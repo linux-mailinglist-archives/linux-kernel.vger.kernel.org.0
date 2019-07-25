@@ -2,238 +2,200 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A00387513E
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 16:33:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6166675141
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 16:33:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728306AbfGYOdC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 10:33:02 -0400
-Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:39961 "EHLO
-        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2387460AbfGYOdC (ORCPT
+        id S1728837AbfGYOdi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 10:33:38 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:39227 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728420AbfGYOdg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 10:33:02 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R871e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04391;MF=aaron.lu@linux.alibaba.com;NM=1;PH=DS;RN=20;SR=0;TI=SMTPD_---0TXmkDME_1564065169;
-Received: from aaronlu(mailfrom:aaron.lu@linux.alibaba.com fp:SMTPD_---0TXmkDME_1564065169)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 25 Jul 2019 22:32:51 +0800
-Date:   Thu, 25 Jul 2019 22:32:49 +0800
-From:   Aaron Lu <aaron.lu@linux.alibaba.com>
-To:     Aubrey Li <aubrey.intel@gmail.com>
-Cc:     Julien Desfossez <jdesfossez@digitalocean.com>,
-        Subhra Mazumdar <subhra.mazumdar@oracle.com>,
-        Vineeth Remanan Pillai <vpillai@digitalocean.com>,
-        Nishanth Aravamudan <naravamudan@digitalocean.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Paul Turner <pjt@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        =?iso-8859-1?Q?Fr=E9d=E9ric?= Weisbecker <fweisbec@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Greg Kerr <kerrnel@google.com>, Phil Auld <pauld@redhat.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 2/3] core vruntime comparison
-Message-ID: <20190725143248.GC992@aaronlu>
-References: <20190531210816.GA24027@sinkpad>
- <20190606152637.GA5703@sinkpad>
- <20190612163345.GB26997@sinkpad>
- <635c01b0-d8f3-561b-5396-10c75ed03712@oracle.com>
- <20190613032246.GA17752@sinkpad>
- <CAERHkrsMFjjBpPZS7jDhzbob4PSmiPj83OfqEeiKgaDAU3ajOA@mail.gmail.com>
- <20190619183302.GA6775@sinkpad>
- <20190718100714.GA469@aaronlu>
- <CAERHkrtvLKxrpvfw04urAuougsYOWnNw4-H1vUDFx27Dvy0=Ww@mail.gmail.com>
- <20190725143003.GA992@aaronlu>
+        Thu, 25 Jul 2019 10:33:36 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6PEXPUo1041320
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Thu, 25 Jul 2019 07:33:25 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6PEXPUo1041320
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019071901; t=1564065206;
+        bh=Aaj0vWujqzqpFjmQS3JzUmdNp9XlQRB0IiBuxqP3Cps=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=ICHURx0M+1yVLOYU8z4XN1MKY/CScKDCx7Q3oJSEfG9MElgU9NnbE57RDGcFWbuqF
+         meqiCkcJyOLOCmRcGEhs0EanfNeb8jKscCkmYqBg26N3ZCMkuRfXBKF9moSjlXW7kg
+         UawtDeWSvSjG7NDyEUfXfKvs414TeeP65eemDUt0DAdj2BgTCNVofuRS8/ykNbxUTo
+         uGj7Qh6f05/NBtX0C6SOgAdMDoHq9YmIT15SJ0mSsoUl1cuFcC5ye2ef1sSEC6MpUw
+         dmW8Nf/akYpRWyBsuZrax6BQwIlWjd+G8DBKC7LXEVxDcG72pDU+uwP7OjuJrcjeHP
+         OdvrLOe3c9+fA==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6PEXPH11041317;
+        Thu, 25 Jul 2019 07:33:25 -0700
+Date:   Thu, 25 Jul 2019 07:33:25 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Thomas Gleixner <tipbot@zytor.com>
+Message-ID: <tip-d0a7166bc7ac4feac5c482ebe8b2417aa3302ef4@git.kernel.org>
+Cc:     mingo@kernel.org, linux-kernel@vger.kernel.org, hpa@zytor.com,
+        peterz@infradead.org, tglx@linutronix.de
+Reply-To: mingo@kernel.org, linux-kernel@vger.kernel.org, hpa@zytor.com,
+          peterz@infradead.org, tglx@linutronix.de
+In-Reply-To: <20190722105220.677835995@linutronix.de>
+References: <20190722105220.677835995@linutronix.de>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/apic] x86/smp: Move smp_function_call implementations into
+ IPI code
+Git-Commit-ID: d0a7166bc7ac4feac5c482ebe8b2417aa3302ef4
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20190725143003.GA992@aaronlu>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Spam-Status: No, score=-0.3 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
+        autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch provides a vruntime based way to compare two cfs task's
-priority, be it on the same cpu or different threads of the same core.
+Commit-ID:  d0a7166bc7ac4feac5c482ebe8b2417aa3302ef4
+Gitweb:     https://git.kernel.org/tip/d0a7166bc7ac4feac5c482ebe8b2417aa3302ef4
+Author:     Thomas Gleixner <tglx@linutronix.de>
+AuthorDate: Mon, 22 Jul 2019 20:47:25 +0200
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Thu, 25 Jul 2019 16:12:01 +0200
 
-When the two tasks are on the same CPU, we just need to find a common
-cfs_rq both sched_entities are on and then do the comparison.
+x86/smp: Move smp_function_call implementations into IPI code
 
-When the two tasks are on differen threads of the same core, the root
-level sched_entities to which the two tasks belong will be used to do
-the comparison.
+Move it where it belongs. That allows to keep all the shorthand logic in
+one place.
 
-An ugly illustration for the cross CPU case:
+No functional change.
 
-   cpu0         cpu1
- /   |  \     /   |  \
-se1 se2 se3  se4 se5 se6
-    /  \            /   \
-  se21 se22       se61  se62
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Link: https://lkml.kernel.org/r/20190722105220.677835995@linutronix.de
 
-Assume CPU0 and CPU1 are smt siblings and task A's se is se21 while
-task B's se is se61. To compare priority of task A and B, we compare
-priority of se2 and se6. Whose vruntime is smaller, who wins.
-
-To make this work, the root level se should have a common cfs_rq min
-vuntime, which I call it the core cfs_rq min vruntime.
-
-Potential issues: when core scheduling is enabled, if there are tasks
-already in some CPU's rq, then new tasks will be queued with the per-core
-cfs_rq min vruntime while the old tasks are using the original root
-level cfs_rq's min_vruntime. The two values can differ greatly and can
-cause tasks with a large vruntime starve. So enable core scheduling
-early when the system is still kind of idle for the time being to avoid
-this problem.
-
-Signed-off-by: Aaron Lu <ziqian.lzq@antfin.com>
 ---
- kernel/sched/core.c  | 15 ++-------
- kernel/sched/fair.c  | 79 +++++++++++++++++++++++++++++++++++++++++++-
- kernel/sched/sched.h |  2 ++
- 3 files changed, 82 insertions(+), 14 deletions(-)
+ arch/x86/include/asm/smp.h |  1 +
+ arch/x86/kernel/apic/ipi.c | 40 ++++++++++++++++++++++++++++++++++++++++
+ arch/x86/kernel/smp.c      | 40 ----------------------------------------
+ 3 files changed, 41 insertions(+), 40 deletions(-)
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 90655c9ad937..bc746ea4cc82 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -105,19 +105,8 @@ static inline bool prio_less(struct task_struct *a, struct task_struct *b)
- 	if (pa == -1) /* dl_prio() doesn't work because of stop_class above */
- 		return !dl_time_before(a->dl.deadline, b->dl.deadline);
+diff --git a/arch/x86/include/asm/smp.h b/arch/x86/include/asm/smp.h
+index e1356a3b8223..e15f364efbcc 100644
+--- a/arch/x86/include/asm/smp.h
++++ b/arch/x86/include/asm/smp.h
+@@ -143,6 +143,7 @@ void play_dead_common(void);
+ void wbinvd_on_cpu(int cpu);
+ int wbinvd_on_all_cpus(void);
  
--	if (pa == MAX_RT_PRIO + MAX_NICE)  { /* fair */
--		u64 vruntime = b->se.vruntime;
--
--		/*
--		 * Normalize the vruntime if tasks are in different cpus.
--		 */
--		if (task_cpu(a) != task_cpu(b)) {
--			vruntime -= task_cfs_rq(b)->min_vruntime;
--			vruntime += task_cfs_rq(a)->min_vruntime;
--		}
--
--		return !((s64)(a->se.vruntime - vruntime) <= 0);
--	}
-+	if (pa == MAX_RT_PRIO + MAX_NICE) /* fair */
-+		return cfs_prio_less(a, b);
- 
- 	return false;
++void native_smp_send_reschedule(int cpu);
+ void native_send_call_func_ipi(const struct cpumask *mask);
+ void native_send_call_func_single_ipi(int cpu);
+ void x86_idle_thread_init(unsigned int cpu, struct task_struct *idle);
+diff --git a/arch/x86/kernel/apic/ipi.c b/arch/x86/kernel/apic/ipi.c
+index f53de3e0145e..eaac65bf58f0 100644
+--- a/arch/x86/kernel/apic/ipi.c
++++ b/arch/x86/kernel/apic/ipi.c
+@@ -62,6 +62,46 @@ void apic_send_IPI_allbutself(unsigned int vector)
+ 		apic->send_IPI_mask_allbutself(cpu_online_mask, vector);
  }
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index a7b26c96f46b..43babc2a12a5 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -431,9 +431,85 @@ find_matching_se(struct sched_entity **se, struct sched_entity **pse)
  
- #endif	/* CONFIG_FAIR_GROUP_SCHED */
- 
-+static inline struct cfs_rq *root_cfs_rq(struct cfs_rq *cfs_rq)
++/*
++ * Send a 'reschedule' IPI to another CPU. It goes straight through and
++ * wastes no time serializing anything. Worst case is that we lose a
++ * reschedule ...
++ */
++void native_smp_send_reschedule(int cpu)
 +{
-+	return &rq_of(cfs_rq)->cfs;
-+}
-+
-+static inline bool is_root_cfs_rq(struct cfs_rq *cfs_rq)
-+{
-+	return cfs_rq == root_cfs_rq(cfs_rq);
-+}
-+
-+static inline struct cfs_rq *core_cfs_rq(struct cfs_rq *cfs_rq)
-+{
-+	return &rq_of(cfs_rq)->core->cfs;
-+}
-+
- static inline u64 cfs_rq_min_vruntime(struct cfs_rq *cfs_rq)
- {
--	return cfs_rq->min_vruntime;
-+	if (!sched_core_enabled(rq_of(cfs_rq)))
-+		return cfs_rq->min_vruntime;
-+
-+	if (is_root_cfs_rq(cfs_rq))
-+		return core_cfs_rq(cfs_rq)->min_vruntime;
-+	else
-+		return cfs_rq->min_vruntime;
-+}
-+
-+static void update_core_cfs_rq_min_vruntime(struct cfs_rq *cfs_rq)
-+{
-+	struct cfs_rq *cfs_rq_core;
-+
-+	if (!sched_core_enabled(rq_of(cfs_rq)))
++	if (unlikely(cpu_is_offline(cpu))) {
++		WARN(1, "sched: Unexpected reschedule of offline CPU#%d!\n", cpu);
 +		return;
-+
-+	if (!is_root_cfs_rq(cfs_rq))
-+		return;
-+
-+	cfs_rq_core = core_cfs_rq(cfs_rq);
-+	cfs_rq_core->min_vruntime = max(cfs_rq_core->min_vruntime,
-+					cfs_rq->min_vruntime);
++	}
++	apic->send_IPI(cpu, RESCHEDULE_VECTOR);
 +}
 +
-+bool cfs_prio_less(struct task_struct *a, struct task_struct *b)
++void native_send_call_func_single_ipi(int cpu)
 +{
-+	struct sched_entity *sea = &a->se;
-+	struct sched_entity *seb = &b->se;
-+	bool samecpu = task_cpu(a) == task_cpu(b);
-+	struct task_struct *p;
-+	s64 delta;
++	apic->send_IPI(cpu, CALL_FUNCTION_SINGLE_VECTOR);
++}
 +
-+	if (samecpu) {
-+		/* vruntime is per cfs_rq */
-+		while (!is_same_group(sea, seb)) {
-+			int sea_depth = sea->depth;
-+			int seb_depth = seb->depth;
++void native_send_call_func_ipi(const struct cpumask *mask)
++{
++	cpumask_var_t allbutself;
 +
-+			if (sea_depth >= seb_depth)
-+				sea = parent_entity(sea);
-+			if (sea_depth <= seb_depth)
-+				seb = parent_entity(seb);
-+		}
-+
-+		delta = (s64)(sea->vruntime - seb->vruntime);
-+		goto out;
++	if (!alloc_cpumask_var(&allbutself, GFP_ATOMIC)) {
++		apic->send_IPI_mask(mask, CALL_FUNCTION_VECTOR);
++		return;
 +	}
 +
-+	/* crosscpu: compare root level se's vruntime to decide priority */
-+	while (sea->parent)
-+		sea = sea->parent;
-+	while (seb->parent)
-+		seb = seb->parent;
-+	delta = (s64)(sea->vruntime - seb->vruntime);
++	cpumask_copy(allbutself, cpu_online_mask);
++	__cpumask_clear_cpu(smp_processor_id(), allbutself);
 +
-+out:
-+	p = delta > 0 ? b : a;
-+	trace_printk("picked %s/%d %s: %Ld %Ld %Ld\n", p->comm, p->pid,
-+			samecpu ? "samecpu" : "crosscpu",
-+			sea->vruntime, seb->vruntime, delta);
++	if (cpumask_equal(mask, allbutself) &&
++	    cpumask_equal(cpu_online_mask, cpu_callout_mask))
++		apic->send_IPI_allbutself(CALL_FUNCTION_VECTOR);
++	else
++		apic->send_IPI_mask(mask, CALL_FUNCTION_VECTOR);
 +
-+	return delta > 0;
- }
- 
- static __always_inline
-@@ -493,6 +569,7 @@ static void update_min_vruntime(struct cfs_rq *cfs_rq)
- 
- 	/* ensure we never gain time by being placed backwards. */
- 	cfs_rq->min_vruntime = max_vruntime(cfs_rq_min_vruntime(cfs_rq), vruntime);
-+	update_core_cfs_rq_min_vruntime(cfs_rq);
- #ifndef CONFIG_64BIT
- 	smp_wmb();
- 	cfs_rq->min_vruntime_copy = cfs_rq->min_vruntime;
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index e91c188a452c..02a6d71704f0 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -2454,3 +2454,5 @@ static inline bool sched_energy_enabled(void)
- static inline bool sched_energy_enabled(void) { return false; }
- 
- #endif /* CONFIG_ENERGY_MODEL && CONFIG_CPU_FREQ_GOV_SCHEDUTIL */
++	free_cpumask_var(allbutself);
++}
 +
-+bool cfs_prio_less(struct task_struct *a, struct task_struct *b);
--- 
-2.19.1.3.ge56e4f7
-
+ #endif /* CONFIG_SMP */
+ 
+ static inline int __prepare_ICR2(unsigned int mask)
+diff --git a/arch/x86/kernel/smp.c b/arch/x86/kernel/smp.c
+index b8ad1876a081..b8d4e9c3c070 100644
+--- a/arch/x86/kernel/smp.c
++++ b/arch/x86/kernel/smp.c
+@@ -115,46 +115,6 @@
+ static atomic_t stopping_cpu = ATOMIC_INIT(-1);
+ static bool smp_no_nmi_ipi = false;
+ 
+-/*
+- * this function sends a 'reschedule' IPI to another CPU.
+- * it goes straight through and wastes no time serializing
+- * anything. Worst case is that we lose a reschedule ...
+- */
+-static void native_smp_send_reschedule(int cpu)
+-{
+-	if (unlikely(cpu_is_offline(cpu))) {
+-		WARN(1, "sched: Unexpected reschedule of offline CPU#%d!\n", cpu);
+-		return;
+-	}
+-	apic->send_IPI(cpu, RESCHEDULE_VECTOR);
+-}
+-
+-void native_send_call_func_single_ipi(int cpu)
+-{
+-	apic->send_IPI(cpu, CALL_FUNCTION_SINGLE_VECTOR);
+-}
+-
+-void native_send_call_func_ipi(const struct cpumask *mask)
+-{
+-	cpumask_var_t allbutself;
+-
+-	if (!alloc_cpumask_var(&allbutself, GFP_ATOMIC)) {
+-		apic->send_IPI_mask(mask, CALL_FUNCTION_VECTOR);
+-		return;
+-	}
+-
+-	cpumask_copy(allbutself, cpu_online_mask);
+-	__cpumask_clear_cpu(smp_processor_id(), allbutself);
+-
+-	if (cpumask_equal(mask, allbutself) &&
+-	    cpumask_equal(cpu_online_mask, cpu_callout_mask))
+-		apic->send_IPI_allbutself(CALL_FUNCTION_VECTOR);
+-	else
+-		apic->send_IPI_mask(mask, CALL_FUNCTION_VECTOR);
+-
+-	free_cpumask_var(allbutself);
+-}
+-
+ static int smp_stop_nmi_callback(unsigned int val, struct pt_regs *regs)
+ {
+ 	/* We are registered on stopping cpu too, avoid spurious NMI */
