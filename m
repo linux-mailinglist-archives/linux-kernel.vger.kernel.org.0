@@ -2,121 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FAB075F46
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 08:49:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 710E375F55
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 08:54:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726107AbfGZGtl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 02:49:41 -0400
-Received: from new1-smtp.messagingengine.com ([66.111.4.221]:37845 "EHLO
-        new1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725867AbfGZGtl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 02:49:41 -0400
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 2F89342BA;
-        Fri, 26 Jul 2019 02:49:40 -0400 (EDT)
-Received: from imap2 ([10.202.2.52])
-  by compute4.internal (MEProxy); Fri, 26 Jul 2019 02:49:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=
-        mime-version:message-id:in-reply-to:references:date:from:to:cc
-        :subject:content-type; s=fm3; bh=kokOQgzIABuKcOf13CmoUQh+Gn2cv69
-        dV+LTjmU8rAk=; b=jXDTHisiOlQRsj/JEm7c0JiMRIHipx0N+6scM50gRBSdCwm
-        MXdU6grcxma8/9ibQjvhXQGFQ/yKqYPP1C6km9DaNzuzVfojUiBtICogtZcK4tRK
-        aPDqdXZfsrQ8Wzks7bmcskSnxEGrjFxRJpW9M89mo/p6YvkIQnnGR1Y49Q8aUJPy
-        PxrxENHZfHf80gdUCZ/29i7IASp38NW6T5aBAhFVKItrPPRt5jUXMCLrgWYt2dzF
-        FBJIGo9Rro1nsCdnGgrAXuQ4Il8fSeBgntVynmytaPco9iPle531hVK4wroVm8eY
-        fRevtX684DvtQDS0zoerDdoNKvV0XETKPkxwKrA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=kokOQg
-        zIABuKcOf13CmoUQh+Gn2cv69dV+LTjmU8rAk=; b=A/lTXR68tPAlyjt76lGNWv
-        D6td6Cm4rdBWDvxB8Z3be9tUf+A+c7ltv+sjTLU5MmcUiKOKfTc9XFapQeFg13U5
-        +GUWPBdq29YdoTJkoURl1/PyPHR0UYnPk7eOR4Af6xaGV9xSiupuB2mlK7+3xkvQ
-        DdutVXz2D706AB4uDOsRPSP18SOkmGNiHi1KXhjFpNnwu7Qmg89sKmKj9wurDwBH
-        txfrthKLxE+ETW3Ooc3S+D47Tnz+pWXh0GoMCjgooXvcigx2bdU7cZL3dJXb8jEk
-        y5Bcb5MNoQlmBlFqcgY5S+P+U1bSz45PjGcohYHHtJSC8O0rw20JZxiW36P2xB8A
-        ==
-X-ME-Sender: <xms:gqI6Xd1eXtuKPIeCF7vKxebDRJaLOq4jc5OcyklJNCoJyMnOUbkE7Q>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrkeefgdduudefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvffutgesthdtredtreertdenucfhrhhomhepfdetnhgu
-    rhgvficulfgvfhhfvghrhidfuceorghnughrvgifsegrjhdrihgurdgruheqnecurfgrrh
-    grmhepmhgrihhlfhhrohhmpegrnhgurhgvfiesrghjrdhiugdrrghunecuvehluhhsthgv
-    rhfuihiivgeptd
-X-ME-Proxy: <xmx:gqI6XTLtjdjlhZAP8lYDylnGOoIU5_qwErskFxXawOBDdepaVpDIgQ>
-    <xmx:gqI6XUGoLVGo134sbxvXj2ZXOiq-x4iSUONdHhGZ3jMmyqh_1acQaw>
-    <xmx:gqI6XXUncIRQVtAYKxT9MV7Qrg7N7wAzOZGdG5qG8JsNMYavcpi3MQ>
-    <xmx:hKI6XVMTy-7dFx0q_FrEmhKBR337Tk9zQ4hVoRgyf4f6uzv34pkImA>
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id B948AE00A2; Fri, 26 Jul 2019 02:49:38 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.1.6-736-gdfb8e44-fmstable-20190718v2
-Mime-Version: 1.0
-Message-Id: <4c6c020d-5985-4c57-aaae-c2393f9cc2fc@www.fastmail.com>
-In-Reply-To: <8a7bfe52-83ca-7601-7d75-e5615da7b5de@intel.com>
-References: <20190712033214.24713-1-andrew@aj.id.au>
- <20190712033214.24713-3-andrew@aj.id.au>
- <d6f7fdf2-07ed-354a-ca29-f3175623679c@intel.com>
- <7cd30f3d-43fd-42da-9301-091eb2625c65@www.fastmail.com>
- <8a7bfe52-83ca-7601-7d75-e5615da7b5de@intel.com>
-Date:   Fri, 26 Jul 2019 16:17:31 +0930
-From:   "Andrew Jeffery" <andrew@aj.id.au>
-To:     "Adrian Hunter" <adrian.hunter@intel.com>,
-        linux-mmc <linux-mmc@vger.kernel.org>
-Cc:     "Ulf Hansson" <ulf.hansson@linaro.org>,
-        "Rob Herring" <robh+dt@kernel.org>, mark.rutland@arm.com,
-        "Joel Stanley" <joel@jms.id.au>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        "Ryan Chen" <ryanchen.aspeed@gmail.com>
-Subject: Re: [PATCH v2 2/2] mmc: Add support for the ASPEED SD controller
-Content-Type: text/plain
+        id S1726177AbfGZGyA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 02:54:00 -0400
+Received: from mga09.intel.com ([134.134.136.24]:13215 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725878AbfGZGyA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 02:54:00 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jul 2019 23:53:59 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,309,1559545200"; 
+   d="scan'208";a="170535298"
+Received: from gliakhov-mobl2.ger.corp.intel.com (HELO ubuntu) ([10.249.35.244])
+  by fmsmga008.fm.intel.com with ESMTP; 25 Jul 2019 23:53:56 -0700
+Date:   Fri, 26 Jul 2019 00:23:02 +0200
+From:   Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc:     alsa-devel@alsa-project.org, tiwai@suse.de,
+        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        vkoul@kernel.org, broonie@kernel.org,
+        srinivas.kandagatla@linaro.org, jank@cadence.com,
+        slawomir.blauciak@intel.com, Sanyog Kale <sanyog.r.kale@intel.com>
+Subject: Re: [alsa-devel] [RFC PATCH 09/40] soundwire: cadence_master: fix
+ usage of CONFIG_UPDATE
+Message-ID: <20190725222302.GB16003@ubuntu>
+References: <20190725234032.21152-1-pierre-louis.bossart@linux.intel.com>
+ <20190725234032.21152-10-pierre-louis.bossart@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190725234032.21152-10-pierre-louis.bossart@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On Fri, 26 Jul 2019, at 15:27, Adrian Hunter wrote:
-> On 26/07/19 3:52 AM, Andrew Jeffery wrote:
-> > On Thu, 25 Jul 2019, at 22:49, Adrian Hunter wrote:
-> >> On 12/07/19 6:32 AM, Andrew Jeffery wrote:
-> >>> +static int aspeed_sdhci_probe(struct platform_device *pdev)
-> >>> +{
-> >>> +	struct sdhci_pltfm_host *pltfm_host;
-> >>> +	struct aspeed_sdhci *dev;
-> >>> +	struct sdhci_host *host;
-> >>> +	struct resource *res;
-> >>> +	int slot;
-> >>> +	int ret;
-> >>> +
-> >>> +	host = sdhci_pltfm_init(pdev, &aspeed_sdc_pdata, sizeof(*dev));
-> >>> +	if (IS_ERR(host))
-> >>> +		return PTR_ERR(host);
-> >>> +
-> >>> +	pltfm_host = sdhci_priv(host);
-> >>> +	dev = sdhci_pltfm_priv(pltfm_host);
-> >>> +	dev->parent = dev_get_drvdata(pdev->dev.parent);
-> >>> +
-> >>> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> >>> +	slot = aspeed_sdhci_calculate_slot(dev, res);
-> >>> +	if (slot < 0)
-> >>> +		return slot;
-> >>> +	dev_info(&pdev->dev, "Configuring for slot %d\n", slot);
-> >>> +	dev->width_mask = !slot ? ASPEED_SDC_S0MMC8 : ASPEED_SDC_S1MMC8;
-> >>
-> >> That implies that you only support 2 slots which begs the question why
-> >> you don't validate slot.
-> > 
-> > I'm not sure what you mean here, but I'll dig into it.
+On Thu, Jul 25, 2019 at 06:40:01PM -0500, Pierre-Louis Bossart wrote:
+> Per the hardware documentation, all changes to MCP_CONFIG,
+> MCP_CONTROL, MCP_CMDCTRL and MCP_PHYCTRL need to be validated with a
+> self-clearing write to MCP_CONFIG_UPDATE.
 > 
-> I just meant, if you only support 2 slots:
+> For some reason, the existing code only does this write to
+> CONFIG_UPDATE when enabling interrupts. Add a helper and do the update
+> when the CONFIG is changed.
 > 
-> 	if (slot > 1)
-> 		return -EINVAL;
->
+> Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+> ---
+>  drivers/soundwire/cadence_master.c | 29 +++++++++++++++++++++--------
+>  1 file changed, 21 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/soundwire/cadence_master.c b/drivers/soundwire/cadence_master.c
+> index 9f611a1fff0a..eb46cf651d62 100644
+> --- a/drivers/soundwire/cadence_master.c
+> +++ b/drivers/soundwire/cadence_master.c
+> @@ -224,6 +224,22 @@ static int cdns_clear_bit(struct sdw_cdns *cdns, int offset, u32 value)
+>  	return -EAGAIN;
+>  }
+>  
+> +/*
+> + * all changes to the MCP_CONFIG, MCP_CONTROL, MCP_CMDCTRL and MCP_PHYCTRL
+> + * need to be confirmed with a write to MCP_CONFIG_UPDATE
+> + */
+> +static int cdns_update_config(struct sdw_cdns *cdns)
+> +{
+> +	int ret;
+> +
+> +	ret = cdns_clear_bit(cdns, CDNS_MCP_CONFIG_UPDATE,
+> +			     CDNS_MCP_CONFIG_UPDATE_BIT);
+> +	if (ret < 0)
+> +		dev_err(cdns->dev, "Config update timedout\n");
+> +
+> +	return ret;
+> +}
+> +
+>  /*
+>   * debugfs
+>   */
+> @@ -758,15 +774,9 @@ static int _cdns_enable_interrupt(struct sdw_cdns *cdns)
+>   */
+>  int sdw_cdns_enable_interrupt(struct sdw_cdns *cdns)
+>  {
+> -	int ret;
+> -
+>  	_cdns_enable_interrupt(cdns);
+> -	ret = cdns_clear_bit(cdns, CDNS_MCP_CONFIG_UPDATE,
+> -			     CDNS_MCP_CONFIG_UPDATE_BIT);
+> -	if (ret < 0)
+> -		dev_err(cdns->dev, "Config update timedout\n");
+>  
+> -	return ret;
+> +	return 0;
+>  }
+>  EXPORT_SYMBOL(sdw_cdns_enable_interrupt);
+>  
+> @@ -943,7 +953,10 @@ int sdw_cdns_init(struct sdw_cdns *cdns)
+>  
+>  	cdns_writel(cdns, CDNS_MCP_CONFIG, val);
+>  
+> -	return 0;
+> +	/* commit changes */
+> +	ret = cdns_update_config(cdns);
+> +
+> +	return ret;
 
-Oh, sure.
++	return cdns_update_config(cdns);
+
+Thanks
+Guennadi
+
+>  }
+>  EXPORT_SYMBOL(sdw_cdns_init);
+>  
+> -- 
+> 2.20.1
+> 
+> _______________________________________________
+> Alsa-devel mailing list
+> Alsa-devel@alsa-project.org
+> https://mailman.alsa-project.org/mailman/listinfo/alsa-devel
