@@ -2,121 +2,199 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A3E774F12
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 15:20:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E644174F1A
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 15:21:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389953AbfGYNUY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 09:20:24 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:40260 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389884AbfGYNUX (ORCPT
+        id S1729989AbfGYNVZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 09:21:25 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:38527 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727466AbfGYNVY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 09:20:23 -0400
-Received: by mail-qt1-f196.google.com with SMTP id a15so48978620qtn.7
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 06:20:23 -0700 (PDT)
+        Thu, 25 Jul 2019 09:21:24 -0400
+Received: by mail-wr1-f66.google.com with SMTP id g17so50788329wrr.5
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 06:21:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=hksOcYMTFsQQXxPG74pF4Ev5omBJ6BpaQhz1gWRfnWA=;
-        b=mtl8aXY6om467I/IRPDfWhsEihgtMKaOYEz8QL8yLJvBwx9xKAmAQPrkOp1Vo38B9/
-         aQ9vOKurZmrzM8ZpTDLNbxQyxjavPEGh6EErSqOnbi8Nb6NihoL2oXkGjD5xpSAVAID6
-         KjtwDJ3aVfk5Sbm9+llQAEo+pjUNBXgC3xcgI995HebYCYdNc4igLjlGb74aR6k0tuD3
-         W+3FF2JHUzwCx9wpYbINO+Ons8sA/FNu226bVz+6xWI1igdZGir0lIFg+5siubDUKTBv
-         9I+pykPeBgve2ZbuvF8QNefQzEEQwQ0i7ERiaS+D1vKyhdhwlu99yOb2iuPsy3gvS5bF
-         H34g==
+        d=cumulusnetworks.com; s=google;
+        h=subject:from:to:references:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=sHoRY+mXic7NkNfPFucr+22Si1CXT/E0fQIjB3vP5E4=;
+        b=Po0NeTTxb+nvdjvmvbUp8u6K6W2wJNfYZoiEEQgVBKy52QdPpqSOmtHg/zMCOS9AS5
+         xMbWSEyGg0+PXLtHosfvgCZq7V8YPbCVpoMQBn31WOosHTMSX5vlX2/GWwAt67ta0I6Y
+         M0cyXxQMy7L4t7HVFJHileEePEdJtygUT3IGM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=hksOcYMTFsQQXxPG74pF4Ev5omBJ6BpaQhz1gWRfnWA=;
-        b=gVSrtbn+sbYFM3TxfP2hAv5uZfb18sQg2/OLmNcq9OhJZXfpgrtbV31qbhW4RNrlVq
-         shKXOE8L+dyBp/7I9VN5q7sJTMRM6tCke+pkTAv4ru6gXBGVULnzIENNHcowZpx+eX69
-         JzqesdQ/kMPvcP6USKPYMnPL4a/160vG8xJQWA6qMKlo7hBS3X6gNnFAc0R6yS72twfv
-         rsQ9AXZBIFQ+6acw7duuwr+p8TX4HNOoS5NwDh4hMX2OpOhNIm6uWY5hkw2Lq2hidrpN
-         5pWcNOFUV/qvnx5lVXXRJAcBFZ6JOhuUq+oJwf80WGUOqaklEqJvYFYG+DxT5Mozxx1f
-         Jzxw==
-X-Gm-Message-State: APjAAAX7mMySeSd/Y9mnt0AexRsTIcjtXN+uVGi7m/eJ3g5YpnlFi+/s
-        EllpBP1VO/3IlDBge/bv+2Y9qM8QM9699OMWHivayg==
-X-Google-Smtp-Source: APXvYqzbohpFc3U6eGc+1t9EcQe7Xduc50XTK8rY2fyUI8XmNmk8NGB9t9ex3V+pUZPDY5hCm9tEx+NwkrM8pQoP8Kg=
-X-Received: by 2002:ac8:7219:: with SMTP id a25mr61991427qtp.234.1564060822527;
- Thu, 25 Jul 2019 06:20:22 -0700 (PDT)
+        h=x-gm-message-state:subject:from:to:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=sHoRY+mXic7NkNfPFucr+22Si1CXT/E0fQIjB3vP5E4=;
+        b=cxs5XsXBxEZNxTBHl9mTEPi++LHoYtSNQxDgoPvzS7qUElomGWcKYo6GtiK7xQr1x1
+         ySN9mD1ivu08Pby0Fep0m8rd2fzPN2taRL1DeoNYypjg3HV3cAVSXgJptqfs4pbDTPiV
+         /vND/fELYyCkuMAD3VsZpz5r07w464dYz6J+fTmzQdvPZDur2sRUSoQG7Flo+olnZdCG
+         KOWkr5I3IqlHacNYjI/fB0rv6oRsyvhnvHLYNsgLt6KCEbJb09ZgCwB32vpR4X1tIpo9
+         0UUkNysyd6uY/UGxjDewbaapuDi86MQAw7Jfb3iMckHHu2qdduRBwRGdHiaHZUQg1ei9
+         lC7Q==
+X-Gm-Message-State: APjAAAVhICJXSv+mIDcnASA4asNBGowIHL14zdR28GeWMvo9TG/2djxG
+        eGzwTsIZuDtBgOTBGG4fHyl0PQ==
+X-Google-Smtp-Source: APXvYqzzn3dDK9Dsq4Rqf9c8rrDZiWfqE90XublDccXfwKAa0gI9nnKVLo/yjPHVttqGxqc2BBpLyQ==
+X-Received: by 2002:adf:ce88:: with SMTP id r8mr21287004wrn.42.1564060881337;
+        Thu, 25 Jul 2019 06:21:21 -0700 (PDT)
+Received: from [192.168.0.107] (84-238-136-197.ip.btc-net.bg. [84.238.136.197])
+        by smtp.gmail.com with ESMTPSA id y6sm61292070wmd.16.2019.07.25.06.21.20
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Thu, 25 Jul 2019 06:21:20 -0700 (PDT)
+Subject: Re: [PATCH] net: bridge: Allow bridge to joing multicast groups
+From:   Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+To:     Horatiu Vultur <horatiu.vultur@microchip.com>,
+        roopa@cumulusnetworks.com, davem@davemloft.net,
+        bridge@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, allan.nielsen@microchip.com
+References: <1564055044-27593-1-git-send-email-horatiu.vultur@microchip.com>
+ <7e7a7015-6072-d884-b2ba-0a51177245ab@cumulusnetworks.com>
+Message-ID: <eef063fe-fd3a-7e02-89c2-e40728a17578@cumulusnetworks.com>
+Date:   Thu, 25 Jul 2019 16:21:19 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-References: <20190624194908.121273-1-john.stultz@linaro.org>
- <20190624194908.121273-5-john.stultz@linaro.org> <20190718100840.GB19666@infradead.org>
- <CALAqxLWLx_tHVjZqrSNWfQ_M2RGGqh4qth3hi9GGRdSPov-gcw@mail.gmail.com>
- <20190724065958.GC16225@infradead.org> <CALAqxLUbsz+paJ=P2hwKecuN8DQjJt9Vj4MENCnFuEh6waxsXg@mail.gmail.com>
- <20190725125206.GE20286@infradead.org>
-In-Reply-To: <20190725125206.GE20286@infradead.org>
-From:   Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Date:   Thu, 25 Jul 2019 15:20:11 +0200
-Message-ID: <CA+M3ks52ADKVCw_pZP9=LSNt+vhiEFyrtB-Jm2x=p62kSV7qVA@mail.gmail.com>
-Subject: Re: [PATCH v6 4/5] dma-buf: heaps: Add CMA heap to dmabuf heaps
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     John Stultz <john.stultz@linaro.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Laura Abbott <labbott@redhat.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Liam Mark <lmark@codeaurora.org>,
-        Pratik Patel <pratikp@codeaurora.org>,
-        Brian Starkey <Brian.Starkey@arm.com>,
-        Vincent Donnefort <Vincent.Donnefort@arm.com>,
-        Sudipto Paul <Sudipto.Paul@arm.com>,
-        "Andrew F . Davis" <afd@ti.com>,
-        Xu YiPing <xuyiping@hisilicon.com>,
-        "Chenfeng (puck)" <puck.chen@hisilicon.com>,
-        butao <butao@hisilicon.com>,
-        "Xiaqing (A)" <saberlily.xia@hisilicon.com>,
-        Yudongbin <yudongbin@hisilicon.com>,
-        Chenbo Feng <fengc@google.com>,
-        Alistair Strachan <astrachan@google.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <7e7a7015-6072-d884-b2ba-0a51177245ab@cumulusnetworks.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Le jeu. 25 juil. 2019 =C3=A0 14:52, Christoph Hellwig <hch@infradead.org> a=
- =C3=A9crit :
->
-> On Wed, Jul 24, 2019 at 11:46:24AM -0700, John Stultz wrote:
-> > I'm still not understanding how this would work. Benjamin and Laura
-> > already commented on this point, but for a simple example, with the
-> > HiKey boards, the DRM driver requires contiguous memory for the
-> > framebuffer, but the GPU can handle non-contiguous. Thus the target
-> > framebuffers that we pass to the display has to be CMA allocated, but
-> > all the other graphics buffers that the GPU will render to and
-> > composite can be system.
+On 25/07/2019 16:06, Nikolay Aleksandrov wrote:
+> On 25/07/2019 14:44, Horatiu Vultur wrote:
+>> There is no way to configure the bridge, to receive only specific link
+>> layer multicast addresses. From the description of the command 'bridge
+>> fdb append' is supposed to do that, but there was no way to notify the
+>> network driver that the bridge joined a group, because LLADDR was added
+>> to the unicast netdev_hw_addr_list.
+>>
+>> Therefore update fdb_add_entry to check if the NLM_F_APPEND flag is set
+>> and if the source is NULL, which represent the bridge itself. Then add
+>> address to multicast netdev_hw_addr_list for each bridge interfaces.
+>> And then the .ndo_set_rx_mode function on the driver is called. To notify
+>> the driver that the list of multicast mac addresses changed.
+>>
+>> Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
+>> ---
+>>  net/bridge/br_fdb.c | 49 ++++++++++++++++++++++++++++++++++++++++++++++---
+>>  1 file changed, 46 insertions(+), 3 deletions(-)
+>>
+> 
+> Hi,
+> I'm sorry but this patch is wrong on many levels, some notes below. In general
+> NLM_F_APPEND is only used in vxlan, the bridge does not handle that flag at all.
+> FDB is only for *unicast*, nothing is joined and no multicast should be used with fdbs.
+> MDB is used for multicast handling, but both of these are used for forwarding.
+> The reason the static fdbs are added to the filter is for non-promisc ports, so they can
+> receive traffic destined for these FDBs for forwarding.
+> If you'd like to join any multicast group please use the standard way, if you'd like to join
+> it only on a specific port - join it only on that port (or ports) and the bridge and you'll
 
-No we have uses cases where graphic buffers can go directly to display with=
-out
-using GPU. For example we can grab frames from the camera and send them dir=
-ectly
-in display (same for video decoder) because we have planes for that.
+And obviously this is for the case where you're not enabling port promisc mode (non-default).
+In general you'll only need to join the group on the bridge to receive traffic for it
+or add it as an mdb entry to forward it.
 
->
-> But that just means we need a flag that memory needs to be contiguous,
-> which totally makes sense at the API level.  But CMA is not the only
-> source of contigous memory, so we should not conflate the two.
+> have the effect that you're describing. What do you mean there's no way ?
+> 
+> In addition you're allowing a mix of mcast functions to be called with unicast addresses
+> and vice versa, it is not that big of a deal because the kernel will simply return an error
+> but still makes no sense.
+> 
+> Nacked-by: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+> 
+>> diff --git a/net/bridge/br_fdb.c b/net/bridge/br_fdb.c
+>> index b1d3248..d93746d 100644
+>> --- a/net/bridge/br_fdb.c
+>> +++ b/net/bridge/br_fdb.c
+>> @@ -175,6 +175,29 @@ static void fdb_add_hw_addr(struct net_bridge *br, const unsigned char *addr)
+>>  	}
+>>  }
+>>  
+>> +static void fdb_add_hw_maddr(struct net_bridge *br, const unsigned char *addr)
+>> +{
+>> +	int err;
+>> +	struct net_bridge_port *p;
+>> +
+>> +	ASSERT_RTNL();
+>> +
+>> +	list_for_each_entry(p, &br->port_list, list) {
+>> +		if (!br_promisc_port(p)) {
+>> +			err = dev_mc_add(p->dev, addr);
+>> +			if (err)
+>> +				goto undo;
+>> +		}
+>> +	}
+>> +
+>> +	return;
+>> +undo:
+>> +	list_for_each_entry_continue_reverse(p, &br->port_list, list) {
+>> +		if (!br_promisc_port(p))
+>> +			dev_mc_del(p->dev, addr);
+>> +	}
+>> +}
+>> +
+>>  /* When a static FDB entry is deleted, the HW address from that entry is
+>>   * also removed from the bridge private HW address list and updates all
+>>   * the ports with needed information.
+>> @@ -192,13 +215,27 @@ static void fdb_del_hw_addr(struct net_bridge *br, const unsigned char *addr)
+>>  	}
+>>  }
+>>  
+>> +static void fdb_del_hw_maddr(struct net_bridge *br, const unsigned char *addr)
+>> +{
+>> +	struct net_bridge_port *p;
+>> +
+>> +	ASSERT_RTNL();
+>> +
+>> +	list_for_each_entry(p, &br->port_list, list) {
+>> +		if (!br_promisc_port(p))
+>> +			dev_mc_del(p->dev, addr);
+>> +	}
+>> +}
+>> +
+>>  static void fdb_delete(struct net_bridge *br, struct net_bridge_fdb_entry *f,
+>>  		       bool swdev_notify)
+>>  {
+>>  	trace_fdb_delete(br, f);
+>>  
+>> -	if (f->is_static)
+>> +	if (f->is_static) {
+>>  		fdb_del_hw_addr(br, f->key.addr.addr);
+>> +		fdb_del_hw_maddr(br, f->key.addr.addr);
+> 
+> Walking over all ports again for each static delete is a no-go.
+> 
+>> +	}
+>>  
+>>  	hlist_del_init_rcu(&f->fdb_node);
+>>  	rhashtable_remove_fast(&br->fdb_hash_tbl, &f->rhnode,
+>> @@ -843,13 +880,19 @@ static int fdb_add_entry(struct net_bridge *br, struct net_bridge_port *source,
+>>  			fdb->is_local = 1;
+>>  			if (!fdb->is_static) {
+>>  				fdb->is_static = 1;
+>> -				fdb_add_hw_addr(br, addr);
+>> +				if (flags & NLM_F_APPEND && !source)
+>> +					fdb_add_hw_maddr(br, addr);
+>> +				else
+>> +					fdb_add_hw_addr(br, addr);
+>>  			}
+>>  		} else if (state & NUD_NOARP) {
+>>  			fdb->is_local = 0;
+>>  			if (!fdb->is_static) {
+>>  				fdb->is_static = 1;
+>> -				fdb_add_hw_addr(br, addr);
+>> +				if (flags & NLM_F_APPEND && !source)
+>> +					fdb_add_hw_maddr(br, addr);
+>> +				else
+>> +					fdb_add_hw_addr(br, addr);
+>>  			}
+>>  		} else {
+>>  			fdb->is_local = 0;
+>>
+> 
 
-We have one file descriptor per heap to be able to add access control
-on each heap.
-That wasn't possible with ION because the heap was selected given the
-flags in ioctl
-structure and we can't do access control based on that. If we put flag
-to select the
-allocation mechanism (system, CMA, other) in ioctl we come back to ION stat=
-us.
-For me one allocation mechanism =3D one heap.
-
->
-> > Laura already touched on this, but similar logic can be used for
-> > camera buffers, which can make sure we allocate from a specifically
-> > reserved CMA region that is only used for the camera so we can always
-> > be sure to have N free buffers immediately to capture with, etc.
->
-> And for that we already have per-device CMA areas hanging off struct
-> device, which this should reuse instead of adding another duplicate
-> CMA area lookup scheme.
