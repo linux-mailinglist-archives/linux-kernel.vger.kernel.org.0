@@ -2,93 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6879A74ED5
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 15:08:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 396AD74F07
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 15:19:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729956AbfGYNIt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 09:08:49 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:45235 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726282AbfGYNIt (ORCPT
+        id S2389761AbfGYNTc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 09:19:32 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:53911 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389724AbfGYNTb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 09:08:49 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-32-vGb2MjMAN-6m5tWQ8A3mXQ-1; Thu, 25 Jul 2019 14:08:46 +0100
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Thu, 25 Jul 2019 14:08:45 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Thu, 25 Jul 2019 14:08:45 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Numfor Mbiziwo-Tiapo' <nums@google.com>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "acme@kernel.org" <acme@kernel.org>,
-        "alexander.shishkin@linux.intel.com" 
-        <alexander.shishkin@linux.intel.com>,
-        "jolsa@redhat.com" <jolsa@redhat.com>,
-        "namhyung@kernel.org" <namhyung@kernel.org>,
-        "songliubraving@fb.com" <songliubraving@fb.com>,
-        "mbd@fb.com" <mbd@fb.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "irogers@google.com" <irogers@google.com>,
-        "eranian@google.com" <eranian@google.com>
-Subject: RE: [PATCH 1/3] Fix backward-ring-buffer.c format-truncation error
-Thread-Topic: [PATCH 1/3] Fix backward-ring-buffer.c format-truncation error
-Thread-Index: AQHVQk/6xV2ERLHHO0iFjViscX/1mKbbTykw
-Date:   Thu, 25 Jul 2019 13:08:45 +0000
-Message-ID: <8ec2cbb1bb2a4aceab09ca685255119a@AcuMS.aculab.com>
-References: <20190724184512.162887-1-nums@google.com>
- <20190724184512.162887-2-nums@google.com>
-In-Reply-To: <20190724184512.162887-2-nums@google.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Thu, 25 Jul 2019 09:19:31 -0400
+Received: by mail-wm1-f65.google.com with SMTP id x15so44988947wmj.3
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 06:19:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=WPFUtxJDXKra9fqJ0rdgv7MWa5JnMhUuO280IUrtqLM=;
+        b=OWEjS7Hf1Kk56zL7T/30GFyMXn6LUQKT6Ts67SfuOj67mvRUIrf4EyBnH0R2RBATWt
+         qxQu0AHjxM6cKbcwz7nSqeQ8w/cIT51lxpcfrgGn1B3VJyD1R6dcigM1uO+rfVyDYAWn
+         qn58p0EyOqw1zgDvQz+NfS7ZpkZ5uSFzmPnlWXafFOoxhrxk9K9G9HNMOgpveXOsvvAz
+         7DWqkBRXFZaQZeamMHaJfN1N4ViJ0Yf9u5IR8jFaNN7KA2l9jsNpHYywHVI4FZrORkQP
+         8CkWLwHGyp4qHToMT+0GTGYDR5OAW8+SzzisjCl8fYnu8kDiMJDe+TlOCgK1bBNYQOlL
+         nO6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=WPFUtxJDXKra9fqJ0rdgv7MWa5JnMhUuO280IUrtqLM=;
+        b=ZWVkWYyQx+zY17BGN7/8jsb6oGndo8+d2HioX8c+TG2gbVaEXAXebfwcFGhrC5g0oy
+         iqh/jzRm9ZpMoV/yPif/+xmo5GfkWsfuoRLcyAGE1RGrCfXT+sduQG+eppeSHZhhmwiE
+         SAzUKBtfl7kQvoe4xSexr6xGQzKNoWlg8Wm9HY4Jb9VudSGxQ9ywh8Rb18u6x8i2T7ey
+         Lc+PViWqF9iut0UA/VkXHMlnKnH6PVtHJLQxpjgDi9RZSad7v8JQoSLy3zBCcwoUuALs
+         LS7/UqZwTSJuOE4yhnVuWTxy7mY7qMIa9YJt9Y7/vNROAUl0S54hWcsS7DSgqbuUKRbZ
+         iTDw==
+X-Gm-Message-State: APjAAAUwfme6sSf4fstVq/gSW/6Frv+fd3gNaM4eQf50LnZP2zV8oOcL
+        BFrMpcnOxru1dx/xcHLr7ZU=
+X-Google-Smtp-Source: APXvYqwDivgfLYdB0sN1gN2PO4Z6g44XVRn1LUpNdsylFxeXh0Y0+CckexauNmiwoeRBfnFoB8M5CA==
+X-Received: by 2002:a1c:9696:: with SMTP id y144mr79410440wmd.73.1564060388417;
+        Thu, 25 Jul 2019 06:13:08 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
+        by smtp.gmail.com with ESMTPSA id z7sm47119735wrh.67.2019.07.25.06.13.07
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 25 Jul 2019 06:13:07 -0700 (PDT)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Lechner <david@lechnology.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v2 5/5] ARM: multi_v5_defconfig: make DaVinci part of the ARM v5 multiplatform build
+Date:   Thu, 25 Jul 2019 15:12:57 +0200
+Message-Id: <20190725131257.6142-6-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20190725131257.6142-1-brgl@bgdev.pl>
+References: <20190725131257.6142-1-brgl@bgdev.pl>
 MIME-Version: 1.0
-X-MC-Unique: vGb2MjMAN-6m5tWQ8A3mXQ-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RnJvbTogTnVtZm9yIE1iaXppd28tVGlhcG8NCj4gU2VudDogMjQgSnVseSAyMDE5IDE5OjQ1DQo+
-DQo+IFBlcmYgZG9lcyBub3QgYnVpbGQgd2l0aCB0aGUgdWJzYW4gKHVuZGVmaW5lZCBiZWhhdmlv
-ciBzYW5pdGl6ZXIpDQo+IGFuZCB0aGVyZSBpcyBhbiBlcnJvciB0aGF0IHNheXM6DQo+IA0KPiB0
-ZXN0cy9iYWNrd2FyZC1yaW5nLWJ1ZmZlci5jOjIzOjQ1OiBlcnJvcjog4oCYJWTigJkgZGlyZWN0
-aXZlIG91dHB1dA0KPiBtYXkgYmUgdHJ1bmNhdGVkIHdyaXRpbmcgYmV0d2VlbiAxIGFuZCAxMCBi
-eXRlcyBpbnRvIGEgcmVnaW9uIG9mDQo+IHNpemUgOCBbLVdlcnJvcj1mb3JtYXQtdHJ1bmNhdGlv
-bj1dDQo+ICAgIHNucHJpbnRmKHByb2NfbmFtZSwgc2l6ZW9mKHByb2NfbmFtZSksICJwOiVkXG4i
-LCBpKTsNCj4gDQo+IFRoaXMgY2FuIGJlIHJlcHJvZHVjZWQgYnkgcnVubmluZyAoZnJvbSB0aGUg
-dGlwIGRpcmVjdG9yeSk6DQo+IG1ha2UgLUMgdG9vbHMvcGVyZiBVU0VfQ0xBTkc9MSBFWFRSQV9D
-RkxBR1M9Ii1mc2FuaXRpemU9dW5kZWZpbmVkIg0KPiANCj4gVGggZXJyb3Igb2NjdXJzIGJlY2F1
-c2UgdGhleSBhcmUgd3JpdGluZyB0byB0aGUgMTAgYnl0ZSBidWZmZXIgLSB0aGUNCj4gaW5kZXgg
-J2knIG9mIHRoZSBmb3IgbG9vcCBhbmQgdGhlIDIgYnl0ZSBoYXJkY29kZWQgc3RyaW5nLiBJZiBz
-b21laG93ICdpJw0KPiB3YXMgZ3JlYXRlciB0aGFuIDggYnl0ZXMgKDEwIC0gMiksIHRoZW4gdGhl
-IHNucHJpbnRmIGZ1bmN0aW9uIHdvdWxkDQo+IHRydW5jYXRlIHRoZSBzdHJpbmcuIEluY3JlYXNp
-bmcgdGhlIHNpemUgb2YgdGhlIGJ1ZmZlciBmaXhlcyB0aGUgZXJyb3IuDQoNCkdldCB0aGUgY29t
-cGlsZXIgZml4ZWQgc28gdGhhdCBpdCBrbm93cyB0aGUgZG9tYWluIG9mIHRoZSB2YWx1ZSBjYW4g
-bmV2ZXINCmV4Y2VlZCB0aGUgY29tcGlsZS10aW1lIGNvbnN0YW50IE5SX0lURVJTLg0KDQo+IFNp
-Z25lZC1vZmYtYnk6IE51bWZvciBNYml6aXdvLVRpYXBvIDxudW1zQGdvb2dsZS5jb20+DQo+IC0t
-LQ0KPiAgdG9vbHMvcGVyZi90ZXN0cy9iYWNrd2FyZC1yaW5nLWJ1ZmZlci5jIHwgMiArLQ0KPiAg
-MSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pDQo+IA0KPiBkaWZm
-IC0tZ2l0IGEvdG9vbHMvcGVyZi90ZXN0cy9iYWNrd2FyZC1yaW5nLWJ1ZmZlci5jIGIvdG9vbHMv
-cGVyZi90ZXN0cy9iYWNrd2FyZC1yaW5nLWJ1ZmZlci5jDQo+IGluZGV4IDZkNTk4Y2MwNzFhZS4u
-MWE5YzNiZWNmNWZmIDEwMDY0NA0KPiAtLS0gYS90b29scy9wZXJmL3Rlc3RzL2JhY2t3YXJkLXJp
-bmctYnVmZmVyLmMNCj4gKysrIGIvdG9vbHMvcGVyZi90ZXN0cy9iYWNrd2FyZC1yaW5nLWJ1ZmZl
-ci5jDQo+IEBAIC0xOCw3ICsxOCw3IEBAIHN0YXRpYyB2b2lkIHRlc3RjYXNlKHZvaWQpDQo+ICAJ
-aW50IGk7DQo+IA0KPiAgCWZvciAoaSA9IDA7IGkgPCBOUl9JVEVSUzsgaSsrKSB7DQo+IC0JCWNo
-YXIgcHJvY19uYW1lWzEwXTsNCj4gKwkJY2hhciBwcm9jX25hbWVbMTVdOw0KDQpBdCBsZWFzdCB1
-c2UgWzE2XQ0KDQo+IA0KPiAgCQlzbnByaW50Zihwcm9jX25hbWUsIHNpemVvZihwcm9jX25hbWUp
-LCAicDolZFxuIiwgaSk7DQo+ICAJCXByY3RsKFBSX1NFVF9OQU1FLCBwcm9jX25hbWUpOw0KPiAt
-LQ0KPiAyLjIyLjAuNjU3Lmc5NjBlOTJkMjRmLWdvb2cNCg0KCURhdmlkDQoNCi0NClJlZ2lzdGVy
-ZWQgQWRkcmVzcyBMYWtlc2lkZSwgQnJhbWxleSBSb2FkLCBNb3VudCBGYXJtLCBNaWx0b24gS2V5
-bmVzLCBNSzEgMVBULCBVSw0KUmVnaXN0cmF0aW9uIE5vOiAxMzk3Mzg2IChXYWxlcykNCg==
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+
+Add all DaVinci boards to multi_v5_defconfig.
+
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+ arch/arm/configs/multi_v5_defconfig | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/arch/arm/configs/multi_v5_defconfig b/arch/arm/configs/multi_v5_defconfig
+index 201237002c65..bd018873e47a 100644
+--- a/arch/arm/configs/multi_v5_defconfig
++++ b/arch/arm/configs/multi_v5_defconfig
+@@ -14,6 +14,18 @@ CONFIG_ARCH_ASPEED=y
+ CONFIG_MACH_ASPEED_G4=y
+ CONFIG_ARCH_AT91=y
+ CONFIG_SOC_AT91SAM9=y
++CONFIG_ARCH_DAVINCI=y
++CONFIG_ARCH_DAVINCI_DM644x=y
++CONFIG_ARCH_DAVINCI_DM355=y
++CONFIG_ARCH_DAVINCI_DM646x=y
++CONFIG_ARCH_DAVINCI_DA830=y
++CONFIG_ARCH_DAVINCI_DA850=y
++CONFIG_ARCH_DAVINCI_DM365=y
++CONFIG_MACH_SFFSDR=y
++CONFIG_MACH_NEUROS_OSD2=y
++CONFIG_MACH_DM355_LEOPARD=y
++CONFIG_MACH_MITYOMAPL138=y
++CONFIG_MACH_OMAPL138_HAWKBOARD=y
+ CONFIG_ARCH_MXC=y
+ CONFIG_MACH_MX21ADS=y
+ CONFIG_MACH_MX27ADS=y
+-- 
+2.21.0
 
