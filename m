@@ -2,171 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D52E474A79
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 11:55:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 225C374A8A
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 11:57:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729171AbfGYJzU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 05:55:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36038 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725808AbfGYJzT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 05:55:19 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1047520840;
-        Thu, 25 Jul 2019 09:55:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564048518;
-        bh=Ejulvgb0tI7ID1t79B5eo5UmboBBOaMW9xK/DcYbYns=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=WGXDbCg10wSMc/9w83f6nT4WgtO7u3o1QbfNZR9maGnrM0V+5dYwoh7cYK8ZZSQU0
-         DzicvhyssfYwiYyjEpvq3wLvQajrqro1OZFJfShuvbcBlUkn7YhLU6ku4y69uPmq2x
-         MYAvH+5KpwsyMShJjLDZVkxblOs/R2BuHJ4rDfME=
-Date:   Thu, 25 Jul 2019 11:55:15 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Martin =?iso-8859-1?Q?Hundeb=F8ll?= <martin@geanix.com>
-Cc:     Jiri Slaby <jslaby@suse.com>,
-        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
-        linux-kernel@vger.kernel.org,
-        Sean =?iso-8859-1?Q?Nyekj=E6r?= <sean@geanix.com>,
-        Esben Haabendal <esben@geanix.com>
-Subject: Re: [PATCHv3 4/4] tty: n_gsm: add ioctl to map serial device to
- mux'ed tty
-Message-ID: <20190725095515.GC31845@kroah.com>
-References: <20190710192656.60381-1-martin@geanix.com>
- <20190710192656.60381-4-martin@geanix.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190710192656.60381-4-martin@geanix.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+        id S2390865AbfGYJ4w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 05:56:52 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:33418 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728186AbfGYJ4v (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 05:56:51 -0400
+Received: by mail-pf1-f194.google.com with SMTP id g2so22495629pfq.0
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 02:56:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=WbY06pGx4xfBMBjQ3bM8KhDBbMliaCTCe0/xa/K2Ezk=;
+        b=IH7fJaRbcSgL+CYKVO82kjihUDaMMuveROBAAcl0U58wpsySgNR4ZbgQ8HzLV1opPe
+         PlINuCAXy0AE3sUUejcUdgVSld2I1sUgazyK4JPuAYeiV9O8jaOWg1zUAU+rmMNZlChU
+         jGZr9aqKxGNrUbO9YG6VA5q/nMJirmLnjKW9TE8D+Swko05OX4FWRG6O/mtN+UU52bCp
+         eexyRSUN9G5GlDXaTn7MPP1wCJE+XHlptKtO7IFLC51rhbe/gVwcU4OoPymaDrooew9A
+         XFr7qHyvbXFA09qtZKFb9PVOrhK5Ra2zEBG9vgNv59oU5BmHJuh2u9pDz5+SVtOWI//f
+         S1ow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=WbY06pGx4xfBMBjQ3bM8KhDBbMliaCTCe0/xa/K2Ezk=;
+        b=SkGvkdEPtfYFeLqY5Uos8FB6Ib213M5puzc7zbnubKrG/G+ldzZhC8pl+RSsOwqtS/
+         Zn0yy9jfvMRdOw2McIV5UgxN3QjZ93+lOHYMMh74Wx3BmqLAy/0KLyUxRNoY5bKlY2HG
+         mXp93trm5WWsgFRHWz2IxsXmGEncoBKyYZpwdffiIydZHAB1rAmiH2agzDlo2EfENN91
+         TUMF3osZijhif3Blz4XAT3AVnAfIU/roCPvtvmuW2qcpXKef1IH2JDFf0H6gNTVQYeCX
+         rmlJG/n4bR/ENRS8iM4V6cbJOWufGmUpfzdsai+NgRFl2NQQmLtf5Trycp4xLFs/DSh3
+         pFPQ==
+X-Gm-Message-State: APjAAAUQNaN/cLoVonunkBOq0rodkTCtQjiCaT2F51KcQ/RxWC5zv7oY
+        Fq973bhR0EBOsZaU2R5S7mYySA==
+X-Google-Smtp-Source: APXvYqyuG8cSKtYKaq8SMZvcaSnlLN88gS7Vc2pHbKryBUh9RET50OhDriRg8rg6qipLaUuuEdEw/A==
+X-Received: by 2002:a62:b408:: with SMTP id h8mr15431548pfn.46.1564048608476;
+        Thu, 25 Jul 2019 02:56:48 -0700 (PDT)
+Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.82])
+        by smtp.gmail.com with ESMTPSA id l26sm44006103pgb.90.2019.07.25.02.56.45
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 25 Jul 2019 02:56:48 -0700 (PDT)
+From:   Baolin Wang <baolin.wang@linaro.org>
+To:     linus.walleij@linaro.org, orsonzhai@gmail.com, zhang.lyra@gmail.com
+Cc:     baolin.wang@linaro.org, vincent.guittot@linaro.org,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] pinctrl: sprd: Change to use devm_platform_ioremap_resource()
+Date:   Thu, 25 Jul 2019 17:56:30 +0800
+Message-Id: <ff410d312ed0047b5a36e5113daf7df78bcf1aa8.1564048446.git.baolin.wang@linaro.org>
+X-Mailer: git-send-email 1.7.9.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 10, 2019 at 09:26:56PM +0200, Martin Hundebøll wrote:
-> Guessing the first tty for a gsm0710 multiplexed serial device is not
-> currently possible, which makes it racy to use with multiple modems.
-> 
-> Add a way to map the physical serial tty to its related mux devices
-> using an ioctl.
-> 
-> Signed-off-by: Martin Hundebøll <martin@geanix.com>
-> ---
-> 
-> Changes since v2:
->  * rename IOCTL from GSMIOC_GETBASE to GSMIOC_GETFIRST
->  * return first usable line instead of private control line
->  * return uint32_t instead of int
-> 
-> Changes since v1:
->  * use put_user() instead of copy_to_user()
->  * add missing opening quote
-> 
->  Documentation/serial/n_gsm.rst | 11 +++++++++--
->  drivers/tty/n_gsm.c            |  4 ++++
->  include/uapi/linux/gsmmux.h    |  2 ++
->  3 files changed, 15 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/serial/n_gsm.rst b/Documentation/serial/n_gsm.rst
-> index 0ba731ab00b2..286e7ff4d2d9 100644
-> --- a/Documentation/serial/n_gsm.rst
-> +++ b/Documentation/serial/n_gsm.rst
-> @@ -18,10 +18,13 @@ How to use it
->  2. switch the serial line to using the n_gsm line discipline by using
->     TIOCSETD ioctl,
->  3. configure the mux using GSMIOC_GETCONF / GSMIOC_SETCONF ioctl,
-> +4. obtain base gsmtty number for the used serial port,
+The devm_platform_ioremap_resource() function wraps platform_get_resource()
+and devm_ioremap_resource() in a single helper, thus use it to simplify
+the code.
 
-As this file is in .rst format, do we need the enumerated list anymore?
+Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+---
+ drivers/pinctrl/sprd/pinctrl-sprd.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Just a meta-comment...
+diff --git a/drivers/pinctrl/sprd/pinctrl-sprd.c b/drivers/pinctrl/sprd/pinctrl-sprd.c
+index c31b581..a32e809 100644
+--- a/drivers/pinctrl/sprd/pinctrl-sprd.c
++++ b/drivers/pinctrl/sprd/pinctrl-sprd.c
+@@ -1020,7 +1020,6 @@ int sprd_pinctrl_core_probe(struct platform_device *pdev,
+ 	struct sprd_pinctrl *sprd_pctl;
+ 	struct sprd_pinctrl_soc_info *pinctrl_info;
+ 	struct pinctrl_pin_desc *pin_desc;
+-	struct resource *res;
+ 	int ret, i;
+ 
+ 	sprd_pctl = devm_kzalloc(&pdev->dev, sizeof(struct sprd_pinctrl),
+@@ -1028,8 +1027,7 @@ int sprd_pinctrl_core_probe(struct platform_device *pdev,
+ 	if (!sprd_pctl)
+ 		return -ENOMEM;
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	sprd_pctl->base = devm_ioremap_resource(&pdev->dev, res);
++	sprd_pctl->base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(sprd_pctl->base))
+ 		return PTR_ERR(sprd_pctl->base);
+ 
+-- 
+1.7.9.5
 
->  
->  Major parts of the initialization program :
->  (a good starting point is util-linux-ng/sys-utils/ldattach.c)::
->  
-> +  #include <stdio.h>
-> +  #include <stdint.h>
->    #include <linux/gsmmux.h>
->    #include <linux/tty.h>
->    #define DEFAULT_SPEED	B115200
-> @@ -30,6 +33,7 @@ Major parts of the initialization program :
->  	int ldisc = N_GSM0710;
->  	struct gsm_config c;
->  	struct termios configuration;
-> +	uint32_t first;
->  
->  	/* open the serial port connected to the modem */
->  	fd = open(SERIAL_PORT, O_RDWR | O_NOCTTY | O_NDELAY);
-> @@ -58,19 +62,22 @@ Major parts of the initialization program :
->  	c.mtu = 127;
->  	/* set the new configuration */
->  	ioctl(fd, GSMIOC_SETCONF, &c);
-> +	/* get first gsmtty device node */
-> +	ioctl(fd, GSMIOC_GETFIRST, &first);
-> +	printf("first muxed line: /dev/gsmtty%i\n", first);
->  
->  	/* and wait for ever to keep the line discipline enabled */
->  	daemon(0,0);
->  	pause();
->  
-> -4. use these devices as plain serial ports.
-> +5. use these devices as plain serial ports.
->  
->     for example, it's possible:
->  
->     - and to use gnokii to send / receive SMS on ttygsm1
->     - to use ppp to establish a datalink on ttygsm2
->  
-> -5. first close all virtual ports before closing the physical port.
-> +6. first close all virtual ports before closing the physical port.
->  
->     Note that after closing the physical port the modem is still in multiplexing
->     mode. This may prevent a successful re-opening of the port later. To avoid
-> diff --git a/drivers/tty/n_gsm.c b/drivers/tty/n_gsm.c
-> index a60be591f1fc..dac98f3ead3d 100644
-> --- a/drivers/tty/n_gsm.c
-> +++ b/drivers/tty/n_gsm.c
-> @@ -2613,6 +2613,7 @@ static int gsmld_ioctl(struct tty_struct *tty, struct file *file,
->  {
->  	struct gsm_config c;
->  	struct gsm_mux *gsm = tty->disc_data;
-> +	unsigned int base;
->  
->  	switch (cmd) {
->  	case GSMIOC_GETCONF:
-> @@ -2624,6 +2625,9 @@ static int gsmld_ioctl(struct tty_struct *tty, struct file *file,
->  		if (copy_from_user(&c, (void *)arg, sizeof(c)))
->  			return -EFAULT;
->  		return gsm_config(gsm, &c);
-> +	case GSMIOC_GETFIRST:
-> +		base = mux_num_to_base(gsm);
-> +		return put_user(base + 1, (uint32_t __user *)arg);
-
-
-
-
->  	default:
->  		return n_tty_ioctl_helper(tty, file, cmd, arg);
->  	}
-> diff --git a/include/uapi/linux/gsmmux.h b/include/uapi/linux/gsmmux.h
-> index 101d3c469acb..e292869245dc 100644
-> --- a/include/uapi/linux/gsmmux.h
-> +++ b/include/uapi/linux/gsmmux.h
-> @@ -37,5 +37,7 @@ struct gsm_netconfig {
->  #define GSMIOC_ENABLE_NET      _IOW('G', 2, struct gsm_netconfig)
->  #define GSMIOC_DISABLE_NET     _IO('G', 3)
->  
-> +/* get the base tty number for a configured gsmmux tty */
-> +#define GSMIOC_GETFIRST		_IOR('G', 4, uint32_t)
-
-Variables that cross the boundry from user/kernel should use the correct
-type.  That would be "__u32" here.
-
-thanks.
-
-greg k-h
