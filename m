@@ -2,123 +2,165 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D46DE74A06
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 11:34:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9443B74A15
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 11:39:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403845AbfGYJea (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 05:34:30 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:39562 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403782AbfGYJe1 (ORCPT
+        id S2390612AbfGYJjH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 05:39:07 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:15441 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387533AbfGYJjH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 05:34:27 -0400
-Received: by mail-io1-f65.google.com with SMTP id f4so95868415ioh.6
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 02:34:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:sender:from:date:message-id:subject:to;
-        bh=vqBoaHlq0fIJR/ISh5qVRaYEVnlcdFYxK6HCKxtO9VM=;
-        b=VxkJJpgQwF3ShSMrE/oUQK/feZiiZ0bs514q0b8fT60q93C60U9cbOJJcB3I2eR45w
-         O4FCAxujMDaNsPL0MDLAG8pyRs/iY6mDaCin+HBgQiS8JXqRsnTwvGnN9jloU/z3cLkA
-         6CSH8sexk/6F/AYGeKAtLyLRTFT2Q4cHMZjd84rd2axPOMfIMP4EiIuhdQjvZ1L9ywzt
-         45LttF7naMRe/vVzpSmPYa++DNEsL2fEejtZe52nsmujt0422Lsdhvm9pyKHoG9NlWaY
-         /r0FOiKVFZ6g17OTK1+hqrugr5fhIfNFpyRfc6wnNXXCsdyvEEMbu+O0UqS1JE4n1fRQ
-         O4gg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:sender:from:date
-         :message-id:subject:to;
-        bh=vqBoaHlq0fIJR/ISh5qVRaYEVnlcdFYxK6HCKxtO9VM=;
-        b=n5qTQt47OYYh+Q6LMRmf8wTZTyjyG5l8Rinr/bj5G6jz/NCD8KPmIZqvbXIXHVCiwR
-         kPqjIfiYlJCLmTRgR9cqXgmkwuTWJIEH7su0gCewO+c1B2rq8Yvuf6cFYuXiYS3Mwvvf
-         p4rMdv44m91jq9pyUrL33Wo79mXRAWt0SYxoDHRlJTSqfHMwhHY8ii9HZq/WF/iPEjxN
-         DEFjCITwsL5vC1r8sK+dNk+r1C+9n1S2wO9JxKProQLO1CYJHBZRHgBxwO4pWStinRrI
-         V9B1QGot3H7oWZWqtKr6nVR7sfGMKUIo5Zf0QzxFGXtUiIhR0mJoZGM8cikYkUrSfj2K
-         jdPQ==
-X-Gm-Message-State: APjAAAXF1r6gKfQiloNhB3r8ZOYSo1EPuZLq7mm6mIA12KNHNSAlZ55q
-        zP2Eq0RECYy/XsZewtSKd/cXkqOqygkOYHH4tzM=
-X-Google-Smtp-Source: APXvYqzrOruf8inF9/hIGksCMAb0Yw7xp5HKZOXBVjkk7P5vT72IJWFDTOYCz6rVtaNGmPFXJ3RWn5E1FbmPjfpP+qs=
-X-Received: by 2002:a5d:8049:: with SMTP id b9mr83709152ior.199.1564047266266;
- Thu, 25 Jul 2019 02:34:26 -0700 (PDT)
+        Thu, 25 Jul 2019 05:39:07 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d3978b90005>; Thu, 25 Jul 2019 02:39:05 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 25 Jul 2019 02:39:04 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 25 Jul 2019 02:39:04 -0700
+Received: from tbergstrom-lnx.Nvidia.com (172.20.13.39) by
+ HQMAIL107.nvidia.com (172.20.187.13) with Microsoft SMTP Server (TLS) id
+ 15.0.1473.3; Thu, 25 Jul 2019 09:36:47 +0000
+Received: by tbergstrom-lnx.Nvidia.com (Postfix, from userid 1000)
+        id 0DD6B4286D; Thu, 25 Jul 2019 12:36:45 +0300 (EEST)
+Date:   Thu, 25 Jul 2019 12:36:45 +0300
+From:   Peter De Schrijver <pdeschrijver@nvidia.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+CC:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/2] soc/tegra: pmc: Query PCLK clock rate at probe
+ time
+Message-ID: <20190725093644.GJ12715@pdeschrijver-desktop.Nvidia.com>
+References: <20190723023511.24542-1-digetx@gmail.com>
 MIME-Version: 1.0
-Reply-To: diawaralassine226@aol.com
-Received: by 2002:a6b:e904:0:0:0:0:0 with HTTP; Thu, 25 Jul 2019 02:34:25
- -0700 (PDT)
-From:   "Mr.Lassine Diawara" <mr.lassinediawara@gmail.com>
-Date:   Thu, 25 Jul 2019 02:34:25 -0700
-X-Google-Sender-Auth: wz3_WRNLiCSyIZq2qUyrO8kVZb8
-Message-ID: <CAPr7tDSg5Wm-rWdO955eDeBZBLi--E=WWcBEWwZt4UOMk-LqGQ@mail.gmail.com>
-Subject: Dear Friend,
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20190723023511.24542-1-digetx@gmail.com>
+X-NVConfidentiality: public
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1564047545; bh=z/b91Cml6zDC1P2RGluPj308VR8sVHX0e0iaWNpGUCs=;
+        h=X-PGP-Universal:Date:From:To:CC:Subject:Message-ID:References:
+         MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
+         X-NVConfidentiality:User-Agent:X-Originating-IP:X-ClientProxiedBy;
+        b=fPKwjp/lRhsKdu+dBZO6pu8ZZPEt5vCY9FkwWVxvN4RWBwU0Id0Anbl/+gCFgNfSQ
+         Abm09WhkGCW4pJZKM9JoEd74VuxajQDQ1VKMMtXOXwrGoDR5uIcx5uFGSaoVyHZjKR
+         bMh01N4dO0qp6hGp5bTjZ0m9Cr5cDKDd4lTZYGENZmMVKD9vpw3OCNlxguNOWDUVOo
+         65+eG+Xonm9gV3qd+wAQBUrfJOkVCcNugt7I1NuNXXEG5VGhCe5A/1I2rpvVXZXlsx
+         hMMVjKAadz9ZPNPsXPGgwxQmp7PRNkCjnh1MILJVatPox8hfkWZlSwq82osKtjETR9
+         DCkkxL21RYsgQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-FROM Mr.LASSINE DIAWARA
-AUDIT& ACCOUNT MANAGER
-BANK OF AFRICA (B.O.A)
-OUAGADOUGOU BURKINA FASO
-WEST AFRICA.
+On Tue, Jul 23, 2019 at 05:35:10AM +0300, Dmitry Osipenko wrote:
+> The PCLK clock is running off SCLK, which is a critical clock that is
+> very unlikely to randomly change its rate. It's also a bit clumsy (and
+> apparently incorrect) to query the clock's rate with interrupts being
+> disabled because clk_get_rate() takes a mutex and that's the case during
+> suspend/cpuidle entering.
+> 
 
-Dear Friend
+SCLK and PCLK certainly can change rate at runtime, although the code to
+handle this hasn't reached upstream yet.
 
-With due respect, I have decided to contact you on a business
-transaction that will be beneficial to both of us. At the bank last
-account and auditing evaluation, my staffs came across an old account
-which was being maintained by a foreign client who we learn was among
-the deceased passengers of motor accident on November.2003, the
-deceased was unable to run this account since his death. The account
-has remained dormant without the knowledge of his family since it was
-put in a safe deposit account in the bank for future investment by the
-client.
+Peter.
 
-Since his demise, even the members of his family haven't applied for
-claims over this fund and it has been in the safe deposit account
-until I discovered that it cannot be claimed since our client is A
-foreign national and we are sure that he has no next of kin here to
-file claims over the money. As the director of the department, this
-discovery was brought to my office so as to decide what is to be done
-.I decided to seek ways through which to transfer this money out of
-the bank and out of the country too.
-
-The total amount in the account is 18.6 million with my positions as
-staffs of the bank, I am handicapped because I cannot operate foreign
-accounts and cannot lay strong claim over this money. The client was a
-foreign national and you will only be asked to act as his next of kin
-and I will supply you with all the necessary information and bank data
-to assist you in being able to transfer this money to any bank of your
-choice where this money could be transferred into .The total sum will
-be shared as follows: 50% for me, 50% for you and expenses incidental
-occur during the transfer will be incur by both of us. The
-transfer is risk free on both sides hence you are going to follow my
-instruction till the fund transfer to your account. Since I work in
-this bank that is why you should be confident in the success of this
-transaction because you will be updated with information as at when
-desired.
-
-
-I will wish you to keep this transaction secret and confidential as I
-am hoping to retire with my share of this money at the end of
-transaction which will be when this money is safety in your account. I
-will then come over to your country for sharing according to the
-previously agreed percentages. You might even have to advise me on
-possibilities of investment in your country or elsewhere of our
-choice. May God help you to help me to a restive retirement, Amen, And
-You have to contact me through my private e-mail at
-(diawaralassine226@aol.com)Please for further information and inquires
-feel free to contact me back immediately for more explanation and
-better understanding I want you to assure me your capability of
-handling this project with trust by providing me your following
-information details such as:
-
-(1)NAME..............
-(2)AGE:................
-(3)SEX:.....................
-(4)PHONE NUMBER:.................
-(5)OCCUPATION:.....................
-(6)YOUR COUNTRY:.....................
-
-Yours sincerely,
-Mr.Lassine Diawara
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+> 
+> Changelog:
+> 
+> v2: Addressed review comments that were made by Jon Hunter to v1 by
+>     not moving the memory barrier, replacing one missed clk_get_rate()
+>     with pmc->rate, handling possible clk_get_rate() error on probe and
+>     slightly adjusting the commits message.
+> 
+>  drivers/soc/tegra/pmc.c | 34 ++++++++++++++++------------------
+>  1 file changed, 16 insertions(+), 18 deletions(-)
+> 
+> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+> index 9f9c1c677cf4..aba3396b2e73 100644
+> --- a/drivers/soc/tegra/pmc.c
+> +++ b/drivers/soc/tegra/pmc.c
+> @@ -1192,7 +1192,7 @@ static int tegra_io_pad_prepare(struct tegra_pmc *pmc, enum tegra_io_pad id,
+>  		return err;
+>  
+>  	if (pmc->clk) {
+> -		rate = clk_get_rate(pmc->clk);
+> +		rate = pmc->rate;
+>  		if (!rate) {
+>  			dev_err(pmc->dev, "failed to get clock rate\n");
+>  			return -ENODEV;
+> @@ -1433,6 +1433,7 @@ void tegra_pmc_set_suspend_mode(enum tegra_suspend_mode mode)
+>  void tegra_pmc_enter_suspend_mode(enum tegra_suspend_mode mode)
+>  {
+>  	unsigned long long rate = 0;
+> +	u64 ticks;
+>  	u32 value;
+>  
+>  	switch (mode) {
+> @@ -1441,31 +1442,22 @@ void tegra_pmc_enter_suspend_mode(enum tegra_suspend_mode mode)
+>  		break;
+>  
+>  	case TEGRA_SUSPEND_LP2:
+> -		rate = clk_get_rate(pmc->clk);
+> +		rate = pmc->rate;
+>  		break;
+>  
+>  	default:
+>  		break;
+>  	}
+>  
+> -	if (WARN_ON_ONCE(rate == 0))
+> -		rate = 100000000;
+> +	ticks = pmc->cpu_good_time * rate + USEC_PER_SEC - 1;
+> +	do_div(ticks, USEC_PER_SEC);
+> +	tegra_pmc_writel(pmc, ticks, PMC_CPUPWRGOOD_TIMER);
+>  
+> -	if (rate != pmc->rate) {
+> -		u64 ticks;
+> +	ticks = pmc->cpu_off_time * rate + USEC_PER_SEC - 1;
+> +	do_div(ticks, USEC_PER_SEC);
+> +	tegra_pmc_writel(pmc, ticks, PMC_CPUPWROFF_TIMER);
+>  
+> -		ticks = pmc->cpu_good_time * rate + USEC_PER_SEC - 1;
+> -		do_div(ticks, USEC_PER_SEC);
+> -		tegra_pmc_writel(pmc, ticks, PMC_CPUPWRGOOD_TIMER);
+> -
+> -		ticks = pmc->cpu_off_time * rate + USEC_PER_SEC - 1;
+> -		do_div(ticks, USEC_PER_SEC);
+> -		tegra_pmc_writel(pmc, ticks, PMC_CPUPWROFF_TIMER);
+> -
+> -		wmb();
+> -
+> -		pmc->rate = rate;
+> -	}
+> +	wmb();
+>  
+>  	value = tegra_pmc_readl(pmc, PMC_CNTRL);
+>  	value &= ~PMC_CNTRL_SIDE_EFFECT_LP0;
+> @@ -2082,8 +2074,14 @@ static int tegra_pmc_probe(struct platform_device *pdev)
+>  		pmc->clk = NULL;
+>  	}
+>  
+> +	pmc->rate = clk_get_rate(pmc->clk);
+>  	pmc->dev = &pdev->dev;
+>  
+> +	if (!pmc->rate) {
+> +		dev_err(&pdev->dev, "failed to get pclk rate\n");
+> +		pmc->rate = 100000000;
+> +	}
+> +
+>  	tegra_pmc_init(pmc);
+>  
+>  	tegra_pmc_init_tsense_reset(pmc);
+> -- 
+> 2.22.0
+> 
