@@ -2,100 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D001775B08
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 00:56:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 72B4A75B02
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 00:55:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726988AbfGYW4Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 18:56:24 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:48788 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726941AbfGYW4X (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 18:56:23 -0400
-Received: from 79.184.253.188.ipv4.supernova.orange.pl (79.184.253.188) (HELO kreacher.localnet)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.267)
- id 2d85bf4e2888bf9b; Fri, 26 Jul 2019 00:56:21 +0200
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Linux ACPI <linux-acpi@vger.kernel.org>
-Cc:     Linux PM <linux-pm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>
-Subject: [PATCH 3/4] ACPI: PM: s2idle: Rearrange lps0_device_attach()
-Date:   Fri, 26 Jul 2019 00:55:11 +0200
-Message-ID: <4485073.xHi3FTShEL@kreacher>
-In-Reply-To: <3471485.I2vrcDHEeC@kreacher>
-References: <3471485.I2vrcDHEeC@kreacher>
+        id S1726906AbfGYWzo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 18:55:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58260 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726823AbfGYWzo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 18:55:44 -0400
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6D58222C7C;
+        Thu, 25 Jul 2019 22:55:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564095342;
+        bh=g812QekVhk9YTdEBM9x7cM1JCaC9kZOURpxH8pDFoBY=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Dz09u9S+Y3r70TocpuCA7IhoTLlYKdq7e+lwmbq167Zr4gqovWvCkIFvioJzQc30E
+         UExAFN0EUnJRkGN7juvvECfcyT/2dxBkDeevZjvKHHIjF+P3AGjXUkTgj812rRiWOK
+         Eqxe4SYbimo13thxamdtxgOCzguesjyhhx+fJq8w=
+Received: by mail-qt1-f172.google.com with SMTP id h18so50763315qtm.9;
+        Thu, 25 Jul 2019 15:55:42 -0700 (PDT)
+X-Gm-Message-State: APjAAAULM5dbKVfmFz8HHWJU32uUu7JoGoERmWGE3E4mjiQffKlxmz1X
+        5akBSq8CsoxPFEkfIJGKaZiV0Kl2rKw+f0Dt9w==
+X-Google-Smtp-Source: APXvYqz9DMpk570nuBSorqgYVEjSnP43DJEbGzpTBLg6Vx9QqBo6uQGIKBtq4PAJy2WytaI2Mv9aGYuTo7fmld4NaC4=
+X-Received: by 2002:a0c:b786:: with SMTP id l6mr65611308qve.148.1564095341588;
+ Thu, 25 Jul 2019 15:55:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+References: <1564083776-20540-1-git-send-email-clabbe@baylibre.com> <1564083776-20540-2-git-send-email-clabbe@baylibre.com>
+In-Reply-To: <1564083776-20540-2-git-send-email-clabbe@baylibre.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Thu, 25 Jul 2019 16:55:30 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqLbYwRpNWHGkYbomWLMpum_DXW4OjNNRrwTRM=w86dONw@mail.gmail.com>
+Message-ID: <CAL_JsqLbYwRpNWHGkYbomWLMpum_DXW4OjNNRrwTRM=w86dONw@mail.gmail.com>
+Subject: Re: [PATCH 1/4] dt-bindings: crypto: Add DT bindings documentation
+ for amlogic-crypto
+To:     Corentin Labbe <clabbe@baylibre.com>
+Cc:     David Miller <davem@davemloft.net>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        baylibre-upstreaming@groups.io
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Thu, Jul 25, 2019 at 1:43 PM Corentin Labbe <clabbe@baylibre.com> wrote:
+>
+> This patch adds documentation for Device-Tree bindings for the
+> Amlogic GXL cryptographic offloader driver.
+>
+> Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+> ---
+>  .../bindings/crypto/amlogic-gxl-crypto.yaml   | 45 +++++++++++++++++++
 
-To allow a subsequent change to be simpler, rearrange the code in
-lps0_device_attach() to reduce the indentation level and (while
-at it) make it avoid calling lpi_device_get_constraints() when
-lps0_device_handle is not going to be set.
+Follow the compatible string for the filename: amlogic,gxl-crypto.yaml
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/acpi/sleep.c |   32 +++++++++++++++++---------------
- 1 file changed, 17 insertions(+), 15 deletions(-)
+>  1 file changed, 45 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/crypto/amlogic-gxl-crypto.yaml
+>
+> diff --git a/Documentation/devicetree/bindings/crypto/amlogic-gxl-crypto.yaml b/Documentation/devicetree/bindings/crypto/amlogic-gxl-crypto.yaml
+> new file mode 100644
+> index 000000000000..41265e57c00b
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/crypto/amlogic-gxl-crypto.yaml
+> @@ -0,0 +1,45 @@
+> +# SPDX-License-Identifier: GPL-2.0
 
-Index: linux-pm/drivers/acpi/sleep.c
-===================================================================
---- linux-pm.orig/drivers/acpi/sleep.c
-+++ linux-pm/drivers/acpi/sleep.c
-@@ -916,28 +916,30 @@ static int lps0_device_attach(struct acp
- 	guid_parse(ACPI_LPS0_DSM_UUID, &lps0_dsm_guid);
- 	/* Check if the _DSM is present and as expected. */
- 	out_obj = acpi_evaluate_dsm(adev->handle, &lps0_dsm_guid, 1, 0, NULL);
--	if (out_obj && out_obj->type == ACPI_TYPE_BUFFER) {
--		char bitmask = *(char *)out_obj->buffer.pointer;
--
--		lps0_dsm_func_mask = bitmask;
--		lps0_device_handle = adev->handle;
--		/*
--		 * Use suspend-to-idle by default if the default
--		 * suspend mode was not set from the command line.
--		 */
--		if (mem_sleep_default > PM_SUSPEND_MEM)
--			mem_sleep_current = PM_SUSPEND_TO_IDLE;
--
--		acpi_handle_debug(adev->handle, "_DSM function mask: 0x%x\n",
--				  bitmask);
--	} else {
-+	if (!out_obj || out_obj->type != ACPI_TYPE_BUFFER) {
- 		acpi_handle_debug(adev->handle,
- 				  "_DSM function 0 evaluation failed\n");
-+		return 0;
- 	}
-+
-+	lps0_dsm_func_mask = *(char *)out_obj->buffer.pointer;
-+
- 	ACPI_FREE(out_obj);
- 
-+	acpi_handle_debug(adev->handle, "_DSM function mask: 0x%x\n",
-+			  lps0_dsm_func_mask);
-+
-+	lps0_device_handle = adev->handle;
-+
- 	lpi_device_get_constraints();
- 
-+	/*
-+	 * Use suspend-to-idle by default if the default suspend mode was not
-+	 * set from the command line.
-+	 */
-+	if (mem_sleep_default > PM_SUSPEND_MEM)
-+		mem_sleep_current = PM_SUSPEND_TO_IDLE;
-+
- 	return 0;
- }
- 
+Dual (GPL-2.0 OR BSD-2-Clause) is preferred for new bindings. Not a
+requirement though.
 
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/crypto/amlogic-gxl-crypto.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Amlogic GXL Cryptographic Offloader
+> +
+> +maintainers:
+> +  - Corentin Labbe <clabbe@baylibre.com>
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
 
+Don't need 'oneOf' when there is only 1.
 
+> +      - const: amlogic,gxl-crypto
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  clock-names:
+> +    const: blkmv
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - clocks
+> +  - clock-names
+> +
+> +examples:
+> +  - |
+> +    crypto: crypto@c883e000 {
+> +        compatible = "amlogic,gxl-crypto";
+> +        reg = <0x0 0xc883e000 0x0 0x36>;
+
+This should throw errors because the default size on examples are 1
+cell. But validating the examples with the schema only just landed in
+5.3-rc1.
+
+> +        interrupts = <GIC_SPI 188 IRQ_TYPE_EDGE_RISING>,
+> +            <GIC_SPI 189 IRQ_TYPE_EDGE_RISING>;
+
+This doesn't match the schema.
+
+> +        clocks = <&clkc CLKID_BLKMV>;
+> +        clock-names = "blkmv";
+> +    };
+> --
+> 2.21.0
+>
