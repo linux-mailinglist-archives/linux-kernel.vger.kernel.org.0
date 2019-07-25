@@ -2,97 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FED474A5E
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 11:51:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE90D74A63
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 11:51:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728946AbfGYJvZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 05:51:25 -0400
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:44981 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725808AbfGYJvZ (ORCPT
+        id S2390809AbfGYJvv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 05:51:51 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:45031 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726591AbfGYJvu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 05:51:25 -0400
-Received: by mail-vs1-f68.google.com with SMTP id v129so33299755vsb.11
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 02:51:25 -0700 (PDT)
+        Thu, 25 Jul 2019 05:51:50 -0400
+Received: by mail-io1-f67.google.com with SMTP id s7so95808483iob.11
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 02:51:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=U6wP9P6W628pwsNoz0uPS/Pivt4xDGduNsvhZDp9MnQ=;
-        b=g5jUkgSwiAQTdPyxXYC99PohHjZpw4vN33ELhAaf74icYXeVey4yxZQ3J1D9b5IB2F
-         ycK8QUxJ0zNpvlgqIY28nAv/RocTsY7uhvz5hRxUmi13/guskqWcnzQjwKz3DbC9v8hN
-         Nao+IAQfBWkYy7dShadaiLuSTo/ftztKCuKG6xekV8a5Lx8qNhJd3E99p9OT6byBw0fs
-         TGwIVD4KZ0Dc82it4goXoKZJxrSwDifF1jNiZSf6HUhPwTQ1LHENlddXNIgn4lUHZ6k+
-         iyO1y+BwRYK+SpoaA7ofqf0E/5z1vqLTj9XMR7FlG+TQasdgaqDoJ5KxlqWpQP6x+ZoM
-         S9+A==
+        bh=WM4BG+uTV3zMGrjjcnjcEwRL5qHsFTNZGCag4yvZ4lk=;
+        b=wOgkhAARx+wI2yHdFBBfXI/DWAe/etXzcpXB6kY4Em/tUyfqu6RFHx/IgX7PW1EQG3
+         slfQah7f1ChmLR4iNWNYefrf+x1b5r3ZhZYNNylKJ/KJjo/wpbQAJCLp9CSVSTcPDWo2
+         daXjWLUtmuiXKLDvQlNGMRtmNmSc1loRg/KqNA4p7dNcIEmB/5fAQF3+hQGQsJbfsYv0
+         cTgcFyoIFSmxMJ6XM1oguIR4LfJK1ZHOsUgeCQ9A2FBWl3Ez+XwjKtkfARXdbew/hHrU
+         IIM00oMadCTo1VrQJbsHLcCxoLV9JqtbNC5/QOTHyeYk9KEE59uLsR3H//aS0P9dr3ig
+         0aiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=U6wP9P6W628pwsNoz0uPS/Pivt4xDGduNsvhZDp9MnQ=;
-        b=PQn+HC2E0MW6R7iDw0CL4UVDUBgN7FuuAlWj9WABufyaUKv6/s1RHJeV3Xtj8hjl5C
-         q2FkF7uUwPkByWYbv2Vbio9tibfj66D+wrU1WjueylhSsQVDTX8AATxxtMXu1iEBoJm2
-         JXROdLEZXec4UhBTf0pC5dG+LujedYHbUiU0NVuLeEQIrTS9AzWTilF14Hw7QUZxanZ7
-         bmwpZZRhYN7X9QqMvazbb65HnfSJusGnN3H8uBxtMqthrmUT6Jkh9/xPQfRWdAqKK0Ch
-         JIWw7RdhXYiyZtot6ZsvaPVWksXInVu3FVZK2ETEArZDrMESvPorRyFaGYUwUgPxwf2N
-         +Cvg==
-X-Gm-Message-State: APjAAAXgFwaABeHl7pL1fMG1FkqbghQHYh9EvB/vwFwDtYmMhspSLcsl
-        /jWhHUxJRjao1Vy4rUDqkH1aoQDiVssAgcdWQQ==
-X-Google-Smtp-Source: APXvYqydx09PFugR1+DQAAtY+36xMPy/hV8WYTgdDC1ltB5Cq8o2gndqs0x9JjppyF4d2kZnJDz5Ie7Z1Edt9DFa1zE=
-X-Received: by 2002:a67:d46:: with SMTP id 67mr55814029vsn.181.1564048284438;
- Thu, 25 Jul 2019 02:51:24 -0700 (PDT)
+        bh=WM4BG+uTV3zMGrjjcnjcEwRL5qHsFTNZGCag4yvZ4lk=;
+        b=OzXciF2ppiwcAcO62yeEljSPxZvg3xURZc46LfsZrNDTN9xBEk/3alWS6d7jMzAjZE
+         x6bkO59L+5NVvT0qjvS/ymmptTPmwc751uUCn0fHkCUep/Lf9nfOsjISknc6DArLOvGn
+         M/QdS8ZfduP9BhsFh/lIIWtzrxNQnTBX4WJrUqTLfg7JE9jzm/QSiorRVYlES7ZFLfbj
+         /a4LZSL3Hm0sGu06vL/d3+sFADXVFw8rIxT+Yp8/L42uhd52kdYtk8nm/BibAzAhyag+
+         5FCni2gDstJHmdvo2gkDEyMUpw1p++8SoPbcEoexdcsJuKA410aRlDSWehJVhTsiJiX6
+         KEAw==
+X-Gm-Message-State: APjAAAVCyUnu+0EA7CCJqM7HSj+CinAe2DC4djjCVrREzfl4PfCBduQ1
+        +bvQ/KYgwWIxZyuJxMvFm0107biQ4ZdzzjorSSlgvw==
+X-Google-Smtp-Source: APXvYqwlnRPwfSLthN+mqDuai/w9TUKTwYiOymUl9ZSn/m3HzY4yRtO5+CiLhyVkLzgI5nPdo28a9RI2RSTeXOM45Ec=
+X-Received: by 2002:a5d:80d6:: with SMTP id h22mr58291980ior.231.1564048309392;
+ Thu, 25 Jul 2019 02:51:49 -0700 (PDT)
 MIME-Version: 1.0
-References: <CALjTZvbrS3dGrTrMMkGRkk=hRL38rrGiYTZ4REX9rJ0T+wcGoQ@mail.gmail.com>
- <alpine.DEB.2.21.1907241257240.1791@nanos.tec.linutronix.de>
- <CALjTZvZtu8sSycu2soSXCEP1yZiVNFKkxs4JY_puFahwFuuRcQ@mail.gmail.com>
- <alpine.DEB.2.21.1907250810530.1791@nanos.tec.linutronix.de>
- <CALjTZvb6aiUEgLN9BxOxBZCBXHoFxOx4TpBxkRQbZjgCna4WUA@mail.gmail.com> <alpine.DEB.2.21.1907251127430.1791@nanos.tec.linutronix.de>
-In-Reply-To: <alpine.DEB.2.21.1907251127430.1791@nanos.tec.linutronix.de>
-From:   Rui Salvaterra <rsalvaterra@gmail.com>
-Date:   Thu, 25 Jul 2019 10:51:13 +0100
-Message-ID: <CALjTZvY6b3C4EnKCDfqN2HUje45sh0uojYRRuyO=Jiuzz8uauw@mail.gmail.com>
-Subject: Re: [BUG] Linux 5.3-rc1: timer problem on x86-64 (Pentium D)
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
-        Daniel Drake <drake@endlessm.com>
+References: <0000000000003fd4ab058e46951f@google.com> <CACT4Y+YLqSt34ka5kQQNBeo+GvGZ0dzNFL3Rb8_1Cid_C75_2w@mail.gmail.com>
+ <500EB100-0253-4934-80FD-689C32ED310C@holtmann.org>
+In-Reply-To: <500EB100-0253-4934-80FD-689C32ED310C@holtmann.org>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Thu, 25 Jul 2019 11:51:36 +0200
+Message-ID: <CACT4Y+aRxn2Wgr7OuZRMb-PbvpJqbeLVUAkygUd_2y6+4u_5Jg@mail.gmail.com>
+Subject: Re: KASAN: use-after-free Read in h5_rx_3wire_hdr
+To:     Marcel Holtmann <marcel@holtmann.org>
+Cc:     Johan Hedberg <johan.hedberg@gmail.com>,
+        linux-bluetooth <linux-bluetooth@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        syzbot <syzbot+0abbda0523882250a97a@syzkaller.appspotmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Thomas,
-
-On Thu, 25 Jul 2019 at 10:37, Thomas Gleixner <tglx@linutronix.de> wrote:
+On Thu, Jul 25, 2019 at 11:44 AM Marcel Holtmann <marcel@holtmann.org> wrote:
 >
-> Duh. Yes, this explains it nicely.
+> Hi Dmitry,
 >
-> > [    1.123548] clocksource: timekeeping watchdog on CPU1: Marking
-> > clocksource 'tsc-early' as unstable because the skew is too large:
-> > [    1.123552] clocksource:                       'hpet' wd_now: 33
-> > wd_last: 33 mask: ffffffff
+> >> syzbot found the following crash on:
+> >>
+> >> HEAD commit:    6d21a41b Add linux-next specific files for 20190718
+> >> git tree:       linux-next
+> >> console output: https://syzkaller.appspot.com/x/log.txt?x=1377958fa00000
+> >> kernel config:  https://syzkaller.appspot.com/x/.config?x=3430a151e1452331
+> >> dashboard link: https://syzkaller.appspot.com/bug?extid=0abbda0523882250a97a
+> >> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> >> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=113e2bb7a00000
+> >
+> > +drivers/bluetooth/hci_h5.c maintainers
+> >
+> >> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> >> Reported-by: syzbot+0abbda0523882250a97a@syzkaller.appspotmail.com
+> >>
+> >> ==================================================================
+> >> BUG: KASAN: use-after-free in h5_rx_3wire_hdr+0x35d/0x3c0
+> >> /drivers/bluetooth/hci_h5.c:438
+> >> Read of size 1 at addr ffff8880a161d1c8 by task syz-executor.4/12040
+> >>
+> >> CPU: 1 PID: 12040 Comm: syz-executor.4 Not tainted 5.2.0-next-20190718 #41
+> >> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> >> Google 01/01/2011
+> >> Call Trace:
+> >>  __dump_stack /lib/dump_stack.c:77 [inline]
+> >>  dump_stack+0x172/0x1f0 /lib/dump_stack.c:113
+> >>  print_address_description.cold+0xd4/0x306 /mm/kasan/report.c:351
+> >>  __kasan_report.cold+0x1b/0x36 /mm/kasan/report.c:482
+> >>  kasan_report+0x12/0x17 /mm/kasan/common.c:612
+> >>  __asan_report_load1_noabort+0x14/0x20 /mm/kasan/generic_report.c:129
+> >>  h5_rx_3wire_hdr+0x35d/0x3c0 /drivers/bluetooth/hci_h5.c:438
+> >>  h5_recv+0x32f/0x500 /drivers/bluetooth/hci_h5.c:563
+> >>  hci_uart_tty_receive+0x279/0x790 /drivers/bluetooth/hci_ldisc.c:600
+> >>  tiocsti /drivers/tty/tty_io.c:2197 [inline]
+> >>  tty_ioctl+0x949/0x14f0 /drivers/tty/tty_io.c:2573
+> >>  vfs_ioctl /fs/ioctl.c:46 [inline]
+> >>  file_ioctl /fs/ioctl.c:509 [inline]
+> >>  do_vfs_ioctl+0xdb6/0x13e0 /fs/ioctl.c:696
+> >>  ksys_ioctl+0xab/0xd0 /fs/ioctl.c:713
+> >>  __do_sys_ioctl /fs/ioctl.c:720 [inline]
+> >>  __se_sys_ioctl /fs/ioctl.c:718 [inline]
+> >>  __x64_sys_ioctl+0x73/0xb0 /fs/ioctl.c:718
+> >>  do_syscall_64+0xfd/0x6a0 /arch/x86/entry/common.c:296
+> >>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> >> RIP: 0033:0x459819
+> >> Code: fd b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7
+> >> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff
+> >> ff 0f 83 cb b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+> >> RSP: 002b:00007f7a3b459c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+> >> RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000459819
+> >> RDX: 0000000020000080 RSI: 0000000000005412 RDI: 0000000000000003
+> >> RBP: 000000000075bf20 R08: 0000000000000000 R09: 0000000000000000
+> >> R10: 0000000000000000 R11: 0000000000000246 R12: 00007f7a3b45a6d4
+> >> R13: 00000000004c408a R14: 00000000004d7ff0 R15: 00000000ffffffff
 >
-> The HPET counter check succeeded, but the early enable and the following
-> reconfiguration confused it completely. So the HPET is not counting:
->
->         'hpet' wd_now: 33 wd_last: 33 mask: ffffffff
->
-> Which is a full explanation for the boot fail because if the counter is not
-> working then the HPET timer is not expiring and the early boot is waiting
-> for HPET to fire forever.
+> Is this happening on specific hardware?
 
-Interesting. Thanks for the detailed explanation!
-
-> That's consistent with the above. 5.3-rc1 unpatched would of course boot as
-> well with hpet=disable now that we know the root cause.
-
-I guess that's the only thing I hadn't tried, hindsight is 20/20. :)
-
-> I'll write a changelog and route it to Linus for -rc2.
->
-> Thanks a lot for debugging this and providing all the information!
-
-My pleasure! I'm glad to have this old workhorse chugging along again.
-
-Thanks,
-Rui
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
