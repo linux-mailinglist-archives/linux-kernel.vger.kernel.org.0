@@ -2,78 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45D3974F9E
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 15:35:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4576374FB5
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 15:39:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388334AbfGYNfr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 09:35:47 -0400
-Received: from foss.arm.com ([217.140.110.172]:57464 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728133AbfGYNfo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 09:35:44 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7ADF328;
-        Thu, 25 Jul 2019 06:35:44 -0700 (PDT)
-Received: from [10.37.10.14] (unknown [10.37.10.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 95DF03F71F;
-        Thu, 25 Jul 2019 06:35:43 -0700 (PDT)
-Subject: Re: [PATCH v2 23/28] drivers: Introduce
- driver_find_device_by_of_node() helper
-To:     lee.jones@linaro.org
-Cc:     linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
-        rafael@kernel.org, thor.thayer@linux.intel.com
-References: <1560534863-15115-1-git-send-email-suzuki.poulose@arm.com>
- <1560534863-15115-24-git-send-email-suzuki.poulose@arm.com>
- <20190725105103.GB6164@dell>
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-Message-ID: <fc40ac7f-3df3-ce30-a4ba-1698f976d239@arm.com>
-Date:   Thu, 25 Jul 2019 14:38:46 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S2389860AbfGYNjP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 09:39:15 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:44170 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387959AbfGYNjO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 09:39:14 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: ezequiel)
+        with ESMTPSA id F10C728B644
+Message-ID: <4f0d0390057195da326354da2343c98c93d86669.camel@collabora.com>
+Subject: Re: [PATCH 0/7] hantro: Add RK3399 VP8 decoding support
+From:   Ezequiel Garcia <ezequiel@collabora.com>
+To:     Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+        Hans Verkuil <hans.verkuil@cisco.com>
+Cc:     kernel@collabora.com,
+        Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        linux-rockchip@lists.infradead.org,
+        Heiko Stuebner <heiko@sntech.de>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Boris Brezillon <boris.brezillon@collabora.com>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        fbuergisser@chromium.org, linux-kernel@vger.kernel.org
+Date:   Thu, 25 Jul 2019 10:38:47 -0300
+In-Reply-To: <b0cd9a4f-4bf9-a48c-6d7c-7147b13fa0b2@xs4all.nl>
+References: <20190724171702.9449-1-ezequiel@collabora.com>
+         <b0cd9a4f-4bf9-a48c-6d7c-7147b13fa0b2@xs4all.nl>
+Organization: Collabora
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5-1.1 
 MIME-Version: 1.0
-In-Reply-To: <20190725105103.GB6164@dell>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lee
-
-On 07/25/2019 11:51 AM, Lee Jones wrote:
-> On Fri, 14 Jun 2019, Suzuki K Poulose wrote:
+On Thu, 2019-07-25 at 14:59 +0200, Hans Verkuil wrote:
+> On 7/24/19 7:16 PM, Ezequiel Garcia wrote:
+> > This series adds VP8 decoding support on RK3399 SoC.
+> > 
+> > I'm including a set of commits from Boris' recent H264 series [1].
+> > These commits add some helpers that are also useful for RK3399 VP8,
+> > and at the same time cleanup the driver nicely.
+> > 
+> > Finally, there's a fix by Francois Buergisser from Chromium team.
+> > 
+> > VP8 and MPEG-2 tested on RK3399 RockPi and RK3288 Rock2 boards.
 > 
->> Add a wrapper to driver_find_device() to search for a device
->> by the of_node pointer, reusing the generic match function.
->> Also convert the existing users to make use of the new helper.
->>
->> Cc: Lee Jones <lee.jones@linaro.org>
->> Cc: Thor Thayer <thor.thayer@linux.intel.com>
->> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
->> Acked-by: Thor Thayer <thor.thayer@linux.intel.com>
->> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
->> ---
->>   drivers/amba/tegra-ahb.c    | 11 +----------
->>   drivers/mfd/altera-sysmgr.c | 14 ++------------
->>   include/linux/device.h      | 13 +++++++++++++
->>   3 files changed, 16 insertions(+), 22 deletions(-)
+> I get this when compiling:
 > 
-> Looks good to me.  For the MFD part.
+> /home/hans/work/build/media-git/drivers/staging/media/hantro/hantro_g1_vp8_dec.c: In function 'hantro_g1_vp8_dec_run':
+> /home/hans/work/build/media-git/drivers/staging/media/hantro/hantro_g1_vp8_dec.c:435:26: warning: variable 'vb2_src' set but not used [-Wunused-but-
+> set-variable]
+>   struct vb2_v4l2_buffer *vb2_src;
+>                           ^~~~~~~
+>   CC      drivers/staging/media/omap4iss/iss_csiphy.o
+> /home/hans/work/build/media-git/drivers/staging/media/hantro/rk3399_vpu_hw_vp8_dec.c: In function 'rk3399_vpu_vp8_dec_run':
+> /home/hans/work/build/media-git/drivers/staging/media/hantro/rk3399_vpu_hw_vp8_dec.c:515:26: warning: variable 'vb2_src' set but not used [-Wunused-
+> but-set-variable]
+>   struct vb2_v4l2_buffer *vb2_src;
+>                           ^~~~~~~
 > 
-> For my own reference:
->    Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
-
-Thanks ! Btw, v3 has been posted based on 5.3-rc1. You are
-in Cc for that.
-
-> 
-> What is the merge plan?
+> Can you take a look?
 > 
 
-With v3, it looks more sensible to merge the patch via Greg's tree.
+Oops, I missed these warnings. I'll fix them and post a new version.
 
-Suzuki
+Thanks,
+Eze
 
