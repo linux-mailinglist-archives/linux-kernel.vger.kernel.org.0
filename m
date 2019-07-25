@@ -2,223 +2,170 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33B3574F09
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 15:20:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE68274F5B
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 15:27:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389819AbfGYNUD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 09:20:03 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:45214 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389776AbfGYNUC (ORCPT
+        id S1728336AbfGYN10 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 09:27:26 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:36224 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725851AbfGYN10 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 09:20:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=Mbxu8AN5/JoOf4Q5zWfvCpbaISPtwSaSppkQ+bMDnVQ=; b=mTNJ6hCK5QvP
-        Z9QzX/SuQ38Av+GnnEv57mtloeTDqm/3CrTvWAb94Pq8KJquuG9qGyqzNwpkjkvzEW6y/oE2Xv8HX
-        gQRKrjIS4CEBdpXz9sK/+j6bZ2bGQ9Op88UrH83iShiWX0WjReM6xFfg9fde/vZZMfLt7ch2nxHck
-        zaYhQ=;
-Received: from ypsilon.sirena.org.uk ([2001:470:1f1d:6b5::7])
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hqdeY-0002rR-Ix; Thu, 25 Jul 2019 13:19:26 +0000
-Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id D36082742B5F; Thu, 25 Jul 2019 14:19:25 +0100 (BST)
-From:   Mark Brown <broonie@kernel.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     alsa-devel@alsa-project.org, broonie@kernel.org,
-        kernel-janitors@vger.kernel.org, liam.r.girdwood@linux.intel.com,
-        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        perex@perex.cz, pierre-louis.bossart@linux.intel.com,
-        tiwai@suse.com, yang.jie@linux.intel.com
-Subject: Applied "ASoC: Intel: Fix some acpi vs apci typo in somme comments" to the asoc tree
-In-Reply-To: <20190725053523.16542-1-christophe.jaillet@wanadoo.fr>
-X-Patchwork-Hint: ignore
-Message-Id: <20190725131925.D36082742B5F@ypsilon.sirena.org.uk>
-Date:   Thu, 25 Jul 2019 14:19:25 +0100 (BST)
+        Thu, 25 Jul 2019 09:27:26 -0400
+Received: by mail-lf1-f68.google.com with SMTP id q26so34570026lfc.3;
+        Thu, 25 Jul 2019 06:27:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
+         :subject:to:cc:content-transfer-encoding;
+        bh=WXiBayTqTdkKTq09rjY6tipJqJtsUSTf9qvOhgtptXE=;
+        b=l61Pt9f2xC+aDtypRt0x2wON8TQwif0kEQaB9wG4yMNYHVMH1B56FKjgcRsrZ0faFe
+         3GPlEaprv7OncIBA5s1Q6ImyRuZk3GXPShB9sE1juXK0z8yUwR8pPeC5l1WP9dWUPafi
+         Ed/34bGH+qMk1dUj3ViF+UCHnhe6jLJ/mA5UOdxt4r+fMOWRXX6s8EhNBRJBisWWy3j0
+         +pbOkjPCzOqgohgd3/NWnJ7UluS8cZQ0/Vkrz6RUUz4YOgdztrfBgkGGz91I6PW/0o1d
+         DIuFSkZ2HBg61DLk/SG1shV9emIytsU40xnOcaY8vMyvbw+tB6Cy97HfuGXZRpvtsz5T
+         BZLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
+         :from:date:message-id:subject:to:cc:content-transfer-encoding;
+        bh=WXiBayTqTdkKTq09rjY6tipJqJtsUSTf9qvOhgtptXE=;
+        b=sXMbfjpwSr+TrNmHbAdSa6NqU5I1QHwYP9cA7FojopfxGpogvlPlD06yRgGWwb7x0x
+         i0+vE87qgXvUKlsXvlkE58AhH/TKjnD+fbau/3YVSdxrM0nUnrBDp0likQXP7HcxkMhM
+         qLsf2J3MK5BbG1NW0c2HmMgBrQN2SSoaWgZxcYiNEtoLKm7mEqeNUACZHDHmNKiS43an
+         O4tLUa+uak1hKFTzlqBePYjjXZXJt6LjRrw6AS2DogxNteVwDzcwWaX5FEhYt/QY6/6d
+         lxJXkIOhP4gTogtYu8/zk9eWUqAuMTEqhb/s3uH2ry/xzL0QcQo/WnpXYF5h8hp9i3E7
+         JyVw==
+X-Gm-Message-State: APjAAAWKmaRl6FgK7Vp/9xEcZw1LQoa6+2NXsIFKk0lxhyXeJIYXp2ib
+        PX0dDW3qnJeG93NAcLmxCA8htcVmO4yRA4CK6r0u+5tFWW4=
+X-Google-Smtp-Source: APXvYqw4Ed1+h8H7qf66p3bgbVK3gmUySWTmYzoU/O47r6Wa7RjMhhccNUNPE6lXOnU4XDyXX1GQMhICP//rsdR1lZc=
+X-Received: by 2002:ac2:47e8:: with SMTP id b8mr25974255lfp.84.1564059772302;
+ Thu, 25 Jul 2019 06:02:52 -0700 (PDT)
+MIME-Version: 1.0
+References: <CGME20190723122024eucas1p1ff060d072132bfbc8a8a1d10fa1f90f8@eucas1p1.samsung.com>
+ <20190723122016.30279-1-a.swigon@partner.samsung.com> <20190723122016.30279-4-a.swigon@partner.samsung.com>
+ <CAGTfZH09n9UOLMwNrCvcdeRCHYFO4TiB-YG2rMVuxA4bxuLCVw@mail.gmail.com>
+In-Reply-To: <CAGTfZH09n9UOLMwNrCvcdeRCHYFO4TiB-YG2rMVuxA4bxuLCVw@mail.gmail.com>
+Reply-To: cwchoi00@gmail.com
+From:   Chanwoo Choi <cwchoi00@gmail.com>
+Date:   Thu, 25 Jul 2019 22:02:14 +0900
+Message-ID: <CAGTfZH2pPh5VVQuHV1d_8Wj1N3TPAh6w4KUkQtssBhEdPgQiuA@mail.gmail.com>
+Subject: Re: [RFC PATCH 03/11] devfreq: exynos-bus: Change goto-based logic to
+ if-else logic
+To:     =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon@partner.samsung.com>
+Cc:     devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>, inki.dae@samsung.com,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        georgi.djakov@linaro.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+2019=EB=85=84 7=EC=9B=94 25=EC=9D=BC (=EB=AA=A9) =EC=98=A4=ED=9B=84 9:56, C=
+hanwoo Choi <cwchoi00@gmail.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
+>
+> 2019=EB=85=84 7=EC=9B=94 24=EC=9D=BC (=EC=88=98) =EC=98=A4=EC=A0=84 8:08,=
+ Artur =C5=9Awigo=C5=84 <a.swigon@partner.samsung.com>=EB=8B=98=EC=9D=B4 =
+=EC=9E=91=EC=84=B1:
+> >
+> > This patch improves code readability by changing the following construc=
+t:
+> >
+> > >    if (cond)
+> > >        goto passive;
+> > >    foo();
+> > >    goto out;
+> > >passive:
+> > >    bar();
+> > >out:
+> >
+> > into this:
+> >
+> > >    if (cond)
+> > >        bar();
+> > >    else
+> > >        foo();
+> >
+> > Signed-off-by: Artur =C5=9Awigo=C5=84 <a.swigon@partner.samsung.com>
+> > ---
+> >  drivers/devfreq/exynos-bus.c | 24 +++++++++---------------
+> >  1 file changed, 9 insertions(+), 15 deletions(-)
+> >
+> > diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.=
+c
+> > index cf6f6cbd0f55..4bb83b945bf7 100644
+> > --- a/drivers/devfreq/exynos-bus.c
+> > +++ b/drivers/devfreq/exynos-bus.c
+> > @@ -505,25 +505,19 @@ static int exynos_bus_probe(struct platform_devic=
+e *pdev)
+> >         node =3D of_parse_phandle(dev->of_node, "devfreq", 0);
+> >         if (node) {
+> >                 of_node_put(node);
+> > -               goto passive;
+> > +               ret =3D exynos_bus_profile_init_passive(bus, profile);
+> > +               if (ret < 0)
+> > +                       goto err;
+> >         } else {
+> >                 ret =3D exynos_bus_parent_parse_of(np, bus);
+> > +               if (ret < 0)
+> > +                       goto err;
+> > +
+> > +               ret =3D exynos_bus_profile_init(bus, profile);
+> > +               if (ret < 0)
+> > +                       goto err;
+> >         }
+> >
+> > -       if (ret < 0)
+> > -               goto err;
+> > -
+> > -       ret =3D exynos_bus_profile_init(bus, profile);
+> > -       if (ret < 0)
+> > -               goto err;
+> > -
+> > -       goto out;
+> > -passive:
+> > -       ret =3D exynos_bus_profile_init_passive(bus, profile);
+> > -       if (ret < 0)
+> > -               goto err;
+> > -
+> > -out:
+> >         max_state =3D bus->devfreq->profile->max_state;
+> >         min_freq =3D (bus->devfreq->profile->freq_table[0] / 1000);
+> >         max_freq =3D (bus->devfreq->profile->freq_table[max_state - 1] =
+/ 1000);
+> > --
+> > 2.17.1
+> >
+>
+> It seems more simple than before.
+> Instead, please merge patch1/2/3 to one patch. and drop the patch4.
 
-   ASoC: Intel: Fix some acpi vs apci typo in somme comments
+But, I think that you better to drop the cleanup patch from this series
+because the series[1] touch the exynos-bus.c driver for coupled regulator.
+[1] https://www.spinics.net/lists/arm-kernel/msg741971.html
 
-has been applied to the asoc tree at
+I recommend that you send the cleanup patch with my comment
+either after reviewing the Kamil's patch[1] or rebase this series base
+on patch[1].
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.3
+>
+> --
+> Best Regards,
+> Chanwoo Choi
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 72ea86391cd3249638fbef340b865c4bfa31465b Mon Sep 17 00:00:00 2001
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Date: Thu, 25 Jul 2019 07:35:23 +0200
-Subject: [PATCH] ASoC: Intel: Fix some acpi vs apci typo in somme comments
-
-Fix some typo to have the filaname given in a comment match the real name
-of the file.
-Some 'acpi' have erroneously been written 'apci'
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Link: https://lore.kernel.org/r/20190725053523.16542-1-christophe.jaillet@wanadoo.fr
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/intel/common/soc-acpi-intel-bxt-match.c     | 2 +-
- sound/soc/intel/common/soc-acpi-intel-byt-match.c     | 2 +-
- sound/soc/intel/common/soc-acpi-intel-cht-match.c     | 2 +-
- sound/soc/intel/common/soc-acpi-intel-cnl-match.c     | 2 +-
- sound/soc/intel/common/soc-acpi-intel-glk-match.c     | 2 +-
- sound/soc/intel/common/soc-acpi-intel-hda-match.c     | 2 +-
- sound/soc/intel/common/soc-acpi-intel-hsw-bdw-match.c | 2 +-
- sound/soc/intel/common/soc-acpi-intel-icl-match.c     | 2 +-
- sound/soc/intel/common/soc-acpi-intel-kbl-match.c     | 2 +-
- sound/soc/intel/common/soc-acpi-intel-skl-match.c     | 2 +-
- 10 files changed, 10 insertions(+), 10 deletions(-)
-
-diff --git a/sound/soc/intel/common/soc-acpi-intel-bxt-match.c b/sound/soc/intel/common/soc-acpi-intel-bxt-match.c
-index 229e39586868..4a5adae1d785 100644
---- a/sound/soc/intel/common/soc-acpi-intel-bxt-match.c
-+++ b/sound/soc/intel/common/soc-acpi-intel-bxt-match.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- * soc-apci-intel-bxt-match.c - tables and support for BXT ACPI enumeration.
-+ * soc-acpi-intel-bxt-match.c - tables and support for BXT ACPI enumeration.
-  *
-  * Copyright (c) 2018, Intel Corporation.
-  *
-diff --git a/sound/soc/intel/common/soc-acpi-intel-byt-match.c b/sound/soc/intel/common/soc-acpi-intel-byt-match.c
-index b94b482ac34f..1cc801ba92eb 100644
---- a/sound/soc/intel/common/soc-acpi-intel-byt-match.c
-+++ b/sound/soc/intel/common/soc-acpi-intel-byt-match.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0-only
- /*
-- * soc-apci-intel-byt-match.c - tables and support for BYT ACPI enumeration.
-+ * soc-acpi-intel-byt-match.c - tables and support for BYT ACPI enumeration.
-  *
-  * Copyright (c) 2017, Intel Corporation.
-  */
-diff --git a/sound/soc/intel/common/soc-acpi-intel-cht-match.c b/sound/soc/intel/common/soc-acpi-intel-cht-match.c
-index b7f11f6be1cf..d0fb43c2b9f6 100644
---- a/sound/soc/intel/common/soc-acpi-intel-cht-match.c
-+++ b/sound/soc/intel/common/soc-acpi-intel-cht-match.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0-only
- /*
-- * soc-apci-intel-cht-match.c - tables and support for CHT ACPI enumeration.
-+ * soc-acpi-intel-cht-match.c - tables and support for CHT ACPI enumeration.
-  *
-  * Copyright (c) 2017, Intel Corporation.
-  */
-diff --git a/sound/soc/intel/common/soc-acpi-intel-cnl-match.c b/sound/soc/intel/common/soc-acpi-intel-cnl-match.c
-index c36c0aa4f683..771b0ef21051 100644
---- a/sound/soc/intel/common/soc-acpi-intel-cnl-match.c
-+++ b/sound/soc/intel/common/soc-acpi-intel-cnl-match.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- * soc-apci-intel-cnl-match.c - tables and support for CNL ACPI enumeration.
-+ * soc-acpi-intel-cnl-match.c - tables and support for CNL ACPI enumeration.
-  *
-  * Copyright (c) 2018, Intel Corporation.
-  *
-diff --git a/sound/soc/intel/common/soc-acpi-intel-glk-match.c b/sound/soc/intel/common/soc-acpi-intel-glk-match.c
-index 616eb09e78a0..60dea358fa04 100644
---- a/sound/soc/intel/common/soc-acpi-intel-glk-match.c
-+++ b/sound/soc/intel/common/soc-acpi-intel-glk-match.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- * soc-apci-intel-glk-match.c - tables and support for GLK ACPI enumeration.
-+ * soc-acpi-intel-glk-match.c - tables and support for GLK ACPI enumeration.
-  *
-  * Copyright (c) 2018, Intel Corporation.
-  *
-diff --git a/sound/soc/intel/common/soc-acpi-intel-hda-match.c b/sound/soc/intel/common/soc-acpi-intel-hda-match.c
-index 68ae43f7b4b2..cc972d2ac691 100644
---- a/sound/soc/intel/common/soc-acpi-intel-hda-match.c
-+++ b/sound/soc/intel/common/soc-acpi-intel-hda-match.c
-@@ -2,7 +2,7 @@
- // Copyright (c) 2018, Intel Corporation.
- 
- /*
-- * soc-apci-intel-hda-match.c - tables and support for HDA+ACPI enumeration.
-+ * soc-acpi-intel-hda-match.c - tables and support for HDA+ACPI enumeration.
-  *
-  */
- 
-diff --git a/sound/soc/intel/common/soc-acpi-intel-hsw-bdw-match.c b/sound/soc/intel/common/soc-acpi-intel-hsw-bdw-match.c
-index d27853e7a369..34eb0baaa951 100644
---- a/sound/soc/intel/common/soc-acpi-intel-hsw-bdw-match.c
-+++ b/sound/soc/intel/common/soc-acpi-intel-hsw-bdw-match.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0-only
- /*
-- * soc-apci-intel-hsw-bdw-match.c - tables and support for ACPI enumeration.
-+ * soc-acpi-intel-hsw-bdw-match.c - tables and support for ACPI enumeration.
-  *
-  * Copyright (c) 2017, Intel Corporation.
-  */
-diff --git a/sound/soc/intel/common/soc-acpi-intel-icl-match.c b/sound/soc/intel/common/soc-acpi-intel-icl-match.c
-index 0b430b9b3673..38977669b576 100644
---- a/sound/soc/intel/common/soc-acpi-intel-icl-match.c
-+++ b/sound/soc/intel/common/soc-acpi-intel-icl-match.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- * soc-apci-intel-icl-match.c - tables and support for ICL ACPI enumeration.
-+ * soc-acpi-intel-icl-match.c - tables and support for ICL ACPI enumeration.
-  *
-  * Copyright (c) 2018, Intel Corporation.
-  *
-diff --git a/sound/soc/intel/common/soc-acpi-intel-kbl-match.c b/sound/soc/intel/common/soc-acpi-intel-kbl-match.c
-index 4b331058e807..e200baa11011 100644
---- a/sound/soc/intel/common/soc-acpi-intel-kbl-match.c
-+++ b/sound/soc/intel/common/soc-acpi-intel-kbl-match.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- * soc-apci-intel-kbl-match.c - tables and support for KBL ACPI enumeration.
-+ * soc-acpi-intel-kbl-match.c - tables and support for KBL ACPI enumeration.
-  *
-  * Copyright (c) 2018, Intel Corporation.
-  *
-diff --git a/sound/soc/intel/common/soc-acpi-intel-skl-match.c b/sound/soc/intel/common/soc-acpi-intel-skl-match.c
-index 0c9c0edd35b3..42fa40a8d932 100644
---- a/sound/soc/intel/common/soc-acpi-intel-skl-match.c
-+++ b/sound/soc/intel/common/soc-acpi-intel-skl-match.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- * soc-apci-intel-skl-match.c - tables and support for SKL ACPI enumeration.
-+ * soc-acpi-intel-skl-match.c - tables and support for SKL ACPI enumeration.
-  *
-  * Copyright (c) 2018, Intel Corporation.
-  *
--- 
-2.20.1
-
+--=20
+Best Regards,
+Chanwoo Choi
