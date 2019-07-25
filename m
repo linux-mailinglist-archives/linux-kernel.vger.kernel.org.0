@@ -2,102 +2,186 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A7A0750A7
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 16:11:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB06A750AB
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 16:11:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387876AbfGYOLT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 10:11:19 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:45673 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728482AbfGYOLS (ORCPT
+        id S2387945AbfGYOLv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 10:11:51 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:59779 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725843AbfGYOLv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 10:11:18 -0400
-Received: by mail-lj1-f196.google.com with SMTP id m23so48072888lje.12;
-        Thu, 25 Jul 2019 07:11:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=jrNLPp3bYzLEDpFwB8WgHdHYREWfUZXv7BJCALM4nMs=;
-        b=e+/2hx5NHVl51pt1NoaAoxtOSPUgJyMBrXs5dukRJ1aHbWbr/J+zpahxrXK3AgWKqf
-         SWfpzTsD1VTIIL/Qay3uuk5XlDjRcihMMzNXo6umEyByVYASmGDPvndRWcis7ufx4och
-         tu/PHfw2z1mk7WqODC9xEAeEY47OnalZSUBE9HEG8BR+Bq7Vuvra7Aa4FeOW3LweYqkZ
-         /ie7cwtrsfgLO9UEYPqp9zk5WxuMh8X28QhSGeEP+L7jW5qMdvrZZuCy7XG07gdmn4lj
-         wY6olIf2XlYDqFyJrpcLxCyHWe5oyMc/YrSsmY57AKlKb7H6SxFaVl2Pkbd11PH+5BLv
-         xixw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jrNLPp3bYzLEDpFwB8WgHdHYREWfUZXv7BJCALM4nMs=;
-        b=E99etn3zEhEexjRtHvWBPthtL2iUGM8yC1jbw/ltdEulmov8+tNE5bb7P90tYr0Rgx
-         uwh8sDcHsUgyTT8/iaJf+S55HcgGUmK6FovUewqSPXn46jaNkKXcdzCKPYnFI6ouX8Cy
-         sRUKNQXmU+GwHygqIpJ9juCPW6MoS525F6bUKlbvVJjltNMGDEKhp+LvsXGs/8IjlKX/
-         JBBp8CQOZGmaHqZE8Hstb58lYU2FwGcqi5OF8CsKfqj705HScNf/o+Pn1YPAycKX9dJQ
-         uN0wJLNMhQXV9lT6R4PCFIgpzuEhzNunsaR2zbGxKtNQdP0GfG+JdowidO6LuzlWF/Xk
-         Sx7w==
-X-Gm-Message-State: APjAAAUEc8d/FA/r/M9AUuFA6KfvxBQXknAxrDAACrBLXJBj7rbBp9Fa
-        wGmLeSJ4ZUf3pMX9ImhybuM9OHxq49SEbn9BeS0=
-X-Google-Smtp-Source: APXvYqyZ2xU3Q3DBuDrKPPtRFmzwXjv7b2fsezBfSsrDgdvw3PESauQBwgujk6jS3/yZmnECnwmNvlSxES79Qhh42rw=
-X-Received: by 2002:a2e:2c07:: with SMTP id s7mr9166631ljs.44.1564063876251;
- Thu, 25 Jul 2019 07:11:16 -0700 (PDT)
+        Thu, 25 Jul 2019 10:11:51 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6PEBbs91034597
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Thu, 25 Jul 2019 07:11:37 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6PEBbs91034597
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019071901; t=1564063897;
+        bh=7JGseR0bVy0xVqa8LExCGvzMWU7h3l1m9/yU+BJljzU=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=N6D12IZ87yjAA/ysG59sFH1qRyt7qphxB+MSQC23K6XfLB9IG0cr60XrjyDoxJx98
+         O1thNIetZtrzFkvIDYw48h8ITWkJDHdzXUZrlbMBHKR1H+W0Zi8EWPoiL8UJU4MJ6U
+         lhOCuG/e1sCE9HchRJznKeWICt1Mn+4VOya2HSPAYolFwDEgPpJU/bTpM6rrgTp1Zv
+         ARuG3VJisnCZMSlxdIevyrM4D2ij7bTR12pKIpoXI2Ng67MgymkMnozKi/9PJ1IDDE
+         fuG7o7tzvnYSyE4Qojg43A0IywxqvZr6nH+gGW61kpnMG2pDi/emE2yaKTCiVIXOnO
+         qdSCgVu/1njAQ==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6PEBaAC1034594;
+        Thu, 25 Jul 2019 07:11:36 -0700
+Date:   Thu, 25 Jul 2019 07:11:36 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Thomas Gleixner <tipbot@zytor.com>
+Message-ID: <tip-0c09ab96fc820109d63097a2adcbbd20836b655f@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org, tglx@linutronix.de,
+        hpa@zytor.com, mathieu.desnoyers@efficios.com
+Reply-To: mingo@kernel.org, tglx@linutronix.de, hpa@zytor.com,
+          mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org
+In-Reply-To: <alpine.DEB.2.21.1907091622590.1634@nanos.tec.linutronix.de>
+References: <alpine.DEB.2.21.1907091622590.1634@nanos.tec.linutronix.de>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:smp/hotplug] cpu/hotplug: Cache number of online CPUs
+Git-Commit-ID: 0c09ab96fc820109d63097a2adcbbd20836b655f
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-References: <20190725121452.16607-1-dafna.hirschfeld@collabora.com> <20190725121452.16607-2-dafna.hirschfeld@collabora.com>
-In-Reply-To: <20190725121452.16607-2-dafna.hirschfeld@collabora.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Thu, 25 Jul 2019 11:11:17 -0300
-Message-ID: <CAOMZO5BWarNdbCc5eVW7TTO9ahkG5wMwX_3XXKkngzKcjk+mpg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] dt-bindings: arm: imx: add imx8mq nitrogen support
-To:     Dafna Hirschfeld <dafna.hirschfeld@collabora.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Ezequiel Garcia <ezequiel@collabora.com>, kernel@collabora.com,
-        Gary Bisson <gary.bisson@boundarydevices.com>,
-        Troy Kisky <troy.kisky@boundarydevices.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-0.3 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
+        autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dafna,
+Commit-ID:  0c09ab96fc820109d63097a2adcbbd20836b655f
+Gitweb:     https://git.kernel.org/tip/0c09ab96fc820109d63097a2adcbbd20836b655f
+Author:     Thomas Gleixner <tglx@linutronix.de>
+AuthorDate: Tue, 9 Jul 2019 16:23:40 +0200
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Thu, 25 Jul 2019 15:48:01 +0200
 
-On Thu, Jul 25, 2019 at 10:56 AM Dafna Hirschfeld
-<dafna.hirschfeld@collabora.com> wrote:
->
-> From: Gary Bisson <gary.bisson@boundarydevices.com>
->
-> i.MX 8Quad is a quad (4x) Cortex-A53 processor with powerful
-> graphic and multimedia features.
-> This patch adds Nitrogen8M board support.
->
-> Signed-off-by: Gary Bisson <gary.bisson@boundarydevices.com>
-> Signed-off-by: Troy Kisky <troy.kisky@boundarydevices.com>
-> [Dafna: porting vendor's code to mainline]
-> Signed-off-by: Dafna Hirschfeld <dafna.hirschfeld@collabora.com>
-> ---
->  Documentation/devicetree/bindings/arm/fsl.yaml | 6 ++++++
->  1 file changed, 6 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/arm/fsl.yaml b/Documentation/devicetree/bindings/arm/fsl.yaml
-> index 7294ac36f4c0..728c41ef83bb 100644
-> --- a/Documentation/devicetree/bindings/arm/fsl.yaml
-> +++ b/Documentation/devicetree/bindings/arm/fsl.yaml
-> @@ -227,6 +227,12 @@ properties:
->                - fsl,imx8qxp-mek           # i.MX8QXP MEK Board
->            - const: fsl,imx8qxp
->
-> +      - description: i.MX8MQ based Boards
+cpu/hotplug: Cache number of online CPUs
 
-This line is already present in latest code as we already have some
-i.MX8MQ boards listed.
+Re-evaluating the bitmap wheight of the online cpus bitmap in every
+invocation of num_online_cpus() over and over is a pretty useless
+exercise. Especially when num_online_cpus() is used in code paths
+like the IPI delivery of x86 or the membarrier code.
 
-Please rebase it against linux-next.
+Cache the number of online CPUs in the core and just return the cached
+variable. The accessor function provides only a snapshot when used without
+protection against concurrent CPU hotplug.
+
+The storage needs to use an atomic_t because the kexec and reboot code
+(ab)use set_cpu_online() in their 'shutdown' handlers without any form of
+serialization as pointed out by Mathieu. Regular CPU hotplug usage is
+properly serialized.
+
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Link: https://lkml.kernel.org/r/alpine.DEB.2.21.1907091622590.1634@nanos.tec.linutronix.de
+
+---
+ include/linux/cpumask.h | 25 ++++++++++++++++---------
+ kernel/cpu.c            | 24 ++++++++++++++++++++++++
+ 2 files changed, 40 insertions(+), 9 deletions(-)
+
+diff --git a/include/linux/cpumask.h b/include/linux/cpumask.h
+index 0c7db5efe66c..b5a5a1ed9efd 100644
+--- a/include/linux/cpumask.h
++++ b/include/linux/cpumask.h
+@@ -10,6 +10,7 @@
+ #include <linux/kernel.h>
+ #include <linux/threads.h>
+ #include <linux/bitmap.h>
++#include <linux/atomic.h>
+ #include <linux/bug.h>
+ 
+ /* Don't assign or return these: may not be this big! */
+@@ -95,8 +96,21 @@ extern struct cpumask __cpu_active_mask;
+ #define cpu_present_mask  ((const struct cpumask *)&__cpu_present_mask)
+ #define cpu_active_mask   ((const struct cpumask *)&__cpu_active_mask)
+ 
++extern atomic_t __num_online_cpus;
++
+ #if NR_CPUS > 1
+-#define num_online_cpus()	cpumask_weight(cpu_online_mask)
++/**
++ * num_online_cpus() - Read the number of online CPUs
++ *
++ * Despite the fact that __num_online_cpus is of type atomic_t, this
++ * interface gives only a momentary snapshot and is not protected against
++ * concurrent CPU hotplug operations unless invoked from a cpuhp_lock held
++ * region.
++ */
++static inline unsigned int num_online_cpus(void)
++{
++	return atomic_read(&__num_online_cpus);
++}
+ #define num_possible_cpus()	cpumask_weight(cpu_possible_mask)
+ #define num_present_cpus()	cpumask_weight(cpu_present_mask)
+ #define num_active_cpus()	cpumask_weight(cpu_active_mask)
+@@ -821,14 +835,7 @@ set_cpu_present(unsigned int cpu, bool present)
+ 		cpumask_clear_cpu(cpu, &__cpu_present_mask);
+ }
+ 
+-static inline void
+-set_cpu_online(unsigned int cpu, bool online)
+-{
+-	if (online)
+-		cpumask_set_cpu(cpu, &__cpu_online_mask);
+-	else
+-		cpumask_clear_cpu(cpu, &__cpu_online_mask);
+-}
++void set_cpu_online(unsigned int cpu, bool online);
+ 
+ static inline void
+ set_cpu_active(unsigned int cpu, bool active)
+diff --git a/kernel/cpu.c b/kernel/cpu.c
+index 05778e32674a..e1967e9eddc2 100644
+--- a/kernel/cpu.c
++++ b/kernel/cpu.c
+@@ -2298,6 +2298,9 @@ EXPORT_SYMBOL(__cpu_present_mask);
+ struct cpumask __cpu_active_mask __read_mostly;
+ EXPORT_SYMBOL(__cpu_active_mask);
+ 
++atomic_t __num_online_cpus __read_mostly;
++EXPORT_SYMBOL(__num_online_cpus);
++
+ void init_cpu_present(const struct cpumask *src)
+ {
+ 	cpumask_copy(&__cpu_present_mask, src);
+@@ -2313,6 +2316,27 @@ void init_cpu_online(const struct cpumask *src)
+ 	cpumask_copy(&__cpu_online_mask, src);
+ }
+ 
++void set_cpu_online(unsigned int cpu, bool online)
++{
++	/*
++	 * atomic_inc/dec() is required to handle the horrid abuse of this
++	 * function by the reboot and kexec code which invoke it from
++	 * IPI/NMI broadcasts when shutting down CPUs. Invocation from
++	 * regular CPU hotplug is properly serialized.
++	 *
++	 * Note, that the fact that __num_online_cpus is of type atomic_t
++	 * does not protect readers which are not serialized against
++	 * concurrent hotplug operations.
++	 */
++	if (online) {
++		if (!cpumask_test_and_set_cpu(cpu, &__cpu_online_mask))
++			atomic_inc(&__num_online_cpus);
++	} else {
++		if (cpumask_test_and_clear_cpu(cpu, &__cpu_online_mask))
++			atomic_dec(&__num_online_cpus);
++	}
++}
++
+ /*
+  * Activate the first processor.
+  */
