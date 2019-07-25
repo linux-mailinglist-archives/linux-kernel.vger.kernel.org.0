@@ -2,119 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D602758DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 22:30:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BBB11758E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 22:34:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726701AbfGYUaq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 16:30:46 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:59348 "EHLO mx1.redhat.com"
+        id S1726809AbfGYUeP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 16:34:15 -0400
+Received: from mga05.intel.com ([192.55.52.43]:29092 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725819AbfGYUaq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 16:30:46 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2F47985539;
-        Thu, 25 Jul 2019 20:30:46 +0000 (UTC)
-Received: from treble.redhat.com (ovpn-122-90.rdu2.redhat.com [10.10.122.90])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0FB6F5D772;
-        Thu, 25 Jul 2019 20:30:44 +0000 (UTC)
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc:     linux-kernel@vger.kernel.org,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sedat Dilek <sedat.dilek@gmail.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH] drm/i915: Remove redundant user_access_end() from __copy_from_user() error path
-Date:   Thu, 25 Jul 2019 15:29:57 -0500
-Message-Id: <51a4155c5bc2ca847a9cbe85c1c11918bb193141.1564086017.git.jpoimboe@redhat.com>
+        id S1726623AbfGYUeN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 16:34:13 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jul 2019 13:34:10 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,308,1559545200"; 
+   d="scan'208";a="345618092"
+Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
+  by orsmga005.jf.intel.com with ESMTP; 25 Jul 2019 13:34:11 -0700
+Date:   Thu, 25 Jul 2019 14:31:18 -0600
+From:   Keith Busch <kbusch@kernel.org>
+To:     Logan Gunthorpe <logang@deltatee.com>
+Cc:     Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Sagi Grimberg <sagi@grimberg.me>, Jens Axboe <axboe@fb.com>,
+        Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>,
+        Max Gurtovoy <maxg@mellanox.com>,
+        Stephen Bates <sbates@raithlin.com>
+Subject: Re: [PATCH v6 04/16] nvme-core: introduce nvme_get_by_path()
+Message-ID: <20190725203118.GB7317@localhost.localdomain>
+References: <20190725172335.6825-1-logang@deltatee.com>
+ <20190725172335.6825-5-logang@deltatee.com>
+ <20190725175023.GA30641@bombadil.infradead.org>
+ <da58f91e-6cfa-02e0-dd89-3cfa23764a0e@deltatee.com>
+ <20190725195835.GA7317@localhost.localdomain>
+ <5dd6a41d-21c4-cf8d-a81d-271549de6763@deltatee.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Thu, 25 Jul 2019 20:30:46 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5dd6a41d-21c4-cf8d-a81d-271549de6763@deltatee.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Objtool reports:
+On Thu, Jul 25, 2019 at 02:28:28PM -0600, Logan Gunthorpe wrote:
+> 
+> 
+> On 2019-07-25 1:58 p.m., Keith Busch wrote:
+> > On Thu, Jul 25, 2019 at 11:54:18AM -0600, Logan Gunthorpe wrote:
+> >>
+> >>
+> >> On 2019-07-25 11:50 a.m., Matthew Wilcox wrote:
+> >>> On Thu, Jul 25, 2019 at 11:23:23AM -0600, Logan Gunthorpe wrote:
+> >>>> nvme_get_by_path() is analagous to blkdev_get_by_path() except it
+> >>>> gets a struct nvme_ctrl from the path to its char dev (/dev/nvme0).
+> >>>>
+> >>>> The purpose of this function is to support NVMe-OF target passthru.
+> >>>
+> >>> I can't find anywhere that you use this in this patchset.
+> >>>
+> >>
+> >> Oh sorry, the commit message is out of date the function was actually
+> >> called nvme_ctrl_get_by_path() and it's used in Patch 10.
+> > 
+> > Instead of by path, could we have configfs take something else, like
+> > the unique controller instance or serial number? I know that's different
+> > than how we handle blocks and files, but that way nvme core can lookup
+> > the cooresponding controller without adding new cdev dependencies.
+> 
+> Well the previous version of the patchset just used the ctrl name
+> ("nvme1") and looped through all the controllers to find a match. But
+> this sucks because of the inconsistency and the fact that the name can
+> change if hardware changes and the number changes. Allowing the user to
+> make use of standard udev rules seems important to me.
 
-  drivers/gpu/drm/i915/gem/i915_gem_execbuffer.o: warning: objtool: .altinstr_replacement+0x36: redundant UACCESS disable
-
-__copy_from_user() already does both STAC and CLAC, so the
-user_access_end() in its error path adds an extra unnecessary CLAC.
-
-Fixes: 0b2c8f8b6b0c ("i915: fix missing user_access_end() in page fault exception case")
-Reported-by: Thomas Gleixner <tglx@linutronix.de>
-Reported-by: Sedat Dilek <sedat.dilek@gmail.com>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Tested-by: Nick Desaulniers <ndesaulniers@google.com>
-Tested-by: Sedat Dilek <sedat.dilek@gmail.com>
-Link: https://github.com/ClangBuiltLinux/linux/issues/617
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
----
- .../gpu/drm/i915/gem/i915_gem_execbuffer.c    | 20 +++++++++----------
- 1 file changed, 9 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/gpu/drm/i915/gem/i915_gem_execbuffer.c b/drivers/gpu/drm/i915/gem/i915_gem_execbuffer.c
-index 5fae0e50aad0..41dab9ea33cd 100644
---- a/drivers/gpu/drm/i915/gem/i915_gem_execbuffer.c
-+++ b/drivers/gpu/drm/i915/gem/i915_gem_execbuffer.c
-@@ -1628,6 +1628,7 @@ static int check_relocations(const struct drm_i915_gem_exec_object2 *entry)
- 
- static int eb_copy_relocations(const struct i915_execbuffer *eb)
- {
-+	struct drm_i915_gem_relocation_entry *relocs;
- 	const unsigned int count = eb->buffer_count;
- 	unsigned int i;
- 	int err;
-@@ -1635,7 +1636,6 @@ static int eb_copy_relocations(const struct i915_execbuffer *eb)
- 	for (i = 0; i < count; i++) {
- 		const unsigned int nreloc = eb->exec[i].relocation_count;
- 		struct drm_i915_gem_relocation_entry __user *urelocs;
--		struct drm_i915_gem_relocation_entry *relocs;
- 		unsigned long size;
- 		unsigned long copied;
- 
-@@ -1663,14 +1663,8 @@ static int eb_copy_relocations(const struct i915_execbuffer *eb)
- 
- 			if (__copy_from_user((char *)relocs + copied,
- 					     (char __user *)urelocs + copied,
--					     len)) {
--end_user:
--				user_access_end();
--end:
--				kvfree(relocs);
--				err = -EFAULT;
--				goto err;
--			}
-+					     len))
-+				goto end;
- 
- 			copied += len;
- 		} while (copied < size);
-@@ -1699,10 +1693,14 @@ static int eb_copy_relocations(const struct i915_execbuffer *eb)
- 
- 	return 0;
- 
-+end_user:
-+	user_access_end();
-+end:
-+	kvfree(relocs);
-+	err = -EFAULT;
- err:
- 	while (i--) {
--		struct drm_i915_gem_relocation_entry *relocs =
--			u64_to_ptr(typeof(*relocs), eb->exec[i].relocs_ptr);
-+		relocs = u64_to_ptr(typeof(*relocs), eb->exec[i].relocs_ptr);
- 		if (eb->exec[i].relocation_count)
- 			kvfree(relocs);
- 	}
--- 
-2.20.1
-
+Should we then create a new udev rule for persistent controller
+names? /dev/nvme1 may not be the same controller each time you refer
+to it.
