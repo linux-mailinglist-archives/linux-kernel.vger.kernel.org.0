@@ -2,126 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C30FC744AA
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 07:04:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 25945744B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 07:04:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390359AbfGYFEH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 01:04:07 -0400
-Received: from mail-io1-f69.google.com ([209.85.166.69]:40251 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390312AbfGYFEG (ORCPT
+        id S2390403AbfGYFEw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 01:04:52 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:38565 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390362AbfGYFEw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 01:04:06 -0400
-Received: by mail-io1-f69.google.com with SMTP id v11so53576511iop.7
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 22:04:06 -0700 (PDT)
+        Thu, 25 Jul 2019 01:04:52 -0400
+Received: by mail-wr1-f67.google.com with SMTP id g17so49208015wrr.5;
+        Wed, 24 Jul 2019 22:04:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=L3y8eC1YuclFK7hkbXSnSrEEcZUpnhzJHsbuLqVifNc=;
+        b=q9dPlklL5rXCpD7A83RKtz9wCstwLbnUviTpE/vD1Aga8gLxuWcfLGMAlemNHX3mpY
+         SWyrx6/IAOIO8s1PqgPfNZfMuaNGNsQ/9yo7CefpiHSh22W2q33Lt9pfO8cItKDdXv2A
+         14T8Mt8KAukz4RGykTJyND2vCEPqS/wUQyE+7+5Cy7aWk1J+nXiy3KYyR6gff0fxjd2Q
+         3zNjFK2NArzweu0DyrivLKEP8aOsrCPxyLUphiq5juNtI2o5JaX32IJq5Mb+sGqGRios
+         nbH+vUbmDqH2Q5ZkqVUBdV695MFZu8euLS89xOdrmrvyXjmUQQL/LvFlmPGagvO/Dc0g
+         InOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=L3X65vZ3rUayuRUS9zN2GDw/XxLqoFgPS3n++Iwna6A=;
-        b=iSY8nr7IajD02C3DC3h+1UB31wyf7z0PAC6w1IgO3uZYEeSXHzsXyBhhZQ365QI8Cy
-         rscY7lS2fCQcsXjJRKPuqSh9cI7MUIDfSycFit/PY4JqiEqkLKP88ou9vAvPjVgA/xRF
-         snNmpXopJGKoEZxU/PAd7Q6Tc6kZQntxwuQgeiXDbHyB8YwwRUZ+2X+lMtRyAtQOxT5j
-         x+hyt7+N0s2F+VHw/VjuQamCuF1Twyz7xc3P/R4/nKww099lmz9298q4rDP7LKWzjdSs
-         tFrVYVF468Pj+GNCHmlP8aCSEIJaJS4F9CyH1WJ0b1rrlWaKE9bGyKtgNfjStX75Dj8D
-         Hi2A==
-X-Gm-Message-State: APjAAAUde2b1sdfybH9Tu7I4h64jJj4yAv/6M6y04kVk/PRsyF4RuSba
-        cxMcGUTpAwHsueSu7PeYEtpczX+IE6gONrzub+Z1ahQpuizR
-X-Google-Smtp-Source: APXvYqzY2yjxTZN7foDFPwt5tMSC/DMH88SCMokplXfOZycOYHM8wdRoZvOlXN32Jc9l/IU3X+nVJ88t3J/1E7NAJoWMPDLtLebS
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=L3y8eC1YuclFK7hkbXSnSrEEcZUpnhzJHsbuLqVifNc=;
+        b=J1oZ87/tOVT0FuhmSTxxk8sfc5uljZ+pNm2I/Pjw4uJymRIVuoieNG3kzpgSlURg7y
+         BleXjdf+6fqbv24AqqOv0eEZW4dqt+W94YDDBaTqqJ0nkwvwCJZ9mXcSmohffEVsxaRm
+         F6eRfeSJcFipiP0CQRhXJuQbFrgkx394v+qz0Io+o0us/U7mueb6a/bL7nIK4i9lEKsE
+         81OEPP9K2hA9LhjKlTOpamXneZGVMSIKhjwnbotLotGVmTrzrCF2jt4m5zR2FlqYUPUy
+         lH1kwCW8s03sAT4w/qCo1f5NZaLVObkXCmU20H3s0tVKzUO+TlpnmhdXzFayxK4zdTiW
+         H0Kw==
+X-Gm-Message-State: APjAAAWlO+kUxE3iI+2cxvdHhQvBV+YFkODTSxl+gPwYgHls/M+ThQ80
+        MAlRZaQz78th1QFwWKDROfg=
+X-Google-Smtp-Source: APXvYqwbeu82ejFTSWXKLFdZY97MjPo8vdf0wiUiDfJNuujA1pYZkzS4KF9tqtwY2qYts4mA/wBZbA==
+X-Received: by 2002:adf:db46:: with SMTP id f6mr40735548wrj.212.1564031090109;
+        Wed, 24 Jul 2019 22:04:50 -0700 (PDT)
+Received: from [192.168.8.147] (240.169.185.81.rev.sfr.net. [81.185.169.240])
+        by smtp.gmail.com with ESMTPSA id j33sm95211179wre.42.2019.07.24.22.04.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 24 Jul 2019 22:04:48 -0700 (PDT)
+Subject: Re: Reminder: 99 open syzbot bugs in net subsystem
+To:     David Miller <davem@davemloft.net>, eric.dumazet@gmail.com,
+        dvyukov@google.com, netdev@vger.kernel.org, fw@strlen.de,
+        i.maximets@samsung.com, edumazet@google.com, dsahern@gmail.com,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <20190724163014.GC673@sol.localdomain>
+ <20190724.111225.2257475150626507655.davem@davemloft.net>
+ <20190724183710.GF213255@gmail.com>
+ <20190724.130928.1854327585456756387.davem@davemloft.net>
+ <20190724210950.GH213255@gmail.com>
+From:   Eric Dumazet <eric.dumazet@gmail.com>
+Message-ID: <1e07462d-61e2-9885-edd0-97a82dd7883e@gmail.com>
+Date:   Thu, 25 Jul 2019 07:04:47 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-X-Received: by 2002:a6b:b985:: with SMTP id j127mr27063494iof.186.1564031045859;
- Wed, 24 Jul 2019 22:04:05 -0700 (PDT)
-Date:   Wed, 24 Jul 2019 22:04:05 -0700
-In-Reply-To: <0000000000003acc06058e6d6b70@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000e80c0e058e7a5a31@google.com>
-Subject: Re: general protection fault in __pm_runtime_resume
-From:   syzbot <syzbot+3cbe5cd105d2ad56a1df@syzkaller.appspotmail.com>
-To:     andreyknvl@google.com, gregkh@linuxfoundation.org,
-        len.brown@intel.com, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-usb@vger.kernel.org, pavel@ucw.cz,
-        rjw@rjwysocki.net, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <20190724210950.GH213255@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has found a reproducer for the following crash on:
 
-HEAD commit:    6a3599ce usb-fuzzer: main usb gadget fuzzer driver
-git tree:       https://github.com/google/kasan.git usb-fuzzer
-console output: https://syzkaller.appspot.com/x/log.txt?x=108edb68600000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=700ca426ab83faae
-dashboard link: https://syzkaller.appspot.com/bug?extid=3cbe5cd105d2ad56a1df
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13f0b4c8600000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=172d8758600000
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+3cbe5cd105d2ad56a1df@syzkaller.appspotmail.com
+On 7/24/19 11:09 PM, Eric Biggers wrote:
+> On Wed, Jul 24, 2019 at 01:09:28PM -0700, David Miller wrote:
+>> From: Eric Biggers <ebiggers@kernel.org>
+>> Date: Wed, 24 Jul 2019 11:37:12 -0700
+>>
+>>> We can argue about what words to use to describe this situation, but
+>>> it doesn't change the situation itself.
+>>
+>> And we should argue about those words because it matters to humans and
+>> effects how they feel, and humans ultimately fix these bugs.
+>>
+>> So please stop with the hyperbole.
+>>
+>> Thank you.
+> 
+> Okay, there are 151 bugs that syzbot saw on the mainline Linux kernel in the
+> last 7 days (90.1% with reproducers).  Of those, 59 were reported over 3 months
+> ago (89.8% with reproducers).  Of those, 12 were reported over a year ago (83.3%
+> with reproducers).
+> 
+> No opinion on whether those are small/medium/large numbers, in case it would
+> hurt someone's feelings.
+> 
+> These numbers do *not* include bugs that are still valid but weren't seen on
+> mainline in last 7 days, e.g.:
+> 
+> - Bugs that are seen only rarely, so by chance weren't seen in last 7 days.
+> - Bugs only in linux-next and/or subsystem branches.
+> - Bugs that were seen in mainline more than 7 days ago, and then only on
+>   linux-next or subsystem branch in last 7 days.
+> - Bugs that stopped being seen due to a change in syzkaller.
+> - Bugs that stopped being seen due to a change in kernel config.
+> - Bugs that stopped being seen due to other environment changes such as kernel
+>   command line parameters.
+> - Bugs that stopped being seen due to a kernel change that hid the bug but
+>   didn't actually fix it, i.e. still reachable in other ways.
+> 
 
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] SMP KASAN
-CPU: 0 PID: 1740 Comm: syz-executor618 Not tainted 5.2.0-rc6+ #15
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:__pm_runtime_resume+0x49/0x180 drivers/base/power/runtime.c:1069
-Code: ed 74 d5 fe 45 85 ed 0f 85 9a 00 00 00 e8 6f 73 d5 fe 48 8d bd c1 02  
-00 00 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <0f> b6 04 02 48  
-89 fa 83 e2 07 38 d0 7f 08 84 c0 0f 85 fe 00 00 00
-RSP: 0018:ffff8881cf5878e0 EFLAGS: 00010202
-RAX: dffffc0000000000 RBX: 0000000000000020 RCX: ffffffff82676833
-RDX: 000000021d463be5 RSI: ffffffff82676841 RDI: 00000010ea31df2b
-RBP: 00000010ea31dc6a R08: ffff8881d1b7e000 R09: fffffbfff0e84c25
-R10: ffff8881cf587940 R11: ffffffff87426127 R12: 0000000000000004
-R13: 0000000000000000 R14: ffff8881cfd7a500 R15: ffffffff897f9040
-FS:  0000555555808880(0000) GS:ffff8881db200000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000000043f760 CR3: 00000001d0f29000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  pm_runtime_get_sync include/linux/pm_runtime.h:226 [inline]
-  usb_autopm_get_interface+0x1b/0x50 drivers/usb/core/driver.c:1707
-  usbhid_power+0x7c/0xe0 drivers/hid/usbhid/hid-core.c:1234
-  hid_hw_power include/linux/hid.h:1038 [inline]
-  hidraw_open+0x20d/0x740 drivers/hid/hidraw.c:282
-  chrdev_open+0x219/0x5c0 fs/char_dev.c:413
-  do_dentry_open+0x497/0x1040 fs/open.c:778
-  do_last fs/namei.c:3416 [inline]
-  path_openat+0x1430/0x3ff0 fs/namei.c:3533
-  do_filp_open+0x1a1/0x280 fs/namei.c:3563
-  do_sys_open+0x3c0/0x580 fs/open.c:1070
-  do_syscall_64+0xb7/0x560 arch/x86/entry/common.c:301
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x401ad0
-Code: 01 f0 ff ff 0f 83 c0 0b 00 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f  
-44 00 00 83 3d fd 5b 2d 00 00 75 14 b8 02 00 00 00 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 94 0b 00 00 c3 48 83 ec 08 e8 fa 00 00 00
-RSP: 002b:00007ffed8d15738 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000401ad0
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00007ffed8d15740
-RBP: 6666666666666667 R08: 000000000000000f R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000402af0
-R13: 0000000000402b80 R14: 0000000000000000 R15: 0000000000000000
-Modules linked in:
----[ end trace 60987a9feed42828 ]---
-RIP: 0010:__pm_runtime_resume+0x49/0x180 drivers/base/power/runtime.c:1069
-Code: ed 74 d5 fe 45 85 ed 0f 85 9a 00 00 00 e8 6f 73 d5 fe 48 8d bd c1 02  
-00 00 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <0f> b6 04 02 48  
-89 fa 83 e2 07 38 d0 7f 08 84 c0 0f 85 fe 00 00 00
-RSP: 0018:ffff8881cf5878e0 EFLAGS: 00010202
-RAX: dffffc0000000000 RBX: 0000000000000020 RCX: ffffffff82676833
-RDX: 000000021d463be5 RSI: ffffffff82676841 RDI: 00000010ea31df2b
-RBP: 00000010ea31dc6a R08: ffff8881d1b7e000 R09: fffffbfff0e84c25
-R10: ffff8881cf587940 R11: ffffffff87426127 R12: 0000000000000004
-R13: 0000000000000000 R14: ffff8881cfd7a500 R15: ffffffff897f9040
-FS:  0000555555808880(0000) GS:ffff8881db200000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000000043f760 CR3: 00000001d0f29000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+We do not doubt syzkaller is an incredible tool.
+
+But netdev@ and lkml@ are mailing lists for humans to interact,
+exchange ideas, send patches and review them.
+
+To me, an issue that was reported to netdev by a real user is _way_ more important
+than potential issues that a bot might have found doing crazy things.
+
+We need to keep optimal S/N on mailing lists, so any bots trying to interact
+with these lists must be very cautious and damn smart.
+
+When I have time to spare and can work on syzbot reports, I am going to a web
+page where I can see them and select the ones it makes sense to fix.
+I hate having to set up email filters.
 
