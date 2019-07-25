@@ -2,200 +2,161 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68FC774F57
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 15:27:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CAB1674F65
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 15:28:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728525AbfGYN05 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 09:26:57 -0400
-Received: from mail-qk1-f177.google.com ([209.85.222.177]:33811 "EHLO
-        mail-qk1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726801AbfGYN04 (ORCPT
+        id S1730030AbfGYN2W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 09:28:22 -0400
+Received: from mx0b-0014ca01.pphosted.com ([208.86.201.193]:50284 "EHLO
+        mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728359AbfGYN2W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 09:26:56 -0400
-Received: by mail-qk1-f177.google.com with SMTP id t8so36387321qkt.1
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 06:26:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=KjjBu7BMfk8xmpq06aF6LWsxATJ7zX54K3XmB9nU8ns=;
-        b=lZzuUWqmsiIbpirdIT3keFKX8b83L+ju5wWcQZ8xcBBzi/9hVIkoQX3Z9T2TDtJoVd
-         fqFjEUUR4QfWKE6B/YDc9zAW6pqHDKibO9MfSVQg0JZE3HoUnwTKYiGlhgyNzklSov82
-         bTGXEyNWMXgFvYoz3zBHMQEx5W/NLupEDTMI0dViNPE7By62oStoF8Z/OeqB4g+fVvR2
-         6PWq1AosjMQ6EK2FFgy0E9mSrvGVM6QwVcGteyMpeQSQo+lRDEvyaZbN1lj6vmHkWcqF
-         k97mO3N8n0RZiqzICX+MA4Qq2ae/yY5MuJ+PrRJdhF64Mqcfu8PzuSpTjE1LZTkz2edX
-         XYlQ==
-X-Gm-Message-State: APjAAAXx/0triidT0a3XZs9VkUwzLLSJQkq6dHalRYn6NLx+wc6gM7dF
-        GrDXbQagJj/yY2akjl+37FaJzA==
-X-Google-Smtp-Source: APXvYqxOAsHTrNRpwq6vcJ7tGMHpKurQRE42kOps0/crxS2PgQFMsqddCIqZtIPX1c6ngHTE5rQAdg==
-X-Received: by 2002:a05:620a:1447:: with SMTP id i7mr59552516qkl.254.1564061215681;
-        Thu, 25 Jul 2019 06:26:55 -0700 (PDT)
-Received: from redhat.com (bzq-79-181-91-42.red.bezeqint.net. [79.181.91.42])
-        by smtp.gmail.com with ESMTPSA id 47sm29804600qtw.90.2019.07.25.06.26.48
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 25 Jul 2019 06:26:54 -0700 (PDT)
-Date:   Thu, 25 Jul 2019 09:26:46 -0400
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     syzbot <syzbot+e58112d71f77113ddb7b@syzkaller.appspotmail.com>,
-        aarcange@redhat.com, akpm@linux-foundation.org,
-        christian@brauner.io, davem@davemloft.net, ebiederm@xmission.com,
-        elena.reshetova@intel.com, guro@fb.com, hch@infradead.org,
-        james.bottomley@hansenpartnership.com, jglisse@redhat.com,
-        keescook@chromium.org, ldv@altlinux.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-parisc@vger.kernel.org,
-        luto@amacapital.net, mhocko@suse.com, mingo@kernel.org,
-        namit@vmware.com, peterz@infradead.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
-        wad@chromium.org
-Subject: Re: WARNING in __mmdrop
-Message-ID: <20190725092332-mutt-send-email-mst@kernel.org>
-References: <20190723032024-mutt-send-email-mst@kernel.org>
- <1d14de4d-0133-1614-9f64-3ded381de04e@redhat.com>
- <20190723035725-mutt-send-email-mst@kernel.org>
- <3f4178f1-0d71-e032-0f1f-802428ceca59@redhat.com>
- <20190723051828-mutt-send-email-mst@kernel.org>
- <caff362a-e208-3468-3688-63e1d093a9d3@redhat.com>
- <20190725012149-mutt-send-email-mst@kernel.org>
- <55e8930c-2695-365f-a07b-3ad169654d28@redhat.com>
- <20190725042651-mutt-send-email-mst@kernel.org>
- <84bb2e31-0606-adff-cf2a-e1878225a847@redhat.com>
+        Thu, 25 Jul 2019 09:28:22 -0400
+Received: from pps.filterd (m0042333.ppops.net [127.0.0.1])
+        by mx0b-0014ca01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6PDNptF021304;
+        Thu, 25 Jul 2019 06:28:01 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=from : to : cc :
+ subject : date : message-id : references : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=proofpoint;
+ bh=EyyBGUacYXnQjizWq9fNekcgqM0FLXqrya+m4HVdjDw=;
+ b=QUkbnBB/XatwUSe/L7XNpGqcErDJOYk1iWvP4Uy1Sf1iSuq2AUohDoIKSC1hbhfBgj56
+ QLAaLkWxsPbU+oOJ4hSmu8+Bax/LeY4eC79JXLbbPGzXuAOKfaZkdZr6g5IQGm8Ibj56
+ SE9KAQmPpantxJX/s+AO8OApArAoPDWMO5gALhWq4UsOJip7tnXQNe5qoFYPErcbN+Qg
+ xyYiPdEF3ruX/BYY6yTjMZA/i/j+EIaxzsRd8zi062VIuKLsNapj59jiGljALt+PnGNS
+ C7V/Qn6S4sxCt7kCqDs4NfsnC9MthpzsvqVkMAuLZTOYefRI2zND7iJSQ+Agnxt0tEca aw== 
+Authentication-Results: cadence.com;
+        spf=pass smtp.mailfrom=pthombar@cadence.com
+Received: from nam04-bn3-obe.outbound.protection.outlook.com (mail-bn3nam04lp2054.outbound.protection.outlook.com [104.47.46.54])
+        by mx0b-0014ca01.pphosted.com with ESMTP id 2tx61f9f8q-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 25 Jul 2019 06:28:00 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=WBECF5C6BJkExE/8XTg51752LMDtRcMGYNV2yYBIrpWPsyA2Y6WxPW1mfQnKLKndItU7Irt5DaDCXa26D0bPzpFAUFC9hKVlZCwK+T4iL6vrZQRS9UAFSKS1p3cKfIkAw32QmNiCyiSgciZ86KzAgaJHJ2jxB5xLKfarsDPFHu2SR1yfTm6c8NUD7AWiY5Tn1/gyG4R/n/32Xv/QM5//NwZj1YDuwpcadV+/yhcJNcwJWaX3S/ejqX1rsRLKRp9DUQ9MinZYf9Z+/B6yWULZmz9Cl8RuMVHkiQaRDouulGwn1gGTebeSI1BEfLZTBXMck4IOy7M1Vfyu+jPhu74tsw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=EyyBGUacYXnQjizWq9fNekcgqM0FLXqrya+m4HVdjDw=;
+ b=TUbNzkplg7Vf0AjFibs5yDa/koBBc4sNB/wI0jT4MCjZNPl67PEYLQYkVwiuVjp/lt5eeN/f1QqnYB8iInIPrg2Sp5fO2LfSeXsJE1JqBBVkdhMCSBRt1L9ZZZjJNhWEkUvD80uLF4ELbzeouI1po9xVLEe+/L8iq696N6wVm9d7birBEtl7jj10YTZZUE0L5Ydf7uA4LZXxpnZpnQI75ZnL0WZ9U9ZcplxEdr6EhKi9Z/IGuGkUpfgG1DIPc3hjWVUjDA7ISBBj2hmAPAe233TjKNM6fHkFXIWoqfKfwvXCf3g311sNa28H1m757X4BPML5KvGPGRWegdZieyei9A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
+ smtp.mailfrom=cadence.com;dmarc=pass action=none
+ header.from=cadence.com;dkim=pass header.d=cadence.com;arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=EyyBGUacYXnQjizWq9fNekcgqM0FLXqrya+m4HVdjDw=;
+ b=Sde3X7ZLtaKnx5CleHxZvoZKclEvtUqW5Fyy/58Ta2anitnnbcBXH8W4O/5N67sx6YmZOVZBYeXNsLTtDvKtG+/XQ5MMsXF4b/QRPnLdgIVwO70ghgV6/5eMq1adOoYf1XrGI9d1c46uRvamcpoX0hG78/lwIKlaUsEm0/g/24U=
+Received: from CO2PR07MB2469.namprd07.prod.outlook.com (10.166.94.21) by
+ CO2PR07MB2565.namprd07.prod.outlook.com (10.166.201.16) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2115.10; Thu, 25 Jul 2019 13:27:58 +0000
+Received: from CO2PR07MB2469.namprd07.prod.outlook.com
+ ([fe80::8d1b:292f:5f51:f6d]) by CO2PR07MB2469.namprd07.prod.outlook.com
+ ([fe80::8d1b:292f:5f51:f6d%6]) with mapi id 15.20.2115.005; Thu, 25 Jul 2019
+ 13:27:58 +0000
+From:   Parshuram Raju Thombare <pthombar@cadence.com>
+To:     Andrew Lunn <andrew@lunn.ch>
+CC:     "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
+        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Rafal Ciepiela <rafalc@cadence.com>,
+        Piotr Sroka <piotrs@cadence.com>,
+        Anil Joy Varughese <aniljoy@cadence.com>,
+        Arthur Marris <arthurm@cadence.com>,
+        Steven Ho <stevenh@cadence.com>,
+        Milind Parab <mparab@cadence.com>
+Subject: RE: [PATCH v6 0/5] net: macb: cover letter
+Thread-Topic: [PATCH v6 0/5] net: macb: cover letter
+Thread-Index: AQHVNyz5FQb5Z+JcbkKLGishkgcgwabQiEQAgArffIA=
+Date:   Thu, 25 Jul 2019 13:27:58 +0000
+Message-ID: <CO2PR07MB246961335F7D401785377765C1C10@CO2PR07MB2469.namprd07.prod.outlook.com>
+References: <1562769391-31803-1-git-send-email-pthombar@cadence.com>
+ <20190718151310.GE25635@lunn.ch>
+In-Reply-To: <20190718151310.GE25635@lunn.ch>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-dg-ref: PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNccHRob21iYXJcYXBwZGF0YVxyb2FtaW5nXDA5ZDg0OWI2LTMyZDMtNGE0MC04NWVlLTZiODRiYTI5ZTM1Ylxtc2dzXG1zZy0wMTY0Nzk3MC1hZWUwLTExZTktODUwMy0xMDY1MzBlNmVmM2VcYW1lLXRlc3RcMDE2NDc5NzItYWVlMC0xMWU5LTg1MDMtMTA2NTMwZTZlZjNlYm9keS50eHQiIHN6PSIxNDU1IiB0PSIxMzIwODUzNDg3NDE0Mjg1NjMiIGg9ImVFRHFiMjhoNE91WDlEREJNOU5pclBkdmlYND0iIGlkPSIiIGJsPSIwIiBibz0iMSIvPjwvbWV0YT4=
+x-dg-rorf: 
+x-originating-ip: [59.145.174.78]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 67c097c8-c3b9-41ff-3abd-08d71103e90c
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600148)(711020)(4605104)(1401327)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:CO2PR07MB2565;
+x-ms-traffictypediagnostic: CO2PR07MB2565:
+x-microsoft-antispam-prvs: <CO2PR07MB25655D2978C1F8AB8BF3092BC1C10@CO2PR07MB2565.namprd07.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-forefront-prvs: 0109D382B0
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(366004)(396003)(376002)(136003)(346002)(36092001)(199004)(189003)(478600001)(8936002)(14444005)(6916009)(86362001)(256004)(71190400001)(6506007)(71200400001)(6436002)(74316002)(26005)(4326008)(102836004)(66476007)(66556008)(64756008)(81156014)(55016002)(66446008)(186003)(8676002)(66946007)(33656002)(229853002)(81166006)(476003)(11346002)(446003)(486006)(2906002)(9686003)(107886003)(66066001)(5660300002)(25786009)(52536014)(53936002)(54906003)(6246003)(3846002)(305945005)(68736007)(7736002)(7696005)(316002)(76176011)(6116002)(99286004)(76116006)(14454004);DIR:OUT;SFP:1101;SCL:1;SRVR:CO2PR07MB2565;H:CO2PR07MB2469.namprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: cadence.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: CL/aJcBuvYLYzsndeLuvZT36PkJiVuoO12nRULfBQq2DaacWuOpURNar1zyc9j8fh6ND89Yf8seUu1FHTZi1W8Vf6Esc4HV5Dl60PBlp6yfUoeRdQOeE1syK/4JJYDehJyTFxKDBswLgxfquqIRdHLFM5BJ18pYg5IAt2RW+eQWVjQOS0aW+ayQUOcEau5agBcUpplVjs9EGhSEmKbpFqtIQfN197715sDznWfPotxT3OstoaegY0FoTk0vb/wRHvLrCkJq0yG2zeVOY161gbUsp9lnsvPfd+x10ViSNnkre4yfafrSrcd8NOWUVEfgjs5CzOurKdlJDIUNveIKIGE+fI3mjrXlP+LKS1weIu5oU5B6PefjEmX8bErS9GvR508IOV0n4KaGUuhEytG8VxDYifn/uL/slg/gwy6n+P88=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <84bb2e31-0606-adff-cf2a-e1878225a847@redhat.com>
+X-OriginatorOrg: cadence.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 67c097c8-c3b9-41ff-3abd-08d71103e90c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Jul 2019 13:27:58.5942
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: pthombar@global.cadence.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO2PR07MB2565
+X-Proofpoint-SPF-Result: pass
+X-Proofpoint-SPF-Record: v=spf1 include:spf.smktg.jp include:_spf.salesforce.com
+ include:mktomail.com include:spf-0014ca01.pphosted.com
+ include:spf.protection.outlook.com include:auth.msgapp.com
+ include:spf.mandrillapp.com ~all
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-25_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0
+ priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0
+ spamscore=0 clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=905 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1907250157
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 25, 2019 at 09:21:22PM +0800, Jason Wang wrote:
-> 
-> On 2019/7/25 下午4:28, Michael S. Tsirkin wrote:
-> > On Thu, Jul 25, 2019 at 03:43:41PM +0800, Jason Wang wrote:
-> > > On 2019/7/25 下午1:52, Michael S. Tsirkin wrote:
-> > > > On Tue, Jul 23, 2019 at 09:31:35PM +0800, Jason Wang wrote:
-> > > > > On 2019/7/23 下午5:26, Michael S. Tsirkin wrote:
-> > > > > > On Tue, Jul 23, 2019 at 04:49:01PM +0800, Jason Wang wrote:
-> > > > > > > On 2019/7/23 下午4:10, Michael S. Tsirkin wrote:
-> > > > > > > > On Tue, Jul 23, 2019 at 03:53:06PM +0800, Jason Wang wrote:
-> > > > > > > > > On 2019/7/23 下午3:23, Michael S. Tsirkin wrote:
-> > > > > > > > > > > > Really let's just use kfree_rcu. It's way cleaner: fire and forget.
-> > > > > > > > > > > Looks not, you need rate limit the fire as you've figured out?
-> > > > > > > > > > See the discussion that followed. Basically no, it's good enough
-> > > > > > > > > > already and is only going to be better.
-> > > > > > > > > > 
-> > > > > > > > > > > And in fact,
-> > > > > > > > > > > the synchronization is not even needed, does it help if I leave a comment to
-> > > > > > > > > > > explain?
-> > > > > > > > > > Let's try to figure it out in the mail first. I'm pretty sure the
-> > > > > > > > > > current logic is wrong.
-> > > > > > > > > Here is what the code what to achieve:
-> > > > > > > > > 
-> > > > > > > > > - The map was protected by RCU
-> > > > > > > > > 
-> > > > > > > > > - Writers are: MMU notifier invalidation callbacks, file operations (ioctls
-> > > > > > > > > etc), meta_prefetch (datapath)
-> > > > > > > > > 
-> > > > > > > > > - Readers are: memory accessor
-> > > > > > > > > 
-> > > > > > > > > Writer are synchronized through mmu_lock. RCU is used to synchronized
-> > > > > > > > > between writers and readers.
-> > > > > > > > > 
-> > > > > > > > > The synchronize_rcu() in vhost_reset_vq_maps() was used to synchronized it
-> > > > > > > > > with readers (memory accessors) in the path of file operations. But in this
-> > > > > > > > > case, vq->mutex was already held, this means it has been serialized with
-> > > > > > > > > memory accessor. That's why I think it could be removed safely.
-> > > > > > > > > 
-> > > > > > > > > Anything I miss here?
-> > > > > > > > > 
-> > > > > > > > So invalidate callbacks need to reset the map, and they do
-> > > > > > > > not have vq mutex. How can they do this and free
-> > > > > > > > the map safely? They need synchronize_rcu or kfree_rcu right?
-> > > > > > > Invalidation callbacks need but file operations (e.g ioctl) not.
-> > > > > > > 
-> > > > > > > 
-> > > > > > > > And I worry somewhat that synchronize_rcu in an MMU notifier
-> > > > > > > > is a problem, MMU notifiers are supposed to be quick:
-> > > > > > > Looks not, since it can allow to be blocked and lots of driver depends on
-> > > > > > > this. (E.g mmu_notifier_range_blockable()).
-> > > > > > Right, they can block. So why don't we take a VQ mutex and be
-> > > > > > done with it then? No RCU tricks.
-> > > > > This is how I want to go with RFC and V1. But I end up with deadlock between
-> > > > > vq locks and some MM internal locks. So I decide to use RCU which is 100%
-> > > > > under the control of vhost.
-> > > > > 
-> > > > > Thanks
-> > > > And I guess the deadlock is because GUP is taking mmu locks which are
-> > > > taken on mmu notifier path, right?
-> > > 
-> > > Yes, but it's not the only lock. I don't remember the details, but I can
-> > > confirm I meet issues with one or two other locks.
-> > > 
-> > > 
-> > > >     How about we add a seqlock and take
-> > > > that in invalidate callbacks?  We can then drop the VQ lock before GUP,
-> > > > and take it again immediately after.
-> > > > 
-> > > > something like
-> > > > 	if (!vq_meta_mapped(vq)) {
-> > > > 		vq_meta_setup(&uaddrs);
-> > > > 		mutex_unlock(vq->mutex)
-> > > > 		vq_meta_map(&uaddrs);
-> > > 
-> > > The problem is the vq address could be changed at this time.
-> > > 
-> > > 
-> > > > 		mutex_lock(vq->mutex)
-> > > > 
-> > > > 		/* recheck both sock->private_data and seqlock count. */
-> > > > 		if changed - bail out
-> > > > 	}
-> > > > 
-> > > > And also requires that VQ uaddrs is defined like this:
-> > > > - writers must have both vq mutex and dev mutex
-> > > > - readers must have either vq mutex or dev mutex
-> > > > 
-> > > > 
-> > > > That's a big change though. For now, how about switching to a per-vq SRCU?
-> > > > That is only a little bit more expensive than RCU, and we
-> > > > can use synchronize_srcu_expedited.
-> > > > 
-> > > Consider we switch to use kfree_rcu(), what's the advantage of per-vq SRCU?
-> > > 
-> > > Thanks
-> > 
-> > I thought we established that notifiers must wait for
-> > all readers to finish before they mark page dirty, to
-> > prevent page from becoming dirty after address
-> > has been invalidated.
-> > Right?
-> 
-> 
-> Exactly, and that's the reason actually I use synchronize_rcu() there.
-> 
-> So the concern is still the possible synchronize_expedited()?
+Hi Andrew,
 
+>One thing which was never clear is how you are testing the features you ar=
+e
+>adding. Please could you describe your test setup and how each new feature
+>is tested using that hardware. I'm particularly interested in what C45 dev=
+ice
+>are you using? But i expect Russell would like to know more about SFP
+>modules you are using. Do you have any which require 1000BaseX,
+>2500BaseX, or provide copper 1G?
 
-I think synchronize_srcu_expedited.
+Sorry for late reply.
+Here is a little more information on our setup used for testing C45 patch w=
+ith a view to
+try clarify a few points.=20
+Regarding the MDIO communication channel that our controller supports - We =
+have tested
+MDIO transfers through Clause 22, but none of our local PHY's support Claus=
+e 45 so our hardware
+team have created an example Clause 45 slave device for us to add support t=
+o the driver.
+Note our hardware has been in silicon for 20 years, with customers using th=
+eir own software to support
+MDIO (both clause 22 and clause 45 functionality) and so this has been in C=
+adence's hardware controller
+many times.=20
+The programming interface is not hugely different between the two clauses a=
+nd therefore we feel the risk is low.
 
-synchronize_expedited sends lots of IPI and is bad for realtime VMs.
+For other features like SGMII, USXGMII we are using kc705 and vcu118 FPGA b=
+oards.
+10G SFP+ module from Tyco electronics is used for testing 10G USXGMII in fi=
+xed AN mode.
 
-> Can I do this
-> on through another series on top of the incoming V2?
-> 
-> Thanks
-> 
-
-The question is this: is this still a gain if we switch to the
-more expensive srcu? If yes then we can keep the feature on,
-if not we'll put it off until next release and think
-of better solutions. rcu->srcu is just a find and replace,
-don't see why we need to defer that. can be a separate patch
-for sure, but we need to know how well it works.
-
--- 
-MST
+Regards,
+Parshuram Thombare
