@@ -2,120 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D14D075005
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 15:47:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 36A6F74FFA
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 15:47:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390536AbfGYNrq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 09:47:46 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:53422 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390490AbfGYNrk (ORCPT
+        id S2390427AbfGYNr3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 09:47:29 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:44797 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390316AbfGYNr2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 09:47:40 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x6PDlCSU120551;
-        Thu, 25 Jul 2019 08:47:12 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1564062432;
-        bh=w+T9dlJYQaD9FfO7esnlLeCqS7R5uSui0ZKYuPaxp58=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=uGcHOF0YgoXt79Yfr7hLsqm1JY3HTVLxjgkOILT/UaHSLWFV3ZaSmTVWbJziwnDRc
-         BMagzBiPV3eu0wESHj12ybXkPTZuyJwm+5ZdPgibV9ewt0aPzmLYDA8uzTe1ZxzFuK
-         1IwKDp01j1CbNfwK/+VJr6dVH6ehHecyGvmXWmaM=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x6PDlCMr050293
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 25 Jul 2019 08:47:12 -0500
-Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Thu, 25
- Jul 2019 08:47:12 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Thu, 25 Jul 2019 08:47:12 -0500
-Received: from [10.250.86.29] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x6PDlBud103612;
-        Thu, 25 Jul 2019 08:47:11 -0500
-Subject: Re: [PATCH v6 4/5] dma-buf: heaps: Add CMA heap to dmabuf heaps
-To:     Christoph Hellwig <hch@infradead.org>,
-        Laura Abbott <labbott@redhat.com>
-CC:     John Stultz <john.stultz@linaro.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Liam Mark <lmark@codeaurora.org>,
-        Pratik Patel <pratikp@codeaurora.org>,
-        Brian Starkey <Brian.Starkey@arm.com>,
-        Vincent Donnefort <Vincent.Donnefort@arm.com>,
-        Sudipto Paul <Sudipto.Paul@arm.com>,
-        Xu YiPing <xuyiping@hisilicon.com>,
-        "Chenfeng (puck)" <puck.chen@hisilicon.com>,
-        butao <butao@hisilicon.com>,
-        "Xiaqing (A)" <saberlily.xia@hisilicon.com>,
-        Yudongbin <yudongbin@hisilicon.com>,
-        Chenbo Feng <fengc@google.com>,
-        Alistair Strachan <astrachan@google.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>
-References: <20190624194908.121273-1-john.stultz@linaro.org>
- <20190624194908.121273-5-john.stultz@linaro.org>
- <20190718100840.GB19666@infradead.org>
- <CALAqxLWLx_tHVjZqrSNWfQ_M2RGGqh4qth3hi9GGRdSPov-gcw@mail.gmail.com>
- <20190724065958.GC16225@infradead.org>
- <25353c4f-5389-0352-b34e-78698b35e588@redhat.com>
- <20190725124820.GC20286@infradead.org>
-From:   "Andrew F. Davis" <afd@ti.com>
-Message-ID: <18975c1a-7e4e-fab3-eec8-387fbf9dcfe5@ti.com>
-Date:   Thu, 25 Jul 2019 09:47:11 -0400
+        Thu, 25 Jul 2019 09:47:28 -0400
+Received: by mail-wr1-f67.google.com with SMTP id p17so50842386wrf.11
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 06:47:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=SuqKb4YQAqjtnzI980ZUMZ7vCnY7EH5Bjcy9gutNiME=;
+        b=ohNmGB+KdtaUc2WPUjLNt0udZq7iwppN9YxLPLgShKah5OHq7K6qtwWiE/8Wh5JvtV
+         4LLQAxW8HNL4TL7cu6jBvHFKPWkHkOrxdSBAR0jXh+ikTxaB/rK2/EFZeWs7kmMUQM8y
+         f69FUjnZin9OrtcQhAcySV3mmGQ/P8Hvkl3iDQWNQmRyEdoO2byTRG5WIO6dExVCdwBH
+         o+sIBbQIpN+DL+1468hnK30OgTzy3F+1vfCIxSyC0yqqTY7ywYZrMsVS/HAVhmOph1sr
+         LkbFbZVDlxUtoxVVpDXpS1QoI4VlAVnDwHBjCI8tSe2H0+2MtnwveOCT09dOfVmO3bUi
+         b3nA==
+X-Gm-Message-State: APjAAAWSeg6pELACt8dsxeHYidE0JbU8SbswTpdoAavj22ih8cnTvVMS
+        i8oM6MzBNHUNz9s05XrAyBsc0at4nes=
+X-Google-Smtp-Source: APXvYqyVTWbHYVJtfb8PPMD0m6sn37kpY1SzS/gA5xrUjwXvBu+fI5/Qxy5jGVWV/mlkU2TH/UWX8Q==
+X-Received: by 2002:adf:e602:: with SMTP id p2mr58047995wrm.306.1564062446855;
+        Thu, 25 Jul 2019 06:47:26 -0700 (PDT)
+Received: from ?IPv6:2001:b07:6468:f312:cc23:f353:392:d2ee? ([2001:b07:6468:f312:cc23:f353:392:d2ee])
+        by smtp.gmail.com with ESMTPSA id f12sm54395018wrg.5.2019.07.25.06.47.25
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Thu, 25 Jul 2019 06:47:26 -0700 (PDT)
+Subject: Re: [PATCH 5.2 000/413] 5.2.3-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Anders Roxell <anders.roxell@linaro.org>
+Cc:     sean.j.christopherson@intel.com, wanpengli@tencent.com,
+        jmattson@google.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        lkft-triage@lists.linaro.org, ben.hutchings@codethink.co.uk,
+        stable@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+        torvalds@linux-foundation.org, linux@roeck-us.net
+References: <20190724191735.096702571@linuxfoundation.org>
+ <CADYN=9+WLxhmqX3JNL_s-kWSN97G=8WhD=TF=uAuKecJnKcj_Q@mail.gmail.com>
+ <20190725113437.GA27429@kroah.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Message-ID: <230a5b34-d23e-8318-0b1f-d23ada7318e0@redhat.com>
+Date:   Thu, 25 Jul 2019 15:47:25 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <20190725124820.GC20286@infradead.org>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20190725113437.GA27429@kroah.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/25/19 8:48 AM, Christoph Hellwig wrote:
-> On Wed, Jul 24, 2019 at 07:38:07AM -0400, Laura Abbott wrote:
->> It's not just an optimization for Ion though. Ion was designed to
->> let the callers choose between system and multiple CMA heaps.
+On 25/07/19 13:34, Greg Kroah-Hartman wrote:
+> Any chance you can run 'git bisect' to find the offending patch?  Or
+> just try reverting a few, you can ignore the ppc ones, so that only
+> leaves you 7 different commits.
 > 
-> Who cares about ion?  That some out of tree android crap that should
-> not be relevant for upstream except as an example for how not to design
-> things..
-> 
+> Does this same test pass in 5.3-rc1?
 
-Tell us how you really feel about ION :)
+Anders, are you running the same kvm-unit-tests commit that passed for 
+5.2.2?  My suspicion is that your previous test didn't have this commit
 
->> On other
->> systems there may be multiple CMA regions dedicated to a specific
->> purpose or placed at a specific address. The callers need to
->> be able to choose exactly whether they want a particular CMA region
->> or discontiguous regions.
-> 
-> At least in cma is only used either with the global pool or a per-device
-> cma pool.  I think if you want to make this new dma-buf API fit in with
-> the rest with the kernel you follow that model, and pass in a struct
-> device to select the particular cma area, similar how the DMA allocator
-> works.
-> 
+    commit 95d6d2c3228891537ee8e35d2e2984964ee0cf6b
+    Author:     Krish Sadhukhan <krish.sadhukhan@oracle.com>
+    AuthorDate: Fri Jun 28 18:14:47 2019 -0400
+    Commit:     Paolo Bonzini <pbonzini@redhat.com>
+    CommitDate: Thu Jul 11 14:26:53 2019 +0200
 
-This is a central allocator, it is not tied to any one device. If we
-knew the one device ahead of time we would just use the existing dma_alloc.
+    nVMX: Test Host Segment Registers and Descriptor Tables on vmentry of nested guests
+    
 
-We might be able to solve some of that with late mapping after all the
-devices attach to the buffer, but even then, which device's CMA area
-would we chose to use from all the attached devices?
+since the symptoms match and the corresponding fix was made in 5.3.
 
-I can agree that allocating from per-device CMA using Heaps doesn't make
-much sense, but for global pools I'm not sure I see any way to allow
-devices to select which pool is right for a specific use. They don't
-have the full use-case information like the application does, the
-selection needs to be made from the application.
+I think Linaro's tests would be helped by making kvm-unit-tests.git a submodule of
+Linux, but I'm a bit wary since it would be the first submodule and I wouldn't know
+where to put it...
 
-Andrew
+Paolo
