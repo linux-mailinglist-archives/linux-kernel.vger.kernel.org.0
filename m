@@ -2,119 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C7E0074DB5
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 14:04:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BD71874DBC
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 14:06:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404471AbfGYMEr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 08:04:47 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:34858 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403965AbfGYMEn (ORCPT
+        id S1727817AbfGYMGH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 08:06:07 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:42115 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725774AbfGYMGH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 08:04:43 -0400
-Received: by mail-wm1-f68.google.com with SMTP id l2so44496018wmg.0
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 05:04:42 -0700 (PDT)
+        Thu, 25 Jul 2019 08:06:07 -0400
+Received: by mail-wr1-f66.google.com with SMTP id x1so584855wrr.9
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 05:06:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=QrZnAj55GJc2DX6oG5oAtaMU4bSEqiLtxAoqbHsBW6U=;
+        b=Nj+0T5bs0d2ufZh1I08Rd4bGQokn2WEvSLQX+2AJ7s+UB3f9RiKMpd8q7mXlGJ5Avl
+         vFcQwnzFB2vmGE+nstAcIOEevpTqhsk9Ijq0QTEaGjX4iznBhWaW5Vn88nfnaGvrG3cc
+         vqvD+TpluBbMnlSomn821rTVwAzQMFwZYdL/wpEjFAtNp0SL4oTPmA9d3tLvEEVPitS+
+         Szrr8RjNC78tK/OYj+aYnFmYbADlXqJXX5KXgHIxCa4zEzywuQHW3XBPtXmUwYQ4s7dU
+         eIlGXALAJh8y9W2giQe6DTlNpw0TsBnCM4O2ia2fXmuL29Ywnl4zDFzAEbxMuJ1O9gbb
+         MCgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=/bIhamhaCP8Od8nQqlaPQjE7bAnGgUhjKuEYaWcyOWQ=;
-        b=kUVopFyiehUokAPGq0foiTxZKcI2j8PsKC0u4LBzFpIcHKQRKFJfTxqmFmJtZoft5b
-         zS7sxPGz2LhEDC8Mm0lomQukkaqCTaADhi2aGO+04WHOHO4T3Btr6/hRboye8LfawlMD
-         L1vHwYs77XbUDqA0/sB2pGoFnJqVG4t7+DdEG+7/3MptHBaeoO9e0L2PuLCkK6obMOnZ
-         zP8dm0UVpXKHqoUuSvzMc2ANc8x63Se/a9u3PrcMpOlpPBcsGYze/BFXCHardgoD1GMv
-         4Y0U7CvL4nEAodqiw/NAs6lTnfKj0gixjn8y1dkeptefACofQxk9D1VD6BFV8Nodgkj1
-         Jmjg==
-X-Gm-Message-State: APjAAAUiOSnT8uCBgat/UGfAGRejAipj15JMbfYRdyvVUKT+0uzL9v7p
-        AZpb6Tt5QfjaB61NUAmIuUno2g==
-X-Google-Smtp-Source: APXvYqww1uMiX4zlMkgdMe0dz50mX1hWd4r7Qep+978QB21ye1nFecSBufvr9akC9iei6QIfTX/wig==
-X-Received: by 2002:a1c:b707:: with SMTP id h7mr78305590wmf.45.1564056281416;
-        Thu, 25 Jul 2019 05:04:41 -0700 (PDT)
-Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id j6sm73793424wrx.46.2019.07.25.05.04.40
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 25 Jul 2019 05:04:40 -0700 (PDT)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     stable@vger.kernel.org
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
-Subject: [PATCH stable-5.2 3/3] Revert "kvm: x86: Use task structs fpu field for user"
-Date:   Thu, 25 Jul 2019 14:04:36 +0200
-Message-Id: <20190725120436.5432-4-vkuznets@redhat.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190725120436.5432-1-vkuznets@redhat.com>
-References: <20190725120436.5432-1-vkuznets@redhat.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=QrZnAj55GJc2DX6oG5oAtaMU4bSEqiLtxAoqbHsBW6U=;
+        b=H9xMlazOboUjR1u06TzYoXRR/7frqNuRQUbQdOep0YFN/r35AUr3Hoj3yvPTVhJ2yT
+         IAUYNWmkH6q3Iz9rtXyC01xs+e2NaG6vpH+KblsY1Rw7lV0YOTA+YuotBZ7r3vlWC0YV
+         H+HaRT9AMSI849/9k/uHkrLR5JSyh2s6+4iVjrz1nlOAmnMZZbA5waQ6t5f1ZQj/8YPN
+         JApnTlujc4GnAlb3BvrSdjT5/kInA3yA92Cz/A/xEenkCgaEmGQQOk2TiLghVU3TmO8N
+         1aIftl59wBwM/74LEyoblVSoHUmnLgwct9pVFRl/W+EzHoVxtVZ8p1x1wfAgn7/JRrNq
+         xQxg==
+X-Gm-Message-State: APjAAAVNPzU59nMrYq+cuLRIm863Zcn/OiU0K1ggZ9mYqt+viQ50MDUQ
+        2uy+9nqkF21sBVurY6DPlo7euw==
+X-Google-Smtp-Source: APXvYqz5cejIS4t0SsogpN4XZMgzduvjw6mlihzrhym3PGwkVtCxXJ0tVe2LrtC3tMsHhpgVO8oZDw==
+X-Received: by 2002:a5d:4a49:: with SMTP id v9mr92906851wrs.44.1564056365397;
+        Thu, 25 Jul 2019 05:06:05 -0700 (PDT)
+Received: from dell ([2.27.35.164])
+        by smtp.gmail.com with ESMTPSA id r11sm62286536wre.14.2019.07.25.05.05.59
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 25 Jul 2019 05:06:04 -0700 (PDT)
+Date:   Thu, 25 Jul 2019 13:05:54 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        jarkko.nikula@linux.intel.com, mika.westerberg@linux.intel.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mfd: intel-lpss: Remove D3cold delay
+Message-ID: <20190725120554.GE23883@dell>
+References: <20190705045503.13379-1-kai.heng.feng@canonical.com>
+ <20190709114647.GX9224@smile.fi.intel.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190709114647.GX9224@smile.fi.intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paolo Bonzini <pbonzini@redhat.com>
+On Tue, 09 Jul 2019, Andy Shevchenko wrote:
 
-[ Upstream commit ec269475cba7bcdd1eb8fdf8e87f4c6c81a376fe ]
+> On Fri, Jul 05, 2019 at 12:55:03PM +0800, Kai-Heng Feng wrote:
+> > Goodix touchpad may drop its first couple input events when
+> > i2c-designware-platdrv and intel-lpss it connects to took too long to
+> > runtime resume from runtime suspended state.
+> > 
+> > This issue happens becuase the touchpad has a rather small buffer to
+> > store up to 13 input events, so if the host doesn't read those events in
+> > time (i.e. runtime resume takes too long), events are dropped from the
+> > touchpad's buffer.
+> > 
+> > The bottleneck is D3cold delay it waits when transitioning from D3cold
+> > to D0, hence remove the delay to make the resume faster. I've tested
+> > some systems with intel-lpss and haven't seen any regression.
+> 
+> Thank you for the patch. I took it to our internal testing and will tell
+> the result within couple of weeks.
 
-This reverts commit 240c35a3783ab9b3a0afaba0dde7291295680a6b
-("kvm: x86: Use task structs fpu field for user", 2018-11-06).
-The commit is broken and causes QEMU's FPU state to be destroyed
-when KVM_RUN is preempted.
+Any news?
 
-Fixes: 240c35a3783a ("kvm: x86: Use task structs fpu field for user")
-Cc: stable@vger.kernel.org
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
----
- arch/x86/include/asm/kvm_host.h | 7 ++++---
- arch/x86/kvm/x86.c              | 4 ++--
- 2 files changed, 6 insertions(+), 5 deletions(-)
+> > Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=202683
+> > Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+> > ---
+> >  drivers/mfd/intel-lpss-pci.c | 2 ++
+> >  1 file changed, 2 insertions(+)
+> > 
+> > diff --git a/drivers/mfd/intel-lpss-pci.c b/drivers/mfd/intel-lpss-pci.c
+> > index aed2c0447966..3c271b14e7c6 100644
+> > --- a/drivers/mfd/intel-lpss-pci.c
+> > +++ b/drivers/mfd/intel-lpss-pci.c
+> > @@ -35,6 +35,8 @@ static int intel_lpss_pci_probe(struct pci_dev *pdev,
+> >  	info->mem = &pdev->resource[0];
+> >  	info->irq = pdev->irq;
+> >  
+> > +	pdev->d3cold_delay = 0;
+> > +
+> >  	/* Probably it is enough to set this for iDMA capable devices only */
+> >  	pci_set_master(pdev);
+> >  	pci_try_set_mwi(pdev);
+> 
 
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index 26d1eb83f72a..08f46951c430 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -607,15 +607,16 @@ struct kvm_vcpu_arch {
- 
- 	/*
- 	 * QEMU userspace and the guest each have their own FPU state.
--	 * In vcpu_run, we switch between the user, maintained in the
--	 * task_struct struct, and guest FPU contexts. While running a VCPU,
--	 * the VCPU thread will have the guest FPU context.
-+	 * In vcpu_run, we switch between the user and guest FPU contexts.
-+	 * While running a VCPU, the VCPU thread will have the guest FPU
-+	 * context.
- 	 *
- 	 * Note that while the PKRU state lives inside the fpu registers,
- 	 * it is switched out separately at VMENTER and VMEXIT time. The
- 	 * "guest_fpu" state here contains the guest FPU context, with the
- 	 * host PRKU bits.
- 	 */
-+	struct fpu user_fpu;
- 	struct fpu *guest_fpu;
- 
- 	u64 xcr0;
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index fafd81d2c9ea..a4eceb0b5dde 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -8219,7 +8219,7 @@ static void kvm_load_guest_fpu(struct kvm_vcpu *vcpu)
- {
- 	fpregs_lock();
- 
--	copy_fpregs_to_fpstate(&current->thread.fpu);
-+	copy_fpregs_to_fpstate(&vcpu->arch.user_fpu);
- 	/* PKRU is separately restored in kvm_x86_ops->run.  */
- 	__copy_kernel_to_fpregs(&vcpu->arch.guest_fpu->state,
- 				~XFEATURE_MASK_PKRU);
-@@ -8236,7 +8236,7 @@ static void kvm_put_guest_fpu(struct kvm_vcpu *vcpu)
- 	fpregs_lock();
- 
- 	copy_fpregs_to_fpstate(vcpu->arch.guest_fpu);
--	copy_kernel_to_fpregs(&current->thread.fpu.state);
-+	copy_kernel_to_fpregs(&vcpu->arch.user_fpu.state);
- 
- 	fpregs_mark_activate();
- 	fpregs_unlock();
 -- 
-2.20.1
-
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
