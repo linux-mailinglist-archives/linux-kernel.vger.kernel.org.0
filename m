@@ -2,98 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4DAD0747EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 09:14:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 336B9747F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 09:16:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729524AbfGYHOR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 03:14:17 -0400
-Received: from mga01.intel.com ([192.55.52.88]:16267 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726001AbfGYHOR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 03:14:17 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jul 2019 00:14:17 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,305,1559545200"; 
-   d="scan'208";a="253846210"
-Received: from yhuang-dev.sh.intel.com (HELO yhuang-dev) ([10.239.159.29])
-  by orsmga001.jf.intel.com with ESMTP; 25 Jul 2019 00:14:15 -0700
-From:   "Huang\, Ying" <ying.huang@intel.com>
-To:     Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Matthew Wilcox <willy@infradead.org>
-Cc:     huang ying <huang.ying.caritas@gmail.com>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        <linux-mm@kvack.org>
-Subject: Re: kernel BUG at mm/swap_state.c:170!
-References: <CABXGCsN9mYmBD-4GaaeW_NrDu+FDXLzr_6x+XNxfmFV6QkYCDg@mail.gmail.com>
-        <CAC=cRTMz5S636Wfqdn3UGbzwzJ+v_M46_juSfoouRLS1H62orQ@mail.gmail.com>
-        <CABXGCsOo-4CJicvTQm4jF4iDSqM8ic+0+HEEqP+632KfCntU+w@mail.gmail.com>
-        <878ssqbj56.fsf@yhuang-dev.intel.com>
-        <CABXGCsOhimxC17j=jApoty-o1roRhKYoe+oiqDZ3c1s2r3QxFw@mail.gmail.com>
-        <87zhl59w2t.fsf@yhuang-dev.intel.com>
-        <CABXGCsNRpq=AF1aRgyquszy2MZzVfKZwrKXiSW-PnGiAR652cg@mail.gmail.com>
-Date:   Thu, 25 Jul 2019 15:14:15 +0800
-In-Reply-To: <CABXGCsNRpq=AF1aRgyquszy2MZzVfKZwrKXiSW-PnGiAR652cg@mail.gmail.com>
-        (Mikhail Gavrilov's message of "Thu, 25 Jul 2019 11:17:21 +0500")
-Message-ID: <87v9vq7fi0.fsf@yhuang-dev.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        id S2387835AbfGYHQk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 03:16:40 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:2721 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2387776AbfGYHQj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 03:16:39 -0400
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 6D97166E45FB2AA639F1;
+        Thu, 25 Jul 2019 15:16:37 +0800 (CST)
+Received: from [127.0.0.1] (10.177.96.203) by DGGEMS406-HUB.china.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server id 14.3.439.0; Thu, 25 Jul 2019
+ 15:16:30 +0800
+Subject: Re: [RFC PATCH 00/10] implement KASLR for powerpc/fsl_booke/32
+To:     <mpe@ellerman.id.au>, <linuxppc-dev@lists.ozlabs.org>,
+        <diana.craciun@nxp.com>, <christophe.leroy@c-s.fr>,
+        <benh@kernel.crashing.org>, <paulus@samba.org>,
+        <npiggin@gmail.com>, <keescook@chromium.org>,
+        <kernel-hardening@lists.openwall.com>
+CC:     <linux-kernel@vger.kernel.org>, <wangkefeng.wang@huawei.com>,
+        <yebin10@huawei.com>, <thunder.leizhen@huawei.com>,
+        <jingxiangfeng@huawei.com>, <fanchengyang@huawei.com>
+References: <20190717080621.40424-1-yanaijie@huawei.com>
+From:   Jason Yan <yanaijie@huawei.com>
+Message-ID: <e6ad41bc-5d5a-cf3f-b308-e1863b4fef99@huawei.com>
+Date:   Thu, 25 Jul 2019 15:16:28 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+In-Reply-To: <20190717080621.40424-1-yanaijie@huawei.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.96.203]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com> writes:
+Hi all, any comments?
 
-> On Tue, 23 Jul 2019 at 10:08, Huang, Ying <ying.huang@intel.com> wrote:
->>
->> Thanks!  I have found another (easier way) to reproduce the panic.
->> Could you try the below patch on top of v5.2-rc2?  It can fix the panic
->> for me.
->>
->
-> Thanks! Amazing work! The patch fixes the issue completely. The system
-> worked at a high load of 16 hours without failures.
 
-Thanks a lot for your help!
+On 2019/7/17 16:06, Jason Yan wrote:
+> This series implements KASLR for powerpc/fsl_booke/32, as a security
+> feature that deters exploit attempts relying on knowledge of the location
+> of kernel internals.
+> 
+> Since CONFIG_RELOCATABLE has already supported, what we need to do is
+> map or copy kernel to a proper place and relocate. Freescale Book-E
+> parts expect lowmem to be mapped by fixed TLB entries(TLB1). The TLB1
+> entries are not suitable to map the kernel directly in a randomized
+> region, so we chose to copy the kernel to a proper place and restart to
+> relocate.
+> 
+> Entropy is derived from the banner and timer base, which will change every
+> build and boot. This not so much safe so additionally the bootloader may
+> pass entropy via the /chosen/kaslr-seed node in device tree.
+> 
+> We will use the first 512M of the low memory to randomize the kernel
+> image. The memory will be split in 64M zones. We will use the lower 8
+> bit of the entropy to decide the index of the 64M zone. Then we chose a
+> 16K aligned offset inside the 64M zone to put the kernel in.
+> 
+>      KERNELBASE
+> 
+>          |-->   64M   <--|
+>          |               |
+>          +---------------+    +----------------+---------------+
+>          |               |....|    |kernel|    |               |
+>          +---------------+    +----------------+---------------+
+>          |                         |
+>          |----->   offset    <-----|
+> 
+>                                kimage_vaddr
+> 
+> We also check if we will overlap with some areas like the dtb area, the
+> initrd area or the crashkernel area. If we cannot find a proper area,
+> kaslr will be disabled and boot from the original kernel.
+> 
+> Jason Yan (10):
+>    powerpc: unify definition of M_IF_NEEDED
+>    powerpc: move memstart_addr and kernstart_addr to init-common.c
+>    powerpc: introduce kimage_vaddr to store the kernel base
+>    powerpc/fsl_booke/32: introduce create_tlb_entry() helper
+>    powerpc/fsl_booke/32: introduce reloc_kernel_entry() helper
+>    powerpc/fsl_booke/32: implement KASLR infrastructure
+>    powerpc/fsl_booke/32: randomize the kernel image offset
+>    powerpc/fsl_booke/kaslr: clear the original kernel if randomized
+>    powerpc/fsl_booke/kaslr: support nokaslr cmdline parameter
+>    powerpc/fsl_booke/kaslr: dump out kernel offset information on panic
+> 
+>   arch/powerpc/Kconfig                          |  11 +
+>   arch/powerpc/include/asm/nohash/mmu-book3e.h  |  10 +
+>   arch/powerpc/include/asm/page.h               |   7 +
+>   arch/powerpc/kernel/Makefile                  |   1 +
+>   arch/powerpc/kernel/early_32.c                |   2 +-
+>   arch/powerpc/kernel/exceptions-64e.S          |  10 -
+>   arch/powerpc/kernel/fsl_booke_entry_mapping.S |  23 +-
+>   arch/powerpc/kernel/head_fsl_booke.S          |  61 ++-
+>   arch/powerpc/kernel/kaslr_booke.c             | 439 ++++++++++++++++++
+>   arch/powerpc/kernel/machine_kexec.c           |   1 +
+>   arch/powerpc/kernel/misc_64.S                 |   5 -
+>   arch/powerpc/kernel/setup-common.c            |  23 +
+>   arch/powerpc/mm/init-common.c                 |   7 +
+>   arch/powerpc/mm/init_32.c                     |   5 -
+>   arch/powerpc/mm/init_64.c                     |   5 -
+>   arch/powerpc/mm/mmu_decl.h                    |  10 +
+>   arch/powerpc/mm/nohash/fsl_booke.c            |   8 +-
+>   17 files changed, 580 insertions(+), 48 deletions(-)
+>   create mode 100644 arch/powerpc/kernel/kaslr_booke.c
+> 
 
-Hi, Matthew and Kirill,
-
-I think we can fold this fix patch into your original patch and try
-again.
-
-> But still seems to me that page cache is being too actively crowded
-> out with a lack of memory. Since, in addition to the top speed SSD on
-> which the swap is located, there is also the slow HDD in the system
-> that just starts to rustle continuously when swap being used. It would
-> seem better to push some of the RAM onto a fast SSD into the swap
-> partition than to leave the slow HDD without a cache.
->
-> https://imgur.com/a/e8TIkBa
->
-> But I am afraid it will be difficult to implement such an algorithm
-> that analyzes the waiting time for the file I/O and waiting for paging
-> (memory) and decides to leave parts in memory where the waiting time
-> is more higher it would be more efficient for systems with several
-> drives with access speeds can vary greatly. By waiting time I mean
-> waiting time reading/writing to storage multiplied on the count of
-> hits. Thus, we will not just keep in memory the most popular parts of
-> the memory/disk, but also those parts of which read/write where was
-> most costly.
-
-Yes.  This is a valid problem.  I remember Johannes has a solution long
-ago, but I don't know why he give up that.  Some information can be
-found in the following URL.
-
-https://lwn.net/Articles/690079/
-
-Best Regards,
-Huang, Ying
-
-> --
-> Best Regards,
-> Mike Gavrilov.
