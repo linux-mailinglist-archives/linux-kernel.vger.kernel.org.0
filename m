@@ -2,47 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA98A75114
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 16:27:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 98F4075119
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 16:28:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388024AbfGYO1n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 10:27:43 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:46969 "EHLO
+        id S1728638AbfGYO2b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 10:28:31 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:37553 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726260AbfGYO1m (ORCPT
+        with ESMTP id S1725981AbfGYO2b (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 10:27:42 -0400
+        Thu, 25 Jul 2019 10:28:31 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6PERWGW1040246
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6PESJhp1040333
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Thu, 25 Jul 2019 07:27:33 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6PERWGW1040246
+        Thu, 25 Jul 2019 07:28:19 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6PESJhp1040333
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019071901; t=1564064853;
-        bh=JjEfk/hvyafi5da4/uodwFLhB/2zbqdyVSnsBoPBuj0=;
+        s=2019071901; t=1564064899;
+        bh=P/dG25HbVo5pH+ZUCoISKq6lnL+rzajresLSvbXO8AI=;
         h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=x5XHiksRFq7MBA4TpFXnNQr5bCydJciCJVsXW61BVGEq7vgG/Ll872ngvKcar4bOA
-         s2Qdv55ZxggkkhoRASFMq4L2ehdqmTDk1Ll2aYjuA9zl5GCsmsR3qOf2Y8vb1joTUh
-         JEXCQf008D+hpxq3I3XLar5KxLVhyCUyDjm2eCTVKb6aEP0ua4SCiPH8vEHuvpIYQ7
-         1lKNt/dBBTr7d4c2cBgXBqqGuqLsykB47xLaKA2Fvflowa6K8ySsG8zV+8aDV3rTf0
-         V+fb4o+TRRx9AssOepupabnsZOIukDQ5ahuwSvmhk8pbQCdVD225/T9jyyrbEHNO3r
-         lxzG18Sfq+bPg==
+        b=zphj+cWvc9f+H3o3PNWQ0Z+Ck+8m2cExhovYt5gtpm5NdPClv4+ePXZLl5EPI7iHV
+         Zf8DxMvdIgoXUwVSejzp4+vWjAUtRp8OqRrc9pg86F7dqFWJGhbPBZrRs+DUeAQzpm
+         RkgxGXbf/0sukzQXuTCROUwb3glrDdu7MrWWoU+FqLOxWvXBOW38I8nv9HtPhTP/sP
+         MN2Wv52+7miX+DTVxtqRIf4Qrwi9lzOtViut75Lmc3aaUez2ruzfpWkd0AT0IiyaUG
+         tceCWuuIG7de/Fsu1vKa+EfUfy81ke4IJXtpSQRmeKDmOv/LYwkvvVvGKh/UGGfbXT
+         +qcln7xQ3WZ+w==
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6PERWGk1040243;
-        Thu, 25 Jul 2019 07:27:32 -0700
-Date:   Thu, 25 Jul 2019 07:27:32 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6PESHwl1040329;
+        Thu, 25 Jul 2019 07:28:17 -0700
+Date:   Thu, 25 Jul 2019 07:28:17 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Thomas Gleixner <tipbot@zytor.com>
-Message-ID: <tip-82e574782345aa634e1544e80da85d71a9dbde19@git.kernel.org>
-Cc:     peterz@infradead.org, tglx@linutronix.de, hpa@zytor.com,
-        mingo@kernel.org, linux-kernel@vger.kernel.org
+Message-ID: <tip-9c92374b631d233abf5bd355cb4253d3d83d5578@git.kernel.org>
+Cc:     peterz@infradead.org, linux-kernel@vger.kernel.org,
+        mingo@kernel.org, hpa@zytor.com, tglx@linutronix.de
 Reply-To: mingo@kernel.org, linux-kernel@vger.kernel.org,
-          tglx@linutronix.de, peterz@infradead.org, hpa@zytor.com
-In-Reply-To: <20190722105219.725264153@linutronix.de>
-References: <20190722105219.725264153@linutronix.de>
+          peterz@infradead.org, hpa@zytor.com, tglx@linutronix.de
+In-Reply-To: <20190722105219.910317273@linutronix.de>
+References: <20190722105219.910317273@linutronix.de>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/apic] x86/apic/uv: Make x2apic_extra_bits static
-Git-Commit-ID: 82e574782345aa634e1544e80da85d71a9dbde19
+Subject: [tip:x86/apic] x86/cpu: Move arch_smt_update() to a neutral place
+Git-Commit-ID: 9c92374b631d233abf5bd355cb4253d3d83d5578
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -60,49 +60,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  82e574782345aa634e1544e80da85d71a9dbde19
-Gitweb:     https://git.kernel.org/tip/82e574782345aa634e1544e80da85d71a9dbde19
+Commit-ID:  9c92374b631d233abf5bd355cb4253d3d83d5578
+Gitweb:     https://git.kernel.org/tip/9c92374b631d233abf5bd355cb4253d3d83d5578
 Author:     Thomas Gleixner <tglx@linutronix.de>
-AuthorDate: Mon, 22 Jul 2019 20:47:15 +0200
+AuthorDate: Mon, 22 Jul 2019 20:47:17 +0200
 Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Thu, 25 Jul 2019 16:11:58 +0200
+CommitDate: Thu, 25 Jul 2019 16:11:59 +0200
 
-x86/apic/uv: Make x2apic_extra_bits static
+x86/cpu: Move arch_smt_update() to a neutral place
 
-Not used outside of the UV apic source.
+arch_smt_update() will be used to control IPI/NMI broadcasting via the
+shorthand mechanism. Keeping it in the bugs file and calling the apic
+function from there is possible, but not really intuitive.
+
+Move it to a neutral place and invoke the bugs function from there.
+
+No functional change.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lkml.kernel.org/r/20190722105219.725264153@linutronix.de
+Link: https://lkml.kernel.org/r/20190722105219.910317273@linutronix.de
 
 ---
- arch/x86/include/asm/apic.h        | 2 --
- arch/x86/kernel/apic/x2apic_uv_x.c | 2 +-
- 2 files changed, 1 insertion(+), 3 deletions(-)
+ arch/x86/include/asm/bugs.h  | 2 ++
+ arch/x86/kernel/cpu/bugs.c   | 2 +-
+ arch/x86/kernel/cpu/common.c | 9 +++++++++
+ 3 files changed, 12 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/include/asm/apic.h b/arch/x86/include/asm/apic.h
-index e647aa095867..f53eda2c986b 100644
---- a/arch/x86/include/asm/apic.h
-+++ b/arch/x86/include/asm/apic.h
-@@ -467,8 +467,6 @@ static inline unsigned default_get_apic_id(unsigned long x)
- 
- #ifdef CONFIG_X86_64
- extern void apic_send_IPI_self(int vector);
--
--DECLARE_PER_CPU(int, x2apic_extra_bits);
+diff --git a/arch/x86/include/asm/bugs.h b/arch/x86/include/asm/bugs.h
+index 542509b53e0f..794eb2129bc6 100644
+--- a/arch/x86/include/asm/bugs.h
++++ b/arch/x86/include/asm/bugs.h
+@@ -18,4 +18,6 @@ int ppro_with_ram_bug(void);
+ static inline int ppro_with_ram_bug(void) { return 0; }
  #endif
  
- extern void generic_bigsmp_probe(void);
-diff --git a/arch/x86/kernel/apic/x2apic_uv_x.c b/arch/x86/kernel/apic/x2apic_uv_x.c
-index 73a652093820..e6230af19864 100644
---- a/arch/x86/kernel/apic/x2apic_uv_x.c
-+++ b/arch/x86/kernel/apic/x2apic_uv_x.c
-@@ -22,7 +22,7 @@
- #include <asm/uv/uv.h>
- #include <asm/apic.h>
++extern void cpu_bugs_smt_update(void);
++
+ #endif /* _ASM_X86_BUGS_H */
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index 66ca906aa790..6d9636c2ca51 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -700,7 +700,7 @@ static void update_mds_branch_idle(void)
  
--DEFINE_PER_CPU(int, x2apic_extra_bits);
-+static DEFINE_PER_CPU(int, x2apic_extra_bits);
+ #define MDS_MSG_SMT "MDS CPU bug present and SMT on, data leak possible. See https://www.kernel.org/doc/html/latest/admin-guide/hw-vuln/mds.html for more details.\n"
  
- static enum uv_system_type	uv_system_type;
- static bool			uv_hubless_system;
+-void arch_smt_update(void)
++void cpu_bugs_smt_update(void)
+ {
+ 	/* Enhanced IBRS implies STIBP. No update required. */
+ 	if (spectre_v2_enabled == SPECTRE_V2_IBRS_ENHANCED)
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index 11472178e17f..1ee6598c5d83 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -1945,3 +1945,12 @@ void microcode_check(void)
+ 	pr_warn("x86/CPU: CPU features have changed after loading microcode, but might not take effect.\n");
+ 	pr_warn("x86/CPU: Please consider either early loading through initrd/built-in or a potential BIOS update.\n");
+ }
++
++/*
++ * Invoked from core CPU hotplug code after hotplug operations
++ */
++void arch_smt_update(void)
++{
++	/* Handle the speculative execution misfeatures */
++	cpu_bugs_smt_update();
++}
