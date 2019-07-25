@@ -2,89 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E72EF7557A
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 19:24:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 163D275576
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 19:24:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391135AbfGYRXy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 13:23:54 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:39680 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390913AbfGYRXv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 13:23:51 -0400
-Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
-        by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1hqhSw-0001Jl-MH; Thu, 25 Jul 2019 11:23:50 -0600
-Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1hqhSw-0001no-Gu; Thu, 25 Jul 2019 11:23:42 -0600
-From:   Logan Gunthorpe <logang@deltatee.com>
-To:     linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Cc:     Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
-        Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@fb.com>,
-        Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>,
-        Max Gurtovoy <maxg@mellanox.com>,
-        Stephen Bates <sbates@raithlin.com>,
-        Logan Gunthorpe <logang@deltatee.com>
-Date:   Thu, 25 Jul 2019 11:23:35 -0600
-Message-Id: <20190725172335.6825-17-logang@deltatee.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190725172335.6825-1-logang@deltatee.com>
-References: <20190725172335.6825-1-logang@deltatee.com>
+        id S2391212AbfGYRYD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 13:24:03 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:42778 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391148AbfGYRYB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 13:24:01 -0400
+Received: by mail-pf1-f193.google.com with SMTP id q10so23080693pff.9;
+        Thu, 25 Jul 2019 10:24:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XQkCw3tqYxNg25HyKYhw0IoWyx88axOMkKNb8Un50tc=;
+        b=dtqqC+qeDMpotBFXm5ofjdw8IToSv9qRF1RBf0M8CMZ3sK9KT9AFSltvF0j0mflCX+
+         Rf3WWNwqi+Kqwb40rz/Z9Fh/AwX7ZmQ8cylNu7Do05652MK/d/h0ZQ8BQzTBeDwWhhtb
+         rrtYEa8v/EEneyR5gVQHEFYmYIpeluOHPDM5jH3NuVdjahlqXBXVMZVR+OuzWsV5ia54
+         sRAWLjTKolit+S8ZmPPfu9+XWb/2qWY2je8D9kmkrUlR10tLH95eZLtd9+axD8uRPTGL
+         /f859Ji0UERJJcAsWJeMvSbxmf7wIBE6C2AjBQxj8gONXhn7GesJLt/QVfDc2lB/fPPh
+         kROw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XQkCw3tqYxNg25HyKYhw0IoWyx88axOMkKNb8Un50tc=;
+        b=Fbo1dv5Qxkdqp1P0jbUQnvabvQPkfzS5sBNZOzYWXF2islHRuPPvMYvA/o/TI11znp
+         cixAJJ3HYu7oAfAs4Iugl8gcINaOsRV+DrzWu8og5Qok+0DloCMik9Xi8zUU55eQ9VTD
+         uClwjH2KWkTwQAbPXbm9t6XXT7KMnYPrlMGU4ansg4Nos9XHiY2Qa7w8ssYnAoqNYTBI
+         lMlPEEPGW0QUDVLgJsarnc2uDrSoHWXcCH+lyhOaLiWzoUaYzzAMYW3TEoBY2jeiW8hg
+         U0qeZVDu9bCgc3k9Wufxyn/6ztMPQWuKXtSboAW1XhXCvaSyLHYobfiGAWQ5On3cb/Cb
+         Jl8Q==
+X-Gm-Message-State: APjAAAWh1xEEX/cw8zNeXQ2n0cwSd0RKi9cw2qIJAKoZtbAQ9v9MOYbc
+        ROTFGj8ND1A87mR6KTXzh2KD65SOWHt/4Yll4Ao=
+X-Google-Smtp-Source: APXvYqxeocBj7MIhS7/W5mqQJNVfcLfk+fSnj7piRIl53LF4ZfMVc4I1OSx4rephqWmIkm+yiiNFFe540IkDy1F0KGU=
+X-Received: by 2002:a62:4e86:: with SMTP id c128mr17725609pfb.64.1564075441091;
+ Thu, 25 Jul 2019 10:24:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org, linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, hch@lst.de, sagi@grimberg.me, kbusch@kernel.org, axboe@fb.com, Chaitanya.Kulkarni@wdc.com, maxg@mellanox.com, sbates@raithlin.com, logang@deltatee.com
-X-SA-Exim-Mail-From: gunthorp@deltatee.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        GREYLIST_ISWHITE,MYRULES_NO_TEXT autolearn=ham autolearn_force=no
-        version=3.4.2
-Subject: [PATCH v6 16/16] nvmet-passthru: support block accounting
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+References: <20190614080940.13640-1-rajneesh.bhardwaj@linux.intel.com>
+ <CAHp75VfMdKqpC3_gF-VzcJQqiWM9E0irORr60KLXyu8HuQg9KA@mail.gmail.com> <37653b30-7a76-0896-ecb7-2fbeab4308ec@linux.intel.com>
+In-Reply-To: <37653b30-7a76-0896-ecb7-2fbeab4308ec@linux.intel.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Thu, 25 Jul 2019 20:23:50 +0300
+Message-ID: <CAHp75VdEZ_VMEk3GjYYtgvSCOOOAMhZj-98B-+t__UdB207T8Q@mail.gmail.com>
+Subject: Re: [PATCH] platform/x86: intel_pmc_core: Add ICL-NNPI support to PMC Core
+To:     "Bhardwaj, Rajneesh" <rajneesh.bhardwaj@linux.intel.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Vishwanath Somayaji <vishwanath.somayaji@intel.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Support block disk accounting by setting the RQF_IO_STAT flag
-and gendisk in the request.
+On Thu, Jul 25, 2019 at 11:02 AM Bhardwaj, Rajneesh
+<rajneesh.bhardwaj@linux.intel.com> wrote:
+>
+> Hi Andy
+>
+> On 29-Jun-19 6:48 PM, Andy Shevchenko wrote:
+> > On Fri, Jun 14, 2019 at 11:14 AM Rajneesh Bhardwaj
+> > <rajneesh.bhardwaj@linux.intel.com> wrote:
+> >> Ice Lake Neural Network Processor for deep learning inference a.k.a.
+> >> ICL-NNPI can re-use Ice Lake Mobile regmap to enable Intel PMC Core
+> >> driver on it.
+> >>
+> > This will be postponed till next cycle since the CPU model will not
+> > appear before merge window.
+> > So, please, resend than (I guess somewhat in a month).
+>
+>
+> The dependent CPUID Patch is now upstream,
+> https://github.com/torvalds/linux/blob/bed38c3e2dca01b358a62b5e73b46e875742fd75/arch/x86/include/asm/intel-family.h#L59
+> so can you please apply this one?
 
-After this change, IO counts will be reflected correctly in
-/proc/diskstats for drives being used by passthru.
+Yes, it's in plan for rc2.
 
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
----
- drivers/nvme/target/io-cmd-passthru.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/nvme/target/io-cmd-passthru.c b/drivers/nvme/target/io-cmd-passthru.c
-index aefdd534cb4a..0a3f1249341a 100644
---- a/drivers/nvme/target/io-cmd-passthru.c
-+++ b/drivers/nvme/target/io-cmd-passthru.c
-@@ -439,6 +439,9 @@ static struct request *nvmet_passthru_blk_make_request(struct nvmet_req *req,
- 	if (unlikely(IS_ERR(rq)))
- 		return rq;
- 
-+	if (blk_queue_io_stat(q) && cmd->common.opcode != nvme_cmd_flush)
-+		rq->rq_flags |= RQF_IO_STAT;
-+
- 	if (req->sg_cnt) {
- 		ret = nvmet_passthru_map_sg(req, rq);
- 		if (unlikely(ret)) {
-@@ -503,7 +506,7 @@ static void nvmet_passthru_execute_cmd(struct nvmet_req *req)
- 
- 	rq->end_io_data = req;
- 	if (req->sq->qid != 0) {
--		blk_execute_rq_nowait(rq->q, NULL, rq, 0,
-+		blk_execute_rq_nowait(rq->q, ns->disk, rq, 0,
- 				      nvmet_passthru_req_done);
- 	} else {
- 		req->p.rq = rq;
 -- 
-2.20.1
-
+With Best Regards,
+Andy Shevchenko
