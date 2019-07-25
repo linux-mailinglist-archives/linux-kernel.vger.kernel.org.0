@@ -2,124 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 09D5E747B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 09:01:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E1D56747C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 09:08:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729473AbfGYHB0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 03:01:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34510 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728097AbfGYHBY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 03:01:24 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DB7BF20657;
-        Thu, 25 Jul 2019 07:01:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564038083;
-        bh=zAjhHSsJhZ6oAn03Z7pWLillY7bVUdhE6rcmIWjShpk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XjJqtVQv5/q2UhBZY205lrIvIaIE6hTj2YLzE3d8t5b2i/vWhU0kzcHzgDgAwBaV1
-         AKUyhWIGwGykoGelnUF4pHIKN5UF46AVkm+6WoRKI2uOM95niPjKv3tPlKTI4R/nhK
-         BvxkvjW65pMrAkqtZtO+ROSqlitmm5K8f5lcoF+4=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Yi, Ammy" <ammy.yi@intel.com>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Stephane Eranian <eranian@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vince Weaver <vincent.weaver@maine.edu>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.19 224/271] perf/x86/intel: Fix spurious NMI on fixed counter
-Date:   Wed, 24 Jul 2019 21:21:33 +0200
-Message-Id: <20190724191714.344365170@linuxfoundation.org>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190724191655.268628197@linuxfoundation.org>
-References: <20190724191655.268628197@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1729062AbfGYHIo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 03:08:44 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:32890 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728097AbfGYHIo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 03:08:44 -0400
+Received: by mail-io1-f68.google.com with SMTP id z3so95140710iog.0
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 00:08:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=/NsOOSmmzO3ouZR79VA2X4x5+ipc/g1qgS9k4/NHDuE=;
+        b=sgmvkbQdmyOibpBn40shEi7rJ8z75kD/TJw4J/zmBkLGQbBcumdRr/jw7AU4Qe1HdE
+         VxOSYas/ddnTitzw7CuPr475G3Iv/U5FkwnNQN0mgC2724Hh4sPiBirLhkRFo3GYU/Ui
+         3TYE6l/tPmTYI5DEr22ddxutNfXGWrH90oltRH9pPpJoJ1Rp3LkCgkzjCdNMu+O833sN
+         4diqCBqPvG5lAOxqYhneGAN1Ygcm3O1G43SPbl/rjyBgoPpqqe8945BMFpQXZTeKXzJA
+         A6wH8/B6SZLbzgdTBFeIu6a6kRvNHBxvvzbp+N/ha+CYO6sT+btaSMT3vMeYhjA9O0eu
+         P+fw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=/NsOOSmmzO3ouZR79VA2X4x5+ipc/g1qgS9k4/NHDuE=;
+        b=YHwSp4qQQ7OLK/If8jWJBs2x7zLsFAzxrLm20ZOPSyOem2Xo4jmUbMn+pzzvJgVrRp
+         rwXaZGERG0H2RLP2G4FE7lDyDc0+wZgN35e28AodskwsVvJkSYMgFwyqxgWE9D1zH+RB
+         Z6ZyRBuE55vNYf2PXzXFKCu62GU+JWVwQlyKY+6fWbI+HsnG1HsR6DH5S/LRLCF+EdSa
+         2F6Uj5EbWQ3el0OEhHwrzW4CkXE4NeDi5wNfKSm3vGSkYZh3FlETJjlOU6EiIrEHO/zL
+         KdvuKS/rXzdpiofypp9CFlhDtPOWZNgPzDEckyMNi41zFNZelEf0LFDtDp34otfjn5NN
+         M6qw==
+X-Gm-Message-State: APjAAAXHdFeiNLEBKsEuiZxjHP6FEr64rkp2kOeB1tpvTADT3zA74miQ
+        sBG173YyvU5IB1+mbSZU9K1WgI8LdBPrMcrRAIA=
+X-Google-Smtp-Source: APXvYqxKH4PDW02MjrUEYrsbijTw06dTqNLUnz3NmDR96/L6oWDqsh3jFnolYCCZ/OBRD2LOhaYkBNKDynioFzWimvY=
+X-Received: by 2002:a5e:8b43:: with SMTP id z3mr78655086iom.287.1564038523269;
+ Thu, 25 Jul 2019 00:08:43 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20190724150156.28526-1-jeyu@kernel.org>
+In-Reply-To: <20190724150156.28526-1-jeyu@kernel.org>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Thu, 25 Jul 2019 09:08:32 +0200
+Message-ID: <CAMRc=MeZOgY=qHNZf635i1OOnrx6Rh2D1qTSBPQjk_CGrRo-Tg@mail.gmail.com>
+Subject: Re: [PATCH] modules: always page-align module section allocations
+To:     Jessica Yu <jeyu@kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Yang Yingliang <yangyingliang@huawei.com>,
+        Jian Cheng <cj.chengjian@huawei.com>,
+        Nadav Amit <namit@vmware.com>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        David Lechner <david@lechnology.com>,
+        Adam Ford <aford173@gmail.com>, Martin Kaiser <lists@kaiser.cx>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kan Liang <kan.liang@linux.intel.com>
+=C5=9Br., 24 lip 2019 o 17:02 Jessica Yu <jeyu@kernel.org> napisa=C5=82(a):
+>
+> Some arches (e.g., arm64, x86) have moved towards non-executable
+> module_alloc() allocations for security hardening reasons. That means
+> that the module loader will need to set the text section of a module to
+> executable, regardless of whether or not CONFIG_STRICT_MODULE_RWX is set.
+>
+> When CONFIG_STRICT_MODULE_RWX=3Dy, module section allocations are always
+> page-aligned to handle memory rwx permissions. On some arches with
+> CONFIG_STRICT_MODULE_RWX=3Dn however, when setting the module text to
+> executable, the BUG_ON() in frob_text() gets triggered since module
+> section allocations are not page-aligned when CONFIG_STRICT_MODULE_RWX=3D=
+n.
+> Since the set_memory_* API works with pages, and since we need to call
+> set_memory_x() regardless of whether CONFIG_STRICT_MODULE_RWX is set, we
+> might as well page-align all module section allocations for ease of
+> managing rwx permissions of module sections (text, rodata, etc).
+>
+> Fixes: 2eef1399a866 ("modules: fix BUG when load module with rodata=3Dn")
+> Reported-by: Martin Kaiser <lists@kaiser.cx>
+> Reported-by: Bartosz Golaszewski <brgl@bgdev.pl>
+> Tested-by: David Lechner <david@lechnology.com>
+> Tested-by: Martin Kaiser <martin@kaiser.cx>
+> Signed-off-by: Jessica Yu <jeyu@kernel.org>
+> ---
+>  kernel/module.c | 7 +------
+>  1 file changed, 1 insertion(+), 6 deletions(-)
+>
+> diff --git a/kernel/module.c b/kernel/module.c
+> index 5933395af9a0..cd8df516666d 100644
+> --- a/kernel/module.c
+> +++ b/kernel/module.c
+> @@ -64,14 +64,9 @@
+>
+>  /*
+>   * Modules' sections will be aligned on page boundaries
+> - * to ensure complete separation of code and data, but
+> - * only when CONFIG_STRICT_MODULE_RWX=3Dy
+> + * to ensure complete separation of code and data
+>   */
+> -#ifdef CONFIG_STRICT_MODULE_RWX
+>  # define debug_align(X) ALIGN(X, PAGE_SIZE)
+> -#else
+> -# define debug_align(X) (X)
+> -#endif
+>
+>  /* If this is set, the section belongs in the init part of the module */
+>  #define INIT_OFFSET_MASK (1UL << (BITS_PER_LONG-1))
+> --
+> 2.16.4
+>
 
-commit e4557c1a46b0d32746bd309e1941914b5a6912b4 upstream.
-
-If a user first sample a PEBS event on a fixed counter, then sample a
-non-PEBS event on the same fixed counter on Icelake, it will trigger
-spurious NMI. For example:
-
-  perf record -e 'cycles:p' -a
-  perf record -e 'cycles' -a
-
-The error message for spurious NMI:
-
-  [June 21 15:38] Uhhuh. NMI received for unknown reason 30 on CPU 2.
-  [    +0.000000] Do you have a strange power saving mode enabled?
-  [    +0.000000] Dazed and confused, but trying to continue
-
-The bug was introduced by the following commit:
-
-  commit 6f55967ad9d9 ("perf/x86/intel: Fix race in intel_pmu_disable_event()")
-
-The commit moves the intel_pmu_pebs_disable() after intel_pmu_disable_fixed(),
-which returns immediately.  The related bit of PEBS_ENABLE MSR will never be
-cleared for the fixed counter. Then a non-PEBS event runs on the fixed counter,
-but the bit on PEBS_ENABLE is still set, which triggers spurious NMIs.
-
-Check and disable PEBS for fixed counters after intel_pmu_disable_fixed().
-
-Reported-by: Yi, Ammy <ammy.yi@intel.com>
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-Cc: <stable@vger.kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Stephane Eranian <eranian@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vince Weaver <vincent.weaver@maine.edu>
-Fixes: 6f55967ad9d9 ("perf/x86/intel: Fix race in intel_pmu_disable_event()")
-Link: https://lkml.kernel.org/r/20190625142135.22112-1-kan.liang@linux.intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- arch/x86/events/intel/core.c |    8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
-
---- a/arch/x86/events/intel/core.c
-+++ b/arch/x86/events/intel/core.c
-@@ -2074,12 +2074,10 @@ static void intel_pmu_disable_event(stru
- 	cpuc->intel_ctrl_host_mask &= ~(1ull << hwc->idx);
- 	cpuc->intel_cp_status &= ~(1ull << hwc->idx);
- 
--	if (unlikely(hwc->config_base == MSR_ARCH_PERFMON_FIXED_CTR_CTRL)) {
-+	if (unlikely(hwc->config_base == MSR_ARCH_PERFMON_FIXED_CTR_CTRL))
- 		intel_pmu_disable_fixed(hwc);
--		return;
--	}
--
--	x86_pmu_disable_event(event);
-+	else
-+		x86_pmu_disable_event(event);
- 
- 	/*
- 	 * Needs to be called after x86_pmu_disable_event,
-
-
+Tested-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
