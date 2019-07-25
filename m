@@ -2,117 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE52E751BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 16:48:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B8C0E751BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 16:49:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729193AbfGYOs4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 10:48:56 -0400
-Received: from mail-vk1-f194.google.com ([209.85.221.194]:45108 "EHLO
-        mail-vk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728984AbfGYOsz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 10:48:55 -0400
-Received: by mail-vk1-f194.google.com with SMTP id e83so10089834vke.12
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 07:48:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=CHAn8ln3MQs7dcW7B31n6Am+l3w6Dh72y4QwrHYZAjk=;
-        b=pUctgbS74Cz1qEEJ+vAQEg7ZdYhhlXOiRJIoo5kdV9/vHMF0++Lg/WjSHtovtVQ7AU
-         W1pJKuyk7zeqZyNd3uFlk+1RB4AIdqxBCCWHLthL1heYFows4Vy3uZ4gIHIQ3lw79nhZ
-         y8TUIq7JiqKgPgjw1KsZ1ugmIZABF0kZ/hVc3gaIh6KEuE+gommOuiYq/qftYn9Bf2Nu
-         CncQ3OS0VrR45TIVIPMC/qwS51h2uda9Yo3+Z5dHfUutjn1ksRsyPi/p7h+Mvhz5YivN
-         H39Bn3H2x5qswVtg6S8otz4CpmypojN83jjBvqmszNcP/9g0l1d6S8l3A3XL2Umbp5Ph
-         blEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=CHAn8ln3MQs7dcW7B31n6Am+l3w6Dh72y4QwrHYZAjk=;
-        b=VxBia2n256dz/w3qxSrkrjBY1kKkNnkNCxKpyRCdh4BU0weBRP/yUnSVUaJIJ8BXYO
-         +DpwH505FvZHZWZp2Hw9TCcMsBv1YuqjXp3cpDSjlwNz98kN5ggObs0sqfcjPGhEzNt1
-         4vFVUxMDykGWLbBgasjnaDPI17sodwsTGILG68ocXLWbjmvFRCPxe7NCU6YrfvPg4DJy
-         qapsjSJONLm2sI1esH3cC/iCj/867boGkVqsaXP1ILZgq7qGo9xVt3hl4RhKnMmM1U0v
-         67RULS2s4EneIiFOJhWHTQYoe43bvFmjXSpZq/rOzgtO/0Q83PKhxAFgZCj/qcA82JPA
-         t+eA==
-X-Gm-Message-State: APjAAAWyK5KiPNTeirTJ74Vu1n+McNkJ0GnbrfRoAFa457Oso0tbDzgz
-        frDJufxUr9vabRgWPLZLPQxQJOuhyWm/TM2qBlY=
-X-Google-Smtp-Source: APXvYqzAnMzKI1F9biguLO2QqF+U05HpWzDjMWtkOWTPV5BNHajKSJvTZr+vszZ0YfoJNnOQabxQIdls9flfpcV/rjg=
-X-Received: by 2002:a1f:9f06:: with SMTP id i6mr34507338vke.52.1564066134559;
- Thu, 25 Jul 2019 07:48:54 -0700 (PDT)
+        id S1729232AbfGYOtS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 10:49:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42502 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727437AbfGYOtR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 10:49:17 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 14462229F9;
+        Thu, 25 Jul 2019 14:49:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564066156;
+        bh=w2m48S5hBD6xMNgWFaIjnAEL4n6W/YAcLr/Tg/RrQBY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=FS8YW7aAsciXRty67KBaUlHnGuFwkgHhA5ojo57vz4fDy2cMTKVn4PZrg4EjtPIuG
+         rlCAZrpvqsB6mFSORv9pg1XxuKHlRA76nriRktFLnpyTSXEMORpvGIqLceW15oD6zj
+         F6DQqWrpoeGqmXP3amThU978Ja3e1S4R5Ryuseok=
+Date:   Thu, 25 Jul 2019 16:49:13 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     eric@anholt.net, wahrenst@gmx.net, inf.braun@fau.de,
+        nishkadg.linux@gmail.com, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH -next] staging: vc04_services: fix used-but-set-variable
+ warning
+Message-ID: <20190725144913.GC29688@kroah.com>
+References: <20190725142716.49276-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
-Received: by 2002:ab0:57:0:0:0:0:0 with HTTP; Thu, 25 Jul 2019 07:48:54 -0700 (PDT)
-Reply-To: yesben300@gmail.com
-From:   OMARU KABORE <ksanduru2040@gmail.com>
-Date:   Thu, 25 Jul 2019 15:48:54 +0100
-Message-ID: <CAEnSmYsOhDWXjPUptiW-gTuuNE3REucThqzpOFJeUOMxUdz00A@mail.gmail.com>
-Subject: THIS IS LEGITIMATE AND GENUINE TRANSACTION
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190725142716.49276-1-yuehaibing@huawei.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Friend,
+On Thu, Jul 25, 2019 at 10:27:16PM +0800, YueHaibing wrote:
+> use variables 'local_entity_uc' and 'local_uc',
+> mute gcc used-but-set-variable warning:
+> 
+> drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c: In function vchiq_release_internal:
+> drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c:2827:16: warning:
+>  variable local_entity_uc set but not used [-Wunused-but-set-variable]
+> drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c:2827:6: warning:
+>  variable local_uc set but not used [-Wunused-but-set-variable]
+> 
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> ---
+>  drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+> index cc4383d..04e6427 100644
+> --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+> +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+> @@ -2861,15 +2861,13 @@ vchiq_release_internal(struct vchiq_state *state, struct vchiq_service *service)
+>  		} else {
+>  			vchiq_log_info(vchiq_susp_log_level,
+>  				"%s %s count %d, state count %d - suspending",
+> -				__func__, entity, *entity_uc,
+> -				arm_state->videocore_use_count);
+> +				__func__, entity, local_entity_uc, local_uc);
+>  			vchiq_arm_vcsuspend(state);
+>  		}
+>  	} else
+>  		vchiq_log_trace(vchiq_susp_log_level,
+>  			"%s %s count %d, state count %d",
+> -			__func__, entity, *entity_uc,
+> -			arm_state->videocore_use_count);
+> +			__func__, entity, local_entity_uc, local_uc);
 
+Are you sure this is the correct way to solve this?
 
-I am Mr.Omaru Kabore, Please this transaction is very urgent and
-confidential besides it is real, genuine and legitimate. I am given
-you 100% assurance and guarantee that this transaction is 100% risk
-free.
+Why not just remove the local variables instead, as obviously they are
+not being used.
 
- The board of directors has decided to pay off all contractors that
-the Government is owing or in any way you been owed by the recent
-government, here the board has decided to pay off all outstanding
-payment.($25.5million has been mapped out to compensate all, may be
-you defrauded in the process of pursuing your fund or any, here is
-chance of redemption from the government to repay and compensate all
-those victims.
+thanks,
 
-We will give you a round trip ticket to come to Ecuador where you will
-go and pick up an anti doth cleanser that will be used to cleanse the
-fund and make it spendable before the fund will finally transferred
-into your designated bank account in your country.
-
-During this trip, the government have set up a board of directors,
-there work is to sponsor your trip tho and back to where the fund will
-be developed, also on your arrival to Ecuador the diplomat will come
-and give you a sum of $1000 for your hotel expenses and on your
-arrival to Europe where this fund will be develop, you will be given
-another $1000 that will take the whole expense for the few days it
-take them to cleanse the fund.
-
-After they might have cleanse the money, they come back and pick you
-to any local bank where this fund will be lodge for onward transfer
-into your  designated bank account in your country.
-
-After the fund is been transferred into your account I will come over
-to have my own share of the fund. If you have any doubts or question
-to ask, please feel free to ask and also I must made it clear that
-this transaction is 100% risk free noting of any problem is involve
-also we have the documents to back up the transfer to avoid any
-questioning from any authority.
-
-Lastly,You are not going to spend any money on this trip, the
-government has set board of directors that will take care of the
-expenses so nobody will ask you to come up with Money
-
-Get back to me with your first data page of your international
-passport to enable the sponsor secure your visa. You are not going to
-spend any single dollars, all the expenses both flight ticket and your
-feeding, hotel accommodation will be taking care by the sponsor mapped
-by the government.
-
-All you need is to indicate your interest open also send your mobile
-telephone number and your international passport data page to enable
-the sponsor proceed with your traveling documents and  your visa
-processing.
-
-Thanks for your understanding and cooperation towards the
-actualization of this transaction.
-
-Mr.Omaru Kabore
-
-
-THIS IS LEGITIMATE AND GENUINE TRANSACTION
+greg k-h
