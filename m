@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A74A175B75
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 01:42:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA79075B68
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 01:42:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726990AbfGYXm3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 19:42:29 -0400
+        id S1727607AbfGYXl5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 19:41:57 -0400
 Received: from mga06.intel.com ([134.134.136.31]:51850 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727035AbfGYXly (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 19:41:54 -0400
+        id S1727579AbfGYXlz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 19:41:55 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jul 2019 16:41:53 -0700
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jul 2019 16:41:55 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,308,1559545200"; 
-   d="scan'208";a="369874844"
+   d="scan'208";a="369874850"
 Received: from amrutaku-mobl1.amr.corp.intel.com (HELO pbossart-mobl3.intel.com) ([10.255.230.75])
-  by fmsmga006.fm.intel.com with ESMTP; 25 Jul 2019 16:41:52 -0700
+  by fmsmga006.fm.intel.com with ESMTP; 25 Jul 2019 16:41:53 -0700
 From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 To:     alsa-devel@alsa-project.org
 Cc:     linux-kernel@vger.kernel.org, tiwai@suse.de, broonie@kernel.org,
@@ -27,9 +27,9 @@ Cc:     linux-kernel@vger.kernel.org, tiwai@suse.de, broonie@kernel.org,
         srinivas.kandagatla@linaro.org, slawomir.blauciak@intel.com,
         Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
         Sanyog Kale <sanyog.r.kale@intel.com>
-Subject: [RFC PATCH 34/40] soundwire: intel: ignore disabled links for suspend/resume
-Date:   Thu, 25 Jul 2019 18:40:26 -0500
-Message-Id: <20190725234032.21152-35-pierre-louis.bossart@linux.intel.com>
+Subject: [RFC PATCH 35/40] soundwire: intel: export helper to exit reset
+Date:   Thu, 25 Jul 2019 18:40:27 -0500
+Message-Id: <20190725234032.21152-36-pierre-louis.bossart@linux.intel.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190725234032.21152-1-pierre-louis.bossart@linux.intel.com>
 References: <20190725234032.21152-1-pierre-louis.bossart@linux.intel.com>
@@ -42,39 +42,79 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 ---
- drivers/soundwire/intel.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ drivers/soundwire/cadence_master.c | 9 +++++++--
+ drivers/soundwire/cadence_master.h | 1 +
+ drivers/soundwire/intel.c          | 4 ++++
+ 3 files changed, 12 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/soundwire/cadence_master.c b/drivers/soundwire/cadence_master.c
+index 4a189e487830..f486fe15fb46 100644
+--- a/drivers/soundwire/cadence_master.c
++++ b/drivers/soundwire/cadence_master.c
+@@ -780,7 +780,11 @@ EXPORT_SYMBOL(sdw_cdns_thread);
+  * init routines
+  */
+ 
+-static int do_reset(struct sdw_cdns *cdns)
++/**
++ * sdw_cdns_exit_reset() - Program reset parameters and start bus operations
++ * @cdns: Cadence instance
++ */
++int sdw_cdns_exit_reset(struct sdw_cdns *cdns)
+ {
+ 	int ret;
+ 
+@@ -804,6 +808,7 @@ static int do_reset(struct sdw_cdns *cdns)
+ 
+ 	return ret;
+ }
++EXPORT_SYMBOL(sdw_cdns_exit_reset);
+ 
+ /**
+  * sdw_cdns_enable_interrupt() - Enable SDW interrupts and update config
+@@ -839,7 +844,7 @@ int sdw_cdns_enable_interrupt(struct sdw_cdns *cdns)
+ 
+ 	cdns_writel(cdns, CDNS_MCP_INTMASK, mask);
+ 
+-	return do_reset(cdns);
++	return 0;
+ }
+ EXPORT_SYMBOL(sdw_cdns_enable_interrupt);
+ 
+diff --git a/drivers/soundwire/cadence_master.h b/drivers/soundwire/cadence_master.h
+index de97bc22acb7..2b551f9226f3 100644
+--- a/drivers/soundwire/cadence_master.h
++++ b/drivers/soundwire/cadence_master.h
+@@ -161,6 +161,7 @@ irqreturn_t sdw_cdns_thread(int irq, void *dev_id);
+ int sdw_cdns_init(struct sdw_cdns *cdns);
+ int sdw_cdns_pdi_init(struct sdw_cdns *cdns,
+ 		      struct sdw_cdns_stream_config config);
++int sdw_cdns_exit_reset(struct sdw_cdns *cdns);
+ int sdw_cdns_enable_interrupt(struct sdw_cdns *cdns);
+ 
+ void sdw_cdns_debugfs_init(struct sdw_cdns *cdns, struct dentry *root);
 diff --git a/drivers/soundwire/intel.c b/drivers/soundwire/intel.c
-index 1477c35f616f..a976480d6f36 100644
+index a976480d6f36..9ebe38e4d979 100644
 --- a/drivers/soundwire/intel.c
 +++ b/drivers/soundwire/intel.c
-@@ -1161,6 +1161,12 @@ static int intel_suspend(struct device *dev)
+@@ -1112,6 +1112,8 @@ static int intel_probe(struct platform_device *pdev)
  
- 	sdw = dev_get_drvdata(dev);
+ 	ret = sdw_cdns_enable_interrupt(&sdw->cdns);
  
-+	if (sdw->cdns.bus.prop.hw_disabled) {
-+		dev_dbg(dev, "SoundWire master %d is disabled, ignoring\n",
-+			sdw->cdns.bus.link_id);
-+		return 0;
-+	}
++	ret = sdw_cdns_exit_reset(&sdw->cdns);
 +
- 	ret = intel_link_power_down(sdw);
+ 	/* Register DAIs */
+ 	ret = intel_register_dai(sdw);
  	if (ret) {
- 		dev_err(dev, "Link power down failed: %d", ret);
-@@ -1179,6 +1185,12 @@ static int intel_resume(struct device *dev)
+@@ -1199,6 +1201,8 @@ static int intel_resume(struct device *dev)
  
- 	sdw = dev_get_drvdata(dev);
+ 	sdw_cdns_enable_interrupt(&sdw->cdns);
  
-+	if (sdw->cdns.bus.prop.hw_disabled) {
-+		dev_dbg(dev, "SoundWire master %d is disabled, ignoring\n",
-+			sdw->cdns.bus.link_id);
-+		return 0;
-+	}
++	ret = sdw_cdns_exit_reset(&sdw->cdns);
 +
- 	ret = intel_init(sdw);
- 	if (ret) {
- 		dev_err(dev, "%s failed: %d", __func__, ret);
+ 	return ret;
+ }
+ 
 -- 
 2.20.1
 
