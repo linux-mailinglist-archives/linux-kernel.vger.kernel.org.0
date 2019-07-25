@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 291D2754DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 19:00:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D1F5A754F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 19:00:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391015AbfGYRAE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 13:00:04 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:40457 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390569AbfGYRAA (ORCPT
+        id S2391085AbfGYRAZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 13:00:25 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:39311 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389267AbfGYQ74 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 13:00:00 -0400
-Received: by mail-wm1-f65.google.com with SMTP id v19so45402459wmj.5
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 09:59:59 -0700 (PDT)
+        Thu, 25 Jul 2019 12:59:56 -0400
+Received: by mail-wr1-f67.google.com with SMTP id x4so51500133wrt.6
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 09:59:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=lbYdutAm45vnNpTOgncZbQOVHMX6IrCJM1Bp1BbX570=;
-        b=JHL5b6yjq498WqGFuxUL/3bR4AEmuQubYpax4UgNdWtxexCUwcLOEgfLEK6IEeOV9j
-         ZEQ/VPp/zAPPlSOpJ2P7cK/l0jbzfN93PS9DUEChu69bt2XEmoBULnR82eIPbgYt71dv
-         9MVzSFF95J4xkl9e4ZrDs5TF6h1wxTdijRA/El6uPPOXG5PtDW22GgkqXaHKN7nmpWiy
-         tNTYcx0HpmJWfDM8WY1uIfBpx6ANJt4h3QXSAJBMv6qu87JdtXBVvA7dgq0liy7XTGVc
-         b6TRBWvAHXzIz76zWg5hhAg3zQ3fo6818Qrn6vkqSuW5T89PJJP3JH46GsppTjysOvBD
-         b4yg==
+        bh=g/jrkR4hgpIY3IEk8lJ9coIWHj6BT0CIAMNbTJmR/YI=;
+        b=qxL/QDJIp2o63X7xJzs9kR9eme+RY19oKFA3sv/4jACT3uZA7tM5wT5OVmqIkqJew7
+         WkqaQHmP0EA4kIgwJ8tyjckEtbj4eRa0Yo1eFaR9a98Vf9UbymNWtQyHOpHsaW0TTHJb
+         ko5LcV6CzamQgg2zO1BYZqrsJ1eJySWMDHh+rTl3OKYYhujCq4X/GeadawMabL5g7lKj
+         50TQrfD1m5zsXD4TuNxjO+hJrsnkS8RyeHTCyemcFY4KotA8JLsymTHntcp5UXe7zPka
+         XHp6dYizSOtMgWuIMfLptctCbjrHIGXCGfEFznNSPNbwxNJxBxzW/h8e7Frm+1OCPiGN
+         Uuug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=lbYdutAm45vnNpTOgncZbQOVHMX6IrCJM1Bp1BbX570=;
-        b=eRUQNYI68E+9FNlosQi3mpdEdie7lCDaw6oIai4K8mqN4MAHgYMXnzOVGF6FI0wzJG
-         8+gNXFSsQZGEgLrzHoMP6O574DSXBJdaCu51nb2CSVhvN/pSGv4AAOq13Pcy6+nGnsIc
-         qZvazGG5IoxFd12lOzvDmqlvZIcqIpJPeiv4sDv4OyEYqArmFBye6VePdKYPPM/Psl89
-         ougE8bIjQmdiiGItoiINafZT1LD9dxUBEX7Hedzbw14+gqmBbZF8DllaPX2gQdcJF4PG
-         jX/dE99TJpp4JnHYGit8XkvzgDMztn0K17jkBVmtGTLgP+c/6HHf9BjH8xNqM+T+VCtH
-         tXvg==
-X-Gm-Message-State: APjAAAVoXFZqsoDbC8QCzXVi+e4fhtE58I6EsKSD6rLMvqJoVXGbKjuN
-        Ps7I2e+aHnnAfIiMQVtOXuwliQ==
-X-Google-Smtp-Source: APXvYqyoB5DTPbPo8blqtf5tmVRdEJqQhC7XQYxzoSLPmCRuk3ksWFESivbnEbmeeLuvKYeRRNAl7g==
-X-Received: by 2002:a1c:988a:: with SMTP id a132mr78758639wme.165.1564073998535;
-        Thu, 25 Jul 2019 09:59:58 -0700 (PDT)
+        bh=g/jrkR4hgpIY3IEk8lJ9coIWHj6BT0CIAMNbTJmR/YI=;
+        b=KOrTGAYs0xz1ug7p+Y5xHCOCvaMTlvceOgwl8cnx7e7rLwZ9HQjT5u0cO6+X+n5MIO
+         F0qU/ZUN9A/6NhOTLCfv+KhVYdmvQn6gnGC9eWIDG0TmSYXPE9cSZGZzcnTvZoEBr/Hq
+         ALe+vKPG0p2+mquJZZ6SNDPyQAXoqPjmmfc8pzisTlNgg92qsCZ+KT8+KyXzKwg8vAYB
+         LzHnpqKwIYuQS+xlsiMeaAaK4vMJHj4lr4IsfJKqgJxBZKcZpubmM8TF+tEv2Dm/BX/J
+         IiZAZ4mOs9TJfYnp9y+mOakBB6Ka2a1W1/Q3dxQd2kJud2HhI1pSJrEfXNyI/7hR7sNc
+         PMmg==
+X-Gm-Message-State: APjAAAUAncj3gUyrrscwdgIqDouM5hjeY4RzDkJPwgWQRw1rOl+1Fzn7
+        NX3fg366Kl39JcHgTEAHFcWWojbU9x0=
+X-Google-Smtp-Source: APXvYqzpTVvhh/KLIlDh7egDJKaGFgaz2cliKjsP5Ce7avkqYayCPiWNr+RETi3mzno+aLH8mp+cjQ==
+X-Received: by 2002:adf:f84a:: with SMTP id d10mr89216078wrq.319.1564073994390;
+        Thu, 25 Jul 2019 09:59:54 -0700 (PDT)
 Received: from starbuck.baylibre.local (uluru.liltaz.com. [163.172.81.188])
-        by smtp.googlemail.com with ESMTPSA id q10sm53627199wrf.32.2019.07.25.09.59.57
+        by smtp.googlemail.com with ESMTPSA id q10sm53627199wrf.32.2019.07.25.09.59.53
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 25 Jul 2019 09:59:58 -0700 (PDT)
+        Thu, 25 Jul 2019 09:59:53 -0700 (PDT)
 From:   Jerome Brunet <jbrunet@baylibre.com>
 To:     Mark Brown <broonie@kernel.org>,
         Liam Girdwood <lgirdwood@gmail.com>,
@@ -52,9 +52,9 @@ To:     Mark Brown <broonie@kernel.org>,
 Cc:     Jerome Brunet <jbrunet@baylibre.com>, alsa-devel@alsa-project.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-amlogic@lists.infradead.org
-Subject: [PATCH v2 6/6] ASoC: codec2codec: fill some of the runtime stream parameters
-Date:   Thu, 25 Jul 2019 18:59:49 +0200
-Message-Id: <20190725165949.29699-7-jbrunet@baylibre.com>
+Subject: [PATCH v2 2/6] ASoC: codec2codec: name link using stream direction
+Date:   Thu, 25 Jul 2019 18:59:45 +0200
+Message-Id: <20190725165949.29699-3-jbrunet@baylibre.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190725165949.29699-1-jbrunet@baylibre.com>
 References: <20190725165949.29699-1-jbrunet@baylibre.com>
@@ -66,30 +66,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Set the information provided struct snd_soc_pcm_stream in the
-struct snd_pcm_runtime of the codec to codec link.
+At the moment, codec to codec dai link widgets are named after the
+cpu dai and the 1st codec valid on the link. This might be confusing
+if there is multiple valid codecs on the link for one stream
+direction.
+
+Instead, use the dai link name and the stream direction to name the
+the dai link widget
 
 Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- sound/soc/soc-dapm.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ sound/soc/soc-dapm.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
 diff --git a/sound/soc/soc-dapm.c b/sound/soc/soc-dapm.c
-index 3e3b81ae87dd..fadc804be89c 100644
+index 034b31fd2ecb..7db4abd9a0a5 100644
 --- a/sound/soc/soc-dapm.c
 +++ b/sound/soc/soc-dapm.c
-@@ -3872,6 +3872,11 @@ snd_soc_dai_link_event_pre_pmu(struct snd_soc_dapm_widget *w,
- 		dapm_update_dai_unlocked(substream, params, sink);
+@@ -4056,8 +4056,7 @@ snd_soc_dapm_alloc_kcontrol(struct snd_soc_card *card,
+ 
+ static struct snd_soc_dapm_widget *
+ snd_soc_dapm_new_dai(struct snd_soc_card *card, struct snd_soc_pcm_runtime *rtd,
+-		     struct snd_soc_dapm_widget *source,
+-		     struct snd_soc_dapm_widget *sink)
++		     char *id)
+ {
+ 	struct snd_soc_dapm_widget template;
+ 	struct snd_soc_dapm_widget *w;
+@@ -4067,7 +4066,7 @@ snd_soc_dapm_new_dai(struct snd_soc_card *card, struct snd_soc_pcm_runtime *rtd,
+ 	int ret;
+ 
+ 	link_name = devm_kasprintf(card->dev, GFP_KERNEL, "%s-%s",
+-				   source->name, sink->name);
++				   rtd->dai_link->name, id);
+ 	if (!link_name)
+ 		return ERR_PTR(-ENOMEM);
+ 
+@@ -4247,15 +4246,13 @@ static void dapm_connect_dai_link_widgets(struct snd_soc_card *card,
  	}
  
-+	runtime->format = params_format(params);
-+	runtime->subformat = params_subformat(params);
-+	runtime->channels = params_channels(params);
-+	runtime->rate = params_rate(params);
-+
- out:
- 	if (ret < 0)
- 		kfree(runtime);
+ 	for_each_rtd_codec_dai(rtd, i, codec_dai) {
+-
+ 		/* connect BE DAI playback if widgets are valid */
+ 		codec = codec_dai->playback_widget;
+ 
+ 		if (playback_cpu && codec) {
+ 			if (!playback) {
+ 				playback = snd_soc_dapm_new_dai(card, rtd,
+-								playback_cpu,
+-								codec);
++								"playback");
+ 				if (IS_ERR(playback)) {
+ 					dev_err(rtd->dev,
+ 						"ASoC: Failed to create DAI %s: %ld\n",
+@@ -4284,8 +4281,7 @@ static void dapm_connect_dai_link_widgets(struct snd_soc_card *card,
+ 		if (codec && capture_cpu) {
+ 			if (!capture) {
+ 				capture = snd_soc_dapm_new_dai(card, rtd,
+-							       codec,
+-							       capture_cpu);
++							       "capture");
+ 				if (IS_ERR(capture)) {
+ 					dev_err(rtd->dev,
+ 						"ASoC: Failed to create DAI %s: %ld\n",
 -- 
 2.21.0
 
