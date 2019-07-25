@@ -2,19 +2,19 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88E9575376
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 18:02:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 65E8275379
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 18:02:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389731AbfGYQCV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 12:02:21 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50080 "EHLO mx1.suse.de"
+        id S2389238AbfGYQCd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 12:02:33 -0400
+Received: from mx2.suse.de ([195.135.220.15]:50114 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387809AbfGYQCR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 12:02:17 -0400
+        id S2388481AbfGYQCS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 12:02:18 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id B6699AF74;
-        Thu, 25 Jul 2019 16:02:15 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id 57D71AFE1;
+        Thu, 25 Jul 2019 16:02:16 +0000 (UTC)
 From:   Oscar Salvador <osalvador@suse.de>
 To:     akpm@linux-foundation.org
 Cc:     dan.j.williams@intel.com, david@redhat.com,
@@ -22,9 +22,9 @@ Cc:     dan.j.williams@intel.com, david@redhat.com,
         anshuman.khandual@arm.com, Jonathan.Cameron@huawei.com,
         vbabka@suse.cz, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         Oscar Salvador <osalvador@suse.de>
-Subject: [PATCH v3 2/5] mm: Introduce a new Vmemmap page-type
-Date:   Thu, 25 Jul 2019 18:02:04 +0200
-Message-Id: <20190725160207.19579-3-osalvador@suse.de>
+Subject: [PATCH v3 3/5] mm,sparse: Add SECTION_USE_VMEMMAP flag
+Date:   Thu, 25 Jul 2019 18:02:05 +0200
+Message-Id: <20190725160207.19579-4-osalvador@suse.de>
 X-Mailer: git-send-email 2.13.7
 In-Reply-To: <20190725160207.19579-1-osalvador@suse.de>
 References: <20190725160207.19579-1-osalvador@suse.de>
@@ -33,116 +33,115 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch introduces a new Vmemmap page-type.
+When hot-removing memory, we need to be careful about two things:
 
-It also introduces some functions to ease the handling of vmemmap pages:
+1) Memory range must be memory_block aligned. This is what
+   check_hotplug_memory_range() checks for.
 
-- vmemmap_nr_sections: Returns the number of sections that used vmemmap.
+2) If a range was hot-added using MHP_MEMMAP_ON_MEMORY, we need to check
+   whether the caller is removing memory with the same granularity that
+   it was added.
 
-- vmemmap_nr_pages: Allows us to retrieve the amount of vmemmap pages
-  derivated from any vmemmap-page in the section. Useful for accounting
-  and to know how much to we have to skip in the case where vmemmap pages
-  need to be ignored.
+So to check against case 2), we mark all sections used by vmemmap
+(not only the ones containing vmemmap pages, but all sections spanning
+the memory range) with SECTION_USE_VMEMMAP.
 
-- vmemmap_head: Returns the vmemmap head page
-
-- SetPageVmemmap: Sets Reserved flag bit, and sets page->type to Vmemmap.
-  Setting the Reserved flag bit is just for extra protection, actually
-  we do not expect anyone to use these pages for anything.
-
-- ClearPageVmemmap: Clears Reserved flag bit and page->type.
-  Only used when sections containing vmemmap pages are removed.
-
-These functions will be used for the code handling Vmemmap pages.
+This will allow us to do some sanity checks when in hot-remove stage.
 
 Signed-off-by: Oscar Salvador <osalvador@suse.de>
 ---
- include/linux/mm.h         | 17 +++++++++++++++++
- include/linux/mm_types.h   |  5 +++++
- include/linux/page-flags.h | 19 +++++++++++++++++++
- 3 files changed, 41 insertions(+)
+ include/linux/memory_hotplug.h | 3 ++-
+ include/linux/mmzone.h         | 8 +++++++-
+ mm/memory_hotplug.c            | 2 +-
+ mm/sparse.c                    | 9 +++++++--
+ 4 files changed, 17 insertions(+), 5 deletions(-)
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 45f0ab0ed4f7..432175f8f8d2 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -2904,6 +2904,23 @@ static inline bool debug_guardpage_enabled(void) { return false; }
- static inline bool page_is_guard(struct page *page) { return false; }
- #endif /* CONFIG_DEBUG_PAGEALLOC */
+diff --git a/include/linux/memory_hotplug.h b/include/linux/memory_hotplug.h
+index 45dece922d7c..6b20008d9297 100644
+--- a/include/linux/memory_hotplug.h
++++ b/include/linux/memory_hotplug.h
+@@ -366,7 +366,8 @@ extern void move_pfn_range_to_zone(struct zone *zone, unsigned long start_pfn,
+ 		unsigned long nr_pages, struct vmem_altmap *altmap);
+ extern bool is_memblock_offlined(struct memory_block *mem);
+ extern int sparse_add_section(int nid, unsigned long pfn,
+-		unsigned long nr_pages, struct vmem_altmap *altmap);
++		unsigned long nr_pages, struct vmem_altmap *altmap,
++		bool vmemmap_section);
+ extern void sparse_remove_section(struct mem_section *ms,
+ 		unsigned long pfn, unsigned long nr_pages,
+ 		unsigned long map_offset, struct vmem_altmap *altmap);
+diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+index d77d717c620c..259c326962f5 100644
+--- a/include/linux/mmzone.h
++++ b/include/linux/mmzone.h
+@@ -1254,7 +1254,8 @@ extern size_t mem_section_usage_size(void);
+ #define SECTION_HAS_MEM_MAP	(1UL<<1)
+ #define SECTION_IS_ONLINE	(1UL<<2)
+ #define SECTION_IS_EARLY	(1UL<<3)
+-#define SECTION_MAP_LAST_BIT	(1UL<<4)
++#define SECTION_USE_VMEMMAP	(1UL<<4)
++#define SECTION_MAP_LAST_BIT	(1UL<<5)
+ #define SECTION_MAP_MASK	(~(SECTION_MAP_LAST_BIT-1))
+ #define SECTION_NID_SHIFT	3
  
-+static __always_inline struct page *vmemmap_head(struct page *page)
+@@ -1265,6 +1266,11 @@ static inline struct page *__section_mem_map_addr(struct mem_section *section)
+ 	return (struct page *)map;
+ }
+ 
++static inline int vmemmap_section(struct mem_section *section)
 +{
-+	return (struct page *)page->vmemmap_head;
++	return (section && (section->section_mem_map & SECTION_USE_VMEMMAP));
 +}
 +
-+static __always_inline unsigned long vmemmap_nr_sections(struct page *page)
-+{
-+	struct page *head = vmemmap_head(page);
-+	return head->vmemmap_sections;
-+}
-+
-+static __always_inline unsigned long vmemmap_nr_pages(struct page *page)
-+{
-+	struct page *head = vmemmap_head(page);
-+	return head->vmemmap_pages - (page - head);
-+}
-+
- #if MAX_NUMNODES > 1
- void __init setup_nr_node_ids(void);
- #else
-diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-index 6a7a1083b6fb..51dd227f2a6b 100644
---- a/include/linux/mm_types.h
-+++ b/include/linux/mm_types.h
-@@ -170,6 +170,11 @@ struct page {
- 			 * pmem backed DAX files are mapped.
- 			 */
- 		};
-+		struct {        /* Vmemmap pages */
-+			unsigned long vmemmap_head;
-+			unsigned long vmemmap_sections; /* Number of sections */
-+			unsigned long vmemmap_pages;    /* Number of pages */
-+		};
+ static inline int present_section(struct mem_section *section)
+ {
+ 	return (section && (section->section_mem_map & SECTION_MARKED_PRESENT));
+diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+index 3d97c3711333..c2338703ce80 100644
+--- a/mm/memory_hotplug.c
++++ b/mm/memory_hotplug.c
+@@ -314,7 +314,7 @@ int __ref __add_pages(int nid, unsigned long pfn, unsigned long nr_pages,
  
- 		/** @rcu_head: You can use this to free a page by RCU. */
- 		struct rcu_head rcu_head;
-diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-index f91cb8898ff0..75f302a532f9 100644
---- a/include/linux/page-flags.h
-+++ b/include/linux/page-flags.h
-@@ -708,6 +708,7 @@ PAGEFLAG_FALSE(DoubleMap)
- #define PG_kmemcg	0x00000200
- #define PG_table	0x00000400
- #define PG_guard	0x00000800
-+#define PG_vmemmap     0x00001000
- 
- #define PageType(page, flag)						\
- 	((page->page_type & (PAGE_TYPE_BASE | flag)) == PAGE_TYPE_BASE)
-@@ -764,6 +765,24 @@ PAGE_TYPE_OPS(Table, table)
+ 		pfns = min(nr_pages, PAGES_PER_SECTION
+ 				- (pfn & ~PAGE_SECTION_MASK));
+-		err = sparse_add_section(nid, pfn, pfns, altmap);
++		err = sparse_add_section(nid, pfn, pfns, altmap, 0);
+ 		if (err)
+ 			break;
+ 		pfn += pfns;
+diff --git a/mm/sparse.c b/mm/sparse.c
+index 79355a86064f..09cac39e39d9 100644
+--- a/mm/sparse.c
++++ b/mm/sparse.c
+@@ -856,13 +856,18 @@ static struct page * __meminit section_activate(int nid, unsigned long pfn,
+  * * -ENOMEM	- Out of memory.
   */
- PAGE_TYPE_OPS(Guard, guard)
+ int __meminit sparse_add_section(int nid, unsigned long start_pfn,
+-		unsigned long nr_pages, struct vmem_altmap *altmap)
++		unsigned long nr_pages, struct vmem_altmap *altmap,
++		bool vmemmap_section)
+ {
+ 	unsigned long section_nr = pfn_to_section_nr(start_pfn);
++	unsigned long flags = 0;
+ 	struct mem_section *ms;
+ 	struct page *memmap;
+ 	int ret;
  
-+/*
-+ * Vmemmap pages refers to those pages that are used to create the memmap
-+ * array, and reside within the same memory range that was hotppluged, so
-+ * they are self-hosted. (see include/linux/memory_hotplug.h)
-+ */
-+PAGE_TYPE_OPS(Vmemmap, vmemmap)
-+static __always_inline void SetPageVmemmap(struct page *page)
-+{
-+	__SetPageVmemmap(page);
-+	__SetPageReserved(page);
-+}
++	if (vmemmap_section)
++		flags = SECTION_USE_VMEMMAP;
 +
-+static __always_inline void ClearPageVmemmap(struct page *page)
-+{
-+	__ClearPageVmemmap(page);
-+	__ClearPageReserved(page);
-+}
-+
- extern bool is_free_buddy_page(struct page *page);
+ 	ret = sparse_index_init(section_nr, nid);
+ 	if (ret < 0)
+ 		return ret;
+@@ -884,7 +889,7 @@ int __meminit sparse_add_section(int nid, unsigned long start_pfn,
+ 	/* Align memmap to section boundary in the subsection case */
+ 	if (section_nr_to_pfn(section_nr) != start_pfn)
+ 		memmap = pfn_to_kaddr(section_nr_to_pfn(section_nr));
+-	sparse_init_one_section(ms, section_nr, memmap, ms->usage, 0);
++	sparse_init_one_section(ms, section_nr, memmap, ms->usage, flags);
  
- __PAGEFLAG(Isolated, isolated, PF_ANY);
+ 	return 0;
+ }
 -- 
 2.12.3
 
