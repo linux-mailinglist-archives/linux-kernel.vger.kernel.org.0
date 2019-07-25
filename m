@@ -2,55 +2,299 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 253D574619
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 07:49:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D250745F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 07:48:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404994AbfGYFok (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 01:44:40 -0400
-Received: from verein.lst.de ([213.95.11.211]:58199 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404975AbfGYFoh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 01:44:37 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 256AD68BFE; Thu, 25 Jul 2019 07:44:35 +0200 (CEST)
-Date:   Thu, 25 Jul 2019 07:44:34 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Lu Baolu <baolu.lu@linux.intel.com>
-Cc:     David Woodhouse <dwmw2@infradead.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Christoph Hellwig <hch@lst.de>, ashok.raj@intel.com,
-        jacob.jun.pan@intel.com, alan.cox@intel.com, kevin.tian@intel.com,
-        mika.westerberg@linux.intel.com, Ingo Molnar <mingo@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        pengfei.xu@intel.com,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 04/10] PCI: Add dev_is_untrusted helper
-Message-ID: <20190725054434.GD24527@lst.de>
-References: <20190725031717.32317-1-baolu.lu@linux.intel.com> <20190725031717.32317-5-baolu.lu@linux.intel.com>
+        id S1728625AbfGYFr5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 01:47:57 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:59746 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391475AbfGYFqv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 01:46:51 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6P5ha6R195564;
+        Thu, 25 Jul 2019 05:46:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=O4N6qo0H8+pxgThdRlquGYN/8UdP1TMUlHR6Uew3RGM=;
+ b=kcP3nyGbdvfWXEAo2NKmUD36GUr+SUWp0ujQP6SQBvWfDacDVXdAEqMbbdk3f+2/LIpB
+ FuFGiEmZNVP77a33FZ8RexCDazhGl6/coROWJaHWUqRdEHZo4OnuUX4Uyj5OnRDLWfjH
+ bPB0cc8lDhDYJwzATLR+Wi9yMTf6YV+28gu6CUPyEZ/p0rpIazFji09KQtmO/mkpUrDs
+ UAg1vhZxGQ45a5w6LKqrAls8DT2OqIWSJl8Mpsv04pdiFuIj++9iQcRV1uXeohUNTDIc
+ Tlh8TzxOeks5E0tMZHd+x+FCrFcT6N9gnebeyUyjPU0xEXs0zZik/401xIwrw+5oOTsU Ww== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2120.oracle.com with ESMTP id 2tx61c1g8m-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 25 Jul 2019 05:46:45 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6P5h7nE110767;
+        Thu, 25 Jul 2019 05:46:44 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3030.oracle.com with ESMTP id 2tx60xm1wa-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 25 Jul 2019 05:46:44 +0000
+Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x6P5khWC020893;
+        Thu, 25 Jul 2019 05:46:43 GMT
+Received: from [10.159.158.5] (/10.159.158.5)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 24 Jul 2019 22:46:42 -0700
+Subject: Re: [PATCH v2 1/1] mm/memory-failure: Poison read receives SIGKILL
+ instead of SIGBUS if mmaped more than once
+To:     Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Cc:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>
+References: <1564007603-9655-1-git-send-email-jane.chu@oracle.com>
+ <1564007603-9655-2-git-send-email-jane.chu@oracle.com>
+ <20190724234318.GA21820@hori.linux.bs1.fc.nec.co.jp>
+From:   Jane Chu <jane.chu@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <3fa73abd-225c-cc71-719d-7ee296867ad4@oracle.com>
+Date:   Wed, 24 Jul 2019 22:46:31 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190725031717.32317-5-baolu.lu@linux.intel.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20190724234318.GA21820@hori.linux.bs1.fc.nec.co.jp>
+Content-Type: text/plain; charset=iso-2022-jp; format=flowed; delsp=yes
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9328 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1907250068
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9328 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1907250068
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 25, 2019 at 11:17:11AM +0800, Lu Baolu wrote:
-> There are several places in the kernel where it is necessary to
-> check whether a device is a pci untrusted device. Add a helper
-> to simplify the callers.
 
-Looks good,
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+On 7/24/2019 4:43 PM, Naoya Horiguchi wrote:
+> On Wed, Jul 24, 2019 at 04:33:23PM -0600, Jane Chu wrote:
+>> Mmap /dev/dax more than once, then read the poison location using address
+>> from one of the mappings. The other mappings due to not having the page
+>> mapped in will cause SIGKILLs delivered to the process. SIGKILL succeeds
+>> over SIGBUS, so user process looses the opportunity to handle the UE.
+>>
+>> Although one may add MAP_POPULATE to mmap(2) to work around the issue,
+>> MAP_POPULATE makes mapping 128GB of pmem several magnitudes slower, so
+>> isn't always an option.
+>>
+>> Details -
+>>
+>> ndctl inject-error --block=10 --count=1 namespace6.0
+>>
+>> ./read_poison -x dax6.0 -o 5120 -m 2
+>> mmaped address 0x7f5bb6600000
+>> mmaped address 0x7f3cf3600000
+>> doing local read at address 0x7f3cf3601400
+>> Killed
+>>
+>> Console messages in instrumented kernel -
+>>
+>> mce: Uncorrected hardware memory error in user-access at edbe201400
+>> Memory failure: tk->addr = 7f5bb6601000
+>> Memory failure: address edbe201: call dev_pagemap_mapping_shift
+>> dev_pagemap_mapping_shift: page edbe201: no PUD
+>> Memory failure: tk->size_shift == 0
+>> Memory failure: Unable to find user space address edbe201 in read_poison
+>> Memory failure: tk->addr = 7f3cf3601000
+>> Memory failure: address edbe201: call dev_pagemap_mapping_shift
+>> Memory failure: tk->size_shift = 21
+>> Memory failure: 0xedbe201: forcibly killing read_poison:22434 because of failure to unmap corrupted page
+>>    => to deliver SIGKILL
+>> Memory failure: 0xedbe201: Killing read_poison:22434 due to hardware memory corruption
+>>    => to deliver SIGBUS
+>>
+>> Signed-off-by: Jane Chu <jane.chu@oracle.com>
+>> Suggested-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+>> ---
+>>   mm/memory-failure.c | 62 ++++++++++++++++++++++-------------------------------
+>>   1 file changed, 26 insertions(+), 36 deletions(-)
+>>
+>> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+>> index d9cc660..bd4db33 100644
+>> --- a/mm/memory-failure.c
+>> +++ b/mm/memory-failure.c
+>> @@ -199,7 +199,6 @@ struct to_kill {
+>>   	struct task_struct *tsk;
+>>   	unsigned long addr;
+>>   	short size_shift;
+>> -	char addr_valid;
+>>   };
+>>   
+>>   /*
+>> @@ -304,43 +303,43 @@ static unsigned long dev_pagemap_mapping_shift(struct page *page,
+>>   /*
+>>    * Schedule a process for later kill.
+>>    * Uses GFP_ATOMIC allocations to avoid potential recursions in the VM.
+>> - * TBD would GFP_NOIO be enough?
+>>    */
+>>   static void add_to_kill(struct task_struct *tsk, struct page *p,
+>>   		       struct vm_area_struct *vma,
+>> -		       struct list_head *to_kill,
+>> -		       struct to_kill **tkc)
+>> +		       struct list_head *to_kill)
+>>   {
+>>   	struct to_kill *tk;
+>>   
+>> -	if (*tkc) {
+>> -		tk = *tkc;
+>> -		*tkc = NULL;
+>> -	} else {
+>> -		tk = kmalloc(sizeof(struct to_kill), GFP_ATOMIC);
+>> -		if (!tk) {
+>> -			pr_err("Memory failure: Out of memory while machine check handling\n");
+>> -			return;
+>> -		}
+>> +	tk = kmalloc(sizeof(struct to_kill), GFP_ATOMIC);
+>> +	if (!tk) {
+>> +		pr_err("Memory failure: Out of memory while machine check handling\n");
+>> +		return;
+> 
+> As Dan pointed out, the cleanup part can be delivered as a separate patch.
+
+My bad, will take care splitting up the patch.
+
+> 
+>>   	}
+>> +
+>>   	tk->addr = page_address_in_vma(p, vma);
+>> -	tk->addr_valid = 1;
+>>   	if (is_zone_device_page(p))
+>>   		tk->size_shift = dev_pagemap_mapping_shift(p, vma);
+>>   	else
+>>   		tk->size_shift = compound_order(compound_head(p)) + PAGE_SHIFT;
+>>   
+>>   	/*
+>> -	 * In theory we don't have to kill when the page was
+>> -	 * munmaped. But it could be also a mremap. Since that's
+>> -	 * likely very rare kill anyways just out of paranoia, but use
+>> -	 * a SIGKILL because the error is not contained anymore.
+>> +	 * Send SIGKILL if "tk->addr == -EFAULT". Also, as
+>> +	 * "tk->size_shift" is always non-zero for !is_zone_device_page(),
+>> +	 * so "tk->size_shift == 0" effectively checks no mapping on
+>> +	 * ZONE_DEVICE. Indeed, when a devdax page is mmapped N times
+>> +	 * to a process' address space, it's possible not all N VMAs
+>> +	 * contain mappings for the page, but at least one VMA does.
+>> +	 * Only deliver SIGBUS with payload derived from the VMA that
+>> +	 * has a mapping for the page.
+> 
+> OK, so SIGBUSs are sent M times (where M is the number of mappings
+> for the page). Then I'm convinced that we need "else if" block below.
+
+Yes. I run read_poison that mmaps /dev/dax 4 times with MAPS_POPULATE flag
+set, so the kernel attempted sending SIGBUS 4 times.
+One time, while the poison was consumed at uaddr[1] (2nd mmap), but the
+SIGBUS payload indicated the si_addr was uaddr[3] (4th mmap).
+
+thanks!
+-jane
+
+
+> 
+> Thanks,
+> Naoya Horiguchi
+> 
+>>   	 */
+>> -	if (tk->addr == -EFAULT || tk->size_shift == 0) {
+>> +	if (tk->addr == -EFAULT) {
+>>   		pr_info("Memory failure: Unable to find user space address %lx in %s\n",
+>>   			page_to_pfn(p), tsk->comm);
+>> -		tk->addr_valid = 0;
+>> +	} else if (tk->size_shift == 0) {
+>> +		kfree(tk);
+>> +		return;
+>>   	}
+>> +
+>>   	get_task_struct(tsk);
+>>   	tk->tsk = tsk;
+>>   	list_add_tail(&tk->nd, to_kill);
+>> @@ -366,7 +365,7 @@ static void kill_procs(struct list_head *to_kill, int forcekill, bool fail,
+>>   			 * make sure the process doesn't catch the
+>>   			 * signal and then access the memory. Just kill it.
+>>   			 */
+>> -			if (fail || tk->addr_valid == 0) {
+>> +			if (fail || tk->addr == -EFAULT) {
+>>   				pr_err("Memory failure: %#lx: forcibly killing %s:%d because of failure to unmap corrupted page\n",
+>>   				       pfn, tk->tsk->comm, tk->tsk->pid);
+>>   				do_send_sig_info(SIGKILL, SEND_SIG_PRIV,
+>> @@ -432,7 +431,7 @@ static struct task_struct *task_early_kill(struct task_struct *tsk,
+>>    * Collect processes when the error hit an anonymous page.
+>>    */
+>>   static void collect_procs_anon(struct page *page, struct list_head *to_kill,
+>> -			      struct to_kill **tkc, int force_early)
+>> +				int force_early)
+>>   {
+>>   	struct vm_area_struct *vma;
+>>   	struct task_struct *tsk;
+>> @@ -457,7 +456,7 @@ static void collect_procs_anon(struct page *page, struct list_head *to_kill,
+>>   			if (!page_mapped_in_vma(page, vma))
+>>   				continue;
+>>   			if (vma->vm_mm == t->mm)
+>> -				add_to_kill(t, page, vma, to_kill, tkc);
+>> +				add_to_kill(t, page, vma, to_kill);
+>>   		}
+>>   	}
+>>   	read_unlock(&tasklist_lock);
+>> @@ -468,7 +467,7 @@ static void collect_procs_anon(struct page *page, struct list_head *to_kill,
+>>    * Collect processes when the error hit a file mapped page.
+>>    */
+>>   static void collect_procs_file(struct page *page, struct list_head *to_kill,
+>> -			      struct to_kill **tkc, int force_early)
+>> +				int force_early)
+>>   {
+>>   	struct vm_area_struct *vma;
+>>   	struct task_struct *tsk;
+>> @@ -492,7 +491,7 @@ static void collect_procs_file(struct page *page, struct list_head *to_kill,
+>>   			 * to be informed of all such data corruptions.
+>>   			 */
+>>   			if (vma->vm_mm == t->mm)
+>> -				add_to_kill(t, page, vma, to_kill, tkc);
+>> +				add_to_kill(t, page, vma, to_kill);
+>>   		}
+>>   	}
+>>   	read_unlock(&tasklist_lock);
+>> @@ -501,26 +500,17 @@ static void collect_procs_file(struct page *page, struct list_head *to_kill,
+>>   
+>>   /*
+>>    * Collect the processes who have the corrupted page mapped to kill.
+>> - * This is done in two steps for locking reasons.
+>> - * First preallocate one tokill structure outside the spin locks,
+>> - * so that we can kill at least one process reasonably reliable.
+>>    */
+>>   static void collect_procs(struct page *page, struct list_head *tokill,
+>>   				int force_early)
+>>   {
+>> -	struct to_kill *tk;
+>> -
+>>   	if (!page->mapping)
+>>   		return;
+>>   
+>> -	tk = kmalloc(sizeof(struct to_kill), GFP_NOIO);
+>> -	if (!tk)
+>> -		return;
+>>   	if (PageAnon(page))
+>> -		collect_procs_anon(page, tokill, &tk, force_early);
+>> +		collect_procs_anon(page, tokill, force_early);
+>>   	else
+>> -		collect_procs_file(page, tokill, &tk, force_early);
+>> -	kfree(tk);
+>> +		collect_procs_file(page, tokill, force_early);
+>>   }
+>>   
+>>   static const char *action_name[] = {
+>> -- 
+>> 1.8.3.1
+>>
+>>
