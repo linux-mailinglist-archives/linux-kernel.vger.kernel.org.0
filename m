@@ -2,195 +2,195 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E88AC74F0B
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 15:20:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 410D674F2D
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 15:23:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389855AbfGYNUM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 09:20:12 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:51610 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389776AbfGYNUM (ORCPT
+        id S1729767AbfGYNWw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 09:22:52 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:41894 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725852AbfGYNWw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 09:20:12 -0400
-Received: by mail-wm1-f68.google.com with SMTP id 207so44992377wma.1
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 06:20:10 -0700 (PDT)
+        Thu, 25 Jul 2019 09:22:52 -0400
+Received: by mail-lj1-f195.google.com with SMTP id d24so47966558ljg.8;
+        Thu, 25 Jul 2019 06:22:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=o4s5mYhFtZl29VTDqSwCHcLENJRWZGEcESnpKK9TpyE=;
-        b=vWHBawv33ZZ6U2Kf/1WV8az60+8PapAIgbjF4cRKP1SqiON9Sc9cUXurj2fsDId5eO
-         +LBQZfXQcEmtfEeC1R5pEISJ4vJ4+PfM0J13CxHOuUjvfvV3uMDIJeMLQ+fR7x2z2TEd
-         sGl/CfMK2zfHVvRcmyhNAYeumt99lUvwQ6J0bi8iJtBTYXgFUzgiZNsDq74HeUPC8uIe
-         hDHd+6H9+6gnZhpu5Ha8Ysr09ciwPcFf6EJjrYEEQoS11HpZ2kqEPYsMCpHTiXItjqCa
-         2B0weoEZ5Utu/OPtO280+QxfpG1Q3QK/dutrzbUNE35n+P5bK4xTZ2KtqpzI0oZUuThW
-         2BgA==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
+         :subject:to:cc:content-transfer-encoding;
+        bh=KgKbQn+sVtaYeJftRwYKqZockp8kTGU+oulqwixLW+w=;
+        b=Kf3Z1S3rHqrjO1JoxJdWnKuBq8hN1KQIwgSpoPR00GOKJL3nGmYGed+tcTpj8qr2GB
+         +v7HJMt9fxA+2jZBPUgP9hhAnYFR72DdyTp8/ATGS/ewqTcf0ASA7K9KfaJKhMZA4vZd
+         6vDFnnJDlMGVnajKl23G3fJSHXPaANDNf+UlcHmUe46sXRl5tpCzGSSsx6xF1L2sCMkw
+         pTKPI0gZ9GkMqW2QIEOv6uyth18zlsjxH3vH+AC/3Vi56ujnMtPqEd1M/9tFpNqVStkl
+         prodH09bb738Mr8sstAKfx6tK16+abbu1SV26muDqEUtaUc1ZzAraUZr13LdSnrKtafX
+         hyMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=o4s5mYhFtZl29VTDqSwCHcLENJRWZGEcESnpKK9TpyE=;
-        b=TsbOR5OIGS+vMJTVW5YwYdAhMHt2cUawzeMUz2wuAqBcsb//OslQthiwXsg5LYYPEi
-         TMQuDECX+/4Mv5vhE8K73t1WiLKZJckLZ+CYB91mEo+cJ4Nqd7aKNnQaJ2xplNz2IaWt
-         vJ9lOUZMJ3mosH62dNGnTGJARGUW5W0JUaNGFVpWp2vHvXXdnqNSRVt3B4wI/5bMS/yi
-         f4G8Fqrr9VwfugS3ZN77vgT0R6FEJyUfeXAnC4EvbHKzCDwRztUYfX5Umg12JmjuySCP
-         lI8PFc9zJ56W7TTusJpwvERDM0JSjq9SNJNYW8bcWR/GdiyAyhQv62Yi1ldvvqgIzVfY
-         Vj7Q==
-X-Gm-Message-State: APjAAAWifEAEoi00YiIhfUeN0ptAcRvgBXOOuOLWmbdhNl0nHAoDFz9n
-        TIpTrUt/2026Sk85BdxXQyg=
-X-Google-Smtp-Source: APXvYqzAlpy7gYe9nIkhMAWD7UaqXx5H1UnY+8UcvvqFWqvBgfMOU5mP1w9Z79vNCNMuGs37+drGXg==
-X-Received: by 2002:a1c:411:: with SMTP id 17mr74091953wme.74.1564060387102;
-        Thu, 25 Jul 2019 06:13:07 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
-        by smtp.gmail.com with ESMTPSA id z7sm47119735wrh.67.2019.07.25.06.13.05
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 25 Jul 2019 06:13:06 -0700 (PDT)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        David Lechner <david@lechnology.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v2 4/5] ARM: davinci: support multiplatform build for ARM v5
-Date:   Thu, 25 Jul 2019 15:12:56 +0200
-Message-Id: <20190725131257.6142-5-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190725131257.6142-1-brgl@bgdev.pl>
-References: <20190725131257.6142-1-brgl@bgdev.pl>
+        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
+         :from:date:message-id:subject:to:cc:content-transfer-encoding;
+        bh=KgKbQn+sVtaYeJftRwYKqZockp8kTGU+oulqwixLW+w=;
+        b=mBDAuogFJpRAq0OwaXa7oY5TQO9W7RgJyRL4hj9vGXoukf0aoPpfz33RQZvXOU77Qx
+         QXBABq4sJH8NBCUfZHOpxUtAfvIOUSuItYpq+g0JuC6gRqHB9glLk4ayHhPfjiKNxh5+
+         ckQbf63mAWHWq6QDe8I6/AT77i188XEae0JUcAROSEm1ECPUIti++4JB95R5Jx3Dg/Ux
+         FSvQkmse7CQUEJN9OQGjlzG2qF33hvsabBTMUyzWidUkCDSpkpPi4tS1McWj1z+SUA1b
+         O5UW55bzuUacFJ1zz/b7Esl6KsPWz5+l0k0DnEcp9rS9uLbHrHIyzGLfA4Bh4+RmGi4M
+         /MKg==
+X-Gm-Message-State: APjAAAVyhsrLMXBlFdXKoNFsd1Q6awHZYUSxuVJ4EPCSh9Lls5L36U1w
+        zosszob/x+XlLKOL4DCIsQONCsKUbt1Rpea4zwR/v/bg
+X-Google-Smtp-Source: APXvYqyTTtkZSLGybeBnj2BYoFqYLkzK/AMLxamssTlKXEad8A8gaXQC1+CN5OL/YGc0pcrVbBBEQ1iENKDqhDFdKKU=
+X-Received: by 2002:a2e:9198:: with SMTP id f24mr46939627ljg.221.1564060446021;
+ Thu, 25 Jul 2019 06:14:06 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <CGME20190723122027eucas1p24b1d76e3139f7cc52614d7613ff9ba98@eucas1p2.samsung.com>
+ <20190723122016.30279-1-a.swigon@partner.samsung.com> <20190723122016.30279-9-a.swigon@partner.samsung.com>
+In-Reply-To: <20190723122016.30279-9-a.swigon@partner.samsung.com>
+Reply-To: cwchoi00@gmail.com
+From:   Chanwoo Choi <cwchoi00@gmail.com>
+Date:   Thu, 25 Jul 2019 22:13:29 +0900
+Message-ID: <CAGTfZH1_Qk+vNa_AJW_8OA8MJbnZa3yCTLLRs2w23bNTm72gyQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 08/11] arm: dts: exynos: Add parents and
+ #interconnect-cells to Exynos4412
+To:     =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon@partner.samsung.com>
+Cc:     devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>, inki.dae@samsung.com,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        georgi.djakov@linaro.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+2019=EB=85=84 7=EC=9B=94 24=EC=9D=BC (=EC=88=98) =EC=98=A4=EC=A0=84 8:07, A=
+rtur =C5=9Awigo=C5=84 <a.swigon@partner.samsung.com>=EB=8B=98=EC=9D=B4 =EC=
+=9E=91=EC=84=B1:
+>
+> This patch adds two fields tp the Exynos4412 DTS:
+>   - parent: to declare connections between nodes that are not in a
+>     parent-child relation in devfreq;
+>   - #interconnect-cells: required by the interconnect framework.
+>
+> Please note that #interconnect-cells is always zero and node IDs are not
+> hardcoded anywhere.
+>
+> Signed-off-by: Artur =C5=9Awigo=C5=84 <a.swigon@partner.samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 1 +
+>  arch/arm/boot/dts/exynos4412.dtsi               | 9 +++++++++
+>  2 files changed, 10 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/b=
+oot/dts/exynos4412-odroid-common.dtsi
+> index ea55f377d17c..bdd61ae86103 100644
+> --- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+> +++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+> @@ -106,6 +106,7 @@
+>  &bus_leftbus {
+>         devfreq-events =3D <&ppmu_leftbus_3>, <&ppmu_rightbus_3>;
+>         vdd-supply =3D <&buck3_reg>;
+> +       parent =3D <&bus_dmc>;
 
-Add modifications necessary to make davinci part of the ARM v5
-multiplatform build.
+It is wrong. 'bus_leftbus' has not any h/w dependency of 'bus_dmc'
+and 'bus_leftbus' is not child of 'bus_dmc'.
 
-Move the arch-specific configuration out of arch/arm/Kconfig and
-into mach-davinci/Kconfig. Remove the sub-menu for DaVinci
-implementations (they'll be visible directly under the system type.
-Select all necessary options not already selected by ARCH_MULTI_V5.
-Update davinci_all_defconfig. Explicitly include the mach-specific
-headers in mach-davinci/Makefile.
+Even it there are some PMQoS requirement between them,
+it it not proper to tie both 'bus_leftbus' and 'bus_dmc'.
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- arch/arm/Kconfig                       | 21 ---------------------
- arch/arm/configs/davinci_all_defconfig |  5 +++++
- arch/arm/mach-davinci/Kconfig          | 17 +++++++++++++----
- arch/arm/mach-davinci/Makefile         |  2 ++
- 4 files changed, 20 insertions(+), 25 deletions(-)
+>         status =3D "okay";
+>  };
+>
+> diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos=
+4412.dtsi
+> index d20db2dfe8e2..a70a671acacd 100644
+> --- a/arch/arm/boot/dts/exynos4412.dtsi
+> +++ b/arch/arm/boot/dts/exynos4412.dtsi
+> @@ -390,6 +390,7 @@
+>                         clocks =3D <&clock CLK_DIV_DMC>;
+>                         clock-names =3D "bus";
+>                         operating-points-v2 =3D <&bus_dmc_opp_table>;
+> +                       #interconnect-cells =3D <0>;
+>                         status =3D "disabled";
+>                 };
+>
+> @@ -398,6 +399,7 @@
+>                         clocks =3D <&clock CLK_DIV_ACP>;
+>                         clock-names =3D "bus";
+>                         operating-points-v2 =3D <&bus_acp_opp_table>;
+> +                       #interconnect-cells =3D <0>;
+>                         status =3D "disabled";
+>                 };
+>
+> @@ -406,6 +408,7 @@
+>                         clocks =3D <&clock CLK_DIV_C2C>;
+>                         clock-names =3D "bus";
+>                         operating-points-v2 =3D <&bus_dmc_opp_table>;
+> +                       #interconnect-cells =3D <0>;
+>                         status =3D "disabled";
+>                 };
+>
+> @@ -459,6 +462,7 @@
+>                         clocks =3D <&clock CLK_DIV_GDL>;
+>                         clock-names =3D "bus";
+>                         operating-points-v2 =3D <&bus_leftbus_opp_table>;
+> +                       #interconnect-cells =3D <0>;
+>                         status =3D "disabled";
+>                 };
+>
+> @@ -467,6 +471,7 @@
+>                         clocks =3D <&clock CLK_DIV_GDR>;
+>                         clock-names =3D "bus";
+>                         operating-points-v2 =3D <&bus_leftbus_opp_table>;
+> +                       #interconnect-cells =3D <0>;
+>                         status =3D "disabled";
+>                 };
+>
+> @@ -475,6 +480,7 @@
+>                         clocks =3D <&clock CLK_ACLK160>;
+>                         clock-names =3D "bus";
+>                         operating-points-v2 =3D <&bus_display_opp_table>;
+> +                       #interconnect-cells =3D <0>;
+>                         status =3D "disabled";
+>                 };
+>
+> @@ -483,6 +489,7 @@
+>                         clocks =3D <&clock CLK_ACLK133>;
+>                         clock-names =3D "bus";
+>                         operating-points-v2 =3D <&bus_fsys_opp_table>;
+> +                       #interconnect-cells =3D <0>;
+>                         status =3D "disabled";
+>                 };
+>
+> @@ -491,6 +498,7 @@
+>                         clocks =3D <&clock CLK_ACLK100>;
+>                         clock-names =3D "bus";
+>                         operating-points-v2 =3D <&bus_peri_opp_table>;
+> +                       #interconnect-cells =3D <0>;
+>                         status =3D "disabled";
+>                 };
+>
+> @@ -499,6 +507,7 @@
+>                         clocks =3D <&clock CLK_SCLK_MFC>;
+>                         clock-names =3D "bus";
+>                         operating-points-v2 =3D <&bus_leftbus_opp_table>;
+> +                       #interconnect-cells =3D <0>;
+>                         status =3D "disabled";
+>                 };
+>
+> --
+> 2.17.1
+>
 
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 33b00579beff..013d4eefdf32 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -578,27 +578,6 @@ config ARCH_S3C24XX
- 	  (<http://www.simtec.co.uk/products/EB110ITX/>), the IPAQ 1940 or the
- 	  Samsung SMDK2410 development board (and derivatives).
- 
--config ARCH_DAVINCI
--	bool "TI DaVinci"
--	select ARCH_HAS_HOLES_MEMORYMODEL
--	select COMMON_CLK
--	select CPU_ARM926T
--	select GENERIC_ALLOCATOR
--	select GENERIC_CLOCKEVENTS
--	select GENERIC_IRQ_CHIP
--	select GENERIC_IRQ_MULTI_HANDLER
--	select GPIOLIB
--	select HAVE_IDE
--	select PM_GENERIC_DOMAINS if PM
--	select PM_GENERIC_DOMAINS_OF if PM && OF
--	select REGMAP_MMIO
--	select RESET_CONTROLLER
--	select SPARSE_IRQ
--	select USE_OF
--	select ZONE_DMA
--	help
--	  Support for TI's DaVinci platform.
--
- config ARCH_OMAP1
- 	bool "TI OMAP1"
- 	depends on MMU
-diff --git a/arch/arm/configs/davinci_all_defconfig b/arch/arm/configs/davinci_all_defconfig
-index 9a32a8c0f873..b34970ce6b31 100644
---- a/arch/arm/configs/davinci_all_defconfig
-+++ b/arch/arm/configs/davinci_all_defconfig
-@@ -17,6 +17,9 @@ CONFIG_MODVERSIONS=y
- CONFIG_PARTITION_ADVANCED=y
- # CONFIG_IOSCHED_DEADLINE is not set
- # CONFIG_IOSCHED_CFQ is not set
-+CONFIG_ARCH_MULTIPLATFORM=y
-+CONFIG_ARCH_MULTI_V7=n
-+CONFIG_ARCH_MULTI_V5=y
- CONFIG_ARCH_DAVINCI=y
- CONFIG_ARCH_DAVINCI_DM644x=y
- CONFIG_ARCH_DAVINCI_DM355=y
-@@ -129,9 +132,11 @@ CONFIG_SPI=y
- CONFIG_SPI_DAVINCI=m
- CONFIG_PINCTRL_DA850_PUPD=m
- CONFIG_PINCTRL_SINGLE=y
-+CONFIG_GPIOLIB=y
- CONFIG_GPIO_SYSFS=y
- CONFIG_GPIO_PCA953X=y
- CONFIG_GPIO_PCA953X_IRQ=y
-+CONFIG_RESET_CONTROLLER=y
- CONFIG_POWER_RESET=y
- CONFIG_POWER_RESET_GPIO=y
- CONFIG_SYSCON_REBOOT_MODE=m
-diff --git a/arch/arm/mach-davinci/Kconfig b/arch/arm/mach-davinci/Kconfig
-index 5a59cebc7d0a..dd427bd2768c 100644
---- a/arch/arm/mach-davinci/Kconfig
-+++ b/arch/arm/mach-davinci/Kconfig
-@@ -1,11 +1,22 @@
- # SPDX-License-Identifier: GPL-2.0
-+
-+menuconfig ARCH_DAVINCI
-+	bool "TI DaVinci"
-+	depends on ARCH_MULTI_V5
-+	select DAVINCI_TIMER
-+	select ZONE_DMA
-+	select ARCH_HAS_HOLES_MEMORYMODEL
-+	select PM_GENERIC_DOMAINS if PM
-+	select PM_GENERIC_DOMAINS_OF if PM && OF
-+	select REGMAP_MMIO
-+	select HAVE_IDE
-+	select PINCTRL_SINGLE
-+
- if ARCH_DAVINCI
- 
- config ARCH_DAVINCI_DMx
- 	bool
- 
--menu "TI DaVinci Implementations"
--
- comment "DaVinci Core Type"
- 
- config ARCH_DAVINCI_DM644x
-@@ -225,6 +236,4 @@ config DAVINCI_MUX_WARNINGS
- 	  to change the pin multiplexing setup. When there are no warnings
- 	  printed, it's safe to deselect DAVINCI_MUX for your product.
- 
--endmenu
--
- endif
-diff --git a/arch/arm/mach-davinci/Makefile b/arch/arm/mach-davinci/Makefile
-index f76a8482784f..a03d8443ef08 100644
---- a/arch/arm/mach-davinci/Makefile
-+++ b/arch/arm/mach-davinci/Makefile
-@@ -4,6 +4,8 @@
- #
- #
- 
-+ccflags-$(CONFIG_ARCH_MULTIPLATFORM) := -I$(srctree)/$(src)/include
-+
- # Common objects
- obj-y 					:= time.o serial.o usb.o \
- 					   common.o sram.o
--- 
-2.21.0
 
+--=20
+Best Regards,
+Chanwoo Choi
