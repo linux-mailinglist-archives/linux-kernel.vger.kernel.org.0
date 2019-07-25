@@ -2,70 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3341975B74
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 01:42:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D709E75B81
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 01:43:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727756AbfGYXmL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 19:42:11 -0400
-Received: from mga06.intel.com ([134.134.136.31]:51850 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727650AbfGYXmD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 19:42:03 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jul 2019 16:42:02 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,308,1559545200"; 
-   d="scan'208";a="369874895"
-Received: from amrutaku-mobl1.amr.corp.intel.com (HELO pbossart-mobl3.intel.com) ([10.255.230.75])
-  by fmsmga006.fm.intel.com with ESMTP; 25 Jul 2019 16:42:01 -0700
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-To:     alsa-devel@alsa-project.org
-Cc:     linux-kernel@vger.kernel.org, tiwai@suse.de, broonie@kernel.org,
-        vkoul@kernel.org, gregkh@linuxfoundation.org, jank@cadence.com,
-        srinivas.kandagatla@linaro.org, slawomir.blauciak@intel.com,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Sanyog Kale <sanyog.r.kale@intel.com>
-Subject: [RFC PATCH 40/40] soundwire: intel: add delay on restart for enumeration
-Date:   Thu, 25 Jul 2019 18:40:32 -0500
-Message-Id: <20190725234032.21152-41-pierre-louis.bossart@linux.intel.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190725234032.21152-1-pierre-louis.bossart@linux.intel.com>
-References: <20190725234032.21152-1-pierre-louis.bossart@linux.intel.com>
+        id S1727433AbfGYXnI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 19:43:08 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:40889 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727336AbfGYXl0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 19:41:26 -0400
+Received: by mail-pf1-f193.google.com with SMTP id p184so23513332pfp.7
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 16:41:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:in-reply-to:references:date:message-id
+         :mime-version;
+        bh=mfnZxOLDEeVO3qt5r3vvVtE+ErJ1uBMl6JY5u4LfgE8=;
+        b=NYZPG4YGuOK9pb/2O879xjVVXKhk7WAvahsuMxvB98qIUqyPiOnrQfQ7P+Ixq3MPma
+         duSsO5O/64u+E2DWqn5D9KXPJfVirf/E7wKVvcvQiNcVhx+9dgbDE55NwVx+TNdUFPtL
+         HvSNEOHGX3NOIDAQ/pq7NQ+imv/wl1pWJXUdb6QOiYLbj793p9+d5af8/iOesOe5lQzm
+         lS/0RgANQyEPvRMRa4YecacmiEKGzvpM819v62SGJVVAytNGiVNtL8m3osIFWFdWup3d
+         3xF7zo67ZntoeI8Yaft3hgxhzcj+lGU7e4kaRtzhJehqB+RlDKNfFuNEkMxdc4aEElLS
+         hXRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=mfnZxOLDEeVO3qt5r3vvVtE+ErJ1uBMl6JY5u4LfgE8=;
+        b=j2IhWpi2ANFKjBjAu8LtIdRJJxgWxDHwhG1Vj5SFbcSAomQjy3oV0JyUCtofkEohBs
+         8JjDZuVXYi0ycFBLn6AfGHQIaoPP7hiZClHBIyFFhUMxqJovh7C0IvYTwBLDUDEtCNNr
+         GL7R9NqE1m+7mZy8tK7BZTXvEnJTiAZ1RJ+d/fG+bZatDPKR0rk3ZPg5YXJ0bUc95c8s
+         pE6/3TXNLdpGbklTVCyJuxqXFyfZ26BPon8rQ6TijF05igkb7HsWV6NeqTsiU8cqAzGp
+         o2Fpxiyz2CylRGCPjPYCEaBy8BrUJjmc5h7yfARXhPWsNXvhansZEWnsGXK9U/SbBLcR
+         deEQ==
+X-Gm-Message-State: APjAAAWnfxRVzEaZk70tMv81m++pMSI5zQgwRBCRrNNiNyr2KhbI6zJa
+        XakAmIki+neT9moFqhvV5tSRxA==
+X-Google-Smtp-Source: APXvYqzhoS3YtUHt0ZnWmTrTLKzKcKwKjxpCWou1XYaUkEeTyPdkWoXNaQqca3bgA+hs4A+tDUQLAw==
+X-Received: by 2002:aa7:8201:: with SMTP id k1mr18609232pfi.97.1564098085191;
+        Thu, 25 Jul 2019 16:41:25 -0700 (PDT)
+Received: from localhost ([2601:602:9200:a1a5:c1da:f078:8d:a297])
+        by smtp.googlemail.com with ESMTPSA id s11sm49036956pgv.13.2019.07.25.16.41.24
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 25 Jul 2019 16:41:24 -0700 (PDT)
+From:   Kevin Hilman <khilman@baylibre.com>
+To:     Xavier Ruppen <xruppen@gmail.com>
+Cc:     linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, narmstrong@baylibre.com,
+        martin.blumenstingl@googlemail.com,
+        Xavier Ruppen <xruppen@gmail.com>
+Subject: Re: [PATCH] arm64: dts: meson: odroid-n2: keep SD card regulator always on
+In-Reply-To: <20190719192954.26481-1-xruppen@gmail.com>
+References: <20190719192954.26481-1-xruppen@gmail.com>
+Date:   Thu, 25 Jul 2019 16:41:20 -0700
+Message-ID: <7htvb9smvz.fsf@baylibre.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We have a conceptual issue on restart: the interaction with the slaves
-can start before (re) enumeration is complete. Add a delay for now but
-we will need to have an async notification that all devices are back
-on the bus.
+Xavier Ruppen <xruppen@gmail.com> writes:
 
-Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
----
- drivers/soundwire/intel.c | 5 +++++
- 1 file changed, 5 insertions(+)
+> When powering off the Odroid N2, the tflash_vdd regulator is
+> automatically turned off by the kernel. This is a problem
+> when issuing the "reboot" command while using an SD card.
+> The boot ROM does not power this regulator back on, blocking
+> the reboot process at the boot ROM stage, preventing the
+> SD card from being detected.
+>
+> Adding the "regulator-always-on" property fixes the problem.
+>
+> Signed-off-by: Xavier Ruppen <xruppen@gmail.com>
 
-diff --git a/drivers/soundwire/intel.c b/drivers/soundwire/intel.c
-index 1394a2322553..e4ea430b5a8e 100644
---- a/drivers/soundwire/intel.c
-+++ b/drivers/soundwire/intel.c
-@@ -1242,6 +1242,11 @@ static int intel_resume(struct device *dev)
- 
- 	ret = sdw_cdns_exit_reset(&sdw->cdns);
- 
-+	/* add delay to let Slaves re-enumerate */
-+	usleep_range(20000, 30000);
-+
-+	dev_dbg(dev, "%s done\n", __func__);
-+
- 	return ret;
- }
- 
--- 
-2.20.1
+Thanks for the fix and the detailed background description.
 
+Queued as a fix for v5.3.
+
+Note that I also added this to the commit log, for the benefit of anyone
+wanting to backport.
+
+Fixes: c35f6dc5c377 ("arm64: dts: meson: Add minimal support for Odroid-N2")
+
+>
+> Here is what the boot ROM output looks like without this patch:
+>
+>     [root@alarm ~]# reboot 
+>     [...]
+>     [   24.275860] shutdown[1]: All loop devices detached.
+>     [   24.278864] shutdown[1]: Detaching DM devices.
+>     [   24.287105] kvm: exiting hardware virtualization
+>     [   24.318776] reboot: Restarting system
+>     bl31 reboot reason: 0xd
+>     bl31 reboot reason: 0x0
+>     system cmd  1.
+>     G12B:BL:6e7c85:7898ac;FEAT:E0F83180:2000;POC:F;RCY:0;
+>     EMMC:800;NAND:81;SD?:0;SD:400;USB:8;LOOP:1;EMMC:800;
+>     NAND:81;SD?:0;SD:400;USB:8;LOOP:2;EMMC:800;NAND:81;
+>     SD?:0;SD:400;USB:8;LOOP:3; [...]
+>
+> Other people can be seen having this problem on the odroid
+> forum [1].
+>
+> The cause of the problem was found by Martin Blumenstingl
+> on #linux-amlogic. We may want to add his Suggested-by tag
+> if he agrees.
+
+Added.
+
+Thanks!
+
+Kevin
