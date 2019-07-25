@@ -2,145 +2,184 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3B1674293
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 02:32:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 71DBA742A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 02:44:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728825AbfGYAcM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 20:32:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47110 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726430AbfGYAcM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 20:32:12 -0400
-Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CA5BD21855;
-        Thu, 25 Jul 2019 00:32:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564014731;
-        bh=1mjgJzVFWoTFmtz+Kx3DxsVaXR0QOiC5wxT60be6Mig=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Qx/pMKIWOm70Fp5OEaQP8a05ekhlUusjXCybkzUsEAOt7qojI8ewhEJZgh8UluQYF
-         0aLorIkZKEpKHgBy9ynJSONokjpZr0ty0An1lhyqFyZNO9HVHPsglussnt1t6UY+GV
-         CWwkncKQf6EbHM/CVvBHp0ybR17qrttA0ale+Vnw=
-Date:   Thu, 25 Jul 2019 09:32:08 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Joe Lawrence <joe.lawrence@redhat.com>
-Cc:     live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: kprobes, livepatch and FTRACE_OPS_FL_IPMODIFY
-Message-Id: <20190725093208.343db9d54f6a0f5abc99af7b@kernel.org>
-In-Reply-To: <20190724151942.GA7205@redhat.com>
-References: <20190724151942.GA7205@redhat.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S2388479AbfGYAop (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 20:44:45 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:36430 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387421AbfGYAoo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 20:44:44 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6P0dlXf171093;
+        Thu, 25 Jul 2019 00:41:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=gv2SPbpkF9xScJE1PHpWHpgE3ifu6hFMD2cmVIyD7TY=;
+ b=muZVds6swMHMAuFbMxKchNkOUd8CqTrPV0KBCMC49yrWg/LxnLuU6ow/RmgyiMUnnjmy
+ MAiRa6Zm+jzf7B99ZPeMXmyGgQxIYQlCeWqFQqyGoNTjbspAoTiqbjfg4/VmNuRd7Vm5
+ HrFVwz2k57PMYa/HPZcBBc0f5omPk+LrAWZPjNDUaWWol7Y67+yRcy8wbGU1Wbct1RLH
+ zVzTyoIxGQlKet79OucxPmXfLkDZ0FkQP1v/RZBYzmhhy8PDfe/AB0YbSVtLklYjMvP9
+ lz6P71WYbBjNCITeo6xlPXLd7l7LVGerjJLbDawimLUiySB/y4c3YF5VO7XLIrxNTkjP MA== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2130.oracle.com with ESMTP id 2tx61c0gjv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 25 Jul 2019 00:41:25 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6P0beDT189084;
+        Thu, 25 Jul 2019 00:41:24 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3020.oracle.com with ESMTP id 2tx60yhed4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 25 Jul 2019 00:41:24 +0000
+Received: from abhmp0022.oracle.com (abhmp0022.oracle.com [141.146.116.28])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x6P0fGBA002510;
+        Thu, 25 Jul 2019 00:41:16 GMT
+Received: from [192.168.1.14] (/180.165.87.209)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 24 Jul 2019 17:41:15 -0700
+Subject: Re: [PATCH 00/12] block/bio, fs: convert put_page() to
+ put_user_page*()
+To:     john.hubbard@gmail.com, Andrew Morton <akpm@linux-foundation.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Jason Wang <jasowang@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        "Michael S . Tsirkin" <mst@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>, ceph-devel@vger.kernel.org,
+        kvm@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-rdma@vger.kernel.org,
+        netdev@vger.kernel.org, samba-technical@lists.samba.org,
+        v9fs-developer@lists.sourceforge.net,
+        virtualization@lists.linux-foundation.org,
+        John Hubbard <jhubbard@nvidia.com>
+References: <20190724042518.14363-1-jhubbard@nvidia.com>
+From:   Bob Liu <bob.liu@oracle.com>
+Message-ID: <8621066c-e242-c449-eb04-4f2ce6867140@oracle.com>
+Date:   Thu, 25 Jul 2019 08:41:04 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
+MIME-Version: 1.0
+In-Reply-To: <20190724042518.14363-1-jhubbard@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9328 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1907250003
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9328 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1907250003
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 24 Jul 2019 11:19:42 -0400
-Joe Lawrence <joe.lawrence@redhat.com> wrote:
+On 7/24/19 12:25 PM, john.hubbard@gmail.com wrote:
+> From: John Hubbard <jhubbard@nvidia.com>
+> 
+> Hi,
+> 
+> This is mostly Jerome's work, converting the block/bio and related areas
+> to call put_user_page*() instead of put_page(). Because I've changed
+> Jerome's patches, in some cases significantly, I'd like to get his
+> feedback before we actually leave him listed as the author (he might
+> want to disown some or all of these).
+> 
 
-> Hi Masami,
-> 
-> I wanted to revisit FTRACE_OPS_FL_IPMODIFY blocking of kprobes and
-> livepatch, at least in cases where kprobe pre_handlers don't modify
-> regs->ip.
+Could you add some background to the commit log for people don't have the context..
+Why this converting? What's the main differences?
 
-OK, now I think we can pass a flag to kprobe_register() to modify regs->ip
-or not. Then we can introduce 2 different ftrace_ops for IPMODIFY
-or just requires REGS.
+Regards, -Bob
 
-> (We've discussed this previously at part of a kpatch github issue #47:
-> https://github.com/dynup/kpatch/issues/47)
+> I added a new patch, in order to make this work with Christoph Hellwig's
+> recent overhaul to bio_release_pages(): "block: bio_release_pages: use
+> flags arg instead of bool".
 > 
-> The particular use case I was wondering about was perf probing a
-> particular function, then attempting to livepatch that same function:
+> I've started the series with a patch that I've posted in another
+> series ("mm/gup: add make_dirty arg to put_user_pages_dirty_lock()"[1]),
+> because I'm not sure which of these will go in first, and this allows each
+> to stand alone.
 > 
->   % uname -r
->   5.3.0-rc1+
+> Testing: not much beyond build and boot testing has been done yet. And
+> I'm not set up to even exercise all of it (especially the IB parts) at
+> run time.
 > 
->   % dmesg -C
->   % perf probe --add cmdline_proc_show
->   Added new event:
->     probe:cmdline_proc_show (on cmdline_proc_show)
+> Anyway, changes here are:
 > 
->   You can now use it in all perf tools, such as:
+> * Store, in the iov_iter, a "came from gup (get_user_pages)" parameter.
+>   Then, use the new iov_iter_get_pages_use_gup() to retrieve it when
+>   it is time to release the pages. That allows choosing between put_page()
+>   and put_user_page*().
 > 
->           perf record -e probe:cmdline_proc_show -aR sleep 1
+> * Pass in one more piece of information to bio_release_pages: a "from_gup"
+>   parameter. Similar use as above.
 > 
->   % perf record -e probe:cmdline_proc_show -aR sleep 30 &
->   [1] 1007
->   % insmod samples/livepatch/livepatch-sample.ko
->   insmod: ERROR: could not insert module samples/livepatch/livepatch-sample.ko: Device or resource busy
->   % dmesg
->   [  440.913962] livepatch_sample: tainting kernel with TAINT_LIVEPATCH
->   [  440.917123] livepatch_sample: module verification failed: signature and/or required key missing - tainting kernel
->   [  440.942493] livepatch: enabling patch 'livepatch_sample'
->   [  440.943445] livepatch: failed to register ftrace handler for function 'cmdline_proc_show' (-16)
->   [  440.944576] livepatch: failed to patch object 'vmlinux'
->   [  440.945270] livepatch: failed to enable patch 'livepatch_sample'
->   [  440.946085] livepatch: 'livepatch_sample': unpatching complete
+> * Change the block layer, and several file systems, to use
+>   put_user_page*().
 > 
-> This same behavior holds in reverse, if we want to probe a livepatched
-> function:
+> [1] https://urldefense.proofpoint.com/v2/url?u=https-3A__lore.kernel.org_r_20190724012606.25844-2D2-2Djhubbard-40nvidia.com&d=DwIDaQ&c=RoP1YumCXCgaWHvlZYR8PZh8Bv7qIrMUB65eapI_JnE&r=1ktT0U2YS_I8Zz2o-MS1YcCAzWZ6hFGtyTgvVMGM7gI&m=FpFhv2rjbKCAYGmO6Hy8WJAottr1Qz_mDKDLObQ40FU&s=q-_mX3daEr22WbdZMElc_ZbD8L9oGLD7U0xLeyJ661Y&e= 
+>     And please note the correction email that I posted as a follow-up,
+>     if you're looking closely at that patch. :) The fixed version is
+>     included here.
 > 
->   % insmod samples/livepatch/livepatch-sample.ko
->   % perf probe --add cmdline_proc_show
->   Added new event:
->     probe:cmdline_proc_show (on cmdline_proc_show)
+> John Hubbard (3):
+>   mm/gup: add make_dirty arg to put_user_pages_dirty_lock()
+>   block: bio_release_pages: use flags arg instead of bool
+>   fs/ceph: fix a build warning: returning a value from void function
 > 
->   You can now use it in all perf tools, such as:
+> Jérôme Glisse (9):
+>   iov_iter: add helper to test if an iter would use GUP v2
+>   block: bio_release_pages: convert put_page() to put_user_page*()
+>   block_dev: convert put_page() to put_user_page*()
+>   fs/nfs: convert put_page() to put_user_page*()
+>   vhost-scsi: convert put_page() to put_user_page*()
+>   fs/cifs: convert put_page() to put_user_page*()
+>   fs/fuse: convert put_page() to put_user_page*()
+>   fs/ceph: convert put_page() to put_user_page*()
+>   9p/net: convert put_page() to put_user_page*()
 > 
->           perf record -e probe:cmdline_proc_show -aR sleep 1
+>  block/bio.c                                |  81 ++++++++++++---
+>  drivers/infiniband/core/umem.c             |   5 +-
+>  drivers/infiniband/hw/hfi1/user_pages.c    |   5 +-
+>  drivers/infiniband/hw/qib/qib_user_pages.c |   5 +-
+>  drivers/infiniband/hw/usnic/usnic_uiom.c   |   5 +-
+>  drivers/infiniband/sw/siw/siw_mem.c        |   8 +-
+>  drivers/vhost/scsi.c                       |  13 ++-
+>  fs/block_dev.c                             |  22 +++-
+>  fs/ceph/debugfs.c                          |   2 +-
+>  fs/ceph/file.c                             |  62 ++++++++---
+>  fs/cifs/cifsglob.h                         |   3 +
+>  fs/cifs/file.c                             |  22 +++-
+>  fs/cifs/misc.c                             |  19 +++-
+>  fs/direct-io.c                             |   2 +-
+>  fs/fuse/dev.c                              |  22 +++-
+>  fs/fuse/file.c                             |  53 +++++++---
+>  fs/nfs/direct.c                            |  10 +-
+>  include/linux/bio.h                        |  22 +++-
+>  include/linux/mm.h                         |   5 +-
+>  include/linux/uio.h                        |  11 ++
+>  mm/gup.c                                   | 115 +++++++++------------
+>  net/9p/trans_common.c                      |  14 ++-
+>  net/9p/trans_common.h                      |   3 +-
+>  net/9p/trans_virtio.c                      |  18 +++-
+>  24 files changed, 357 insertions(+), 170 deletions(-)
 > 
->   % perf record -e probe:cmdline_proc_show -aR sleep 30
->   Error:
->   The sys_perf_event_open() syscall returned with 16 (Device or resource busy) for event (probe:cmdline_proc_show).
->   /bin/dmesg | grep -i perf may provide additional information.
-> 
-> 
-> Now, if I read kernel/trace/trace_kprobe.c :: kprobe_dispatcher()
-> correctly, it's only going to return !0 (indicating a modified regs->ip)
-> when kprobe_perf_func() returns !0, i.e. regs->ip changes over a call to
-> trace_call_bpf().
-> 
-> Aside: should kprobe_ftrace_handler() check that FTRACE_OPS_FL_IPMODIFY
-> is set when a pre_handler returns !0?
 
-NO, that flag has been shared among all ftrace-based kprobes, and checked
-when registering. So what we need is to introduce a new kprobe flag which
-states that this kprobe doesn't modify regs->ip. And kprobe prepare 2 ftrace_ops
-1 is for IPMODIFY and 1 is for !IPMODIFY.
-
-
-> 
-> In kpatch #47, Josh suggested:
-> 
-> - If a kprobe handler needs to modify IP, user sets KPROBE_FLAG_IPMODIFY
->   flag to register_kprobe, and then kprobes sets FTRACE_OPS_FL_IPMODIFY
->   when registering with ftrace for that probe.
-> 
-> - If KPROBE_FLAG_IPMODIFY is not used, kprobe_ftrace_handler() can
->   detect when a kprobe handler changes regs->ip and restore it to its
->   original value (regs->ip = ip).
-> 
-> Is this something that could still be supported?  In cases like perf
-> probe, could we get away with not setting FTRACE_OPS_FL_IPMODIFY?  The
-> current way that we're applying that flag, kprobes and livepatch are
-> mutually exclusive (for the same function).
-
-It is not supported yet. But I can make it. wait a bit :)
-
-Thank you,
-
-> 
-> Regards,
-> 
-> -- Joe
-
-
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
