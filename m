@@ -2,172 +2,646 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A78BB74F88
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 15:33:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 488A274FA8
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 15:36:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387971AbfGYNdN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 09:33:13 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:35901 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727137AbfGYNdN (ORCPT
+        id S2388854AbfGYNg0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 09:36:26 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:38135 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388380AbfGYNgZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 09:33:13 -0400
-Received: by mail-oi1-f195.google.com with SMTP id q4so8491272oij.3
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 06:33:12 -0700 (PDT)
+        Thu, 25 Jul 2019 09:36:25 -0400
+Received: by mail-lf1-f65.google.com with SMTP id h28so34523245lfj.5
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 06:36:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=linuxfoundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=B1z3qSqeis7KRp59LvW3GrIz3rWu/CFv+sXSsB3MIv0=;
-        b=S7zg9NIJWKApcIDLjPg7XBK9rjPeDYoBWNVm005ZjT5gIbIyVfUK1xk1sLRQw2MM6x
-         0Mdkbzf6ixFn9ev3RGLQI0Euk3fBpj38V9Um9YNXmB8Nig9Gqm7yu3MXe9SGvtsSF/wm
-         cBMTtWscvwBj58mpSYQZHP82mWWmXezEv903XajiM4H7GkdESKIQ2TWthd1ygp1tVdlf
-         auy3V0rc8NfdYnkaaXDknQrzs7TI038ABRxdFGjrDH+niO5voLKTNLeZJ3SjiHVtixc8
-         lxDg71dtEjf+ShJe5QILrIeZjUXh+f9GR/ZH/Tfe/MfFQcGDLs78lnMBTM2MtL7glJNB
-         5yWw==
+        bh=rLcIVMRUNl0ZlZnvpVMA3og+oeyIpwM2mAuKlKc2G6U=;
+        b=QSKzlqTzncSThd08RjvZ/HnrrdNzHU7oM+NuWyvJtGdhbojRa9cU7lFOKdNEmPFQxo
+         zS5c4uX1V0067Io6Ps3NJ6S64bQxfEPTBSjwuFxrl0pZmjs9FSk+7GTyZE2MdDau5aZi
+         Icv2TacyPCJlPgD9pKfrGCgNX9uMgAZQvIb3E=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=B1z3qSqeis7KRp59LvW3GrIz3rWu/CFv+sXSsB3MIv0=;
-        b=B9qsvphBpm6bB3G42Kyl8DM1mX/clX794WIfqNz3zzr28sQi9jWO06kF/rywLH3iSa
-         Jnpqb7yArAAoivoO9gy9qk82x0lzNAz/ruDbY/blAnjZXJscY4oG6OBJkNARdSDjipnX
-         PVgg7WoPpyQnwlV5oEWTganqOcR2Mkt3yyQULQrEaBSus0UH5UwCEW1iYVAMah2EQyUU
-         XJIzr5qIqsgsL+ggEP03GaMU19kp6aQ2igVfbI4z+k039NfRGSRdg/U95Ofxp922cqEp
-         YuHD3WfF1N1ZSa4JfS80PaoK7G7TDlw6W4h40jSTANuMgpRQdK3PQG+9d6ITbICVubRm
-         S5wA==
-X-Gm-Message-State: APjAAAW74d7RbrrL8ji/3TQvZVhg2NcumO3wOVQrA/oVeYhDKPgwWlm9
-        2Gt4FUBBDjvCLgu3Uvrbv7MN7WWbPJ7zjPfQ69lEwKgBa7s=
-X-Google-Smtp-Source: APXvYqzWSaFSn1p/xkKu/nTk8JDTShS1XkRJNDVHcXJf+E/HgRUTiWRJNBpO14sGxRyKRreBRD1/QWYHKp73a7558FA=
-X-Received: by 2002:a1f:f282:: with SMTP id q124mr34325145vkh.4.1564059690186;
- Thu, 25 Jul 2019 06:01:30 -0700 (PDT)
+        bh=rLcIVMRUNl0ZlZnvpVMA3og+oeyIpwM2mAuKlKc2G6U=;
+        b=nkzR0qLRjNy5OneqKWdCsZo+jPBpuQGW2GoWzycRNvgMakkNl6Jk0HHyWBSFsiBK/3
+         LVT0fzY2YGVQ6nE1stLX+vxQnXVA401K5JHA1lU5zw40rOjPi5ngQ4hrw6g8fB35TI72
+         hLz/N2FaXFGamOcxGq4FZuBIGMjwJ3bRUssYdDwmSfqC0dHAKWebYOfLaoG4f2lRr0j7
+         N3s3O4aDK8v3UEl3PPF3fkUNSNt6Yu9vy7S1jACWNcnpvJ+MkBriZ+p773i7cqzwPqmz
+         skDMWCvw1BO5lbMgbWmhQIytYYBW9SRMiofPhvVhBOCYg8z5jZXXCnfGqm9qqqvReHgM
+         JW3w==
+X-Gm-Message-State: APjAAAXaBBu93yAm+hnWJaoGhOQDU5UQi0sI917uLE9+QMUbgH9aD0X6
+        iODr6E1QJiljR3D+mEMjZUeFMFTb/dyyhMxFcQqJOg==
+X-Google-Smtp-Source: APXvYqzZ6WgTFcLkt6e8koFRMVB4I+ORsxE8qsNxcIhT3jZah7ASbzEJXK7gJVIj3jRYZdWkpEjx3wVBbSr/ds+VNkA=
+X-Received: by 2002:ac2:4152:: with SMTP id c18mr20245039lfi.144.1564059840041;
+ Thu, 25 Jul 2019 06:04:00 -0700 (PDT)
 MIME-Version: 1.0
-References: <1561958991-21935-1-git-send-email-manish.narani@xilinx.com>
- <1561958991-21935-2-git-send-email-manish.narani@xilinx.com>
- <20190722215404.GA28292@bogus> <MN2PR02MB602907616249FF19C1A737D8C1C70@MN2PR02MB6029.namprd02.prod.outlook.com>
-In-Reply-To: <MN2PR02MB602907616249FF19C1A737D8C1C70@MN2PR02MB6029.namprd02.prod.outlook.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Thu, 25 Jul 2019 15:00:53 +0200
-Message-ID: <CAPDyKFostBKYipTkCsDbggsrux7w8BPqARx7fwRsL1XqEEX2NQ@mail.gmail.com>
-Subject: Re: [PATCH v2 01/11] dt-bindings: mmc: arasan: Update documentation
- for SD Card Clock
-To:     Manish Narani <MNARANI@xilinx.com>
-Cc:     Rob Herring <robh@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "heiko@sntech.de" <heiko@sntech.de>,
-        Michal Simek <michals@xilinx.com>,
-        "adrian.hunter@intel.com" <adrian.hunter@intel.com>,
-        "christoph.muellner@theobroma-systems.com" 
-        <christoph.muellner@theobroma-systems.com>,
-        "philipp.tomsich@theobroma-systems.com" 
-        <philipp.tomsich@theobroma-systems.com>,
-        "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>,
-        "scott.branden@broadcom.com" <scott.branden@broadcom.com>,
-        "ayaka@soulik.info" <ayaka@soulik.info>,
-        "kernel@esmil.dk" <kernel@esmil.dk>,
-        "tony.xie@rock-chips.com" <tony.xie@rock-chips.com>,
-        Rajan Vaja <RAJANV@xilinx.com>, Jolly Shah <JOLLYS@xilinx.com>,
-        Nava kishore Manne <navam@xilinx.com>,
-        "mdf@kernel.org" <mdf@kernel.org>,
-        "olof@lixom.net" <olof@lixom.net>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-rockchip@lists.infradead.org" 
-        <linux-rockchip@lists.infradead.org>
+References: <20190725075833.3481-1-yamada.masahiro@socionext.com>
+In-Reply-To: <20190725075833.3481-1-yamada.masahiro@socionext.com>
+From:   Kate Stewart <kstewart@linuxfoundation.org>
+Date:   Thu, 25 Jul 2019 08:03:47 -0500
+Message-ID: <CAG_66ZTswnteAEkv_reQ8DkyXCsYgNB=hU=g=kY6Y8o5XVSQiQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] treewide: add "WITH Linux-syscall-note" to SPDX
+ tag of uapi headers
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>, linux-spdx@vger.kernel.org,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        alsa-devel@alsa-project.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 23 Jul 2019 at 10:23, Manish Narani <MNARANI@xilinx.com> wrote:
+On Thu, Jul 25, 2019 at 2:59 AM Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
 >
-> Hi Rob,
+> UAPI headers licensed under GPL are supposed to have exception
+> "WITH Linux-syscall-note" so that they can be included into non-GPL
+> user space application code.
 >
-> Thanks a lot for the review!
+> The exception note is missing in some UAPI headers.
 >
+> Some of them slipped in by the treewide conversion commit b24413180f56
+> ("License cleanup: add SPDX GPL-2.0 license identifier to files with
+> no license"). Just run:
 >
-> > -----Original Message-----
-> > From: Rob Herring <robh@kernel.org>
-> > Sent: Tuesday, July 23, 2019 3:24 AM
-> > To: Manish Narani <MNARANI@xilinx.com>
-> > Cc: ulf.hansson@linaro.org; mark.rutland@arm.com; heiko@sntech.de; Michal
-> > Simek <michals@xilinx.com>; adrian.hunter@intel.com;
-> > christoph.muellner@theobroma-systems.com; philipp.tomsich@theobroma-
-> > systems.com; viresh.kumar@linaro.org; scott.branden@broadcom.com;
-> > ayaka@soulik.info; kernel@esmil.dk; tony.xie@rock-chips.com; Rajan Vaja
-> > <RAJANV@xilinx.com>; Jolly Shah <JOLLYS@xilinx.com>; Nava kishore Manne
-> > <navam@xilinx.com>; mdf@kernel.org; olof@lixom.net; linux-
-> > mmc@vger.kernel.org; devicetree@vger.kernel.org; linux-
-> > kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
-> > rockchip@lists.infradead.org
-> > Subject: Re: [PATCH v2 01/11] dt-bindings: mmc: arasan: Update
-> > documentation for SD Card Clock
-> >
-> > On Mon, Jul 01, 2019 at 10:59:41AM +0530, Manish Narani wrote:
-> > > The clock handling is to be updated in the Arasan SDHCI. As the
-> > > 'devm_clk_register' is deprecated in the clock framework, this needs to
-> > > specify one more clock named 'clk_sdcard' to get the clock in the driver
-> > > via 'devm_clk_get()'. This clock represents the clock from controller to
-> > > the card.
-> >
-> > Please explain why in terms of the binding, not some driver calls.
-> Okay.
+>   $ git show --oneline b24413180f56 -- arch/x86/include/uapi/asm/
 >
-> >
-> >
-> > > Signed-off-by: Manish Narani <manish.narani@xilinx.com>
-> > > ---
-> > >  Documentation/devicetree/bindings/mmc/arasan,sdhci.txt | 15 ++++++++++-
-> > ----
-> > >  1 file changed, 10 insertions(+), 5 deletions(-)
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/mmc/arasan,sdhci.txt
-> > b/Documentation/devicetree/bindings/mmc/arasan,sdhci.txt
-> > > index 1edbb04..15c6397 100644
-> > > --- a/Documentation/devicetree/bindings/mmc/arasan,sdhci.txt
-> > > +++ b/Documentation/devicetree/bindings/mmc/arasan,sdhci.txt
-> > > @@ -23,6 +23,10 @@ Required Properties:
-> > >    - reg: From mmc bindings: Register location and length.
-> > >    - clocks: From clock bindings: Handles to clock inputs.
-> > >    - clock-names: From clock bindings: Tuple including "clk_xin" and "clk_ahb"
-> > > +            Apart from these two there is one more optional clock which
-> > > +            is "clk_sdcard". This clock represents output clock from
-> > > +            controller and card. This must be specified when #clock-cells
-> > > +            is specified.
-> > >    - interrupts: Interrupt specifier
-> > >
-> > >  Required Properties for "arasan,sdhci-5.1":
-> > > @@ -36,9 +40,10 @@ Optional Properties:
-> > >    - clock-output-names: If specified, this will be the name of the card clock
-> > >      which will be exposed by this device.  Required if #clock-cells is
-> > >      specified.
-> > > -  - #clock-cells: If specified this should be the value <0>.  With this property
-> > > -    in place we will export a clock representing the Card Clock.  This clock
-> > > -    is expected to be consumed by our PHY.  You must also specify
-> > > +  - #clock-cells: If specified this should be the value <0>. With this
-> > > +    property in place we will export one clock representing the Card
-> > > +    Clock. This clock is expected to be consumed by our PHY. You must also
-> > > +    specify
-> >
-> > specify what?
-> I think this line was already there, I missed to correct it, Will update in v3.
+> I believe they are not intentional, and should be fixed too.
 >
-> >
-> > The 3rd clock input I assume? This statement means any existing users
-> > with 2 clock inputs and #clock-cells are in error now. Is that correct?
-> Yes, this is correct. So far there was only one vendor using '#clock-cells'  which is Rockchip. I have sent DT patch (02/11) for that also.
-> Here this is needed as earlier implementation isn't correct as suggested by Uffe. (https://lkml.org/lkml/2019/6/20/486) .
+> This patch was generated by the following script:
+>
+>   git grep -l --not -e Linux-syscall-note --and -e SPDX-License-Identifier \
+>     -- :arch/*/include/uapi/asm/*.h :include/uapi/ :^*/Kbuild |
+>   while read file
+>   do
+>           sed -i -e '/[[:space:]]OR[[:space:]]/s/\(GPL-[^[:space:]]*\)/(\1 WITH Linux-syscall-note)/g' \
+>           -e '/[[:space:]]or[[:space:]]/s/\(GPL-[^[:space:]]*\)/(\1 WITH Linux-syscall-note)/g' \
+>           -e '/[[:space:]]OR[[:space:]]/!{/[[:space:]]or[[:space:]]/!s/\(GPL-[^[:space:]]*\)/\1 WITH Linux-syscall-note/g}' $file
+>   done
+>
+> After this patch is applied, there are 5 UAPI headers that do not contain
+> "WITH Linux-syscall-note". They are kept untouched since this exception
+> applies only to GPL variants.
+>
+>   $ git grep --not -e Linux-syscall-note --and -e SPDX-License-Identifier \
+>     -- :arch/*/include/uapi/asm/*.h :include/uapi/ :^*/Kbuild
+>   include/uapi/drm/panfrost_drm.h:/* SPDX-License-Identifier: MIT */
+>   include/uapi/linux/batman_adv.h:/* SPDX-License-Identifier: MIT */
+>   include/uapi/linux/qemu_fw_cfg.h:/* SPDX-License-Identifier: BSD-3-Clause */
+>   include/uapi/linux/vbox_err.h:/* SPDX-License-Identifier: MIT */
+>   include/uapi/linux/virtio_iommu.h:/* SPDX-License-Identifier: BSD-3-Clause */
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
+>
+> Changes in v2:
+>   - Fix missing parentheses
+>
+>  arch/arm64/include/uapi/asm/bpf_perf_event.h   | 2 +-
+>  arch/csky/include/uapi/asm/byteorder.h         | 2 +-
+>  arch/csky/include/uapi/asm/cachectl.h          | 2 +-
+>  arch/csky/include/uapi/asm/perf_regs.h         | 2 +-
+>  arch/csky/include/uapi/asm/ptrace.h            | 2 +-
+>  arch/csky/include/uapi/asm/sigcontext.h        | 2 +-
+>  arch/csky/include/uapi/asm/unistd.h            | 2 +-
+>  arch/nds32/include/uapi/asm/auxvec.h           | 2 +-
+>  arch/nds32/include/uapi/asm/byteorder.h        | 2 +-
+>  arch/nds32/include/uapi/asm/cachectl.h         | 2 +-
+>  arch/nds32/include/uapi/asm/fp_udfiex_crtl.h   | 2 +-
+>  arch/nds32/include/uapi/asm/param.h            | 2 +-
+>  arch/nds32/include/uapi/asm/ptrace.h           | 2 +-
+>  arch/nds32/include/uapi/asm/sigcontext.h       | 2 +-
+>  arch/nds32/include/uapi/asm/unistd.h           | 2 +-
+>  arch/powerpc/include/uapi/asm/bpf_perf_event.h | 2 +-
+>  arch/riscv/include/uapi/asm/auxvec.h           | 2 +-
+>  arch/riscv/include/uapi/asm/bitsperlong.h      | 2 +-
+>  arch/riscv/include/uapi/asm/byteorder.h        | 2 +-
+>  arch/riscv/include/uapi/asm/hwcap.h            | 2 +-
+>  arch/riscv/include/uapi/asm/ptrace.h           | 2 +-
+>  arch/riscv/include/uapi/asm/sigcontext.h       | 2 +-
+>  arch/riscv/include/uapi/asm/ucontext.h         | 2 +-
+>  arch/s390/include/uapi/asm/bpf_perf_event.h    | 2 +-
+>  arch/s390/include/uapi/asm/ipl.h               | 2 +-
+>  arch/sh/include/uapi/asm/setup.h               | 2 +-
+>  arch/sh/include/uapi/asm/types.h               | 2 +-
+>  arch/sparc/include/uapi/asm/oradax.h           | 2 +-
+>  arch/x86/include/uapi/asm/byteorder.h          | 2 +-
+>  arch/x86/include/uapi/asm/hwcap2.h             | 2 +-
+>  arch/x86/include/uapi/asm/sigcontext32.h       | 2 +-
+>  arch/x86/include/uapi/asm/types.h              | 2 +-
+>  include/uapi/linux/bpfilter.h                  | 2 +-
+>  include/uapi/linux/ipmi_bmc.h                  | 2 +-
+>  include/uapi/linux/isst_if.h                   | 2 +-
+>  include/uapi/linux/netfilter/nf_synproxy.h     | 2 +-
+>  include/uapi/linux/psp-sev.h                   | 2 +-
+>  include/uapi/linux/rxrpc.h                     | 2 +-
+>  include/uapi/linux/usb/g_uvc.h                 | 2 +-
+>  include/uapi/linux/vbox_vmmdev_types.h         | 2 +-
+>  include/uapi/linux/vboxguest.h                 | 2 +-
+>  include/uapi/linux/virtio_pmem.h               | 2 +-
+>  include/uapi/linux/vmcore.h                    | 2 +-
+>  include/uapi/linux/wmi.h                       | 2 +-
+>  include/uapi/misc/fastrpc.h                    | 2 +-
+>  include/uapi/rdma/rvt-abi.h                    | 2 +-
+>  include/uapi/rdma/siw-abi.h                    | 2 +-
+>  include/uapi/scsi/scsi_bsg_ufs.h               | 2 +-
+>  include/uapi/sound/skl-tplg-interface.h        | 2 +-
+>  49 files changed, 49 insertions(+), 49 deletions(-)
+>
+> diff --git a/arch/arm64/include/uapi/asm/bpf_perf_event.h b/arch/arm64/include/uapi/asm/bpf_perf_event.h
+> index b551b741653d..5e1e648aeec4 100644
+> --- a/arch/arm64/include/uapi/asm/bpf_perf_event.h
+> +++ b/arch/arm64/include/uapi/asm/bpf_perf_event.h
+> @@ -1,4 +1,4 @@
+> -/* SPDX-License-Identifier: GPL-2.0 */
+> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+>  #ifndef _UAPI__ASM_BPF_PERF_EVENT_H__
+>  #define _UAPI__ASM_BPF_PERF_EVENT_H__
+>
+> diff --git a/arch/csky/include/uapi/asm/byteorder.h b/arch/csky/include/uapi/asm/byteorder.h
+> index b079ec715cdf..d150cd664873 100644
+> --- a/arch/csky/include/uapi/asm/byteorder.h
+> +++ b/arch/csky/include/uapi/asm/byteorder.h
+> @@ -1,4 +1,4 @@
+> -/* SPDX-License-Identifier: GPL-2.0 */
+> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+>  // Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
+>
+>  #ifndef __ASM_CSKY_BYTEORDER_H
+> diff --git a/arch/csky/include/uapi/asm/cachectl.h b/arch/csky/include/uapi/asm/cachectl.h
+> index ddf2f39aa925..ed7fad1ea20d 100644
+> --- a/arch/csky/include/uapi/asm/cachectl.h
+> +++ b/arch/csky/include/uapi/asm/cachectl.h
+> @@ -1,4 +1,4 @@
+> -/* SPDX-License-Identifier: GPL-2.0 */
+> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+>
+>  #ifndef __ASM_CSKY_CACHECTL_H
+>  #define __ASM_CSKY_CACHECTL_H
+> diff --git a/arch/csky/include/uapi/asm/perf_regs.h b/arch/csky/include/uapi/asm/perf_regs.h
+> index ee323d818592..49d4e147a559 100644
+> --- a/arch/csky/include/uapi/asm/perf_regs.h
+> +++ b/arch/csky/include/uapi/asm/perf_regs.h
+> @@ -1,4 +1,4 @@
+> -/* SPDX-License-Identifier: GPL-2.0 */
+> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+>  // Copyright (C) 2019 Hangzhou C-SKY Microsystems co.,ltd.
+>
+>  #ifndef _ASM_CSKY_PERF_REGS_H
+> diff --git a/arch/csky/include/uapi/asm/ptrace.h b/arch/csky/include/uapi/asm/ptrace.h
+> index 4e248d5b86ef..66b2268e324e 100644
+> --- a/arch/csky/include/uapi/asm/ptrace.h
+> +++ b/arch/csky/include/uapi/asm/ptrace.h
+> @@ -1,4 +1,4 @@
+> -/* SPDX-License-Identifier: GPL-2.0 */
+> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+>  // Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
+>
+>  #ifndef _CSKY_PTRACE_H
+> diff --git a/arch/csky/include/uapi/asm/sigcontext.h b/arch/csky/include/uapi/asm/sigcontext.h
+> index e81e7ff11e36..670c020f2cb8 100644
+> --- a/arch/csky/include/uapi/asm/sigcontext.h
+> +++ b/arch/csky/include/uapi/asm/sigcontext.h
+> @@ -1,4 +1,4 @@
+> -/* SPDX-License-Identifier: GPL-2.0 */
+> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+>  // Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
+>
+>  #ifndef __ASM_CSKY_SIGCONTEXT_H
+> diff --git a/arch/csky/include/uapi/asm/unistd.h b/arch/csky/include/uapi/asm/unistd.h
+> index ec60e49cea66..211c983c7282 100644
+> --- a/arch/csky/include/uapi/asm/unistd.h
+> +++ b/arch/csky/include/uapi/asm/unistd.h
+> @@ -1,4 +1,4 @@
+> -/* SPDX-License-Identifier: GPL-2.0 */
+> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+>  // Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
+>
+>  #define __ARCH_WANT_SYS_CLONE
+> diff --git a/arch/nds32/include/uapi/asm/auxvec.h b/arch/nds32/include/uapi/asm/auxvec.h
+> index b5d58ea8decb..bc0b92ab8c15 100644
+> --- a/arch/nds32/include/uapi/asm/auxvec.h
+> +++ b/arch/nds32/include/uapi/asm/auxvec.h
+> @@ -1,4 +1,4 @@
+> -/* SPDX-License-Identifier: GPL-2.0 */
+> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+>  // Copyright (C) 2005-2017 Andes Technology Corporation
+>
+>  #ifndef __ASM_AUXVEC_H
+> diff --git a/arch/nds32/include/uapi/asm/byteorder.h b/arch/nds32/include/uapi/asm/byteorder.h
+> index 511e653c709d..c264ef12c49c 100644
+> --- a/arch/nds32/include/uapi/asm/byteorder.h
+> +++ b/arch/nds32/include/uapi/asm/byteorder.h
+> @@ -1,4 +1,4 @@
+> -/* SPDX-License-Identifier: GPL-2.0 */
+> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+>  // Copyright (C) 2005-2017 Andes Technology Corporation
+>
+>  #ifndef __NDS32_BYTEORDER_H__
+> diff --git a/arch/nds32/include/uapi/asm/cachectl.h b/arch/nds32/include/uapi/asm/cachectl.h
+> index 73793662815c..31b9b439d819 100644
+> --- a/arch/nds32/include/uapi/asm/cachectl.h
+> +++ b/arch/nds32/include/uapi/asm/cachectl.h
+> @@ -1,4 +1,4 @@
+> -/* SPDX-License-Identifier: GPL-2.0 */
+> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+>  // Copyright (C) 1994, 1995, 1996 by Ralf Baechle
+>  // Copyright (C) 2005-2017 Andes Technology Corporation
+>  #ifndef        _ASM_CACHECTL
+> diff --git a/arch/nds32/include/uapi/asm/fp_udfiex_crtl.h b/arch/nds32/include/uapi/asm/fp_udfiex_crtl.h
+> index d54a5d6c6538..f17396db16ec 100644
+> --- a/arch/nds32/include/uapi/asm/fp_udfiex_crtl.h
+> +++ b/arch/nds32/include/uapi/asm/fp_udfiex_crtl.h
+> @@ -1,4 +1,4 @@
+> -/* SPDX-License-Identifier: GPL-2.0 */
+> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+>  /* Copyright (C) 2005-2019 Andes Technology Corporation */
+>  #ifndef        _FP_UDF_IEX_CRTL_H
+>  #define        _FP_UDF_IEX_CRTL_H
+> diff --git a/arch/nds32/include/uapi/asm/param.h b/arch/nds32/include/uapi/asm/param.h
+> index 2977534a6bd3..48d00328d328 100644
+> --- a/arch/nds32/include/uapi/asm/param.h
+> +++ b/arch/nds32/include/uapi/asm/param.h
+> @@ -1,4 +1,4 @@
+> -/* SPDX-License-Identifier: GPL-2.0 */
+> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+>  // Copyright (C) 2005-2017 Andes Technology Corporation
+>
+>  #ifndef __ASM_NDS32_PARAM_H
+> diff --git a/arch/nds32/include/uapi/asm/ptrace.h b/arch/nds32/include/uapi/asm/ptrace.h
+> index 1a6e01c00e6f..d76217c7c010 100644
+> --- a/arch/nds32/include/uapi/asm/ptrace.h
+> +++ b/arch/nds32/include/uapi/asm/ptrace.h
+> @@ -1,4 +1,4 @@
+> -/* SPDX-License-Identifier: GPL-2.0 */
+> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+>  // Copyright (C) 2005-2017 Andes Technology Corporation
+>
+>  #ifndef __UAPI_ASM_NDS32_PTRACE_H
+> diff --git a/arch/nds32/include/uapi/asm/sigcontext.h b/arch/nds32/include/uapi/asm/sigcontext.h
+> index dc89af7ddcc3..6c1e6648878f 100644
+> --- a/arch/nds32/include/uapi/asm/sigcontext.h
+> +++ b/arch/nds32/include/uapi/asm/sigcontext.h
+> @@ -1,4 +1,4 @@
+> -/* SPDX-License-Identifier: GPL-2.0 */
+> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+>  // Copyright (C) 2005-2017 Andes Technology Corporation
+>
+>  #ifndef _ASMNDS32_SIGCONTEXT_H
+> diff --git a/arch/nds32/include/uapi/asm/unistd.h b/arch/nds32/include/uapi/asm/unistd.h
+> index a0b2f7b9c0f2..410795e280fe 100644
+> --- a/arch/nds32/include/uapi/asm/unistd.h
+> +++ b/arch/nds32/include/uapi/asm/unistd.h
+> @@ -1,4 +1,4 @@
+> -/* SPDX-License-Identifier: GPL-2.0 */
+> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+>  // Copyright (C) 2005-2017 Andes Technology Corporation
+>
+>  #define __ARCH_WANT_STAT64
+> diff --git a/arch/powerpc/include/uapi/asm/bpf_perf_event.h b/arch/powerpc/include/uapi/asm/bpf_perf_event.h
+> index b551b741653d..5e1e648aeec4 100644
+> --- a/arch/powerpc/include/uapi/asm/bpf_perf_event.h
+> +++ b/arch/powerpc/include/uapi/asm/bpf_perf_event.h
+> @@ -1,4 +1,4 @@
+> -/* SPDX-License-Identifier: GPL-2.0 */
+> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+>  #ifndef _UAPI__ASM_BPF_PERF_EVENT_H__
+>  #define _UAPI__ASM_BPF_PERF_EVENT_H__
+>
+> diff --git a/arch/riscv/include/uapi/asm/auxvec.h b/arch/riscv/include/uapi/asm/auxvec.h
+> index 62716653554b..d86cb17bbabe 100644
+> --- a/arch/riscv/include/uapi/asm/auxvec.h
+> +++ b/arch/riscv/include/uapi/asm/auxvec.h
+> @@ -1,4 +1,4 @@
+> -/* SPDX-License-Identifier: GPL-2.0-only */
+> +/* SPDX-License-Identifier: GPL-2.0-only WITH Linux-syscall-note */
+>  /*
+>   * Copyright (C) 2012 ARM Ltd.
+>   * Copyright (C) 2015 Regents of the University of California
+> diff --git a/arch/riscv/include/uapi/asm/bitsperlong.h b/arch/riscv/include/uapi/asm/bitsperlong.h
+> index 0b9b58b57ff6..7d0b32e3b701 100644
+> --- a/arch/riscv/include/uapi/asm/bitsperlong.h
+> +++ b/arch/riscv/include/uapi/asm/bitsperlong.h
+> @@ -1,4 +1,4 @@
+> -/* SPDX-License-Identifier: GPL-2.0-only */
+> +/* SPDX-License-Identifier: GPL-2.0-only WITH Linux-syscall-note */
+>  /*
+>   * Copyright (C) 2012 ARM Ltd.
+>   * Copyright (C) 2015 Regents of the University of California
+> diff --git a/arch/riscv/include/uapi/asm/byteorder.h b/arch/riscv/include/uapi/asm/byteorder.h
+> index 1920debc09c0..f671e16bf6af 100644
+> --- a/arch/riscv/include/uapi/asm/byteorder.h
+> +++ b/arch/riscv/include/uapi/asm/byteorder.h
+> @@ -1,4 +1,4 @@
+> -/* SPDX-License-Identifier: GPL-2.0-only */
+> +/* SPDX-License-Identifier: GPL-2.0-only WITH Linux-syscall-note */
+>  /*
+>   * Copyright (C) 2012 ARM Ltd.
+>   * Copyright (C) 2015 Regents of the University of California
+> diff --git a/arch/riscv/include/uapi/asm/hwcap.h b/arch/riscv/include/uapi/asm/hwcap.h
+> index 7d786145183b..4e7646077056 100644
+> --- a/arch/riscv/include/uapi/asm/hwcap.h
+> +++ b/arch/riscv/include/uapi/asm/hwcap.h
+> @@ -1,4 +1,4 @@
+> -/* SPDX-License-Identifier: GPL-2.0-only */
+> +/* SPDX-License-Identifier: GPL-2.0-only WITH Linux-syscall-note */
+>  /*
+>   * Copied from arch/arm64/include/asm/hwcap.h
+>   *
+> diff --git a/arch/riscv/include/uapi/asm/ptrace.h b/arch/riscv/include/uapi/asm/ptrace.h
+> index 92d8f7cd8f84..882547f6bd5c 100644
+> --- a/arch/riscv/include/uapi/asm/ptrace.h
+> +++ b/arch/riscv/include/uapi/asm/ptrace.h
+> @@ -1,4 +1,4 @@
+> -/* SPDX-License-Identifier: GPL-2.0-only */
+> +/* SPDX-License-Identifier: GPL-2.0-only WITH Linux-syscall-note */
+>  /*
+>   * Copyright (C) 2012 Regents of the University of California
+>   */
+> diff --git a/arch/riscv/include/uapi/asm/sigcontext.h b/arch/riscv/include/uapi/asm/sigcontext.h
+> index 053f809e52ce..84f2dfcfdbce 100644
+> --- a/arch/riscv/include/uapi/asm/sigcontext.h
+> +++ b/arch/riscv/include/uapi/asm/sigcontext.h
+> @@ -1,4 +1,4 @@
+> -/* SPDX-License-Identifier: GPL-2.0-only */
+> +/* SPDX-License-Identifier: GPL-2.0-only WITH Linux-syscall-note */
+>  /*
+>   * Copyright (C) 2012 Regents of the University of California
+>   */
+> diff --git a/arch/riscv/include/uapi/asm/ucontext.h b/arch/riscv/include/uapi/asm/ucontext.h
+> index b58e00cee2ec..411dd7b52ed6 100644
+> --- a/arch/riscv/include/uapi/asm/ucontext.h
+> +++ b/arch/riscv/include/uapi/asm/ucontext.h
+> @@ -1,4 +1,4 @@
+> -/* SPDX-License-Identifier: GPL-2.0-only */
+> +/* SPDX-License-Identifier: GPL-2.0-only WITH Linux-syscall-note */
+>  /*
+>   * Copyright (C) 2012 ARM Ltd.
+>   * Copyright (C) 2017 SiFive, Inc.
+> diff --git a/arch/s390/include/uapi/asm/bpf_perf_event.h b/arch/s390/include/uapi/asm/bpf_perf_event.h
+> index cefe7c7cd4f6..3ed42ff6da94 100644
+> --- a/arch/s390/include/uapi/asm/bpf_perf_event.h
+> +++ b/arch/s390/include/uapi/asm/bpf_perf_event.h
+> @@ -1,4 +1,4 @@
+> -/* SPDX-License-Identifier: GPL-2.0 */
+> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+>  #ifndef _UAPI__ASM_BPF_PERF_EVENT_H__
+>  #define _UAPI__ASM_BPF_PERF_EVENT_H__
+>
+> diff --git a/arch/s390/include/uapi/asm/ipl.h b/arch/s390/include/uapi/asm/ipl.h
+> index fd32b1cd80d2..451ba7d08905 100644
+> --- a/arch/s390/include/uapi/asm/ipl.h
+> +++ b/arch/s390/include/uapi/asm/ipl.h
+> @@ -1,4 +1,4 @@
+> -/* SPDX-License-Identifier: GPL-2.0 */
+> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+>  #ifndef _ASM_S390_UAPI_IPL_H
+>  #define _ASM_S390_UAPI_IPL_H
+>
+> diff --git a/arch/sh/include/uapi/asm/setup.h b/arch/sh/include/uapi/asm/setup.h
+> index 1170dd2fb998..4bd19f80f9b0 100644
+> --- a/arch/sh/include/uapi/asm/setup.h
+> +++ b/arch/sh/include/uapi/asm/setup.h
+> @@ -1,2 +1,2 @@
+> -/* SPDX-License-Identifier: GPL-2.0 */
+> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+>  #include <asm-generic/setup.h>
+> diff --git a/arch/sh/include/uapi/asm/types.h b/arch/sh/include/uapi/asm/types.h
+> index f83795fdc0da..68100e108ea6 100644
+> --- a/arch/sh/include/uapi/asm/types.h
+> +++ b/arch/sh/include/uapi/asm/types.h
+> @@ -1,2 +1,2 @@
+> -/* SPDX-License-Identifier: GPL-2.0 */
+> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+>  #include <asm-generic/types.h>
+> diff --git a/arch/sparc/include/uapi/asm/oradax.h b/arch/sparc/include/uapi/asm/oradax.h
+> index 64c67f2ea33f..0dace69058ab 100644
+> --- a/arch/sparc/include/uapi/asm/oradax.h
+> +++ b/arch/sparc/include/uapi/asm/oradax.h
+> @@ -1,4 +1,4 @@
+> -/* SPDX-License-Identifier: GPL-2.0-or-later */
+> +/* SPDX-License-Identifier: GPL-2.0-or-later WITH Linux-syscall-note */
+>  /*
+>   * Copyright (c) 2017, Oracle and/or its affiliates. All rights reserved.
+>   */
+> diff --git a/arch/x86/include/uapi/asm/byteorder.h b/arch/x86/include/uapi/asm/byteorder.h
+> index 484e3cfd7ef2..149143cab9ff 100644
+> --- a/arch/x86/include/uapi/asm/byteorder.h
+> +++ b/arch/x86/include/uapi/asm/byteorder.h
+> @@ -1,4 +1,4 @@
+> -/* SPDX-License-Identifier: GPL-2.0 */
+> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+>  #ifndef _ASM_X86_BYTEORDER_H
+>  #define _ASM_X86_BYTEORDER_H
+>
+> diff --git a/arch/x86/include/uapi/asm/hwcap2.h b/arch/x86/include/uapi/asm/hwcap2.h
+> index 6ebaae90e207..8b2effe6efb8 100644
+> --- a/arch/x86/include/uapi/asm/hwcap2.h
+> +++ b/arch/x86/include/uapi/asm/hwcap2.h
+> @@ -1,4 +1,4 @@
+> -/* SPDX-License-Identifier: GPL-2.0 */
+> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+>  #ifndef _ASM_X86_HWCAP2_H
+>  #define _ASM_X86_HWCAP2_H
+>
+> diff --git a/arch/x86/include/uapi/asm/sigcontext32.h b/arch/x86/include/uapi/asm/sigcontext32.h
+> index 6b18e88de8a6..7114801d0499 100644
+> --- a/arch/x86/include/uapi/asm/sigcontext32.h
+> +++ b/arch/x86/include/uapi/asm/sigcontext32.h
+> @@ -1,4 +1,4 @@
+> -/* SPDX-License-Identifier: GPL-2.0 */
+> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+>  #ifndef _ASM_X86_SIGCONTEXT32_H
+>  #define _ASM_X86_SIGCONTEXT32_H
+>
+> diff --git a/arch/x86/include/uapi/asm/types.h b/arch/x86/include/uapi/asm/types.h
+> index df55e1ddb0c9..9d5c11a24279 100644
+> --- a/arch/x86/include/uapi/asm/types.h
+> +++ b/arch/x86/include/uapi/asm/types.h
+> @@ -1,4 +1,4 @@
+> -/* SPDX-License-Identifier: GPL-2.0 */
+> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+>  #ifndef _ASM_X86_TYPES_H
+>  #define _ASM_X86_TYPES_H
+>
+> diff --git a/include/uapi/linux/bpfilter.h b/include/uapi/linux/bpfilter.h
+> index 2ec3cc99ea4c..cbc1f5813f50 100644
+> --- a/include/uapi/linux/bpfilter.h
+> +++ b/include/uapi/linux/bpfilter.h
+> @@ -1,4 +1,4 @@
+> -/* SPDX-License-Identifier: GPL-2.0 */
+> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+>  #ifndef _UAPI_LINUX_BPFILTER_H
+>  #define _UAPI_LINUX_BPFILTER_H
+>
+> diff --git a/include/uapi/linux/ipmi_bmc.h b/include/uapi/linux/ipmi_bmc.h
+> index 1670f0944227..782a03eb1086 100644
+> --- a/include/uapi/linux/ipmi_bmc.h
+> +++ b/include/uapi/linux/ipmi_bmc.h
+> @@ -1,4 +1,4 @@
+> -/* SPDX-License-Identifier: GPL-2.0 */
+> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+>  /*
+>   * Copyright (c) 2015-2018, Intel Corporation.
+>   */
+> diff --git a/include/uapi/linux/isst_if.h b/include/uapi/linux/isst_if.h
+> index d10b832c58c5..0a52b7b093d3 100644
+> --- a/include/uapi/linux/isst_if.h
+> +++ b/include/uapi/linux/isst_if.h
+> @@ -1,4 +1,4 @@
+> -/* SPDX-License-Identifier: GPL-2.0 */
+> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+>  /*
+>   * Intel Speed Select Interface: OS to hardware Interface
+>   * Copyright (c) 2019, Intel Corporation.
+> diff --git a/include/uapi/linux/netfilter/nf_synproxy.h b/include/uapi/linux/netfilter/nf_synproxy.h
+> index 6f3791c8946f..00d787f0260e 100644
+> --- a/include/uapi/linux/netfilter/nf_synproxy.h
+> +++ b/include/uapi/linux/netfilter/nf_synproxy.h
+> @@ -1,4 +1,4 @@
+> -/* SPDX-License-Identifier: GPL-2.0 */
+> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+>  #ifndef _NF_SYNPROXY_H
+>  #define _NF_SYNPROXY_H
+>
+> diff --git a/include/uapi/linux/psp-sev.h b/include/uapi/linux/psp-sev.h
+> index 8654b2442f6a..592a0c1b77c9 100644
+> --- a/include/uapi/linux/psp-sev.h
+> +++ b/include/uapi/linux/psp-sev.h
+> @@ -1,4 +1,4 @@
+> -/* SPDX-License-Identifier: GPL-2.0-only */
+> +/* SPDX-License-Identifier: GPL-2.0-only WITH Linux-syscall-note */
+>  /*
+>   * Userspace interface for AMD Secure Encrypted Virtualization (SEV)
+>   * platform management commands.
+> diff --git a/include/uapi/linux/rxrpc.h b/include/uapi/linux/rxrpc.h
+> index 782069dcf607..4accfa7e266d 100644
+> --- a/include/uapi/linux/rxrpc.h
+> +++ b/include/uapi/linux/rxrpc.h
+> @@ -1,4 +1,4 @@
+> -/* SPDX-License-Identifier: GPL-2.0-or-later */
+> +/* SPDX-License-Identifier: GPL-2.0-or-later WITH Linux-syscall-note */
+>  /* Types and definitions for AF_RXRPC.
+>   *
+>   * Copyright (C) 2007 Red Hat, Inc. All Rights Reserved.
+> diff --git a/include/uapi/linux/usb/g_uvc.h b/include/uapi/linux/usb/g_uvc.h
+> index 3c9ee3020cbb..652f169a019e 100644
+> --- a/include/uapi/linux/usb/g_uvc.h
+> +++ b/include/uapi/linux/usb/g_uvc.h
+> @@ -1,4 +1,4 @@
+> -/* SPDX-License-Identifier: GPL-2.0+ */
+> +/* SPDX-License-Identifier: GPL-2.0+ WITH Linux-syscall-note */
+>  /*
+>   * g_uvc.h  --  USB Video Class Gadget driver API
+>   *
+> diff --git a/include/uapi/linux/vbox_vmmdev_types.h b/include/uapi/linux/vbox_vmmdev_types.h
+> index 26f39816af14..c27289fd619a 100644
+> --- a/include/uapi/linux/vbox_vmmdev_types.h
+> +++ b/include/uapi/linux/vbox_vmmdev_types.h
+> @@ -1,4 +1,4 @@
+> -/* SPDX-License-Identifier: (GPL-2.0 OR CDDL-1.0) */
+> +/* SPDX-License-Identifier: ((GPL-2.0 WITH Linux-syscall-note) OR CDDL-1.0) */
+>  /*
+>   * Virtual Device for Guest <-> VMM/Host communication, type definitions
+>   * which are also used for the vboxguest ioctl interface / by vboxsf
+> diff --git a/include/uapi/linux/vboxguest.h b/include/uapi/linux/vboxguest.h
+> index 612f0c7d3558..9cec58a6a5ea 100644
+> --- a/include/uapi/linux/vboxguest.h
+> +++ b/include/uapi/linux/vboxguest.h
+> @@ -1,4 +1,4 @@
+> -/* SPDX-License-Identifier: (GPL-2.0 OR CDDL-1.0) */
+> +/* SPDX-License-Identifier: ((GPL-2.0 WITH Linux-syscall-note) OR CDDL-1.0) */
+>  /*
+>   * VBoxGuest - VirtualBox Guest Additions Driver Interface.
+>   *
+> diff --git a/include/uapi/linux/virtio_pmem.h b/include/uapi/linux/virtio_pmem.h
+> index 9a63ed6d062f..b022787ffb94 100644
+> --- a/include/uapi/linux/virtio_pmem.h
+> +++ b/include/uapi/linux/virtio_pmem.h
+> @@ -1,4 +1,4 @@
+> -/* SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause */
+> +/* SPDX-License-Identifier: (GPL-2.0 WITH Linux-syscall-note) OR BSD-3-Clause */
+>  /*
+>   * Definitions for virtio-pmem devices.
+>   *
+> diff --git a/include/uapi/linux/vmcore.h b/include/uapi/linux/vmcore.h
+> index 022619668e0e..3e9da91866ff 100644
+> --- a/include/uapi/linux/vmcore.h
+> +++ b/include/uapi/linux/vmcore.h
+> @@ -1,4 +1,4 @@
+> -/* SPDX-License-Identifier: GPL-2.0 */
+> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+>  #ifndef _UAPI_VMCORE_H
+>  #define _UAPI_VMCORE_H
+>
+> diff --git a/include/uapi/linux/wmi.h b/include/uapi/linux/wmi.h
+> index c36f2d7675a4..7085c5dca9fa 100644
+> --- a/include/uapi/linux/wmi.h
+> +++ b/include/uapi/linux/wmi.h
+> @@ -1,4 +1,4 @@
+> -/* SPDX-License-Identifier: GPL-2.0-only */
+> +/* SPDX-License-Identifier: GPL-2.0-only WITH Linux-syscall-note */
+>  /*
+>   *  User API methods for ACPI-WMI mapping driver
+>   *
+> diff --git a/include/uapi/misc/fastrpc.h b/include/uapi/misc/fastrpc.h
+> index 6d701af9fc42..fb792e882cef 100644
+> --- a/include/uapi/misc/fastrpc.h
+> +++ b/include/uapi/misc/fastrpc.h
+> @@ -1,4 +1,4 @@
+> -/* SPDX-License-Identifier: GPL-2.0 */
+> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+>
+>  #ifndef __QCOM_FASTRPC_H__
+>  #define __QCOM_FASTRPC_H__
+> diff --git a/include/uapi/rdma/rvt-abi.h b/include/uapi/rdma/rvt-abi.h
+> index 7328293c715c..7c05a02d2be5 100644
+> --- a/include/uapi/rdma/rvt-abi.h
+> +++ b/include/uapi/rdma/rvt-abi.h
+> @@ -1,4 +1,4 @@
+> -/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) */
+> +/* SPDX-License-Identifier: ((GPL-2.0 WITH Linux-syscall-note) OR BSD-3-Clause) */
+>
+>  /*
+>   * This file contains defines, structures, etc. that are used
+> diff --git a/include/uapi/rdma/siw-abi.h b/include/uapi/rdma/siw-abi.h
+> index 3dd8071ace7b..7de68f1dc707 100644
+> --- a/include/uapi/rdma/siw-abi.h
+> +++ b/include/uapi/rdma/siw-abi.h
+> @@ -1,4 +1,4 @@
+> -/* SPDX-License-Identifier: GPL-2.0 or BSD-3-Clause */
+> +/* SPDX-License-Identifier: (GPL-2.0 WITH Linux-syscall-note) or BSD-3-Clause */
+>
+>  /* Authors: Bernard Metzler <bmt@zurich.ibm.com> */
+>  /* Copyright (c) 2008-2019, IBM Corporation */
+> diff --git a/include/uapi/scsi/scsi_bsg_ufs.h b/include/uapi/scsi/scsi_bsg_ufs.h
+> index 17c7abd0803a..9988db6ad244 100644
+> --- a/include/uapi/scsi/scsi_bsg_ufs.h
+> +++ b/include/uapi/scsi/scsi_bsg_ufs.h
+> @@ -1,4 +1,4 @@
+> -/* SPDX-License-Identifier: GPL-2.0 */
+> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+>  /*
+>   * UFS Transport SGIO v4 BSG Message Support
+>   *
+> diff --git a/include/uapi/sound/skl-tplg-interface.h b/include/uapi/sound/skl-tplg-interface.h
+> index f39352cef382..9eee32f5e407 100644
+> --- a/include/uapi/sound/skl-tplg-interface.h
+> +++ b/include/uapi/sound/skl-tplg-interface.h
+> @@ -1,4 +1,4 @@
+> -/* SPDX-License-Identifier: GPL-2.0 */
+> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+>  /*
+>   * skl-tplg-interface.h - Intel DSP FW private data interface
+>   *
+> --
+> 2.17.1
+>
 
-I am not sure how big of a problem the backwards compatible thingy
-with DT is, in general we must not break it. What do you say Manish?
-
-As a workaround, would it be possible to use
-of_clk_get_from_provider() somehow to address the compatibility issue?
-Or maybe there is another clock API that can help.
-
-Kind regards
-Uffe
+Reviewed-by: Kate Stewart <kstewart@linuxfoundation.org>
