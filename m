@@ -2,288 +2,284 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D909074ADF
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 11:59:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A2BAC74A83
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 11:55:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391350AbfGYJ6G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 05:58:06 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:2726 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2391316AbfGYJ6E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 05:58:04 -0400
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 4FEDD9A7A6324FBB7554;
-        Thu, 25 Jul 2019 17:58:02 +0800 (CST)
-Received: from architecture4.huawei.com (10.140.130.215) by smtp.huawei.com
- (10.3.19.210) with Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 25 Jul
- 2019 17:57:54 +0800
-From:   Gao Xiang <gaoxiang25@huawei.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Theodore Ts'o <tytso@mit.edu>,
-        "David Sterba" <dsterba@suse.cz>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-CC:     <linux-fsdevel@vger.kernel.org>, <devel@driverdev.osuosl.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        <linux-erofs@lists.ozlabs.org>, Chao Yu <yuchao0@huawei.com>,
-        Miao Xie <miaoxie@huawei.com>,
-        Li Guifu <bluce.liguifu@huawei.com>,
-        Fang Wei <fangwei1@huawei.com>,
-        Gao Xiang <gaoxiang25@huawei.com>
-Subject: [PATCH v4 24/24] erofs: add document
-Date:   Thu, 25 Jul 2019 17:56:58 +0800
-Message-ID: <20190725095658.155779-25-gaoxiang25@huawei.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190725095658.155779-1-gaoxiang25@huawei.com>
-References: <20190725095658.155779-1-gaoxiang25@huawei.com>
+        id S2390831AbfGYJzr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 05:55:47 -0400
+Received: from mailout3.samsung.com ([203.254.224.33]:47872 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729271AbfGYJzp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 05:55:45 -0400
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20190725095542epoutp031b8cfe1801fccaca41bf13ccd5c91e20~0ndzW5FPg2080620806epoutp03f
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 09:55:42 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20190725095542epoutp031b8cfe1801fccaca41bf13ccd5c91e20~0ndzW5FPg2080620806epoutp03f
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1564048542;
+        bh=APvyhy0eQAA2wXp8WTSoXGWXI9/At5nyAp+5gePsgVg=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=h29K8wMHJjYi+fuUrkwfTfFMLgzeOV52qOxzjXWKSsnMJrADIsNojY5pZWFLpkVCh
+         StoScMhnOUGugLejS72qOZp0f2ch+GHsv8oJlIs91Mbm7wLD5QgOGftC7/lA1UrkXt
+         5jBkEm65QeP9piuf1D2JSzmTjGAHWXiD4U/4gDFs=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20190725095541epcas1p23ae99ffd69957e3dd1bbbd877aacb535~0ndytmimj0831308313epcas1p2C;
+        Thu, 25 Jul 2019 09:55:41 +0000 (GMT)
+Received: from epsmges1p2.samsung.com (unknown [182.195.40.157]) by
+        epsnrtp4.localdomain (Postfix) with ESMTP id 45vSJW2gBtzMqYkY; Thu, 25 Jul
+        2019 09:55:39 +0000 (GMT)
+Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
+        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        15.22.04075.B9C793D5; Thu, 25 Jul 2019 18:55:39 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+        20190725095538epcas1p323a4e0d70b4a906ffb5927b2e43dc00f~0ndwDjd_B0042800428epcas1p3T;
+        Thu, 25 Jul 2019 09:55:38 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20190725095538epsmtrp2fc287fb53405ebd9e0d5370c0341322b~0ndv-668u1824718247epsmtrp2a;
+        Thu, 25 Jul 2019 09:55:38 +0000 (GMT)
+X-AuditID: b6c32a36-b49ff70000000feb-5f-5d397c9baee1
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        F9.7C.03706.A9C793D5; Thu, 25 Jul 2019 18:55:38 +0900 (KST)
+Received: from [10.113.221.102] (unknown [10.113.221.102]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20190725095538epsmtip2f38872b5e416bf14678ccd1a705babdf~0ndvtvIEv1344113441epsmtip26;
+        Thu, 25 Jul 2019 09:55:38 +0000 (GMT)
+Subject: Re: [PATCH v3 1/5] devfreq: exynos-bus: correct clock enable
+ sequence
+To:     k.konieczny@partner.samsung.com
+Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Viresh Kumar <vireshk@kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+Message-ID: <9c29db92-2452-0ff3-3ffa-d861e4327bc9@samsung.com>
+Date:   Thu, 25 Jul 2019 18:58:43 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.140.130.215]
+In-Reply-To: <20190719150535.15501-2-k.konieczny@partner.samsung.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrIJsWRmVeSWpSXmKPExsWy7bCmge7sGstYg/0XRCw2zljPajH/yDlW
+        i759/xkt+h+/ZrY4f34Du8XZpjfsFpseX2O1uLxrDpvF594jjBYzzu9jslh75C67xdLrF5ks
+        bjeuYLN48+Msk0Xr3iPsFv+ubWSx2PzgGJuDoMeaeWsYPTat6mTz2Lyk3uPguz1MHn1bVjF6
+        HL+xncnj8ya5APaobJuM1MSU1CKF1Lzk/JTMvHRbJe/geOd4UzMDQ11DSwtzJYW8xNxUWyUX
+        nwBdt8wcoA+UFMoSc0qBQgGJxcVK+nY2RfmlJakKGfnFJbZKqQUpOQWWBXrFibnFpXnpesn5
+        uVaGBgZGpkCFCdkZ/S9XMxVcU6n4e/YqUwPjZZkuRg4OCQETiQ+T5bsYuTiEBHYwSix5eZYV
+        wvnEKDHxyzZmCOcbo0T/1MVAGU6wjjmrVzBCJPYySrw+fxzKec8o8f7fU7AqYYEAiV8LtjKB
+        2CICyhKT700HG8UscJlFYtqjSWBFbAJaEvtf3GADsfkFFCWu/njMCGLzCthJ7H61BizOIqAq
+        0bLmK9ggUYEIiU8PDrNC1AhKnJz5hAXE5hRwlfi/FGIxs4C4xK0n85kgbHmJ5q2zwRZLCJxj
+        l9je3Qz1g4vEvHkwtrDEq+Nb2CFsKYnP7/ayQdjVEitPHmGDaO5glNiy/wJUg7HE/qWTmUDB
+        xyygKbF+lz5EWFFi5++5jBCL+STefe1hhYQwr0RHmxBEibLE5Qd3mSBsSYnF7Z1sExiVZiF5
+        ZxaSF2YheWEWwrIFjCyrGMVSC4pz01OLDQuMkKN7EyM4eWuZ7WBcdM7nEKMAB6MSDy9HkkWs
+        EGtiWXFl7iFGCQ5mJRHewAazWCHelMTKqtSi/Pii0pzU4kOMpsDQnsgsJZqcD8wseSXxhqZG
+        xsbGFiaGZqaGhkrivAt/AM0RSE8sSc1OTS1ILYLpY+LglGpglGZ5qzav4bVdHE9+2RHfqdcs
+        P/X85C35yV7r8cS9e59A0uRDG3gld9d++KvwrY3nV+uUytJczkK/v8/+rhVl27Yg7PPFPRll
+        xb47uBbqPih2TgizOudXxF0ft8utrcFzwdQtsqssDx/mlTsZdNat02Kuk3bx7VC9LOkvZ6M7
+        U6/809i+yyZZiaU4I9FQi7moOBEAFCo0ovQDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrDIsWRmVeSWpSXmKPExsWy7bCSvO6sGstYgy/PNC02zljPajH/yDlW
+        i759/xkt+h+/ZrY4f34Du8XZpjfsFpseX2O1uLxrDpvF594jjBYzzu9jslh75C67xdLrF5ks
+        bjeuYLN48+Msk0Xr3iPsFv+ubWSx2PzgGJuDoMeaeWsYPTat6mTz2Lyk3uPguz1MHn1bVjF6
+        HL+xncnj8ya5APYoLpuU1JzMstQifbsEroz+l6uZCq6pVPw9e5WpgfGyTBcjJ4eEgInEnNUr
+        GLsYuTiEBHYzSrxd38oKkZCUmHbxKHMXIweQLSxx+HAxRM1bRonfy2Yxg9QIC/hJ3JryF6xe
+        REBZYvK96cwgRcwCV1kkzm+cwwbRcZlRYumt+ewgVWwCWhL7X9xgA7H5BRQlrv54zAhi8wrY
+        Sex+tQYsziKgKtGy5isTiC0qECFxeMcsqBpBiZMzn7CA2JwCrhL/lz4F28wsoC7xZ94lZghb
+        XOLWk/lMELa8RPPW2cwTGIVnIWmfhaRlFpKWWUhaFjCyrGKUTC0ozk3PLTYsMMxLLdcrTswt
+        Ls1L10vOz93ECI5jLc0djJeXxB9iFOBgVOLh3RBvESvEmlhWXJl7iFGCg1lJhDewwSxWiDcl
+        sbIqtSg/vqg0J7X4EKM0B4uSOO/TvGORQgLpiSWp2ampBalFMFkmDk6pBkauuJ+VcxmmnDwX
+        w/aWc1G75f1F/YzuHxVSxHK2FCmrea0/W7TwbvPB5SVPKn+ILHa7wMt77tGLwD1Gk1UrPC8U
+        eu6OPeZ7f4VRqGZ98aHzzG75yzLy38ka6Hpvfu67dcd32asffl1aYhprkXdYSmm9yWnBDbe+
+        /Ky3Eqo6n/hM+431tDMTbT8rsRRnJBpqMRcVJwIAF0CQiN8CAAA=
+X-CMS-MailID: 20190725095538epcas1p323a4e0d70b4a906ffb5927b2e43dc00f
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
 X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20190719150553eucas1p1665462f3fc0e06fc9c082e258be3a851
+References: <20190719150535.15501-1-k.konieczny@partner.samsung.com>
+        <CGME20190719150553eucas1p1665462f3fc0e06fc9c082e258be3a851@eucas1p1.samsung.com>
+        <20190719150535.15501-2-k.konieczny@partner.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This documents key features, usage, and
-on-disk design of erofs.
+Hi Kamil,
 
-Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
----
- Documentation/filesystems/erofs.txt | 221 ++++++++++++++++++++++++++++
- 1 file changed, 221 insertions(+)
- create mode 100644 Documentation/filesystems/erofs.txt
+On 19. 7. 20. 오전 12:05, k.konieczny@partner.samsung.com wrote:
+> Regulators should be enabled before clocks to avoid h/w hang. This
+> require change in exynos_bus_probe() to move exynos_bus_parse_of()
+> after exynos_bus_parent_parse_of() and change in enabling sequence
+> of regulator and clock in exynos_bus_parse_of(). Similar change is
+> needed in exynos_bus_exit() where clock should be disabled first.
+> 
+> Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
+> ---
+> This patch is new to this series.
+> 
+> ---
+>  drivers/devfreq/exynos-bus.c | 58 ++++++++++++++++++++----------------
+>  1 file changed, 32 insertions(+), 26 deletions(-)
+> 
+> diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
+> index 486cc5b422f1..f391044aa39d 100644
+> --- a/drivers/devfreq/exynos-bus.c
+> +++ b/drivers/devfreq/exynos-bus.c
+> @@ -194,11 +194,11 @@ static void exynos_bus_exit(struct device *dev)
+>  	if (ret < 0)
+>  		dev_warn(dev, "failed to disable the devfreq-event devices\n");
+>  
+> +	clk_disable_unprepare(bus->clk);
+>  	if (bus->regulator)
+>  		regulator_disable(bus->regulator);
+>  
+>  	dev_pm_opp_of_remove_table(dev);
+> -	clk_disable_unprepare(bus->clk);
+>  }
+>  
+>  /*
+> @@ -326,8 +326,7 @@ static int exynos_bus_parent_parse_of(struct device_node *np,
+>  	return ret;
+>  }
+>  
+> -static int exynos_bus_parse_of(struct device_node *np,
+> -			      struct exynos_bus *bus)
+> +static int exynos_bus_parse_of(struct exynos_bus *bus)
+>  {
+>  	struct device *dev = bus->dev;
+>  	struct dev_pm_opp *opp;
+> @@ -341,36 +340,35 @@ static int exynos_bus_parse_of(struct device_node *np,
+>  		return PTR_ERR(bus->clk);
+>  	}
+>  
+> -	ret = clk_prepare_enable(bus->clk);
+> +	/* Get the freq and voltage from OPP table to scale the bus freq */
+> +	ret = dev_pm_opp_of_add_table(dev);
+>  	if (ret < 0) {
+> -		dev_err(dev, "failed to get enable clock\n");
+> +		dev_err(dev, "failed to get OPP table\n");
+>  		return ret;
+>  	}
+>  
+> -	/* Get the freq and voltage from OPP table to scale the bus freq */
+> -	ret = dev_pm_opp_of_add_table(dev);
+> +	ret = clk_prepare_enable(bus->clk);
+>  	if (ret < 0) {
+> -		dev_err(dev, "failed to get OPP table\n");
+> +		dev_err(dev, "failed to enable clock\n");
+>  		goto err_clk;
+>  	}
+> -
+>  	rate = clk_get_rate(bus->clk);
+>  
+>  	opp = devfreq_recommended_opp(dev, &rate, 0);
+>  	if (IS_ERR(opp)) {
+>  		dev_err(dev, "failed to find dev_pm_opp\n");
+>  		ret = PTR_ERR(opp);
+> -		goto err_opp;
+> +		goto err;
+>  	}
+>  	bus->curr_freq = dev_pm_opp_get_freq(opp);
+>  	dev_pm_opp_put(opp);
+>  
+>  	return 0;
+>  
+> -err_opp:
+> -	dev_pm_opp_of_remove_table(dev);
+> -err_clk:
+> +err:
+>  	clk_disable_unprepare(bus->clk);
+> +err_clk:
+> +	dev_pm_opp_of_remove_table(dev);
+>  
+>  	return ret;
+>  }
+> @@ -386,6 +384,7 @@ static int exynos_bus_probe(struct platform_device *pdev)
+>  	struct exynos_bus *bus;
+>  	int ret, max_state;
+>  	unsigned long min_freq, max_freq;
+> +	bool passive = false;
+>  
+>  	if (!np) {
+>  		dev_err(dev, "failed to find devicetree node\n");
+> @@ -399,27 +398,31 @@ static int exynos_bus_probe(struct platform_device *pdev)
+>  	bus->dev = &pdev->dev;
+>  	platform_set_drvdata(pdev, bus);
+>  
+> -	/* Parse the device-tree to get the resource information */
+> -	ret = exynos_bus_parse_of(np, bus);
+> -	if (ret < 0)
+> -		return ret;
+> -
+>  	profile = devm_kzalloc(dev, sizeof(*profile), GFP_KERNEL);
+> -	if (!profile) {
+> -		ret = -ENOMEM;
+> -		goto err;
+> -	}
+> +	if (!profile)
+> +		return -ENOMEM;
+>  
+>  	node = of_parse_phandle(dev->of_node, "devfreq", 0);
+>  	if (node) {
+>  		of_node_put(node);
+> -		goto passive;
+> +		passive = true;
+>  	} else {
+>  		ret = exynos_bus_parent_parse_of(np, bus);
+> +		if (ret < 0)
+> +			return ret;
+>  	}
+>  
+> -	if (ret < 0)
+> -		goto err;
+> +	/* Parse the device-tree to get the resource information */
+> +	ret = exynos_bus_parse_of(bus);
+> +	if (ret < 0) {
+> +		if (!passive)
+> +			regulator_disable(bus->regulator);
+> +
+> +		return ret;
+> +	}
+> +
+> +	if (passive)
+> +		goto passive;
+>  
+>  	/* Initialize the struct profile and governor data for parent device */
+>  	profile->polling_ms = 50;
+> @@ -508,8 +511,11 @@ static int exynos_bus_probe(struct platform_device *pdev)
+>  	return 0;
+>  
+>  err:
+> -	dev_pm_opp_of_remove_table(dev);
+>  	clk_disable_unprepare(bus->clk);
+> +	if (!passive)
+> +		regulator_disable(bus->regulator);
+> +
+> +	dev_pm_opp_of_remove_table(dev);
+>  
+>  	return ret;
+>  }
+> 
 
-diff --git a/Documentation/filesystems/erofs.txt b/Documentation/filesystems/erofs.txt
-new file mode 100644
-index 000000000000..db2d22d61d11
---- /dev/null
-+++ b/Documentation/filesystems/erofs.txt
-@@ -0,0 +1,221 @@
-+Overview
-+========
-+
-+EROFS file-system stands for Enhanced Read-Only File System. Different
-+from other read-only file systems, it aims to be designed for flexibility,
-+scalability, but be kept simple and high performance.
-+
-+It is designed as a better filesystem solution for the following scenarios:
-+ - read-only storage media or
-+
-+ - part of a fully trusted read-only solution, which means it needs to be
-+   immutable and bit-for-bit identical to the official golden image for
-+   their releases due to security and other considerations and
-+
-+ - hope to save some extra storage space with guaranteed end-to-end performance
-+   by using reduced metadata and transparent file compression, especially
-+   for those embedded devices with limited memory (ex, smartphone);
-+
-+Here is the main features of EROFS:
-+ - Little endian on-disk design;
-+
-+ - Currently 4KB block size (nobh) and therefore maximum 16TB address space;
-+
-+ - Metadata & data could be mixed by design;
-+
-+ - 2 inode versions for different requirements:
-+                          v1            v2
-+   Inode metadata size:   32 bytes      64 bytes
-+   Max file size:         4 GB          16 EB (also limited by max. vol size)
-+   Max uids/gids:         65536         4294967296
-+   File creation time:    no            yes (64 + 32-bit timestamp)
-+   Max hardlinks:         65536         4294967296
-+   Metadata reserved:     4 bytes       14 bytes
-+
-+ - Support extended attributes (xattrs) as an option;
-+
-+ - Support xattr inline and tail-end data inline for all files;
-+
-+ - Support POSIX.1e ACLs by using xattrs;
-+
-+ - Support statx();
-+
-+ - Support transparent file compression as an option:
-+   LZ4 algorithm with 4 KB fixed-output compression for high performance;
-+
-+The following git tree provides the file system user-space tools under
-+development (ex, formatting tool mkfs.erofs):
-+>> git://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs-utils.git
-+
-+Bugs and patches are welcome, please kindly help us and send to the following
-+linux-erofs mailing list:
-+>> linux-erofs mailing list   <linux-erofs@lists.ozlabs.org>
-+
-+Note that EROFS is still working in progress as a Linux staging driver,
-+Cc the staging mailing list as well is highly recommended:
-+>> Linux Driver Project Developer List <devel@driverdev.osuosl.org>
-+
-+Mount options
-+=============
-+
-+fault_injection=%d     Enable fault injection in all supported types with
-+                       specified injection rate. Supported injection type:
-+                       Type_Name                Type_Value
-+                       FAULT_KMALLOC            0x000000001
-+                       FAULT_READ_IO            0x000000002
-+(no)user_xattr         Setup Extended User Attributes. Note: xattr is enabled
-+                       by default if CONFIG_EROFS_FS_XATTR is selected.
-+(no)acl                Setup POSIX Access Control List. Note: acl is enabled
-+                       by default if CONFIG_EROFS_FS_POSIX_ACL is selected.
-+cache_strategy=%s      Select a strategy for cached decompression from now on:
-+                         disabled: In-place I/O decompression only;
-+                        readahead: Cache the last incomplete compressed physical
-+                                   cluster for further reading. It still does
-+                                   in-place I/O decompression for the rest
-+                                   compressed physical clusters;
-+                       readaround: Cache the both ends of incomplete compressed
-+                                   physical clusters for further reading.
-+                                   It still does in-place I/O decompression
-+                                   for the rest compressed physical clusters.
-+
-+On-disk details
-+===============
-+
-+Summary
-+-------
-+Different from other read-only file systems, an EROFS volume is designed
-+to be as simple as possible:
-+
-+                                |-> aligned with the block size
-+   ____________________________________________________________
-+  | |SB| | ... | Metadata | ... | Data | Metadata | ... | Data |
-+  |_|__|_|_____|__________|_____|______|__________|_____|______|
-+  0 +1K
-+
-+All data areas should be aligned with the block size, but metadata areas
-+may not. All metadatas can be now observed in two different spaces (views):
-+ 1. Inode metadata space
-+    Each valid inode should be aligned with an inode slot, which is a fixed
-+    value (32 bytes) and designed to be kept in line with v1 inode size.
-+
-+    Each inode can be directly found with the following formula:
-+         inode offset = meta_blkaddr * block_size + 32 * nid
-+
-+                                |-> aligned with 8B
-+                                           |-> followed closely
-+    + meta_blkaddr blocks                                      |-> another slot
-+     _____________________________________________________________________
-+    |  ...   | inode |  xattrs  | extents  | data inline | ... | inode ...
-+    |________|_______|(optional)|(optional)|__(optional)_|_____|__________
-+             |-> aligned with the inode slot size
-+                  .                   .
-+                .                         .
-+              .                              .
-+            .                                    .
-+          .                                         .
-+        .                                              .
-+      .____________________________________________________|-> aligned with 4B
-+      | xattr_ibody_header | shared xattrs | inline xattrs |
-+      |____________________|_______________|_______________|
-+      |->    12 bytes    <-|->x * 4 bytes<-|               .
-+                          .                .                 .
-+                    .                      .                   .
-+               .                           .                     .
-+           ._______________________________.______________________.
-+           | id | id | id | id |  ... | id | ent | ... | ent| ... |
-+           |____|____|____|____|______|____|_____|_____|____|_____|
-+                                           |-> aligned with 4B
-+                                                       |-> aligned with 4B
-+
-+    Inode could be 32 or 64 bytes, which can be distinguished from a common
-+    field which all inode versions have -- i_advise:
-+
-+        __________________               __________________
-+       |     i_advise     |             |     i_advise     |
-+       |__________________|             |__________________|
-+       |        ...       |             |        ...       |
-+       |                  |             |                  |
-+       |__________________| 32 bytes    |                  |
-+                                        |                  |
-+                                        |__________________| 64 bytes
-+
-+    Xattrs, extents, data inline are followed by the corresponding inode with
-+    proper alignes, and they could be optional for different data mappings,
-+    _currently_ there are totally 3 valid data mappings supported:
-+
-+     1) flat file data without data inline (no extent);
-+     2) fixed-output size data compression (must have extents);
-+     3) flat file data with tail-end data inline (no extent);
-+
-+    The size of the optional xattrs is indicated by i_xattr_count in inode
-+    header. Large xattrs or xattrs shared by many different files can be
-+    stored in shared xattrs metadata rather than inlined right after inode.
-+
-+ 2. Shared xattrs metadata space
-+    Shared xattrs space is similar to the above inode space, started with
-+    a specific block indicated by xattr_blkaddr, organized one by one with
-+    proper align.
-+
-+    Each share xattr can also be directly found by the following formula:
-+         xattr offset = xattr_blkaddr * block_size + 4 * xattr_id
-+
-+                           |-> aligned by  4 bytes
-+    + xattr_blkaddr blocks                     |-> aligned with 4 bytes
-+     _________________________________________________________________________
-+    |  ...   | xattr_entry |  xattr data | ... |  xattr_entry | xattr data  ...
-+    |________|_____________|_____________|_____|______________|_______________
-+
-+Directories
-+-----------
-+All directories are now organized in a compact on-disk format. Note that
-+each directory block is divided into index and name areas in order to support
-+random file lookup, and all directory entries are _strictly_ recorded in
-+alphabetical order in order to support improved prefix binary search
-+algorithm (could refer to the related source code).
-+
-+                 ___________________________
-+                /                           |
-+               /              ______________|________________
-+              /              /              | nameoff1       | nameoffN-1
-+ ____________.______________._______________v________________v__________
-+| dirent | dirent | ... | dirent | filename | filename | ... | filename |
-+|___.0___|____1___|_____|___N-1__|____0_____|____1_____|_____|___N-1____|
-+     \                           ^
-+      \                          |                           * could have
-+       \                         |                             trailing '\0'
-+        \________________________| nameoff0
-+
-+                             Directory block
-+
-+Note that apart from the offset of the first filename, nameoff0 also indicates
-+the total number of directory entries in this block since it is no need to
-+introduce another on-disk field at all.
-+
-+Compression
-+-----------
-+Currently, EROFS supports 4KB fixed-output clustersize transparent file
-+compression, as illustrated below:
-+
-+         |---- Variant-Length Extent ----|-------- VLE --------|----- VLE -----
-+         clusterofs                      clusterofs            clusterofs
-+         |                               |                     |   logical data
-+_________v_______________________________v_____________________v_______________
-+... |    .        |             |        .    |             |  .          | ...
-+____|____.________|_____________|________.____|_____________|__.__________|____
-+    |-> cluster <-|-> cluster <-|-> cluster <-|-> cluster <-|-> cluster <-|
-+         size          size          size          size          size
-+          .                             .                .                   .
-+           .                       .               .                  .
-+            .                  .              .                .
-+      _______._____________._____________._____________._____________________
-+         ... |             |             |             | ... physical data
-+      _______|_____________|_____________|_____________|_____________________
-+             |-> cluster <-|-> cluster <-|-> cluster <-|
-+                  size          size          size
-+
-+Currently each on-disk physical cluster can contain 4KB (un)compressed data
-+at most. For each logical cluster, there is a corresponding on-disk index to
-+describe its cluster type, physical cluster address, etc.
-+
-+See "struct z_erofs_vle_decompressed_index" in erofs_fs.h for more details.
-+
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+
 -- 
-2.17.1
-
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
