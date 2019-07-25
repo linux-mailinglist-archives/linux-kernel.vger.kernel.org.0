@@ -2,173 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6E017441B
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 05:47:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 97F1574423
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 05:52:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390129AbfGYDrT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 23:47:19 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:45083 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389014AbfGYDrS (ORCPT
+        id S2390163AbfGYDwG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 23:52:06 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:33148 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390150AbfGYDwG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 23:47:18 -0400
-Received: by mail-ot1-f68.google.com with SMTP id x21so11735298otq.12
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 20:47:17 -0700 (PDT)
+        Wed, 24 Jul 2019 23:52:06 -0400
+Received: by mail-pg1-f195.google.com with SMTP id f20so13041663pgj.0;
+        Wed, 24 Jul 2019 20:52:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=aMjIeeabzA2glm2FgNQ5GnaE3BxUhRtGgmqv9hcezQY=;
-        b=wHXvEk5oHzm7Sws7eklMNmrftnJSG+btbxOyjYGAbrQL1qJy6zD4PObA+jWSEgMyRB
-         aRrkrq80Z3SJ2TSDws4Rv5GRprZNDrWDLrJQ0wX3686kQIu2OCLvI9w87d8UHHgOg+0d
-         GTePKHqwPknGA8PHhql/6tyfd3uPOh/2TEWx5qiFganq3CI2HM14/fLyaNDFJPivQgUE
-         AJkjK8XC/qBav++WOcziu3XSxf9dhzyMLjLbq5mM7h/sbnUvptmXH0y5tOUiHyLN72sK
-         xNtG93040FKsaE7cwu4XrwN/9ZyPqAIjdUosovdN6zX4Hoeb7KDzRbZ9hm/ScRQ2CIJ6
-         NaBA==
+        d=gmail.com; s=20161025;
+        h=subject:to:references:cc:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=Q/98t+M2Y8cT5VRhI3CXJllAGvqhT13uQ4iFZGPeAKQ=;
+        b=TDriAVm9iNGKXqNyY9jNLT67/TAZxSgx1zvErjGKOnYp4i3vmCPs51kg4wyBv5sNXW
+         9u2ToLoPJcyMJOK0cH/VvWhw+kgFLrV5aSlaYpmYgnipRFVBF7VSK6bhuw/b5D3ESIVe
+         wm6hsZ+L1oM8SP6oh7Tb6MfHOWQf/yyKO6UvInwdgQCj0YneqYLajq6kyiqvJbC5oKyk
+         n0e7Moam56yuIoMHnwIjnH3LeRU+85F65f4vzHfGFmII8JI+rYPldKP29ADzahfh8rgY
+         7ARHhdqfQM7JxIhPnTm8k/wTb7OxKhT2tkWb9n8nK0TrVLzCOg7HayVmr2y2KHuXpDzN
+         Em7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=aMjIeeabzA2glm2FgNQ5GnaE3BxUhRtGgmqv9hcezQY=;
-        b=XFuGXmB6fGTcZ+CBUxxkgPBvCUCh5haG27jad0CRd/3r/v8z6FbkfWrvhX84u5Jom6
-         jttCWWXzP7nhsiNBeG8x9Y8RGKARKgRk0BsoclSjfFPZe6j5lq0Utxopn14Felop3HRI
-         zlqTeZE/B6tnzkKr0WSb8krWzCex5cC+ekAACuo49QBjS2Zx1VEZ2FasrCZjkmc7MPDL
-         hNvm8CNookvy10cQggkGxFS9XBxTYkKfRjTsbPgziETCuGdNtAQ1ei4X7iPPOeTn3u/P
-         qYl545H1QAT+dZ6kxzIAD0mEX43T0SkVaWQJFdqRgT9qAFPh9ooTz9aqhWh6wZSkB439
-         6l5g==
-X-Gm-Message-State: APjAAAVctX2aG56U9s/sbfoKRhhxCbBH8b6ggEUOCcP94XmxZ1Caav9t
-        HkuLbFAjTdx9ZsGxDWf8WzVciumN29+qgJFDrnaKVQ==
-X-Google-Smtp-Source: APXvYqxwTxwYWp2aKQeTiODwLq0phPgcO3cP/jhc5NSj2PouBt+Yra1YiOWB/mjtrI5O3dhVxWWJpN8W09pU0uWM2zM=
-X-Received: by 2002:a05:6830:160c:: with SMTP id g12mr7714792otr.231.1564026437377;
- Wed, 24 Jul 2019 20:47:17 -0700 (PDT)
+        h=x-gm-message-state:subject:to:references:cc:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=Q/98t+M2Y8cT5VRhI3CXJllAGvqhT13uQ4iFZGPeAKQ=;
+        b=hx3Opncb8LwrB8OBPOKNtc4rRTRtB/9CssEPkxTjASyloNVrI1y3L367Nf1aMOoMy8
+         zk8S4Q78GOHN2/nxF4KTVdOu7TAI2nB3C+uFn2VfR0qVir0ljQNToWyrXG1PSsJrXOr2
+         DZX7swVULjZVVqXORWot+CeNZrOETEuELAX5gt2BqdWYDupPZk3HztJihQR4CBb+nwJD
+         HwuY97T/VFQx+OoiM1sdb0B10GbqoosKnO3nWJG1H39TN1pEEm1r3ubCvleL9vqInygJ
+         s9OxJeqaSsFot5Op8y+EeQwQb12AhS3FXHwt5dP0RM0RGcAjlIYxGFR+7gttvC6r1P2+
+         xvhA==
+X-Gm-Message-State: APjAAAXt2Wud2xmm545EFv512fpK0TFd+pwlIvlKW91pRiEVZfPJ1f+F
+        X31XuUudgprYurhwKXpQ0gFeYW27WqU=
+X-Google-Smtp-Source: APXvYqxPCChHRFanP/sFGlhVTRTI3yWFc7fZq6TDXEsUJclACOL+YZ7jSqEE28G9RJ/P3W29GbPl0Q==
+X-Received: by 2002:a65:6108:: with SMTP id z8mr53000362pgu.289.1564026725425;
+        Wed, 24 Jul 2019 20:52:05 -0700 (PDT)
+Received: from ?IPv6:2402:f000:4:72:808::177e? ([2402:f000:4:72:808::177e])
+        by smtp.gmail.com with ESMTPSA id z6sm19026125pgk.18.2019.07.24.20.52.03
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 24 Jul 2019 20:52:05 -0700 (PDT)
+Subject: Re: [PATCH] fs: crypto: keyinfo: Fix a possible null-pointer
+ dereference in derive_key_aes()
+To:     tytso@mit.edu, jaegeuk@kernel.org, ebiggers@kernel.org
+References: <20190724100204.2009-1-baijiaju1990@gmail.com>
+ <20190724160711.GB673@sol.localdomain>
+ <3d206c43-994e-6134-3f28-b4a500472760@gmail.com>
+ <9740973d-6e59-e4df-7097-4e5d0da89235@gmail.com>
+ <20190725033951.GA677@sol.localdomain>
+Cc:     linux-fscrypt@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-crypto@vger.kernel.org
+From:   Jia-Ju Bai <baijiaju1990@gmail.com>
+Message-ID: <33ae3693-9792-a793-5e9e-aca845c427a5@gmail.com>
+Date:   Thu, 25 Jul 2019 11:52:07 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <20190717222340.137578-1-saravanak@google.com> <20190717222340.137578-3-saravanak@google.com>
- <20190723095316.t5ltprixxd5veuj7@vireshk-i7> <CAGETcx-r6fZH0xYea-YXyXDwe33pimtfNerLzzBn4UHT2qQVvA@mail.gmail.com>
- <20190725025849.y2xyxmqmgorrny6k@vireshk-i7>
-In-Reply-To: <20190725025849.y2xyxmqmgorrny6k@vireshk-i7>
-From:   Saravana Kannan <saravanak@google.com>
-Date:   Wed, 24 Jul 2019 20:46:41 -0700
-Message-ID: <CAGETcx8r3C_=Y0vSwqekCZPUeYkNQ6EOUDK4bUJksDHG6zPUjA@mail.gmail.com>
-Subject: Re: [PATCH v3 2/5] OPP: Add function to look up required OPP's for a
- given OPP
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        Android Kernel Team <kernel-team@android.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190725033951.GA677@sol.localdomain>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 24, 2019 at 7:58 PM Viresh Kumar <viresh.kumar@linaro.org> wrote:
->
-> On 23-07-19, 17:23, Saravana Kannan wrote:
-> > On Tue, Jul 23, 2019 at 2:53 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> > >
-> > > On 17-07-19, 15:23, Saravana Kannan wrote:
-> > > > Add a function that allows looking up required OPPs given a source OPP
-> > > > table, destination OPP table and the source OPP.
-> > > >
-> > > > Signed-off-by: Saravana Kannan <saravanak@google.com>
-> > > > ---
-> > > >  drivers/opp/core.c     | 54 ++++++++++++++++++++++++++++++++++++++++++
-> > > >  include/linux/pm_opp.h | 11 +++++++++
-> > > >  2 files changed, 65 insertions(+)
-> > > >
-> > > > diff --git a/drivers/opp/core.c b/drivers/opp/core.c
-> > > > index 438fcd134d93..72c055a3f6b7 100644
-> > > > --- a/drivers/opp/core.c
-> > > > +++ b/drivers/opp/core.c
-> > > > @@ -1883,6 +1883,60 @@ void dev_pm_opp_detach_genpd(struct opp_table *opp_table)
-> > > >  }
-> > > >  EXPORT_SYMBOL_GPL(dev_pm_opp_detach_genpd);
-> > > >
-> > > > +/**
-> > > > + * dev_pm_opp_xlate_opp() - Find required OPP for src_table OPP.
-> > > > + * @src_table: OPP table which has dst_table as one of its required OPP table.
-> > > > + * @dst_table: Required OPP table of the src_table.
-> > > > + * @pstate: OPP of the src_table.
-> > >
-> > > You should use @ before parameters in the comments as well ? Just like
-> > > you did that below.
-> >
-> > And I should probably be deleting the @pstate phantom parameter :)
-> >
-> > > > + *
-> > > > + * This function returns the OPP (present in @dst_table) pointed out by the
-> > > > + * "required-opps" property of the OPP (present in @src_table).
-> > > > + *
-> > > > + * The callers are required to call dev_pm_opp_put() for the returned OPP after
-> > > > + * use.
-> > > > + *
-> > > > + * Return: destination table OPP on success, otherwise NULL on errors.
-> > > > + */
-> > > > +struct dev_pm_opp *dev_pm_opp_xlate_opp(struct opp_table *src_table,
-> > >
-> > > Please name it dev_pm_opp_xlate_required_opp().
-> >
-> > Ok
-> >
-> > >
-> > > > +                                     struct opp_table *dst_table,
-> > > > +                                     struct dev_pm_opp *src_opp)
-> > > > +{
-> > > > +     struct dev_pm_opp *opp, *dest_opp = NULL;
-> > > > +     int i;
-> > > > +
-> > > > +     if (!src_table || !dst_table || !src_opp)
-> > > > +             return NULL;
-> > > > +
-> > > > +     for (i = 0; i < src_table->required_opp_count; i++) {
-> > > > +             if (src_table->required_opp_tables[i]->np == dst_table->np)
-> > >
-> > > Why can't we just compare the table pointers instead ? Yeah, I know
-> > > that's how I wrote that in the other xlate function, but I am confused
-> > > now :)
-> >
-> > I almost said "not sure. Let me just compare pointers".
-> > I think (not sure) it has to do with the same OPP table being used to
-> > create multiple OPP table copies if the "shared OPP table" flag isn't
-> > set?
-> > Can you confirm if this makes sense? If so, I can add a comment patch
-> > that adds comments to the existing code and then copies it into this
-> > function in this patch.
->
-> Right, that was the reason but we also need to fix ...
 
-I know I gave that explanation but I'm still a bit confused by the
-existing logic. If the same DT OPP table is used to create multiple in
-memory OPP tables, how do you device which in memory OPP table is the
-right one to point to?
+
+On 2019/7/25 11:39, Eric Biggers wrote:
+> On Thu, Jul 25, 2019 at 11:33:53AM +0800, Jia-Ju Bai wrote:
+>> Sorry, I forgot to send to Eric, so send it again.
+>>
+>> On 2019/7/25 11:30, Jia-Ju Bai wrote:
+>>>
+>>> On 2019/7/25 0:07, Eric Biggers wrote:
+>>>> [+Cc linux-crypto]
+>>>>
+>>>> On Wed, Jul 24, 2019 at 06:02:04PM +0800, Jia-Ju Bai wrote:
+>>>>> In derive_key_aes(), tfm is assigned to NULL on line 46, and then
+>>>>> crypto_free_skcipher(tfm) is executed.
+>>>>>
+>>>>> crypto_free_skcipher(tfm)
+>>>>>       crypto_skcipher_tfm(tfm)
+>>>>>           return &tfm->base;
+>>>>>
+>>>>> Thus, a possible null-pointer dereference may occur.
+>>>> This analysis is incorrect because only the address &tfm->base is taken.
+>>>> There's no pointer dereference.
+>>>>
+>>>> In fact all the crypto_free_*() functions are no-ops on NULL
+>>>> pointers, and many
+>>>> other callers rely on it.  So there's no bug here.
+>>> Thanks for the reply :)
+>>> I admit that "&tfm->base" is not a null-pointer dereference when tfm is
+>>> NULL.
+>>> But I still think crypto_free_skcipher(tfm) can cause security problems
+>>> when tfm is NULL.
+>>>
+>>> Looking at the code:
+>>>
+>>> static inline void crypto_free_skcipher(struct crypto_skcipher *tfm)
+>>> {
+>>>      crypto_destroy_tfm(tfm, crypto_skcipher_tfm(tfm));
+>>> }
+>>>
+>>> static inline struct crypto_tfm *crypto_skcipher_tfm(
+>>>      struct crypto_skcipher *tfm)
+>>> {
+>>>      return &tfm->base;
+>>> }
+>>>
+>>> void crypto_destroy_tfm(void *mem, struct crypto_tfm *tfm)
+>>> {
+>>>      struct crypto_alg *alg;
+>>>
+>>>      if (unlikely(!mem))
+>>>          return;
+> When the original pointer is NULL, mem == NULL here so crypto_destroy_tfm() is a
+> no-op.
+
+I overlooked this if statement, thanks for the pointer.
 
 >
-> > > > +                     break;
-> > > > +     }
-> > > > +
-> > > > +     if (unlikely(i == src_table->required_opp_count)) {
-> > > > +             pr_err("%s: Couldn't find matching OPP table (%p: %p)\n",
-> > > > +                    __func__, src_table, dst_table);
-> > > > +             return NULL;
-> > > > +     }
-> > > > +
-> > > > +     mutex_lock(&src_table->lock);
-> > > > +
-> > > > +     list_for_each_entry(opp, &src_table->opp_list, node) {
-> > > > +             if (opp == src_opp) {
->
-> ... this as well. We must be comparing node pointers here as well.
+>>> Besides, I also find that some kernel modules check tfm before calling
+>>> crypto_free_*(), such as:
+>>>
+>>> drivers/crypto/vmx/aes_xts.c:
+>>>      if (ctx->fallback) {
+>>>          crypto_free_skcipher(ctx->fallback);
+>>>          ctx->fallback = NULL;
+>>>      }
+>>>
+>>> net/rxrpc/rxkad.c:
+>>>      if (conn->cipher)
+>>>          crypto_free_skcipher(conn->cipher);
+>>>
+>>> drivers/crypto/chelsio/chcr_algo.c:
+>>>      if (ablkctx->aes_generic)
+>>>          crypto_free_cipher(ablkctx->aes_generic);
+>>>
+>>> net/mac80211/wep.c:
+>>>      if (!IS_ERR(local->wep_tx_tfm))
+>>>          crypto_free_cipher(local->wep_tx_tfm);
+>>>
+> Well, people sometimes do that for kfree() too.  But that doesn't mean it's
+> needed, or that it's the preferred style (it's not).
 
-Not really, if an in memory OPP entry is not part of an in memory OPP
-table list, I don't think it should be considered part of the OPP
-table just because the node pointer is the same. I think that's
-explicitly wrong and the above code is correct as is.
+Okay.
 
--Saravana
+
+Best wishes,
+Jia-Ju Bai
