@@ -2,62 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB3EB7525E
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 17:17:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 36F007526B
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 17:19:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388984AbfGYPRs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 11:17:48 -0400
-Received: from verein.lst.de ([213.95.11.211]:36175 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388457AbfGYPRr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 11:17:47 -0400
-Received: by verein.lst.de (Postfix, from userid 2005)
-        id 532AC68B02; Thu, 25 Jul 2019 17:17:42 +0200 (CEST)
-Date:   Thu, 25 Jul 2019 17:17:42 +0200
-From:   Torsten Duwe <duwe@lst.de>
-To:     Vasily Khoruzhick <anarsoul@gmail.com>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Sean Paul <seanpaul@chromium.org>,
-        Harald Geyer <harald@ccbib.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        arm-linux <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 6/7] dt-bindings: Add ANX6345 DP/eDP transmitter
- binding
-Message-ID: <20190725151742.GA4820@lst.de>
-References: <20190722151202.5506768B20@verein.lst.de> <CA+E=qVdu3Hf7ufst-t_CiWkquximGFX8B2RcoQ1x0m++cc8n8Q@mail.gmail.com>
+        id S2389156AbfGYPTT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 11:19:19 -0400
+Received: from conssluserg-01.nifty.com ([210.131.2.80]:57000 "EHLO
+        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388736AbfGYPTT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 11:19:19 -0400
+Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com [209.85.222.49]) (authenticated)
+        by conssluserg-01.nifty.com with ESMTP id x6PFJ2Cm028409;
+        Fri, 26 Jul 2019 00:19:02 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com x6PFJ2Cm028409
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1564067943;
+        bh=ybYKBy2jy2mNaj9dapjCxjrjOczwrfBem/VG0oV9nbc=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=RPWbux+yjMepS0eHBsNLg6KHVJNe8nyxRgAyeUBrPLRd3lkQ70KNqeCAl4/SFU1rA
+         KqBCIJnmWTt2dzLfUOdXeqg+NBM9I3lI8V+DKpydh+IeSPY5DNQ5WiA4bUBUSLIEkt
+         CwCTwUmJ/5Nte6KSXD0BHkytFeq93XGtPvEC8kcmddSm6NmhCaqhVNgH28OM66ukCr
+         lLHl4P5+M38HUeaBBTMOTcOcN9ExEtQDRXnM8pW4pA5bnQZzg00ryltINj4ovvWtKJ
+         oVvWb/xneF1qbgFz9QMY5BMTL9S8MZrPnS+NV0+3zfI6zHcHYFLOddfge1s6iJs6oe
+         p7abfWuOYSYfA==
+X-Nifty-SrcIP: [209.85.222.49]
+Received: by mail-ua1-f49.google.com with SMTP id j8so19975307uan.6;
+        Thu, 25 Jul 2019 08:19:02 -0700 (PDT)
+X-Gm-Message-State: APjAAAWG2hHadUBZSQoluo44Dern+wLF9J+iIOtiPh5fXNhrhPOBRKch
+        fia/qU5R4gKWuy7KXLSaniPkmUGLIChPUQFHcr0=
+X-Google-Smtp-Source: APXvYqzREwsVdqY9MpRLTcsyv3GQ7mTlG0gkpVTsr5J+UESJVcs/+a1yYujSjrS2p7W2Tw/dNRFWb+R1W2ZTVW6lnTQ=
+X-Received: by 2002:ab0:5ea6:: with SMTP id y38mr56716853uag.40.1564067941791;
+ Thu, 25 Jul 2019 08:19:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+E=qVdu3Hf7ufst-t_CiWkquximGFX8B2RcoQ1x0m++cc8n8Q@mail.gmail.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+References: <20190717061800.10018-1-yamada.masahiro@socionext.com>
+ <20190717061800.10018-8-yamada.masahiro@socionext.com> <230d2ca1-19cd-b60e-1b1b-6d7413eea9e2@siemens.com>
+In-Reply-To: <230d2ca1-19cd-b60e-1b1b-6d7413eea9e2@siemens.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Fri, 26 Jul 2019 00:18:12 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARu--p-tiJA2RGM5_KSQPSeo6-pkp-4GRd2AwM_1dtD7Q@mail.gmail.com>
+Message-ID: <CAK7LNARu--p-tiJA2RGM5_KSQPSeo6-pkp-4GRd2AwM_1dtD7Q@mail.gmail.com>
+Subject: Re: [PATCH v3 07/12] kbuild: modpost: read modules.order instead of $(MODVERDIR)/*.mod
+To:     Jan Kiszka <jan.kiszka@siemens.com>
+Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 22, 2019 at 11:51:36AM -0700, Vasily Khoruzhick wrote:
-> On Mon, Jul 22, 2019 at 8:12 AM Torsten Duwe <duwe@lst.de> wrote:
+Hi Jan,
+
+On Thu, Jul 25, 2019 at 5:39 PM Jan Kiszka <jan.kiszka@siemens.com> wrote:
 > >
-> > The anx6345 is an ultra-low power DisplayPort/eDP transmitter designed
-> > for portable devices.
-> >
-> > Add a binding document for it.
-> 
-> I believe you'll have to convert it to yaml format.
+>
+> This affects also external modules builds: I have patterns here that do
+>
+> [Makefile]
+> subdir-y := some-module
+>
+> [some-module/Makefile]
+> obj-m := some-module.o
+>
+> and since this patch, the final some-module.ko is no longer built. Am I missing
+> something in the kbuild makefiles, or is this a regression?
 
-Right. Thanks for the reminder.
+Thanks for the report.
+Interesting. I have never imagined that Makefiles were written like that.
 
-	Torsten
+I just wrote a fix-up, but I have not determined to apply it.
+https://patchwork.kernel.org/patch/11059033/
 
+It is easy to fixup your Makefile, though.
+
+--
+Best Regards
+Masahiro Yamada
