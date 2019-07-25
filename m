@@ -2,91 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD1147431E
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 04:09:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 61E8F74326
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 04:15:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388946AbfGYCJb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 22:09:31 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:35987 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387963AbfGYCJa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 22:09:30 -0400
-Received: by mail-pf1-f194.google.com with SMTP id r7so21874326pfl.3
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 19:09:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=r6xcP5bA0sOT1XKD434f1tzHJ1w8Z5pUhBurvR0md3Y=;
-        b=OS7tR5zyV52UK8u0O/4vWdCPtirPj+DX3kR5Qgo2YISvEdfPqAmP6f7NJy+3klPmT4
-         RfiJkeso73KofXRUuat2uX68lTB2nU+lTIoDsvW+XXbqveTSN22AxhIXfvTl1OPmEGOX
-         DH3L7/9/XwY5TeTaDs6ABHYUM5FB1G0P87Pr1+h/ZEgE/aGHr9TSGUmLgFDYzYzqlESP
-         1iAG/50feaU5Wpnt7JFSAudk6bjOxCwMgQE2p0Aw+aNMQHkFGspQpD8Jd1B6o/qaNIi6
-         T5cdmRleLEqVXZqLsvnAhx+nQAuZlQQO0MSsTDOGkl5s4M6GF7nA2xY1Q2icg/YVFy96
-         pCIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=r6xcP5bA0sOT1XKD434f1tzHJ1w8Z5pUhBurvR0md3Y=;
-        b=TthDulgdbsCLs5/liA0/ESW7zj+VRc4WBoBtLPqB0D+HRJ7B2XkvQ+5WU3+2bdlGuQ
-         34YFYl/bZIKj2VVRBlASuuXBqgLmXFXMY9FNxbFMScFwm8sUNv42JFM37SDrEAbEMpmh
-         3z4ytJmLuTIbMyeADw1JozjwWK7fJtgkj1qeg/o83io7eMT7ApNjj1IHOPliY142SZ+u
-         rp+46Y7KZNMVUHf7A7RGIUHqew6a1rAcMktuvYBeSPjqXga6KVOsGtdHod5Sr+i4II/s
-         XwupmF8Slj1KcgUlMtjXZvu3HYgkhIXQu/QO/Mlr4xarZSF02MLjoTPTs0i/JPOe4JRA
-         TzFQ==
-X-Gm-Message-State: APjAAAWGxKb9fFRCylmIlQ+Z3KfNtYHhR7gXJYhZ+04AiWwjUZgF7buz
-        0EmVnvIaDWx7L2Nevz/jVLUikUUcZqc=
-X-Google-Smtp-Source: APXvYqy09Mds/SHzIx9nVdnz1Mx3LWHtzspmtN58tOrZhoceS+OUaqb+iSoiBuk9HxtsEaV20c2MbQ==
-X-Received: by 2002:a17:90a:2430:: with SMTP id h45mr92683720pje.14.1564020569953;
-        Wed, 24 Jul 2019 19:09:29 -0700 (PDT)
-Received: from suzukaze.ipads-lab.se.sjtu.edu.cn ([89.31.126.54])
-        by smtp.gmail.com with ESMTPSA id q1sm56990685pfg.84.2019.07.24.19.09.27
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 24 Jul 2019 19:09:29 -0700 (PDT)
-From:   Chuhong Yuan <hslester96@gmail.com>
-Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        Chuhong Yuan <hslester96@gmail.com>
-Subject: [PATCH] ALSA: echoaudio: Replace kmalloc + memcpy with kmemdup
-Date:   Thu, 25 Jul 2019 10:09:24 +0800
-Message-Id: <20190725020924.7643-1-hslester96@gmail.com>
-X-Mailer: git-send-email 2.20.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+        id S2389000AbfGYCPY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 22:15:24 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:34944 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387963AbfGYCPY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 22:15:24 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id E706020053C;
+        Thu, 25 Jul 2019 04:15:21 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 45E1B20016C;
+        Thu, 25 Jul 2019 04:15:15 +0200 (CEST)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id E844D40302;
+        Thu, 25 Jul 2019 10:15:06 +0800 (SGT)
+From:   Anson.Huang@nxp.com
+To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH] dt-bindings: clock: imx8mn: Fix tab indentation for yaml file
+Date:   Thu, 25 Jul 2019 10:05:51 +0800
+Message-Id: <20190725020551.27034-1-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.9.5
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Instead of using kmalloc + memcpy, use kmemdup
-to simplify the code.
+From: Anson Huang <Anson.Huang@nxp.com>
 
-Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+YAML file can NOT contain tab as indentation, fix it.
+
+Fixes: 6d6062553e3d ("dt-bindings: imx: Add clock binding doc for i.MX8MN")
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 ---
- sound/pci/echoaudio/echoaudio.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ Documentation/devicetree/bindings/clock/imx8mn-clock.yaml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/pci/echoaudio/echoaudio.c b/sound/pci/echoaudio/echoaudio.c
-index b612a536a5a1..ca9125726be2 100644
---- a/sound/pci/echoaudio/echoaudio.c
-+++ b/sound/pci/echoaudio/echoaudio.c
-@@ -2189,11 +2189,10 @@ static int snd_echo_resume(struct device *dev)
- 	u32 pipe_alloc_mask;
- 	int err;
+diff --git a/Documentation/devicetree/bindings/clock/imx8mn-clock.yaml b/Documentation/devicetree/bindings/clock/imx8mn-clock.yaml
+index 454c5b4..622f365 100644
+--- a/Documentation/devicetree/bindings/clock/imx8mn-clock.yaml
++++ b/Documentation/devicetree/bindings/clock/imx8mn-clock.yaml
+@@ -71,7 +71,7 @@ examples:
+         compatible = "fixed-clock";
+         #clock-cells = <0>;
+         clock-frequency = <32768>;
+-	clock-output-names = "osc_32k";
++        clock-output-names = "osc_32k";
+     };
  
--	commpage_bak = kmalloc(sizeof(*commpage), GFP_KERNEL);
-+	commpage = chip->comm_page;
-+	commpage_bak = kmemdup(commpage, sizeof(*commpage), GFP_KERNEL);
- 	if (commpage_bak == NULL)
- 		return -ENOMEM;
--	commpage = chip->comm_page;
--	memcpy(commpage_bak, commpage, sizeof(*commpage));
- 
- 	err = init_hw(chip, chip->pci->device, chip->pci->subsystem_device);
- 	if (err < 0) {
+     osc_24m: clock-osc-24m {
 -- 
-2.20.1
+2.7.4
 
