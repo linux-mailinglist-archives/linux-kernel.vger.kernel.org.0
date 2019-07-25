@@ -2,83 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 599F8756B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 20:17:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A0456756B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 20:19:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726959AbfGYSR3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 14:17:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55410 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725800AbfGYSR3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 14:17:29 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E0790218F0;
-        Thu, 25 Jul 2019 18:17:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564078648;
-        bh=vNiBpexJOLkJT1OK/Ak0sReI/jvKicgb9jdfc1P7pcQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=GQjyv/EZSZA8TQbBc4NDPOC0tKWA6ACRDtfWpMcPMkDQd0ZX5jJWLng/StuUxH1wW
-         H+D8+HhTSEV914fFvltgpsYRV/PnZEfYSHB3mkEPvqtQxBi++ubu8Sd3VFGt+7EtXO
-         ppEZfe6TjaZy26mca/ScRWxHCVIf7S9JV4+hygtU=
-Date:   Thu, 25 Jul 2019 20:17:26 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org,
-        linux-tegra <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 5.2 000/413] 5.2.3-stable review
-Message-ID: <20190725181726.GB10098@kroah.com>
-References: <20190724191735.096702571@linuxfoundation.org>
- <4a1e00d4-d952-c463-963f-0a26ba3976a2@nvidia.com>
+        id S1726636AbfGYSTK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 14:19:10 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:16404 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726005AbfGYSTK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 14:19:10 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d39f2a50000>; Thu, 25 Jul 2019 11:19:17 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Thu, 25 Jul 2019 11:19:09 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Thu, 25 Jul 2019 11:19:09 -0700
+Received: from rcampbell-dev.nvidia.com (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 25 Jul
+ 2019 18:19:08 +0000
+Subject: Re: [PATCH v3 1/3] mm: document zone device struct page field usage
+To:     Christoph Hellwig <hch@lst.de>
+CC:     <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Christoph Lameter <cl@linux.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+References: <20190724232700.23327-1-rcampbell@nvidia.com>
+ <20190724232700.23327-2-rcampbell@nvidia.com> <20190725053821.GA24527@lst.de>
+X-Nvconfidentiality: public
+From:   Ralph Campbell <rcampbell@nvidia.com>
+Message-ID: <8acce6b0-7e84-9dc6-9268-eaf0e814d994@nvidia.com>
+Date:   Thu, 25 Jul 2019 11:19:07 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4a1e00d4-d952-c463-963f-0a26ba3976a2@nvidia.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20190725053821.GA24527@lst.de>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1564078757; bh=Qao2t1CrfNdMKoMvCh94dTKdtpC+EI45d5wLIIGgET0=;
+        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=OrB98rUKTadk/d8iIGA0ZOIqqnVmAn2Gd/fFnuSL26pd/r5Tax28SSiAFMrnrbU+D
+         SInaELtAsdLvh1iYAAkif/sblYyfYzv3b9qGdoSGaZtsLotIAi/jJoglZpjOHgjsi1
+         Yn51vJ4bQCcYhCTwfcnYmvTNgvpkQOXXM8nWn+wuYBisyfzkxHWVL+79VJum4Mj5Pf
+         w3GDnLSrvzxCgFScHswqu3fju9uqDWp9eZW4sqcsystYZL0gCfffYhsaaDPtEdGcCJ
+         kWJq0QuG2fd9qi5LuW+Pa2TavLm2wnyDUWnB4mFBBnEFSdaKiSwy51ELb249H9GSRf
+         +KQD6RUNBkkoQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 25, 2019 at 10:04:43AM +0100, Jon Hunter wrote:
+
+On 7/24/19 10:38 PM, Christoph Hellwig wrote:
+> On Wed, Jul 24, 2019 at 04:26:58PM -0700, Ralph Campbell wrote:
+>> Struct page for ZONE_DEVICE private pages uses the page->mapping and
+>> and page->index fields while the source anonymous pages are migrated to
+>> device private memory. This is so rmap_walk() can find the page when
+>> migrating the ZONE_DEVICE private page back to system memory.
+>> ZONE_DEVICE pmem backed fsdax pages also use the page->mapping and
+>> page->index fields when files are mapped into a process address space.
+>>
+>> Add comments to struct page and remove the unused "_zd_pad_1" field
+>> to make this more clear.
 > 
-> On 24/07/2019 20:14, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 5.2.3 release.
-> > There are 413 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Fri 26 Jul 2019 07:13:35 PM UTC.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.2.3-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.2.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> 
-> All tests are passing for Tegra ...
-> 
-> Test results for stable-v5.2:
->     12 builds:	12 pass, 0 fail
->     22 boots:	22 pass, 0 fail
->     38 tests:	38 pass, 0 fail
-> 
-> Linux version:	5.2.3-rc1-gdb628fe0e67f
-> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
->                 tegra194-p2972-0000, tegra20-ventana,
->                 tegra210-p2371-2180, tegra30-cardhu-a04
+> I still think we should also fix up the layout, and I haven't seen
+> a reply from Matthew justifying his curses for your patch that makes
+> the struct page layout actually match how it is used.
 > 
 
-Great, thanks for testing all of these and letting me know.
+Well, I can kind of see this both ways since ZONE_DEVICE
+MEMORY_DEVICE_DEVDAX and MEMORY_DEVICE_PCI_P2PDMA don't
+seem to use the 3 words like MEMORY_DEVICE_PRIVATE and
+MEMORY_DEVICE_FS_DAX.
 
-greg k-h
+I like v3 because not all of the ZONE_DEVICE types are handled
+the same in regards to using the 3 words and there may be future
+ZONE_DEVICE types that use the 3 words differently which might
+require a union.
+
+I agree, I would like to hear from Matthew on his thoughts.
