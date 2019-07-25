@@ -2,76 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D586374F27
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 15:22:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DD4E74F36
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 15:23:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730023AbfGYNWK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 09:22:10 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:39456 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726765AbfGYNWJ (ORCPT
+        id S1729790AbfGYNXv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 09:23:51 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:47084 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725852AbfGYNXu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 09:22:09 -0400
-Received: by mail-pl1-f194.google.com with SMTP id b7so23461846pls.6
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 06:22:09 -0700 (PDT)
+        Thu, 25 Jul 2019 09:23:50 -0400
+Received: by mail-oi1-f194.google.com with SMTP id 65so37620284oid.13
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 06:23:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=mut94+Ig0D1WZMLMgqjo0fdxOTgp/jmf0ROWY/8OjU4=;
-        b=AuEXaHtwq+L/h4JxWqbaAhpFHIeodbFkpOaWMctSKijpFsbgqRzg98FMNfSGbEC8n8
-         CX8iLRFFsglvEoPLmjobFmWwFO1c9DVT4gimzG8dnhKUwvX44d2Ih8PeNml3KVGpmwQ2
-         fQEiPSCI1thyRSPL3c5cWJIYHbc5T2032XUHNrIsXRHkUlg++QGv8voXNmLwvEnJXuFR
-         qjzy00ZPKwTDEFZ7IZiwryUXQ0V3VBQMZe68pxSd7hu2sHO4JC8Zgow5EGTiZ26Q244E
-         +3QmS/eNb1BKND8oxQtga9TRby2LKT0TvAKoNp9X9sWAsvpJ59FHz6W2IIoKjpzDZ3JP
-         iBzw==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=KwM2+qYHt0UEBA6UJDkeQDcGwUyIPjkorh2VTV9IDzw=;
+        b=UpD8rDzoKa7CF0RszwEp2yu+B1fDuQVKouFsCxQnA5dTxpou+Ba3K9lVpz2jMPqq/1
+         sxeFNJK6Sf38cQGqrVLHeAQfBsqpgOTYVX12hsupalkh+KnDYymBDvqA/45etUsKBwvZ
+         0Ab4Z822WfZQm+okMa5x6zu0rnY+sVZpRjGRLe4ekSilG1jJLTHwNCG57S00SQJ5TMeq
+         FkIBGCDmkRRu2QfHuvfH0DHb8rHjKJn2RvtTKU2M76OnXw1kYCVoK5OQljlokqn7EnmN
+         6P5kJri4WNNlZJ+Uj/pSGWD+8m6are5chNBp4JvdEWWOhAaKh9LZB24sZiuH7WT7DHK/
+         kCJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=mut94+Ig0D1WZMLMgqjo0fdxOTgp/jmf0ROWY/8OjU4=;
-        b=LgxaYXrRyDhqFzvRSKnt9JSbHhf5XN22dEEape3RNHxKvij+0QQoXah0iluY1LcPXZ
-         s4jZkRoWqID64vWuR3EBTbo0hLztuoDZjauLujbZr70pxxoxf7l2cS9Ho3e79uL1HwKP
-         cqLHNvgkPf3y9t87aJ0MLAVzNx/yrWjOM7tNzVhGIHwOGPDpMW0uyyv1jFHJ4SATBTZr
-         Ia9Bj5/qu5c1qnZByezn55ERUbFsVGhQCrKFiROpBhBcLx3BL7EfDZdQPsEh8dFvmIZN
-         vEzovcVEwVNmsR+vQZn11EEpo+31wQvNqaoy8ddOcrG6ksbJ6BJqiTvXF/oAUQWQv2T0
-         pRYg==
-X-Gm-Message-State: APjAAAXMvt4mLkmjZKtuO040No69kuD8AZbJVJczq5TKmoDCOI4F63jY
-        3n0kdMak0NDE/7618d3J8BY=
-X-Google-Smtp-Source: APXvYqy6T4/8ZgLoXmJLsxsGqwB7Eo0HtOFOD79qEVhzhLWLIE0qcgikbTe/aMXNISkuimwhGPo/mg==
-X-Received: by 2002:a17:902:da4:: with SMTP id 33mr83216202plv.209.1564060470842;
-        Thu, 25 Jul 2019 06:14:30 -0700 (PDT)
-Received: from localhost ([123.213.206.190])
-        by smtp.gmail.com with ESMTPSA id z12sm31263772pfn.29.2019.07.25.06.14.29
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 25 Jul 2019 06:14:30 -0700 (PDT)
-Date:   Thu, 25 Jul 2019 22:14:22 +0900
-From:   Minwoo Im <minwoo.im.dev@gmail.com>
-To:     Chuhong Yuan <hslester96@gmail.com>
-Cc:     Sagi Grimberg <sagi@grimberg.me>, linux-kernel@vger.kernel.org,
-        linux-nvme@lists.infradead.org, Jens Axboe <axboe@fb.com>,
-        Keith Busch <kbusch@kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Minwoo Im <minwoo.im.dev@gmail.com>
-Subject: Re: [PATCH] nvme-pci: Use dev_get_drvdata where possible
-Message-ID: <20190725131422.GA7289@minwoo-desktop>
-References: <20190724122235.21639-1-hslester96@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=KwM2+qYHt0UEBA6UJDkeQDcGwUyIPjkorh2VTV9IDzw=;
+        b=m9gLTcsVv/IGOn1YWKQXSjHEOZ2k8bQx81SaoOdAT9SShvJ1CwXR66c5WL0o1DideF
+         CE+nSLPujMYk9DmMftLfq5exe3dR/2uCJRNjSUnWr9lZd9+xCdUtkL3QRL+yICiRVFaD
+         gynuPXERo9Ag/5ct/21RB/g4lvLElRutG40s+n0Fap4ber9/DGTToKocPW/d0ZPaO6ea
+         rfNebM7hzw8Wz/JkNsZkCMDq1zZ9TV79brEobZeKvO6zrDGOKSXVHq1H/H3MHY46lEYU
+         z8E30nZy47a2xEP6Ngwxf7PuOx/RMRtStbtz6dBtHWe7be5dDl5jFACipA7PuGdTtrHJ
+         VI7w==
+X-Gm-Message-State: APjAAAUzmFSYzJMs4ryZ95sNf//VF3G7QRMiRThYHl6iFE33QQtv+Nwl
+        7fPnWUUgdR5zXkSyfMIabTjK2sYuZJD+rJKOJb+gB3m9
+X-Google-Smtp-Source: APXvYqypjRf2awMQdztO7PYDu9Rw91aR4GcRmWVCqGbM344Dbhlb0mEkUpz8ySSDsEuabMZWkpRRW0tnWgt9tzqllw0=
+X-Received: by 2002:ac5:c2d2:: with SMTP id i18mr33137975vkk.36.1564060526687;
+ Thu, 25 Jul 2019 06:15:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190724122235.21639-1-hslester96@gmail.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+References: <20190725151748.1a59b1ba@xhacker.debian>
+In-Reply-To: <20190725151748.1a59b1ba@xhacker.debian>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Thu, 25 Jul 2019 15:14:50 +0200
+Message-ID: <CAPDyKFpwOaa-8GxkWnXoyoC8nLyGMGE8moyEJr4a7TVBSiw6mw@mail.gmail.com>
+Subject: Re: [PATCH] mmc: sdhci-pltfm: Use devm_platform_ioremap_resource() to
+ simplify code
+To:     Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19-07-24 20:22:35, Chuhong Yuan wrote:
-> Instead of using to_pci_dev + pci_get_drvdata,
-> use dev_get_drvdata to make code simpler.
-> 
-> Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+On Thu, 25 Jul 2019 at 09:28, Jisheng Zhang <Jisheng.Zhang@synaptics.com> wrote:
+>
+> devm_platform_ioremap_resource() wraps platform_get_resource() and
+> devm_ioremap_resource() in a single helper, let's use that helper to
+> simplify the code.
+>
+> Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
 
-This looks good to me.
+Applied for next, thanks!
 
-Reviewed-by: Minwoo Im <minwoo.im.dev@gmail.com>
+Kind regards
+Uffe
+
+
+> ---
+>  drivers/mmc/host/sdhci-pltfm.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+>
+> diff --git a/drivers/mmc/host/sdhci-pltfm.c b/drivers/mmc/host/sdhci-pltfm.c
+> index d268b3b8850a..11ecff9e998d 100644
+> --- a/drivers/mmc/host/sdhci-pltfm.c
+> +++ b/drivers/mmc/host/sdhci-pltfm.c
+> @@ -118,12 +118,10 @@ struct sdhci_host *sdhci_pltfm_init(struct platform_device *pdev,
+>                                     size_t priv_size)
+>  {
+>         struct sdhci_host *host;
+> -       struct resource *iomem;
+>         void __iomem *ioaddr;
+>         int irq, ret;
+>
+> -       iomem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -       ioaddr = devm_ioremap_resource(&pdev->dev, iomem);
+> +       ioaddr = devm_platform_ioremap_resource(pdev, 0);
+>         if (IS_ERR(ioaddr)) {
+>                 ret = PTR_ERR(ioaddr);
+>                 goto err;
+> --
+> 2.22.0
+>
