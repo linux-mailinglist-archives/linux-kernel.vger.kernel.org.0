@@ -2,138 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A6A7742E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 03:28:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6FF86742EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 03:40:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387752AbfGYB24 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 21:28:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39900 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726300AbfGYB24 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 21:28:56 -0400
-Received: from oasis.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5EA4521901;
-        Thu, 25 Jul 2019 01:28:54 +0000 (UTC)
-Date:   Wed, 24 Jul 2019 21:28:52 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Ben Dooks <ben.dooks@codethink.co.uk>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Vinod Koul <vkoul@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH] trace: fix header include guards
-Message-ID: <20190724212852.070641d4@oasis.local.home>
-In-Reply-To: <20190720103943.16982-1-yamada.masahiro@socionext.com>
-References: <20190720103943.16982-1-yamada.masahiro@socionext.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S2388151AbfGYBky (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 21:40:54 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:45209 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727336AbfGYBks (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 21:40:48 -0400
+Received: by mail-io1-f68.google.com with SMTP id g20so93746330ioc.12
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2019 18:40:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=oXN5GwXNrqWezDYAWTbIPylSr9KykD38a2m5LA5Vzvk=;
+        b=H2461pL6theAnpW5edW+3dqP8T5QMrpFl0SXGGIZnqB+ZlHIXGHeYrYrfnlBuLfUp9
+         o+DcklySifYG765de/M6SgutOlGYOP4WF5mJtz1jTM2lOmhvJX9V6DhHKgn2HOScs53e
+         IzBcWiOROr/uvNK+aKEyV/oc1kulroh6fFFau4kjUzN5aRYuMC+51OMqOcoZLa0nC2bS
+         8+BoGmCcQceVuXdjrqbcfXyFNI4xY1/t62QHTPZefRz7oOXBCShHxOwzmafADOk8VhJX
+         gLdEGHfYCnCmIhAozPvWbPT1+3C7/khPdVJ4aX000z8Dz28NjCaJoqArS2QvPkpIHpQM
+         slfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=oXN5GwXNrqWezDYAWTbIPylSr9KykD38a2m5LA5Vzvk=;
+        b=pgAGLRByQPom6Fl1rXCsFvUBa2RIk/P08rV5d1qZFOjud8JAs3+iWhH0XbYR+Gm+qR
+         ZoIe2MSBlGCwcF5C4DWCSxob8VeajKaoMwRj+35WewQyAna6qjNnkXxshqSN+gxr4WtE
+         XwCjgk/TT4KPk1GDUcI4Rk3At/3mC+8VqK4ui1LDZV1afZAm9FtqO+0ktfXrBqAamubo
+         bA9QZQC2eeHPAQL7yiLIXkCuAoL26HBZ3aPcLG9pww0RbeRU69EVemesOckemkxCsMBT
+         /0k9jDIYC3CJcL0MnD3n3zZrS6z29mvnr30GwIdEfgTxgURUIjM5C/njMK0iofxKJTfh
+         Paxg==
+X-Gm-Message-State: APjAAAUTyafMl67MIITK8yW1KdLfFeaA3NiJcQcVk0CAmNb+ma5ZUin1
+        3266tsQAXBdq3NImohjH9xs=
+X-Google-Smtp-Source: APXvYqwZV+csN65QFH3c/+ek2MRlo4Jzp+G1GLrE+iP8KG1lV2GK5/itgNtY2zuUMy76j+9IordQ7Q==
+X-Received: by 2002:a02:aa8f:: with SMTP id u15mr88348318jai.39.1564018847231;
+        Wed, 24 Jul 2019 18:40:47 -0700 (PDT)
+Received: from cs-dulles.cs.umn.edu (cs-dulles.cs.umn.edu. [128.101.35.54])
+        by smtp.googlemail.com with ESMTPSA id h19sm32973203iol.65.2019.07.24.18.40.46
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 24 Jul 2019 18:40:46 -0700 (PDT)
+From:   Navid Emamdoost <navid.emamdoost@gmail.com>
+To:     emamd001@umn.edu
+Cc:     kjlu@umn.edu, smccaman@umn.edu,
+        Navid Emamdoost <navid.emamdoost@gmail.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] mm/hugetlb.c: check the failure case for find_vma
+Date:   Wed, 24 Jul 2019 20:39:44 -0500
+Message-Id: <20190725013944.20661-1-navid.emamdoost@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 20 Jul 2019 19:39:43 +0900
-Masahiro Yamada <yamada.masahiro@socionext.com> wrote:
+find_vma may fail and return NULL. The null check is added.
 
-> These include guards are broken.
-> 
-> Match the #if !define() and #define lines so that they work correctly.
+Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+---
+ mm/hugetlb.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Thanks, this all looks legit to me. I'll pull this in through my tree.
-
--- Steve
-
-> 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
-> 
->  include/trace/events/dma_fence.h     | 2 +-
->  include/trace/events/napi.h          | 4 ++--
->  include/trace/events/qdisc.h         | 4 ++--
->  include/trace/events/tegra_apb_dma.h | 4 ++--
->  4 files changed, 7 insertions(+), 7 deletions(-)
-> 
-> diff --git a/include/trace/events/dma_fence.h b/include/trace/events/dma_fence.h
-> index 2212adda8f77..64e92d56c6a8 100644
-> --- a/include/trace/events/dma_fence.h
-> +++ b/include/trace/events/dma_fence.h
-> @@ -2,7 +2,7 @@
->  #undef TRACE_SYSTEM
->  #define TRACE_SYSTEM dma_fence
->  
-> -#if !defined(_TRACE_FENCE_H) || defined(TRACE_HEADER_MULTI_READ)
-> +#if !defined(_TRACE_DMA_FENCE_H) || defined(TRACE_HEADER_MULTI_READ)
->  #define _TRACE_DMA_FENCE_H
->  
->  #include <linux/tracepoint.h>
-> diff --git a/include/trace/events/napi.h b/include/trace/events/napi.h
-> index f3a12566bed0..6678cf8b235b 100644
-> --- a/include/trace/events/napi.h
-> +++ b/include/trace/events/napi.h
-> @@ -3,7 +3,7 @@
->  #define TRACE_SYSTEM napi
->  
->  #if !defined(_TRACE_NAPI_H) || defined(TRACE_HEADER_MULTI_READ)
-> -#define _TRACE_NAPI_H_
-> +#define _TRACE_NAPI_H
->  
->  #include <linux/netdevice.h>
->  #include <linux/tracepoint.h>
-> @@ -38,7 +38,7 @@ TRACE_EVENT(napi_poll,
->  
->  #undef NO_DEV
->  
-> -#endif /* _TRACE_NAPI_H_ */
-> +#endif /* _TRACE_NAPI_H */
->  
->  /* This part must be outside protection */
->  #include <trace/define_trace.h>
-> diff --git a/include/trace/events/qdisc.h b/include/trace/events/qdisc.h
-> index 60d0d8bd336d..0d1a9ebf55ba 100644
-> --- a/include/trace/events/qdisc.h
-> +++ b/include/trace/events/qdisc.h
-> @@ -2,7 +2,7 @@
->  #define TRACE_SYSTEM qdisc
->  
->  #if !defined(_TRACE_QDISC_H) || defined(TRACE_HEADER_MULTI_READ)
-> -#define _TRACE_QDISC_H_
-> +#define _TRACE_QDISC_H
->  
->  #include <linux/skbuff.h>
->  #include <linux/netdevice.h>
-> @@ -44,7 +44,7 @@ TRACE_EVENT(qdisc_dequeue,
->  		  __entry->txq_state, __entry->packets, __entry->skbaddr )
->  );
->  
-> -#endif /* _TRACE_QDISC_H_ */
-> +#endif /* _TRACE_QDISC_H */
->  
->  /* This part must be outside protection */
->  #include <trace/define_trace.h>
-> diff --git a/include/trace/events/tegra_apb_dma.h b/include/trace/events/tegra_apb_dma.h
-> index 0818f6286110..971cd02d2daf 100644
-> --- a/include/trace/events/tegra_apb_dma.h
-> +++ b/include/trace/events/tegra_apb_dma.h
-> @@ -1,5 +1,5 @@
->  #if !defined(_TRACE_TEGRA_APB_DMA_H) || defined(TRACE_HEADER_MULTI_READ)
-> -#define _TRACE_TEGRA_APM_DMA_H
-> +#define _TRACE_TEGRA_APB_DMA_H
->  
->  #include <linux/tracepoint.h>
->  #include <linux/dmaengine.h>
-> @@ -55,7 +55,7 @@ TRACE_EVENT(tegra_dma_isr,
->  	TP_printk("%s: irq %d\n",  __get_str(chan), __entry->irq)
->  );
->  
-> -#endif /*  _TRACE_TEGRADMA_H */
-> +#endif /* _TRACE_TEGRA_APB_DMA_H */
->  
->  /* This part must be outside protection */
->  #include <trace/define_trace.h>
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index ede7e7f5d1ab..9c5e8b7a6476 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -4743,6 +4743,9 @@ void adjust_range_if_pmd_sharing_possible(struct vm_area_struct *vma,
+ pte_t *huge_pmd_share(struct mm_struct *mm, unsigned long addr, pud_t *pud)
+ {
+ 	struct vm_area_struct *vma = find_vma(mm, addr);
++	if (!vma)
++		return (pte_t *)pmd_alloc(mm, pud, addr);
++
+ 	struct address_space *mapping = vma->vm_file->f_mapping;
+ 	pgoff_t idx = ((addr - vma->vm_start) >> PAGE_SHIFT) +
+ 			vma->vm_pgoff;
+-- 
+2.17.1
 
