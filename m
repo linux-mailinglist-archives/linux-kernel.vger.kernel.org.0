@@ -2,79 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 77F747553E
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 19:18:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0844975542
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 19:19:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729716AbfGYRSu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 13:18:50 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:45981 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725878AbfGYRSt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 13:18:49 -0400
-Received: by mail-pg1-f195.google.com with SMTP id o13so23350165pgp.12
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 10:18:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=message-id:mime-version:content-transfer-encoding:in-reply-to
-         :references:subject:to:cc:from:user-agent:date;
-        bh=pKF4uTEG2V2736jXBsUmCSSZEQt/JQWcWxojg2SNHvQ=;
-        b=YzYCDtwsX9ubBUiVtnqndDSs3hmpOz1P0CeQ2TgcZ8Gn4gowsx2EV6xe/gDciXbo2V
-         cXdMt+RL/GjOKn65B/pUAoWDBBVtRu8cL07AYgSTHhJrpiSVUcvsdrZEvC/sw2oNtyHQ
-         J06ebgNs46VM6Kb3iZgbNX/a4WxRa0QpnyGOo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:mime-version
-         :content-transfer-encoding:in-reply-to:references:subject:to:cc:from
-         :user-agent:date;
-        bh=pKF4uTEG2V2736jXBsUmCSSZEQt/JQWcWxojg2SNHvQ=;
-        b=RX3CNGWjZVSkVa45suWmXkUC3Gyk+u635aBJmM7NHJmcDL1kUJl5w9b77g9q3kCjxX
-         yQHb0oWsHoa1XPGKbIVqQPEGFxd8PLyo+yWvEYGo9uLwvWhe+esHgxwr+uk+lKyUfjz0
-         ToFFYvE0rWDfeNyXiG7yK7R76JKY4PpZC1F8CyTRaZV38ZbkGY12gQKV0M4tBVqPsm0s
-         t4JmmF70B5YZygNSAe0LB+leRuO4pKL0C0E/L0XcTh0TPYhTA5XgF7foeVgkcL6fAF4e
-         Nswyr5+fdV/DPQslZhx4yNdwOJIv2tex98imV/dTPtWBAVnBY3yXGMCQ947K+laB8YCd
-         yN2w==
-X-Gm-Message-State: APjAAAWz4m4HZrM2uFcwdOzEsOclQ2Hs9JyLtpJs1ykWM1zhIFPaD2bo
-        GCRfRDRUl5+4VSFFcX29pRIqGw==
-X-Google-Smtp-Source: APXvYqwyvvB59B3ughI+E3wp1WnBBj0Dam/Cxzjm5SQLtruxS4EDniq2hIg9r9i6o5dS5o9HEqeP6A==
-X-Received: by 2002:a63:7245:: with SMTP id c5mr73569315pgn.11.1564075129171;
-        Thu, 25 Jul 2019 10:18:49 -0700 (PDT)
-Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id l31sm88237663pgm.63.2019.07.25.10.18.48
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 25 Jul 2019 10:18:48 -0700 (PDT)
-Message-ID: <5d39e478.1c69fb81.53508.87c6@mx.google.com>
-Content-Type: text/plain; charset="utf-8"
+        id S1729760AbfGYRTV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 13:19:21 -0400
+Received: from mga09.intel.com ([134.134.136.24]:11488 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728807AbfGYRTU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 13:19:20 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jul 2019 10:19:20 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,307,1559545200"; 
+   d="scan'208";a="160972719"
+Received: from agluck-desk2.sc.intel.com (HELO agluck-desk2.amr.corp.intel.com) ([10.3.52.68])
+  by orsmga007.jf.intel.com with ESMTP; 25 Jul 2019 10:19:20 -0700
+Date:   Thu, 25 Jul 2019 10:19:19 -0700
+From:   "Luck, Tony" <tony.luck@intel.com>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Linux Edac Mailing List <linux-edac@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] MAINTAINERS: update EDAC entry to reflect current tree
+ and maintainers
+Message-ID: <20190725171919.GA27542@agluck-desk2.amr.corp.intel.com>
+References: <1eb2d09e58500bef18428e2b3f52b54d3cd707d5.1564071419.git.mchehab+samsung@kernel.org>
+ <20190725170050.GA27348@nazgul.tnic>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1564073635-27998-1-git-send-email-jcrouse@codeaurora.org>
-References: <1564073635-27998-1-git-send-email-jcrouse@codeaurora.org>
-Subject: Re: [PATCH] drm/msm: Use generic bulk clock function
-To:     Jordan Crouse <jcrouse@codeaurora.org>,
-        freedreno@lists.freedesktop.org
-Cc:     linux-arm-msm@vger.kernel.org, Sean Paul <sean@poorly.run>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Sharat Masetty <smasetty@codeaurora.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        David Airlie <airlied@linux.ie>,
-        Rob Clark <robdclark@gmail.com>,
-        Mamta Shukla <mamtashukla555@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>
-From:   Stephen Boyd <swboyd@chromium.org>
-User-Agent: alot/0.8.1
-Date:   Thu, 25 Jul 2019 10:18:47 -0700
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190725170050.GA27348@nazgul.tnic>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Jordan Crouse (2019-07-25 09:53:55)
-> Remove the homebrewed bulk clock get function and replace it with
-> devm_clk_bulk_get_all().
->=20
-> Signed-off-by: Jordan Crouse <jcrouse@codeaurora.org>
-> ---
+On Thu, Jul 25, 2019 at 07:00:50PM +0200, Borislav Petkov wrote:
+> On Thu, Jul 25, 2019 at 12:17:35PM -0400, Mauro Carvalho Chehab wrote:
+> > Tony will start to officially maintain EDAC trees. Also, we'll
+> > be using a single tree for the EDAC development.
+> > 
+> > Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+> > ---
+> >  MAINTAINERS | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index 783569e3c4b4..7c22905b5aba 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -5781,10 +5781,10 @@ F:	drivers/edac/thunderx_edac*
+> >  EDAC-CORE
+> >  M:	Borislav Petkov <bp@alien8.de>
+> >  M:	Mauro Carvalho Chehab <mchehab@kernel.org>
+> > +M:	Tony Luck <tony.luck@intel.com>
+> >  R:	James Morse <james.morse@arm.com>
+> >  L:	linux-edac@vger.kernel.org
+> > -T:	git git://git.kernel.org/pub/scm/linux/kernel/git/bp/bp.git for-next
+> > -T:	git git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-edac.git linux_next
+> > +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/ras/ras.git edac-for-next
+> >  S:	Supported
+> >  F:	Documentation/admin-guide/ras.rst
+> >  F:	Documentation/driver-api/edac.rst
+> > -- 
+> 
+> Acked-by: Borislav Petkov <bp@suse.de>
+> 
 
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+Acked-by: Tony Luck <tony.luck@intel.com>
 
+-Tony
