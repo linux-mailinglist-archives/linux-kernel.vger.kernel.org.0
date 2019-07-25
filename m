@@ -2,89 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8977C74C01
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 12:43:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B2CA74C09
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 12:45:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391147AbfGYKnP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 06:43:15 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:33730 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390947AbfGYKnM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 06:43:12 -0400
-Received: by mail-lf1-f67.google.com with SMTP id x3so34275363lfc.0
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 03:43:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=XpjNV+NMvqH+LpxRr8zkgoFmR2noH7509JIlqZCM7Jo=;
-        b=LuEiCvOTvkInrAJWj0qXwyO7s1XERMW8pSHDK9VY8URGrgn87S6FUMVEr2HzEseoOu
-         zaDVbiiW9I23Fgh2QSHf1EZlrKDkmPx7Wq6kJDhk7VFAK1wcZIOVxD6ap20Fu/3yRdRx
-         /TWUX7b+bStIY8r7lf8sa1a0ZlHkmTSqACVxT8uWuzocM59uEODdNdLVaX6XRsII+FsG
-         m+IZuwTahGkX8H94lXNw5tuJTVviQyqconFH/rt08Asg49Y8RKcYpimAhkcIUM70Deb9
-         I0D+N6VMKBzMvzBkcjj9UVykkwPty3g7gzMTfs+i03HK4dOv4ND6qXSMzfG2oxGwnOZF
-         4Wzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=XpjNV+NMvqH+LpxRr8zkgoFmR2noH7509JIlqZCM7Jo=;
-        b=DaEnwHikqtmCfFwj6fA6gPC0JPE6RW72eBiooGISWIdUa5e3cnpgufbF06UIkovEo5
-         4kOiZtD1JfpWeOaXiq1+bLMbaV4vv04Azo6MQfzNpF9CqLGvEkTmrAfFZZKn569dGKX4
-         w8nU7IwUuWJI5oo54q985luRGCK1Kw4cxrk8AvKy5dWmtTvFdDASi+/r2etm4FJwNVCl
-         6gQie83MEAHBS70dkXExZX/87wc9g/OXcKEyqGJbfILPTh+7SMaNNTnjUhuYSo0cNmUX
-         sRsYHGCHgdhozJq5cgjoLy0gDKoihTlf3Ea8KpiZ8ZWVh2CaESSUMQd7a7w4WXjWFcFW
-         NaAQ==
-X-Gm-Message-State: APjAAAWZ5guDr1Jyj00QaHy/RLwb/Lb4UCepaWG7Jqw+iy2AmAEpour6
-        W3qcPVtvApZkT+k3oJD7Eyv9Mb/oFzE=
-X-Google-Smtp-Source: APXvYqx5mS7anbigc+++QypZ2if88kYGJ0a5LKp93fOIM3Eqx9brqMfs5/1ZEsgOU46pHJraeSucHQ==
-X-Received: by 2002:ac2:4d02:: with SMTP id r2mr39615965lfi.138.1564051390847;
-        Thu, 25 Jul 2019 03:43:10 -0700 (PDT)
-Received: from localhost.localdomain (ua-83-226-44-230.bbcust.telenor.se. [83.226.44.230])
-        by smtp.gmail.com with ESMTPSA id 63sm9139580ljs.84.2019.07.25.03.43.09
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 25 Jul 2019 03:43:10 -0700 (PDT)
-From:   Niklas Cassel <niklas.cassel@linaro.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-arm-msm@vger.kernel.org, jorge.ramirez-ortiz@linaro.org,
-        sboyd@kernel.org, vireshk@kernel.org, bjorn.andersson@linaro.org,
-        ulf.hansson@linaro.org, Niklas Cassel <niklas.cassel@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 14/14] arm64: defconfig: enable CONFIG_ARM_QCOM_CPUFREQ_NVMEM
-Date:   Thu, 25 Jul 2019 12:41:42 +0200
-Message-Id: <20190725104144.22924-15-niklas.cassel@linaro.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190725104144.22924-1-niklas.cassel@linaro.org>
-References: <20190725104144.22924-1-niklas.cassel@linaro.org>
+        id S1728191AbfGYKo4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 06:44:56 -0400
+Received: from gofer.mess.org ([88.97.38.141]:41021 "EHLO gofer.mess.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726513AbfGYKoz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 06:44:55 -0400
+Received: by gofer.mess.org (Postfix, from userid 1000)
+        id EA01460474; Thu, 25 Jul 2019 11:44:53 +0100 (BST)
+Date:   Thu, 25 Jul 2019 11:44:53 +0100
+From:   Sean Young <sean@mess.org>
+To:     Wolfram Sang <wsa@the-dreams.de>
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-i2c@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] media: ir-kbd-i2c: prevent potential NULL pointer
+ access
+Message-ID: <20190725104453.5kqusisyg44zbbcy@gofer.mess.org>
+References: <20190722172632.4402-1-wsa+renesas@sang-engineering.com>
+ <20190722172632.4402-2-wsa+renesas@sang-engineering.com>
+ <20190725051202.o47mz4unbn63z6uk@gofer.mess.org>
+ <20190725075538.GB1323@kunai>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190725075538.GB1323@kunai>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable CONFIG_ARM_QCOM_CPUFREQ_NVMEM.
+Hi Wolfram,
 
-Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
----
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+On Thu, Jul 25, 2019 at 09:55:38AM +0200, Wolfram Sang wrote:
+> Hi Sean,
+> 
+> thanks for the review!
+> 
+> On Thu, Jul 25, 2019 at 06:12:02AM +0100, Sean Young wrote:
+> > On Mon, Jul 22, 2019 at 07:26:31PM +0200, Wolfram Sang wrote:
+> > > i2c_new_dummy() can fail returning a NULL pointer. The code does not
+> > > bail out in this case and the returned pointer is blindly used.
+> > 
+> > I don't see how. The existing code tries to set up the tx part; if
+> > i2c_new_dummy() return NULL then the rcdev is registered without tx,
+> > and tx_c is never used.
+> 
+> Yes, you are totally right. I missed that the send_block function is
+> also only called iff zilog_init succeeded. Thanks for the heads up and
+> sorry for the noise.
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 3e7618818250..9b0cc49f5fe8 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -84,6 +84,7 @@ CONFIG_ACPI_CPPC_CPUFREQ=m
- CONFIG_ARM_ARMADA_37XX_CPUFREQ=y
- CONFIG_ARM_SCPI_CPUFREQ=y
- CONFIG_ARM_IMX_CPUFREQ_DT=m
-+CONFIG_ARM_QCOM_CPUFREQ_NVMEM=y
- CONFIG_ARM_RASPBERRYPI_CPUFREQ=m
- CONFIG_ARM_TEGRA186_CPUFREQ=y
- CONFIG_ARM_SCPI_PROTOCOL=y
--- 
-2.21.0
+Not at all, thank you for the patch.
 
+> > > Convert
+> > > to devm_i2c_new_dummy_device() which returns an ERR_PTR and also bail
+> > > out when failing the validity check.
+> > 
+> > Possibly I was being overly cautious with not bailing out if tx can't
+> > be registered; moving to devm is probably a good idea. However the
+> > commit message is misleading, because the existing code has no
+> > NULL pointer access.
+> 
+> Yep, I will resend with a proper commit message. Technically, there is
+> no need to bail out anymore because there is no NULL pointer access. My
+> tendency is now to not bail out and keep the old behaviour (registering
+> without tx). What do you think?
+
+Since I write this code I've got pretty much every model with this zilog
+transmitter/receiver, and they all work fine, including different firmware
+versions. If there is a problem it would be nice to hear about it, and
+not silently swallow the error. I think.
+
+Thanks,
+
+Sean
