@@ -2,199 +2,172 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E644174F1A
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 15:21:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A00574F25
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 15:22:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729989AbfGYNVZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 09:21:25 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:38527 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727466AbfGYNVY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 09:21:24 -0400
-Received: by mail-wr1-f66.google.com with SMTP id g17so50788329wrr.5
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 06:21:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cumulusnetworks.com; s=google;
-        h=subject:from:to:references:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=sHoRY+mXic7NkNfPFucr+22Si1CXT/E0fQIjB3vP5E4=;
-        b=Po0NeTTxb+nvdjvmvbUp8u6K6W2wJNfYZoiEEQgVBKy52QdPpqSOmtHg/zMCOS9AS5
-         xMbWSEyGg0+PXLtHosfvgCZq7V8YPbCVpoMQBn31WOosHTMSX5vlX2/GWwAt67ta0I6Y
-         M0cyXxQMy7L4t7HVFJHileEePEdJtygUT3IGM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=sHoRY+mXic7NkNfPFucr+22Si1CXT/E0fQIjB3vP5E4=;
-        b=cxs5XsXBxEZNxTBHl9mTEPi++LHoYtSNQxDgoPvzS7qUElomGWcKYo6GtiK7xQr1x1
-         ySN9mD1ivu08Pby0Fep0m8rd2fzPN2taRL1DeoNYypjg3HV3cAVSXgJptqfs4pbDTPiV
-         /vND/fELYyCkuMAD3VsZpz5r07w464dYz6J+fTmzQdvPZDur2sRUSoQG7Flo+olnZdCG
-         KOWkr5I3IqlHacNYjI/fB0rv6oRsyvhnvHLYNsgLt6KCEbJb09ZgCwB32vpR4X1tIpo9
-         0UUkNysyd6uY/UGxjDewbaapuDi86MQAw7Jfb3iMckHHu2qdduRBwRGdHiaHZUQg1ei9
-         lC7Q==
-X-Gm-Message-State: APjAAAVhICJXSv+mIDcnASA4asNBGowIHL14zdR28GeWMvo9TG/2djxG
-        eGzwTsIZuDtBgOTBGG4fHyl0PQ==
-X-Google-Smtp-Source: APXvYqzzn3dDK9Dsq4Rqf9c8rrDZiWfqE90XublDccXfwKAa0gI9nnKVLo/yjPHVttqGxqc2BBpLyQ==
-X-Received: by 2002:adf:ce88:: with SMTP id r8mr21287004wrn.42.1564060881337;
-        Thu, 25 Jul 2019 06:21:21 -0700 (PDT)
-Received: from [192.168.0.107] (84-238-136-197.ip.btc-net.bg. [84.238.136.197])
-        by smtp.gmail.com with ESMTPSA id y6sm61292070wmd.16.2019.07.25.06.21.20
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Thu, 25 Jul 2019 06:21:20 -0700 (PDT)
-Subject: Re: [PATCH] net: bridge: Allow bridge to joing multicast groups
-From:   Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
-To:     Horatiu Vultur <horatiu.vultur@microchip.com>,
-        roopa@cumulusnetworks.com, davem@davemloft.net,
-        bridge@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, allan.nielsen@microchip.com
-References: <1564055044-27593-1-git-send-email-horatiu.vultur@microchip.com>
- <7e7a7015-6072-d884-b2ba-0a51177245ab@cumulusnetworks.com>
-Message-ID: <eef063fe-fd3a-7e02-89c2-e40728a17578@cumulusnetworks.com>
-Date:   Thu, 25 Jul 2019 16:21:19 +0300
+        id S1730017AbfGYNV6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 09:21:58 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:56368 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727466AbfGYNV6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 09:21:58 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 3513730860BE;
+        Thu, 25 Jul 2019 13:21:57 +0000 (UTC)
+Received: from [10.72.12.18] (ovpn-12-18.pek2.redhat.com [10.72.12.18])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A59BD19723;
+        Thu, 25 Jul 2019 13:21:44 +0000 (UTC)
+Subject: Re: WARNING in __mmdrop
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     syzbot <syzbot+e58112d71f77113ddb7b@syzkaller.appspotmail.com>,
+        aarcange@redhat.com, akpm@linux-foundation.org,
+        christian@brauner.io, davem@davemloft.net, ebiederm@xmission.com,
+        elena.reshetova@intel.com, guro@fb.com, hch@infradead.org,
+        james.bottomley@hansenpartnership.com, jglisse@redhat.com,
+        keescook@chromium.org, ldv@altlinux.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-parisc@vger.kernel.org,
+        luto@amacapital.net, mhocko@suse.com, mingo@kernel.org,
+        namit@vmware.com, peterz@infradead.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
+        wad@chromium.org
+References: <20190723010019-mutt-send-email-mst@kernel.org>
+ <b4696f2e-678a-bdb2-4b7c-fb4ce040ec2a@redhat.com>
+ <20190723032024-mutt-send-email-mst@kernel.org>
+ <1d14de4d-0133-1614-9f64-3ded381de04e@redhat.com>
+ <20190723035725-mutt-send-email-mst@kernel.org>
+ <3f4178f1-0d71-e032-0f1f-802428ceca59@redhat.com>
+ <20190723051828-mutt-send-email-mst@kernel.org>
+ <caff362a-e208-3468-3688-63e1d093a9d3@redhat.com>
+ <20190725012149-mutt-send-email-mst@kernel.org>
+ <55e8930c-2695-365f-a07b-3ad169654d28@redhat.com>
+ <20190725042651-mutt-send-email-mst@kernel.org>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <84bb2e31-0606-adff-cf2a-e1878225a847@redhat.com>
+Date:   Thu, 25 Jul 2019 21:21:22 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <7e7a7015-6072-d884-b2ba-0a51177245ab@cumulusnetworks.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20190725042651-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Thu, 25 Jul 2019 13:21:57 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25/07/2019 16:06, Nikolay Aleksandrov wrote:
-> On 25/07/2019 14:44, Horatiu Vultur wrote:
->> There is no way to configure the bridge, to receive only specific link
->> layer multicast addresses. From the description of the command 'bridge
->> fdb append' is supposed to do that, but there was no way to notify the
->> network driver that the bridge joined a group, because LLADDR was added
->> to the unicast netdev_hw_addr_list.
->>
->> Therefore update fdb_add_entry to check if the NLM_F_APPEND flag is set
->> and if the source is NULL, which represent the bridge itself. Then add
->> address to multicast netdev_hw_addr_list for each bridge interfaces.
->> And then the .ndo_set_rx_mode function on the driver is called. To notify
->> the driver that the list of multicast mac addresses changed.
->>
->> Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
->> ---
->>  net/bridge/br_fdb.c | 49 ++++++++++++++++++++++++++++++++++++++++++++++---
->>  1 file changed, 46 insertions(+), 3 deletions(-)
->>
-> 
-> Hi,
-> I'm sorry but this patch is wrong on many levels, some notes below. In general
-> NLM_F_APPEND is only used in vxlan, the bridge does not handle that flag at all.
-> FDB is only for *unicast*, nothing is joined and no multicast should be used with fdbs.
-> MDB is used for multicast handling, but both of these are used for forwarding.
-> The reason the static fdbs are added to the filter is for non-promisc ports, so they can
-> receive traffic destined for these FDBs for forwarding.
-> If you'd like to join any multicast group please use the standard way, if you'd like to join
-> it only on a specific port - join it only on that port (or ports) and the bridge and you'll
 
-And obviously this is for the case where you're not enabling port promisc mode (non-default).
-In general you'll only need to join the group on the bridge to receive traffic for it
-or add it as an mdb entry to forward it.
-
-> have the effect that you're describing. What do you mean there's no way ?
-> 
-> In addition you're allowing a mix of mcast functions to be called with unicast addresses
-> and vice versa, it is not that big of a deal because the kernel will simply return an error
-> but still makes no sense.
-> 
-> Nacked-by: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
-> 
->> diff --git a/net/bridge/br_fdb.c b/net/bridge/br_fdb.c
->> index b1d3248..d93746d 100644
->> --- a/net/bridge/br_fdb.c
->> +++ b/net/bridge/br_fdb.c
->> @@ -175,6 +175,29 @@ static void fdb_add_hw_addr(struct net_bridge *br, const unsigned char *addr)
->>  	}
->>  }
->>  
->> +static void fdb_add_hw_maddr(struct net_bridge *br, const unsigned char *addr)
->> +{
->> +	int err;
->> +	struct net_bridge_port *p;
->> +
->> +	ASSERT_RTNL();
->> +
->> +	list_for_each_entry(p, &br->port_list, list) {
->> +		if (!br_promisc_port(p)) {
->> +			err = dev_mc_add(p->dev, addr);
->> +			if (err)
->> +				goto undo;
->> +		}
->> +	}
->> +
->> +	return;
->> +undo:
->> +	list_for_each_entry_continue_reverse(p, &br->port_list, list) {
->> +		if (!br_promisc_port(p))
->> +			dev_mc_del(p->dev, addr);
->> +	}
->> +}
->> +
->>  /* When a static FDB entry is deleted, the HW address from that entry is
->>   * also removed from the bridge private HW address list and updates all
->>   * the ports with needed information.
->> @@ -192,13 +215,27 @@ static void fdb_del_hw_addr(struct net_bridge *br, const unsigned char *addr)
->>  	}
->>  }
->>  
->> +static void fdb_del_hw_maddr(struct net_bridge *br, const unsigned char *addr)
->> +{
->> +	struct net_bridge_port *p;
->> +
->> +	ASSERT_RTNL();
->> +
->> +	list_for_each_entry(p, &br->port_list, list) {
->> +		if (!br_promisc_port(p))
->> +			dev_mc_del(p->dev, addr);
->> +	}
->> +}
->> +
->>  static void fdb_delete(struct net_bridge *br, struct net_bridge_fdb_entry *f,
->>  		       bool swdev_notify)
->>  {
->>  	trace_fdb_delete(br, f);
->>  
->> -	if (f->is_static)
->> +	if (f->is_static) {
->>  		fdb_del_hw_addr(br, f->key.addr.addr);
->> +		fdb_del_hw_maddr(br, f->key.addr.addr);
-> 
-> Walking over all ports again for each static delete is a no-go.
-> 
->> +	}
->>  
->>  	hlist_del_init_rcu(&f->fdb_node);
->>  	rhashtable_remove_fast(&br->fdb_hash_tbl, &f->rhnode,
->> @@ -843,13 +880,19 @@ static int fdb_add_entry(struct net_bridge *br, struct net_bridge_port *source,
->>  			fdb->is_local = 1;
->>  			if (!fdb->is_static) {
->>  				fdb->is_static = 1;
->> -				fdb_add_hw_addr(br, addr);
->> +				if (flags & NLM_F_APPEND && !source)
->> +					fdb_add_hw_maddr(br, addr);
->> +				else
->> +					fdb_add_hw_addr(br, addr);
->>  			}
->>  		} else if (state & NUD_NOARP) {
->>  			fdb->is_local = 0;
->>  			if (!fdb->is_static) {
->>  				fdb->is_static = 1;
->> -				fdb_add_hw_addr(br, addr);
->> +				if (flags & NLM_F_APPEND && !source)
->> +					fdb_add_hw_maddr(br, addr);
->> +				else
->> +					fdb_add_hw_addr(br, addr);
->>  			}
->>  		} else {
->>  			fdb->is_local = 0;
+On 2019/7/25 下午4:28, Michael S. Tsirkin wrote:
+> On Thu, Jul 25, 2019 at 03:43:41PM +0800, Jason Wang wrote:
+>> On 2019/7/25 下午1:52, Michael S. Tsirkin wrote:
+>>> On Tue, Jul 23, 2019 at 09:31:35PM +0800, Jason Wang wrote:
+>>>> On 2019/7/23 下午5:26, Michael S. Tsirkin wrote:
+>>>>> On Tue, Jul 23, 2019 at 04:49:01PM +0800, Jason Wang wrote:
+>>>>>> On 2019/7/23 下午4:10, Michael S. Tsirkin wrote:
+>>>>>>> On Tue, Jul 23, 2019 at 03:53:06PM +0800, Jason Wang wrote:
+>>>>>>>> On 2019/7/23 下午3:23, Michael S. Tsirkin wrote:
+>>>>>>>>>>> Really let's just use kfree_rcu. It's way cleaner: fire and forget.
+>>>>>>>>>> Looks not, you need rate limit the fire as you've figured out?
+>>>>>>>>> See the discussion that followed. Basically no, it's good enough
+>>>>>>>>> already and is only going to be better.
+>>>>>>>>>
+>>>>>>>>>> And in fact,
+>>>>>>>>>> the synchronization is not even needed, does it help if I leave a comment to
+>>>>>>>>>> explain?
+>>>>>>>>> Let's try to figure it out in the mail first. I'm pretty sure the
+>>>>>>>>> current logic is wrong.
+>>>>>>>> Here is what the code what to achieve:
+>>>>>>>>
+>>>>>>>> - The map was protected by RCU
+>>>>>>>>
+>>>>>>>> - Writers are: MMU notifier invalidation callbacks, file operations (ioctls
+>>>>>>>> etc), meta_prefetch (datapath)
+>>>>>>>>
+>>>>>>>> - Readers are: memory accessor
+>>>>>>>>
+>>>>>>>> Writer are synchronized through mmu_lock. RCU is used to synchronized
+>>>>>>>> between writers and readers.
+>>>>>>>>
+>>>>>>>> The synchronize_rcu() in vhost_reset_vq_maps() was used to synchronized it
+>>>>>>>> with readers (memory accessors) in the path of file operations. But in this
+>>>>>>>> case, vq->mutex was already held, this means it has been serialized with
+>>>>>>>> memory accessor. That's why I think it could be removed safely.
+>>>>>>>>
+>>>>>>>> Anything I miss here?
+>>>>>>>>
+>>>>>>> So invalidate callbacks need to reset the map, and they do
+>>>>>>> not have vq mutex. How can they do this and free
+>>>>>>> the map safely? They need synchronize_rcu or kfree_rcu right?
+>>>>>> Invalidation callbacks need but file operations (e.g ioctl) not.
+>>>>>>
+>>>>>>
+>>>>>>> And I worry somewhat that synchronize_rcu in an MMU notifier
+>>>>>>> is a problem, MMU notifiers are supposed to be quick:
+>>>>>> Looks not, since it can allow to be blocked and lots of driver depends on
+>>>>>> this. (E.g mmu_notifier_range_blockable()).
+>>>>> Right, they can block. So why don't we take a VQ mutex and be
+>>>>> done with it then? No RCU tricks.
+>>>> This is how I want to go with RFC and V1. But I end up with deadlock between
+>>>> vq locks and some MM internal locks. So I decide to use RCU which is 100%
+>>>> under the control of vhost.
+>>>>
+>>>> Thanks
+>>> And I guess the deadlock is because GUP is taking mmu locks which are
+>>> taken on mmu notifier path, right?
 >>
-> 
+>> Yes, but it's not the only lock. I don't remember the details, but I can
+>> confirm I meet issues with one or two other locks.
+>>
+>>
+>>>     How about we add a seqlock and take
+>>> that in invalidate callbacks?  We can then drop the VQ lock before GUP,
+>>> and take it again immediately after.
+>>>
+>>> something like
+>>> 	if (!vq_meta_mapped(vq)) {
+>>> 		vq_meta_setup(&uaddrs);
+>>> 		mutex_unlock(vq->mutex)
+>>> 		vq_meta_map(&uaddrs);
+>>
+>> The problem is the vq address could be changed at this time.
+>>
+>>
+>>> 		mutex_lock(vq->mutex)
+>>>
+>>> 		/* recheck both sock->private_data and seqlock count. */
+>>> 		if changed - bail out
+>>> 	}
+>>>
+>>> And also requires that VQ uaddrs is defined like this:
+>>> - writers must have both vq mutex and dev mutex
+>>> - readers must have either vq mutex or dev mutex
+>>>
+>>>
+>>> That's a big change though. For now, how about switching to a per-vq SRCU?
+>>> That is only a little bit more expensive than RCU, and we
+>>> can use synchronize_srcu_expedited.
+>>>
+>> Consider we switch to use kfree_rcu(), what's the advantage of per-vq SRCU?
+>>
+>> Thanks
+>
+> I thought we established that notifiers must wait for
+> all readers to finish before they mark page dirty, to
+> prevent page from becoming dirty after address
+> has been invalidated.
+> Right?
+
+
+Exactly, and that's the reason actually I use synchronize_rcu() there.
+
+So the concern is still the possible synchronize_expedited()? Can I do 
+this on through another series on top of the incoming V2?
+
+Thanks
+
 
