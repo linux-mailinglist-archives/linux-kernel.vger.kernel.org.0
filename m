@@ -2,80 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2A31750AA
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 16:11:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 81CA5750AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 16:13:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387901AbfGYOLq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 10:11:46 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:34912 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725867AbfGYOLp (ORCPT
+        id S1727705AbfGYOM6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 10:12:58 -0400
+Received: from smtprelay0139.hostedemail.com ([216.40.44.139]:43583 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725843AbfGYOM6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 10:11:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=rVU3OdYVB/xxhc+Jxe+Jl0rvuIWAAmVPWnVC1lgwyac=; b=ag0sWRS2Qau6/riWg3p8KEakN
-        879W/vBUC7KhSFSuRmVrddLtdB+ukxtpMcsgoDdTk3iHr0s+Xw6ewyntMvp4Eerrw5vUjV2JrKI5+
-        BRjfvW0r7QfVyp4L8LfjZMW3yS+muIPpdCptG0YM8vfE7w7c9aPH0JHWs2QzvzBPt9loTWP1nyZ4T
-        58pi6b0FzZdPCa8JKojNGEy+/57NctfhMHMuztnzLcUMBqmfvwgUKmcGmX35Dsdb+f980RoRtTDht
-        H3JKkAp4EfelUoFFPn6BU18hLE2pz3Igtrej1ytLc6NVvgVgF5Y5yPGrJWBGTUr8c6pWpy1YdaLm2
-        LHbtTAczg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hqeTA-0004Hq-RH; Thu, 25 Jul 2019 14:11:44 +0000
-Date:   Thu, 25 Jul 2019 07:11:44 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     "Andrew F. Davis" <afd@ti.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        John Stultz <john.stultz@linaro.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Laura Abbott <labbott@redhat.com>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Liam Mark <lmark@codeaurora.org>,
-        Pratik Patel <pratikp@codeaurora.org>,
-        Brian Starkey <Brian.Starkey@arm.com>,
-        Vincent Donnefort <Vincent.Donnefort@arm.com>,
-        Sudipto Paul <Sudipto.Paul@arm.com>,
-        Xu YiPing <xuyiping@hisilicon.com>,
-        "Chenfeng (puck)" <puck.chen@hisilicon.com>,
-        butao <butao@hisilicon.com>,
-        "Xiaqing (A)" <saberlily.xia@hisilicon.com>,
-        Yudongbin <yudongbin@hisilicon.com>,
-        Chenbo Feng <fengc@google.com>,
-        Alistair Strachan <astrachan@google.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>
-Subject: Re: [PATCH v6 4/5] dma-buf: heaps: Add CMA heap to dmabuf heaps
-Message-ID: <20190725141144.GA14609@infradead.org>
-References: <20190624194908.121273-1-john.stultz@linaro.org>
- <20190624194908.121273-5-john.stultz@linaro.org>
- <20190718100840.GB19666@infradead.org>
- <CALAqxLWLx_tHVjZqrSNWfQ_M2RGGqh4qth3hi9GGRdSPov-gcw@mail.gmail.com>
- <20190724065958.GC16225@infradead.org>
- <8e6f8e4f-20fc-1f1f-2228-f4fd7c7c5c1f@ti.com>
- <20190725125014.GD20286@infradead.org>
- <0eae0024-1fdf-bd06-a8ff-1a41f0af3c69@ti.com>
- <20190725140448.GA25010@infradead.org>
- <8e2ec315-5d18-68b2-8cb5-2bfb8a116d1b@ti.com>
+        Thu, 25 Jul 2019 10:12:58 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay01.hostedemail.com (Postfix) with ESMTP id 10C05100E96EA;
+        Thu, 25 Jul 2019 14:12:57 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::,RULES_HIT:41:355:379:599:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1539:1593:1594:1711:1730:1747:1777:1792:2393:2553:2559:2562:2828:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3868:3871:3874:4321:4362:5007:6117:10004:10400:10848:11232:11658:11914:12297:12740:12760:12895:13069:13311:13357:13439:14659:21080:21324:21627:30054:30070:30090:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:25,LUA_SUMMARY:none
+X-HE-Tag: army43_8e08c24f85a19
+X-Filterd-Recvd-Size: 2302
+Received: from XPS-9350.home (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
+        (Authenticated sender: joe@perches.com)
+        by omf09.hostedemail.com (Postfix) with ESMTPA;
+        Thu, 25 Jul 2019 14:12:55 +0000 (UTC)
+Message-ID: <eaef283741c0a6a718040f99a17bdb9882bde665.camel@perches.com>
+Subject: Re: [Fwd: [PATCH 1/2] string: Add stracpy and stracpy_pad
+ mechanisms]
+From:   Joe Perches <joe@perches.com>
+To:     Julia Lawall <julia.lawall@lip6.fr>
+Cc:     David Laight <David.Laight@ACULAB.COM>,
+        cocci <cocci@systeme.lip6.fr>,
+        LKML <linux-kernel@vger.kernel.org>
+Date:   Thu, 25 Jul 2019 07:12:54 -0700
+In-Reply-To: <alpine.DEB.2.21.1907250856450.2555@hadrien>
+References: <7ab8957eaf9b0931a59eff6e2bd8c5169f2f6c41.1563841972.git.joe@perches.com>
+           <66fcdbf607d7d0bea41edb39e5579d63b62b7d84.camel@perches.com>
+           <alpine.DEB.2.21.1907231546090.2551@hadrien>
+           <0f3ba090dfc956f5651e6c7c430abdba94ddcb8b.camel@perches.com>
+         <alpine.DEB.2.21.1907232252260.2539@hadrien>
+           <d5993902fd44ce89915fab94f4db03f5081c3c8e.camel@perches.com>
+           <alpine.DEB.2.21.1907232326360.2539@hadrien>
+           <f909b4b31f123c7d88535db397a04421077ed0ab.camel@perches.com>
+           <563222fbfdbb44daa98078db9d404972@AcuMS.aculab.com>
+         <d2b2b528b9f296dfeb1d92554be024245abd678e.camel@perches.com>
+          <alpine.DEB.2.21.1907242040490.10108@hadrien>
+         <a0e892c3522f4df2991119a2a30cd62ec14c76cc.camel@perches.com>
+         <alpine.DEB.2.21.1907250856450.2555@hadrien>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8e2ec315-5d18-68b2-8cb5-2bfb8a116d1b@ti.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 25, 2019 at 10:10:08AM -0400, Andrew F. Davis wrote:
-> Pages yes, but not "normal" pages from the kernel managed area.
-> page_to_pfn() will return bad values on the pages returned by this
-> allocator and so will any of the kernel sync/map functions. Therefor
-> those operations cannot be common and need special per-heap handling.
+On Thu, 2019-07-25 at 08:58 -0500, Julia Lawall wrote:
+> On Thu, 25 Jul 2019, Joe Perches wrote:
+[]
+> > Just for completeness and correctness, as I at
+> > least don't find an existing use:
+> > 
+> > Perhaps this "x =" should also include += and +
+> > and the various other operators that are possible
+> > or does SmPL grammar already do that?
+> 
+> I could do this.  One might though think that if someone went to the
+> trouble of computing +=, these would be cases that we don't want to
+> change?
 
-Well, that means this thing is buggy and abuses the scatterlist API
-and we can't merge it anyway, so it is irrelevant.
+Maybe I quoted the wrong bit.  But exactly.
+
+Anywhere the return value of strlcpy is used, not just as
+an assignment, is an instance that should not be changed.
+
+Thanks for doing this.
+
