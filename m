@@ -2,388 +2,620 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF46575228
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 17:09:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E04EA7523C
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 17:11:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388872AbfGYPJN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 11:09:13 -0400
-Received: from lb1-smtp-cloud8.xs4all.net ([194.109.24.21]:51585 "EHLO
-        lb1-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2387941AbfGYPJM (ORCPT
+        id S2388973AbfGYPLt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 11:11:49 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:41382 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388738AbfGYPLs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 11:09:12 -0400
-Received: from [192.168.2.10] ([46.9.232.237])
-        by smtp-cloud8.xs4all.net with ESMTPA
-        id qfMbhBCJreD5bqfMehiO3a; Thu, 25 Jul 2019 17:09:10 +0200
-Subject: Re: [PATCH v3 3/3] media: stm32-dcmi: add support of several
- sub-devices
-To:     Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Cc:     Hugues Fruchet <hugues.fruchet@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        linux-media@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Yannick Fertre <yannick.fertre@st.com>,
-        Philippe CORNU <philippe.cornu@st.com>,
-        Mickael GUENE <mickael.guene@st.com>
-References: <1562082779-31165-1-git-send-email-hugues.fruchet@st.com>
- <1562082779-31165-4-git-send-email-hugues.fruchet@st.com>
- <81e1a94d-af25-302c-64a6-3cec096d4144@xs4all.nl>
- <CA+M3ks7HRc2C+dFpS9AM8ANo+=f360SFTCRrjavbqjd_SWkr_A@mail.gmail.com>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <7c18a314-851b-2852-83be-406cdc2f2047@xs4all.nl>
-Date:   Thu, 25 Jul 2019 17:09:01 +0200
+        Thu, 25 Jul 2019 11:11:48 -0400
+Received: by mail-lj1-f195.google.com with SMTP id d24so48350136ljg.8
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 08:11:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=mhCLJd2eT7cib03YC5z7D5E+De8vfmE5c8zUEHCqPMQ=;
+        b=lwH9DhBnqx7Tp6IJ4L57PMIhSceaZ/InxoliJazU7RHxSgB9Ies9uhVhqFYvGGXz2X
+         DTwsCi5LcAdxLnjqaOvHHjWYEY821bj7k7iWERtJVFXUouF+j2DF0hJnIw5CWFmDJ572
+         Ojd1M1Fa/pQNgDOfvrBnqt0J3vWEqK+uy9fhiFcS+JQ9hHIT6srSGmqfGuQjsvTR2OHg
+         ZrhzdXeACKAl0nW04Af0FFrJLZ1zS1f8xzyOJ9sBututuiy+CPBoNHyx/+cbQ1W8dQO8
+         juslofGr2Uv6CBc+soXbRKPEzEGs4jhPW5c0D0DbZbVC1zWhzvaG7GxLqnSG2eFPXR9y
+         GcrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=mhCLJd2eT7cib03YC5z7D5E+De8vfmE5c8zUEHCqPMQ=;
+        b=QKvdgi+FF0hujhsH5URYPxooYUvG/LrNwinF3CS2kKbs9CD5xkGSQNq2+wlnbN/8aM
+         /JboLEmf45FScefVAsXHTA9CqMhbXblEOHRd05E92hbTcXYmU/1okRRj45BlxL+T7BF1
+         Ciq7AMyy04lphFawkS2S16wuGr/yP8rCJu2ciyw7o2A4J6WX1MH5ESBq2OdLLIs3Q8OU
+         MJVXttAENuaiWVLs4DcnFpXGatwxK5690IsNx0p9ZvEz1X/Kwzk7vi8NB3063fjnsZ6j
+         +AqkSdNt3WKh9YFv6oWx9SvuQjorEEhJwskRHasslGB/Ey/MMaUkfpHm+Jos/wC3c1p5
+         B6tg==
+X-Gm-Message-State: APjAAAUSW5kYcXj6ZL3WXN25OBMVzhul7z52BBSB0ERIDOLUX7zRpvOB
+        vtxXD5Kg60ILVIAs/ou5Azc=
+X-Google-Smtp-Source: APXvYqxT3WkfwIzVxrun3P7dS1heJkqzpeWvwgsjxJRwPemVeyrqmaGPQyQIq1xwUv65KzHCYU7DnQ==
+X-Received: by 2002:a2e:9758:: with SMTP id f24mr46842343ljj.58.1564067505383;
+        Thu, 25 Jul 2019 08:11:45 -0700 (PDT)
+Received: from [192.168.2.145] (ppp91-78-220-99.pppoe.mtu-net.ru. [91.78.220.99])
+        by smtp.googlemail.com with ESMTPSA id u13sm7555724lfi.4.2019.07.25.08.11.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 25 Jul 2019 08:11:44 -0700 (PDT)
+Subject: Re: [v5 1/2] mtd: nand: Add new Cadence NAND driver to MTD subsystem
+To:     Piotr Sroka <piotrs@cadence.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Paul Burton <paul.burton@mips.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Stefan Agner <stefan@agner.ch>, linux-mtd@lists.infradead.org,
+        Kazuhiro Kasai <kasai.kazuhiro@socionext.com>
+References: <20190725145804.8886-1-piotrs@cadence.com>
+ <20190725150012.14416-1-piotrs@cadence.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <da7a99b4-36e9-9a52-6ec3-f6c31343d90e@gmail.com>
+Date:   Thu, 25 Jul 2019 18:11:43 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-In-Reply-To: <CA+M3ks7HRc2C+dFpS9AM8ANo+=f360SFTCRrjavbqjd_SWkr_A@mail.gmail.com>
+In-Reply-To: <20190725150012.14416-1-piotrs@cadence.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-CMAE-Envelope: MS4wfG+rEBaoo3HVqX6zvYxB8iTJ/kg1XrQOhUnim04n/WCW6R5BtMYtrLv63efsmVvXQY72P3QYgG6u91+7bUz8DJsd2B7rhYLSKslY+pX2YgyzZCCxl79A
- 8Gk12tQ3u7R6jkCGSmZYk2NnRf6Gb017hgsZHpMm8jikTDmVVaZl+gMDBn/EfL0PUMYh++EPiQZoDqPkG5qm9z7P0fq9IIEn0zcKXXGug4/HTJ40hvwM4eBU
- 4K2apNldSzCtzm01A+GoGopcNqpbkZTxeMGTAGzbNMh59vBFzup0L3AuKJdaNbmGjVNTaIPMvuFRyHtzfQNQfksRhX3+xy2uRpfU4ioYqQqR/7OnIXTrE5Tn
- jA85MbCnFUR5yM8DIy5DyVeCCpZuR3Xu2I2XB5EkNjB+W8Jk9EwwTgrw54GUn6Oetl5VRC2WHMLuA5eIoyL83CEBkhQv9smZkynkbuWI1sKF2DRdot93IENv
- GK2EMM4CkTquTLt5KwRNP0cBnUXouD27+xRTV85M8cjdTKHroRQNbycI8Tmkyt+74GP35hkwJA4U2R4WbmT3ZuAUtnDnQq7NgTq/5pS+hBElOo0anmtcPcjN
- yowhmaxHuKBPopwrMlw8i3Lv
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/25/19 4:56 PM, Benjamin Gaignard wrote:
-> Le jeu. 25 juil. 2019 à 13:40, Hans Verkuil <hverkuil@xs4all.nl> a écrit :
->>
->> On 7/2/19 5:52 PM, Hugues Fruchet wrote:
->>> Add support of several sub-devices within pipeline instead
->>> of a single one.
->>> This allows to support a CSI-2 camera sensor connected
->>> through a CSI-2 to parallel bridge.
->>>
->>> Signed-off-by: Hugues Fruchet <hugues.fruchet@st.com>
->>> ---
->>>  drivers/media/platform/stm32/stm32-dcmi.c | 204 +++++++++++++++++++++++++++---
->>>  1 file changed, 186 insertions(+), 18 deletions(-)
->>>
->>> diff --git a/drivers/media/platform/stm32/stm32-dcmi.c b/drivers/media/platform/stm32/stm32-dcmi.c
->>> index 6f37617..6921e6b 100644
->>> --- a/drivers/media/platform/stm32/stm32-dcmi.c
->>> +++ b/drivers/media/platform/stm32/stm32-dcmi.c
->>> @@ -172,6 +172,7 @@ struct stm32_dcmi {
->>>
->>>       struct media_device             mdev;
->>>       struct media_pad                vid_cap_pad;
->>> +     struct media_pipeline           pipeline;
->>>  };
->>>
->>>  static inline struct stm32_dcmi *notifier_to_dcmi(struct v4l2_async_notifier *n)
->>> @@ -583,6 +584,131 @@ static void dcmi_buf_queue(struct vb2_buffer *vb)
->>>       spin_unlock_irq(&dcmi->irqlock);
->>>  }
->>>
->>> +static struct media_entity *dcmi_find_source(struct stm32_dcmi *dcmi)
->>> +{
->>> +     struct media_entity *entity = &dcmi->vdev->entity;
->>> +     struct media_pad *pad;
->>> +
->>> +     /* Walk searching for entity having no sink */
->>> +     while (1) {
->>> +             pad = &entity->pads[0];
->>> +             if (!(pad->flags & MEDIA_PAD_FL_SINK))
->>> +                     break;
->>> +
->>> +             pad = media_entity_remote_pad(pad);
->>> +             if (!pad || !is_media_entity_v4l2_subdev(pad->entity))
->>> +                     break;
->>> +
->>> +             entity = pad->entity;
->>> +     }
->>> +
->>> +     return entity;
->>> +}
->>> +
->>> +static int dcmi_pipeline_s_fmt(struct stm32_dcmi *dcmi,
->>> +                            struct v4l2_subdev_pad_config *pad_cfg,
->>> +                            struct v4l2_subdev_format *format)
->>> +{
->>> +     struct media_entity *entity = &dcmi->entity.source->entity;
->>> +     struct v4l2_subdev *subdev;
->>> +     struct media_pad *sink_pad = NULL;
->>> +     struct media_pad *src_pad = NULL;
->>> +     struct media_pad *pad = NULL;
->>> +     struct v4l2_subdev_format fmt = *format;
->>> +     bool found = false;
->>> +     int ret;
->>> +
->>> +     /*
->>> +      * Starting from sensor subdevice, walk within
->>> +      * pipeline and set format on each subdevice
->>> +      */
->>> +     while (1) {
->>> +             unsigned int i;
->>> +
->>> +             /* Search if current entity has a source pad */
->>> +             for (i = 0; i < entity->num_pads; i++) {
->>> +                     pad = &entity->pads[i];
->>> +                     if (pad->flags & MEDIA_PAD_FL_SOURCE) {
->>> +                             src_pad = pad;
->>> +                             found = true;
->>> +                             break;
->>> +                     }
->>> +             }
->>> +             if (!found)
->>> +                     break;
->>> +
->>> +             subdev = media_entity_to_v4l2_subdev(entity);
->>> +
->>> +             /* Propagate format on sink pad if any, otherwise source pad */
->>> +             if (sink_pad)
->>> +                     pad = sink_pad;
->>> +
->>> +             dev_dbg(dcmi->dev, "%s[%d] pad format set to 0x%x %ux%u\n",
->>> +                     subdev->name, pad->index, format->format.code,
->>> +                     format->format.width, format->format.height);
->>> +
->>> +             fmt.pad = pad->index;
->>> +             ret = v4l2_subdev_call(subdev, pad, set_fmt, pad_cfg, &fmt);
->>> +             if (ret < 0)
->>> +                     return ret;
->>> +
->>> +             /* Walk to next entity */
->>> +             sink_pad = media_entity_remote_pad(src_pad);
->>> +             if (!sink_pad || !is_media_entity_v4l2_subdev(sink_pad->entity))
->>> +                     break;
->>> +
->>> +             entity = sink_pad->entity;
->>> +     }
->>> +     *format = fmt;
->>> +
->>> +     return 0;
->>> +}
->>> +
->>> +static int dcmi_pipeline_s_stream(struct stm32_dcmi *dcmi, int state)
->>> +{
->>> +     struct media_entity *entity = &dcmi->vdev->entity;
->>> +     struct v4l2_subdev *subdev;
->>> +     struct media_pad *pad;
->>> +     int ret;
->>> +
->>> +     /* Start/stop all entities within pipeline */
->>> +     while (1) {
->>> +             pad = &entity->pads[0];
->>> +             if (!(pad->flags & MEDIA_PAD_FL_SINK))
->>> +                     break;
->>> +
->>> +             pad = media_entity_remote_pad(pad);
->>> +             if (!pad || !is_media_entity_v4l2_subdev(pad->entity))
->>> +                     break;
->>> +
->>> +             entity = pad->entity;
->>> +             subdev = media_entity_to_v4l2_subdev(entity);
->>> +
->>> +             ret = v4l2_subdev_call(subdev, video, s_stream, state);
->>> +             if (ret < 0 && ret != -ENOIOCTLCMD) {
->>> +                     dev_err(dcmi->dev, "%s: %s failed to %s streaming (%d)\n",
->>> +                             __func__, subdev->name,
->>> +                             state ? "start" : "stop", ret);
->>> +                     return ret;
->>> +             }
->>> +
->>> +             dev_dbg(dcmi->dev, "%s is %s\n",
->>> +                     subdev->name, state ? "started" : "stopped");
->>> +     }
->>> +
->>> +     return 0;
->>> +}
->>> +
->>> +static int dcmi_pipeline_start(struct stm32_dcmi *dcmi)
->>> +{
->>> +     return dcmi_pipeline_s_stream(dcmi, 1);
->>> +}
->>> +
->>> +static void dcmi_pipeline_stop(struct stm32_dcmi *dcmi)
->>> +{
->>> +     dcmi_pipeline_s_stream(dcmi, 0);
->>> +}
->>> +
->>>  static int dcmi_start_streaming(struct vb2_queue *vq, unsigned int count)
->>>  {
->>>       struct stm32_dcmi *dcmi = vb2_get_drv_priv(vq);
->>> @@ -597,14 +723,17 @@ static int dcmi_start_streaming(struct vb2_queue *vq, unsigned int count)
->>>               goto err_release_buffers;
->>>       }
->>>
->>> -     /* Enable stream on the sub device */
->>> -     ret = v4l2_subdev_call(dcmi->entity.source, video, s_stream, 1);
->>> -     if (ret && ret != -ENOIOCTLCMD) {
->>> -             dev_err(dcmi->dev, "%s: Failed to start streaming, subdev streamon error",
->>> -                     __func__);
->>> +     ret = media_pipeline_start(&dcmi->vdev->entity, &dcmi->pipeline);
->>> +     if (ret < 0) {
->>> +             dev_err(dcmi->dev, "%s: Failed to start streaming, media pipeline start error (%d)\n",
->>> +                     __func__, ret);
->>>               goto err_pm_put;
->>>       }
->>>
->>> +     ret = dcmi_pipeline_start(dcmi);
->>> +     if (ret)
->>> +             goto err_media_pipeline_stop;
->>> +
->>>       spin_lock_irq(&dcmi->irqlock);
->>>
->>>       /* Set bus width */
->>> @@ -676,7 +805,7 @@ static int dcmi_start_streaming(struct vb2_queue *vq, unsigned int count)
->>>       if (ret) {
->>>               dev_err(dcmi->dev, "%s: Start streaming failed, cannot start capture\n",
->>>                       __func__);
->>> -             goto err_subdev_streamoff;
->>> +             goto err_pipeline_stop;
->>>       }
->>>
->>>       /* Enable interruptions */
->>> @@ -687,8 +816,11 @@ static int dcmi_start_streaming(struct vb2_queue *vq, unsigned int count)
->>>
->>>       return 0;
->>>
->>> -err_subdev_streamoff:
->>> -     v4l2_subdev_call(dcmi->entity.source, video, s_stream, 0);
->>> +err_pipeline_stop:
->>> +     dcmi_pipeline_stop(dcmi);
->>> +
->>> +err_media_pipeline_stop:
->>> +     media_pipeline_stop(&dcmi->vdev->entity);
->>>
->>>  err_pm_put:
->>>       pm_runtime_put(dcmi->dev);
->>> @@ -713,13 +845,10 @@ static void dcmi_stop_streaming(struct vb2_queue *vq)
->>>  {
->>>       struct stm32_dcmi *dcmi = vb2_get_drv_priv(vq);
->>>       struct dcmi_buf *buf, *node;
->>> -     int ret;
->>>
->>> -     /* Disable stream on the sub device */
->>> -     ret = v4l2_subdev_call(dcmi->entity.source, video, s_stream, 0);
->>> -     if (ret && ret != -ENOIOCTLCMD)
->>> -             dev_err(dcmi->dev, "%s: Failed to stop streaming, subdev streamoff error (%d)\n",
->>> -                     __func__, ret);
->>> +     dcmi_pipeline_stop(dcmi);
->>> +
->>> +     media_pipeline_stop(&dcmi->vdev->entity);
->>>
->>>       spin_lock_irq(&dcmi->irqlock);
->>>
->>> @@ -937,8 +1066,7 @@ static int dcmi_set_fmt(struct stm32_dcmi *dcmi, struct v4l2_format *f)
->>>       mf->width = sd_framesize.width;
->>>       mf->height = sd_framesize.height;
->>>
->>> -     ret = v4l2_subdev_call(dcmi->entity.source, pad,
->>> -                            set_fmt, NULL, &format);
->>> +     ret = dcmi_pipeline_s_fmt(dcmi, NULL, &format);
->>>       if (ret < 0)
->>>               return ret;
->>>
->>> @@ -1529,7 +1657,20 @@ static int dcmi_graph_notify_complete(struct v4l2_async_notifier *notifier)
->>>       struct stm32_dcmi *dcmi = notifier_to_dcmi(notifier);
->>>       int ret;
->>>
->>> +     /*
->>> +      * Now that the graph is complete,
->>> +      * we search for the source subdevice
->>> +      * in order to expose it through V4L2 interface
->>> +      */
->>> +     dcmi->entity.source =
->>> +             media_entity_to_v4l2_subdev(dcmi_find_source(dcmi));
->>> +     if (!dcmi->entity.source) {
->>> +             dev_err(dcmi->dev, "Source subdevice not found\n");
->>> +             return -ENODEV;
->>> +     }
->>> +
->>>       dcmi->vdev->ctrl_handler = dcmi->entity.source->ctrl_handler;
->>> +
->>>       ret = dcmi_formats_init(dcmi);
->>>       if (ret) {
->>>               dev_err(dcmi->dev, "No supported mediabus format found\n");
->>> @@ -1574,12 +1715,30 @@ static int dcmi_graph_notify_bound(struct v4l2_async_notifier *notifier,
->>>                                  struct v4l2_async_subdev *asd)
->>>  {
->>>       struct stm32_dcmi *dcmi = notifier_to_dcmi(notifier);
->>> +     unsigned int ret;
->>> +     int src_pad;
->>>
->>>       dev_dbg(dcmi->dev, "Subdev %s bound\n", subdev->name);
->>>
->>> -     dcmi->entity.source = subdev;
->>> +     /*
->>> +      * Link this sub-device to DCMI, it could be
->>> +      * a parallel camera sensor or a bridge
->>> +      */
->>> +     src_pad = media_entity_get_fwnode_pad(&subdev->entity,
->>> +                                           subdev->fwnode,
->>> +                                           MEDIA_PAD_FL_SOURCE);
->>> +
->>> +     ret = media_create_pad_link(&subdev->entity, src_pad,
->>> +                                 &dcmi->vdev->entity, 0,
->>> +                                 MEDIA_LNK_FL_IMMUTABLE |
->>> +                                 MEDIA_LNK_FL_ENABLED);
->>> +     if (ret)
->>> +             dev_err(dcmi->dev, "Failed to create media pad link with subdev %s\n",
->>> +                     subdev->name);
->>> +     else
->>> +             dev_dbg(dcmi->dev, "DCMI is now linked to %s\n", subdev->name);
->>>
->>> -     return 0;
->>> +     return ret;
->>>  }
->>>
->>>  static const struct v4l2_async_notifier_operations dcmi_graph_notify_ops = {
->>> @@ -1639,6 +1798,15 @@ static int dcmi_graph_init(struct stm32_dcmi *dcmi)
->>>               return ret;
->>>       }
->>>
->>> +     /* Register all the subdev nodes */
->>> +     ret = v4l2_device_register_subdev_nodes(&dcmi->v4l2_dev);
->>
->> This shouldn't be needed. Only MC-centric drivers (i.e. where the pipeline
->> has to be configured by userspace) need to do this.
+25.07.2019 18:00, Piotr Sroka пишет:
+> Add new Cadence NAND driver to MTD subsystem
 > 
-> Hi Hans,
-> I think this point has been discussed in this thread
-> https://www.spinics.net/lists/linux-media/msg153417.html
+> Signed-off-by: Piotr Sroka <piotrs@cadence.com>
+> ---
+> Changes for v5:
+> - fix "ecc config strength" field size
+> - remove unused macros
+> - fix address of timing2 register
+> - add guard for accessing data_control_size register
+> - simplify the driver by use the same function 
+>   for accessing main area and oob area
+> - add comment to the driver describing main controller modes
+> - change compatible name from cdns,hpnfc to cdns,hp-nfc
+> Changes for v4:
+> - fix comments issues like typos, missing capitals, missing dots etc.
+> - remove unnecessary PHY options phy_dll_aging and phy_per_bit_deskew
+> - replace all register access functions to "relaxed" version
+> - remove all unnecessary variables initializations
+> - handle error inside cadence_nand_get_ecc_strength_idx function in case 
+>   correnction strength is not found
+> - add commit message
+> Changes for v3:
+> - remove definitions of unused registers
+> - remove configuring registers which are not expected to be configured in
+>   asynchronous mode
+> - remove not needed function reading timing registers
+> - remove information about oob size and write size from cdns_nand_chip type
+>   and use vales from mtd_info directly
+> - use nand_cleanup instead of nand_release if mtd device is not registered yet
+> - fix cadence_nand_chips_init function add garbage collection 
+>   if a chip init fails
+> - simplify PHY calculations
+> Changes for v2:
+> - create one universal wait function for all events instead of one
+>   function per event.
+> - split one big function executing nand operations to separate
+>   functions one per each type of operation.
+> - add erase atomic operation to nand operation parser
+> - remove unnecessary includes.
+> - remove unused register defines 
+> - add support for multiple nand chips
+> - remove all code using legacy functions
+> - remove chip dependents parameters from dts bindings, they were
+>   attached to the SoC specific compatible at the driver level
+> - simplify interrupt handling
+> - simplify timing calculations
+> - fix calculation of maximum supported cs signals
+> - simplify ecc size calculation
+> - remove header file and put whole code to one c file
+> ---
+>  drivers/mtd/nand/raw/Kconfig                   |    7 +
+>  drivers/mtd/nand/raw/Makefile                  |    1 +
+>  drivers/mtd/nand/raw/cadence-nand-controller.c | 3021 ++++++++++++++++++++++++
+>  3 files changed, 3029 insertions(+)
+>  create mode 100644 drivers/mtd/nand/raw/cadence-nand-controller.c
 > 
-> In short : since the hardware only offer one possible path we don't expose
-> the configuration to userland and let DCMI driver configure the
-> subdevice (like bridge).
+> diff --git a/drivers/mtd/nand/raw/Kconfig b/drivers/mtd/nand/raw/Kconfig
+> index e604625e2dfa..4d2ce3b5b2ae 100644
+> --- a/drivers/mtd/nand/raw/Kconfig
+> +++ b/drivers/mtd/nand/raw/Kconfig
+> @@ -557,5 +557,12 @@ config MTD_NAND_MESON
+>  	help
+>  	  Enables support for NAND controller on Amlogic's Meson SoCs.
+>  	  This controller is found on Meson SoCs.
+> +config MTD_NAND_CADENCE
+> +	tristate "Support Cadence NAND (HPNFC) controller"
+> +	depends on OF
+> +	help
+> +	  Enable the driver for NAND flash on platforms using a Cadence NAND
+> +	  controller.
+> +
+>  
+>  endif # MTD_NAND
+> diff --git a/drivers/mtd/nand/raw/Makefile b/drivers/mtd/nand/raw/Makefile
+> index 5a5a72f0793e..f4b099f276f7 100644
+> --- a/drivers/mtd/nand/raw/Makefile
+> +++ b/drivers/mtd/nand/raw/Makefile
+> @@ -58,6 +58,7 @@ obj-$(CONFIG_MTD_NAND_MTK)		+= mtk_ecc.o mtk_nand.o
+>  obj-$(CONFIG_MTD_NAND_TEGRA)		+= tegra_nand.o
+>  obj-$(CONFIG_MTD_NAND_STM32_FMC2)	+= stm32_fmc2_nand.o
+>  obj-$(CONFIG_MTD_NAND_MESON)		+= meson_nand.o
+> +obj-$(CONFIG_MTD_NAND_CADENCE)		+= cadence-nand-controller.o
+>  
+>  nand-objs := nand_base.o nand_legacy.o nand_bbt.o nand_timings.o nand_ids.o
+>  nand-objs += nand_onfi.o
+> diff --git a/drivers/mtd/nand/raw/cadence-nand-controller.c b/drivers/mtd/nand/raw/cadence-nand-controller.c
+> new file mode 100644
+> index 000000000000..a7ff4e4585d3
+> --- /dev/null
+> +++ b/drivers/mtd/nand/raw/cadence-nand-controller.c
+> @@ -0,0 +1,3021 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * Cadence NAND flash controller driver
+> + *
+> + * Copyright (C) 2019 Cadence
+> + */
+> +
+> +#include <linux/bitfield.h>
+> +#include <linux/clk.h>
+> +#include <linux/dma-mapping.h>
+> +#include <linux/dmaengine.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/module.h>
+> +#include <linux/mtd/mtd.h>
+> +#include <linux/mtd/rawnand.h>
+> +#include <linux/of_device.h>
+> +#include <linux/iopoll.h>
+> +
+> +/*
+> + * HPNFC can work in 3 modes:
+> + * -  PIO - can work in master or slave DMA.
+> + * -  CDMA - needs Master DMA for accessing command descriptors.
+> + * -  Generic mode - can use only slave DMA.
+> + * CDMA and PIO modes can be used to execute only base commands.
+> + * Generic mode can be used to execute any command
+> + * on NAND flash memory. Driver uses CDMA mode for
+> + * block erasing, page reading, page programing.
+> + * Generic mode is used for executing rest of commands.
+> + */
+> +
+> +#define MAX_OOB_SIZE_PER_SECTOR	32
+> +#define MAX_ADDRESS_CYC		6
+> +#define MAX_ERASE_ADDRESS_CYC	3
+> +#define MAX_DATA_SIZE		0xFFFC
+> +
+> +/* Register definition. */
+> +/*
+> + * Command register 0.
+> + * Writing data to this register will initiate a new transaction
+> + * of the NF controller.
+> + */
+> +#define CMD_REG0			0x0000
+> +/* Command type field mask. */
+> +#define		CMD_REG0_CT		GENMASK(31, 30)
+> +/* Command type CDMA. */
+> +#define		CMD_REG0_CT_CDMA	0uL
+> +/* Command type generic. */
+> +#define		CMD_REG0_CT_GEN		3uL
+> +/* Command thread number field mask. */
+> +#define		CMD_REG0_TN		GENMASK(27, 24)
+> +
+> +/* Command register 2. */
+> +#define CMD_REG2			0x0008
+> +/* Command register 3. */
+> +#define CMD_REG3			0x000C
+> +/* Pointer register to select which thread status will be selected. */
+> +#define CMD_STATUS_PTR			0x0010
+> +/* Command status register for selected thread. */
+> +#define CMD_STATUS			0x0014
+> +
+> +/* Interrupt status register. */
+> +#define INTR_STATUS			0x0110
+> +#define		INTR_STATUS_SDMA_ERR	BIT(22)
+> +#define		INTR_STATUS_SDMA_TRIGG	BIT(21)
+> +#define		INTR_STATUS_UNSUPP_CMD	BIT(19)
+> +#define		INTR_STATUS_DDMA_TERR	BIT(18)
+> +#define		INTR_STATUS_CDMA_TERR	BIT(17)
+> +#define		INTR_STATUS_CDMA_IDL	BIT(16)
+> +
+> +/* Interrupt enable register. */
+> +#define INTR_ENABLE				0x0114
+> +#define		INTR_ENABLE_INTR_EN		BIT(31)
+> +#define		INTR_ENABLE_SDMA_ERR_EN		BIT(22)
+> +#define		INTR_ENABLE_SDMA_TRIGG_EN	BIT(21)
+> +#define		INTR_ENABLE_UNSUPP_CMD_EN	BIT(19)
+> +#define		INTR_ENABLE_DDMA_TERR_EN	BIT(18)
+> +#define		INTR_ENABLE_CDMA_TERR_EN	BIT(17)
+> +#define		INTR_ENABLE_CDMA_IDLE_EN	BIT(16)
+> +
+> +/* Controller internal state. */
+> +#define CTRL_STATUS				0x0118
+> +#define		CTRL_STATUS_INIT_COMP		BIT(9)
+> +#define		CTRL_STATUS_CTRL_BUSY		BIT(8)
+> +
+> +/* Command Engine threads state. */
+> +#define TRD_STATUS				0x0120
+> +
+> +/* Command Engine interrupt thread error status. */
+> +#define TRD_ERR_INT_STATUS			0x0128
+> +/* Command Engine interrupt thread error enable. */
+> +#define TRD_ERR_INT_STATUS_EN			0x0130
+> +/* Command Engine interrupt thread complete status. */
+> +#define TRD_COMP_INT_STATUS			0x0138
+> +
+> +/*
+> + * Transfer config 0 register.
+> + * Configures data transfer parameters.
+> + */
+> +#define TRAN_CFG_0				0x0400
+> +/* Offset value from the beginning of the page. */
+> +#define		TRAN_CFG_0_OFFSET		GENMASK(31, 16)
+> +/* Numbers of sectors to transfer within singlNF device's page. */
+> +#define		TRAN_CFG_0_SEC_CNT		GENMASK(7, 0)
+> +
+> +/*
+> + * Transfer config 1 register.
+> + * Configures data transfer parameters.
+> + */
+> +#define TRAN_CFG_1				0x0404
+> +/* Size of last data sector. */
+> +#define		TRAN_CFG_1_LAST_SEC_SIZE	GENMASK(31, 16)
+> +/* Size of not-last data sector. */
+> +#define		TRAN_CFG_1_SECTOR_SIZE		GENMASK(15, 0)
+> +
+> +/* ECC engine configuration register 0. */
+> +#define ECC_CONFIG_0				0x0428
+> +/* Correction strength. */
+> +#define		ECC_CONFIG_0_CORR_STR		GENMASK(10, 8)
+> +/* Enable erased pages detection mechanism. */
+> +#define		ECC_CONFIG_0_ERASE_DET_EN	BIT(1)
+> +/* Enable controller ECC check bits generation and correction. */
+> +#define		ECC_CONFIG_0_ECC_EN		BIT(0)
+> +
+> +/* ECC engine configuration register 1. */
+> +#define ECC_CONFIG_1				0x042C
+> +
+> +/* Multiplane settings register. */
+> +#define MULTIPLANE_CFG				0x0434
+> +/* Cache operation settings. */
+> +#define CACHE_CFG				0x0438
+> +
+> +/* DMA settings register. */
+> +#define DMA_SETINGS				0x043C
+> +/* Enable SDMA error report on access unprepared slave DMA interface. */
+> +#define		DMA_SETINGS_SDMA_ERR_RSP	BIT(17)
+> +
+> +/* Transferred data block size for the slave DMA module. */
+> +#define SDMA_SIZE				0x0440
+> +
+> +/* Thread number associated with transferred data block
+> + * for the slave DMA module.
+> + */
+> +#define SDMA_TRD_NUM				0x0444
+> +/* Thread number mask. */
+> +#define		SDMA_TRD_NUM_SDMA_TRD		GENMASK(2, 0)
+> +
+> +#define CONTROL_DATA_CTRL			0x0494
+> +/* Thread number mask. */
+> +#define		CONTROL_DATA_CTRL_SIZE		GENMASK(15, 0)
+> +
+> +#define CTRL_VERSION				0x800
+> +
+> +/* Available hardware features of the controller. */
+> +#define CTRL_FEATURES				0x804
+> +/* Support for NV-DDR2/3 work mode. */
+> +#define		CTRL_FEATURES_NVDDR_2_3		BIT(28)
+> +/* Support for NV-DDR work mode. */
+> +#define		CTRL_FEATURES_NVDDR		BIT(27)
+> +/* Support for asynchronous work mode. */
+> +#define		CTRL_FEATURES_ASYNC		BIT(26)
+> +/* Support for asynchronous work mode. */
+> +#define		CTRL_FEATURES_N_BANKS		GENMASK(25, 24)
+> +/* Slave and Master DMA data width. */
+> +#define		CTRL_FEATURES_DMA_DWITH64	BIT(21)
+> +/* Availability of Control Data feature.*/
+> +#define		CTRL_FEATURES_CONTROL_DATA	BIT(10)
+> +
+> +/* BCH Engine identification register 0 - correction strengths. */
+> +#define BCH_CFG_0				0x838
+> +#define		BCH_CFG_0_CORR_CAP_0		GENMASK(7, 0)
+> +#define		BCH_CFG_0_CORR_CAP_1		GENMASK(15, 8)
+> +#define		BCH_CFG_0_CORR_CAP_2		GENMASK(23, 16)
+> +#define		BCH_CFG_0_CORR_CAP_3		GENMASK(31, 24)
+> +
+> +/* BCH Engine identification register 1 - correction strengths. */
+> +#define BCH_CFG_1				0x83C
+> +#define		BCH_CFG_1_CORR_CAP_4		GENMASK(7, 0)
+> +#define		BCH_CFG_1_CORR_CAP_5		GENMASK(15, 8)
+> +#define		BCH_CFG_1_CORR_CAP_6		GENMASK(23, 16)
+> +#define		BCH_CFG_1_CORR_CAP_7		GENMASK(31, 24)
+> +
+> +/* BCH Engine identification register 2 - sector sizes. */
+> +#define BCH_CFG_2				0x840
+> +#define		BCH_CFG_2_SECT_0		GENMASK(15, 0)
+> +#define		BCH_CFG_2_SECT_1		GENMASK(31, 16)
+> +
+> +/* BCH Engine identification register 3. */
+> +#define BCH_CFG_3				0x844
+> +
+> +/* Ready/Busy# line status. */
+> +#define RBN_SETINGS				0x1004
+> +
+> +/* Common settings. */
+> +#define COMMON_SET				0x1008
+> +/* 16 bit device connected to the NAND Flash interface. */
+> +#define		COMMON_SET_DEVICE_16BIT		BIT(8)
+> +
+> +/* Skip_bytes registers. */
+> +#define SKIP_BYTES_CONF				0x100C
+> +#define		SKIP_BYTES_MARKER_VALUE		GENMASK(31, 16)
+> +#define		SKIP_BYTES_NUM_OF_BYTES		GENMASK(7, 0)
+> +
+> +#define SKIP_BYTES_OFFSET			0x1010
+> +#define		 SKIP_BYTES_OFFSET_VALUE	GENMASK(23, 0)
+> +
+> +/* Timings configuration. */
+> +#define ASYNC_TOGGLE_TIMINGS			0x101c
+> +#define		ASYNC_TOGGLE_TIMINGS_TRH	GENMASK(28, 24)
+> +#define		ASYNC_TOGGLE_TIMINGS_TRP	GENMASK(20, 16)
+> +#define		ASYNC_TOGGLE_TIMINGS_TWH	GENMASK(12, 8)
+> +#define		ASYNC_TOGGLE_TIMINGS_TWP	GENMASK(4, 0)
+> +
+> +#define	TIMINGS0				0x1024
+> +#define		TIMINGS0_TADL			GENMASK(31, 24)
+> +#define		TIMINGS0_TCCS			GENMASK(23, 16)
+> +#define		TIMINGS0_TWHR			GENMASK(15, 8)
+> +#define		TIMINGS0_TRHW			GENMASK(7, 0)
+> +
+> +#define	TIMINGS1				0x1028
+> +#define		TIMINGS1_TRHZ			GENMASK(31, 24)
+> +#define		TIMINGS1_TWB			GENMASK(23, 16)
+> +#define		TIMINGS1_TVDLY			GENMASK(7, 0)
+> +
+> +#define	TIMINGS2				0x102c
+> +#define		TIMINGS2_TFEAT			GENMASK(25, 16)
+> +#define		TIMINGS2_CS_HOLD_TIME		GENMASK(13, 8)
+> +#define		TIMINGS2_CS_SETUP_TIME		GENMASK(5, 0)
+> +
+> +/* Configuration of the resynchronization of slave DLL of PHY. */
+> +#define DLL_PHY_CTRL				0x1034
+> +#define		DLL_PHY_CTRL_DLL_RST_N		BIT(24)
+> +#define		DLL_PHY_CTRL_EXTENDED_WR_MODE	BIT(17)
+> +#define		DLL_PHY_CTRL_EXTENDED_RD_MODE	BIT(16)
+> +#define		DLL_PHY_CTRL_RS_HIGH_WAIT_CNT	GENMASK(11, 8)
+> +#define		DLL_PHY_CTRL_RS_IDLE_CNT	GENMASK(7, 0)
+> +
+> +/* Register controlling DQ related timing. */
+> +#define PHY_DQ_TIMING				0x2000
+> +/* Register controlling DSQ related timing.  */
+> +#define PHY_DQS_TIMING				0x2004
+> +#define		PHY_DQS_TIMING_DQS_SEL_OE_END	GENMASK(3, 0)
+> +#define		PHY_DQS_TIMING_PHONY_DQS_SEL	BIT(16)
+> +#define		PHY_DQS_TIMING_USE_PHONY_DQS	BIT(20)
+> +
+> +/* Register controlling the gate and loopback control related timing. */
+> +#define PHY_GATE_LPBK_CTRL			0x2008
+> +#define		PHY_GATE_LPBK_CTRL_RDS		GENMASK(24, 19)
+> +
+> +/* Register holds the control for the master DLL logic. */
+> +#define PHY_DLL_MASTER_CTRL			0x200C
+> +#define		PHY_DLL_MASTER_CTRL_BYPASS_MODE	BIT(23)
+> +
+> +/* Register holds the control for the slave DLL logic. */
+> +#define PHY_DLL_SLAVE_CTRL			0x2010
+> +
+> +/* This register handles the global control settings for the PHY. */
+> +#define PHY_CTRL				0x2080
+> +#define		PHY_CTRL_SDR_DQS		BIT(14)
+> +#define		PHY_CTRL_PHONY_DQS		GENMASK(9, 4)
+> +
+> +/*
+> + * This register handles the global control settings
+> + * for the termination selects for reads.
+> + */
+> +#define PHY_TSEL				0x2084
+> +
+> +/* Generic command layout. */
+> +#define GCMD_LAY_CS			GENMASK_ULL(11, 8)
+> +/*
+> + * This bit informs the minicotroller if it has to wait for tWB
+> + * after sending the last CMD/ADDR/DATA in the sequence.
+> + */
+> +#define GCMD_LAY_TWB			BIT_ULL(6)
+> +/* Type of generic instruction. */
+> +#define GCMD_LAY_INSTR			GENMASK_ULL(5, 0)
+> +
+> +/* Generic CMD sequence type. */
+> +#define		GCMD_LAY_INSTR_CMD	0
+> +/* Generic ADDR sequence type. */
+> +#define		GCMD_LAY_INSTR_ADDR	1
+> +/* Generic data transfer sequence type. */
+> +#define		GCMD_LAY_INSTR_DATA	2
+> +
+> +/* Input part of generic command type of input is command. */
+> +#define GCMD_LAY_INPUT_CMD		GENMASK_ULL(23, 16)
+> +
+> +/* Generic command address sequence - address fields. */
+> +#define GCMD_LAY_INPUT_ADDR		GENMASK_ULL(63, 16)
+> +/* Generic command address sequence - address size. */
+> +#define GCMD_LAY_INPUT_ADDR_SIZE	GENMASK_ULL(13, 11)
+> +
+> +/* Transfer direction field of generic command data sequence. */
+> +#define GCMD_DIR			BIT_ULL(11)
+> +/* Read transfer direction of generic command data sequence. */
+> +#define		GCMD_DIR_READ		0
+> +/* Write transfer direction of generic command data sequence. */
+> +#define		GCMD_DIR_WRITE		1
+> +
+> +/* ECC enabled flag of generic command data sequence - ECC enabled. */
+> +#define GCMD_ECC_EN			BIT_ULL(12)
+> +/* Generic command data sequence - sector size. */
+> +#define GCMD_SECT_SIZE			GENMASK_ULL(31, 16)
+> +/* Generic command data sequence - sector count. */
+> +#define GCMD_SECT_CNT			GENMASK_ULL(39, 32)
+> +/* Generic command data sequence - last sector size. */
+> +#define GCMD_LAST_SIZE			GENMASK_ULL(55, 40)
+> +
+> +/* CDMA descriptor fields. */
+> +/* Erase command type of CDMA descriptor. */
+> +#define CDMA_CT_ERASE		0x1000
+> +/* Program page command type of CDMA descriptor. */
+> +#define CDMA_CT_WR		0x2100
+> +/* Read page command type of CDMA descriptor. */
+> +#define CDMA_CT_RD		0x2200
+> +
+> +/* Flash pointer memory shift. */
+> +#define CDMA_CFPTR_MEM_SHIFT	24
+> +/* Flash pointer memory mask. */
+> +#define CDMA_CFPTR_MEM		GENMASK(26, 24)
+> +
+> +/*
+> + * Command DMA descriptor flags. If set causes issue interrupt after
+> + * the completion of descriptor processing.
+> + */
+> +#define CDMA_CF_INT		BIT(8)
+> +/*
+> + * Command DMA descriptor flags - the next descriptor
+> + * address field is valid and descriptor processing should continue.
+> + */
+> +#define CDMA_CF_CONT		BIT(9)
+> +/* DMA master flag of command DMA descriptor. */
+> +#define CDMA_CF_DMA_MASTER	BIT(10)
+> +
+> +/* Operation complete status of command descriptor. */
+> +#define CDMA_CS_COMP		BIT(15)
+> +/* Operation complete status of command descriptor. */
+> +/* Command descriptor status - operation fail. */
+> +#define CDMA_CS_FAIL		BIT(14)
+> +/* Command descriptor status - page erased. */
+> +#define CDMA_CS_ERP		BIT(11)
+> +/* Command descriptor status - timeout occurred. */
+> +#define CDMA_CS_TOUT		BIT(10)
+> +/*
+> + * Maximum amount of correction applied to one ECC sector.
+> + * It is part of command descriptor status.
+> + */
+> +#define CDMA_CS_MAXERR		GENMASK(9, 2)
+> +/* Command descriptor status - uncorrectable ECC error. */
+> +#define CDMA_CS_UNCE		BIT(1)
+> +/* Command descriptor status - descriptor error. */
+> +#define CDMA_CS_ERR		BIT(0)
+> +
+> +/* Status of operation - OK. */
+> +#define STAT_OK			0
+> +/* Status of operation - FAIL. */
+> +#define STAT_FAIL		2
+> +/* Status of operation - uncorrectable ECC error. */
+> +#define STAT_ECC_UNCORR		3
+> +/* Status of operation - page erased. */
+> +#define STAT_ERASED		5
+> +/* Status of operation - correctable ECC error. */
+> +#define STAT_ECC_CORR		6
+> +/* Status of operation - unsuspected state. */
+> +#define STAT_UNKNOWN		7
+> +/* Status of operation - operation is not completed yet. */
+> +#define STAT_BUSY		0xFF
+> +
+> +#define BCH_MAX_NUM_CORR_CAPS		8
+> +#define BCH_MAX_NUM_SECTOR_SIZES	2
+> +
+> +struct cadence_nand_timings {
+> +	u32 async_toggle_timings;
+> +	u32 timings0;
+> +	u32 timings1;
+> +	u32 timings2;
+> +	u32 dll_phy_ctrl;
+> +	u32 phy_ctrl;
+> +	u32 phy_dqs_timing;
+> +	u32 phy_gate_lpbk_ctrl;
+> +};
+> +
+> +/* Command DMA descriptor. */
+> +struct cadence_nand_cdma_desc {
+> +	/* Next descriptor address. */
+> +	u64 next_pointer;
+> +
+> +	/* Flash address is a 32-bit address comprising of BANK and ROW ADDR. */
+> +	u32 flash_pointer;
+> +	u32 rsvd0;
+> +
+> +	/* Operation the controller needs to perform. */
+> +	u16 command_type;
+> +	u16 rsvd1;
+> +	/* Flags for operation of this command. */
+> +	u16 command_flags;
+> +	u16 rsvd2;
+> +
+> +	/* System/host memory address required for data DMA commands. */
+> +	u64 memory_pointer;
+> +
+> +	/* Status of operation. */
+> +	u32 status;
+> +	u32 rsvd3;
+> +
+> +	/* Address pointer to sync buffer location. */
+> +	u64 sync_flag_pointer;
+> +
+> +	/* Controls the buffer sync mechanism. */
+> +	u32 sync_arguments;
+> +	u32 rsvd4;
+> +
+> +	/* Control data pointer. */
+> +	u64 ctrl_data_ptr;
+> +};
+> +
+> +/* Interrupt status. */
+> +struct cadence_nand_irq_status {
+> +	/* Thread operation complete status. */
+> +	u32 trd_status;
+> +	/* Thread operation error. */
+> +	u32 trd_error;
+> +	/* Controller status. */
+> +	u32 status;
+> +};
+> +
+> +/* Cadence NAND flash controller capabilities get from driver data. */
+> +struct cadence_nand_dt_devdata {
+> +	/* Skew value of the output signals of the NAND Flash interface. */
+> +	u32 if_skew;
+> +	/* It informs if slave DMA interface is connected to DMA engine. */
+> +	unsigned int has_dma:1;
+> +};
+> +
+> +/* Cadence NAND flash controller capabilities read from registers. */
+> +struct cdns_nand_caps {
+> +	/* Maximum number of banks supported by hardware. */
+> +	u8 max_banks;
+> +	/* Slave and Master DMA data width in bytes (4 or 8). */
+> +	u8 data_dma_width;
+> +	/* Control Data feature supported. */
+> +	u8 data_control_supp;
+> +	/* Is PHY type DLL. */
+> +	u8 is_phy_type_dll;
 
-Yes, and I agree completely. But why then do you register v4l-subdevX devices?
-That's not needed for this driver.
+I'd make 'data_control_supp' and 'is_phy_type_dll' u8:1 or unsigned
+int:1 as you did for 'has_dma', for consistency.
 
-Regards,
-
-	Hans
-
-> 
-> Benjamin
-> 
->>
->> Otherwise this patch looks good.
->>
->> Regards,
->>
->>         Hans
->>
->>> +     if (ret) {
->>> +             dev_err(dcmi->dev, "Failed to register subdev nodes\n");
->>> +             v4l2_async_notifier_unregister(&dcmi->notifier);
->>> +             of_node_put(dcmi->entity.remote_node);
->>> +             return ret;
->>> +     }
->>> +
->>>       return 0;
->>>  }
->>>
->>>
->>
+> +};
 
