@@ -2,91 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9AF7758E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 22:34:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 24E5B758F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 22:37:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726785AbfGYUeK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 16:34:10 -0400
-Received: from mga07.intel.com ([134.134.136.100]:64560 "EHLO mga07.intel.com"
+        id S1726890AbfGYUhE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 16:37:04 -0400
+Received: from mga03.intel.com ([134.134.136.65]:58797 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726623AbfGYUeK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 16:34:10 -0400
+        id S1726195AbfGYUhD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 16:37:03 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jul 2019 13:34:08 -0700
-X-ExtLoop1: 1
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jul 2019 13:37:02 -0700
 X-IronPort-AV: E=Sophos;i="5.64,308,1559545200"; 
-   d="scan'208";a="172821940"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga003.jf.intel.com with ESMTP; 25 Jul 2019 13:34:06 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id E415C76; Thu, 25 Jul 2019 23:34:05 +0300 (EEST)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        linux-kernel@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 2/2] extcon: axp288: Use for_each_set_bit() in axp288_extcon_log_rsi()
-Date:   Thu, 25 Jul 2019 23:34:05 +0300
-Message-Id: <20190725203405.65523-2-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190725203405.65523-1-andriy.shevchenko@linux.intel.com>
-References: <20190725203405.65523-1-andriy.shevchenko@linux.intel.com>
+   d="scan'208";a="161090207"
+Received: from ahduyck-desk1.jf.intel.com ([10.7.198.76])
+  by orsmga007-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jul 2019 13:37:02 -0700
+Message-ID: <5f78cccab8273cb759538ef6e088886a507ce438.camel@linux.intel.com>
+Subject: Re: [PATCH v2 4/5] mm: Introduce Hinted pages
+From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
+To:     David Hildenbrand <david@redhat.com>,
+        Alexander Duyck <alexander.duyck@gmail.com>
+Cc:     Nitesh Narayan Lal <nitesh@redhat.com>,
+        kvm list <kvm@vger.kernel.org>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Yang Zhang <yang.zhang.wz@gmail.com>, pagupta@redhat.com,
+        Rik van Riel <riel@surriel.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        lcapitulino@redhat.com, wei.w.wang@intel.com,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>, dan.j.williams@intel.com,
+        Matthew Wilcox <willy@infradead.org>
+Date:   Thu, 25 Jul 2019 13:37:02 -0700
+In-Reply-To: <c200d5cf-90f7-9dca-5061-b6e0233ca089@redhat.com>
+References: <20190724165158.6685.87228.stgit@localhost.localdomain>
+         <20190724170259.6685.18028.stgit@localhost.localdomain>
+         <a9f52894-52df-cd0c-86ac-eea9fbe96e34@redhat.com>
+         <CAKgT0Ud-UNk0Mbef92hDLpWb2ppVHsmd24R9gEm2N8dujb4iLw@mail.gmail.com>
+         <f0ac7747-0e18-5039-d341-5dfda8d5780e@redhat.com>
+         <b3568a5422d0f6b88f7c5cb46577db1a43057c04.camel@linux.intel.com>
+         <c200d5cf-90f7-9dca-5061-b6e0233ca089@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This simplifies and standardizes axp288_extcon_log_rsi()
-by using for_each_set_bit() library function.
+On Thu, 2019-07-25 at 20:32 +0200, David Hildenbrand wrote:
+> On 25.07.19 19:38, Alexander Duyck wrote:
+> > On Thu, 2019-07-25 at 18:48 +0200, David Hildenbrand wrote:
+> > > On 25.07.19 17:59, Alexander Duyck wrote:
+> > > > On Thu, Jul 25, 2019 at 1:53 AM David Hildenbrand <david@redhat.com> wrote:
+> > > > > On 24.07.19 19:03, Alexander Duyck wrote:
+> > > > > > From: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+> > 
+> > <snip>
+> > 
+> > > > > Can't we reuse one of the traditional page flags for that, not used
+> > > > > along with buddy pages? E.g., PG_dirty: Pages that were not hinted yet
+> > > > > are dirty.
+> > > > 
+> > > > Reusing something like the dirty bit would just be confusing in my
+> > > > opinion. In addition it looks like Xen has also re-purposed PG_dirty
+> > > > already for another purpose.
+> > > 
+> > > You brought up waste page management. A dirty bit for unprocessed pages
+> > > fits perfectly in this context. Regarding XEN, as long as it's not used
+> > > along with buddy pages, no issue.
+> > 
+> > I would rather not have to dirty all pages that aren't hinted. That starts
+> > to get too invasive. Ideally we only modify pages if we are hinting on
+> > them. That is why I said I didn't like the use of a dirty bit. What we
+> > want is more of a "guaranteed clean" bit.
+> 
+> Not sure if that is too invasive, but fair enough.
+> 
+> > > FWIW, I don't even thing PG_offline matches to what you are using it
+> > > here for. The pages are not logically offline. They were simply buddy
+> > > pages that were hinted. (I'd even prefer a separate page type for that
+> > > instead - if we cannot simply reuse one of the other flags)
+> > > 
+> > > "Offline pages" that are not actually offline in the context of the
+> > > buddy is way more confusing.
+> > 
+> > Right now offline and hinted are essentially the same thing since the
+> > effect is identical.
+> 
+> No they are not the same thing. Regarding virtio-balloon: You are free
+> to reuse any hinted pages immediate. Offline pages (a.k.a. inflated) you
+> might not generally reuse before deflating.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/extcon/extcon-axp288.c | 13 +++++--------
- 1 file changed, 5 insertions(+), 8 deletions(-)
+Okay, so it sounds like your perspective is a bit different than mine. I
+was thinking of it from the perspective of the host OS where in either
+case the guest has set the page as MADV_DONTNEED. You are looking at it
+from the guest perspective where Offline means the guest cannot use it.
 
-diff --git a/drivers/extcon/extcon-axp288.c b/drivers/extcon/extcon-axp288.c
-index 4cbcc3b1aa6b..670334c362ac 100644
---- a/drivers/extcon/extcon-axp288.c
-+++ b/drivers/extcon/extcon-axp288.c
-@@ -121,7 +121,6 @@ static const char * const axp288_pwr_up_down_info[] = {
- 	"Last shutdown caused by PMIC UVLO threshold",
- 	"Last shutdown caused by SOC initiated cold off",
- 	"Last shutdown caused by user pressing the power button",
--	NULL,
- };
- 
- /*
-@@ -130,20 +129,18 @@ static const char * const axp288_pwr_up_down_info[] = {
-  */
- static void axp288_extcon_log_rsi(struct axp288_extcon_info *info)
- {
--	const char * const *rsi;
- 	unsigned int val, i, clear_mask = 0;
-+	unsigned long bits;
- 	int ret;
- 
- 	ret = regmap_read(info->regmap, AXP288_PS_BOOT_REASON_REG, &val);
- 	if (ret < 0)
- 		return;
- 
--	for (i = 0, rsi = axp288_pwr_up_down_info; *rsi; rsi++, i++) {
--		if (val & BIT(i)) {
--			dev_dbg(info->dev, "%s\n", *rsi);
--			clear_mask |= BIT(i);
--		}
--	}
-+	bits = val & GENMASK(ARRAY_SIZE(axp288_pwr_up_down_info) - 1, 0);
-+	for_each_set_bit(i, &bits, ARRAY_SIZE(axp288_pwr_up_down_info))
-+		dev_dbg(info->dev, "%s\n", axp288_pwr_up_down_info[i]);
-+	clear_mask = bits;
- 
- 	/* Clear the register value for next reboot (write 1 to clear bit) */
- 	regmap_write(info->regmap, AXP288_PS_BOOT_REASON_REG, clear_mask);
--- 
-2.20.1
+> > There may be cases in the future where that is not the case, but with the
+> > current patch set they both result in the pages being evicted from the
+> > guest.
+> > 
+> > > > If anything I could probably look at seeing if the PG_private flags
+> > > > are available when a page is in the buddy allocator which I suspect
+> > > > they probably are since the only users I currently see appear to be
+> > > > SLOB and compound pages. Either that or maybe something like PG_head
+> > > > might make sense since once we start allocating them we are popping
+> > > > the head off of the boundary list.
+> > > 
+> > > Would also be fine with me.
+> > 
+> > Actually I may have found an even better bit if we are going with the
+> > "reporting" name. I could probably use "PG_uptodate" since it looks like
+> > most of its uses are related to filesystems. I will wait till I hear from
+> > Matthew on what bits would be available for use before I update things.
+> 
+> Also fine with me. In the optimal case we (in my opinion)
+> a) Don't reuse PG_offline
+> b) Don't use another page type
+
+That is fine. I just need to determine the exact flag to use then. I'll do
+some more research and wait to see if anyone else from MM comunity has
+input or suggestions on the page flag to be used. From what I can tell it
+looks like there are a bunch of flag bits that are unused as far as the
+buddy pages are concerned so I should have a few to choose from.
 
