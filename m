@@ -2,199 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F2E974E6E
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 14:46:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5449C74E6A
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 14:45:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389133AbfGYMqA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 08:46:00 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:36738 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388497AbfGYMp7 (ORCPT
+        id S2388894AbfGYMp0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 08:45:26 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:38776 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387824AbfGYMp0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 08:45:59 -0400
-Received: by mail-lj1-f193.google.com with SMTP id i21so47885223ljj.3;
-        Thu, 25 Jul 2019 05:45:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
-         :subject:to:cc:content-transfer-encoding;
-        bh=YxoMXX9Nct0eRRcS7Q/PLXYnZRgyZpcSP8/DWhoCE08=;
-        b=iC1vZvfJutufEB8O0LVkEL3eLGLkJvcm3eMtB88c8eNso6GNJRzNp+ZIqa/3Q52BIu
-         JRoQYKgU9myUBTAbT0TCOHH5UbyaMYcVFjy0TEU3YM81qHCSIkGNjrtDJtW+uxLeVFwA
-         kRHHCiwp15FcRYWijkcBil/QsrUnPTJH2FLrZb5nWB8g8uEQIW22396vX3zHb35bpdR3
-         UD1bfkthTgUKyJ+NW7JORGckCMOEp4JMlXM5VEoEoEj01RVHQ5NYxto3PDXdunGJjHiC
-         9vtq66s8v7Wl8bnyGmgwgfT7Zruss//MqXAsQOXN1Ft+UULQ/F+gDuzbsN6AJOXkE/cj
-         Wf9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
-         :from:date:message-id:subject:to:cc:content-transfer-encoding;
-        bh=YxoMXX9Nct0eRRcS7Q/PLXYnZRgyZpcSP8/DWhoCE08=;
-        b=AquvUnnGLUf0F+hqnm2VvkyP9xUSulJ+GXsk+VNCighqJVwi0jVubsG4AO7URAN+qW
-         /ly2JwZ4b+TNo5X05q8ZLcNeB6Ei21yUMQ3wlCiyfBZgict4dEYyEv32AH5FxJa6YdPf
-         RFPlDDmtHx/KcVc94nlD8xs4InDlpP1x3TcLH3sARbe55jTBvdMDBJWW2Q2DN4k1D3h/
-         wgZcMjgX2RUigDSM5og4guCGjcKE46Oyak756cY4kMR01eWuAgJqkXNcRB0ncWmBh/Tz
-         y6ojH36F8MEC4adHfnN99Gst36HHZsKVd3Y64L3z+hNFjTP2mHj7/fpc4GUkZ3650Oy4
-         /JDA==
-X-Gm-Message-State: APjAAAUQ2JUbAo2qCfCGTMu7o4SXIskLnte+aanCxHn/eHYCpmorRDo0
-        GBTGY6qrELpb8rtG4Zr8MpEQ6w6GQfvC7P3oZ40=
-X-Google-Smtp-Source: APXvYqwievWEj3UbBaN2VIfe8QRJUis+gUfdQlAX6IUbqOgqfMnKj83r/6dVQ+2l6WZ0uRdOwLDmDD1IMt9qut4IPNs=
-X-Received: by 2002:a2e:8945:: with SMTP id b5mr44878199ljk.93.1564058756462;
- Thu, 25 Jul 2019 05:45:56 -0700 (PDT)
+        Thu, 25 Jul 2019 08:45:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=emJzk9odpy1wnlUGcXdIzUFv1SXJfSlgageYxVB9ttk=; b=bZAG/LpGP+NKh/MRi5Jp7hN47
+        vKXsFv3Bu6+0/pdl2vCAYrsqSPKfBRywv94yzvNfiMY6g6uX3kw6mM4o81ToVJDZv/pFkaZyTjZUu
+        I/Q4jl9/olAhVQ9D0Uz9XdfucTea6rY9EjI0Rav6U1Z8bDIq/oFRdysjtDIUa1gSMKpEIapfAQH5T
+        xW/kxfgeS724msQMeqnj/mTwjNZJPOtWgplC5gYmbPAXeDTWrS7FPmcHpweGDlN3XnlwABxrrvIla
+        Yf3iJxbBuVoBI6Eq//Lv8a0s3zzjq8GefmXitCKCK9SQMB+SEAlBTstJ7hKELthxI2NxL8b687Y05
+        kCM2zAFxA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hqd7c-0008GX-Lj; Thu, 25 Jul 2019 12:45:24 +0000
+Date:   Thu, 25 Jul 2019 05:45:24 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        John Stultz <john.stultz@linaro.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Laura Abbott <labbott@redhat.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Liam Mark <lmark@codeaurora.org>,
+        Pratik Patel <pratikp@codeaurora.org>,
+        Brian Starkey <Brian.Starkey@arm.com>,
+        Vincent Donnefort <Vincent.Donnefort@arm.com>,
+        Sudipto Paul <Sudipto.Paul@arm.com>,
+        "Andrew F . Davis" <afd@ti.com>,
+        Xu YiPing <xuyiping@hisilicon.com>,
+        "Chenfeng (puck)" <puck.chen@hisilicon.com>,
+        butao <butao@hisilicon.com>,
+        "Xiaqing (A)" <saberlily.xia@hisilicon.com>,
+        Yudongbin <yudongbin@hisilicon.com>,
+        Chenbo Feng <fengc@google.com>,
+        Alistair Strachan <astrachan@google.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>
+Subject: Re: [PATCH v6 4/5] dma-buf: heaps: Add CMA heap to dmabuf heaps
+Message-ID: <20190725124524.GB20286@infradead.org>
+References: <20190624194908.121273-1-john.stultz@linaro.org>
+ <20190624194908.121273-5-john.stultz@linaro.org>
+ <20190718100840.GB19666@infradead.org>
+ <CALAqxLWLx_tHVjZqrSNWfQ_M2RGGqh4qth3hi9GGRdSPov-gcw@mail.gmail.com>
+ <20190724065958.GC16225@infradead.org>
+ <CA+M3ks6yPTV4i=wEu41bHqMsn_VkYUj=y9BXGmgDgovnT9ESfA@mail.gmail.com>
 MIME-Version: 1.0
-References: <CGME20190723122023eucas1p2ff56c00b60a676ed85d9fe159a1839f2@eucas1p2.samsung.com>
- <20190723122016.30279-1-a.swigon@partner.samsung.com> <20190723122016.30279-3-a.swigon@partner.samsung.com>
-In-Reply-To: <20190723122016.30279-3-a.swigon@partner.samsung.com>
-Reply-To: cwchoi00@gmail.com
-From:   Chanwoo Choi <cwchoi00@gmail.com>
-Date:   Thu, 25 Jul 2019 21:45:19 +0900
-Message-ID: <CAGTfZH3GXCuYY-xmKtGd-M47WKp2c8PseytKw-oUOwp+TtGsvQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 02/11] devfreq: exynos-bus: Extract exynos_bus_profile_init_passive()
-To:     =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon@partner.samsung.com>
-Cc:     devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>, inki.dae@samsung.com,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        georgi.djakov@linaro.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+M3ks6yPTV4i=wEu41bHqMsn_VkYUj=y9BXGmgDgovnT9ESfA@mail.gmail.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2019=EB=85=84 7=EC=9B=94 24=EC=9D=BC (=EC=88=98) =EC=98=A4=EC=A0=84 8:07, A=
-rtur =C5=9Awigo=C5=84 <a.swigon@partner.samsung.com>=EB=8B=98=EC=9D=B4 =EC=
-=9E=91=EC=84=B1:
->
-> This patch adds a new static function, exynos_bus_profile_init_passive(),
-> extracted from exynos_bus_probe().
->
-> Signed-off-by: Artur =C5=9Awigo=C5=84 <a.swigon@partner.samsung.com>
-> ---
->  drivers/devfreq/exynos-bus.c | 70 +++++++++++++++++++++---------------
->  1 file changed, 42 insertions(+), 28 deletions(-)
->
-> diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
-> index d8f1efaf2d49..cf6f6cbd0f55 100644
-> --- a/drivers/devfreq/exynos-bus.c
-> +++ b/drivers/devfreq/exynos-bus.c
-> @@ -430,13 +430,51 @@ static int exynos_bus_profile_init(struct exynos_bu=
-s *bus,
->         return ret;
->  }
->
-> +static int exynos_bus_profile_init_passive(struct exynos_bus *bus,
-> +                                          struct devfreq_dev_profile *pr=
-ofile)
-> +{
-> +       struct device *dev =3D bus->dev;
-> +       struct devfreq *parent_devfreq;
-> +       struct devfreq_passive_data *passive_data;
-> +       int ret =3D 0;
-> +
-> +       /* Initialize the struct profile and governor data for passive de=
-vice */
-> +       profile->target =3D exynos_bus_passive_target;
-> +       profile->exit =3D exynos_bus_passive_exit;
-> +
-> +       /* Get the instance of parent devfreq device */
-> +       parent_devfreq =3D devfreq_get_devfreq_by_phandle(dev, 0);
-> +       if (IS_ERR(parent_devfreq)) {
-> +               ret =3D -EPROBE_DEFER;
-> +               goto err;
-> +       }
-> +
-> +       passive_data =3D devm_kzalloc(dev, sizeof(*passive_data), GFP_KER=
-NEL);
-> +       if (!passive_data) {
-> +               ret =3D -ENOMEM;
-> +               goto err;
-> +       }
-> +       passive_data->parent =3D parent_devfreq;
-> +
-> +       /* Add devfreq device for exynos bus with passive governor */
-> +       bus->devfreq =3D devm_devfreq_add_device(dev, profile, DEVFREQ_GO=
-V_PASSIVE,
-> +                                               passive_data);
-> +       if (IS_ERR(bus->devfreq)) {
-> +               dev_err(dev,
-> +                       "failed to add devfreq dev with passive governor\=
-n");
-> +               ret =3D PTR_ERR(bus->devfreq);
-> +               goto err;
-> +       }
-> +
-> +err:
-> +       return ret;
-> +}
-> +
->  static int exynos_bus_probe(struct platform_device *pdev)
->  {
->         struct device *dev =3D &pdev->dev;
->         struct device_node *np =3D dev->of_node, *node;
->         struct devfreq_dev_profile *profile;
-> -       struct devfreq_passive_data *passive_data;
-> -       struct devfreq *parent_devfreq;
->         struct exynos_bus *bus;
->         int ret, max_state;
->         unsigned long min_freq, max_freq;
-> @@ -481,33 +519,9 @@ static int exynos_bus_probe(struct platform_device *=
-pdev)
->
->         goto out;
->  passive:
-> -       /* Initialize the struct profile and governor data for passive de=
-vice */
-> -       profile->target =3D exynos_bus_passive_target;
-> -       profile->exit =3D exynos_bus_passive_exit;
-> -
-> -       /* Get the instance of parent devfreq device */
-> -       parent_devfreq =3D devfreq_get_devfreq_by_phandle(dev, 0);
-> -       if (IS_ERR(parent_devfreq)) {
-> -               ret =3D -EPROBE_DEFER;
-> +       ret =3D exynos_bus_profile_init_passive(bus, profile);
-> +       if (ret < 0)
->                 goto err;
-> -       }
-> -
-> -       passive_data =3D devm_kzalloc(dev, sizeof(*passive_data), GFP_KER=
-NEL);
-> -       if (!passive_data) {
-> -               ret =3D -ENOMEM;
-> -               goto err;
-> -       }
-> -       passive_data->parent =3D parent_devfreq;
-> -
-> -       /* Add devfreq device for exynos bus with passive governor */
-> -       bus->devfreq =3D devm_devfreq_add_device(dev, profile, DEVFREQ_GO=
-V_PASSIVE,
-> -                                               passive_data);
-> -       if (IS_ERR(bus->devfreq)) {
-> -               dev_err(dev,
-> -                       "failed to add devfreq dev with passive governor\=
-n");
-> -               ret =3D PTR_ERR(bus->devfreq);
-> -               goto err;
-> -       }
->
->  out:
->         max_state =3D bus->devfreq->profile->max_state;
-> --
-> 2.17.1
->
+On Wed, Jul 24, 2019 at 10:08:54AM +0200, Benjamin Gaignard wrote:
+> CMA has made possible to get large regions of memories and to give some
+> priority on device allocating pages on it. I don't think that possible
+> with system
+> heap so I suggest to keep CMA heap if we want to be able to port a maximum
+> of applications on dma-buf-heap.
 
-Actually, it is not necessary. It has no any benefit.
-Please drop it as I commented on patch1.
+Yes, CMA is a way to better allocate contigous regions, but it isn't
+the only way to do that.
 
+So at least for the system default CMA area it really should be a helper
+for the system heap, especially given that CMA is an optional feature
+and we can do high order contigous allocations using alloc_pages as
+well.
 
---
-Best Regards,
-Chanwoo Choi
+Something like:
+
+	if (!require_contigous && order > 0) {
+		for (i = 0; i < nr_pages; i++)
+			page[i] = alloc_page();
+		goto done;
+	} else if (order > 0)
+		page = cma_alloc();
+		if (page)
+			goto done;
+	}
+
+	page = alloc_pages(order);
