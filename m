@@ -2,109 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A6A674D17
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 13:31:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B88574D26
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 13:34:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391888AbfGYLb4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 07:31:56 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:37698 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391826AbfGYLbz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 07:31:55 -0400
-Received: by mail-oi1-f196.google.com with SMTP id t76so37431480oih.4
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 04:31:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=essensium-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=KhuBXKW1pqwu3I/a51C/lMMrHG93yOL/odw0jXksmsM=;
-        b=NFaF/0+HWBocaTISPRN64FldkQJsCLdLOvTsLvCXfup95wjAONzWuBKO5ZBfS6oF1J
-         ekdw5EqRu1vDsLkUPP8yayxmbdrOGMKKvDgdSqTumrq/ZI2blPkLolJokz3tMpSz5Od7
-         HWqfiq+FtTHlUP+8d6HXhtaQyDxiNFxwvQFtqs/IPrI2nN9+kLAbJhhHho20DwC9vkII
-         iPPEL36enx+NCendroTEzk3RZ2eR4hq/QsxLtDL7oviQHOAk7K1QoZ4arpkFtKrTG0OF
-         2qXJXB2jE18QVAJwsyM2BX8o5PSu/f32LtkYRTY6e+0sXgxGSTCjNCgu8MFCj2e64/FE
-         njZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=KhuBXKW1pqwu3I/a51C/lMMrHG93yOL/odw0jXksmsM=;
-        b=kV1UVxCyYC7nP7q21kWOLIf4Q9t1C9TTSCHaPXo4H/1W6VQ5VvobKOaeJdS6jjSZgU
-         MJDsIwo2g68zFfZt4Hg1mYzcWpwwZaPGXsdN/LWtTuSZRi0L5wMzgMFsJus4pOd++4RQ
-         URRsYEgpsIhmqflzgd9OEO5L6BwK40RVt8l8QfUU3uPb/tj73LoPH1LuAeRRqk8lN8PO
-         8USrQdKOBxbuOhH9DQ4GoLwwYdX7okAw2m4H3IV3FIO37//F+3iameZR4a21AZ8Xns8j
-         xfTF8KryjutrrZX3C3kXwmzf6R8/YQNGh7Jco3yHHo82dBtXrlD/Ge+0m6tBPQLzXba1
-         ClaQ==
-X-Gm-Message-State: APjAAAWyQP98MSGCjB587w6yAA8MxBks2wTG9RZrrSSZjkpA8UHp/uXR
-        tHxx1tlG1QU7yfTQue0h2VCf3Zcil/iFJfaSoE7vvg==
-X-Google-Smtp-Source: APXvYqyTumoJZ0ix0stK6lv6nkJJmb3o/KhhwbmFxp6XK2dHaRDdSRFrJZl7q7gsxLKrWmIrfy6vJiZqQtl3NavRNws=
-X-Received: by 2002:a05:6808:8d3:: with SMTP id k19mr41623577oij.164.1564054314741;
- Thu, 25 Jul 2019 04:31:54 -0700 (PDT)
+        id S2391936AbfGYLem (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 07:34:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40236 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388479AbfGYLem (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 07:34:42 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A96052184B;
+        Thu, 25 Jul 2019 11:34:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564054480;
+        bh=nBOvUuzvC2p8gP+bnMWX3ZYG2Z6gx6IlHhzdXjtO114=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=R3ux+oQifD81Ws9cfZ6N50zWTqufwQSDGIQzc8mXoZ2uVngZKcLpZuqlNWA/TjAuU
+         EMW+el1rV6aChQG+cZ8O6zuESdOAH8JSS6yS4sWck9c3DEtk3/XnSqPEycA+LUZ7B+
+         LuBpXKeY4NT2YrYKonQJlYRq+6ZQbNaZxtQZGxNg=
+Date:   Thu, 25 Jul 2019 13:34:37 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Anders Roxell <anders.roxell@linaro.org>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        sean.j.christopherson@intel.com, wanpengli@tencent.com,
+        jmattson@google.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        lkft-triage@lists.linaro.org, ben.hutchings@codethink.co.uk,
+        stable@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+        torvalds@linux-foundation.org, linux@roeck-us.net
+Subject: Re: [PATCH 5.2 000/413] 5.2.3-stable review
+Message-ID: <20190725113437.GA27429@kroah.com>
+References: <20190724191735.096702571@linuxfoundation.org>
+ <CADYN=9+WLxhmqX3JNL_s-kWSN97G=8WhD=TF=uAuKecJnKcj_Q@mail.gmail.com>
 MIME-Version: 1.0
-References: <20190725085458.21838-1-hslester96@gmail.com>
-In-Reply-To: <20190725085458.21838-1-hslester96@gmail.com>
-From:   Patrick Havelange <patrick.havelange@essensium.com>
-Date:   Thu, 25 Jul 2019 13:31:43 +0200
-Message-ID: <CAKKE0ZE_9dK=nCodqHjTZFF2iQQvJRn=etdT_fm4ug7L_maCgg@mail.gmail.com>
-Subject: Re: [PATCH] counter/ftm-quaddec: Use device-managed registration API
-To:     Chuhong Yuan <hslester96@gmail.com>
-Cc:     William Breathitt Gray <vilhelm.gray@gmail.com>,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CADYN=9+WLxhmqX3JNL_s-kWSN97G=8WhD=TF=uAuKecJnKcj_Q@mail.gmail.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Thu, Jul 25, 2019 at 01:16:19PM +0200, Anders Roxell wrote:
+> On Wed, 24 Jul 2019 at 21:25, Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> >
+> > This is the start of the stable review cycle for the 5.2.3 release.
+> > There are 413 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> >
+> > Responses should be made by Fri 26 Jul 2019 07:13:35 PM UTC.
+> > Anything received after that time might be too late.
+> >
+> > The whole patch series can be found in one patch at:
+> >         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.2.3-rc1.gz
+> > or in the git tree and branch at:
+> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.2.y
+> > and the diffstat can be found below.
+> >
+> > thanks,
+> >
+> > greg k-h
+> 
+> Results from Linaro’s test farm.
+> Regressions detected.
+> 
+> Summary
+> ------------------------------------------------------------------------
+> 
+> kernel: 5.2.3-rc1
+> git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+> git branch: linux-5.2.y
+> git commit: db628fe0e67ff8c66e8c6ba76e5e4becfa75fe21
+> git describe: v5.2.2-414-gdb628fe0e67f
+> Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-5.2-oe/build/v5.2.2-414-gdb628fe0e67f
+> 
+> Regressions (compared to build v5.2.2)
+> ------------------------------------------------------------------------
+> 
+> x86:
+>   kvm-unit-tests:
+>     * vmx
+> 
+> 
+> TESTNAME=vmx TIMEOUT=90s ACCEL= ./x86/run x86/vmx.flat -smp 1 -cpu
+> host,+vmx -append \"-exit_monitor_from_l2_test -ept_access* -vmx_smp*
+> -vmx_vmcs_shadow_test\"
+> [  155.670748] kvm [6062]: vcpu0, guest rIP: 0x4050cb
+> kvm_set_msr_common: MSR_IA32_DEBUGCTLMSR 0x1, nop
+> [  155.681027] kvm [6062]: vcpu0, guest rIP: 0x408911
+> kvm_set_msr_common: MSR_IA32_DEBUGCTLMSR 0x3, nop
+> [  155.690749] kvm [6062]: vcpu0, guest rIP: 0x40bb39
+> kvm_set_msr_common: MSR_IA32_DEBUGCTLMSR 0x1, nop
+> [  155.700595] kvm [6062]: vcpu0, guest rIP: 0x4089b2
+> kvm_set_msr_common: MSR_IA32_DEBUGCTLMSR 0x3, nop
+> [  158.349308] nested_vmx_exit_reflected failed vm entry 7
+> [  158.363737] nested_vmx_exit_reflected failed vm entry 7
+> [  158.378010] nested_vmx_exit_reflected failed vm entry 7
+> [  158.392480] nested_vmx_exit_reflected failed vm entry 7
+> [  158.406920] nested_vmx_exit_reflected failed vm entry 7
+> [  158.421390] nested_vmx_exit_reflected failed vm entry 7
+> [  158.435795] nested_vmx_exit_reflected failed vm entry 7
+> [  158.450276] nested_vmx_exit_reflected failed vm entry 7
+> [  158.464674] nested_vmx_exit_reflected failed vm entry 7
+> [  158.479030] nested_vmx_exit_reflected failed vm entry 7
+> [  161.044379] set kvm_intel.dump_invalid_vmcs=1 to dump internal KVM state.
+> FAIL vmx (timeout; duration=90s)
+> 
+> kernel-config: http://snapshots.linaro.org/openembedded/lkft/lkft/sumo/intel-corei7-64/lkft/linux-stable-rc-5.2/14/config
+> Full log: https://lkft.validation.linaro.org/scheduler/job/836289#L1597
 
-Comments inline
+Ick.
 
-On Thu, Jul 25, 2019 at 10:55 AM Chuhong Yuan <hslester96@gmail.com> wrote:
->
-> Make use of devm_counter_register.
-> Then we can remove redundant unregistration API
-> usage to make code simpler.
->
-> Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
-> ---
->  drivers/counter/ftm-quaddec.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
->
-> diff --git a/drivers/counter/ftm-quaddec.c b/drivers/counter/ftm-quaddec.c
-> index 68a9b7393457..bccbca8681b6 100644
-> --- a/drivers/counter/ftm-quaddec.c
-> +++ b/drivers/counter/ftm-quaddec.c
-> @@ -317,7 +317,7 @@ static int ftm_quaddec_probe(struct platform_device *pdev)
->
->         ftm_quaddec_init(ftm);
->
-> -       ret = counter_register(&ftm->counter);
-> +       ret = devm_counter_register(&pdev->dev, &ftm->counter);
->         if (ret)
->                 ftm_quaddec_disable(ftm);
->
-> @@ -328,8 +328,6 @@ static int ftm_quaddec_remove(struct platform_device *pdev)
->  {
->         struct ftm_quaddec *ftm = platform_get_drvdata(pdev);
->
-> -       counter_unregister(&ftm->counter);
-> -
+Any chance you can run 'git bisect' to find the offending patch?  Or
+just try reverting a few, you can ignore the ppc ones, so that only
+leaves you 7 different commits.
 
-The orders of (de)initialization should be kept symmetrical.
-In this case, now that counter_unregister() will be called via devm,
-it will be executed after ftm_quaddec_remove()
+Does this same test pass in 5.3-rc1?
 
-This introduces a race condition where the ftm-quaddec is disabled but
-the counter entry itself is not.
+thanks,
 
-Somebody else (William?) should confirm this.
-
-
->         ftm_quaddec_disable(ftm);
->
->         return 0;
-> --
-> 2.20.1
->
+greg k-h
