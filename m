@@ -2,113 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14FAA74A31
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 11:46:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD5DB74A2E
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 11:45:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390798AbfGYJqF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 05:46:05 -0400
-Received: from relay2-d.mail.gandi.net ([217.70.183.194]:46217 "EHLO
-        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729162AbfGYJqC (ORCPT
+        id S2390757AbfGYJpw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 05:45:52 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:15831 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725808AbfGYJpw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 05:46:02 -0400
-X-Originating-IP: 92.137.69.152
-Received: from localhost (alyon-656-1-672-152.w92-137.abo.wanadoo.fr [92.137.69.152])
-        (Authenticated sender: gregory.clement@bootlin.com)
-        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id ED6D040006;
-        Thu, 25 Jul 2019 09:45:58 +0000 (UTC)
-From:   Gregory CLEMENT <gregory.clement@bootlin.com>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-Cc:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Gregory CLEMENT <gregory.clement@bootlin.com>
-Subject: [PATCH 3/3] regulator: twl6030: workaround the VMMC reset behavior
-Date:   Thu, 25 Jul 2019 11:45:42 +0200
-Message-Id: <20190725094542.16547-4-gregory.clement@bootlin.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190725094542.16547-1-gregory.clement@bootlin.com>
-References: <20190725094542.16547-1-gregory.clement@bootlin.com>
+        Thu, 25 Jul 2019 05:45:52 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d397a500000>; Thu, 25 Jul 2019 02:45:52 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 25 Jul 2019 02:45:51 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 25 Jul 2019 02:45:51 -0700
+Received: from [10.21.132.148] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 25 Jul
+ 2019 09:45:48 +0000
+Subject: Re: [PATCH net-next 3/3] net: stmmac: Introducing support for Page
+ Pool
+To:     Jose Abreu <Jose.Abreu@synopsys.com>,
+        Ilias Apalodimas <ilias.apalodimas@linaro.org>
+CC:     David Miller <davem@davemloft.net>,
+        "robin.murphy@arm.com" <robin.murphy@arm.com>,
+        "lists@bofh.nu" <lists@bofh.nu>,
+        "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>,
+        "alexandre.torgue@st.com" <alexandre.torgue@st.com>,
+        "maxime.ripard@bootlin.com" <maxime.ripard@bootlin.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-stm32@st-md-mailman.stormreply.com" 
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        "wens@csie.org" <wens@csie.org>,
+        "mcoquelin.stm32@gmail.com" <mcoquelin.stm32@gmail.com>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "peppe.cavallaro@st.com" <peppe.cavallaro@st.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+References: <BYAPR12MB32692AF2BA127C5DA5B74804D3C70@BYAPR12MB3269.namprd12.prod.outlook.com>
+ <6c769226-bdd9-6fe0-b96b-5a0d800fed24@arm.com>
+ <8756d681-e167-fe4a-c6f0-47ae2dcbb100@nvidia.com>
+ <20190723.115112.1824255524103179323.davem@davemloft.net>
+ <20190724085427.GA10736@apalos>
+ <BYAPR12MB3269AA9955844E317B62A239D3C60@BYAPR12MB3269.namprd12.prod.outlook.com>
+ <20190724095310.GA12991@apalos>
+ <BYAPR12MB3269C5766F553438ECFF2C9BD3C60@BYAPR12MB3269.namprd12.prod.outlook.com>
+ <33de62bf-2f8a-bf00-9260-418b12bed24c@nvidia.com>
+ <BYAPR12MB32696F0A2BFDF69F31C4311CD3C60@BYAPR12MB3269.namprd12.prod.outlook.com>
+ <a07c3480-af03-a61b-4e9c-d9ceb29ce622@nvidia.com>
+ <BYAPR12MB3269F4E62B64484B08F90998D3C10@BYAPR12MB3269.namprd12.prod.outlook.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <d2658b7d-1f24-70f7-fafe-b60a0fd7d240@nvidia.com>
+Date:   Thu, 25 Jul 2019 10:45:46 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <BYAPR12MB3269F4E62B64484B08F90998D3C10@BYAPR12MB3269.namprd12.prod.outlook.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1564047952; bh=5isgglopm7SeJ86vy3+jPoE2tjL+r8qlKxtTv2QKBHM=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=UOPEEsvkrrYBFIWOd177XUvGoLoWRcDIklaeRlE6HdJ86bODEuxFdAKOnXSsl7TQj
+         C1BlC2kjEQ0OhI0uEKzvHK9P8cFLhTi9bOecyjyqn+yeZ5oJTX4F0fA21jvxkmoMGW
+         TNukEvfcPf42Mg3iQLiGz6vTTPRGJWuSlRF4vZIshHT3rYR/wZStZWNFVVkYAUtTdd
+         e5axWio9Qs/BMnGYpAWXNM8SBrmW/SE92TcRbIn7zHU7j0fR3D8FXMdI5wfJW2vgh6
+         LWbcupZd1chBOxvamcdQX84cb/usJkiRoWPgbFY/h+z97ZHmL8OzwA12q1uekPsgVZ
+         PMCZNteWQgGFg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-During reset the VMMC regulator doesn't reach 0V and only drops to
-1.8V, furthermore the pulse width is under 200us whereas the SD
-specification expect 1ms.
 
-The WR_S bit allows the TWL6030 to no reset at all the VMMC during warm
-reset and keep the current voltage. Thanks to this workaround the SD
-card doesn't reach a undefined reset stage.
+On 25/07/2019 08:44, Jose Abreu wrote:
 
-Actually this behavior is available for all the LDO regulator, so the
-driver will also allow to use it with any of these regulator.
+...
 
-Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
----
- drivers/regulator/twl6030-regulator.c | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
+> OK. Can you please test what Ilias mentioned ?
+> 
+> Basically you can hard-code the order to 0 in 
+> alloc_dma_rx_desc_resources():
+> - pp_params.order = DIV_ROUND_UP(priv->dma_buf_sz, PAGE_SIZE);
+> + pp_params.order = 0;
+> 
+> Unless you use a MTU > PAGE_SIZE.
 
-diff --git a/drivers/regulator/twl6030-regulator.c b/drivers/regulator/twl6030-regulator.c
-index d73c81542ceb..b8100c3cedad 100644
---- a/drivers/regulator/twl6030-regulator.c
-+++ b/drivers/regulator/twl6030-regulator.c
-@@ -57,6 +57,9 @@ struct twlreg_info {
- #define VREG_BC_PROC		3
- #define VREG_BC_CLK_RST		4
- 
-+/* TWL6030 LDO register values for VREG_VOLTAGE */
-+#define TWL6030_VREG_VOLTAGE_WR_S   BIT(7)
-+
- /* TWL6030 LDO register values for CFG_STATE */
- #define TWL6030_CFG_STATE_OFF	0x00
- #define TWL6030_CFG_STATE_ON	0x01
-@@ -68,9 +71,10 @@ struct twlreg_info {
- #define TWL6030_CFG_STATE_APP(v)	(((v) & TWL6030_CFG_STATE_APP_MASK) >>\
- 						TWL6030_CFG_STATE_APP_SHIFT)
- 
--/* Flags for SMPS Voltage reading */
-+/* Flags for SMPS Voltage reading and LDO reading*/
- #define SMPS_OFFSET_EN		BIT(0)
- #define SMPS_EXTENDED_EN	BIT(1)
-+#define TWL_6030_WARM_RESET	BIT(3)
- 
- /* twl6032 SMPS EPROM values */
- #define TWL6030_SMPS_OFFSET		0xB0
-@@ -250,6 +254,9 @@ twl6030ldo_set_voltage_sel(struct regulator_dev *rdev, unsigned selector)
- {
- 	struct twlreg_info	*info = rdev_get_drvdata(rdev);
- 
-+	if (info->flags & TWL_6030_WARM_RESET)
-+		selector |= TWL6030_VREG_VOLTAGE_WR_S;
-+
- 	return twlreg_write(info, TWL_MODULE_PM_RECEIVER, VREG_VOLTAGE,
- 			    selector);
- }
-@@ -259,6 +266,9 @@ static int twl6030ldo_get_voltage_sel(struct regulator_dev *rdev)
- 	struct twlreg_info	*info = rdev_get_drvdata(rdev);
- 	int vsel = twlreg_read(info, TWL_MODULE_PM_RECEIVER, VREG_VOLTAGE);
- 
-+	if (info->flags & TWL_6030_WARM_RESET)
-+		vsel &= ~TWL6030_VREG_VOLTAGE_WR_S;
-+
- 	return vsel;
- }
- 
-@@ -710,6 +720,9 @@ static int twlreg_probe(struct platform_device *pdev)
- 		break;
- 	}
- 
-+	if (of_get_property(np, "ti,retain-on-reset", NULL))
-+		info->flags |= TWL_6030_WARM_RESET;
-+
- 	config.dev = &pdev->dev;
- 	config.init_data = initdata;
- 	config.driver_data = info;
+I made the change but unfortunately the issue persists.
+
+Jon
+
 -- 
-2.20.1
-
+nvpublic
