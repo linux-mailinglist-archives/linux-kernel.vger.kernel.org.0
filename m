@@ -2,83 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7815475415
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 18:32:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 972AD7541D
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 18:33:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729302AbfGYQcV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 12:32:21 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:57516 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726087AbfGYQcV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 12:32:21 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id F144A86679;
-        Thu, 25 Jul 2019 16:32:20 +0000 (UTC)
-Received: from [10.36.116.102] (ovpn-116-102.ams2.redhat.com [10.36.116.102])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7EA3E60C05;
-        Thu, 25 Jul 2019 16:32:16 +0000 (UTC)
-Subject: Re: [PATCH 2/2] virtio/virtio_ring: Fix the dma_max_mapping_size call
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Robin Murphy <robin.murphy@arm.com>, eric.auger.pro@gmail.com,
-        m.szyprowski@samsung.com, mst@redhat.com, jasowang@redhat.com,
-        virtualization@lists.linux-foundation.org,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-References: <20190722145509.1284-1-eric.auger@redhat.com>
- <20190722145509.1284-3-eric.auger@redhat.com>
- <e4a288f2-a93a-5ce4-32da-f5434302551f@arm.com> <20190723153851.GE720@lst.de>
- <fa0fbad5-9b44-d937-e0fd-65fb20c90666@redhat.com>
- <20190725130416.GA4992@lst.de>
-From:   Auger Eric <eric.auger@redhat.com>
-Message-ID: <11b7b5e4-2de7-2089-57d2-d0a138f94376@redhat.com>
-Date:   Thu, 25 Jul 2019 18:32:14 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        id S1729341AbfGYQdb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 12:33:31 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:38659 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729288AbfGYQdb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 12:33:31 -0400
+Received: by mail-pl1-f194.google.com with SMTP id az7so23600636plb.5;
+        Thu, 25 Jul 2019 09:33:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=fWyae0jUTAF4x+yTTmMwdWy55jpYm4id2Z4h6uyhbMw=;
+        b=SpsO+BbYEdwHYVZc1i1GI0ksxX4pfVrpjDdQeO48qo7O6BqqcIX3kL5Xv82/T4iVKf
+         llk2JqaPSRzpRSq9B5f1m9rlkqvn7P+vQKDzqVY5NjxB6EQpZw9sb688ZS9gT8HxyhbF
+         VJSDabUUafSGREfR+QYuAbgtV8Ytwdp1uj00YiXnS68yM23MDB7Zrb32ks+0w2P6deeT
+         T1z8hwv2pLvcJH32nrSzBteRvXUwsTtqhu+MNH6qT9NJwpnVdBJ7tfZawJYyRbmGU1Yc
+         Q0aZOzqnnr441ytU4wiMSrK9pwKotd80ibMjxm+DmmXUyFTf0OZ1v/5iab1Q7Qx5MRQd
+         kkPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=fWyae0jUTAF4x+yTTmMwdWy55jpYm4id2Z4h6uyhbMw=;
+        b=YQt1FIy8z9WvgHDPu/IU1fXPlGqNse7ouX1jRHYlPH+tI4r8vAiz+GdO94chjXbZzl
+         XDmyPoMWGlKoDKx8R8cqLsHLFBhMs7kLuAP5kAidlashj8j6o5RIZv1aiu2Ho2yrNcAt
+         pDGjyGJ5R7vXjlo6SvJHxAUwyguNvpab78FhDHC0wft7cSNHcCTkdW+WcgKKkCs3xQnj
+         yaAHo3PX07UflvjK0mUL9U6Z7A7OulMKcwOd1CZwQ8rABVSSmTc8kS9MiWG9wwZ8kZDc
+         aKa/hQdQkwNtzzvWPSOxbaMqpFHdT4uyiF5kPiguEAJIcO4tAmjqo8vmqL/Dc+1CAlI+
+         1IEw==
+X-Gm-Message-State: APjAAAWojnlYmwNSCHlR8LQFlJBIG7zw0XOVpDjMjmdZc2GQUpVy4sjL
+        bQtFz+t0RI+rCO7rBxI60+g=
+X-Google-Smtp-Source: APXvYqzfVcMfDfERWDYvingdE+UxhlPApARaZyeBgAP9HeQ2JtHcCTKSSqpBq3wc0/MYmFpHeluJ7w==
+X-Received: by 2002:a17:902:ac85:: with SMTP id h5mr92835129plr.198.1564072410911;
+        Thu, 25 Jul 2019 09:33:30 -0700 (PDT)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id e189sm25305383pgc.15.2019.07.25.09.33.29
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 25 Jul 2019 09:33:29 -0700 (PDT)
+Date:   Thu, 25 Jul 2019 09:33:29 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 5.1 000/371] 5.1.20-stable review
+Message-ID: <20190725163329.GA11220@roeck-us.net>
+References: <20190724191724.382593077@linuxfoundation.org>
 MIME-Version: 1.0
-In-Reply-To: <20190725130416.GA4992@lst.de>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Thu, 25 Jul 2019 16:32:21 +0000 (UTC)
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190724191724.382593077@linuxfoundation.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Christoph, Michael,
-
-On 7/25/19 3:04 PM, Christoph Hellwig wrote:
-> On Thu, Jul 25, 2019 at 01:53:49PM +0200, Auger Eric wrote:
->> I am confused: if vring_use_dma_api() returns false if the dma_mask is
->> unset (ie. vring_use_dma_api() returns false), the virtio-blk-pci device
->> will not be able to get translated addresses and won't work properly.
->>
->> The patch above allows the dma api to be used and only influences the
->> max_segment_size and it works properly.
->>
->> So is it normal the dma_mask is unset in my case?
+On Wed, Jul 24, 2019 at 09:15:52PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.1.20 release.
+> There are 371 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Its not normal.  I assume you use virtio-nmio?  Due to the mess with
-> the dma_mask being a pointer a lot of subsystems forgot to set a dma
-> mask up, and oddly enough seem to mostly get away with it.
+> Responses should be made by Fri 26 Jul 2019 07:13:35 PM UTC.
+> Anything received after that time might be too late.
 > 
 
-No the issue is encountered with virtio-blk-pci
+Building powerpc:defconfig ... failed
+Building powerpc:allmodconfig ... failed
 
-I think the problem is virtio_max_dma_size() is called from
-virtblk_probe (virtio_blk.c) on the virtio<n> device and not the actual
-virtio_pci_device which has a dma_mask set. I don't think the virtio<n>
-device ever has a dma_mask set.
+arch/powerpc/kernel/prom_init.c: In function ‘early_cmdline_parse’:
+arch/powerpc/kernel/prom_init.c:689:8: error: implicit declaration of function ‘prom_strstr’
 
-We do not hit the guest crash on the virtio-net-pci device as the
-virtio-net driver does not call virtio_max_dma_size() on the virtio<n>
-device.
+plus several qemu tests failing to build for the same reason.
 
-Does fd1068e1860e ("virtio-blk: Consider virtio_max_dma_size() for
-maximum segment size") call virtio_max_dma_size() on the right device?
-
-Thanks
-
-Eric
+Guenter
