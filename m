@@ -2,224 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F421A743A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 05:09:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 956C8743AB
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 05:11:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389685AbfGYDJb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 24 Jul 2019 23:09:31 -0400
-Received: from hermes.aosc.io ([199.195.250.187]:54404 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389610AbfGYDJb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Jul 2019 23:09:31 -0400
-Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
-        by hermes.aosc.io (Postfix) with ESMTPSA id 919D867D0F;
-        Thu, 25 Jul 2019 03:09:27 +0000 (UTC)
-From:   Icenowy Zheng <icenowy@aosc.io>
-To:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>
-Cc:     linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v2] f2fs: use EINVAL for superblock with invalid magic
-Date:   Thu, 25 Jul 2019 11:08:52 +0800
-Message-Id: <20190725030852.33161-1-icenowy@aosc.io>
+        id S2389719AbfGYDLB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 24 Jul 2019 23:11:01 -0400
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:57997 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2388594AbfGYDLB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Jul 2019 23:11:01 -0400
+X-IronPort-AV: E=Sophos;i="5.64,305,1559491200"; 
+   d="scan'208";a="72161282"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 25 Jul 2019 11:11:00 +0800
+Received: from G08CNEXCHPEKD02.g08.fujitsu.local (unknown [10.167.33.83])
+        by cn.fujitsu.com (Postfix) with ESMTP id 10AD04CDE64D;
+        Thu, 25 Jul 2019 11:10:59 +0800 (CST)
+Received: from [10.167.215.46] (10.167.215.46) by
+ G08CNEXCHPEKD02.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
+ id 14.3.439.0; Thu, 25 Jul 2019 11:11:00 +0800
+Message-ID: <5D391DC0.3050100@cn.fujitsu.com>
+Date:   Thu, 25 Jul 2019 11:10:56 +0800
+From:   Yang Xu <xuyang2018.jy@cn.fujitsu.com>
+User-Agent: Mozilla/5.0 (Windows; U; Windows NT 6.1; zh-CN; rv:1.9.2.18) Gecko/20110616 Thunderbird/3.1.11
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+To:     Andrew Morton <akpm@linux-foundation.org>
+CC:     <gorcunov@gmail.com>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] sys_prctl(): remove unsigned comparision with less
+ than zero
+References: <20190723094809.GE4832@uranus.lan>  <1563934308-20833-1-git-send-email-xuyang2018.jy@cn.fujitsu.com> <20190724191448.4db70a34f8b89bd8bdc085f5@linux-foundation.org>
+In-Reply-To: <20190724191448.4db70a34f8b89bd8bdc085f5@linux-foundation.org>
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.167.215.46]
+X-yoursite-MailScanner-ID: 10AD04CDE64D.A18B6
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: xuyang2018.jy@cn.fujitsu.com
+X-Spam-Status: No
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The kernel mount_block_root() function expects -EACESS or -EINVAL for a
-unmountable filesystem when trying to mount the root with different
-filesystem types.
+on 2019/07/25 10:14, Andrew Morton wrote:
 
-However, in 5.3-rc1 the behavior when F2FS code cannot find valid block
-changed to return -EFSCORRUPTED(-EUCLEAN), and this error code makes
-mount_block_root() fail when trying to probe F2FS.
+> On Wed, 24 Jul 2019 10:11:48 +0800 Yang Xu<xuyang2018.jy@cn.fujitsu.com>  wrote:
+>
+>> Currently, when calling prctl(PR_SET_TIMERSLACK, arg2), arg2 is an
+>> unsigned long value, arg2 will never<  0. Negative judgment is
+>> meaningless, so remove it.
+>>
+>> ...
+>>
+>> --- a/kernel/sys.c
+>> +++ b/kernel/sys.c
+>> @@ -2372,7 +2372,7 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
+>>   			error = current->timer_slack_ns;
+>>   		break;
+>>   	case PR_SET_TIMERSLACK:
+>> -		if (arg2<= 0)
+>> +		if (arg2 == 0)
+>>   			current->timer_slack_ns =
+>>   					current->default_timer_slack_ns;
+> A number of years ago Linus expressed approval of such comparisons with
+> unsigned quantities.  He felt that it improves readability a little -
+> the reader doesn't have to scroll back and check the type.
+Hi Andrew
 
-When the magic number of the superblock mismatches, it has a high
-probability that it's just not a F2FS. In this case return -EINVAL seems
-to be a better result, and this return value can make mount_block_root()
-probing work again.
+    It sounds good. ButWe still have to look at the actual situation. In here, this comparisons with unsigned
+quantities doesn't improvereadability. In turn, the code give user a wrongdescription  as man page said "
+If arg2 is less than or equal to zero, the "current" timer slack is reset to the thread's default" timer slack value."
 
-Return -EINVAL when the superblock has magic mismatch, -EFSCORRUPTED in
-other cases (the magic matches but the superblock cannot be recognized).
+If we set -1 in user space, we pass it into kernel as ULONG_MAX, it will not use default timer_slack value.
 
-Fixes: 10f966bbf521 ("f2fs: use generic EFSBADCRC/EFSCORRUPTED")
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
-Changes in v2:
-- Only return -EINVAL when magic mismatch.
+Also, I guess that if value has no actual sense we can use this comparisons. In here, arg2 represents slack time.
+time will never less than 0.
 
- fs/f2fs/super.c | 48 ++++++++++++++++++++++++------------------------
- 1 file changed, 24 insertions(+), 24 deletions(-)
+ps: whether we change or not change this comparisons, it doesn't affect logic. So if you think this patch is meaningless,
+I will accept it.
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 6de6cda44031..78a1b873e48a 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -2422,6 +2422,12 @@ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
- 	size_t crc_offset = 0;
- 	__u32 crc = 0;
- 
-+	if (le32_to_cpu(raw_super->magic) != F2FS_SUPER_MAGIC) {
-+		f2fs_info(sbi, "Magic Mismatch, valid(0x%x) - read(0x%x)",
-+			  F2FS_SUPER_MAGIC, le32_to_cpu(raw_super->magic));
-+		return -EINVAL;
-+	}
-+
- 	/* Check checksum_offset and crc in superblock */
- 	if (__F2FS_HAS_FEATURE(raw_super, F2FS_FEATURE_SB_CHKSUM)) {
- 		crc_offset = le32_to_cpu(raw_super->checksum_offset);
-@@ -2429,26 +2435,20 @@ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
- 			offsetof(struct f2fs_super_block, crc)) {
- 			f2fs_info(sbi, "Invalid SB checksum offset: %zu",
- 				  crc_offset);
--			return 1;
-+			return -EFSCORRUPTED;
- 		}
- 		crc = le32_to_cpu(raw_super->crc);
- 		if (!f2fs_crc_valid(sbi, crc, raw_super, crc_offset)) {
- 			f2fs_info(sbi, "Invalid SB checksum value: %u", crc);
--			return 1;
-+			return -EFSCORRUPTED;
- 		}
- 	}
- 
--	if (F2FS_SUPER_MAGIC != le32_to_cpu(raw_super->magic)) {
--		f2fs_info(sbi, "Magic Mismatch, valid(0x%x) - read(0x%x)",
--			  F2FS_SUPER_MAGIC, le32_to_cpu(raw_super->magic));
--		return 1;
--	}
--
- 	/* Currently, support only 4KB page cache size */
- 	if (F2FS_BLKSIZE != PAGE_SIZE) {
- 		f2fs_info(sbi, "Invalid page_cache_size (%lu), supports only 4KB",
- 			  PAGE_SIZE);
--		return 1;
-+		return -EFSCORRUPTED;
- 	}
- 
- 	/* Currently, support only 4KB block size */
-@@ -2456,14 +2456,14 @@ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
- 	if (blocksize != F2FS_BLKSIZE) {
- 		f2fs_info(sbi, "Invalid blocksize (%u), supports only 4KB",
- 			  blocksize);
--		return 1;
-+		return -EFSCORRUPTED;
- 	}
- 
- 	/* check log blocks per segment */
- 	if (le32_to_cpu(raw_super->log_blocks_per_seg) != 9) {
- 		f2fs_info(sbi, "Invalid log blocks per segment (%u)",
- 			  le32_to_cpu(raw_super->log_blocks_per_seg));
--		return 1;
-+		return -EFSCORRUPTED;
- 	}
- 
- 	/* Currently, support 512/1024/2048/4096 bytes sector size */
-@@ -2473,7 +2473,7 @@ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
- 				F2FS_MIN_LOG_SECTOR_SIZE) {
- 		f2fs_info(sbi, "Invalid log sectorsize (%u)",
- 			  le32_to_cpu(raw_super->log_sectorsize));
--		return 1;
-+		return -EFSCORRUPTED;
- 	}
- 	if (le32_to_cpu(raw_super->log_sectors_per_block) +
- 		le32_to_cpu(raw_super->log_sectorsize) !=
-@@ -2481,7 +2481,7 @@ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
- 		f2fs_info(sbi, "Invalid log sectors per block(%u) log sectorsize(%u)",
- 			  le32_to_cpu(raw_super->log_sectors_per_block),
- 			  le32_to_cpu(raw_super->log_sectorsize));
--		return 1;
-+		return -EFSCORRUPTED;
- 	}
- 
- 	segment_count = le32_to_cpu(raw_super->segment_count);
-@@ -2495,7 +2495,7 @@ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
- 	if (segment_count > F2FS_MAX_SEGMENT ||
- 				segment_count < F2FS_MIN_SEGMENTS) {
- 		f2fs_info(sbi, "Invalid segment count (%u)", segment_count);
--		return 1;
-+		return -EFSCORRUPTED;
- 	}
- 
- 	if (total_sections > segment_count ||
-@@ -2503,25 +2503,25 @@ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
- 			segs_per_sec > segment_count || !segs_per_sec) {
- 		f2fs_info(sbi, "Invalid segment/section count (%u, %u x %u)",
- 			  segment_count, total_sections, segs_per_sec);
--		return 1;
-+		return -EFSCORRUPTED;
- 	}
- 
- 	if ((segment_count / segs_per_sec) < total_sections) {
- 		f2fs_info(sbi, "Small segment_count (%u < %u * %u)",
- 			  segment_count, segs_per_sec, total_sections);
--		return 1;
-+		return -EFSCORRUPTED;
- 	}
- 
- 	if (segment_count > (le64_to_cpu(raw_super->block_count) >> 9)) {
- 		f2fs_info(sbi, "Wrong segment_count / block_count (%u > %llu)",
- 			  segment_count, le64_to_cpu(raw_super->block_count));
--		return 1;
-+		return -EFSCORRUPTED;
- 	}
- 
- 	if (secs_per_zone > total_sections || !secs_per_zone) {
- 		f2fs_info(sbi, "Wrong secs_per_zone / total_sections (%u, %u)",
- 			  secs_per_zone, total_sections);
--		return 1;
-+		return -EFSCORRUPTED;
- 	}
- 	if (le32_to_cpu(raw_super->extension_count) > F2FS_MAX_EXTENSION ||
- 			raw_super->hot_ext_count > F2FS_MAX_EXTENSION ||
-@@ -2531,7 +2531,7 @@ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
- 			  le32_to_cpu(raw_super->extension_count),
- 			  raw_super->hot_ext_count,
- 			  F2FS_MAX_EXTENSION);
--		return 1;
-+		return -EFSCORRUPTED;
- 	}
- 
- 	if (le32_to_cpu(raw_super->cp_payload) >
-@@ -2539,7 +2539,7 @@ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
- 		f2fs_info(sbi, "Insane cp_payload (%u > %u)",
- 			  le32_to_cpu(raw_super->cp_payload),
- 			  blocks_per_seg - F2FS_CP_PACKS);
--		return 1;
-+		return -EFSCORRUPTED;
- 	}
- 
- 	/* check reserved ino info */
-@@ -2550,12 +2550,12 @@ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
- 			  le32_to_cpu(raw_super->node_ino),
- 			  le32_to_cpu(raw_super->meta_ino),
- 			  le32_to_cpu(raw_super->root_ino));
--		return 1;
-+		return -EFSCORRUPTED;
- 	}
- 
- 	/* check CP/SIT/NAT/SSA/MAIN_AREA area boundary */
- 	if (sanity_check_area_boundary(sbi, bh))
--		return 1;
-+		return -EFSCORRUPTED;
- 
- 	return 0;
- }
-@@ -2870,10 +2870,10 @@ static int read_raw_super_block(struct f2fs_sb_info *sbi,
- 		}
- 
- 		/* sanity checking of raw super */
--		if (sanity_check_raw_super(sbi, bh)) {
-+		err = sanity_check_raw_super(sbi, bh);
-+		if (err) {
- 			f2fs_err(sbi, "Can't find valid F2FS filesystem in %dth superblock",
- 				 block + 1);
--			err = -EFSCORRUPTED;
- 			brelse(bh);
- 			continue;
- 		}
--- 
-2.21.0
+Thanks
+Yang Xu
+
+>
+>
+>
+>
+
+
 
