@@ -2,68 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8AD7C75B2D
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 01:19:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D2AFB75B2E
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 01:19:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726963AbfGYXTC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 19:19:02 -0400
-Received: from smtprelay0254.hostedemail.com ([216.40.44.254]:35600 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726822AbfGYXTB (ORCPT
+        id S1726982AbfGYXTl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 19:19:41 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:37090 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726822AbfGYXTl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 19:19:01 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay07.hostedemail.com (Postfix) with ESMTP id 42B0A181D33FC;
-        Thu, 25 Jul 2019 23:19:00 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::::::::::,RULES_HIT:41:355:379:599:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1538:1567:1593:1594:1711:1714:1730:1747:1777:1792:2393:2559:2562:2693:2828:3138:3139:3140:3141:3142:3622:3865:3866:3867:3868:3870:3872:3874:4321:5007:6691:6742:10004:10400:10848:11232:11658:11914:12297:12740:12760:12895:13069:13311:13357:13439:14659:21080:21433:21627:30054:30055:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:28,LUA_SUMMARY:none
-X-HE-Tag: sand48_6b5f3660fae4f
-X-Filterd-Recvd-Size: 1709
-Received: from XPS-9350 (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
-        (Authenticated sender: joe@perches.com)
-        by omf16.hostedemail.com (Postfix) with ESMTPA;
-        Thu, 25 Jul 2019 23:18:57 +0000 (UTC)
-Message-ID: <ad5ec66830b502d68e6d3c814706b52490418f0f.camel@perches.com>
-Subject: Re: [tip:perf/urgent] perf/x86/intel: Mark expected switch
- fall-throughs
-From:   Joe Perches <joe@perches.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>
-Cc:     hpa@zytor.com, tglx@linutronix.de, mingo@kernel.org,
-        gustavo@embeddedor.com, torvalds@linux-foundation.org,
-        acme@kernel.org, kan.liang@linux.intel.com, namhyung@kernel.org,
-        jolsa@redhat.com, linux-kernel@vger.kernel.org,
-        alexander.shishkin@linux.intel.com, keescook@chromium.org,
-        linux-tip-commits@vger.kernel.org
-Date:   Thu, 25 Jul 2019 16:18:56 -0700
-In-Reply-To: <20190725173521.GM31381@hirez.programming.kicks-ass.net>
-References: <20190624161913.GA32270@embeddedor>
-         <tip-289a2d22b5b611d85030795802a710e9f520df29@git.kernel.org>
-         <20190725170613.GC27348@nazgul.tnic>
-         <20190725173521.GM31381@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
+        Thu, 25 Jul 2019 19:19:41 -0400
+Received: by mail-wr1-f65.google.com with SMTP id n9so27338636wrr.4
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 16:19:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=K3wHkemLb3xaCpDEOIj/woHJAbVwLsLkHjzsKdx3mpc=;
+        b=iE5fP78vQJNNEpUlj/w8P2zd5lVYcK/GEEYtKmli/8t6+RClly+os1sCsFVr101z+C
+         lIzlpGPn/Gl9nXDANPZkWRXrzCGBOp3T70eTP22I1HqfCIA4w4eNsdYzqj03gwUsrWEM
+         J9abwSF0pjCC68oM4q4Cp6BjWdHnLTVwTNnz7ktmQjdoDVyEWr+VAwgOA0Xt1hHpKxEj
+         oz7OoKZNi2qKsd00cC3PYQ9zJzCWIuv1p8jOFZSKqwtF5AXfanTFXY4bV5kYCba0E5IK
+         6kI4iejG2G/5AYMnRFwjzeqIe1QHqFejq/jyA6EzVsjOLBQcSwvHmXOIctE77p0ypJm6
+         PNZw==
+X-Gm-Message-State: APjAAAV9CL/duv4rOgSIWP2LdkdtgtZ+QlxkQlPVJ26Ksqy4QIxu2hAg
+        Cp1PFGB4WacGy6kHDmsJToD8MA==
+X-Google-Smtp-Source: APXvYqzjWT4ow6D0N4ysM5JtU6bPrYkvp6eH3dlpaBKFdVmxlLFewHnONQ5vX0oLS8HYmV85Lf7nuA==
+X-Received: by 2002:a05:6000:1203:: with SMTP id e3mr20306951wrx.300.1564096779690;
+        Thu, 25 Jul 2019 16:19:39 -0700 (PDT)
+Received: from mcroce-redhat.homenet.telecomitalia.it (host21-50-dynamic.21-87-r.retail.telecomitalia.it. [87.21.50.21])
+        by smtp.gmail.com with ESMTPSA id y1sm38206717wma.32.2019.07.25.16.19.38
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 25 Jul 2019 16:19:38 -0700 (PDT)
+From:   Matteo Croce <mcroce@redhat.com>
+To:     netdev@vger.kernel.org
+Cc:     Antoine Tenart <antoine.tenart@bootlin.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        Marcin Wojtas <mw@semihalf.com>,
+        Stefan Chulski <stefanc@marvell.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: [PATCH net] mvpp2: refactor MTU change code
+Date:   Fri, 26 Jul 2019 01:19:31 +0200
+Message-Id: <20190725231931.24073-1-mcroce@redhat.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-07-25 at 19:35 +0200, Peter Zijlstra wrote:
-> Seriously though; I detest these patches and we really, as in _really_
-> should have done that attribute thing.
+The MTU change code can call napi_disable() with the device already down,
+leading to a deadlock. Also, lot of code is duplicated unnecessarily.
 
-At least it'll be fairly easy to convert to something
-sensible later.
+Rework mvpp2_change_mtu() to avoid the deadlock and remove duplicated code.
 
-Variants of the equivalent of:
+Signed-off-by: Matteo Croce <mcroce@redhat.com>
+---
+ .../net/ethernet/marvell/mvpp2/mvpp2_main.c   | 41 ++++++-------------
+ 1 file changed, 13 insertions(+), 28 deletions(-)
 
-s@/* fallthrough */@fallthrough;@
-
-with some trivial whitespace reformatting will read
-_much_ better.
-
-It's pretty scriptable.
-
+diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+index 2f7286bd203b..60eb98f99571 100644
+--- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
++++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+@@ -3612,6 +3612,7 @@ static int mvpp2_set_mac_address(struct net_device *dev, void *p)
+ static int mvpp2_change_mtu(struct net_device *dev, int mtu)
+ {
+ 	struct mvpp2_port *port = netdev_priv(dev);
++	bool running = netif_running(dev);
+ 	int err;
+ 
+ 	if (!IS_ALIGNED(MVPP2_RX_PKT_SIZE(mtu), 8)) {
+@@ -3620,40 +3621,24 @@ static int mvpp2_change_mtu(struct net_device *dev, int mtu)
+ 		mtu = ALIGN(MVPP2_RX_PKT_SIZE(mtu), 8);
+ 	}
+ 
+-	if (!netif_running(dev)) {
+-		err = mvpp2_bm_update_mtu(dev, mtu);
+-		if (!err) {
+-			port->pkt_size =  MVPP2_RX_PKT_SIZE(mtu);
+-			return 0;
+-		}
+-
+-		/* Reconfigure BM to the original MTU */
+-		err = mvpp2_bm_update_mtu(dev, dev->mtu);
+-		if (err)
+-			goto log_error;
+-	}
+-
+-	mvpp2_stop_dev(port);
++	if (running)
++		mvpp2_stop_dev(port);
+ 
+ 	err = mvpp2_bm_update_mtu(dev, mtu);
+-	if (!err) {
++	if (err) {
++		netdev_err(dev, "failed to change MTU\n");
++		/* Reconfigure BM to the original MTU */
++		mvpp2_bm_update_mtu(dev, dev->mtu);
++	} else {
+ 		port->pkt_size =  MVPP2_RX_PKT_SIZE(mtu);
+-		goto out_start;
+ 	}
+ 
+-	/* Reconfigure BM to the original MTU */
+-	err = mvpp2_bm_update_mtu(dev, dev->mtu);
+-	if (err)
+-		goto log_error;
+-
+-out_start:
+-	mvpp2_start_dev(port);
+-	mvpp2_egress_enable(port);
+-	mvpp2_ingress_enable(port);
++	if (running) {
++		mvpp2_start_dev(port);
++		mvpp2_egress_enable(port);
++		mvpp2_ingress_enable(port);
++	}
+ 
+-	return 0;
+-log_error:
+-	netdev_err(dev, "failed to change MTU\n");
+ 	return err;
+ }
+ 
+-- 
+2.21.0
 
