@@ -2,140 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 12C92759BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 23:37:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 24D6A759C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 23:38:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727041AbfGYVhU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 17:37:20 -0400
-Received: from mail-vs1-f41.google.com ([209.85.217.41]:44094 "EHLO
-        mail-vs1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726817AbfGYVhS (ORCPT
+        id S1726766AbfGYViJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 17:38:09 -0400
+Received: from relay1.mentorg.com ([192.94.38.131]:39134 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725819AbfGYViJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 17:37:18 -0400
-Received: by mail-vs1-f41.google.com with SMTP id v129so34702549vsb.11;
-        Thu, 25 Jul 2019 14:37:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=lTd7Gz7s5jeydJlwaOBlP9FrkJ567NK9DmXJEKGyG6M=;
-        b=sLakc87rb4hOGU1OSbrdA/rxHkU9VGvNHdokH17C0h+S/MM4VZc22b26ghLIFXfFqF
-         de2J6+4XQ/o0MCoT1uWQ6MX03H3gRKcPVqpJNZdeiw4/Q52YetknhBxXemjFBbGHRhCj
-         aomsoPv7lp/6pQGfHThsX8QT/eGb/1SfmjxYxJS/8JXEefNPaUrvDJvRHNtFeuLwvnd3
-         if4beGnXXlchmVW/GPpaYGwYW2IKBnzu7mM6C194XzIh+sg6NIxslUy8O58cI5macwJN
-         x4zhKLVJDz657AjIgfXPFqq0+4X8q6lnyOKRAB9+VazOaJX/nal9r3X6UJ1yZn07OVor
-         9a+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=lTd7Gz7s5jeydJlwaOBlP9FrkJ567NK9DmXJEKGyG6M=;
-        b=toPmCzCZRAKUr0Df5ibVzcQJVPAH+zVJlsFQtEt5FyySDUdzQIW3RkKW6qUr3oiaqH
-         BLb7/+nVxnCQqKm68yOhC5mXMIXWfdLtrF8G+4Jr6bNbhbRLEOSErK+oIOyyQa4AQV0M
-         /dTMdT8GTbMps4UNB7tHLlnfKXpyQNa08l9f0Z/rF31ubUW4soWlGzQNi+DAlhcOL2wa
-         gy6DNx+CiOTbwTXcQqC7+NDdIe+9DKXslZxsEp28GJ0FblPKYPw0zLgX8zJaMPWSSehe
-         U3fsCtDJI66uTMJeK6b27JxRmpVrI4M5milfjjUtg/0ZTWZEsEAjP2f9T1Qb9l7kcBnp
-         iDwA==
-X-Gm-Message-State: APjAAAWoEpb6bUzIig+LS+xZgTPLXOJYjGejsSluLI8P9wNGMz/bPiRc
-        J9nDlX7pkcdKjch1czU6fUgU/uiaEicylH720Gc3kQ==
-X-Google-Smtp-Source: APXvYqz3a02ATq/pR9r7nMgVe4KmjnjpMVrJmVLsq5f/GDIc7uwqG508wbsHkpB2z864qpcXIi3M0dFsAqAN7UUavVg=
-X-Received: by 2002:a67:edcf:: with SMTP id e15mr57616507vsp.75.1564090636593;
- Thu, 25 Jul 2019 14:37:16 -0700 (PDT)
+        Thu, 25 Jul 2019 17:38:09 -0400
+Received: from svr-orw-mbx-01.mgc.mentorg.com ([147.34.90.201])
+        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
+        id 1hqlR0-00033d-8J from George_Davis@mentor.com ; Thu, 25 Jul 2019 14:37:58 -0700
+Received: from localhost (147.34.91.1) by svr-orw-mbx-01.mgc.mentorg.com
+ (147.34.90.201) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Thu, 25 Jul
+ 2019 14:37:56 -0700
+Date:   Thu, 25 Jul 2019 17:37:54 -0400
+From:   "George G. Davis" <george_davis@mentor.com>
+To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
+CC:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Allison Randal <allison@lohutok.net>,
+        Souptick Joarder <jrdr.linux@gmail.com>,
+        "moderated list:ARM PORT" <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ARM: Fix null die() string for unhandled data and
+ prefetch abort cases
+Message-ID: <20190725213754.GA29898@mam-gdavis-lt>
+References: <1563589976-19004-1-git-send-email-george_davis@mentor.com>
+ <20190720123023.GA1330@shell.armlinux.org.uk>
 MIME-Version: 1.0
-References: <CAOGqxeVeEq803rrtGrnubRA8cP3dRCXsU15ss3pS1q6ik+k8Bw@mail.gmail.com>
- <7610bbc9-83d8-ee98-1425-07bb65448541@intel.com> <CAOGqxeVR3XzAQ-yTH35hyT3KpL11nTwMY1Ca96ZW=K=PiWMnHA@mail.gmail.com>
- <23ce5519-cb4b-4d85-4bfc-3e438212ec7f@intel.com>
-In-Reply-To: <23ce5519-cb4b-4d85-4bfc-3e438212ec7f@intel.com>
-From:   Alan Cooper <alcooperx@gmail.com>
-Date:   Thu, 25 Jul 2019 17:37:47 -0400
-Message-ID: <CAOGqxeVjj9Leok-Oph-kNA92fKhdBHzwJZ643uND8GV_8VaHCw@mail.gmail.com>
-Subject: Re: Issue with sequence to switch to HS400
-To:     Adrian Hunter <adrian.hunter@intel.com>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20190720123023.GA1330@shell.armlinux.org.uk>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-ClientProxiedBy: svr-orw-mbx-03.mgc.mentorg.com (147.34.90.203) To
+ svr-orw-mbx-01.mgc.mentorg.com (147.34.90.201)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-That's an even better solution and it gets my HS400 mode working.
-Will you add this change or should I?
+Hello Russell,
 
-Thanks
-Al
+Thanks for your prompt reply!
 
-On Thu, Jul 25, 2019 at 3:33 AM Adrian Hunter <adrian.hunter@intel.com> wro=
-te:
->
-> On 23/07/19 3:34 PM, Alan Cooper wrote:
-> > On Tue, Jul 23, 2019 at 1:21 AM Adrian Hunter <adrian.hunter@intel.com>=
- wrote:
-> >>
-> >> On 23/07/19 1:31 AM, Alan Cooper wrote:
-> >>> I'm having a problem with a new SD/MMC controller and PHY in our
-> >>> latest SoC's. The issue I'm seeing is that I can't switch into HS400
-> >>> mode. This looks like something the driver is doing that doesn't meet
-> >>> the JEDEC spec. In the "HS400 timing mode selection" section of the
-> >>> JEDEC spec , in step 7 it states:
-> >>>
-> >>> 7) Set the =E2=80=9CTiming Interface=E2=80=9D parameter in the HS_TIM=
-ING [185] field
-> >>> of the Extended CSD register to 0x1 to switch to High Speed mode and
-> >>> then set the clock frequency to a value not greater than 52 MHz.
-> >>>
-> >>> In the function mmc_select_hs400() in mmc.c, I see that a switch
-> >>> command is done to set the eMMC device to HS mode and then
-> >>> mmc_set_timing(card->host, MMC_TIMING_MMC_HS) is used to change the
-> >>> controller to HS mode. The problem is that the "SD Host Controller
-> >>> Standard Specification" states that "UHS Mode Select" field of the
-> >>> "Host Control 2 Register" controls the mode when the "1.8V Signaling
-> >>> Enable" bit in the same register is set, so mmc_set_timing() is
-> >>> actually leaving the controller in SDR12 mode and mmc_select_hs400()
-> >>> will then set the clock to 52MHz. This causes our PHY to detect an
-> >>> illegal combination and return an error.
-> >>>
-> >>> I think the easiest fix would be to change mmc_set_timing(card->host,
-> >>> MMC_TIMING_MMC_HS) to mmc_set_timing(card->host,
-> >>> MMC_TIMING_UHS_SDR25). The other possibility would be to change
-> >>> mmc_set_timing to handle the "1.8V Signaling Enable" bit properly.
-> >>> I'll submit a patch based on the feedback I get.
-> >>
-> >> eMMC is governed by JEDEC specs not SD specs.
-> >
-> > My understanding is that JEDEC does not have a host controller spec so
-> > this driver uses the "SD Host Controller Standard Specification".
->
-> There is no spec for using eMMC with SDHCI.
->
-> >
-> >>
-> >> Please consider making a change in your driver instead.  For example, =
-hook
-> >> ->set_ios() and if 1.8V is enabled and timing is set to MMC_TIMING_MMC=
-_HS
-> >> then change it to MMC_TIMING_UHS_SDR25.
-> >
-> > That's an easy fix, but it still leaves all other drivers/systems
-> > temporarily using SDR12 at 52MHz during the switch to HS400.
->
-> Yes, I changed my mind.  Does this work:
->
-> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-> index 59acf8e3331e..f9d241458dcd 100644
-> --- a/drivers/mmc/host/sdhci.c
-> +++ b/drivers/mmc/host/sdhci.c
-> @@ -1849,7 +1849,9 @@ void sdhci_set_uhs_signaling(struct sdhci_host *hos=
-t, unsigned timing)
->                 ctrl_2 |=3D SDHCI_CTRL_UHS_SDR104;
->         else if (timing =3D=3D MMC_TIMING_UHS_SDR12)
->                 ctrl_2 |=3D SDHCI_CTRL_UHS_SDR12;
-> -       else if (timing =3D=3D MMC_TIMING_UHS_SDR25)
-> +       else if (timing =3D=3D MMC_TIMING_SD_HS ||
-> +                timing =3D=3D MMC_TIMING_MMC_HS ||
-> +                timing =3D=3D MMC_TIMING_UHS_SDR25)
->                 ctrl_2 |=3D SDHCI_CTRL_UHS_SDR25;
->         else if (timing =3D=3D MMC_TIMING_UHS_SDR50)
->                 ctrl_2 |=3D SDHCI_CTRL_UHS_SDR50;
+On Sat, Jul 20, 2019 at 01:30:23PM +0100, Russell King - ARM Linux admin wrote:
+> On Fri, Jul 19, 2019 at 10:32:55PM -0400, George G. Davis wrote:
+> > When an unhandled data or prefetch abort occurs, the die() string
+> > is empty resulting in backtrace messages similar to the following:
+> > 
+> > 	Internal error: : 1 [#1] PREEMPT SMP ARM
+> > 
+> > Replace the null string with the name of the abort handler in order
+> > to provide more meaningful hints as to the cause of the fault.
+> 
+> NAK.
+> 
+> We already print the cause of the abort earlier in the dump, and we've
+> also added a "cut here" marker to help people include all the necessary
+> information when reporting a problem.
+
+For what it's worth, I often receive crash dumps which lack the pr_alert
+messages and only include the pr_emerg messages which this change would at
+least provide extra hints, since the "Internal error" as at EMERG level
+wereas the initial messages are only at ALERT level. It's subtle but for
+cases where the end user has set loglevel such that they only see EMERG
+messages, the change is helpful, to me at least.
+
+> It's unfortunate that we have the additional colon in the oops dump,
+
+Agreed, it's rather unfortunate that the string is NULL in these cases.
+
+> but repeating the information that we've printed on one of the previous
+> two lines is really not necessary.
+
+It depends on the loglevel the user has set. So perhaps it's not such a
+bad thing to repeat the information?
+
+Thanks!
+
+> > 
+> > Signed-off-by: George G. Davis <george_davis@mentor.com>
+> > ---
+> >  arch/arm/mm/fault.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/arch/arm/mm/fault.c b/arch/arm/mm/fault.c
+> > index 0048eadd0681..dddea0a21220 100644
+> > --- a/arch/arm/mm/fault.c
+> > +++ b/arch/arm/mm/fault.c
+> > @@ -557,7 +557,7 @@ do_DataAbort(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
+> >  		inf->name, fsr, addr);
+> >  	show_pte(current->mm, addr);
+> >  
+> > -	arm_notify_die("", regs, inf->sig, inf->code, (void __user *)addr,
+> > +	arm_notify_die(inf->name, regs, inf->sig, inf->code, (void __user *)addr,
+> >  		       fsr, 0);
+> >  }
+> >  
+> > @@ -585,7 +585,7 @@ do_PrefetchAbort(unsigned long addr, unsigned int ifsr, struct pt_regs *regs)
+> >  	pr_alert("Unhandled prefetch abort: %s (0x%03x) at 0x%08lx\n",
+> >  		inf->name, ifsr, addr);
+> >  
+> > -	arm_notify_die("", regs, inf->sig, inf->code, (void __user *)addr,
+> > +	arm_notify_die(inf->name, regs, inf->sig, inf->code, (void __user *)addr,
+> >  		       ifsr, 0);
+> >  }
+> >  
+> > -- 
+> > 2.7.4
+> > 
+> > 
+> 
+> -- 
+> RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+> FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+> According to speedtest.net: 11.9Mbps down 500kbps up
+
+-- 
+Regards,
+George
