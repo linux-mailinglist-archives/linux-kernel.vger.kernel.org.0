@@ -2,107 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1984754AA
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 18:53:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC9F9754B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 18:54:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729601AbfGYQxb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 12:53:31 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:41290 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729083AbfGYQxb (ORCPT
+        id S2387931AbfGYQyD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 12:54:03 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:55906 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729577AbfGYQyD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 12:53:31 -0400
-Received: by mail-pl1-f195.google.com with SMTP id m9so23538336pls.8;
-        Thu, 25 Jul 2019 09:53:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=In7FvxuJSL3nD+oAuTVZBinyIAwT8H4rTKstMSgDT6k=;
-        b=Ir8ythaTdYfmhG6ThebrvPMDl6Or+u2JFZT2YGgHeTyemmRXmccljqmFK4CYCsFVu4
-         b0obGx93qGpsIIm5LIyXE6vG7aOY/mtqok+8OuZbnEuUJQgD8kVZ4cOWX0Fbc/EK5b7U
-         cBLe1gONSrxZDK4rSdj2iqlQqvWzc7bL+PwOJ06TTJIoFZ8/51euqd/vjVH5WMdfHGPa
-         WEkR5xccCYN6KFevS0FdvtROl0rzmIujbWB63A0oDjuFhPOAOPpN4cmGihpjABbdeRUl
-         2mU/YhQ7YtU+bSdUiEcCqXr6uP0dII213cspLlDHHvkg7ShzRQdV/mwu6N8XaGDHL7fQ
-         fO0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=In7FvxuJSL3nD+oAuTVZBinyIAwT8H4rTKstMSgDT6k=;
-        b=cNv3uSi9tgsU47D2rxN6/WsZKQ+HeT5tzK0z9CefUJ/TQrd4Ir0eTVAVX4k+l0E8tu
-         ojxt6zlEwII+JwaLLAvJgor8sK88IKu/8I9L7pPxKjHOz6Tt1sJNE+dLwsnISV1zcFOk
-         DqT44kz6ZS+epH5alhpdVK5CY6XbyNcakj49LqArJSSYJoqkCVTMriPIAjoz/CXI8Kl6
-         5/zmWujTZlOscND+UwRcL6cP+Ly3qnsQAH3mfS9U9L54dYAQ+8dsvqq/2g2ARVf61Eth
-         7ddwdWeu5zgMv2shg/e7yfhHO065q6Sa/gw3X9mt23ohqF6iSKM8ghKapCakBqFDt/g+
-         KYzA==
-X-Gm-Message-State: APjAAAW62aKSGLBwE/U26h9ueqbFDlq6kP8X40XO9UUU2AzlhLHfmGlV
-        wXv8lyk69UcVvzPBX6rK9SU=
-X-Google-Smtp-Source: APXvYqyGN37PGpgWry3wj5md3YEsS6cW6xq7SrPkHtyUxnRKecWuxvpMKzZuTLCreZ2GPKr2WEy9uQ==
-X-Received: by 2002:a17:902:f216:: with SMTP id gn22mr89782294plb.118.1564073610528;
-        Thu, 25 Jul 2019 09:53:30 -0700 (PDT)
-Received: from localhost ([123.213.206.190])
-        by smtp.gmail.com with ESMTPSA id i15sm54516319pfd.160.2019.07.25.09.53.29
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 25 Jul 2019 09:53:29 -0700 (PDT)
-Date:   Fri, 26 Jul 2019 01:53:27 +0900
-From:   Minwoo Im <minwoo.im.dev@gmail.com>
-To:     Sreekanth Reddy <sreekanth.reddy@broadcom.com>
-Cc:     Hannes Reinecke <hare@suse.de>, minwoo.im@samsung.com,
-        "sathya.prakash@broadcom.com" <sathya.prakash@broadcom.com>,
-        "suganath-prabu.subramani@broadcom.com" 
-        <suganath-prabu.subramani@broadcom.com>,
-        "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
-        "MPT-FusionLinux.pdl@broadcom.com" <MPT-FusionLinux.pdl@broadcom.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        Euihyeok Kwon <eh81.kwon@samsung.com>,
-        Sarah Cho <sohyeon.jo@samsung.com>,
-        Sanggwan Lee <sanggwan.lee@samsung.com>,
-        Gyeongmin Nam <gm.nam@samsung.com>,
-        Sungjun Park <sj1228.park@samsung.com>,
-        Minwoo Im <minwoo.im.dev@gmail.com>
-Subject: Re: [PATCH V2] mpt3sas: support target smid for [abort|query] task
-Message-ID: <20190725165327.GA3081@minwoo-desktop>
-References: <CGME20190714034415epcms2p25f9787cb71993a30f58524d2f355b543@epcms2p2>
- <20190714034415epcms2p25f9787cb71993a30f58524d2f355b543@epcms2p2>
- <860cc8cf-6419-c649-b2d9-19b82f6ebc99@suse.de>
- <CAK=zhgocY3Ute_6RiowaWsOROx3+Nzq6+WvkobmR_SB0Rt9_1g@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAK=zhgocY3Ute_6RiowaWsOROx3+Nzq6+WvkobmR_SB0Rt9_1g@mail.gmail.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+        Thu, 25 Jul 2019 12:54:03 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 8F1FF618E1; Thu, 25 Jul 2019 16:54:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1564073642;
+        bh=JX5a4knX1zlE7Ic/SEaGbhWGGuYLtzUU8dSNGCasgeU=;
+        h=From:To:Cc:Subject:Date:From;
+        b=lz259GchXqS1PlLGI5Tr5CByuFTtOEcB70GJtw3nTxuq91DEGiJ5koBK0ftEy6wHz
+         ukDb5r2vXaD7uHupgB8TqbPP5aEdI8958j3262+v2Dc+ScId9CUjQikEtySLIjPgEY
+         UjmRYjULEyQyjQI+2nhc4IIc8odSrqiaDNT7fx7E=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
+        version=3.4.0
+Received: from jcrouse1-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: jcrouse@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id EE69F60C5F;
+        Thu, 25 Jul 2019 16:53:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1564073640;
+        bh=JX5a4knX1zlE7Ic/SEaGbhWGGuYLtzUU8dSNGCasgeU=;
+        h=From:To:Cc:Subject:Date:From;
+        b=PXvWRxJgS3p+MdXTXy/lw/0oCGSwBg4JlcQBBGPozVMUNb8G8IppudngNpR/HrgF7
+         bFpvpbsfYI7XEKQ5Usz9b9xdd+5AXOSDN9h0jN0sfU2Fd8KnHf7fZth7CH8PMnGrhC
+         w1iOd3zB59X6JM+rE7iueb2Uzx/no19asKYVQZIQ=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EE69F60C5F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jcrouse@codeaurora.org
+From:   Jordan Crouse <jcrouse@codeaurora.org>
+To:     freedreno@lists.freedesktop.org
+Cc:     linux-arm-msm@vger.kernel.org, Sean Paul <sean@poorly.run>,
+        Stephen Boyd <swboyd@chromium.org>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Sharat Masetty <smasetty@codeaurora.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        David Airlie <airlied@linux.ie>,
+        Rob Clark <robdclark@gmail.com>,
+        Mamta Shukla <mamtashukla555@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>
+Subject: [PATCH] drm/msm: Use generic bulk clock function
+Date:   Thu, 25 Jul 2019 10:53:55 -0600
+Message-Id: <1564073635-27998-1-git-send-email-jcrouse@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19-07-23 16:57:49, Sreekanth Reddy wrote:
-> On Mon, Jul 15, 2019 at 11:43 AM Hannes Reinecke <hare@suse.de> wrote:
-> > I think this is fundamentally wrong.
-> > ABORT_TASK is used to abort a single task, which of course has to be
-> > known beforehand. If you don't know the task, what exactly do you hope
-> > to achieve here? Aborting random I/O?
-> > Or, even worse, aborting I/O the driver uses internally and corrupt the
-> > internal workflow of the driver?
-> >
-> > We should simply disallow any ABORT TASK from userspace if the TaskMID
-> > is zero. And I would even argue to disabllow ABORT TASK from userspace
-> > completely, as the smid is never relayed to userland, and as such the
-> > user cannot know which task should be aborted.
-> 
-> Hannes,
-> 
-> This interface was added long time back in mpt2sas driver and I don't
-> have exact reason of adding this interface at that time.
-> But I know that this interface is still used by BRCM test team & few
-> customers only for some functionality and regression testing.
+Remove the homebrewed bulk clock get function and replace it with
+devm_clk_bulk_get_all().
 
-Sreekanth, and Hannes,
+Signed-off-by: Jordan Crouse <jcrouse@codeaurora.org>
+---
 
-Could you please give some review points on this?
+ drivers/gpu/drm/msm/adreno/a6xx_gmu.c |  2 +-
+ drivers/gpu/drm/msm/msm_drv.c         | 40 -----------------------------------
+ drivers/gpu/drm/msm/msm_drv.h         |  1 -
+ drivers/gpu/drm/msm/msm_gpu.c         |  2 +-
+ 4 files changed, 2 insertions(+), 43 deletions(-)
 
-Thanks,
+diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+index 2ca470e..85f14fe 100644
+--- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
++++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+@@ -1172,7 +1172,7 @@ static int a6xx_gmu_pwrlevels_probe(struct a6xx_gmu *gmu)
+ 
+ static int a6xx_gmu_clocks_probe(struct a6xx_gmu *gmu)
+ {
+-	int ret = msm_clk_bulk_get(gmu->dev, &gmu->clocks);
++	int ret = devm_clk_bulk_get_all(gmu->dev, &gmu->clocks);
+ 
+ 	if (ret < 1)
+ 		return ret;
+diff --git a/drivers/gpu/drm/msm/msm_drv.c b/drivers/gpu/drm/msm/msm_drv.c
+index 0e0fca1..96fe24c 100644
+--- a/drivers/gpu/drm/msm/msm_drv.c
++++ b/drivers/gpu/drm/msm/msm_drv.c
+@@ -75,46 +75,6 @@ module_param(modeset, bool, 0600);
+  * Util/helpers:
+  */
+ 
+-int msm_clk_bulk_get(struct device *dev, struct clk_bulk_data **bulk)
+-{
+-	struct property *prop;
+-	const char *name;
+-	struct clk_bulk_data *local;
+-	int i = 0, ret, count;
+-
+-	count = of_property_count_strings(dev->of_node, "clock-names");
+-	if (count < 1)
+-		return 0;
+-
+-	local = devm_kcalloc(dev, sizeof(struct clk_bulk_data *),
+-		count, GFP_KERNEL);
+-	if (!local)
+-		return -ENOMEM;
+-
+-	of_property_for_each_string(dev->of_node, "clock-names", prop, name) {
+-		local[i].id = devm_kstrdup(dev, name, GFP_KERNEL);
+-		if (!local[i].id) {
+-			devm_kfree(dev, local);
+-			return -ENOMEM;
+-		}
+-
+-		i++;
+-	}
+-
+-	ret = devm_clk_bulk_get(dev, count, local);
+-
+-	if (ret) {
+-		for (i = 0; i < count; i++)
+-			devm_kfree(dev, (void *) local[i].id);
+-		devm_kfree(dev, local);
+-
+-		return ret;
+-	}
+-
+-	*bulk = local;
+-	return count;
+-}
+-
+ struct clk *msm_clk_bulk_get_clock(struct clk_bulk_data *bulk, int count,
+ 		const char *name)
+ {
+diff --git a/drivers/gpu/drm/msm/msm_drv.h b/drivers/gpu/drm/msm/msm_drv.h
+index ee7b512..843c68f 100644
+--- a/drivers/gpu/drm/msm/msm_drv.h
++++ b/drivers/gpu/drm/msm/msm_drv.h
+@@ -399,7 +399,6 @@ static inline void msm_perf_debugfs_cleanup(struct msm_drm_private *priv) {}
+ #endif
+ 
+ struct clk *msm_clk_get(struct platform_device *pdev, const char *name);
+-int msm_clk_bulk_get(struct device *dev, struct clk_bulk_data **bulk);
+ 
+ struct clk *msm_clk_bulk_get_clock(struct clk_bulk_data *bulk, int count,
+ 	const char *name);
+diff --git a/drivers/gpu/drm/msm/msm_gpu.c b/drivers/gpu/drm/msm/msm_gpu.c
+index 4edb874..445a9f8 100644
+--- a/drivers/gpu/drm/msm/msm_gpu.c
++++ b/drivers/gpu/drm/msm/msm_gpu.c
+@@ -783,7 +783,7 @@ static irqreturn_t irq_handler(int irq, void *data)
+ 
+ static int get_clocks(struct platform_device *pdev, struct msm_gpu *gpu)
+ {
+-	int ret = msm_clk_bulk_get(&pdev->dev, &gpu->grp_clks);
++	int ret = devm_clk_bulk_get_all(&pdev->dev, &gpu->grp_clks);
+ 
+ 	if (ret < 1) {
+ 		gpu->nr_clocks = 0;
+-- 
+2.7.4
+
