@@ -2,140 +2,199 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E066074E65
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 14:44:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F2E974E6E
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 14:46:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389054AbfGYMoc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 08:44:32 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:45222 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387824AbfGYMoc (ORCPT
+        id S2389133AbfGYMqA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 08:46:00 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:36738 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388497AbfGYMp7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 08:44:32 -0400
-Received: by mail-pg1-f194.google.com with SMTP id o13so22981568pgp.12
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 05:44:31 -0700 (PDT)
+        Thu, 25 Jul 2019 08:45:59 -0400
+Received: by mail-lj1-f193.google.com with SMTP id i21so47885223ljj.3;
+        Thu, 25 Jul 2019 05:45:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=YtTD1zW4DFFiIXNHW0lcZtx2P/QwbKs4fO50xTY7/Rw=;
-        b=M/Voi5AdNRJuu0f0xVFvWhBGojmOjd9MpiuUS35IZonb5vauyAmAVyzUK52ayLrBN3
-         SgiKz3juyYSfNnGjkkTgz45hx6I04HFDTNBTt5UcmCB10eN9SXlRz8/eDLc4EkW0+xea
-         qo1zB+JSSfmtRWicQU+daV9QinrXpqhhLHr+xUIW8CaIOt43tAjHH7qysSd5oYOW6T9T
-         2yf1t8gNceqUK0rD0LtilyNSrWzlAtQOEy8VPDKVPXoW7btTLsu5WKhZLl21/LpxSyWd
-         7/BEc0333JvmoowXxOmujyOVAzCT4EcfNujLbgdwtJxCnHFPG6L1VN/dvmBYNBtSVDVa
-         BKGA==
+        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
+         :subject:to:cc:content-transfer-encoding;
+        bh=YxoMXX9Nct0eRRcS7Q/PLXYnZRgyZpcSP8/DWhoCE08=;
+        b=iC1vZvfJutufEB8O0LVkEL3eLGLkJvcm3eMtB88c8eNso6GNJRzNp+ZIqa/3Q52BIu
+         JRoQYKgU9myUBTAbT0TCOHH5UbyaMYcVFjy0TEU3YM81qHCSIkGNjrtDJtW+uxLeVFwA
+         kRHHCiwp15FcRYWijkcBil/QsrUnPTJH2FLrZb5nWB8g8uEQIW22396vX3zHb35bpdR3
+         UD1bfkthTgUKyJ+NW7JORGckCMOEp4JMlXM5VEoEoEj01RVHQ5NYxto3PDXdunGJjHiC
+         9vtq66s8v7Wl8bnyGmgwgfT7Zruss//MqXAsQOXN1Ft+UULQ/F+gDuzbsN6AJOXkE/cj
+         Wf9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=YtTD1zW4DFFiIXNHW0lcZtx2P/QwbKs4fO50xTY7/Rw=;
-        b=Qs4thdMWMt8yDNqKx9mAMqhL5kV4/xFRzOEj7xOQFl2Ln8ii2fwioCqEs10gcWInm1
-         Ef9uCM/BdRTsetjeRC6K57QBygSTz0DHmsRF2vq5TvO7N1/u10lu6o62KGFHPGG01OBH
-         jQXtF8sLLnpvAtIqwX16TQqhWKC6pW3SrZfjtnjK4uE2E47tB/JAhMucnsZXRkA4ue+s
-         gsFCPIKqrd53gwk+yErYVwLHQQqbuEtz7dR/vTYMfoIE+9UR+WWkMUuFUpDd+65yEg9u
-         ayul3Tth0kuCeimn+Mys9Q70FPf0kU+/aIEHSLykyy+qAtFL/wxq95JHmREca7zsa7e0
-         d5eQ==
-X-Gm-Message-State: APjAAAWr4lWRTHUZ0+2UI5wAtvwACj12Yyh272gxgD/BIVLR2tQfEuQZ
-        73tql6b1Ad8+vvb/03qNilE=
-X-Google-Smtp-Source: APXvYqw8t1BcANx6QWJK3Ufj5nZnJSHUkXSuUFta0coSy0Mzsvx9vA+JC+8xkN6Rom4g6ZLvZYhrkg==
-X-Received: by 2002:aa7:8b11:: with SMTP id f17mr16520924pfd.19.1564058671500;
-        Thu, 25 Jul 2019 05:44:31 -0700 (PDT)
-Received: from bharath12345-Inspiron-5559 ([103.110.42.34])
-        by smtp.gmail.com with ESMTPSA id 195sm86924983pfu.75.2019.07.25.05.44.30
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 25 Jul 2019 05:44:30 -0700 (PDT)
-From:   Bharath Vedartham <linux.bhar@gmail.com>
-To:     gregkh@linuxfoundation.org, Matt.Sickler@daktronics.com
-Cc:     Bharath Vedartham <linux.bhar@gmail.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        John Hubbard <jhubbard@nvidia.com>,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: [PATCH v4] staging: kpc2000: Convert put_page() to put_user_page*()
-Date:   Thu, 25 Jul 2019 18:14:18 +0530
-Message-Id: <1564058658-3551-1-git-send-email-linux.bhar@gmail.com>
-X-Mailer: git-send-email 2.7.4
+        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
+         :from:date:message-id:subject:to:cc:content-transfer-encoding;
+        bh=YxoMXX9Nct0eRRcS7Q/PLXYnZRgyZpcSP8/DWhoCE08=;
+        b=AquvUnnGLUf0F+hqnm2VvkyP9xUSulJ+GXsk+VNCighqJVwi0jVubsG4AO7URAN+qW
+         /ly2JwZ4b+TNo5X05q8ZLcNeB6Ei21yUMQ3wlCiyfBZgict4dEYyEv32AH5FxJa6YdPf
+         RFPlDDmtHx/KcVc94nlD8xs4InDlpP1x3TcLH3sARbe55jTBvdMDBJWW2Q2DN4k1D3h/
+         wgZcMjgX2RUigDSM5og4guCGjcKE46Oyak756cY4kMR01eWuAgJqkXNcRB0ncWmBh/Tz
+         y6ojH36F8MEC4adHfnN99Gst36HHZsKVd3Y64L3z+hNFjTP2mHj7/fpc4GUkZ3650Oy4
+         /JDA==
+X-Gm-Message-State: APjAAAUQ2JUbAo2qCfCGTMu7o4SXIskLnte+aanCxHn/eHYCpmorRDo0
+        GBTGY6qrELpb8rtG4Zr8MpEQ6w6GQfvC7P3oZ40=
+X-Google-Smtp-Source: APXvYqwievWEj3UbBaN2VIfe8QRJUis+gUfdQlAX6IUbqOgqfMnKj83r/6dVQ+2l6WZ0uRdOwLDmDD1IMt9qut4IPNs=
+X-Received: by 2002:a2e:8945:: with SMTP id b5mr44878199ljk.93.1564058756462;
+ Thu, 25 Jul 2019 05:45:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <CGME20190723122023eucas1p2ff56c00b60a676ed85d9fe159a1839f2@eucas1p2.samsung.com>
+ <20190723122016.30279-1-a.swigon@partner.samsung.com> <20190723122016.30279-3-a.swigon@partner.samsung.com>
+In-Reply-To: <20190723122016.30279-3-a.swigon@partner.samsung.com>
+Reply-To: cwchoi00@gmail.com
+From:   Chanwoo Choi <cwchoi00@gmail.com>
+Date:   Thu, 25 Jul 2019 21:45:19 +0900
+Message-ID: <CAGTfZH3GXCuYY-xmKtGd-M47WKp2c8PseytKw-oUOwp+TtGsvQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 02/11] devfreq: exynos-bus: Extract exynos_bus_profile_init_passive()
+To:     =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon@partner.samsung.com>
+Cc:     devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>, inki.dae@samsung.com,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        georgi.djakov@linaro.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For pages that were retained via get_user_pages*(), release those pages
-via the new put_user_page*() routines, instead of via put_page().
+2019=EB=85=84 7=EC=9B=94 24=EC=9D=BC (=EC=88=98) =EC=98=A4=EC=A0=84 8:07, A=
+rtur =C5=9Awigo=C5=84 <a.swigon@partner.samsung.com>=EB=8B=98=EC=9D=B4 =EC=
+=9E=91=EC=84=B1:
+>
+> This patch adds a new static function, exynos_bus_profile_init_passive(),
+> extracted from exynos_bus_probe().
+>
+> Signed-off-by: Artur =C5=9Awigo=C5=84 <a.swigon@partner.samsung.com>
+> ---
+>  drivers/devfreq/exynos-bus.c | 70 +++++++++++++++++++++---------------
+>  1 file changed, 42 insertions(+), 28 deletions(-)
+>
+> diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
+> index d8f1efaf2d49..cf6f6cbd0f55 100644
+> --- a/drivers/devfreq/exynos-bus.c
+> +++ b/drivers/devfreq/exynos-bus.c
+> @@ -430,13 +430,51 @@ static int exynos_bus_profile_init(struct exynos_bu=
+s *bus,
+>         return ret;
+>  }
+>
+> +static int exynos_bus_profile_init_passive(struct exynos_bus *bus,
+> +                                          struct devfreq_dev_profile *pr=
+ofile)
+> +{
+> +       struct device *dev =3D bus->dev;
+> +       struct devfreq *parent_devfreq;
+> +       struct devfreq_passive_data *passive_data;
+> +       int ret =3D 0;
+> +
+> +       /* Initialize the struct profile and governor data for passive de=
+vice */
+> +       profile->target =3D exynos_bus_passive_target;
+> +       profile->exit =3D exynos_bus_passive_exit;
+> +
+> +       /* Get the instance of parent devfreq device */
+> +       parent_devfreq =3D devfreq_get_devfreq_by_phandle(dev, 0);
+> +       if (IS_ERR(parent_devfreq)) {
+> +               ret =3D -EPROBE_DEFER;
+> +               goto err;
+> +       }
+> +
+> +       passive_data =3D devm_kzalloc(dev, sizeof(*passive_data), GFP_KER=
+NEL);
+> +       if (!passive_data) {
+> +               ret =3D -ENOMEM;
+> +               goto err;
+> +       }
+> +       passive_data->parent =3D parent_devfreq;
+> +
+> +       /* Add devfreq device for exynos bus with passive governor */
+> +       bus->devfreq =3D devm_devfreq_add_device(dev, profile, DEVFREQ_GO=
+V_PASSIVE,
+> +                                               passive_data);
+> +       if (IS_ERR(bus->devfreq)) {
+> +               dev_err(dev,
+> +                       "failed to add devfreq dev with passive governor\=
+n");
+> +               ret =3D PTR_ERR(bus->devfreq);
+> +               goto err;
+> +       }
+> +
+> +err:
+> +       return ret;
+> +}
+> +
+>  static int exynos_bus_probe(struct platform_device *pdev)
+>  {
+>         struct device *dev =3D &pdev->dev;
+>         struct device_node *np =3D dev->of_node, *node;
+>         struct devfreq_dev_profile *profile;
+> -       struct devfreq_passive_data *passive_data;
+> -       struct devfreq *parent_devfreq;
+>         struct exynos_bus *bus;
+>         int ret, max_state;
+>         unsigned long min_freq, max_freq;
+> @@ -481,33 +519,9 @@ static int exynos_bus_probe(struct platform_device *=
+pdev)
+>
+>         goto out;
+>  passive:
+> -       /* Initialize the struct profile and governor data for passive de=
+vice */
+> -       profile->target =3D exynos_bus_passive_target;
+> -       profile->exit =3D exynos_bus_passive_exit;
+> -
+> -       /* Get the instance of parent devfreq device */
+> -       parent_devfreq =3D devfreq_get_devfreq_by_phandle(dev, 0);
+> -       if (IS_ERR(parent_devfreq)) {
+> -               ret =3D -EPROBE_DEFER;
+> +       ret =3D exynos_bus_profile_init_passive(bus, profile);
+> +       if (ret < 0)
+>                 goto err;
+> -       }
+> -
+> -       passive_data =3D devm_kzalloc(dev, sizeof(*passive_data), GFP_KER=
+NEL);
+> -       if (!passive_data) {
+> -               ret =3D -ENOMEM;
+> -               goto err;
+> -       }
+> -       passive_data->parent =3D parent_devfreq;
+> -
+> -       /* Add devfreq device for exynos bus with passive governor */
+> -       bus->devfreq =3D devm_devfreq_add_device(dev, profile, DEVFREQ_GO=
+V_PASSIVE,
+> -                                               passive_data);
+> -       if (IS_ERR(bus->devfreq)) {
+> -               dev_err(dev,
+> -                       "failed to add devfreq dev with passive governor\=
+n");
+> -               ret =3D PTR_ERR(bus->devfreq);
+> -               goto err;
+> -       }
+>
+>  out:
+>         max_state =3D bus->devfreq->profile->max_state;
+> --
+> 2.17.1
+>
 
-This is part a tree-wide conversion, as described in commit fc1d8e7cca2d
-("mm: introduce put_user_page*(), placeholder versions").
+Actually, it is not necessary. It has no any benefit.
+Please drop it as I commented on patch1.
 
-Cc: Ira Weiny <ira.weiny@intel.com>
-Cc: John Hubbard <jhubbard@nvidia.com>
-Cc: Jérôme Glisse <jglisse@redhat.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Matt Sickler <Matt.Sickler@daktronics.com>
-Cc: devel@driverdev.osuosl.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org
-Reviewed-by: John Hubbard <jhubbard@nvidia.com>
-Signed-off-by: Bharath Vedartham <linux.bhar@gmail.com>
----
-Changes since v1
-        - Improved changelog by John's suggestion.
-        - Moved logic to dirty pages below sg_dma_unmap
-         and removed PageReserved check.
-Changes since v2
-        - Added back PageResevered check as
-        suggested by John Hubbard.
-Changes since v3
-        - Changed the changelog as suggested by John.
-        - Added John's Reviewed-By tag.
-Changes since v4
-        - Rebased the patch on the staging tree.
-        - Improved commit log by fixing a line wrap.
----
- drivers/staging/kpc2000/kpc_dma/fileops.c | 17 ++++++-----------
- 1 file changed, 6 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/staging/kpc2000/kpc_dma/fileops.c b/drivers/staging/kpc2000/kpc_dma/fileops.c
-index 48ca88b..f15e292 100644
---- a/drivers/staging/kpc2000/kpc_dma/fileops.c
-+++ b/drivers/staging/kpc2000/kpc_dma/fileops.c
-@@ -190,9 +190,7 @@ static int kpc_dma_transfer(struct dev_private_data *priv,
- 	sg_free_table(&acd->sgt);
-  err_dma_map_sg:
-  err_alloc_sg_table:
--	for (i = 0 ; i < acd->page_count ; i++) {
--		put_page(acd->user_pages[i]);
--	}
-+	put_user_pages(acd->user_pages, acd->page_count);
-  err_get_user_pages:
- 	kfree(acd->user_pages);
-  err_alloc_userpages:
-@@ -211,16 +209,13 @@ void  transfer_complete_cb(struct aio_cb_data *acd, size_t xfr_count, u32 flags)
- 	BUG_ON(acd->ldev == NULL);
- 	BUG_ON(acd->ldev->pldev == NULL);
- 
--	for (i = 0 ; i < acd->page_count ; i++) {
--		if (!PageReserved(acd->user_pages[i])) {
--			set_page_dirty(acd->user_pages[i]);
--		}
--	}
--
- 	dma_unmap_sg(&acd->ldev->pldev->dev, acd->sgt.sgl, acd->sgt.nents, acd->ldev->dir);
- 
--	for (i = 0 ; i < acd->page_count ; i++) {
--		put_page(acd->user_pages[i]);
-+	for (i = 0; i < acd->page_count; i++) {
-+		if (!PageReserved(acd->user_pages[i]))
-+			put_user_pages_dirty(&acd->user_pages[i], 1);
-+		else
-+			put_user_page(acd->user_pages[i]);
- 	}
- 
- 	sg_free_table(&acd->sgt);
--- 
-2.7.4
-
+--
+Best Regards,
+Chanwoo Choi
