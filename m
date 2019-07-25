@@ -2,134 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 664F675369
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 18:00:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 380B57536E
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2019 18:01:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389779AbfGYQAo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 12:00:44 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:48059 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387874AbfGYQAn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 12:00:43 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6PG0Uue1070667
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Thu, 25 Jul 2019 09:00:30 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6PG0Uue1070667
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019071901; t=1564070431;
-        bh=7XiOeA/D+HawhTDttdbmLI0yx6Nrxaq+KSSWvCxRWsI=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=BCgUAiiOFaDyryfeRzBoERMpc9En7sTFhMxa7RG4713YChFFbnfYb3SBHEV7QYRe/
-         UCWTq8ao7Ni/FPyFjIR1hoR3Pl5NnIQG23ENT+JxgyNuyDq8FIsUCEgU0kVRLtMt4K
-         rnGvQdTCCgb+2VcsuNcfnyCgz8IYllqW5rlSENAAg9NNnaA0DhafBY1KrZS3CW4d2+
-         z3+Dgw+wQNxe7cuxSy8EX/uYNZChiBhH9Ie2/3l11e2aHYEvVm7UdCzbZJw4oUBsKr
-         4JBimxHL8GfBONAWT0ZJDR+Y9iN9QalolouwHPl+jFSg4wyeqroP5GuiI8jJ8QeL7/
-         ikPpgl6e3pe2w==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6PG0TqZ1070661;
-        Thu, 25 Jul 2019 09:00:29 -0700
-Date:   Thu, 25 Jul 2019 09:00:29 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Jan Stancek <tipbot@zytor.com>
-Message-ID: <tip-e1b98fa316648420d0434d9ff5b92ad6609ba6c3@git.kernel.org>
-Cc:     longman@redhat.com, linux-kernel@vger.kernel.org, mingo@kernel.org,
-        hpa@zytor.com, will@kernel.org, peterz@infradead.org,
-        jstancek@redhat.com, tglx@linutronix.de,
-        torvalds@linux-foundation.org
-Reply-To: torvalds@linux-foundation.org, tglx@linutronix.de,
-          jstancek@redhat.com, peterz@infradead.org, will@kernel.org,
-          hpa@zytor.com, mingo@kernel.org, linux-kernel@vger.kernel.org,
-          longman@redhat.com
-In-Reply-To: <50b8914e20d1d62bb2dee42d342836c2c16ebee7.1563438048.git.jstancek@redhat.com>
-References: <50b8914e20d1d62bb2dee42d342836c2c16ebee7.1563438048.git.jstancek@redhat.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:locking/core] locking/rwsem: Add missing ACQUIRE to
- read_slowpath exit when queue is empty
-Git-Commit-ID: e1b98fa316648420d0434d9ff5b92ad6609ba6c3
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        id S2389838AbfGYQBJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 12:01:09 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:38186 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387874AbfGYQBI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 12:01:08 -0400
+Received: from s01061831bf6ec98c.cg.shawcable.net ([68.147.80.180] helo=[192.168.6.132])
+        by ale.deltatee.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <logang@deltatee.com>)
+        id 1hqgAp-00081n-6V; Thu, 25 Jul 2019 10:00:56 -0600
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Christian Koenig <Christian.Koenig@amd.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@fb.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Eric Pilmore <epilmore@gigaio.com>,
+        Stephen Bates <sbates@raithlin.com>
+References: <20190722230859.5436-1-logang@deltatee.com>
+ <20190722230859.5436-15-logang@deltatee.com> <20190724063235.GC1804@lst.de>
+ <57e8fc1a-de70-fb65-5ef1-ffa2b95c73a6@deltatee.com>
+ <20190725115038.GC31065@lst.de>
+From:   Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <3d5400df-f109-9ffa-3e79-8f6bb8d7de34@deltatee.com>
+Date:   Thu, 25 Jul 2019 10:00:54 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-X-Spam-Status: No, score=-0.3 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
-        autolearn=no autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+In-Reply-To: <20190725115038.GC31065@lst.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 68.147.80.180
+X-SA-Exim-Rcpt-To: sbates@raithlin.com, epilmore@gigaio.com, dan.j.williams@intel.com, axboe@fb.com, kbusch@kernel.org, sagi@grimberg.me, jgg@mellanox.com, Christian.Koenig@amd.com, bhelgaas@google.com, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, hch@lst.de
+X-SA-Exim-Mail-From: logang@deltatee.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
+X-Spam-Level: 
+X-Spam-Status: No, score=-8.9 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        GREYLIST_ISWHITE autolearn=ham autolearn_force=no version=3.4.2
+Subject: Re: [PATCH 14/14] PCI/P2PDMA: Introduce pci_p2pdma_[un]map_resource()
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  e1b98fa316648420d0434d9ff5b92ad6609ba6c3
-Gitweb:     https://git.kernel.org/tip/e1b98fa316648420d0434d9ff5b92ad6609ba6c3
-Author:     Jan Stancek <jstancek@redhat.com>
-AuthorDate: Thu, 18 Jul 2019 10:51:25 +0200
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Thu, 25 Jul 2019 15:39:23 +0200
 
-locking/rwsem: Add missing ACQUIRE to read_slowpath exit when queue is empty
 
-LTP mtest06 has been observed to occasionally hit "still mapped when
-deleted" and following BUG_ON on arm64.
+On 2019-07-25 5:50 a.m., Christoph Hellwig wrote:
+> On Wed, Jul 24, 2019 at 10:06:22AM -0600, Logan Gunthorpe wrote:
+>> Yes. This is the downside of dealing only with a phys_addr_t: we have to
+>> look up against it. Unfortunately, I believe it's possible for different
+>> BARs on a device to be in different windows, so something like this is
+>> necessary unless we already know the BAR the phys_addr_t belongs to. It
+>> might probably be sped up a bit by storing the offsets of each bar
+>> instead of looping through all the bridge windows, but I don't think it
+>> will get you *that* much.
+>>
+>> As this is an example with no users, the answer here will really depend
+>> on what the use-case is doing. If they can lookup, ahead of time, the
+>> mapping type and offset then they don't have to do this work on the hot
+>> path and it means that pci_p2pdma_map_resource() is simply not a
+>> suitable API.
+> 
+> Ok.  So lets just keep this out as an RFC and don't merge it until an
+> actual concrete user shows up.
 
-The extra mapcount originated from pagefault handler, which handled
-pagefault for vma that has already been detached. vma is detached
-under mmap_sem write lock by detach_vmas_to_be_unmapped(), which
-also invalidates vmacache.
 
-When the pagefault handler (under mmap_sem read lock) calls
-find_vma(), vmacache_valid() wrongly reports vmacache as valid.
+Yup, that was my intention and I mentioned that in the commit message.
 
-After rwsem down_read() returns via 'queue empty' path (as of v5.2),
-it does so without an ACQUIRE on sem->count:
-
-  down_read()
-    __down_read()
-      rwsem_down_read_failed()
-        __rwsem_down_read_failed_common()
-          raw_spin_lock_irq(&sem->wait_lock);
-          if (list_empty(&sem->wait_list)) {
-            if (atomic_long_read(&sem->count) >= 0) {
-              raw_spin_unlock_irq(&sem->wait_lock);
-              return sem;
-
-The problem can be reproduced by running LTP mtest06 in a loop and
-building the kernel (-j $NCPUS) in parallel. It does reproduces since
-v4.20 on arm64 HPE Apollo 70 (224 CPUs, 256GB RAM, 2 nodes). It
-triggers reliably in about an hour.
-
-The patched kernel ran fine for 10+ hours.
-
-Signed-off-by: Jan Stancek <jstancek@redhat.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Will Deacon <will@kernel.org>
-Acked-by: Waiman Long <longman@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: dbueso@suse.de
-Fixes: 4b486b535c33 ("locking/rwsem: Exit read lock slowpath if queue empty & no writer")
-Link: https://lkml.kernel.org/r/50b8914e20d1d62bb2dee42d342836c2c16ebee7.1563438048.git.jstancek@redhat.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- kernel/locking/rwsem.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/kernel/locking/rwsem.c b/kernel/locking/rwsem.c
-index bc91aacaab58..d3ce7c6c42a6 100644
---- a/kernel/locking/rwsem.c
-+++ b/kernel/locking/rwsem.c
-@@ -1036,6 +1036,8 @@ queue:
- 		 */
- 		if (adjustment && !(atomic_long_read(&sem->count) &
- 		     (RWSEM_WRITER_MASK | RWSEM_FLAG_HANDOFF))) {
-+			/* Provide lock ACQUIRE */
-+			smp_acquire__after_ctrl_dep();
- 			raw_spin_unlock_irq(&sem->wait_lock);
- 			rwsem_set_reader_owned(sem);
- 			lockevent_inc(rwsem_rlock_fast);
+Logan
