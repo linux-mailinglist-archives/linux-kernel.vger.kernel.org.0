@@ -2,92 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95E6275B40
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 01:28:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 912DB75B3A
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 01:27:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727000AbfGYX2e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 19:28:34 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:45882 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726870AbfGYX2e (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 19:28:34 -0400
-Received: by mail-pl1-f194.google.com with SMTP id y8so23996410plr.12
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 16:28:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=M3rqORVkqBiODjKEMrIyrwxQVBfmP7LQCVwVFz/rCkM=;
-        b=HQmc7FxeDA3d2FsEzSxitr3nsdIOetT67kgNAii5UPpvX7fy3Pjspmgx2/L8s/udWN
-         48C3ZZVKnipawiHGa/P9T8sMkAUG6Gx5NDyKNreq2hjqUIEa1w9S6XHpNRxuoIfmn0np
-         hoV24HNckvAfPIUGbRv1+dig8Iv/+MjMPENcU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=M3rqORVkqBiODjKEMrIyrwxQVBfmP7LQCVwVFz/rCkM=;
-        b=TxZErb4qsoVv7qoj3UKp/BC4kW7D7fJKa0gIB/Ufwbi9JNyshBfg/lRCFsq60i196Y
-         aNGUuiUq5HG/Ux1uJy4LHm89TBEGZjFc3Q5zfECCp1me7bvGHkCE4mhQhlNVuDwue2ZA
-         TC8D2kYo+Bondse3tf+kIFltjNlLTOY/GzGfJ8hLrPLmRr8kP3yubOHRyPr/wWLkEt8d
-         HaxSh8P4Io/u5XlWVZJefvh1l02OiamBy3S57dxRdJ2VRjy0WOu+I9Igamuls6d4U5vB
-         9v+q1QRYaVGfNb0u2DHdgukuzVykY3OGa2Y4hJ4gy2q8jbO8sdS0oA88Nf8WoVDWFR9F
-         F7Mw==
-X-Gm-Message-State: APjAAAXhIZVJELfOxDtnJVOTC29iEaCSS5rHdcn2NrsUqGsCAu5Gipl+
-        8iMoZpjvkIm9vXp2rKq+USANNoSGhGI=
-X-Google-Smtp-Source: APXvYqz7bMqVPHEDovV+s45euU5I00RSWdblm4ISMBy7OUzPsKoXZiQqFFAcALMOYCpvfrg5xwiWzg==
-X-Received: by 2002:a17:902:3103:: with SMTP id w3mr94989186plb.84.1564097313473;
-        Thu, 25 Jul 2019 16:28:33 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id bo20sm37941048pjb.23.2019.07.25.16.28.32
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 25 Jul 2019 16:28:32 -0700 (PDT)
-Date:   Thu, 25 Jul 2019 16:28:31 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Joe Perches <joe@perches.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>, hpa@zytor.com,
-        tglx@linutronix.de, mingo@kernel.org, gustavo@embeddedor.com,
-        torvalds@linux-foundation.org, acme@kernel.org,
-        kan.liang@linux.intel.com, namhyung@kernel.org, jolsa@redhat.com,
-        linux-kernel@vger.kernel.org, alexander.shishkin@linux.intel.com,
-        linux-tip-commits@vger.kernel.org
-Subject: Re: [tip:perf/urgent] perf/x86/intel: Mark expected switch
- fall-throughs
-Message-ID: <201907251627.5DA61CB@keescook>
-References: <20190624161913.GA32270@embeddedor>
- <tip-289a2d22b5b611d85030795802a710e9f520df29@git.kernel.org>
- <20190725170613.GC27348@nazgul.tnic>
- <20190725173521.GM31381@hirez.programming.kicks-ass.net>
- <ad5ec66830b502d68e6d3c814706b52490418f0f.camel@perches.com>
+        id S1726963AbfGYX1E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 19:27:04 -0400
+Received: from mga17.intel.com ([192.55.52.151]:56731 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726822AbfGYX1D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 19:27:03 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jul 2019 16:27:03 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,308,1559545200"; 
+   d="scan'208";a="194036500"
+Received: from tthayer-hp-z620.an.intel.com (HELO [10.122.105.146]) ([10.122.105.146])
+  by fmsmga004.fm.intel.com with ESMTP; 25 Jul 2019 16:27:03 -0700
+Reply-To: thor.thayer@linux.intel.com
+Subject: Re: [PATCHv2] EDAC, altera: Move Stratix10 SDRAM ECC to peripheral
+To:     James Morse <james.morse@arm.com>
+Cc:     bp@alien8.de, mchehab@kernel.org, linux-edac@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1562956123-23640-1-git-send-email-thor.thayer@linux.intel.com>
+ <eb7a1e75-2de9-cb60-bf8f-77cd1e71255f@arm.com>
+From:   Thor Thayer <thor.thayer@linux.intel.com>
+Message-ID: <e88c9dd7-13af-4696-c5c1-653aaa13e805@linux.intel.com>
+Date:   Thu, 25 Jul 2019 18:29:04 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ad5ec66830b502d68e6d3c814706b52490418f0f.camel@perches.com>
+In-Reply-To: <eb7a1e75-2de9-cb60-bf8f-77cd1e71255f@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 25, 2019 at 04:18:56PM -0700, Joe Perches wrote:
-> On Thu, 2019-07-25 at 19:35 +0200, Peter Zijlstra wrote:
-> > Seriously though; I detest these patches and we really, as in _really_
-> > should have done that attribute thing.
-> 
-> At least it'll be fairly easy to convert to something
-> sensible later.
-> 
-> Variants of the equivalent of:
-> 
-> s@/* fallthrough */@fallthrough;@
-> 
-> with some trivial whitespace reformatting will read
-> _much_ better.
-> 
-> It's pretty scriptable.
+Hi James,
 
-Yup; that's been my perspective. First let's finish markings (so so
-close right now), then we can do the next phase.
+On 7/25/19 7:46 AM, James Morse wrote:
+> Hi Thor,
+> 
+> On 12/07/2019 19:28, thor.thayer@linux.intel.com wrote:
+>> From: Thor Thayer <thor.thayer@linux.intel.com>
+>>
+>> ARM32 SoCFPGAs had separate IRQs for SDRAM. ARM64 SoCFPGAs
+>> send all DBEs to SError so filtering by source is necessary.
+>>
+>> The Stratix10 SDRAM ECC is a better match with the generic
+>> Altera peripheral ECC framework because the linked list can
+>> be searched to find the ECC block offset and printout
+>> the DBE Address.
+> 
+> 
+>> diff --git a/drivers/edac/altera_edac.c b/drivers/edac/altera_edac.c
+>> index c2e693e34d43..09a80b53acea 100644
+>> --- a/drivers/edac/altera_edac.c
+>> +++ b/drivers/edac/altera_edac.c
+> 
+>> @@ -2231,13 +2275,15 @@ static int altr_edac_a10_probe(struct platform_device *pdev)
+>>   		    of_device_is_compatible(child, "altr,socfpga-dma-ecc") ||
+>>   		    of_device_is_compatible(child, "altr,socfpga-usb-ecc") ||
+>>   		    of_device_is_compatible(child, "altr,socfpga-qspi-ecc") ||
+>> +#ifdef CONFIG_EDAC_ALTERA_SDRAM
+>> +		    of_device_is_compatible(child, "altr,sdram-edac-s10") ||
+>> +#endif
+>>   		    of_device_is_compatible(child, "altr,socfpga-sdmmc-ecc"))
+> 
+> I'm just curious: This list looks suspiciously like the altr_edac_a10_device_of_match[]
+> list. Is there a reason it can't use of_match_device() here?
+> 
+Good point. Yes, it does look very much like the match list. Although 
+of_match_device() doesn't fit with the available parameters (device 
+pointer), your question prompted me to look closer and I noticed 
+of_match_node() is perfect.
 
--- 
-Kees Cook
+I'll create a version 3 with this change.
+
+Thanks for reviewing!
+
+>>   
+>>   			altr_edac_a10_device_add(edac, child);
+>>   
+>>   #ifdef CONFIG_EDAC_ALTERA_SDRAM
+>> -		else if ((of_device_is_compatible(child, "altr,sdram-edac-a10")) ||
+>> -			 (of_device_is_compatible(child, "altr,sdram-edac-s10")))
+>> +		else if (of_device_is_compatible(child, "altr,sdram-edac-a10"))
+>>   			of_platform_populate(pdev->dev.of_node,
+>>   					     altr_sdram_ctrl_of_match,
+>>   					     NULL, &pdev->dev);
+> 
+> 
+> Acked-by: James Morse <james.morse@arm.com>
+> 
+> 
+> Thanks,
+> 
+> James
+> 
+
