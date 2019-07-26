@@ -2,84 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE743771CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 21:01:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BFB55771D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 21:05:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388344AbfGZTB5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 15:01:57 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:36745 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387743AbfGZTB4 (ORCPT
+        id S2388384AbfGZTF4 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 26 Jul 2019 15:05:56 -0400
+Received: from mail.fireflyinternet.com ([109.228.58.192]:53925 "EHLO
+        fireflyinternet.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2388306AbfGZTFz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 15:01:56 -0400
-Received: by mail-qt1-f194.google.com with SMTP id z4so53700224qtc.3
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2019 12:01:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=syecGPLAVxXKoScF58JM1nKaJhwv9Ro0xqH2lWpKv7s=;
-        b=mWuTVaH89MAVhGcqtln7I6cJDGBVNDmPF17LnLwz0UxffNJfpG/ImSkR3c2jfLNuTm
-         O0p7ixMqV0hOZSHCjs007Er1FZ35YkvK8X97JYMbRWVVH9JwElPeZS15wfVfwRLBTyoe
-         y32zsnQZ/uv8IydTJTTruGaxfyauVNIV4xIC1P0KlzLLIr6BFZhD66Otx23acTsDQQgX
-         apnBA3eW9PSBjW/9s6rXSEddGFynj1SVfXA7YSwcG4iDXyuTY0mvIX9bJjooe5ucwZuP
-         e7t7etJqCtt+m2Sri8Z+HWsfAalh2tcHnwTCCPHkTF6ikfwBGDWOn7Y7hEALSIJhN4i2
-         zAjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=syecGPLAVxXKoScF58JM1nKaJhwv9Ro0xqH2lWpKv7s=;
-        b=IeMVX4euZj8iYGb4JpjlX0dUvxKBGXOu5/bHh8mper6cvu7rT0mHc3MxPC0mQ6oOFX
-         gQ/lsn0jvZWixH46Vkzob08oCvZvw/o71298WO9UJO1NBLUuFLIrquOhvy2b8PbTP97a
-         T7mTOCqnjuPI39FfY7XKn30bbXtQ1/t1oEdIOf/tjuabkXFncnrfalmVMflEcbiUo/fD
-         1sA50wI65JSTleBt5d+WAsTcHKirn4DAusv+vpzhishsOqt300hiC/t711Xe5UlddoJt
-         Ru1QvuswYrlWYrbk8gGUr7n1TQhvg/jhrMm4O3EcCbnaGo2CAfRVoqgfmg2tdChDhvJy
-         0E5w==
-X-Gm-Message-State: APjAAAXvFD7Baxq7ZlVDTYAuJn5RHQaKkgYv0iiqXvDX8xcvlar2ObLa
-        M4u0eZ+M4DF8KpmZuof6ces=
-X-Google-Smtp-Source: APXvYqzrMQuk02/iXrXtRaLD6D5IA8xZF45GCR2iy/tCNubwNavnBZHpamZyjQxpD1SFWtfNVrnOGg==
-X-Received: by 2002:a0c:e001:: with SMTP id j1mr70180692qvk.110.1564167715842;
-        Fri, 26 Jul 2019 12:01:55 -0700 (PDT)
-Received: from localhost (ec2-3-84-150-207.compute-1.amazonaws.com. [3.84.150.207])
-        by smtp.gmail.com with ESMTPSA id u16sm27436019qte.32.2019.07.26.12.01.55
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 26 Jul 2019 12:01:55 -0700 (PDT)
-From:   Abhinav Jain <crazypsychild@gmail.com>
-X-Google-Original-From: Abhinav Jain <ubuntu@ip-172-31-129-142.ec2.internal>
-To:     gregkh@linuxfoundation.org
-Cc:     himadri18.07@gmail.com, devel@driverdev.osuosl.org,
+        Fri, 26 Jul 2019 15:05:55 -0400
+X-Default-Received-SPF: pass (skip=forwardok (res=PASS)) x-ip-name=78.156.65.138;
+Received: from localhost (unverified [78.156.65.138]) 
+        by fireflyinternet.com (Firefly Internet (M1)) with ESMTP (TLS) id 17638005-1500050 
+        for multiple; Fri, 26 Jul 2019 20:05:36 +0100
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8BIT
+To:     Josh Poimboeuf <jpoimboe@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+From:   Chris Wilson <chris@chris-wilson.co.uk>
+In-Reply-To: <alpine.DEB.2.21.1907252355150.1791@nanos.tec.linutronix.de>
+Cc:     intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
         linux-kernel@vger.kernel.org,
-        Abhinav Jain <crazypsychild@gmail.com>
-Subject: [PATCH] Staging: rtl8192e: fixed a function prototype definition issue
-Date:   Fri, 26 Jul 2019 19:01:46 +0000
-Message-Id: <20190726190146.10875-1-ubuntu@ip-172-31-129-142.ec2.internal>
-X-Mailer: git-send-email 2.17.1
+        Peter Zijlstra <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sedat Dilek <sedat.dilek@gmail.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>
+References: <51a4155c5bc2ca847a9cbe85c1c11918bb193141.1564086017.git.jpoimboe@redhat.com>
+ <alpine.DEB.2.21.1907252355150.1791@nanos.tec.linutronix.de>
+Message-ID: <156416793450.30723.5556760526480191131@skylake-alporthouse-com>
+User-Agent: alot/0.6
+Subject: Re: [PATCH] drm/i915: Remove redundant user_access_end() from
+ __copy_from_user() error path
+Date:   Fri, 26 Jul 2019 20:05:34 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Abhinav Jain <crazypsychild@gmail.com>
+Quoting Thomas Gleixner (2019-07-25 22:55:45)
+> On Thu, 25 Jul 2019, Josh Poimboeuf wrote:
+> 
+> > Objtool reports:
+> > 
+> >   drivers/gpu/drm/i915/gem/i915_gem_execbuffer.o: warning: objtool: .altinstr_replacement+0x36: redundant UACCESS disable
+> > 
+> > __copy_from_user() already does both STAC and CLAC, so the
+> > user_access_end() in its error path adds an extra unnecessary CLAC.
+> > 
+> > Fixes: 0b2c8f8b6b0c ("i915: fix missing user_access_end() in page fault exception case")
+> > Reported-by: Thomas Gleixner <tglx@linutronix.de>
+> > Reported-by: Sedat Dilek <sedat.dilek@gmail.com>
+> > Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> > Tested-by: Nick Desaulniers <ndesaulniers@google.com>
+> > Tested-by: Sedat Dilek <sedat.dilek@gmail.com>
+> > Link: https://github.com/ClangBuiltLinux/linux/issues/617
+> > Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+> 
+> Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
 
-Added the identifier name in the function prototype definition.
-
-Signed-off-by: Abhinav Jain <crazypsychild@gmail.com>
----
- drivers/staging/rtl8192e/rtllib.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/staging/rtl8192e/rtllib.h b/drivers/staging/rtl8192e/rtllib.h
-index 2dd57e88276e..f55153270a8d 100644
---- a/drivers/staging/rtl8192e/rtllib.h
-+++ b/drivers/staging/rtl8192e/rtllib.h
-@@ -1940,7 +1940,7 @@ int rtllib_encrypt_fragment(
- 	int hdr_len);
- 
- int rtllib_xmit(struct sk_buff *skb,  struct net_device *dev);
--void rtllib_txb_free(struct rtllib_txb *);
-+void rtllib_txb_free(struct rtllib_txb *txb);
- 
- /* rtllib_rx.c */
- int rtllib_rx(struct rtllib_device *ieee, struct sk_buff *skb,
--- 
-2.17.1
-
+Which tree do you plan to apply it to? I can put in drm-intel, and with
+the fixes tag it will percolate through to 5.3 and beyond, but if you
+want to apply it directly to squash the build warnings, feel free.
+-Chris
