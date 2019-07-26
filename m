@@ -2,117 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17631770C0
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 19:58:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BD60B770C8
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 19:59:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388015AbfGZR6c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 13:58:32 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:35156 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387995AbfGZR6c (ORCPT
+        id S1729031AbfGZR73 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 13:59:29 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:33791 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727083AbfGZR73 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 13:58:32 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6QHrRdQ070868;
-        Fri, 26 Jul 2019 17:58:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=yeCMaN4K2ZO7buQVH+UC6UxQHTwLlHucEGyTiE6T/j8=;
- b=V0Z3b9HcNgBLGK896nLr2lpPLZ3t1rvtynwo15NBI8+Rb9P+k8AH9iYWd+kfaPmp8Lnd
- 0a2r3afMlMyIHnVJK3DO3MwMV3zYSN7DZfOLLhSHkgIOj7F/pqIbhehWBukF5lfyQytt
- wudHYssGhgewTAGbbkiNjL3zXo5a0UeOyJKooPUuHbCTDKoqAhelFGKSn+tAQgnqbKg8
- EUHF/9KD9mK+AG+orSGaqCT1LXFUd5Hyw/zUgnC1WgHaxkUixgPrHyD9XdcmGYoDBlkt
- OqguUQqE+9zgFzfUuLOrF9LXUBib1fbRrmKsgxTHwSnkUMgb3UUbN73fX3Qu52yi7jvb pw== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2130.oracle.com with ESMTP id 2tx61ccdbe-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 26 Jul 2019 17:58:13 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6QHvSiE095495;
-        Fri, 26 Jul 2019 17:58:12 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3030.oracle.com with ESMTP id 2tx60ymgxp-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 26 Jul 2019 17:58:12 +0000
-Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x6QHw4SK007947;
-        Fri, 26 Jul 2019 17:58:04 GMT
-Received: from [10.154.133.139] (/10.154.133.139)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 26 Jul 2019 10:58:04 -0700
-Subject: Re: [PATCH 09/16] sparc64: use the generic get_user_pages_fast code
-To:     "Dmitry V. Levin" <ldv@altlinux.org>,
-        Christoph Hellwig <hch@lst.de>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Anatoly Pugachev <matorola@gmail.com>,
-        sparclinux@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-References: <20190625143715.1689-1-hch@lst.de>
- <20190625143715.1689-10-hch@lst.de> <20190717215956.GA30369@altlinux.org>
-From:   Khalid Aziz <khalid.aziz@oracle.com>
-Organization: Oracle Corp
-Message-ID: <14242f6d-e833-c5b7-3748-458f31039b84@oracle.com>
-Date:   Fri, 26 Jul 2019 11:58:01 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Fri, 26 Jul 2019 13:59:29 -0400
+Received: by mail-io1-f67.google.com with SMTP id z3so106625892iog.0
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2019 10:59:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=usp-br.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Mz6yFp/JdoMmP88Hd9wgTkqmhK5wh8hSxVlurnjVo58=;
+        b=AqdQBSa+KR+uV7HGSwYjR8NLjKpjPepgw0zylTLXZ2QQt/1THpF/IcxTn9NEC2+a1o
+         mEdqDuJaXZJSxYKkUXBcNCmPTgQq3dGfUhPsntmMSDH5QtHkMKiKDU86C/gca8cxTMd8
+         6/yzBbfm3RVHl15/DODIgB3Cd/GPtXpUnJkV2SR4GLk5GbVLK8RwEW3EX2EtkejrFmNv
+         HVjdQh5HsFf+GdZ0BQSIw5dMf1rZZwStF4kg1X0vW0pmSU3Lgs4BDbgxFVRlci6MTiKY
+         tZK3xW9fmKhVo7LFGLcFqYWBmUa72CuL2KwU9npClRTQetuaBXMVcAyI7GofbWa4TVm4
+         OFKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Mz6yFp/JdoMmP88Hd9wgTkqmhK5wh8hSxVlurnjVo58=;
+        b=UmvC8zW7fWLrCFVyf6lkZfLBPDBTcB618QATwH8M/dORcRrTlP1a2QKxHQ677qPCZK
+         2Sy5quJbKg7isqAifQwJ0lcMjjMTzRP3BJkIaesPZxLU0rc/u2f1HMj7hEqF3QyBuAJe
+         mD3ul5Nc2zvhlnYmyP3J2EamdvKDg27xpbhEA3WENEoWHUkoxAyp/yX4riAXh8bM7UtZ
+         9uklGBtuS+OWEBR8xoC6yvSpssrnyz3Gy6aiT8Z4y+iFweSYIax7oVLWMu9J+952QETw
+         zX5Jshsqs461WCEbmnivmcrlLAmxWZOof9ut4Lu06ZatbecpiTSZ2byNoQz+P26avHt+
+         cLGg==
+X-Gm-Message-State: APjAAAXiKa1xavl5q7UKa4BunslQ5ajBC5HIhF3p5XdSW56dGglG1Gc3
+        iA6wMXqtlOVCxGCv/hCRXXjV7RY88NrelBKQzUCuBg==
+X-Google-Smtp-Source: APXvYqxQgZBD3hEdmYQN0ATdE+xO3I4QX7GvRTvtCBuN9N9yUSx7Dm9vAjvX0rbeiciuckyUOL3NhdqK6yM+PYnGSzE=
+X-Received: by 2002:a5d:9711:: with SMTP id h17mr16548342iol.280.1564163967979;
+ Fri, 26 Jul 2019 10:59:27 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190717215956.GA30369@altlinux.org>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9330 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1906280000 definitions=main-1907260215
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9330 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
- definitions=main-1907260214
+References: <20190725200817.31277-1-kartik.koolks@gmail.com> <0e273486f1c4fb6249896225837cdf2da0fd2415.camel@analog.com>
+In-Reply-To: <0e273486f1c4fb6249896225837cdf2da0fd2415.camel@analog.com>
+From:   Matheus Tavares Bernardino <matheus.bernardino@usp.br>
+Date:   Fri, 26 Jul 2019 14:59:16 -0300
+Message-ID: <CAHd-oW5sOry2g_tQbgQ9-dp1esVStmS+UF-TTYoB2mWmzR10jQ@mail.gmail.com>
+Subject: Re: [PATCH] staging:iio:adc:ad7280a: add of_match_table entry
+To:     "Ardelean, Alexandru" <alexandru.Ardelean@analog.com>
+Cc:     "Popa, Stefan Serban" <StefanSerban.Popa@analog.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "pmeerw@pmeerw.net" <pmeerw@pmeerw.net>,
+        "jic23@kernel.org" <jic23@kernel.org>,
+        "Hennerich, Michael" <Michael.Hennerich@analog.com>,
+        "lars@metafoo.de" <lars@metafoo.de>,
+        "knaack.h@gmx.de" <knaack.h@gmx.de>,
+        "kartik.koolks@gmail.com" <kartik.koolks@gmail.com>,
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        "kernel-usp@googlegroups.com" <kernel-usp@googlegroups.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/17/19 3:59 PM, Dmitry V. Levin wrote:
-> Hi,
->=20
-> On Tue, Jun 25, 2019 at 04:37:08PM +0200, Christoph Hellwig wrote:
->> The sparc64 code is mostly equivalent to the generic one, minus variou=
-s
->> bugfixes and two arch overrides that this patch adds to pgtable.h.
->>
->> Signed-off-by: Christoph Hellwig <hch@lst.de>
->> Reviewed-by: Khalid Aziz <khalid.aziz@oracle.com>
->> ---
->>  arch/sparc/Kconfig                  |   1 +
->>  arch/sparc/include/asm/pgtable_64.h |  18 ++
->>  arch/sparc/mm/Makefile              |   2 +-
->>  arch/sparc/mm/gup.c                 | 340 ---------------------------=
--
->>  4 files changed, 20 insertions(+), 341 deletions(-)
->>  delete mode 100644 arch/sparc/mm/gup.c
->=20
-> So this ended up as commit 7b9afb86b6328f10dc2cad9223d7def12d60e505
-> (thanks to Anatoly for bisecting) and introduced a regression:=20
-> futex.test from the strace test suite now causes an Oops on sparc64
-> in futex syscall
->=20
+On Fri, Jul 26, 2019 at 2:30 AM Ardelean, Alexandru
+<alexandru.Ardelean@analog.com> wrote:
+>
+> On Fri, 2019-07-26 at 01:38 +0530, Kartik Kulkarni wrote:
+> > Add the of_device_id struct and the respective
+> > of_match_device entry to complete device tree support.
+> >
+>
+> This would be a [V2] I suppose.
+>
+> This change also does the rename of the driver name in a single go.
+> Since it's a trivial change, it's fine from my side.
 
-I have been working on reproducing this problem but ran into a different
-problem. I found 5.1 and newer kernels no longer boot on an S7 server or
-in an ldom on a T7 server (kernel hangs after "crc32c_sparc64: Using
-sparc64 crc32c opcode optimized CRC32C implementation" on console). A
-long git bisect session between 5.0 and 5.1 pointed to commit
-73a66023c937 ("sparc64: fix sparc_ipc type conversion") but that makes
-no sense. I will keep working on finding root cause. I wonder if
-Anatoly's git bisect result is also suspect.
+I think there was a small confusion when we sent the patches. Sorry
+for that. Originally, Kartik made the rename in its own patch. Would
+it be better if we resend the two patches separately?
 
---
-Khalid
+Thanks,
+Matheus
 
+> Reviewed-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
+>
+>
+> > Signed-off-by: Kartik Kulkarni <kartik.koolks@gmail.com>
+> > Reviewed-by: Matheus Tavares <matheus.bernardino@usp.br>
+> > ---
+> >  drivers/staging/iio/adc/ad7280a.c | 9 ++++++++-
+> >  1 file changed, 8 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/staging/iio/adc/ad7280a.c b/drivers/staging/iio/adc/ad7280a.c
+> > index 19a5f244dcae..ded0ba093a28 100644
+> > --- a/drivers/staging/iio/adc/ad7280a.c
+> > +++ b/drivers/staging/iio/adc/ad7280a.c
+> > @@ -1027,9 +1027,16 @@ static const struct spi_device_id ad7280_id[] = {
+> >  };
+> >  MODULE_DEVICE_TABLE(spi, ad7280_id);
+> >
+> > +static const struct of_device_id ad7280_of_match[] = {
+> > +     { .compatible = "adi,ad7280a", },
+> > +     { }
+> > +};
+> > +MODULE_DEVICE_TABLE(of, ad7280_of_match);
+> > +
+> >  static struct spi_driver ad7280_driver = {
+> >       .driver = {
+> > -             .name   = "ad7280",
+> > +             .name   = "ad7280a",
+> > +             .of_match_table = ad7280_of_match,
+> >       },
+> >       .probe          = ad7280_probe,
+> >       .id_table       = ad7280_id,
+>
+> --
+> You received this message because you are subscribed to the Google Groups "Kernel USP" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to kernel-usp+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgid/kernel-usp/0e273486f1c4fb6249896225837cdf2da0fd2415.camel%40analog.com.
