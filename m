@@ -2,234 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C7DA76AD1
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 16:01:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 909B476AD7
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 16:01:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388268AbfGZOBE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 10:01:04 -0400
-Received: from foss.arm.com ([217.140.110.172]:45126 "EHLO foss.arm.com"
+        id S2387532AbfGZOB0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 10:01:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42332 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387439AbfGZOBA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 10:01:00 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 35F03337;
-        Fri, 26 Jul 2019 07:00:59 -0700 (PDT)
-Received: from [10.1.196.105] (eglon.cambridge.arm.com [10.1.196.105])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D37703F694;
-        Fri, 26 Jul 2019 07:00:57 -0700 (PDT)
-Subject: Re: [RFC v1 0/4] arm64: MMU enabled kexec kernel relocation
-To:     Pavel Tatashin <pasha.tatashin@soleen.com>
-Cc:     James Morris <jmorris@namei.org>, Sasha Levin <sashal@kernel.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        kexec mailing list <kexec@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Catalin Marinas <catalin.marinas@arm.com>, will@kernel.org,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-References: <20190716165641.6990-1-pasha.tatashin@soleen.com>
- <4c8a3a11-adc2-efa4-f765-6be338546ae4@arm.com>
- <CA+CK2bBj9UsQZCLsy-S8c_Kd5SRAPvtdS8s9P_Fdg+VifTbT5w@mail.gmail.com>
-From:   James Morse <james.morse@arm.com>
-Message-ID: <9f74788a-98e8-9839-2017-df64e8532026@arm.com>
-Date:   Fri, 26 Jul 2019 15:00:56 +0100
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S2388797AbfGZOBW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 10:01:22 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5712420659;
+        Fri, 26 Jul 2019 14:01:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564149681;
+        bh=FVYNxjJLl/W5Dert07lPwnlV/q5+htxqU2YZhMN4tVA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=mOFvSAqxJtYLjDKCpiywPR/Hj9HyVEoup//WBMEY/mfHLkp6x8koAmiOwLlmv5j9g
+         d7eEUcC+sk7AlJo5/EO6o57O26KLm1D/D101VmY6rnW5jBO60Mh5FdXduz7Lu320y9
+         0eMqTheDx3jighRHdszCAdnWVz/haxkmtwIMqmMA=
+Date:   Fri, 26 Jul 2019 16:01:18 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     "Chang, Junxiao" <junxiao.chang@intel.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "rafael@kernel.org" <rafael@kernel.org>,
+        "Li, Lili" <lili.li@intel.com>
+Subject: Re: [PATCH] platform: release resource itself instead of resource
+ tree
+Message-ID: <20190726140118.GA23143@kroah.com>
+References: <1556173458-9318-1-git-send-email-junxiao.chang@intel.com>
+ <20190725133850.GB11115@kroah.com>
+ <840F6BCBBBA89F46BAD0D7D6EF39E6E350F5072A@SHSMSX107.ccr.corp.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <CA+CK2bBj9UsQZCLsy-S8c_Kd5SRAPvtdS8s9P_Fdg+VifTbT5w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <840F6BCBBBA89F46BAD0D7D6EF39E6E350F5072A@SHSMSX107.ccr.corp.intel.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Pavel,
 
-On 17/07/2019 20:13, Pavel Tatashin wrote:
->> After a quick skim:
->>
->> This will map 'nomap' regions of memory with cacheable attributes. This is a non-starter.
->> These regions were described by firmware as having content that was/is written with
->> different attributes. The attributes must match whenever it is mapped, otherwise we have a
->> loss of coherency. Mapping this stuff as cacheable means the CPU can prefetch it into the
->> cache whenever it likes.
+A: Because it messes up the order in which people normally read text.
+Q: Why is top-posting such a bad thing?
+A: Top-posting.
+Q: What is the most annoying thing in e-mail?
+
+A: No.
+Q: Should I include quotations after my reply?
+
+http://daringfireball.net/2007/07/on_top
+
+On Fri, Jul 26, 2019 at 10:24:22AM +0000, Chang, Junxiao wrote:
+> Hi Greg,
 > 
->> It may be important that we do not ever map some of these regions, even though its
->> described as memory. On AMD-Seattle the bottom page of memory is reserved by firmware for
->> its own use; it is made secure-only, and any access causes an
->> external-abort/machine-check. UEFI describes this as 'Reserved', and we preserve this in
->> the kernel as 'nomap'. The equivalent DT support uses memreserve, possibly with the
->> 'nomap' attribute.
->>
->> Mapping a 'new'/unknown region with cacheable attributes can never be safe, even if we
->> trusted kexec-tool to only write the kernel to memory. The host may be using a bigger page
->> size causing more memory to become cacheable than was intended.
->> Linux's EFI support rounds the UEFI memory map to the largest support page size, (and
->> winges about firmware bugs).
->> If we're allowing kexec to load images in a region not described as IORESOURCE_SYSTEM_RAM,
->> that is a bug we should fix.
+> Thank you for looking at it.
 > 
-> We are allowing this. If you consider this to be a bug, I will fix it,
-> and this will actually simplify the idmap page table. User will
-> receive an error during kexec load if a request is made to load into
-> !IORESOURCE_SYSTEM_RAM region.
+> Below example is simplified description. Our detail problem is:
+> 1. ACPI driver registers a MEM resource during bootup;
+> 2. Our PUNIT(Intel CPU power management module) platform device reads ACPI driver's resource, and registers same MEM resource;
+> 3. According to current resource management logic, if two resources are same, later registered resource will be parent. That is, PUNIT platform device's resource will be ACPI driver resource's parent.
+> 4. PUNIT kernel module is removed, its resource will be removed. If we use original API "release_resource", ACPI driver's resource will be released as well because it is PUNIT device's child;
 
-I consider this a bug, but we can see what others think.
-This suggests kexec-tools can open /proc/iomem, find a likely looking gap, and try to load
-the new kernel between two platform devices.
+Why did you remove this module?  That never happens unless you do it "by
+hand", and as root.  Just don't do this if it causes problems in your
+system, right?
 
+Anyway, if you create a child reference you should always clean up all
+of your children before removing yourself from memory.  So try fixing
+that up first.
 
->> The only way to do this properly is to copy the linear mapping. The arch code has lots of
->> complex code to generate it correctly at boot, we do not want to duplicate it.
->> (this is why hibernate copies the linear mapping)
+> 5. Next time PUNIT platform device kernel module is inserted, it might read wrong ACPI MEM resource because it has been released in step 4.
 > 
-> As I understand, you would like to take a copy of idmap page table,
-> and add entries only for segment
-> sources and destinations into the new page table?
+> How should we handle this case? :) 
 
-I don't think there is a need to idmap memory at all. We should copy the linear map so you
-know you won't overwrite its page tables as part of loading the new kernel.
+Don't unload kernel modules unless you know what you are doing :)
 
+Seriously, you are creating a dependancy here that you are not
+expressing in your module reference count, and you are not properly
+cleaning up after yourself when removing your devices.  Just delete your
+child devices when unloading yourself and you should be fine, right?
 
-> If so, there is a slight problem: arch hook machine_kexec_prepare() is
-> called prior to loading segments from userland. We can solve this by
-> adding another hook that is called after kimage_terminate().
+> We should not register same MEM resource in step 2? Or, make change in
+> resource management logic, if two resources are same, later registered
+> resource should be child instead of parent?
 
-Yes, all this would need doing as machine_kexec() runs. We preferably need to allocate
-memory in this path, or at least have a bitmap of what we can/can't overwrite.
+I don't know how your resource management logic works, try working with
+the developers who wrote that.  But as you describe it, it is not
+correct at least when you try to clean things up.
 
+thanks,
 
->> These patches do not remove the running page tables from TTBR1. As you overwrite the live
->> page tables you will corrupt the state of the CPU. The page-table walker may access things
->> that aren't memory, cache memory that shouldn't be cached (see above), and allocate
->> conflicting entries in the TLB.
-> 
-> Indeed. However, I was following what is done in create_safe_exec_page():
-> https://soleen.com/source/xref/linux/arch/arm64/kernel/hibernate.c?r=af873fce#263
-> 
-> ttbr1 is not removed there. Am I missing something, or is not yet
-> configured there?
-
-Hibernate maps a single executable page in ttbr0_el1 that holds its relocation code.
-The relocation code then switches ttbr1_el1 to point to the copy of the linear map. See
-the 'break_before_make_ttbr_switch' macro in swsusp_arch_suspend_exit().
-
-
-> I will set ttbr1 to zero page.
-> 
->> You cannot use the mm page table helpers to build an idmap on arm64. The mm page table
->> helpers have a compile-time VA_BITS, and we support systems where there is no memory below
->> 1<<VA_BITS. (crazy huh!). Picking on AMD-Seattle again: if you boot a 4K 39bit VA kernel,
->> the idmap will have more page table levels than the page table helpers can build. This is
->> why there are special helpers to load the idmap, and twiddle TCR_EL1.T0SZ.
->> You already need to copy the linear-map, so using an idmap is extra work. You want to work
->> with linear-map addresses, you probably need to add the field to the appropriate structure.
-> 
-> OK. Makes sense. I will do the way hibernate setup this table. I was
-> indeed following x86, hoping that eventually it would be possible to
-> unite: kasan, hibernate, and kexec implementation of this page table.
-
-Our kasan and hibernate code already went a different way. I doubt we can bring them back
-in to look like x86, they have different problems to solve.
-
-
->> The kexec relocation code still runs at EL2. You can't use a copy of the linear map here
->> as there is only one TTBR on v8.0, and you'd need to setup EL2 as its been torn back to
->> the hyp-stub.
-> 
-> As I understand normally on baremetal kexec runs at EL1 not EL2. On my
-> machine is_kernel_in_hyp_mode() == false in cpu_soft_restart.
-
-and is_hyp_mode_available() ?
-
-
-This depends on which exception-level your bootloader set Linux running. You should get a
-boot message that tells you:
-| CPU: All CPU(s) started at EL2
-
-is_kernel_in_hyp_mode() is for determining if the kernel is running at EL2. This is the
-case if you get a message like:
-| kvm [1]: VHE mode initialized successfully
-VHE is a v8.1 feature that repaints the system-registers so a kernel written to run at EL1
-can run almost unmodified at EL2.
-
-We also have is_hyp_mode_available(), which will return true if all the CPUs booted at EL2.
-
-
-kexec either runs its relocation code at EL1, or at EL2 if that is where the first kernel
-booted. If you call to EL2, the MMU was already off as KVM will reset EL2 to the hyp-stub
-in response to the reboot notifiers hardware_disable() call.
-
-(kvm_arch_hardware_disable() calls cpu_hyp_reset())
-
-
-> This is the reason hibernate posts EL2 in a holding pen while it rewrites
->> all of memory, then calls back to fixup EL2. Keeping the rewrite phase at EL1 means it
->> doesn't need independently tweaking/testing. You need to do something similar, either
->> calling EL2 to start the new image, or disabling the MMU at EL1 to start the new image there.
-
-> OK, I will study how hibernate does this. I was thinking that if we
-> are running in EL2 we can simply configure TTBR0_EL2 instead of
-> TTBR0_EL1. But, I need to understand this better.
-
-Yes, if you've got a VHE system it can skip the jumping around Exception-levels, but we
-still need to support the non-VHE systems.
-
-
->>> This patch series works in terms, that I can kexec-reboot both in QEMU
->>> and on a physical machine. However, I do not see performance improvement
->>> during relocation. The performance is just as slow as before with disabled
->>> caches.
->>
->>> Am I missing something? Perhaps, there is some flag that I should also
->>> enable in page table? Please provide me with any suggestions.
->>
->> Some information about the physical machine you tested this on would help.
->> I'm guessing its v8.0, and booted at EL2....
-
-> I am using Broadcom's Stingray SoC.
-
-First hit on google is [0]. Which assuming its the same SoC, says its Cortex-A72, this is
-a v8.0 part, it doesn't have VHE. The kernel will be running at EL1, if it supports KVM it
-must have booted at EL2.
-
-
-> Because  is_kernel_in_hyp_mode()
-> returns false, I believe it is EL1. How can I boot it at EL2?
-
-This check is for VHE.
-|static inline bool is_kernel_in_hyp_mode(void)
-| {
-|	return read_sysreg(CurrentEL) == CurrentEL_EL2;
-| }
-
-The kernel's early startup in head.S detects if its running at EL2 or EL1. If it has VHE,
-it enables the feature and stays at EL2. Otherwise it installs the 'hyp-stub' and drops to
-EL1.
-
-On v8.0 the kernel has to run at EL1 because we need the two ttbr registers.
-(kernel/user-space). EL2 on these parts only has one. v8.1's VHE adds a second ttbr to
-EL2, meaning we can run linux at EL2 and KVM avoids the jumping between exception levels.
-
-
-You can check for that:
-| CPU: All CPU(s) started at EL2
-message. If your bootloader is starting the OS at EL1, you will need to speak to the
-firmware folk about getting that changed.
-
-
-> So, I am still confused why I do not see performance improvements
-> during relocation on this machine. Any theories?
-
-I assume you started at EL2. You moved EL1's mmu-off code, but cpu_soft_restart() will
-call the relocation code at EL2 where the MMU is already off. Because you expected to be
-using an idmap, nothing goes wrong, but nothing has changed.
-
-
-Thanks,
-
-James
-
-[0] https://www.broadcom.com/products/storage/ethernet-storage-adapters-ics/ps1100r
+greg k-h
