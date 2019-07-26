@@ -2,151 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2931B76ECE
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 18:20:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF21076ED3
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 18:21:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728665AbfGZQUj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 12:20:39 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:57062 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728599AbfGZQUc (ORCPT
+        id S1728712AbfGZQUx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 12:20:53 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:33219 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728611AbfGZQUx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 12:20:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Type:MIME-Version:References:
-        Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=SpMi5sOhIYD3roQa84wOPn7StPj6QRDmcoeVo4NB+S0=; b=2jziYZSTmijt7b5N7WLNFH7oQC
-        SsXXxtlyPAmpsX4Eg/ZGZn6sW5q8Glp5T9OTlDlamPG+xnGA1xNG4+ML8Rjn2lC0JQ07oEl5xwqoF
-        fCFiBCJ3TdN60BjDzCnC+t9iKywQcoPwssKmR9fda6Xkxn17vIEMllrhZ6HJ9hhrSPiqNIbGWNTeC
-        r2I96W8ZIfVCLf5vqzhABrJ+udV6xi1pDWfKaMdOOM6v5PHmHV2KDvEuetdF7vzv/3UFCs0Q76HNH
-        8KTaq3wH6qjKbSG9Hn7vUpdXHjxMZ0OEUyoAhXxgpuBQbWk9RiuBT0PH0xJRJk7C4ehsVgq7c6ghx
-        7aRUzwjQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hr2wz-00066d-OT; Fri, 26 Jul 2019 16:20:09 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 74DE820229759; Fri, 26 Jul 2019 18:20:05 +0200 (CEST)
-Message-Id: <20190726161358.113257053@infradead.org>
-User-Agent: quilt/0.65
-Date:   Fri, 26 Jul 2019 16:54:22 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     mingo@kernel.org, juri.lelli@redhat.com
-Cc:     linux-kernel@vger.kernel.org, dietmar.eggemann@arm.com,
-        luca.abeni@santannapisa.it, bristot@redhat.com,
-        balsini@android.com, dvyukov@google.com, tglx@linutronix.de,
-        vpillai@digitalocean.com, rostedt@goodmis.org, peterz@infradead.org
-Subject: [RFC][PATCH 13/13] sched/fair: Add trivial fair server
-References: <20190726145409.947503076@infradead.org>
+        Fri, 26 Jul 2019 12:20:53 -0400
+Received: by mail-wr1-f65.google.com with SMTP id n9so55130627wru.0;
+        Fri, 26 Jul 2019 09:20:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=T/qDVf+3dooEMAhruNasjaP2IHvuiWtEmkuvHmBG+jE=;
+        b=u74QyaIaeokVKcRlclbi8ZChTroTb+hxErNprFXFz63Rra5MoMHUzsrbWObUJ9n0Ux
+         7ANAXkMymd83qMr5GScNwcw2aYi3uILh36LndhKYmSk6ed00GJi2B4x8HZ08xB4gQjWX
+         aqlfKimYkJ02s5kxVwcBDzn5ouy8Mb5tK5a7LpJ7Gje454GjWKDTCaYpqL35f/JYeEXa
+         Xr2fLn4cqHSs8Q9sov/srOvuG70bhp7UfBx4vA58SfNFZLxQ1y5tufGPhazUruajAR0x
+         8tpSWrFw+RlYbtQ+LLXAPXew0fL9tOO+6ShaAfoaTduq/lBtsW20YbNWycu3Q6Re0sb2
+         x/YQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=T/qDVf+3dooEMAhruNasjaP2IHvuiWtEmkuvHmBG+jE=;
+        b=JT/l2/28218hdsfYg+y6C7smE5Uc1JA5YXC2HgV8uNS3S/leHYD4rv6tcZj86iaZTh
+         yLr/Y72eUMULv6K6E5iDl75zL5iCvwAQFIKF5UzONLFhpX/Bl7n87m6MkVBHH5kPAsbF
+         ZEN2qj0kKanwTheX210UPtQOYliawxpzrTqiaU31fg02efPeQTUp6X02Kq1eRasQvJb/
+         bjLNTa2LqQCDAsmo2QcNcLHNPxXmRDRqcczRAsBDT6uE6DMBNooAmtlMHOjE70bgA2mj
+         nK4WdqrSPwEB7uV2R1xnTYbywCDmUU9gUoMEBRkVtMJ/qtEvzcuhkjhHFWpKn9WwO5jF
+         trQw==
+X-Gm-Message-State: APjAAAX9NOE5r9pJ7hULJImChL74CT3b4h9JGTS7P9313iywapOUucPV
+        vQcxSMrjGZRu2+EHGcYKar0=
+X-Google-Smtp-Source: APXvYqwChD/6H+v/k2i0GRnWa8BPb9pYfF23pSNRnjD9xEwPX6Kks+G03fmvtv+XXTU2gzoC5WPMnw==
+X-Received: by 2002:a5d:53c1:: with SMTP id a1mr323995wrw.185.1564158051059;
+        Fri, 26 Jul 2019 09:20:51 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:4f8:222:2f1b::2])
+        by smtp.gmail.com with ESMTPSA id u2sm45819941wmc.3.2019.07.26.09.20.49
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Fri, 26 Jul 2019 09:20:49 -0700 (PDT)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Iyappan Subramanian <iyappan@os.amperecomputing.com>,
+        Keyur Chudgar <keyur@os.amperecomputing.com>,
+        Quan Nguyen <quan@os.amperecomputing.com>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Kelsey Skunberg <skunberg.kelsey@gmail.com>,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH] drivers: net: xgene: Move status variable declaration into CONFIG_ACPI block
+Date:   Fri, 26 Jul 2019 09:20:37 -0700
+Message-Id: <20190726162037.37308-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+X-Patchwork-Bot: notify
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+When CONFIG_ACPI is unset (arm allyesconfig), status is unused.
 
+drivers/net/ethernet/apm/xgene/xgene_enet_xgmac.c:383:14: warning:
+unused variable 'status' [-Wunused-variable]
+        acpi_status status;
+                    ^
+drivers/net/ethernet/apm/xgene/xgene_enet_sgmac.c:440:14: warning:
+unused variable 'status' [-Wunused-variable]
+        acpi_status status;
+                    ^
+drivers/net/ethernet/apm/xgene/xgene_enet_hw.c:697:14: warning: unused
+variable 'status' [-Wunused-variable]
+        acpi_status status;
+                    ^
 
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Move the declaration into the CONFIG_ACPI block so that there are no
+compiler warnings.
+
+Fixes: 570d785ba46b ("drivers: net: xgene: Remove acpi_has_method() calls")
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 ---
- kernel/sched/core.c     |    6 +++++-
- kernel/sched/deadline.c |    2 ++
- kernel/sched/fair.c     |   29 +++++++++++++++++++++++++++++
- kernel/sched/sched.h    |    6 +++++-
- 4 files changed, 41 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/apm/xgene/xgene_enet_hw.c    | 3 ++-
+ drivers/net/ethernet/apm/xgene/xgene_enet_sgmac.c | 3 ++-
+ drivers/net/ethernet/apm/xgene/xgene_enet_xgmac.c | 3 ++-
+ 3 files changed, 6 insertions(+), 3 deletions(-)
 
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -6501,6 +6504,7 @@ void __init sched_init(void)
- #endif /* CONFIG_SMP */
- 		hrtick_rq_init(rq);
- 		atomic_set(&rq->nr_iowait, 0);
-+		fair_server_init(rq);
- 	}
+diff --git a/drivers/net/ethernet/apm/xgene/xgene_enet_hw.c b/drivers/net/ethernet/apm/xgene/xgene_enet_hw.c
+index 79924efd4ab7..5f657879134e 100644
+--- a/drivers/net/ethernet/apm/xgene/xgene_enet_hw.c
++++ b/drivers/net/ethernet/apm/xgene/xgene_enet_hw.c
+@@ -694,7 +694,6 @@ bool xgene_ring_mgr_init(struct xgene_enet_pdata *p)
+ static int xgene_enet_reset(struct xgene_enet_pdata *pdata)
+ {
+ 	struct device *dev = &pdata->pdev->dev;
+-	acpi_status status;
  
- 	set_load_weight(&init_task, false);
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -5239,6 +5239,9 @@ enqueue_task_fair(struct rq *rq, struct
- 	 */
- 	util_est_enqueue(&rq->cfs, p);
+ 	if (!xgene_ring_mgr_init(pdata))
+ 		return -ENODEV;
+@@ -713,6 +712,8 @@ static int xgene_enet_reset(struct xgene_enet_pdata *pdata)
+ 		udelay(5);
+ 	} else {
+ #ifdef CONFIG_ACPI
++		acpi_status status;
++
+ 		status = acpi_evaluate_object(ACPI_HANDLE(&pdata->pdev->dev),
+ 					      "_RST", NULL, NULL);
+ 		if (ACPI_FAILURE(status)) {
+diff --git a/drivers/net/ethernet/apm/xgene/xgene_enet_sgmac.c b/drivers/net/ethernet/apm/xgene/xgene_enet_sgmac.c
+index 3b3dc5b25b29..f482ced2cadd 100644
+--- a/drivers/net/ethernet/apm/xgene/xgene_enet_sgmac.c
++++ b/drivers/net/ethernet/apm/xgene/xgene_enet_sgmac.c
+@@ -437,7 +437,6 @@ static void xgene_sgmac_tx_disable(struct xgene_enet_pdata *p)
+ static int xgene_enet_reset(struct xgene_enet_pdata *p)
+ {
+ 	struct device *dev = &p->pdev->dev;
+-	acpi_status status;
  
-+	if (!rq->cfs.h_nr_running)
-+		dl_server_start(&rq->fair_server);
+ 	if (!xgene_ring_mgr_init(p))
+ 		return -ENODEV;
+@@ -461,6 +460,8 @@ static int xgene_enet_reset(struct xgene_enet_pdata *p)
+ 		}
+ 	} else {
+ #ifdef CONFIG_ACPI
++		acpi_status status;
 +
- 	/*
- 	 * If in_iowait is set, the code below may not trigger any cpufreq
- 	 * utilization updates, so do it here explicitly with the IOWAIT flag
-@@ -5374,6 +5377,9 @@ static void dequeue_task_fair(struct rq
- 	if (!se)
- 		sub_nr_running(rq, 1);
+ 		status = acpi_evaluate_object(ACPI_HANDLE(&p->pdev->dev),
+ 					      "_RST", NULL, NULL);
+ 		if (ACPI_FAILURE(status)) {
+diff --git a/drivers/net/ethernet/apm/xgene/xgene_enet_xgmac.c b/drivers/net/ethernet/apm/xgene/xgene_enet_xgmac.c
+index 78584089d76d..304b5d43f236 100644
+--- a/drivers/net/ethernet/apm/xgene/xgene_enet_xgmac.c
++++ b/drivers/net/ethernet/apm/xgene/xgene_enet_xgmac.c
+@@ -380,7 +380,6 @@ static void xgene_xgmac_tx_disable(struct xgene_enet_pdata *pdata)
+ static int xgene_enet_reset(struct xgene_enet_pdata *pdata)
+ {
+ 	struct device *dev = &pdata->pdev->dev;
+-	acpi_status status;
  
-+	if (!rq->cfs.h_nr_running)
-+		dl_server_stop(&rq->fair_server);
+ 	if (!xgene_ring_mgr_init(pdata))
+ 		return -ENODEV;
+@@ -394,6 +393,8 @@ static int xgene_enet_reset(struct xgene_enet_pdata *pdata)
+ 		udelay(5);
+ 	} else {
+ #ifdef CONFIG_ACPI
++		acpi_status status;
 +
- 	util_est_dequeue(&rq->cfs, p, task_sleep);
- 	hrtick_update(rq);
- }
-@@ -6903,6 +6909,29 @@ done: __maybe_unused;
- 	return NULL;
- }
- 
-+static bool fair_server_has_tasks(struct sched_dl_entity *dl_se)
-+{
-+	return !!dl_se->rq->cfs.nr_running;
-+}
-+
-+static struct task_struct *fair_server_pick(struct sched_dl_entity *dl_se)
-+{
-+	return pick_next_task_fair(dl_se->rq, NULL, NULL);
-+}
-+
-+void fair_server_init(struct rq *rq)
-+{
-+	struct sched_dl_entity *dl_se = &rq->fair_server;
-+
-+	init_dl_entity(dl_se);
-+
-+	dl_se->dl_runtime = TICK_NSEC;
-+	dl_se->dl_deadline = 20 * TICK_NSEC;
-+	dl_se->dl_period = 20 * TICK_NSEC;
-+
-+	dl_server_init(dl_se, rq, fair_server_has_tasks, fair_server_pick);
-+}
-+
- /*
-  * Account for a descheduled task:
-  */
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -345,6 +345,8 @@ extern void dl_server_init(struct sched_
- 		    dl_server_has_tasks_f has_tasks,
- 		    dl_server_pick_f pick);
- 
-+extern void fair_server_init(struct rq *);
-+
- #ifdef CONFIG_CGROUP_SCHED
- 
- #include <linux/cgroup.h>
-@@ -905,6 +907,8 @@ struct rq {
- 	struct rt_rq		rt;
- 	struct dl_rq		dl;
- 
-+	struct sched_dl_entity	fair_server;
-+
- #ifdef CONFIG_FAIR_GROUP_SCHED
- 	/* list of leaf cfs_rq on this CPU: */
- 	struct list_head	leaf_cfs_rq_list;
-@@ -968,7 +972,7 @@ struct rq {
- 
- 	/* This is used to determine avg_idle's max value */
- 	u64			max_idle_balance_cost;
--#endif
-+#endif /* CONFIG_SMP */
- 
- #ifdef CONFIG_IRQ_TIME_ACCOUNTING
- 	u64			prev_irq_time;
-
+ 		status = acpi_evaluate_object(ACPI_HANDLE(&pdata->pdev->dev),
+ 					      "_RST", NULL, NULL);
+ 		if (ACPI_FAILURE(status)) {
+-- 
+2.22.0
 
