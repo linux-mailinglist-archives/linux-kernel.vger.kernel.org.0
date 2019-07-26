@@ -2,210 +2,180 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 638C976AF7
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 16:04:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 33D5176B07
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 16:05:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727545AbfGZOEP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 10:04:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43272 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727004AbfGZOEP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 10:04:15 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8AC08216B7;
-        Fri, 26 Jul 2019 14:04:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564149854;
-        bh=z2tICJ/pBRX3sO9g7iIlHb6OfAEfjoKN4VjM1iN4HJk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=xSqtm2V4xb0u8cJrqZlBaV6cYegcNBSqL1kXKSeVIRlq/7QGMK5bQ0QqY+LsvRb4x
-         /gR3MTEYLk2NzblLMNrDTeQODFHMPIaDiMwBetI7X6UXLXl79nUu2IOU6AoFsbWxgm
-         plyF0zC0tFU4ejg9UPFatdaguT6NL06QnOA2lSug=
-Date:   Fri, 26 Jul 2019 16:04:11 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        tiwai@suse.de, broonie@kernel.org, vkoul@kernel.org,
-        jank@cadence.com, srinivas.kandagatla@linaro.org,
-        slawomir.blauciak@intel.com, Sanyog Kale <sanyog.r.kale@intel.com>
-Subject: Re: [RFC PATCH 01/40] soundwire: add debugfs support
-Message-ID: <20190726140411.GA8767@kroah.com>
-References: <20190725234032.21152-1-pierre-louis.bossart@linux.intel.com>
- <20190725234032.21152-2-pierre-louis.bossart@linux.intel.com>
+        id S1727806AbfGZOFP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 10:05:15 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:33786 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726434AbfGZOFP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 10:05:15 -0400
+Received: by mail-lf1-f65.google.com with SMTP id x3so37266920lfc.0
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2019 07:05:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=XRsk0iEI3zTElR2u2jt3WIaXl85qXr9Noy6MPl/LLlU=;
+        b=OX77yu642sxgg1HWdyQx9x41cx1WuDT18/aO9UX6rY4u4nAODv+wC6yhBaw3+9QX5T
+         dBV1+B9FKTO/C+WlDI5n+NiBhKRsKNedmV8BCjk0uTgaB5MapIid4HUVGa8JaZKYD3yD
+         nlg5wjSYvBF7Gf8MnPUS+JftzW8zigSkaenRy2Uw5jyAdHFjkJIQ8Oe3qzzp0Jl3BdRY
+         UvCzsbkTsgl3SeExNSjo80CItXkQUHBePxaN2g7ANgbH7nPjhp5EV5EQ5W5GwhhAT7za
+         mYlEKOBBkzDnZNJeVptuM4S9BVNtUQrKp6ObQSUIgCqUFZn3URJCZvD2air0iweLKLrk
+         Y+Sg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=XRsk0iEI3zTElR2u2jt3WIaXl85qXr9Noy6MPl/LLlU=;
+        b=Wof6LIX2Dpj6iniyBuZrPfufAB2t2KAnIJPWgYWpEzVU+Uad5DeByLaDwjGagP+3kk
+         0sWc1Za6hji+teP72BWuaBd943+vnJ3/kA0Achl5NtiD+AJiaj75iepUsl5H8LLllL4h
+         /0J/mbHLuL4xwSqT7pbglE6XjDV2M+Q2uXfOShWKCy4+t7MZgk73xazfbAzJewP40ify
+         UvwtcdGnvDFcRL6bJTFv3RhsmQcFRrvD3QP7HQulogt9HNhuxXVI3KjyDITcSdyau9le
+         qVVDc9Qhgv5cs0AXfIOCcF3SMdtoc5qNVOAYDl7td1+LAr68A3T0W0X8lrq9TigRHwMN
+         LYTA==
+X-Gm-Message-State: APjAAAVW13Xphu3C9dZxzjoembT26n5M7yAKT/YZAOtntSlOM4BPpqXH
+        OdXehFdKbgaVbISuk+CNJGJymqMCAfwaPC5AmqHw9w==
+X-Google-Smtp-Source: APXvYqwa4920tCYVHHu9I4QKSrBmf0RTIQ5b6Q2RM0JOBEekZMUOdfpLbKuHuoNm3VkGJHdz7S50cU4xJ9G0jxWt3ec=
+X-Received: by 2002:ac2:44b1:: with SMTP id c17mr33687690lfm.87.1564149912518;
+ Fri, 26 Jul 2019 07:05:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190725234032.21152-2-pierre-louis.bossart@linux.intel.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+References: <20190726112705.19000-1-anders.roxell@linaro.org> <86ef2dnfkb.wl-marc.zyngier@arm.com>
+In-Reply-To: <86ef2dnfkb.wl-marc.zyngier@arm.com>
+From:   Anders Roxell <anders.roxell@linaro.org>
+Date:   Fri, 26 Jul 2019 16:05:01 +0200
+Message-ID: <CADYN=9+RpC1xkBwvjUO=Figy5VSw-LFxazEE32fx9eLoPPMjRA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] arm64: KVM: regmap: Mark expected switch fall-through
+To:     Marc Zyngier <marc.zyngier@arm.com>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>, will@kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        kvmarm@lists.cs.columbia.edu,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 25, 2019 at 06:39:53PM -0500, Pierre-Louis Bossart wrote:
-> Add base debugfs mechanism for SoundWire bus by creating soundwire
-> root and master-N and slave-x hierarchy.
-> 
-> Also add SDW Slave SCP, DP0 and DP-N register debug file.
-> 
-> Registers not implemented will print as "XX"
-> 
-> Credits: this patch is based on an earlier internal contribution by
-> Vinod Koul, Sanyog Kale, Shreyas Nc and Hardik Shah. The main change
-> is the use of scnprintf to avoid known issues with snprintf.
-> 
-> Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-> ---
->  drivers/soundwire/Makefile    |   4 +-
->  drivers/soundwire/bus.c       |   6 ++
->  drivers/soundwire/bus.h       |  24 ++++++
->  drivers/soundwire/bus_type.c  |   3 +
->  drivers/soundwire/debugfs.c   | 156 ++++++++++++++++++++++++++++++++++
->  drivers/soundwire/slave.c     |   1 +
->  include/linux/soundwire/sdw.h |   4 +
->  7 files changed, 197 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/soundwire/debugfs.c
-> 
-> diff --git a/drivers/soundwire/Makefile b/drivers/soundwire/Makefile
-> index fd99a831b92a..88990cac48a7 100644
-> --- a/drivers/soundwire/Makefile
-> +++ b/drivers/soundwire/Makefile
-> @@ -4,7 +4,9 @@
->  #
->  
->  #Bus Objs
-> -soundwire-bus-objs := bus_type.o bus.o slave.o mipi_disco.o stream.o
-> +soundwire-bus-objs := bus_type.o bus.o slave.o mipi_disco.o stream.o \
-> +			debugfs.o
-> +
->  obj-$(CONFIG_SOUNDWIRE_BUS) += soundwire-bus.o
->  
->  #Cadence Objs
-> diff --git a/drivers/soundwire/bus.c b/drivers/soundwire/bus.c
-> index fe745830a261..5ad4109dc72f 100644
-> --- a/drivers/soundwire/bus.c
-> +++ b/drivers/soundwire/bus.c
-> @@ -49,6 +49,8 @@ int sdw_add_bus_master(struct sdw_bus *bus)
->  		}
->  	}
->  
-> +	bus->debugfs = sdw_bus_debugfs_init(bus);
-> +
->  	/*
->  	 * Device numbers in SoundWire are 0 through 15. Enumeration device
->  	 * number (0), Broadcast device number (15), Group numbers (12 and
-> @@ -109,6 +111,8 @@ static int sdw_delete_slave(struct device *dev, void *data)
->  	struct sdw_slave *slave = dev_to_sdw_dev(dev);
->  	struct sdw_bus *bus = slave->bus;
->  
-> +	sdw_slave_debugfs_exit(slave->debugfs);
-> +
->  	mutex_lock(&bus->bus_lock);
->  
->  	if (slave->dev_num) /* clear dev_num if assigned */
-> @@ -130,6 +134,8 @@ static int sdw_delete_slave(struct device *dev, void *data)
->  void sdw_delete_bus_master(struct sdw_bus *bus)
->  {
->  	device_for_each_child(bus->dev, NULL, sdw_delete_slave);
-> +
-> +	sdw_bus_debugfs_exit(bus->debugfs);
->  }
->  EXPORT_SYMBOL(sdw_delete_bus_master);
->  
-> diff --git a/drivers/soundwire/bus.h b/drivers/soundwire/bus.h
-> index 3048ca153f22..06ac4adb0074 100644
-> --- a/drivers/soundwire/bus.h
-> +++ b/drivers/soundwire/bus.h
-> @@ -18,6 +18,30 @@ static inline int sdw_acpi_find_slaves(struct sdw_bus *bus)
->  void sdw_extract_slave_id(struct sdw_bus *bus,
->  			  u64 addr, struct sdw_slave_id *id);
->  
-> +#ifdef CONFIG_DEBUG_FS
-> +struct dentry *sdw_bus_debugfs_init(struct sdw_bus *bus);
-> +void sdw_bus_debugfs_exit(struct dentry *d);
-> +struct dentry *sdw_slave_debugfs_init(struct sdw_slave *slave);
-> +void sdw_slave_debugfs_exit(struct dentry *d);
-> +void sdw_debugfs_init(void);
-> +void sdw_debugfs_exit(void);
-> +#else
-> +struct dentry *sdw_bus_debugfs_init(struct sdw_bus *bus)
-> +{ return NULL; }
-> +
-> +void sdw_bus_debugfs_exit(struct dentry *d) {}
-> +
-> +struct dentry *sdw_slave_debugfs_init(struct sdw_slave *slave)
-> +{ return NULL; }
-> +
-> +void sdw_slave_debugfs_exit(struct dentry *d) {}
-> +
-> +void sdw_debugfs_init(void) {}
-> +
-> +void sdw_debugfs_exit(void) {}
-> +
-> +#endif
-> +
->  enum {
->  	SDW_MSG_FLAG_READ = 0,
->  	SDW_MSG_FLAG_WRITE,
-> diff --git a/drivers/soundwire/bus_type.c b/drivers/soundwire/bus_type.c
-> index 2655602f0cfb..4a465f55039f 100644
-> --- a/drivers/soundwire/bus_type.c
-> +++ b/drivers/soundwire/bus_type.c
-> @@ -6,6 +6,7 @@
->  #include <linux/pm_domain.h>
->  #include <linux/soundwire/sdw.h>
->  #include <linux/soundwire/sdw_type.h>
-> +#include "bus.h"
->  
->  /**
->   * sdw_get_device_id - find the matching SoundWire device id
-> @@ -177,11 +178,13 @@ EXPORT_SYMBOL_GPL(sdw_unregister_driver);
->  
->  static int __init sdw_bus_init(void)
->  {
-> +	sdw_debugfs_init();
->  	return bus_register(&sdw_bus_type);
->  }
->  
->  static void __exit sdw_bus_exit(void)
->  {
-> +	sdw_debugfs_exit();
->  	bus_unregister(&sdw_bus_type);
->  }
->  
-> diff --git a/drivers/soundwire/debugfs.c b/drivers/soundwire/debugfs.c
-> new file mode 100644
-> index 000000000000..8d86e100516e
-> --- /dev/null
-> +++ b/drivers/soundwire/debugfs.c
-> @@ -0,0 +1,156 @@
-> +// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
+On Fri, 26 Jul 2019 at 14:30, Marc Zyngier <marc.zyngier@arm.com> wrote:
+>
+> Hi Anders,
+>
+> On Fri, 26 Jul 2019 12:27:05 +0100,
+> Anders Roxell <anders.roxell@linaro.org> wrote:
+> >
+> > When fall-through warnings was enabled by default, commit d93512ef0f0e
+> > ("Makefile: Globally enable fall-through warning"), the following
+> > warnings was starting to show up:
+> >
+> > In file included from ../arch/arm64/include/asm/kvm_emulate.h:19,
+> >                  from ../arch/arm64/kvm/regmap.c:13:
+> > ../arch/arm64/kvm/regmap.c: In function =E2=80=98vcpu_write_spsr32=E2=
+=80=99:
+> > ../arch/arm64/include/asm/kvm_hyp.h:31:3: warning: this statement may f=
+all
+> >  through [-Wimplicit-fallthrough=3D]
+> >    asm volatile(ALTERNATIVE(__msr_s(r##nvh, "%x0"), \
+> >    ^~~
+> > ../arch/arm64/include/asm/kvm_hyp.h:46:31: note: in expansion of macro =
+=E2=80=98write_sysreg_elx=E2=80=99
+> >  #define write_sysreg_el1(v,r) write_sysreg_elx(v, r, _EL1, _EL12)
+> >                                ^~~~~~~~~~~~~~~~
+> > ../arch/arm64/kvm/regmap.c:180:3: note: in expansion of macro =E2=80=98=
+write_sysreg_el1=E2=80=99
+> >    write_sysreg_el1(v, SYS_SPSR);
+> >    ^~~~~~~~~~~~~~~~
+> > ../arch/arm64/kvm/regmap.c:181:2: note: here
+> >   case KVM_SPSR_ABT:
+> >   ^~~~
+> > In file included from ../arch/arm64/include/asm/cputype.h:132,
+> >                  from ../arch/arm64/include/asm/cache.h:8,
+> >                  from ../include/linux/cache.h:6,
+> >                  from ../include/linux/printk.h:9,
+> >                  from ../include/linux/kernel.h:15,
+> >                  from ../include/asm-generic/bug.h:18,
+> >                  from ../arch/arm64/include/asm/bug.h:26,
+> >                  from ../include/linux/bug.h:5,
+> >                  from ../include/linux/mmdebug.h:5,
+> >                  from ../include/linux/mm.h:9,
+> >                  from ../arch/arm64/kvm/regmap.c:11:
+> > ../arch/arm64/include/asm/sysreg.h:837:2: warning: this statement may f=
+all
+> >  through [-Wimplicit-fallthrough=3D]
+> >   asm volatile("msr " __stringify(r) ", %x0"  \
+> >   ^~~
+> > ../arch/arm64/kvm/regmap.c:182:3: note: in expansion of macro =E2=80=98=
+write_sysreg=E2=80=99
+> >    write_sysreg(v, spsr_abt);
+> >    ^~~~~~~~~~~~
+> > ../arch/arm64/kvm/regmap.c:183:2: note: here
+> >   case KVM_SPSR_UND:
+> >   ^~~~
+> >
+> > Rework to add a 'break;' in the swich-case since it didn't have that.
+> > That also made the compiler happy and didn't warn about fall-through.
+> >
+> > Cc: stable@vger.kernel.org # v3.16+
+>
+> Erm... Are you sure about that?
 
-No, for debugfs-specific code, that dual license makes no sense, right?
-Don't cargo-cult SPDX identifiers please.
+I made two mistakes.
+1. saying 3.x instead of 4.x
+2. I said the same kernel that 'git describe' showed and not the later one.
 
-> +// Copyright(c) 2017-19 Intel Corporation.
+I did not know about '--match=3D'.
 
-Spell the year out fully unless you want lawyers knocking on your door :)
+> Here's what I have:
+>
+> $ git describe --contains  a892819560c4
+> kvm-arm-for-v4.17~44
+> $ git describe --contains --match=3D'v*' a892819560c4
+> v4.17-rc1~72^2~36^2~44
 
-> +
-> +#include <linux/device.h>
-> +#include <linux/debugfs.h>
-> +#include <linux/mod_devicetable.h>
-> +#include <linux/slab.h>
-> +#include <linux/soundwire/sdw.h>
-> +#include <linux/soundwire/sdw_registers.h>
-> +#include "bus.h"
-> +
-> +#ifdef CONFIG_DEBUG_FS
-> +struct dentry *sdw_debugfs_root;
-> +#endif
+That's correct.
 
-This whole file is not built if that option is not enabled, so why the
-#ifdef?
+>
+>
+> > Fixes: a892819560c4 ("KVM: arm64: Prepare to handle deferred save/resto=
+re of 32-bit registers")
+> > Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+> > ---
+> >  arch/arm64/kvm/regmap.c | 5 +++++
+> >  1 file changed, 5 insertions(+)
+> >
+> > diff --git a/arch/arm64/kvm/regmap.c b/arch/arm64/kvm/regmap.c
+> > index 0d60e4f0af66..a900181e3867 100644
+> > --- a/arch/arm64/kvm/regmap.c
+> > +++ b/arch/arm64/kvm/regmap.c
+> > @@ -178,13 +178,18 @@ void vcpu_write_spsr32(struct kvm_vcpu *vcpu, uns=
+igned long v)
+> >       switch (spsr_idx) {
+> >       case KVM_SPSR_SVC:
+> >               write_sysreg_el1(v, SYS_SPSR);
+> > +             break;
+> >       case KVM_SPSR_ABT:
+> >               write_sysreg(v, spsr_abt);
+> > +             break;
+> >       case KVM_SPSR_UND:
+> >               write_sysreg(v, spsr_und);
+> > +             break;
+> >       case KVM_SPSR_IRQ:
+> >               write_sysreg(v, spsr_irq);
+> > +             break;
+> >       case KVM_SPSR_FIQ:
+> >               write_sysreg(v, spsr_fiq);
+> > +             break;
+> >       }
+> >  }
+>
+> Otherwise looks like the right fix to me. Let me know what you think
+> about the Fixes: tag (no need to resend for that).
 
-thanks,
+It should be v4.17+.
 
-greg k-h
+Cheers,
+Anders
