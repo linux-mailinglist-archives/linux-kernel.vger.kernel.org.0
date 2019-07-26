@@ -2,221 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D883761F7
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 11:26:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D3C487628C
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 11:50:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726413AbfGZJZ6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 05:25:58 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54696 "EHLO mx1.suse.de"
+        id S1726578AbfGZJ0k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 05:26:40 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:38540 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726007AbfGZJZ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 05:25:57 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 3E144B603;
-        Fri, 26 Jul 2019 09:25:55 +0000 (UTC)
-Date:   Fri, 26 Jul 2019 11:25:52 +0200
-From:   Oscar Salvador <osalvador@suse.de>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     akpm@linux-foundation.org, dan.j.williams@intel.com,
-        pasha.tatashin@soleen.com, mhocko@suse.com,
-        anshuman.khandual@arm.com, Jonathan.Cameron@huawei.com,
-        vbabka@suse.cz, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/5] mm: Introduce a new Vmemmap page-type
-Message-ID: <20190726092548.GA26268@linux>
-References: <20190725160207.19579-1-osalvador@suse.de>
- <20190725160207.19579-3-osalvador@suse.de>
- <7e8746ac-6a66-d73c-9f2a-4fc53c7e4c04@redhat.com>
+        id S1726007AbfGZJ0k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 05:26:40 -0400
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id AE30A344AC963379B5BE;
+        Fri, 26 Jul 2019 17:26:38 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS406-HUB.china.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server id 14.3.439.0; Fri, 26 Jul 2019
+ 17:26:33 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <eric@anholt.net>, <wahrenst@gmx.net>,
+        <gregkh@linuxfoundation.org>, <inf.braun@fau.de>,
+        <nishkadg.linux@gmail.com>
+CC:     <linux-kernel@vger.kernel.org>, <devel@driverdev.osuosl.org>,
+        <linux-rpi-kernel@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <bcm-kernel-feedback-list@broadcom.com>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH v2 -next] staging: vc04_services: fix used-but-set-variable warning
+Date:   Fri, 26 Jul 2019 17:26:21 +0800
+Message-ID: <20190726092621.27972-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
+In-Reply-To: <20190725142716.49276-1-yuehaibing@huawei.com>
+References: <20190725142716.49276-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7e8746ac-6a66-d73c-9f2a-4fc53c7e4c04@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 26, 2019 at 10:48:54AM +0200, David Hildenbrand wrote:
-> > Signed-off-by: Oscar Salvador <osalvador@suse.de>
-> > ---
-> >  include/linux/mm.h         | 17 +++++++++++++++++
-> >  include/linux/mm_types.h   |  5 +++++
-> >  include/linux/page-flags.h | 19 +++++++++++++++++++
-> >  3 files changed, 41 insertions(+)
-> > 
-> > diff --git a/include/linux/mm.h b/include/linux/mm.h
-> > index 45f0ab0ed4f7..432175f8f8d2 100644
-> > --- a/include/linux/mm.h
-> > +++ b/include/linux/mm.h
-> > @@ -2904,6 +2904,23 @@ static inline bool debug_guardpage_enabled(void) { return false; }
-> >  static inline bool page_is_guard(struct page *page) { return false; }
-> >  #endif /* CONFIG_DEBUG_PAGEALLOC */
-> >  
-> > +static __always_inline struct page *vmemmap_head(struct page *page)
-> > +{
-> > +	return (struct page *)page->vmemmap_head;
-> > +}
-> > +
-> > +static __always_inline unsigned long vmemmap_nr_sections(struct page *page)
-> > +{
-> > +	struct page *head = vmemmap_head(page);
-> > +	return head->vmemmap_sections;
-> > +}
-> > +
-> > +static __always_inline unsigned long vmemmap_nr_pages(struct page *page)
-> > +{
-> > +	struct page *head = vmemmap_head(page);
-> > +	return head->vmemmap_pages - (page - head);
-> > +}
-> > +
-> >  #if MAX_NUMNODES > 1
-> >  void __init setup_nr_node_ids(void);
-> >  #else
-> > diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-> > index 6a7a1083b6fb..51dd227f2a6b 100644
-> > --- a/include/linux/mm_types.h
-> > +++ b/include/linux/mm_types.h
-> > @@ -170,6 +170,11 @@ struct page {
-> >  			 * pmem backed DAX files are mapped.
-> >  			 */
-> >  		};
-> > +		struct {        /* Vmemmap pages */
-> > +			unsigned long vmemmap_head;
-> > +			unsigned long vmemmap_sections; /* Number of sections */
-> > +			unsigned long vmemmap_pages;    /* Number of pages */
-> > +		};
-> >  
-> >  		/** @rcu_head: You can use this to free a page by RCU. */
-> >  		struct rcu_head rcu_head;
-> > diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-> > index f91cb8898ff0..75f302a532f9 100644
-> > --- a/include/linux/page-flags.h
-> > +++ b/include/linux/page-flags.h
-> > @@ -708,6 +708,7 @@ PAGEFLAG_FALSE(DoubleMap)
-> >  #define PG_kmemcg	0x00000200
-> >  #define PG_table	0x00000400
-> >  #define PG_guard	0x00000800
-> > +#define PG_vmemmap     0x00001000
-> >  
-> >  #define PageType(page, flag)						\
-> >  	((page->page_type & (PAGE_TYPE_BASE | flag)) == PAGE_TYPE_BASE)
-> > @@ -764,6 +765,24 @@ PAGE_TYPE_OPS(Table, table)
-> >   */
-> >  PAGE_TYPE_OPS(Guard, guard)
-> >  
-> > +/*
-> > + * Vmemmap pages refers to those pages that are used to create the memmap
-> > + * array, and reside within the same memory range that was hotppluged, so
-> > + * they are self-hosted. (see include/linux/memory_hotplug.h)
-> > + */
-> > +PAGE_TYPE_OPS(Vmemmap, vmemmap)
-> > +static __always_inline void SetPageVmemmap(struct page *page)
-> > +{
-> > +	__SetPageVmemmap(page);
-> > +	__SetPageReserved(page);
-> 
-> So, the issue with some vmemmap pages is that the "struct pages" reside
-> on the memory they manage. (it is nice, but complicated - e.g. when
-> onlining/offlining)
+Fix gcc used-but-set-variable warning:
 
-Hi David,
+drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c: In function vchiq_release_internal:
+drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c:2827:16: warning:
+ variable local_entity_uc set but not used [-Wunused-but-set-variable]
+drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c:2827:6: warning:
+ variable local_uc set but not used [-Wunused-but-set-variable]
 
-Not really.
-Vemmap pages are just skipped when onling/offlining handling.
-We do not need them to a) send to the buddy and b) migrate them over.
-A look at patch#4 will probably help, as the crux of the matter is there.
+Remove the unused variables 'local_entity_uc' and 'local_uc'
 
-> 
-> I would expect that you properly initialize the struct pages for the
-> vmemmap pages (now it gets confusing :) ) when adding memory. The other
-> struct pages are initialized when onlining/offlining.
-> 
-> So, at this point, the pages should already be marked reserved, no? Or
-> are the struct pages for the vmemmap never initialized?
-> 
-> What zone do these vmemmap pages have? They are not assigned to any zone
-> and will never be :/
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+v2: remove the unused variable
+---
+ drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-This patch is only a preparation, the real "fun" is in patch#4.
-
-Vmemmap pages initialization occurs in mhp_mark_vmemmap_pages, called from
-__add_pages() (patch#4).
-In there we a) mark the page as vmemmap and b) initialize the fields we need to
-track some medata (sections, pages and head).
-
-In __init_single_page(), when onlining, the rest of the fields will be set up
-properly (zone, refcount, etc).
-
-Chunk from patch#4:
-
-static void __meminit __init_single_page(struct page *page, unsigned long pfn,
-                                unsigned long zone, int nid)
-{
-        if (PageVmemmap(page))
-                /*
-                 * Vmemmap pages need to preserve their state.
-                 */
-                goto preserve_state;
-
-        mm_zero_struct_page(page);
-        page_mapcount_reset(page);
-        INIT_LIST_HEAD(&page->lru);
-preserve_state:
-        init_page_count(page);
-        set_page_links(page, zone, nid, pfn);
-        page_cpupid_reset_last(page);
-        page_kasan_tag_reset(page);
-
-So, vmemmap pages will fall within the same zone as the range we are adding,
-that does not change.
-
-> > +}
-> > +
-> > +static __always_inline void ClearPageVmemmap(struct page *page)
-> > +{
-> > +	__ClearPageVmemmap(page);
-> > +	__ClearPageReserved(page);
-> 
-> You sure you want to clear the reserved flag here? Is this function
-> really needed?
-> 
-> (when you add memory, you can mark all relevant pages as vmemmap pages,
-> which is valid until removing the memory)
-> 
-> Let's draw a picture so I am not confused
-> 
-> [ ------ added memory ------ ]
-> [ vmemmap]
-> 
-> The first page of the added memory is a vmemmap page AND contains its
-> own vmemmap, right?
-
-Not only the first page.
-Depending on how large is the chunk you are adding, the number of vmemmap
-pages will vary, because we need to cover the memmaps for the range.
-
-e.g:
-
- - 128MB (1 section) = 512 vmemmap pages at the beginning of the range
- - 256MB (2 section) = 1024 vmemmap pages at the beginning of the range
- ...
-
-> When adding memory, you would initialize set all struct pages of the
-> vmemmap (residing on itself) and set them to SetPageVmemmap().
-> 
-> When removing memory, there is nothing to do, all struct pages are
-> dropped. So why do we need the ClearPageVmemmap() ?
-
-Well, it is not really needed as we only call ClearPageVmemmap when we are
-actually removing the memory with vmemmap_free()->...
-So one could argue that since the memory is going away, there is no need
-to clear anything in there.
-
-I just made it for consistency purposes.
-
-Can drop it if feeling strong here.
-
+diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+index cc4383d..b1595b1 100644
+--- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
++++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+@@ -2824,7 +2824,6 @@ vchiq_release_internal(struct vchiq_state *state, struct vchiq_service *service)
+ 	VCHIQ_STATUS_T ret = VCHIQ_SUCCESS;
+ 	char entity[16];
+ 	int *entity_uc;
+-	int local_uc, local_entity_uc;
+ 
+ 	if (!arm_state)
+ 		goto out;
+@@ -2849,8 +2848,8 @@ vchiq_release_internal(struct vchiq_state *state, struct vchiq_service *service)
+ 		ret = VCHIQ_ERROR;
+ 		goto unlock;
+ 	}
+-	local_uc = --arm_state->videocore_use_count;
+-	local_entity_uc = --(*entity_uc);
++	--arm_state->videocore_use_count;
++	--(*entity_uc);
+ 
+ 	if (!vchiq_videocore_wanted(state)) {
+ 		if (vchiq_platform_use_suspend_timer() &&
 -- 
-Oscar Salvador
-SUSE L3
+2.7.4
+
+
