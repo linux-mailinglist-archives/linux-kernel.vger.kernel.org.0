@@ -2,79 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DC36761AB
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 11:18:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C10A0761B1
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 11:20:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726044AbfGZJSt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 05:18:49 -0400
-Received: from foss.arm.com ([217.140.110.172]:40018 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725815AbfGZJSt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 05:18:49 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BC2D6344;
-        Fri, 26 Jul 2019 02:18:48 -0700 (PDT)
-Received: from why (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BCBA93F71A;
-        Fri, 26 Jul 2019 02:18:47 -0700 (PDT)
-Date:   Fri, 26 Jul 2019 10:18:44 +0100
-From:   Marc Zyngier <marc.zyngier@arm.com>
-To:     Shaokun Zhang <zhangshaokun@hisilicon.com>
-Cc:     <linux-kernel@vger.kernel.org>,
-        Nianyao Tang <tangnianyao@huawei.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>
-Subject: Re: [PATCH] irqchip/gic-v3-its: Free unused vpt_page when alloc vpe
- table fail
-Message-ID: <20190726101844.79cb10b5@why>
-In-Reply-To: <1564105905-15410-1-git-send-email-zhangshaokun@hisilicon.com>
-References: <1564105905-15410-1-git-send-email-zhangshaokun@hisilicon.com>
-Organization: ARM Ltd
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1726220AbfGZJUL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 05:20:11 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:37342 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725815AbfGZJUK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 05:20:10 -0400
+Received: by mail-wr1-f68.google.com with SMTP id n9so28567383wrr.4
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2019 02:20:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=zEHnLlgAE1F9o6ePfjZnmyUfCv46Keatw9zPZPEqKp8=;
+        b=ijLVBWkse1pN0fMXduTA/xB4GXtD4ubH24s9nA+k1XSc52OEjmpMaL1oUvJT5VZXM4
+         UbgwF646j8ib04rc4CADRvR3KfEZZc3Jm5w0/X6y5dvxqTpHzabjIFd5SCMZOd51fZeJ
+         vwzEFoS3bEHgYrstBAR0vp+HMrGhD6MBsq0py85+cqSwYdu4NJzPlDSZH8iXn86/m44W
+         6xePPiEjGtauSi2cQRZhiOUXDbC6X9SB7y5L7OFLV8HQvwM0Pm1hYqttdICIDy1OYNjL
+         h91Donl8oQsgzxSnWZZYUA5qo9+GTW9JR8CIx+w+QkM1t7kpm3Xl/rV5CesEPWDJQnYW
+         sFzg==
+X-Gm-Message-State: APjAAAXckvfJmsTLda5xqMEJhitgW6w35f87PAN4BZiz11g+fo9V/qD8
+        e0aqKtVKGiqd9pGUGbMTvotlEA==
+X-Google-Smtp-Source: APXvYqy/cMG9VHIDV9npSjUWMW6JbBex3Qa8CdqSnWwfwhAdpogypl9y2wBOqHH8yavf66tDB/Igqg==
+X-Received: by 2002:a5d:4a02:: with SMTP id m2mr99040297wrq.78.1564132808208;
+        Fri, 26 Jul 2019 02:20:08 -0700 (PDT)
+Received: from localhost.localdomain ([151.29.237.107])
+        by smtp.gmail.com with ESMTPSA id j10sm52483595wrw.96.2019.07.26.02.20.06
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 26 Jul 2019 02:20:07 -0700 (PDT)
+Date:   Fri, 26 Jul 2019 11:20:05 +0200
+From:   Juri Lelli <juri.lelli@redhat.com>
+To:     Valentin Schneider <valentin.schneider@arm.com>
+Cc:     Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Luca Abeni <luca.abeni@santannapisa.it>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Qais Yousef <Qais.Yousef@arm.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/5] sched/deadline: Cleanup on_dl_rq() handling
+Message-ID: <20190726092005.GO25636@localhost.localdomain>
+References: <20190726082756.5525-1-dietmar.eggemann@arm.com>
+ <20190726082756.5525-5-dietmar.eggemann@arm.com>
+ <0f460dba-4677-00de-59a2-5cd31ffe6e4b@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0f460dba-4677-00de-59a2-5cd31ffe6e4b@arm.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 26 Jul 2019 09:51:45 +0800
-Shaokun Zhang <zhangshaokun@hisilicon.com> wrote:
+Hi,
 
-> From: Nianyao Tang <tangnianyao@huawei.com>
+On 26/07/19 09:37, Valentin Schneider wrote:
+> On 26/07/2019 09:27, Dietmar Eggemann wrote:
+> > Remove BUG_ON() in __enqueue_dl_entity() since there is already one in
+> > enqueue_dl_entity().
+> > 
+> > Move the check that the dl_se is not on the dl_rq from
+> > __dequeue_dl_entity() to dequeue_dl_entity() to align with the enqueue
+> > side and use the on_dl_rq() helper function.
+> > 
+> > Signed-off-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
+> > ---
+> >  kernel/sched/deadline.c | 8 +++-----
+> >  1 file changed, 3 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+> > index 1fa005f79307..a9cb52ceb761 100644
+> > --- a/kernel/sched/deadline.c
+> > +++ b/kernel/sched/deadline.c
+> > @@ -1407,8 +1407,6 @@ static void __enqueue_dl_entity(struct sched_dl_entity *dl_se)
+> >  	struct sched_dl_entity *entry;
+> >  	int leftmost = 1;
+> >  
+> > -	BUG_ON(!RB_EMPTY_NODE(&dl_se->rb_node));
+> > -
+> >  	while (*link) {
+> >  		parent = *link;
+> >  		entry = rb_entry(parent, struct sched_dl_entity, rb_node);
+> > @@ -1430,9 +1428,6 @@ static void __dequeue_dl_entity(struct sched_dl_entity *dl_se)
+> >  {
+> >  	struct dl_rq *dl_rq = dl_rq_of_se(dl_se);
+> >  
+> > -	if (RB_EMPTY_NODE(&dl_se->rb_node))
+> > -		return;
+> > -
 > 
-> In its_vpe_init, when its_alloc_vpe_table fails, we should free
-> vpt_page allocated just before, instead of vpe->vpt_page.
-> Let's fix it.
-> 
-> Cc: Thomas Gleixner <tglx@linutronix.de> 
-> Cc: Jason Cooper <jason@lakedaemon.net>
-> Cc: Marc Zyngier <marc.zyngier@arm.com>
-> Signed-off-by: Nianyao Tang <tangnianyao@huawei.com>
-> ---
->  drivers/irqchip/irq-gic-v3-its.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
-> index 730fbe0..1b5c367 100644
-> --- a/drivers/irqchip/irq-gic-v3-its.c
-> +++ b/drivers/irqchip/irq-gic-v3-its.c
-> @@ -3010,7 +3010,7 @@ static int its_vpe_init(struct its_vpe *vpe)
->  
->  	if (!its_alloc_vpe_table(vpe_id)) {
->  		its_vpe_id_free(vpe_id);
-> -		its_free_pending_table(vpe->vpt_page);
-> +		its_free_pending_table(vpt_page);
->  		return -ENOMEM;
->  	}
+> Any idea why a similar error leads to a BUG_ON() in the enqueue path but
+> only a silent return on the dequeue path? I would expect the handling to be
+> almost identical.
 >  
 
-Oops, well caught. Please repost this patch with your own SoB added
-though, as you're posting the patch on behalf of someone else.
+Task could have already been dequeued by update_curr_dl()->throttle
+called by dequeue_task_dl() before calling __dequeue_task_dl().
 
 Thanks,
 
-	M.
--- 
-Without deviation from the norm, progress is not possible.
+Juri
