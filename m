@@ -2,54 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C08B277390
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 23:40:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D3FD773A8
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 23:46:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728530AbfGZVkW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 17:40:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58886 "EHLO mail.kernel.org"
+        id S1728545AbfGZVpu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 17:45:50 -0400
+Received: from mga14.intel.com ([192.55.52.115]:28904 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726999AbfGZVkU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 17:40:20 -0400
-Subject: Re: [GIT PULL] SCSI fixes for 5.3-rc1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564177220;
-        bh=VBlbRVTdDM9X5wUuccB0nWAXEEoTBnPckG68xFCQ+lg=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=bc+BcKiJiz1mi/tpO366FUzu4CCbWdIMYS0MeE+TUxtAQp14i+maqRaOnxhi4AcD5
-         09YSHLdNlW45mHfCoiXtfBqsbwI590TRGQjPaXZohrWSWz+ng0WOke5O5cLKUPsFKg
-         dwICbUSLzCpEIxu6GPNDENcHfOIZNiekcCvFLo0E=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <1564171685.9950.14.camel@HansenPartnership.com>
-References: <1564171685.9950.14.camel@HansenPartnership.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <1564171685.9950.14.camel@HansenPartnership.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-fixes
-X-PR-Tracked-Commit-Id: 20122994e38aef0ae50555884d287adde6641c94
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: a689838913670765f7754bb1ba749acac9541626
-Message-Id: <156417722011.826.16480120807211637212.pr-tracker-bot@kernel.org>
-Date:   Fri, 26 Jul 2019 21:40:20 +0000
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-scsi <linux-scsi@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
+        id S1726999AbfGZVpu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 17:45:50 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jul 2019 14:45:49 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,312,1559545200"; 
+   d="scan'208";a="369671127"
+Received: from skuppusw-desk.jf.intel.com ([10.54.74.33])
+  by fmsmga005.fm.intel.com with ESMTP; 26 Jul 2019 14:45:49 -0700
+From:   sathyanarayanan.kuppuswamy@linux.intel.com
+To:     bhelgaas@google.com
+Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ashok.raj@intel.com, keith.busch@intel.com,
+        sathyanarayanan.kuppuswamy@linux.intel.com
+Subject: [PATCH v6 0/9] Add Error Disconnect Recover (EDR) support
+Date:   Fri, 26 Jul 2019 14:43:10 -0700
+Message-Id: <cover.1564177080.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+X-Mailer: git-send-email 2.21.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Fri, 26 Jul 2019 13:08:05 -0700:
+From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-fixes
+This patchset adds support for following features:
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/a689838913670765f7754bb1ba749acac9541626
+1. Error Disconnect Recover (EDR) support.
+2. _OSC based negotiation support for DPC.
 
-Thank you!
+You can find EDR spec in the following link.
+
+https://members.pcisig.com/wg/PCI-SIG/document/12614
+
+Changes since v5:
+ * Addressed Keith's comments.
+ * Added additional check for FF mode in pci_aer_init().
+ * Updated commit history of "PCI/DPC: Add support for DPC recovery on NON_FATAL errors" patch.
+
+Changes since v4:
+ * Rebased on top of v5.3-rc1
+ * Fixed lock/unlock issue in edr_handle_event().
+ * Merged "Update error status after reset_link()" patch into this patchset.
+
+Changes since v3:
+ * Moved EDR related ACPI functions/definitions to pci-acpi.c
+ * Modified commit history in few patches to include spec reference.
+ * Added support to handle DPC triggered by NON_FATAL errors.
+ * Added edr_lock to protect PCI device receiving duplicate EDR notifications.
+ * Addressed Bjorn comments.
+
+Changes since v2:
+ * Split EDR support patch into multiple patches.
+ * Addressed Bjorn comments.
+
+Changes since v1:
+ * Rebased on top of v5.1-rc1
+
+Kuppuswamy Sathyanarayanan (9):
+  PCI/ERR: Update error status after reset_link()
+  PCI/ACPI: Add _OSC based negotiation support for DPC
+  PCI/ACPI: Expose EDR support via _OSC to BIOS
+  PCI/DPC: Allow dpc_probe() even if firmware first mode is enabled
+  PCI/DPC: Add dpc_process_error() wrapper function
+  PCI/DPC: Add Error Disconnect Recover (EDR) support
+  PCI/AER: Allow clearing Error Status Register in FF mode
+  PCI/DPC: Update comments related to DPC recovery on NON_FATAL errors
+  PCI/DPC: Clear AER registers in EDR mode
+
+ drivers/acpi/pci_root.c         |   9 ++
+ drivers/pci/pci-acpi.c          |  91 +++++++++++++++
+ drivers/pci/pcie/Kconfig        |  10 ++
+ drivers/pci/pcie/aer.c          |  12 +-
+ drivers/pci/pcie/dpc.c          | 196 +++++++++++++++++++++++++++++---
+ drivers/pci/pcie/err.c          |  11 +-
+ drivers/pci/pcie/portdrv_core.c |   8 +-
+ drivers/pci/probe.c             |   1 +
+ include/linux/acpi.h            |   4 +-
+ include/linux/pci-acpi.h        |  11 ++
+ include/linux/pci.h             |   2 +-
+ 11 files changed, 322 insertions(+), 33 deletions(-)
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+2.21.0
+
