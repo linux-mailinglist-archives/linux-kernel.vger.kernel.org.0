@@ -2,78 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BA52761BA
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 11:21:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5420A761C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 11:22:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726581AbfGZJVs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 05:21:48 -0400
-Received: from honk.sigxcpu.org ([24.134.29.49]:59352 "EHLO honk.sigxcpu.org"
+        id S1726519AbfGZJWS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 05:22:18 -0400
+Received: from mga07.intel.com ([134.134.136.100]:10099 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725903AbfGZJVr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 05:21:47 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by honk.sigxcpu.org (Postfix) with ESMTP id 12041FB04;
-        Fri, 26 Jul 2019 11:21:46 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at honk.sigxcpu.org
-Received: from honk.sigxcpu.org ([127.0.0.1])
-        by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id ZwHT3MJlLXlW; Fri, 26 Jul 2019 11:21:45 +0200 (CEST)
-Received: by bogon.sigxcpu.org (Postfix, from userid 1000)
-        id 47E3346AA1; Fri, 26 Jul 2019 11:21:43 +0200 (CEST)
-From:   =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>
-To:     =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>,
-        Purism Kernel Team <kernel@puri.sm>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] drm/panel: jh057n00900: Print error code on all DRM_DEV_ERROR()s
-Date:   Fri, 26 Jul 2019 11:21:43 +0200
-Message-Id: <85e8899f8091c7466283d42a510042ef55882c97.1564132646.git.agx@sigxcpu.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <cover.1564132646.git.agx@sigxcpu.org>
-References: <cover.1564132646.git.agx@sigxcpu.org>
+        id S1725842AbfGZJWS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 05:22:18 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jul 2019 02:22:17 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,310,1559545200"; 
+   d="scan'208";a="175543512"
+Received: from crojewsk-mobl1.ger.corp.intel.com (HELO [10.251.89.116]) ([10.251.89.116])
+  by orsmga006.jf.intel.com with ESMTP; 26 Jul 2019 02:22:12 -0700
+Subject: Re: [RFC PATCH 01/40] soundwire: add debugfs support
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        tiwai@suse.de, broonie@kernel.org, vkoul@kernel.org,
+        gregkh@linuxfoundation.org, jank@cadence.com,
+        srinivas.kandagatla@linaro.org, slawomir.blauciak@intel.com,
+        Sanyog Kale <sanyog.r.kale@intel.com>
+References: <20190725234032.21152-1-pierre-louis.bossart@linux.intel.com>
+ <20190725234032.21152-2-pierre-louis.bossart@linux.intel.com>
+From:   Cezary Rojewski <cezary.rojewski@intel.com>
+Message-ID: <35a3936d-12d5-d301-2c8e-9e90163dd86e@intel.com>
+Date:   Fri, 26 Jul 2019 11:22:10 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190725234032.21152-2-pierre-louis.bossart@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Most of them had these already but two mere missing. This eases
-debugging.
+On 2019-07-26 01:39, Pierre-Louis Bossart wrote:
+> +static ssize_t sdw_slave_reg_read(struct file *file, char __user *user_buf,
+> +				  size_t count, loff_t *ppos)
+> +{
+> +	struct sdw_slave *slave = file->private_data;
+> +	unsigned int reg;
+> +	char *buf;
+> +	ssize_t ret;
+> +	int i, j;
+> +
+> +	buf = kzalloc(RD_BUF, GFP_KERNEL);
+> +	if (!buf)
+> +		return -ENOMEM;
+> +
+> +	ret = scnprintf(buf, RD_BUF, "Register  Value\n");
+> +	ret += scnprintf(buf + ret, RD_BUF - ret, "\nDP0\n");
+> +
+> +	for (i = 0; i < 6; i++)
+> +		ret += sdw_sprintf(slave, buf, ret, i);
 
-Signed-off-by: Guido Günther <agx@sigxcpu.org>
----
- drivers/gpu/drm/panel/panel-rocktech-jh057n00900.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+In most cases explicit reg macro is used, here it's implicit. Align with 
+the rest?
 
-diff --git a/drivers/gpu/drm/panel/panel-rocktech-jh057n00900.c b/drivers/gpu/drm/panel/panel-rocktech-jh057n00900.c
-index cc89831e30a6..a182ca7de701 100644
---- a/drivers/gpu/drm/panel/panel-rocktech-jh057n00900.c
-+++ b/drivers/gpu/drm/panel/panel-rocktech-jh057n00900.c
-@@ -127,7 +127,7 @@ static int jh057n_init_sequence(struct jh057n *ctx)
- 
- 	ret = mipi_dsi_dcs_exit_sleep_mode(dsi);
- 	if (ret < 0) {
--		DRM_DEV_ERROR(dev, "Failed to exit sleep mode\n");
-+		DRM_DEV_ERROR(dev, "Failed to exit sleep mode: %d\n", ret);
- 		return ret;
- 	}
- 	/* Panel is operational 120 msec after reset */
-@@ -355,7 +355,9 @@ static int jh057n_probe(struct mipi_dsi_device *dsi)
- 
- 	ret = mipi_dsi_attach(dsi);
- 	if (ret < 0) {
--		DRM_DEV_ERROR(dev, "mipi_dsi_attach failed. Is host ready?\n");
-+		DRM_DEV_ERROR(dev,
-+			      "mipi_dsi_attach failed (%d). Is host ready?\n",
-+			      ret);
- 		drm_panel_remove(&ctx->panel);
- 		return ret;
- 	}
--- 
-2.20.1
+> +
+> +	ret += scnprintf(buf + ret, RD_BUF - ret, "Bank0\n");
+> +	ret += sdw_sprintf(slave, buf, ret, SDW_DP0_CHANNELEN);
+> +	for (i = SDW_DP0_SAMPLECTRL1; i <= SDW_DP0_LANECTRL; i++)
+> +		ret += sdw_sprintf(slave, buf, ret, i);
+> +
+> +	ret += scnprintf(buf + ret, RD_BUF - ret, "Bank1\n");
+> +	ret += sdw_sprintf(slave, buf, ret,
+> +			SDW_DP0_CHANNELEN + SDW_BANK1_OFFSET);
+> +	for (i = SDW_DP0_SAMPLECTRL1 + SDW_BANK1_OFFSET;
+> +			i <= SDW_DP0_LANECTRL + SDW_BANK1_OFFSET; i++)
+> +		ret += sdw_sprintf(slave, buf, ret, i);
 
+I'd advice to revisit macros declarations first.
+There should be SDW_DP0_SAMPLECTRL1_B(bank) declared. In general all 
+macros for SDW should be "bank-less" (name wise). Additionally, 
+SDW_BANK_OFFSET(bank) could be provided for convenience i.e.: return 0 
+for bank0.
+Yeah, there might be some speed loss in terms of operation count but in 
+most cases it is negligible.
+
+Would simplify this entire reg dump greatly.
+const array on top with {0, 1} elements and replacing explicit "bank0/1" 
+strings with "bank%d" gets code size reduced while not losing on 
+readability.
+
+> +
+> +	ret += scnprintf(buf + ret, RD_BUF - ret, "\nSCP\n");
+> +	for (i = SDW_SCP_INT1; i <= SDW_SCP_BANKDELAY; i++)
+> +		ret += sdw_sprintf(slave, buf, ret, i);
+> +	for (i = SDW_SCP_DEVID_0; i <= SDW_SCP_DEVID_5; i++)
+> +		ret += sdw_sprintf(slave, buf, ret, i);
+> +
+> +	ret += scnprintf(buf + ret, RD_BUF - ret, "Bank0\n");
+> +	ret += sdw_sprintf(slave, buf, ret, SDW_SCP_FRAMECTRL_B0);
+> +	ret += sdw_sprintf(slave, buf, ret, SDW_SCP_NEXTFRAME_B0);
+> +
+> +	ret += scnprintf(buf + ret, RD_BUF - ret, "Bank1\n");
+> +	ret += sdw_sprintf(slave, buf, ret, SDW_SCP_FRAMECTRL_B1);
+> +	ret += sdw_sprintf(slave, buf, ret, SDW_SCP_NEXTFRAME_B1);
+> +
+> +	for (i = 1; i < 14; i++) {
+
+Explicit valid slave addresses would be preferred.
+
+> +		ret += scnprintf(buf + ret, RD_BUF - ret, "\nDP%d\n", i);
+> +		reg = SDW_DPN_INT(i);
+> +		for (j = 0; j < 6; j++)
+> +			ret += sdw_sprintf(slave, buf, ret, reg + j);
+> +
+> +		ret += scnprintf(buf + ret, RD_BUF - ret, "Bank0\n");
+> +		reg = SDW_DPN_CHANNELEN_B0(i);
+> +		for (j = 0; j < 9; j++)
+> +			ret += sdw_sprintf(slave, buf, ret, reg + j);
+> +
+> +		ret += scnprintf(buf + ret, RD_BUF - ret, "Bank1\n");
+> +		reg = SDW_DPN_CHANNELEN_B1(i);
+> +		for (j = 0; j < 9; j++)
+> +			ret += sdw_sprintf(slave, buf, ret, reg + j);
+
+Some sort of MAX_CHANNELS would be nice here too.
+
+> +	}
+> +
+> +	ret = simple_read_from_buffer(user_buf, count, ppos, buf, ret);
+> +	kfree(buf);
+> +
+> +	return ret;
+> +}
+> +
+> +static const struct file_operations sdw_slave_reg_fops = {
+> +	.open = simple_open,
+> +	.read = sdw_slave_reg_read,
+> +	.llseek = default_llseek,
+> +};
+> +
+> +struct dentry *sdw_slave_debugfs_init(struct sdw_slave *slave)
+> +{
+> +	struct dentry *master;
+> +	struct dentry *d;
+> +	char name[32];
+> +
+> +	master = slave->bus->debugfs;
+> +
+> +	/* create the debugfs slave-name */
+> +	snprintf(name, sizeof(name), "%s", dev_name(&slave->dev));
+> +	d = debugfs_create_dir(name, master);
+> +
+> +	debugfs_create_file("registers", 0400, d, slave, &sdw_slave_reg_fops);
+
+Pointer returned by _create_file gets completely ignored here. At least 
+dbg msg would be nice if it fails.
+
+> +	return d;
+> +}
+> +
