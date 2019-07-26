@@ -2,154 +2,185 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E668777351
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 23:20:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1743B77363
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 23:24:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728324AbfGZVUf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 17:20:35 -0400
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:34212 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726102AbfGZVUf (ORCPT
+        id S1728520AbfGZVY2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 17:24:28 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:46641 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728454AbfGZVYT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 17:20:35 -0400
-Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6QLHUtC008904;
-        Fri, 26 Jul 2019 14:19:57 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=facebook;
- bh=jVnRWhXm2MWCV1Qc5izacs5GiuNHypcF1Ji6eqWRSVs=;
- b=GDd2/BifOW6FME0UHZB3Ztga0MHxlksvfUGzkmrL1yqGNuaP0t+U8cu5jlWZK+wyLDLW
- 6YJ8m6ChHtJnFFRDWoAuvy4+c5V1hW90/2oeMRW8ocImjVjfopI+Zop7cuc1tW+oleRh
- vzbiVVtbAJkB+nevgVVFA1bxzbHgS0JikwI= 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com with ESMTP id 2u02eb9qpx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Fri, 26 Jul 2019 14:19:56 -0700
-Received: from ash-exhub101.TheFacebook.com (2620:10d:c0a8:82::e) by
- ash-exhub103.TheFacebook.com (2620:10d:c0a8:82::c) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Fri, 26 Jul 2019 14:19:55 -0700
-Received: from NAM02-BL2-obe.outbound.protection.outlook.com (100.104.31.183)
- by o365-in.thefacebook.com (100.104.35.173) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1713.5
- via Frontend Transport; Fri, 26 Jul 2019 14:19:55 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=mUv2Rgmw0JEXe+8Os+s7g2qKB+4vJazLXSS8LqDR7NN766nZwayjSi4klqRSkDR06C4VrQKhPiZQrCKHA9czKBkRrbL2sPSiwfkqis7+e7JkdxJSN6Bawp7yflYMSenFuQY93h3RwOP2jXTBUtRgbqoNpdNppevFzRlMgtVjgKgPhA/wNbGwF9IjlZDovsrEiB6We4QN/qciitxFC0KjpgW0SqIHp7KBlpyBSqLFsF9hw7Dv09mYWVfr+bJNGk3ebOBUtG03Cn2lxlOhkpxydN1reUpPJJ9S9KJIhA/I2qTmBtLotPPqOK0qca/qRW/RLV2Al+G2vAoONiEVedTP8g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jVnRWhXm2MWCV1Qc5izacs5GiuNHypcF1Ji6eqWRSVs=;
- b=htf+1g10xLW9/JYhj45EQV6sNqC7v84F4TGe+ajpys9MyTwU0i1C7Ni9kjyom0RT6SXkCsPi/22fqgJutb0x2mGB/sjNnXUNqN6l4cY638E660iwM8PChCpCVrL+1IiPaB4fShUN3+TBY2eVrGPqig9762hPTwpcNNU6/ZFSFMfjiy4Cu8m+UvI2CIQ89sCv3Z7tdhDD3GaW6Qv6eCiQyQWIkvliaoRP1uV4DYqrJLc2LIGzoda7mKLXMG52m60jOdL30gaVTX7TP6dfcElHJSvVKXBAww++FXxw8099R9oWqk81MD2+QeywnZPyMKzQbptXp9ZYpv7tb5lJ0ZI+VA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
- smtp.mailfrom=fb.com;dmarc=pass action=none header.from=fb.com;dkim=pass
- header.d=fb.com;arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector2-fb-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jVnRWhXm2MWCV1Qc5izacs5GiuNHypcF1Ji6eqWRSVs=;
- b=VJc46yTU0dfVj3ldRlDlfbkiWLcz1y0Qc6EmLjEX7mrsDnHhVX1iz729W69xGK8Tr/PpxVToBR5+5A+7km34DT7kuW87bEapBqvT8Hwid6MzRImrRTRA5hXjfpnVEcyGVT2UXBPzhVE+1oK+ESTY5iXDKIGXEjUHt02+7w/I084=
-Received: from MWHPR15MB1165.namprd15.prod.outlook.com (10.175.3.22) by
- MWHPR15MB1902.namprd15.prod.outlook.com (10.174.255.21) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2094.16; Fri, 26 Jul 2019 21:19:54 +0000
-Received: from MWHPR15MB1165.namprd15.prod.outlook.com
- ([fe80::4066:b41c:4397:27b7]) by MWHPR15MB1165.namprd15.prod.outlook.com
- ([fe80::4066:b41c:4397:27b7%7]) with mapi id 15.20.2094.013; Fri, 26 Jul 2019
- 21:19:54 +0000
-From:   Song Liu <songliubraving@fb.com>
-To:     Oleg Nesterov <oleg@redhat.com>
-CC:     lkml <linux-kernel@vger.kernel.org>, Linux-MM <linux-mm@kvack.org>,
-        "Andrew Morton" <akpm@linux-foundation.org>,
-        "matthew.wilcox@oracle.com" <matthew.wilcox@oracle.com>,
-        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "rostedt@goodmis.org" <rostedt@goodmis.org>,
-        "Kernel Team" <Kernel-team@fb.com>,
-        "william.kucharski@oracle.com" <william.kucharski@oracle.com>
-Subject: Re: [PATCH v8 2/4] uprobe: use original page when all uprobes are
- removed
-Thread-Topic: [PATCH v8 2/4] uprobe: use original page when all uprobes are
- removed
-Thread-Index: AQHVQfsnepoAlMhPK0qmuIU0gpphb6bZpE2AgAB5kgCAAOAOAIAAqHSAgADyToCAANMVgA==
-Date:   Fri, 26 Jul 2019 21:19:54 +0000
-Message-ID: <4398BBD5-31AB-4342-9572-32763B016175@fb.com>
-References: <20190724083600.832091-1-songliubraving@fb.com>
- <20190724083600.832091-3-songliubraving@fb.com>
- <20190724113711.GE21599@redhat.com>
- <BCE000B2-3F72-4148-A75C-738274917282@fb.com>
- <20190725081414.GB4707@redhat.com>
- <A0D24D6F-B649-4B4B-8C33-70B7DCB0D814@fb.com>
- <20190726084423.GA16112@redhat.com>
-In-Reply-To: <20190726084423.GA16112@redhat.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: Apple Mail (2.3445.104.11)
-x-originating-ip: [2620:10d:c090:180::1:bb04]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: bb4ea2bf-d7ea-4df1-4355-08d7120f00c9
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:MWHPR15MB1902;
-x-ms-traffictypediagnostic: MWHPR15MB1902:
-x-microsoft-antispam-prvs: <MWHPR15MB1902354F2CEBE716297B9D33B3C00@MWHPR15MB1902.namprd15.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8273;
-x-forefront-prvs: 01106E96F6
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(39860400002)(346002)(366004)(376002)(136003)(52314003)(199004)(189003)(14454004)(486006)(6116002)(229853002)(6436002)(25786009)(50226002)(8676002)(46003)(316002)(256004)(6512007)(53936002)(478600001)(99286004)(476003)(54906003)(5660300002)(446003)(305945005)(186003)(14444005)(2616005)(76176011)(11346002)(86362001)(6486002)(53546011)(71190400001)(64756008)(33656002)(71200400001)(68736007)(76116006)(102836004)(66446008)(2906002)(6916009)(6246003)(66946007)(36756003)(4326008)(6506007)(81156014)(4744005)(57306001)(8936002)(91956017)(81166006)(66476007)(66556008)(7736002);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR15MB1902;H:MWHPR15MB1165.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: v8CgET2JkHFHThws0wOB1vMi97P7LEaiDWlJmwDXBc4vgsVlB2/o9A1XTyHSxXbKsGy6WKloWW4DpF3f1ao2p06o8hhs5DfyZJnDiN6IEnCCwZdxxrSAY6F8cE0Tjz62FpxeNEXIN9W2Lu6TOeizRHxpEV5ZKkQuOvFbH7ewXHWoRaAzQVqPpoUH7B6ec3OebsF8qRnHEon8L+/vYokuWGb35CdPNg+4fdUjnb1GvKBNXcGf1YRTdQpqpyXicDzRh5vs/oEy9m3NW80YcEmWrU21CLvWVa6OkF/IaOh4P5oIsxnG3I91CfuM91BgHafQoz8CnndFlnx1u65SjgRX3cTHHpQ8eWlRl1tHal53QAB8jZhq8rIHP4MT8UGCHHIt95XxW3Fk75do/r9q3xYdVfjvvC14eDywqn1QZWkfiEs=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <8092EDAF1C73394291E86563B64E33D3@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Fri, 26 Jul 2019 17:24:19 -0400
+Received: by mail-qt1-f193.google.com with SMTP id h21so53977877qtn.13
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2019 14:24:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=owpXJzkwRhTQpFv3YFYd1YLSHkq3ebxH7N/mkMxT22w=;
+        b=aMJ/j5Za4QMl8Pf2M7kaOR415fQRH6rbjYvIyS/i6JoHNO1516z0Q7L7CjFPJ7OSS1
+         51Tf7qtTEW9o3QxpAl09Ian0zWGVtbbD0nG+Um3baSMk8x4ZwW46HfklJgWl9rFAmdxC
+         wOIhrnvM2feyVB+D596KSvP2fwa183EZXUZsR09c5+V9awonePLsdUEd9pE+vVyhKSl4
+         dLsxG2Cd86+m28G2I5cieWpy294e4O+naTmRX3y3ThmoJ7iWdyCdI1EvgPueMmA5RgwT
+         sq/HsxDn/okq7PDtBIalb+vyn7ZR4elNjex9aOv4MTGiRGn9pQe0NeSPFFZAvApATh8c
+         GZdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=owpXJzkwRhTQpFv3YFYd1YLSHkq3ebxH7N/mkMxT22w=;
+        b=f2Kw9wwPU6V8IHC/vDLoDl1Jk9DtwRR/LOx6qpVWYk5MmU/xzj6AcAhdVvaRf9vs9m
+         1E2kCtDB+gxbsB7zC7CLIVN9WjI4MSGTCsruWFHpmKDUT32yyDHqR9A5bm1ny4Any33o
+         FrVkv20RBOHK46l83YXdgL4v5MvfCZgK3zPMgQBOnfmepGXZHDE2tbwWV/3Yk3VbhrbQ
+         lDOWDOrk5yQuXeQf+qdnomW7F75cBW5wWV4e1B9YRAGUsCdhQEavTmTA7fOPufRxJuVm
+         LnyLadvyvcC1RcnSVZM0BdHAY4V4r/VCPM04B0Wi0PJ4JVxGRmf7mfv6wb/onZ4Yz7yu
+         /f6Q==
+X-Gm-Message-State: APjAAAWgjwZ+E9SLZr3yqs+9LsJDpV+DMr++rB1VnB+pBzCVc1AsPDFM
+        qy2UeNoA9yU1mGkfa5VCEv4icFQ2Mob0os6lylzmWw==
+X-Google-Smtp-Source: APXvYqwE2TYMffQJtT7kl52cvJrjGWqA9vEUfORVMtMAylZHsE47npdSnAmrQgan5ft+zsV9NfDaKeUFkLTLYLHvv0Q=
+X-Received: by 2002:a0c:baa1:: with SMTP id x33mr70919945qvf.200.1564176258418;
+ Fri, 26 Jul 2019 14:24:18 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: bb4ea2bf-d7ea-4df1-4355-08d7120f00c9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Jul 2019 21:19:54.0952
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: songliubraving@fb.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR15MB1902
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-26_15:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=710 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1907260241
-X-FB-Internal: deliver
+References: <20190717222340.137578-1-saravanak@google.com> <20190717222340.137578-4-saravanak@google.com>
+ <20190723102842.t2s45zzylsjuccm4@vireshk-i7> <CAGETcx-6M9Ts8tfMf6aA8GjMyzK5sOLr069ZCxTG7RHMFPLzHw@mail.gmail.com>
+ <20190725030712.lx3cjogo5r7kc262@vireshk-i7> <CAGETcx8QTs2Dqqppb_gwiUa2fte92K_q+B+j_CreRgqU52L7EA@mail.gmail.com>
+ <20190725051742.mn54pi722txkpddg@vireshk-i7> <CAGETcx9yO7HCz-rvqRMQf6srN_9-O_wc1bb7HadL+4QxvuqyWA@mail.gmail.com>
+In-Reply-To: <CAGETcx9yO7HCz-rvqRMQf6srN_9-O_wc1bb7HadL+4QxvuqyWA@mail.gmail.com>
+From:   Saravana Kannan <saravanak@google.com>
+Date:   Fri, 26 Jul 2019 14:23:41 -0700
+Message-ID: <CAGETcx9UAAc6u=qFPN49Pn2u4xiMCroL-PhHqLZrBPRSXBbHBw@mail.gmail.com>
+Subject: Re: [PATCH v3 3/5] OPP: Improve require-opps linking
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Sibi Sankar <sibis@codeaurora.org>,
+        Android Kernel Team <kernel-team@android.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Jul 25, 2019 at 6:52 PM Saravana Kannan <saravanak@google.com> wrote:
+>
+> On Wed, Jul 24, 2019 at 10:17 PM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> >
+> > On 24-07-19, 21:09, Saravana Kannan wrote:
+> > > On Wed, Jul 24, 2019 at 8:07 PM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> > > > We should be doing this whenever a new OPP table is created, and see
+> > > > if someone else was waiting for this OPP table to come alive.
+> > >
+> > > Searching the global OPP table list seems a ton more wasteful than
+> > > doing the lazy linking. I'd rather not do this.
+> >
+> > We can see how best to optimize that, but it will be done only once
+> > while a new OPP table is created and putting stress there is the right
+> > thing to do IMO. And doing anything like that in a place like
+> > opp-set-rate is the worst one. It will be a bad choice by design if
+> > you ask me and so I am very much against that.
+> >
+> > > > Also we
+> > > > must make sure that we do this linking only if the new OPP table has
+> > > > its own required-opps links fixed, otherwise delay further.
+> > >
+> > > This can be done. Although even without doing that, this patch is
+> > > making things better by not failing silently like it does today? Can I
+> > > do this later as a separate patch set series?
+> >
+> > I would like this to get fixed now in a proper way, there is no hurry
+> > for a quick fix currently. No band-aids please.
+> >
+> > > > Even then I don't want to add these checks to those places. For the
+> > > > opp-set-rate routine, add another flag to the OPP table which
+> > > > indicates if we are ready to do dvfs or not and mark it true only
+> > > > after the required-opps are all set.
+> > >
+> > > Honestly, this seems like extra memory and micro optimization without
+> > > any data to back it.
+> >
+> > Again, opp-set-rate isn't supposed to do something like this. It
+> > shouldn't handle initializations of things, that is broken design.
+> >
+> > > Show me data that checking all these table
+> > > pointers is noticeably slower than what I'm doing. What's the max
+> > > "required tables count" you've seen in upstream so far?
+> >
+> > Running anything extra (specially some initialization stuff) in
+> > opp-set-rate is wrong as per me and as a Maintainer of the OPP core it
+> > is my responsibility to not allow such things to happen.
+>
+> Doing operations lazily right before they are needed isn't something
+> new in the kernel. It's done all over the place (VFP save/restore?).
+> It's not worth arguing though -- so I'll agree to disagree but follow
+> the Maintainer's preference.
+>
 
+I was taking a closer look at the OPP framework code to try and do
+what you ask above, but it's kind of a mess. The whole "the same OPP
+table can be used by multiple devices without the opp-shared flag set"
+is effectively breaking "required-opps" at a minimum and probably a
+lot more cases. I don't think I can rewrite my patch the way you want
+it without fixing the existing bugs.
 
-> On Jul 26, 2019, at 1:44 AM, Oleg Nesterov <oleg@redhat.com> wrote:
->=20
-> On 07/25, Song Liu wrote:
->>=20
->> I guess I know the case now. We can probably avoid this with an simp=10l=
-e=20
->> check for old_page =3D=3D new_page?
->=20
-> better yet, I think we can check PageAnon(old_page) and avoid the unneces=
-sary
-> __replace_page() in this case. See the patch below.
+Let's take this example DT (leaving out the irrelevant part):
 
-I added PageAnon(old_page) check in v9 of the patch.=20
+OPP table 1:
+    required-opps = <OPP table 2 entry>;
 
->=20
-> Anyway, why __replace_page() needs to lock both pages? This doesn't look =
-nice
-> even if it were correct. I think it can do lock_page(old_page) later.
->=20
+OPP table 2:
+    <opp-shared property not set>
 
-Agreed. I have changed the v9 to only unmap old_page. So it should be clean=
-er.=20
+Device A:
+    operating-points-v2 = <&OPP table 1>
 
-Thanks again for these good suggestions,
-Song=
+Device B:
+    operating-points-v2 = <&OPP table 2>
+
+Device C:
+    operating-points-v2 = <&OPP table 2>
+
+Let's say device B and C add their OPP tables. They both get their own
+"in-memory" copy of the OPP table. They can then enabled/disable
+different OPP entries (rows) and not affect each other's OPP table.
+Which is how it's expected to work.
+
+Now if device A adds its OPP table 1, the "in-memory"
+required_opp_tables pointer of OPP table 1 can end up pointing to
+either Device A's copy of the OPP table or Device B's copy of the OPP
+table depending on which happens to be added first. This effectively
+random linking of OPP tables is mutually exclusive to the point of
+required-opps.
+
+Also, at a DT definition level, OPP table 1 pointing to OPP table 2
+when OPP table 2 is used by more than one device doesn't make any
+sense. Which device/genpd is OPP table 1 saying it "requires to
+operate at a certain level"?
+
+So I propose that we should consider the OPP table DT configuration
+invalid if one OPP table points to another OPP tables that's NOT
+shared but is ALSO pointed to by multiple devices. Basically the
+example above would be considered an invalid DT configuration. Does
+that sound okay to you? If I make changes to enforce that, will that
+be acceptable?
+
+If this sounds okay to you, then in the example above, assume Device C
+isn't present. Then when OPP table 1 is added by device A, if OPP
+table 2 hasn't been added already, I can just go ahead and allocate
+OPP table 2. And then when device B tries to add OPP table 2, I can
+just tie device B to OPP table 2 and fill up any of the missing
+pieces.
+
+This sounds better than trying to loop through existing OPP tables and
+seeing if any other table is waiting for the newly added table and
+marking the waiting tables as "linked". Especially because it gets a
+lot more complicated and inefficient when you consider a chain of OPP
+tables and many-to-many linking of OPP tables.
+
+-Saravana
