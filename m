@@ -2,100 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A136776B77
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 16:23:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9897A76B7A
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 16:23:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387489AbfGZOXB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 10:23:01 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:45098 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725869AbfGZOXB (ORCPT
+        id S2387508AbfGZOXP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 10:23:15 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:55318 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725869AbfGZOXP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 10:23:01 -0400
-Received: by mail-pf1-f194.google.com with SMTP id r1so24599586pfq.12;
-        Fri, 26 Jul 2019 07:23:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=en0pvNZcM3kkSmz8hVt+Vi3uAvo2FewDy+aMfhbvUlY=;
-        b=UAZRF14qLpPXvi9pHNnuQV/IcqDc5nYKJ9twIxHfUrzZPxIBa9sFMHCyCppny4w8Tr
-         kvNN7W702YBcnJ4C9S0oimLwk5PYqtSujw17of0xIGjpyx37ThgNIu6e+4vGx5SO5teF
-         7F1USnTH9dvIosE0fH8fbZoV8zP/lXPb5Crb8vbz2nQ8L5owpl2X0VpJsmkmHIwOd56J
-         PNgg5hK0j/Cbp9zheN/Gi/tQmkaVFnwIe/W9Yo7PzNt1D6df2DSdlKjhqZO7ddfDxDo6
-         L+v19zvEIAn3zmtF1xuougreky5RaoxVe3EGKUjpNY7sfB4XdItsCv7WcyWUOoJoGIcy
-         67wA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=en0pvNZcM3kkSmz8hVt+Vi3uAvo2FewDy+aMfhbvUlY=;
-        b=NSWLKMNeaacRx9cmzzXzEOY9HMzvZ0KR3t2Rl6Vc+WhQk9GJy/RgWuV+1cA3e297X3
-         WgqkiUCsOpAXjHQVNwpim7Z4nOgd6s4tZefcEQI3OL299anrM9dnkNl4kmcbjHa8IXJn
-         eQN5YEhxMoCznCxzH14Lm1vIfPyfhMV+efMwwkhdYgbeUtqtZVW1QFT5ERRFvQfNjdUU
-         Y9DuGw9IoFp+HR7f3ASZvTwQXka0G1oj5IkDhQ8antEujjKzI2rVXy7U4CPxp63FXUKS
-         XBaflvLsANwwnjDvQ4nE+LFUWL59JoTSioIWOUoHS3bE5pnZ9nV/vWROEY/jyaN748Pb
-         ORow==
-X-Gm-Message-State: APjAAAWGFcRUY1BpafTnhft10Ti/wO5pSdp+VXwIp3Dj4QPCfEdoP+b4
-        hj5qYeGE0fPVezZGOAPreKq1BN/KYnU=
-X-Google-Smtp-Source: APXvYqwflgYhWxBQM/ZUSLNQz04HoE44wm/0LodHQNfZiB33HlkE2tRq/7pbDjKnMMHWzHnC1dO8Fg==
-X-Received: by 2002:a17:90a:2506:: with SMTP id j6mr64297087pje.129.1564150980639;
-        Fri, 26 Jul 2019 07:23:00 -0700 (PDT)
-Received: from oslab.tsinghua.edu.cn ([2402:f000:4:72:808::3ca])
-        by smtp.gmail.com with ESMTPSA id a6sm51371671pfa.162.2019.07.26.07.22.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 26 Jul 2019 07:23:00 -0700 (PDT)
-From:   Jia-Ju Bai <baijiaju1990@gmail.com>
-To:     jh80.chung@samsung.com, ulf.hansson@linaro.org
-Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [PATCH] mmc: host: dw_mmc: Fix possible null-pointer dereferences in dw_mci_runtime_resume()
-Date:   Fri, 26 Jul 2019 22:22:52 +0800
-Message-Id: <20190726142252.9654-1-baijiaju1990@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        Fri, 26 Jul 2019 10:23:15 -0400
+Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id EDCF55C0CE3;
+        Fri, 26 Jul 2019 16:23:12 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
+        t=1564150992;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=E5FMo6ELzebhiWgFCcrTDqmf5tKgwdevClIfhESEF3U=;
+        b=dBEi8+80uL2lmGFpZLhKcS/qTHioGXH64pG245YbHH/YbMEnmAV73uL3DEIAadPCBHMWuO
+        /ZwAOsLPL8o5h0X9GBieEvdd1/37Fcs2DRufDOTpkszqw+v/GpzzOkpJvYvMcl7BRiZuQP
+        AhTCzMn0TNTO2I8rN5auX6bflp6YhFc=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Date:   Fri, 26 Jul 2019 16:23:12 +0200
+From:   Stefan Agner <stefan@agner.ch>
+To:     thierry.reding@gmail.com, airlied@linux.ie
+Cc:     jonathanh@nvidia.com, dri-devel@lists.freedesktop.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/tegra: return with probe defer if GPIO subsystem is
+ not ready
+In-Reply-To: <de84d04c902d1f7f22b6f024b853a1c7@agner.ch>
+References: <20180726133606.14587-1-stefan@agner.ch>
+ <de84d04c902d1f7f22b6f024b853a1c7@agner.ch>
+Message-ID: <cd14bca0a1f1e097265602a1d5f0c0f5@agner.ch>
+X-Sender: stefan@agner.ch
+User-Agent: Roundcube Webmail/1.3.9
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In dw_mci_runtime_resume(), there is an if statement on line 3420 
-to check whether host->slot is NULL:
-    if (host->slot && ...)
+Hi Thierry, Hi Dave,
 
-When host->slot is NULL, it is used on line 3458:
-    if (host->slot->mmc->pm_flags & MMC_PM_KEEP_POWER)
-and on line 3462:
-    dw_mci_setup_bus(host->slot, true);
-        struct dw_mci *host = slot->host;
+On 2018-09-07 01:31, Stefan Agner wrote:
+> On 26.07.2018 06:36, Stefan Agner wrote:
+>> If the GPIO subsystem is not ready make sure to return -EPROBE_DEFER
+>> instead of silently continuing without HPD.
+>>
+>> Reported-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+>> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> 
+> I think this did not get merged yet, any chance to get it in?
 
-Thus, possible null-pointer dereferences may occur.
+Any chance to get this in in the next merge window?
 
-To fix these bugs, host->slot is checked before being used.
+--
+Stefan
 
-These bugs are found by a static analysis tool STCheck written by us.
-
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
----
- drivers/mmc/host/dw_mmc.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
-index faaaf52a46d2..91bd6c3ccf50 100644
---- a/drivers/mmc/host/dw_mmc.c
-+++ b/drivers/mmc/host/dw_mmc.c
-@@ -3455,11 +3455,12 @@ int dw_mci_runtime_resume(struct device *dev)
- 	mci_writel(host, CTRL, SDMMC_CTRL_INT_ENABLE);
- 
- 
--	if (host->slot->mmc->pm_flags & MMC_PM_KEEP_POWER)
-+	if (host->slot && (host->slot->mmc->pm_flags & MMC_PM_KEEP_POWER))
- 		dw_mci_set_ios(host->slot->mmc, &host->slot->mmc->ios);
- 
- 	/* Force setup bus to guarantee available clock output */
--	dw_mci_setup_bus(host->slot, true);
-+	if (host->slot)
-+		dw_mci_setup_bus(host->slot, true);
- 
- 	/* Now that slots are all setup, we can enable card detect */
- 	dw_mci_enable_cd(host);
--- 
-2.17.0
-
+> 
+> --
+> Stefan
+> 
+>> ---
+>>  drivers/gpu/drm/tegra/output.c | 4 +++-
+>>  1 file changed, 3 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/gpu/drm/tegra/output.c b/drivers/gpu/drm/tegra/output.c
+>> index ffe34bd0bb9d..4bcefe455afd 100644
+>> --- a/drivers/gpu/drm/tegra/output.c
+>> +++ b/drivers/gpu/drm/tegra/output.c
+>> @@ -133,7 +133,9 @@ int tegra_output_probe(struct tegra_output *output)
+>>  	output->hpd_gpio = of_get_named_gpio_flags(output->of_node,
+>>  						   "nvidia,hpd-gpio", 0,
+>>  						   &output->hpd_gpio_flags);
+>> -	if (gpio_is_valid(output->hpd_gpio)) {
+>> +	if (output->hpd_gpio == -EPROBE_DEFER) {
+>> +		return -EPROBE_DEFER;
+>> +	} else if (gpio_is_valid(output->hpd_gpio)) {
+>>  		unsigned long flags;
+>>
+>>  		err = gpio_request_one(output->hpd_gpio, GPIOF_DIR_IN,
