@@ -2,42 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EFC1E76A1E
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 15:56:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BC6176A1B
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 15:56:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728500AbfGZN4Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 09:56:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48978 "EHLO mail.kernel.org"
+        id S1728479AbfGZN4S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 09:56:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49036 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387790AbfGZNlv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 09:41:51 -0400
+        id S1727558AbfGZNlz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 09:41:55 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2012822C7E;
-        Fri, 26 Jul 2019 13:41:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CE59722CBD;
+        Fri, 26 Jul 2019 13:41:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564148511;
-        bh=EpQGnQ/G+NzeXJNmwDMDpPK+BWDg110HPcO6n8jqX9o=;
+        s=default; t=1564148514;
+        bh=dA9rjTfI3ezqpl0b3sykI4tA/BBNeqQ0Y08JP8hVIyw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jePkYeLgBm3YPqol38CyIcH5fHeyboV5TFhOY6D1azOyOWkPUf+3hd30dnfkd4L27
-         LUnVJWjBirO2YXX46nWvY+ZAF778nfZb/QNBbyjiNc7YLuXldlNpAE+r6rRmYGCZdH
-         b7vyXpPapXW/8V5syvvWCrrLNWGcKhFa8QtHI2i0=
+        b=uGmlVZl8XSMB0BSzWLuhfh9gXsSGgLETdAY8sOvTePaI1nTKSskBvFk5B/Ctp5nmK
+         VdoT6+MmFT9gtlC8m3uXuC4q2zglgp0hJgbb2EYRuFD/fM95rZJrVhsNxTFbMpMteQ
+         6g60XOzBKcKM0jDc0PUwn06wALiuQYUFzO7Rua/w=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Zhenzhong Duan <zhenzhong.duan@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
+Cc:     Josh Poimboeuf <jpoimboe@redhat.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Andrew Cooper <andrew.cooper3@citrix.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Peter Zijlstra <peterz@infradead.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.2 75/85] xen/pv: Fix a boot up hang revealed by int3 self test
-Date:   Fri, 26 Jul 2019 09:39:25 -0400
-Message-Id: <20190726133936.11177-75-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.2 77/85] objtool: Add mcsafe_handle_tail() to the uaccess safe list
+Date:   Fri, 26 Jul 2019 09:39:27 -0400
+Message-Id: <20190726133936.11177-77-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190726133936.11177-1-sashal@kernel.org>
 References: <20190726133936.11177-1-sashal@kernel.org>
@@ -50,117 +45,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zhenzhong Duan <zhenzhong.duan@oracle.com>
+From: Josh Poimboeuf <jpoimboe@redhat.com>
 
-[ Upstream commit b23e5844dfe78a80ba672793187d3f52e4b528d7 ]
+[ Upstream commit a7e47f26039c26312a4144c3001b4e9fa886bd45 ]
 
-Commit 7457c0da024b ("x86/alternatives: Add int3_emulate_call()
-selftest") is used to ensure there is a gap setup in int3 exception stack
-which could be used for inserting call return address.
+After an objtool improvement, it's reporting that __memcpy_mcsafe() is
+calling mcsafe_handle_tail() with AC=1:
 
-This gap is missed in XEN PV int3 exception entry path, then below panic
-triggered:
+  arch/x86/lib/memcpy_64.o: warning: objtool: .fixup+0x13: call to mcsafe_handle_tail() with UACCESS enabled
+  arch/x86/lib/memcpy_64.o: warning: objtool:   __memcpy_mcsafe()+0x34: (alt)
+  arch/x86/lib/memcpy_64.o: warning: objtool:   __memcpy_mcsafe()+0xb: (branch)
+  arch/x86/lib/memcpy_64.o: warning: objtool:   __memcpy_mcsafe()+0x0: <=== (func)
 
-[    0.772876] general protection fault: 0000 [#1] SMP NOPTI
-[    0.772886] CPU: 0 PID: 0 Comm: swapper/0 Not tainted 5.2.0+ #11
-[    0.772893] RIP: e030:int3_magic+0x0/0x7
-[    0.772905] RSP: 3507:ffffffff82203e98 EFLAGS: 00000246
-[    0.773334] Call Trace:
-[    0.773334]  alternative_instructions+0x3d/0x12e
-[    0.773334]  check_bugs+0x7c9/0x887
-[    0.773334]  ? __get_locked_pte+0x178/0x1f0
-[    0.773334]  start_kernel+0x4ff/0x535
-[    0.773334]  ? set_init_arg+0x55/0x55
-[    0.773334]  xen_start_kernel+0x571/0x57a
+mcsafe_handle_tail() is basically an extension of __memcpy_mcsafe(), so
+AC=1 is supposed to be set.  Add mcsafe_handle_tail() to the uaccess
+safe list.
 
-For 64bit PV guests, Xen's ABI enters the kernel with using SYSRET, with
-%rcx/%r11 on the stack. To convert back to "normal" looking exceptions,
-the xen thunks do 'xen_*: pop %rcx; pop %r11; jmp *'.
-
-E.g. Extracting 'xen_pv_trap xenint3' we have:
-xen_xenint3:
- pop %rcx;
- pop %r11;
- jmp xenint3
-
-As xenint3 and int3 entry code are same except xenint3 doesn't generate
-a gap, we can fix it by using int3 and drop useless xenint3.
-
-Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
-Reviewed-by: Juergen Gross <jgross@suse.com>
-Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: Juergen Gross <jgross@suse.com>
-Cc: Stefano Stabellini <sstabellini@kernel.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Andrew Cooper <andrew.cooper3@citrix.com>
-Signed-off-by: Juergen Gross <jgross@suse.com>
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Nick Desaulniers <ndesaulniers@google.com>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Link: https://lkml.kernel.org/r/035c38f7eac845281d3c3d36749144982e06e58c.1563413318.git.jpoimboe@redhat.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/entry/entry_64.S    | 1 -
- arch/x86/include/asm/traps.h | 2 +-
- arch/x86/xen/enlighten_pv.c  | 2 +-
- arch/x86/xen/xen-asm_64.S    | 1 -
- 4 files changed, 2 insertions(+), 4 deletions(-)
+ tools/objtool/check.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
-index 8dbca86c249b..5c033dc0c2c7 100644
---- a/arch/x86/entry/entry_64.S
-+++ b/arch/x86/entry/entry_64.S
-@@ -1171,7 +1171,6 @@ idtentry stack_segment		do_stack_segment	has_error_code=1
- #ifdef CONFIG_XEN_PV
- idtentry xennmi			do_nmi			has_error_code=0
- idtentry xendebug		do_debug		has_error_code=0
--idtentry xenint3		do_int3			has_error_code=0
- #endif
- 
- idtentry general_protection	do_general_protection	has_error_code=1
-diff --git a/arch/x86/include/asm/traps.h b/arch/x86/include/asm/traps.h
-index 7d6f3f3fad78..f2bd284abc16 100644
---- a/arch/x86/include/asm/traps.h
-+++ b/arch/x86/include/asm/traps.h
-@@ -40,7 +40,7 @@ asmlinkage void simd_coprocessor_error(void);
- asmlinkage void xen_divide_error(void);
- asmlinkage void xen_xennmi(void);
- asmlinkage void xen_xendebug(void);
--asmlinkage void xen_xenint3(void);
-+asmlinkage void xen_int3(void);
- asmlinkage void xen_overflow(void);
- asmlinkage void xen_bounds(void);
- asmlinkage void xen_invalid_op(void);
-diff --git a/arch/x86/xen/enlighten_pv.c b/arch/x86/xen/enlighten_pv.c
-index 4722ba2966ac..30c14cb343fc 100644
---- a/arch/x86/xen/enlighten_pv.c
-+++ b/arch/x86/xen/enlighten_pv.c
-@@ -596,12 +596,12 @@ struct trap_array_entry {
- 
- static struct trap_array_entry trap_array[] = {
- 	{ debug,                       xen_xendebug,                    true },
--	{ int3,                        xen_xenint3,                     true },
- 	{ double_fault,                xen_double_fault,                true },
- #ifdef CONFIG_X86_MCE
- 	{ machine_check,               xen_machine_check,               true },
- #endif
- 	{ nmi,                         xen_xennmi,                      true },
-+	{ int3,                        xen_int3,                        false },
- 	{ overflow,                    xen_overflow,                    false },
- #ifdef CONFIG_IA32_EMULATION
- 	{ entry_INT80_compat,          xen_entry_INT80_compat,          false },
-diff --git a/arch/x86/xen/xen-asm_64.S b/arch/x86/xen/xen-asm_64.S
-index 1e9ef0ba30a5..ebf610b49c06 100644
---- a/arch/x86/xen/xen-asm_64.S
-+++ b/arch/x86/xen/xen-asm_64.S
-@@ -32,7 +32,6 @@ xen_pv_trap divide_error
- xen_pv_trap debug
- xen_pv_trap xendebug
- xen_pv_trap int3
--xen_pv_trap xenint3
- xen_pv_trap xennmi
- xen_pv_trap overflow
- xen_pv_trap bounds
+diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+index 172f99195726..f5c3b97051a7 100644
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -488,6 +488,7 @@ static const char *uaccess_safe_builtin[] = {
+ 	/* misc */
+ 	"csum_partial_copy_generic",
+ 	"__memcpy_mcsafe",
++	"mcsafe_handle_tail",
+ 	"ftrace_likely_update", /* CONFIG_TRACE_BRANCH_PROFILING */
+ 	NULL
+ };
 -- 
 2.20.1
 
