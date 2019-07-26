@@ -2,217 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C5AF770F8
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 20:08:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DEFB677101
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 20:11:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729115AbfGZSIC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 14:08:02 -0400
-Received: from mga12.intel.com ([192.55.52.136]:34946 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725899AbfGZSIB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 14:08:01 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jul 2019 11:08:00 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,311,1559545200"; 
-   d="scan'208";a="173110623"
-Received: from tthayer-hp-z620.an.intel.com ([10.122.105.146])
-  by orsmga003.jf.intel.com with ESMTP; 26 Jul 2019 11:07:59 -0700
-From:   thor.thayer@linux.intel.com
-To:     bp@alien8.de, mchehab@kernel.org, james.morse@arm.com
-Cc:     linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Thor Thayer <thor.thayer@linux.intel.com>
-Subject: [PATCHv3] EDAC, altera: Move Stratix10 SDRAM ECC to peripheral
-Date:   Fri, 26 Jul 2019 13:09:58 -0500
-Message-Id: <1564164598-20927-1-git-send-email-thor.thayer@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
+        id S1729152AbfGZSLN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 14:11:13 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:35921 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725899AbfGZSLN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 14:11:13 -0400
+Received: by mail-wr1-f67.google.com with SMTP id n4so55406582wrs.3;
+        Fri, 26 Jul 2019 11:11:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=H4OkvprGWkQxdepZxoo091W8o8XKsTc4NaiAP0lwajo=;
+        b=P+qVIFcunWopdw0py0JC+0ltz77IaW3kQ7vZCM5O1HtBUI4eHOLn/h0g0Acig7mVJg
+         hG/ELhLwgnxJOgMW0iJRTt3WLfT7JPAeMPur3xSGbIjvtRRC5sJdhx9v+nXsYNXXfCF7
+         r6FrGauxyBtbsTQduYEt1YWhJPX+8JR001YJZKvueW7gsjk+NtzBSvUSyKm8ppIVG00d
+         y50VncWrZX4//8zU2lVjFygIf8MSxy4qnaK8iR/4S5DlOrsYhBdzonBrBbDHRFHpfu/u
+         3ftQsxIWQo5vtweHOqU4yKQcDo41gJFEkRipUkl9dNjO/Gcbn1NwQQC3rSQATXOBSHTR
+         AeDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=H4OkvprGWkQxdepZxoo091W8o8XKsTc4NaiAP0lwajo=;
+        b=oaLgw8cCdh83KA794tLTJCPMEzePmUHLqU28BXZ/x6435wSr3rI/pyR7akAueRVSGf
+         OCbr9r54XFYAsj7qYw6GAie2cMSpwsVPo0gwNdjpNe/FJvj7ojIq/zf62ZTILQwN9K+u
+         5TRAS1gKbI8dsq5HTCETH6wU8RVZjfeHAAyNXw6nRyRO3KfCBs3oIAOxC4A9IKALIPD2
+         MvzBo8/Wpmx3X8rRrGNT4Onu1x1wWhaqsaezur76XDL9uLRwWJ7kzlaavwLJvC+qw/Yp
+         /w/Pna+K7ZzVyWU9om7N4UdPDNds1gnOYfb+vFtrFw0k8b+TVtcUFSJVsjmkjvk9S1YF
+         yK9g==
+X-Gm-Message-State: APjAAAWOOmmuWQ5p+o2YCtmINLpnI6MXpImNV4m4CeRdSxy5DXUGAxxB
+        YfE8BZfAR1xR4oVfbf2vuj8=
+X-Google-Smtp-Source: APXvYqyTfwjMyqVr91cyDtNh35kpDAk49UxPpISuR1aXbfmeauE2uUNVKz29hKbbTI65LWnh0RsAMg==
+X-Received: by 2002:a5d:564e:: with SMTP id j14mr100454046wrw.1.1564164671398;
+        Fri, 26 Jul 2019 11:11:11 -0700 (PDT)
+Received: from Red ([2a01:cb1d:147:7200:2e56:dcff:fed2:c6d6])
+        by smtp.googlemail.com with ESMTPSA id u2sm46006939wmc.3.2019.07.26.11.11.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 26 Jul 2019 11:11:10 -0700 (PDT)
+Date:   Fri, 26 Jul 2019 20:11:08 +0200
+From:   Corentin Labbe <clabbe.montjoie@gmail.com>
+To:     robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: How to add multiple example with conflicting includes
+Message-ID: <20190726181108.GA17767@Red>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thor Thayer <thor.thayer@linux.intel.com>
+Hello
 
-ARM32 SoCFPGAs had separate IRQs for SDRAM. ARM64 SoCFPGAs
-send all DBEs to SError so filtering by source is necessary.
+When I try to check the following examples of a devicetree schema:
+examples:                                                                       
+  - |                                                                           
+    #include <dt-bindings/interrupt-controller/arm-gic.h>                       
+    #include <dt-bindings/clock/sun50i-a64-ccu.h>                               
+    #include <dt-bindings/reset/sun50i-a64-ccu.h>                               
+                                                                                
+    crypto: crypto@1c15000 {                                                    
+      compatible = "allwinner,sun8i-h3-crypto";                                 
+      reg = <0x01c15000 0x1000>;                                                
+      interrupts = <GIC_SPI 94 IRQ_TYPE_LEVEL_HIGH>;                            
+      clocks = <&ccu CLK_BUS_CE>, <&ccu CLK_CE>;                                
+      clock-names = "ahb", "mod";                                               
+      resets = <&ccu RST_BUS_CE>;                                               
+      reset-names = "ahb";                                                      
+    };                                                                          
+                                                                                
+  - |                                                                           
+    #include <dt-bindings/interrupt-controller/arm-gic.h>                       
+    #include <dt-bindings/clock/sun50i-h6-ccu.h>                                
+    #include <dt-bindings/reset/sun50i-h6-ccu.h>                                
+                                                                                
+    crypto: crypto@1904000 {                                                    
+      compatible = "allwinner,sun50i-h6-crypto";                                
+      reg = <0x01904000 0x1000>;                                                
+      interrupts = <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>;                            
+      clocks = <&ccu CLK_BUS_CE>, <&ccu CLK_CE>, <&ccu CLK_MBUS_CE>;            
+      clock-names = "ahb", "mod", "mbus";                                       
+      resets = <&ccu RST_BUS_CE>;                                               
+      reset-names = "ahb";                                                      
+    };
 
-The Stratix10 SDRAM ECC is a better match with the generic
-Altera peripheral ECC framework because the linked list can
-be searched to find the ECC block offset and printout
-the DBE Address.
+I get:
+In file included from Documentation/devicetree/bindings/crypto/allwinner,sun8i-ce.example.dts:42:
+/linux-next/scripts/dtc/include-prefixes/dt-bindings/clock/sun50i-h6-ccu.h:9: warning: "CLK_PLL_PERIPH0" redefined
+ #define CLK_PLL_PERIPH0  3
+[...]
 
-Signed-off-by: Thor Thayer <thor.thayer@linux.intel.com>
-Acked-by: James Morse <james.morse@arm.com>
----
-v2 Use existing device tree bindings for SDRAM discovery.
-v3 Replace multiple of_device_is_compatible() with of_match_node()
----
- drivers/edac/altera_edac.c | 61 ++++++++++++++++++++++++++++++++++++----------
- drivers/edac/altera_edac.h | 25 ++++++++++++++++++-
- 2 files changed, 72 insertions(+), 14 deletions(-)
+So how can I add multiple examples which need somes conflicting #include to be validated.
 
-diff --git a/drivers/edac/altera_edac.c b/drivers/edac/altera_edac.c
-index c2e693e34d43..055eae1a8332 100644
---- a/drivers/edac/altera_edac.c
-+++ b/drivers/edac/altera_edac.c
-@@ -222,7 +222,6 @@ static unsigned long get_total_mem(void)
- static const struct of_device_id altr_sdram_ctrl_of_match[] = {
- 	{ .compatible = "altr,sdram-edac", .data = &c5_data},
- 	{ .compatible = "altr,sdram-edac-a10", .data = &a10_data},
--	{ .compatible = "altr,sdram-edac-s10", .data = &a10_data},
- 	{},
- };
- MODULE_DEVICE_TABLE(of, altr_sdram_ctrl_of_match);
-@@ -1170,6 +1169,24 @@ static int __init __maybe_unused altr_init_a10_ecc_device_type(char *compat)
- 	return 0;
- }
- 
-+/*********************** SDRAM EDAC Device Functions *********************/
-+
-+#ifdef CONFIG_EDAC_ALTERA_SDRAM
-+
-+static const struct edac_device_prv_data s10_sdramecc_data = {
-+	.setup = altr_check_ecc_deps,
-+	.ce_clear_mask = ALTR_S10_ECC_SERRPENA,
-+	.ue_clear_mask = ALTR_S10_ECC_DERRPENA,
-+	.ecc_enable_mask = ALTR_S10_ECC_EN,
-+	.ecc_en_ofst = ALTR_S10_ECC_CTRL_SDRAM_OFST,
-+	.ce_set_mask = ALTR_S10_ECC_TSERRA,
-+	.ue_set_mask = ALTR_S10_ECC_TDERRA,
-+	.set_err_ofst = ALTR_S10_ECC_INTTEST_OFST,
-+	.ecc_irq_handler = altr_edac_a10_ecc_irq,
-+	.inject_fops = &altr_edac_a10_device_inject_fops,
-+};
-+#endif /* CONFIG_EDAC_ALTERA_SDRAM */
-+
- /*********************** OCRAM EDAC Device Functions *********************/
- 
- #ifdef CONFIG_EDAC_ALTERA_OCRAM
-@@ -1759,6 +1776,9 @@ static const struct of_device_id altr_edac_a10_device_of_match[] = {
- #ifdef CONFIG_EDAC_ALTERA_SDMMC
- 	{ .compatible = "altr,socfpga-sdmmc-ecc", .data = &a10_sdmmcecca_data },
- #endif
-+#ifdef CONFIG_EDAC_ALTERA_SDRAM
-+	{ .compatible = "altr,sdram-edac-s10", .data = &s10_sdramecc_data },
-+#endif
- 	{},
- };
- MODULE_DEVICE_TABLE(of, altr_edac_a10_device_of_match);
-@@ -1889,6 +1909,10 @@ static int validate_parent_available(struct device_node *np)
- 	struct device_node *parent;
- 	int ret = 0;
- 
-+	/* SDRAM must be present for Linux (implied parent) */
-+	if (of_device_is_compatible(np, "altr,sdram-edac-s10"))
-+		return 0;
-+
- 	/* Ensure parent device is enabled if parent node exists */
- 	parent = of_parse_phandle(np, "altr,ecc-parent", 0);
- 	if (parent && !of_device_is_available(parent))
-@@ -1898,6 +1922,22 @@ static int validate_parent_available(struct device_node *np)
- 	return ret;
- }
- 
-+static int get_s10_sdram_edac_resource(struct device_node *np,
-+				       struct resource *res)
-+{
-+	struct device_node *parent;
-+	int ret;
-+
-+	parent = of_parse_phandle(np, "altr,sdr-syscon", 0);
-+	if (!parent)
-+		return -ENODEV;
-+
-+	ret = of_address_to_resource(parent, 0, res);
-+	of_node_put(parent);
-+
-+	return ret;
-+}
-+
- static int altr_edac_a10_device_add(struct altr_arria10_edac *edac,
- 				    struct device_node *np)
- {
-@@ -1925,7 +1965,11 @@ static int altr_edac_a10_device_add(struct altr_arria10_edac *edac,
- 	if (!devres_open_group(edac->dev, altr_edac_a10_device_add, GFP_KERNEL))
- 		return -ENOMEM;
- 
--	rc = of_address_to_resource(np, 0, &res);
-+	if (of_device_is_compatible(np, "altr,sdram-edac-s10"))
-+		rc = get_s10_sdram_edac_resource(np, &res);
-+	else
-+		rc = of_address_to_resource(np, 0, &res);
-+
- 	if (rc < 0) {
- 		edac_printk(KERN_ERR, EDAC_DEVICE,
- 			    "%s: no resource address\n", ecc_name);
-@@ -2224,20 +2268,11 @@ static int altr_edac_a10_probe(struct platform_device *pdev)
- 		if (!of_device_is_available(child))
- 			continue;
- 
--		if (of_device_is_compatible(child, "altr,socfpga-a10-l2-ecc") || 
--		    of_device_is_compatible(child, "altr,socfpga-a10-ocram-ecc") ||
--		    of_device_is_compatible(child, "altr,socfpga-eth-mac-ecc") ||
--		    of_device_is_compatible(child, "altr,socfpga-nand-ecc") ||
--		    of_device_is_compatible(child, "altr,socfpga-dma-ecc") ||
--		    of_device_is_compatible(child, "altr,socfpga-usb-ecc") ||
--		    of_device_is_compatible(child, "altr,socfpga-qspi-ecc") ||
--		    of_device_is_compatible(child, "altr,socfpga-sdmmc-ecc"))
--
-+		if (of_match_node(altr_edac_a10_device_of_match, child))
- 			altr_edac_a10_device_add(edac, child);
- 
- #ifdef CONFIG_EDAC_ALTERA_SDRAM
--		else if ((of_device_is_compatible(child, "altr,sdram-edac-a10")) ||
--			 (of_device_is_compatible(child, "altr,sdram-edac-s10")))
-+		else if (of_device_is_compatible(child, "altr,sdram-edac-a10"))
- 			of_platform_populate(pdev->dev.of_node,
- 					     altr_sdram_ctrl_of_match,
- 					     NULL, &pdev->dev);
-diff --git a/drivers/edac/altera_edac.h b/drivers/edac/altera_edac.h
-index 55654cc4bcdf..3727e72c8c2e 100644
---- a/drivers/edac/altera_edac.h
-+++ b/drivers/edac/altera_edac.h
-@@ -289,6 +289,29 @@ struct altr_sdram_mc_data {
- #define ALTR_A10_ECC_INIT_WATCHDOG_10US      10000
- 
- /************* Stratix10 Defines **************/
-+#define ALTR_S10_ECC_CTRL_SDRAM_OFST      0x00
-+#define ALTR_S10_ECC_EN                   BIT(0)
-+
-+#define ALTR_S10_ECC_ERRINTEN_OFST        0x10
-+#define ALTR_S10_ECC_ERRINTENS_OFST       0x14
-+#define ALTR_S10_ECC_ERRINTENR_OFST       0x18
-+#define ALTR_S10_ECC_SERRINTEN            BIT(0)
-+
-+#define ALTR_S10_ECC_INTMODE_OFST         0x1C
-+#define ALTR_S10_ECC_INTMODE              BIT(0)
-+
-+#define ALTR_S10_ECC_INTSTAT_OFST         0x20
-+#define ALTR_S10_ECC_SERRPENA             BIT(0)
-+#define ALTR_S10_ECC_DERRPENA             BIT(8)
-+#define ALTR_S10_ECC_ERRPENA_MASK         (ALTR_S10_ECC_SERRPENA | \
-+					   ALTR_S10_ECC_DERRPENA)
-+
-+#define ALTR_S10_ECC_INTTEST_OFST         0x24
-+#define ALTR_S10_ECC_TSERRA               BIT(0)
-+#define ALTR_S10_ECC_TDERRA               BIT(8)
-+#define ALTR_S10_ECC_TSERRB               BIT(16)
-+#define ALTR_S10_ECC_TDERRB               BIT(24)
-+
- #define ALTR_S10_DERR_ADDRA_OFST          0x2C
- 
- /* Stratix10 ECC Manager Defines */
-@@ -300,7 +323,7 @@ struct altr_sdram_mc_data {
- #define S10_SYSMGR_UE_ADDR_OFST           0x224
- 
- #define S10_DDR0_IRQ_MASK                 BIT(16)
--#define S10_DBE_IRQ_MASK                  0x3FE
-+#define S10_DBE_IRQ_MASK                  0x3FFFE
- 
- /* Define ECC Block Offsets for peripherals */
- #define ECC_BLK_ADDRESS_OFST              0x40
--- 
-2.7.4
-
+Thanks
+Regards
