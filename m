@@ -2,34 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A45D762A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 11:50:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 00235762A8
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 11:50:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726347AbfGZJiN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 05:38:13 -0400
-Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:48939 "EHLO
-        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726082AbfGZJiN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 05:38:13 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=joseph.qi@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0TXq4TFt_1564133890;
-Received: from JosephdeMacBook-Pro.local(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0TXq4TFt_1564133890)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Fri, 26 Jul 2019 17:38:11 +0800
-Subject: Re: [PATCH 2/3] fs: ocfs2: Fix a possible null-pointer dereference in
- ocfs2_write_end_nolock()
-To:     Jia-Ju Bai <baijiaju1990@gmail.com>, mark@fasheh.com,
-        jlbec@evilplan.org
-Cc:     ocfs2-devel@oss.oracle.com, linux-kernel@vger.kernel.org
-References: <20190726033705.32307-1-baijiaju1990@gmail.com>
-From:   Joseph Qi <joseph.qi@linux.alibaba.com>
-Message-ID: <cdec8b79-a854-e9b0-21af-897c7eedc454@linux.alibaba.com>
-Date:   Fri, 26 Jul 2019 17:38:10 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:60.0)
- Gecko/20100101 Thunderbird/60.8.0
+        id S1726527AbfGZJi2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 05:38:28 -0400
+Received: from mga04.intel.com ([192.55.52.120]:27786 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726129AbfGZJi1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 05:38:27 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jul 2019 02:38:26 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,310,1559545200"; 
+   d="scan'208";a="175546381"
+Received: from crojewsk-mobl1.ger.corp.intel.com (HELO [10.251.89.116]) ([10.251.89.116])
+  by orsmga006.jf.intel.com with ESMTP; 26 Jul 2019 02:38:20 -0700
+Subject: Re: [RFC PATCH 03/40] soundwire: cadence_master: align debugfs to 8
+ digits
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        tiwai@suse.de, broonie@kernel.org, vkoul@kernel.org,
+        gregkh@linuxfoundation.org, jank@cadence.com,
+        srinivas.kandagatla@linaro.org, slawomir.blauciak@intel.com,
+        Sanyog Kale <sanyog.r.kale@intel.com>
+References: <20190725234032.21152-1-pierre-louis.bossart@linux.intel.com>
+ <20190725234032.21152-4-pierre-louis.bossart@linux.intel.com>
+From:   Cezary Rojewski <cezary.rojewski@intel.com>
+Message-ID: <500e2f21-3ec9-342c-ab4d-e222d9adb42c@intel.com>
+Date:   Fri, 26 Jul 2019 11:38:18 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <20190726033705.32307-1-baijiaju1990@gmail.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20190725234032.21152-4-pierre-louis.bossart@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -37,45 +45,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 19/7/26 11:37, Jia-Ju Bai wrote:
-> In ocfs2_write_end_nolock(), there are an if statement on lines 1976, 
-> 2047 and 2058, to check whether handle is NULL:
->     if (handle)
+On 2019-07-26 01:39, Pierre-Louis Bossart wrote:
+> SQUASHME
 > 
-> When handle is NULL, it is used on line 2045:
-> 	ocfs2_update_inode_fsync_trans(handle, inode, 1);
->         oi->i_sync_tid = handle->h_transaction->t_tid;
-> 
-> Thus, a possible null-pointer dereference may occur.
-> 
-> To fix this bug, handle is checked before calling
-> ocfs2_update_inode_fsync_trans().
-> 
-> This bug is found by a static analysis tool STCheck written by us.
-> 
-> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-
-Looks good.
-Reviewed-by: Joseph Qi <joseph.qi@linux.alibaba.com>
-
+> Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 > ---
->  fs/ocfs2/aops.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+>   drivers/soundwire/cadence_master.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/fs/ocfs2/aops.c b/fs/ocfs2/aops.c
-> index a4c905d6b575..5473bd99043e 100644
-> --- a/fs/ocfs2/aops.c
-> +++ b/fs/ocfs2/aops.c
-> @@ -2042,7 +2042,8 @@ int ocfs2_write_end_nolock(struct address_space *mapping,
->  		inode->i_mtime = inode->i_ctime = current_time(inode);
->  		di->i_mtime = di->i_ctime = cpu_to_le64(inode->i_mtime.tv_sec);
->  		di->i_mtime_nsec = di->i_ctime_nsec = cpu_to_le32(inode->i_mtime.tv_nsec);
-> -		ocfs2_update_inode_fsync_trans(handle, inode, 1);
-> +		if (handle)
-> +			ocfs2_update_inode_fsync_trans(handle, inode, 1);
->  	}
->  	if (handle)
->  		ocfs2_journal_dirty(handle, wc->w_di_bh);
+> diff --git a/drivers/soundwire/cadence_master.c b/drivers/soundwire/cadence_master.c
+> index 91e8bacb83e3..9f611a1fff0a 100644
+> --- a/drivers/soundwire/cadence_master.c
+> +++ b/drivers/soundwire/cadence_master.c
+> @@ -234,7 +234,7 @@ static ssize_t cdns_sprintf(struct sdw_cdns *cdns,
+>   			    char *buf, size_t pos, unsigned int reg)
+>   {
+>   	return scnprintf(buf + pos, RD_BUF - pos,
+> -			 "%4x\t%4x\n", reg, cdns_readl(cdns, reg));
+> +			 "%4x\t%8x\n", reg, cdns_readl(cdns, reg));
+>   }
+>   
+>   static ssize_t cdns_reg_read(struct file *file, char __user *user_buf,
 > 
+
+Should just be merged together with the introducing commit. Guess it's 
+posted unintentionally.
