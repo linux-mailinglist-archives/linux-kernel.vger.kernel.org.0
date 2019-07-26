@@ -2,30 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A008377360
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 23:24:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 675D37735D
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 23:24:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728469AbfGZVYU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 17:24:20 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:50430 "EHLO
+        id S1728389AbfGZVYM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 17:24:12 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:50433 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728284AbfGZVYJ (ORCPT
+        with ESMTP id S1728353AbfGZVYJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 26 Jul 2019 17:24:09 -0400
 Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1hr7h9-00030n-I5; Fri, 26 Jul 2019 23:24:07 +0200
-Message-Id: <20190726212124.302995288@linutronix.de>
+        id 1hr7hA-00030y-0X; Fri, 26 Jul 2019 23:24:08 +0200
+Message-Id: <20190726212124.409766323@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Fri, 26 Jul 2019 23:19:39 +0200
+Date:   Fri, 26 Jul 2019 23:19:40 +0200
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
         "Paul E. McKenney" <paulmck@linux.ibm.com>,
         Masami Hiramatsu <mhiramat@kernel.org>,
         Paolo Bonzini <pbonzini@redhat.com>
-Subject: [patch 3/8] locking: Use CONFIG_PREEMPTION
+Subject: [patch 4/8] tracing: Use CONFIG_PREEMPTION
 References: <20190726211936.226129163@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -38,35 +38,77 @@ CONFIG_PREEMPTION is selected by CONFIG_PREEMPT and by
 CONFIG_PREEMPT_RT. Both PREEMPT and PREEMPT_RT require the same
 functionality which today depends on CONFIG_PREEMPT.
 
-Adjust the comments in the locking code.
+Switch the conditionals in the tracer over to CONFIG_PREEMPTION.
+
+This is the first step to make the tracer work on RT. The other small
+tweaks are submitted separately.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 ---
- include/linux/spinlock.h         |    2 +-
- include/linux/spinlock_api_smp.h |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ kernel/trace/Kconfig                 |    4 ++--
+ kernel/trace/ftrace.c                |    2 +-
+ kernel/trace/ring_buffer_benchmark.c |    2 +-
+ kernel/trace/trace_events.c          |    4 ++--
+ 4 files changed, 6 insertions(+), 6 deletions(-)
 
---- a/include/linux/spinlock.h
-+++ b/include/linux/spinlock.h
-@@ -214,7 +214,7 @@ static inline void do_raw_spin_unlock(ra
+--- a/kernel/trace/Kconfig
++++ b/kernel/trace/Kconfig
+@@ -179,7 +179,7 @@ config TRACE_PREEMPT_TOGGLE
+ config PREEMPTIRQ_EVENTS
+ 	bool "Enable trace events for preempt and irq disable/enable"
+ 	select TRACE_IRQFLAGS
+-	select TRACE_PREEMPT_TOGGLE if PREEMPT
++	select TRACE_PREEMPT_TOGGLE if PREEMPTION
+ 	select GENERIC_TRACER
+ 	default n
+ 	help
+@@ -214,7 +214,7 @@ config PREEMPT_TRACER
+ 	bool "Preemption-off Latency Tracer"
+ 	default n
+ 	depends on !ARCH_USES_GETTIMEOFFSET
+-	depends on PREEMPT
++	depends on PREEMPTION
+ 	select GENERIC_TRACER
+ 	select TRACER_MAX_TRACE
+ 	select RING_BUFFER_ALLOW_SWAP
+--- a/kernel/trace/ftrace.c
++++ b/kernel/trace/ftrace.c
+@@ -2814,7 +2814,7 @@ int ftrace_shutdown(struct ftrace_ops *o
+ 		 * synchornize_rcu_tasks() will wait for those tasks to
+ 		 * execute and either schedule voluntarily or enter user space.
+ 		 */
+-		if (IS_ENABLED(CONFIG_PREEMPT))
++		if (IS_ENABLED(CONFIG_PREEMPTION))
+ 			synchronize_rcu_tasks();
  
- /*
-  * Define the various spin_lock methods.  Note we define these
-- * regardless of whether CONFIG_SMP or CONFIG_PREEMPT are set. The
-+ * regardless of whether CONFIG_SMP or CONFIG_PREEMPTION are set. The
-  * various methods are defined as nops in the case they are not
-  * required.
-  */
---- a/include/linux/spinlock_api_smp.h
-+++ b/include/linux/spinlock_api_smp.h
-@@ -96,7 +96,7 @@ static inline int __raw_spin_trylock(raw
+  free_ops:
+--- a/kernel/trace/ring_buffer_benchmark.c
++++ b/kernel/trace/ring_buffer_benchmark.c
+@@ -267,7 +267,7 @@ static void ring_buffer_producer(void)
+ 		if (consumer && !(cnt % wakeup_interval))
+ 			wake_up_process(consumer);
  
- /*
-  * If lockdep is enabled then we use the non-preemption spin-ops
-- * even on CONFIG_PREEMPT, because lockdep assumes that interrupts are
-+ * even on CONFIG_PREEMPTION, because lockdep assumes that interrupts are
-  * not re-enabled during lock-acquire (which the preempt-spin-ops do):
-  */
- #if !defined(CONFIG_GENERIC_LOCKBREAK) || defined(CONFIG_DEBUG_LOCK_ALLOC)
+-#ifndef CONFIG_PREEMPT
++#ifndef CONFIG_PREEMPTION
+ 		/*
+ 		 * If we are a non preempt kernel, the 10 second run will
+ 		 * stop everything while it runs. Instead, we will call
+--- a/kernel/trace/trace_events.c
++++ b/kernel/trace/trace_events.c
+@@ -255,12 +255,12 @@ void *trace_event_buffer_reserve(struct
+ 	local_save_flags(fbuffer->flags);
+ 	fbuffer->pc = preempt_count();
+ 	/*
+-	 * If CONFIG_PREEMPT is enabled, then the tracepoint itself disables
++	 * If CONFIG_PREEMPTION is enabled, then the tracepoint itself disables
+ 	 * preemption (adding one to the preempt_count). Since we are
+ 	 * interested in the preempt_count at the time the tracepoint was
+ 	 * hit, we need to subtract one to offset the increment.
+ 	 */
+-	if (IS_ENABLED(CONFIG_PREEMPT))
++	if (IS_ENABLED(CONFIG_PREEMPTION))
+ 		fbuffer->pc--;
+ 	fbuffer->trace_file = trace_file;
+ 
 
 
