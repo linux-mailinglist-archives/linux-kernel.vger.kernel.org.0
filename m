@@ -2,89 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03C6B76E5A
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 17:57:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0204476E6B
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 18:01:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726715AbfGZP5i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 11:57:38 -0400
-Received: from foss.arm.com ([217.140.110.172]:46722 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726469AbfGZP5i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 11:57:38 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4C6C3152D;
-        Fri, 26 Jul 2019 08:57:37 -0700 (PDT)
-Received: from e109758.arm.com (unknown [10.1.39.157])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 50BC73F71F;
-        Fri, 26 Jul 2019 08:57:35 -0700 (PDT)
-Date:   Fri, 26 Jul 2019 16:57:32 +0100
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     syzbot <syzbot+a871c1e6ea00685e73d7@syzkaller.appspotmail.com>,
-        alexandre.belloni@free-electrons.com,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>, nicolas.ferre@atmel.com,
-        Rob Herring <robh@kernel.org>, sre@kernel.org,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Subject: Re: memory leak in vq_meta_prefetch
-Message-ID: <20190726155732.GA30211@e109758.arm.com>
-References: <00000000000052ad6b058e722ba4@google.com>
- <20190726130013.GC2368@arrakis.emea.arm.com>
- <CACT4Y+b5H4jvY34iT2K0m6a2HCpzgKd3dtv+YFsApp=-18B+pw@mail.gmail.com>
+        id S1726862AbfGZQBB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 12:01:01 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:16842 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726000AbfGZQBB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 12:01:01 -0400
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6QFuGIF006272;
+        Fri, 26 Jul 2019 18:00:09 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=STMicroelectronics;
+ bh=Y75BNG+ZG7vXH0PyAhO98l9SHQ/zPoys4fP5bNxiSws=;
+ b=xElqh+q7EgccAjNQffkCsqWxvs1nv14CqX4moJ8gnskKJjhmcurLrp+L6KGCmIbqUU+8
+ idG0GWPq5KfFQxUHs/pA/fE6LLVPbe7a//MWkqB3C3kuTz85tjREBD/c7kMCXbmU+VDB
+ ZC6tyHrW+L6KDVBw1ohv2H7vYRBm05IizZ0hIoVNFb6M+jS+aiJjfX0TQTpcih7j9TTW
+ qgnLb3PZdzbMD0Y+9EHvhA/SBUIzrbd4I2DDFeb7ifE2VD2+/+uonT2CbxWm710JcTWu
+ +AeFXe3AmdqjLHxLmPQtNZeRXVbkrVWIvDieTT/1KAwarNxxemk09vbJe5BS4jHwJvG7 2w== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2tx60abn3e-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Fri, 26 Jul 2019 18:00:08 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id A40D634;
+        Fri, 26 Jul 2019 16:00:07 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 4EF254F17;
+        Fri, 26 Jul 2019 16:00:07 +0000 (GMT)
+Received: from lmecxl0912.lme.st.com (10.75.127.49) by SFHDAG3NODE2.st.com
+ (10.75.127.8) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 26 Jul
+ 2019 18:00:06 +0200
+Subject: Re: [PATCH 0/5] Add missing vdda-supply to STM32 ADC
+To:     Fabrice Gasnier <fabrice.gasnier@st.com>, <jic23@kernel.org>,
+        <robh+dt@kernel.org>
+CC:     <mark.rutland@arm.com>, <mcoquelin.stm32@gmail.com>,
+        <lars@metafoo.de>, <knaack.h@gmx.de>, <pmeerw@pmeerw.net>,
+        <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1560947398-11592-1-git-send-email-fabrice.gasnier@st.com>
+From:   Alexandre Torgue <alexandre.torgue@st.com>
+Message-ID: <b91163f5-ad6f-0a22-eb8a-ceb0b0c056c6@st.com>
+Date:   Fri, 26 Jul 2019 18:00:06 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACT4Y+b5H4jvY34iT2K0m6a2HCpzgKd3dtv+YFsApp=-18B+pw@mail.gmail.com>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+In-Reply-To: <1560947398-11592-1-git-send-email-fabrice.gasnier@st.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.49]
+X-ClientProxiedBy: SFHDAG8NODE3.st.com (10.75.127.24) To SFHDAG3NODE2.st.com
+ (10.75.127.8)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-26_12:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 26, 2019 at 05:20:55PM +0200, Dmitry Vyukov wrote:
-> On Fri, Jul 26, 2019 at 3:00 PM Catalin Marinas <catalin.marinas@arm.com> wrote:
-> > On Wed, Jul 24, 2019 at 12:18:07PM -0700, syzbot wrote:
-> > > syzbot found the following crash on:
-> > >
-> > > HEAD commit:    c6dd78fc Merge branch 'x86-urgent-for-linus' of git://git...
-> > > git tree:       upstream
-> > > console output: https://syzkaller.appspot.com/x/log.txt?x=15fffef4600000
-> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=8de7d700ea5ac607
-> > > dashboard link: https://syzkaller.appspot.com/bug?extid=a871c1e6ea00685e73d7
-> > > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=127b0334600000
-> > > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12609e94600000
-> > >
-> > > The bug was bisected to:
-> > >
-> > > commit 0e5f7d0b39e1f184dc25e3adb580c79e85332167
-> > > Author: Nicolas Ferre <nicolas.ferre@atmel.com>
-> > > Date:   Wed Mar 16 13:19:49 2016 +0000
-> > >
-> > >     ARM: dts: at91: shdwc binding: add new shutdown controller documentation
-> >
-> > That's another wrong commit identification (a documentation patch should
-> > not cause a memory leak).
-> >
-> > I don't really think kmemleak, with its relatively high rate of false
-> > positives, is suitable for automated testing like syzbot. You could
+Hi Fabrice
+
+On 6/19/19 2:29 PM, Fabrice Gasnier wrote:
+> Add missing vdda-supply, analog power supply, to STM32 ADC. When vdda is
+> an independent supply, it needs to be properly turned on or off to supply
+> the ADC.
+> This series proposes fixes for the dt-bindings, IIO driver and relevant
+> device tree files.
 > 
-> Do you mean automated testing in general, or bisection only?
-> The wrong commit identification is related to bisection only, but you
-> generalized it to automated testing in general. So which exactly you
-> mean?
+> Fabrice Gasnier (5):
+>    dt-bindings: iio: adc: stm32: add missing vdda supply
+>    iio: adc: stm32-adc: add missing vdda-supply
+>    ARM: dts: stm32: remove fixed regulator unit address on stm32429i-eval
+>    ARM: dts: stm32: add missing vdda-supply to adc on stm32429i-eval
+>    ARM: dts: stm32: add missing vdda-supply to adc on stm32h743i-eval
+> 
+>   .../devicetree/bindings/iio/adc/st,stm32-adc.txt   |  1 +
+>   arch/arm/boot/dts/stm32429i-eval.dts               | 25 +++++++++++-----------
+>   arch/arm/boot/dts/stm32h743i-eval.dts              |  1 +
+>   drivers/iio/adc/stm32-adc-core.c                   | 21 +++++++++++++++++-
+>   4 files changed, 35 insertions(+), 13 deletions(-)
+> 
 
-I probably meant both. In terms of automated testing and reporting, if
-the false positives rate is high, people start ignoring the reports. So
-it requires some human checking first (or make the tool more robust).
+DT patches applied on stm32-next. I plan to add them in my PR for v5.4.
+However those patches are marked as "fixes", do you see an issue to only 
+send it for v5.4 ?
 
-W.r.t. bisection, the false negatives (rather than positives) will cause
-the tool to miss the problematic commit and misreport. I'm not sure you
-can make the reporting deterministic on successive runs given that you
-changed the kernel HEAD (for bisection). But it may get better if you
-have a "stopscan" kmemleak option which freezes the machine during
-scanning (it has been discussed in the past but I really struggle to
-find time to work on it; any help appreciated ;)).
-
--- 
-Catalin
+Regards
+alex
