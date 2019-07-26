@@ -2,106 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71BD176E58
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 17:57:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 334D476E5B
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 17:58:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726595AbfGZP5V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 11:57:21 -0400
-Received: from mga04.intel.com ([192.55.52.120]:50199 "EHLO mga04.intel.com"
+        id S1726780AbfGZP6F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 11:58:05 -0400
+Received: from mout.gmx.net ([212.227.15.15]:59389 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726000AbfGZP5V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 11:57:21 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jul 2019 08:57:21 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,311,1559545200"; 
-   d="scan'208";a="172262285"
-Received: from gliakhov-mobl2.ger.corp.intel.com (HELO ubuntu) ([10.249.35.244])
-  by fmsmga007.fm.intel.com with ESMTP; 26 Jul 2019 08:57:18 -0700
-Date:   Fri, 26 Jul 2019 17:57:17 +0200
-From:   Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc:     alsa-devel@alsa-project.org, tiwai@suse.de,
-        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        vkoul@kernel.org, broonie@kernel.org,
-        srinivas.kandagatla@linaro.org, jank@cadence.com,
-        slawomir.blauciak@intel.com, Sanyog Kale <sanyog.r.kale@intel.com>
-Subject: Re: [alsa-devel] [RFC PATCH 37/40] soundwire: cadence_master: add
- hw_reset capability in debugfs
-Message-ID: <20190726155717.GM16003@ubuntu>
-References: <20190725234032.21152-1-pierre-louis.bossart@linux.intel.com>
- <20190725234032.21152-38-pierre-louis.bossart@linux.intel.com>
+        id S1726000AbfGZP6F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 11:58:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1564156653;
+        bh=qQMv8Gq4VWw3O9pfd3Hcs8DunZMxg+zrMDk3d/xK/Ig=;
+        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
+        b=btwBiIdpDEYqjFNOFAQZfoI6LC6YCv7SMbakhPOWf43dVDwnvKQzwlTnVN3J2Eg7w
+         Vp0xsYm8cr9OECam+mOvuzsqjJb2YxPA4Vpy/ZlXnc6yiWqb5zZWS8zg0NpgIy81xy
+         sVq+tHzpofGTGHvTwUZa9eVve65y/rltKpJEZlVA=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from [192.168.1.162] ([37.4.249.127]) by mail.gmx.com (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MS3mz-1hwrCA3God-00TRbQ; Fri, 26
+ Jul 2019 17:57:33 +0200
+Subject: Re: [PATCH v2 -next] staging: vc04_services: fix
+ used-but-set-variable warning
+To:     YueHaibing <yuehaibing@huawei.com>, eric@anholt.net,
+        gregkh@linuxfoundation.org, inf.braun@fau.de,
+        nishkadg.linux@gmail.com
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20190725142716.49276-1-yuehaibing@huawei.com>
+ <20190726092621.27972-1-yuehaibing@huawei.com>
+From:   Stefan Wahren <wahrenst@gmx.net>
+Message-ID: <229b2d16-9623-6005-2e1b-4d1f239643a2@gmx.net>
+Date:   Fri, 26 Jul 2019 17:57:31 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190725234032.21152-38-pierre-louis.bossart@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190726092621.27972-1-yuehaibing@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Provags-ID: V03:K1:a2QhRZDV76cNOnjxUp2kDO8bbHN+pQ+5quVTlxjJKZaXVZ8NaaZ
+ jaLLWxgnA8kgLJwLh5hRmDmyoaB+0mL5oxcM9ioK+We71b9cPSxIo4RfJjsnDQ5LiM+DRrd
+ cEqT6ewd45gEwSuo7F/WosYaSPOtL6R8nN6o65GqjcroVOpVPwZZb1gqtbFzfnDUOlpZDtC
+ P19ql6muElPiWevB/OJ5g==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:5yPF2OLnToQ=:YON+oYprlbkfGhoC6RuoYj
+ nz07pRF4vW8w4G0wmk9aqybt7RDI33cerMdwgmokxtMhpRSoTyhDRe/0xputZ3tPGHqgzNvnP
+ 3Hj+ksOssb1Bo5s5XOzuKuaX818IisjjZm36cDLQNrimqpUrt2ATI5W1EMbgU7Vhp28c/MpGj
+ 0D1IO4n8Ku1iduTVfOJie1joYj+b3oKDCbHULvNmJ8gfmBzI1tHKsMvESj/elfYlTi3v/5NU+
+ H+ld7i6+zc6Gq4G/Y7u4cdHnbYlM13ruyGKDz8ZD1hSWRXydTNxr/jH9eMYxFmUGZYW+ab61s
+ kal+mn1AELb1IrK/ChExhHmkDXI13Xy/FL+zTFvU9tjMYd5On3xHLm08fbp5ch2mQqBCkrkvH
+ hltK4YmbU05PLASo+5iCIPT8KZhr9ZGCNq+AKua7j32FIHOyqcm0tBm0j7km4rg5Ay/NiMHLR
+ +e7vfpB+65StkgSe7S7khtwwoN07fPCQR9VxB1dTBJqI1Rwv5QIiCuy3R+yrNnN6BbHN6Fdb7
+ XfqZ5FFazb70uJ6VGdmy/iA06X8edPspsc+aV8cQ3LY7DlueSlFLOsBxqLhRuOehhqTuooBAE
+ 7j8eIB+Uxvkbha24/WkvUjgLN5exo+zScz8kb1iaOX3n4C9MtFeCymUrOdTvSMg3VZ/g3mbrC
+ qVLWgmp+blBrPHXr+pZVV6uPZohXTx8mn3LmNAyTG4GRNo0iZfg1HGM4KIzrT0+Ai6Tb4BJ1h
+ qKiXdnQ8GtYjYb7p02AHPBtt5c317KFXhqrJUelQ3LD4yzUYqH88qSlsz5eksGX+ge+bhGK5E
+ AbVLaGC5DPt3Yt2QU1RvK4Qgeo95M4LJN+O7K05xe10GWV+d/GwAKuqSkX79riGv5YUn7YXIf
+ cKRZveHfGQOB4xnXtvA0Tx2Z9uH4Vz0WDj24+aYp096orJBluAdKE5pcoqTM1b9AmFOBhsmix
+ l4CISh7f/HWOfUyLX0dbFcCPHUMq4t0V2R+JeIu+HAVOloHTaupOdchmXqUcl6HD4pGWtqG4x
+ cjETbP2INxt1vUhSfMRJLaSx7rAZchcbYAmFOJhE/Azdgxe/3srFFJoE2Un9jzmwGoAe0kffc
+ dQKRQ9SojxtTmQ=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 25, 2019 at 06:40:29PM -0500, Pierre-Louis Bossart wrote:
-> This is to kick devices into reset and see what software does
-> 
-> Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Hi Yue,
+
+Am 26.07.19 um 11:26 schrieb YueHaibing:
+> Fix gcc used-but-set-variable warning:
+
+just a nit. It is call "unused-but-set-variable"
+
+Acked-by: Stefan Wahren <wahrenst@gmx.net>
+
+>
+> drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c: In function vchiq_release_internal:
+> drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c:2827:16: warning:
+>  variable local_entity_uc set but not used [-Wunused-but-set-variable]
+> drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c:2827:6: warning:
+>  variable local_uc set but not used [-Wunused-but-set-variable]
+>
+> Remove the unused variables 'local_entity_uc' and 'local_uc'
+>
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 > ---
->  drivers/soundwire/cadence_master.c | 22 ++++++++++++++++++++++
->  1 file changed, 22 insertions(+)
-> 
-> diff --git a/drivers/soundwire/cadence_master.c b/drivers/soundwire/cadence_master.c
-> index fa7230b0f200..53278aa2436f 100644
-> --- a/drivers/soundwire/cadence_master.c
-> +++ b/drivers/soundwire/cadence_master.c
-> @@ -331,6 +331,25 @@ static const struct file_operations cdns_reg_fops = {
->  	.llseek = default_llseek,
->  };
->  
-> +static int cdns_hw_reset(void *data, u64 value)
-> +{
-> +	struct sdw_cdns *cdns = data;
-> +	int ret;
-> +
-> +	if (value != 1)
-> +		return 0;
-> +
-> +	dev_info(cdns->dev, "starting link hw_reset\n");
-> +
-> +	ret = sdw_cdns_exit_reset(cdns);
-> +
-> +	dev_info(cdns->dev, "link hw_reset done\n");
-
-Both really should be dev_info()? Maybe at least one of them can be dev_dbg()?
-
-Thanks
-Guennadi
-
-> +
-> +	return ret;
-> +}
-> +
-> +DEFINE_DEBUGFS_ATTRIBUTE(cdns_hw_reset_fops, NULL, cdns_hw_reset, "%llu\n");
-> +
->  /**
->   * sdw_cdns_debugfs_init() - Cadence debugfs init
->   * @cdns: Cadence instance
-> @@ -339,6 +358,9 @@ static const struct file_operations cdns_reg_fops = {
->  void sdw_cdns_debugfs_init(struct sdw_cdns *cdns, struct dentry *root)
->  {
->  	debugfs_create_file("cdns-registers", 0400, root, cdns, &cdns_reg_fops);
-> +
-> +	debugfs_create_file_unsafe("cdns-hw-reset", 0200, root, cdns,
-> +				   &cdns_hw_reset_fops);
->  }
->  EXPORT_SYMBOL_GPL(sdw_cdns_debugfs_init);
->  
-> -- 
-> 2.20.1
-> 
-> _______________________________________________
-> Alsa-devel mailing list
-> Alsa-devel@alsa-project.org
-> https://mailman.alsa-project.org/mailman/listinfo/alsa-devel
