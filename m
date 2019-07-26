@@ -2,118 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 090AB75C7C
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 03:24:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6277475C86
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 03:25:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726065AbfGZBYT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 21:24:19 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:12796 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725808AbfGZBYS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 21:24:18 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d3a563e0000>; Thu, 25 Jul 2019 18:24:14 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 25 Jul 2019 18:24:17 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 25 Jul 2019 18:24:17 -0700
-Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 26 Jul
- 2019 01:24:16 +0000
-Subject: Re: [PATCH 00/12] block/bio, fs: convert put_page() to
- put_user_page*()
-To:     Bob Liu <bob.liu@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-CC:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Jason Wang <jasowang@redhat.com>, Jens Axboe <axboe@kernel.dk>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        "Michael S . Tsirkin" <mst@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Matthew Wilcox <willy@infradead.org>, <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        <ceph-devel@vger.kernel.org>, <kvm@vger.kernel.org>,
-        <linux-block@vger.kernel.org>, <linux-cifs@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-nfs@vger.kernel.org>,
-        <linux-rdma@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <samba-technical@lists.samba.org>,
-        <v9fs-developer@lists.sourceforge.net>,
-        <virtualization@lists.linux-foundation.org>
-References: <20190724042518.14363-1-jhubbard@nvidia.com>
- <8621066c-e242-c449-eb04-4f2ce6867140@oracle.com>
-From:   John Hubbard <jhubbard@nvidia.com>
-X-Nvconfidentiality: public
-Message-ID: <88864b91-516d-9774-f4ca-b45927ac4556@nvidia.com>
-Date:   Thu, 25 Jul 2019 18:24:16 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <8621066c-e242-c449-eb04-4f2ce6867140@oracle.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
+        id S1726177AbfGZBZZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 21:25:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53968 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725819AbfGZBZZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 21:25:25 -0400
+Received: from localhost.localdomain (c-73-223-200-170.hsd1.ca.comcast.net [73.223.200.170])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1245B2082E;
+        Fri, 26 Jul 2019 01:25:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564104324;
+        bh=hQnoYefwpnCAAg9s0kL4bPLOBy5YHF5poTqfNE9a5Vo=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=ThVgeLizxHSdRe3N47YgrAndRU85laMix4d8o2Rpb4LGhK1vBi5DiqwmLG4HLx80f
+         O/setgvAStrybhk4mZWgPlpatf3BBDtHBcZaUcAzFomBYgRIRS5Kd6L16040BVr3Dy
+         ThT/tDroFFIlVles91icc/hF26M39A5O4qdikZig=
+Date:   Thu, 25 Jul 2019 18:25:23 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Matteo Croce <mcroce@redhat.com>
+Cc:     Joe Perches <joe@perches.com>, LKML <linux-kernel@vger.kernel.org>,
+        Andy Whitcroft <apw@canonical.com>
+Subject: Re: [PATCH v2] checkpatch.pl: warn on invalid commit id
+Message-Id: <20190725182523.0d19ccd938688e5325be2e06@linux-foundation.org>
+In-Reply-To: <5E31E2F6-1EE7-4A40-A7F5-68576C36A6AD@redhat.com>
+References: <20190711001640.13398-1-mcroce@redhat.com>
+        <20190724200707.2ba88e3affd73de1ce64fab6@linux-foundation.org>
+        <CAGnkfhxZUw7wUgE6FRetc52HywgwnucZpqcvg3MTUU0M8O158w@mail.gmail.com>
+        <20190725172205.6d5a3b5896e64f88116c0b21@linux-foundation.org>
+        <5E31E2F6-1EE7-4A40-A7F5-68576C36A6AD@redhat.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1564104254; bh=QKXKINFukbwLIIsnFYM0gxF2tKYcHndEGgwougXKa7I=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=PQnzJX5xz5ikEiwrLKM8WsALivZ88h6rrpD5As08defMJIkdP+u4c4qNjj9VJ4tt7
-         nwv4lirmE3zmhFpqjjtQZ51fomZqIx7+Z5K/hIMgtkne3B/lAraavguLY6SA4HXRUi
-         W4SUZZlps8N4rFxPowCNQkldeoVK/fBECjRShYxjtzJx8yvDnyDgvLG3XjCMQgN0HE
-         j0RlPZtSamPdX7GpRyHeIVO0klar+OAGzPGoJx+oiz7wZ/GbisDHnJkR/hoyBrvfQa
-         +HuyKaWvKrWvHxopvgEQcRa8uv0hWn0N0u4M8vDDfrnuUHyPlJZxMytFt1GB3uPYBU
-         1cdZ+M2GXGeqw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/24/19 5:41 PM, Bob Liu wrote:
-> On 7/24/19 12:25 PM, john.hubbard@gmail.com wrote:
->> From: John Hubbard <jhubbard@nvidia.com>
->>
->> Hi,
->>
->> This is mostly Jerome's work, converting the block/bio and related areas
->> to call put_user_page*() instead of put_page(). Because I've changed
->> Jerome's patches, in some cases significantly, I'd like to get his
->> feedback before we actually leave him listed as the author (he might
->> want to disown some or all of these).
->>
+On Fri, 26 Jul 2019 03:17:32 +0200 Matteo Croce <mcroce@redhat.com> wrote:
+
+> > > If .git is not found, the check is disabled
+> > 
+> > We could permit user to set an environment variable to tell checkpatch
+> > where the kernel git tree resides.
+> > 
 > 
-> Could you add some background to the commit log for people don't have the context..
-> Why this converting? What's the main differences?
-> 
+> Maybe GIT_DIR already does it.
 
-Hi Bob,
-
-1. Many of the patches have a blurb like this:
-
-For pages that were retained via get_user_pages*(), release those pages
-via the new put_user_page*() routines, instead of via put_page().
-
-This is part a tree-wide conversion, as described in commit fc1d8e7cca2d
-("mm: introduce put_user_page*(), placeholder versions").
-
-...and if you look at that commit, you'll find several pages of
-information in its commit description, which should address your point.
-
-2. This whole series has to be re-worked, as per the other feedback thread.
-So I'll keep your comment in mind when I post a new series.
-
-thanks,
--- 
-John Hubbard
-NVIDIA
+Yes, that works.  GIT_DIR=<wherever>/.git
