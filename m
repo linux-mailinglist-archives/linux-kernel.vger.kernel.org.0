@@ -2,128 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C98D76576
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 14:14:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E73476580
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 14:18:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727041AbfGZMN7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 08:13:59 -0400
-Received: from foss.arm.com ([217.140.110.172]:42330 "EHLO foss.arm.com"
+        id S1726841AbfGZMSY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 08:18:24 -0400
+Received: from mga17.intel.com ([192.55.52.151]:20543 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726277AbfGZMN6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 08:13:58 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C1E78337;
-        Fri, 26 Jul 2019 05:13:57 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A0F5C3F694;
-        Fri, 26 Jul 2019 05:13:56 -0700 (PDT)
-Date:   Fri, 26 Jul 2019 13:13:54 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Anders Roxell <anders.roxell@linaro.org>
-Cc:     will@kernel.org, catalin.marinas@arm.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH 1/3] arm64: perf: Mark expected switch fall-through
-Message-ID: <20190726121354.GB26088@lakrids.cambridge.arm.com>
-References: <20190726112716.19104-1-anders.roxell@linaro.org>
- <20190726121056.GA26088@lakrids.cambridge.arm.com>
+        id S1726277AbfGZMSY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 08:18:24 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jul 2019 05:18:23 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,310,1559545200"; 
+   d="scan'208";a="322025492"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga004.jf.intel.com with ESMTP; 26 Jul 2019 05:18:21 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id B2B10130; Fri, 26 Jul 2019 15:18:20 +0300 (EEST)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        linux-kernel@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Ramakrishna Pallala <ramakrishna.pallala@intel.com>
+Subject: [PATCH v2 1/2] extcon: axp288: Add missed error check
+Date:   Fri, 26 Jul 2019 15:18:19 +0300
+Message-Id: <20190726121820.69679-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190726121056.GA26088@lakrids.cambridge.arm.com>
-User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 26, 2019 at 01:10:57PM +0100, Mark Rutland wrote:
-> On Fri, Jul 26, 2019 at 01:27:16PM +0200, Anders Roxell wrote:
-> > When fall-through warnings was enabled by default, commit d93512ef0f0e
-> > ("Makefile: Globally enable fall-through warning"), the following
-> > warnings was starting to show up:
-> > 
-> > ../arch/arm64/kernel/hw_breakpoint.c: In function ‘hw_breakpoint_arch_parse’:
-> > ../arch/arm64/kernel/hw_breakpoint.c:540:7: warning: this statement may fall
-> >  through [-Wimplicit-fallthrough=]
-> >     if (hw->ctrl.len == ARM_BREAKPOINT_LEN_1)
-> >        ^
-> > ../arch/arm64/kernel/hw_breakpoint.c:542:3: note: here
-> >    case 2:
-> >    ^~~~
-> > ../arch/arm64/kernel/hw_breakpoint.c:544:7: warning: this statement may fall
-> >  through [-Wimplicit-fallthrough=]
-> >     if (hw->ctrl.len == ARM_BREAKPOINT_LEN_2)
-> >        ^
-> > ../arch/arm64/kernel/hw_breakpoint.c:546:3: note: here
-> >    default:
-> >    ^~~~~~~
-> > 
-> > Rework so that the compiler doesn't warn about fall-through. Rework so
-> > the code looks like the arm code. Since the comment in the function
-> > indicates taht this is supposed to behave the same way as arm32 because
-> 
-> Typo: s/taht/that/
-> 
-> > it handles 32-bit tasks also.
-> > 
-> > Cc: stable@vger.kernel.org # v3.16+
-> > Fixes: 6ee33c2712fc ("ARM: hw_breakpoint: correct and simplify alignment fixup code")
-> > Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
-> 
-> The patch itself looks fine, but I don't think this needs a CC to
-> stable, nor does it require that fixes tag, as there's no functional
-> problem.
+It seems from the very beginning the error check has been missed
+in axp288_extcon_log_rsi(). Add it here.
 
-Hmm... I now see I spoke too soon, and this is making the 1-byte
-breakpoint work at a 3-byte offset.
+Cc: Ramakrishna Pallala <ramakrishna.pallala@intel.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+- added error message (Chanwoo)
+ drivers/extcon/extcon-axp288.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Given that:
+diff --git a/drivers/extcon/extcon-axp288.c b/drivers/extcon/extcon-axp288.c
+index 7254852e6ec0..694a8d4a57ff 100644
+--- a/drivers/extcon/extcon-axp288.c
++++ b/drivers/extcon/extcon-axp288.c
+@@ -135,6 +135,11 @@ static void axp288_extcon_log_rsi(struct axp288_extcon_info *info)
+ 	int ret;
+ 
+ 	ret = regmap_read(info->regmap, AXP288_PS_BOOT_REASON_REG, &val);
++	if (ret < 0) {
++		dev_err(info->dev, "failed to read reset source indicator\n");
++		return;
++	}
++
+ 	for (i = 0, rsi = axp288_pwr_up_down_info; *rsi; rsi++, i++) {
+ 		if (val & BIT(i)) {
+ 			dev_dbg(info->dev, "%s\n", *rsi);
+-- 
+2.20.1
 
-Acked-by: Mark Rutland <mark.rutland@arm.com>
-
-... and the fixes and stable tags are appropriate for that portion of
-the patch.
-
-Sorry for the noise.
-
-Thanks,
-Mark.
-
-
-> > ---
-> >  arch/arm64/kernel/hw_breakpoint.c | 11 +++++++----
-> >  1 file changed, 7 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/arch/arm64/kernel/hw_breakpoint.c b/arch/arm64/kernel/hw_breakpoint.c
-> > index dceb84520948..ea616adf1cf1 100644
-> > --- a/arch/arm64/kernel/hw_breakpoint.c
-> > +++ b/arch/arm64/kernel/hw_breakpoint.c
-> > @@ -535,14 +535,17 @@ int hw_breakpoint_arch_parse(struct perf_event *bp,
-> >  		case 0:
-> >  			/* Aligned */
-> >  			break;
-> > -		case 1:
-> > -			/* Allow single byte watchpoint. */
-> > -			if (hw->ctrl.len == ARM_BREAKPOINT_LEN_1)
-> > -				break;
-> >  		case 2:
-> >  			/* Allow halfword watchpoints and breakpoints. */
-> >  			if (hw->ctrl.len == ARM_BREAKPOINT_LEN_2)
-> >  				break;
-> > +			/* Fall through */
-> > +		case 1:
-> > +		case 3:
-> > +			/* Allow single byte watchpoint. */
-> > +			if (hw->ctrl.len == ARM_BREAKPOINT_LEN_1)
-> > +				break;
-> > +			/* Fall through */
-> >  		default:
-> >  			return -EINVAL;
-> >  		}
-> > -- 
-> > 2.20.1
-> > 
