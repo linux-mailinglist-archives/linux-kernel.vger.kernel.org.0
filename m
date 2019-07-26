@@ -2,68 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F236774C5
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2019 01:01:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 308A0774C6
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2019 01:02:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728143AbfGZXBg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 19:01:36 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:36736 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726871AbfGZXBg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 19:01:36 -0400
-Received: by mail-io1-f65.google.com with SMTP id o9so4452114iom.3;
-        Fri, 26 Jul 2019 16:01:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=W9aJHw1S9UNrc+mERSpNWt7mOmycq6fdw0EF/39Vags=;
-        b=GxQ8fIY7tEl9P4fqes6jdL0dBBaAKe2ArTOWkU3exgaZjcoiaw9bH0VHZ+EqDvkri5
-         7E6Q6Ce5WLkRToYgSm4yqdg2TFJkPsO8BS0ANjwrqyRKdB1z99GU6Y5PMawJ0e6xCRzj
-         m0cufhEKInVgwe94917cR6Qns8dX1jwCLvLuUbnXWlXzjEJhnjy9h2Apn5/2LSJCRXNY
-         5j9IlyfZ4qQfyKPX+TKlewoVBw+2VSCvq2I+iCs1k3FX/WONxpPnCutTsu7TTCHJhFAq
-         Y/5DhyBW+77tMygdHivTQEVfYcwvhX0Mulp6F6hfRZJ+5OnXIbgMuwrQw24YLIPmFBl8
-         c4rg==
-X-Gm-Message-State: APjAAAXuJiHv4x5/Ddl+ivFCWicjxWbU5rLDszHM1E1nIuUkfoJ0sXQk
-        jg7+nxVuEbEQ7ATLVT2m+A==
-X-Google-Smtp-Source: APXvYqxPyJPHExO+MTu/7+6H+tPoiDVGmxEamiEz/kzHRo5pS/oMtad7oaypn7kmMQMsm2/VQdnY3A==
-X-Received: by 2002:a5e:de4d:: with SMTP id e13mr67504232ioq.272.1564182095539;
-        Fri, 26 Jul 2019 16:01:35 -0700 (PDT)
-Received: from localhost ([64.188.179.254])
-        by smtp.gmail.com with ESMTPSA id k2sm47708711iom.50.2019.07.26.16.01.34
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 26 Jul 2019 16:01:35 -0700 (PDT)
-Date:   Fri, 26 Jul 2019 17:01:34 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Frank Rowand <frowand.list@gmail.com>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] of: Fix typo in kerneldoc
-Message-ID: <20190726230134.GA30632@bogus>
-References: <20190726101744.27118-1-thierry.reding@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190726101744.27118-1-thierry.reding@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1728231AbfGZXCl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 19:02:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56770 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726616AbfGZXCl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 19:02:41 -0400
+Received: from localhost.localdomain (c-73-223-200-170.hsd1.ca.comcast.net [73.223.200.170])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F11A921994;
+        Fri, 26 Jul 2019 23:02:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564182160;
+        bh=uog7xDvm2Trfq+568RxA/iEycB6CRRejnXbrvr8BSdY=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=2UhTedPZgajbGffiDMPEjqh9WvdDSCfJpTpcwge1EckBFQeXPRAAOUE224YbTQlOS
+         m3Y7UOcKHobcI4Ihfus2az9muFpUFcpJhLNy22x+4J/gwhKkUZ5lPIp+dPpJjz1Fgv
+         rlMlOoGOJE83ZjTF3wGfOM25M+WcnUIekcZo6eTw=
+Date:   Fri, 26 Jul 2019 16:02:39 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Song Liu <songliubraving@fb.com>
+Cc:     <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+        <matthew.wilcox@oracle.com>, <kirill.shutemov@linux.intel.com>,
+        <peterz@infradead.org>, <oleg@redhat.com>, <rostedt@goodmis.org>,
+        <kernel-team@fb.com>, <william.kucharski@oracle.com>,
+        <srikar@linux.vnet.ibm.com>
+Subject: Re: [PATCH v9 4/4] uprobe: use FOLL_SPLIT_PMD instead of FOLL_SPLIT
+Message-Id: <20190726160239.68f538a79913df343308b473@linux-foundation.org>
+In-Reply-To: <20190726054654.1623433-5-songliubraving@fb.com>
+References: <20190726054654.1623433-1-songliubraving@fb.com>
+        <20190726054654.1623433-5-songliubraving@fb.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 26 Jul 2019 12:17:44 +0200, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
-> 
-> "Findfrom" is not a word. Replace the function synopsis by something
-> that makes sense.
-> 
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
->  include/linux/of.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
+On Thu, 25 Jul 2019 22:46:54 -0700 Song Liu <songliubraving@fb.com> wrote:
 
-Applied, thanks.
+> This patches uses newly added FOLL_SPLIT_PMD in uprobe. This enables easy
+> regroup of huge pmd after the uprobe is disabled (in next patch).
 
-Rob
+Confused.  There is no "next patch".
