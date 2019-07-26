@@ -2,119 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E18DC76184
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 11:07:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D59F7618C
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 11:11:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726447AbfGZJH1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 05:07:27 -0400
-Received: from mga07.intel.com ([134.134.136.100]:9276 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725815AbfGZJHZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 05:07:25 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jul 2019 02:07:25 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,310,1559545200"; 
-   d="scan'208";a="345772348"
-Received: from xxx.igk.intel.com ([10.237.93.170])
-  by orsmga005.jf.intel.com with ESMTP; 26 Jul 2019 02:07:22 -0700
-From:   =?UTF-8?q?Amadeusz=20S=C5=82awi=C5=84ski?= 
-        <amadeuszx.slawinski@linux.intel.com>
-To:     alsa-devel@alsa-project.org
-Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Jie Yang <yang.jie@linux.intel.com>,
-        Cezary Rojewski <cezary.rojewski@intel.com>,
-        linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Amadeusz=20S=C5=82awi=C5=84ski?= 
-        <amadeuszx.slawinski@linux.intel.com>
-Subject: [PATCH v4 1/1] ASoC: Intel: Skylake: Remove static table index when parsing topology
-Date:   Fri, 26 Jul 2019 11:09:29 +0200
-Message-Id: <20190726090929.27946-2-amadeuszx.slawinski@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190726090929.27946-1-amadeuszx.slawinski@linux.intel.com>
-References: <20190726090929.27946-1-amadeuszx.slawinski@linux.intel.com>
+        id S1726129AbfGZJLJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 05:11:09 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:3173 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725815AbfGZJLJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 05:11:09 -0400
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 6AA88FF0175CD0D1D039;
+        Fri, 26 Jul 2019 17:11:06 +0800 (CST)
+Received: from [127.0.0.1] (10.177.96.96) by DGGEMS403-HUB.china.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server id 14.3.439.0; Fri, 26 Jul 2019
+ 17:11:01 +0800
+Subject: Re: [PATCH 4.4 stable net] net: tcp: Fix use-after-free in
+ tcp_write_xmit
+To:     Eric Dumazet <eric.dumazet@gmail.com>, <davem@davemloft.net>,
+        <gregkh@linuxfoundation.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20190724091715.137033-1-maowenan@huawei.com>
+ <2e09f4d1-8a47-27e9-60f9-63d3b19a98ec@gmail.com>
+ <13ffa2fe-d064-9786-bc52-e4281d26ed1d@huawei.com>
+ <44f0ba0d-fd19-d44b-9c5c-686e2f8ef988@gmail.com>
+ <9a8d6a5a-9a9d-9cb5-caa9-5c12ba04a43c@huawei.com>
+ <510109e3-101f-517c-22b4-921432f04fe5@gmail.com>
+From:   maowenan <maowenan@huawei.com>
+Message-ID: <69faf3d1-ee37-8fc5-fedf-25284e45d6bb@huawei.com>
+Date:   Fri, 26 Jul 2019 17:10:51 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <510109e3-101f-517c-22b4-921432f04fe5@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.96.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently when we remove and reload driver we use previous ref_count
-value to start iterating over skl->modules which leads to out of table
-access. To fix this just inline the function and calculate indexes
-everytime we parse UUID token.
 
-Signed-off-by: Amadeusz Sławiński <amadeuszx.slawinski@linux.intel.com>
----
- sound/soc/intel/skylake/skl-topology.c | 34 +++++++++-----------------
- 1 file changed, 12 insertions(+), 22 deletions(-)
 
-diff --git a/sound/soc/intel/skylake/skl-topology.c b/sound/soc/intel/skylake/skl-topology.c
-index 118866cd5075..c1c37ce759bd 100644
---- a/sound/soc/intel/skylake/skl-topology.c
-+++ b/sound/soc/intel/skylake/skl-topology.c
-@@ -3333,25 +3333,6 @@ static int skl_tplg_get_int_tkn(struct device *dev,
- 	return tkn_count;
- }
- 
--static int skl_tplg_get_manifest_uuid(struct device *dev,
--				struct skl_dev *skl,
--				struct snd_soc_tplg_vendor_uuid_elem *uuid_tkn)
--{
--	static int ref_count;
--	struct skl_module *mod;
--
--	if (uuid_tkn->token == SKL_TKN_UUID) {
--		mod = skl->modules[ref_count];
--		guid_copy(&mod->uuid, (guid_t *)&uuid_tkn->uuid);
--		ref_count++;
--	} else {
--		dev_err(dev, "Not an UUID token tkn %d\n", uuid_tkn->token);
--		return -EINVAL;
--	}
--
--	return 0;
--}
--
- /*
-  * Fill the manifest structure by parsing the tokens based on the
-  * type.
-@@ -3362,6 +3343,7 @@ static int skl_tplg_get_manifest_tkn(struct device *dev,
- {
- 	int tkn_count = 0, ret;
- 	int off = 0, tuple_size = 0;
-+	u8 uuid_index = 0;
- 	struct snd_soc_tplg_vendor_array *array;
- 	struct snd_soc_tplg_vendor_value_elem *tkn_elem;
- 
-@@ -3384,9 +3366,17 @@ static int skl_tplg_get_manifest_tkn(struct device *dev,
- 			continue;
- 
- 		case SND_SOC_TPLG_TUPLE_TYPE_UUID:
--			ret = skl_tplg_get_manifest_uuid(dev, skl, array->uuid);
--			if (ret < 0)
--				return ret;
-+			if (array->uuid->token != SKL_TKN_UUID) {
-+				dev_err(dev, "Not an UUID token: %d\n",
-+					array->uuid->token);
-+				return -EINVAL;
-+			}
-+			if (uuid_index >= skl->nr_modules) {
-+				dev_err(dev, "Too many UUID tokens\n");
-+				return -EINVAL;
-+			}
-+			guid_copy(&skl->modules[uuid_index++]->uuid,
-+				  (guid_t *)&array->uuid->uuid);
- 
- 			tuple_size += sizeof(*array->uuid);
- 			continue;
--- 
-2.17.1
+On 2019/7/25 14:19, Eric Dumazet wrote:
+> 
+> 
+> On 7/25/19 6:29 AM, maowenan wrote:
+>>
+> 
+>>>>>> Syzkaller reproducer():
+>>>>>> r0 = socket$packet(0x11, 0x3, 0x300)
+>>>>>> r1 = socket$inet_tcp(0x2, 0x1, 0x0)
+>>>>>> bind$inet(r1, &(0x7f0000000300)={0x2, 0x4e21, @multicast1}, 0x10)
+>>>>>> connect$inet(r1, &(0x7f0000000140)={0x2, 0x1000004e21, @loopback}, 0x10)
+>>>>>> recvmmsg(r1, &(0x7f0000001e40)=[{{0x0, 0x0, &(0x7f0000000100)=[{&(0x7f00000005c0)=""/88, 0x58}], 0x1}}], 0x1, 0x40000000, 0x0)
+>>>>>> sendto$inet(r1, &(0x7f0000000000)="e2f7ad5b661c761edf", 0x9, 0x8080, 0x0, 0x0)
+>>>>>> r2 = fcntl$dupfd(r1, 0x0, r0)
+>>>>>> connect$unix(r2, &(0x7f00000001c0)=@file={0x0, './file0\x00'}, 0x6e)
+>>>>>>
+>>>
+>>> It does call tcp_disconnect(), by one of the connect() call.
+>>
+>> yes, __inet_stream_connect will call tcp_disconnect when sa_family == AF_UNSPEC, in c repro if it
+>> passes sa_family with AF_INET it won't call disconnect, and then sk_send_head won't be NULL when tcp_connect.
+>>
+> 
+> 
+> Look again at the Syzkaller reproducer()
+> 
+> It definitely uses tcp_disconnect()
+> 
+> Do not be fooled by connect$unix(), this is a connect() call really, with AF_UNSPEC
+
+Right, in syzkaller reproducer, it calls connect() with AF_UNSPEC, actually I can reproduce the issue only with C repro(https://syzkaller.appspot.com/text?tag=ReproC&x=14db474f800000).
+syscall procedure in C:
+__NR_socket
+__NR_bind
+__NR_sendto  (flag=0x20000000,MSG_FASTOPEN, it will call __inet_stream_connect with sa_family = AF_INET, sk->sk_send_head = NULL)
+__NR_write
+__NR_connect (call __inet_stream_connect with sa_family = AF_UNSPEC, it will call tcp_disconnect and set sk->sk_send_head = NULL)
+__NR_connect (call __inet_stream_connect with sa_family = AF_INET, if sk->sk_send_head != NULL UAF happen)
+
+I debug why tcp_disconnect has already set sk->sk_send_head = NULL, but it is NOT NULL after next __NR_connect.
+I find that some packets send out before second __NR_connect(with AF_INET), so the sk_send_head is modified by: tcp_sendmsg->skb_entail->tcp_add_write_queue_tail
+static inline void tcp_add_write_queue_tail(struct sock *sk, struct sk_buff *skb)
+{
+	__tcp_add_write_queue_tail(sk, skb);
+
+	/* Queue it, remembering where we must start sending. */
+	if (sk->sk_send_head == NULL) {
+		sk->sk_send_head = skb;  //here, sk->sk_send_head is changed.
+
+		if (tcp_sk(sk)->highest_sack == NULL)
+			tcp_sk(sk)->highest_sack = skb;
+	}
+}
+
+
+
+
+> 
+> 
+
+
 
