@@ -2,77 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1BC076F0D
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 18:29:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CFE6276F14
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 18:30:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728867AbfGZQ3a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 12:29:30 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:43022 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728826AbfGZQ33 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 12:29:29 -0400
-Received: by mail-lj1-f196.google.com with SMTP id y17so27479458ljk.10;
-        Fri, 26 Jul 2019 09:29:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=+CW43oDjjf97uXnO1yFBC+kyjGo7bEowuJ7murd1juw=;
-        b=etENTVA7DjvU2AiUuoCuuykKkMYl2+TSQPOT5X3qJ2eZJFHwPPg0VsEjVW85mww7Vo
-         8dweWbEnm97EKHJbmAQyycY83tIVmIr0uF2b+bZ4SgIPfeygo9kYob5bayq+fMf0MN18
-         u7ZTEVCKjZqtWYRhM5yH7hMftMbRB6JSJ+BRLgic48AlReU1gHBV2OsRoaea77ad41PE
-         hQYBMynd8gncuWog2CXD09tp6FhhWDsOpCK7ILsUcTt684Bzasil8XiGIosjpGPSyqFJ
-         0uNfzXDT8PERLi0DHPN1eiLJVYUczXEAWKqt3EKJ4WmO1PKPVqeVLmn7S8qObocWoBjB
-         JJMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=+CW43oDjjf97uXnO1yFBC+kyjGo7bEowuJ7murd1juw=;
-        b=TQ910LPL/i8H/qYSAkk3A/63uNBZnINnGozZge/w/+hm/90rJPC1+J/9lzr1lIttBh
-         opzZolmvFbiYv2FpWRymai/mG+VJwPiPv9l99WkwLEHq7znSLx0b/Wkn7kp35XPD7NcD
-         c0eXN16SScPf5jzLAS2Lc6uZNNPhqIqIu3DuU1Ywi0N9PervHkN/pgnC0A+nbrD0k5Jh
-         DwWai+w0s/F/oyqM1Yhrr1u4fbcXnN1UihKY22WbryQyGn0NA0BoHbesNAsKvhKmB+Zb
-         /V9V/u61z8m4XPlYRjh9b5B5C29c4Bo1JlP+h/hLAgEFoDOq5Ol4OTQuOo/4CP83rLEe
-         ZEkw==
-X-Gm-Message-State: APjAAAXLXXhLCUvohe4iTCmLSR9UrywJfE4F5AZfvmU/3lltqaOk60kX
-        qtEJ4HGuWk7r5TlpzToSJMuyYfWlEHZ9bU3JLT8=
-X-Google-Smtp-Source: APXvYqyduOFi8NImu0AzMAEfao7/6RCtL069JVxtRYJcG7ZxY2sDnpNyZhwel7yXqUTnvDofI8d+F0LuvM32vbsAM7s=
-X-Received: by 2002:a2e:5b5b:: with SMTP id p88mr14059332ljb.192.1564158567371;
- Fri, 26 Jul 2019 09:29:27 -0700 (PDT)
+        id S1728879AbfGZQaB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 12:30:01 -0400
+Received: from foss.arm.com ([217.140.110.172]:47074 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727514AbfGZQaB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 12:30:01 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6FBB1337;
+        Fri, 26 Jul 2019 09:30:00 -0700 (PDT)
+Received: from e119884-lin.cambridge.arm.com (e119884-lin.cambridge.arm.com [10.1.196.72])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BDBF93F71F;
+        Fri, 26 Jul 2019 09:29:57 -0700 (PDT)
+From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
+To:     linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-kselftest@vger.kernel.org
+Cc:     catalin.marinas@arm.com, will.deacon@arm.com, arnd@arndb.de,
+        linux@armlinux.org.uk, ralf@linux-mips.org, paul.burton@mips.com,
+        daniel.lezcano@linaro.org, tglx@linutronix.de, salyzyn@android.com,
+        pcc@google.com, shuah@kernel.org, 0x7f454c46@gmail.com,
+        linux@rasmusvillemoes.dk, huw@codeweavers.com,
+        sthotton@marvell.com, andre.przywara@arm.com, luto@kernel.org
+Subject: [PATCH 0/2] mips: vdso: Fix Makefile
+Date:   Fri, 26 Jul 2019 17:29:42 +0100
+Message-Id: <20190726162944.12149-1-vincenzo.frascino@arm.com>
+X-Mailer: git-send-email 2.22.0
+In-Reply-To: <MWHPR2201MB1277C33D971A9C8945812CFCC1C00@MWHPR2201MB1277.namprd22.prod.outlook.com>
+References: <MWHPR2201MB1277C33D971A9C8945812CFCC1C00@MWHPR2201MB1277.namprd22.prod.outlook.com>
 MIME-Version: 1.0
-Received: by 2002:a2e:94c:0:0:0:0:0 with HTTP; Fri, 26 Jul 2019 09:29:26 -0700 (PDT)
-In-Reply-To: <20190726100614.6924-1-colin.king@canonical.com>
-References: <20190726100614.6924-1-colin.king@canonical.com>
-From:   Stanislav Yakovlev <stas.yakovlev@gmail.com>
-Date:   Fri, 26 Jul 2019 20:29:26 +0400
-Message-ID: <CA++WF2PS_3X-fs7nKuxipizXE3QAPYXbYk=AV9waxDEc9JVJNg@mail.gmail.com>
-Subject: Re: [PATCH] ipw2x00: remove redundant assignment to err
-To:     Colin King <colin.king@canonical.com>
-Cc:     Kalle Valo <kvalo@codeaurora.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26/07/2019, Colin King <colin.king@canonical.com> wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Variable err is initialized to a value that is never read and it
-> is re-assigned later.  The initialization is redundant and can
-> be removed.
->
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/net/wireless/intel/ipw2x00/ipw2100.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+Consequently to the unified vDSO transition of the MIPS architecture few
+compilation issues appeared due to:
+ - A wrong source path for the configuration environment settings for
+   the O32 and N32 vDSO library generation.
+ - A flip/flop vDSO building bug that would cause to rebuild the vDSO
+   library every second time.
 
-Looks fine, thanks!
+This patch series addresses both the issues providing the respective
+fixes.
 
-Stanislav.
+This patchset is rebased on top of mips-next.
+
+Cc: Paul Burton <paul.burton@mips.com>
+Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
+
+Vincenzo Frascino (2):
+  mips: vdso: Fix source path
+  mips: vdso: Fix flip/flop vdso building bug
+
+ arch/mips/vdso/Makefile | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
+
+-- 
+2.22.0
+
