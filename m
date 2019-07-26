@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 052BC76CB6
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 17:26:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 40A5476CB9
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 17:26:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388081AbfGZP0s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 11:26:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40830 "EHLO mail.kernel.org"
+        id S2388123AbfGZP0x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 11:26:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40860 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387976AbfGZP0q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 11:26:46 -0400
+        id S2388078AbfGZP0s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 11:26:48 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1F9DE218D4;
-        Fri, 26 Jul 2019 15:26:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AFEC1205F4;
+        Fri, 26 Jul 2019 15:26:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564154805;
-        bh=eBinwqcJdtssqV8okGdFjjiIvIlF+S1X3v/D2boZEqc=;
+        s=default; t=1564154808;
+        bh=4H05V33b22NBKbavxlsFHLdxSESXPpMrppj84sOSSIE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HBBCPDNPIeP2nXOeZ46NzJYp0TMhVOdGWbQbHiTbOY1y/PREPfvQhK3j+xtEXpVc5
-         cie+Tck6NcLxRbi4UjSIrhvU3SUG62fJueFwQ9cCJMiUV34JUTEBCGpUOpyGMj1jEl
-         oLNO9lwYusoFi2fFxP5IrIp1rObL+0I+c9QyLzaI=
+        b=JttS7iN/3DR8oeV+HPWZKDFkLmYWAdQE+w7p0ce5SctmQF67HUd/aMVC/7LctgHdv
+         4cRDv21Pq1SHl/HSharB/jKYvkvoOTsOr9pw2KLmWeOfcwhte+iR5+JriUnWomqoFZ
+         /lPK+xx+cQW4ib/zLoGvyRG1t6HJ4yo/qca8AXOc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
+        stable@vger.kernel.org, Andreas Steinmetz <ast@domdv.de>,
+        Willem de Bruijn <willemb@google.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.2 31/66] net: bridge: stp: dont cache eth dest pointer before skb pull
-Date:   Fri, 26 Jul 2019 17:24:30 +0200
-Message-Id: <20190726152305.217987566@linuxfoundation.org>
+Subject: [PATCH 5.2 32/66] macsec: fix use-after-free of skb during RX
+Date:   Fri, 26 Jul 2019 17:24:31 +0200
+Message-Id: <20190726152305.366115983@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190726152301.936055394@linuxfoundation.org>
 References: <20190726152301.936055394@linuxfoundation.org>
@@ -44,38 +44,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+From: Andreas Steinmetz <ast@domdv.de>
 
-[ Upstream commit 2446a68ae6a8cee6d480e2f5b52f5007c7c41312 ]
+[ Upstream commit 095c02da80a41cf6d311c504d8955d6d1c2add10 ]
 
-Don't cache eth dest pointer before calling pskb_may_pull.
+Fix use-after-free of skb when rx_handler returns RX_HANDLER_PASS.
 
-Fixes: cf0f02d04a83 ("[BRIDGE]: use llc for receiving STP packets")
-Signed-off-by: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+Signed-off-by: Andreas Steinmetz <ast@domdv.de>
+Acked-by: Willem de Bruijn <willemb@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/bridge/br_stp_bpdu.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/net/macsec.c |    5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
---- a/net/bridge/br_stp_bpdu.c
-+++ b/net/bridge/br_stp_bpdu.c
-@@ -143,7 +143,6 @@ void br_send_tcn_bpdu(struct net_bridge_
- void br_stp_rcv(const struct stp_proto *proto, struct sk_buff *skb,
- 		struct net_device *dev)
- {
--	const unsigned char *dest = eth_hdr(skb)->h_dest;
- 	struct net_bridge_port *p;
- 	struct net_bridge *br;
- 	const unsigned char *buf;
-@@ -172,7 +171,7 @@ void br_stp_rcv(const struct stp_proto *
- 	if (p->state == BR_STATE_DISABLED)
- 		goto out;
+--- a/drivers/net/macsec.c
++++ b/drivers/net/macsec.c
+@@ -1099,10 +1099,9 @@ static rx_handler_result_t macsec_handle
+ 	}
  
--	if (!ether_addr_equal(dest, br->group_addr))
-+	if (!ether_addr_equal(eth_hdr(skb)->h_dest, br->group_addr))
- 		goto out;
+ 	skb = skb_unshare(skb, GFP_ATOMIC);
+-	if (!skb) {
+-		*pskb = NULL;
++	*pskb = skb;
++	if (!skb)
+ 		return RX_HANDLER_CONSUMED;
+-	}
  
- 	if (p->flags & BR_BPDU_GUARD) {
+ 	pulled_sci = pskb_may_pull(skb, macsec_extra_len(true));
+ 	if (!pulled_sci) {
 
 
