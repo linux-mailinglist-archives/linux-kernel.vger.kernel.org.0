@@ -2,76 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC30177234
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 21:33:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 178BC77236
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 21:34:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727251AbfGZTdv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 15:33:51 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:39943 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725320AbfGZTdv (ORCPT
+        id S1727345AbfGZTdz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 15:33:55 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:43657 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725320AbfGZTdw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 15:33:51 -0400
-Received: by mail-pl1-f196.google.com with SMTP id a93so25065845pla.7
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2019 12:33:51 -0700 (PDT)
+        Fri, 26 Jul 2019 15:33:52 -0400
+Received: by mail-pg1-f194.google.com with SMTP id f25so25215451pgv.10
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2019 12:33:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=7tkH22Ffe0DvxT70J0560IP/vxuVnKp0sgsAZ7ct/kU=;
-        b=sZhAyKvQ0pJENnvl74GI+1vSNcqkR7Zxt27F7+yk8XwPzP5vyrblpmuDnWM8eA7j4u
-         VQAKprvKigJ+ytQQcWxx7oQUnaXYmgdZQEORKjvLR4HwbP/U0j3btuSHOCRH4wvw4ASL
-         lxgEpkfzoCwStLlspH78nOXbYqjs7qEVDbCe+a7t1+cxH0xyRm9aaRANiP1UBsnGsvX4
-         svCSscP6id4Vk1p0+Ra0pHr335yFW/iRoU/3gY4uEMpNs+NBpDGq9zAskyH5m+OOsvEX
-         +f+NWJi0hVJXVqzQ5991FwCpjBNAa+iLTeI9VHHm5pJvwgcSuqtg/cHqc6SjLm3ntMw9
-         KBPg==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=ZMz7g4AgOx4LjZHETS+rUqwaKxF1Ur0tqe/gkV6SSF4=;
+        b=uG2RJ7GxHf4F+PsfSrFEhcOkc2xWKqke5LuZRx6/qKaSwdfHs6DjIyXZO9JXBOoPSE
+         qTzga2sI5ee1q9lxd/t9Le0lCRQLiX1u4l8CmEUAOwx/dH3FJk9OF4Nha7sl8YiEfvXX
+         6vxjcngCvqTmv1cKRwZ6f6IZjcN5XsDXJzPyc+ZHHiXvh9haUO/0+cP6jQnDs6H/H9ri
+         mOZpZU4W/hLTXzjv2qqfrAFbPvvnL9k0pRhgL8CS4zVhB3Qai1T2nlsEfqge3tLwOaGq
+         JCsvg7I0SeK5/yag8/OTLe7t2axSgbBrTcZv2MXz6TJXJdkhfiycySfZaHklKkTsyTud
+         1/Ww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=7tkH22Ffe0DvxT70J0560IP/vxuVnKp0sgsAZ7ct/kU=;
-        b=LFtFbYQOFt98xF5JGe5oc3mkA6WRJmkoxxV/axSVoj1VkrxSFZpe6zsciqJiwxEIW+
-         mrzakREk4ZANMKwhQgi+8mkMnaD/TZU8lBFhyIs5ZyVRJodekDN1hw3MRuSEeLRpfKL0
-         Y6yJ+/vOHnd4tFglRJj7y6O+ZzGlMzr3a1LtzMkWIhxhJQ/CY582G38gzQanIMqS2oHF
-         LE+Yxj+cqeNPNqgBhK+lRZSUxaiFAyGYjxtnvPbbpul3IZAZGR0dpuDz+DsVoVzlQyrD
-         8JBUJNEC0MQOS/Y8kllFhjJoQIIudFdwDUJ97Lokolk8fHeFviqXWAx9aiRl5UH9KSM+
-         a4AQ==
-X-Gm-Message-State: APjAAAXtYZG12DVzucUlU1fjgkFZi3PjpWxZCjav6uPcbALkTfbiyibm
-        VTesh/0TzxxGRFfbVT9UFQY=
-X-Google-Smtp-Source: APXvYqx7SUpoM/Zcr020mWM3NZGJfkkvDWZ4q/gV2rr6L837Ox7xNkubltz0joMFZej0ufvDUqwtvA==
-X-Received: by 2002:a17:902:2aa8:: with SMTP id j37mr93425919plb.316.1564169630686;
-        Fri, 26 Jul 2019 12:33:50 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=ZMz7g4AgOx4LjZHETS+rUqwaKxF1Ur0tqe/gkV6SSF4=;
+        b=fVtAaO0vYQgYios72B4NReLmwJ7Ba/y0nPoldXdlsTzc65ZWSt5+Yt2wCU3/d/BUXO
+         7Ss43xdxIPSX1oCSbAsdrfOH+nkshXRIqs2VjxSmH66ls6bF2eEEPhLjxET8WV+Cyl7j
+         a2MxIEyuiYTXpCWOBx/P7GOCP5EJnv8AovqyXVJlpHBgINbjR6fUtZh8zAC68Sb1TUQQ
+         peJrL8PFSANohrfBkllICe6c1OKUQTnYKNDD03BXZBneU1Y6W1OcTGSJodF6IrP+juMI
+         zAQcz4YsOp5UvpL+Ifnf23dBFiboTeK/Njmjf6HdGaXtJe+AVGuq1HU1k9E6wY5KgEoL
+         9HSg==
+X-Gm-Message-State: APjAAAWfVDdf7DZHv0TQfCkUvxAIrcP3UPkAjZ59QaIL2wfHMxH3oV3p
+        9oIeQbamz2nxu2gwx5oZ9u4=
+X-Google-Smtp-Source: APXvYqyKxFEnr0gqZJeRO17PpLeXYBGDPQWOCOfthfDDs5T0J+tdcUSxbOoA/BHuesiqS6HFfqyojg==
+X-Received: by 2002:a17:90a:9301:: with SMTP id p1mr99375409pjo.22.1564169631701;
+        Fri, 26 Jul 2019 12:33:51 -0700 (PDT)
 Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
-        by smtp.gmail.com with ESMTPSA id e189sm31824212pgc.15.2019.07.26.12.33.49
+        by smtp.gmail.com with ESMTPSA id e189sm31824212pgc.15.2019.07.26.12.33.50
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
         Fri, 26 Jul 2019 12:33:50 -0700 (PDT)
 From:   Nicolin Chen <nicoleotsuka@gmail.com>
 To:     dafna.hirschfeld@collabora.com, hch@lst.de,
         m.szyprowski@samsung.com, robin.murphy@arm.com
 Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 0/2] dma-contiguous: two bug fixes for dma_{alloc,free}_contiguous()
-Date:   Fri, 26 Jul 2019 12:34:31 -0700
-Message-Id: <20190726193433.12000-1-nicoleotsuka@gmail.com>
+Subject: [PATCH v2 1/2] dma-contiguous: do not overwrite align in dma_alloc_contiguous()
+Date:   Fri, 26 Jul 2019 12:34:32 -0700
+Message-Id: <20190726193433.12000-2-nicoleotsuka@gmail.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190726193433.12000-1-nicoleotsuka@gmail.com>
+References: <20190726193433.12000-1-nicoleotsuka@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are two obvious bugs in these two functions. So having
-two patches to fix them.
+The dma_alloc_contiguous() limits align at CONFIG_CMA_ALIGNMENT for
+cma_alloc() however it does not restore it for the fallback routine.
+This will result in a size mismatch between the allocation and free
+when running into the fallback routines after cma_alloc() fails, if
+the align is larger than CONFIG_CMA_ALIGNMENT.
 
-Changlog
-v1->v2:
- * PATCH-1: Confine cma_align inside the if-condition.
- * PATCH-1: Updated commit message to be precise for the corner case.
- * PATCH-2: Added Reviewed-by from Christoph.
+This patch adds a cma_align to take care of cma_alloc() and prevent
+the align from being overwritten.
 
-Nicolin Chen (2):
-  dma-contiguous: do not overwrite align in dma_alloc_contiguous()
-  dma-contiguous: page-align the size in dma_free_contiguous()
+Fixes: fdaeec198ada ("dma-contiguous: add dma_{alloc,free}_contiguous() helpers")
+Reported-by: Dafna Hirschfeld <dafna.hirschfeld@collabora.com>
+Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
+---
+ kernel/dma/contiguous.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
- kernel/dma/contiguous.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
-
+diff --git a/kernel/dma/contiguous.c b/kernel/dma/contiguous.c
+index bfc0c17f2a3d..ea8259f53eda 100644
+--- a/kernel/dma/contiguous.c
++++ b/kernel/dma/contiguous.c
+@@ -243,8 +243,9 @@ struct page *dma_alloc_contiguous(struct device *dev, size_t size, gfp_t gfp)
+ 
+ 	/* CMA can be used only in the context which permits sleeping */
+ 	if (cma && gfpflags_allow_blocking(gfp)) {
+-		align = min_t(size_t, align, CONFIG_CMA_ALIGNMENT);
+-		page = cma_alloc(cma, count, align, gfp & __GFP_NOWARN);
++		size_t cma_align = min_t(size_t, align, CONFIG_CMA_ALIGNMENT);
++
++		page = cma_alloc(cma, count, cma_align, gfp & __GFP_NOWARN);
+ 	}
+ 
+ 	/* Fallback allocation of normal pages */
 -- 
 2.17.1
 
