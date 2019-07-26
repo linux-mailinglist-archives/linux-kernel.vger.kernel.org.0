@@ -2,90 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A97BD75F50
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 08:52:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2043475F5E
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 08:57:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726190AbfGZGw0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 02:52:26 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:49106 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725864AbfGZGw0 (ORCPT
+        id S1726102AbfGZG5o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 02:57:44 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:42932 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725942AbfGZG5o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 02:52:26 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 7130A6053D; Fri, 26 Jul 2019 06:52:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1564123945;
-        bh=45rlvmxAk80l2YGJDp8L9VwoMC5Accf2bkvFWQ7rH2Y=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=MPo66DQnePBb9HPCqbRq0xL4Hn6M9xqdBGRDDvyWgBC3WS2/QnsH8hUIVhkhH/OOC
-         +jhmf4PvUCLKq94Yfd6lZWE0NvcrpaIaa6nafL1Q7UhRUt4F/AgZLiKDdO9kv8XQ66
-         c5PEF33x5QVXyeU+aehhWKn6Cxa3rP+UTUu+sCpk=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED autolearn=no autolearn_force=no version=3.4.0
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id AFF9B606FC;
-        Fri, 26 Jul 2019 06:52:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1564123944;
-        bh=45rlvmxAk80l2YGJDp8L9VwoMC5Accf2bkvFWQ7rH2Y=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=FzKftfZ8E7sWY3QOPlc74YzWQYB/HV00IrG1WdFtk55IbVpwfHa3kMc3edl3ScdVa
-         XjoO4Qkc7Ykg+3smYnlk4kIMirrrcl+GY5OS92CM1BJyCFTfyT1JZAMvcdvtA9guRZ
-         W5KeMVsiOXisNNjDsgKiid1w4I6UNuD5z5m7qVSY=
+        Fri, 26 Jul 2019 02:57:44 -0400
+Received: by mail-pl1-f194.google.com with SMTP id ay6so24424147plb.9
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 23:57:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=bzQNKaZKw8eToFqDsQXbuB2yvZDO2AGHnxOmbSadekg=;
+        b=D7jepyajIBROtTtVBRHO30NiYXAeVmjGCJbHSHXTuzjnSS8FsQ3UuvfORc1nANBoCV
+         4CKKsTIM5dtsEO607omtllGtCE8qOnJmQCgTbR1fYXDggum829aLmyTii5PkS6fd34od
+         T2cNSa8CjGv9SEDMGaCU33ritC8YGOBNMhBoWe3ZRvwB41GWr9XjgqkBMvZ0QDrcWs4L
+         irdsOPL2P9Fg1+oEAAw1PUVDBjx6voLdFWjdrEsONJ55F1XS6VlJs1SEpAek+1so9BNd
+         NTazoekjIgNqSPfCw/ZOVTRebwGFq8baCu0Xq8yDDvZLf6hFmjfiL7BxVK25Jti7ffq1
+         bx+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=bzQNKaZKw8eToFqDsQXbuB2yvZDO2AGHnxOmbSadekg=;
+        b=Mt6VSxy+aCqEfjCwqygBzgY2jv54Z0soLjPYFlHrtmT4wydD3SFCMb1kQAQHChvzCA
+         tzQmEOJ6dH97sJR8U4DGW2ix/i1QpszmJ9ilfXd71bgaOAqhuV5F4kB24TG6nB//+3KP
+         nOji1GTCSvrZ4kegtkqNh6npsr8jFABF2TcQobiqiV75/1yIDssfxPvYkugKKRMztJv8
+         XDNHofMIkdn6MhyyiWq3E+0GXeu+KtRvQK6hQyVnzOzP/w7Yrikw6BRya03veMv2oPbg
+         6t7cpvRsywg83Go+V195gHK0db6ziS4Rha7QeReOYiWuAOddXtPvFMkdSBXuiy6Y+dYN
+         eLTg==
+X-Gm-Message-State: APjAAAVdb2IeupSpACqOG0oDgUX2JC0mQj0trFUrSeMAgZ7TJCONcUQ/
+        gm51JGhpsT5na0BV/CaG3qSVFA==
+X-Google-Smtp-Source: APXvYqzzo+ODsFIczIG4j/cy5XNrUcZj88VBcx5YjQ+nwxEcwhFoGe3xWYa2zhp/yiPSVfhcKjKEfw==
+X-Received: by 2002:a17:902:ff11:: with SMTP id f17mr96645555plj.121.1564124263268;
+        Thu, 25 Jul 2019 23:57:43 -0700 (PDT)
+Received: from localhost ([122.172.28.117])
+        by smtp.gmail.com with ESMTPSA id o24sm7949706pgn.93.2019.07.25.23.57.41
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 25 Jul 2019 23:57:41 -0700 (PDT)
+Date:   Fri, 26 Jul 2019 12:27:39 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Doug Smythies <dsmythies@telus.net>
+Cc:     "'Rafael J. Wysocki'" <rafael@kernel.org>,
+        'Rafael Wysocki' <rjw@rjwysocki.net>,
+        'Ingo Molnar' <mingo@redhat.com>,
+        'Peter Zijlstra' <peterz@infradead.org>,
+        'Linux PM' <linux-pm@vger.kernel.org>,
+        'Vincent Guittot' <vincent.guittot@linaro.org>,
+        'Joel Fernandes' <joel@joelfernandes.org>,
+        "'v4 . 18+'" <stable@vger.kernel.org>,
+        'Linux Kernel Mailing List' <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] cpufreq: schedutil: Don't skip freq update when limits
+ change
+Message-ID: <20190726065739.xjvyvqpkb3o6m4ty@vireshk-i7>
+References: <1563431200-3042-1-git-send-email-dsmythies@telus.net>
+ <8091ef83f264feb2feaa827fbeefe08348bcd05d.1563778071.git.viresh.kumar@linaro.org>
+ <001201d54125$a6a82350$f3f869f0$@net>
+ <20190723091551.nchopfpqlmdmzvge@vireshk-i7>
+ <CAJZ5v0ji+ksapJ4kc2m5UM_O+AShAvJWmYhTQHiXiHnpTq+xRg@mail.gmail.com>
+ <20190724114327.apmx35c7a4tv3qt5@vireshk-i7>
+ <000c01d542fc$703ff850$50bfe8f0$@net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Fri, 26 Jul 2019 12:22:24 +0530
-From:   Govind Singh <govinds@codeaurora.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Kalle Valo <kvalo@codeaurora.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        ath10k@lists.infradead.org, linux-wireless@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH 0/3] ath10k: Clean up regulator and clock handling
-In-Reply-To: <20190725174755.23432-1-bjorn.andersson@linaro.org>
-References: <20190725174755.23432-1-bjorn.andersson@linaro.org>
-Message-ID: <196fa4aa63fd5135aead736396fe3f8c@codeaurora.org>
-X-Sender: govinds@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <000c01d542fc$703ff850$50bfe8f0$@net>
+User-Agent: NeoMutt/20180716-391-311a52
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-07-25 23:17, Bjorn Andersson wrote:
-> The first patch in this series removes the regulator_set_voltage() of a 
-> fixed
-> voltate, as fixed regulator constraints should be specified on a board 
-> level
-> and on certain boards - such as the Lenovo Yoga C630 - the voltage 
-> specified
-> for the 3.3V regulator is outside the given range.
+On 25-07-19, 08:20, Doug Smythies wrote:
+> I tried the patch ("patch2"). It did not fix the issue.
 > 
-> The following two patches cleans up regulator and clock usage by using 
-> the bulk
-> API provided by the two frameworks.
+> To summarize, all kernel 5.2 based, all intel_cpufreq driver and schedutil governor:
 > 
-> Bjorn Andersson (3):
->   ath10k: snoc: skip regulator operations
->   ath10k: Use standard regulator bulk API in snoc
->   ath10k: Use standard bulk clock API in snoc
+> Test: Does a busy system respond to maximum CPU clock frequency reduction?
 > 
->  drivers/net/wireless/ath/ath10k/snoc.c | 324 ++++---------------------
->  drivers/net/wireless/ath/ath10k/snoc.h |  26 +-
->  2 files changed, 48 insertions(+), 302 deletions(-)
+> stock, unaltered: No.
+> revert ecd2884291261e3fddbc7651ee11a20d596bb514: Yes
+> viresh patch: No.
+> fast_switch edit: No.
+> viresh patch2: No.
 
-Tested on 845 MTP and QCS404 platform with normal sanity and driver 
-recover cases for proxy votes.
+Hmm, so I tried to reproduce your setup on my ARM board.
+- booted only with CPU0 so I hit the sugov_update_single() routine
+- And applied below diff to make CPU look permanently busy:
 
-Tested-by: Govind Singh <govinds@codeaurora.org>
-Reviewed-by: Govind Singh <govinds@codeaurora.org>
+-------------------------8<-------------------------
+diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+index 2f382b0959e5..afb47490e5dc 100644
+--- a/kernel/sched/cpufreq_schedutil.c
++++ b/kernel/sched/cpufreq_schedutil.c
+@@ -121,6 +121,7 @@ static void sugov_fast_switch(struct sugov_policy *sg_policy, u64 time,
+        if (!sugov_update_next_freq(sg_policy, time, next_freq))
+                return;
+ 
++       pr_info("%s: %d: %u\n", __func__, __LINE__, freq);
+        next_freq = cpufreq_driver_fast_switch(policy, next_freq);
+        if (!next_freq)
+                return;
+@@ -424,14 +425,10 @@ static unsigned long sugov_iowait_apply(struct sugov_cpu *sg_cpu, u64 time,
+ #ifdef CONFIG_NO_HZ_COMMON
+ static bool sugov_cpu_is_busy(struct sugov_cpu *sg_cpu)
+ {
+-       unsigned long idle_calls = tick_nohz_get_idle_calls_cpu(sg_cpu->cpu);
+-       bool ret = idle_calls == sg_cpu->saved_idle_calls;
+-
+-       sg_cpu->saved_idle_calls = idle_calls;
+-       return ret;
++       return true;
+ }
+ #else
+-static inline bool sugov_cpu_is_busy(struct sugov_cpu *sg_cpu) { return false; }
++static inline bool sugov_cpu_is_busy(struct sugov_cpu *sg_cpu) { return true; }
+ #endif /* CONFIG_NO_HZ_COMMON */
+ 
+ /*
+@@ -565,6 +562,7 @@ static void sugov_work(struct kthread_work *work)
+        sg_policy->work_in_progress = false;
+        raw_spin_unlock_irqrestore(&sg_policy->update_lock, flags);
+ 
++       pr_info("%s: %d: %u\n", __func__, __LINE__, freq);
+        mutex_lock(&sg_policy->work_lock);
+        __cpufreq_driver_target(sg_policy->policy, freq, CPUFREQ_RELATION_L);
+        mutex_unlock(&sg_policy->work_lock);
 
-BR,
-Govind
+-------------------------8<-------------------------
+
+Now, the frequency never gets down and so gets set to the maximum
+possible after a bit.
+
+- Then I did:
+
+echo <any-low-freq-value> > /sys/devices/system/cpu/cpufreq/policy0/scaling_max_freq
+
+Without my patch applied:
+        The print never gets printed and so frequency doesn't go down.
+
+With my patch applied:
+        The print gets printed immediately from sugov_work() and so
+        the frequency reduces.
+
+Can you try with this diff along with my Patch2 ? I suspect there may
+be something wrong with the intel_cpufreq driver as the patch fixes
+the only path we have in the schedutil governor which takes busyness
+of a CPU into account.
+
+-- 
+viresh
