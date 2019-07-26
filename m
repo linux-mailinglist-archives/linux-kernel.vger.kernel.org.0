@@ -2,100 +2,165 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DA0B76B14
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 16:08:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 40D6676B1B
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 16:09:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727739AbfGZOHw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 10:07:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44476 "EHLO mail.kernel.org"
+        id S1727502AbfGZOJ0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 10:09:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44880 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726784AbfGZOHw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 10:07:52 -0400
+        id S1726902AbfGZOJ0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 10:09:26 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 179AD218D3;
-        Fri, 26 Jul 2019 14:07:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 334BC21850;
+        Fri, 26 Jul 2019 14:09:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564150071;
-        bh=2uuUK1ifiyV3Y744hTmQ7HeB0GK4yG8UQLMkmVM9zpc=;
+        s=default; t=1564150165;
+        bh=0+3MSmx+qJhUrDrjQL6BneIaHl/nbDAanbN39/Pki5w=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=sWp6qOTpA7EA0QuyZ00iA2kjV0qwj8DZ1fRMijoF4NxjWPJQOQ5BvSC+bVJX2sNaC
-         +b57ip08/KFMI9dpgoX6yZbKyTvu7SYTD8ZFUQ7KIXvSWr5Cu05w5ab6mfFlzd9DqU
-         mrCVTz10XLKAOk4dt7H9S8fHUzIwpAj68zoRAQXo=
-Date:   Fri, 26 Jul 2019 16:07:49 +0200
+        b=pTDmpDVZkpnP1M/pyDjd5YbEUz82p1pljhgmYCuRRg0pXN6eqBfxmtJ5D//H/a3vm
+         /toBXPT3R52QT00OmObrGaywEZ2Sf3jkQ3lKaHT+tg/ipbzm7rT+SL939qss4PgGhO
+         MkIrvgu7uG9rqR1DZA2GjDhW5QOJCsUD5lOZSOfQ=
+Date:   Fri, 26 Jul 2019 16:09:22 +0200
 From:   Greg KH <gregkh@linuxfoundation.org>
 To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
         tiwai@suse.de, broonie@kernel.org, vkoul@kernel.org,
         jank@cadence.com, srinivas.kandagatla@linaro.org,
         slawomir.blauciak@intel.com, Sanyog Kale <sanyog.r.kale@intel.com>
-Subject: Re: [RFC PATCH 37/40] soundwire: cadence_master: add hw_reset
- capability in debugfs
-Message-ID: <20190726140749.GC8767@kroah.com>
+Subject: Re: [RFC PATCH 02/40] soundwire: cadence_master: add debugfs
+ register dump
+Message-ID: <20190726140922.GD8767@kroah.com>
 References: <20190725234032.21152-1-pierre-louis.bossart@linux.intel.com>
- <20190725234032.21152-38-pierre-louis.bossart@linux.intel.com>
+ <20190725234032.21152-3-pierre-louis.bossart@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190725234032.21152-38-pierre-louis.bossart@linux.intel.com>
+In-Reply-To: <20190725234032.21152-3-pierre-louis.bossart@linux.intel.com>
 User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 25, 2019 at 06:40:29PM -0500, Pierre-Louis Bossart wrote:
-> This is to kick devices into reset and see what software does
+On Thu, Jul 25, 2019 at 06:39:54PM -0500, Pierre-Louis Bossart wrote:
+> Add debugfs file to dump the Cadence master registers
+> 
+> Credits: this patch is based on an earlier internal contribution by
+> Vinod Koul, Sanyog Kale, Shreyas Nc and Hardik Shah. The main change
+> is the use of scnprintf to avoid known issues with snprintf.
 > 
 > Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 > ---
->  drivers/soundwire/cadence_master.c | 22 ++++++++++++++++++++++
->  1 file changed, 22 insertions(+)
+>  drivers/soundwire/cadence_master.c | 98 ++++++++++++++++++++++++++++++
+>  drivers/soundwire/cadence_master.h |  2 +
+>  2 files changed, 100 insertions(+)
 > 
 > diff --git a/drivers/soundwire/cadence_master.c b/drivers/soundwire/cadence_master.c
-> index fa7230b0f200..53278aa2436f 100644
+> index ff4badc9b3de..91e8bacb83e3 100644
 > --- a/drivers/soundwire/cadence_master.c
 > +++ b/drivers/soundwire/cadence_master.c
-> @@ -331,6 +331,25 @@ static const struct file_operations cdns_reg_fops = {
->  	.llseek = default_llseek,
->  };
+> @@ -8,6 +8,7 @@
 >  
-> +static int cdns_hw_reset(void *data, u64 value)
+>  #include <linux/delay.h>
+>  #include <linux/device.h>
+> +#include <linux/debugfs.h>
+>  #include <linux/interrupt.h>
+>  #include <linux/io.h>
+>  #include <linux/module.h>
+> @@ -223,6 +224,103 @@ static int cdns_clear_bit(struct sdw_cdns *cdns, int offset, u32 value)
+>  	return -EAGAIN;
+>  }
+>  
+> +/*
+> + * debugfs
+> + */
+> +
+> +#define RD_BUF (2 * PAGE_SIZE)
+> +
+> +static ssize_t cdns_sprintf(struct sdw_cdns *cdns,
+> +			    char *buf, size_t pos, unsigned int reg)
 > +{
-> +	struct sdw_cdns *cdns = data;
-> +	int ret;
+> +	return scnprintf(buf + pos, RD_BUF - pos,
+> +			 "%4x\t%4x\n", reg, cdns_readl(cdns, reg));
+> +}
 > +
-> +	if (value != 1)
-> +		return 0;
+> +static ssize_t cdns_reg_read(struct file *file, char __user *user_buf,
+> +			     size_t count, loff_t *ppos)
+> +{
+> +	struct sdw_cdns *cdns = file->private_data;
+> +	char *buf;
+> +	ssize_t ret;
+> +	int i, j;
 > +
-> +	dev_info(cdns->dev, "starting link hw_reset\n");
+> +	buf = kzalloc(RD_BUF, GFP_KERNEL);
+> +	if (!buf)
+> +		return -ENOMEM;
 > +
-> +	ret = sdw_cdns_exit_reset(cdns);
+> +	ret = scnprintf(buf, RD_BUF, "Register  Value\n");
+> +	ret += scnprintf(buf + ret, RD_BUF - ret, "\nMCP Registers\n");
+> +	for (i = 0; i < 8; i++) /* 8 MCP registers */
+> +		ret += cdns_sprintf(cdns, buf, ret, i * 4);
 > +
-> +	dev_info(cdns->dev, "link hw_reset done\n");
-
-Do not be noisy for when things always go right.  This looks like
-debuggging code, please remove.
-
+> +	ret += scnprintf(buf + ret, RD_BUF - ret,
+> +			 "\nStatus & Intr Registers\n");
+> +	for (i = 0; i < 13; i++) /* 13 Status & Intr registers */
+> +		ret += cdns_sprintf(cdns, buf, ret, CDNS_MCP_STAT + i * 4);
+> +
+> +	ret += scnprintf(buf + ret, RD_BUF - ret,
+> +			 "\nSSP & Clk ctrl Registers\n");
+> +	ret += cdns_sprintf(cdns, buf, ret, CDNS_MCP_SSP_CTRL0);
+> +	ret += cdns_sprintf(cdns, buf, ret, CDNS_MCP_SSP_CTRL1);
+> +	ret += cdns_sprintf(cdns, buf, ret, CDNS_MCP_CLK_CTRL0);
+> +	ret += cdns_sprintf(cdns, buf, ret, CDNS_MCP_CLK_CTRL1);
+> +
+> +	ret += scnprintf(buf + ret, RD_BUF - ret,
+> +			 "\nDPn B0 Registers\n");
+> +	for (i = 0; i < 7; i++) {
+> +		ret += scnprintf(buf + ret, RD_BUF - ret,
+> +				 "\nDP-%d\n", i);
+> +		for (j = 0; j < 6; j++)
+> +			ret += cdns_sprintf(cdns, buf, ret,
+> +					CDNS_DPN_B0_CONFIG(i) + j * 4);
+> +	}
+> +
+> +	ret += scnprintf(buf + ret, RD_BUF - ret,
+> +			 "\nDPn B1 Registers\n");
+> +	for (i = 0; i < 7; i++) {
+> +		ret += scnprintf(buf + ret, RD_BUF - ret,
+> +				 "\nDP-%d\n", i);
+> +
+> +		for (j = 0; j < 6; j++)
+> +			ret += cdns_sprintf(cdns, buf, ret,
+> +					CDNS_DPN_B1_CONFIG(i) + j * 4);
+> +	}
+> +
+> +	ret += scnprintf(buf + ret, RD_BUF - ret,
+> +			 "\nDPn Control Registers\n");
+> +	for (i = 0; i < 7; i++)
+> +		ret += cdns_sprintf(cdns, buf, ret,
+> +				CDNS_PORTCTRL + i * CDNS_PORT_OFFSET);
+> +
+> +	ret += scnprintf(buf + ret, RD_BUF - ret,
+> +			 "\nPDIn Config Registers\n");
+> +	for (i = 0; i < 7; i++)
+> +		ret += cdns_sprintf(cdns, buf, ret, CDNS_PDI_CONFIG(i));
+> +
+> +	ret = simple_read_from_buffer(user_buf, count, ppos, buf, ret);
+> +	kfree(buf);
 > +
 > +	return ret;
 > +}
 > +
-> +DEFINE_DEBUGFS_ATTRIBUTE(cdns_hw_reset_fops, NULL, cdns_hw_reset, "%llu\n");
-> +
->  /**
->   * sdw_cdns_debugfs_init() - Cadence debugfs init
->   * @cdns: Cadence instance
-> @@ -339,6 +358,9 @@ static const struct file_operations cdns_reg_fops = {
->  void sdw_cdns_debugfs_init(struct sdw_cdns *cdns, struct dentry *root)
->  {
->  	debugfs_create_file("cdns-registers", 0400, root, cdns, &cdns_reg_fops);
-> +
-> +	debugfs_create_file_unsafe("cdns-hw-reset", 0200, root, cdns,
-> +				   &cdns_hw_reset_fops);
+> +static const struct file_operations cdns_reg_fops = {
+> +	.open = simple_open,
+> +	.read = cdns_reg_read,
+> +	.llseek = default_llseek,
+> +};
 
-Why unsafe?
+DEFINE_SHOW_ATTRIBUTE()?
 
 thanks,
 
