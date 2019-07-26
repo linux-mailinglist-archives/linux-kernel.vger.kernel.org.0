@@ -2,34 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2149476AA9
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 16:00:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9AAB476AB8
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 16:00:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727611AbfGZNkL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 09:40:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46018 "EHLO mail.kernel.org"
+        id S2387665AbfGZOAs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 10:00:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46040 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727575AbfGZNkH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 09:40:07 -0400
+        id S1727584AbfGZNkJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 09:40:09 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 47FB622BF5;
-        Fri, 26 Jul 2019 13:40:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3B75722CBB;
+        Fri, 26 Jul 2019 13:40:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564148406;
-        bh=iRNqSiuw0WWltpKRN5X7jUlnCo+TpcQGXiHSgh5eqMI=;
+        s=default; t=1564148408;
+        bh=GS0t9ejWfMJx8u+jiXzlJqATgam2UjS8xzz2i1Kfo70=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0+BZ9qO3HO3Lv+2S1zOxKsRWPrk2zCm93HAagGr/eJJN7r5xAIZvHT83Bva7RN/S5
-         sVRMKhd4gdnMh52/No96VpnxSWUj9nelRpUqQpNQg+Pyc4wNTil0vUyh5mc9SjZQRc
-         XhSrT0zK8H1fTq2+xGRpixzfrACKqP+9+ykCm7MI=
+        b=Ck0FiNcQjy4xFqS5XBGVeVPQzPL4hLByZ/ZJabWU7lfYdMS1XLGrMXNXK0opmmP5v
+         jOI5N+qcFBKEc5t2KaBNUkIhwvEdiSi4lUlJJyC6gIEPAIrCnGDXRxK6VSU+D0bzot
+         ZzCVtYve4efxLwQKowFsAHhqSv/7qOTOTa7eAzAU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Anson Huang <Anson.Huang@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.2 16/85] soc: imx8: Fix potential kernel dump in error path
-Date:   Fri, 26 Jul 2019 09:38:26 -0400
-Message-Id: <20190726133936.11177-16-sashal@kernel.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Niklas Cassel <niklas.cassel@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>, Olof Johansson <olof@lixom.net>,
+        Sasha Levin <sashal@kernel.org>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.2 17/85] arm64: qcom: qcs404: Add reset-cells to GCC node
+Date:   Fri, 26 Jul 2019 09:38:27 -0400
+Message-Id: <20190726133936.11177-17-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190726133936.11177-1-sashal@kernel.org>
 References: <20190726133936.11177-1-sashal@kernel.org>
@@ -42,73 +45,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anson Huang <Anson.Huang@nxp.com>
+From: Andy Gross <agross@kernel.org>
 
-[ Upstream commit 1bcbe7300815e91fef18ee905b04f65490ad38c9 ]
+[ Upstream commit 0763d0c2273a3c72247d325c48fbac3d918d6b87 ]
 
-When SoC's revision value is 0, SoC driver will print out
-"unknown" in sysfs's revision node, this "unknown" is a
-static string which can NOT be freed, this will caused below
-kernel dump in later error path which calls kfree:
+This patch adds a reset-cells property to the gcc controller on the QCS404.
+Without this in place, we get warnings like the following if nodes reference
+a gcc reset:
 
-kernel BUG at mm/slub.c:3942!
-Internal error: Oops - BUG: 0 [#1] PREEMPT SMP
-Modules linked in:
-CPU: 2 PID: 1 Comm: swapper/0 Not tainted 5.2.0-rc4-next-20190611-00023-g705146c-dirty #2197
-Hardware name: NXP i.MX8MQ EVK (DT)
-pstate: 60000005 (nZCv daif -PAN -UAO)
-pc : kfree+0x170/0x1b0
-lr : imx8_soc_init+0xc0/0xe4
-sp : ffff00001003bd10
-x29: ffff00001003bd10 x28: ffff00001121e0a0
-x27: ffff000011482000 x26: ffff00001117068c
-x25: ffff00001121e100 x24: ffff000011482000
-x23: ffff000010fe2b58 x22: ffff0000111b9ab0
-x21: ffff8000bd9dfba0 x20: ffff0000111b9b70
-x19: ffff7e000043f880 x18: 0000000000001000
-x17: ffff000010d05fa0 x16: ffff0000122e0000
-x15: 0140000000000000 x14: 0000000030360000
-x13: ffff8000b94b5bb0 x12: 0000000000000038
-x11: ffffffffffffffff x10: ffffffffffffffff
-x9 : 0000000000000003 x8 : ffff8000b9488147
-x7 : ffff00001003bc00 x6 : 0000000000000000
-x5 : 0000000000000003 x4 : 0000000000000003
-x3 : 0000000000000003 x2 : b8793acd604edf00
-x1 : ffff7e000043f880 x0 : ffff7e000043f888
-Call trace:
- kfree+0x170/0x1b0
- imx8_soc_init+0xc0/0xe4
- do_one_initcall+0x58/0x1b8
- kernel_init_freeable+0x1cc/0x288
- kernel_init+0x10/0x100
- ret_from_fork+0x10/0x18
+arch/arm64/boot/dts/qcom/qcs404.dtsi:261.38-310.5: Warning (resets_property):
+/soc@0/remoteproc@b00000: Missing property '#reset-cells' in node
+/soc@0/clock-controller@1800000 or bad phandle (referred from resets[0])
+  also defined at arch/arm64/boot/dts/qcom/qcs404-evb.dtsi:82.18-84.3
+  DTC     arch/arm64/boot/dts/qcom/qcs404-evb-4000.dtb
+arch/arm64/boot/dts/qcom/qcs404.dtsi:261.38-310.5: Warning (resets_property):
+/soc@0/remoteproc@b00000: Missing property '#reset-cells' in node
+/soc@0/clock-controller@1800000 or bad phandle (referred from resets[0])
+  also defined at arch/arm64/boot/dts/qcom/qcs404-evb.dtsi:82.18-84.3
 
-This patch fixes this potential kernel dump when a chip's
-revision is "unknown", it is done by checking whether the
-revision space can be freed.
-
-Fixes: a7e26f356ca1 ("soc: imx: Add generic i.MX8 SoC driver")
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-Signed-off-by: Shawn Guo <shawnguo@kernel.org>
+Signed-off-by: Andy Gross <agross@kernel.org>
+Reviewed-by: Niklas Cassel <niklas.cassel@linaro.org>
+Reviewed-by: Vinod Koul <vkoul@kernel.org>
+Signed-off-by: Olof Johansson <olof@lixom.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/soc/imx/soc-imx8.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/qcom/qcs404.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/soc/imx/soc-imx8.c b/drivers/soc/imx/soc-imx8.c
-index e567d866a9d3..79a3d922a4a9 100644
---- a/drivers/soc/imx/soc-imx8.c
-+++ b/drivers/soc/imx/soc-imx8.c
-@@ -112,7 +112,8 @@ static int __init imx8_soc_init(void)
- 	return 0;
+diff --git a/arch/arm64/boot/dts/qcom/qcs404.dtsi b/arch/arm64/boot/dts/qcom/qcs404.dtsi
+index ffedf9640af7..65a2cbeb28be 100644
+--- a/arch/arm64/boot/dts/qcom/qcs404.dtsi
++++ b/arch/arm64/boot/dts/qcom/qcs404.dtsi
+@@ -383,6 +383,7 @@
+ 			compatible = "qcom,gcc-qcs404";
+ 			reg = <0x01800000 0x80000>;
+ 			#clock-cells = <1>;
++			#reset-cells = <1>;
  
- free_rev:
--	kfree(soc_dev_attr->revision);
-+	if (strcmp(soc_dev_attr->revision, "unknown"))
-+		kfree(soc_dev_attr->revision);
- free_soc:
- 	kfree(soc_dev_attr);
- 	of_node_put(root);
+ 			assigned-clocks = <&gcc GCC_APSS_AHB_CLK_SRC>;
+ 			assigned-clock-rates = <19200000>;
 -- 
 2.20.1
 
