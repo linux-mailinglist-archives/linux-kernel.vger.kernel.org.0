@@ -2,35 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C9B3769C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 15:54:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 857C9769C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 15:54:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388067AbfGZNmy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 09:42:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50168 "EHLO mail.kernel.org"
+        id S2388078AbfGZNm5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 09:42:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50210 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388047AbfGZNmt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 09:42:49 -0400
+        id S2388054AbfGZNmv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 09:42:51 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3D88022CBF;
-        Fri, 26 Jul 2019 13:42:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5916122CC0;
+        Fri, 26 Jul 2019 13:42:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564148569;
-        bh=xcrPwqvyu0V0LBKurqlo82+0cYsgFDQ2imAbyZfWuw4=;
+        s=default; t=1564148570;
+        bh=6KIks1I9K7slzZ4k7PGXXjS0icOWDo+AY22dArQQoVA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=I45MlmzvuS/OTGHy2Glg2oyMXykjiqtIN8s2Md0kix+L2OzrkuobjqrCgPLtnqxak
-         S6Qte4rwe/hdcloO5XS+nUQ2GHaEOhDb7TlhoP0HmzUALSv7C2WoCQ3EBoc8Ky8YgC
-         mjiXq+y2a6oKswJAb0ppCwfqLo6HV538wiYn8ELA=
+        b=oXxlcfIs+mWNOn34rNwJAc6a7TsI0neVQLcO6XwSodI/EiVdAchyh7wPUZtTrBEXd
+         cZ/0dylnAmNU41kryiCVBWoNuqJ6neg0wbvHkYNtWlg31SHwui3pRy28nZmG7gxiIj
+         aSMHMrJyRPQS6lB/2YTQSEOUmteNzgTLtyd3Anvg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Arnd Bergmann <arnd@arndb.de>, Paolo Bonzini <pbonzini@redhat.com>,
-        Sasha Levin <sashal@kernel.org>, kvm@vger.kernel.org,
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Sasha Levin <sashal@kernel.org>, linux-acpi@vger.kernel.org,
         clang-built-linux@googlegroups.com
-Subject: [PATCH AUTOSEL 4.19 24/47] x86: kvm: avoid constant-conversion warning
-Date:   Fri, 26 Jul 2019 09:41:47 -0400
-Message-Id: <20190726134210.12156-24-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 25/47] ACPI: fix false-positive -Wuninitialized warning
+Date:   Fri, 26 Jul 2019 09:41:48 -0400
+Message-Id: <20190726134210.12156-25-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190726134210.12156-1-sashal@kernel.org>
 References: <20190726134210.12156-1-sashal@kernel.org>
@@ -45,51 +48,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-[ Upstream commit a6a6d3b1f867d34ba5bd61aa7bb056b48ca67cff ]
+[ Upstream commit dfd6f9ad36368b8dbd5f5a2b2f0a4705ae69a323 ]
 
-clang finds a contruct suspicious that converts an unsigned
-character to a signed integer and back, causing an overflow:
+clang gets confused by an uninitialized variable in what looks
+to it like a never executed code path:
 
-arch/x86/kvm/mmu.c:4605:39: error: implicit conversion from 'int' to 'u8' (aka 'unsigned char') changes value from -205 to 51 [-Werror,-Wconstant-conversion]
-                u8 wf = (pfec & PFERR_WRITE_MASK) ? ~w : 0;
-                   ~~                               ^~
-arch/x86/kvm/mmu.c:4607:38: error: implicit conversion from 'int' to 'u8' (aka 'unsigned char') changes value from -241 to 15 [-Werror,-Wconstant-conversion]
-                u8 uf = (pfec & PFERR_USER_MASK) ? ~u : 0;
-                   ~~                              ^~
-arch/x86/kvm/mmu.c:4609:39: error: implicit conversion from 'int' to 'u8' (aka 'unsigned char') changes value from -171 to 85 [-Werror,-Wconstant-conversion]
-                u8 ff = (pfec & PFERR_FETCH_MASK) ? ~x : 0;
-                   ~~                               ^~
+arch/x86/kernel/acpi/boot.c:618:13: error: variable 'polarity' is uninitialized when used here [-Werror,-Wuninitialized]
+        polarity = polarity ? ACPI_ACTIVE_LOW : ACPI_ACTIVE_HIGH;
+                   ^~~~~~~~
+arch/x86/kernel/acpi/boot.c:606:32: note: initialize the variable 'polarity' to silence this warning
+        int rc, irq, trigger, polarity;
+                                      ^
+                                       = 0
+arch/x86/kernel/acpi/boot.c:617:12: error: variable 'trigger' is uninitialized when used here [-Werror,-Wuninitialized]
+        trigger = trigger ? ACPI_LEVEL_SENSITIVE : ACPI_EDGE_SENSITIVE;
+                  ^~~~~~~
+arch/x86/kernel/acpi/boot.c:606:22: note: initialize the variable 'trigger' to silence this warning
+        int rc, irq, trigger, polarity;
+                            ^
+                             = 0
 
-Add an explicit cast to tell clang that everything works as
-intended here.
+This is unfortunately a design decision in clang and won't be fixed.
+
+Changing the acpi_get_override_irq() macro to an inline function
+reliably avoids the issue.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Link: https://github.com/ClangBuiltLinux/linux/issues/95
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kvm/mmu.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ include/linux/acpi.h | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
-index e0f982e35c96..cdc0c460950f 100644
---- a/arch/x86/kvm/mmu.c
-+++ b/arch/x86/kvm/mmu.c
-@@ -4532,11 +4532,11 @@ static void update_permission_bitmask(struct kvm_vcpu *vcpu,
- 		 */
- 
- 		/* Faults from writes to non-writable pages */
--		u8 wf = (pfec & PFERR_WRITE_MASK) ? ~w : 0;
-+		u8 wf = (pfec & PFERR_WRITE_MASK) ? (u8)~w : 0;
- 		/* Faults from user mode accesses to supervisor pages */
--		u8 uf = (pfec & PFERR_USER_MASK) ? ~u : 0;
-+		u8 uf = (pfec & PFERR_USER_MASK) ? (u8)~u : 0;
- 		/* Faults from fetches of non-executable pages*/
--		u8 ff = (pfec & PFERR_FETCH_MASK) ? ~x : 0;
-+		u8 ff = (pfec & PFERR_FETCH_MASK) ? (u8)~x : 0;
- 		/* Faults from kernel mode fetches of user pages */
- 		u8 smepf = 0;
- 		/* Faults from kernel mode accesses of user pages */
+diff --git a/include/linux/acpi.h b/include/linux/acpi.h
+index de8d3d3fa651..b4d23b3a2ef2 100644
+--- a/include/linux/acpi.h
++++ b/include/linux/acpi.h
+@@ -326,7 +326,10 @@ void acpi_set_irq_model(enum acpi_irq_model_id model,
+ #ifdef CONFIG_X86_IO_APIC
+ extern int acpi_get_override_irq(u32 gsi, int *trigger, int *polarity);
+ #else
+-#define acpi_get_override_irq(gsi, trigger, polarity) (-1)
++static inline int acpi_get_override_irq(u32 gsi, int *trigger, int *polarity)
++{
++	return -1;
++}
+ #endif
+ /*
+  * This function undoes the effect of one call to acpi_register_gsi().
 -- 
 2.20.1
 
