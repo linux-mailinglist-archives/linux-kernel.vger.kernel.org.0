@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B3D776D17
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 17:31:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6343076D44
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 17:33:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389082AbfGZPa0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 11:30:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45276 "EHLO mail.kernel.org"
+        id S2387744AbfGZPcS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 11:32:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47430 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389064AbfGZPaW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 11:30:22 -0400
+        id S2389437AbfGZPcQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 11:32:16 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 034E5205F4;
-        Fri, 26 Jul 2019 15:30:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CC6D22054F;
+        Fri, 26 Jul 2019 15:32:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564155021;
-        bh=ZR35wzuuqft4MCSMoZUmWn/SZjadH6eInU+f59OcpAo=;
+        s=default; t=1564155136;
+        bh=NZBYPz9/upGof+pf+7aPQwh2oUQ15oTbaqLDqA5xc1U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BGg8IVIbY1zOIjXGOy4IJsVQUCqzhujAolkt8/Q2EuU8tUf8WL4yeu+qNBZ94eRxF
-         2wjjMDp8p4RykRlOTybk/sTDRAslJqTziyNIJeXdetP41rnVAs9fYUj0+daA3QmXZ8
-         AOKcY/cnwDhwd9sdJBhdLxvPVQaxBcxPBkMB3zFQ=
+        b=W1ftNZ1FuC6cFKjiV0+ZfMfCIhahfFrWW9ZZik3WQwXCeAgBC7KFhLOIS9TUNK1GJ
+         f3mP0OHWrO8HjMUu3ibBGlZ2J7xLJ2rZK+ntM/dGZagbTtFHKFwFtV4tniLz2HcIDb
+         G9lYfs8SXeJ1dql7kBNsETm7UW8g2vmpI/H7UyzY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Dirk van der Merwe <dirk.vandermerwe@netronome.com>,
+        stable@vger.kernel.org, Yang Wei <albin_yang@163.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.1 38/62] net/tls: reject offload of TLS 1.3
+Subject: [PATCH 4.19 15/50] nfc: fix potential illegal memory access
 Date:   Fri, 26 Jul 2019 17:24:50 +0200
-Message-Id: <20190726152305.969679023@linuxfoundation.org>
+Message-Id: <20190726152302.126128177@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190726152301.720139286@linuxfoundation.org>
-References: <20190726152301.720139286@linuxfoundation.org>
+In-Reply-To: <20190726152300.760439618@linuxfoundation.org>
+References: <20190726152300.760439618@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,46 +43,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jakub Kicinski <jakub.kicinski@netronome.com>
+From: Yang Wei <albin_yang@163.com>
 
-[ Upstream commit 618bac45937a3dc6126ac0652747481e97000f99 ]
+[ Upstream commit dd006fc434e107ef90f7de0db9907cbc1c521645 ]
 
-Neither drivers nor the tls offload code currently supports TLS
-version 1.3. Check the TLS version when installing connection
-state. TLS 1.3 will just fallback to the kernel crypto for now.
+The frags_q is not properly initialized, it may result in illegal memory
+access when conn_info is NULL.
+The "goto free_exit" should be replaced by "goto exit".
 
-Fixes: 130b392c6cd6 ("net: tls: Add tls 1.3 support")
-Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
-Reviewed-by: Dirk van der Merwe <dirk.vandermerwe@netronome.com>
+Signed-off-by: Yang Wei <albin_yang@163.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/tls/tls_device.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ net/nfc/nci/data.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/tls/tls_device.c
-+++ b/net/tls/tls_device.c
-@@ -746,6 +746,11 @@ int tls_set_device_offload(struct sock *
+--- a/net/nfc/nci/data.c
++++ b/net/nfc/nci/data.c
+@@ -119,7 +119,7 @@ static int nci_queue_tx_data_frags(struc
+ 	conn_info = nci_get_conn_info_by_conn_id(ndev, conn_id);
+ 	if (!conn_info) {
+ 		rc = -EPROTO;
+-		goto free_exit;
++		goto exit;
  	}
  
- 	crypto_info = &ctx->crypto_send.info;
-+	if (crypto_info->version != TLS_1_2_VERSION) {
-+		rc = -EOPNOTSUPP;
-+		goto free_offload_ctx;
-+	}
-+
- 	switch (crypto_info->cipher_type) {
- 	case TLS_CIPHER_AES_GCM_128:
- 		nonce_size = TLS_CIPHER_AES_GCM_128_IV_SIZE;
-@@ -880,6 +885,9 @@ int tls_set_device_offload_rx(struct soc
- 	struct net_device *netdev;
- 	int rc = 0;
- 
-+	if (ctx->crypto_recv.info.version != TLS_1_2_VERSION)
-+		return -EOPNOTSUPP;
-+
- 	/* We support starting offload on multiple sockets
- 	 * concurrently, so we only need a read lock here.
- 	 * This lock must precede get_netdev_for_sock to prevent races between
+ 	__skb_queue_head_init(&frags_q);
 
 
