@@ -2,81 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 77CD276FCC
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 19:24:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 661E476FF5
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 19:26:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729008AbfGZRYq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 13:24:46 -0400
-Received: from mga11.intel.com ([192.55.52.93]:42026 "EHLO mga11.intel.com"
+        id S1729016AbfGZR0Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 13:26:16 -0400
+Received: from mga17.intel.com ([192.55.52.151]:40444 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728251AbfGZRYq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 13:24:46 -0400
+        id S1728279AbfGZR0P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 13:26:15 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jul 2019 10:24:45 -0700
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jul 2019 10:26:15 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,311,1559545200"; 
-   d="scan'208";a="369603426"
-Received: from haiyuewa-mobl.ccr.corp.intel.com (HELO [10.255.31.18]) ([10.255.31.18])
-  by fmsmga005.fm.intel.com with ESMTP; 26 Jul 2019 10:24:43 -0700
-Subject: Re: [RFC PATCH 14/17] ipmi: kcs: Finish configuring ASPEED KCS device
- before enable
-From:   "Wang, Haiyue" <haiyue.wang@linux.intel.com>
-To:     Andrew Jeffery <andrew@aj.id.au>, linux-aspeed@lists.ozlabs.org
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, joel@jms.id.au,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Corey Minyard <minyard@acm.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        openipmi-developer@lists.sourceforge.net
-References: <20190726053959.2003-1-andrew@aj.id.au>
- <20190726053959.2003-15-andrew@aj.id.au>
- <29a2d999-23bd-8e95-a1b8-f00e25a11df5@linux.intel.com>
-Message-ID: <b4d60d12-0a1f-906a-1f3a-da0cfdd06be3@linux.intel.com>
-Date:   Sat, 27 Jul 2019 01:24:43 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+   d="scan'208";a="198461381"
+Received: from andawes-mobl.amr.corp.intel.com (HELO [10.251.145.66]) ([10.251.145.66])
+  by fmsmga002.fm.intel.com with ESMTP; 26 Jul 2019 10:26:14 -0700
+Subject: Re: [alsa-devel] [RFC PATCH 36/40] soundwire: intel: disable
+ interrupts on suspend
+To:     Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
+Cc:     alsa-devel@alsa-project.org, tiwai@suse.de,
+        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        vkoul@kernel.org, broonie@kernel.org,
+        srinivas.kandagatla@linaro.org, jank@cadence.com,
+        slawomir.blauciak@intel.com, Sanyog Kale <sanyog.r.kale@intel.com>
+References: <20190725234032.21152-1-pierre-louis.bossart@linux.intel.com>
+ <20190725234032.21152-37-pierre-louis.bossart@linux.intel.com>
+ <20190726155520.GL16003@ubuntu>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <e456112b-27a4-d897-6690-3177dd5a8b56@linux.intel.com>
+Date:   Fri, 26 Jul 2019 12:26:10 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <29a2d999-23bd-8e95-a1b8-f00e25a11df5@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190726155520.GL16003@ubuntu>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-在 2019-07-27 01:04, Wang, Haiyue 写道:
-> 在 2019-07-26 13:39, Andrew Jeffery 写道:
->> The currently interrupts are configured after the channel was enabled.
->>
->> Cc: Haiyue Wang<haiyue.wang@linux.intel.com>
->> Cc: Corey Minyard<minyard@acm.org>
->> Cc: Arnd Bergmann<arnd@arndb.de>
->> Cc: Greg Kroah-Hartman<gregkh@linuxfoundation.org>
->> Cc:openipmi-developer@lists.sourceforge.net
->> Signed-off-by: Andrew Jeffery<andrew@aj.id.au>
->> ---
->>   drivers/char/ipmi/kcs_bmc_aspeed.c | 7 ++++---
->>   1 file changed, 4 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/char/ipmi/kcs_bmc_aspeed.c 
->> b/drivers/char/ipmi/kcs_bmc_aspeed.c
->> index 3c955946e647..e3dd09022589 100644
->> --- a/drivers/char/ipmi/kcs_bmc_aspeed.c
->> +++ b/drivers/char/ipmi/kcs_bmc_aspeed.c
->> @@ -268,13 +268,14 @@ static int aspeed_kcs_probe(struct 
->> platform_device *pdev)
->>       kcs_bmc->io_inputb = aspeed_kcs_inb;
->>       kcs_bmc->io_outputb = aspeed_kcs_outb;
->>   +    rc = aspeed_kcs_config_irq(kcs_bmc, pdev);
->> +    if (rc)
->> +        return rc;
->> +
->>       dev_set_drvdata(dev, kcs_bmc);
->
->
-> Thanks for catching this, for not miss the data.
->
-Reviewed-by: Haiyue Wang <haiyue.wang@linux.intel.com>
+>> -int sdw_cdns_enable_interrupt(struct sdw_cdns *cdns)
+>> +int sdw_cdns_enable_interrupt(struct sdw_cdns *cdns, bool state)
+>>   {
+>>   	u32 mask;
+>>   
+>> -	cdns_writel(cdns, CDNS_MCP_SLAVE_INTMASK0,
+>> -		    CDNS_MCP_SLAVE_INTMASK0_MASK);
+>> -	cdns_writel(cdns, CDNS_MCP_SLAVE_INTMASK1,
+>> -		    CDNS_MCP_SLAVE_INTMASK1_MASK);
+>> +	if (state) {
+>> +		cdns_writel(cdns, CDNS_MCP_SLAVE_INTMASK0,
+>> +			    CDNS_MCP_SLAVE_INTMASK0_MASK);
+>> +		cdns_writel(cdns, CDNS_MCP_SLAVE_INTMASK1,
+>> +			    CDNS_MCP_SLAVE_INTMASK1_MASK);
+>>   
+>> -	/* enable detection of slave state changes */
+>> -	mask = CDNS_MCP_INT_SLAVE_RSVD | CDNS_MCP_INT_SLAVE_ALERT |
+>> -		CDNS_MCP_INT_SLAVE_ATTACH | CDNS_MCP_INT_SLAVE_NATTACH;
+>> +		/* enable detection of slave state changes */
+>> +		mask = CDNS_MCP_INT_SLAVE_RSVD | CDNS_MCP_INT_SLAVE_ALERT |
+>> +			CDNS_MCP_INT_SLAVE_ATTACH | CDNS_MCP_INT_SLAVE_NATTACH;
+>>   
+>> -	/* enable detection of bus issues */
+>> -	mask |= CDNS_MCP_INT_CTRL_CLASH | CDNS_MCP_INT_DATA_CLASH |
+>> -		CDNS_MCP_INT_PARITY;
+>> +		/* enable detection of bus issues */
+>> +		mask |= CDNS_MCP_INT_CTRL_CLASH | CDNS_MCP_INT_DATA_CLASH |
+>> +			CDNS_MCP_INT_PARITY;
+>>   
+>> -	/* no detection of port interrupts for now */
+>> +		/* no detection of port interrupts for now */
+>>   
+>> -	/* enable detection of RX fifo level */
+>> -	mask |= CDNS_MCP_INT_RX_WL;
+>> +		/* enable detection of RX fifo level */
+>> +		mask |= CDNS_MCP_INT_RX_WL;
+>>   
+>> -	/* now enable all of the above */
+>> -	mask |= CDNS_MCP_INT_IRQ;
+>> +		/* now enable all of the above */
+>> +		mask |= CDNS_MCP_INT_IRQ;
+>>   
+>> -	if (interrupt_mask) /* parameter override */
+>> -		mask = interrupt_mask;
+>> +		if (interrupt_mask) /* parameter override */
+>> +			mask = interrupt_mask;
+>> +	} else {
+>> +		cdns_writel(cdns, CDNS_MCP_SLAVE_INTMASK0, 0);
+>> +		cdns_writel(cdns, CDNS_MCP_SLAVE_INTMASK1, 0);
+>> +		mask = 0;
+>> +	}
+> 
+> Looks like this should be two functions? Especially since "state" is always a constant
+> when it is called. If there is still a lot of common code below, maybe make it a helper
+> function.
+
+Yes, the code is a bit ugly. I could initialize all the masks to zero, 
+have the if(state) block and write the masks.
