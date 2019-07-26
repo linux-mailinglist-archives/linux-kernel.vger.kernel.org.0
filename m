@@ -2,86 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4999376C50
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 17:05:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FA1E76C53
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 17:06:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728266AbfGZPFd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 11:05:33 -0400
-Received: from hera.aquilenet.fr ([185.233.100.1]:58088 "EHLO
-        hera.aquilenet.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727287AbfGZPFd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 11:05:33 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by hera.aquilenet.fr (Postfix) with ESMTP id 95EAB18AFA;
-        Fri, 26 Jul 2019 17:05:31 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at aquilenet.fr
-Received: from hera.aquilenet.fr ([127.0.0.1])
-        by localhost (hera.aquilenet.fr [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id f04B5gwHognF; Fri, 26 Jul 2019 17:05:31 +0200 (CEST)
-Received: from function (dhcp-13-113.lip.ens-lyon.fr [140.77.13.113])
-        by hera.aquilenet.fr (Postfix) with ESMTPSA id DFBD318AF8;
-        Fri, 26 Jul 2019 17:05:30 +0200 (CEST)
-Received: from samy by function with local (Exim 4.92)
-        (envelope-from <samuel.thibault@ens-lyon.org>)
-        id 1hr1mk-0001Vd-Gv; Fri, 26 Jul 2019 17:05:30 +0200
-Date:   Fri, 26 Jul 2019 17:05:30 +0200
-From:   Samuel Thibault <samuel.thibault@ens-lyon.org>
-To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        931507@bugs.debian.org
-Subject: hda: Fix 1-minute detection delay when i915 module is not available
-Message-ID: <20190726150530.cibwiaohhexl5jdc@function>
-Mail-Followup-To: Samuel Thibault <samuel.thibault@ens-lyon.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        931507@bugs.debian.org
+        id S2387735AbfGZPF5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 11:05:57 -0400
+Received: from mga03.intel.com ([134.134.136.65]:54533 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387661AbfGZPF5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 11:05:57 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jul 2019 08:05:56 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,311,1559545200"; 
+   d="scan'208";a="322060204"
+Received: from msmall-mobl.amr.corp.intel.com (HELO [10.251.154.62]) ([10.251.154.62])
+  by orsmga004.jf.intel.com with ESMTP; 26 Jul 2019 08:05:55 -0700
+Subject: Re: [alsa-devel] [RFC PATCH 23/40] soundwire: stream: fix disable
+ sequence
+To:     Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
+Cc:     alsa-devel@alsa-project.org, tiwai@suse.de,
+        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        vkoul@kernel.org, broonie@kernel.org,
+        srinivas.kandagatla@linaro.org, jank@cadence.com,
+        slawomir.blauciak@intel.com, Sanyog Kale <sanyog.r.kale@intel.com>
+References: <20190725234032.21152-1-pierre-louis.bossart@linux.intel.com>
+ <20190725234032.21152-24-pierre-louis.bossart@linux.intel.com>
+ <20190726145129.GI16003@ubuntu>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <8ec39464-81f7-e29d-7a2c-b2903a7fbf60@linux.intel.com>
+Date:   Fri, 26 Jul 2019 10:05:54 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20190726145129.GI16003@ubuntu>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Distribution installation images such as Debian include different sets
-of modules which can be downloaded dynamically.  Such images may notably
-include the hda sound modules but not the i915 DRM module, even if the
-latter was enabled at build time, as reported on
-https://bugs.debian.org/931507
 
-In such a case hdac_i915 would be linked in and try to load the i915
-module, fail since it is not there, but still wait for a whole minute
-before giving up binding with it.
+> Unrelated to this specific patch, but I looked at _sdw_disable_stream()
+> and I see this there (again, maybe my version is outdated already):
+> 
+> 	struct sdw_master_runtime *m_rt = NULL;
+> 	struct sdw_bus *bus = NULL;
+> 
+> where both those initialisations are redundant. Moreover:
 
-This fixes such as case by only waiting for the binding if the module
-was properly loaded (or module support is disabled, in which case i915
-is already compiled-in anyway).
+will look at this, thanks.
 
-Signed-off-by: Samuel Thibault <samuel.thibault@ens-lyon.org>
----
- sound/hda/hdac_i915.c |   12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+> 
+> On Thu, Jul 25, 2019 at 06:40:15PM -0500, Pierre-Louis Bossart wrote:
+>> When we disable the stream and then call hw_free, two bank switches
+>> will be handled and as a result we re-enable the stream on hw_free.
+>>
+>> Make sure the stream is disabled on both banks.
+>>
+>> TODO: we need to completely revisit all this and make sure we have a
+>> mirroring mechanism between current and alternate banks.
+>>
+>> Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+>> ---
+>>   drivers/soundwire/stream.c | 19 ++++++++++++++++++-
+>>   1 file changed, 18 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/soundwire/stream.c b/drivers/soundwire/stream.c
+>> index 53f5e790fcd7..75b9ad1fb1a6 100644
+>> --- a/drivers/soundwire/stream.c
+>> +++ b/drivers/soundwire/stream.c
+>> @@ -1637,7 +1637,24 @@ static int _sdw_disable_stream(struct sdw_stream_runtime *stream)
+>>   		}
+>>   	}
+>>   
+>> -	return do_bank_switch(stream);
+>> +	ret = do_bank_switch(stream);
+>> +	if (ret < 0) {
+>> +		dev_err(bus->dev, "Bank switch failed: %d\n", ret);
+>> +		return ret;
+>> +	}
+>> +
+>> +	/* make sure alternate bank (previous current) is also disabled */
+>> +	list_for_each_entry(m_rt, &stream->master_list, stream_node) {
+>> +		bus = m_rt->bus;
+> 
+> "bus" is only used below, so at least take that line under "if (ret < 0)"
+> or even just do "dev_err(m_rt->bus->dev,...)" everywhere in this function
+> and remove the variable altogether...
 
---- a/sound/hda/hdac_i915.c
-+++ b/sound/hda/hdac_i915.c
-@@ -143,10 +143,14 @@ int snd_hdac_i915_init(struct hdac_bus *
- 	if (!acomp)
- 		return -ENODEV;
- 	if (!acomp->ops) {
--		request_module("i915");
--		/* 60s timeout */
--		wait_for_completion_timeout(&bind_complete,
--					    msecs_to_jiffies(60 * 1000));
-+#ifdef CONFIG_MODULES
-+		if (request_module("i915") == 0)
-+#endif
-+		{
-+			/* 60s timeout */
-+			wait_for_completion_timeout(&bind_complete,
-+						   msecs_to_jiffies(60 * 1000));
-+		}
- 	}
- 	if (!acomp->ops) {
- 		dev_info(bus->dev, "couldn't bind with audio component\n");
+will look at this, thanks Guennadi
+
+> 
+> Thanks
+> Guennadi
+> 
+>> +		/* Disable port(s) */
+>> +		ret = sdw_enable_disable_ports(m_rt, false);
+>> +		if (ret < 0) {
+>> +			dev_err(bus->dev, "Disable port(s) failed: %d\n", ret);
+>> +			return ret;
