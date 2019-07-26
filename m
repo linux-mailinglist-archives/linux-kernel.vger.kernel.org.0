@@ -2,38 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 037B276AD0
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 16:01:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2149476AA9
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 16:00:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388747AbfGZOBC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 10:01:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45902 "EHLO mail.kernel.org"
+        id S1727611AbfGZNkL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 09:40:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46018 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727300AbfGZNkB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 09:40:01 -0400
+        id S1727575AbfGZNkH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 09:40:07 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1EB6A22BEF;
-        Fri, 26 Jul 2019 13:39:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 47FB622BF5;
+        Fri, 26 Jul 2019 13:40:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564148399;
-        bh=AENY1n9cHSbUJWQ9s5zvXU2DDrcP++82T2pATxOVbTU=;
+        s=default; t=1564148406;
+        bh=iRNqSiuw0WWltpKRN5X7jUlnCo+TpcQGXiHSgh5eqMI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ktGnGh9bfy1hNdjz8KLcgk0gsnERHlTWC/evuHDG7e5mhySUnvGQB0n05p2SoZWWK
-         uyzgQ4Otbvex3gxZdUzeWugtRHRNVRgdmXtbwMm+VKAkZa5kvzixHN650Cueda2IqQ
-         EKRxpXYISc89HRMR+8alqURB/wWy8EzKSood+Qr0=
+        b=0+BZ9qO3HO3Lv+2S1zOxKsRWPrk2zCm93HAagGr/eJJN7r5xAIZvHT83Bva7RN/S5
+         sVRMKhd4gdnMh52/No96VpnxSWUj9nelRpUqQpNQg+Pyc4wNTil0vUyh5mc9SjZQRc
+         XhSrT0zK8H1fTq2+xGRpixzfrACKqP+9+ykCm7MI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Prarit Bhargava <prarit@redhat.com>,
-        Barret Rhoden <brho@google.com>,
-        David Arcari <darcari@redhat.com>,
-        Jessica Yu <jeyu@kernel.org>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
+Cc:     Anson Huang <Anson.Huang@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.2 13/85] kernel/module.c: Only return -EEXIST for modules that have finished loading
-Date:   Fri, 26 Jul 2019 09:38:23 -0400
-Message-Id: <20190726133936.11177-13-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.2 16/85] soc: imx8: Fix potential kernel dump in error path
+Date:   Fri, 26 Jul 2019 09:38:26 -0400
+Message-Id: <20190726133936.11177-16-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190726133936.11177-1-sashal@kernel.org>
 References: <20190726133936.11177-1-sashal@kernel.org>
@@ -46,73 +42,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Prarit Bhargava <prarit@redhat.com>
+From: Anson Huang <Anson.Huang@nxp.com>
 
-[ Upstream commit 6e6de3dee51a439f76eb73c22ae2ffd2c9384712 ]
+[ Upstream commit 1bcbe7300815e91fef18ee905b04f65490ad38c9 ]
 
-Microsoft HyperV disables the X86_FEATURE_SMCA bit on AMD systems, and
-linux guests boot with repeated errors:
+When SoC's revision value is 0, SoC driver will print out
+"unknown" in sysfs's revision node, this "unknown" is a
+static string which can NOT be freed, this will caused below
+kernel dump in later error path which calls kfree:
 
-amd64_edac_mod: Unknown symbol amd_unregister_ecc_decoder (err -2)
-amd64_edac_mod: Unknown symbol amd_register_ecc_decoder (err -2)
-amd64_edac_mod: Unknown symbol amd_report_gart_errors (err -2)
-amd64_edac_mod: Unknown symbol amd_unregister_ecc_decoder (err -2)
-amd64_edac_mod: Unknown symbol amd_register_ecc_decoder (err -2)
-amd64_edac_mod: Unknown symbol amd_report_gart_errors (err -2)
+kernel BUG at mm/slub.c:3942!
+Internal error: Oops - BUG: 0 [#1] PREEMPT SMP
+Modules linked in:
+CPU: 2 PID: 1 Comm: swapper/0 Not tainted 5.2.0-rc4-next-20190611-00023-g705146c-dirty #2197
+Hardware name: NXP i.MX8MQ EVK (DT)
+pstate: 60000005 (nZCv daif -PAN -UAO)
+pc : kfree+0x170/0x1b0
+lr : imx8_soc_init+0xc0/0xe4
+sp : ffff00001003bd10
+x29: ffff00001003bd10 x28: ffff00001121e0a0
+x27: ffff000011482000 x26: ffff00001117068c
+x25: ffff00001121e100 x24: ffff000011482000
+x23: ffff000010fe2b58 x22: ffff0000111b9ab0
+x21: ffff8000bd9dfba0 x20: ffff0000111b9b70
+x19: ffff7e000043f880 x18: 0000000000001000
+x17: ffff000010d05fa0 x16: ffff0000122e0000
+x15: 0140000000000000 x14: 0000000030360000
+x13: ffff8000b94b5bb0 x12: 0000000000000038
+x11: ffffffffffffffff x10: ffffffffffffffff
+x9 : 0000000000000003 x8 : ffff8000b9488147
+x7 : ffff00001003bc00 x6 : 0000000000000000
+x5 : 0000000000000003 x4 : 0000000000000003
+x3 : 0000000000000003 x2 : b8793acd604edf00
+x1 : ffff7e000043f880 x0 : ffff7e000043f888
+Call trace:
+ kfree+0x170/0x1b0
+ imx8_soc_init+0xc0/0xe4
+ do_one_initcall+0x58/0x1b8
+ kernel_init_freeable+0x1cc/0x288
+ kernel_init+0x10/0x100
+ ret_from_fork+0x10/0x18
 
-The warnings occur because the module code erroneously returns -EEXIST
-for modules that have failed to load and are in the process of being
-removed from the module list.
+This patch fixes this potential kernel dump when a chip's
+revision is "unknown", it is done by checking whether the
+revision space can be freed.
 
-module amd64_edac_mod has a dependency on module edac_mce_amd.  Using
-modules.dep, systemd will load edac_mce_amd for every request of
-amd64_edac_mod.  When the edac_mce_amd module loads, the module has
-state MODULE_STATE_UNFORMED and once the module load fails and the state
-becomes MODULE_STATE_GOING.  Another request for edac_mce_amd module
-executes and add_unformed_module() will erroneously return -EEXIST even
-though the previous instance of edac_mce_amd has MODULE_STATE_GOING.
-Upon receiving -EEXIST, systemd attempts to load amd64_edac_mod, which
-fails because of unknown symbols from edac_mce_amd.
-
-add_unformed_module() must wait to return for any case other than
-MODULE_STATE_LIVE to prevent a race between multiple loads of
-dependent modules.
-
-Signed-off-by: Prarit Bhargava <prarit@redhat.com>
-Signed-off-by: Barret Rhoden <brho@google.com>
-Cc: David Arcari <darcari@redhat.com>
-Cc: Jessica Yu <jeyu@kernel.org>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
-Signed-off-by: Jessica Yu <jeyu@kernel.org>
+Fixes: a7e26f356ca1 ("soc: imx: Add generic i.MX8 SoC driver")
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Signed-off-by: Shawn Guo <shawnguo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/module.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/soc/imx/soc-imx8.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/module.c b/kernel/module.c
-index 80c7c09584cf..8431c3d47c97 100644
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@ -3385,8 +3385,7 @@ static bool finished_loading(const char *name)
- 	sched_annotate_sleep();
- 	mutex_lock(&module_mutex);
- 	mod = find_module_all(name, strlen(name), true);
--	ret = !mod || mod->state == MODULE_STATE_LIVE
--		|| mod->state == MODULE_STATE_GOING;
-+	ret = !mod || mod->state == MODULE_STATE_LIVE;
- 	mutex_unlock(&module_mutex);
+diff --git a/drivers/soc/imx/soc-imx8.c b/drivers/soc/imx/soc-imx8.c
+index e567d866a9d3..79a3d922a4a9 100644
+--- a/drivers/soc/imx/soc-imx8.c
++++ b/drivers/soc/imx/soc-imx8.c
+@@ -112,7 +112,8 @@ static int __init imx8_soc_init(void)
+ 	return 0;
  
- 	return ret;
-@@ -3576,8 +3575,7 @@ static int add_unformed_module(struct module *mod)
- 	mutex_lock(&module_mutex);
- 	old = find_module_all(mod->name, strlen(mod->name), true);
- 	if (old != NULL) {
--		if (old->state == MODULE_STATE_COMING
--		    || old->state == MODULE_STATE_UNFORMED) {
-+		if (old->state != MODULE_STATE_LIVE) {
- 			/* Wait in case it fails to load. */
- 			mutex_unlock(&module_mutex);
- 			err = wait_event_interruptible(module_wq,
+ free_rev:
+-	kfree(soc_dev_attr->revision);
++	if (strcmp(soc_dev_attr->revision, "unknown"))
++		kfree(soc_dev_attr->revision);
+ free_soc:
+ 	kfree(soc_dev_attr);
+ 	of_node_put(root);
 -- 
 2.20.1
 
