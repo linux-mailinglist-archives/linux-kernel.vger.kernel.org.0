@@ -2,198 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C71676B69
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 16:21:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BB0C76B73
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 16:22:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727787AbfGZOV2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 10:21:28 -0400
-Received: from ms.lwn.net ([45.79.88.28]:50366 "EHLO ms.lwn.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725869AbfGZOV1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 10:21:27 -0400
-Received: from lwn.net (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id 7FD822B7;
-        Fri, 26 Jul 2019 14:21:26 +0000 (UTC)
-Date:   Fri, 26 Jul 2019 08:21:25 -0600
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@infradead.org>
-Subject: [GIT PULL] Documentation fixes for 5.3
-Message-ID: <20190726082125.0c8467e9@lwn.net>
-Organization: LWN.net
+        id S2387471AbfGZOWd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 10:22:33 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:34552 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725869AbfGZOWc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 10:22:32 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 1DB942EE39331E641556;
+        Fri, 26 Jul 2019 22:22:30 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS409-HUB.china.huawei.com
+ (10.3.19.209) with Microsoft SMTP Server id 14.3.439.0; Fri, 26 Jul 2019
+ 22:22:23 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <jeesw@melfas.com>, <dmitry.torokhov@gmail.com>
+CC:     <linux-kernel@vger.kernel.org>, <linux-input@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] Input: melfas_mip4 - remove set but not used variables
+Date:   Fri, 26 Jul 2019 22:22:16 +0800
+Message-ID: <20190726142216.35212-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit
-5f9e832c137075045d15cd6899ab0505cfb2ca4b:
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-  Linus 5.3-rc1 (2019-07-21 14:05:38 -0700)
+drivers/input/touchscreen/melfas_mip4.c: In function 'mip4_report_touch':
+drivers/input/touchscreen/melfas_mip4.c:474:5: warning: variable 'size' set but not used [-Wunused-but-set-variable]
+drivers/input/touchscreen/melfas_mip4.c:472:5: warning: variable 'pressure_stage' set but not used [-Wunused-but-set-variable]
+drivers/input/touchscreen/melfas_mip4.c:469:7: warning: variable 'palm' set but not used [-Wunused-but-set-variable]
+drivers/input/touchscreen/melfas_mip4.c:468:7: warning: variable 'hover' set but not used [-Wunused-but-set-variable]
 
-are available in the Git repository at:
+They are never used so can be removed.
 
-  git://git.lwn.net/linux.git tags/docs-5.3-1
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/input/touchscreen/melfas_mip4.c | 11 -----------
+ 1 file changed, 11 deletions(-)
 
-for you to fetch changes up to d2eba640a4b96bc1bdc0f4a500b8b8d5e16725c8:
+diff --git a/drivers/input/touchscreen/melfas_mip4.c b/drivers/input/touchscreen/melfas_mip4.c
+index 247c3aa..d291a82 100644
+--- a/drivers/input/touchscreen/melfas_mip4.c
++++ b/drivers/input/touchscreen/melfas_mip4.c
+@@ -465,13 +465,9 @@ static void mip4_report_keys(struct mip4_ts *ts, u8 *packet)
+ static void mip4_report_touch(struct mip4_ts *ts, u8 *packet)
+ {
+ 	int id;
+-	bool hover;
+-	bool palm;
+ 	bool state;
+ 	u16 x, y;
+-	u8 pressure_stage = 0;
+ 	u8 pressure;
+-	u8 size;
+ 	u8 touch_major;
+ 	u8 touch_minor;
+ 
+@@ -480,14 +476,11 @@ static void mip4_report_touch(struct mip4_ts *ts, u8 *packet)
+ 	case 1:
+ 		/* Touch only */
+ 		state = packet[0] & BIT(7);
+-		hover = packet[0] & BIT(5);
+-		palm = packet[0] & BIT(4);
+ 		id = (packet[0] & 0x0F) - 1;
+ 		x = ((packet[1] & 0x0F) << 8) | packet[2];
+ 		y = (((packet[1] >> 4) & 0x0F) << 8) |
+ 			packet[3];
+ 		pressure = packet[4];
+-		size = packet[5];
+ 		if (ts->event_format == 0) {
+ 			touch_major = packet[5];
+ 			touch_minor = packet[5];
+@@ -501,14 +494,10 @@ static void mip4_report_touch(struct mip4_ts *ts, u8 *packet)
+ 	default:
+ 		/* Touch + Force(Pressure) */
+ 		id = (packet[0] & 0x0F) - 1;
+-		hover = packet[1] & BIT(2);
+-		palm = packet[1] & BIT(1);
+ 		state = packet[1] & BIT(0);
+ 		x = ((packet[2] & 0x0F) << 8) | packet[3];
+ 		y = (((packet[2] >> 4) & 0x0F) << 8) |
+ 			packet[4];
+-		size = packet[6];
+-		pressure_stage = (packet[7] & 0xF0) >> 4;
+ 		pressure = ((packet[7] & 0x0F) << 8) |
+ 			packet[8];
+ 		touch_major = packet[9];
+-- 
+2.7.4
 
-  docs: phy: Drop duplicate 'be made' (2019-07-26 08:15:26 -0600)
 
-----------------------------------------------------------------
-This is mostly a set of follow-on fixes from Mauro fixing various fallout
-from the massive RST conversion; a few other small fixes as well.
-
-----------------------------------------------------------------
-Federico Vaga (3):
-      doc:it_IT: align translation to mainline
-      doc:it_IT: rephrase statement
-      doc:it_IT: translations in process/
-
-Guido Günther (1):
-      docs: phy: Drop duplicate 'be made'
-
-Jeremy Cline (1):
-      docs/vm: transhuge: fix typo in madvise reference
-
-Jonathan Corbet (2):
-      Merge tag 'v5.3-rc1' into docs-next
-      Merge branch 'pdf_fixes_v1' of https://git.linuxtv.org/mchehab/experimental into mauro
-
-Marcus Folkesson (1):
-      docs: driver-api: generic-counter: fix file path to ABI doc
-
-Mauro Carvalho Chehab (15):
-      docs: powerpc: convert docs to ReST and rename to *.rst
-      docs: power: add it to to the main documentation index
-      docs: fix broken doc references due to renames
-      docs: pdf: add all Documentation/*/index.rst to PDF output
-      docs: conf.py: add CJK package needed by translations
-      docs: conf.py: only use CJK if the font is available
-      scripts/sphinx-pre-install: fix script for RHEL/CentOS
-      scripts/sphinx-pre-install: don't use LaTeX with CentOS 7
-      scripts/sphinx-pre-install: fix latexmk dependencies
-      scripts/sphinx-pre-install: cleanup Gentoo checks
-      scripts/sphinx-pre-install: seek for Noto CJK fonts for pdf output
-      docs: load_config.py: avoid needing a conf.py just due to LaTeX docs
-      docs: remove extra conf.py files
-      docs: virtual: add it to the documentation body
-      docs: load_config.py: ensure subdirs end with "/"
-
- Documentation/PCI/pci-error-recovery.rst           |   5 +-
- Documentation/RCU/rculist_nulls.txt                |   2 +-
- Documentation/admin-guide/conf.py                  |  10 --
- Documentation/admin-guide/mm/transhuge.rst         |   2 +-
- Documentation/conf.py                              |  30 +++-
- Documentation/core-api/conf.py                     |  10 --
- Documentation/crypto/conf.py                       |  10 --
- Documentation/dev-tools/conf.py                    |  10 --
- .../devicetree/bindings/arm/idle-states.txt        |   2 +-
- Documentation/doc-guide/conf.py                    |  10 --
- Documentation/driver-api/80211/conf.py             |  10 --
- Documentation/driver-api/conf.py                   |  10 --
- Documentation/driver-api/generic-counter.rst       |   4 +-
- Documentation/driver-api/phy/phy.rst               |   4 +-
- Documentation/driver-api/pm/conf.py                |  10 --
- Documentation/filesystems/conf.py                  |  10 --
- Documentation/gpu/conf.py                          |  10 --
- Documentation/index.rst                            |   3 +
- Documentation/input/conf.py                        |  10 --
- Documentation/kernel-hacking/conf.py               |  10 --
- Documentation/locking/spinlocks.rst                |   4 +-
- Documentation/maintainer/conf.py                   |  10 --
- Documentation/media/conf.py                        |  12 --
- Documentation/memory-barriers.txt                  |   2 +-
- Documentation/networking/conf.py                   |  10 --
- Documentation/power/index.rst                      |   2 +-
- .../powerpc/{bootwrapper.txt => bootwrapper.rst}   |  28 +++-
- .../powerpc/{cpu_families.txt => cpu_families.rst} |  23 +--
- .../powerpc/{cpu_features.txt => cpu_features.rst} |   6 +-
- Documentation/powerpc/{cxl.txt => cxl.rst}         |  46 ++++--
- .../powerpc/{cxlflash.txt => cxlflash.rst}         |  10 +-
- .../powerpc/{DAWR-POWER9.txt => dawr-power9.rst}   |  15 +-
- Documentation/powerpc/{dscr.txt => dscr.rst}       |  18 ++-
- ...ror-recovery.txt => eeh-pci-error-recovery.rst} | 108 +++++++-------
- ...ssisted-dump.txt => firmware-assisted-dump.rst} | 117 +++++++++-------
- Documentation/powerpc/{hvcs.txt => hvcs.rst}       | 108 +++++++-------
- Documentation/powerpc/index.rst                    |  34 +++++
- Documentation/powerpc/isa-versions.rst             |  15 +-
- Documentation/powerpc/{mpc52xx.txt => mpc52xx.rst} |  12 +-
- ...powernv.txt => pci_iov_resource_on_powernv.rst} |  15 +-
- Documentation/powerpc/{pmu-ebb.txt => pmu-ebb.rst} |   1 +
- Documentation/powerpc/ptrace.rst                   | 156 +++++++++++++++++++++
- Documentation/powerpc/ptrace.txt                   | 151 --------------------
- .../powerpc/{qe_firmware.txt => qe_firmware.rst}   |  37 ++---
- .../{syscall64-abi.txt => syscall64-abi.rst}       |  29 ++--
- ...ctional_memory.txt => transactional_memory.rst} |  45 +++---
- Documentation/process/conf.py                      |  10 --
- Documentation/sh/conf.py                           |  10 --
- Documentation/sound/conf.py                        |  10 --
- Documentation/sphinx/load_config.py                |  27 +++-
- .../translations/it_IT/doc-guide/sphinx.rst        |  19 +--
- Documentation/translations/it_IT/process/index.rst |   1 +
- .../translations/it_IT/process/kernel-docs.rst     |  11 +-
- .../it_IT/process/maintainer-pgp-guide.rst         |  25 ++--
- .../it_IT/process/programming-language.rst         |  51 +++++++
- .../translations/ko_KR/memory-barriers.txt         |   2 +-
- Documentation/userspace-api/conf.py                |  10 --
- Documentation/virtual/kvm/index.rst                |   1 +
- Documentation/vm/conf.py                           |  10 --
- Documentation/watchdog/hpwdt.rst                   |   2 +-
- Documentation/x86/conf.py                          |  10 --
- MAINTAINERS                                        |  14 +-
- arch/powerpc/kernel/exceptions-64s.S               |   2 +-
- drivers/gpu/drm/drm_modes.c                        |   2 +-
- drivers/i2c/busses/i2c-nvidia-gpu.c                |   2 +-
- drivers/scsi/hpsa.c                                |   4 +-
- drivers/soc/fsl/qe/qe.c                            |   2 +-
- drivers/tty/hvc/hvcs.c                             |   2 +-
- include/soc/fsl/qe/qe.h                            |   2 +-
- scripts/sphinx-pre-install                         | 118 +++++++++++++---
- 70 files changed, 830 insertions(+), 703 deletions(-)
- delete mode 100644 Documentation/admin-guide/conf.py
- delete mode 100644 Documentation/core-api/conf.py
- delete mode 100644 Documentation/crypto/conf.py
- delete mode 100644 Documentation/dev-tools/conf.py
- delete mode 100644 Documentation/doc-guide/conf.py
- delete mode 100644 Documentation/driver-api/80211/conf.py
- delete mode 100644 Documentation/driver-api/conf.py
- delete mode 100644 Documentation/driver-api/pm/conf.py
- delete mode 100644 Documentation/filesystems/conf.py
- delete mode 100644 Documentation/gpu/conf.py
- delete mode 100644 Documentation/input/conf.py
- delete mode 100644 Documentation/kernel-hacking/conf.py
- delete mode 100644 Documentation/maintainer/conf.py
- delete mode 100644 Documentation/media/conf.py
- delete mode 100644 Documentation/networking/conf.py
- rename Documentation/powerpc/{bootwrapper.txt => bootwrapper.rst} (93%)
- rename Documentation/powerpc/{cpu_families.txt => cpu_families.rst} (95%)
- rename Documentation/powerpc/{cpu_features.txt => cpu_features.rst} (97%)
- rename Documentation/powerpc/{cxl.txt => cxl.rst} (95%)
- rename Documentation/powerpc/{cxlflash.txt => cxlflash.rst} (98%)
- rename Documentation/powerpc/{DAWR-POWER9.txt => dawr-power9.rst} (95%)
- rename Documentation/powerpc/{dscr.txt => dscr.rst} (91%)
- rename Documentation/powerpc/{eeh-pci-error-recovery.txt => eeh-pci-error-recovery.rst} (82%)
- rename Documentation/powerpc/{firmware-assisted-dump.txt => firmware-assisted-dump.rst} (80%)
- rename Documentation/powerpc/{hvcs.txt => hvcs.rst} (91%)
- create mode 100644 Documentation/powerpc/index.rst
- rename Documentation/powerpc/{mpc52xx.txt => mpc52xx.rst} (91%)
- rename Documentation/powerpc/{pci_iov_resource_on_powernv.txt => pci_iov_resource_on_powernv.rst} (97%)
- rename Documentation/powerpc/{pmu-ebb.txt => pmu-ebb.rst} (99%)
- create mode 100644 Documentation/powerpc/ptrace.rst
- delete mode 100644 Documentation/powerpc/ptrace.txt
- rename Documentation/powerpc/{qe_firmware.txt => qe_firmware.rst} (95%)
- rename Documentation/powerpc/{syscall64-abi.txt => syscall64-abi.rst} (82%)
- rename Documentation/powerpc/{transactional_memory.txt => transactional_memory.rst} (93%)
- delete mode 100644 Documentation/process/conf.py
- delete mode 100644 Documentation/sh/conf.py
- delete mode 100644 Documentation/sound/conf.py
- create mode 100644 Documentation/translations/it_IT/process/programming-language.rst
- delete mode 100644 Documentation/userspace-api/conf.py
- delete mode 100644 Documentation/vm/conf.py
- delete mode 100644 Documentation/x86/conf.py
