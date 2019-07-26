@@ -2,30 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 675D37735D
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 23:24:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 185C677366
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 23:24:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728389AbfGZVYM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 17:24:12 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:50433 "EHLO
+        id S1728584AbfGZVYn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 17:24:43 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:50437 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728353AbfGZVYJ (ORCPT
+        with ESMTP id S1726102AbfGZVYK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 17:24:09 -0400
+        Fri, 26 Jul 2019 17:24:10 -0400
 Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1hr7hA-00030y-0X; Fri, 26 Jul 2019 23:24:08 +0200
-Message-Id: <20190726212124.409766323@linutronix.de>
+        id 1hr7hA-000313-Ex; Fri, 26 Jul 2019 23:24:08 +0200
+Message-Id: <20190726212124.516286187@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Fri, 26 Jul 2019 23:19:40 +0200
+Date:   Fri, 26 Jul 2019 23:19:41 +0200
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
         Masami Hiramatsu <mhiramat@kernel.org>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
         Paolo Bonzini <pbonzini@redhat.com>
-Subject: [patch 4/8] tracing: Use CONFIG_PREEMPTION
+Subject: [patch 5/8] kprobes: Use CONFIG_PREEMPTION
 References: <20190726211936.226129163@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -38,77 +38,24 @@ CONFIG_PREEMPTION is selected by CONFIG_PREEMPT and by
 CONFIG_PREEMPT_RT. Both PREEMPT and PREEMPT_RT require the same
 functionality which today depends on CONFIG_PREEMPT.
 
-Switch the conditionals in the tracer over to CONFIG_PREEMPTION.
-
-This is the first step to make the tracer work on RT. The other small
-tweaks are submitted separately.
+Switch kprobes conditional over to CONFIG_PREEMPTION.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
 ---
- kernel/trace/Kconfig                 |    4 ++--
- kernel/trace/ftrace.c                |    2 +-
- kernel/trace/ring_buffer_benchmark.c |    2 +-
- kernel/trace/trace_events.c          |    4 ++--
- 4 files changed, 6 insertions(+), 6 deletions(-)
+ kernel/kprobes.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/kernel/trace/Kconfig
-+++ b/kernel/trace/Kconfig
-@@ -179,7 +179,7 @@ config TRACE_PREEMPT_TOGGLE
- config PREEMPTIRQ_EVENTS
- 	bool "Enable trace events for preempt and irq disable/enable"
- 	select TRACE_IRQFLAGS
--	select TRACE_PREEMPT_TOGGLE if PREEMPT
-+	select TRACE_PREEMPT_TOGGLE if PREEMPTION
- 	select GENERIC_TRACER
- 	default n
- 	help
-@@ -214,7 +214,7 @@ config PREEMPT_TRACER
- 	bool "Preemption-off Latency Tracer"
- 	default n
- 	depends on !ARCH_USES_GETTIMEOFFSET
--	depends on PREEMPT
-+	depends on PREEMPTION
- 	select GENERIC_TRACER
- 	select TRACER_MAX_TRACE
- 	select RING_BUFFER_ALLOW_SWAP
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -2814,7 +2814,7 @@ int ftrace_shutdown(struct ftrace_ops *o
- 		 * synchornize_rcu_tasks() will wait for those tasks to
- 		 * execute and either schedule voluntarily or enter user space.
- 		 */
--		if (IS_ENABLED(CONFIG_PREEMPT))
-+		if (IS_ENABLED(CONFIG_PREEMPTION))
- 			synchronize_rcu_tasks();
+--- a/kernel/kprobes.c
++++ b/kernel/kprobes.c
+@@ -1906,7 +1906,7 @@ int register_kretprobe(struct kretprobe
  
-  free_ops:
---- a/kernel/trace/ring_buffer_benchmark.c
-+++ b/kernel/trace/ring_buffer_benchmark.c
-@@ -267,7 +267,7 @@ static void ring_buffer_producer(void)
- 		if (consumer && !(cnt % wakeup_interval))
- 			wake_up_process(consumer);
- 
--#ifndef CONFIG_PREEMPT
-+#ifndef CONFIG_PREEMPTION
- 		/*
- 		 * If we are a non preempt kernel, the 10 second run will
- 		 * stop everything while it runs. Instead, we will call
---- a/kernel/trace/trace_events.c
-+++ b/kernel/trace/trace_events.c
-@@ -255,12 +255,12 @@ void *trace_event_buffer_reserve(struct
- 	local_save_flags(fbuffer->flags);
- 	fbuffer->pc = preempt_count();
- 	/*
--	 * If CONFIG_PREEMPT is enabled, then the tracepoint itself disables
-+	 * If CONFIG_PREEMPTION is enabled, then the tracepoint itself disables
- 	 * preemption (adding one to the preempt_count). Since we are
- 	 * interested in the preempt_count at the time the tracepoint was
- 	 * hit, we need to subtract one to offset the increment.
- 	 */
--	if (IS_ENABLED(CONFIG_PREEMPT))
-+	if (IS_ENABLED(CONFIG_PREEMPTION))
- 		fbuffer->pc--;
- 	fbuffer->trace_file = trace_file;
- 
+ 	/* Pre-allocate memory for max kretprobe instances */
+ 	if (rp->maxactive <= 0) {
+-#ifdef CONFIG_PREEMPT
++#ifdef CONFIG_PREEMPTION
+ 		rp->maxactive = max_t(unsigned int, 10, 2*num_possible_cpus());
+ #else
+ 		rp->maxactive = num_possible_cpus();
 
 
