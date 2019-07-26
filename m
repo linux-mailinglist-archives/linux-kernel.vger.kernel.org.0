@@ -2,84 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 556A2764B8
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 13:43:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 823BC764C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 13:45:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726130AbfGZLna (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 07:43:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44720 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725903AbfGZLn3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 07:43:29 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 69DED229F3;
-        Fri, 26 Jul 2019 11:43:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564141408;
-        bh=5yhEY4/CW3iFSx6x2N72Exb83PWgWW4WYbcupxxH+EQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=2agoaOv3lpVGYhSQxrkRuDOARn2KEXJcqmDa7xybgtHiM6/IJNjdpLnyRHt7Aubtc
-         X8i7PeL0fMglVJ+kGD7HlNNxki0h00bW92TbkewMZwyidxTXpksfKgvJIVrarwrs/f
-         4bwd5fiplYiGBI4MZPkaodlW/in25rCAMv7VrmOs=
-Date:   Fri, 26 Jul 2019 13:43:25 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Cc:     Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Leo Yan <leo.yan@linaro.org>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [Regression] Missing device nodes for ETR, ETF and STM after
- CONFIG_UEVENT_HELPER=n
-Message-ID: <20190726114325.GA18727@kroah.com>
-References: <cfe09a46-462f-633a-37c2-52f8bfc0ffb2@codeaurora.org>
- <20190726070429.GA15714@kroah.com>
- <165028a7-ff12-dd28-cc4c-57a3961dbb40@codeaurora.org>
- <20190726084127.GA28470@kroah.com>
- <097942a1-6914-2542-450f-65a6147dc7aa@codeaurora.org>
- <6d48f996-6297-dc69-250b-790be6d2670c@codeaurora.org>
- <20190726101925.GA22476@kroah.com>
- <20190726133316.688a43d8@windsurf>
+        id S1726385AbfGZLph (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 07:45:37 -0400
+Received: from mail-yb1-f195.google.com ([209.85.219.195]:38985 "EHLO
+        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726298AbfGZLpd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 07:45:33 -0400
+Received: by mail-yb1-f195.google.com with SMTP id z128so16092831yba.6
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2019 04:45:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=2LG0AzeYCrP2HPh4ReaU07gb34Xc8BwShnIuQhHSCaA=;
+        b=eJy4qywY76PYX6Wq+0zlTbLlEE+um6eGdLbCQ4a9LkeyyavV0kCo1CzQ1MfPBYJRHx
+         mKRuwgeGGdIj0sI0lJuhlCTGJhzBlwxAw8ouHd+LhwuTOL66GBFLIypxORhqhGAhgFwJ
+         yIvoLtiCqbodpU3TEp26OSbXbBawiJr76Ul80QWH/Jlx8mbbIE2AwyLn4CzxpOiInTx4
+         rMDYMjB8Mw7yi7UqypknsRP35NtBUQHseHV4y43s931zqUwIPBQbX+UQblxDYV3xivMA
+         /lnWdjX2Wc0qBe9HTFcYuqET4O4jPnwNLYf3tMUBBNUmkmUOibQ3JMvBCaBkoIWtY5iI
+         OVjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2LG0AzeYCrP2HPh4ReaU07gb34Xc8BwShnIuQhHSCaA=;
+        b=aSYJTOsOST8tOspc9KMC5mrz3+tLw371r4hqryi5Ya7xW4rzCB+lsDsPNClnZWCwmb
+         ULQjTYZOoF37cugML85jhunJVxV2fqoEJKktDFSI0JYAmTG90g8K8Y4Ai2okkixMierM
+         v5y3mXQazEKZV9yiwFqGAorTkJEtQOR8r0D2g5RestPhZCRXMbp6KBrBFB6g2aRDuigu
+         aZo2EjFIX4O8ZXDAUdFjyh4EEPnwpo6eHAO06wVkkuxEKqFsIALh+8JubJDsWvd2PRbT
+         5/r8Lv7ZV0lcLYCky01OGeo8p66lOfZNbQeE8DxzQgLxzchdo5g+D8HtKpjYnMY5d7Ba
+         10PA==
+X-Gm-Message-State: APjAAAVxrPaNe+uA667EHLLEd1L/kz3XDVNftrZMJDPV+0gyERx21myg
+        xd4IEolloGY1BZJQHWm9k8N1SNFT
+X-Google-Smtp-Source: APXvYqwUSmv1XDUd9+WpEG48JCFSHgo/pwzjHbwEwbVPga0swHQcKgwZ6t8wDuaRkGD3u0oXQM9ARQ==
+X-Received: by 2002:a25:324b:: with SMTP id y72mr51809197yby.146.1564141532194;
+        Fri, 26 Jul 2019 04:45:32 -0700 (PDT)
+Received: from mail-yw1-f53.google.com (mail-yw1-f53.google.com. [209.85.161.53])
+        by smtp.gmail.com with ESMTPSA id q83sm12796555ywq.88.2019.07.26.04.45.30
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Fri, 26 Jul 2019 04:45:31 -0700 (PDT)
+Received: by mail-yw1-f53.google.com with SMTP id i138so20253200ywg.8
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2019 04:45:30 -0700 (PDT)
+X-Received: by 2002:a0d:c301:: with SMTP id f1mr53998273ywd.494.1564141530408;
+ Fri, 26 Jul 2019 04:45:30 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190726133316.688a43d8@windsurf>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+References: <20190726080307.4414-1-baijiaju1990@gmail.com>
+In-Reply-To: <20190726080307.4414-1-baijiaju1990@gmail.com>
+From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Date:   Fri, 26 Jul 2019 07:44:54 -0400
+X-Gmail-Original-Message-ID: <CA+FuTSenOG7Y_RK7TTLKjXzQbX35YR_TyM5QGrf17ue5+JesXA@mail.gmail.com>
+Message-ID: <CA+FuTSenOG7Y_RK7TTLKjXzQbX35YR_TyM5QGrf17ue5+JesXA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] net: ipv6: Fix a possible null-pointer dereference in ip6_xmit()
+To:     Jia-Ju Bai <baijiaju1990@gmail.com>
+Cc:     David Miller <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        Network Development <netdev@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 26, 2019 at 01:33:16PM +0200, Thomas Petazzoni wrote:
-> Hello,
-> 
-> On Fri, 26 Jul 2019 12:19:25 +0200
-> Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
-> 
-> > > This somehow is not mounting etr, etf, stm devices when uevent-helper is
-> > > disabled. Anyways as Suzuki mentioned, using devtmpfs does fix the issue.  
-> > 
-> > Last I looked (many years ago) mdev requires uevent-helper in order for
-> > it to work.  I recommend that if you rely on mdev to keep that option
-> > enabled, or to just use devtmpfs and udev :)
-> 
-> Since Busybox 1.31.0, mdev has gained a daemon mode. In this mode, mdev
-> runs in the background, and receives uevent through a netlink socket.
-> So there's been some changes in how Busybox mdev works in recent times.
+On Fri, Jul 26, 2019 at 4:03 AM Jia-Ju Bai <baijiaju1990@gmail.com> wrote:
+>
+> In ip6_xmit(), there is an if statement on line 245 to check whether
+> np is NULL:
+>     if (np)
+>
+> When np is NULL, it is used on line 251:
+>     ip6_autoflowlabel(net, np)
+>         if (!np->autoflowlabel_set)
+>
+> Thus, a possible null-pointer dereference may occur.
+>
+> To fix this bug, np is checked before calling
+> ip6_autoflowlabel(net,np).
+>
+> This bug is found by a static analysis tool STCheck written by us.
+>
+> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+> ---
+>  net/ipv6/ip6_output.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+>
+> diff --git a/net/ipv6/ip6_output.c b/net/ipv6/ip6_output.c
+> index 8e49fd62eea9..07db5ab6e970 100644
+> --- a/net/ipv6/ip6_output.c
+> +++ b/net/ipv6/ip6_output.c
+> @@ -247,8 +247,10 @@ int ip6_xmit(const struct sock *sk, struct sk_buff *skb, struct flowi6 *fl6,
+>         if (hlimit < 0)
+>                 hlimit = ip6_dst_hoplimit(dst);
+>
+> -       ip6_flow_hdr(hdr, tclass, ip6_make_flowlabel(net, skb, fl6->flowlabel,
+> -                               ip6_autoflowlabel(net, np), fl6));
+> +       if (np) {
+> +               ip6_flow_hdr(hdr, tclass, ip6_make_flowlabel(net, skb, fl6->flowlabel,
+> +                                       ip6_autoflowlabel(net, np), fl6));
+> +       }
 
-Ideally mdev should switch to what udev did many many years ago and not
-do any device node creations and just leave all of that up to devtmpfs.
-Then it can just stick to any symlinks and any specific owner:group
-permissions that might be wanted separate from the default ones the
-kernel provides.
+I don't know when np can be NULL in ip6_xmit. But if so, must still
+setup the ipv6 header.
 
-Makes things much simpler and should save a lot of userspace code,
-making mdev even smaller.
+A more narrow change would be in ip6_autoflowlabel
 
-thanks,
-
-greg k-h
+-        if (!np->autoflowlabel_set)
++       if (!np || !np->autoflowlabel_set)
