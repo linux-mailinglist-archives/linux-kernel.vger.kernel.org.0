@@ -2,114 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE35275EFF
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 08:26:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EB8EB75F0C
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 08:28:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726129AbfGZG0I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 02:26:08 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:58238 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725864AbfGZG0I (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 02:26:08 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 744C960734; Fri, 26 Jul 2019 06:26:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1564122367;
-        bh=EbZ8V/DEcs0/4znrzggpjMRyIZLsE99CLDSEHMkEF4I=;
-        h=Subject:From:To:References:Date:In-Reply-To:From;
-        b=ILMJwpgxOLX2eMtgJTBQuce8DNgvDGeX8Fpm10eLZD/HdmUS6W7P5UmYjWbBn+lB5
-         9x5adW3YYsZJNHhwCWsJoGNXroy9T3LjqHvpYuXQBCOMl04rizdTfcfLwl6zaV+1lE
-         zPPL4WGu+uPtys7m3XY8alF5gSFavlvz8jUpNWxc=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
-        version=3.4.0
-Received: from [10.79.136.27] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: saiprakash.ranjan@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id A593F6053D;
-        Fri, 26 Jul 2019 06:26:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1564122366;
-        bh=EbZ8V/DEcs0/4znrzggpjMRyIZLsE99CLDSEHMkEF4I=;
-        h=Subject:From:To:References:Date:In-Reply-To:From;
-        b=YVML3e72rFVZFteKr7KSCTHnPOEip/doe8dq52LfuNF0h09sTjHTNdY8LRGHJr5du
-         IpC5CaBa1tdz1E27R+2F5JPQCn14DLCYEfJ5Pcuk+ltSTL/tIfGwj5CPyrzMDiil2W
-         +1iCSORfJnl6EKLMKJuw5+TZU6va8B3Z60s68SpI=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A593F6053D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
-Subject: Re: [Regression] Missing device nodes for ETR, ETF and STM after
- CONFIG_UEVENT_HELPER=n
-From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Leo Yan <leo.yan@linaro.org>, linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <cfe09a46-462f-633a-37c2-52f8bfc0ffb2@codeaurora.org>
-Message-ID: <e3a01f7e-9662-415d-1e3d-df3734d3e305@codeaurora.org>
-Date:   Fri, 26 Jul 2019 11:56:02 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1726108AbfGZG2y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 02:28:54 -0400
+Received: from verein.lst.de ([213.95.11.211]:41795 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725867AbfGZG2x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 02:28:53 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id CA18068B02; Fri, 26 Jul 2019 08:28:49 +0200 (CEST)
+Date:   Fri, 26 Jul 2019 08:28:49 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Nicolin Chen <nicoleotsuka@gmail.com>
+Cc:     dafna.hirschfeld@collabora.com, hch@lst.de,
+        m.szyprowski@samsung.com, robin.murphy@arm.com,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] dma-contiguous: do not overwrite align in
+ dma_alloc_contiguous()
+Message-ID: <20190726062849.GE22881@lst.de>
+References: <20190725233959.15129-1-nicoleotsuka@gmail.com> <20190725233959.15129-2-nicoleotsuka@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <cfe09a46-462f-633a-37c2-52f8bfc0ffb2@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190725233959.15129-2-nicoleotsuka@gmail.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/26/2019 11:49 AM, Sai Prakash Ranjan wrote:
-> Hi,
+On Thu, Jul 25, 2019 at 04:39:58PM -0700, Nicolin Chen wrote:
+> The dma_alloc_contiguous() limits align at CONFIG_CMA_ALIGNMENT for
+> cma_alloc() however it does not restore it for the fallback routine.
+> This will result in a size mismatch between the allocation and free
+> when running in the fallback routines, if the align is larger than
+> CONFIG_CMA_ALIGNMENT.
 > 
-> When trying to test my coresight patches, I found that etr,etf and stm 
-> device nodes are missing from /dev.
+> This patch adds a cma_align to take care of cma_alloc() and prevent
+> the align from being overwritten.
 > 
-> Bisection gives this as the bad commit.
+> Fixes: fdaeec198ada ("dma-contiguous: add dma_{alloc,free}_contiguous() helpers")
+> Reported-by: Dafna Hirschfeld <dafna.hirschfeld@collabora.com>
+> Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
+> ---
+>  kernel/dma/contiguous.c | 9 +++++----
+>  1 file changed, 5 insertions(+), 4 deletions(-)
 > 
-> 1be01d4a57142ded23bdb9e0c8d9369e693b26cc is the first bad commit
-> commit 1be01d4a57142ded23bdb9e0c8d9369e693b26cc
-> Author: Geert Uytterhoeven <geert+renesas@glider.be>
-> Date:   Thu Mar 14 12:13:50 2019 +0100
-> 
->      driver: base: Disable CONFIG_UEVENT_HELPER by default
-> 
->      Since commit 7934779a69f1184f ("Driver-Core: disable /sbin/hotplug by
->      default"), the help text for the /sbin/hotplug fork-bomb says
->      "This should not be used today [...] creates a high system load, or
->      [...] out-of-memory situations during bootup".  The rationale for this
->      was that no recent mainstream system used this anymore (in 2010!).
-> 
->      A few years later, the complete uevent helper support was made 
-> optional
->      in commit 86d56134f1b67d0c ("kobject: Make support for uevent_helper
->      optional.").  However, if was still left enabled by default, to 
-> support
->      ancient userland.
-> 
->      Time passed by, and nothing should use this anymore, so it can be
->      disabled by default.
-> 
->      Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->      Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> 
->   drivers/base/Kconfig | 1 -
->   1 file changed, 1 deletion(-)
-> 
-> 
-FYI, I am testing on linux-next.
+> diff --git a/kernel/dma/contiguous.c b/kernel/dma/contiguous.c
+> index bfc0c17f2a3d..fa8cd0f0512e 100644
+> --- a/kernel/dma/contiguous.c
+> +++ b/kernel/dma/contiguous.c
+> @@ -233,6 +233,7 @@ struct page *dma_alloc_contiguous(struct device *dev, size_t size, gfp_t gfp)
+>  	int node = dev ? dev_to_node(dev) : NUMA_NO_NODE;
+>  	size_t count = PAGE_ALIGN(size) >> PAGE_SHIFT;
+>  	size_t align = get_order(PAGE_ALIGN(size));
+> +	size_t cma_align = CONFIG_CMA_ALIGNMENT;
+>  	struct page *page = NULL;
+>  	struct cma *cma = NULL;
+>  
+> @@ -241,11 +242,11 @@ struct page *dma_alloc_contiguous(struct device *dev, size_t size, gfp_t gfp)
+>  	else if (count > 1)
+>  		cma = dma_contiguous_default_area;
+>  
+> +	cma_align = min_t(size_t, align, cma_align);
+> +
+>  	/* CMA can be used only in the context which permits sleeping */
+> -	if (cma && gfpflags_allow_blocking(gfp)) {
+> -		align = min_t(size_t, align, CONFIG_CMA_ALIGNMENT);
+> -		page = cma_alloc(cma, count, align, gfp & __GFP_NOWARN);
+> -	}
+> +	if (cma && gfpflags_allow_blocking(gfp))
+> +		page = cma_alloc(cma, count, cma_align, gfp & __GFP_NOWARN);
 
-Thanks,
-Sai
-
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+Shouldn't cma_align be confined to the block guarded by
+"if (cma && gfpflags_allow_blocking(gfp))" so that we can optimize it
+away for configurations that do not support CMA?
