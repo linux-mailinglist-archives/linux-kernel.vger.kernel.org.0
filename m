@@ -2,88 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 69A7B768EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 15:48:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 25FED7690A
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 15:49:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388751AbfGZNsH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 09:48:07 -0400
-Received: from wout1-smtp.messagingengine.com ([64.147.123.24]:46059 "EHLO
-        wout1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388036AbfGZNsE (ORCPT
+        id S1728150AbfGZNsz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 09:48:55 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:57024 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727993AbfGZNsu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 09:48:04 -0400
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailout.west.internal (Postfix) with ESMTP id 9DA8E5B5;
-        Fri, 26 Jul 2019 09:48:03 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute6.internal (MEProxy); Fri, 26 Jul 2019 09:48:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=EwBpIkjhCHtc6Po0QEhUGVxUPV9
-        vvyQZliRF9TyzIsw=; b=TuZpe1Nk0q/BOxdUgTXVqKmed6/8769jGxywKgLJ7Ok
-        aKoIHR7vG+pP09vplXewjZXdn44bfCuodsSZm7w+BB6xkHJsxijVQDxWbIFZguNd
-        WUAMuIadKIae+ziCON8pz4Kw34mcIUQCjgReYu5OGcGmz2oO9G5X/w8s3oTkWXbL
-        brufs+Qtr7/v0JU6u7EQKZcgWujewbF/y/vcSlsWtsTg4E7EPKvfr3QcbYU5YYVC
-        RFBKDn2tPzO/6LQzHt1mdGH0Yl0ViNyTy9wASG9CcvOF0v9tfOo/vd4rxGUaO2iF
-        n9WMU77YbyDPDdBKan1UcJ3+klT4gDG+xaixVaYDzkw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=EwBpIk
-        jhCHtc6Po0QEhUGVxUPV9vvyQZliRF9TyzIsw=; b=pSlIkRnRajFAAKrhMWR0nF
-        ciGnPNIcILZ/TwwalAjPGFPxCget17THr/UOL2MvXxPkf09ovVO/rtjaU75ZB3/D
-        W/w++jTgRZdCmk4iMLmY1s4LOHfMfGm1Q677Pt+Zj8HLw2bHgjlHKGTUg6KVgnxl
-        //vhKI8qE3dCEZMpI+cqB3iIsBjCUWlMnQRX+C63tzZFPqAvC0B17ALmEoVDKqK5
-        lE3kwD1Zs2WA4jaVVFX2wErQTNFYstng3breWrR293AkIsLwD9YxPdSBiOCiJLdd
-        wNnfLb0FbLa7GPREuTh60Om4QBEQGMImlyaGNR6kkp4gLr8MzQcPoV+MWn9q6tXA
-        ==
-X-ME-Sender: <xms:kgQ7XUzzqfCSn_myxjMq4PC-VB9hFVqwZEkMYNjjWQQ3dfWEtz6pkQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrkeeggdeilecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvuffkfhggtggujggfsehttdertddtredvnecuhfhrohhmpefirhgvghcu
-    mffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucfkphepkeefrdekiedrkeelrddutd
-    ejnecurfgrrhgrmhepmhgrihhlfhhrohhmpehgrhgvgheskhhrohgrhhdrtghomhenucev
-    lhhushhtvghrufhiiigvpedt
-X-ME-Proxy: <xmx:kgQ7XbozBuhl0-RHB9XXsPFLlKVCqQkfG9THTamB2ZQ15-8tOORpyA>
-    <xmx:kgQ7XRk1nIlbiZe0Sq-KrILzoq9b-dFwSrPD_HJUR5BRRZGLMMjnQg>
-    <xmx:kgQ7XUCB_8YJ6eOFctKG6ApUxSt8QH57q3JiJIqsDFY8fBDb3jgHbg>
-    <xmx:kwQ7XW3d_regz52ZsMOFHmxRgATolIEq4VYi6RqKmBux6kfh_gBBbQ>
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 7A03C380086;
-        Fri, 26 Jul 2019 09:48:02 -0400 (EDT)
-Date:   Fri, 26 Jul 2019 15:48:00 +0200
-From:   Greg KH <greg@kroah.com>
-To:     Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc:     stable@vger.kernel.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Subject: Re: [PATCH stable-4.19 0/2] KVM: nVMX: guest reset fixes
-Message-ID: <20190726134800.GA23085@kroah.com>
-References: <20190725104645.30642-1-vkuznets@redhat.com>
+        Fri, 26 Jul 2019 09:48:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=htfhLWZo77GI35WrasDZvyZIUNtrtd28Pfw24aVqO8Y=; b=oyvoqopAJAEKIZxWMVJWh6bib
+        XdDilmXtqJcZJbrrevFZkky2ixNq0TZ3WuvR+OAS6S0m2FybWVn9XDYYg7HaqoDokpkiRsPcdgBz4
+        tpBazO6n0zmZGZpKY2Ukv/QDBnf00FOYzxLgWtFhXbvAyZlZFPSMdVOGf5UE9Okb+hFqM=;
+Received: from ypsilon.sirena.org.uk ([2001:470:1f1d:6b5::7])
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1hr0aS-00023k-Uf; Fri, 26 Jul 2019 13:48:45 +0000
+Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
+        id DBD182742B63; Fri, 26 Jul 2019 14:48:43 +0100 (BST)
+Date:   Fri, 26 Jul 2019 14:48:43 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     kernel-build-reports@lists.linaro.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org
+Subject: Re: next/master boot: 254 boots: 16 failed, 231 passed with 4
+ offline, 1 untried/unknown, 2 conflicts (next-20190726)
+Message-ID: <20190726134843.GC55803@sirena.org.uk>
+References: <5d3aef79.1c69fb81.111b9.a701@mx.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="gr/z0/N6AeWAPJVB"
 Content-Disposition: inline
-In-Reply-To: <20190725104645.30642-1-vkuznets@redhat.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <5d3aef79.1c69fb81.111b9.a701@mx.google.com>
+X-Cookie: Think sideways!
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 25, 2019 at 12:46:43PM +0200, Vitaly Kuznetsov wrote:
-> Few patches were recently marked for stable@ but commits are not
-> backportable as-is and require a few tweaks. Here is 4.19 stable backport.
-> 
-> Jan Kiszka (1):
->   KVM: nVMX: Clear pending KVM_REQ_GET_VMCS12_PAGES when leaving nested
-> 
-> Paolo Bonzini (1):
->   KVM: nVMX: do not use dangling shadow VMCS after guest reset
-> 
->  arch/x86/kvm/vmx.c | 10 +++++++++-
->  1 file changed, 9 insertions(+), 1 deletion(-)
 
-All now applied, thanks!
+--gr/z0/N6AeWAPJVB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-greg k-h
+On Fri, Jul 26, 2019 at 05:18:01AM -0700, kernelci.org bot wrote:
+
+The past few versions of -next failed to boot on apq8096-db820c:
+
+>     defconfig:
+>         gcc-8:
+>             apq8096-db820c: 1 failed lab
+
+with an RCU stall towards the end of boot:
+
+00:03:40.521336  [   18.487538] qcom_q6v5_pas adsp-pil: adsp-pil supply px not found, using dummy regulator
+00:04:01.523104  [   39.499613] rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
+00:04:01.533371  [   39.499657] rcu: 	2-...!: (0 ticks this GP) idle=9ca/1/0x4000000000000000 softirq=1450/1450 fqs=50
+00:04:01.537544  [   39.504689] 	(detected by 0, t=5252 jiffies, g=2425, q=619)
+00:04:01.541727  [   39.513539] Task dump for CPU 2:
+00:04:01.547929  [   39.519096] seq             R  running task        0   199    198 0x00000000
+
+Full details and logs at:
+
+	https://kernelci.org/boot/id/5d3aa7ea59b5142ba868890f/
+
+The last version that worked was from the 15th and there seem to be
+similar issues in mainline since -rc1.
+
+--gr/z0/N6AeWAPJVB
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl07BLsACgkQJNaLcl1U
+h9Cizgf+Me4RzqbuEHdvW+EQJup+d34Qw3wZ0/GAFQhI/JjOpNk7MyyppherGwDv
+WfQkX54QZ+szqipujtfsM7BOHn6WrY5yl7vWF5PNmBaKnq2COZkqIDMvP4tOLfPd
+Ni5U/6zJZu2WPGtV+W4stbGKfJJx/4M+LOl8+94bpr24aXrbt4LzoPHQlpBofkoe
+fO0qvOy6gwUXntL8TLMPz8WxXyCsfkE7oZ+9xfVpS2tBN2Qbzrf7AxB+dls80iB6
+DJUm4/2vxP9KdpwFCAA/gdBVgAdIqhlKwNyL63wral4HsM6jijAKAp61MV3dIUfG
+I+gyLOxXa6nCzfuq9L4uIxE1pVuwIA==
+=AiHc
+-----END PGP SIGNATURE-----
+
+--gr/z0/N6AeWAPJVB--
