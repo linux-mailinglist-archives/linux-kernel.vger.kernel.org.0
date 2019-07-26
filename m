@@ -2,182 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A46776501
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 14:00:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9EE6E76509
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 14:01:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726909AbfGZMAS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 08:00:18 -0400
-Received: from relay.sw.ru ([185.231.240.75]:54716 "EHLO relay.sw.ru"
+        id S1726952AbfGZMBL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 08:01:11 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:49226 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726267AbfGZMAR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 08:00:17 -0400
-Received: from [172.16.25.12]
-        by relay.sw.ru with esmtp (Exim 4.92)
-        (envelope-from <aryabinin@virtuozzo.com>)
-        id 1hqytE-0007LO-Dd; Fri, 26 Jul 2019 15:00:00 +0300
-Subject: Re: [PATCH v3] kasan: add memory corruption identification for
- software tag-based mode
-To:     Walter Wu <walter-zh.wu@mediatek.com>
-Cc:     Dmitry Vyukov <dvyukov@google.com>,
-        Alexander Potapenko <glider@google.com>,
-        Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        "Jason A . Donenfeld" <Jason@zx2c4.com>,
-        Miles Chen <miles.chen@mediatek.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-mediatek@lists.infradead.org,
-        wsd_upstream <wsd_upstream@mediatek.com>
-References: <20190613081357.1360-1-walter-zh.wu@mediatek.com>
- <da7591c9-660d-d380-d59e-6d70b39eaa6b@virtuozzo.com>
- <1560447999.15814.15.camel@mtksdccf07> <1560479520.15814.34.camel@mtksdccf07>
- <1560744017.15814.49.camel@mtksdccf07>
- <CACT4Y+Y3uS59rXf92ByQuFK_G4v0H8NNnCY1tCbr4V+PaZF3ag@mail.gmail.com>
- <1560774735.15814.54.camel@mtksdccf07> <1561974995.18866.1.camel@mtksdccf07>
- <CACT4Y+aMXTBE0uVkeZz+MuPx3X1nESSBncgkScWvAkciAxP1RA@mail.gmail.com>
- <ebc99ee1-716b-0b18-66ab-4e93de02ce50@virtuozzo.com>
- <1562640832.9077.32.camel@mtksdccf07>
- <d9fd1d5b-9516-b9b9-0670-a1885e79f278@virtuozzo.com>
- <1562839579.5846.12.camel@mtksdccf07>
- <37897fb7-88c1-859a-dfcc-0a5e89a642e0@virtuozzo.com>
- <1563160001.4793.4.camel@mtksdccf07>
- <9ab1871a-2605-ab34-3fd3-4b44a0e17ab7@virtuozzo.com>
- <1563789162.31223.3.camel@mtksdccf07>
-From:   Andrey Ryabinin <aryabinin@virtuozzo.com>
-Message-ID: <e62da62a-2a63-3a1c-faeb-9c5561a5170c@virtuozzo.com>
-Date:   Fri, 26 Jul 2019 15:00:00 +0300
+        id S1726026AbfGZMBK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 08:01:10 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0724830C0A3B;
+        Fri, 26 Jul 2019 12:01:08 +0000 (UTC)
+Received: from [10.72.12.238] (ovpn-12-238.pek2.redhat.com [10.72.12.238])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0BBB55DE6F;
+        Fri, 26 Jul 2019 12:00:59 +0000 (UTC)
+Subject: Re: WARNING in __mmdrop
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     syzbot <syzbot+e58112d71f77113ddb7b@syzkaller.appspotmail.com>,
+        aarcange@redhat.com, akpm@linux-foundation.org,
+        christian@brauner.io, davem@davemloft.net, ebiederm@xmission.com,
+        elena.reshetova@intel.com, guro@fb.com, hch@infradead.org,
+        james.bottomley@hansenpartnership.com, jglisse@redhat.com,
+        keescook@chromium.org, ldv@altlinux.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-parisc@vger.kernel.org,
+        luto@amacapital.net, mhocko@suse.com, mingo@kernel.org,
+        namit@vmware.com, peterz@infradead.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
+        wad@chromium.org
+References: <20190723035725-mutt-send-email-mst@kernel.org>
+ <3f4178f1-0d71-e032-0f1f-802428ceca59@redhat.com>
+ <20190723051828-mutt-send-email-mst@kernel.org>
+ <caff362a-e208-3468-3688-63e1d093a9d3@redhat.com>
+ <20190725012149-mutt-send-email-mst@kernel.org>
+ <55e8930c-2695-365f-a07b-3ad169654d28@redhat.com>
+ <20190725042651-mutt-send-email-mst@kernel.org>
+ <84bb2e31-0606-adff-cf2a-e1878225a847@redhat.com>
+ <20190725092332-mutt-send-email-mst@kernel.org>
+ <11802a8a-ce41-f427-63d5-b6a4cf96bb3f@redhat.com>
+ <20190726074644-mutt-send-email-mst@kernel.org>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <5cc94f15-b229-a290-55f3-8295266edb2b@redhat.com>
+Date:   Fri, 26 Jul 2019 20:00:58 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <1563789162.31223.3.camel@mtksdccf07>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <20190726074644-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Fri, 26 Jul 2019 12:01:09 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-
-On 7/22/19 12:52 PM, Walter Wu wrote:
-> On Thu, 2019-07-18 at 19:11 +0300, Andrey Ryabinin wrote:
->>
->> On 7/15/19 6:06 AM, Walter Wu wrote:
->>> On Fri, 2019-07-12 at 13:52 +0300, Andrey Ryabinin wrote:
+On 2019/7/26 下午7:49, Michael S. Tsirkin wrote:
+> On Thu, Jul 25, 2019 at 10:25:25PM +0800, Jason Wang wrote:
+>> On 2019/7/25 下午9:26, Michael S. Tsirkin wrote:
+>>>> Exactly, and that's the reason actually I use synchronize_rcu() there.
 >>>>
->>>> On 7/11/19 1:06 PM, Walter Wu wrote:
->>>>> On Wed, 2019-07-10 at 21:24 +0300, Andrey Ryabinin wrote:
->>>>>>
->>>>>> On 7/9/19 5:53 AM, Walter Wu wrote:
->>>>>>> On Mon, 2019-07-08 at 19:33 +0300, Andrey Ryabinin wrote:
->>>>>>>>
->>>>>>>> On 7/5/19 4:34 PM, Dmitry Vyukov wrote:
->>>>>>>>> On Mon, Jul 1, 2019 at 11:56 AM Walter Wu <walter-zh.wu@mediatek.com> wrote:
->>>>>>
->>>>>>>>>
->>>>>>>>> Sorry for delays. I am overwhelm by some urgent work. I afraid to
->>>>>>>>> promise any dates because the next week I am on a conference, then
->>>>>>>>> again a backlog and an intern starting...
->>>>>>>>>
->>>>>>>>> Andrey, do you still have concerns re this patch? This change allows
->>>>>>>>> to print the free stack.
->>>>>>>>
->>>>>>>> I 'm not sure that quarantine is a best way to do that. Quarantine is made to delay freeing, but we don't that here.
->>>>>>>> If we want to remember more free stacks wouldn't be easier simply to remember more stacks in object itself?
->>>>>>>> Same for previously used tags for better use-after-free identification.
->>>>>>>>
->>>>>>>
->>>>>>> Hi Andrey,
->>>>>>>
->>>>>>> We ever tried to use object itself to determine use-after-free
->>>>>>> identification, but tag-based KASAN immediately released the pointer
->>>>>>> after call kfree(), the original object will be used by another
->>>>>>> pointer, if we use object itself to determine use-after-free issue, then
->>>>>>> it has many false negative cases. so we create a lite quarantine(ring
->>>>>>> buffers) to record recent free stacks in order to avoid those false
->>>>>>> negative situations.
->>>>>>
->>>>>> I'm telling that *more* than one free stack and also tags per object can be stored.
->>>>>> If object reused we would still have information about n-last usages of the object.
->>>>>> It seems like much easier and more efficient solution than patch you proposing.
->>>>>>
->>>>> To make the object reused, we must ensure that no other pointers uses it
->>>>> after kfree() release the pointer.
->>>>> Scenario:
->>>>> 1). The object reused information is valid when no another pointer uses
->>>>> it.
->>>>> 2). The object reused information is invalid when another pointer uses
->>>>> it.
->>>>> Do you mean that the object reused is scenario 1) ?
->>>>> If yes, maybe we can change the calling quarantine_put() location. It
->>>>> will be fully use that quarantine, but at scenario 2) it looks like to
->>>>> need this patch.
->>>>> If no, maybe i miss your meaning, would you tell me how to use invalid
->>>>> object information? or?
->>>>>
+>>>> So the concern is still the possible synchronize_expedited()?
+>>> I think synchronize_srcu_expedited.
+>>>
+>>> synchronize_expedited sends lots of IPI and is bad for realtime VMs.
+>>>
+>>>> Can I do this
+>>>> on through another series on top of the incoming V2?
 >>>>
+>>>> Thanks
 >>>>
->>>> KASAN keeps information about object with the object, right after payload in the kasan_alloc_meta struct.
->>>> This information is always valid as long as slab page allocated. Currently it keeps only one last free stacktrace.
->>>> It could be extended to record more free stacktraces and also record previously used tags which will allow you
->>>> to identify use-after-free and extract right free stacktrace.
->>>
->>> Thanks for your explanation.
->>>
->>> For extend slub object, if one record is 9B (sizeof(u8)+ sizeof(struct
->>> kasan_track)) and add five records into slub object, every slub object
->>> may add 45B usage after the system runs longer. 
->>> Slub object number is easy more than 1,000,000(maybe it may be more
->>> bigger), then the extending object memory usage should be 45MB, and
->>> unfortunately it is no limit. The memory usage is more bigger than our
->>> patch.
+>>> The question is this: is this still a gain if we switch to the
+>>> more expensive srcu? If yes then we can keep the feature on,
 >>
->> No, it's not necessarily more.
->> And there are other aspects to consider such as performance, how simple reliable the code is.
+>> I think we only care about the cost on srcu_read_lock() which looks pretty
+>> tiny form my point of view. Which is basically a READ_ONCE() + WRITE_ONCE().
 >>
->>>
->>> We hope tag-based KASAN advantage is smaller memory usage. If it’s
->>> possible, we should spend less memory in order to identify
->>> use-after-free. Would you accept our patch after fine tune it?
+>> Of course I can benchmark to see the difference.
 >>
->> Sure, if you manage to fix issues and demonstrate that performance penalty of your
->> patch is close to zero.
-> 
-> 
-> I remember that there are already the lists which you concern. Maybe we
-> can try to solve those problems one by one.
-> 
-> 1. deadlock issue? cause by kmalloc() after kfree()?
-
-smp_call_on_cpu()
-
-> 2. decrease allocation fail, to modify GFP_NOWAIT flag to GFP_KERNEL?
-
-No, this is not gonna work. Ideally we shouldn't have any allocations there.
-It's not reliable and it hurts performance.
+>>
+>>> if not we'll put it off until next release and think
+>>> of better solutions. rcu->srcu is just a find and replace,
+>>> don't see why we need to defer that. can be a separate patch
+>>> for sure, but we need to know how well it works.
+>>
+>> I think I get here, let me try to do that in V2 and let's see the numbers.
+>>
+>> Thanks
 
 
-> 3. check whether slim 48 bytes (sizeof (qlist_object) +
-> sizeof(kasan_alloc_meta)) and additional unique stacktrace in
-> stackdepot?
-> 4. duplicate struct 'kasan_track' information in two different places
-> 
+It looks to me for tree rcu, its srcu_read_lock() have a mb() which is 
+too expensive for us.
 
-Yup.
+If we just worry about the IPI, can we do something like in 
+vhost_invalidate_vq_start()?
 
-> Would you have any other concern? or?
-> 
+         if (map) {
+                 /* In order to avoid possible IPIs with
+                  * synchronize_rcu_expedited() we use call_rcu() +
+                  * completion.
+*/
+init_completion(&c.completion);
+                 call_rcu(&c.rcu_head, vhost_finish_vq_invalidation);
+wait_for_completion(&c.completion);
+                 vhost_set_map_dirty(vq, map, index);
+vhost_map_unprefetch(map);
+         }
 
-It would be nice to see some performance numbers. Something that uses slab allocations a lot, e.g. netperf STREAM_STREAM test.
+?
 
+
+> There's one other thing that bothers me, and that is that
+> for large rings which are not physically contiguous
+> we don't implement the optimization.
+>
+> For sure, that can wait, but I think eventually we should
+> vmap large rings.
+
+
+Yes, worth to try. But using direct map has its own advantage: it can 
+use hugepage that vmap can't
+
+Thanks
 
