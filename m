@@ -2,148 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6117076320
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 12:07:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8210E76324
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 12:07:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726267AbfGZKHC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 06:07:02 -0400
-Received: from mail-yb1-f195.google.com ([209.85.219.195]:40440 "EHLO
-        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725978AbfGZKHB (ORCPT
+        id S1726346AbfGZKHK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 06:07:10 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:55352 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726276AbfGZKHG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 06:07:01 -0400
-Received: by mail-yb1-f195.google.com with SMTP id j6so10911233ybm.7;
-        Fri, 26 Jul 2019 03:07:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+L/PTQ5WefhhdGJICPJZTWREq0FzbcuJty7GGMjdHkY=;
-        b=VCSujiP21xYdy1ahpgC2+dtBp0wr/0BcqKSe0AyyDa7PJ/965UyFMFXClC2mfLFgdh
-         7eP6Oa/iHbhqLOKFabXsBfbS9JYT/Zl6e678J4G04tv0S2jALsqqDqr/cob7t+YQHVKp
-         eJXA4h4Ytfwc+lTDzl8cmEUcKkjRLBon17tBkbFNpvpBRzzdVqhT4OlmtlhrgnzlFdIm
-         jgh/vl20N+VXetQSRMzcutCOjSJL3LJFqC8i1Hg+rm9YQiwU2viX7FLxsMGryPYwQQ8j
-         9P9Pvqs0setZ1hmzfdXqM/4gv7XXVG5FHIiLOLepvtgMkKzG5ROyBvZ/1qpZSaANLir/
-         58Bg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+L/PTQ5WefhhdGJICPJZTWREq0FzbcuJty7GGMjdHkY=;
-        b=HW7W4MzEvCgnB3ZN+hRHBiQnedctpiiyFxvJY6JbcXhxAp7xyrJt9YO2R8Mz/avxg2
-         RF0JOfK+VLe/Wru9psmbK3MuLcA6eepaCAwJphScXg4aupyNrjYZEbqk18Vd8AqoADaM
-         ++LAcfS1TogDedFr9VF0JRLfrEsrMpnR2LQiCob5HCvV3Iv8MY+37dZjPxun7WE4v2F+
-         PkM1qyi5nsmgSvKbTMfjvV+STi0ByFzNOdLn2ANjenG00vGBbgHORWPTwMXepIwbDhHL
-         S8lD7Fz/RWRt87+xht7dfZaupaCuMYp6rfoj6gx2QKBQbtHhoHMu5MZkZG4Z6IJ8zSMN
-         ph4Q==
-X-Gm-Message-State: APjAAAXIBaRjttCm4HoN+vk6fxg31aVu8yC+ESCd6j9sMSsScVOC6iYS
-        0zyGnBB39fizKeiawlzyBi+tTlxQb5I625iVyQM=
-X-Google-Smtp-Source: APXvYqwtGACaDY+AapAm+Wv/BOPD5Rnehn08Yr74B0c+I+jtRM5nQVUAvFIqqMFPNG69TtvPmBICsA0wdkx6WsfhCNA=
-X-Received: by 2002:a25:7683:: with SMTP id r125mr56699420ybc.144.1564135620396;
- Fri, 26 Jul 2019 03:07:00 -0700 (PDT)
+        Fri, 26 Jul 2019 06:07:06 -0400
+Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: bbrezillon)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 8B85828BE70;
+        Fri, 26 Jul 2019 11:07:01 +0100 (BST)
+Date:   Fri, 26 Jul 2019 12:06:58 +0200
+From:   Boris Brezillon <boris.brezillon@collabora.com>
+To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@iki.fi>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Tomasz Figa <tfiga@chromium.org>,
+        Nicolas Dufresne <nicolas@ndufresne.ca>, kernel@collabora.com,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        linux-rockchip@lists.infradead.org,
+        Heiko Stuebner <heiko@sntech.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Hertz Wong <hertz.wong@rock-chips.com>
+Subject: Re: [PATCH 7/9] media: hantro: Add core bits to support H264
+ decoding
+Message-ID: <20190726120658.53022c21@collabora.com>
+In-Reply-To: <25cc2826-fc8f-570a-07fa-8cbdb11830a7@rasmusvillemoes.dk>
+References: <20190619121540.29320-1-boris.brezillon@collabora.com>
+        <20190619121540.29320-8-boris.brezillon@collabora.com>
+        <25cc2826-fc8f-570a-07fa-8cbdb11830a7@rasmusvillemoes.dk>
+Organization: Collabora
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-References: <0000000000004a3a63058e722b94@google.com> <00000000000086c732058e79cb59@google.com>
- <CAOQ4uxhAi6sqBR2219ZvzX7izeF_RezN+VKRrHiQ04P=t0uiOg@mail.gmail.com>
-In-Reply-To: <CAOQ4uxhAi6sqBR2219ZvzX7izeF_RezN+VKRrHiQ04P=t0uiOg@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Fri, 26 Jul 2019 13:06:48 +0300
-Message-ID: <CAOQ4uxhRWzjY=RcgFtFZL4VUg7Y8EyRa2eaWuqtVOHDZWWO1PQ@mail.gmail.com>
-Subject: Re: WARNING in ovl_real_fdget_meta
-To:     syzbot <syzbot+032bc63605089a199d30@syzkaller.appspotmail.com>
-Cc:     "J. Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 26, 2019 at 11:11 AM Amir Goldstein <amir73il@gmail.com> wrote:
->
-> On Thu, Jul 25, 2019 at 7:24 AM syzbot
-> <syzbot+032bc63605089a199d30@syzkaller.appspotmail.com> wrote:
-> >
-> > syzbot has bisected this bug to:
-> >
-> > commit 387e3746d01c34457d6a73688acd90428725070b
-> > Author: Amir Goldstein <amir73il@gmail.com>
-> > Date:   Fri Jun 7 14:24:38 2019 +0000
-> >
-> >      locks: eliminate false positive conflicts for write lease
-> >
-> > bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15a79594600000
-> > start commit:   c6dd78fc Merge branch 'x86-urgent-for-linus' of git://git...
-> > git tree:       upstream
-> > final crash:    https://syzkaller.appspot.com/x/report.txt?x=17a79594600000
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=13a79594600000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3c8985c08e1f9727
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=032bc63605089a199d30
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15855334600000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17fcc4c8600000
-> >
-> > Reported-by: syzbot+032bc63605089a199d30@syzkaller.appspotmail.com
-> > Fixes: 387e3746d01c ("locks: eliminate false positive conflicts for write
-> > lease")
-> >
-> > For information about bisection process see: https://goo.gl/tpsmEJ#bisection
->
-> The repro:
-> #{"repeat":true,"procs":1,"sandbox":"none","fault_call":-1,"cgroups":true,"close_fds":true,"tmpdir":true}
-> mkdir(&(0x7f0000000100)='./file0\x00', 0x0)
-> mkdirat$cgroup_root(0xffffffffffffff9c,
-> &(0x7f0000000000)='./cgroup.net/syz1\x00', 0x1ff)
-> mount$fuse(0x20000000, &(0x7f0000000140)='./file0\x00', 0x0, 0x1004, 0x0)
-> mount$overlay(0x400000, &(0x7f0000000100)='./file0\x00',
-> &(0x7f00000001c0)='overlay\x00', 0x0,
-> &(0x7f0000000040)=ANY=[@ANYBLOB=',lowerdir=.:file0'])
-> r0 = open(&(0x7f0000000500)='./file0\x00', 0x0, 0x0)
-> r1 = openat$cgroup_procs(r0, &(0x7f00000004c0)='cgroup.procs\x00', 0x48, 0x0)
-> dup3(r1, r0, 0x0)
-> fcntl$setlease(r0, 0x400, 0x1)
-> lseek(r0, 0x4, 0x0)
->
-> I though we would stop these family of overlapping layers fuzzers with:
-> 146d62e5a586 ("ovl: detect overlapping layers")
->
-> But syzbot got the upper hand, because we do not check for overlapping layers
-> that cross fs boundary. Not sure if we should (?).
+On Thu, 25 Jul 2019 15:31:41 +0200
+Rasmus Villemoes <linux@rasmusvillemoes.dk> wrote:
 
-No, we shouldn't care about that.
-overlayfs doesn't follow cross-fs in underlying layers.
+> On 19/06/2019 14.15, Boris Brezillon wrote:
+> > From: Hertz Wong <hertz.wong@rock-chips.com>
+> > 
+> > Add helpers and patch hantro_{drv,v4l2}.c to prepare addition of H264
+> > decoding support.
+> > 
+> > Signed-off-by: Hertz Wong <hertz.wong@rock-chips.com>
+> > Signed-off-by: Boris Brezillon <boris.brezillon@collabora.com>
+> > ---
+> > +
+> > +	/*
+> > +	 * Short term pics in descending pic num order, long term ones in
+> > +	 * ascending order.
+> > +	 */
+> > +	if (!(a->flags & V4L2_H264_DPB_ENTRY_FLAG_LONG_TERM))
+> > +		return b->frame_num - a->frame_num;
+> > +
+> > +	return a->pic_num - b->pic_num;
+> > +}  
+> 
+> Pet peeve: This works because ->frame_num and ->pic_num are u16, so
+> their difference is guaranteed to fit in an int.
+> 
+> > +static int b0_ref_list_cmp(const void *ptra, const void *ptrb, const void *data)
+> > +{
+> > +	const struct hantro_h264_reflist_builder *builder = data;
+> > +	const struct v4l2_h264_dpb_entry *a, *b;
+> > +	s32 poca, pocb;
+> > +	u8 idxa, idxb;
+> > +
+> > +	idxa = *((u8 *)ptra);
+> > +	idxb = *((u8 *)ptrb);
+> > +	a = &builder->dpb[idxa];
+> > +	b = &builder->dpb[idxb];
+> > +
+> > +	if ((a->flags & V4L2_H264_DPB_ENTRY_FLAG_LONG_TERM) !=
+> > +	    (b->flags & V4L2_H264_DPB_ENTRY_FLAG_LONG_TERM)) {
+> > +		/* Short term pics firt. */
+> > +		if (!(a->flags & V4L2_H264_DPB_ENTRY_FLAG_LONG_TERM))
+> > +			return -1;
+> > +		else
+> > +			return 1;
+> > +	}
+> > +
+> > +	/* Long term pics in ascending pic num order. */
+> > +	if (a->flags & V4L2_H264_DPB_ENTRY_FLAG_LONG_TERM)
+> > +		return a->pic_num - b->pic_num;
+> > +
+> > +	poca = builder->pocs[idxa];
+> > +	pocb = builder->pocs[idxb];
+> > +
+> > +	/*
+> > +	 * Short term pics with POC < cur POC first in POC descending order
+> > +	 * followed by short term pics with POC > cur POC in POC ascending
+> > +	 * order.
+> > +	 */
+> > +	if ((poca < builder->curpoc) != (pocb < builder->curpoc))
+> > +		return poca - pocb;
+> > +	else if (poca < builder->curpoc)
+> > +		return pocb - poca;
+> > +
+> > +	return poca - pocb;
+> > +}  
+> 
+> Here, however, poca and pocb are ints. What guarantees that their values
+> are not more than 2^31 apart?
 
->
-> ./ is a tmpfs dir and ./file0/ is some kind of fuse mount (?)
-> then after one cycle, ./file0/ itself is an overlapping overlay mount
-> (lowerdir=./:./file0/)
-> and after another cycle, ./file0/ is a nested overlapping overlayfs mount.
-> Fine. Whatever.
+Good question. Both should normally be >= 0, which I guess prevents the
+s32 overflow. This being said, it's something passed by userspace, and
+I don't think we check the value (yet).
 
-But damage can still be created if a lower overlayfs layer
-overlaps with the another nested overlay lower underlying layer.
-It actually shouldn't be too hard to add a guard also on the
-nested overlay lower underlying layer inode.
+> I know absolutely nothing about this code
+> or what these numbers represent, so it may be obvious that they are
+> smallish.
 
->
-> What I don't understand is if dup3 succeeds r0 should not be an overlayfs fd
-> and even if dup3 fails r0 should be an overlayfs directory fd (./file0/), so how
-> the hell did we get to ovl_llseek => ... ovl_change_flags() with this repro??
->
-> There is not a single regular file in this test.
->
-
-I was wrong here of course.
-./file0/cgroup.procs is a regular overlayfs file (I was confused by the name)
-which is later also exposed at ./file0/file0/cgroup.procs in the nested
-overlay mount.
-
-Still not sure about the rest of the way to ovl_change_flags() failure,
-but I think I'll try to block this new syzbot overlap attack.
-
-Thanks,
-Amir.
+Well, a safe approach would be to replace those subtraction by a
+ternary operator.
