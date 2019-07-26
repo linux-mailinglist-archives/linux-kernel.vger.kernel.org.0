@@ -2,37 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BCEBB7695E
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 15:51:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C114F7695A
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 15:51:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728069AbfGZNv1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 09:51:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51826 "EHLO mail.kernel.org"
+        id S1727787AbfGZNvS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 09:51:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51868 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727686AbfGZNnx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 09:43:53 -0400
+        id S1727794AbfGZNnz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 09:43:55 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EB44F22BF5;
-        Fri, 26 Jul 2019 13:43:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 51DF022CC2;
+        Fri, 26 Jul 2019 13:43:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564148632;
-        bh=vzNNaYikDY21v23/2zO3IPUtpcgrGZDW0AIPcGzNqA8=;
+        s=default; t=1564148635;
+        bh=0Gb08muBv98DTLQL3LipRqh0c9UU8aTqxL/YMxmBZU4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YOmDqrtj4oVBkidZnkzhNq+Y5NXnscfqIYPqN2zRixs/WcVWsqRs4Gwd8GUivU3dL
-         TixBA+kcHCivm0ynX0RhNPCqVwyWNbzWbLWapHHOgYhWsXvcDYFUiEMR0pXo8ZeyIF
-         GrlpdqFTWN+XJUIPdgNanC3iU5LsAqC6u7d+LsNM=
+        b=avuMpCqEF/kn+lup9gOBnajumscWAIxICekM8dkdXGuZzBpqAlaEpAw8kQEL+j5KF
+         Uyig6ZVjx1PC9J/LH1ePgMu6ydjfwR5dhJa0QicLlJgv/2uQUjr18SqkADfhDbr5IL
+         zuoQ8FMSt6xJhoRMTSniaoKukM0nLg+VV13J3Dbo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Sasha Levin <sashal@kernel.org>, linux-acpi@vger.kernel.org,
+Cc:     Arnd Bergmann <arnd@arndb.de>, Paolo Bonzini <pbonzini@redhat.com>,
+        Sasha Levin <sashal@kernel.org>, kvm@vger.kernel.org,
         clang-built-linux@googlegroups.com
-Subject: [PATCH AUTOSEL 4.14 15/37] ACPI: blacklist: fix clang warning for unused DMI table
-Date:   Fri, 26 Jul 2019 09:43:10 -0400
-Message-Id: <20190726134332.12626-15-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 17/37] x86: kvm: avoid constant-conversion warning
+Date:   Fri, 26 Jul 2019 09:43:12 -0400
+Message-Id: <20190726134332.12626-17-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190726134332.12626-1-sashal@kernel.org>
 References: <20190726134332.12626-1-sashal@kernel.org>
@@ -47,49 +45,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-[ Upstream commit b80d6a42bdc97bdb6139107d6034222e9843c6e2 ]
+[ Upstream commit a6a6d3b1f867d34ba5bd61aa7bb056b48ca67cff ]
 
-When CONFIG_DMI is disabled, we only have a tentative declaration,
-which causes a warning from clang:
+clang finds a contruct suspicious that converts an unsigned
+character to a signed integer and back, causing an overflow:
 
-drivers/acpi/blacklist.c:20:35: error: tentative array definition assumed to have one element [-Werror]
-static const struct dmi_system_id acpi_rev_dmi_table[] __initconst;
+arch/x86/kvm/mmu.c:4605:39: error: implicit conversion from 'int' to 'u8' (aka 'unsigned char') changes value from -205 to 51 [-Werror,-Wconstant-conversion]
+                u8 wf = (pfec & PFERR_WRITE_MASK) ? ~w : 0;
+                   ~~                               ^~
+arch/x86/kvm/mmu.c:4607:38: error: implicit conversion from 'int' to 'u8' (aka 'unsigned char') changes value from -241 to 15 [-Werror,-Wconstant-conversion]
+                u8 uf = (pfec & PFERR_USER_MASK) ? ~u : 0;
+                   ~~                              ^~
+arch/x86/kvm/mmu.c:4609:39: error: implicit conversion from 'int' to 'u8' (aka 'unsigned char') changes value from -171 to 85 [-Werror,-Wconstant-conversion]
+                u8 ff = (pfec & PFERR_FETCH_MASK) ? ~x : 0;
+                   ~~                               ^~
 
-As the variable is not actually used here, hide it entirely
-in an #ifdef to shut up the warning.
+Add an explicit cast to tell clang that everything works as
+intended here.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Link: https://github.com/ClangBuiltLinux/linux/issues/95
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/acpi/blacklist.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ arch/x86/kvm/mmu.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/acpi/blacklist.c b/drivers/acpi/blacklist.c
-index 995c4d8922b1..761f0c19a451 100644
---- a/drivers/acpi/blacklist.c
-+++ b/drivers/acpi/blacklist.c
-@@ -30,7 +30,9 @@
+diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
+index f97b533bc6e6..87a0601b1c20 100644
+--- a/arch/x86/kvm/mmu.c
++++ b/arch/x86/kvm/mmu.c
+@@ -4313,11 +4313,11 @@ static void update_permission_bitmask(struct kvm_vcpu *vcpu,
+ 		 */
  
- #include "internal.h"
- 
-+#ifdef CONFIG_DMI
- static const struct dmi_system_id acpi_rev_dmi_table[] __initconst;
-+#endif
- 
- /*
-  * POLICY: If *anything* doesn't work, put it on the blacklist.
-@@ -74,7 +76,9 @@ int __init acpi_blacklisted(void)
- 	}
- 
- 	(void)early_acpi_osi_init();
-+#ifdef CONFIG_DMI
- 	dmi_check_system(acpi_rev_dmi_table);
-+#endif
- 
- 	return blacklisted;
- }
+ 		/* Faults from writes to non-writable pages */
+-		u8 wf = (pfec & PFERR_WRITE_MASK) ? ~w : 0;
++		u8 wf = (pfec & PFERR_WRITE_MASK) ? (u8)~w : 0;
+ 		/* Faults from user mode accesses to supervisor pages */
+-		u8 uf = (pfec & PFERR_USER_MASK) ? ~u : 0;
++		u8 uf = (pfec & PFERR_USER_MASK) ? (u8)~u : 0;
+ 		/* Faults from fetches of non-executable pages*/
+-		u8 ff = (pfec & PFERR_FETCH_MASK) ? ~x : 0;
++		u8 ff = (pfec & PFERR_FETCH_MASK) ? (u8)~x : 0;
+ 		/* Faults from kernel mode fetches of user pages */
+ 		u8 smepf = 0;
+ 		/* Faults from kernel mode accesses of user pages */
 -- 
 2.20.1
 
