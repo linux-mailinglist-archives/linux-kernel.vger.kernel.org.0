@@ -2,64 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7424877105
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 20:13:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 041287710A
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 20:15:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729159AbfGZSNm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 14:13:42 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:33169 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725899AbfGZSNm (ORCPT
+        id S1728693AbfGZSPC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 14:15:02 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:37381 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726781AbfGZSPC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 14:13:42 -0400
-Received: by mail-oi1-f195.google.com with SMTP id u15so40918054oiv.0
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2019 11:13:41 -0700 (PDT)
+        Fri, 26 Jul 2019 14:15:02 -0400
+Received: by mail-wm1-f67.google.com with SMTP id f17so48395842wme.2;
+        Fri, 26 Jul 2019 11:15:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+        h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=BjjJlV879zvacGB1X8HxFWmHBaqpdGed0atAco6+GI4=;
-        b=uSAZlnZzyGiKPoCZ8+of5If/Ok6jwYvMpWp47EZKlveWuK/2L7ypuBo3a1g3d+0BsD
-         Ae5DvIsVjS76bw07fhxEcjr4zrD0W3xEMp7QxI4FAsiCKhzS511beMZ6pRLE5IkwVDTL
-         ZS+Ex7H7QOT/SkzeeGu/UUjW89Zg0ghrtRZFyUaBIkq0fuKzMH8sXeeFhZSNyJ7H0xpx
-         NVsQFr4e+BVi1+uGtP1DWFy9tPM9p7xC1nSJolb4uOK9nyVKxpqFidwnmZ6EBSW5U44g
-         Uv7XgZbmIYEusq6JvFiepec7P06UFLs5SQmYGd/yTzAhL2S6hP7bKcl0kNprA9PtqbmY
-         3JNA==
+        bh=JKw39pI2llb7A01NXuEKDfaC4+iRUymYwQL0imdPSKs=;
+        b=dNqzYdVqcZfPAziZ23MpFrZNMRjes+fGTgZkSQ1C+5pbkn7xHFhvm8aXQ1gHZJW9ZH
+         El2HrLr604GsqqIFQg5uuc+Zg0CY4Ust2WMYx5pWJnVbQFNF9lbeDcv6H/gu5PRS3x8B
+         nBp3Aut03vN4wALa1S8wR/68wgUpJxD8UlMbQdqpvaj1ca03j5ULZ+UB5HD6pmjTQjzR
+         gg/ttUspqIuZ9YJdsrWGXq0oolILm02GG1l9aflkLD+c/+MOup7a5dV9pNvTTCSTp8uD
+         qs/fL5gzo4gnV+OBdwvaDSLxDtbf6s7lprq1Q9wPXS6IT8NucSkx2or0ekft2KeT1Ahm
+         zlXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=BjjJlV879zvacGB1X8HxFWmHBaqpdGed0atAco6+GI4=;
-        b=RaCyByO0PbKHZgLy7jBTGCui1Z64dtiFHoSd1Ok79HODPmT9UsnRlsvYaETzvLyCRU
-         LbNkTbaKrX/Uh9YJQv7LhSB4bJzt2cIvx+my8O+hASc5zXFKlfngi38URZ6x5eBWgUAe
-         eL6CoLVFq2ozJ4HebD5mtP6n+cyTeQs9XS2tu8LuixF05hdiG0Kf+p6ge2OkG1nzLoYE
-         U1bEHzhhppNRUv3Hnp5sofZbcpw6iFEm1jXnRiV4oOZNwDCy1qfIYKyTWAlbMMEjDTPW
-         J+eq9FwxdHJV247DqMohF9tGNiW4sUoxQlA8lgD5DH8tFmHVIYhAUQXViK606DBGN0iM
-         dqdg==
-X-Gm-Message-State: APjAAAWfuWvafL14cIwCMmj6XeKPqutWrrjGv0Fy0SzAMUbLEte2Zfl1
-        mHlpREVI6rGqd9f06A8Uo9mZROa6
-X-Google-Smtp-Source: APXvYqxzbcrzWnJw3FqAdbdLrQjkNLG84WMtD4VcLg+nDfDrkn9yp7NmR/WCGhXBsDqr+TBOyuBkaA==
-X-Received: by 2002:aca:ac4d:: with SMTP id v74mr43043303oie.66.1564164820904;
-        Fri, 26 Jul 2019 11:13:40 -0700 (PDT)
-Received: from [192.168.1.112] (cpe-24-31-245-230.kc.res.rr.com. [24.31.245.230])
-        by smtp.gmail.com with ESMTPSA id i11sm18347154oia.9.2019.07.26.11.13.40
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Fri, 26 Jul 2019 11:13:40 -0700 (PDT)
-Subject: Re: [PATCH 1/6] staging: rtl8188eu: add spaces around '+' in
- usb_halinit.c
-To:     Michael Straube <straube.linux@gmail.com>,
-        gregkh@linuxfoundation.org
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-References: <20190726180448.2290-1-straube.linux@gmail.com>
-From:   Larry Finger <Larry.Finger@lwfinger.net>
-Message-ID: <500253ca-41bf-b374-ada1-84607455bcbc@lwfinger.net>
-Date:   Fri, 26 Jul 2019 13:13:39 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        bh=JKw39pI2llb7A01NXuEKDfaC4+iRUymYwQL0imdPSKs=;
+        b=ffhg1Hl2sxi1CDhgpLTgrdvghFHnLaONSZcBb1+Ps/f57AsTJrXluGijcE+CQ3W2ic
+         cgCFMzZlIoHWIFYigmI8r2FnpFAO/lKnqFpeFAYAGdIBJUHjxm7FszaVBM9mhNECD/8Z
+         P67odqxA6iCVoodR0jFMnCdduyEYom3nvxgscwxg+yUX55r9JZESx9XCOOdkrCpQm+oY
+         PQGeYR5MIr02QG7uapWLDw3FIfr5PzEpzSJSe3QeCg9zDC+fuq5/gDcZhnmEXV+3GmV/
+         m/OLxDLec0VaKYvj88nzPXDG0lcr7jnbZLxNk45DFsa9cTQGo9meFcOBc0QzS7xyFSlr
+         XFtQ==
+X-Gm-Message-State: APjAAAWlGmE5LZGSSXreYO7Se0eZnOXInJql37hrIjcsZjc7EU9uQ2Nt
+        0EPw173Ts8rD3Vis0yk0fCM=
+X-Google-Smtp-Source: APXvYqxYXMQI2HJ97cUHUaomwuteph1EY3UXRjsSSsubmMq20Bid28heJ2nMYVrj8lNHRSbGUubIAw==
+X-Received: by 2002:a05:600c:230c:: with SMTP id 12mr83673655wmo.166.1564164899711;
+        Fri, 26 Jul 2019 11:14:59 -0700 (PDT)
+Received: from ?IPv6:2003:ea:8f43:4200:55f1:e404:698f:358? (p200300EA8F43420055F1E404698F0358.dip0.t-ipconnect.de. [2003:ea:8f43:4200:55f1:e404:698f:358])
+        by smtp.googlemail.com with ESMTPSA id u6sm54367668wml.9.2019.07.26.11.14.58
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 26 Jul 2019 11:14:59 -0700 (PDT)
+Subject: Re: [RFC] net: phy: read link status twice when
+ phy_check_link_status()
+To:     Yonglong Liu <liuyonglong@huawei.com>, andrew@lunn.ch,
+        davem@davemloft.net
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linuxarm@huawei.com, salil.mehta@huawei.com,
+        yisen.zhuang@huawei.com, shiju.jose@huawei.com
+References: <1564134831-24962-1-git-send-email-liuyonglong@huawei.com>
+From:   Heiner Kallweit <hkallweit1@gmail.com>
+Message-ID: <92f42ee8-3659-87a7-ac96-d312a98046ba@gmail.com>
+Date:   Fri, 26 Jul 2019 20:14:28 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <20190726180448.2290-1-straube.linux@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <1564134831-24962-1-git-send-email-liuyonglong@huawei.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -67,18 +69,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/26/19 1:04 PM, Michael Straube wrote:
-> Add spaces around '+' to improve readability and follow kernel
-> coding style. Reported by checkpatch.
+On 26.07.2019 11:53, Yonglong Liu wrote:
+> According to the datasheet of Marvell phy and Realtek phy, the
+> copper link status should read twice, or it may get a fake link
+> up status, and cause up->down->up at the first time when link up.
+> This happens more oftem at Realtek phy.
 > 
-> Signed-off-by: Michael Straube <straube.linux@gmail.com>
+This is not correct, there is no fake link up status.
+Read the comment in genphy_update_link, only link-down events
+are latched. Means if the first read returns link up, then there
+is no need for a second read. And in polling mode we don't do a
+second read because we want to detect also short link drops.
+
+It would be helpful if you could describe your actual problem
+and whether you use polling or interrupt mode.
+
+> I add a fake status read, and can solve this problem.
+> 
+> I also see that in genphy_update_link(), had delete the fake
+> read in polling mode, so I don't know whether my solution is
+> correct.
+> 
+> Or provide a phydev->drv->read_status functions for the phy I
+> used is more acceptable?
+> 
+> Signed-off-by: Yonglong Liu <liuyonglong@huawei.com>
 > ---
->   drivers/staging/rtl8188eu/hal/usb_halinit.c | 76 ++++++++++-----------
->   1 file changed, 38 insertions(+), 38 deletions(-)
+>  drivers/net/phy/phy.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/drivers/net/phy/phy.c b/drivers/net/phy/phy.c
+> index ef7aa73..0c03edc 100644
+> --- a/drivers/net/phy/phy.c
+> +++ b/drivers/net/phy/phy.c
+> @@ -1,4 +1,7 @@
+>  // SPDX-License-Identifier: GPL-2.0+
+> +	err = phy_read_status(phydev);
+> +	if (err)
+> +		return err;
 
-If they apply, all six of these are OK.
+This seems to be completely wrong at that place.
 
-Acked-by: Larry Finger <Larry.Finger@lwfinger.net>
-
-Larry
+>  /* Framework for configuring and reading PHY devices
+>   * Based on code in sungem_phy.c and gianfar_phy.c
+>   *
+> @@ -525,6 +528,11 @@ static int phy_check_link_status(struct phy_device *phydev)
+>  
+>  	WARN_ON(!mutex_is_locked(&phydev->lock));
+>  
+> +	/* Do a fake read */
+> +	err = phy_read(phydev, MII_BMSR);
+> +	if (err < 0)
+> +		return err;
+> +
+>  	err = phy_read_status(phydev);
+>  	if (err)
+>  		return err;
+> 
 
