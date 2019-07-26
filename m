@@ -2,72 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C890B770F5
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 20:07:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E77B770F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 20:09:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728127AbfGZSHU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 14:07:20 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:38375 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725899AbfGZSHU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 14:07:20 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 4F52F8023F; Fri, 26 Jul 2019 20:07:06 +0200 (CEST)
-Date:   Fri, 26 Jul 2019 20:07:16 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        linux-media@vger.kernel.org
-Subject: Re: [PATCH AUTOSEL 4.19 097/158] media: coda: fix mpeg2 sequence
- number handling
-Message-ID: <20190726180716.GA3909@xo-6d-61-c0.localdomain>
-References: <20190715141809.8445-1-sashal@kernel.org>
- <20190715141809.8445-97-sashal@kernel.org>
+        id S1729127AbfGZSIp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 14:08:45 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:36634 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725899AbfGZSIo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 14:08:44 -0400
+Received: from s01061831bf6ec98c.cg.shawcable.net ([68.147.80.180] helo=[192.168.6.132])
+        by ale.deltatee.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <logang@deltatee.com>)
+        id 1hr4e2-0005Y4-OJ; Fri, 26 Jul 2019 12:08:43 -0600
+To:     kernel test robot <lkp@intel.com>
+Cc:     Jon Mason <jdmason@kudzu.us>, Dave Jiang <dave.jiang@intel.com>,
+        Allen Hubbe <allenbh@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>, lkp@01.org
+References: <20190726082329.GF22106@shao2-debian>
+From:   Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <36d29c75-07bb-8e79-feeb-4e6dc96124df@deltatee.com>
+Date:   Fri, 26 Jul 2019 12:08:39 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190715141809.8445-97-sashal@kernel.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20190726082329.GF22106@shao2-debian>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 68.147.80.180
+X-SA-Exim-Rcpt-To: lkp@01.org, torvalds@linux-foundation.org, linux-kernel@vger.kernel.org, allenbh@gmail.com, dave.jiang@intel.com, jdmason@kudzu.us, lkp@intel.com
+X-SA-Exim-Mail-From: logang@deltatee.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
+X-Spam-Level: 
+X-Spam-Status: No, score=-8.9 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        GREYLIST_ISWHITE autolearn=ham autolearn_force=no version=3.4.2
+Subject: Re: [NTB] 26b3a37b92: WARNING:at_kernel/params.c:#param_sysfs_init
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi!
 
-> From: Philipp Zabel <p.zabel@pengutronix.de>
+
+On 2019-07-26 2:23 a.m., kernel test robot wrote:
+> FYI, we noticed the following commit (built with gcc-4.9):
 > 
-> [ Upstream commit 56d159a4ec6d8da7313aac6fcbb95d8fffe689ba ]
+> commit: 26b3a37b928457ba2cd98eaf6d7b0feca5a30fa6 ("NTB: Introduce MSI library")
+> https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux.git master
 > 
-> Sequence number handling assumed that the BIT processor frame number
-> starts counting at 1, but this is not true for the MPEG-2 decoder,
-> which starts at 0. Fix the sequence counter offset detection to handle
-> this.
+> in testcase: locktorture
+> with following parameters:
+> 
+> 	runtime: 300s
+> 	test: cpuhotplug
+> 
+> test-description: This torture test consists of creating a number of kernel threads which acquire the lock and hold it for specific amount of time, thus simulating different critical region behaviors.
+> test-url: https://www.kernel.org/doc/Documentation/locking/locktorture.txt
+> 
+> 
+> on test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 2G
+> 
+> caused below changes (please refer to attached dmesg/kmsg for entire log/backtrace):
+> 
+> 
+> +----------------------------------------------+------------+------------+
+> |                                              | d217e07b32 | 26b3a37b92 |
+> +----------------------------------------------+------------+------------+
+> | boot_successes                               | 4          | 0          |
+> | boot_failures                                | 0          | 4          |
+> | WARNING:at_kernel/params.c:#param_sysfs_init | 0          | 4          |
+> | RIP:param_sysfs_init                         | 0          | 4          |
+> +----------------------------------------------+------------+------------+
+> 
 
-> +++ b/drivers/media/platform/coda/coda-bit.c
-> @@ -1728,6 +1728,7 @@ static int __coda_start_decoding(struct coda_ctx *ctx)
->  		v4l2_err(&dev->v4l2_dev, "CODA_COMMAND_SEQ_INIT timeout\n");
->  		return ret;
->  	}
-> +	ctx->sequence_offset = ~0U;
->  	ctx->initialized = 1;
->  
->  	/* Update kfifo out pointer from coda bitstream read pointer */
-> @@ -2147,7 +2148,9 @@ static void coda_finish_decode(struct coda_ctx *ctx)
->  		v4l2_err(&dev->v4l2_dev,
->  			 "decoded frame index out of range: %d\n", decoded_idx);
->  	} else {
-> -		val = coda_read(dev, CODA_RET_DEC_PIC_FRAME_NUM) - 1;
-> +		val = coda_read(dev, CODA_RET_DEC_PIC_FRAME_NUM);
-> +		if (ctx->sequence_offset == -1)
-> +			ctx->sequence_offset = val;
+Oh shoot.
 
-For consistency, would it be better to use == ~0U here, too? Variable is unsigned...
+This confusing report is caused by me accidentally leaving the MODULE_
+defines in a file that ended up not being a module. I'll send a patch ASAP.
 
--- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+Logan
+
+
