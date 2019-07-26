@@ -2,36 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8245D76D86
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 17:35:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A954976D8B
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 17:35:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389818AbfGZPeS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 11:34:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49932 "EHLO mail.kernel.org"
+        id S2389233AbfGZPe0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 11:34:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50004 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389422AbfGZPeR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 11:34:17 -0400
+        id S2389823AbfGZPeU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 11:34:20 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 97F522054F;
-        Fri, 26 Jul 2019 15:34:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0E6DD2054F;
+        Fri, 26 Jul 2019 15:34:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564155257;
-        bh=mU/cphH8ryHrVmuO9omVALk2fgtD/LhRfsJrntv7E2o=;
+        s=default; t=1564155259;
+        bh=QOAORFFSoIgj6olZjTHeJxdeVZ/k9XluFJeK97Pn3B0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JsSFV1pnKrU8BkWi2UbE4ot/BOgSBMicUEkYJaq+5rfqrdpCKFX1TW7+XSBjlOoMz
-         QKRQxhrN8hRh8qOiB/tRr7yspI6ke+ucEcnjbhZbtwDmhN+lrohD6iRmL06OlanMQ0
-         Ccmpy0eCwKxEYvYIZngnlhu/aRWQFaQW6byE6/VQ=
+        b=x6FWzX3miONmF3QIg6gjmqnAT55iBBvhlwVngLXfnoBqfNBwsLfbrJHa43YFkfs/O
+         6kxXdt20TGDZAdeaaRgwWOQ454y+kvdSqQyLqmA23FXs1sVQfabZuys90TU3cCIiUx
+         HTS/0VSkWZoj7bROExf43TS45S/WNo8X712oLS0o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 35/50] net: bridge: stp: dont cache eth dest pointer before skb pull
-Date:   Fri, 26 Jul 2019 17:25:10 +0200
-Message-Id: <20190726152304.248021797@linuxfoundation.org>
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linaro-mm-sig@lists.linaro.org,
+        =?UTF-8?q?St=C3=A9phane=20Marchesin?= <marcheu@chromium.org>
+Subject: [PATCH 4.19 36/50] dma-buf: balance refcount inbalance
+Date:   Fri, 26 Jul 2019 17:25:11 +0200
+Message-Id: <20190726152304.356080005@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190726152300.760439618@linuxfoundation.org>
 References: <20190726152300.760439618@linuxfoundation.org>
@@ -44,38 +49,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+From: Jérôme Glisse <jglisse@redhat.com>
 
-[ Upstream commit 2446a68ae6a8cee6d480e2f5b52f5007c7c41312 ]
+commit 5e383a9798990c69fc759a4930de224bb497e62c upstream.
 
-Don't cache eth dest pointer before calling pskb_may_pull.
+The debugfs take reference on fence without dropping them.
 
-Fixes: cf0f02d04a83 ("[BRIDGE]: use llc for receiving STP packets")
-Signed-off-by: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
+Cc: Christian König <christian.koenig@amd.com>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: Sumit Semwal <sumit.semwal@linaro.org>
+Cc: linux-media@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org
+Cc: linaro-mm-sig@lists.linaro.org
+Cc: Stéphane Marchesin <marcheu@chromium.org>
+Cc: stable@vger.kernel.org
+Reviewed-by: Christian König <christian.koenig@amd.com>
+Signed-off-by: Sumit Semwal <sumit.semwal@linaro.org>
+Link: https://patchwork.freedesktop.org/patch/msgid/20181206161840.6578-1-jglisse@redhat.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/bridge/br_stp_bpdu.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/net/bridge/br_stp_bpdu.c
-+++ b/net/bridge/br_stp_bpdu.c
-@@ -147,7 +147,6 @@ void br_send_tcn_bpdu(struct net_bridge_
- void br_stp_rcv(const struct stp_proto *proto, struct sk_buff *skb,
- 		struct net_device *dev)
- {
--	const unsigned char *dest = eth_hdr(skb)->h_dest;
- 	struct net_bridge_port *p;
- 	struct net_bridge *br;
- 	const unsigned char *buf;
-@@ -176,7 +175,7 @@ void br_stp_rcv(const struct stp_proto *
- 	if (p->state == BR_STATE_DISABLED)
- 		goto out;
+---
+ drivers/dma-buf/dma-buf.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- a/drivers/dma-buf/dma-buf.c
++++ b/drivers/dma-buf/dma-buf.c
+@@ -1069,6 +1069,7 @@ static int dma_buf_debug_show(struct seq
+ 				   fence->ops->get_driver_name(fence),
+ 				   fence->ops->get_timeline_name(fence),
+ 				   dma_fence_is_signaled(fence) ? "" : "un");
++			dma_fence_put(fence);
+ 		}
+ 		rcu_read_unlock();
  
--	if (!ether_addr_equal(dest, br->group_addr))
-+	if (!ether_addr_equal(eth_hdr(skb)->h_dest, br->group_addr))
- 		goto out;
- 
- 	if (p->flags & BR_BPDU_GUARD) {
 
 
