@@ -2,194 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 070437725A
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 21:47:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 694CA77263
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 21:49:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727894AbfGZTqy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 15:46:54 -0400
-Received: from esa4.hgst.iphmx.com ([216.71.154.42]:17134 "EHLO
-        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727771AbfGZTqt (ORCPT
+        id S1727983AbfGZTto (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 15:49:44 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:32953 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726855AbfGZTtn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 15:46:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1564170409; x=1595706409;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=4G/AiivRvt04iQqbVTDPT9b5v5TEP81JdiptpePFLX8=;
-  b=kbhMHiqz2to9iR+Vg1UjXHeF8S4OkHEVCybu87MmRw36LyagmS9aBljZ
-   2jctNq7rRulWH3l6Kecq+IUXazjRPsZiE1ydjbwlCFcdFivzuGWwOzaOl
-   e5SuvctxWai5mtjsqwQRAoBpPqCQ2LafOWhVlJkG28OW4fRDdRgfaTwg3
-   jkFJ1G5v0L/b61W+0MiLiiyge61zZ+a7UBpHgNcX6f21i3MY8GIHpOpVX
-   v6jebSA0xNL6ahTLCLmqetOPFk2A06g7NLPWNrMdBCKJnQR7I7SqOUrLb
-   rkBmAjV4iN+SIFc3FhGtnDqTU8XYY1uhOO3Ogg8LZUrfExEToIHLBt+g0
-   w==;
-IronPort-SDR: VjMPj83Lrgwf5MV/myr/BJOW7KJGWKp8CJ1PQqHPZpRfUzKbVrxt9eDrZzzHqtqTSLZsXR9C1T
- VABfD93gM+1xxMPat4uIZqbmcXYHqjTb/8OOhUFARwPi/3CuIpS1UXpRqdUqW6HC5PcPDbB806
- icTJ1QWdZilYu3sQxYM29r2LxKzRfHcDEMQHKEoih6jFZjEt2T2e5SKwaVCjOimAhZMvkoy+Lm
- Q5CysZAlOknNyMlUTKFRSY8Q+PRZuDatLHrL7q5YOokS7E55/Sa5msQGWgG+iYEsAUSpk2+sux
- H5I=
-X-IronPort-AV: E=Sophos;i="5.64,312,1559491200"; 
-   d="scan'208";a="114239813"
-Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 27 Jul 2019 03:46:48 +0800
-IronPort-SDR: 4esurgtfWkTuDEqyJRca9cVoDRGSe9HfzjmuSjsX52UGp8rNLHCjA/Pd9SnlIjNest+8fZ++nL
- 1h/XKqBgJx+DQ35JKC9Q6rgAjplmyYXjU+7hqF/tZKSUBm5zXavjDVj6i83CN7aHSOCGUYx8bX
- eRJvNTdLH0ShVt/S1bBU3w4BI/D+yGgr5e/oeTvFRplJfX7MNwGjmgg/l9kQnt5hs28vosrm1G
- SSllSoVN1yIj5mnZ1K8f5UG92fKCWKhz5br/llpNWaTGxov+IiOgUOHbFWhpoLld8XRHnVLQQi
- M8xAL8tJaPQ1M16mAXUiygMa
-Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep01.wdc.com with ESMTP; 26 Jul 2019 12:44:57 -0700
-IronPort-SDR: J+Ohxn5O071I/GlSvFKCslQ9U8iEOicbnZ4EcP2qBdVSymXxULqZFXIfnOnMBQFvrfRo8ZHBlm
- fFpNFzKwqBNbM0XfVEW+YRpM+1MQbVg4/t+Xwxpji2jecPcLABfxtsEcO8eILswds3CPKKERls
- R1MTIVpFz5P7/9+zl0AvLs+6yKfvCYsW4I7XaCjhX01og23X+/jlzsOfLnB6mLSnGdWs5F69Cv
- t0gCfuOsBiMP1ZYMyIfhHFZKG2FE5t3hOTvud6Dlgv4xYVIKMTx5bEfe9N4nm0/YTE60F4sS2n
- gco=
-Received: from jedi-01.sdcorp.global.sandisk.com (HELO jedi-01.int.fusionio.com) ([10.11.143.218])
-  by uls-op-cesaip01.wdc.com with ESMTP; 26 Jul 2019 12:46:48 -0700
-From:   Atish Patra <atish.patra@wdc.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Atish Patra <atish.patra@wdc.com>,
-        Alan Kao <alankao@andestech.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Allison Randal <allison@lohutok.net>,
-        Anup Patel <anup.patel@wdc.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Johan Hovold <johan@kernel.org>,
-        linux-riscv@lists.infradead.org,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 4/4] RISC-V: Fix unsupported isa string info.
-Date:   Fri, 26 Jul 2019 12:46:38 -0700
-Message-Id: <20190726194638.8068-4-atish.patra@wdc.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190726194638.8068-1-atish.patra@wdc.com>
-References: <20190726194638.8068-1-atish.patra@wdc.com>
+        Fri, 26 Jul 2019 15:49:43 -0400
+Received: by mail-qt1-f195.google.com with SMTP id r6so49564879qtt.0
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2019 12:49:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ZTgTHrN6B+JKK0bxUfsBC3AuqiptBA1np1rV+FpgXS8=;
+        b=vYpaC/nQschTK08XZSTMuyTP3F9LCSSLlQ5cEHAh/JYkSCAQpCwO2qAf+uDX5wRKL9
+         LkqFzpFb9AFA81VV8y49VzYJoviYcKA30KipAxG8gZLkXJ5j5xh3B8Xi6aSdwoMi6oRx
+         3s0D7Zc4HRIA9zMtJW7TUfjcqKuy25q4PrhL8e0ryE4jS8J2MriT/lR1/AtMBZstXOiF
+         YLGiazPW+EdBnTFOJbYGhgpigK2fvlAU/1PjLFGHbuDsUjCLV2sYaHVNHApIkW5xrhYO
+         lbcF9hW040vXQ/LQYIao27ZqqNxRZLvxgvhoMBZU66B9XE8IQ39LuD1WWC+AwQBwyJkl
+         T8TQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZTgTHrN6B+JKK0bxUfsBC3AuqiptBA1np1rV+FpgXS8=;
+        b=Y21ic5YNsCFmx2wnnvqpBZwv/Nq3gaBhNEM6gGMpJ2QEPfCEha9oRoNFwupZMdTzxx
+         N+Wrga/6Jk9oTAEgvRldH4zWIGEcpuP38eu07G46YFr+dfopE6lC5Snx1x9/8+VW9oyb
+         fHw+XAPP2X6q5elHvXpYMR7nHKHwohCEWc1Cg3jTTGpH3UJzU1pa9Gxo/rNCHVesQgRk
+         M6JGSbX5A/RdYXuJUUT/lUD7mTJSyAzsSDtRx4qAOOLGSWcDgd2RaBLv1J+IAjkolRWc
+         5/TU/DrW+mbF2WqXlvW3wjuYVnsSAWcVgAPhnvWnnDKnHgce6x0DG7jPES9VC1LHO7Lg
+         33tw==
+X-Gm-Message-State: APjAAAWWDtfouBKfKsccM3UtuFO/qIssW+hYWvj+WymmbsK2/3B/8ZCC
+        iR9pNiBYSizw9Th9xoNfoLmTjJyoitA3jxD3U0U+JA==
+X-Google-Smtp-Source: APXvYqyz+HZo+hz+50oIUBT+Ci74ViWrpTikyXGqsAjt2avy5pzWrJYRGhJgiJyHNg0NzKoxh7dEaZwnmnKE17vZF0Q=
+X-Received: by 2002:ac8:1ba9:: with SMTP id z38mr69008671qtj.176.1564170582398;
+ Fri, 26 Jul 2019 12:49:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190716222650.tk2coihjtsxszarf@ast-mbp.dhcp.thefacebook.com>
+ <20190716224150.GC172157@google.com> <20190716235500.GA199237@google.com>
+ <20190717012406.lugqemvubixfdd6v@ast-mbp.dhcp.thefacebook.com>
+ <20190717130119.GA138030@google.com> <CAADnVQJY_=yeY0C3k1ZKpRFu5oNbB4zhQf5tQnLr=Mi8i6cgeQ@mail.gmail.com>
+ <20190718025143.GB153617@google.com> <20190723221108.gamojemj5lorol7k@ast-mbp>
+ <20190724135714.GA9945@google.com> <20190726183954.oxzhkrwt4uhgl4gl@ast-mbp.dhcp.thefacebook.com>
+ <20190726191853.GA196514@google.com>
+In-Reply-To: <20190726191853.GA196514@google.com>
+From:   Joel Fernandes <joelaf@google.com>
+Date:   Fri, 26 Jul 2019 15:49:30 -0400
+Message-ID: <CAJWu+opEckc++G6btY6Muhi6ToJQYSW7HfxPYdrJkXiAoy4Fww@mail.gmail.com>
+Subject: Re: [PATCH RFC 0/4] Add support to directly attach BPF program to ftrace
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Network Development <netdev@vger.kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        "Cc: Android Kernel" <kernel-team@android.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, kernel prints a info warning if any of the extensions
-from "mafdcsu" is missing in device tree. This is not entirely
-correct as Linux can boot with "f or d" extensions if kernel is
-configured accordingly. Moreover, it will continue to print the
-info string for future extensions such as hypervisor as well which
-is misleading. /proc/cpuinfo also doesn't print any other extensions
-except "mafdcsu".
+On Fri, Jul 26, 2019 at 3:18 PM Joel Fernandes <joel@joelfernandes.org> wrote:
+>
+> On Fri, Jul 26, 2019 at 11:39:56AM -0700, Alexei Starovoitov wrote:
+[snip]
+> > > For bpf program:
+> > > https://android.googlesource.com/platform/system/bpfprogs/+/908f6cd718fab0de7a944f84628c56f292efeb17%5E%21/
+> >
+> > what is unsafe_bpf_map_update_elem() in there?
+> > The verifier comment sounds odd.
+> > Could you describe the issue you see with the verifier?
+>
+> Will dig out the verifier issue I was seeing. I was just trying to get a
+> prototype working so I did not go into verifier details much.
 
-Make sure that info log is only printed only if kernel is configured
-to have any mandatory extensions but device tree doesn't describe it.
-All the extensions present in device tree and follow the order
-described in the RISC-V specification (except 'S') are printed via
-/proc/cpuinfo always.
+This is actually slightly old code, the actual function name is
+bpf_map_update_elem_unsafe() .
+ https://android.googlesource.com/platform/system/bpf/+/refs/heads/master/progs/include/bpf_helpers.h#39
 
-Signed-off-by: Atish Patra <atish.patra@wdc.com>
----
- arch/riscv/kernel/cpu.c | 47 ++++++++++++++++++++++++++++++++---------
- 1 file changed, 37 insertions(+), 10 deletions(-)
+This function came about because someone added a DEFINE_BPF_MAP macro
+which defines BPF map accessors based on the type of the key and
+value. So that's the "safe" variant:
+https://android.googlesource.com/platform/system/bpf/+/refs/heads/master/progs/include/bpf_helpers.h#54
+(added in commit
+https://android.googlesource.com/platform/system/bpf/+/6564b8eac46fc27dde807a39856386d98d2471c3)
 
-diff --git a/arch/riscv/kernel/cpu.c b/arch/riscv/kernel/cpu.c
-index 185143478830..3d050440364c 100644
---- a/arch/riscv/kernel/cpu.c
-+++ b/arch/riscv/kernel/cpu.c
-@@ -8,6 +8,7 @@
- #include <linux/ctype.h>
- #include <linux/of.h>
- #include <asm/smp.h>
-+#include <asm/hwcap.h>
- 
- /*
-  * Returns the hart ID of the given device tree node, or -ENODEV if the node
-@@ -47,11 +48,14 @@ int riscv_of_processor_hartid(struct device_node *node)
- 
- #ifdef CONFIG_PROC_FS
- 
--static void print_isa(struct seq_file *f, const char *orig_isa)
-+static void print_isa(struct seq_file *f, const char *orig_isa,
-+		      unsigned long cpuid)
- {
--	static const char *ext = "mafdcsu";
-+	static const char *mandatory_ext = "mafdcsu";
- 	const char *isa = orig_isa;
- 	const char *e;
-+	char unsupported_isa[26] = {0};
-+	int index = 0;
- 
- 	/*
- 	 * Linux doesn't support rv32e or rv128i, and we only support booting
-@@ -71,27 +75,50 @@ static void print_isa(struct seq_file *f, const char *orig_isa)
- 	isa += 5;
- 
- 	/*
--	 * Check the rest of the ISA string for valid extensions, printing those
--	 * we find.  RISC-V ISA strings define an order, so we only print the
-+	 * RISC-V ISA strings define an order, so we only print all the
- 	 * extension bits when they're in order. Hide the supervisor (S)
- 	 * extension from userspace as it's not accessible from there.
-+	 * Throw a warning only if any mandatory extensions are not available
-+	 * and kernel is configured to have that mandatory extensions.
- 	 */
--	for (e = ext; *e != '\0'; ++e) {
--		if (tolower(isa[0]) == e[0]) {
-+	for (e = mandatory_ext; *e != '\0'; ++e) {
-+		if (tolower(isa[0]) != e[0]) {
-+#if defined(CONFIG_ISA_RISCV_C)
-+			if (tolower(isa[0] == 'c'))
-+				continue;
-+#endif
-+#if defined(CONFIG_FP)
-+			if ((tolower(isa[0]) == 'f') || tolower(isa[0] == 'd'))
-+				continue;
-+#endif
-+			unsupported_isa[index] = e[0];
-+			index++;
-+		}
-+		if (isa[0] != '\0') {
-+			/* Only write if part of isa string */
- 			if (tolower(isa[0] != 's'))
- 				seq_write(f, isa, 1);
--
- 			isa++;
- 		}
- 	}
-+	if (isa[0] != '\0') {
-+		/* Add remainging isa strings */
-+		for (e = isa; *e != '\0'; ++e) {
-+#if !defined(CONFIG_VIRTUALIZATION)
-+			if ((tolower(e[0]) != 'h'))
-+#endif
-+				seq_write(f, e, 1);
-+		}
-+	}
- 	seq_puts(f, "\n");
- 
- 	/*
- 	 * If we were given an unsupported ISA in the device tree then print
- 	 * a bit of info describing what went wrong.
- 	 */
--	if (isa[0] != '\0')
--		pr_info("unsupported ISA \"%s\" in device tree\n", orig_isa);
-+	if (unsupported_isa[0])
-+		pr_info("unsupported ISA extensions \"%s\" in device tree for cpu [%ld]\n",
-+			unsupported_isa, cpuid);
- }
- 
- static void print_mmu(struct seq_file *f, const char *mmu_type)
-@@ -135,7 +162,7 @@ static int c_show(struct seq_file *m, void *v)
- 	seq_printf(m, "processor\t: %lu\n", cpu_id);
- 	seq_printf(m, "hart\t\t: %lu\n", cpuid_to_hartid_map(cpu_id));
- 	if (!of_property_read_string(node, "riscv,isa", &isa))
--		print_isa(m, isa);
-+		print_isa(m, isa, cpu_id);
- 	if (!of_property_read_string(node, "mmu-type", &mmu))
- 		print_mmu(m, mmu);
- 	if (!of_property_read_string(node, "compatible", &compat)
--- 
-2.21.0
+So the "safe" variant of the bpf_map_update_elem for us became a map
+specific version with a prototype:
+static inline __always_inline __unused int
+bpf_##the_map##_update_elem(TypeOfKey* k, TypeOfValue* v, unsigned
+long long flags)
 
+Since I had not upgraded my BPF program to the "safe" variant, I had
+to use the internal "unsafe" variant of the API (if that makes
+sense..).
+
+thanks Alexei!
+
+- Joel
