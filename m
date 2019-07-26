@@ -2,67 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B2F8876ED7
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 18:21:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E6C9776EED
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 18:22:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728692AbfGZQUs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 12:20:48 -0400
-Received: from mga02.intel.com ([134.134.136.20]:45268 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728611AbfGZQUr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 12:20:47 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jul 2019 09:20:45 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,311,1559545200"; 
-   d="scan'208";a="194315334"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.165])
-  by fmsmga004.fm.intel.com with ESMTP; 26 Jul 2019 09:20:44 -0700
-Date:   Fri, 26 Jul 2019 09:20:44 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Paul Bolle <pebolle@tiscali.nl>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [VDSO] [x86_32] v5-3-rc1 needs vdso32=0 to get systemd-journald
- running
-Message-ID: <20190726162044.GA5978@linux.intel.com>
-References: <618de21a4510f20f1b38a894517b5e9011f0da69.camel@tiscali.nl>
+        id S1728794AbfGZQWg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 12:22:36 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:26872 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727461AbfGZQWf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 12:22:35 -0400
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6QG7fWM014148;
+        Fri, 26 Jul 2019 18:22:27 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=STMicroelectronics;
+ bh=8uknQWRYc0ctwojlhiO1IFxUbdNNf9KGmiNaqsxedGA=;
+ b=hK/jrgE+HR7IWIPUmAZBr74PpQh9KHWaD3+owSOCBUwcODXMOIvjvCjoufdDHeeT85/6
+ OihgaQ8odbwYk2ppO6W/SdZNGlcb9CzOOSMN4o7WffzWivV75G6OdFNdO6IvuZl3uHeR
+ Rr41uYaC8zctr1fH5ju7K/R7xFrj0S/66Gaahi6frYu8ifvZUEGlroSbovaUpUsDkE57
+ f0oPhrkBXfcQn8Yznf/EkKtPFAwosc3J/SwW8QZdjuISmSo/Pjsq6ltMJH/pTBfsXd5x
+ lRxyopZIM7SA9l6PFTgFhkyAPj8zpF/UpMb1xHlvGTJZSO1ydKdIkn/fDZgvFXoma2d6 sw== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2tx60abrvn-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Fri, 26 Jul 2019 18:22:27 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 49A0D31;
+        Fri, 26 Jul 2019 16:22:26 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 2B2514FB8;
+        Fri, 26 Jul 2019 16:22:26 +0000 (GMT)
+Received: from lmecxl0912.lme.st.com (10.75.127.49) by SFHDAG3NODE2.st.com
+ (10.75.127.8) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 26 Jul
+ 2019 18:22:25 +0200
+Subject: Re: [PATCH v2 0/4] regulator: add support for the STM32 ADC booster
+To:     Fabrice Gasnier <fabrice.gasnier@st.com>, <broonie@kernel.org>,
+        <lgirdwood@gmail.com>, <robh+dt@kernel.org>
+CC:     <mcoquelin.stm32@gmail.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <devicetree@vger.kernel.org>
+References: <1561968865-22037-1-git-send-email-fabrice.gasnier@st.com>
+From:   Alexandre Torgue <alexandre.torgue@st.com>
+Message-ID: <d8bc0f0d-adc6-abd6-f248-94c72b360b00@st.com>
+Date:   Fri, 26 Jul 2019 18:22:25 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <618de21a4510f20f1b38a894517b5e9011f0da69.camel@tiscali.nl>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <1561968865-22037-1-git-send-email-fabrice.gasnier@st.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.49]
+X-ClientProxiedBy: SFHDAG4NODE3.st.com (10.75.127.12) To SFHDAG3NODE2.st.com
+ (10.75.127.8)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-26_12:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 26, 2019 at 06:13:54PM +0200, Paul Bolle wrote:
-> My first attempts to boot v5.3-rc1 on my (ancient) ThinkPad X41 made systemd-
-> journald crash. I kept ending up with nasty my messages on the console:
-> 
->          Starting Journal Service...
-> [...]
-> [    7.143552] systemd-journald[213]: Assertion 'clock_gettime(map_clock_id(clock_id), &ts) == 0' failed at ../src/basic/time-util.c:55, function now(). Aborting.
-> [FAILED] Failed to start Journal Service.
-> See 'systemctl status systemd-journald.service' for details.
-> [    7.220367] systemd-coredump[217]: Cannot resolve systemd-coredump user. Proceeding to dump core as root: No such process
-> [  OK  ] Stopped Journal Service.
-> 
-> And without systemd-journald I couldn't get userspace up and running.
-> 
-> A bit of tinkering showed that "vdso32=0" on the kernel command line allows me
-> to get a usable userspace.
-> 
-> Any idea where I should look next to pinpoint this?
+Hi Fabrice
 
-More than likely it's this:
+On 7/1/19 10:14 AM, Fabrice Gasnier wrote:
+> Add support for the 3.3V booster regulator embedded in stm32h7 and stm32mp1
+> devices, that can be used to supply ADC analog input switches.
+> It's useful to reach full ADC performance when their supply is below 2.7V
+> (vdda by default).
+> 
+> Changes in v2:
+> - rebase on top of for-next branch
+> 
+> Fabrice Gasnier (4):
+>    dt-bindings: regulator: add support for the stm32-booster
+>    regulator: add support for the stm32-booster
+>    ARM: multi_v7_defconfig: enable STM32 booster regulator
+>    ARM: dts: stm32: add booster for ADC analog switches on stm32mp157c
+> 
+>   .../bindings/regulator/st,stm32-booster.txt        |  18 +++
+>   arch/arm/boot/dts/stm32mp157c.dtsi                 |   6 +
+>   arch/arm/configs/multi_v7_defconfig                |   1 +
+>   drivers/regulator/Kconfig                          |  11 ++
+>   drivers/regulator/Makefile                         |   1 +
+>   drivers/regulator/stm32-booster.c                  | 132 +++++++++++++++++++++
+>   6 files changed, 169 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/regulator/st,stm32-booster.txt
+>   create mode 100644 drivers/regulator/stm32-booster.c
+> 
 
-https://lkml.kernel.org/r/20190719170343.GA13680@linux.intel.com
+DT patch + config applied in stm32-next.
+
+regards
+alex
