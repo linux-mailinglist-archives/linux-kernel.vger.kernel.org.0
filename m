@@ -2,42 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3320376CA5
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 17:26:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A01776CFA
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 17:29:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387850AbfGZP0K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 11:26:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40042 "EHLO mail.kernel.org"
+        id S2388793AbfGZP3X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 11:29:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43962 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387834AbfGZP0I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 11:26:08 -0400
+        id S2388759AbfGZP3S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 11:29:18 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8FE0922BF5;
-        Fri, 26 Jul 2019 15:26:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B43A322CBD;
+        Fri, 26 Jul 2019 15:29:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564154768;
-        bh=tp8Iagt+Ausx74B2p9vp97XiN5fd8WInryLepiW6ebE=;
+        s=default; t=1564154958;
+        bh=JiuFgkY+17KLtujNkFHlgKRwZi31lbFpMHz3Vr+0Xqk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nOhFVmQo/N2zLOtvIxvbmVcXeHMnxqcyJGgYBbdXDnxgAg6ABKqUBva/I9R8bEq9w
-         +XHJK0/W6M6+7uC5zgEMQ8x5Kmgg37ErGj3tpnnwpllyTNgsbw7mVO2EF+zkCXmvGj
-         J3G0doTAk8g9xVXexwsVj80LyzJciTTYyhHuDl+g=
+        b=JRM6MnQEbWXZokz+ZgUwLe/jJ903dCGtgYXixuNHQFLSZ2WxrPXo+OnytjPAn7FlD
+         Jo0ePR2LUArX45Yfo0WhGg5+pIuu0mZA/UYcIs4+luXHw7mcDGPPdnGKw+j1nfvvtN
+         VczI4qpBNVG85TO07rWrOa9updCfZK/k8CTg/wp0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+c1a380d42b190ad1e559@syzkaller.appspotmail.com,
-        Xin Long <lucien.xin@gmail.com>,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-        Neil Horman <nhorman@redhat.com>,
+        stable@vger.kernel.org, Ido Schimmel <idosch@mellanox.com>,
+        Alexander Petrovskiy <alexpe@mellanox.com>,
+        David Ahern <dsahern@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.2 20/66] sctp: fix error handling on stream scheduler initialization
+Subject: [PATCH 5.1 07/62] ipv6: Unlink sibling route in case of failure
 Date:   Fri, 26 Jul 2019 17:24:19 +0200
-Message-Id: <20190726152303.969554244@linuxfoundation.org>
+Message-Id: <20190726152302.474152642@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190726152301.936055394@linuxfoundation.org>
-References: <20190726152301.936055394@linuxfoundation.org>
+In-Reply-To: <20190726152301.720139286@linuxfoundation.org>
+References: <20190726152301.720139286@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,60 +45,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+From: Ido Schimmel <idosch@mellanox.com>
 
-[ Upstream commit 4d1415811e492d9a8238f8a92dd0d51612c788e9 ]
+[ Upstream commit 54851aa90cf27041d64b12f65ac72e9f97bd90fd ]
 
-It allocates the extended area for outbound streams only on sendmsg
-calls, if they are not yet allocated.  When using the priority
-stream scheduler, this initialization may imply into a subsequent
-allocation, which may fail.  In this case, it was aborting the stream
-scheduler initialization but leaving the ->ext pointer (allocated) in
-there, thus in a partially initialized state.  On a subsequent call to
-sendmsg, it would notice the ->ext pointer in there, and trip on
-uninitialized stuff when trying to schedule the data chunk.
+When a route needs to be appended to an existing multipath route,
+fib6_add_rt2node() first appends it to the siblings list and increments
+the number of sibling routes on each sibling.
 
-The fix is undo the ->ext initialization if the stream scheduler
-initialization fails and avoid the partially initialized state.
+Later, the function notifies the route via call_fib6_entry_notifiers().
+In case the notification is vetoed, the route is not unlinked from the
+siblings list, which can result in a use-after-free.
 
-Although syzkaller bisected this to commit 4ff40b86262b ("sctp: set
-chunk transport correctly when it's a new asoc"), this bug was actually
-introduced on the commit I marked below.
+Fix this by unlinking the route from the siblings list before returning
+an error.
 
-Reported-by: syzbot+c1a380d42b190ad1e559@syzkaller.appspotmail.com
-Fixes: 5bbbbe32a431 ("sctp: introduce stream scheduler foundations")
-Tested-by: Xin Long <lucien.xin@gmail.com>
-Signed-off-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-Acked-by: Neil Horman <nhorman@redhat.com>
+Audited the rest of the call sites from which the FIB notification chain
+is called and could not find more problems.
+
+Fixes: 2233000cba40 ("net/ipv6: Move call_fib6_entry_notifiers up for route adds")
+Signed-off-by: Ido Schimmel <idosch@mellanox.com>
+Reported-by: Alexander Petrovskiy <alexpe@mellanox.com>
+Reviewed-by: David Ahern <dsahern@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sctp/stream.c |    9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ net/ipv6/ip6_fib.c |   18 +++++++++++++++++-
+ 1 file changed, 17 insertions(+), 1 deletion(-)
 
---- a/net/sctp/stream.c
-+++ b/net/sctp/stream.c
-@@ -153,13 +153,20 @@ out:
- int sctp_stream_init_ext(struct sctp_stream *stream, __u16 sid)
- {
- 	struct sctp_stream_out_ext *soute;
-+	int ret;
- 
- 	soute = kzalloc(sizeof(*soute), GFP_KERNEL);
- 	if (!soute)
- 		return -ENOMEM;
- 	SCTP_SO(stream, sid)->ext = soute;
- 
--	return sctp_sched_init_sid(stream, sid, GFP_KERNEL);
-+	ret = sctp_sched_init_sid(stream, sid, GFP_KERNEL);
-+	if (ret) {
-+		kfree(SCTP_SO(stream, sid)->ext);
-+		SCTP_SO(stream, sid)->ext = NULL;
-+	}
+--- a/net/ipv6/ip6_fib.c
++++ b/net/ipv6/ip6_fib.c
+@@ -1113,8 +1113,24 @@ add:
+ 		err = call_fib6_entry_notifiers(info->nl_net,
+ 						FIB_EVENT_ENTRY_ADD,
+ 						rt, extack);
+-		if (err)
++		if (err) {
++			struct fib6_info *sibling, *next_sibling;
 +
-+	return ret;
- }
++			/* If the route has siblings, then it first
++			 * needs to be unlinked from them.
++			 */
++			if (!rt->fib6_nsiblings)
++				return err;
++
++			list_for_each_entry_safe(sibling, next_sibling,
++						 &rt->fib6_siblings,
++						 fib6_siblings)
++				sibling->fib6_nsiblings--;
++			rt->fib6_nsiblings = 0;
++			list_del_init(&rt->fib6_siblings);
++			rt6_multipath_rebalance(next_sibling);
+ 			return err;
++		}
  
- void sctp_stream_free(struct sctp_stream *stream)
+ 		rcu_assign_pointer(rt->fib6_next, iter);
+ 		atomic_inc(&rt->fib6_ref);
 
 
