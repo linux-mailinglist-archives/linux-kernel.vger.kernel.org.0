@@ -2,41 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ADCD076A3F
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 15:57:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6663D76A3A
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 15:57:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728548AbfGZN5P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 09:57:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47660 "EHLO mail.kernel.org"
+        id S2387668AbfGZNl0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 09:41:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47748 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727862AbfGZNlR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 09:41:17 -0400
+        id S2387654AbfGZNlV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 09:41:21 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8F62322BE8;
-        Fri, 26 Jul 2019 13:41:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DB0B922CB8;
+        Fri, 26 Jul 2019 13:41:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564148476;
-        bh=fpt9gHlgHFABDDyRXQzXw1gk5uU8yrS8EcsUFXPNdQA=;
+        s=default; t=1564148480;
+        bh=2HAjsazSUtJXt2TTMq9ufkoer4YWsLVnedNBQy4W8XM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tIiCtH4cmSCpAD4ZuU/N4Ddlz1h4I5XYuQBkjZNXToag3d6ogjYl/FuPZoPxVgUeV
-         tG7D3tH66+uRHcMH0UxqwBm5pbpO7mZCgsRizUKVVyprCW6aF9yDeNiV2J/m/kdFFd
-         cMwngPQUuE4rnAbZ1ieLPjBY3pu1A5JWIpqQmzSE=
+        b=XlOoQLGHZvAZVMvaKig/BI/07/sh8W9bAZt/LT41cJfKQ9vvtCgqWqyLGja0Qsb2f
+         NvyAuPOxwP2bdZz4YUVr+zFyvH5ZfLkhOf8V9721T2voM8TWlja8dLQXR6YP5Bwhh5
+         ARioHrWtupnVwrJmjQaCa1AmGkfUgFcQuDGyxWvY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Anshuman Khandual <anshuman.khandual@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Toshi Kani <toshi.kani@hpe.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Chintan Pandya <cpandya@codeaurora.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
+Cc:     Sam Protsenko <semen.protsenko@linaro.org>,
+        Jan Harkes <jaharkes@cs.cmu.edu>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Colin Ian King <colin.king@canonical.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        David Howells <dhowells@redhat.com>,
+        Fabian Frederick <fabf@skynet.be>,
+        Mikko Rapeli <mikko.rapeli@iki.fi>,
+        Yann Droneaud <ydroneaud@opteya.com>,
+        Zhouyang Jia <jiazhouyang09@gmail.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.2 59/85] mm/ioremap: check virtual address alignment while creating huge mappings
-Date:   Fri, 26 Jul 2019 09:39:09 -0400
-Message-Id: <20190726133936.11177-59-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, codalist@coda.cs.cmu.edu
+Subject: [PATCH AUTOSEL 5.2 61/85] coda: fix build using bare-metal toolchain
+Date:   Fri, 26 Jul 2019 09:39:11 -0400
+Message-Id: <20190726133936.11177-61-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190726133936.11177-1-sashal@kernel.org>
 References: <20190726133936.11177-1-sashal@kernel.org>
@@ -49,63 +53,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anshuman Khandual <anshuman.khandual@arm.com>
+From: Sam Protsenko <semen.protsenko@linaro.org>
 
-[ Upstream commit 6b95ab4218bfa59bc315105127ffe03aef3b5742 ]
+[ Upstream commit b2a57e334086602be56b74958d9f29b955cd157f ]
 
-Virtual address alignment is essential in ensuring correct clearing for
-all intermediate level pgtable entries and freeing associated pgtable
-pages.  An unaligned address can end up randomly freeing pgtable page
-that potentially still contains valid mappings.  Hence also check it's
-alignment along with existing phys_addr check.
+The kernel is self-contained project and can be built with bare-metal
+toolchain.  But bare-metal toolchain doesn't define __linux__.  Because
+of this u_quad_t type is not defined when using bare-metal toolchain and
+codafs build fails.  This patch fixes it by defining u_quad_t type
+unconditionally.
 
-Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
-Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Toshi Kani <toshi.kani@hpe.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Chintan Pandya <cpandya@codeaurora.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/3cbb40b0a57b6f9923a9d67b53473c0b691a3eaa.1558117389.git.jaharkes@cs.cmu.edu
+Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+Signed-off-by: Jan Harkes <jaharkes@cs.cmu.edu>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Colin Ian King <colin.king@canonical.com>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: David Howells <dhowells@redhat.com>
+Cc: Fabian Frederick <fabf@skynet.be>
+Cc: Mikko Rapeli <mikko.rapeli@iki.fi>
+Cc: Yann Droneaud <ydroneaud@opteya.com>
+Cc: Zhouyang Jia <jiazhouyang09@gmail.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- lib/ioremap.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ include/linux/coda.h | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/lib/ioremap.c b/lib/ioremap.c
-index 063213685563..a95161d9c883 100644
---- a/lib/ioremap.c
-+++ b/lib/ioremap.c
-@@ -86,6 +86,9 @@ static int ioremap_try_huge_pmd(pmd_t *pmd, unsigned long addr,
- 	if ((end - addr) != PMD_SIZE)
- 		return 0;
+diff --git a/include/linux/coda.h b/include/linux/coda.h
+index d30209b9cef8..0ca0c83fdb1c 100644
+--- a/include/linux/coda.h
++++ b/include/linux/coda.h
+@@ -58,8 +58,7 @@ Mellon the rights to redistribute these changes without encumbrance.
+ #ifndef _CODA_HEADER_
+ #define _CODA_HEADER_
  
-+	if (!IS_ALIGNED(addr, PMD_SIZE))
-+		return 0;
+-#if defined(__linux__)
+ typedef unsigned long long u_quad_t;
+-#endif
 +
- 	if (!IS_ALIGNED(phys_addr, PMD_SIZE))
- 		return 0;
- 
-@@ -126,6 +129,9 @@ static int ioremap_try_huge_pud(pud_t *pud, unsigned long addr,
- 	if ((end - addr) != PUD_SIZE)
- 		return 0;
- 
-+	if (!IS_ALIGNED(addr, PUD_SIZE))
-+		return 0;
-+
- 	if (!IS_ALIGNED(phys_addr, PUD_SIZE))
- 		return 0;
- 
-@@ -166,6 +172,9 @@ static int ioremap_try_huge_p4d(p4d_t *p4d, unsigned long addr,
- 	if ((end - addr) != P4D_SIZE)
- 		return 0;
- 
-+	if (!IS_ALIGNED(addr, P4D_SIZE))
-+		return 0;
-+
- 	if (!IS_ALIGNED(phys_addr, P4D_SIZE))
- 		return 0;
- 
+ #include <uapi/linux/coda.h>
+ #endif 
 -- 
 2.20.1
 
