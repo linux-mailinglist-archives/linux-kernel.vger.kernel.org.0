@@ -2,58 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E28176C0E
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 16:52:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A544B76C12
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 16:52:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387611AbfGZOwG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 10:52:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55854 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387407AbfGZOwG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 10:52:06 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8CC082082E;
-        Fri, 26 Jul 2019 14:52:04 +0000 (UTC)
-Date:   Fri, 26 Jul 2019 10:52:03 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Bhaskar Chowdhury <unixbhaskar@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        linux-rt-users <linux-rt-users@vger.kernel.org>,
-        "linux-trace-users@vger.kernel.org" 
-        <linux-trace-users@vger.kernel.org>,
-        Linux Trace Devel <linux-trace-devel@vger.kernel.org>,
-        troyengel@gmail.com, amikhak@wirelessfabric.com,
-        valentin.schneider@arm.com, Patrick McLean <chutzpah@gentoo.org>,
-        John Kacur <jkacur@redhat.com>,
-        Yordan Karadzhov <y.karadz@gmail.com>,
-        Tzvetomir Stoyanov <tstoyanov@vmware.com>,
-        Slavomir Kaslev <kaslevs@vmware.com>, howaboutsynergy@pm.me,
-        Bas van Dijk <v.dijk.bas@gmail.com>
-Subject: Re: [ANNOUNCE] KernelShark 1.0
-Message-ID: <20190726105203.13c7f0e7@gandalf.local.home>
-In-Reply-To: <20190726144938.GA3078@ArchLinux>
-References: <20190726095730.0674d81d@gandalf.local.home>
-        <20190726144938.GA3078@ArchLinux>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1727992AbfGZOwm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 10:52:42 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:33834 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727172AbfGZOwl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 10:52:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Reply-To:Content-Type:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=5hwDR4tPEL7vTgTgaQSKrhug2Vgpq2uEOobdVVVTPIo=; b=JZv16xyW1hc6t5gsX/fUqj2Jz
+        LyKwgUpPzesrfNl5p93wcBs+vkR5ursAN14i3s+3p02C4rWGOy4w3DZGDFcBovWcWdgQrHZbFskXp
+        GrbrlNzGbb+dLf0FyFxX4Dr9wv5CHC60FAvKy9i5e/2LbVeVbckrN3YvuVP+pyR5Dri+BGUzqTkGl
+        J1C5IGiC9tpJXC0pVXyKqQRViIu+3XpdjCmbHft1H8MS4knlOuD8rGnfMypQeqg/B6irXqKi2FyN7
+        61aolci5+9V85XKDKw9OD2DaPhGrSfer8NOPmSMdYkfqr9ezFjXan6sibUUXcLLgqNwjpT969G0ob
+        J9wrZqeIg==;
+Received: from [179.95.31.157] (helo=bombadil.infradead.org)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hr1aL-0008Og-5t; Fri, 26 Jul 2019 14:52:41 +0000
+Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
+        (envelope-from <mchehab@bombadil.infradead.org>)
+        id 1hr1aI-0004OR-HA; Fri, 26 Jul 2019 11:52:38 -0300
+From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
+Subject: [PATCH] MAINTAINERS: add entries for some documentation scripts
+Date:   Fri, 26 Jul 2019 11:52:34 -0300
+Message-Id: <b21677443a602c5dc263537fa48f0e78da75187a.1564152752.git.mchehab+samsung@kernel.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 26 Jul 2019 20:19:38 +0530
-Bhaskar Chowdhury <unixbhaskar@gmail.com> wrote:
+There are some documentation scripts I wrote with doesn't
+have any maintainer at maintainer's file.
 
-> Kudos to everyone...time to play with it. :)
-> 
+Add them to the DOCUMENTATION entry, in order to have
+Jon and linux-doc ML c/c on those patches, plus a new
+entry to ensure that I'll be c/c when people send patches
+to those.
 
-Thanks,
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+---
+ MAINTAINERS | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-Although we're preparing for a ton of bug reports. Nothing is better
-testing to flush out bugs than giving it to users.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 4de2f288d1ec..a09355672212 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -4947,7 +4947,9 @@ M:	Jonathan Corbet <corbet@lwn.net>
+ L:	linux-doc@vger.kernel.org
+ S:	Maintained
+ F:	Documentation/
++F:	scripts/documentation-file-ref-check
+ F:	scripts/kernel-doc
++F:	scripts/sphinx-pre-install
+ X:	Documentation/ABI/
+ X:	Documentation/firmware-guide/acpi/
+ X:	Documentation/devicetree/
+@@ -4963,6 +4965,14 @@ L:	linux-doc@vger.kernel.org
+ S:	Maintained
+ F:	Documentation/translations/it_IT
+ 
++DOCUMENTATION SCRIPTS
++M:	Mauro Carvalho Chehab <mchehab@kernel.org>
++L:	linux-doc@vger.kernel.org
++S:	Maintained
++F:	scripts/documentation-file-ref-check
++F:	scripts/sphinx-pre-install
++F:	Documentation/sphinx/parse-headers.pl
++
+ DONGWOON DW9714 LENS VOICE COIL DRIVER
+ M:	Sakari Ailus <sakari.ailus@linux.intel.com>
+ L:	linux-media@vger.kernel.org
+-- 
+2.21.0
 
--- Steve
