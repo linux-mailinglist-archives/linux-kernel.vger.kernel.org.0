@@ -2,82 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45C4576FA3
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 19:18:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B504C76FAE
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 19:22:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387790AbfGZRSc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 13:18:32 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42338 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726635AbfGZRSc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 13:18:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=RBX7tzBB3qOOwRPE91iIliUe4Au3MKtV5wsdWSb/SZs=; b=khpzyhyArncmH0mL33rxRuuoo
-        tpja7bvM8+oKVU8hbzELWNPvdbdlGvU6hiqrKxNQu3p1aqXNdUdQ7Dre7Rj/WGjg1YXsjxy38z93n
-        6Do7pXKlv4vSEAgseUHNtERU4zyhYrwQA0olkaPmp8FFsDCuEJLyELQOmBpMeoJfRFI8Y=;
-Received: from ypsilon.sirena.org.uk ([2001:470:1f1d:6b5::7])
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hr3rN-0002v0-0d; Fri, 26 Jul 2019 17:18:25 +0000
-Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 60BFA2742B63; Fri, 26 Jul 2019 18:18:24 +0100 (BST)
-Date:   Fri, 26 Jul 2019 18:18:24 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc:     linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
-        rafael@kernel.org, linux-arm-kernel@lists.infradead.org,
-        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org,
-        linux-spi@vger.kernel.org,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org
-Subject: Re: [PATCH v3 5/7] drivers: Introduce device lookup variants by
- ACPI_COMPANION device
-Message-ID: <20190726171824.GE55803@sirena.org.uk>
-References: <20190723221838.12024-1-suzuki.poulose@arm.com>
- <20190723221838.12024-6-suzuki.poulose@arm.com>
+        id S1727895AbfGZRWR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 13:22:17 -0400
+Received: from mga03.intel.com ([134.134.136.65]:63386 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726675AbfGZRWQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 13:22:16 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jul 2019 10:22:16 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,311,1559545200"; 
+   d="scan'208";a="198460217"
+Received: from andawes-mobl.amr.corp.intel.com (HELO [10.251.145.66]) ([10.251.145.66])
+  by fmsmga002.fm.intel.com with ESMTP; 26 Jul 2019 10:22:15 -0700
+Subject: Re: [alsa-devel] [RFC PATCH 35/40] soundwire: intel: export helper to
+ exit reset
+To:     Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
+Cc:     alsa-devel@alsa-project.org, tiwai@suse.de,
+        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        vkoul@kernel.org, broonie@kernel.org,
+        srinivas.kandagatla@linaro.org, jank@cadence.com,
+        slawomir.blauciak@intel.com, Sanyog Kale <sanyog.r.kale@intel.com>
+References: <20190725234032.21152-1-pierre-louis.bossart@linux.intel.com>
+ <20190725234032.21152-36-pierre-louis.bossart@linux.intel.com>
+ <20190726155213.GK16003@ubuntu>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <4b1f657c-e75f-d817-aa86-4224ce459a01@linux.intel.com>
+Date:   Fri, 26 Jul 2019 12:22:14 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="u5E4XgoOPWr4PD9E"
-Content-Disposition: inline
-In-Reply-To: <20190723221838.12024-6-suzuki.poulose@arm.com>
-X-Cookie: Think sideways!
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190726155213.GK16003@ubuntu>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---u5E4XgoOPWr4PD9E
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+>> @@ -161,6 +161,7 @@ irqreturn_t sdw_cdns_thread(int irq, void *dev_id);
+>>   int sdw_cdns_init(struct sdw_cdns *cdns);
+>>   int sdw_cdns_pdi_init(struct sdw_cdns *cdns,
+>>   		      struct sdw_cdns_stream_config config);
+>> +int sdw_cdns_exit_reset(struct sdw_cdns *cdns);
+>>   int sdw_cdns_enable_interrupt(struct sdw_cdns *cdns);
+>>   
+>>   void sdw_cdns_debugfs_init(struct sdw_cdns *cdns, struct dentry *root);
+>> diff --git a/drivers/soundwire/intel.c b/drivers/soundwire/intel.c
+>> index a976480d6f36..9ebe38e4d979 100644
+>> --- a/drivers/soundwire/intel.c
+>> +++ b/drivers/soundwire/intel.c
+>> @@ -1112,6 +1112,8 @@ static int intel_probe(struct platform_device *pdev)
+>>   
+>>   	ret = sdw_cdns_enable_interrupt(&sdw->cdns);
+>>   
+>> +	ret = sdw_cdns_exit_reset(&sdw->cdns);
+> 
+> This isn't something, that this patch changes, but if the return value above is
+> ignored, maybe no need to assign it at all?
 
-On Tue, Jul 23, 2019 at 11:18:36PM +0100, Suzuki K Poulose wrote:
-> Add a generic helper to match a device by the ACPI_COMPANION device
-> and provide wrappers for the device lookup APIs.
+The return of these two functions was used with in some logs at some 
+point but they obviously vanished.
+I'll re-check if we care about the status, could be that it never fails
+Thanks!
 
-Acked-by: Mark Brown <broonie@kernel.org>
 
---u5E4XgoOPWr4PD9E
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl07Nd8ACgkQJNaLcl1U
-h9AP6Qf/YGrw0TyOSSQSBXyPk+b+NdGM3zToNrnX22MlqJOqIoR1Cojj3bSvlBPh
-X0GCuxCUvGTjhFC0Hrg4YvdCm68TiZwOyi8e8s7bwZfJQxz/Z7tDrCsumy62WuzF
-qKxfi2q4CAm7FIRT4J7Q8AKVroxHaWs6mS2P/LzMkNUBOfXrMu4VNbObMaXkVt92
-y1rqdWxtykM3LKPyO11gmxjRzlgtZsNuFLvgqUzJL6xTCvNPsYVilqr2TdlsSVtk
-iyb9Bepc0jZslrKB9t/goFvPZ0hjB7o/WiCwXkPhcuIe/YgPZzIKapao7AGZruf4
-Egk3xu2RdzcnwJMfkHYFGJzU5OaLwA==
-=DtTy
------END PGP SIGNATURE-----
-
---u5E4XgoOPWr4PD9E--
+>> +
+>>   	/* Register DAIs */
+>>   	ret = intel_register_dai(sdw);
+>>   	if (ret) {
+>> @@ -1199,6 +1201,8 @@ static int intel_resume(struct device *dev)
+>>   
+>>   	sdw_cdns_enable_interrupt(&sdw->cdns);
+>>   
+>> +	ret = sdw_cdns_exit_reset(&sdw->cdns);
+>> +
+>>   	return ret;
