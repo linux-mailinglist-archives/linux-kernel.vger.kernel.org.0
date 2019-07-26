@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DBA4076A61
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 15:58:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 000F776A5A
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 15:58:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387575AbfGZN6Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 09:58:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46850 "EHLO mail.kernel.org"
+        id S1728635AbfGZN6N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 09:58:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47066 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387561AbfGZNko (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 09:40:44 -0400
+        id S1726303AbfGZNkv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 09:40:51 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 95BF222BEF;
-        Fri, 26 Jul 2019 13:40:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9AAA722BE8;
+        Fri, 26 Jul 2019 13:40:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564148443;
-        bh=2MXhqljQf7IMFqHmhVvDjqDPhscxIYuwMTCiLHA670Q=;
+        s=default; t=1564148450;
+        bh=KUv6mWvMSFQNA76Oz4rKb7K3b927nL2D1ipU8GAI5XQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SSkyK/iocW2pj3MgCUwWeqbjYK6lvSnK1ToWFB8TaueyASCdnjwz/RemsLMC+2Jve
-         eCw3fSuCAuEaqJWCwLbmvUoa1Hly9yH+8D5AlRdnr/ttfAdiJnTpHYnrIidVuZyag4
-         YJZwghLA7ghrUstR2ek3LTx1zzGFC0b5+UGY9Dms=
+        b=S/SPEYJuEbEZx6RNYzA8OTv0jHDxZ9n2EP5XIt62Gz3cjP75iv/miu/1ttg9bWKCX
+         NGitYih94FYnPSpGOFYtQcejQTVTSR9Cmi6rVmOzyMoOf9epc2vjYo+Cn/YW5+pAVT
+         plPhHwR56mprUqJ16GdmjMOJDEqbt5TtT98L3mQM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Ronnie Sahlberg <lsahlber@redhat.com>,
-        Steve French <stfrench@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>, linux-cifs@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 41/85] cifs: fix crash in cifs_dfs_do_automount
-Date:   Fri, 26 Jul 2019 09:38:51 -0400
-Message-Id: <20190726133936.11177-41-sashal@kernel.org>
+Cc:     Liran Alon <liran.alon@oracle.com>,
+        Maxime Villard <max@m00nbsd.net>,
+        Joao Martins <joao.m.martins@oracle.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sasha Levin <sashal@kernel.org>, kvm@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.2 46/85] KVM: nVMX: Ignore segment base for VMX memory operand when segment not FS or GS
+Date:   Fri, 26 Jul 2019 09:38:56 -0400
+Message-Id: <20190726133936.11177-46-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190726133936.11177-1-sashal@kernel.org>
 References: <20190726133936.11177-1-sashal@kernel.org>
@@ -43,66 +45,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ronnie Sahlberg <lsahlber@redhat.com>
+From: Liran Alon <liran.alon@oracle.com>
 
-[ Upstream commit ce465bf94b70f03136171a62b607864f00093b19 ]
+[ Upstream commit 6694e48012826351036fd10fc506ca880023e25f ]
 
-RHBZ: 1649907
+As reported by Maxime at
+https://bugzilla.kernel.org/show_bug.cgi?id=204175:
 
-Fix a crash that happens while attempting to mount a DFS referral from the same server on the root of a filesystem.
+In vmx/nested.c::get_vmx_mem_address(), when the guest runs in long mode,
+the base address of the memory operand is computed with a simple:
+    *ret = s.base + off;
 
-Signed-off-by: Ronnie Sahlberg <lsahlber@redhat.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
+This is incorrect, the base applies only to FS and GS, not to the others.
+Because of that, if the guest uses a VMX instruction based on DS and has
+a DS.base that is non-zero, KVM wrongfully adds the base to the
+resulting address.
+
+Reported-by: Maxime Villard <max@m00nbsd.net>
+Reviewed-by: Joao Martins <joao.m.martins@oracle.com>
+Signed-off-by: Liran Alon <liran.alon@oracle.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/cifs/connect.c | 16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
+ arch/x86/kvm/vmx/nested.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/fs/cifs/connect.c b/fs/cifs/connect.c
-index 0872188ce3c6..e508613f09ff 100644
---- a/fs/cifs/connect.c
-+++ b/fs/cifs/connect.c
-@@ -4459,11 +4459,13 @@ cifs_are_all_path_components_accessible(struct TCP_Server_Info *server,
- 					unsigned int xid,
- 					struct cifs_tcon *tcon,
- 					struct cifs_sb_info *cifs_sb,
--					char *full_path)
-+					char *full_path,
-+					int added_treename)
- {
- 	int rc;
- 	char *s;
- 	char sep, tmp;
-+	int skip = added_treename ? 1 : 0;
+diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
+index 46af3a5e9209..aa949ab7850c 100644
+--- a/arch/x86/kvm/vmx/nested.c
++++ b/arch/x86/kvm/vmx/nested.c
+@@ -4068,7 +4068,10 @@ int get_vmx_mem_address(struct kvm_vcpu *vcpu, unsigned long exit_qualification,
+ 		 * mode, e.g. a 32-bit address size can yield a 64-bit virtual
+ 		 * address when using FS/GS with a non-zero base.
+ 		 */
+-		*ret = s.base + off;
++		if (seg_reg == VCPU_SREG_FS || seg_reg == VCPU_SREG_GS)
++			*ret = s.base + off;
++		else
++			*ret = off;
  
- 	sep = CIFS_DIR_SEP(cifs_sb);
- 	s = full_path;
-@@ -4478,7 +4480,14 @@ cifs_are_all_path_components_accessible(struct TCP_Server_Info *server,
- 		/* next separator */
- 		while (*s && *s != sep)
- 			s++;
--
-+		/*
-+		 * if the treename is added, we then have to skip the first
-+		 * part within the separators
-+		 */
-+		if (skip) {
-+			skip = 0;
-+			continue;
-+		}
- 		/*
- 		 * temporarily null-terminate the path at the end of
- 		 * the current component
-@@ -4526,8 +4535,7 @@ static int is_path_remote(struct cifs_sb_info *cifs_sb, struct smb_vol *vol,
- 
- 	if (rc != -EREMOTE) {
- 		rc = cifs_are_all_path_components_accessible(server, xid, tcon,
--							     cifs_sb,
--							     full_path);
-+			cifs_sb, full_path, tcon->Flags & SMB_SHARE_IS_IN_DFS);
- 		if (rc != 0) {
- 			cifs_dbg(VFS, "cannot query dirs between root and final path, "
- 				 "enabling CIFS_MOUNT_USE_PREFIX_PATH\n");
+ 		/* Long mode: #GP(0)/#SS(0) if the memory address is in a
+ 		 * non-canonical form. This is the only check on the memory
 -- 
 2.20.1
 
