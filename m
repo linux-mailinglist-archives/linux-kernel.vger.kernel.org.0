@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BAFF770EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 20:05:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE096770E3
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 20:05:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729066AbfGZSFH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 14:05:07 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:56245 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727647AbfGZSFF (ORCPT
+        id S1729099AbfGZSFL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 14:05:11 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:36112 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729053AbfGZSFG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 14:05:05 -0400
-Received: by mail-wm1-f67.google.com with SMTP id a15so48712580wmj.5
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2019 11:05:03 -0700 (PDT)
+        Fri, 26 Jul 2019 14:05:06 -0400
+Received: by mail-wm1-f66.google.com with SMTP id g67so44286332wme.1
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2019 11:05:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=W/Bdj0w4zilE2dn88/OLN2tRAFIDUIOcrXrBB+fYiPw=;
-        b=eIRG9la9xvJMshzZRARYU1QuTIXvhA9ClZDTSeW5KHDsOuuxI02w+kY5Qx0ALZGNDP
-         nrxGlG9TRwdc0VrMQdAxOOXo5fnEWv60FCq0GOZsTGZPbPgIu91wbc17VzfmUF5p6czw
-         cWANupJNRlOAWejQxmHgRnaW6IVT+vc7cajxCOEzjomM+Q1+IRYWOV5ZoX982rTLCF+f
-         wImcUPUjhLhOdUFidygHOlufLakF7eP0891qfdXHGtJznP/YqBa1iSV+WzQc1xXT3qGW
-         H+VmTPQK3Q2EADe3ChOifPX70Kwb8eAMYr4QpZpnNra3ywo2KoIyfyIzM8WiONttFhTL
-         ScIw==
+        bh=enVHRv1hzuB9DJdnWqCR0Hba3g3fFl7T7q4qjet7quA=;
+        b=Bu1C08H+O89Gvqnc4MHs/dvqLDwOEJNxd6PUlhpPQ0/MtUyUKJALlsF6V0/OJoTpy3
+         HexvSPG2yUEyBOdTLuDe4PNpvHWY/tkhtLPMkuxBSRRB3jww9NFWkZt+j++TkHLGhvsi
+         88MNZFZGpB5XgLwL3F0Kd6+ibWUztbZbJf4wgv+FLKgYLQKasIgu2h1MMnazBkDZGIkv
+         kMqcQ5F+zH5URiax79p3LvX7ivpFhgn1ygoYSkVt7GjwblZVmyICM75PrOg1Dl+L9/jo
+         AQ8O519KEHDHZwHdNwnu0VXz5Ko1Mu74bfWwnpb46t36/6SLTCAC+UmT/xu+MIsqVd9H
+         hEKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=W/Bdj0w4zilE2dn88/OLN2tRAFIDUIOcrXrBB+fYiPw=;
-        b=TUvZGyu8t9TVtV5+f1UdmMV01Xu5cDDp0mf0cMt98gsaXiRF2iajOjKxeG6HrDA97O
-         au6iu4c2eNa+eurJHVM0+xyPlOvHha4j08Nf5BGYeJLMPM/irpx49kbAGSG9oLATnk6x
-         TpDgzMX4NnyNh21s8TfhZjwSP+Of3YW/hJlAOmT58/VKHtdTs/1HQcqC2HWeRNMZZOFP
-         /BtUfS66zkjLZXhTrdmW1Lcyz+npYMrq6bTJCJJlmonjrQlVquNO93nABbfuu2Z+8OHE
-         V7r/QJ0LWl4m0McwgE/4qcBfuCZ1+oTCDrjxEI8pYM/Ztb4gbNEgLlU27zbABjOebhVv
-         VDrA==
-X-Gm-Message-State: APjAAAX7DK68nQsfJsrv5FQ+LKe2GS3zJ/7orHc1ub3jyDVg+K59RQmO
-        2OvS+oTCBDioEW8DAJor3lw=
-X-Google-Smtp-Source: APXvYqyfSP9HphmkChAzSqY7yd6VArjniOZ/FPKkZFq6rexTp4zpejIIp95+4G7/rRVAsg9tylPwDg==
-X-Received: by 2002:a7b:c651:: with SMTP id q17mr80142442wmk.136.1564164303026;
+        bh=enVHRv1hzuB9DJdnWqCR0Hba3g3fFl7T7q4qjet7quA=;
+        b=FrdT9kXagSZkwRpBZJfMnyRQpcZW4dJdj2IH1N/c2X+PE3+NhUVkKgaoC8H0Bz+8NR
+         vJcfuEqNckX6yMs2EgbkFTLR3ZEmu01rqM0D0S6Rh1z7/SDDFdN+qxLhxE2uJ41BnDdR
+         /DbLv3W0Ek1cwWKuKhecmBB4kJ8uNCLOaz+mEnZRaYYHUzVQ7QE0kt0jPVbg5l1Nt1qq
+         y+NHI5+4sDIW/bqaADIGY8QGY4nE503gtfczW6DjPKZAYf24GXPAoDHawh4Ad4FTeNTF
+         asdj2aJi2P9VjhSjmVZQ2WWrG19ZWAmpMQkSd3q/BuuBKaX7wfPRWJQLLg2teqxOCszc
+         EUJg==
+X-Gm-Message-State: APjAAAXjZugud6jBxVpuBDc2QmIiyO+h8Ma2UK3ps0TIPyCB63CPl1KG
+        CbPSfpmNreYFMrzFcphiRfg=
+X-Google-Smtp-Source: APXvYqwAjH34PdGkB7r0hZnVFL3ktfFsk6yV6XpbWZqQ2po4BATrPac2HREJBiM9pPGXA/uWD2Lz2g==
+X-Received: by 2002:a1c:a909:: with SMTP id s9mr85344396wme.20.1564164303895;
         Fri, 26 Jul 2019 11:05:03 -0700 (PDT)
 Received: from localhost.localdomain ([2a02:8108:96bf:e0ab:2b68:5d76:a12a:e6ba])
-        by smtp.gmail.com with ESMTPSA id p14sm43535931wrx.17.2019.07.26.11.05.02
+        by smtp.gmail.com with ESMTPSA id p14sm43535931wrx.17.2019.07.26.11.05.03
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 26 Jul 2019 11:05:02 -0700 (PDT)
+        Fri, 26 Jul 2019 11:05:03 -0700 (PDT)
 From:   Michael Straube <straube.linux@gmail.com>
 To:     gregkh@linuxfoundation.org
 Cc:     Larry.Finger@lwfinger.net, devel@driverdev.osuosl.org,
         linux-kernel@vger.kernel.org,
         Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH 4/6] staging: rtl8188eu: add spaces around '<<' and '>>' in usb_halinit.c
-Date:   Fri, 26 Jul 2019 20:04:46 +0200
-Message-Id: <20190726180448.2290-4-straube.linux@gmail.com>
+Subject: [PATCH 5/6] staging: rtl8188eu: add spaces around '-' and '*' in usb_halinit.c
+Date:   Fri, 26 Jul 2019 20:04:47 +0200
+Message-Id: <20190726180448.2290-5-straube.linux@gmail.com>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190726180448.2290-1-straube.linux@gmail.com>
 References: <20190726180448.2290-1-straube.linux@gmail.com>
@@ -63,65 +63,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add spaces around '<<' and '>>' to improve readability and follow
-kernel coding style. Reported by checkpatch.
+Add spaces around '-' and '*' to improve readability and follow kernel
+coding style. Reported by checkpatch.
 
 Signed-off-by: Michael Straube <straube.linux@gmail.com>
 ---
- drivers/staging/rtl8188eu/hal/usb_halinit.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/staging/rtl8188eu/hal/usb_halinit.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/staging/rtl8188eu/hal/usb_halinit.c b/drivers/staging/rtl8188eu/hal/usb_halinit.c
-index 9fa34c5c11c4..40162f111195 100644
+index 40162f111195..0f54fde2f47b 100644
 --- a/drivers/staging/rtl8188eu/hal/usb_halinit.c
 +++ b/drivers/staging/rtl8188eu/hal/usb_halinit.c
-@@ -923,7 +923,7 @@ static void CardDisableRTL8188EU(struct adapter *Adapter)
- 	usb_write8(Adapter, GPIO_IO_SEL, 0xFF);/* Reg0x46 */
+@@ -190,7 +190,7 @@ static void _InitPageBoundary(struct adapter *Adapter)
+ {
+ 	/*  RX Page Boundary */
+ 	/*  */
+-	u16 rxff_bndy = MAX_RX_DMA_BUFFER_SIZE_88E-1;
++	u16 rxff_bndy = MAX_RX_DMA_BUFFER_SIZE_88E - 1;
  
- 	val8 = usb_read8(Adapter, REG_GPIO_IO_SEL);
--	usb_write8(Adapter, REG_GPIO_IO_SEL, (val8<<4));
-+	usb_write8(Adapter, REG_GPIO_IO_SEL, (val8 << 4));
- 	val8 = usb_read8(Adapter, REG_GPIO_IO_SEL + 1);
- 	usb_write8(Adapter, REG_GPIO_IO_SEL + 1, val8 | 0x0F);/* Reg0x43 */
- 	usb_write32(Adapter, REG_BB_PAD_CTRL, 0x00080808);/* set LNA ,TRSW,EX_PA Pin to output mode */
-@@ -1307,7 +1307,7 @@ void rtw_hal_set_hwreg(struct adapter *Adapter, u8 variable, u8 *val)
- 			usb_write8(Adapter, REG_BCN_CTRL, usb_read8(Adapter, REG_BCN_CTRL) & (~BIT(3)));
+ 	usb_write16(Adapter, (REG_TRXFF_BNDY + 2), rxff_bndy);
+ }
+@@ -1298,7 +1298,7 @@ void rtw_hal_set_hwreg(struct adapter *Adapter, u8 variable, u8 *val)
+ 			struct mlme_ext_priv	*pmlmeext = &Adapter->mlmeextpriv;
+ 			struct mlme_ext_info	*pmlmeinfo = &pmlmeext->mlmext_info;
  
- 			usb_write32(Adapter, REG_TSFTR, tsf);
--			usb_write32(Adapter, REG_TSFTR + 4, tsf>>32);
-+			usb_write32(Adapter, REG_TSFTR + 4, tsf >> 32);
+-			tsf = pmlmeext->TSFValue - do_div(pmlmeext->TSFValue, (pmlmeinfo->bcn_interval*1024)) - 1024; /* us */
++			tsf = pmlmeext->TSFValue - do_div(pmlmeext->TSFValue, (pmlmeinfo->bcn_interval * 1024)) - 1024; /* us */
  
- 			/* enable related TSF function */
- 			usb_write8(Adapter, REG_BCN_CTRL, usb_read8(Adapter, REG_BCN_CTRL) | BIT(3));
-@@ -1442,7 +1442,7 @@ void rtw_hal_set_hwreg(struct adapter *Adapter, u8 variable, u8 *val)
- 			u8 regTmp;
- 			u8 bShortPreamble = *((bool *)val);
- 			/*  Joseph marked out for Netgear 3500 TKIP channel 7 issue.(Temporarily) */
--			regTmp = (haldata->nCur40MhzPrimeSC)<<5;
-+			regTmp = (haldata->nCur40MhzPrimeSC) << 5;
- 			if (bShortPreamble)
- 				regTmp |= 0x80;
- 
-@@ -1480,7 +1480,7 @@ void rtw_hal_set_hwreg(struct adapter *Adapter, u8 variable, u8 *val)
- 			for (i = 0; i < CAM_CONTENT_COUNT; i++) {
- 				/*  filled id in CAM config 2 byte */
- 				if (i == 0)
--					ulContent |= (ucIndex & 0x03) | ((u16)(ulEncAlgo)<<2);
-+					ulContent |= (ucIndex & 0x03) | ((u16)(ulEncAlgo) << 2);
+ 			if (((pmlmeinfo->state & 0x03) == WIFI_FW_ADHOC_STATE) || ((pmlmeinfo->state & 0x03) == WIFI_FW_AP_STATE))
+ 				StopTxBeacon(Adapter);
+@@ -1484,7 +1484,7 @@ void rtw_hal_set_hwreg(struct adapter *Adapter, u8 variable, u8 *val)
  				else
  					ulContent = 0;
  				/*  polling bit, and No Write enable, and address */
-@@ -1590,8 +1590,8 @@ void rtw_hal_set_hwreg(struct adapter *Adapter, u8 variable, u8 *val)
- 					FactorToSet = 0xf;
- 
- 				for (index = 0; index < 4; index++) {
--					if ((pRegToSet[index] & 0xf0) > (FactorToSet<<4))
--						pRegToSet[index] = (pRegToSet[index] & 0x0f) | (FactorToSet<<4);
-+					if ((pRegToSet[index] & 0xf0) > (FactorToSet << 4))
-+						pRegToSet[index] = (pRegToSet[index] & 0x0f) | (FactorToSet << 4);
- 
- 					if ((pRegToSet[index] & 0x0f) > FactorToSet)
- 						pRegToSet[index] = (pRegToSet[index] & 0xf0) | (FactorToSet);
+-				ulCommand = CAM_CONTENT_COUNT*ucIndex + i;
++				ulCommand = CAM_CONTENT_COUNT * ucIndex + i;
+ 				ulCommand = ulCommand | CAM_POLLINIG |
+ 					    CAM_WRITE;
+ 				/*  write content 0 is equall to mark invalid */
 -- 
 2.22.0
 
