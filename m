@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6343076D44
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 17:33:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B91EC76D18
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 17:31:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387744AbfGZPcS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 11:32:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47430 "EHLO mail.kernel.org"
+        id S2389093AbfGZPab (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 11:30:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45298 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389437AbfGZPcQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 11:32:16 -0400
+        id S2388303AbfGZPaY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 11:30:24 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CC6D22054F;
-        Fri, 26 Jul 2019 15:32:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A1140205F4;
+        Fri, 26 Jul 2019 15:30:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564155136;
-        bh=NZBYPz9/upGof+pf+7aPQwh2oUQ15oTbaqLDqA5xc1U=;
+        s=default; t=1564155024;
+        bh=8Or4AWLAlexKIw/bjsBgwyYHaKuQtxtf6ga710lI3V8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=W1ftNZ1FuC6cFKjiV0+ZfMfCIhahfFrWW9ZZik3WQwXCeAgBC7KFhLOIS9TUNK1GJ
-         f3mP0OHWrO8HjMUu3ibBGlZ2J7xLJ2rZK+ntM/dGZagbTtFHKFwFtV4tniLz2HcIDb
-         G9lYfs8SXeJ1dql7kBNsETm7UW8g2vmpI/H7UyzY=
+        b=tAnMyIFUZT61fRBSxzHY4h0Ek0PsARHI1L09EXlhJchujRUlw+t3C/jT9e49rK0kY
+         +JDCSpK3fiQHzhnIjsxc6HVLfY0WSWH4+RRAN/xU8qec1Jmap5AwOH3Fu21Eliyifz
+         6zOS2fBNloYRLceelDy5GCZbsOiUGChbZ3M2mVro=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yang Wei <albin_yang@163.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 15/50] nfc: fix potential illegal memory access
-Date:   Fri, 26 Jul 2019 17:24:50 +0200
-Message-Id: <20190726152302.126128177@linuxfoundation.org>
+        stable@vger.kernel.org, Eli Britstein <elibr@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>
+Subject: [PATCH 5.1 39/62] net/mlx5e: Fix port tunnel GRE entropy control
+Date:   Fri, 26 Jul 2019 17:24:51 +0200
+Message-Id: <20190726152306.072675599@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190726152300.760439618@linuxfoundation.org>
-References: <20190726152300.760439618@linuxfoundation.org>
+In-Reply-To: <20190726152301.720139286@linuxfoundation.org>
+References: <20190726152301.720139286@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,31 +43,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yang Wei <albin_yang@163.com>
+From: Eli Britstein <elibr@mellanox.com>
 
-[ Upstream commit dd006fc434e107ef90f7de0db9907cbc1c521645 ]
+[ Upstream commit 914adbb1bcf89478ac138318d28b302704564d59 ]
 
-The frags_q is not properly initialized, it may result in illegal memory
-access when conn_info is NULL.
-The "goto free_exit" should be replaced by "goto exit".
+GRE entropy calculation is a single bit per card, and not per port.
+Force disable GRE entropy calculation upon the first GRE encap rule,
+and release the force at the last GRE encap rule removal. This is done
+per port.
 
-Signed-off-by: Yang Wei <albin_yang@163.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 97417f6182f8 ("net/mlx5e: Fix GRE key by controlling port tunnel entropy calculation")
+Signed-off-by: Eli Britstein <elibr@mellanox.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/nfc/nci/data.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/mellanox/mlx5/core/lib/port_tun.c |   23 ++---------------
+ 1 file changed, 4 insertions(+), 19 deletions(-)
 
---- a/net/nfc/nci/data.c
-+++ b/net/nfc/nci/data.c
-@@ -119,7 +119,7 @@ static int nci_queue_tx_data_frags(struc
- 	conn_info = nci_get_conn_info_by_conn_id(ndev, conn_id);
- 	if (!conn_info) {
- 		rc = -EPROTO;
--		goto free_exit;
-+		goto exit;
- 	}
- 
- 	__skb_queue_head_init(&frags_q);
+--- a/drivers/net/ethernet/mellanox/mlx5/core/lib/port_tun.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/lib/port_tun.c
+@@ -100,27 +100,12 @@ static int mlx5_set_entropy(struct mlx5_
+ 	 */
+ 	if (entropy_flags.gre_calc_supported &&
+ 	    reformat_type == MLX5_REFORMAT_TYPE_L2_TO_NVGRE) {
+-		/* Other applications may change the global FW entropy
+-		 * calculations settings. Check that the current entropy value
+-		 * is the negative of the updated value.
+-		 */
+-		if (entropy_flags.force_enabled &&
+-		    enable == entropy_flags.gre_calc_enabled) {
+-			mlx5_core_warn(tun_entropy->mdev,
+-				       "Unexpected GRE entropy calc setting - expected %d",
+-				       !entropy_flags.gre_calc_enabled);
+-			return -EOPNOTSUPP;
+-		}
+-		err = mlx5_set_port_gre_tun_entropy_calc(tun_entropy->mdev, enable,
+-							 entropy_flags.force_supported);
++		if (!entropy_flags.force_supported)
++			return 0;
++		err = mlx5_set_port_gre_tun_entropy_calc(tun_entropy->mdev,
++							 enable, !enable);
+ 		if (err)
+ 			return err;
+-		/* if we turn on the entropy we don't need to force it anymore */
+-		if (entropy_flags.force_supported && enable) {
+-			err = mlx5_set_port_gre_tun_entropy_calc(tun_entropy->mdev, 1, 0);
+-			if (err)
+-				return err;
+-		}
+ 	} else if (entropy_flags.calc_supported) {
+ 		/* Other applications may change the global FW entropy
+ 		 * calculations settings. Check that the current entropy value
 
 
