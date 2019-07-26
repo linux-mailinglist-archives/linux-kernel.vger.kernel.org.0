@@ -2,240 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97CA47628A
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 11:50:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EF5E67628F
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 11:50:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726491AbfGZJ0a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 05:26:30 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:33838 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726007AbfGZJ02 (ORCPT
+        id S1726397AbfGZJ2M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 05:28:12 -0400
+Received: from mail-io1-f70.google.com ([209.85.166.70]:51187 "EHLO
+        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726007AbfGZJ2G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 05:26:28 -0400
-Received: by mail-wm1-f67.google.com with SMTP id w9so37572708wmd.1
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2019 02:26:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cumulusnetworks.com; s=google;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=yAlmetSau4JpsYsOXgnMOz5VqkVT3TgR1F5e1YGklgc=;
-        b=H4UbmT7qC9fZxoMDpNMUzt+GXicV51GrqaAEqaxzQSfGvVM7UDEvLPRlCztVDWssXI
-         fURLW8T8DOeAEy2YdtprPkjzVDlyTKxhVxSkc2Cp1K5Pdh95/5figTrOdQkxD7o922Jh
-         dJNLMH7rt7i8cfmlKpnSg5TwooNRjwxX43jG8=
+        Fri, 26 Jul 2019 05:28:06 -0400
+Received: by mail-io1-f70.google.com with SMTP id m26so58102751ioh.17
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2019 02:28:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=yAlmetSau4JpsYsOXgnMOz5VqkVT3TgR1F5e1YGklgc=;
-        b=sykImjw5rN//MG1MM0lu/lamygfzgzX/jo8Uw0OQovESiX17+QqEyxBAQMAHEhaxzN
-         /MQG6VIrQbhIJwyg9P2fXj78kvt8iSPNknRCot+7UUrBA6xayRdbiJ4MB/7ZFVqUFgpr
-         hU9FG2KIJ6K+Cm8YJTQT13dqlphlsQA5PkG/J/u0yeA1uqkhjzcFpqveG5eyAnpVaeXU
-         xMZaagOPVjNWiijEvPskLn8aLg69WYfoKvdacnVGR4eOv0Qi5/jmkYWHC5qKQo6GYANn
-         huQiX1PmgHwjnjyMX4gcMoNzZ7w366nKD6DMd8eDs1Ij68m29afxC4M1DFVGD6JQ8OF6
-         ytDQ==
-X-Gm-Message-State: APjAAAUXG7mWvSb81w8aC+2LraYW9E4RQbHXlwsjfaBGbn9omEA32IXe
-        LGRceX51gTvX7P88DviTs21LQw==
-X-Google-Smtp-Source: APXvYqyskWqXyumKsOoVMV5Xd5XnvR0IWtK4g9S4QSM8XY/CZ7l7B6rqLJslxVZvgMHH0NWBaksV0A==
-X-Received: by 2002:a1c:630a:: with SMTP id x10mr88654134wmb.113.1564133184533;
-        Fri, 26 Jul 2019 02:26:24 -0700 (PDT)
-Received: from [192.168.0.107] (84-238-136-197.ip.btc-net.bg. [84.238.136.197])
-        by smtp.gmail.com with ESMTPSA id t140sm47111096wmt.0.2019.07.26.02.26.23
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Fri, 26 Jul 2019 02:26:23 -0700 (PDT)
-Subject: Re: [PATCH] net: bridge: Allow bridge to joing multicast groups
-From:   Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
-To:     Horatiu Vultur <horatiu.vultur@microchip.com>
-Cc:     roopa@cumulusnetworks.com, davem@davemloft.net,
-        bridge@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, allan.nielsen@microchip.com
-References: <1564055044-27593-1-git-send-email-horatiu.vultur@microchip.com>
- <7e7a7015-6072-d884-b2ba-0a51177245ab@cumulusnetworks.com>
- <eef063fe-fd3a-7e02-89c2-e40728a17578@cumulusnetworks.com>
- <20190725142101.65tusauc6fzxb2yp@soft-dev3.microsemi.net>
- <b9ce433a-3ef7-fe15-642a-659c5715d992@cumulusnetworks.com>
-Message-ID: <e6ad982f-4706-46f9-b8f0-1337b09de350@cumulusnetworks.com>
-Date:   Fri, 26 Jul 2019 12:26:22 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=6davJOYz8NFOOdWsY5H1NvS4PxoFkTXvVpfk5Cm4qBE=;
+        b=MzyMfuQbtuSd0GDHWOP+9H1t6+UI6UmjnP4N+I36aj0FqSnXVZKp++Crw+u0QGQ26T
+         p7UE9+nNA3OQiyHcvrBP7Js8MFZQdYHx95OqorIs6csibWBRTmiq7ZvT7UOXCAUQYkEG
+         i+miNnydnQFbSauYjNE2bCBd8RBS95HSK/QyxH3u0Sd186ZkQ0MauppHMu54ITgjVD93
+         g7IaMqeL8I7ocfxLQv5mHEK8/ouWG01uG38bjFfv6LjVN1Pu0qSB+QI9mcMo9u1xqsOm
+         sQz9XjtqMidjFdpovTLwUwXOVxeFm8VUcy34z5C5CQFWj1msVplVRlWc3RIXm/NNH+Ac
+         SeSw==
+X-Gm-Message-State: APjAAAXJNt+BIU7Z5nclhn7rYQHZWQMSuJN4jgqT70NcPAU+dLbBK9YP
+        ctweibnE8XNY81TWhiRDdMLDbcyzalHmz9BqR3m7VhyUYpws
+X-Google-Smtp-Source: APXvYqxFwdBHIFL4jYOt6rFHQ+cmxmrkxCIZEIZznM0dTKOWBgCT2oVFgIqjeKqMaGUtGf98TsimqOV1imyM+Sgd2xJfVoqJC0R1
 MIME-Version: 1.0
-In-Reply-To: <b9ce433a-3ef7-fe15-642a-659c5715d992@cumulusnetworks.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6638:c8:: with SMTP id w8mr99608159jao.52.1564133285664;
+ Fri, 26 Jul 2019 02:28:05 -0700 (PDT)
+Date:   Fri, 26 Jul 2019 02:28:05 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000df9d48058e9228cd@google.com>
+Subject: KASAN: use-after-free Read in psi_task_change
+From:   syzbot <syzbot+f17ba6f9b8d9cc0498d0@syzkaller.appspotmail.com>
+To:     linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        tglx@linutronix.de
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26/07/2019 11:41, Nikolay Aleksandrov wrote:
-> On 25/07/2019 17:21, Horatiu Vultur wrote:
->> Hi Nikolay,
->>
->> The 07/25/2019 16:21, Nikolay Aleksandrov wrote:
->>> External E-Mail
->>>
->>>
->>> On 25/07/2019 16:06, Nikolay Aleksandrov wrote:
->>>> On 25/07/2019 14:44, Horatiu Vultur wrote:
->>>>> There is no way to configure the bridge, to receive only specific link
->>>>> layer multicast addresses. From the description of the command 'bridge
->>>>> fdb append' is supposed to do that, but there was no way to notify the
->>>>> network driver that the bridge joined a group, because LLADDR was added
->>>>> to the unicast netdev_hw_addr_list.
->>>>>
->>>>> Therefore update fdb_add_entry to check if the NLM_F_APPEND flag is set
->>>>> and if the source is NULL, which represent the bridge itself. Then add
->>>>> address to multicast netdev_hw_addr_list for each bridge interfaces.
->>>>> And then the .ndo_set_rx_mode function on the driver is called. To notify
->>>>> the driver that the list of multicast mac addresses changed.
->>>>>
->>>>> Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
->>>>> ---
->>>>>  net/bridge/br_fdb.c | 49 ++++++++++++++++++++++++++++++++++++++++++++++---
->>>>>  1 file changed, 46 insertions(+), 3 deletions(-)
->>>>>
->>>>
->>>> Hi,
->>>> I'm sorry but this patch is wrong on many levels, some notes below. In general
->>>> NLM_F_APPEND is only used in vxlan, the bridge does not handle that flag at all.
->>>> FDB is only for *unicast*, nothing is joined and no multicast should be used with fdbs.
->>>> MDB is used for multicast handling, but both of these are used for forwarding.
->>>> The reason the static fdbs are added to the filter is for non-promisc ports, so they can
->>>> receive traffic destined for these FDBs for forwarding.
->>>> If you'd like to join any multicast group please use the standard way, if you'd like to join
->>>> it only on a specific port - join it only on that port (or ports) and the bridge and you'll
->>>
->>> And obviously this is for the case where you're not enabling port promisc mode (non-default).
->>> In general you'll only need to join the group on the bridge to receive traffic for it
->>> or add it as an mdb entry to forward it.
->>>
->>>> have the effect that you're describing. What do you mean there's no way ?
->>
->> Thanks for the explanation.
->> There are few things that are not 100% clear to me and maybe you can
->> explain them, not to go totally in the wrong direction. Currently I am
->> writing a network driver on which I added switchdev support. Then I was
->> looking for a way to configure the network driver to copy link layer
->> multicast address to the CPU port.
->>
->> If I am using bridge mdb I can do it only for IP multicast addreses,
->> but how should I do it if I want non IP frames with link layer multicast
->> address to be copy to CPU? For example: all frames with multicast
->> address '01-21-6C-00-00-01' to be copy to CPU. What is the user space
->> command for that?
->>
-> 
-> Check SIOCADDMULTI (ip maddr from iproute2), f.e. add that mac to the port
-> which needs to receive it and the bridge will send it up automatically since
-> it's unknown mcast (note that if there's a querier, you'll have to make the
-> bridge mcast router if it is not the querier itself). It would also flood it to all
+Hello,
 
-Actually you mentioned non-IP traffic, so the querier stuff is not a problem. This
-traffic will always be flooded by the bridge (and also a copy will be locally sent up).
-Thus only the flooding may need to be controlled.
+syzbot found the following crash on:
 
-> other ports so you may want to control that. It really depends on the setup
-> and the how the hardware is configured.
-> 
->>>>
->>>> In addition you're allowing a mix of mcast functions to be called with unicast addresses
->>>> and vice versa, it is not that big of a deal because the kernel will simply return an error
->>>> but still makes no sense.
->>>>
->>>> Nacked-by: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
->>>>
->>>>> diff --git a/net/bridge/br_fdb.c b/net/bridge/br_fdb.c
->>>>> index b1d3248..d93746d 100644
->>>>> --- a/net/bridge/br_fdb.c
->>>>> +++ b/net/bridge/br_fdb.c
->>>>> @@ -175,6 +175,29 @@ static void fdb_add_hw_addr(struct net_bridge *br, const unsigned char *addr)
->>>>>  	}
->>>>>  }
->>>>>  
->>>>> +static void fdb_add_hw_maddr(struct net_bridge *br, const unsigned char *addr)
->>>>> +{
->>>>> +	int err;
->>>>> +	struct net_bridge_port *p;
->>>>> +
->>>>> +	ASSERT_RTNL();
->>>>> +
->>>>> +	list_for_each_entry(p, &br->port_list, list) {
->>>>> +		if (!br_promisc_port(p)) {
->>>>> +			err = dev_mc_add(p->dev, addr);
->>>>> +			if (err)
->>>>> +				goto undo;
->>>>> +		}
->>>>> +	}
->>>>> +
->>>>> +	return;
->>>>> +undo:
->>>>> +	list_for_each_entry_continue_reverse(p, &br->port_list, list) {
->>>>> +		if (!br_promisc_port(p))
->>>>> +			dev_mc_del(p->dev, addr);
->>>>> +	}
->>>>> +}
->>>>> +
->>>>>  /* When a static FDB entry is deleted, the HW address from that entry is
->>>>>   * also removed from the bridge private HW address list and updates all
->>>>>   * the ports with needed information.
->>>>> @@ -192,13 +215,27 @@ static void fdb_del_hw_addr(struct net_bridge *br, const unsigned char *addr)
->>>>>  	}
->>>>>  }
->>>>>  
->>>>> +static void fdb_del_hw_maddr(struct net_bridge *br, const unsigned char *addr)
->>>>> +{
->>>>> +	struct net_bridge_port *p;
->>>>> +
->>>>> +	ASSERT_RTNL();
->>>>> +
->>>>> +	list_for_each_entry(p, &br->port_list, list) {
->>>>> +		if (!br_promisc_port(p))
->>>>> +			dev_mc_del(p->dev, addr);
->>>>> +	}
->>>>> +}
->>>>> +
->>>>>  static void fdb_delete(struct net_bridge *br, struct net_bridge_fdb_entry *f,
->>>>>  		       bool swdev_notify)
->>>>>  {
->>>>>  	trace_fdb_delete(br, f);
->>>>>  
->>>>> -	if (f->is_static)
->>>>> +	if (f->is_static) {
->>>>>  		fdb_del_hw_addr(br, f->key.addr.addr);
->>>>> +		fdb_del_hw_maddr(br, f->key.addr.addr);
->>>>
->>>> Walking over all ports again for each static delete is a no-go.
->>>>
->>>>> +	}
->>>>>  
->>>>>  	hlist_del_init_rcu(&f->fdb_node);
->>>>>  	rhashtable_remove_fast(&br->fdb_hash_tbl, &f->rhnode,
->>>>> @@ -843,13 +880,19 @@ static int fdb_add_entry(struct net_bridge *br, struct net_bridge_port *source,
->>>>>  			fdb->is_local = 1;
->>>>>  			if (!fdb->is_static) {
->>>>>  				fdb->is_static = 1;
->>>>> -				fdb_add_hw_addr(br, addr);
->>>>> +				if (flags & NLM_F_APPEND && !source)
->>>>> +					fdb_add_hw_maddr(br, addr);
->>>>> +				else
->>>>> +					fdb_add_hw_addr(br, addr);
->>>>>  			}
->>>>>  		} else if (state & NUD_NOARP) {
->>>>>  			fdb->is_local = 0;
->>>>>  			if (!fdb->is_static) {
->>>>>  				fdb->is_static = 1;
->>>>> -				fdb_add_hw_addr(br, addr);
->>>>> +				if (flags & NLM_F_APPEND && !source)
->>>>> +					fdb_add_hw_maddr(br, addr);
->>>>> +				else
->>>>> +					fdb_add_hw_addr(br, addr);
->>>>>  			}
->>>>>  		} else {
->>>>>  			fdb->is_local = 0;
->>>>>
->>>>
->>>
->>
-> 
+HEAD commit:    bed38c3e Merge tag 'powerpc-5.3-2' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=160b9ef0600000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=9aec8cb13b5f7389
+dashboard link: https://syzkaller.appspot.com/bug?extid=f17ba6f9b8d9cc0498d0
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10dc7b34600000
 
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+f17ba6f9b8d9cc0498d0@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KASAN: use-after-free in raw_write_seqcount_begin  
+include/linux/seqlock.h:228 [inline]
+BUG: KASAN: use-after-free in write_seqcount_begin_nested  
+include/linux/seqlock.h:376 [inline]
+BUG: KASAN: use-after-free in write_seqcount_begin  
+include/linux/seqlock.h:382 [inline]
+BUG: KASAN: use-after-free in psi_group_change kernel/sched/psi.c:689  
+[inline]
+BUG: KASAN: use-after-free in psi_task_change+0x89b/0x9d0  
+kernel/sched/psi.c:780
+Read of size 4 at addr ffff888039cd9460 by task syz-executor.3/9140
+
+CPU: 1 PID: 9140 Comm: syz-executor.3 Not tainted 5.3.0-rc1+ #83
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
+  print_address_description.cold+0xd4/0x306 mm/kasan/report.c:351
+  __kasan_report.cold+0x1b/0x36 mm/kasan/report.c:482
+  kasan_report+0x12/0x17 mm/kasan/common.c:612
+  __asan_report_load4_noabort+0x14/0x20 mm/kasan/generic_report.c:131
+  raw_write_seqcount_begin include/linux/seqlock.h:228 [inline]
+  write_seqcount_begin_nested include/linux/seqlock.h:376 [inline]
+  write_seqcount_begin include/linux/seqlock.h:382 [inline]
+  psi_group_change kernel/sched/psi.c:689 [inline]
+  psi_task_change+0x89b/0x9d0 kernel/sched/psi.c:780
+  psi_dequeue kernel/sched/stats.h:100 [inline]
+  dequeue_task kernel/sched/core.c:1191 [inline]
+  deactivate_task+0x2f3/0x420 kernel/sched/core.c:1215
+  __schedule+0xecc/0x1580 kernel/sched/core.c:3844
+  schedule+0xa8/0x270 kernel/sched/core.c:3944
+  freezable_schedule include/linux/freezer.h:172 [inline]
+  do_nanosleep+0x201/0x6a0 kernel/time/hrtimer.c:1679
+  hrtimer_nanosleep+0x2a6/0x570 kernel/time/hrtimer.c:1733
+  __do_sys_nanosleep kernel/time/hrtimer.c:1767 [inline]
+  __se_sys_nanosleep kernel/time/hrtimer.c:1754 [inline]
+  __x64_sys_nanosleep+0x1a6/0x220 kernel/time/hrtimer.c:1754
+  do_syscall_64+0xfd/0x6a0 arch/x86/entry/common.c:296
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x457cd0
+Code: c0 5b 5d c3 66 0f 1f 44 00 00 8b 04 24 48 83 c4 18 5b 5d c3 66 0f 1f  
+44 00 00 83 3d 81 ea 61 00 00 75 14 b8 23 00 00 00 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 24 d3 fb ff c3 48 83 ec 08 e8 ea 46 00 00
+RSP: 002b:00007fff3ad23fa8 EFLAGS: 00000246 ORIG_RAX: 0000000000000023
+RAX: ffffffffffffffda RBX: 000000000001555c RCX: 0000000000457cd0
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00007fff3ad23fb0
+RBP: 0000000000000038 R08: 0000000000000001 R09: 00005555557ca940
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000008
+R13: 00007fff3ad24000 R14: 0000000000015503 R15: 00007fff3ad24010
+
+The buggy address belongs to the page:
+page:ffffea0000e73640 refcount:0 mapcount:0 mapping:0000000000000000  
+index:0x0
+flags: 0x1fffc0000000000()
+raw: 01fffc0000000000 ffffea0000e73648 ffffea0000e73648 0000000000000000
+raw: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff888039cd9300: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+  ffff888039cd9380: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+> ffff888039cd9400: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+                                                        ^
+  ffff888039cd9480: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+  ffff888039cd9500: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+==================================================================
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
