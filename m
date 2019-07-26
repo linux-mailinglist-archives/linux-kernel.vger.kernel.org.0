@@ -2,48 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA7157655B
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 14:12:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 84A2876566
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 14:12:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726983AbfGZMM0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 08:12:26 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:36150 "EHLO
+        id S1727083AbfGZMMj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 08:12:39 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:36542 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726203AbfGZMM0 (ORCPT
+        with ESMTP id S1726277AbfGZMMh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 08:12:26 -0400
+        Fri, 26 Jul 2019 08:12:37 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=ppv6g71055dMnrkMQSdTZpzfu9QPlBAMNF035s+cREw=; b=uWg3gJmM5dtO
-        6ZeuoYmRrchMwdzcw3uqtCJhzusDByr17UgU9Z9UNcSEI8LVj8RaraP1KVWGcL+cT7qMNqCdWVbuk
-        ktvAxPC3zArscqgRJvUfBp0fPUtTo8wfqcbXawEA0GSQ4nE4rh5nqvDe+l1jypVH0Ju+sZxZ976Vg
-        NVAS0=;
+        List-Archive; bh=0JaOym/8/1xYTPj/lo5DfsfdR6OwtKMSwBUpWlF89z0=; b=hnGLPn1FdiHl
+        v3Z8uQinKEdqNQGi4zdGQZwpSG/IHSsABkF/uQSQA+UwhUIDEhestFvojqz32XVGIH4jxNARq4Rkq
+        EJ+NTVhZcyL809+hqpgpPt5YG1KIX6WKbI4RykYu5fUjqY9D7KOUV3w5ENCGQQrIgxK6cHZ0UmHzU
+        Xs4Hk=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1hqz58-0001Zr-U7; Fri, 26 Jul 2019 12:12:18 +0000
+        id 1hqz5E-0001aO-3f; Fri, 26 Jul 2019 12:12:24 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 543B02742B63; Fri, 26 Jul 2019 13:12:18 +0100 (BST)
+        id 99EF52742B63; Fri, 26 Jul 2019 13:12:23 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Cheng-Yi Chiang <cychiang@chromium.org>
-Cc:     alsa-devel@alsa-project.org, dgreid@chromium.org,
-        dianders@chromium.org, Heiko Stuebner <heiko@sntech.de>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        Mark Brown <broonie@kernel.org>, mka@chromium.org,
-        Takashi Iwai <tiwai@suse.com>, tzungbi@chromium.org
-Subject: Applied "ASoC: rockchip: Fix mono capture" to the asoc tree
-In-Reply-To: <20190726044202.26866-1-cychiang@chromium.org>
+To:     Baolin Wang <baolin.wang@linaro.org>
+Cc:     baolin.wang@linaro.org, broonie@kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-spi@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        mark.rutland@arm.com, orsonzhai@gmail.com, robh+dt@kernel.org,
+        sherry.zong@unisoc.com, vincent.guittot@linaro.org,
+        weicx@spreadst.com, zhang.lyra@gmail.com
+Subject: Applied "spi: sprd: Change the hwlock support to be optional" to the spi tree
+In-Reply-To: <23d51f5d9c9cc647ad0c5a1fb950d3d9fb9c1303.1564125131.git.baolin.wang@linaro.org>
 X-Patchwork-Hint: ignore
-Message-Id: <20190726121218.543B02742B63@ypsilon.sirena.org.uk>
-Date:   Fri, 26 Jul 2019 13:12:18 +0100 (BST)
+Message-Id: <20190726121223.99EF52742B63@ypsilon.sirena.org.uk>
+Date:   Fri, 26 Jul 2019 13:12:23 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -51,11 +49,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: rockchip: Fix mono capture
+   spi: sprd: Change the hwlock support to be optional
 
-has been applied to the asoc tree at
+has been applied to the spi tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.3
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-5.4
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -76,66 +74,52 @@ to this mail.
 Thanks,
 Mark
 
-From 789e162a6255325325bd321ab0cd51dc7e285054 Mon Sep 17 00:00:00 2001
-From: Cheng-Yi Chiang <cychiang@chromium.org>
-Date: Fri, 26 Jul 2019 12:42:02 +0800
-Subject: [PATCH] ASoC: rockchip: Fix mono capture
+From 70f69f481b87da0614360e57e05a3ba962d60439 Mon Sep 17 00:00:00 2001
+From: Baolin Wang <baolin.wang@linaro.org>
+Date: Fri, 26 Jul 2019 15:20:53 +0800
+Subject: [PATCH] spi: sprd: Change the hwlock support to be optional
 
-This reverts commit db51707b9c9aeedd310ebce60f15d5bb006567e0.
-Revert "ASoC: rockchip: i2s: Support mono capture"
+No need to add hardware spinlock proctection due to add multiple
+msater channel, so change it to be optional in documentation.
 
-Previous discussion in
-
-https://patchwork.kernel.org/patch/10147153/
-
-explains the issue of the patch.
-While device is configured as 1-ch, hardware is still
-generating a 2-ch stream.
-When user space reads the data and assumes it is a 1-ch stream,
-the rate will be slower by 2x.
-
-Revert the change so 1-ch is not supported.
-User space can selectively take one channel data out of two channel
-if 1-ch is preferred.
-Currently, both channels record identical data.
-
-Signed-off-by: Cheng-Yi Chiang <cychiang@chromium.org>
-Link: https://lore.kernel.org/r/20190726044202.26866-1-cychiang@chromium.org
+Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+Link: https://lore.kernel.org/r/23d51f5d9c9cc647ad0c5a1fb950d3d9fb9c1303.1564125131.git.baolin.wang@linaro.org
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/rockchip/rockchip_i2s.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ .../devicetree/bindings/spi/spi-sprd-adi.txt          | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-diff --git a/sound/soc/rockchip/rockchip_i2s.c b/sound/soc/rockchip/rockchip_i2s.c
-index 0a34d0eb8dba..88ebaf6e1880 100644
---- a/sound/soc/rockchip/rockchip_i2s.c
-+++ b/sound/soc/rockchip/rockchip_i2s.c
-@@ -326,7 +326,6 @@ static int rockchip_i2s_hw_params(struct snd_pcm_substream *substream,
- 		val |= I2S_CHN_4;
- 		break;
- 	case 2:
--	case 1:
- 		val |= I2S_CHN_2;
- 		break;
- 	default:
-@@ -459,7 +458,7 @@ static struct snd_soc_dai_driver rockchip_i2s_dai = {
- 	},
- 	.capture = {
- 		.stream_name = "Capture",
--		.channels_min = 1,
-+		.channels_min = 2,
- 		.channels_max = 2,
- 		.rates = SNDRV_PCM_RATE_8000_192000,
- 		.formats = (SNDRV_PCM_FMTBIT_S8 |
-@@ -659,7 +658,7 @@ static int rockchip_i2s_probe(struct platform_device *pdev)
- 	}
+diff --git a/Documentation/devicetree/bindings/spi/spi-sprd-adi.txt b/Documentation/devicetree/bindings/spi/spi-sprd-adi.txt
+index 8de589b376ce..2567c829e2dc 100644
+--- a/Documentation/devicetree/bindings/spi/spi-sprd-adi.txt
++++ b/Documentation/devicetree/bindings/spi/spi-sprd-adi.txt
+@@ -25,18 +25,23 @@ data by ADI software channels at the same time, or two parallel routine of setti
+ ADI registers will make ADI controller registers chaos to lead incorrect results.
+ Then we need one hardware spinlock to synchronize between the multiple subsystems.
  
- 	if (!of_property_read_u32(node, "rockchip,capture-channels", &val)) {
--		if (val >= 1 && val <= 8)
-+		if (val >= 2 && val <= 8)
- 			soc_dai->capture.channels_max = val;
- 	}
++The new version ADI controller supplies multiple master channels for different
++subsystem accessing, that means no need to add hardware spinlock to synchronize,
++thus change the hardware spinlock support to be optional to keep backward
++compatibility.
++
+ Required properties:
+ - compatible: Should be "sprd,sc9860-adi".
+ - reg: Offset and length of ADI-SPI controller register space.
+-- hwlocks: Reference to a phandle of a hwlock provider node.
+-- hwlock-names: Reference to hwlock name strings defined in the same order
+-	as the hwlocks, should be "adi".
+ - #address-cells: Number of cells required to define a chip select address
+ 	on the ADI-SPI bus. Should be set to 1.
+ - #size-cells: Size of cells required to define a chip select address size
+ 	on the ADI-SPI bus. Should be set to 0.
  
+ Optional properties:
++- hwlocks: Reference to a phandle of a hwlock provider node.
++- hwlock-names: Reference to hwlock name strings defined in the same order
++	as the hwlocks, should be "adi".
+ - sprd,hw-channels: This is an array of channel values up to 49 channels.
+ 	The first value specifies the hardware channel id which is used to
+ 	transfer data triggered by hardware automatically, and the second
 -- 
 2.20.1
 
