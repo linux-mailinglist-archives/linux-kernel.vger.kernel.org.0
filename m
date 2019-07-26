@@ -2,98 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F5CC76C92
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 17:25:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EC6B376C97
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 17:25:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727895AbfGZPZZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 11:25:25 -0400
-Received: from mail-eopbgr60065.outbound.protection.outlook.com ([40.107.6.65]:4674
-        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727476AbfGZPZZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 11:25:25 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=AHVb/c7F6VvWGT8OtnCyc5BUDA0o1O3vea6+1jCce6GR+cIeg08sLVVd2hGME/D5ThECTjU0rr0hpsaY8UBnOq8yEhuwnTHez+PfyvHdIK+9VeXvwf12iPhclqujXgVyWLulEQoky+HlEtMla81EqWSxLY7x+2ezShk79+1NqZ7xuLwvzlYSUVSOoqE5oJiPuP6or7q55E0WT7GIKb2zjPO7qvM9y/ClS8ySckqZsl44aafs2ZsTamVukFjbgXOv4kompz8Hb5nvAbEvQIUMQrqjajC9rFajHSZS/fH80gEaZybt9VJEhjieFAkh6/avSbukEIwigeP0ldhkBIvlow==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=n+bKdT2+COwjFBZ28cC301VbdXIIY0AMRzlju+ouLE4=;
- b=JuvEdKlEYIWqHp2x8dkqOGdnrChqmJYKsxoR5UvueRNJ9zDwMIVzaYDFdeMykChqG9blkC5ZUbqVFQ0rbObtSAfyy/K4Ue1b30NwojcH76XZtIdY8uz7k4YoKUpinjcSwHFQkyjZ3wzwS4kOGEsazQ4YSeqBde4wNj87Q6ik7bI/Dw1F4o2j+jni/lCihwRkHTkCXBtoD2N1By+hb1UL5D+XYhFRqntzk2+2D/E360PPhc8o/JNjFOtxXyC4QmCY6X/WPg6zGAhh6lQXlLpIb529PDAw4yKuX+Mz/ylslRWprblaAXVApshBbzjgeg1rrpZL2pZaogFHFPjNTqzXxA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
- smtp.mailfrom=nxp.com;dmarc=pass action=none header.from=nxp.com;dkim=pass
- header.d=nxp.com;arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=n+bKdT2+COwjFBZ28cC301VbdXIIY0AMRzlju+ouLE4=;
- b=Y3QrsQ1QkT+ONgKIZR1pU/V4FNXOX0d7wb5EHxS+A/OX6slYGhpN9f3iMuFT4D+QGcHO2bb5doHy1DOJrMqAOhhyzYR2l+1wgL3KMugjL8BlwsIw7u6mkAFUBtrCM39Ya2rm7iliuwY4VY8vk32JHEJGr7YOU1QRVf3OYbEAh3U=
-Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com (52.134.3.153) by
- VI1PR0402MB3631.eurprd04.prod.outlook.com (52.134.7.22) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2094.17; Fri, 26 Jul 2019 15:25:21 +0000
-Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com
- ([fe80::7c64:5296:4607:e10]) by VI1PR0402MB3485.eurprd04.prod.outlook.com
- ([fe80::7c64:5296:4607:e10%5]) with mapi id 15.20.2094.017; Fri, 26 Jul 2019
- 15:25:21 +0000
-From:   Horia Geanta <horia.geanta@nxp.com>
-To:     Iuliana Prodan <iuliana.prodan@nxp.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Aymen Sghaier <aymen.sghaier@nxp.com>
-CC:     "David S. Miller" <davem@davemloft.net>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH v3 05/14] crypto: caam - check authsize
-Thread-Topic: [PATCH v3 05/14] crypto: caam - check authsize
-Thread-Index: AQHVQvEPg1sByUmkbE2MhOZimAmAuA==
-Date:   Fri, 26 Jul 2019 15:25:21 +0000
-Message-ID: <VI1PR0402MB3485FC672AC806098AF0C1A998C00@VI1PR0402MB3485.eurprd04.prod.outlook.com>
-References: <1564063106-9552-1-git-send-email-iuliana.prodan@nxp.com>
- <1564063106-9552-6-git-send-email-iuliana.prodan@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=horia.geanta@nxp.com; 
-x-originating-ip: [79.118.216.219]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 41e31e43-09b3-4f95-07c3-08d711dd7967
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR0402MB3631;
-x-ms-traffictypediagnostic: VI1PR0402MB3631:
-x-microsoft-antispam-prvs: <VI1PR0402MB363106944D935D7D1B97A2E598C00@VI1PR0402MB3631.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:6790;
-x-forefront-prvs: 01106E96F6
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(39860400002)(366004)(136003)(376002)(346002)(199004)(189003)(3846002)(6116002)(53936002)(81166006)(6436002)(9686003)(81156014)(99286004)(6506007)(86362001)(55016002)(316002)(478600001)(25786009)(26005)(71190400001)(71200400001)(6636002)(6246003)(14454004)(8676002)(558084003)(54906003)(8936002)(44832011)(66556008)(66446008)(76116006)(74316002)(66476007)(52536014)(229853002)(66946007)(5660300002)(66066001)(102836004)(7696005)(110136005)(476003)(446003)(186003)(14444005)(256004)(76176011)(68736007)(486006)(7736002)(33656002)(305945005)(4326008)(53546011)(64756008)(91956017)(2906002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB3631;H:VI1PR0402MB3485.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: YEZ7N23cv6XIR1z0EyWV03gWkYChTH/p0gVtiSrSu0ui/zq7WEvJBf4cQg5ny36lDLoZWXyfClVAz4JwUPIk532ndIZnW4nSwyufPWHfS9cqAQwFRmaRKXxgHfs+Z3u3cCVOxgEyEddu4IW/OhS9vwXRUmK1EGlxh7WhLBhoyogv66lTERI9pM+V+Dv/cDw3p0keiDwDNPeOSzsBnLRTA6nvYIHflgxVtoARFCULpRAoUD1xJNOn7/XQ+ZBEI5cbgzp+Vk3fj7GIUH4uYGNoVZevduDxN7ay/qZFwec5lh5HOEnXKtGwxTZ+fS6IBLlonOosvHxMcjSr1Hd/4r2DZa2gDrExNgFmpjwt+GcLAuh5Mk2i8NOqjsWDXzwAXXypQSXfXZlH7kG9rRP6nRz1qec5mlIUCouXLEEDUCv41Q0=
-Content-Type: text/plain; charset="iso-8859-2"
-Content-Transfer-Encoding: quoted-printable
+        id S1728468AbfGZPZn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 11:25:43 -0400
+Received: from vps01.wiesinger.com ([46.36.37.179]:45074 "EHLO
+        vps01.wiesinger.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728369AbfGZPZj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 11:25:39 -0400
+Received: from wiesinger.com (wiesinger.com [84.113.44.87])
+        by vps01.wiesinger.com (Postfix) with ESMTPS id 88D6A9F1FD;
+        Fri, 26 Jul 2019 17:25:36 +0200 (CEST)
+Received: from [192.168.0.14] ([192.168.0.14])
+        (authenticated bits=0)
+        by wiesinger.com (8.15.2/8.15.2) with ESMTPSA id x6QFPYAM011882
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Fri, 26 Jul 2019 17:25:35 +0200
+DKIM-Filter: OpenDKIM Filter v2.11.0 wiesinger.com x6QFPYAM011882
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wiesinger.com;
+        s=default; t=1564154735;
+        bh=y4jI+N3udLkUBt/fdlluM+w0Q7vkRjreRmtO4xFTGMc=;
+        h=Subject:References:To:From:Cc:Date:In-Reply-To:From;
+        b=rh4n4TLWnQdWhmU5yzvkShXSQWJY7ncWE7fsOBg28ZJcMils48RwZxjhUXpyX0k5B
+         i7EnWgys+08L+eb5a6xOxHtolE7be5K1zMsxX75foKVQhYNU61M58uUae0K1dnr0ey
+         jdSnZHR+MomzLLOpMwwHxhpuZ6nznn75V6o4RRJhd6fD/+lbsvfjqzCtwRxkE+7PQs
+         zGWUYJclWfmLHdOyZMJOzM1Olefe7GtEN5p2VUxtftjBdtMOEnvBUvpAn0bFmXK+Dc
+         7cN6e37ccsknS+fYi+caZwVhab4Iv5oILeWfukquRmj3J/VS1aDv4y1upx1TH3Cupi
+         /jfkrseu5mHMdDkhqYvdEFCgSLVqXa0+ud9tynlOsRFf/HQvqJY62kzKCpf3kCAJgC
+         ceX7M2Qalhvv1tw+Gwd5JkMpvfhIc9jdadCcCJmFSlCTuOdbmsc3fytAUF0W5VWX7I
+         geHj/Rw0YnU2yerNyXhAwLvEYGyzlD/sn0p+ah5JvGLa1G5RrxCi3POrYraOvsx/62
+         AuzQ+Lp1tthpBCy75fhcrBGmvpliElzSGEkExHS4MZci8v8zidL1J6mp0vdp79DVOY
+         4kd6tCPL+mwW4uzevhwNhImH3kiJba6CuAy3IFcPKyPGezoJoT+75sJ1ZVF//2wN1I
+         aXosbySzGCo+Hk3Iv2pMTci0=
+Subject: platform/x86/pcengines-apuv2: Missing apu4
+References: <02b34d18-27bc-cb48-f698-03df61df7d91@wiesinger.com>
+To:     Florian Eckert <fe@dev.tdt.de>, Eckert.Florian@googlemail.com,
+        info@metux.net, dvhart@infradead.org, andy@infradead.org
+From:   Gerhard Wiesinger <lists@wiesinger.com>
+Cc:     platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+X-Forwarded-Message-Id: <02b34d18-27bc-cb48-f698-03df61df7d91@wiesinger.com>
+Message-ID: <2f22106f-4d13-f3a7-0862-3a71762d62ab@wiesinger.com>
+Date:   Fri, 26 Jul 2019 17:25:34 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 41e31e43-09b3-4f95-07c3-08d711dd7967
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Jul 2019 15:25:21.7355
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: horia.geanta@nxp.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB3631
+In-Reply-To: <02b34d18-27bc-cb48-f698-03df61df7d91@wiesinger.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/25/2019 4:58 PM, Iuliana Prodan wrote:=0A=
-> Check authsize to solve the extra tests that expect -EINVAL to be=0A=
-> returned when the authentication tag size is not valid.=0A=
-> =0A=
-> Validated authsize for GCM, RFC4106 and RFC4543.=0A=
-> =0A=
-> Signed-off-by: Iuliana Prodan <iuliana.prodan@nxp.com>=0A=
-Reviewed-by: Horia Geant=E3 <horia.geanta@nxp.com>=0A=
-=0A=
-Thanks,=0A=
-Horia=0A=
+Hello,
+
+I saw that the apu4 board is completly missing (also on 5.3rc1). Can you 
+please add it. Should be very easy, see below.
+
+https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/drivers/platform/x86/pcengines-apuv2.c?h=v5.1.20
+
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/platform/x86/pcengines-apuv2.c?h=v5.3-rc1
+
+
+For further rference:
+
+https://www.pcengines.ch/apu2.htm
+
+https://www.pcengines.ch/apu4c2.htm
+
+https://www.pcengines.ch/apu4c4.htm
+
+Please backport it also to 5.1.x and 5.2.x.
+
+
+Thnx.
+
+Ciao,
+
+Gerhard
+
+
+     /* APU4 w/ legacy bios < 4.0.8 */
+     {
+         .ident        = "apu4",
+         .matches    = {
+             DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
+             DMI_MATCH(DMI_BOARD_NAME, "APU4")
+         },
+         .driver_data = (void *)&board_apu2,
+     },
+     /* APU4 w/ legacy bios >= 4.0.8 */
+     {
+         .ident       = "apu4",
+         .matches     = {
+             DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
+             DMI_MATCH(DMI_BOARD_NAME, "apu4)
+         },
+         .driver_data = (void *)&board_apu2,
+     },
+     /* APU4 w/ mainline bios */
+     {
+         .ident       = "apu4",
+         .matches     = {
+             DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
+             DMI_MATCH(DMI_BOARD_NAME, "PC Engines apu4")
+         },
+         .driver_data = (void *)&board_apu2,
+     },
+
+
+|
+
+MODULE_DESCRIPTION("PC Engines APUv2/APUv3/APUv4 board GPIO/LED/keys 
+driver"); |
+
