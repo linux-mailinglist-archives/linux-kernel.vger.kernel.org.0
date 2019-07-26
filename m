@@ -2,63 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0911C76773
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 15:28:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 557967677E
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 15:30:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727171AbfGZN2s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 09:28:48 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50512 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726001AbfGZN2s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 09:28:48 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id B3936AF1D;
-        Fri, 26 Jul 2019 13:28:46 +0000 (UTC)
-Received: by ds.suse.cz (Postfix, from userid 10065)
-        id BF30EDA811; Fri, 26 Jul 2019 15:29:22 +0200 (CEST)
-Date:   Fri, 26 Jul 2019 15:29:22 +0200
-From:   David Sterba <dsterba@suse.cz>
-To:     Paul Menzel <pmenzel@molgen.mpg.de>
-Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Subject: Re: BTRFS: Kmemleak errrors with do_sys_ftruncate
-Message-ID: <20190726132922.GA2868@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz, Paul Menzel <pmenzel@molgen.mpg.de>,
-        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>
-References: <8c9b2f4e-252c-fee7-ef52-4ec2b9b54042@molgen.mpg.de>
+        id S1727310AbfGZNaL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 09:30:11 -0400
+Received: from mail.santannapisa.it ([193.205.80.98]:45992 "EHLO
+        mail.santannapisa.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726666AbfGZNaL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 09:30:11 -0400
+Received: from [151.41.39.6] (account l.abeni@santannapisa.it HELO sweethome)
+  by santannapisa.it (CommuniGate Pro SMTP 6.1.11)
+  with ESMTPSA id 141121803; Fri, 26 Jul 2019 15:30:09 +0200
+Date:   Fri, 26 Jul 2019 15:30:02 +0200
+From:   luca abeni <luca.abeni@santannapisa.it>
+To:     Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Valentin Schneider <Valentin.Schneider@arm.com>,
+        Qais Yousef <Qais.Yousef@arm.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/5] sched/deadline: Fix double accounting of rq/running
+ bw in push_dl_task()
+Message-ID: <20190726153002.5e49c666@sweethome>
+In-Reply-To: <20190726082756.5525-2-dietmar.eggemann@arm.com>
+References: <20190726082756.5525-1-dietmar.eggemann@arm.com>
+        <20190726082756.5525-2-dietmar.eggemann@arm.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8c9b2f4e-252c-fee7-ef52-4ec2b9b54042@molgen.mpg.de>
-User-Agent: Mutt/1.5.23.1 (2014-03-12)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 26, 2019 at 03:16:57PM +0200, Paul Menzel wrote:
-> Dear Linux folks,
-> 
-> 
-> On a Power 8 server
-> 
->     Linux power 5.3.0-rc1+ #1 SMP Fri Jul 26 11:34:28 CEST 2019 ppc64le ppc64le ppc64le GNU/Linux
-> 
-> Kmemleak reports the warnings below.
+Hi,
 
-There are memory leaks of struct extent_state introduced in 5.3 pull and
-there's a fix going to 5.3-rc2 (https://patchwork.kernel.org/patch/11060447/).
+On Fri, 26 Jul 2019 09:27:52 +0100
+Dietmar Eggemann <dietmar.eggemann@arm.com> wrote:
+[...]
+> @@ -2121,17 +2121,13 @@ static int push_dl_task(struct rq *rq)
+>  	}
+>  
+>  	deactivate_task(rq, next_task, 0);
+> -	sub_running_bw(&next_task->dl, &rq->dl);
+> -	sub_rq_bw(&next_task->dl, &rq->dl);
+>  	set_task_cpu(next_task, later_rq->cpu);
+> -	add_rq_bw(&next_task->dl, &later_rq->dl);
+>  
+>  	/*
+>  	 * Update the later_rq clock here, because the clock is used
+>  	 * by the cpufreq_update_util() inside __add_running_bw().
+>  	 */
+>  	update_rq_clock(later_rq);
+> -	add_running_bw(&next_task->dl, &later_rq->dl);
 
-> I believe these have been present for some releases already, but Kmemleak
-> was broken until now on that system, so that I could only report them now.
+Looking at the code again and thinking a little bit more about this
+issue, I suspect a similar change is needed in pull_dl_task() too, no?
 
-We have a leak detector built-in btrfs so I think we'd notice and that
-you observe the known leak. You could try to apply the patch or wait for
-rc2 and restst.
+
+
+			Luca
