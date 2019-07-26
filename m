@@ -2,71 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DBD876E29
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 17:40:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B3EF576E14
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 17:40:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388877AbfGZPja (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 11:39:30 -0400
-Received: from mail-io1-f69.google.com ([209.85.166.69]:46557 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387756AbfGZP0B (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 11:26:01 -0400
-Received: by mail-io1-f69.google.com with SMTP id s83so59041520iod.13
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2019 08:26:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=iHIZY3n79tjWiqF4FrsxNYHlKLoyYYCqi0zeJqFjTkY=;
-        b=ZdzuMOPigJG+/FpmeTQ+SXesmtBik+YcnBByR7qJxFHd2Xaihuy4qK09S7NEA2YSS6
-         RVgCpQ38uXgP3GoIVw5Thi5GbzSioqGt4xjGP0EJiWrKn+KctsKPDsEZ3jRz5SUmRYbc
-         4hLBgXlvEAy3nZVSz57PvidiTveDme7n4Lyvy0tngYj8O35tOiEkDlSfeAGbtlyveioJ
-         C3jjW4J22hzdq0nVjshrqgRSEm6Xw+BYCEstx1EO6Xgph8xtcnCRWb2WML0B1SZB6iTY
-         6WsBJPiiYvIYwrT5yB6DlxNMsvqfWx0YMzUbm3gnfAi9HgXaut7de88mbDLXeGgki5A6
-         mk3w==
-X-Gm-Message-State: APjAAAVLemrKBJv3/pXE0x60uJErVuHsNzPoWWK8Cq8r9M7YDOt6aHXz
-        ML7l5+jPnzeOsuVzaNO7P403n/L37HPK9/rA3zQdyZYZlwE6
-X-Google-Smtp-Source: APXvYqzHpk/vEMkIMKMtiMdg8PB4RYhne1o6pJ8WL+G6Degv9dbMalQiRsRdhyVuMJOgTkwheM+dhLdMfqp+YLyIul4ruGrn56Gi
+        id S2388779AbfGZP3V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 11:29:21 -0400
+Received: from mga18.intel.com ([134.134.136.126]:57548 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388739AbfGZP3P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 11:29:15 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jul 2019 08:29:14 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,311,1559545200"; 
+   d="scan'208";a="322065695"
+Received: from msmall-mobl.amr.corp.intel.com (HELO [10.251.154.62]) ([10.251.154.62])
+  by orsmga004.jf.intel.com with ESMTP; 26 Jul 2019 08:29:13 -0700
+Subject: Re: [RFC PATCH 01/40] soundwire: add debugfs support
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        tiwai@suse.de, broonie@kernel.org, vkoul@kernel.org,
+        jank@cadence.com, srinivas.kandagatla@linaro.org,
+        slawomir.blauciak@intel.com, Sanyog Kale <sanyog.r.kale@intel.com>
+References: <20190725234032.21152-1-pierre-louis.bossart@linux.intel.com>
+ <20190725234032.21152-2-pierre-louis.bossart@linux.intel.com>
+ <20190726140411.GA8767@kroah.com>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <1c9448c3-2a98-e5c3-fadf-910e361187ab@linux.intel.com>
+Date:   Fri, 26 Jul 2019 10:29:13 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-X-Received: by 2002:a02:4484:: with SMTP id o126mr98783066jaa.34.1564154761082;
- Fri, 26 Jul 2019 08:26:01 -0700 (PDT)
-Date:   Fri, 26 Jul 2019 08:26:01 -0700
-In-Reply-To: <000000000000b4358f058e924c6d@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000e87d14058e9728d7@google.com>
-Subject: Re: INFO: rcu detected stall in vhost_worker
-From:   syzbot <syzbot+36e93b425cd6eb54fcc1@syzkaller.appspotmail.com>
-To:     jasowang@redhat.com, kvm@vger.kernel.org,
-        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-        michal.lkml@markovi.net, mst@redhat.com, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, torvalds@linux-foundation.org,
-        virtualization@lists.linux-foundation.org,
-        yamada.masahiro@socionext.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <20190726140411.GA8767@kroah.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has bisected this bug to:
 
-commit 0ecfebd2b52404ae0c54a878c872bb93363ada36
-Author: Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sun Jul 7 22:41:56 2019 +0000
+>> diff --git a/drivers/soundwire/debugfs.c b/drivers/soundwire/debugfs.c
+>> new file mode 100644
+>> index 000000000000..8d86e100516e
+>> --- /dev/null
+>> +++ b/drivers/soundwire/debugfs.c
+>> @@ -0,0 +1,156 @@
+>> +// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
+> 
+> No, for debugfs-specific code, that dual license makes no sense, right?
+> Don't cargo-cult SPDX identifiers please.
 
-     Linux 5.2
+It's a miss, I used EXPORT_GPL and missed this line, will fix.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=118810bfa00000
-start commit:   13bf6d6a Add linux-next specific files for 20190725
-git tree:       linux-next
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8ae987d803395886
-dashboard link: https://syzkaller.appspot.com/bug?extid=36e93b425cd6eb54fcc1
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15112f3fa00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=131ab578600000
+> 
+>> +// Copyright(c) 2017-19 Intel Corporation.
+> 
+> Spell the year out fully unless you want lawyers knocking on your door :)
 
-Reported-by: syzbot+36e93b425cd6eb54fcc1@syzkaller.appspotmail.com
-Fixes: 0ecfebd2b524 ("Linux 5.2")
+haha, will fix.
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+> 
+>> +
+>> +#include <linux/device.h>
+>> +#include <linux/debugfs.h>
+>> +#include <linux/mod_devicetable.h>
+>> +#include <linux/slab.h>
+>> +#include <linux/soundwire/sdw.h>
+>> +#include <linux/soundwire/sdw_registers.h>
+>> +#include "bus.h"
+>> +
+>> +#ifdef CONFIG_DEBUG_FS
+>> +struct dentry *sdw_debugfs_root;
+>> +#endif
+> 
+> This whole file is not built if that option is not enabled, so why the
+> #ifdef?
+
+Ah, will look into this, thanks!
