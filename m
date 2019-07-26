@@ -2,106 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE0C1771D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 21:05:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B4A1771DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 21:08:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388370AbfGZTFp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 15:05:45 -0400
-Received: from mail-qk1-f174.google.com ([209.85.222.174]:34183 "EHLO
-        mail-qk1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388306AbfGZTFp (ORCPT
+        id S2388423AbfGZTIv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 15:08:51 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:39873 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387570AbfGZTIv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 15:05:45 -0400
-Received: by mail-qk1-f174.google.com with SMTP id t8so39841476qkt.1
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2019 12:05:44 -0700 (PDT)
+        Fri, 26 Jul 2019 15:08:51 -0400
+Received: by mail-ot1-f67.google.com with SMTP id r21so50349441otq.6
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2019 12:08:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=PZsF7ZJaphMWN9qRy4bD4vHayPMKRYnmzgQEknbb+i0=;
-        b=WJPUMagw7mekaMPendP9T8PCqp3BQckjVCLd/rndL+nv6DRii3ypfgbKqyA/+Ft+Xy
-         dpzkPuuqAfKJE15w8Osb6Lic9i9WqW2sRZGbLbwk3sHuewiKkYHtXjBtukBUf+EXxF1Q
-         6veZXcnwd/9NQ257Kg2/gCMTuXXYoQ6HlAHTrycpTwzv7BX9MtH6BZUI+4e3gAY/V+Nf
-         SSCpge7pQhmNGsaqBt6jABGVgEy6VzTamIunWf7XpH1WTtRjkAFfCQMup8C7ZhzwQgd6
-         UbrHjeAX6qAfK1qveWIR+ZD7F8BpsQfA8BgRnb9B6x2d7H4rF+/iYZ5tLU6Zk7frCW+5
-         bMmg==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Qv/TYWK6NOYekEaLft+v7J5eS4Mf0pr3nYuBj6c8hlQ=;
+        b=Qa7vSe1RB8VnZOGBb0s+Kj+fpIDyeE6S/eOwpwfNE4z9MOYNwqpVwrdVgJH3WTo6R2
+         DUvJoADoLeswvTnOfIkZz29zTpMtaOUHAJbEC6boa+hc8cCAFuK7jnCqjmRsKuVsayJv
+         XGc/OTQyUT8FIl/T4thWlWIb0cB6Vpsy+3ZNoggtUSk7qWfPNebILKpjDLxrq9RvGxTt
+         qvCTlRo6Ods1D0ImSaDz5TGTQlNtzPORLqOTfxes56X7+qgfUM43q2cZkEAvoGWM5ykh
+         UajSesiCEwB4DHkJy2IPmVd48UJbLbwKJiDD8AItzwacWT5OYOLRvykef0EgO4Sb7jkV
+         Ny+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=PZsF7ZJaphMWN9qRy4bD4vHayPMKRYnmzgQEknbb+i0=;
-        b=XJGG77p1XNjYxJhIUiD5NdCrXpQvd4Xw7/z1zXYUOilFjIuJHCtagCoZzz3WTsDelY
-         G0rnPXjRydXpJEyX5b5IUm6evXZnbeCnsovGeZ9d3q+6h9+n86I0bDvxurt2o/085Bl+
-         0s8W7c8yWSdX5J/MzGhQgKDV1TDXUT2D72xBIskDOg49ndr6GdvOJBtVAWHo4A9dTqoh
-         x30i16OI0uG8iCji/8u6/0IbfR8A2CeYk4otxSBOBnjYf/oDMHPxwxnenYtA7OVe6O8i
-         1ILLhex7pPgXS3mhMAqhDs72l8VmIZRnuYcaDxnIpvpTPZmtCmcFQd4D7I7pc6a7n0an
-         S24A==
-X-Gm-Message-State: APjAAAXGkLufVoG5MWWYNK0xGfJ9aK8kC9KEu0ip1Ip7CKeIdfsww48y
-        1qs7bCJNKaKo8GVjvw0bc0o=
-X-Google-Smtp-Source: APXvYqyuJ/vu0VGo8xvzuoUQ6pcwY0rIRCc1+foG0SfHLPs9H5Igpj31+QElSDbEmkEt581vgqC+kw==
-X-Received: by 2002:a05:620a:1006:: with SMTP id z6mr31170851qkj.312.1564167944308;
-        Fri, 26 Jul 2019 12:05:44 -0700 (PDT)
-Received: from quaco.ghostprotocols.net ([179.97.35.50])
-        by smtp.gmail.com with ESMTPSA id i1sm23987910qtb.7.2019.07.26.12.05.43
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 26 Jul 2019 12:05:43 -0700 (PDT)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 846FA40340; Fri, 26 Jul 2019 16:05:41 -0300 (-03)
-Date:   Fri, 26 Jul 2019 16:05:41 -0300
-To:     Vince Weaver <vincent.weaver@maine.edu>
-Cc:     linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>
-Subject: Re: [patch] perf tool buffer overflow in perf_header__read_build_ids
-Message-ID: <20190726190541.GC20482@kernel.org>
-References: <alpine.DEB.2.21.1907231100440.14532@macbook-air>
- <alpine.DEB.2.21.1907231639120.14532@macbook-air>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Qv/TYWK6NOYekEaLft+v7J5eS4Mf0pr3nYuBj6c8hlQ=;
+        b=pjK47ZFxfLO5+/ipHUIL2wzrKYFEpMLfBJEjjsgAZiHU7+tO1qgg9bZOP/SsMQjsWN
+         /sdU+uz/fusdl+q7NRBEt3BPs/NGg7bsPLRWJLjKLNiOqI5glJZdp/aZ7/+hdDaKI6J1
+         cu2l8Dtl3YYFGJdKGQisxnbiDBAHer5+JdLbP6cQMS15EDt6qD0RCG/WyAmDMz32vVW9
+         XgudQgkActzVKII2M6dmYAeDw65g68Az3tVXxn3PuXa9gyJcrS0dUo0UaR82sQOokYXJ
+         EsS6YOmqwsFwCHY5WTSl7NjGvxJQfGj/jq6r/YIPeN43kYOx0i/A0hUAwEtvu5X+taNr
+         CLVg==
+X-Gm-Message-State: APjAAAUJG1D7SOG+0nu8CjU17Ef45iKdF/3FOqn+IgrOixARvxXJRkXk
+        aehbswNT/C80T2lq5mjyLJCueXJyGlihecmOqlf1JQ==
+X-Google-Smtp-Source: APXvYqwswxBkVVGVTDXag1cBSCnrtLh/NFlUrBDxo9q0yG5wk2PUY/8LeoOx+VOVO9FtYtjmDs9baSxZ1cuMp/QUZNo=
+X-Received: by 2002:a9d:6201:: with SMTP id g1mr72758418otj.195.1564168129789;
+ Fri, 26 Jul 2019 12:08:49 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1907231639120.14532@macbook-air>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.12.0 (2019-05-25)
+References: <20190703011020.151615-1-saravanak@google.com> <20190703011020.151615-7-saravanak@google.com>
+ <fde02417-dc72-acad-727d-452a3ae3cbd0@linaro.org>
+In-Reply-To: <fde02417-dc72-acad-727d-452a3ae3cbd0@linaro.org>
+From:   Saravana Kannan <saravanak@google.com>
+Date:   Fri, 26 Jul 2019 12:08:13 -0700
+Message-ID: <CAGETcx_y=6XJi-1YroB3wzMZ9UF1zunqPc4NLhEy0DdHJXYnNQ@mail.gmail.com>
+Subject: Re: [PATCH v3 6/6] interconnect: Add OPP table support for interconnects
+To:     Georgi Djakov <georgi.djakov@linaro.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        "Sweeney, Sean" <seansw@qti.qualcomm.com>,
+        David Dai <daidavid1@codeaurora.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Sibi Sankar <sibis@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Evan Green <evgreen@chromium.org>,
+        Android Kernel Team <kernel-team@android.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Tue, Jul 23, 2019 at 04:42:30PM -0400, Vince Weaver escreveu:
-> Hello
-> 
-> my perf_tool_fuzzer has found another issue, this one a buffer overflow
-> in perf_header__read_build_ids.  The build id filename is read in with a 
-> filename length read from the perf.data file, but this can be longer than
-> PATH_MAX which will smash the stack.
-> 
-> This might not be the right fix, not sure if filename should be NUL
-> terminated or not.
-> 
-> Signed-off-by: Vince Weaver <vincent.weaver@maine.edu>
-> 
-> diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
-> index c24db7f4909c..9a893a26e678 100644
-> --- a/tools/perf/util/header.c
-> +++ b/tools/perf/util/header.c
-> @@ -2001,6 +2001,9 @@ static int perf_header__read_build_ids(struct perf_header *header,
->  			perf_event_header__bswap(&bev.header);
->  
->  		len = bev.header.size - sizeof(bev);
-> +
-> +		if (len>PATH_MAX) len=PATH_MAX;
-> +
+On Fri, Jul 26, 2019 at 9:25 AM Georgi Djakov <georgi.djakov@linaro.org> wrote:
+>
+> Hi Saravana,
+>
+> On 7/3/19 04:10, Saravana Kannan wrote:
+> > Interconnect paths can have different performance points. Now that OPP
+> > framework supports bandwidth OPP tables, add OPP table support for
+> > interconnects.
+> >
+> > Devices can use the interconnect-opp-table DT property to specify OPP
+> > tables for interconnect paths. And the driver can obtain the OPP table for
+> > an interconnect path by calling icc_get_opp_table().
+> >
+> > Signed-off-by: Saravana Kannan <saravanak@google.com>
+> > ---
+> >  drivers/interconnect/core.c  | 27 ++++++++++++++++++++++++++-
+> >  include/linux/interconnect.h |  7 +++++++
+> >  2 files changed, 33 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/interconnect/core.c b/drivers/interconnect/core.c
+> > index 871eb4bc4efc..881bac80bc1e 100644
+> > --- a/drivers/interconnect/core.c
+> > +++ b/drivers/interconnect/core.c
+> > @@ -47,6 +47,7 @@ struct icc_req {
+> >   */
+> >  struct icc_path {
+> >       size_t num_nodes;
+> > +     struct opp_table *opp_table;
+>
+> I am a bit worried that these tables might be abused and size of the DT will
+> grow with many OPP tables of all existing paths.
 
-Humm, I wonder if we shouldn't just declare the whole file invalid like
-you did with the previous patch?
+A ton of stuff can be abused in downstream code. We can't do anything
+about that.
 
-- Arnaldo
+We just need to keep an eye on OPP table abuse in upstream (whether it
+frequency or bw OPP).
 
->  		if (readn(input, filename, len) != len)
->  			goto out;
->  		/*
+> >       struct icc_req reqs[];
+> >  };
+> >
+> > @@ -313,7 +314,7 @@ struct icc_path *of_icc_get(struct device *dev, const char *name)
+> >  {
+> >       struct icc_path *path = ERR_PTR(-EPROBE_DEFER);
+> >       struct icc_node *src_node, *dst_node;
+> > -     struct device_node *np = NULL;
+> > +     struct device_node *np = NULL, *opp_node;
+> >       struct of_phandle_args src_args, dst_args;
+> >       int idx = 0;
+> >       int ret;
+> > @@ -381,10 +382,34 @@ struct icc_path *of_icc_get(struct device *dev, const char *name)
+> >               dev_err(dev, "%s: invalid path=%ld\n", __func__, PTR_ERR(path));
+> >       mutex_unlock(&icc_lock);
+> >
+> > +     opp_node = of_parse_phandle(np, "interconnect-opp-table", idx);
+>
+> Can't we figure out if the device OPP table contains bandwidth even without this
+> property?
+>
+
+Rob pointed out that the property isn't necessary because the device
+binding should document which OPP table is used for what. That takes
+care of my main concern of how do we know which OPP table is for what
+path. So I'm dropping this patch.
+
+-Saravana
