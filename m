@@ -2,76 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7835A76B42
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 16:15:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 17D1776B45
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 16:16:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727534AbfGZOPC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 10:15:02 -0400
-Received: from mga12.intel.com ([192.55.52.136]:18726 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727119AbfGZOPC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 10:15:02 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jul 2019 07:15:02 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,311,1559545200"; 
-   d="scan'208";a="322050604"
-Received: from msmall-mobl.amr.corp.intel.com (HELO [10.251.154.62]) ([10.251.154.62])
-  by orsmga004.jf.intel.com with ESMTP; 26 Jul 2019 07:15:00 -0700
-Subject: Re: [alsa-devel] [RFC PATCH 20/40] soundwire: prototypes for
- suspend/resume
-To:     Cezary Rojewski <cezary.rojewski@intel.com>
-Cc:     alsa-devel@alsa-project.org, tiwai@suse.de,
-        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        vkoul@kernel.org, broonie@kernel.org,
-        srinivas.kandagatla@linaro.org, jank@cadence.com,
-        slawomir.blauciak@intel.com, Sanyog Kale <sanyog.r.kale@intel.com>
-References: <20190725234032.21152-1-pierre-louis.bossart@linux.intel.com>
- <20190725234032.21152-21-pierre-louis.bossart@linux.intel.com>
- <f718d6ae-6654-210b-4152-6692091130c9@intel.com>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <0ef40222-46b2-1f5e-2482-ae1f48a91241@linux.intel.com>
-Date:   Fri, 26 Jul 2019 09:15:00 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1728250AbfGZOP7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 10:15:59 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:2780 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727119AbfGZOP7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 10:15:59 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 9E5277926D7979379D45;
+        Fri, 26 Jul 2019 22:15:54 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS409-HUB.china.huawei.com
+ (10.3.19.209) with Microsoft SMTP Server id 14.3.439.0; Fri, 26 Jul 2019
+ 22:15:47 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <kvalo@codeaurora.org>, <arend.vanspriel@broadcom.com>,
+        <franky.lin@broadcom.com>, <hante.meuleman@broadcom.com>,
+        <chi-hsien.lin@cypress.com>, <wright.feng@cypress.com>
+CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-wireless@vger.kernel.org>,
+        <brcm80211-dev-list.pdl@broadcom.com>,
+        <brcm80211-dev-list@cypress.com>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH] brcmsmac: remove three set but not used variables
+Date:   Fri, 26 Jul 2019 22:15:35 +0800
+Message-ID: <20190726141535.33212-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-In-Reply-To: <f718d6ae-6654-210b-4152-6692091130c9@intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Fixes gcc '-Wunused-but-set-variable' warning:
+
+drivers/net/wireless/broadcom/brcm80211/brcmsmac/main.c: In function 'brcms_c_set_gmode':
+drivers/net/wireless/broadcom/brcm80211/brcmsmac/main.c:5257:7: warning: variable 'preamble_restrict' set but not used [-Wunused-but-set-variable]
+drivers/net/wireless/broadcom/brcm80211/brcmsmac/main.c:5256:6: warning: variable 'preamble' set but not used [-Wunused-but-set-variable]
+drivers/net/wireless/broadcom/brcm80211/brcmsmac/main.c:5251:7: warning: variable 'shortslot_restrict' set but not used [-Wunused-but-set-variable]
+
+They are never used so can be removed.
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/net/wireless/broadcom/brcm80211/brcmsmac/main.c | 13 -------------
+ 1 file changed, 13 deletions(-)
+
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/main.c b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/main.c
+index 7d4e8f5..080e829 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/main.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/main.c
+@@ -5248,15 +5248,7 @@ int brcms_c_set_gmode(struct brcms_c_info *wlc, u8 gmode, bool config)
+ 	/* Default to 54g Auto */
+ 	/* Advertise and use shortslot (-1/0/1 Auto/Off/On) */
+ 	s8 shortslot = BRCMS_SHORTSLOT_AUTO;
+-	bool shortslot_restrict = false; /* Restrict association to stations
+-					  * that support shortslot
+-					  */
+ 	bool ofdm_basic = false;	/* Make 6, 12, and 24 basic rates */
+-	/* Advertise and use short preambles (-1/0/1 Auto/Off/On) */
+-	int preamble = BRCMS_PLCP_LONG;
+-	bool preamble_restrict = false;	/* Restrict association to stations
+-					 * that support short preambles
+-					 */
+ 	struct brcms_band *band;
+ 
+ 	/* if N-support is enabled, allow Gmode set as long as requested
+@@ -5297,16 +5289,11 @@ int brcms_c_set_gmode(struct brcms_c_info *wlc, u8 gmode, bool config)
+ 
+ 	case GMODE_ONLY:
+ 		ofdm_basic = true;
+-		preamble = BRCMS_PLCP_SHORT;
+-		preamble_restrict = true;
+ 		break;
+ 
+ 	case GMODE_PERFORMANCE:
+ 		shortslot = BRCMS_SHORTSLOT_ON;
+-		shortslot_restrict = true;
+ 		ofdm_basic = true;
+-		preamble = BRCMS_PLCP_SHORT;
+-		preamble_restrict = true;
+ 		break;
+ 
+ 	default:
+-- 
+2.7.4
 
 
-On 7/26/19 5:04 AM, Cezary Rojewski wrote:
-> On 2019-07-26 01:40, Pierre-Louis Bossart wrote:
->> Signed-off-by: Pierre-Louis Bossart 
->> <pierre-louis.bossart@linux.intel.com>
->> ---
->>   drivers/soundwire/cadence_master.h | 3 +++
->>   1 file changed, 3 insertions(+)
->>
->> diff --git a/drivers/soundwire/cadence_master.h 
->> b/drivers/soundwire/cadence_master.h
->> index c0bf6ff00a44..d375bbfead18 100644
->> --- a/drivers/soundwire/cadence_master.h
->> +++ b/drivers/soundwire/cadence_master.h
->> @@ -165,6 +165,9 @@ int sdw_cdns_enable_interrupt(struct sdw_cdns *cdns);
->>   void sdw_cdns_debugfs_init(struct sdw_cdns *cdns, struct dentry *root);
->> +int sdw_cdns_suspend(struct sdw_cdns *cdns);
->> +bool sdw_cdns_check_resume_status(struct sdw_cdns *cdns);
->> +
->>   int sdw_cdns_get_stream(struct sdw_cdns *cdns,
->>               struct sdw_cdns_streams *stream,
->>               u32 ch, u32 dir);
->>
-> 
-> No commit message, guess it's SQUASHME commit and shouldn't be part of 
-> overall series.
-
-I can't recall why it's separate, will look into this. Thanks.
