@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E801376E28
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 17:40:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7186076E18
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 17:40:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387905AbfGZPj0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 11:39:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39994 "EHLO mail.kernel.org"
+        id S1728437AbfGZPhu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 11:37:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44016 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387792AbfGZP0F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 11:26:05 -0400
+        id S2388773AbfGZP3V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 11:29:21 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0497422CD0;
-        Fri, 26 Jul 2019 15:26:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5BD2C218D4;
+        Fri, 26 Jul 2019 15:29:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564154764;
-        bh=EvBLQ6kSMwCQh4fSs12lF93NW+Tl1p2iPCcUQyfqziQ=;
+        s=default; t=1564154960;
+        bh=uu3qTDnCNTovUsEE/JifBgDG5Yt/eiY+fHSm5v52wDk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zNat9NtyK2Iljr4jIk4+Ylzjazz4qjMGxBwAvZfmmd72MRRNfe4JbFd827eSXZsvs
-         vmuLZpriI3gcsHxQn72nbS0KKzp02OK+XunwNK1kdewxhsRZoDkceBy2LfRSxLcKCG
-         lHsfskaziXFippkF/T+hjNhvBTats+MYbyltGoOw=
+        b=uvaM8/GcuRxBrFf4HG7c6H6OEPoD6hNZKsvX8871KOCHHfmkJ2OX62lN22/TiKdFl
+         OnKboRpwz8Qn/mnFtA7+GwCe8EzeSpyOTtAbCOF9M8QbN7069Pk14ONlg8z9H2zvHz
+         OQt+iZBiTLVuWWHnupaFE4Z/p5/fhmn8ATckVxz8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+7966f2a0b2c7da8939b4@syzkaller.appspotmail.com,
-        David Howells <dhowells@redhat.com>,
-        Marc Dionne <marc.dionne@auristor.com>,
+        stable@vger.kernel.org, Justin Chen <justinpopo6@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.2 19/66] rxrpc: Fix send on a connected, but unbound socket
-Date:   Fri, 26 Jul 2019 17:24:18 +0200
-Message-Id: <20190726152303.859878708@linuxfoundation.org>
+Subject: [PATCH 5.1 08/62] net: bcmgenet: use promisc for unsupported filters
+Date:   Fri, 26 Jul 2019 17:24:20 +0200
+Message-Id: <20190726152302.573411272@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190726152301.936055394@linuxfoundation.org>
-References: <20190726152301.936055394@linuxfoundation.org>
+In-Reply-To: <20190726152301.720139286@linuxfoundation.org>
+References: <20190726152301.720139286@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,125 +44,126 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Howells <dhowells@redhat.com>
+From: Justin Chen <justinpopo6@gmail.com>
 
-[ Upstream commit e835ada07091f40dcfb1bc735082bd0a7c005e59 ]
+[ Upstream commit 35cbef9863640f06107144687bd13151bc2e8ce3 ]
 
-If sendmsg() or sendmmsg() is called on a connected socket that hasn't had
-bind() called on it, then an oops will occur when the kernel tries to
-connect the call because no local endpoint has been allocated.
+Currently we silently ignore filters if we cannot meet the filter
+requirements. This will lead to the MAC dropping packets that are
+expected to pass. A better solution would be to set the NIC to promisc
+mode when the required filters cannot be met.
 
-Fix this by implicitly binding the socket if it is in the
-RXRPC_CLIENT_UNBOUND state, just like it does for the RXRPC_UNBOUND state.
+Also correct the number of MDF filters supported. It should be 17,
+not 16.
 
-Further, the state should be transitioned to RXRPC_CLIENT_BOUND after this
-to prevent further attempts to bind it.
-
-This can be tested with:
-
-	#include <stdio.h>
-	#include <stdlib.h>
-	#include <string.h>
-	#include <sys/socket.h>
-	#include <arpa/inet.h>
-	#include <linux/rxrpc.h>
-	static const unsigned char inet6_addr[16] = {
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, -1, 0xac, 0x14, 0x14, 0xaa
-	};
-	int main(void)
-	{
-		struct sockaddr_rxrpc srx;
-		struct cmsghdr *cm;
-		struct msghdr msg;
-		unsigned char control[16];
-		int fd;
-		memset(&srx, 0, sizeof(srx));
-		srx.srx_family = 0x21;
-		srx.srx_service = 0;
-		srx.transport_type = AF_INET;
-		srx.transport_len = 0x1c;
-		srx.transport.sin6.sin6_family = AF_INET6;
-		srx.transport.sin6.sin6_port = htons(0x4e22);
-		srx.transport.sin6.sin6_flowinfo = htons(0x4e22);
-		srx.transport.sin6.sin6_scope_id = htons(0xaa3b);
-		memcpy(&srx.transport.sin6.sin6_addr, inet6_addr, 16);
-		cm = (struct cmsghdr *)control;
-		cm->cmsg_len	= CMSG_LEN(sizeof(unsigned long));
-		cm->cmsg_level	= SOL_RXRPC;
-		cm->cmsg_type	= RXRPC_USER_CALL_ID;
-		*(unsigned long *)CMSG_DATA(cm) = 0;
-		msg.msg_name = NULL;
-		msg.msg_namelen = 0;
-		msg.msg_iov = NULL;
-		msg.msg_iovlen = 0;
-		msg.msg_control = control;
-		msg.msg_controllen = cm->cmsg_len;
-		msg.msg_flags = 0;
-		fd = socket(AF_RXRPC, SOCK_DGRAM, AF_INET);
-		connect(fd, (struct sockaddr *)&srx, sizeof(srx));
-		sendmsg(fd, &msg, 0);
-		return 0;
-	}
-
-Leading to the following oops:
-
-	BUG: kernel NULL pointer dereference, address: 0000000000000018
-	#PF: supervisor read access in kernel mode
-	#PF: error_code(0x0000) - not-present page
-	...
-	RIP: 0010:rxrpc_connect_call+0x42/0xa01
-	...
-	Call Trace:
-	 ? mark_held_locks+0x47/0x59
-	 ? __local_bh_enable_ip+0xb6/0xba
-	 rxrpc_new_client_call+0x3b1/0x762
-	 ? rxrpc_do_sendmsg+0x3c0/0x92e
-	 rxrpc_do_sendmsg+0x3c0/0x92e
-	 rxrpc_sendmsg+0x16b/0x1b5
-	 sock_sendmsg+0x2d/0x39
-	 ___sys_sendmsg+0x1a4/0x22a
-	 ? release_sock+0x19/0x9e
-	 ? reacquire_held_locks+0x136/0x160
-	 ? release_sock+0x19/0x9e
-	 ? find_held_lock+0x2b/0x6e
-	 ? __lock_acquire+0x268/0xf73
-	 ? rxrpc_connect+0xdd/0xe4
-	 ? __local_bh_enable_ip+0xb6/0xba
-	 __sys_sendmsg+0x5e/0x94
-	 do_syscall_64+0x7d/0x1bf
-	 entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Fixes: 2341e0775747 ("rxrpc: Simplify connect() implementation and simplify sendmsg() op")
-Reported-by: syzbot+7966f2a0b2c7da8939b4@syzkaller.appspotmail.com
-Signed-off-by: David Howells <dhowells@redhat.com>
-Reviewed-by: Marc Dionne <marc.dionne@auristor.com>
+Signed-off-by: Justin Chen <justinpopo6@gmail.com>
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/rxrpc/af_rxrpc.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/broadcom/genet/bcmgenet.c |   57 +++++++++++--------------
+ 1 file changed, 26 insertions(+), 31 deletions(-)
 
---- a/net/rxrpc/af_rxrpc.c
-+++ b/net/rxrpc/af_rxrpc.c
-@@ -545,6 +545,7 @@ static int rxrpc_sendmsg(struct socket *
+--- a/drivers/net/ethernet/broadcom/genet/bcmgenet.c
++++ b/drivers/net/ethernet/broadcom/genet/bcmgenet.c
+@@ -3086,39 +3086,42 @@ static void bcmgenet_timeout(struct net_
+ 	netif_tx_wake_all_queues(dev);
+ }
  
- 	switch (rx->sk.sk_state) {
- 	case RXRPC_UNBOUND:
-+	case RXRPC_CLIENT_UNBOUND:
- 		rx->srx.srx_family = AF_RXRPC;
- 		rx->srx.srx_service = 0;
- 		rx->srx.transport_type = SOCK_DGRAM;
-@@ -569,10 +570,9 @@ static int rxrpc_sendmsg(struct socket *
- 		}
+-#define MAX_MC_COUNT	16
++#define MAX_MDF_FILTER	17
  
- 		rx->local = local;
--		rx->sk.sk_state = RXRPC_CLIENT_UNBOUND;
-+		rx->sk.sk_state = RXRPC_CLIENT_BOUND;
- 		/* Fall through */
+ static inline void bcmgenet_set_mdf_addr(struct bcmgenet_priv *priv,
+ 					 unsigned char *addr,
+-					 int *i,
+-					 int *mc)
++					 int *i)
+ {
+-	u32 reg;
+-
+ 	bcmgenet_umac_writel(priv, addr[0] << 8 | addr[1],
+ 			     UMAC_MDF_ADDR + (*i * 4));
+ 	bcmgenet_umac_writel(priv, addr[2] << 24 | addr[3] << 16 |
+ 			     addr[4] << 8 | addr[5],
+ 			     UMAC_MDF_ADDR + ((*i + 1) * 4));
+-	reg = bcmgenet_umac_readl(priv, UMAC_MDF_CTRL);
+-	reg |= (1 << (MAX_MC_COUNT - *mc));
+-	bcmgenet_umac_writel(priv, reg, UMAC_MDF_CTRL);
+ 	*i += 2;
+-	(*mc)++;
+ }
  
--	case RXRPC_CLIENT_UNBOUND:
- 	case RXRPC_CLIENT_BOUND:
- 		if (!m->msg_name &&
- 		    test_bit(RXRPC_SOCK_CONNECTED, &rx->flags)) {
+ static void bcmgenet_set_rx_mode(struct net_device *dev)
+ {
+ 	struct bcmgenet_priv *priv = netdev_priv(dev);
+ 	struct netdev_hw_addr *ha;
+-	int i, mc;
++	int i, nfilter;
+ 	u32 reg;
+ 
+ 	netif_dbg(priv, hw, dev, "%s: %08X\n", __func__, dev->flags);
+ 
+-	/* Promiscuous mode */
++	/* Number of filters needed */
++	nfilter = netdev_uc_count(dev) + netdev_mc_count(dev) + 2;
++
++	/*
++	 * Turn on promicuous mode for three scenarios
++	 * 1. IFF_PROMISC flag is set
++	 * 2. IFF_ALLMULTI flag is set
++	 * 3. The number of filters needed exceeds the number filters
++	 *    supported by the hardware.
++	*/
+ 	reg = bcmgenet_umac_readl(priv, UMAC_CMD);
+-	if (dev->flags & IFF_PROMISC) {
++	if ((dev->flags & (IFF_PROMISC | IFF_ALLMULTI)) ||
++	    (nfilter > MAX_MDF_FILTER)) {
+ 		reg |= CMD_PROMISC;
+ 		bcmgenet_umac_writel(priv, reg, UMAC_CMD);
+ 		bcmgenet_umac_writel(priv, 0, UMAC_MDF_CTRL);
+@@ -3128,32 +3131,24 @@ static void bcmgenet_set_rx_mode(struct
+ 		bcmgenet_umac_writel(priv, reg, UMAC_CMD);
+ 	}
+ 
+-	/* UniMac doesn't support ALLMULTI */
+-	if (dev->flags & IFF_ALLMULTI) {
+-		netdev_warn(dev, "ALLMULTI is not supported\n");
+-		return;
+-	}
+-
+ 	/* update MDF filter */
+ 	i = 0;
+-	mc = 0;
+ 	/* Broadcast */
+-	bcmgenet_set_mdf_addr(priv, dev->broadcast, &i, &mc);
++	bcmgenet_set_mdf_addr(priv, dev->broadcast, &i);
+ 	/* my own address.*/
+-	bcmgenet_set_mdf_addr(priv, dev->dev_addr, &i, &mc);
+-	/* Unicast list*/
+-	if (netdev_uc_count(dev) > (MAX_MC_COUNT - mc))
+-		return;
++	bcmgenet_set_mdf_addr(priv, dev->dev_addr, &i);
+ 
+-	if (!netdev_uc_empty(dev))
+-		netdev_for_each_uc_addr(ha, dev)
+-			bcmgenet_set_mdf_addr(priv, ha->addr, &i, &mc);
+-	/* Multicast */
+-	if (netdev_mc_empty(dev) || netdev_mc_count(dev) >= (MAX_MC_COUNT - mc))
+-		return;
++	/* Unicast */
++	netdev_for_each_uc_addr(ha, dev)
++		bcmgenet_set_mdf_addr(priv, ha->addr, &i);
+ 
++	/* Multicast */
+ 	netdev_for_each_mc_addr(ha, dev)
+-		bcmgenet_set_mdf_addr(priv, ha->addr, &i, &mc);
++		bcmgenet_set_mdf_addr(priv, ha->addr, &i);
++
++	/* Enable filters */
++	reg = GENMASK(MAX_MDF_FILTER - 1, MAX_MDF_FILTER - nfilter);
++	bcmgenet_umac_writel(priv, reg, UMAC_MDF_CTRL);
+ }
+ 
+ /* Set the hardware MAC address. */
 
 
