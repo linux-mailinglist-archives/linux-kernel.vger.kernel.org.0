@@ -2,131 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A989277204
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 21:20:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C69877200
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 21:19:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388545AbfGZTS5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 15:18:57 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:38129 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388523AbfGZTS5 (ORCPT
+        id S1728203AbfGZTTe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 15:19:34 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:37621 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388725AbfGZTTc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 15:18:57 -0400
-Received: by mail-pf1-f195.google.com with SMTP id y15so24962247pfn.5
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2019 12:18:56 -0700 (PDT)
+        Fri, 26 Jul 2019 15:19:32 -0400
+Received: by mail-qt1-f194.google.com with SMTP id y26so53701068qto.4
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2019 12:19:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=aaLCO9rquW8zOfKrWz3ON/6AgObn6JUEqFdlb0biVXs=;
-        b=t7xuzeqrfaBvKuIzgMGqiBiJ+bNKXpm0hav9D4RB0YlIt0j3Ja5TcPtOdARR8OOKXv
-         R8skIXSww2dlvw1KwWGssW8pAcTrO0mxapnzlplUyC+8320bpsICCvBR4p/oYgIW/hxO
-         TWmLmhivSt+2Q5v6AU6uj2TpMtH6HN72fyR+E=
+        bh=CpzhLAZ1Tk4+tthXloHBt+h7BDefmj32MyAj8d7cP00=;
+        b=hD4ybSskoIGalzStkMeB6+dJbqT7rQTjanyfSGyC+e8zMs/ABTUbK7BYNFhKcBsTu1
+         ylNJbMNwDrp1GNmsiA0jPYz1YrznyQSEcZOkShW4VS64PsxxlpFtqUFIggXUMA9ffVGo
+         wnD2s0SltJBohMsea5oCh2VZiC1RngoYisr7OYlyjhFyG4zobn9II5gXzhCpKrs7g2Th
+         XlLKlK5ezdJcAmvi2HxN7zawqLnKDw9IqaqS61tVo28qIXm71kDM0528k+B69824IsS5
+         MYrMoKeU769YWAiSPf06ViNx7D1VPP/hWZM4urL9mcFxuG9TrMYCSCsMOXcULNA/zJit
+         rmmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=aaLCO9rquW8zOfKrWz3ON/6AgObn6JUEqFdlb0biVXs=;
-        b=FrmBbd2Lpu95SuriKgIvMD8ofWbsUPGVaF61fPyOdKREVR/3zDvpPlfTdIhxSaAKEJ
-         QWNlh5Ufq1NcpsNjxHoBVX5mYDphov7isyVGbWPNH7rUpjCevJ7juaXONmbaeC63Ns9j
-         c5hmeMlZmn9CUy8g2byBCPcWpNt3etV7MySWKfHVywlCETAcO0+6J8blkvn7azMElZT7
-         RRxco0Y9Ujg8XY5/FYhc5JF1pYQELFRqbj2dnKMBD2oxyG6j75Vwcbr55MA8cgZfa75v
-         s1mCqnzTn6FxBCW9sAaMjSVTXrowyap2EuRfqjwJ/qFaAqEi+AkbJcFb8U7HN5NICog6
-         ImuQ==
-X-Gm-Message-State: APjAAAWzi6Lyp1CzRbXFCkjbqbqAmUzYt5ljYmbrOV56/xIlS850F2xL
-        Ew6Cs2ZFeHeE6Sfzf5uUHp0=
-X-Google-Smtp-Source: APXvYqzchn27cAzocnBFE1KDl/j92iJMV04GePHVAx4gM5q3wTu5qdEQzK08hGWd1BxpCIg6dSLdxQ==
-X-Received: by 2002:a65:5b8e:: with SMTP id i14mr91573307pgr.188.1564168736216;
-        Fri, 26 Jul 2019 12:18:56 -0700 (PDT)
-Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id j12sm45814793pff.4.2019.07.26.12.18.54
+        bh=CpzhLAZ1Tk4+tthXloHBt+h7BDefmj32MyAj8d7cP00=;
+        b=hV3vT3jA9R7aq07kbHgoas2FFbVDnxAUb/PRPs1qNZIRcvX4DhTyRO95uyj3iV0hUC
+         Rqj/lKQ1eQD7rmG4wKGQJn1w2npHbTnV/crLJgM12bVVRWN52BCRcmGjaEPzK64vLSrB
+         B5EGX4t6wMUtzWjOg0LIfN8Hdxfy6BYebVzVtkYMaLb8iRu9lQEOu39SKqizwjyg8w51
+         0PX88HrYQy6jX4C7J3AFrTLm3XmJlwHb8rRMhlHb8jhTIJnvS8XEY66/q9XtNO9bZVma
+         gCTKL7T2zltV0R34i37KuPHaYxIqcIdm+cVZdV9+zOU7iRLU0Zd2+H0hJ4+eoNW9TfwC
+         EZXg==
+X-Gm-Message-State: APjAAAWnez54Z9OIWqUDLKMuVb0B6Zn9m1R49goloWroMJZTBrlUjrD4
+        9xaD2s2LunVbHC6BaRccF308pnA5
+X-Google-Smtp-Source: APXvYqzKR3eGhxXf87Si1dP47Im21BEcKMrs9qSrPVdY7/NXt6MkP4KFatqqIYErzXQDF/2Ec8z3LQ==
+X-Received: by 2002:a0c:b012:: with SMTP id k18mr70182318qvc.74.1564168771302;
+        Fri, 26 Jul 2019 12:19:31 -0700 (PDT)
+Received: from quaco.ghostprotocols.net ([179.97.35.50])
+        by smtp.gmail.com with ESMTPSA id j61sm23852056qte.47.2019.07.26.12.19.30
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 26 Jul 2019 12:18:55 -0700 (PDT)
-Date:   Fri, 26 Jul 2019 15:18:53 -0400
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Network Development <netdev@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>, kernel-team@android.com
-Subject: Re: [PATCH RFC 0/4] Add support to directly attach BPF program to
- ftrace
-Message-ID: <20190726191853.GA196514@google.com>
-References: <20190716222650.tk2coihjtsxszarf@ast-mbp.dhcp.thefacebook.com>
- <20190716224150.GC172157@google.com>
- <20190716235500.GA199237@google.com>
- <20190717012406.lugqemvubixfdd6v@ast-mbp.dhcp.thefacebook.com>
- <20190717130119.GA138030@google.com>
- <CAADnVQJY_=yeY0C3k1ZKpRFu5oNbB4zhQf5tQnLr=Mi8i6cgeQ@mail.gmail.com>
- <20190718025143.GB153617@google.com>
- <20190723221108.gamojemj5lorol7k@ast-mbp>
- <20190724135714.GA9945@google.com>
- <20190726183954.oxzhkrwt4uhgl4gl@ast-mbp.dhcp.thefacebook.com>
+        Fri, 26 Jul 2019 12:19:30 -0700 (PDT)
+From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 49A1F40340; Fri, 26 Jul 2019 16:19:28 -0300 (-03)
+Date:   Fri, 26 Jul 2019 16:19:28 -0300
+To:     Numfor Mbiziwo-Tiapo <nums@google.com>
+Cc:     peterz@infradead.org, mingo@redhat.com,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org, songliubraving@fb.com, mbd@fb.com,
+        linux-kernel@vger.kernel.org, irogers@google.com,
+        eranian@google.com
+Subject: Re: [PATCH 1/3] Fix util.c use of unitialized value warning
+Message-ID: <20190726191928.GF20482@kernel.org>
+References: <20190724234500.253358-1-nums@google.com>
+ <20190724234500.253358-2-nums@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190726183954.oxzhkrwt4uhgl4gl@ast-mbp.dhcp.thefacebook.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190724234500.253358-2-nums@google.com>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 26, 2019 at 11:39:56AM -0700, Alexei Starovoitov wrote:
-[snip]
-> > > > 1. timeinstate: By hooking 2 programs onto sched_switch and cpu_frequency
-> > > > tracepoints, we are able to collect CPU power per-UID (specific app). Connor
-> > > > O'Brien is working on that.
-> > > > 
-> > > > 2. inode to file path mapping: By hooking onto VFS tracepoints we are adding to
-> > > > the android kernels, we can collect data when the kernel resolves a file path
-> > > > to a inode/device number. A BPF map stores the inode/dev number (key) and the
-> > > > path (value). We have usecases where we need a high speed lookup of this
-> > > > without having to scan all the files in the filesystem.
-> > > 
-> > > Can you share the link to vfs tracepoints you're adding?
-> > > Sounds like you're not going to attempt to upstream them knowing
-> > > Al's stance towards them?
-> > > May be there is a way we can do the feature you need, but w/o tracepoints?
-> > 
-> > Yes, given Al's stance I understand the patch is not upstreamable. The patch
-> > is here:
-> > For tracepoint:
-> > https://android.googlesource.com/kernel/common/+/27d3bfe20558d279041af403a887e7bdbdcc6f24%5E%21/
+Em Wed, Jul 24, 2019 at 04:44:58PM -0700, Numfor Mbiziwo-Tiapo escreveu:
+> When building our local version of perf with MSAN (Memory Sanitizer)
+> and running the perf record command, MSAN throws a use of uninitialized
+> value warning in "tools/perf/util/util.c:333:6".
 > 
-> this is way more than tracepoint.
-
-True there is some code that calls the tracepoint. I want to optimize it more
-but lets see I am ready to think more about it before doing it this way,
-based on your suggestions.
-
-> > For bpf program:
-> > https://android.googlesource.com/platform/system/bpfprogs/+/908f6cd718fab0de7a944f84628c56f292efeb17%5E%21/
+> This warning stems from the "buf" variable being passed into "write".
+> It originated as the variable "ev" with the type union perf_event*
+> defined in the "perf_event__synthesize_attr" function in
+> "tools/perf/util/header.c".
 > 
-> what is unsafe_bpf_map_update_elem() in there?
-> The verifier comment sounds odd.
-> Could you describe the issue you see with the verifier?
+> In the "perf_event__synthesize_attr" function they allocate space with
+> a malloc call using ev, then go on to only assign some of the member
+> variables before passing "ev" on as a parameter to the "process" function
+> therefore "ev" contains uninitialized memory. Changing the malloc call
+> to calloc initializes all the members of "ev" which gets rid of the
+> warning.
 
-Will dig out the verifier issue I was seeing. I was just trying to get a
-prototype working so I did not go into verifier details much.
+I'm applying, but changing the calloc call to zalloc() that is just a
+shorter wrapper to calloc(1, size).
 
-> > I intended to submit the tracepoint only for the Android kernels, however if
-> > there is an upstream solution to this then that's even better since upstream can
-> > benefit. Were you thinking of a BPF helper function to get this data?
+Thanks,
+
+- Arnaldo
+ 
+> To reproduce this warning, build perf by running:
+> make -C tools/perf CLANG=1 CC=clang EXTRA_CFLAGS="-fsanitize=memory\
+>  -fsanitize-memory-track-origins"
 > 
-> I think the best way to evaluate the patches is whether they are upstreamable or not.
-> If they're not (like this case), it means that there is something wrong with their design
-> and if android decides to go with such approach it will only create serious issues long term.
-> Starting with the whole idea of dev+inode -> filepath cache.
-> dev+inode is not a unique identifier of the file.
-> In some filesystems two different files may have the same ino integer value.
-> Have you looked at 'struct file_handle' ? and name_to_handle_at ?
-> I think fhandle is the only way to get unique identifier of the file.
-> Could you please share more details why android needs this cache of dev+ino->path?
+> (Additionally, llvm might have to be installed and clang might have to
+> be specified as the compiler - export CC=/usr/bin/clang)
+> 
+> then running:
+> tools/perf/perf record -o - ls / | tools/perf/perf --no-pager annotate\
+>  -i - --stdio
+> 
+> Please see the cover letter for why false positive warnings may be
+> generated.
+> 
+> Signed-off-by: Numfor Mbiziwo-Tiapo <nums@google.com>
+> ---
+>  tools/perf/util/header.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
+> index dec6d218c31c..b9c71fc45ac1 100644
+> --- a/tools/perf/util/header.c
+> +++ b/tools/perf/util/header.c
+> @@ -3427,7 +3427,7 @@ int perf_event__synthesize_attr(struct perf_tool *tool,
+>  	size += sizeof(struct perf_event_header);
+>  	size += ids * sizeof(u64);
+>  
+> -	ev = malloc(size);
+> +	ev = calloc(1, size);
+>  
+>  	if (ev == NULL)
+>  		return -ENOMEM;
+> -- 
+> 2.22.0.657.g960e92d24f-goog
 
-I will follow-up with you on this by email off the list, thanks.
+-- 
 
-thanks,
-
- - Joel
-
+- Arnaldo
