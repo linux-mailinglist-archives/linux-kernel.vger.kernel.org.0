@@ -2,34 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D48776A96
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 15:59:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 10CD176A8B
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 15:59:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388579AbfGZN7u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 09:59:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46470 "EHLO mail.kernel.org"
+        id S2388051AbfGZN7d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 09:59:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46490 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387438AbfGZNkZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 09:40:25 -0400
+        id S2387423AbfGZNk1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 09:40:27 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8712722BEF;
-        Fri, 26 Jul 2019 13:40:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 93BAE22BE8;
+        Fri, 26 Jul 2019 13:40:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564148424;
-        bh=edvf3DTeDzU2yIlOWa9VLhVU3UJsUzw5MBZd+FpJX9k=;
+        s=default; t=1564148426;
+        bh=lT53jVn0x4o2nj7YOhRR5yqWqMQqPXBWboEqcOgNnb4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=B7L/zlhWceZGhXbqMFwfl7mk5R20Yw4pIKl9eoTNtEzq6gh/xOutBjsgQVfU1WcWm
-         hXrleFBEDAMef8ChlYvTmR1q4xvFGBDvyCfLTLwM8av5WK1tMIfJJTwiY1b6UatDNT
-         OONUVV2evFX6D282ka5cWxwdbVq/I5mXFTBL/K8E=
+        b=jg3B5WedHTAKoUQ0ScBeOq56eeLdYN3AhVQtnI2eAeE6NChXxYK6vv4Nk6awA3+U+
+         0rf+zCsjkK3s4+SUDvEurDyB08uyfnoiIekWhr0H/S01jb5i3OfBu7DY3l5txVy1KU
+         jSKUIBjrhTxIpByxAaDMp4AFss3/+WuY1T5YdF6I=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     David Sterba <dsterba@suse.com>, Qu Wenruo <wqu@suse.com>,
-        Sasha Levin <sashal@kernel.org>, linux-btrfs@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 27/85] btrfs: fix minimum number of chunk errors for DUP
-Date:   Fri, 26 Jul 2019 09:38:37 -0400
-Message-Id: <20190726133936.11177-27-sashal@kernel.org>
+Cc:     Clement Leger <cleger@kalray.eu>,
+        Loic Pallardy <loic.pallardy@st.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-remoteproc@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.2 29/85] remoteproc: copy parent dma_pfn_offset for vdev
+Date:   Fri, 26 Jul 2019 09:38:39 -0400
+Message-Id: <20190726133936.11177-29-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190726133936.11177-1-sashal@kernel.org>
 References: <20190726133936.11177-1-sashal@kernel.org>
@@ -42,48 +45,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Sterba <dsterba@suse.com>
+From: Clement Leger <cleger@kalray.eu>
 
-[ Upstream commit 0ee5f8ae082e1f675a2fb6db601c31ac9958a134 ]
+[ Upstream commit 72f64cabc4bd6985c7355f5547bd3637c82762ac ]
 
-The list of profiles in btrfs_chunk_max_errors lists DUP as a profile
-DUP able to tolerate 1 device missing. Though this profile is special
-with 2 copies, it still needs the device, unlike the others.
+When preparing the subdevice for the vdev, also copy dma_pfn_offset
+since this is used for sub device dma allocations. Without that, there
+is incoherency between the parent dma settings and the childs one,
+potentially leading to dma_alloc_coherent failure (due to phys_to_dma
+using dma_pfn_offset for translation).
 
-Looking at the history of changes, thre's no clear reason why DUP is
-there, functions were refactored and blocks of code merged to one
-helper.
-
-d20983b40e828 Btrfs: fix writing data into the seed filesystem
-  - factor code to a helper
-
-de11cc12df173 Btrfs: don't pre-allocate btrfs bio
-  - unrelated change, DUP still in the list with max errors 1
-
-a236aed14ccb0 Btrfs: Deal with failed writes in mirrored configurations
-  - introduced the max errors, leaves DUP and RAID1 in the same group
-
-Reviewed-by: Qu Wenruo <wqu@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Fixes: 086d08725d34 ("remoteproc: create vdev subdevice with specific dma memory pool")
+Signed-off-by: Clement Leger <cleger@kalray.eu>
+Acked-by: Loic Pallardy <loic.pallardy@st.com>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/btrfs/volumes.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/remoteproc/remoteproc_core.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
-index 1c2a6e4b39da..8508f6028c8d 100644
---- a/fs/btrfs/volumes.c
-+++ b/fs/btrfs/volumes.c
-@@ -5328,8 +5328,7 @@ static inline int btrfs_chunk_max_errors(struct map_lookup *map)
- 
- 	if (map->type & (BTRFS_BLOCK_GROUP_RAID1 |
- 			 BTRFS_BLOCK_GROUP_RAID10 |
--			 BTRFS_BLOCK_GROUP_RAID5 |
--			 BTRFS_BLOCK_GROUP_DUP)) {
-+			 BTRFS_BLOCK_GROUP_RAID5)) {
- 		max_errors = 1;
- 	} else if (map->type & BTRFS_BLOCK_GROUP_RAID6) {
- 		max_errors = 2;
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 8b5363223eaa..5031c6806908 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -512,6 +512,7 @@ static int rproc_handle_vdev(struct rproc *rproc, struct fw_rsc_vdev *rsc,
+ 	/* Initialise vdev subdevice */
+ 	snprintf(name, sizeof(name), "vdev%dbuffer", rvdev->index);
+ 	rvdev->dev.parent = rproc->dev.parent;
++	rvdev->dev.dma_pfn_offset = rproc->dev.parent->dma_pfn_offset;
+ 	rvdev->dev.release = rproc_rvdev_release;
+ 	dev_set_name(&rvdev->dev, "%s#%s", dev_name(rvdev->dev.parent), name);
+ 	dev_set_drvdata(&rvdev->dev, rvdev);
 -- 
 2.20.1
 
