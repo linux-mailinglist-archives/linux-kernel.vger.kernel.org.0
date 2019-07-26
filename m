@@ -2,138 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90DF476289
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 11:50:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E41C576292
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 11:50:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726240AbfGZJ2G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 05:28:06 -0400
-Received: from mail-io1-f69.google.com ([209.85.166.69]:56760 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725944AbfGZJ2G (ORCPT
+        id S1726557AbfGZJ2e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 05:28:34 -0400
+Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:15766 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725978AbfGZJ2d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 05:28:06 -0400
-Received: by mail-io1-f69.google.com with SMTP id u25so57661169iol.23
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2019 02:28:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=N6WhCKShM4LNQj7FFoXGbLqE7BK2p7Oc3KCbLQcERuo=;
-        b=s7mIdoKtPjVWQ1o40k27EMSCx6+Tz4mfrcwlo4WTtiYZrKT2+KAKuMR2+7nHrOpfGk
-         DBMY9YpTrup44QTaMqvKTtKqKtnwf72e6PDWUhUdo+FfWuZHEAo2pyMz87rwfzwGRlht
-         +zyKWuYNGacfsTVrlaj+KmX/Vt5lqWKM952//yPtTWj9kRmGup/NFE68l6iF/9rTVjyH
-         5CsxRBG7vqqCAHdlPjT6g2JuJeQSm7yIqAgXzd7jJXMfGSBNJO/lfQvFSO2OQN4RhAOT
-         p2bmyvm6dSfS4mIit5EhG/O9lG6rO2sMiSLSK3+iu4mPLK9SpaCuWcSsZt1KsWEPjKVr
-         eiQQ==
-X-Gm-Message-State: APjAAAVCtoNHy6cGZbiYhKssZmEGxsWg7pOLh5NLMPaCeZHFcKEKyozv
-        sbXM3UHF0pYSyulMRTvWmYP8RXAiAa3yXqMu2OQQcTVw08Ze
-X-Google-Smtp-Source: APXvYqyxxW+mlSyxlEitOMyN9HQFiD4Y3xK5ypEcIatqjfP5trCTyOhnKeYAq6SoHlRrRf0Zr4kK/rctAqNXHkQGviXQWfFMt/30
+        Fri, 26 Jul 2019 05:28:33 -0400
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+        by mx0b-001ae601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x6Q9NkuS026201;
+        Fri, 26 Jul 2019 04:28:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=PODMain02222019;
+ bh=PukIIV6EOsNKE66DWOqgfgFs5Yv2tpDoxcH85uQmCxI=;
+ b=jVGn3UklaJHuibO6vsfgUbnjvc+oAzHMsqW0/6T3EbsjfO+PBbAjU6NUXIR1DKbO/bYx
+ DZyMd10WNHM5Ku/1ToYneNI2bBsiw9t7I5q3ouzf+NjA+DYkIaprS/ZL+azhBKC7MiQV
+ rMwG35vKGBmsKB6rZMt9YTOlPNF3ws/Si02woVUxc2eueZC9bNFYU6W8JZg4jxhELgoU
+ hl/zaX++L8qq8zt52KwUsfIQdmxBFczIzXF4dDNA6KzlLQ1OlHSW2eyNNUfemAuchQbB
+ tRQeIPHb3nh26JAodYFYe2COTSV6COkxaaKgHDMbmpi6fdtYMNd4+egzDetvc6ORJDLU JQ== 
+Authentication-Results: ppops.net;
+        spf=fail smtp.mailfrom=ckeepax@opensource.cirrus.com
+Received: from ediex02.ad.cirrus.com ([87.246.76.36])
+        by mx0b-001ae601.pphosted.com with ESMTP id 2tx61nmnpm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Fri, 26 Jul 2019 04:28:19 -0500
+Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX02.ad.cirrus.com
+ (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Fri, 26 Jul
+ 2019 10:28:17 +0100
+Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server id 15.1.1591.10 via Frontend
+ Transport; Fri, 26 Jul 2019 10:28:17 +0100
+Received: from ediswmail.ad.cirrus.com (ediswmail.ad.cirrus.com [198.61.86.93])
+        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id B1ADF2C5;
+        Fri, 26 Jul 2019 10:28:17 +0100 (BST)
+Date:   Fri, 26 Jul 2019 10:28:17 +0100
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     Jia-Ju Bai <baijiaju1990@gmail.com>
+CC:     <dmitry.torokhov@gmail.com>, <tglx@linutronix.de>,
+        <gregkh@linuxfoundation.org>, <allison@lohutok.net>,
+        <rdunlap@infradead.org>, <patches@opensource.cirrus.com>,
+        <linux-input@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] input: touchscreen: wm97xx-core: Fix possible
+ null-pointer dereferences in wm97xx_ts_input_open()
+Message-ID: <20190726092817.GB54126@ediswmail.ad.cirrus.com>
+References: <20190726091436.8866-1-baijiaju1990@gmail.com>
 MIME-Version: 1.0
-X-Received: by 2002:a5d:8404:: with SMTP id i4mr16679815ion.146.1564133285421;
- Fri, 26 Jul 2019 02:28:05 -0700 (PDT)
-Date:   Fri, 26 Jul 2019 02:28:05 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000dbe98e058e92286d@google.com>
-Subject: general protection fault in tls_sk_proto_close
-From:   syzbot <syzbot+fb2a31b9c0676ea410e3@syzkaller.appspotmail.com>
-To:     aviadye@mellanox.com, borisp@mellanox.com, daniel@iogearbox.net,
-        davejwatson@fb.com, davem@davemloft.net, john.fastabend@gmail.com,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20190726091436.8866-1-baijiaju1990@gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Proofpoint-SPF-Result: fail
+X-Proofpoint-SPF-Record: v=spf1 include:spf-001ae601.pphosted.com include:spf.protection.outlook.com
+ -all
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 clxscore=1015 mlxscore=0
+ impostorscore=0 priorityscore=1501 adultscore=0 bulkscore=0 suspectscore=0
+ malwarescore=0 lowpriorityscore=0 mlxlogscore=939 spamscore=0 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-1906280000
+ definitions=main-1907260121
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Fri, Jul 26, 2019 at 05:14:36PM +0800, Jia-Ju Bai wrote:
+> In wm97xx_ts_input_open(), there is an if statement on line 507 to check
+> whether wm->mach_ops is NULL:
+>     if (wm->mach_ops && wm->mach_ops->acc_enabled)
+> 
+> When wm->mach_ops is NULL, it is used on line 521:
+>     wm97xx_init_pen_irq(wm);
+>         BUG_ON(!wm->mach_ops->irq_enable);
+>         BUG_ON(!wm->mach_ops->irq_gpio);
+>         wm97xx_reg_write(..., reg & ~(wm->mach_ops->irq_gpio))
+> 
+> Thus, possible null-pointer dereferences may occur.
+> 
+> To fix these bugs, wm->mach_ops is checked at the beginning of 
+> wm97xx_init_pen_irq().
+> 
+> These bugs found by a static analysis tool STCheck written by us.
+> 
+> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+> ---
+> v2:
+> * Add a new check of wm->mach_ops in wm97xx_init_pen_irq().
+>   Thank Charles for helpful advice.
+> 
+> ---
+>  drivers/input/touchscreen/wm97xx-core.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/input/touchscreen/wm97xx-core.c b/drivers/input/touchscreen/wm97xx-core.c
+> index 0a174bd82915..50b016abf492 100644
+> --- a/drivers/input/touchscreen/wm97xx-core.c
+> +++ b/drivers/input/touchscreen/wm97xx-core.c
+> @@ -374,6 +374,9 @@ static int wm97xx_init_pen_irq(struct wm97xx *wm)
+>  {
+>  	u16 reg;
+>  
+> +	if (!wm->mach_ops)
+> +		return -EINVAL;
+> +
 
-syzbot found the following crash on:
+Probably worth adding an printk in here too, the calling function
+doesn't check the return value of this function so otherwise
+there will be no indication this failed.
 
-HEAD commit:    9e6dfe80 Add linux-next specific files for 20190724
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=11ff2594600000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6cbb8fc2cf2842d7
-dashboard link: https://syzkaller.appspot.com/bug?extid=fb2a31b9c0676ea410e3
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13eb6a7c600000
+Thanks,
+Charles
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+fb2a31b9c0676ea410e3@syzkaller.appspotmail.com
-
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] PREEMPT SMP KASAN
-CPU: 1 PID: 9180 Comm: syz-executor.0 Not tainted 5.3.0-rc1-next-20190724  
-#50
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:tls_sk_proto_close+0x90/0x4a0 net/tls/tls_main.c:348
-Code: 3c 02 00 0f 85 dd 03 00 00 49 8b 84 24 c0 02 00 00 4d 8d 75 14 4c 89  
-f2 48 c1 ea 03 48 89 45 b8 48 b8 00 00 00 00 00 fc ff df <0f> b6 04 02 4c  
-89 f2 83 e2 07 38 d0 7f 08 84 c0 0f 85 67 03 00 00
-RSP: 0018:ffff8880a6497c70 EFLAGS: 00010203
-RAX: dffffc0000000000 RBX: 00000000fffffff0 RCX: ffffffff8629731c
-RDX: 0000000000000002 RSI: ffffffff862970cd RDI: ffff88808b204f00
-RBP: ffff8880a6497cb8 R08: ffff8880a76c4700 R09: fffffbfff14a8151
-R10: fffffbfff14a8150 R11: ffffffff8a540a87 R12: ffff88808b204c40
-R13: 0000000000000000 R14: 0000000000000014 R15: 0000000000000001
-FS:  000055555741a940(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000780000 CR3: 000000008ff7d000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  tls_sk_proto_close+0x2a9/0x4a0 net/tls/tls_main.c:369
-  tcp_bpf_close+0x17c/0x390 net/ipv4/tcp_bpf.c:578
-  inet_release+0xed/0x200 net/ipv4/af_inet.c:427
-  inet6_release+0x53/0x80 net/ipv6/af_inet6.c:470
-  __sock_release+0xce/0x280 net/socket.c:590
-  sock_close+0x1e/0x30 net/socket.c:1268
-  __fput+0x2ff/0x890 fs/file_table.c:280
-  ____fput+0x16/0x20 fs/file_table.c:313
-  task_work_run+0x145/0x1c0 kernel/task_work.c:113
-  tracehook_notify_resume include/linux/tracehook.h:188 [inline]
-  exit_to_usermode_loop+0x316/0x380 arch/x86/entry/common.c:163
-  prepare_exit_to_usermode arch/x86/entry/common.c:194 [inline]
-  syscall_return_slowpath arch/x86/entry/common.c:274 [inline]
-  do_syscall_64+0x65f/0x760 arch/x86/entry/common.c:300
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x4134f0
-Code: 01 f0 ff ff 0f 83 30 1b 00 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f  
-44 00 00 83 3d 9d 2d 66 00 00 75 14 b8 03 00 00 00 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 04 1b 00 00 c3 48 83 ec 08 e8 0a fc ff ff
-RSP: 002b:00007ffc6f204768 EFLAGS: 00000246 ORIG_RAX: 0000000000000003
-RAX: 0000000000000000 RBX: 0000000000000006 RCX: 00000000004134f0
-RDX: 0000001b30d20000 RSI: 0000000000000000 RDI: 0000000000000005
-RBP: 0000000000000001 R08: 0000000000000000 R09: ffffffffffffffff
-R10: 0000000000000000 R11: 0000000000000246 R12: 000000000075bf20
-R13: 0000000000000003 R14: 0000000000761178 R15: ffffffffffffffff
-Modules linked in:
----[ end trace 5143786da0160ad0 ]---
-RIP: 0010:tls_sk_proto_close+0x90/0x4a0 net/tls/tls_main.c:348
-Code: 3c 02 00 0f 85 dd 03 00 00 49 8b 84 24 c0 02 00 00 4d 8d 75 14 4c 89  
-f2 48 c1 ea 03 48 89 45 b8 48 b8 00 00 00 00 00 fc ff df <0f> b6 04 02 4c  
-89 f2 83 e2 07 38 d0 7f 08 84 c0 0f 85 67 03 00 00
-RSP: 0018:ffff8880a6497c70 EFLAGS: 00010203
-RAX: dffffc0000000000 RBX: 00000000fffffff0 RCX: ffffffff8629731c
-RDX: 0000000000000002 RSI: ffffffff862970cd RDI: ffff88808b204f00
-RBP: ffff8880a6497cb8 R08: ffff8880a76c4700 R09: fffffbfff14a8151
-R10: fffffbfff14a8150 R11: ffffffff8a540a87 R12: ffff88808b204c40
-R13: 0000000000000000 R14: 0000000000000014 R15: 0000000000000001
-FS:  000055555741a940(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000780000 CR3: 000000008ff7d000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+>  	/* If an interrupt is supplied an IRQ enable operation must also be
+>  	 * provided. */
+>  	BUG_ON(!wm->mach_ops->irq_enable);
+> -- 
+> 2.17.0
+> 
