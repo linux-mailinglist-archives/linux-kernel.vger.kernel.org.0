@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6345F76DC1
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 17:36:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8805476D27
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 17:31:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389185AbfGZPbB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 11:31:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45790 "EHLO mail.kernel.org"
+        id S2389194AbfGZPbD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 11:31:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45848 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388599AbfGZPaw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 11:30:52 -0400
+        id S2389155AbfGZPaz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 11:30:55 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CF3DB205F4;
-        Fri, 26 Jul 2019 15:30:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 62D7F22BF5;
+        Fri, 26 Jul 2019 15:30:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564155051;
-        bh=SDwjP90aPitR34LDnbaqCl3IW4kZgC2Ilb45z9YwOQM=;
+        s=default; t=1564155053;
+        bh=MCUL7sTU/DfR1NNw9dpHQY2ENyUBKOeryycYkC5qzuU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Iwe9D7XHfXEn8bazMaQidUU9PJwXZsHZJLJ8rnh1ZOXeqcNtyQ6aFbuZGoiAyVr2f
-         MfE1wOI5xPVk3lnI2N7NI36dy5dtowqtgqy9Sx7tJixxrXASLQ2xJmg0kXpAwEmB/N
-         q3lnIO3v1TX6phbWkIYoLeonnc9sQ6uVD1JWGjkU=
+        b=nkJfCpMfFf+N/rM25SPdQrLpz3B9Up4AhaZCxgrXuNA1EPA6kzSuL42KogwixMGsb
+         7wuRIRoB/B5t/dgFO95ioOw/aTcdrilfG97cQfOagUbVNYMD9vUS5r82s9BNtBP9G2
+         CfF1er+3/pXuZ4UQuszL98zoRpKDCmB8SOSDlEBg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>, od@zcrc.me,
-        linux-mips@vger.kernel.org
-Subject: [PATCH 5.1 47/62] MIPS: lb60: Fix pin mappings
-Date:   Fri, 26 Jul 2019 17:24:59 +0200
-Message-Id: <20190726152306.985230751@linuxfoundation.org>
+        stable@vger.kernel.org, David Carrillo Cisneros <davidca@fb.com>,
+        Song Liu <songliubraving@fb.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Andi Kleen <ak@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>, kernel-team@fb.com
+Subject: [PATCH 5.1 48/62] perf script: Assume native_arch for pipe mode
+Date:   Fri, 26 Jul 2019 17:25:00 +0200
+Message-Id: <20190726152307.086370026@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190726152301.720139286@linuxfoundation.org>
 References: <20190726152301.720139286@linuxfoundation.org>
@@ -47,68 +46,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paul Cercueil <paul@crapouillou.net>
+From: Song Liu <songliubraving@fb.com>
 
-commit 1323c3b72a987de57141cabc44bf9cd83656bc70 upstream.
+commit 9d49169c5958e429ffa6874fbef734ae7502ad65 upstream.
 
-The pin mappings introduced in commit 636f8ba67fb6
-("MIPS: JZ4740: Qi LB60: Add pinctrl configuration for several drivers")
-are completely wrong. The pinctrl driver name is incorrect, and the
-function and group fields are swapped.
+In pipe mode, session->header.env.arch is not populated until the events
+are processed. Therefore, the following command crashes:
 
-Fixes: 636f8ba67fb6 ("MIPS: JZ4740: Qi LB60: Add pinctrl configuration for several drivers")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: James Hogan <jhogan@kernel.org>
-Cc: od@zcrc.me
-Cc: linux-mips@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+   perf record -o - | perf script
+
+(gdb) bt
+
+It fails when we try to compare env.arch against uts.machine:
+
+        if (!strcmp(uts.machine, session->header.env.arch) ||
+            (!strcmp(uts.machine, "x86_64") &&
+             !strcmp(session->header.env.arch, "i386")))
+                native_arch = true;
+
+In pipe mode, it is tricky to find env.arch at this stage. To keep it
+simple, let's just assume native_arch is always true for pipe mode.
+
+Reported-by: David Carrillo Cisneros <davidca@fb.com>
+Signed-off-by: Song Liu <songliubraving@fb.com>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: kernel-team@fb.com
+Cc: stable@vger.kernel.org #v5.1+
+Fixes: 3ab481a1cfe1 ("perf script: Support insn output for normal samples")
+Link: http://lkml.kernel.org/r/20190621014438.810342-1-songliubraving@fb.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/jz4740/board-qi_lb60.c |   16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ tools/perf/builtin-script.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/arch/mips/jz4740/board-qi_lb60.c
-+++ b/arch/mips/jz4740/board-qi_lb60.c
-@@ -469,27 +469,27 @@ static unsigned long pin_cfg_bias_disabl
- static struct pinctrl_map pin_map[] __initdata = {
- 	/* NAND pin configuration */
- 	PIN_MAP_MUX_GROUP_DEFAULT("jz4740-nand",
--			"10010000.jz4740-pinctrl", "nand", "nand-cs1"),
-+			"10010000.pin-controller", "nand-cs1", "nand"),
+--- a/tools/perf/builtin-script.c
++++ b/tools/perf/builtin-script.c
+@@ -3669,7 +3669,8 @@ int cmd_script(int argc, const char **ar
+ 		goto out_delete;
  
- 	/* fbdev pin configuration */
- 	PIN_MAP_MUX_GROUP("jz4740-fb", PINCTRL_STATE_DEFAULT,
--			"10010000.jz4740-pinctrl", "lcd", "lcd-8bit"),
-+			"10010000.pin-controller", "lcd-8bit", "lcd"),
- 	PIN_MAP_MUX_GROUP("jz4740-fb", PINCTRL_STATE_SLEEP,
--			"10010000.jz4740-pinctrl", "lcd", "lcd-no-pins"),
-+			"10010000.pin-controller", "lcd-no-pins", "lcd"),
- 
- 	/* MMC pin configuration */
- 	PIN_MAP_MUX_GROUP_DEFAULT("jz4740-mmc.0",
--			"10010000.jz4740-pinctrl", "mmc", "mmc-1bit"),
-+			"10010000.pin-controller", "mmc-1bit", "mmc"),
- 	PIN_MAP_MUX_GROUP_DEFAULT("jz4740-mmc.0",
--			"10010000.jz4740-pinctrl", "mmc", "mmc-4bit"),
-+			"10010000.pin-controller", "mmc-4bit", "mmc"),
- 	PIN_MAP_CONFIGS_PIN_DEFAULT("jz4740-mmc.0",
--			"10010000.jz4740-pinctrl", "PD0", pin_cfg_bias_disable),
-+			"10010000.pin-controller", "PD0", pin_cfg_bias_disable),
- 	PIN_MAP_CONFIGS_PIN_DEFAULT("jz4740-mmc.0",
--			"10010000.jz4740-pinctrl", "PD2", pin_cfg_bias_disable),
-+			"10010000.pin-controller", "PD2", pin_cfg_bias_disable),
- 
- 	/* PWM pin configuration */
- 	PIN_MAP_MUX_GROUP_DEFAULT("jz4740-pwm",
--			"10010000.jz4740-pinctrl", "pwm4", "pwm4"),
-+			"10010000.pin-controller", "pwm4", "pwm4"),
- };
- 
- 
+ 	uname(&uts);
+-	if (!strcmp(uts.machine, session->header.env.arch) ||
++	if (data.is_pipe ||  /* assume pipe_mode indicates native_arch */
++	    !strcmp(uts.machine, session->header.env.arch) ||
+ 	    (!strcmp(uts.machine, "x86_64") &&
+ 	     !strcmp(session->header.env.arch, "i386")))
+ 		native_arch = true;
 
 
