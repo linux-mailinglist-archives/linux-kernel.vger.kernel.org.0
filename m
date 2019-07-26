@@ -2,90 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C2ED7692E
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 15:50:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E306476932
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 15:50:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388818AbfGZNtt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S2388585AbfGZNt6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 09:49:58 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:41373 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388813AbfGZNtt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 26 Jul 2019 09:49:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52954 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388378AbfGZNoi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 09:44:38 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DD34A22CD0;
-        Fri, 26 Jul 2019 13:44:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564148677;
-        bh=8HA8IjR33J2fJ3Pv+GKfU7B00lyYztzgYhQloIpGWUs=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rkGhSE7BSR8usdfPLeEbw1HBDH26ENuAHmYjcM+wSCI6ni1XmvUE3N09W8F6XwGVp
-         384kyNMcICFrCTaKiunKzomikoRS9RWDRcMEzur5SdjS/VkMTiO7vHMhF1xLp4YhqB
-         ivfcUrP9MVq8hNH1SUM0dzylx+Nje6k+EKmMbhic=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Douglas Anderson <dianders@chromium.org>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 04/30] ARM: dts: rockchip: Mark that the rk3288 timer might stop in suspend
-Date:   Fri, 26 Jul 2019 09:44:06 -0400
-Message-Id: <20190726134432.12993-4-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190726134432.12993-1-sashal@kernel.org>
-References: <20190726134432.12993-1-sashal@kernel.org>
+Received: by mail-qt1-f196.google.com with SMTP id d17so52532561qtj.8
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2019 06:49:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=Arc7jiA/gNfqVVW7QNfgaMfkpV6mHYMiv3nUsNQh21Q=;
+        b=C1TOqzmGmMDDx5+78B9o2F0tV4pBewaMghEvZOibsG9uBC0iJjkWS10rScwGb8MQXu
+         E8bEdIgx7GxELdWy39CftqcUVHWOHAJBWh8FWM+gAd6lE9NUWhuKbjU+ZwO2L/+tr0l0
+         CsDOeGuvxwMReKnskimxKVhc7XdbQ6CEiU085ZNuD2nTpGtlJR0J0f0bmrNUKj6GarUc
+         JnHNRBh8b1FGthdRayHxiUkTozJRSQVRVKM2sdpj9qXR7min1Vew+27oUKVbjoPjPtVu
+         R8OXeNZ8WfF893RbAGWvvoOakIfjii4ya7icgVJp7UKgmLPdaRtXl9QCB5Ix6woCkJOo
+         mmeA==
+X-Gm-Message-State: APjAAAWyA48PT8RjQuWfni+DeYhMXEk15FBnGxRY2AtwnVrawZIh3pza
+        VGnWqJVTdAwAE3VEgB4xu2TkcQ==
+X-Google-Smtp-Source: APXvYqwJQHLCc1j1lFY5aAZTn5kwYloU8xFZNwjN11XBjJ1dY1OXNTBegRGc33x5aUh2wiZJ7uMG3w==
+X-Received: by 2002:a0c:9233:: with SMTP id a48mr67054287qva.66.1564148988892;
+        Fri, 26 Jul 2019 06:49:48 -0700 (PDT)
+Received: from redhat.com ([212.92.104.165])
+        by smtp.gmail.com with ESMTPSA id w19sm20959381qkj.66.2019.07.26.06.49.42
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Fri, 26 Jul 2019 06:49:48 -0700 (PDT)
+Date:   Fri, 26 Jul 2019 09:49:39 -0400
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     syzbot <syzbot+e58112d71f77113ddb7b@syzkaller.appspotmail.com>,
+        aarcange@redhat.com, akpm@linux-foundation.org,
+        christian@brauner.io, davem@davemloft.net, ebiederm@xmission.com,
+        elena.reshetova@intel.com, guro@fb.com, hch@infradead.org,
+        james.bottomley@hansenpartnership.com, jglisse@redhat.com,
+        keescook@chromium.org, ldv@altlinux.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-parisc@vger.kernel.org,
+        luto@amacapital.net, mhocko@suse.com, mingo@kernel.org,
+        namit@vmware.com, peterz@infradead.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
+        wad@chromium.org
+Subject: Re: WARNING in __mmdrop
+Message-ID: <20190726094756-mutt-send-email-mst@kernel.org>
+References: <55e8930c-2695-365f-a07b-3ad169654d28@redhat.com>
+ <20190725042651-mutt-send-email-mst@kernel.org>
+ <84bb2e31-0606-adff-cf2a-e1878225a847@redhat.com>
+ <20190725092332-mutt-send-email-mst@kernel.org>
+ <11802a8a-ce41-f427-63d5-b6a4cf96bb3f@redhat.com>
+ <20190726074644-mutt-send-email-mst@kernel.org>
+ <5cc94f15-b229-a290-55f3-8295266edb2b@redhat.com>
+ <20190726082837-mutt-send-email-mst@kernel.org>
+ <ada10dc9-6cab-e189-5289-6f9d3ff8fed2@redhat.com>
+ <aaefa93e-a0de-1c55-feb0-509c87aae1f3@redhat.com>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <aaefa93e-a0de-1c55-feb0-509c87aae1f3@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Douglas Anderson <dianders@chromium.org>
+On Fri, Jul 26, 2019 at 09:36:18PM +0800, Jason Wang wrote:
+> 
+> On 2019/7/26 下午8:53, Jason Wang wrote:
+> > 
+> > On 2019/7/26 下午8:38, Michael S. Tsirkin wrote:
+> > > On Fri, Jul 26, 2019 at 08:00:58PM +0800, Jason Wang wrote:
+> > > > On 2019/7/26 下午7:49, Michael S. Tsirkin wrote:
+> > > > > On Thu, Jul 25, 2019 at 10:25:25PM +0800, Jason Wang wrote:
+> > > > > > On 2019/7/25 下午9:26, Michael S. Tsirkin wrote:
+> > > > > > > > Exactly, and that's the reason actually I use
+> > > > > > > > synchronize_rcu() there.
+> > > > > > > > 
+> > > > > > > > So the concern is still the possible synchronize_expedited()?
+> > > > > > > I think synchronize_srcu_expedited.
+> > > > > > > 
+> > > > > > > synchronize_expedited sends lots of IPI and is bad for realtime VMs.
+> > > > > > > 
+> > > > > > > > Can I do this
+> > > > > > > > on through another series on top of the incoming V2?
+> > > > > > > > 
+> > > > > > > > Thanks
+> > > > > > > > 
+> > > > > > > The question is this: is this still a gain if we switch to the
+> > > > > > > more expensive srcu? If yes then we can keep the feature on,
+> > > > > > I think we only care about the cost on srcu_read_lock()
+> > > > > > which looks pretty
+> > > > > > tiny form my point of view. Which is basically a
+> > > > > > READ_ONCE() + WRITE_ONCE().
+> > > > > > 
+> > > > > > Of course I can benchmark to see the difference.
+> > > > > > 
+> > > > > > 
+> > > > > > > if not we'll put it off until next release and think
+> > > > > > > of better solutions. rcu->srcu is just a find and replace,
+> > > > > > > don't see why we need to defer that. can be a separate patch
+> > > > > > > for sure, but we need to know how well it works.
+> > > > > > I think I get here, let me try to do that in V2 and
+> > > > > > let's see the numbers.
+> > > > > > 
+> > > > > > Thanks
+> > > > 
+> > > > It looks to me for tree rcu, its srcu_read_lock() have a mb()
+> > > > which is too
+> > > > expensive for us.
+> > > I will try to ponder using vq lock in some way.
+> > > Maybe with trylock somehow ...
+> > 
+> > 
+> > Ok, let me retry if necessary (but I do remember I end up with deadlocks
+> > last try).
+> 
+> 
+> Ok, I play a little with this. And it works so far. Will do more testing
+> tomorrow.
+> 
+> One reason could be I switch to use get_user_pages_fast() to
+> __get_user_pages_fast() which doesn't need mmap_sem.
+> 
+> Thanks
 
-[ Upstream commit 8ef1ba39a9fa53d2205e633bc9b21840a275908e ]
+OK that sounds good. If we also set a flag to make
+vhost_exceeds_weight exit, then I think it will be all good.
 
-This is similar to commit e6186820a745 ("arm64: dts: rockchip: Arch
-counter doesn't tick in system suspend").  Specifically on the rk3288
-it can be seen that the timer stops ticking in suspend if we end up
-running through the "osc_disable" path in rk3288_slp_mode_set().  In
-that path the 24 MHz clock will turn off and the timer stops.
-
-To test this, I ran this on a Chrome OS filesystem:
-  before=$(date); \
-  suspend_stress_test -c1 --suspend_min=30 --suspend_max=31; \
-  echo ${before}; date
-
-...and I found that unless I plug in a device that requests USB wakeup
-to be active that the two calls to "date" would show that fewer than
-30 seconds passed.
-
-NOTE: deep suspend (where the 24 MHz clock gets disabled) isn't
-supported yet on upstream Linux so this was tested on a downstream
-kernel.
-
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- arch/arm/boot/dts/rk3288.dtsi | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm/boot/dts/rk3288.dtsi b/arch/arm/boot/dts/rk3288.dtsi
-index 17ec2e2d7a60..30f1384f619b 100644
---- a/arch/arm/boot/dts/rk3288.dtsi
-+++ b/arch/arm/boot/dts/rk3288.dtsi
-@@ -210,6 +210,7 @@
- 			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>,
- 			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
- 		clock-frequency = <24000000>;
-+		arm,no-tick-in-suspend;
- 	};
- 
- 	timer: timer@ff810000 {
 -- 
-2.20.1
-
+MST
