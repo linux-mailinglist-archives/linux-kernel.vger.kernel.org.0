@@ -2,228 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 94D1B77378
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 23:30:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A3D2B7737A
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 23:31:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728344AbfGZVav (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 17:30:51 -0400
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:35229 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727398AbfGZVav (ORCPT
+        id S2387545AbfGZVbE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 17:31:04 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:44228 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387515AbfGZVbD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 17:30:51 -0400
-Received: by mail-qk1-f194.google.com with SMTP id r21so40185965qke.2;
-        Fri, 26 Jul 2019 14:30:49 -0700 (PDT)
+        Fri, 26 Jul 2019 17:31:03 -0400
+Received: by mail-ot1-f65.google.com with SMTP id b7so6581813otl.11
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2019 14:31:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=dQjKZe5ZIisB+jYkXsqpcBIwf20hxNpJSx/NJlMHif0=;
-        b=Q21lMWLXAlD0/VsF9hm2+zcG1lU0SRB1ZwQAWDPWRCw9KoQF5bwYmn+xiDTVTJDpCw
-         s7IblGwlbwy4LoaLSW/jWnUrGJhKnH7LQovEjVlFLWC5NojRTQAdWfA3T3kSrU5EwV4W
-         y6zrIObXeZDtlybF6NboB76kTyXP6ctr64HOZ/IQSY3dWkoE7fVckCg88+CQhlCXr9wv
-         QLLRNYhpviiqfJamtOGr5Vu9Kq59d30eddZL7TpSy/5zYotuZ4yK/Nw3RvZD1nPlD3qc
-         hHJ87YgFeYgt36sWPxg6JRRznN+snz/HOUin6eVS9yy8TpPu/APopZhrBv3Ulh7rafbl
-         WUxg==
+        d=brauner.io; s=google;
+        h=date:user-agent:in-reply-to:references:mime-version
+         :content-transfer-encoding:subject:to:cc:from:message-id;
+        bh=Jfd4mpE87lptWZqiCfBhaLZUZjR4MuZc1S8+FaCFHwg=;
+        b=YnIQx4BnH07uyAmyxAoCIvR48D36Um9TBtzlvXVfr300qctKk1hGfBIOG+Wa6+mAk4
+         sDmR4ApgQcjUsDHzqWukknQbr5+VRHr8immO1DlZizwmpELIiY7x80YL4CtIdDOjhIX/
+         4lJGEgLcnz8Flz8iKpCcs315MQpw6dU8YlgbeDkbf/wXw/OH9cHzMSzp7xEqdJjpnKM2
+         EG9mc5T1/nLQSt9d1jpbdbiHieg4x7Kt5oVZ4Ux6DSHOKJHUzX+aagY8AI7Mk8XMZos7
+         ZuSCFeN+hoAUEc6I0LonwQ2+S/aFaz6AwUFcSKlHCRoPh/kx0CY0IwdkFABBH4m1YAnu
+         F6cQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=dQjKZe5ZIisB+jYkXsqpcBIwf20hxNpJSx/NJlMHif0=;
-        b=U/2d1t6R0vIcmTRxKeCq7CEvCkGXVcB5wr/h0xcokWUN0Kd8cW0oFWjNH4t9nwpz+g
-         UAA4RxgfL0uCCIiwzwaC+rRIhtc/FeCWcDNDfjYNQyWa4L+ddYyFW7Ap/2HCaO0mKY/K
-         079kB+GtGemmfMPCM0EOAVbt1vlxLvsTxqDrmGxYOK0lTIhcy6JxIhDH4s+pVT7MVMwS
-         gMaoSNiEv2rl6wjtGrDaCwLU7FfZ1lZD2KO5W8b35Lu0qh3BINwGDwEAt0HW0PSa4YM4
-         eeIoPDbUmMo8sj7D571Kysi2BQplRGV7x4F2fHP68NzCEbQul6IJRrI9xb0jYOFvsmst
-         TtZA==
-X-Gm-Message-State: APjAAAUKz2Oxxls7v97DzfNxOCfVSQtGVlQsZDrcubNUBAvkSz/qONDs
-        xGQsXZowk6xBbpXPDMJTUcudDSlus6QLlw==
-X-Google-Smtp-Source: APXvYqwF6+35DPwztcSKhpZqKSVe9ngRlNV9ZO9T1phUuqhE0jvmwqHgPHBhVScUAq51mV9RPi0OWg==
-X-Received: by 2002:a37:c81:: with SMTP id 123mr66357179qkm.474.1564176649379;
-        Fri, 26 Jul 2019 14:30:49 -0700 (PDT)
-Received: from localhost.localdomain ([168.181.49.45])
-        by smtp.gmail.com with ESMTPSA id i62sm24920470qke.52.2019.07.26.14.30.48
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 26 Jul 2019 14:30:48 -0700 (PDT)
-Received: by localhost.localdomain (Postfix, from userid 1000)
-        id 02890C1906; Fri, 26 Jul 2019 18:30:45 -0300 (-03)
-Date:   Fri, 26 Jul 2019 18:30:45 -0300
-From:   Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-To:     Qian Cai <cai@lca.pw>
-Cc:     vyasevich@gmail.com, nhorman@tuxdriver.com,
-        linux-sctp@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net/sctp: fix GCC8+ -Wpacked-not-aligned warnings
-Message-ID: <20190726213045.GL6204@localhost.localdomain>
-References: <1564174659-21211-1-git-send-email-cai@lca.pw>
+        h=x-gm-message-state:date:user-agent:in-reply-to:references
+         :mime-version:content-transfer-encoding:subject:to:cc:from
+         :message-id;
+        bh=Jfd4mpE87lptWZqiCfBhaLZUZjR4MuZc1S8+FaCFHwg=;
+        b=RaxG/IF253Rmjcp7ZQDM0U223d/TYrRRKpTnhOLsFw/NM/eAG7i7EGuH/2nvFqEs3c
+         plXntPLkTLUYdBxBmJ6Os3m7f0uKh4KAKMlL1RtMCVv3OP9+xFGyENhiZ7/nZij6QtN6
+         Nr0HRr5uBrdAvaI9g3F+2hoHpEVwJR3zkt77n1SyklslovxBPrjRsMCqAW+vNo77GDEF
+         PmKcjoeRDABDYne1/jaz4oAqkzDPA53Py7qgUmLswo2H4ksLoxuvCdf7n4XJ/G2PHbc2
+         pQudBo01lzDFiyMTKWwqvHg24QX0f/CBEcsE94H8/6Se/Qep9ge/Sc2z1YyZZhdWavI/
+         sv4A==
+X-Gm-Message-State: APjAAAXOQlbDK9/yFkayUerDZGAsLioCFnxmope8MAPqGKaX1OwCageU
+        GMTHYUW58sF6YfuL7riuhwo=
+X-Google-Smtp-Source: APXvYqwMnRPP3U+3zAp80Qn84RIfFfCdghblszx8MmNF3wxHudRez2+JOjXqsjAZQl8lsWgmSe0+Eg==
+X-Received: by 2002:a9d:48f:: with SMTP id 15mr39510012otm.160.1564176662636;
+        Fri, 26 Jul 2019 14:31:02 -0700 (PDT)
+Received: from [26.83.97.235] ([172.56.7.186])
+        by smtp.gmail.com with ESMTPSA id x193sm17872767oix.15.2019.07.26.14.31.01
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 26 Jul 2019 14:31:01 -0700 (PDT)
+Date:   Fri, 26 Jul 2019 23:30:52 +0200
+User-Agent: K-9 Mail for Android
+In-Reply-To: <CAHk-=wibXtQ9pjB9ctpy5jWJK93DL19Lj09Et6cYEQE+h7tPpg@mail.gmail.com>
+References: <20190726093934.13557-1-christian@brauner.io> <20190726093934.13557-2-christian@brauner.io> <CAHk-=wibXtQ9pjB9ctpy5jWJK93DL19Lj09Et6cYEQE+h7tPpg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1564174659-21211-1-git-send-email-cai@lca.pw>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v1 1/2] pidfd: add P_PIDFD to waitid()
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+CC:     Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Kees Cook <keescook@chromium.org>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tejun Heo <tj@kernel.org>, David Howells <dhowells@redhat.com>,
+        Jann Horn <jannh@google.com>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Android Kernel Team <kernel-team@android.com>
+From:   Christian Brauner <christian@brauner.io>
+Message-ID: <8A437322-D16E-4D5F-ACFA-3B1DEAAC100A@brauner.io>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 26, 2019 at 04:57:39PM -0400, Qian Cai wrote:
-> There are a lot of those warnings with GCC8+ 64bit,
-> 
-> In file included from ./include/linux/sctp.h:42,
->                  from net/core/skbuff.c:47:
-> ./include/uapi/linux/sctp.h:395:1: warning: alignment 4 of 'struct
-> sctp_paddr_change' is less than 8 [-Wpacked-not-aligned]
->  } __attribute__((packed, aligned(4)));
->  ^
-> ./include/uapi/linux/sctp.h:728:1: warning: alignment 4 of 'struct
-> sctp_setpeerprim' is less than 8 [-Wpacked-not-aligned]
->  } __attribute__((packed, aligned(4)));
->  ^
-> ./include/uapi/linux/sctp.h:727:26: warning: 'sspp_addr' offset 4 in
-> 'struct sctp_setpeerprim' isn't aligned to 8 [-Wpacked-not-aligned]
->   struct sockaddr_storage sspp_addr;
->                           ^~~~~~~~~
-> ./include/uapi/linux/sctp.h:741:1: warning: alignment 4 of 'struct
-> sctp_prim' is less than 8 [-Wpacked-not-aligned]
->  } __attribute__((packed, aligned(4)));
->  ^
-> ./include/uapi/linux/sctp.h:740:26: warning: 'ssp_addr' offset 4 in
-> 'struct sctp_prim' isn't aligned to 8 [-Wpacked-not-aligned]
->   struct sockaddr_storage ssp_addr;
->                           ^~~~~~~~
-> ./include/uapi/linux/sctp.h:792:1: warning: alignment 4 of 'struct
-> sctp_paddrparams' is less than 8 [-Wpacked-not-aligned]
->  } __attribute__((packed, aligned(4)));
->  ^
-> ./include/uapi/linux/sctp.h:784:26: warning: 'spp_address' offset 4 in
-> 'struct sctp_paddrparams' isn't aligned to 8 [-Wpacked-not-aligned]
->   struct sockaddr_storage spp_address;
->                           ^~~~~~~~~~~
-> ./include/uapi/linux/sctp.h:905:1: warning: alignment 4 of 'struct
-> sctp_paddrinfo' is less than 8 [-Wpacked-not-aligned]
->  } __attribute__((packed, aligned(4)));
->  ^
-> ./include/uapi/linux/sctp.h:899:26: warning: 'spinfo_address' offset 4
-> in 'struct sctp_paddrinfo' isn't aligned to 8 [-Wpacked-not-aligned]
->   struct sockaddr_storage spinfo_address;
->                           ^~~~~~~~~~~~~~
-> Fix them by aligning the structures and fields to 8 bytes instead.
-> 
-> Signed-off-by: Qian Cai <cai@lca.pw>
-> ---
->  include/uapi/linux/sctp.h | 18 +++++++++---------
->  1 file changed, 9 insertions(+), 9 deletions(-)
-> 
-> diff --git a/include/uapi/linux/sctp.h b/include/uapi/linux/sctp.h
-> index b8f2c4d56532..e7bd71cde882 100644
-> --- a/include/uapi/linux/sctp.h
-> +++ b/include/uapi/linux/sctp.h
+On July 26, 2019 11:26:45 PM GMT+02:00, Linus Torvalds <torvalds@linux-foun=
+dation=2Eorg> wrote:
+>On Fri, Jul 26, 2019 at 2:41 AM Christian Brauner
+><christian@brauner=2Eio> wrote:
+>>
+>> -       if (type < PIDTYPE_MAX)
+>> +       if (type < PIDTYPE_MAX && !pid)
+>>                 pid =3D find_get_pid(upid);
+>
+>So now we have four cases in the switch statement, and two of them do
+>*not* want that "find_get_pid()" call=2E
+>
+>Honestly, let's just move that whole thing into the switch statement
+>for the two cases that do want it=2E Particulartly since I think the
+>"upid =3D=3D 0" case for P_PGID will prefer it that way anyway=2E
+>
+>Let's not check 'type' in two different places in two completely
+>different ways=2E
+>
+>Ok?
+>
+>             Linus
 
-These changes gotta be more careful, if possible at all. As is, it's breaking UAPI.
+Ok, will resend with that changed=2E
 
--before
-+after patch
-
- struct sctp_paddrparams {
-        sctp_assoc_t               spp_assoc_id;         /*     0     4 */
--       struct __kernel_sockaddr_storage spp_address __attribute__((__aligned__(1))); /*     4   128 */
--       /* --- cacheline 2 boundary (128 bytes) was 4 bytes ago --- */
--       __u32                      spp_hbinterval;       /*   132     4 */
--       __u16                      spp_pathmaxrxt;       /*   136     2 */
--       __u32                      spp_pathmtu;          /*   138     4 */
--       __u32                      spp_sackdelay;        /*   142     4 */
--       __u32                      spp_flags;            /*   146     4 */
--       __u32                      spp_ipv6_flowlabel;   /*   150     4 */
--       __u8                       spp_dscp;             /*   154     1 */
-
--       /* size: 156, cachelines: 3, members: 9 */
-+       /* XXX 4 bytes hole, try to pack */
-+
-+       struct __kernel_sockaddr_storage spp_address __attribute__((__aligned__(8))); /*     8   128 */
-+       /* --- cacheline 2 boundary (128 bytes) was 8 bytes ago --- */
-+       __u32                      spp_hbinterval;       /*   136     4 */
-+       __u16                      spp_pathmaxrxt;       /*   140     2 */
-+       __u32                      spp_pathmtu;          /*   142     4 */
-+       __u32                      spp_sackdelay;        /*   146     4 */
-+       __u32                      spp_flags;            /*   150     4 */
-+       __u32                      spp_ipv6_flowlabel;   /*   154     4 */
-+       __u8                       spp_dscp;             /*   158     1 */
-+
-+       /* size: 160, cachelines: 3, members: 9 */
-+       /* sum members: 155, holes: 1, sum holes: 4 */
-        /* padding: 1 */
--       /* forced alignments: 1 */
--       /* last cacheline: 28 bytes */
--} __attribute__((__aligned__(4)));
-+       /* forced alignments: 1, forced holes: 1, sum forced holes: 4 */
-+       /* last cacheline: 32 bytes */
-+} __attribute__((__aligned__(8)));
-
-
-> @@ -392,7 +392,7 @@ struct sctp_paddr_change {
->  	int spc_state;
->  	int spc_error;
->  	sctp_assoc_t spc_assoc_id;
-> -} __attribute__((packed, aligned(4)));
-> +} __attribute__((packed, aligned(8)));
->  
->  /*
->   *    spc_state:  32 bits (signed integer)
-> @@ -724,8 +724,8 @@ struct sctp_assocparams {
->   */
->  struct sctp_setpeerprim {
->  	sctp_assoc_t            sspp_assoc_id;
-> -	struct sockaddr_storage sspp_addr;
-> -} __attribute__((packed, aligned(4)));
-> +	struct sockaddr_storage sspp_addr __attribute__((aligned(8)));
-> +} __attribute__((packed, aligned(8)));
->  
->  /*
->   * 7.1.10 Set Primary Address (SCTP_PRIMARY_ADDR)
-> @@ -737,8 +737,8 @@ struct sctp_setpeerprim {
->   */
->  struct sctp_prim {
->  	sctp_assoc_t            ssp_assoc_id;
-> -	struct sockaddr_storage ssp_addr;
-> -} __attribute__((packed, aligned(4)));
-> +	struct sockaddr_storage ssp_addr __attribute__((aligned(8)));
-> +} __attribute__((packed, aligned(8)));
->  
->  /* For backward compatibility use, define the old name too */
->  #define sctp_setprim	sctp_prim
-> @@ -781,7 +781,7 @@ enum  sctp_spp_flags {
->  
->  struct sctp_paddrparams {
->  	sctp_assoc_t		spp_assoc_id;
-> -	struct sockaddr_storage	spp_address;
-> +	struct sockaddr_storage	spp_address __attribute__((aligned(8)));
->  	__u32			spp_hbinterval;
->  	__u16			spp_pathmaxrxt;
->  	__u32			spp_pathmtu;
-> @@ -789,7 +789,7 @@ struct sctp_paddrparams {
->  	__u32			spp_flags;
->  	__u32			spp_ipv6_flowlabel;
->  	__u8			spp_dscp;
-> -} __attribute__((packed, aligned(4)));
-> +} __attribute__((packed, aligned(8)));
->  
->  /*
->   * 7.1.18.  Add a chunk that must be authenticated (SCTP_AUTH_CHUNK)
-> @@ -896,13 +896,13 @@ struct sctp_stream_value {
->   */
->  struct sctp_paddrinfo {
->  	sctp_assoc_t		spinfo_assoc_id;
-> -	struct sockaddr_storage	spinfo_address;
-> +	struct sockaddr_storage	spinfo_address __attribute__((aligned(8)));
->  	__s32			spinfo_state;
->  	__u32			spinfo_cwnd;
->  	__u32			spinfo_srtt;
->  	__u32			spinfo_rto;
->  	__u32			spinfo_mtu;
-> -} __attribute__((packed, aligned(4)));
-> +} __attribute__((packed, aligned(8)));
->  
->  /* Peer addresses's state. */
->  /* UNKNOWN: Peer address passed by the upper layer in sendmsg or connect[x]
-> -- 
-> 1.8.3.1
-> 
+Christian
