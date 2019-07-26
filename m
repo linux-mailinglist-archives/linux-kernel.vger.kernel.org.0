@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E29BD76962
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 15:51:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BCEBB7695E
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 15:51:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728192AbfGZNvf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 09:51:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51794 "EHLO mail.kernel.org"
+        id S1728069AbfGZNv1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 09:51:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51826 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727212AbfGZNnv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 09:43:51 -0400
+        id S1727686AbfGZNnx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 09:43:53 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 96AC822CD0;
-        Fri, 26 Jul 2019 13:43:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EB44F22BF5;
+        Fri, 26 Jul 2019 13:43:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564148630;
-        bh=tkiLADUTcUdV6ynKUj8SgvQBjOlu9A4vwPtyAlQ+mE4=;
+        s=default; t=1564148632;
+        bh=vzNNaYikDY21v23/2zO3IPUtpcgrGZDW0AIPcGzNqA8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MOyGbOiBR9yiJYf0dLJq1b3e+bL47OaBJ4vYEY1Xleq75DKH8mQWTIYEO8fdSeCwz
-         7wWYUZGQIWCw2CKl476h7UDTERwiPPyMuq2Fxsqs9FRO2b5KXEGM+cIBLmWvvjCyGA
-         VyhukRAV+IQB5zNMSsQo2KyhaOb3T1pBb5T1Ab2Y=
+        b=YOmDqrtj4oVBkidZnkzhNq+Y5NXnscfqIYPqN2zRixs/WcVWsqRs4Gwd8GUivU3dL
+         TixBA+kcHCivm0ynX0RhNPCqVwyWNbzWbLWapHHOgYhWsXvcDYFUiEMR0pXo8ZeyIF
+         GrlpdqFTWN+XJUIPdgNanC3iU5LsAqC6u7d+LsNM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Andrea Parri <andrea.parri@amarulasolutions.com>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Yan, Zheng" <zyan@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
-        Sasha Levin <sashal@kernel.org>, ceph-devel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 13/37] ceph: fix improper use of smp_mb__before_atomic()
-Date:   Fri, 26 Jul 2019 09:43:08 -0400
-Message-Id: <20190726134332.12626-13-sashal@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Sasha Levin <sashal@kernel.org>, linux-acpi@vger.kernel.org,
+        clang-built-linux@googlegroups.com
+Subject: [PATCH AUTOSEL 4.14 15/37] ACPI: blacklist: fix clang warning for unused DMI table
+Date:   Fri, 26 Jul 2019 09:43:10 -0400
+Message-Id: <20190726134332.12626-15-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190726134332.12626-1-sashal@kernel.org>
 References: <20190726134332.12626-1-sashal@kernel.org>
@@ -45,43 +45,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrea Parri <andrea.parri@amarulasolutions.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-[ Upstream commit 749607731e26dfb2558118038c40e9c0c80d23b5 ]
+[ Upstream commit b80d6a42bdc97bdb6139107d6034222e9843c6e2 ]
 
-This barrier only applies to the read-modify-write operations; in
-particular, it does not apply to the atomic64_set() primitive.
+When CONFIG_DMI is disabled, we only have a tentative declaration,
+which causes a warning from clang:
 
-Replace the barrier with an smp_mb().
+drivers/acpi/blacklist.c:20:35: error: tentative array definition assumed to have one element [-Werror]
+static const struct dmi_system_id acpi_rev_dmi_table[] __initconst;
 
-Fixes: fdd4e15838e59 ("ceph: rework dcache readdir")
-Reported-by: "Paul E. McKenney" <paulmck@linux.ibm.com>
-Reported-by: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
-Reviewed-by: "Yan, Zheng" <zyan@redhat.com>
-Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+As the variable is not actually used here, hide it entirely
+in an #ifdef to shut up the warning.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/ceph/super.h | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/acpi/blacklist.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-index 3e27a28aa44a..60b70f0985f6 100644
---- a/fs/ceph/super.h
-+++ b/fs/ceph/super.h
-@@ -517,7 +517,12 @@ static inline void __ceph_dir_set_complete(struct ceph_inode_info *ci,
- 					   long long release_count,
- 					   long long ordered_count)
- {
--	smp_mb__before_atomic();
-+	/*
-+	 * Makes sure operations that setup readdir cache (update page
-+	 * cache and i_size) are strongly ordered w.r.t. the following
-+	 * atomic64_set() operations.
-+	 */
-+	smp_mb();
- 	atomic64_set(&ci->i_complete_seq[0], release_count);
- 	atomic64_set(&ci->i_complete_seq[1], ordered_count);
+diff --git a/drivers/acpi/blacklist.c b/drivers/acpi/blacklist.c
+index 995c4d8922b1..761f0c19a451 100644
+--- a/drivers/acpi/blacklist.c
++++ b/drivers/acpi/blacklist.c
+@@ -30,7 +30,9 @@
+ 
+ #include "internal.h"
+ 
++#ifdef CONFIG_DMI
+ static const struct dmi_system_id acpi_rev_dmi_table[] __initconst;
++#endif
+ 
+ /*
+  * POLICY: If *anything* doesn't work, put it on the blacklist.
+@@ -74,7 +76,9 @@ int __init acpi_blacklisted(void)
+ 	}
+ 
+ 	(void)early_acpi_osi_init();
++#ifdef CONFIG_DMI
+ 	dmi_check_system(acpi_rev_dmi_table);
++#endif
+ 
+ 	return blacklisted;
  }
 -- 
 2.20.1
