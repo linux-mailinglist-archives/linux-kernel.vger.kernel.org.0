@@ -2,135 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DEC476F2B
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 18:32:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 19E7576F4E
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 18:47:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387511AbfGZQcx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 12:32:53 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:41599 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387452AbfGZQcx (ORCPT
+        id S1728966AbfGZQrr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 12:47:47 -0400
+Received: from relay8-d.mail.gandi.net ([217.70.183.201]:47941 "EHLO
+        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726827AbfGZQrq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 12:32:53 -0400
-Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
-        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
-        (envelope-from <l.stach@pengutronix.de>)
-        id 1hr396-0004LY-Tq; Fri, 26 Jul 2019 18:32:40 +0200
-Message-ID: <1564158758.2311.49.camel@pengutronix.de>
-Subject: Re: [PATCH RESEND v8] PCI: imx6: limit DBI register length
-From:   Lucas Stach <l.stach@pengutronix.de>
-To:     Stefan Agner <stefan@agner.ch>, hongxing.zhu@nxp.com
-Cc:     lorenzo.pieralisi@arm.com, jingoohan1@gmail.com,
-        gustavo.pimentel@synopsys.com, tpiepho@impinj.com,
-        leonard.crestez@nxp.com, bhelgaas@google.com,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Fri, 26 Jul 2019 18:32:38 +0200
-In-Reply-To: <20190726144007.26605-1-stefan@agner.ch>
-References: <20190726144007.26605-1-stefan@agner.ch>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
-X-SA-Exim-Mail-From: l.stach@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        Fri, 26 Jul 2019 12:47:46 -0400
+X-Originating-IP: 109.190.253.11
+Received: from localhost (unknown [109.190.253.11])
+        (Authenticated sender: maxime.ripard@bootlin.com)
+        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id 839B91BF207;
+        Fri, 26 Jul 2019 16:47:41 +0000 (UTC)
+Date:   Fri, 26 Jul 2019 18:36:01 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Torsten Duwe <duwe@lst.de>
+Cc:     Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Sean Paul <seanpaul@chromium.org>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Harald Geyer <harald@ccbib.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 6a/7] dt-bindings: Add ANX6345 DP/eDP transmitter
+ binding
+Message-ID: <20190726163601.o32bxqew5xavjgyi@flea>
+References: <20190722150414.9F97668B20@verein.lst.de>
+ <20190725151829.DC20968B02@verein.lst.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190725151829.DC20968B02@verein.lst.de>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Freitag, den 26.07.2019, 16:40 +0200 schrieb Stefan Agner:
-> Define the length of the DBI registers and limit config space to its
-> length. This makes sure that the kernel does not access registers
-> beyond that point, avoiding the following abort on a i.MX 6Quad:
->   # cat /sys/devices/soc0/soc/1ffc000.pcie/pci0000\:00/0000\:00\:00.0/config
->   [  100.021433] Unhandled fault: imprecise external abort (0x1406) at 0xb6ea7000
->   ...
->   [  100.056423] PC is at dw_pcie_read+0x50/0x84
->   [  100.060790] LR is at dw_pcie_rd_own_conf+0x44/0x48
->   ...
-> 
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
+Hi,
 
-Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
-
+On Thu, Jul 25, 2019 at 05:18:29PM +0200, Torsten Duwe wrote:
+> The anx6345 is an ultra-low power DisplayPort/eDP transmitter designed
+> for portable devices.
+>
+> Add a binding document for it.
+>
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Torsten Duwe <duwe@suse.de>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 > ---
-> Changes in v3:
-> - Rebase on pci/dwc
-> Changes in v4:
-> - Rebase on pci/dwc
-> Changes in v5:
-> - Rebased ontop of pci/dwc
-> - Use DBI length of 0x200
-> Changes in v6:
-> - Use pci_dev.cfg_size mechanism to limit config space (this made patch 1
->   of previous versions of this patchset obsolete).
-> Changes in v7:
-> - Restrict fixup to Synopsys/0xabcd
-> - Apply cfg_size limitation only if dbi_length is specified
-> Changes in v8:
-> - Restrict fixup for Synopsys/0xabcd and class PCI bridge
-> - Check device driver to be pci-imx6
-> 
->  drivers/pci/controller/dwc/pci-imx6.c | 33 +++++++++++++++++++++++++++
->  1 file changed, 33 insertions(+)
-> 
-> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
-> index 9b5cb5b70389..8b8efa3063f5 100644
-> --- a/drivers/pci/controller/dwc/pci-imx6.c
-> +++ b/drivers/pci/controller/dwc/pci-imx6.c
-> @@ -57,6 +57,7 @@ enum imx6_pcie_variants {
->  struct imx6_pcie_drvdata {
-> >  	enum imx6_pcie_variants variant;
-> >  	u32 flags;
-> > +	int dbi_length;
->  };
->  
->  struct imx6_pcie {
-> @@ -1212,6 +1213,7 @@ static const struct imx6_pcie_drvdata drvdata[] = {
-> >  		.variant = IMX6Q,
-> >  		.flags = IMX6_PCIE_FLAG_IMX6_PHY |
-> >  			 IMX6_PCIE_FLAG_IMX6_SPEED_CHANGE,
-> > +		.dbi_length = 0x200,
-> >  	},
-> >  	[IMX6SX] = {
-> >  		.variant = IMX6SX,
-> @@ -1254,6 +1256,37 @@ static struct platform_driver imx6_pcie_driver = {
-> >  	.shutdown = imx6_pcie_shutdown,
->  };
->  
-> +static void imx6_pcie_quirk(struct pci_dev *dev)
-> +{
-> > +	struct pci_bus *bus = dev->bus;
-> > +	struct pcie_port *pp = bus->sysdata;
+>  .../devicetree/bindings/display/bridge/anx6345.yaml |   90 ++++++++++
+>  1 file changed, 90 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/display/bridge/anx6345.yaml
+>
+> diff --git a/Documentation/devicetree/bindings/display/bridge/anx6345.yaml b/Documentation/devicetree/bindings/display/bridge/anx6345.yaml
+> new file mode 100644
+> index 000000000000..0af092d101c5
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/bridge/anx6345.yaml
+> @@ -0,0 +1,90 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/display/bridge/anx6345.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> > +	/* Bus parent is the PCI bridge, its parent is this platform driver */
-> > +	if (!bus->dev.parent || !bus->dev.parent->parent)
-> > +		return;
+> +title: Analogix ANX6345 eDP Transmitter Device Tree Bindings
 > +
-> > +	/* Make sure we only quirk devices associated with this driver */
-> > +	if (bus->dev.parent->parent->driver != &imx6_pcie_driver.driver)
-> > +		return;
+> +maintainers:
+> +  - Torsten Duwe <duwe@lst.de>
 > +
-> > +	if (bus->number == pp->root_bus_nr) {
-> > +		struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-> > +		struct imx6_pcie *imx6_pcie = to_imx6_pcie(pci);
+> +description: |
+> +  The ANX6345 is an ultra-low power Full-HD eDP transmitter designed for
+> +  portable devices.
 > +
-> > +		/*
-> > +		 * Limit config length to avoid the kernel reading beyond
-> > +		 * the register set and causing an abort on i.MX 6Quad
-> > +		 */
-> > +		if (imx6_pcie->drvdata->dbi_length) {
-> > +			dev->cfg_size = imx6_pcie->drvdata->dbi_length;
-> > +			dev_info(&dev->dev, "Limiting cfg_size to %d\n",
-> > +					dev->cfg_size);
-> > +		}
-> > +	}
-> +}
-> +DECLARE_PCI_FIXUP_CLASS_HEADER(PCI_VENDOR_ID_SYNOPSYS, 0xabcd,
-> > +			PCI_CLASS_BRIDGE_PCI, 8, imx6_pcie_quirk);
+> +properties:
+> +  compatible:
+> +    const: analogix,anx6345
 > +
->  static int __init imx6_pcie_init(void)
->  {
->  #ifdef CONFIG_ARM
+> +  reg:
+> +    maxItems: 1
+> +    description: I2C address of the device
+> +
+> +  reset-gpios:
+> +    maxItems: 1
+> +    description: active low GPIO to use for reset
+> +
+> +  dvdd12-supply:
+> +    maxItems: 1
+> +    description: Regulator for 1.2V digital core power.
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +
+> +  dvdd25-supply:
+> +    maxItems: 1
+> +    description: Regulator for 2.5V digital core power.
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+
+There's no need to specify the type here, all the properties ending in
+-supply are already checked for that type
+
+> +  ports:
+> +    type: object
+> +    minItems: 1
+> +    maxItems: 2
+> +    description: |
+> +      Video port 0 for LVTTL input,
+> +      Video port 1 for eDP output (panel or connector)
+> +      using the DT bindings defined in
+> +      Documentation/devicetree/bindings/media/video-interfaces.txt
+
+You should probably describe the port@0 and port@1 nodes here as
+well. It would allow you to express that the port 0 is mandatory and
+the port 1 optional, which got dropped in the conversion.
+
+Maxime
+
+--
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
