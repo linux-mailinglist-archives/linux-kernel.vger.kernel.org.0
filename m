@@ -2,119 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D2EC75DE5
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 06:44:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B85175DED
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 06:46:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725909AbfGZEmR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 00:42:17 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:43356 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725781AbfGZEmQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 00:42:16 -0400
-Received: by mail-pf1-f195.google.com with SMTP id i189so23860402pfg.10
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 21:42:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=eq62dV3aG3jd/W9zqRWfepVRB8FhgcYvUn8Cc6l9GkA=;
-        b=Hm635lZZN0RARpzAb9ayexcKn9YXj1XlLee2lITYorBDY2KOsISLHVejwgEYcg6Nc0
-         ZqhT1sHlG9s/X0ETZP/JU0sFKEZfCI/zwx6FZHpw1WBMbMM+jyC+fd8EFxcdysy7wZMH
-         YYPvEnctY6Zda/l2Cl2oxKrjCh5ExnnUiBHjE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=eq62dV3aG3jd/W9zqRWfepVRB8FhgcYvUn8Cc6l9GkA=;
-        b=mUFqQvoPnuio6E3b7qaDhCxJdHwC1FdZ8wJPe3XtP7IMDLWFEoPyk6ou74bmdIM0Hx
-         MQD53rY0wX9kAfAEYRQgvBmIMI6GFuFUVx/qxUORnka4MjgUClYX9VfcpCVnp6suahum
-         o6uL8pidg+gG6+yS4B72tlZyjusYob0IU2NTTu2gi/wszeMjsEevBTiJEm+ofZe9vHHL
-         tSYiJ2CDGMGM1iKfVqeZafA1NZka84jQ+xWQmG5Q7NkJ8E3mjNbP0uVXvgppPvY++8Gr
-         zsD+KNMqWnPSHZ6t+rOVpgjhTWm7UttwYHTZo5bYKFqbZi2zhfwHiPgXSZCaMUosn2ST
-         T/cg==
-X-Gm-Message-State: APjAAAWp4UvnH1FAbnTOne5boQ0XRp6kTzhG+4zbEkm6MaTX0sBfap+r
-        BwqiJO6IzlgQJkmz8WydN5HetWmkbco=
-X-Google-Smtp-Source: APXvYqzyDNFdueHohA8SGN1O6dmRutvK/f1c35LtOqHGnJFqaLCJWNkNKPAQTGdjzMb/377e4SAgXA==
-X-Received: by 2002:a17:90a:9905:: with SMTP id b5mr98357683pjp.70.1564116135769;
-        Thu, 25 Jul 2019 21:42:15 -0700 (PDT)
-Received: from localhost ([2401:fa00:1:b:e688:dfd2:a1a7:2956])
-        by smtp.gmail.com with ESMTPSA id t7sm41702252pjq.15.2019.07.25.21.42.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 25 Jul 2019 21:42:14 -0700 (PDT)
-From:   Cheng-Yi Chiang <cychiang@chromium.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Heiko Stuebner <heiko@sntech.de>, dianders@chromium.org,
-        dgreid@chromium.org, tzungbi@chromium.org, mka@chromium.org,
-        alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        Cheng-Yi Chiang <cychiang@chromium.org>
-Subject: [PATCH] Revert "ASoC: rockchip: i2s: Support mono capture"
-Date:   Fri, 26 Jul 2019 12:42:02 +0800
-Message-Id: <20190726044202.26866-1-cychiang@chromium.org>
-X-Mailer: git-send-email 2.22.0.709.g102302147b-goog
+        id S1726007AbfGZEqj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 00:46:39 -0400
+Received: from foss.arm.com ([217.140.110.172]:37798 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725836AbfGZEqi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 00:46:38 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B6593337;
+        Thu, 25 Jul 2019 21:46:37 -0700 (PDT)
+Received: from [10.163.1.197] (unknown [10.163.1.197])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4CBE13F694;
+        Thu, 25 Jul 2019 21:46:33 -0700 (PDT)
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+Subject: Re: [RFC] mm/pgtable/debug: Add test validating architecture page
+ table helpers
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mark Brown <Mark.Brown@arm.com>,
+        Steven Price <Steven.Price@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Kees Cook <keescook@chromium.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Sri Krishna chowdary <schowdary@nvidia.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        linux-arm-kernel@lists.infradead.org, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1564037723-26676-1-git-send-email-anshuman.khandual@arm.com>
+ <1564037723-26676-2-git-send-email-anshuman.khandual@arm.com>
+ <20190725143920.GW363@bombadil.infradead.org>
+Message-ID: <c3bb0420-584c-de3b-2439-8702bc09595e@arm.com>
+Date:   Fri, 26 Jul 2019 10:17:11 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190725143920.GW363@bombadil.infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This reverts commit db51707b9c9aeedd310ebce60f15d5bb006567e0.
+On 07/25/2019 08:09 PM, Matthew Wilcox wrote:
+> On Thu, Jul 25, 2019 at 12:25:23PM +0530, Anshuman Khandual wrote:
+>> This adds a test module which will validate architecture page table helpers
+>> and accessors regarding compliance with generic MM semantics expectations.
+>> This will help various architectures in validating changes to the existing
+>> page table helpers or addition of new ones.
+> 
+> I think this is a really good idea.
+> 
+>>  lib/Kconfig.debug       |  14 +++
+>>  lib/Makefile            |   1 +
+>>  lib/test_arch_pgtable.c | 290 ++++++++++++++++++++++++++++++++++++++++++++++++
+> 
+> Is this the right place for it?  I worry that lib/ is going to get overloaded
+> with test code, and this feels more like mm/ test code.
 
-Previous discussion in
+Sure this can be moved to mm/ but unlike existing test configs there (following)
+lets keep some config description in mm/Kconfig. Will probably rename this as
+CONFIG_DEBUG_ARCH_PGTABLE_TEST to match other tests.
 
-https://patchwork.kernel.org/patch/10147153/
+CONFIG_DEBUG_KMEMLEAK_TEST
+CONFIG_DEBUG_RODATA_TEST
+CONFIG_MEMTEST
 
-explains the issue of the patch.
-While device is configured as 1-ch, hardware is still
-generating a 2-ch stream.
-When user space reads the data and assumes it is a 1-ch stream,
-the rate will be slower by 2x.
+After moving to mm/ directory I guess it does not need a loadable module option.
 
-Revert the change so 1-ch is not supported.
-User space can selectively take one channel data out of two channel
-if 1-ch is preferred.
-Currently, both channels record identical data.
+> 
+>> +#ifdef CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE
+>> +static void pmd_basic_tests(void)
+>> +{
+>> +	pmd_t pmd;
+>> +
+>> +	pmd = mk_pmd(page, prot);
+> 
+> But 'page' isn't necessarily PMD-aligned.  I don't think we can rely on
+> architectures doing the right thing if asked to make a PMD for a randomly
+> aligned page.
+> 
+> How about finding the physical address of something like kernel_init(),
 
-Signed-off-by: Cheng-Yi Chiang <cychiang@chromium.org>
----
- sound/soc/rockchip/rockchip_i2s.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+Physical address corresponding to the symbol in the kernel text segment ?
 
-diff --git a/sound/soc/rockchip/rockchip_i2s.c b/sound/soc/rockchip/rockchip_i2s.c
-index 0a34d0eb8dba..88ebaf6e1880 100644
---- a/sound/soc/rockchip/rockchip_i2s.c
-+++ b/sound/soc/rockchip/rockchip_i2s.c
-@@ -326,7 +326,6 @@ static int rockchip_i2s_hw_params(struct snd_pcm_substream *substream,
- 		val |= I2S_CHN_4;
- 		break;
- 	case 2:
--	case 1:
- 		val |= I2S_CHN_2;
- 		break;
- 	default:
-@@ -459,7 +458,7 @@ static struct snd_soc_dai_driver rockchip_i2s_dai = {
- 	},
- 	.capture = {
- 		.stream_name = "Capture",
--		.channels_min = 1,
-+		.channels_min = 2,
- 		.channels_max = 2,
- 		.rates = SNDRV_PCM_RATE_8000_192000,
- 		.formats = (SNDRV_PCM_FMTBIT_S8 |
-@@ -659,7 +658,7 @@ static int rockchip_i2s_probe(struct platform_device *pdev)
- 	}
- 
- 	if (!of_property_read_u32(node, "rockchip,capture-channels", &val)) {
--		if (val >= 1 && val <= 8)
-+		if (val >= 2 && val <= 8)
- 			soc_dai->capture.channels_max = val;
- 	}
- 
--- 
-2.22.0.709.g102302147b-goog
+> and using the corresponding pte/pmd/pud/p4d/pgd that encompasses that
 
+So I guess this will help us use pte/pmd/pud/p4d/pgd entries from a real and
+present mapping rather then making them up for test purpose. Although we are
+not creating real page tables here just wondering if this could some how
+affect these real mapping in anyway from some accessors. The current proposal
+stays clear from anything real - allocates, evaluates and releases.
+
+Also table entries at pmd/pud/p4d/pgd cannot be operated with accessors in the
+test. THP and PUD THP will operate on leaf entries at pmd or pud levels. We need
+them as leaf entries created from allocated (aligned) pfns. While determining
+pte/pmd/pud/p4d/pgd for kernel_init() some of them will be table entries.
+
+> address?  It's also better to pass in the pfn/page rather than using global
+> variables to communicate to the test functions.
+
+Sure those can be allocated and passed from the main function. Just wanted to
+avoid page allocation in each individual tests.
+
+> 
+>> +	/*
+>> +	 * A huge page does not point to next level page table
+>> +	 * entry. Hence this must qualify as pmd_bad().
+>> +	 */
+>> +	WARN_ON(!pmd_bad(pmd_mkhuge(pmd)));
+> 
+> I didn't know that rule.  This is helpful because it gives us somewhere
+> to document all these tricksy little rules.
+
+That is another objective this test has which will help settle semantics
+in a clear and documented manner.
+
+> 
+>> +#ifdef CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD
+>> +static void pud_basic_tests(void)
+> 
+> Is this the right ifdef?
+
+IIUC THP at PUD is where the pud_t entries are directly operated upon and the
+corresponding accessors are present only when HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD
+is enabled. Am I missing something here ?
