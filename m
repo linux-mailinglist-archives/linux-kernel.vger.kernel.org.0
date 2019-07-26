@@ -2,587 +2,404 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A952F77288
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 22:01:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E2077728C
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 22:08:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387623AbfGZUBx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 16:01:53 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:39182 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387532AbfGZUBw (ORCPT
+        id S1726550AbfGZUIL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 16:08:11 -0400
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:54474 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726000AbfGZUIK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 16:01:52 -0400
-Received: by mail-lj1-f196.google.com with SMTP id v18so52564497ljh.6;
-        Fri, 26 Jul 2019 13:01:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=kZidz+2sfJl7QwKTupRy9ixTpNNMsvkYqhghMR5iiOA=;
-        b=NARsQl2n+nPDCsm9EUG4kCkw++BmHPegwQhoi+3bQRUl6Brf7/lO+0tblQ/4eJEOHI
-         Lrtghcb9rhtoKxeg7B0g2pxrsvoJUcGn2mnkXZOW63GELEIvRzNKZvoBYXzuOIuD9xF7
-         hX7nj9TN5TdUsHRqseKvxvyf7YShoSR7NE2KmSYlVXXajXEHYIVvhq1gWYhSUifzhc1Y
-         XOkZAAZAWA3FDTE9A8D9yfmaPmfv/loqnnVl5sRps4MvVkInilYnIVs8a7U+KsytLOf/
-         hWVvVAqs2K0JFxxkPb5EBOcSPXbd550nTCcCj9xZgiKTOfpgs0SH4oI5nnTUPlmpb1CG
-         M8Cg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=kZidz+2sfJl7QwKTupRy9ixTpNNMsvkYqhghMR5iiOA=;
-        b=htcRf0oJ0dTcoi2YIohYKywJjmO/zEsx9MFkvmEjUu6dJUAfepPYLMhO7cZ6uEewwI
-         XaPzN5Z6b0wi/J0c50X4nnT4GCKovz86fPPegSqt+DVh2e23GiKH4eTfIwvEZn3gu82T
-         56hsfVCS2mI1VbOqUyJovMb0jSQrGed8XbTjnaaJXBO/VGB5Y+7e9wtBWl3GKs4jJu/y
-         fL7zVlK7jZMWanHEsHHJYAkl62DepUop5vinpjmW99GSYPPX3FXc1ahvBqtvrwc5IFVW
-         ovGpLW8kC584yS/Cffrw3Y0xdXQWSAjYCef5ecnKX9kFaZgT37X0Rya4PPUDCF+vOP9o
-         IYew==
-X-Gm-Message-State: APjAAAUxKxdGnbcPYqz15X62M1UEUp3gRAMZvnL0nrYlF3NCjSFNFjqZ
-        UZ4cHkPVThfR8GwO67s+/sukvwproxo+0Yz2PG0=
-X-Google-Smtp-Source: APXvYqyCaJ9ePwnew108BNRnyXQzksfZXAtDWBoUUB7fd8t1cwG9RTsr9WqtBV+qaQUebxiWncoq7iSlqp94M99YFig=
-X-Received: by 2002:a2e:8650:: with SMTP id i16mr51072222ljj.178.1564171309337;
- Fri, 26 Jul 2019 13:01:49 -0700 (PDT)
-MIME-Version: 1.0
-References: <cover.1563983037.git.agx@sigxcpu.org> <3158f4f8c97c21f98c394e5631d74bc60d796522.1563983037.git.agx@sigxcpu.org>
-In-Reply-To: <3158f4f8c97c21f98c394e5631d74bc60d796522.1563983037.git.agx@sigxcpu.org>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Fri, 26 Jul 2019 17:01:52 -0300
-Message-ID: <CAOMZO5BRbV_1du1b9eJqcBvvXSE2Mon3yxSPJxPpZgBqYNjBSg@mail.gmail.com>
-Subject: Re: [PATCH 3/3] drm/bridge: Add NWL MIPI DSI host controller support
-To:     =?UTF-8?Q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>
-Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Lee Jones <lee.jones@linaro.org>,
-        DRI mailing list <dri-devel@lists.freedesktop.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Robert Chiras <robert.chiras@nxp.com>,
-        Chris Healy <cphealy@gmail.com>
+        Fri, 26 Jul 2019 16:08:10 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 697178EE147;
+        Fri, 26 Jul 2019 13:08:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1564171689;
+        bh=HZ0rHOZIhOcKEbYoaFFlkj6tGBdjEf+6TGyECg/4r6A=;
+        h=Subject:From:To:Cc:Date:From;
+        b=eBdQAdIE34+KVANlng75LqdvVfqulMAvnYFb2mCStgWYeT0zatuJ7EIqeCCacqBBf
+         AHsIGwZaeda0+HW/CjvRB3sySNnwSUuHO3Da8vHSUrEdt+uE4fw+Lk+EQSHPjbz7Zf
+         K1peY4ggltO/a+huWgw5eEx91tS4glQvLb8g+Dcg=
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 3rMneackXjPM; Fri, 26 Jul 2019 13:08:09 -0700 (PDT)
+Received: from jarvis.lan (unknown [50.35.68.20])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 946DE8EE0FD;
+        Fri, 26 Jul 2019 13:08:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1564171688;
+        bh=HZ0rHOZIhOcKEbYoaFFlkj6tGBdjEf+6TGyECg/4r6A=;
+        h=Subject:From:To:Cc:Date:From;
+        b=hsulPR62nEI1FoSFlgorScj1+HTBp8lASI63ZaW7h48ve6SXNxhx9Vlh3rzSYsnts
+         fHtez/WF4Z9gW2ossGqZ3syRIcgP3Dv1oqLDXOPeCn+QgyYX+jYbi65MvJbX2A2fQ0
+         5RwB7Nm2IEYPXj9A2BD25Qp8WA5xxdYiQ3Bo5qd0=
+Message-ID: <1564171685.9950.14.camel@HansenPartnership.com>
+Subject: [GIT PULL] SCSI fixes for 5.3-rc1
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-scsi <linux-scsi@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Date:   Fri, 26 Jul 2019 13:08:05 -0700
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Guido,
-
-Thanks for your work on this driver!
-
-On Wed, Jul 24, 2019 at 12:52 PM Guido G=C3=BCnther <agx@sigxcpu.org> wrote=
-:
-
-> --- /dev/null
-> +++ b/drivers/gpu/drm/bridge/imx-nwl/Kconfig
-> @@ -0,0 +1,15 @@
-> +config DRM_IMX_NWL_DSI
-> +       tristate "Support for Northwest Logic MIPI DSI Host controller"
-> +       depends on DRM && (ARCH_MXC || ARCH_MULTIPLATFORM || COMPILE_TEST=
-)
-
-
-This IP could potentially be found on other SoCs, so no need to make
-it depend on ARCH_MXC.
-
-> +#include <drm/drm_atomic_helper.h>
-> +#include <drm/drm_of.h>
-> +#include <drm/drm_panel.h>
-> +#include <drm/drm_print.h>
-> +#include <drm/drm_probe_helper.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/clk.h>
-> +#include <linux/component.h>
-> +#include <linux/gpio/consumer.h>
-
-I did not find gpio AP used in this driver.
-
-> +static void imx_nwl_dsi_set_clocks(struct imx_nwl_dsi *dsi, bool enable)
-
-Better make it to return 'int' instead...
-
-> +{
-> +       struct device *dev =3D dsi->dev;
-> +       const char *id;
-> +       struct clk *clk;
-> +       unsigned long new_rate, cur_rate;
-> +       bool enabled;
-> +       size_t i;
-> +       int ret;
-> +
-> +       DRM_DEV_DEBUG_DRIVER(dev, "%sabling platform clocks",
-
-Please remove the letter 's' from 'sabling'.
-
-> +                            enable ? "en" : "dis");
-> +                       ret =3D clk_prepare_enable(clk);
-> +                       if (ret < 0) {
-> +                               DRM_DEV_ERROR(dev, "Failed to enable cloc=
-k %s",
-> +                                             id);
-
-and propagate the error in case of clk_prepare_enable() failure.
-
-> +                       }
-> +                       dsi->clk_config[i].enabled =3D true;
-> +                       cur_rate =3D clk_get_rate(clk);
-> +                       DRM_DEV_DEBUG_DRIVER(
-> +                               dev, "Enabled %s clk (rate: req=3D%lu act=
-=3D%lu)\n",
-> +                               id, new_rate, cur_rate);
-> +               } else if (enabled) {
-> +                       clk_disable_unprepare(clk);
-> +                       dsi->clk_config[i].enabled =3D false;
-> +                       DRM_DEV_DEBUG_DRIVER(dev, "Disabled %s clk\n", id=
-);
-> +               }
-> +       }
-> +}
-> +
-> +static void imx_nwl_dsi_enable(struct imx_nwl_dsi *dsi)
-
-Same here. Please return 'int' instead.
-
-> +{
-> +       struct device *dev =3D dsi->dev;
-> +       int ret;
-> +
-> +       imx_nwl_dsi_set_clocks(dsi, true);
-> +
-> +       ret =3D dsi->pdata->poweron(dsi);
-> +       if (ret < 0)
-> +               DRM_DEV_ERROR(dev, "Failed to power on DSI (%d)\n", ret);
-
-If the power domain failed to turn on, it is better to propagate the error.
-
-> +       phy_ref_rate =3D clk_get_rate(dsi->phy_ref_clk);
-> +       DRM_DEV_DEBUG_DRIVER(dev, "PHY at ref rate: %lu\n", phy_ref_rate)=
-;
-> +       if (ret < 0) {
-
-This check looks wrong. At this point ret is always 0.
-
-> +               DRM_DEV_ERROR(dsi->dev,
-> +                             "Cannot setup PHY for mode: %ux%u @%d Hz\n"=
-,
-> +                             adjusted_mode->hdisplay, adjusted_mode->vdi=
-splay,
-> +                             adjusted_mode->clock);
-> +               DRM_DEV_ERROR(dsi->dev, "PHY ref clk: %lu, bit clk: %lu\n=
-",
-> +                             phy_ref_rate, new_cfg.mipi_dphy.hs_clk_rate=
-);
-> +       } else {
-> +               /* Save the new desired phy config */
-> +               memcpy(&dsi->phy_cfg, &new_cfg, sizeof(new_cfg));
-> +       }
-> +
-> +       /* LCDIF + NWL needs active high sync */
-
-Would this still work if DCSS is used instead?
-
-> +       adjusted_mode->flags |=3D (DRM_MODE_FLAG_PHSYNC | DRM_MODE_FLAG_P=
-VSYNC);
-> +       adjusted_mode->flags &=3D ~(DRM_MODE_FLAG_NHSYNC | DRM_MODE_FLAG_=
-NVSYNC);
-> +
-> +       drm_display_mode_to_videomode(adjusted_mode, &dsi->vm);
-> +       drm_mode_debug_printmodeline(adjusted_mode);
-> +
-> +       return ret =3D=3D 0;
-
-At this point ret is always 0.
-
-> +static void imx_nwl_dsi_bridge_pre_enable(struct drm_bridge *bridge)
-> +{
-> +       struct imx_nwl_dsi *dsi =3D bridge_to_dsi(bridge);
-> +
-> +       if (dsi->dpms_mode =3D=3D DRM_MODE_DPMS_ON)
-> +               return;
-> +
-> +       imx_nwl_select_input_source(dsi);
-
-This function is i.MX8M specific, so better protect it to run only for
-the i.MX8M variant.
-
-> +       pm_runtime_get_sync(dsi->dev);
-> +       imx_nwl_dsi_enable(dsi);
-> +       nwl_dsi_enable(dsi);
-
-Please check the error and propagate in the case of failure.
-
-> +       dsi->dpms_mode =3D DRM_MODE_DPMS_ON;
-> +}
-> +
-
-> +       dsi->csr =3D syscon_regmap_lookup_by_phandle(np, "csr");
-> +       if (IS_ERR(dsi->csr) && dsi->pdata->ext_regs & IMX_REG_CSR) {
-> +               ret =3D PTR_ERR(dsi->csr);
-> +               DRM_DEV_ERROR(dsi->dev, "Failed to get CSR regmap: %d\n",
-
-In this function (and globally in the driver) there is a mix of
-DRM_DEV_ERROR() and dev_err().
-
-Can we just pick one of the two and use it consistently?
-
-Not sure what is the norm in drm code, but IMHO dev_err() looks prettier :-=
-)
-
-> +
-> +       res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +       base =3D devm_ioremap_resource(dsi->dev, res);
-
-Could use devm_platform_ioremap_resource(), which makes it simpler.
-
-> +err_cleanup:
-> +       devm_free_irq(dev, dsi->irq, dsi);
-
-No need to call devm_free_irq() here. The devm functions do not need
-to be freed on probe.
-
-> diff --git a/drivers/gpu/drm/bridge/imx-nwl/nwl-dsi.c b/drivers/gpu/drm/b=
-ridge/imx-nwl/nwl-dsi.c
-> new file mode 100644
-> index 000000000000..0e1463af162f
-> --- /dev/null
-> +++ b/drivers/gpu/drm/bridge/imx-nwl/nwl-dsi.c
-> @@ -0,0 +1,745 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * NWL DSI host driver
-> + *
-> + * Copyright (C) 2017 NXP
-> + * Copyright (C) 2019 Purism SPC
-> + */
-> +
-> +#include <asm/unaligned.h>
-
-Is this asm header required?
-
-> +/*
-> + * DSI Video mode
-> + */
-
-Single line comment would suffice.
-
-> +#define VIDEO_MODE_BURST_MODE_WITH_SYNC_PULSES         0
-> +#define VIDEO_MODE_NON_BURST_MODE_WITH_SYNC_EVENTS     BIT(0)
-> +#define VIDEO_MODE_BURST_MODE                          BIT(1)
-> +
-> +/*
-> + * DPI color coding
-> + */
-
-Ditto.
-
-> +#define DPI_16_BIT_565_PACKED  0
-> +#define DPI_16_BIT_565_ALIGNED 1
-> +#define DPI_16_BIT_565_SHIFTED 2
-> +#define DPI_18_BIT_PACKED      3
-> +#define DPI_18_BIT_ALIGNED     4
-> +#define DPI_24_BIT             5
-> +
-> +/*
-> + * DPI Pixel format
-> + */
-
-Ditto.
-
-> +#define PIXEL_FORMAT_16  0
-> +#define PIXEL_FORMAT_18  BIT(0)
-> +#define PIXEL_FORMAT_18L BIT(1)
-> +#define PIXEL_FORMAT_24  (BIT(0) | BIT(1))
-> +
-> +enum transfer_direction { DSI_PACKET_SEND, DSI_PACKET_RECEIVE };
-> +
-> +struct mipi_dsi_transfer {
-> +       const struct mipi_dsi_msg *msg;
-> +       struct mipi_dsi_packet packet;
-> +       struct completion completed;
-> +
-> +       int status; /* status of transmission */
-> +       enum transfer_direction direction;
-> +       bool need_bta;
-> +       u8 cmd;
-> +       u16 rx_word_count;
-> +       size_t tx_len; /* bytes sent */
-> +       size_t rx_len; /* bytes received */
-> +};
-
-The comments here are kind of obvious, so I would just remove them.
-
-> +static inline int nwl_dsi_write(struct imx_nwl_dsi *dsi, unsigned int re=
-g,
-
-inline can be dropped.
-
-> +                               u32 val)
-> +{
-> +       int ret;
-> +
-> +       ret =3D regmap_write(dsi->regmap, reg, val);
-> +       if (ret < 0)
-> +               DRM_DEV_ERROR(dsi->dev,
-> +                             "Failed to write NWL DSI reg 0x%x: %d\n", r=
-eg,
-> +                             ret);
-> +       return ret;
-> +}
-> +
-> +static inline u32 nwl_dsi_read(struct imx_nwl_dsi *dsi, u32 reg)
-
-Same here.
-
-> +{
-> +       unsigned int val;
-> +       int ret;
-> +
-> +       ret =3D regmap_read(dsi->regmap, reg, &val);
-> +       if (ret < 0)
-> +               DRM_DEV_ERROR(dsi->dev, "Failed to read NWL DSI reg 0x%x:=
- %d\n",
-> +                             reg, ret);
-> +
-> +       return val;
-> +}
-
-It seems that we could simply use regmap_read/write() directly instead
-of these functions.
-
-> +int nwl_dsi_get_dphy_params(struct imx_nwl_dsi *dsi,
-> +                           const struct drm_display_mode *mode,
-> +                           union phy_configure_opts *phy_opts)
-> +{
-> +       unsigned long rate;
-> +
-> +       if (dsi->lanes < 1 || dsi->lanes > 4)
-> +               return -EINVAL;
-> +
-> +       /*
-> +        * So far the DPHY spec minimal timings work for both mixel
-> +        * dphy and nwl dsi host
-> +        */
-> +       phy_mipi_dphy_get_default_config(
-> +               mode->crtc_clock * 1000,
-> +               mipi_dsi_pixel_format_to_bpp(dsi->format), dsi->lanes,
-> +               &phy_opts->mipi_dphy);
-> +       rate =3D clk_get_rate(dsi->tx_esc_clk);
-> +       DRM_DEV_DEBUG_DRIVER(dsi->dev, "LP clk is @%lu Hz\n", rate);
-> +       phy_opts->mipi_dphy.lp_clk_rate =3D rate;
-> +
-> +       return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(nwl_dsi_get_dphy_params);
-
-Does it really need to be exported? Why can't it be placed inside
-nwl-drv.c and be made static?
-
-> +/**
-
-/* is enough
-
-
-> + * ui2bc - UI time periods to byte clock cycles
-> + */
-> +static u32 ui2bc(struct imx_nwl_dsi *dsi, unsigned long long ui)
-> +{
-> +       int bpp =3D mipi_dsi_pixel_format_to_bpp(dsi->format);
-> +
-> +       return DIV_ROUND_UP(ui * dsi->lanes, dsi->vm.pixelclock * bpp);
-> +}
-> +
-> +#define USEC_PER_SEC 1000000L
-
-This definition already exists in include/linux/time64.h. No need to
-redefine it.
-
-> +static int nwl_dsi_enable_tx_clock(struct imx_nwl_dsi *dsi)
-> +{
-> +       struct device *dev =3D dsi->dev;
-> +       int ret;
-> +
-> +       ret =3D clk_prepare_enable(dsi->tx_esc_clk);
-> +       if (ret < 0) {
-> +               DRM_DEV_ERROR(dev, "Failed to enable tx_esc clk: %d\n", r=
-et);
-> +               return ret;
-> +       }
-> +
-> +       DRM_DEV_DEBUG_DRIVER(dev, "Enabled tx_esc clk @%lu Hz\n",
-> +                            clk_get_rate(dsi->tx_esc_clk));
-> +       return 0;
-> +}
-
-Do we really need this function? It looks like it would be simpler
-just to call clk_prepare_enable() directly.
-
-> +
-> +static int nwl_dsi_enable_rx_clock(struct imx_nwl_dsi *dsi)
-> +{
-> +       struct device *dev =3D dsi->dev;
-> +       int ret;
-> +
-> +       ret =3D clk_prepare_enable(dsi->rx_esc_clk);
-> +       if (ret < 0) {
-> +               DRM_DEV_ERROR(dev, "Failed to enable rx_esc clk: %d\n", r=
-et);
-> +               return ret;
-> +       }
-> +
-> +       DRM_DEV_DEBUG_DRIVER(dev, "Enabled rx_esc clk @%lu Hz\n",
-> +                            clk_get_rate(dsi->rx_esc_clk));
-> +       return 0;
-> +}
-
-Same here.
-
-> +static ssize_t nwl_dsi_host_transfer(struct mipi_dsi_host *dsi_host,
-> +                                    const struct mipi_dsi_msg *msg)
-> +{
-> +       struct imx_nwl_dsi *dsi =3D
-> +               container_of(dsi_host, struct imx_nwl_dsi, dsi_host);
-> +       struct mipi_dsi_transfer xfer;
-> +       ssize_t ret =3D 0;
-> +
-> +       /* Create packet to be sent */
-> +       dsi->xfer =3D &xfer;
-> +       ret =3D mipi_dsi_create_packet(&xfer.packet, msg);
-> +       if (ret < 0) {
-> +               dsi->xfer =3D NULL;
-> +               return ret;
-> +       }
-> +
-> +       if ((msg->type & MIPI_DSI_GENERIC_READ_REQUEST_0_PARAM ||
-> +            msg->type & MIPI_DSI_GENERIC_READ_REQUEST_1_PARAM ||
-> +            msg->type & MIPI_DSI_GENERIC_READ_REQUEST_2_PARAM ||
-> +            msg->type & MIPI_DSI_DCS_READ) &&
-> +           msg->rx_len > 0 && msg->rx_buf !=3D NULL)
-> +               xfer.direction =3D DSI_PACKET_RECEIVE;
-> +       else
-> +               xfer.direction =3D DSI_PACKET_SEND;
-> +
-> +       xfer.need_bta =3D (xfer.direction =3D=3D DSI_PACKET_RECEIVE);
-> +       xfer.need_bta |=3D (msg->flags & MIPI_DSI_MSG_REQ_ACK) ? 1 : 0;
-> +       xfer.msg =3D msg;
-> +       xfer.status =3D -ETIMEDOUT;
-> +       xfer.rx_word_count =3D 0;
-> +       xfer.rx_len =3D 0;
-> +       xfer.cmd =3D 0x00;
-> +       if (msg->tx_len > 0)
-> +               xfer.cmd =3D ((u8 *)(msg->tx_buf))[0];
-> +       init_completion(&xfer.completed);
-> +
-> +       nwl_dsi_enable_rx_clock(dsi);
-
-This may fail, so better check the error.
-
-ret =3D clk_prepare_enable()
-if (ret < 0)
-   return ret;
-
-> +irqreturn_t nwl_dsi_irq_handler(int irq, void *data)
-> +{
-> +       u32 irq_status;
-> +       struct imx_nwl_dsi *dsi =3D data;
-> +
-> +       irq_status =3D nwl_dsi_read(dsi, IRQ_STATUS);
-> +
-> +       if (irq_status & TX_PKT_DONE || irq_status & RX_PKT_HDR_RCVD ||
-> +           irq_status & RX_PKT_PAYLOAD_DATA_RCVD)
-> +               nwl_dsi_finish_transmission(dsi, irq_status);
-> +
-> +       return IRQ_HANDLED;
-> +}
-> +EXPORT_SYMBOL_GPL(nwl_dsi_irq_handler);
-
-What about placing this function inside nwl-drv.c and make it static?
-
-> +
-> +int nwl_dsi_enable(struct imx_nwl_dsi *dsi)
-> +{
-> +       struct device *dev =3D dsi->dev;
-> +       union phy_configure_opts *phy_cfg =3D &dsi->phy_cfg;
-> +       int ret;
-> +
-> +       if (!dsi->lanes) {
-> +               DRM_DEV_ERROR(dev, "Need DSI lanes: %d\n", dsi->lanes);
-> +               return -EINVAL;
-> +       }
-> +
-> +       ret =3D phy_init(dsi->phy);
-> +       if (ret < 0) {
-> +               DRM_DEV_ERROR(dev, "Failed to init DSI phy: %d\n", ret);
-> +               return ret;
-> +       }
-> +
-> +       ret =3D phy_configure(dsi->phy, phy_cfg);
-> +       if (ret < 0) {
-> +               DRM_DEV_ERROR(dev, "Failed to configure DSI phy: %d\n", r=
-et);
-> +               return ret;
-> +       }
-> +
-> +       ret =3D nwl_dsi_enable_tx_clock(dsi);
-> +       if (ret < 0) {
-> +               DRM_DEV_ERROR(dev, "Failed to enable tx clock: %d\n", ret=
-);
-> +               return ret;
-> +       }
-> +
-> +       ret =3D nwl_dsi_config_host(dsi);
-> +       if (ret < 0) {
-> +               DRM_DEV_ERROR(dev, "Failed to set up DSI: %d", ret);
-> +               return ret;
-> +       }
-> +
-> +       ret =3D nwl_dsi_config_dpi(dsi);
-> +       if (ret < 0) {
-> +               DRM_DEV_ERROR(dev, "Failed to set up DPI: %d", ret);
-> +               return ret;
-> +       }
-> +
-> +       ret =3D phy_power_on(dsi->phy);
-> +       if (ret < 0) {
-> +               DRM_DEV_ERROR(dev, "Failed to power on DPHY (%d)\n", ret)=
-;
-> +               return ret;
-> +       }
-> +
-> +       nwl_dsi_init_interrupts(dsi);
-> +
-> +       return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(nwl_dsi_enable);
-
-Same here.
-
-> +
-> +int nwl_dsi_disable(struct imx_nwl_dsi *dsi)
-> +{
-> +       struct device *dev =3D dsi->dev;
-> +
-> +       DRM_DEV_DEBUG_DRIVER(dev, "Disabling clocks and phy\n");
-> +
-> +       phy_power_off(dsi->phy);
-> +       phy_exit(dsi->phy);
-> +
-> +       /* Disabling the clock before the phy breaks enabling dsi again *=
-/
-> +       clk_disable_unprepare(dsi->tx_esc_clk);
-> +
-> +       return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(nwl_dsi_disable);
-
-Same here.
+Nine fixes: The most important core one is the dma_max_mapping_size fix
+that corrects the boot problem Gunter Roeck was having.  A couple of
+other driver only fixes are significant, like the cxgbi selector
+support addition, the alua 2 second delay and the fdomain build fix.
+
+As you know I use expiring keys, so I've renewed and updated my current
+keys on the keyservers, but if you're not using them, you can get it
+from my DNSSEC using DANE with:
+
+gpg --auto-key-locate dane --recv-keys D5606E73C8B46271BEAD9ADF814AE47C214854D6 
+
+The patch is available here:
+
+git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-fixes
+
+The short changelog is:
+
+Arnd Bergmann (1):
+      scsi: fdomain: fix building pcmcia front-end
+
+Christoph Hellwig (1):
+      scsi: core: fix the dma_max_mapping_size call
+
+Christophe JAILLET (1):
+      scsi: fcoe: fix a typo
+
+Colin Ian King (1):
+      scsi: megaraid_sas: fix spelling mistake "megarid_sas" -> "megaraid_sas"
+
+Hannes Reinecke (1):
+      scsi: scsi_dh_alua: always use a 2 second delay before retrying RTPG
+
+Junxiao Bi (1):
+      scsi: megaraid_sas: fix panic on loading firmware crashdump
+
+Tyrel Datwyler (1):
+      scsi: ibmvfc: fix WARN_ON during event pool release
+
+Varun Prakash (1):
+      scsi: target: cxgbit: add support for IEEE_8021QAZ_APP_SEL_STREAM selector
+
+YueHaibing (1):
+      scsi: megaraid_sas: Make some functions static
+
+And the diffstat:
+
+ drivers/scsi/Kconfig                        |  4 ++--
+ drivers/scsi/device_handler/scsi_dh_alua.c  |  7 ++++++-
+ drivers/scsi/fcoe/fcoe_ctlr.c               |  2 +-
+ drivers/scsi/ibmvscsi/ibmvfc.c              |  2 +-
+ drivers/scsi/megaraid/megaraid_sas_base.c   |  5 ++++-
+ drivers/scsi/megaraid/megaraid_sas_fusion.c | 27 ++++++++++++++-------------
+ drivers/scsi/scsi_lib.c                     |  6 ++++--
+ drivers/target/iscsi/cxgbit/cxgbit_cm.c     |  8 +++++---
+ drivers/target/iscsi/cxgbit/cxgbit_main.c   |  3 ++-
+ include/scsi/libfcoe.h                      |  2 +-
+ 10 files changed, 40 insertions(+), 26 deletions(-)
+
+With full diff below.
+
+James
+
+---
+
+diff --git a/drivers/scsi/Kconfig b/drivers/scsi/Kconfig
+index 75f66f8ad3ea..1b92f3c19ff3 100644
+--- a/drivers/scsi/Kconfig
++++ b/drivers/scsi/Kconfig
+@@ -1523,10 +1523,10 @@ config SCSI_VIRTIO
+ 
+ source "drivers/scsi/csiostor/Kconfig"
+ 
+-endif # SCSI_LOWLEVEL
+-
+ source "drivers/scsi/pcmcia/Kconfig"
+ 
++endif # SCSI_LOWLEVEL
++
+ source "drivers/scsi/device_handler/Kconfig"
+ 
+ endmenu
+diff --git a/drivers/scsi/device_handler/scsi_dh_alua.c b/drivers/scsi/device_handler/scsi_dh_alua.c
+index f0066f8a1786..4971104b1817 100644
+--- a/drivers/scsi/device_handler/scsi_dh_alua.c
++++ b/drivers/scsi/device_handler/scsi_dh_alua.c
+@@ -40,6 +40,7 @@
+ #define ALUA_FAILOVER_TIMEOUT		60
+ #define ALUA_FAILOVER_RETRIES		5
+ #define ALUA_RTPG_DELAY_MSECS		5
++#define ALUA_RTPG_RETRY_DELAY		2
+ 
+ /* device handler flags */
+ #define ALUA_OPTIMIZE_STPG		0x01
+@@ -682,7 +683,7 @@ static int alua_rtpg(struct scsi_device *sdev, struct alua_port_group *pg)
+ 	case SCSI_ACCESS_STATE_TRANSITIONING:
+ 		if (time_before(jiffies, pg->expiry)) {
+ 			/* State transition, retry */
+-			pg->interval = 2;
++			pg->interval = ALUA_RTPG_RETRY_DELAY;
+ 			err = SCSI_DH_RETRY;
+ 		} else {
+ 			struct alua_dh_data *h;
+@@ -807,6 +808,8 @@ static void alua_rtpg_work(struct work_struct *work)
+ 				spin_lock_irqsave(&pg->lock, flags);
+ 				pg->flags &= ~ALUA_PG_RUNNING;
+ 				pg->flags |= ALUA_PG_RUN_RTPG;
++				if (!pg->interval)
++					pg->interval = ALUA_RTPG_RETRY_DELAY;
+ 				spin_unlock_irqrestore(&pg->lock, flags);
+ 				queue_delayed_work(kaluad_wq, &pg->rtpg_work,
+ 						   pg->interval * HZ);
+@@ -818,6 +821,8 @@ static void alua_rtpg_work(struct work_struct *work)
+ 		spin_lock_irqsave(&pg->lock, flags);
+ 		if (err == SCSI_DH_RETRY || pg->flags & ALUA_PG_RUN_RTPG) {
+ 			pg->flags &= ~ALUA_PG_RUNNING;
++			if (!pg->interval && !(pg->flags & ALUA_PG_RUN_RTPG))
++				pg->interval = ALUA_RTPG_RETRY_DELAY;
+ 			pg->flags |= ALUA_PG_RUN_RTPG;
+ 			spin_unlock_irqrestore(&pg->lock, flags);
+ 			queue_delayed_work(kaluad_wq, &pg->rtpg_work,
+diff --git a/drivers/scsi/fcoe/fcoe_ctlr.c b/drivers/scsi/fcoe/fcoe_ctlr.c
+index 590ec8009f52..1a85fe9e4b7b 100644
+--- a/drivers/scsi/fcoe/fcoe_ctlr.c
++++ b/drivers/scsi/fcoe/fcoe_ctlr.c
+@@ -1019,7 +1019,7 @@ static void fcoe_ctlr_recv_adv(struct fcoe_ctlr *fip, struct sk_buff *skb)
+ {
+ 	struct fcoe_fcf *fcf;
+ 	struct fcoe_fcf new;
+-	unsigned long sol_tov = msecs_to_jiffies(FCOE_CTRL_SOL_TOV);
++	unsigned long sol_tov = msecs_to_jiffies(FCOE_CTLR_SOL_TOV);
+ 	int first = 0;
+ 	int mtu_valid;
+ 	int found = 0;
+diff --git a/drivers/scsi/ibmvscsi/ibmvfc.c b/drivers/scsi/ibmvscsi/ibmvfc.c
+index acd16e0d52cf..8cdbac076a1b 100644
+--- a/drivers/scsi/ibmvscsi/ibmvfc.c
++++ b/drivers/scsi/ibmvscsi/ibmvfc.c
+@@ -4864,8 +4864,8 @@ static int ibmvfc_remove(struct vio_dev *vdev)
+ 
+ 	spin_lock_irqsave(vhost->host->host_lock, flags);
+ 	ibmvfc_purge_requests(vhost, DID_ERROR);
+-	ibmvfc_free_event_pool(vhost);
+ 	spin_unlock_irqrestore(vhost->host->host_lock, flags);
++	ibmvfc_free_event_pool(vhost);
+ 
+ 	ibmvfc_free_mem(vhost);
+ 	spin_lock(&ibmvfc_driver_lock);
+diff --git a/drivers/scsi/megaraid/megaraid_sas_base.c b/drivers/scsi/megaraid/megaraid_sas_base.c
+index b2339d04a700..f9f07935556e 100644
+--- a/drivers/scsi/megaraid/megaraid_sas_base.c
++++ b/drivers/scsi/megaraid/megaraid_sas_base.c
+@@ -3163,6 +3163,7 @@ fw_crash_buffer_show(struct device *cdev,
+ 		(struct megasas_instance *) shost->hostdata;
+ 	u32 size;
+ 	unsigned long dmachunk = CRASH_DMA_BUF_SIZE;
++	unsigned long chunk_left_bytes;
+ 	unsigned long src_addr;
+ 	unsigned long flags;
+ 	u32 buff_offset;
+@@ -3186,6 +3187,8 @@ fw_crash_buffer_show(struct device *cdev,
+ 	}
+ 
+ 	size = (instance->fw_crash_buffer_size * dmachunk) - buff_offset;
++	chunk_left_bytes = dmachunk - (buff_offset % dmachunk);
++	size = (size > chunk_left_bytes) ? chunk_left_bytes : size;
+ 	size = (size >= PAGE_SIZE) ? (PAGE_SIZE - 1) : size;
+ 
+ 	src_addr = (unsigned long)instance->crash_buf[buff_offset / dmachunk] +
+@@ -8763,7 +8766,7 @@ static int __init megasas_init(void)
+ 
+ 	if ((event_log_level < MFI_EVT_CLASS_DEBUG) ||
+ 	    (event_log_level > MFI_EVT_CLASS_DEAD)) {
+-		printk(KERN_WARNING "megarid_sas: provided event log level is out of range, setting it to default 2(CLASS_CRITICAL), permissible range is: -2 to 4\n");
++		pr_warn("megaraid_sas: provided event log level is out of range, setting it to default 2(CLASS_CRITICAL), permissible range is: -2 to 4\n");
+ 		event_log_level = MFI_EVT_CLASS_CRITICAL;
+ 	}
+ 
+diff --git a/drivers/scsi/megaraid/megaraid_sas_fusion.c b/drivers/scsi/megaraid/megaraid_sas_fusion.c
+index a32b3f0fcd15..120e3c4de8c2 100644
+--- a/drivers/scsi/megaraid/megaraid_sas_fusion.c
++++ b/drivers/scsi/megaraid/megaraid_sas_fusion.c
+@@ -537,7 +537,7 @@ static int megasas_create_sg_sense_fusion(struct megasas_instance *instance)
+ 	return 0;
+ }
+ 
+-int
++static int
+ megasas_alloc_cmdlist_fusion(struct megasas_instance *instance)
+ {
+ 	u32 max_mpt_cmd, i, j;
+@@ -576,7 +576,8 @@ megasas_alloc_cmdlist_fusion(struct megasas_instance *instance)
+ 
+ 	return 0;
+ }
+-int
++
++static int
+ megasas_alloc_request_fusion(struct megasas_instance *instance)
+ {
+ 	struct fusion_context *fusion;
+@@ -657,7 +658,7 @@ megasas_alloc_request_fusion(struct megasas_instance *instance)
+ 	return 0;
+ }
+ 
+-int
++static int
+ megasas_alloc_reply_fusion(struct megasas_instance *instance)
+ {
+ 	int i, count;
+@@ -734,7 +735,7 @@ megasas_alloc_reply_fusion(struct megasas_instance *instance)
+ 	return 0;
+ }
+ 
+-int
++static int
+ megasas_alloc_rdpq_fusion(struct megasas_instance *instance)
+ {
+ 	int i, j, k, msix_count;
+@@ -916,7 +917,7 @@ megasas_free_reply_fusion(struct megasas_instance *instance) {
+  * and is used as SMID of the cmd.
+  * SMID value range is from 1 to max_fw_cmds.
+  */
+-int
++static int
+ megasas_alloc_cmds_fusion(struct megasas_instance *instance)
+ {
+ 	int i;
+@@ -1736,7 +1737,7 @@ static inline void megasas_free_ioc_init_cmd(struct megasas_instance *instance)
+  *
+  * This is the main function for initializing firmware.
+  */
+-u32
++static u32
+ megasas_init_adapter_fusion(struct megasas_instance *instance)
+ {
+ 	struct fusion_context *fusion;
+@@ -1962,7 +1963,7 @@ megasas_fusion_stop_watchdog(struct megasas_instance *instance)
+  * @ext_status :	ext status of cmd returned by FW
+  */
+ 
+-void
++static void
+ map_cmd_status(struct fusion_context *fusion,
+ 		struct scsi_cmnd *scmd, u8 status, u8 ext_status,
+ 		u32 data_length, u8 *sense)
+@@ -2375,7 +2376,7 @@ int megasas_make_sgl(struct megasas_instance *instance, struct scsi_cmnd *scp,
+  *
+  * Used to set the PD LBA in CDB for FP IOs
+  */
+-void
++static void
+ megasas_set_pd_lba(struct MPI2_RAID_SCSI_IO_REQUEST *io_request, u8 cdb_len,
+ 		   struct IO_REQUEST_INFO *io_info, struct scsi_cmnd *scp,
+ 		   struct MR_DRV_RAID_MAP_ALL *local_map_ptr, u32 ref_tag)
+@@ -2714,7 +2715,7 @@ megasas_set_raidflag_cpu_affinity(struct fusion_context *fusion,
+  * Prepares the io_request and chain elements (sg_frame) for IO
+  * The IO can be for PD (Fast Path) or LD
+  */
+-void
++static void
+ megasas_build_ldio_fusion(struct megasas_instance *instance,
+ 			  struct scsi_cmnd *scp,
+ 			  struct megasas_cmd_fusion *cmd)
+@@ -3211,7 +3212,7 @@ megasas_build_syspd_fusion(struct megasas_instance *instance,
+  * Invokes helper functions to prepare request frames
+  * and sets flags appropriate for IO/Non-IO cmd
+  */
+-int
++static int
+ megasas_build_io_fusion(struct megasas_instance *instance,
+ 			struct scsi_cmnd *scp,
+ 			struct megasas_cmd_fusion *cmd)
+@@ -3325,9 +3326,9 @@ megasas_get_request_descriptor(struct megasas_instance *instance, u16 index)
+ /* megasas_prepate_secondRaid1_IO
+  *  It prepares the raid 1 second IO
+  */
+-void megasas_prepare_secondRaid1_IO(struct megasas_instance *instance,
+-			    struct megasas_cmd_fusion *cmd,
+-			    struct megasas_cmd_fusion *r1_cmd)
++static void megasas_prepare_secondRaid1_IO(struct megasas_instance *instance,
++					   struct megasas_cmd_fusion *cmd,
++					   struct megasas_cmd_fusion *r1_cmd)
+ {
+ 	union MEGASAS_REQUEST_DESCRIPTOR_UNION *req_desc, *req_desc2 = NULL;
+ 	struct fusion_context *fusion;
+diff --git a/drivers/scsi/scsi_lib.c b/drivers/scsi/scsi_lib.c
+index 9381171c2fc0..11e64b50497f 100644
+--- a/drivers/scsi/scsi_lib.c
++++ b/drivers/scsi/scsi_lib.c
+@@ -1784,8 +1784,10 @@ void __scsi_init_queue(struct Scsi_Host *shost, struct request_queue *q)
+ 		blk_queue_max_integrity_segments(q, shost->sg_prot_tablesize);
+ 	}
+ 
+-	shost->max_sectors = min_t(unsigned int, shost->max_sectors,
+-			dma_max_mapping_size(dev) << SECTOR_SHIFT);
++	if (dev->dma_mask) {
++		shost->max_sectors = min_t(unsigned int, shost->max_sectors,
++				dma_max_mapping_size(dev) >> SECTOR_SHIFT);
++	}
+ 	blk_queue_max_hw_sectors(q, shost->max_sectors);
+ 	if (shost->unchecked_isa_dma)
+ 		blk_queue_bounce_limit(q, BLK_BOUNCE_ISA);
+diff --git a/drivers/target/iscsi/cxgbit/cxgbit_cm.c b/drivers/target/iscsi/cxgbit/cxgbit_cm.c
+index 22dd4c457d6a..c70caf4ea490 100644
+--- a/drivers/target/iscsi/cxgbit/cxgbit_cm.c
++++ b/drivers/target/iscsi/cxgbit/cxgbit_cm.c
+@@ -875,10 +875,12 @@ static u8 cxgbit_get_iscsi_dcb_priority(struct net_device *ndev, u16 local_port)
+ 		return 0;
+ 
+ 	if (caps & DCB_CAP_DCBX_VER_IEEE) {
+-		iscsi_dcb_app.selector = IEEE_8021QAZ_APP_SEL_ANY;
+-
++		iscsi_dcb_app.selector = IEEE_8021QAZ_APP_SEL_STREAM;
+ 		ret = dcb_ieee_getapp_mask(ndev, &iscsi_dcb_app);
+-
++		if (!ret) {
++			iscsi_dcb_app.selector = IEEE_8021QAZ_APP_SEL_ANY;
++			ret = dcb_ieee_getapp_mask(ndev, &iscsi_dcb_app);
++		}
+ 	} else if (caps & DCB_CAP_DCBX_VER_CEE) {
+ 		iscsi_dcb_app.selector = DCB_APP_IDTYPE_PORTNUM;
+ 
+diff --git a/drivers/target/iscsi/cxgbit/cxgbit_main.c b/drivers/target/iscsi/cxgbit/cxgbit_main.c
+index 343b129c2cfa..e877b917c15f 100644
+--- a/drivers/target/iscsi/cxgbit/cxgbit_main.c
++++ b/drivers/target/iscsi/cxgbit/cxgbit_main.c
+@@ -589,7 +589,8 @@ static void cxgbit_dcb_workfn(struct work_struct *work)
+ 	iscsi_app = &dcb_work->dcb_app;
+ 
+ 	if (iscsi_app->dcbx & DCB_CAP_DCBX_VER_IEEE) {
+-		if (iscsi_app->app.selector != IEEE_8021QAZ_APP_SEL_ANY)
++		if ((iscsi_app->app.selector != IEEE_8021QAZ_APP_SEL_STREAM) &&
++		    (iscsi_app->app.selector != IEEE_8021QAZ_APP_SEL_ANY))
+ 			goto out;
+ 
+ 		priority = iscsi_app->app.priority;
+diff --git a/include/scsi/libfcoe.h b/include/scsi/libfcoe.h
+index c50fb297e265..dc14b52577f7 100644
+--- a/include/scsi/libfcoe.h
++++ b/include/scsi/libfcoe.h
+@@ -31,7 +31,7 @@
+  * FIP tunable parameters.
+  */
+ #define FCOE_CTLR_START_DELAY	2000	/* mS after first adv. to choose FCF */
+-#define FCOE_CTRL_SOL_TOV	2000	/* min. solicitation interval (mS) */
++#define FCOE_CTLR_SOL_TOV	2000	/* min. solicitation interval (mS) */
+ #define FCOE_CTLR_FCF_LIMIT	20	/* max. number of FCF entries */
+ #define FCOE_CTLR_VN2VN_LOGIN_LIMIT 3	/* max. VN2VN rport login retries */
+ 
