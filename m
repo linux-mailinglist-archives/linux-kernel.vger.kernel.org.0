@@ -2,113 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF3F6766CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 15:05:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A141766D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 15:05:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726491AbfGZNFa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 09:05:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45892 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726086AbfGZNFa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 09:05:30 -0400
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2DD94218D4;
-        Fri, 26 Jul 2019 13:05:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564146328;
-        bh=PlJaIXLsd7+ROMZXdVipGcdLV0hhbDgStYB8O8oFc0c=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=RdcUIdd1H+5eq9/3l9EYVMzYIHTMXpCifNslC1KeXnrHabpBGQVVegiqp1oaFoNRa
-         dZ9wthH9uc5ZaCamXK2hqB0iYpN0Q6dAXK+IoCEFy4V5umgyxufnEdIhK/4CTLecCl
-         7Ghvg4ElsJ5NFty0qQoUitUxckBHjJfa8psJi1lo=
-Date:   Fri, 26 Jul 2019 14:05:24 +0100
-From:   Will Deacon <will@kernel.org>
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Kees Cook <keescook@chromium.org>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        catalin.marinas@arm.com, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/3] arm64: perf: Mark expected switch fall-through
-Message-ID: <20190726130523.ftmc2un7fwwcegrr@willie-the-truck>
-References: <20190726112716.19104-1-anders.roxell@linaro.org>
- <20190726121056.GA26088@lakrids.cambridge.arm.com>
- <20190726121354.GB26088@lakrids.cambridge.arm.com>
- <20190726122728.jhn4e6wq7rcowyi4@willie-the-truck>
- <1549fe77-367f-fee1-c09c-e429fca91051@arm.com>
+        id S1726910AbfGZNFq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 09:05:46 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:54662 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726086AbfGZNFp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 09:05:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
+        From:Date:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=v25fSyTOpn+HLVJ1/RYUYjo/p2HKkKXuypllJV6JuFU=; b=FGTl2rF5Ekw99U5eWA0qO4ViY
+        ezxgPoNckrfd02rKeR5DfhI5n58vJTcEz7aQ3diHZkRmGndI5Rrlekc33Ay4TibbLOwpG1XKCSloG
+        82pJRxtCcnQvPslNG7xO/8DHeER9qlTWSUhlaF/iNE0YUnkdxnIGvBgg9Brpdp4iVK9JkJjbm0TvY
+        TcCvfrG3NaxcqzRwVsiX1+l5U3fjf1yQEEnGnZRs2iZazrP26MkKBj4gTVChmnzy3Hz3krFh/Kx2g
+        S6dj3Qi5GKN2Rfpl0jR+wq9OXeL8jT6dpW75i/Mr7cpWYS51GnMWuFS7A6xMmFALsHG7f3ly85U0p
+        sDY3Ty9HA==;
+Received: from [179.95.31.157] (helo=coco.lan)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hqzun-0004Yn-F9; Fri, 26 Jul 2019 13:05:42 +0000
+Date:   Fri, 26 Jul 2019 10:05:33 -0300
+From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-pci@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-scsi@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-hwmon@vger.kernel.org, linux-spi@vger.kernel.org,
+        linux-iio@vger.kernel.org, linux-rtc@vger.kernel.org,
+        netdev@vger.kernel.org, linux-parisc@vger.kernel.org,
+        openrisc@lists.librecores.org, devel@driverdev.osuosl.org,
+        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
+        devel@lists.orangefs.org, dmaengine@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-mips@vger.kernel.org,
+        linux-wireless@vger.kernel.org, rcu@vger.kernel.org
+Subject: Re: [PATCH v2 00/26] ReST conversion of text files without .txt
+ extension
+Message-ID: <20190726100521.5d379300@coco.lan>
+In-Reply-To: <cover.1564145354.git.mchehab+samsung@kernel.org>
+References: <cover.1564145354.git.mchehab+samsung@kernel.org>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1549fe77-367f-fee1-c09c-e429fca91051@arm.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 26, 2019 at 01:38:24PM +0100, Robin Murphy wrote:
-> On 26/07/2019 13:27, Will Deacon wrote:
-> > On Fri, Jul 26, 2019 at 01:13:54PM +0100, Mark Rutland wrote:
-> > > On Fri, Jul 26, 2019 at 01:10:57PM +0100, Mark Rutland wrote:
-> > > > On Fri, Jul 26, 2019 at 01:27:16PM +0200, Anders Roxell wrote:
-> > > > > When fall-through warnings was enabled by default, commit d93512ef0f0e
-> > > > > ("Makefile: Globally enable fall-through warning"), the following
-> > > > > warnings was starting to show up:
-> > > > > 
-> > > > > ../arch/arm64/kernel/hw_breakpoint.c: In function ‘hw_breakpoint_arch_parse’:
-> > > > > ../arch/arm64/kernel/hw_breakpoint.c:540:7: warning: this statement may fall
-> > > > >   through [-Wimplicit-fallthrough=]
-> > > > >      if (hw->ctrl.len == ARM_BREAKPOINT_LEN_1)
-> > > > >         ^
-> > > > > ../arch/arm64/kernel/hw_breakpoint.c:542:3: note: here
-> > > > >     case 2:
-> > > > >     ^~~~
-> > > > > ../arch/arm64/kernel/hw_breakpoint.c:544:7: warning: this statement may fall
-> > > > >   through [-Wimplicit-fallthrough=]
-> > > > >      if (hw->ctrl.len == ARM_BREAKPOINT_LEN_2)
-> > > > >         ^
-> > > > > ../arch/arm64/kernel/hw_breakpoint.c:546:3: note: here
-> > > > >     default:
-> > > > >     ^~~~~~~
-> > > > > 
-> > > > > Rework so that the compiler doesn't warn about fall-through. Rework so
-> > > > > the code looks like the arm code. Since the comment in the function
-> > > > > indicates taht this is supposed to behave the same way as arm32 because
-> > > > 
-> > > > Typo: s/taht/that/
-> > > > 
-> > > > > it handles 32-bit tasks also.
-> > > > > 
-> > > > > Cc: stable@vger.kernel.org # v3.16+
-> > > > > Fixes: 6ee33c2712fc ("ARM: hw_breakpoint: correct and simplify alignment fixup code")
-> > > > > Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
-> > > > 
-> > > > The patch itself looks fine, but I don't think this needs a CC to
-> > > > stable, nor does it require that fixes tag, as there's no functional
-> > > > problem.
-> > > 
-> > > Hmm... I now see I spoke too soon, and this is making the 1-byte
-> > > breakpoint work at a 3-byte offset.
-> > 
-> > I still don't think it's quite right though, since it forbids a 2-byte
-> > watchpoint on a byte-aligned address.
-> 
-> Plus, AFAICS, a 1-byte watchpoint on a 2-byte-aligned address.
-> 
-> Not that I know anything about this code, but it does start to look like it
-> might want rewriting without the offending switch statement anyway. At a
-> glance, it looks like the intended semantic might boil down to:
-> 
-> 	if (hw->ctrl.len > offset)
-> 		return -EINVAL;
+Em Fri, 26 Jul 2019 09:51:10 -0300
+Mauro Carvalho Chehab <mchehab+samsung@kernel.org> escreveu:
 
-Given that it's compat code, I think it's worth staying as close to the
-arch/arm/ implementation as we can. Also, beware that the
-ARM_BREAKPOINT_LEN_* definitions are masks because of the BAS fields in
-the debug architecture.
+> This series converts the text files under Documentation with doesn't end
+> neither .txt or .rst and are not part of ABI or features.
+> 
+> This series is at:
+> 	https://git.linuxtv.org/mchehab/experimental.git/log/?h=rst_for_5_4_v3
+> 
+> And it is based on yesterday's upstream tree.
+> 
+> After this series, we have ~320 files left to be converted to ReST.
+> 
+> v2:
+>   - Added 3 files submitted for v5.3 that weren't merged yet;
+>   - markdown patch broken into two, per Rob's request;
+>   - rebased on the top of upstream master branch
+> 
+> Mauro Carvalho Chehab (26):
 
-Will
+>   docs: ABI: remove extension from sysfs-class-mic.txt
+
+    ^ In time: this one was already merged.
+
+Thanks,
+Mauro
