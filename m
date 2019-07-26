@@ -2,72 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E4ED676834
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 15:43:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 19267767CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 15:40:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387655AbfGZNnH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 09:43:07 -0400
-Received: from olimex.com ([184.105.72.32]:41816 "EHLO olimex.com"
+        id S1727589AbfGZNkJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 09:40:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45936 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387632AbfGZNnE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 09:43:04 -0400
-Received: from localhost.localdomain ([94.155.250.134])
-        by olimex.com with ESMTPSA (ECDHE-RSA-AES128-GCM-SHA256:TLSv1.2:Kx=ECDH:Au=RSA:Enc=AESGCM(128):Mac=AEAD) (SMTP-AUTH username stefan@olimex.com, mechanism PLAIN)
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2019 06:32:59 -0700
-From:   Stefan Mavrodiev <stefan@olimex.com>
-To:     Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-pm@vger.kernel.org (open list:THERMAL),
-        linux-kernel@vger.kernel.org (open list)
-Cc:     Stefan Mavrodiev <stefan@olimex.com>
-Subject: [PATCH 1/1] thermal_hwmon: Sanitize thermal_zone type
-Date:   Fri, 26 Jul 2019 16:32:36 +0300
-Message-Id: <20190726133236.22872-1-stefan@olimex.com>
-X-Mailer: git-send-email 2.17.1
+        id S1726364AbfGZNkD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 09:40:03 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7B48D22BF5;
+        Fri, 26 Jul 2019 13:40:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564148402;
+        bh=RLsYumlcChrRdNAT+1a34p/7+WhNOBCg+wKS11rYYOI=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=BBNaR2dJvM1DC5YNjHabfrTivAv/DENdTepFPiJxY33lY3ZHByhUx7/pWT6FUey9H
+         UOlQb/lSYzIwsy7EYmuWlolZFFr+ARaOqUKHZf3dnAVGVd7Qudqmb9QHmLT6HVV/Tw
+         o1yhjHFepgbAG2HzC4gDlK14Y9ebROdZyNuHZV5c=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Olof Johansson <olof@lixom.net>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH AUTOSEL 5.2 15/85] firmware/psci: psci_checker: Park kthreads before stopping them
+Date:   Fri, 26 Jul 2019 09:38:25 -0400
+Message-Id: <20190726133936.11177-15-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190726133936.11177-1-sashal@kernel.org>
+References: <20190726133936.11177-1-sashal@kernel.org>
+MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When calling thermal_add_hwmon_sysfs(), the device type is sanitized by
-replacing '-' with '_'. However tz->type remains unsanitized. Thus
-calling thermal_hwmon_lookup_by_type() returns no device. And if there is
-no device, thermal_remove_hwmon_sysfs() fails with "hwmon device lookup failed!".
+From: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
 
-The result is unregisted hwmon devices in the sysfs.
+[ Upstream commit 92e074acf6f7694e96204265eb18ac113f546e80 ]
 
-Fixes: 409ef0bacacf ("thermal_hwmon: Sanitize attribute name passed to hwmon")
+Since commit 85f1abe0019f ("kthread, sched/wait: Fix kthread_parkme()
+completion issue"), kthreads that are bound to a CPU must be parked
+before being stopped. At the moment the PSCI checker calls
+kthread_stop() directly on the suspend kthread, which triggers the
+following warning:
 
-Signed-off-by: Stefan Mavrodiev <stefan@olimex.com>
+[    6.068288] WARNING: CPU: 1 PID: 1 at kernel/kthread.c:398 __kthread_bind_mask+0x20/0x78
+               ...
+[    6.190151] Call trace:
+[    6.192566]  __kthread_bind_mask+0x20/0x78
+[    6.196615]  kthread_unpark+0x74/0x80
+[    6.200235]  kthread_stop+0x44/0x1d8
+[    6.203769]  psci_checker+0x3bc/0x484
+[    6.207389]  do_one_initcall+0x48/0x260
+[    6.211180]  kernel_init_freeable+0x2c8/0x368
+[    6.215488]  kernel_init+0x10/0x100
+[    6.218935]  ret_from_fork+0x10/0x1c
+[    6.222467] ---[ end trace e05e22863d043cd3 ]---
+
+kthread_unpark() tries to bind the thread to its CPU and aborts with a
+WARN() if the thread wasn't in TASK_PARKED state. Park the kthreads
+before stopping them.
+
+Fixes: 85f1abe0019f ("kthread, sched/wait: Fix kthread_parkme() completion issue")
+Signed-off-by: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
+Acked-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Signed-off-by: Olof Johansson <olof@lixom.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/thermal/thermal_hwmon.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/firmware/psci/psci_checker.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/thermal/thermal_hwmon.c b/drivers/thermal/thermal_hwmon.c
-index 40c69a533b24..dd5d8ee37928 100644
---- a/drivers/thermal/thermal_hwmon.c
-+++ b/drivers/thermal/thermal_hwmon.c
-@@ -87,13 +87,17 @@ static struct thermal_hwmon_device *
- thermal_hwmon_lookup_by_type(const struct thermal_zone_device *tz)
- {
- 	struct thermal_hwmon_device *hwmon;
-+	char type[THERMAL_NAME_LENGTH];
+diff --git a/drivers/firmware/psci/psci_checker.c b/drivers/firmware/psci/psci_checker.c
+index 08c85099d4d0..f3659443f8c2 100644
+--- a/drivers/firmware/psci/psci_checker.c
++++ b/drivers/firmware/psci/psci_checker.c
+@@ -359,16 +359,16 @@ static int suspend_test_thread(void *arg)
+ 	for (;;) {
+ 		/* Needs to be set first to avoid missing a wakeup. */
+ 		set_current_state(TASK_INTERRUPTIBLE);
+-		if (kthread_should_stop()) {
+-			__set_current_state(TASK_RUNNING);
++		if (kthread_should_park())
+ 			break;
+-		}
+ 		schedule();
+ 	}
  
- 	mutex_lock(&thermal_hwmon_list_lock);
--	list_for_each_entry(hwmon, &thermal_hwmon_list, node)
--		if (!strcmp(hwmon->type, tz->type)) {
-+	list_for_each_entry(hwmon, &thermal_hwmon_list, node) {
-+		strcpy(type, tz->type);
-+		strreplace(type, '-', '_');
-+		if (!strcmp(hwmon->type, type)) {
- 			mutex_unlock(&thermal_hwmon_list_lock);
- 			return hwmon;
- 		}
+ 	pr_info("CPU %d suspend test results: success %d, shallow states %d, errors %d\n",
+ 		cpu, nb_suspend, nb_shallow_sleep, nb_err);
+ 
++	kthread_parkme();
++
+ 	return nb_err;
+ }
+ 
+@@ -433,8 +433,10 @@ static int suspend_tests(void)
+ 
+ 
+ 	/* Stop and destroy all threads, get return status. */
+-	for (i = 0; i < nb_threads; ++i)
++	for (i = 0; i < nb_threads; ++i) {
++		err += kthread_park(threads[i]);
+ 		err += kthread_stop(threads[i]);
 +	}
- 	mutex_unlock(&thermal_hwmon_list_lock);
- 
- 	return NULL;
+  out:
+ 	cpuidle_resume_and_unlock();
+ 	kfree(threads);
 -- 
-2.17.1
+2.20.1
 
