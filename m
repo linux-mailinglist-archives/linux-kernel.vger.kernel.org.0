@@ -2,116 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F25487696F
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 15:52:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CBF07699A
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 15:53:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388773AbfGZNwE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 09:52:04 -0400
-Received: from foss.arm.com ([217.140.110.172]:44550 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388680AbfGZNwC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 09:52:02 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 06B9F152D;
-        Fri, 26 Jul 2019 06:52:02 -0700 (PDT)
-Received: from usa.arm.com (e107155-lin.cambridge.arm.com [10.1.196.42])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 8C9303F694;
-        Fri, 26 Jul 2019 06:52:00 -0700 (PDT)
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     Sudeep Holla <sudeep.holla@arm.com>, Peng Fan <peng.fan@nxp.com>,
-        linux-kernel@vger.kernel.org,
-        Bo Zhang <bozhang.zhang@broadcom.com>,
-        Jim Quinlan <james.quinlan@broadcom.com>,
-        Volodymyr Babchuk <volodymyr_babchuk@epam.com>,
-        Gaku Inami <gaku.inami.xh@renesas.com>,
-        Etienne Carriere <etienne.carriere@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH v2 10/10] firmware: arm_scmi: Use asynchronous CLOCK_RATE_SET when possible
-Date:   Fri, 26 Jul 2019 14:51:38 +0100
-Message-Id: <20190726135138.9858-11-sudeep.holla@arm.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190726135138.9858-1-sudeep.holla@arm.com>
-References: <20190726135138.9858-1-sudeep.holla@arm.com>
+        id S2388887AbfGZNxJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 09:53:09 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:36895 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388253AbfGZNxF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 09:53:05 -0400
+Received: by mail-qt1-f195.google.com with SMTP id y26so52639522qto.4
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2019 06:53:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=AG8g0/5+Esm5c3gfwUTGC7xBT2DUyGJWbBLEtSQE6Lo=;
+        b=f5sS255ejBIPNtSc+bjfotL6SPL3L21wib4criaycDSqAWvop2fF44S98mi/h3dEpz
+         aKrCtYMA8BCqVejFTCPGtNjwz+CR5Xvpt7E52ZwgKmsrFz5CbSrTLzRVXoSTjaL4LsWS
+         0iM7xHIpZd5LM2qGQnMBwGgJS/siospe2T8l2Fa9L4Qjpi5UI9fYFh5FmsEBmhOXfks1
+         miXThjAHkaK6tm2IseZyDeVy4NB8KDV5VbWQhk9mBK8p18+dSP6OlBzR64RjgF9jGzM2
+         NnWYMTX0HZczlJHU1EcTez940R4/7X5xi9WrAYcmAy2kRlQ61ZhBkd1qnFp91EYvOYIz
+         qflA==
+X-Gm-Message-State: APjAAAXWW5pc+OqWbGmdz7WSLEWt9qbBvysH9MLC4H3A7O54YAJPZvFQ
+        aDHk/8ZLw9uptgHE+i/7mLo0cQ==
+X-Google-Smtp-Source: APXvYqydwEkRiDUhjkzyGjQfoaMf8JbYOCxKxauTFB3YoeZG49kK7ARiVn02SSH3ZF9H39y3z1BKaA==
+X-Received: by 2002:a0c:b521:: with SMTP id d33mr68309462qve.239.1564149185035;
+        Fri, 26 Jul 2019 06:53:05 -0700 (PDT)
+Received: from redhat.com ([212.92.104.165])
+        by smtp.gmail.com with ESMTPSA id v17sm30156688qtc.23.2019.07.26.06.53.02
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Fri, 26 Jul 2019 06:53:04 -0700 (PDT)
+Date:   Fri, 26 Jul 2019 09:52:59 -0400
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org
+Subject: Re: [PATCH] vhost: disable metadata prefetch optimization
+Message-ID: <20190726095044-mutt-send-email-mst@kernel.org>
+References: <20190726115021.7319-1-mst@redhat.com>
+ <ccba99c1-7708-3e55-6fc9-7775415c77a8@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ccba99c1-7708-3e55-6fc9-7775415c77a8@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-CLOCK_PROTOCOL_ATTRIBUTES provides attributes to indicate the maximum
-number of pending asynchronous clock rate changes supported by the
-platform. If it's non-zero, then we should be able to use asynchronous
-clock rate set for any clocks until the maximum limit is reached.
+On Fri, Jul 26, 2019 at 07:57:25PM +0800, Jason Wang wrote:
+> 
+> On 2019/7/26 下午7:51, Michael S. Tsirkin wrote:
+> > This seems to cause guest and host memory corruption.
+> > Disable for now until we get a better handle on that.
+> > 
+> > Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+> > ---
+> > 
+> > I put this in linux-next, we'll re-enable if we can fix
+> > the outstanding issues in a short order.
+> 
+> 
+> Btw, is this more suitable to e.g revert the
+> 842aa64eddacd23adc6ecdbc69cb2030bec47122
 
-Tracking the current count of pending asynchronous clock set rate
-requests, we can decide if the incoming/new request for clock set rate
-can be handled asynchronously or not until the maximum limit is
-reached.
+Yes I did that too.
 
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
----
- drivers/firmware/arm_scmi/clock.c | 19 ++++++++++++++++---
- 1 file changed, 16 insertions(+), 3 deletions(-)
+> and let syzbot fuzz more on the
+> current code?
 
-diff --git a/drivers/firmware/arm_scmi/clock.c b/drivers/firmware/arm_scmi/clock.c
-index dd215bd11a58..4a32ae1822a3 100644
---- a/drivers/firmware/arm_scmi/clock.c
-+++ b/drivers/firmware/arm_scmi/clock.c
-@@ -56,7 +56,7 @@ struct scmi_msg_resp_clock_describe_rates {
- struct scmi_clock_set_rate {
- 	__le32 flags;
- #define CLOCK_SET_ASYNC		BIT(0)
--#define CLOCK_SET_DELAYED	BIT(1)
-+#define CLOCK_SET_IGNORE_RESP	BIT(1)
- #define CLOCK_SET_ROUND_UP	BIT(2)
- #define CLOCK_SET_ROUND_AUTO	BIT(3)
- 	__le32 id;
-@@ -67,6 +67,7 @@ struct scmi_clock_set_rate {
- struct clock_info {
- 	int num_clocks;
- 	int max_async_req;
-+	atomic_t cur_async_req;
- 	struct scmi_clock_info *clk;
- };
- 
-@@ -221,21 +222,33 @@ static int scmi_clock_rate_set(const struct scmi_handle *handle, u32 clk_id,
- 			       u64 rate)
- {
- 	int ret;
-+	u32 flags = 0;
- 	struct scmi_xfer *t;
- 	struct scmi_clock_set_rate *cfg;
-+	struct clock_info *ci = handle->clk_priv;
- 
- 	ret = scmi_xfer_get_init(handle, CLOCK_RATE_SET, SCMI_PROTOCOL_CLOCK,
- 				 sizeof(*cfg), 0, &t);
- 	if (ret)
- 		return ret;
- 
-+	if (ci->max_async_req &&
-+	    atomic_inc_return(&ci->cur_async_req) < ci->max_async_req)
-+		flags |= CLOCK_SET_ASYNC;
-+
- 	cfg = t->tx.buf;
--	cfg->flags = cpu_to_le32(0);
-+	cfg->flags = cpu_to_le32(flags);
- 	cfg->id = cpu_to_le32(clk_id);
- 	cfg->value_low = cpu_to_le32(rate & 0xffffffff);
- 	cfg->value_high = cpu_to_le32(rate >> 32);
- 
--	ret = scmi_do_xfer(handle, t);
-+	if (flags & CLOCK_SET_ASYNC)
-+		ret = scmi_do_xfer_with_response(handle, t);
-+	else
-+		ret = scmi_do_xfer(handle, t);
-+
-+	if (ci->max_async_req)
-+		atomic_dec(&ci->cur_async_req);
- 
- 	scmi_xfer_put(handle, t);
- 	return ret;
--- 
-2.17.1
+Current metadata direct access code is known to corrupt guest and host
+memory - I don't feel we need more fuzzing.
 
+> 
+> I think we won't accept that patch eventually, so I suspect what syzbot
+> reports today is a false positives.
+
+Today's reports are real, it's a bug in my patch. But I reverted it -
+the below is an easier way to make sure at least linux-next is stable
+for everyone.
+
+> 
+> Thanks
+> 
+> 
+> > 
+> >   drivers/vhost/vhost.h | 2 +-
+> >   1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/vhost/vhost.h b/drivers/vhost/vhost.h
+> > index 819296332913..42a8c2a13ab1 100644
+> > --- a/drivers/vhost/vhost.h
+> > +++ b/drivers/vhost/vhost.h
+> > @@ -96,7 +96,7 @@ struct vhost_uaddr {
+> >   };
+> >   #if defined(CONFIG_MMU_NOTIFIER) && ARCH_IMPLEMENTS_FLUSH_DCACHE_PAGE == 0
+> > -#define VHOST_ARCH_CAN_ACCEL_UACCESS 1
+> > +#define VHOST_ARCH_CAN_ACCEL_UACCESS 0
+> >   #else
+> >   #define VHOST_ARCH_CAN_ACCEL_UACCESS 0
+> >   #endif
