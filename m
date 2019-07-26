@@ -2,50 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 306BA7734B
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 23:18:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7AF567735C
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 23:24:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728328AbfGZVSc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 17:18:32 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:55254 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726102AbfGZVSc (ORCPT
+        id S1728359AbfGZVYI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 17:24:08 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:50424 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726102AbfGZVYI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 17:18:32 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::d71])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 1460312B8A119;
-        Fri, 26 Jul 2019 14:18:31 -0700 (PDT)
-Date:   Fri, 26 Jul 2019 14:18:30 -0700 (PDT)
-Message-Id: <20190726.141830.1385987551076676185.davem@davemloft.net>
-To:     yanhaishuang@cmss.chinamobile.com
-Cc:     kuznet@ms2.inr.ac.ru, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ip6_tunnel: fix possible use-after-free on xmit
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <1564072817-13240-1-git-send-email-yanhaishuang@cmss.chinamobile.com>
-References: <1564072817-13240-1-git-send-email-yanhaishuang@cmss.chinamobile.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 26 Jul 2019 14:18:31 -0700 (PDT)
+        Fri, 26 Jul 2019 17:24:08 -0400
+Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtp (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hr7h8-00030e-69; Fri, 26 Jul 2019 23:24:06 +0200
+Message-Id: <20190726211936.226129163@linutronix.de>
+User-Agent: quilt/0.65
+Date:   Fri, 26 Jul 2019 23:19:36 +0200
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     x86@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [patch 0/8] core, x86: Preparatory steps for RT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
-Date: Fri, 26 Jul 2019 00:40:17 +0800
+CONFIG_PREEMPTION is selected by CONFIG_PREEMPT and by
+CONFIG_PREEMPT_RT. Both PREEMPT and PREEMPT_RT require the same
+functionality which today depends on CONFIG_PREEMPT.
 
-> ip4ip6/ip6ip6 tunnels run iptunnel_handle_offloads on xmit which
-> can cause a possible use-after-free accessing iph/ipv6h pointer
-> since the packet will be 'uncloned' running pskb_expand_head if
-> it is a cloned gso skb.
-> 
-> Fixes: 0e9a709560db ("ip6_tunnel, ip6_gre: fix setting of DSCP on encapsulated packets")
-> Signed-off-by: Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
+The following series adjusts the core and x86 code to use
+CONFIG_PREEMPTION where appropriate and extends the x86 dumpstack
+implementation to display PREEMPT_RT instead of PREEMPT on a RT
+enabled kernel.
 
-Applied and queued up for -stable, thanks.
+Thanks,
+
+	tglx
+
