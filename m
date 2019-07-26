@@ -2,78 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45A5276D91
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 17:35:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A619E76E2C
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 17:40:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389870AbfGZPem (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 11:34:42 -0400
-Received: from mga07.intel.com ([134.134.136.100]:30545 "EHLO mga07.intel.com"
+        id S2388420AbfGZPjm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 11:39:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39490 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389487AbfGZPek (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 11:34:40 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jul 2019 08:34:40 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,311,1559545200"; 
-   d="scan'208";a="322067214"
-Received: from msmall-mobl.amr.corp.intel.com (HELO [10.251.154.62]) ([10.251.154.62])
-  by orsmga004.jf.intel.com with ESMTP; 26 Jul 2019 08:34:39 -0700
-Subject: Re: [RFC PATCH 04/40] soundwire: intel: add debugfs register dump
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        tiwai@suse.de, broonie@kernel.org, vkoul@kernel.org,
-        jank@cadence.com, srinivas.kandagatla@linaro.org,
-        slawomir.blauciak@intel.com, Sanyog Kale <sanyog.r.kale@intel.com>
-References: <20190725234032.21152-1-pierre-louis.bossart@linux.intel.com>
- <20190725234032.21152-5-pierre-louis.bossart@linux.intel.com>
- <20190726140635.GB8767@kroah.com>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <0dc45659-33cd-0dfb-946b-9303fe54ec1c@linux.intel.com>
-Date:   Fri, 26 Jul 2019 10:34:38 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1727985AbfGZPZl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 11:25:41 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DC062218D4;
+        Fri, 26 Jul 2019 15:25:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564154740;
+        bh=1HpdXPdCH3AGliimYDa8ivFia1SmaPzjNwsuVwn7LSQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=RMeJ2QhS4p+CGzyN/tbpLlaFeuoCdpmxI4X4AtPvLuJ6becvQT7uTJljivBMaBZ2y
+         S9nt1BonZSNQVwkMiFNKyzESc38bWBCdV37V0z6QDsn8+jO61AW5UTtHE6BTNRAtMK
+         1spgqzc+OHJiAx7IuaXkClEF0J5zYaaMegWcvzGw=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Haiyang Zhang <haiyangz@microsoft.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.2 03/66] hv_netvsc: Fix extra rcu_read_unlock in netvsc_recv_callback()
+Date:   Fri, 26 Jul 2019 17:24:02 +0200
+Message-Id: <20190726152302.308798082@linuxfoundation.org>
+X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20190726152301.936055394@linuxfoundation.org>
+References: <20190726152301.936055394@linuxfoundation.org>
+User-Agent: quilt/0.66
 MIME-Version: 1.0
-In-Reply-To: <20190726140635.GB8767@kroah.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Haiyang Zhang <haiyangz@microsoft.com>
 
->> +static const struct file_operations intel_reg_fops = {
->> +	.open = simple_open,
->> +	.read = intel_reg_read,
->> +	.llseek = default_llseek,
->> +};
-> 
-> DEFINE_SIMPLE_ATTRIBUTE()?
+[ Upstream commit be4363bdf0ce9530f15aa0a03d1060304d116b15 ]
 
-yes
+There is an extra rcu_read_unlock left in netvsc_recv_callback(),
+after a previous patch that removes RCU from this function.
+This patch removes the extra RCU unlock.
 
-> 
->> +
->> +static void intel_debugfs_init(struct sdw_intel *sdw)
->> +{
->> +	struct dentry *root = sdw->cdns.bus.debugfs;
->> +
->> +	if (!root)
->> +		return;
->> +
->> +	sdw->fs = debugfs_create_dir("intel-sdw", root);
->> +	if (IS_ERR_OR_NULL(sdw->fs)) {
->> +		dev_err(sdw->cdns.dev, "debugfs root creation failed\n");
-> 
-> No, come on, don't do that.  I've been sweeping the kernel tree to
-> remove this anti-pattern.
-> 
-> The debugfs core will print an error if you got something wrong, just
-> call the function and move on, you NEVER need to check the return value
-> of a debugfs call.
+Fixes: 345ac08990b8 ("hv_netvsc: pass netvsc_device to receive callback")
+Signed-off-by: Haiyang Zhang <haiyangz@microsoft.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/net/hyperv/netvsc_drv.c |    1 -
+ 1 file changed, 1 deletion(-)
 
-Yes, sorry to make your blood pressure go up... I missed this one in the 
-cleanups yesterday. will fix.
+--- a/drivers/net/hyperv/netvsc_drv.c
++++ b/drivers/net/hyperv/netvsc_drv.c
+@@ -836,7 +836,6 @@ int netvsc_recv_callback(struct net_devi
+ 
+ 	if (unlikely(!skb)) {
+ 		++net_device_ctx->eth_stats.rx_no_memory;
+-		rcu_read_unlock();
+ 		return NVSP_STAT_FAIL;
+ 	}
+ 
+
+
