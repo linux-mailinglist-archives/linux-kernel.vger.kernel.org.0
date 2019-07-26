@@ -2,120 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC6B376C97
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 17:25:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE11376CA4
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 17:26:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728468AbfGZPZn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 11:25:43 -0400
-Received: from vps01.wiesinger.com ([46.36.37.179]:45074 "EHLO
-        vps01.wiesinger.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728369AbfGZPZj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 11:25:39 -0400
-Received: from wiesinger.com (wiesinger.com [84.113.44.87])
-        by vps01.wiesinger.com (Postfix) with ESMTPS id 88D6A9F1FD;
-        Fri, 26 Jul 2019 17:25:36 +0200 (CEST)
-Received: from [192.168.0.14] ([192.168.0.14])
-        (authenticated bits=0)
-        by wiesinger.com (8.15.2/8.15.2) with ESMTPSA id x6QFPYAM011882
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Fri, 26 Jul 2019 17:25:35 +0200
-DKIM-Filter: OpenDKIM Filter v2.11.0 wiesinger.com x6QFPYAM011882
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wiesinger.com;
-        s=default; t=1564154735;
-        bh=y4jI+N3udLkUBt/fdlluM+w0Q7vkRjreRmtO4xFTGMc=;
-        h=Subject:References:To:From:Cc:Date:In-Reply-To:From;
-        b=rh4n4TLWnQdWhmU5yzvkShXSQWJY7ncWE7fsOBg28ZJcMils48RwZxjhUXpyX0k5B
-         i7EnWgys+08L+eb5a6xOxHtolE7be5K1zMsxX75foKVQhYNU61M58uUae0K1dnr0ey
-         jdSnZHR+MomzLLOpMwwHxhpuZ6nznn75V6o4RRJhd6fD/+lbsvfjqzCtwRxkE+7PQs
-         zGWUYJclWfmLHdOyZMJOzM1Olefe7GtEN5p2VUxtftjBdtMOEnvBUvpAn0bFmXK+Dc
-         7cN6e37ccsknS+fYi+caZwVhab4Iv5oILeWfukquRmj3J/VS1aDv4y1upx1TH3Cupi
-         /jfkrseu5mHMdDkhqYvdEFCgSLVqXa0+ud9tynlOsRFf/HQvqJY62kzKCpf3kCAJgC
-         ceX7M2Qalhvv1tw+Gwd5JkMpvfhIc9jdadCcCJmFSlCTuOdbmsc3fytAUF0W5VWX7I
-         geHj/Rw0YnU2yerNyXhAwLvEYGyzlD/sn0p+ah5JvGLa1G5RrxCi3POrYraOvsx/62
-         AuzQ+Lp1tthpBCy75fhcrBGmvpliElzSGEkExHS4MZci8v8zidL1J6mp0vdp79DVOY
-         4kd6tCPL+mwW4uzevhwNhImH3kiJba6CuAy3IFcPKyPGezoJoT+75sJ1ZVF//2wN1I
-         aXosbySzGCo+Hk3Iv2pMTci0=
-Subject: platform/x86/pcengines-apuv2: Missing apu4
-References: <02b34d18-27bc-cb48-f698-03df61df7d91@wiesinger.com>
-To:     Florian Eckert <fe@dev.tdt.de>, Eckert.Florian@googlemail.com,
-        info@metux.net, dvhart@infradead.org, andy@infradead.org
-From:   Gerhard Wiesinger <lists@wiesinger.com>
-Cc:     platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-X-Forwarded-Message-Id: <02b34d18-27bc-cb48-f698-03df61df7d91@wiesinger.com>
-Message-ID: <2f22106f-4d13-f3a7-0862-3a71762d62ab@wiesinger.com>
-Date:   Fri, 26 Jul 2019 17:25:34 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+        id S2387835AbfGZP0I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 11:26:08 -0400
+Received: from mga11.intel.com ([192.55.52.93]:33806 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387681AbfGZP0D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 11:26:03 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jul 2019 08:26:02 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,311,1559545200"; 
+   d="scan'208";a="322065176"
+Received: from msmall-mobl.amr.corp.intel.com (HELO [10.251.154.62]) ([10.251.154.62])
+  by orsmga004.jf.intel.com with ESMTP; 26 Jul 2019 08:26:01 -0700
+Subject: Re: [alsa-devel] [RFC PATCH 21/40] soundwire: export helpers to find
+ row and column values
+To:     Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
+Cc:     alsa-devel@alsa-project.org, tiwai@suse.de,
+        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        vkoul@kernel.org, broonie@kernel.org,
+        srinivas.kandagatla@linaro.org, jank@cadence.com,
+        slawomir.blauciak@intel.com, Sanyog Kale <sanyog.r.kale@intel.com>
+References: <20190725234032.21152-1-pierre-louis.bossart@linux.intel.com>
+ <20190725234032.21152-22-pierre-louis.bossart@linux.intel.com>
+ <20190726144325.GH16003@ubuntu>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <d6268a75-b38c-aee5-0463-af8b602286bb@linux.intel.com>
+Date:   Fri, 26 Jul 2019 10:26:01 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <02b34d18-27bc-cb48-f698-03df61df7d91@wiesinger.com>
+In-Reply-To: <20190726144325.GH16003@ubuntu>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
-
-I saw that the apu4 board is completly missing (also on 5.3rc1). Can you 
-please add it. Should be very easy, see below.
-
-https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/drivers/platform/x86/pcengines-apuv2.c?h=v5.1.20
-
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/platform/x86/pcengines-apuv2.c?h=v5.3-rc1
 
 
-For further rference:
+On 7/26/19 9:43 AM, Guennadi Liakhovetski wrote:
+> On Thu, Jul 25, 2019 at 06:40:13PM -0500, Pierre-Louis Bossart wrote:
+>> Add a prefix for common tables and export 2 helpers to set the frame
+>> shapes based on row/col values.
+>>
+>> Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+>> ---
+>>   drivers/soundwire/bus.h    |  7 +++++--
+>>   drivers/soundwire/stream.c | 14 ++++++++------
+>>   2 files changed, 13 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/drivers/soundwire/bus.h b/drivers/soundwire/bus.h
+>> index 06ac4adb0074..c57c9c23f6ca 100644
+>> --- a/drivers/soundwire/bus.h
+>> +++ b/drivers/soundwire/bus.h
+>> @@ -73,8 +73,11 @@ struct sdw_msg {
+>>   
+>>   #define SDW_DOUBLE_RATE_FACTOR		2
+>>   
+>> -extern int rows[SDW_FRAME_ROWS];
+>> -extern int cols[SDW_FRAME_COLS];
+>> +extern int sdw_rows[SDW_FRAME_ROWS];
+>> +extern int sdw_cols[SDW_FRAME_COLS];
+> 
+> So these arrays actually have to be exported? In the current (5.2) sources they
+> seem to only be used in stream.c, maybe make them static there?
+> 
+>> +
+>> +int sdw_find_row_index(int row);
+>> +int sdw_find_col_index(int col);
 
-https://www.pcengines.ch/apu2.htm
-
-https://www.pcengines.ch/apu4c2.htm
-
-https://www.pcengines.ch/apu4c4.htm
-
-Please backport it also to 5.1.x and 5.2.x.
-
-
-Thnx.
-
-Ciao,
-
-Gerhard
-
-
-     /* APU4 w/ legacy bios < 4.0.8 */
-     {
-         .ident        = "apu4",
-         .matches    = {
-             DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
-             DMI_MATCH(DMI_BOARD_NAME, "APU4")
-         },
-         .driver_data = (void *)&board_apu2,
-     },
-     /* APU4 w/ legacy bios >= 4.0.8 */
-     {
-         .ident       = "apu4",
-         .matches     = {
-             DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
-             DMI_MATCH(DMI_BOARD_NAME, "apu4)
-         },
-         .driver_data = (void *)&board_apu2,
-     },
-     /* APU4 w/ mainline bios */
-     {
-         .ident       = "apu4",
-         .matches     = {
-             DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
-             DMI_MATCH(DMI_BOARD_NAME, "PC Engines apu4")
-         },
-         .driver_data = (void *)&board_apu2,
-     },
-
-
-|
-
-MODULE_DESCRIPTION("PC Engines APUv2/APUv3/APUv4 board GPIO/LED/keys 
-driver"); |
-
+yes, they need to be exported, they are used by the allocation algorithm 
+(in Patch 27).
+Others will need this for non-Intel solutions, it's really a part of the 
+standard definition and should be shared.
+I can improve the commit message to make this explicit.
