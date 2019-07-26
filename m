@@ -2,290 +2,280 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E467776D80
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 17:35:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB5FA76D12
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 17:31:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389789AbfGZPeG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 11:34:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49574 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388449AbfGZPeE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 11:34:04 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 947BF2054F;
-        Fri, 26 Jul 2019 15:34:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564155243;
-        bh=Zbddla8VV+mKzdfXhWuEssTmkq3nJ7p212+T/dx9BZ0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=U+PaCLx8oyqPVv3zbRLYuohZRXINoNQOxvCnFYWjt6JtfLg8iPcGFmJCmowht/7dN
-         l6vcBL22UMrSGOzQPfnaJG1j8NBVNcXEPrEWSTN+vW2gC2nIeU9nzewu1LyOLX7UmQ
-         /Jp3C2IMnVLmPtbD88dBme37/JddA3UOU0ZYp0S8=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kuo-Hsin Yang <vovoy@chromium.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Sonny Rao <sonnyrao@chromium.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Rik van Riel <riel@redhat.com>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.19 50/50] mm: vmscan: scan anonymous pages on file refaults
-Date:   Fri, 26 Jul 2019 17:25:25 +0200
-Message-Id: <20190726152306.041848000@linuxfoundation.org>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190726152300.760439618@linuxfoundation.org>
-References: <20190726152300.760439618@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S2388998AbfGZPaG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 11:30:06 -0400
+Received: from mx2.suse.de ([195.135.220.15]:34250 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728518AbfGZPaD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 11:30:03 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id F15B8B628;
+        Fri, 26 Jul 2019 15:29:54 +0000 (UTC)
+From:   Nikolay Borisov <nborisov@suse.com>
+Subject: Re: [PATCH 3/5] Btrfs: only associate the locked page with one
+ async_cow struct
+To:     Chris Mason <clm@fb.com>
+Cc:     Kernel Team <Kernel-team@fb.com>,
+        "axboe@kernel.dk" <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
+        David Sterba <dsterba@suse.com>, "jack@suse.cz" <jack@suse.cz>,
+        "josef@toxicpanda.com" <josef@toxicpanda.com>,
+        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20190710192818.1069475-1-tj@kernel.org>
+ <20190710192818.1069475-4-tj@kernel.org>
+ <0522e068-57d0-f7f2-6500-f431225bdc73@suse.com>
+ <C459F9B6-8154-4099-BC62-C3DCCAF56CE2@fb.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=nborisov@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <c2419d01-5c84-3fb4-189e-4db519d08796@suse.com>
+Date:   Fri, 26 Jul 2019 18:29:00 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <C459F9B6-8154-4099-BC62-C3DCCAF56CE2@fb.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kuo-Hsin Yang <vovoy@chromium.org>
-
-commit 2c012a4ad1a2cd3fb5a0f9307b9d219f84eda1fa upstream.
-
-When file refaults are detected and there are many inactive file pages,
-the system never reclaim anonymous pages, the file pages are dropped
-aggressively when there are still a lot of cold anonymous pages and
-system thrashes.  This issue impacts the performance of applications
-with large executable, e.g.  chrome.
-
-With this patch, when file refault is detected, inactive_list_is_low()
-always returns true for file pages in get_scan_count() to enable
-scanning anonymous pages.
-
-The problem can be reproduced by the following test program.
-
----8<---
-void fallocate_file(const char *filename, off_t size)
-{
-	struct stat st;
-	int fd;
-
-	if (!stat(filename, &st) && st.st_size >= size)
-		return;
-
-	fd = open(filename, O_WRONLY | O_CREAT, 0600);
-	if (fd < 0) {
-		perror("create file");
-		exit(1);
-	}
-	if (posix_fallocate(fd, 0, size)) {
-		perror("fallocate");
-		exit(1);
-	}
-	close(fd);
-}
-
-long *alloc_anon(long size)
-{
-	long *start = malloc(size);
-	memset(start, 1, size);
-	return start;
-}
-
-long access_file(const char *filename, long size, long rounds)
-{
-	int fd, i;
-	volatile char *start1, *end1, *start2;
-	const int page_size = getpagesize();
-	long sum = 0;
-
-	fd = open(filename, O_RDONLY);
-	if (fd == -1) {
-		perror("open");
-		exit(1);
-	}
-
-	/*
-	 * Some applications, e.g. chrome, use a lot of executable file
-	 * pages, map some of the pages with PROT_EXEC flag to simulate
-	 * the behavior.
-	 */
-	start1 = mmap(NULL, size / 2, PROT_READ | PROT_EXEC, MAP_SHARED,
-		      fd, 0);
-	if (start1 == MAP_FAILED) {
-		perror("mmap");
-		exit(1);
-	}
-	end1 = start1 + size / 2;
-
-	start2 = mmap(NULL, size / 2, PROT_READ, MAP_SHARED, fd, size / 2);
-	if (start2 == MAP_FAILED) {
-		perror("mmap");
-		exit(1);
-	}
-
-	for (i = 0; i < rounds; ++i) {
-		struct timeval before, after;
-		volatile char *ptr1 = start1, *ptr2 = start2;
-		gettimeofday(&before, NULL);
-		for (; ptr1 < end1; ptr1 += page_size, ptr2 += page_size)
-			sum += *ptr1 + *ptr2;
-		gettimeofday(&after, NULL);
-		printf("File access time, round %d: %f (sec)
-", i,
-		       (after.tv_sec - before.tv_sec) +
-		       (after.tv_usec - before.tv_usec) / 1000000.0);
-	}
-	return sum;
-}
-
-int main(int argc, char *argv[])
-{
-	const long MB = 1024 * 1024;
-	long anon_mb, file_mb, file_rounds;
-	const char filename[] = "large";
-	long *ret1;
-	long ret2;
-
-	if (argc != 4) {
-		printf("usage: thrash ANON_MB FILE_MB FILE_ROUNDS
-");
-		exit(0);
-	}
-	anon_mb = atoi(argv[1]);
-	file_mb = atoi(argv[2]);
-	file_rounds = atoi(argv[3]);
-
-	fallocate_file(filename, file_mb * MB);
-	printf("Allocate %ld MB anonymous pages
-", anon_mb);
-	ret1 = alloc_anon(anon_mb * MB);
-	printf("Access %ld MB file pages
-", file_mb);
-	ret2 = access_file(filename, file_mb * MB, file_rounds);
-	printf("Print result to prevent optimization: %ld
-",
-	       *ret1 + ret2);
-	return 0;
-}
----8<---
-
-Running the test program on 2GB RAM VM with kernel 5.2.0-rc5, the program
-fills ram with 2048 MB memory, access a 200 MB file for 10 times.  Without
-this patch, the file cache is dropped aggresively and every access to the
-file is from disk.
-
-  $ ./thrash 2048 200 10
-  Allocate 2048 MB anonymous pages
-  Access 200 MB file pages
-  File access time, round 0: 2.489316 (sec)
-  File access time, round 1: 2.581277 (sec)
-  File access time, round 2: 2.487624 (sec)
-  File access time, round 3: 2.449100 (sec)
-  File access time, round 4: 2.420423 (sec)
-  File access time, round 5: 2.343411 (sec)
-  File access time, round 6: 2.454833 (sec)
-  File access time, round 7: 2.483398 (sec)
-  File access time, round 8: 2.572701 (sec)
-  File access time, round 9: 2.493014 (sec)
-
-With this patch, these file pages can be cached.
-
-  $ ./thrash 2048 200 10
-  Allocate 2048 MB anonymous pages
-  Access 200 MB file pages
-  File access time, round 0: 2.475189 (sec)
-  File access time, round 1: 2.440777 (sec)
-  File access time, round 2: 2.411671 (sec)
-  File access time, round 3: 1.955267 (sec)
-  File access time, round 4: 0.029924 (sec)
-  File access time, round 5: 0.000808 (sec)
-  File access time, round 6: 0.000771 (sec)
-  File access time, round 7: 0.000746 (sec)
-  File access time, round 8: 0.000738 (sec)
-  File access time, round 9: 0.000747 (sec)
-
-Checked the swap out stats during the test [1], 19006 pages swapped out
-with this patch, 3418 pages swapped out without this patch. There are
-more swap out, but I think it's within reasonable range when file backed
-data set doesn't fit into the memory.
-
-$ ./thrash 2000 100 2100 5 1 # ANON_MB FILE_EXEC FILE_NOEXEC ROUNDS
-PROCESSES Allocate 2000 MB anonymous pages active_anon: 1613644,
-inactive_anon: 348656, active_file: 892, inactive_file: 1384 (kB)
-pswpout: 7972443, pgpgin: 478615246 Access 100 MB executable file pages
-Access 2100 MB regular file pages File access time, round 0: 12.165,
-(sec) active_anon: 1433788, inactive_anon: 478116, active_file: 17896,
-inactive_file: 24328 (kB) File access time, round 1: 11.493, (sec)
-active_anon: 1430576, inactive_anon: 477144, active_file: 25440,
-inactive_file: 26172 (kB) File access time, round 2: 11.455, (sec)
-active_anon: 1427436, inactive_anon: 476060, active_file: 21112,
-inactive_file: 28808 (kB) File access time, round 3: 11.454, (sec)
-active_anon: 1420444, inactive_anon: 473632, active_file: 23216,
-inactive_file: 35036 (kB) File access time, round 4: 11.479, (sec)
-active_anon: 1413964, inactive_anon: 471460, active_file: 31728,
-inactive_file: 32224 (kB) pswpout: 7991449 (+ 19006), pgpgin: 489924366
-(+ 11309120)
-
-With 4 processes accessing non-overlapping parts of a large file, 30316
-pages swapped out with this patch, 5152 pages swapped out without this
-patch.  The swapout number is small comparing to pgpgin.
-
-[1]: https://github.com/vovo/testing/blob/master/mem_thrash.c
-
-Link: http://lkml.kernel.org/r/20190701081038.GA83398@google.com
-Fixes: e9868505987a ("mm,vmscan: only evict file pages when we have plenty")
-Fixes: 7c5bd705d8f9 ("mm: memcg: only evict file pages when we have plenty")
-Signed-off-by: Kuo-Hsin Yang <vovoy@chromium.org>
-Acked-by: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Sonny Rao <sonnyrao@chromium.org>
-Cc: Mel Gorman <mgorman@techsingularity.net>
-Cc: Rik van Riel <riel@redhat.com>
-Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
-Cc: Minchan Kim <minchan@kernel.org>
-Cc: <stable@vger.kernel.org>	[4.12+]
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-[backported to 4.14.y, 4.19.y, 5.1.y: adjust context]
-Signed-off-by: Kuo-Hsin Yang <vovoy@chromium.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- mm/vmscan.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -2190,7 +2190,7 @@ static void shrink_active_list(unsigned
-  *   10TB     320        32GB
-  */
- static bool inactive_list_is_low(struct lruvec *lruvec, bool file,
--				 struct scan_control *sc, bool actual_reclaim)
-+				 struct scan_control *sc, bool trace)
- {
- 	enum lru_list active_lru = file * LRU_FILE + LRU_ACTIVE;
- 	struct pglist_data *pgdat = lruvec_pgdat(lruvec);
-@@ -2216,7 +2216,7 @@ static bool inactive_list_is_low(struct
- 	 * rid of the stale workingset quickly.
- 	 */
- 	refaults = lruvec_page_state(lruvec, WORKINGSET_ACTIVATE);
--	if (file && actual_reclaim && lruvec->refaults != refaults) {
-+	if (file && lruvec->refaults != refaults) {
- 		inactive_ratio = 0;
- 	} else {
- 		gb = (inactive + active) >> (30 - PAGE_SHIFT);
-@@ -2226,7 +2226,7 @@ static bool inactive_list_is_low(struct
- 			inactive_ratio = 1;
- 	}
- 
--	if (actual_reclaim)
-+	if (trace)
- 		trace_mm_vmscan_inactive_list_is_low(pgdat->node_id, sc->reclaim_idx,
- 			lruvec_lru_size(lruvec, inactive_lru, MAX_NR_ZONES), inactive,
- 			lruvec_lru_size(lruvec, active_lru, MAX_NR_ZONES), active,
 
 
+On 11.07.19 г. 22:52 ч., Chris Mason wrote:
+> On 11 Jul 2019, at 12:00, Nikolay Borisov wrote:
+> 
+>> On 10.07.19 г. 22:28 ч., Tejun Heo wrote:
+>>> From: Chris Mason <clm@fb.com>
+>>>
+>>> The btrfs writepages function collects a large range of pages flagged
+>>> for delayed allocation, and then sends them down through the COW code
+>>> for processing.  When compression is on, we allocate one async_cow
+>>
+>> nit: The code no longer uses async_cow to represent in-flight chunks 
+>> but
+>> the more aptly named async_chunk. Presumably this patchset predates
+>> those changes.
+> 
+> Not by much, but yes.
+> 
+>>
+>>>
+>>> The end result is that cowA is completed and cleaned up before cowB 
+>>> even
+>>> starts processing.  This means we can free locked_page() and reuse it
+>>> elsewhere.  If we get really lucky, it'll have the same page->index 
+>>> in
+>>> its new home as it did before.
+>>>
+>>> While we're processing cowB, we might decide we need to fall back to
+>>> uncompressed IO, and so compress_file_range() will call
+>>> __set_page_dirty_nobufers() on cowB->locked_page.
+>>>
+>>> Without cgroups in use, this creates as a phantom dirty page, which> 
+>>> isn't great but isn't the end of the world.  With cgroups in use, we
+>>
+>> Having a phantom dirty page is not great but not terrible without
+>> cgroups but apart from that, does it have any other implications?
+> 
+> Best case, it'll go through the writepage fixup worker and go through 
+> the whole cow machinery again.  Worst case we go to this code more than 
+> once:
+> 
+>                          /*
+>                           * if page_started, cow_file_range inserted an
+>                           * inline extent and took care of all the 
+> unlocking
+>                           * and IO for us.  Otherwise, we need to submit
+>                           * all those pages down to the drive.
+>                           */
+>                          if (!page_started && !ret)
+>                                  extent_write_locked_range(inode,
+>                                                    async_extent->start,
+>                                                    async_extent->start +
+>                                                    async_extent->ram_size 
+> - 1,
+>                                                    WB_SYNC_ALL);
+>                          else if (ret)
+>                                  unlock_page(async_chunk->locked_page);
+> 
+> 
+> That never happened in production as far as I can tell, but it seems 
+> possible.
+> 
+>>
+>>
+>>> might crash in the accounting code because page->mapping->i_wb isn't
+>>> set.
+>>>
+>>> [ 8308.523110] BUG: unable to handle kernel NULL pointer dereference 
+>>> at 00000000000000d0
+>>> [ 8308.531084] IP: percpu_counter_add_batch+0x11/0x70
+>>> [ 8308.538371] PGD 66534e067 P4D 66534e067 PUD 66534f067 PMD 0
+>>> [ 8308.541750] Oops: 0000 [#1] SMP DEBUG_PAGEALLOC
+>>> [ 8308.551948] CPU: 16 PID: 2172 Comm: rm Not tainted
+>>> [ 8308.566883] RIP: 0010:percpu_counter_add_batch+0x11/0x70
+>>> [ 8308.567891] RSP: 0018:ffffc9000a97bbe0 EFLAGS: 00010286
+>>> [ 8308.568986] RAX: 0000000000000005 RBX: 0000000000000090 RCX: 
+>>> 0000000000026115
+>>> [ 8308.570734] RDX: 0000000000000030 RSI: ffffffffffffffff RDI: 
+>>> 0000000000000090
+>>> [ 8308.572543] RBP: 0000000000000000 R08: fffffffffffffff5 R09: 
+>>> 0000000000000000
+>>> [ 8308.573856] R10: 00000000000260c0 R11: ffff881037fc26c0 R12: 
+>>> ffffffffffffffff
+>>> [ 8308.580099] R13: ffff880fe4111548 R14: ffffc9000a97bc90 R15: 
+>>> 0000000000000001
+>>> [ 8308.582520] FS:  00007f5503ced480(0000) GS:ffff880ff7200000(0000) 
+>>> knlGS:0000000000000000
+>>> [ 8308.585440] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>>> [ 8308.587951] CR2: 00000000000000d0 CR3: 00000001e0459005 CR4: 
+>>> 0000000000360ee0
+>>> [ 8308.590707] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 
+>>> 0000000000000000
+>>> [ 8308.592865] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 
+>>> 0000000000000400
+>>> [ 8308.594469] Call Trace:
+>>> [ 8308.595149]  account_page_cleaned+0x15b/0x1f0
+>>> [ 8308.596340]  __cancel_dirty_page+0x146/0x200
+>>> [ 8308.599395]  truncate_cleanup_page+0x92/0xb0
+>>> [ 8308.600480]  truncate_inode_pages_range+0x202/0x7d0
+>>> [ 8308.617392]  btrfs_evict_inode+0x92/0x5a0
+>>> [ 8308.619108]  evict+0xc1/0x190
+>>> [ 8308.620023]  do_unlinkat+0x176/0x280
+>>> [ 8308.621202]  do_syscall_64+0x63/0x1a0
+>>> [ 8308.623451]  entry_SYSCALL_64_after_hwframe+0x42/0xb7
+>>>
+>>> The fix here is to make asyc_cow->locked_page NULL everywhere but the
+>>> one async_cow struct that's allowed to do things to the locked page.
+>>>
+>>> Signed-off-by: Chris Mason <clm@fb.com>
+>>> Fixes: 771ed689d2cd ("Btrfs: Optimize compressed writeback and 
+>>> reads")
+>>> Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+>>> ---
+>>>  fs/btrfs/extent_io.c |  2 +-
+>>>  fs/btrfs/inode.c     | 25 +++++++++++++++++++++----
+>>>  2 files changed, 22 insertions(+), 5 deletions(-)
+>>>
+>>> diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
+>>> index 5106008f5e28..a31574df06aa 100644
+>>> --- a/fs/btrfs/extent_io.c
+>>> +++ b/fs/btrfs/extent_io.c
+>>> @@ -1838,7 +1838,7 @@ static int __process_pages_contig(struct 
+>>> address_space *mapping,
+>>>  			if (page_ops & PAGE_SET_PRIVATE2)
+>>>  				SetPagePrivate2(pages[i]);
+>>>
+>>> -			if (pages[i] == locked_page) {
+>>> +			if (locked_page && pages[i] == locked_page) {
+>>
+>> Why not make the check just if (locked_page) then clean it up, since 
+>> if
+>> __process_pages_contig is called from the owner of the page then it's
+>> guaranteed that the page will fall within it's range.
+> 
+> I'm not convinced that every single caller of __process_pages_contig is 
+> making sure to only send locked_page for ranges that correspond to the 
+> locked_page.  I'm not sure exactly what you're asking for though, it 
+> looks like it would require some larger changes to the flow of that 
+> loop.
+
+
+What I meant it is to simply factor out the code dealing with locked
+page outside of the loop and still place it inside
+__process_pages_contig. Also looking at the way locked_pages is passed
+across different call chains I arrive at:
+
+
+compress_file_range  <-- locked page is null
+ extent_clear_unlock_delalloc
+  __process_pages_contig
+
+submit_compressed_extents <---- locked page is null
+ extent_clear_unlock_delalloc
+  __process_pages_contig
+
+btrfs_run_delalloc_range | run_delalloc_nocow
+ cow_file_range <--- [when called from btrfs_run_delalloc_range we are
+all fine and dandy because it will always iterates a range which belongs
+to the page. So we can free the page and set it null for subsequent
+passes of the loop.]
+
+Looking run_delalloc_nocow I see the page is used 5
+times - 2 of those, at the beginning and end of the function, are only
+used during error cases. The other 2 times is if cow_start is different
+than -1 , which happens if !nocow is true. I've yet to wrap my head
+around run_delalloc_nocow but I think it should also be safe to pass
+locked page just once.
+
+cow_file_range_async <--- always called with the correct locked page, in
+this case the function is called before any async chunks are going to be
+submitted.
+ extent_clear_unlock_delalloc
+  __process_pages_contig
+
+btrfs_run_delalloc_range <--- this one is called with locked_page
+belonging to the passed delalloc range.
+ run_delalloc_nocow
+  extent_clear_unlock_delalloc
+   __process_pages_contig
+
+
+writepage_delalloc <-- calls find_lock_delalloc_range only if we aren't
+caalled from compress path and the start range always belongs to the page
+ find_lock_delalloc_range <----  if the range is not delalloc it will
+retry. But that function is also called with the correct page.
+  lock_delalloc_pages <--- ignores range which belongs only to this page
+    __unlock_for_delaloc <--- ignores range which belongs only to this page
+
+
+
+
+<snip>
