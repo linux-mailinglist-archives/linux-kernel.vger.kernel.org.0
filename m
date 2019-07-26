@@ -2,98 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F3E976C79
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 17:19:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 705EA76C82
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 17:21:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728186AbfGZPTW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 11:19:22 -0400
-Received: from mail-eopbgr140053.outbound.protection.outlook.com ([40.107.14.53]:42469
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726681AbfGZPTW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 11:19:22 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=c+oNplWQAaolRCP+bxsHDba066ndJh7f7MY6cJdeKq2fg3j9MBxI61Lp6J8R6s4krPOb7sfarUwwan1GHMpS5nW9Ux5gmxcA1tNTducpDUKvWIB/ucnONaVglz3C2REnU5qcZq8Gx1ppt3Mx/Sg2ncbjfW+szB0YtjFJIUjN8lF/Ps7OVPv7oTWj8NAPVRAVdt+mYGKrXXGse+iy0qsaEEyYVNTCIJbGqcQ5tUG2tHCVxlrOvtvMpWnY1RHy1TYGsl0+r4LQb+ytN1J7nEVFxjxhRWXFMkQWK297AZQ+zPTI/xVsOUmUAzM3oPDNr0nnZavMpX8of9DXiF2AdDJLYw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Xjs7Bp6nmdbHMVAEZ3BZ3jW1f5VMrUB9oWN0BudQTNk=;
- b=gZ3wBE55S9So21vvV+HTyL5JDodnGeBDWO0AGct8FkfaAkeMO8W3YEFk7WsoB1hokdW5Oxzi+t/cBjtdnPf1u7gJqXFcDnXAQk/V/b4Jj6fPyXchULRoNXr/NSyqT1iQVDey/xqVStv2fFvYffxH4MT6mXbw/maconrXgyYKs7qOUh6qASN4L0ukciQQdU9BCGQJgVd/hGXE2FcvCI0TDpXB1ovSQPWLDVtoYymmeKnc5uUZAs8cbiDrHFdg3YpMdlQQKJuzrhIvv95EQW10UpOCW3bHVQ56ut0hn5p+QFonrmhn4+o0TGLqT/0Dn+r/IYihBeIS06GlRm1m6LvoRQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
- smtp.mailfrom=nxp.com;dmarc=pass action=none header.from=nxp.com;dkim=pass
- header.d=nxp.com;arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Xjs7Bp6nmdbHMVAEZ3BZ3jW1f5VMrUB9oWN0BudQTNk=;
- b=OFtWV+bBM36mXwFMdJ0/aVTjwRlplBdBrvjNdf39utEU6MZHvS6cIe8DmGHzugzHIQ1mmKoasRbGoxGm4/rOCO62y6ZgI8DPDPSBFLAWP6Y8s7rbwPdLr/uG1ynxGrk3tLkDeQa8KDVPV0bEfvcIIHYpElCxq9F062zfF65l6eU=
-Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com (52.134.3.153) by
- VI1PR0402MB3742.eurprd04.prod.outlook.com (52.134.15.148) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2115.14; Fri, 26 Jul 2019 15:19:19 +0000
-Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com
- ([fe80::7c64:5296:4607:e10]) by VI1PR0402MB3485.eurprd04.prod.outlook.com
- ([fe80::7c64:5296:4607:e10%5]) with mapi id 15.20.2094.017; Fri, 26 Jul 2019
- 15:19:18 +0000
-From:   Horia Geanta <horia.geanta@nxp.com>
-To:     Iuliana Prodan <iuliana.prodan@nxp.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Aymen Sghaier <aymen.sghaier@nxp.com>
-CC:     "David S. Miller" <davem@davemloft.net>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH v3 04/14] crypto: caam - check key length
-Thread-Topic: [PATCH v3 04/14] crypto: caam - check key length
-Thread-Index: AQHVQvEQZTrNEftHI0aaBTmv2mddVQ==
-Date:   Fri, 26 Jul 2019 15:19:18 +0000
-Message-ID: <VI1PR0402MB3485A18BFAC50302DB3DF72F98C00@VI1PR0402MB3485.eurprd04.prod.outlook.com>
-References: <1564063106-9552-1-git-send-email-iuliana.prodan@nxp.com>
- <1564063106-9552-5-git-send-email-iuliana.prodan@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=horia.geanta@nxp.com; 
-x-originating-ip: [79.118.216.219]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: f30882d2-1a4b-4a46-f765-08d711dca11e
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR0402MB3742;
-x-ms-traffictypediagnostic: VI1PR0402MB3742:
-x-microsoft-antispam-prvs: <VI1PR0402MB37427F7291C747E11EF2382298C00@VI1PR0402MB3742.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:6790;
-x-forefront-prvs: 01106E96F6
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(396003)(346002)(136003)(366004)(376002)(189003)(199004)(52536014)(6116002)(6436002)(3846002)(86362001)(5660300002)(66446008)(64756008)(66556008)(66476007)(66946007)(76116006)(91956017)(14454004)(53546011)(6506007)(102836004)(76176011)(2906002)(7696005)(229853002)(478600001)(486006)(305945005)(14444005)(256004)(44832011)(476003)(7736002)(9686003)(71190400001)(99286004)(68736007)(71200400001)(81166006)(81156014)(8676002)(55016002)(110136005)(54906003)(316002)(8936002)(6636002)(74316002)(25786009)(558084003)(6246003)(186003)(66066001)(4326008)(446003)(53936002)(26005)(33656002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB3742;H:VI1PR0402MB3485.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: PgrQTZwRu/IOMxnM28HOgf8n+XnxT25ABNxHarBE5ldfcco14jTuG2Uyif5p6W45tColbmlVcFo53Y8zHd2m+0LanmInnZuFZVMHPlpzFDRkLl63K7UVf/8L6lzmKUEV0bOhaUcBLdgPFKb9MN37DPrL/+rcdZT1+0N9FLrfAWC4JedWl/+uYhDccDmtrRXMyggNi4Hl5sQJmodvRQZilNxvXprT9vKsyHWgiNJThbkbkzDnPkcFAz1mlHeazFO9553fYvq2r2t+LXSo+biTLx6Jo0vyt0Y+b8Up5EeInTtkUzatvmq8xRe3cJhmqMzcuT5q1TvZOLHhkXGydZLeprQBNg4LisppXwTKiUsuXdhwn8vqKZ9EVPcMqqWjw5z026vqmqMCJ4Wn2y1tHE/gI0YqioLVVP48zpILzQxm1Ug=
-Content-Type: text/plain; charset="iso-8859-2"
-Content-Transfer-Encoding: quoted-printable
+        id S1728305AbfGZPVL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 11:21:11 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:44693 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726731AbfGZPVK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 11:21:10 -0400
+Received: by mail-io1-f68.google.com with SMTP id s7so105411329iob.11
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2019 08:21:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=F9G1CH0Ps2FRcZ/NwMc7CwEB3cMwgOdfmNpmMO9HdoM=;
+        b=N0w2rApMLkoaZxE6gBTrU8k8luxL61ZdCWczIF69GZlKQMFUb4lG2guayRg6yAIpbk
+         H1X366pDlqnI3DIuEPp2eBW6njqlQnGw537yrxBAD3BJ8WtV/88SiHMNhsFBE5NfC8Mc
+         6pFDGGrtahrlAC+muBEsD3Uw/mU6kjLtiI4R5g3tYOUIQwjj+xGug574LijMJ9525yyM
+         PBE6JWBDuqPjDFgkXCHTfNPmGyDCt/onMSaEIBQ8DSyYxWlpz9e/7Zj/YiwrwWq4N/JH
+         c1tG2fhMhAiOJtHrldKpL6DVeLTIm6XxQznNCdMNS+EWp3QiFKDkpkNeDLme62XdCPgV
+         PtnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=F9G1CH0Ps2FRcZ/NwMc7CwEB3cMwgOdfmNpmMO9HdoM=;
+        b=ddYwkNme2Olsn/6/ibToIf5LFGxw+ufXwTMDSQaPw6NR6PCtPNJ2jV6nHPaq0y1GTw
+         gJ3A3uOiWSUmYZgrOJ0XAi76D8GJYKWvizyhIfFPHf8lz9isOBdUQIYTHhZmmB/EAvPn
+         Qct4xZ8FqKXrTH4MjEUNv83FjKDiB0khYAiXy2pavj1t5hZJn9sb996Fjrp3XKiDiD45
+         NbDeCoI6fEKiYE+WdUi+Jg3GGzkK94Ak7L6ecCSNZON8hoky1Di2iXoXUbPhOgDmeGw4
+         U4Hrb9yeDgJgaOXMFg9E/EB8H6+59B2NqE1po3ZAX4Yn5Dei3WYLpxiRsZGVIWshD7qT
+         RoyQ==
+X-Gm-Message-State: APjAAAWr0kagDp9BymO9T3zEUcYMCSoP0BTYOnygC2kEpvCqgM5pUUXQ
+        Uh50DhgBNMgXKCbRhuPGqZGWnDhSGnQdkC2sgZo8/A==
+X-Google-Smtp-Source: APXvYqzWkKaER3d1SoL4pM51luD5r76GIZCi5wBc/4zHT9xYg4/8N5PMzy6UISLqCi9oNf8Xd9jLBaT9T4dOYpBVyvo=
+X-Received: by 2002:a5d:80d6:: with SMTP id h22mr65334094ior.231.1564154468687;
+ Fri, 26 Jul 2019 08:21:08 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f30882d2-1a4b-4a46-f765-08d711dca11e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Jul 2019 15:19:18.9403
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: horia.geanta@nxp.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB3742
+References: <00000000000052ad6b058e722ba4@google.com> <20190726130013.GC2368@arrakis.emea.arm.com>
+In-Reply-To: <20190726130013.GC2368@arrakis.emea.arm.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Fri, 26 Jul 2019 17:20:55 +0200
+Message-ID: <CACT4Y+b5H4jvY34iT2K0m6a2HCpzgKd3dtv+YFsApp=-18B+pw@mail.gmail.com>
+Subject: Re: memory leak in vq_meta_prefetch
+To:     Catalin Marinas <catalin.marinas@arm.com>
+Cc:     syzbot <syzbot+a871c1e6ea00685e73d7@syzkaller.appspotmail.com>,
+        alexandre.belloni@free-electrons.com,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>, nicolas.ferre@atmel.com,
+        Rob Herring <robh@kernel.org>, sre@kernel.org,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/25/2019 4:58 PM, Iuliana Prodan wrote:=0A=
-> Check key length to solve the extra tests that expect -EINVAL to be=0A=
-> returned when the key size is not valid.=0A=
-> =0A=
-> Validated AES keylen for skcipher, ahash and aead.=0A=
-> =0A=
-> Signed-off-by: Iuliana Prodan <iuliana.prodan@nxp.com>=0A=
-Reviewed-by: Horia Geant=E3 <horia.geanta@nxp.com>=0A=
-=0A=
-Thanks,=0A=
-Horia=0A=
+On Fri, Jul 26, 2019 at 3:00 PM Catalin Marinas <catalin.marinas@arm.com> wrote:
+>
+> On Wed, Jul 24, 2019 at 12:18:07PM -0700, syzbot wrote:
+> > syzbot found the following crash on:
+> >
+> > HEAD commit:    c6dd78fc Merge branch 'x86-urgent-for-linus' of git://git...
+> > git tree:       upstream
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=15fffef4600000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=8de7d700ea5ac607
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=a871c1e6ea00685e73d7
+> > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=127b0334600000
+> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12609e94600000
+> >
+> > The bug was bisected to:
+> >
+> > commit 0e5f7d0b39e1f184dc25e3adb580c79e85332167
+> > Author: Nicolas Ferre <nicolas.ferre@atmel.com>
+> > Date:   Wed Mar 16 13:19:49 2016 +0000
+> >
+> >     ARM: dts: at91: shdwc binding: add new shutdown controller documentation
+>
+> That's another wrong commit identification (a documentation patch should
+> not cause a memory leak).
+>
+> I don't really think kmemleak, with its relatively high rate of false
+> positives, is suitable for automated testing like syzbot. You could
+
+Hi Catalin,
+
+Do you mean automated testing in general, or bisection only?
+The wrong commit identification is related to bisection only, but you
+generalized it to automated testing in general. So which exactly you
+mean?
+
+
+> reduce the false positives if you add support for scanning in
+> stop_machine(). Otherwise, in order to avoid locking the kernel for long
+> periods, kmemleak runs concurrently with other threads (even on the
+> current CPU) and under high load, pointers are missed (e.g. they are in
+> CPU registers rather than stack).
