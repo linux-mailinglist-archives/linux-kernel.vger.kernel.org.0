@@ -2,90 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5858F761F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 11:24:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 05E0C761F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 11:25:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726504AbfGZJYV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 05:24:21 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:35880 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725903AbfGZJYV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 05:24:21 -0400
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 67D8CFC61B5C23688CC1;
-        Fri, 26 Jul 2019 17:24:19 +0800 (CST)
-Received: from [127.0.0.1] (10.74.221.148) by DGGEMS413-HUB.china.huawei.com
- (10.3.19.213) with Microsoft SMTP Server id 14.3.439.0; Fri, 26 Jul 2019
- 17:24:13 +0800
-Subject: Re: [PATCH] irqchip/gic-v3-its: Free unused vpt_page when alloc vpe
- table fail
-To:     Marc Zyngier <marc.zyngier@arm.com>
-References: <1564105905-15410-1-git-send-email-zhangshaokun@hisilicon.com>
- <20190726101844.79cb10b5@why>
-CC:     <linux-kernel@vger.kernel.org>,
-        Nianyao Tang <tangnianyao@huawei.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>
-From:   Zhangshaokun <zhangshaokun@hisilicon.com>
-Message-ID: <d33b8161-3ed0-07d6-af8a-d7fcca47f300@hisilicon.com>
-Date:   Fri, 26 Jul 2019 17:24:13 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.1.1
+        id S1726276AbfGZJZy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 05:25:54 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:36755 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726007AbfGZJZy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 05:25:54 -0400
+Received: by mail-lj1-f195.google.com with SMTP id i21so50834972ljj.3
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2019 02:25:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=9+PIbmOU2L0JKXtCkLpSiyF+YIeyaYLwnS78i5Iju9M=;
+        b=dbYOmz3UopyNMm7b+ZL7OYeHZdKMjC8uKvQEM6zd4xeZieU1Gi9gvjgH3EC1AIvYE7
+         duuZwTh1H+R8KFptKI/jmo5gs6vbyo1Hn4Yvszu+PAhMscpBeKE0NUDIEylJzsG9RQXx
+         O2eO72Dl+2cezfYqquobSJ95toySzW4VpudQ7IDc/a/BCdxaZULQMFGSNR1MEkaqRfzu
+         yw4myOKYtau9cDEFTvOv9lQXp+tPo3R7FgKpCKwXTLMufDI4BbufB6HK0z6U+rlKB8h6
+         Txn8SJkVcvNbYm8TbvLQK9gHymzUcOxdcaMUAG9qs1HWphbaCs1bXctY+Umltlf2xL9w
+         VbSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=9+PIbmOU2L0JKXtCkLpSiyF+YIeyaYLwnS78i5Iju9M=;
+        b=lLn8rcYYTn1B+/uNiI4dtnEWPyJO52wsQMmjWavrnqDnlKM/ynx3zt6AjVaBA7wSQ0
+         YBi8INIUU+hV1u+b2wciayic7NJmuVtMTztvi6qAYX7TljZpO3zOarz9nBaLknlPWSYX
+         nAutxoP1PLOrs297CBJS4yEkAINk3ciRWOZR1aG7iajejJYV02yCTrAF/bMiDSS5yXR8
+         amCdFxTFhMD022ISvQ5HK0gG9OyAq9UMbo5aqCJFdFJIpvXC3oVKH+mOOvl5cMJDBWLh
+         z3RsI96TMMVxQovL3uz0prAa6P00TcU8QEWiff01jICvmAyPl6VCUqqg1bTs5rPI460l
+         zjaQ==
+X-Gm-Message-State: APjAAAWB6k6zAlmqUCUYLbEZzHSW/ZZTtxgdzskKUxYfscgbzIBXTZQY
+        BbCkJqVhlaa4Q8b2zrHyPIXSag==
+X-Google-Smtp-Source: APXvYqx3uN2nE7n6qS05F8mg8lPbGXuEEWpcKrx2U8qn9xYeIoCbLmf2xLHai/CRWcn88ThrbBoiNw==
+X-Received: by 2002:a2e:a16c:: with SMTP id u12mr46776497ljl.59.1564133151828;
+        Fri, 26 Jul 2019 02:25:51 -0700 (PDT)
+Received: from localhost (c-243c70d5.07-21-73746f28.bbcust.telenor.se. [213.112.60.36])
+        by smtp.gmail.com with ESMTPSA id m17sm9919308lji.16.2019.07.26.02.25.51
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Fri, 26 Jul 2019 02:25:51 -0700 (PDT)
+From:   Anders Roxell <anders.roxell@linaro.org>
+To:     bmt@zurich.ibm.com, dledford@redhat.com, jgg@ziepe.ca
+Cc:     linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Anders Roxell <anders.roxell@linaro.org>
+Subject: [PATCH] rdma: siw: remove unused variable
+Date:   Fri, 26 Jul 2019 11:25:40 +0200
+Message-Id: <20190726092540.22467-1-anders.roxell@linaro.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20190726101844.79cb10b5@why>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.74.221.148]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marc,
+The variable 'p' si no longer used and the compiler rightly complains
+that it should be removed.
 
-On 2019/7/26 17:18, Marc Zyngier wrote:
-> On Fri, 26 Jul 2019 09:51:45 +0800
-> Shaokun Zhang <zhangshaokun@hisilicon.com> wrote:
-> 
->> From: Nianyao Tang <tangnianyao@huawei.com>
->>
->> In its_vpe_init, when its_alloc_vpe_table fails, we should free
->> vpt_page allocated just before, instead of vpe->vpt_page.
->> Let's fix it.
->>
->> Cc: Thomas Gleixner <tglx@linutronix.de> 
->> Cc: Jason Cooper <jason@lakedaemon.net>
->> Cc: Marc Zyngier <marc.zyngier@arm.com>
->> Signed-off-by: Nianyao Tang <tangnianyao@huawei.com>
->> ---
->>  drivers/irqchip/irq-gic-v3-its.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
->> index 730fbe0..1b5c367 100644
->> --- a/drivers/irqchip/irq-gic-v3-its.c
->> +++ b/drivers/irqchip/irq-gic-v3-its.c
->> @@ -3010,7 +3010,7 @@ static int its_vpe_init(struct its_vpe *vpe)
->>  
->>  	if (!its_alloc_vpe_table(vpe_id)) {
->>  		its_vpe_id_free(vpe_id);
->> -		its_free_pending_table(vpe->vpt_page);
->> +		its_free_pending_table(vpt_page);
->>  		return -ENOMEM;
->>  	}
->>  
-> 
-> Oops, well caught. Please repost this patch with your own SoB added
-> though, as you're posting the patch on behalf of someone else.
-> 
+../drivers/infiniband/sw/siw/siw_mem.c: In function ‘siw_free_plist’:
+../drivers/infiniband/sw/siw/siw_mem.c:66:16: warning: unused variable
+ ‘p’ [-Wunused-variable]
+  struct page **p = chunk->plist;
+                ^
 
-Thanks your reminder and I will do it in v2 version.
+Rework to remove unused variable.
 
-Shaokun
+Fixes: 8288d030447f ("mm/gup: add make_dirty arg to put_user_pages_dirty_lock()")
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+---
+ drivers/infiniband/sw/siw/siw_mem.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-> Thanks,
-> 
-> 	M.
-> 
+diff --git a/drivers/infiniband/sw/siw/siw_mem.c b/drivers/infiniband/sw/siw/siw_mem.c
+index 358d440efa11..ab83a9cec562 100644
+--- a/drivers/infiniband/sw/siw/siw_mem.c
++++ b/drivers/infiniband/sw/siw/siw_mem.c
+@@ -63,8 +63,6 @@ struct siw_mem *siw_mem_id2obj(struct siw_device *sdev, int stag_index)
+ static void siw_free_plist(struct siw_page_chunk *chunk, int num_pages,
+ 			   bool dirty)
+ {
+-	struct page **p = chunk->plist;
+-
+ 	put_user_pages_dirty_lock(chunk->plist, num_pages, dirty);
+ }
+ 
+-- 
+2.20.1
 
