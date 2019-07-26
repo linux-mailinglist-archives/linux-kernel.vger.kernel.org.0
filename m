@@ -2,115 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BA4A76565
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 14:12:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C98D76576
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 14:14:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727111AbfGZMMk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 08:12:40 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:36546 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726739AbfGZMMh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 08:12:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=ZSAFp4Q6v+yIVYlu0OxWtsyuhfSD5zJfL+9vw/k5KdM=; b=RLFSTwJa8Aka
-        Da5Awmtb0PtcUM6vmjvwCyrYta+1Nd+Kpnh9NgA5ZrMdoEkglqtZ9bD59VeiB6iL0/tGBak74gIEF
-        C0AlgFew+6ppy4+84fNJpE4dX5NyoHqBzJdV267I/4tBvqdeXkOrwOSxwHJYQxb+7ptIxD8Z6k6Gq
-        BHmX4=;
-Received: from ypsilon.sirena.org.uk ([2001:470:1f1d:6b5::7])
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hqz5F-0001aa-4t; Fri, 26 Jul 2019 12:12:25 +0000
-Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 8440C2742BAB; Fri, 26 Jul 2019 13:12:24 +0100 (BST)
-From:   Mark Brown <broonie@kernel.org>
-To:     Chenxu Wei <weicx@spreadst.com>
-Cc:     Baolin Wang <baolin.wang@linaro.org>, baolin.wang@linaro.org,
-        broonie@kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>, mark.rutland@arm.com,
-        orsonzhai@gmail.com, robh+dt@kernel.org, sherry.zong@unisoc.com,
-        vincent.guittot@linaro.org, weicx@spreadst.com,
-        zhang.lyra@gmail.com
-Subject: Applied "spi: sprd: adi: Add a reset reason for TOS panic" to the spi tree
-In-Reply-To: <97583aad1f2b849d69b4e76e8d29113da72a9fff.1564125131.git.baolin.wang@linaro.org>
-X-Patchwork-Hint: ignore
-Message-Id: <20190726121224.8440C2742BAB@ypsilon.sirena.org.uk>
-Date:   Fri, 26 Jul 2019 13:12:24 +0100 (BST)
+        id S1727041AbfGZMN7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 08:13:59 -0400
+Received: from foss.arm.com ([217.140.110.172]:42330 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726277AbfGZMN6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 08:13:58 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C1E78337;
+        Fri, 26 Jul 2019 05:13:57 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A0F5C3F694;
+        Fri, 26 Jul 2019 05:13:56 -0700 (PDT)
+Date:   Fri, 26 Jul 2019 13:13:54 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Anders Roxell <anders.roxell@linaro.org>
+Cc:     will@kernel.org, catalin.marinas@arm.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH 1/3] arm64: perf: Mark expected switch fall-through
+Message-ID: <20190726121354.GB26088@lakrids.cambridge.arm.com>
+References: <20190726112716.19104-1-anders.roxell@linaro.org>
+ <20190726121056.GA26088@lakrids.cambridge.arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190726121056.GA26088@lakrids.cambridge.arm.com>
+User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On Fri, Jul 26, 2019 at 01:10:57PM +0100, Mark Rutland wrote:
+> On Fri, Jul 26, 2019 at 01:27:16PM +0200, Anders Roxell wrote:
+> > When fall-through warnings was enabled by default, commit d93512ef0f0e
+> > ("Makefile: Globally enable fall-through warning"), the following
+> > warnings was starting to show up:
+> > 
+> > ../arch/arm64/kernel/hw_breakpoint.c: In function ‘hw_breakpoint_arch_parse’:
+> > ../arch/arm64/kernel/hw_breakpoint.c:540:7: warning: this statement may fall
+> >  through [-Wimplicit-fallthrough=]
+> >     if (hw->ctrl.len == ARM_BREAKPOINT_LEN_1)
+> >        ^
+> > ../arch/arm64/kernel/hw_breakpoint.c:542:3: note: here
+> >    case 2:
+> >    ^~~~
+> > ../arch/arm64/kernel/hw_breakpoint.c:544:7: warning: this statement may fall
+> >  through [-Wimplicit-fallthrough=]
+> >     if (hw->ctrl.len == ARM_BREAKPOINT_LEN_2)
+> >        ^
+> > ../arch/arm64/kernel/hw_breakpoint.c:546:3: note: here
+> >    default:
+> >    ^~~~~~~
+> > 
+> > Rework so that the compiler doesn't warn about fall-through. Rework so
+> > the code looks like the arm code. Since the comment in the function
+> > indicates taht this is supposed to behave the same way as arm32 because
+> 
+> Typo: s/taht/that/
+> 
+> > it handles 32-bit tasks also.
+> > 
+> > Cc: stable@vger.kernel.org # v3.16+
+> > Fixes: 6ee33c2712fc ("ARM: hw_breakpoint: correct and simplify alignment fixup code")
+> > Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+> 
+> The patch itself looks fine, but I don't think this needs a CC to
+> stable, nor does it require that fixes tag, as there's no functional
+> problem.
 
-   spi: sprd: adi: Add a reset reason for TOS panic
+Hmm... I now see I spoke too soon, and this is making the 1-byte
+breakpoint work at a 3-byte offset.
 
-has been applied to the spi tree at
+Given that:
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-5.4
+Acked-by: Mark Rutland <mark.rutland@arm.com>
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+... and the fixes and stable tags are appropriate for that portion of
+the patch.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+Sorry for the noise.
 
 Thanks,
-Mark
+Mark.
 
-From cc6b3431b36a1109d44cb8e4015cc68dddc75208 Mon Sep 17 00:00:00 2001
-From: Chenxu Wei <weicx@spreadst.com>
-Date: Fri, 26 Jul 2019 15:20:49 +0800
-Subject: [PATCH] spi: sprd: adi: Add a reset reason for TOS panic
 
-Add a new reset flag to indicate the reset reason is caused by TOS.
-
-Signed-off-by: Chenxu Wei <weicx@spreadst.com>
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
-Link: https://lore.kernel.org/r/97583aad1f2b849d69b4e76e8d29113da72a9fff.1564125131.git.baolin.wang@linaro.org
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/spi/spi-sprd-adi.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/spi/spi-sprd-adi.c b/drivers/spi/spi-sprd-adi.c
-index 11880db08ce9..0b3f23ad6479 100644
---- a/drivers/spi/spi-sprd-adi.c
-+++ b/drivers/spi/spi-sprd-adi.c
-@@ -86,6 +86,7 @@
- #define BIT_WDG_EN			BIT(2)
- 
- /* Definition of PMIC reset status register */
-+#define HWRST_STATUS_SECURITY		0x02
- #define HWRST_STATUS_RECOVERY		0x20
- #define HWRST_STATUS_NORMAL		0x40
- #define HWRST_STATUS_ALARM		0x50
-@@ -336,6 +337,8 @@ static int sprd_adi_restart_handler(struct notifier_block *this,
- 		reboot_mode = HWRST_STATUS_IQMODE;
- 	else if (!strncmp(cmd, "sprdisk", 7))
- 		reboot_mode = HWRST_STATUS_SPRDISK;
-+	else if (!strncmp(cmd, "tospanic", 8))
-+		reboot_mode = HWRST_STATUS_SECURITY;
- 	else
- 		reboot_mode = HWRST_STATUS_NORMAL;
- 
--- 
-2.20.1
-
+> > ---
+> >  arch/arm64/kernel/hw_breakpoint.c | 11 +++++++----
+> >  1 file changed, 7 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/arch/arm64/kernel/hw_breakpoint.c b/arch/arm64/kernel/hw_breakpoint.c
+> > index dceb84520948..ea616adf1cf1 100644
+> > --- a/arch/arm64/kernel/hw_breakpoint.c
+> > +++ b/arch/arm64/kernel/hw_breakpoint.c
+> > @@ -535,14 +535,17 @@ int hw_breakpoint_arch_parse(struct perf_event *bp,
+> >  		case 0:
+> >  			/* Aligned */
+> >  			break;
+> > -		case 1:
+> > -			/* Allow single byte watchpoint. */
+> > -			if (hw->ctrl.len == ARM_BREAKPOINT_LEN_1)
+> > -				break;
+> >  		case 2:
+> >  			/* Allow halfword watchpoints and breakpoints. */
+> >  			if (hw->ctrl.len == ARM_BREAKPOINT_LEN_2)
+> >  				break;
+> > +			/* Fall through */
+> > +		case 1:
+> > +		case 3:
+> > +			/* Allow single byte watchpoint. */
+> > +			if (hw->ctrl.len == ARM_BREAKPOINT_LEN_1)
+> > +				break;
+> > +			/* Fall through */
+> >  		default:
+> >  			return -EINVAL;
+> >  		}
+> > -- 
+> > 2.20.1
+> > 
