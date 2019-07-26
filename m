@@ -2,62 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C5D6676A3D
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 15:57:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C3C5E76A46
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 15:57:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728237AbfGZN5H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 09:57:07 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:43809 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728531AbfGZN5D (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 09:57:03 -0400
-Received: by mail-ed1-f66.google.com with SMTP id e3so53374970edr.10
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2019 06:57:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
-        b=jlpiqmI/8Uu8/Xt/1eaqYUBB+70RlWiZUHwzBmUeOj6ogw6xxiJhWGBdCx0CfaY+ot
-         Ud6fOyVAAics9od4N7exkGo8ODyXftccaoGiIxN3QLMxQbomv8bPGXS4QrkK6YYwm98Y
-         kUgiR3P7r5iaXni1yAry1cTKSmhu0C4N0vpNTHqY8tP8+1qPJPEY4euT401p8Q7rTtMp
-         PvpmBW/tYzcS1FRQwiWqkuVrMTE+lZDWackN3MQQHbow/jFs1xRsQvQIlKLRPBdx9tf9
-         N5COgCSTCa6nMw/sA9u/cYe5RwWhZ4MOcGQu032b/lHWkF4sDPwTrjnQcIJ9OGslQIHn
-         E9fg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
-        b=o388m3KOb1k1hnVvrHGnPbw3ZpqydE1a7eQvuNgdE33zg+OY0SnadOsvGOnmGqsODV
-         kN4J/KcSG4LlqDj44DSKDi7RD2FU0qRt0H6MrWpA2V/m0Q2qQn487oK/INjRSYWz0xqV
-         wtghapHFT3YSmVVEY07DkSJlhsed5Z51C+hp6bfHYQPSbNE+zsbQXzvK065WMZSF+1Nj
-         OamBA5EZHYp1978HQwVN0Ea8pIGQIAYoSh5nkCpsReMt7rdAsiXRAGQCrQa8giFivHq+
-         YRpJipmF9yGtw01cga5qgBt4XgXW/ys8G5sD5gKpHKXYAhYkvt1cjAis+2vlwij8y6QV
-         m1/g==
-X-Gm-Message-State: APjAAAX6Fao3YvNETO/JuPvCaphxCXs7AZ/4fEdQY/VVz0qW++7vHXSD
-        aeVySb2jEy9qAEQcnoB0Y+KlVVsASqjxkTmtb5g=
-X-Google-Smtp-Source: APXvYqw9881uwnuD9Qu3tomj+BntI80tFmfbEk+mi1/nb+YMJNG/GltqkFNhnmh6Ki1nSSfwc43R7JuHRSCIeVwQUW4=
-X-Received: by 2002:a17:906:cce9:: with SMTP id ot41mr44081668ejb.196.1564149421824;
- Fri, 26 Jul 2019 06:57:01 -0700 (PDT)
+        id S1728587AbfGZN5c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 09:57:32 -0400
+Received: from mga17.intel.com ([192.55.52.151]:26086 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728369AbfGZN5b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 09:57:31 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jul 2019 06:57:30 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,311,1559545200"; 
+   d="scan'208";a="322044954"
+Received: from msmall-mobl.amr.corp.intel.com (HELO [10.251.154.62]) ([10.251.154.62])
+  by orsmga004.jf.intel.com with ESMTP; 26 Jul 2019 06:57:29 -0700
+Subject: Re: [alsa-devel] [RFC PATCH 01/40] soundwire: add debugfs support
+To:     Cezary Rojewski <cezary.rojewski@intel.com>
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        tiwai@suse.de, broonie@kernel.org, vkoul@kernel.org,
+        gregkh@linuxfoundation.org, jank@cadence.com,
+        srinivas.kandagatla@linaro.org, slawomir.blauciak@intel.com,
+        Sanyog Kale <sanyog.r.kale@intel.com>
+References: <20190725234032.21152-1-pierre-louis.bossart@linux.intel.com>
+ <20190725234032.21152-2-pierre-louis.bossart@linux.intel.com>
+ <35a3936d-12d5-d301-2c8e-9e90163dd86e@intel.com>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <1e0c8b9c-8e02-2735-df2d-7f82bdbb74a8@linux.intel.com>
+Date:   Fri, 26 Jul 2019 08:57:29 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Received: by 2002:a50:adb7:0:0:0:0:0 with HTTP; Fri, 26 Jul 2019 06:57:01
- -0700 (PDT)
-Reply-To: ofunwa2000@hotmail.com
-From:   Barrister Ben Bruce Ofunwa <ofunwamurphy17@gmail.com>
-Date:   Fri, 26 Jul 2019 14:57:01 +0100
-Message-ID: <CAPGu3CHUC7mKbwhA6xNRU7z27+xNmYY+1LFPZ-j5yac6=LBqGg@mail.gmail.com>
-Subject: =?UTF-8?Q?Hallo_Sehr_geehrte_=2F_Ich_habe_Sie_kontaktiert=2C_um_Si?=
-        =?UTF-8?Q?e_bei_der_Beantragung_von_Geldern_in_H=C3=B6he_von_6=2C5_Millionen?=
-        =?UTF-8?Q?_Dollar_zu_unterst=C3=BCtzen=2C_die_mein_verstorbener_Kunde_bei_de?=
-        =?UTF-8?Q?r_Bank_hinterlegt_hat=2E_Bitte_wenden_Sie_sich_an_mich_=28ofunwa?=
-        =?UTF-8?Q?2000=40hotmail=2Ecom=29=2C_um_weitere_Erl=C3=A4uterungen_zu_erhalten=2E_Ra?=
-        =?UTF-8?Q?rds=2C_Rechtsanwalt_Ben_Bruce_ofunwa?=
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <35a3936d-12d5-d301-2c8e-9e90163dd86e@intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Thanks for the feedback Cezary.
 
+>> +static ssize_t sdw_slave_reg_read(struct file *file, char __user 
+>> *user_buf,
+>> +                  size_t count, loff_t *ppos)
+>> +{
+>> +    struct sdw_slave *slave = file->private_data;
+>> +    unsigned int reg;
+>> +    char *buf;
+>> +    ssize_t ret;
+>> +    int i, j;
+>> +
+>> +    buf = kzalloc(RD_BUF, GFP_KERNEL);
+>> +    if (!buf)
+>> +        return -ENOMEM;
+>> +
+>> +    ret = scnprintf(buf, RD_BUF, "Register  Value\n");
+>> +    ret += scnprintf(buf + ret, RD_BUF - ret, "\nDP0\n");
+>> +
+>> +    for (i = 0; i < 6; i++)
+>> +        ret += sdw_sprintf(slave, buf, ret, i);
+> 
+> In most cases explicit reg macro is used, here it's implicit. Align with 
+> the rest?
+
+I don't see what you are referring to, or I need more coffee.
+we use this function sdw_printf in a number of places. Or are you 
+referring to the magic value 6? That should indeed be a macro.
+
+>> +
+>> +    ret += scnprintf(buf + ret, RD_BUF - ret, "Bank0\n");
+>> +    ret += sdw_sprintf(slave, buf, ret, SDW_DP0_CHANNELEN);
+>> +    for (i = SDW_DP0_SAMPLECTRL1; i <= SDW_DP0_LANECTRL; i++)
+>> +        ret += sdw_sprintf(slave, buf, ret, i);
+>> +
+>> +    ret += scnprintf(buf + ret, RD_BUF - ret, "Bank1\n");
+>> +    ret += sdw_sprintf(slave, buf, ret,
+>> +            SDW_DP0_CHANNELEN + SDW_BANK1_OFFSET);
+>> +    for (i = SDW_DP0_SAMPLECTRL1 + SDW_BANK1_OFFSET;
+>> +            i <= SDW_DP0_LANECTRL + SDW_BANK1_OFFSET; i++)
+>> +        ret += sdw_sprintf(slave, buf, ret, i);
+> 
+> I'd advice to revisit macros declarations first.
+> There should be SDW_DP0_SAMPLECTRL1_B(bank) declared. In general all 
+> macros for SDW should be "bank-less" (name wise). Additionally, 
+> SDW_BANK_OFFSET(bank) could be provided for convenience i.e.: return 0 
+> for bank0.
+> Yeah, there might be some speed loss in terms of operation count but in 
+> most cases it is negligible.
+> 
+> Would simplify this entire reg dump greatly.
+> const array on top with {0, 1} elements and replacing explicit "bank0/1" 
+> strings with "bank%d" gets code size reduced while not losing on 
+> readability.
+
+This could require a lot of changes in other parts of the code, and I 
+don't want to do this just for debugfs. It's valid point that maybe the 
+code can be simplified, but the changes are an across-the-board change 
+to be done when we don't add new functionality. I'll keep this on the 
+todo list.
+
+> 
+>> +
+>> +    ret += scnprintf(buf + ret, RD_BUF - ret, "\nSCP\n");
+>> +    for (i = SDW_SCP_INT1; i <= SDW_SCP_BANKDELAY; i++)
+>> +        ret += sdw_sprintf(slave, buf, ret, i);
+>> +    for (i = SDW_SCP_DEVID_0; i <= SDW_SCP_DEVID_5; i++)
+>> +        ret += sdw_sprintf(slave, buf, ret, i);
+>> +
+>> +    ret += scnprintf(buf + ret, RD_BUF - ret, "Bank0\n");
+>> +    ret += sdw_sprintf(slave, buf, ret, SDW_SCP_FRAMECTRL_B0);
+>> +    ret += sdw_sprintf(slave, buf, ret, SDW_SCP_NEXTFRAME_B0);
+>> +
+>> +    ret += scnprintf(buf + ret, RD_BUF - ret, "Bank1\n");
+>> +    ret += sdw_sprintf(slave, buf, ret, SDW_SCP_FRAMECTRL_B1);
+>> +    ret += sdw_sprintf(slave, buf, ret, SDW_SCP_NEXTFRAME_B1);
+>> +
+>> +    for (i = 1; i < 14; i++) {
+> 
+> Explicit valid slave addresses would be preferred.
+
+no, these are ports. we should use a macro instead of the magic 14 but 
+it's fine to try and read all ports. As I explained it's a good way to 
+figure out how many ports the Slave device supports even in the absence 
+of documentation. This also helps figure out if the DisCo properties 
+make sense.
+
+> 
+>> +        ret += scnprintf(buf + ret, RD_BUF - ret, "\nDP%d\n", i);
+>> +        reg = SDW_DPN_INT(i);
+>> +        for (j = 0; j < 6; j++)
+>> +            ret += sdw_sprintf(slave, buf, ret, reg + j);
+>> +
+>> +        ret += scnprintf(buf + ret, RD_BUF - ret, "Bank0\n");
+>> +        reg = SDW_DPN_CHANNELEN_B0(i);
+>> +        for (j = 0; j < 9; j++)
+>> +            ret += sdw_sprintf(slave, buf, ret, reg + j);
+>> +
+>> +        ret += scnprintf(buf + ret, RD_BUF - ret, "Bank1\n");
+>> +        reg = SDW_DPN_CHANNELEN_B1(i);
+>> +        for (j = 0; j < 9; j++)
+>> +            ret += sdw_sprintf(slave, buf, ret, reg + j);
+> 
+> Some sort of MAX_CHANNELS would be nice here too.
+
+Yes, need to use macros indeed.
+
+>> +struct dentry *sdw_slave_debugfs_init(struct sdw_slave *slave)
+>> +{
+>> +    struct dentry *master;
+>> +    struct dentry *d;
+>> +    char name[32];
+>> +
+>> +    master = slave->bus->debugfs;
+>> +
+>> +    /* create the debugfs slave-name */
+>> +    snprintf(name, sizeof(name), "%s", dev_name(&slave->dev));
+>> +    d = debugfs_create_dir(name, master);
+>> +
+>> +    debugfs_create_file("registers", 0400, d, slave, 
+>> &sdw_slave_reg_fops);
+> 
+> Pointer returned by _create_file gets completely ignored here. At least 
+> dbg msg would be nice if it fails.
+> 
+>> +    return d;
+
+I understood that Greg KH doesn't want us to depend on the result of 
+debugfs calls, but a dev_dbg is likely ok.
