@@ -2,82 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 107F5773E8
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2019 00:19:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 66D31773EC
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2019 00:19:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728547AbfGZWTE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 18:19:04 -0400
-Received: from smtprelay0089.hostedemail.com ([216.40.44.89]:54963 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726651AbfGZWTD (ORCPT
+        id S1728612AbfGZWTb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 18:19:31 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:37461 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728550AbfGZWTa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 18:19:03 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay06.hostedemail.com (Postfix) with ESMTP id 3D0EC182251B2;
-        Fri, 26 Jul 2019 22:19:02 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::,RULES_HIT:41:355:379:599:800:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1540:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3352:3622:3865:3867:3868:3871:4321:4605:5007:6119:7576:7903:10004:10400:10848:11026:11232:11658:11914:12043:12296:12297:12740:12760:12895:13069:13255:13311:13357:13439:14181:14659:14721:21080:21212:21433:21451:21627:30054:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:24,LUA_SUMMARY:none
-X-HE-Tag: pail14_4e54f40abf635
-X-Filterd-Recvd-Size: 2393
-Received: from XPS-9350.home (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
-        (Authenticated sender: joe@perches.com)
-        by omf07.hostedemail.com (Postfix) with ESMTPA;
-        Fri, 26 Jul 2019 22:18:58 +0000 (UTC)
-Message-ID: <05602c954c689ffcd796e9468c52bca6fa4efe3f.camel@perches.com>
-Subject: Re: [PATCH V2 net-next 07/11] net: hns3: adds debug messages to
- identify eth down cause
-From:   Joe Perches <joe@perches.com>
-To:     Saeed Mahameed <saeedm@mellanox.com>,
-        "tanhuazhong@huawei.com" <tanhuazhong@huawei.com>,
-        "davem@davemloft.net" <davem@davemloft.net>
-Cc:     "lipeng321@huawei.com" <lipeng321@huawei.com>,
-        "yisen.zhuang@huawei.com" <yisen.zhuang@huawei.com>,
-        "salil.mehta@huawei.com" <salil.mehta@huawei.com>,
-        "linuxarm@huawei.com" <linuxarm@huawei.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "liuyonglong@huawei.com" <liuyonglong@huawei.com>
-Date:   Fri, 26 Jul 2019 15:18:57 -0700
-In-Reply-To: <a32ca755bfd69046cf89aeacbf67fd16313de768.camel@mellanox.com>
-References: <1564111502-15504-1-git-send-email-tanhuazhong@huawei.com>
-         <1564111502-15504-8-git-send-email-tanhuazhong@huawei.com>
-         <a32ca755bfd69046cf89aeacbf67fd16313de768.camel@mellanox.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
+        Fri, 26 Jul 2019 18:19:30 -0400
+Received: by mail-wr1-f68.google.com with SMTP id n9so30760736wrr.4
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2019 15:19:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=YCzn2d3M/bK6nxASHNYCTBtvF1uCCsPTj9a0ROwZiV8=;
+        b=B+++3lWaTiWztafNNnqsNvAbcdWYIRjBnloXyDRvHYeHwGIXVmEj19g8sCKySOkKsR
+         WuhiYi3hxU9jc8QYhjcbzFr61dodgRNBjVuCSCkVxnUM5PzSyKshxTuzHx92DSz227NL
+         hx2tuEWlObp/LI0aJdW5W48fm3ADobwOalN7h64FrWTrtHOtANw6ZOQrHAjiQCicm9kL
+         1SV3t6+IrZ2ZA7f7jiIqPZR+jocWTMbb4h1bEo1BbS8jlZAOe7P2joUzgN/qOy3i3UWU
+         4zO3494LIVDR5poHVRIFp78rPbq6yL8zUGLafmaeWzbRQGgOlxZqbD/0IpE8q/bs+3z8
+         6o9g==
+X-Gm-Message-State: APjAAAUOFr6r4JSN4D92XIuoGwdNqlCpnnjxHQAGPRJ9bCLXDxDdhuNC
+        mXfjIJLOokJZCzNA6FYVGUjhdLQda20=
+X-Google-Smtp-Source: APXvYqyRRPKjQm+AekBeMu3q9YUsqv008iQETXfKvvUxhOEE27ABBNIeCAqBKvTheZhMUo1s0PuG/g==
+X-Received: by 2002:a05:6000:187:: with SMTP id p7mr96507148wrx.189.1564179568428;
+        Fri, 26 Jul 2019 15:19:28 -0700 (PDT)
+Received: from ?IPv6:2001:b07:6468:f312:9036:7130:d6ec:a346? ([2001:b07:6468:f312:9036:7130:d6ec:a346])
+        by smtp.gmail.com with ESMTPSA id i18sm72932769wrp.91.2019.07.26.15.19.27
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Fri, 26 Jul 2019 15:19:27 -0700 (PDT)
+Subject: Re: [PATCH 2/3] Documentation: kvm: Convert cpuid.txt to .rst
+To:     Jonathan Corbet <corbet@lwn.net>,
+        Luke Nowakowski-Krijger <lnowakow@eng.ucsd.edu>
+Cc:     linux-kernel-mentees@lists.linuxfoundation.org, rkrcmar@redhat.com,
+        kvm@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <cover.1562448500.git.lnowakow@eng.ucsd.edu>
+ <e8cd24f40cdd23ed116679f4c3cfcf8849879bb4.1562448500.git.lnowakow@eng.ucsd.edu>
+ <20190708140022.5fa9d01f@lwn.net> <20190708201510.GA13296@luke-XPS-13>
+ <20190708142032.4fbd175e@lwn.net>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Message-ID: <5a18d0c0-8bfa-c936-11e5-8238a89b5b5f@redhat.com>
+Date:   Sat, 27 Jul 2019 00:19:27 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
+In-Reply-To: <20190708142032.4fbd175e@lwn.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2019-07-26 at 22:00 +0000, Saeed Mahameed wrote:
-> On Fri, 2019-07-26 at 11:24 +0800, Huazhong Tan wrote:
-> > From: Yonglong Liu <liuyonglong@huawei.com>
-> > 
-> > Some times just see the eth interface have been down/up via
-> > dmesg, but can not know why the eth down. So adds some debug
-> > messages to identify the cause for this.
-[]
-> > diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-> []
-> > @@ -459,6 +459,10 @@ static int hns3_nic_net_open(struct net_device
-> > *netdev)
-> >  		h->ae_algo->ops->set_timer_task(priv->ae_handle, true);
-> >  
-> >  	hns3_config_xps(priv);
-> > +
-> > +	if (netif_msg_drv(h))
-> > +		netdev_info(netdev, "net open\n");
-> > +
+On 08/07/19 22:20, Jonathan Corbet wrote:
+>>>> +:Author: Glauber Costa <glommer@redhat.com>, Red Hat Inc, 2010  
+>>> I rather suspect that email address doesn't work these days.
+>>>   
+>> No I guess it wont :). We would still keep this correct? 
+> There's nothing good that will come from keeping a broken email address
+> there.  You could either:
 > 
-> to make sure this is only intended for debug, and to avoid repetition.
-> #define hns3_dbg(__dev, format, args...)			\
-> ({								\
-> 	if (netif_msg_drv(h))					\
-> 		netdev_info(h->netdev, format, ##args);         \
-> })
+>  - Just take the address out, or
 
-	netif_dbg(h, drv, h->netdev, "net open\n")
+I agree with this, there have been more authors since 2010.
 
+Regarding the license, it was my understanding that if somebody wants
+anything but GPL-2.0 they should put it in the file when they create it.
+ That's because even if Glauber had a different idea of what license to
+use, other contributors to the file couldn't know.
 
+Paolo
+
+>  - Track Glauber down and get a newer address; you could ask him about the
+>    licensing while you're at it :)
