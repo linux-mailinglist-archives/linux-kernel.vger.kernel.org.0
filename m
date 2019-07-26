@@ -2,43 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EB2776ECC
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 18:20:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D80976EDC
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 18:21:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728565AbfGZQU2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 12:20:28 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:52112 "EHLO
+        id S1728743AbfGZQVL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 12:21:11 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:52124 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728496AbfGZQU1 (ORCPT
+        with ESMTP id S1728540AbfGZQU2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 12:20:27 -0400
+        Fri, 26 Jul 2019 12:20:28 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:References:
         Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
         Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
         Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=Yz9Xtm2sZUJQiP7HnbPwNasUB4b81OC8P1nglrmAuoQ=; b=i2nl6omOecnIfjXkC3qrF9hfS3
-        4M78gC12E+KgUXleRqQdna/LhFi4f1nVaNFNJXfGAZPjwi7I3lDSjzbZoMhDSbQSRt39Wz7GyI8Uh
-        +sN0qMCJ2KH/fq1CZhJ33Qs3fMPgPUduY75qg2HeHcYV0i7BmxpXsEKg8kAY6OcaBgngIjsO8KhuH
-        r2HDy3nYpKzIE9KX0ndJ04eCZpt8FtMKbNBzhIbAdErR/4yR+oUvXF4macJU0ZUubIO3H4jZtoqKy
-        zFouVwIGj/6bNnzJ3YkQ2kfwSIK7U+iPMtT7+n5jsQyuPxZra2/Okp4BW7IuKdX7WI6rBRGaa+tgD
-        bmLbdwVg==;
+        bh=IkuJEjf3jjAHnNNfJltckDOcnAoGB5oVO+XgSCJzQHQ=; b=MINbHlwH531LegJvn8aF4q/buH
+        xU7nBUE8Aj3d9Xiru4I4ltzamWdUoAoQBFCYeBJ30OHunbAUkFbtKrCS7nWhuy16mey/Qm9L+2Fbj
+        V9DonEUqFE1p4AqM1T3G1rXvz/sfVlEbJJN1pNG1nNNGulbMlvRE6pShSELVxkxGxXUXV9IVvz2+S
+        fFHUTSdMQsaYy/QtX6Kx4oQyE3LQ96qJ64XiRofAoyNbj8ewv2rEUjWkwoIf1Q/4WcOWv2vBIllvP
+        alkkg3pAoCnwxRnvS+6eLiAAZKXlNC0vohsugp5BBj28vq/HBwzv0gjHbPJndwUdydVMzdqoiNPVL
+        m4oGM+DA==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hr2wz-0006vx-AC; Fri, 26 Jul 2019 16:20:09 +0000
+        id 1hr2wz-00072B-Vm; Fri, 26 Jul 2019 16:20:10 +0000
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 5C2A320229754; Fri, 26 Jul 2019 18:20:05 +0200 (CEST)
-Message-Id: <20190726161357.812535015@infradead.org>
+        id 6041420229755; Fri, 26 Jul 2019 18:20:05 +0200 (CEST)
+Message-Id: <20190726161357.883133230@infradead.org>
 User-Agent: quilt/0.65
-Date:   Fri, 26 Jul 2019 16:54:17 +0200
+Date:   Fri, 26 Jul 2019 16:54:18 +0200
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     mingo@kernel.org, juri.lelli@redhat.com
 Cc:     linux-kernel@vger.kernel.org, dietmar.eggemann@arm.com,
         luca.abeni@santannapisa.it, bristot@redhat.com,
         balsini@android.com, dvyukov@google.com, tglx@linutronix.de,
         vpillai@digitalocean.com, rostedt@goodmis.org, peterz@infradead.org
-Subject: [RFC][PATCH 08/13] sched: Rework pick_next_task() slow-path
+Subject: [RFC][PATCH 09/13] sched: Unify runtime accounting across classes
 References: <20190726145409.947503076@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,232 +47,210 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Avoid the RETRY_TASK case in the pick_next_task() slow path.
+All classes use sched_entity::exec_start to track runtime and have
+copies of the exact same code around to compute runtime.
 
-By doing the put_prev_task() early, we get the rt/deadline pull done,
-and by testing rq->nr_running we know if we need newidle_balance().
-
-This then gives a stable state to pick a task from.
-
-Since the fast-path is fair only; it means the other classes will
-always have pick_next_task(.prev=NULL, .rf=NULL) and we can simplify.
+Collapse all that.
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- kernel/sched/core.c      |   19 ++++++++++++-------
- kernel/sched/deadline.c  |   30 ++----------------------------
- kernel/sched/fair.c      |    9 ++++++---
- kernel/sched/idle.c      |    4 +++-
- kernel/sched/rt.c        |   29 +----------------------------
- kernel/sched/sched.h     |   13 ++++++++-----
- kernel/sched/stop_task.c |    3 ++-
- 7 files changed, 34 insertions(+), 73 deletions(-)
+ include/linux/sched.h    |    2 -
+ kernel/sched/deadline.c  |   17 ++-------------
+ kernel/sched/fair.c      |   50 ++++++++++++++++++++++++++++++++++++-----------
+ kernel/sched/rt.c        |   17 ++-------------
+ kernel/sched/sched.h     |    2 +
+ kernel/sched/stop_task.c |   16 ---------------
+ 6 files changed, 49 insertions(+), 55 deletions(-)
 
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -3739,7 +3739,7 @@ pick_next_task(struct rq *rq, struct tas
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -433,7 +433,7 @@ struct sched_statistics {
  
- 		p = fair_sched_class.pick_next_task(rq, prev, rf);
- 		if (unlikely(p == RETRY_TASK))
--			goto again;
-+			goto restart;
+ 	u64				block_start;
+ 	u64				block_max;
+-	u64				exec_max;
++	s64				exec_max;
+ 	u64				slice_max;
  
- 		/* Assumes fair_sched_class->next == idle_sched_class */
- 		if (unlikely(!p))
-@@ -3748,14 +3748,19 @@ pick_next_task(struct rq *rq, struct tas
- 		return p;
- 	}
- 
--again:
-+restart:
-+	/*
-+	 * Ensure that we put DL/RT tasks before the pick loop, such that they
-+	 * can PULL higher prio tasks when we lower the RQ 'priority'.
-+	 */
-+	prev->sched_class->put_prev_task(rq, prev, rf);
-+	if (!rq->nr_running)
-+		newidle_balance(rq, rf);
-+
- 	for_each_class(class) {
--		p = class->pick_next_task(rq, prev, rf);
--		if (p) {
--			if (unlikely(p == RETRY_TASK))
--				goto again;
-+		p = class->pick_next_task(rq, NULL, NULL);
-+		if (p)
- 			return p;
--		}
- 	}
- 
- 	/* The idle class should always have a runnable task: */
+ 	u64				nr_migrations_cold;
 --- a/kernel/sched/deadline.c
 +++ b/kernel/sched/deadline.c
-@@ -1729,39 +1729,13 @@ pick_next_task_dl(struct rq *rq, struct
- 	struct task_struct *p;
- 	struct dl_rq *dl_rq;
+@@ -1147,9 +1147,8 @@ static void update_curr_dl(struct rq *rq
+ {
+ 	struct task_struct *curr = rq->curr;
+ 	struct sched_dl_entity *dl_se = &curr->dl;
+-	u64 delta_exec, scaled_delta_exec;
++	s64 delta_exec, scaled_delta_exec;
+ 	int cpu = cpu_of(rq);
+-	u64 now;
  
--	dl_rq = &rq->dl;
+ 	if (!dl_task(curr) || !on_dl_rq(dl_se))
+ 		return;
+@@ -1162,23 +1161,13 @@ static void update_curr_dl(struct rq *rq
+ 	 * natural solution, but the full ramifications of this
+ 	 * approach need further study.
+ 	 */
+-	now = rq_clock_task(rq);
+-	delta_exec = now - curr->se.exec_start;
+-	if (unlikely((s64)delta_exec <= 0)) {
++	delta_exec = update_curr_common(rq);
++	if (unlikely(delta_exec <= 0)) {
+ 		if (unlikely(dl_se->dl_yielded))
+ 			goto throttle;
+ 		return;
+ 	}
+ 
+-	schedstat_set(curr->se.statistics.exec_max,
+-		      max(curr->se.statistics.exec_max, delta_exec));
 -
--	if (need_pull_dl_task(rq, prev)) {
--		/*
--		 * This is OK, because current is on_cpu, which avoids it being
--		 * picked for load-balance and preemption/IRQs are still
--		 * disabled avoiding further scheduler activity on it and we're
--		 * being very careful to re-start the picking loop.
--		 */
--		rq_unpin_lock(rq, rf);
--		pull_dl_task(rq);
--		rq_repin_lock(rq, rf);
--		/*
--		 * pull_dl_task() can drop (and re-acquire) rq->lock; this
--		 * means a stop task can slip in, in which case we need to
--		 * re-start task selection.
--		 */
--		if (rq->stop && task_on_rq_queued(rq->stop))
--			return RETRY_TASK;
--	}
-+	WARN_ON_ONCE(prev || rf);
- 
--	/*
--	 * When prev is DL, we may throttle it in put_prev_task().
--	 * So, we update time before we check for dl_nr_running.
--	 */
--	if (prev->sched_class == &dl_sched_class)
--		update_curr_dl(rq);
-+	dl_rq = &rq->dl;
- 
- 	if (unlikely(!dl_rq->dl_nr_running))
- 		return NULL;
- 
--	put_prev_task(rq, prev);
+-	curr->se.sum_exec_runtime += delta_exec;
+-	account_group_exec_runtime(curr, delta_exec);
 -
- 	dl_se = pick_next_dl_entity(rq, dl_rq);
- 	BUG_ON(!dl_se);
+-	curr->se.exec_start = now;
+-	cgroup_account_cputime(curr, delta_exec);
+-
+ 	if (dl_entity_is_special(dl_se))
+ 		return;
  
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -6740,7 +6740,7 @@ pick_next_task_fair(struct rq *rq, struc
- 		goto idle;
+@@ -828,30 +828,58 @@ static void update_tg_load_avg(struct cf
+ }
+ #endif /* CONFIG_SMP */
  
- #ifdef CONFIG_FAIR_GROUP_SCHED
--	if (prev->sched_class != &fair_sched_class)
-+	if (!prev || prev->sched_class != &fair_sched_class)
- 		goto simple;
- 
- 	/*
-@@ -6817,8 +6817,8 @@ pick_next_task_fair(struct rq *rq, struc
- 	goto done;
- simple:
- #endif
--
--	put_prev_task(rq, prev);
-+	if (prev)
-+		put_prev_task(rq, prev);
- 
- 	do {
- 		se = pick_next_entity(cfs_rq, NULL);
-@@ -6846,6 +6846,9 @@ done: __maybe_unused;
- 	return p;
- 
- idle:
-+	if (!rf)
-+		return NULL;
++static s64 update_curr_se(struct rq *rq, struct sched_entity *curr)
++{
++	u64 now = rq_clock_task(rq);
++	s64 delta_exec;
 +
- 	new_tasks = newidle_balance(rq, rf);
- 
- 	/*
---- a/kernel/sched/idle.c
-+++ b/kernel/sched/idle.c
-@@ -389,7 +389,9 @@ pick_next_task_idle(struct rq *rq, struc
++	delta_exec = now - curr->exec_start;
++	if (unlikely(delta_exec <= 0))
++		return delta_exec;
++
++	curr->exec_start = now;
++	curr->sum_exec_runtime += delta_exec;
++
++	schedstat_set(curr->statistics.exec_max,
++		      max(delta_exec, curr->statistics.exec_max));
++
++	return delta_exec;
++}
++
++/*
++ * Used by other classes to account runtime.
++ */
++s64 update_curr_common(struct rq *rq)
++{
++	struct task_struct *curr = rq->curr;
++	s64 delta_exec;
++
++	delta_exec = update_curr_se(rq, &curr->se);
++	if (unlikely(delta_exec <= 0))
++		return delta_exec;
++
++	account_group_exec_runtime(curr, delta_exec);
++	cgroup_account_cputime(curr, delta_exec);
++
++	return delta_exec;
++}
++
+ /*
+  * Update the current task's runtime statistics.
+  */
+ static void update_curr(struct cfs_rq *cfs_rq)
  {
- 	struct task_struct *next = rq->idle;
+ 	struct sched_entity *curr = cfs_rq->curr;
+-	u64 now = rq_clock_task(rq_of(cfs_rq));
+-	u64 delta_exec;
++	s64 delta_exec;
  
--	put_prev_task(rq, prev);
-+	if (prev)
-+		put_prev_task(rq, prev);
-+
- 	set_next_task_idle(rq, next);
+ 	if (unlikely(!curr))
+ 		return;
  
- 	return next;
+-	delta_exec = now - curr->exec_start;
+-	if (unlikely((s64)delta_exec <= 0))
++	delta_exec = update_curr_se(rq_of(cfs_rq), curr);
++	if (unlikely(delta_exec <= 0))
+ 		return;
+ 
+-	curr->exec_start = now;
+-
+-	schedstat_set(curr->statistics.exec_max,
+-		      max(delta_exec, curr->statistics.exec_max));
+-
+-	curr->sum_exec_runtime += delta_exec;
+ 	schedstat_add(cfs_rq->exec_clock, delta_exec);
+-
+ 	curr->vruntime += calc_delta_fair(delta_exec, curr);
+ 	update_min_vruntime(cfs_rq);
+ 
 --- a/kernel/sched/rt.c
 +++ b/kernel/sched/rt.c
-@@ -1554,38 +1554,11 @@ pick_next_task_rt(struct rq *rq, struct
- 	struct task_struct *p;
- 	struct rt_rq *rt_rq = &rq->rt;
+@@ -955,26 +955,15 @@ static void update_curr_rt(struct rq *rq
+ {
+ 	struct task_struct *curr = rq->curr;
+ 	struct sched_rt_entity *rt_se = &curr->rt;
+-	u64 delta_exec;
+-	u64 now;
++	s64 delta_exec;
  
--	if (need_pull_rt_task(rq, prev)) {
--		/*
--		 * This is OK, because current is on_cpu, which avoids it being
--		 * picked for load-balance and preemption/IRQs are still
--		 * disabled avoiding further scheduler activity on it and we're
--		 * being very careful to re-start the picking loop.
--		 */
--		rq_unpin_lock(rq, rf);
--		pull_rt_task(rq);
--		rq_repin_lock(rq, rf);
--		/*
--		 * pull_rt_task() can drop (and re-acquire) rq->lock; this
--		 * means a dl or stop task can slip in, in which case we need
--		 * to re-start task selection.
--		 */
--		if (unlikely((rq->stop && task_on_rq_queued(rq->stop)) ||
--			     rq->dl.dl_nr_running))
--			return RETRY_TASK;
--	}
+ 	if (curr->sched_class != &rt_sched_class)
+ 		return;
+ 
+-	now = rq_clock_task(rq);
+-	delta_exec = now - curr->se.exec_start;
+-	if (unlikely((s64)delta_exec <= 0))
++	delta_exec = update_curr_common(rq);
++	if (unlikely(delta_exec < 0))
+ 		return;
+ 
+-	schedstat_set(curr->se.statistics.exec_max,
+-		      max(curr->se.statistics.exec_max, delta_exec));
 -
--	/*
--	 * We may dequeue prev's rt_rq in put_prev_task().
--	 * So, we update time before rt_queued check.
--	 */
--	if (prev->sched_class == &rt_sched_class)
--		update_curr_rt(rq);
-+	WARN_ON_ONCE(prev || rf);
- 
- 	if (!rt_rq->rt_queued)
- 		return NULL;
- 
--	put_prev_task(rq, prev);
+-	curr->se.sum_exec_runtime += delta_exec;
+-	account_group_exec_runtime(curr, delta_exec);
 -
- 	p = _pick_next_task_rt(rq);
+-	curr->se.exec_start = now;
+-	cgroup_account_cputime(curr, delta_exec);
+-
+ 	if (!rt_bandwidth_enabled())
+ 		return;
  
- 	set_next_task_rt(rq, p);
 --- a/kernel/sched/sched.h
 +++ b/kernel/sched/sched.h
-@@ -1704,12 +1704,15 @@ struct sched_class {
- 	void (*check_preempt_curr)(struct rq *rq, struct task_struct *p, int flags);
+@@ -1689,6 +1689,8 @@ extern const u32		sched_prio_to_wmult[40
  
- 	/*
--	 * It is the responsibility of the pick_next_task() method that will
--	 * return the next task to call put_prev_task() on the @prev task or
--	 * something equivalent.
-+	 * Both @prev and @rf are optional and may be NULL, in which case the
-+	 * caller must already have invoked put_prev_task(rq, prev, rf).
- 	 *
--	 * May return RETRY_TASK when it finds a higher prio class has runnable
--	 * tasks.
-+	 * Otherwise it is the responsibility of the pick_next_task() to call
-+	 * put_prev_task() on the @prev task or something equivalent, IFF it
-+	 * returns a next task.
-+	 *
-+	 * In that case (@rf != NULL) it may return RETRY_TASK when it finds a
-+	 * higher prio class has runnable tasks.
- 	 */
- 	struct task_struct * (*pick_next_task)(struct rq *rq,
- 					       struct task_struct *prev,
+ #define RETRY_TASK		((void *)-1UL)
+ 
++extern s64 update_curr_common(struct rq *rq);
++
+ struct sched_class {
+ 	const struct sched_class *next;
+ 
 --- a/kernel/sched/stop_task.c
 +++ b/kernel/sched/stop_task.c
-@@ -33,10 +33,11 @@ pick_next_task_stop(struct rq *rq, struc
+@@ -62,21 +62,7 @@ static void yield_task_stop(struct rq *r
+ 
+ static void put_prev_task_stop(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
  {
- 	struct task_struct *stop = rq->stop;
+-	struct task_struct *curr = rq->curr;
+-	u64 delta_exec;
+-
+-	delta_exec = rq_clock_task(rq) - curr->se.exec_start;
+-	if (unlikely((s64)delta_exec < 0))
+-		delta_exec = 0;
+-
+-	schedstat_set(curr->se.statistics.exec_max,
+-			max(curr->se.statistics.exec_max, delta_exec));
+-
+-	curr->se.sum_exec_runtime += delta_exec;
+-	account_group_exec_runtime(curr, delta_exec);
+-
+-	curr->se.exec_start = rq_clock_task(rq);
+-	cgroup_account_cputime(curr, delta_exec);
++	update_curr_common(rq);
+ }
  
-+	WARN_ON_ONCE(prev || rf);
-+
- 	if (!stop || !task_on_rq_queued(stop))
- 		return NULL;
- 
--	put_prev_task(rq, prev);
- 	set_next_task_stop(rq, stop);
- 
- 	return stop;
+ /*
 
 
