@@ -2,89 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 863B776922
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 15:49:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B3EE176ADC
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 16:01:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388620AbfGZNtj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 09:49:39 -0400
-Received: from wout1-smtp.messagingengine.com ([64.147.123.24]:47749 "EHLO
-        wout1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2387657AbfGZNti (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 09:49:38 -0400
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailout.west.internal (Postfix) with ESMTP id 73CC95A5;
-        Fri, 26 Jul 2019 09:49:37 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute6.internal (MEProxy); Fri, 26 Jul 2019 09:49:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=u25v4jqLdMhcJsCJVGv5xgA4m38
-        jD8NRJ0/CYBRLtXg=; b=ZRlfeWVkQj++42bsuWPcVrGpH5F0W/5LyXXK3FOTURy
-        HgWl1mKNBLptRdaiOzVjMqqM2Nj9DMujhcLk8cadQlSpynErjzgeuO1//YncVQt8
-        3tUjQ8hPodIWoX9uO3YHLCdOxHZcT+q6KDBMp4fCNkaTE6wJ89UA9fN8Yx8IdGcJ
-        DHOMBRkwv8D2h80Z1jbL6MaaG43RO/Tx8sFExU6tbnh1s2j8nbjnh4Yit5j5nlpJ
-        Y6XypE/7sch06tHQdIIuWpjfcDgmHlD7IlR4kWmR7ETayUhoX9DeQylE7v3UHh0j
-        GTNBY+i/H61+nxfHADDCPt69H+QZfLmyMCizHesIFFA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=u25v4j
-        qLdMhcJsCJVGv5xgA4m38jD8NRJ0/CYBRLtXg=; b=lrnJVLcpqnbp123eerg9D9
-        jf5TtIyK7Dd90270NU7wi8rV/KMjnwiLpBBmDzPIRea+x5sh2hWL/AXoWd86wfMP
-        6gSG+3A4LVBHAF1V98Pz2dU6UgqmHQBnh5NOrpiM/nFzmwrgcfR6axihsxdgSGfj
-        M98jxGgxwpV8EfVJNxKAPggvlpIs/ABzJ6YBz8+PtL6MDmLznGtNsz2sdjQZj4KG
-        VhQdVUgSOw0rZjWbFAD/xsLmoOuydZQq2AtbGFUl4WngOQfaB9+W0UCN3ksuxgQB
-        ca0S0zkm6huM0OK3UUnVnBbCbjcr7obSP2OaGfywT/iT6dNRCYKrEeQfhdgAJiPQ
-        ==
-X-ME-Sender: <xms:8AQ7XZ3VdRCcKb-w-srfkTLKFRUlU9tyJfH37WiwXExg8KNgj71W-w>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrkeeggdeilecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvuffkfhggtggujggfsehttdertddtredvnecuhfhrohhmpefirhgvghcu
-    mffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucfkphepkeefrdekiedrkeelrddutd
-    ejnecurfgrrhgrmhepmhgrihhlfhhrohhmpehgrhgvgheskhhrohgrhhdrtghomhenucev
-    lhhushhtvghrufhiiigvpedu
-X-ME-Proxy: <xmx:8AQ7Xc0rOJGI1ujIFz7ECacyWCLKU2I3QehskWuFCDmTxhDdRssk8g>
-    <xmx:8AQ7XZeeYjvktOdOKdPsWek4CgLWrqhnHdFIZjWpdQZPPg9HHgvsrQ>
-    <xmx:8AQ7XfeKEdxEveQkfXWOo9jZE0p7iiHypQcQNqLwBBkG-FRD-4-Cuw>
-    <xmx:8QQ7XYUMNUNpDh3Zt0hSdKLTWAf4ZPcHPqwVbWYx8REXZtT8kWWtFA>
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 72408380089;
-        Fri, 26 Jul 2019 09:49:36 -0400 (EDT)
-Date:   Fri, 26 Jul 2019 15:49:34 +0200
-From:   Greg KH <greg@kroah.com>
-To:     Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc:     stable@vger.kernel.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Subject: Re: [PATCH stable-5.2 0/3] KVM: x86: FPU and nested VMX guest reset
- fixes
-Message-ID: <20190726134934.GB23085@kroah.com>
-References: <20190725120436.5432-1-vkuznets@redhat.com>
+        id S2388890AbfGZOBj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 10:01:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45532 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726001AbfGZNjk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 09:39:40 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 342EF22BE8;
+        Fri, 26 Jul 2019 13:39:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564148379;
+        bh=Ko/+jmiMwx1Noz+1muVVeKU8VE+QI/+BKre3Eh07Cpw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=FBJZiotZcMSfMEj0bztS64AmTbZRx0uMxnnoiOYD9Ee3SjrOjQBEpvOvUpR90Vajj
+         5FvfV5jSMvHanXI/MVQ/x/MgfbqD+MjqVOfAuPa0TpwCfWH30mHCeeH1qD8X4febk/
+         v56Dq9ID1fZecBzF3BgFFx4LxIXMLEiILxtNQZl8=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Douglas Anderson <dianders@chromium.org>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.2 03/85] ARM: dts: rockchip: Make rk3288-veyron-mickey's emmc work again
+Date:   Fri, 26 Jul 2019 09:38:13 -0400
+Message-Id: <20190726133936.11177-3-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190726133936.11177-1-sashal@kernel.org>
+References: <20190726133936.11177-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190725120436.5432-1-vkuznets@redhat.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 25, 2019 at 02:04:33PM +0200, Vitaly Kuznetsov wrote:
-> Few patches were recently marked for stable@ but commits are not
-> backportable as-is and require a few tweaks. Here is 5.2 stable backport.
-> 
-> [PATCHes 2/3 of the series apply as-is, I have them here for completeness]
-> 
-> Jan Kiszka (1):
->   KVM: nVMX: Clear pending KVM_REQ_GET_VMCS12_PAGES when leaving nested
-> 
-> Paolo Bonzini (2):
->   KVM: nVMX: do not use dangling shadow VMCS after guest reset
->   Revert "kvm: x86: Use task structs fpu field for user"
+From: Douglas Anderson <dianders@chromium.org>
 
-All now applied, thanks!
+[ Upstream commit 99fa066710f75f18f4d9a5bc5f6a711968a581d5 ]
 
-greg k-h
+When I try to boot rk3288-veyron-mickey I totally fail to make the
+eMMC work.  Specifically my logs (on Chrome OS 4.19):
+
+  mmc_host mmc1: card is non-removable.
+  mmc_host mmc1: Bus speed (slot 0) = 400000Hz (slot req 400000Hz, actual 400000HZ div = 0)
+  mmc_host mmc1: Bus speed (slot 0) = 50000000Hz (slot req 52000000Hz, actual 50000000HZ div = 0)
+  mmc1: switch to bus width 8 failed
+  mmc1: switch to bus width 4 failed
+  mmc1: new high speed MMC card at address 0001
+  mmcblk1: mmc1:0001 HAG2e 14.7 GiB
+  mmcblk1boot0: mmc1:0001 HAG2e partition 1 4.00 MiB
+  mmcblk1boot1: mmc1:0001 HAG2e partition 2 4.00 MiB
+  mmcblk1rpmb: mmc1:0001 HAG2e partition 3 4.00 MiB, chardev (243:0)
+  mmc_host mmc1: Bus speed (slot 0) = 400000Hz (slot req 400000Hz, actual 400000HZ div = 0)
+  mmc_host mmc1: Bus speed (slot 0) = 50000000Hz (slot req 52000000Hz, actual 50000000HZ div = 0)
+  mmc1: switch to bus width 8 failed
+  mmc1: switch to bus width 4 failed
+  mmc1: tried to HW reset card, got error -110
+  mmcblk1: error -110 requesting status
+  mmcblk1: recovery failed!
+  print_req_error: I/O error, dev mmcblk1, sector 0
+  ...
+
+When I remove the '/delete-property/mmc-hs200-1_8v' then everything is
+hunky dory.
+
+That line comes from the original submission of the mickey dts
+upstream, so presumably at the time the HS200 was failing and just
+enumerating things as a high speed device was fine.  ...or maybe it's
+just that some mickey devices work when enumerating at "high speed",
+just not mine?
+
+In any case, hs200 seems good now.  Let's turn it on.
+
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ arch/arm/boot/dts/rk3288-veyron-mickey.dts | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/arch/arm/boot/dts/rk3288-veyron-mickey.dts b/arch/arm/boot/dts/rk3288-veyron-mickey.dts
+index e852594417b5..b13f87792e9f 100644
+--- a/arch/arm/boot/dts/rk3288-veyron-mickey.dts
++++ b/arch/arm/boot/dts/rk3288-veyron-mickey.dts
+@@ -128,10 +128,6 @@
+ 	};
+ };
+ 
+-&emmc {
+-	/delete-property/mmc-hs200-1_8v;
+-};
+-
+ &i2c2 {
+ 	status = "disabled";
+ };
+-- 
+2.20.1
+
