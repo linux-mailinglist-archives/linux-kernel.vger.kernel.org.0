@@ -2,99 +2,180 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43E4A76F9F
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 19:18:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4878776FAB
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 19:19:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728497AbfGZRSW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 13:18:22 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42016 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726402AbfGZRSW (ORCPT
+        id S2387884AbfGZRTX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 13:19:23 -0400
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:19948 "EHLO
+        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726635AbfGZRTW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 13:18:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=ZTdXXHzjtIECvcH9SRFxgzEXd0AdlsTme63IMTdWnT8=; b=P584lDKfa4NmiJ8hHfzMke5wr
-        8M1Wua8DsotsnkRBbK/U70BiaP+amK32eFaySdFJf3m7YxOvLi0+64I67QalcnMzT1cz+RyP+iwq1
-        GyxdLMz/ORUNmCMDt2OjgwNVzp/ypcWvUcHuLP7vT1C7iDCvdA/xsISEn2P9vWxbSrH18=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hr3r1-0002uT-Sa; Fri, 26 Jul 2019 17:18:03 +0000
-Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 996452742B63; Fri, 26 Jul 2019 18:18:02 +0100 (BST)
-Date:   Fri, 26 Jul 2019 18:18:02 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc:     linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
-        rafael@kernel.org, linux-arm-kernel@lists.infradead.org,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, devicetree@vger.kernel.org,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Liam Girdwood <lgirdwood@gmail.com>, linux-i2c@vger.kernel.org,
-        linux-rockchip@lists.infradead.org, linux-spi@vger.kernel.org,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Takashi Iwai <tiwai@suse.com>,
-        Wolfram Sang <wsa@the-dreams.de>, Alan Tull <atull@kernel.org>,
-        Moritz Fischer <mdf@kernel.org>, linux-fpga@vger.kernel.org,
-        Peter Rosin <peda@axentia.se>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Andrew Lunn <andrew@lunn.ch>, Lee Jones <lee.jones@linaro.org>,
-        Thor Thayer <thor.thayer@linux.intel.com>,
-        Jiri Slaby <jslaby@suse.com>
-Subject: Re: [PATCH v3 2/7] drivers: Introduce device lookup variants by
- of_node
-Message-ID: <20190726171802.GD55803@sirena.org.uk>
-References: <20190723221838.12024-1-suzuki.poulose@arm.com>
- <20190723221838.12024-3-suzuki.poulose@arm.com>
+        Fri, 26 Jul 2019 13:19:22 -0400
+Received: from pps.filterd (m0109331.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6QHI41Z025672;
+        Fri, 26 Jul 2019 10:18:13 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=1cLO6UUuGLLv6igO8cDwpB0zGPxu6plc0KFr9CFZsXY=;
+ b=EqOFYdYbpEcsJqra6B2AwMpBzEm3gbSn+zUlAICcIRYezg3kwKpod0QWwMChAPfNVcyJ
+ 3e7fwomI7lg9qSa/91jyw96odZB+q6y0oroV19ryTT3DYOpqDv5crGt/oJlB5LBdw61D
+ hBsdUBWUfbleNIIongplQ4om1OV0siNqNFk= 
+Received: from mail.thefacebook.com (mailout.thefacebook.com [199.201.64.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2u006ah9h2-2
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Fri, 26 Jul 2019 10:18:13 -0700
+Received: from prn-mbx06.TheFacebook.com (2620:10d:c081:6::20) by
+ prn-hub06.TheFacebook.com (2620:10d:c081:35::130) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1713.5; Fri, 26 Jul 2019 10:18:10 -0700
+Received: from prn-hub01.TheFacebook.com (2620:10d:c081:35::125) by
+ prn-mbx06.TheFacebook.com (2620:10d:c081:6::20) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1713.5; Fri, 26 Jul 2019 10:18:10 -0700
+Received: from NAM04-CO1-obe.outbound.protection.outlook.com (192.168.54.28)
+ by o365-in.thefacebook.com (192.168.16.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1713.5
+ via Frontend Transport; Fri, 26 Jul 2019 10:18:10 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=fOKCTmvRQAVsRBS3iGO6JpoTYQbooYNkD03OhfaMPAU97luubJQVlk0V5sacbBV9gZciI/GQ8CmDV7LnEmisIptVWqTm6QBiQcXOJTLmTeoZMRoE4m1tArWbF0o5JsEWG07GjHD8lkKbMq9rXVX437HWj5EVIEJ3lF8/RlVrWpLurZ1JlLDsj7pwWqHmhw0tjjKqoBXuDNKBDehWP3zkXFcj99Q5RIoF4tyConxtHo6/y8Dv3hTLMgtLrW2B4Lp9B0sUjLNN5votOxISVzzvac17eHwVBm4LtQHdXyDySHf6r0j6STMAc/BF29WS1+q5m4vuJReM8v7SY5BZohs/+g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1cLO6UUuGLLv6igO8cDwpB0zGPxu6plc0KFr9CFZsXY=;
+ b=iB1Q2SCMfsfPDobs5FmJ4rawRdzQdFzZU3pjBnJUnzSR4Nb5BAn8HMlWemL72d5/HL7XsxIq1Wf75bkrxS6y+1r9+G7Qy33bwu6efFzAVLov3BBQ41+IyX0sc1T1Wxrw4yG0ULR0kz4O97xoDd+p5vFdm+1W0gRVh5J4oRXqzm6h+xSgy1Gj1RIFBfPnSALjlQmgr33+F7QRkBK+njGINZ5aBhnOeNu4Q7oDGLbumOMa2fITpaHlYKgUALWMDH0K1cLwVhGVdulqkjuEGDy3cAIWC2APr48uCY67RR3pm0F1x4yE7ty6CI4yta2jDTGV7jcfJ2h6RmiSsUDIiY0RyA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
+ smtp.mailfrom=fb.com;dmarc=pass action=none header.from=fb.com;dkim=pass
+ header.d=fb.com;arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector2-fb-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1cLO6UUuGLLv6igO8cDwpB0zGPxu6plc0KFr9CFZsXY=;
+ b=WFP2o57uVSSaJRID9rINw5np4jQkufgpz6QPX+qGxHBsWb/+gDk/HcBJ3f5/UckmDLHgEwNRRfhgZ9VRMQ6PnWWfLLUbRwNiz94Vagw6n8w8N29+qOzzFBmj7DRddpkEccBm1IndP0Pp80PBR+ugBAqRApDT8DbNP7pY2wK60FM=
+Received: from MWHPR15MB1165.namprd15.prod.outlook.com (10.175.3.22) by
+ MWHPR15MB1407.namprd15.prod.outlook.com (10.173.235.143) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2115.10; Fri, 26 Jul 2019 17:18:10 +0000
+Received: from MWHPR15MB1165.namprd15.prod.outlook.com
+ ([fe80::4066:b41c:4397:27b7]) by MWHPR15MB1165.namprd15.prod.outlook.com
+ ([fe80::4066:b41c:4397:27b7%7]) with mapi id 15.20.2094.013; Fri, 26 Jul 2019
+ 17:18:09 +0000
+From:   Song Liu <songliubraving@fb.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+CC:     Shaohua Li <shli@kernel.org>,
+        "linux-raid@vger.kernel.org" <linux-raid@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Mike Snitzer <snitzer@redhat.com>, Coly Li <colyli@suse.de>,
+        Mikulas Patocka <mpatocka@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1] md: Convert to use int_pow()
+Thread-Topic: [PATCH v1] md: Convert to use int_pow()
+Thread-Index: AQHVQ9ICPoM25vwzBkyUooybG4mzI6bdJIyA
+Date:   Fri, 26 Jul 2019 17:18:09 +0000
+Message-ID: <F7CF9393-B366-4810-B127-876C6D5A72A1@fb.com>
+References: <20190723204155.71531-1-andriy.shevchenko@linux.intel.com>
+ <20190726164823.GB9224@smile.fi.intel.com>
+In-Reply-To: <20190726164823.GB9224@smile.fi.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Apple Mail (2.3445.104.11)
+x-originating-ip: [2620:10d:c090:180::1:bb04]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: d0ea9c54-f8b3-488e-540b-08d711ed3b55
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:MWHPR15MB1407;
+x-ms-traffictypediagnostic: MWHPR15MB1407:
+x-microsoft-antispam-prvs: <MWHPR15MB14071F04C01A60D5BD2CFFE0B3C00@MWHPR15MB1407.namprd15.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:5516;
+x-forefront-prvs: 01106E96F6
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(136003)(39860400002)(376002)(346002)(366004)(189003)(199004)(6512007)(4326008)(57306001)(81156014)(66476007)(64756008)(5660300002)(76116006)(91956017)(53936002)(66556008)(8676002)(81166006)(50226002)(66446008)(6916009)(66946007)(486006)(6246003)(2906002)(229853002)(14454004)(6436002)(68736007)(33656002)(316002)(99286004)(478600001)(86362001)(2616005)(6116002)(11346002)(25786009)(46003)(8936002)(76176011)(186003)(446003)(54906003)(6506007)(53546011)(102836004)(476003)(7736002)(36756003)(71190400001)(71200400001)(256004)(305945005)(6486002);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR15MB1407;H:MWHPR15MB1165.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: o3zZfEvv81jbGodjYv7u6uHfUrjaIvS0+PdEFIw0olXn3RlfLe+H3NHTosrlaw/U3uKyoPPg0n3/cFxuc+Y/ft9qrE1TBJs5pM+nibcEottLUtPcNTsXlcpQUnb8uVTqqjHnpbiks/W2yvX9R4TEGZl/RCTpfPzgpYlyrmE4sFbbayr2Hzb4o1Ucz7pkgWWHqqPGNBV4dm7kBctRyaWUCd2cmBTOeAEE0nU+qzbeFQf0FmVhCd+dAm8k+zDLHwk9a3inqKtfMPHFXbyeBXQKWWJmxi6u6ZoVH/WuXhoKNvYRf461Jocq4NtFlaTR/7muaDZjPQRLzGWXCNag4Bs4lgkbdVVZnt9kZ/bkK7jwdcaJod9Evih2zg0uNR3AqLYOAQq/0v+dnNYebnsRpIb+Sc8sFJHgDCV0ZphZ71H9roE=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <EAD09523AB061648A24EB869500B7D81@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="fOHHtNG4YXGJ0yqR"
-Content-Disposition: inline
-In-Reply-To: <20190723221838.12024-3-suzuki.poulose@arm.com>
-X-Cookie: Think sideways!
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-MS-Exchange-CrossTenant-Network-Message-Id: d0ea9c54-f8b3-488e-540b-08d711ed3b55
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Jul 2019 17:18:09.5432
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: songliubraving@fb.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR15MB1407
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-26_12:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1907260209
+X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---fOHHtNG4YXGJ0yqR
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Tue, Jul 23, 2019 at 11:18:33PM +0100, Suzuki K Poulose wrote:
-> Introduce wrappers for {bus/driver/class}_find_device() to
-> locate devices by its of_node.
+> On Jul 26, 2019, at 9:48 AM, Andy Shevchenko <andriy.shevchenko@linux.int=
+el.com> wrote:
+>=20
+> On Tue, Jul 23, 2019 at 11:41:55PM +0300, Andy Shevchenko wrote:
+>> Instead of linear approach to calculate power of 10, use generic int_pow=
+()
+>> which does it better.
+>=20
+> I took into Cc drivers/dm guys as they might have known something about m=
+d raid
+> state of affairs. Sorry if I mistakenly added somebody.
+>=20
+> Who is doing this?
+> Should it be orphaned?
+>=20
+> (I got a bounce from Shaohua address)
 
-Acked-by: Mark Brown <broonie@kernel.org>
+I process the patch. Sorry for the delay.
 
---fOHHtNG4YXGJ0yqR
-Content-Type: application/pgp-signature; name="signature.asc"
+Song
 
------BEGIN PGP SIGNATURE-----
+>=20
+>>=20
+>> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+>> ---
+>> drivers/md/md.c | 6 +-----
+>> 1 file changed, 1 insertion(+), 5 deletions(-)
+>>=20
+>> diff --git a/drivers/md/md.c b/drivers/md/md.c
+>> index 24638ccedce4..3f1252440ad0 100644
+>> --- a/drivers/md/md.c
+>> +++ b/drivers/md/md.c
+>> @@ -3664,11 +3664,7 @@ int strict_strtoul_scaled(const char *cp, unsigne=
+d long *res, int scale)
+>> 		return -EINVAL;
+>> 	if (decimals < 0)
+>> 		decimals =3D 0;
+>> -	while (decimals < scale) {
+>> -		result *=3D 10;
+>> -		decimals ++;
+>> -	}
+>> -	*res =3D result;
+>> +	*res =3D result * int_pow(10, scale - decimals);
+>> 	return 0;
+>> }
+>>=20
+>> --=20
+>> 2.20.1
+>>=20
+>=20
+> --=20
+> With Best Regards,
+> Andy Shevchenko
+>=20
+>=20
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl07NckACgkQJNaLcl1U
-h9A0GAf/Qv4GC1ywijdMO9/GL0PzTuBBqL46oM94b0OCt9PYllKoQ2MkrwSN+eAS
-DGfHngyqVnoUtqjC/RksDFvWLJ7/Hg6BRJf0zkPspIu7s/DC2tW4x7C8CTIvfbF3
-LbDl5DdTKcj/+2cS7yypDLGUkmUVs0pmfQJ5e9gk0l8qX8UUIoycnIQCKtctvUlr
-LZgOv6gh5nuo2Vh8vuJIMi9rUHfe8zeSvMhnDhM/cU4ufM81bxjTeRw/9wdv1KOO
-WLCRZm1nIAYCZajxTVgQdYhI/c7w6Dl9ZSc9/dJmzVp5RZyoV7KYT6IcjRwPVnRt
-UZpTwC9oSD2mXZB30cpoNy7JmGFAKw==
-=+DYp
------END PGP SIGNATURE-----
-
---fOHHtNG4YXGJ0yqR--
