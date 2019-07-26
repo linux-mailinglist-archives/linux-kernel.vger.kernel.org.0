@@ -2,84 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 938FA75F03
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 08:26:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 39A4175F14
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 08:33:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726262AbfGZG0x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 02:26:53 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:35409 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725864AbfGZG0x (ORCPT
+        id S1726004AbfGZGdi convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 26 Jul 2019 02:33:38 -0400
+Received: from tyo161.gate.nec.co.jp ([114.179.232.161]:33807 "EHLO
+        tyo161.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725903AbfGZGdh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 02:26:53 -0400
-Received: by mail-lf1-f66.google.com with SMTP id p197so36241838lfa.2;
-        Thu, 25 Jul 2019 23:26:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=nnLng03yKzoOCov75qSA3MqCcOmyhGOuTFn/YZRC6bw=;
-        b=QY77d0thwiUD4ElvhVAy5MKyD6fafSxKbtUv9VmsptPFHHlvme/Z5bDd9kco83+dOz
-         CJ1t8DkfHzgcMv66CGkufSFrQ6n5xX1QBja5olBDwVAevTLMlXef1BbefBr3tHHrLpFK
-         XK01aB7P2BDn2Bn8YP/I4KGqK7/vKpw7Qf7Q6C7hz31pREPZpTvVdpMWcJGUILzoTv+T
-         QM6N/YfrpJzm0vXuptrAaE2BUOax/gA9Y3ArgX4Lhrqb9QsDVllkWQd5TBNvmVWvVc/a
-         dMXl4XuC6Dq3uFjwMkRbaAVeIAnCwIOoXUe76JsyaUS7+cqO1ASTJmQDItIWMIvv+66A
-         tbVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=nnLng03yKzoOCov75qSA3MqCcOmyhGOuTFn/YZRC6bw=;
-        b=oArE1I4lE9NBJ91fqswpzYjAt80Zj4u+z34Oj5Bzg0fZbuXtOSWgjc4tU047gvnuHu
-         i9MIqMLyXd2NLkBotlWhYo96Cf//9ZiAoqffohWAVa0FZ9R2bnhPLrnKg00nKD5LN3se
-         zprugjYnNh494kywRxdt5Zvnfbxg55aI/+DlFOLy/6Pw6Gr8k38UAMSAVOvmXw5s6U7g
-         9+3VLZXce2xI3JZEji5IYPzY4TB8ozIQz1aZ74vRaYBg5koxvOiZQvKXPbOrChaURFc0
-         aOo5hhME2CxEVOM7t5oO/67/fnG6tBjdHBldZlSNvXI7kNXyJZjGTV8g1lbWRTdFaDl8
-         CUhg==
-X-Gm-Message-State: APjAAAWdo0I/zJ3VjjhZZi6cQuFw1HZj/Wdb7F4odKzGCi/k25xNTmnw
-        U4LRZYU5lVSSK8s+k+Eys2Q=
-X-Google-Smtp-Source: APXvYqxQGcfDkp5SBeDAZqV+MRX5iBECRKA/CnzStUstMtYBdbgt64kzQ037siw3JTVdCCysd7N8QQ==
-X-Received: by 2002:ac2:59c6:: with SMTP id x6mr8532542lfn.169.1564122411084;
-        Thu, 25 Jul 2019 23:26:51 -0700 (PDT)
-Received: from dimatab (ppp91-78-220-99.pppoe.mtu-net.ru. [91.78.220.99])
-        by smtp.gmail.com with ESMTPSA id z12sm8129347lfe.2.2019.07.25.23.26.49
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 25 Jul 2019 23:26:50 -0700 (PDT)
-Date:   Fri, 26 Jul 2019 09:30:55 +0300
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <tglx@linutronix.de>, <jason@lakedaemon.net>,
-        <marc.zyngier@arm.com>, <linus.walleij@linaro.org>,
-        <stefan@agner.ch>, <mark.rutland@arm.com>,
-        <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
-        <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <jckuo@nvidia.com>,
-        <josephl@nvidia.com>, <talho@nvidia.com>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <mperttunen@nvidia.com>, <spatra@nvidia.com>, <robh+dt@kernel.org>,
-        <devicetree@vger.kernel.org>
-Subject: Re: [PATCH V6 17/21] arm64: tegra: Enable wake from deep sleep on
- RTC alarm.
-Message-ID: <20190726093055.4d8fe3ff@dimatab>
-In-Reply-To: <1563738060-30213-18-git-send-email-skomatineni@nvidia.com>
-References: <1563738060-30213-1-git-send-email-skomatineni@nvidia.com>
-        <1563738060-30213-18-git-send-email-skomatineni@nvidia.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; arm-unknown-linux-gnueabihf)
+        Fri, 26 Jul 2019 02:33:37 -0400
+Received: from mailgate01.nec.co.jp ([114.179.233.122])
+        by tyo161.gate.nec.co.jp (8.15.1/8.15.1) with ESMTPS id x6Q6XF0g009534
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Fri, 26 Jul 2019 15:33:15 +0900
+Received: from mailsv02.nec.co.jp (mailgate-v.nec.co.jp [10.204.236.94])
+        by mailgate01.nec.co.jp (8.15.1/8.15.1) with ESMTP id x6Q6XFnI026172;
+        Fri, 26 Jul 2019 15:33:15 +0900
+Received: from mail01b.kamome.nec.co.jp (mail01b.kamome.nec.co.jp [10.25.43.2])
+        by mailsv02.nec.co.jp (8.15.1/8.15.1) with ESMTP id x6Q6TpBq025337;
+        Fri, 26 Jul 2019 15:33:15 +0900
+Received: from bpxc99gp.gisp.nec.co.jp ([10.38.151.152] [10.38.151.152]) by mail02.kamome.nec.co.jp with ESMTP id BT-MMP-7142931; Fri, 26 Jul 2019 15:25:51 +0900
+Received: from BPXM20GP.gisp.nec.co.jp ([10.38.151.212]) by
+ BPXC24GP.gisp.nec.co.jp ([10.38.151.152]) with mapi id 14.03.0439.000; Fri,
+ 26 Jul 2019 15:25:50 +0900
+From:   Toshiki Fukasawa <t-fukasawa@vx.jp.nec.com>
+To:     Michal Hocko <mhocko@kernel.org>
+CC:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        "adobriyan@gmail.com" <adobriyan@gmail.com>,
+        "hch@lst.de" <hch@lst.de>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Junichi Nomura <j-nomura@ce.jp.nec.com>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH 2/2] /proc/kpageflags: do not use uninitialized struct
+ pages
+Thread-Topic: [PATCH 2/2] /proc/kpageflags: do not use uninitialized struct
+ pages
+Thread-Index: AQHVQpEKFGt+j6P+NkKoSe72QQuzoKbac7OAgAFmX4A=
+Date:   Fri, 26 Jul 2019 06:25:49 +0000
+Message-ID: <40b3078e-fb8b-87ef-5c4e-6321956cc940@vx.jp.nec.com>
+References: <20190725023100.31141-1-t-fukasawa@vx.jp.nec.com>
+ <20190725023100.31141-3-t-fukasawa@vx.jp.nec.com>
+ <20190725090341.GC13855@dhcp22.suse.cz>
+In-Reply-To: <20190725090341.GC13855@dhcp22.suse.cz>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.34.125.135]
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-ID: <565C14CFB150684B823E03D090635792@gisp.nec.co.jp>
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+X-TM-AS-MML: disable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-=D0=92 Sun, 21 Jul 2019 12:40:56 -0700
-Sowjanya Komatineni <skomatineni@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
 
-> This patch updates device tree for RTC and PMC to allow system wake
-> from deep sleep on RTC alarm.
->=20
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 
-The dot in the end of the commit's title is unnecessary.
+On 2019/07/25 18:03, Michal Hocko wrote:
+> On Thu 25-07-19 02:31:18, Toshiki Fukasawa wrote:
+>> A kernel panic was observed during reading /proc/kpageflags for
+>> first few pfns allocated by pmem namespace:
+>>
+>> BUG: unable to handle page fault for address: fffffffffffffffe
+>> [  114.495280] #PF: supervisor read access in kernel mode
+>> [  114.495738] #PF: error_code(0x0000) - not-present page
+>> [  114.496203] PGD 17120e067 P4D 17120e067 PUD 171210067 PMD 0
+>> [  114.496713] Oops: 0000 [#1] SMP PTI
+>> [  114.497037] CPU: 9 PID: 1202 Comm: page-types Not tainted 5.3.0-rc1 #1
+>> [  114.497621] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.11.0-0-g63451fca13-prebuilt.qemu-project.org 04/01/2014
+>> [  114.498706] RIP: 0010:stable_page_flags+0x27/0x3f0
+>> [  114.499142] Code: 82 66 90 66 66 66 66 90 48 85 ff 0f 84 d1 03 00 00 41 54 55 48 89 fd 53 48 8b 57 08 48 8b 1f 48 8d 42 ff 83 e2 01 48 0f 44 c7 <48> 8b 00 f6 c4 02 0f 84 57 03 00 00 45 31 e4 48 8b 55 08 48 89 ef
+>> [  114.500788] RSP: 0018:ffffa5e601a0fe60 EFLAGS: 00010202
+>> [  114.501373] RAX: fffffffffffffffe RBX: ffffffffffffffff RCX: 0000000000000000
+>> [  114.502009] RDX: 0000000000000001 RSI: 00007ffca13a7310 RDI: ffffd07489000000
+>> [  114.502637] RBP: ffffd07489000000 R08: 0000000000000001 R09: 0000000000000000
+>> [  114.503270] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000240000
+>> [  114.503896] R13: 0000000000080000 R14: 00007ffca13a7310 R15: ffffa5e601a0ff08
+>> [  114.504530] FS:  00007f0266c7f540(0000) GS:ffff962dbbac0000(0000) knlGS:0000000000000000
+>> [  114.505245] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> [  114.505754] CR2: fffffffffffffffe CR3: 000000023a204000 CR4: 00000000000006e0
+>> [  114.506401] Call Trace:
+>> [  114.506660]  kpageflags_read+0xb1/0x130
+>> [  114.507051]  proc_reg_read+0x39/0x60
+>> [  114.507387]  vfs_read+0x8a/0x140
+>> [  114.507686]  ksys_pread64+0x61/0xa0
+>> [  114.508021]  do_syscall_64+0x5f/0x1a0
+>> [  114.508372]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>> [  114.508844] RIP: 0033:0x7f0266ba426b
+>>
+>> The reason for the panic is that stable_page_flags() which parses
+>> the page flags uses uninitialized struct pages reserved by the
+>> ZONE_DEVICE driver.
+> 
+> Why pmem hasn't initialized struct pages? 
+
+We proposed to initialize in previous approach but that wasn't merged.
+(See https://marc.info/?l=linux-mm&m=152964792500739&w=2)
+
+> Isn't that a bug that should be addressed rather than paper over it like this?
+
+I'm not sure. What do you think, Dan?
+
+Best regards,
+Toshiki Fukasawa
