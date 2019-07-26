@@ -2,101 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA36076254
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 11:48:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F3594762A7
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 11:50:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726138AbfGZJrv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 05:47:51 -0400
-Received: from out4436.biz.mail.alibaba.com ([47.88.44.36]:2979 "EHLO
-        out4436.biz.mail.alibaba.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725815AbfGZJrv (ORCPT
+        id S1726504AbfGZJiW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 05:38:22 -0400
+Received: from mail-io1-f72.google.com ([209.85.166.72]:52498 "EHLO
+        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726129AbfGZJiH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 05:47:51 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R201e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01422;MF=joseph.qi@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0TXqO63E_1564133850;
-Received: from JosephdeMacBook-Pro.local(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0TXqO63E_1564133850)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Fri, 26 Jul 2019 17:37:30 +0800
-Subject: Re: [PATCH 1/3] fs: ocfs2: Fix possible null-pointer dereferences in
- ocfs2_xa_prepare_entry()
-To:     Jia-Ju Bai <baijiaju1990@gmail.com>, mark@fasheh.com,
-        jlbec@evilplan.org
-Cc:     ocfs2-devel@oss.oracle.com, linux-kernel@vger.kernel.org
-References: <20190726033655.32253-1-baijiaju1990@gmail.com>
-From:   Joseph Qi <joseph.qi@linux.alibaba.com>
-Message-ID: <b6aef7d8-9884-7349-bcec-0c8654d1b062@linux.alibaba.com>
-Date:   Fri, 26 Jul 2019 17:37:30 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:60.0)
- Gecko/20100101 Thunderbird/60.8.0
+        Fri, 26 Jul 2019 05:38:07 -0400
+Received: by mail-io1-f72.google.com with SMTP id p12so58057315iog.19
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2019 02:38:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=QDNthF8eUHdqYI8kSSEW4zJ8AlkW+NY0ccSrbtgPmUo=;
+        b=detOpgvjH/D3yLN/AqMuWGFKMRUEVsUZvGKugjRiKZEG6HNLdDKkyI4WmLKPBocNQf
+         g8WLTvlP8TmrzTdY/Xz+z3ofmFn9bXJ+KEy5u56ASI63+72/dZjumYdJgaUw2ye4AJkf
+         7bsYeWezk2cYRwnngCBFe9edQc4FBwKwN9RVZPqGFtS3o8i/CUl0cdn7ix+K97FZfARC
+         bmPUzKJM4TXMadGFyIPxvxU3LNokck7UkCBcu0U5hTX8/7Z7/Os/L3P3Ye+Rel2oKrfI
+         duEvKHaXVl1iBXm7NkDjdF2FJ5Joiv3/ppoPk5gql5s3aGopd6YzTBO6UMqkAGHI9DW6
+         SZNA==
+X-Gm-Message-State: APjAAAVy4I99blfnqjn5y9UWn4OoketEMkzv5c5x4njrbvsDZCfQkz33
+        rEzBPRQxkDpk7Kj2D+uK3Y5nG+R6J5KuXnwDD2vaUH7Qhe76
+X-Google-Smtp-Source: APXvYqxZyRhoRRM4yZ/SXtXxqgJFOOdNBkxlozj1hSnyOWnQiwPMwSyUjqxsEA+FwP5IKOIsmu9huWtjTJ7T27mCGuM0yNwEzorL
 MIME-Version: 1.0
-In-Reply-To: <20190726033655.32253-1-baijiaju1990@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a02:8816:: with SMTP id r22mr22730032jai.60.1564133886797;
+ Fri, 26 Jul 2019 02:38:06 -0700 (PDT)
+Date:   Fri, 26 Jul 2019 02:38:06 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000b4358f058e924c6d@google.com>
+Subject: INFO: rcu detected stall in vhost_worker
+From:   syzbot <syzbot+36e93b425cd6eb54fcc1@syzkaller.appspotmail.com>
+To:     jasowang@redhat.com, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mst@redhat.com,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        virtualization@lists.linux-foundation.org
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello,
+
+syzbot found the following crash on:
+
+HEAD commit:    13bf6d6a Add linux-next specific files for 20190725
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=141449f0600000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8ae987d803395886
+dashboard link: https://syzkaller.appspot.com/bug?extid=36e93b425cd6eb54fcc1
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15112f3fa00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=131ab578600000
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+36e93b425cd6eb54fcc1@syzkaller.appspotmail.com
+
+rcu: INFO: rcu_preempt self-detected stall on CPU
+rcu: 	0-....: (10500 ticks this GP) idle=a56/1/0x4000000000000002  
+softirq=12266/12266 fqs=5250
+	(t=10502 jiffies g=14905 q=12)
+NMI backtrace for cpu 0
+CPU: 0 PID: 10848 Comm: vhost-10847 Not tainted 5.3.0-rc1-next-20190725 #52
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  <IRQ>
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
+  nmi_cpu_backtrace.cold+0x70/0xb2 lib/nmi_backtrace.c:101
+  nmi_trigger_cpumask_backtrace+0x23b/0x28b lib/nmi_backtrace.c:62
+  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
+  trigger_single_cpu_backtrace include/linux/nmi.h:164 [inline]
+  rcu_dump_cpu_stacks+0x183/0x1cf kernel/rcu/tree_stall.h:254
+  print_cpu_stall kernel/rcu/tree_stall.h:455 [inline]
+  check_cpu_stall kernel/rcu/tree_stall.h:529 [inline]
+  rcu_pending kernel/rcu/tree.c:2736 [inline]
+  rcu_sched_clock_irq.cold+0x4dd/0xc13 kernel/rcu/tree.c:2183
+  update_process_times+0x32/0x80 kernel/time/timer.c:1639
+  tick_sched_handle+0xa2/0x190 kernel/time/tick-sched.c:167
+  tick_sched_timer+0x53/0x140 kernel/time/tick-sched.c:1296
+  __run_hrtimer kernel/time/hrtimer.c:1389 [inline]
+  __hrtimer_run_queues+0x364/0xe40 kernel/time/hrtimer.c:1451
+  hrtimer_interrupt+0x314/0x770 kernel/time/hrtimer.c:1509
+  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1068 [inline]
+  smp_apic_timer_interrupt+0x160/0x610 arch/x86/kernel/apic/apic.c:1093
+  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:828
+  </IRQ>
+RIP: 0010:check_memory_region_inline mm/kasan/generic.c:173 [inline]
+RIP: 0010:check_memory_region+0x0/0x1a0 mm/kasan/generic.c:192
+Code: 66 2e 0f 1f 84 00 00 00 00 00 55 48 89 f2 be f8 00 00 00 48 89 e5 e8  
+df 60 90 05 5d c3 0f 1f 00 66 2e 0f 1f 84 00 00 00 00 00 <48> 85 f6 0f 84  
+34 01 00 00 48 b8 ff ff ff ff ff 7f ff ff 55 0f b6
+RSP: 0018:ffff8880a40bf950 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff13
+RAX: 0000000000000000 RBX: ffff8880836a8220 RCX: ffffffff81599777
+RDX: 0000000000000000 RSI: 0000000000000004 RDI: ffff8880836a8220
+RBP: ffff8880a40bf958 R08: 1ffff110106d5044 R09: ffffed10106d5045
+R10: ffffed10106d5044 R11: ffff8880836a8223 R12: 0000000000000001
+R13: 0000000000000003 R14: ffffed10106d5044 R15: 0000000000000001
+  atomic_read include/asm-generic/atomic-instrumented.h:26 [inline]
+  virt_spin_lock arch/x86/include/asm/qspinlock.h:83 [inline]
+  native_queued_spin_lock_slowpath+0xb7/0x9f0 kernel/locking/qspinlock.c:325
+  pv_queued_spin_lock_slowpath arch/x86/include/asm/paravirt.h:642 [inline]
+  queued_spin_lock_slowpath arch/x86/include/asm/qspinlock.h:50 [inline]
+  queued_spin_lock include/asm-generic/qspinlock.h:81 [inline]
+  do_raw_spin_lock+0x20e/0x2e0 kernel/locking/spinlock_debug.c:113
+  __raw_spin_lock include/linux/spinlock_api_smp.h:143 [inline]
+  _raw_spin_lock+0x37/0x40 kernel/locking/spinlock.c:151
+  spin_lock include/linux/spinlock.h:338 [inline]
+  vhost_setup_uaddr drivers/vhost/vhost.c:790 [inline]
+  vhost_setup_vq_uaddr drivers/vhost/vhost.c:801 [inline]
+  vhost_vq_map_prefetch drivers/vhost/vhost.c:1783 [inline]
+  vq_meta_prefetch+0x2a0/0xcb0 drivers/vhost/vhost.c:1804
+  handle_rx+0x145/0x1890 drivers/vhost/net.c:1128
+  handle_rx_net+0x19/0x20 drivers/vhost/net.c:1270
+  vhost_worker+0x2af/0x4d0 drivers/vhost/vhost.c:473
+  kthread+0x361/0x430 kernel/kthread.c:255
+  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
 
 
-On 19/7/26 11:36, Jia-Ju Bai wrote:
-> In ocfs2_xa_prepare_entry(), there is an if statement on line 2136 to
-> check whether loc->xl_entry is NULL:
->     if (loc->xl_entry)
-> 
-> When loc->xl_entry is NULL, it is used on line 2158:
->     ocfs2_xa_add_entry(loc, name_hash);
->         loc->xl_entry->xe_name_hash = cpu_to_le32(name_hash);
->         loc->xl_entry->xe_name_offset = cpu_to_le16(loc->xl_size);
-> and line 2164:
-> 	ocfs2_xa_add_namevalue(loc, xi);
->         loc->xl_entry->xe_value_size = cpu_to_le64(xi->xi_value_len);
->         loc->xl_entry->xe_name_len = xi->xi_name_len;
-> 
-> Thus, possible null-pointer dereferences may occur.
-> 
-> To fix these bugs, if loc-xl_entry is NULL, ocfs2_xa_prepare_entry() 
-> abnormally returns with -EINVAL.
-> 
-> These bugs are found by a static analysis tool STCheck written by us.
-> 
-> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-> ---
->  fs/ocfs2/xattr.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/ocfs2/xattr.c b/fs/ocfs2/xattr.c
-> index 385f3aaa2448..f690502daf3c 100644
-> --- a/fs/ocfs2/xattr.c
-> +++ b/fs/ocfs2/xattr.c
-> @@ -2154,8 +2154,10 @@ static int ocfs2_xa_prepare_entry(struct ocfs2_xa_loc *loc,
->  			}
->  		}
->  		ocfs2_xa_wipe_namevalue(loc);
-> -	} else
-> -		ocfs2_xa_add_entry(loc, name_hash);
-> +	} else {
-> +		rc = -EINVAL;
-> +		goto out;
-> +	}
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Since entry not found, so there is nothing to do in
-ocfs2_xa_prepare_entry(). We may change it like:
-
-if (!loc->xl_entry) {
-	rc = -EINVAL;
-	goto out;
-}	
-
-if (ocfs2_xa_can_reuse_entry(loc, xi)) {
-	......
-}
-.....
-
-
-Thanks,
-Joseph
->  
->  	/*
->  	 * If we get here, we have a blank entry.  Fill it.  We grow our
-> 
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
