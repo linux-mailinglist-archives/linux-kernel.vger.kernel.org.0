@@ -2,103 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D23375CDD
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 04:19:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8376075CE8
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 04:21:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726129AbfGZCTT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 22:19:19 -0400
-Received: from twhmllg4.macronix.com ([122.147.135.202]:60926 "EHLO
-        TWHMLLG4.macronix.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725842AbfGZCTS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 22:19:18 -0400
-Received: from localhost.localdomain ([172.17.195.96])
-        by TWHMLLG4.macronix.com with ESMTP id x6Q2Iasl095779;
-        Fri, 26 Jul 2019 10:18:38 +0800 (GMT-8)
-        (envelope-from masonccyang@mxic.com.tw)
-From:   Mason Yang <masonccyang@mxic.com.tw>
-To:     broonie@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        devicetree@vger.kernel.org
-Cc:     juliensu@mxic.com.tw, Simon Horman <horms@verge.net.au>,
-        lee.jones@linaro.org, sergei.shtylyov@cogentembedded.com,
-        Mason Yang <masonccyang@mxic.com.tw>, marek.vasut@gmail.com,
-        miquel.raynal@bootlin.com
-Subject: [PATCH v15 2/2] dt-bindings: spi: Document Renesas R-Car Gen3 RPC-IF controller bindings
-Date:   Fri, 26 Jul 2019 10:42:55 +0800
-Message-Id: <1564108975-27423-3-git-send-email-masonccyang@mxic.com.tw>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1564108975-27423-1-git-send-email-masonccyang@mxic.com.tw>
-References: <1564108975-27423-1-git-send-email-masonccyang@mxic.com.tw>
-X-MAIL: TWHMLLG4.macronix.com x6Q2Iasl095779
+        id S1726107AbfGZCVd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 22:21:33 -0400
+Received: from szxga01-in.huawei.com ([45.249.212.187]:2431 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725808AbfGZCVc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 22:21:32 -0400
+Received: from DGGEMM405-HUB.china.huawei.com (unknown [172.30.72.53])
+        by Forcepoint Email with ESMTP id 1352BF589A1FF2D3A17D;
+        Fri, 26 Jul 2019 10:21:30 +0800 (CST)
+Received: from dggeme760-chm.china.huawei.com (10.3.19.106) by
+ DGGEMM405-HUB.china.huawei.com (10.3.20.213) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Fri, 26 Jul 2019 10:21:29 +0800
+Received: from [127.0.0.1] (10.57.37.248) by dggeme760-chm.china.huawei.com
+ (10.3.19.106) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Fri, 26
+ Jul 2019 10:21:29 +0800
+Subject: Re: [PATCH net-next 07/11] net: hns3: adds debug messages to identify
+ eth down cause
+To:     Saeed Mahameed <saeedm@mellanox.com>,
+        "tanhuazhong@huawei.com" <tanhuazhong@huawei.com>,
+        "davem@davemloft.net" <davem@davemloft.net>
+CC:     "lipeng321@huawei.com" <lipeng321@huawei.com>,
+        "yisen.zhuang@huawei.com" <yisen.zhuang@huawei.com>,
+        "salil.mehta@huawei.com" <salil.mehta@huawei.com>,
+        "linuxarm@huawei.com" <linuxarm@huawei.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <1563938327-9865-1-git-send-email-tanhuazhong@huawei.com>
+ <1563938327-9865-8-git-send-email-tanhuazhong@huawei.com>
+ <ffd942e7d7442549a3a6d469709b7f7405928afe.camel@mellanox.com>
+ <30483e38-5e4a-0111-f431-4742ceb1aa62@huawei.com>
+ <75a02bbe5b3b0f2755cd901a8830d4a3026f9383.camel@mellanox.com>
+From:   liuyonglong <liuyonglong@huawei.com>
+Message-ID: <9ae85be2-b958-ecb4-2980-ca7e977606a1@huawei.com>
+Date:   Fri, 26 Jul 2019 10:21:27 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <75a02bbe5b3b0f2755cd901a8830d4a3026f9383.camel@mellanox.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.57.37.248]
+X-ClientProxiedBy: dggeme701-chm.china.huawei.com (10.1.199.97) To
+ dggeme760-chm.china.huawei.com (10.3.19.106)
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dcument the bindings used by the Renesas R-Car Gen3 RPC-IF controller.
+We will change all of them to netif_msg_drv() which is default off
+Thanks for your reply!
 
-Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
- .../devicetree/bindings/spi/spi-renesas-rpc.txt    | 46 ++++++++++++++++++++++
- 1 file changed, 46 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
-
-diff --git a/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
-new file mode 100644
-index 0000000..d929850
---- /dev/null
-+++ b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
-@@ -0,0 +1,46 @@
-+Renesas R-Car Gen3 RPC-IF controller Device Tree Bindings
-+---------------------------------------------------------
-+
-+Required properties:
-+- compatible: should be an SoC-specific compatible value, followed by
-+		"renesas,rcar-gen3-rpc" as a fallback.
-+		supported SoC-specific values are:
-+		"renesas,r8a77980-rpc"	(R-Car V3H)
-+		"renesas,r8a77995-rpc"	(R-Car D3)
-+- reg: should contain three register areas:
-+       first for the base address of RPC-IF registers,
-+       second for the direct mapping read mode and
-+       third for the write buffer area.
-+- reg-names: should contain "regs", "dirmap" and "wbuf"
-+- clocks: should contain the clock phandle/specifier pair for the module clock.
-+- clock-names: should contain "rpc"
-+- power-domains: should contain the power domain phandle/secifier pair.
-+- resets: should contain the reset controller phandle/specifier pair.
-+- #address-cells: should be 1
-+- #size-cells: should be 0
-+- flash: should be represented by a subnode of the RPC-IF node,
-+	 which "compatible" property contains "jedec,spi-nor", it presents
-+	 SPI is used.
-+
-+Example:
-+
-+	rpc: spi@ee200000 {
-+		compatible = "renesas,r8a77995-rpc", "renesas,rcar-gen3-rpc";
-+		reg = <0 0xee200000 0 0x200>, <0 0x08000000 0 0x4000000>,
-+		      <0 0xee208000 0 0x100>;
-+		reg-names = "regs", "dirmap", "wbuf";
-+		clocks = <&cpg CPG_MOD 917>;
-+		clock-names = "rpc";
-+		power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+		resets = <&cpg 917>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		flash@0 {
-+			compatible = "jedec,spi-nor";
-+			reg = <0>;
-+			spi-max-frequency = <40000000>;
-+			spi-tx-bus-width = <1>;
-+			spi-rx-bus-width = <1>;
-+		};
-+	};
--- 
-1.9.1
+On 2019/7/26 5:59, Saeed Mahameed wrote:
+> On Thu, 2019-07-25 at 20:28 +0800, liuyonglong wrote:
+>>
+>> On 2019/7/25 3:12, Saeed Mahameed wrote:
+>>> On Wed, 2019-07-24 at 11:18 +0800, Huazhong Tan wrote:
+>>>> From: Yonglong Liu <liuyonglong@huawei.com>
+>>>>
+>>>> Some times just see the eth interface have been down/up via
+>>>> dmesg, but can not know why the eth down. So adds some debug
+>>>> messages to identify the cause for this.
+>>>>
+>>>
+>>> I really don't like this. your default msg lvl has NETIF_MSG_IFDOWN
+>>> turned on .. dumping every single operation that happens on your
+>>> device
+>>> by default to kernel log is too much ! 
+>>>
+>>> We should really consider using trace buffers with well defined
+>>> structures for vendor specific events. so we can use bpf filters
+>>> and
+>>> state of the art tools for netdev debugging.
+>>>
+>>
+>> We do this because we can just see a link down message in dmesg, and
+>> had
+>> take a long time to found the cause of link down, just because
+>> another
+>> user changed the settings.
+>>
+>> We can change the net_open/net_stop/dcbnl_ops to msg_drv (not default
+>> turned on),  and want to keep the others default print to kernel log,
+>> is it acceptable?
+>>
+> 
+> acceptable as long as debug information are kept off by default and
+> your driver doens't spam the kernel log.
+> 
+> you should use dynamic debug [1] and/or "off by default" msg lvls for
+> debugging information..
+> 
+> I couldn't find any rules regarding what to put in kernel log, Maybe
+> someone can share ?. but i vaguely remember that the recommendation
+> for device drivers is to put nothing, only error/warning messages.
+> 
+> [1] 
+> https://www.kernel.org/doc/html/v4.15/admin-guide/dynamic-debug-howto.html
+> 
+>>>> @@ -1593,6 +1603,11 @@ static int hns3_ndo_set_vf_vlan(struct
+>>>> net_device *netdev, int vf, u16 vlan,
+>>>>  	struct hnae3_handle *h = hns3_get_handle(netdev);
+>>>>  	int ret = -EIO;
+>>>>  
+>>>> +	if (netif_msg_ifdown(h))
+>>>
+>>> why msg_ifdown ? looks like netif_msg_drv is more appropriate, for
+>>> many
+>>> of the cases in this patch.
+>>>
+>>
+>> This operation may cause link down, so we use msg_ifdown.
+>>
+> 
+> ifdown isn't link down.. 
+> 
+> to be honest, I couldn't find any documentation explaining how/when to
+> use msg lvls, (i didn't look too deep though), by looking at other
+> drivers, my interpretations is:
+> 
+> ifdup (open/boot up flow)
+> ifdwon (close/teardown flow)
+> drv (driver based or dynamic flows) 
+> etc .. 
+> 
+> -Saeed.
+> 
 
