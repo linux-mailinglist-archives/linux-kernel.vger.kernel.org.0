@@ -2,143 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF6D675F99
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 09:20:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C2FC475F9E
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 09:21:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726317AbfGZHUi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 03:20:38 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:3171 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726287AbfGZHUi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 03:20:38 -0400
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 93A3A94F2B2BF5405892;
-        Fri, 26 Jul 2019 15:20:34 +0800 (CST)
-Received: from [127.0.0.1] (10.177.96.203) by DGGEMS401-HUB.china.huawei.com
- (10.3.19.201) with Microsoft SMTP Server id 14.3.439.0; Fri, 26 Jul 2019
- 15:20:28 +0800
-Subject: Re: [RFC PATCH 00/10] implement KASLR for powerpc/fsl_booke/32
-To:     Kees Cook <keescook@chromium.org>
-CC:     <mpe@ellerman.id.au>, <linuxppc-dev@lists.ozlabs.org>,
-        <diana.craciun@nxp.com>, <christophe.leroy@c-s.fr>,
-        <benh@kernel.crashing.org>, <paulus@samba.org>,
-        <npiggin@gmail.com>, <kernel-hardening@lists.openwall.com>,
-        <linux-kernel@vger.kernel.org>, <wangkefeng.wang@huawei.com>,
-        <yebin10@huawei.com>, <thunder.leizhen@huawei.com>,
-        <jingxiangfeng@huawei.com>, <fanchengyang@huawei.com>
-References: <20190717080621.40424-1-yanaijie@huawei.com>
- <e6ad41bc-5d5a-cf3f-b308-e1863b4fef99@huawei.com>
- <201907251252.0C58037@keescook>
-From:   Jason Yan <yanaijie@huawei.com>
-Message-ID: <877d818d-b3ec-1cea-d024-4ad6aea7af60@huawei.com>
-Date:   Fri, 26 Jul 2019 15:20:26 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
-MIME-Version: 1.0
-In-Reply-To: <201907251252.0C58037@keescook>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.96.203]
-X-CFilter-Loop: Reflected
+        id S1726386AbfGZHVW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 03:21:22 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:38282 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725867AbfGZHVV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 03:21:21 -0400
+Received: by mail-pg1-f193.google.com with SMTP id f5so15510991pgu.5
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2019 00:21:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=DPFbvaM0ffzn/S9lvtDvQ6X/wXEPD6IvdQw6DnygcpE=;
+        b=Dcn0TQ5iRKLiq9la/u8PnkLoh/bQ2HK/pp5dNWDnoSTPgId5B1ES2XCZi8js0tnVhC
+         KXOtq22CVWqlrrr+aJObx2rwiuJsfIl7mY9R3xWmrAFgRkh9A0GLxELmkTaWSiy/d51P
+         s0bap92JtiqtNfdeVMzIxqhcUx6GIyuEaMsWzjldAXjQdkBdQjzVZXq03JkOdlEqsCr7
+         +/7+BNEovq0MpwM8KHegM16BSHvp9FATaTzBq6pse5fXCApisAoCGuNKaecOlGBVxX9n
+         LmfGDxRULfqXvBm7lRINK7qgeM4mx9z+WK8g8Cm7S5UQc9jKSK0AonVKhg+tPDB2PiFo
+         qIIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=DPFbvaM0ffzn/S9lvtDvQ6X/wXEPD6IvdQw6DnygcpE=;
+        b=ttXncbOu9rNp1cqg+ssS8iNA/E0TJb/hAXCHhp8h80V7zVamr+1Kt26mh3P79HbR0J
+         3pUnISALN7/anWxffw6T1zxstgFcuGozaC3TK5fpABLQYh9bVKnvB0oTDpy1w9mNO0bP
+         w5wd0Q+biQfBLDjYkDige+M3zETPhE8bmQS3rVLcZZUfGNh76TR27V4FSOwJo0r0G1Ot
+         OMkWdPKWryBup2tR9daaCGU1744KUfAto3y7blZ9MYosca0JdlXbBWuGFCbEcCJh89eo
+         QbwWu84Pq/50AhRC4W890n/Uua/0FSC84qJRF0FlMu1Uht4tis+ZTne2kz6VUSir14AF
+         kLHA==
+X-Gm-Message-State: APjAAAVlBJkAb/dxgQrwwE/ES3Yf4i7xilTOKdNholhOKeZ7OXU6l3j7
+        qqLoNaCL9mGp3B/6qRHq9vx1mQ==
+X-Google-Smtp-Source: APXvYqyF4Tr6KpqzUUg1uyFSW7cNnma7IjvzfFuYcV2VA1wP1hJQrdEzG7PNSHLazixsMdq0cLRW9Q==
+X-Received: by 2002:a63:c006:: with SMTP id h6mr56329731pgg.290.1564125680781;
+        Fri, 26 Jul 2019 00:21:20 -0700 (PDT)
+Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.82])
+        by smtp.gmail.com with ESMTPSA id o12sm39216152pjr.22.2019.07.26.00.21.17
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 26 Jul 2019 00:21:20 -0700 (PDT)
+From:   Baolin Wang <baolin.wang@linaro.org>
+To:     broonie@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        orsonzhai@gmail.com, zhang.lyra@gmail.com
+Cc:     weicx@spreadst.com, sherry.zong@unisoc.com, baolin.wang@linaro.org,
+        vincent.guittot@linaro.org, linux-spi@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/6] Optimize Spreadtrum ADI driver
+Date:   Fri, 26 Jul 2019 15:20:47 +0800
+Message-Id: <cover.1564125131.git.baolin.wang@linaro.org>
+X-Mailer: git-send-email 1.7.9.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This patchset did some optimization to remove some redundant code,
+add more reboot mode support and change hardware spinlock support
+to be optional.
 
+Baolin Wang (3):
+  spi: sprd: adi: Remove redundant address bits setting
+  spi: sprd: adi: Change hwlock to be optional
+  dt-bindings: spi: sprd: Change the hwlock support to be optional
 
-On 2019/7/26 3:58, Kees Cook wrote:
-> On Thu, Jul 25, 2019 at 03:16:28PM +0800, Jason Yan wrote:
->> Hi all, any comments?
-> 
-> I'm a fan of it, but I don't know ppc internals well enough to sanely
-> review the code. :) Some comments below on design...
-> 
+Chenxu Wei (1):
+  spi: sprd: adi: Add a reset reason for TOS panic
 
-Hi Kees, Thanks for your comments.
+Sherry Zong (2):
+  spi: sprd: adi: Add a reset reason for factory test mode
+  spi: sprd: adi: Add a reset reason for watchdog mode
 
->>
->>
->> On 2019/7/17 16:06, Jason Yan wrote:
->>> This series implements KASLR for powerpc/fsl_booke/32, as a security
->>> feature that deters exploit attempts relying on knowledge of the location
->>> of kernel internals.
->>>
->>> Since CONFIG_RELOCATABLE has already supported, what we need to do is
->>> map or copy kernel to a proper place and relocate. Freescale Book-E
->>> parts expect lowmem to be mapped by fixed TLB entries(TLB1). The TLB1
->>> entries are not suitable to map the kernel directly in a randomized
->>> region, so we chose to copy the kernel to a proper place and restart to
->>> relocate.
->>>
->>> Entropy is derived from the banner and timer base, which will change every
->>> build and boot. This not so much safe so additionally the bootloader may
->>> pass entropy via the /chosen/kaslr-seed node in device tree.
-> 
-> Good: adding kaslr-seed is a good step here. Are there any x86-like
-> RDRAND or RDTSC to use? (Or maybe timer base here is similar to x86
-> RDTSC here?)
-> 
+ .../devicetree/bindings/spi/spi-sprd-adi.txt       |   11 ++-
+ drivers/spi/spi-sprd-adi.c                         |   92 ++++++++++++++------
+ 2 files changed, 71 insertions(+), 32 deletions(-)
 
-Yes, time base is similar to RDTSC here.
-
->>>
->>> We will use the first 512M of the low memory to randomize the kernel
->>> image. The memory will be split in 64M zones. We will use the lower 8
->>> bit of the entropy to decide the index of the 64M zone. Then we chose a
->>> 16K aligned offset inside the 64M zone to put the kernel in.
-> 
-> Does this 16K granularity have any page table performance impact? My
-> understanding was that x86 needed to have 2M granularity due to its page
-> table layouts.
-> 
-
-The fsl booke TLB1 covers the whole low memeory. AFAIK, there is no page 
-table performance impact. But if anyone knows there is any regressions, 
-please let me know.
-
-> Why the 64M zones instead of just 16K granularity across the entire low
-> 512M?
-> 
-
-The boot code only maps one 64M zone at early start. If the kernel 
-crosses two 64M zones, we need to map two 64M zones. Keep the kernel in 
-one 64M saves a lot of complex codes.
-
->>>
->>>       KERNELBASE
->>>
->>>           |-->   64M   <--|
->>>           |               |
->>>           +---------------+    +----------------+---------------+
->>>           |               |....|    |kernel|    |               |
->>>           +---------------+    +----------------+---------------+
->>>           |                         |
->>>           |----->   offset    <-----|
->>>
->>>                                 kimage_vaddr
->>>
->>> We also check if we will overlap with some areas like the dtb area, the
->>> initrd area or the crashkernel area. If we cannot find a proper area,
->>> kaslr will be disabled and boot from the original kernel.
->>>
->>> Jason Yan (10):
->>>     powerpc: unify definition of M_IF_NEEDED
->>>     powerpc: move memstart_addr and kernstart_addr to init-common.c
->>>     powerpc: introduce kimage_vaddr to store the kernel base
->>>     powerpc/fsl_booke/32: introduce create_tlb_entry() helper
->>>     powerpc/fsl_booke/32: introduce reloc_kernel_entry() helper
->>>     powerpc/fsl_booke/32: implement KASLR infrastructure
->>>     powerpc/fsl_booke/32: randomize the kernel image offset
->>>     powerpc/fsl_booke/kaslr: clear the original kernel if randomized
->>>     powerpc/fsl_booke/kaslr: support nokaslr cmdline parameter
->>>     powerpc/fsl_booke/kaslr: dump out kernel offset information on panic
-> 
-> Is there anything planned for other fixed-location things, like x86's
-> CONFIG_RANDOMIZE_MEMORY?
-> 
-
-Yes, if this feature can be accepted, I will start to work with 
-powerpc64 KASLR and other things like CONFIG_RANDOMIZE_MEMORY.
+-- 
+1.7.9.5
 
