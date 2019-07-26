@@ -2,211 +2,437 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1184C75F9B
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 09:21:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 300D075FB4
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 09:22:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726332AbfGZHVD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 03:21:03 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:47766 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725867AbfGZHVC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 03:21:02 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8121DA70E;
-        Fri, 26 Jul 2019 07:21:01 +0000 (UTC)
-Received: from [10.36.116.244] (ovpn-116-244.ams2.redhat.com [10.36.116.244])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B6A3D5DE80;
-        Fri, 26 Jul 2019 07:20:59 +0000 (UTC)
-Subject: Re: [PATCH v1] ACPI / scan: Acquire device_hotplug_lock in
- acpi_scan_init()
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Michal Hocko <mhocko@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Oscar Salvador <osalvador@suse.de>
-References: <20190724143017.12841-1-david@redhat.com>
- <20190725125636.GA3582@dhcp22.suse.cz>
- <6dc566c2-faf6-565d-4ef1-2ac3a366bc76@redhat.com>
- <20190725135747.GB3582@dhcp22.suse.cz>
- <447b74ca-f7c7-0835-fd50-a9f7191fe47c@redhat.com>
- <20190725191943.GA6142@dhcp22.suse.cz>
- <e31882cf-3290-ea36-77d6-637eaf66fe77@redhat.com>
- <CAJZ5v0h+MjC3gFm1Kf3eBg2Rs12368j6S_i5_Gc24yWx+Z3xBA@mail.gmail.com>
-From:   David Hildenbrand <david@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- SE+xAvmumFBY
-Organization: Red Hat GmbH
-Message-ID: <8e891e0c-9024-b5ad-0f44-bccd4e87c60e@redhat.com>
-Date:   Fri, 26 Jul 2019 09:20:58 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1726308AbfGZHWg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 03:22:36 -0400
+Received: from mx0a-00010702.pphosted.com ([148.163.156.75]:5570 "EHLO
+        mx0b-00010702.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725955AbfGZHWg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 03:22:36 -0400
+Received: from pps.filterd (m0098780.ppops.net [127.0.0.1])
+        by mx0a-00010702.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x6Q7KjlS020976;
+        Fri, 26 Jul 2019 02:22:34 -0500
+Received: from ni.com (skprod3.natinst.com [130.164.80.24])
+        by mx0a-00010702.pphosted.com with ESMTP id 2tx62hk999-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 26 Jul 2019 02:22:34 -0500
+Received: from us-aus-exhub2.ni.corp.natinst.com (us-aus-exhub2.ni.corp.natinst.com [130.164.68.32])
+        by us-aus-skprod3.natinst.com (8.16.0.27/8.16.0.27) with ESMTPS id x6Q7MXNB009272
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Fri, 26 Jul 2019 02:22:33 -0500
+Received: from us-aus-exhub1.ni.corp.natinst.com (130.164.68.41) by
+ us-aus-exhub2.ni.corp.natinst.com (130.164.68.32) with Microsoft SMTP Server
+ (TLS) id 15.0.1395.4; Fri, 26 Jul 2019 02:22:32 -0500
+Received: from my-pen-rd9.apac.corp.natinst.com (130.164.49.7) by
+ us-aus-exhub1.ni.corp.natinst.com (130.164.68.41) with Microsoft SMTP Server
+ id 15.0.1395.4 via Frontend Transport; Fri, 26 Jul 2019 02:22:31 -0500
+From:   jeyentam <je.yen.tam@ni.com>
+To:     <gregkh@linuxfoundation.org>
+CC:     <linux-serial@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        jeyentam <je.yen.tam@ni.com>
+Subject: [PATCH v6] serial/8250: Add support for NI-Serial PXI/PXIe+485 devices
+Date:   Fri, 26 Jul 2019 15:22:26 +0800
+Message-ID: <20190726072226.6357-1-je.yen.tam@ni.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-In-Reply-To: <CAJZ5v0h+MjC3gFm1Kf3eBg2Rs12368j6S_i5_Gc24yWx+Z3xBA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Fri, 26 Jul 2019 07:21:01 +0000 (UTC)
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:5.22.84,1.0.8
+ definitions=2019-07-26_04:2019-07-26,2019-07-26 signatures=0
+X-Proofpoint-Spam-Reason: safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25.07.19 23:23, Rafael J. Wysocki wrote:
-> On Thu, Jul 25, 2019 at 10:49 PM David Hildenbrand <david@redhat.com> wrote:
->>
->> On 25.07.19 21:19, Michal Hocko wrote:
->>> On Thu 25-07-19 16:35:07, David Hildenbrand wrote:
->>>> On 25.07.19 15:57, Michal Hocko wrote:
->>>>> On Thu 25-07-19 15:05:02, David Hildenbrand wrote:
->>>>>> On 25.07.19 14:56, Michal Hocko wrote:
->>>>>>> On Wed 24-07-19 16:30:17, David Hildenbrand wrote:
->>>>>>>> We end up calling __add_memory() without the device hotplug lock held.
->>>>>>>> (I used a local patch to assert in __add_memory() that the
->>>>>>>>  device_hotplug_lock is held - I might upstream that as well soon)
->>>>>>>>
->>>>>>>> [   26.771684]        create_memory_block_devices+0xa4/0x140
->>>>>>>> [   26.772952]        add_memory_resource+0xde/0x200
->>>>>>>> [   26.773987]        __add_memory+0x6e/0xa0
->>>>>>>> [   26.775161]        acpi_memory_device_add+0x149/0x2b0
->>>>>>>> [   26.776263]        acpi_bus_attach+0xf1/0x1f0
->>>>>>>> [   26.777247]        acpi_bus_attach+0x66/0x1f0
->>>>>>>> [   26.778268]        acpi_bus_attach+0x66/0x1f0
->>>>>>>> [   26.779073]        acpi_bus_attach+0x66/0x1f0
->>>>>>>> [   26.780143]        acpi_bus_scan+0x3e/0x90
->>>>>>>> [   26.780844]        acpi_scan_init+0x109/0x257
->>>>>>>> [   26.781638]        acpi_init+0x2ab/0x30d
->>>>>>>> [   26.782248]        do_one_initcall+0x58/0x2cf
->>>>>>>> [   26.783181]        kernel_init_freeable+0x1bd/0x247
->>>>>>>> [   26.784345]        kernel_init+0x5/0xf1
->>>>>>>> [   26.785314]        ret_from_fork+0x3a/0x50
->>>>>>>>
->>>>>>>> So perform the locking just like in acpi_device_hotplug().
->>>>>>>
->>>>>>> While playing with the device_hotplug_lock, can we actually document
->>>>>>> what it is protecting please? I have a bad feeling that we are adding
->>>>>>> this lock just because some other code path does rather than with a good
->>>>>>> idea why it is needed. This patch just confirms that. What exactly does
->>>>>>> the lock protect from here in an early boot stage.
->>>>>>
->>>>>> We have plenty of documentation already
->>>>>>
->>>>>> mm/memory_hotplug.c
->>>>>>
->>>>>> git grep -C5 device_hotplug mm/memory_hotplug.c
->>>>>>
->>>>>> Also see
->>>>>>
->>>>>> Documentation/core-api/memory-hotplug.rst
->>>>>
->>>>> OK, fair enough. I was more pointing to a documentation right there
->>>>> where the lock is declared because that is the place where people
->>>>> usually check for documentation. The core-api documentation looks quite
->>>>> nice. And based on that doc it seems that this patch is actually not
->>>>> needed because neither the online/offline or cpu hotplug should be
->>>>> possible that early unless I am missing something.
->>>>
->>>> I really prefer to stick to locking rules as outlined on the
->>>> interfaces if it doesn't hurt. Why it is not needed is not clear.
->>>>
->>>>>
->>>>>> Regarding the early stage: primarily lockdep as I mentioned.
->>>>>
->>>>> Could you add a lockdep splat that would be fixed by this patch to the
->>>>> changelog for reference?
->>>>>
->>>>
->>>> I have one where I enforce what's documented (but that's of course not
->>>> upstream and therefore not "real" yet)
->>>
->>> Then I suppose to not add locking for something that is not a problem.
->>> Really, think about it. People will look at this code and follow the
->>> lead without really knowing why the locking is needed.
->>> device_hotplug_lock has its purpose and if the code in question doesn't
->>> need synchronization for the documented scenarios then the locking
->>> simply shouldn't be there. Adding the lock just because of a
->>> non-existing, and IMHO dubious, lockdep splats is just wrong.
->>>
->>> We need to rationalize the locking here, not to add more hacks.
->>
->> No, sorry. The real hack is calling a function that is *documented* to
->> be called under lock without it. That is an optimization for a special
->> case. That is the black magic in the code.
->>
->> The only alternative I see to this patch is adding a comment like
->>
->> /*
->>  * We end up calling __add_memory() without the device_hotplug_lock
->>  * held. This is fine as we cannot race with other hotplug activities
->>  * and userspace trying to online memory blocks.
->>  */
->>
->> Personally, I don't think that's any better than just grabbing the lock
->> as we are told to. (honestly, I don't see how optimizing away the lock
->> here is of *any* help to optimize our overall memory hotplug locking)
->>
->> @Rafael, what's your take? lock or comment?
-> 
-> Well, I have ACKed your patch already. :-)
+Add support for NI-Serial PXIe-RS232, PXI-RS485 and PXIe-RS485 devices.
 
-It's never to late to un-ACK if you changed your mind :)
+Signed-off-by: Je Yen Tam <je.yen.tam@ni.com>
+---
 
-> 
-> That said, adding a comment stating that the lock is acquired mostly
-> for consistency wouldn't hurt.
-> 
+v5 -> v6
+- Fix author full name.
 
-I can certainly do that. Thanks!
+v4 -> v5
+- Remove blank lines between variable definitions.
+- Remove trace_printk().
 
+v3 -> v4:
+- Add changes description.
+
+v2 -> v3:
+- Add "full" name for author
+- Use BIT() macro for bits definition
+- Remove unnecessary WARN_ON()
+- Change debugging interface to ftrace
+- Fix indentation
+- Add NI PXIe-RS232 and PXI/PXIe-RS485 device IDs #defines
+
+v1 -> v2:
+- Fix unintended indentation
+
+v1:
+- Add and rename #defines for 16550 UART Port Control Register
+- Add configuration for RS485 port.
+- Add device setup for NI PXI/PXIe-RS485 family.
+- Add PCI board attributes for NI PXIe-RS232 and PXI/PXIe-RS485 devices.
+
+ drivers/tty/serial/8250/8250_pci.c | 292 ++++++++++++++++++++++++++++-
+ 1 file changed, 288 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/tty/serial/8250/8250_pci.c b/drivers/tty/serial/8250/8250_pci.c
+index df41397de478..a675069571b2 100644
+--- a/drivers/tty/serial/8250/8250_pci.c
++++ b/drivers/tty/serial/8250/8250_pci.c
+@@ -730,8 +730,16 @@ static int pci_ni8430_init(struct pci_dev *dev)
+ }
+ 
+ /* UART Port Control Register */
+-#define NI8430_PORTCON	0x0f
+-#define NI8430_PORTCON_TXVR_ENABLE	(1 << 3)
++#define NI16550_PCR_OFFSET	0x0f
++#define NI16550_PCR_RS422	0x00
++#define NI16550_PCR_ECHO_RS485	0x01
++#define NI16550_PCR_DTR_RS485	0x02
++#define NI16550_PCR_AUTO_RS485	0x03
++#define NI16550_PCR_WIRE_MODE_MASK	0x03
++#define NI16550_PCR_TXVR_ENABLE_BIT	BIT(3)
++#define NI16550_PCR_RS485_TERMINATION_BIT	BIT(6)
++#define NI16550_ACR_DTR_AUTO_DTR	(0x2 << 3)
++#define NI16550_ACR_DTR_MANUAL_DTR	(0x0 << 3)
+ 
+ static int
+ pci_ni8430_setup(struct serial_private *priv,
+@@ -753,14 +761,117 @@ pci_ni8430_setup(struct serial_private *priv,
+ 		return -ENOMEM;
+ 
+ 	/* enable the transceiver */
+-	writeb(readb(p + offset + NI8430_PORTCON) | NI8430_PORTCON_TXVR_ENABLE,
+-	       p + offset + NI8430_PORTCON);
++	writeb(readb(p + offset + NI16550_PCR_OFFSET) | NI16550_PCR_TXVR_ENABLE_BIT,
++	       p + offset + NI16550_PCR_OFFSET);
+ 
+ 	iounmap(p);
+ 
+ 	return setup_port(priv, port, bar, offset, board->reg_shift);
+ }
+ 
++static int pci_ni8431_config_rs485(struct uart_port *port,
++	struct serial_rs485 *rs485)
++{
++	u8 pcr, acr;
++	struct uart_8250_port *up;
++
++	up = container_of(port, struct uart_8250_port, port);
++	acr = up->acr;
++	pcr = port->serial_in(port, NI16550_PCR_OFFSET);
++	pcr &= ~NI16550_PCR_WIRE_MODE_MASK;
++
++	if (rs485->flags & SER_RS485_ENABLED) {
++		/* RS-485 */
++		if ((rs485->flags & SER_RS485_RX_DURING_TX) &&
++			(rs485->flags & SER_RS485_RTS_ON_SEND)) {
++			dev_dbg(port->dev, "Invalid 2-wire mode\n");
++			return -EINVAL;
++		}
++
++		if (rs485->flags & SER_RS485_RX_DURING_TX) {
++			/* Echo */
++			dev_vdbg(port->dev, "2-wire DTR with echo\n");
++			pcr |= NI16550_PCR_ECHO_RS485;
++			acr |= NI16550_ACR_DTR_MANUAL_DTR;
++		} else {
++			/* Auto or DTR */
++			if (rs485->flags & SER_RS485_RTS_ON_SEND) {
++				/* Auto */
++				dev_vdbg(port->dev, "2-wire Auto\n");
++				pcr |= NI16550_PCR_AUTO_RS485;
++				acr |= NI16550_ACR_DTR_AUTO_DTR;
++			} else {
++				/* DTR-controlled */
++				/* No Echo */
++				dev_vdbg(port->dev, "2-wire DTR no echo\n");
++				pcr |= NI16550_PCR_DTR_RS485;
++				acr |= NI16550_ACR_DTR_MANUAL_DTR;
++			}
++		}
++	} else {
++		/* RS-422 */
++		dev_vdbg(port->dev, "4-wire\n");
++		pcr |= NI16550_PCR_RS422;
++		acr |= NI16550_ACR_DTR_MANUAL_DTR;
++	}
++
++	dev_dbg(port->dev, "write pcr: 0x%08x\n", pcr);
++	port->serial_out(port, NI16550_PCR_OFFSET, pcr);
++
++	up->acr = acr;
++	port->serial_out(port, UART_SCR, UART_ACR);
++	port->serial_out(port, UART_ICR, up->acr);
++
++	/* Update the cache. */
++	port->rs485 = *rs485;
++
++	return 0;
++}
++
++static int pci_ni8431_setup(struct serial_private *priv,
++		 const struct pciserial_board *board,
++		 struct uart_8250_port *uart, int idx)
++{
++	u8 pcr, acr;
++	struct pci_dev *dev = priv->dev;
++	void __iomem *addr;
++	unsigned int bar, offset = board->first_offset;
++
++	if (idx >= board->num_ports)
++		return 1;
++
++	bar = FL_GET_BASE(board->flags);
++	offset += idx * board->uart_offset;
++
++	addr = pci_ioremap_bar(dev, bar);
++	if (!addr)
++		return -ENOMEM;
++
++	/* enable the transceiver */
++	writeb(readb(addr + NI16550_PCR_OFFSET) | NI16550_PCR_TXVR_ENABLE_BIT,
++		addr + NI16550_PCR_OFFSET);
++
++	pcr = readb(addr + NI16550_PCR_OFFSET);
++	pcr &= ~NI16550_PCR_WIRE_MODE_MASK;
++
++	/* set wire mode to default RS-422 */
++	pcr |= NI16550_PCR_RS422;
++	acr = NI16550_ACR_DTR_MANUAL_DTR;
++
++	/* write port configuration to register */
++	writeb(pcr, addr + NI16550_PCR_OFFSET);
++
++	/* access and write to UART acr register */
++	writeb(UART_ACR, addr + UART_SCR);
++	writeb(acr, addr + UART_ICR);
++
++	uart->port.rs485_config = &pci_ni8431_config_rs485;
++
++	iounmap(addr);
++
++	return setup_port(priv, uart, bar, offset, board->reg_shift);
++}
++
+ static int pci_netmos_9900_setup(struct serial_private *priv,
+ 				const struct pciserial_board *board,
+ 				struct uart_8250_port *port, int idx)
+@@ -1731,6 +1842,15 @@ pci_wch_ch38x_setup(struct serial_private *priv,
+ #define PCI_DEVICE_ID_ACCESIO_PCIE_COM_8SM	0x10E9
+ #define PCI_DEVICE_ID_ACCESIO_PCIE_ICM_4SM	0x11D8
+ 
++#define PCIE_DEVICE_ID_NI_PXIE8430_2328	0x74C2
++#define PCIE_DEVICE_ID_NI_PXIE8430_23216	0x74C1
++#define PCI_DEVICE_ID_NI_PXI8431_4852	0x7081
++#define PCI_DEVICE_ID_NI_PXI8431_4854	0x70DE
++#define PCI_DEVICE_ID_NI_PXI8431_4858	0x70E3
++#define PCI_DEVICE_ID_NI_PXI8433_4852	0x70E9
++#define PCI_DEVICE_ID_NI_PXI8433_4854	0x70ED
++#define PCIE_DEVICE_ID_NI_PXIE8431_4858	0x74C4
++#define PCIE_DEVICE_ID_NI_PXIE8431_48516	0x74C3
+ 
+ 
+ /* Unknown vendors/cards - this should not be in linux/pci_ids.h */
+@@ -1956,6 +2076,87 @@ static struct pci_serial_quirk pci_serial_quirks[] __refdata = {
+ 		.setup		= pci_ni8430_setup,
+ 		.exit		= pci_ni8430_exit,
+ 	},
++	{
++		.vendor		= PCI_VENDOR_ID_NI,
++		.device		= PCIE_DEVICE_ID_NI_PXIE8430_2328,
++		.subvendor	= PCI_ANY_ID,
++		.subdevice	= PCI_ANY_ID,
++		.init		= pci_ni8430_init,
++		.setup		= pci_ni8430_setup,
++		.exit		= pci_ni8430_exit,
++	},
++	{
++		.vendor		= PCI_VENDOR_ID_NI,
++		.device		= PCIE_DEVICE_ID_NI_PXIE8430_23216,
++		.subvendor	= PCI_ANY_ID,
++		.subdevice	= PCI_ANY_ID,
++		.init		= pci_ni8430_init,
++		.setup		= pci_ni8430_setup,
++		.exit		= pci_ni8430_exit,
++	},
++	{
++		.vendor		= PCI_VENDOR_ID_NI,
++		.device		= PCI_DEVICE_ID_NI_PXI8431_4852,
++		.subvendor	= PCI_ANY_ID,
++		.subdevice	= PCI_ANY_ID,
++		.init		= pci_ni8430_init,
++		.setup		= pci_ni8431_setup,
++		.exit		= pci_ni8430_exit,
++	},
++	{
++		.vendor		= PCI_VENDOR_ID_NI,
++		.device		= PCI_DEVICE_ID_NI_PXI8431_4854,
++		.subvendor	= PCI_ANY_ID,
++		.subdevice	= PCI_ANY_ID,
++		.init		= pci_ni8430_init,
++		.setup		= pci_ni8431_setup,
++		.exit		= pci_ni8430_exit,
++	},
++	{
++		.vendor		= PCI_VENDOR_ID_NI,
++		.device		= PCI_DEVICE_ID_NI_PXI8431_4858,
++		.subvendor	= PCI_ANY_ID,
++		.subdevice	= PCI_ANY_ID,
++		.init		= pci_ni8430_init,
++		.setup		= pci_ni8431_setup,
++		.exit		= pci_ni8430_exit,
++	},
++	{
++		.vendor		= PCI_VENDOR_ID_NI,
++		.device		= PCI_DEVICE_ID_NI_PXI8433_4852,
++		.subvendor	= PCI_ANY_ID,
++		.subdevice	= PCI_ANY_ID,
++		.init		= pci_ni8430_init,
++		.setup		= pci_ni8431_setup,
++		.exit		= pci_ni8430_exit,
++	},
++	{
++		.vendor		= PCI_VENDOR_ID_NI,
++		.device		= PCI_DEVICE_ID_NI_PXI8433_4854,
++		.subvendor	= PCI_ANY_ID,
++		.subdevice	= PCI_ANY_ID,
++		.init		= pci_ni8430_init,
++		.setup		= pci_ni8431_setup,
++		.exit		= pci_ni8430_exit,
++	},
++	{
++		.vendor		= PCI_VENDOR_ID_NI,
++		.device		= PCIE_DEVICE_ID_NI_PXIE8431_4858,
++		.subvendor	= PCI_ANY_ID,
++		.subdevice	= PCI_ANY_ID,
++		.init		= pci_ni8430_init,
++		.setup		= pci_ni8431_setup,
++		.exit		= pci_ni8430_exit,
++	},
++	{
++		.vendor		= PCI_VENDOR_ID_NI,
++		.device		= PCIE_DEVICE_ID_NI_PXIE8431_48516,
++		.subvendor	= PCI_ANY_ID,
++		.subdevice	= PCI_ANY_ID,
++		.init		= pci_ni8430_init,
++		.setup		= pci_ni8431_setup,
++		.exit		= pci_ni8430_exit,
++	},
+ 	/* Quatech */
+ 	{
+ 		.vendor		= PCI_VENDOR_ID_QUATECH,
+@@ -2679,6 +2880,13 @@ enum pci_board_num_t {
+ 	pbn_ni8430_4,
+ 	pbn_ni8430_8,
+ 	pbn_ni8430_16,
++	pbn_ni8430_pxie_8,
++	pbn_ni8430_pxie_16,
++	pbn_ni8431_2,
++	pbn_ni8431_4,
++	pbn_ni8431_8,
++	pbn_ni8431_pxie_8,
++	pbn_ni8431_pxie_16,
+ 	pbn_ADDIDATA_PCIe_1_3906250,
+ 	pbn_ADDIDATA_PCIe_2_3906250,
+ 	pbn_ADDIDATA_PCIe_4_3906250,
+@@ -3320,6 +3528,55 @@ static struct pciserial_board pci_boards[] = {
+ 		.uart_offset	= 0x10,
+ 		.first_offset	= 0x800,
+ 	},
++	[pbn_ni8430_pxie_16] = {
++		.flags		= FL_BASE0,
++		.num_ports	= 16,
++		.base_baud	= 3125000,
++		.uart_offset	= 0x10,
++		.first_offset	= 0x800,
++	},
++	[pbn_ni8430_pxie_8] = {
++		.flags		= FL_BASE0,
++		.num_ports	= 8,
++		.base_baud	= 3125000,
++		.uart_offset	= 0x10,
++		.first_offset	= 0x800,
++	},
++	[pbn_ni8431_8] = {
++		.flags		= FL_BASE0,
++		.num_ports	= 8,
++		.base_baud	= 3686400,
++		.uart_offset	= 0x10,
++		.first_offset	= 0x800,
++	},
++	[pbn_ni8431_4] = {
++		.flags		= FL_BASE0,
++		.num_ports	= 4,
++		.base_baud	= 3686400,
++		.uart_offset	= 0x10,
++		.first_offset	= 0x800,
++	},
++	[pbn_ni8431_2] = {
++		.flags		= FL_BASE0,
++		.num_ports	= 2,
++		.base_baud	= 3686400,
++		.uart_offset	= 0x10,
++		.first_offset	= 0x800,
++	},
++	[pbn_ni8431_pxie_16] = {
++		.flags		= FL_BASE0,
++		.num_ports	= 16,
++		.base_baud	= 3125000,
++		.uart_offset	= 0x10,
++		.first_offset	= 0x800,
++	},
++	[pbn_ni8431_pxie_8] = {
++		.flags		= FL_BASE0,
++		.num_ports	= 8,
++		.base_baud	= 3125000,
++		.uart_offset	= 0x10,
++		.first_offset	= 0x800,
++	},
+ 	/*
+ 	 * ADDI-DATA GmbH PCI-Express communication cards <info@addi-data.com>
+ 	 */
+@@ -5003,6 +5260,33 @@ static const struct pci_device_id serial_pci_tbl[] = {
+ 	{	PCI_VENDOR_ID_NI, PCI_DEVICE_ID_NI_PCI8432_2324,
+ 		PCI_ANY_ID, PCI_ANY_ID, 0, 0,
+ 		pbn_ni8430_4 },
++	{	PCI_VENDOR_ID_NI, PCIE_DEVICE_ID_NI_PXIE8430_2328,
++		PCI_ANY_ID, PCI_ANY_ID, 0, 0,
++		pbn_ni8430_pxie_8 },
++	{	PCI_VENDOR_ID_NI, PCIE_DEVICE_ID_NI_PXIE8430_23216,
++		PCI_ANY_ID, PCI_ANY_ID, 0, 0,
++		pbn_ni8430_pxie_16 },
++	{	PCI_VENDOR_ID_NI, PCI_DEVICE_ID_NI_PXI8431_4852,
++		PCI_ANY_ID, PCI_ANY_ID, 0, 0,
++		pbn_ni8431_2 },
++	{	PCI_VENDOR_ID_NI, PCI_DEVICE_ID_NI_PXI8431_4854,
++		PCI_ANY_ID, PCI_ANY_ID, 0, 0,
++		pbn_ni8431_4 },
++	{	PCI_VENDOR_ID_NI, PCI_DEVICE_ID_NI_PXI8431_4858,
++		PCI_ANY_ID, PCI_ANY_ID, 0, 0,
++		pbn_ni8431_8 },
++	{	PCI_VENDOR_ID_NI, PCIE_DEVICE_ID_NI_PXIE8431_4858,
++		PCI_ANY_ID, PCI_ANY_ID, 0, 0,
++		pbn_ni8431_pxie_8 },
++	{	PCI_VENDOR_ID_NI, PCIE_DEVICE_ID_NI_PXIE8431_48516,
++		PCI_ANY_ID, PCI_ANY_ID, 0, 0,
++		pbn_ni8431_pxie_16 },
++	{	PCI_VENDOR_ID_NI, PCI_DEVICE_ID_NI_PXI8433_4852,
++		PCI_ANY_ID, PCI_ANY_ID, 0, 0,
++		pbn_ni8431_2 },
++	{	PCI_VENDOR_ID_NI, PCI_DEVICE_ID_NI_PXI8433_4854,
++		PCI_ANY_ID, PCI_ANY_ID, 0, 0,
++		pbn_ni8431_4 },
+ 
+ 	/*
+ 	* ADDI-DATA GmbH communication cards <info@addi-data.com>
 -- 
+2.17.1
 
-Thanks,
-
-David / dhildenb
