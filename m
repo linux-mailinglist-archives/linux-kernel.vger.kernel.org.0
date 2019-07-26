@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DFB8276D2A
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 17:31:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F28676D05
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 17:31:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389247AbfGZPbQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 11:31:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46162 "EHLO mail.kernel.org"
+        id S2388856AbfGZP3f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 11:29:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44262 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389239AbfGZPbO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 11:31:14 -0400
+        id S2388842AbfGZP3d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 11:29:33 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CA2B322BF5;
-        Fri, 26 Jul 2019 15:31:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 852AB218D4;
+        Fri, 26 Jul 2019 15:29:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564155073;
-        bh=bkKa09Bt3oXV8Y6UPtyVRlX3kevz220qWhxojHD+jwQ=;
+        s=default; t=1564154973;
+        bh=iBSRzCIoJ+ShBskL/2vbRiaxpojvCljOleIl0m5Q5iw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=n3sOkzUAhhkdso1/Os02fsmHzCTZcrqCCT0dufEoTXkLDcau1rkzblsuGuTIUvA+w
-         XdlnZWHuxHgANkmXUP6XYUxsFoU3Ica+nkP2mXIYyhGblfWTRgg5xY9apnNTyakI2H
-         YYPreE+hCsmTgv799z4PMjn6XzImc7p5SjTdmKkA=
+        b=lq2JSOGHgXQefg1Rqy9xk8xZwnYu5EXTPsvdjqv/Qqc3IF+temUTox85W/yZ5vxIF
+         vTiauhtraFtqeTO6gvQ3xqyCD1zSPWvIIEklRqhpNAT1ABPmphdtWLpEfM2ffTmMes
+         3rM6+4WDq1YWpFy2C2R8Rd+U84jpRq7/Q6psCBus=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+079bf326b38072f849d9@syzkaller.appspotmail.com,
-        Xin Long <lucien.xin@gmail.com>,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.1 21/62] sctp: not bind the socket in sctp_connect
-Date:   Fri, 26 Jul 2019 17:24:33 +0200
-Message-Id: <20190726152303.922789380@linuxfoundation.org>
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Marcus Seyfarth <m.seyfarth@gmail.com>
+Subject: [PATCH 5.1 22/62] sky2: Disable MSI on ASUS P6T
+Date:   Fri, 26 Jul 2019 17:24:34 +0200
+Message-Id: <20190726152304.021048612@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190726152301.720139286@linuxfoundation.org>
 References: <20190726152301.720139286@linuxfoundation.org>
@@ -46,72 +44,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xin Long <lucien.xin@gmail.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-[ Upstream commit 9b6c08878e23adb7cc84bdca94d8a944b03f099e ]
+[ Upstream commit a261e3797506bd561700be643fe1a85bf81e9661 ]
 
-Now when sctp_connect() is called with a wrong sa_family, it binds
-to a port but doesn't set bp->port, then sctp_get_af_specific will
-return NULL and sctp_connect() returns -EINVAL.
+The onboard sky2 NIC on ASUS P6T WS PRO doesn't work after PM resume
+due to the infamous IRQ problem.  Disabling MSI works around it, so
+let's add it to the blacklist.
 
-Then if sctp_bind() is called to bind to another port, the last
-port it has bound will leak due to bp->port is NULL by then.
+Unfortunately the BIOS on the machine doesn't fill the standard
+DMI_SYS_* entry, so we pick up DMI_BOARD_* entries instead.
 
-sctp_connect() doesn't need to bind ports, as later __sctp_connect
-will do it if bp->port is NULL. So remove it from sctp_connect().
-While at it, remove the unnecessary sockaddr.sa_family len check
-as it's already done in sctp_inet_connect.
-
-Fixes: 644fbdeacf1d ("sctp: fix the issue that flags are ignored when using kernel_connect")
-Reported-by: syzbot+079bf326b38072f849d9@syzkaller.appspotmail.com
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
-Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+BugLink: https://bugzilla.suse.com/show_bug.cgi?id=1142496
+Reported-and-tested-by: Marcus Seyfarth <m.seyfarth@gmail.com>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sctp/socket.c |   24 +++---------------------
- 1 file changed, 3 insertions(+), 21 deletions(-)
+ drivers/net/ethernet/marvell/sky2.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/net/sctp/socket.c
-+++ b/net/sctp/socket.c
-@@ -4828,35 +4828,17 @@ out_nounlock:
- static int sctp_connect(struct sock *sk, struct sockaddr *addr,
- 			int addr_len, int flags)
- {
--	struct inet_sock *inet = inet_sk(sk);
- 	struct sctp_af *af;
--	int err = 0;
-+	int err = -EINVAL;
+--- a/drivers/net/ethernet/marvell/sky2.c
++++ b/drivers/net/ethernet/marvell/sky2.c
+@@ -4933,6 +4933,13 @@ static const struct dmi_system_id msi_bl
+ 			DMI_MATCH(DMI_PRODUCT_NAME, "P-79"),
+ 		},
+ 	},
++	{
++		.ident = "ASUS P6T",
++		.matches = {
++			DMI_MATCH(DMI_BOARD_VENDOR, "ASUSTeK Computer INC."),
++			DMI_MATCH(DMI_BOARD_NAME, "P6T"),
++		},
++	},
+ 	{}
+ };
  
- 	lock_sock(sk);
--
- 	pr_debug("%s: sk:%p, sockaddr:%p, addr_len:%d\n", __func__, sk,
- 		 addr, addr_len);
- 
--	/* We may need to bind the socket. */
--	if (!inet->inet_num) {
--		if (sk->sk_prot->get_port(sk, 0)) {
--			release_sock(sk);
--			return -EAGAIN;
--		}
--		inet->inet_sport = htons(inet->inet_num);
--	}
--
- 	/* Validate addr_len before calling common connect/connectx routine. */
--	af = addr_len < offsetofend(struct sockaddr, sa_family) ? NULL :
--		sctp_get_af_specific(addr->sa_family);
--	if (!af || addr_len < af->sockaddr_len) {
--		err = -EINVAL;
--	} else {
--		/* Pass correct addr len to common routine (so it knows there
--		 * is only one address being passed.
--		 */
-+	af = sctp_get_af_specific(addr->sa_family);
-+	if (af && addr_len >= af->sockaddr_len)
- 		err = __sctp_connect(sk, addr, af->sockaddr_len, flags, NULL);
--	}
- 
- 	release_sock(sk);
- 	return err;
 
 
