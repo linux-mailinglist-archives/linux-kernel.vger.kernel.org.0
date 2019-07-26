@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39C8776CA9
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 17:26:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 391C776CFC
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 17:29:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387884AbfGZP0U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 11:26:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40112 "EHLO mail.kernel.org"
+        id S2388808AbfGZP31 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 11:29:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44074 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387854AbfGZP0L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 11:26:11 -0400
+        id S2387940AbfGZP3Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 11:29:24 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2157B22CBE;
-        Fri, 26 Jul 2019 15:26:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DBAE4218D4;
+        Fri, 26 Jul 2019 15:29:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564154770;
-        bh=+ZxTGt51rK1SVRLv5Puk6vIbEgJLjlMdYTF1nSdXc8A=;
+        s=default; t=1564154964;
+        bh=NfmUCFLiynhvpHzrgnwobc64au4JaTnkhxfA4F/0VZw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gC+Cb4pAZgAUDO1+TvTCW1nqd2WM52atma2A5QLdD7xtWkLaYVSDqURQijazYxQ9W
-         /N3WcGGfFAGZLtVksKTHsRmJEbGICiUT8iv4XE7o+nvlgareYN+ZNzLFmKDELGwhMF
-         tV3SQty3C75sa+shevXT7U1YuF6w3HKby7BzkuGk=
+        b=ks0ERRTUK7XKGDUuVJJfCABosJGFHak4nwWUzSbYM4cR5M+uJYdPGZ6sCT3ezAN7I
+         QVnOaadez50rSXC3BqE+FMH5qioI8ymDTn15WdkI68eegrF3q6RiQTFB7bHxAfeQ2l
+         E3cOToIYiFFJgp+Ua7zxcyLaTEbESiupm/5/D5qU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+079bf326b38072f849d9@syzkaller.appspotmail.com,
-        Xin Long <lucien.xin@gmail.com>,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+        stable@vger.kernel.org, Baruch Siach <baruch@tkos.co.il>,
+        Andrew Lunn <andrew@lunn.ch>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.2 21/66] sctp: not bind the socket in sctp_connect
-Date:   Fri, 26 Jul 2019 17:24:20 +0200
-Message-Id: <20190726152304.076380271@linuxfoundation.org>
+Subject: [PATCH 5.1 09/62] net: dsa: mv88e6xxx: wait after reset deactivation
+Date:   Fri, 26 Jul 2019 17:24:21 +0200
+Message-Id: <20190726152302.680792877@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190726152301.936055394@linuxfoundation.org>
-References: <20190726152301.936055394@linuxfoundation.org>
+In-Reply-To: <20190726152301.720139286@linuxfoundation.org>
+References: <20190726152301.720139286@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,72 +44,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xin Long <lucien.xin@gmail.com>
+From: Baruch Siach <baruch@tkos.co.il>
 
-[ Upstream commit 9b6c08878e23adb7cc84bdca94d8a944b03f099e ]
+[ Upstream commit 7b75e49de424ceb53d13e60f35d0a73765626fda ]
 
-Now when sctp_connect() is called with a wrong sa_family, it binds
-to a port but doesn't set bp->port, then sctp_get_af_specific will
-return NULL and sctp_connect() returns -EINVAL.
+Add a 1ms delay after reset deactivation. Otherwise the chip returns
+bogus ID value. This is observed with 88E6390 (Peridot) chip.
 
-Then if sctp_bind() is called to bind to another port, the last
-port it has bound will leak due to bp->port is NULL by then.
-
-sctp_connect() doesn't need to bind ports, as later __sctp_connect
-will do it if bp->port is NULL. So remove it from sctp_connect().
-While at it, remove the unnecessary sockaddr.sa_family len check
-as it's already done in sctp_inet_connect.
-
-Fixes: 644fbdeacf1d ("sctp: fix the issue that flags are ignored when using kernel_connect")
-Reported-by: syzbot+079bf326b38072f849d9@syzkaller.appspotmail.com
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
-Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+Signed-off-by: Baruch Siach <baruch@tkos.co.il>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sctp/socket.c |   24 +++---------------------
- 1 file changed, 3 insertions(+), 21 deletions(-)
+ drivers/net/dsa/mv88e6xxx/chip.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/net/sctp/socket.c
-+++ b/net/sctp/socket.c
-@@ -4816,35 +4816,17 @@ out_nounlock:
- static int sctp_connect(struct sock *sk, struct sockaddr *addr,
- 			int addr_len, int flags)
- {
--	struct inet_sock *inet = inet_sk(sk);
- 	struct sctp_af *af;
--	int err = 0;
-+	int err = -EINVAL;
+--- a/drivers/net/dsa/mv88e6xxx/chip.c
++++ b/drivers/net/dsa/mv88e6xxx/chip.c
+@@ -4910,6 +4910,8 @@ static int mv88e6xxx_probe(struct mdio_d
+ 		err = PTR_ERR(chip->reset);
+ 		goto out;
+ 	}
++	if (chip->reset)
++		usleep_range(1000, 2000);
  
- 	lock_sock(sk);
--
- 	pr_debug("%s: sk:%p, sockaddr:%p, addr_len:%d\n", __func__, sk,
- 		 addr, addr_len);
- 
--	/* We may need to bind the socket. */
--	if (!inet->inet_num) {
--		if (sk->sk_prot->get_port(sk, 0)) {
--			release_sock(sk);
--			return -EAGAIN;
--		}
--		inet->inet_sport = htons(inet->inet_num);
--	}
--
- 	/* Validate addr_len before calling common connect/connectx routine. */
--	af = addr_len < offsetofend(struct sockaddr, sa_family) ? NULL :
--		sctp_get_af_specific(addr->sa_family);
--	if (!af || addr_len < af->sockaddr_len) {
--		err = -EINVAL;
--	} else {
--		/* Pass correct addr len to common routine (so it knows there
--		 * is only one address being passed.
--		 */
-+	af = sctp_get_af_specific(addr->sa_family);
-+	if (af && addr_len >= af->sockaddr_len)
- 		err = __sctp_connect(sk, addr, af->sockaddr_len, flags, NULL);
--	}
- 
- 	release_sock(sk);
- 	return err;
+ 	err = mv88e6xxx_detect(chip);
+ 	if (err)
 
 
