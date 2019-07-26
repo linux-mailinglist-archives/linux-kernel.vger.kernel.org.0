@@ -2,71 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00235762A8
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 11:50:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 97A38762AD
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 11:50:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726527AbfGZJi2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 05:38:28 -0400
-Received: from mga04.intel.com ([192.55.52.120]:27786 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726129AbfGZJi1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 05:38:27 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jul 2019 02:38:26 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,310,1559545200"; 
-   d="scan'208";a="175546381"
-Received: from crojewsk-mobl1.ger.corp.intel.com (HELO [10.251.89.116]) ([10.251.89.116])
-  by orsmga006.jf.intel.com with ESMTP; 26 Jul 2019 02:38:20 -0700
-Subject: Re: [RFC PATCH 03/40] soundwire: cadence_master: align debugfs to 8
- digits
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        tiwai@suse.de, broonie@kernel.org, vkoul@kernel.org,
-        gregkh@linuxfoundation.org, jank@cadence.com,
-        srinivas.kandagatla@linaro.org, slawomir.blauciak@intel.com,
-        Sanyog Kale <sanyog.r.kale@intel.com>
-References: <20190725234032.21152-1-pierre-louis.bossart@linux.intel.com>
- <20190725234032.21152-4-pierre-louis.bossart@linux.intel.com>
-From:   Cezary Rojewski <cezary.rojewski@intel.com>
-Message-ID: <500e2f21-3ec9-342c-ab4d-e222d9adb42c@intel.com>
-Date:   Fri, 26 Jul 2019 11:38:18 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1726184AbfGZJlH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 05:41:07 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:39151 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725903AbfGZJlH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 05:41:07 -0400
+Received: by mail-wm1-f67.google.com with SMTP id u25so36758100wmc.4
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2019 02:41:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brauner.io; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=sZakpoqaym6PsfEMEGIlfAyfufXMJwyfKIVWjWt4sec=;
+        b=M/rwVKFHXcUBztKkbZz/jjMyEqkRgdmMkYGynHz2GkdLZgUM6lrZrdxevS1aQLNqZS
+         8lnANdGaA3czqZdzzCBUC2Q89JJPWW5V+FCzrCtYga4jp835B2Gm9oQi+WseWTIFFZOi
+         4zoBPWUW6QGDJ8h5NMzKSZaLrfDp4vPCimRfi32cecvn4VhfmolkC32ugAxhBWBx2Xb5
+         dSXO09uWNIAvzVVuJjKLks7nKQUFcE6/yVWOD06GLkftgsU3EYHUGdwQbS08ZuIzn8KG
+         L3TNZ+PD0AxuvAJYQzTnNesK1m1NOe88rd6PLu5oUXDUnSWHbMQsbhODmH/VYLy3Dw96
+         na4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=sZakpoqaym6PsfEMEGIlfAyfufXMJwyfKIVWjWt4sec=;
+        b=A62PgFVXDa6M4b53qb/Glhk5mnL9FLTLRGiYntfceYbbONLvXk+TYlgg4TkrM8HQct
+         6sNLmuq9XX3P16UG/PM7LwSOtjV+tq2lNN/J9svHqZVqUC/LthA22twpLUIird5Bz5rP
+         ROcZTXdS8y0uAnU8S6LhxVv43YusZdYAnxWkJwr8E916nkWfcG9AQzbNg+W5whv4Mtft
+         ulzs2wtzaPbiM4PKyNhYGI2qGl7YYxdItW0oL0+OaYSTDthyCfbW/Ya4teSPg2cKbfRb
+         7vcfK7d7MrfwK2xAa08Cff51k+hEkP+uTyeCxofpzejVmbCxS2dw8g8dhZVrGknck8qj
+         tqGw==
+X-Gm-Message-State: APjAAAUytQ9E/fmyFYBnEebWWu38cX992FZ2WX8loOnlIHt5EGb9klDU
+        nAP9hfev0Ha9S7UUXD1LYJOydWn+Hno=
+X-Google-Smtp-Source: APXvYqza0l7ynfwjY4fT2uXw1gFK6yZFW5WnF2E8+aVo4xl+VlG6rlzd1OitPnjK4w4Qzkw4/be28A==
+X-Received: by 2002:a1c:f415:: with SMTP id z21mr9822561wma.34.1564134063794;
+        Fri, 26 Jul 2019 02:41:03 -0700 (PDT)
+Received: from localhost.localdomain ([213.220.153.21])
+        by smtp.gmail.com with ESMTPSA id r12sm61664892wrt.95.2019.07.26.02.41.01
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Fri, 26 Jul 2019 02:41:02 -0700 (PDT)
+From:   Christian Brauner <christian@brauner.io>
+To:     linux-kernel@vger.kernel.org, oleg@redhat.com
+Cc:     arnd@arndb.de, ebiederm@xmission.com, keescook@chromium.org,
+        joel@joelfernandes.org, tglx@linutronix.de, tj@kernel.org,
+        dhowells@redhat.com, jannh@google.com, luto@kernel.org,
+        akpm@linux-foundation.org, cyphar@cyphar.com,
+        torvalds@linux-foundation.org, viro@zeniv.linux.org.uk,
+        kernel-team@android.com, Christian Brauner <christian@brauner.io>
+Subject: [PATCH v1 0/2] pidfd: waiting on processes through pidfds
+Date:   Fri, 26 Jul 2019 11:39:32 +0200
+Message-Id: <20190726093934.13557-1-christian@brauner.io>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-In-Reply-To: <20190725234032.21152-4-pierre-louis.bossart@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-07-26 01:39, Pierre-Louis Bossart wrote:
-> SQUASHME
-> 
-> Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-> ---
->   drivers/soundwire/cadence_master.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/soundwire/cadence_master.c b/drivers/soundwire/cadence_master.c
-> index 91e8bacb83e3..9f611a1fff0a 100644
-> --- a/drivers/soundwire/cadence_master.c
-> +++ b/drivers/soundwire/cadence_master.c
-> @@ -234,7 +234,7 @@ static ssize_t cdns_sprintf(struct sdw_cdns *cdns,
->   			    char *buf, size_t pos, unsigned int reg)
->   {
->   	return scnprintf(buf + pos, RD_BUF - pos,
-> -			 "%4x\t%4x\n", reg, cdns_readl(cdns, reg));
-> +			 "%4x\t%8x\n", reg, cdns_readl(cdns, reg));
->   }
->   
->   static ssize_t cdns_reg_read(struct file *file, char __user *user_buf,
-> 
+Hey everyone,
 
-Should just be merged together with the introducing commit. Guess it's 
-posted unintentionally.
+/* v1 */
+This adds the ability to wait on processes using pidfds. This is one of
+the few missing pieces to make it possible to manage processes using
+only pidfds.
+
+Please note the following major changes (More details can be found in
+the individual commit changelogs.):
+- Add the new type P_PIDFD to waitid() instead of a new dedicated
+  pidfd_wait() syscall.
+  This is the same approach we discussed a few months ago and still
+  prefer over adding a dedicated syscall.
+- Adapt the tests to the new type P_PIDFD for waitid().
+- Remove struct waitid_info patch.
+  This will be sent out as a separate patch.
+- Remove CLONE_WAIT_PID patch.
+  This will be sent out as a separate patch.
+
+The core patch for waitid is pleasantly small. The largest change is
+caused by adding proper tests for waitid(P_PIDFD).
+
+/* v0 */
+Link: https://lore.kernel.org/lkml/20190724144651.28272-1-christian@brauner.io
+
+Thanks!
+Christian
+
+Christian Brauner (2):
+  pidfd: add P_PIDFD to waitid()
+  pidfd: add pidfd_wait tests
+
+ include/linux/pid.h                        |   4 +
+ include/uapi/linux/wait.h                  |   1 +
+ kernel/exit.c                              |  25 ++-
+ kernel/fork.c                              |   8 +
+ kernel/signal.c                            |   7 +-
+ tools/testing/selftests/pidfd/pidfd.h      |  25 +++
+ tools/testing/selftests/pidfd/pidfd_test.c |  14 --
+ tools/testing/selftests/pidfd/pidfd_wait.c | 245 +++++++++++++++++++++
+ 8 files changed, 311 insertions(+), 18 deletions(-)
+ create mode 100644 tools/testing/selftests/pidfd/pidfd_wait.c
+
+-- 
+2.22.0
+
