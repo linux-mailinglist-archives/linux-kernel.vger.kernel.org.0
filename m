@@ -2,97 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE97275EA4
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 07:54:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B16F775EAB
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 07:57:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726000AbfGZFyk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 01:54:40 -0400
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:47098 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725842AbfGZFyk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 01:54:40 -0400
-Received: by mail-ua1-f68.google.com with SMTP id o19so20857714uap.13
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 22:54:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=oXHxtrY/1JPtBqrQIWoexay88qj+bMo7PQ0N6TAP0FQ=;
-        b=RT8iuHWKJO+K6tK3R+Y+Y00ITNtcOoEgtttRUEM2NMaSU2tB0CJB9SKMqgyUAhVLGE
-         vb8lMrGX6RPYmLfo/h8VQXu3cMpxn0wRrjSa5/b8QZlkr72fiARnCgV6nMwei2A20KiT
-         ZAJybqEQT0Nt1XC9KaEFHhSae+BvhmPTQtl3o66Gm9LILvFSMsceQfSw9W4G3TvZGRIK
-         ZwOovOj91qPRy3V7eYs1aupLGRuTNKl0TBfi6RvEFAj+aWRuJC3HJ3FpcOZ1qEfmieic
-         hMJJ3ChOg1DlNyoAR8vaLaU7WKZBWQqYG3cj/E+Du637cZ4NZHyYYzXKDSU4NSuMN7x3
-         xT/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=oXHxtrY/1JPtBqrQIWoexay88qj+bMo7PQ0N6TAP0FQ=;
-        b=EPI7ma8N6CV/RO0KraYQTV5k2JBt5P1Pa0PB7rOOeAdqJKOqYc2jyJYMGHT/64K/u4
-         Sq4UHY7sl0Hg5fQJHyU+mhl7qEbrR4rt0fdwbYH54JevrD02Rv+eHZO6/sFrOJAEftle
-         /Smbj9Db3bT5BYq1Vhoj00YYx2fkOJmpyzDesg4olZ76hEYOnTw53IOFr4YyHP+ckYAR
-         HZQUeCg4US1Mb+PiykeflLGrlq8Wfk7P/1m2n04KKiWG+1K9Ne1cTsPRvLrBs8BMErli
-         NMLVUrlE9WoTDxeTmEArGrN7YR0FfI7dVXVjJRA9UXDHdDiIMfmfIGKX8JSVQmSInGFi
-         JFZQ==
-X-Gm-Message-State: APjAAAVYmObXTN3A/PMYPCFNkkb9H8YqyhHz52bfkimQ3RsCJzCU6Scj
-        VuzjIyIdO/Vy7rrfgaAIQR9FCZYGrlMM6oHuzBSENlSJUiE=
-X-Google-Smtp-Source: APXvYqyZVy8en1WC391nxzGnZAXn3I+0fS7Pbg7x7y5GbYYx1gFKKUihOzlftKLHCxOjx8Mc9D4use6fh4MYflHZK8E=
-X-Received: by 2002:ab0:2442:: with SMTP id g2mr7216037uan.47.1564120478505;
- Thu, 25 Jul 2019 22:54:38 -0700 (PDT)
+        id S1726130AbfGZF5a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 01:57:30 -0400
+Received: from mga01.intel.com ([192.55.52.88]:39876 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725842AbfGZF5a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 01:57:30 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jul 2019 22:57:30 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,309,1559545200"; 
+   d="scan'208";a="254223291"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.122]) ([10.237.72.122])
+  by orsmga001.jf.intel.com with ESMTP; 25 Jul 2019 22:57:26 -0700
+Subject: Re: [PATCH v2 2/2] mmc: Add support for the ASPEED SD controller
+To:     Andrew Jeffery <andrew@aj.id.au>,
+        linux-mmc <linux-mmc@vger.kernel.org>
+Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, mark.rutland@arm.com,
+        Joel Stanley <joel@jms.id.au>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        Ryan Chen <ryanchen.aspeed@gmail.com>
+References: <20190712033214.24713-1-andrew@aj.id.au>
+ <20190712033214.24713-3-andrew@aj.id.au>
+ <d6f7fdf2-07ed-354a-ca29-f3175623679c@intel.com>
+ <7cd30f3d-43fd-42da-9301-091eb2625c65@www.fastmail.com>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <8a7bfe52-83ca-7601-7d75-e5615da7b5de@intel.com>
+Date:   Fri, 26 Jul 2019 08:56:08 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <20190703034812.53002-1-walken@google.com> <20190725201920.fa67c2a95e975dcbb1f859af@linux-foundation.org>
-In-Reply-To: <20190725201920.fa67c2a95e975dcbb1f859af@linux-foundation.org>
-From:   Michel Lespinasse <walken@google.com>
-Date:   Thu, 25 Jul 2019 22:54:26 -0700
-Message-ID: <CANN689GWsF97UcdOUQu11qXvfy7LBBHxCwRhixoJ_utS4BrDbA@mail.gmail.com>
-Subject: Re: [PATCH] rbtree: sync up the tools/ copy of the code with the main one
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <7cd30f3d-43fd-42da-9301-091eb2625c65@www.fastmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 25, 2019 at 8:19 PM Andrew Morton <akpm@linux-foundation.org> wrote:
-> On Tue,  2 Jul 2019 20:48:12 -0700 Michel Lespinasse <walken@google.com> wrote:
->
-> > I should probably have done this in the same commit that changed the
-> > main rbtree code to avoid generating code twice for the cached rbtree
-> > versions.
-> >
-> > Not copying the reviewers of the previous change as tools/ is just another
-> > copy of it. Copying LKML anyway because the additional noise
-> > won't make as much of a difference there :)
->
-> That isn't really a changelog.  Could we please have a few words
-> describing the change?  Was it a simple `cp'?
+On 26/07/19 3:52 AM, Andrew Jeffery wrote:
+> On Thu, 25 Jul 2019, at 22:49, Adrian Hunter wrote:
+>> On 12/07/19 6:32 AM, Andrew Jeffery wrote:
+>>> +static int aspeed_sdhci_probe(struct platform_device *pdev)
+>>> +{
+>>> +	struct sdhci_pltfm_host *pltfm_host;
+>>> +	struct aspeed_sdhci *dev;
+>>> +	struct sdhci_host *host;
+>>> +	struct resource *res;
+>>> +	int slot;
+>>> +	int ret;
+>>> +
+>>> +	host = sdhci_pltfm_init(pdev, &aspeed_sdc_pdata, sizeof(*dev));
+>>> +	if (IS_ERR(host))
+>>> +		return PTR_ERR(host);
+>>> +
+>>> +	pltfm_host = sdhci_priv(host);
+>>> +	dev = sdhci_pltfm_priv(pltfm_host);
+>>> +	dev->parent = dev_get_drvdata(pdev->dev.parent);
+>>> +
+>>> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>>> +	slot = aspeed_sdhci_calculate_slot(dev, res);
+>>> +	if (slot < 0)
+>>> +		return slot;
+>>> +	dev_info(&pdev->dev, "Configuring for slot %d\n", slot);
+>>> +	dev->width_mask = !slot ? ASPEED_SDC_S0MMC8 : ASPEED_SDC_S1MMC8;
+>>
+>> That implies that you only support 2 slots which begs the question why
+>> you don't validate slot.
+> 
+> I'm not sure what you mean here, but I'll dig into it.
 
-Hmmm, sorry about that. Here is what I propose as a changelog:
+I just meant, if you only support 2 slots:
 
----
-rbtree: avoid generating code twice for the cached versions (tools copy)
-
-As was already noted in rbtree.h, the logic to cache rb_first (or rb_last)
-can easily be implemented externally to the core rbtree api.
-
-This commit takes the changes applied to the include/linux/ and lib/
-rbtree files in commit 9f973cb38088, and applies these to the
-tools/include/linux/ and tools/lib/ files as well to keep them synchronized.
-
-Signed-off-by: Michel Lespinasse <walken@google.com>
----
-
-The files are not a straight copy, but are very close. I opened the
-tools/include/linux rbtree files, cut out the parts that were modified
-in commit 9f973cb38088, then pasted the corresponding replacements
-from that commit. Then I diffed the exported commits against each
-other for a sanity check - they differ only in their context and in
-irrelevant detail (for example whether some removed function had some
-EXPORT_SYMBOL on them).
-
--- 
-Michel "Walken" Lespinasse
-A program is never fully debugged until the last user dies.
+	if (slot > 1)
+		return -EINVAL;
