@@ -2,61 +2,197 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C291076B03
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 16:05:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9387476B0B
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 16:06:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727483AbfGZOFG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 10:05:06 -0400
-Received: from mga04.intel.com ([192.55.52.120]:42665 "EHLO mga04.intel.com"
+        id S1727496AbfGZOGj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 10:06:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44000 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726434AbfGZOFF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 10:05:05 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jul 2019 07:05:05 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,311,1559545200"; 
-   d="scan'208";a="322048440"
-Received: from msmall-mobl.amr.corp.intel.com (HELO [10.251.154.62]) ([10.251.154.62])
-  by orsmga004.jf.intel.com with ESMTP; 26 Jul 2019 07:05:03 -0700
-Subject: Re: [alsa-devel] [RFC PATCH 09/40] soundwire: cadence_master: fix
- usage of CONFIG_UPDATE
-To:     Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
-Cc:     alsa-devel@alsa-project.org, tiwai@suse.de,
-        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        vkoul@kernel.org, broonie@kernel.org,
-        srinivas.kandagatla@linaro.org, jank@cadence.com,
+        id S1726364AbfGZOGi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 10:06:38 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 38E3621743;
+        Fri, 26 Jul 2019 14:06:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564149997;
+        bh=6LfqjPN06gwOLWMwiAbSXnJ6+TV+cegwJWjCipI2Wyk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=VL/IqECoYI4eYvfJUGVC1aH6YMKwuhRuSkd291Mfe4ePuIBtEbWsJpwY2NQU1NjLW
+         2Rn4DKNkoGzdQnlpJyyofZmQFUZQh57Li8DDVikI4X8Nc81RkOUsB58txa8gOBlM5X
+         04i/RLTXM+4sJp1aAUGCYBC64di1c2CfwqVd6QVk=
+Date:   Fri, 26 Jul 2019 16:06:35 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        tiwai@suse.de, broonie@kernel.org, vkoul@kernel.org,
+        jank@cadence.com, srinivas.kandagatla@linaro.org,
         slawomir.blauciak@intel.com, Sanyog Kale <sanyog.r.kale@intel.com>
+Subject: Re: [RFC PATCH 04/40] soundwire: intel: add debugfs register dump
+Message-ID: <20190726140635.GB8767@kroah.com>
 References: <20190725234032.21152-1-pierre-louis.bossart@linux.intel.com>
- <20190725234032.21152-10-pierre-louis.bossart@linux.intel.com>
- <20190725222302.GB16003@ubuntu>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <b1458200-c28b-91be-8dca-acd641816676@linux.intel.com>
-Date:   Fri, 26 Jul 2019 09:05:03 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+ <20190725234032.21152-5-pierre-louis.bossart@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20190725222302.GB16003@ubuntu>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190725234032.21152-5-pierre-louis.bossart@linux.intel.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
->> @@ -943,7 +953,10 @@ int sdw_cdns_init(struct sdw_cdns *cdns)
->>   
->>   	cdns_writel(cdns, CDNS_MCP_CONFIG, val);
->>   
->> -	return 0;
->> +	/* commit changes */
->> +	ret = cdns_update_config(cdns);
->> +
->> +	return ret;
+On Thu, Jul 25, 2019 at 06:39:56PM -0500, Pierre-Louis Bossart wrote:
+> Add debugfs file to dump the Intel SoundWire registers
 > 
-> +	return cdns_update_config(cdns);
+> Credits: this patch is based on an earlier internal contribution by
+> Vinod Koul, Sanyog Kale, Shreyas Nc and Hardik Shah. The main change
+> is the use of scnprintf to avoid known issues with snprintf.
+> 
+> Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+> ---
+>  drivers/soundwire/intel.c | 115 ++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 115 insertions(+)
+> 
+> diff --git a/drivers/soundwire/intel.c b/drivers/soundwire/intel.c
+> index 317873bc0555..aeadc341c0a3 100644
+> --- a/drivers/soundwire/intel.c
+> +++ b/drivers/soundwire/intel.c
+> @@ -6,6 +6,7 @@
+>   */
+>  
+>  #include <linux/acpi.h>
+> +#include <linux/debugfs.h>
+>  #include <linux/delay.h>
+>  #include <linux/module.h>
+>  #include <linux/interrupt.h>
+> @@ -16,6 +17,7 @@
+>  #include <linux/soundwire/sdw.h>
+>  #include <linux/soundwire/sdw_intel.h>
+>  #include "cadence_master.h"
+> +#include "bus.h"
+>  #include "intel.h"
+>  
+>  /* Intel SHIM Registers Definition */
+> @@ -98,6 +100,7 @@ struct sdw_intel {
+>  	struct sdw_cdns cdns;
+>  	int instance;
+>  	struct sdw_intel_link_res *res;
+> +	struct dentry *fs;
+>  };
+>  
+>  #define cdns_to_intel(_cdns) container_of(_cdns, struct sdw_intel, cdns)
+> @@ -161,6 +164,115 @@ static int intel_set_bit(void __iomem *base, int offset, u32 value, u32 mask)
+>  	return -EAGAIN;
+>  }
+>  
+> +/*
+> + * debugfs
+> + */
+> +
+> +#define RD_BUF (2 * PAGE_SIZE)
+> +
+> +static ssize_t intel_sprintf(void __iomem *mem, bool l,
+> +			     char *buf, size_t pos, unsigned int reg)
+> +{
+> +	int value;
+> +
+> +	if (l)
+> +		value = intel_readl(mem, reg);
+> +	else
+> +		value = intel_readw(mem, reg);
+> +
+> +	return scnprintf(buf + pos, RD_BUF - pos, "%4x\t%4x\n", reg, value);
+> +}
+> +
+> +static ssize_t intel_reg_read(struct file *file, char __user *user_buf,
+> +			      size_t count, loff_t *ppos)
+> +{
+> +	struct sdw_intel *sdw = file->private_data;
+> +	void __iomem *s = sdw->res->shim;
+> +	void __iomem *a = sdw->res->alh;
+> +	char *buf;
+> +	ssize_t ret;
+> +	int i, j;
+> +	unsigned int links, reg;
+> +
+> +	buf = kzalloc(RD_BUF, GFP_KERNEL);
+> +	if (!buf)
+> +		return -ENOMEM;
+> +
+> +	links = intel_readl(s, SDW_SHIM_LCAP) & GENMASK(2, 0);
+> +
+> +	ret = scnprintf(buf, RD_BUF, "Register  Value\n");
+> +	ret += scnprintf(buf + ret, RD_BUF - ret, "\nShim\n");
+> +
+> +	for (i = 0; i < 4; i++) {
+> +		reg = SDW_SHIM_LCAP + i * 4;
+> +		ret += intel_sprintf(s, true, buf, ret, reg);
+> +	}
+> +
+> +	for (i = 0; i < links; i++) {
+> +		ret += scnprintf(buf + ret, RD_BUF - ret, "\nLink%d\n", i);
+> +		ret += intel_sprintf(s, false, buf, ret, SDW_SHIM_CTLSCAP(i));
+> +		ret += intel_sprintf(s, false, buf, ret, SDW_SHIM_CTLS0CM(i));
+> +		ret += intel_sprintf(s, false, buf, ret, SDW_SHIM_CTLS1CM(i));
+> +		ret += intel_sprintf(s, false, buf, ret, SDW_SHIM_CTLS2CM(i));
+> +		ret += intel_sprintf(s, false, buf, ret, SDW_SHIM_CTLS3CM(i));
+> +		ret += intel_sprintf(s, false, buf, ret, SDW_SHIM_PCMSCAP(i));
+> +
+> +		for (j = 0; j < 8; j++) {
+> +			ret += intel_sprintf(s, false, buf, ret,
+> +					SDW_SHIM_PCMSYCHM(i, j));
+> +			ret += intel_sprintf(s, false, buf, ret,
+> +					SDW_SHIM_PCMSYCHC(i, j));
+> +		}
+> +
+> +		ret += intel_sprintf(s, false, buf, ret, SDW_SHIM_PDMSCAP(i));
+> +		ret += intel_sprintf(s, false, buf, ret, SDW_SHIM_IOCTL(i));
+> +		ret += intel_sprintf(s, false, buf, ret, SDW_SHIM_CTMCTL(i));
+> +	}
+> +
+> +	ret += intel_sprintf(s, false, buf, ret, SDW_SHIM_WAKEEN);
+> +	ret += intel_sprintf(s, false, buf, ret, SDW_SHIM_WAKESTS);
+> +
+> +	ret += scnprintf(buf + ret, RD_BUF - ret, "\nALH\n");
+> +	for (i = 0; i < 8; i++)
+> +		ret += intel_sprintf(a, true, buf, ret, SDW_ALH_STRMZCFG(i));
+> +
+> +	ret = simple_read_from_buffer(user_buf, count, ppos, buf, ret);
+> +	kfree(buf);
+> +
+> +	return ret;
+> +}
+> +
+> +static const struct file_operations intel_reg_fops = {
+> +	.open = simple_open,
+> +	.read = intel_reg_read,
+> +	.llseek = default_llseek,
+> +};
 
-yes, will fix. thanks!
+DEFINE_SIMPLE_ATTRIBUTE()?
+
+> +
+> +static void intel_debugfs_init(struct sdw_intel *sdw)
+> +{
+> +	struct dentry *root = sdw->cdns.bus.debugfs;
+> +
+> +	if (!root)
+> +		return;
+> +
+> +	sdw->fs = debugfs_create_dir("intel-sdw", root);
+> +	if (IS_ERR_OR_NULL(sdw->fs)) {
+> +		dev_err(sdw->cdns.dev, "debugfs root creation failed\n");
+
+No, come on, don't do that.  I've been sweeping the kernel tree to
+remove this anti-pattern.
+
+The debugfs core will print an error if you got something wrong, just
+call the function and move on, you NEVER need to check the return value
+of a debugfs call.
+
+thanks,
+
+greg k-h
