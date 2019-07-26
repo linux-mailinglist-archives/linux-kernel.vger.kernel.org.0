@@ -2,72 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 58F22760F7
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 10:37:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CEA4676100
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 10:38:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726593AbfGZIh4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 04:37:56 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:37776 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726463AbfGZIhz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 04:37:55 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id ADF472009B1;
-        Fri, 26 Jul 2019 10:37:53 +0200 (CEST)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id A04642002AD;
-        Fri, 26 Jul 2019 10:37:53 +0200 (CEST)
-Received: from fsr-ub1664-175.ea.freescale.net (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 822B1205E8;
-        Fri, 26 Jul 2019 10:37:53 +0200 (CEST)
-Date:   Fri, 26 Jul 2019 11:37:52 +0300
-From:   Abel Vesa <abel.vesa@nxp.com>
-To:     Anson.Huang@nxp.com
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        aisheng.dong@nxp.com, l.stach@pengutronix.de, ping.bai@nxp.com,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Linux-imx@nxp.com
-Subject: Re: [PATCH] clk: imx: Remove unused function statement
-Message-ID: <20190726083752.qjhzbqvsuyzcqtcg@fsr-ub1664-175>
-References: <20190724062435.28074-1-Anson.Huang@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190724062435.28074-1-Anson.Huang@nxp.com>
-User-Agent: NeoMutt/20180622
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1726705AbfGZIis (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 04:38:48 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:43555 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726683AbfGZIir (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 04:38:47 -0400
+Received: by mail-pf1-f195.google.com with SMTP id i189so24170341pfg.10;
+        Fri, 26 Jul 2019 01:38:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=OErtjgtck0WYHrq2s+gRLUV620lMFnBrd6HnTxIAPgU=;
+        b=UAhTdssUA4+XWhrHM2GbqjnQIy3n3cxguHpOBXBKFR5OuQj5lqh7lPgCDf4wjYe53m
+         /jD86Y6YqBz/X3y43vrb0CGz02kJeFecG2r8rINfDHOhw8oGnOJNFPGiAkuvDXLDgc+U
+         im9PeG6/7ekRqdmCeihHPpNGG0b6o1rLb/q9CwiRFuC1yrlKC84EN904QY5a97Ezn6fx
+         zA+svGsMmSk1js2bnWypOWvortNwPTv1XfwDYRT5aW91HhvTSwoEFK4WZAuDPMRsfdcR
+         rsClamSBeGWsTBlEtHgMJkoNXobLsVaLb1ixUFOQ73Q+pmDx07hWUaB4/y/fD9Dypptj
+         fwew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=OErtjgtck0WYHrq2s+gRLUV620lMFnBrd6HnTxIAPgU=;
+        b=ahmewyal9YlxDG+8tGDTdfAjlZT+zvKNiHHh4CBMZ2+ZcaF1W03H3R9kluuK1z2r2P
+         KgRTZmnqzgHuJX18bKl8Sbe8fRU9oLz+jVexjI+SISSiVnITnZy0O6HGDDJuGz2wZCoT
+         qeJlfU6mOE69RIhv2/CbPI8QnACosJD1nujJ3olht8cSbClFNp+EykwPBQyHALQk8wcY
+         yL8ngzyUYH2xm8YgW4jJ1oL+MvX4HPOGEQkNtOJ2J+PnynS9lFWPLqSuzQFBIwOpOAr3
+         /mXcbbHpzoOeRS/8+pKIIjnJMA95wfWqrbDfb1DgEEBVdtkUT90xKBEUY/8FjNHpWVKx
+         Eq4Q==
+X-Gm-Message-State: APjAAAUDb/tweOSBIFuA609iMyunulM63l1N/IVgpugzogi8wM18Xac4
+        5BMdN24TUwzwFvDsBKDQHOE=
+X-Google-Smtp-Source: APXvYqyzEWcneSVZNWDYX/qw8hVQ/5juZptKMLrsrRTXkTsVqqB80bQjE+Anev90pquWhM0Hc1IhxQ==
+X-Received: by 2002:a17:90a:974b:: with SMTP id i11mr95889116pjw.21.1564130326643;
+        Fri, 26 Jul 2019 01:38:46 -0700 (PDT)
+Received: from oslab.tsinghua.edu.cn ([2402:f000:4:72:808::3ca])
+        by smtp.gmail.com with ESMTPSA id v126sm12901542pgb.23.2019.07.26.01.38.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 26 Jul 2019 01:38:46 -0700 (PDT)
+From:   Jia-Ju Bai <baijiaju1990@gmail.com>
+To:     jack@suse.cz, akpm@linux-foundation.org, arnd@arndb.de,
+        linux.bhar@gmail.com, hariprasad.kelam@gmail.com
+Cc:     reiserfs-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH] fs: reiserfs: Fix possible null-pointer dereferences in remove_from_transaction()
+Date:   Fri, 26 Jul 2019 16:38:38 +0800
+Message-Id: <20190726083838.8301-1-baijiaju1990@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19-07-24 14:24:35, Anson.Huang@nxp.com wrote:
-> From: Anson Huang <Anson.Huang@nxp.com>
-> 
-> imx_register_uart_clocks_hws() function is NOT implemented
-> at all, remove it.
-> 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+In remove_from_transaction(), there is an if statement on line 3447 to
+check whether bh is NULL:
+    if (bh)
 
-Reviewed-by: Abel Vesa <abel.vesa@nxp.com>
+When bh is NULL, it is used on line 3450:
+    clear_buffer_journaled(bh);
+and lines 3453-3456:
+    clear_buffer_journal_dirty(bh);
+    clear_buffer_dirty(bh);
+    clear_buffer_journal_test(bh);
+    put_bh(bh);
 
-> ---
->  drivers/clk/imx/clk.h | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-> index 9995f2a..f7a389a 100644
-> --- a/drivers/clk/imx/clk.h
-> +++ b/drivers/clk/imx/clk.h
-> @@ -10,7 +10,6 @@ extern spinlock_t imx_ccm_lock;
->  void imx_check_clocks(struct clk *clks[], unsigned int count);
->  void imx_check_clk_hws(struct clk_hw *clks[], unsigned int count);
->  void imx_register_uart_clocks(struct clk ** const clks[]);
-> -void imx_register_uart_clocks_hws(struct clk_hw ** const hws[]);
->  void imx_mmdc_mask_handshake(void __iomem *ccm_base, unsigned int chn);
->  void imx_unregister_clocks(struct clk *clks[], unsigned int count);
->  
-> -- 
-> 2.7.4
-> 
+Thus, possible null-pointer dereferences may occur.
+
+To fix these bugs, bh is checked before being used.
+
+These bugs are found by a static analysis tool STCheck written by us.
+
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+---
+ fs/reiserfs/journal.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/fs/reiserfs/journal.c b/fs/reiserfs/journal.c
+index 4517a1394c6f..d115578597b6 100644
+--- a/fs/reiserfs/journal.c
++++ b/fs/reiserfs/journal.c
+@@ -3444,12 +3444,13 @@ static int remove_from_transaction(struct super_block *sb,
+ 	if (cn == journal->j_last) {
+ 		journal->j_last = cn->prev;
+ 	}
+-	if (bh)
++	if (bh) {
+ 		remove_journal_hash(sb, journal->j_hash_table, NULL,
+ 				    bh->b_blocknr, 0);
+-	clear_buffer_journaled(bh);	/* don't log this one */
++		clear_buffer_journaled(bh);	/* don't log this one */
++	}
+ 
+-	if (!already_cleaned) {
++	if (!already_cleaned && bh) {
+ 		clear_buffer_journal_dirty(bh);
+ 		clear_buffer_dirty(bh);
+ 		clear_buffer_journal_test(bh);
+-- 
+2.17.0
+
