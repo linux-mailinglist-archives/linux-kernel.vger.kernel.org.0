@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D18C6760B7
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 10:29:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 30FB4760B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 10:29:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726561AbfGZI3m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 04:29:42 -0400
-Received: from foss.arm.com ([217.140.110.172]:39518 "EHLO foss.arm.com"
+        id S1726631AbfGZI3p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 04:29:45 -0400
+Received: from foss.arm.com ([217.140.110.172]:39532 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725815AbfGZI3k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 04:29:40 -0400
+        id S1726437AbfGZI3l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 04:29:41 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CA256344;
-        Fri, 26 Jul 2019 01:29:39 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3294C152D;
+        Fri, 26 Jul 2019 01:29:41 -0700 (PDT)
 Received: from e107985-lin.arm.com (e107985-lin.cambridge.arm.com [10.1.194.38])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id AB9F93F71A;
-        Fri, 26 Jul 2019 01:29:38 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 0AD413F71A;
+        Fri, 26 Jul 2019 01:29:39 -0700 (PDT)
 From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
 To:     Peter Zijlstra <peterz@infradead.org>,
         Ingo Molnar <mingo@kernel.org>,
@@ -25,9 +25,9 @@ Cc:     Luca Abeni <luca.abeni@santannapisa.it>,
         Daniel Bristot de Oliveira <bristot@redhat.com>,
         Valentin Schneider <Valentin.Schneider@arm.com>,
         Qais Yousef <Qais.Yousef@arm.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH 4/5] sched/deadline: Cleanup on_dl_rq() handling
-Date:   Fri, 26 Jul 2019 09:27:55 +0100
-Message-Id: <20190726082756.5525-5-dietmar.eggemann@arm.com>
+Subject: [PATCH 5/5] sched/deadline: Use return value of SCHED_WARN_ON() in bw accounting
+Date:   Fri, 26 Jul 2019 09:27:56 +0100
+Message-Id: <20190726082756.5525-6-dietmar.eggemann@arm.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190726082756.5525-1-dietmar.eggemann@arm.com>
 References: <20190726082756.5525-1-dietmar.eggemann@arm.com>
@@ -36,51 +36,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove BUG_ON() in __enqueue_dl_entity() since there is already one in
-enqueue_dl_entity().
-
-Move the check that the dl_se is not on the dl_rq from
-__dequeue_dl_entity() to dequeue_dl_entity() to align with the enqueue
-side and use the on_dl_rq() helper function.
+To make the decision whether to set rq or running bw to 0 in underflow
+case use the return value of SCHED_WARN_ON() rather than an extra if
+condition.
 
 Signed-off-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
 ---
- kernel/sched/deadline.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ kernel/sched/deadline.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
 diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-index 1fa005f79307..a9cb52ceb761 100644
+index a9cb52ceb761..66c594b5507e 100644
 --- a/kernel/sched/deadline.c
 +++ b/kernel/sched/deadline.c
-@@ -1407,8 +1407,6 @@ static void __enqueue_dl_entity(struct sched_dl_entity *dl_se)
- 	struct sched_dl_entity *entry;
- 	int leftmost = 1;
+@@ -95,8 +95,7 @@ void __sub_running_bw(u64 dl_bw, struct dl_rq *dl_rq)
  
--	BUG_ON(!RB_EMPTY_NODE(&dl_se->rb_node));
--
- 	while (*link) {
- 		parent = *link;
- 		entry = rb_entry(parent, struct sched_dl_entity, rb_node);
-@@ -1430,9 +1428,6 @@ static void __dequeue_dl_entity(struct sched_dl_entity *dl_se)
- {
- 	struct dl_rq *dl_rq = dl_rq_of_se(dl_se);
+ 	lockdep_assert_held(&(rq_of_dl_rq(dl_rq))->lock);
+ 	dl_rq->running_bw -= dl_bw;
+-	SCHED_WARN_ON(dl_rq->running_bw > old); /* underflow */
+-	if (dl_rq->running_bw > old)
++	if (SCHED_WARN_ON(dl_rq->running_bw > old)) /* underflow */
+ 		dl_rq->running_bw = 0;
+ 	/* kick cpufreq (see the comment in kernel/sched/sched.h). */
+ 	cpufreq_update_util(rq_of_dl_rq(dl_rq), 0);
+@@ -119,8 +118,7 @@ void __sub_rq_bw(u64 dl_bw, struct dl_rq *dl_rq)
  
--	if (RB_EMPTY_NODE(&dl_se->rb_node))
--		return;
--
- 	rb_erase_cached(&dl_se->rb_node, &dl_rq->root);
- 	RB_CLEAR_NODE(&dl_se->rb_node);
- 
-@@ -1466,6 +1461,9 @@ enqueue_dl_entity(struct sched_dl_entity *dl_se,
- 
- static void dequeue_dl_entity(struct sched_dl_entity *dl_se)
- {
-+	if (!on_dl_rq(dl_se))
-+		return;
-+
- 	__dequeue_dl_entity(dl_se);
+ 	lockdep_assert_held(&(rq_of_dl_rq(dl_rq))->lock);
+ 	dl_rq->this_bw -= dl_bw;
+-	SCHED_WARN_ON(dl_rq->this_bw > old); /* underflow */
+-	if (dl_rq->this_bw > old)
++	if (SCHED_WARN_ON(dl_rq->this_bw > old)) /* underflow */
+ 		dl_rq->this_bw = 0;
+ 	SCHED_WARN_ON(dl_rq->running_bw > dl_rq->this_bw);
  }
- 
 -- 
 2.17.1
 
