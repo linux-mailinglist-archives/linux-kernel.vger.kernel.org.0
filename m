@@ -2,138 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49FCB766B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 14:56:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC3997663E
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 14:50:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726705AbfGZM4S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 08:56:18 -0400
-Received: from [101.11.20.158] ([101.11.20.158]:35906 "EHLO
-        E6440.gar.corp.intel.com" rhost-flags-FAIL-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726001AbfGZM4S (ORCPT
+        id S1726402AbfGZMu4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 08:50:56 -0400
+Received: from relay7-d.mail.gandi.net ([217.70.183.200]:38407 "EHLO
+        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726000AbfGZMu4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 08:56:18 -0400
-X-Greylist: delayed 4199 seconds by postgrey-1.27 at vger.kernel.org; Fri, 26 Jul 2019 08:56:17 EDT
-Received: from E6440.gar.corp.intel.com (localhost [127.0.0.1])
-        by E6440.gar.corp.intel.com (Postfix) with ESMTP id 0F6EAC18BF;
-        Fri, 26 Jul 2019 17:08:49 +0800 (CST)
-From:   Harry Pan <harry.pan@intel.com>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     gs0622@gmail.com, Harry Pan <harry.pan@intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-Subject: [PATCH] perf/x86/intel: Update ICL Core and Package C-state event counters
-Date:   Fri, 26 Jul 2019 17:08:46 +0800
-Message-Id: <20190726090846.6109-1-harry.pan@intel.com>
-X-Mailer: git-send-email 2.20.1
+        Fri, 26 Jul 2019 08:50:56 -0400
+X-Originating-IP: 86.250.200.211
+Received: from localhost (lfbn-1-17395-211.w86-250.abo.wanadoo.fr [86.250.200.211])
+        (Authenticated sender: antoine.tenart@bootlin.com)
+        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id 89D6C20004;
+        Fri, 26 Jul 2019 12:50:53 +0000 (UTC)
+Date:   Fri, 26 Jul 2019 14:50:53 +0200
+From:   Antoine Tenart <antoine.tenart@bootlin.com>
+To:     Matteo Croce <mcroce@redhat.com>
+Cc:     netdev@vger.kernel.org,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        Marcin Wojtas <mw@semihalf.com>,
+        Stefan Chulski <stefanc@marvell.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net] mvpp2: refactor MTU change code
+Message-ID: <20190726125053.GA5031@kwain>
+References: <20190725231931.24073-1-mcroce@redhat.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190725231931.24073-1-mcroce@redhat.com>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ice Lake microarchitecture inherits Cannon Lake, it has CC1/PC8/PC9/PC10
-residency counters.
+Hi Matteo,
 
-Update the list of Ice Lake PMU event counters from the snb_cstates[] list
-of events to the cnl_cstates[] list of events, which keeps all previously
-supported events and also adds the CORE_C1, PKG_C8, PKG_C9, and PKG_C10
-residency counters.
+On Fri, Jul 26, 2019 at 01:19:31AM +0200, Matteo Croce wrote:
+> The MTU change code can call napi_disable() with the device already down,
+> leading to a deadlock. Also, lot of code is duplicated unnecessarily.
+> 
+> Rework mvpp2_change_mtu() to avoid the deadlock and remove duplicated code.
+> 
+> Signed-off-by: Matteo Croce <mcroce@redhat.com>
 
-This benefits users to profile them through the perf interface.
+As this is a fix sent to net, you could add a Fixes: tag.
 
-Signed-off-by: Harry Pan <harry.pan@intel.com>
+Otherwise this looks good,
+Acked-by: Antoine Tenart <antoine.tenart@bootlin.com>
 
----
+Thanks!
+Antoine
 
- arch/x86/events/intel/cstate.c | 26 ++++++++++++++------------
- 1 file changed, 14 insertions(+), 12 deletions(-)
+> ---
+>  .../net/ethernet/marvell/mvpp2/mvpp2_main.c   | 41 ++++++-------------
+>  1 file changed, 13 insertions(+), 28 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+> index 2f7286bd203b..60eb98f99571 100644
+> --- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+> +++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+> @@ -3612,6 +3612,7 @@ static int mvpp2_set_mac_address(struct net_device *dev, void *p)
+>  static int mvpp2_change_mtu(struct net_device *dev, int mtu)
+>  {
+>  	struct mvpp2_port *port = netdev_priv(dev);
+> +	bool running = netif_running(dev);
+>  	int err;
+>  
+>  	if (!IS_ALIGNED(MVPP2_RX_PKT_SIZE(mtu), 8)) {
+> @@ -3620,40 +3621,24 @@ static int mvpp2_change_mtu(struct net_device *dev, int mtu)
+>  		mtu = ALIGN(MVPP2_RX_PKT_SIZE(mtu), 8);
+>  	}
+>  
+> -	if (!netif_running(dev)) {
+> -		err = mvpp2_bm_update_mtu(dev, mtu);
+> -		if (!err) {
+> -			port->pkt_size =  MVPP2_RX_PKT_SIZE(mtu);
+> -			return 0;
+> -		}
+> -
+> -		/* Reconfigure BM to the original MTU */
+> -		err = mvpp2_bm_update_mtu(dev, dev->mtu);
+> -		if (err)
+> -			goto log_error;
+> -	}
+> -
+> -	mvpp2_stop_dev(port);
+> +	if (running)
+> +		mvpp2_stop_dev(port);
+>  
+>  	err = mvpp2_bm_update_mtu(dev, mtu);
+> -	if (!err) {
+> +	if (err) {
+> +		netdev_err(dev, "failed to change MTU\n");
+> +		/* Reconfigure BM to the original MTU */
+> +		mvpp2_bm_update_mtu(dev, dev->mtu);
+> +	} else {
+>  		port->pkt_size =  MVPP2_RX_PKT_SIZE(mtu);
+> -		goto out_start;
+>  	}
+>  
+> -	/* Reconfigure BM to the original MTU */
+> -	err = mvpp2_bm_update_mtu(dev, dev->mtu);
+> -	if (err)
+> -		goto log_error;
+> -
+> -out_start:
+> -	mvpp2_start_dev(port);
+> -	mvpp2_egress_enable(port);
+> -	mvpp2_ingress_enable(port);
+> +	if (running) {
+> +		mvpp2_start_dev(port);
+> +		mvpp2_egress_enable(port);
+> +		mvpp2_ingress_enable(port);
+> +	}
+>  
+> -	return 0;
+> -log_error:
+> -	netdev_err(dev, "failed to change MTU\n");
+>  	return err;
+>  }
+>  
+> -- 
+> 2.21.0
+> 
 
-diff --git a/arch/x86/events/intel/cstate.c b/arch/x86/events/intel/cstate.c
-index 688592b34564..08291233f5c9 100644
---- a/arch/x86/events/intel/cstate.c
-+++ b/arch/x86/events/intel/cstate.c
-@@ -40,51 +40,53 @@
-  * Model specific counters:
-  *	MSR_CORE_C1_RES: CORE C1 Residency Counter
-  *			 perf code: 0x00
-- *			 Available model: SLM,AMT,GLM,CNL
-+ *			 Available model: SLM,AMT,GLM,CNL,ICL
-  *			 Scope: Core (each processor core has a MSR)
-  *	MSR_CORE_C3_RESIDENCY: CORE C3 Residency Counter
-  *			       perf code: 0x01
-  *			       Available model: NHM,WSM,SNB,IVB,HSW,BDW,SKL,GLM,
--						CNL
-+						CNL,ICL
-  *			       Scope: Core
-  *	MSR_CORE_C6_RESIDENCY: CORE C6 Residency Counter
-  *			       perf code: 0x02
-  *			       Available model: SLM,AMT,NHM,WSM,SNB,IVB,HSW,BDW,
-- *						SKL,KNL,GLM,CNL
-+ *						SKL,KNL,GLM,CNL,ICL
-  *			       Scope: Core
-  *	MSR_CORE_C7_RESIDENCY: CORE C7 Residency Counter
-  *			       perf code: 0x03
-- *			       Available model: SNB,IVB,HSW,BDW,SKL,CNL
-+ *			       Available model: SNB,IVB,HSW,BDW,SKL,CNL,ICL
-  *			       Scope: Core
-  *	MSR_PKG_C2_RESIDENCY:  Package C2 Residency Counter.
-  *			       perf code: 0x00
-- *			       Available model: SNB,IVB,HSW,BDW,SKL,KNL,GLM,CNL
-+ *			       Available model: SNB,IVB,HSW,BDW,SKL,KNL,GLM,CNL,
-+						ICL
-  *			       Scope: Package (physical package)
-  *	MSR_PKG_C3_RESIDENCY:  Package C3 Residency Counter.
-  *			       perf code: 0x01
-  *			       Available model: NHM,WSM,SNB,IVB,HSW,BDW,SKL,KNL,
-- *						GLM,CNL
-+ *						GLM,CNL,ICL
-  *			       Scope: Package (physical package)
-  *	MSR_PKG_C6_RESIDENCY:  Package C6 Residency Counter.
-  *			       perf code: 0x02
-  *			       Available model: SLM,AMT,NHM,WSM,SNB,IVB,HSW,BDW
-- *						SKL,KNL,GLM,CNL
-+ *						SKL,KNL,GLM,CNL,ICL
-  *			       Scope: Package (physical package)
-  *	MSR_PKG_C7_RESIDENCY:  Package C7 Residency Counter.
-  *			       perf code: 0x03
-  *			       Available model: NHM,WSM,SNB,IVB,HSW,BDW,SKL,CNL
-+						ICL
-  *			       Scope: Package (physical package)
-  *	MSR_PKG_C8_RESIDENCY:  Package C8 Residency Counter.
-  *			       perf code: 0x04
-- *			       Available model: HSW ULT,KBL,CNL
-+ *			       Available model: HSW ULT,KBL,CNL,ICL
-  *			       Scope: Package (physical package)
-  *	MSR_PKG_C9_RESIDENCY:  Package C9 Residency Counter.
-  *			       perf code: 0x05
-- *			       Available model: HSW ULT,KBL,CNL
-+ *			       Available model: HSW ULT,KBL,CNL,ICL
-  *			       Scope: Package (physical package)
-  *	MSR_PKG_C10_RESIDENCY: Package C10 Residency Counter.
-  *			       perf code: 0x06
-- *			       Available model: HSW ULT,KBL,GLM,CNL
-+ *			       Available model: HSW ULT,KBL,GLM,CNL,ICL
-  *			       Scope: Package (physical package)
-  *
-  */
-@@ -625,8 +627,8 @@ static const struct x86_cpu_id intel_cstates_match[] __initconst = {
- 
- 	X86_CSTATES_MODEL(INTEL_FAM6_ATOM_GOLDMONT_PLUS, glm_cstates),
- 
--	X86_CSTATES_MODEL(INTEL_FAM6_ICELAKE_MOBILE, snb_cstates),
--	X86_CSTATES_MODEL(INTEL_FAM6_ICELAKE_DESKTOP, snb_cstates),
-+	X86_CSTATES_MODEL(INTEL_FAM6_ICELAKE_MOBILE, cnl_cstates),
-+	X86_CSTATES_MODEL(INTEL_FAM6_ICELAKE_DESKTOP, cnl_cstates),
- 	{ },
- };
- MODULE_DEVICE_TABLE(x86cpu, intel_cstates_match);
 -- 
-2.20.1
-
+Antoine Ténart, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
