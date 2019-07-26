@@ -2,135 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19E7576F4E
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 18:47:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 46C4276F35
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 18:41:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728966AbfGZQrr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 12:47:47 -0400
-Received: from relay8-d.mail.gandi.net ([217.70.183.201]:47941 "EHLO
-        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726827AbfGZQrq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 12:47:46 -0400
-X-Originating-IP: 109.190.253.11
-Received: from localhost (unknown [109.190.253.11])
-        (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id 839B91BF207;
-        Fri, 26 Jul 2019 16:47:41 +0000 (UTC)
-Date:   Fri, 26 Jul 2019 18:36:01 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Torsten Duwe <duwe@lst.de>
-Cc:     Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Sean Paul <seanpaul@chromium.org>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Harald Geyer <harald@ccbib.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 6a/7] dt-bindings: Add ANX6345 DP/eDP transmitter
- binding
-Message-ID: <20190726163601.o32bxqew5xavjgyi@flea>
-References: <20190722150414.9F97668B20@verein.lst.de>
- <20190725151829.DC20968B02@verein.lst.de>
+        id S1727266AbfGZQlM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 12:41:12 -0400
+Received: from mga17.intel.com ([192.55.52.151]:37330 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725298AbfGZQlM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 12:41:12 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jul 2019 09:38:08 -0700
+X-IronPort-AV: E=Sophos;i="5.64,311,1559545200"; 
+   d="scan'208";a="175655606"
+Received: from ahduyck-desk1.jf.intel.com ([10.7.198.76])
+  by orsmga006-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jul 2019 09:38:08 -0700
+Message-ID: <c59c6c9a5bb77d517336e3fc3b17eebd0f294276.camel@linux.intel.com>
+Subject: Re: [PATCH v2 4/5] mm: Introduce Hinted pages
+From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
+To:     Nitesh Narayan Lal <nitesh@redhat.com>,
+        Alexander Duyck <alexander.duyck@gmail.com>,
+        kvm@vger.kernel.org, david@redhat.com, mst@redhat.com,
+        dave.hansen@intel.com, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, akpm@linux-foundation.org
+Cc:     yang.zhang.wz@gmail.com, pagupta@redhat.com, riel@surriel.com,
+        konrad.wilk@oracle.com, lcapitulino@redhat.com,
+        wei.w.wang@intel.com, aarcange@redhat.com, pbonzini@redhat.com,
+        dan.j.williams@intel.com
+Date:   Fri, 26 Jul 2019 09:38:08 -0700
+In-Reply-To: <49a49a38-b1f4-d5c0-f5f1-a6bed57a03d2@redhat.com>
+References: <20190724165158.6685.87228.stgit@localhost.localdomain>
+         <20190724170259.6685.18028.stgit@localhost.localdomain>
+         <49a49a38-b1f4-d5c0-f5f1-a6bed57a03d2@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190725151829.DC20968B02@verein.lst.de>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Fri, 2019-07-26 at 08:24 -0400, Nitesh Narayan Lal wrote:
+> On 7/24/19 1:03 PM, Alexander Duyck wrote:
+> > From: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+> > 
+> > 
 
-On Thu, Jul 25, 2019 at 05:18:29PM +0200, Torsten Duwe wrote:
-> The anx6345 is an ultra-low power DisplayPort/eDP transmitter designed
-> for portable devices.
->
-> Add a binding document for it.
->
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Torsten Duwe <duwe@suse.de>
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> ---
->  .../devicetree/bindings/display/bridge/anx6345.yaml |   90 ++++++++++
->  1 file changed, 90 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/bridge/anx6345.yaml
->
-> diff --git a/Documentation/devicetree/bindings/display/bridge/anx6345.yaml b/Documentation/devicetree/bindings/display/bridge/anx6345.yaml
-> new file mode 100644
-> index 000000000000..0af092d101c5
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/bridge/anx6345.yaml
-> @@ -0,0 +1,90 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/display/bridge/anx6345.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Analogix ANX6345 eDP Transmitter Device Tree Bindings
-> +
-> +maintainers:
-> +  - Torsten Duwe <duwe@lst.de>
-> +
-> +description: |
-> +  The ANX6345 is an ultra-low power Full-HD eDP transmitter designed for
-> +  portable devices.
-> +
-> +properties:
-> +  compatible:
-> +    const: analogix,anx6345
-> +
-> +  reg:
-> +    maxItems: 1
-> +    description: I2C address of the device
-> +
-> +  reset-gpios:
-> +    maxItems: 1
-> +    description: active low GPIO to use for reset
-> +
-> +  dvdd12-supply:
-> +    maxItems: 1
-> +    description: Regulator for 1.2V digital core power.
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +
-> +  dvdd25-supply:
-> +    maxItems: 1
-> +    description: Regulator for 2.5V digital core power.
-> +    $ref: /schemas/types.yaml#/definitions/phandle
+<snip>
 
-There's no need to specify the type here, all the properties ending in
--supply are already checked for that type
+> > +/*
+> > + * The page hinting cycle consists of 4 stages, fill, react, drain, and idle.
+> > + * We will cycle through the first 3 stages until we fail to obtain any
+> > + * pages, in that case we will switch to idle.
+> > + */
+> > +static void page_hinting_cycle(struct zone *zone,
+> > +			       struct page_hinting_dev_info *phdev)
+> > +{
+> > +	/*
+> > +	 * Guarantee boundaries and stats are populated before we
+> > +	 * start placing hinted pages in the zone.
+> > +	 */
+> > +	if (page_hinting_populate_metadata(zone))
+> > +		return;
+> > +
+> > +	spin_lock(&zone->lock);
+> > +
+> > +	/* set bit indicating boundaries are present */
+> > +	set_bit(ZONE_PAGE_HINTING_ACTIVE, &zone->flags);
+> > +
+> > +	do {
+> > +		/* Pull pages out of allocator into a scaterlist */
+> > +		unsigned int num_hints = page_hinting_fill(zone, phdev);
+> > +
+> > +		/* no pages were acquired, give up */
+> > +		if (!num_hints)
+> > +			break;
+> > +
+> > +		spin_unlock(&zone->lock);
+> 
+> Is there any recommendation in general about how/where we should lock and unlock
+> zones in the code? For instance, over here you have a zone lock outside the loop
+> and you are unlocking it inside the loop and then re-acquiring it.
+> My guess is we should be fine as long as:
+> 1. We are not holding the lock for a very long time.
+> 2. We are making sure that if we have a zone lock we are releasing it before
+> returning from the function.
 
-> +  ports:
-> +    type: object
-> +    minItems: 1
-> +    maxItems: 2
-> +    description: |
-> +      Video port 0 for LVTTL input,
-> +      Video port 1 for eDP output (panel or connector)
-> +      using the DT bindings defined in
-> +      Documentation/devicetree/bindings/media/video-interfaces.txt
+So as a general rule the first two you mention work. Basically what you
+want to do is work with some sort of bounded limit when you are holding
+the lock so you know it will be released in a timely fashion.
 
-You should probably describe the port@0 and port@1 nodes here as
-well. It would allow you to express that the port 0 is mandatory and
-the port 1 optional, which got dropped in the conversion.
+The reason for dropping the lock inside of the loop s because we will end
+up sleeping while we wait for the virtio-balloon device to process the
+pages. So it makes sense to release the lock, process the pages, and then
+reacquire the lock so that we can return the pages and grab another 16
+pages.
 
-Maxime
-
---
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
