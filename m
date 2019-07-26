@@ -2,112 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B32FE76C0C
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 16:51:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E28176C0E
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 16:52:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387582AbfGZOve (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 10:51:34 -0400
-Received: from mga03.intel.com ([134.134.136.65]:53591 "EHLO mga03.intel.com"
+        id S2387611AbfGZOwG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 10:52:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55854 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387532AbfGZOvd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 10:51:33 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jul 2019 07:51:33 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,311,1559545200"; 
-   d="scan'208";a="370101454"
-Received: from gliakhov-mobl2.ger.corp.intel.com (HELO ubuntu) ([10.249.35.244])
-  by fmsmga006.fm.intel.com with ESMTP; 26 Jul 2019 07:51:30 -0700
-Date:   Fri, 26 Jul 2019 16:51:29 +0200
-From:   Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc:     alsa-devel@alsa-project.org, tiwai@suse.de,
-        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        vkoul@kernel.org, broonie@kernel.org,
-        srinivas.kandagatla@linaro.org, jank@cadence.com,
-        slawomir.blauciak@intel.com, Sanyog Kale <sanyog.r.kale@intel.com>
-Subject: Re: [alsa-devel] [RFC PATCH 23/40] soundwire: stream: fix disable
- sequence
-Message-ID: <20190726145129.GI16003@ubuntu>
-References: <20190725234032.21152-1-pierre-louis.bossart@linux.intel.com>
- <20190725234032.21152-24-pierre-louis.bossart@linux.intel.com>
+        id S2387407AbfGZOwG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 10:52:06 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8CC082082E;
+        Fri, 26 Jul 2019 14:52:04 +0000 (UTC)
+Date:   Fri, 26 Jul 2019 10:52:03 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Bhaskar Chowdhury <unixbhaskar@gmail.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        linux-rt-users <linux-rt-users@vger.kernel.org>,
+        "linux-trace-users@vger.kernel.org" 
+        <linux-trace-users@vger.kernel.org>,
+        Linux Trace Devel <linux-trace-devel@vger.kernel.org>,
+        troyengel@gmail.com, amikhak@wirelessfabric.com,
+        valentin.schneider@arm.com, Patrick McLean <chutzpah@gentoo.org>,
+        John Kacur <jkacur@redhat.com>,
+        Yordan Karadzhov <y.karadz@gmail.com>,
+        Tzvetomir Stoyanov <tstoyanov@vmware.com>,
+        Slavomir Kaslev <kaslevs@vmware.com>, howaboutsynergy@pm.me,
+        Bas van Dijk <v.dijk.bas@gmail.com>
+Subject: Re: [ANNOUNCE] KernelShark 1.0
+Message-ID: <20190726105203.13c7f0e7@gandalf.local.home>
+In-Reply-To: <20190726144938.GA3078@ArchLinux>
+References: <20190726095730.0674d81d@gandalf.local.home>
+        <20190726144938.GA3078@ArchLinux>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190725234032.21152-24-pierre-louis.bossart@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Unrelated to this specific patch, but I looked at _sdw_disable_stream()
-and I see this there (again, maybe my version is outdated already):
+On Fri, 26 Jul 2019 20:19:38 +0530
+Bhaskar Chowdhury <unixbhaskar@gmail.com> wrote:
 
-	struct sdw_master_runtime *m_rt = NULL;
-	struct sdw_bus *bus = NULL;
-
-where both those initialisations are redundant. Moreover:
-
-On Thu, Jul 25, 2019 at 06:40:15PM -0500, Pierre-Louis Bossart wrote:
-> When we disable the stream and then call hw_free, two bank switches
-> will be handled and as a result we re-enable the stream on hw_free.
+> Kudos to everyone...time to play with it. :)
 > 
-> Make sure the stream is disabled on both banks.
-> 
-> TODO: we need to completely revisit all this and make sure we have a
-> mirroring mechanism between current and alternate banks.
-> 
-> Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-> ---
->  drivers/soundwire/stream.c | 19 ++++++++++++++++++-
->  1 file changed, 18 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/soundwire/stream.c b/drivers/soundwire/stream.c
-> index 53f5e790fcd7..75b9ad1fb1a6 100644
-> --- a/drivers/soundwire/stream.c
-> +++ b/drivers/soundwire/stream.c
-> @@ -1637,7 +1637,24 @@ static int _sdw_disable_stream(struct sdw_stream_runtime *stream)
->  		}
->  	}
->  
-> -	return do_bank_switch(stream);
-> +	ret = do_bank_switch(stream);
-> +	if (ret < 0) {
-> +		dev_err(bus->dev, "Bank switch failed: %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	/* make sure alternate bank (previous current) is also disabled */
-> +	list_for_each_entry(m_rt, &stream->master_list, stream_node) {
-> +		bus = m_rt->bus;
 
-"bus" is only used below, so at least take that line under "if (ret < 0)"
-or even just do "dev_err(m_rt->bus->dev,...)" everywhere in this function
-and remove the variable altogether...
+Thanks,
 
-Thanks
-Guennadi
+Although we're preparing for a ton of bug reports. Nothing is better
+testing to flush out bugs than giving it to users.
 
-> +		/* Disable port(s) */
-> +		ret = sdw_enable_disable_ports(m_rt, false);
-> +		if (ret < 0) {
-> +			dev_err(bus->dev, "Disable port(s) failed: %d\n", ret);
-> +			return ret;
-> +		}
-> +	}
-> +
-> +	return 0;
->  }
->  
->  /**
-> -- 
-> 2.20.1
-> 
-> _______________________________________________
-> Alsa-devel mailing list
-> Alsa-devel@alsa-project.org
-> https://mailman.alsa-project.org/mailman/listinfo/alsa-devel
+-- Steve
