@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 58FD97670B
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 15:15:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DA77A76704
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 15:14:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727172AbfGZNO5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 09:14:57 -0400
-Received: from honk.sigxcpu.org ([24.134.29.49]:36338 "EHLO honk.sigxcpu.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726491AbfGZNOq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726939AbfGZNOq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Fri, 26 Jul 2019 09:14:46 -0400
+Received: from honk.sigxcpu.org ([24.134.29.49]:36352 "EHLO honk.sigxcpu.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726303AbfGZNOp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 09:14:45 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by honk.sigxcpu.org (Postfix) with ESMTP id 082F9FB02;
+        by honk.sigxcpu.org (Postfix) with ESMTP id E1017FB03;
         Fri, 26 Jul 2019 15:14:43 +0200 (CEST)
 X-Virus-Scanned: Debian amavisd-new at honk.sigxcpu.org
 Received: from honk.sigxcpu.org ([127.0.0.1])
         by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id rl7091_wxe66; Fri, 26 Jul 2019 15:14:42 +0200 (CEST)
+        with ESMTP id u1mgCVL2meXc; Fri, 26 Jul 2019 15:14:43 +0200 (CEST)
 Received: by bogon.sigxcpu.org (Postfix, from userid 1000)
-        id 1A20646AA0; Fri, 26 Jul 2019 15:14:40 +0200 (CEST)
+        id 2ADC346AA2; Fri, 26 Jul 2019 15:14:40 +0200 (CEST)
 From:   =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>
 To:     =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>,
         Purism Kernel Team <kernel@puri.sm>,
@@ -28,9 +28,9 @@ To:     =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>,
         David Airlie <airlied@linux.ie>,
         Daniel Vetter <daniel@ffwll.ch>,
         dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/4] drm/panel: jh057n00900: Move mipi_dsi_dcs_set_display_off to disable()
-Date:   Fri, 26 Jul 2019 15:14:37 +0200
-Message-Id: <e2c31d34ce1f917065d590297e5115a4ca954874.1564146727.git.agx@sigxcpu.org>
+Subject: [PATCH v2 3/4] drm/panel: jh057n00900: Print error code on all DRM_DEV_ERROR()s
+Date:   Fri, 26 Jul 2019 15:14:38 +0200
+Message-Id: <6b237a570cb368dc4471fb8feb3a0441813cd576.1564146727.git.agx@sigxcpu.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <cover.1564146727.git.agx@sigxcpu.org>
 References: <cover.1564146727.git.agx@sigxcpu.org>
@@ -42,40 +42,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This makes it symmetric with the panel init happening in enable().
+Most of them had these already but two mere missing. This eases
+debugging.
 
 Signed-off-by: Guido Günther <agx@sigxcpu.org>
+Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
 ---
- drivers/gpu/drm/panel/panel-rocktech-jh057n00900.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/panel/panel-rocktech-jh057n00900.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/gpu/drm/panel/panel-rocktech-jh057n00900.c b/drivers/gpu/drm/panel/panel-rocktech-jh057n00900.c
-index c6b4bfd79fde..fed24c51d48b 100644
+index fed24c51d48b..1037a201b4bb 100644
 --- a/drivers/gpu/drm/panel/panel-rocktech-jh057n00900.c
 +++ b/drivers/gpu/drm/panel/panel-rocktech-jh057n00900.c
-@@ -158,19 +158,19 @@ static int jh057n_enable(struct drm_panel *panel)
- static int jh057n_disable(struct drm_panel *panel)
- {
- 	struct jh057n *ctx = panel_to_jh057n(panel);
-+	struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
+@@ -127,7 +127,7 @@ static int jh057n_init_sequence(struct jh057n *ctx)
  
--	return backlight_disable(ctx->backlight);
-+	backlight_disable(ctx->backlight);
-+	return mipi_dsi_dcs_set_display_off(dsi);
- }
+ 	ret = mipi_dsi_dcs_exit_sleep_mode(dsi);
+ 	if (ret < 0) {
+-		DRM_DEV_ERROR(dev, "Failed to exit sleep mode\n");
++		DRM_DEV_ERROR(dev, "Failed to exit sleep mode: %d\n", ret);
+ 		return ret;
+ 	}
+ 	/* Panel is operational 120 msec after reset */
+@@ -351,7 +351,9 @@ static int jh057n_probe(struct mipi_dsi_device *dsi)
  
- static int jh057n_unprepare(struct drm_panel *panel)
- {
- 	struct jh057n *ctx = panel_to_jh057n(panel);
--	struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
- 
- 	if (!ctx->prepared)
- 		return 0;
- 
--	mipi_dsi_dcs_set_display_off(dsi);
- 	regulator_disable(ctx->iovcc);
- 	regulator_disable(ctx->vcc);
- 	ctx->prepared = false;
+ 	ret = mipi_dsi_attach(dsi);
+ 	if (ret < 0) {
+-		DRM_DEV_ERROR(dev, "mipi_dsi_attach failed. Is host ready?\n");
++		DRM_DEV_ERROR(dev,
++			      "mipi_dsi_attach failed (%d). Is host ready?\n",
++			      ret);
+ 		drm_panel_remove(&ctx->panel);
+ 		return ret;
+ 	}
 -- 
 2.20.1
 
