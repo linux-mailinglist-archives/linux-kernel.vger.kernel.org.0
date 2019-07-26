@@ -2,111 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 590C276B1E
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 16:10:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A5C276B35
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 16:11:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728096AbfGZOJ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 10:09:59 -0400
-Received: from mga09.intel.com ([134.134.136.24]:50913 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726902AbfGZOJ7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 10:09:59 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jul 2019 07:09:58 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,311,1559545200"; 
-   d="scan'208";a="322049406"
-Received: from msmall-mobl.amr.corp.intel.com (HELO [10.251.154.62]) ([10.251.154.62])
-  by orsmga004.jf.intel.com with ESMTP; 26 Jul 2019 07:09:56 -0700
-Subject: Re: [alsa-devel] [RFC PATCH 15/40] soundwire: cadence_master: handle
- multiple status reports per Slave
-To:     Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
-Cc:     alsa-devel@alsa-project.org, tiwai@suse.de,
-        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        vkoul@kernel.org, broonie@kernel.org,
-        srinivas.kandagatla@linaro.org, jank@cadence.com,
-        slawomir.blauciak@intel.com, Sanyog Kale <sanyog.r.kale@intel.com>
-References: <20190725234032.21152-1-pierre-louis.bossart@linux.intel.com>
- <20190725234032.21152-16-pierre-louis.bossart@linux.intel.com>
- <20190725223100.GC16003@ubuntu>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <fe63b365-5251-fab0-ab7f-bb2290534e4b@linux.intel.com>
-Date:   Fri, 26 Jul 2019 09:09:56 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1728404AbfGZOLb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 10:11:31 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:54568 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727397AbfGZOL3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 10:11:29 -0400
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 1D65FF879E7F7B9D1E28;
+        Fri, 26 Jul 2019 22:11:27 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS414-HUB.china.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server id 14.3.439.0; Fri, 26 Jul 2019
+ 22:11:19 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <gregkh@linuxfoundation.org>, <nishkadg.linux@gmail.com>,
+        <mamtashukla555@gmail.com>, <hariprasad.kelam@gmail.com>
+CC:     <linux-kernel@vger.kernel.org>, <devel@driverdev.osuosl.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH 06/10] staging: rtl8723bs: os_dep: remove two set but not used variables
+Date:   Fri, 26 Jul 2019 22:09:59 +0800
+Message-ID: <20190726140959.15008-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-In-Reply-To: <20190725223100.GC16003@ubuntu>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Fixes gcc '-Wunused-but-set-variable' warning:
 
->> diff --git a/drivers/soundwire/cadence_master.c b/drivers/soundwire/cadence_master.c
->> index 889fa2cd49ae..25d5c7267c15 100644
->> --- a/drivers/soundwire/cadence_master.c
->> +++ b/drivers/soundwire/cadence_master.c
->> @@ -643,13 +643,35 @@ static int cdns_update_slave_status(struct sdw_cdns *cdns,
->>   
->>   		/* first check if Slave reported multiple status */
->>   		if (set_status > 1) {
->> +			u32 val;
->> +
->>   			dev_warn_ratelimited(cdns->dev,
->> -					     "Slave reported multiple Status: %d\n",
->> -					     mask);
->> -			/*
->> -			 * TODO: we need to reread the status here by
->> -			 * issuing a PING cmd
->> -			 */
->> +					     "Slave %d reported multiple Status: %d\n",
->> +					     i, mask);
->> +
->> +			/* re-check latest status extracted from PING commands */
->> +			val = cdns_readl(cdns, CDNS_MCP_SLAVE_STAT);
->> +			val >>= (i * 2);
-> 
-> Superfluous parentheses.
+drivers/staging/rtl8723bs//os_dep/osdep_service.c: In function 'rtw_buf_free':
+drivers/staging/rtl8723bs//os_dep/osdep_service.c:321:6: warning:
+ variable 'ori_len' set but not used [-Wunused-but-set-variable]
+drivers/staging/rtl8723bs//os_dep/ioctl_linux.c: In function 'rtw_ioctl_wext_private':
+drivers/staging/rtl8723bs//os_dep/ioctl_linux.c:4915:6: warning:
+ variable 'num_priv' set but not used [-Wunused-but-set-variable]
 
-Humm, I don't know my left from my right and I can't remember operator 
-precedence, so i'd rather make it explicit...
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/staging/rtl8723bs/os_dep/ioctl_linux.c   | 2 --
+ drivers/staging/rtl8723bs/os_dep/osdep_service.c | 4 ----
+ 2 files changed, 6 deletions(-)
 
-> 
->> +
->> +			switch (val & 0x3) {
->> +			case 0:
->> +				status[i] = SDW_SLAVE_UNATTACHED;
->> +				break;
->> +			case 1:
->> +				status[i] = SDW_SLAVE_ATTACHED;
->> +				break;
->> +			case 2:
->> +				status[i] = SDW_SLAVE_ALERT;
->> +				break;
->> +			default:
-> 
-> There aren't many values left for the "default" case :-) But I'm not sure whether
-> any of
-> 
-> +			case 3:
-> 
-> or
-> 
-> +			case 3:
-> +			default:
-> 
-> would improve readability.
-> 
-> Thanks
-> Guennadi
-> 
->> +				status[i] = SDW_SLAVE_RESERVED;
->> +				break;
+diff --git a/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c b/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
+index 99e6b10..90c2997 100644
+--- a/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
++++ b/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
+@@ -4912,7 +4912,6 @@ static int rtw_ioctl_wext_private(struct net_device *dev, union iwreq_data *wrq_
+ 	s32 k;
+ 	const iw_handler *priv;		/* Private ioctl */
+ 	const struct iw_priv_args *priv_args;	/* Private ioctl description */
+-	u32 num_priv;				/* Number of ioctl */
+ 	u32 num_priv_args;			/* Number of descriptions */
+ 	iw_handler handler;
+ 	int temp;
+@@ -4948,7 +4947,6 @@ static int rtw_ioctl_wext_private(struct net_device *dev, union iwreq_data *wrq_
+ 
+ 	priv = rtw_private_handler;
+ 	priv_args = rtw_private_args;
+-	num_priv = ARRAY_SIZE(rtw_private_handler);
+ 	num_priv_args = ARRAY_SIZE(rtw_private_args);
+ 
+ 	if (num_priv_args == 0) {
+diff --git a/drivers/staging/rtl8723bs/os_dep/osdep_service.c b/drivers/staging/rtl8723bs/os_dep/osdep_service.c
+index 62fdd24..25a8004 100644
+--- a/drivers/staging/rtl8723bs/os_dep/osdep_service.c
++++ b/drivers/staging/rtl8723bs/os_dep/osdep_service.c
+@@ -318,13 +318,9 @@ int rtw_change_ifname(struct adapter *padapter, const char *ifname)
+ 
+ void rtw_buf_free(u8 **buf, u32 *buf_len)
+ {
+-	u32 ori_len;
+-
+ 	if (!buf || !buf_len)
+ 		return;
+ 
+-	ori_len = *buf_len;
+-
+ 	if (*buf) {
+ 		*buf_len = 0;
+ 		kfree(*buf);
+-- 
+2.7.4
 
-Yes, those defaults are annoying. Some tools complain so I tend to leave 
-them.
+
