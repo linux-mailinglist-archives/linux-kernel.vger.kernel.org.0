@@ -2,23 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9633C771FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 21:19:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9361E77206
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 21:20:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388706AbfGZTTL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 15:19:11 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:50243 "EHLO
+        id S2388746AbfGZTTv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 15:19:51 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:50187 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388639AbfGZTTG (ORCPT
+        with ESMTP id S2388521AbfGZTS6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 15:19:06 -0400
+        Fri, 26 Jul 2019 15:18:58 -0400
 Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1hr5jz-00019v-3F; Fri, 26 Jul 2019 21:18:55 +0200
-Message-Id: <20190726185752.981398465@linutronix.de>
+        id 1hr5jz-00019z-KV; Fri, 26 Jul 2019 21:18:55 +0200
+Message-Id: <20190726185753.077004842@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Fri, 26 Jul 2019 20:30:51 +0200
+Date:   Fri, 26 Jul 2019 20:30:52 +0200
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
@@ -28,7 +28,7 @@ Cc:     x86@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
         Jiri Olsa <jolsa@redhat.com>,
         Paolo Bonzini <pbonzini@redhat.com>,
         Juergen Gross <jgross@suse.com>
-Subject: [patch 03/12] hrtimer: Introduce HARD expiry mode
+Subject: [patch 04/12] sched: Mark hrtimers to expire in hard interrupt context
 References: <20190726183048.982726647@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -37,53 +37,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-On PREEMPT_RT not all hrtimers can be expired in hard interrupt context
-even if that is perfectly fine on a PREEMPT_RT=n kernel, e.g. because they
-take regular spinlocks. Also for latency reasons PREEMPT_RT tries to defer
-most hrtimers' expiry into soft interrupt context.
+The scheduler related hrtimers need to expire in hard interrupt context
+even on PREEMPT_RT enabled kernels. Mark then as such.
 
-But there are hrtimers which must be expired in hard interrupt context even
-when PREEMPT_RT is enabled:
+No functional change.
 
-  - hrtimers which must expiry in hard interrupt context, e.g. scheduler,
-    perf, watchdog related hrtimers
-
-  - latency critical hrtimers, e.g. nanosleep, ..., kvm lapic timer
-
-Add a new mode flag HRTIMER_MODE_HARD which allows to mark these timers so
-PREEMPT_RT will not move them into softirq expiry mode.
-
-[ tglx: Split out of a larger combo patch. Added changelog ]
+[ tglx: Split out from larger combo patch. Add changelog. ]
 
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 ---
- include/linux/hrtimer.h |    6 ++++++
- 1 file changed, 6 insertions(+)
+ kernel/sched/core.c     |    2 +-
+ kernel/sched/deadline.c |    2 +-
+ kernel/sched/fair.c     |    6 ++++--
+ kernel/sched/rt.c       |    4 ++--
+ 4 files changed, 8 insertions(+), 6 deletions(-)
 
---- a/include/linux/hrtimer.h
-+++ b/include/linux/hrtimer.h
-@@ -38,6 +38,7 @@ enum hrtimer_mode {
- 	HRTIMER_MODE_REL	= 0x01,
- 	HRTIMER_MODE_PINNED	= 0x02,
- 	HRTIMER_MODE_SOFT	= 0x04,
-+	HRTIMER_MODE_HARD	= 0x08,
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -328,7 +328,7 @@ static void hrtick_rq_init(struct rq *rq
+ 	rq->hrtick_csd.info = rq;
+ #endif
  
- 	HRTIMER_MODE_ABS_PINNED = HRTIMER_MODE_ABS | HRTIMER_MODE_PINNED,
- 	HRTIMER_MODE_REL_PINNED = HRTIMER_MODE_REL | HRTIMER_MODE_PINNED,
-@@ -48,6 +49,11 @@ enum hrtimer_mode {
- 	HRTIMER_MODE_ABS_PINNED_SOFT = HRTIMER_MODE_ABS_PINNED | HRTIMER_MODE_SOFT,
- 	HRTIMER_MODE_REL_PINNED_SOFT = HRTIMER_MODE_REL_PINNED | HRTIMER_MODE_SOFT,
+-	hrtimer_init(&rq->hrtick_timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
++	hrtimer_init(&rq->hrtick_timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL_HARD);
+ 	rq->hrtick_timer.function = hrtick;
+ }
+ #else	/* CONFIG_SCHED_HRTICK */
+--- a/kernel/sched/deadline.c
++++ b/kernel/sched/deadline.c
+@@ -1053,7 +1053,7 @@ void init_dl_task_timer(struct sched_dl_
+ {
+ 	struct hrtimer *timer = &dl_se->dl_timer;
  
-+	HRTIMER_MODE_ABS_HARD	= HRTIMER_MODE_ABS | HRTIMER_MODE_HARD,
-+	HRTIMER_MODE_REL_HARD	= HRTIMER_MODE_REL | HRTIMER_MODE_HARD,
-+
-+	HRTIMER_MODE_ABS_PINNED_HARD = HRTIMER_MODE_ABS_PINNED | HRTIMER_MODE_HARD,
-+	HRTIMER_MODE_REL_PINNED_HARD = HRTIMER_MODE_REL_PINNED | HRTIMER_MODE_HARD,
- };
+-	hrtimer_init(timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
++	hrtimer_init(timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL_HARD);
+ 	timer->function = dl_task_timer;
+ }
  
- /*
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -4972,9 +4972,11 @@ void init_cfs_bandwidth(struct cfs_bandw
+ 	cfs_b->period = ns_to_ktime(default_cfs_period());
+ 
+ 	INIT_LIST_HEAD(&cfs_b->throttled_cfs_rq);
+-	hrtimer_init(&cfs_b->period_timer, CLOCK_MONOTONIC, HRTIMER_MODE_ABS_PINNED);
++	hrtimer_init(&cfs_b->period_timer, CLOCK_MONOTONIC,
++		     HRTIMER_MODE_ABS_PINNED_HARD);
+ 	cfs_b->period_timer.function = sched_cfs_period_timer;
+-	hrtimer_init(&cfs_b->slack_timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
++	hrtimer_init(&cfs_b->slack_timer, CLOCK_MONOTONIC,
++		     HRTIMER_MODE_REL_HARD);
+ 	cfs_b->slack_timer.function = sched_cfs_slack_timer;
+ 	cfs_b->distribute_running = 0;
+ 	cfs_b->slack_started = false;
+--- a/kernel/sched/rt.c
++++ b/kernel/sched/rt.c
+@@ -45,8 +45,8 @@ void init_rt_bandwidth(struct rt_bandwid
+ 
+ 	raw_spin_lock_init(&rt_b->rt_runtime_lock);
+ 
+-	hrtimer_init(&rt_b->rt_period_timer,
+-			CLOCK_MONOTONIC, HRTIMER_MODE_REL);
++	hrtimer_init(&rt_b->rt_period_timer, CLOCK_MONOTONIC,
++		     HRTIMER_MODE_REL_HARD);
+ 	rt_b->rt_period_timer.function = sched_rt_period_timer;
+ }
+ 
 
 
