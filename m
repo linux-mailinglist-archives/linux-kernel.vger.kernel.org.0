@@ -2,106 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B3E9875CCF
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 04:14:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DFB775CD6
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 04:17:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726115AbfGZCOy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 22:14:54 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:39783 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725923AbfGZCOy (ORCPT
+        id S1726208AbfGZCRo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 22:17:44 -0400
+Received: from conuserg-11.nifty.com ([210.131.2.78]:25839 "EHLO
+        conuserg-11.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726099AbfGZCRo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 22:14:54 -0400
-Received: by mail-pl1-f194.google.com with SMTP id b7so24164488pls.6
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2019 19:14:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=omBls9Gx4bP4rqZZvHf2qg7ZHRKve5iFfEyz6IL0Sek=;
-        b=L+5weXap3F/aUB3dU/dLA+E47mrqkGreRpNSO0P4EFp34DviXxVckUNAji93YEXOrK
-         HaXiMFlzinZ1Ps+NCoJ+hMG9sIwJJyJm/PzOok2v1rnIamul1CNL0fjm0MUIGlLhpxSb
-         g+c2f/hrtp3AoRTqU4Z0QrXkbM0IUSQr0Lm4Zztarg2M6/UgVLVwCJhRMnTOSc4P5wFm
-         3+XHFE6MdqFXDzfFKidY+d8i5f8F7LEHmKEOAQ1t0Las1rpnsalyj0HJLZZeBsVfxXai
-         J6x1DEySm84MM/MLR9GOgWy2utfArMn2CBkWLzlmTKJetppAHmDK0VkjzznOnj2R5GyV
-         vjjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=omBls9Gx4bP4rqZZvHf2qg7ZHRKve5iFfEyz6IL0Sek=;
-        b=PdXctl3Geb3uRGvYDc3j/QQxt7fbLEv5vHENGQ2JTQFUHteNDAM6C2z12LSQWU9Hiq
-         UOn8n1s1fICRlxiXGJGOebex6DqgYemLPjwGmAMwvDdtjq7CMofFWe22yuFZ5s4XkGB/
-         VlKNcgEhmGSzObj7eSHbUUN2FiApH0ow13bqr/OkUEy05Z2Zp596/rClR5NwYr+ypl66
-         Xd1LljSjo252zevAXmt6Gg6luddKPufe9qKzchLH6aYbcPck1rbbdi4jtqyG/32Utui0
-         W9rm7g32wSQS2KRoWjJb++e58G4D6i4Jnoy+0pljZFUPCvhnC/Wx+h8MiTG50IcWXkUb
-         KfwA==
-X-Gm-Message-State: APjAAAU+wZC59QuLPJBIgY0XSTJIik6oQ81ngH3GL529SnIuM83LrCzK
-        wOZQHb+b91Y1S9BLmcZdMdjmJsz84II=
-X-Google-Smtp-Source: APXvYqzhtWZULLiTvGVlGqmQlDUERIrGC3/w9xnlHbHonHpzpbFCDrgdVCtDSTQxnMeQWP0657yc/A==
-X-Received: by 2002:a17:902:1d4a:: with SMTP id u10mr9939058plu.343.1564107293936;
-        Thu, 25 Jul 2019 19:14:53 -0700 (PDT)
-Received: from oslab.tsinghua.edu.cn ([2402:f000:4:72:808::3ca])
-        by smtp.gmail.com with ESMTPSA id y128sm69564365pgy.41.2019.07.25.19.14.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 25 Jul 2019 19:14:53 -0700 (PDT)
-From:   Jia-Ju Bai <baijiaju1990@gmail.com>
-To:     perex@perex.cz, tiwai@suse.com, tglx@linutronix.de,
-        rfontana@redhat.com, gregkh@linuxfoundation.org
-Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [PATCH v2] ALSA: i2c: ak4xxx-adda: Fix a possible null pointer dereference in build_adc_controls()
-Date:   Fri, 26 Jul 2019 10:14:42 +0800
-Message-Id: <20190726021442.21177-1-baijiaju1990@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        Thu, 25 Jul 2019 22:17:44 -0400
+Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-11.nifty.com with ESMTP id x6Q2HevN004335;
+        Fri, 26 Jul 2019 11:17:40 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-11.nifty.com x6Q2HevN004335
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1564107460;
+        bh=6bHD7bwBuq14HT8OqTr/oNHl219WxknX0kwiJlKXRrI=;
+        h=From:To:Cc:Subject:Date:From;
+        b=aL3oLq/r/qsmtVGZHEyopbkIFALO7SHEZaBsJS7eAlWAAN22IKWlGbXh15qnA78cx
+         S9wqJotyerqLVFT1dWoSXdnzim452eVvvWOIjKID2aqwq9+N9Ssj8Nda83D4ZH/I3r
+         xWeN2bO0OLgeTXxUHLTpoVCjkBlNkCS+NMgRyWc6xNECIJ5qik6BNnzrbJlH+nnY9r
+         IX+oE1GGIh1yi67NHqc6D7wXeC5zrdwdrQuSnxJPTAEhT3xSVt6o1JdIXro51mkTke
+         BvfhqTIeXRjXqXscuNb6yVYS3obkaGlMy7jqnDdnMD7sWgg078ayeoRI7CMFCMDxCU
+         M5yTzMP8a6mzw==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-kbuild@vger.kernel.org
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] kbuild: remove unused single-used-m
+Date:   Fri, 26 Jul 2019 11:17:38 +0900
+Message-Id: <20190726021738.4935-1-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In build_adc_controls(), there is an if statement on line 773 to check
-whether ak->adc_info is NULL:
-    if (! ak->adc_info ||
-        ! ak->adc_info[mixer_ch].switch_name)
+This is unused since commit 9f69a496f100 ("kbuild: split out *.mod out
+of {single,multi}-used-m rules").
 
-When ak->adc_info is NULL, it is used on line 792:
-    knew.name = ak->adc_info[mixer_ch].selector_name;
-
-Thus, a possible null-pointer dereference may occur.
-
-To fix this bug, referring to lines 773 and 774, ak->adc_info
-and ak->adc_info[mixer_ch].selector_name are checked before being used.
-
-This bug is found by a static analysis tool STCheck written by us.
-
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
-v2:
-* Fix the errors reported by checkpatch.pl.
-  Thank Takashi for helpful advice.
 
----
- sound/i2c/other/ak4xxx-adda.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ scripts/Makefile.lib | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/sound/i2c/other/ak4xxx-adda.c b/sound/i2c/other/ak4xxx-adda.c
-index 5f59316f982a..b03e6d1be656 100644
---- a/sound/i2c/other/ak4xxx-adda.c
-+++ b/sound/i2c/other/ak4xxx-adda.c
-@@ -775,11 +775,12 @@ static int build_adc_controls(struct snd_akm4xxx *ak)
- 				return err;
+diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
+index 5241d0751eb0..41c50f9461e5 100644
+--- a/scripts/Makefile.lib
++++ b/scripts/Makefile.lib
+@@ -45,7 +45,6 @@ subdir-ym	:= $(sort $(subdir-y) $(subdir-m))
+ multi-used-y := $(sort $(foreach m,$(obj-y), $(if $(strip $($(m:.o=-objs)) $($(m:.o=-y))), $(m))))
+ multi-used-m := $(sort $(foreach m,$(obj-m), $(if $(strip $($(m:.o=-objs)) $($(m:.o=-y)) $($(m:.o=-m))), $(m))))
+ multi-used   := $(multi-used-y) $(multi-used-m)
+-single-used-m := $(sort $(filter-out $(multi-used-m),$(obj-m)))
  
- 			memset(&knew, 0, sizeof(knew));
--			knew.name = ak->adc_info[mixer_ch].selector_name;
--			if (!knew.name) {
-+			if (!ak->adc_info ||
-+				!ak->adc_info[mixer_ch].selector_name) {
- 				knew.name = "Capture Channel";
- 				knew.index = mixer_ch + ak->idx_offset * 2;
--			}
-+			} else
-+				knew.name = ak->adc_info[mixer_ch].selector_name;
+ # $(subdir-obj-y) is the list of objects in $(obj-y) which uses dir/ to
+ # tell kbuild to descend
+@@ -91,7 +90,6 @@ lib-y		:= $(addprefix $(obj)/,$(lib-y))
+ subdir-obj-y	:= $(addprefix $(obj)/,$(subdir-obj-y))
+ real-obj-y	:= $(addprefix $(obj)/,$(real-obj-y))
+ real-obj-m	:= $(addprefix $(obj)/,$(real-obj-m))
+-single-used-m	:= $(addprefix $(obj)/,$(single-used-m))
+ multi-used-m	:= $(addprefix $(obj)/,$(multi-used-m))
+ subdir-ym	:= $(addprefix $(obj)/,$(subdir-ym))
  
- 			knew.iface = SNDRV_CTL_ELEM_IFACE_MIXER;
- 			knew.info = ak4xxx_capture_source_info;
 -- 
-2.17.0
+2.17.1
 
