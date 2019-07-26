@@ -2,35 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 711997681B
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 15:42:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F2A4B76822
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 15:42:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387910AbfGZNmS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 09:42:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49450 "EHLO mail.kernel.org"
+        id S2387962AbfGZNma (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 09:42:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49564 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387874AbfGZNmN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 09:42:13 -0400
+        id S2387904AbfGZNmS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 09:42:18 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 49CAF22CC0;
-        Fri, 26 Jul 2019 13:42:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7A72D22CC0;
+        Fri, 26 Jul 2019 13:42:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564148531;
-        bh=SRWkb1rYWHX8LGcFo1lj7BcnybwsJzYcZ56huQNPnn4=;
-        h=From:To:Cc:Subject:Date:From;
-        b=lvmdxL0ZxCLs++Msjs4gfE6/SQs2QKRbomfDMI8WtrnRWw6YHoZVAS7IcRr7a6QUH
-         Akg9qUGe5J7gRZdci0TsurcsQr9ttswumPVmhRkL9OjfoEs1ccn375BuDslbDJMg84
-         XpCjSH5Yt/VW9c1z6OgqJiEon0oDIs6mC7+FOtUM=
+        s=default; t=1564148537;
+        bh=BE60MTfJWxzfbe2tQ2Ymw2igQvnnLord2g0WlKjagOM=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=M7xMCSvk3meAUMcjLVe7PECuiajh73B8Sn/6jy72d30eOule6y/jf7R5THwxWfFxp
+         ajQkEonmtzozqBRWwE9EdWwL/9/9PRyTqx00AQc5wxGyCRmjQiqMQNG6XLwjn/jUo3
+         sWk0lwnnH6HrwSdGfjka6Je347OiDU1tKtjCWDO8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Russell King <rmk+kernel@armlinux.org.uk>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 01/47] ARM: riscpc: fix DMA
-Date:   Fri, 26 Jul 2019 09:41:24 -0400
-Message-Id: <20190726134210.12156-1-sashal@kernel.org>
+Cc:     Dmitry Osipenko <digetx@gmail.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>,
+        dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 06/47] dmaengine: tegra-apb: Error out if DMA_PREP_INTERRUPT flag is unset
+Date:   Fri, 26 Jul 2019 09:41:29 -0400
+Message-Id: <20190726134210.12156-6-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190726134210.12156-1-sashal@kernel.org>
+References: <20190726134210.12156-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -40,48 +44,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Russell King <rmk+kernel@armlinux.org.uk>
+From: Dmitry Osipenko <digetx@gmail.com>
 
-[ Upstream commit ffd9a1ba9fdb7f2bd1d1ad9b9243d34e96756ba2 ]
+[ Upstream commit dc161064beb83c668e0f85766b92b1e7ed186e58 ]
 
-DMA got broken a while back in two different ways:
-1) a change in the behaviour of disable_irq() to wait for the interrupt
-   to finish executing causes us to deadlock at the end of DMA.
-2) a change to avoid modifying the scatterlist left the first transfer
-   uninitialised.
+Apparently driver was never tested with DMA_PREP_INTERRUPT flag being
+unset since it completely disables interrupt handling instead of skipping
+the callbacks invocations, hence putting channel into unusable state.
 
-DMA is only used with expansion cards, so has gone unnoticed.
+The flag is always set by all of kernel drivers that use APB DMA, so let's
+error out in otherwise case for consistency. It won't be difficult to
+support that case properly if ever will be needed.
 
-Fixes: fa4e99899932 ("[ARM] dma: RiscPC: don't modify DMA SG entries")
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/mach-rpc/dma.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/dma/tegra20-apb-dma.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/mach-rpc/dma.c b/arch/arm/mach-rpc/dma.c
-index fb48f3141fb4..c4c96661eb89 100644
---- a/arch/arm/mach-rpc/dma.c
-+++ b/arch/arm/mach-rpc/dma.c
-@@ -131,7 +131,7 @@ static irqreturn_t iomd_dma_handle(int irq, void *dev_id)
- 	} while (1);
- 
- 	idma->state = ~DMA_ST_AB;
--	disable_irq(irq);
-+	disable_irq_nosync(irq);
- 
- 	return IRQ_HANDLED;
- }
-@@ -174,6 +174,9 @@ static void iomd_enable_dma(unsigned int chan, dma_t *dma)
- 				DMA_FROM_DEVICE : DMA_TO_DEVICE);
- 		}
- 
-+		idma->dma_addr = idma->dma.sg->dma_address;
-+		idma->dma_len = idma->dma.sg->length;
-+
- 		iomd_writeb(DMA_CR_C, dma_base + CR);
- 		idma->state = DMA_ST_AB;
+diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
+index 8219ab88a507..fb23993430d3 100644
+--- a/drivers/dma/tegra20-apb-dma.c
++++ b/drivers/dma/tegra20-apb-dma.c
+@@ -981,8 +981,12 @@ static struct dma_async_tx_descriptor *tegra_dma_prep_slave_sg(
+ 		csr |= tdc->slave_id << TEGRA_APBDMA_CSR_REQ_SEL_SHIFT;
  	}
+ 
+-	if (flags & DMA_PREP_INTERRUPT)
++	if (flags & DMA_PREP_INTERRUPT) {
+ 		csr |= TEGRA_APBDMA_CSR_IE_EOC;
++	} else {
++		WARN_ON_ONCE(1);
++		return NULL;
++	}
+ 
+ 	apb_seq |= TEGRA_APBDMA_APBSEQ_WRAP_WORD_1;
+ 
+@@ -1124,8 +1128,12 @@ static struct dma_async_tx_descriptor *tegra_dma_prep_dma_cyclic(
+ 		csr |= tdc->slave_id << TEGRA_APBDMA_CSR_REQ_SEL_SHIFT;
+ 	}
+ 
+-	if (flags & DMA_PREP_INTERRUPT)
++	if (flags & DMA_PREP_INTERRUPT) {
+ 		csr |= TEGRA_APBDMA_CSR_IE_EOC;
++	} else {
++		WARN_ON_ONCE(1);
++		return NULL;
++	}
+ 
+ 	apb_seq |= TEGRA_APBDMA_APBSEQ_WRAP_WORD_1;
+ 
 -- 
 2.20.1
 
