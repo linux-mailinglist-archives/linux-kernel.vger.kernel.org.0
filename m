@@ -2,38 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0EAB576D53
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 17:33:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4219176D2D
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 17:31:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728566AbfGZPc6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 11:32:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48146 "EHLO mail.kernel.org"
+        id S2389268AbfGZPbX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 11:31:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46306 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389568AbfGZPcw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 11:32:52 -0400
+        id S2389256AbfGZPbU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 11:31:20 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DCAD2205F4;
-        Fri, 26 Jul 2019 15:32:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A663622CB9;
+        Fri, 26 Jul 2019 15:31:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564155172;
-        bh=qV1uPx44c/lDnu2VPvoFyoVq2I1KcqlgPo8CaBaqsCM=;
+        s=default; t=1564155079;
+        bh=EtuxGL0g9cKMmNy6KapyBnlRAz2SyGUAO60uxNSnL+M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=V4cTWVDRQiWSj1dmW7q1sPCmB3PrYb7g2HG1KLNfPoY3X7YL4Mg7/O3paLk0mWF/e
-         16n4fhP/WhZcblLzL20h7BvtaqHOh55S184SiNOsL4wxIakHFQAIXUePk9y+ZaKClr
-         Ca4BB4jl11Uve7XakTS7gsc02Yh2V/hUMZ4nzguo=
+        b=K3HhjBoDQOts8DeuCswMo/V1Ot4aD3j+OFt1a9k6pPeCRYIloMip/VAzOQXDbbeyh
+         CDwesEcklCM5pyB+CCsrt+q/+lNE19V8kbbyflcbw7Bg58DFfLGWdG2eJO1pVED3z7
+         /hecfifP8+rKrXfhOAKbWpGmPdi+KJrair5RNAnQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andreas Steinmetz <ast@domdv.de>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 26/50] macsec: fix checksumming after decryption
-Date:   Fri, 26 Jul 2019 17:25:01 +0200
-Message-Id: <20190726152303.316120842@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+a24c397a29ad22d86c98@syzkaller.appspotmail.com,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Stephane Eranian <eranian@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vince Weaver <vincent.weaver@maine.edu>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 5.1 50/62] perf/core: Fix race between close() and fork()
+Date:   Fri, 26 Jul 2019 17:25:02 +0200
+Message-Id: <20190726152307.283985735@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190726152300.760439618@linuxfoundation.org>
-References: <20190726152300.760439618@linuxfoundation.org>
+In-Reply-To: <20190726152301.720139286@linuxfoundation.org>
+References: <20190726152301.720139286@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,28 +53,183 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andreas Steinmetz <ast@domdv.de>
+From: Peter Zijlstra <peterz@infradead.org>
 
-[ Upstream commit 7d8b16b9facb0dd81d1469808dd9a575fa1d525a ]
+commit 1cf8dfe8a661f0462925df943140e9f6d1ea5233 upstream.
 
-Fix checksumming after decryption.
+Syzcaller reported the following Use-after-Free bug:
 
-Signed-off-by: Andreas Steinmetz <ast@domdv.de>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+	close()						clone()
+
+							  copy_process()
+							    perf_event_init_task()
+							      perf_event_init_context()
+							        mutex_lock(parent_ctx->mutex)
+								inherit_task_group()
+								  inherit_group()
+								    inherit_event()
+								      mutex_lock(event->child_mutex)
+								      // expose event on child list
+								      list_add_tail()
+								      mutex_unlock(event->child_mutex)
+							        mutex_unlock(parent_ctx->mutex)
+
+							    ...
+							    goto bad_fork_*
+
+							  bad_fork_cleanup_perf:
+							    perf_event_free_task()
+
+	  perf_release()
+	    perf_event_release_kernel()
+	      list_for_each_entry()
+		mutex_lock(ctx->mutex)
+		mutex_lock(event->child_mutex)
+		// event is from the failing inherit
+		// on the other CPU
+		perf_remove_from_context()
+		list_move()
+		mutex_unlock(event->child_mutex)
+		mutex_unlock(ctx->mutex)
+
+							      mutex_lock(ctx->mutex)
+							      list_for_each_entry_safe()
+							        // event already stolen
+							      mutex_unlock(ctx->mutex)
+
+							    delayed_free_task()
+							      free_task()
+
+	     list_for_each_entry_safe()
+	       list_del()
+	       free_event()
+	         _free_event()
+		   // and so event->hw.target
+		   // is the already freed failed clone()
+		   if (event->hw.target)
+		     put_task_struct(event->hw.target)
+		       // WHOOPSIE, already quite dead
+
+Which puts the lie to the the comment on perf_event_free_task():
+'unexposed, unused context' not so much.
+
+Which is a 'fun' confluence of fail; copy_process() doing an
+unconditional free_task() and not respecting refcounts, and perf having
+creative locking. In particular:
+
+  82d94856fa22 ("perf/core: Fix lock inversion between perf,trace,cpuhp")
+
+seems to have overlooked this 'fun' parade.
+
+Solve it by using the fact that detached events still have a reference
+count on their (previous) context. With this perf_event_free_task()
+can detect when events have escaped and wait for their destruction.
+
+Debugged-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Reported-by: syzbot+a24c397a29ad22d86c98@syzkaller.appspotmail.com
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Acked-by: Mark Rutland <mark.rutland@arm.com>
+Cc: <stable@vger.kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vince Weaver <vincent.weaver@maine.edu>
+Fixes: 82d94856fa22 ("perf/core: Fix lock inversion between perf,trace,cpuhp")
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/macsec.c |    1 +
- 1 file changed, 1 insertion(+)
 
---- a/drivers/net/macsec.c
-+++ b/drivers/net/macsec.c
-@@ -869,6 +869,7 @@ static void macsec_reset_skb(struct sk_b
+---
+ kernel/events/core.c |   49 +++++++++++++++++++++++++++++++++++++++++--------
+ 1 file changed, 41 insertions(+), 8 deletions(-)
+
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -4459,12 +4459,20 @@ static void _free_event(struct perf_even
+ 	if (event->destroy)
+ 		event->destroy(event);
  
- static void macsec_finalize_skb(struct sk_buff *skb, u8 icv_len, u8 hdr_len)
+-	if (event->ctx)
+-		put_ctx(event->ctx);
+-
++	/*
++	 * Must be after ->destroy(), due to uprobe_perf_close() using
++	 * hw.target.
++	 */
+ 	if (event->hw.target)
+ 		put_task_struct(event->hw.target);
+ 
++	/*
++	 * perf_event_free_task() relies on put_ctx() being 'last', in particular
++	 * all task references must be cleaned up.
++	 */
++	if (event->ctx)
++		put_ctx(event->ctx);
++
+ 	exclusive_event_destroy(event);
+ 	module_put(event->pmu->module);
+ 
+@@ -4644,8 +4652,17 @@ again:
+ 	mutex_unlock(&event->child_mutex);
+ 
+ 	list_for_each_entry_safe(child, tmp, &free_list, child_list) {
++		void *var = &child->ctx->refcount;
++
+ 		list_del(&child->child_list);
+ 		free_event(child);
++
++		/*
++		 * Wake any perf_event_free_task() waiting for this event to be
++		 * freed.
++		 */
++		smp_mb(); /* pairs with wait_var_event() */
++		wake_up_var(var);
+ 	}
+ 
+ no_ctx:
+@@ -11506,11 +11523,11 @@ static void perf_free_event(struct perf_
+ }
+ 
+ /*
+- * Free an unexposed, unused context as created by inheritance by
+- * perf_event_init_task below, used by fork() in case of fail.
++ * Free a context as created by inheritance by perf_event_init_task() below,
++ * used by fork() in case of fail.
+  *
+- * Not all locks are strictly required, but take them anyway to be nice and
+- * help out with the lockdep assertions.
++ * Even though the task has never lived, the context and events have been
++ * exposed through the child_list, so we must take care tearing it all down.
+  */
+ void perf_event_free_task(struct task_struct *task)
  {
-+	skb->ip_summed = CHECKSUM_NONE;
- 	memmove(skb->data + hdr_len, skb->data, 2 * ETH_ALEN);
- 	skb_pull(skb, hdr_len);
- 	pskb_trim_unique(skb, skb->len - icv_len);
+@@ -11540,7 +11557,23 @@ void perf_event_free_task(struct task_st
+ 			perf_free_event(event, ctx);
+ 
+ 		mutex_unlock(&ctx->mutex);
+-		put_ctx(ctx);
++
++		/*
++		 * perf_event_release_kernel() could've stolen some of our
++		 * child events and still have them on its free_list. In that
++		 * case we must wait for these events to have been freed (in
++		 * particular all their references to this task must've been
++		 * dropped).
++		 *
++		 * Without this copy_process() will unconditionally free this
++		 * task (irrespective of its reference count) and
++		 * _free_event()'s put_task_struct(event->hw.target) will be a
++		 * use-after-free.
++		 *
++		 * Wait for all events to drop their context reference.
++		 */
++		wait_var_event(&ctx->refcount, refcount_read(&ctx->refcount) == 1);
++		put_ctx(ctx); /* must be last */
+ 	}
+ }
+ 
 
 
