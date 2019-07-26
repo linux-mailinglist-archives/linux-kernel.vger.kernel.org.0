@@ -2,120 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A024771E3
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 21:10:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7260D771F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 21:19:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388464AbfGZTJ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 15:09:59 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:40724 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726970AbfGZTJ6 (ORCPT
+        id S2388565AbfGZTS6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 15:18:58 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:50184 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387455AbfGZTS5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 15:09:58 -0400
-Received: by mail-qt1-f195.google.com with SMTP id a15so53643624qtn.7
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2019 12:09:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=I10/oU0PFDARVAgkqlcuLI1H2p3iKjf7ry3uMpP3L8s=;
-        b=eWslAz7r23Ss2BSZeYLM1wHW6ES45e3i+imLBE8tIsIPLdOfqxdy+cjTx+4Qe3qE5W
-         ePhDO7TNxUF1TYmz1OGoAeEAy+I1oyEriwBO+G0nwe0ygxPhnINwk4KF+rJS04jtb5i1
-         CCwNGiPuJOnFCil6rgnmcW/lYk+JoUoecvuhj5LiFUiC2HOWoJHU+XOjhEFz+NjJovwx
-         9pksWOMVoD+NxTtgeIg3Vh/51ab+jVlOLrKCwGrcPDX7j9h19ISjROUN5TAriGGSTnj1
-         mlSsFF9ax/LNpyEX8j4NO/sGxy0UL8JHVL74Wgtay7MCZSubd3zqYGAaJvF7JHCN8TKT
-         3KvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=I10/oU0PFDARVAgkqlcuLI1H2p3iKjf7ry3uMpP3L8s=;
-        b=Z/NuDaeo4thPF5OtB1Azb5aa3xTBu3nQ8dwLgTJJKpdptUVV74togJIUw/O3yGkkcj
-         Jy838rQvhai62MJzbT36eeWkK3BejBSujOZP9lOsidwG9IEf6TjUu8/R4+jppoIR8GdG
-         MkDpeIyFWm83otoLuqFmeZ0K5j6u1IRXhkmofpTo/rGz74soii8Ahyyb2mPv9bBeMDLO
-         5Yhi8CP+u51Rc0ey7AjS+znpHnnz4PRg0E2YzKxDAVSzMX+Pknx+IMZsMUwlNJSddZe9
-         GM2i+gCNffjUo3ygJs7q2L+AptpEJqF//Ui4XttvG7+AY7VrK9kNl3cWaiG00q6rpWjM
-         1T6Q==
-X-Gm-Message-State: APjAAAUAiq+DpWIkA03z8JS5FSv3pIV23WqFNJVINngODrryvTJQpLL0
-        4S6yQesk77nE6GYPhlTZoAE=
-X-Google-Smtp-Source: APXvYqybrE7kK+lLH0U48/mylzNlORjCn0eBxqVD5xDyu7f11v0Rpvw1atEEqp+K8m0eIeKucy97Ww==
-X-Received: by 2002:aed:22af:: with SMTP id p44mr69273443qtc.348.1564168197593;
-        Fri, 26 Jul 2019 12:09:57 -0700 (PDT)
-Received: from quaco.ghostprotocols.net ([179.97.35.50])
-        by smtp.gmail.com with ESMTPSA id z19sm25052511qkg.28.2019.07.26.12.09.57
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 26 Jul 2019 12:09:57 -0700 (PDT)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 0E1EA40340; Fri, 26 Jul 2019 16:09:53 -0300 (-03)
-Date:   Fri, 26 Jul 2019 16:09:53 -0300
-To:     Vince Weaver <vincent.weaver@maine.edu>
-Cc:     linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Fri, 26 Jul 2019 15:18:57 -0400
+Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtp (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hr5jx-00019l-7Z; Fri, 26 Jul 2019 21:18:53 +0200
+Message-Id: <20190726183048.982726647@linutronix.de>
+User-Agent: quilt/0.65
+Date:   Fri, 26 Jul 2019 20:30:48 +0200
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     x86@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+        Sebastian Siewior <bigeasy@linutronix.de>,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
         Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>
-Subject: Re: [patch] perf report segfault with 0-sized strings
-Message-ID: <20190726190953.GD20482@kernel.org>
-References: <alpine.DEB.2.21.1907251423410.22624@macbook-air>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1907251423410.22624@macbook-air>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.12.0 (2019-05-25)
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Juergen Gross <jgross@suse.com>
+Subject: [patch 00/12] (hr)timers: Prepare for PREEMPT_RT support
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu, Jul 25, 2019 at 02:27:14PM -0400, Vince Weaver escreveu:
-> Hello,
-> 
-> the perf_data_fuzzer found an issue when strings have size 0.
-> malloc() in do_read_string() is happy to allocate a string of 
-> size 0 but when code (in this case the pmu parser) tries to work with 
-> those it will segfault.
+The following series brings the bulk of PREEMPT_RT specific changes for the
+(hr)timer code:
 
-So here are two fixes, i.e. one is to make do_read_string() to return
-NULL when len is 0, which do_read_string() already returns for failure
-(NULL) and most of the callers I looked handle that.
+  - Handle timer deletion correctly under RT to avoid priority inversion
+    and life locks
 
-The other is to make print_pmu_mappings() deal with a NULL
-ff->ph->env.pmu_mappings, agreed?
+    This mechanism might be useful for VMs as well when a vCPU
+    executing a timer callback gets scheduled out and on another vCPU
+    del_timer_sync() or hrtimer_cancel() is invoked.
 
-- Arnaldo
- 
-> Signed-off-by: Vince Weaver <vincent.weaver@maine.edu>
-> 
-> diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
-> index c24db7f4909c..641129efa987 100644
-> --- a/tools/perf/util/header.c
-> +++ b/tools/perf/util/header.c
-> @@ -251,6 +252,9 @@ static char *do_read_string(struct feat_fd *ff)
->  	if (do_read_u32(ff, &len))
->  		return NULL;
->  
-> +	if (len==0)
-> +		return NULL;
-> +
->  	buf = malloc(len);
->  	if (!buf)
->  		return NULL;
-> @@ -1781,6 +1785,10 @@ static void print_pmu_mappings(struct feat_fd *ff, FILE *fp)
->  	str = ff->ph->env.pmu_mappings;
->  
->  	while (pmu_num) {
-> +
-> +		if (str==NULL)
-> +			goto error;
-> +
->  		type = strtoul(str, &tmp, 0);
->  		if (*tmp != ':')
->  			goto error;
+    The mitigation would only work when paravirt spinlocks are
+    enabled. I've not implemented that, as I don't know whether this is a
+    real world issue. I just noticed that it is basically the same
+    problem. Adding it would be trivial.
 
--- 
+  - Prepare for moving most hrtimer callbacks into softirq context and mark
+    timers which need to expire in hard interrupt context even on RT so
+    they don't get moved.
 
-- Arnaldo
+The timerwheel still needs some special handling for IRQSAFE timers (grrrr)
+which I'm still working on to find a less fugly solution.
+
+Thanks,
+
+	tglx
+
+
+
