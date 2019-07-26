@@ -2,74 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7656976B15
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 16:08:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D1E8776B10
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 16:07:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727892AbfGZOII (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 10:08:08 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:2779 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726784AbfGZOII (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 10:08:08 -0400
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 185953502BBE3CD197FC;
-        Fri, 26 Jul 2019 22:08:04 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS404-HUB.china.huawei.com
- (10.3.19.204) with Microsoft SMTP Server id 14.3.439.0; Fri, 26 Jul 2019
- 22:07:58 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <gregkh@linuxfoundation.org>, <payal.s.kshirsagar.98@gmail.com>,
-        <paul.walmsley@sifive.com>
-CC:     <linux-kernel@vger.kernel.org>, <devel@driverdev.osuosl.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] staging: rtl8723bs: remove set but not used variable 'pszBBRegMpFile'
-Date:   Fri, 26 Jul 2019 22:07:34 +0800
-Message-ID: <20190726140734.39564-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S1727566AbfGZOHm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 10:07:42 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:44158 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726784AbfGZOHl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 10:07:41 -0400
+Received: by mail-ed1-f67.google.com with SMTP id k8so53365113edr.11;
+        Fri, 26 Jul 2019 07:07:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=zWt0jo8AMAZchPeNnT8VtD1Yz35B0VOWcsrzm+hetHc=;
+        b=EBcVkDbkQNLVIGiixEGt7/effrRULBIFCXd9TZAffqJ0lq9fLauFVglwd8b2bkfIyN
+         BC2KTJ0r7uFjeAiEasWUgU6aWedhVoGCjUdR79nMIVUDf9eRmgNeFHwfIhnG2q+vPRj7
+         KHU9aOnIUcaakS3x7UtUstN8BEHp6jrdVJM3xQiElzojceQJjqShcUo3suIS3TZKEIa/
+         q+wCSwmyLhAMXWit89VHrabrdm0z8JodaAn4xOccgKrSmNSXuwY7DZP8cbK9m5UDEhTA
+         TbTSj64wO85eM1pq276rMeD9A4c5mKU+DVMlfW5NOSsvxIMd+TxOHofzx8wrdUuqQLLM
+         3rVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=zWt0jo8AMAZchPeNnT8VtD1Yz35B0VOWcsrzm+hetHc=;
+        b=EPCg97zCZQzhPo/OjPa05yATVxc7UIb71QPZXrojpMtn5sQHgL8qIpvlOHmathyFvE
+         azhRQ0ePt5HQsxOPZgYf8lZAp+mChZ3gptS1eoMIlmP/M92N9vNYuETYerEFyQEJMtlY
+         RiTrOBnyHgvGbyntegfOrjGdxvoswFMO5ky9tzxEybw4+7thrUcWjIoNNTCVM0GuyQEJ
+         Wz7KT0HcjazfNegtHhs3Sl6nJWc9gWjWK5dL6BA/gGlSwgaUHtEegsHtGAnPEeXSXbrd
+         dxU+NxC5kh6vOb7MMZJfjuqQvsNHqFYrTXsFFTqjDXchKUvI8V6pajcoJ2lnX2YFwAAQ
+         sunQ==
+X-Gm-Message-State: APjAAAVOOj8inEfFoJU2Ea3SEVxhPHg09lg2KwpHzjVDSEFtpX8FvLOj
+        Chmb04qGoQ7ZqP369tTQoVmZ4r2e3raCotLwVMg=
+X-Google-Smtp-Source: APXvYqziAi2Y22ozLNyzPYiFdK2PgVBXM4KosDiTc3Nx+FjBq2NUFXjGLKY6H8bA/5mLr0Sx4XUxvkaoFm5l8HHo1CM=
+X-Received: by 2002:a50:8b9d:: with SMTP id m29mr82832052edm.248.1564150059833;
+ Fri, 26 Jul 2019 07:07:39 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+Received: by 2002:a50:b3b9:0:0:0:0:0 with HTTP; Fri, 26 Jul 2019 07:07:39
+ -0700 (PDT)
+In-Reply-To: <20190726110135.GO31381@hirez.programming.kicks-ass.net>
+References: <20190724191655.268628197@linuxfoundation.org> <20190724191701.954991110@linuxfoundation.org>
+ <5D3AD35E.FB77B44F@gmail.com> <20190726110135.GO31381@hirez.programming.kicks-ass.net>
+From:   Jari Ruusu <jari.ruusu@gmail.com>
+Date:   Fri, 26 Jul 2019 17:07:39 +0300
+Message-ID: <CACMCwJJm++=x0EOXYMvFvybE63rmHEq6f96ahfYUA83wGGHHLw@mail.gmail.com>
+Subject: Re: [PATCH 4.19 079/271] x86/atomic: Fix smp_mb__{before,after}_atomic()
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+On 7/26/19, Peter Zijlstra <peterz@infradead.org> wrote:
+> On Fri, Jul 26, 2019 at 01:18:06PM +0300, Jari Ruusu wrote:
+>> Shouldn't those clobber contraints actually be:  "memory","cc"
+>> That is because addl subl (and other) machine instructions
+>> actually modify the flags register too.
+>>
+>> gcc docs say: The "cc" clobber indicates that the assembler
+>> code modifies the flags register.
+>
+> GCC x86 assumes any asm() will clobber "cc".
 
-drivers/staging/rtl8723bs/hal/rtl8723b_phycfg.c: In function phy_BB8723b_Config_ParaFile:
-drivers/staging/rtl8723bs/hal/rtl8723b_phycfg.c:436:77:
- warning: variable pszBBRegMpFile set but not used [-Wunused-but-set-variable]
+No worries then. Thanks for your clarification.
 
-It is never used so can be removed.
-
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/staging/rtl8723bs/hal/rtl8723b_phycfg.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/staging/rtl8723bs/hal/rtl8723b_phycfg.c b/drivers/staging/rtl8723bs/hal/rtl8723b_phycfg.c
-index 25c75b9..f06539d 100644
---- a/drivers/staging/rtl8723bs/hal/rtl8723b_phycfg.c
-+++ b/drivers/staging/rtl8723bs/hal/rtl8723b_phycfg.c
-@@ -431,14 +431,12 @@ static int phy_BB8723b_Config_ParaFile(struct adapter *Adapter)
- 	u8 sz8723BBRegFile[] = RTL8723B_PHY_REG;
- 	u8 sz8723AGCTableFile[] = RTL8723B_AGC_TAB;
- 	u8 sz8723BBBRegPgFile[] = RTL8723B_PHY_REG_PG;
--	u8 sz8723BBRegMpFile[] = RTL8723B_PHY_REG_MP;
- 	u8 sz8723BRFTxPwrLmtFile[] = RTL8723B_TXPWR_LMT;
--	u8 *pszBBRegFile = NULL, *pszAGCTableFile = NULL, *pszBBRegPgFile = NULL, *pszBBRegMpFile = NULL, *pszRFTxPwrLmtFile = NULL;
-+	u8 *pszBBRegFile = NULL, *pszAGCTableFile = NULL, *pszBBRegPgFile = NULL, *pszRFTxPwrLmtFile = NULL;
- 
- 	pszBBRegFile = sz8723BBRegFile;
- 	pszAGCTableFile = sz8723AGCTableFile;
- 	pszBBRegPgFile = sz8723BBBRegPgFile;
--	pszBBRegMpFile = sz8723BBRegMpFile;
- 	pszRFTxPwrLmtFile = sz8723BRFTxPwrLmtFile;
- 
- 	/*  Read Tx Power Limit File */
 -- 
-2.7.4
-
-
+Jari Ruusu  4096R/8132F189 12D6 4C3A DCDA 0AA4 27BD  ACDF F073 3C80 8132 F189
