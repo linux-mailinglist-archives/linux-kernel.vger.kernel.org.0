@@ -2,98 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 909B476AD7
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 16:01:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 70B7C76AE0
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 16:02:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387532AbfGZOB0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 10:01:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42332 "EHLO mail.kernel.org"
+        id S1728209AbfGZOB5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 10:01:57 -0400
+Received: from foss.arm.com ([217.140.110.172]:45196 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388797AbfGZOBW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 10:01:22 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5712420659;
-        Fri, 26 Jul 2019 14:01:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564149681;
-        bh=FVYNxjJLl/W5Dert07lPwnlV/q5+htxqU2YZhMN4tVA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=mOFvSAqxJtYLjDKCpiywPR/Hj9HyVEoup//WBMEY/mfHLkp6x8koAmiOwLlmv5j9g
-         d7eEUcC+sk7AlJo5/EO6o57O26KLm1D/D101VmY6rnW5jBO60Mh5FdXduz7Lu320y9
-         0eMqTheDx3jighRHdszCAdnWVz/haxkmtwIMqmMA=
-Date:   Fri, 26 Jul 2019 16:01:18 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     "Chang, Junxiao" <junxiao.chang@intel.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "rafael@kernel.org" <rafael@kernel.org>,
-        "Li, Lili" <lili.li@intel.com>
-Subject: Re: [PATCH] platform: release resource itself instead of resource
- tree
-Message-ID: <20190726140118.GA23143@kroah.com>
-References: <1556173458-9318-1-git-send-email-junxiao.chang@intel.com>
- <20190725133850.GB11115@kroah.com>
- <840F6BCBBBA89F46BAD0D7D6EF39E6E350F5072A@SHSMSX107.ccr.corp.intel.com>
+        id S1726001AbfGZOB4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 10:01:56 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 71582337;
+        Fri, 26 Jul 2019 07:01:56 -0700 (PDT)
+Received: from [10.1.194.37] (e113632-lin.cambridge.arm.com [10.1.194.37])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 647233F694;
+        Fri, 26 Jul 2019 07:01:55 -0700 (PDT)
+Subject: Re: [PATCH 3/5] sched/fair: rework load_balance
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <Morten.Rasmussen@arm.com>,
+        Phil Auld <pauld@redhat.com>
+References: <1563523105-24673-1-git-send-email-vincent.guittot@linaro.org>
+ <1563523105-24673-4-git-send-email-vincent.guittot@linaro.org>
+ <d55f906e-6e91-9f49-5c2c-7ec2e6bd68b0@arm.com>
+ <CAKfTPtD2hDxnHSaa5C_Jrtabb_ogJSgkLE=5UPyystKZqUmzWA@mail.gmail.com>
+ <4d3a67f5-c9c4-6397-7405-6f0efbd49d5c@arm.com>
+ <CAKfTPtBE5fzycHk33rf7Bky-tYSeCXaKd9oGR5cgaghzbL2TvA@mail.gmail.com>
+From:   Valentin Schneider <valentin.schneider@arm.com>
+Message-ID: <aff49e6a-b4d3-baae-9124-3d5bb5abdbfe@arm.com>
+Date:   Fri, 26 Jul 2019 15:01:54 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <840F6BCBBBA89F46BAD0D7D6EF39E6E350F5072A@SHSMSX107.ccr.corp.intel.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <CAKfTPtBE5fzycHk33rf7Bky-tYSeCXaKd9oGR5cgaghzbL2TvA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-A: Because it messes up the order in which people normally read text.
-Q: Why is top-posting such a bad thing?
-A: Top-posting.
-Q: What is the most annoying thing in e-mail?
-
-A: No.
-Q: Should I include quotations after my reply?
-
-http://daringfireball.net/2007/07/on_top
-
-On Fri, Jul 26, 2019 at 10:24:22AM +0000, Chang, Junxiao wrote:
-> Hi Greg,
+On 26/07/2019 13:30, Vincent Guittot wrote:
+>> We can avoid this entirely by going straight for an active balance when
+>> we are balancing misfit tasks (which we really should be doing TBH).
 > 
-> Thank you for looking at it.
+> but your misfit task might not be the running one anymore when
+> load_balance effectively happens
 > 
-> Below example is simplified description. Our detail problem is:
-> 1. ACPI driver registers a MEM resource during bootup;
-> 2. Our PUNIT(Intel CPU power management module) platform device reads ACPI driver's resource, and registers same MEM resource;
-> 3. According to current resource management logic, if two resources are same, later registered resource will be parent. That is, PUNIT platform device's resource will be ACPI driver resource's parent.
-> 4. PUNIT kernel module is removed, its resource will be removed. If we use original API "release_resource", ACPI driver's resource will be released as well because it is PUNIT device's child;
 
-Why did you remove this module?  That never happens unless you do it "by
-hand", and as root.  Just don't do this if it causes problems in your
-system, right?
+We could add a check in the active balance bits to make sure the current
+task is still a misfit task (albeit not necessarily the one we wanted to
+migrate, since we can't really differentiate them).
 
-Anyway, if you create a child reference you should always clean up all
-of your children before removing yourself from memory.  So try fixing
-that up first.
+Misfit migration shouldn't go through detach_tasks() - if the misfit task
+is still the running task, we want to go for active balance anyway, and if
+it's not the running task anymore then we should try to detect it and give
+up - there's not much else we can do. From a rq's perspective, a task can
+only ever be misfit if it's currently running.
 
-> 5. Next time PUNIT platform device kernel module is inserted, it might read wrong ACPI MEM resource because it has been released in step 4.
+The current code can totally active balance the wrong task if the load
+balancer saw a misfit task in update_sd_lb_stats() but it moved away in the
+meantime, so making misfit balancing skip detach_tasks() would be a straight
+improvement IMO: we can still get some active balance collaterals, but at
+least we don't wrongfully detach a non-running task that happened to have
+the right load shape.
+
+>>
+>> If we *really* want to be surgical about misfit migration, we could track
+>> the task itself via a pointer to its task_struct, but IIRC Morten
 > 
-> How should we handle this case? :) 
+> I thought about this but task can have already die at that time and
+> the pointer is no more relevant.
+> Or we should parse the list of task still attached to the cpu and
+> compare them with the saved pointer but then it's not scalable and
+> will consume a lot of time
+> 
+>> purposely avoided this due to all the fun synchronization issues that
+>> come with it.
+>>
+>> With that out of the way, I still believe we should maximize the migrated
+>> load when dealing with several misfit tasks - there's not much else you can
+>> look at anyway to make a decision.
+> 
+> But you can easily select a task that is not misfit so what is the best/worst ?
+> select a fully wrong task or at least one of the real misfit tasks
+> 
 
-Don't unload kernel modules unless you know what you are doing :)
+Utilization can't help you select a "best" misfit task amongst several 
+since the utilization of misfit tasks is by definition meaningless.
 
-Seriously, you are creating a dependancy here that you are not
-expressing in your module reference count, and you are not properly
-cleaning up after yourself when removing your devices.  Just delete your
-child devices when unloading yourself and you should be fine, right?
+I do agree that looking at utilization when detaching the task prevents
+picking a non-misfit task, but those are two different issues:
 
-> We should not register same MEM resource in step 2? Or, make change in
-> resource management logic, if two resources are same, later registered
-> resource should be child instead of parent?
+1) Among several rqs/groups with misfit tasks, pick the busiest one
+   (this is where I'm arguing we should use load)
+2) When detaching a task, make sure it's a misfit task (this is where
+   you're arguing we should use utilization).
 
-I don't know how your resource management logic works, try working with
-the developers who wrote that.  But as you describe it, it is not
-correct at least when you try to clean things up.
+> I'm fine to go back and use load instead of util but it's not robust IMO.
+> 
 
-thanks,
+[...]
+>> What if there is spare capacity but no idle CPUs? In scenarios like this
+>> we should balance utilization. We could wait for a newidle balance to
+> 
+> why should we balance anything ? all tasks have already enough running time.
+> It's better to wait for a cpu to become idle instead of trying to
+> predict which one will be idle first and migrate task uselessly
+> because other tasks can easily wakeup in the meantime
+> 
 
-greg k-h
+I probably need to play with this and create some synthetic use cases.
+
+What I had in mind is something like 2 CPUs, CPU0 running a 20% task and
+CPU1 running 6 10% tasks.
+
+If CPU0 runs the load balancer, balancing utilization would mean pulling
+2 tasks from CPU1 to reach the domain-average of 40%. The good side of this
+is that we could save ourselves from running some newidle balances, but
+I'll admit that's all quite "finger in the air".
+
+>> happen, but it'd be a shame to repeatedly do this when we could
+>> preemptively balance utilization.
+>>
