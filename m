@@ -2,43 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B116D76EDB
+	by mail.lfdr.de (Postfix) with ESMTP id 1D88076EDA
 	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 18:21:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728729AbfGZQVG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 12:21:06 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:57072 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728606AbfGZQUc (ORCPT
+        id S1728627AbfGZQUf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 12:20:35 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:52128 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728496AbfGZQU3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 12:20:32 -0400
+        Fri, 26 Jul 2019 12:20:29 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Type:MIME-Version:References:
+        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:References:
         Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
         Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
         Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=JXvlIC4u4F2IkNU/GkwEGhYaRWxhelNM+5dXTenAYmE=; b=pha/+B/mvy8eksAFgaeU6jUHAq
-        D9ts31kx2sujmMlOjBsiDhd7pJIGRGhfRX5yOP5NtHRNRApwdPkOPt63HCbGimu5We8Fzol4WqoBX
-        Xs3MqNKGfH7xQiSP76X7KLKvAtRNAn+YOJXMxgwYvp/z82bvXh6lZ+RB4Z92Mu8jNt7ZXqDBnmSvQ
-        8HOqJpq0kSqNWnplDm0cbctNA+IxdFyORPGZvdloMYcEgmlvh/aBTGXvUzqDOEkR1fVdXJzUl6GWe
-        ZKEwycH7D9PBRsIJYF3WAAXNbS1UbMM3bG6lmwXqcKsVWuEqv2863znKyUokx153k9k2Dwkc48Qfl
-        9FWDM0kg==;
+        bh=1b4EtHS9UElvRi3jhTmRTHgqbUNJ8Nk14PkWsQ58Cl0=; b=RxLsxoz8mnNvYOgeshF12V0rbl
+        3KOrj0ZgN6lk6Pmt9ykEorCboAokah3MVSJUqxXp4Z39stl6QbqRaNtQT442cblaVj4Cb0BZwQ8fv
+        MpAC1cdiusOlv5VFIgeFNN5dFWwp1W4wIl3chiG0sVKZj6lfAevXvFhuFiw8mOAWMuFwowug3byGH
+        TSWwx+kXTZoMk4Dvoj7HWDHXVwIbSWkI7NtikSp4SqToI0IoehN6iNoZ2ax6Cby4DZ/Zjk4urcVbM
+        wEsNNTttOgUkgmrRBRGtkwGfLFvNg3ffVpP+ivyXollMPK9wbEVOe1z9nqzemnq0IO7iUsUdwGPGR
+        Lw2j+Vpw==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hr2wy-00066U-Vd; Fri, 26 Jul 2019 16:20:09 +0000
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hr2wz-0006vp-9j; Fri, 26 Jul 2019 16:20:09 +0000
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 5442620229752; Fri, 26 Jul 2019 18:20:05 +0200 (CEST)
-Message-Id: <20190726161357.696559863@infradead.org>
+        id 582E220229753; Fri, 26 Jul 2019 18:20:05 +0200 (CEST)
+Message-Id: <20190726161357.755285526@infradead.org>
 User-Agent: quilt/0.65
-Date:   Fri, 26 Jul 2019 16:54:15 +0200
+Date:   Fri, 26 Jul 2019 16:54:16 +0200
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     mingo@kernel.org, juri.lelli@redhat.com
 Cc:     linux-kernel@vger.kernel.org, dietmar.eggemann@arm.com,
         luca.abeni@santannapisa.it, bristot@redhat.com,
         balsini@android.com, dvyukov@google.com, tglx@linutronix.de,
         vpillai@digitalocean.com, rostedt@goodmis.org, peterz@infradead.org
-Subject: [RFC][PATCH 06/13] sched/fair: Export newidle_balance()
+Subject: [RFC][PATCH 07/13] sched: Allow put_prev_task() to drop rq->lock
 References: <20190726145409.947503076@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,89 +47,146 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For pick_next_task_fair() it is the newidle balance that requires
-dropping the rq->lock; provided we do put_prev_task() early, we can
-also detect the condition for doing newidle early.
+Currently the pick_next_task() loop is convoluted and ugly because of
+how it can drop the rq->lock and needs to restart the picking.
+
+For the RT/Deadline classes, it is put_prev_task() where we do
+balancing, and we could do this before the picking loop. Make this
+possible.
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- kernel/sched/fair.c  |   18 ++++++++----------
- kernel/sched/sched.h |    4 ++++
- 2 files changed, 12 insertions(+), 10 deletions(-)
+ kernel/sched/core.c      |    2 +-
+ kernel/sched/deadline.c  |   14 +++++++++++++-
+ kernel/sched/fair.c      |    2 +-
+ kernel/sched/idle.c      |    2 +-
+ kernel/sched/rt.c        |   14 +++++++++++++-
+ kernel/sched/sched.h     |    4 ++--
+ kernel/sched/stop_task.c |    2 +-
+ 7 files changed, 32 insertions(+), 8 deletions(-)
 
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -6012,7 +6012,7 @@ static void calc_load_migrate(struct rq
+ 		atomic_long_add(delta, &calc_load_tasks);
+ }
+ 
+-static void put_prev_task_fake(struct rq *rq, struct task_struct *prev)
++static void put_prev_task_fake(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
+ {
+ }
+ 
+--- a/kernel/sched/deadline.c
++++ b/kernel/sched/deadline.c
+@@ -1772,13 +1772,25 @@ pick_next_task_dl(struct rq *rq, struct
+ 	return p;
+ }
+ 
+-static void put_prev_task_dl(struct rq *rq, struct task_struct *p)
++static void put_prev_task_dl(struct rq *rq, struct task_struct *p, struct rq_flags *rf)
+ {
+ 	update_curr_dl(rq);
+ 
+ 	update_dl_rq_load_avg(rq_clock_pelt(rq), rq, 1);
+ 	if (on_dl_rq(&p->dl) && p->nr_cpus_allowed > 1)
+ 		enqueue_pushable_dl_task(rq, p);
++
++	if (rf && !on_dl_rq(&p->dl) && need_pull_dl_task(rq, p)) {
++		/*
++		 * This is OK, because current is on_cpu, which avoids it being
++		 * picked for load-balance and preemption/IRQs are still
++		 * disabled avoiding further scheduler activity on it and we've
++		 * not yet started the picking loop.
++		 */
++		rq_unpin_lock(rq, rf);
++		pull_dl_task(rq);
++		rq_repin_lock(rq, rf);
++	}
+ }
+ 
+ /*
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -3635,8 +3635,6 @@ static inline unsigned long cfs_rq_load_
- 	return cfs_rq->avg.load_avg;
+@@ -6871,7 +6871,7 @@ done: __maybe_unused;
+ /*
+  * Account for a descheduled task:
+  */
+-static void put_prev_task_fair(struct rq *rq, struct task_struct *prev)
++static void put_prev_task_fair(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
+ {
+ 	struct sched_entity *se = &prev->se;
+ 	struct cfs_rq *cfs_rq;
+--- a/kernel/sched/idle.c
++++ b/kernel/sched/idle.c
+@@ -374,7 +374,7 @@ static void check_preempt_curr_idle(stru
+ 	resched_curr(rq);
  }
  
--static int idle_balance(struct rq *this_rq, struct rq_flags *rf);
--
- static inline unsigned long task_util(struct task_struct *p)
+-static void put_prev_task_idle(struct rq *rq, struct task_struct *prev)
++static void put_prev_task_idle(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
  {
- 	return READ_ONCE(p->se.avg.util_avg);
-@@ -6848,11 +6846,10 @@ done: __maybe_unused;
+ }
+ 
+--- a/kernel/sched/rt.c
++++ b/kernel/sched/rt.c
+@@ -1593,7 +1593,7 @@ pick_next_task_rt(struct rq *rq, struct
  	return p;
+ }
  
- idle:
--	update_misfit_status(NULL, rq);
--	new_tasks = idle_balance(rq, rf);
-+	new_tasks = newidle_balance(rq, rf);
- 
- 	/*
--	 * Because idle_balance() releases (and re-acquires) rq->lock, it is
-+	 * Because newidle_balance() releases (and re-acquires) rq->lock, it is
- 	 * possible for any higher priority task to appear. In that case we
- 	 * must re-start the pick_next_entity() loop.
- 	 */
-@@ -9016,10 +9013,10 @@ static int load_balance(int this_cpu, st
- 	ld_moved = 0;
- 
- 	/*
--	 * idle_balance() disregards balance intervals, so we could repeatedly
--	 * reach this code, which would lead to balance_interval skyrocketting
--	 * in a short amount of time. Skip the balance_interval increase logic
--	 * to avoid that.
-+	 * newidle_balance() disregards balance intervals, so we could
-+	 * repeatedly reach this code, which would lead to balance_interval
-+	 * skyrocketting in a short amount of time. Skip the balance_interval
-+	 * increase logic to avoid that.
- 	 */
- 	if (env.idle == CPU_NEWLY_IDLE)
- 		goto out;
-@@ -9729,7 +9726,7 @@ static inline void nohz_newidle_balance(
-  * idle_balance is called by schedule() if this_cpu is about to become
-  * idle. Attempts to pull tasks from other CPUs.
-  */
--static int idle_balance(struct rq *this_rq, struct rq_flags *rf)
-+int newidle_balance(struct rq *this_rq, struct rq_flags *rf)
+-static void put_prev_task_rt(struct rq *rq, struct task_struct *p)
++static void put_prev_task_rt(struct rq *rq, struct task_struct *p, struct rq_flags *rf)
  {
- 	unsigned long next_balance = jiffies + HZ;
- 	int this_cpu = this_rq->cpu;
-@@ -9737,6 +9734,7 @@ static int idle_balance(struct rq *this_
- 	int pulled_task = 0;
- 	u64 curr_cost = 0;
+ 	update_curr_rt(rq);
  
-+	update_misfit_status(NULL, this_rq);
- 	/*
- 	 * We must set idle_stamp _before_ calling idle_balance(), such that we
- 	 * measure the duration of idle_balance() as idle time.
+@@ -1605,6 +1605,18 @@ static void put_prev_task_rt(struct rq *
+ 	 */
+ 	if (on_rt_rq(&p->rt) && p->nr_cpus_allowed > 1)
+ 		enqueue_pushable_task(rq, p);
++
++	if (rf && !on_rt_rq(&p->rt) && need_pull_rt_task(rq, p)) {
++		/*
++		 * This is OK, because current is on_cpu, which avoids it being
++		 * picked for load-balance and preemption/IRQs are still
++		 * disabled avoiding further scheduler activity on it and we've
++		 * not yet started the picking loop.
++		 */
++		rq_unpin_lock(rq, rf);
++		pull_rt_task(rq);
++		rq_repin_lock(rq, rf);
++	}
+ }
+ 
+ #ifdef CONFIG_SMP
 --- a/kernel/sched/sched.h
 +++ b/kernel/sched/sched.h
-@@ -1449,10 +1449,14 @@ static inline void unregister_sched_doma
+@@ -1714,7 +1714,7 @@ struct sched_class {
+ 	struct task_struct * (*pick_next_task)(struct rq *rq,
+ 					       struct task_struct *prev,
+ 					       struct rq_flags *rf);
+-	void (*put_prev_task)(struct rq *rq, struct task_struct *p);
++	void (*put_prev_task)(struct rq *rq, struct task_struct *p, struct rq_flags *rf);
+ 	void (*set_next_task)(struct rq *rq, struct task_struct *p);
+ 
+ #ifdef CONFIG_SMP
+@@ -1760,7 +1760,7 @@ struct sched_class {
+ static inline void put_prev_task(struct rq *rq, struct task_struct *prev)
+ {
+ 	WARN_ON_ONCE(rq->curr != prev);
+-	prev->sched_class->put_prev_task(rq, prev);
++	prev->sched_class->put_prev_task(rq, prev, NULL);
  }
- #endif
  
-+extern int newidle_balance(struct rq *this_rq, struct rq_flags *rf);
-+
- #else
+ static inline void set_next_task(struct rq *rq, struct task_struct *next)
+--- a/kernel/sched/stop_task.c
++++ b/kernel/sched/stop_task.c
+@@ -59,7 +59,7 @@ static void yield_task_stop(struct rq *r
+ 	BUG(); /* the stop task should never yield, its pointless. */
+ }
  
- static inline void sched_ttwu_pending(void) { }
- 
-+static inline int newidle_balance(struct rq *this_rq, struct rq_flags *rf) { return 0; }
-+
- #endif /* CONFIG_SMP */
- 
- #include "stats.h"
+-static void put_prev_task_stop(struct rq *rq, struct task_struct *prev)
++static void put_prev_task_stop(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
+ {
+ 	struct task_struct *curr = rq->curr;
+ 	u64 delta_exec;
 
 
