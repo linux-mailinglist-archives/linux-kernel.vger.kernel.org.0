@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52DAA76C9B
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 17:25:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1559176CAD
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 17:26:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728507AbfGZPZs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 11:25:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39634 "EHLO mail.kernel.org"
+        id S2387945AbfGZP03 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 11:26:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40344 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728481AbfGZPZq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 11:25:46 -0400
+        id S2387894AbfGZP0U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 11:26:20 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 64B5422CB8;
-        Fri, 26 Jul 2019 15:25:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0205C218D4;
+        Fri, 26 Jul 2019 15:26:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564154745;
-        bh=W4FR3wy1jqQSOKX4Wt5Oz9xjrRQFwqw6YChMOwS9VVI=;
+        s=default; t=1564154780;
+        bh=kQogq5q7TgVnT/79suhILfXBjUEJhKtEX/sKEyHCqPI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zOn1dPCjIL4/zXTNQtjVlgbL/QwEAuEZGCCs/qpAOU8mCALPbBYQdn0lG/kfMwy04
-         vJawX7FOgIH0XwpXQ1pz8XcjY11XQX3klQmvnDHbFNfn6x6dEdqqhjU1hT70dd57FI
-         Gx6ovhZc+/A4l0d3flwWOoP3HwbMk1Sh1ISFtJCY=
+        b=RT0wlzP/GtmlHQpgOR1++aRA0nsLD7jELMd2G4JLcHXP8EsUoyLfx0R7xTd+BZdQN
+         //3UMIJ7l72xAZJjoL3Q5DP86CVQDC4WsXqYfkgKayUR/IFiwWf7MYCkPB3Gt96ZQc
+         TSt+e0Vz7Z0zllSC/CfXrWzejQnjc5AOcY23T9tA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Matteo Croce <mcroce@redhat.com>,
+        stable@vger.kernel.org, Paul Donohue <linux-kernel@PaulSD.com>,
         David Ahern <dsahern@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.2 05/66] ipv4: dont set IPv6 only flags to IPv4 addresses
-Date:   Fri, 26 Jul 2019 17:24:04 +0200
-Message-Id: <20190726152302.506906618@linuxfoundation.org>
+Subject: [PATCH 5.2 06/66] ipv6: rt6_check should return NULL if from is NULL
+Date:   Fri, 26 Jul 2019 17:24:05 +0200
+Message-Id: <20190726152302.607408339@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190726152301.936055394@linuxfoundation.org>
 References: <20190726152301.936055394@linuxfoundation.org>
@@ -44,56 +44,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matteo Croce <mcroce@redhat.com>
+From: David Ahern <dsahern@gmail.com>
 
-[ Upstream commit 2e60546368165c2449564d71f6005dda9205b5fb ]
+[ Upstream commit 49d05fe2c9d1b4a27761c9807fec39b8155bef9e ]
 
-Avoid the situation where an IPV6 only flag is applied to an IPv4 address:
+Paul reported that l2tp sessions were broken after the commit referenced
+in the Fixes tag. Prior to this commit rt6_check returned NULL if the
+rt6_info 'from' was NULL - ie., the dst_entry was disconnected from a FIB
+entry. Restore that behavior.
 
-    # ip addr add 192.0.2.1/24 dev dummy0 nodad home mngtmpaddr noprefixroute
-    # ip -4 addr show dev dummy0
-    2: dummy0: <BROADCAST,NOARP,UP,LOWER_UP> mtu 1500 qdisc noqueue state UNKNOWN group default qlen 1000
-        inet 192.0.2.1/24 scope global noprefixroute dummy0
-           valid_lft forever preferred_lft forever
-
-Or worse, by sending a malicious netlink command:
-
-    # ip -4 addr show dev dummy0
-    2: dummy0: <BROADCAST,NOARP,UP,LOWER_UP> mtu 1500 qdisc noqueue state UNKNOWN group default qlen 1000
-        inet 192.0.2.1/24 scope global nodad optimistic dadfailed home tentative mngtmpaddr noprefixroute stable-privacy dummy0
-           valid_lft forever preferred_lft forever
-
-Signed-off-by: Matteo Croce <mcroce@redhat.com>
-Reviewed-by: David Ahern <dsahern@gmail.com>
+Fixes: 93531c674315 ("net/ipv6: separate handling of FIB entries from dst based routes")
+Reported-by: Paul Donohue <linux-kernel@PaulSD.com>
+Tested-by: Paul Donohue <linux-kernel@PaulSD.com>
+Signed-off-by: David Ahern <dsahern@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/devinet.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ net/ipv6/route.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/ipv4/devinet.c
-+++ b/net/ipv4/devinet.c
-@@ -62,6 +62,11 @@
- #include <net/net_namespace.h>
- #include <net/addrconf.h>
+--- a/net/ipv6/route.c
++++ b/net/ipv6/route.c
+@@ -2215,7 +2215,7 @@ static struct dst_entry *rt6_check(struc
+ {
+ 	u32 rt_cookie = 0;
  
-+#define IPV6ONLY_FLAGS	\
-+		(IFA_F_NODAD | IFA_F_OPTIMISTIC | IFA_F_DADFAILED | \
-+		 IFA_F_HOMEADDRESS | IFA_F_TENTATIVE | \
-+		 IFA_F_MANAGETEMPADDR | IFA_F_STABLE_PRIVACY)
-+
- static struct ipv4_devconf ipv4_devconf = {
- 	.data = {
- 		[IPV4_DEVCONF_ACCEPT_REDIRECTS - 1] = 1,
-@@ -468,6 +473,9 @@ static int __inet_insert_ifa(struct in_i
- 	ifa->ifa_flags &= ~IFA_F_SECONDARY;
- 	last_primary = &in_dev->ifa_list;
+-	if ((from && !fib6_get_cookie_safe(from, &rt_cookie)) ||
++	if (!from || !fib6_get_cookie_safe(from, &rt_cookie) ||
+ 	    rt_cookie != cookie)
+ 		return NULL;
  
-+	/* Don't set IPv6 only flags to IPv4 addresses */
-+	ifa->ifa_flags &= ~IPV6ONLY_FLAGS;
-+
- 	for (ifap = &in_dev->ifa_list; (ifa1 = *ifap) != NULL;
- 	     ifap = &ifa1->ifa_next) {
- 		if (!(ifa1->ifa_flags & IFA_F_SECONDARY) &&
 
 
