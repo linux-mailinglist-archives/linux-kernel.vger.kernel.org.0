@@ -2,80 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AFA9675CC0
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 04:11:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C2C575CC6
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 04:12:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726004AbfGZCLl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 25 Jul 2019 22:11:41 -0400
-Received: from conuserg-10.nifty.com ([210.131.2.77]:63576 "EHLO
-        conuserg-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725819AbfGZCLl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Jul 2019 22:11:41 -0400
-Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-10.nifty.com with ESMTP id x6Q2B03n020523;
-        Fri, 26 Jul 2019 11:11:05 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com x6Q2B03n020523
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1564107066;
-        bh=tnYEZud056hAhoewZO62tSceN4oWh0Eu5vKNqgUHTuA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eAQTARqBJdu5M8oLYd9bZGW5wUIXU99lD2ThtL6eLuFOMuxsHICMGHymnGXmleVYg
-         Qa74aWIuWW6Sy5XLCpWzGV3rzgw2M5BplNz2l7owILS32xrbkw713nPjK+MobFaugG
-         Ppf0wkHQYTPKDkYTF9hsbNZIMxzYT2gVQmhkQzEttDwwpKbogmjgpS0xxjjrTwAGiD
-         aB5qreWN5KaHdUPdDN/C1Cnmv/FO/LW4b/1Gr359v3j5x2ycE4oH+Dy0sMBBUQt69K
-         wk+ZYdETNjLFXjjtyaKw7R6nh6tHDhf/Ms3iRL4cvNbtrEeoI5A4XcFPKj7u0AEh2v
-         GFccDlB1DNNnA==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: [PATCH 5/5] EVM: use obj-y for non-modular objects
-Date:   Fri, 26 Jul 2019 11:10:58 +0900
-Message-Id: <20190726021058.4212-6-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190726021058.4212-1-yamada.masahiro@socionext.com>
-References: <20190726021058.4212-1-yamada.masahiro@socionext.com>
+        id S1726328AbfGZCME (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 25 Jul 2019 22:12:04 -0400
+Received: from mga12.intel.com ([192.55.52.136]:25299 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726043AbfGZCME (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Jul 2019 22:12:04 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jul 2019 19:12:04 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,308,1559545200"; 
+   d="scan'208";a="254179356"
+Received: from yungchua-mobl.ccr.corp.intel.com (HELO [10.252.184.27]) ([10.252.184.27])
+  by orsmga001.jf.intel.com with ESMTP; 25 Jul 2019 19:12:00 -0700
+Subject: Re: [alsa-devel] [RFC PATCH 09/40] soundwire: cadence_master: fix
+ usage of CONFIG_UPDATE
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        alsa-devel@alsa-project.org
+Cc:     tiwai@suse.de, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org, vkoul@kernel.org, broonie@kernel.org,
+        srinivas.kandagatla@linaro.org, jank@cadence.com,
+        slawomir.blauciak@intel.com, Sanyog Kale <sanyog.r.kale@intel.com>
+References: <20190725234032.21152-1-pierre-louis.bossart@linux.intel.com>
+ <20190725234032.21152-10-pierre-louis.bossart@linux.intel.com>
+From:   Bard liao <yung-chuan.liao@linux.intel.com>
+Message-ID: <3aa182a9-4b8e-96dd-e8f8-f2f5a90401cb@linux.intel.com>
+Date:   Fri, 26 Jul 2019 10:11:53 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <20190725234032.21152-10-pierre-louis.bossart@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-CONFIG_EVM is a boolean option, so none of these objects is linked
-into a module.
-
-All the objects in this directory are compiled only when CONFIG_EVM=y
-since this directory is guarded by the parent Makefile:
-
-  obj-$(CONFIG_EVM)                       += evm/
-
-So, there is no point in creating the composite object, evm.o
-
-Flatten the code into the obj-$(CONFIG_...) form.
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
-
- security/integrity/evm/Makefile | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/security/integrity/evm/Makefile b/security/integrity/evm/Makefile
-index a56f5613be79..ace8e4ef5a96 100644
---- a/security/integrity/evm/Makefile
-+++ b/security/integrity/evm/Makefile
-@@ -2,7 +2,5 @@
- #
- # Makefile for building the Extended Verification Module(EVM)
- #
--obj-$(CONFIG_EVM) += evm.o
--
--evm-y := evm_main.o evm_crypto.o evm_secfs.o
--evm-$(CONFIG_FS_POSIX_ACL) += evm_posix_acl.o
-+obj-y := evm_main.o evm_crypto.o evm_secfs.o
-+obj-$(CONFIG_FS_POSIX_ACL) += evm_posix_acl.o
--- 
-2.17.1
-
+On 7/26/2019 7:40 AM, Pierre-Louis Bossart wrote:
+> Per the hardware documentation, all changes to MCP_CONFIG,
+> MCP_CONTROL, MCP_CMDCTRL and MCP_PHYCTRL need to be validated with a
+> self-clearing write to MCP_CONFIG_UPDATE.
+>
+> For some reason, the existing code only does this write to
+> CONFIG_UPDATE when enabling interrupts. Add a helper and do the update
+> when the CONFIG is changed.
+>
+> Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+> ---
+>   drivers/soundwire/cadence_master.c | 29 +++++++++++++++++++++--------
+>   1 file changed, 21 insertions(+), 8 deletions(-)
+>
+> diff --git a/drivers/soundwire/cadence_master.c b/drivers/soundwire/cadence_master.c
+> index 9f611a1fff0a..eb46cf651d62 100644
+> --- a/drivers/soundwire/cadence_master.c
+> +++ b/drivers/soundwire/cadence_master.c
+> @@ -224,6 +224,22 @@ static int cdns_clear_bit(struct sdw_cdns *cdns, int offset, u32 value)
+>   	return -EAGAIN;
+>   }
+>   
+> +/*
+> + * all changes to the MCP_CONFIG, MCP_CONTROL, MCP_CMDCTRL and MCP_PHYCTRL
+> + * need to be confirmed with a write to MCP_CONFIG_UPDATE
+> + */
+> +static int cdns_update_config(struct sdw_cdns *cdns)
+> +{
+> +	int ret;
+> +
+> +	ret = cdns_clear_bit(cdns, CDNS_MCP_CONFIG_UPDATE,
+> +			     CDNS_MCP_CONFIG_UPDATE_BIT);
+> +	if (ret < 0)
+> +		dev_err(cdns->dev, "Config update timedout\n");
+> +
+> +	return ret;
+> +}
+> +
+>   /*
+>    * debugfs
+>    */
+> @@ -758,15 +774,9 @@ static int _cdns_enable_interrupt(struct sdw_cdns *cdns)
+>    */
+>   int sdw_cdns_enable_interrupt(struct sdw_cdns *cdns)
+>   {
+> -	int ret;
+> -
+>   	_cdns_enable_interrupt(cdns);
+> -	ret = cdns_clear_bit(cdns, CDNS_MCP_CONFIG_UPDATE,
+> -			     CDNS_MCP_CONFIG_UPDATE_BIT);
+> -	if (ret < 0)
+> -		dev_err(cdns->dev, "Config update timedout\n");
+>   
+> -	return ret;
+Should we add cdns_update_config() here?
+> +	return 0;
+>   }
+>   EXPORT_SYMBOL(sdw_cdns_enable_interrupt);
+>   
+> @@ -943,7 +953,10 @@ int sdw_cdns_init(struct sdw_cdns *cdns)
+>   
+>   	cdns_writel(cdns, CDNS_MCP_CONFIG, val);
+>   
+> -	return 0;
+> +	/* commit changes */
+> +	ret = cdns_update_config(cdns);
+> +
+> +	return ret;
+>   }
+>   EXPORT_SYMBOL(sdw_cdns_init);
+>   
