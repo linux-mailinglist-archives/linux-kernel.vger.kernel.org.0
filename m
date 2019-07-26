@@ -2,43 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D80976EDC
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 18:21:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 47BFA76EE2
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 18:21:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728743AbfGZQVL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 12:21:11 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:52124 "EHLO
+        id S1728786AbfGZQVa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 12:21:30 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:52116 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728540AbfGZQU2 (ORCPT
+        with ESMTP id S1728500AbfGZQU1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 12:20:28 -0400
+        Fri, 26 Jul 2019 12:20:27 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:References:
         Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
         Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
         Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=IkuJEjf3jjAHnNNfJltckDOcnAoGB5oVO+XgSCJzQHQ=; b=MINbHlwH531LegJvn8aF4q/buH
-        xU7nBUE8Aj3d9Xiru4I4ltzamWdUoAoQBFCYeBJ30OHunbAUkFbtKrCS7nWhuy16mey/Qm9L+2Fbj
-        V9DonEUqFE1p4AqM1T3G1rXvz/sfVlEbJJN1pNG1nNNGulbMlvRE6pShSELVxkxGxXUXV9IVvz2+S
-        fFHUTSdMQsaYy/QtX6Kx4oQyE3LQ96qJ64XiRofAoyNbj8ewv2rEUjWkwoIf1Q/4WcOWv2vBIllvP
-        alkkg3pAoCnwxRnvS+6eLiAAZKXlNC0vohsugp5BBj28vq/HBwzv0gjHbPJndwUdydVMzdqoiNPVL
-        m4oGM+DA==;
+        bh=95pGL7jjUOOxBXZwzIrRwxWHix+QdRjTYhrRFgJeGAE=; b=lW0P4IgwJSpIMH+CtjZIBbh5Ol
+        W3QZ675EPpcqq3O8Yj4gawrMOD46OGwD5WszAWU7y/Fb1OOxxWiOjLr2a66gOsZO3tV3GNvqvyx4S
+        ecszOZNkbi49XH+rr0dP+jA4QxRvriP5eoaWBtRrJ3r5+D5N05KV8cVDk63euz9e4WW+g2myG88bD
+        WMbDLCIkVpgl1nFVlBNrt2kIx8Ci/iCw2uLaPcIsSICdCoIZXK1Y8DQyTlSvVMMpipHmR1UW4OsHq
+        hmb/cjhRscSI4YC0HwwVPnaP/M6UQ5mtT63DVIPyy2CS1iqzUd3HSnM1HLaoQT06oVUJjKGwwHLVV
+        hYecDznQ==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hr2wz-00072B-Vm; Fri, 26 Jul 2019 16:20:10 +0000
+        id 1hr2x0-00072G-0X; Fri, 26 Jul 2019 16:20:10 +0000
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 6041420229755; Fri, 26 Jul 2019 18:20:05 +0200 (CEST)
-Message-Id: <20190726161357.883133230@infradead.org>
+        id 64A5A20229756; Fri, 26 Jul 2019 18:20:05 +0200 (CEST)
+Message-Id: <20190726161357.941355615@infradead.org>
 User-Agent: quilt/0.65
-Date:   Fri, 26 Jul 2019 16:54:18 +0200
+Date:   Fri, 26 Jul 2019 16:54:19 +0200
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     mingo@kernel.org, juri.lelli@redhat.com
 Cc:     linux-kernel@vger.kernel.org, dietmar.eggemann@arm.com,
         luca.abeni@santannapisa.it, bristot@redhat.com,
         balsini@android.com, dvyukov@google.com, tglx@linutronix.de,
         vpillai@digitalocean.com, rostedt@goodmis.org, peterz@infradead.org
-Subject: [RFC][PATCH 09/13] sched: Unify runtime accounting across classes
+Subject: [RFC][PATCH 10/13] sched/deadline: Collect sched_dl_entity initialization
 References: <20190726145409.947503076@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,210 +47,126 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-All classes use sched_entity::exec_start to track runtime and have
-copies of the exact same code around to compute runtime.
-
-Collapse all that.
+Create a single function that initializes a sched_dl_entity.
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- include/linux/sched.h    |    2 -
- kernel/sched/deadline.c  |   17 ++-------------
- kernel/sched/fair.c      |   50 ++++++++++++++++++++++++++++++++++++-----------
- kernel/sched/rt.c        |   17 ++-------------
- kernel/sched/sched.h     |    2 +
- kernel/sched/stop_task.c |   16 ---------------
- 6 files changed, 49 insertions(+), 55 deletions(-)
+ kernel/sched/core.c     |    5 +----
+ kernel/sched/deadline.c |   22 +++++++++++++++-------
+ kernel/sched/sched.h    |    6 ++----
+ 3 files changed, 18 insertions(+), 15 deletions(-)
 
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -433,7 +433,7 @@ struct sched_statistics {
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -2581,10 +2581,7 @@ static void __sched_fork(unsigned long c
+ 	memset(&p->se.statistics, 0, sizeof(p->se.statistics));
+ #endif
  
- 	u64				block_start;
- 	u64				block_max;
--	u64				exec_max;
-+	s64				exec_max;
- 	u64				slice_max;
+-	RB_CLEAR_NODE(&p->dl.rb_node);
+-	init_dl_task_timer(&p->dl);
+-	init_dl_inactive_task_timer(&p->dl);
+-	__dl_clear_params(p);
++	init_dl_entity(&p->dl);
  
- 	u64				nr_migrations_cold;
+ 	INIT_LIST_HEAD(&p->rt.run_list);
+ 	p->rt.timeout		= 0;
 --- a/kernel/sched/deadline.c
 +++ b/kernel/sched/deadline.c
-@@ -1147,9 +1147,8 @@ static void update_curr_dl(struct rq *rq
- {
- 	struct task_struct *curr = rq->curr;
- 	struct sched_dl_entity *dl_se = &curr->dl;
--	u64 delta_exec, scaled_delta_exec;
-+	s64 delta_exec, scaled_delta_exec;
- 	int cpu = cpu_of(rq);
--	u64 now;
- 
- 	if (!dl_task(curr) || !on_dl_rq(dl_se))
- 		return;
-@@ -1162,23 +1161,13 @@ static void update_curr_dl(struct rq *rq
- 	 * natural solution, but the full ramifications of this
- 	 * approach need further study.
- 	 */
--	now = rq_clock_task(rq);
--	delta_exec = now - curr->se.exec_start;
--	if (unlikely((s64)delta_exec <= 0)) {
-+	delta_exec = update_curr_common(rq);
-+	if (unlikely(delta_exec <= 0)) {
- 		if (unlikely(dl_se->dl_yielded))
- 			goto throttle;
- 		return;
- 	}
- 
--	schedstat_set(curr->se.statistics.exec_max,
--		      max(curr->se.statistics.exec_max, delta_exec));
--
--	curr->se.sum_exec_runtime += delta_exec;
--	account_group_exec_runtime(curr, delta_exec);
--
--	curr->se.exec_start = now;
--	cgroup_account_cputime(curr, delta_exec);
--
- 	if (dl_entity_is_special(dl_se))
- 		return;
- 
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -828,30 +828,58 @@ static void update_tg_load_avg(struct cf
+@@ -180,6 +180,8 @@ void dl_change_utilization(struct task_s
+ 	__add_rq_bw(new_bw, &rq->dl);
  }
- #endif /* CONFIG_SMP */
  
-+static s64 update_curr_se(struct rq *rq, struct sched_entity *curr)
-+{
-+	u64 now = rq_clock_task(rq);
-+	s64 delta_exec;
-+
-+	delta_exec = now - curr->exec_start;
-+	if (unlikely(delta_exec <= 0))
-+		return delta_exec;
-+
-+	curr->exec_start = now;
-+	curr->sum_exec_runtime += delta_exec;
-+
-+	schedstat_set(curr->statistics.exec_max,
-+		      max(delta_exec, curr->statistics.exec_max));
-+
-+	return delta_exec;
-+}
-+
-+/*
-+ * Used by other classes to account runtime.
-+ */
-+s64 update_curr_common(struct rq *rq)
-+{
-+	struct task_struct *curr = rq->curr;
-+	s64 delta_exec;
-+
-+	delta_exec = update_curr_se(rq, &curr->se);
-+	if (unlikely(delta_exec <= 0))
-+		return delta_exec;
-+
-+	account_group_exec_runtime(curr, delta_exec);
-+	cgroup_account_cputime(curr, delta_exec);
-+
-+	return delta_exec;
-+}
++static void __dl_clear_params(struct sched_dl_entity *dl_se);
 +
  /*
-  * Update the current task's runtime statistics.
+  * The utilization of a task cannot be immediately removed from
+  * the rq active utilization (running_bw) when the task blocks.
+@@ -278,7 +280,7 @@ static void task_non_contending(struct t
+ 				sub_rq_bw(&p->dl, &rq->dl);
+ 			raw_spin_lock(&dl_b->lock);
+ 			__dl_sub(dl_b, p->dl.dl_bw, dl_bw_cpus(task_cpu(p)));
+-			__dl_clear_params(p);
++			__dl_clear_params(dl_se);
+ 			raw_spin_unlock(&dl_b->lock);
+ 		}
+ 
+@@ -1049,7 +1051,7 @@ static enum hrtimer_restart dl_task_time
+ 	return HRTIMER_NORESTART;
+ }
+ 
+-void init_dl_task_timer(struct sched_dl_entity *dl_se)
++static void init_dl_task_timer(struct sched_dl_entity *dl_se)
+ {
+ 	struct hrtimer *timer = &dl_se->dl_timer;
+ 
+@@ -1261,7 +1263,7 @@ static enum hrtimer_restart inactive_tas
+ 		raw_spin_lock(&dl_b->lock);
+ 		__dl_sub(dl_b, p->dl.dl_bw, dl_bw_cpus(task_cpu(p)));
+ 		raw_spin_unlock(&dl_b->lock);
+-		__dl_clear_params(p);
++		__dl_clear_params(dl_se);
+ 
+ 		goto unlock;
+ 	}
+@@ -1277,7 +1279,7 @@ static enum hrtimer_restart inactive_tas
+ 	return HRTIMER_NORESTART;
+ }
+ 
+-void init_dl_inactive_task_timer(struct sched_dl_entity *dl_se)
++static void init_dl_inactive_task_timer(struct sched_dl_entity *dl_se)
+ {
+ 	struct hrtimer *timer = &dl_se->inactive_timer;
+ 
+@@ -2633,10 +2635,8 @@ bool __checkparam_dl(const struct sched_
+ /*
+  * This function clears the sched_dl_entity static params.
   */
- static void update_curr(struct cfs_rq *cfs_rq)
+-void __dl_clear_params(struct task_struct *p)
++static void __dl_clear_params(struct sched_dl_entity *dl_se)
  {
- 	struct sched_entity *curr = cfs_rq->curr;
--	u64 now = rq_clock_task(rq_of(cfs_rq));
--	u64 delta_exec;
-+	s64 delta_exec;
- 
- 	if (unlikely(!curr))
- 		return;
- 
--	delta_exec = now - curr->exec_start;
--	if (unlikely((s64)delta_exec <= 0))
-+	delta_exec = update_curr_se(rq_of(cfs_rq), curr);
-+	if (unlikely(delta_exec <= 0))
- 		return;
- 
--	curr->exec_start = now;
+-	struct sched_dl_entity *dl_se = &p->dl;
 -
--	schedstat_set(curr->statistics.exec_max,
--		      max(delta_exec, curr->statistics.exec_max));
--
--	curr->sum_exec_runtime += delta_exec;
- 	schedstat_add(cfs_rq->exec_clock, delta_exec);
--
- 	curr->vruntime += calc_delta_fair(delta_exec, curr);
- 	update_min_vruntime(cfs_rq);
+ 	dl_se->dl_runtime		= 0;
+ 	dl_se->dl_deadline		= 0;
+ 	dl_se->dl_period		= 0;
+@@ -2650,6 +2650,14 @@ void __dl_clear_params(struct task_struc
+ 	dl_se->dl_overrun		= 0;
+ }
  
---- a/kernel/sched/rt.c
-+++ b/kernel/sched/rt.c
-@@ -955,26 +955,15 @@ static void update_curr_rt(struct rq *rq
++void init_dl_entity(struct sched_dl_entity *dl_se)
++{
++	RB_CLEAR_NODE(&dl_se->rb_node);
++	init_dl_task_timer(dl_se);
++	init_dl_inactive_task_timer(dl_se);
++	__dl_clear_params(dl_se);
++}
++
+ bool dl_param_changed(struct task_struct *p, const struct sched_attr *attr)
  {
- 	struct task_struct *curr = rq->curr;
- 	struct sched_rt_entity *rt_se = &curr->rt;
--	u64 delta_exec;
--	u64 now;
-+	s64 delta_exec;
- 
- 	if (curr->sched_class != &rt_sched_class)
- 		return;
- 
--	now = rq_clock_task(rq);
--	delta_exec = now - curr->se.exec_start;
--	if (unlikely((s64)delta_exec <= 0))
-+	delta_exec = update_curr_common(rq);
-+	if (unlikely(delta_exec < 0))
- 		return;
- 
--	schedstat_set(curr->se.statistics.exec_max,
--		      max(curr->se.statistics.exec_max, delta_exec));
--
--	curr->se.sum_exec_runtime += delta_exec;
--	account_group_exec_runtime(curr, delta_exec);
--
--	curr->se.exec_start = now;
--	cgroup_account_cputime(curr, delta_exec);
--
- 	if (!rt_bandwidth_enabled())
- 		return;
- 
+ 	struct sched_dl_entity *dl_se = &p->dl;
 --- a/kernel/sched/sched.h
 +++ b/kernel/sched/sched.h
-@@ -1689,6 +1689,8 @@ extern const u32		sched_prio_to_wmult[40
+@@ -239,8 +239,6 @@ struct rt_bandwidth {
+ 	unsigned int		rt_period_active;
+ };
  
- #define RETRY_TASK		((void *)-1UL)
- 
-+extern s64 update_curr_common(struct rq *rq);
-+
- struct sched_class {
- 	const struct sched_class *next;
- 
---- a/kernel/sched/stop_task.c
-+++ b/kernel/sched/stop_task.c
-@@ -62,21 +62,7 @@ static void yield_task_stop(struct rq *r
- 
- static void put_prev_task_stop(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
- {
--	struct task_struct *curr = rq->curr;
--	u64 delta_exec;
+-void __dl_clear_params(struct task_struct *p);
 -
--	delta_exec = rq_clock_task(rq) - curr->se.exec_start;
--	if (unlikely((s64)delta_exec < 0))
--		delta_exec = 0;
--
--	schedstat_set(curr->se.statistics.exec_max,
--			max(curr->se.statistics.exec_max, delta_exec));
--
--	curr->se.sum_exec_runtime += delta_exec;
--	account_group_exec_runtime(curr, delta_exec);
--
--	curr->se.exec_start = rq_clock_task(rq);
--	cgroup_account_cputime(curr, delta_exec);
-+	update_curr_common(rq);
- }
- 
  /*
+  * To keep the bandwidth of -deadline tasks and groups under control
+  * we need some place where:
+@@ -1844,10 +1842,10 @@ extern void init_rt_bandwidth(struct rt_
+ 
+ extern struct dl_bandwidth def_dl_bandwidth;
+ extern void init_dl_bandwidth(struct dl_bandwidth *dl_b, u64 period, u64 runtime);
+-extern void init_dl_task_timer(struct sched_dl_entity *dl_se);
+-extern void init_dl_inactive_task_timer(struct sched_dl_entity *dl_se);
+ extern void init_dl_rq_bw_ratio(struct dl_rq *dl_rq);
+ 
++extern void init_dl_entity(struct sched_dl_entity *dl_se);
++
+ #define BW_SHIFT		20
+ #define BW_UNIT			(1 << BW_SHIFT)
+ #define RATIO_SHIFT		8
 
 
