@@ -2,104 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83BC976400
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 13:00:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CFFF67640A
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 13:01:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726796AbfGZLAj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 07:00:39 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:51340 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725842AbfGZLAi (ORCPT
+        id S1726807AbfGZLBr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 07:01:47 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:53124 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726129AbfGZLBr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 07:00:38 -0400
-Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id 0FABA5C02B3;
-        Fri, 26 Jul 2019 13:00:37 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1564138837;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=EYDHF2viGAO7INulhQjnGn1wMlyhHlC54xWBdg+6oIw=;
-        b=Abl1Av9XYNIGg7/KWzSis/iAAeoLSkkVbDapmS9iSmxuO/x9+keLZx4mhaq96DkqPNeAE1
-        Lg0y2TsF9fLpyY4ZCna4GxpQulihTPQ61oUSrDCCx06gBltqE5dOSXM04sqDOCi6Ses1+u
-        MeuI7kqT2SLCl26GU59MynKLg9ZyZuM=
+        Fri, 26 Jul 2019 07:01:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=gW1Md4ZhXK3S0fvI55c/3Y5ClOV0sc1UfTNxtBj16RU=; b=s2c+GrUo/qdQvXNS9uOpLjrgt
+        ELnrxfhUFo9I7SgXEHySGOFk4SkuYJ/Bvomv//hsGI2fSSrHI+l0e59J/Id+/3XfiCmVfqH1VgWHU
+        8tp7h5gu5ux/QdL8map2mMsuUbQXMw/Ug0z03ho1xA1yMWgOr8AKckgDx1r7fIefGyXTyOJSVn3D+
+        YW/Aivd7mFpY/plRfr9DeMSVvJBfBMN5DbSLvwkuzhU019DCmxknDSnGdkOUzp8aJ9PqjmNOKqSVu
+        jwyJfW+Trf+39rLBomy4hvrqdZflDgpPU+PW1MxqSm4ucAIUD8CDkLF6zSIrdltytu7rff7T+AVnD
+        QAeQXRy2A==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hqxyk-0001YW-Be; Fri, 26 Jul 2019 11:01:38 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 99614203B6360; Fri, 26 Jul 2019 13:01:35 +0200 (CEST)
+Date:   Fri, 26 Jul 2019 13:01:35 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Jari Ruusu <jari.ruusu@gmail.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: Re: [PATCH 4.19 079/271] x86/atomic: Fix
+ smp_mb__{before,after}_atomic()
+Message-ID: <20190726110135.GO31381@hirez.programming.kicks-ass.net>
+References: <20190724191655.268628197@linuxfoundation.org>
+ <20190724191701.954991110@linuxfoundation.org>
+ <5D3AD35E.FB77B44F@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Date:   Fri, 26 Jul 2019 13:00:37 +0200
-From:   Stefan Agner <stefan@agner.ch>
-To:     =?UTF-8?Q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>
-Cc:     Robert Chiras <robert.chiras@nxp.com>, Marek Vasut <marex@denx.de>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] drm/mxsfb: Read bus flags from bridge if present
-In-Reply-To: <9390060f65f94722cb13101d4835d9048037f7a0.1564134488.git.agx@sigxcpu.org>
-References: <cover.1564134488.git.agx@sigxcpu.org>
- <9390060f65f94722cb13101d4835d9048037f7a0.1564134488.git.agx@sigxcpu.org>
-Message-ID: <cdf94095134f91656752d4872fea9d3c@agner.ch>
-X-Sender: stefan@agner.ch
-User-Agent: Roundcube Webmail/1.3.9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5D3AD35E.FB77B44F@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-07-26 11:49, Guido Günther wrote:
-> The bridge might have special requirmentes on the input bus. This
-> is e.g. used by the imx-nwl bridge.
+On Fri, Jul 26, 2019 at 01:18:06PM +0300, Jari Ruusu wrote:
+> Greg Kroah-Hartman wrote:
+> > [ Upstream commit 69d927bba39517d0980462efc051875b7f4db185 ]
+> > 
+> > Recent probing at the Linux Kernel Memory Model uncovered a
+> > 'surprise'. Strongly ordered architectures where the atomic RmW
+> > primitive implies full memory ordering and
+> > smp_mb__{before,after}_atomic() are a simple barrier() (such as x86)
+> > fail for:
+> > 
+> >         *x = 1;
+> >         atomic_inc(u);
+> >         smp_mb__after_atomic();
+> >         r0 = *y;
 > 
-> Signed-off-by: Guido Günther <agx@sigxcpu.org>
-
-Looks good to me.
-
-Reviewed-by: Stefan Agner <stefan@agner.ch>
-
-
-That is similar to what I sent for the imx DRM driver:
-
-https://lkml.org/lkml/2018/9/12/913
-
-I probably should follow up on that patchset.
-
---
-Stefan
-
-> ---
->  drivers/gpu/drm/mxsfb/mxsfb_crtc.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
+> [snip]
 > 
-> diff --git a/drivers/gpu/drm/mxsfb/mxsfb_crtc.c
-> b/drivers/gpu/drm/mxsfb/mxsfb_crtc.c
-> index e84bac3a541d..3b8eb3ac13b6 100644
-> --- a/drivers/gpu/drm/mxsfb/mxsfb_crtc.c
-> +++ b/drivers/gpu/drm/mxsfb/mxsfb_crtc.c
-> @@ -215,7 +215,7 @@ static void mxsfb_crtc_mode_set_nofb(struct
-> mxsfb_drm_private *mxsfb)
->  {
->  	struct drm_device *drm = mxsfb->pipe.crtc.dev;
->  	struct drm_display_mode *m = &mxsfb->pipe.crtc.state->adjusted_mode;
-> -	const u32 bus_flags = mxsfb->connector->display_info.bus_flags;
-> +	u32 bus_flags = mxsfb->connector->display_info.bus_flags;
->  	u32 vdctrl0, vsync_pulse_len, hsync_pulse_len;
->  	int err;
->  
-> @@ -239,6 +239,9 @@ static void mxsfb_crtc_mode_set_nofb(struct
-> mxsfb_drm_private *mxsfb)
->  
->  	clk_set_rate(mxsfb->clk, m->crtc_clock * 1000);
->  
-> +	if (mxsfb->bridge && mxsfb->bridge->timings)
-> +		bus_flags = mxsfb->bridge->timings->input_bus_flags;
-> +
->  	DRM_DEV_DEBUG_DRIVER(drm->dev, "Pixel clock: %dkHz (actual: %dkHz)\n",
->  			     m->crtc_clock,
->  			     (int)(clk_get_rate(mxsfb->clk) / 1000));
+> > --- a/arch/x86/include/asm/atomic.h
+> > +++ b/arch/x86/include/asm/atomic.h
+> > @@ -54,7 +54,7 @@ static __always_inline void arch_atomic_add(int i, atomic_t *v)
+> >  {
+> >         asm volatile(LOCK_PREFIX "addl %1,%0"
+> >                      : "+m" (v->counter)
+> > -                    : "ir" (i));
+> > +                    : "ir" (i) : "memory");
+> >  }
+> > 
+> >  /**
+> 
+> Shouldn't those clobber contraints actually be:  "memory","cc"
+> That is because addl subl (and other) machine instructions
+> actually modify the flags register too.
+> 
+> gcc docs say: The "cc" clobber indicates that the assembler
+> code modifies the flags register.
+
+GCC x86 assumes any asm() will clobber "cc".
