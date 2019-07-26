@@ -2,61 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81F1075DF0
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 06:49:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D04CC75DFE
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 06:57:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726023AbfGZEtN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 00:49:13 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:47412 "EHLO mx1.redhat.com"
+        id S1726004AbfGZE5F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 00:57:05 -0400
+Received: from verein.lst.de ([213.95.11.211]:41129 "EHLO verein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725836AbfGZEtN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 00:49:13 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 917AD3091761;
-        Fri, 26 Jul 2019 04:49:12 +0000 (UTC)
-Received: from treble (ovpn-120-166.rdu2.redhat.com [10.10.120.166])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7743C1001938;
-        Fri, 26 Jul 2019 04:49:11 +0000 (UTC)
-Date:   Thu, 25 Jul 2019 23:49:09 -0500
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: build warning after merge of the tip tree
-Message-ID: <20190726044909.ubf4rhzmsgjd3xgk@treble>
-References: <20190726130327.1f707cb3@canb.auug.org.au>
+        id S1725903AbfGZE5F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 00:57:05 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id C418C227A81; Fri, 26 Jul 2019 06:57:01 +0200 (CEST)
+Date:   Fri, 26 Jul 2019 06:57:01 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Jason Gunthorpe <jgg@mellanox.com>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: hmm_range_fault related fixes and legacy API removal v3
+Message-ID: <20190726045701.GB21532@lst.de>
+References: <20190724065258.16603-1-hch@lst.de> <20190726001622.GL7450@mellanox.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190726130327.1f707cb3@canb.auug.org.au>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Fri, 26 Jul 2019 04:49:13 +0000 (UTC)
+In-Reply-To: <20190726001622.GL7450@mellanox.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 26, 2019 at 01:05:49PM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
-> produced this warning:
-> 
-> drivers/gpu/drm/i915/gem/i915_gem_execbuffer.o: warning: objtool: .altinstr_replacement+0x1c: redundant UACCESS disable
-> 
-> Presuambly introduced/uncovered by commit
-> 
->   882a0db9d143 ("objtool: Improve UACCESS coverage")
+On Fri, Jul 26, 2019 at 12:16:30AM +0000, Jason Gunthorpe wrote:
+> I don't see Ralph's tested by, do you think it changed enough to
+> require testing again? If so, Ralph would you be so kind?
 
-This will be fixed by:
-
-  https://lkml.kernel.org/r/51a4155c5bc2ca847a9cbe85c1c11918bb193141.1564086017.git.jpoimboe@redhat.com
-
--- 
-Josh
+The changes were fairly small, but I didn't feel to carry it over given
+that there were changes after all.
