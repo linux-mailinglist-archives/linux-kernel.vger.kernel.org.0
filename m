@@ -2,37 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9061176A57
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 15:58:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0625376A4A
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 15:57:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728321AbfGZN6C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 09:58:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47126 "EHLO mail.kernel.org"
+        id S1728613AbfGZN5r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 09:57:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47182 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387575AbfGZNkx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 09:40:53 -0400
+        id S1727777AbfGZNk5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 09:40:57 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F1D5B22BEF;
-        Fri, 26 Jul 2019 13:40:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4B7FD22BEF;
+        Fri, 26 Jul 2019 13:40:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564148452;
-        bh=b8v1s0/Nhsc9bXPHePJK13Qv88Pa349rf1WKvsM3Ge0=;
+        s=default; t=1564148456;
+        bh=g1Vj/B5j1Trd98aOkbS5Nj7l1bSCMsfMsN7CB+41oAM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=a7pldTrY4cJrA8iHQ+jAceYnj4V7yfSqrvscA4vLuYkm6UDGzXS9bjc6fcnbfGMNf
-         qCAThAeR+rZinjFBqdjfEt5KxLKFLgU1+xyiwa6YL2o9ahD0QjGjEtZMAe58Jyy0DA
-         xhxFr8kGtFenwQv3OgQTIwFvUH75tCxcgzsNHnt0=
+        b=lqezt7JD5xlUxv5ZdFAEqftwm2Xj9qPUU8uknark3BJZrXlNfqpij8FIUVXLtHCgl
+         i6fB83xeW0fGK1hh2w474IYegZ2zhsbpYWvGHYmZnw7ch4EtKpf1VZvJqbmrFHnE2w
+         Rad7YjDkI6cWATzNdQj/mXBGsPZL5aoUjM1xFC9o=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Andrii Nakryiko <andriin@fb.com>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
-        bpf@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 48/85] libbpf: fix another GCC8 warning for strncpy
-Date:   Fri, 26 Jul 2019 09:38:58 -0400
-Message-Id: <20190726133936.11177-48-sashal@kernel.org>
+Cc:     Vitaly Wool <vitalywool@gmail.com>,
+        Henry Burns <henryburns@google.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Jonathan Adams <jwadams@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>, linux-mm@kvack.org
+Subject: [PATCH AUTOSEL 5.2 50/85] mm/z3fold: don't try to use buddy slots after free
+Date:   Fri, 26 Jul 2019 09:39:00 -0400
+Message-Id: <20190726133936.11177-50-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190726133936.11177-1-sashal@kernel.org>
 References: <20190726133936.11177-1-sashal@kernel.org>
@@ -45,36 +47,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrii Nakryiko <andriin@fb.com>
+From: Vitaly Wool <vitalywool@gmail.com>
 
-[ Upstream commit 763ff0e7d9c72e7094b31e7fb84a859be9325635 ]
+[ Upstream commit bb9a374dfa3a2f46581455ab66cd1d24c5e3d183 ]
 
-Similar issue was fixed in cdfc7f888c2a ("libbpf: fix GCC8 warning for
-strncpy") already. This one was missed. Fixing now.
+As reported by Henry Burns:
 
-Cc: Magnus Karlsson <magnus.karlsson@intel.com>
-Signed-off-by: Andrii Nakryiko <andriin@fb.com>
-Acked-by: Magnus Karlsson <magnus.karlsson@intel.com>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Running z3fold stress testing with address sanitization showed zhdr->slots
+was being used after it was freed.
+
+  z3fold_free(z3fold_pool, handle)
+    free_handle(handle)
+      kmem_cache_free(pool->c_handle, zhdr->slots)
+    release_z3fold_page_locked_list(kref)
+      __release_z3fold_page(zhdr, true)
+        zhdr_to_pool(zhdr)
+          slots_to_pool(zhdr->slots)  *BOOM*
+
+To fix this, add pointer to the pool back to z3fold_header and modify
+zhdr_to_pool to return zhdr->pool.
+
+Link: http://lkml.kernel.org/r/20190708134808.e89f3bfadd9f6ffd7eff9ba9@gmail.com
+Fixes: 7c2b8baa61fe  ("mm/z3fold.c: add structure for buddy handles")
+Signed-off-by: Vitaly Wool <vitalywool@gmail.com>
+Reported-by: Henry Burns <henryburns@google.com>
+Reviewed-by: Shakeel Butt <shakeelb@google.com>
+Cc: Jonathan Adams <jwadams@google.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/lib/bpf/xsk.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ mm/z3fold.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/tools/lib/bpf/xsk.c b/tools/lib/bpf/xsk.c
-index 38667b62f1fe..aa37005209aa 100644
---- a/tools/lib/bpf/xsk.c
-+++ b/tools/lib/bpf/xsk.c
-@@ -561,7 +561,8 @@ int xsk_socket__create(struct xsk_socket **xsk_ptr, const char *ifname,
- 		err = -errno;
- 		goto out_socket;
- 	}
--	strncpy(xsk->ifname, ifname, IFNAMSIZ);
-+	strncpy(xsk->ifname, ifname, IFNAMSIZ - 1);
-+	xsk->ifname[IFNAMSIZ - 1] = '\0';
+diff --git a/mm/z3fold.c b/mm/z3fold.c
+index 985732c8b025..e1686bf6d689 100644
+--- a/mm/z3fold.c
++++ b/mm/z3fold.c
+@@ -101,6 +101,7 @@ struct z3fold_buddy_slots {
+  * @refcount:		reference count for the z3fold page
+  * @work:		work_struct for page layout optimization
+  * @slots:		pointer to the structure holding buddy slots
++ * @pool:		pointer to the containing pool
+  * @cpu:		CPU which this page "belongs" to
+  * @first_chunks:	the size of the first buddy in chunks, 0 if free
+  * @middle_chunks:	the size of the middle buddy in chunks, 0 if free
+@@ -114,6 +115,7 @@ struct z3fold_header {
+ 	struct kref refcount;
+ 	struct work_struct work;
+ 	struct z3fold_buddy_slots *slots;
++	struct z3fold_pool *pool;
+ 	short cpu;
+ 	unsigned short first_chunks;
+ 	unsigned short middle_chunks;
+@@ -320,6 +322,7 @@ static struct z3fold_header *init_z3fold_page(struct page *page,
+ 	zhdr->start_middle = 0;
+ 	zhdr->cpu = -1;
+ 	zhdr->slots = slots;
++	zhdr->pool = pool;
+ 	INIT_LIST_HEAD(&zhdr->buddy);
+ 	INIT_WORK(&zhdr->work, compact_page_work);
+ 	return zhdr;
+@@ -426,7 +429,7 @@ static enum buddy handle_to_buddy(unsigned long handle)
  
- 	err = xsk_set_xdp_socket_config(&xsk->config, usr_config);
- 	if (err)
+ static inline struct z3fold_pool *zhdr_to_pool(struct z3fold_header *zhdr)
+ {
+-	return slots_to_pool(zhdr->slots);
++	return zhdr->pool;
+ }
+ 
+ static void __release_z3fold_page(struct z3fold_header *zhdr, bool locked)
 -- 
 2.20.1
 
