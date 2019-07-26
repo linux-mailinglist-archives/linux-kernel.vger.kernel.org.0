@@ -2,98 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE853770C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 19:59:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 412A2770CF
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 20:01:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728387AbfGZR7W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 13:59:22 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:38194 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727083AbfGZR7W (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 13:59:22 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id D02E28023F; Fri, 26 Jul 2019 19:59:07 +0200 (CEST)
-Date:   Fri, 26 Jul 2019 19:59:17 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     pavel@ucw.cz
-Cc:     linux-kernel@vger.kernel.org,
-        Kan Liang <kan.liang@linux.intel.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>, acme@kernel.org,
-        eranian@google.com, Ingo Molnar <mingo@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: Re: [PATCH 4.19 078/271] perf/x86/intel/uncore: Handle invalid event
- coding for free-running counter
-Message-ID: <20190726175917.GC5945@xo-6d-61-c0.localdomain>
-References: <20190724191655.268628197@linuxfoundation.org>
- <20190724191701.880558315@linuxfoundation.org>
+        id S1729041AbfGZSBE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 14:01:04 -0400
+Received: from mga07.intel.com ([134.134.136.100]:39633 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727951AbfGZSBE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 14:01:04 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jul 2019 11:01:03 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,311,1559545200"; 
+   d="scan'208";a="178472981"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.41])
+  by FMSMGA003.fm.intel.com with ESMTP; 26 Jul 2019 11:01:03 -0700
+Date:   Fri, 26 Jul 2019 11:01:03 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Paul Bolle <pebolle@tiscali.nl>
+Subject: Re: [5.2 REGRESSION] Generic vDSO breaks seccomp-enabled userspace
+ on i386
+Message-ID: <20190726180103.GE3188@linux.intel.com>
+References: <201907221012.41504DCD@keescook>
+ <alpine.DEB.2.21.1907222027090.1659@nanos.tec.linutronix.de>
+ <201907221135.2C2D262D8@keescook>
+ <CALCETrVnV8o_jqRDZua1V0s_fMYweP2J2GbwWA-cLxqb_PShog@mail.gmail.com>
+ <201907221620.F31B9A082@keescook>
+ <CALCETrWqu-S3rrg8kf6aqqkXg9Z+TFQHbUgpZEiUU+m8KRARqg@mail.gmail.com>
+ <201907231437.DB20BEBD3@keescook>
+ <alpine.DEB.2.21.1907240038001.27812@nanos.tec.linutronix.de>
+ <201907231636.AD3ED717D@keescook>
+ <alpine.DEB.2.21.1907240155080.2034@nanos.tec.linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190724191701.880558315@linuxfoundation.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <alpine.DEB.2.21.1907240155080.2034@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 2019-07-24 21:19:07, Greg Kroah-Hartman wrote:
++cc Paul
 
-> [ Upstream commit 543ac280b3576c0009e8c0fcd4d6bfc9978d7bd0 ]
+On Wed, Jul 24, 2019 at 01:56:34AM +0200, Thomas Gleixner wrote:
+> On Tue, 23 Jul 2019, Kees Cook wrote:
 > 
-> Counting with invalid event coding for free-running counter may cause
-> OOPs, e.g. uncore_iio_free_running_0/event=1/.
+> > On Wed, Jul 24, 2019 at 12:59:03AM +0200, Thomas Gleixner wrote:
+> > > And as we have sys_clock_gettime64() exposed for 32bit anyway you need to
+> > > deal with that in seccomp independently of the VDSO. It does not make sense
+> > > to treat sys_clock_gettime() differently than sys_clock_gettime64(). They
+> > > both expose the same information, but the latter is y2038 safe.
+> > 
+> > Okay, so combining Andy's ideas on aliasing and "more seccomp flags",
+> > we could declare that clock_gettime64() is not filterable on 32-bit at
+> > all without the magic SECCOMP_IGNORE_ALIASES flag or something. Then we
+> > would alias clock_gettime64 to clock_gettime _before_ the first evaluation
+> > (unless SECCOMP_IGNORE_ALIASES is set)?
+> > 
+> > (When was clock_gettime64() introduced? Is it too long ago to do this
+> > "you can't filter it without a special flag" change?)
 > 
-> Current code only validate the event with free-running event format,
-> event=0xff,umask=0xXY. Non-free-running event format never be checked
-> for the PMU with free-running counters.
-> 
-> Add generic hw_config() to check and reject the invalid event coding
-> for free-running PMU.
+> clock_gettime64() and the other sys_*time64() syscalls which address the
+> y2038 issue were added in 5.1
 
-So this is interesting. "static inline", but it is never really inlined because
-the only use is for taking pointer.
-
-Best regards,
-									Pavel
-
-> +++ b/arch/x86/events/intel/uncore.h
-> @@ -402,6 +402,16 @@ static inline bool is_freerunning_event(struct perf_event *event)
->  	       (((cfg >> 8) & 0xff) >= UNCORE_FREERUNNING_UMASK_START);
->  }
->  
-> +/* Check and reject invalid config */
-> +static inline int uncore_freerunning_hw_config(struct intel_uncore_box *box,
-> +					       struct perf_event *event)
-> +{
-> +	if (is_freerunning_event(event))
-> +		return 0;
-> +
-> +	return -EINVAL;
-> +}
-> +
->  static inline void uncore_disable_box(struct intel_uncore_box *box)
->  {
->  	if (box->pmu->type->ops->disable_box)
-> diff --git a/arch/x86/events/intel/uncore_snbep.c b/arch/x86/events/intel/uncore_snbep.c
-> index b10e04387f38..8e4e8e423839 100644
-> --- a/arch/x86/events/intel/uncore_snbep.c
-> +++ b/arch/x86/events/intel/uncore_snbep.c
-> @@ -3585,6 +3585,7 @@ static struct uncore_event_desc skx_uncore_iio_freerunning_events[] = {
->  
->  static struct intel_uncore_ops skx_uncore_iio_freerunning_ops = {
->  	.read_counter		= uncore_msr_read_counter,
-> +	.hw_config		= uncore_freerunning_hw_config,
->  };
->  
->  static struct attribute *skx_uncore_iio_freerunning_formats_attr[] = {
-> -- 
-> 2.20.1
-> 
-> 
-
--- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+Paul Bolle pointed out that this regression showed up in v5.3-rc1, not
+v5.2.  In Paul's case, systemd-journal is failing.
