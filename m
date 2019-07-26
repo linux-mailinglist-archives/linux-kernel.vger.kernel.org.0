@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7811376D54
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 17:33:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 00CE976D0A
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 17:31:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389568AbfGZPdA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 11:33:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48248 "EHLO mail.kernel.org"
+        id S2388938AbfGZP3u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 11:29:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44518 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728305AbfGZPc6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 11:32:58 -0400
+        id S2387845AbfGZP3r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 11:29:47 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3B0F120644;
-        Fri, 26 Jul 2019 15:32:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D51FC22CBE;
+        Fri, 26 Jul 2019 15:29:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564155177;
-        bh=isWgQL8oAvhDesX3jX8Kg4zXgZ+BM6SzrDwebKcjy+M=;
+        s=default; t=1564154986;
+        bh=5RYlE/PzhWIeGqoHSSU1wVSgtVIkc9GzHbSiCAM3ggQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YtBQbE+s7n74aqnhDUdxxBJnXqK9GsSBxLMRkGKNsYCcmDymXndNU5FBbpSp6kb7t
-         CWqL/ERMFQ/wNsMXx/tdC0amYRAQpfU57tkp53HALmn6Bjw4X5vIX8+uIGrwO+qYmw
-         GYlnjonBhs8Z3ynl4LMOFle1xTEkqRLGjvkQuVJ0=
+        b=oamyHRpfBF8Dor70wbCcvHJoOipxj2tVKc2Kmr24l8kOlGO3FY4n4MEhDkfGA+b8B
+         seFu6jUMfnXUZvSKS6rq6CvuflwIkVV0MMTi324AO1nCE2tsXcX56Ny3wOcOjumIr6
+         f/3LKBXVjZDFhmpb8o0W9DszaOGvgNhPUdlUdGCE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Haiyang Zhang <haiyangz@microsoft.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 03/50] hv_netvsc: Fix extra rcu_read_unlock in netvsc_recv_callback()
-Date:   Fri, 26 Jul 2019 17:24:38 +0200
-Message-Id: <20190726152301.083757733@linuxfoundation.org>
+        stable@vger.kernel.org, Aya Levin <ayal@mellanox.com>,
+        Feras Daoud <ferasda@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>
+Subject: [PATCH 5.1 27/62] net/mlx5e: IPoIB, Add error path in mlx5_rdma_setup_rn
+Date:   Fri, 26 Jul 2019 17:24:39 +0200
+Message-Id: <20190726152304.567036815@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190726152300.760439618@linuxfoundation.org>
-References: <20190726152300.760439618@linuxfoundation.org>
+In-Reply-To: <20190726152301.720139286@linuxfoundation.org>
+References: <20190726152301.720139286@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,31 +44,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Haiyang Zhang <haiyangz@microsoft.com>
+From: Aya Levin <ayal@mellanox.com>
 
-[ Upstream commit be4363bdf0ce9530f15aa0a03d1060304d116b15 ]
+[ Upstream commit ef1ce7d7b67b46661091c7ccc0396186b7a247ef ]
 
-There is an extra rcu_read_unlock left in netvsc_recv_callback(),
-after a previous patch that removes RCU from this function.
-This patch removes the extra RCU unlock.
+Check return value from mlx5e_attach_netdev, add error path on failure.
 
-Fixes: 345ac08990b8 ("hv_netvsc: pass netvsc_device to receive callback")
-Signed-off-by: Haiyang Zhang <haiyangz@microsoft.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 48935bbb7ae8 ("net/mlx5e: IPoIB, Add netdevice profile skeleton")
+Signed-off-by: Aya Levin <ayal@mellanox.com>
+Reviewed-by: Feras Daoud <ferasda@mellanox.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/hyperv/netvsc_drv.c |    1 -
- 1 file changed, 1 deletion(-)
+ drivers/net/ethernet/mellanox/mlx5/core/ipoib/ipoib.c |    9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
---- a/drivers/net/hyperv/netvsc_drv.c
-+++ b/drivers/net/hyperv/netvsc_drv.c
-@@ -847,7 +847,6 @@ int netvsc_recv_callback(struct net_devi
- 				    csum_info, vlan, data, len);
- 	if (unlikely(!skb)) {
- 		++net_device_ctx->eth_stats.rx_no_memory;
--		rcu_read_unlock();
- 		return NVSP_STAT_FAIL;
- 	}
+--- a/drivers/net/ethernet/mellanox/mlx5/core/ipoib/ipoib.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/ipoib/ipoib.c
+@@ -698,7 +698,9 @@ static int mlx5_rdma_setup_rn(struct ib_
  
+ 	prof->init(mdev, netdev, prof, ipriv);
+ 
+-	mlx5e_attach_netdev(epriv);
++	err = mlx5e_attach_netdev(epriv);
++	if (err)
++		goto detach;
+ 	netif_carrier_off(netdev);
+ 
+ 	/* set rdma_netdev func pointers */
+@@ -714,6 +716,11 @@ static int mlx5_rdma_setup_rn(struct ib_
+ 
+ 	return 0;
+ 
++detach:
++	prof->cleanup(epriv);
++	if (ipriv->sub_interface)
++		return err;
++	mlx5e_destroy_mdev_resources(mdev);
+ destroy_ht:
+ 	mlx5i_pkey_qpn_ht_cleanup(netdev);
+ 	return err;
 
 
