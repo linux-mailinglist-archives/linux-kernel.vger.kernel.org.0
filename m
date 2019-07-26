@@ -2,107 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3CBF07699A
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 15:53:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9854476A19
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 15:56:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388887AbfGZNxJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 09:53:09 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:36895 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388253AbfGZNxF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 09:53:05 -0400
-Received: by mail-qt1-f195.google.com with SMTP id y26so52639522qto.4
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2019 06:53:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=AG8g0/5+Esm5c3gfwUTGC7xBT2DUyGJWbBLEtSQE6Lo=;
-        b=f5sS255ejBIPNtSc+bjfotL6SPL3L21wib4criaycDSqAWvop2fF44S98mi/h3dEpz
-         aKrCtYMA8BCqVejFTCPGtNjwz+CR5Xvpt7E52ZwgKmsrFz5CbSrTLzRVXoSTjaL4LsWS
-         0iM7xHIpZd5LM2qGQnMBwGgJS/siospe2T8l2Fa9L4Qjpi5UI9fYFh5FmsEBmhOXfks1
-         miXThjAHkaK6tm2IseZyDeVy4NB8KDV5VbWQhk9mBK8p18+dSP6OlBzR64RjgF9jGzM2
-         NnWYMTX0HZczlJHU1EcTez940R4/7X5xi9WrAYcmAy2kRlQ61ZhBkd1qnFp91EYvOYIz
-         qflA==
-X-Gm-Message-State: APjAAAXWW5pc+OqWbGmdz7WSLEWt9qbBvysH9MLC4H3A7O54YAJPZvFQ
-        aDHk/8ZLw9uptgHE+i/7mLo0cQ==
-X-Google-Smtp-Source: APXvYqydwEkRiDUhjkzyGjQfoaMf8JbYOCxKxauTFB3YoeZG49kK7ARiVn02SSH3ZF9H39y3z1BKaA==
-X-Received: by 2002:a0c:b521:: with SMTP id d33mr68309462qve.239.1564149185035;
-        Fri, 26 Jul 2019 06:53:05 -0700 (PDT)
-Received: from redhat.com ([212.92.104.165])
-        by smtp.gmail.com with ESMTPSA id v17sm30156688qtc.23.2019.07.26.06.53.02
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 26 Jul 2019 06:53:04 -0700 (PDT)
-Date:   Fri, 26 Jul 2019 09:52:59 -0400
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org
-Subject: Re: [PATCH] vhost: disable metadata prefetch optimization
-Message-ID: <20190726095044-mutt-send-email-mst@kernel.org>
-References: <20190726115021.7319-1-mst@redhat.com>
- <ccba99c1-7708-3e55-6fc9-7775415c77a8@redhat.com>
+        id S1728467AbfGZN4I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 09:56:08 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:39926 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728452AbfGZN4F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 09:56:05 -0400
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 358F2D34AB62BD8B557C;
+        Fri, 26 Jul 2019 21:56:01 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS407-HUB.china.huawei.com
+ (10.3.19.207) with Microsoft SMTP Server id 14.3.439.0; Fri, 26 Jul 2019
+ 21:55:52 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <kashyap.desai@broadcom.com>, <sumit.saxena@broadcom.com>,
+        <shivasharan.srikanteshwara@broadcom.com>, <jejb@linux.ibm.com>,
+        <martin.petersen@oracle.com>
+CC:     <linux-kernel@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
+        <megaraidlinux.pdl@broadcom.com>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] scsi: megaraid_sas: Make a bunch of functions static
+Date:   Fri, 26 Jul 2019 21:55:40 +0800
+Message-ID: <20190726135540.48780-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ccba99c1-7708-3e55-6fc9-7775415c77a8@redhat.com>
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 26, 2019 at 07:57:25PM +0800, Jason Wang wrote:
-> 
-> On 2019/7/26 下午7:51, Michael S. Tsirkin wrote:
-> > This seems to cause guest and host memory corruption.
-> > Disable for now until we get a better handle on that.
-> > 
-> > Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-> > ---
-> > 
-> > I put this in linux-next, we'll re-enable if we can fix
-> > the outstanding issues in a short order.
-> 
-> 
-> Btw, is this more suitable to e.g revert the
-> 842aa64eddacd23adc6ecdbc69cb2030bec47122
+Fix sparse warnings:
 
-Yes I did that too.
+drivers/scsi/megaraid/megaraid_sas_fusion.c:3369:1: warning: symbol 'complete_cmd_fusion' was not declared. Should it be static?
+drivers/scsi/megaraid/megaraid_sas_fusion.c:3535:6: warning: symbol 'megasas_sync_irqs' was not declared. Should it be static?
+drivers/scsi/megaraid/megaraid_sas_fusion.c:3554:1: warning: symbol 'megasas_complete_cmd_dpc_fusion' was not declared. Should it be static?
+drivers/scsi/megaraid/megaraid_sas_fusion.c:3573:13: warning: symbol 'megasas_isr_fusion' was not declared. Should it be static?
+drivers/scsi/megaraid/megaraid_sas_fusion.c:3604:1: warning: symbol 'build_mpt_mfi_pass_thru' was not declared. Should it be static?
+drivers/scsi/megaraid/megaraid_sas_fusion.c:3661:40: warning: symbol 'build_mpt_cmd' was not declared. Should it be static?
+drivers/scsi/megaraid/megaraid_sas_fusion.c:3688:1: warning: symbol 'megasas_issue_dcmd_fusion' was not declared. Should it be static?
+drivers/scsi/megaraid/megaraid_sas_fusion.c:3881:5: warning: symbol 'megasas_wait_for_outstanding_fusion' was not declared. Should it be static?
+drivers/scsi/megaraid/megaraid_sas_fusion.c:4005:6: warning: symbol 'megasas_refire_mgmt_cmd' was not declared. Should it be static?
+drivers/scsi/megaraid/megaraid_sas_fusion.c:4525:25: warning: symbol 'megasas_get_peer_instance' was not declared. Should it be static?
+drivers/scsi/megaraid/megaraid_sas_fusion.c:4825:7: warning: symbol 'megasas_fusion_crash_dump' was not declared. Should it be static?
 
-> and let syzbot fuzz more on the
-> current code?
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/scsi/megaraid/megaraid_sas_fusion.c | 26 ++++++++++++++------------
+ 1 file changed, 14 insertions(+), 12 deletions(-)
 
-Current metadata direct access code is known to corrupt guest and host
-memory - I don't feel we need more fuzzing.
+diff --git a/drivers/scsi/megaraid/megaraid_sas_fusion.c b/drivers/scsi/megaraid/megaraid_sas_fusion.c
+index 120e3c4..10ef99e 100644
+--- a/drivers/scsi/megaraid/megaraid_sas_fusion.c
++++ b/drivers/scsi/megaraid/megaraid_sas_fusion.c
+@@ -3511,7 +3511,7 @@ megasas_complete_r1_command(struct megasas_instance *instance,
+  * @instance:			Adapter soft state
+  * Completes all commands that is in reply descriptor queue
+  */
+-int
++static int
+ complete_cmd_fusion(struct megasas_instance *instance, u32 MSIxIndex,
+ 		    struct megasas_irq_context *irq_context)
+ {
+@@ -3702,7 +3702,7 @@ static void megasas_enable_irq_poll(struct megasas_instance *instance)
+  * megasas_sync_irqs -	Synchronizes all IRQs owned by adapter
+  * @instance:			Adapter soft state
+  */
+-void megasas_sync_irqs(unsigned long instance_addr)
++static void megasas_sync_irqs(unsigned long instance_addr)
+ {
+ 	u32 count, i;
+ 	struct megasas_instance *instance =
+@@ -3760,7 +3760,7 @@ int megasas_irqpoll(struct irq_poll *irqpoll, int budget)
+  *
+  * Tasklet to complete cmds
+  */
+-void
++static void
+ megasas_complete_cmd_dpc_fusion(unsigned long instance_addr)
+ {
+ 	struct megasas_instance *instance =
+@@ -3780,7 +3780,7 @@ megasas_complete_cmd_dpc_fusion(unsigned long instance_addr)
+ /**
+  * megasas_isr_fusion - isr entry point
+  */
+-irqreturn_t megasas_isr_fusion(int irq, void *devp)
++static irqreturn_t megasas_isr_fusion(int irq, void *devp)
+ {
+ 	struct megasas_irq_context *irq_context = devp;
+ 	struct megasas_instance *instance = irq_context->instance;
+@@ -3816,7 +3816,7 @@ irqreturn_t megasas_isr_fusion(int irq, void *devp)
+  * mfi_cmd:			megasas_cmd pointer
+  *
+  */
+-void
++static void
+ build_mpt_mfi_pass_thru(struct megasas_instance *instance,
+ 			struct megasas_cmd *mfi_cmd)
+ {
+@@ -3874,7 +3874,7 @@ build_mpt_mfi_pass_thru(struct megasas_instance *instance,
+  * @cmd:			mfi cmd to build
+  *
+  */
+-union MEGASAS_REQUEST_DESCRIPTOR_UNION *
++static union MEGASAS_REQUEST_DESCRIPTOR_UNION *
+ build_mpt_cmd(struct megasas_instance *instance, struct megasas_cmd *cmd)
+ {
+ 	union MEGASAS_REQUEST_DESCRIPTOR_UNION *req_desc = NULL;
+@@ -3900,7 +3900,7 @@ build_mpt_cmd(struct megasas_instance *instance, struct megasas_cmd *cmd)
+  * @cmd:			mfi cmd pointer
+  *
+  */
+-void
++static void
+ megasas_issue_dcmd_fusion(struct megasas_instance *instance,
+ 			  struct megasas_cmd *cmd)
+ {
+@@ -4096,8 +4096,9 @@ static inline void megasas_trigger_snap_dump(struct megasas_instance *instance)
+ }
+ 
+ /* This function waits for outstanding commands on fusion to complete */
+-int megasas_wait_for_outstanding_fusion(struct megasas_instance *instance,
+-					int reason, int *convert)
++static int
++megasas_wait_for_outstanding_fusion(struct megasas_instance *instance,
++				    int reason, int *convert)
+ {
+ 	int i, outstanding, retval = 0, hb_seconds_missed = 0;
+ 	u32 fw_state, abs_state;
+@@ -4221,7 +4222,7 @@ void  megasas_reset_reply_desc(struct megasas_instance *instance)
+  * megasas_refire_mgmt_cmd :	Re-fire management commands
+  * @instance:				Controller's soft instance
+ */
+-void megasas_refire_mgmt_cmd(struct megasas_instance *instance)
++static void megasas_refire_mgmt_cmd(struct megasas_instance *instance)
+ {
+ 	int j;
+ 	struct megasas_cmd_fusion *cmd_fusion;
+@@ -4747,7 +4748,8 @@ int megasas_reset_target_fusion(struct scsi_cmnd *scmd)
+ }
+ 
+ /*SRIOV get other instance in cluster if any*/
+-struct megasas_instance *megasas_get_peer_instance(struct megasas_instance *instance)
++static struct
++megasas_instance *megasas_get_peer_instance(struct megasas_instance *instance)
+ {
+ 	int i;
+ 
+@@ -5053,7 +5055,7 @@ int megasas_reset_fusion(struct Scsi_Host *shost, int reason)
+ }
+ 
+ /* Fusion Crash dump collection */
+-void  megasas_fusion_crash_dump(struct megasas_instance *instance)
++static void  megasas_fusion_crash_dump(struct megasas_instance *instance)
+ {
+ 	u32 status_reg;
+ 	u8 partial_copy = 0;
+-- 
+2.7.4
 
-> 
-> I think we won't accept that patch eventually, so I suspect what syzbot
-> reports today is a false positives.
 
-Today's reports are real, it's a bug in my patch. But I reverted it -
-the below is an easier way to make sure at least linux-next is stable
-for everyone.
-
-> 
-> Thanks
-> 
-> 
-> > 
-> >   drivers/vhost/vhost.h | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/vhost/vhost.h b/drivers/vhost/vhost.h
-> > index 819296332913..42a8c2a13ab1 100644
-> > --- a/drivers/vhost/vhost.h
-> > +++ b/drivers/vhost/vhost.h
-> > @@ -96,7 +96,7 @@ struct vhost_uaddr {
-> >   };
-> >   #if defined(CONFIG_MMU_NOTIFIER) && ARCH_IMPLEMENTS_FLUSH_DCACHE_PAGE == 0
-> > -#define VHOST_ARCH_CAN_ACCEL_UACCESS 1
-> > +#define VHOST_ARCH_CAN_ACCEL_UACCESS 0
-> >   #else
-> >   #define VHOST_ARCH_CAN_ACCEL_UACCESS 0
-> >   #endif
