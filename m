@@ -2,115 +2,177 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 11FA67668A
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 14:53:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C8C337668F
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 14:53:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726666AbfGZMxD convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 26 Jul 2019 08:53:03 -0400
-Received: from mail-oln040092254033.outbound.protection.outlook.com ([40.92.254.33]:24800
-        "EHLO APC01-PU1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726279AbfGZMxD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 08:53:03 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=WXH9LSmdFTwi3Y5kR38S6+35eXdeZOD3mJy83yMqvRMmuRdPQxAhGYmShgV1RlXQMHS0C5p71xz6UHK/QcdCk7d0zr8K9wdsl375tle5nY7v4LEW65YBydTVci15y6dBskXf3s643aoVRzpTT0Z2UxCTk7eoIdRNgQC9Vn3Siucp6HwQFa5lcR9awEXSCplZUD2lbaO7yAoKKg4iYqr+1YFGZU199vwy77M1scFnQ1XWx6K2uLCWdrSp8ZnU3reY7MzbprG4gkO/OEmuGRzCa6Yb4ERgYiukZQ8E021+QYChuNpmmRCpRkxn/8m2WtnbIFuaEcVYIhHVCnBUYR+59A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kwyScT6p0CPb0Lyp5mnwzfwCHpMqnb5rRR/KS+tAkTY=;
- b=lDRaFgqojnxqnSDSqv2mty9fSf5m/PeIqeoNobvuu6l6BF/Cb74P9EtTMOVf7fn+cqnP0BbThMiMQVmtVCRxp2GqhyZcQI84Sc/mSs0HiTkxxEGT5Iz23b/JYVirT+aEDPgXI5Q83G+4O/JcQJsImDXdXXG7JDt+tpt03GxNCd1NnsDbhw1kD+xkpXwrSaKJwpplpV2LEelEMKvxaOtfn/DryDdKeWOf1OGI1P9jCLoOqC21bt4kfcu4JS22aFUqL1dP8MU4nqf/okd0HgbxYWoiw9M24hRB6QDd9osq8ACL65z3SBUC2tPHE/D+5rTzNrWaoUo1szdxEvheR56mZA==
-ARC-Authentication-Results: i=1; mx.microsoft.com
- 1;spf=none;dmarc=none;dkim=none;arc=none
-Received: from PU1APC01FT060.eop-APC01.prod.protection.outlook.com
- (10.152.252.54) by PU1APC01HT058.eop-APC01.prod.protection.outlook.com
- (10.152.253.133) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.2115.10; Fri, 26 Jul
- 2019 12:52:58 +0000
-Received: from SL2P216MB0187.KORP216.PROD.OUTLOOK.COM (10.152.252.59) by
- PU1APC01FT060.mail.protection.outlook.com (10.152.253.44) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.2115.10 via Frontend Transport; Fri, 26 Jul 2019 12:52:58 +0000
-Received: from SL2P216MB0187.KORP216.PROD.OUTLOOK.COM
- ([fe80::1cba:d572:7a30:ff0d]) by SL2P216MB0187.KORP216.PROD.OUTLOOK.COM
- ([fe80::1cba:d572:7a30:ff0d%3]) with mapi id 15.20.2094.013; Fri, 26 Jul 2019
- 12:52:58 +0000
-From:   Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>
-To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "mika.westerberg@linux.intel.com" <mika.westerberg@linux.intel.com>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
-        "logang@deltatee.com" <logang@deltatee.com>
-Subject: [PATCH v8 0/6] Patch series to support Thunderbolt without any BIOS
- support
-Thread-Topic: [PATCH v8 0/6] Patch series to support Thunderbolt without any
- BIOS support
-Thread-Index: AQHVQ7EMFjpbQeqsQESrK2KNnG8LAg==
-Date:   Fri, 26 Jul 2019 12:52:58 +0000
-Message-ID: <SL2P216MB01873757CFAE0E4B02F1BBE080C00@SL2P216MB0187.KORP216.PROD.OUTLOOK.COM>
-Accept-Language: en-AU, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: SY2PR01CA0002.ausprd01.prod.outlook.com
- (2603:10c6:1:14::14) To SL2P216MB0187.KORP216.PROD.OUTLOOK.COM
- (2603:1096:100:22::19)
-x-incomingtopheadermarker: OriginalChecksum:C1103906F62BFE2486639208E6571013AB303418B97FB837F76E5947D2EB556D;UpperCasedChecksum:17B2CDE6500E139C833C8900ECB5A1A411954DE05E9FC4BC8D9C4DD236F9301B;SizeAsReceived:7693;Count:47
-x-ms-exchange-messagesentrepresentingtype: 1
-x-tmn:  [7Gsd+AuGlqD4wp1UvmI1+NiP77oqon8QLFMaDDmSK7iVDZw8xW3+K7kqGPU6wq/Z3rFkb2LLS24=]
-x-microsoft-original-message-id: <20190726125240.GA2601@nicholas-usb>
-x-ms-publictraffictype: Email
-x-incomingheadercount: 47
-x-eopattributedmessage: 0
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(5050001)(7020095)(20181119110)(201702061078)(5061506573)(5061507331)(1603103135)(2017031320274)(2017031323274)(2017031324274)(2017031322404)(1601125500)(1603101475)(1701031045);SRVR:PU1APC01HT058;
-x-ms-traffictypediagnostic: PU1APC01HT058:
-x-microsoft-antispam-message-info: ELFtnrRCgenmnq7ObU+3V0fNzXhnwbWuuW78dOGFOKnUwfN70kXGFLe3SX9udOgU6tSci9LPY5rGsYLroHi3oMkpUIQlAioM9ypy1zo1dB5wjpMPOAU4hO6V191TymcIIAiB47FhiXmYA3S0g7ns3dUE84gh0aMTYDQOmGhVki5sMpUFK/19w+066bBnIVum
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <EE73F2F33D98374CB83F39BE5C4B7289@KORP216.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: 8BIT
+        id S1727000AbfGZMxf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 08:53:35 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:41486 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726897AbfGZMxe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 08:53:34 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id AE5F6300D1CA;
+        Fri, 26 Jul 2019 12:53:33 +0000 (UTC)
+Received: from [10.72.12.238] (ovpn-12-238.pek2.redhat.com [10.72.12.238])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3F4645DE6F;
+        Fri, 26 Jul 2019 12:53:19 +0000 (UTC)
+Subject: Re: WARNING in __mmdrop
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     syzbot <syzbot+e58112d71f77113ddb7b@syzkaller.appspotmail.com>,
+        aarcange@redhat.com, akpm@linux-foundation.org,
+        christian@brauner.io, davem@davemloft.net, ebiederm@xmission.com,
+        elena.reshetova@intel.com, guro@fb.com, hch@infradead.org,
+        james.bottomley@hansenpartnership.com, jglisse@redhat.com,
+        keescook@chromium.org, ldv@altlinux.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-parisc@vger.kernel.org,
+        luto@amacapital.net, mhocko@suse.com, mingo@kernel.org,
+        namit@vmware.com, peterz@infradead.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
+        wad@chromium.org
+References: <20190723051828-mutt-send-email-mst@kernel.org>
+ <caff362a-e208-3468-3688-63e1d093a9d3@redhat.com>
+ <20190725012149-mutt-send-email-mst@kernel.org>
+ <55e8930c-2695-365f-a07b-3ad169654d28@redhat.com>
+ <20190725042651-mutt-send-email-mst@kernel.org>
+ <84bb2e31-0606-adff-cf2a-e1878225a847@redhat.com>
+ <20190725092332-mutt-send-email-mst@kernel.org>
+ <11802a8a-ce41-f427-63d5-b6a4cf96bb3f@redhat.com>
+ <20190726074644-mutt-send-email-mst@kernel.org>
+ <5cc94f15-b229-a290-55f3-8295266edb2b@redhat.com>
+ <20190726082837-mutt-send-email-mst@kernel.org>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <ada10dc9-6cab-e189-5289-6f9d3ff8fed2@redhat.com>
+Date:   Fri, 26 Jul 2019 20:53:18 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: 60e03b37-567e-41bc-6f01-08d711c82f2c
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Jul 2019 12:52:58.3365
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Internet
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PU1APC01HT058
+In-Reply-To: <20190726082837-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Fri, 26 Jul 2019 12:53:34 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Patch series rebased to 5.3-rc1.
 
-If possible, please have a quick read over while I am away (2019-07-27
-to mid 2019-08-04), so I can fix any mistakes or make simple changes to
-get problems out of the way for a more thorough examination later.
+On 2019/7/26 下午8:38, Michael S. Tsirkin wrote:
+> On Fri, Jul 26, 2019 at 08:00:58PM +0800, Jason Wang wrote:
+>> On 2019/7/26 下午7:49, Michael S. Tsirkin wrote:
+>>> On Thu, Jul 25, 2019 at 10:25:25PM +0800, Jason Wang wrote:
+>>>> On 2019/7/25 下午9:26, Michael S. Tsirkin wrote:
+>>>>>> Exactly, and that's the reason actually I use synchronize_rcu() there.
+>>>>>>
+>>>>>> So the concern is still the possible synchronize_expedited()?
+>>>>> I think synchronize_srcu_expedited.
+>>>>>
+>>>>> synchronize_expedited sends lots of IPI and is bad for realtime VMs.
+>>>>>
+>>>>>> Can I do this
+>>>>>> on through another series on top of the incoming V2?
+>>>>>>
+>>>>>> Thanks
+>>>>>>
+>>>>> The question is this: is this still a gain if we switch to the
+>>>>> more expensive srcu? If yes then we can keep the feature on,
+>>>> I think we only care about the cost on srcu_read_lock() which looks pretty
+>>>> tiny form my point of view. Which is basically a READ_ONCE() + WRITE_ONCE().
+>>>>
+>>>> Of course I can benchmark to see the difference.
+>>>>
+>>>>
+>>>>> if not we'll put it off until next release and think
+>>>>> of better solutions. rcu->srcu is just a find and replace,
+>>>>> don't see why we need to defer that. can be a separate patch
+>>>>> for sure, but we need to know how well it works.
+>>>> I think I get here, let me try to do that in V2 and let's see the numbers.
+>>>>
+>>>> Thanks
+>>
+>> It looks to me for tree rcu, its srcu_read_lock() have a mb() which is too
+>> expensive for us.
+> I will try to ponder using vq lock in some way.
+> Maybe with trylock somehow ...
 
-Thanks!
 
-Kind regards,
-Nicholas
+Ok, let me retry if necessary (but I do remember I end up with deadlocks 
+last try).
 
-Nicholas Johnson (6):
-  PCI: Consider alignment of hot-added bridges when distributing
-    available resources
-  PCI: In extend_bridge_window() change available to new_size
-  PCI: Change extend_bridge_window() to set resource size directly
-  PCI: Allow extend_bridge_window() to shrink resource if necessary
-  PCI: Add hp_mmio_size and hp_mmio_pref_size parameters
-  PCI: Fix bug resulting in double hpmemsize being assigned to MMIO
-    window
 
- .../admin-guide/kernel-parameters.txt         |   9 +-
- drivers/pci/pci.c                             |  17 +-
- drivers/pci/setup-bus.c                       | 233 +++++++++---------
- include/linux/pci.h                           |   3 +-
- 4 files changed, 143 insertions(+), 119 deletions(-)
+>
+>
+>> If we just worry about the IPI,
+> With synchronize_rcu what I would worry about is that guest is stalled
 
--- 
-2.22.0
+
+Can this synchronize_rcu() be triggered by guest? If yes, there are 
+several other MMU notifiers that can block. Is vhost something special here?
+
+
+> because system is busy because of other guests.
+> With expedited it's the IPIs...
+>
+
+The current synchronize_rcu()  can force a expedited grace period:
+
+void synchronize_rcu(void)
+{
+         ...
+         if (rcu_blocking_is_gp())
+return;
+         if (rcu_gp_is_expedited())
+synchronize_rcu_expedited();
+else
+wait_rcu_gp(call_rcu);
+}
+EXPORT_SYMBOL_GPL(synchronize_rcu);
+
+
+>> can we do something like in
+>> vhost_invalidate_vq_start()?
+>>
+>>          if (map) {
+>>                  /* In order to avoid possible IPIs with
+>>                   * synchronize_rcu_expedited() we use call_rcu() +
+>>                   * completion.
+>> */
+>> init_completion(&c.completion);
+>>                  call_rcu(&c.rcu_head, vhost_finish_vq_invalidation);
+>> wait_for_completion(&c.completion);
+>>                  vhost_set_map_dirty(vq, map, index);
+>> vhost_map_unprefetch(map);
+>>          }
+>>
+>> ?
+> Why would that be faster than synchronize_rcu?
+
+
+No faster but no IPI.
+
+
+>
+>
+>>> There's one other thing that bothers me, and that is that
+>>> for large rings which are not physically contiguous
+>>> we don't implement the optimization.
+>>>
+>>> For sure, that can wait, but I think eventually we should
+>>> vmap large rings.
+>>
+>> Yes, worth to try. But using direct map has its own advantage: it can use
+>> hugepage that vmap can't
+>>
+>> Thanks
+> Sure, so we can do that for small rings.
+
+
+Yes, that's possible but should be done on top.
+
+Thanks
 
