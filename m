@@ -2,45 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A898176CAA
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 17:26:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BCDF876CF4
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 17:29:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387905AbfGZP0V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 11:26:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40266 "EHLO mail.kernel.org"
+        id S2388660AbfGZP3B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 11:29:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43566 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387867AbfGZP0R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 11:26:17 -0400
+        id S2388221AbfGZP27 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 11:28:59 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 46E2F22CBE;
-        Fri, 26 Jul 2019 15:26:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 383D3205F4;
+        Fri, 26 Jul 2019 15:28:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564154776;
-        bh=nZSVqgw+OyqqsSoivuJYlq5EHO9EKgyOIuXLfB6vaIM=;
+        s=default; t=1564154938;
+        bh=X2FF89FPtZ9iDNWY3iamf/vlsbahOtCxF9omaR74wN4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=h630sKoDb+iIstxMudBnu1QkRs03uXkLybuY3geP4Tnt+pN9fcKERrJxDbbtIRsKu
-         4cjDsS8ldhbDcs+/M3wk3Tp/RQMJ5JeeSU0MXlJMD5OcBBSLq8iSSQ3zEa86+9tbgU
-         UER00h6txEEvOnuI8+Nco2gbwv/3lEPwUQAb3fvU=
+        b=NM0qeS7NKjD9LC9LzunYITUdezB/FogNXxx7CzNe1FXCXAbXPbYiRjc/JzJ8n/jsN
+         aPn28TrhOAUBCjPDFe1gtfPP5qfCTky7FR/Eb7Zc3MijTM/atcX2VJ9J3Lr17LNIP2
+         bBfUgGPCBYLvmfHkToM9gRJEd1iwqGv07200XvBM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Andrew Prout <aprout@ll.mit.edu>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Michal Kubecek <mkubecek@suse.cz>,
-        Neal Cardwell <ncardwell@google.com>,
-        Yuchung Cheng <ycheng@google.com>,
-        Christoph Paasch <cpaasch@apple.com>,
-        Jonathan Looney <jtl@netflix.com>,
+        stable@vger.kernel.org, Florian Westphal <fw@strlen.de>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.2 23/66] tcp: be more careful in tcp_fragment()
+Subject: [PATCH 5.1 10/62] net: make skb_dst_force return true when dst is refcounted
 Date:   Fri, 26 Jul 2019 17:24:22 +0200
-Message-Id: <20190726152304.335263429@linuxfoundation.org>
+Message-Id: <20190726152302.784171823@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190726152301.936055394@linuxfoundation.org>
-References: <20190726152301.936055394@linuxfoundation.org>
+In-Reply-To: <20190726152301.720139286@linuxfoundation.org>
+References: <20190726152301.720139286@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -50,94 +43,91 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Dumazet <edumazet@google.com>
+From: Florian Westphal <fw@strlen.de>
 
-[ Upstream commit b617158dc096709d8600c53b6052144d12b89fab ]
+[ Upstream commit b60a77386b1d4868f72f6353d35dabe5fbe981f2 ]
 
-Some applications set tiny SO_SNDBUF values and expect
-TCP to just work. Recent patches to address CVE-2019-11478
-broke them in case of losses, since retransmits might
-be prevented.
+netfilter did not expect that skb_dst_force() can cause skb to lose its
+dst entry.
 
-We should allow these flows to make progress.
+I got a bug report with a skb->dst NULL dereference in netfilter
+output path.  The backtrace contains nf_reinject(), so the dst might have
+been cleared when skb got queued to userspace.
 
-This patch allows the first and last skb in retransmit queue
-to be split even if memory limits are hit.
-
-It also adds the some room due to the fact that tcp_sendmsg()
-and tcp_sendpage() might overshoot sk_wmem_queued by about one full
-TSO skb (64KB size). Note this allowance was already present
-in stable backports for kernels < 4.15
-
-Note for < 4.15 backports :
- tcp_rtx_queue_tail() will probably look like :
-
-static inline struct sk_buff *tcp_rtx_queue_tail(const struct sock *sk)
-{
-	struct sk_buff *skb = tcp_send_head(sk);
-
-	return skb ? tcp_write_queue_prev(sk, skb) : tcp_write_queue_tail(sk);
+Other users were fixed via
+if (skb_dst(skb)) {
+	skb_dst_force(skb);
+	if (!skb_dst(skb))
+		goto handle_err;
 }
 
-Fixes: f070ef2ac667 ("tcp: tcp_fragment() should apply sane memory limits")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: Andrew Prout <aprout@ll.mit.edu>
-Tested-by: Andrew Prout <aprout@ll.mit.edu>
-Tested-by: Jonathan Lemon <jonathan.lemon@gmail.com>
-Tested-by: Michal Kubecek <mkubecek@suse.cz>
-Acked-by: Neal Cardwell <ncardwell@google.com>
-Acked-by: Yuchung Cheng <ycheng@google.com>
-Acked-by: Christoph Paasch <cpaasch@apple.com>
-Cc: Jonathan Looney <jtl@netflix.com>
+But I think its preferable to make the 'dst might be cleared' part
+of the function explicit.
+
+In netfilter case, skb with a null dst is expected when queueing in
+prerouting hook, so drop skb for the other hooks.
+
+v2:
+ v1 of this patch returned true in case skb had no dst entry.
+ Eric said:
+   Say if we have two skb_dst_force() calls for some reason
+   on the same skb, only the first one will return false.
+
+ This now returns false even when skb had no dst, as per Erics
+ suggestion, so callers might need to check skb_dst() first before
+ skb_dst_force().
+
+Signed-off-by: Florian Westphal <fw@strlen.de>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/net/tcp.h     |    5 +++++
- net/ipv4/tcp_output.c |   13 +++++++++++--
- 2 files changed, 16 insertions(+), 2 deletions(-)
+ include/net/dst.h        |    5 ++++-
+ net/netfilter/nf_queue.c |    6 +++++-
+ 2 files changed, 9 insertions(+), 2 deletions(-)
 
---- a/include/net/tcp.h
-+++ b/include/net/tcp.h
-@@ -1675,6 +1675,11 @@ static inline struct sk_buff *tcp_rtx_qu
- 	return skb_rb_first(&sk->tcp_rtx_queue);
+--- a/include/net/dst.h
++++ b/include/net/dst.h
+@@ -313,8 +313,9 @@ static inline bool dst_hold_safe(struct
+  * @skb: buffer
+  *
+  * If dst is not yet refcounted and not destroyed, grab a ref on it.
++ * Returns true if dst is refcounted.
+  */
+-static inline void skb_dst_force(struct sk_buff *skb)
++static inline bool skb_dst_force(struct sk_buff *skb)
+ {
+ 	if (skb_dst_is_noref(skb)) {
+ 		struct dst_entry *dst = skb_dst(skb);
+@@ -325,6 +326,8 @@ static inline void skb_dst_force(struct
+ 
+ 		skb->_skb_refdst = (unsigned long)dst;
+ 	}
++
++	return skb->_skb_refdst != 0UL;
  }
  
-+static inline struct sk_buff *tcp_rtx_queue_tail(const struct sock *sk)
-+{
-+	return skb_rb_last(&sk->tcp_rtx_queue);
-+}
-+
- static inline struct sk_buff *tcp_write_queue_head(const struct sock *sk)
- {
- 	return skb_peek(&sk->sk_write_queue);
---- a/net/ipv4/tcp_output.c
-+++ b/net/ipv4/tcp_output.c
-@@ -1286,6 +1286,7 @@ int tcp_fragment(struct sock *sk, enum t
- 	struct tcp_sock *tp = tcp_sk(sk);
- 	struct sk_buff *buff;
- 	int nsize, old_factor;
-+	long limit;
- 	int nlen;
- 	u8 flags;
  
-@@ -1296,8 +1297,16 @@ int tcp_fragment(struct sock *sk, enum t
- 	if (nsize < 0)
- 		nsize = 0;
- 
--	if (unlikely((sk->sk_wmem_queued >> 1) > sk->sk_sndbuf &&
--		     tcp_queue != TCP_FRAG_IN_WRITE_QUEUE)) {
-+	/* tcp_sendmsg() can overshoot sk_wmem_queued by one full size skb.
-+	 * We need some allowance to not penalize applications setting small
-+	 * SO_SNDBUF values.
-+	 * Also allow first and last skb in retransmit queue to be split.
-+	 */
-+	limit = sk->sk_sndbuf + 2 * SKB_TRUESIZE(GSO_MAX_SIZE);
-+	if (unlikely((sk->sk_wmem_queued >> 1) > limit &&
-+		     tcp_queue != TCP_FRAG_IN_WRITE_QUEUE &&
-+		     skb != tcp_rtx_queue_head(sk) &&
-+		     skb != tcp_rtx_queue_tail(sk))) {
- 		NET_INC_STATS(sock_net(sk), LINUX_MIB_TCPWQUEUETOOBIG);
- 		return -ENOMEM;
+--- a/net/netfilter/nf_queue.c
++++ b/net/netfilter/nf_queue.c
+@@ -190,6 +190,11 @@ static int __nf_queue(struct sk_buff *sk
+ 		goto err;
  	}
+ 
++	if (!skb_dst_force(skb) && state->hook != NF_INET_PRE_ROUTING) {
++		status = -ENETDOWN;
++		goto err;
++	}
++
+ 	*entry = (struct nf_queue_entry) {
+ 		.skb	= skb,
+ 		.state	= *state,
+@@ -198,7 +203,6 @@ static int __nf_queue(struct sk_buff *sk
+ 	};
+ 
+ 	nf_queue_entry_get_refs(entry);
+-	skb_dst_force(skb);
+ 
+ 	switch (entry->state.pf) {
+ 	case AF_INET:
 
 
