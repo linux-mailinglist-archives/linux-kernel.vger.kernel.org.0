@@ -2,43 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD9F876ECF
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 18:20:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E8DA76EDD
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 18:21:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728653AbfGZQUi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 12:20:38 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:57068 "EHLO
+        id S1728753AbfGZQVO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 12:21:14 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:57124 "EHLO
         merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728602AbfGZQUc (ORCPT
+        with ESMTP id S1728540AbfGZQVM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 12:20:32 -0400
+        Fri, 26 Jul 2019 12:21:12 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=merlin.20170209; h=Content-Type:MIME-Version:References:
         Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
         Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
         Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=UrJfcZgXofwgL1dif08mG2dJOnGZUTf3aYEtHTl9aJ4=; b=aRUSKrqG/QdAEOpCrN11a9Mgkf
-        P3EYu4ymg991EiupLAt7zd/6h0OEgJEdjxTFX/fF/l0XWDO3yB0aXFIf5VcmAQUbjJKaa+HPhOJdo
-        TvSL2bXTG//qCAvdFTgTTM+YgezOKgYJDcPqi+io7xfkpp4ykmy9dBoLcKr4tMK7YcTZWJZ+U5qPR
-        okJBWhtVLy0hnCWnFqFyLUAUbTR9iwE/VDgyDUCnkvdZ8zoUrB0ZPrApmFaY4ST3q5z2CwSMjrAt5
-        1WwhGQKhB2/kYHAARUQtgtKiMUD6QmjoVjhLyV5ZHm/Fa/V35rVwCw9HVALQkdyacfXvBVlym2IQE
-        dd4IFCmw==;
+        bh=4LGgb/RxBmRsu5tQu/73IdPkxohqI9VwMtm6mMA9Uf0=; b=r5wATKxZkFwgTqzrQPtB6UV33n
+        prUfoOnj40W0xggTXD0EN4WC01PLcUPi00DY+OUWq7oEJNYODx9OtpjNydn5iSXbdt77LYu3mRxRB
+        a3oeDTXWc6r2M4otFj5RsRKI6i0kqZMntTH/vwHzG/Zww8/XWyGR2ja5AaliB3/vsvMA6+Cl4iZPc
+        oPqRW3tRxLI2fBJvCRuz03TFJfjQKEeyuzhawa1V32+lpS7hVIqAGKofLnhcBkguvonkk+UtUalQl
+        TNVUclUlewYgLnNUnZAPepXLD2qvPqfu3LcI2k6wZt6OgCsiwdi/MwxxJrcFKzf/r8pwFaAkd7C9D
+        SuIPvK+g==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
         by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hr2wy-00066R-3M; Fri, 26 Jul 2019 16:20:08 +0000
+        id 1hr2wy-00066T-3D; Fri, 26 Jul 2019 16:20:08 +0000
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 3FDB32022974A; Fri, 26 Jul 2019 18:20:05 +0200 (CEST)
-Message-Id: <20190726161357.397880775@infradead.org>
+        id 41BED2022974D; Fri, 26 Jul 2019 18:20:05 +0200 (CEST)
+Message-Id: <20190726161357.455421817@infradead.org>
 User-Agent: quilt/0.65
-Date:   Fri, 26 Jul 2019 16:54:10 +0200
+Date:   Fri, 26 Jul 2019 16:54:11 +0200
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     mingo@kernel.org, juri.lelli@redhat.com
 Cc:     linux-kernel@vger.kernel.org, dietmar.eggemann@arm.com,
         luca.abeni@santannapisa.it, bristot@redhat.com,
         balsini@android.com, dvyukov@google.com, tglx@linutronix.de,
-        vpillai@digitalocean.com, rostedt@goodmis.org, peterz@infradead.org
-Subject: [RFC][PATCH 01/13] sched/deadline: Impose global limits on sched_attr::sched_period
+        vpillai@digitalocean.com, rostedt@goodmis.org,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Aaron Lu <aaron.lwe@gmail.com>, keescook@chromium.org,
+        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+        Phil Auld <pauld@redhat.com>, torvalds@linux-foundation.org,
+        Tim Chen <tim.c.chen@linux.intel.com>, fweisbec@gmail.com,
+        subhra.mazumdar@oracle.com,
+        Julien Desfossez <jdesfossez@digitalocean.com>, pjt@google.com,
+        Nishanth Aravamudan <naravamudan@digitalocean.com>,
+        Aubrey Li <aubrey.intel@gmail.com>,
+        Mel Gorman <mgorman@techsingularity.net>, kerrnel@google.com,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>
+Subject: [RFC][PATCH 02/13] stop_machine: Fix stop_cpus_in_progress ordering
 References: <20190726145409.947503076@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,102 +59,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Make sure the entire for loop has stop_cpus_in_progress set.
 
-Cc: Daniel Bristot de Oliveira <bristot@redhat.com>
-Cc: Luca Abeni <luca.abeni@santannapisa.it>
-Cc: Juri Lelli <juri.lelli@redhat.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
+Cc: Valentin Schneider <valentin.schneider@arm.com>
+Cc: Aaron Lu <aaron.lwe@gmail.com>
+Cc: keescook@chromium.org
+Cc: mingo@kernel.org
+Cc: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+Cc: Phil Auld <pauld@redhat.com>
+Cc: torvalds@linux-foundation.org
+Cc: Tim Chen <tim.c.chen@linux.intel.com>
+Cc: fweisbec@gmail.com
+Cc: subhra.mazumdar@oracle.com
+Cc: tglx@linutronix.de
+Cc: Julien Desfossez <jdesfossez@digitalocean.com>
+Cc: pjt@google.com
+Cc: Nishanth Aravamudan <naravamudan@digitalocean.com>
+Cc: Aubrey Li <aubrey.intel@gmail.com>
+Cc: Mel Gorman <mgorman@techsingularity.net>
+Cc: kerrnel@google.com
+Cc: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Link: https://lkml.kernel.org/r/0fd8fd4b99b9b9aa88d8b2dff897f7fd0d88f72c.1559129225.git.vpillai@digitalocean.com
 ---
- include/linux/sched/sysctl.h |    3 +++
- kernel/sched/deadline.c      |   23 +++++++++++++++++++++--
- kernel/sysctl.c              |   14 ++++++++++++++
- 3 files changed, 38 insertions(+), 2 deletions(-)
+ kernel/stop_machine.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/include/linux/sched/sysctl.h
-+++ b/include/linux/sched/sysctl.h
-@@ -56,6 +56,9 @@ int sched_proc_update_handler(struct ctl
- extern unsigned int sysctl_sched_rt_period;
- extern int sysctl_sched_rt_runtime;
+--- a/kernel/stop_machine.c
++++ b/kernel/stop_machine.c
+@@ -383,6 +383,7 @@ static bool queue_stop_cpus_work(const s
+ 	 */
+ 	preempt_disable();
+ 	stop_cpus_in_progress = true;
++	barrier();
+ 	for_each_cpu(cpu, cpumask) {
+ 		work = &per_cpu(cpu_stopper.stop_work, cpu);
+ 		work->fn = fn;
+@@ -391,6 +392,7 @@ static bool queue_stop_cpus_work(const s
+ 		if (cpu_stop_queue_work(cpu, work))
+ 			queued = true;
+ 	}
++	barrier();
+ 	stop_cpus_in_progress = false;
+ 	preempt_enable();
  
-+extern unsigned int sysctl_sched_dl_period_max;
-+extern unsigned int sysctl_sched_dl_period_min;
-+
- #ifdef CONFIG_UCLAMP_TASK
- extern unsigned int sysctl_sched_uclamp_util_min;
- extern unsigned int sysctl_sched_uclamp_util_max;
---- a/kernel/sched/deadline.c
-+++ b/kernel/sched/deadline.c
-@@ -2597,6 +2597,14 @@ void __getparam_dl(struct task_struct *p
- }
- 
- /*
-+ * Default limits for DL period; on the top end we guard against small util
-+ * tasks still getting rediculous long effective runtimes, on the bottom end we
-+ * guard against timer DoS.
-+ */
-+unsigned int sysctl_sched_dl_period_max = 1 << 22; /* ~4 seconds */
-+unsigned int sysctl_sched_dl_period_min = 100;     /* 100 us */
-+
-+/*
-  * This function validates the new parameters of a -deadline task.
-  * We ask for the deadline not being zero, and greater or equal
-  * than the runtime, as well as the period of being zero or
-@@ -2608,6 +2616,8 @@ void __getparam_dl(struct task_struct *p
-  */
- bool __checkparam_dl(const struct sched_attr *attr)
- {
-+	u64 period, max, min;
-+
- 	/* special dl tasks don't actually use any parameter */
- 	if (attr->sched_flags & SCHED_FLAG_SUGOV)
- 		return true;
-@@ -2631,12 +2641,21 @@ bool __checkparam_dl(const struct sched_
- 	    attr->sched_period & (1ULL << 63))
- 		return false;
- 
-+	period = attr->sched_period;
-+	if (!period)
-+		period = attr->sched_deadline;
-+
- 	/* runtime <= deadline <= period (if period != 0) */
--	if ((attr->sched_period != 0 &&
--	     attr->sched_period < attr->sched_deadline) ||
-+	if (period < attr->sched_deadline ||
- 	    attr->sched_deadline < attr->sched_runtime)
- 		return false;
- 
-+	max = (u64)READ_ONCE(sysctl_sched_dl_period_max) * NSEC_PER_USEC;
-+	min = (u64)READ_ONCE(sysctl_sched_dl_period_min) * NSEC_PER_USEC;
-+
-+	if (period < min || period > max)
-+		return false;
-+
- 	return true;
- }
- 
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -443,6 +443,20 @@ static struct ctl_table kern_table[] = {
- 		.proc_handler	= sched_rt_handler,
- 	},
- 	{
-+		.procname	= "sched_deadline_period_max_us",
-+		.data		= &sysctl_sched_dl_period_max,
-+		.maxlen		= sizeof(unsigned int),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dointvec,
-+	},
-+	{
-+		.procname	= "sched_deadline_period_min_us",
-+		.data		= &sysctl_sched_dl_period_min,
-+		.maxlen		= sizeof(unsigned int),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dointvec,
-+	},
-+	{
- 		.procname	= "sched_rr_timeslice_ms",
- 		.data		= &sysctl_sched_rr_timeslice,
- 		.maxlen		= sizeof(int),
 
 
