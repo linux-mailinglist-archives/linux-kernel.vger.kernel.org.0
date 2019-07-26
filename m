@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60E7676D88
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 17:35:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5112B76D3E
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 17:32:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389827AbfGZPeV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 11:34:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49894 "EHLO mail.kernel.org"
+        id S2389366AbfGZPcB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 11:32:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46994 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389805AbfGZPeP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 11:34:15 -0400
+        id S2388577AbfGZPby (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 11:31:54 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 07E48218D4;
-        Fri, 26 Jul 2019 15:34:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D366922CD1;
+        Fri, 26 Jul 2019 15:31:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564155254;
-        bh=9Vs9GVRd9TJQm5SDEB14JCe59/uTBsjFm7m7oH9GKzU=;
+        s=default; t=1564155113;
+        bh=H+PFAhJnfasRI2CQQwAOMPBazNoKG0UptdFUcKC+uqs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FSFa0zOgwQqn5mCd3FWgAuifDJH4yB4hgaUzsrA8t/IPr0KnLrd2sy/DvCGpteQ82
-         Acwsm/MaOonzbtc/AtZETqN/CEJ4DQIvMhtKk3xQ844vaYQCko5NSB4JUj8sG+x64B
-         LcF0hhtSXJonNtTR0q35arxFE/gZOO1gGYX0jhDI=
+        b=qIsx4s1yyGIJzMObshp0+zJc+NZFmGitfuwY8jL61moxe/F+/eTXoLqZ1ZM1g9ZaL
+         +TSoGa6M9TCCusgYp07GH4Ks5BHhKq/JbZGbtphTdR4PLZXoou3ZwDLxypsxnxrtbS
+         73tWcWgvc5NjDpv74gud8LQMuanx2YTZMuZ1NQnM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 34/50] net: bridge: dont cache ether dest pointer on input
-Date:   Fri, 26 Jul 2019 17:25:09 +0200
-Message-Id: <20190726152304.139481279@linuxfoundation.org>
+        stable@vger.kernel.org, Jan Kiszka <jan.kiszka@siemens.com>,
+        Liran Alon <liran.alon@oracle.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 5.1 58/62] KVM: nVMX: Clear pending KVM_REQ_GET_VMCS12_PAGES when leaving nested
+Date:   Fri, 26 Jul 2019 17:25:10 +0200
+Message-Id: <20190726152308.052374385@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190726152300.760439618@linuxfoundation.org>
-References: <20190726152300.760439618@linuxfoundation.org>
+In-Reply-To: <20190726152301.720139286@linuxfoundation.org>
+References: <20190726152301.720139286@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,56 +44,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+From: Jan Kiszka <jan.kiszka@siemens.com>
 
-[ Upstream commit 3d26eb8ad1e9b906433903ce05f775cf038e747f ]
+commit cf64527bb33f6cec2ed50f89182fc4688d0056b6 upstream.
 
-We would cache ether dst pointer on input in br_handle_frame_finish but
-after the neigh suppress code that could lead to a stale pointer since
-both ipv4 and ipv6 suppress code do pskb_may_pull. This means we have to
-always reload it after the suppress code so there's no point in having
-it cached just retrieve it directly.
+Letting this pend may cause nested_get_vmcs12_pages to run against an
+invalid state, corrupting the effective vmcs of L1.
 
-Fixes: 057658cb33fbf ("bridge: suppress arp pkts on BR_NEIGH_SUPPRESS ports")
-Fixes: ed842faeb2bd ("bridge: suppress nd pkts on BR_NEIGH_SUPPRESS ports")
-Signed-off-by: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+This was triggerable in QEMU after a guest corruption in L2, followed by
+a L1 reset.
+
+Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+Reviewed-by: Liran Alon <liran.alon@oracle.com>
+Cc: stable@vger.kernel.org
+Fixes: 7f7f1ba33cf2 ("KVM: x86: do not load vmcs12 pages while still in SMM")
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/bridge/br_input.c |    8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
 
---- a/net/bridge/br_input.c
-+++ b/net/bridge/br_input.c
-@@ -79,7 +79,6 @@ int br_handle_frame_finish(struct net *n
- 	struct net_bridge_fdb_entry *dst = NULL;
- 	struct net_bridge_mdb_entry *mdst;
- 	bool local_rcv, mcast_hit = false;
--	const unsigned char *dest;
- 	struct net_bridge *br;
- 	u16 vid = 0;
+---
+ arch/x86/kvm/vmx/nested.c |    2 ++
+ 1 file changed, 2 insertions(+)
+
+--- a/arch/x86/kvm/vmx/nested.c
++++ b/arch/x86/kvm/vmx/nested.c
+@@ -212,6 +212,8 @@ static void free_nested(struct kvm_vcpu
+ 	if (!vmx->nested.vmxon && !vmx->nested.smm.vmxon)
+ 		return;
  
-@@ -97,10 +96,9 @@ int br_handle_frame_finish(struct net *n
- 		br_fdb_update(br, p, eth_hdr(skb)->h_source, vid, false);
- 
- 	local_rcv = !!(br->dev->flags & IFF_PROMISC);
--	dest = eth_hdr(skb)->h_dest;
--	if (is_multicast_ether_addr(dest)) {
-+	if (is_multicast_ether_addr(eth_hdr(skb)->h_dest)) {
- 		/* by definition the broadcast is also a multicast address */
--		if (is_broadcast_ether_addr(dest)) {
-+		if (is_broadcast_ether_addr(eth_hdr(skb)->h_dest)) {
- 			pkt_type = BR_PKT_BROADCAST;
- 			local_rcv = true;
- 		} else {
-@@ -150,7 +148,7 @@ int br_handle_frame_finish(struct net *n
- 		}
- 		break;
- 	case BR_PKT_UNICAST:
--		dst = br_fdb_find_rcu(br, dest, vid);
-+		dst = br_fdb_find_rcu(br, eth_hdr(skb)->h_dest, vid);
- 	default:
- 		break;
- 	}
++	kvm_clear_request(KVM_REQ_GET_VMCS12_PAGES, vcpu);
++
+ 	vmx->nested.vmxon = false;
+ 	vmx->nested.smm.vmxon = false;
+ 	free_vpid(vmx->nested.vpid02);
 
 
