@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59BF076D2B
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 17:31:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 248FC76DEE
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 17:40:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389259AbfGZPbT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 11:31:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46232 "EHLO mail.kernel.org"
+        id S2387987AbfGZP0g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 11:26:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40530 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389243AbfGZPbQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 11:31:16 -0400
+        id S2387894AbfGZP0b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 11:26:31 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6B1A322BF5;
-        Fri, 26 Jul 2019 15:31:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 021A5218D4;
+        Fri, 26 Jul 2019 15:26:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564155075;
-        bh=p2jxfemamL9OThkkkhp5Ka0e+Tn3mOYTKn4IIiywrSo=;
+        s=default; t=1564154790;
+        bh=pd60Bu+4T99eUyvmjTQ7cnpMlotfylLzNV1ScSYiIAc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HtM9E1JJ+pmzspkD09T8DahH6v0myefvbzWOwdKp98SQtvODnOqLHBJcEBYytTL0+
-         xODiwhvrsr26R6VbLaCwBrOGPvHtF4on+1Mza9pPGz7v6oR70FtzSFLVSNo9Rhcyk2
-         2m7kSgP0c6gaU5tI36tmRcmBiyHo3yhBGup56/0Y=
+        b=Sd1vgeraQ3ZgU1/GRtWLGoKGS0sAErjZzhJzOUUlsvFeWEoQvJj80RyMoTj25kbL/
+         VsiKVuBBPRke3GnISZgUoU/LIMmdNG1Fw9fTo71fjKtItN+3k4mlhbGVdcDOZj3LRS
+         h64FNPMcDNzO8SeUn/pmwUvjac1iL8MshrhR3TDY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, John Hurley <john.hurley@netronome.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Simon Horman <simon.horman@netronome.com>,
-        Pravin B Shelar <pshelar@ovn.org>,
+        stable@vger.kernel.org, Peter Kosyh <p.kosyh@gmail.com>,
+        David Ahern <dsa@cumulusnetworks.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.1 12/62] net: openvswitch: fix csum updates for MPLS actions
-Date:   Fri, 26 Jul 2019 17:24:24 +0200
-Message-Id: <20190726152302.979936500@linuxfoundation.org>
+Subject: [PATCH 5.2 26/66] vrf: make sure skb->data contains ip header to make routing
+Date:   Fri, 26 Jul 2019 17:24:25 +0200
+Message-Id: <20190726152304.649964258@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190726152301.720139286@linuxfoundation.org>
-References: <20190726152301.720139286@linuxfoundation.org>
+In-Reply-To: <20190726152301.936055394@linuxfoundation.org>
+References: <20190726152301.936055394@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,73 +44,113 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: John Hurley <john.hurley@netronome.com>
+From: Peter Kosyh <p.kosyh@gmail.com>
 
-[ Upstream commit 0e3183cd2a64843a95b62f8bd4a83605a4cf0615 ]
+[ Upstream commit 107e47cc80ec37cb332bd41b22b1c7779e22e018 ]
 
-Skbs may have their checksum value populated by HW. If this is a checksum
-calculated over the entire packet then the CHECKSUM_COMPLETE field is
-marked. Changes to the data pointer on the skb throughout the network
-stack still try to maintain this complete csum value if it is required
-through functions such as skb_postpush_rcsum.
+vrf_process_v4_outbound() and vrf_process_v6_outbound() do routing
+using ip/ipv6 addresses, but don't make sure the header is available
+in skb->data[] (skb_headlen() is less then header size).
 
-The MPLS actions in Open vSwitch modify a CHECKSUM_COMPLETE value when
-changes are made to packet data without a push or a pull. This occurs when
-the ethertype of the MAC header is changed or when MPLS lse fields are
-modified.
+Case:
 
-The modification is carried out using the csum_partial function to get the
-csum of a buffer and add it into the larger checksum. The buffer is an
-inversion of the data to be removed followed by the new data. Because the
-csum is calculated over 16 bits and these values align with 16 bits, the
-effect is the removal of the old value from the CHECKSUM_COMPLETE and
-addition of the new value.
+1) igb driver from intel.
+2) Packet size is greater then 255.
+3) MPLS forwards to VRF device.
 
-However, the csum fed into the function and the outcome of the
-calculation are also inverted. This would only make sense if it was the
-new value rather than the old that was inverted in the input buffer.
+So, patch adds pskb_may_pull() calls in vrf_process_v4/v6_outbound()
+functions.
 
-Fix the issue by removing the bit inverts in the csum_partial calculation.
-
-The bug was verified and the fix tested by comparing the folded value of
-the updated CHECKSUM_COMPLETE value with the folded value of a full
-software checksum calculation (reset skb->csum to 0 and run
-skb_checksum_complete(skb)). Prior to the fix the outcomes differed but
-after they produce the same result.
-
-Fixes: 25cd9ba0abc0 ("openvswitch: Add basic MPLS support to kernel")
-Fixes: bc7cc5999fd3 ("openvswitch: update checksum in {push,pop}_mpls")
-Signed-off-by: John Hurley <john.hurley@netronome.com>
-Reviewed-by: Jakub Kicinski <jakub.kicinski@netronome.com>
-Reviewed-by: Simon Horman <simon.horman@netronome.com>
-Acked-by: Pravin B Shelar <pshelar@ovn.org>
+Signed-off-by: Peter Kosyh <p.kosyh@gmail.com>
+Reviewed-by: David Ahern <dsa@cumulusnetworks.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/openvswitch/actions.c |    6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/net/vrf.c |   58 ++++++++++++++++++++++++++++++++----------------------
+ 1 file changed, 35 insertions(+), 23 deletions(-)
 
---- a/net/openvswitch/actions.c
-+++ b/net/openvswitch/actions.c
-@@ -175,8 +175,7 @@ static void update_ethertype(struct sk_b
- 	if (skb->ip_summed == CHECKSUM_COMPLETE) {
- 		__be16 diff[] = { ~(hdr->h_proto), ethertype };
+--- a/drivers/net/vrf.c
++++ b/drivers/net/vrf.c
+@@ -165,23 +165,29 @@ static int vrf_ip6_local_out(struct net
+ static netdev_tx_t vrf_process_v6_outbound(struct sk_buff *skb,
+ 					   struct net_device *dev)
+ {
+-	const struct ipv6hdr *iph = ipv6_hdr(skb);
++	const struct ipv6hdr *iph;
+ 	struct net *net = dev_net(skb->dev);
+-	struct flowi6 fl6 = {
+-		/* needed to match OIF rule */
+-		.flowi6_oif = dev->ifindex,
+-		.flowi6_iif = LOOPBACK_IFINDEX,
+-		.daddr = iph->daddr,
+-		.saddr = iph->saddr,
+-		.flowlabel = ip6_flowinfo(iph),
+-		.flowi6_mark = skb->mark,
+-		.flowi6_proto = iph->nexthdr,
+-		.flowi6_flags = FLOWI_FLAG_SKIP_NH_OIF,
+-	};
++	struct flowi6 fl6;
+ 	int ret = NET_XMIT_DROP;
+ 	struct dst_entry *dst;
+ 	struct dst_entry *dst_null = &net->ipv6.ip6_null_entry->dst;
  
--		skb->csum = ~csum_partial((char *)diff, sizeof(diff),
--					~skb->csum);
-+		skb->csum = csum_partial((char *)diff, sizeof(diff), skb->csum);
- 	}
++	if (!pskb_may_pull(skb, ETH_HLEN + sizeof(struct ipv6hdr)))
++		goto err;
++
++	iph = ipv6_hdr(skb);
++
++	memset(&fl6, 0, sizeof(fl6));
++	/* needed to match OIF rule */
++	fl6.flowi6_oif = dev->ifindex;
++	fl6.flowi6_iif = LOOPBACK_IFINDEX;
++	fl6.daddr = iph->daddr;
++	fl6.saddr = iph->saddr;
++	fl6.flowlabel = ip6_flowinfo(iph);
++	fl6.flowi6_mark = skb->mark;
++	fl6.flowi6_proto = iph->nexthdr;
++	fl6.flowi6_flags = FLOWI_FLAG_SKIP_NH_OIF;
++
+ 	dst = ip6_route_output(net, NULL, &fl6);
+ 	if (dst == dst_null)
+ 		goto err;
+@@ -237,21 +243,27 @@ static int vrf_ip_local_out(struct net *
+ static netdev_tx_t vrf_process_v4_outbound(struct sk_buff *skb,
+ 					   struct net_device *vrf_dev)
+ {
+-	struct iphdr *ip4h = ip_hdr(skb);
++	struct iphdr *ip4h;
+ 	int ret = NET_XMIT_DROP;
+-	struct flowi4 fl4 = {
+-		/* needed to match OIF rule */
+-		.flowi4_oif = vrf_dev->ifindex,
+-		.flowi4_iif = LOOPBACK_IFINDEX,
+-		.flowi4_tos = RT_TOS(ip4h->tos),
+-		.flowi4_flags = FLOWI_FLAG_ANYSRC | FLOWI_FLAG_SKIP_NH_OIF,
+-		.flowi4_proto = ip4h->protocol,
+-		.daddr = ip4h->daddr,
+-		.saddr = ip4h->saddr,
+-	};
++	struct flowi4 fl4;
+ 	struct net *net = dev_net(vrf_dev);
+ 	struct rtable *rt;
  
- 	hdr->h_proto = ethertype;
-@@ -268,8 +267,7 @@ static int set_mpls(struct sk_buff *skb,
- 	if (skb->ip_summed == CHECKSUM_COMPLETE) {
- 		__be32 diff[] = { ~(stack->label_stack_entry), lse };
- 
--		skb->csum = ~csum_partial((char *)diff, sizeof(diff),
--					  ~skb->csum);
-+		skb->csum = csum_partial((char *)diff, sizeof(diff), skb->csum);
- 	}
- 
- 	stack->label_stack_entry = lse;
++	if (!pskb_may_pull(skb, ETH_HLEN + sizeof(struct iphdr)))
++		goto err;
++
++	ip4h = ip_hdr(skb);
++
++	memset(&fl4, 0, sizeof(fl4));
++	/* needed to match OIF rule */
++	fl4.flowi4_oif = vrf_dev->ifindex;
++	fl4.flowi4_iif = LOOPBACK_IFINDEX;
++	fl4.flowi4_tos = RT_TOS(ip4h->tos);
++	fl4.flowi4_flags = FLOWI_FLAG_ANYSRC | FLOWI_FLAG_SKIP_NH_OIF;
++	fl4.flowi4_proto = ip4h->protocol;
++	fl4.daddr = ip4h->daddr;
++	fl4.saddr = ip4h->saddr;
++
+ 	rt = ip_route_output_flow(net, &fl4, NULL);
+ 	if (IS_ERR(rt))
+ 		goto err;
 
 
