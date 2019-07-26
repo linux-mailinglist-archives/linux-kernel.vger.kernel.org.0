@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50F16767D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 15:40:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 079C9767D4
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 15:40:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387405AbfGZNkR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 09:40:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46234 "EHLO mail.kernel.org"
+        id S2387434AbfGZNkV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 09:40:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46254 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726959AbfGZNkP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 09:40:15 -0400
+        id S2387395AbfGZNkQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 09:40:16 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B6FD222BF5;
-        Fri, 26 Jul 2019 13:40:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A657522C7E;
+        Fri, 26 Jul 2019 13:40:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564148414;
-        bh=QeoPHraVr2x2y4+V98xcIycETXfpfC6HcAE7vAPZXDk=;
+        s=default; t=1564148415;
+        bh=IWPjRJPgu9wPEVwBoAVPhkgA4Xv50ieDzkNLxVqxltA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=e55tGN7WCyBW6fiAV8LNrBxJAZw5xq88jcFJG+8eZyVQG4sSQ1uzej3RaGXAzZSri
-         ZIqaM+xLngc9dkhWJzNU4/7H2hu6WjLwdE49OWK02C3rmvuua8TjkMK8BIv0Kdz95l
-         Vg/q+c9cf5CBbTd/vQcuunQVJUgAA7gHvsRDA06k=
+        b=BHrUZQvZLuSZ++uhz3iLeuuq9Mzk1oiLe1sq3XdACcFtIWa2DqhpUqU8SFhaim89X
+         XB0C7WWbeyknQkLzJqn54ejkuN/YQb4pCABInAHITYxFo3mEkUhsJNL+UFdXMyrbqm
+         uss5TM1XzdoWwDFIpXgt+r9PYGrgi0BSGhayS0ak=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.2 21/85] ARM: exynos: Only build MCPM support if used
-Date:   Fri, 26 Jul 2019 09:38:31 -0400
-Message-Id: <20190726133936.11177-21-sashal@kernel.org>
+Cc:     JC Kuo <jckuo@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.2 22/85] clk: tegra210: fix PLLU and PLLU_OUT1
+Date:   Fri, 26 Jul 2019 09:38:32 -0400
+Message-Id: <20190726133936.11177-22-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190726133936.11177-1-sashal@kernel.org>
 References: <20190726133936.11177-1-sashal@kernel.org>
@@ -43,97 +45,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: JC Kuo <jckuo@nvidia.com>
 
-[ Upstream commit 24d2c73ff28bcda48607eacc4bc804002dbf78d9 ]
+[ Upstream commit 0d34dfbf3023cf119b83f6470692c0b10c832495 ]
 
-We get a link error for configurations that enable an Exynos
-SoC that does not require MCPM, but then manually enable
-MCPM anyway without also turning on the arm-cci:
+Full-speed and low-speed USB devices do not work with Tegra210
+platforms because of incorrect PLLU/PLLU_OUT1 clock settings.
 
-arch/arm/mach-exynos/mcpm-exynos.o: In function `exynos_pm_power_up_setup':
-mcpm-exynos.c:(.text+0x8): undefined reference to `cci_enable_port_for_self'
+When full-speed device is connected:
+[   14.059886] usb 1-3: new full-speed USB device number 2 using tegra-xusb
+[   14.196295] usb 1-3: device descriptor read/64, error -71
+[   14.436311] usb 1-3: device descriptor read/64, error -71
+[   14.675749] usb 1-3: new full-speed USB device number 3 using tegra-xusb
+[   14.812335] usb 1-3: device descriptor read/64, error -71
+[   15.052316] usb 1-3: device descriptor read/64, error -71
+[   15.164799] usb usb1-port3: attempt power cycle
 
-Change it back to only build the code we actually need, by
-introducing a CONFIG_EXYNOS_MCPM that serves the same purpose
-as the older CONFIG_EXYNOS5420_MCPM.
+When low-speed device is connected:
+[   37.610949] usb usb1-port3: Cannot enable. Maybe the USB cable is bad?
+[   38.557376] usb usb1-port3: Cannot enable. Maybe the USB cable is bad?
+[   38.564977] usb usb1-port3: attempt power cycle
 
-Fixes: 2997520c2d4e ("ARM: exynos: Set MCPM as mandatory for Exynos542x/5800 SoCs")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+This commit fixes the issue by:
+ 1. initializing PLLU_OUT1 before initializing XUSB_FS_SRC clock
+    because PLLU_OUT1 is parent of XUSB_FS_SRC.
+ 2. changing PLLU post-divider to /2 (DIVP=1) according to Technical
+    Reference Manual.
+
+Fixes: e745f992cf4b ("clk: tegra: Rework pll_u")
+Signed-off-by: JC Kuo <jckuo@nvidia.com>
+Acked-By: Peter De Schrijver <pdeschrijver@nvidia.com>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/mach-exynos/Kconfig   | 6 +++++-
- arch/arm/mach-exynos/Makefile  | 2 +-
- arch/arm/mach-exynos/suspend.c | 6 +++---
- 3 files changed, 9 insertions(+), 5 deletions(-)
+ drivers/clk/tegra/clk-tegra210.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-index 1c518b8ee520..21a59efd1a2c 100644
---- a/arch/arm/mach-exynos/Kconfig
-+++ b/arch/arm/mach-exynos/Kconfig
-@@ -106,7 +106,7 @@ config SOC_EXYNOS5420
- 	bool "SAMSUNG EXYNOS5420"
- 	default y
- 	depends on ARCH_EXYNOS5
--	select MCPM if SMP
-+	select EXYNOS_MCPM if SMP
- 	select ARM_CCI400_PORT_CTRL
- 	select ARM_CPU_SUSPEND
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index ac1d27a8c650..e5470a6bbf55 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -2204,9 +2204,9 @@ static struct div_nmp pllu_nmp = {
+ };
  
-@@ -115,6 +115,10 @@ config SOC_EXYNOS5800
- 	default y
- 	depends on SOC_EXYNOS5420
+ static struct tegra_clk_pll_freq_table pll_u_freq_table[] = {
+-	{ 12000000, 480000000, 40, 1, 0, 0 },
+-	{ 13000000, 480000000, 36, 1, 0, 0 }, /* actual: 468.0 MHz */
+-	{ 38400000, 480000000, 25, 2, 0, 0 },
++	{ 12000000, 480000000, 40, 1, 1, 0 },
++	{ 13000000, 480000000, 36, 1, 1, 0 }, /* actual: 468.0 MHz */
++	{ 38400000, 480000000, 25, 2, 1, 0 },
+ 	{        0,         0,  0, 0, 0, 0 },
+ };
  
-+config EXYNOS_MCPM
-+	bool
-+	select MCPM
-+
- config EXYNOS_CPU_SUSPEND
- 	bool
- 	select ARM_CPU_SUSPEND
-diff --git a/arch/arm/mach-exynos/Makefile b/arch/arm/mach-exynos/Makefile
-index 264dbaa89c3d..5abf3db23912 100644
---- a/arch/arm/mach-exynos/Makefile
-+++ b/arch/arm/mach-exynos/Makefile
-@@ -18,5 +18,5 @@ plus_sec := $(call as-instr,.arch_extension sec,+sec)
- AFLAGS_exynos-smc.o		:=-Wa,-march=armv7-a$(plus_sec)
- AFLAGS_sleep.o			:=-Wa,-march=armv7-a$(plus_sec)
- 
--obj-$(CONFIG_MCPM)		+= mcpm-exynos.o
-+obj-$(CONFIG_EXYNOS_MCPM)	+= mcpm-exynos.o
- CFLAGS_mcpm-exynos.o		+= -march=armv7-a
-diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
-index be122af0de8f..8b1e6ab8504f 100644
---- a/arch/arm/mach-exynos/suspend.c
-+++ b/arch/arm/mach-exynos/suspend.c
-@@ -268,7 +268,7 @@ static int exynos5420_cpu_suspend(unsigned long arg)
- 	unsigned int cluster = MPIDR_AFFINITY_LEVEL(mpidr, 1);
- 	unsigned int cpu = MPIDR_AFFINITY_LEVEL(mpidr, 0);
- 
--	if (IS_ENABLED(CONFIG_MCPM)) {
-+	if (IS_ENABLED(CONFIG_EXYNOS_MCPM)) {
- 		mcpm_set_entry_vector(cpu, cluster, exynos_cpu_resume);
- 		mcpm_cpu_suspend();
- 	}
-@@ -351,7 +351,7 @@ static void exynos5420_pm_prepare(void)
- 	exynos_pm_enter_sleep_mode();
- 
- 	/* ensure at least INFORM0 has the resume address */
--	if (IS_ENABLED(CONFIG_MCPM))
-+	if (IS_ENABLED(CONFIG_EXYNOS_MCPM))
- 		pmu_raw_writel(__pa_symbol(mcpm_entry_point), S5P_INFORM0);
- 
- 	tmp = pmu_raw_readl(EXYNOS_L2_OPTION(0));
-@@ -455,7 +455,7 @@ static void exynos5420_prepare_pm_resume(void)
- 	mpidr = read_cpuid_mpidr();
- 	cluster = MPIDR_AFFINITY_LEVEL(mpidr, 1);
- 
--	if (IS_ENABLED(CONFIG_MCPM))
-+	if (IS_ENABLED(CONFIG_EXYNOS_MCPM))
- 		WARN_ON(mcpm_cpu_powered_up());
- 
- 	if (IS_ENABLED(CONFIG_HW_PERF_EVENTS) && cluster != 0) {
+@@ -3333,6 +3333,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
+ 	{ TEGRA210_CLK_DFLL_REF, TEGRA210_CLK_PLL_P, 51000000, 1 },
+ 	{ TEGRA210_CLK_SBC4, TEGRA210_CLK_PLL_P, 12000000, 1 },
+ 	{ TEGRA210_CLK_PLL_RE_VCO, TEGRA210_CLK_CLK_MAX, 672000000, 1 },
++	{ TEGRA210_CLK_PLL_U_OUT1, TEGRA210_CLK_CLK_MAX, 48000000, 1 },
+ 	{ TEGRA210_CLK_XUSB_GATE, TEGRA210_CLK_CLK_MAX, 0, 1 },
+ 	{ TEGRA210_CLK_XUSB_SS_SRC, TEGRA210_CLK_PLL_U_480M, 120000000, 0 },
+ 	{ TEGRA210_CLK_XUSB_FS_SRC, TEGRA210_CLK_PLL_U_48M, 48000000, 0 },
+@@ -3357,7 +3358,6 @@ static struct tegra_clk_init_table init_table[] __initdata = {
+ 	{ TEGRA210_CLK_PLL_DP, TEGRA210_CLK_CLK_MAX, 270000000, 0 },
+ 	{ TEGRA210_CLK_SOC_THERM, TEGRA210_CLK_PLL_P, 51000000, 0 },
+ 	{ TEGRA210_CLK_CCLK_G, TEGRA210_CLK_CLK_MAX, 0, 1 },
+-	{ TEGRA210_CLK_PLL_U_OUT1, TEGRA210_CLK_CLK_MAX, 48000000, 1 },
+ 	{ TEGRA210_CLK_PLL_U_OUT2, TEGRA210_CLK_CLK_MAX, 60000000, 1 },
+ 	{ TEGRA210_CLK_SPDIF_IN_SYNC, TEGRA210_CLK_CLK_MAX, 24576000, 0 },
+ 	{ TEGRA210_CLK_I2S0_SYNC, TEGRA210_CLK_CLK_MAX, 24576000, 0 },
 -- 
 2.20.1
 
