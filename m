@@ -2,64 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ADF47762D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 11:55:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1AA22762E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 11:57:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726138AbfGZJzg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 05:55:36 -0400
-Received: from honk.sigxcpu.org ([24.134.29.49]:60256 "EHLO honk.sigxcpu.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725815AbfGZJzg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 05:55:36 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by honk.sigxcpu.org (Postfix) with ESMTP id 30FD3FB03;
-        Fri, 26 Jul 2019 11:55:35 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at honk.sigxcpu.org
-Received: from honk.sigxcpu.org ([127.0.0.1])
-        by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id KjqHBg3sjT4T; Fri, 26 Jul 2019 11:55:34 +0200 (CEST)
-Received: by bogon.sigxcpu.org (Postfix, from userid 1000)
-        id 2240D46AA1; Fri, 26 Jul 2019 11:55:34 +0200 (CEST)
-From:   =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>
-To:     Jonathan Corbet <corbet@lwn.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] docs: phy: Drop duplicate 'be made'
-Date:   Fri, 26 Jul 2019 11:55:34 +0200
-Message-Id: <37eecffe6ecd9d64bfdb57a32f34b2c0805dd754.1564134855.git.agx@sigxcpu.org>
-X-Mailer: git-send-email 2.20.1
+        id S1726183AbfGZJ5q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 05:57:46 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:34308 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725815AbfGZJ5q (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 05:57:46 -0400
+Received: by mail-qt1-f196.google.com with SMTP id k10so52062515qtq.1;
+        Fri, 26 Jul 2019 02:57:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/iufb0TTF1GAeZGPOnqhrgxVKxrEycW/hHzn4npZ/Lk=;
+        b=G722eRD8jWAb3CJJzKki0E0uH1a8sQkU4UrBTT9nwheBdXXZ/Zip0wP4BcLHBs0tqw
+         F/j57OTGVO9vYXlShXw2Q2OSIoXkpTnL3b3gkZBoiCtFuJ8B0uEPjStXR10ewQgCD+T2
+         fpe9SA36WLUDEbXfHfQDtmwDtOVaEVaz0mWH8Frh1zS51/PBkfTam/jCDBWOZvgVILlO
+         Qz4Fwwjy9RdkVMyXSiZQk4A7bw/IDyBOQKEN3BC+VOZHT2V6uIsTG/GEiHS9p+quzQJP
+         DFowklglHyEf/alNDoyEG2k+iAdyfO78TR9t+X0Vpu2ehcFXztyg21Vh7tfo/JDob1wf
+         2iUA==
+X-Gm-Message-State: APjAAAU8UFKSKF0VNmY/fKNuW++Y12Yc9nfGy9VAYVga0BBrb94EkYuf
+        iQIR06EOCQ00twok+U3g6vQYWSYe9NYxzxXD6W88uYlB
+X-Google-Smtp-Source: APXvYqx8077dqguPqEFI6+OlyN3ofw5NkRSHCv3ii7U127hZoYr0bYgeSV/phYbejddupJV+eJ/33u2deWUNPfAQvk8=
+X-Received: by 2002:aed:33a4:: with SMTP id v33mr63995596qtd.18.1564135065054;
+ Fri, 26 Jul 2019 02:57:45 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20190724144651.28272-1-christian@brauner.io> <20190724144651.28272-3-christian@brauner.io>
+ <CAK8P3a0+3wqCzQv-A-QmWTtioFRGjYUvq6QiLysqi9OFs3kJsw@mail.gmail.com> <20190726082413.n7srvcrqxmvk67z7@brauner.io>
+In-Reply-To: <20190726082413.n7srvcrqxmvk67z7@brauner.io>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 26 Jul 2019 11:57:28 +0200
+Message-ID: <CAK8P3a3VK77OvRPY-nozEGbcfHks6YdcyE7cY_2UEN9nfy=hRg@mail.gmail.com>
+Subject: Re: [PATCH 2/5] pidfd: add pidfd_wait()
+To:     Christian Brauner <christian@brauner.io>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Kees Cook <keescook@chromium.org>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tejun Heo <tj@kernel.org>, David Howells <dhowells@redhat.com>,
+        Jann Horn <jannh@google.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Android Kernel Team <kernel-team@android.com>,
+        Linux API <linux-api@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix duplicate words.
+On Fri, Jul 26, 2019 at 10:24 AM Christian Brauner <christian@brauner.io> wrote:
+>
+> > It would be nice to introduce it in a separate patch, and then use it
+> > to kill off
+> > compat_sys_getrusage() and compat_sys_wait4(), and possibly even
+> > compat_sys_waitid() in combination with your copy_siginfo_to_user_any().
+> > That could be done as a cleanup patch afterwards, or as part of your series.
+>
+> Right, but we won't go the syscall route but instead go the P_PIDFD
+> route for waitid(). :)
 
-Signed-off-by: Guido Günther <agx@sigxcpu.org>
----
-Noticed on next-20190725.
+Ah, of course, nevermind then. It would still be a useful cleanup, but
+many other things would be as well.
 
- Documentation/driver-api/phy/phy.rst | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/driver-api/phy/phy.rst b/Documentation/driver-api/phy/phy.rst
-index 457c3e0f86d6..8fc1ce0bb905 100644
---- a/Documentation/driver-api/phy/phy.rst
-+++ b/Documentation/driver-api/phy/phy.rst
-@@ -179,8 +179,8 @@ PHY Mappings
- 
- In order to get reference to a PHY without help from DeviceTree, the framework
- offers lookups which can be compared to clkdev that allow clk structures to be
--bound to devices. A lookup can be made be made during runtime when a handle to
--the struct phy already exists.
-+bound to devices. A lookup can be made during runtime when a handle to the
-+struct phy already exists.
- 
- The framework offers the following API for registering and unregistering the
- lookups::
--- 
-2.20.1
-
+      Arnd
