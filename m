@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72ACD76D4D
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 17:33:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1921D76D26
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 17:31:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389539AbfGZPcn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 11:32:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47924 "EHLO mail.kernel.org"
+        id S2389173AbfGZPa7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 11:30:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45764 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387859AbfGZPcl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 11:32:41 -0400
+        id S2389146AbfGZPat (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 11:30:49 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5CD0B218D4;
-        Fri, 26 Jul 2019 15:32:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3F87B205F4;
+        Fri, 26 Jul 2019 15:30:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564155160;
-        bh=ilr3yYVnfkadw0BIMkVASEXZzFIXHCS7okPRCA9hKv8=;
+        s=default; t=1564155048;
+        bh=TtIz97idgvK/ebngtPfSIyiQsgALKx7b8XEflyfLeM4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RUXfDANOkmcytADa0VJb46cFhKerjXltrkW3EkSSNDWaKWJT4Vg4wMIezkxGbNLka
-         fK9EXUG/YnX+gB7bfHiyzqQe4ygwo+q2vS0x3ux0bUiTZmDUccB7qrMYAMjUB0oxhD
-         y21dZ52kYkWHqGVNSD3Gv5UbM702xY61bTH4cRFg=
+        b=Wh8t8mNQC15XbX9VQfJQjN8Ju5jMJ6l6PtNd1JHLiXb+86+HuL3TKPbrMK301QRSN
+         wuP5tUPZ2XSpg/WILIEBmj/5hMkFpuNyJ/ecqsRmeoPdKZeI5k8Pvzr0iP2ADD58/V
+         WsXNIOC546iQpN5G+d/JbpT1ZX7x+AsqVYpJGqz0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Christoph Paasch <cpaasch@apple.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 22/50] tcp: Reset bytes_acked and bytes_received when disconnecting
-Date:   Fri, 26 Jul 2019 17:24:57 +0200
-Message-Id: <20190726152302.854207423@linuxfoundation.org>
+        stable@vger.kernel.org, Keerthy <j-keerthy@ti.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH 5.1 46/62] gpio: davinci: silence error prints in case of EPROBE_DEFER
+Date:   Fri, 26 Jul 2019 17:24:58 +0200
+Message-Id: <20190726152306.862106492@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190726152300.760439618@linuxfoundation.org>
-References: <20190726152300.760439618@linuxfoundation.org>
+In-Reply-To: <20190726152301.720139286@linuxfoundation.org>
+References: <20190726152301.720139286@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,35 +43,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christoph Paasch <cpaasch@apple.com>
+From: Keerthy <j-keerthy@ti.com>
 
-[ Upstream commit e858faf556d4e14c750ba1e8852783c6f9520a0e ]
+commit 541e4095f388c196685685633c950cb9b97f8039 upstream.
 
-If an app is playing tricks to reuse a socket via tcp_disconnect(),
-bytes_acked/received needs to be reset to 0. Otherwise tcp_info will
-report the sum of the current and the old connection..
+Silence error prints in case of EPROBE_DEFER. This avoids
+multiple/duplicate defer prints during boot.
 
-Cc: Eric Dumazet <edumazet@google.com>
-Fixes: 0df48c26d841 ("tcp: add tcpi_bytes_acked to tcp_info")
-Fixes: bdd1f9edacb5 ("tcp: add tcpi_bytes_received to tcp_info")
-Signed-off-by: Christoph Paasch <cpaasch@apple.com>
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Keerthy <j-keerthy@ti.com>
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/ipv4/tcp.c |    2 ++
- 1 file changed, 2 insertions(+)
 
---- a/net/ipv4/tcp.c
-+++ b/net/ipv4/tcp.c
-@@ -2594,6 +2594,8 @@ int tcp_disconnect(struct sock *sk, int
- 	tcp_saved_syn_free(tp);
- 	tp->compressed_ack = 0;
- 	tp->bytes_sent = 0;
-+	tp->bytes_acked = 0;
-+	tp->bytes_received = 0;
- 	tp->bytes_retrans = 0;
- 	tp->dsack_dups = 0;
- 	tp->reord_seen = 0;
+---
+ drivers/gpio/gpio-davinci.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+--- a/drivers/gpio/gpio-davinci.c
++++ b/drivers/gpio/gpio-davinci.c
+@@ -242,8 +242,9 @@ static int davinci_gpio_probe(struct pla
+ 	for (i = 0; i < nirq; i++) {
+ 		chips->irqs[i] = platform_get_irq(pdev, i);
+ 		if (chips->irqs[i] < 0) {
+-			dev_info(dev, "IRQ not populated, err = %d\n",
+-				 chips->irqs[i]);
++			if (chips->irqs[i] != -EPROBE_DEFER)
++				dev_info(dev, "IRQ not populated, err = %d\n",
++					 chips->irqs[i]);
+ 			return chips->irqs[i];
+ 		}
+ 	}
 
 
