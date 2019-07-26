@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19267767CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 15:40:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D4C33767D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 15:40:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727589AbfGZNkJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 09:40:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45936 "EHLO mail.kernel.org"
+        id S1727651AbfGZNkP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 09:40:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46206 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726364AbfGZNkD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 09:40:03 -0400
+        id S1727622AbfGZNkN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 09:40:13 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7B48D22BF5;
-        Fri, 26 Jul 2019 13:40:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7909122BEF;
+        Fri, 26 Jul 2019 13:40:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564148402;
-        bh=RLsYumlcChrRdNAT+1a34p/7+WhNOBCg+wKS11rYYOI=;
+        s=default; t=1564148413;
+        bh=VBtzKvIqMJOCwVo9MEpzdpTmmq1gqn2zMMkGHbgXXtk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BBNaR2dJvM1DC5YNjHabfrTivAv/DENdTepFPiJxY33lY3ZHByhUx7/pWT6FUey9H
-         UOlQb/lSYzIwsy7EYmuWlolZFFr+ARaOqUKHZf3dnAVGVd7Qudqmb9QHmLT6HVV/Tw
-         o1yhjHFepgbAG2HzC4gDlK14Y9ebROdZyNuHZV5c=
+        b=1AeUhxQDODCGLP2yCyutzOZzPFFdYuZL/HomnkJwCS7syWdvToIVIxarOg+NEEGgS
+         W+isjsJYdPINiMm49wDvicwKsJAZc6HGQ8glkJ3684swN6H3UMjPaw/OjU+ZCY3/ww
+         2JNqxJr3OgEL2/updWsp1dMFd+HzNQJCcl2QHzDM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Olof Johansson <olof@lixom.net>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.2 15/85] firmware/psci: psci_checker: Park kthreads before stopping them
-Date:   Fri, 26 Jul 2019 09:38:25 -0400
-Message-Id: <20190726133936.11177-15-sashal@kernel.org>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>,
+        dmaengine@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.2 20/85] dmaengine: rcar-dmac: Reject zero-length slave DMA requests
+Date:   Fri, 26 Jul 2019 09:38:30 -0400
+Message-Id: <20190726133936.11177-20-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190726133936.11177-1-sashal@kernel.org>
 References: <20190726133936.11177-1-sashal@kernel.org>
@@ -46,79 +45,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 92e074acf6f7694e96204265eb18ac113f546e80 ]
+[ Upstream commit 78efb76ab4dfb8f74f290ae743f34162cd627f19 ]
 
-Since commit 85f1abe0019f ("kthread, sched/wait: Fix kthread_parkme()
-completion issue"), kthreads that are bound to a CPU must be parked
-before being stopped. At the moment the PSCI checker calls
-kthread_stop() directly on the suspend kthread, which triggers the
-following warning:
+While the .device_prep_slave_sg() callback rejects empty scatterlists,
+it still accepts single-entry scatterlists with a zero-length segment.
+These may happen if a driver calls dmaengine_prep_slave_single() with a
+zero len parameter.  The corresponding DMA request will never complete,
+leading to messages like:
 
-[    6.068288] WARNING: CPU: 1 PID: 1 at kernel/kthread.c:398 __kthread_bind_mask+0x20/0x78
-               ...
-[    6.190151] Call trace:
-[    6.192566]  __kthread_bind_mask+0x20/0x78
-[    6.196615]  kthread_unpark+0x74/0x80
-[    6.200235]  kthread_stop+0x44/0x1d8
-[    6.203769]  psci_checker+0x3bc/0x484
-[    6.207389]  do_one_initcall+0x48/0x260
-[    6.211180]  kernel_init_freeable+0x2c8/0x368
-[    6.215488]  kernel_init+0x10/0x100
-[    6.218935]  ret_from_fork+0x10/0x1c
-[    6.222467] ---[ end trace e05e22863d043cd3 ]---
+    rcar-dmac e7300000.dma-controller: Channel Address Error happen
 
-kthread_unpark() tries to bind the thread to its CPU and aborts with a
-WARN() if the thread wasn't in TASK_PARKED state. Park the kthreads
-before stopping them.
+and DMA timeouts.
 
-Fixes: 85f1abe0019f ("kthread, sched/wait: Fix kthread_parkme() completion issue")
-Signed-off-by: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
-Acked-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Signed-off-by: Olof Johansson <olof@lixom.net>
+Although requesting a zero-length DMA request is a driver bug, rejecting
+it early eases debugging.  Note that the .device_prep_dma_memcpy()
+callback already rejects requests to copy zero bytes.
+
+Reported-by: Eugeniu Rosca <erosca@de.adit-jv.com>
+Analyzed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/firmware/psci/psci_checker.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/dma/sh/rcar-dmac.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/firmware/psci/psci_checker.c b/drivers/firmware/psci/psci_checker.c
-index 08c85099d4d0..f3659443f8c2 100644
---- a/drivers/firmware/psci/psci_checker.c
-+++ b/drivers/firmware/psci/psci_checker.c
-@@ -359,16 +359,16 @@ static int suspend_test_thread(void *arg)
- 	for (;;) {
- 		/* Needs to be set first to avoid missing a wakeup. */
- 		set_current_state(TASK_INTERRUPTIBLE);
--		if (kthread_should_stop()) {
--			__set_current_state(TASK_RUNNING);
-+		if (kthread_should_park())
- 			break;
--		}
- 		schedule();
- 	}
+diff --git a/drivers/dma/sh/rcar-dmac.c b/drivers/dma/sh/rcar-dmac.c
+index 33ab1b607e2b..54de669c38b8 100644
+--- a/drivers/dma/sh/rcar-dmac.c
++++ b/drivers/dma/sh/rcar-dmac.c
+@@ -1165,7 +1165,7 @@ rcar_dmac_prep_slave_sg(struct dma_chan *chan, struct scatterlist *sgl,
+ 	struct rcar_dmac_chan *rchan = to_rcar_dmac_chan(chan);
  
- 	pr_info("CPU %d suspend test results: success %d, shallow states %d, errors %d\n",
- 		cpu, nb_suspend, nb_shallow_sleep, nb_err);
- 
-+	kthread_parkme();
-+
- 	return nb_err;
- }
- 
-@@ -433,8 +433,10 @@ static int suspend_tests(void)
- 
- 
- 	/* Stop and destroy all threads, get return status. */
--	for (i = 0; i < nb_threads; ++i)
-+	for (i = 0; i < nb_threads; ++i) {
-+		err += kthread_park(threads[i]);
- 		err += kthread_stop(threads[i]);
-+	}
-  out:
- 	cpuidle_resume_and_unlock();
- 	kfree(threads);
+ 	/* Someone calling slave DMA on a generic channel? */
+-	if (rchan->mid_rid < 0 || !sg_len) {
++	if (rchan->mid_rid < 0 || !sg_len || !sg_dma_len(sgl)) {
+ 		dev_warn(chan->device->dev,
+ 			 "%s: bad parameter: len=%d, id=%d\n",
+ 			 __func__, sg_len, rchan->mid_rid);
 -- 
 2.20.1
 
