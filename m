@@ -2,392 +2,203 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8AE337730C
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 22:56:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 607A877306
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 22:55:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728063AbfGZU4L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 16:56:11 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:34198 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726184AbfGZU4K (ORCPT
+        id S1727442AbfGZUzs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 16:55:48 -0400
+Received: from out5-smtp.messagingengine.com ([66.111.4.29]:48703 "EHLO
+        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726184AbfGZUzs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 16:56:10 -0400
-Received: from hades.home (unknown [IPv6:2a00:23c5:58d:db00:68bb:47d:d5ca:9abd])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: martyn)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id E4CC528C59F;
-        Fri, 26 Jul 2019 21:56:08 +0100 (BST)
-From:   Martyn Welch <martyn.welch@collabora.com>
-To:     Mark Rutland <mark.rutland@arm.com>,
-        Jonathan Cameron <jic23@kernel.org>
-Cc:     Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel@lists.collabora.co.uk, devicetree@vger.kernel.org,
-        Martyn Welch <martyn.welch@collabora.com>,
-        Sergei M <fizik1@yandex.com>
-Subject: [PATCH v3 2/2] iio: light: noa1305: Add support for NOA1305
-Date:   Fri, 26 Jul 2019 21:55:13 +0100
-Message-Id: <20190726205513.31291-2-martyn.welch@collabora.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190726205513.31291-1-martyn.welch@collabora.com>
-References: <20190726205513.31291-1-martyn.welch@collabora.com>
+        Fri, 26 Jul 2019 16:55:48 -0400
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.nyi.internal (Postfix) with ESMTP id E977A21EAE;
+        Fri, 26 Jul 2019 16:55:46 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Fri, 26 Jul 2019 16:55:46 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=anarazel.de; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm2; bh=3L5jxBgHli5NohmalPaEx8ZRAtT
+        /SmIItX3mL6gr7MA=; b=QdiPjmxs27MxtcyP1f3Lxsq3jK3yxVU2kBn+MNuUb96
+        JmCQdjS8oK/O6GR8iLXM3jNE3EDBaNSoYfnlJt7eO5ctcqcTyWlXxEK5vjjlHZB/
+        Ci2ZbboDqBRFVXdVeNMrpEP57Nvb3Ya9R5r2gwXHYvi0bUeMvXP8bvO50fRrlTWN
+        WSZMGt4aO2xgEUKCrmgi62V8kX+zr2Rz9HiPCzklM/JbHMe6MKjjFBLzToOPGi1n
+        bTdpw48Gax5ZCw4Y/xbz+mHJ2KXHZm/9VWfeFbAXZB5Av2J/vZDp5WRK/gF+m4v1
+        9iBWM5wMKtkaBIoCGxpU/pMjYS06fdVJIdwK0D4oGTg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=3L5jxB
+        gHli5NohmalPaEx8ZRAtT/SmIItX3mL6gr7MA=; b=DlWhKFAr6mE57F50kozdUE
+        D8zZgsqOdtFXrRzpIIFGJyGFKDO9eRDamTapIjC9m+m9GcTRVBXsO/jBrju3/WuW
+        iwHbbA+x3EwyhKMv7W/E32xO4reH9uK73xdQXfbAq0KIoMhf5Yg7+VSwm19J3Vh/
+        nrxbfZNPYZ/GmG4iGRIphmf6bO1dHIVoR6yy3GPeaCy+5atySWsVBgwRqNzNNRBI
+        ah1kYKlLB1evQQCHovftkxh9D48k9T3duoiMnrA7nchBx9aGQndHXx1L8lA3eKie
+        N//ve8hXy+b6r/A8L71dnHgGT+83OrxRhXddi6h9Vq3lFeDF98rYfb/M6hkd1MIA
+        ==
+X-ME-Sender: <xms:0mg7XU7dzNCzzLySVeRZk1TIMGr2enVNGfJlQZ-kjKzxr2k42Ap3Qw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrkeeggdduheehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeetnhgurhgv
+    shcuhfhrvghunhguuceorghnughrvghssegrnhgrrhgriigvlhdruggvqeenucffohhmrg
+    hinhepthhrrggtvgdqvghvvghnthdqphgrrhhsvgdrtgifnecukfhppeeijedrudeitddr
+    vddukedrvdefjeenucfrrghrrghmpehmrghilhhfrhhomheprghnughrvghssegrnhgrrh
+    griigvlhdruggvnecuvehluhhsthgvrhfuihiivgeptd
+X-ME-Proxy: <xmx:0mg7XaN75Ecu9cSE82YC0afZYwHGjBaHw_6zNPK5fJAlZYYEJLT9zA>
+    <xmx:0mg7XeUYBIlvfI6A6WfDj4G-3l6Uwmq5x_4JJIiNr7QH0GE3m-e7hA>
+    <xmx:0mg7XUXvgi0kDt2laKUmPbI-gBybcPKpbUE0NWmrIimcHIix2hAWXg>
+    <xmx:0mg7XTjTl81JKbueP5PHtYcWQoPGfGJ9LLmeXQ0MZ5WHwVmeFKjBEg>
+Received: from intern.anarazel.de (c-67-160-218-237.hsd1.ca.comcast.net [67.160.218.237])
+        by mail.messagingengine.com (Postfix) with ESMTPA id DECBF380076;
+        Fri, 26 Jul 2019 16:55:45 -0400 (EDT)
+Date:   Fri, 26 Jul 2019 13:55:44 -0700
+From:   Andres Freund <andres@anarazel.de>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Trace Devel <linux-trace-devel@vger.kernel.org>,
+        Tzvetomir Stoyanov <tstoyanov@vmware.com>,
+        Jiri Olsa <jolsa@redhat.com>, Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>
+Subject: Re: [PATCH] tools/lib/traceevent, tools/perf: Move struct
+ tep_handler definition in a local header file
+Message-ID: <20190726205544.yffnsfsnji362jk7@alap3.anarazel.de>
+References: <20181005122225.522155df@gandalf.local.home>
+ <20190726035829.4xcw5k2exx4omlvg@alap3.anarazel.de>
+ <20190726091200.0d1e1f01@gandalf.local.home>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190726091200.0d1e1f01@gandalf.local.home>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This driver adds the initial support for the ON Semiconductor
-NOA1305 Ambient Light Sensor.
+Hi,
 
-Originally written by Sergei Miroshnichenko. Found here:
-  https://github.com/EmcraftSystems/linux-upstream/commit/196d6cf897e632d2cb82d45484bd7a1bfdd5b6d9
+On 2019-07-26 09:12:00 -0400, Steven Rostedt wrote:
+> On Thu, 25 Jul 2019 20:58:29 -0700
+> Andres Freund <andres@anarazel.de> wrote:
+> > 
+> > Is just plain wrong, as:
+> > 
+> > > -		return pevent->events[idx];
+> > > +		return (all_events + idx);  
+> > 
+> > that's not a valid conversion. ->events isn't an array of tep_handle,
+> > it's an array of tep_handle* (and even if it were, the previous notation
+> 
+> You're right, it is wrong, but it's not tep_handle* but
+> tep_event_format*.
 
-Signed-off-by: Sergei M <fizik1@yandex.com>
-Signed-off-by: Martyn Welch <martyn.welch@collabora.com>
----
+Err, yea. Typo.
 
-Changes:
-v2:
- - Correcting authorship and SOB.
-v3:
- - Improve register define naming.
- - Follow IIO convention of interleaving register bit definitions with
-   register defintions.
- - Use proper endian swapping.
- - Process raw sensor count into Lux.
- - Avoid setting variables to zero when not needed.
- - Check return value of i2c writes.
- - Implement disabling of regulator as a devm action.
- - Remove excessive white spacing.
 
- drivers/iio/light/Kconfig   |  10 ++
- drivers/iio/light/Makefile  |   1 +
- drivers/iio/light/noa1305.c | 278 ++++++++++++++++++++++++++++++++++++
- 3 files changed, 289 insertions(+)
- create mode 100644 drivers/iio/light/noa1305.c
 
-diff --git a/drivers/iio/light/Kconfig b/drivers/iio/light/Kconfig
-index 954c958cfc43..d1db0ec0d0f5 100644
---- a/drivers/iio/light/Kconfig
-+++ b/drivers/iio/light/Kconfig
-@@ -309,6 +309,16 @@ config MAX44009
- 	 To compile this driver as a module, choose M here:
- 	 the module will be called max44009.
- 
-+config NOA1305
-+	tristate "ON Semiconductor NOA1305 ambient light sensor"
-+	depends on I2C
-+	help
-+	 Say Y here if you want to build support for the ON Semiconductor
-+	 NOA1305 ambient light sensor.
-+
-+	 To compile this driver as a module, choose M here:
-+	 The module will be called noa1305.
-+
- config OPT3001
- 	tristate "Texas Instruments OPT3001 Light Sensor"
- 	depends on I2C
-diff --git a/drivers/iio/light/Makefile b/drivers/iio/light/Makefile
-index e40794fbb435..00d1f9b98f39 100644
---- a/drivers/iio/light/Makefile
-+++ b/drivers/iio/light/Makefile
-@@ -29,6 +29,7 @@ obj-$(CONFIG_LTR501)		+= ltr501.o
- obj-$(CONFIG_LV0104CS)		+= lv0104cs.o
- obj-$(CONFIG_MAX44000)		+= max44000.o
- obj-$(CONFIG_MAX44009)		+= max44009.o
-+obj-$(CONFIG_NOA1305)		+= noa1305.o
- obj-$(CONFIG_OPT3001)		+= opt3001.o
- obj-$(CONFIG_PA12203001)	+= pa12203001.o
- obj-$(CONFIG_RPR0521)		+= rpr0521.o
-diff --git a/drivers/iio/light/noa1305.c b/drivers/iio/light/noa1305.c
-new file mode 100644
-index 000000000000..02b0cf48c2be
---- /dev/null
-+++ b/drivers/iio/light/noa1305.c
-@@ -0,0 +1,278 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Support for ON Semiconductor NOA1305 ambient light sensor
-+ *
-+ * Copyright (C) 2016 Emcraft Systems
-+ * Copyright (C) 2019 Collabora Ltd.
-+ */
-+
-+#include <linux/delay.h>
-+#include <linux/err.h>
-+#include <linux/i2c.h>
-+#include <linux/iio/iio.h>
-+#include <linux/iio/sysfs.h>
-+#include <linux/module.h>
-+#include <linux/regmap.h>
-+#include <linux/regulator/consumer.h>
-+
-+#define NOA1305_REG_POWER_CONTROL	0x0
-+#define   NOA1305_POWER_CONTROL_DOWN	0x00
-+#define   NOA1305_POWER_CONTROL_ON	0x08
-+#define NOA1305_REG_RESET		0x1
-+#define   NOA1305_RESET_RESET		0x10
-+#define NOA1305_REG_INTEGRATION_TIME	0x2
-+#define   NOA1305_INTEGR_TIME_800MS	0x00
-+#define   NOA1305_INTEGR_TIME_400MS	0x01
-+#define   NOA1305_INTEGR_TIME_200MS	0x02
-+#define   NOA1305_INTEGR_TIME_100MS	0x03
-+#define   NOA1305_INTEGR_TIME_50MS	0x04
-+#define   NOA1305_INTEGR_TIME_25MS	0x05
-+#define   NOA1305_INTEGR_TIME_12_5MS	0x06
-+#define   NOA1305_INTEGR_TIME_6_25MS	0x07
-+#define NOA1305_REG_INT_SELECT		0x3
-+#define   NOA1305_INT_SEL_ACTIVE_HIGH	0x01
-+#define   NOA1305_INT_SEL_ACTIVE_LOW	0x02
-+#define   NOA1305_INT_SEL_INACTIVE	0x03
-+#define NOA1305_REG_INT_THRESH_LSB	0x4
-+#define NOA1305_REG_INT_THRESH_MSB	0x5
-+#define NOA1305_REG_ALS_DATA_LSB	0x6
-+#define NOA1305_REG_ALS_DATA_MSB	0x7
-+#define NOA1305_REG_DEVICE_ID_LSB	0x8
-+#define NOA1305_REG_DEVICE_ID_MSB	0x9
-+
-+#define NOA1305_DEVICE_ID	0x0519
-+#define NOA1305_DRIVER_NAME	"noa1305"
-+
-+struct noa1305_priv {
-+	struct i2c_client *client;
-+	struct regmap *regmap;
-+	struct regulator *vin_reg;
-+};
-+
-+static int noa1305_measure(struct noa1305_priv *priv)
-+{
-+	__le16 data;
-+	int count;
-+	int ret;
-+
-+	ret = regmap_bulk_read(priv->regmap, NOA1305_REG_ALS_DATA_LSB, &data,
-+			       2);
-+	if (ret < 0)
-+		return ret;
-+
-+	/*
-+	 * Lux = count / (<Integration Constant> * <Integration Time>)
-+	 *
-+	 * Integration Constant = 7.7
-+	 * Integration Time in Seconds (currently) = 800ms
-+	 */
-+	return (le16_to_cpu(data) * 100) / (77 * 8);
-+}
-+
-+static const struct iio_chan_spec noa1305_channels[] = {
-+	{
-+		.type = IIO_LIGHT,
-+		.info_mask_separate = BIT(IIO_CHAN_INFO_PROCESSED),
-+	}
-+};
-+
-+static int noa1305_read_raw(struct iio_dev *indio_dev,
-+				struct iio_chan_spec const *chan,
-+				int *val, int *val2, long mask)
-+{
-+	int ret = -EINVAL;
-+	struct noa1305_priv *priv = iio_priv(indio_dev);
-+
-+	switch (mask) {
-+	case IIO_CHAN_INFO_PROCESSED:
-+		switch (chan->type) {
-+		case IIO_LIGHT:
-+			ret = noa1305_measure(priv);
-+			if (ret < 0)
-+				return ret;
-+			*val = ret;
-+			ret = IIO_VAL_INT;
-+			break;
-+		default:
-+			break;
-+		}
-+		break;
-+	default:
-+		break;
-+	}
-+
-+	return ret;
-+}
-+
-+static const struct iio_info noa1305_info = {
-+	.read_raw = noa1305_read_raw,
-+};
-+
-+static bool noa1305_writable_reg(struct device *dev, unsigned int reg)
-+{
-+	switch (reg) {
-+	case NOA1305_REG_POWER_CONTROL:
-+	case NOA1305_REG_RESET:
-+	case NOA1305_REG_INTEGRATION_TIME:
-+	case NOA1305_REG_INT_SELECT:
-+	case NOA1305_REG_INT_THRESH_LSB:
-+	case NOA1305_REG_INT_THRESH_MSB:
-+		return true;
-+	default:
-+		return false;
-+	}
-+}
-+
-+static const struct regmap_config noa1305_regmap_config = {
-+	.name = NOA1305_DRIVER_NAME,
-+	.reg_bits = 8,
-+	.val_bits = 8,
-+	.max_register = NOA1305_REG_DEVICE_ID_MSB,
-+	.writeable_reg = noa1305_writable_reg,
-+};
-+
-+static void noa1305_reg_remove(void *data)
-+{
-+	struct noa1305_priv *priv = data;
-+
-+	regulator_disable(priv->vin_reg);
-+}
-+
-+static int noa1305_probe(struct i2c_client *client,
-+			 const struct i2c_device_id *id)
-+{
-+	struct noa1305_priv *priv;
-+	struct iio_dev *indio_dev;
-+	struct regmap *regmap;
-+	__le16 data;
-+	unsigned int dev_id;
-+	int ret;
-+
-+	indio_dev = devm_iio_device_alloc(&client->dev, sizeof(*priv));
-+	if (!indio_dev)
-+		return -ENOMEM;
-+
-+	regmap = devm_regmap_init_i2c(client, &noa1305_regmap_config);
-+	if (IS_ERR(regmap)) {
-+		dev_err(&client->dev, "Regmap initialization failed.\n");
-+		return PTR_ERR(regmap);
-+	}
-+
-+	priv = iio_priv(indio_dev);
-+
-+	priv->vin_reg = devm_regulator_get(&client->dev, "vin");
-+	if (IS_ERR(priv->vin_reg)) {
-+		dev_err(&client->dev, "get regulator vin failed\n");
-+		return PTR_ERR(priv->vin_reg);
-+	}
-+
-+	ret = regulator_enable(priv->vin_reg);
-+	if (ret) {
-+		dev_err(&client->dev, "enable regulator vin failed\n");
-+		return ret;
-+	}
-+
-+	ret = devm_add_action_or_reset(&client->dev, noa1305_reg_remove, priv);
-+	if (ret) {
-+		dev_err(&client->dev, "addition of devm action failed\n");
-+		return ret;
-+	}
-+
-+	i2c_set_clientdata(client, indio_dev);
-+	priv->client = client;
-+	priv->regmap = regmap;
-+
-+	ret = regmap_bulk_read(regmap, NOA1305_REG_DEVICE_ID_LSB, &data, 2);
-+	if (ret < 0) {
-+		dev_err(&client->dev, "ID reading failed: %d\n", ret);
-+		return ret;
-+	}
-+
-+	dev_id = le16_to_cpu(data);
-+	if (dev_id != NOA1305_DEVICE_ID) {
-+		dev_err(&client->dev, "Unknown device ID: 0x%x\n", dev_id);
-+		ret = -ENODEV;
-+		return ret;
-+	}
-+
-+	ret = regmap_write(regmap, NOA1305_REG_POWER_CONTROL,
-+			   NOA1305_POWER_CONTROL_ON);
-+	if (ret < 0) {
-+		dev_err(&client->dev, "Enabling power control failed\n");
-+		return ret;
-+	}
-+
-+	ret = regmap_write(regmap, NOA1305_REG_RESET, NOA1305_RESET_RESET);
-+	if (ret < 0) {
-+		dev_err(&client->dev, "Device reset failed\n");
-+		return ret;
-+	}
-+
-+	ret = regmap_write(regmap, NOA1305_REG_INTEGRATION_TIME,
-+			   NOA1305_INTEGR_TIME_800MS);
-+	if (ret < 0) {
-+		dev_err(&client->dev, "Setting integration time failed\n");
-+		return ret;
-+	}
-+
-+	ret = regmap_write(regmap, NOA1305_REG_INT_SELECT,
-+			   NOA1305_INT_SEL_INACTIVE);
-+	if (ret < 0) {
-+		dev_err(&client->dev, "Disabling interrupts failed\n");
-+		return ret;
-+	}
-+
-+	indio_dev->dev.parent = &client->dev;
-+	indio_dev->info = &noa1305_info;
-+	indio_dev->channels = noa1305_channels;
-+	indio_dev->num_channels = ARRAY_SIZE(noa1305_channels);
-+	indio_dev->name = NOA1305_DRIVER_NAME;
-+	indio_dev->modes = INDIO_DIRECT_MODE;
-+
-+	ret = devm_iio_device_register(&client->dev, indio_dev);
-+	if (ret) {
-+		dev_err(&client->dev, "registering device failed\n");
-+		return ret;
-+	}
-+
-+	return ret;
-+}
-+
-+static int noa1305_remove(struct i2c_client *client)
-+{
-+	struct iio_dev *indio_dev = i2c_get_clientdata(client);
-+	struct noa1305_priv *priv = iio_priv(indio_dev);
-+
-+	regulator_disable(priv->vin_reg);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id noa1305_of_match[] = {
-+	{ .compatible = "onnn,noa1305" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, noa1305_of_match);
-+
-+static const struct i2c_device_id noa1305_ids[] = {
-+	{ "noa1305", 0 },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(i2c, noa1305_id);
-+
-+static struct i2c_driver noa1305_driver = {
-+	.driver = {
-+		.name		= NOA1305_DRIVER_NAME,
-+		.of_match_table	= noa1305_of_match,
-+	},
-+	.probe		= noa1305_probe,
-+	.remove		= noa1305_remove,
-+	.id_table	= noa1305_ids,
-+};
-+
-+module_i2c_driver(noa1305_driver);
-+
-+MODULE_AUTHOR("Sergei Miroshnichenko <sergeimir@emcraft.com>");
-+MODULE_AUTHOR("Martyn Welch <martyn.welch@collabora.com");
-+MODULE_DESCRIPTION("ON Semiconductor NOA1305 ambient light sensor");
-+MODULE_LICENSE("GPL");
--- 
-2.20.1
+> > diff --git i/tools/lib/traceevent/event-parse.h w/tools/lib/traceevent/event-parse.h
+> > index 642f68ab5fb2..7ebc9b5308d4 100644
+> > --- i/tools/lib/traceevent/event-parse.h
+> > +++ w/tools/lib/traceevent/event-parse.h
+> > @@ -517,6 +517,7 @@ int tep_read_number_field(struct tep_format_field *field, const void *data,
+> >  			  unsigned long long *value);
+> >  
+> >  struct tep_event *tep_get_first_event(struct tep_handle *tep);
+> > +struct tep_event *tep_get_event(struct tep_handle *tep, int index);
+> 
+> I was looking at the tep_get_event() code, and we should switch that to
+> "unsigned int index" otherwise passing in a negative number will return
+> an address outside the array.
 
+Makes sense.
+
+
+> >  int tep_get_events_count(struct tep_handle *tep);
+> >  struct tep_event *tep_find_event(struct tep_handle *tep, int id);
+> >  
+> > diff --git i/tools/perf/util/trace-event-parse.c w/tools/perf/util/trace-event-parse.c
+> > index 62bc61155dd1..6a035ffd58ac 100644
+> > --- i/tools/perf/util/trace-event-parse.c
+> > +++ w/tools/perf/util/trace-event-parse.c
+> > @@ -179,28 +179,26 @@ struct tep_event *trace_find_next_event(struct tep_handle *pevent,
+> >  {
+> >  	static int idx;
+> >  	int events_count;
+> > -	struct tep_event *all_events;
+> >  
+> > -	all_events = tep_get_first_event(pevent);
+> >  	events_count = tep_get_events_count(pevent);
+> 
+> I think we can get rid of the events_count and all its checks, as the
+> same check is done within tep_get_event().
+
+> > -	if (!pevent || !all_events || events_count < 1)
+> > +	if (!pevent || events_count < 1)
+> 
+> 	if (!pevent)
+> 
+> >  		return NULL;
+> >  
+> >  	if (!event) {
+> >  		idx = 0;
+> > -		return all_events;
+> > +		return tep_get_event(pevent, 0);
+> >  	}
+> >  
+> > -	if (idx < events_count && event == (all_events + idx)) {
+> > +	if (idx < events_count && event == tep_get_event(pevent, idx)) {
+> 
+> 	if (event == tep_get_event(pevent, idx))
+> 		return tep_get_event(pevent, ++idx);
+> 
+> >  		idx++;
+> >  		if (idx == events_count)
+> >  			return NULL;
+> > -		return (all_events + idx);
+> > +		return tep_get_event(pevent, idx);
+> >  	}
+> >  
+> 
+> 	struct tep_event_format *next_event;
+> 
+> 	for (idx = 0; next_event = tep_get_event(pevent, idx); idx++)
+> 		if (event == next_event)
+> 			return tep_get_event(pevent, ++idx);
+> 
+> Also, I think setting the idx to 1 in the loop is wrong. Why? think of
+> this:
+> 
+> 	first_event = trace_find_next_event(pevent, NULL);
+> 
+> 	next_event = trace_find_next_event(pevent, first_event);
+> 	for (i = 0; i < 5; i++)
+> 		next_event = trace_find_next_event(pevent, next_event);
+> 
+> 	second_event = trace_find_next_event(pevent, first_event);
+> 
+> second_event would become NULL.
+
+How about my proposal to instead change the loops in
+trace-event-{python,perl}.c, the only callers of trace_find_next_event,
+to be something akin to
+
+[idx_type_for_tep_get_event] event_count = tep_get_events_count(pevent);
+for ([idx_type_for_tep_get_event] idx = 0; idx < event_count; idx++)
+{
+	struct tep_event *event = tep_get_events(...);
+
+}
+
+and just removing trace_find_next_event()? It's not a nice API imo, and
+seems unnecessary given that the events aren't a linked list anymore.
+
+
+> Care to send a formal patch?
+
+Will do.
+
+Greetings,
+
+Andres Freund
