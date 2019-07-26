@@ -2,43 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8072876ECD
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 18:20:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B116D76EDB
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 18:21:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728592AbfGZQU3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 12:20:29 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:52126 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728553AbfGZQU2 (ORCPT
+        id S1728729AbfGZQVG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 12:21:06 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:57072 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728606AbfGZQUc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 12:20:28 -0400
+        Fri, 26 Jul 2019 12:20:32 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:References:
+        d=infradead.org; s=merlin.20170209; h=Content-Type:MIME-Version:References:
         Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
         Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
         Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=O7A5d/em5FkEGHseGCgsmtgjboa5yxZdBBZ+Ha2b1dI=; b=aNBDuw0PPuaYKAAKBYPvFgqgX9
-        xXHmsnBreQRk3SkolA5D989oGtTyR+HxiOFXDDO5IXIc7lZWzUlL2r0apy/FPnXqndC9M79biIlVj
-        jLumQ/+r/BbdDZPWeqJ6eDrkJwgS08N6vsgFp3Qh11sb+Nz6vECe9yEge32onSOWzAiIZVCvRg+Vn
-        A8dSYdP6PR9ZsxZOYDxK8rkQiwRZFZ48DyaILKAkjm+1+5Jpd7wbI3XJwDRnVpaWjIRm5W4jaEftB
-        Z9yZqxMfhrLdQfj+q8N0Xgpa7nfJrAoLWo1cwfxH/1jqgV8W122WFgY5GlGM5/pbmtj/JnG6WjxQB
-        wVy9lIhw==;
+        bh=JXvlIC4u4F2IkNU/GkwEGhYaRWxhelNM+5dXTenAYmE=; b=pha/+B/mvy8eksAFgaeU6jUHAq
+        D9ts31kx2sujmMlOjBsiDhd7pJIGRGhfRX5yOP5NtHRNRApwdPkOPt63HCbGimu5We8Fzol4WqoBX
+        Xs3MqNKGfH7xQiSP76X7KLKvAtRNAn+YOJXMxgwYvp/z82bvXh6lZ+RB4Z92Mu8jNt7ZXqDBnmSvQ
+        8HOqJpq0kSqNWnplDm0cbctNA+IxdFyORPGZvdloMYcEgmlvh/aBTGXvUzqDOEkR1fVdXJzUl6GWe
+        ZKEwycH7D9PBRsIJYF3WAAXNbS1UbMM3bG6lmwXqcKsVWuEqv2863znKyUokx153k9k2Dwkc48Qfl
+        9FWDM0kg==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hr2wz-0006vo-A1; Fri, 26 Jul 2019 16:20:09 +0000
+        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hr2wy-00066U-Vd; Fri, 26 Jul 2019 16:20:09 +0000
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 5053A20229751; Fri, 26 Jul 2019 18:20:05 +0200 (CEST)
-Message-Id: <20190726161357.638193058@infradead.org>
+        id 5442620229752; Fri, 26 Jul 2019 18:20:05 +0200 (CEST)
+Message-Id: <20190726161357.696559863@infradead.org>
 User-Agent: quilt/0.65
-Date:   Fri, 26 Jul 2019 16:54:14 +0200
+Date:   Fri, 26 Jul 2019 16:54:15 +0200
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     mingo@kernel.org, juri.lelli@redhat.com
 Cc:     linux-kernel@vger.kernel.org, dietmar.eggemann@arm.com,
         luca.abeni@santannapisa.it, bristot@redhat.com,
         balsini@android.com, dvyukov@google.com, tglx@linutronix.de,
         vpillai@digitalocean.com, rostedt@goodmis.org, peterz@infradead.org
-Subject: [RFC][PATCH 05/13] sched: Add task_struct pointer to sched_class::set_curr_task
+Subject: [RFC][PATCH 06/13] sched/fair: Export newidle_balance()
 References: <20190726145409.947503076@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,334 +47,89 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation of further separating pick_next_task() and
-set_curr_task() we have to pass the actual task into it, while there,
-rename the thing to better pair with put_prev_task().
+For pick_next_task_fair() it is the newidle balance that requires
+dropping the rq->lock; provided we do put_prev_task() early, we can
+also detect the condition for doing newidle early.
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- kernel/sched/core.c      |   12 ++++++------
- kernel/sched/deadline.c  |    7 +------
- kernel/sched/fair.c      |   17 ++++++++++++++---
- kernel/sched/idle.c      |   27 +++++++++++++++------------
- kernel/sched/rt.c        |    7 +------
- kernel/sched/sched.h     |    8 +++++---
- kernel/sched/stop_task.c |   17 +++++++----------
- 7 files changed, 49 insertions(+), 46 deletions(-)
+ kernel/sched/fair.c  |   18 ++++++++----------
+ kernel/sched/sched.h |    4 ++++
+ 2 files changed, 12 insertions(+), 10 deletions(-)
 
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -1494,7 +1494,7 @@ void do_set_cpus_allowed(struct task_str
- 	if (queued)
- 		enqueue_task(rq, p, ENQUEUE_RESTORE | ENQUEUE_NOCLOCK);
- 	if (running)
--		set_curr_task(rq, p);
-+		set_next_task(rq, p);
- }
- 
- /*
-@@ -4273,7 +4273,7 @@ void rt_mutex_setprio(struct task_struct
- 	if (queued)
- 		enqueue_task(rq, p, queue_flag);
- 	if (running)
--		set_curr_task(rq, p);
-+		set_next_task(rq, p);
- 
- 	check_class_changed(rq, p, prev_class, oldprio);
- out_unlock:
-@@ -4340,7 +4340,7 @@ void set_user_nice(struct task_struct *p
- 			resched_curr(rq);
- 	}
- 	if (running)
--		set_curr_task(rq, p);
-+		set_next_task(rq, p);
- out_unlock:
- 	task_rq_unlock(rq, p, &rf);
- }
-@@ -4783,7 +4783,7 @@ static int __sched_setscheduler(struct t
- 		enqueue_task(rq, p, queue_flags);
- 	}
- 	if (running)
--		set_curr_task(rq, p);
-+		set_next_task(rq, p);
- 
- 	check_class_changed(rq, p, prev_class, oldprio);
- 
-@@ -5972,7 +5972,7 @@ void sched_setnuma(struct task_struct *p
- 	if (queued)
- 		enqueue_task(rq, p, ENQUEUE_RESTORE | ENQUEUE_NOCLOCK);
- 	if (running)
--		set_curr_task(rq, p);
-+		set_next_task(rq, p);
- 	task_rq_unlock(rq, p, &rf);
- }
- #endif /* CONFIG_NUMA_BALANCING */
-@@ -6853,7 +6853,7 @@ void sched_move_task(struct task_struct
- 	if (queued)
- 		enqueue_task(rq, tsk, queue_flags);
- 	if (running)
--		set_curr_task(rq, tsk);
-+		set_next_task(rq, tsk);
- 
- 	task_rq_unlock(rq, tsk, &rf);
- }
---- a/kernel/sched/deadline.c
-+++ b/kernel/sched/deadline.c
-@@ -1812,11 +1812,6 @@ static void task_fork_dl(struct task_str
- 	 */
- }
- 
--static void set_curr_task_dl(struct rq *rq)
--{
--	set_next_task_dl(rq, rq->curr);
--}
--
- #ifdef CONFIG_SMP
- 
- /* Only try algorithms three times */
-@@ -2404,6 +2399,7 @@ const struct sched_class dl_sched_class
- 
- 	.pick_next_task		= pick_next_task_dl,
- 	.put_prev_task		= put_prev_task_dl,
-+	.set_next_task		= set_next_task_dl,
- 
- #ifdef CONFIG_SMP
- 	.select_task_rq		= select_task_rq_dl,
-@@ -2414,7 +2410,6 @@ const struct sched_class dl_sched_class
- 	.task_woken		= task_woken_dl,
- #endif
- 
--	.set_curr_task		= set_curr_task_dl,
- 	.task_tick		= task_tick_dl,
- 	.task_fork              = task_fork_dl,
- 
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -10121,9 +10121,19 @@ static void switched_to_fair(struct rq *
-  * This routine is mostly called to set cfs_rq->curr field when a task
-  * migrates between groups/classes.
-  */
--static void set_curr_task_fair(struct rq *rq)
-+static void set_next_task_fair(struct rq *rq, struct task_struct *p)
- {
--	struct sched_entity *se = &rq->curr->se;
-+	struct sched_entity *se = &p->se;
-+
-+#ifdef CONFIG_SMP
-+	if (task_on_rq_queued(p)) {
-+		/*
-+		 * Move the next running task to the front of the list, so our
-+		 * cfs_tasks list becomes MRU one.
-+		 */
-+		list_move(&se->group_node, &rq->cfs_tasks);
-+	}
-+#endif
- 
- 	for_each_sched_entity(se) {
- 		struct cfs_rq *cfs_rq = cfs_rq_of(se);
-@@ -10394,7 +10404,9 @@ const struct sched_class fair_sched_clas
- 	.check_preempt_curr	= check_preempt_wakeup,
- 
- 	.pick_next_task		= pick_next_task_fair,
-+
- 	.put_prev_task		= put_prev_task_fair,
-+	.set_next_task          = set_next_task_fair,
- 
- #ifdef CONFIG_SMP
- 	.select_task_rq		= select_task_rq_fair,
-@@ -10407,7 +10419,6 @@ const struct sched_class fair_sched_clas
- 	.set_cpus_allowed	= set_cpus_allowed_common,
- #endif
- 
--	.set_curr_task          = set_curr_task_fair,
- 	.task_tick		= task_tick_fair,
- 	.task_fork		= task_fork_fair,
- 
---- a/kernel/sched/idle.c
-+++ b/kernel/sched/idle.c
-@@ -374,14 +374,25 @@ static void check_preempt_curr_idle(stru
- 	resched_curr(rq);
+@@ -3635,8 +3635,6 @@ static inline unsigned long cfs_rq_load_
+ 	return cfs_rq->avg.load_avg;
  }
  
-+static void put_prev_task_idle(struct rq *rq, struct task_struct *prev)
-+{
-+}
-+
-+static void set_next_task_idle(struct rq *rq, struct task_struct *next)
-+{
-+	update_idle_core(rq);
-+	schedstat_inc(rq->sched_goidle);
-+}
-+
- static struct task_struct *
- pick_next_task_idle(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
- {
-+	struct task_struct *next = rq->idle;
-+
- 	put_prev_task(rq, prev);
--	update_idle_core(rq);
--	schedstat_inc(rq->sched_goidle);
-+	set_next_task_idle(rq, next);
- 
--	return rq->idle;
-+	return next;
- }
- 
- /*
-@@ -397,10 +408,6 @@ dequeue_task_idle(struct rq *rq, struct
- 	raw_spin_lock_irq(&rq->lock);
- }
- 
--static void put_prev_task_idle(struct rq *rq, struct task_struct *prev)
--{
--}
+-static int idle_balance(struct rq *this_rq, struct rq_flags *rf);
 -
- /*
-  * scheduler tick hitting a task of our scheduling class.
-  *
-@@ -413,10 +420,6 @@ static void task_tick_idle(struct rq *rq
+ static inline unsigned long task_util(struct task_struct *p)
  {
- }
+ 	return READ_ONCE(p->se.avg.util_avg);
+@@ -6848,11 +6846,10 @@ done: __maybe_unused;
+ 	return p;
  
--static void set_curr_task_idle(struct rq *rq)
--{
--}
--
- static void switched_to_idle(struct rq *rq, struct task_struct *p)
- {
- 	BUG();
-@@ -451,13 +454,13 @@ const struct sched_class idle_sched_clas
+ idle:
+-	update_misfit_status(NULL, rq);
+-	new_tasks = idle_balance(rq, rf);
++	new_tasks = newidle_balance(rq, rf);
  
- 	.pick_next_task		= pick_next_task_idle,
- 	.put_prev_task		= put_prev_task_idle,
-+	.set_next_task          = set_next_task_idle,
- 
- #ifdef CONFIG_SMP
- 	.select_task_rq		= select_task_rq_idle,
- 	.set_cpus_allowed	= set_cpus_allowed_common,
- #endif
- 
--	.set_curr_task          = set_curr_task_idle,
- 	.task_tick		= task_tick_idle,
- 
- 	.get_rr_interval	= get_rr_interval_idle,
---- a/kernel/sched/rt.c
-+++ b/kernel/sched/rt.c
-@@ -2355,11 +2355,6 @@ static void task_tick_rt(struct rq *rq,
- 	}
- }
- 
--static void set_curr_task_rt(struct rq *rq)
--{
--	set_next_task_rt(rq, rq->curr);
--}
--
- static unsigned int get_rr_interval_rt(struct rq *rq, struct task_struct *task)
- {
  	/*
-@@ -2381,6 +2376,7 @@ const struct sched_class rt_sched_class
+-	 * Because idle_balance() releases (and re-acquires) rq->lock, it is
++	 * Because newidle_balance() releases (and re-acquires) rq->lock, it is
+ 	 * possible for any higher priority task to appear. In that case we
+ 	 * must re-start the pick_next_entity() loop.
+ 	 */
+@@ -9016,10 +9013,10 @@ static int load_balance(int this_cpu, st
+ 	ld_moved = 0;
  
- 	.pick_next_task		= pick_next_task_rt,
- 	.put_prev_task		= put_prev_task_rt,
-+	.set_next_task          = set_next_task_rt,
+ 	/*
+-	 * idle_balance() disregards balance intervals, so we could repeatedly
+-	 * reach this code, which would lead to balance_interval skyrocketting
+-	 * in a short amount of time. Skip the balance_interval increase logic
+-	 * to avoid that.
++	 * newidle_balance() disregards balance intervals, so we could
++	 * repeatedly reach this code, which would lead to balance_interval
++	 * skyrocketting in a short amount of time. Skip the balance_interval
++	 * increase logic to avoid that.
+ 	 */
+ 	if (env.idle == CPU_NEWLY_IDLE)
+ 		goto out;
+@@ -9729,7 +9726,7 @@ static inline void nohz_newidle_balance(
+  * idle_balance is called by schedule() if this_cpu is about to become
+  * idle. Attempts to pull tasks from other CPUs.
+  */
+-static int idle_balance(struct rq *this_rq, struct rq_flags *rf)
++int newidle_balance(struct rq *this_rq, struct rq_flags *rf)
+ {
+ 	unsigned long next_balance = jiffies + HZ;
+ 	int this_cpu = this_rq->cpu;
+@@ -9737,6 +9734,7 @@ static int idle_balance(struct rq *this_
+ 	int pulled_task = 0;
+ 	u64 curr_cost = 0;
  
- #ifdef CONFIG_SMP
- 	.select_task_rq		= select_task_rq_rt,
-@@ -2392,7 +2388,6 @@ const struct sched_class rt_sched_class
- 	.switched_from		= switched_from_rt,
- #endif
- 
--	.set_curr_task          = set_curr_task_rt,
- 	.task_tick		= task_tick_rt,
- 
- 	.get_rr_interval	= get_rr_interval_rt,
++	update_misfit_status(NULL, this_rq);
+ 	/*
+ 	 * We must set idle_stamp _before_ calling idle_balance(), such that we
+ 	 * measure the duration of idle_balance() as idle time.
 --- a/kernel/sched/sched.h
 +++ b/kernel/sched/sched.h
-@@ -1711,6 +1711,7 @@ struct sched_class {
- 					       struct task_struct *prev,
- 					       struct rq_flags *rf);
- 	void (*put_prev_task)(struct rq *rq, struct task_struct *p);
-+	void (*set_next_task)(struct rq *rq, struct task_struct *p);
- 
- #ifdef CONFIG_SMP
- 	int  (*select_task_rq)(struct task_struct *p, int task_cpu, int sd_flag, int flags);
-@@ -1725,7 +1726,6 @@ struct sched_class {
- 	void (*rq_offline)(struct rq *rq);
+@@ -1449,10 +1449,14 @@ static inline void unregister_sched_doma
+ }
  #endif
  
--	void (*set_curr_task)(struct rq *rq);
- 	void (*task_tick)(struct rq *rq, struct task_struct *p, int queued);
- 	void (*task_fork)(struct task_struct *p);
- 	void (*task_dead)(struct task_struct *p);
-@@ -1755,12 +1755,14 @@ struct sched_class {
- 
- static inline void put_prev_task(struct rq *rq, struct task_struct *prev)
- {
-+	WARN_ON_ONCE(rq->curr != prev);
- 	prev->sched_class->put_prev_task(rq, prev);
- }
- 
--static inline void set_curr_task(struct rq *rq, struct task_struct *curr)
-+static inline void set_next_task(struct rq *rq, struct task_struct *next)
- {
--	curr->sched_class->set_curr_task(rq);
-+	WARN_ON_ONCE(rq->curr != next);
-+	next->sched_class->set_next_task(rq, next);
- }
- 
- #ifdef CONFIG_SMP
---- a/kernel/sched/stop_task.c
-+++ b/kernel/sched/stop_task.c
-@@ -23,6 +23,11 @@ check_preempt_curr_stop(struct rq *rq, s
- 	/* we're never preempted */
- }
- 
-+static void set_next_task_stop(struct rq *rq, struct task_struct *stop)
-+{
-+	stop->se.exec_start = rq_clock_task(rq);
-+}
++extern int newidle_balance(struct rq *this_rq, struct rq_flags *rf);
 +
- static struct task_struct *
- pick_next_task_stop(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
- {
-@@ -32,8 +37,7 @@ pick_next_task_stop(struct rq *rq, struc
- 		return NULL;
+ #else
  
- 	put_prev_task(rq, prev);
--
--	stop->se.exec_start = rq_clock_task(rq);
-+	set_next_task_stop(rq, stop);
+ static inline void sched_ttwu_pending(void) { }
  
- 	return stop;
- }
-@@ -86,13 +90,6 @@ static void task_tick_stop(struct rq *rq
- {
- }
++static inline int newidle_balance(struct rq *this_rq, struct rq_flags *rf) { return 0; }
++
+ #endif /* CONFIG_SMP */
  
--static void set_curr_task_stop(struct rq *rq)
--{
--	struct task_struct *stop = rq->stop;
--
--	stop->se.exec_start = rq_clock_task(rq);
--}
--
- static void switched_to_stop(struct rq *rq, struct task_struct *p)
- {
- 	BUG(); /* its impossible to change to this class */
-@@ -128,13 +125,13 @@ const struct sched_class stop_sched_clas
- 
- 	.pick_next_task		= pick_next_task_stop,
- 	.put_prev_task		= put_prev_task_stop,
-+	.set_next_task          = set_next_task_stop,
- 
- #ifdef CONFIG_SMP
- 	.select_task_rq		= select_task_rq_stop,
- 	.set_cpus_allowed	= set_cpus_allowed_common,
- #endif
- 
--	.set_curr_task          = set_curr_task_stop,
- 	.task_tick		= task_tick_stop,
- 
- 	.get_rr_interval	= get_rr_interval_stop,
+ #include "stats.h"
 
 
