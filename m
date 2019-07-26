@@ -2,60 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F493774BA
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2019 00:54:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 68D1A774BD
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2019 00:55:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727850AbfGZWyS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 18:54:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54894 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727483AbfGZWyS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 18:54:18 -0400
-Received: from localhost.localdomain (c-73-223-200-170.hsd1.ca.comcast.net [73.223.200.170])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 66CEC218B0;
-        Fri, 26 Jul 2019 22:54:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564181657;
-        bh=0I8ibO4ILGJpL8erC1yuBP5LAOpyh2rkqKPnbsCnLuY=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=pK1MW8MvICaSKOlCQqHnQ9l6nuLWH6z5U/EVYmUGTyLWaJMRR5LGPnmkHYCxsAgVO
-         blFDeY2cL9fAqNHU9VjvQ4Kfda8QxzbtCF2lQT8kJ+rUUblKp5A13I2P6xwKeiY4qq
-         zxEv6sAEkwCslSXWueRrCDWR7IN/4kpH6j9BxHnE=
-Date:   Fri, 26 Jul 2019 15:54:16 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Jia-Ju Bai <baijiaju1990@gmail.com>
-Cc:     jack@suse.cz, arnd@arndb.de, linux.bhar@gmail.com,
-        hariprasad.kelam@gmail.com, reiserfs-devel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fs: reiserfs: Fix possible null-pointer dereferences in
- remove_from_transaction()
-Message-Id: <20190726155416.86f1b96302273b91129e6dc3@linux-foundation.org>
-In-Reply-To: <20190726083838.8301-1-baijiaju1990@gmail.com>
-References: <20190726083838.8301-1-baijiaju1990@gmail.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1728032AbfGZWzc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 18:55:32 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:44565 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727368AbfGZWzc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 18:55:32 -0400
+Received: from callcc.thunk.org ([209.117.102.182])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x6QMt9eZ010885
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 26 Jul 2019 18:55:11 -0400
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 7AF1D4202F5; Fri, 26 Jul 2019 18:55:08 -0400 (EDT)
+Date:   Fri, 26 Jul 2019 18:55:08 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Naohiro Aota <naohiro.aota@wdc.com>,
+        Masato Suzuki <masato.suzuki@wdc.com>
+Subject: Re: [PATCH] ext4: Fix deadlock on page reclaim
+Message-ID: <20190726225508.GA13729@mit.edu>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Naohiro Aota <naohiro.aota@wdc.com>,
+        Masato Suzuki <masato.suzuki@wdc.com>
+References: <20190725093358.30679-1-damien.lemoal@wdc.com>
+ <20190725115442.GA15733@infradead.org>
+ <20190726224423.GE7777@dread.disaster.area>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190726224423.GE7777@dread.disaster.area>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 26 Jul 2019 16:38:38 +0800 Jia-Ju Bai <baijiaju1990@gmail.com> wrote:
+On Sat, Jul 27, 2019 at 08:44:23AM +1000, Dave Chinner wrote:
+> > 
+> > This looks like something that could hit every file systems, so
+> > shouldn't we fix this in common code?  We could also look into
+> > just using memalloc_nofs_save for the page cache allocation path
+> > instead of the per-mapping gfp_mask.
+> 
+> I think it has to be the entire IO path - any allocation from the
+> underlying filesystem could recurse into the top level filesystem
+> and then deadlock if the memory reclaim submits IO or blocks on
+> IO completion from the upper filesystem. That's a bloody big hammer
+> for something that is only necessary when there are stacked
+> filesystems like this....
 
-> In remove_from_transaction(), there is an if statement on line 3447 to
-> check whether bh is NULL:
->     if (bh)
+Yeah.... that's why using memalloc_nofs_save() probably makes the most
+sense, and dm_zoned should use that before it calls into ext4.
 
-We already know that bh != NULL here.
-
-	cn = get_journal_hash_dev(sb, journal->j_hash_table, blocknr);
-	if (!cn || !cn->bh) {
-		return ret;
-	}
-	bh = cn->bh;
-
-
-Please prepare a patch to remove the unneeded test?
+       	   	    	       	    	   - Ted
