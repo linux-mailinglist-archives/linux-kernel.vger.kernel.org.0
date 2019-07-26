@@ -2,69 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6740773A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 23:46:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AFE7E773B3
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 23:47:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728708AbfGZVqQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 17:46:16 -0400
-Received: from mga14.intel.com ([192.55.52.115]:28907 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728602AbfGZVpw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 17:45:52 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jul 2019 14:45:51 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,312,1559545200"; 
-   d="scan'208";a="369671157"
-Received: from skuppusw-desk.jf.intel.com ([10.54.74.33])
-  by fmsmga005.fm.intel.com with ESMTP; 26 Jul 2019 14:45:51 -0700
-From:   sathyanarayanan.kuppuswamy@linux.intel.com
-To:     bhelgaas@google.com
-Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ashok.raj@intel.com, keith.busch@intel.com,
-        sathyanarayanan.kuppuswamy@linux.intel.com
-Subject: [PATCH v6 9/9] PCI/DPC: Clear AER registers in EDR mode
-Date:   Fri, 26 Jul 2019 14:43:19 -0700
-Message-Id: <7111ba701f2bac1b991fe6710dd963d7e2cdb2f9.1564177080.git.sathyanarayanan.kuppuswamy@linux.intel.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <cover.1564177080.git.sathyanarayanan.kuppuswamy@linux.intel.com>
-References: <cover.1564177080.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+        id S1728098AbfGZVrG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 17:47:06 -0400
+Received: from hera.aquilenet.fr ([185.233.100.1]:41062 "EHLO
+        hera.aquilenet.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726026AbfGZVrF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 17:47:05 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by hera.aquilenet.fr (Postfix) with ESMTP id 3556D19315;
+        Fri, 26 Jul 2019 23:47:04 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at aquilenet.fr
+Received: from hera.aquilenet.fr ([127.0.0.1])
+        by localhost (hera.aquilenet.fr [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id HgFx9HJp6DC3; Fri, 26 Jul 2019 23:47:03 +0200 (CEST)
+Received: from function (105.251.129.77.rev.sfr.net [77.129.251.105])
+        by hera.aquilenet.fr (Postfix) with ESMTPSA id 861ED19312;
+        Fri, 26 Jul 2019 23:47:03 +0200 (CEST)
+Received: from samy by function with local (Exim 4.92)
+        (envelope-from <samuel.thibault@ens-lyon.org>)
+        id 1hr83K-00012p-Gb; Fri, 26 Jul 2019 23:47:02 +0200
+Date:   Fri, 26 Jul 2019 23:47:02 +0200
+From:   Samuel Thibault <samuel.thibault@ens-lyon.org>
+To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        931507@bugs.debian.org
+Subject: [PATCHv2] hda: Fix 1-minute detection delay when i915 module is not
+ available
+Message-ID: <20190726214702.kxi2gavlieiwyf7q@function>
+Mail-Followup-To: Samuel Thibault <samuel.thibault@ens-lyon.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        931507@bugs.debian.org
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+Distribution installation images such as Debian include different sets
+of modules which can be downloaded dynamically.  Such images may notably
+include the hda sound modules but not the i915 DRM module, even if the
+latter was enabled at build time, as reported on
+https://bugs.debian.org/931507
 
-As per PCI firmware specification r3.2 Downstream Port Containment
-Related Enhancements ECN, OS is responsible for clearing the AER
-registers in EDR mode. So clear AER registers in dpc_process_error()
-function.
+In such a case hdac_i915 would be linked in and try to load the i915
+module, fail since it is not there, but still wait for a whole minute
+before giving up binding with it.
 
-Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+This fixes such as case by only waiting for the binding if the module
+was properly loaded (or module support is disabled, in which case i915
+is already compiled-in anyway).
+
+Signed-off-by: Samuel Thibault <samuel.thibault@ens-lyon.org>
 ---
- drivers/pci/pcie/dpc.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ sound/hda/hdac_i915.c |   11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/pci/pcie/dpc.c b/drivers/pci/pcie/dpc.c
-index 369df422692f..115590ad10ed 100644
---- a/drivers/pci/pcie/dpc.c
-+++ b/drivers/pci/pcie/dpc.c
-@@ -275,6 +275,10 @@ static void dpc_process_error(struct dpc_dev *dpc)
- 		pci_aer_clear_fatal_status(pdev);
+--- a/sound/hda/hdac_i915.c
++++ b/sound/hda/hdac_i915.c
+@@ -136,10 +136,13 @@ int snd_hdac_i915_init(struct hdac_bus *
+ 	if (!acomp)
+ 		return -ENODEV;
+ 	if (!acomp->ops) {
+-		request_module("i915");
+-		/* 60s timeout */
+-		wait_for_completion_timeout(&bind_complete,
+-					    msecs_to_jiffies(60 * 1000));
++		if (!IS_ENABLED(CONFIG_MODULES) ||
++		    !request_module("i915"))
++		{
++			/* 60s timeout */
++			wait_for_completion_timeout(&bind_complete,
++						   msecs_to_jiffies(60 * 1000));
++		}
  	}
- 
-+	/* In EDR mode, OS is responsible for clearing AER registers */
-+	if (dpc->firmware_dpc)
-+		pci_cleanup_aer_error_status_regs(pdev);
-+
- 	/*
- 	 * Irrespective of whether the DPC event is triggered by
- 	 * ERR_FATAL or ERR_NONFATAL, since the link is already down,
--- 
-2.21.0
-
+ 	if (!acomp->ops) {
+ 		dev_info(bus->dev, "couldn't bind with audio component\n");
