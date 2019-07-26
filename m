@@ -2,93 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A031576944
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 15:50:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 054F77698F
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 15:53:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388506AbfGZNuk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 09:50:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52556 "EHLO mail.kernel.org"
+        id S2388244AbfGZNne (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 09:43:34 -0400
+Received: from mga14.intel.com ([192.55.52.115]:61886 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728096AbfGZNoW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 09:44:22 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8DE5222CD8;
-        Fri, 26 Jul 2019 13:44:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564148661;
-        bh=8bKqOjSUUQC1mnRNDLkjrxM4PpNvEvT4NFD5HvX0/1g=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nPtuQRW0/diSn3YIaUDnob/F7aGKpOXza4ldm6pYi+3h7hMCNJB6uIPzU8x8etQ33
-         pKMnamOPa8Z7IeRRFTCo5nJ9lhl65UkcQ9AS+lOpZr/zU03VeEtODxDkkNcl2reyGD
-         0IH+yX5dLEfr02zQke4U9mCSxheiucCWGC7E9Axs=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Denis Efremov <efremov@ispras.ru>, Willy Tarreau <w@1wt.eu>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>, linux-block@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 31/37] floppy: fix out-of-bounds read in copy_buffer
-Date:   Fri, 26 Jul 2019 09:43:26 -0400
-Message-Id: <20190726134332.12626-31-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190726134332.12626-1-sashal@kernel.org>
-References: <20190726134332.12626-1-sashal@kernel.org>
+        id S2388209AbfGZNn2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 09:43:28 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jul 2019 06:43:27 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,311,1559545200"; 
+   d="scan'208";a="322042154"
+Received: from msmall-mobl.amr.corp.intel.com (HELO [10.251.154.62]) ([10.251.154.62])
+  by orsmga004.jf.intel.com with ESMTP; 26 Jul 2019 06:43:26 -0700
+Subject: Re: [alsa-devel] [RFC PATCH 01/40] soundwire: add debugfs support
+To:     Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
+Cc:     alsa-devel@alsa-project.org, tiwai@suse.de,
+        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        vkoul@kernel.org, broonie@kernel.org,
+        srinivas.kandagatla@linaro.org, jank@cadence.com,
+        slawomir.blauciak@intel.com, Sanyog Kale <sanyog.r.kale@intel.com>
+References: <20190725234032.21152-1-pierre-louis.bossart@linux.intel.com>
+ <20190725234032.21152-2-pierre-louis.bossart@linux.intel.com>
+ <20190725221554.GA16003@ubuntu>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <3a45625f-72a8-cb0c-1467-460000d1d8f7@linux.intel.com>
+Date:   Fri, 26 Jul 2019 08:43:26 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190725221554.GA16003@ubuntu>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Denis Efremov <efremov@ispras.ru>
 
-[ Upstream commit da99466ac243f15fbba65bd261bfc75ffa1532b6 ]
 
-This fixes a global out-of-bounds read access in the copy_buffer
-function of the floppy driver.
+On 7/25/19 5:15 PM, Guennadi Liakhovetski wrote:
+> Hi Pierre,
+> 
+> A couple of nitpicks:
 
-The FDDEFPRM ioctl allows one to set the geometry of a disk.  The sect
-and head fields (unsigned int) of the floppy_drive structure are used to
-compute the max_sector (int) in the make_raw_rw_request function.  It is
-possible to overflow the max_sector.  Next, max_sector is passed to the
-copy_buffer function and used in one of the memcpy calls.
+Thanks for the feedback!
 
-An unprivileged user could trigger the bug if the device is accessible,
-but requires a floppy disk to be inserted.
+>>   create mode 100644 drivers/soundwire/debugfs.c
+> 
+> [snip]
+> 
+>> diff --git a/drivers/soundwire/bus.h b/drivers/soundwire/bus.h
+>> index 3048ca153f22..06ac4adb0074 100644
+>> --- a/drivers/soundwire/bus.h
+>> +++ b/drivers/soundwire/bus.h
+>> @@ -18,6 +18,30 @@ static inline int sdw_acpi_find_slaves(struct sdw_bus *bus)
+>>   void sdw_extract_slave_id(struct sdw_bus *bus,
+>>   			  u64 addr, struct sdw_slave_id *id);
+>>   
+>> +#ifdef CONFIG_DEBUG_FS
+>> +struct dentry *sdw_bus_debugfs_init(struct sdw_bus *bus);
+>> +void sdw_bus_debugfs_exit(struct dentry *d);
+>> +struct dentry *sdw_slave_debugfs_init(struct sdw_slave *slave);
+>> +void sdw_slave_debugfs_exit(struct dentry *d);
+>> +void sdw_debugfs_init(void);
+>> +void sdw_debugfs_exit(void);
+>> +#else
+>> +struct dentry *sdw_bus_debugfs_init(struct sdw_bus *bus)
+>> +{ return NULL; }
+> 
+> static?
+> 
+>> +
+>> +void sdw_bus_debugfs_exit(struct dentry *d) {}
+>> +
+>> +struct dentry *sdw_slave_debugfs_init(struct sdw_slave *slave)
+>> +{ return NULL; }
+>> +
+>> +void sdw_slave_debugfs_exit(struct dentry *d) {}
+>> +
+>> +void sdw_debugfs_init(void) {}
+>> +
+>> +void sdw_debugfs_exit(void) {}
+> 
+> Same for all the above. You could also declare them inline, but I really hope
+> the compiler will be smart enough to do that itself.
 
-The patch adds the check for the .sect * .head multiplication for not
-overflowing in the set_geometry function.
+yes, I'll add static inline for all this.
 
-The bug was found by syzkaller.
+>> +struct dentry *sdw_bus_debugfs_init(struct sdw_bus *bus)
+>> +{
+>> +	struct dentry *d;
+> 
+> I would remove the above
+> 
+>> +	char name[16];
+>> +
+>> +	if (!sdw_debugfs_root)
+>> +		return NULL;
+>> +
+>> +	/* create the debugfs master-N */
+>> +	snprintf(name, sizeof(name), "master-%d", bus->link_id);
+>> +	d = debugfs_create_dir(name, sdw_debugfs_root);
+>> +
+>> +	return d;
+> 
+> And just do
+> 
+> +	return debugfs_create_dir(name, sdw_debugfs_root);
 
-Signed-off-by: Denis Efremov <efremov@ispras.ru>
-Tested-by: Willy Tarreau <w@1wt.eu>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/block/floppy.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+yep, will do.
 
-diff --git a/drivers/block/floppy.c b/drivers/block/floppy.c
-index 4c6c20376a83..1205472a9f63 100644
---- a/drivers/block/floppy.c
-+++ b/drivers/block/floppy.c
-@@ -3239,8 +3239,10 @@ static int set_geometry(unsigned int cmd, struct floppy_struct *g,
- 	int cnt;
- 
- 	/* sanity checking for parameters. */
--	if (g->sect <= 0 ||
--	    g->head <= 0 ||
-+	if ((int)g->sect <= 0 ||
-+	    (int)g->head <= 0 ||
-+	    /* check for overflow in max_sector */
-+	    (int)(g->sect * g->head) <= 0 ||
- 	    /* check for zero in F_SECT_PER_TRACK */
- 	    (unsigned char)((g->sect << 2) >> FD_SIZECODE(g)) == 0 ||
- 	    g->track <= 0 || g->track > UDP->tracks >> STRETCH(g) ||
--- 
-2.20.1
+>> +static ssize_t sdw_sprintf(struct sdw_slave *slave,
+>> +			   char *buf, size_t pos, unsigned int reg)
+>> +{
+>> +	int value;
+>> +
+>> +	value = sdw_read(slave, reg);
+> 
+> I personally would join the two lines above, but that's just a personal
+> preference.
 
+I prefer splitting variables and code, I just can't mentally split the two.
+
+> 
+>> +
+>> +	if (value < 0)
+>> +		return scnprintf(buf + pos, RD_BUF - pos, "%3x\tXX\n", reg);
+>> +	else
+> 
+> I think it's advised to not use an else in such cases.
+> 
+> Thanks
+> Guennadi
+> 
+>> +		return scnprintf(buf + pos, RD_BUF - pos,
+>> +				"%3x\t%2x\n", reg, value);
+>> +}
+
+The intent was to provide a visual cue that the register is not 
+implemented, which is quite useful. Not all registers are mandatory and 
+not all vendors document the entire set of registers, so it's a good way 
+to figure things out. The value is not used for any functional purpose, 
+it's just a register dump for the integrator to look at. I'll add a note 
+to explain the idea.
