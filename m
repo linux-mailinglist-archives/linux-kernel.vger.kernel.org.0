@@ -2,30 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 185C677366
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 23:24:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 341DE77365
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 23:24:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728584AbfGZVYn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 17:24:43 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:50437 "EHLO
+        id S1727747AbfGZVYf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 17:24:35 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:50443 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726102AbfGZVYK (ORCPT
+        with ESMTP id S1728368AbfGZVYL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 17:24:10 -0400
+        Fri, 26 Jul 2019 17:24:11 -0400
 Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1hr7hA-000313-Ex; Fri, 26 Jul 2019 23:24:08 +0200
-Message-Id: <20190726212124.516286187@linutronix.de>
+        id 1hr7hA-000319-U1; Fri, 26 Jul 2019 23:24:09 +0200
+Message-Id: <20190726212124.608488448@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Fri, 26 Jul 2019 23:19:41 +0200
+Date:   Fri, 26 Jul 2019 23:19:42 +0200
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
         "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
         Paolo Bonzini <pbonzini@redhat.com>
-Subject: [patch 5/8] kprobes: Use CONFIG_PREEMPTION
+Subject: [patch 6/8] x86: Use CONFIG_PREEMPTION
 References: <20190726211936.226129163@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -38,24 +38,120 @@ CONFIG_PREEMPTION is selected by CONFIG_PREEMPT and by
 CONFIG_PREEMPT_RT. Both PREEMPT and PREEMPT_RT require the same
 functionality which today depends on CONFIG_PREEMPT.
 
-Switch kprobes conditional over to CONFIG_PREEMPTION.
+Switch the entry code, preempt and kprobes conditionals over to
+CONFIG_PREEMPTION.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
 ---
- kernel/kprobes.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/entry/entry_32.S      |    6 +++---
+ arch/x86/entry/entry_64.S      |    4 ++--
+ arch/x86/entry/thunk_32.S      |    2 +-
+ arch/x86/entry/thunk_64.S      |    4 ++--
+ arch/x86/include/asm/preempt.h |    2 +-
+ arch/x86/kernel/kprobes/core.c |    2 +-
+ 6 files changed, 10 insertions(+), 10 deletions(-)
 
---- a/kernel/kprobes.c
-+++ b/kernel/kprobes.c
-@@ -1906,7 +1906,7 @@ int register_kretprobe(struct kretprobe
+--- a/arch/x86/entry/entry_32.S
++++ b/arch/x86/entry/entry_32.S
+@@ -63,7 +63,7 @@
+  * enough to patch inline, increasing performance.
+  */
  
- 	/* Pre-allocate memory for max kretprobe instances */
- 	if (rp->maxactive <= 0) {
 -#ifdef CONFIG_PREEMPT
 +#ifdef CONFIG_PREEMPTION
- 		rp->maxactive = max_t(unsigned int, 10, 2*num_possible_cpus());
+ # define preempt_stop(clobbers)	DISABLE_INTERRUPTS(clobbers); TRACE_IRQS_OFF
  #else
- 		rp->maxactive = num_possible_cpus();
+ # define preempt_stop(clobbers)
+@@ -1084,7 +1084,7 @@ ENTRY(entry_INT80_32)
+ 	INTERRUPT_RETURN
+ 
+ restore_all_kernel:
+-#ifdef CONFIG_PREEMPT
++#ifdef CONFIG_PREEMPTION
+ 	DISABLE_INTERRUPTS(CLBR_ANY)
+ 	cmpl	$0, PER_CPU_VAR(__preempt_count)
+ 	jnz	.Lno_preempt
+@@ -1364,7 +1364,7 @@ ENTRY(xen_hypervisor_callback)
+ ENTRY(xen_do_upcall)
+ 1:	mov	%esp, %eax
+ 	call	xen_evtchn_do_upcall
+-#ifndef CONFIG_PREEMPT
++#ifndef CONFIG_PREEMPTION
+ 	call	xen_maybe_preempt_hcall
+ #endif
+ 	jmp	ret_from_intr
+--- a/arch/x86/entry/entry_64.S
++++ b/arch/x86/entry/entry_64.S
+@@ -662,7 +662,7 @@ GLOBAL(swapgs_restore_regs_and_return_to
+ 
+ /* Returning to kernel space */
+ retint_kernel:
+-#ifdef CONFIG_PREEMPT
++#ifdef CONFIG_PREEMPTION
+ 	/* Interrupts are off */
+ 	/* Check if we need preemption */
+ 	btl	$9, EFLAGS(%rsp)		/* were interrupts off? */
+@@ -1113,7 +1113,7 @@ ENTRY(xen_do_hypervisor_callback)		/* do
+ 	call	xen_evtchn_do_upcall
+ 	LEAVE_IRQ_STACK
+ 
+-#ifndef CONFIG_PREEMPT
++#ifndef CONFIG_PREEMPTION
+ 	call	xen_maybe_preempt_hcall
+ #endif
+ 	jmp	error_exit
+--- a/arch/x86/entry/thunk_32.S
++++ b/arch/x86/entry/thunk_32.S
+@@ -34,7 +34,7 @@
+ 	THUNK trace_hardirqs_off_thunk,trace_hardirqs_off_caller,1
+ #endif
+ 
+-#ifdef CONFIG_PREEMPT
++#ifdef CONFIG_PREEMPTION
+ 	THUNK ___preempt_schedule, preempt_schedule
+ 	THUNK ___preempt_schedule_notrace, preempt_schedule_notrace
+ 	EXPORT_SYMBOL(___preempt_schedule)
+--- a/arch/x86/entry/thunk_64.S
++++ b/arch/x86/entry/thunk_64.S
+@@ -46,7 +46,7 @@
+ 	THUNK lockdep_sys_exit_thunk,lockdep_sys_exit
+ #endif
+ 
+-#ifdef CONFIG_PREEMPT
++#ifdef CONFIG_PREEMPTION
+ 	THUNK ___preempt_schedule, preempt_schedule
+ 	THUNK ___preempt_schedule_notrace, preempt_schedule_notrace
+ 	EXPORT_SYMBOL(___preempt_schedule)
+@@ -55,7 +55,7 @@
+ 
+ #if defined(CONFIG_TRACE_IRQFLAGS) \
+  || defined(CONFIG_DEBUG_LOCK_ALLOC) \
+- || defined(CONFIG_PREEMPT)
++ || defined(CONFIG_PREEMPTION)
+ .L_restore:
+ 	popq %r11
+ 	popq %r10
+--- a/arch/x86/include/asm/preempt.h
++++ b/arch/x86/include/asm/preempt.h
+@@ -102,7 +102,7 @@ static __always_inline bool should_resch
+ 	return unlikely(raw_cpu_read_4(__preempt_count) == preempt_offset);
+ }
+ 
+-#ifdef CONFIG_PREEMPT
++#ifdef CONFIG_PREEMPTION
+   extern asmlinkage void ___preempt_schedule(void);
+ # define __preempt_schedule() \
+ 	asm volatile ("call ___preempt_schedule" : ASM_CALL_CONSTRAINT)
+--- a/arch/x86/kernel/kprobes/core.c
++++ b/arch/x86/kernel/kprobes/core.c
+@@ -580,7 +580,7 @@ static void setup_singlestep(struct kpro
+ 	if (setup_detour_execution(p, regs, reenter))
+ 		return;
+ 
+-#if !defined(CONFIG_PREEMPT)
++#if !defined(CONFIG_PREEMPTION)
+ 	if (p->ainsn.boostable && !p->post_handler) {
+ 		/* Boost up -- we can execute copied instructions directly */
+ 		if (!reenter)
 
 
