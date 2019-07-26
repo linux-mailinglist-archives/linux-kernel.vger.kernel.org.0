@@ -2,251 +2,215 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA29376AB4
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 16:00:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AFF7076ACD
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 16:01:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388716AbfGZOA1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 10:00:27 -0400
-Received: from foss.arm.com ([217.140.110.172]:45056 "EHLO foss.arm.com"
+        id S2388195AbfGZOAy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 10:00:54 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:48040 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387395AbfGZOAS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 10:00:18 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3E7CF152D;
-        Fri, 26 Jul 2019 07:00:18 -0700 (PDT)
-Received: from usa.arm.com (e107155-lin.cambridge.arm.com [10.1.196.42])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 3C6CC3F694;
-        Fri, 26 Jul 2019 07:00:16 -0700 (PDT)
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     Sudeep Holla <sudeep.holla@arm.com>, Peng Fan <peng.fan@nxp.com>,
-        linux-kernel@vger.kernel.org,
-        Bo Zhang <bozhang.zhang@broadcom.com>,
-        Jim Quinlan <james.quinlan@broadcom.com>,
-        Volodymyr Babchuk <volodymyr_babchuk@epam.com>,
-        Gaku Inami <gaku.inami.xh@renesas.com>,
-        aidapala@qti.qualcomm.com, pajay@qti.qualcomm.com,
-        Etienne Carriere <etienne.carriere@linaro.org>,
-        Souvik Chakravarty <Souvik.Chakravarty@arm.com>,
-        wesleys@xilinx.com, Felix Burton <fburton@xilinx.com>,
-        Saeed Nowshadi <saeed.nowshadi@xilinx.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Subject: [PATCH 5/5] reset: Add support for resets provided by SCMI
-Date:   Fri, 26 Jul 2019 14:59:54 +0100
-Message-Id: <20190726135954.11078-6-sudeep.holla@arm.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190726135954.11078-1-sudeep.holla@arm.com>
-References: <20190726135954.11078-1-sudeep.holla@arm.com>
+        id S2387598AbfGZOAu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 10:00:50 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 07A33C059B6F;
+        Fri, 26 Jul 2019 14:00:49 +0000 (UTC)
+Received: from [10.72.12.238] (ovpn-12-238.pek2.redhat.com [10.72.12.238])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 894BC6062E;
+        Fri, 26 Jul 2019 14:00:22 +0000 (UTC)
+Subject: Re: WARNING in __mmdrop
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     syzbot <syzbot+e58112d71f77113ddb7b@syzkaller.appspotmail.com>,
+        aarcange@redhat.com, akpm@linux-foundation.org,
+        christian@brauner.io, davem@davemloft.net, ebiederm@xmission.com,
+        elena.reshetova@intel.com, guro@fb.com, hch@infradead.org,
+        james.bottomley@hansenpartnership.com, jglisse@redhat.com,
+        keescook@chromium.org, ldv@altlinux.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-parisc@vger.kernel.org,
+        luto@amacapital.net, mhocko@suse.com, mingo@kernel.org,
+        namit@vmware.com, peterz@infradead.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
+        wad@chromium.org
+References: <20190725012149-mutt-send-email-mst@kernel.org>
+ <55e8930c-2695-365f-a07b-3ad169654d28@redhat.com>
+ <20190725042651-mutt-send-email-mst@kernel.org>
+ <84bb2e31-0606-adff-cf2a-e1878225a847@redhat.com>
+ <20190725092332-mutt-send-email-mst@kernel.org>
+ <11802a8a-ce41-f427-63d5-b6a4cf96bb3f@redhat.com>
+ <20190726074644-mutt-send-email-mst@kernel.org>
+ <5cc94f15-b229-a290-55f3-8295266edb2b@redhat.com>
+ <20190726082837-mutt-send-email-mst@kernel.org>
+ <ada10dc9-6cab-e189-5289-6f9d3ff8fed2@redhat.com>
+ <20190726094353-mutt-send-email-mst@kernel.org>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <63754251-a39a-1e0e-952d-658102682094@redhat.com>
+Date:   Fri, 26 Jul 2019 22:00:20 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <20190726094353-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Fri, 26 Jul 2019 14:00:49 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On some ARM based systems, a separate Cortex-M based System Control
-Processor(SCP) provides the overall power, clock, reset and system
-control. System Control and Management Interface(SCMI) Message Protocol
-is defined for the communication between the Application Cores(AP)
-and the SCP.
 
-Adds support for the resets provided using SCMI protocol for performing
-reset management of various devices present on the SoC. Various reset
-functionalities are achieved by the means of different ARM SCMI device
-operations provided by the ARM SCMI framework.
+On 2019/7/26 下午9:47, Michael S. Tsirkin wrote:
+> On Fri, Jul 26, 2019 at 08:53:18PM +0800, Jason Wang wrote:
+>> On 2019/7/26 下午8:38, Michael S. Tsirkin wrote:
+>>> On Fri, Jul 26, 2019 at 08:00:58PM +0800, Jason Wang wrote:
+>>>> On 2019/7/26 下午7:49, Michael S. Tsirkin wrote:
+>>>>> On Thu, Jul 25, 2019 at 10:25:25PM +0800, Jason Wang wrote:
+>>>>>> On 2019/7/25 下午9:26, Michael S. Tsirkin wrote:
+>>>>>>>> Exactly, and that's the reason actually I use synchronize_rcu() there.
+>>>>>>>>
+>>>>>>>> So the concern is still the possible synchronize_expedited()?
+>>>>>>> I think synchronize_srcu_expedited.
+>>>>>>>
+>>>>>>> synchronize_expedited sends lots of IPI and is bad for realtime VMs.
+>>>>>>>
+>>>>>>>> Can I do this
+>>>>>>>> on through another series on top of the incoming V2?
+>>>>>>>>
+>>>>>>>> Thanks
+>>>>>>>>
+>>>>>>> The question is this: is this still a gain if we switch to the
+>>>>>>> more expensive srcu? If yes then we can keep the feature on,
+>>>>>> I think we only care about the cost on srcu_read_lock() which looks pretty
+>>>>>> tiny form my point of view. Which is basically a READ_ONCE() + WRITE_ONCE().
+>>>>>>
+>>>>>> Of course I can benchmark to see the difference.
+>>>>>>
+>>>>>>
+>>>>>>> if not we'll put it off until next release and think
+>>>>>>> of better solutions. rcu->srcu is just a find and replace,
+>>>>>>> don't see why we need to defer that. can be a separate patch
+>>>>>>> for sure, but we need to know how well it works.
+>>>>>> I think I get here, let me try to do that in V2 and let's see the numbers.
+>>>>>>
+>>>>>> Thanks
+>>>> It looks to me for tree rcu, its srcu_read_lock() have a mb() which is too
+>>>> expensive for us.
+>>> I will try to ponder using vq lock in some way.
+>>> Maybe with trylock somehow ...
+>>
+>> Ok, let me retry if necessary (but I do remember I end up with deadlocks
+>> last try).
+>>
+>>
+>>>
+>>>> If we just worry about the IPI,
+>>> With synchronize_rcu what I would worry about is that guest is stalled
+>>
+>> Can this synchronize_rcu() be triggered by guest? If yes, there are several
+>> other MMU notifiers that can block. Is vhost something special here?
+> Sorry, let me explain: guests (and tasks in general)
+> can trigger activity that will
+> make synchronize_rcu take a long time.
 
-Cc: Philipp Zabel <p.zabel@pengutronix.de>
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
----
- MAINTAINERS                |   1 +
- drivers/reset/Kconfig      |  10 +++
- drivers/reset/Makefile     |   1 +
- drivers/reset/reset-scmi.c | 133 +++++++++++++++++++++++++++++++++++++
- 4 files changed, 145 insertions(+)
- create mode 100644 drivers/reset/reset-scmi.c
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 783569e3c4b4..59df8f88b56d 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -15545,6 +15545,7 @@ F:	drivers/clk/clk-sc[mp]i.c
- F:	drivers/cpufreq/sc[mp]i-cpufreq.c
- F:	drivers/firmware/arm_scpi.c
- F:	drivers/firmware/arm_scmi/
-+F:	drivers/reset/reset-scmi.c
- F:	include/linux/sc[mp]i_protocol.h
- 
- SYSTEM RESET/SHUTDOWN DRIVERS
-diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-index 21efb7d39d62..09dcc3bf3b7a 100644
---- a/drivers/reset/Kconfig
-+++ b/drivers/reset/Kconfig
-@@ -22,6 +22,16 @@ config RESET_A10SR
- 	  This option enables support for the external reset functions for
- 	  peripheral PHYs on the Altera Arria10 System Resource Chip.
- 
-+config RESET_ARM_SCMI
-+	tristate "Reset driver controlled via ARM SCMI interface"
-+	depends on ARM_SCMI_PROTOCOL || COMPILE_TEST
-+	help
-+	  This driver provides support for reset signal/domains that are
-+	  controlled by firmware that implements the SCMI interface.
-+
-+	  This driver uses SCMI Message Protocol to interact with the
-+	  firmware providing all the reset signals.
-+
- config RESET_ATH79
- 	bool "AR71xx Reset Driver" if COMPILE_TEST
- 	default ATH79
-diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-index 61456b8f659c..2f1103d31938 100644
---- a/drivers/reset/Makefile
-+++ b/drivers/reset/Makefile
-@@ -4,6 +4,7 @@ obj-y += hisilicon/
- obj-$(CONFIG_ARCH_STI) += sti/
- obj-$(CONFIG_ARCH_TEGRA) += tegra/
- obj-$(CONFIG_RESET_A10SR) += reset-a10sr.o
-+obj-$(CONFIG_RESET_ARM_SCMI) += reset-scmi.o
- obj-$(CONFIG_RESET_ATH79) += reset-ath79.o
- obj-$(CONFIG_RESET_AXS10X) += reset-axs10x.o
- obj-$(CONFIG_RESET_BERLIN) += reset-berlin.o
-diff --git a/drivers/reset/reset-scmi.c b/drivers/reset/reset-scmi.c
-new file mode 100644
-index 000000000000..9e5d07cac2ed
---- /dev/null
-+++ b/drivers/reset/reset-scmi.c
-@@ -0,0 +1,133 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * ARM System Control and Management Interface (ARM SCMI) reset driver
-+ *
-+ * Copyright (C) 2019 ARM Ltd.
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/mutex.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/reset-controller.h>
-+#include <linux/scmi_protocol.h>
-+
-+/**
-+ * struct scmi_reset_data - reset controller information structure
-+ * @rcdev: reset controller entity
-+ * @handle: ARM SCMI handle used for communication with system controller
-+ * @dev: reset controller device pointer
-+ */
-+struct scmi_reset_data {
-+	struct reset_controller_dev rcdev;
-+	const struct scmi_handle *handle;
-+	struct device *dev;
-+};
-+
-+#define to_scmi_reset_data(p)	\
-+	container_of((p), struct scmi_reset_data, rcdev)
-+
-+/**
-+ * scmi_reset_assert() - assert device reset
-+ * @rcdev: reset controller entity
-+ * @id: ID of the reset to be asserted
-+ *
-+ * This function implements the reset driver op to assert a device's reset
-+ * using the ARM SCMI protocol.
-+ *
-+ * Return: 0 for successful request, else a corresponding error value
-+ */
-+static int
-+scmi_reset_assert(struct reset_controller_dev *rcdev, unsigned long id)
-+{
-+	struct scmi_reset_data *data = to_scmi_reset_data(rcdev);
-+	const struct scmi_handle *handle = data->handle;
-+	int ret;
-+
-+	ret = handle->reset_ops->assert(handle, id);
-+
-+	return ret;
-+}
-+
-+/**
-+ * scmi_reset_deassert() - deassert device reset
-+ * @rcdev: reset controller entity
-+ * @id: ID of the reset to be deasserted
-+ *
-+ * This function implements the reset driver op to deassert a device's reset
-+ * using the ARM SCMI protocol.
-+ *
-+ * Return: 0 for successful request, else a corresponding error value
-+ */
-+static int
-+scmi_reset_deassert(struct reset_controller_dev *rcdev, unsigned long id)
-+{
-+	struct scmi_reset_data *data = to_scmi_reset_data(rcdev);
-+	const struct scmi_handle *handle = data->handle;
-+
-+	return handle->reset_ops->deassert(handle, id);
-+}
-+
-+/**
-+ * scmi_reset_reset() - reset the device
-+ * @rcdev: reset controller entity
-+ * @id: ID of the reset signal to be reset(assert + deassert)
-+ *
-+ * This function implements the reset driver op to reset a device's reset
-+ * signal using the ARM SCMI protocol.
-+ *
-+ * Return: 0 for successful request, else a corresponding error value
-+ */
-+static int
-+scmi_reset_reset(struct reset_controller_dev *rcdev, unsigned long id)
-+{
-+	struct scmi_reset_data *data = to_scmi_reset_data(rcdev);
-+	const struct scmi_handle *handle = data->handle;
-+
-+	return handle->reset_ops->reset(handle, id);
-+}
-+
-+static const struct reset_control_ops scmi_reset_ops = {
-+	.assert		= scmi_reset_assert,
-+	.deassert	= scmi_reset_deassert,
-+	.reset		= scmi_reset_reset,
-+};
-+
-+static int scmi_reset_probe(struct scmi_device *sdev)
-+{
-+	struct scmi_reset_data *data;
-+	struct device *dev = &sdev->dev;
-+	struct device_node *np = dev->of_node;
-+	const struct scmi_handle *handle = sdev->handle;
-+
-+	if (!handle || !handle->reset_ops)
-+		return -ENODEV;
-+
-+	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	data->rcdev.ops = &scmi_reset_ops;
-+	data->rcdev.owner = THIS_MODULE;
-+	data->rcdev.of_node = np;
-+	data->dev = dev;
-+
-+	return devm_reset_controller_register(dev, &data->rcdev);
-+}
-+
-+static const struct scmi_device_id scmi_id_table[] = {
-+	{ SCMI_PROTOCOL_RESET },
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(scmi, scmi_id_table);
-+
-+static struct scmi_driver scmi_reset_driver = {
-+	.name = "scmi-reset",
-+	.probe = scmi_reset_probe,
-+	.id_table = scmi_id_table,
-+};
-+module_scmi_driver(scmi_reset_driver);
-+
-+MODULE_AUTHOR("Sudeep Holla <sudeep.holla@arm.com>");
-+MODULE_DESCRIPTION("ARM SCMI clock driver");
-+MODULE_LICENSE("GPL v2");
--- 
-2.17.1
+Yes, I get this.
+
+
+>   Thus blocking
+> an mmu notifier until synchronize_rcu finishes
+> is a bad idea.
+
+
+The question is, MMU notifier are allowed to be blocked on 
+invalidate_range_start() which could be much slower than 
+synchronize_rcu() to finish.
+
+Looking at amdgpu_mn_invalidate_range_start_gfx() which calls 
+amdgpu_mn_invalidate_node() which did:
+
+                 r = reservation_object_wait_timeout_rcu(bo->tbo.resv,
+                         true, false, MAX_SCHEDULE_TIMEOUT);
+
+...
+
+
+>>> because system is busy because of other guests.
+>>> With expedited it's the IPIs...
+>>>
+>> The current synchronize_rcu()  can force a expedited grace period:
+>>
+>> void synchronize_rcu(void)
+>> {
+>>          ...
+>>          if (rcu_blocking_is_gp())
+>> return;
+>>          if (rcu_gp_is_expedited())
+>> synchronize_rcu_expedited();
+>> else
+>> wait_rcu_gp(call_rcu);
+>> }
+>> EXPORT_SYMBOL_GPL(synchronize_rcu);
+>
+> An admin can force rcu to finish faster, trading
+> interrupts for responsiveness.
+
+
+Yes, so when set, all each synchronize_rcu() will go for 
+synchronize_rcu_expedited().
+
+
+>
+>>>> can we do something like in
+>>>> vhost_invalidate_vq_start()?
+>>>>
+>>>>           if (map) {
+>>>>                   /* In order to avoid possible IPIs with
+>>>>                    * synchronize_rcu_expedited() we use call_rcu() +
+>>>>                    * completion.
+>>>> */
+>>>> init_completion(&c.completion);
+>>>>                   call_rcu(&c.rcu_head, vhost_finish_vq_invalidation);
+>>>> wait_for_completion(&c.completion);
+>>>>                   vhost_set_map_dirty(vq, map, index);
+>>>> vhost_map_unprefetch(map);
+>>>>           }
+>>>>
+>>>> ?
+>>> Why would that be faster than synchronize_rcu?
+>>
+>> No faster but no IPI.
+>>
+> Sorry I still don't see the point.
+> synchronize_rcu doesn't normally do an IPI either.
+>
+
+Not the case of when rcu_expedited is set. This can just 100% make sure 
+there's no IPI.
+
+
+>>>
+>>>>> There's one other thing that bothers me, and that is that
+>>>>> for large rings which are not physically contiguous
+>>>>> we don't implement the optimization.
+>>>>>
+>>>>> For sure, that can wait, but I think eventually we should
+>>>>> vmap large rings.
+>>>> Yes, worth to try. But using direct map has its own advantage: it can use
+>>>> hugepage that vmap can't
+>>>>
+>>>> Thanks
+>>> Sure, so we can do that for small rings.
+>>
+>> Yes, that's possible but should be done on top.
+>>
+>> Thanks
+> Absolutely. Need to fix up the bugs first.
+>
+
+Yes.
+
+Thanks
 
