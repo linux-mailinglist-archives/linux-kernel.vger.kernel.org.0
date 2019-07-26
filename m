@@ -2,73 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 30FB4760B8
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 10:29:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 69646760BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 10:31:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726631AbfGZI3p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 04:29:45 -0400
-Received: from foss.arm.com ([217.140.110.172]:39532 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726437AbfGZI3l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 04:29:41 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3294C152D;
-        Fri, 26 Jul 2019 01:29:41 -0700 (PDT)
-Received: from e107985-lin.arm.com (e107985-lin.cambridge.arm.com [10.1.194.38])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 0AD413F71A;
-        Fri, 26 Jul 2019 01:29:39 -0700 (PDT)
-From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Juri Lelli <juri.lelli@redhat.com>
-Cc:     Luca Abeni <luca.abeni@santannapisa.it>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Valentin Schneider <Valentin.Schneider@arm.com>,
-        Qais Yousef <Qais.Yousef@arm.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH 5/5] sched/deadline: Use return value of SCHED_WARN_ON() in bw accounting
-Date:   Fri, 26 Jul 2019 09:27:56 +0100
-Message-Id: <20190726082756.5525-6-dietmar.eggemann@arm.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190726082756.5525-1-dietmar.eggemann@arm.com>
-References: <20190726082756.5525-1-dietmar.eggemann@arm.com>
+        id S1726323AbfGZIbT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 04:31:19 -0400
+Received: from mx2.suse.de ([195.135.220.15]:42978 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725842AbfGZIbT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 04:31:19 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id AB72DB606;
+        Fri, 26 Jul 2019 08:31:17 +0000 (UTC)
+Date:   Fri, 26 Jul 2019 10:31:17 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-acpi@vger.kernel.org,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Oscar Salvador <osalvador@suse.de>
+Subject: Re: [PATCH v1] ACPI / scan: Acquire device_hotplug_lock in
+ acpi_scan_init()
+Message-ID: <20190726083117.GJ6142@dhcp22.suse.cz>
+References: <20190724143017.12841-1-david@redhat.com>
+ <20190725125636.GA3582@dhcp22.suse.cz>
+ <6dc566c2-faf6-565d-4ef1-2ac3a366bc76@redhat.com>
+ <20190725135747.GB3582@dhcp22.suse.cz>
+ <447b74ca-f7c7-0835-fd50-a9f7191fe47c@redhat.com>
+ <20190725191943.GA6142@dhcp22.suse.cz>
+ <e31882cf-3290-ea36-77d6-637eaf66fe77@redhat.com>
+ <20190726075729.GG6142@dhcp22.suse.cz>
+ <fd9e8495-1a93-ac47-442f-081d392ed09b@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fd9e8495-1a93-ac47-442f-081d392ed09b@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To make the decision whether to set rq or running bw to 0 in underflow
-case use the return value of SCHED_WARN_ON() rather than an extra if
-condition.
+On Fri 26-07-19 10:05:58, David Hildenbrand wrote:
+> On 26.07.19 09:57, Michal Hocko wrote:
+> > On Thu 25-07-19 22:49:36, David Hildenbrand wrote:
+> >> On 25.07.19 21:19, Michal Hocko wrote:
+> > [...]
+> >>> We need to rationalize the locking here, not to add more hacks.
+> >>
+> >> No, sorry. The real hack is calling a function that is *documented* to
+> >> be called under lock without it. That is an optimization for a special
+> >> case. That is the black magic in the code.
+> > 
+> > OK, let me ask differently. What does the device_hotplug_lock actually
+> > protects from in the add_memory path? (Which data structures)
+> > 
+> > This function is meant to be used when struct pages and node/zone data
+> > structures should be updated. Why should we even care about some device
+> > concept here? This should all be handled a layer up. Not all memory will
+> > have user space API to control online/offline state.
+> 
+> Via add_memory()/__add_memory() we create memory block devices for all
+> memory. So all memory we create via this function (IOW, hotplug) will
+> have user space APIs.
 
-Signed-off-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
----
- kernel/sched/deadline.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+Ups, I have mixed add_memory with add_pages which I've had in mind while
+writing that. Sorry about the confusion.
 
-diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-index a9cb52ceb761..66c594b5507e 100644
---- a/kernel/sched/deadline.c
-+++ b/kernel/sched/deadline.c
-@@ -95,8 +95,7 @@ void __sub_running_bw(u64 dl_bw, struct dl_rq *dl_rq)
- 
- 	lockdep_assert_held(&(rq_of_dl_rq(dl_rq))->lock);
- 	dl_rq->running_bw -= dl_bw;
--	SCHED_WARN_ON(dl_rq->running_bw > old); /* underflow */
--	if (dl_rq->running_bw > old)
-+	if (SCHED_WARN_ON(dl_rq->running_bw > old)) /* underflow */
- 		dl_rq->running_bw = 0;
- 	/* kick cpufreq (see the comment in kernel/sched/sched.h). */
- 	cpufreq_update_util(rq_of_dl_rq(dl_rq), 0);
-@@ -119,8 +118,7 @@ void __sub_rq_bw(u64 dl_bw, struct dl_rq *dl_rq)
- 
- 	lockdep_assert_held(&(rq_of_dl_rq(dl_rq))->lock);
- 	dl_rq->this_bw -= dl_bw;
--	SCHED_WARN_ON(dl_rq->this_bw > old); /* underflow */
--	if (dl_rq->this_bw > old)
-+	if (SCHED_WARN_ON(dl_rq->this_bw > old)) /* underflow */
- 		dl_rq->this_bw = 0;
- 	SCHED_WARN_ON(dl_rq->running_bw > dl_rq->this_bw);
- }
+Anyway, my dislike of the device_hotplug_lock persists. I would really
+love to see it go rather than grow even more to the hotplug code. We
+should be really striving for mem hotplug internal and ideally range
+defined locking longterm.
+
 -- 
-2.17.1
-
+Michal Hocko
+SUSE Labs
