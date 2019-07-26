@@ -2,85 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE11376CA4
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 17:26:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2469276CE6
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 17:29:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387835AbfGZP0I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 11:26:08 -0400
-Received: from mga11.intel.com ([192.55.52.93]:33806 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387681AbfGZP0D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 11:26:03 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jul 2019 08:26:02 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,311,1559545200"; 
-   d="scan'208";a="322065176"
-Received: from msmall-mobl.amr.corp.intel.com (HELO [10.251.154.62]) ([10.251.154.62])
-  by orsmga004.jf.intel.com with ESMTP; 26 Jul 2019 08:26:01 -0700
-Subject: Re: [alsa-devel] [RFC PATCH 21/40] soundwire: export helpers to find
- row and column values
-To:     Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>
-Cc:     alsa-devel@alsa-project.org, tiwai@suse.de,
-        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        vkoul@kernel.org, broonie@kernel.org,
-        srinivas.kandagatla@linaro.org, jank@cadence.com,
-        slawomir.blauciak@intel.com, Sanyog Kale <sanyog.r.kale@intel.com>
-References: <20190725234032.21152-1-pierre-louis.bossart@linux.intel.com>
- <20190725234032.21152-22-pierre-louis.bossart@linux.intel.com>
- <20190726144325.GH16003@ubuntu>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <d6268a75-b38c-aee5-0463-af8b602286bb@linux.intel.com>
-Date:   Fri, 26 Jul 2019 10:26:01 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <20190726144325.GH16003@ubuntu>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        id S2388483AbfGZP21 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 11:28:27 -0400
+Received: from mail-eopbgr130085.outbound.protection.outlook.com ([40.107.13.85]:49284
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388441AbfGZP2Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 11:28:25 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Bvt0sYi+ZPbizoCwyKqGamD8R1N/yIXBQjYoeWP9A7oPdLpQvgXz4HzJSBPwS5vbIy29pwfTPEQmW7uToUstox1S1OwUzkk+haZdnAzd//nG2Gb+pa+3ZG7F0sLxFyrcalXtrZsfoikhelL1uFKr9Gh9uAm8qZYHmbsrlC059VZQCkRihcaurZKfli/TYBVSKi4XgYo+GW+n6Jl4UkpSezzdr1SH2qbkJRUx9V+10z6ntDGGnqIC3G+58P8uziwm0fDny2fVxXyVH2LNLX6ZKx5bwamWYIhVeaey2+kZpMj706ZETtffdTH5JX9iBUbYmGkVxyWRE0JCvsWCM1QA1g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zLjvjOdOrza6DN2eKp9twaq8zicSPEYLNkPVUh2Ut/s=;
+ b=NgWHD+LazFPiv36JWP8W/NWxkS59OVP4UMt4+E2j3xKB5MusFE4kp3tuo6+L1gP4RLl7IjaC/qWB9bIMFsws4+l8fHlnsSeLBn0AJP+/2L51pWUMm+aKc8SFD9ZL+cOtwqW07B9Ie8jTpvSyvATSvPmjSH7pGqJZzla2LkGRpsIZQso9D1SBaIXqLk+5kuXnj/kYonLqe4VfyBPgo1tOFVy4wVkyClu40hyWxPX8oewdNOJdJhx8Pg7T57IvfDIP1MzA6fZDqsLhJ2MLObS9ncCzN56juvD9qbKD1V8Zll34Y1ClvcaVOUQLlBz7gLs8c/8IRVmBjgU+ptCanlU+pw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
+ smtp.mailfrom=nxp.com;dmarc=pass action=none header.from=nxp.com;dkim=pass
+ header.d=nxp.com;arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zLjvjOdOrza6DN2eKp9twaq8zicSPEYLNkPVUh2Ut/s=;
+ b=B9jkHQz13fpl17p2H+S7IvOrGBz5hRwEmtfAojdn41uB9gdwLV5jqWik4bTM7wbNcnT2yxYBLSFzf6tIBxeUzQlJa5MTzUzghAvP4TdyYU3pPiwvXelS3UeERSYcJukbZgKwQrQIP1/5cJyR2Zj6AVG9MEXH8kekjstnnFdCgwU=
+Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com (52.134.3.153) by
+ VI1PR0402MB3631.eurprd04.prod.outlook.com (52.134.7.22) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2094.17; Fri, 26 Jul 2019 15:28:21 +0000
+Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com
+ ([fe80::7c64:5296:4607:e10]) by VI1PR0402MB3485.eurprd04.prod.outlook.com
+ ([fe80::7c64:5296:4607:e10%5]) with mapi id 15.20.2094.017; Fri, 26 Jul 2019
+ 15:28:21 +0000
+From:   Horia Geanta <horia.geanta@nxp.com>
+To:     Iuliana Prodan <iuliana.prodan@nxp.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Aymen Sghaier <aymen.sghaier@nxp.com>
+CC:     "David S. Miller" <davem@davemloft.net>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH v3 06/14] crypto: caam - check assoclen
+Thread-Topic: [PATCH v3 06/14] crypto: caam - check assoclen
+Thread-Index: AQHVQvEQJzJNMDz6nU6UAqFvjUrpUg==
+Date:   Fri, 26 Jul 2019 15:28:21 +0000
+Message-ID: <VI1PR0402MB3485E88DEB954E2BCB22DD7498C00@VI1PR0402MB3485.eurprd04.prod.outlook.com>
+References: <1564063106-9552-1-git-send-email-iuliana.prodan@nxp.com>
+ <1564063106-9552-7-git-send-email-iuliana.prodan@nxp.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=horia.geanta@nxp.com; 
+x-originating-ip: [79.118.216.219]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: fa30ee8d-0c99-47fa-7283-08d711dde483
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR0402MB3631;
+x-ms-traffictypediagnostic: VI1PR0402MB3631:
+x-microsoft-antispam-prvs: <VI1PR0402MB363113E7A01A87A4D3B84DA798C00@VI1PR0402MB3631.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7691;
+x-forefront-prvs: 01106E96F6
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(39860400002)(366004)(136003)(376002)(346002)(199004)(189003)(3846002)(6116002)(53936002)(81166006)(6436002)(9686003)(81156014)(99286004)(6506007)(86362001)(55016002)(316002)(478600001)(25786009)(26005)(71190400001)(71200400001)(6636002)(6246003)(14454004)(8676002)(54906003)(4744005)(8936002)(44832011)(66556008)(66446008)(76116006)(74316002)(66476007)(52536014)(229853002)(66946007)(5660300002)(66066001)(102836004)(7696005)(110136005)(476003)(446003)(186003)(14444005)(256004)(76176011)(68736007)(486006)(7736002)(33656002)(305945005)(4326008)(53546011)(64756008)(91956017)(2906002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB3631;H:VI1PR0402MB3485.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: TrSHEQ75c1CInAYjwg5721pX9JDh2tlsR4BicCrT2cYSJr2p4EoSuv0MVi+R6BOP3TzyqzkJzHWG6nSubo5+AXX/+th6GsGuqDu0VYh8sn7ANsA3ONbBXHWpBIHvEDc+oh4qtYEy0hU83px36TwWomoEJh/mpQcWhiC69wViaDTEHx5pjtGCs3XskyGzMYXdmAWnhv1btZyy8pf3N9ul7ryeml6wO8dl2B3ZA5/8dCK3pL91HcKh2R6SvfSLw2dSji2tYlncuX5V86uubqDLyxq69wIJ78BYo0OG8DPr4kPTp/eegbmYSXllGz3UwT44xHCeJiDkMLjXVJVlf+9xyodEWKAYKjr/5dkwxATRQCBT5gUEL3RYxl8Am5PbGbETHrhAD0avnLvnxOUalkoBBY2332vKRr8az0PBiFrPFVc=
+Content-Type: text/plain; charset="iso-8859-2"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fa30ee8d-0c99-47fa-7283-08d711dde483
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Jul 2019 15:28:21.4409
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: horia.geanta@nxp.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB3631
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 7/26/19 9:43 AM, Guennadi Liakhovetski wrote:
-> On Thu, Jul 25, 2019 at 06:40:13PM -0500, Pierre-Louis Bossart wrote:
->> Add a prefix for common tables and export 2 helpers to set the frame
->> shapes based on row/col values.
->>
->> Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
->> ---
->>   drivers/soundwire/bus.h    |  7 +++++--
->>   drivers/soundwire/stream.c | 14 ++++++++------
->>   2 files changed, 13 insertions(+), 8 deletions(-)
->>
->> diff --git a/drivers/soundwire/bus.h b/drivers/soundwire/bus.h
->> index 06ac4adb0074..c57c9c23f6ca 100644
->> --- a/drivers/soundwire/bus.h
->> +++ b/drivers/soundwire/bus.h
->> @@ -73,8 +73,11 @@ struct sdw_msg {
->>   
->>   #define SDW_DOUBLE_RATE_FACTOR		2
->>   
->> -extern int rows[SDW_FRAME_ROWS];
->> -extern int cols[SDW_FRAME_COLS];
->> +extern int sdw_rows[SDW_FRAME_ROWS];
->> +extern int sdw_cols[SDW_FRAME_COLS];
-> 
-> So these arrays actually have to be exported? In the current (5.2) sources they
-> seem to only be used in stream.c, maybe make them static there?
-> 
->> +
->> +int sdw_find_row_index(int row);
->> +int sdw_find_col_index(int col);
-
-yes, they need to be exported, they are used by the allocation algorithm 
-(in Patch 27).
-Others will need this for non-Intel solutions, it's really a part of the 
-standard definition and should be shared.
-I can improve the commit message to make this explicit.
+On 7/25/2019 4:58 PM, Iuliana Prodan wrote:=0A=
+> Check assoclen to solve the extra tests that expect -EINVAL to be=0A=
+> returned when the associated data size is not valid.=0A=
+> =0A=
+> Validated assoclen for RFC4106 and RFC4543 which expects an assoclen=0A=
+> of 16 or 20.=0A=
+> Based on seqiv, IPsec ESP and RFC4543/RFC4106 the assoclen is sizeof IP=
+=0A=
+> Header (spi, seq_no, extended seq_no) and IV len. This can be 16 or 20=0A=
+> bytes.=0A=
+> =0A=
+> Signed-off-by: Iuliana Prodan <iuliana.prodan@nxp.com>=0A=
+Reviewed-by: Horia Geant=E3 <horia.geanta@nxp.com>=0A=
+=0A=
+Thanks,=0A=
+Horia=0A=
