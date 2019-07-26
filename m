@@ -2,187 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7631F764BF
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 13:45:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BAFF2764C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 13:47:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726279AbfGZLpc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 07:45:32 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:38451 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725903AbfGZLpb (ORCPT
+        id S1726469AbfGZLrc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 07:47:32 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:47362 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726180AbfGZLrb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 07:45:31 -0400
-Received: by mail-lj1-f196.google.com with SMTP id r9so51188139ljg.5
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2019 04:45:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=IIyzRbatR38ttllEYMMotwwVkanyqchmaJcpYBpIki0=;
-        b=pETxnGiWkSphfi8/+4c4u+22brSho8PFLYphcLagT7bB4i3SZD16fRKJ1ZGb4qp9QL
-         XlEsF8oKodWUi4PTu9/XdlUG9gA1pNqyjoA1KsmDLbgysBzBCd4nQcFsDELuCIbpAPhL
-         21AoZAsF7HFuXv/4+6Ros9QR2I6qyBtvICViA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=IIyzRbatR38ttllEYMMotwwVkanyqchmaJcpYBpIki0=;
-        b=QKYxmsiyqQ+2HHaZw77ysnM+Xi3p/obREgf1YqUxOyMzi92Yz3LpiqJDgwhs3CsGMk
-         AQxE8IPevQnljWPC27m/jH0pYJmd0MajmeLZpaZORUu29gAz0RTj4+o+lI/5w2zTg6Lw
-         yqpBN9m9iH2vUdfHNOrIwVt/t1fqEXpaJEL/UBooh6B3j0Sbr0zLNrnz4aYUwgWNl+N+
-         ddFPy9UUtaz3ctxHtOsXe/EjN5flMx8d7wWUGHpgbrAdQAkq1EoDVTyDnqcH4U1mlaKt
-         DhtJBamm+kUPgfnqtOEqXsToCuW+OsW61KhePpuo+PX7f/g+/Bc9S09YUzQIUpAKm8Rj
-         rmQg==
-X-Gm-Message-State: APjAAAX+/kkRMQHKjYZispwFbrWiBqdUNCG88yvpx6K5Rq9sKuJsPrHR
-        Hw8VlLpbVuS2OkQuUCFG9rXFrvd2Yociw9X0lg8=
-X-Google-Smtp-Source: APXvYqy1v+K91LR9Uqf7ttTOrc82KHvHW4Tm7nxGruwvykh6mSwzjj9McmHGuJKaCGbsiBx37LheJaMcKc4BiMCDW/c=
-X-Received: by 2002:a2e:3602:: with SMTP id d2mr13542107lja.112.1564141528767;
- Fri, 26 Jul 2019 04:45:28 -0700 (PDT)
+        Fri, 26 Jul 2019 07:47:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Reply-To:Content-Type:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=D0Qj9dCjSWBikWuVtcrnge2jcaAe2+fe4XkHjYEdnbc=; b=eIb7498wVSBC13/a5vcNoBDFg
+        0XDw5M4gw1VwiY23ak5h+nSi2RVm3yHVmWCUKcMKxdQd5viWbDleAA2X2ZKKyiEE5rSYYzLrYc/IB
+        Bw7ZZBWHomI1C9PIhwnqEXVUekkk9wDRk3i7lqlxOtE+o/24ZZ/dN1mzlOMWH8iUsc+Hakj31Micu
+        EcPBsia0E3Rdc33EoRe0t2baRTtrKgeyBPBkBkqI+p7T6brWqLGgZQC/CyOYTkFZV9NCsq/eB00JR
+        bnKmV/qScDA3FwUAg54XJDwTVt3B4bvX3cDvDjXxbRB/cTfo91wFAdnqpQYarSjGNvjr0Ku4/54a1
+        yGZkp6opg==;
+Received: from [179.95.31.157] (helo=bombadil.infradead.org)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hqyh8-0003BV-TI; Fri, 26 Jul 2019 11:47:30 +0000
+Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
+        (envelope-from <mchehab@bombadil.infradead.org>)
+        id 1hqyh6-0000tm-UW; Fri, 26 Jul 2019 08:47:28 -0300
+From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Atish Patra <atish.patra@wdc.com>,
+        =?UTF-8?q?=C5=81ukasz=20Stelmach?= <l.stelmach@samsung.com>,
+        Rob Herring <robh+dt@kernel.org>
+Subject: [PATCH 0/7] Fix broken references to files under Documentation/*
+Date:   Fri, 26 Jul 2019 08:47:20 -0300
+Message-Id: <cover.1564140865.git.mchehab+samsung@kernel.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-References: <3b922aa4-c6d4-e4a4-766d-f324ff77f7b5@linux.com>
- <40f8b7d8-fafa-ad99-34fb-9c63e34917e2@redhat.com> <CALAqxLU199ATrMFa2ARmHOZ3K6ZnOuDLSAqNrTfwOWJaYiW7Yg@mail.gmail.com>
- <CALAqxLU0VUp=PGx5=JuVp6c5gwLqpSZJxs7ieL631QhdzNQTyA@mail.gmail.com>
-In-Reply-To: <CALAqxLU0VUp=PGx5=JuVp6c5gwLqpSZJxs7ieL631QhdzNQTyA@mail.gmail.com>
-From:   Joel Fernandes <joel@joelfernandes.org>
-Date:   Fri, 26 Jul 2019 07:45:17 -0400
-Message-ID: <CAEXW_YQFKhfS=2-LkkDkSg_1XzWh9WUa__nWjqxL0Uts9yyDdg@mail.gmail.com>
-Subject: Re: Limits for ION Memory Allocator
-To:     John Stultz <john.stultz@linaro.org>
-Cc:     Laura Abbott <labbott@redhat.com>, alex.popov@linux.com,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>,
-        Todd Kjos <tkjos@android.com>,
-        Martijn Coenen <maco@android.com>,
-        Christian Brauner <christian@brauner.io>,
-        Riley Andrews <riandrews@android.com>,
-        driverdevel <devel@driverdev.osuosl.org>,
-        "moderated list:DMA BUFFER SHARING FRAMEWORK" 
-        <linaro-mm-sig@lists.linaro.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Brian Starkey <brian.starkey@arm.com>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Mark Brown <broonie@kernel.org>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        syzkaller <syzkaller@googlegroups.com>,
-        Hridya Valsaraju <hridya@google.com>,
-        Alistair Delva <adelva@google.com>,
-        Chenbo Feng <fengc@google.com>,
-        Erick Reyes <erickreyes@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 24, 2019 at 4:24 PM John Stultz <john.stultz@linaro.org> wrote:
->
-> On Wed, Jul 24, 2019 at 1:18 PM John Stultz <john.stultz@linaro.org> wrote:
-> >
-> > On Wed, Jul 24, 2019 at 12:36 PM Laura Abbott <labbott@redhat.com> wrote:
-> > >
-> > > On 7/17/19 12:31 PM, Alexander Popov wrote:
-> > > > Hello!
-> > > >
-> > > > The syzkaller [1] has a trouble with fuzzing the Linux kernel with ION Memory
-> > > > Allocator.
-> > > >
-> > > > Syzkaller uses several methods [2] to limit memory consumption of the userspace
-> > > > processes calling the syscalls for testing the kernel:
-> > > >   - setrlimit(),
-> > > >   - cgroups,
-> > > >   - various sysctl.
-> > > > But these methods don't work for ION Memory Allocator, so any userspace process
-> > > > that has access to /dev/ion can bring the system to the out-of-memory state.
-> > > >
-> > > > An example of a program doing that:
-> > > >
-> > > >
-> > > > #include <sys/types.h>
-> > > > #include <sys/stat.h>
-> > > > #include <fcntl.h>
-> > > > #include <stdio.h>
-> > > > #include <linux/types.h>
-> > > > #include <sys/ioctl.h>
-> > > >
-> > > > #define ION_IOC_MAGIC         'I'
-> > > > #define ION_IOC_ALLOC         _IOWR(ION_IOC_MAGIC, 0, \
-> > > >                                     struct ion_allocation_data)
-> > > >
-> > > > struct ion_allocation_data {
-> > > >       __u64 len;
-> > > >       __u32 heap_id_mask;
-> > > >       __u32 flags;
-> > > >       __u32 fd;
-> > > >       __u32 unused;
-> > > > };
-> > > >
-> > > > int main(void)
-> > > > {
-> > > >       unsigned long i = 0;
-> > > >       int fd = -1;
-> > > >       struct ion_allocation_data data = {
-> > > >               .len = 0x13f65d8c,
-> > > >               .heap_id_mask = 1,
-> > > >               .flags = 0,
-> > > >               .fd = -1,
-> > > >               .unused = 0
-> > > >       };
-> > > >
-> > > >       fd = open("/dev/ion", 0);
-> > > >       if (fd == -1) {
-> > > >               perror("[-] open /dev/ion");
-> > > >               return 1;
-> > > >       }
-> > > >
-> > > >       while (1) {
-> > > >               printf("iter %lu\n", i);
-> > > >               ioctl(fd, ION_IOC_ALLOC, &data);
-> > > >               i++;
-> > > >       }
-> > > >
-> > > >       return 0;
-> > > > }
-> > > >
-> > > >
-> > > > I looked through the code of ion_alloc() and didn't find any limit checks.
-> > > > Is it currently possible to limit ION kernel allocations for some process?
-> > > >
-> > > > If not, is it a right idea to do that?
-> > > > Thanks!
-> > > >
-> > >
-> > > Yes, I do think that's the right approach. We're working on moving Ion
-> > > out of staging and this is something I mentioned to John Stultz. I don't
-> > > think we've thought too hard about how to do the actual limiting so
-> > > suggestions are welcome.
-> >
-> > In part the dmabuf heaps allow for separate heap devices, so we can
-> > have finer grained permissions to the specific heaps.  But that
-> > doesn't provide any controls on how much memory one process could
-> > allocate using the device if it has permission.
-> >
-> > I suspect the same issue is present with any of the dmabuf exporters
-> > (gpu/display drivers, etc), so this is less of an ION/dmabuf heap
-> > issue and more of a dmabuf core accounting issue.
-> >
->
-> Also, do unmapped memfd buffers have similar accounting issues?
->
+Solves most of the pending broken references upstream, except for two of
+them:
 
-The syzcaller bot didn't complain about this for memfd yet, so I suspect not ;-)
+	$ ./scripts/documentation-file-ref-check 
+	Documentation/riscv/boot-image-header.txt: Documentation/riscv/booting.txt
+	MAINTAINERS: Documentation/devicetree/bindings/rng/samsung,exynos5250-trng.txt
 
-With memfd since it uses shmem underneath, __vm_enough_memory() is
-called during shmem_acct_block() which should take per-process memory
-into account already and fail if there is not enough memory.
+As written at boot-image-header.txt, it is waiting for the addition of
+a future file: 
 
-Should ION be doing something similar to fail if there's not enough memory?
+	"The complete booting guide will be available at
+	  Documentation/riscv/booting.txt."
 
-thanks,
+The second is due to this patch, pending to be merged:
+	https://lore.kernel.org/patchwork/patch/994210/
 
-- Joel
+I'm not a DT expert, but I can't see any issue with this patch, except
+for a missing acked-by a DT maintainer, and a possible conversion to
+yaml. IMO, the best fix for this would be to merge the DT patch.
+
+Patch 1 was already submitted before, together with the v1 of
+my PDF fix series.
+
+Mauro Carvalho Chehab (7):
+  docs: fix broken doc references due to renames
+  docs: generic-counter.rst: fix broken references for ABI file
+  MAINTAINERS: fix reference to net phy ABI file
+  MAINTAINERS: fix a renamed DT reference
+  docs: cgroup-v1/blkio-controller.rst: remove a CFQ left over
+  docs: zh_CN: howto.rst: fix a broken reference
+  docs: dt: fix a sound binding broken reference
+
+ Documentation/RCU/rculist_nulls.txt                |  2 +-
+ .../admin-guide/cgroup-v1/blkio-controller.rst     |  6 ------
+ .../devicetree/bindings/arm/idle-states.txt        |  2 +-
+ .../devicetree/bindings/sound/sun8i-a33-codec.txt  |  2 +-
+ Documentation/driver-api/generic-counter.rst       |  4 ++--
+ Documentation/locking/spinlocks.rst                |  4 ++--
+ Documentation/memory-barriers.txt                  |  2 +-
+ .../translations/ko_KR/memory-barriers.txt         |  2 +-
+ Documentation/translations/zh_CN/process/howto.rst |  2 +-
+ Documentation/watchdog/hpwdt.rst                   |  2 +-
+ MAINTAINERS                                        | 14 +++++++-------
+ drivers/gpu/drm/drm_modes.c                        |  2 +-
+ drivers/i2c/busses/i2c-nvidia-gpu.c                |  2 +-
+ drivers/scsi/hpsa.c                                |  4 ++--
+ 14 files changed, 22 insertions(+), 28 deletions(-)
+
+-- 
+2.21.0
+
+
