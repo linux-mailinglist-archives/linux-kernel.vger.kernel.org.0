@@ -2,68 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E198D76577
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 14:14:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D1CD17653E
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 14:10:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727218AbfGZMOL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 08:14:11 -0400
-Received: from mail.saltedge.com ([148.251.41.210]:48540 "EHLO
-        mail.saltedge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726277AbfGZMOK (ORCPT
+        id S1726781AbfGZMKP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 08:10:15 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:46783 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726065AbfGZMKO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 08:14:10 -0400
-X-Greylist: delayed 428 seconds by postgrey-1.27 at vger.kernel.org; Fri, 26 Jul 2019 08:14:10 EDT
-Received: from [192.168.100.145] (unknown [195.22.227.78])
-        by mail.saltedge.com (Postfix) with ESMTPSA id 8238060538;
-        Fri, 26 Jul 2019 12:07:00 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.9.2 mail.saltedge.com 8238060538
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=saltedge.com;
-        s=mail; t=1564142821;
-        bh=x+Z5a9e8cJYLnAWaP567zFw2cFIDZlyHj4wl4q4yb28=;
-        h=Subject:From:To:Cc:Date:From;
-        b=WFgDVPynf+7Gr9tbYyHNLsmEWubiJz39Z8O6fkbxNhUm2xX1rFXCRKmGyv1+jhYqQ
-         HUvEGIaY8DjCZkLZJUPHwNJ0uw9vdfujBUJUKo2iBXPZLy+Mkoy8yYJpN6pfOfs4Ho
-         7PdoFXe78twwr9PXRySqy8OLml/xxXDZbAV4FlWU=
-Message-ID: <667a5b466e7daa22e1901d02cc708542020513b0.camel@saltedge.com>
-Subject: [PATCH][RESEND] drm/amdkfd: add missing 'break' statement
-From:   Alexandr Savca <alexandr.savca@saltedge.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     alexander.deucher@amd.com, christian.koenig@amd.com,
-        David1.Zhou@amd.com, oded.gabbay@gmail.com
-Date:   Fri, 26 Jul 2019 15:07:15 +0300
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5-1.1 
+        Fri, 26 Jul 2019 08:10:14 -0400
+Received: by mail-ot1-f66.google.com with SMTP id z23so26757477ote.13
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2019 05:10:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=JrQTsqOEOykeYsYpjUAu93byMK1KwkPcKibV3U5vnJs=;
+        b=n/Tfy/qYbxxPMGO0GtR4PSwWNzJiHr/teYhJWdmOLIQXeIGRhXlrNAOjHxIg44X/c8
+         rTMphlu7MEMszPQPE7i0KXL/fg/5WjYEzxco2QaaRD1yrK2bg+KCzZWa39ZRgNTM2LtM
+         lCI+/my1YocZGIgiqhq3JHhPYzlOqgYvp6ZdftyiDQSF1s5Nqn4vzv+ZzYEuh31enYTk
+         jjQ04X5nn2NicQK3HyVuUjV+toViPvNj+wcJA44R4DusLvIx9mXjaDaZ27VLOEOxPKkn
+         k32sNyCUvsUw8nN+h7F+9P8EGFwgzyFqenM4BP1xKx9k2fNKMAwbFIXSWbIArOH/RDFF
+         Qdtg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=JrQTsqOEOykeYsYpjUAu93byMK1KwkPcKibV3U5vnJs=;
+        b=p0iIbu5PacGrPPJyCmCBudiuOeod5u21A7Ginit4PN+blowLOH4Xex8I6IMAa02sZe
+         oxJ6ClFzOR80s/sTFfFOcc/UEGAE7enSKZWQxeJ+TG8PT7nwjFU3gasZwyQ8PjIe2hhy
+         qK4o30pL2tMfh2bI5admGJq+9GJ6PWU09Xr2x5CeEFg6nn3D+HKJp0F1GD6yhFgYgBiF
+         GaR/FLYZvDwSUWPOY0mIje0Gn24W3BL9fymeuWjKw3r3N0rjFz3Wqcbxj7LAr0JZPc1/
+         QQuTyDSwa5br0lBicaBkyj8djzwKnq4eWT86lasnK+vRCq9Rps1fVe+EpLWgtZAooZbG
+         NIUg==
+X-Gm-Message-State: APjAAAVJfpdFGDs6v3g2JIn0Sh9pBeKy4p1XWhc34zNML6tH7kLLOhUp
+        u6y6zSZ9tj6El59AQX/tnqC23DU1hwCqEAGWRt5VMQ==
+X-Google-Smtp-Source: APXvYqywRN7n6lzmjA5a4KHs4TPzxtEcwP96gaeiFcPkyYj2chffCIcDU5MoSxlTXx3/N/hta8tMsIUOdAnpviY8SDk=
+X-Received: by 2002:a9d:529:: with SMTP id 38mr69587609otw.145.1564143014185;
+ Fri, 26 Jul 2019 05:10:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.100.0 at mail.saltedge.com
-X-Virus-Status: Clean
+References: <cover.1564125131.git.baolin.wang@linaro.org> <23d51f5d9c9cc647ad0c5a1fb950d3d9fb9c1303.1564125131.git.baolin.wang@linaro.org>
+ <20190726112901.GC4902@sirena.org.uk>
+In-Reply-To: <20190726112901.GC4902@sirena.org.uk>
+From:   Baolin Wang <baolin.wang@linaro.org>
+Date:   Fri, 26 Jul 2019 20:10:02 +0800
+Message-ID: <CAMz4ku+3FVOYr7Gvh-Yrdhvw2cfntbnEkhONYGbC71UmCgZA-A@mail.gmail.com>
+Subject: Re: [PATCH 6/6] dt-bindings: spi: sprd: Change the hwlock support to
+ be optional
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>, weicx@spreadst.com,
+        sherry.zong@unisoc.com,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add missing 'break' statement which was introduced by the previous
-commit.
+Hi Mark,
 
-Signed-off-by: Alexandr Savca <alexandr.savca@saltedge.com>
----
- drivers/gpu/drm/amd/amdkfd/kfd_crat.c | 1 +
- 1 file changed, 1 insertion(+)
+On Fri, 26 Jul 2019 at 19:29, Mark Brown <broonie@kernel.org> wrote:
+>
+> On Fri, Jul 26, 2019 at 03:20:53PM +0800, Baolin Wang wrote:
+> > No need to add hardware spinlock proctection due to add multiple
+> > msater channel, so change it to be optional in documentation.
+>
+> Please use subject lines matching the style for the subsystem.  This
+> makes it easier for people to identify relevant patches.
 
-diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_crat.c
-b/drivers/gpu/drm/amd/amdkfd/kfd_crat.c
-index 792371442195..4e3fc284f6ac 100644
---- a/drivers/gpu/drm/amd/amdkfd/kfd_crat.c
-+++ b/drivers/gpu/drm/amd/amdkfd/kfd_crat.c
-@@ -668,6 +668,7 @@ static int kfd_fill_gpu_cache_info(struct kfd_dev
-*kdev,
-        case CHIP_RAVEN:
-                pcache_info = raven_cache_info;
-                num_of_cache_types = ARRAY_SIZE(raven_cache_info);
-+               break;
-        case CHIP_NAVI10:
-                pcache_info = navi10_cache_info;
-                num_of_cache_types = ARRAY_SIZE(navi10_cache_info);
+The subject lines format 'dt-bindings: xxx' was recommended by Rob, so
+I am not sure if I need to change the format as 'spi: sprd:'? Thanks.
+
 -- 
-2.20.1
-
+Baolin Wang
+Best Regards
