@@ -2,60 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 66E0A765E0
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 14:33:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E447765E8
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 14:34:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727330AbfGZMd5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 08:33:57 -0400
-Received: from asavdk4.altibox.net ([109.247.116.15]:33740 "EHLO
-        asavdk4.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726130AbfGZMd5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 08:33:57 -0400
-Received: from ravnborg.org (unknown [158.248.194.18])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by asavdk4.altibox.net (Postfix) with ESMTPS id 655ED804B3;
-        Fri, 26 Jul 2019 14:33:54 +0200 (CEST)
-Date:   Fri, 26 Jul 2019 14:33:53 +0200
-From:   Sam Ravnborg <sam@ravnborg.org>
-To:     Navid Emamdoost <navid.emamdoost@gmail.com>
-Cc:     secalert@redhat.com, David Airlie <airlied@linux.ie>, kjlu@umn.edu,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Thierry Reding <thierry.reding@gmail.com>, smccaman@umn.edu,
-        emamd001@umn.edu
-Subject: Re: [PATCH v2] drm/panel: check failure cases in the probe func
-Message-ID: <20190726123353.GA16964@ravnborg.org>
-References: <20190724185933.GE22640@ravnborg.org>
- <20190724195534.9303-1-navid.emamdoost@gmail.com>
+        id S1727299AbfGZMeq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 08:34:46 -0400
+Received: from helcar.hmeau.com ([216.24.177.18]:46482 "EHLO fornost.hmeau.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726130AbfGZMep (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 08:34:45 -0400
+Received: from gondolin.me.apana.org.au ([192.168.0.6] helo=gondolin.hengli.com.au)
+        by fornost.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
+        id 1hqzQg-0003wt-T7; Fri, 26 Jul 2019 22:34:35 +1000
+Received: from herbert by gondolin.hengli.com.au with local (Exim 4.80)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1hqzQa-0002BM-72; Fri, 26 Jul 2019 22:34:28 +1000
+Date:   Fri, 26 Jul 2019 22:34:28 +1000
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     thomas.lendacky@amd.com, gary.hook@amd.com, davem@davemloft.net,
+        arnd@arndb.de, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com
+Subject: Re: [PATCH] crypto: ccp - Reduce maximum stack usage
+Message-ID: <20190726123428.GA8381@gondor.apana.org.au>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190724195534.9303-1-navid.emamdoost@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.3 cv=VcLZwmh9 c=1 sm=1 tr=0
-        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=pGLkceISAAAA:8
-        a=warq429__hhIKtkPYyQA:9 a=CjuIK1q_8ugA:10
+In-Reply-To: <20190712085937.4157934-1-arnd@arndb.de>
+Organization: Core
+X-Newsgroups: apana.lists.os.linux.cryptoapi,apana.lists.os.linux.kernel
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Navid.
-
-On Wed, Jul 24, 2019 at 02:55:34PM -0500, Navid Emamdoost wrote:
-> The following function calls may fail and return NULL, so the null check
-> is added.
-> of_graph_get_next_endpoint
-> of_graph_get_remote_port_parent
-> of_graph_get_remote_port
+Arnd Bergmann <arnd@arndb.de> wrote:
+> Each of the operations in ccp_run_cmd() needs several hundred
+> bytes of kernel stack. Depending on the inlining, these may
+> need separate stack slots that add up to more than the warning
+> limit, as shown in this clang based build:
 > 
-> Update: Thanks to Sam Ravnborg, for suggession on the use of goto to avoid
-> leaking endpoint.
+> drivers/crypto/ccp/ccp-ops.c:871:12: error: stack frame size of 1164 bytes in function 'ccp_run_aes_cmd' [-Werror,-Wframe-larger-than=]
+> static int ccp_run_aes_cmd(struct ccp_cmd_queue *cmd_q, struct ccp_cmd *cmd)
 > 
-> Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
-Applied and pushed to drm-misc-next.
+> The problem may also happen when there is no warning, e.g. in the
+> ccp_run_cmd()->ccp_run_aes_cmd()->ccp_run_aes_gcm_cmd() call chain with
+> over 2000 bytes.
+> 
+> Mark each individual function as 'noinline_for_stack' to prevent
+> this from happening, and move the calls to the two special cases for aes
+> into the top-level function. This will keep the actual combined stack
+> usage to the mimimum: 828 bytes for ccp_run_aes_gcm_cmd() and
+> at most 524 bytes for each of the other cases.
+> 
+> Fixes: 63b945091a07 ("crypto: ccp - CCP device driver and interface support")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+> drivers/crypto/ccp/ccp-ops.c | 52 +++++++++++++++++++++---------------
+> 1 file changed, 31 insertions(+), 21 deletions(-)
 
-	Sam
+Patch applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
