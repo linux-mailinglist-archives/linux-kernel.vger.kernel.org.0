@@ -2,57 +2,198 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B4EB76B61
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 16:21:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C71676B69
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 16:21:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727710AbfGZOVU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 10:21:20 -0400
-Received: from sonic304-21.consmr.mail.ne1.yahoo.com ([66.163.191.147]:32927
-        "EHLO sonic304-21.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725869AbfGZOVU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 10:21:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1564150878; bh=OZTYvFC+2DETo5lwYO6MFnQgLTQokLFP37Hfdjk2lm0=; h=Date:From:Reply-To:Subject:From:Subject; b=lhUM6pZ24Za7PZN2TWoyccuN9N+NDaHmyLEVxP5f2mzjFurA7AeVnF7j9Szn6oJttjnHdoz8x7I6CZ9QqjjPHaQI9uXxEh+Z5pzrImGXG3Bbdgh0qZE0muRbdCafS7wObs3P7EyHBNhOItKpKAFXlm6m36QA0CWjD78MP6ekCgxmnBmjBXrAvpOnkH5aibiPa8Tc/VTBIpqCegVtyqXI2Yq9cr2doRunZhuSHF9q9H1g6Tqhpub1QqWXuepVYd//sjNANVk3LcCEBALsR8TSGaPG21JJ5AqrD+0m2vO8JfoEs3MJy08hC6vPba5I+1g10NKl5SIvEs3UkxUZ1VUQWw==
-X-YMail-OSG: 5B0u.agVM1mZZNPr__lE6N_X4ZGyZ6PDS4TJntXim7__HuSCowhnrJPdaCJQUhQ
- UA1jNUyD8GdCAE0Zz9FG1XdAZGbzGUkIk44kdE0fCSVyMMXhNqTjyg2VgQlinJl2mAZ8S7A_c_Qg
- 0R0TQ38daR2veyd7IqST_kWxKI_ErKq6Cc9k3Pucpf5NKNPVTeiPZ6eucx_em5mVGaGEjECdDG5I
- 8Z52JzDldsZokJGvJ7qtdn18xQ8zzQZsCFg1QzoEUe6hR6yFCeiSMW42wYphVzKkPl6XqHr4S7QI
- c81Xu0Uzz3knV8jJa.mHLN4lUH0K58q9iFXjVBxkYgtJr5ltFLid74v0oYCHR.WvgMLSNgLt7HZJ
- wLpu7.LvIYhxrjzQgy32fZjBr_KaZ8tSsBJzr1jpsTSCgN8Y2l.c8utQD1PLBxZDm_4e0Mv.AnfO
- x03QxrrX2dc7DAOSxEngw5n3Sccp05K3..ihCAL0GDoFfMfkF4OmlsBnwwRjDn.K4HiJU3leKyvP
- oPHc4kOQ65Oklb9Fec2CIZkcm0chJCXvROkHfGR0jxITBjpA8fBDsBXwujfYGVIN3a8pZryjEYne
- Lr_tE79WrTAgX7DL1V6ATERHL3bjMJP_qN_U3f.7Ui4ycyEa7bzNPCtJgD2iPgMKjSbJfzltoj4c
- 0jYkQyIYTsimglKuMXD17Bp0SIhaF_7GLc81FN1sKfIz4BMJdrBx7gNsBzsaVNV6M5exNJwKTZTB
- R1TqjuePnKEXmJHSFQj7IV.ddZOBTch83ewy8AqTMLKXNEuOuVHgg4RMeADKVdGVBcYS8eFTyR47
- R4f.jn69ayKZxg_M5oxfT8diEChTETersWgSMVMDTt1uVMb9BTOXwU1oR_sImLoTM1z.3e1YwYud
- .BzElC3uRNlhrOAX4QvatenKfddNA6IATOtGmpAIVEwJU_LZm81qmVhX_xKVTIoM0PxAyfLAH8Kw
- bgWtb8stbcqDRfg8qQt2s_msoKP0jzpbVuDAfOEHXCeS4na3XR4CA6JKy4QdObc6iIhe79ku2tZG
- N2dLGaJNzhvWKwsnJF4B_YbjtfeEO_o.YvUVjXRl.KpCyowBQGTb2bCXcaWwubI18tbtOjgpeCo2
- jMdDF3QRZV.igzVQ.M.QA2Y6BRwM.JkuSidpXqSf.tR9eXnviRr67R5Qas1mJu_778Ndi0KAmzaP
- jg7OvQcu1.EDXYXuybH1MnNjMZ11.4qh25znS.cu9l3oXJlLxwYDbng--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic304.consmr.mail.ne1.yahoo.com with HTTP; Fri, 26 Jul 2019 14:21:18 +0000
-Date:   Fri, 26 Jul 2019 14:21:14 +0000 (UTC)
-From:   Miss Aysha Al-Gaddafi <missayshaal0@gmail.com>
-Reply-To: missayshaal0@gmail.com
-Message-ID: <1167228374.2040166.1564150874695@mail.yahoo.com>
-Subject: ASSALAMU ALAIKUM
+        id S1727787AbfGZOV2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 10:21:28 -0400
+Received: from ms.lwn.net ([45.79.88.28]:50366 "EHLO ms.lwn.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725869AbfGZOV1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 10:21:27 -0400
+Received: from lwn.net (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ms.lwn.net (Postfix) with ESMTPSA id 7FD822B7;
+        Fri, 26 Jul 2019 14:21:26 +0000 (UTC)
+Date:   Fri, 26 Jul 2019 08:21:25 -0600
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab@infradead.org>
+Subject: [GIT PULL] Documentation fixes for 5.3
+Message-ID: <20190726082125.0c8467e9@lwn.net>
+Organization: LWN.net
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
-To:     unlisted-recipients:; (no To-header on input)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCkFTU0FMQU1VIEFMQUlLVU0sDQoNCkkgaGF2ZSBhIGJ1c2luZXNzIFByb3Bvc2FsIGZvciB5
-b3UgYW5kIEkgbmVlZCBtdXR1YWwgcmVzcGVjdCwgdHJ1c3QsDQpob25lc3R5LCB0cmFuc3BhcmVu
-Y3ksIGFkZXF1YXRlIHN1cHBvcnQgYW5kIGFzc2lzdGFuY2UsIEhvcGUgdG8gaGVhcg0KZnJvbSB5
-b3UgZm9yIG1vcmUgZGV0YWlscy4NCg0KV2FybWVzdCByZWdhcmRzDQpNcnMgQWlzaGEgR2FkZGFm
-aQ0KDQrYp9mE2LPZhNin2YUg2LnZhNmK2YPZhdiMDQoNCtmE2K/ZiiDYp9mC2KrYsdin2K0g2LnZ
-hdmEINmE2YMg2YjYo9it2KrYp9isINil2YTZiSDYp9mE2KfYrdiq2LHYp9mFINin2YTZhdiq2KjY
-p9iv2YQg2YjYp9mE2KvZgtipINmI2KfZhNi12K/ZgiDZiNin2YTYtNmB2KfZgdmK2KkNCtmI2KfZ
-hNiv2LnZhSDYp9mE2YPYp9mB2Yog2YjYp9mE2YXYs9in2LnYr9ipINiMINmI2YbYo9mF2YQg2KPZ
-hiDZhtiz2YXYuSDZhdmG2YMg2YTZhdiy2YrYryDZhdmGINin2YTYqtmB2KfYtdmK2YQuDQoNCtij
-2K3YsSDYp9mE2KrYrdmK2KfYqg0K2KfZhNiz2YrYr9ipINi52KfYpti02Kkg2KfZhNmC2LDYp9mB
-2Yo=
+The following changes since commit
+5f9e832c137075045d15cd6899ab0505cfb2ca4b:
+
+  Linus 5.3-rc1 (2019-07-21 14:05:38 -0700)
+
+are available in the Git repository at:
+
+  git://git.lwn.net/linux.git tags/docs-5.3-1
+
+for you to fetch changes up to d2eba640a4b96bc1bdc0f4a500b8b8d5e16725c8:
+
+  docs: phy: Drop duplicate 'be made' (2019-07-26 08:15:26 -0600)
+
+----------------------------------------------------------------
+This is mostly a set of follow-on fixes from Mauro fixing various fallout
+from the massive RST conversion; a few other small fixes as well.
+
+----------------------------------------------------------------
+Federico Vaga (3):
+      doc:it_IT: align translation to mainline
+      doc:it_IT: rephrase statement
+      doc:it_IT: translations in process/
+
+Guido Günther (1):
+      docs: phy: Drop duplicate 'be made'
+
+Jeremy Cline (1):
+      docs/vm: transhuge: fix typo in madvise reference
+
+Jonathan Corbet (2):
+      Merge tag 'v5.3-rc1' into docs-next
+      Merge branch 'pdf_fixes_v1' of https://git.linuxtv.org/mchehab/experimental into mauro
+
+Marcus Folkesson (1):
+      docs: driver-api: generic-counter: fix file path to ABI doc
+
+Mauro Carvalho Chehab (15):
+      docs: powerpc: convert docs to ReST and rename to *.rst
+      docs: power: add it to to the main documentation index
+      docs: fix broken doc references due to renames
+      docs: pdf: add all Documentation/*/index.rst to PDF output
+      docs: conf.py: add CJK package needed by translations
+      docs: conf.py: only use CJK if the font is available
+      scripts/sphinx-pre-install: fix script for RHEL/CentOS
+      scripts/sphinx-pre-install: don't use LaTeX with CentOS 7
+      scripts/sphinx-pre-install: fix latexmk dependencies
+      scripts/sphinx-pre-install: cleanup Gentoo checks
+      scripts/sphinx-pre-install: seek for Noto CJK fonts for pdf output
+      docs: load_config.py: avoid needing a conf.py just due to LaTeX docs
+      docs: remove extra conf.py files
+      docs: virtual: add it to the documentation body
+      docs: load_config.py: ensure subdirs end with "/"
+
+ Documentation/PCI/pci-error-recovery.rst           |   5 +-
+ Documentation/RCU/rculist_nulls.txt                |   2 +-
+ Documentation/admin-guide/conf.py                  |  10 --
+ Documentation/admin-guide/mm/transhuge.rst         |   2 +-
+ Documentation/conf.py                              |  30 +++-
+ Documentation/core-api/conf.py                     |  10 --
+ Documentation/crypto/conf.py                       |  10 --
+ Documentation/dev-tools/conf.py                    |  10 --
+ .../devicetree/bindings/arm/idle-states.txt        |   2 +-
+ Documentation/doc-guide/conf.py                    |  10 --
+ Documentation/driver-api/80211/conf.py             |  10 --
+ Documentation/driver-api/conf.py                   |  10 --
+ Documentation/driver-api/generic-counter.rst       |   4 +-
+ Documentation/driver-api/phy/phy.rst               |   4 +-
+ Documentation/driver-api/pm/conf.py                |  10 --
+ Documentation/filesystems/conf.py                  |  10 --
+ Documentation/gpu/conf.py                          |  10 --
+ Documentation/index.rst                            |   3 +
+ Documentation/input/conf.py                        |  10 --
+ Documentation/kernel-hacking/conf.py               |  10 --
+ Documentation/locking/spinlocks.rst                |   4 +-
+ Documentation/maintainer/conf.py                   |  10 --
+ Documentation/media/conf.py                        |  12 --
+ Documentation/memory-barriers.txt                  |   2 +-
+ Documentation/networking/conf.py                   |  10 --
+ Documentation/power/index.rst                      |   2 +-
+ .../powerpc/{bootwrapper.txt => bootwrapper.rst}   |  28 +++-
+ .../powerpc/{cpu_families.txt => cpu_families.rst} |  23 +--
+ .../powerpc/{cpu_features.txt => cpu_features.rst} |   6 +-
+ Documentation/powerpc/{cxl.txt => cxl.rst}         |  46 ++++--
+ .../powerpc/{cxlflash.txt => cxlflash.rst}         |  10 +-
+ .../powerpc/{DAWR-POWER9.txt => dawr-power9.rst}   |  15 +-
+ Documentation/powerpc/{dscr.txt => dscr.rst}       |  18 ++-
+ ...ror-recovery.txt => eeh-pci-error-recovery.rst} | 108 +++++++-------
+ ...ssisted-dump.txt => firmware-assisted-dump.rst} | 117 +++++++++-------
+ Documentation/powerpc/{hvcs.txt => hvcs.rst}       | 108 +++++++-------
+ Documentation/powerpc/index.rst                    |  34 +++++
+ Documentation/powerpc/isa-versions.rst             |  15 +-
+ Documentation/powerpc/{mpc52xx.txt => mpc52xx.rst} |  12 +-
+ ...powernv.txt => pci_iov_resource_on_powernv.rst} |  15 +-
+ Documentation/powerpc/{pmu-ebb.txt => pmu-ebb.rst} |   1 +
+ Documentation/powerpc/ptrace.rst                   | 156 +++++++++++++++++++++
+ Documentation/powerpc/ptrace.txt                   | 151 --------------------
+ .../powerpc/{qe_firmware.txt => qe_firmware.rst}   |  37 ++---
+ .../{syscall64-abi.txt => syscall64-abi.rst}       |  29 ++--
+ ...ctional_memory.txt => transactional_memory.rst} |  45 +++---
+ Documentation/process/conf.py                      |  10 --
+ Documentation/sh/conf.py                           |  10 --
+ Documentation/sound/conf.py                        |  10 --
+ Documentation/sphinx/load_config.py                |  27 +++-
+ .../translations/it_IT/doc-guide/sphinx.rst        |  19 +--
+ Documentation/translations/it_IT/process/index.rst |   1 +
+ .../translations/it_IT/process/kernel-docs.rst     |  11 +-
+ .../it_IT/process/maintainer-pgp-guide.rst         |  25 ++--
+ .../it_IT/process/programming-language.rst         |  51 +++++++
+ .../translations/ko_KR/memory-barriers.txt         |   2 +-
+ Documentation/userspace-api/conf.py                |  10 --
+ Documentation/virtual/kvm/index.rst                |   1 +
+ Documentation/vm/conf.py                           |  10 --
+ Documentation/watchdog/hpwdt.rst                   |   2 +-
+ Documentation/x86/conf.py                          |  10 --
+ MAINTAINERS                                        |  14 +-
+ arch/powerpc/kernel/exceptions-64s.S               |   2 +-
+ drivers/gpu/drm/drm_modes.c                        |   2 +-
+ drivers/i2c/busses/i2c-nvidia-gpu.c                |   2 +-
+ drivers/scsi/hpsa.c                                |   4 +-
+ drivers/soc/fsl/qe/qe.c                            |   2 +-
+ drivers/tty/hvc/hvcs.c                             |   2 +-
+ include/soc/fsl/qe/qe.h                            |   2 +-
+ scripts/sphinx-pre-install                         | 118 +++++++++++++---
+ 70 files changed, 830 insertions(+), 703 deletions(-)
+ delete mode 100644 Documentation/admin-guide/conf.py
+ delete mode 100644 Documentation/core-api/conf.py
+ delete mode 100644 Documentation/crypto/conf.py
+ delete mode 100644 Documentation/dev-tools/conf.py
+ delete mode 100644 Documentation/doc-guide/conf.py
+ delete mode 100644 Documentation/driver-api/80211/conf.py
+ delete mode 100644 Documentation/driver-api/conf.py
+ delete mode 100644 Documentation/driver-api/pm/conf.py
+ delete mode 100644 Documentation/filesystems/conf.py
+ delete mode 100644 Documentation/gpu/conf.py
+ delete mode 100644 Documentation/input/conf.py
+ delete mode 100644 Documentation/kernel-hacking/conf.py
+ delete mode 100644 Documentation/maintainer/conf.py
+ delete mode 100644 Documentation/media/conf.py
+ delete mode 100644 Documentation/networking/conf.py
+ rename Documentation/powerpc/{bootwrapper.txt => bootwrapper.rst} (93%)
+ rename Documentation/powerpc/{cpu_families.txt => cpu_families.rst} (95%)
+ rename Documentation/powerpc/{cpu_features.txt => cpu_features.rst} (97%)
+ rename Documentation/powerpc/{cxl.txt => cxl.rst} (95%)
+ rename Documentation/powerpc/{cxlflash.txt => cxlflash.rst} (98%)
+ rename Documentation/powerpc/{DAWR-POWER9.txt => dawr-power9.rst} (95%)
+ rename Documentation/powerpc/{dscr.txt => dscr.rst} (91%)
+ rename Documentation/powerpc/{eeh-pci-error-recovery.txt => eeh-pci-error-recovery.rst} (82%)
+ rename Documentation/powerpc/{firmware-assisted-dump.txt => firmware-assisted-dump.rst} (80%)
+ rename Documentation/powerpc/{hvcs.txt => hvcs.rst} (91%)
+ create mode 100644 Documentation/powerpc/index.rst
+ rename Documentation/powerpc/{mpc52xx.txt => mpc52xx.rst} (91%)
+ rename Documentation/powerpc/{pci_iov_resource_on_powernv.txt => pci_iov_resource_on_powernv.rst} (97%)
+ rename Documentation/powerpc/{pmu-ebb.txt => pmu-ebb.rst} (99%)
+ create mode 100644 Documentation/powerpc/ptrace.rst
+ delete mode 100644 Documentation/powerpc/ptrace.txt
+ rename Documentation/powerpc/{qe_firmware.txt => qe_firmware.rst} (95%)
+ rename Documentation/powerpc/{syscall64-abi.txt => syscall64-abi.rst} (82%)
+ rename Documentation/powerpc/{transactional_memory.txt => transactional_memory.rst} (93%)
+ delete mode 100644 Documentation/process/conf.py
+ delete mode 100644 Documentation/sh/conf.py
+ delete mode 100644 Documentation/sound/conf.py
+ create mode 100644 Documentation/translations/it_IT/process/programming-language.rst
+ delete mode 100644 Documentation/userspace-api/conf.py
+ delete mode 100644 Documentation/vm/conf.py
+ delete mode 100644 Documentation/x86/conf.py
