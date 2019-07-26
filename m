@@ -2,140 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE82D766FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 15:12:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 714517670C
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 15:15:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726804AbfGZNMV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 09:12:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47154 "EHLO mail.kernel.org"
+        id S1726851AbfGZNOq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 09:14:46 -0400
+Received: from honk.sigxcpu.org ([24.134.29.49]:36322 "EHLO honk.sigxcpu.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726086AbfGZNMU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 09:12:20 -0400
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2AA5F218D4;
-        Fri, 26 Jul 2019 13:12:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564146740;
-        bh=lS7VU+fYLf9p8y4UAb/u0BkVPuztI5yiv146UfxCQDM=;
-        h=Date:From:To:Cc:Subject:From;
-        b=HeI8QMV5ptqPEjWImZK/G7ljfbzJwNqBuLFsieHmWMcqdpaYdl2UtrBms5Lh5GX8C
-         3X+EuxET8Bu0ofRypSvw5Ag9692Un3I0nSMkS/9nfNLKduqv5rGCu6F7a6VdMxx8i7
-         yqIeRc3KFTvVuU3p3DRZQ4yMz+SaUS9WbCopSzhk=
-Date:   Fri, 26 Jul 2019 14:12:16 +0100
-From:   Will Deacon <will@kernel.org>
-To:     torvalds@linux-foundation.org
-Cc:     catalin.marinas@arm.com, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL] arm64: fixes for -rc2
-Message-ID: <20190726131215.2dqryzjvxfyqefuw@willie-the-truck>
+        id S1726001AbfGZNOp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 09:14:45 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by honk.sigxcpu.org (Postfix) with ESMTP id 2CC44FB07;
+        Fri, 26 Jul 2019 15:14:42 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at honk.sigxcpu.org
+Received: from honk.sigxcpu.org ([127.0.0.1])
+        by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id RdK5Fd9fsItN; Fri, 26 Jul 2019 15:14:41 +0200 (CEST)
+Received: by bogon.sigxcpu.org (Postfix, from userid 1000)
+        id 0AE6046AA1; Fri, 26 Jul 2019 15:14:40 +0200 (CEST)
+From:   =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>
+To:     =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>,
+        Purism Kernel Team <kernel@puri.sm>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/4] drm/panel: jh057n00900: Move dsi init sequence to prepare
+Date:   Fri, 26 Jul 2019 15:14:35 +0200
+Message-Id: <cover.1564146727.git.agx@sigxcpu.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
 
-Please pull these arm64 fixes for -rc2. There's more here than we usually
-have at this stage, but that's mainly down to the stacktrace changes which
-came in slightly too late for the merge window.
+If the panel is wrapped in a panel_bridge it gets prepar()ed before the
+upstream DSI bridge which can cause hangs (e.g. with imx-nwl since clocks
+are not enabled yet). To avoid this move the panel's first DSI access to
+enable() so the upstream bridge can prepare the DSI host controller in
+it's pre_enable().
 
-Summary is in the tag.
+The second patch makes the disable() call symmetric to the above and the third
+one just eases debugging.
 
-Thanks,
+Changes from v1:
+* As per review comments by Sam Ravnborg
+  * Ignore failures to disable the backlight in jh057n_disable()
+  * Add 'drm/panel: jh057n00900: Use drm_panel_{unprepare,disable} consistently'
+* Collected Reviewed-By: Thanks Sam!
 
-Will
+To: "Guido Günther" <agx@sigxcpu.org>,Purism Kernel Team <kernel@puri.sm>,Thierry Reding <thierry.reding@gmail.com>,Sam Ravnborg <sam@ravnborg.org>,David Airlie <airlied@linux.ie>,Daniel Vetter <daniel@ffwll.ch>,dri-devel@lists.freedesktop.org,linux-kernel@vger.kernel.org
 
---->8
 
-The following changes since commit 5f9e832c137075045d15cd6899ab0505cfb2ca4b:
+Guido Günther (4):
+  drm/panel: jh057n00900: Move panel DSI init to enable()
+  drm/panel: jh057n00900: Move mipi_dsi_dcs_set_display_off to disable()
+  drm/panel: jh057n00900: Print error code on all DRM_DEV_ERROR()s
+  drm/panel: jh057n00900: Use drm_panel_{unprepare,disable} consistently
 
-  Linus 5.3-rc1 (2019-07-21 14:05:38 -0700)
+ .../drm/panel/panel-rocktech-jh057n00900.c    | 31 ++++++++++---------
+ 1 file changed, 17 insertions(+), 14 deletions(-)
 
-are available in the git repository at:
+-- 
+2.20.1
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git tags/arm64-fixes
-
-for you to fetch changes up to 5a46d3f71d5e5a9f82eabc682f996f1281705ac7:
-
-  ACPI/IORT: Fix off-by-one check in iort_dev_find_its_id() (2019-07-23 15:45:46 +0100)
-
-----------------------------------------------------------------
-arm64 fixes for -rc2
-
-- Big bad batch of MAINTAINERS updates
-
-- Fix handling of SP alignment fault exceptions
-
-- Fix PSTATE.SSBS handling on heterogeneous systems
-
-- Fix fallout from moving to the generic vDSO implementation
-
-- Fix stack unwinding in the face of frame corruption
-
-- Fix off-by-one in IORT code
-
-- Minor SVE cleanups
-
-----------------------------------------------------------------
-Anshuman Khandual (1):
-      arm64: mm: Drop pte_huge()
-
-Dave Martin (4):
-      arm64: stacktrace: Constify stacktrace.h functions
-      arm64: stacktrace: Factor out backtrace initialisation
-      arm64/sve: Factor out FPSIMD to SVE state conversion
-      arm64/sve: Fix a couple of magic numbers for the Z-reg count
-
-James Morse (1):
-      arm64: entry: SP Alignment Fault doesn't write to FAR_EL1
-
-Jean-Philippe Brucker (1):
-      MAINTAINERS: Update my email address
-
-Julien Thierry (1):
-      MAINTAINERS: Update my email address
-
-Lorenzo Pieralisi (1):
-      ACPI/IORT: Fix off-by-one check in iort_dev_find_its_id()
-
-Marc Zyngier (2):
-      MAINTAINERS: Update my email address to @kernel.org
-      arm64: Force SSBS on context switch
-
-Mark Rutland (1):
-      arm64: stacktrace: Better handle corrupted stacks
-
-Naohiro Aota (1):
-      arm64: vdso: fix flip/flop vdso build bug
-
-Suzuki K Poulose (1):
-      MAINTAINERS: Fix spelling mistake in my name
-
-Vincenzo Frascino (2):
-      arm64: vdso: Fix population of AT_SYSINFO_EHDR for compat vdso
-      arm64: vdso: Cleanup Makefiles
-
- .mailmap                            |  3 ++
- MAINTAINERS                         | 14 +++----
- arch/arm64/include/asm/elf.h        |  2 +-
- arch/arm64/include/asm/pgtable.h    |  1 -
- arch/arm64/include/asm/processor.h  | 14 ++++++-
- arch/arm64/include/asm/stacktrace.h | 78 ++++++++++++++++++++++++++++++-------
- arch/arm64/kernel/entry.S           | 22 ++++++-----
- arch/arm64/kernel/fpsimd.c          | 29 +++++++-------
- arch/arm64/kernel/perf_callchain.c  |  7 +---
- arch/arm64/kernel/process.c         | 36 ++++++++++++++---
- arch/arm64/kernel/return_address.c  |  9 ++---
- arch/arm64/kernel/stacktrace.c      | 59 +++++++++++++++++++++-------
- arch/arm64/kernel/time.c            |  7 +---
- arch/arm64/kernel/traps.c           | 13 +++----
- arch/arm64/kernel/vdso/Makefile     | 13 +++----
- arch/arm64/kernel/vdso32/Makefile   | 14 ++++---
- drivers/acpi/arm64/iort.c           |  4 +-
- 17 files changed, 219 insertions(+), 106 deletions(-)
