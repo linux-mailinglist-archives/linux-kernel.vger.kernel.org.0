@@ -2,37 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 147D676AAB
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 16:00:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A9B376A9A
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 15:59:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726863AbfGZNkO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 09:40:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46122 "EHLO mail.kernel.org"
+        id S2387421AbfGZNkU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 09:40:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46312 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727604AbfGZNkL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 09:40:11 -0400
+        id S1726959AbfGZNkS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 09:40:18 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A368222BE8;
-        Fri, 26 Jul 2019 13:40:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F31A122BF5;
+        Fri, 26 Jul 2019 13:40:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564148410;
-        bh=y7wvvjWfhthkYbvXrbQ5U8OjVUEJsmODjPMSeo6TFcA=;
+        s=default; t=1564148417;
+        bh=cSdDVAIWMsnBNzx9dEUvgtuT/rNZt3Ev+e8xCa6Ol8U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zLZT7Zv+qgdrOvMwY0/n86AluX7Uz2u9c/I8R9N7///rqh8+fOOHxrKkNy+bLbBOa
-         C0zrXHTa3jkDkUC0QrGTsCy95+OMsR+MCStVOleL/F8ZdCsknO/883/2CaequjiFVR
-         jNodIwSQkGue7wRPl2JMR2kNxBF5uZoDC2GbeIO8=
+        b=A40AYqqPiKbbjaKQ3Sz2wdiI+4zVB7ocSjjRjCPjQuDxXcPxA89Yz/GctyMSW5au4
+         U3CHQ4+mII1GLtNuLYoCNcazQzNmyY9ETGfBmuubMvaKT+uDiWuT0qPk696PyUKEO7
+         sfsr7fm2P3rPUQUWAqugkwR8jiqAj9JTrEDfoHqA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Petr Cvek <petrcvekcz@gmail.com>,
-        Paul Burton <paul.burton@mips.com>, hauke@hauke-m.de,
-        john@phrozen.org, linux-mips@vger.kernel.org,
-        openwrt-devel@lists.openwrt.org, pakahmar@hotmail.com,
+Cc:     Russell King <rmk+kernel@armlinux.org.uk>,
+        Al Viro <viro@zeniv.linux.org.uk>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.2 19/85] MIPS: lantiq: Fix bitfield masking
-Date:   Fri, 26 Jul 2019 09:38:29 -0400
-Message-Id: <20190726133936.11177-19-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.2 23/85] fs/adfs: super: fix use-after-free bug
+Date:   Fri, 26 Jul 2019 09:38:33 -0400
+Message-Id: <20190726133936.11177-23-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190726133936.11177-1-sashal@kernel.org>
 References: <20190726133936.11177-1-sashal@kernel.org>
@@ -45,42 +43,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Petr Cvek <petrcvekcz@gmail.com>
+From: Russell King <rmk+kernel@armlinux.org.uk>
 
-[ Upstream commit ba1bc0fcdeaf3bf583c1517bd2e3e29cf223c969 ]
+[ Upstream commit 5808b14a1f52554de612fee85ef517199855e310 ]
 
-The modification of EXIN register doesn't clean the bitfield before
-the writing of a new value. After a few modifications the bitfield would
-accumulate only '1's.
+Fix a use-after-free bug during filesystem initialisation, where we
+access the disc record (which is stored in a buffer) after we have
+released the buffer.
 
-Signed-off-by: Petr Cvek <petrcvekcz@gmail.com>
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Cc: hauke@hauke-m.de
-Cc: john@phrozen.org
-Cc: linux-mips@vger.kernel.org
-Cc: openwrt-devel@lists.openwrt.org
-Cc: pakahmar@hotmail.com
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/mips/lantiq/irq.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ fs/adfs/super.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/arch/mips/lantiq/irq.c b/arch/mips/lantiq/irq.c
-index cfd87e662fcf..9c95097557c7 100644
---- a/arch/mips/lantiq/irq.c
-+++ b/arch/mips/lantiq/irq.c
-@@ -154,8 +154,9 @@ static int ltq_eiu_settype(struct irq_data *d, unsigned int type)
- 			if (edge)
- 				irq_set_handler(d->hwirq, handle_edge_irq);
- 
--			ltq_eiu_w32(ltq_eiu_r32(LTQ_EIU_EXIN_C) |
--				(val << (i * 4)), LTQ_EIU_EXIN_C);
-+			ltq_eiu_w32((ltq_eiu_r32(LTQ_EIU_EXIN_C) &
-+				    (~(7 << (i * 4)))) | (val << (i * 4)),
-+				    LTQ_EIU_EXIN_C);
- 		}
+diff --git a/fs/adfs/super.c b/fs/adfs/super.c
+index ffb669f9bba7..ce0fbbe002bf 100644
+--- a/fs/adfs/super.c
++++ b/fs/adfs/super.c
+@@ -360,6 +360,7 @@ static int adfs_fill_super(struct super_block *sb, void *data, int silent)
+ 	struct buffer_head *bh;
+ 	struct object_info root_obj;
+ 	unsigned char *b_data;
++	unsigned int blocksize;
+ 	struct adfs_sb_info *asb;
+ 	struct inode *root;
+ 	int ret = -EINVAL;
+@@ -411,8 +412,10 @@ static int adfs_fill_super(struct super_block *sb, void *data, int silent)
+ 		goto error_free_bh;
  	}
  
++	blocksize = 1 << dr->log2secsize;
+ 	brelse(bh);
+-	if (sb_set_blocksize(sb, 1 << dr->log2secsize)) {
++
++	if (sb_set_blocksize(sb, blocksize)) {
+ 		bh = sb_bread(sb, ADFS_DISCRECORD / sb->s_blocksize);
+ 		if (!bh) {
+ 			adfs_error(sb, "couldn't read superblock on "
 -- 
 2.20.1
 
