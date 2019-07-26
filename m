@@ -2,41 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 269AA7699C
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 15:53:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B94097697A
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 15:52:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388233AbfGZNnc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 09:43:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51164 "EHLO mail.kernel.org"
+        id S2388287AbfGZNnn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 09:43:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51366 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388201AbfGZNn1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 09:43:27 -0400
+        id S2388209AbfGZNne (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 09:43:34 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8D20922CC3;
-        Fri, 26 Jul 2019 13:43:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B8E1222CC2;
+        Fri, 26 Jul 2019 13:43:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564148607;
-        bh=7AVM+aF9br7NYktqFIBlqLhlCSGucjodWR167t3Jr+U=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ESY8RtRNDqOVeLItgkS93MJh/dCRy0/dbS43MymD41zTzR2/QbnED44daRtVgbGm6
-         f8SwOTsPwSSfbGl2Xgim3O6Uiej23KquTNxkAshAp7Ddf+eMHcCqncmbsBdPrJJMfa
-         ntViaxHk85hHwLdY9UTv2T7LTVwdNFUG4ffMhjuo=
+        s=default; t=1564148614;
+        bh=SRWkb1rYWHX8LGcFo1lj7BcnybwsJzYcZ56huQNPnn4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=qOErhd9UFQFRYmMcnXTvr9QzOqBoeGFOBP2umWmUe+l5g5UbcuGPB/qswDmJshaum
+         Ys3ZVV14aScpp/ZAuLFW+FE7WszAD0VgqfcT78uDhtf5s3F0Q9lhBbbRcFdswoJ4Nc
+         ATI1vn56rsiqg8fT5wL+rMr+GZHexCNcqjHG/DMk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Josh Poimboeuf <jpoimboe@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Juergen Gross <jgross@suse.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Sasha Levin <sashal@kernel.org>,
-        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 45/47] x86/paravirt: Fix callee-saved function ELF sizes
-Date:   Fri, 26 Jul 2019 09:42:08 -0400
-Message-Id: <20190726134210.12156-45-sashal@kernel.org>
+Cc:     Russell King <rmk+kernel@armlinux.org.uk>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 01/37] ARM: riscpc: fix DMA
+Date:   Fri, 26 Jul 2019 09:42:56 -0400
+Message-Id: <20190726134332.12626-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190726134210.12156-1-sashal@kernel.org>
-References: <20190726134210.12156-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -46,55 +40,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Josh Poimboeuf <jpoimboe@redhat.com>
+From: Russell King <rmk+kernel@armlinux.org.uk>
 
-[ Upstream commit 083db6764821996526970e42d09c1ab2f4155dd4 ]
+[ Upstream commit ffd9a1ba9fdb7f2bd1d1ad9b9243d34e96756ba2 ]
 
-The __raw_callee_save_*() functions have an ELF symbol size of zero,
-which confuses objtool and other tools.
+DMA got broken a while back in two different ways:
+1) a change in the behaviour of disable_irq() to wait for the interrupt
+   to finish executing causes us to deadlock at the end of DMA.
+2) a change to avoid modifying the scatterlist left the first transfer
+   uninitialised.
 
-Fixes a bunch of warnings like the following:
+DMA is only used with expansion cards, so has gone unnoticed.
 
-  arch/x86/xen/mmu_pv.o: warning: objtool: __raw_callee_save_xen_pte_val() is missing an ELF size annotation
-  arch/x86/xen/mmu_pv.o: warning: objtool: __raw_callee_save_xen_pgd_val() is missing an ELF size annotation
-  arch/x86/xen/mmu_pv.o: warning: objtool: __raw_callee_save_xen_make_pte() is missing an ELF size annotation
-  arch/x86/xen/mmu_pv.o: warning: objtool: __raw_callee_save_xen_make_pgd() is missing an ELF size annotation
-
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Juergen Gross <jgross@suse.com>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lkml.kernel.org/r/afa6d49bb07497ca62e4fc3b27a2d0cece545b4e.1563413318.git.jpoimboe@redhat.com
+Fixes: fa4e99899932 ("[ARM] dma: RiscPC: don't modify DMA SG entries")
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/include/asm/paravirt.h | 1 +
- arch/x86/kernel/kvm.c           | 1 +
- 2 files changed, 2 insertions(+)
+ arch/arm/mach-rpc/dma.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/include/asm/paravirt.h b/arch/x86/include/asm/paravirt.h
-index e375d4266b53..a04677038872 100644
---- a/arch/x86/include/asm/paravirt.h
-+++ b/arch/x86/include/asm/paravirt.h
-@@ -768,6 +768,7 @@ static __always_inline bool pv_vcpu_is_preempted(long cpu)
- 	    PV_RESTORE_ALL_CALLER_REGS					\
- 	    FRAME_END							\
- 	    "ret;"							\
-+	    ".size " PV_THUNK_NAME(func) ", .-" PV_THUNK_NAME(func) ";"	\
- 	    ".popsection")
+diff --git a/arch/arm/mach-rpc/dma.c b/arch/arm/mach-rpc/dma.c
+index fb48f3141fb4..c4c96661eb89 100644
+--- a/arch/arm/mach-rpc/dma.c
++++ b/arch/arm/mach-rpc/dma.c
+@@ -131,7 +131,7 @@ static irqreturn_t iomd_dma_handle(int irq, void *dev_id)
+ 	} while (1);
  
- /* Get a reference to a callee-save function */
-diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
-index 7f89d609095a..cee45d46e67d 100644
---- a/arch/x86/kernel/kvm.c
-+++ b/arch/x86/kernel/kvm.c
-@@ -830,6 +830,7 @@ asm(
- "cmpb	$0, " __stringify(KVM_STEAL_TIME_preempted) "+steal_time(%rax);"
- "setne	%al;"
- "ret;"
-+".size __raw_callee_save___kvm_vcpu_is_preempted, .-__raw_callee_save___kvm_vcpu_is_preempted;"
- ".popsection");
+ 	idma->state = ~DMA_ST_AB;
+-	disable_irq(irq);
++	disable_irq_nosync(irq);
  
- #endif
+ 	return IRQ_HANDLED;
+ }
+@@ -174,6 +174,9 @@ static void iomd_enable_dma(unsigned int chan, dma_t *dma)
+ 				DMA_FROM_DEVICE : DMA_TO_DEVICE);
+ 		}
+ 
++		idma->dma_addr = idma->dma.sg->dma_address;
++		idma->dma_len = idma->dma.sg->length;
++
+ 		iomd_writeb(DMA_CR_C, dma_base + CR);
+ 		idma->state = DMA_ST_AB;
+ 	}
 -- 
 2.20.1
 
