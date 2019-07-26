@@ -2,34 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA84E76829
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 15:42:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F0927682B
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 15:42:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388023AbfGZNmn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 09:42:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49982 "EHLO mail.kernel.org"
+        id S2388038AbfGZNmq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 09:42:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50060 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387991AbfGZNmj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 09:42:39 -0400
+        id S2388021AbfGZNmo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 09:42:44 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E22EE22CBD;
-        Fri, 26 Jul 2019 13:42:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4431322CBF;
+        Fri, 26 Jul 2019 13:42:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564148558;
-        bh=7xIcJ6Fzifi4By4D8Vj/IisMVr9pp74nLitXIpQmDTU=;
+        s=default; t=1564148563;
+        bh=yGGLQpsk4pfJOCVhiY5lkmd6e5gX8chRYfFcRPbzkgU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2q6C315hTGmFgIH8/uczmTLnJ5r1mJEYsgwov0MUBY3vUzpFpMqxEF4Dn3Wx6J7S/
-         Qm+F1wgC0G8zrWBoKokwk7b0JjHYDDwYZ7jxPZ07w11C511XWw09/x3qSt6wUOvFCi
-         xDgArn3RNez8rjM6g9D2rSrsEGFWvJ8d+h1odL2s=
+        b=18yNJDuVsiABeDh5PDvJMLeLe2JfW2j6m9wG5RJTjgck+4s6mJ/S4I72n6y9cemiB
+         cBIDOgEDAxet/OtIdURcqyQczAskquQ8y6t9dMbiiZe0skqG7oH7wgPDjVKr3aVbLj
+         +N6M2krVe9OCTuSZPPfaS+CtqTbUCuFuy75Odbns=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     David Sterba <dsterba@suse.com>, Qu Wenruo <wqu@suse.com>,
-        Sasha Levin <sashal@kernel.org>, linux-btrfs@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 15/47] btrfs: fix minimum number of chunk errors for DUP
-Date:   Fri, 26 Jul 2019 09:41:38 -0400
-Message-Id: <20190726134210.12156-15-sashal@kernel.org>
+Cc:     Andrea Parri <andrea.parri@amarulasolutions.com>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Yan, Zheng" <zyan@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
+        Sasha Levin <sashal@kernel.org>, ceph-devel@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 19/47] ceph: fix improper use of smp_mb__before_atomic()
+Date:   Fri, 26 Jul 2019 09:41:42 -0400
+Message-Id: <20190726134210.12156-19-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190726134210.12156-1-sashal@kernel.org>
 References: <20190726134210.12156-1-sashal@kernel.org>
@@ -42,48 +45,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Sterba <dsterba@suse.com>
+From: Andrea Parri <andrea.parri@amarulasolutions.com>
 
-[ Upstream commit 0ee5f8ae082e1f675a2fb6db601c31ac9958a134 ]
+[ Upstream commit 749607731e26dfb2558118038c40e9c0c80d23b5 ]
 
-The list of profiles in btrfs_chunk_max_errors lists DUP as a profile
-DUP able to tolerate 1 device missing. Though this profile is special
-with 2 copies, it still needs the device, unlike the others.
+This barrier only applies to the read-modify-write operations; in
+particular, it does not apply to the atomic64_set() primitive.
 
-Looking at the history of changes, thre's no clear reason why DUP is
-there, functions were refactored and blocks of code merged to one
-helper.
+Replace the barrier with an smp_mb().
 
-d20983b40e828 Btrfs: fix writing data into the seed filesystem
-  - factor code to a helper
-
-de11cc12df173 Btrfs: don't pre-allocate btrfs bio
-  - unrelated change, DUP still in the list with max errors 1
-
-a236aed14ccb0 Btrfs: Deal with failed writes in mirrored configurations
-  - introduced the max errors, leaves DUP and RAID1 in the same group
-
-Reviewed-by: Qu Wenruo <wqu@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Fixes: fdd4e15838e59 ("ceph: rework dcache readdir")
+Reported-by: "Paul E. McKenney" <paulmck@linux.ibm.com>
+Reported-by: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
+Reviewed-by: "Yan, Zheng" <zyan@redhat.com>
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/btrfs/volumes.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ fs/ceph/super.h | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
-index 2fd000308be7..6e008bd5c8cd 100644
---- a/fs/btrfs/volumes.c
-+++ b/fs/btrfs/volumes.c
-@@ -5040,8 +5040,7 @@ static inline int btrfs_chunk_max_errors(struct map_lookup *map)
- 
- 	if (map->type & (BTRFS_BLOCK_GROUP_RAID1 |
- 			 BTRFS_BLOCK_GROUP_RAID10 |
--			 BTRFS_BLOCK_GROUP_RAID5 |
--			 BTRFS_BLOCK_GROUP_DUP)) {
-+			 BTRFS_BLOCK_GROUP_RAID5)) {
- 		max_errors = 1;
- 	} else if (map->type & BTRFS_BLOCK_GROUP_RAID6) {
- 		max_errors = 2;
+diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+index 582e28fd1b7b..d8579a56e5dc 100644
+--- a/fs/ceph/super.h
++++ b/fs/ceph/super.h
+@@ -526,7 +526,12 @@ static inline void __ceph_dir_set_complete(struct ceph_inode_info *ci,
+ 					   long long release_count,
+ 					   long long ordered_count)
+ {
+-	smp_mb__before_atomic();
++	/*
++	 * Makes sure operations that setup readdir cache (update page
++	 * cache and i_size) are strongly ordered w.r.t. the following
++	 * atomic64_set() operations.
++	 */
++	smp_mb();
+ 	atomic64_set(&ci->i_complete_seq[0], release_count);
+ 	atomic64_set(&ci->i_complete_seq[1], ordered_count);
+ }
 -- 
 2.20.1
 
