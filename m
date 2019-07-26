@@ -2,37 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EDFC076E09
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 17:40:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 63CE576E0A
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 17:40:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388579AbfGZP2s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 11:28:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43282 "EHLO mail.kernel.org"
+        id S1727887AbfGZP2t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 11:28:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43340 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388137AbfGZP2n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 11:28:43 -0400
+        id S2387941AbfGZP2r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 11:28:47 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 219F622CBF;
-        Fri, 26 Jul 2019 15:28:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9C62C205F4;
+        Fri, 26 Jul 2019 15:28:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564154922;
-        bh=v7Xqxq0QTqHQrs+EEZYLm0GJ7qSjUp75lZ9u4crDjOk=;
+        s=default; t=1564154926;
+        bh=qj3Yu+ZsCVSVuHnZvv8QkWNU/+idoulJXQQsqaUdSyU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=J8ormoSBkh07mv/CLje04iVl2omwkDp1gsMTUVi3Yx8A2Z4kWynmn+FJDphBQJgdg
-         pvfnLHmQ1PhwUn0h1tUfdodtkIplykTnzAswmovnKV8SAP08F5DvDGYn+Hl+tsvfYk
-         prSCCsnoD85+oq+Z9xiHH5lRlBJLVREs8RmQD/mg=
+        b=fujRO6o1yVjJHVaUOx/S9SfwBBXrFenr+C5NRgFsEXtte9dmy0MaFdN5ZGbhjOego
+         MuwII7NkAsFaVJS8xX7iMrp3TyT0MH49FqrICBr7laaTF1HOUvfWt2iHpxv6lNQLxd
+         VBktOMM+P107/HNmW+W07X8iWmOW/kG6e3nKVz+8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ido Schimmel <idosch@mellanox.com>,
-        Alex Kushnarov <alexanderk@mellanox.com>,
-        Jiri Pirko <jiri@mellanox.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.2 46/66] mlxsw: spectrum: Do not process learned records with a dummy FID
-Date:   Fri, 26 Jul 2019 17:24:45 +0200
-Message-Id: <20190726152306.957806093@linuxfoundation.org>
+        stable@vger.kernel.org,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linaro-mm-sig@lists.linaro.org,
+        =?UTF-8?q?St=C3=A9phane=20Marchesin?= <marcheu@chromium.org>
+Subject: [PATCH 5.2 47/66] dma-buf: balance refcount inbalance
+Date:   Fri, 26 Jul 2019 17:24:46 +0200
+Message-Id: <20190726152307.050532782@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190726152301.936055394@linuxfoundation.org>
 References: <20190726152301.936055394@linuxfoundation.org>
@@ -45,96 +49,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ido Schimmel <idosch@mellanox.com>
+From: Jérôme Glisse <jglisse@redhat.com>
 
-[ Upstream commit 577fa14d210073ba1ce6237c659a8820312104ad ]
+commit 5e383a9798990c69fc759a4930de224bb497e62c upstream.
 
-The switch periodically sends notifications about learned FDB entries.
-Among other things, the notification includes the FID (Filtering
-Identifier) and the port on which the MAC was learned.
+The debugfs take reference on fence without dropping them.
 
-In case the driver does not have the FID defined on the relevant port,
-the following error will be periodically generated:
-
-mlxsw_spectrum2 0000:06:00.0 swp32: Failed to find a matching {Port, VID} following FDB notification
-
-This is not supposed to happen under normal conditions, but can happen
-if an ingress tc filter with a redirect action is installed on a bridged
-port. The redirect action will cause the packet's FID to be changed to
-the dummy FID and a learning notification will be emitted with this FID
-- which is not defined on the bridged port.
-
-Fix this by having the driver ignore learning notifications generated
-with the dummy FID and delete them from the device.
-
-Another option is to chain an ignore action after the redirect action
-which will cause the device to disable learning, but this means that we
-need to consume another action whenever a redirect action is used. In
-addition, the scenario described above is merely a corner case.
-
-Fixes: cedbb8b25948 ("mlxsw: spectrum_flower: Set dummy FID before forward action")
-Signed-off-by: Ido Schimmel <idosch@mellanox.com>
-Reported-by: Alex Kushnarov <alexanderk@mellanox.com>
-Acked-by: Jiri Pirko <jiri@mellanox.com>
-Tested-by: Alex Kushnarov <alexanderk@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Jérôme Glisse <jglisse@redhat.com>
+Cc: Christian König <christian.koenig@amd.com>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: Sumit Semwal <sumit.semwal@linaro.org>
+Cc: linux-media@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org
+Cc: linaro-mm-sig@lists.linaro.org
+Cc: Stéphane Marchesin <marcheu@chromium.org>
+Cc: stable@vger.kernel.org
+Reviewed-by: Christian König <christian.koenig@amd.com>
+Signed-off-by: Sumit Semwal <sumit.semwal@linaro.org>
+Link: https://patchwork.freedesktop.org/patch/msgid/20181206161840.6578-1-jglisse@redhat.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/mellanox/mlxsw/spectrum.h           |    1 +
- drivers/net/ethernet/mellanox/mlxsw/spectrum_fid.c       |   10 ++++++++++
- drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c |    6 ++++++
- 3 files changed, 17 insertions(+)
 
---- a/drivers/net/ethernet/mellanox/mlxsw/spectrum.h
-+++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum.h
-@@ -805,6 +805,7 @@ int mlxsw_sp_setup_tc_prio(struct mlxsw_
- 			   struct tc_prio_qopt_offload *p);
+---
+ drivers/dma-buf/dma-buf.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- a/drivers/dma-buf/dma-buf.c
++++ b/drivers/dma-buf/dma-buf.c
+@@ -1057,6 +1057,7 @@ static int dma_buf_debug_show(struct seq
+ 				   fence->ops->get_driver_name(fence),
+ 				   fence->ops->get_timeline_name(fence),
+ 				   dma_fence_is_signaled(fence) ? "" : "un");
++			dma_fence_put(fence);
+ 		}
+ 		rcu_read_unlock();
  
- /* spectrum_fid.c */
-+bool mlxsw_sp_fid_is_dummy(struct mlxsw_sp *mlxsw_sp, u16 fid_index);
- bool mlxsw_sp_fid_lag_vid_valid(const struct mlxsw_sp_fid *fid);
- struct mlxsw_sp_fid *mlxsw_sp_fid_lookup_by_index(struct mlxsw_sp *mlxsw_sp,
- 						  u16 fid_index);
---- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_fid.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_fid.c
-@@ -126,6 +126,16 @@ static const int *mlxsw_sp_packet_type_s
- 	[MLXSW_SP_FLOOD_TYPE_MC]	= mlxsw_sp_sfgc_mc_packet_types,
- };
- 
-+bool mlxsw_sp_fid_is_dummy(struct mlxsw_sp *mlxsw_sp, u16 fid_index)
-+{
-+	enum mlxsw_sp_fid_type fid_type = MLXSW_SP_FID_TYPE_DUMMY;
-+	struct mlxsw_sp_fid_family *fid_family;
-+
-+	fid_family = mlxsw_sp->fid_core->fid_family_arr[fid_type];
-+
-+	return fid_family->start_index == fid_index;
-+}
-+
- bool mlxsw_sp_fid_lag_vid_valid(const struct mlxsw_sp_fid *fid)
- {
- 	return fid->fid_family->lag_vid_valid;
---- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
-@@ -2468,6 +2468,9 @@ static void mlxsw_sp_fdb_notify_mac_proc
- 		goto just_remove;
- 	}
- 
-+	if (mlxsw_sp_fid_is_dummy(mlxsw_sp, fid))
-+		goto just_remove;
-+
- 	mlxsw_sp_port_vlan = mlxsw_sp_port_vlan_find_by_fid(mlxsw_sp_port, fid);
- 	if (!mlxsw_sp_port_vlan) {
- 		netdev_err(mlxsw_sp_port->dev, "Failed to find a matching {Port, VID} following FDB notification\n");
-@@ -2527,6 +2530,9 @@ static void mlxsw_sp_fdb_notify_mac_lag_
- 		goto just_remove;
- 	}
- 
-+	if (mlxsw_sp_fid_is_dummy(mlxsw_sp, fid))
-+		goto just_remove;
-+
- 	mlxsw_sp_port_vlan = mlxsw_sp_port_vlan_find_by_fid(mlxsw_sp_port, fid);
- 	if (!mlxsw_sp_port_vlan) {
- 		netdev_err(mlxsw_sp_port->dev, "Failed to find a matching {Port, VID} following FDB notification\n");
 
 
