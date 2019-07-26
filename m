@@ -2,160 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9AE067667D
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 14:52:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 23ADE76680
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 14:52:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726616AbfGZMvo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 08:51:44 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:34834 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726439AbfGZMvm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 08:51:42 -0400
-Received: by mail-oi1-f193.google.com with SMTP id a127so40144319oii.2
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2019 05:51:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=essensium-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bvMVXgkYpNN9sZPuxppMuXcoMoKSnEUwXCqI78r7ick=;
-        b=TIH72VEwJpwTnsuWC8zz3OaqzRUPMGxpFxy6dYsj38j88Af6eYXPrhYU3vDK71zZIj
-         uSKZHqDtlQ6qqNh57BpEnpBsJpDdc90pdEkJLWLyUeosw14uIiEZANxw+3HhOjeDMHNn
-         w6De2kMAu5Iyk+tKmj5wBKSauJDf5dg0E5KrgDwKwb721u8CVWXa1NpMvnsp6EYu6cSL
-         qfh+NsvPIsu+UOhGfgFUR+6N75jEGBlHyHPyKervAB+TCwrTtl+ifj+YqTaZDQO5F9dO
-         O7upC+DFuIYrIvY+CHu0i8DSmUqSu53iyGGnLmqmpljmvEXXFjLW/YQKd1ck1Ub9xrcI
-         f+4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bvMVXgkYpNN9sZPuxppMuXcoMoKSnEUwXCqI78r7ick=;
-        b=k+wQXGPLQ1twLzH0H/yowvQOiN/uFmadoxuGMYITSLXf20761uD4c8KL8DXXg1jf22
-         BdwQyTNFsftsCiXeLmPIB6PWjTLqdesAch2+LIJdXvEwrMJ3Ik439QhCRjD0KiC2CIUK
-         yKHunFSJ3HoFcqIsWoaFQT8xnztr2GwBUVYIR0Srqw4138bC1YP5Gm7nhOhl8JOzE2Qq
-         lVIBRhs89j5AQWgizPlSwHlLcSxynzfNQmHklskUL/jQD4gUGC318kcxsyrTuMPHlFxx
-         ha5TSMixqBJUrph+fDCE/csrHKO8Z+jqop891wHSJOKCrg4TwtnAgnhI19WrjPh/Ux5E
-         MAIA==
-X-Gm-Message-State: APjAAAWQC1JREHVeI9KzhmYLjKo80UOB75eFXpOmpasy0E0eoc1goQ67
-        JKZ74L0fBFQTjgbpmPhFOc+UkOQRp2hLQJo/ifpAUg==
-X-Google-Smtp-Source: APXvYqwx6IXRb/OfiRGUc3dedl/UOL9sv4gr0GbVlzrNIsbqHM0mqlH5VsShWnu+ldh/+do6QZlIJDvDZLjBtdjsE1A=
-X-Received: by 2002:aca:b107:: with SMTP id a7mr44870887oif.83.1564145501803;
- Fri, 26 Jul 2019 05:51:41 -0700 (PDT)
+        id S1727083AbfGZMwQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 08:52:16 -0400
+Received: from relay.sw.ru ([185.231.240.75]:56286 "EHLO relay.sw.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726562AbfGZMwP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Jul 2019 08:52:15 -0400
+Received: from [172.16.25.12]
+        by relay.sw.ru with esmtp (Exim 4.92)
+        (envelope-from <aryabinin@virtuozzo.com>)
+        id 1hqzhc-0007Xf-H3; Fri, 26 Jul 2019 15:52:04 +0300
+Subject: Re: [PATCH v3] kasan: add memory corruption identification for
+ software tag-based mode
+To:     Walter Wu <walter-zh.wu@mediatek.com>
+Cc:     Dmitry Vyukov <dvyukov@google.com>,
+        Alexander Potapenko <glider@google.com>,
+        Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        "Jason A . Donenfeld" <Jason@zx2c4.com>,
+        Miles Chen <miles.chen@mediatek.com>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-mediatek@lists.infradead.org,
+        wsd_upstream <wsd_upstream@mediatek.com>
+References: <20190613081357.1360-1-walter-zh.wu@mediatek.com>
+ <da7591c9-660d-d380-d59e-6d70b39eaa6b@virtuozzo.com>
+ <1560447999.15814.15.camel@mtksdccf07> <1560479520.15814.34.camel@mtksdccf07>
+ <1560744017.15814.49.camel@mtksdccf07>
+ <CACT4Y+Y3uS59rXf92ByQuFK_G4v0H8NNnCY1tCbr4V+PaZF3ag@mail.gmail.com>
+ <1560774735.15814.54.camel@mtksdccf07> <1561974995.18866.1.camel@mtksdccf07>
+ <CACT4Y+aMXTBE0uVkeZz+MuPx3X1nESSBncgkScWvAkciAxP1RA@mail.gmail.com>
+ <ebc99ee1-716b-0b18-66ab-4e93de02ce50@virtuozzo.com>
+ <1562640832.9077.32.camel@mtksdccf07>
+ <d9fd1d5b-9516-b9b9-0670-a1885e79f278@virtuozzo.com>
+ <1562839579.5846.12.camel@mtksdccf07>
+ <37897fb7-88c1-859a-dfcc-0a5e89a642e0@virtuozzo.com>
+ <1563160001.4793.4.camel@mtksdccf07>
+ <9ab1871a-2605-ab34-3fd3-4b44a0e17ab7@virtuozzo.com>
+ <1563789162.31223.3.camel@mtksdccf07>
+ <e62da62a-2a63-3a1c-faeb-9c5561a5170c@virtuozzo.com>
+ <1564144097.515.3.camel@mtksdccf07>
+From:   Andrey Ryabinin <aryabinin@virtuozzo.com>
+Message-ID: <71df2bd5-7bc8-2c82-ee31-3f68c3b6296d@virtuozzo.com>
+Date:   Fri, 26 Jul 2019 15:52:10 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <20190726022836.7182-1-hslester96@gmail.com>
-In-Reply-To: <20190726022836.7182-1-hslester96@gmail.com>
-From:   Patrick Havelange <patrick.havelange@essensium.com>
-Date:   Fri, 26 Jul 2019 14:51:30 +0200
-Message-ID: <CAKKE0ZG9hKqOnPHCfmW8Mpe2tdcdpdv4Njvx7XNuw6ykJf3P0w@mail.gmail.com>
-Subject: Re: [PATCH v2] counter/ftm-quaddec: Use device-managed registration API
-To:     Chuhong Yuan <hslester96@gmail.com>
-Cc:     William Breathitt Gray <vilhelm.gray@gmail.com>,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1564144097.515.3.camel@mtksdccf07>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
-
-On Fri, Jul 26, 2019 at 4:28 AM Chuhong Yuan <hslester96@gmail.com> wrote:
->
-> Make use of devm_counter_register.
-> Then we can remove redundant unregistration API
-> usage to make code simpler.
->
-> Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
-> ---
-> Changes in v2:
->   - Use devm_add_action_or_reset to keep
->     resource release order.
-
-This is better now indeed.
-
-However it seems there is an issue with the mail/patch format, I'm
-unable to apply it with git am, and if you look at
-https://lore.kernel.org/patchwork/patch/1105782/ the diff section is
-missing the beginning of the patch. I don't know why, but I think it
-should be looked into.
-
-Otherwise, it's fine by me.
-
-Regards,
-
-Patrick Havelange
 
 
->   - _remove() function is redundant now,
->     delete it.
+On 7/26/19 3:28 PM, Walter Wu wrote:
+> On Fri, 2019-07-26 at 15:00 +0300, Andrey Ryabinin wrote:
+>>
 >
->  drivers/counter/ftm-quaddec.c | 31 +++++++++++--------------------
->  1 file changed, 11 insertions(+), 20 deletions(-)
->
-> diff --git a/drivers/counter/ftm-quaddec.c b/drivers/counter/ftm-quaddec.c
-> index 68a9b7393457..76c70a6c3593 100644
-> --- a/drivers/counter/ftm-quaddec.c
-> +++ b/drivers/counter/ftm-quaddec.c
-> @@ -100,16 +100,17 @@ static void ftm_quaddec_init(struct ftm_quaddec *ftm)
->         ftm_set_write_protection(ftm);
->  }
->
-> -static void ftm_quaddec_disable(struct ftm_quaddec *ftm)
-> +static void ftm_quaddec_disable(void *ftm)
->  {
-> -       ftm_clear_write_protection(ftm);
-> -       ftm_write(ftm, FTM_MODE, 0);
-> -       ftm_write(ftm, FTM_QDCTRL, 0);
-> +       struct ftm_quaddec *ftm_qua = ftm;
->
-> +       ftm_clear_write_protection(ftm_qua);
-> +       ftm_write(ftm_qua, FTM_MODE, 0);
-> +       ftm_write(ftm_qua, FTM_QDCTRL, 0);
->         /*
->          * This is enough to disable the counter. No clock has been
->          * selected by writing to FTM_SC in init()
->          */
-> -       ftm_set_write_protection(ftm);
-> +       ftm_set_write_protection(ftm_qua);
->  }
->
->  static int ftm_quaddec_get_prescaler(struct counter_device *counter,
-> @@ -316,22 +317,13 @@ static int ftm_quaddec_probe(struct platform_device *pdev)
->         mutex_init(&ftm->ftm_quaddec_mutex);
->
->         ftm_quaddec_init(ftm);
-> -
-> -       ret = counter_register(&ftm->counter);
-> +       ret = devm_add_action_or_reset(&pdev->dev, ftm_quaddec_disable, ftm);
->         if (ret)
-> -               ftm_quaddec_disable(ftm);
-> -
-> -       return ret;
-> -}
-> -
-> -static int ftm_quaddec_remove(struct platform_device *pdev)
-> -{
-> -       struct ftm_quaddec *ftm = platform_get_drvdata(pdev);
-> -
-> -       counter_unregister(&ftm->counter);
-> -
-> -       ftm_quaddec_disable(ftm);
-> +               return ret;
->
-> +       ret = devm_counter_register(&pdev->dev, &ftm->counter);
-> +       if (ret)
-> +               return ret;
->         return 0;
->  }
->
-> @@ -346,7 +338,6 @@ static struct platform_driver ftm_quaddec_driver = {
->                 .of_match_table = ftm_quaddec_match,
->         },
->         .probe = ftm_quaddec_probe,
-> -       .remove = ftm_quaddec_remove,
->  };
->
->  module_platform_driver(ftm_quaddec_driver);
-> --
-> 2.20.1
->
+>>>
+>>>
+>>> I remember that there are already the lists which you concern. Maybe we
+>>> can try to solve those problems one by one.
+>>>
+>>> 1. deadlock issue? cause by kmalloc() after kfree()?
+>>
+>> smp_call_on_cpu()
+> 
+>>> 2. decrease allocation fail, to modify GFP_NOWAIT flag to GFP_KERNEL?
+>>
+>> No, this is not gonna work. Ideally we shouldn't have any allocations there.
+>> It's not reliable and it hurts performance.
+>>
+> I dont know this meaning, we need create a qobject and put into
+> quarantine, so may need to call kmem_cache_alloc(), would you agree this
+> action?
+> 
+
+How is this any different from what you have now?
