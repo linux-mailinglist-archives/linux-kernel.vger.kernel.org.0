@@ -2,84 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F48077164
-	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 20:41:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B833377170
+	for <lists+linux-kernel@lfdr.de>; Fri, 26 Jul 2019 20:43:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388080AbfGZSlO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 26 Jul 2019 14:41:14 -0400
-Received: from mailoutvs11.siol.net ([185.57.226.202]:54841 "EHLO
-        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2388035AbfGZSlL (ORCPT
+        id S2388102AbfGZSnL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 26 Jul 2019 14:43:11 -0400
+Received: from asavdk3.altibox.net ([109.247.116.14]:43927 "EHLO
+        asavdk3.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388035AbfGZSnL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Jul 2019 14:41:11 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTP id A51F8523041;
-        Fri, 26 Jul 2019 20:41:08 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at psrvmta10.zcs-production.pri
-Received: from mail.siol.net ([127.0.0.1])
-        by localhost (psrvmta10.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id vwG4zhWBUSbu; Fri, 26 Jul 2019 20:41:08 +0200 (CEST)
-Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTPS id 686A0523044;
-        Fri, 26 Jul 2019 20:41:08 +0200 (CEST)
-Received: from localhost.localdomain (cpe-194-152-11-237.cable.triera.net [194.152.11.237])
-        (Authenticated sender: 031275009)
-        by mail.siol.net (Postfix) with ESMTPSA id 1CB6F523041;
-        Fri, 26 Jul 2019 20:41:06 +0200 (CEST)
-From:   Jernej Skrabec <jernej.skrabec@siol.net>
-To:     thierry.reding@gmail.com, mripard@kernel.org, wens@csie.org
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: [PATCH 6/6] arm64: dts: allwinner: h6: Add PWM node
-Date:   Fri, 26 Jul 2019 20:40:45 +0200
-Message-Id: <20190726184045.14669-7-jernej.skrabec@siol.net>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190726184045.14669-1-jernej.skrabec@siol.net>
-References: <20190726184045.14669-1-jernej.skrabec@siol.net>
+        Fri, 26 Jul 2019 14:43:11 -0400
+Received: from ravnborg.org (unknown [158.248.194.18])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by asavdk3.altibox.net (Postfix) with ESMTPS id 3F74320117;
+        Fri, 26 Jul 2019 20:43:08 +0200 (CEST)
+Date:   Fri, 26 Jul 2019 20:43:06 +0200
+From:   Sam Ravnborg <sam@ravnborg.org>
+To:     Guido =?iso-8859-1?Q?G=FCnther?= <agx@sigxcpu.org>
+Cc:     Purism Kernel Team <kernel@puri.sm>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/4] drm/panel: jh057n00900: Move dsi init sequence to
+ prepare
+Message-ID: <20190726184306.GA14981@ravnborg.org>
+References: <cover.1564146727.git.agx@sigxcpu.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <cover.1564146727.git.agx@sigxcpu.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-CMAE-Score: 0
+X-CMAE-Analysis: v=2.3 cv=dqr19Wo4 c=1 sm=1 tr=0
+        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=8nJEP1OIZ-IA:10 a=ze386MxoAAAA:8
+        a=pGLkceISAAAA:8 a=7gkXJVJtAAAA:8 a=VwQbUJbxAAAA:8 a=D0Xkq8Vs1On2DmSM1iMA:9
+        a=wPNLvfGTeEIA:10 a=iBZjaW-pnkserzjvUTHh:22 a=E9Po1WZjFZOl8hwRPBS3:22
+        a=AjGcO6oz07-iQ99wixmX:22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allwinner H6 PWM is similar to that in A20 except that it has additional
-bus clock and reset line.
+Hi Guido.
 
-Note that first PWM channel is connected to output pin and second
-channel is used internally, as a clock source to AC200 co-packaged chip.
-This means that any combination of these two channels can be used and
-thus it doesn't make sense to add pinctrl nodes at this point.
+On Fri, Jul 26, 2019 at 03:14:35PM +0200, Guido Günther wrote:
+> 
+> If the panel is wrapped in a panel_bridge it gets prepar()ed before the
+> upstream DSI bridge which can cause hangs (e.g. with imx-nwl since clocks
+> are not enabled yet). To avoid this move the panel's first DSI access to
+> enable() so the upstream bridge can prepare the DSI host controller in
+> it's pre_enable().
+> 
+> The second patch makes the disable() call symmetric to the above and the third
+> one just eases debugging.
+> 
+> Changes from v1:
+> * As per review comments by Sam Ravnborg
+>   * Ignore failures to disable the backlight in jh057n_disable()
+>   * Add 'drm/panel: jh057n00900: Use drm_panel_{unprepare,disable} consistently'
+> * Collected Reviewed-By: Thanks Sam!
+> 
+> To: "Guido Günther" <agx@sigxcpu.org>,Purism Kernel Team <kernel@puri.sm>,Thierry Reding <thierry.reding@gmail.com>,Sam Ravnborg <sam@ravnborg.org>,David Airlie <airlied@linux.ie>,Daniel Vetter <daniel@ffwll.ch>,dri-devel@lists.freedesktop.org,linux-kernel@vger.kernel.org
+> 
+> 
+> Guido Günther (4):
+>   drm/panel: jh057n00900: Move panel DSI init to enable()
+>   drm/panel: jh057n00900: Move mipi_dsi_dcs_set_display_off to disable()
+>   drm/panel: jh057n00900: Print error code on all DRM_DEV_ERROR()s
+>   drm/panel: jh057n00900: Use drm_panel_{unprepare,disable} consistently
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+Looks good. Series applied to drm-misc-next and pushed out.
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi b/arch/arm64/bo=
-ot/dts/allwinner/sun50i-h6.dtsi
-index e8bed58e7246..c1abd805cfdc 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-@@ -229,6 +229,16 @@
- 			status =3D "disabled";
- 		};
-=20
-+		pwm: pwm@300a000 {
-+			compatible =3D "allwinner,sun50i-h6-pwm";
-+			reg =3D <0x0300a000 0x400>;
-+			clocks =3D <&osc24M>, <&ccu CLK_BUS_PWM>;
-+			clock-names =3D "pwm", "bus";
-+			resets =3D <&ccu RST_BUS_PWM>;
-+			#pwm-cells =3D <3>;
-+			status =3D "disabled";
-+		};
-+
- 		pio: pinctrl@300b000 {
- 			compatible =3D "allwinner,sun50i-h6-pinctrl";
- 			reg =3D <0x0300b000 0x400>;
---=20
-2.22.0
-
+	Sam
