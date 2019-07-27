@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF7FF77988
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2019 17:10:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 92E2E77990
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2019 17:10:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729058AbfG0PKN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 27 Jul 2019 11:10:13 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:2788 "EHLO huawei.com"
+        id S1729087AbfG0PKY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 27 Jul 2019 11:10:24 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:3183 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728990AbfG0PKK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1729043AbfG0PKK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 27 Jul 2019 11:10:10 -0400
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 53D2A344F7D54AFB3CA9;
-        Sat, 27 Jul 2019 23:10:06 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS402-HUB.china.huawei.com
- (10.3.19.202) with Microsoft SMTP Server id 14.3.439.0; Sat, 27 Jul 2019
- 23:09:58 +0800
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 91B6CD5F3BF66402C1F9;
+        Sat, 27 Jul 2019 23:10:08 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS405-HUB.china.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server id 14.3.439.0; Sat, 27 Jul 2019
+ 23:10:01 +0800
 From:   YueHaibing <yuehaibing@huawei.com>
 To:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
         <tiwai@suse.com>, <eric@anholt.net>, <wahrenst@gmx.net>,
@@ -44,9 +44,9 @@ CC:     <linux-kernel@vger.kernel.org>, <alsa-devel@alsa-project.org>,
         <linux-stm32@st-md-mailman.stormreply.com>,
         <linux-tegra@vger.kernel.org>, <linux-xtensa@linux-xtensa.org>,
         <gregkh@linuxfoundation.org>, YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next 12/34] ASoC: spear: use devm_platform_ioremap_resource() to simplify code
-Date:   Sat, 27 Jul 2019 23:07:16 +0800
-Message-ID: <20190727150738.54764-13-yuehaibing@huawei.com>
+Subject: [PATCH -next 13/34] ASoC: kirkwood-i2s: use devm_platform_ioremap_resource() to simplify code
+Date:   Sat, 27 Jul 2019 23:07:17 +0800
+Message-ID: <20190727150738.54764-14-yuehaibing@huawei.com>
 X-Mailer: git-send-email 2.10.2.windows.1
 In-Reply-To: <20190727150738.54764-1-yuehaibing@huawei.com>
 References: <20190727150738.54764-1-yuehaibing@huawei.com>
@@ -65,27 +65,30 @@ This is detected by coccinelle.
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- sound/soc/spear/spdif_in.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ sound/soc/kirkwood/kirkwood-i2s.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/sound/soc/spear/spdif_in.c b/sound/soc/spear/spdif_in.c
-index 78a6a36..4b68d6e 100644
---- a/sound/soc/spear/spdif_in.c
-+++ b/sound/soc/spear/spdif_in.c
-@@ -202,12 +202,11 @@ static int spdif_in_probe(struct platform_device *pdev)
- {
- 	struct spdif_in_dev *host;
- 	struct spear_spdif_platform_data *pdata;
--	struct resource *res, *res_fifo;
-+	struct resource *res_fifo;
- 	void __iomem *io_base;
- 	int ret;
+diff --git a/sound/soc/kirkwood/kirkwood-i2s.c b/sound/soc/kirkwood/kirkwood-i2s.c
+index 3446a113..5076ec4 100644
+--- a/sound/soc/kirkwood/kirkwood-i2s.c
++++ b/sound/soc/kirkwood/kirkwood-i2s.c
+@@ -523,7 +523,6 @@ static int kirkwood_i2s_dev_probe(struct platform_device *pdev)
+ 	struct kirkwood_asoc_platform_data *data = pdev->dev.platform_data;
+ 	struct snd_soc_dai_driver *soc_dai = kirkwood_i2s_dai;
+ 	struct kirkwood_dma_data *priv;
+-	struct resource *mem;
+ 	struct device_node *np = pdev->dev.of_node;
+ 	int err;
  
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	io_base = devm_ioremap_resource(&pdev->dev, res);
-+	io_base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(io_base))
- 		return PTR_ERR(io_base);
+@@ -533,8 +532,7 @@ static int kirkwood_i2s_dev_probe(struct platform_device *pdev)
+ 
+ 	dev_set_drvdata(&pdev->dev, priv);
+ 
+-	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	priv->io = devm_ioremap_resource(&pdev->dev, mem);
++	priv->io = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(priv->io))
+ 		return PTR_ERR(priv->io);
  
 -- 
 2.7.4
