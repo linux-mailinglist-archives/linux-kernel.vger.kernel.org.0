@@ -2,143 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52F6F7779E
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2019 10:34:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BBC77777B0
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2019 10:37:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728576AbfG0IeF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 27 Jul 2019 04:34:05 -0400
-Received: from mail-eopbgr780049.outbound.protection.outlook.com ([40.107.78.49]:42291
-        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728487AbfG0IeF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 27 Jul 2019 04:34:05 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=LQs7Kd7fzolszVepkB5yMw7EdSCg1hPwSl3nKD4AYodRYAzSwo7/2N3Ik+Zg34awI6L2FWXMj2z29S8NhK/zxQJmSXzC2TMcYmcX8bdMpN6H8YkMZeIjH2JWQ1L5PYKXBaElAoBB/5cvwywQDSde9Sx8hpT3dwySYTbLGNoX9EeEO+w6uLXaOCmdISQsrFBOvQpuQlRiBun9Wx60yZKQjEK9Qs3Y8hyCt3RZ8ylXs8L0mUUjxYGb5qt84vvEc7ETxdUeLL4/NfGxOoourvdZ10FnSLG2M/gqsW4fUAxslayMOfNAOVbdGK+OsYYZYbsWxQhtDOCK++sY/7Hm9aZxVA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=uGNLe8BATWGu0tVLqNDAOcnKFx0PCrilC04wo+c6P0g=;
- b=mdAvitiNlFrS0vLPEqJh9kEsOEuuyIS9xWzmy0pwQ/RYjygpfT7btetGPrz8mC5lWl97WnNTDg8apBHuqHWewGjD+q/gz+EkiWCbEYZWi82S8pdSRaJuAYrkm4QONCNBqeJsB3QD13j7fapcuEYY5DFMSMktUTnYxC4gKTto9okAS+0Qt1cAz7soYuPrR5jWRPAda1DK4DOxRl4rlQ1BeZpbm3rpx7ortwXVJfxSPWUG/TQKg7ibPL6aPhmnobuLOBmHhN3CL4w0IEkkPmZLlYe8GB2z54HWndmMVz2dJMhR1YuufNKNerF8KAk8wrNfY8gOyMK732ky7CXHd+/r8A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass (sender ip is
- 149.199.80.198) smtp.rcpttodomain=arndb.de
- smtp.mailfrom=xilinx.com;dmarc=bestguesspass action=none
- header.from=xilinx.com;dkim=none (message not signed);arc=none
+        id S2387405AbfG0IhO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 27 Jul 2019 04:37:14 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:53046 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728347AbfG0IhN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 27 Jul 2019 04:37:13 -0400
+Received: by mail-wm1-f67.google.com with SMTP id s3so49757648wms.2
+        for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2019 01:37:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=uGNLe8BATWGu0tVLqNDAOcnKFx0PCrilC04wo+c6P0g=;
- b=tflsT0OwTWUHeLo9zxx3aViZbqwEphr8xynfPipLrBIqMwNEL7VmgZWUcOgtzqED7KrRG5lqzDZ+4piQbSGrqk/wQruMgSQYFiFoiIttVKN84Baggx4okmm9IF7WHnP/mXNhBPDHM2zJn+T9orA35XCosIqoQt6lAV2UFsqYbiY=
-Received: from BN6PR02CA0097.namprd02.prod.outlook.com (2603:10b6:405:60::38)
- by SN6PR02MB4768.namprd02.prod.outlook.com (2603:10b6:805:90::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2094.16; Sat, 27 Jul
- 2019 08:34:02 +0000
-Received: from BL2NAM02FT059.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e46::205) by BN6PR02CA0097.outlook.office365.com
- (2603:10b6:405:60::38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.2115.13 via Frontend
- Transport; Sat, 27 Jul 2019 08:34:02 +0000
-Authentication-Results: spf=pass (sender IP is 149.199.80.198)
- smtp.mailfrom=xilinx.com; arndb.de; dkim=none (message not signed)
- header.d=none;arndb.de; dmarc=bestguesspass action=none
- header.from=xilinx.com;
-Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.80.198 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.80.198; helo=xir-pvapexch02.xlnx.xilinx.com;
-Received: from xir-pvapexch02.xlnx.xilinx.com (149.199.80.198) by
- BL2NAM02FT059.mail.protection.outlook.com (10.152.76.247) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
- 15.20.2115.10 via Frontend Transport; Sat, 27 Jul 2019 08:34:01 +0000
-Received: from xir-pvapexch01.xlnx.xilinx.com (172.21.17.15) by
- xir-pvapexch02.xlnx.xilinx.com (172.21.17.17) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1531.3; Sat, 27 Jul 2019 09:34:00 +0100
-Received: from smtp.xilinx.com (172.21.105.197) by
- xir-pvapexch01.xlnx.xilinx.com (172.21.17.15) with Microsoft SMTP Server id
- 15.1.1531.3 via Frontend Transport; Sat, 27 Jul 2019 09:34:00 +0100
-Envelope-to: arnd@arndb.de,
- gregkh@linuxfoundation.org,
- michal.simek@xilinx.com,
- linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org,
- dragan.cvetic@xilinx.com,
- derek.kiernan@xilinx.com
-Received: from [149.199.110.15] (port=40508 helo=xirdraganc40.xilinx.com)
-        by smtp.xilinx.com with esmtp (Exim 4.90)
-        (envelope-from <dragan.cvetic@xilinx.com>)
-        id 1hrI9Q-00027X-0i; Sat, 27 Jul 2019 09:34:00 +0100
-From:   Dragan Cvetic <dragan.cvetic@xilinx.com>
-To:     <arnd@arndb.de>, <gregkh@linuxfoundation.org>,
-        <michal.simek@xilinx.com>, <linux-arm-kernel@lists.infradead.org>
-CC:     <linux-kernel@vger.kernel.org>,
-        Dragan Cvetic <dragan.cvetic@xilinx.com>,
-        Derek Kiernan <derek.kiernan@xilinx.com>
-Subject: [PATCH V9 8/8] MAINTAINERS: add maintainer for SD-FEC
-Date:   Sat, 27 Jul 2019 09:33:58 +0100
-Message-ID: <1564216438-322406-9-git-send-email-dragan.cvetic@xilinx.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1564216438-322406-1-git-send-email-dragan.cvetic@xilinx.com>
-References: <1564216438-322406-1-git-send-email-dragan.cvetic@xilinx.com>
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=SzX7m4bwjQSdn4Mqmgypetc/V+AxipBx0rG9jo0B898=;
+        b=EXEMfZRNCrK5o19CdDFNvjY8x/NPixnOmIGHa0kP0IoDeEnHssWRDbGji5jecDOJX7
+         Q7Kkn0suWsfJq+MeNii4gTAOjnhEUt/9N34noz9HQ3KXZ3JwvveHToYmD0x+C1yhAOEi
+         8qjnDcu4i4dgFlnqdudAwadzwDROYZrdVbVbvTVzcsrnJqF1pggjG6S25GJBbbXsJiih
+         uJ6QGoFQMGt7TGQX0zuiXoSvw1bBPPjTcY2VUbB+qUsHCaNH/m/yEvXQ4k3mXBrq2zAA
+         o31yf4GOMDVDMhsHH2DzKhDq6hngBDwJ7QwDIl3ywJ27SC4plc9AC1702Iy+dss4dyN6
+         PN3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=SzX7m4bwjQSdn4Mqmgypetc/V+AxipBx0rG9jo0B898=;
+        b=RLDWAg4AmfAXrQocT944e2QrgvFJoTO0Y2z0fGyjO/RXAaSPJRXhVd02krud/b7b+/
+         8WDbeyn8RSFC18rDPni15/YhzL82BmyxEYtxjszvc24XEgV1mD8//sCK+/jjBlqARnT2
+         dEVB8/elVV1sjGD6xvcxlnZ6+7oMq2lcuoEQ6Kq1B4S/iWG88hFC0STbex9E1HG2pP4t
+         26gL5EZ/351/tN2ab8hDTkMWf4Eor1etMBIEdQeDZuW1E8sAF6wuzcpP+RLjsuaUhtK4
+         zq76jb0v5/ZZ9CP1VA0MMYEuSKO1R9L2QwNp1hsOkylp4Lv04O57RpDgA1VZMJoRoF2l
+         PHjw==
+X-Gm-Message-State: APjAAAVIQiFxtRkD55+z5MvW3FJjoRmddOMUWtew15ELRq4F8KzNsyC/
+        e/v61sOHgah7RraoVhyvsBc=
+X-Google-Smtp-Source: APXvYqzuIqWCcyBbW5jro/eGOjzE9P+2FE186dnOFl7zd8DPXlIUYfzc5WmzVu8t2AUKnEJjfO39NQ==
+X-Received: by 2002:a1c:6454:: with SMTP id y81mr63961053wmb.105.1564216631543;
+        Sat, 27 Jul 2019 01:37:11 -0700 (PDT)
+Received: from [10.230.35.19] ([192.19.248.250])
+        by smtp.gmail.com with ESMTPSA id m24sm33183707wmi.39.2019.07.27.01.36.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 27 Jul 2019 01:36:56 -0700 (PDT)
+Subject: Re: [RFC] ARM: bcm2835: register dmabounce on devices hooked to main
+ interconnect
+To:     Christoph Hellwig <hch@lst.de>,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Cc:     Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Eric Anholt <eric@anholt.net>,
+        Stefan Wahren <wahrenst@gmx.net>, mbrugger@suse.com,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org
+References: <20190723161934.4590-1-nsaenzjulienne@suse.de>
+ <20190723163433.GA2234@lst.de>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+Openpgp: preference=signencrypt
+Message-ID: <f15ef16e-8e5c-4e9b-1cb2-c6602b15a4ec@gmail.com>
+Date:   Sat, 27 Jul 2019 10:36:46 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:149.199.80.198;IPV:CAL;CTRY:IE;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(136003)(376002)(346002)(396003)(39860400002)(2980300002)(189003)(199004)(47776003)(50226002)(7636002)(48376002)(9786002)(8936002)(305945005)(50466002)(246002)(4326008)(4744005)(36756003)(5660300002)(26826003)(2906002)(76176011)(28376004)(70206006)(71366001)(8676002)(186003)(60926002)(2201001)(2616005)(956004)(44832011)(478600001)(336012)(26005)(107886003)(76130400001)(36906005)(70586007)(356004)(486006)(426003)(476003)(51416003)(126002)(11346002)(446003)(16586007)(316002)(7696005)(106002)(54906003)(110136005)(102446001);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR02MB4768;H:xir-pvapexch02.xlnx.xilinx.com;FPR:;SPF:Pass;LANG:en;PTR:unknown-80-198.xilinx.com;MX:1;A:1;
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: e91a8f3b-7c85-4704-5935-08d7126d2d90
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(4709080)(1401327)(2017052603328);SRVR:SN6PR02MB4768;
-X-MS-TrafficTypeDiagnostic: SN6PR02MB4768:
-X-Microsoft-Antispam-PRVS: <SN6PR02MB476899C53FF32230CDF6F64CCBC30@SN6PR02MB4768.namprd02.prod.outlook.com>
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-Oob-TLC-OOBClassifiers: OLM:1079;
-X-Forefront-PRVS: 01110342A5
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Message-Info: fBSx66tayDz2nTHoyXsHvTEsASPcjM7oF4RssH22VDneet3DErg52sUUVI1rGT12kYznGxsN3iqaXKyif1YwqIMoWpjI6TNe8Eri39x5hhu0oRNdjk8FBwMmO6xYFR0jVfg/HtMxmCx03cZF8Ke0FDmfA+SRwX1FVEy42CPRxLQBEu3P1RLy+Sd/gy11zv8+IYUIGUKj3ZcxqlZUW7Mf3aBz8+V6QB0LkfsnS9xFLfx8JRw39ECr+XSkjnXIqeEhP4M6XAYkN3AXOgZhEAOVFPcegwRx8YwBbsBJ/0ViNjleUXuoLXx81YtDOYp/kLgaC5+4D17Di6NNmhP64paUvAc73PbcTHGo5plCl5SZvbX204BP7U/1zlsZ7j3OcMUYM1ATdISFA4EQp0y5ycB9vjxI8iU48HWsK0A0dCmQDg8=
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Jul 2019 08:34:01.9753
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e91a8f3b-7c85-4704-5935-08d7126d2d90
-X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.80.198];Helo=[xir-pvapexch02.xlnx.xilinx.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR02MB4768
+In-Reply-To: <20190723163433.GA2234@lst.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-support
 
-Add maintainer entry for Xilinx SD-FEC driver support.
 
-Signed-off-by: Derek Kiernan <derek.kiernan@xilinx.com>
-Signed-off-by: Dragan Cvetic <dragan.cvetic@xilinx.com>
----
- MAINTAINERS | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+On 7/23/2019 6:34 PM, Christoph Hellwig wrote:
+>> +static int bcm2835_needs_bounce(struct device *dev, dma_addr_t dma_addr, size_t size)
+> 
+> Too long line..
+> 
+>> +void __init bcm2835_init_early(void)
+>> +{
+>> +	if(of_machine_is_compatible("brcm,bcm2711"))
+> 
+> Odd formatting.
+> 
+> Otherwise this looks good to me.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index c8c506b..2ae7376 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -17693,6 +17693,17 @@ F:	Documentation/devicetree/bindings/media/xilinx/
- F:	drivers/media/platform/xilinx/
- F:	include/uapi/linux/xilinx-v4l2-controls.h
- 
-+XILINX SD-FEC IP CORES
-+M:	Derek Kiernan <derek.kiernan@xilinx.com>
-+M:	Dragan Cvetic <dragan.cvetic@xilinx.com>
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/misc/xlnx,sd-fec.txt
-+F:	Documentation/misc-devices/xilinx_sdfec.rst
-+F:	drivers/misc/xilinx_sdfec.c
-+F:	drivers/misc/Kconfig
-+F:	drivers/misc/Makefile
-+F:	include/uapi/misc/xilinx_sdfec.h
-+
- XILLYBUS DRIVER
- M:	Eli Billauer <eli.billauer@gmail.com>
- L:	linux-kernel@vger.kernel.org
+Is this really the right way to solve this problem? First this is ARM
+32-bit specific, and second, should not we have a way to indicate via
+device tree that all peripherals behind the "soc" simple-bus parent node
+are limited to 32-bit of DMA masks, but the specific memory map of the
+BCM283x/BCM2711 makes it that only the last 1GB (0xC000_0000 -
+0xffff_ffff) (which dma-ranges conveys already) is suitable for DMA into
+the VPU uncached alias?
 -- 
-2.7.4
-
+Florian
