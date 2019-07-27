@@ -2,70 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA69177A43
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2019 17:29:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A37A277A49
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2019 17:33:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729033AbfG0P3p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 27 Jul 2019 11:29:45 -0400
-Received: from sonic309-20.consmr.mail.ne1.yahoo.com ([66.163.184.146]:36286
-        "EHLO sonic309-20.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728431AbfG0P3p (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 27 Jul 2019 11:29:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1564241384; bh=tPdyM4f7Tq8kspt5syr9wxbiHLUxanV8lkCr2Pkkkas=; h=Date:From:Reply-To:Subject:From:Subject; b=ap7B9at7WvNVPuhB4JcTpHsIVMYAq4wdORtEvJFg5sFfKQZM6sMqZqimnUz1IZuQGaX5+2mefwrZMbCvcbJWeo/Pu+CpJ9ESRPrgAnFWRV021QjQ9K5QK+LR+OfwoBiOMO7GToTOneiTyTfvlYkPc/x3v2+BRVP3pwl/Qy2x9A6zcr3zCQA2RYbaMbRVlGthmtiMm9l9egrXsA8PCarbEiTvRryOuIrIDCh68EcgPcapDCFdFhvUkyEssq48GBdljF8sBW9ddu1RdawaxTRb8ZRTkq8Dji0P3kCZRKxeKqjahdzzSW4GkIQFuHD15drhLopG/lqHuFeEAUg4S7q+eA==
-X-YMail-OSG: RYb5MrcVM1mME5Py5nISr.q79WpYA2ANfRvA9NLJ6cBSk0mq36HNaNVdAaPoAVT
- RAcrIAT8iyht9i6JMkueY0Iys1iOEPLUTOgWoJGI2oklAtWWHhwVYdxSCF6eneHIEPXCMIRLV4y2
- HWAD5uWQ6yzb.Bw0E9M7_bBZLgytsxop4IZ0LHHJQKkFDG_nJ2Bhr3imiE6YP_xZ_OtqkEoXJR8d
- OA1rWJeIDTioFHDZBXWwHDVdpS3SgiY_wCncYNbFkAgXByx5.fu9UjeekjLXEVBhmQ06m.l831Oj
- EZbAxkdiHvLS9ACjCGqfdurBvSUO3ExK.yLz_Fh5XdyvEaH2XuxngzAf9CO_bBqOqdJ4muHoRK4j
- Oh9mRFF1rzvS5zjCKHhj5pL.yokANKPhob2JYmtf1Pv_wMb1O2SGTjkRutqTLzKWSr2_iw3nPlXo
- WIjD.lHaQ1aO20rqfowJ8KfJZN_jm.MNDenehXKuisT_Ru_e45BzOKa8.KyXSaI7PyigRSbyWN70
- K1If4DSLzCo1vwTaNWWDcfLwGWspHtVlBO1M0N9S5rGh1rFbjZ4Jn85QpiCWeoVYXdb1GDog7tLF
- xuptWJW3vswaWz6D4rCiyV.NGzuAocl713g7fGCMG7NVf06.V1E55m6LyVR0QIcvSL.wxmMsUd_8
- hQR5XxRgpiRf_7Rd49HxtoiCOUtyQeDml46mHV.pB.Zc3UXulWe0VpLNnKM40hMjxNkUQyUFg5qU
- m_0AcEQ2n5awwXlkxISHLIrfMbmDQh6cTTv1r3uOa3JUeHgFpBnN5Mi4U9Qa.IsyUK1zFTjGm8WZ
- EcL6t39rBO9RiSykJ8v7DPonAK5xwyfNyPa3laODTm2dhgUixOpwpqImZgrleSPYNTGv5keonTfQ
- f9Vhn6JGRKWuIpdNKUDwzahEncEHwWOaTUPV8osbcuXjBUrR.Q1jAgigk2eb4l3TjCTJVd2VJDIU
- UHLdLt5azDv6GO_f3YSSmdSeQv.xLo47vTUlS3IkprHLU8xKciWErrymXiwVEEtWI70CAOjx6Py5
- CheLbflo6SG8qUNx6hAMWqSUdjTRJiNfGXclz4h66FMYizk9TzVt_mCp86WaEGEf8aAXbRT3TkVY
- sBn0ayAGGAFIIaciVrvS_ny3h4ial9S9OC_Hy4VOxDoB6.D3ydATVmgqO8.mRQbnTs.eEp.aGD08
- LXYkrQ1LJSMjmyqTCbw7uKIt34wMKOG2Xj.udBN8-
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ne1.yahoo.com with HTTP; Sat, 27 Jul 2019 15:29:44 +0000
-Date:   Sat, 27 Jul 2019 15:29:41 +0000 (UTC)
-From:   Aisha Gaddafi <gaddafiaisha25552@aol.com>
-Reply-To: gaisha983@gmail.com
-Message-ID: <344620600.3403604.1564241381626@mail.yahoo.com>
-Subject: Dear Friend,
+        id S1729065AbfG0Pdq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 27 Jul 2019 11:33:46 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:52692 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729038AbfG0Pdo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 27 Jul 2019 11:33:44 -0400
+Received: from d57e23da.static.ziggozakelijk.nl ([213.126.35.218] helo=phil.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1hrOhX-0002VP-9k; Sat, 27 Jul 2019 17:33:39 +0200
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] ARM: dts: rockchip: Add missing unit address to memory node on rk3288-veyron
+Date:   Sat, 27 Jul 2019 17:33:38 +0200
+Message-ID: <86910491.m50tbimVMv@phil>
+In-Reply-To: <20190727142736.23188-2-krzk@kernel.org>
+References: <20190727142736.23188-1-krzk@kernel.org> <20190727142736.23188-2-krzk@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-To:     unlisted-recipients:; (no To-header on input)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Friend,
+Hi Krzysztof,
 
-I came across your e-mail contact prior a private search while in need of 
-your assistance. My name is Aisha  Gaddafi a single Mother and a Widow with 
-three Children. I am the only biological Daughter of late Libyan President 
-(Late Colonel Muammar Gaddafi).
+Am Samstag, 27. Juli 2019, 16:27:36 CEST schrieb Krzysztof Kozlowski:
+> Fix DTC warning:
+> 
+>     arch/arm/boot/dts/rk3288-veyron.dtsi:21.9-24.4:
+>     Warning (unit_address_vs_reg): /memory: node has a reg or ranges property, but no unit name
 
-I have investment funds worth Twenty Seven Million Five Hundred Thousand 
-United State Dollar ($27.500.000.00 ) and i need a trusted investment 
-Manager/Partner because of my current refugee status, however, I am 
-interested in you for investment project assistance in your country, may be 
-from there, we can build business relationship in the nearest future.
+please see the comment directly above the memory node on why that needs
+to stay that way. So no, we'll keep the veyron memory node as is.
 
-I am willing to negotiate investment/business profit sharing ratio with you 
-base on the future investment earning profits.
 
-If you are willing to handle this project on my behalf kindly reply urgent 
-to enable me provide you more information about the investment funds.
+Heiko
 
-Your Urgent Reply Will Be Appreciated.
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  arch/arm/boot/dts/rk3288-veyron.dtsi | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/boot/dts/rk3288-veyron.dtsi b/arch/arm/boot/dts/rk3288-veyron.dtsi
+> index 8fc8eac699bf..02243ff46a65 100644
+> --- a/arch/arm/boot/dts/rk3288-veyron.dtsi
+> +++ b/arch/arm/boot/dts/rk3288-veyron.dtsi
+> @@ -18,7 +18,7 @@
+>  	 * The default coreboot on veyron devices ignores memory@0 nodes
+>  	 * and would instead create another memory node.
+>  	 */
+> -	memory {
+> +	memory@0 {
+>  		device_type = "memory";
+>  		reg = <0x0 0x0 0x0 0x80000000>;
+>  	};
+> 
 
-Best Regards
-Mrs Aisha Gaddafi
-(gaisha983@gmail.com)
+
+
+
