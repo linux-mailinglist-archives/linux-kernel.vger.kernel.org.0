@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DABFF779C9
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2019 17:11:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 07B5877992
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2019 17:10:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387862AbfG0PKu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 27 Jul 2019 11:10:50 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:41274 "EHLO huawei.com"
+        id S1729101AbfG0PK2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 27 Jul 2019 11:10:28 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:41476 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729104AbfG0PKn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 27 Jul 2019 11:10:43 -0400
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 01CF66C90E18C1F42A26;
-        Sat, 27 Jul 2019 23:10:17 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS413-HUB.china.huawei.com
- (10.3.19.213) with Microsoft SMTP Server id 14.3.439.0; Sat, 27 Jul 2019
- 23:10:10 +0800
+        id S1729069AbfG0PKY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 27 Jul 2019 11:10:24 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id A46AD9911FF182FFAE54;
+        Sat, 27 Jul 2019 23:10:19 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS401-HUB.china.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server id 14.3.439.0; Sat, 27 Jul 2019
+ 23:10:13 +0800
 From:   YueHaibing <yuehaibing@huawei.com>
 To:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
         <tiwai@suse.com>, <eric@anholt.net>, <wahrenst@gmx.net>,
@@ -44,9 +44,9 @@ CC:     <linux-kernel@vger.kernel.org>, <alsa-devel@alsa-project.org>,
         <linux-stm32@st-md-mailman.stormreply.com>,
         <linux-tegra@vger.kernel.org>, <linux-xtensa@linux-xtensa.org>,
         <gregkh@linuxfoundation.org>, YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next 16/34] ASoC: codecs: msm8916-wcd: use devm_platform_ioremap_resource() to simplify code
-Date:   Sat, 27 Jul 2019 23:07:20 +0800
-Message-ID: <20190727150738.54764-17-yuehaibing@huawei.com>
+Subject: [PATCH -next 17/34] ASoC: codecs: jz4725b: use devm_platform_ioremap_resource() to simplify code
+Date:   Sat, 27 Jul 2019 23:07:21 +0800
+Message-ID: <20190727150738.54764-18-yuehaibing@huawei.com>
 X-Mailer: git-send-email 2.10.2.windows.1
 In-Reply-To: <20190727150738.54764-1-yuehaibing@huawei.com>
 References: <20190727150738.54764-1-yuehaibing@huawei.com>
@@ -65,30 +65,29 @@ This is detected by coccinelle.
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- sound/soc/codecs/msm8916-wcd-digital.c | 4 +---
+ sound/soc/codecs/jz4725b.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/sound/soc/codecs/msm8916-wcd-digital.c b/sound/soc/codecs/msm8916-wcd-digital.c
-index 1db7e43..9fa5d44 100644
---- a/sound/soc/codecs/msm8916-wcd-digital.c
-+++ b/sound/soc/codecs/msm8916-wcd-digital.c
-@@ -1143,7 +1143,6 @@ static int msm8916_wcd_digital_probe(struct platform_device *pdev)
- 	struct msm8916_wcd_digital_priv *priv;
+diff --git a/sound/soc/codecs/jz4725b.c b/sound/soc/codecs/jz4725b.c
+index 766354c..2567a5d 100644
+--- a/sound/soc/codecs/jz4725b.c
++++ b/sound/soc/codecs/jz4725b.c
+@@ -545,15 +545,13 @@ static int jz4725b_codec_probe(struct platform_device *pdev)
+ {
  	struct device *dev = &pdev->dev;
- 	void __iomem *base;
--	struct resource *mem_res;
- 	struct regmap *digital_map;
+ 	struct jz_icdc *icdc;
+-	struct resource *mem;
  	int ret;
  
-@@ -1151,8 +1150,7 @@ static int msm8916_wcd_digital_probe(struct platform_device *pdev)
- 	if (!priv)
+ 	icdc = devm_kzalloc(dev, sizeof(*icdc), GFP_KERNEL);
+ 	if (!icdc)
  		return -ENOMEM;
  
--	mem_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	base = devm_ioremap_resource(&pdev->dev, mem_res);
-+	base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(base))
- 		return PTR_ERR(base);
+-	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	icdc->base = devm_ioremap_resource(dev, mem);
++	icdc->base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(icdc->base))
+ 		return PTR_ERR(icdc->base);
  
 -- 
 2.7.4
