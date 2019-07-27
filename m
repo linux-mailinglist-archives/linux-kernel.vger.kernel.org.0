@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8466B779C6
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2019 17:11:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 88CBD779BB
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2019 17:11:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729219AbfG0PLD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 27 Jul 2019 11:11:03 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:42418 "EHLO huawei.com"
+        id S2387920AbfG0PLG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 27 Jul 2019 11:11:06 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:2791 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729104AbfG0PKz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 27 Jul 2019 11:10:55 -0400
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id EA5B79BD1557C1582B5B;
-        Sat, 27 Jul 2019 23:10:52 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS408-HUB.china.huawei.com
- (10.3.19.208) with Microsoft SMTP Server id 14.3.439.0; Sat, 27 Jul 2019
- 23:10:45 +0800
+        id S1729205AbfG0PLC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 27 Jul 2019 11:11:02 -0400
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 9C3CC716FCA8B09EEB9D;
+        Sat, 27 Jul 2019 23:10:58 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS410-HUB.china.huawei.com
+ (10.3.19.210) with Microsoft SMTP Server id 14.3.439.0; Sat, 27 Jul 2019
+ 23:10:47 +0800
 From:   YueHaibing <yuehaibing@huawei.com>
 To:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
         <tiwai@suse.com>, <eric@anholt.net>, <wahrenst@gmx.net>,
@@ -44,9 +44,9 @@ CC:     <linux-kernel@vger.kernel.org>, <alsa-devel@alsa-project.org>,
         <linux-stm32@st-md-mailman.stormreply.com>,
         <linux-tegra@vger.kernel.org>, <linux-xtensa@linux-xtensa.org>,
         <gregkh@linuxfoundation.org>, YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next 27/34] ASoC: meson: axg-pdm: use devm_platform_ioremap_resource() to simplify code
-Date:   Sat, 27 Jul 2019 23:07:31 +0800
-Message-ID: <20190727150738.54764-28-yuehaibing@huawei.com>
+Subject: [PATCH -next 28/34] ASoC: meson: axg-spdifin: use devm_platform_ioremap_resource() to simplify code
+Date:   Sat, 27 Jul 2019 23:07:32 +0800
+Message-ID: <20190727150738.54764-29-yuehaibing@huawei.com>
 X-Mailer: git-send-email 2.10.2.windows.1
 In-Reply-To: <20190727150738.54764-1-yuehaibing@huawei.com>
 References: <20190727150738.54764-1-yuehaibing@huawei.com>
@@ -65,22 +65,22 @@ This is detected by coccinelle.
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- sound/soc/meson/axg-pdm.c | 4 +---
+ sound/soc/meson/axg-spdifin.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/sound/soc/meson/axg-pdm.c b/sound/soc/meson/axg-pdm.c
-index 9d56844..bfd37d4 100644
---- a/sound/soc/meson/axg-pdm.c
-+++ b/sound/soc/meson/axg-pdm.c
-@@ -585,7 +585,6 @@ static int axg_pdm_probe(struct platform_device *pdev)
- {
+diff --git a/sound/soc/meson/axg-spdifin.c b/sound/soc/meson/axg-spdifin.c
+index 01b2035..d0d09f9 100644
+--- a/sound/soc/meson/axg-spdifin.c
++++ b/sound/soc/meson/axg-spdifin.c
+@@ -453,7 +453,6 @@ static int axg_spdifin_probe(struct platform_device *pdev)
  	struct device *dev = &pdev->dev;
- 	struct axg_pdm *priv;
+ 	struct axg_spdifin *priv;
+ 	struct snd_soc_dai_driver *dai_drv;
 -	struct resource *res;
  	void __iomem *regs;
  	int ret;
  
-@@ -600,8 +599,7 @@ static int axg_pdm_probe(struct platform_device *pdev)
+@@ -468,8 +467,7 @@ static int axg_spdifin_probe(struct platform_device *pdev)
  		return -ENODEV;
  	}
  
