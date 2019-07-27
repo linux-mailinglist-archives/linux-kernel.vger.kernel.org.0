@@ -2,86 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FF1C77AD1
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2019 19:39:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EAD4377ACC
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2019 19:37:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388036AbfG0Rji (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 27 Jul 2019 13:39:38 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:39967 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387714AbfG0Rji (ORCPT
+        id S2388020AbfG0RhU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 27 Jul 2019 13:37:20 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:39971 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387856AbfG0RhT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 27 Jul 2019 13:39:38 -0400
-Received: by mail-wm1-f66.google.com with SMTP id v19so50132167wmj.5
-        for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2019 10:39:36 -0700 (PDT)
+        Sat, 27 Jul 2019 13:37:19 -0400
+Received: by mail-oi1-f195.google.com with SMTP id w196so21168274oie.7
+        for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2019 10:37:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        d=android.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=Ep/bHJiwTJubKvCC+mCIkJn0WsJ1FO1eKm4QNltKuYQ=;
-        b=ChjuOA3qi8hCRwOL9y99MT+7yo1t/bL0L6Ncsb3uWV71xRrRX6evagsWwnF98DFPzn
-         ReISaGFh5kQyGICxbtfmuOI+gkr36ju6f2L+dBfv0rymGAWzj38ODeTccI4tatv/eqZn
-         tdOPkjx1kA2nT3LVk/i54jbH4GmtHkszvZxc2kPpBwDfmtsA/g5tA1S5sWz5iIqF+neH
-         hDfsbmVPkW8qxlfX819hqG4PGIiF4Us+/RLoov+UGKzyIwkhQv/+0HFbz3vWCFcdQtZK
-         iC2FW1CYf/EJPns2g1kwR+89knj+P9DJ5Z36Hk2nEYfDWuasdkc+wHv5+VYihGBvR2E5
-         x+tg==
+        bh=N0VcUvigVHWGBC8li8r0Gqa12uFZQAgt8PU9s9KJNdc=;
+        b=LXeFyCNucSi/3hlEQmsO8pgXTKJEehdGTDO2HP62g1xnKMPFsJpKbQriXEyIt6tdi/
+         Mfbh/6W3uNzXDwb7scHYKkqCVB5H/PJXQMFbtvjTDIuFrWmsRDkdaQGStv4g6Vv9EFfG
+         Zy7TRUUXOqPrGOzBVdFAp9dsH/qkXJ77dr9+ry9qQ8vVymwgrGIgWg+32/tJC2NfRiw4
+         tSIHSsG1KqVci4cTK8gWpseFKbNfG2T0tr2u3skn6guKv37sXtso8Ruo6xHHEGP/sXjf
+         mFGrm1OELKEPJ5OxwABazHH6gIOe2riDehBf7dElcXAWDP9Le2iROCyzuZtEuE5XEp4g
+         jKxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Ep/bHJiwTJubKvCC+mCIkJn0WsJ1FO1eKm4QNltKuYQ=;
-        b=VjzcHJUfvLebMJVvJeWXwRksZbVGPbWsqP14kplqAOiTMUitIJYoUysO4b3BKNxjiN
-         Bp6GnSmG6nqw9usRLgfk54Kz3shB6/3v0smVcp8cJ5ztjCM48bSpWoqVpK3KaU0an5oW
-         yIQnrnYpindfUq6023gvXor9brfG7mq6byiu+vqLW8WeHYNllpiB675T7N/0y3M1sH9Z
-         KcBB0mmEdJ7XPnKDwDf06ONFIcNjKYMaPwDZGz5EWGn0Al5LMeisDZkPV7sgFVYpsmDf
-         RHeRJCqvTDu+vG4k5H/4sCI65SpGpPp28hA6JaZpTDbpqFOk+VpYKSxoa1UDVq4ZoeUF
-         NsPg==
-X-Gm-Message-State: APjAAAX6lavYJog82iqZVxnAnsqT0eQJnSpOeTXkS+Do8toJo3Fo+X3T
-        OlRv8TECJsMBBgn21DMjPy1wvyxtZzhDrNVVZsC5Cw==
-X-Google-Smtp-Source: APXvYqxTGhXxLIkZBjp9vHFr7vfJZLQQuLojzbsMN1L6Q+kxU1bNPfP5/4CeCgiTLR1EhS6r90+g+fM2xHYaqgFAdyE=
-X-Received: by 2002:a7b:c4d2:: with SMTP id g18mr91410809wmk.79.1564248742263;
- Sat, 27 Jul 2019 10:32:22 -0700 (PDT)
+        bh=N0VcUvigVHWGBC8li8r0Gqa12uFZQAgt8PU9s9KJNdc=;
+        b=dfpKnTdB1VrCRHXupf2n/AA2uz94uY0nUAdqkf2Pi7497hgRAbnQZlPk8gCBl42XlC
+         7lLZpsXJivzCaTuljGPX7y1MOU8R3cILSNlHLDudoaAef9kF/O4FSa77dZyo7n+BHJLP
+         N3pnR5zb2W0y4yDoAYqeTa77Nm26bG7KiEoxi3Ebj2Mx61okAaYa4QAcyOIyr5+Is/JI
+         Vm88PudKOzq52/UlhSA1DZFZsj9bOY+xjIQe7nCCep7obPlXGs2kdI5pqxJD/JeRoLS7
+         zeo0vyD6yjAVOtos53k1/+RvrKSBrQZf5QaUIILhqzq8gcr/9Xjc7SqBoGiVXbC01FsN
+         HWhA==
+X-Gm-Message-State: APjAAAUYUn6DnVTPQf3/aLHodLdQzouabUTfxxtM1PVVFM8ac7j/BmO2
+        /GooAfi5Wo93s4KTaldjn5Rtwrgt2FlTPdzsKt8=
+X-Google-Smtp-Source: APXvYqyNv7y/6X5zyIAn36VOoLWNDm86uV9fDmdmYUdjNzjtOTCzl/wZuq/8yw7vkhA84DzOKgfS6F5ol7vhovv0Ogs=
+X-Received: by 2002:aca:af55:: with SMTP id y82mr47866890oie.172.1564249038760;
+ Sat, 27 Jul 2019 10:37:18 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190727055214.9282-1-sean.j.christopherson@intel.com> <20190727055214.9282-22-sean.j.christopherson@intel.com>
-In-Reply-To: <20190727055214.9282-22-sean.j.christopherson@intel.com>
-From:   Andy Lutomirski <luto@amacapital.net>
-Date:   Sat, 27 Jul 2019 10:32:11 -0700
-Message-ID: <CALCETrVJ1vMAA-7qtiZ8tg-3qyckSwbzNC2kbbHsojm+W46PWg@mail.gmail.com>
-Subject: Re: [RFC PATCH 21/21] KVM: x86: Add capability to grant VM access to
- privileged SGX attribute
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        X86 ML <x86@kernel.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, kvm list <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-sgx@vger.kernel.org
+References: <20190727011040.89582-1-swboyd@chromium.org> <CAJZ5v0hroRuGQ5N42Z8=yFVXiJPdid3wJrHoKqr2BZVx=sfnBQ@mail.gmail.com>
+In-Reply-To: <CAJZ5v0hroRuGQ5N42Z8=yFVXiJPdid3wJrHoKqr2BZVx=sfnBQ@mail.gmail.com>
+From:   Tri Vo <trong@android.com>
+Date:   Sat, 27 Jul 2019 10:37:07 -0700
+Message-ID: <CANA+-vDNkSG39SLd0_B_L8gkDkfQ2uJLcuvCaRgHkU8DiBzMTw@mail.gmail.com>
+Subject: Re: [PATCH] PM / wakeup: Avoid dev_name collisions in wakeup class
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Stephen Boyd <swboyd@chromium.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Kalesh Singh <kaleshsingh@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ravi Chandra Sadineni <ravisadineni@chromium.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 26, 2019 at 10:52 PM Sean Christopherson
-<sean.j.christopherson@intel.com> wrote:
+On Sat, Jul 27, 2019 at 6:10 AM Rafael J. Wysocki <rafael@kernel.org> wrote:
 >
-> The SGX subsystem restricts access to a subset of enclave attributes to
-> provide additional security for an uncompromised kernel, e.g. to prevent
-> malware from using the PROVISIONKEY to ensure its nodes are running
-> inside a geniune SGX enclave and/or to obtain a stable fingerprint.
+> On Sat, Jul 27, 2019 at 3:11 AM Stephen Boyd <swboyd@chromium.org> wrote:
+> >
+> > If a device is wakeup capable and the driver calls device_wakeup_init()
+> > on it during probe and then userspace writes 'enabled' to that device's
+> > power/wakeup file in sysfs we'll try to create the same named wakeup
+> > device in sysfs. The kernel will complain about duplicate file names.
+
+Thanks for reporting the issue, Stephen!
+> >
+> > sysfs: cannot create duplicate filename '/devices/virtual/wakeup/1-1.1'
+> > kobject_add_internal failed for 1-1.1 with -EEXIST, don't try to register things with the same name in the same directory.
+> >
+> > It may be advantageous to not write 'enabled' to the wakeup file (see
+> > wakeup_store()) from userspace for these devices because we allocate
+> > devices and register them and then throw them all away later on if the
+> > device driver has already initialized the wakeup attribute. The
+> > implementation currently tries to avoid taking locks here so it seems
+> > best to optimize that path in a separate patch.
+> >
+> > Let's rename the wakeup class devices as 'wakeupN' with an IDA that's
+> > simple enough to just return some sort of number. In addition, let's
+> > make the device registering the wakeup the parent and include a 'name'
+> > attribute in case userspace wants to figure out the type of wakeup it is
+> > (in the case of virtual wakeups) or the device associated with the
+> > wakeup. This makes it easier for userspace to go from /sys/class/wakeup
+> > to a place in the device hierarchy where the wakeup is generated from
+> > like an input device.
+> >
+> > Cc: Tri Vo <trong@android.com>
+> > Cc: Kalesh Singh <kaleshsingh@google.com>
+> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > Cc: Ravi Chandra Sadineni <ravisadineni@chromium.org>
+> > Signed-off-by: Stephen Boyd <swboyd@chromium.org>
 >
-> To prevent userspace from circumventing such restrictions by running an
-> enclave in a VM, KVM restricts guest access to privileged attributes by
-> default.  Add a capability, KVM_CAP_SGX_ATTRIBUTE, that can be used by
-> userspace to grant a VM access to a priveleged attribute, with args[0]
-> holding a file handle to a valid SGX attribute file corresponding to
-> an attribute that is restricted by KVM (currently only PROVISIONKEY).
+> I'd rather change the commit that introduced this issue which is only
+> in linux-next for now.
 
-Looks good to me.  Thanks!
-
-> +can use KVM_CAP_SGX_ATTRIBUTE to grant a VM access to a priveleged attribute.
-
-Spelling.
+Raphael, could you roll back my patch? I'll work with Stephen to fix it.
