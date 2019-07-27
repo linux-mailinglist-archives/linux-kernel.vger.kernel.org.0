@@ -2,55 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73B667785E
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2019 13:10:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 399B777860
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2019 13:13:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728809AbfG0LKP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 27 Jul 2019 07:10:15 -0400
-Received: from helcar.hmeau.com ([216.24.177.18]:47810 "EHLO fornost.hmeau.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727083AbfG0LKN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 27 Jul 2019 07:10:13 -0400
-Received: from gondolin.me.apana.org.au ([192.168.0.6] helo=gondolin.hengli.com.au)
-        by fornost.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1hrKaW-0003Xy-V7; Sat, 27 Jul 2019 21:10:09 +1000
-Received: from herbert by gondolin.hengli.com.au with local (Exim 4.80)
-        (envelope-from <herbert@gondor.apana.org.au>)
-        id 1hrKaT-0004ep-Ho; Sat, 27 Jul 2019 21:10:05 +1000
-Date:   Sat, 27 Jul 2019 21:10:05 +1000
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Hook, Gary" <Gary.Hook@amd.com>
-Subject: Re: linux-next: Signed-off-by missing for commit in the crypto tree
-Message-ID: <20190727111004.GA17611@gondor.apana.org.au>
-References: <20190727150738.3640330a@canb.auug.org.au>
+        id S1728777AbfG0LNY convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Sat, 27 Jul 2019 07:13:24 -0400
+Received: from lithops.sigma-star.at ([195.201.40.130]:47888 "EHLO
+        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725875AbfG0LNY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 27 Jul 2019 07:13:24 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 3AB43606D4AC;
+        Sat, 27 Jul 2019 13:13:22 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id 3FIFmhAxF4DT; Sat, 27 Jul 2019 13:13:21 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 51920606D4B6;
+        Sat, 27 Jul 2019 13:13:21 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id dDwU3E9fLcRX; Sat, 27 Jul 2019 13:13:21 +0200 (CEST)
+Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 2113D606D4AC;
+        Sat, 27 Jul 2019 13:13:21 +0200 (CEST)
+Date:   Sat, 27 Jul 2019 13:13:21 +0200 (CEST)
+From:   Richard Weinberger <richard@nod.at>
+To:     chengzhihao1 <chengzhihao1@huawei.com>
+Cc:     Sascha Hauer <s.hauer@pengutronix.de>,
+        Artem Bityutskiy <dedekind1@gmail.com>,
+        yi zhang <yi.zhang@huawei.com>,
+        linux-mtd <linux-mtd@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Message-ID: <294578939.51712.1564226001053.JavaMail.zimbra@nod.at>
+In-Reply-To: <0B80F9D4116B2F4484E7279D5A66984F7A4DB4@dggemi524-mbx.china.huawei.com>
+References: <1563602720-113903-1-git-send-email-chengzhihao1@huawei.com> <0B80F9D4116B2F4484E7279D5A66984F7A4DB4@dggemi524-mbx.china.huawei.com>
+Subject: =?utf-8?Q?Re:_=E7=AD=94=E5=A4=8D:_[PATCH]_ubifs:_ubifs=5Ftnc=5Fsta?=
+ =?utf-8?Q?rt=5Fcommit:_Fix_OOB_in_layout=5Fin=5Fgaps?=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190727150738.3640330a@canb.auug.org.au>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+X-Originating-IP: [195.201.40.130]
+X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF60 (Linux)/8.8.12_GA_3809)
+Thread-Topic: ubifs: ubifs_tnc_start_commit: Fix OOB in layout_in_gaps
+Thread-Index: AQHVPsBTBWetoNcJ1UaytZ+21M4VxabeWhAgfGLlKWo=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jul 27, 2019 at 03:07:38PM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Commit
-> 
->   53a5d5192803 ("crypto: ccp - Log an error message when ccp-crypto fails to load")
-> 
-> is missing a Signed-off-by from its author.
+----- Ursprüngliche Mail -----
+> Von: "chengzhihao1" <chengzhihao1@huawei.com>
+> An: "richard" <richard@nod.at>, "Sascha Hauer" <s.hauer@pengutronix.de>, "Artem Bityutskiy" <dedekind1@gmail.com>, "yi
+> zhang" <yi.zhang@huawei.com>
+> CC: "linux-mtd" <linux-mtd@lists.infradead.org>, "linux-kernel" <linux-kernel@vger.kernel.org>
+> Gesendet: Samstag, 27. Juli 2019 13:09:59
+> Betreff: 答复: [PATCH] ubifs: ubifs_tnc_start_commit: Fix OOB in layout_in_gaps
 
-Thanks Stephen.
+> ping
 
-Gary, I've backed this patch out.  Please resubmit with a sign-off.
+I had no time to look at this yet. It is on my list.
 
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Thanks,
+//richard
