@@ -2,94 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B2BD377B90
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2019 21:47:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B4EC777B9C
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2019 21:48:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388262AbfG0TrN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 27 Jul 2019 15:47:13 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:37984 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387890AbfG0TrL (ORCPT
+        id S2388196AbfG0Tsm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 27 Jul 2019 15:48:42 -0400
+Received: from saturn.retrosnub.co.uk ([46.235.226.198]:45078 "EHLO
+        saturn.retrosnub.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387841AbfG0Tsm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 27 Jul 2019 15:47:11 -0400
-Received: by mail-wm1-f66.google.com with SMTP id s15so28881686wmj.3
-        for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2019 12:47:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=nJlEm3dspnVA1ANEmrZqrPkw4P7Y/3ZVDcm+FttuwD8=;
-        b=jMGFetvUkouy5oaS2jC9JloqDDB4ECT5Fa59B0q8l9FZFb1TmFQeFuDB+PkR6358Hl
-         GZOcEZ06G86uK/6zH82Gwdj8NsArIOCIX+mrwQBhjItintgYrxBW/lL7dTjOMWK26XS4
-         TqV5BIAhUlaj9eFliO6D+6sdMxwNl6eAb0oXuaKkUA/eQJ5DNtO1DC80LTUbEPC5AVst
-         lkg2S+BsXMyk57FnQJaaRZ8VmvM8Fs8NJWI3jTfsOLQmyN0pJu5/8oWk+f6i3AKV23VO
-         Lv7d5qg0GusMAKDMNUOkcVGtOIBjDpV9Di7lkH28WDLPSBn8ZyrA3lO6OfRueI1r24fG
-         /mvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=nJlEm3dspnVA1ANEmrZqrPkw4P7Y/3ZVDcm+FttuwD8=;
-        b=eMxrXcNaPahAUib/fIFAjQNcXKRLuO2pL2Bn+DpZmLWMHAs/UWSqqHG7Cn5Es1fi5B
-         06/ZtBWteoDv2izQWFv2/njSZ8UyWHZkXi4/usAEIhIT5y5Eh5GUQlCA8LoIYGC4t1uf
-         Twt4/Y5X90dBTUURIUb+kIVVXz1cO74wV8GXTfLZ2VOKmbHjHwxErtoGQiO54tuP9poi
-         pfmxPppwBSheXR7vdfyz2OAhfnAZthgCAwMbIcbCrgDBlB96FfwNNYwyrxjr52z6SBmS
-         S/qdYAMnGUf4uEL9skUe5NOoD5HdZIkyXOXrN/LX0K1fLVuVJJ6O0c6HlXidCarMdP7u
-         8raw==
-X-Gm-Message-State: APjAAAXGOrsZgL1efThDfVyX/3Rup9AD6YhwmcYuCo8xC+iwDk+mE7zM
-        kW69K9Dog0CrBxT6y23+CVE=
-X-Google-Smtp-Source: APXvYqw957ik/KAi3QT0gjmD5rTkJZINjl7uhrK+NX+nd9KMeifyb6WC8ERCf40L6g/Rr/rocBXY7A==
-X-Received: by 2002:a7b:c748:: with SMTP id w8mr17514641wmk.36.1564256829821;
-        Sat, 27 Jul 2019 12:47:09 -0700 (PDT)
-Received: from blackbox.darklights.net (p200300F133C65C00B418D0F4A25A19EC.dip0.t-ipconnect.de. [2003:f1:33c6:5c00:b418:d0f4:a25a:19ec])
-        by smtp.googlemail.com with ESMTPSA id c4sm44651726wrt.86.2019.07.27.12.47.08
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Sat, 27 Jul 2019 12:47:09 -0700 (PDT)
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To:     linux-amlogic@lists.infradead.org, khilman@baylibre.com
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux.amoon@gmail.com, ottuzzi@gmail.com,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH 2/2] ARM: dts: meson8b: odroidc1: use the MAC address stored in the eFuse
-Date:   Sat, 27 Jul 2019 21:46:47 +0200
-Message-Id: <20190727194647.15355-3-martin.blumenstingl@googlemail.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190727194647.15355-1-martin.blumenstingl@googlemail.com>
-References: <20190727194647.15355-1-martin.blumenstingl@googlemail.com>
+        Sat, 27 Jul 2019 15:48:42 -0400
+Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
+        by saturn.retrosnub.co.uk (Postfix; Retrosnub mail submission) with ESMTPSA id 69FA69E774D;
+        Sat, 27 Jul 2019 20:48:39 +0100 (BST)
+Date:   Sat, 27 Jul 2019 20:48:36 +0100
+From:   Jonathan Cameron <jic23@jic23.retrosnub.co.uk>
+To:     David Lechner <david@lechnology.com>
+Cc:     linux-iio@vger.kernel.org, linux-omap@vger.kernel.org,
+        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        =?UTF-8?B?QmVub8OudA==?= Cousson <bcousson@baylibre.com>,
+        Tony Lindgren <tony@atomide.com>,
+        William Breathitt Gray <vilhelm.gray@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org
+Subject: Re: [PATCH 1/4] dt-bindings: counter: new bindings for TI eQEP
+Message-ID: <20190727204836.1514265d@archlinux>
+In-Reply-To: <20190722154538.5314-2-david@lechnology.com>
+References: <20190722154538.5314-1-david@lechnology.com>
+        <20190722154538.5314-2-david@lechnology.com>
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Odroid-C1 (and probably other Meson8b boards which are based on the
-reference designs) uses the MAC address stored in eFuse at offset 0x1b4.
+On Mon, 22 Jul 2019 10:45:35 -0500
+David Lechner <david@lechnology.com> wrote:
 
-Assign the nvmem cell to the Ethernet controller as "mac-address" so the
-MAC address which is stored in the eFuse is assigned to the Ethernet
-controller. This means the MAC address will be consistent across
-reboots.
+> This documents device tree binding for the Texas Instruments Enhanced
+> Quadrature Encoder Pulse (eQEP) Module found in various TI SoCs.
+> 
+> Signed-off-by: David Lechner <david@lechnology.com>
 
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
----
- arch/arm/boot/dts/meson8b-odroidc1.dts | 3 +++
- 1 file changed, 3 insertions(+)
+Up to William given it is a counter binding, (unless Rob overrules)
+but new bindings are generally preferred as yaml.
 
-diff --git a/arch/arm/boot/dts/meson8b-odroidc1.dts b/arch/arm/boot/dts/meson8b-odroidc1.dts
-index 90f66dc45115..df428a40a748 100644
---- a/arch/arm/boot/dts/meson8b-odroidc1.dts
-+++ b/arch/arm/boot/dts/meson8b-odroidc1.dts
-@@ -200,6 +200,9 @@
- 	phy-handle = <&eth_phy>;
- 	amlogic,tx-delay-ns = <4>;
- 
-+	nvmem-cells = <&ethernet_mac_address>;
-+	nvmem-cell-names = "mac-address";
-+
- 	mdio {
- 		compatible = "snps,dwmac-mdio";
- 		#address-cells = <1>;
--- 
-2.22.0
+Content looks fine to me.
+
+Thanks,
+
+Jonathan
+
+> ---
+>  .../devicetree/bindings/counter/ti-eqep.txt    | 18 ++++++++++++++++++
+>  1 file changed, 18 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/counter/ti-eqep.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/counter/ti-eqep.txt b/Documentation/devicetree/bindings/counter/ti-eqep.txt
+> new file mode 100644
+> index 000000000000..fbcebc2c2cc2
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/counter/ti-eqep.txt
+> @@ -0,0 +1,18 @@
+> +Texas Instruments Enhanced Quadrature Encoder Pulse (eQEP) Module
+> +
+> +Required properties:
+> +- compatible:		Must be "ti,am3352-eqep".
+> +- reg:			Physical base address and size of the registers map.
+> +- clocks:		Handle to the PWM's functional clock.
+> +- clock-names:		Must be "fck".
+> +- interrupts:		Handle to the eQEP event interrupt
+> +
+> +Example:
+> +
+> +	eqep0: eqep@180 {
+> +		compatible = "ti,am3352-eqep";
+> +		reg = <0x180 0x80>;
+> +		clocks = <&l4ls_gclk>;
+> +		clock-names = "fck";
+> +		interrupts = <79>;
+> +	};
 
