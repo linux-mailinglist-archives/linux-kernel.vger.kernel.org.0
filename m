@@ -2,23 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 05D1A7771D
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2019 07:57:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 148827771A
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2019 07:57:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728938AbfG0F5S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 27 Jul 2019 01:57:18 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:43910 "EHLO mx1.redhat.com"
+        id S1728878AbfG0F5E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 27 Jul 2019 01:57:04 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:46658 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728305AbfG0F4s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 27 Jul 2019 01:56:48 -0400
+        id S1728664AbfG0F4u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 27 Jul 2019 01:56:50 -0400
 Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id AA1DD883D7;
-        Sat, 27 Jul 2019 05:56:48 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id BC96730872C5;
+        Sat, 27 Jul 2019 05:56:49 +0000 (UTC)
 Received: from t460p.redhat.com (ovpn-116-73.phx2.redhat.com [10.3.116.73])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B76FF19C71;
-        Sat, 27 Jul 2019 05:56:47 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C7CDE19C71;
+        Sat, 27 Jul 2019 05:56:48 +0000 (UTC)
 From:   Scott Wood <swood@redhat.com>
 To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Cc:     Thomas Gleixner <tglx@linutronix.de>,
@@ -29,54 +29,128 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Clark Williams <williams@redhat.com>,
         linux-kernel@vger.kernel.org, linux-rt-users@vger.kernel.org,
         Scott Wood <swood@redhat.com>
-Subject: [PATCH RT 4/8] sched: migrate disable: Protect cpus_ptr with lock
-Date:   Sat, 27 Jul 2019 00:56:34 -0500
-Message-Id: <20190727055638.20443-5-swood@redhat.com>
+Subject: [PATCH RT 5/8] sched/deadline: Reclaim cpuset bandwidth in .migrate_task_rq()
+Date:   Sat, 27 Jul 2019 00:56:35 -0500
+Message-Id: <20190727055638.20443-6-swood@redhat.com>
 In-Reply-To: <20190727055638.20443-1-swood@redhat.com>
 References: <20190727055638.20443-1-swood@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Sat, 27 Jul 2019 05:56:48 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Sat, 27 Jul 2019 05:56:49 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Various places assume that cpus_ptr is protected by rq/pi locks,
-so don't change it before grabbing those locks.
+With the changes to migrate disabling, ->set_cpus_allowed() no longer
+gets deferred until migrate_enable().  To avoid releasing the bandwidth
+while the task may still be executing on the old CPU, move the subtraction
+to ->migrate_task_rq().
 
 Signed-off-by: Scott Wood <swood@redhat.com>
 ---
- kernel/sched/core.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ kernel/sched/deadline.c | 67 +++++++++++++++++++++++--------------------------
+ 1 file changed, 31 insertions(+), 36 deletions(-)
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 99a3cfccf4d3..38a9a9df5638 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -7283,9 +7283,8 @@ void dump_cpu_task(int cpu)
- 	struct rq *rq;
- 	struct rq_flags rf;
+diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+index c18be51f7608..2f18d0cf1b56 100644
+--- a/kernel/sched/deadline.c
++++ b/kernel/sched/deadline.c
+@@ -1606,14 +1606,42 @@ static void yield_task_dl(struct rq *rq)
+ 	return cpu;
+ }
  
--	p->cpus_ptr = cpumask_of(smp_processor_id());
--
- 	rq = task_rq_lock(p, &rf);
-+	p->cpus_ptr = cpumask_of(smp_processor_id());
- 	update_nr_migratory(p, -1);
- 	p->nr_cpus_allowed = 1;
- 	task_rq_unlock(rq, p, &rf);
-@@ -7297,9 +7296,8 @@ void dump_cpu_task(int cpu)
++static void free_old_cpuset_bw_dl(struct rq *rq, struct task_struct *p)
++{
++	struct root_domain *src_rd = rq->rd;
++
++	/*
++	 * Migrating a SCHED_DEADLINE task between exclusive
++	 * cpusets (different root_domains) entails a bandwidth
++	 * update. We already made space for us in the destination
++	 * domain (see cpuset_can_attach()).
++	 */
++	if (!cpumask_intersects(src_rd->span, p->cpus_ptr)) {
++		struct dl_bw *src_dl_b;
++
++		src_dl_b = dl_bw_of(cpu_of(rq));
++		/*
++		 * We now free resources of the root_domain we are migrating
++		 * off. In the worst case, sched_setattr() may temporary fail
++		 * until we complete the update.
++		 */
++		raw_spin_lock(&src_dl_b->lock);
++		__dl_sub(src_dl_b, p->dl.dl_bw, dl_bw_cpus(task_cpu(p)));
++		raw_spin_unlock(&src_dl_b->lock);
++	}
++}
++
+ static void migrate_task_rq_dl(struct task_struct *p, int new_cpu __maybe_unused)
+ {
  	struct rq *rq;
- 	struct rq_flags rf;
  
--	p->cpus_ptr = &p->cpus_mask;
+-	if (p->state != TASK_WAKING)
++	rq = task_rq(p);
++
++	if (p->state != TASK_WAKING) {
++		free_old_cpuset_bw_dl(rq, p);
+ 		return;
++	}
+ 
+-	rq = task_rq(p);
+ 	/*
+ 	 * Since p->state == TASK_WAKING, set_task_cpu() has been called
+ 	 * from try_to_wake_up(). Hence, p->pi_lock is locked, but
+@@ -2220,39 +2248,6 @@ static void task_woken_dl(struct rq *rq, struct task_struct *p)
+ 	}
+ }
+ 
+-static void set_cpus_allowed_dl(struct task_struct *p,
+-				const struct cpumask *new_mask)
+-{
+-	struct root_domain *src_rd;
+-	struct rq *rq;
 -
- 	rq = task_rq_lock(p, &rf);
-+	p->cpus_ptr = &p->cpus_mask;
- 	p->nr_cpus_allowed = cpumask_weight(&p->cpus_mask);
- 	update_nr_migratory(p, 1);
- 	task_rq_unlock(rq, p, &rf);
+-	BUG_ON(!dl_task(p));
+-
+-	rq = task_rq(p);
+-	src_rd = rq->rd;
+-	/*
+-	 * Migrating a SCHED_DEADLINE task between exclusive
+-	 * cpusets (different root_domains) entails a bandwidth
+-	 * update. We already made space for us in the destination
+-	 * domain (see cpuset_can_attach()).
+-	 */
+-	if (!cpumask_intersects(src_rd->span, new_mask)) {
+-		struct dl_bw *src_dl_b;
+-
+-		src_dl_b = dl_bw_of(cpu_of(rq));
+-		/*
+-		 * We now free resources of the root_domain we are migrating
+-		 * off. In the worst case, sched_setattr() may temporary fail
+-		 * until we complete the update.
+-		 */
+-		raw_spin_lock(&src_dl_b->lock);
+-		__dl_sub(src_dl_b, p->dl.dl_bw, dl_bw_cpus(task_cpu(p)));
+-		raw_spin_unlock(&src_dl_b->lock);
+-	}
+-
+-	set_cpus_allowed_common(p, new_mask);
+-}
+-
+ /* Assumes rq->lock is held */
+ static void rq_online_dl(struct rq *rq)
+ {
+@@ -2407,7 +2402,7 @@ static void prio_changed_dl(struct rq *rq, struct task_struct *p,
+ #ifdef CONFIG_SMP
+ 	.select_task_rq		= select_task_rq_dl,
+ 	.migrate_task_rq	= migrate_task_rq_dl,
+-	.set_cpus_allowed       = set_cpus_allowed_dl,
++	.set_cpus_allowed       = set_cpus_allowed_common,
+ 	.rq_online              = rq_online_dl,
+ 	.rq_offline             = rq_offline_dl,
+ 	.task_woken		= task_woken_dl,
 -- 
 1.8.3.1
 
