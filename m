@@ -2,72 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C89DD77818
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2019 12:16:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C36A7781A
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2019 12:16:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728822AbfG0KQB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 27 Jul 2019 06:16:01 -0400
-Received: from mail-io1-f71.google.com ([209.85.166.71]:43815 "EHLO
-        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728533AbfG0KQB (ORCPT
+        id S2387500AbfG0KQN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 27 Jul 2019 06:16:13 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:35752 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728831AbfG0KQM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 27 Jul 2019 06:16:01 -0400
-Received: by mail-io1-f71.google.com with SMTP id q26so61574683ioi.10
-        for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2019 03:16:00 -0700 (PDT)
+        Sat, 27 Jul 2019 06:16:12 -0400
+Received: by mail-wr1-f65.google.com with SMTP id y4so56852444wrm.2
+        for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2019 03:16:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chrisdown.name; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=IXEjdnUn3VkhWBwJSQhECGFViuPtRLCo9vxT8tzVgl8=;
+        b=a71xFW1NUEq3o8kaHcCrDOOxweDvWfxkp5iKwmVSBuzUXtmp2Bs/hmDEUtV3HkeQnQ
+         JWMv9wk0XNKWjntQLlyVE8LDYrP7rri71bngMvGZW5+W2nL4nbe36sjnAUywcyUSnLxn
+         ET/QGwikXysoTxta0lpPP7dpr1pLviGffAq1w=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=x2XPPyWw+kTQEvjXcX/vC5JNb6a5vMqFuiwlUWd2Kag=;
-        b=IWkCjkRE1RR2zAHFoU9UbQ5mA/tKurG6Uk1k5BvUg/f76z2XasFLXrdbq43dQJozvw
-         k+7Zj1XSXG91XPO/ugBKL800hfglCzoVfbZWHoPEZXUW4Z7UpNfYUS9nG0GpOqMgkrfg
-         h7BZ9T5WO4fiogfDYEkVAJ3+PpuZsyVbkBDNj9GOj/q0DOoqzgqfFA5TuBdRCjS7339g
-         vejkmjSycqaHSSxEImGCPRcqv+DT0BdvFo83zrtUV+0RYXUkW9CwZNZXO6CK+7ioKaFh
-         cbirDGUO7m71l+2yKbXP+/1EO5hyXB/xjpk2nZKpBtr9KYfHNGndic+YtMYMmIihnxt0
-         cxVA==
-X-Gm-Message-State: APjAAAXXRpHitJFFMnebdLoi0eOiR2DYOu0EmfuiJy0+Ibe6EkYPoU5F
-        Nax+9RVzCT5ra2KKWoOnlBr52LsTtMbNzvOaHtL6z0wzRuBU
-X-Google-Smtp-Source: APXvYqyUUXRwrDhv+Q8VwK3XJ+lyMBkXhuGvc/B+mH+HMjh06Rq3S9TIzl2shA7qpymnG5hvTqwSBsZorpk8Y0tjAKx1u9bCuJWS
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=IXEjdnUn3VkhWBwJSQhECGFViuPtRLCo9vxT8tzVgl8=;
+        b=K1DFRXswxQGy/KDKvwf7VzHIEuZrMsC92tj87Px21xjavsTqm4B9EWy2Ebob7c3pmV
+         yviMWDum6mj370NHDFzzW9q4JsElMDwcWIg08E9xCc/z42lspVUpL5s5d8KgGp9YoOe4
+         UanoSBcXFNjnz04oazCzT0pqfg5NcLT4tFpg4yKuBKPqCRAQLiFkv6xTCePWZd5H7cEt
+         vkbsqN7rtPwsOkJ2XKxUgn/ZV7MV2tCk/GoxrqWpOCvC9rESup5EW/uCDcQQMH+yt4Ag
+         h1fyMEdKYvkmkTeSvmPmPGe+bfol1pLqX8BjYinbGUaKjmTx6tR24QpLFOj7zgVNFE6o
+         HqPg==
+X-Gm-Message-State: APjAAAV5O/wuQ4rPTipofGgHkcfKUmhMkCx9E7MsAS//k1LsKhnLYo0r
+        yFCBm3N1KR+65zmWFShECtAeww==
+X-Google-Smtp-Source: APXvYqx/cGuS1gJ0Afm2ttVoWqm/3PaHRFGZ43BnTfOXHbEQEMJU5qWym22vdCCCuNXUHFEHPP+FUQ==
+X-Received: by 2002:adf:e841:: with SMTP id d1mr28181928wrn.204.1564222569709;
+        Sat, 27 Jul 2019 03:16:09 -0700 (PDT)
+Received: from localhost ([2a01:4b00:8432:8a00:56e1:adff:fe3f:49ed])
+        by smtp.gmail.com with ESMTPSA id f2sm49931061wrq.48.2019.07.27.03.16.09
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Sat, 27 Jul 2019 03:16:09 -0700 (PDT)
+Date:   Sat, 27 Jul 2019 11:16:08 +0100
+From:   Chris Down <chris@chrisdown.name>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>, broonie@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
+        mm-commits@vger.kernel.org, sfr@canb.auug.org.au
+Subject: Re: mmotm 2019-07-24-21-39 uploaded (mm/memcontrol)
+Message-ID: <20190727101608.GA1740@chrisdown.name>
+References: <20190725044010.4tE0dhrji%akpm@linux-foundation.org>
+ <4831a203-8853-27d7-1996-280d34ea824f@infradead.org>
+ <20190725163959.3d759a7f37ba40bb7f75244e@linux-foundation.org>
+ <20190727034205.GA10843@archlinux-threadripper>
+ <20190726211952.757a63db5271d516faa7eaac@linux-foundation.org>
 MIME-Version: 1.0
-X-Received: by 2002:a5d:994b:: with SMTP id v11mr46002856ios.165.1564222560256;
- Sat, 27 Jul 2019 03:16:00 -0700 (PDT)
-Date:   Sat, 27 Jul 2019 03:16:00 -0700
-In-Reply-To: <000000000000111cbe058dc7754d@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000000dc874058ea6f261@google.com>
-Subject: Re: memory leak in new_inode_pseudo (2)
-From:   syzbot <syzbot+e682cca30bc101a4d9d9@syzkaller.appspotmail.com>
-To:     axboe@fb.com, axboe@kernel.dk, catalin.marinas@arm.com,
-        davem@davemloft.net, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        michaelcallahan@fb.com, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20190726211952.757a63db5271d516faa7eaac@linux-foundation.org>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has bisected this bug to:
+u64 division: truly the gift that keeps on giving. Thanks Andrew for following 
+up on these.
 
-commit a21f2a3ec62abe2e06500d6550659a0ff5624fbb
-Author: Michael Callahan <michaelcallahan@fb.com>
-Date:   Tue May 3 15:12:49 2016 +0000
+Andrew Morton writes:
+>Ah.
+>
+>It's rather unclear why that u64 cast is there anyway.  We're dealing
+>with ulongs all over this code.  The below will suffice.
 
-     block: Minor blk_account_io_start usage cleanup
+This place in particular uses u64 to make sure we don't overflow when left 
+shifting, since the numbers can get pretty big (and that's somewhat needed due 
+to the need for high precision when calculating the penalty jiffies). It's ok 
+if the output after division is an unsigned long, just the intermediate steps 
+need to have enough precision.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13565e92600000
-start commit:   be8454af Merge tag 'drm-next-2019-07-16' of git://anongit...
-git tree:       upstream
-final crash:    https://syzkaller.appspot.com/x/report.txt?x=10d65e92600000
-console output: https://syzkaller.appspot.com/x/log.txt?x=17565e92600000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d23a1a7bf85c5250
-dashboard link: https://syzkaller.appspot.com/bug?extid=e682cca30bc101a4d9d9
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=155c5800600000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1738f800600000
+>Chris, please take a look?
+>
+>--- a/mm/memcontrol.c~mm-throttle-allocators-when-failing-reclaim-over-memoryhigh-fix-fix-fix
+>+++ a/mm/memcontrol.c
+>@@ -2415,7 +2415,7 @@ void mem_cgroup_handle_over_high(void)
+> 	clamped_high = max(high, 1UL);
+>
+> 	overage = (u64)(usage - high) << MEMCG_DELAY_PRECISION_SHIFT;
+>-	do_div(overage, clamped_high);
+>+	overage /= clamped_high;
 
-Reported-by: syzbot+e682cca30bc101a4d9d9@syzkaller.appspotmail.com
-Fixes: a21f2a3ec62a ("block: Minor blk_account_io_start usage cleanup")
+I think this isn't going to work because left shifting by 
+MEMCG_DELAY_PRECISION_SHIFT can make the number bigger than ULONG_MAX, which 
+may cause wraparound -- we need to retain the u64 until we divide.
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Maybe div_u64 will satisfy both ARM and i386? ie.
+
+diff --git mm/memcontrol.c mm/memcontrol.c
+index 5c7b9facb0eb..e12a47e96154 100644
+--- mm/memcontrol.c
++++ mm/memcontrol.c
+@@ -2419,8 +2419,8 @@ void mem_cgroup_handle_over_high(void)
+         */
+        clamped_high = max(high, 1UL);
+ 
+-       overage = (u64)(usage - high) << MEMCG_DELAY_PRECISION_SHIFT;
+-       do_div(overage, clamped_high);
++       overage = div_u64((u64)(usage - high) << MEMCG_DELAY_PRECISION_SHIFT,
++                         clamped_high);
+ 
+        penalty_jiffies = ((u64)overage * overage * HZ)
+                >> (MEMCG_DELAY_PRECISION_SHIFT + MEMCG_DELAY_SCALING_SHIFT);
