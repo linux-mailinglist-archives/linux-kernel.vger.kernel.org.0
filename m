@@ -2,143 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 89803776C7
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2019 07:47:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E8D967770C
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2019 07:54:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727715AbfG0FrZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 27 Jul 2019 01:47:25 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:38002 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726010AbfG0FrY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 27 Jul 2019 01:47:24 -0400
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id B11BDA591B15D1329791;
-        Sat, 27 Jul 2019 13:47:21 +0800 (CST)
-Received: from [127.0.0.1] (10.177.31.14) by DGGEMS403-HUB.china.huawei.com
- (10.3.19.203) with Microsoft SMTP Server id 14.3.439.0; Sat, 27 Jul 2019
- 13:47:20 +0800
-Subject: Re: [RFC PATCH 0/3] md: export internal stats through debugfs
-To:     Song Liu <liu.song.a23@gmail.com>
-CC:     linux-raid <linux-raid@vger.kernel.org>,
-        Song Liu <songliubraving@fb.com>, NeilBrown <neilb@suse.com>,
-        <linux-block@vger.kernel.org>, <snitzer@redhat.com>,
-        <agk@redhat.com>, <dm-devel@redhat.com>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20190702132918.114818-1-houtao1@huawei.com>
- <CAPhsuW6yH7np1=+e5Rgutp3m1VA0TPvtANeX=0ZdpJaRKEvBkQ@mail.gmail.com>
-From:   Hou Tao <houtao1@huawei.com>
-Message-ID: <b047c187-e4a6-a82a-3177-3da7fef2f6b8@huawei.com>
-Date:   Sat, 27 Jul 2019 13:47:19 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S1727824AbfG0FwQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 27 Jul 2019 01:52:16 -0400
+Received: from mga02.intel.com ([134.134.136.20]:40956 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726197AbfG0FwQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 27 Jul 2019 01:52:16 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Jul 2019 22:52:15 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,313,1559545200"; 
+   d="scan'208";a="254568578"
+Received: from sjchrist-coffee.jf.intel.com ([10.54.74.41])
+  by orsmga001.jf.intel.com with ESMTP; 26 Jul 2019 22:52:15 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Joerg Roedel <joro@8bytes.org>
+Cc:     "H. Peter Anvin" <hpa@zytor.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sgx@vger.kernel.org,
+        Andy Lutomirski <luto@amacapital.net>
+Subject: [RFC PATCH 00/21] x86/sgx: KVM: Add SGX virtualization
+Date:   Fri, 26 Jul 2019 22:51:53 -0700
+Message-Id: <20190727055214.9282-1-sean.j.christopherson@intel.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-In-Reply-To: <CAPhsuW6yH7np1=+e5Rgutp3m1VA0TPvtANeX=0ZdpJaRKEvBkQ@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.177.31.14]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+This is an "early" RFC series for adding SGX virtualization to KVM.  SGX
+virtualization (more specifically, EPC virtualization) is dependent on the
+not-yet-merged SGX enabling series and so cannot be considered for
+inclusion any time soon.
 
-On 2019/7/23 5:31, Song Liu wrote:
-> On Tue, Jul 2, 2019 at 6:25 AM Hou Tao <houtao1@huawei.com> wrote:
->>
->> Hi,
->>
->> There are so many io counters, stats and flags in md, so I think
->> export these info to userspace will be helpful for online-debugging,
->> especially when the vmlinux file and the crash utility are not
->> available. And these info can also be utilized during code
->> understanding.
->>
->> MD has already exported some stats through sysfs files under
->> /sys/block/mdX/md, but using sysfs file to export more internal
->> stats are not a good choice, because we need to create a single
->> sysfs file for each internal stat according to the use convention
->> of sysfs and there are too many internal stats. Further, the
->> newly-created sysfs files would become APIs for userspace tools,
->> but that is not we wanted, because these files are related with
->> internal stats and internal stats may change from time to time.
->>
->> And I think debugfs is a better choice. Because we can show multiple
->> related stats in a debugfs file, and the debugfs file will never be
->> used as an userspace API.
->>
->> Two debugfs files are created to expose these internal stats:
->> * iostat: io counters and io related stats (e.g., mddev->active_io,
->>         r1conf->nr_pending, or r1confi->retry_list)
->> * stat: normal stats/flags (e.g., mddev->recovery, conf->array_frozen)
->>
->> Because internal stats are spreaded all over md-core and md-personality,
->> so both md-core and md-personality will create these two debugfs files
->> under different debugfs directory.
->>
->> Patch 1 factors out the debugfs files creation routine for md-core and
->> md-personality, patch 2 creates two debugfs files: iostat & stat under
->> /sys/kernel/debug/block/mdX for md-core, and patch 3 creates two debugfs
->> files: iostat & stat under /sys/kernel/debug/block/mdX/raid1 for md-raid1.
->>
->> The following lines show the hierarchy and the content of these debugfs
->> files for a RAID1 device:
->>
->> $ pwd
->> /sys/kernel/debug/block/md0
->> $ tree
->> .
->> ├── iostat
->> ├── raid1
->> │   ├── iostat
->> │   └── stat
->> └── stat
->>
->> $ cat iostat
->> active_io 0
->> sb_wait 0 pending_writes 0
->> recovery_active 0
->> bitmap pending_writes 0
->>
->> $ cat stat
->> flags 0x20
->> sb_flags 0x0
->> recovery 0x0
->>
->> $ cat raid1/iostat
->> retry_list active 0
->> bio_end_io_list active 0
->> pending_bio_list active 0 cnt 0
->> sync_pending 0
->> nr_pending 0
->> nr_waiting 0
->> nr_queued 0
->> barrier 0
-> 
-> Hi,
-> 
-> Sorry for the late reply.
-> 
-> I think these information are really debug information that we should not
-> show in /sys. Once we expose them in /sys, we need to support them
-> because some use space may start searching data from them.
-So debugfs is used to place these debug information instead of sysfs.
+The primary goal of this RFC is to get feedback on the overall approach,
+e.g. code location, uAPI changes, functionality, etc...  My hope is to
+sort out any major issues sooner rather than later, so that if/when the
+base SGX enabling is merged, virtualization support can quickly follow
+suit.
 
-It's OK for user-space tools to search data from these files as long as these
-tools don't expect these information to be stable. And the most possible user
-of these files would be test programs, and if some user-space tools may truly
-expect some stable information from the debugfs file, maybe we should move
-these information from debugfs to sysfs file.
+That being said, nitpicking and bikeshedding is more than welcome :-)
 
-Regards,
-Tao
+This code applies on top of a slightly modified version of v21 of the SGX
+enabling series[1].  The modifications on top of the SGX series are a few
+minor bug fixes that are not related to SGX virtualization, but affect
+code that is moved/modified by this series.  The full source for the
+modified version of v21 can be found at:
 
-> 
-> Thanks,
-> Song
-> 
-> .
-> 
+ https://github.com/sean-jc/linux.git
+
+under the tag:
+
+  sgx-v21-ish
+
+A corresponding Qemu RFC will (hopefully) follow next week, the Qemu
+patches need a bit more cleanup...
+
+[1] https://lkml.kernel.org/r/20190713170804.2340-1-jarkko.sakkinen@linux.intel.com
+
+Sean Christopherson (21):
+  x86/sgx: Add defines for SGX device minor numbers
+  x86/sgx: Move bus registration and device init to common code
+  x86/sgx: Move provisioning device to common code
+  x86/sgx: Add /dev/sgx/virt_epc device to allocate "raw" EPC for VMs
+  x86/sgx: Expose SGX architectural definitions to the kernel
+  KVM: x86: Add SGX sub-features leaf to reverse CPUID table
+  KVM: x86: Add WARN_ON_ONCE(index!=0) in __do_cpuid_ent
+  KVM: x86: Add kvm_x86_ops hook to short circuit emulation
+  KVM: VMX: Add basic handling of VM-Exit from SGX enclave
+  KVM: x86: Export kvm_mmu_gva_to_gpa_{read,write}() for VMX/SGX
+  KVM: x86: Export kvm_propagate_fault (as kvm_propagate_page_fault)
+  KVM: x86: Define new #PF SGX error code bit
+  x86/sgx: Move the intermediate EINIT helper into the driver
+  x86/sgx: Add helpers to expose ECREATE and EINIT to KVM
+  KVM: VMX: Add SGX ENCLS[ECREATE] handler to enforce CPUID restrictions
+  KVM: VMX: Edd emulation of SGX Launch Control LE hash MSRs
+  KVM: VMX: Add handler for ENCLS[EINIT] to support SGX Launch Control
+  KVM: x86: Invoke kvm_x86_ops->cpuid_update() after kvm_update_cpuid()
+  KVM: VMX: Enable SGX virtualization for SGX1, SGX2 and LC
+  x86/sgx: Export sgx_set_attribute() for use by KVM
+  KVM: x86: Add capability to grant VM access to privileged SGX
+    attribute
+
+ Documentation/virtual/kvm/api.txt             |  20 ++
+ arch/x86/Kconfig                              |  13 +
+ arch/x86/include/asm/kvm_host.h               |   8 +-
+ arch/x86/include/asm/sgx.h                    |  17 +
+ .../cpu/sgx/arch.h => include/asm/sgx_arch.h} |   1 +
+ arch/x86/include/asm/vmx.h                    |   1 +
+ arch/x86/include/uapi/asm/vmx.h               |   1 +
+ arch/x86/kernel/cpu/sgx/Makefile              |   1 +
+ arch/x86/kernel/cpu/sgx/driver/driver.h       |   3 +-
+ arch/x86/kernel/cpu/sgx/driver/ioctl.c        |  40 ++-
+ arch/x86/kernel/cpu/sgx/driver/main.c         |  73 +----
+ arch/x86/kernel/cpu/sgx/encl.c                |   2 +-
+ arch/x86/kernel/cpu/sgx/encls.h               |   2 +-
+ arch/x86/kernel/cpu/sgx/main.c                | 141 ++++++--
+ arch/x86/kernel/cpu/sgx/sgx.h                 |  16 +-
+ arch/x86/kernel/cpu/sgx/virt.c                | 308 ++++++++++++++++++
+ arch/x86/kernel/cpu/sgx/virt.h                |  14 +
+ arch/x86/kvm/Makefile                         |   2 +
+ arch/x86/kvm/cpuid.c                          | 135 ++++++--
+ arch/x86/kvm/cpuid.h                          |  20 ++
+ arch/x86/kvm/emulate.c                        |   1 +
+ arch/x86/kvm/mmu.c                            |  12 -
+ arch/x86/kvm/svm.c                            |  19 +-
+ arch/x86/kvm/vmx/nested.c                     |  21 +-
+ arch/x86/kvm/vmx/nested.h                     |   5 +
+ arch/x86/kvm/vmx/sgx.c                        | 247 ++++++++++++++
+ arch/x86/kvm/vmx/sgx.h                        |  11 +
+ arch/x86/kvm/vmx/vmcs12.c                     |   1 +
+ arch/x86/kvm/vmx/vmcs12.h                     |   4 +-
+ arch/x86/kvm/vmx/vmx.c                        | 251 +++++++++++++-
+ arch/x86/kvm/vmx/vmx.h                        |   6 +
+ arch/x86/kvm/x86.c                            |  40 ++-
+ arch/x86/kvm/x86.h                            |   5 -
+ include/uapi/linux/kvm.h                      |   1 +
+ tools/testing/selftests/x86/sgx/defines.h     |   2 +-
+ 35 files changed, 1234 insertions(+), 210 deletions(-)
+ create mode 100644 arch/x86/include/asm/sgx.h
+ rename arch/x86/{kernel/cpu/sgx/arch.h => include/asm/sgx_arch.h} (99%)
+ create mode 100644 arch/x86/kernel/cpu/sgx/virt.c
+ create mode 100644 arch/x86/kernel/cpu/sgx/virt.h
+ create mode 100644 arch/x86/kvm/vmx/sgx.c
+ create mode 100644 arch/x86/kvm/vmx/sgx.h
+
+-- 
+2.22.0
 
