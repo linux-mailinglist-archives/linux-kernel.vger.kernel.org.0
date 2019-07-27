@@ -2,42 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D8F177ACF
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2019 19:38:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DFFD377AD5
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2019 19:44:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388054AbfG0RiT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 27 Jul 2019 13:38:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41288 "EHLO mail.kernel.org"
+        id S2387952AbfG0Roi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 27 Jul 2019 13:44:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41954 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388038AbfG0RiR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 27 Jul 2019 13:38:17 -0400
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+        id S2387665AbfG0Roi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 27 Jul 2019 13:44:38 -0400
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 676712166E
-        for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2019 17:38:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A14A4208E4
+        for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2019 17:44:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564249096;
-        bh=kUWslRPU39oVlObLtgG3Hl8pm76FUT1cLz91UMA48ew=;
+        s=default; t=1564249476;
+        bh=7508Hqjsp5BrZEfHjlTHq2n5lWF3Ig6ljiPlvZAE1mM=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=RZCyy6gKHyjKvKUJjlqGamViQZCRDsV+acvbcEuofVU9B8hzZAdEB/H4cnHobpPwR
-         PR0yvQHQb/YlLGvJQmyht1q9N9wniM3yxQfd/mdd2RUjT8UcSp5z9rt6DmOF3+KKxN
-         yDb3Opss3OxfKY6/XBocj611pRRXj9B5ZQEcZSSw=
-Received: by mail-wm1-f42.google.com with SMTP id f17so50083664wme.2
-        for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2019 10:38:16 -0700 (PDT)
-X-Gm-Message-State: APjAAAX12K3xWM3tatjMFxYHuuKEwwB0rPf1KIX2lVkyKykgul28MJSc
-        2LhPs8E33cXMZb/YpsTaWFZBfFrOv6wvI2HqS24IyQ==
-X-Google-Smtp-Source: APXvYqz/y9qS7PXle2+Y7h5CA9LtEoMkB5vxXCCNxEHyrQDG/47qNC8Mg4ReFpz0N33XeD+HzMjP0b21IZQ3+VviJvA=
-X-Received: by 2002:a1c:c5c2:: with SMTP id v185mr96261509wmf.161.1564249094779;
- Sat, 27 Jul 2019 10:38:14 -0700 (PDT)
+        b=0qJWEiy0ID85IOhEb93xNtQpSEilcQaXycwDHMREppR6o76xs9ICA6qt8UOR9VLnO
+         ECykGS4C/wgMcPq6R3kDkur/NvlDAp/aqO3HedLyj4VvqnglLf+KU6cs91oGXi/lOM
+         4+HP1a/RBvMk14M5IydeA/S7Z4Q5SD4f7BDBt7XI=
+Received: by mail-wm1-f52.google.com with SMTP id g67so45998664wme.1
+        for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2019 10:44:36 -0700 (PDT)
+X-Gm-Message-State: APjAAAVs05p5fyAb1lx1ZlY/rOaA62GbpfC3FjWKkaWu7+wkyhH5OgOz
+        JQDCl7WAJkz9hrg+hzfX7Ga97QrWkeogo1gsu0GyMw==
+X-Google-Smtp-Source: APXvYqyL7o2Bip6WKE1D1IyKrCOYDk6eK1EMMmNi55lNH9ZADh4TGsDQfeBUitoT/dV/PYPcV8t9et42W6nmgGaaYek=
+X-Received: by 2002:a1c:9a53:: with SMTP id c80mr30866653wme.173.1564249475144;
+ Sat, 27 Jul 2019 10:44:35 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190727055214.9282-1-sean.j.christopherson@intel.com> <20190727055214.9282-9-sean.j.christopherson@intel.com>
-In-Reply-To: <20190727055214.9282-9-sean.j.christopherson@intel.com>
+References: <20190727055214.9282-1-sean.j.christopherson@intel.com> <20190727055214.9282-5-sean.j.christopherson@intel.com>
+In-Reply-To: <20190727055214.9282-5-sean.j.christopherson@intel.com>
 From:   Andy Lutomirski <luto@kernel.org>
-Date:   Sat, 27 Jul 2019 10:38:03 -0700
-X-Gmail-Original-Message-ID: <CALCETrU_51Ae=F9HzUwsUuSkJ1or63p_eG+f3uKkBqFx=bheUA@mail.gmail.com>
-Message-ID: <CALCETrU_51Ae=F9HzUwsUuSkJ1or63p_eG+f3uKkBqFx=bheUA@mail.gmail.com>
-Subject: Re: [RFC PATCH 08/21] KVM: x86: Add kvm_x86_ops hook to short circuit emulation
+Date:   Sat, 27 Jul 2019 10:44:24 -0700
+X-Gmail-Original-Message-ID: <CALCETrXLE6RpR9p9eGPNvU+Nt=yyCkqsQHv7hzmNaC61sFK7Jg@mail.gmail.com>
+Message-ID: <CALCETrXLE6RpR9p9eGPNvU+Nt=yyCkqsQHv7hzmNaC61sFK7Jg@mail.gmail.com>
+Subject: Re: [RFC PATCH 04/21] x86/sgx: Add /dev/sgx/virt_epc device to
+ allocate "raw" EPC for VMs
 To:     Sean Christopherson <sean.j.christopherson@intel.com>
 Cc:     Paolo Bonzini <pbonzini@redhat.com>,
         =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
@@ -57,36 +58,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 On Fri, Jul 26, 2019 at 10:52 PM Sean Christopherson
 <sean.j.christopherson@intel.com> wrote:
 >
-> Similar to the existing AMD #NPF case where emulation of the current
-> instruction is not possible due to lack of information, virtualization
-> of Intel SGX will introduce a scenario where emulation is not possible
-> due to the VMExit occurring in an SGX enclave.  And again similar to
-> the AMD case, emulation can be initiated by kvm_mmu_page_fault(), i.e.
-> outside of the control of the vendor-specific code.
+> Add an SGX device to enable userspace to allocate EPC without an
+> associated enclave.  The intended and only known use case for direct EPC
+> allocation is to expose EPC to a KVM guest, hence the virt_epc moniker,
+> virt.{c,h} files and INTEL_SGX_VIRTUALIZATION Kconfig.
 >
-> While the cause and architecturally visible behavior of the two cases
-> is different,  e.g. Intel SGX will inject a #UD whereas AMD #NPF is a
-> clean resume or complete shutdown, the impact on the common emulation
-> code is identical: KVM must stop emulation immediately and resume the
-> guest.
+> Although KVM is the end consumer of EPC, and will need hooks into the
+> virtual EPC management if oversubscription of EPC for guest is ever
+> supported (see below), implement direct access to EPC in the SGX
+> subsystem instead of in KVM.  Doing so has two major advantages:
 >
-> Replace the exisiting need_emulation_on_page_fault() with a more generic
-> is_emulatable() kvm_x86_ops callback, which is called unconditionally
-> by x86_emulate_instruction().
->
+>   - Does not require changes to KVM's uAPI, e.g. EPC gets handled as
+>     just another memory backend for guests.
 
-Having recently noticed that emulate_ud() is broken when the guest's
-TF is set, I suppose I should ask: does your new code function
-sensibly when TF is set?
+This is general grumbling more than useful feedback, but I wish there
+was a way for KVM's userspace to add a memory region that is *not*
+backed by a memory mapping.  For SGX, this would avoid the slightly
+awkward situation where useless EPC pages are mapped by QEMU.  For
+SEV, it would solve the really fairly awful situation where the SEV
+pages are mapped *incoherently* for QEMU.  And even in the absence of
+fancy hardware features, it would allow the guest to have secrets in
+memory that are not exposed to wild reads, speculation attacks, etc
+coming from QEMU.
 
-Also, anyone want to fix that emulate_ud() bug?  The test case is merged now:
-
-# ./tools/testing/selftests/x86/syscall_arg_fault_32
-[RUN]    SYSENTER with invalid state
-[OK]    Seems okay
-[RUN]    SYSCALL with invalid state
-[SKIP]    Illegal instruction
-[RUN]    SYSENTER with TF and invalid state
-[OK]    Seems okay
-[RUN]    SYSCALL with TF and invalid state
-[WARN]    Got stuck single-stepping -- you probably have a KVM bug
+I realize the implementation would be extremely intrusive, but it just
+might make it a lot easier to do things like making SEV pages property
+movable.  Similarly, I could see EPC oversubscription being less nasty
+in this model.  For one thing, it would make it more straightforward
+to keep track of exactly which VMs have a given EPC page mapped,
+whereas right now this driver only really knows which host userspace
+mm has the EPC page mapped.
