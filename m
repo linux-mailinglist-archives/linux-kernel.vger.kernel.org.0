@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 560487799E
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2019 17:10:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 379A8779DC
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2019 17:12:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729141AbfG0PKj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 27 Jul 2019 11:10:39 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:3186 "EHLO huawei.com"
+        id S2387829AbfG0PKr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 27 Jul 2019 11:10:47 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:2789 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729122AbfG0PKf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 27 Jul 2019 11:10:35 -0400
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 445BBE0CE35BE6B53BA0;
-        Sat, 27 Jul 2019 23:10:28 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS407-HUB.china.huawei.com
- (10.3.19.207) with Microsoft SMTP Server id 14.3.439.0; Sat, 27 Jul 2019
- 23:10:19 +0800
+        id S1729023AbfG0PKg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 27 Jul 2019 11:10:36 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id C87948F1DF3A64D838EE;
+        Sat, 27 Jul 2019 23:10:29 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS401-HUB.china.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server id 14.3.439.0; Sat, 27 Jul 2019
+ 23:10:22 +0800
 From:   YueHaibing <yuehaibing@huawei.com>
 To:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
         <tiwai@suse.com>, <eric@anholt.net>, <wahrenst@gmx.net>,
@@ -44,9 +44,9 @@ CC:     <linux-kernel@vger.kernel.org>, <alsa-devel@alsa-project.org>,
         <linux-stm32@st-md-mailman.stormreply.com>,
         <linux-tegra@vger.kernel.org>, <linux-xtensa@linux-xtensa.org>,
         <gregkh@linuxfoundation.org>, YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next 19/34] ASoC: jz4740: use devm_platform_ioremap_resource() to simplify code
-Date:   Sat, 27 Jul 2019 23:07:23 +0800
-Message-ID: <20190727150738.54764-20-yuehaibing@huawei.com>
+Subject: [PATCH -next 20/34] ASoC: inno_rk3036: use devm_platform_ioremap_resource() to simplify code
+Date:   Sat, 27 Jul 2019 23:07:24 +0800
+Message-ID: <20190727150738.54764-21-yuehaibing@huawei.com>
 X-Mailer: git-send-email 2.10.2.windows.1
 In-Reply-To: <20190727150738.54764-1-yuehaibing@huawei.com>
 References: <20190727150738.54764-1-yuehaibing@huawei.com>
@@ -65,27 +65,27 @@ This is detected by coccinelle.
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- sound/soc/codecs/jz4740.c | 4 +---
+ sound/soc/codecs/inno_rk3036.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/sound/soc/codecs/jz4740.c b/sound/soc/codecs/jz4740.c
-index 974e17f..460aa1f 100644
---- a/sound/soc/codecs/jz4740.c
-+++ b/sound/soc/codecs/jz4740.c
-@@ -318,7 +318,6 @@ static int jz4740_codec_probe(struct platform_device *pdev)
+diff --git a/sound/soc/codecs/inno_rk3036.c b/sound/soc/codecs/inno_rk3036.c
+index 7feedbb..14d8fe1 100644
+--- a/sound/soc/codecs/inno_rk3036.c
++++ b/sound/soc/codecs/inno_rk3036.c
+@@ -405,7 +405,6 @@ static int rk3036_codec_platform_probe(struct platform_device *pdev)
  {
- 	int ret;
- 	struct jz4740_codec *jz4740_codec;
--	struct resource *mem;
+ 	struct rk3036_codec_priv *priv;
+ 	struct device_node *of_node = pdev->dev.of_node;
+-	struct resource *res;
  	void __iomem *base;
- 
- 	jz4740_codec = devm_kzalloc(&pdev->dev, sizeof(*jz4740_codec),
-@@ -326,8 +325,7 @@ static int jz4740_codec_probe(struct platform_device *pdev)
- 	if (!jz4740_codec)
+ 	struct regmap *grf;
+ 	int ret;
+@@ -414,8 +413,7 @@ static int rk3036_codec_platform_probe(struct platform_device *pdev)
+ 	if (!priv)
  		return -ENOMEM;
  
--	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	base = devm_ioremap_resource(&pdev->dev, mem);
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	base = devm_ioremap_resource(&pdev->dev, res);
 +	base = devm_platform_ioremap_resource(pdev, 0);
  	if (IS_ERR(base))
  		return PTR_ERR(base);
