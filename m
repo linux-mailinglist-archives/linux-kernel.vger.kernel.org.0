@@ -2,71 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8EDB577AB6
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2019 19:16:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 18FF377AB8
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2019 19:17:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387904AbfG0RP7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 27 Jul 2019 13:15:59 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:55306 "EHLO mx1.redhat.com"
+        id S2387932AbfG0RQ6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 27 Jul 2019 13:16:58 -0400
+Received: from dcvr.yhbt.net ([64.71.152.64]:60662 "EHLO dcvr.yhbt.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387823AbfG0RP7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 27 Jul 2019 13:15:59 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1E02E883BA;
-        Sat, 27 Jul 2019 17:15:59 +0000 (UTC)
-Received: from krava (ovpn-204-40.brq.redhat.com [10.40.204.40])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 29C03600C0;
-        Sat, 27 Jul 2019 17:15:55 +0000 (UTC)
-Date:   Sat, 27 Jul 2019 19:15:54 +0200
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Vince Weaver <vincent.weaver@maine.edu>
-Cc:     linux-kernel@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        id S2387823AbfG0RQ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 27 Jul 2019 13:16:58 -0400
+Received: from localhost (dcvr.yhbt.net [127.0.0.1])
+        by dcvr.yhbt.net (Postfix) with ESMTP id E65BA1F462;
+        Sat, 27 Jul 2019 17:16:57 +0000 (UTC)
+Date:   Sat, 27 Jul 2019 17:16:57 +0000
+From:   Eric Wong <e@80x24.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Roman Penyaev <rpenyaev@suse.de>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>
-Subject: Re: [patch] perf.data documentation has wrong units for memory size
-Message-ID: <20190727171554.GB31276@krava>
-References: <alpine.DEB.2.21.1907251155500.22624@macbook-air>
+        Azat Khuzhin <azat@libevent.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 00/14] epoll: support pollable epoll from userspace
+Message-ID: <20190727171657.cisalgn3wfs5opyi@dcvr>
+References: <20190611145458.9540-1-rpenyaev@suse.de>
+ <20190726162208.0a9a244d41d9384fb94d9210@linux-foundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1907251155500.22624@macbook-air>
-User-Agent: Mutt/1.12.0 (2019-05-25)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Sat, 27 Jul 2019 17:15:59 +0000 (UTC)
+In-Reply-To: <20190726162208.0a9a244d41d9384fb94d9210@linux-foundation.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 25, 2019 at 11:57:43AM -0400, Vince Weaver wrote:
+Andrew Morton <akpm@linux-foundation.org> wrote:
+> On Tue, 11 Jun 2019 16:54:44 +0200 Roman Penyaev <rpenyaev@suse.de> wrote:
+> > In order to measure polling from userspace libevent was modified [1] and
+> > bench_http benchmark (client and server) was used:
+> > 
+> >  o EPOLLET, original epoll:
+> > 
+> >     20000 requests in 0.551306 sec. (36277.49 throughput)
+> >     Each took about 5.54 msec latency
+> >     1600000bytes read. 0 errors.
+> > 
+> >  o EPOLLET + polling from userspace:
+> > 
+> >     20000 requests in 0.475585 sec. (42053.47 throughput)
+> >     Each took about 4.78 msec latency
+> >     1600000bytes read. 0 errors.
 > 
-> The perf.data-file-format documentation incorrectly says the 
-> HEADER_TOTAL_MEM results are in bytes.  The results are in kilobytes
-> (perf reads the value from /proc/meminfo)
-> 
-> Signed-off-by: Vince Weaver <vincent.weaver@maine.edu>
+> It would be useful to include some words which describe the
+> significance of this to real-world userspace.  If a real application is
+> sped up 0.000000001% then this isn't very exciting ;)
 
-Acked-by: Jiri Olsa <jolsa@kernel.org>
+Agreed.  I've put my wfcqueue changes from years back on hold
+because I couldn't show a meaningful improvement in real-world
+cases: https://lore.kernel.org/lkml/20130401183118.GA9968@dcvr.yhbt.net/
 
-thanks,
-jirka
+Roman's changes have me interested in seeing how my previous
+changes would stack up (no UAPI changes required).
+I've been looking for time to forward port my wfcqueue work
+to the current kernel (but public-inbox takes priority;
+not that I have much time for that).
 
-> 
-> diff --git a/tools/perf/Documentation/perf.data-file-format.txt b/tools/perf/Documentation/perf.data-file-format.txt
-> index 5f54feb19977..d030c87ed9f5 100644
-> --- a/tools/perf/Documentation/perf.data-file-format.txt
-> +++ b/tools/perf/Documentation/perf.data-file-format.txt
-> @@ -126,7 +126,7 @@ vendor,family,model,stepping. For example: GenuineIntel,6,69,1
->  
->  	HEADER_TOTAL_MEM = 10,
->  
-> -An uint64_t with the total memory in bytes.
-> +An uint64_t with the total memory in kilobytes.
->  
->  	HEADER_CMDLINE = 11,
->  
+On the userspace side; I'm not sure any widely-used open source
+project is really impacted by epoll performance...
+Most everybody seems to use level-trigger :<
