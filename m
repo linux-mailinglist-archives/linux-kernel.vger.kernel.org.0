@@ -2,116 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B341B77740
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2019 08:31:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F56677744
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2019 08:33:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387418AbfG0GbL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 27 Jul 2019 02:31:11 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:34304 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725905AbfG0GbK (ORCPT
+        id S2387458AbfG0GdY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 27 Jul 2019 02:33:24 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:37205 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725905AbfG0GdX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 27 Jul 2019 02:31:10 -0400
-Received: by mail-wr1-f65.google.com with SMTP id 31so56522654wrm.1;
-        Fri, 26 Jul 2019 23:31:08 -0700 (PDT)
+        Sat, 27 Jul 2019 02:33:23 -0400
+Received: by mail-wm1-f65.google.com with SMTP id f17so49271994wme.2;
+        Fri, 26 Jul 2019 23:33:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=HKeMdrdWBgdGTKyoRuJP3d49YclQQWgce18ijijgk9I=;
-        b=AGHQ4E1M37EE6M5F7RtEuQX4fkGB62kY4xRAU4L+AEosvTGG1SlsCDHK/o1yzkzkDs
-         dIXgIfZkTv5prHK3S04NTfBitoJAJxa2qMEF2hXgq7kcHz/Ph+bnLSuGJ6xuuopOZFDw
-         6uuBk4Vxg8Cczbs0i0DHfpYyQXXpLe4C83J19nZ5t8hJ3C13Z9IFgCOGRHXtYUaxunpD
-         C8pDK25kbahOed4KZT9hdXJ35VWXDaf3pe7uE3M8lH2RhTE0NiZMb0IfzfwLPyFq8KYa
-         1Ow0QA9gE6SIWSxWWNN1mLHBF71kHuLo1XlD8aJmTl7YQoevnv6ebF+Y0TT/XY22mpXB
-         uPiQ==
+        bh=ldJpVA6CE8TYIFWLOiSPguYs7EOGYw+Dfb3wpQniKEw=;
+        b=sPAPHVvj/MDKirz5G4DrNwsHaEC0OfA1zsJsGk2qMS1qyY87+dcEx7MzdyqHWvfh+e
+         zPkHdYDZdYpEHzIPzgrYVsxPJMz/2orE7rs6BQcAf1EnyZouv2q9YKBs6ULpldMnIoRw
+         DKPC8U0a+vCYNaheHFFXB/AVlxozJpJI16dQxFkPak/RBGY2p15dte3hJ3E9Id2vRUZQ
+         sfC3oIjEse/IRiiXQNnfhQNLPlukknwB4Qcy0Sjz5+52G6mINUwuiwSdY1+CeXvVQWSc
+         Ap8uXbYfRIx5yi8Gy6GbGBjXPVMRQr4arZd6854a5NbouDV3IWi6pRu6GhSevHiJgD82
+         OsAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=HKeMdrdWBgdGTKyoRuJP3d49YclQQWgce18ijijgk9I=;
-        b=SZOynE7dBSmJShozwmpz3FlZYfvyo39kfYJDWY5U0Qh2ZiBBVA3Zr6XwglXFcquoSV
-         8iF8VYGea3PfURjlQpHB8hdI5Sqk7IB8eh9T67YzK/uUyNvhDFKVKmilxkyVKs9KrF6a
-         7zOTXUgeQx4Les/+XPNpW04GpWRI8gnyLNLl2vkMvGMshArKhrlAtxWPA3CRabXSU9Aq
-         gU1jETVnv4X0BLlVVMJwjs1HsHocdkr90V9osAX4vX3/1ke5Efda6lKSDx6WsUenZrQw
-         vycHmfLDcpYW/8IZl1vifvFQjyghk2PsD2SuUXlAgCnkv6TeDbqJ2Z5XEC2b0KRIta1Q
-         Ho4Q==
-X-Gm-Message-State: APjAAAWXnsfNYir6P/lURbALO4OX2vLWcPlBs+nGezKcRE5Y05EDcIlu
-        UdThDapV+yshvvOD/BO6aDjC2srJHW0ekeDypRw=
-X-Google-Smtp-Source: APXvYqzdgecswj3pdUxE5wMpc0iYUFA3hEfoHHf/1a5LOh9kiFNqb77jfKSfAfUuh+1oWpfs5nRNP7Da4/Vx0J4QRJc=
-X-Received: by 2002:adf:f450:: with SMTP id f16mr74204830wrp.335.1564209068259;
- Fri, 26 Jul 2019 23:31:08 -0700 (PDT)
+        bh=ldJpVA6CE8TYIFWLOiSPguYs7EOGYw+Dfb3wpQniKEw=;
+        b=B0MKRtk+nwB17UO9MKmDgD97ppmu9r8TisruBjuBxwuESs6O9hNtJa1d0crXgY5VRn
+         2QEKg2VLTILaIYIJf0FAuYf/k2KdeydI7kzw5D2aAWn+c3VxoeTO1Q6HAkhxY0EjjPNI
+         rXD/ibZ4NKvnxMnqASiC5iLSHRI/Jy8YHatniLVZricleFRrG0wKPJapDGtzFwcOYV7s
+         tMPfjLO9uyDKBQHeeNAWQcwyJdlcXzFK06nCVwnuJXaUcuL5hJNY48wcQvAmKZm2CijU
+         nTrlXSirx0NRtgV08WjJmc3pasyQUBjwz5zuS6WwCs6ROoSXCVmda46Hovm4ABmBS1T9
+         Lh2w==
+X-Gm-Message-State: APjAAAWfXALFhv7bRctswB4NcjFZFJMJNYxmYfqJOdfcm4xr7RIkYeto
+        XCkUzzPSMpprdHpZhQyzsZuecFYAggURqihbUdQ=
+X-Google-Smtp-Source: APXvYqy92oOEaSw9pO9I2bT0W1j8OkANGqP73txRdDJZYc35yUpNin5FBhApbrCoeq1jkR6QhmZfNC1vyrlkYdmvbdQ=
+X-Received: by 2002:a1c:96c7:: with SMTP id y190mr81779074wmd.87.1564209201152;
+ Fri, 26 Jul 2019 23:33:21 -0700 (PDT)
 MIME-Version: 1.0
-References: <1561453316-11481-1-git-send-email-abel.vesa@nxp.com>
- <20190625223223.3B8EC2053B@mail.kernel.org> <20190705085218.lvvqnqx6nfph2era@fsr-ub1664-175>
- <20190722212537.41C9121900@mail.kernel.org>
-In-Reply-To: <20190722212537.41C9121900@mail.kernel.org>
+References: <20190705045612.27665-1-Anson.Huang@nxp.com> <20190705045612.27665-5-Anson.Huang@nxp.com>
+ <CAEnQRZAZNMBx3ApVmRP8hYPw0XY_QgR-saE6WLcT8oZmHPCxSA@mail.gmail.com> <DB3PR0402MB3916233A56CF5DF778115716F5C30@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+In-Reply-To: <DB3PR0402MB3916233A56CF5DF778115716F5C30@DB3PR0402MB3916.eurprd04.prod.outlook.com>
 From:   Daniel Baluta <daniel.baluta@gmail.com>
-Date:   Sat, 27 Jul 2019 09:30:57 +0300
-Message-ID: <CAEnQRZAFdvSzh-pDJ-rsyaEJw83ymSVW0CC2+QZyWwAPeTOyBw@mail.gmail.com>
-Subject: Re: [PATCH] clk: imx8mq: Mark AHB clock as critical
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Abel Vesa <abel.vesa@nxp.com>, Anson Huang <anson.huang@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Sascha Hauer <kernel@pengutronix.de>,
+Date:   Sat, 27 Jul 2019 09:33:10 +0300
+Message-ID: <CAEnQRZCrZybzcy__u4p_Eq4zSVc2ESyfKLk5sPf1JYba1JSOiA@mail.gmail.com>
+Subject: Re: [PATCH 5/6] clk: imx8mq: Remove CLK_IS_CRITICAL flag for IMX8MQ_CLK_TMU_ROOT
+To:     Anson Huang <anson.huang@nxp.com>
+Cc:     "rui.zhang@intel.com" <rui.zhang@intel.com>,
+        "edubezval@gmail.com" <edubezval@gmail.com>,
+        "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
         Shawn Guo <shawnguo@kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>,
+        "Angus Ainslie (Purism)" <angus@akkea.ca>,
+        Carlo Caione <ccaione@baylibre.com>,
+        =?UTF-8?Q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        Devicetree List <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
         "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        dl-linux-imx <linux-imx@nxp.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 23, 2019 at 6:17 AM Stephen Boyd <sboyd@kernel.org> wrote:
+On Sat, Jul 27, 2019 at 9:19 AM Anson Huang <anson.huang@nxp.com> wrote:
 >
-> Quoting Abel Vesa (2019-07-05 01:52:19)
-> > On 19-06-25 15:32:22, Stephen Boyd wrote:
-> > > Quoting Abel Vesa (2019-06-25 02:01:56)
-> > > > Keep the AHB clock always on since there is no driver to control it and
-> > > > all the other clocks that use it as parent rely on it being always enabled.
-> > > >
-> > > > Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-> > > > ---
-> > > >  drivers/clk/imx/clk-imx8mq.c | 2 +-
-> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > >
-> > > > diff --git a/drivers/clk/imx/clk-imx8mq.c b/drivers/clk/imx/clk-imx8mq.c
-> > > > index 5fbc2a7..b48268b 100644
-> > > > --- a/drivers/clk/imx/clk-imx8mq.c
-> > > > +++ b/drivers/clk/imx/clk-imx8mq.c
-> > > > @@ -398,7 +398,7 @@ static int imx8mq_clocks_probe(struct platform_device *pdev)
-> > > >         clks[IMX8MQ_CLK_NOC_APB] = imx8m_clk_composite_critical("noc_apb", imx8mq_noc_apb_sels, base + 0x8d80);
-> > > >
-> > > >         /* AHB */
-> > > > -       clks[IMX8MQ_CLK_AHB] = imx8m_clk_composite("ahb", imx8mq_ahb_sels, base + 0x9000);
-> > > > +       clks[IMX8MQ_CLK_AHB] = imx8m_clk_composite_critical("ahb", imx8mq_ahb_sels, base + 0x9000);
-> > >
-> > > Please add a comment into the code why it's critical.
+> Hi, Daniel
+>
+> > Subject: Re: [PATCH 5/6] clk: imx8mq: Remove CLK_IS_CRITICAL flag for
+> > IMX8MQ_CLK_TMU_ROOT
 > >
-> > Comment explaining why the AHB bus clock is critical ?
-> > Isn't that self-explanatory ?
+> > Hi all,
+> >
+> > latest linux-next hangs at boot.
+> >
+> > commit fde50b96be821ac9673a7e00847cc4605bd88f34 (HEAD -> master, tag:
+> > next-20190726, origin/master, origin/HEAD)
+> > Author: Stephen Rothwell <sfr@canb.auug.org.au>
+> > Date:   Fri Jul 26 15:18:02 2019 +1000
+> >
+> >     Add linux-next specific files for 20190726
+> >
+> >     Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> >
+> >
+> > I know this is crazy but reverting commit:
+> >
+> > commit 431bdd1df48ee2896ea9980d9153e3aeaf0c81ef (refs/bisect/bad)
+> > Author: Anson Huang <Anson.Huang@nxp.com>
+> > Date:   Fri Jul 5 12:56:11 2019 +0800
+> >
+> >     clk: imx8mq: Remove CLK_IS_CRITICAL flag for IMX8MQ_CLK_TMU_ROOT
+> >
+> >     IMX8MQ_CLK_TMU_ROOT is ONLY used for thermal module, the driver
+> >     should manage this clock, so no need to have CLK_IS_CRITICAL flag
+> >     set.
+> >
+> >
+> >
+> > makes the boot work again.
+> >
+> > Any idea?
 >
-> Nope, it isn't self-explanatory, because nothing on this line says "bus"
-> and it could be that someone reading this code isn't well versed in the
-> concepts of ARM world AHB to connect the two.
+> I just found if disabling SDMA1, then kernel can boot up, it does NOT make sense
+> TMU clock is related to SDMA1, I will check with design and get back to you soon.
+>
 
-Agree with Stephen. Commit message should try to give as much details
-as possible
-also maybe educate the readers who might not have that much knowledge.
+Hi Anson,
 
-Abel, I understand that for someone who works daily with this part of the kernel
-this change might look trivial.
+Applying Abel's patch:
 
-Also, without this patch linux-next hangs on imx8mq.
+commit 8816c47db6a82f55bb4d64f62fd9dd3af680f0e4 (HEAD -> master)
+Author: Abel Vesa <abel.vesa@nxp.com>
+Date:   Tue Jun 25 12:01:56 2019 +0300
 
-With the explanation added you can add my:
+    clk: imx8mq: Mark AHB clock as critical
 
-Tested-by: Daniel Baluta <daniel.baluta@nxp.com>
+    Keep the AHB clock always on since there is no driver to control it and
+    all the other clocks that use it as parent rely on it being always enabled.
+
+
+
+The kernel boots up again.
+
+It make some sense. I don't understand though why having
+IMX8MQ_CLK_TMU_ROOT as critical also "unhangs" the kernel.
 
 thanks,
 Daniel.
