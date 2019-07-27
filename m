@@ -2,54 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86F3377A9A
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2019 18:35:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A5ED77AA0
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2019 18:41:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387828AbfG0QfT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 27 Jul 2019 12:35:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55158 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728995AbfG0QfT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 27 Jul 2019 12:35:19 -0400
-Subject: Re: [GIT PULL] s390 updates for 5.3-rc2
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564245318;
-        bh=RPfCAxdyCyZeq9vRoYR0W1zQ5eAzh1TLpM3NSBsFlVg=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=McyoIdXRHjHf1Xfd3hAbU3+qnwqp6weLcI4+NzV2JhVUsEVY1GYlg4XOBaCQWjn7N
-         +IlHZMoroeQeOI0Y4x4Vdt0P8nu2JzHYlJxtZeDvYht5hsHQroa8RdaLRf7awpHfQ3
-         o7X5iVgJjTI+iAWW0tDYxCFqfQJMjQG/nCupg6Z4=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190727094517.GA9501@osiris>
-References: <20190727094517.GA9501@osiris>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190727094517.GA9501@osiris>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git tags/s390-5.3-3
-X-PR-Tracked-Commit-Id: 98abe0227827f45cddb21875b2ffa9aeca3848b3
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 43e317c1bbdfe1d4d6d19d28f925f400898d41b9
-Message-Id: <156424531889.2399.16706313874729112396.pr-tracker-bot@kernel.org>
-Date:   Sat, 27 Jul 2019 16:35:18 +0000
-To:     Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
+        id S1728998AbfG0Qlr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 27 Jul 2019 12:41:47 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:41269 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728856AbfG0Qlr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 27 Jul 2019 12:41:47 -0400
+Received: by mail-lj1-f195.google.com with SMTP id d24so54380357ljg.8
+        for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2019 09:41:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=URzo6r2h2/jBzyZ/IbgB9BNeTix2jmweMWplmeW7miE=;
+        b=fUv1YrBBaXDgQir2L0b+1MYDz2FMOyGCVVhV3BqLC7Ynrf0k01/vDoIA/nLEk9UeCn
+         ycwRuXTvxvUZ1/CLFddwJCNil6D/+omHdt2hn979QSKWvEKEbHFsr+k6yfvf6glxKqoC
+         rWRXDRFy+5wsQTx9spjJ3c8Bvxfb+4qXzE1Ao=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=URzo6r2h2/jBzyZ/IbgB9BNeTix2jmweMWplmeW7miE=;
+        b=IJRx0wZ4+fZvx864dvW531r7A4okHDjvdzmshmsRM+iE15KA3tiQoZ6gvzGVyA6jE/
+         em6CKjPzC6H/ZR2U80f9sNNT/uC3lC5vgnBukGbssfza2uXS1y8auKLOWTBhLWKsHXA0
+         D04F6HD8GZXJ9AYpInOSz5wUhPiyJGalmJKLj4JUl1jfA5q/s5jaa/ir/uwGZbR510wF
+         1RrwvC1scx05aNHgE5PPm4ahjh2ltgSv04RqDm5rAdTKYuKAEGbHurMyOjwmxDuLBeDK
+         BCGvSeNZS40kHLD61jNcRO6afctX6iju+WWZhGWf18s+IbgGU/pyx5GCB2uqGwAbsXYW
+         nGEw==
+X-Gm-Message-State: APjAAAUv1lsXTbyuXl2DPSROTdWj/DjCtS6o6zcExFVQw/RnwWsJrFSs
+        QgjZDmutgUQg1d89UHBEi8zIXVzVxgY=
+X-Google-Smtp-Source: APXvYqyUjGDYVgzJXIoUhmR/5UKA9po8NfgNO2fRQhITjR6spE2d8frf5CbQAgub5jBvHkMjRGyMPw==
+X-Received: by 2002:a2e:9950:: with SMTP id r16mr35766982ljj.173.1564245704372;
+        Sat, 27 Jul 2019 09:41:44 -0700 (PDT)
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com. [209.85.167.54])
+        by smtp.gmail.com with ESMTPSA id m4sm11202697ljc.56.2019.07.27.09.41.41
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Sat, 27 Jul 2019 09:41:42 -0700 (PDT)
+Received: by mail-lf1-f54.google.com with SMTP id c9so39109500lfh.4
+        for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2019 09:41:41 -0700 (PDT)
+X-Received: by 2002:ac2:44c5:: with SMTP id d5mr48540131lfm.134.1564245701693;
+ Sat, 27 Jul 2019 09:41:41 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190727085201.11743-1-christian@brauner.io> <20190727085201.11743-2-christian@brauner.io>
+ <CAHk-=whrh5+aHmgqP9YhZ-yzCtUWT8fPi08ZSJdxusx7aHXOQQ@mail.gmail.com>
+In-Reply-To: <CAHk-=whrh5+aHmgqP9YhZ-yzCtUWT8fPi08ZSJdxusx7aHXOQQ@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sat, 27 Jul 2019 09:41:25 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgtGyQTLLb7m=jkMY5hOcj+TsOKSoeoJC7Jc1_h_XL+tw@mail.gmail.com>
+Message-ID: <CAHk-=wgtGyQTLLb7m=jkMY5hOcj+TsOKSoeoJC7Jc1_h_XL+tw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] pidfd: add P_PIDFD to waitid()
+To:     Christian Brauner <christian@brauner.io>
+Cc:     Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Kees Cook <keescook@chromium.org>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tejun Heo <tj@kernel.org>, David Howells <dhowells@redhat.com>,
+        Jann Horn <jannh@google.com>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Android Kernel Team <kernel-team@android.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Sat, 27 Jul 2019 11:45:17 +0200:
+On Sat, Jul 27, 2019 at 9:28 AM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> Something like
+>
+>   struct pid *fd_to_pid(unsigned int fd)
+>   {
+>         struct fd f;
+>         struct pid *pid;
+...
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git tags/s390-5.3-3
+I forgot to put my usual disclaimer about TOTALLY UNTESTED GARBAGE in
+that email. I want to make that part clear: that code snippet was
+meant as a rough guide of direction, not as a "this works".
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/43e317c1bbdfe1d4d6d19d28f925f400898d41b9
+Hopefully that was clear.
 
-Thank you!
+Also note again that one of the reasons I would prefer that
+"fd_to_pid()" interface is that you _can_ do it cleverly with RCU
+lookup, but that requires a lot of care.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+In particular, I think all of our _existing_
+"proc_pid(file_inode(file))" users are done while you actually hold a
+reference to "struct file *", so they don't have to worry about races
+with another thread doing the final ->release(). So the "clever" thing
+is possible, but might need a _lot_ of care to make sure the 'struct
+pid *' associated with the file still exists.
+
+The example code sequence was not doing the clever thing, obviously.
+So it was untested _and_ simple-stupid. But it has the interface that
+I'd prefer.
+
+              Linus
