@@ -2,90 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5EC8277C05
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2019 23:24:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ABE1F77C0B
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2019 23:27:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728856AbfG0VYX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 27 Jul 2019 17:24:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58438 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726404AbfG0VYW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 27 Jul 2019 17:24:22 -0400
-Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 544B820657;
-        Sat, 27 Jul 2019 21:24:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564262661;
-        bh=qoE6ptOEb4ULRj1Rw05H1bmDm81qtxOhZ4CxCKq7DKs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=oXz/4F4yJJ1k+lSXFJfJQyElubb42wUxO4un+dZzd6/squ5M3/mqyv7ZuZ8kl6GWR
-         yiYaOMJTny1lJ0+OI9E/z4nKemRQjgA3bJfxqybEhUkaVFefvauc0lzfVR8h3byeos
-         hnRuZRewNOIIzW96DIxkqn2w66J2x6eZ9GDVJDFU=
-Date:   Sat, 27 Jul 2019 17:24:20 -0400
-From:   Sasha Levin <sashal@kernel.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Eric Dumazet <edumazet@google.com>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: Re: [PATCH 5.2 14/66] net_sched: unset TCQ_F_CAN_BYPASS when adding
- filters
-Message-ID: <20190727212420.GA8637@sasha-vm>
-References: <20190726152301.936055394@linuxfoundation.org>
- <20190726152303.389623216@linuxfoundation.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20190726152303.389623216@linuxfoundation.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1728927AbfG0V1L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 27 Jul 2019 17:27:11 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:40434 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725280AbfG0V1L (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 27 Jul 2019 17:27:11 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::d71])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 3D57C1534FD20;
+        Sat, 27 Jul 2019 14:27:10 -0700 (PDT)
+Date:   Sat, 27 Jul 2019 14:27:09 -0700 (PDT)
+Message-Id: <20190727.142709.1469820728325208550.davem@davemloft.net>
+To:     pebolle@tiscali.nl
+Cc:     tilman@imap.cc, hjlipp@web.de, arnd@arndb.de, kkeil@linux-pingi.de,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] gigaset: stop maintaining seperately
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20190726220541.28783-1-pebolle@tiscali.nl>
+References: <20190726220541.28783-1-pebolle@tiscali.nl>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sat, 27 Jul 2019 14:27:10 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 26, 2019 at 05:24:13PM +0200, Greg Kroah-Hartman wrote:
->From: Cong Wang <xiyou.wangcong@gmail.com>
->
->[ Upstream commit 3f05e6886a595c9a29a309c52f45326be917823c ]
->
->For qdisc's that support TC filters and set TCQ_F_CAN_BYPASS,
->notably fq_codel, it makes no sense to let packets bypass the TC
->filters we setup in any scenario, otherwise our packets steering
->policy could not be enforced.
->
->This can be reproduced easily with the following script:
->
-> ip li add dev dummy0 type dummy
-> ifconfig dummy0 up
-> tc qd add dev dummy0 root fq_codel
-> tc filter add dev dummy0 parent 8001: protocol arp basic action mirred egress redirect dev lo
-> tc filter add dev dummy0 parent 8001: protocol ip basic action mirred egress redirect dev lo
-> ping -I dummy0 192.168.112.1
->
->Without this patch, packets are sent directly to dummy0 without
->hitting any of the filters. With this patch, packets are redirected
->to loopback as expected.
->
->This fix is not perfect, it only unsets the flag but does not set it back
->because we have to save the information somewhere in the qdisc if we
->really want that. Note, both fq_codel and sfq clear this flag in their
->->bind_tcf() but this is clearly not sufficient when we don't use any
->class ID.
->
->Fixes: 23624935e0c4 ("net_sched: TCQ_F_CAN_BYPASS generalization")
->Cc: Eric Dumazet <edumazet@google.com>
->Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
->Reviewed-by: Eric Dumazet <edumazet@google.com>
->Signed-off-by: David S. Miller <davem@davemloft.net>
->Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From: Paul Bolle <pebolle@tiscali.nl>
+Date: Sat, 27 Jul 2019 00:05:41 +0200
 
-There's a fix for this one:
+> The Dutch consumer grade ISDN network will be shut down on September 1,
+> 2019. This means I'll be converted to some sort of VOIP shortly. At that
+> point it would be unwise to try to maintain the gigaset driver, even for
+> odd fixes as I do. So I'll stop maintaining it as a seperate driver and
+> bump support to CAPI in staging. De facto this means the driver will be
+> unmaintained, since no-one seems to be working on CAPI.
+> 
+> I've lighty tested the hardware specific modules of this driver (bas-gigaset,
+> ser-gigaset, and usb-gigaset) for v5.3-rc1. The basic functionality appears to
+> be working. It's unclear whether anyone still cares. I'm aware of only one
+> person sort of using the driver a few years ago.
+> 
+> Thanks to Karsten Keil for the ISDN subsystems gigaset was using (I4L and
+> CAPI). And many thanks to Hansjoerg Lipp and Tilman Schmidt for writing and
+> upstreaming this driver.
+> 
+> Signed-off-by: Paul Bolle <pebolle@tiscali.nl>
 
-	503d81d428bd5 ("net: sched: verify that q!=NULL before setting
-	q->flags").
-
---
-Thanks,
-Sasha
+Applied.
