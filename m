@@ -2,227 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03ED677AC4
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2019 19:31:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FF1C77AD1
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2019 19:39:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387955AbfG0RbB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 27 Jul 2019 13:31:01 -0400
-Received: from gateway21.websitewelcome.com ([192.185.45.38]:33778 "EHLO
-        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2387665AbfG0RbB (ORCPT
+        id S2388036AbfG0Rji (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 27 Jul 2019 13:39:38 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:39967 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387714AbfG0Rji (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 27 Jul 2019 13:31:01 -0400
-Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
-        by gateway21.websitewelcome.com (Postfix) with ESMTP id 3CBD6400CBD00
-        for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2019 12:31:00 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id rQX6hWosO2qH7rQX6hZZUC; Sat, 27 Jul 2019 12:31:00 -0500
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:Subject:From:References:Cc:To:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=zTMCyoGbSC014cU50kL2oE1FLmpMXZhSvTZVZ5+pLUk=; b=XHhqOFyiFr9JJw/td89la0Dc6I
-        FpMpAIc896N/Ok8gQjBCYJPKyeaQwPc3jizGSfR67M5h9/JvnKolp0C55SUwHvPDk596RhnyJoY/4
-        o2zJyTpR4A0MvbVoaE8+NKqIwODzYhZn0shLQfyv1l4jkeE7FEzszYS2abcYLkiDG1FFbor5sW7sG
-        IhDlUJ6/RaGbJuU8GeZoVCjkdrT9KCbs35zyYAGlNToKm5kc+7vgSlrXPmPtroh6vySKwO3LqqAGT
-        WC5Tp3NAhVixZQ2XoDr45zH4h10bR+4tZsTi+gEe03zKXg1OJrjNzeITSn7q3Xr4wxl3joUc4CTPm
-        vzffscGQ==;
-Received: from [201.162.240.64] (port=14779 helo=[192.168.43.131])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1hrQX5-003Xxr-QW; Sat, 27 Jul 2019 12:30:59 -0500
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Greg KH <gregkh@linuxfoundation.org>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        linux-kernel@vger.kernel.org
-References: <20190726025521.GA1824@embeddedor>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Subject: Re: [GIT PULL] Wimplicit-fallthrough patches for 5.3-rc2
-Message-ID: <86348a8d-2dce-35c7-51b8-34b230e68258@embeddedor.com>
-Date:   Sat, 27 Jul 2019 12:30:57 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Sat, 27 Jul 2019 13:39:38 -0400
+Received: by mail-wm1-f66.google.com with SMTP id v19so50132167wmj.5
+        for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2019 10:39:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Ep/bHJiwTJubKvCC+mCIkJn0WsJ1FO1eKm4QNltKuYQ=;
+        b=ChjuOA3qi8hCRwOL9y99MT+7yo1t/bL0L6Ncsb3uWV71xRrRX6evagsWwnF98DFPzn
+         ReISaGFh5kQyGICxbtfmuOI+gkr36ju6f2L+dBfv0rymGAWzj38ODeTccI4tatv/eqZn
+         tdOPkjx1kA2nT3LVk/i54jbH4GmtHkszvZxc2kPpBwDfmtsA/g5tA1S5sWz5iIqF+neH
+         hDfsbmVPkW8qxlfX819hqG4PGIiF4Us+/RLoov+UGKzyIwkhQv/+0HFbz3vWCFcdQtZK
+         iC2FW1CYf/EJPns2g1kwR+89knj+P9DJ5Z36Hk2nEYfDWuasdkc+wHv5+VYihGBvR2E5
+         x+tg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Ep/bHJiwTJubKvCC+mCIkJn0WsJ1FO1eKm4QNltKuYQ=;
+        b=VjzcHJUfvLebMJVvJeWXwRksZbVGPbWsqP14kplqAOiTMUitIJYoUysO4b3BKNxjiN
+         Bp6GnSmG6nqw9usRLgfk54Kz3shB6/3v0smVcp8cJ5ztjCM48bSpWoqVpK3KaU0an5oW
+         yIQnrnYpindfUq6023gvXor9brfG7mq6byiu+vqLW8WeHYNllpiB675T7N/0y3M1sH9Z
+         KcBB0mmEdJ7XPnKDwDf06ONFIcNjKYMaPwDZGz5EWGn0Al5LMeisDZkPV7sgFVYpsmDf
+         RHeRJCqvTDu+vG4k5H/4sCI65SpGpPp28hA6JaZpTDbpqFOk+VpYKSxoa1UDVq4ZoeUF
+         NsPg==
+X-Gm-Message-State: APjAAAX6lavYJog82iqZVxnAnsqT0eQJnSpOeTXkS+Do8toJo3Fo+X3T
+        OlRv8TECJsMBBgn21DMjPy1wvyxtZzhDrNVVZsC5Cw==
+X-Google-Smtp-Source: APXvYqxTGhXxLIkZBjp9vHFr7vfJZLQQuLojzbsMN1L6Q+kxU1bNPfP5/4CeCgiTLR1EhS6r90+g+fM2xHYaqgFAdyE=
+X-Received: by 2002:a7b:c4d2:: with SMTP id g18mr91410809wmk.79.1564248742263;
+ Sat, 27 Jul 2019 10:32:22 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190726025521.GA1824@embeddedor>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 201.162.240.64
-X-Source-L: No
-X-Exim-ID: 1hrQX5-003Xxr-QW
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.43.131]) [201.162.240.64]:14779
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 5
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+References: <20190727055214.9282-1-sean.j.christopherson@intel.com> <20190727055214.9282-22-sean.j.christopherson@intel.com>
+In-Reply-To: <20190727055214.9282-22-sean.j.christopherson@intel.com>
+From:   Andy Lutomirski <luto@amacapital.net>
+Date:   Sat, 27 Jul 2019 10:32:11 -0700
+Message-ID: <CALCETrVJ1vMAA-7qtiZ8tg-3qyckSwbzNC2kbbHsojm+W46PWg@mail.gmail.com>
+Subject: Re: [RFC PATCH 21/21] KVM: x86: Add capability to grant VM access to
+ privileged SGX attribute
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        X86 ML <x86@kernel.org>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, kvm list <kvm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-sgx@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Fri, Jul 26, 2019 at 10:52 PM Sean Christopherson
+<sean.j.christopherson@intel.com> wrote:
+>
+> The SGX subsystem restricts access to a subset of enclave attributes to
+> provide additional security for an uncompromised kernel, e.g. to prevent
+> malware from using the PROVISIONKEY to ensure its nodes are running
+> inside a geniune SGX enclave and/or to obtain a stable fingerprint.
+>
+> To prevent userspace from circumventing such restrictions by running an
+> enclave in a VM, KVM restricts guest access to privileged attributes by
+> default.  Add a capability, KVM_CAP_SGX_ATTRIBUTE, that can be used by
+> userspace to grant a VM access to a priveleged attribute, with args[0]
+> holding a file handle to a valid SGX attribute file corresponding to
+> an attribute that is restricted by KVM (currently only PROVISIONKEY).
 
-I've been building the kernel every time you merge new changes for -rc2 in
-the last couple of days, trying to catch any new warning that other people's
-code might have introduced. So far, it's been building cleanly with my
-changes on top. :)
+Looks good to me.  Thanks!
 
-I really hope you can merge my pull-request for -rc2.
+> +can use KVM_CAP_SGX_ATTRIBUTE to grant a VM access to a priveleged attribute.
 
-Thank you
---
-Gustavo
-
-On 7/25/19 9:55 PM, Gustavo A. R. Silva wrote:
-> Hi Linus,
-> 
-> Kees let me know about the problems you had with my previous pull-request.
-> Apologies for the inconvenience. 
-> 
-> Here is a new pull-request that includes a fix for those warnings you
-> were seeing with the dcn20_dccg driver.
-> 
-> Just for you to know, I'm building allmodconfig.
-> 
-> Please, let me know if you have any trouble and I'll address it ASAP.
-> 
-> Thanks!
-> --
-> Gustavo
-> 
-> The following changes since commit 5f9e832c137075045d15cd6899ab0505cfb2ca4b:
-> 
->   Linus 5.3-rc1 (2019-07-21 14:05:38 -0700)
-> 
-> are available in the Git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git tags/Wimplicit-fallthrough-5.3-rc2
-> 
-> for you to fetch changes up to a035d552a93bb9ef6048733bb9f2a0dc857ff869:
-> 
->   Makefile: Globally enable fall-through warning (2019-07-25 20:13:54 -0500)
-> 
-> ----------------------------------------------------------------
-> Wimplicit-fallthrough patches for 5.3-rc2
-> 
-> Hi Linus,
-> 
-> Please, pull the following patches that mark switch cases where we are
-> expecting to fall through. These patches are part of the ongoing efforts
-> to enable -Wimplicit-fallthrough. Most of them have been baking in linux-next
-> for a whole development cycle.
-> 
-> Also, pull the Makefile patch that globally enables the
-> -Wimplicit-fallthrough option.
-> 
-> Finally, some missing-break fixes that have been tagged for -stable:
-> 
->  - drm/amdkfd: Fix missing break in switch statement
->  - drm/amdgpu/gfx10: Fix missing break in switch statement
-> 
-> Notice that with these changes, we completely get rid of all the
-> fall-through warnings in the kernel.
-> 
-> Thanks
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> 
-> ----------------------------------------------------------------
-> Gustavo A. R. Silva (12):
->       firewire: mark expected switch fall-throughs
->       can: mark expected switch fall-throughs
->       afs: yfsclient: Mark expected switch fall-throughs
->       afs: fsclient: Mark expected switch fall-throughs
->       mtd: onenand_base: Mark expected switch fall-through
->       perf/x86/intel: Mark expected switch fall-throughs
->       drm/amdkfd: Fix missing break in switch statement
->       drm/amdgpu/gfx10: Fix missing break in switch statement
->       drm/amdkfd/kfd_mqd_manager_v10: Avoid fall-through warning
->       drm/amd/display: Mark expected switch fall-throughs
->       drm/i915: Mark expected switch fall-throughs
->       Makefile: Globally enable fall-through warning
-> 
->  Documentation/process/deprecated.rst              | 14 ++++++
->  Makefile                                          |  3 ++
->  arch/x86/events/intel/core.c                      |  2 +
->  drivers/firewire/core-device.c                    |  2 +-
->  drivers/firewire/core-iso.c                       |  2 +-
->  drivers/firewire/core-topology.c                  |  1 +
->  drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c            |  1 +
->  drivers/gpu/drm/amd/amdkfd/kfd_crat.c             |  1 +
->  drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager_v10.c  |  1 -
->  drivers/gpu/drm/amd/display/dc/dcn20/dcn20_dccg.c |  5 +++
->  drivers/gpu/drm/i915/Makefile                     |  1 -
->  drivers/gpu/drm/i915/display/intel_display.c      |  2 +-
->  drivers/gpu/drm/i915/display/intel_dp.c           |  1 +
->  drivers/gpu/drm/i915/gem/i915_gem_mman.c          |  2 +-
->  drivers/gpu/drm/i915/gem/i915_gem_pages.c         |  2 +-
->  drivers/gpu/drm/i915/i915_gpu_error.c             |  1 +
->  drivers/mtd/nand/onenand/onenand_base.c           |  1 +
->  drivers/net/can/at91_can.c                        |  6 ++-
->  drivers/net/can/peak_canfd/peak_pciefd_main.c     |  2 +-
->  drivers/net/can/spi/mcp251x.c                     |  3 +-
->  drivers/net/can/usb/peak_usb/pcan_usb.c           |  2 +-
->  fs/afs/fsclient.c                                 | 51 +++++++++++++--------
->  fs/afs/yfsclient.c                                | 54 +++++++++++++++--------
->  23 files changed, 111 insertions(+), 49 deletions(-)
-> 
+Spelling.
