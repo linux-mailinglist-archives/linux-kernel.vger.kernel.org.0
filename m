@@ -2,164 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CC96776C0
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2019 07:35:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B5AE776CD
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2019 07:48:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727630AbfG0FfS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 27 Jul 2019 01:35:18 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:43957 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727328AbfG0FfR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 27 Jul 2019 01:35:17 -0400
-Received: by mail-lf1-f67.google.com with SMTP id c19so38522171lfm.10
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Jul 2019 22:35:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=PzolGi6g/TcuDu8SL3iyFaFmwaFjqKwFAI80D9n/s1Q=;
-        b=VGgXuS1Y9NES4hVTBbGA4O4397PVfo+SH0nSYNBaZA3UekU18/WJZh4K4ONF1sF86q
-         30NqvPEha+oMSIPWg0Dw3GLgYq7uk870F5ZPMzfJsc6QATcb/OSb6IqqNWsfv7+uw72N
-         ecQVde47OY0UBdCOa2sIfEDdYR+TT7+xyq7xByJpkizW0I+4dKZMgOxwv/61zQYOPW8G
-         g6ws2uYOHjGwkCRjqSrB2G5nICZG0SIGRZfzHjcu+hqpPD6HH5NHBcsDCyLlz3RZMNQi
-         ZOHwQVItlba9czw5zGI+aIVETOCjNq9WBhYVNGJbH8Kz4xGYyBH2wTalou8N2UhFwpue
-         wfrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=PzolGi6g/TcuDu8SL3iyFaFmwaFjqKwFAI80D9n/s1Q=;
-        b=iC8pcgYzCwelCQ0hFCrIY6y9zV8EQqW/BseC5NqKF9g8sRtrrOJDxG5goRWtZET/02
-         ZouAPj98pQNYBIi++pLIwuiyfXRVznNaaWmqTZM/catYlaurQxFM7Q4jRkXeKlsuCB4D
-         RrKi31z4LIh2CvA/fiRxtwWK/gsqt/oExFVHSaAIodg1K1cZiw5sOhun40B00AgaBdLi
-         f653Atf5xX125gDCJGU305qOmUh6z0WdibpMo3uqqeQuQxtZbAb3kxzOIzMOgwOGos1n
-         gHEwABE2qeHp8vJJpR8vXe1eGHmlOfAZfY36u5gx7RtI0IHdhOlc01S9sGXlR9g67O2C
-         s6ZA==
-X-Gm-Message-State: APjAAAUxPHn3dVdcBQyc9S7k4UMecZgXfqPXFZgcquiQx8nXz+cKwjro
-        IDkcwwc3x4kUOYcBTS6XtN/T98E0xjtIIeoofoIdUg==
-X-Google-Smtp-Source: APXvYqwnC3I49Q9Qpb94zyDJQeM8/85gk5segHmTrCFRL7t2meMzjC83QZLqr4w5cTUZGnFRlBqjwetertyfeCKYqO8=
-X-Received: by 2002:ac2:546a:: with SMTP id e10mr47166003lfn.75.1564205715628;
- Fri, 26 Jul 2019 22:35:15 -0700 (PDT)
+        id S1727958AbfG0FsQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 27 Jul 2019 01:48:16 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:41274 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726010AbfG0FsQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 27 Jul 2019 01:48:16 -0400
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id C3D0A54AAEFEF7364EF7;
+        Sat, 27 Jul 2019 13:48:13 +0800 (CST)
+Received: from localhost.localdomain (10.67.212.132) by
+ DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
+ 14.3.439.0; Sat, 27 Jul 2019 13:48:07 +0800
+From:   Huazhong Tan <tanhuazhong@huawei.com>
+To:     <davem@davemloft.net>
+CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
+        <linuxarm@huawei.com>, <saeedm@mellanox.com>,
+        Huazhong Tan <tanhuazhong@huawei.com>
+Subject: [PATCH V3 net-next 00/10] net: hns3: some code optimizations & bugfixes & features
+Date:   Sat, 27 Jul 2019 13:46:02 +0800
+Message-ID: <1564206372-42467-1-git-send-email-tanhuazhong@huawei.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-References: <20190726152301.936055394@linuxfoundation.org>
-In-Reply-To: <20190726152301.936055394@linuxfoundation.org>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Sat, 27 Jul 2019 11:05:04 +0530
-Message-ID: <CA+G9fYs8BSxWnE2csOg93jNNFhqMFLavWh8FO3cpBuxy-U3QSg@mail.gmail.com>
-Subject: Re: [PATCH 5.2 00/66] 5.2.4-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-Originating-IP: [10.67.212.132]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 26 Jul 2019 at 20:55, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 5.2.4 release.
-> There are 66 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sun 28 Jul 2019 03:21:13 PM UTC.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-=
-5.2.4-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-5.2.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+This patch-set includes code optimizations, bugfixes and features for
+the HNS3 ethernet controller driver.
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+[patch 1/10] checks reset status before setting channel.
 
-Summary
-------------------------------------------------------------------------
+[patch 2/10] adds a NULL pointer checking.
 
-kernel: 5.2.4-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git
-git branch: linux-5.2.y
-git commit: d61e440a1852a64d8a2d0d358b9582b19157e039
-git describe: v5.2.3-67-gd61e440a1852
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-5.2-oe/bui=
-ld/v5.2.3-67-gd61e440a1852
+[patch 3/10] removes reset level upgrading when current reset fails.
 
-No regressions (compared to build v5.2.3)
+[patch 4/10] fixes a GFP flags errors when holding spin_lock.
 
-No fixes (compared to build v5.2.3)
+[patch 5/10] modifies firmware version format.
 
-Ran 22512 total tests in the following environments and test suites.
+[patch 6/10] adds some print information which is off by default.
 
-Environments
---------------
-- dragonboard-410c
-- hi6220-hikey
-- i386
-- juno-r2
-- qemu_arm
-- qemu_arm64
-- qemu_i386
-- qemu_x86_64
-- x15
-- x86
+[patch 7/10 - 8/10] adds two code optimizations about interrupt handler
+and work task.
 
-Test Suites
------------
-* build
-* install-android-platform-tools-r2600
-* kselftest
-* libgpiod
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-commands-tests
-* ltp-containers-tests
-* ltp-cpuhotplug-tests
-* ltp-cve-tests
-* ltp-dio-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-mm-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* network-basic-tests
-* perf
-* spectre-meltdown-checker-test
-* v4l2-compliance
-* ltp-fs-tests
-* ltp-open-posix-tests
-* kselftest-vsyscall-mode-native
-* kselftest-vsyscall-mode-none
-* kvm-unit-tests
+[patch 9/10] adds support for using order 1 pages with a 4K buffer.
 
---=20
-Linaro LKFT
-https://lkft.linaro.org
+[patch 10/10] modifies messages prints with dev_info() instead of
+pr_info().
+
+Change log:
+V2->V3: fixes comments from Saeed Mahameed and Joe Perches.
+V1->V2: fixes comments from Saeed Mahameed and
+	removes previous [patch 4/11] and [patch 11/11]
+	which needs further discussion, and adds a new
+	patch [11/11] suggested by Saeed Mahameed.
+
+
+Guangbin Huang (1):
+  net: hns3: add a check for get_reset_level
+
+Huazhong Tan (2):
+  net: hns3: remove upgrade reset level when reset fail
+  net: hns3: use dev_info() instead of pr_info()
+
+Jian Shen (1):
+  net: hns3: add reset checking before set channels
+
+Yonglong Liu (1):
+  net: hns3: add debug messages to identify eth down cause
+
+Yufeng Mo (2):
+  net: hns3: change GFP flag during lock period
+  net: hns3: modify firmware version display format
+
+Yunsheng Lin (3):
+  net: hns3: make hclge_service use delayed workqueue
+  net: hns3: add interrupt affinity support for misc interrupt
+  net: hns3: Add support for using order 1 pages with a 4K buffer
+
+ drivers/net/ethernet/hisilicon/hns3/hnae3.h        |   9 ++
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.c    |  33 ++++-
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.h    |  15 ++-
+ drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c |  34 +++++-
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.c |  10 +-
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c |  11 ++
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    | 135 ++++++++++++---------
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.h    |   7 +-
+ .../ethernet/hisilicon/hns3/hns3vf/hclgevf_cmd.c   |  10 +-
+ .../ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c  |   3 +-
+ 10 files changed, 195 insertions(+), 72 deletions(-)
+
+-- 
+2.7.4
+
