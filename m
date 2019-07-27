@@ -2,23 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F26E77719
-	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2019 07:57:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D800C77717
+	for <lists+linux-kernel@lfdr.de>; Sat, 27 Jul 2019 07:56:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728855AbfG0F5D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 27 Jul 2019 01:57:03 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:36632 "EHLO mx1.redhat.com"
+        id S1728767AbfG0F4z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 27 Jul 2019 01:56:55 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:49200 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728683AbfG0F4u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 27 Jul 2019 01:56:50 -0400
+        id S1728702AbfG0F4w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 27 Jul 2019 01:56:52 -0400
 Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C99C03082DDD;
-        Sat, 27 Jul 2019 05:56:50 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id D83C7285AE;
+        Sat, 27 Jul 2019 05:56:51 +0000 (UTC)
 Received: from t460p.redhat.com (ovpn-116-73.phx2.redhat.com [10.3.116.73])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D660B19C71;
-        Sat, 27 Jul 2019 05:56:49 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E607719C71;
+        Sat, 27 Jul 2019 05:56:50 +0000 (UTC)
 From:   Scott Wood <swood@redhat.com>
 To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Cc:     Thomas Gleixner <tglx@linutronix.de>,
@@ -29,49 +29,78 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Clark Williams <williams@redhat.com>,
         linux-kernel@vger.kernel.org, linux-rt-users@vger.kernel.org,
         Scott Wood <swood@redhat.com>
-Subject: [PATCH RT 6/8] sched: migrate_enable: Set state to TASK_RUNNING
-Date:   Sat, 27 Jul 2019 00:56:36 -0500
-Message-Id: <20190727055638.20443-7-swood@redhat.com>
+Subject: [PATCH RT 7/8] sched: migrate_enable: Use select_fallback_rq()
+Date:   Sat, 27 Jul 2019 00:56:37 -0500
+Message-Id: <20190727055638.20443-8-swood@redhat.com>
 In-Reply-To: <20190727055638.20443-1-swood@redhat.com>
 References: <20190727055638.20443-1-swood@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Sat, 27 Jul 2019 05:56:50 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Sat, 27 Jul 2019 05:56:51 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If migrate_enable() is called while a task is preparing to sleep
-(state != TASK_RUNNING), that triggers a debug check in stop_one_cpu().
-Explicitly reset state to acknowledge that we're accepting the spurious
-wakeup.
+migrate_enable() currently open-codes a variant of select_fallback_rq().
+However, it does not have the "No more Mr. Nice Guy" fallback and thus
+it will pass an invalid CPU to the migration thread if cpus_mask only
+contains a CPU that is !active.
 
 Signed-off-by: Scott Wood <swood@redhat.com>
 ---
- kernel/sched/core.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+This scenario will be more likely after the next patch, since
+the migrate_disable_update check goes away.  However, it could happen
+anyway if cpus_mask was updated to a CPU other than the one we were
+pinned to, and that CPU subsequently became inactive.
+---
+ kernel/sched/core.c | 25 ++++++++++---------------
+ 1 file changed, 10 insertions(+), 15 deletions(-)
 
 diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 38a9a9df5638..eb27a9bf70d7 100644
+index eb27a9bf70d7..3a2d8251a30c 100644
 --- a/kernel/sched/core.c
 +++ b/kernel/sched/core.c
-@@ -7396,6 +7396,14 @@ void migrate_enable(void)
+@@ -7368,6 +7368,7 @@ void migrate_enable(void)
+ 	if (p->migrate_disable_update) {
+ 		struct rq *rq;
+ 		struct rq_flags rf;
++		int cpu = task_cpu(p);
+ 
+ 		rq = task_rq_lock(p, &rf);
+ 		update_rq_clock(rq);
+@@ -7377,21 +7378,15 @@ void migrate_enable(void)
+ 
+ 		p->migrate_disable_update = 0;
+ 
+-		WARN_ON(smp_processor_id() != task_cpu(p));
+-		if (!cpumask_test_cpu(task_cpu(p), &p->cpus_mask)) {
+-			const struct cpumask *cpu_valid_mask = cpu_active_mask;
+-			struct migration_arg arg;
+-			unsigned int dest_cpu;
+-
+-			if (p->flags & PF_KTHREAD) {
+-				/*
+-				 * Kernel threads are allowed on online && !active CPUs
+-				 */
+-				cpu_valid_mask = cpu_online_mask;
+-			}
+-			dest_cpu = cpumask_any_and(cpu_valid_mask, &p->cpus_mask);
+-			arg.task = p;
+-			arg.dest_cpu = dest_cpu;
++		WARN_ON(smp_processor_id() != cpu);
++		if (!cpumask_test_cpu(cpu, &p->cpus_mask)) {
++			struct migration_arg arg = { p };
++			struct rq_flags rf;
++
++			rq = task_rq_lock(p, &rf);
++			update_rq_clock(rq);
++			arg.dest_cpu = select_fallback_rq(cpu, p);
++			task_rq_unlock(rq, p, &rf);
+ 
  			unpin_current_cpu();
  			preempt_lazy_enable();
- 			preempt_enable();
-+
-+			/*
-+			 * Avoid sleeping with an existing non-running
-+			 * state.  This will result in a spurious wakeup
-+			 * for the calling context.
-+			 */
-+			__set_current_state(TASK_RUNNING);
-+
- 			sleeping_lock_inc();
- 			stop_one_cpu(task_cpu(p), migration_cpu_stop, &arg);
- 			sleeping_lock_dec();
 -- 
 1.8.3.1
 
