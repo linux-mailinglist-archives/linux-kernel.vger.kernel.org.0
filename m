@@ -2,73 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06D4277F9A
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2019 15:30:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E81677F9D
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2019 15:31:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726098AbfG1N3z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 28 Jul 2019 09:29:55 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:37206 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726032AbfG1N3y (ORCPT
+        id S1726138AbfG1NbJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 28 Jul 2019 09:31:09 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:59088 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726032AbfG1NbJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 28 Jul 2019 09:29:54 -0400
-Received: by mail-ed1-f68.google.com with SMTP id w13so57075337eds.4
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2019 06:29:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=mvXJ3/c4rpFRGGh2Wow0lkZGjKN4V1iCfYC7Oigz+iA=;
-        b=WBszeDWnp4ZcGvcJBBrX+sXfsbbQGBMwyvnvu5/GlXW+VqkFGoJ8GdKapq1oALPyLs
-         G13dv5CGaW0XI9qGkQjgfORNTLQSkyLQBRt4yga/lHpBKVCHdP0ISR+gjVgNVHf7jz/J
-         1FOV6JAnaQz1URcB+qsDQwlchxqMm5zXThFNYTPPRz97RXNFYqpxpkgOj4bbxWbgu6w9
-         k0Oiu87maWJR/CL23+qO++5TWMr7OI5On+em7+hrcB8JfxQEqx3evrr5ovkdhrHXHk58
-         ZvD1rxgN9YY2VsQu7k7jHc4IOUtWyDvAgJS2gHt7VV1y7O5ondyGju0TCnndQoRw4g/k
-         UDoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mvXJ3/c4rpFRGGh2Wow0lkZGjKN4V1iCfYC7Oigz+iA=;
-        b=p420u5oLzH69FNeJHcTVGjpemsaXOM3RxWy2Us1IjwR7gTU5ifJ6FX4WzcYEvdjnHB
-         UHCupMZ0Pe0nS/4jYYx6VvSj3rj5wWmJqs/NB3osV5e+gUZGe1LV9lcO7G+C4qwS9qrB
-         8lQqdDZJnW3fIuYAjohUii9S1Asw5jPENMyJ2OtqkeT8UR+eSs7mzwSs+Vt44g8Y57dI
-         7YJjH7pjzBXdOcVyYV0a6HkDTUd9d9dGz0kPE/Jr9PavuU0lHmLBXXthTzhdJwje/ujb
-         1mRzujUGxmKD9ZldUPZy+6j+BHoFpQNpLYvAfvdo4gpb5sWDaJHbxqfmUIB44SjsxvMu
-         x8gA==
-X-Gm-Message-State: APjAAAUkHBQtFjnIBCGdAcMEmRk7EPwI8dscETknoLaNK8br4WYI+4/y
-        lz8fhw0EdurHXk5UXG1s3OtUtWX4Fjgs8KZmpPM=
-X-Google-Smtp-Source: APXvYqzUHdn0K/6jv1Ayf0caTyzE54mDGtV0LNSQdgaxs59ZSKla4UqaBrYnMXVctxpaI0W6SGAuv6R1sbGMKAUdF+Y=
-X-Received: by 2002:a50:ad01:: with SMTP id y1mr89286757edc.180.1564320592940;
- Sun, 28 Jul 2019 06:29:52 -0700 (PDT)
+        Sun, 28 Jul 2019 09:31:09 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id D830B8021E; Sun, 28 Jul 2019 15:30:55 +0200 (CEST)
+Date:   Sun, 28 Jul 2019 15:31:02 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Parth Shah <parth@linux.ibm.com>
+Cc:     peterz@infradead.org, mingo@redhat.com,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        patrick.bellasi@arm.com, dietmar.eggemann@arm.com,
+        daniel.lezcano@linaro.org, subhra.mazumdar@oracle.com
+Subject: Re: [RFC v4 0/8] TurboSched: A scheduler for sustaining Turbo
+ Frequencies for longer durations
+Message-ID: <20190728133102.GD8718@xo-6d-61-c0.localdomain>
+References: <20190725070857.6639-1-parth@linux.ibm.com>
 MIME-Version: 1.0
-References: <alpine.DEB.2.21.9999.1907251535421.32766@viisi.sifive.com>
-In-Reply-To: <alpine.DEB.2.21.9999.1907251535421.32766@viisi.sifive.com>
-From:   Bin Meng <bmeng.cn@gmail.com>
-Date:   Sun, 28 Jul 2019 21:29:42 +0800
-Message-ID: <CAEUhbmUeAFtmFci78phyLdxTFwh4rfztsMZAy5ekfbmyX1VZeA@mail.gmail.com>
-Subject: Re: [PATCH] riscv: defconfig: align RV64 defconfig to the output of
- "make savedefconfig"
-To:     Paul Walmsley <paul.walmsley@sifive.com>
-Cc:     linux-riscv <linux-riscv@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190725070857.6639-1-parth@linux.ibm.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 26, 2019 at 6:36 AM Paul Walmsley <paul.walmsley@sifive.com> wrote:
->
->
-> Align the RV64 defconfig to the output of "make savedefconfig" to
-> avoid unnecessary deltas for future defconfig patches.  This patch
-> should have no runtime functional impact.
->
-> Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
-> ---
->  arch/riscv/configs/defconfig | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
->
+Hi!
 
-Reviewed-by: Bin Meng <bmeng.cn@gmail.com>
+> Abstract
+> ========
+> 
+> The modern servers allows multiple cores to run at range of frequencies
+> higher than rated range of frequencies. But the power budget of the system
+> inhibits sustaining these higher frequencies for longer durations.
+
+Thermal budget?
+
+Should this go to documentation somewhere?
+
+> Current CFS algorithm in kernel scheduler is performance oriented and hence
+> tries to assign any idle CPU first for the waking up of new tasks. This
+> policy is perfect for major categories of the workload, but for jitter
+> tasks, one can save energy by packing them onto the active cores and allow
+> those cores to run at higher frequencies.
+> 
+> These patch-set tunes the task wake up logic in scheduler to pack
+> exclusively classified jitter tasks onto busy cores. The work involves the
+> jitter tasks classifications by using syscall based mechanisms.
+> 
+> In brief, if we can pack jitter tasks on busy cores then we can save power
+> by keeping other cores idle and allow busier cores to run at turbo
+> frequencies, patch-set tries to meet this solution in simplest manner.
+> Though, there are some challenges in implementing it(like smt_capacity,
+
+Space before (.
+
+> These numbers are w.r.t. `turbo_bench.c` multi-threaded test benchmark
+> which can create two kinds of tasks: CPU bound (High Utilization) and
+> Jitters (Low Utilization). N in X-axis represents N-CPU bound and N-Jitter
+> tasks spawned.
+
+Ok, so you have description how it causes 13% improvements. Do you also have metrics how
+it harms performance.. how much delay is added to unimportant tasks etc...?
+
+Thanks,
+										Pavel
