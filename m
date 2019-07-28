@@ -2,67 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3629F78119
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2019 21:25:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 480B978138
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2019 21:37:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726425AbfG1TY4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 28 Jul 2019 15:24:56 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:48110 "EHLO inva021.nxp.com"
+        id S1726247AbfG1Tgp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 28 Jul 2019 15:36:45 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:43990 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726366AbfG1TYx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 28 Jul 2019 15:24:53 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 03E98201281;
-        Sun, 28 Jul 2019 21:24:52 +0200 (CEST)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id EA794201272;
-        Sun, 28 Jul 2019 21:24:51 +0200 (CEST)
-Received: from fsr-ub1864-103.ea.freescale.net (fsr-ub1864-103.ea.freescale.net [10.171.82.17])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 2D7142060A;
-        Sun, 28 Jul 2019 21:24:51 +0200 (CEST)
-From:   Daniel Baluta <daniel.baluta@nxp.com>
-To:     broonie@kernel.org
-Cc:     l.stach@pengutronix.de, mihai.serban@gmail.com,
-        alsa-devel@alsa-project.org, viorel.suman@nxp.com,
-        timur@kernel.org, shengjiu.wang@nxp.com, angus@akkea.ca,
-        tiwai@suse.com, nicoleotsuka@gmail.com, linux-imx@nxp.com,
-        kernel@pengutronix.de, festevam@gmail.com,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        robh@kernel.org, Daniel Baluta <daniel.baluta@nxp.com>
-Subject: [PATCH v2 7/7] ASoC: dt-bindings: Introduce compatible strings for 7ULP and 8MQ
-Date:   Sun, 28 Jul 2019 22:24:29 +0300
-Message-Id: <20190728192429.1514-8-daniel.baluta@nxp.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190728192429.1514-1-daniel.baluta@nxp.com>
-References: <20190728192429.1514-1-daniel.baluta@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1726105AbfG1Tgp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 28 Jul 2019 15:36:45 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7A07785538;
+        Sun, 28 Jul 2019 19:36:44 +0000 (UTC)
+Received: from treble (ovpn-120-102.rdu2.redhat.com [10.10.120.102])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 200465D6A9;
+        Sun, 28 Jul 2019 19:36:43 +0000 (UTC)
+Date:   Sun, 28 Jul 2019 14:36:41 -0500
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/5] KVM: VMX: Add error handling to VMREAD helper
+Message-ID: <20190728193641.mjxrtcc6ps72z3sp@treble>
+References: <20190719204110.18306-1-sean.j.christopherson@intel.com>
+ <20190719204110.18306-4-sean.j.christopherson@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190719204110.18306-4-sean.j.christopherson@intel.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Sun, 28 Jul 2019 19:36:44 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For i.MX7ULP and i.MX8MQ register map is changed. Add two new compatbile
-strings to differentiate this.
+On Fri, Jul 19, 2019 at 01:41:08PM -0700, Sean Christopherson wrote:
+> @@ -68,8 +67,22 @@ static __always_inline unsigned long __vmcs_readl(unsigned long field)
+>  {
+>  	unsigned long value;
+>  
+> -	asm volatile (__ex_clear("vmread %1, %0", "%k0")
+> -		      : "=r"(value) : "r"(field));
+> +	asm volatile("1: vmread %2, %1\n\t"
+> +		     ".byte 0x3e\n\t" /* branch taken hint */
+> +		     "ja 3f\n\t"
+> +		     "mov %2, %%" _ASM_ARG1 "\n\t"
+> +		     "xor %%" _ASM_ARG2 ", %%" _ASM_ARG2 "\n\t"
+> +		     "2: call vmread_error\n\t"
+> +		     "xor %k1, %k1\n\t"
+> +		     "3:\n\t"
+> +
+> +		     ".pushsection .fixup, \"ax\"\n\t"
+> +		     "4: mov %2, %%" _ASM_ARG1 "\n\t"
+> +		     "mov $1, %%" _ASM_ARG2 "\n\t"
+> +		     "jmp 2b\n\t"
+> +		     ".popsection\n\t"
+> +		     _ASM_EXTABLE(1b, 4b)
+> +		     : ASM_CALL_CONSTRAINT, "=r"(value) : "r"(field) : "cc");
 
-Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
----
- Documentation/devicetree/bindings/sound/fsl-sai.txt | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Was there a reason you didn't do the asm goto thing here like you did
+for the previous patch?  That seemed cleaner, and needs less asm.  
 
-diff --git a/Documentation/devicetree/bindings/sound/fsl-sai.txt b/Documentation/devicetree/bindings/sound/fsl-sai.txt
-index 2b38036a4883..b008e9cfedc1 100644
---- a/Documentation/devicetree/bindings/sound/fsl-sai.txt
-+++ b/Documentation/devicetree/bindings/sound/fsl-sai.txt
-@@ -8,7 +8,8 @@ codec/DSP interfaces.
- Required properties:
- 
-   - compatible		: Compatible list, contains "fsl,vf610-sai",
--			  "fsl,imx6sx-sai" or "fsl,imx6ul-sai"
-+			  "fsl,imx6sx-sai", "fsl,imx6ul-sai",
-+			  "fsl,imx7ulp-sai", "fsl,imx8mq-sai".
- 
-   - reg			: Offset and length of the register set for the device.
- 
+I think the branch hints aren't needed -- they're ignored on modern
+processors.  Ditto for the previous patch.
+
+Also please use named asm operands whereever you can, like "%[field]"
+instead of "%2".  It helps a lot with readability.
+
 -- 
-2.17.1
-
+Josh
