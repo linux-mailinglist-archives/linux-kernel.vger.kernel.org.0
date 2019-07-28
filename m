@@ -2,158 +2,224 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 502D378023
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2019 17:25:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 23BD278029
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2019 17:27:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726262AbfG1PZU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 28 Jul 2019 11:25:20 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:39993 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726046AbfG1PZT (ORCPT
+        id S1726183AbfG1P1b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 28 Jul 2019 11:27:31 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:33100 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726046AbfG1P11 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 28 Jul 2019 11:25:19 -0400
-Received: by mail-wm1-f67.google.com with SMTP id v19so51371413wmj.5;
-        Sun, 28 Jul 2019 08:25:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0OnbAgSPJwvUbw2tRezNGTvwhfaWECDe+MXcGqH5rpM=;
-        b=tvJGjGNCiGu81qsWG9UW1f56ISoykEzQxe69HGgPuJWY1vWh2BToE4P1lQr7o5zhty
-         Y2DXk41Rk9LE1SFSiWTRbXOLb3Ahyjyh3LwqbXk+RU9t0fS6e+lp4lMHC2jEoTiGo3q/
-         8/iuL/uplQQPaE1s+4RoUDSg4F5g7RMbV+4g9nIA74D8p7dTNgg5YCEDhPJg8uDP4ndy
-         gQ5Q36Ltmq/rQZfnqMOaz8qyOzAyc03cAux98RtGT56OwjoJ1Mo27sJ1WLyV5VggUoF1
-         0+QxYug6KjR5HKu80bJZYdugQqf5bNZNv/vvWMNATeNBdgw7RYpPCeeiqtRoNGjFerIR
-         QOiQ==
+        Sun, 28 Jul 2019 11:27:27 -0400
+Received: by mail-qk1-f196.google.com with SMTP id r6so42502185qkc.0
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2019 08:27:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=0OnbAgSPJwvUbw2tRezNGTvwhfaWECDe+MXcGqH5rpM=;
-        b=tKg/BHVWaeiLMU+Vryut8ytGUVcU3O8S4NEgsVT5RbxgEnuKWPkUxgdZULP8iVxk67
-         DAST7XhS9qTHwuURvZdnUZ5PGyVKqDKbEBK1TNREXQb0eSSGOguXYjgWYcZypg1rDMEi
-         d4gfMuTu468xyA8tj00MjION2jHwnN0XYA3mjoHKid9OrsxdsHAIBHP6qcq3vehAxfVv
-         PgMTsCt5d9Q372jPhtdSnJONxHi9Q0bNubmv03Y40hTBnB/7yF53OLKv/YJAIJd8k7F9
-         O3IvExCnJBeDy6FCWBvxeQnZCDAcrjlutRnLKDmZx40FcbbTRJ/o201MDHJgqYE7wdIr
-         +QNw==
-X-Gm-Message-State: APjAAAXITFsC0SFxUJL0t5vMylnos1VsQQOhT2Twsn0yesgx3JSmfODD
-        FLyCnXqAfIxc4hlmqSITGNdDzoaMjPgv/oIbx6E=
-X-Google-Smtp-Source: APXvYqwqMHY/y3WFu0ZR36r/YOmks/hkw86Ydao02mX6fAJoEhqh32A4SVNoT8E4xKHv5jx67NZn+rRHRT2VWzP/WGU=
-X-Received: by 2002:a7b:c247:: with SMTP id b7mr99117091wmj.13.1564327516506;
- Sun, 28 Jul 2019 08:25:16 -0700 (PDT)
+        bh=F35K+zfag4ltzyCsUASdf81c+ysiklIJwp6fDU8GkBg=;
+        b=V7hrk/1IHBGxJbsyQBGs9oVwcMOEI00tc9ygXi/AWIp7RYi6FXRuseqE9MOQUxfAhl
+         ejy6lFvcSpSeoQ/HP8hA2AlQ6Gi9iA/12GTiKnbUVQphxBNMnpOUoApbh77wiHRv8PAq
+         bYPRe63dDHMrXjZK/Tb7FuD++NP4/rdKXkd+mSnp7zbmDRDGBSaWFDNYjWb2F4YMONwp
+         IkXU4QUUiNKhOKnE+Jpf4QuxUWCWB4rt8Fbh+LQw42eP9+/sZi3MqbDlmc+/QV9hbVaJ
+         RWOM51kgxgymkr9Doo+bQq2ccfVgpkX58HFBLEUWDiW7TwRxDcXKxXNo2SPgFNaEhUOa
+         I8ig==
+X-Gm-Message-State: APjAAAWJxecD3KrOYlCiNHRyxFvUy6rt5KEQnUAJGPcgOHkcJ+n8Dtg+
+        s4K1P+6wYQIRvsvRK97fxU1Hq/lP5Sp6XRodang=
+X-Google-Smtp-Source: APXvYqw6+D27uAOCGRjn7qjS0hMSrUs+qwZOguAPKuhEO7YfPihCE7pkfWb6ewDj2Zi0ubfJ7XpvIeo29ncfT6rLQl0=
+X-Received: by 2002:a37:4ac3:: with SMTP id x186mr67603060qka.138.1564327646458;
+ Sun, 28 Jul 2019 08:27:26 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190728141218.12702-1-daniel.baluta@nxp.com> <b6506f6579f823e4c1e26ef3a7d1eed2@akkea.ca>
-In-Reply-To: <b6506f6579f823e4c1e26ef3a7d1eed2@akkea.ca>
-From:   Daniel Baluta <daniel.baluta@gmail.com>
-Date:   Sun, 28 Jul 2019 18:25:05 +0300
-Message-ID: <CAEnQRZCyyfoVeG90Qbt8nQaEJYS7ywsSRFAy7a7WR6JrKfq-yg@mail.gmail.com>
-Subject: Re: [PATCH v3] arm64: dts: imx8mq: Init rates and parents configs for clocks
-To:     Angus Ainslie <angus@akkea.ca>
-Cc:     Daniel Baluta <daniel.baluta@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Carlo Caione <ccaione@baylibre.com>,
-        Abel Vesa <abel.vesa@nxp.com>, baruch@tkos.co.il,
-        Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Devicetree List <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "S.j. Wang" <shengjiu.wang@nxp.com>,
-        =?UTF-8?Q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>,
-        Anson Huang <Anson.Huang@nxp.com>,
-        linux-kernel-owner@vger.kernel.org
+References: <201907221012.41504DCD@keescook> <alpine.DEB.2.21.1907222027090.1659@nanos.tec.linutronix.de>
+ <201907221135.2C2D262D8@keescook> <CALCETrVnV8o_jqRDZua1V0s_fMYweP2J2GbwWA-cLxqb_PShog@mail.gmail.com>
+ <201907221620.F31B9A082@keescook> <CALCETrWqu-S3rrg8kf6aqqkXg9Z+TFQHbUgpZEiUU+m8KRARqg@mail.gmail.com>
+ <201907231437.DB20BEBD3@keescook> <alpine.DEB.2.21.1907240038001.27812@nanos.tec.linutronix.de>
+ <201907231636.AD3ED717D@keescook> <alpine.DEB.2.21.1907240155080.2034@nanos.tec.linutronix.de>
+ <20190726180103.GE3188@linux.intel.com> <CALCETrUe50sbMx+Pg+fQdVFVeZ_zTffNWGJUmYy53fcHNrOhrQ@mail.gmail.com>
+ <CAK8P3a3_tki1mi4OjLJdaGLwVA7JE0wE1kczE_q7kEpr5e8sMQ@mail.gmail.com> <alpine.DEB.2.21.1907281225410.1791@nanos.tec.linutronix.de>
+In-Reply-To: <alpine.DEB.2.21.1907281225410.1791@nanos.tec.linutronix.de>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Sun, 28 Jul 2019 17:27:10 +0200
+Message-ID: <CAK8P3a0dC5ti8nVMK8-NmmTYeEfKPdLpVf0zrQEnq76fUvh1oA@mail.gmail.com>
+Subject: Re: [5.2 REGRESSION] Generic vDSO breaks seccomp-enabled userspace on i386
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Paul Bolle <pebolle@tiscali.nl>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jul 28, 2019 at 5:53 PM Angus Ainslie <angus@akkea.ca> wrote:
->
-> Hi Daniel,
->
-> On 2019-07-28 07:12, Daniel Baluta wrote:
-> > From: Abel Vesa <abel.vesa@nxp.com>
-> >
-> > Add the initial configuration for clocks that need default parent and
-> > rate
-> > setting. This is based on the vendor tree clock provider parents and
-> > rates
-> > configuration except this is doing the setup in dts rather then using
-> > clock
-> > consumer API in a clock provider driver.
-> >
-> > Note that by adding the initial rate setting for audio_pll1/audio_pll
-> > setting we need to remove it from imx8mq-librem5-devkit.dts
-> > imx8mq-librem5-devkit.dts
-> >
-> > Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-> > Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
->
-> This works with our board. One small nit below
->
-> Tested-by: Angus Ainslie (Purism) <angus@akkea.ca>
->
-> > ---
-> > Changes since v2:
-> >       - set rate for audio_pll1/audio_pll2  in the dtsi file and
-> >       remove the setting from imx8mq-librem5-devkit.dts
-> >
-> >  .../dts/freescale/imx8mq-librem5-devkit.dts   |  5 -----
-> >  arch/arm64/boot/dts/freescale/imx8mq.dtsi     | 21 +++++++++++++++++++
-> >  2 files changed, 21 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts
-> > b/arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts
-> > index 683a11035643..c702ccc82867 100644
-> > --- a/arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts
-> > +++ b/arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts
-> > @@ -169,11 +169,6 @@
-> >       };
-> >  };
-> >
-> > -&clk {
-> > -     assigned-clocks = <&clk IMX8MQ_AUDIO_PLL1>, <&clk IMX8MQ_AUDIO_PLL2>;
-> > -     assigned-clock-rates = <786432000>, <722534400>;
-> > -};
-> > -
-> >  &dphy {
-> >       status = "okay";
-> >  };
-> > diff --git a/arch/arm64/boot/dts/freescale/imx8mq.dtsi
-> > b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
-> > index 02fbd0625318..c67625a881a4 100644
-> > --- a/arch/arm64/boot/dts/freescale/imx8mq.dtsi
-> > +++ b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
-> > @@ -494,6 +494,27 @@
-> >                               clock-names = "ckil", "osc_25m", "osc_27m",
-> >                                             "clk_ext1", "clk_ext2",
-> >                                             "clk_ext3", "clk_ext4";
-> > +                             assigned-clocks = <&clk IMX8MQ_VIDEO_PLL1>,
-> > +                                     <&clk IMX8MQ_AUDIO_PLL1>,
-> > +                                     <&clk IMX8MQ_AUDIO_PLL2>,
-> > +                                     <&clk IMX8MQ_CLK_AHB>,
-> > +                                     <&clk IMX8MQ_CLK_NAND_USDHC_BUS>,
-> > +                                     <&clk IMX8MQ_CLK_AUDIO_AHB>,
-> > +                                     <&clk IMX8MQ_VIDEO_PLL1_REF_SEL>,
-> > +                                     <&clk IMX8MQ_CLK_NOC>;
-> > +                             assigned-clock-parents = <0>,
-> > +                                             <0>,
-> > +                                             <0>,
-> > +                                             <&clk IMX8MQ_SYS1_PLL_133M>,
-> > +                                             <&clk IMX8MQ_SYS1_PLL_266M>,
-> > +                                             <&clk IMX8MQ_SYS2_PLL_500M>,
-> > +                                             <&clk IMX8MQ_CLK_27M>,
-> > +                                             <&clk IMX8MQ_SYS1_PLL_800M>;
-> > +                             assigned-clock-rates = <593999999>,
-> > +                                             <786432000>,
-> > +                                             <722534400>;
-> > +
-> > +
->
-> Extra whitespace
+On Sun, Jul 28, 2019 at 12:30 PM Thomas Gleixner <tglx@linutronix.de> wrote:
+> On Sun, 28 Jul 2019, Arnd Bergmann wrote:
+> > On Sat, Jul 27, 2019 at 7:53 PM Andy Lutomirski <luto@kernel.org> wrote:
 
-Thanks Angus for testing. Fixed in v4.
+> Which is totally irrelevant because res is NULL and that NULL pointer check
+> should simply return -EFAULT, which is what the syscall fallback returns
+> because the pointer is NULL.
+>
+> But that NULL pointer check is inconsistent anyway:
+>
+>  - 64 bit does not have it and never had
+>
+>  - the vdso is not capable of handling faults properly anyway. If the
+>    pointer is not valid, then it will segfault. So just preventing the
+>    segfault for NULL is silly.
+>
+> I'm going to just remove it.
+
+Ah, you are right, I misread.
+
+Anyway, if we want to keep the traditional behavior and get fewer surprises
+for users of seccomp and anything else that might observe clock_gettime
+behavior, below is how I'd do it. (not even build tested, x86-only. I'll
+send a proper patch if this is where we want to take it).
+
+        Arnd
+
+diff --git a/arch/x86/include/asm/vdso/gettimeofday.h
+b/arch/x86/include/asm/vdso/gettimeofday.h
+index ae91429129a6..f7b6a50d4811 100644
+--- a/arch/x86/include/asm/vdso/gettimeofday.h
++++ b/arch/x86/include/asm/vdso/gettimeofday.h
+@@ -70,6 +70,13 @@ long clock_gettime_fallback(clockid_t _clkid,
+struct __kernel_timespec *_ts)
+        return ret;
+ }
+
++
++static __always_inline
++long clock_gettime32_fallback(clockid_t _clkid, struct old_timespec32 *_ts)
++{
++       return -ENOSYS;
++}
++
+ static __always_inline
+ long gettimeofday_fallback(struct __kernel_old_timeval *_tv,
+                           struct timezone *_tz)
+@@ -97,7 +104,7 @@ long clock_getres_fallback(clockid_t _clkid, struct
+__kernel_timespec *_ts)
+ #else
+
+ static __always_inline
+-long clock_gettime_fallback(clockid_t _clkid, struct __kernel_timespec *_ts)
++long clock_gettime_fallback(clockid_t _clkid, struct old_timespec32 *_ts)
+ {
+        long ret;
+
+@@ -113,6 +120,23 @@ long clock_gettime_fallback(clockid_t _clkid,
+struct __kernel_timespec *_ts)
+        return ret;
+ }
+
++static __always_inline
++long clock_gettime32_fallback(clockid_t _clkid, struct __kernel_timespec *_ts)
++{
++       long ret;
++
++       asm (
++               "mov %%ebx, %%edx \n"
++               "mov %[clock], %%ebx \n"
++               "call __kernel_vsyscall \n"
++               "mov %%edx, %%ebx \n"
++               : "=a" (ret), "=m" (*_ts)
++               : "0" (__NR_clock_gettime), [clock] "g" (_clkid), "c" (_ts)
++               : "edx");
++
++       return ret;
++}
++
+ static __always_inline
+ long gettimeofday_fallback(struct __kernel_old_timeval *_tv,
+                           struct timezone *_tz)
+diff --git a/lib/vdso/gettimeofday.c b/lib/vdso/gettimeofday.c
+index 2d1c1f241fd9..3b3dab53d611 100644
+--- a/lib/vdso/gettimeofday.c
++++ b/lib/vdso/gettimeofday.c
+@@ -18,6 +18,7 @@
+  *   clock_mode.
+  * - gettimeofday_fallback(): fallback for gettimeofday.
+  * - clock_gettime_fallback(): fallback for clock_gettime.
++ * - clock_gettime_fallback(): fallback for clock_gettime32.
+  * - clock_getres_fallback(): fallback for clock_getres.
+  */
+ #ifdef ENABLE_COMPAT_VDSO
+@@ -51,7 +52,7 @@ static int do_hres(const struct vdso_data *vd, clockid_t clk,
+                ns = vdso_ts->nsec;
+                last = vd->cycle_last;
+                if (unlikely((s64)cycles < 0))
+-                       return clock_gettime_fallback(clk, ts);
++                       return -ENOSYS;
+
+                ns += vdso_calc_delta(cycles, last, vd->mask, vd->mult);
+                ns >>= vd->shift;
+@@ -81,15 +82,15 @@ static void do_coarse(const struct vdso_data *vd,
+clockid_t clk,
+        } while (unlikely(vdso_read_retry(vd, seq)));
+ }
+
+-static __maybe_unused int
+-__cvdso_clock_gettime(clockid_t clock, struct __kernel_timespec *ts)
++static int
++__cvdso_clock_gettime_common(clockid_t clock, struct __kernel_timespec *ts)
+ {
+        const struct vdso_data *vd = __arch_get_vdso_data();
+        u32 msk;
+
+        /* Check for negative values or invalid clocks */
+        if (unlikely((u32) clock >= MAX_CLOCKS))
+-               goto fallback;
++               return -EINVAL;
+
+        /*
+         * Convert the clockid to a bitmask and use it to check which
+@@ -105,7 +106,15 @@ __cvdso_clock_gettime(clockid_t clock, struct
+__kernel_timespec *ts)
+                return do_hres(&vd[CS_RAW], clock, ts);
+        }
+
+-fallback:
++       return -EINVAL;
++}
++
++static __maybe_unused int
++__cvdso_clock_gettime(clockid_t clock, struct __kernel_timespec *ts)
++{
++       if (!__cvdso_clock_gettime_common(clock, ts))
++               return 0;
++
+        return clock_gettime_fallback(clock, ts);
+ }
+
+@@ -113,22 +122,14 @@ static __maybe_unused int
+ __cvdso_clock_gettime32(clockid_t clock, struct old_timespec32 *res)
+ {
+        struct __kernel_timespec ts;
+-       int ret;
+-
+-       if (res == NULL)
+-               goto fallback;
+-
+-       ret = __cvdso_clock_gettime(clock, &ts);
+
+-       if (ret == 0) {
++       if (!__cvdso_clock_gettime_common(clock, &ts)) {
+                res->tv_sec = ts.tv_sec;
+                res->tv_nsec = ts.tv_nsec;
++               return 0;
+        }
+
+-       return ret;
+-
+-fallback:
+-       return clock_gettime_fallback(clock, (struct __kernel_timespec *)res);
++       return clock_gettime32_fallback(clock, res);
+ }
+
+ static __maybe_unused int
