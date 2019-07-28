@@ -2,148 +2,198 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 04FFC78035
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2019 17:31:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E7C4278039
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2019 17:35:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726129AbfG1Pbz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 28 Jul 2019 11:31:55 -0400
-Received: from foss.arm.com ([217.140.110.172]:33560 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726032AbfG1Pbz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 28 Jul 2019 11:31:55 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 906B5344;
-        Sun, 28 Jul 2019 08:31:54 -0700 (PDT)
-Received: from [10.37.12.40] (unknown [10.37.12.40])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 45FE03F71F;
-        Sun, 28 Jul 2019 08:31:53 -0700 (PDT)
-Subject: Re: [patch 3/5] lib/vdso/32: Provide legacy syscall fallbacks
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc:     x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Paul Bolle <pebolle@tiscali.nl>, Will Deacon <will@kernel.org>
-References: <20190728131251.622415456@linutronix.de>
- <20190728131648.786513965@linutronix.de>
-From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
-Message-ID: <3aba2ca9-5ed2-8bde-eb3e-ddb25410205d@arm.com>
-Date:   Sun, 28 Jul 2019 16:33:04 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1726167AbfG1Pfr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 28 Jul 2019 11:35:47 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:39218 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726032AbfG1Pfr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 28 Jul 2019 11:35:47 -0400
+Received: by mail-pl1-f196.google.com with SMTP id b7so26565633pls.6
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2019 08:35:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Pm6pwIPdlV9wRk+JitjPlIfT8uYdgqGZKgDDx5JXMvo=;
+        b=ARdtilcr0o+k6afqdq26dB6uiPQmwsK/dIg5CCUfize/+2sZckkq9SBfSdltYDqdvK
+         CmUecGvwbkSdnSWtSvlXRjuxZcdFejEOeqPY3zzYmNgSuYBBQd3SV4PGISic/QDX6sxV
+         tPS9OrxdPUdOe16wYiDYpxXi115+Z/pjxkEZU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Pm6pwIPdlV9wRk+JitjPlIfT8uYdgqGZKgDDx5JXMvo=;
+        b=Uld8qJxHpGnMyaeKgZzC61qh8VRGDDOXBDBUwEmGBq7iZN3D0ICHYOhRh5J6QYOPZs
+         5cu0Bue1ErV0VSjCFxRo75JEaaBaHK2of59B8uZY6NNPyk4PZtTsn9AU/18c1lq1QdVI
+         MMnL/lOiU4TTgkAKQ7OLweheFb1VFT1Ass6L8kRXTjJKYiCmx/W3CmWiCIOYzwDEu9r0
+         44by2nYlF/Mi5xWm2PyeoQDU2clWTwpAHpDok7lFTwi5j/Zngnk9RNZYYdKtz6W5JQal
+         6mWZNps+ad4q2lJYgNgjru0gA++SD2FKFYHFjVgzY0i/u09OFAzkXJAhEMVds2AlZkWN
+         PIsA==
+X-Gm-Message-State: APjAAAXNfrLhSKQdkGA4tcru579jPO3/b9Z5rNiYrwWfZazwtYaQlyK4
+        6fwae7Z9H3UoQIzznq8714U=
+X-Google-Smtp-Source: APXvYqwlh8jFqpMNB2vT4vmBRbLrB7P3r3gqG6V5tDxzBhF0Er/215XImhQMOAIPhhTKSVtXcooiBA==
+X-Received: by 2002:a17:902:b702:: with SMTP id d2mr109216801pls.259.1564328146304;
+        Sun, 28 Jul 2019 08:35:46 -0700 (PDT)
+Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
+        by smtp.gmail.com with ESMTPSA id x24sm55904341pgl.84.2019.07.28.08.35.45
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Sun, 28 Jul 2019 08:35:45 -0700 (PDT)
+Date:   Sun, 28 Jul 2019 11:35:44 -0400
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Boqun Feng <boqun.feng@gmail.com>
+Cc:     Alan Stern <stern@rowland.harvard.edu>,
+        linux-kernel@vger.kernel.org, kernel-team@android.com,
+        Akira Yokosawa <akiyks@gmail.com>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        David Howells <dhowells@redhat.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Jade Alglave <j.alglave@ucl.ac.uk>, linux-arch@vger.kernel.org,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will@kernel.org>
+Subject: Re: [PATCH v2] lkmm/docs: Correct ->prop example with additional rfe
+ link
+Message-ID: <20190728153544.GA87531@google.com>
+References: <20190728031303.164545-1-joel@joelfernandes.org>
+ <Pine.LNX.4.44L0.1907281027160.6532-100000@netrider.rowland.org>
+ <20190728151959.GA82871@google.com>
+ <20190728152806.GB26905@tardis>
 MIME-Version: 1.0
-In-Reply-To: <20190728131648.786513965@linutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190728152806.GB26905@tardis>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/28/19 2:12 PM, Thomas Gleixner wrote:
-> To address the regression which causes seccomp to deny applications the
-> access to clock_gettime64() and clock_getres64() syscalls because they
-> are not enabled in the existing filters.
+On Sun, Jul 28, 2019 at 11:28:06PM +0800, Boqun Feng wrote:
+> On Sun, Jul 28, 2019 at 11:19:59AM -0400, Joel Fernandes wrote:
+> > On Sun, Jul 28, 2019 at 10:48:51AM -0400, Alan Stern wrote:
+> > > On Sat, 27 Jul 2019, Joel Fernandes (Google) wrote:
+> > > 
+> > > > The lkmm example about ->prop relation should describe an additional rfe
+> > > > link between P1's store to y and P2's load of y, which should be
+> > > > critical to establishing the ordering resulting in the ->prop ordering
+> > > > on P0. IOW, there are 2 rfe links, not one.
+> > > > 
+> > > > Correct these in the docs to make the ->prop ordering on P0 more clear.
+> > > > 
+> > > > Cc: kernel-team@android.com
+> > > > Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
+> > > > Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+> > > > ---
+> > > 
+> > > This is not a good update.  See below...
+> > 
+> > No problem, thanks for the feedback. I am new to the LKMM so please bear
+> > with me.. I should have tagged this RFC.
+> > 
+> > > >  .../memory-model/Documentation/explanation.txt  | 17 ++++++++++-------
+> > > >  1 file changed, 10 insertions(+), 7 deletions(-)
+> > > > 
+> > > > diff --git a/tools/memory-model/Documentation/explanation.txt b/tools/memory-model/Documentation/explanation.txt
+> > > > index 68caa9a976d0..aa84fce854cc 100644
+> > > > --- a/tools/memory-model/Documentation/explanation.txt
+> > > > +++ b/tools/memory-model/Documentation/explanation.txt
+> > > > @@ -1302,8 +1302,8 @@ followed by an arbitrary number of cumul-fence links, ending with an
+> > > >  rfe link.  You can concoct more exotic examples, containing more than
+> > > >  one fence, although this quickly leads to diminishing returns in terms
+> > > >  of complexity.  For instance, here's an example containing a coe link
+> > > > -followed by two fences and an rfe link, utilizing the fact that
+> > > > -release fences are A-cumulative:
+> > > > +followed by a fence, an rfe link, another fence and and a final rfe link,
+> > >                                                    ^---^
+> > > > +utilizing the fact that release fences are A-cumulative:
+> > > 
+> > > I don't like this, for two reasons.  First is the repeated "and" typo.
+> > 
+> > Will fix the trivial typo, sorry about that.
+> > 
+> > > More importantly, it's not necessary to go into this level of detail; a
+> > > better revision would be:
+> > > 
+> > > +followed by two cumul-fences and an rfe link, utilizing the fact that
+> > > 
+> > > This is appropriate because the cumul-fence relation is defined to 
+> > > contain the rfe link which you noticed wasn't mentioned explicitly.
+> > 
+> > No, I am talking about the P1's store to Y and P2's load of Y. That is not
+> > through a cumul-fence so I don't understand what you meant? That _is_ missing
+> > the rfe link I am referring to, that is left out.
+> > 
+> > The example says r2 = 1 and then we work backwards from that. r2 could very
+> > well have been 0, there's no fence or anything involved, it just happens to
+> > be the executation pattern causing r2 = 1 and hence the rfe link. Right?
+> > 
+> > > >  	int x, y, z;
+> > > >  
+> > > > @@ -1334,11 +1334,14 @@ If x = 2, r0 = 1, and r2 = 1 after this code runs then there is a prop
+> > > >  link from P0's store to its load.  This is because P0's store gets
+> > > >  overwritten by P1's store since x = 2 at the end (a coe link), the
+> > > >  smp_wmb() ensures that P1's store to x propagates to P2 before the
+> > > > -store to y does (the first fence), the store to y propagates to P2
+> > > > -before P2's load and store execute, P2's smp_store_release()
+> > > > -guarantees that the stores to x and y both propagate to P0 before the
+> > > > -store to z does (the second fence), and P0's load executes after the
+> > > > -store to z has propagated to P0 (an rfe link).
+> > > > +store to y does (the first fence), P2's store to y happens before P2's
+> > > ---------------------------------------^
+> > > 
+> > > This makes no sense, since P2 doesn't store to y.  You meant P1's store
+> > > to y.  Also, the use of "happens before" is here unnecessarily
+> > > ambiguous (is it an informal usage or does it refer to the formal
+> > > happens-before relation?).  The original "propagates to" is better.
+> > 
+> > Will reword this.
+> > 
+> > > > +load of y (rfe link), P2's smp_store_release() ensures that P2's load
+> > > > +of y executes before P2's store to z (second fence), which implies that
+> > > > +that stores to x and y propagate to P2 before the smp_store_release(), which
+> > > > +means that P2's smp_store_release() will propagate stores to x and y to all
+> > > > +CPUs before the store to z propagates (A-cumulative property of this fence).
+> > > > +Finally P0's load of z executes after P2's store to z has propagated to
+> > > > +P0 (rfe link).
+> > > 
+> > > Again, a better change would be simply to replace the two instances of
+> > > "fence" in the original text with "cumul-fence".
+> > 
+> > Ok that's fine. But I still feel the rfe is not a part of the cumul-fence.
+> > The fences have nothing to do with the rfe. Or, I am missing something quite
+> > badly.
+> > 
+> > Boqun, did you understand what Alan is saying?
+> > 
 > 
-> That trips over the fact that 32bit VDSOs use the new clock_gettime64() and
-> clock_getres64() syscalls in the fallback path.
+> I think 'cumul-fence' that Alan mentioned is not a fence, but a
+> relation, which could be the result of combining a rfe relation and a
+> A-cumulative fence relation. Please see the section "PROPAGATION ORDER
+> RELATION: cumul-fence" or the definition of cumul-fence in
+> linux-kernel.cat.
 > 
-> Implement a __cvdso_clock_get*time32() variants which invokes the legacy
-> 32bit syscalls when the architecture requests it.
-> 
-> The conditional can go away once all architectures are converted.
->
+> Did I get you right, Alan? If so, your suggestion is indeed a better
+> change.
 
-Reviewed-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
-Tested-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
+To be frank, I don't think it is better if that's what Alan meant. It is
+better to be explicit about the ->rfe so that the reader walking through the
+example can clearly see the ordering and make sense of it.
 
-> Fixes: 00b26474c2f1 ("lib/vdso: Provide generic VDSO implementation")
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> ---
->  lib/vdso/gettimeofday.c |   46 +++++++++++++++++++++++++++++++++++++++++++++-
->  1 file changed, 45 insertions(+), 1 deletion(-)
-> 
-> --- a/lib/vdso/gettimeofday.c
-> +++ b/lib/vdso/gettimeofday.c
-> @@ -117,6 +117,8 @@ static __maybe_unused int
->  	return 0;
->  }
->  
-> +#ifndef VDSO_HAS_32BIT_FALLBACK
-> +
->  static __maybe_unused int
->  __cvdso_clock_gettime32(clockid_t clock, struct old_timespec32 *res)
->  {
-> @@ -132,10 +134,29 @@ static __maybe_unused int
->  		res->tv_sec = ts.tv_sec;
->  		res->tv_nsec = ts.tv_nsec;
->  	}
-> -
->  	return ret;
->  }
->  
-> +#else
-> +
-> +static __maybe_unused int
-> +__cvdso_clock_gettime32(clockid_t clock, struct old_timespec32 *res)
-> +{
-> +	struct __kernel_timespec ts;
-> +	int ret;
-> +
-> +	ret = __cvdso_clock_gettime_common(clock, &ts);
-> +
-> +	if (likely(!ret)) {
-> +		res->tv_sec = ts.tv_sec;
-> +		res->tv_nsec = ts.tv_nsec;
-> +		return 0;
-> +	}
-> +	return clock_gettime32_fallback(clock, res);
-> +}
-> +
-> +#endif
-> +
->  static __maybe_unused int
->  __cvdso_gettimeofday(struct __kernel_old_timeval *tv, struct timezone *tz)
->  {
-> @@ -225,6 +246,8 @@ int __cvdso_clock_getres(clockid_t clock
->  	return 0;
->  }
->  
-> +#ifndef VDSO_HAS_32BIT_FALLBACK
-> +
->  static __maybe_unused int
->  __cvdso_clock_getres_time32(clockid_t clock, struct old_timespec32 *res)
->  {
-> @@ -241,4 +264,25 @@ static __maybe_unused int
->  	}
->  	return ret;
->  }
-> +
-> +#else
-> +
-> +static __maybe_unused int
-> +__cvdso_clock_getres_time32(clockid_t clock, struct old_timespec32 *res)
-> +{
-> +	struct __kernel_timespec ts;
-> +	int ret;
-> +
-> +	ret = __cvdso_clock_getres_common(clock, &ts);
-> +
-> +	if (likely(!ret)) {
-> +		res->tv_sec = ts.tv_sec;
-> +		res->tv_nsec = ts.tv_nsec;
-> +		return 0;
-> +	}
-> +
-> +	return clock_getres32_fallback(clock, res);
-> +}
-> +#endif
-> +
->  #endif /* VDSO_HAS_CLOCK_GETRES */
-> 
-> 
+Just saying 'cumul-fence' and then hoping the reader sees the light is quite
+a big assumption and makes the document less readable.
 
--- 
-Regards,
-Vincenzo
+I mean the fact that you are asking Alan for clarification, means that it is
+not that obvious ;)
+
+thanks,
+
+ - Joel
+
+
