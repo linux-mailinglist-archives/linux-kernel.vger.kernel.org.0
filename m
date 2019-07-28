@@ -2,83 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E07E78268
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 01:38:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 70C7778278
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 01:43:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726384AbfG1XiN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 28 Jul 2019 19:38:13 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:37567 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726163AbfG1XiM (ORCPT
+        id S1726317AbfG1Xno (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 28 Jul 2019 19:43:44 -0400
+Received: from gateway36.websitewelcome.com ([192.185.198.13]:20861 "EHLO
+        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726229AbfG1Xno (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 28 Jul 2019 19:38:12 -0400
-Received: by mail-lf1-f67.google.com with SMTP id c9so40690562lfh.4
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2019 16:38:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=A2YoLjOmjoi0MvPq3QD0hmADDj+Ydfv3BHipfJHYsV4=;
-        b=XlhkQmH67dhcBDB/Xr7JvFPOG2VU81DTdMdboPT/HeIYWgB9tdya4Qu7sHgU0WMkaM
-         vLenZczcXQneLoQwwIMosVAUQ7eROBagrCowwDdHynkzWR6TG6G/348pyMvV2ko15fAX
-         J6eOaYIHqHdN2UumITKAxV05/2xTZbsY0nfOHx2zKefVEAWZk/V94esJyXg+dV04m9ZC
-         3T6esDVVvsV2RDBV0sLFBEN22b9i5xaNaCrAxueDIdJQotuNWYkqh9CJdvvAgneQ8VYO
-         PxSF+7xqWZhasZ+4KJQhOOybJ6f/GiXAs/huwwXy1rfoOxGb0FkKxX89PQJ4JjNcb5+Z
-         0kRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=A2YoLjOmjoi0MvPq3QD0hmADDj+Ydfv3BHipfJHYsV4=;
-        b=EwMOS5FHWY+pwOIMNOv55N6ZPbRssgR9r43cninGz3oPJPTZbWDXPbmShezwBLfuYE
-         MMxQmBDRmCQZK7kUD6YOHbzkBkm0OsRMrVQVfSL9aCIfShi3mmgdin4pdlRp9mDZaNQI
-         gCxW8m5KMr6AsEB3xlU0pKyunKDIVWd8zQCI696I5aQBltk1YacczAYo6B1RKO54Kzhe
-         TQPWhyDmMyG2iXRlY4w+kmhEZLMkMC5EM6zZix60WFHQnK0V6Ierepuc3StnQEWuOx/o
-         ZB32bNQQbSqNAtsBhv5mZZ8mJobC2+1AjzgNdIWAapmRfkm4R5tiD+Axx2VJ1or+V8Sz
-         DzUA==
-X-Gm-Message-State: APjAAAV+sx6XnJALmm1zov5hJsSM67AlihzY1DZxCmTKMtz4aY0qpXj/
-        sgzwjEOEFUA81Zw1cBExNRZ/sPGuYm9AiAK52PfBMw==
-X-Google-Smtp-Source: APXvYqzNLF2GKPsxU0k1Fl9UXDm3yiIIWBYWeFyjCRu2eWqJIj+FDChdYuoS6Cmi6P1mJrVQoHtEsToFX8UBgZc9YJM=
-X-Received: by 2002:a19:dc0d:: with SMTP id t13mr45895639lfg.152.1564357090803;
- Sun, 28 Jul 2019 16:38:10 -0700 (PDT)
+        Sun, 28 Jul 2019 19:43:44 -0400
+X-Greylist: delayed 1461 seconds by postgrey-1.27 at vger.kernel.org; Sun, 28 Jul 2019 19:43:43 EDT
+Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
+        by gateway36.websitewelcome.com (Postfix) with ESMTP id 22AE0400C34D5
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2019 17:43:25 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id rsRmh1Yd1dnCersRmhV4Os; Sun, 28 Jul 2019 18:19:22 -0500
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=PY6E13tVfIgBq9qTq9qmjg7C5IhkGMS1k4wt9WQOgBg=; b=UIbI760Cqp3d3ijjcmuaqmwDtN
+        kyrvcLfNZF4clUbxV+4FTx7Mak7xcRTjZsTWsnlo9CfF0ahFDUsML2mQDkCqLcJClVkNS+GWRjWbe
+        X5MdRtFHZJcebXg7ocKkwPJyJSCfTmQMHwH8sjxayXUiZbTQWRcGLMXVqEs0W24Y6IepyptAzDdC3
+        sQE8X+gLM4VseJflhpewJhF4OPJLigjqiJC1cNCmdqVKleFtgxa44iLdWvP5Q43Hkz93pJw4NTHsk
+        bDV0rPCJs84J5vPbLA4I67uK9urFp268W0EFB3m2WodxyEcb2cg5CQY30ZcsYhy7jl567pkV5H40E
+        wg0swe8Q==;
+Received: from [187.192.11.120] (port=39058 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1hrsRl-003XoU-2P; Sun, 28 Jul 2019 18:19:21 -0500
+Date:   Sun, 28 Jul 2019 18:19:20 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Russell King <linux@armlinux.org.uk>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Kees Cook <keescook@chromium.org>
+Subject: [PATCH] ARM: alignment: Mark expected switch fall-throughs
+Message-ID: <20190728231920.GA22247@embeddedor>
 MIME-Version: 1.0
-References: <1563564291-9692-3-git-send-email-hongweiz@ami.com> <1563827815-15092-1-git-send-email-hongweiz@ami.com>
-In-Reply-To: <1563827815-15092-1-git-send-email-hongweiz@ami.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 29 Jul 2019 01:37:33 +0200
-Message-ID: <CACRpkdbkLj7WDMp7vtNDR81yezw-zPq3MWvVRLKvpkvAueo0uw@mail.gmail.com>
-Subject: Re: [v5 2/2] gpio: aspeed: Add SGPIO driver
-To:     Hongwei Zhang <hongweiz@ami.com>
-Cc:     Andrew Jeffery <andrew@aj.id.au>,
-        linux-gpio <linux-gpio@vger.kernel.org>,
-        Joel Stanley <joel@jms.id.au>,
-        linux-aspeed <linux-aspeed@lists.ozlabs.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 187.192.11.120
+X-Source-L: No
+X-Exim-ID: 1hrsRl-003XoU-2P
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [187.192.11.120]:39058
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 18
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 22, 2019 at 10:37 PM Hongwei Zhang <hongweiz@ami.com> wrote:
+Mark switch cases where we are expecting to fall through.
 
-> As you suspected it correctly, AST2500 utilizes all the 32 bits of the registers
-> (data value, interrupt, etc...), such that using 8-bit bands
-> [7:0]/[15:8]/23:16]/[31:24] of GPIO_200H for SGPIO_A/B/C/D .
-> so registering 10 gpiochip drivers separately will make code more
-> complicated, for example gpio_200 register (data_value reg) has to be
-> shared by 4 gpiochip instances, and the same is true for gpio204 (interrupt reg),
-> and other more registers.
-> So we would prefer to keeping current implementation.
+This patch fixes the following warnings:
 
-OK this is a pretty good argument. My review assumed one
-32-bit register was not shared between banks but it is,
-I see.
+arch/arm/mm/alignment.c: In function 'thumb2arm':
+arch/arm/mm/alignment.c:688:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+   if ((tinstr & (3 << 9)) == 0x0400) {
+      ^
+arch/arm/mm/alignment.c:700:2: note: here
+  default:
+  ^~~~~~~
+arch/arm/mm/alignment.c: In function 'do_alignment_t32_to_handler':
+arch/arm/mm/alignment.c:753:15: warning: this statement may fall through [-Wimplicit-fallthrough=]
+   poffset->un = (tinst2 & 0xff) << 2;
+   ~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+arch/arm/mm/alignment.c:754:2: note: here
+  case 0xe940:
+  ^~~~
 
-The above situation can be managed by regmap, but that will
-just a different complexity so go with this approach then.
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ arch/arm/mm/alignment.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Yours,
-Linus Walleij
+diff --git a/arch/arm/mm/alignment.c b/arch/arm/mm/alignment.c
+index 8cdb78642e93..04b36436cbc0 100644
+--- a/arch/arm/mm/alignment.c
++++ b/arch/arm/mm/alignment.c
+@@ -695,7 +695,7 @@ thumb2arm(u16 tinstr)
+ 			return subset[(L<<1) | ((tinstr & (1<<8)) >> 8)] |
+ 			    (tinstr & 255);		/* register_list */
+ 		}
+-		/* Else fall through for illegal instruction case */
++		/* Else, fall through - for illegal instruction case */
+ 
+ 	default:
+ 		return BAD_INSTR;
+@@ -751,6 +751,8 @@ do_alignment_t32_to_handler(unsigned long *pinstr, struct pt_regs *regs,
+ 	case 0xe8e0:
+ 	case 0xe9e0:
+ 		poffset->un = (tinst2 & 0xff) << 2;
++		/* Fall through */
++
+ 	case 0xe940:
+ 	case 0xe9c0:
+ 		return do_alignment_ldrdstrd;
+-- 
+2.22.0
+
