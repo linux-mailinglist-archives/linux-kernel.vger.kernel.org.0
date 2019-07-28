@@ -2,124 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD2547802E
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2019 17:29:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E22B7803B
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2019 17:36:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726302AbfG1P26 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 28 Jul 2019 11:28:58 -0400
-Received: from foss.arm.com ([217.140.110.172]:33526 "EHLO foss.arm.com"
+        id S1726191AbfG1Pgf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 28 Jul 2019 11:36:35 -0400
+Received: from sam.st ([5.44.101.18]:47691 "EHLO mail.sam.st"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726046AbfG1P25 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 28 Jul 2019 11:28:57 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0B7A4344;
-        Sun, 28 Jul 2019 08:28:57 -0700 (PDT)
-Received: from [10.37.12.40] (unknown [10.37.12.40])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AEBAD3F71F;
-        Sun, 28 Jul 2019 08:28:55 -0700 (PDT)
-Subject: Re: [patch 1/5] lib/vdso/32: Remove inconsistent NULL pointer checks
+        id S1726082AbfG1Pgf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 28 Jul 2019 11:36:35 -0400
+X-Greylist: delayed 562 seconds by postgrey-1.27 at vger.kernel.org; Sun, 28 Jul 2019 11:36:33 EDT
+Received: from workstation-ibk.test (212-186-61-58.cable.dynamic.surfer.at [212.186.61.58])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.mayr.bz.it (Postfix) with ESMTPSA id 802DB3000BD;
+        Sun, 28 Jul 2019 17:27:06 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sam.st; s=default;
+        t=1564327626;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=71FxAUQjnzv2j4qqgDoMFk3VeNdKFNwKxT1YuGIIY4U=;
+        b=WbITrxD0yrYuIBctsgI0XRdCjme+lw+y2NvxAFKUQ8bc2zPLq1gRWHCV1ndv5M9/UUNKaH
+        I01z2fLCBqYU9PB0z7eH5AWsAIPtaBbqkPryiqL6SuK8xqkTzUP2qpfB4qR8K9ekEqulVK
+        i1XrToC88XlD86Pc2fw8SW6F4imMtmo=
+From:   Sebastian Mayr <me@sam.st>
 To:     Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc:     x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Paul Bolle <pebolle@tiscali.nl>, Will Deacon <will@kernel.org>
-References: <20190728131251.622415456@linutronix.de>
- <20190728131648.587523358@linutronix.de>
-From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
-Message-ID: <dafaa6b5-8e45-307c-c65a-dfef467a5754@arm.com>
-Date:   Sun, 28 Jul 2019 16:30:07 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Sebastian Mayr <me@sam.st>
+Subject: [PATCH] uprobes/x86: fix detection of 32-bit user mode
+Date:   Sun, 28 Jul 2019 17:26:17 +0200
+Message-Id: <20190728152617.7308-1-me@sam.st>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-In-Reply-To: <20190728131648.587523358@linutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/28/19 2:12 PM, Thomas Gleixner wrote:
-> The 32bit variants of vdso_clock_gettime()/getres() have a NULL pointer
-> check for the timespec pointer. That's inconsistent vs. 64bit.
-> 
-> But the vdso implementation will never be consistent versus the syscall
-> because the only case which it can handle is NULL. Any other invalid
-> pointer will cause a segfault. So special casing NULL is not really useful.
-> 
-> Remove it along with the superflouos syscall fallback invocation as that
-> will return -EFAULT anyway. That also gets rid of the dubious typecast
-> which only works because the pointer is NULL.
+32-bit processes running on a 64-bit kernel are not always detected
+correctly, causing the process to crash when uretprobes are installed.
+The reason for the crash is that in_ia32_syscall() is used to determine
+the process's mode, which only works correctly when called from a
+syscall. In the case of uretprobes, however, the function is called from
+a software interrupt and always returns 'false' (on a 64-bit kernel). In
+consequence this leads to corruption of the process's return address.
 
-Reviewed-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
-Tested-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
+This can be fixed by using user_64bit_mode(), which should always be
+correct.
 
-> 
-> Fixes: 00b26474c2f1 ("lib/vdso: Provide generic VDSO implementation")
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> ---
->  lib/vdso/gettimeofday.c |   18 ++----------------
->  1 file changed, 2 insertions(+), 16 deletions(-)
-> 
-> --- a/lib/vdso/gettimeofday.c
-> +++ b/lib/vdso/gettimeofday.c
-> @@ -115,9 +115,6 @@ static __maybe_unused int
->  	struct __kernel_timespec ts;
->  	int ret;
->  
-> -	if (res == NULL)
-> -		goto fallback;
-> -
->  	ret = __cvdso_clock_gettime(clock, &ts);
->  
->  	if (ret == 0) {
-> @@ -126,9 +123,6 @@ static __maybe_unused int
->  	}
->  
->  	return ret;
-> -
-> -fallback:
-> -	return clock_gettime_fallback(clock, (struct __kernel_timespec *)res);
->  }
->  
->  static __maybe_unused int
-> @@ -204,10 +198,8 @@ int __cvdso_clock_getres(clockid_t clock
->  		goto fallback;
->  	}
->  
-> -	if (res) {
-> -		res->tv_sec = 0;
-> -		res->tv_nsec = ns;
-> -	}
-> +	res->tv_sec = 0;
-> +	res->tv_nsec = ns;
->  
->  	return 0;
->  
-> @@ -221,9 +213,6 @@ static __maybe_unused int
->  	struct __kernel_timespec ts;
->  	int ret;
->  
-> -	if (res == NULL)
-> -		goto fallback;
-> -
->  	ret = __cvdso_clock_getres(clock, &ts);
->  
->  	if (ret == 0) {
-> @@ -232,8 +221,5 @@ static __maybe_unused int
->  	}
->  
->  	return ret;
-> -
-> -fallback:
-> -	return clock_getres_fallback(clock, (struct __kernel_timespec *)res);
->  }
->  #endif /* VDSO_HAS_CLOCK_GETRES */
-> 
-> 
+Signed-off-by: Sebastian Mayr <me@sam.st>
+---
 
+Please note that I just stumbled over this bug and am not really
+familiar with all the internals. So take the patch and, in particular,
+the commit message with a grain of salt. Thanks!
+
+ arch/x86/kernel/uprobes.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/arch/x86/kernel/uprobes.c b/arch/x86/kernel/uprobes.c
+index 918b5092a85f..d6e261202c6b 100644
+--- a/arch/x86/kernel/uprobes.c
++++ b/arch/x86/kernel/uprobes.c
+@@ -508,9 +508,9 @@ struct uprobe_xol_ops {
+ 	void	(*abort)(struct arch_uprobe *, struct pt_regs *);
+ };
+ 
+-static inline int sizeof_long(void)
++static inline int sizeof_long(struct pt_regs *regs)
+ {
+-	return in_ia32_syscall() ? 4 : 8;
++	return user_64bit_mode(regs) ? 8 : 4;
+ }
+ 
+ static int default_pre_xol_op(struct arch_uprobe *auprobe, struct pt_regs *regs)
+@@ -521,9 +521,9 @@ static int default_pre_xol_op(struct arch_uprobe *auprobe, struct pt_regs *regs)
+ 
+ static int emulate_push_stack(struct pt_regs *regs, unsigned long val)
+ {
+-	unsigned long new_sp = regs->sp - sizeof_long();
++	unsigned long new_sp = regs->sp - sizeof_long(regs);
+ 
+-	if (copy_to_user((void __user *)new_sp, &val, sizeof_long()))
++	if (copy_to_user((void __user *)new_sp, &val, sizeof_long(regs)))
+ 		return -EFAULT;
+ 
+ 	regs->sp = new_sp;
+@@ -556,7 +556,7 @@ static int default_post_xol_op(struct arch_uprobe *auprobe, struct pt_regs *regs
+ 		long correction = utask->vaddr - utask->xol_vaddr;
+ 		regs->ip += correction;
+ 	} else if (auprobe->defparam.fixups & UPROBE_FIX_CALL) {
+-		regs->sp += sizeof_long(); /* Pop incorrect return address */
++		regs->sp += sizeof_long(regs); /* Pop incorrect return address */
+ 		if (emulate_push_stack(regs, utask->vaddr + auprobe->defparam.ilen))
+ 			return -ERESTART;
+ 	}
+@@ -675,7 +675,7 @@ static int branch_post_xol_op(struct arch_uprobe *auprobe, struct pt_regs *regs)
+ 	 * "call" insn was executed out-of-line. Just restore ->sp and restart.
+ 	 * We could also restore ->ip and try to call branch_emulate_op() again.
+ 	 */
+-	regs->sp += sizeof_long();
++	regs->sp += sizeof_long(regs);
+ 	return -ERESTART;
+ }
+ 
+@@ -1056,7 +1056,7 @@ bool arch_uprobe_skip_sstep(struct arch_uprobe *auprobe, struct pt_regs *regs)
+ unsigned long
+ arch_uretprobe_hijack_return_addr(unsigned long trampoline_vaddr, struct pt_regs *regs)
+ {
+-	int rasize = sizeof_long(), nleft;
++	int rasize = sizeof_long(regs), nleft;
+ 	unsigned long orig_ret_vaddr = 0; /* clear high bits for 32-bit apps */
+ 
+ 	if (copy_from_user(&orig_ret_vaddr, (void __user *)regs->sp, rasize))
 -- 
-Regards,
-Vincenzo
+2.22.0
+
