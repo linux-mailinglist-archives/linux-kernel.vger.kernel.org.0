@@ -2,130 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D73E377F8C
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2019 15:20:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E64A077F91
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2019 15:21:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726252AbfG1NUs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 28 Jul 2019 09:20:48 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:51653 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726087AbfG1NUs (ORCPT
+        id S1726323AbfG1NU6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 28 Jul 2019 09:20:58 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:58888 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726032AbfG1NU4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 28 Jul 2019 09:20:48 -0400
-Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtp (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1hrj6U-0003qH-5y; Sun, 28 Jul 2019 15:20:46 +0200
-Message-Id: <20190728131648.971361611@linutronix.de>
-User-Agent: quilt/0.65
-Date:   Sun, 28 Jul 2019 15:12:56 +0200
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Paul Bolle <pebolle@tiscali.nl>, Will Deacon <will@kernel.org>
-Subject: [patch 5/5] arm64: compat: vdso: Use legacy syscalls as fallback
-References: <20190728131251.622415456@linutronix.de>
+        Sun, 28 Jul 2019 09:20:56 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 02D3F80234; Sun, 28 Jul 2019 15:20:40 +0200 (CEST)
+Date:   Sun, 28 Jul 2019 15:20:47 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Evgeny Kolesnikov <evgenyz@gmail.com>
+Cc:     Sebastian Reichel <sre@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 0/5] Add support for WD MyCloud EX2 Ultra (+ versatile
+ UART-based restart/poweroff drivers)
+Message-ID: <20190728132047.GA8718@xo-6d-61-c0.localdomain>
+References: <cover.1563822216.git.evgenyz@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1563822216.git.evgenyz@gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The generic VDSO implementation uses the Y2038 safe clock_gettime64() and
-clock_getres_time64() syscalls as fallback for 32bit VDSO. This breaks
-seccomp setups because these syscalls might be not (yet) allowed.
+On Mon 2019-07-22 21:53:00, Evgeny Kolesnikov wrote:
+> This patchset consists of the DTS, which describes the WD MyCloud EX2 Ultra device,
+> 'poweroff' and 'resert' drivers for power-managing MCUs connected to a board via UART
+> (these drivers are more versatile than qnap-poweroff and could be used as a substitude),
+> and DT bindings for these drivers.
+> 
+> The difference between uart-poweroff and qnap-poweroff is small, but important:
+> uart-poweroff is able to send to an MCU a command of arbitrary length, and the command
+> itself is defined in a DTS file for a specific device/board, thus making this driver
+> applicable to wider range of devices.
+> 
+>  drivers/power/reset/uart-poweroff.c           | 155 +++++++++
+>  drivers/power/reset/uart-restart.c            | 204 ++++++++++++
 
-Implement the 32bit variants which use the legacy syscalls and select the
-variant in the core library.
+These twon really need to be combined somehow.
 
-The 64bit time variants are not removed because they are required for the
-time64 based vdso accessors.
-
-Reported-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Reported-by: Paul Bolle <pebolle@tiscali.nl>
-Suggested-by: Andy Lutomirski <luto@kernel.org>
-Fixes: 00b26474c2f1 ("lib/vdso: Provide generic VDSO implementation")
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
----
-Note:
-
-The NULL pointer check in the getres/getres32() fallbacks is just wrong.
-The proper return code for a NULL pointer is -EFAULT. How did this ever
-pass any posix test? Also it just should go away because any other invalid
-pointer will be caught in the syscall anyway. The clockid check is also
-part of the syscall so no point in having it here again. Handling calls
-with invalid arguments is not really a performance critical operation.
-
----
- arch/arm64/include/asm/vdso/compat_gettimeofday.h |   40 ++++++++++++++++++++++
- 1 file changed, 40 insertions(+)
-
---- a/arch/arm64/include/asm/vdso/compat_gettimeofday.h
-+++ b/arch/arm64/include/asm/vdso/compat_gettimeofday.h
-@@ -16,6 +16,8 @@
- 
- #define VDSO_HAS_CLOCK_GETRES		1
- 
-+#define VDSO_HAS_32BIT_FALLBACK		1
-+
- static __always_inline
- int gettimeofday_fallback(struct __kernel_old_timeval *_tv,
- 			  struct timezone *_tz)
-@@ -52,6 +54,23 @@ long clock_gettime_fallback(clockid_t _c
- }
- 
- static __always_inline
-+long clock_gettime32_fallback(clockid_t _clkid, struct old_timespec32 *_ts)
-+{
-+	register struct old_timespec32 *ts asm("r1") = _ts;
-+	register clockid_t clkid asm("r0") = _clkid;
-+	register long ret asm ("r0");
-+	register long nr asm("r7") = __NR_compat_clock_gettime;
-+
-+	asm volatile(
-+	"	swi #0\n"
-+	: "=r" (ret)
-+	: "r" (clkid), "r" (ts), "r" (nr)
-+	: "memory");
-+
-+	return ret;
-+}
-+
-+static __always_inline
- int clock_getres_fallback(clockid_t _clkid, struct __kernel_timespec *_ts)
- {
- 	register struct __kernel_timespec *ts asm("r1") = _ts;
-@@ -61,6 +80,27 @@ int clock_getres_fallback(clockid_t _clk
- 
- 	/* The checks below are required for ABI consistency with arm */
- 	if ((_clkid >= MAX_CLOCKS) && (_ts == NULL))
-+		return -EINVAL;
-+
-+	asm volatile(
-+	"       swi #0\n"
-+	: "=r" (ret)
-+	: "r" (clkid), "r" (ts), "r" (nr)
-+	: "memory");
-+
-+	return ret;
-+}
-+
-+static __always_inline
-+int clock_getres32_fallback(clockid_t _clkid, struct old_timespec32 *_ts)
-+{
-+	register struct old_timespec32 *ts asm("r1") = _ts;
-+	register clockid_t clkid asm("r0") = _clkid;
-+	register long ret asm ("r0");
-+	register long nr asm("r7") = __NR_compat_clock_getres;
-+
-+	/* The checks below are required for ABI consistency with arm */
-+	if ((_clkid >= MAX_CLOCKS) && (_ts == NULL))
- 		return -EINVAL;
- 
- 	asm volatile(
-
-
+Plus... does it have mini-16550 driver in it? Should it use serdev instead?
+										Pavel
+-- 
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
