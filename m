@@ -2,117 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A0387780B8
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2019 19:35:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D69E780BC
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2019 19:36:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726357AbfG1Rfh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 28 Jul 2019 13:35:37 -0400
-Received: from conuserg-07.nifty.com ([210.131.2.74]:60666 "EHLO
-        conuserg-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726046AbfG1Rfh (ORCPT
+        id S1726439AbfG1Rf5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 28 Jul 2019 13:35:57 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:35156 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726046AbfG1Rf5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 28 Jul 2019 13:35:37 -0400
-Received: from grover.flets-west.jp (softbank126026094249.bbtec.net [126.26.94.249]) (authenticated)
-        by conuserg-07.nifty.com with ESMTP id x6SHYoZH026150;
-        Mon, 29 Jul 2019 02:34:51 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com x6SHYoZH026150
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1564335291;
-        bh=iG031DUvivyDj4/eRwi67WX79/aUiFl95rYeNucb6+g=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eFmlKTvqurETKdUjDROj/ki74BFxx3sdW/DnBcIPvnTD2AA2UEBB7S1ocoFsd2Q9+
-         uX0suAIK3rfIxLfzkw9+NAKKswjhn8jxh8GYm2tC+kp0IqJWdGZhoK1hlKMHbMMPyo
-         +cl07RdYP/vkpcinJINvpOaUjwMbZAyBjG+SYvHyKZn8QpTT/kKLX8EnQVpRrSWP+b
-         z86D7pX0C70dFFgzWpNvlPhqVvauJWnWRygE8g0UqDNEeFZGQtIg+KVYlju0enl2IB
-         RNkMVtd3dC/UR4zuYPdakPnwN0g27f+6EHcWvdJeOd3qWYOxKfr/8aMO6m5aXKoVh8
-         vo0tc5PCGSgNw==
-X-Nifty-SrcIP: [126.26.94.249]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     linux-kbuild@vger.kernel.org
-Cc:     Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH 2/2] kbuild: detect missing header include guard
-Date:   Mon, 29 Jul 2019 02:34:45 +0900
-Message-Id: <20190728173445.10954-2-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190728173445.10954-1-yamada.masahiro@socionext.com>
-References: <20190728173445.10954-1-yamada.masahiro@socionext.com>
+        Sun, 28 Jul 2019 13:35:57 -0400
+Received: by mail-wr1-f68.google.com with SMTP id y4so59355834wrm.2
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2019 10:35:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=b2zuiNV9z+FTezAi/VZPRSNLA8E7gVpLhLnn8tmOsl8=;
+        b=kgKwcNeG16HoeyiIZqJvgFAVoqNZk/t7LGsGuKFNiLjfCOvkOuVjlwyFRg1TFg1f4H
+         ERmb6bt5kg2fzs7QyJqRjmo6HZ9D3qM0umu67Pnhz8ND2Yr4WJtgk4QLrgcOVMo9WfSb
+         QYUaCUMVMsMxf0RFACkhAGj9L55HTC2Q8qLYRYRVIooR+nZMC6FN+g6r9e9aecyxBQw9
+         /4/I7OWZ3vim2vT0YqEwP90Qn+eQfxCNsbsMPtzeGI/+mdDhS0yYwvKu6WpwLre9uGuH
+         Wt8X72/oe8YQwn5GLXXt9WOxS6d42N+vJpu4ts8RKDJk1WHLSz0Mfi4W/KIlty6xXVST
+         Xx2g==
+X-Gm-Message-State: APjAAAVqkZ2ez/hvGA4RtPorUP92bkzyZf+Z/PRVPlhMwJiigLSK83wd
+        +Dyq2GxuNoW7+LEntEfnMMfwwA==
+X-Google-Smtp-Source: APXvYqzmHrUH5DR1DuabwII6AeoWJ1witAV6rclFFLf5pp1RWkQsEUhAKHdon+uwsXhFoDu6Hpk5ww==
+X-Received: by 2002:a5d:67cd:: with SMTP id n13mr41178123wrw.138.1564335355423;
+        Sun, 28 Jul 2019 10:35:55 -0700 (PDT)
+Received: from mcroce-redhat.redhat.com (host221-208-dynamic.27-79-r.retail.telecomitalia.it. [79.27.208.221])
+        by smtp.gmail.com with ESMTPSA id x20sm134505614wrg.10.2019.07.28.10.35.54
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Sun, 28 Jul 2019 10:35:54 -0700 (PDT)
+From:   Matteo Croce <mcroce@redhat.com>
+To:     netdev@vger.kernel.org
+Cc:     Antoine Tenart <antoine.tenart@bootlin.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        Marcin Wojtas <mw@semihalf.com>,
+        Stefan Chulski <stefanc@marvell.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        David Miller <davem@davemloft.net>
+Subject: [PATCH net v2] mvpp2: refactor the HW checksum setup
+Date:   Sun, 28 Jul 2019 19:35:49 +0200
+Message-Id: <20190728173549.32034-1-mcroce@redhat.com>
+X-Mailer: git-send-email 2.21.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Our convention is to surround the whole of the header content with an
-include guard. This avoids the same header being parsed over again in
-case it is included multiple times.
+The hardware can only offload checksum calculation on first port due to
+the Tx FIFO size limitation, and has a maximum L3 offset of 128 bytes.
+Document this in a comment and move duplicated code in a function.
 
-The include guard is missing in several places, or broken due to the
-mismatch between #ifndef and #define.
-
-The recently added header-test-y syntax allows the comprehensive sanity
-checks of headers. This commit adds another check; if include guard is
-missing, the header will fail to build due to redefinition of something.
-
-Some headers must be excluded from the test-coverage for now. I will
-let them in after they are fixed.
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Fixes: 576193f2d579 ("net: mvpp2: jumbo frames support")
+Signed-off-by: Matteo Croce <mcroce@redhat.com>
 ---
+ .../net/ethernet/marvell/mvpp2/mvpp2_main.c   | 35 ++++++++++++-------
+ 1 file changed, 22 insertions(+), 13 deletions(-)
 
- scripts/Makefile.build | 3 ++-
- usr/include/Makefile   | 6 ++++++
- 2 files changed, 8 insertions(+), 1 deletion(-)
-
-diff --git a/scripts/Makefile.build b/scripts/Makefile.build
-index 0d434d0afc0b..b024b108055b 100644
---- a/scripts/Makefile.build
-+++ b/scripts/Makefile.build
-@@ -294,8 +294,9 @@ $(obj)/%.lst: $(src)/%.c FORCE
- # header test (header-test-y, header-test-m target)
- # ---------------------------------------------------------------------------
+diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+index 937e4b928b94..a99405135046 100644
+--- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
++++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+@@ -811,6 +811,26 @@ static int mvpp2_swf_bm_pool_init(struct mvpp2_port *port)
+ 	return 0;
+ }
  
-+# include the header twice to catch missing header include guard.
- quiet_cmd_cc_s_h = CC      $@
--      cmd_cc_s_h = $(CC) $(c_flags) -S -o $@ -x c /dev/null -include $<
-+      cmd_cc_s_h = $(CC) $(c_flags) -S -o $@ -x c /dev/null -include $< -include $<
++static void mvpp2_set_hw_csum(struct mvpp2_port *port,
++			      enum mvpp2_bm_pool_log_num new_long_pool)
++{
++	const netdev_features_t csums = NETIF_F_IP_CSUM | NETIF_F_IPV6_CSUM;
++
++	/* Update L4 checksum when jumbo enable/disable on port.
++	 * Only port 0 supports hardware checksum offload due to
++	 * the Tx FIFO size limitation.
++	 * Also, don't set NETIF_F_HW_CSUM because L3_offset in TX descriptor
++	 * has 7 bits, so the maximum L3 offset is 128.
++	 */
++	if (new_long_pool == MVPP2_BM_JUMBO && port->id != 0) {
++		port->dev->features &= ~csums;
++		port->dev->hw_features &= ~csums;
++	} else {
++		port->dev->features |= csums;
++		port->dev->hw_features |= csums;
++	}
++}
++
+ static int mvpp2_bm_update_mtu(struct net_device *dev, int mtu)
+ {
+ 	struct mvpp2_port *port = netdev_priv(dev);
+@@ -843,15 +863,7 @@ static int mvpp2_bm_update_mtu(struct net_device *dev, int mtu)
+ 		/* Add port to new short & long pool */
+ 		mvpp2_swf_bm_pool_init(port);
  
- $(obj)/%.h.s: $(src)/%.h FORCE
- 	$(call if_changed_dep,cc_s_h)
-diff --git a/usr/include/Makefile b/usr/include/Makefile
-index 1fb6abe29b2f..ee945819c9d8 100644
---- a/usr/include/Makefile
-+++ b/usr/include/Makefile
-@@ -28,8 +28,11 @@ header-test- += linux/android/binder.h
- header-test- += linux/android/binderfs.h
- header-test-$(CONFIG_CPU_BIG_ENDIAN) += linux/byteorder/big_endian.h
- header-test-$(CONFIG_CPU_LITTLE_ENDIAN) += linux/byteorder/little_endian.h
-+header-test- += linux/chio.h		# missing include guard
-+header-test- += linux/cryptouser.h	# missing include guard
- header-test- += linux/coda.h
- header-test- += linux/coda_psdev.h
-+header-test- += linux/coff.h		# missing include guard
- header-test- += linux/elfcore.h
- header-test- += linux/errqueue.h
- header-test- += linux/fsmap.h
-@@ -38,6 +41,7 @@ header-test- += linux/ivtv.h
- header-test- += linux/jffs2.h
- header-test- += linux/kexec.h
- header-test- += linux/matroxfb.h
-+header-test- += linux/netfilter/xt_connlabel.h	# missing include guard
- header-test- += linux/netfilter_bridge/ebtables.h
- header-test- += linux/netfilter_ipv4/ipt_LOG.h
- header-test- += linux/netfilter_ipv6/ip6t_LOG.h
-@@ -45,7 +49,9 @@ header-test- += linux/nfc.h
- header-test- += linux/omap3isp.h
- header-test- += linux/omapfb.h
- header-test- += linux/patchkey.h
-+header-test- += linux/pg.h		# missing include guard
- header-test- += linux/phonet.h
-+header-test- += linux/ppdev.h		# missing include guard
- header-test- += linux/reiserfs_xattr.h
- header-test- += linux/scc.h
- header-test- += linux/sctp.h
+-		/* Update L4 checksum when jumbo enable/disable on port */
+-		if (new_long_pool == MVPP2_BM_JUMBO && port->id != 0) {
+-			dev->features &= ~(NETIF_F_IP_CSUM | NETIF_F_IPV6_CSUM);
+-			dev->hw_features &= ~(NETIF_F_IP_CSUM |
+-					      NETIF_F_IPV6_CSUM);
+-		} else {
+-			dev->features |= NETIF_F_IP_CSUM | NETIF_F_IPV6_CSUM;
+-			dev->hw_features |= NETIF_F_IP_CSUM | NETIF_F_IPV6_CSUM;
+-		}
++		mvpp2_set_hw_csum(port, new_long_pool);
+ 	}
+ 
+ 	dev->mtu = mtu;
+@@ -5209,10 +5221,7 @@ static int mvpp2_port_probe(struct platform_device *pdev,
+ 		dev->features |= NETIF_F_NTUPLE;
+ 	}
+ 
+-	if (port->pool_long->id == MVPP2_BM_JUMBO && port->id != 0) {
+-		dev->features &= ~(NETIF_F_IP_CSUM | NETIF_F_IPV6_CSUM);
+-		dev->hw_features &= ~(NETIF_F_IP_CSUM | NETIF_F_IPV6_CSUM);
+-	}
++	mvpp2_set_hw_csum(port, port->pool_long->id);
+ 
+ 	dev->vlan_features |= features;
+ 	dev->gso_max_segs = MVPP2_MAX_TSO_SEGS;
 -- 
-2.17.1
+2.21.0
 
