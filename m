@@ -2,95 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3061578258
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 01:25:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5076C78259
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 01:27:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726291AbfG1XZU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 28 Jul 2019 19:25:20 -0400
-Received: from ozlabs.org ([203.11.71.1]:35431 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726163AbfG1XZU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 28 Jul 2019 19:25:20 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45xf7K0scRz9sBt;
-        Mon, 29 Jul 2019 09:25:16 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1564356317;
-        bh=BljZEOlkc0W0NeIxt8gVxip2VkivG4oSoW6uKHxHpB4=;
-        h=Date:From:To:Cc:Subject:From;
-        b=R4BJbtEHFuy67IeBGAx+VhvkesZV22pEDUaB1pkal9crgcXUN0Wkh4Sgt9rUSBjMO
-         6kQw1aUC60l1kOTAOXtTnq0JPq9XqVE+DJTRwJlA3KQARqmocMLgHODCR3nh2nyW9T
-         r9xKBdPcIzq1PVXVLg+aeUYhk5o9rgcpowmHCdNdBkMUWSInxYUbH5nUaY4KtbdHVe
-         t1vmF0xN14rqfQxxq3iZ/c3DXyvY3XuT7nJuE0z4JJz1b9XH4xZXPKShns4fHug2bS
-         91DBA8oEpiasr7rCKgRKNlD36NXoeoFCnF2QwjtWNLlC84x+LFmlcrrGTmo6+BpbD/
-         tXPStfIKFni3Q==
-Date:   Mon, 29 Jul 2019 09:25:10 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Yoshinori Sato <ysato@users.sourceforge.jp>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: linux-next: manual merge of the sh tree with Linus' tree
-Message-ID: <20190729092510.5e269cac@canb.auug.org.au>
+        id S1726271AbfG1X1Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 28 Jul 2019 19:27:16 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:35622 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726120AbfG1X1Q (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 28 Jul 2019 19:27:16 -0400
+Received: by mail-wr1-f68.google.com with SMTP id y4so59805734wrm.2
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2019 16:27:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=CDFX7cmqBbGxd3S+PHtfPokRI/hCi8zxl2i1XDeVF5A=;
+        b=fkelgX8XdoxtvqYoZfAkpP78GBVlTDxpHl/XJ4o/w5fjEfhJM7LPQ9Q2N9KZk15hTD
+         485XTcpoecD5tBuVSZvXhyehJYJnkSaO7ANtU7G7wsaORab0IWOoB3hIQjp+snQUvbcO
+         PQEqICXCUtPsHCe5SSbNV433skUM+MbIX28tDLNLVJIyhpFk14nQFe/VGiOoj7l9jJ9o
+         rxZwYM5XAZH/UAsgEypdE4CJyOkiglv3G+6nryECF5d5xfh2D6O1wAHr1nSLKDOeEL6J
+         WxQZaq7NkHGFE/4LpsZXmbbfCaYC+aFyPkiDC2I6eHvw3EqVQqNVr6zjeSIZ+6UDuX5W
+         7jwQ==
+X-Gm-Message-State: APjAAAVUUeKXBMXnVVe4ZqIih+IF6TjRJrna1jW70riqrLvTQeU6VQRA
+        K0qClRTSoZ2qVSuif9PVA+eHaKj2k98=
+X-Google-Smtp-Source: APXvYqwbGg1c6DE/fHerM+Cvhn2kZX5UU+f9UqfzQyc2lvseyUAQVt6FWzZleWaiLpZ13cuB2B3vOg==
+X-Received: by 2002:a5d:4a49:: with SMTP id v9mr113674213wrs.44.1564356434100;
+        Sun, 28 Jul 2019 16:27:14 -0700 (PDT)
+Received: from mcroce-redhat.homenet.telecomitalia.it (host221-208-dynamic.27-79-r.retail.telecomitalia.it. [79.27.208.221])
+        by smtp.gmail.com with ESMTPSA id t6sm65373267wmb.29.2019.07.28.16.27.13
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Sun, 28 Jul 2019 16:27:13 -0700 (PDT)
+From:   Matteo Croce <mcroce@redhat.com>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org
+Subject: [PATCH] arm64: hw_breakpoint: mark expected switch fall-through
+Date:   Mon, 29 Jul 2019 01:27:06 +0200
+Message-Id: <20190728232706.7396-1-mcroce@redhat.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/BxDyDWOKbe+Rq69Bnd_nACt";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/BxDyDWOKbe+Rq69Bnd_nACt
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Mark switch cases where we are expecting to fall through,
+fixes the following warning:
 
-Hi all,
+  CC      arch/arm64/kernel/hw_breakpoint.o
+arch/arm64/kernel/hw_breakpoint.c: In function ‘hw_breakpoint_arch_parse’:
+arch/arm64/kernel/hw_breakpoint.c:540:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
+    if (hw->ctrl.len == ARM_BREAKPOINT_LEN_1)
+       ^
+arch/arm64/kernel/hw_breakpoint.c:542:3: note: here
+   case 2:
+   ^~~~
+arch/arm64/kernel/hw_breakpoint.c:544:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
+    if (hw->ctrl.len == ARM_BREAKPOINT_LEN_2)
+       ^
+arch/arm64/kernel/hw_breakpoint.c:546:3: note: here
+   default:
+   ^~~~~~~
 
-Today's linux-next merge of the sh tree got conflicts in:
+Signed-off-by: Matteo Croce <mcroce@redhat.com>
+---
+ arch/arm64/kernel/hw_breakpoint.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-  arch/sh/include/uapi/asm/setup.h
-  arch/sh/include/uapi/asm/types.h
+diff --git a/arch/arm64/kernel/hw_breakpoint.c b/arch/arm64/kernel/hw_breakpoint.c
+index dceb84520948..7d846985b133 100644
+--- a/arch/arm64/kernel/hw_breakpoint.c
++++ b/arch/arm64/kernel/hw_breakpoint.c
+@@ -539,10 +539,12 @@ int hw_breakpoint_arch_parse(struct perf_event *bp,
+ 			/* Allow single byte watchpoint. */
+ 			if (hw->ctrl.len == ARM_BREAKPOINT_LEN_1)
+ 				break;
++			/* fallthrough */
+ 		case 2:
+ 			/* Allow halfword watchpoints and breakpoints. */
+ 			if (hw->ctrl.len == ARM_BREAKPOINT_LEN_2)
+ 				break;
++			/* fallthrough */
+ 		default:
+ 			return -EINVAL;
+ 		}
+-- 
+2.21.0
 
-between commit:
-
-  d9c525229521 ("treewide: add "WITH Linux-syscall-note" to SPDX tag of uap=
-i headers")
-
-from Linus' tree and commit:
-
-  cd10afbc932d ("sh: remove unneeded uapi asm-generic wrappers")
-
-from the sh tree.
-
-I fixed it up (I just removed the files) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/BxDyDWOKbe+Rq69Bnd_nACt
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0+LtYACgkQAVBC80lX
-0GwxHwf/QPHqVBNCp6xbO2JaJLqVG4mPC5TmH7R6UImXcmPDPt5mO1hryua725ZQ
-EyhIjO76IGxDQHwjOWBxx7cvtfVJZKp+y49tIT1tIyjtTbjCejiL77bI8kReXHW2
-B0e7d2uymWY9HcIJcA6sq9tmSKtB/ebf3kbcJQMLT5rWPCFiFqTCS3aH2KtOY8+6
-o0ElKBVhYgNWhK8+oyvU3vyyUBVvcwGeg88PaRvz0+lQRwXpTT8HS/yWx72WwaQ5
-Vlt0MqLGUOJiCm4KLwFvEwbJUGJ5uOTX8uhKfDAE1vzmAbd6l2a+PQQlyHhgMO+C
-VRsBNxWXtZovLPz7BvqT4C+C1jqSqQ==
-=/2NV
------END PGP SIGNATURE-----
-
---Sig_/BxDyDWOKbe+Rq69Bnd_nACt--
