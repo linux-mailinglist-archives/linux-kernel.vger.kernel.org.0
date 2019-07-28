@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 89C097811D
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2019 21:25:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3629F78119
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2019 21:25:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726496AbfG1TZF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 28 Jul 2019 15:25:05 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:48088 "EHLO inva021.nxp.com"
+        id S1726425AbfG1TY4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 28 Jul 2019 15:24:56 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:48110 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726343AbfG1TYx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726366AbfG1TYx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 28 Jul 2019 15:24:53 -0400
 Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 2C8D5201275;
-        Sun, 28 Jul 2019 21:24:51 +0200 (CEST)
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 03E98201281;
+        Sun, 28 Jul 2019 21:24:52 +0200 (CEST)
 Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 1B83D201272;
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id EA794201272;
         Sun, 28 Jul 2019 21:24:51 +0200 (CEST)
 Received: from fsr-ub1864-103.ea.freescale.net (fsr-ub1864-103.ea.freescale.net [10.171.82.17])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 4CC822060A;
-        Sun, 28 Jul 2019 21:24:50 +0200 (CEST)
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 2D7142060A;
+        Sun, 28 Jul 2019 21:24:51 +0200 (CEST)
 From:   Daniel Baluta <daniel.baluta@nxp.com>
 To:     broonie@kernel.org
 Cc:     l.stach@pengutronix.de, mihai.serban@gmail.com,
@@ -29,9 +29,9 @@ Cc:     l.stach@pengutronix.de, mihai.serban@gmail.com,
         kernel@pengutronix.de, festevam@gmail.com,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         robh@kernel.org, Daniel Baluta <daniel.baluta@nxp.com>
-Subject: [PATCH v2 6/7] ASoC: fsl_sai: Add support for imx7ulp/imx8mq
-Date:   Sun, 28 Jul 2019 22:24:28 +0300
-Message-Id: <20190728192429.1514-7-daniel.baluta@nxp.com>
+Subject: [PATCH v2 7/7] ASoC: dt-bindings: Introduce compatible strings for 7ULP and 8MQ
+Date:   Sun, 28 Jul 2019 22:24:29 +0300
+Message-Id: <20190728192429.1514-8-daniel.baluta@nxp.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190728192429.1514-1-daniel.baluta@nxp.com>
 References: <20190728192429.1514-1-daniel.baluta@nxp.com>
@@ -41,46 +41,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SAI module on imx7ulp/imx8m features 2 new registers (VERID and PARAM)
-at the beginning of register address space.
-
-On imx7ulp FIFOs can held up to 16 x 32 bit samples.
-On imx8mq FIFOs can held up to 128 x 32 bit samples.
+For i.MX7ULP and i.MX8MQ register map is changed. Add two new compatbile
+strings to differentiate this.
 
 Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
 ---
- sound/soc/fsl/fsl_sai.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ Documentation/devicetree/bindings/sound/fsl-sai.txt | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/sound/soc/fsl/fsl_sai.c b/sound/soc/fsl/fsl_sai.c
-index 54e5e9abae01..0fb6750fefd5 100644
---- a/sound/soc/fsl/fsl_sai.c
-+++ b/sound/soc/fsl/fsl_sai.c
-@@ -1030,10 +1030,24 @@ static const struct fsl_sai_soc_data fsl_sai_imx6sx_data = {
- 	.reg_offset = 0,
- };
+diff --git a/Documentation/devicetree/bindings/sound/fsl-sai.txt b/Documentation/devicetree/bindings/sound/fsl-sai.txt
+index 2b38036a4883..b008e9cfedc1 100644
+--- a/Documentation/devicetree/bindings/sound/fsl-sai.txt
++++ b/Documentation/devicetree/bindings/sound/fsl-sai.txt
+@@ -8,7 +8,8 @@ codec/DSP interfaces.
+ Required properties:
  
-+static const struct fsl_sai_soc_data fsl_sai_imx7ulp_data = {
-+	.use_imx_pcm = true,
-+	.fifo_depth = 16,
-+	.reg_offset = 8,
-+};
-+
-+static const struct fsl_sai_soc_data fsl_sai_imx8mq_data = {
-+	.use_imx_pcm = true,
-+	.fifo_depth = 128,
-+	.reg_offset = 8,
-+};
-+
- static const struct of_device_id fsl_sai_ids[] = {
- 	{ .compatible = "fsl,vf610-sai", .data = &fsl_sai_vf610_data },
- 	{ .compatible = "fsl,imx6sx-sai", .data = &fsl_sai_imx6sx_data },
- 	{ .compatible = "fsl,imx6ul-sai", .data = &fsl_sai_imx6sx_data },
-+	{ .compatible = "fsl,imx7ulp-sai", .data = &fsl_sai_imx7ulp_data },
-+	{ .compatible = "fsl,imx8mq-sai", .data = &fsl_sai_imx8mq_data },
- 	{ /* sentinel */ }
- };
- MODULE_DEVICE_TABLE(of, fsl_sai_ids);
+   - compatible		: Compatible list, contains "fsl,vf610-sai",
+-			  "fsl,imx6sx-sai" or "fsl,imx6ul-sai"
++			  "fsl,imx6sx-sai", "fsl,imx6ul-sai",
++			  "fsl,imx7ulp-sai", "fsl,imx8mq-sai".
+ 
+   - reg			: Offset and length of the register set for the device.
+ 
 -- 
 2.17.1
 
