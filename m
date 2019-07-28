@@ -2,22 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 760787827A
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 01:45:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 22B5478287
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 01:58:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726366AbfG1Xpf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 28 Jul 2019 19:45:35 -0400
-Received: from gateway32.websitewelcome.com ([192.185.145.178]:21591 "EHLO
-        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726203AbfG1Xpe (ORCPT
+        id S1726300AbfG1X6R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 28 Jul 2019 19:58:17 -0400
+Received: from gateway20.websitewelcome.com ([192.185.64.36]:32858 "EHLO
+        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726203AbfG1X6R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 28 Jul 2019 19:45:34 -0400
-Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
-        by gateway32.websitewelcome.com (Postfix) with ESMTP id 699DF1469A4
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2019 18:45:33 -0500 (CDT)
+        Sun, 28 Jul 2019 19:58:17 -0400
+X-Greylist: delayed 1451 seconds by postgrey-1.27 at vger.kernel.org; Sun, 28 Jul 2019 19:58:16 EDT
+Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
+        by gateway20.websitewelcome.com (Postfix) with ESMTP id 47F9E400D0A98
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2019 17:30:39 -0500 (CDT)
 Received: from gator4166.hostgator.com ([108.167.133.22])
         by cmsmtp with SMTP
-        id rsr7hyQszYTGMrsr7hmc4N; Sun, 28 Jul 2019 18:45:33 -0500
+        id rsg1hQru14FKprsg1haq8f; Sun, 28 Jul 2019 18:34:05 -0500
 X-Authority-Reason: nr=8
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
@@ -25,27 +26,24 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=c4CFd82eZIWkt0ndIbgvddHP47hbuUo2fEMnCh5onr0=; b=xueIpv9Df/eq1qm6R69u6HCRkV
-        xkQkgO7EHYSu4vvJEXRzZJYPuiEk0YKj7T/dZQs8D7OQoXBi8u9b20MWq0oSjGOXj3GuZBWVrTGb9
-        oa8urF3EqNG5V/CJPDKUtTZUi36jVQexkhs3hJhbgeub2OqVlIKX5WPt8xDOK3qTPDF4U14LbB9UG
-        vtxR7aUmORmbjj5Y2ZkE1ppODR3yIimgFGCy/PdZD4EbvL1J1yAfnn9ULGzUIfhQ1EhPNNxn57qog
-        nbeezCKml9qJRDJOIR6p5O9gC9QZwIMHiKqaem4d5Hr+tiq+wUjhZkHcVqH30zvYATPoHDmHivPH/
-        FMXRX0BQ==;
-Received: from [187.192.11.120] (port=35798 helo=[192.168.43.131])
+        bh=9+zKVXc82L60T55iugw5sTyhpsXMwmjUkecafHvnOh0=; b=I9cVymvbb92ub/7e3w17ynYUHk
+        eW3RGXx2fBsT1yCzqyaJlOpBrDp1IZcEKskVozQhv2PBlOMYQVjfbOUuElMW4bLPzTwmHD7vPYTR/
+        cPKO+Wf6wLQo8a3l+gyFj4vjuahsHr89PRlJKduvObpekIdGhKXGbaGt02QdpeX/sK67hlHSrWlQS
+        xKFTl6faOfOUbDostxQ4uHSlZzXWoU3QxMQ6tujgUFjvfvIl6+B4CJ4fq8/df68R4+dCNTmDZIjpx
+        +6PLxQtaacmFGPH0hmMOwCvcSgVWOp6pKW8DvTnjsqdDKExx9ged2anQZ0XmVB6LXTytlO6nY/8YD
+        sExL/1bQ==;
+Received: from [187.192.11.120] (port=35762 helo=[192.168.43.131])
         by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
         (Exim 4.92)
         (envelope-from <gustavo@embeddedor.com>)
-        id 1hrsr7-003hn6-0Z; Sun, 28 Jul 2019 18:45:33 -0500
+        id 1hrsg0-003cp6-TF; Sun, 28 Jul 2019 18:34:04 -0500
 Subject: Re: [PATCH] arm64: hw_breakpoint: mark expected switch fall-through
-To:     Matteo Croce <mcroce@redhat.com>
-Cc:     Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Mark Rutland <mark.rutland@arm.com>,
+To:     Matteo Croce <mcroce@redhat.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     Mark Rutland <mark.rutland@arm.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
+        Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org
 References: <20190728232706.7396-1-mcroce@redhat.com>
- <763dd408-7ac0-436c-d952-1decff5c696e@embeddedor.com>
- <CAGnkfhx1r_wE9d9DLKYznhFw43bYWx5A23MnLy9X4T_bZAmjKA@mail.gmail.com>
 From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=gustavo@embeddedor.com; keydata=
@@ -91,12 +89,12 @@ Autocrypt: addr=gustavo@embeddedor.com; keydata=
  YJWH93PN+ZUh6i6Rd2U/i8jH5WvzR57UeWxE4P8bQc0hNGrUsHQH6bpHV2lbuhDdqo+cM9eh
  GZEO3+gCDFmKrjspZjkJbB5Gadzvts5fcWGOXEvuT8uQSvl+vEL0g6vczsyPBtqoBLa9SNrS
  VtSixD1uOgytAP7RWS474w==
-Message-ID: <26c1353d-ab91-c031-1ea7-ebbf837c100c@embeddedor.com>
-Date:   Sun, 28 Jul 2019 18:45:31 -0500
+Message-ID: <763dd408-7ac0-436c-d952-1decff5c696e@embeddedor.com>
+Date:   Sun, 28 Jul 2019 18:34:02 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <CAGnkfhx1r_wE9d9DLKYznhFw43bYWx5A23MnLy9X4T_bZAmjKA@mail.gmail.com>
+In-Reply-To: <20190728232706.7396-1-mcroce@redhat.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -108,13 +106,13 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 187.192.11.120
 X-Source-L: No
-X-Exim-ID: 1hrsr7-003hn6-0Z
+X-Exim-ID: 1hrsg0-003cp6-TF
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: ([192.168.43.131]) [187.192.11.120]:35798
+X-Source-Sender: ([192.168.43.131]) [187.192.11.120]:35762
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 40
+X-Email-Count: 34
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -122,79 +120,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Matteo,
 
+I sent a patch for this some minutes ago:
 
-On 7/28/19 6:36 PM, Matteo Croce wrote:
-> Feel free di discard the patch then.
-> What compiler are you using? I' using gcc version 8.3.0 (Ubuntu/Linaro
-> 8.3.0-6ubuntu1)
-> 
+https://lore.kernel.org/patchwork/patch/1106585/
 
-My bad. My patch address the ones in arch/arm/kernel/hw_breakpoint.c
+It seems there are more warnings in that file than the ones you are
+addressing.
 
-Your patch should be fine.
-
+Thanks
 --
 Gustavo
 
-> On Mon, Jul 29, 2019 at 1:34 AM Gustavo A. R. Silva
-> <gustavo@embeddedor.com> wrote:
->>
->> Hi Matteo,
->>
->> I sent a patch for this some minutes ago:
->>
->> https://lore.kernel.org/patchwork/patch/1106585/
->>
->> It seems there are more warnings in that file than the ones you are
->> addressing.
->>
->> Thanks
->> --
->> Gustavo
->>
->> On 7/28/19 6:27 PM, Matteo Croce wrote:
->>> Mark switch cases where we are expecting to fall through,
->>> fixes the following warning:
->>>
->>>   CC      arch/arm64/kernel/hw_breakpoint.o
->>> arch/arm64/kernel/hw_breakpoint.c: In function ‘hw_breakpoint_arch_parse’:
->>> arch/arm64/kernel/hw_breakpoint.c:540:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
->>>     if (hw->ctrl.len == ARM_BREAKPOINT_LEN_1)
->>>        ^
->>> arch/arm64/kernel/hw_breakpoint.c:542:3: note: here
->>>    case 2:
->>>    ^~~~
->>> arch/arm64/kernel/hw_breakpoint.c:544:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
->>>     if (hw->ctrl.len == ARM_BREAKPOINT_LEN_2)
->>>        ^
->>> arch/arm64/kernel/hw_breakpoint.c:546:3: note: here
->>>    default:
->>>    ^~~~~~~
->>>
->>> Signed-off-by: Matteo Croce <mcroce@redhat.com>
->>> ---
->>>  arch/arm64/kernel/hw_breakpoint.c | 2 ++
->>>  1 file changed, 2 insertions(+)
->>>
->>> diff --git a/arch/arm64/kernel/hw_breakpoint.c b/arch/arm64/kernel/hw_breakpoint.c
->>> index dceb84520948..7d846985b133 100644
->>> --- a/arch/arm64/kernel/hw_breakpoint.c
->>> +++ b/arch/arm64/kernel/hw_breakpoint.c
->>> @@ -539,10 +539,12 @@ int hw_breakpoint_arch_parse(struct perf_event *bp,
->>>                       /* Allow single byte watchpoint. */
->>>                       if (hw->ctrl.len == ARM_BREAKPOINT_LEN_1)
->>>                               break;
->>> +                     /* fallthrough */
->>>               case 2:
->>>                       /* Allow halfword watchpoints and breakpoints. */
->>>                       if (hw->ctrl.len == ARM_BREAKPOINT_LEN_2)
->>>                               break;
->>> +                     /* fallthrough */
->>>               default:
->>>                       return -EINVAL;
->>>               }
->>>
+On 7/28/19 6:27 PM, Matteo Croce wrote:
+> Mark switch cases where we are expecting to fall through,
+> fixes the following warning:
 > 
+>   CC      arch/arm64/kernel/hw_breakpoint.o
+> arch/arm64/kernel/hw_breakpoint.c: In function ‘hw_breakpoint_arch_parse’:
+> arch/arm64/kernel/hw_breakpoint.c:540:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>     if (hw->ctrl.len == ARM_BREAKPOINT_LEN_1)
+>        ^
+> arch/arm64/kernel/hw_breakpoint.c:542:3: note: here
+>    case 2:
+>    ^~~~
+> arch/arm64/kernel/hw_breakpoint.c:544:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>     if (hw->ctrl.len == ARM_BREAKPOINT_LEN_2)
+>        ^
+> arch/arm64/kernel/hw_breakpoint.c:546:3: note: here
+>    default:
+>    ^~~~~~~
 > 
+> Signed-off-by: Matteo Croce <mcroce@redhat.com>
+> ---
+>  arch/arm64/kernel/hw_breakpoint.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/arch/arm64/kernel/hw_breakpoint.c b/arch/arm64/kernel/hw_breakpoint.c
+> index dceb84520948..7d846985b133 100644
+> --- a/arch/arm64/kernel/hw_breakpoint.c
+> +++ b/arch/arm64/kernel/hw_breakpoint.c
+> @@ -539,10 +539,12 @@ int hw_breakpoint_arch_parse(struct perf_event *bp,
+>  			/* Allow single byte watchpoint. */
+>  			if (hw->ctrl.len == ARM_BREAKPOINT_LEN_1)
+>  				break;
+> +			/* fallthrough */
+>  		case 2:
+>  			/* Allow halfword watchpoints and breakpoints. */
+>  			if (hw->ctrl.len == ARM_BREAKPOINT_LEN_2)
+>  				break;
+> +			/* fallthrough */
+>  		default:
+>  			return -EINVAL;
+>  		}
 > 
