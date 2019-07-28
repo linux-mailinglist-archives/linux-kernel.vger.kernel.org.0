@@ -2,54 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1047877F38
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2019 13:28:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9008977F3B
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2019 13:28:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726283AbfG1L2e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 28 Jul 2019 07:28:34 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:45182 "EHLO
+        id S1726343AbfG1L2o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 28 Jul 2019 07:28:44 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:45184 "EHLO
         mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726215AbfG1L2c (ORCPT
+        with ESMTP id S1726238AbfG1L2d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 28 Jul 2019 07:28:32 -0400
-Received: by mail-wr1-f68.google.com with SMTP id f9so58759119wre.12
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2019 04:28:31 -0700 (PDT)
+        Sun, 28 Jul 2019 07:28:33 -0400
+Received: by mail-wr1-f68.google.com with SMTP id f9so58759144wre.12
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2019 04:28:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id:in-reply-to:references;
-        bh=oh4it4O+BCVIshsKL1XggNsUtd5ItSDidUyOsRvbrOQ=;
-        b=D/pv6FwedurX759H4av8/3DLOowAUv1Cp0CV12ihsCtOHaTSzdp7+aaxgnDbFQtnEf
-         aMkpAWS+SvfXpjDIDxS4IKrZTA9tiS6vlF9XTqdkgja+7t0dYMFlCbSmsiXyfRYWoqsL
-         XNptvX8agWxBAxVa3f0ngEGyDCTUbpzfIkBx81o2xavvrl0Rh/zrgtVJ3LJ5W4VoxJmf
-         w+LrAN3L+fqwf+RV5IR1aKSnQzhQA7sC6Pvo98UibjUDoCwEk9NiKBc+8+n8FNXbc1mU
-         rF95XS9zaSf71GjME356XtmbifjHXossz9SXDtvFOFxaChVbxVdeKJyx1ts4akk9dZDL
-         9W1Q==
+        bh=hKpyjTDk7o+25T3/HgBgX1TYyMZs1MLZWqa1gyuadF0=;
+        b=biSBdgIe4Szk/LbEmvlaNiJX6GxgwjCPp/H8AZIB/SmtMU2AotN1h7itC2eMQUtXW9
+         jb6GwyoiJFfe2lSSu/wpQnZQHZC6ba42sokOgjEOzicTxY85ySJrPKYXC9wUyyYWmYy4
+         jQq/bCWIwFljBbraBLF1CS9Eo4oZ+gGJB0XUQpNPdkdYU0ck/F/14nKEBmykPnOpJV7T
+         Kneqoe5OADYqFTJ5C15Sk/dJeJot/6ujQnBRUMjHqHWv7QscvNAeotuLf5K4oDkiYPWe
+         EaOpmXuq6JPuI1BAhmTAXpPrOlzMX1q6/oEn9BvdomPHojVYrrpJNxV71aDumExvBYQ1
+         isgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references;
-        bh=oh4it4O+BCVIshsKL1XggNsUtd5ItSDidUyOsRvbrOQ=;
-        b=lnt+6PFArL7rbs6lc7pJsE+z8WeW6UVOJlT8BNEgs0CtNzDxogIM4Oc0HNrAixthis
-         YSZlO2BfEuvrYyNrsEghrAqxNmYF1KEWYBCTIwz/Aln8fyfekkBtaxFLvBNJG54qzy9r
-         miY+OgiB861lq3mFZ4RGtQaFi6vq7w2PVnvxPVI/WsYQX0Z9C2ZRdEgjcEqi9cysr8Pg
-         PINTzEevPL9iMSOhFXzWrifUnChd1qa0jFgHrhV/YoR5RgVUAzRii/nt87RfQFquoJaq
-         YSKxKS9WSJVa30IBuLg9FOqJUhTwd5OO4Gf6XDNtWgPXAU+Jdzt4pHKS1uWVL9Q0Bh27
-         JcTA==
-X-Gm-Message-State: APjAAAVCqBSxrpSsVJ8DCpnjPJn2gCwfGBgpxgMVNKLtAFC2k9G39BfA
-        U6dAzYT3F0o1+bd8vdxT944de/2bw4U=
-X-Google-Smtp-Source: APXvYqwQRIxj2BBbOfk65X7BrsP6nVrkHZKr0aYVuWg8dROLbexZqjbdcOdCyX7c0eBUAJnVJm3Irg==
-X-Received: by 2002:adf:ed04:: with SMTP id a4mr105936777wro.86.1564313310147;
-        Sun, 28 Jul 2019 04:28:30 -0700 (PDT)
+        bh=hKpyjTDk7o+25T3/HgBgX1TYyMZs1MLZWqa1gyuadF0=;
+        b=r+qqjUHyzG1tvdp5cVtiKnpVetI8xuZvTvYLFlJGI9mbY13QEjNawo5e2qG+/Y6JsP
+         bNdBLXQ/3UXaFZ+xGRm6kkOz59FMnegl7N2fyCmh/hhAjNoOl81W64PYof1fmSowPeeZ
+         w0cUvVuVfVfApE/d45h2afVo3NHrjTf3qbZHF5kRZb/4GwVmfGZKSWyo3AVBd7COApHV
+         1gWlyA7WNCERQC+BxuVDRZuvrp2wMCBtizqXlnHdUUAvgmHReCv17yZ2HYCYKzG8apgq
+         9g+LyhwQxe+TWWfkONTxfnPpSkZ9TTeIqPax9LZz6uiL6gM3MNaGLG4QrGY9jZTVaVgY
+         0fPw==
+X-Gm-Message-State: APjAAAUpCTQq0V2fpDcspM98zbU1kmVnK4nNVWF4BPGybCjAKOFiWVTy
+        OpW1oHE6pvwM/mQl5qgRjPFmmA8tMn4=
+X-Google-Smtp-Source: APXvYqzUi+GjiE2SUjTUehYNuf+KSi/lr7aAD3dGnlyp/lm9G+Shku9M5F98ObPFI+CeLcCSsIW3kA==
+X-Received: by 2002:a5d:4e4d:: with SMTP id r13mr24852787wrt.295.1564313311548;
+        Sun, 28 Jul 2019 04:28:31 -0700 (PDT)
 Received: from ogabbay-VM.habana-labs.com ([31.154.190.6])
-        by smtp.gmail.com with ESMTPSA id r12sm69805174wrt.95.2019.07.28.04.28.28
+        by smtp.gmail.com with ESMTPSA id r12sm69805174wrt.95.2019.07.28.04.28.30
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Sun, 28 Jul 2019 04:28:29 -0700 (PDT)
+        Sun, 28 Jul 2019 04:28:30 -0700 (PDT)
 From:   Oded Gabbay <oded.gabbay@gmail.com>
 To:     linux-kernel@vger.kernel.org, oshpigelman@habana.ai,
         ttayar@habana.ai, gregkh@linuxfoundation.org
-Subject: [PATCH 7/9] habanalabs: protect only pointer dereference in hard-reset
-Date:   Sun, 28 Jul 2019 14:28:16 +0300
-Message-Id: <20190728112818.30397-8-oded.gabbay@gmail.com>
+Subject: [PATCH 8/9] habanalabs: kill user process after CS rollback
+Date:   Sun, 28 Jul 2019 14:28:17 +0300
+Message-Id: <20190728112818.30397-9-oded.gabbay@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190728112818.30397-1-oded.gabbay@gmail.com>
 References: <20190728112818.30397-1-oded.gabbay@gmail.com>
@@ -58,83 +58,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch changes the location of taking a mutex lock and releasing it
-during the hard-reset process of the ASIC.
-
-The only place we need to protect is when we dereference pointers that may
-go away in case the user process aborts/closes the FD.
-
-That way, we allow the user process to actually close its FD in case we
-tell him that an error occurred.
+This patch calls the kill user process function after we rollback the
+in-flight CSs. This is because the user process can't be closed while
+there are open CSs. Therefore, there is no point of sending it a SIGKILL
+before we do the rollback CS part.
 
 Signed-off-by: Oded Gabbay <oded.gabbay@gmail.com>
 ---
- drivers/misc/habanalabs/device.c | 26 ++++++++++++++------------
- 1 file changed, 14 insertions(+), 12 deletions(-)
+ drivers/misc/habanalabs/device.c | 17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/misc/habanalabs/device.c b/drivers/misc/habanalabs/device.c
-index 5400e65ba5fa..471506b54217 100644
+index 471506b54217..2677160c01b8 100644
 --- a/drivers/misc/habanalabs/device.c
 +++ b/drivers/misc/habanalabs/device.c
-@@ -574,20 +574,21 @@ static void device_kill_open_processes(struct hl_device *hdev)
- 	else
- 		pending_total = HL_PENDING_RESET_PER_SEC;
+@@ -631,8 +631,6 @@ static void device_hard_reset_pending(struct work_struct *work)
+ 		container_of(work, struct hl_device_reset_work, reset_work);
+ 	struct hl_device *hdev = device_reset_work->hdev;
  
--	pending_cnt = pending_total;
+-	device_kill_open_processes(hdev);
 -
- 	/* Flush all processes that are inside hl_open */
- 	mutex_lock(&hdev->fpriv_list_lock);
-+	mutex_unlock(&hdev->fpriv_list_lock);
+ 	hl_device_reset(hdev, true, true);
  
--	while ((!list_empty(&hdev->fpriv_list)) && (pending_cnt)) {
--
--		pending_cnt--;
--
--		dev_info(hdev->dev,
--			"Can't HARD reset, waiting for user to close FD\n");
-+	/* Giving time for user to close FD, and for processes that are inside
-+	 * hl_device_open to finish
+ 	kfree(device_reset_work);
+@@ -737,6 +735,13 @@ int hl_device_reset(struct hl_device *hdev, bool hard_reset,
+ 	/* Go over all the queues, release all CS and their jobs */
+ 	hl_cs_rollback_all(hdev);
+ 
++	/* Kill processes here after CS rollback. This is because the process
++	 * can't really exit until all its CSs are done, which is what we
++	 * do in cs rollback
 +	 */
-+	if (!list_empty(&hdev->fpriv_list))
- 		ssleep(1);
--	}
- 
-+	mutex_lock(&hdev->fpriv_list_lock);
++	if (from_hard_reset_thread)
++		device_kill_open_processes(hdev);
 +
-+	/* This section must be protected because we are dereferencing
-+	 * pointers that are freed if the process exits
+ 	/* Release kernel context */
+ 	if ((hard_reset) && (hl_ctx_put(hdev->kernel_ctx) == 1))
+ 		hdev->kernel_ctx = NULL;
+@@ -1131,8 +1136,6 @@ void hl_device_fini(struct hl_device *hdev)
+ 
+ 	hdev->hard_reset_pending = true;
+ 
+-	device_kill_open_processes(hdev);
+-
+ 	hl_hwmon_fini(hdev);
+ 
+ 	device_late_fini(hdev);
+@@ -1151,6 +1154,12 @@ void hl_device_fini(struct hl_device *hdev)
+ 	/* Go over all the queues, release all CS and their jobs */
+ 	hl_cs_rollback_all(hdev);
+ 
++	/* Kill processes here after CS rollback. This is because the process
++	 * can't really exit until all its CSs are done, which is what we
++	 * do in cs rollback
 +	 */
- 	if (!list_empty(&hdev->fpriv_list)) {
- 		task = get_pid_task(hdev->compute_ctx->hpriv->taskpid,
- 					PIDTYPE_PID);
-@@ -600,6 +601,8 @@ static void device_kill_open_processes(struct hl_device *hdev)
- 		}
- 	}
- 
-+	mutex_unlock(&hdev->fpriv_list_lock);
++	device_kill_open_processes(hdev);
 +
- 	/* We killed the open users, but because the driver cleans up after the
- 	 * user contexts are closed (e.g. mmu mappings), we need to wait again
- 	 * to make sure the cleaning phase is finished before continuing with
-@@ -609,6 +612,8 @@ static void device_kill_open_processes(struct hl_device *hdev)
- 	pending_cnt = pending_total;
+ 	hl_cb_pool_fini(hdev);
  
- 	while ((!list_empty(&hdev->fpriv_list)) && (pending_cnt)) {
-+		dev_info(hdev->dev,
-+			"Waiting for all unmap operations to finish before hard reset\n");
- 
- 		pending_cnt--;
- 
-@@ -618,9 +623,6 @@ static void device_kill_open_processes(struct hl_device *hdev)
- 	if (!list_empty(&hdev->fpriv_list))
- 		dev_crit(hdev->dev,
- 			"Going to hard reset with open user contexts\n");
--
--	mutex_unlock(&hdev->fpriv_list_lock);
--
- }
- 
- static void device_hard_reset_pending(struct work_struct *work)
+ 	/* Release kernel context */
 -- 
 2.17.1
 
