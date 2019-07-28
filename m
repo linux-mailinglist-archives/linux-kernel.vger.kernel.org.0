@@ -2,65 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D97777F97
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2019 15:24:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 06D4277F9A
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2019 15:30:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726167AbfG1NYZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 28 Jul 2019 09:24:25 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:58916 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726032AbfG1NYZ (ORCPT
+        id S1726098AbfG1N3z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 28 Jul 2019 09:29:55 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:37206 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726032AbfG1N3y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 28 Jul 2019 09:24:25 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 33D9E80239; Sun, 28 Jul 2019 15:24:11 +0200 (CEST)
-Date:   Sun, 28 Jul 2019 15:24:12 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Andrew Lunn <andrew@lunn.ch>
-Cc:     liuyonglong <liuyonglong@huawei.com>,
-        David Miller <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linuxarm@huawei.com,
-        salil.mehta@huawei.com, yisen.zhuang@huawei.com,
-        shiju.jose@huawei.com
-Subject: Re: [PATCH net] net: hns: fix LED configuration for marvell phy
-Message-ID: <20190728132412.GC8718@xo-6d-61-c0.localdomain>
-References: <1563775152-21369-1-git-send-email-liuyonglong@huawei.com>
- <20190722.181906.2225538844348045066.davem@davemloft.net>
- <72061222-411f-a58c-5873-ad873394cdb5@huawei.com>
- <20190725042829.GB14276@lunn.ch>
+        Sun, 28 Jul 2019 09:29:54 -0400
+Received: by mail-ed1-f68.google.com with SMTP id w13so57075337eds.4
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2019 06:29:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mvXJ3/c4rpFRGGh2Wow0lkZGjKN4V1iCfYC7Oigz+iA=;
+        b=WBszeDWnp4ZcGvcJBBrX+sXfsbbQGBMwyvnvu5/GlXW+VqkFGoJ8GdKapq1oALPyLs
+         G13dv5CGaW0XI9qGkQjgfORNTLQSkyLQBRt4yga/lHpBKVCHdP0ISR+gjVgNVHf7jz/J
+         1FOV6JAnaQz1URcB+qsDQwlchxqMm5zXThFNYTPPRz97RXNFYqpxpkgOj4bbxWbgu6w9
+         k0Oiu87maWJR/CL23+qO++5TWMr7OI5On+em7+hrcB8JfxQEqx3evrr5ovkdhrHXHk58
+         ZvD1rxgN9YY2VsQu7k7jHc4IOUtWyDvAgJS2gHt7VV1y7O5ondyGju0TCnndQoRw4g/k
+         UDoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mvXJ3/c4rpFRGGh2Wow0lkZGjKN4V1iCfYC7Oigz+iA=;
+        b=p420u5oLzH69FNeJHcTVGjpemsaXOM3RxWy2Us1IjwR7gTU5ifJ6FX4WzcYEvdjnHB
+         UHCupMZ0Pe0nS/4jYYx6VvSj3rj5wWmJqs/NB3osV5e+gUZGe1LV9lcO7G+C4qwS9qrB
+         8lQqdDZJnW3fIuYAjohUii9S1Asw5jPENMyJ2OtqkeT8UR+eSs7mzwSs+Vt44g8Y57dI
+         7YJjH7pjzBXdOcVyYV0a6HkDTUd9d9dGz0kPE/Jr9PavuU0lHmLBXXthTzhdJwje/ujb
+         1mRzujUGxmKD9ZldUPZy+6j+BHoFpQNpLYvAfvdo4gpb5sWDaJHbxqfmUIB44SjsxvMu
+         x8gA==
+X-Gm-Message-State: APjAAAUkHBQtFjnIBCGdAcMEmRk7EPwI8dscETknoLaNK8br4WYI+4/y
+        lz8fhw0EdurHXk5UXG1s3OtUtWX4Fjgs8KZmpPM=
+X-Google-Smtp-Source: APXvYqzUHdn0K/6jv1Ayf0caTyzE54mDGtV0LNSQdgaxs59ZSKla4UqaBrYnMXVctxpaI0W6SGAuv6R1sbGMKAUdF+Y=
+X-Received: by 2002:a50:ad01:: with SMTP id y1mr89286757edc.180.1564320592940;
+ Sun, 28 Jul 2019 06:29:52 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190725042829.GB14276@lunn.ch>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+References: <alpine.DEB.2.21.9999.1907251535421.32766@viisi.sifive.com>
+In-Reply-To: <alpine.DEB.2.21.9999.1907251535421.32766@viisi.sifive.com>
+From:   Bin Meng <bmeng.cn@gmail.com>
+Date:   Sun, 28 Jul 2019 21:29:42 +0800
+Message-ID: <CAEUhbmUeAFtmFci78phyLdxTFwh4rfztsMZAy5ekfbmyX1VZeA@mail.gmail.com>
+Subject: Re: [PATCH] riscv: defconfig: align RV64 defconfig to the output of
+ "make savedefconfig"
+To:     Paul Walmsley <paul.walmsley@sifive.com>
+Cc:     linux-riscv <linux-riscv@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 2019-07-25 06:28:29, Andrew Lunn wrote:
-> On Thu, Jul 25, 2019 at 11:00:08AM +0800, liuyonglong wrote:
-> > > Revert "net: hns: fix LED configuration for marvell phy"
-> > > This reverts commit f4e5f775db5a4631300dccd0de5eafb50a77c131.
-> > >
-> > > Andrew Lunn says this should be handled another way.
-> > >
-> > > Signed-off-by: David S. Miller <davem@davemloft.net>
-> > 
-> > 
-> > Hi Andrew:
-> > 
-> > I see this patch have been reverted, can you tell me the better way to do this?
-> > Thanks very much!
-> 
-> Please take a look at the work Matthias Kaehlcke is doing. It has not
-> got too far yet, but when it is complete, it should define a generic
-> way to configure PHY LEDs.
+On Fri, Jul 26, 2019 at 6:36 AM Paul Walmsley <paul.walmsley@sifive.com> wrote:
+>
+>
+> Align the RV64 defconfig to the output of "make savedefconfig" to
+> avoid unnecessary deltas for future defconfig patches.  This patch
+> should have no runtime functional impact.
+>
+> Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
+> ---
+>  arch/riscv/configs/defconfig | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+>
 
-I don't remember PHY LED discussion from LED mailing list. Would you have a pointer?
-Would it make sense to coordinate with LED subsystem?
-
-									Pavel
--- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+Reviewed-by: Bin Meng <bmeng.cn@gmail.com>
