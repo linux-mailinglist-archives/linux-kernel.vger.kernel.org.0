@@ -2,122 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0623A77D54
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2019 05:13:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 50C5777D90
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2019 05:46:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726103AbfG1DNK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 27 Jul 2019 23:13:10 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:45665 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725440AbfG1DNJ (ORCPT
+        id S1726023AbfG1DqC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 27 Jul 2019 23:46:02 -0400
+Received: from mail-io1-f69.google.com ([209.85.166.69]:45746 "EHLO
+        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725875AbfG1DqB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 27 Jul 2019 23:13:09 -0400
-Received: by mail-pl1-f194.google.com with SMTP id y8so26197694plr.12
-        for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2019 20:13:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=FqLsZz2nSjYhrpKM+WzGM9xkHpfQDieQVUOE+LPBLEI=;
-        b=TQtynCrSO8zFxyd9WBSrJDd7NsaeQpRvN24ZM12Z2d7iH1shFb7aVxAlLY19nMqC0l
-         dy6mso2iQSbsIkUjKA0e7knOEc/T/i3KJ90rkncQSZMEURG/p0l6wTBBTLIQPj35NeRy
-         4ViG+jegcBjIRimQLQT6694aCvUDxbDrBf/PA=
+        Sat, 27 Jul 2019 23:46:01 -0400
+Received: by mail-io1-f69.google.com with SMTP id e20so63151502ioe.12
+        for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2019 20:46:01 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=FqLsZz2nSjYhrpKM+WzGM9xkHpfQDieQVUOE+LPBLEI=;
-        b=hAMR+pHTqL/yhGN06L+9TWvHO3EbUp0uTQkkpBpJt3Gr8+UHmnNcjrW8IUeVXnxjeJ
-         2jL3jxO4sIxICEo1PBXMrqjfERQ+6ygfl9L+xUhJjb4C6X2ZPojkwyFMkHeodl6sO5tu
-         RyKBOxSG4NcHoONGpOXVFoe+tRV9jKSzrHp680VlBDe11vndmEFdhEcdqABHKBxnOWhG
-         GuevJochPL+OU+eUulRADUM0Z/TnbQ6N5EaSkgHrIUlzqQ7DNDCwvbvJOq+C2ATp/jWd
-         EK73DVUgWwGhP/maAOr8f5KFsLa9FpD03DMYkk0LjiJvRF6UpN5CmrCC0bJWtZNkNqxX
-         vspQ==
-X-Gm-Message-State: APjAAAVfQ5IFEgJIU1XvuErTcmzP06k94cZjg2CSpi/iw+CLlL1+l33P
-        2gYYQuTEJZBcEG2X3jWQRkVyBqdu
-X-Google-Smtp-Source: APXvYqzwDI9I9PeC8h95jHNksqEQG9WOIA03p9LLLVQYtZmq6YSewHUcA+rk5MKkl8CvZePu5/dGPQ==
-X-Received: by 2002:a17:902:2869:: with SMTP id e96mr99972617plb.203.1564283588784;
-        Sat, 27 Jul 2019 20:13:08 -0700 (PDT)
-Received: from joelaf.cam.corp.google.com ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id z12sm38727125pfn.29.2019.07.27.20.13.05
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Sat, 27 Jul 2019 20:13:07 -0700 (PDT)
-From:   "Joel Fernandes (Google)" <joel@joelfernandes.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        kernel-team@android.com, Boqun Feng <boqun.feng@gmail.com>,
-        Akira Yokosawa <akiyks@gmail.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        David Howells <dhowells@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Jade Alglave <j.alglave@ucl.ac.uk>, linux-arch@vger.kernel.org,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will@kernel.org>
-Subject: [PATCH v2] lkmm/docs: Correct ->prop example with additional rfe link
-Date:   Sat, 27 Jul 2019 23:13:03 -0400
-Message-Id: <20190728031303.164545-1-joel@joelfernandes.org>
-X-Mailer: git-send-email 2.22.0.709.g102302147b-goog
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=o2kzyTbMhQL/kAorHcC+7ID+BqHWTQyphajjOBsUUz8=;
+        b=cA7CccRz5izEY3dJP5dV0F4e9IXcGNQLAUOhtXd5bPojHbcKl6qC4VyTHUcuV1eFxI
+         vpoZCgZzmzBphNqy59sFcmt/traSzuVuz9U3kcjDcscX3cGBpA5s22mdyarMHQbpmhng
+         ADS6XVoMAht6iAg9oRUydX6f7g7Kv8WVI7wtJBrd4/Iiev/sWx5X/eBR47tajPZgJHqO
+         tE6xbMZswngaxVmTxrRQZFRNUBmheZxbJtMkHAnGEwxR5y7qYFbTMQizH9Fy9G9dpXOp
+         9cHaoblQw7ER0gUyHGNTLnwLJaoDLugBst1eJnomkgJ5cbybc3mu3HtCtq6dM0hYxQCy
+         IKxw==
+X-Gm-Message-State: APjAAAUFHGJ1t7B41uNk0glaNSfcnVasJ4Y86KL3Mo4mCfc9XbE2TRXw
+        pb77CeMesYsV7ojjsNfxuoCBp77a6A4jIxXt1rUuZx8HnCZO
+X-Google-Smtp-Source: APXvYqxXM+e7HkG1ndOj4S4xy8tLRGbSOz7rHomFcVxe9opbIqsbCOX/jEqUOK4tXAcI7y8l03aMdveo9Zu26OKpCrjDuyQnBW0q
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a02:878a:: with SMTP id t10mr33742269jai.112.1564285560945;
+ Sat, 27 Jul 2019 20:46:00 -0700 (PDT)
+Date:   Sat, 27 Jul 2019 20:46:00 -0700
+In-Reply-To: <0000000000002b4896058e7abf78@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000300996058eb59dd7@google.com>
+Subject: Re: general protection fault in tls_trim_both_msgs
+From:   syzbot <syzbot+0e0fedcad708d12d3032@syzkaller.appspotmail.com>
+To:     ast@kernel.org, aviadye@mellanox.com, borisp@mellanox.com,
+        bpf@vger.kernel.org, corbet@lwn.net, daniel@iogearbox.net,
+        davejwatson@fb.com, davem@davemloft.net,
+        jakub.kicinski@netronome.com, john.fastabend@gmail.com,
+        kafai@fb.com, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        songliubraving@fb.com, syzkaller-bugs@googlegroups.com, yhs@fb.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The lkmm example about ->prop relation should describe an additional rfe
-link between P1's store to y and P2's load of y, which should be
-critical to establishing the ordering resulting in the ->prop ordering
-on P0. IOW, there are 2 rfe links, not one.
+syzbot has bisected this bug to:
 
-Correct these in the docs to make the ->prop ordering on P0 more clear.
+commit 32857cf57f920cdc03b5095f08febec94cf9c36b
+Author: John Fastabend <john.fastabend@gmail.com>
+Date:   Fri Jul 19 17:29:18 2019 +0000
 
-Cc: kernel-team@android.com
-Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
-Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
----
- .../memory-model/Documentation/explanation.txt  | 17 ++++++++++-------
- 1 file changed, 10 insertions(+), 7 deletions(-)
+     net/tls: fix transition through disconnect with close
 
-diff --git a/tools/memory-model/Documentation/explanation.txt b/tools/memory-model/Documentation/explanation.txt
-index 68caa9a976d0..aa84fce854cc 100644
---- a/tools/memory-model/Documentation/explanation.txt
-+++ b/tools/memory-model/Documentation/explanation.txt
-@@ -1302,8 +1302,8 @@ followed by an arbitrary number of cumul-fence links, ending with an
- rfe link.  You can concoct more exotic examples, containing more than
- one fence, although this quickly leads to diminishing returns in terms
- of complexity.  For instance, here's an example containing a coe link
--followed by two fences and an rfe link, utilizing the fact that
--release fences are A-cumulative:
-+followed by a fence, an rfe link, another fence and and a final rfe link,
-+utilizing the fact that release fences are A-cumulative:
- 
- 	int x, y, z;
- 
-@@ -1334,11 +1334,14 @@ If x = 2, r0 = 1, and r2 = 1 after this code runs then there is a prop
- link from P0's store to its load.  This is because P0's store gets
- overwritten by P1's store since x = 2 at the end (a coe link), the
- smp_wmb() ensures that P1's store to x propagates to P2 before the
--store to y does (the first fence), the store to y propagates to P2
--before P2's load and store execute, P2's smp_store_release()
--guarantees that the stores to x and y both propagate to P0 before the
--store to z does (the second fence), and P0's load executes after the
--store to z has propagated to P0 (an rfe link).
-+store to y does (the first fence), P2's store to y happens before P2's
-+load of y (rfe link), P2's smp_store_release() ensures that P2's load
-+of y executes before P2's store to z (second fence), which implies that
-+that stores to x and y propagate to P2 before the smp_store_release(), which
-+means that P2's smp_store_release() will propagate stores to x and y to all
-+CPUs before the store to z propagates (A-cumulative property of this fence).
-+Finally P0's load of z executes after P2's store to z has propagated to
-+P0 (rfe link).
- 
- In summary, the fact that the hb relation links memory access events
- in the order they execute means that it must not have cycles.  This
--- 
-2.22.0.709.g102302147b-goog
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=155064d8600000
+start commit:   fde50b96 Add linux-next specific files for 20190726
+git tree:       linux-next
+final crash:    https://syzkaller.appspot.com/x/report.txt?x=175064d8600000
+console output: https://syzkaller.appspot.com/x/log.txt?x=135064d8600000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4b58274564b354c1
+dashboard link: https://syzkaller.appspot.com/bug?extid=0e0fedcad708d12d3032
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14779d64600000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1587c842600000
 
+Reported-by: syzbot+0e0fedcad708d12d3032@syzkaller.appspotmail.com
+Fixes: 32857cf57f92 ("net/tls: fix transition through disconnect with  
+close")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
