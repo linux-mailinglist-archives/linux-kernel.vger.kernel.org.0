@@ -2,90 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 460D778DFC
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 16:29:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 75AB278E06
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 16:31:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728031AbfG2O3e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 10:29:34 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:7928 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728045AbfG2O33 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 10:29:29 -0400
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6TERLrM022428;
-        Mon, 29 Jul 2019 16:29:17 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : subject :
- date : message-id : mime-version : content-type :
- content-transfer-encoding; s=STMicroelectronics;
- bh=/E0GksnkJiKefciHBvFyL+s1X3i9mUeBZFhV3J5bfCA=;
- b=MejLdAC5egEPFYo+PeRI2KZ59gQepBm4PjuE4dYHUmy2ipCTkYeM8cPmcIuSB5SWQNZc
- RWkDgdoUWvw3LPq0VRRbTRfja20BeoQ43YZJjo73gjX75besD6SIgzfQwDq3U6bS6jX4
- L9ELCvaiRoeRT73MTMLKzNRLuVenb8F1Kp+dQ3QMliTZWXCRQIjCAtmzQdq5k/AfDJSE
- Jcm28weMNsKgnLktPyiKeaCpGOtZrBUi0IA3MLu/DH7f+Jm0RWGCxy/j4HwaUzG1/tlU
- Sm0oYVM+dOOe63K/wy8W/kCEDgi0jnnm8h05EyWzJ4dJZfn1fAhTIaGveh3kVOEjKjcL +A== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2u0br9n7jv-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Mon, 29 Jul 2019 16:29:17 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 1F17F34;
-        Mon, 29 Jul 2019 14:29:16 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas24.st.com [10.75.90.94])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id D1D6B5A7C;
-        Mon, 29 Jul 2019 14:29:15 +0000 (GMT)
-Received: from SAFEX1HUBCAS23.st.com (10.75.90.47) by Safex1hubcas24.st.com
- (10.75.90.94) with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 29 Jul
- 2019 16:29:15 +0200
-Received: from localhost (10.201.23.97) by webmail-ga.st.com (10.75.90.48)
- with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 29 Jul 2019 16:29:15
- +0200
-From:   =?UTF-8?q?Yannick=20Fertr=C3=A9?= <yannick.fertre@st.com>
-To:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Benjamin Gaignard <benjamin.gaignard@st.com>,
-        Yannick Fertre <yannick.fertre@st.com>,
-        Philippe Cornu <philippe.cornu@st.com>,
-        Fabrice Gasnier <fabrice.gasnier@st.com>
-Subject: [PATCH] ARM: dts: stm32: add phy-dsi-supply property on stm32mp157c-ev1
-Date:   Mon, 29 Jul 2019 16:29:08 +0200
-Message-ID: <1564410548-20436-1-git-send-email-yannick.fertre@st.com>
-X-Mailer: git-send-email 2.7.4
+        id S1727572AbfG2ObK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 10:31:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42412 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726473AbfG2ObK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 10:31:10 -0400
+Received: from localhost.localdomain (unknown [180.111.32.87])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DDD51206DD;
+        Mon, 29 Jul 2019 14:31:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564410670;
+        bh=UjF/AwvKhVxU6D/HTh8Hq1nLgczmyOG6CMrKwunrSbc=;
+        h=From:To:Cc:Subject:Date:From;
+        b=V5dxupUlfgUZEBYpjvlt723xj/TcjTDF9WMaKoEZENPx/o+C8axJ7+2DL915XzMHT
+         eLvON8oyYmDW03M6gYX5TmSFYAC1hrf6qdp6i6kZfbJHy8fIDz3xBDw2tZHEcqQOeg
+         eUp1nCiwek9wdItlegOE6c9ShlnKpDle7SKw+oKA=
+From:   Chao Yu <chao@kernel.org>
+To:     jaegeuk@kernel.org
+Cc:     linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH] f2fs: fix to migrate blocks correctly during defragment
+Date:   Sun, 28 Jul 2019 23:01:52 +0800
+Message-Id: <20190728150152.8533-1-chao@kernel.org>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.201.23.97]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-29_07:,,
- signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The dsi physical layer is powered by the 1v8 power controller supply.
+From: Chao Yu <yuchao0@huawei.com>
 
-Signed-off-by: Yannick Fertré <yannick.fertre@st.com>
+During defragment, we missed to trigger fragmented blocks migration
+for below condition:
+
+In defragment region:
+- total number of valid blocks is smaller than 512;
+- the tail part of the region are all holes;
+
+In addtion, return zero to user via range->len if there is no
+fragmented blocks.
+
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- arch/arm/boot/dts/stm32mp157c-ev1.dts | 1 +
- 1 file changed, 1 insertion(+)
+ fs/f2fs/file.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/boot/dts/stm32mp157c-ev1.dts b/arch/arm/boot/dts/stm32mp157c-ev1.dts
-index feb8f77..19d69d0 100644
---- a/arch/arm/boot/dts/stm32mp157c-ev1.dts
-+++ b/arch/arm/boot/dts/stm32mp157c-ev1.dts
-@@ -101,6 +101,7 @@
- &dsi {
- 	#address-cells = <1>;
- 	#size-cells = <0>;
-+	phy-dsi-supply = <&reg18>;
- 	status = "okay";
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index ff93066ed515..ff2ffa850a6f 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -2384,8 +2384,10 @@ static int f2fs_defragment_range(struct f2fs_sb_info *sbi,
+ 		map.m_lblk += map.m_len;
+ 	}
  
- 	ports {
+-	if (!fragmented)
++	if (!fragmented) {
++		total = 0;
+ 		goto out;
++	}
+ 
+ 	sec_num = DIV_ROUND_UP(total, BLKS_PER_SEC(sbi));
+ 
+@@ -2415,7 +2417,7 @@ static int f2fs_defragment_range(struct f2fs_sb_info *sbi,
+ 
+ 		if (!(map.m_flags & F2FS_MAP_FLAGS)) {
+ 			map.m_lblk = next_pgofs;
+-			continue;
++			goto check;
+ 		}
+ 
+ 		set_inode_flag(inode, FI_DO_DEFRAG);
+@@ -2439,8 +2441,8 @@ static int f2fs_defragment_range(struct f2fs_sb_info *sbi,
+ 		}
+ 
+ 		map.m_lblk = idx;
+-
+-		if (idx < pg_end && cnt < blk_per_seg)
++check:
++		if (map.m_lblk < pg_end && cnt < blk_per_seg)
+ 			goto do_map;
+ 
+ 		clear_inode_flag(inode, FI_DO_DEFRAG);
 -- 
-2.7.4
+2.22.0
 
