@@ -2,115 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AA5E77FA2
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2019 15:40:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA75C77FA8
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2019 15:42:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726111AbfG1Nk1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 28 Jul 2019 09:40:27 -0400
-Received: from foss.arm.com ([217.140.110.172]:32796 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726032AbfG1Nk1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 28 Jul 2019 09:40:27 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2389C344;
-        Sun, 28 Jul 2019 06:40:26 -0700 (PDT)
-Received: from [10.163.1.126] (unknown [10.163.1.126])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DD10B3F71A;
-        Sun, 28 Jul 2019 06:40:19 -0700 (PDT)
-Subject: Re: [PATCH v9 13/21] mm: pagewalk: Add test_p?d callbacks
-To:     Steven Price <steven.price@arm.com>, linux-mm@kvack.org
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        James Morse <james.morse@arm.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will@kernel.org>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Mark Rutland <Mark.Rutland@arm.com>,
-        "Liang, Kan" <kan.liang@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-References: <20190722154210.42799-1-steven.price@arm.com>
- <20190722154210.42799-14-steven.price@arm.com>
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-Message-ID: <b74e545f-cbe0-9dd0-004c-5919e5cabb6f@arm.com>
-Date:   Sun, 28 Jul 2019 19:11:00 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1726178AbfG1NmB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 28 Jul 2019 09:42:01 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:36665 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726046AbfG1NmB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 28 Jul 2019 09:42:01 -0400
+Received: by mail-ed1-f65.google.com with SMTP id k21so57072285edq.3;
+        Sun, 28 Jul 2019 06:41:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=yTBwHNHT3KHAp/UaTaH4Up3YEwsrhkbymBNCkcdraJ4=;
+        b=UQWUwAU/aLkzrRJuq7lz6WfmkRCRPcRIkelqPKRkPBmQvdcVxlDWInaTr16xiYUOTh
+         LaIL6njzffcFYPhbX3vBZ31RhD8oEUnYxYzGm6URgF9ybzNE3wjQD+Q91qr4QpoP89x/
+         7AZ+mKc/2Z03uFx+5PK5F7JsddDDwG8851Ro9yV3keN1CYuu0p24wRy19pNYk0P6i2YX
+         l/zE2saf2xRu5aXu/3I3UG3IZKFaKpY44+0qACOrLx5/D1k08/toiQG0I7wjC4ntV3n0
+         mXhsVFqhR+jOLJT3+Q5iz0xFOVDJeqJPDwbI+s2WDPn2gxr6HeePvKoF/ToqjaZSBtLa
+         M8eg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=yTBwHNHT3KHAp/UaTaH4Up3YEwsrhkbymBNCkcdraJ4=;
+        b=mQpKveWgg9CG9uIgqGmYufZtm7gd5dMpvToTMDB/njS5o+AQl8avAoqv77VX2IXyQ/
+         9EUolbxNCuTjYxXHth0DWEnOzB6grGeStFC4rjVCjQeP904Yqk//IP+/Zi6Vjc/M1fEg
+         8y7no3BL2wm4pmm15acbGs9RYCCGXOejkGnqBznB6rSkw7oUr3IAroRHkFztLDnkstOa
+         eoXBTJgEe24OrKsvOrYe0bNhFwalOPin3UtC0I5zE4VEpPiL32HIjVmfFu1riy++mDuz
+         yrhXVlnsW8oIbzAV2zu51JgcP4Jhs2Uns0HdlnMmvY1ReT3wIjrcb1Zr/6uy7ZfTwTBe
+         DJIw==
+X-Gm-Message-State: APjAAAXARECJPmxsaKUnzlKFUKhkF+lpFChZKCI7ic/Groq+pa95NDzX
+        A50RodTeQ2UwT5nkpqcLHoFNag264bdn4xTokJo=
+X-Google-Smtp-Source: APXvYqzBKvd0Qybj93U8jK8asK800I/u667umXFP0VgBlCHZHI45yVtwQGVyY3X1SFkkAX087eMxDRfleptdKbmxNjo=
+X-Received: by 2002:a50:94e6:: with SMTP id t35mr91612893eda.137.1564321319323;
+ Sun, 28 Jul 2019 06:41:59 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190722154210.42799-14-steven.price@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <alpine.DEB.2.21.9999.1907251426450.32766@viisi.sifive.com>
+In-Reply-To: <alpine.DEB.2.21.9999.1907251426450.32766@viisi.sifive.com>
+From:   Bin Meng <bmeng.cn@gmail.com>
+Date:   Sun, 28 Jul 2019 21:41:48 +0800
+Message-ID: <CAEUhbmX1vJbm9NNU-5OkSaWDRN0pK0=1D6ZLXHD45PNAqDu6gw@mail.gmail.com>
+Subject: Re: [PATCH v2] pci: Kconfig: select PCI_MSI_IRQ_DOMAIN by default on RISC-V
+To:     Paul Walmsley <paul.walmsley@sifive.com>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        linux-pci <linux-pci@vger.kernel.org>,
+        linux-riscv <linux-riscv@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>, wesley@sifive.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 07/22/2019 09:12 PM, Steven Price wrote:
-> It is useful to be able to skip parts of the page table tree even when
-> walking without VMAs. Add test_p?d callbacks similar to test_walk but
-> which are called just before a table at that level is walked. If the
-> callback returns non-zero then the entire table is skipped.
-> 
-> Signed-off-by: Steven Price <steven.price@arm.com>
+On Fri, Jul 26, 2019 at 5:28 AM Paul Walmsley <paul.walmsley@sifive.com> wrote:
+>
+> From: Wesley Terpstra <wesley@sifive.com>
+>
+> This is part of adding support for RISC-V systems with PCIe host
+> controllers that support message-signaled interrupts.
+>
+> Signed-off-by: Wesley Terpstra <wesley@sifive.com>
+> [paul.walmsley@sifive.com: wrote patch description; split this
+>  patch from the arch/riscv patch]
+> Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
 > ---
->  include/linux/mm.h | 11 +++++++++++
->  mm/pagewalk.c      | 24 ++++++++++++++++++++++++
->  2 files changed, 35 insertions(+)
-> 
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index b22799129128..325a1ca6f820 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -1447,6 +1447,11 @@ void unmap_vmas(struct mmu_gather *tlb, struct vm_area_struct *start_vma,
->   *             value means "do page table walk over the current vma,"
->   *             and a negative one means "abort current page table walk
->   *             right now." 1 means "skip the current vma."
-> + * @test_pmd:  similar to test_walk(), but called for every pmd.
-> + * @test_pud:  similar to test_walk(), but called for every pud.
-> + * @test_p4d:  similar to test_walk(), but called for every p4d.
-> + *             Returning 0 means walk this part of the page tables,
-> + *             returning 1 means to skip this range.
->   * @mm:        mm_struct representing the target process of page table walk
->   * @vma:       vma currently walked (NULL if walking outside vmas)
->   * @private:   private data for callbacks' usage
-> @@ -1471,6 +1476,12 @@ struct mm_walk {
->  			     struct mm_walk *walk);
->  	int (*test_walk)(unsigned long addr, unsigned long next,
->  			struct mm_walk *walk);
-> +	int (*test_pmd)(unsigned long addr, unsigned long next,
-> +			pmd_t *pmd_start, struct mm_walk *walk);
-> +	int (*test_pud)(unsigned long addr, unsigned long next,
-> +			pud_t *pud_start, struct mm_walk *walk);
-> +	int (*test_p4d)(unsigned long addr, unsigned long next,
-> +			p4d_t *p4d_start, struct mm_walk *walk);
->  	struct mm_struct *mm;
->  	struct vm_area_struct *vma;
->  	void *private;
-> diff --git a/mm/pagewalk.c b/mm/pagewalk.c
-> index 1cbef99e9258..6bea79b95be3 100644
-> --- a/mm/pagewalk.c
-> +++ b/mm/pagewalk.c
-> @@ -32,6 +32,14 @@ static int walk_pmd_range(pud_t *pud, unsigned long addr, unsigned long end,
->  	unsigned long next;
->  	int err = 0;
->  
-> +	if (walk->test_pmd) {
-> +		err = walk->test_pmd(addr, end, pmd_offset(pud, 0UL), walk);
-> +		if (err < 0)
-> +			return err;
-> +		if (err > 0)
-> +			return 0;
-> +	}
+>  drivers/pci/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/pci/Kconfig b/drivers/pci/Kconfig
+> index 2ab92409210a..beb3408a0272 100644
+> --- a/drivers/pci/Kconfig
+> +++ b/drivers/pci/Kconfig
+> @@ -52,7 +52,7 @@ config PCI_MSI
+>            If you don't know what to do here, say Y.
+>
+>  config PCI_MSI_IRQ_DOMAIN
+> -       def_bool ARC || ARM || ARM64 || X86
+> +       def_bool ARC || ARM || ARM64 || X86 || RISCV
+>         depends on PCI_MSI
+>         select GENERIC_MSI_IRQ_DOMAIN
+>
+> --
 
-Though this attempts to match semantics with test_walk() and be comprehensive
-just wondering what are the real world situations when page walking need to be
-aborted based on error condition at a given page table level.
+Reviewed-by: Bin Meng <bmeng.cn@gmail.com>
