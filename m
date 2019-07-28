@@ -2,49 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A71878155
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2019 21:52:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 581A278157
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2019 21:52:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726375AbfG1TwY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 28 Jul 2019 15:52:24 -0400
-Received: from smtp-fw-9102.amazon.com ([207.171.184.29]:50815 "EHLO
-        smtp-fw-9102.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726129AbfG1TwX (ORCPT
+        id S1726441AbfG1Tw3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 28 Jul 2019 15:52:29 -0400
+Received: from smtp-fw-33001.amazon.com ([207.171.190.10]:11886 "EHLO
+        smtp-fw-33001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726388AbfG1Tw2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 28 Jul 2019 15:52:23 -0400
+        Sun, 28 Jul 2019 15:52:28 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1564343543; x=1595879543;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=TQZHxFyuKFJqN7+q9YByiunsHnWg6Vq9Zg3jp/Zcago=;
-  b=EXI6OBGccST6dMss/9saEKnOz7Pjiuvg3xBhKCETJsX/FFxd9Y9qTXxH
-   xctKMEaNs9c7c+IcsYTd9NLkX50D5b5gMnCfQmIR2jOpnWCRg3nI67KEk
-   ydrlVQEKWpMJny+3bMA44RnlEJh6FHDwCH0uXL1M2R7ytwb9dRB36WBeE
-   8=;
+  t=1564343547; x=1595879547;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=jp036A70PNKKSUR2d3ycNtKJ/DljExzQRQpJU5CYsQE=;
+  b=hl7TiFhGep4uTeOXe/txzGFfE9eN96HJESnDSa/JLbTzg9eLarCYgDVV
+   JXuvbt6bq2cpnCuE+SWj3Ob3DJhnnUOjj69gyG8ETtrbfUSG6+GYVpXjR
+   57a08GBAEYes4GlT52cCCcSn4l8oedZPrriNf6N8oh+0vda98CSridwUD
+   4=;
 X-IronPort-AV: E=Sophos;i="5.64,319,1559520000"; 
-   d="scan'208";a="688577182"
-Received: from sea3-co-svc-lb6-vlan2.sea.amazon.com (HELO email-inbound-relay-2a-53356bf6.us-west-2.amazon.com) ([10.47.22.34])
-  by smtp-border-fw-out-9102.sea19.amazon.com with ESMTP; 28 Jul 2019 19:52:08 +0000
-Received: from EX13MTAUEA001.ant.amazon.com (pdx4-ws-svc-p6-lb7-vlan2.pdx.amazon.com [10.170.41.162])
-        by email-inbound-relay-2a-53356bf6.us-west-2.amazon.com (Postfix) with ESMTPS id B6940A220D;
-        Sun, 28 Jul 2019 19:52:07 +0000 (UTC)
+   d="scan'208";a="814374163"
+Received: from sea3-co-svc-lb6-vlan3.sea.amazon.com (HELO email-inbound-relay-2c-1968f9fa.us-west-2.amazon.com) ([10.47.22.38])
+  by smtp-border-fw-out-33001.sea14.amazon.com with ESMTP; 28 Jul 2019 19:52:14 +0000
+Received: from EX13MTAUEA001.ant.amazon.com (pdx4-ws-svc-p6-lb7-vlan3.pdx.amazon.com [10.170.41.166])
+        by email-inbound-relay-2c-1968f9fa.us-west-2.amazon.com (Postfix) with ESMTPS id 9B673A2173;
+        Sun, 28 Jul 2019 19:52:14 +0000 (UTC)
 Received: from EX13D05EUC002.ant.amazon.com (10.43.164.231) by
  EX13MTAUEA001.ant.amazon.com (10.43.61.82) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Sun, 28 Jul 2019 19:52:07 +0000
+ id 15.0.1367.3; Sun, 28 Jul 2019 19:52:14 +0000
 Received: from u18dbf258377358bea500.amazon.com (10.43.160.25) by
  EX13D05EUC002.ant.amazon.com (10.43.164.231) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Sun, 28 Jul 2019 19:51:58 +0000
+ id 15.0.1367.3; Sun, 28 Jul 2019 19:52:06 +0000
 From:   Ronen Krupnik <ronenk@amazon.com>
 To:     <robh+dt@kernel.org>, <mark.rutland@arm.com>
 CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <barakw@amazon.com>, <dwmw@amazon.co.uk>, <benh@amazon.com>,
         <jonnyc@amazon.com>, <talel@amazon.com>, <hhhawa@amazon.com>,
         <hanochu@amazon.com>, Ronen Krupnik <ronenk@amazon.com>
-Subject: [PATCH 0/2] Amazon Annapurna Labs Alpine v3 device-tree
-Date:   Sun, 28 Jul 2019 22:51:33 +0300
-Message-ID: <20190728195135.12661-1-ronenk@amazon.com>
+Subject: [PATCH 1/2] dt-bindings: amazon: add Amazon Annapurna Labs Alpine support
+Date:   Sun, 28 Jul 2019 22:51:34 +0300
+Message-ID: <20190728195135.12661-2-ronenk@amazon.com>
 X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20190728195135.12661-1-ronenk@amazon.com>
+References: <20190728195135.12661-1-ronenk@amazon.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
@@ -56,24 +58,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series introduces the device tree for Amazon Annapurna Labs Alpine v3
-SoC and Evaluation Board.
+This patch adds DT bindings info for Amazon Annapurna Labs Alpine SOC
+and related reference boards.
 
-Ronen Krupnik (2):
-  dt-bindings: amazon: add Amazon Annapurna Labs Alpine support
-  arm64: dts: amazon: add Amazon Annapurna Labs Alpine v3 support
-
- .../devicetree/bindings/arm/amazon,alpine.txt |  23 ++
- arch/arm64/boot/dts/Makefile                  |   1 +
- arch/arm64/boot/dts/amazon/Makefile           |   1 +
- arch/arm64/boot/dts/amazon/alpine-v3-evp.dts  |  23 ++
- arch/arm64/boot/dts/amazon/alpine-v3.dtsi     | 371 ++++++++++++++++++
- 5 files changed, 419 insertions(+)
+Signed-off-by: Ronen Krupnik <ronenk@amazon.com>
+---
+ .../devicetree/bindings/arm/amazon,alpine.txt | 23 +++++++++++++++++++
+ 1 file changed, 23 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/arm/amazon,alpine.txt
- create mode 100644 arch/arm64/boot/dts/amazon/Makefile
- create mode 100644 arch/arm64/boot/dts/amazon/alpine-v3-evp.dts
- create mode 100644 arch/arm64/boot/dts/amazon/alpine-v3.dtsi
 
+diff --git a/Documentation/devicetree/bindings/arm/amazon,alpine.txt b/Documentation/devicetree/bindings/arm/amazon,alpine.txt
+new file mode 100644
+index 000000000000..58817208421b
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/amazon,alpine.txt
+@@ -0,0 +1,23 @@
++Amazon Annapurna Labs Alpine v3 Platform Device Tree Bindings
++---------------------------------------------------------------
++
++Platforms based on Amazon Annapurna Labs Alpine SoC architecture
++shall follow the following scheme:
++
++SoCs
++----
++
++Each device tree root node must specify which exact SoC in alpine
++architecture it uses, using one of the following compatible values:
++
++- alpine v3
++  compatible = "amazon,alpine-v3";
++
++Boards
++------
++
++Each device tree must specify which one or more of the following
++board-specific compatible values:
++
++- alpine-v3 Evaluation Platform (EVP)
++  compatible = "amazon,alpine-v3-evp";
 -- 
 2.21.0
 
