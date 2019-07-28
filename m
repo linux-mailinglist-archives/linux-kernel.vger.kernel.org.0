@@ -2,102 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02D2C78272
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 01:41:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A37178279
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 01:45:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726271AbfG1XlO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 28 Jul 2019 19:41:14 -0400
-Received: from new3-smtp.messagingengine.com ([66.111.4.229]:60963 "EHLO
-        new3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726203AbfG1XlO (ORCPT
+        id S1726297AbfG1Xp1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 28 Jul 2019 19:45:27 -0400
+Received: from smtprelay0149.hostedemail.com ([216.40.44.149]:38341 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726203AbfG1Xp1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 28 Jul 2019 19:41:14 -0400
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailnew.nyi.internal (Postfix) with ESMTP id C65CD108B;
-        Sun, 28 Jul 2019 19:41:12 -0400 (EDT)
-Received: from imap2 ([10.202.2.52])
-  by compute4.internal (MEProxy); Sun, 28 Jul 2019 19:41:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=
-        mime-version:message-id:in-reply-to:references:date:from:to:cc
-        :subject:content-type; s=fm3; bh=U4RDuA+FSEF8yU1ZGRvQY82lPLeCcjf
-        hhcly0ZZX73U=; b=eK8A1ThuZVoK4sXEsuVOEEhAwXkF1Yy77aDYbCW9IrJ/OYo
-        n/Xq54zf6PMwyMfx+kR6Wjxy46DHAU1UqJgSiHeCNXWdBiOfDJ2aUg+TdbGCJNXi
-        yvByaeGHqMHHt3+7CX6mhuUBnjjnqKvlL+HOYEIOrFtNCF9WaOq8w/d+us4s/QSE
-        5G+F6AF2yLRoX8MR0YTB5Wnpz0T7KAlp1/kWKuL8iUyL+BR28Knb31AoAZPWNKIA
-        LsgMqG25wyLYu2vqIJXFjC3KwyDZyB7LFortsXGniIuL4UCzfgWM3COAOmU7W64X
-        WRm2hez+5RNzFeLKhYZGyIyU0sqyR3PyECBTEpw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=U4RDuA
-        +FSEF8yU1ZGRvQY82lPLeCcjfhhcly0ZZX73U=; b=pNeZHonuKkVktSvIThlH/V
-        fYL19ZQpECOIQs61lYsbRiQT7BVt2YitAJRtljv0NPSYHnj3KlE32wRLolJg5KL8
-        UshJdoM0O2VOJEWzarRdOr335PaRZlxb3zLATuhD/4LlRwGSNWy2j4n14njuSZj5
-        u9vJcualcV6GIcCK/CoF87dREOmijBshNYL8B8hvXas13tWoezDwGNjMKCcLeEeH
-        xoDjie8OTu5frdKQ4rh2YvtiusrBCiMKCq3c4qAEyqvfjzNw2QeDOVBpvE+U8xmm
-        v+qi1Ucu35yzKfMPn7UsQX2Zin5Ad4NnHGUqVf4piNJaXMx4SFPPmagXLB7CzhYA
-        ==
-X-ME-Sender: <xms:lTI-Xf0D-h9NjPtChndbt_AZAEcGOgba9qUFHi71HCoRLpxCds5Hjg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrledtgddvgecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefofgggkfgjfhffhffvufgtsehttdertderredtnecuhfhrohhmpedftehnughr
-    vgifucflvghffhgvrhihfdcuoegrnhgurhgvfiesrghjrdhiugdrrghuqeenucfrrghrrg
-    hmpehmrghilhhfrhhomheprghnughrvgifsegrjhdrihgurdgruhenucevlhhushhtvghr
-    ufhiiigvpedt
-X-ME-Proxy: <xmx:lTI-XaIJins3UcM1v_qAS1wAwJcnzQH3zB9Z9iJzd-dsfWe_JnEAxw>
-    <xmx:lTI-XV1gZJJ5wfub7rrZbuhLNdfqfhc-KxeMMkbZWoy-6-Xk7KjPIA>
-    <xmx:lTI-XVyjXvVm-gpkrvZRwv0CJYJOEjsyW5wxW2m5b8pmEw8-alJt4Q>
-    <xmx:mDI-XVdQMfBvgBauhlEZAvpotqZ8mpaX0JOXEV8Mkk2lONrbFJDrkw>
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id 3062AE00A2; Sun, 28 Jul 2019 19:41:09 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.1.6-736-gdfb8e44-fmstable-20190718v2
-Mime-Version: 1.0
-Message-Id: <950b8374-2a06-44fe-a1fc-87be17e7d608@www.fastmail.com>
-In-Reply-To: <CACRpkdb4pEdPHbo=3+fJXe9WG8K7A2_xVMtKWCJCfEawDO5wBw@mail.gmail.com>
-References: <20190711041942.23202-1-andrew@aj.id.au>
- <CACRpkdb4pEdPHbo=3+fJXe9WG8K7A2_xVMtKWCJCfEawDO5wBw@mail.gmail.com>
-Date:   Mon, 29 Jul 2019 09:11:28 +0930
-From:   "Andrew Jeffery" <andrew@aj.id.au>
-To:     "Linus Walleij" <linus.walleij@linaro.org>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "Rob Herring" <robh+dt@kernel.org>,
-        "Mark Rutland" <mark.rutland@arm.com>,
-        "Joel Stanley" <joel@jms.id.au>,
-        "Ryan Chen" <ryanchen.aspeed@gmail.com>,
-        "Johnny Huang" <johnny_huang@aspeedtech.com>,
-        linux-aspeed@lists.ozlabs.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "Linux ARM" <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/6] pinctrl: aspeed: Add AST2600 pinmux support
-Content-Type: text/plain
+        Sun, 28 Jul 2019 19:45:27 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay06.hostedemail.com (Postfix) with ESMTP id 84D8018224D81;
+        Sun, 28 Jul 2019 23:45:25 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::,RULES_HIT:41:355:379:599:960:988:989:1260:1277:1311:1313:1314:1345:1359:1431:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2828:2915:3138:3139:3140:3141:3142:3353:3622:3865:3866:3868:3870:3872:3873:4321:5007:7903:9010:9036:10004:10400:10848:11026:11232:11473:11658:11914:12043:12295:12297:12438:12555:12740:12760:12895:13019:13069:13311:13357:13439:14659:14721:21080:21451:21627:21740:30054:30069:30070:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:24,LUA_SUMMARY:none
+X-HE-Tag: step72_4c54fc21e9006
+X-Filterd-Recvd-Size: 2661
+Received: from XPS-9350.home (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
+        (Authenticated sender: joe@perches.com)
+        by omf11.hostedemail.com (Postfix) with ESMTPA;
+        Sun, 28 Jul 2019 23:45:24 +0000 (UTC)
+Message-ID: <0306bec0ec270b01b09441da3200252396abed27.camel@perches.com>
+Subject: Re: [PATCH 00/12] treewide: Fix GENMASK misuses
+From:   Joe Perches <joe@perches.com>
+To:     Rikard Falkeborn <rikard.falkeborn@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     johannes@sipsolutions.net, linux-kernel@vger.kernel.org
+Date:   Sun, 28 Jul 2019 16:45:22 -0700
+In-Reply-To: <20190727195455.1558-1-rikard.falkeborn@gmail.com>
+References: <c94a0a50c41c7530354b4a662ee945212424c8c7.camel@perches.com>
+         <20190727195455.1558-1-rikard.falkeborn@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On Mon, 29 Jul 2019, at 08:44, Linus Walleij wrote:
-> On Thu, Jul 11, 2019 at 6:19 AM Andrew Jeffery <andrew@aj.id.au> wrote:
+On Sat, 2019-07-27 at 21:54 +0200, Rikard Falkeborn wrote:
+> Trimming CC-list.
 > 
-> > This series adds pinmux support for the AST2600. Some more rework was required
-> > on top of the previous cleanup series, but this rework was focussed on
-> > supporting features of the AST2600 pinmux rather than fixing issues with the
-> > existing infrastructure for the ASPEED drivers. Due to the dependences it's
-> > based on top of pinctrl/devel, so should avoid any more SPDX issues.
-> >
-> > ASPEED have been testing the patches on hardware, so even for an initial pass
-> > there's some confidence in the implementation.
+> > It'd can't be done as it's used in declarations
+> > and included in asm files and it uses the UL()
+> > macro.
 > 
-> I'm unsure if I need to wait for the DT bindings to be fixed on this
-> series?
+> Can the BUILD_BUG_ON_ZERO() macro be used instead? It works in
+> declarations. I don't know if it works in asm-files, but the below
+> changes builds an x86-64 allyesconfig without problems (after the rest
+> of this series have been applied.
 
-Yeah, I need to, sorry for the delay. Been distracted by other stuff.
+Maybe, fine by me if it works.
 
-Will send a v2 shortly.
+Perhaps you should submit this and let the build-bot
+verify it.
 
-Andrew
+
+
+> /Rikard
+> 
+> ---
+>  include/linux/bits.h | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
+> 
+> diff --git a/include/linux/bits.h b/include/linux/bits.h
+> index 669d69441a62..52e747d27f87 100644
+> --- a/include/linux/bits.h
+> +++ b/include/linux/bits.h
+> @@ -2,6 +2,7 @@
+>  #ifndef __LINUX_BITS_H
+>  #define __LINUX_BITS_H
+>  
+> +#include <linux/build_bug.h>
+>  #include <linux/const.h>
+>  #include <asm/bitsperlong.h>
+>  
+> @@ -19,11 +20,15 @@
+>   * GENMASK_ULL(39, 21) gives us the 64bit vector 0x000000ffffe00000.
+>   */
+>  #define GENMASK(h, l) \
+> +	(BUILD_BUG_ON_ZERO(__builtin_choose_expr( \
+> +		__is_constexpr(h) && __is_constexpr(l), (l) > (h), 0)) + \
+>  	(((~UL(0)) - (UL(1) << (l)) + 1) & \
+> -	 (~UL(0) >> (BITS_PER_LONG - 1 - (h))))
+> +	 (~UL(0) >> (BITS_PER_LONG - 1 - (h)))))
+>  
+>  #define GENMASK_ULL(h, l) \
+> +	(BUILD_BUG_ON_ZERO(__builtin_choose_expr( \
+> +		__is_constexpr(h) && __is_constexpr(l), (l) > (h), 0)) + \
+>  	(((~ULL(0)) - (ULL(1) << (l)) + 1) & \
+> -	 (~ULL(0) >> (BITS_PER_LONG_LONG - 1 - (h))))
+> +	 (~ULL(0) >> (BITS_PER_LONG_LONG - 1 - (h)))))
+>  
+>  #endif	/* __LINUX_BITS_H */
+
