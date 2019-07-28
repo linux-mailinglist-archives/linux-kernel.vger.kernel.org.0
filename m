@@ -2,23 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC6D077F92
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2019 15:21:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 51EC877F8D
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2019 15:20:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726351AbfG1NVG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 28 Jul 2019 09:21:06 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:51646 "EHLO
+        id S1726215AbfG1NUs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 28 Jul 2019 09:20:48 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:51650 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726044AbfG1NUr (ORCPT
+        with ESMTP id S1726082AbfG1NUr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 28 Jul 2019 09:20:47 -0400
 Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1hrj6T-0003q0-3c; Sun, 28 Jul 2019 15:20:45 +0200
-Message-Id: <20190728131648.786513965@linutronix.de>
+        id 1hrj6T-0003q3-Kc; Sun, 28 Jul 2019 15:20:45 +0200
+Message-Id: <20190728131648.879156507@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Sun, 28 Jul 2019 15:12:54 +0200
+Date:   Sun, 28 Jul 2019 15:12:55 +0200
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
@@ -26,7 +26,7 @@ Cc:     x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
         Sean Christopherson <sean.j.christopherson@intel.com>,
         Kees Cook <keescook@chromium.org>,
         Paul Bolle <pebolle@tiscali.nl>, Will Deacon <will@kernel.org>
-Subject: [patch 3/5] lib/vdso/32: Provide legacy syscall fallbacks
+Subject: [patch 4/5] x86/vdso/32: Use 32bit syscall fallback
 References: <20190728131251.622415456@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -35,100 +35,83 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To address the regression which causes seccomp to deny applications the
-access to clock_gettime64() and clock_getres64() syscalls because they
-are not enabled in the existing filters.
+The generic VDSO implementation uses the Y2038 safe clock_gettime64() and
+clock_getres_time64() syscalls as fallback for 32bit VDSO. This breaks
+seccomp setups because these syscalls might be not (yet) allowed.
 
-That trips over the fact that 32bit VDSOs use the new clock_gettime64() and
-clock_getres64() syscalls in the fallback path.
+Implement the 32bit variants which use the legacy syscalls and select the
+variant in the core library.
 
-Implement a __cvdso_clock_get*time32() variants which invokes the legacy
-32bit syscalls when the architecture requests it.
+The 64bit time variants are not removed because they are required for the
+time64 based vdso accessors.
 
-The conditional can go away once all architectures are converted.
-
-Fixes: 00b26474c2f1 ("lib/vdso: Provide generic VDSO implementation")
+Reported-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Reported-by: Paul Bolle <pebolle@tiscali.nl>
+Suggested-by: Andy Lutomirski <luto@kernel.org>
+Fixes: 7ac870747988 ("x86/vdso: Switch to generic vDSO implementation")
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 ---
- lib/vdso/gettimeofday.c |   46 +++++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 45 insertions(+), 1 deletion(-)
+ arch/x86/include/asm/vdso/gettimeofday.h |   36 +++++++++++++++++++++++++++++++
+ 1 file changed, 36 insertions(+)
 
---- a/lib/vdso/gettimeofday.c
-+++ b/lib/vdso/gettimeofday.c
-@@ -117,6 +117,8 @@ static __maybe_unused int
- 	return 0;
- }
+--- a/arch/x86/include/asm/vdso/gettimeofday.h
++++ b/arch/x86/include/asm/vdso/gettimeofday.h
+@@ -96,6 +96,8 @@ long clock_getres_fallback(clockid_t _cl
  
-+#ifndef VDSO_HAS_32BIT_FALLBACK
+ #else
+ 
++#define VDSO_HAS_32BIT_FALLBACK	1
 +
- static __maybe_unused int
- __cvdso_clock_gettime32(clockid_t clock, struct old_timespec32 *res)
+ static __always_inline
+ long clock_gettime_fallback(clockid_t _clkid, struct __kernel_timespec *_ts)
  {
-@@ -132,10 +134,29 @@ static __maybe_unused int
- 		res->tv_sec = ts.tv_sec;
- 		res->tv_nsec = ts.tv_nsec;
- 	}
--
- 	return ret;
+@@ -114,6 +116,23 @@ long clock_gettime_fallback(clockid_t _c
  }
  
-+#else
-+
-+static __maybe_unused int
-+__cvdso_clock_gettime32(clockid_t clock, struct old_timespec32 *res)
+ static __always_inline
++long clock_gettime32_fallback(clockid_t _clkid, struct old_timespec32 *_ts)
 +{
-+	struct __kernel_timespec ts;
-+	int ret;
++	long ret;
 +
-+	ret = __cvdso_clock_gettime_common(clock, &ts);
++	asm (
++		"mov %%ebx, %%edx \n"
++		"mov %[clock], %%ebx \n"
++		"call __kernel_vsyscall \n"
++		"mov %%edx, %%ebx \n"
++		: "=a" (ret), "=m" (*_ts)
++		: "0" (__NR_clock_gettime), [clock] "g" (_clkid), "c" (_ts)
++		: "edx");
 +
-+	if (likely(!ret)) {
-+		res->tv_sec = ts.tv_sec;
-+		res->tv_nsec = ts.tv_nsec;
-+		return 0;
-+	}
-+	return clock_gettime32_fallback(clock, res);
++	return ret;
 +}
 +
-+#endif
-+
- static __maybe_unused int
- __cvdso_gettimeofday(struct __kernel_old_timeval *tv, struct timezone *tz)
++static __always_inline
+ long gettimeofday_fallback(struct __kernel_old_timeval *_tv,
+ 			   struct timezone *_tz)
  {
-@@ -225,6 +246,8 @@ int __cvdso_clock_getres(clockid_t clock
- 	return 0;
+@@ -146,6 +165,23 @@ clock_getres_fallback(clockid_t _clkid,
+ 		: "edx");
+ 
+ 	return ret;
++}
++
++static __always_inline
++long clock_getres32_fallback(clockid_t _clkid, struct old_timespec32 *_ts)
++{
++	long ret;
++
++	asm (
++		"mov %%ebx, %%edx \n"
++		"mov %[clock], %%ebx \n"
++		"call __kernel_vsyscall \n"
++		"mov %%edx, %%ebx \n"
++		: "=a" (ret), "=m" (*_ts)
++		: "0" (__NR_clock_getres), [clock] "g" (_clkid), "c" (_ts)
++		: "edx");
++
++	return ret;
  }
  
-+#ifndef VDSO_HAS_32BIT_FALLBACK
-+
- static __maybe_unused int
- __cvdso_clock_getres_time32(clockid_t clock, struct old_timespec32 *res)
- {
-@@ -241,4 +264,25 @@ static __maybe_unused int
- 	}
- 	return ret;
- }
-+
-+#else
-+
-+static __maybe_unused int
-+__cvdso_clock_getres_time32(clockid_t clock, struct old_timespec32 *res)
-+{
-+	struct __kernel_timespec ts;
-+	int ret;
-+
-+	ret = __cvdso_clock_getres_common(clock, &ts);
-+
-+	if (likely(!ret)) {
-+		res->tv_sec = ts.tv_sec;
-+		res->tv_nsec = ts.tv_nsec;
-+		return 0;
-+	}
-+
-+	return clock_getres32_fallback(clock, res);
-+}
-+#endif
-+
- #endif /* VDSO_HAS_CLOCK_GETRES */
+ #endif
 
 
