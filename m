@@ -2,90 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C68077EA9
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2019 10:45:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E126477EAF
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2019 10:51:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726013AbfG1Ipa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 28 Jul 2019 04:45:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59518 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725880AbfG1Ipa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 28 Jul 2019 04:45:30 -0400
-Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3D44A2085A;
-        Sun, 28 Jul 2019 08:45:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564303529;
-        bh=/5r3rYZjAroH9klgA3A3a0rKTbHeBYnKF2HDF1+EAzw=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=em3yfMQjkjLr7fBs+kgwtzRpXzjQmy4heVAtAqHs4GXaffz3PpYrdderzejYuejwS
-         cP4TsQd06lza6cbSqVueJcAT+coNAZRiolIEvYJcIGcccVIi3mrojQ1G60Jr9Y8YwR
-         2Hp0vvfRjrJxV1ywuSKxIcNFUXZK1CL6HvgOMYIc=
-Date:   Sun, 28 Jul 2019 09:45:23 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Artur Rojek <contact@artur-rojek.eu>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v2 1/3] dt-bindings: iio/adc: Add a compatible string
- for JZ4770 SoC ADC
-Message-ID: <20190728094523.2a161231@archlinux>
-In-Reply-To: <20190727195940.14010-1-contact@artur-rojek.eu>
-References: <20190727195940.14010-1-contact@artur-rojek.eu>
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1726046AbfG1Iuw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 28 Jul 2019 04:50:52 -0400
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:38998 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725880AbfG1Iuw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 28 Jul 2019 04:50:52 -0400
+Received: by mail-ua1-f68.google.com with SMTP id j8so22841279uan.6
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2019 01:50:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=Bd1ZBZ2FNqNMb57SprPPSGj1lWrjpRHh58+CI5+PhM4=;
+        b=BehAl33UAwFBui9gJ7VncFWixEkggSDLNSGcYpJftjm65Gk4ISbx99NM2uW4jZUgeu
+         qbmMuDNDPGPO0QoS8319I0e1e6G7HWFlSROpiGJtz7NlzmhNPZ68XmfxQ+QEUTq7+uDf
+         YXOj3hiwA92hSkCrXGLlHLkhkFGpjlUx4WsIOm21sk8glRGxMreh56YclVOvjCt3eMtd
+         yBI+LvYNOJ0KhbW3WkuNMYXP9vrq5q7Qi7TDaXo7lvHT1zRPpoFqG6CDVM7+APiv2ZMl
+         wXW9Zsd4BmZQ6+Opg8bhwVp58F474n5IwnIthTyVGk0mDzFrGqDMnPkQTQl3+T+xVRJP
+         ctsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=Bd1ZBZ2FNqNMb57SprPPSGj1lWrjpRHh58+CI5+PhM4=;
+        b=BEDMbj1gVhV4ChSGHM5/lxj1iCz3BxP+jkqBB50aowKqEw3gsRzOfhJVYfdXSX1Je6
+         YT6GzLZNjghN1tF95aq03WpUnUu+FUscmWUNi5+RIK5k8xO6+Uc1s/xUjzMLOkMY2FQG
+         B5cGqnb3beMDtOLevNlYOYnoNd8Fn50Xa7qVcpg/HyXLNBcNpq8dqnz0Vvlxij1K5Bi5
+         5011TNc9KGYuk+pnV+jQU3oBVVkEI7y8KCprRjsVpp7m6ASQOMWBCYbjOGBczMrpWgYH
+         cS/syQjfAMrl8SkGUXpl5nRFxj5yCpR8Bc/z2IZ/QZ0caFJ2nMYFPBXjF5h288BY9Fr3
+         3IMw==
+X-Gm-Message-State: APjAAAVP2J4dcTtaS2kyoDYBCAkOyxkfyj4gpe5TcbyA9H9AQz3Xc+nL
+        fRQbcPn5Fz/LsZN5V6w0MQi923/DAWOcuArWWCI=
+X-Google-Smtp-Source: APXvYqyXG4PvAoy3fQoxHN4lfKat96iCPcBq0Pb0lChHMRgfQ6TmR+W7X2csD+uXsNeB3DpBG9tbz4NdSR6hv54N6Mw=
+X-Received: by 2002:ab0:290a:: with SMTP id v10mr37063460uap.74.1564303851347;
+ Sun, 28 Jul 2019 01:50:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Received: by 2002:ab0:2049:0:0:0:0:0 with HTTP; Sun, 28 Jul 2019 01:50:50
+ -0700 (PDT)
+Reply-To: sheemakhawaj@gmail.com
+From:   Sheemakhawaja Subhan <adillianuttah@gmail.com>
+Date:   Sun, 28 Jul 2019 10:50:50 +0200
+Message-ID: <CAFGtC-fXv3hCqyFoG=CWB_O9DeZpqNVJyr4Wd-5GPF2z7gHfmQ@mail.gmail.com>
+Subject: =?UTF-8?Q?SVAR_SV=C3=86RIGT?=
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 27 Jul 2019 21:59:38 +0200
-Artur Rojek <contact@artur-rojek.eu> wrote:
+--=20
+Jeg er Sheemakhawaja, en borger i Dubai. Jeg har vigtige oplysninger
+til at diskutere med dig om en uopfordret fond med dit efternavn. Kom
+tilbage til mig s=C3=A5 hurtigt som muligt igennem
 
-> Add a compatible string for the ADC controller present on
-> Ingenic JZ4770 SoC.
-> 
-> Signed-off-by: Artur Rojek <contact@artur-rojek.eu>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-
-Hi Artur,
-
-I'll have to hold this series for a few weeks as the fix for the
-clock rate divider isn't in my upstream for the togreg branch yet
-(as I haven't sent a pull request since the merge window).
-
-Give me a poke if I seem to have forgotten these in a few weeks
-time.
-
-Thanks,
-
-Jonathan
-
-> ---
-> 
-> Changes:
-> 
-> v2: no change
-> 
->  Documentation/devicetree/bindings/iio/adc/ingenic,adc.txt | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/adc/ingenic,adc.txt b/Documentation/devicetree/bindings/iio/adc/ingenic,adc.txt
-> index f01159f20d87..cd9048cf9dcf 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/ingenic,adc.txt
-> +++ b/Documentation/devicetree/bindings/iio/adc/ingenic,adc.txt
-> @@ -5,6 +5,7 @@ Required properties:
->  - compatible: Should be one of:
->    * ingenic,jz4725b-adc
->    * ingenic,jz4740-adc
-> +  * ingenic,jz4770-adc
->  - reg: ADC controller registers location and length.
->  - clocks: phandle to the SoC's ADC clock.
->  - clock-names: Must be set to "adc".
-
+Tak skal du have,
+Sheema
