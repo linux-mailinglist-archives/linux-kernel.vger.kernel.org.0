@@ -2,127 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D69E780BC
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2019 19:36:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 02B3C780C2
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2019 19:39:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726439AbfG1Rf5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 28 Jul 2019 13:35:57 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:35156 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726046AbfG1Rf5 (ORCPT
+        id S1726148AbfG1RjZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 28 Jul 2019 13:39:25 -0400
+Received: from sender4-pp-o95.zoho.com ([136.143.188.95]:25570 "EHLO
+        sender4-pp-o95.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726046AbfG1RjY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 28 Jul 2019 13:35:57 -0400
-Received: by mail-wr1-f68.google.com with SMTP id y4so59355834wrm.2
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2019 10:35:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=b2zuiNV9z+FTezAi/VZPRSNLA8E7gVpLhLnn8tmOsl8=;
-        b=kgKwcNeG16HoeyiIZqJvgFAVoqNZk/t7LGsGuKFNiLjfCOvkOuVjlwyFRg1TFg1f4H
-         ERmb6bt5kg2fzs7QyJqRjmo6HZ9D3qM0umu67Pnhz8ND2Yr4WJtgk4QLrgcOVMo9WfSb
-         QYUaCUMVMsMxf0RFACkhAGj9L55HTC2Q8qLYRYRVIooR+nZMC6FN+g6r9e9aecyxBQw9
-         /4/I7OWZ3vim2vT0YqEwP90Qn+eQfxCNsbsMPtzeGI/+mdDhS0yYwvKu6WpwLre9uGuH
-         Wt8X72/oe8YQwn5GLXXt9WOxS6d42N+vJpu4ts8RKDJk1WHLSz0Mfi4W/KIlty6xXVST
-         Xx2g==
-X-Gm-Message-State: APjAAAVqkZ2ez/hvGA4RtPorUP92bkzyZf+Z/PRVPlhMwJiigLSK83wd
-        +Dyq2GxuNoW7+LEntEfnMMfwwA==
-X-Google-Smtp-Source: APXvYqzmHrUH5DR1DuabwII6AeoWJ1witAV6rclFFLf5pp1RWkQsEUhAKHdon+uwsXhFoDu6Hpk5ww==
-X-Received: by 2002:a5d:67cd:: with SMTP id n13mr41178123wrw.138.1564335355423;
-        Sun, 28 Jul 2019 10:35:55 -0700 (PDT)
-Received: from mcroce-redhat.redhat.com (host221-208-dynamic.27-79-r.retail.telecomitalia.it. [79.27.208.221])
-        by smtp.gmail.com with ESMTPSA id x20sm134505614wrg.10.2019.07.28.10.35.54
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Sun, 28 Jul 2019 10:35:54 -0700 (PDT)
-From:   Matteo Croce <mcroce@redhat.com>
-To:     netdev@vger.kernel.org
-Cc:     Antoine Tenart <antoine.tenart@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Marcin Wojtas <mw@semihalf.com>,
-        Stefan Chulski <stefanc@marvell.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        David Miller <davem@davemloft.net>
-Subject: [PATCH net v2] mvpp2: refactor the HW checksum setup
-Date:   Sun, 28 Jul 2019 19:35:49 +0200
-Message-Id: <20190728173549.32034-1-mcroce@redhat.com>
-X-Mailer: git-send-email 2.21.0
+        Sun, 28 Jul 2019 13:39:24 -0400
+ARC-Seal: i=1; a=rsa-sha256; t=1564335555; cv=none; 
+        d=zoho.com; s=zohoarc; 
+        b=XsK9eqGfO9QyneAvg9JvLsqRRXp4nCUZwjrZkiHsUSJEf4HWHlr3mGeT5vsqoq/0waQ1Ojnn0c9kXLHWZNsoBW+PofIeHA9VswSE2gBigi929FcSZ3b0SthgwTKxYrPTTJsHb/8srDkPxx36lxn5xdO3y3mV2evcCGKkbFz6OgM=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
+        t=1564335555; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To:ARC-Authentication-Results; 
+        bh=EVwHbEiiGifKfoO+KrCFNaKJshu4Crq1DoWO+5YurGA=; 
+        b=Ulpto2wg9Vux7209jYVI9Yh2DBO/LWdCRzsQpVmq49wr/GtkPK6lehIpyWzWa1N8cr/XnP26+uot3CTsh+WgSsNyidCXojpMTnQSWOzUCHZPd/++fJt/J8Z0PFsX7QnoB3UIUp/rISwGHdLxoOQSOu+tcuGUKF1Ye/ToKuYS4So=
+ARC-Authentication-Results: i=1; mx.zoho.com;
+        dkim=pass  header.i=zoho.com;
+        spf=pass  smtp.mailfrom=zhouyanjie@zoho.com;
+        dmarc=pass header.from=<zhouyanjie@zoho.com> header.from=<zhouyanjie@zoho.com>
+DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws; 
+  s=zapps768; d=zoho.com; 
+  h=subject:to:references:cc:from:message-id:date:user-agent:mime-version:in-reply-to:content-type; 
+  b=HCfU15Bd2IFV2jmXzPl2sZ0WH1y7HFMcGBM3jUgZPXDKrNmZBrXow6dBtNdLtFCja/NAPDgo3zgU
+    xtIxES+N1qvUOT8bmDYpWnIv7sAlsi/8aDp2uWvLtTixgvEXCJDh  
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1564335555;
+        s=zm2019; d=zoho.com; i=zhouyanjie@zoho.com;
+        h=Subject:To:References:Cc:From:Message-ID:Date:MIME-Version:In-Reply-To:Content-Type:Content-Transfer-Encoding;
+        l=1368; bh=EVwHbEiiGifKfoO+KrCFNaKJshu4Crq1DoWO+5YurGA=;
+        b=q1sHDKAJnzZZGjX/7Vl84weg6ujuwYkW4NseQt2jsa0Zfy3U/fozInDzT3c/QTDJ
+        9FvNp1O1tGgk+c/rlyFUjVgxZrzacJkkTKb9+O4kf9b5OUKzppLL1Lbj0ynWaoCRJha
+        RADmh6Otn1dgv2a8q+v0L5K6tCRLVWzTslXZB0R4=
+Received: from [192.168.88.139] (171.221.113.137 [171.221.113.137]) by mx.zohomail.com
+        with SMTPS id 1564335554304611.6885982302678; Sun, 28 Jul 2019 10:39:14 -0700 (PDT)
+Subject: Re: [PATCH v3 3/8] dt-bindings: interrupt-controller: Add JZ4760 and
+ JZ4760B bindings.
+To:     Marc Zyngier <marc.zyngier@arm.com>
+References: <1548517123-60058-1-git-send-email-zhouyanjie@zoho.com>
+ <1563192595-53546-1-git-send-email-zhouyanjie@zoho.com>
+ <1563192595-53546-4-git-send-email-zhouyanjie@zoho.com>
+ <865znoor2n.wl-marc.zyngier@arm.com>
+Cc:     linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, paul.burton@mips.com,
+        tglx@linutronix.de, robh+dt@kernel.org, mark.rutland@arm.com,
+        jason@lakedaemon.net
+From:   Zhou Yanjie <zhouyanjie@zoho.com>
+Message-ID: <5D3DDDB9.20507@zoho.com>
+Date:   Mon, 29 Jul 2019 01:39:05 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <865znoor2n.wl-marc.zyngier@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-ZohoMailClient: External
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The hardware can only offload checksum calculation on first port due to
-the Tx FIFO size limitation, and has a maximum L3 offset of 128 bytes.
-Document this in a comment and move duplicated code in a function.
+Hi Marc,
 
-Fixes: 576193f2d579 ("net: mvpp2: jumbo frames support")
-Signed-off-by: Matteo Croce <mcroce@redhat.com>
----
- .../net/ethernet/marvell/mvpp2/mvpp2_main.c   | 35 ++++++++++++-------
- 1 file changed, 22 insertions(+), 13 deletions(-)
+These patches has been combined in v4.
 
-diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-index 937e4b928b94..a99405135046 100644
---- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-+++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-@@ -811,6 +811,26 @@ static int mvpp2_swf_bm_pool_init(struct mvpp2_port *port)
- 	return 0;
- }
- 
-+static void mvpp2_set_hw_csum(struct mvpp2_port *port,
-+			      enum mvpp2_bm_pool_log_num new_long_pool)
-+{
-+	const netdev_features_t csums = NETIF_F_IP_CSUM | NETIF_F_IPV6_CSUM;
-+
-+	/* Update L4 checksum when jumbo enable/disable on port.
-+	 * Only port 0 supports hardware checksum offload due to
-+	 * the Tx FIFO size limitation.
-+	 * Also, don't set NETIF_F_HW_CSUM because L3_offset in TX descriptor
-+	 * has 7 bits, so the maximum L3 offset is 128.
-+	 */
-+	if (new_long_pool == MVPP2_BM_JUMBO && port->id != 0) {
-+		port->dev->features &= ~csums;
-+		port->dev->hw_features &= ~csums;
-+	} else {
-+		port->dev->features |= csums;
-+		port->dev->hw_features |= csums;
-+	}
-+}
-+
- static int mvpp2_bm_update_mtu(struct net_device *dev, int mtu)
- {
- 	struct mvpp2_port *port = netdev_priv(dev);
-@@ -843,15 +863,7 @@ static int mvpp2_bm_update_mtu(struct net_device *dev, int mtu)
- 		/* Add port to new short & long pool */
- 		mvpp2_swf_bm_pool_init(port);
- 
--		/* Update L4 checksum when jumbo enable/disable on port */
--		if (new_long_pool == MVPP2_BM_JUMBO && port->id != 0) {
--			dev->features &= ~(NETIF_F_IP_CSUM | NETIF_F_IPV6_CSUM);
--			dev->hw_features &= ~(NETIF_F_IP_CSUM |
--					      NETIF_F_IPV6_CSUM);
--		} else {
--			dev->features |= NETIF_F_IP_CSUM | NETIF_F_IPV6_CSUM;
--			dev->hw_features |= NETIF_F_IP_CSUM | NETIF_F_IPV6_CSUM;
--		}
-+		mvpp2_set_hw_csum(port, new_long_pool);
- 	}
- 
- 	dev->mtu = mtu;
-@@ -5209,10 +5221,7 @@ static int mvpp2_port_probe(struct platform_device *pdev,
- 		dev->features |= NETIF_F_NTUPLE;
- 	}
- 
--	if (port->pool_long->id == MVPP2_BM_JUMBO && port->id != 0) {
--		dev->features &= ~(NETIF_F_IP_CSUM | NETIF_F_IPV6_CSUM);
--		dev->hw_features &= ~(NETIF_F_IP_CSUM | NETIF_F_IPV6_CSUM);
--	}
-+	mvpp2_set_hw_csum(port, port->pool_long->id);
- 
- 	dev->vlan_features |= features;
- 	dev->gso_max_segs = MVPP2_MAX_TSO_SEGS;
--- 
-2.21.0
+Thanks
+
+On 2019=E5=B9=B407=E6=9C=8826=E6=97=A5 21:36, Marc Zyngier wrote:
+> On Mon, 15 Jul 2019 13:09:50 +0100,
+> Zhou Yanjie <zhouyanjie@zoho.com> wrote:
+>> Add the interrupt-controller bindings for the JZ4760 Soc and
+>> the JZ4760B Soc from Ingenic.
+>>
+>> Signed-off-by: Zhou Yanjie <zhouyanjie@zoho.com>
+>> ---
+>>   Documentation/devicetree/bindings/interrupt-controller/ingenic,intc.tx=
+t | 2 ++
+>>   1 file changed, 2 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/interrupt-controller/inge=
+nic,intc.txt b/Documentation/devicetree/bindings/interrupt-controller/ingen=
+ic,intc.txt
+>> index d4373d0..fa1ad54 100644
+>> --- a/Documentation/devicetree/bindings/interrupt-controller/ingenic,int=
+c.txt
+>> +++ b/Documentation/devicetree/bindings/interrupt-controller/ingenic,int=
+c.txt
+>> @@ -5,6 +5,8 @@ Required properties:
+>>   - compatible : should be "ingenic,<socname>-intc". Valid strings are:
+>>       ingenic,jz4740-intc
+>>       ingenic,jz4725b-intc
+>> +    ingenic,jz4760-intc
+>> +    ingenic,jz4760b-intc
+>>       ingenic,jz4770-intc
+>>       ingenic,jz4775-intc
+>>       ingenic,jz4780-intc
+>> --=20
+>> 2.7.4
+>>
+>>
+> This should be combined with patches 5 and 7. I don't see the need for
+> multiple patches. Same thing should happen with patches 4, 6 and 8.
+>
+> Thanks,
+>
+> =09M.
+>
+
+
 
