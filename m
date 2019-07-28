@@ -2,113 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D64A277E13
-	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2019 07:00:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C09F277E15
+	for <lists+linux-kernel@lfdr.de>; Sun, 28 Jul 2019 07:00:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726108AbfG1FAQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 28 Jul 2019 01:00:16 -0400
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:41374 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725832AbfG1FAQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 28 Jul 2019 01:00:16 -0400
-Received: by mail-vs1-f66.google.com with SMTP id 2so38654015vso.8
-        for <linux-kernel@vger.kernel.org>; Sat, 27 Jul 2019 22:00:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=F5Me1XzBnqordzVnGCm93YZY5kdT2ygSLpfm+qBKoC0=;
-        b=OyRA0tZ0+LWuO3/HcDFeK1Ybjdm85mko7VyGlyUfb3GcjJx6AYSUgTHhfQeBxfdorJ
-         fwVa8agGrG7qzR2mOfLF25oiEbMtSTkCt/gPoaOYegCem5yg0yPaVPzzNNb12oHyc2Ch
-         pdG3ZTjffR9Jcz9ZT3tXGtuGZSoeuBtQ8iMHIeBiDrszRBTNcdNJSQAI7CoxV1/2nHhm
-         towdvGCipZdRaAGf7gnlxuopI2HfYgb9qgjLenufCJtc5ydZ3p2Z2Qo4GKmBc0F+6qP8
-         em7B2bYEUTBAxBYmOKG7jiSIc8HhI0wsoSwKRjA4FB53p5jLCLxkXBIwf5lZWAQe2kfS
-         enoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=F5Me1XzBnqordzVnGCm93YZY5kdT2ygSLpfm+qBKoC0=;
-        b=P8VOYr6eBO0fz1WMF0bE9k8yQmAIYgUsWKYuEtZNkjuj4CoaJmVMSKe03nZi+lOyZo
-         S5X5MUKhPbR8fmNe/aNdHoNtzMFhLl7pU2Mdx/KPLR1G/ia4ICLpOZhYkoir/CItxgV0
-         VJ0x/FmMH/HIGb6Zxv6xyPCFRklSprhy0xdSUd3b1yZkqhggePjmN073RQ6Xmrz+z6Ey
-         kUzbv9m8Ea7hvvAJSP1GKyMtZu7jzp0AE+SA0WGrgCDtQnU4nQi034CkRg3dgjNaHoyG
-         90AUKaVihqoMH6TeMbnGf8njzYNRk7dbpQDJDWgbhxpqq5X26TZ7z6NMabTqmAvYpj9s
-         4KGw==
-X-Gm-Message-State: APjAAAX6F+A2oR2v4htQlH9M958cBf+KsSIesuHpPCyARG42XtSRmejd
-        EX9oqxHobwNRTl8Ku+me9uQ6X+eee0Vow7wGXsA=
-X-Google-Smtp-Source: APXvYqwFVK0GA/JKrHJNyBmp1qNYX+8Jo2N9tutUWNNPRx2/SXcvaQZuqiBvwjVwX8BGjn/8ylYRCVSbLuY1GmZcG/0=
-X-Received: by 2002:a67:ad07:: with SMTP id t7mr12184085vsl.214.1564290015599;
- Sat, 27 Jul 2019 22:00:15 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:ab0:57:0:0:0:0:0 with HTTP; Sat, 27 Jul 2019 22:00:15 -0700 (PDT)
-Reply-To: yesben300@gmail.com
-From:   ATM HEAD OPERATION <ksanduru2040@gmail.com>
-Date:   Sun, 28 Jul 2019 06:00:15 +0100
-Message-ID: <CAEnSmYsvB71_a3CQycSQnquqtWDYa0pGbLHwcR9Fe6=Boq8fXg@mail.gmail.com>
-Subject: PAYMENT CENTRE ATM CARD
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+        id S1726171AbfG1FAT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 28 Jul 2019 01:00:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34572 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725832AbfG1FAS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 28 Jul 2019 01:00:18 -0400
+Subject: Re: [GIT pull] core/urgent for 5.3-rc2 
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564290017;
+        bh=W+VgFx52J/3xOt6L+KkqS8F/Pxfs5xbCmD7zpZrXp88=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=UDgBj6FbQzezNJCZQKMnjeYGMs+4Qn9vgG2zF/aRjHOs+gVsztPdM6hUUsL//El1V
+         L7tjPEI+ON9q8A6d2l6FVesUugmhxZIw4t6bSLsG6fiWK+nzC7G57Yl42K0joEt2xA
+         bQ/JWrfJTONsGg7aJtQXg054pcI0fGWsR7qbbN9s=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <156426997427.6953.14728916479410000420.tglx@nanos.tec.linutronix.de>
+References: <156426997427.6953.14728916479410000420.tglx@nanos.tec.linutronix.de>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <156426997427.6953.14728916479410000420.tglx@nanos.tec.linutronix.de>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git
+ core-urgent-for-linus
+X-PR-Tracked-Commit-Id: 882a0db9d143e5e8dac54b96e83135bccd1f68d1
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 13fbe991b5b1bbb52ede39be11d5c196721349bf
+Message-Id: <156429001772.32180.13434146020692468546.pr-tracker-bot@kernel.org>
+Date:   Sun, 28 Jul 2019 05:00:17 +0000
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, x86@kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Attn: Fund Beneficiary
+The pull request you sent on Sat, 27 Jul 2019 23:26:14 -0000:
 
-This is the 2nd time i am sending you this notification letter
-regarding your abandoned ATM Visa Card valued sum of US$9,500.000.00
-and i have not
-received any positive respond from you or asking a suggestion on how
-you wish to receive your ATM Visa Card. Once again; I am Mr. Martins
-Bright, the new director of ATM Head of Operation United Bank For
-Africa PLC,
+> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git core-urgent-for-linus
 
-I resumed to this office on the 2nd of November 2018 and during my
-official research I discovered an abandoned ATM Visa card valued sum
-of $9,500.000.00 belonging to you as the rightfully intimate
-beneficiary.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/13fbe991b5b1bbb52ede39be11d5c196721349bf
 
-I tried to know why this ATM Visa Card has not been released to you
-but I was told by the UBA Bank management that the former director of
-ATM head of
-operation that left this office three months ago withhold your Card
-for his own personal use without knowing that his evil plans towards
-diverting your
-fund will be discovered.
+Thank you!
 
-Now that your ATM Visa Card is still available and ready for your
-receiving, you can come down here to our Bank to pick up your Card
-direct from my
-office or alternatively it can be arranged ship to your address
-through any registered reliable Courier Service Company that you will
-take care of the Courier
-Charge,hope it is cleared and accepted by you?
-
-In this case, you are required to forward the following information:
-
-1, Your full name and address:---
-2, Your direct phone number for easy communication:---
-3, Identification card or passport:-----
-4, Your Occupation:-----
-
-Your direct telephone number and address will be needed and more
-details of your ATM Visa Card payment will be made known to you as
-soon as I receive
-your swift positive response.
-
-Contact me on this below email address;
-
-E-mail address:==== ( yesben400@gmail.com )
-
-Telephone number:=== (+234) 701638756
-Contact person:=== Mr.Martins  Bright
-
-Do not hesitate to call me on (+234) 7016738790 as soon as you read this mail.
-Thanks for your co-operation and i wait for your kind positive respond.
-
-Yours Faithfully,
-Mr.Martins  Bright
-
-
-PAYMENT CENTRE ATM CARD
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
