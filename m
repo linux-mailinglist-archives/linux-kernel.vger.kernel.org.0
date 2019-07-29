@@ -2,43 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07F5579523
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:40:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C8166795B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:46:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388944AbfG2TjH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 15:39:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54112 "EHLO mail.kernel.org"
+        id S2389906AbfG2TpI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 15:45:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33730 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388925AbfG2TjE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:39:04 -0400
+        id S2389827AbfG2TpC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:45:02 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3A4382171F;
-        Mon, 29 Jul 2019 19:39:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0890220C01;
+        Mon, 29 Jul 2019 19:45:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564429143;
-        bh=Bk4euBxqH5qlll/EnIf32IESFKGEKVT4LqtJsXFNGTE=;
+        s=default; t=1564429501;
+        bh=pHc7wbZC2CQyPwbypAX1PB3PGUIUAQS/3zqsA9hgQkg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HVv+HESF+Zocdz3+I7by6SK+AzzM23C1U13/Md7EXyvizjERySkEX/44viDi6vhE0
-         uv9cvd5PjFGHharfua2WvR/4oO1TSBYPOVfNXmpz2FlfPnANtKEfrCOWsgpSzyIaG+
-         BRJss+4VFK4X+Cf7H/i088V2vxkKmJ1k9FpufO4c=
+        b=xYoYaEXc/ySqtsvWWTmJJ4sZ0zb2bdynSeIQQYNw+WzVfHJa2BNnbAMtKnrxJuBGd
+         Q4rmIlEfS5BvQis6BjB4wwzQWIAK5iOMlTGHXwZibRemtnMqMvilTvJcd9/r1l0x93
+         8yIMb+WoE2To8kDJCBw0Q5e0r1RfJoWDpz5mt+Y4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Florian Weimer <fweimer@redhat.com>,
-        Jann Horn <jannh@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, David Windsor <dwindsor@redhat.com>,
+        David Teigland <teigland@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 274/293] mm/gup.c: remove some BUG_ONs from get_gate_page()
-Date:   Mon, 29 Jul 2019 21:22:45 +0200
-Message-Id: <20190729190845.306981562@linuxfoundation.org>
+Subject: [PATCH 4.19 079/113] dlm: check if workqueues are NULL before flushing/destroying
+Date:   Mon, 29 Jul 2019 21:22:46 +0200
+Message-Id: <20190729190714.519242769@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190729190820.321094988@linuxfoundation.org>
-References: <20190729190820.321094988@linuxfoundation.org>
+In-Reply-To: <20190729190655.455345569@linuxfoundation.org>
+References: <20190729190655.455345569@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,51 +44,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit b5d1c39f34d1c9bca0c4b9ae2e339fbbe264a9c7 ]
+[ Upstream commit b355516f450703c9015316e429b66a93dfff0e6f ]
 
-If we end up without a PGD or PUD entry backing the gate area, don't BUG
--- just fail gracefully.
+If the DLM lowcomms stack is shut down before any DLM
+traffic can be generated, flush_workqueue() and
+destroy_workqueue() can be called on empty send and/or recv
+workqueues.
 
-It's not entirely implausible that this could happen some day on x86.  It
-doesn't right now even with an execute-only emulated vsyscall page because
-the fixmap shares the PUD, but the core mm code shouldn't rely on that
-particular detail to avoid OOPSing.
+Insert guard conditionals to only call flush_workqueue()
+and destroy_workqueue() on workqueues that are not NULL.
 
-Link: http://lkml.kernel.org/r/a1d9f4efb75b9d464e59fd6af00104b21c58f6f7.1561610798.git.luto@kernel.org
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Florian Weimer <fweimer@redhat.com>
-Cc: Jann Horn <jannh@google.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: David Windsor <dwindsor@redhat.com>
+Signed-off-by: David Teigland <teigland@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- mm/gup.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ fs/dlm/lowcomms.c | 18 ++++++++++++------
+ 1 file changed, 12 insertions(+), 6 deletions(-)
 
-diff --git a/mm/gup.c b/mm/gup.c
-index cee599d1692c..12b9626b1a9e 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -442,11 +442,14 @@ static int get_gate_page(struct mm_struct *mm, unsigned long address,
- 		pgd = pgd_offset_k(address);
- 	else
- 		pgd = pgd_offset_gate(mm, address);
--	BUG_ON(pgd_none(*pgd));
-+	if (pgd_none(*pgd))
-+		return -EFAULT;
- 	p4d = p4d_offset(pgd, address);
--	BUG_ON(p4d_none(*p4d));
-+	if (p4d_none(*p4d))
-+		return -EFAULT;
- 	pud = pud_offset(p4d, address);
--	BUG_ON(pud_none(*pud));
-+	if (pud_none(*pud))
-+		return -EFAULT;
- 	pmd = pmd_offset(pud, address);
- 	if (!pmd_present(*pmd))
- 		return -EFAULT;
+diff --git a/fs/dlm/lowcomms.c b/fs/dlm/lowcomms.c
+index a5e4a221435c..a93ebffe84b3 100644
+--- a/fs/dlm/lowcomms.c
++++ b/fs/dlm/lowcomms.c
+@@ -1630,8 +1630,10 @@ static void clean_writequeues(void)
+ 
+ static void work_stop(void)
+ {
+-	destroy_workqueue(recv_workqueue);
+-	destroy_workqueue(send_workqueue);
++	if (recv_workqueue)
++		destroy_workqueue(recv_workqueue);
++	if (send_workqueue)
++		destroy_workqueue(send_workqueue);
+ }
+ 
+ static int work_start(void)
+@@ -1691,13 +1693,17 @@ static void work_flush(void)
+ 	struct hlist_node *n;
+ 	struct connection *con;
+ 
+-	flush_workqueue(recv_workqueue);
+-	flush_workqueue(send_workqueue);
++	if (recv_workqueue)
++		flush_workqueue(recv_workqueue);
++	if (send_workqueue)
++		flush_workqueue(send_workqueue);
+ 	do {
+ 		ok = 1;
+ 		foreach_conn(stop_conn);
+-		flush_workqueue(recv_workqueue);
+-		flush_workqueue(send_workqueue);
++		if (recv_workqueue)
++			flush_workqueue(recv_workqueue);
++		if (send_workqueue)
++			flush_workqueue(send_workqueue);
+ 		for (i = 0; i < CONN_HASH_SIZE && ok; i++) {
+ 			hlist_for_each_entry_safe(con, n,
+ 						  &connection_hash[i], list) {
 -- 
 2.20.1
 
