@@ -2,116 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7566478DF7
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 16:29:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB4B178DE4
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 16:28:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728578AbfG2O3Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 10:29:24 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:47022 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728486AbfG2O3X (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 10:29:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
-        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=UZ1iiZ91D5ta7woyBUt0JspQpjAYy1irdMsZOOrHXMc=; b=PsKqXUcN7z7Xz9gU7L79usjrqd
-        1TEUjHamWsPT+rB4y+/yJm/EmvCFSl7ml+1TBJeGQpJ7BwVxO9wF2ewwlhrRVlZhQ2fn7eM4nvSru
-        Htj0+NqPiUUfos5bsZ+wlkRab0SxVL9RrtXQZ0X5t45PUuUj7wuHcCn43N+m+i27dIdLRZryJCjb+
-        p41WXKWECLMO9LZLn3XL4a/cY1LJKbqbDtDs9Mnwi1jx/mtoDZJwIzftrtvBMEa3DqdCL4xlxrb9T
-        Pn5dnuGhyiDr2tSO2dx5kndNT3pjthrpWfVIQvSgWUpbBrW0LeWUm490FPAwN1pfH7BrK6o7UT0aq
-        y3B5AiUQ==;
-Received: from [195.167.85.94] (helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hs6eN-0006P2-Jm; Mon, 29 Jul 2019 14:29:20 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Ben Skeggs <bskeggs@redhat.com>
-Cc:     Ralph Campbell <rcampbell@nvidia.com>,
-        Bharata B Rao <bharata@linux.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 9/9] mm: remove the MIGRATE_PFN_WRITE flag
-Date:   Mon, 29 Jul 2019 17:28:43 +0300
-Message-Id: <20190729142843.22320-10-hch@lst.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190729142843.22320-1-hch@lst.de>
-References: <20190729142843.22320-1-hch@lst.de>
+        id S1728129AbfG2O2s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 10:28:48 -0400
+Received: from foss.arm.com ([217.140.110.172]:45084 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726190AbfG2O2s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 10:28:48 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0306A28;
+        Mon, 29 Jul 2019 07:28:48 -0700 (PDT)
+Received: from [10.1.194.37] (e113632-lin.cambridge.arm.com [10.1.194.37])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DB0C13F71F;
+        Mon, 29 Jul 2019 07:28:46 -0700 (PDT)
+Subject: Re: [PATCH 3/5] sched/fair: rework load_balance
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <Morten.Rasmussen@arm.com>,
+        Phil Auld <pauld@redhat.com>
+References: <1563523105-24673-1-git-send-email-vincent.guittot@linaro.org>
+ <1563523105-24673-4-git-send-email-vincent.guittot@linaro.org>
+ <d55f906e-6e91-9f49-5c2c-7ec2e6bd68b0@arm.com>
+ <CAKfTPtD2hDxnHSaa5C_Jrtabb_ogJSgkLE=5UPyystKZqUmzWA@mail.gmail.com>
+ <4d3a67f5-c9c4-6397-7405-6f0efbd49d5c@arm.com>
+ <CAKfTPtBE5fzycHk33rf7Bky-tYSeCXaKd9oGR5cgaghzbL2TvA@mail.gmail.com>
+ <aff49e6a-b4d3-baae-9124-3d5bb5abdbfe@arm.com>
+ <CAKfTPtBTH10k56s-sU3TX+vL6Xas-QArLW-CBz7ZeqU0BNzMQA@mail.gmail.com>
+From:   Valentin Schneider <valentin.schneider@arm.com>
+Message-ID: <58f79135-4b6c-2507-3f5d-e3c7704bf8b3@arm.com>
+Date:   Mon, 29 Jul 2019 15:28:45 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <CAKfTPtBTH10k56s-sU3TX+vL6Xas-QArLW-CBz7ZeqU0BNzMQA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The MIGRATE_PFN_WRITE is only used locally in migrate_vma_collect_pmd,
-where it can be replaced with a simple boolean local variable.
+On 26/07/2019 15:47, Vincent Guittot wrote:
+[...]
+>> If CPU0 runs the load balancer, balancing utilization would mean pulling
+>> 2 tasks from CPU1 to reach the domain-average of 40%. The good side of this
+>> is that we could save ourselves from running some newidle balances, but
+>> I'll admit that's all quite "finger in the air".
+> 
+> Don't forget that scheduler also selects a cpu when task wakeup and
+> should cope with such situation
+> 
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- include/linux/migrate.h | 1 -
- mm/migrate.c            | 9 +++++----
- 2 files changed, 5 insertions(+), 5 deletions(-)
+Right, although I'm not sure even the slow wakeup path is any good at
+balancing utilization.
 
-diff --git a/include/linux/migrate.h b/include/linux/migrate.h
-index 8b46cfdb1a0e..ba74ef5a7702 100644
---- a/include/linux/migrate.h
-+++ b/include/linux/migrate.h
-@@ -165,7 +165,6 @@ static inline int migrate_misplaced_transhuge_page(struct mm_struct *mm,
- #define MIGRATE_PFN_VALID	(1UL << 0)
- #define MIGRATE_PFN_MIGRATE	(1UL << 1)
- #define MIGRATE_PFN_LOCKED	(1UL << 2)
--#define MIGRATE_PFN_WRITE	(1UL << 3)
- #define MIGRATE_PFN_SHIFT	6
- 
- static inline struct page *migrate_pfn_to_page(unsigned long mpfn)
-diff --git a/mm/migrate.c b/mm/migrate.c
-index 74735256e260..724f92dcc31b 100644
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -2212,6 +2212,7 @@ static int migrate_vma_collect_pmd(pmd_t *pmdp,
- 		unsigned long mpfn, pfn;
- 		struct page *page;
- 		swp_entry_t entry;
-+		bool writable = false;
- 		pte_t pte;
- 
- 		pte = *ptep;
-@@ -2240,7 +2241,7 @@ static int migrate_vma_collect_pmd(pmd_t *pmdp,
- 			mpfn = migrate_pfn(page_to_pfn(page)) |
- 					MIGRATE_PFN_MIGRATE;
- 			if (is_write_device_private_entry(entry))
--				mpfn |= MIGRATE_PFN_WRITE;
-+				writable = true;
- 		} else {
- 			if (is_zero_pfn(pfn)) {
- 				mpfn = MIGRATE_PFN_MIGRATE;
-@@ -2250,7 +2251,8 @@ static int migrate_vma_collect_pmd(pmd_t *pmdp,
- 			}
- 			page = vm_normal_page(migrate->vma, addr, pte);
- 			mpfn = migrate_pfn(pfn) | MIGRATE_PFN_MIGRATE;
--			mpfn |= pte_write(pte) ? MIGRATE_PFN_WRITE : 0;
-+			if (pte_write(pte))
-+				writable = true;
- 		}
- 
- 		/* FIXME support THP */
-@@ -2284,8 +2286,7 @@ static int migrate_vma_collect_pmd(pmd_t *pmdp,
- 			ptep_get_and_clear(mm, addr, ptep);
- 
- 			/* Setup special migration page table entry */
--			entry = make_migration_entry(page, mpfn &
--						     MIGRATE_PFN_WRITE);
-+			entry = make_migration_entry(page, writable);
- 			swp_pte = swp_entry_to_pte(entry);
- 			if (pte_soft_dirty(pte))
- 				swp_pte = pte_swp_mksoft_dirty(swp_pte);
--- 
-2.20.1
-
+>>
+>>>> happen, but it'd be a shame to repeatedly do this when we could
+>>>> preemptively balance utilization.
+>>>>
