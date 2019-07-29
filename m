@@ -2,89 +2,718 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4885879BA7
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 23:57:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CAFB79BB0
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 00:00:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389081AbfG2V5b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 17:57:31 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:41863 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728185AbfG2V5a (ORCPT
+        id S2389145AbfG2V6H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 17:58:07 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:56092 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728704AbfG2V6F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 17:57:30 -0400
-Received: by mail-lf1-f66.google.com with SMTP id 62so38267033lfa.8
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 14:57:29 -0700 (PDT)
+        Mon, 29 Jul 2019 17:58:05 -0400
+Received: by mail-wm1-f65.google.com with SMTP id a15so55189742wmj.5
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 14:58:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=WhB+RZ2P4weNNxlV3JiaH27Cy16VoQbodVkM+yi6FAA=;
-        b=sVE9zpEAJSM4jgNF+JxW1v7N1fcEZmKVkBwXW6KNsVWmVQFLHqD9d+xWPT9I2jAv7d
-         TWVaNyRqpnOg3/0m2gk7Ch7jfca9Jh7XmgTvTp/mhbO/osy8RPidS52ZbciVLnLEwdVN
-         13aomLVoHqKP8mi75hzRriyJh55sc4+nlArQq/OmMsDigdVM12/m5kKoc0QeQ0A/N+rn
-         uT5q2dRFCTZxrWDs9LEKNvSy227d40I8Q4tKWwgJf09KBFWvYLj22dKO7HSBJthn38/j
-         qYBSQpexpirObv7xVzyDVw0nZYVjTHFYX1mCs0JG/ZipMEBdkq6//TrU3cy7vGuxUxj1
-         Nt8w==
+        d=arista.com; s=googlenew;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=jkiQPSYDXwDAYrX28YnMh41xAuZDG+yWKTdtR9jOa8w=;
+        b=ZDs0n5TYVHi9mibeUwUV10bV15c2ujVCl1OYmXCT6MdQgoDHk3p3zTh3dGGsJ5pgH8
+         CW347t4UjNYs4HEPHByOgus6sNmuQzJ4Yjp//4Q7PcxcGnZVd7o0xU7NeCB6JiQaPjfA
+         rBTpRgQvCb5nHfDM5xmqz4pdOGwFiLeYkcMBNkrL2YimQ2+XCktp5Pa1FQkNtJXtGP+g
+         I9pGTvRtAePdTNBBKwhnMb6z/6rTcilpimQnD71kF7bY9E4iDFDxkGxEUIC4RwfRYrqP
+         oH5tLxO/IEpTkBjbj45nhezMGrg7oDbxzVbf0auL3n48a+NzcxGX6rVD1P6FjhR8J4D+
+         nqFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=WhB+RZ2P4weNNxlV3JiaH27Cy16VoQbodVkM+yi6FAA=;
-        b=kekW//8HHhdmejxuSXZOPkvb6y9GrLpq/WHhuxu4ANHHwW+7S6WVREwXjNUGpooRZx
-         j4chebYmcP3qZ/zoo+BCJhUg0nuPdQA88KXynGnM4t7uFk3ZW80XlVJUxFz9NIvvv5AL
-         96sU3qQ0QskgOZGeIXFOjhAQ+EW3YkOdN9p9OsCJNazH29FY95hov1ynaE5T27hNedjX
-         B/6HyqAuz5hIcmwtI8ZFPlS6LYhOg3cveFQusP3YAIAVxA2Ol0Mdkl7LSyutppvHbRWu
-         EZgv+EOuXzuVcf/03DpT90FYex7wOBrYgkd3KPM9p5TFxbJNJg740IgKI/dsMeX/uolR
-         7W3Q==
-X-Gm-Message-State: APjAAAX5SVYmHNpFKDDAI2SM+1KkGWjSPxk6q/ixptXPlAo5TPWdlwYj
-        EMywYHLKZxGXO0GITU+LWKinop4TFnrNXrUdRKu1HA==
-X-Google-Smtp-Source: APXvYqyBnwkv1VRTZGXZco57yirARpTFLPJRJ/RvgElvK8IXTHcFCH30jet7L01e4aA0VROLzr8OPXOGn2X/EdVc1D0=
-X-Received: by 2002:ac2:4891:: with SMTP id x17mr54444437lfc.60.1564437448905;
- Mon, 29 Jul 2019 14:57:28 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=jkiQPSYDXwDAYrX28YnMh41xAuZDG+yWKTdtR9jOa8w=;
+        b=X/F+y6EV7Fij/FA6PLYOZfFVQGVMzuL91iAgJfHpjiedFdSRwQQD53O2393v8Uog2y
+         5x903HRTus458jkb1F79NvyUd2Ecl9CrBCbUWZFevjwabD7vB0AUlKa/GRXu6efecsC+
+         X5eZWac7PbAh2NpbEHikZwgNX3DKLgfbkrSGXhikMrp2pNZKL5digvg3mLsUt/P1DQxD
+         wByn6M0b7WU/7Dyi1FiziMzwa1uc1FtVuDY8FBtOwEn6zGQqZu8mGrlYwiuZsHjgcEOa
+         Q4COv66rgUHCpP6/70Prjll+QKlrc/cC6jRsosCV9lIWwA8eVcpF8L77eiOKmrMleJTy
+         QpDA==
+X-Gm-Message-State: APjAAAV5QTkr975F2vRlT7CzFDic14NTTgHuZSIXHfYVyRbAiiCHfiR6
+        y9c2uKTNmXOHffT8RnpOGmXikZWcnGRVJa09r2JmdG6dqQ6ZecQaXK28VuA4IJVhTy/dLK/XtKs
+        k/9pwhJkCgSoRokRqi40jRN6C/aNwabs1VDb6bVBF4d02GC+U6qF1+sB7CH2beUTF3sNmEZGlD3
+        MojsniWs3+cChiFVbWyHxwl+LKY2qBKlqeRNQRsXM=
+X-Google-Smtp-Source: APXvYqz7o4bSOgr1O3eNk9OeOuO//gFb1588hWqOm8Wecfl541Igtg7UqkMbxul0k0dq4638gtoIGw==
+X-Received: by 2002:a7b:c7d8:: with SMTP id z24mr101775160wmk.10.1564437481384;
+        Mon, 29 Jul 2019 14:58:01 -0700 (PDT)
+Received: from Mindolluin.ire.aristanetworks.com ([217.173.96.166])
+        by smtp.gmail.com with ESMTPSA id x20sm49230728wmc.1.2019.07.29.14.58.00
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 29 Jul 2019 14:58:00 -0700 (PDT)
+From:   Dmitry Safonov <dima@arista.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
+        Andrei Vagin <avagin@openvz.org>,
+        Dmitry Safonov <dima@arista.com>,
+        Adrian Reber <adrian@lisas.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Jann Horn <jannh@google.com>, Jeff Dike <jdike@addtoit.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        containers@lists.linux-foundation.org, criu@openvz.org,
+        linux-api@vger.kernel.org, x86@kernel.org
+Subject: [PATCHv5 01/37] ns: Introduce Time Namespace
+Date:   Mon, 29 Jul 2019 22:56:43 +0100
+Message-Id: <20190729215758.28405-2-dima@arista.com>
+X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20190729215758.28405-1-dima@arista.com>
+References: <20190729215758.28405-1-dima@arista.com>
 MIME-Version: 1.0
-References: <1563564291-9692-1-git-send-email-hongweiz@ami.com>
- <1563564291-9692-2-git-send-email-hongweiz@ami.com> <CACRpkdYhVoP75ZDfASW+DH5yf-a5diitiXsh7eLsJx5hsTC9sQ@mail.gmail.com>
- <ef9d9c17-6e2d-4a4e-ac44-f8da4bb3b8eb@www.fastmail.com> <CACRpkdZxsF9gQj0VicVLsPKXg6rKA1mLwbywmazOf0w8PLnOfA@mail.gmail.com>
- <f2875111-9ba9-43b7-b2a4-d00c8725f5a0@www.fastmail.com>
-In-Reply-To: <f2875111-9ba9-43b7-b2a4-d00c8725f5a0@www.fastmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 29 Jul 2019 23:57:16 +0200
-Message-ID: <CACRpkdZcLNe+oM1jWPpva0LECc-P48ab3H-kG7eabMmSvmvioA@mail.gmail.com>
-Subject: Re: [v5 1/2] dt-bindings: gpio: aspeed: Add SGPIO support
-To:     Andrew Jeffery <andrew@aj.id.au>
-Cc:     Hongwei Zhang <hongweiz@ami.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Joel Stanley <joel@jms.id.au>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        linux-aspeed <linux-aspeed@lists.ozlabs.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-CLOUD-SEC-AV-Info: arista,google_mail,monitor
+X-CLOUD-SEC-AV-Sent: true
+X-Gm-Spam: 0
+X-Gm-Phishy: 0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 29, 2019 at 2:19 AM Andrew Jeffery <andrew@aj.id.au> wrote:
+From: Andrei Vagin <avagin@openvz.org>
 
-> The behaviour is to periodically emit the state of all enabled GPIOs
-> (i.e. the ngpios value), one per bus clock cycle. There's no explicit
-> addressing scheme, the protocol encodes the value for a given GPIO
-> by its position in the data stream relative to a pulse on the "load data"
-> (LD) line, whose envelope covers the clock cycle for the last GPIO in
-> the sequence. Similar to SPI the bus has both out and in lines, which
-> cater to output/input GPIOs.
->
-> A rough timing diagram for a 16-GPIO configuration looks like what
-> I've pasted here:
->
-> https://gist.github.com/amboar/c9543af1957854474b8c05ab357f0675
+Time Namespace isolates clock values.
 
-OK that is complex. I agree we need to keep this driver together.
+The kernel provides access to several clocks CLOCK_REALTIME,
+CLOCK_MONOTONIC, CLOCK_BOOTTIME, etc.
 
-Yours,
-Linus Walleij
+CLOCK_REALTIME
+      System-wide clock that measures real (i.e., wall-clock) time.
+
+CLOCK_MONOTONIC
+      Clock that cannot be set and represents monotonic time since
+      some unspecified starting point.
+
+CLOCK_BOOTTIME
+      Identical to CLOCK_MONOTONIC, except it also includes any time
+      that the system is suspended.
+
+For many users, the time namespace means the ability to changes date and
+time in a container (CLOCK_REALTIME).
+
+But in a context of the checkpoint/restore functionality, monotonic and
+bootime clocks become interesting. Both clocks are monotonic with
+unspecified staring points. These clocks are widely used to measure time
+slices and set timers. After restoring or migrating processes, we have to
+guarantee that they never go backward. In an ideal case, the behavior of
+these clocks should be the same as for a case when a whole system is
+suspended. All this means that we need to be able to set CLOCK_MONOTONIC
+and CLOCK_BOOTTIME clocks, what can be done by adding per-namespace
+offsets for clocks.
+
+A time namespace is similar to a pid namespace in a way how it is
+created: unshare(CLONE_NEWTIME) system call creates a new time namespace,
+but doesn't set it to the current process. Then all children of
+the process will be born in the new time namespace, or a process can
+use the setns() system call to join a namespace.
+
+This scheme allows setting clock offsets for a namespace, before any
+processes appear in it.
+
+All available clone flags have been used, so CLONE_NEWTIME uses the
+highest bit of CSIGNAL. It means that we can use it with the unshare
+system call only. Rith now, this works for us, because time namespace
+offsets can be set only when a new time namespace is not populated. In a
+future, we will have the clone3 system call [1] which will allow to use
+the CSIGNAL mask for clone flags.
+
+[1]: httmps://lkml.kernel.org/r/20190604160944.4058-1-christian@brauner.io
+
+Link: https://criu.org/Time_namespace
+Link: https://lists.openvz.org/pipermail/criu/2018-June/041504.html
+Signed-off-by: Andrei Vagin <avagin@openvz.org>
+Co-developed-by: Dmitry Safonov <dima@arista.com>
+Signed-off-by: Dmitry Safonov <dima@arista.com>
+---
+ MAINTAINERS                    |   2 +
+ fs/proc/namespaces.c           |   4 +
+ include/linux/nsproxy.h        |   2 +
+ include/linux/proc_ns.h        |   3 +
+ include/linux/time_namespace.h |  69 +++++++++++
+ include/linux/user_namespace.h |   1 +
+ include/uapi/linux/sched.h     |   6 +
+ init/Kconfig                   |   7 ++
+ kernel/Makefile                |   1 +
+ kernel/fork.c                  |  16 ++-
+ kernel/nsproxy.c               |  41 +++++--
+ kernel/time_namespace.c        | 217 +++++++++++++++++++++++++++++++++
+ 12 files changed, 359 insertions(+), 10 deletions(-)
+ create mode 100644 include/linux/time_namespace.h
+ create mode 100644 kernel/time_namespace.c
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 6426db5198f0..ce6ff88f7efd 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -12836,6 +12836,8 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers/core
+ S:	Maintained
+ F:	fs/timerfd.c
+ F:	include/linux/timer*
++F:	include/linux/time_namespace.h
++F:	kernel/time_namespace.c
+ F:	kernel/time/*timer*
+ 
+ POWER MANAGEMENT CORE
+diff --git a/fs/proc/namespaces.c b/fs/proc/namespaces.c
+index dd2b35f78b09..8b5c720fe5d7 100644
+--- a/fs/proc/namespaces.c
++++ b/fs/proc/namespaces.c
+@@ -33,6 +33,10 @@ static const struct proc_ns_operations *ns_entries[] = {
+ #ifdef CONFIG_CGROUPS
+ 	&cgroupns_operations,
+ #endif
++#ifdef CONFIG_TIME_NS
++	&timens_operations,
++	&timens_for_children_operations,
++#endif
+ };
+ 
+ static const char *proc_ns_get_link(struct dentry *dentry,
+diff --git a/include/linux/nsproxy.h b/include/linux/nsproxy.h
+index 2ae1b1a4d84d..074f395b9ad2 100644
+--- a/include/linux/nsproxy.h
++++ b/include/linux/nsproxy.h
+@@ -35,6 +35,8 @@ struct nsproxy {
+ 	struct mnt_namespace *mnt_ns;
+ 	struct pid_namespace *pid_ns_for_children;
+ 	struct net 	     *net_ns;
++	struct time_namespace *time_ns;
++	struct time_namespace *time_ns_for_children;
+ 	struct cgroup_namespace *cgroup_ns;
+ };
+ extern struct nsproxy init_nsproxy;
+diff --git a/include/linux/proc_ns.h b/include/linux/proc_ns.h
+index d31cb6215905..d312e6281e69 100644
+--- a/include/linux/proc_ns.h
++++ b/include/linux/proc_ns.h
+@@ -32,6 +32,8 @@ extern const struct proc_ns_operations pidns_for_children_operations;
+ extern const struct proc_ns_operations userns_operations;
+ extern const struct proc_ns_operations mntns_operations;
+ extern const struct proc_ns_operations cgroupns_operations;
++extern const struct proc_ns_operations timens_operations;
++extern const struct proc_ns_operations timens_for_children_operations;
+ 
+ /*
+  * We always define these enumerators
+@@ -43,6 +45,7 @@ enum {
+ 	PROC_USER_INIT_INO	= 0xEFFFFFFDU,
+ 	PROC_PID_INIT_INO	= 0xEFFFFFFCU,
+ 	PROC_CGROUP_INIT_INO	= 0xEFFFFFFBU,
++	PROC_TIME_INIT_INO	= 0xEFFFFFFAU,
+ };
+ 
+ #ifdef CONFIG_PROC_FS
+diff --git a/include/linux/time_namespace.h b/include/linux/time_namespace.h
+new file mode 100644
+index 000000000000..9507ed7072fe
+--- /dev/null
++++ b/include/linux/time_namespace.h
+@@ -0,0 +1,69 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _LINUX_TIMENS_H
++#define _LINUX_TIMENS_H
++
++
++#include <linux/sched.h>
++#include <linux/kref.h>
++#include <linux/nsproxy.h>
++#include <linux/ns_common.h>
++#include <linux/err.h>
++
++struct user_namespace;
++extern struct user_namespace init_user_ns;
++
++struct time_namespace {
++	struct kref kref;
++	struct user_namespace *user_ns;
++	struct ucounts *ucounts;
++	struct ns_common ns;
++	struct timens_offsets *offsets;
++	bool   initialized;
++} __randomize_layout;
++extern struct time_namespace init_time_ns;
++
++#ifdef CONFIG_TIME_NS
++static inline struct time_namespace *get_time_ns(struct time_namespace *ns)
++{
++	kref_get(&ns->kref);
++	return ns;
++}
++
++extern struct time_namespace *copy_time_ns(unsigned long flags,
++	struct user_namespace *user_ns, struct time_namespace *old_ns);
++extern void free_time_ns(struct kref *kref);
++extern int timens_on_fork(struct nsproxy *nsproxy, struct task_struct *tsk);
++
++static inline void put_time_ns(struct time_namespace *ns)
++{
++	kref_put(&ns->kref, free_time_ns);
++}
++
++
++#else
++static inline struct time_namespace *get_time_ns(struct time_namespace *ns)
++{
++	return NULL;
++}
++
++static inline void put_time_ns(struct time_namespace *ns)
++{
++}
++
++static inline struct time_namespace *copy_time_ns(unsigned long flags,
++	struct user_namespace *user_ns, struct time_namespace *old_ns)
++{
++	if (flags & CLONE_NEWTIME)
++		return ERR_PTR(-EINVAL);
++
++	return old_ns;
++}
++
++static inline int timens_on_fork(struct nsproxy *nsproxy, struct task_struct *tsk)
++{
++	return 0;
++}
++
++#endif
++
++#endif /* _LINUX_TIMENS_H */
+diff --git a/include/linux/user_namespace.h b/include/linux/user_namespace.h
+index fb9f4f799554..6ef1c7109fc4 100644
+--- a/include/linux/user_namespace.h
++++ b/include/linux/user_namespace.h
+@@ -45,6 +45,7 @@ enum ucount_type {
+ 	UCOUNT_NET_NAMESPACES,
+ 	UCOUNT_MNT_NAMESPACES,
+ 	UCOUNT_CGROUP_NAMESPACES,
++	UCOUNT_TIME_NAMESPACES,
+ #ifdef CONFIG_INOTIFY_USER
+ 	UCOUNT_INOTIFY_INSTANCES,
+ 	UCOUNT_INOTIFY_WATCHES,
+diff --git a/include/uapi/linux/sched.h b/include/uapi/linux/sched.h
+index b3105ac1381a..551739227e96 100644
+--- a/include/uapi/linux/sched.h
++++ b/include/uapi/linux/sched.h
+@@ -33,6 +33,12 @@
+ #define CLONE_NEWNET		0x40000000	/* New network namespace */
+ #define CLONE_IO		0x80000000	/* Clone io context */
+ 
++/*
++ * cloning flags intersect with CSIGNAL so can be used with unshare and clone3
++ * syscalls only:
++ */
++#define CLONE_NEWTIME	0x00000080	/* New time namespace */
++
+ /*
+  * Arguments for the clone3 syscall
+  */
+diff --git a/init/Kconfig b/init/Kconfig
+index bd7d650d4a99..a7cbc9b470c7 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -1069,6 +1069,13 @@ config UTS_NS
+ 	  In this namespace tasks see different info provided with the
+ 	  uname() system call
+ 
++config TIME_NS
++	bool "TIME namespace"
++	default y
++	help
++	  In this namespace boottime and monotonic clocks can be set.
++	  The time will keep going with the same pace.
++
+ config IPC_NS
+ 	bool "IPC namespace"
+ 	depends on (SYSVIPC || POSIX_MQUEUE)
+diff --git a/kernel/Makefile b/kernel/Makefile
+index a8d923b5481b..a8654c9aa2f5 100644
+--- a/kernel/Makefile
++++ b/kernel/Makefile
+@@ -68,6 +68,7 @@ obj-$(CONFIG_BACKTRACE_SELF_TEST) += backtracetest.o
+ obj-$(CONFIG_COMPAT) += compat.o
+ obj-$(CONFIG_CGROUPS) += cgroup/
+ obj-$(CONFIG_UTS_NS) += utsname.o
++obj-$(CONFIG_TIME_NS) += time_namespace.o
+ obj-$(CONFIG_USER_NS) += user_namespace.o
+ obj-$(CONFIG_PID_NS) += pid_namespace.o
+ obj-$(CONFIG_IKCONFIG) += configs.o
+diff --git a/kernel/fork.c b/kernel/fork.c
+index 2852d0e76ea3..3dbb2d33dc52 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -1777,6 +1777,7 @@ static __latent_entropy struct task_struct *copy_process(
+ 	struct multiprocess_signals delayed;
+ 	struct file *pidfile = NULL;
+ 	u64 clone_flags = args->flags;
++	struct nsproxy *nsp = current->nsproxy;
+ 
+ 	/*
+ 	 * Don't allow sharing the root directory with processes in a different
+@@ -1819,8 +1820,16 @@ static __latent_entropy struct task_struct *copy_process(
+ 	 */
+ 	if (clone_flags & CLONE_THREAD) {
+ 		if ((clone_flags & (CLONE_NEWUSER | CLONE_NEWPID)) ||
+-		    (task_active_pid_ns(current) !=
+-				current->nsproxy->pid_ns_for_children))
++		    (task_active_pid_ns(current) != nsp->pid_ns_for_children))
++			return ERR_PTR(-EINVAL);
++	}
++
++	/*
++	 * If the new process will be in a different time namespace
++	 * do not allow it to share VM or a thread group with the forking task.
++	 */
++	if (clone_flags & (CLONE_THREAD | CLONE_VM)) {
++		if (nsp->time_ns != nsp->time_ns_for_children)
+ 			return ERR_PTR(-EINVAL);
+ 	}
+ 
+@@ -2707,7 +2716,8 @@ static int check_unshare_flags(unsigned long unshare_flags)
+ 	if (unshare_flags & ~(CLONE_THREAD|CLONE_FS|CLONE_NEWNS|CLONE_SIGHAND|
+ 				CLONE_VM|CLONE_FILES|CLONE_SYSVSEM|
+ 				CLONE_NEWUTS|CLONE_NEWIPC|CLONE_NEWNET|
+-				CLONE_NEWUSER|CLONE_NEWPID|CLONE_NEWCGROUP))
++				CLONE_NEWUSER|CLONE_NEWPID|CLONE_NEWCGROUP|
++				CLONE_NEWTIME))
+ 		return -EINVAL;
+ 	/*
+ 	 * Not implemented, but pretend it works if there is nothing
+diff --git a/kernel/nsproxy.c b/kernel/nsproxy.c
+index c815f58e6bc0..ed9882108cd2 100644
+--- a/kernel/nsproxy.c
++++ b/kernel/nsproxy.c
+@@ -18,6 +18,7 @@
+ #include <linux/pid_namespace.h>
+ #include <net/net_namespace.h>
+ #include <linux/ipc_namespace.h>
++#include <linux/time_namespace.h>
+ #include <linux/proc_ns.h>
+ #include <linux/file.h>
+ #include <linux/syscalls.h>
+@@ -40,6 +41,10 @@ struct nsproxy init_nsproxy = {
+ #ifdef CONFIG_CGROUPS
+ 	.cgroup_ns		= &init_cgroup_ns,
+ #endif
++#ifdef CONFIG_TIME_NS
++	.time_ns		= &init_time_ns,
++	.time_ns_for_children	= &init_time_ns,
++#endif
+ };
+ 
+ static inline struct nsproxy *create_nsproxy(void)
+@@ -106,8 +111,18 @@ static struct nsproxy *create_new_namespaces(unsigned long flags,
+ 		goto out_net;
+ 	}
+ 
++	new_nsp->time_ns_for_children = copy_time_ns(flags, user_ns,
++					tsk->nsproxy->time_ns_for_children);
++	if (IS_ERR(new_nsp->time_ns_for_children)) {
++		err = PTR_ERR(new_nsp->time_ns_for_children);
++		goto out_time;
++	}
++	new_nsp->time_ns = get_time_ns(tsk->nsproxy->time_ns);
++
+ 	return new_nsp;
+ 
++out_time:
++	put_net(new_nsp->net_ns);
+ out_net:
+ 	put_cgroup_ns(new_nsp->cgroup_ns);
+ out_cgroup:
+@@ -136,15 +151,16 @@ int copy_namespaces(unsigned long flags, struct task_struct *tsk)
+ 	struct nsproxy *old_ns = tsk->nsproxy;
+ 	struct user_namespace *user_ns = task_cred_xxx(tsk, user_ns);
+ 	struct nsproxy *new_ns;
++	int ret;
+ 
+ 	if (likely(!(flags & (CLONE_NEWNS | CLONE_NEWUTS | CLONE_NEWIPC |
+ 			      CLONE_NEWPID | CLONE_NEWNET |
+-			      CLONE_NEWCGROUP)))) {
+-		get_nsproxy(old_ns);
+-		return 0;
+-	}
+-
+-	if (!ns_capable(user_ns, CAP_SYS_ADMIN))
++			      CLONE_NEWCGROUP | CLONE_NEWTIME)))) {
++		if (likely(old_ns->time_ns_for_children == old_ns->time_ns)) {
++			get_nsproxy(old_ns);
++			return 0;
++		}
++	} else if (!ns_capable(user_ns, CAP_SYS_ADMIN))
+ 		return -EPERM;
+ 
+ 	/*
+@@ -162,6 +178,12 @@ int copy_namespaces(unsigned long flags, struct task_struct *tsk)
+ 	if (IS_ERR(new_ns))
+ 		return  PTR_ERR(new_ns);
+ 
++	ret = timens_on_fork(new_ns, tsk);
++	if (ret) {
++		free_nsproxy(new_ns);
++		return ret;
++	}
++
+ 	tsk->nsproxy = new_ns;
+ 	return 0;
+ }
+@@ -176,6 +198,10 @@ void free_nsproxy(struct nsproxy *ns)
+ 		put_ipc_ns(ns->ipc_ns);
+ 	if (ns->pid_ns_for_children)
+ 		put_pid_ns(ns->pid_ns_for_children);
++	if (ns->time_ns)
++		put_time_ns(ns->time_ns);
++	if (ns->time_ns_for_children)
++		put_time_ns(ns->time_ns_for_children);
+ 	put_cgroup_ns(ns->cgroup_ns);
+ 	put_net(ns->net_ns);
+ 	kmem_cache_free(nsproxy_cachep, ns);
+@@ -192,7 +218,8 @@ int unshare_nsproxy_namespaces(unsigned long unshare_flags,
+ 	int err = 0;
+ 
+ 	if (!(unshare_flags & (CLONE_NEWNS | CLONE_NEWUTS | CLONE_NEWIPC |
+-			       CLONE_NEWNET | CLONE_NEWPID | CLONE_NEWCGROUP)))
++			       CLONE_NEWNET | CLONE_NEWPID | CLONE_NEWCGROUP |
++			       CLONE_NEWTIME)))
+ 		return 0;
+ 
+ 	user_ns = new_cred ? new_cred->user_ns : current_user_ns();
+diff --git a/kernel/time_namespace.c b/kernel/time_namespace.c
+new file mode 100644
+index 000000000000..7ee6be0647bc
+--- /dev/null
++++ b/kernel/time_namespace.c
+@@ -0,0 +1,217 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Author: Andrei Vagin <avagin@openvz.org>
++ * Author: Dmitry Safonov <dima@arista.com>
++ */
++
++#include <linux/time_namespace.h>
++#include <linux/user_namespace.h>
++#include <linux/sched/signal.h>
++#include <linux/sched/task.h>
++#include <linux/proc_ns.h>
++#include <linux/export.h>
++#include <linux/time.h>
++#include <linux/slab.h>
++#include <linux/cred.h>
++#include <linux/err.h>
++
++static struct ucounts *inc_time_namespaces(struct user_namespace *ns)
++{
++	return inc_ucount(ns, current_euid(), UCOUNT_TIME_NAMESPACES);
++}
++
++static void dec_time_namespaces(struct ucounts *ucounts)
++{
++	dec_ucount(ucounts, UCOUNT_TIME_NAMESPACES);
++}
++
++static struct time_namespace *create_time_ns(void)
++{
++	struct time_namespace *time_ns;
++
++	time_ns = kmalloc(sizeof(struct time_namespace), GFP_KERNEL);
++	if (time_ns) {
++		kref_init(&time_ns->kref);
++		time_ns->initialized = false;
++	}
++	return time_ns;
++}
++
++/*
++ * Clone a new ns copying @old_ns, setting refcount to 1
++ * @old_ns: namespace to clone
++ * Return the new ns or ERR_PTR.
++ */
++static struct time_namespace *clone_time_ns(struct user_namespace *user_ns,
++					  struct time_namespace *old_ns)
++{
++	struct time_namespace *ns;
++	struct ucounts *ucounts;
++	int err;
++
++	err = -ENOSPC;
++	ucounts = inc_time_namespaces(user_ns);
++	if (!ucounts)
++		goto fail;
++
++	err = -ENOMEM;
++	ns = create_time_ns();
++	if (!ns)
++		goto fail_dec;
++
++	err = ns_alloc_inum(&ns->ns);
++	if (err)
++		goto fail_free;
++
++	ns->ucounts = ucounts;
++	ns->ns.ops = &timens_operations;
++	ns->user_ns = get_user_ns(user_ns);
++	return ns;
++
++fail_free:
++	kfree(ns);
++fail_dec:
++	dec_time_namespaces(ucounts);
++fail:
++	return ERR_PTR(err);
++}
++
++/*
++ * Add a reference to old_ns, or clone it if @flags specify CLONE_NEWTIME.
++ * In latter case, changes to the time of this process won't be seen by parent,
++ * and vice versa.
++ */
++struct time_namespace *copy_time_ns(unsigned long flags,
++	struct user_namespace *user_ns, struct time_namespace *old_ns)
++{
++	if (!(flags & CLONE_NEWTIME))
++		return get_time_ns(old_ns);
++
++	return clone_time_ns(user_ns, old_ns);
++}
++
++void free_time_ns(struct kref *kref)
++{
++	struct time_namespace *ns;
++
++	ns = container_of(kref, struct time_namespace, kref);
++	dec_time_namespaces(ns->ucounts);
++	put_user_ns(ns->user_ns);
++	ns_free_inum(&ns->ns);
++	kfree(ns);
++}
++
++static struct time_namespace *to_time_ns(struct ns_common *ns)
++{
++	return container_of(ns, struct time_namespace, ns);
++}
++
++static struct ns_common *timens_get(struct task_struct *task)
++{
++	struct time_namespace *ns = NULL;
++	struct nsproxy *nsproxy;
++
++	task_lock(task);
++	nsproxy = task->nsproxy;
++	if (nsproxy) {
++		ns = nsproxy->time_ns;
++		get_time_ns(ns);
++	}
++	task_unlock(task);
++
++	return ns ? &ns->ns : NULL;
++}
++
++static struct ns_common *timens_for_children_get(struct task_struct *task)
++{
++	struct time_namespace *ns = NULL;
++	struct nsproxy *nsproxy;
++
++	task_lock(task);
++	nsproxy = task->nsproxy;
++	if (nsproxy) {
++		ns = nsproxy->time_ns_for_children;
++		get_time_ns(ns);
++	}
++	task_unlock(task);
++
++	return ns ? &ns->ns : NULL;
++}
++
++static void timens_put(struct ns_common *ns)
++{
++	put_time_ns(to_time_ns(ns));
++}
++
++static int timens_install(struct nsproxy *nsproxy, struct ns_common *new)
++{
++	struct time_namespace *ns = to_time_ns(new);
++
++	if (!thread_group_empty(current))
++		return -EINVAL;
++
++	if (!ns_capable(ns->user_ns, CAP_SYS_ADMIN) ||
++	    !ns_capable(current_user_ns(), CAP_SYS_ADMIN))
++		return -EPERM;
++
++	get_time_ns(ns);
++	get_time_ns(ns);
++	put_time_ns(nsproxy->time_ns);
++	put_time_ns(nsproxy->time_ns_for_children);
++	nsproxy->time_ns = ns;
++	nsproxy->time_ns_for_children = ns;
++	ns->initialized = true;
++	return 0;
++}
++
++int timens_on_fork(struct nsproxy *nsproxy, struct task_struct *tsk)
++{
++	struct ns_common *nsc = &nsproxy->time_ns_for_children->ns;
++	struct time_namespace *ns = to_time_ns(nsc);
++
++	if (nsproxy->time_ns == nsproxy->time_ns_for_children)
++		return 0;
++
++	get_time_ns(ns);
++	put_time_ns(nsproxy->time_ns);
++	nsproxy->time_ns = ns;
++	ns->initialized = true;
++
++	return 0;
++}
++
++static struct user_namespace *timens_owner(struct ns_common *ns)
++{
++	return to_time_ns(ns)->user_ns;
++}
++
++const struct proc_ns_operations timens_operations = {
++	.name		= "time",
++	.type		= CLONE_NEWTIME,
++	.get		= timens_get,
++	.put		= timens_put,
++	.install	= timens_install,
++	.owner		= timens_owner,
++};
++
++const struct proc_ns_operations timens_for_children_operations = {
++	.name		= "time_for_children",
++	.type		= CLONE_NEWTIME,
++	.get		= timens_for_children_get,
++	.put		= timens_put,
++	.install	= timens_install,
++	.owner		= timens_owner,
++};
++
++struct time_namespace init_time_ns = {
++	.kref = KREF_INIT(3),
++	.user_ns = &init_user_ns,
++	.ns.inum = PROC_TIME_INIT_INO,
++	.ns.ops = &timens_operations,
++};
++
++static int __init time_ns_init(void)
++{
++	return 0;
++}
++subsys_initcall(time_ns_init);
+-- 
+2.22.0
+
