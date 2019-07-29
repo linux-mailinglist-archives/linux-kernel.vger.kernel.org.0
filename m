@@ -2,37 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FC1379862
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:07:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED3D97985B
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:07:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730095AbfG2UHV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 16:07:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54780 "EHLO mail.kernel.org"
+        id S2389067AbfG2Tj4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 15:39:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55078 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388589AbfG2Tjg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:39:36 -0400
+        id S2389039AbfG2Tjy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:39:54 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D23D8206DD;
-        Mon, 29 Jul 2019 19:39:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7FCC1217D4;
+        Mon, 29 Jul 2019 19:39:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564429176;
-        bh=slMhLLzF0Lqf1ggD9BjMAZtuBRfrx1kN0uNY1MqkJ5E=;
+        s=default; t=1564429193;
+        bh=H8AJYrVZIfb1kv/D0H3pFJb2xDfdmkq/qkgb0ea7t68=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PtBLljVMYxrAkMnJxMGIJx3DoUZw1cKgM30fNyDk6T+xFNnU1TchK4yEuP0d4KXAw
-         BUxGoGVwvmAKcuFcLcqg6vNnBRXDk+Iqr57w3DkYMMPRCT9VByBPu97Yqwcs7bldW4
-         +cWWaPc10jA6OUBMXXgXsWs4xwL07msAap8iWfUU=
+        b=hcySuAW8wzfwi+SK1HBJEgWFjwbdxaqUht3oJI48Y7p0R2vySMEpF2scFeEgWGYY6
+         +90RrKJRBQ6NcPdVgVpYu8US/YXBN0EFjQ3i+5AEiyI50h/3aApjgMiLBcm4BtviEs
+         ZKxVEftyvXwGQHRbh1eIFZOJcMcizRNDJuasW1OY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
+        Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        Emil Velikov <emil.velikov@collabora.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
+        <ville.syrjala@linux.intel.com>,
+        Daniel Vetter <daniel.vetter@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 016/113] PCI: Return error if cannot probe VF
-Date:   Mon, 29 Jul 2019 21:21:43 +0200
-Message-Id: <20190729190659.676178730@linuxfoundation.org>
+Subject: [PATCH 4.19 020/113] drm/crc-debugfs: User irqsafe spinlock in drm_crtc_add_crc_entry
+Date:   Mon, 29 Jul 2019 21:21:47 +0200
+Message-Id: <20190729190700.633359978@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190729190655.455345569@linuxfoundation.org>
 References: <20190729190655.455345569@linuxfoundation.org>
@@ -45,61 +50,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 76002d8b48c4b08c9bd414517dd295e132ad910b ]
+[ Upstream commit 1882018a70e06376234133e69ede9dd743b4dbd9 ]
 
-Commit 0e7df22401a3 ("PCI: Add sysfs sriov_drivers_autoprobe to control
-VF driver binding") allows the user to specify that drivers for VFs of
-a PF should not be probed, but it actually causes pci_device_probe() to
-return success back to the driver core in this case.  Therefore by all
-sysfs appearances the device is bound to a driver, the driver link from
-the device exists as does the device link back from the driver, yet the
-driver's probe function is never called on the device.  We also fail to
-do any sort of cleanup when we're prohibited from probing the device,
-the IRQ setup remains in place and we even hold a device reference.
+We can be called from any context, we need to be prepared.
 
-Instead, abort with errno before any setup or references are taken when
-pci_device_can_probe() prevents us from trying to probe the device.
+Noticed this while hacking on vkms, which calls this function from a
+normal worker. Which really upsets lockdep.
 
-Link: https://lore.kernel.org/lkml/155672991496.20698.4279330795743262888.stgit@gimli.home
-Fixes: 0e7df22401a3 ("PCI: Add sysfs sriov_drivers_autoprobe to control VF driver binding")
-Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Cc: Emil Velikov <emil.velikov@collabora.com>
+Cc: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Reviewed-by: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Reviewed-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
+Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190605194556.16744-1-daniel.vetter@ffwll.ch
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pci/pci-driver.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+ drivers/gpu/drm/drm_debugfs_crc.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
-index 33f3f475e5c6..956ee7527d2c 100644
---- a/drivers/pci/pci-driver.c
-+++ b/drivers/pci/pci-driver.c
-@@ -414,6 +414,9 @@ static int pci_device_probe(struct device *dev)
- 	struct pci_dev *pci_dev = to_pci_dev(dev);
- 	struct pci_driver *drv = to_pci_driver(dev->driver);
+diff --git a/drivers/gpu/drm/drm_debugfs_crc.c b/drivers/gpu/drm/drm_debugfs_crc.c
+index 99961192bf03..a334a82fcb36 100644
+--- a/drivers/gpu/drm/drm_debugfs_crc.c
++++ b/drivers/gpu/drm/drm_debugfs_crc.c
+@@ -379,8 +379,9 @@ int drm_crtc_add_crc_entry(struct drm_crtc *crtc, bool has_frame,
+ 	struct drm_crtc_crc *crc = &crtc->crc;
+ 	struct drm_crtc_crc_entry *entry;
+ 	int head, tail;
++	unsigned long flags;
  
-+	if (!pci_device_can_probe(pci_dev))
-+		return -ENODEV;
-+
- 	pci_assign_irq(pci_dev);
+-	spin_lock(&crc->lock);
++	spin_lock_irqsave(&crc->lock, flags);
  
- 	error = pcibios_alloc_irq(pci_dev);
-@@ -421,12 +424,10 @@ static int pci_device_probe(struct device *dev)
- 		return error;
+ 	/* Caller may not have noticed yet that userspace has stopped reading */
+ 	if (!crc->entries) {
+@@ -411,7 +412,7 @@ int drm_crtc_add_crc_entry(struct drm_crtc *crtc, bool has_frame,
+ 	head = (head + 1) & (DRM_CRC_ENTRIES_NR - 1);
+ 	crc->head = head;
  
- 	pci_dev_get(pci_dev);
--	if (pci_device_can_probe(pci_dev)) {
--		error = __pci_device_probe(drv, pci_dev);
--		if (error) {
--			pcibios_free_irq(pci_dev);
--			pci_dev_put(pci_dev);
--		}
-+	error = __pci_device_probe(drv, pci_dev);
-+	if (error) {
-+		pcibios_free_irq(pci_dev);
-+		pci_dev_put(pci_dev);
- 	}
+-	spin_unlock(&crc->lock);
++	spin_unlock_irqrestore(&crc->lock, flags);
  
- 	return error;
+ 	wake_up_interruptible(&crc->wq);
+ 
 -- 
 2.20.1
 
