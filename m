@@ -2,82 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 307DE78F3A
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 17:29:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CF09778F40
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 17:30:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388050AbfG2P3m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 11:29:42 -0400
-Received: from shelob.surriel.com ([96.67.55.147]:60516 "EHLO
-        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387925AbfG2P3m (ORCPT
+        id S2388079AbfG2PaB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 11:30:01 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:39390 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388019AbfG2PaA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 11:29:42 -0400
-Received: from imladris.surriel.com ([96.67.55.152])
-        by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.92)
-        (envelope-from <riel@shelob.surriel.com>)
-        id 1hs7an-0005ym-DC; Mon, 29 Jul 2019 11:29:41 -0400
-Message-ID: <5335b83c3371242f75abb6c92b40c665bb8f9ce3.camel@surriel.com>
-Subject: Re: [PATCH] sched: Clean up active_mm reference counting
-From:   Rik van Riel <riel@surriel.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Waiman Long <longman@redhat.com>
-Cc:     Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        Phil Auld <pauld@redhat.com>, luto@kernel.org,
-        mathieu.desnoyers@efficios.com
-Date:   Mon, 29 Jul 2019 11:29:41 -0400
-In-Reply-To: <20190729142450.GE31425@hirez.programming.kicks-ass.net>
-References: <20190727171047.31610-1-longman@redhat.com>
-         <20190729085235.GT31381@hirez.programming.kicks-ass.net>
-         <20190729142450.GE31425@hirez.programming.kicks-ass.net>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-xhoRZta1p4CDAjhhG3pf"
-User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
+        Mon, 29 Jul 2019 11:30:00 -0400
+Received: by mail-pl1-f194.google.com with SMTP id b7so27696446pls.6
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 08:30:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=zClkBN3lTS1+Q+JFzp+qXPFY9wwST6ib98450V0l434=;
+        b=uKh2QezEkGVv+DpYW2qjVlLCa/B7ZJRmRmtB9hDESR/c/qhRIikFGdrPpODIN5vtHo
+         BV7A/U71JXov8ytlkjvJRxAMlFM6FRcE4XQmnVEZAEIhdIuEvLjZ+7J9NTwVY5zzPmqh
+         Mucd+ULNoW/BYk7iod4QAGLCHzJXyv7mwPgYaoWcImUvTX2Fra5PEkLTIQtM0wepLoQC
+         4nyZZM+7MHjouKUz0Lb1MMXzIdiCmjZSrJbhqU56XtFCuN7JNUkIypXB1E6pFUfBB6XT
+         mRvUk6l/zkQaeGrHn7uBNFGtLWDUrB5FbJLMwPgwmmGL4eJ80gGdhDrL2EHbpkSRzA0g
+         jrVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=zClkBN3lTS1+Q+JFzp+qXPFY9wwST6ib98450V0l434=;
+        b=lq16A4djte4dtRHNgsAmi1flAWAd6jWEtQv4zcjrV76smg4vUO7N1yl6zDxP2CdqmO
+         U1GoYTAa98BXgNS4cFxcuZvsQh17VnvYKC7O6zwYVA+kZQxQU4G/buEXFZPtAijoOLhZ
+         rp04fbrnN+a1umRfeeHsXQk4+ySuvkH7Fn2SUydK1q1stM5UIFbRPqUmT9dJAHeUkVAa
+         SHN3j+EBFasdSHhPNucWTXtzVbxWgsSye5ZGWH9eURvloF3+n/4AGU0+ZNwrpoXeoaH7
+         urJZD9fqOjxmVQAHTSvmbzTeblGNyhSxyomiedkfAGBgoLH5qEBKLIc3ScKkBSLfecIJ
+         phRA==
+X-Gm-Message-State: APjAAAWwrosyaNY9LmsEJ+5VXLtjFTcIjTTIlWA+3SY5xaiUMxw0llID
+        rZxomEUWISjQWkwROMynFKY=
+X-Google-Smtp-Source: APXvYqwPjhLMk1w3laF/wa+oxvfL2vmLWPsYqunR2ElWAj61hIcPl41JFwyRl5sNMmL/+D5zjXci9w==
+X-Received: by 2002:a17:902:9a85:: with SMTP id w5mr110768476plp.221.1564414200219;
+        Mon, 29 Jul 2019 08:30:00 -0700 (PDT)
+Received: from localhost ([2620:10d:c090:180::1:1811])
+        by smtp.gmail.com with ESMTPSA id h13sm28484598pfn.13.2019.07.29.08.29.59
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 29 Jul 2019 08:29:59 -0700 (PDT)
+Date:   Mon, 29 Jul 2019 11:29:57 -0400
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Jason Xing <kerneljasonxing@linux.alibaba.com>
+Cc:     surenb@google.com, mingo@redhat.com, peterz@infradead.org,
+        dennis@kernel.org, axboe@kernel.dk, lizefan@huawei.com,
+        tj@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] psi: get poll_work to run when calling poll syscall next
+ time
+Message-ID: <20190729152957.GA21958@cmpxchg.org>
+References: <1563864339-2621-1-git-send-email-kerneljasonxing@linux.alibaba.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1563864339-2621-1-git-send-email-kerneljasonxing@linux.alibaba.com>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Jason,
 
---=-xhoRZta1p4CDAjhhG3pf
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+On Tue, Jul 23, 2019 at 02:45:39PM +0800, Jason Xing wrote:
+> Only when calling the poll syscall the first time can user
+> receive POLLPRI correctly. After that, user always fails to
+> acquire the event signal.
+> 
+> Reproduce case:
+> 1. Get the monitor code in Documentation/accounting/psi.txt
+> 2. Run it, and wait for the event triggered.
+> 3. Kill and restart the process.
+> 
+> If the user doesn't kill the monitor process, it seems the
+> poll_work works fine. After killing and restarting the monitor,
+> the poll_work in kernel will never run again due to the wrong
+> value of poll_scheduled. Therefore, we should reset the value
+> as group_init() does after the last trigger is destroyed.
+> 
+> Signed-off-by: Jason Xing <kerneljasonxing@linux.alibaba.com>
 
-On Mon, 2019-07-29 at 16:24 +0200, Peter Zijlstra wrote:
+Good catch, and the fix makes sense to me. However, it was a bit hard
+to understand how the problem occurs:
 
-> Subject: sched: Clean up active_mm reference counting
-> From: Peter Zijlstra <peterz@infradead.org>
-> Date: Mon Jul 29 16:05:15 CEST 2019
->=20
-> The current active_mm reference counting is confusing and sub-
-> optimal.
->=20
-> Rewrite the code to explicitly consider the 4 separate cases:
->=20
+> ---
+>  kernel/sched/psi.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/kernel/sched/psi.c b/kernel/sched/psi.c
+> index 7acc632..66f4385 100644
+> --- a/kernel/sched/psi.c
+> +++ b/kernel/sched/psi.c
+> @@ -1133,6 +1133,12 @@ static void psi_trigger_destroy(struct kref *ref)
+>  	if (kworker_to_destroy) {
+>  		kthread_cancel_delayed_work_sync(&group->poll_work);
+>  		kthread_destroy_worker(kworker_to_destroy);
+> +		/*
+> +		 * The poll_work should have the chance to be put into the
+> +		 * kthread queue when calling poll syscall next time. So
+> +		 * reset poll_scheduled to zero as group_init() does
+> +		 */
+> +		atomic_set(&group->poll_scheduled, 0);
 
-Reviewed-by: Rik van Riel <riel@surriel.com>
+The question is why we can end up with poll_scheduled = 1 but the work
+not running (which would reset it to 0). And the answer is because the
+scheduling side sees group->poll_kworker under RCU protection and then
+schedules it, but here we cancel the work and destroy the worker. The
+cancel needs to pair with resetting the poll_scheduled flag:
 
---=20
-All Rights Reversed.
+	if (kworker_to_destroy) {
+		/*
+		 * After the RCU grace period has expired, the worker
+		 * can no longer be found through group->poll_kworker.
+		 * But it might have been already scheduled before
+		 * that - deschedule it cleanly before destroying it.
+		 */
+		kthread_cancel_delayed_work_sync(&group->poll_work);
+		atomic_set(&group->poll_scheduled, 0);
 
---=-xhoRZta1p4CDAjhhG3pf
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
+		kthread_destroy_worker(kworker_to_destroy);
+	}
 
------BEGIN PGP SIGNATURE-----
+With that change, please add:
 
-iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAl0/EOUACgkQznnekoTE
-3oOjJwf/ajhjMXP9koUzmYeZd95QTTdo4qKU1rTnCPbOw2EJeuQ1PO+XoaWfG9jI
-xK4Mf1ns4ypSWTut3wV3PCsi/RjWQNnbSBsEwPPVrmhivjFwWSY8GfQ6cDNnNASA
-UGOd7rBvuGaDp6oJCfLHQz9lRLaJI47EHZuK28IvnWbjMY7aQyRMBnV58y0hAhoQ
-HjAoSz2I4M/w37q94IVKYPKGuU+I+/g5zK6ZaY4PrBkw7hatv/yoUt6y3KoglFZY
-APK3yTvtCwQQFNYdLMAXyJswmHeiLgOn/5c99NZjxU2nPv/OQ2kuO+NaXo0Cq4ac
-izDJuwuoYNuCP/XfZNMLVQz5Inafxw==
-=jzZW
------END PGP SIGNATURE-----
+Acked-by: Johannes Weiner <hannes@cmpxchg.org>
 
---=-xhoRZta1p4CDAjhhG3pf--
-
+Thanks!
