@@ -2,55 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9BF6A79C0A
+	by mail.lfdr.de (Postfix) with ESMTP id 327A479C09
 	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 00:03:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730450AbfG2WBD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 18:01:03 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:39684 "EHLO
+        id S1729164AbfG2WA6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 18:00:58 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:56135 "EHLO
         mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730408AbfG2V6i (ORCPT
+        with ESMTP id S1730397AbfG2V6k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 17:58:38 -0400
-Received: by mail-wm1-f65.google.com with SMTP id u25so44435998wmc.4
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 14:58:37 -0700 (PDT)
+        Mon, 29 Jul 2019 17:58:40 -0400
+Received: by mail-wm1-f65.google.com with SMTP id a15so55190839wmj.5
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 14:58:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=arista.com; s=googlenew;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=OW8GU+t0fVJSjUItOBj5d09rAdyjVelz1gsjEuXxZec=;
-        b=cnnrX+qQPbDjALwPI2qY855GbxStpPeJEe4VSbOhOsWfQuUQnzCWREC6/j9snCQmKa
-         RROusgDqPPUGhhKbvW5F8lFniaBh5s+zwA/qveINFjliT+xfLuXpI4I0xps2YbGGeHAL
-         +IYMZFC7rDJmKxcMOidg5CurG+/VtroXnxhkbsje4890o4QD4ab4zX+kb28GIvnFw4et
-         vflBBeqa9FFfdFH8F/fTo4HUxFWF77VZRnFDxhBpNIf59eGi9I7N/cog2/sDEZDfyKWa
-         W+N9z1BsMA19ifqP9qgIHuYsSbZ/zBoBoS51YF9Fa4OzgMcUyAceyEvW0cXdj7GkdeXW
-         Rqdw==
+        bh=uJkPu9y+gmExeCUpCA066mqgvfW2S/OqiamBX4Wlaac=;
+        b=RQXI05dku4fJ8r2oqnqNf/9NtEAGKp/k38XUdulMZlu8JNkOLGaqwCBnGvnnefJhtt
+         j0kSEsyUTnjhkOssr/JYXs4a9aVojBdgA1b7B3uxvYtTyssni/zvWB/AJj0aS1ze9Rbt
+         iFooZfYAOfO3pQumT9mLGGg17rntF8nn0g8PosgM+Noncni4ntHsRN+v0sNh59waXBFT
+         sJkZ9OhdcyM/Ji5Bmd+DbANCojNGYDzhgpv9CxUd2ApB9OEd4a8lMbnd6ttAuyhioJ1c
+         wdMhghFrcls5LRpF+YoxX0Db852sS9EXb9dm1XyWAj8Q2T3YTEOhITUtW2E3KbkQ/oQG
+         4uzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=OW8GU+t0fVJSjUItOBj5d09rAdyjVelz1gsjEuXxZec=;
-        b=C8MuTQ2fl4RBxqo4tToRktFGj66Q2sQzq4b/lemtgnIWkboyYwTRblC8HIPeLnnRIl
-         ehsmArSVsPke7aR0slyVObEzMynkc0AE5ge1D7jdVXgyxYDfM53mM/xMrarzpRul89lt
-         5jeleLU+bKyCkUKrALKM6zUprX0cpILSk3sWH8xCHwHvRncgmv2EhQeSVaS1ba2Wbjiq
-         sBGPIgtXuPezMXaL5L/dn3jaYZp24e+ykNEOd3qyYyTsXGtXxBwK+2WhqCS1EDe7tYKg
-         gldCrMBR14sgEO7YTMbP2Xoi2eXn4Q/ZZruRjc2gHkAfuKBXnIm2qEzpdxSXtB3kBE41
-         jOtg==
-X-Gm-Message-State: APjAAAVxqVB5PHUrNXio7upplqDAWylKpCCTWYzjDbim2YXbg9fGaKsS
-        CceFnIdwmnmmcSl7+3Cp/7LpKATDEc1P7PFC/rqgobbubd9v3WmHrpAPW/gUs2dZvWkhtJx2xuV
-        jEwbyhVudd5/JJeVEUctMKdfWzSkaW7tjUuKvpfk8jknUKXyqECOg4gHyix9quMrqkSyZQlgLpT
-        bnEBtf3xXF8/rYR18tkLZu8s3UtV69/QZAtklX2lE=
-X-Google-Smtp-Source: APXvYqyczyvBs3sJHc3Xzg6CfJWOstD//re4woLcTGWNV6okiSkW8WG8Kt7KZT7qqzD3u1HHO47bNQ==
-X-Received: by 2002:a7b:c251:: with SMTP id b17mr27134664wmj.143.1564437516291;
-        Mon, 29 Jul 2019 14:58:36 -0700 (PDT)
+        bh=uJkPu9y+gmExeCUpCA066mqgvfW2S/OqiamBX4Wlaac=;
+        b=nrmM2pbbWMXg3bAd73Y3L3TSuPKLP5zfEKFzCSqfUV9myl9iUnSbD9iY54BKVd/c6w
+         SPExvC25EL4ANexRaAFK7GsC1iAD8RyyRyJHb+KJ0prxUU6aQ7e34e+WnmdwiHa7H6ti
+         EDahAIkA8phhe2OLKA5LsVY176aeD+R/P406XKNNC9d39bxfUbMv6rj1WIqcTTip6qB0
+         jMLmZs+K94xHzaaRUtzoENAADo9fkmyjQv5HqZ8kEhvThWaP39zRy2Ouu9UjqqD50oV4
+         3qM1XeJNWFsZTRhftdsnES8jrO28Pb26XGK/IussDd4DASl1xneGs0GGkXXmkDycYvgx
+         eLVg==
+X-Gm-Message-State: APjAAAUYK2WYzRHfJUS1Wi46Yv+OdViExyPk/5kJyZEVFBTr4vdSxSZb
+        7KsSCp0dUvEY7p2ZMm/4pgm5acl+kCrPTV0dncOfHO1OMvql89H3keEldpkZdBy3uI0D6nwcSBT
+        jLke3se27X6K6oKmT/SYINpRkCwI12JlSbQmpFCDp9DbVFTF43UxELtDPkRThP/DjPW0Ttny5Ij
+        R8xKKI6VWiLVvLg+5sZxe24gy9CpQ1S5xVi6Gm5Rs=
+X-Google-Smtp-Source: APXvYqzlo+ErKLnV+mIUOt+HBmu0++8ZYqKngGxYeK6whrKBE9XLsuUPttEBceyQw8CdQznTk6AjmA==
+X-Received: by 2002:a1c:5f87:: with SMTP id t129mr106499814wmb.150.1564437517690;
+        Mon, 29 Jul 2019 14:58:37 -0700 (PDT)
 Received: from Mindolluin.ire.aristanetworks.com ([217.173.96.166])
-        by smtp.gmail.com with ESMTPSA id x20sm49230728wmc.1.2019.07.29.14.58.35
+        by smtp.gmail.com with ESMTPSA id x20sm49230728wmc.1.2019.07.29.14.58.36
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 29 Jul 2019 14:58:35 -0700 (PDT)
+        Mon, 29 Jul 2019 14:58:37 -0700 (PDT)
 From:   Dmitry Safonov <dima@arista.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
-        Andrei Vagin <avagin@gmail.com>,
         Dmitry Safonov <dima@arista.com>,
         Adrian Reber <adrian@lisas.de>,
         Andrei Vagin <avagin@openvz.org>,
@@ -67,10 +66,11 @@ Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Vincenzo Frascino <vincenzo.frascino@arm.com>,
         containers@lists.linux-foundation.org, criu@openvz.org,
-        linux-api@vger.kernel.org, x86@kernel.org
-Subject: [PATCHv5 26/37] vdso: Introduce vdso_static_branch_unlikely()
-Date:   Mon, 29 Jul 2019 22:57:08 +0100
-Message-Id: <20190729215758.28405-27-dima@arista.com>
+        linux-api@vger.kernel.org, x86@kernel.org,
+        Andrei Vagin <avagin@gmail.com>
+Subject: [PATCHv5 27/37] x86/vdso2c: Process jump tables
+Date:   Mon, 29 Jul 2019 22:57:09 +0100
+Message-Id: <20190729215758.28405-28-dima@arista.com>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190729215758.28405-1-dima@arista.com>
 References: <20190729215758.28405-1-dima@arista.com>
@@ -85,112 +85,93 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrei Vagin <avagin@gmail.com>
-
 As it has been discussed on timens RFC, adding a new conditional branch
 `if (inside_time_ns)` on VDSO for all processes is undesirable.
 
 Addressing those problems, there are two versions of VDSO's .so:
-for host tasks (without any penalty) and for processes inside of time
+for host tasks (without any penalty) and for processes inside time
 namespace with clk_to_ns() that subtracts offsets from host's time.
 
-Introduce vdso_static_branch_unlikely(), which is similar to
-static_branch_unlikely(); alias it with timens_static_branch_unlikely()
-under CONFIG_TIME_NS.
+The timens code in vdso looks like this:
 
-The timens code in vdso will look like this:
+      if (timens_static_branch()) {
+              clk_to_ns(clk, ts);
+      }
 
-   if (timens_static_branch_unlikely()) {
-	   clk_to_ns(clk, ts);
-   }
+Static branch mechanism adds a __jump_table section into vdso.
+Vdso's linker script drops all unwanted sections in compile time.
 
-The version of vdso which is compiled from sources will never execute
-clk_to_ns(). And then we can patch the 'no-op' in the straight-line
-codepath with a 'jump' instruction to the out-of-line true branch and
-get the timens version of the vdso library.
+Preserve __jump_table section and add it into (struct vdso_image),
+as it's needed for enabling (patching) static branches that are
+present on vdso.
 
+Co-developed-by: Andrei Vagin <avagin@gmail.com>
 Signed-off-by: Andrei Vagin <avagin@gmail.com>
-Co-developed-by: Dmitry Safonov <dima@arista.com>
 Signed-off-by: Dmitry Safonov <dima@arista.com>
 ---
- arch/x86/include/asm/jump_label.h | 14 ++++++++++++++
- lib/vdso/gettimeofday.c           | 10 ++++++++--
- 2 files changed, 22 insertions(+), 2 deletions(-)
+ arch/x86/entry/vdso/vdso-layout.lds.S | 1 +
+ arch/x86/entry/vdso/vdso2c.h          | 9 ++++++++-
+ arch/x86/include/asm/vdso.h           | 1 +
+ 3 files changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/include/asm/jump_label.h b/arch/x86/include/asm/jump_label.h
-index 06c3cc22a058..376efb53183b 100644
---- a/arch/x86/include/asm/jump_label.h
-+++ b/arch/x86/include/asm/jump_label.h
-@@ -53,6 +53,20 @@ static __always_inline bool arch_static_branch_jump(struct static_key *key, bool
- 	return true;
- }
+diff --git a/arch/x86/entry/vdso/vdso-layout.lds.S b/arch/x86/entry/vdso/vdso-layout.lds.S
+index ba216527e59f..69dbe4821aa5 100644
+--- a/arch/x86/entry/vdso/vdso-layout.lds.S
++++ b/arch/x86/entry/vdso/vdso-layout.lds.S
+@@ -45,6 +45,7 @@ SECTIONS
+ 	.gnu.version	: { *(.gnu.version) }
+ 	.gnu.version_d	: { *(.gnu.version_d) }
+ 	.gnu.version_r	: { *(.gnu.version_r) }
++	__jump_table	: { *(__jump_table) }	:text
  
-+static __always_inline bool vdso_static_branch_unlikely(void)
-+{
-+	asm_volatile_goto("1:\n\t"
-+		".byte " __stringify(STATIC_KEY_INIT_NOP) "\n\t"
-+		 ".pushsection __jump_table,  \"aw\"\n\t"
-+		 "2: .word 1b - 2b, %l[l_yes] - 2b\n\t"
-+		 ".popsection\n\t"
-+		 : :  :  : l_yes);
+ 	.dynamic	: { *(.dynamic) }		:text	:dynamic
+ 
+diff --git a/arch/x86/entry/vdso/vdso2c.h b/arch/x86/entry/vdso/vdso2c.h
+index 885b988aea19..318b278ca396 100644
+--- a/arch/x86/entry/vdso/vdso2c.h
++++ b/arch/x86/entry/vdso/vdso2c.h
+@@ -14,7 +14,7 @@ static void BITSFUNC(go)(void *raw_addr, size_t raw_len,
+ 	unsigned long mapping_size;
+ 	ELF(Ehdr) *hdr = (ELF(Ehdr) *)raw_addr;
+ 	unsigned int i, syms_nr;
+-	unsigned long j;
++	unsigned long j, jump_table_addr = -1UL, jump_table_size = -1UL;
+ 	ELF(Shdr) *symtab_hdr = NULL, *strtab_hdr, *secstrings_hdr,
+ 		*alt_sec = NULL;
+ 	ELF(Dyn) *dyn = 0, *dyn_end = 0;
+@@ -78,6 +78,10 @@ static void BITSFUNC(go)(void *raw_addr, size_t raw_len,
+ 		if (!strcmp(secstrings + GET_LE(&sh->sh_name),
+ 			    ".altinstructions"))
+ 			alt_sec = sh;
++		if (!strcmp(secstrings + GET_LE(&sh->sh_name), "__jump_table")) {
++			jump_table_addr = GET_LE(&sh->sh_offset);
++			jump_table_size = GET_LE(&sh->sh_size);
++		}
+ 	}
+ 
+ 	if (!symtab_hdr)
+@@ -166,6 +170,9 @@ static void BITSFUNC(go)(void *raw_addr, size_t raw_len,
+ 		fprintf(outfile, "\t.alt_len = %lu,\n",
+ 			(unsigned long)GET_LE(&alt_sec->sh_size));
+ 	}
++	fprintf(outfile, "\t.jump_table = %luUL,\n", jump_table_addr);
++	fprintf(outfile, "\t.jump_table_len = %luUL,\n", jump_table_size);
 +
-+	return false;
-+l_yes:
-+	return true;
-+}
-+
- #else	/* __ASSEMBLY__ */
+ 	for (i = 0; i < NSYMS; i++) {
+ 		if (required_syms[i].export && syms[i])
+ 			fprintf(outfile, "\t.sym_%s = %" PRIi64 ",\n",
+diff --git a/arch/x86/include/asm/vdso.h b/arch/x86/include/asm/vdso.h
+index ccf89dedd04f..5e83bd3cda22 100644
+--- a/arch/x86/include/asm/vdso.h
++++ b/arch/x86/include/asm/vdso.h
+@@ -16,6 +16,7 @@ struct vdso_image {
+ 	unsigned long size;   /* Always a multiple of PAGE_SIZE */
  
- .macro STATIC_JUMP_IF_TRUE target, key, def
-diff --git a/lib/vdso/gettimeofday.c b/lib/vdso/gettimeofday.c
-index 7525433f8ba4..605bdb92055d 100644
---- a/lib/vdso/gettimeofday.c
-+++ b/lib/vdso/gettimeofday.c
-@@ -8,6 +8,7 @@
- #include <linux/kernel.h>
- #include <linux/hrtimer_defs.h>
- #include <linux/timens_offsets.h>
-+#include <linux/jump_label.h>
- #include <vdso/datapage.h>
- #include <vdso/helpers.h>
+ 	unsigned long alt, alt_len;
++	unsigned long jump_table, jump_table_len;
  
-@@ -43,6 +44,8 @@ u64 vdso_calc_delta(u64 cycles, u64 last, u64 mask, u32 mult)
- extern u8 timens_page
- 	__attribute__((visibility("hidden")));
+ 	long sym_vvar_start;  /* Negative offset to the vvar area */
  
-+#define timens_static_branch_unlikely vdso_static_branch_unlikely
-+
- notrace static __always_inline void clk_to_ns(clockid_t clk, struct __kernel_timespec *ts)
- {
- 	struct timens_offsets *timens = (struct timens_offsets *) &timens_page;
-@@ -79,6 +82,7 @@ notrace static __always_inline void clk_to_ns(clockid_t clk, struct __kernel_tim
- }
- #else
- notrace static __always_inline void clk_to_ns(clockid_t clk, struct __kernel_timespec *ts) {}
-+notrace static __always_inline bool timens_static_branch_unlikely(void) { return false; }
- #endif
- 
- static int do_hres(const struct vdso_data *vd, clockid_t clk,
-@@ -108,7 +112,8 @@ static int do_hres(const struct vdso_data *vd, clockid_t clk,
- 	ts->tv_sec = sec + __iter_div_u64_rem(ns, NSEC_PER_SEC, &ns);
- 	ts->tv_nsec = ns;
- 
--	clk_to_ns(clk, ts);
-+	if (timens_static_branch_unlikely())
-+		clk_to_ns(clk, ts);
- 
- 	return 0;
- }
-@@ -125,7 +130,8 @@ static void do_coarse(const struct vdso_data *vd, clockid_t clk,
- 		ts->tv_nsec = vdso_ts->nsec;
- 	} while (unlikely(vdso_read_retry(vd, seq)));
- 
--	clk_to_ns(clk, ts);
-+	if (timens_static_branch_unlikely())
-+		clk_to_ns(clk, ts);
- }
- 
- static __maybe_unused int
 -- 
 2.22.0
 
