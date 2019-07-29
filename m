@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB02379606
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:48:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F3AE79609
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:48:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390035AbfG2Tr7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 15:47:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37768 "EHLO mail.kernel.org"
+        id S2390155AbfG2TsG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 15:48:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38018 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390388AbfG2Try (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:47:54 -0400
+        id S1729316AbfG2TsF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:48:05 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2D1A52054F;
-        Mon, 29 Jul 2019 19:47:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A26C720C01;
+        Mon, 29 Jul 2019 19:48:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564429673;
-        bh=5j+OMtqYWQdxW7IWocSN2k+G39CzIhu6wV5/P5JzbDI=;
+        s=default; t=1564429684;
+        bh=dPWXnPoMNQ/AGftH0Fj6+yl480hMzVScjFP8uUDm/xs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JQ/ZG+DXqMLk3qD8FWe1azdNNJ0n/L7yKP1zTkicqOYTe8tM4CbWdUWSYR7M0wq6r
-         8WvXflVuX13FKWW4bDf711yRUcDNjKrt3726qOGlGvKz3t3VrT7lQkOH2ioz6+LuyZ
-         KkQpNIZYYvHUXRa+0FsEtHhBlw05ZpKraSYyioBI=
+        b=rZjTVRwCM1J5keUG+WArQitLFOUXmz4ilRdpXJ8tx7wHoraAa4zEqTxLDZdZb2S5W
+         vEVeXNC0EPD7ga+bNZLg/IkN8Hav1vi7OjJaeL3hSmdbqhltF4hqeqTiLSs4c1ElYR
+         hAc3kpClzBVNUhjrWQoQC9Pq4z4Sh+2ks/Hwlsjc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
+        stable@vger.kernel.org,
+        John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 058/215] phy: renesas: rcar-gen2: Fix memory leak at error paths
-Date:   Mon, 29 Jul 2019 21:20:54 +0200
-Message-Id: <20190729190750.571643093@linuxfoundation.org>
+Subject: [PATCH 5.2 060/215] sunhv: Fix device naming inconsistency between sunhv_console and sunhv_reg
+Date:   Mon, 29 Jul 2019 21:20:56 +0200
+Message-Id: <20190729190750.925642226@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190729190739.971253303@linuxfoundation.org>
 References: <20190729190739.971253303@linuxfoundation.org>
@@ -46,42 +45,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit d4a36e82924d3305a17ac987a510f3902df5a4b2 ]
+[ Upstream commit 07a6d63eb1b54b5fb38092780fe618dfe1d96e23 ]
 
-This patch fixes memory leak at error paths of the probe function.
-In for_each_child_of_node, if the loop returns, the driver should
-call of_put_node() before returns.
+In d5a2aa24, the name in struct console sunhv_console was changed from "ttyS"
+to "ttyHV" while the name in struct uart_ops sunhv_pops remained unchanged.
 
-Reported-by: Julia Lawall <julia.lawall@lip6.fr>
-Fixes: 1233f59f745b237 ("phy: Renesas R-Car Gen2 PHY driver")
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+This results in the hypervisor console device to be listed as "ttyHV0" under
+/proc/consoles while the device node is still named "ttyS0":
+
+root@osaka:~# cat /proc/consoles
+ttyHV0               -W- (EC p  )    4:64
+tty0                 -WU (E     )    4:1
+root@osaka:~# readlink /sys/dev/char/4:64
+../../devices/root/f02836f0/f0285690/tty/ttyS0
+root@osaka:~#
+
+This means that any userland code which tries to determine the name of the
+device file of the hypervisor console device can not rely on the information
+provided by /proc/consoles. In particular, booting current versions of debian-
+installer inside a SPARC LDOM will fail with the installer unable to determine
+the console device.
+
+After renaming the device in struct uart_ops sunhv_pops to "ttyHV" as well,
+the inconsistency is fixed and it is possible again to determine the name
+of the device file of the hypervisor console device by reading the contents
+of /proc/console:
+
+root@osaka:~# cat /proc/consoles
+ttyHV0               -W- (EC p  )    4:64
+tty0                 -WU (E     )    4:1
+root@osaka:~# readlink /sys/dev/char/4:64
+../../devices/root/f02836f0/f0285690/tty/ttyHV0
+root@osaka:~#
+
+With this change, debian-installer works correctly when installing inside
+a SPARC LDOM.
+
+Signed-off-by: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/phy/renesas/phy-rcar-gen2.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/tty/serial/sunhv.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/phy/renesas/phy-rcar-gen2.c b/drivers/phy/renesas/phy-rcar-gen2.c
-index 8dc5710d9c98..2926e4937301 100644
---- a/drivers/phy/renesas/phy-rcar-gen2.c
-+++ b/drivers/phy/renesas/phy-rcar-gen2.c
-@@ -391,6 +391,7 @@ static int rcar_gen2_phy_probe(struct platform_device *pdev)
- 		error = of_property_read_u32(np, "reg", &channel_num);
- 		if (error || channel_num > 2) {
- 			dev_err(dev, "Invalid \"reg\" property\n");
-+			of_node_put(np);
- 			return error;
- 		}
- 		channel->select_mask = select_mask[channel_num];
-@@ -406,6 +407,7 @@ static int rcar_gen2_phy_probe(struct platform_device *pdev)
- 						   data->gen2_phy_ops);
- 			if (IS_ERR(phy->phy)) {
- 				dev_err(dev, "Failed to create PHY\n");
-+				of_node_put(np);
- 				return PTR_ERR(phy->phy);
- 			}
- 			phy_set_drvdata(phy->phy, phy);
+diff --git a/drivers/tty/serial/sunhv.c b/drivers/tty/serial/sunhv.c
+index 63e34d868de8..f8503f8fc44e 100644
+--- a/drivers/tty/serial/sunhv.c
++++ b/drivers/tty/serial/sunhv.c
+@@ -397,7 +397,7 @@ static const struct uart_ops sunhv_pops = {
+ static struct uart_driver sunhv_reg = {
+ 	.owner			= THIS_MODULE,
+ 	.driver_name		= "sunhv",
+-	.dev_name		= "ttyS",
++	.dev_name		= "ttyHV",
+ 	.major			= TTY_MAJOR,
+ };
+ 
 -- 
 2.20.1
 
