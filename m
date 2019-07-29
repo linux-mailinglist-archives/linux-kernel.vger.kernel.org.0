@@ -2,139 +2,207 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DCEF782F2
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 03:04:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C56CE782F9
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 03:08:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726422AbfG2BEm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 28 Jul 2019 21:04:42 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:56114 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726216AbfG2BEl (ORCPT
+        id S1726478AbfG2BId (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 28 Jul 2019 21:08:33 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:41908 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726216AbfG2BId (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 28 Jul 2019 21:04:41 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6T13Z7j002189;
-        Mon, 29 Jul 2019 01:03:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=PdcdzZqByBsaJyFO6zEiMqm8RLM0rmvXzok8u84h7X0=;
- b=B82Lq/jHSPm245ufPF5M6jy2Eo6E1wZPk3U4D7Yb5mvr3xuSNflB6H5sN+awMaP5/Nx5
- /TbzU3VSBQ4la/fRMI5hdNQA8u9NbGBkC4UdGEw0tksCWU8hqsMbBUukJyQ6YrF420TU
- RWQPElUdaIj/mdBhdRahbwuZc8c8WNnR1h1XH6h7RpjEPDVy/KmdoHcpKyVLU5MMLO+6
- BwkhFag5ysFg1ATmZqnmPp/pMnh8rwoaRTzyxu/hT3vzGzUaDQDvfWmomyhjB0pq4voa
- Kcc7DZehQqFfwpxyDZ69ha2zE6pGOmd2xAMyf7ivC72uW7QsQBZCGZKmjXT4viLBEv9w 7A== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2130.oracle.com with ESMTP id 2u0e1tcfc2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 29 Jul 2019 01:03:34 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6T12tCC124045;
-        Mon, 29 Jul 2019 01:03:34 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3020.oracle.com with ESMTP id 2u0ee3n58p-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 29 Jul 2019 01:03:33 +0000
-Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x6T13UEn008054;
-        Mon, 29 Jul 2019 01:03:30 GMT
-Received: from [192.168.1.14] (/180.165.87.209)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Sun, 28 Jul 2019 18:03:30 -0700
-Subject: Re: memory leak in bio_copy_user_iov
-To:     syzbot <syzbot+03e5c8ebd22cc6c3a8cb@syzkaller.appspotmail.com>,
-        agk@redhat.com, axboe@kernel.dk, coreteam@netfilter.org,
-        davem@davemloft.net, dm-devel@redhat.com, hdanton@sina.com,
-        kaber@trash.net, kadlec@blackhole.kfki.hu,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-raid@vger.kernel.org, netdev@vger.kernel.org,
-        netfilter-devel@vger.kernel.org, pablo@netfilter.org,
-        shli@kernel.org, snitzer@redhat.com,
-        syzkaller-bugs@googlegroups.com
-References: <000000000000aec4ec058ec71a3d@google.com>
-From:   Bob Liu <bob.liu@oracle.com>
-Message-ID: <81dcfa59-152c-4f22-2054-615662364394@oracle.com>
-Date:   Mon, 29 Jul 2019 09:03:21 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.1
+        Sun, 28 Jul 2019 21:08:33 -0400
+Received: by mail-pf1-f194.google.com with SMTP id m30so27106891pff.8
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2019 18:08:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=etsukata-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=qbL3ZNd6Yfl9XGwRwZu8P8EkNcIfnBlQKqpKi3KACD8=;
+        b=gBQww/xkoLK4gbu3lkp1VXuPMw9oRLmCcF52ne8vCYRNMs9IR0XPXDySOT3gRssI5M
+         h+TAgGnrgApeXOLmz6sREDeBI9SSysdMrMADGyI1mgLNJtv8r2o1PaxdMZq+YJBSrljk
+         FX34Heav4w+saNV2KxFdmeUAh+SorNTvY5JbJUi/zGSl+pzjr064dpi6mQ3+ZJvdyldC
+         OfPlglYP1wXrJyKK0UAJ9sIltUvc3IWLm6SZU0wv+Dzpz1IlVM2oYXKLBRB8vdqO9Jct
+         rg+91u3HHoWcEHKYWXnBUkzq9clWyVZ1gvnnD12h8Sm5nmexvFPxNwmUFs2Bl42jy5dw
+         oY8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=qbL3ZNd6Yfl9XGwRwZu8P8EkNcIfnBlQKqpKi3KACD8=;
+        b=sO8Nj1QXwsuqHOVJ54MjvCPmRgvbqRMAWeCh7M7IqWl0/6coIq5o9qx+Fv1fKGXeLA
+         XJ/QW+u7wdNFtx/5orXFbDcJyyTpBsACsEcVOhwk1C0bwigf5ZxsUBJKPq6rmDxZllx1
+         FiwQ8ycZKq0vyv8mD0Wp+HGPlNfjs7drS6lHxJnN4odN3ZIT6UcOn8uoKMjjV57UeS5l
+         b9FA1r4EGKNjh8R4Ab6epEFN+zYCQjDXhqWvZ8AB8Tc9RMvfz79/0seLkHVMpqYhmnBI
+         yOGO1AjkjqniSuhqWuEkqY+gX+kaW+gxZ02z3l6DgFjQmKd1Yc3d9wsp30EJhGqUYu7E
+         5T4A==
+X-Gm-Message-State: APjAAAUOnLiA5bYrtxohupmYctVsuxvZ4zQM5UZrn8BOHCHKYn/UQAoE
+        gRZpYc03LAGK+z7fiuvsFFk=
+X-Google-Smtp-Source: APXvYqzvwMexYFJFD8qJvuvgSGbcmtY9AgfvLNXs/7DCCXuFfYlAMPT5t0xpmOLpraGIVU0fDcgKmQ==
+X-Received: by 2002:aa7:9514:: with SMTP id b20mr34727150pfp.223.1564362512313;
+        Sun, 28 Jul 2019 18:08:32 -0700 (PDT)
+Received: from localhost.localdomain (p2517222-ipngn21701marunouchi.tokyo.ocn.ne.jp. [118.7.246.222])
+        by smtp.gmail.com with ESMTPSA id a3sm68620300pje.3.2019.07.28.18.08.29
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Sun, 28 Jul 2019 18:08:31 -0700 (PDT)
+From:   Eiichi Tsukata <devel@etsukata.com>
+To:     joel@joelfernandes.org, paulmck@linux.vnet.ibm.com,
+        tglx@linutronix.de, peterz@infradead.org, rostedt@goodmis.org,
+        mingo@redhat.com, fweisbec@gmail.com, luto@amacapital.net,
+        linux-kernel@vger.kernel.org
+Cc:     Eiichi Tsukata <devel@etsukata.com>
+Subject: [PATCH] tracing: Prevent RCU EQS breakage in preemptirq events
+Date:   Mon, 29 Jul 2019 10:07:34 +0900
+Message-Id: <20190729010734.3352-1-devel@etsukata.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-In-Reply-To: <000000000000aec4ec058ec71a3d@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9332 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1906280000 definitions=main-1907290010
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9332 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
- definitions=main-1907290010
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/29/19 8:38 AM, syzbot wrote:
-> syzbot has bisected this bug to:
-> 
-> commit 664820265d70a759dceca87b6eb200cd2b93cda8
-> Author: Mike Snitzer <snitzer@redhat.com>
-> Date:   Thu Feb 18 20:44:39 2016 +0000
-> 
->     dm: do not return target from dm_get_live_table_for_ioctl()
-> 
+If context tracking is enabled, causing page fault in preemptirq
+irq_enable or irq_disable events triggers the following RCU EQS warning.
 
-This(and previous bisection) look not related to the reported leak.
+Reproducer:
 
+  // CONFIG_PREEMPTIRQ_EVENTS=y
+  // CONFIG_CONTEXT_TRACKING=y
+  // CONFIG_RCU_EQS_DEBUG=y
+  # echo 1 > events/preemptirq/irq_disable/enable
+  # echo 1 > options/userstacktrace
 
-A possible reason may be KASAN can't recognize the failure path of bio_alloc_bioset()
-where mempool_free() is called but not kmalloc(p).
+  WARNING: CPU: 0 PID: 2574 at kernel/rcu/tree.c:262 rcu_dynticks_eqs_exit+0x48/0x50
+  CPU: 0 PID: 2574 Comm: sh Not tainted 5.3.0-rc1+ #105
+  RIP: 0010:rcu_dynticks_eqs_exit+0x48/0x50
+  Call Trace:
+   rcu_eqs_exit+0x4e/0xd0
+   rcu_user_exit+0x13/0x20
+   __context_tracking_exit.part.0+0x74/0x120
+   context_tracking_exit.part.0+0x28/0x50
+   context_tracking_exit+0x1d/0x20
+   do_page_fault+0xab/0x1b0
+   do_async_page_fault+0x35/0xb0
+   async_page_fault+0x3e/0x50
+  RIP: 0010:arch_stack_walk_user+0x8e/0x100
+   stack_trace_save_user+0x7d/0xa9
+   trace_buffer_unlock_commit_regs+0x178/0x220
+   trace_event_buffer_commit+0x6b/0x200
+   trace_event_raw_event_preemptirq_template+0x7b/0xc0
+   trace_hardirqs_off_caller+0xb3/0xf0
+   trace_hardirqs_off_thunk+0x1a/0x20
+   entry_SYSCALL_64_after_hwframe+0x3e/0xbe
 
-But it's not a real bug, because we have the condition if (nr_iovecs > inline_vecs).
+Details of call trace and RCU EQS/Context:
 
-Below fix may avoid the syzbot bug report..
+  entry_SYSCALL_64_after_hwframe() EQS: IN, CTX: USER
+    trace_irq_disable_rcuidle()
+      rcu_irq_enter_irqson()
+        rcu_dynticks_eqs_exit() EQS: IN => OUT
+      stack_trace_save_user() EQS: OUT, CTX: USER
+        page_fault()
+          do_page_fault()
+            exception_enter() EQS: OUT, CTX: USER
+              context_tracking_exit()
+                rcu_eqs_exit()
+		  rcu_dynticks_eqs_exit() EQS: OUT => OUT? (warning)
 
-diff --git a/block/bio.c b/block/bio.c
-index 4db1008..04a7879 100644
---- a/block/bio.c
-+++ b/block/bio.c
-@@ -513,8 +513,10 @@ struct bio *bio_alloc_bioset(gfp_t gfp_mask, unsigned int nr_iovecs,
-                        bvl = bvec_alloc(gfp_mask, nr_iovecs, &idx, &bs->bvec_pool);
-                }
+trace_irq_disable/enable_rcuidle() are called from user mode in entry
+code, and calls rcu_irq_enter_irqson() in __DO_TRACE(). This can cause
+the state "RCU ESQ: OUT but CTX: USER", then stack_trace_save_user() can
+cause page fault which calls rcu_dynticks_eqs_exit() again leads to hit
+the EQS validation warning if CONFIG_RCU_EQS_DEBUG is enabled.
+
+Fix it by calling exception_enter/exit() around
+trace_irq_disable/enable_rcuidle() to enter CONTEXT_KERNEL before
+tracing code causes page fault. Also makes the timing of state change to
+CONTEXT_KERNL earlier to prevent tracing codes from calling
+context_tracking_exit() recursively.
+
+Ideally, the problem can be fixed by calling enter_from_user_mode() before
+TRACE_IRQS_OFF in entry codes (then we need to tell lockdep that IRQs are
+off eariler) and calling prepare_exit_to_usermode() after TRACE_IRQS_ON.
+But this patch will be much simpler and limit the most change to tracing
+codes.
+
+Fixes: 865e63b04e9b ("tracing: Add back in rcu_irq_enter/exit_irqson() for rcuidle tracepoints")
+Signed-off-by: Eiichi Tsukata <devel@etsukata.com>
+---
+ kernel/context_tracking.c       |  6 +++++-
+ kernel/trace/trace_preemptirq.c | 15 +++++++++++++--
+ 2 files changed, 18 insertions(+), 3 deletions(-)
+
+diff --git a/kernel/context_tracking.c b/kernel/context_tracking.c
+index be01a4d627c9..860eaf9780e5 100644
+--- a/kernel/context_tracking.c
++++ b/kernel/context_tracking.c
+@@ -148,6 +148,11 @@ void __context_tracking_exit(enum ctx_state state)
+ 		return;
  
--               if (unlikely(!bvl))
--                       goto err_free;
-+               if (unlikely(!bvl)) {
-+                       mempool_free(p, &bs->bio_pool);
-+                       return NULL;
-+               }
- 
-                bio->bi_flags |= idx << BVEC_POOL_OFFSET;
-        } else if (nr_iovecs) {
-@@ -525,10 +527,6 @@ struct bio *bio_alloc_bioset(gfp_t gfp_mask, unsigned int nr_iovecs,
-        bio->bi_max_vecs = nr_iovecs;
-        bio->bi_io_vec = bvl;
-        return bio;
--
--err_free:
--       mempool_free(p, &bs->bio_pool);
--       return NULL;
+ 	if (__this_cpu_read(context_tracking.state) == state) {
++		/*
++		 * Change state before executing codes which can trigger
++		 * page fault leading unnecessary re-entrance.
++		 */
++		__this_cpu_write(context_tracking.state, CONTEXT_KERNEL);
+ 		if (__this_cpu_read(context_tracking.active)) {
+ 			/*
+ 			 * We are going to run code that may use RCU. Inform
+@@ -159,7 +164,6 @@ void __context_tracking_exit(enum ctx_state state)
+ 				trace_user_exit(0);
+ 			}
+ 		}
+-		__this_cpu_write(context_tracking.state, CONTEXT_KERNEL);
+ 	}
+ 	context_tracking_recursion_exit();
  }
- EXPORT_SYMBOL(bio_alloc_bioset);
-
-
-Regards, -Bob
-
-> bisection log:  https://urldefense.proofpoint.com/v2/url?u=https-3A__syzkaller.appspot.com_x_bisect.txt-3Fx-3D13f4eb64600000&d=DwIBaQ&c=RoP1YumCXCgaWHvlZYR8PZh8Bv7qIrMUB65eapI_JnE&r=1ktT0U2YS_I8Zz2o-MS1YcCAzWZ6hFGtyTgvVMGM7gI&m=NfGQRVxYCfZacAKiml9Wue-G1r2h8qkuAhAMOx_uFcc&s=MNjYy_nft_s0ErmK2n89p7y2yhKmeWlxWch0z7_dsm8&e=start commit:   0011572c Merge branch 'for-5.2-fixes' of git://git.kernel...
-> git tree:       upstream
-> final crash:    https://urldefense.proofpoint.com/v2/url?u=https-3A__syzkaller.appspot.com_x_report.txt-3Fx-3D100ceb64600000&d=DwIBaQ&c=RoP1YumCXCgaWHvlZYR8PZh8Bv7qIrMUB65eapI_JnE&r=1ktT0U2YS_I8Zz2o-MS1YcCAzWZ6hFGtyTgvVMGM7gI&m=NfGQRVxYCfZacAKiml9Wue-G1r2h8qkuAhAMOx_uFcc&s=iviPOQNPEIjkuqBma_VWEQ9l1Ve3eOiTwads42E4ZPo&e=console output: https://urldefense.proofpoint.com/v2/url?u=https-3A__syzkaller.appspot.com_x_log.txt-3Fx-3D17f4eb64600000&d=DwIBaQ&c=RoP1YumCXCgaWHvlZYR8PZh8Bv7qIrMUB65eapI_JnE&r=1ktT0U2YS_I8Zz2o-MS1YcCAzWZ6hFGtyTgvVMGM7gI&m=NfGQRVxYCfZacAKiml9Wue-G1r2h8qkuAhAMOx_uFcc&s=MBwnFwjEcSQfYymfv8EYt_EawVdK9vD-OAqDMutO-YY&e=kernel config:  https://urldefense.proofpoint.com/v2/url?u=https-3A__syzkaller.appspot.com_x_.config-3Fx-3Dcb38d33cd06d8d48&d=DwIBaQ&c=RoP1YumCXCgaWHvlZYR8PZh8Bv7qIrMUB65eapI_JnE&r=1ktT0U2YS_I8Zz2o-MS1YcCAzWZ6hFGtyTgvVMGM7gI&m=NfGQRVxYCfZacAKiml9Wue-G1r2h8qkuAhAMOx_uFcc&s=SqmDUenNFS-961PGgiMW5mIUv0nIBrf0oBrzUxYZ8Do&e=dashboard link:
-> https://urldefense.proofpoint.com/v2/url?u=https-3A__syzkaller.appspot.com_bug-3Fextid-3D03e5c8ebd22cc6c3a8cb&d=DwIBaQ&c=RoP1YumCXCgaWHvlZYR8PZh8Bv7qIrMUB65eapI_JnE&r=1ktT0U2YS_I8Zz2o-MS1YcCAzWZ6hFGtyTgvVMGM7gI&m=NfGQRVxYCfZacAKiml9Wue-G1r2h8qkuAhAMOx_uFcc&s=jKd2ocY5X94uyB8Or-OC3yffbOgClPQPlXqFnLzvvSY&e=syz repro:      https://urldefense.proofpoint.com/v2/url?u=https-3A__syzkaller.appspot.com_x_repro.syz-3Fx-3D13244221a00000&d=DwIBaQ&c=RoP1YumCXCgaWHvlZYR8PZh8Bv7qIrMUB65eapI_JnE&r=1ktT0U2YS_I8Zz2o-MS1YcCAzWZ6hFGtyTgvVMGM7gI&m=NfGQRVxYCfZacAKiml9Wue-G1r2h8qkuAhAMOx_uFcc&s=K-C39Kcd1oEOtJKwnby-s1EyEZZA10mr9bcXZ0J9Kh0&e=C reproducer:   https://urldefense.proofpoint.com/v2/url?u=https-3A__syzkaller.appspot.com_x_repro.c-3Fx-3D117b2432a00000&d=DwIBaQ&c=RoP1YumCXCgaWHvlZYR8PZh8Bv7qIrMUB65eapI_JnE&r=1ktT0U2YS_I8Zz2o-MS1YcCAzWZ6hFGtyTgvVMGM7gI&m=NfGQRVxYCfZacAKiml9Wue-G1r2h8qkuAhAMOx_uFcc&s=7J685CwQN6_FA2KgO3Vgy1msF0zi5O0OqZj_bgvEqBE&e=
-> Reported-by: syzbot+03e5c8ebd22cc6c3a8cb@syzkaller.appspotmail.com
-> Fixes: 664820265d70 ("dm: do not return target from dm_get_live_table_for_ioctl()")
-> 
-> For information about bisection process see: https://urldefense.proofpoint.com/v2/url?u=https-3A__goo.gl_tpsmEJ-23bisection&d=DwIBaQ&c=RoP1YumCXCgaWHvlZYR8PZh8Bv7qIrMUB65eapI_JnE&r=1ktT0U2YS_I8Zz2o-MS1YcCAzWZ6hFGtyTgvVMGM7gI&m=NfGQRVxYCfZacAKiml9Wue-G1r2h8qkuAhAMOx_uFcc&s=rs52TkiEQCrV4V8YQa2wT55HD8E-0AX9pn7MNIDcje4&e=
+diff --git a/kernel/trace/trace_preemptirq.c b/kernel/trace/trace_preemptirq.c
+index 4d8e99fdbbbe..031b51cb94d0 100644
+--- a/kernel/trace/trace_preemptirq.c
++++ b/kernel/trace/trace_preemptirq.c
+@@ -10,6 +10,7 @@
+ #include <linux/module.h>
+ #include <linux/ftrace.h>
+ #include <linux/kprobes.h>
++#include <linux/context_tracking.h>
+ #include "trace.h"
+ 
+ #define CREATE_TRACE_POINTS
+@@ -49,9 +50,14 @@ NOKPROBE_SYMBOL(trace_hardirqs_off);
+ 
+ __visible void trace_hardirqs_on_caller(unsigned long caller_addr)
+ {
++	enum ctx_state prev_state;
++
+ 	if (this_cpu_read(tracing_irq_cpu)) {
+-		if (!in_nmi())
++		if (!in_nmi()) {
++			prev_state = exception_enter();
+ 			trace_irq_enable_rcuidle(CALLER_ADDR0, caller_addr);
++			exception_exit(prev_state);
++		}
+ 		tracer_hardirqs_on(CALLER_ADDR0, caller_addr);
+ 		this_cpu_write(tracing_irq_cpu, 0);
+ 	}
+@@ -63,11 +69,16 @@ NOKPROBE_SYMBOL(trace_hardirqs_on_caller);
+ 
+ __visible void trace_hardirqs_off_caller(unsigned long caller_addr)
+ {
++	enum ctx_state prev_state;
++
+ 	if (!this_cpu_read(tracing_irq_cpu)) {
+ 		this_cpu_write(tracing_irq_cpu, 1);
+ 		tracer_hardirqs_off(CALLER_ADDR0, caller_addr);
+-		if (!in_nmi())
++		if (!in_nmi()) {
++			prev_state = exception_enter();
+ 			trace_irq_disable_rcuidle(CALLER_ADDR0, caller_addr);
++			exception_exit(prev_state);
++		}
+ 	}
+ 
+ 	lockdep_hardirqs_off(CALLER_ADDR0);
+-- 
+2.21.0
 
