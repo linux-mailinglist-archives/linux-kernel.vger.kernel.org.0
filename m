@@ -2,38 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 272877957B
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:43:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FBBC7954B
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:41:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389588AbfG2TnD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 15:43:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59104 "EHLO mail.kernel.org"
+        id S2389232AbfG2Tk4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 15:40:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56232 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389581AbfG2TnB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:43:01 -0400
+        id S1729212AbfG2Tkx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:40:53 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6DC4B2171F;
-        Mon, 29 Jul 2019 19:43:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 08DC020C01;
+        Mon, 29 Jul 2019 19:40:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564429380;
-        bh=X5Xg3XBNCA1cU1UmBXIds2rJiSWnOVbdRjrzqcUfyTI=;
+        s=default; t=1564429252;
+        bh=9SmH12nidC7+mKOl+ADbmfoN5bZixqCjWUVB9ZLnOiQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=k+GH9r+f5ErBhuIpSwsgycSksBPL2+ZM1nCfAeTR1hLknVAOPKNfcDrH86M9cv+Dc
-         YySkMJa/YSmMOJZLOn2hnSl0IBHZmhXWAQa2QLb7nUP1/i0nK236bqyNw15h9S2ytq
-         a5In8Zn0vML9SjO6ah5t4ANM3gimlpfe9VHjk6vg=
+        b=hr0+l6J81cRhY6YvVVljVeGdG/phN33Oe7XBooh6obqIp6m2/HgWLeXcEkCewzbjX
+         JyyuREMJSrFrYiieQeqCSYzdaHaTylFoiHRgBJfPa6sk1rTC4CtOwa8OQ138fyHqwr
+         teebumllgewfo4eZ1I+bhN8BitJ0xtu5Xds91MFQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Douglas Anderson <dianders@chromium.org>,
-        Sean Paul <seanpaul@chromium.org>,
-        Yakir Yang <ykk@rock-chips.com>,
-        Heiko Stuebner <heiko@sntech.de>,
+        stable@vger.kernel.org, Sergey Organov <sorganov@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 031/113] drm/rockchip: Properly adjust to a true clock in adjusted_mode
-Date:   Mon, 29 Jul 2019 21:21:58 +0200
-Message-Id: <20190729190703.328928636@linuxfoundation.org>
+Subject: [PATCH 4.19 032/113] serial: imx: fix locking in set_termios()
+Date:   Mon, 29 Jul 2019 21:21:59 +0200
+Message-Id: <20190729190703.575473801@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190729190655.455345569@linuxfoundation.org>
 References: <20190729190655.455345569@linuxfoundation.org>
@@ -46,44 +43,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 99b9683f2142b20bad78e61f7f829e8714e45685 ]
+[ Upstream commit 4e828c3e09201512be5ee162393f334321f7cf01 ]
 
-When fixing up the clock in vop_crtc_mode_fixup() we're not doing it
-quite correctly.  Specifically if we've got the true clock 266666667 Hz,
-we'll perform this calculation:
-   266666667 / 1000 => 266666
+imx_uart_set_termios() called imx_uart_rts_active(), or
+imx_uart_rts_inactive() before taking port->port.lock.
 
-Later when we try to set the clock we'll do clk_set_rate(266666 *
-1000).  The common clock framework won't actually pick the proper clock
-in this case since it always wants clocks <= the specified one.
+As a consequence, sport->port.mctrl that these functions modify
+could have been changed without holding port->port.lock.
 
-Let's solve this by using DIV_ROUND_UP.
+Moved locking of port->port.lock above the calls to fix the issue.
 
-Fixes: b59b8de31497 ("drm/rockchip: return a true clock rate to adjusted_mode")
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
-Signed-off-by: Sean Paul <seanpaul@chromium.org>
-Reviewed-by: Yakir Yang <ykk@rock-chips.com>
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190614224730.98622-1-dianders@chromium.org
+Signed-off-by: Sergey Organov <sorganov@gmail.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/rockchip/rockchip_drm_vop.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/tty/serial/imx.c | 23 +++++++++++++----------
+ 1 file changed, 13 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-index f8f9ae6622eb..873624a11ce8 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-@@ -880,7 +880,8 @@ static bool vop_crtc_mode_fixup(struct drm_crtc *crtc,
- 	struct vop *vop = to_vop(crtc);
- 
- 	adjusted_mode->clock =
--		clk_round_rate(vop->dclk, mode->clock * 1000) / 1000;
-+		DIV_ROUND_UP(clk_round_rate(vop->dclk, mode->clock * 1000),
-+			     1000);
- 
- 	return true;
+diff --git a/drivers/tty/serial/imx.c b/drivers/tty/serial/imx.c
+index 0f67197a3783..105de92b0b3b 100644
+--- a/drivers/tty/serial/imx.c
++++ b/drivers/tty/serial/imx.c
+@@ -382,6 +382,7 @@ static void imx_uart_ucrs_restore(struct imx_port *sport,
  }
+ #endif
+ 
++/* called with port.lock taken and irqs caller dependent */
+ static void imx_uart_rts_active(struct imx_port *sport, u32 *ucr2)
+ {
+ 	*ucr2 &= ~(UCR2_CTSC | UCR2_CTS);
+@@ -390,6 +391,7 @@ static void imx_uart_rts_active(struct imx_port *sport, u32 *ucr2)
+ 	mctrl_gpio_set(sport->gpios, sport->port.mctrl);
+ }
+ 
++/* called with port.lock taken and irqs caller dependent */
+ static void imx_uart_rts_inactive(struct imx_port *sport, u32 *ucr2)
+ {
+ 	*ucr2 &= ~UCR2_CTSC;
+@@ -399,6 +401,7 @@ static void imx_uart_rts_inactive(struct imx_port *sport, u32 *ucr2)
+ 	mctrl_gpio_set(sport->gpios, sport->port.mctrl);
+ }
+ 
++/* called with port.lock taken and irqs caller dependent */
+ static void imx_uart_rts_auto(struct imx_port *sport, u32 *ucr2)
+ {
+ 	*ucr2 |= UCR2_CTSC;
+@@ -1554,6 +1557,16 @@ imx_uart_set_termios(struct uart_port *port, struct ktermios *termios,
+ 		old_csize = CS8;
+ 	}
+ 
++	del_timer_sync(&sport->timer);
++
++	/*
++	 * Ask the core to calculate the divisor for us.
++	 */
++	baud = uart_get_baud_rate(port, termios, old, 50, port->uartclk / 16);
++	quot = uart_get_divisor(port, baud);
++
++	spin_lock_irqsave(&sport->port.lock, flags);
++
+ 	if ((termios->c_cflag & CSIZE) == CS8)
+ 		ucr2 = UCR2_WS | UCR2_SRST | UCR2_IRTS;
+ 	else
+@@ -1597,16 +1610,6 @@ imx_uart_set_termios(struct uart_port *port, struct ktermios *termios,
+ 			ucr2 |= UCR2_PROE;
+ 	}
+ 
+-	del_timer_sync(&sport->timer);
+-
+-	/*
+-	 * Ask the core to calculate the divisor for us.
+-	 */
+-	baud = uart_get_baud_rate(port, termios, old, 50, port->uartclk / 16);
+-	quot = uart_get_divisor(port, baud);
+-
+-	spin_lock_irqsave(&sport->port.lock, flags);
+-
+ 	sport->port.read_status_mask = 0;
+ 	if (termios->c_iflag & INPCK)
+ 		sport->port.read_status_mask |= (URXD_FRMERR | URXD_PRERR);
 -- 
 2.20.1
 
