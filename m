@@ -2,68 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 937887907A
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 18:13:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C5B779062
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 18:10:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728409AbfG2QN2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 12:13:28 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:45246 "EHLO vps0.lunn.ch"
+        id S1728843AbfG2QKd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 12:10:33 -0400
+Received: from mga02.intel.com ([134.134.136.20]:23364 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728903AbfG2QN1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 12:13:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=E8+StAJi8iR+10hnQNem7TjVI3Aa8ZKLhuLix4pgEFU=; b=Glj5iqr8L2yWUK8p+I64wgdP9q
-        DZOE9qPw6xIsieVDpKTkB1Y/FmeR8En9e9crk2+PXwgDl7axcaxmAX9YslGJySYLZbDIsuh1p89rQ
-        Ps3ONpBtXfyrGD5OoRmNMw7K0SJagtQkNh7iJv97bmLTOSbF7YvCilxzuOkF0y/TrHs4=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
-        (envelope-from <andrew@lunn.ch>)
-        id 1hs7ib-0002Wc-2C; Mon, 29 Jul 2019 17:37:45 +0200
-Date:   Mon, 29 Jul 2019 17:37:45 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Claudiu Manoil <claudiu.manoil@nxp.com>
-Cc:     "David S . Miller" <davem@davemloft.net>,
-        Rob Herring <robh+dt@kernel.org>, Li Yang <leoyang.li@nxp.com>,
-        alexandru.marginean@nxp.com, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v3 4/4] arm64: dts: fsl: ls1028a: Enable eth
- port1 on the ls1028a QDS board
-Message-ID: <20190729153745.GI4110@lunn.ch>
-References: <1564394627-3810-1-git-send-email-claudiu.manoil@nxp.com>
- <1564394627-3810-5-git-send-email-claudiu.manoil@nxp.com>
+        id S1727038AbfG2QKc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 12:10:32 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jul 2019 08:38:18 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,323,1559545200"; 
+   d="scan'208";a="179417951"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.145])
+  by FMSMGA003.fm.intel.com with ESMTP; 29 Jul 2019 08:38:17 -0700
+Received: from andy by smile with local (Exim 4.92)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1hs7j5-0000EB-Kh; Mon, 29 Jul 2019 18:38:15 +0300
+Date:   Mon, 29 Jul 2019 18:38:15 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>
+Subject: [GIT PULL] platform-drivers-x86 for 5.3-3
+Message-ID: <20190729153815.GA853@smile.fi.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1564394627-3810-5-git-send-email-claudiu.manoil@nxp.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 29, 2019 at 01:03:47PM +0300, Claudiu Manoil wrote:
-> LS1028a has one Ethernet management interface. On the QDS board, the
-> MDIO signals are multiplexed to either on-board AR8035 PHY device or
-> to 4 PCIe slots allowing for SGMII cards.
-> To enable the Ethernet ENETC Port 1, which can only be connected to a
-> RGMII PHY, the multiplexer needs to be configured to route the MDIO to
-> the AR8035 PHY.  The MDIO/MDC routing is controlled by bits 7:4 of FPGA
-> board config register 0x54, and value 0 selects the on-board RGMII PHY.
-> The FPGA board config registers are accessible on the i2c bus, at address
-> 0x66.
-> 
-> The PF3 MDIO PCIe integrated endpoint device allows for centralized access
-> to the MDIO bus.  Add the corresponding devicetree node and set it to be
-> the MDIO bus parent.
-> 
-> Signed-off-by: Alex Marginean <alexandru.marginean@nxp.com>
-> Signed-off-by: Claudiu Manoil <claudiu.manoil@nxp.com>
+Hi Linus,
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Business as usual for PDx86, few fixes and new ID
+(missed merge window due to dependency).
 
-    Andrew
+Thanks,
+
+With Best Regards,
+Andy Shevchenko
+
+The following changes since commit 5f9e832c137075045d15cd6899ab0505cfb2ca4b:
+
+  Linus 5.3-rc1 (2019-07-21 14:05:38 -0700)
+
+are available in the Git repository at:
+
+  git://git.infradead.org/linux-platform-drivers-x86.git tags/platform-drivers-x86-v5.3-3
+
+for you to fetch changes up to f14312a93b34b9350dc33ff0b4215c24f4c82617:
+
+  platform/x86: pcengines-apuv2: use KEY_RESTART for front button (2019-07-29 18:24:59 +0300)
+
+----------------------------------------------------------------
+platform-drivers-x86 for v5.3-3
+
+PC Engines APU got one fix for software dependencies to automatically load them
+and another fix for mapping of key button in the front to issue restart event.
+
+OLPC driver is now can be probed automatically based on module device table.
+
+Intel PMC core driver supports Intel Ice Lake NNPI processor.
+
+WMI driver missed description of new field in the structure that has been added.
+
+The following is an automated git shortlog grouped by driver:
+
+intel_pmc_core:
+ -  Add ICL-NNPI support to PMC Core
+
+pcengines-apuv2:
+ -  use KEY_RESTART for front button
+ -  Fix softdep statement
+
+OLPC:
+ -  add SPI MODULE_DEVICE_TABLE
+
+wmi:
+ -  add missing struct parameter description
+
+----------------------------------------------------------------
+Enrico Weigelt (1):
+      platform/x86: pcengines-apuv2: use KEY_RESTART for front button
+
+Jean Delvare (1):
+      platform/x86: pcengines-apuv2: Fix softdep statement
+
+Lubomir Rintel (1):
+      Platform: OLPC: add SPI MODULE_DEVICE_TABLE
+
+Mattias Jacobsson (1):
+      platform/x86: wmi: add missing struct parameter description
+
+Rajneesh Bhardwaj (1):
+      platform/x86: intel_pmc_core: Add ICL-NNPI support to PMC Core
+
+ drivers/platform/olpc/olpc-xo175-ec.c  | 6 ++++++
+ drivers/platform/x86/intel_pmc_core.c  | 1 +
+ drivers/platform/x86/pcengines-apuv2.c | 6 ++----
+ include/linux/mod_devicetable.h        | 1 +
+ 4 files changed, 10 insertions(+), 4 deletions(-)
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
