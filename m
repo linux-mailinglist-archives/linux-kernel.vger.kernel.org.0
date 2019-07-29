@@ -2,157 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B40A878568
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 08:53:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F0F9C78582
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 08:54:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727375AbfG2GxC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 02:53:02 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:56630 "EHLO huawei.com"
+        id S1727122AbfG2GyE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 02:54:04 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:57892 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726935AbfG2Gwv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 02:52:51 -0400
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 66098B9DEDA5E952D4CD;
-        Mon, 29 Jul 2019 14:52:45 +0800 (CST)
-Received: from architecture4.huawei.com (10.140.130.215) by smtp.huawei.com
- (10.3.19.210) with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 29 Jul
- 2019 14:52:37 +0800
-From:   Gao Xiang <gaoxiang25@huawei.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <devel@driverdev.osuosl.org>
-CC:     LKML <linux-kernel@vger.kernel.org>,
-        <linux-erofs@lists.ozlabs.org>, "Chao Yu" <chao@kernel.org>,
-        Miao Xie <miaoxie@huawei.com>, <weidu.du@huawei.com>,
-        Fang Wei <fangwei1@huawei.com>,
-        Gao Xiang <gaoxiang25@huawei.com>
-Subject: [PATCH 22/22] staging: erofs: update Kconfig
-Date:   Mon, 29 Jul 2019 14:51:59 +0800
-Message-ID: <20190729065159.62378-23-gaoxiang25@huawei.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190729065159.62378-1-gaoxiang25@huawei.com>
-References: <20190729065159.62378-1-gaoxiang25@huawei.com>
+        id S1726900AbfG2GyE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 02:54:04 -0400
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 57F4BE75CF37FCE21D54;
+        Mon, 29 Jul 2019 14:54:01 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS410-HUB.china.huawei.com
+ (10.3.19.210) with Microsoft SMTP Server id 14.3.439.0; Mon, 29 Jul 2019
+ 14:53:54 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <a.hajda@samsung.com>, <narmstrong@baylibre.com>,
+        <Laurent.pinchart@ideasonboard.com>, <jonas@kwiboo.se>,
+        <jernej.skrabec@siol.net>, <airlied@linux.ie>, <daniel@ffwll.ch>,
+        <eric@anholt.net>
+CC:     <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH] drm/bridge: lvds-encoder: Fix build error while CONFIG_DRM_KMS_HELPER=m
+Date:   Mon, 29 Jul 2019 14:53:44 +0800
+Message-ID: <20190729065344.9680-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Originating-IP: [10.140.130.215]
+X-Originating-IP: [10.133.213.239]
 X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Keep in line with erofs-outofstaging patchset:
- - turn on CONFIG_EROFS_FS_ZIP by default;
- - turn on CONFIG_EROFS_FS_SECURITY by default suggested by David;
- - update Kconfig description.
+If DRM_LVDS_ENCODER=y but CONFIG_DRM_KMS_HELPER=m,
+build fails:
 
-Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+drivers/gpu/drm/bridge/lvds-encoder.o: In function `lvds_encoder_probe':
+lvds-encoder.c:(.text+0x155): undefined reference to `devm_drm_panel_bridge_add'
+drivers/gpu/drm/bridge/tc358764.o:(.rodata+0x228): undefined reference to `drm_atomic_helper_connector_reset'
+drivers/gpu/drm/bridge/tc358764.o:(.rodata+0x240): undefined reference to `drm_helper_probe_single_connector_modes'
+drivers/gpu/drm/bridge/tc358764.o:(.rodata+0x268): undefined reference to `drm_atomic_helper_connector_duplicate_state'
+drivers/gpu/drm/bridge/tc358764.o:(.rodata+0x270): undefined reference to `drm_atomic_helper_connector_destroy_state'
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Fixes: dbb58bfd9ae6 drm/bridge: ("Fix lvds-encoder since the panel_bridge rework.")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/staging/erofs/Kconfig | 54 ++++++++++++++++++-----------------
- 1 file changed, 28 insertions(+), 26 deletions(-)
+ drivers/gpu/drm/bridge/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/staging/erofs/Kconfig b/drivers/staging/erofs/Kconfig
-index 1a8e48943e50..16316d1adca3 100644
---- a/drivers/staging/erofs/Kconfig
-+++ b/drivers/staging/erofs/Kconfig
-@@ -4,16 +4,16 @@ config EROFS_FS
- 	tristate "EROFS filesystem support"
- 	depends on BLOCK
+diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
+index a6eec90..77e4b95 100644
+--- a/drivers/gpu/drm/bridge/Kconfig
++++ b/drivers/gpu/drm/bridge/Kconfig
+@@ -48,6 +48,7 @@ config DRM_DUMB_VGA_DAC
+ config DRM_LVDS_ENCODER
+ 	tristate "Transparent parallel to LVDS encoder support"
+ 	depends on OF
++	select DRM_KMS_HELPER
+ 	select DRM_PANEL_BRIDGE
  	help
--	  EROFS(Enhanced Read-Only File System) is a lightweight
-+	  EROFS (Enhanced Read-Only File System) is a lightweight
- 	  read-only file system with modern designs (eg. page-sized
- 	  blocks, inline xattrs/data, etc.) for scenarios which need
--	  high-performance read-only requirements, eg. firmwares in
--	  mobile phone or LIVECDs.
-+	  high-performance read-only requirements, e.g. Android OS
-+	  for mobile phones and LIVECDs.
- 
--	  It also provides VLE compression support, focusing on
--	  random read improvements, keeping relatively lower
--	  compression ratios, which is useful for high-performance
--	  devices with limited memory and ROM space.
-+	  It also provides fixed-sized output compression support,
-+	  which improves storage density, keeps relatively higher
-+	  compression ratios, which is more useful to achieve high
-+	  performance for embedded devices with limited memory.
- 
- 	  If unsure, say N.
- 
-@@ -21,11 +21,19 @@ config EROFS_FS_DEBUG
- 	bool "EROFS debugging feature"
- 	depends on EROFS_FS
- 	help
--	  Print EROFS debugging messages and enable more BUG_ONs
--	  which check the filesystem consistency aggressively.
-+	  Print debugging messages and enable more BUG_ONs which check
-+	  filesystem consistency and find potential issues aggressively,
-+	  which can be used for Android eng build, for example.
- 
- 	  For daily use, say N.
- 
-+config EROFS_FAULT_INJECTION
-+	bool "EROFS fault injection facility"
-+	depends on EROFS_FS
-+	help
-+	  Test EROFS to inject faults such as ENOMEM, EIO, and so on.
-+	  If unsure, say N.
-+
- config EROFS_FS_XATTR
- 	bool "EROFS extended attributes"
- 	depends on EROFS_FS
-@@ -54,6 +62,7 @@ config EROFS_FS_POSIX_ACL
- config EROFS_FS_SECURITY
- 	bool "EROFS Security Labels"
- 	depends on EROFS_FS_XATTR
-+	default y
- 	help
- 	  Security labels provide an access control facility to support Linux
- 	  Security Models (LSMs) accepted by AppArmor, SELinux, Smack and TOMOYO
-@@ -63,22 +72,15 @@ config EROFS_FS_SECURITY
- 
- 	  If you are not using a security module, say N.
- 
--config EROFS_FAULT_INJECTION
--	bool "EROFS fault injection facility"
--	depends on EROFS_FS
--	help
--	  Test EROFS to inject faults such as ENOMEM, EIO, and so on.
--	  If unsure, say N.
--
- config EROFS_FS_ZIP
--	bool "EROFS Data Compresssion Support"
-+	bool "EROFS Data Compression Support"
- 	depends on EROFS_FS
- 	select LZ4_DECOMPRESS
-+	default y
- 	help
--	  Currently we support LZ4 VLE Compression only.
--	  Play at your own risk.
-+	  Enable fixed-sized output compression for EROFS.
- 
--	  If you don't want to use compression feature, say N.
-+	  If you don't want to enable compression feature, say N.
- 
- config EROFS_FS_CLUSTER_PAGE_LIMIT
- 	int "EROFS Cluster Pages Hard Limit"
-@@ -86,11 +88,11 @@ config EROFS_FS_CLUSTER_PAGE_LIMIT
- 	range 1 256
- 	default "1"
- 	help
--	  Indicates VLE compressed pages hard limit of a
--	  compressed cluster.
-+	  Indicates maximum # of pages of a compressed
-+	  physical cluster.
- 
--	  For example, if files of a image are compressed
--	  into 8k-unit, the hard limit should not be less
--	  than 2. Otherwise, the image cannot be mounted
--	  correctly on this kernel.
-+	  For example, if files in a image were compressed
-+	  into 8k-unit, hard limit should not be configured
-+	  less than 2. Otherwise, the image will be refused
-+	  to mount on this kernel.
- 
+ 	  Support for transparent parallel to LVDS encoders that don't require
 -- 
-2.17.1
+2.7.4
+
 
