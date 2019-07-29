@@ -2,127 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A9BE7872D
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 10:19:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 66AFA78731
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 10:20:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727590AbfG2IS6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 04:18:58 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:52248 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726305AbfG2IS6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 04:18:58 -0400
-Received: by mail-wm1-f65.google.com with SMTP id s3so52930545wms.2
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 01:18:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=vHj9NXahSs6iR8Pg+ItC8iS4CBlK8AvLVaxPXNIpuUE=;
-        b=xQbnXKF8Y7E+t8j+NkUBwqn2H5QphW/cVaobSbrgpsuHm+4EWO6RX6IzN8M9D2M0RQ
-         vYwnuc6bMkTf84yGvMP1JgFPoid5mCkowMdZ0MyW+RKWpJK+zwB5LDHuqYVYyanjhzeG
-         3I6WqlRd/fPf8gz1MbhF0/UTB8oYe5Sl/8a2HSb7zJCPnHHzaQD9dQ6Z4oTAh5T6dO9+
-         TlIom4yR5AXhYb0+X3LgWDYmbq6JXjeHA7Wh4WugIU+K4wQA2ZnvlBHKa9Eb1K/d1Xn6
-         eOl5U8Bia8RTUj8iYkhItoD7RiAgYAJF8pT45eS4sWxouG63GTqtIRrWxJswCz0h91o0
-         R5DQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=vHj9NXahSs6iR8Pg+ItC8iS4CBlK8AvLVaxPXNIpuUE=;
-        b=BiT8wFhovQHMjwzIgMeerM6h/jn9HRMN766wlQY2IesmZsht4Q8Heun0L6EONJf3Gu
-         8Ynu4liz7FTq1XOP2vZuus8DuNT/0KfQLkZOIidoIu8AepVA4cJKz36J1JW660ygvf1Q
-         UQmrXtW9rqaCngeHh4DY78uAwl1lgqsDG3w/0YYsPNF1TtgaiZge3ans4gxSxnS4l3qN
-         yFT6J0MRrzqNWcWmlU6cyfmhuDmY3/b91AGj5fEw4cW4GzEG4/0sdZF1bFilA2AlSaOg
-         1faLLDqTK8VhoCFH5miGL2NNPurz12nveKuCuD8S8pjlCAe1sy71omRf3B1Qt7px/6oE
-         yNaA==
-X-Gm-Message-State: APjAAAWhDUDsnc2OAdy43qfDnXSMez69ogMcYJk/KKRvYAGa44Pt8rgp
-        1IdcBiY5dHZX1MavqUGpBac=
-X-Google-Smtp-Source: APXvYqwmY7Gie5+Musllq20iA/vpGOeb+HpfY7d6X5o963I1/ONCZZ3wYid5aigxUN7L3tNQhUWdSA==
-X-Received: by 2002:a1c:1bd7:: with SMTP id b206mr95120334wmb.85.1564388336079;
-        Mon, 29 Jul 2019 01:18:56 -0700 (PDT)
-Received: from localhost (mail.chocen-mesto.cz. [85.163.43.2])
-        by smtp.gmail.com with ESMTPSA id f12sm66058989wrg.5.2019.07.29.01.18.55
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 29 Jul 2019 01:18:55 -0700 (PDT)
-Date:   Mon, 29 Jul 2019 10:18:54 +0200
-From:   Jiri Pirko <jiri@resnulli.us>
-To:     Jia-Ju Bai <baijiaju1990@gmail.com>
-Cc:     jhs@mojatatu.com, xiyou.wangcong@gmail.com, davem@davemloft.net,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] net: sched: Fix a possible null-pointer dereference
- in dequeue_func()
-Message-ID: <20190729081854.GC2211@nanopsycho>
-References: <20190729080018.28678-1-baijiaju1990@gmail.com>
+        id S1727552AbfG2IUM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 04:20:12 -0400
+Received: from ozlabs.org ([203.11.71.1]:51569 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726305AbfG2IUL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 04:20:11 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 45xt0T0bbFz9sMQ;
+        Mon, 29 Jul 2019 18:20:09 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1564388409;
+        bh=lfCsp2hyEGbThOuKiVn2hk/tp0U4RSwPC4uVbmrp4+w=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=ahHovQeeaULp+5VAO21mDQCeuM+kRFe+h3BeWyrmggs8jiv5t04aCiasQeP5Kqf6q
+         KTUfvAmCd46PRvFHrfiUJkaVCFzPU+8UqfQ9NfUTmc0H6HcQ+1yARdQN0sARCdBkyo
+         hghBGxpVWXri8x3Y+Ru1uL57r0dmP61ghGSjOP5AxpLLnQf+7Ho9ps/WGNrlpnsaB3
+         rd3muM9d4Zy+ubff6Rftnq8+blYMnc4gjgd975i6Ib/AWGFEohQXkPo8O+KWBuyk0t
+         Hp49Tsi0Tnt+8YJ4DZKJkbOPiLjfxBuSYoN0uPW29WpnXZ5bZYpGHQEpH8HCmnBjp0
+         rPRnipA5Xhdiw==
+Date:   Mon, 29 Jul 2019 18:20:08 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Takashi Iwai <tiwai@suse.de>
+Cc:     Johannes Berg <johannes@sipsolutions.net>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: build warning after merge of Linus' tree
+Message-ID: <20190729182008.14e75363@canb.auug.org.au>
+In-Reply-To: <s5h5znlpbdt.wl-tiwai@suse.de>
+References: <20190729140404.37bac29e@canb.auug.org.au>
+        <s5h8sshpbt3.wl-tiwai@suse.de>
+        <e96cf8a57c4633e807cfe82762397ad15ba19ed8.camel@sipsolutions.net>
+        <s5h5znlpbdt.wl-tiwai@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190729080018.28678-1-baijiaju1990@gmail.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+Content-Type: multipart/signed; boundary="Sig_/xLdHkpy2Q+DQ.V63y1ZCW0m";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mon, Jul 29, 2019 at 10:00:18AM CEST, baijiaju1990@gmail.com wrote:
->In dequeue_func(), there is an if statement on line 74 to check whether
->skb is NULL:
->    if (skb)
->
->When skb is NULL, it is used on line 77:
->    prefetch(&skb->end);
->
->Thus, a possible null-pointer dereference may occur.
->
->To fix this bug, skb->end is used when skb is not NULL.
->
->This bug is found by a static analysis tool STCheck written by us.
->
->Fixes: 79bdc4c862af ("codel: generalize the implementation")
+--Sig_/xLdHkpy2Q+DQ.V63y1ZCW0m
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Looks like this is something being there since the beginning:
-commit 76e3cc126bb223013a6b9a0e2a51238d1ef2e409
-Author: Eric Dumazet <edumazet@google.com>
-Date:   Thu May 10 07:51:25 2012 +0000
+Hi all,
 
-    codel: Controlled Delay AQM
-
-
-Please adjust "Fixes:".
-
-The fix itself looks fine to me.
-Reviewed-by: Jiri Pirko <jiri@mellanox.com>
-
-
-
->Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
->---
->v2:
->* Add a fix tag.
->  Thank Jiri Pirko for helpful advice.
+On Mon, 29 Jul 2019 09:07:10 +0200 Takashi Iwai <tiwai@suse.de> wrote:
 >
->---
-> net/sched/sch_codel.c | 6 +++---
-> 1 file changed, 3 insertions(+), 3 deletions(-)
->
->diff --git a/net/sched/sch_codel.c b/net/sched/sch_codel.c
->index 25ef172c23df..30169b3adbbb 100644
->--- a/net/sched/sch_codel.c
->+++ b/net/sched/sch_codel.c
->@@ -71,10 +71,10 @@ static struct sk_buff *dequeue_func(struct codel_vars *vars, void *ctx)
-> 	struct Qdisc *sch = ctx;
-> 	struct sk_buff *skb = __qdisc_dequeue_head(&sch->q);
-> 
->-	if (skb)
->+	if (skb) {
-> 		sch->qstats.backlog -= qdisc_pkt_len(skb);
->-
->-	prefetch(&skb->end); /* we'll need skb_shinfo() */
->+		prefetch(&skb->end); /* we'll need skb_shinfo() */
->+	}
-> 	return skb;
-> }
-> 
->-- 
->2.17.0
->
+> On Mon, 29 Jul 2019 09:03:14 +0200,
+> Johannes Berg wrote:
+> >=20
+> > On Mon, 2019-07-29 at 08:58 +0200, Takashi Iwai wrote: =20
+> > > > This warning has been around for a long time.  It could possibly be
+> > > > suppressed by checking for errors returned by onyx_read_register().=
+ =20
+> > >=20
+> > > Yes, or simply zero-ing the variable in onyx_read_register().  The
+> > > current code ignores the read error and it's been OK over a decade :)=
+ =20
+> >=20
+> > Yeah, it's pretty weird that it never showed up before. I was wondering
+> > for a minute why I was CC'ed on a sound merge issue :-) =20
+>=20
+> Maybe switched to a new gcc version?
+
+Or the number of warnings in a powerpc allyesconfig build got low
+enough for me to finally take notice :-)
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/xLdHkpy2Q+DQ.V63y1ZCW0m
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0+rDgACgkQAVBC80lX
+0GxVAgf8D0EY4Nfw7dKIsnd3Y7YDBwfuf6QepZ0jE9uI0NnRS2ZZPL9Qg4XCFgKz
++3ulymA+/foqRjmboDtrPUJMyLPiFJfiFOT6Ik/ZXHzcnbnfV8sl6NcHRD8TvLvk
+n6bKL+3+PSpujYrI5251SjM8RrN55N3/prTrrzswRdsqT1AwLItq1n/dKoCeD/pF
+RQDf4IRgsGFWNjxyW82FIFsZiiPNJSLJkAFNlzgcOV0TZGtO/QwI/YMMiVJo+bXk
+ZG9PcCBf+dr8ilpabis7TCBSloEu1nwK4qHjrAjRgaMft3gdJ2bhiohbBU9s16ID
+bg33l1Xhy0cGDF1/5MNg9te5Bn2xPQ==
+=52Id
+-----END PGP SIGNATURE-----
+
+--Sig_/xLdHkpy2Q+DQ.V63y1ZCW0m--
