@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 92F83797DB
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:04:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BE0B797BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:02:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390407AbfG2TsC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 15:48:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37900 "EHLO mail.kernel.org"
+        id S2390089AbfG2TsW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 15:48:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38362 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390396AbfG2Tr5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:47:57 -0400
+        id S1729729AbfG2TsQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:48:16 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0757B2054F;
-        Mon, 29 Jul 2019 19:47:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0516820C01;
+        Mon, 29 Jul 2019 19:48:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564429677;
-        bh=7b3PNelU0H9b3f/+JF6x6eK27XM/GcEd3wH6I8f+LMs=;
+        s=default; t=1564429696;
+        bh=kTu5OqvrgpLJAICy736VvCxhpsfGdUpXfh8eyIoGUHw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Fklr8hsawFT956sMFjySeCitLTlxTbrrOgBjbyy1LTvcIz9QaDV1tzU2E8kDBw7HZ
-         OLx2mHbxVH59jn8lRPPkyWOLXvMkFVpH7zLQ5OysInV53RnQxM2p9+52jZ+D2w64TA
-         8xZwwBrhi0CsoO7dUI/jy0W3388iOWfIXDA2EvWE=
+        b=LpAGVNcs7BQMZ3hNG54Bjaq6D58AQ2gBwMwJc6kQAlByTgAaButqHbnLSx0YDDdF9
+         rJCn10hYjX24AY71bgkbpVI0ekfSuTF19u6AEyzY5b0DD6/m8253XU0xoylZY34q20
+         IEAjN2ZUrGyvPX9/xgsJ9LPUpEUUAQIZ5kjegzog=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Hariprasad Kelam <hariprasad.kelam@gmail.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
+        stable@vger.kernel.org, Douglas Anderson <dianders@chromium.org>,
+        Sean Paul <seanpaul@chromium.org>,
+        Yakir Yang <ykk@rock-chips.com>,
+        Heiko Stuebner <heiko@sntech.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 059/215] drm/amd/display: fix compilation error
-Date:   Mon, 29 Jul 2019 21:20:55 +0200
-Message-Id: <20190729190750.758334939@linuxfoundation.org>
+Subject: [PATCH 5.2 064/215] drm/rockchip: Properly adjust to a true clock in adjusted_mode
+Date:   Mon, 29 Jul 2019 21:21:00 +0200
+Message-Id: <20190729190751.575791553@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190729190739.971253303@linuxfoundation.org>
 References: <20190729190739.971253303@linuxfoundation.org>
@@ -45,36 +46,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 88099f53cc3717437f5fc9cf84205c5b65118377 ]
+[ Upstream commit 99b9683f2142b20bad78e61f7f829e8714e45685 ]
 
-this patch fixes below compilation error
+When fixing up the clock in vop_crtc_mode_fixup() we're not doing it
+quite correctly.  Specifically if we've got the true clock 266666667 Hz,
+we'll perform this calculation:
+   266666667 / 1000 => 266666
 
-drivers/gpu/drm/amd/amdgpu/../display/dc/dcn10/dcn10_hw_sequencer.c: In
-function ‘dcn10_apply_ctx_for_surface’:
-drivers/gpu/drm/amd/amdgpu/../display/dc/dcn10/dcn10_hw_sequencer.c:2378:3:
-error: implicit declaration of function ‘udelay’
-[-Werror=implicit-function-declaration]
-   udelay(underflow_check_delay_us);
+Later when we try to set the clock we'll do clk_set_rate(266666 *
+1000).  The common clock framework won't actually pick the proper clock
+in this case since it always wants clocks <= the specified one.
 
-Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Let's solve this by using DIV_ROUND_UP.
+
+Fixes: b59b8de31497 ("drm/rockchip: return a true clock rate to adjusted_mode")
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Signed-off-by: Sean Paul <seanpaul@chromium.org>
+Reviewed-by: Yakir Yang <ykk@rock-chips.com>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190614224730.98622-1-dianders@chromium.org
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpu/drm/rockchip/rockchip_drm_vop.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c
-index 33d311cea28c..9e4d70a0055e 100644
---- a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c
-+++ b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c
-@@ -23,6 +23,7 @@
-  *
-  */
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+index 12ed5265a90b..09046135e720 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+@@ -1011,7 +1011,8 @@ static bool vop_crtc_mode_fixup(struct drm_crtc *crtc,
+ 	struct vop *vop = to_vop(crtc);
  
-+#include <linux/delay.h>
- #include "dm_services.h"
- #include "core_types.h"
- #include "resource.h"
+ 	adjusted_mode->clock =
+-		clk_round_rate(vop->dclk, mode->clock * 1000) / 1000;
++		DIV_ROUND_UP(clk_round_rate(vop->dclk, mode->clock * 1000),
++			     1000);
+ 
+ 	return true;
+ }
 -- 
 2.20.1
 
