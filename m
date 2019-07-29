@@ -2,98 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 66AFA78731
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 10:20:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3ADFD78737
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 10:21:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727552AbfG2IUM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 04:20:12 -0400
-Received: from ozlabs.org ([203.11.71.1]:51569 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726305AbfG2IUL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 04:20:11 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45xt0T0bbFz9sMQ;
-        Mon, 29 Jul 2019 18:20:09 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1564388409;
-        bh=lfCsp2hyEGbThOuKiVn2hk/tp0U4RSwPC4uVbmrp4+w=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=ahHovQeeaULp+5VAO21mDQCeuM+kRFe+h3BeWyrmggs8jiv5t04aCiasQeP5Kqf6q
-         KTUfvAmCd46PRvFHrfiUJkaVCFzPU+8UqfQ9NfUTmc0H6HcQ+1yARdQN0sARCdBkyo
-         hghBGxpVWXri8x3Y+Ru1uL57r0dmP61ghGSjOP5AxpLLnQf+7Ho9ps/WGNrlpnsaB3
-         rd3muM9d4Zy+ubff6Rftnq8+blYMnc4gjgd975i6Ib/AWGFEohQXkPo8O+KWBuyk0t
-         Hp49Tsi0Tnt+8YJ4DZKJkbOPiLjfxBuSYoN0uPW29WpnXZ5bZYpGHQEpH8HCmnBjp0
-         rPRnipA5Xhdiw==
-Date:   Mon, 29 Jul 2019 18:20:08 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Takashi Iwai <tiwai@suse.de>
-Cc:     Johannes Berg <johannes@sipsolutions.net>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: build warning after merge of Linus' tree
-Message-ID: <20190729182008.14e75363@canb.auug.org.au>
-In-Reply-To: <s5h5znlpbdt.wl-tiwai@suse.de>
-References: <20190729140404.37bac29e@canb.auug.org.au>
-        <s5h8sshpbt3.wl-tiwai@suse.de>
-        <e96cf8a57c4633e807cfe82762397ad15ba19ed8.camel@sipsolutions.net>
-        <s5h5znlpbdt.wl-tiwai@suse.de>
+        id S1727578AbfG2IVc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 04:21:32 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:34573 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726305AbfG2IVc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 04:21:32 -0400
+X-UUID: 780830a3b75549efb0a14e7921b571d2-20190729
+X-UUID: 780830a3b75549efb0a14e7921b571d2-20190729
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw02.mediatek.com
+        (envelope-from <roger.lu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0707 with TLS)
+        with ESMTP id 404034317; Mon, 29 Jul 2019 16:21:24 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs02n2.mediatek.inc (172.21.101.101) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Mon, 29 Jul 2019 16:21:23 +0800
+Received: from mtksdaap41.mediatek.inc (172.21.77.4) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Mon, 29 Jul 2019 16:21:23 +0800
+From:   Roger Lu <roger.lu@mediatek.com>
+To:     Kevin Hilman <khilman@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Nicolas Boichat <drinkcat@google.com>,
+        Stephen Boyd <sboyd@kernel.org>
+CC:     Fan Chen <fan.chen@mediatek.com>,
+        HenryC Chen <HenryC.Chen@mediatek.com>, <yt.lee@mediatek.com>,
+        Angus Lin <Angus.Lin@mediatek.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Nishanth Menon <nm@ti.com>, Roger Lu <roger.lu@mediatek.com>,
+        <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>
+Subject: PM / AVS: SVS: Introduce SVS engine
+Date:   Mon, 29 Jul 2019 16:20:30 +0800
+Message-ID: <20190729082032.13661-1-roger.lu@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/xLdHkpy2Q+DQ.V63y1ZCW0m";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain
+X-TM-SNTS-SMTP: 7BD0541FC892B82770FD20972E089988A363FED08225FB08CE915C3077133DE42000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/xLdHkpy2Q+DQ.V63y1ZCW0m
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+SVS driver use OPP adjust event in [1] to update OPP table voltage part.
 
-Hi all,
+[1] https://patchwork.kernel.org/patch/10946069/
 
-On Mon, 29 Jul 2019 09:07:10 +0200 Takashi Iwai <tiwai@suse.de> wrote:
->
-> On Mon, 29 Jul 2019 09:03:14 +0200,
-> Johannes Berg wrote:
-> >=20
-> > On Mon, 2019-07-29 at 08:58 +0200, Takashi Iwai wrote: =20
-> > > > This warning has been around for a long time.  It could possibly be
-> > > > suppressed by checking for errors returned by onyx_read_register().=
- =20
-> > >=20
-> > > Yes, or simply zero-ing the variable in onyx_read_register().  The
-> > > current code ignores the read error and it's been OK over a decade :)=
- =20
-> >=20
-> > Yeah, it's pretty weird that it never showed up before. I was wondering
-> > for a minute why I was CC'ed on a sound merge issue :-) =20
->=20
-> Maybe switched to a new gcc version?
+changes since v3:
+- return -ENOMEM when kmalloc() cannot allocate memory.
+- Refine SVS debug log format for SVS designer request.
 
-Or the number of warnings in a powerpc allyesconfig build got low
-enough for me to finally take notice :-)
+Roger Lu (2):
+  dt-bindings: soc: add mtk svs dt-bindings
+  PM / AVS: SVS: Introduce SVS engine
 
---=20
-Cheers,
-Stephen Rothwell
+ .../devicetree/bindings/power/mtk-svs.txt     |   88 +
+ drivers/power/avs/Kconfig                     |   10 +
+ drivers/power/avs/Makefile                    |    1 +
+ drivers/power/avs/mtk_svs.c                   | 2075 +++++++++++++++++
+ include/linux/power/mtk_svs.h                 |   23 +
+ 5 files changed, 2197 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/power/mtk-svs.txt
+ create mode 100644 drivers/power/avs/mtk_svs.c
+ create mode 100644 include/linux/power/mtk_svs.h
 
---Sig_/xLdHkpy2Q+DQ.V63y1ZCW0m
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0+rDgACgkQAVBC80lX
-0GxVAgf8D0EY4Nfw7dKIsnd3Y7YDBwfuf6QepZ0jE9uI0NnRS2ZZPL9Qg4XCFgKz
-+3ulymA+/foqRjmboDtrPUJMyLPiFJfiFOT6Ik/ZXHzcnbnfV8sl6NcHRD8TvLvk
-n6bKL+3+PSpujYrI5251SjM8RrN55N3/prTrrzswRdsqT1AwLItq1n/dKoCeD/pF
-RQDf4IRgsGFWNjxyW82FIFsZiiPNJSLJkAFNlzgcOV0TZGtO/QwI/YMMiVJo+bXk
-ZG9PcCBf+dr8ilpabis7TCBSloEu1nwK4qHjrAjRgaMft3gdJ2bhiohbBU9s16ID
-bg33l1Xhy0cGDF1/5MNg9te5Bn2xPQ==
-=52Id
------END PGP SIGNATURE-----
-
---Sig_/xLdHkpy2Q+DQ.V63y1ZCW0m--
