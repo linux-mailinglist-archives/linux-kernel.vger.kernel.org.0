@@ -2,342 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F1DAA79BE2
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 00:00:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B76ED79BEA
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 00:00:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730648AbfG2V7o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 17:59:44 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:45853 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730386AbfG2V7m (ORCPT
+        id S2387544AbfG2WAP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 18:00:15 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:37537 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726323AbfG2WAM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 17:59:42 -0400
-Received: by mail-pf1-f193.google.com with SMTP id r1so28688046pfq.12;
-        Mon, 29 Jul 2019 14:59:41 -0700 (PDT)
+        Mon, 29 Jul 2019 18:00:12 -0400
+Received: by mail-pg1-f193.google.com with SMTP id i70so18178796pgd.4
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 15:00:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=NcwrNg7j+HRd7MjLCT3rvayxG213ODRbG4I++1syays=;
-        b=mBiVo6Bs1K3usthxtuR7bVeV4Uh9AcyTyHCY55paZiwp06TMSGR/HB4sCpviCSLmVV
-         V8Lp1+o5ylo6xvmjDA6YW4gkCVyMhBc0cr3qFKomjy4ryaUN7KksGbDm7TrMscpYYmBQ
-         5+iZrSEpmMuQzfiuoG00EY8EpoBdlnBgV6OHtVo/GcuGq6baqrv7ZWHwwCigJJUD+GYh
-         qpKQ5wMrkpTsD3PgM6e7KoxleGpcRh/h4PepjQY58SA6v4mUHYTG1WuzvP1xWkU3ikoU
-         taTebHmv0mqUj5SxWtRu4X4bdLGA8JDWqbvT+KKxltfN8OLFjzqUGXY4a+aDm3G7BRXk
-         wt4Q==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=4Z4e7eX8RQPe9vUaooI5ICKzcwt4GloFa186owymu9w=;
+        b=evgg/NUaECZfWMgoopuUjqMgL3RIQnKnY+v1LdbrQnAp16/Qsiv9tYEU6iBOpd2igT
+         sa8z84mWybDVIyTTmlTr+ziJJNla6OGi5MfVYcsmZzV4BAvm85G9AWfrNZXQsx5PEetg
+         tCCjUuXVSeG6hdK4ltLvaG17c49KdMWWjKMYUEKngKgbNh6wUXkUuZ1Mj1mp0cwzoerj
+         ae4rW1ihC7pOyWywGxGiS9SXAs41HjV4faGX8uKJ1w6GBG0GPKk7RcCwacWGwKYR9KLG
+         2vF5KLTQ/E4thllFpeExE15i8fwI38jDkV8IReYs4T1gWG9L4C/Zm4Pr2Dk08on58wWK
+         7IcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mime-version:content-disposition:user-agent;
-        bh=NcwrNg7j+HRd7MjLCT3rvayxG213ODRbG4I++1syays=;
-        b=adUZIEk/qEVIpuAjzaPlnhp7ujj4t73CR0UFLnpRC4JiH4QwgD4sguJO6gx0v8d6tA
-         kVUkjmgI82KXaIDEItOxrTZeWkFHP98vpe3b8vVB6YJFLygHg9BVopeiqpha1OkBPh2p
-         ebBHaTW6//ghnlu99KVf2Rkgm9sNm7Ne7g7ETx3Cyr7gAtuwbrmXA6Sz/kTgL6VFVxG5
-         4q8SlQ2OOkkHhYmYYHkqXwvicXCyjhvDVVGv8pFU/q8Pn3W6S10jNtfzMnAl75KFHZt2
-         MoSpDeKcaXx1ftqB/+muDe0CB7NraFHS1eEyaeSpqSU0L70KdkzUIbAyumvaBzPZRWaE
-         L6Gg==
-X-Gm-Message-State: APjAAAWIje9olj8jF0ZxUpTueFVoA9uQ03CAmrv7XU+oR5Pl8dGnf7Cd
-        4thYuhXzZY/B0KeqX0GXSOI=
-X-Google-Smtp-Source: APXvYqyQUJUtM0DHntVFZzr1PMFYOgAjZDLwN2PGMlWHawifZJQjZtW9XEYCkikUxYBfalrMMO7rqA==
-X-Received: by 2002:aa7:82da:: with SMTP id f26mr38908871pfn.82.1564437581260;
-        Mon, 29 Jul 2019 14:59:41 -0700 (PDT)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id x65sm62307416pfd.139.2019.07.29.14.59.39
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=4Z4e7eX8RQPe9vUaooI5ICKzcwt4GloFa186owymu9w=;
+        b=jOUCWmrnUGN8Zc6Q/2VtyhIOv5oXWLTquswV0huyYHp71kC6S417ijs3A3bLyJIjl6
+         00y3F9nwJfkwIHHF/clDwD4TVVJMUSWJZV2ZBsnW4VFwCND0gwTUHRCA0EKDYY2q6XGx
+         ztp4APCGRLuFkzsp+Q/WbMWo+pH6dV4Bz80M4XdiD/j0v1ufOa8DkRwgeq0gtmAGCPbu
+         e9HY/Q0Foh+gbpiUcuvCc1lBVxLiAMsExC+Xhn4r9/kgvhhPpYgqIasIGC4q7vla44YF
+         YZOXyqWrIlqR8Il/6x5OITfMNtoxUN0VQ+RI1KzzFhiEFkCOOSv7HKO+1HqZ6DanGK9x
+         4YWQ==
+X-Gm-Message-State: APjAAAUaWvEZOftYuqTh5ETBrki5OWnCrhMTX14AAeYxBMVOQPhMaxZG
+        vhWZzRCdCi1JfVj8Y+iG1P0=
+X-Google-Smtp-Source: APXvYqyfNcRSjrWVsZSzB3NBDcnt7QuGn/RJ0+xa66W4NnRQyERt4aBYwvHv0KEK3s30PtEkXU6xuQ==
+X-Received: by 2002:a17:90a:fa12:: with SMTP id cm18mr113838295pjb.137.1564437611499;
+        Mon, 29 Jul 2019 15:00:11 -0700 (PDT)
+Received: from [192.168.1.188] (66.29.164.166.static.utbb.net. [66.29.164.166])
+        by smtp.gmail.com with ESMTPSA id v138sm71349403pfc.15.2019.07.29.15.00.09
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 29 Jul 2019 14:59:40 -0700 (PDT)
-Date:   Mon, 29 Jul 2019 14:59:38 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Mark Balantzyan <mbalant3@gmail.com>
-Cc:     wim@linux-watchdog.org, linux-watchdog@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] watchdog device drivers:pc87413_wdt: Rewriting of
- pc87413_wdt driver to utilize common watchdog interface
-Message-ID: <20190729215938.GA5712@roeck-us.net>
+        Mon, 29 Jul 2019 15:00:10 -0700 (PDT)
+Subject: Re: [PATCH v2] libata: zpodd: Fix small read overflow in
+ zpodd_get_mech_type()
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Jeffrin Jose T <jeffrin@rajagiritech.edu.in>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        tobin@kernel.org, Dmitry Vyukov <dvyukov@google.com>,
+        Alexander Potapenko <glider@google.com>,
+        Tejun Heo <tj@kernel.org>
+References: <201907291442.B9953EBED@keescook>
+ <3e515b31-0779-4f65-debf-49e462f9cd25@kernel.dk>
+ <CAKwvOdkRxJ6Vtm8CX1ZgDgzzAywSyx7Y-nNFn+tVPf35YQc2YQ@mail.gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <6c270cac-e946-bba8-03e7-633a7c9006e6@kernel.dk>
+Date:   Mon, 29 Jul 2019 16:00:08 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <CAKwvOdkRxJ6Vtm8CX1ZgDgzzAywSyx7Y-nNFn+tVPf35YQc2YQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 29, 2019 at 02:20:16PM -0700, Mark Balantzyan wrote:
-> There is a potential for the variable swc_base_addr in the call chain of the
-> driver initialization function (init) to be used before initialization. This
-> brought up the need for, by rewriting the driver to use the common watchdog
-> interface, ensuring to have all resources in place. This patch addresses this
-> need by rewriting into common watchdog interface utilization for the driver.
+On 7/29/19 3:58 PM, Nick Desaulniers wrote:
+> On Mon, Jul 29, 2019 at 2:55 PM Jens Axboe <axboe@kernel.dk> wrote:
+>>
+>> On 7/29/19 3:47 PM, Kees Cook wrote:
+>>> Jeffrin reported a KASAN issue:
+>>>
+>>>     BUG: KASAN: global-out-of-bounds in ata_exec_internal_sg+0x50f/0xc70
+>>>     Read of size 16 at addr ffffffff91f41f80 by task scsi_eh_1/149
+>>>     ...
+>>>     The buggy address belongs to the variable:
+>>>       cdb.48319+0x0/0x40
+>>>
+>>> Much like commit 18c9a99bce2a ("libata: zpodd: small read overflow in
+>>> eject_tray()"), this fixes a cdb[] buffer length, this time in
+>>> zpodd_get_mech_type():
+>>>
+>>> We read from the cdb[] buffer in ata_exec_internal_sg(). It has to be
+>>> ATAPI_CDB_LEN (16) bytes long, but this buffer is only 12 bytes.
+>>
+>> Applied, thanks.
 > 
-> Signed-off-by: Mark Balantzyan <mbalant3@gmail.com>
-> 
+> Dropped my reviewed by tag. :(
+> https://lkml.org/lkml/2019/7/22/865
 
-This patch shows up as corrupted if I try to apply it.
+I'll add it.
 
-> ---
->  drivers/media/pci/tw686x/Kconfig |  1 +
->  drivers/watchdog/pc87413_wdt.c   | 92 +++++++++++++++-----------------
->  2 files changed, 45 insertions(+), 48 deletions(-)
-> 
-> diff --git a/drivers/media/pci/tw686x/Kconfig
-> b/drivers/media/pci/tw686x/Kconfig
-> index da8bfee7..079d7464 100644
-> --- a/drivers/media/pci/tw686x/Kconfig
-> +++ b/drivers/media/pci/tw686x/Kconfig
-> @@ -5,6 +5,7 @@ config VIDEO_TW686X
->  	select VIDEOBUF2_DMA_CONTIG
->  	select VIDEOBUF2_DMA_SG
->  	select SND_PCM
-> +	select WATCHDOG_CORE
->  	help
->  	  Support for Intersil/Techwell TW686x-based frame grabber cards.
-> 
-> diff --git a/drivers/watchdog/pc87413_wdt.c b/drivers/watchdog/pc87413_wdt.c
-> index 06a892e3..4c330ee5 100644
-> --- a/drivers/watchdog/pc87413_wdt.c
-> +++ b/drivers/watchdog/pc87413_wdt.c
-> @@ -22,12 +22,10 @@
-> 
->  #include <linux/module.h>
->  #include <linux/types.h>
-> -#include <linux/miscdevice.h>
->  #include <linux/watchdog.h>
->  #include <linux/ioport.h>
->  #include <linux/delay.h>
->  #include <linux/notifier.h>
-> -#include <linux/fs.h>
->  #include <linux/reboot.h>
->  #include <linux/init.h>
->  #include <linux/spinlock.h>
-> @@ -65,7 +63,6 @@ static char expect_close;		/* is the close expected? */
-> 
->  static DEFINE_SPINLOCK(io_lock);	/* to guard us from io races */
-> 
-> -static bool nowayout = WATCHDOG_NOWAYOUT;
-> 
->  /* -- Low level function ----------------------------------------*/
-> 
-> @@ -216,9 +213,9 @@ static inline void pc87413_disable_sw_wd_trg(void)
-> 
->  /* -- Higher level functions ------------------------------------*/
-> 
-> -/* Enable the watchdog */
-> +/* Enable/start the watchdog */
-> 
-> -static void pc87413_enable(void)
-> +static void pc87413_start(void)
->  {
->  	spin_lock(&io_lock);
-> 
-> @@ -231,9 +228,9 @@ static void pc87413_enable(void)
->  	spin_unlock(&io_lock);
->  }
-> 
-> -/* Disable the watchdog */
-> +/* Disable/stop the watchdog */
-> 
-> -static void pc87413_disable(void)
-> +static void pc87413_stop(void)
->  {
->  	spin_lock(&io_lock);
+-- 
+Jens Axboe
 
-Locking is handled by the watchdog core. Local locking is no
-longer needed.
-
-> 
-> @@ -245,9 +242,9 @@ static void pc87413_disable(void)
->  	spin_unlock(&io_lock);
->  }
-> 
-> -/* Refresh the watchdog */
-> +/* Refresh/keepalive the watchdog */
-> 
-> -static void pc87413_refresh(void)
-> +static void pc87413_keepalive(struct watchdog_device *wdd)
->  {
->  	spin_lock(&io_lock);
-> 
-> @@ -260,6 +257,8 @@ static void pc87413_refresh(void)
->  	pc87413_enable_sw_wd_trg();
-> 
->  	spin_unlock(&io_lock);
-> +
-> +	return 0;
->  }
-> 
->  /* -- File operations -------------------------------------------*/
-> @@ -278,9 +277,6 @@ static int pc87413_open(struct inode *inode, struct file
-> *file)
-
-WHy is this function still there ?
-
->  	if (test_and_set_bit(0, &timer_enabled))
->  		return -EBUSY;
-> 
-> -	if (nowayout)
-> -		__module_get(THIS_MODULE);
-> -
->  	/* Reload and activate timer */
->  	pc87413_refresh();
-> 
-> @@ -331,7 +327,6 @@ static int pc87413_status(void)
-> 
->  /**
->   *	pc87413_write:
-> - *	@file: file handle to the watchdog
->   *	@data: data buffer to write
->   *	@len: length in bytes
->   *	@ppos: pointer to the position to write. No seeks allowed
-> @@ -345,26 +340,25 @@ static ssize_t pc87413_write(struct file *file, const
-> char __user *data,
->  {
-
-This function is no longer needed or used.
-
->  	/* See if we got the magic character 'V' and reload the timer */
->  	if (len) {
-> -		if (!nowayout) {
-> -			size_t i;
-> -
-> -			/* reset expect flag */
-> -			expect_close = 0;
-> -
-> -			/* scan to see whether or not we got the
-> -			   magic character */
-> -			for (i = 0; i != len; i++) {
-> -				char c;
-> -				if (get_user(c, data + i))
-> -					return -EFAULT;
-> -				if (c == 'V')
-> -					expect_close = 42;
-> -			}
-> +		size_t i;
-> +
-> +		/* reset expect flag */
-> +		expect_close = 0;
-> +
-> +		/* scan to see whether or not we got the
-> +		   magic character */
-> +		for (i = 0; i != len; i++) {
-> +			char c;
-> +			if (get_user(c, data + i))
-> +				return -EFAULT;
-> +			if (c == 'V')
-> +				expect_close = 42;
->  		}
-> +	}
-> 
->  		/* someone wrote to us, we should reload the timer */
-> -		pc87413_refresh();
-> -	}
-> +	pc87413_refresh();
-> +
->  	return len;
->  }
-> 
-> @@ -417,7 +411,7 @@ static long pc87413_ioctl(struct file *file, unsigned int
-> cmd,
-
-Another function that is no longer needed. And the above looks corrupted.
-
->  			retval = 0;
->  		}
->  		if (options & WDIOS_ENABLECARD) {
-> -			pc87413_enable();
-> +			pc87413_start();
->  			retval = 0;
->  		}
->  		return retval;
-> @@ -466,31 +460,32 @@ static int pc87413_notify_sys(struct notifier_block
-> *this,
-
-Drivers using the watchdog core should use the watchdog core's
-restart notifier.
-
->  {
->  	if (code == SYS_DOWN || code == SYS_HALT)
->  		/* Turn the card off */
-> -		pc87413_disable();
-> +		pc87413_stop();
->  	return NOTIFY_DONE;
->  }
-> 
->  /* -- Module's structures ---------------------------------------*/
-> 
-> -static const struct file_operations pc87413_fops = {
-> -	.owner		= THIS_MODULE,
-> -	.llseek		= no_llseek,
-> -	.write		= pc87413_write,
-> -	.unlocked_ioctl	= pc87413_ioctl,
-> -	.open		= pc87413_open,
-> -	.release	= pc87413_release,
-> -};
-> 
-> -static struct notifier_block pc87413_notifier = {
-> +static struct notifier_block pc87413wdt_notifier = {
->  	.notifier_call  = pc87413_notify_sys,
->  };
-> 
-> -static struct miscdevice pc87413_miscdev = {
-> -	.minor          = WATCHDOG_MINOR,
-> -	.name           = "watchdog",
-> -	.fops           = &pc87413_fops,
-> +static struct watchdog_ops pc87413wdt_ops = {
-> +       .owner = THIS_MODULE,
-> +       .start = pc87413wdt_start,
-> +       .stop = pc87413wdt_stop,
-> +       .ping = pc87413wdt_keepalive,
-> +       .set_timeout = pc87413wdt_set_heartbeat,
-> +};
-> +
-> +static struct watchdog_device pc87413wdt_wdd = {
-> +       	.info = &pc87413wdt_ident,
-> +       	.ops = &pc87413wdt_ops,
-> +	.status = WATCHDOG_NOWAYOUT_INIT_STATUS
->  };
-> 
-> +
->  /* -- Module init functions -------------------------------------*/
-> 
->  /**
-> @@ -515,7 +510,7 @@ static int __init pc87413_init(void)
->  	if (ret != 0)
->  		pr_err("cannot register reboot notifier (err=%d)\n", ret);
-> 
-> -	ret = misc_register(&pc87413_miscdev);
-> +	ret = watchdog_register_device(&pc87413wdt_wdd);
->  	if (ret != 0) {
->  		pr_err("cannot register miscdev on minor=%d (err=%d)\n",
->  		       WATCHDOG_MINOR, ret);
-> @@ -533,13 +528,14 @@ static int __init pc87413_init(void)
->  		goto misc_unreg;
->  	}
-> 
-> -	pc87413_enable();
-> +	pc87413_start();
-> 
-Hmm ... I don't think starting the watchdog in the probe function is a good
-idea. One reason to believe that no one is actually using it.
-
->  	release_region(io, 2);
-> +	pc87413_keepalive(&pc87413wdt_wdd);
->  	return 0;
-> 
->  misc_unreg:
-> -	misc_deregister(&pc87413_miscdev);
-> +	watchdog_unregister_device(&pc87413wdt_wdd)
->  reboot_unreg:
->  	unregister_reboot_notifier(&pc87413_notifier);
->  	release_region(io, 2);
-
-Are you sure you even compiled this file ? It still calls
-misc_deregister() in the exit function, but miscdevice.h is
-no longer included. And the now unnecessary but still present
-functions should at the very least trigger a build warning.
-
-Overall, I don't think you have this hardware. If you do, please provide
-logs showing that the new driver is working. Otherwise, I really think it
-would be better to leave it alone.
-
-Thanks,
-Guenter
