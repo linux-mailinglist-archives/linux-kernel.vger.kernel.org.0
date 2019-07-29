@@ -2,119 +2,219 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 250677876B
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 10:32:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E0BAA78778
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 10:33:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727620AbfG2IcQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 04:32:16 -0400
-Received: from foss.arm.com ([217.140.110.172]:39908 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726305AbfG2IcQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 04:32:16 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A9CDF337;
-        Mon, 29 Jul 2019 01:32:15 -0700 (PDT)
-Received: from [10.162.40.126] (p8cg001049571a15.blr.arm.com [10.162.40.126])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 990293F575;
-        Mon, 29 Jul 2019 01:32:11 -0700 (PDT)
-Subject: Re: [RFC] mm/pgtable/debug: Add test validating architecture page
- table helpers
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mark Brown <Mark.Brown@arm.com>,
-        Steven Price <Steven.Price@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Kees Cook <keescook@chromium.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Sri Krishna chowdary <schowdary@nvidia.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        linux-arm-kernel@lists.infradead.org, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1564037723-26676-1-git-send-email-anshuman.khandual@arm.com>
- <1564037723-26676-2-git-send-email-anshuman.khandual@arm.com>
- <20190725143920.GW363@bombadil.infradead.org>
- <c3bb0420-584c-de3b-2439-8702bc09595e@arm.com>
- <20190726195457.GI30641@bombadil.infradead.org>
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-Message-ID: <10ed1022-a5c0-c80c-c0c9-025bb2307666@arm.com>
-Date:   Mon, 29 Jul 2019 14:02:52 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1727732AbfG2IdJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 04:33:09 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:41026 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726305AbfG2IdJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 04:33:09 -0400
+Received: by mail-lf1-f68.google.com with SMTP id 62so36568667lfa.8
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 01:33:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=fzjgi5IYwtgWKCD94QQKl1WKdW6R14NVG7cIaq5hNd0=;
+        b=Yj2x/YP+GQx3u0ETLl95DFn76V+nUeZ0HgcyvoUS0J23BQZRtMVjzIjCk80uAnKs7Q
+         HQlRZ1Ixt54mk2Xl0CPAS4hhA/sUUWDDv5/rRB2v+KHQ4C83QqlXf3PwcGVgrK44gXGK
+         T8QwJf/xyMFHhs2/N13YRy+O5ZrAaWHzCrT+9uVBY8T0e9XoY4vKw0aMc3l5RNtlaUye
+         2VNkfpFLe1kIUERcSgFAVPZYdYW3WF1u+Y7yXdwTmDoI1JjojonOcWFQNJEu9zZ2L+Ms
+         iR7gq/NDAQVjh7NAv7l7QBoZvm7uLNemt8yUQrhf5sdM60rK76dfCnEyAtS40qTLkvPy
+         d9ag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=fzjgi5IYwtgWKCD94QQKl1WKdW6R14NVG7cIaq5hNd0=;
+        b=qFqFX15699i5pVKnmvmgp6xCheXTbEIccEl9xPnjqstv88w2yDNg3Ov/52XHsUbZGk
+         oMQD6c4Tj3CjOgr8joXF+IQ6XT8VEfKJi+RxMcdoKARh3USoL1JzTxLNaikXCN3Kt7Ng
+         Mib1VbA4Eqw83Muf1G4HTXJ9sEzfDxtE/7yfj5osmn71avUjdNsiCrqekPabTmpY90ck
+         bHBVuGWQywtfV7NEiSVOWpJ3HXXeq9s6j0v2wqbrvAbDT0s7P2ge0wclJhTFrQqevcX4
+         VzZsXfJ71p9sdVNq7VnFcsByxj3jsC+K4N8Y8lM919YIdCSO95anD7EkROXlX8KHnE3n
+         rI3g==
+X-Gm-Message-State: APjAAAXu6R9o9H/Qac5peR9b6BOxxUAAGGPFUBTe3HY0MB9XVuvYBbap
+        gPapBjODt/sL9nI93mr9XNhmwNpCL93Hg2+Lz5FHFw==
+X-Google-Smtp-Source: APXvYqxOB3hlBmp/ELmfdAvewRmPGBGlLy908aDcnO5gzCSlHvcgEUZGOZj5/xu4Z+SD47jako1Nt3Hob11dDINtGdM=
+X-Received: by 2002:a19:5e10:: with SMTP id s16mr49683043lfb.13.1564389186319;
+ Mon, 29 Jul 2019 01:33:06 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190726195457.GI30641@bombadil.infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190215024830.GA26477@jordon-HP-15-Notebook-PC>
+ <20190728180611.GA20589@mail-itl> <CAFqt6zaMDnpB-RuapQAyYAub1t7oSdHH_pTD=f5k-s327ZvqMA@mail.gmail.com>
+In-Reply-To: <CAFqt6zaMDnpB-RuapQAyYAub1t7oSdHH_pTD=f5k-s327ZvqMA@mail.gmail.com>
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+Date:   Mon, 29 Jul 2019 14:02:54 +0530
+Message-ID: <CAFqt6zY+07JBxAVfMqb+X78mXwFOj2VBh0nbR2tGnQOP9RrNkQ@mail.gmail.com>
+Subject: Re: [Xen-devel] [PATCH v4 8/9] xen/gntdev.c: Convert to use vm_map_pages()
+To:     =?UTF-8?Q?Marek_Marczykowski=2DG=C3=B3recki?= 
+        <marmarek@invisiblethingslab.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        robin.murphy@arm.com, xen-devel@lists.xenproject.org,
+        linux-kernel@vger.kernel.org, Linux-MM <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/27/2019 01:24 AM, Matthew Wilcox wrote:
-> On Fri, Jul 26, 2019 at 10:17:11AM +0530, Anshuman Khandual wrote:
->>> But 'page' isn't necessarily PMD-aligned.  I don't think we can rely on
->>> architectures doing the right thing if asked to make a PMD for a randomly
->>> aligned page.
->>>
->>> How about finding the physical address of something like kernel_init(),
->>
->> Physical address corresponding to the symbol in the kernel text segment ?
-> 
-> Yes.  We need the address of something that's definitely memory.
-> The stack might be in vmalloc space.  We can't allocate memory from the
-> allocator that's PUD-aligned.  This seems like a reasonable approximation
-> to something that might work.
+On Mon, Jul 29, 2019 at 1:35 PM Souptick Joarder <jrdr.linux@gmail.com> wro=
+te:
+>
+> On Sun, Jul 28, 2019 at 11:36 PM Marek Marczykowski-G=C3=B3recki
+> <marmarek@invisiblethingslab.com> wrote:
+> >
+> > On Fri, Feb 15, 2019 at 08:18:31AM +0530, Souptick Joarder wrote:
+> > > Convert to use vm_map_pages() to map range of kernel
+> > > memory to user vma.
+> > >
+> > > map->count is passed to vm_map_pages() and internal API
+> > > verify map->count against count ( count =3D vma_pages(vma))
+> > > for page array boundary overrun condition.
+> >
+> > This commit breaks gntdev driver. If vma->vm_pgoff > 0, vm_map_pages
+> > will:
+> >  - use map->pages starting at vma->vm_pgoff instead of 0
+>
+> The actual code ignores vma->vm_pgoff > 0 scenario and mapped
+> the entire map->pages[i]. Why the entire map->pages[i] needs to be mapped
+> if vma->vm_pgoff > 0 (in original code) ?
+>
+> are you referring to set vma->vm_pgoff =3D 0 irrespective of value passed
+> from user space ? If yes, using vm_map_pages_zero() is an alternate
+> option.
+>
+>
+> >  - verify map->count against vma_pages()+vma->vm_pgoff instead of just
+> >    vma_pages().
+>
+> In original code ->
+>
+> diff --git a/drivers/xen/gntdev.c b/drivers/xen/gntdev.c
+> index 559d4b7f807d..469dfbd6cf90 100644
+> --- a/drivers/xen/gntdev.c
+> +++ b/drivers/xen/gntdev.c
+> @@ -1084,7 +1084,7 @@ static int gntdev_mmap(struct file *flip, struct
+> vm_area_struct *vma)
+> int index =3D vma->vm_pgoff;
+> int count =3D vma_pages(vma);
+>
+> Count is user passed value.
+>
+> struct gntdev_grant_map *map;
+> - int i, err =3D -EINVAL;
+> + int err =3D -EINVAL;
+> if ((vma->vm_flags & VM_WRITE) && !(vma->vm_flags & VM_SHARED))
+> return -EINVAL;
+> @@ -1145,12 +1145,9 @@ static int gntdev_mmap(struct file *flip,
+> struct vm_area_struct *vma)
+> goto out_put_map;
+> if (!use_ptemod) {
+> - for (i =3D 0; i < count; i++) {
+> - err =3D vm_insert_page(vma, vma->vm_start + i*PAGE_SIZE,
+> - map->pages[i]);
+>
+> and when count > i , we end up with trying to map memory outside
+> boundary of map->pages[i], which was not correct.
 
-Okay sure. What is about vmalloc space being PUD aligned and how that is
-problematic here ? Could you please give some details. Just being curious.
-
-> 
->>> and using the corresponding pte/pmd/pud/p4d/pgd that encompasses that
->>
->> So I guess this will help us use pte/pmd/pud/p4d/pgd entries from a real and
->> present mapping rather then making them up for test purpose. Although we are
->> not creating real page tables here just wondering if this could some how
->> affect these real mapping in anyway from some accessors. The current proposal
->> stays clear from anything real - allocates, evaluates and releases.
-> 
-> I think that's a mistake.  As Russell said, the ARM p*d manipulation
-> functions expect to operate on tables, not on individual entries
-> constructed on the stack.
-
-Hmm. I assume that it will take care of dual 32 bit entry updates on arm
-platform through various helper functions as Russel had mentioned earlier.
-After we create page table with p?d_alloc() functions and pick an entry at
-each page table level.
-
-> 
-> So I think the right thing to do here is allocate an mm, then do the
-> pgd_alloc / p4d_alloc / pud_alloc / pmd_alloc / pte_alloc() steps giving
-> you real page tables that you can manipulate.
-> 
-> Then destroy them, of course.  And don't access through them.
-
-mm_alloc() seems like a comprehensive helper to allocate and initialize a
-mm_struct. But could we use mm_init() with 'current' in the driver context or we
-need to create a dummy task_struct for this purpose. Some initial tests show that
-p?d_alloc() and p?d_free() at each level with a fixed virtual address gives p?d_t
-entries required at various page table level to test upon.
-
-> 
->>>> +#ifdef CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD
->>>> +static void pud_basic_tests(void)
->>>
->>> Is this the right ifdef?
->>
->> IIUC THP at PUD is where the pud_t entries are directly operated upon and the
->> corresponding accessors are present only when HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD
->> is enabled. Am I missing something here ?
-> 
-> Maybe I am.  I thought we could end up operating on PUDs for kernel mappings,
-> even without transparent hugepages turned on.
-
-In generic MM ? IIUC except ioremap mapping all other PUD handling for kernel virtual
-range is platform specific. All the helpers used in the function pud_basic_tests() are
-part of THP and used in mm/huge_memory.c
+typo.
+s/count > i / count > map->count
+>
+> - if (err)
+> - goto out_put_map;
+> - }
+> + err =3D vm_map_pages(vma, map->pages, map->count);
+> + if (err)
+> + goto out_put_map;
+>
+> With this commit, inside __vm_map_pages(), we have addressed this scenari=
+o.
+>
+> +static int __vm_map_pages(struct vm_area_struct *vma, struct page **page=
+s,
+> + unsigned long num, unsigned long offset)
+> +{
+> + unsigned long count =3D vma_pages(vma);
+> + unsigned long uaddr =3D vma->vm_start;
+> + int ret, i;
+> +
+> + /* Fail if the user requested offset is beyond the end of the object */
+> + if (offset > num)
+> + return -ENXIO;
+> +
+> + /* Fail if the user requested size exceeds available object size */
+> + if (count > num - offset)
+> + return -ENXIO;
+>
+> By checking count > num -offset. (considering vma->vm_pgoff !=3D 0 as wel=
+l).
+> So we will never cross the boundary of map->pages[i].
+>
+>
+> >
+> > In practice, this breaks using a single gntdev FD for mapping multiple
+> > grants.
+>
+> How ?
+>
+> >
+> > It looks like vm_map_pages() is not a good fit for this code and IMO it
+> > should be reverted.
+>
+> Did you hit any issue around this code in real time ?
+>
+>
+> >
+> > > Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+> > > Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+> > > ---
+> > >  drivers/xen/gntdev.c | 11 ++++-------
+> > >  1 file changed, 4 insertions(+), 7 deletions(-)
+> > >
+> > > diff --git a/drivers/xen/gntdev.c b/drivers/xen/gntdev.c
+> > > index 5efc5ee..5d64262 100644
+> > > --- a/drivers/xen/gntdev.c
+> > > +++ b/drivers/xen/gntdev.c
+> > > @@ -1084,7 +1084,7 @@ static int gntdev_mmap(struct file *flip, struc=
+t vm_area_struct *vma)
+> > >       int index =3D vma->vm_pgoff;
+> > >       int count =3D vma_pages(vma);
+> > >       struct gntdev_grant_map *map;
+> > > -     int i, err =3D -EINVAL;
+> > > +     int err =3D -EINVAL;
+> > >
+> > >       if ((vma->vm_flags & VM_WRITE) && !(vma->vm_flags & VM_SHARED))
+> > >               return -EINVAL;
+> > > @@ -1145,12 +1145,9 @@ static int gntdev_mmap(struct file *flip, stru=
+ct vm_area_struct *vma)
+> > >               goto out_put_map;
+> > >
+> > >       if (!use_ptemod) {
+> > > -             for (i =3D 0; i < count; i++) {
+> > > -                     err =3D vm_insert_page(vma, vma->vm_start + i*P=
+AGE_SIZE,
+> > > -                             map->pages[i]);
+> > > -                     if (err)
+> > > -                             goto out_put_map;
+> > > -             }
+> > > +             err =3D vm_map_pages(vma, map->pages, map->count);
+> > > +             if (err)
+> > > +                     goto out_put_map;
+> > >       } else {
+> > >  #ifdef CONFIG_X86
+> > >               /*
+> >
+> > --
+> > Best Regards,
+> > Marek Marczykowski-G=C3=B3recki
+> > Invisible Things Lab
+> > A: Because it messes up the order in which people normally read text.
+> > Q: Why is top-posting such a bad thing?
