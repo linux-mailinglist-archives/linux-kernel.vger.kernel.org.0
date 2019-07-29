@@ -2,35 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 849DE797BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:02:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CFB92797A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:02:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390143AbfG2Tse (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 15:48:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38746 "EHLO mail.kernel.org"
+        id S2390562AbfG2Tti (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 15:49:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40138 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390094AbfG2Tsc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:48:32 -0400
+        id S2389987AbfG2Tte (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:49:34 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9923E205F4;
-        Mon, 29 Jul 2019 19:48:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 372FE21655;
+        Mon, 29 Jul 2019 19:49:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564429711;
-        bh=dY4+MCoX2L9K8Jk3aHUD3La1eiee6KJrz9EY35TJmxw=;
+        s=default; t=1564429773;
+        bh=BB3i0a7WNVHRMHYQq60v4UZ2dAiAnHvjY8Jd6CqZtOo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GJxluEHPg3whow8CBaLV4zMZSuE/GQuQP/UnmCAuB8pj7xrqQQragvQt8CfxFvC3N
-         7SLh9hxLNeyZpyaa/u9fbira06CsZS5uoFqQqqXuHqJ+GZF0mVYyIHWgj8lGxUu7j9
-         B7+A8IcDMMrUrIB6c/XKZkQmmmR4q8/Psx8w8wIs=
+        b=2Elawo3wlr0GnbOdajg/zAc68UPBksIH262DDzYnpu2aQbHjwxhbuVMCVu6fxuefP
+         k3qMnULx08OSYseDh5eA5Q16CLmYzUkmwcGtRVV6BS4U3THXKDXpgWLt8DDjq5XeKD
+         8xJsHWIKYnVdWpnv4f+I2f9YM+nrJHQGbCl9uZqk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Serge Semin <fancer.lancer@gmail.com>,
+        stable@vger.kernel.org, Jim Mattson <jmattson@google.com>,
+        Liran Alon <liran.alon@oracle.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 069/215] tty: serial_core: Set port active bit in uart_port_activate
-Date:   Mon, 29 Jul 2019 21:21:05 +0200
-Message-Id: <20190729190752.259653310@linuxfoundation.org>
+Subject: [PATCH 5.2 074/215] KVM: nVMX: Intercept VMWRITEs to GUEST_{CS,SS}_AR_BYTES
+Date:   Mon, 29 Jul 2019 21:21:10 +0200
+Message-Id: <20190729190752.935522010@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190729190739.971253303@linuxfoundation.org>
 References: <20190729190739.971253303@linuxfoundation.org>
@@ -43,69 +46,104 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 13b18d35909707571af9539f7731389fbf0feb31 ]
+[ Upstream commit b643780562af5378ef7fe731c65b8f93e49c59c6 ]
 
-A bug was introduced by commit b3b576461864 ("tty: serial_core: convert
-uart_open to use tty_port_open"). It caused a constant warning printed
-into the system log regarding the tty and port counter mismatch:
+VMMs frequently read the guest's CS and SS AR bytes to detect 64-bit
+mode and CPL respectively, but effectively never write said fields once
+the VM is initialized.  Intercepting VMWRITEs for the two fields saves
+~55 cycles in copy_shadow_to_vmcs12().
 
-[   21.644197] ttyS ttySx: tty_port_close_start: tty->count = 1 port count = 2
+Because some Intel CPUs, e.g. Haswell, drop the reserved bits of the
+guest access rights fields on VMWRITE, exposing the fields to L1 for
+VMREAD but not VMWRITE leads to inconsistent behavior between L1 and L2.
+On hardware that drops the bits, L1 will see the stripped down value due
+to reading the value from hardware, while L2 will see the full original
+value as stored by KVM.  To avoid such an inconsistency, emulate the
+behavior on all CPUS, but only for intercepted VMWRITEs so as to avoid
+introducing pointless latency into copy_shadow_to_vmcs12(), e.g. if the
+emulation were added to vmcs12_write_any().
 
-in case if session hangup was detected so the warning is printed starting
-from the second open-close iteration.
+Since the AR_BYTES emulation is done only for intercepted VMWRITE, if a
+future patch (re)exposed AR_BYTES for both VMWRITE and VMREAD, then KVM
+would end up with incosistent behavior on pre-Haswell hardware, e.g. KVM
+would drop the reserved bits on intercepted VMWRITE, but direct VMWRITE
+to the shadow VMCS would not drop the bits.  Add a WARN in the shadow
+field initialization to detect any attempt to expose an AR_BYTES field
+without updating vmcs12_write_any().
 
-Particularly the problem was discovered in situation when there is a
-serial tty device without hardware back-end being setup. It is considered
-by the tty-serial subsystems as a hardware problem with session hang up.
-In this case uart_startup() will return a positive value with TTY_IO_ERROR
-flag set in corresponding tty_struct instance. The same value will get
-passed to be returned from the activate() callback and then being returned
-from tty_port_open(). But since in this case tty_port_block_til_ready()
-isn't called the TTY_PORT_ACTIVE flag isn't set (while the method had been
-called before tty_port_open conversion was introduced and the rest of the
-subsystem code expected the bit being set in this case), which prevents the
-uart_hangup() method to perform any cleanups including the tty port
-counter setting to zero. So the next attempt to open/close the tty device
-will discover the counters mismatch.
+Note, emulation of the AR_BYTES reserved bit behavior is based on a
+patch[1] from Jim Mattson that applied the emulation to all writes to
+vmcs12 so that live migration across different generations of hardware
+would not introduce divergent behavior.  But given that live migration
+of nested state has already been enabled, that ship has sailed (not to
+mention that no sane VMM will be affected by this behavior).
 
-In order to fix the problem we need to manually set the TTY_PORT_ACTIVE
-flag in case if uart_startup() returned a positive value. In this case
-the hang up procedure will perform a full set of cleanup actions including
-the port ref-counter resetting.
+[1] https://patchwork.kernel.org/patch/10483321/
 
-Fixes: b3b576461864 "tty: serial_core: convert uart_open to use tty_port_open"
-Signed-off-by: Serge Semin <fancer.lancer@gmail.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jim Mattson <jmattson@google.com>
+Cc: Liran Alon <liran.alon@oracle.com>
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/serial/serial_core.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ arch/x86/kvm/vmx/nested.c             | 15 +++++++++++++++
+ arch/x86/kvm/vmx/vmcs_shadow_fields.h |  4 ++--
+ 2 files changed, 17 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/tty/serial/serial_core.c b/drivers/tty/serial/serial_core.c
-index 83f4dd0bfd74..4223cb496764 100644
---- a/drivers/tty/serial/serial_core.c
-+++ b/drivers/tty/serial/serial_core.c
-@@ -1777,6 +1777,7 @@ static int uart_port_activate(struct tty_port *port, struct tty_struct *tty)
- {
- 	struct uart_state *state = container_of(port, struct uart_state, port);
- 	struct uart_port *uport;
-+	int ret;
+diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
+index 543d7d82479b..ac98b1328124 100644
+--- a/arch/x86/kvm/vmx/nested.c
++++ b/arch/x86/kvm/vmx/nested.c
+@@ -91,6 +91,10 @@ static void init_vmcs_shadow_fields(void)
+ 			pr_err("Missing field from shadow_read_write_field %x\n",
+ 			       field + 1);
  
- 	uport = uart_port_check(state);
- 	if (!uport || uport->flags & UPF_DEAD)
-@@ -1787,7 +1788,11 @@ static int uart_port_activate(struct tty_port *port, struct tty_struct *tty)
- 	/*
- 	 * Start up the serial port.
- 	 */
--	return uart_startup(tty, state, 0);
-+	ret = uart_startup(tty, state, 0);
-+	if (ret > 0)
-+		tty_port_set_active(port, 1);
++		WARN_ONCE(field >= GUEST_ES_AR_BYTES &&
++			  field <= GUEST_TR_AR_BYTES,
++			  "Update vmcs12_write_any() to expose AR_BYTES RW");
 +
-+	return ret;
- }
+ 		/*
+ 		 * PML and the preemption timer can be emulated, but the
+ 		 * processor cannot vmwrite to fields that don't exist
+@@ -4500,6 +4504,17 @@ static int handle_vmwrite(struct kvm_vcpu *vcpu)
+ 		vmcs12 = get_shadow_vmcs12(vcpu);
+ 	}
  
- static const char *uart_type(struct uart_port *port)
++	/*
++	 * Some Intel CPUs intentionally drop the reserved bits of the AR byte
++	 * fields on VMWRITE.  Emulate this behavior to ensure consistent KVM
++	 * behavior regardless of the underlying hardware, e.g. if an AR_BYTE
++	 * field is intercepted for VMWRITE but not VMREAD (in L1), then VMREAD
++	 * from L1 will return a different value than VMREAD from L2 (L1 sees
++	 * the stripped down value, L2 sees the full value as stored by KVM).
++	 */
++	if (field >= GUEST_ES_AR_BYTES && field <= GUEST_TR_AR_BYTES)
++		field_value &= 0x1f0ff;
++
+ 	if (vmcs12_write_any(vmcs12, field, field_value) < 0)
+ 		return nested_vmx_failValid(vcpu,
+ 			VMXERR_UNSUPPORTED_VMCS_COMPONENT);
+diff --git a/arch/x86/kvm/vmx/vmcs_shadow_fields.h b/arch/x86/kvm/vmx/vmcs_shadow_fields.h
+index 132432f375c2..97dd5295be31 100644
+--- a/arch/x86/kvm/vmx/vmcs_shadow_fields.h
++++ b/arch/x86/kvm/vmx/vmcs_shadow_fields.h
+@@ -40,14 +40,14 @@ SHADOW_FIELD_RO(VM_EXIT_INSTRUCTION_LEN)
+ SHADOW_FIELD_RO(IDT_VECTORING_INFO_FIELD)
+ SHADOW_FIELD_RO(IDT_VECTORING_ERROR_CODE)
+ SHADOW_FIELD_RO(VM_EXIT_INTR_ERROR_CODE)
++SHADOW_FIELD_RO(GUEST_CS_AR_BYTES)
++SHADOW_FIELD_RO(GUEST_SS_AR_BYTES)
+ SHADOW_FIELD_RW(CPU_BASED_VM_EXEC_CONTROL)
+ SHADOW_FIELD_RW(EXCEPTION_BITMAP)
+ SHADOW_FIELD_RW(VM_ENTRY_EXCEPTION_ERROR_CODE)
+ SHADOW_FIELD_RW(VM_ENTRY_INTR_INFO_FIELD)
+ SHADOW_FIELD_RW(VM_ENTRY_INSTRUCTION_LEN)
+ SHADOW_FIELD_RW(TPR_THRESHOLD)
+-SHADOW_FIELD_RW(GUEST_CS_AR_BYTES)
+-SHADOW_FIELD_RW(GUEST_SS_AR_BYTES)
+ SHADOW_FIELD_RW(GUEST_INTERRUPTIBILITY_INFO)
+ SHADOW_FIELD_RW(VMX_PREEMPTION_TIMER_VALUE)
+ 
 -- 
 2.20.1
 
