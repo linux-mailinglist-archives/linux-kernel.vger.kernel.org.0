@@ -2,253 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4DFB379B0F
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 23:29:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0474179B1C
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 23:33:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388480AbfG2V3p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 17:29:45 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:54137 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387905AbfG2V3p (ORCPT
+        id S1730003AbfG2VdM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 17:33:12 -0400
+Received: from gateway20.websitewelcome.com ([192.185.59.4]:12775 "EHLO
+        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728894AbfG2VdL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 17:29:45 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6TLTQwc2940623
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Mon, 29 Jul 2019 14:29:27 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6TLTQwc2940623
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019071901; t=1564435767;
-        bh=o3MBluRnNgMlgnWkAQGCskmFywAsnd/PHSQzzPvYUjI=;
-        h=Date:From:Cc:Reply-To:To:Subject:From;
-        b=n/Yd1qw+PPQ899A5FIodBBP6Lg22iyffsQOCFhvhqnliIgiQIaUAuq59/ZnveA9DO
-         frdCbYQo2TlFlMaFwAGQbLtJHn8fvtoWKWV8GmcIqfwSpLeY15ivcQ65bE2y7SIYnh
-         BzKyOrwDwoBmBPxrtozFffZopsja/3TXUGYz6v6f+6V+UNQqq0tRyn3F/koxZQ22Bm
-         9bV4w9gNqF3CBWK2dg0HZakl+UYUGCKGg6/3xRWo0XvXOE6reubsLh1gZmD/x3Qvy6
-         Cql8/YIrggKXt2xEopk+S4oqjMyxpLPkReZqF9m5aAXFuqgRWVJ8lCRbgmIHXVuQKe
-         YeS4CPy22JcUQ==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6TLTQKq2940620;
-        Mon, 29 Jul 2019 14:29:26 -0700
-Date:   Mon, 29 Jul 2019 14:29:26 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-py1gcmt6rboehlwg6zvagfg2@git.kernel.org>
-Cc:     hpa@zytor.com, jolsa@kernel.org, pbonzini@redhat.com,
-        lclaudio@redhat.com, namhyung@kernel.org, ehankland@google.com,
-        brendan.d.gregg@gmail.com, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, andre.przywara@arm.com,
-        sean.j.christopherson@intel.com, adrian.hunter@intel.com,
-        marc.zyngier@arm.com, mingo@kernel.org, acme@redhat.com
-Reply-To: lclaudio@redhat.com, pbonzini@redhat.com, jolsa@kernel.org,
-          hpa@zytor.com, acme@redhat.com, mingo@kernel.org,
-          marc.zyngier@arm.com, adrian.hunter@intel.com,
-          andre.przywara@arm.com, sean.j.christopherson@intel.com,
-          tglx@linutronix.de, brendan.d.gregg@gmail.com,
-          linux-kernel@vger.kernel.org, namhyung@kernel.org,
-          ehankland@google.com
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] tools headers UAPI: Update tools's copy of kvm.h
- headers
-Git-Commit-ID: e0d99c4d24fd8861da724b88ebd18a9fae8a2260
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Mon, 29 Jul 2019 17:33:11 -0400
+X-Greylist: delayed 1336 seconds by postgrey-1.27 at vger.kernel.org; Mon, 29 Jul 2019 17:33:11 EDT
+Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
+        by gateway20.websitewelcome.com (Postfix) with ESMTP id 8DDC6400D1C60
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 15:07:26 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id sCv1hhE6i4FKpsCv1hr2JK; Mon, 29 Jul 2019 16:10:55 -0500
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        MIME-Version:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=Vyp07Q2BMZxkBU4I91lGXX/CgC/9r6rOUx013x0Y1/g=; b=dc0L4KP/HtmIe4hcEzHC+YuT1A
+        cUbxGgV3pXJAvpHt4MZ9EvTS3AtAF3Fw9DoZ7DNyikCjesw7pthWqml/8BWGAOSKWnDBSDkAK205g
+        6CU1I/oXWNav0CYtfi5RvFV2mJcLRK35CpwESSwraUhf46MFi6axNphdI1S0hu5SU5r/Inv5VLWGR
+        t+fy+IGmvMZCeKdKqkOOpwQewQJPCh4D8j8uKSL0NZsrwfWfznDp+wW+YsAhcAmvxd4gwH9JsTWk/
+        4BW2Ajk622cRYA3iKfocNTRmi6OMVfNis9/OIKya4DTF2ZbF/h5iPPuj9jt/OCh2MRaVGqsHQsI04
+        I5DWICaA==;
+Received: from [187.192.11.120] (port=60400 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1hsCv0-001Tpb-2B; Mon, 29 Jul 2019 16:10:54 -0500
+Date:   Mon, 29 Jul 2019 16:10:53 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: [PATCH] ataflop: Mark expected switch fall-through
+Message-ID: <20190729211053.GA6735@embeddedor>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-X-Spam-Status: No, score=1.9 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        FREEMAIL_FORGED_REPLYTO autolearn=no autolearn_force=no version=3.4.2
-X-Spam-Level: *
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 187.192.11.120
+X-Source-L: No
+X-Exim-ID: 1hsCv0-001Tpb-2B
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [187.192.11.120]:60400
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 8
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  e0d99c4d24fd8861da724b88ebd18a9fae8a2260
-Gitweb:     https://git.kernel.org/tip/e0d99c4d24fd8861da724b88ebd18a9fae8a2260
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Fri, 26 Jul 2019 12:43:23 -0300
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Fri, 26 Jul 2019 12:43:23 -0300
+Mark switch cases where we are expecting to fall through.
 
-tools headers UAPI: Update tools's copy of kvm.h headers
+This patch fixes the following warning (Building: m68k):
 
-Picking the changes from:
+drivers/block/ataflop.c: In function ‘fd_locked_ioctl’:
+drivers/block/ataflop.c:1728:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
+   set_capacity(floppy->disk, MAX_DISK_SIZE * 2);
+   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/block/ataflop.c:1729:2: note: here
+  case FDFMTEND:
+  ^~~~
 
-  66bb8a065f5a ("KVM: x86: PMU Event Filter")
-  f087a02941fe ("KVM: nVMX: Stash L1's CR3 in vmcs01.GUEST_CR3 on nested entry w/o EPT")
-  99adb567632b ("KVM: arm/arm64: Add save/restore support for firmware workaround state")
-
-Silencing this perf build warning:
-
-  Warning: Kernel ABI header at 'tools/arch/arm/include/uapi/asm/kvm.h' differs from latest version at 'arch/arm/include/uapi/asm/kvm.h'
-  diff -u tools/arch/arm/include/uapi/asm/kvm.h arch/arm/include/uapi/asm/kvm.h
-  Warning: Kernel ABI header at 'tools/arch/arm64/include/uapi/asm/kvm.h' differs from latest version at 'arch/arm64/include/uapi/asm/kvm.h'
-  diff -u tools/arch/arm64/include/uapi/asm/kvm.h arch/arm64/include/uapi/asm/kvm.h
-  Warning: Kernel ABI header at 'tools/arch/x86/include/uapi/asm/vmx.h' differs from latest version at 'arch/x86/include/uapi/asm/vmx.h'
-  diff -u tools/arch/x86/include/uapi/asm/vmx.h arch/x86/include/uapi/asm/vmx.h
-  Warning: Kernel ABI header at 'tools/arch/x86/include/uapi/asm/kvm.h' differs from latest version at 'arch/x86/include/uapi/asm/kvm.h'
-  diff -u tools/arch/x86/include/uapi/asm/kvm.h arch/x86/include/uapi/asm/kvm.h
-  Warning: Kernel ABI header at 'tools/include/uapi/linux/kvm.h' differs from latest version at 'include/uapi/linux/kvm.h'
-  diff -u tools/include/uapi/linux/kvm.h include/uapi/linux/kvm.h
-
-Now 'perf trace' and other code that might use the tools/perf/trace/beauty autogenerated
-tables will be able to translate this new ioctl code into a string:
-
-  $ tools/perf/trace/beauty/kvm_ioctl.sh > before
-  $
-  $ cp include/uapi/linux/kvm.h tools/include/uapi/linux/kvm.h
-  $ tools/perf/trace/beauty/kvm_ioctl.sh > after
-  $ diff -u before after
-  --- before 2019-07-26 12:32:47.959220236 -0300
-  +++ after 2019-07-26 12:33:05.766464871 -0300
-  @@ -79,6 +79,7 @@
-        [0xac] = "SET_ONE_REG",
-        [0xad] = "KVMCLOCK_CTRL",
-        [0xb0] = "GET_REG_LIST",
-  +     [0xb2] = "SET_PMU_EVENT_FILTER",
-        [0xb7] = "SMI",
-        [0xba] = "MEMORY_ENCRYPT_OP",
-        [0xbb] = "MEMORY_ENCRYPT_REG_REGION",
-  $
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Andre Przywara <andre.przywara@arm.com>
-Cc: Brendan Gregg <brendan.d.gregg@gmail.com>
-Cc: Eric Hankland <ehankland@google.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Luis Cláudio Gonçalves <lclaudio@redhat.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Sean Christopherson <sean.j.christopherson@intel.com>
-Link: https://lkml.kernel.org/n/tip-py1gcmt6rboehlwg6zvagfg2@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- tools/arch/arm/include/uapi/asm/kvm.h   | 12 ++++++++++++
- tools/arch/arm64/include/uapi/asm/kvm.h | 10 ++++++++++
- tools/arch/x86/include/uapi/asm/kvm.h   | 22 ++++++++++++++++++----
- tools/arch/x86/include/uapi/asm/vmx.h   |  1 -
- tools/include/uapi/linux/kvm.h          |  3 +++
- 5 files changed, 43 insertions(+), 5 deletions(-)
+ drivers/block/ataflop.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/tools/arch/arm/include/uapi/asm/kvm.h b/tools/arch/arm/include/uapi/asm/kvm.h
-index 4602464ebdfb..a4217c1a5d01 100644
---- a/tools/arch/arm/include/uapi/asm/kvm.h
-+++ b/tools/arch/arm/include/uapi/asm/kvm.h
-@@ -214,6 +214,18 @@ struct kvm_vcpu_events {
- #define KVM_REG_ARM_FW_REG(r)		(KVM_REG_ARM | KVM_REG_SIZE_U64 | \
- 					 KVM_REG_ARM_FW | ((r) & 0xffff))
- #define KVM_REG_ARM_PSCI_VERSION	KVM_REG_ARM_FW_REG(0)
-+#define KVM_REG_ARM_SMCCC_ARCH_WORKAROUND_1	KVM_REG_ARM_FW_REG(1)
-+	/* Higher values mean better protection. */
-+#define KVM_REG_ARM_SMCCC_ARCH_WORKAROUND_1_NOT_AVAIL		0
-+#define KVM_REG_ARM_SMCCC_ARCH_WORKAROUND_1_AVAIL		1
-+#define KVM_REG_ARM_SMCCC_ARCH_WORKAROUND_1_NOT_REQUIRED	2
-+#define KVM_REG_ARM_SMCCC_ARCH_WORKAROUND_2	KVM_REG_ARM_FW_REG(2)
-+	/* Higher values mean better protection. */
-+#define KVM_REG_ARM_SMCCC_ARCH_WORKAROUND_2_NOT_AVAIL		0
-+#define KVM_REG_ARM_SMCCC_ARCH_WORKAROUND_2_UNKNOWN		1
-+#define KVM_REG_ARM_SMCCC_ARCH_WORKAROUND_2_AVAIL		2
-+#define KVM_REG_ARM_SMCCC_ARCH_WORKAROUND_2_NOT_REQUIRED	3
-+#define KVM_REG_ARM_SMCCC_ARCH_WORKAROUND_2_ENABLED	(1U << 4)
- 
- /* Device Control API: ARM VGIC */
- #define KVM_DEV_ARM_VGIC_GRP_ADDR	0
-diff --git a/tools/arch/arm64/include/uapi/asm/kvm.h b/tools/arch/arm64/include/uapi/asm/kvm.h
-index d819a3e8b552..9a507716ae2f 100644
---- a/tools/arch/arm64/include/uapi/asm/kvm.h
-+++ b/tools/arch/arm64/include/uapi/asm/kvm.h
-@@ -229,6 +229,16 @@ struct kvm_vcpu_events {
- #define KVM_REG_ARM_FW_REG(r)		(KVM_REG_ARM64 | KVM_REG_SIZE_U64 | \
- 					 KVM_REG_ARM_FW | ((r) & 0xffff))
- #define KVM_REG_ARM_PSCI_VERSION	KVM_REG_ARM_FW_REG(0)
-+#define KVM_REG_ARM_SMCCC_ARCH_WORKAROUND_1	KVM_REG_ARM_FW_REG(1)
-+#define KVM_REG_ARM_SMCCC_ARCH_WORKAROUND_1_NOT_AVAIL		0
-+#define KVM_REG_ARM_SMCCC_ARCH_WORKAROUND_1_AVAIL		1
-+#define KVM_REG_ARM_SMCCC_ARCH_WORKAROUND_1_NOT_REQUIRED	2
-+#define KVM_REG_ARM_SMCCC_ARCH_WORKAROUND_2	KVM_REG_ARM_FW_REG(2)
-+#define KVM_REG_ARM_SMCCC_ARCH_WORKAROUND_2_NOT_AVAIL		0
-+#define KVM_REG_ARM_SMCCC_ARCH_WORKAROUND_2_UNKNOWN		1
-+#define KVM_REG_ARM_SMCCC_ARCH_WORKAROUND_2_AVAIL		2
-+#define KVM_REG_ARM_SMCCC_ARCH_WORKAROUND_2_NOT_REQUIRED	3
-+#define KVM_REG_ARM_SMCCC_ARCH_WORKAROUND_2_ENABLED     	(1U << 4)
- 
- /* SVE registers */
- #define KVM_REG_ARM64_SVE		(0x15 << KVM_REG_ARM_COPROC_SHIFT)
-diff --git a/tools/arch/x86/include/uapi/asm/kvm.h b/tools/arch/x86/include/uapi/asm/kvm.h
-index d6ab5b4d15e5..503d3f42da16 100644
---- a/tools/arch/x86/include/uapi/asm/kvm.h
-+++ b/tools/arch/x86/include/uapi/asm/kvm.h
-@@ -378,10 +378,11 @@ struct kvm_sync_regs {
- 	struct kvm_vcpu_events events;
- };
- 
--#define KVM_X86_QUIRK_LINT0_REENABLED	(1 << 0)
--#define KVM_X86_QUIRK_CD_NW_CLEARED	(1 << 1)
--#define KVM_X86_QUIRK_LAPIC_MMIO_HOLE	(1 << 2)
--#define KVM_X86_QUIRK_OUT_7E_INC_RIP	(1 << 3)
-+#define KVM_X86_QUIRK_LINT0_REENABLED	   (1 << 0)
-+#define KVM_X86_QUIRK_CD_NW_CLEARED	   (1 << 1)
-+#define KVM_X86_QUIRK_LAPIC_MMIO_HOLE	   (1 << 2)
-+#define KVM_X86_QUIRK_OUT_7E_INC_RIP	   (1 << 3)
-+#define KVM_X86_QUIRK_MISC_ENABLE_NO_MWAIT (1 << 4)
- 
- #define KVM_STATE_NESTED_FORMAT_VMX	0
- #define KVM_STATE_NESTED_FORMAT_SVM	1	/* unused */
-@@ -432,4 +433,17 @@ struct kvm_nested_state {
- 	} data;
- };
- 
-+/* for KVM_CAP_PMU_EVENT_FILTER */
-+struct kvm_pmu_event_filter {
-+	__u32 action;
-+	__u32 nevents;
-+	__u32 fixed_counter_bitmap;
-+	__u32 flags;
-+	__u32 pad[4];
-+	__u64 events[0];
-+};
-+
-+#define KVM_PMU_EVENT_ALLOW 0
-+#define KVM_PMU_EVENT_DENY 1
-+
- #endif /* _ASM_X86_KVM_H */
-diff --git a/tools/arch/x86/include/uapi/asm/vmx.h b/tools/arch/x86/include/uapi/asm/vmx.h
-index d213ec5c3766..f0b0c90dd398 100644
---- a/tools/arch/x86/include/uapi/asm/vmx.h
-+++ b/tools/arch/x86/include/uapi/asm/vmx.h
-@@ -146,7 +146,6 @@
- 
- #define VMX_ABORT_SAVE_GUEST_MSR_FAIL        1
- #define VMX_ABORT_LOAD_HOST_PDPTE_FAIL       2
--#define VMX_ABORT_VMCS_CORRUPTED             3
- #define VMX_ABORT_LOAD_HOST_MSR_FAIL         4
- 
- #endif /* _UAPIVMX_H */
-diff --git a/tools/include/uapi/linux/kvm.h b/tools/include/uapi/linux/kvm.h
-index c2152f3dd02d..a7c19540ce21 100644
---- a/tools/include/uapi/linux/kvm.h
-+++ b/tools/include/uapi/linux/kvm.h
-@@ -995,6 +995,7 @@ struct kvm_ppc_resize_hpt {
- #define KVM_CAP_ARM_SVE 170
- #define KVM_CAP_ARM_PTRAUTH_ADDRESS 171
- #define KVM_CAP_ARM_PTRAUTH_GENERIC 172
-+#define KVM_CAP_PMU_EVENT_FILTER 173
- 
- #ifdef KVM_CAP_IRQ_ROUTING
- 
-@@ -1329,6 +1330,8 @@ struct kvm_s390_ucas_mapping {
- #define KVM_PPC_GET_RMMU_INFO	  _IOW(KVMIO,  0xb0, struct kvm_ppc_rmmu_info)
- /* Available with KVM_CAP_PPC_GET_CPU_CHAR */
- #define KVM_PPC_GET_CPU_CHAR	  _IOR(KVMIO,  0xb1, struct kvm_ppc_cpu_char)
-+/* Available with KVM_CAP_PMU_EVENT_FILTER */
-+#define KVM_SET_PMU_EVENT_FILTER  _IOW(KVMIO,  0xb2, struct kvm_pmu_event_filter)
- 
- /* ioctl for vm fd */
- #define KVM_CREATE_DEVICE	  _IOWR(KVMIO,  0xe0, struct kvm_create_device)
+diff --git a/drivers/block/ataflop.c b/drivers/block/ataflop.c
+index 85f20e371f2f..bd7d3bb8b890 100644
+--- a/drivers/block/ataflop.c
++++ b/drivers/block/ataflop.c
+@@ -1726,6 +1726,7 @@ static int fd_locked_ioctl(struct block_device *bdev, fmode_t mode,
+ 		/* MSch: invalidate default_params */
+ 		default_params[drive].blocks  = 0;
+ 		set_capacity(floppy->disk, MAX_DISK_SIZE * 2);
++		/* Fall through */
+ 	case FDFMTEND:
+ 	case FDFLUSH:
+ 		/* invalidate the buffer track to force a reread */
+-- 
+2.22.0
+
