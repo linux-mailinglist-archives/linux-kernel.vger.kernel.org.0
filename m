@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 632D77982F
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:06:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 19CD37982C
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:06:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390334AbfG2UFK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 16:05:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60652 "EHLO mail.kernel.org"
+        id S2389784AbfG2UFD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 16:05:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32868 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389705AbfG2ToB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:44:01 -0400
+        id S2389766AbfG2ToS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:44:18 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8C6A1205F4;
-        Mon, 29 Jul 2019 19:44:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C6A4E205F4;
+        Mon, 29 Jul 2019 19:44:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564429441;
-        bh=g3Qa5pRkKnZVNZExxBrPTdWu2N5wP1p8syJV2zVv3rc=;
+        s=default; t=1564429457;
+        bh=ZPmfZoJlLwTcRkZU0BsWm4+fuP0Yq8LQoHWCzuFYCAc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Tqvt1ZUPKvbaj0oEbVKEmI5gPREhUpyJH+SQ+xNxGzm6zyuZIcm7JyZUIkd2bqxMg
-         ibbxtYoSAqBp8BqK7+UQMV7bx540+WXh6rwEgXsUf0UK4my+sLJTGHKp1r5k0WhcU5
-         GCTzXlhaj5unnolvTezANxxVntRIlEMBxUPM2R+0=
+        b=HmAsbEE1NfwvcBSn2zR5owKMgkf/FIbZsGl1LpKIQfqMDSfL/4qxk7YjVj9+NW871
+         5MDywK8Tozj2XgJokzyYsfufyrmTtMFQ+/OKOhgbt6xEQSkL/J5Fs73/EnXsvzTFD9
+         glE7PgwdUfwj5veBnQdX0d0xyJIg15CHv2FXHS7Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+fd2bd7df88c606eea4ef@syzkaller.appspotmail.com,
-        Phong Tran <tranmanphong@gmail.com>
-Subject: [PATCH 4.19 098/113] usb: wusbcore: fix unbalanced get/put cluster_id
-Date:   Mon, 29 Jul 2019 21:23:05 +0200
-Message-Id: <20190729190718.955497803@linuxfoundation.org>
+        syzbot+8b3c354d33c4ac78bfad@syzkaller.appspotmail.com,
+        Hridya Valsaraju <hridya@google.com>,
+        Todd Kjos <tkjos@google.com>
+Subject: [PATCH 4.19 103/113] binder: prevent transactions to context manager from its own process.
+Date:   Mon, 29 Jul 2019 21:23:10 +0200
+Message-Id: <20190729190720.129090388@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190729190655.455345569@linuxfoundation.org>
 References: <20190729190655.455345569@linuxfoundation.org>
@@ -44,61 +45,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Phong Tran <tranmanphong@gmail.com>
+From: Hridya Valsaraju <hridya@google.com>
 
-commit f90bf1ece48a736097ea224430578fe586a9544c upstream.
+commit 49ed96943a8e0c62cc5a9b0a6cfc88be87d1fcec upstream.
 
-syzboot reported that
-https://syzkaller.appspot.com/bug?extid=fd2bd7df88c606eea4ef
+Currently, a transaction to context manager from its own process
+is prevented by checking if its binder_proc struct is the same as
+that of the sender. However, this would not catch cases where the
+process opens the binder device again and uses the new fd to send
+a transaction to the context manager.
 
-There is not consitency parameter in cluste_id_get/put calling.
-In case of getting the id with result is failure, the wusbhc->cluster_id
-will not be updated and this can not be used for wusb_cluster_id_put().
-
-Tested report
-https://groups.google.com/d/msg/syzkaller-bugs/0znZopp3-9k/oxOrhLkLEgAJ
-
-Reproduce and gdb got the details:
-
-139		addr = wusb_cluster_id_get();
-(gdb) n
-140		if (addr == 0)
-(gdb) print addr
-$1 = 254 '\376'
-(gdb) n
-142		result = __hwahc_set_cluster_id(hwahc, addr);
-(gdb) print result
-$2 = -71
-(gdb) break wusb_cluster_id_put
-Breakpoint 3 at 0xffffffff836e3f20: file drivers/usb/wusbcore/wusbhc.c, line 384.
-(gdb) s
-Thread 2 hit Breakpoint 3, wusb_cluster_id_put (id=0 '\000') at drivers/usb/wusbcore/wusbhc.c:384
-384		id = 0xff - id;
-(gdb) n
-385		BUG_ON(id >= CLUSTER_IDS);
-(gdb) print id
-$3 = 255 '\377'
-
-Reported-by: syzbot+fd2bd7df88c606eea4ef@syzkaller.appspotmail.com
-Signed-off-by: Phong Tran <tranmanphong@gmail.com>
+Reported-by: syzbot+8b3c354d33c4ac78bfad@syzkaller.appspotmail.com
+Signed-off-by: Hridya Valsaraju <hridya@google.com>
+Acked-by: Todd Kjos <tkjos@google.com>
 Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20190724020601.15257-1-tranmanphong@gmail.com
+Link: https://lore.kernel.org/r/20190715191804.112933-1-hridya@google.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/host/hwa-hc.c |    2 +-
+ drivers/android/binder.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/usb/host/hwa-hc.c
-+++ b/drivers/usb/host/hwa-hc.c
-@@ -159,7 +159,7 @@ out:
- 	return result;
- 
- error_set_cluster_id:
--	wusb_cluster_id_put(wusbhc->cluster_id);
-+	wusb_cluster_id_put(addr);
- error_cluster_id_get:
- 	goto out;
- 
+--- a/drivers/android/binder.c
++++ b/drivers/android/binder.c
+@@ -2838,7 +2838,7 @@ static void binder_transaction(struct bi
+ 			else
+ 				return_error = BR_DEAD_REPLY;
+ 			mutex_unlock(&context->context_mgr_node_lock);
+-			if (target_node && target_proc == proc) {
++			if (target_node && target_proc->pid == proc->pid) {
+ 				binder_user_error("%d:%d got transaction to context manager from process owning it\n",
+ 						  proc->pid, thread->pid);
+ 				return_error = BR_FAILED_REPLY;
 
 
