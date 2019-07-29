@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6AB579487
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:32:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C33D279489
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:32:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730274AbfG2Tch (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 15:32:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46160 "EHLO mail.kernel.org"
+        id S1729641AbfG2Tcl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 15:32:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46258 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730262AbfG2Tcf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:32:35 -0400
+        id S1725897AbfG2Tcj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:32:39 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CA08A217D4;
-        Mon, 29 Jul 2019 19:32:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 962AD21773;
+        Mon, 29 Jul 2019 19:32:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564428755;
-        bh=K8tCOehphzHY0IO/sbGLCbhffAbFe0XqUIVhEKI7KQ8=;
+        s=default; t=1564428759;
+        bh=ZoxoJX3JIBSKtw7+QATylHzz1N3zv5WldLucO3PBzVM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mQLQ+mO50plewPK7Dfaek34yU5b1o6MYxAw1nDnPzTYA2pAWi01hfkdbn1NvMjBku
-         hf1qt5ssGcK1m9Cj1xOjL6mgSeAiXLuveRqq6xJ0gOv5WRV25jhmnHwK/51GZ/pxVR
-         B8prRkYyO9ppfVmF/OldordyBhFJvPnOWW/omEjI=
+        b=ZXLy543ZMVb/AweA457KMdLzSmjenV3BhMtwpAXLI+L76dq1S1iVPBUWz98eVegJ2
+         iRQvGOIxXA0TnRYzM3hvyQfmMNYgkY7F8wvt7Vw11BXlXhlhDklCKgDJvx78GSOStH
+         CMGmTBOyAijE8KNoLmAs6vHSOY7kfh6tJcR3HYXg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
         Josua Mayer <josua@solid-run.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 175/293] net: mvmdio: allow up to four clocks to be specified for orion-mdio
-Date:   Mon, 29 Jul 2019 21:21:06 +0200
-Message-Id: <20190729190837.932300658@linuxfoundation.org>
+Subject: [PATCH 4.14 176/293] dt-bindings: allow up to four clocks for orion-mdio
+Date:   Mon, 29 Jul 2019 21:21:07 +0200
+Message-Id: <20190729190837.998992704@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190729190820.321094988@linuxfoundation.org>
 References: <20190729190820.321094988@linuxfoundation.org>
@@ -46,37 +46,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Josua Mayer <josua@solid-run.com>
 
-commit 4aabed699c400810981d3dda170f05fa4d782905 upstream.
+commit 80785f5a22e9073e2ded5958feb7f220e066d17b upstream.
 
-Allow up to four clocks to be specified and enabled for the orion-mdio
-interface, which are required by the Armada 8k and defined in
-armada-cp110.dtsi.
-
-Fixes a hang in probing the mvmdio driver that was encountered on the
-Clearfog GT 8K with all drivers built as modules, but also affects other
-boards such as the MacchiatoBIN.
+Armada 8040 needs four clocks to be enabled for MDIO accesses to work.
+Update the binding to allow the extra clock to be specified.
 
 Cc: stable@vger.kernel.org
-Fixes: 96cb43423822 ("net: mvmdio: allow up to three clocks to be specified for orion-mdio")
+Fixes: 6d6a331f44a1 ("dt-bindings: allow up to three clocks for orion-mdio")
 Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 Signed-off-by: Josua Mayer <josua@solid-run.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/ethernet/marvell/mvmdio.c |    2 +-
+ Documentation/devicetree/bindings/net/marvell-orion-mdio.txt |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/marvell/mvmdio.c
-+++ b/drivers/net/ethernet/marvell/mvmdio.c
-@@ -64,7 +64,7 @@
+--- a/Documentation/devicetree/bindings/net/marvell-orion-mdio.txt
++++ b/Documentation/devicetree/bindings/net/marvell-orion-mdio.txt
+@@ -16,7 +16,7 @@ Required properties:
  
- struct orion_mdio_dev {
- 	void __iomem *regs;
--	struct clk *clk[3];
-+	struct clk *clk[4];
- 	/*
- 	 * If we have access to the error interrupt pin (which is
- 	 * somewhat misnamed as it not only reflects internal errors
+ Optional properties:
+ - interrupts: interrupt line number for the SMI error/done interrupt
+-- clocks: phandle for up to three required clocks for the MDIO instance
++- clocks: phandle for up to four required clocks for the MDIO instance
+ 
+ The child nodes of the MDIO driver are the individual PHY devices
+ connected to this MDIO bus. They must have a "reg" property given the
 
 
