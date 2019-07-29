@@ -2,184 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0882479775
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:01:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A5546797E9
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:04:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404136AbfG2T7v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 15:59:51 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:36192 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403951AbfG2TxB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:53:01 -0400
-Received: by mail-pl1-f196.google.com with SMTP id k8so27923618plt.3;
-        Mon, 29 Jul 2019 12:53:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=xSR8UIuJtUSfE1z/aFnKt2Qtqi8QrJMV4/6voBg3yuM=;
-        b=sTghtoQ07flTgSh7Epjme4BrL1GNyPeXeHeX7d+kreZhh0eug8TbMG1el8na/8S4iK
-         xSnmylVtUtcDC2Z8NHPpn8TsFhLlAGoYSMd40rg/brQ/qvnWiP7PHMd5NElKleX1up4X
-         S96Dkrwc19E40ZqN+XB6ZbioTJcpWgGrJWdoogufTcmbiHKvydAoDIG4wjhcXu1N0Rws
-         qIQNVFWmqJTWO4JyYY0BU+y0GGUvOG0pvrQh/KHl09pd6wOxUNnytpaq8E/I0UVZ72+Q
-         Hmrg/oloTwUp7l2sVTy2wel1NCoGDpPbD89fImiVluqebqo/CkOjDM58dULGsZdNPymO
-         Dlwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=xSR8UIuJtUSfE1z/aFnKt2Qtqi8QrJMV4/6voBg3yuM=;
-        b=KywXcZ0CdP6MO9mAU5RrvxNWKld4yncuL0QDe92ach+bI7kx5JDsl2zfhnbBS6aVzp
-         nCk9+A4QyylGDT5CBAsSIYfoiiRfFiYIR08S9HYBMj/1o5ty6nb0dYGw42OdfU1+mAqM
-         I6G3MWpswKeDSNnfrM5OdbZ6HFQ2A3F5J3TdMuGrNeh+032NfKnRj5CioCJR/hf/FhsT
-         QJ9iwgpXvDXZV7SDSXtcUk6vYUBGAYz3Oi4uvaS48wJSLareJhml3xrzqAKOIwYAsF5o
-         QHh4a4SqoMS0Xa74jbsr6BQ5hGJf+9fXhc8seYHgmIDcHHTeCLEnV6tFavOmDcMKojTt
-         qUyA==
-X-Gm-Message-State: APjAAAWHI7GwgIlfXy+no77azn//6YzkzjlOP7eLRn/zQE1ZcikUmXk2
-        1YJofPViWTPphbxyxkRhLZcxsVQ4
-X-Google-Smtp-Source: APXvYqwAkcJ5VuqJJYKnj+U/FYuNG6xkJZ2V+u3k5VljLDWmRkMRJfyfXhePf/M4hly0tmPNiQu+Nw==
-X-Received: by 2002:a17:902:6a85:: with SMTP id n5mr104225220plk.73.1564429980871;
-        Mon, 29 Jul 2019 12:53:00 -0700 (PDT)
-Received: from localhost.lan (c-67-185-54-80.hsd1.wa.comcast.net. [67.185.54.80])
-        by smtp.gmail.com with ESMTPSA id z12sm43983750pfn.29.2019.07.29.12.52.59
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 29 Jul 2019 12:53:00 -0700 (PDT)
-From:   Andrey Smirnov <andrew.smirnov@gmail.com>
-To:     linux-serial@vger.kernel.org
-Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Stefan Agner <stefan@agner.ch>,
-        Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>,
-        Chris Healy <cphealy@gmail.com>,
-        Cory Tusar <cory.tusar@zii.aero>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, linux-imx@nxp.com,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 11/24] tty: serial: fsl_lpuart: Drop unnecessary extra parenthesis
-Date:   Mon, 29 Jul 2019 12:52:13 -0700
-Message-Id: <20190729195226.8862-12-andrew.smirnov@gmail.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190729195226.8862-1-andrew.smirnov@gmail.com>
-References: <20190729195226.8862-1-andrew.smirnov@gmail.com>
+        id S1729917AbfG2UD4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 16:03:56 -0400
+Received: from ja.ssi.bg ([178.16.129.10]:52746 "EHLO ja.ssi.bg"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729843AbfG2UDz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 16:03:55 -0400
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+        by ja.ssi.bg (8.15.2/8.15.2) with ESMTP id x6TK3VOW005690;
+        Mon, 29 Jul 2019 23:03:32 +0300
+Date:   Mon, 29 Jul 2019 23:03:31 +0300 (EEST)
+From:   Julian Anastasov <ja@ssi.bg>
+To:     Haishuang Yan <yanhaishuang@cmss.chinamobile.com>
+cc:     "David S. Miller" <davem@davemloft.net>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Simon Horman <horms@verge.net.au>, netdev@vger.kernel.org,
+        lvs-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netfilter-devel@vger.kernel.org
+Subject: Re: [net-next 1/2] ipvs: batch __ip_vs_cleanup
+In-Reply-To: <8441EA26-E197-4F40-A6D7-5B7D59AA7F7F@cmss.chinamobile.com>
+Message-ID: <alpine.LFD.2.21.1907292300580.2909@ja.home.ssi.bg>
+References: <1563031186-2101-1-git-send-email-yanhaishuang@cmss.chinamobile.com> <1563031186-2101-2-git-send-email-yanhaishuang@cmss.chinamobile.com> <alpine.LFD.2.21.1907152333300.5700@ja.home.ssi.bg>
+ <8441EA26-E197-4F40-A6D7-5B7D59AA7F7F@cmss.chinamobile.com>
+User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Drop unnecessary extra parenthesis in the driver.
 
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc: Stefan Agner <stefan@agner.ch>
-Cc: Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>
-Cc: Chris Healy <cphealy@gmail.com>
-Cc: Cory Tusar <cory.tusar@zii.aero>
-Cc: Lucas Stach <l.stach@pengutronix.de>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Jiri Slaby <jslaby@suse.com>
-Cc: linux-imx@nxp.com
-Cc: linux-serial@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
----
- drivers/tty/serial/fsl_lpuart.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+	Hello,
 
-diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c
-index 5181ba5d8f71..5a1e19733353 100644
---- a/drivers/tty/serial/fsl_lpuart.c
-+++ b/drivers/tty/serial/fsl_lpuart.c
-@@ -1443,7 +1443,7 @@ static int lpuart_startup(struct uart_port *port)
- 	lpuart_setup_watermark(sport);
- 
- 	temp = readb(sport->port.membase + UARTCR2);
--	temp |= (UARTCR2_RIE | UARTCR2_TIE | UARTCR2_RE | UARTCR2_TE);
-+	temp |= UARTCR2_RIE | UARTCR2_TIE | UARTCR2_RE | UARTCR2_TE;
- 	writeb(temp, sport->port.membase + UARTCR2);
- 
- 	if (sport->dma_rx_chan && !lpuart_start_rx_dma(sport)) {
-@@ -1652,7 +1652,7 @@ lpuart_set_termios(struct uart_port *port, struct ktermios *termios,
- 		termios->c_cflag &= ~CRTSCTS;
- 
- 	if (termios->c_cflag & CRTSCTS)
--		modem |= (UARTMODEM_RXRTSE | UARTMODEM_TXCTSE);
-+		modem |= UARTMODEM_RXRTSE | UARTMODEM_TXCTSE;
- 	else
- 		modem &= ~(UARTMODEM_RXRTSE | UARTMODEM_TXCTSE);
- 
-@@ -1663,7 +1663,7 @@ lpuart_set_termios(struct uart_port *port, struct ktermios *termios,
- 	if ((termios->c_cflag & CSIZE) == CS7)
- 		termios->c_cflag |= PARENB;
- 
--	if ((termios->c_cflag & PARENB)) {
-+	if (termios->c_cflag & PARENB) {
- 		if (termios->c_cflag & CMSPAR) {
- 			cr1 &= ~UARTCR1_PE;
- 			if (termios->c_cflag & PARODD)
-@@ -1702,7 +1702,7 @@ lpuart_set_termios(struct uart_port *port, struct ktermios *termios,
- 
- 	sport->port.read_status_mask = 0;
- 	if (termios->c_iflag & INPCK)
--		sport->port.read_status_mask |=	(UARTSR1_FE | UARTSR1_PE);
-+		sport->port.read_status_mask |= UARTSR1_FE | UARTSR1_PE;
- 	if (termios->c_iflag & (IGNBRK | BRKINT | PARMRK))
- 		sport->port.read_status_mask |= UARTSR1_FE;
- 
-@@ -1816,7 +1816,7 @@ lpuart32_serial_setbrg(struct lpuart_port *sport, unsigned int baudrate)
- 		tmp |= UARTBAUD_BOTHEDGE;
- 
- 	tmp &= ~(UARTBAUD_OSR_MASK << UARTBAUD_OSR_SHIFT);
--	tmp |= (((osr-1) & UARTBAUD_OSR_MASK) << UARTBAUD_OSR_SHIFT);
-+	tmp |= ((osr-1) & UARTBAUD_OSR_MASK) << UARTBAUD_OSR_SHIFT;
- 
- 	tmp &= ~UARTBAUD_SBR_MASK;
- 	tmp |= sbr & UARTBAUD_SBR_MASK;
-@@ -1869,7 +1869,7 @@ lpuart32_set_termios(struct uart_port *port, struct ktermios *termios,
- 	}
- 
- 	if (termios->c_cflag & CRTSCTS) {
--		modem |= (UARTMODEM_RXRTSE | UARTMODEM_TXCTSE);
-+		modem |= UARTMODEM_RXRTSE | UARTMODEM_TXCTSE;
- 	} else {
- 		termios->c_cflag &= ~CRTSCTS;
- 		modem &= ~(UARTMODEM_RXRTSE | UARTMODEM_TXCTSE);
-@@ -1918,7 +1918,7 @@ lpuart32_set_termios(struct uart_port *port, struct ktermios *termios,
- 
- 	sport->port.read_status_mask = 0;
- 	if (termios->c_iflag & INPCK)
--		sport->port.read_status_mask |=	(UARTSTAT_FE | UARTSTAT_PE);
-+		sport->port.read_status_mask |= UARTSTAT_FE | UARTSTAT_PE;
- 	if (termios->c_iflag & (IGNBRK | BRKINT | PARMRK))
- 		sport->port.read_status_mask |= UARTSTAT_FE;
- 
-@@ -2085,7 +2085,7 @@ lpuart_console_write(struct console *co, const char *s, unsigned int count)
- 
- 	/* first save CR2 and then disable interrupts */
- 	cr2 = old_cr2 = readb(sport->port.membase + UARTCR2);
--	cr2 |= (UARTCR2_TE |  UARTCR2_RE);
-+	cr2 |= UARTCR2_TE | UARTCR2_RE;
- 	cr2 &= ~(UARTCR2_TIE | UARTCR2_TCIE | UARTCR2_RIE);
- 	writeb(cr2, sport->port.membase + UARTCR2);
- 
-@@ -2116,7 +2116,7 @@ lpuart32_console_write(struct console *co, const char *s, unsigned int count)
- 
- 	/* first save CR2 and then disable interrupts */
- 	cr = old_cr = lpuart32_read(&sport->port, UARTCTRL);
--	cr |= (UARTCTRL_TE |  UARTCTRL_RE);
-+	cr |= UARTCTRL_TE | UARTCTRL_RE;
- 	cr &= ~(UARTCTRL_TIE | UARTCTRL_TCIE | UARTCTRL_RIE);
- 	lpuart32_write(&sport->port, cr, UARTCTRL);
- 
-@@ -2574,7 +2574,7 @@ static int lpuart_resume(struct device *dev)
- 	} else {
- 		lpuart_setup_watermark(sport);
- 		temp = readb(sport->port.membase + UARTCR2);
--		temp |= (UARTCR2_RIE | UARTCR2_TIE | UARTCR2_RE | UARTCR2_TE);
-+		temp |= UARTCR2_RIE | UARTCR2_TIE | UARTCR2_RE | UARTCR2_TE;
- 		writeb(temp, sport->port.membase + UARTCR2);
- 	}
- 
--- 
-2.21.0
+On Thu, 18 Jul 2019, Haishuang Yan wrote:
 
+> As the following benchmark testing results show, there is a little performance improvement:
+
+	OK, can you send v2 after removing the LIST_HEAD(list) from
+both patches, I guess, it is not needed. If you prefer, you can
+include these benchmark results too.
+
+> $  cat add_del_unshare.sh
+> #!/bin/bash
+> 
+> for i in `seq 1 100`
+>     do
+>      (for j in `seq 1 40` ; do  unshare -n ipvsadm -A -t 172.16.$i.$j:80 >/dev/null ; done) &
+>     done
+> wait; grep net_namespace /proc/slabinfo
+> 
+> Befor patch:
+> $  time sh add_del_unshare.sh
+> net_namespace       4020   4020   4736    6    8 : tunables    0    0    0 : slabdata    670    670      0
+> 
+> real    0m8.086s
+> user    0m2.025s
+> sys     0m36.956s
+> 
+> After patch:
+> $  time sh add_del_unshare.sh
+> net_namespace       4020   4020   4736    6    8 : tunables    0    0    0 : slabdata    670    670      0
+> 
+> real    0m7.623s
+> user    0m2.003s
+> sys     0m32.935s
+> 
+> 
+> > 
+> >> +		ipvs = net_ipvs(net);
+> >> +		ip_vs_conn_net_cleanup(ipvs);
+> >> +		ip_vs_app_net_cleanup(ipvs);
+> >> +		ip_vs_protocol_net_cleanup(ipvs);
+> >> +		ip_vs_control_net_cleanup(ipvs);
+> >> +		ip_vs_estimator_net_cleanup(ipvs);
+> >> +		IP_VS_DBG(2, "ipvs netns %d released\n", ipvs->gen);
+> >> +		net->ipvs = NULL;
+
+Regards
+
+--
+Julian Anastasov <ja@ssi.bg>
