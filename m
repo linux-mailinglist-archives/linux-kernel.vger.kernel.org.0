@@ -2,98 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 377DA78E74
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 16:54:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A210778E7F
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 16:57:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728666AbfG2OyN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 10:54:13 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:41857 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726197AbfG2OyM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 10:54:12 -0400
-Received: by mail-io1-f67.google.com with SMTP id j5so116482889ioj.8
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 07:54:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=CbcFasXRs6Q74mapSNu5x1SKgIy5eGtlSI7L4N2Lods=;
-        b=CXfoye8Pdzp7J2mVhI3180iIaSeGw1qThtognGOELxFYcijNrAvvXFx9vjukuWh+1+
-         BFJD1ysvRTVYRo+8efiKY6SsUEGiEtiNMsXSGEGEdned2l6RntHpR4sSvwPFCahq0FYK
-         KISP+N/oKHc4o6vIw8547M7O50eDjxDxy/S6+0N//kgSZEq1lQ6ArlzN/is463BAkheM
-         1CqE1Dsapd0rCRZ/UkzYRmwnRzXHAE2Mcut/FMlr6Es/8H4C1IgwT8GtCy6V6jqyJUV4
-         nL8JwtU63HzNXjUqIuYfmYGMRwUXd5MsGpzWIjEh0Zsx6dgmTjZ6U9k9Qzl46veV3/uX
-         cLXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=CbcFasXRs6Q74mapSNu5x1SKgIy5eGtlSI7L4N2Lods=;
-        b=XFWS0wBwF0bz9bE3BKnAqKPkG1HbEFoARqSuqPDZEpKr8e9XOU0UVg0clVnF5ua9Rb
-         TEIkMCRXyFyqZd9RqOZckK0FoDym7VSt788LMZfr5KhoAw2H+O+gzODPdHnBROt+3VqZ
-         3zY4SARnI/IldXW/SXG8dfwdmuYtbk/m+UvYn6gO69Ba8l0fGXnx3JvvXNzMsrcSfHRX
-         ddLu+CUyTipKct0+K3fgfK3ljHt97+hslwSZNJP4lQtTiS4pRIPo1eFLrPSXgSeSpW8Y
-         pnIG1LEdA6H7aTtjRkHgKltISpSYD6bRS5tuk0CILhtnSkNU5SKaAca15XIXYytiJ8V8
-         1aYg==
-X-Gm-Message-State: APjAAAWTb+PbUsxmPqhGHBMgN+MEy2LEBoEE/i/EOpMtGh1aB8diC9cu
-        KMPGxmv65P8/svYXrV+CDGs=
-X-Google-Smtp-Source: APXvYqz/xLLmzzwvYt9ZuWv99pATMaOsHNF7q2MgBnomCBQYVO6oB/5s4HDRhoaJ3giaBNT3ALbkKA==
-X-Received: by 2002:a02:ac03:: with SMTP id a3mr117002554jao.132.1564412051832;
-        Mon, 29 Jul 2019 07:54:11 -0700 (PDT)
-Received: from brauner.io ([162.223.5.124])
-        by smtp.gmail.com with ESMTPSA id j14sm52530376ioa.78.2019.07.29.07.54.10
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 29 Jul 2019 07:54:11 -0700 (PDT)
-Date:   Mon, 29 Jul 2019 16:54:10 +0200
-From:   Christian Brauner <christian@brauner.io>
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        arnd@arndb.de, ebiederm@xmission.com, keescook@chromium.org,
-        joel@joelfernandes.org, tglx@linutronix.de, tj@kernel.org,
-        dhowells@redhat.com, jannh@google.com, luto@kernel.org,
-        akpm@linux-foundation.org, cyphar@cyphar.com,
-        viro@zeniv.linux.org.uk, kernel-team@android.com
-Subject: Re: [PATCH v3 1/2] pidfd: add P_PIDFD to waitid()
-Message-ID: <20190729145408.ro2loxchmbtfk6h6@brauner.io>
-References: <20190727222229.6516-1-christian@brauner.io>
- <20190727222229.6516-2-christian@brauner.io>
- <20190729142744.GA11349@redhat.com>
+        id S2387807AbfG2O52 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 10:57:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56498 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726281AbfG2O51 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 10:57:27 -0400
+Received: from [192.168.0.101] (unknown [180.111.32.87])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D7F582067D;
+        Mon, 29 Jul 2019 14:57:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564412246;
+        bh=hMANmngripBsLJYd0Y/7x4OoPirri23tE2oLpVKpNB4=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=fmIYCh1tQ7HGhaBzdlRtL2bHHiOLDhp8u5eyZg8qMCO41oty4t2dCIDuN3sxkRk7e
+         C/M4SoQ+feASKNhouXi6y5RnqTyepKX4N1mk3kln5zowMv36DnEMloxEU4IpopLkGr
+         BVSnI82o391mNn0iFzF+OuKAodyIiVWC47INjDH8=
+Subject: Re: [f2fs-dev] [PATCH v4 3/3] f2fs: Support case-insensitive file
+ name lookups
+To:     Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>
+Cc:     Daniel Rosenberg <drosen@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        linux-f2fs-devel@lists.sourceforge.net, linux-doc@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, kernel-team@android.com
+References: <20190723230529.251659-1-drosen@google.com>
+ <20190723230529.251659-4-drosen@google.com>
+ <9362e4ed-2be8-39f5-b4d9-9c86e37ab993@kernel.org>
+ <20190729062735.GA98839@jaegeuk-macbookpro.roam.corp.google.com>
+ <fa07a09d-92c9-4e0b-7c2b-e87771273dce@huawei.com>
+From:   Chao Yu <chao@kernel.org>
+Message-ID: <fe7066e9-f299-c675-cec3-919cdabe18ce@kernel.org>
+Date:   Mon, 29 Jul 2019 22:57:00 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190729142744.GA11349@redhat.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <fa07a09d-92c9-4e0b-7c2b-e87771273dce@huawei.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 29, 2019 at 04:27:44PM +0200, Oleg Nesterov wrote:
-> On 07/28, Christian Brauner wrote:
-> >
-> > +static struct pid *pidfd_get_pid(unsigned int fd)
-> > +{
-> > +	struct fd f;
-> > +	struct pid *pid;
-> > +
-> > +	f = fdget(fd);
-> > +	if (!f.file)
-> > +		return ERR_PTR(-EBADF);
-> > +
-> > +	pid = pidfd_pid(f.file);
-> > +	if (!IS_ERR(pid))
-> > +		get_pid(pid);
-> > +
-> > +	fdput(f);
-> > +	return pid;
-> > +}
+On 2019-7-29 15:22, Chao Yu wrote:
+> On 2019/7/29 14:27, Jaegeuk Kim wrote:
+>> On 07/28, Chao Yu wrote:
+>>> On 2019-7-24 7:05, Daniel Rosenberg via Linux-f2fs-devel wrote:
+>>>>  /* Flags that are appropriate for regular files (all but dir-specific ones). */
+>>>>  #define F2FS_REG_FLMASK		(~(F2FS_DIRSYNC_FL | F2FS_PROJINHERIT_FL))
+>>>
+>>> We missed to add F2FS_CASEFOLD_FL here to exclude it in F2FS_REG_FLMASK.
+>>
+>> Applied.
+>>
+>>>
+>>>> @@ -1660,7 +1660,16 @@ static int f2fs_setflags_common(struct inode *inode, u32 iflags, u32 mask)
+>>>>  		return -EPERM;
+>>>>  
+>>>>  	oldflags = fi->i_flags;
+>>>> +	if ((iflags ^ oldflags) & F2FS_CASEFOLD_FL) {
+>>>> +		if (!f2fs_sb_has_casefold(F2FS_I_SB(inode)))
+>>>> +			return -EOPNOTSUPP;
+>>>> +
+>>>> +		if (!S_ISDIR(inode->i_mode))
+>>>> +			return -ENOTDIR;
+>>>>  
+>>>> +		if (!f2fs_empty_dir(inode))
+>>>> +			return -ENOTEMPTY;
+>>>> +	}
+>>
+>> Modified like this:
+>> @@ -1665,6 +1665,13 @@ static int f2fs_setflags_common(struct inode *inode, u32 iflags, u32 mask)
+>>         if (IS_NOQUOTA(inode))
+>>                 return -EPERM;
+>>
+>> +       if ((iflags ^ fi->i_flags) & F2FS_CASEFOLD_FL) {
+>> +               if (!f2fs_sb_has_casefold(F2FS_I_SB(inode)))
+>> +                       return -EOPNOTSUPP;
+>> +               if (!f2fs_empty_dir(inode))
+>> +                       return -ENOTEMPTY;
+>> +       }
+>> +
+>>
+>> Note that, directory is checked by above change.
+>>
+>> I've uploaded in f2fs.git, so could you check it out and test a bit?
 > 
-> Agreed, this looks better than the previous version.
+> I've checked it out, it looks good to me now, and later I will test this new
+> version.
 > 
-> FWIW,
-> 
-> Reviewed-by: Oleg Nesterov <oleg@redhat.com>
+> Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
-Thanks Oleg!
-Christian
+It can pass generic/556 as well.
+
+Thanks,
+
+> 
+> Thanks,
+> 
+>>
+>> Thanks,
+>>
+>>>
+>>> I applied the patches based on last Jaegeuk's dev branch, it seems we needs to
+>>> adjust above code a bit. Otherwise it looks good to me.
+>>>
+>>> BTW, it looks the patchset works fine with generic/556 testcase.
+>>>
+>>> Thanks,
+>> .
+>>
