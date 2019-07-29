@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B0B37982A
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:06:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3454379823
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:06:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389403AbfG2UEv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 16:04:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33354 "EHLO mail.kernel.org"
+        id S1727952AbfG2To4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 15:44:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33468 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389820AbfG2Ton (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:44:43 -0400
+        id S2389845AbfG2Tov (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:44:51 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ED9882171F;
-        Mon, 29 Jul 2019 19:44:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D746820C01;
+        Mon, 29 Jul 2019 19:44:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564429482;
-        bh=AjB9ovnnGRHFQbRJNii7d5yid9O6pyfxFu7a1mrNwng=;
+        s=default; t=1564429489;
+        bh=s1YB5W5ELtm5BS5QaBGi/Ak7p8J1w2oYhu7OyzwYbjI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XjRARXmPOVaXypuUkjaxs2r2qajj2dd4RNODRFqgMq/Lo4jybnO28k8+GXPLett7V
-         TcRhq1uMtCEU1JfGHqcZksWdqIqeVVTe2ybAx70/2CROqPO4TiGMurNLlDxdgwp9Os
-         wkHm9SRSuYlyzepPMKkOUcnBH44wWmiWjSI5WjRk=
+        b=oCsiT5SIrk2hxZl5onanHCgtZZDtpU0A+ojOqnKuRdAXEfjMWGIvLkW7lvMMDZqc2
+         yF0CWhFI2JWzi+960sX14zCAi00GhiX7cgi1mUnG9WJRfZTDqNhHsdETv504cUl01A
+         qWiY0Fx8NtJ1Fl66qRNDiKGYIaomtonFzmYh4820=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Praveen Pandey <Praveen.Pandey@in.ibm.com>,
-        Michael Neuling <mikey@neuling.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.19 111/113] powerpc/tm: Fix oops on sigreturn on systems without TM
-Date:   Mon, 29 Jul 2019 21:23:18 +0200
-Message-Id: <20190729190721.421186265@linuxfoundation.org>
+        stable@vger.kernel.org, Vishal Verma <vishal.l.verma@intel.com>,
+        Jane Chu <jane.chu@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>
+Subject: [PATCH 4.19 112/113] libnvdimm/bus: Stop holding nvdimm_bus_list_mutex over __nd_ioctl()
+Date:   Mon, 29 Jul 2019 21:23:19 +0200
+Message-Id: <20190729190721.610390670@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190729190655.455345569@linuxfoundation.org>
 References: <20190729190655.455345569@linuxfoundation.org>
@@ -44,91 +44,208 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michael Neuling <mikey@neuling.org>
+From: Dan Williams <dan.j.williams@intel.com>
 
-commit f16d80b75a096c52354c6e0a574993f3b0dfbdfe upstream.
+commit b70d31d054ee3a6fc1034b9d7fc0ae1e481aa018 upstream.
 
-On systems like P9 powernv where we have no TM (or P8 booted with
-ppc_tm=off), userspace can construct a signal context which still has
-the MSR TS bits set. The kernel tries to restore this context which
-results in the following crash:
+In preparation for fixing a deadlock between wait_for_bus_probe_idle()
+and the nvdimm_bus_list_mutex arrange for __nd_ioctl() without
+nvdimm_bus_list_mutex held. This also unifies the 'dimm' and 'bus' level
+ioctls into a common nd_ioctl() preamble implementation.
 
-  Unexpected TM Bad Thing exception at c0000000000022fc (msr 0x8000000102a03031) tm_scratch=800000020280f033
-  Oops: Unrecoverable exception, sig: 6 [#1]
-  LE PAGE_SIZE=64K MMU=Hash SMP NR_CPUS=2048 NUMA pSeries
-  Modules linked in:
-  CPU: 0 PID: 1636 Comm: sigfuz Not tainted 5.2.0-11043-g0a8ad0ffa4 #69
-  NIP:  c0000000000022fc LR: 00007fffb2d67e48 CTR: 0000000000000000
-  REGS: c00000003fffbd70 TRAP: 0700   Not tainted  (5.2.0-11045-g7142b497d8)
-  MSR:  8000000102a03031 <SF,VEC,VSX,FP,ME,IR,DR,LE,TM[E]>  CR: 42004242  XER: 00000000
-  CFAR: c0000000000022e0 IRQMASK: 0
-  GPR00: 0000000000000072 00007fffb2b6e560 00007fffb2d87f00 0000000000000669
-  GPR04: 00007fffb2b6e728 0000000000000000 0000000000000000 00007fffb2b6f2a8
-  GPR08: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-  GPR12: 0000000000000000 00007fffb2b76900 0000000000000000 0000000000000000
-  GPR16: 00007fffb2370000 00007fffb2d84390 00007fffea3a15ac 000001000a250420
-  GPR20: 00007fffb2b6f260 0000000010001770 0000000000000000 0000000000000000
-  GPR24: 00007fffb2d843a0 00007fffea3a14a0 0000000000010000 0000000000800000
-  GPR28: 00007fffea3a14d8 00000000003d0f00 0000000000000000 00007fffb2b6e728
-  NIP [c0000000000022fc] rfi_flush_fallback+0x7c/0x80
-  LR [00007fffb2d67e48] 0x7fffb2d67e48
-  Call Trace:
-  Instruction dump:
-  e96a0220 e96a02a8 e96a0330 e96a03b8 394a0400 4200ffdc 7d2903a6 e92d0c00
-  e94d0c08 e96d0c10 e82d0c18 7db242a6 <4c000024> 7db243a6 7db142a6 f82d0c18
+Marked for -stable as it is a pre-requisite for a follow-on fix.
 
-The problem is the signal code assumes TM is enabled when
-CONFIG_PPC_TRANSACTIONAL_MEM is enabled. This may not be the case as
-with P9 powernv or if `ppc_tm=off` is used on P8.
-
-This means any local user can crash the system.
-
-Fix the problem by returning a bad stack frame to the user if they try
-to set the MSR TS bits with sigreturn() on systems where TM is not
-supported.
-
-Found with sigfuz kernel selftest on P9.
-
-This fixes CVE-2019-13648.
-
-Fixes: 2b0a576d15e0 ("powerpc: Add new transactional memory state to the signal context")
-Cc: stable@vger.kernel.org # v3.9
-Reported-by: Praveen Pandey <Praveen.Pandey@in.ibm.com>
-Signed-off-by: Michael Neuling <mikey@neuling.org>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://lore.kernel.org/r/20190719050502.405-1-mikey@neuling.org
+Cc: <stable@vger.kernel.org>
+Fixes: bf9bccc14c05 ("libnvdimm: pmem label sets and namespace instantiation")
+Cc: Vishal Verma <vishal.l.verma@intel.com>
+Tested-by: Jane Chu <jane.chu@oracle.com>
+Link: https://lore.kernel.org/r/156341209518.292348.7183897251740665198.stgit@dwillia2-desk3.amr.corp.intel.com
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/kernel/signal_32.c |    3 +++
- arch/powerpc/kernel/signal_64.c |    5 +++++
- 2 files changed, 8 insertions(+)
+ drivers/nvdimm/bus.c     |   94 ++++++++++++++++++++++++++++-------------------
+ drivers/nvdimm/nd-core.h |    3 +
+ 2 files changed, 59 insertions(+), 38 deletions(-)
 
---- a/arch/powerpc/kernel/signal_32.c
-+++ b/arch/powerpc/kernel/signal_32.c
-@@ -1202,6 +1202,9 @@ SYSCALL_DEFINE0(rt_sigreturn)
- 			goto bad;
+--- a/drivers/nvdimm/bus.c
++++ b/drivers/nvdimm/bus.c
+@@ -86,7 +86,7 @@ static void nvdimm_bus_probe_end(struct
+ {
+ 	nvdimm_bus_lock(&nvdimm_bus->dev);
+ 	if (--nvdimm_bus->probe_active == 0)
+-		wake_up(&nvdimm_bus->probe_wait);
++		wake_up(&nvdimm_bus->wait);
+ 	nvdimm_bus_unlock(&nvdimm_bus->dev);
+ }
  
- 		if (MSR_TM_ACTIVE(msr_hi<<32)) {
-+			/* Trying to start TM on non TM system */
-+			if (!cpu_has_feature(CPU_FTR_TM))
-+				goto bad;
- 			/* We only recheckpoint on return if we're
- 			 * transaction.
- 			 */
---- a/arch/powerpc/kernel/signal_64.c
-+++ b/arch/powerpc/kernel/signal_64.c
-@@ -750,6 +750,11 @@ SYSCALL_DEFINE0(rt_sigreturn)
- 	if (MSR_TM_ACTIVE(msr)) {
- 		/* We recheckpoint on return. */
- 		struct ucontext __user *uc_transact;
+@@ -348,7 +348,7 @@ struct nvdimm_bus *nvdimm_bus_register(s
+ 		return NULL;
+ 	INIT_LIST_HEAD(&nvdimm_bus->list);
+ 	INIT_LIST_HEAD(&nvdimm_bus->mapping_list);
+-	init_waitqueue_head(&nvdimm_bus->probe_wait);
++	init_waitqueue_head(&nvdimm_bus->wait);
+ 	nvdimm_bus->id = ida_simple_get(&nd_ida, 0, 0, GFP_KERNEL);
+ 	mutex_init(&nvdimm_bus->reconfig_mutex);
+ 	badrange_init(&nvdimm_bus->badrange);
+@@ -418,6 +418,9 @@ static int nd_bus_remove(struct device *
+ 	list_del_init(&nvdimm_bus->list);
+ 	mutex_unlock(&nvdimm_bus_list_mutex);
+ 
++	wait_event(nvdimm_bus->wait,
++			atomic_read(&nvdimm_bus->ioctl_active) == 0);
 +
-+		/* Trying to start TM on non TM system */
-+		if (!cpu_has_feature(CPU_FTR_TM))
-+			goto badframe;
+ 	nd_synchronize();
+ 	device_for_each_child(&nvdimm_bus->dev, NULL, child_unregister);
+ 
+@@ -838,7 +841,7 @@ void wait_nvdimm_bus_probe_idle(struct d
+ 		if (nvdimm_bus->probe_active == 0)
+ 			break;
+ 		nvdimm_bus_unlock(&nvdimm_bus->dev);
+-		wait_event(nvdimm_bus->probe_wait,
++		wait_event(nvdimm_bus->wait,
+ 				nvdimm_bus->probe_active == 0);
+ 		nvdimm_bus_lock(&nvdimm_bus->dev);
+ 	} while (true);
+@@ -1068,24 +1071,10 @@ static int __nd_ioctl(struct nvdimm_bus
+ 	return rc;
+ }
+ 
+-static long nd_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+-{
+-	long id = (long) file->private_data;
+-	int rc = -ENXIO, ro;
+-	struct nvdimm_bus *nvdimm_bus;
+-
+-	ro = ((file->f_flags & O_ACCMODE) == O_RDONLY);
+-	mutex_lock(&nvdimm_bus_list_mutex);
+-	list_for_each_entry(nvdimm_bus, &nvdimm_bus_list, list) {
+-		if (nvdimm_bus->id == id) {
+-			rc = __nd_ioctl(nvdimm_bus, NULL, ro, cmd, arg);
+-			break;
+-		}
+-	}
+-	mutex_unlock(&nvdimm_bus_list_mutex);
+-
+-	return rc;
+-}
++enum nd_ioctl_mode {
++	BUS_IOCTL,
++	DIMM_IOCTL,
++};
+ 
+ static int match_dimm(struct device *dev, void *data)
+ {
+@@ -1100,31 +1089,62 @@ static int match_dimm(struct device *dev
+ 	return 0;
+ }
+ 
+-static long nvdimm_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
++static long nd_ioctl(struct file *file, unsigned int cmd, unsigned long arg,
++		enum nd_ioctl_mode mode)
 +
- 		if (__get_user(uc_transact, &uc->uc_link))
- 			goto badframe;
- 		if (restore_tm_sigcontexts(current, &uc->uc_mcontext,
+ {
+-	int rc = -ENXIO, ro;
+-	struct nvdimm_bus *nvdimm_bus;
++	struct nvdimm_bus *nvdimm_bus, *found = NULL;
++	long id = (long) file->private_data;
++	struct nvdimm *nvdimm = NULL;
++	int rc, ro;
+ 
+ 	ro = ((file->f_flags & O_ACCMODE) == O_RDONLY);
+ 	mutex_lock(&nvdimm_bus_list_mutex);
+ 	list_for_each_entry(nvdimm_bus, &nvdimm_bus_list, list) {
+-		struct device *dev = device_find_child(&nvdimm_bus->dev,
+-				file->private_data, match_dimm);
+-		struct nvdimm *nvdimm;
++		if (mode == DIMM_IOCTL) {
++			struct device *dev;
+ 
+-		if (!dev)
+-			continue;
++			dev = device_find_child(&nvdimm_bus->dev,
++					file->private_data, match_dimm);
++			if (!dev)
++				continue;
++			nvdimm = to_nvdimm(dev);
++			found = nvdimm_bus;
++		} else if (nvdimm_bus->id == id) {
++			found = nvdimm_bus;
++		}
+ 
+-		nvdimm = to_nvdimm(dev);
+-		rc = __nd_ioctl(nvdimm_bus, nvdimm, ro, cmd, arg);
+-		put_device(dev);
+-		break;
++		if (found) {
++			atomic_inc(&nvdimm_bus->ioctl_active);
++			break;
++		}
+ 	}
+ 	mutex_unlock(&nvdimm_bus_list_mutex);
+ 
++	if (!found)
++		return -ENXIO;
++
++	nvdimm_bus = found;
++	rc = __nd_ioctl(nvdimm_bus, nvdimm, ro, cmd, arg);
++
++	if (nvdimm)
++		put_device(&nvdimm->dev);
++	if (atomic_dec_and_test(&nvdimm_bus->ioctl_active))
++		wake_up(&nvdimm_bus->wait);
++
+ 	return rc;
+ }
+ 
++static long bus_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
++{
++	return nd_ioctl(file, cmd, arg, BUS_IOCTL);
++}
++
++static long dimm_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
++{
++	return nd_ioctl(file, cmd, arg, DIMM_IOCTL);
++}
++
+ static int nd_open(struct inode *inode, struct file *file)
+ {
+ 	long minor = iminor(inode);
+@@ -1136,16 +1156,16 @@ static int nd_open(struct inode *inode,
+ static const struct file_operations nvdimm_bus_fops = {
+ 	.owner = THIS_MODULE,
+ 	.open = nd_open,
+-	.unlocked_ioctl = nd_ioctl,
+-	.compat_ioctl = nd_ioctl,
++	.unlocked_ioctl = bus_ioctl,
++	.compat_ioctl = bus_ioctl,
+ 	.llseek = noop_llseek,
+ };
+ 
+ static const struct file_operations nvdimm_fops = {
+ 	.owner = THIS_MODULE,
+ 	.open = nd_open,
+-	.unlocked_ioctl = nvdimm_ioctl,
+-	.compat_ioctl = nvdimm_ioctl,
++	.unlocked_ioctl = dimm_ioctl,
++	.compat_ioctl = dimm_ioctl,
+ 	.llseek = noop_llseek,
+ };
+ 
+--- a/drivers/nvdimm/nd-core.h
++++ b/drivers/nvdimm/nd-core.h
+@@ -25,10 +25,11 @@ extern int nvdimm_major;
+ 
+ struct nvdimm_bus {
+ 	struct nvdimm_bus_descriptor *nd_desc;
+-	wait_queue_head_t probe_wait;
++	wait_queue_head_t wait;
+ 	struct list_head list;
+ 	struct device dev;
+ 	int id, probe_active;
++	atomic_t ioctl_active;
+ 	struct list_head mapping_list;
+ 	struct mutex reconfig_mutex;
+ 	struct badrange badrange;
 
 
