@@ -2,97 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EAB61785B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 09:01:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 809D3785C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 09:03:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727433AbfG2HBu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 03:01:50 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:63730 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727128AbfG2HBW (ORCPT
+        id S1726656AbfG2HDU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 03:03:20 -0400
+Received: from s3.sipsolutions.net ([144.76.43.62]:56746 "EHLO
+        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726048AbfG2HDT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 03:01:22 -0400
-X-UUID: ff653d2dcbaf4cd681514c2941f3ab41-20190729
-X-UUID: ff653d2dcbaf4cd681514c2941f3ab41-20190729
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
-        (envelope-from <bibby.hsieh@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0707 with TLS)
-        with ESMTP id 611002067; Mon, 29 Jul 2019 15:01:16 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Mon, 29 Jul 2019 15:01:10 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Mon, 29 Jul 2019 15:01:10 +0800
-From:   Bibby Hsieh <bibby.hsieh@mediatek.com>
-To:     Jassi Brar <jassisinghbrar@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, CK HU <ck.hu@mediatek.com>
-CC:     Daniel Kurtz <djkurtz@chromium.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        YT Shen <yt.shen@mediatek.com>,
-        Daoyuan Huang <daoyuan.huang@mediatek.com>,
-        Jiaguang Zhang <jiaguang.zhang@mediatek.com>,
-        Dennis-YC Hsieh <dennis-yc.hsieh@mediatek.com>,
-        Houlong Wei <houlong.wei@mediatek.com>,
-        <ginny.chen@mediatek.com>, Bibby Hsieh <bibby.hsieh@mediatek.com>
-Subject: [PATCH v11 12/12] arm64: dts: add gce node for mt8183
-Date:   Mon, 29 Jul 2019 15:01:06 +0800
-Message-ID: <20190729070106.9332-13-bibby.hsieh@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20190729070106.9332-1-bibby.hsieh@mediatek.com>
-References: <20190729070106.9332-1-bibby.hsieh@mediatek.com>
+        Mon, 29 Jul 2019 03:03:19 -0400
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <johannes@sipsolutions.net>)
+        id 1hrzgh-0005SS-L6; Mon, 29 Jul 2019 09:03:15 +0200
+Message-ID: <e96cf8a57c4633e807cfe82762397ad15ba19ed8.camel@sipsolutions.net>
+Subject: Re: linux-next: build warning after merge of Linus' tree
+From:   Johannes Berg <johannes@sipsolutions.net>
+To:     Takashi Iwai <tiwai@suse.de>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date:   Mon, 29 Jul 2019 09:03:14 +0200
+In-Reply-To: <s5h8sshpbt3.wl-tiwai@suse.de>
+References: <20190729140404.37bac29e@canb.auug.org.au>
+         <s5h8sshpbt3.wl-tiwai@suse.de>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-SNTS-SMTP: 452939164E0A036E79BC4354F5DBF2B0307C990B92DAE3B1B63BCA2416DACB8F2000:8
-X-MTK:  N
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-add gce device node for mt8183
+On Mon, 2019-07-29 at 08:58 +0200, Takashi Iwai wrote:
+> On Mon, 29 Jul 2019 06:04:04 +0200,
+> Stephen Rothwell wrote:
+> > Hi all,
+> > 
+> > After merging the origin tree, today's linux-next build (powerpc
+> > allyesconfig) produced this warning:
+> > 
+> > sound/aoa/codecs/onyx.c: In function 'onyx_snd_single_bit_get':
+> > sound/aoa/codecs/onyx.c:377:37: warning: 'c' may be used uninitialized in this function [-Wmaybe-uninitialized]
+> >   ucontrol->value.integer.value[0] = !!(c & mask) ^ polarity;
+> >                                      ^~~~~~~~~~~~
+> > 
+> > Introduced by commit
+> > 
+> >   f3d9478b2ce4 ("[ALSA] snd-aoa: add snd-aoa")
+> > 
+> > This warning has been around for a long time.  It could possibly be
+> > suppressed by checking for errors returned by onyx_read_register().
+> 
+> Yes, or simply zero-ing the variable in onyx_read_register().  The
+> current code ignores the read error and it's been OK over a decade :)
 
-Signed-off-by: Bibby Hsieh <bibby.hsieh@mediatek.com>
----
- arch/arm64/boot/dts/mediatek/mt8183.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+Yeah, it's pretty weird that it never showed up before. I was wondering
+for a minute why I was CC'ed on a sound merge issue :-)
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8183.dtsi b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-index 08274bfcebd8..98d17d0bdebf 100644
---- a/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-@@ -8,6 +8,7 @@
- #include <dt-bindings/clock/mt8183-clk.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/gce/mt8183-gce.h>
- 
- / {
- 	compatible = "mediatek,mt8183";
-@@ -212,6 +213,15 @@
- 			clock-names = "spi", "wrap";
- 		};
- 
-+		gce: gce@10238000 {
-+			compatible = "mediatek,mt8183-gce";
-+			reg = <0 0x10238000 0 0x4000>;
-+			interrupts = <GIC_SPI 162 IRQ_TYPE_LEVEL_LOW>;
-+			#mbox-cells = <3>;
-+			clocks = <&infracfg CLK_INFRA_GCE>;
-+			clock-names = "gce";
-+		};
-+
- 		uart0: serial@11002000 {
- 			compatible = "mediatek,mt8183-uart",
- 				     "mediatek,mt6577-uart";
--- 
-2.18.0
+Do you want me to send a patch or just commit something to suppress
+this?
+
+johannes
 
