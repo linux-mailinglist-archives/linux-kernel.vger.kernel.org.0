@@ -2,133 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B4A578A6F
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 13:26:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6433778A79
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 13:27:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387703AbfG2L0J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 07:26:09 -0400
-Received: from mail-io1-f70.google.com ([209.85.166.70]:37086 "EHLO
-        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387483AbfG2L0I (ORCPT
+        id S2387721AbfG2L1Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 07:27:16 -0400
+Received: from mail-lj1-f175.google.com ([209.85.208.175]:42744 "EHLO
+        mail-lj1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387638AbfG2L1Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 07:26:08 -0400
-Received: by mail-io1-f70.google.com with SMTP id v3so67254564ios.4
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 04:26:07 -0700 (PDT)
+        Mon, 29 Jul 2019 07:27:16 -0400
+Received: by mail-lj1-f175.google.com with SMTP id t28so58209736lje.9
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 04:27:15 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to:cc;
-        bh=CiTsFwy01HY+45xZWkPRSyqJ30c3ZUdDwfNLV3u64lQ=;
-        b=ofTIiRKCk2hHpHBWV0ZorvgwIf10ROak7n744jPywglTfVWhbJDz8/Jvp3y07UAOfe
-         gRCiSOXmrgoct6yN3Ds/rd14bdL81+P4R/aK97ZzyS8jpUprHJckbG3M+Vu4EypMCehG
-         pEAu5F4GcM7nXo+pdeLYjuPjWMxdna1h0X4R1fz75KktcnGaucWUI9CRFfBAaF9CGRin
-         mVJhliwRlSGM5eIyInfLDWlra88a0l7LTyKa6S3721IVk+claEsQoFH2g6UKGZe1TvNJ
-         Js2vk6TRGBvKlKKdQ5usXvr1mkVAGQWTV8u4UBDqoenq/e6Qqimifbgqg2+x5EjGrC81
-         l+Vg==
-X-Gm-Message-State: APjAAAWeT1etOivg4we0492BMNl2UpU+v8tvcp0avGue6hdOOhV4IGcW
-        Dr9HEkvSC6KDrqRdwiyzAKMmEXhUbR/1/TPsboDx3d73PR+f
-X-Google-Smtp-Source: APXvYqwO0ePpVSbSPAM3YZRYg1LDnzHtT0mXbTayoB4XQ1/jhncoTw791M2ecgXMexBfnxEQMcp11YASrxIWfcVCHWUqTzs/m9gD
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PhSMztl9vtcPHrtCcvMgqxG7WnfxjbwUrZSM++0kKfk=;
+        b=OJl29BZHKS0WhGpPMg3wEVXl+sAlwDF0jrgBoeQaujlWxk0BNfDWAku1xJ48eVmy7O
+         HrkbmtvWj/nlJPTbi//+iqVO8kGbmMccnGo4zwwsMSDJci54kWV6O7fGVNea5DQu97py
+         ezAtqthVXt0Iz0G5dPgDdyyOu4o7CV2/TliXevZp6+TDzU6QIDirigfWQxfHxnFyp8l9
+         9RXC97C+y0u0Ahvoy+Lmivn4rjmvCbuSVDXrQIGx05XdOE1x/yfQTcoR+7I26a9F+nuS
+         dKj7T+Q9oeetkXvVJqK6SOFPK6LWP3SpeLenARb9WasC+hCQEGa3qHY86oE9WHp16SFE
+         Ro/w==
+X-Gm-Message-State: APjAAAVIVjkFzB+8ZChL8lsiEspBeE4G4Hfiga/CcO/BqA9IswVBzXyM
+        hY3qZKla0R5sBLj8cUvSG+paJ/SZn2GDsjPLs7Uptw==
+X-Google-Smtp-Source: APXvYqwmGzre91C1xV6WEc9bvK8y6PD3NAo1Y9stcZDW0EJEmZA86HhxhvVEUcD8QyRTdmFfYCdQ0561v6Et3EZw+5Y=
+X-Received: by 2002:a2e:9643:: with SMTP id z3mr58628311ljh.43.1564399634664;
+ Mon, 29 Jul 2019 04:27:14 -0700 (PDT)
 MIME-Version: 1.0
-X-Received: by 2002:a5d:9c46:: with SMTP id 6mr43195713iof.6.1564399567073;
- Mon, 29 Jul 2019 04:26:07 -0700 (PDT)
-Date:   Mon, 29 Jul 2019 04:26:07 -0700
-In-Reply-To: <1564399552.25582.8.camel@suse.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000007b7990058ed028d0@google.com>
-Subject: Re: Re: WARNING in iguanair_probe/usb_submit_urb
-From:   syzbot <syzbot+01a77b82edaa374068e1@syzkaller.appspotmail.com>
-To:     Oliver Neukum <oneukum@suse.com>
-Cc:     andreyknvl@google.com, gregkh@linuxfoundation.org,
-        gustavo@embeddedor.com, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org, oneukum@suse.com,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+References: <CAGnkfhySwXY7YwuQezyx6cEpemZW4Hox1_4fQJm3-5hvM3G6gw@mail.gmail.com>
+ <20190729095047.k45isr7etq3xkyvr@willie-the-truck> <1cfad84e-5a98-99bd-07c2-9db0cf37292b@arm.com>
+ <CAGnkfhxXHPfMZVMy4Wjmy39E3Oh2U8FjVU8p8PprCnj5QFLMEg@mail.gmail.com>
+ <cc6f9c8f-a4a1-7c71-1f89-72e1e8dd0cc8@arm.com> <CAGnkfhx6St+MYQuR_Duguk4Q9ieuL7sLCTL=G76-eqUcCAbpoA@mail.gmail.com>
+ <c8581164-168d-a4a0-46de-4bdd7f7dedbf@arm.com>
+In-Reply-To: <c8581164-168d-a4a0-46de-4bdd7f7dedbf@arm.com>
+From:   Matteo Croce <mcroce@redhat.com>
+Date:   Mon, 29 Jul 2019 13:26:38 +0200
+Message-ID: <CAGnkfhyT=2kPsiUy-V=aCA_s-C4BXgD++hAZ9ii1h0p94mMVQA@mail.gmail.com>
+Subject: Re: build error
+To:     Vincenzo Frascino <vincenzo.frascino@arm.com>
+Cc:     Will Deacon <will@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Am Freitag, den 26.07.2019, 05:28 -0700 schrieb syzbot:
->> Hello,
+On Mon, Jul 29, 2019 at 1:18 PM Vincenzo Frascino
+<vincenzo.frascino@arm.com> wrote:
+> Last but not least, are you on any irc channel? Might help speeding up the
+> debugging if we talk there.
+>
 
->> syzbot found the following crash on:
+Sure, I'm matteo on FreeNode, #armlinux
 
->> HEAD commit:    6a3599ce usb-fuzzer: main usb gadget fuzzer driver
->> git tree:       https://github.com/google/kasan.git usb-fuzzer
->> console output: https://syzkaller.appspot.com/x/log.txt?x=164ab1f0600000
->> kernel config:   
->> https://syzkaller.appspot.com/x/.config?x=700ca426ab83faae
->> dashboard link:  
->> https://syzkaller.appspot.com/bug?extid=01a77b82edaa374068e1
->> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
->> syz repro:       
->> https://syzkaller.appspot.com/x/repro.syz?x=143d7978600000
->> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=134623f4600000
-
->> IMPORTANT: if you fix the bug, please add the following tag to the  
->> commit:
->> Reported-by: syzbot+01a77b82edaa374068e1@syzkaller.appspotmail.com
-
-> #syz test: https://github.com/google/kasan.git  
-> usb-fuzzer-usb-testing-2019.07.11]
-
-"usb-fuzzer-usb-testing-2019.07.11]" does not look like a valid git branch  
-or commit.
-
-
->  From 0b0a7f7e980973e0c0d17f1dfe2bd7742492bfcc Mon Sep 17 00:00:00 2001
-> From: Oliver Neukum <oneukum@suse.com>
-> Date: Mon, 29 Jul 2019 11:49:00 +0200
-> Subject: [PATCH] iguanair: add sanity checks
-
-> The driver needs to check the endpoint types, too, as opposed
-> to the number of endpoints. This also requires moving the check earlier.
-
-> Reported-by: syzbot+01a77b82edaa374068e1@syzkaller.appspotmail.com
-> Signed-off-by: Oliver Neukum <oneukum@suse.com>
-> ---
->   drivers/media/rc/iguanair.c | 15 +++++++--------
->   1 file changed, 7 insertions(+), 8 deletions(-)
-
-> diff --git a/drivers/media/rc/iguanair.c b/drivers/media/rc/iguanair.c
-> index ea05e125016a..663083a6b399 100644
-> --- a/drivers/media/rc/iguanair.c
-> +++ b/drivers/media/rc/iguanair.c
-> @@ -413,6 +413,10 @@ static int iguanair_probe(struct usb_interface *intf,
->   	int ret, pipein, pipeout;
->   	struct usb_host_interface *idesc;
-
-> +	idesc = intf->altsetting;
-> +	if (idesc->desc.bNumEndpoints < 2)
-> +		return -ENODEV;
-> +
->   	ir = kzalloc(sizeof(*ir), GFP_KERNEL);
->   	rc = rc_allocate_device(RC_DRIVER_IR_RAW);
->   	if (!ir || !rc) {
-> @@ -427,18 +431,13 @@ static int iguanair_probe(struct usb_interface  
-> *intf,
->   	ir->urb_in = usb_alloc_urb(0, GFP_KERNEL);
->   	ir->urb_out = usb_alloc_urb(0, GFP_KERNEL);
-
-> -	if (!ir->buf_in || !ir->packet || !ir->urb_in || !ir->urb_out) {
-> +	if (!ir->buf_in || !ir->packet || !ir->urb_in || !ir->urb_out ||
-> +			!usb_endpoint_is_int_in(&idesc->endpoint[0].desc) ||
-> +			!usb_endpoint_is_int_out(&idesc->endpoint[1].desc)) {
->   		ret = -ENOMEM;
->   		goto out;
->   	}
-
-> -	idesc = intf->altsetting;
-> -
-> -	if (idesc->desc.bNumEndpoints < 2) {
-> -		ret = -ENODEV;
-> -		goto out;
-> -	}
-> -
->   	ir->rc = rc;
->   	ir->dev = &intf->dev;
->   	ir->udev = udev;
-> --
-> 2.16.4
-
+-- 
+Matteo Croce
+per aspera ad upstream
