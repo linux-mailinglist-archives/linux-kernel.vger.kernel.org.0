@@ -2,117 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E596798B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:10:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 16EC1798DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:11:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730378AbfG2UJQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 16:09:16 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:44242 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730188AbfG2UJP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 16:09:15 -0400
-Received: by mail-pg1-f195.google.com with SMTP id i18so28790764pgl.11;
-        Mon, 29 Jul 2019 13:09:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:user-agent:mime-version;
-        bh=fBfBw2wkhiVUlzKRrybQChsuOJLRt+8izpDdk9CY/Nw=;
-        b=itX+YlvedKY4fzRJQgV8KR91wHxBTELBREIy6gRJ1SnVaGf8KOzDxp/Mo1UCKVNbYn
-         YmeEEpb++7Xb2MmG4WBZv35xHPGgtC954vfVzAkjAnJsDyVbGwKlx4TaA7lsaGEIVU7t
-         mJzeA9NIXmlBC3Nhndc4sqUhCFAxDU/ZNCrLnXRJM334siKWj9Z/gJmCNP/kgKmteM6v
-         9fqrTApA0o/HsMAVxEngZ5+FEWG2EGEc0hxGKq8mIlV2CYCdY0moT0dPJgvX5uPBFa2c
-         g9tllaQTKnK/uJMj1bZbI9CN0sypo/DOoeduDUXnsA1X1rru6bo1lLIGBHlkHJYrR7yz
-         6nyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:user-agent
-         :mime-version;
-        bh=fBfBw2wkhiVUlzKRrybQChsuOJLRt+8izpDdk9CY/Nw=;
-        b=gA/6KCOZlk/luGsmhEcbtJ0hCmTOKyY8M25oKIxNCunRHR/HZhVMxnuUMymCFyqb4D
-         Q2tks60iOWTtoGpyEA2fPKjDWZrWalRsDfPAYy7E2eBx1bObiOVnqosS7vRaBMBtgrt+
-         nbyA1IWFbp/8zhT6+Tf/EsUK0zi/LlI1tfwDHEcUEv/ohsB1mGFah6/UOa7XzqBa08dN
-         Po0HtIWk9WBfX1luUyGupuEU99tQp5SOL6Nw4U/VkqN45JQzqpCcO8DGGyCgl421skOJ
-         iliVaUKJwVdP3dqIs8kszm64V+ZFcuZeYrWp+J5kOUQ/IjdZfNmyjyFazGjYKaUqNwVc
-         MwZQ==
-X-Gm-Message-State: APjAAAWXipAkaRJaBukiNTCjE/OcTjx6E45OdiZLR7yZ1AWxlO0qfYoS
-        AmvzenmZ7e3NFQRQVp6Enq/lIzR4skY=
-X-Google-Smtp-Source: APXvYqw64sHT7u8AAtryI2j1MfjOmW9ev5iXn+VhM8gdPdBzitofVG1Wz8aoXhGzm/hkiCwz6d96zQ==
-X-Received: by 2002:a63:8a43:: with SMTP id y64mr104911456pgd.104.1564430954506;
-        Mon, 29 Jul 2019 13:09:14 -0700 (PDT)
-Received: from mbalantz-desktop (d206-116-172-62.bchsia.telus.net. [206.116.172.62])
-        by smtp.gmail.com with ESMTPSA id m20sm65250324pff.79.2019.07.29.13.09.13
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 29 Jul 2019 13:09:14 -0700 (PDT)
-From:   Mark Balantzyan <mbalant3@gmail.com>
-X-Google-Original-From: Mark Balantzyan <mbalantz@mbalantz-desktop>
-Date:   Mon, 29 Jul 2019 13:09:09 -0700 (PDT)
-To:     ezequiel@vanguardiasur.com.ar
-cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] media input infrastructure:tw686x: Fix of possibleinconsistent
- memory deallocation and/or race condition by implementation of custom
- video_device_release function in tw686x driver
-Message-ID: <alpine.DEB.2.21.1907291256080.16959@mbalantz-desktop>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S1730487AbfG2ULI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 16:11:08 -0400
+Received: from mail-eopbgr750085.outbound.protection.outlook.com ([40.107.75.85]:49308
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730144AbfG2ULF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 16:11:05 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=dCeNBNmCjC49os7LvsXKpfinTshpUvEKKLdIzJpBYRUs/ONI9oZbjMdB0ePXAi29akpaRHm1e+OVrhFNXyWvt4Go9nXOmFuBu70Gm2ZH/MansPNWys6dCvBsS/c0GoGHVaHZPcSTcaB1aSSYYVBsQjsaEj20EridGR2S0dTvsazCkp356MCgKrOd34+YXnluzxkXYfCiABzWp0vFoIIBUDFvU5K3uyXFI9BmmBv2PaPZ/VDesihwC+x0mJn8QNK2FBl4vwSPwdFnLG9K1ffKdWRrg/sN4UrKFjh9Toz/h1HrqJSdq20v7NyZ2gzV5NSpIZVRrWY7sCLzps+jC5F6vg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=UXVn8wV4RVC+z2KdELcSE9VVmmeSXCmEkyNuBNRfzU4=;
+ b=kLYFlM4zhHzEg+F/ZnBrBZe9jziT+7+QSQV4U1eZMoGnKCGTOcRCnV5A4oPcNoi+d/8A3nuDaOoOx3MnnC2tjCvL4z6YRxlLgyJ1lj6ymH06tJp9R/N1AVbvcFCIH2QxKGa4YwkGBtaw9YKoPkzSdMLYUIWlG/WMzUe8OPAHX6T5qxStUoOQiZzJHUPpCZJc72sJdyXYLk9roe9vIeclIGCLubnjK1ODT12HUstNhVtfy88zJWqooay5CyqSdbkRKd1Z77k6t5cQBe60Q9kWlI41ZM1eyaiL15pHZIPJrTziTu7fV/WnCQPuxyXlA2on77f0gcDIZLKRqoPTol1Pag==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
+ smtp.mailfrom=vmware.com;dmarc=pass action=none
+ header.from=vmware.com;dkim=pass header.d=vmware.com;arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=UXVn8wV4RVC+z2KdELcSE9VVmmeSXCmEkyNuBNRfzU4=;
+ b=YWbCcmmOm+zBlx0BuqUDczw+6veSwlG1UNaBEWLadoRGWSEZjCdFE8DBpN3LgX1FGZLYGUZKnIyEsVwEetIF1nfqv6mf0uZGniX/C4ujjZzW9qKb6UKwfnOhSeV18nHkscUyvKOUVNiI2SRiL+MZceIas7tWcmB3DIgenCYO/dQ=
+Received: from CY4PR05MB3494.namprd05.prod.outlook.com (10.171.246.163) by
+ CY4PR05MB3464.namprd05.prod.outlook.com (10.171.248.164) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2136.11; Mon, 29 Jul 2019 20:10:58 +0000
+Received: from CY4PR05MB3494.namprd05.prod.outlook.com
+ ([fe80::84f3:3266:347a:26bf]) by CY4PR05MB3494.namprd05.prod.outlook.com
+ ([fe80::84f3:3266:347a:26bf%4]) with mapi id 15.20.2136.010; Mon, 29 Jul 2019
+ 20:10:58 +0000
+From:   Matt Helsley <mhelsley@vmware.com>
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+CC:     LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCH v3 09/13] objtool: Prepare to merge recordmcount
+Thread-Topic: [PATCH v3 09/13] objtool: Prepare to merge recordmcount
+Thread-Index: AQHVQmOO4kt6r/gP8Em15ETleLxC4abgVKCAgAG6D4A=
+Importance: high
+X-Priority: 1
+Date:   Mon, 29 Jul 2019 20:10:57 +0000
+Message-ID: <8FC1CDA2-F58F-4D23-BB76-7BDDE56ADB58@vmware.com>
+References: <cover.1563992889.git.mhelsley@vmware.com>
+ <2767f55f4a5fbf30ba0635aed7a9c5ee92ac07dd.1563992889.git.mhelsley@vmware.com>
+ <20190728174807.vr7j6t7ebblub6cz@treble>
+In-Reply-To: <20190728174807.vr7j6t7ebblub6cz@treble>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=mhelsley@vmware.com; 
+x-originating-ip: [73.25.163.201]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 7490d404-c574-4224-873b-08d71460dea5
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:CY4PR05MB3464;
+x-ms-traffictypediagnostic: CY4PR05MB3464:
+x-microsoft-antispam-prvs: <CY4PR05MB34649B47A375E2FBF6574238A0DD0@CY4PR05MB3464.namprd05.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:4125;
+x-forefront-prvs: 01136D2D90
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(346002)(366004)(376002)(39860400002)(136003)(199004)(189003)(71200400001)(66476007)(6916009)(486006)(64756008)(66946007)(2616005)(11346002)(102836004)(66556008)(478600001)(91956017)(446003)(86362001)(76116006)(476003)(5660300002)(6506007)(54906003)(316002)(76176011)(81686011)(7736002)(53546011)(186003)(99286004)(26005)(66446008)(53936002)(229853002)(68736007)(3846002)(305945005)(6436002)(25786009)(2906002)(6246003)(8936002)(36756003)(33656002)(81166006)(256004)(81156014)(6116002)(8676002)(4326008)(6512007)(66066001)(6486002)(71190400001)(14454004);DIR:OUT;SFP:1101;SCL:1;SRVR:CY4PR05MB3464;H:CY4PR05MB3494.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: vmware.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: bqZpQYDogdYK0EqGGsxzO+zdNl+0lMj/+4+vEuo9eUBR5Pbvmep6jevzV+8pSNLIgwfmZnFW2tEO1vTSsdbRE0RVGr67VbvCn4XMlZZD4tjkdAISPKUyMNhqxrPQ32FBXyTvcaC4Nanj/Sj+3tRvGtZkCZdmQ58NJxwwpZRVOhDa1stwzlF+bO7h7B02N3NLG5tCgbFepFfa5PbRawhcEUtegiJnpx+VgZL5zgAv8UB3eWHeBtu1IajLfgKfbzVdVbtr46rKJVDpc8aasYOzb5qeGlxpCC7L6zOdTbYFW3BRUZZVgh/Qv/wOtDudc9GoteMfj/t/hgkZYeAY1OF+S2kI7vvytnSeGbclIVpHq6GM/b+fu8VJZ17pstN4RPmrFp8ZTRL8/siYvOt80qDS5gDvQCQURWSQvRejsVB7MpM=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <E67737297CC9CF4EA599A3F99C43E2B2@namprd05.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; format=flowed; charset=US-ASCII
+X-OriginatorOrg: vmware.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7490d404-c574-4224-873b-08d71460dea5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Jul 2019 20:10:57.9541
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: mhelsley@vmware.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR05MB3464
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-Possible inconsistent memory deallocation and/or race conditions were 
-detected specifically with respect to remaining open handles to the video 
-device handled by the tw686x driver. This patch addresses this by 
-implementing a revised independent instance of the video_device_release 
-function to free the remaining resources and memory where the last open 
-handle(s) is/were closed.
-
-Signed-off-by: Mark Balantzyan <mbalant3@gmail.com>
-
----
-
-  drivers/media/pci/tw686x/tw686x-video.c | 15 +++++++++++----
-  1 file changed, 11 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/media/pci/tw686x/tw686x-video.c 
-b/drivers/media/pci/tw686x/tw686x-video.c
-index 3a06c000..29e10c85 100644
---- a/drivers/media/pci/tw686x/tw686x-video.c
-+++ b/drivers/media/pci/tw686x/tw686x-video.c
-@@ -1151,18 +1151,25 @@ void tw686x_video_irq(struct tw686x_dev *dev, 
-unsigned long requests,
-  	}
-  }
-
-+void video_device_release(tw686x_dev *dev) {
-+	for (int pb = 0; pb < 2; pb++) {
-+		dev->dma_ops->free(dev->video_channels,pb);
-+	}
-+	kfree(dev);
-+}
-+
-  void tw686x_video_free(struct tw686x_dev *dev)
-  {
--	unsigned int ch, pb;
-+	unsigned int ch;
-
-  	for (ch = 0; ch < max_channels(dev); ch++) {
-  		struct tw686x_video_channel *vc = 
-&dev->video_channels[ch];
-
-  		video_unregister_device(vc->device);
-
--		if (dev->dma_ops->free)
--			for (pb = 0; pb < 2; pb++)
--				dev->dma_ops->free(vc, pb);
-+		if (dev->dma_ops->free) {
-+			video_device_release(dev);
-+		}
-  	}
-  }
-
--- 
-2.17.1
-
+DQo+IE9uIEp1bCAyOCwgMjAxOSwgYXQgMTA6NDggQU0sIEpvc2ggUG9pbWJvZXVmIDxqcG9pbWJv
+ZUByZWRoYXQuY29tPiB3cm90ZToNCj4gDQo+IE9uIFdlZCwgSnVsIDI0LCAyMDE5IGF0IDAyOjA1
+OjAzUE0gLTA3MDAsIE1hdHQgSGVsc2xleSB3cm90ZToNCj4+IE1vdmUgcmVjb3JkbWNvdW50IGlu
+dG8gdGhlIG9ianRvb2wgZGlyZWN0b3J5LiBXZSBrZWVwIHRoaXMgc3RlcCBzZXBhcmF0ZQ0KPj4g
+c28gY2hhbmdlcyB3aGljaCB0dXJuIHJlY29yZG1jb3VudCBpbnRvIGEgc3ViY29tbWFuZCBvZiBv
+Ymp0b29sIGRvbid0DQo+PiBnZXQgb2JzY3VyZWQuDQo+PiANCj4+IFNpZ25lZC1vZmYtYnk6IE1h
+dHQgSGVsc2xleSA8bWhlbHNsZXlAdm13YXJlLmNvbT4NCj4+IC0tLQ0KPj4gc2NyaXB0cy8uZ2l0
+aWdub3JlICAgICAgICAgICAgICAgICAgICAgICAgIHwgIDEgLQ0KPj4gc2NyaXB0cy9NYWtlZmls
+ZSAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgIDEgLQ0KPj4gc2NyaXB0cy9NYWtlZmlsZS5i
+dWlsZCAgICAgICAgICAgICAgICAgICAgIHwgMTEgKysrKysrLS0tLS0NCj4+IHRvb2xzL29ianRv
+b2wvLmdpdGlnbm9yZSAgICAgICAgICAgICAgICAgICB8ICAxICsNCj4+IHRvb2xzL29ianRvb2wv
+QnVpbGQgICAgICAgICAgICAgICAgICAgICAgICB8ICAyICsrDQo+PiB0b29scy9vYmp0b29sL01h
+a2VmaWxlICAgICAgICAgICAgICAgICAgICAgfCAxMyArKysrKysrKysrKystDQo+PiB7c2NyaXB0
+cyA9PiB0b29scy9vYmp0b29sfS9yZWNvcmRtY291bnQuYyAgfCAgMA0KPj4ge3NjcmlwdHMgPT4g
+dG9vbHMvb2JqdG9vbH0vcmVjb3JkbWNvdW50LmggIHwgIDANCj4+IHtzY3JpcHRzID0+IHRvb2xz
+L29ianRvb2x9L3JlY29yZG1jb3VudC5wbCB8ICAwDQo+PiA5IGZpbGVzIGNoYW5nZWQsIDIxIGlu
+c2VydGlvbnMoKyksIDggZGVsZXRpb25zKC0pDQo+PiByZW5hbWUge3NjcmlwdHMgPT4gdG9vbHMv
+b2JqdG9vbH0vcmVjb3JkbWNvdW50LmMgKDEwMCUpDQo+PiByZW5hbWUge3NjcmlwdHMgPT4gdG9v
+bHMvb2JqdG9vbH0vcmVjb3JkbWNvdW50LmggKDEwMCUpDQo+PiByZW5hbWUge3NjcmlwdHMgPT4g
+dG9vbHMvb2JqdG9vbH0vcmVjb3JkbWNvdW50LnBsICgxMDAlKQ0KPiANCj4gQWNjb3JkaW5nIHRv
+ICJnaXQgZ3JlcCByZWNvcmRtY291bnQiIHRoZXJlIGFyZSBhIGZldyBkb2N1bWVudGF0aW9uIGZp
+bGVzDQo+IHdoaWNoIHJlZmVyZW5jZSByZWNvcmRtY291bnQgYW5kIHJlY29yZG1vdW50LnBsIGlu
+IHRoZWlyIG9sZCBsb2NhdGlvbnMuDQo+IA0KPiBBbmQgdGhleSdsbCBwcm9iYWJseSBuZWVkIHVw
+ZGF0aW5nIGFnYWluIGZvciB0aGUgbmV4dCBwYXRjaCBhcyB3ZWxsLg0KDQpFeGNlbGxlbnQgcG9p
+bnQuIEnigJlsbCBpbnRlZ3JhdGUgdGhvc2UgY2hhbmdlcyBhbmQgcmVzZW5kLg0KDQpDaGVlcnMs
+DQoJLU1hdHQ=
