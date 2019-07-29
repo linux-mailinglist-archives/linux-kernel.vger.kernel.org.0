@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 186B479495
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:33:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7479C794B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:35:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730304AbfG2TdJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 15:33:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46976 "EHLO mail.kernel.org"
+        id S2388471AbfG2Tej (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 15:34:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49002 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729778AbfG2TdF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:33:05 -0400
+        id S2388344AbfG2Teg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:34:36 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 61D1121655;
-        Mon, 29 Jul 2019 19:33:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BE3102070B;
+        Mon, 29 Jul 2019 19:34:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564428784;
-        bh=B+4mkE2wlLtHn+8VNj1PDnu0y6OxojTs8LQSdPTpCJQ=;
+        s=default; t=1564428876;
+        bh=txun0dhN5ZPu3uTiJ5GQy+XetnkVydPP6bPsfuQq26c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dnLKPoxN++RUxCUSug+lzx0X3+OmmvzlVZyGVxFwys/oX5S9sG++lxOQyKGTs8kXJ
-         u1XgIGmSOzoySyi90D7ugcIca3yF2uP0WP9mOPCQKnFLesFEK5RJB0ee7tp1j87AwA
-         jCkz+vVzAjzxZ4Mre2aSbfFgtpMT4DsT6lz2Ik54=
+        b=bFMvzvbBvni2ee0AFwTIcrXz1h7UPhibdLF0z4MQFY5pfPWa+S8KGbhGcric3Kzxe
+         KPlYWc+V0MmULCyUrNFnLzOnIF072pq113sRwQFNQX8tYlvSLmv6ID5yMdGl0fOPme
+         p0nkTjY9MCLGHZW/zpfyXcdaaXK8T9knrTxz4blI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
+        stable@vger.kernel.org, Baruch Siach <baruch@tkos.co.il>,
+        Andrew Lunn <andrew@lunn.ch>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 183/293] caif-hsi: fix possible deadlock in cfhsi_exit_module()
-Date:   Mon, 29 Jul 2019 21:21:14 +0200
-Message-Id: <20190729190838.522437823@linuxfoundation.org>
+Subject: [PATCH 4.14 187/293] net: dsa: mv88e6xxx: wait after reset deactivation
+Date:   Mon, 29 Jul 2019 21:21:18 +0200
+Message-Id: <20190729190838.832230335@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190729190820.321094988@linuxfoundation.org>
 References: <20190729190820.321094988@linuxfoundation.org>
@@ -43,32 +44,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Taehee Yoo <ap420073@gmail.com>
+From: Baruch Siach <baruch@tkos.co.il>
 
-[ Upstream commit fdd258d49e88a9e0b49ef04a506a796f1c768a8e ]
+[ Upstream commit 7b75e49de424ceb53d13e60f35d0a73765626fda ]
 
-cfhsi_exit_module() calls unregister_netdev() under rtnl_lock().
-but unregister_netdev() internally calls rtnl_lock().
-So deadlock would occur.
+Add a 1ms delay after reset deactivation. Otherwise the chip returns
+bogus ID value. This is observed with 88E6390 (Peridot) chip.
 
-Fixes: c41254006377 ("caif-hsi: Add rtnl support")
-Signed-off-by: Taehee Yoo <ap420073@gmail.com>
+Signed-off-by: Baruch Siach <baruch@tkos.co.il>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/caif/caif_hsi.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/dsa/mv88e6xxx/chip.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/net/caif/caif_hsi.c
-+++ b/drivers/net/caif/caif_hsi.c
-@@ -1462,7 +1462,7 @@ static void __exit cfhsi_exit_module(voi
- 	rtnl_lock();
- 	list_for_each_safe(list_node, n, &cfhsi_list) {
- 		cfhsi = list_entry(list_node, struct cfhsi, list);
--		unregister_netdev(cfhsi->ndev);
-+		unregister_netdevice(cfhsi->ndev);
+--- a/drivers/net/dsa/mv88e6xxx/chip.c
++++ b/drivers/net/dsa/mv88e6xxx/chip.c
+@@ -4044,6 +4044,8 @@ static int mv88e6xxx_probe(struct mdio_d
+ 				goto out_g1_irq;
+ 		}
  	}
- 	rtnl_unlock();
- }
++	if (chip->reset)
++		usleep_range(1000, 2000);
+ 
+ 	err = mv88e6xxx_mdios_register(chip, np);
+ 	if (err)
 
 
