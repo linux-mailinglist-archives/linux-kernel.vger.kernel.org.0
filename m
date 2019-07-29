@@ -2,147 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73F3C799DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:24:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8764E799E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:26:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387731AbfG2UYV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 16:24:21 -0400
-Received: from mail-vk1-f194.google.com ([209.85.221.194]:36841 "EHLO
-        mail-vk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387512AbfG2UYV (ORCPT
+        id S1729086AbfG2U0M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 16:26:12 -0400
+Received: from mail-pl1-f201.google.com ([209.85.214.201]:43466 "EHLO
+        mail-pl1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725975AbfG2U0M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 16:24:21 -0400
-Received: by mail-vk1-f194.google.com with SMTP id b69so12346387vkb.3
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 13:24:20 -0700 (PDT)
+        Mon, 29 Jul 2019 16:26:12 -0400
+Received: by mail-pl1-f201.google.com with SMTP id t2so33809533plo.10
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 13:26:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=MdZSh5RxIzhkZKwZhPaXMDYMCWoc5OqdNfaSUD52NhE=;
-        b=YxuOOl8UB79J8g6bZQA1PI0O/aX11tn1uzDGl5Kl698RmntxCh7SGe8lHUfyjZ+xpP
-         /dST/nnVQOU7cNcZWA37Z0aTdUNU53IAOW2heHnR30Fxk9F4Q+IDAVCmWD9sli+Kc7eE
-         JvpGkkfCfbHnqBwcWKL7SdC46rEca8jg+xXDVJX0JpWuCv4AdGmKzURYzUK7SuM5RnM4
-         ove8m6d3s16Ur9ifPhMZesR9RVyKyK+1K6azj+phbjcbs98yxvzIzp5IA4va4PPHyv4l
-         JWUFmx9VdAxIlKvEJsXwxxKvoxAHOcRcQ74lJGIV4JRZhUp99n0g7yWw1WSZIep02yVA
-         p++g==
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=InkWYbyakoin4kW7joWmSnOT6nnJvOIEoZKfiSX6FXM=;
+        b=NrH9CP3j3IaEZeQTRPUpaINe6R+O0NeUPVTiKEqR6ZRIdxWO6b0hnLm51vp8WpodBt
+         b6YZ/M3SVAVCFf3UurTkKgjdqsG/kQ8nQYh7BWrOOjkRKhtlE1ly2pEUBUWxk6GGbYm8
+         1ArC7a1eS8zanTLR4ftZoAMpPBBnZ9ajFP2RpwM+A1dCeK8QIzBW1wpVAYqB7Uuom3Lo
+         CoBW1LSDZajNANwdP5yg7IcmAWWiInk7VkArgc5DgBwQrWjtWw6B0CmJ+6WQc8lHqx03
+         m3b2v59YP42soakHigmlcSIQP5KCqXM6lb/979S2CV6wnYKKJK5lJX989prCYbKth+Ai
+         M+NA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=MdZSh5RxIzhkZKwZhPaXMDYMCWoc5OqdNfaSUD52NhE=;
-        b=PawxVkYFTamtWBZKLCFe3zWrVRxb2Kuu2qCfbBnbiefah1X563BIDNdDQTKSXFCKfc
-         x2dTzSuTw7itPF3KblVPZe4Uj8q2wB3fCHXJlN6OPuLz3FsisH8GYM8iAIlG09BA9kG5
-         a6JXnJM9WkAeGBx2sKPssAjvdCt31zF8ZEA0ONRhIawbYt8KrmVaVwP6NKlFbZUEO37E
-         6PtvsEGM+3nZEZedZKj/mPhjs4ElV+EUwWG/esXdkGvyWmSMVNqcVn9Npa6bST77Omca
-         3CrPpDi2y1pOiggyLLirhnRZ7lu5AJy8dxsb1ETweoj6WVHkz1lRvFLCTeyIAdCGSul9
-         Zh5g==
-X-Gm-Message-State: APjAAAUdb1dT1gXNmV0SdwTAVn1YQ4LqRSTi2h7s25liIGAw8hBXIQLU
-        D9SY+kEnGrBFle8dHI312uPWuA==
-X-Google-Smtp-Source: APXvYqwj+GdgasqfsMhmo5I6aD70Un0lsre9nGEv9e8lbsyomLJE+3DtELV4/S7GNOeJ4tJVQWT8wg==
-X-Received: by 2002:a1f:1e47:: with SMTP id e68mr27124799vke.37.1564431859760;
-        Mon, 29 Jul 2019 13:24:19 -0700 (PDT)
-Received: from qcai.nay.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id 142sm28599412vkc.40.2019.07.29.13.24.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 29 Jul 2019 13:24:19 -0700 (PDT)
-From:   Qian Cai <cai@lca.pw>
-To:     davem@davemloft.net
-Cc:     vyasevich@gmail.com, nhorman@tuxdriver.com,
-        marcelo.leitner@gmail.com, linux-sctp@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Qian Cai <cai@lca.pw>
-Subject: [PATCH] net/socket: fix GCC8+ Wpacked-not-aligned warnings
-Date:   Mon, 29 Jul 2019 16:23:58 -0400
-Message-Id: <1564431838-23051-1-git-send-email-cai@lca.pw>
-X-Mailer: git-send-email 1.8.3.1
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=InkWYbyakoin4kW7joWmSnOT6nnJvOIEoZKfiSX6FXM=;
+        b=gNuVQOcWbP7+Av0gXOsjlzkbqiVAPMYiqONG4IPDyXVQqb86Ob9gAuicqeax0ESd70
+         BWvrVDIdPD4w7SGOSk4u128+LU5AqQ48xLYpT/7zLeNNWrGiKD2/Pys42OU3bA6LomRw
+         5tvSXXaIaZim0U0CRoAgEPnm2/Di7vTUwqhotkfZYek0yD4Z9Rt88l3V4gP4cbISdGNT
+         4tLCfItYYv7B5zTqdFRYNDJ4PdmYon2cPCm28E5ZN9wCL70K921qv5Y9CgVQJJyXl8pw
+         tNws+vFrs9M1t+Vc2Uv4M4jC8nXIQ7GQ04bLONDfdJv7UHgPlKqZFhSNcZ/RORjao5Ql
+         MYjw==
+X-Gm-Message-State: APjAAAUfDNKhVft+VenBz2qPXHXXiEZBiLhQCjD6G94vv+O7LGRKeNm3
+        kdINWR5gtEbXcv8CpvFUzS1kxmFvPLDk7/Rgg68=
+X-Google-Smtp-Source: APXvYqzbqjK6rfCZn+o56AxaIOeOmnCvc2eWfzYd3XaqtryKtAIfNfxTDSqVXK8CEHfxuNI/ij2rwh8wRg9LWpZl+Y0=
+X-Received: by 2002:a63:5b52:: with SMTP id l18mr106138942pgm.21.1564431971070;
+ Mon, 29 Jul 2019 13:26:11 -0700 (PDT)
+Date:   Mon, 29 Jul 2019 13:25:41 -0700
+Message-Id: <20190729202542.205309-1-ndesaulniers@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.22.0.709.g102302147b-goog
+Subject: [PATCH] powerpc: workaround clang codegen bug in dcbz
+From:   Nick Desaulniers <ndesaulniers@google.com>
+To:     mpe@ellerman.id.au
+Cc:     christophe.leroy@c-s.fr, segher@kernel.crashing.org, arnd@arndb.de,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        kbuild test robot <lkp@intel.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        clang-built-linux@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In file included from ./include/linux/sctp.h:42,
-                 from net/core/skbuff.c:47:
-./include/uapi/linux/sctp.h:395:1: warning: alignment 4 of 'struct
-sctp_paddr_change' is less than 8 [-Wpacked-not-aligned]
- } __attribute__((packed, aligned(4)));
- ^
-./include/uapi/linux/sctp.h:728:1: warning: alignment 4 of 'struct
-sctp_setpeerprim' is less than 8 [-Wpacked-not-aligned]
- } __attribute__((packed, aligned(4)));
- ^
-./include/uapi/linux/sctp.h:727:26: warning: 'sspp_addr' offset 4 in
-'struct sctp_setpeerprim' isn't aligned to 8 [-Wpacked-not-aligned]
-  struct sockaddr_storage sspp_addr;
-                          ^~~~~~~~~
-./include/uapi/linux/sctp.h:741:1: warning: alignment 4 of 'struct
-sctp_prim' is less than 8 [-Wpacked-not-aligned]
- } __attribute__((packed, aligned(4)));
- ^
-./include/uapi/linux/sctp.h:740:26: warning: 'ssp_addr' offset 4 in
-'struct sctp_prim' isn't aligned to 8 [-Wpacked-not-aligned]
-  struct sockaddr_storage ssp_addr;
-                          ^~~~~~~~
-./include/uapi/linux/sctp.h:792:1: warning: alignment 4 of 'struct
-sctp_paddrparams' is less than 8 [-Wpacked-not-aligned]
- } __attribute__((packed, aligned(4)));
- ^
-./include/uapi/linux/sctp.h:784:26: warning: 'spp_address' offset 4 in
-'struct sctp_paddrparams' isn't aligned to 8 [-Wpacked-not-aligned]
-  struct sockaddr_storage spp_address;
-                          ^~~~~~~~~~~
-./include/uapi/linux/sctp.h:905:1: warning: alignment 4 of 'struct
-sctp_paddrinfo' is less than 8 [-Wpacked-not-aligned]
- } __attribute__((packed, aligned(4)));
- ^
-./include/uapi/linux/sctp.h:899:26: warning: 'spinfo_address' offset 4
-in 'struct sctp_paddrinfo' isn't aligned to 8 [-Wpacked-not-aligned]
-  struct sockaddr_storage spinfo_address;
-                          ^~~~~~~~~~~~~~
+Commit 6c5875843b87 ("powerpc: slightly improve cache helpers") exposed
+what looks like a codegen bug in Clang's handling of `%y` output
+template with `Z` constraint. This is resulting in panics during boot
+for 32b powerpc builds w/ Clang, as reported by our CI.
 
-This is because the commit 20c9c825b12f ("[SCTP] Fix SCTP socket options
-to work with 32-bit apps on 64-bit kernels.") added "packed, aligned(4)"
-GCC attributes to some structures but one of the members, i.e, "struct
-sockaddr_storage" in those structures has the attribute,
-"aligned(__alignof__ (struct sockaddr *)" which is 8-byte on 64-bit
-systems, so the commit overwrites the designed alignments for
-"sockaddr_storage".
+Add back the original code that worked behind a preprocessor check for
+__clang__ until we can fix LLVM.
 
-To fix this, "struct sockaddr_storage" needs to be aligned to 4-byte as
-it is only used in those packed sctp structure which is part of UAPI,
-and "struct __kernel_sockaddr_storage" is used in some other
-places of UAPI that need not to change alignments in order to not
-breaking userspace.
+Further, it seems that clang allnoconfig builds are unhappy with `Z`, as
+reported by 0day bot. This is likely because Clang warns about inline
+asm constraints when the constraint requires inlining to be semantically
+valid.
 
-One option is use typedef between "sockaddr_storage" and
-"__kernel_sockaddr_storage" but it needs to change 35 or 370 lines of
-codes. The other option is to duplicate this simple 2-field structure to
-have a separate "struct sockaddr_storage" so it can use a different
-alignment than "__kernel_sockaddr_storage". Also the structure seems
-stable enough, so it will be low-maintenance to update two structures in
-the future in case of changes.
-
-Signed-off-by: Qian Cai <cai@lca.pw>
+Link: https://bugs.llvm.org/show_bug.cgi?id=42762
+Link: https://github.com/ClangBuiltLinux/linux/issues/593
+Link: https://lore.kernel.org/lkml/20190721075846.GA97701@archlinux-threadripper/
+Debugged-by: Nathan Chancellor <natechancellor@gmail.com>
+Reported-by: Nathan Chancellor <natechancellor@gmail.com>
+Reported-by: kbuild test robot <lkp@intel.com>
+Suggested-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
 ---
- include/linux/socket.h | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+Alternatively, we could just revert 6c5875843b87. It seems that GCC
+generates the same code for these functions for out of line versions.
+But I'm not sure how the inlined code generated would be affected.
 
-diff --git a/include/linux/socket.h b/include/linux/socket.h
-index 97523818cb14..301119657125 100644
---- a/include/linux/socket.h
-+++ b/include/linux/socket.h
-@@ -38,7 +38,13 @@ struct linger {
- 	int		l_linger;	/* How long to linger for	*/
- };
+ arch/powerpc/include/asm/cache.h | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
+
+diff --git a/arch/powerpc/include/asm/cache.h b/arch/powerpc/include/asm/cache.h
+index b3388d95f451..72983da94dce 100644
+--- a/arch/powerpc/include/asm/cache.h
++++ b/arch/powerpc/include/asm/cache.h
+@@ -105,6 +105,30 @@ extern void _set_L3CR(unsigned long);
+ #define _set_L3CR(val)	do { } while(0)
+ #endif
  
--#define sockaddr_storage __kernel_sockaddr_storage
-+struct sockaddr_storage {
-+	__kernel_sa_family_t	ss_family;		/* address family */
-+	/* Following field(s) are implementation specific */
-+	char		__data[_K_SS_MAXSIZE - sizeof(unsigned short)];
-+				/* space to achieve desired size, */
-+				/* _SS_MAXSIZE value minus size of ss_family */
-+} __aligned(4);			/* force desired alignment */
- 
- /*
-  *	As we do 4.4BSD message passing we use a 4.4BSD message passing
++/*
++ * Workaround for https://bugs.llvm.org/show_bug.cgi?id=42762.
++ */
++#ifdef __clang__
++static inline void dcbz(void *addr)
++{
++	__asm__ __volatile__ ("dcbz 0, %0" : : "r"(addr) : "memory");
++}
++
++static inline void dcbi(void *addr)
++{
++	__asm__ __volatile__ ("dcbi 0, %0" : : "r"(addr) : "memory");
++}
++
++static inline void dcbf(void *addr)
++{
++	__asm__ __volatile__ ("dcbf 0, %0" : : "r"(addr) : "memory");
++}
++
++static inline void dcbst(void *addr)
++{
++	__asm__ __volatile__ ("dcbst 0, %0" : : "r"(addr) : "memory");
++}
++#else
+ static inline void dcbz(void *addr)
+ {
+ 	__asm__ __volatile__ ("dcbz %y0" : : "Z"(*(u8 *)addr) : "memory");
+@@ -124,6 +148,7 @@ static inline void dcbst(void *addr)
+ {
+ 	__asm__ __volatile__ ("dcbst %y0" : : "Z"(*(u8 *)addr) : "memory");
+ }
++#endif /* __clang__ */
+ #endif /* !__ASSEMBLY__ */
+ #endif /* __KERNEL__ */
+ #endif /* _ASM_POWERPC_CACHE_H */
 -- 
-1.8.3.1
+2.22.0.709.g102302147b-goog
 
