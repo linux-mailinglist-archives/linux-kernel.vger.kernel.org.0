@@ -2,116 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E353279D1B
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 01:54:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA54679D1F
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 01:55:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729919AbfG2Xyg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 19:54:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41194 "EHLO mail.kernel.org"
+        id S1729994AbfG2Xzg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 19:55:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41524 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728809AbfG2Xyf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 19:54:35 -0400
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+        id S1728269AbfG2Xzf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 19:55:35 -0400
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 623C9206BA;
-        Mon, 29 Jul 2019 23:54:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8CBCE21773;
+        Mon, 29 Jul 2019 23:55:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564444474;
-        bh=7M7iM5NZ1SgdUOG+BMFQMLBU2J1/FLifWH7WWo4vukw=;
+        s=default; t=1564444534;
+        bh=QJajQ9rPwQQEztIa7Aie8zZd9zfm/Sqk8yhLa8ZcYl0=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=wIDAiVgh8oFtCAHjZALXvXLlF06U5PG+b+RlokjKcUA+9gTiIQfq+hQf4JLn3jQqv
-         5FCecCmkCjAKo3SLAn3us51NrlQf/6cZWaRJrH30n0bTmbsUgHMHgFxjBmnZ421Lz1
-         XLXZCIiUws+DJYgL8XSsNCIr34nlTVVrVgiufrKM=
-Received: by mail-qt1-f176.google.com with SMTP id w17so16966692qto.10;
-        Mon, 29 Jul 2019 16:54:34 -0700 (PDT)
-X-Gm-Message-State: APjAAAUgrLsv9jpLRUivJp8ogfVxrCT0n7QsumPZd4lEuq/FAy1m54JP
-        tMPtYqeuC98fviLSbC6WdSkJE9krveXjHjWn1w==
-X-Google-Smtp-Source: APXvYqyvVVqVtiLHXCcmAnRN5s1dQ0v6PPdL5zspMJDODprjdlHMPqDWq1VLjpfR7WA8o08e4xLxr0pSQlrAw0k6B0M=
-X-Received: by 2002:aed:3f10:: with SMTP id p16mr79236510qtf.110.1564444473606;
- Mon, 29 Jul 2019 16:54:33 -0700 (PDT)
+        b=V9/tFzo/fOI4CMU7QpMUnouCMw9y4Z4Gis/0Xg3FuV6jfnNqSFAPs1DA1HvL79MXq
+         9YMFINPaRZERAbmHosngz5Yz24y7NBdq62iQsjsRWmNd15UbNzTI6OPnC1Fs/6VSJj
+         srnKhICD1uhc8IXv2y+8DdWhp8MPYCO76JwBxO/k=
+Received: by mail-qt1-f170.google.com with SMTP id d23so61319157qto.2;
+        Mon, 29 Jul 2019 16:55:34 -0700 (PDT)
+X-Gm-Message-State: APjAAAVp3Vu9ahqHib6Cansw9s/ubQdvReVLg4Ru+eqoipvBWWYu68XM
+        VGS3TAN0jbQrv3HQHawVrtIcbOqEU5nokBMBDw==
+X-Google-Smtp-Source: APXvYqznXMqQ6aE9gIcWbb/9lh1ClqELBH1Q0acqDOKZC0kqgtdGTVRMzfO1zsWwf0QVCqeFe8EP2ojj+nXv+b3KAlo=
+X-Received: by 2002:a0c:b786:: with SMTP id l6mr81436699qve.148.1564444533780;
+ Mon, 29 Jul 2019 16:55:33 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190722150414.9F97668B20@verein.lst.de> <20190725151829.DC20968B02@verein.lst.de>
- <20190726163601.o32bxqew5xavjgyi@flea> <20190729142258.GB7946@lst.de>
-In-Reply-To: <20190729142258.GB7946@lst.de>
+References: <20190729172007.3275-1-krzk@kernel.org>
+In-Reply-To: <20190729172007.3275-1-krzk@kernel.org>
 From:   Rob Herring <robh+dt@kernel.org>
-Date:   Mon, 29 Jul 2019 17:54:21 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqKAU3WG3L=KP8A8u4vW=q_BQWPN-m_c+ADOwTioJ2-cmg@mail.gmail.com>
-Message-ID: <CAL_JsqKAU3WG3L=KP8A8u4vW=q_BQWPN-m_c+ADOwTioJ2-cmg@mail.gmail.com>
-Subject: Re: [PATCH v3 6a/7] dt-bindings: Add ANX6345 DP/eDP transmitter binding
-To:     Torsten Duwe <duwe@lst.de>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Sean Paul <seanpaul@chromium.org>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Harald Geyer <harald@ccbib.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
+Date:   Mon, 29 Jul 2019 17:55:22 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqLo9ftDo-tmeOWGqjKR32PL9bsWkDL+zr6LSYts2ZY7SA@mail.gmail.com>
+Message-ID: <CAL_JsqLo9ftDo-tmeOWGqjKR32PL9bsWkDL+zr6LSYts2ZY7SA@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] dt-bindings: vendor-prefixes: Add Admatec GmbH and Anvo-Systems
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
         devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
         <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+        Schrempf Frieder <frieder.schrempf@kontron.de>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 29, 2019 at 8:23 AM Torsten Duwe <duwe@lst.de> wrote:
+On Mon, Jul 29, 2019 at 11:20 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
 >
-> On Fri, Jul 26, 2019 at 06:36:01PM +0200, Maxime Ripard wrote:
-> > > +
-> > > +  dvdd12-supply:
-> > > +    maxItems: 1
-> > > +    description: Regulator for 1.2V digital core power.
-> > > +    $ref: /schemas/types.yaml#/definitions/phandle
-> > > +
-> > > +  dvdd25-supply:
-> > > +    maxItems: 1
-> > > +    description: Regulator for 2.5V digital core power.
-> > > +    $ref: /schemas/types.yaml#/definitions/phandle
-> >
-> > There's no need to specify the type here, all the properties ending in
-> > -supply are already checked for that type
+> Add vendor prefix for Admatec GmbH (not to be confused with Admatec AG
+> in Switzerland) and Anvo-Systems Dresden GmbH.
 >
-> Ok, thanks for the hint.
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 >
-> > > +  ports:
-> > > +    type: object
-> > > +    minItems: 1
-> > > +    maxItems: 2
-> > > +    description: |
-> > > +      Video port 0 for LVTTL input,
-> > > +      Video port 1 for eDP output (panel or connector)
-> > > +      using the DT bindings defined in
-> > > +      Documentation/devicetree/bindings/media/video-interfaces.txt
-> >
-> > You should probably describe the port@0 and port@1 nodes here as
-> > well. It would allow you to express that the port 0 is mandatory and
-> > the port 1 optional, which got dropped in the conversion.
+> ---
 >
-> I would have liked to, but have not discovered yet a comprehensive source
-> of information about recommended syntax and semantics of the YAML schemes.
+> Changes since v2:
+> 1. Use admatecde vendor prefix.
+> 2. Add Anvo-Systems Dresden GmbH.
+>
+> Changes since v1:
+> New patch
+> ---
+>  Documentation/devicetree/bindings/vendor-prefixes.yaml | 4 ++++
+>  1 file changed, 4 insertions(+)
 
-The language is json-schema.
-
-> Is there some central reference for these types of issues? I mean not the
-> "here is a git repo with the meta-schemes" but sort of a cookbook?
-
-Documentation/devicetree/writing-schema.md (soon .rst) and
-Documentation/devicetree/bindings/example-schema.yaml attempt to do
-this. Any feedback on them would be helpful.
-
-For this case specifically, we do need to define a common graph
-schema, but haven't yet. You can assume we do and only really need to
-capture what Maxime said above.
-
-Rob
+Reviewed-by: Rob Herring <robh@kernel.org>
