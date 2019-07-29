@@ -2,177 +2,415 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE49578E1D
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 16:36:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ABEC678E20
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 16:37:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728129AbfG2Ogg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 10:36:36 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:37466 "EHLO mx1.redhat.com"
+        id S2387480AbfG2OhD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 10:37:03 -0400
+Received: from mga14.intel.com ([192.55.52.115]:46198 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727000AbfG2Ogf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 10:36:35 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 19BEA300CA4D;
-        Mon, 29 Jul 2019 14:36:35 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-160.bos.redhat.com [10.18.17.160])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 643436443F;
-        Mon, 29 Jul 2019 14:36:34 +0000 (UTC)
-Subject: Re: [PATCH -tip] locking/rwsem: Check for operations on an
- uninitialized rwsem
-To:     Davidlohr Bueso <dave@stgolabs.net>, mingo@kernel.org,
-        peterz@infradead.org
-Cc:     linux-kernel@vger.kernel.org, Davidlohr Bueso <dbueso@suse.de>
-References: <20190729044735.9632-1-dave@stgolabs.net>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <9f55534d-7654-0697-4a87-a9d6a10a9bb2@redhat.com>
-Date:   Mon, 29 Jul 2019 10:36:33 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1727036AbfG2OhD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 10:37:03 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jul 2019 07:36:58 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,323,1559545200"; 
+   d="scan'208";a="190603566"
+Received: from kuha.fi.intel.com ([10.237.72.189])
+  by fmsmga001.fm.intel.com with SMTP; 29 Jul 2019 07:36:54 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 29 Jul 2019 17:36:53 +0300
+Date:   Mon, 29 Jul 2019 17:36:53 +0300
+From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To:     Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc:     linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
+        rafael@kernel.org, linux-arm-kernel@lists.infradead.org,
+        "David S. Miller" <davem@davemloft.net>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, linux-usb@vger.kernel.org,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Joe Perches <joe@perches.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <joro@8bytes.org>
+Subject: Re: [PATCH v3 3/7] drivers: Introduce device lookup variants by
+ fwnode
+Message-ID: <20190729143653.GH28600@kuha.fi.intel.com>
+References: <20190723221838.12024-1-suzuki.poulose@arm.com>
+ <20190723221838.12024-4-suzuki.poulose@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <20190729044735.9632-1-dave@stgolabs.net>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Mon, 29 Jul 2019 14:36:35 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190723221838.12024-4-suzuki.poulose@arm.com>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/29/19 12:47 AM, Davidlohr Bueso wrote:
-> Currently rwsems is the only locking primitive that lacks this
-> debug feature. Add it under CONFIG_DEBUG_RWSEMS and do the magic
-> checking in the locking fastpath (trylock) operation such that
-> we cover all cases. The unlocking part is pretty straightforward.
->
-> Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
+On Tue, Jul 23, 2019 at 11:18:34PM +0100, Suzuki K Poulose wrote:
+> Add a helper to match the firmware node handle of a device and provide
+> wrappers for {bus/class/driver}_find_device() APIs to avoid proliferation
+> of duplicate custom match functions.
+> 
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Cc: Doug Ledford <dledford@redhat.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+> Cc: Jason Gunthorpe <jgg@ziepe.ca>
+> Cc: linux-usb@vger.kernel.org
+> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> Cc: Joe Perches <joe@perches.com>
+> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+> Cc: Will Deacon <will.deacon@arm.com>
+> Cc: Robin Murphy <robin.murphy@arm.com>
+> Cc: Joerg Roedel <joro@8bytes.org>
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+
 > ---
->  include/linux/rwsem.h  | 10 ++++++++++
->  kernel/locking/rwsem.c | 22 ++++++++++++++++++----
->  2 files changed, 28 insertions(+), 4 deletions(-)
->
-> diff --git a/include/linux/rwsem.h b/include/linux/rwsem.h
-> index 9d9c663987d8..00d6054687dd 100644
-> --- a/include/linux/rwsem.h
-> +++ b/include/linux/rwsem.h
-> @@ -45,6 +45,9 @@ struct rw_semaphore {
->  #endif
->  	raw_spinlock_t wait_lock;
->  	struct list_head wait_list;
-> +#ifdef CONFIG_DEBUG_RWSEMS
-> +	void *magic;
-> +#endif
->  #ifdef CONFIG_DEBUG_LOCK_ALLOC
->  	struct lockdep_map	dep_map;
->  #endif
-> @@ -73,6 +76,12 @@ static inline int rwsem_is_locked(struct rw_semaphore *sem)
->  # define __RWSEM_DEP_MAP_INIT(lockname)
->  #endif
->  
-> +#ifdef CONFIG_DEBUG_RWSEMS
-> +# define __DEBUG_RWSEM_INITIALIZER(lockname) , .magic = &lockname
-> +#else
-> +# define __DEBUG_RWSEM_INITIALIZER(lockname)
-> +#endif
+>  drivers/base/core.c                           |  6 +++
+>  drivers/base/devcon.c                         |  8 +---
+>  .../hwtracing/coresight/coresight-platform.c  | 11 +-----
+>  drivers/hwtracing/coresight/coresight-priv.h  |  2 -
+>  drivers/hwtracing/coresight/coresight.c       |  4 +-
+>  drivers/infiniband/hw/hns/hns_roce_hw_v1.c    |  8 +---
+>  drivers/iommu/arm-smmu-v3.c                   |  9 +----
+>  drivers/iommu/arm-smmu.c                      |  9 +----
+>  .../ethernet/hisilicon/hns/hns_dsaf_misc.c    |  8 +---
+>  drivers/usb/roles/class.c                     |  8 +---
+>  drivers/usb/typec/class.c                     |  8 +---
+>  include/linux/device.h                        | 39 +++++++++++++++++++
+>  12 files changed, 57 insertions(+), 63 deletions(-)
+> 
+> diff --git a/drivers/base/core.c b/drivers/base/core.c
+> index fb83647d685a..e8f81a667545 100644
+> --- a/drivers/base/core.c
+> +++ b/drivers/base/core.c
+> @@ -3368,3 +3368,9 @@ int device_match_of_node(struct device *dev, const void *np)
+>  	return dev->of_node == np;
+>  }
+>  EXPORT_SYMBOL_GPL(device_match_of_node);
 > +
->  #ifdef CONFIG_RWSEM_SPIN_ON_OWNER
->  #define __RWSEM_OPT_INIT(lockname) , .osq = OSQ_LOCK_UNLOCKED
->  #else
-> @@ -85,6 +94,7 @@ static inline int rwsem_is_locked(struct rw_semaphore *sem)
->  	  .wait_list = LIST_HEAD_INIT((name).wait_list),	\
->  	  .wait_lock = __RAW_SPIN_LOCK_UNLOCKED(name.wait_lock)	\
->  	  __RWSEM_OPT_INIT(name)				\
-> +	  __DEBUG_RWSEM_INITIALIZER(name)			\
->  	  __RWSEM_DEP_MAP_INIT(name) }
+> +int device_match_fwnode(struct device *dev, const void *fwnode)
+> +{
+> +	return dev_fwnode(dev) == fwnode;
+> +}
+> +EXPORT_SYMBOL_GPL(device_match_fwnode);
+> diff --git a/drivers/base/devcon.c b/drivers/base/devcon.c
+> index 09f28479b243..1d488dc5dd0c 100644
+> --- a/drivers/base/devcon.c
+> +++ b/drivers/base/devcon.c
+> @@ -133,19 +133,13 @@ static struct bus_type *generic_match_buses[] = {
+>  	NULL,
+>  };
 >  
->  #define DECLARE_RWSEM(name) \
-> diff --git a/kernel/locking/rwsem.c b/kernel/locking/rwsem.c
-> index 37524a47f002..ab392ec51252 100644
-> --- a/kernel/locking/rwsem.c
-> +++ b/kernel/locking/rwsem.c
-> @@ -105,8 +105,9 @@
->  #ifdef CONFIG_DEBUG_RWSEMS
->  # define DEBUG_RWSEMS_WARN_ON(c, sem)	do {			\
->  	if (!debug_locks_silent &&				\
-> -	    WARN_ONCE(c, "DEBUG_RWSEMS_WARN_ON(%s): count = 0x%lx, owner = 0x%lx, curr 0x%lx, list %sempty\n",\
-> +	    WARN_ONCE(c, "DEBUG_RWSEMS_WARN_ON(%s): count = 0x%lx, magic = 0x%lx, owner = 0x%lx, curr 0x%lx, list %sempty\n",\
->  		#c, atomic_long_read(&(sem)->count),		\
-> +		(unsigned long) sem->magic,			\
->  		atomic_long_read(&(sem)->owner), (long)current,	\
->  		list_empty(&(sem)->wait_list) ? "" : "not "))	\
->  			debug_locks_off();			\
-> @@ -329,6 +330,9 @@ void __init_rwsem(struct rw_semaphore *sem, const char *name,
->  	 */
->  	debug_check_no_locks_freed((void *)sem, sizeof(*sem));
->  	lockdep_init_map(&sem->dep_map, name, key, 0);
-> +#endif
-> +#ifdef CONFIG_DEBUG_RWSEMS
-> +	sem->magic = sem;
->  #endif
->  	atomic_long_set(&sem->count, RWSEM_UNLOCKED_VALUE);
->  	raw_spin_lock_init(&sem->wait_lock);
-> @@ -1322,11 +1326,14 @@ static inline int __down_read_killable(struct rw_semaphore *sem)
->  
->  static inline int __down_read_trylock(struct rw_semaphore *sem)
->  {
-> +	long tmp;
-> +
-> +	DEBUG_RWSEMS_WARN_ON(sem->magic != sem, sem);
-> +
->  	/*
->  	 * Optimize for the case when the rwsem is not locked at all.
->  	 */
-> -	long tmp = RWSEM_UNLOCKED_VALUE;
+> -static int device_fwnode_match(struct device *dev, const void *fwnode)
+> -{
+> -	return dev_fwnode(dev) == fwnode;
+> -}
 > -
-> +	tmp = RWSEM_UNLOCKED_VALUE;
->  	do {
->  		if (atomic_long_try_cmpxchg_acquire(&sem->count, &tmp,
->  					tmp + RWSEM_READER_BIAS)) {
-> @@ -1367,8 +1374,11 @@ static inline int __down_write_killable(struct rw_semaphore *sem)
->  
->  static inline int __down_write_trylock(struct rw_semaphore *sem)
+>  static void *device_connection_fwnode_match(struct device_connection *con)
 >  {
-> -	long tmp = RWSEM_UNLOCKED_VALUE;
-> +	long tmp;
+>  	struct bus_type *bus;
+>  	struct device *dev;
 >  
-> +	DEBUG_RWSEMS_WARN_ON(sem->magic != sem, sem);
-> +
-> +	tmp  = RWSEM_UNLOCKED_VALUE;
->  	if (atomic_long_try_cmpxchg_acquire(&sem->count, &tmp,
->  					    RWSEM_WRITER_LOCKED)) {
->  		rwsem_set_owner(sem);
-> @@ -1384,7 +1394,9 @@ inline void __up_read(struct rw_semaphore *sem)
+>  	for (bus = generic_match_buses[0]; bus; bus++) {
+> -		dev = bus_find_device(bus, NULL, (void *)con->fwnode,
+> -				      device_fwnode_match);
+> +		dev = bus_find_device_by_fwnode(bus, con->fwnode);
+>  		if (dev && !strncmp(dev_name(dev), con->id, strlen(con->id)))
+>  			return dev;
+>  
+> diff --git a/drivers/hwtracing/coresight/coresight-platform.c b/drivers/hwtracing/coresight/coresight-platform.c
+> index dad7d96c5943..3c5bee429105 100644
+> --- a/drivers/hwtracing/coresight/coresight-platform.c
+> +++ b/drivers/hwtracing/coresight/coresight-platform.c
+> @@ -37,11 +37,6 @@ static int coresight_alloc_conns(struct device *dev,
+>  	return 0;
+>  }
+>  
+> -int coresight_device_fwnode_match(struct device *dev, const void *fwnode)
+> -{
+> -	return dev_fwnode(dev) == fwnode;
+> -}
+> -
+>  static struct device *
+>  coresight_find_device_by_fwnode(struct fwnode_handle *fwnode)
 >  {
->  	long tmp;
->  
-> +	DEBUG_RWSEMS_WARN_ON(sem->magic != sem, sem);
->  	DEBUG_RWSEMS_WARN_ON(!is_rwsem_reader_owned(sem), sem);
-> +
->  	rwsem_clear_reader_owned(sem);
->  	tmp = atomic_long_add_return_release(-RWSEM_READER_BIAS, &sem->count);
->  	DEBUG_RWSEMS_WARN_ON(tmp < 0, sem);
-> @@ -1402,12 +1414,14 @@ static inline void __up_write(struct rw_semaphore *sem)
->  {
->  	long tmp;
->  
-> +	DEBUG_RWSEMS_WARN_ON(sem->magic != sem, sem);
->  	/*
->  	 * sem->owner may differ from current if the ownership is transferred
->  	 * to an anonymous writer by setting the RWSEM_NONSPINNABLE bits.
+> @@ -51,8 +46,7 @@ coresight_find_device_by_fwnode(struct fwnode_handle *fwnode)
+>  	 * If we have a non-configurable replicator, it will be found on the
+>  	 * platform bus.
 >  	 */
->  	DEBUG_RWSEMS_WARN_ON((rwsem_owner(sem) != current) &&
->  			    !rwsem_test_oflags(sem, RWSEM_NONSPINNABLE), sem);
+> -	dev = bus_find_device(&platform_bus_type, NULL,
+> -			      fwnode, coresight_device_fwnode_match);
+> +	dev = bus_find_device_by_fwnode(&platform_bus_type, fwnode);
+>  	if (dev)
+>  		return dev;
+>  
+> @@ -60,8 +54,7 @@ coresight_find_device_by_fwnode(struct fwnode_handle *fwnode)
+>  	 * We have a configurable component - circle through the AMBA bus
+>  	 * looking for the device that matches the endpoint node.
+>  	 */
+> -	return bus_find_device(&amba_bustype, NULL,
+> -			       fwnode, coresight_device_fwnode_match);
+> +	return bus_find_device_by_fwnode(&amba_bustype, fwnode);
+>  }
+>  
+>  #ifdef CONFIG_OF
+> diff --git a/drivers/hwtracing/coresight/coresight-priv.h b/drivers/hwtracing/coresight/coresight-priv.h
+> index 7d401790dd7e..61d7f9ff054d 100644
+> --- a/drivers/hwtracing/coresight/coresight-priv.h
+> +++ b/drivers/hwtracing/coresight/coresight-priv.h
+> @@ -202,6 +202,4 @@ static inline void *coresight_get_uci_data(const struct amba_id *id)
+>  
+>  void coresight_release_platform_data(struct coresight_platform_data *pdata);
+>  
+> -int coresight_device_fwnode_match(struct device *dev, const void *fwnode);
+> -
+>  #endif
+> diff --git a/drivers/hwtracing/coresight/coresight.c b/drivers/hwtracing/coresight/coresight.c
+> index 55db77f6410b..6453c67a4d01 100644
+> --- a/drivers/hwtracing/coresight/coresight.c
+> +++ b/drivers/hwtracing/coresight/coresight.c
+> @@ -1046,9 +1046,7 @@ static void coresight_fixup_device_conns(struct coresight_device *csdev)
+>  		struct coresight_connection *conn = &csdev->pdata->conns[i];
+>  		struct device *dev = NULL;
+>  
+> -		dev = bus_find_device(&coresight_bustype, NULL,
+> -				      (void *)conn->child_fwnode,
+> -				      coresight_device_fwnode_match);
+> +		dev = bus_find_device_by_fwnode(&coresight_bustype, conn->child_fwnode);
+>  		if (dev) {
+>  			conn->child_dev = to_coresight_device(dev);
+>  			/* and put reference from 'bus_find_device()' */
+> diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v1.c b/drivers/infiniband/hw/hns/hns_roce_hw_v1.c
+> index 81e6dedb1e02..fa05e943038a 100644
+> --- a/drivers/infiniband/hw/hns/hns_roce_hw_v1.c
+> +++ b/drivers/infiniband/hw/hns/hns_roce_hw_v1.c
+> @@ -4499,19 +4499,13 @@ static const struct acpi_device_id hns_roce_acpi_match[] = {
+>  };
+>  MODULE_DEVICE_TABLE(acpi, hns_roce_acpi_match);
+>  
+> -static int hns_roce_node_match(struct device *dev, const void *fwnode)
+> -{
+> -	return dev->fwnode == fwnode;
+> -}
+> -
+>  static struct
+>  platform_device *hns_roce_find_pdev(struct fwnode_handle *fwnode)
+>  {
+>  	struct device *dev;
+>  
+>  	/* get the 'device' corresponding to the matching 'fwnode' */
+> -	dev = bus_find_device(&platform_bus_type, NULL,
+> -			      fwnode, hns_roce_node_match);
+> +	dev = bus_find_device_by_fwnode(&platform_bus_type, fwnode);
+>  	/* get the platform device */
+>  	return dev ? to_platform_device(dev) : NULL;
+>  }
+> diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
+> index a9a9fabd3968..6f0e13fa5e1a 100644
+> --- a/drivers/iommu/arm-smmu-v3.c
+> +++ b/drivers/iommu/arm-smmu-v3.c
+> @@ -2034,16 +2034,11 @@ arm_smmu_iova_to_phys(struct iommu_domain *domain, dma_addr_t iova)
+>  
+>  static struct platform_driver arm_smmu_driver;
+>  
+> -static int arm_smmu_match_node(struct device *dev, const void *data)
+> -{
+> -	return dev->fwnode == data;
+> -}
+> -
+>  static
+>  struct arm_smmu_device *arm_smmu_get_by_fwnode(struct fwnode_handle *fwnode)
+>  {
+> -	struct device *dev = driver_find_device(&arm_smmu_driver.driver, NULL,
+> -						fwnode, arm_smmu_match_node);
+> +	struct device *dev = driver_find_device_by_fwnode(&arm_smmu_driver.driver,
+> +							  fwnode);
+>  	put_device(dev);
+>  	return dev ? dev_get_drvdata(dev) : NULL;
+>  }
+> diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
+> index 64977c131ee6..aa06498f291d 100644
+> --- a/drivers/iommu/arm-smmu.c
+> +++ b/drivers/iommu/arm-smmu.c
+> @@ -1426,16 +1426,11 @@ static bool arm_smmu_capable(enum iommu_cap cap)
+>  	}
+>  }
+>  
+> -static int arm_smmu_match_node(struct device *dev, const void *data)
+> -{
+> -	return dev->fwnode == data;
+> -}
+> -
+>  static
+>  struct arm_smmu_device *arm_smmu_get_by_fwnode(struct fwnode_handle *fwnode)
+>  {
+> -	struct device *dev = driver_find_device(&arm_smmu_driver.driver, NULL,
+> -						fwnode, arm_smmu_match_node);
+> +	struct device *dev = driver_find_device_by_fwnode(&arm_smmu_driver.driver,
+> +							  fwnode);
+>  	put_device(dev);
+>  	return dev ? dev_get_drvdata(dev) : NULL;
+>  }
+> diff --git a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_misc.c b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_misc.c
+> index bb6586d0e5af..ed3829ae4ef1 100644
+> --- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_misc.c
+> +++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_misc.c
+> @@ -754,17 +754,11 @@ struct dsaf_misc_op *hns_misc_op_get(struct dsaf_device *dsaf_dev)
+>  	return (void *)misc_op;
+>  }
+>  
+> -static int hns_dsaf_dev_match(struct device *dev, const void *fwnode)
+> -{
+> -	return dev->fwnode == fwnode;
+> -}
+> -
+>  struct
+>  platform_device *hns_dsaf_find_platform_device(struct fwnode_handle *fwnode)
+>  {
+>  	struct device *dev;
+>  
+> -	dev = bus_find_device(&platform_bus_type, NULL,
+> -			      fwnode, hns_dsaf_dev_match);
+> +	dev = bus_find_device_by_fwnode(&platform_bus_type, fwnode);
+>  	return dev ? to_platform_device(dev) : NULL;
+>  }
+> diff --git a/drivers/usb/roles/class.c b/drivers/usb/roles/class.c
+> index c8efe60e2465..0526efbc4922 100644
+> --- a/drivers/usb/roles/class.c
+> +++ b/drivers/usb/roles/class.c
+> @@ -85,11 +85,6 @@ enum usb_role usb_role_switch_get_role(struct usb_role_switch *sw)
+>  }
+>  EXPORT_SYMBOL_GPL(usb_role_switch_get_role);
+>  
+> -static int switch_fwnode_match(struct device *dev, const void *fwnode)
+> -{
+> -	return dev_fwnode(dev) == fwnode;
+> -}
+> -
+>  static void *usb_role_switch_match(struct device_connection *con, int ep,
+>  				   void *data)
+>  {
+> @@ -99,8 +94,7 @@ static void *usb_role_switch_match(struct device_connection *con, int ep,
+>  		if (con->id && !fwnode_property_present(con->fwnode, con->id))
+>  			return NULL;
+>  
+> -		dev = class_find_device(role_class, NULL, con->fwnode,
+> -					switch_fwnode_match);
+> +		dev = class_find_device_by_fwnode(role_class, con->fwnode);
+>  	} else {
+>  		dev = class_find_device_by_name(role_class, con->endpoint[ep]);
+>  	}
+> diff --git a/drivers/usb/typec/class.c b/drivers/usb/typec/class.c
+> index 9b0d15b487e5..94a3eda62add 100644
+> --- a/drivers/usb/typec/class.c
+> +++ b/drivers/usb/typec/class.c
+> @@ -205,11 +205,6 @@ static void typec_altmode_put_partner(struct altmode *altmode)
+>  	put_device(&adev->dev);
+>  }
+>  
+> -static int typec_port_fwnode_match(struct device *dev, const void *fwnode)
+> -{
+> -	return dev_fwnode(dev) == fwnode;
+> -}
+> -
+>  static void *typec_port_match(struct device_connection *con, int ep, void *data)
+>  {
+>  	struct device *dev;
+> @@ -219,8 +214,7 @@ static void *typec_port_match(struct device_connection *con, int ep, void *data)
+>  	 * we need to return ERR_PTR(-PROBE_DEFER) when there is no device.
+>  	 */
+>  	if (con->fwnode)
+> -		return class_find_device(typec_class, NULL, con->fwnode,
+> -					 typec_port_fwnode_match);
+> +		return class_find_device_by_fwnode(typec_class, con->fwnode);
+>  
+>  	dev = class_find_device_by_name(typec_class, con->endpoint[ep]);
+>  
+> diff --git a/include/linux/device.h b/include/linux/device.h
+> index 29d8d7ad41e6..7133fc1c285d 100644
+> --- a/include/linux/device.h
+> +++ b/include/linux/device.h
+> @@ -166,6 +166,7 @@ void subsys_dev_iter_exit(struct subsys_dev_iter *iter);
+>  
+>  int device_match_name(struct device *dev, const void *name);
+>  int device_match_of_node(struct device *dev, const void *np);
+> +int device_match_fwnode(struct device *dev, const void *fwnode);
+>  
+>  int bus_for_each_dev(struct bus_type *bus, struct device *start, void *data,
+>  		     int (*fn)(struct device *dev, void *data));
+> @@ -198,6 +199,18 @@ bus_find_device_by_of_node(struct bus_type *bus, const struct device_node *np)
+>  	return bus_find_device(bus, NULL, np, device_match_of_node);
+>  }
+>  
+> +/**
+> + * bus_find_device_by_fwnode : device iterator for locating a particular device
+> + * matching the fwnode.
+> + * @bus: bus type
+> + * @fwnode: fwnode of the device to match.
+> + */
+> +static inline struct device *
+> +bus_find_device_by_fwnode(struct bus_type *bus, const struct fwnode_handle *fwnode)
+> +{
+> +	return bus_find_device(bus, NULL, fwnode, device_match_fwnode);
+> +}
 > +
->  	rwsem_clear_owner(sem);
->  	tmp = atomic_long_fetch_add_release(-RWSEM_WRITER_LOCKED, &sem->count);
->  	if (unlikely(tmp & RWSEM_FLAG_WAITERS))
+>  struct device *subsys_find_device_by_id(struct bus_type *bus, unsigned int id,
+>  					struct device *hint);
+>  int bus_for_each_drv(struct bus_type *bus, struct device_driver *start,
+> @@ -391,6 +404,19 @@ driver_find_device_by_of_node(struct device_driver *drv,
+>  	return driver_find_device(drv, NULL, np, device_match_of_node);
+>  }
+>  
+> +/**
+> + * driver_find_device_by_fwnode- device iterator for locating a particular device
+> + * by fwnode pointer.
+> + * @driver: the driver we're iterating
+> + * @fwnode: fwnode pointer to match.
+> + */
+> +static inline struct device *
+> +driver_find_device_by_fwnode(struct device_driver *drv,
+> +			     const struct fwnode_handle *fwnode)
+> +{
+> +	return driver_find_device(drv, NULL, fwnode, device_match_fwnode);
+> +}
+> +
+>  void driver_deferred_probe_add(struct device *dev);
+>  int driver_deferred_probe_check_state(struct device *dev);
+>  int driver_deferred_probe_check_state_continue(struct device *dev);
+> @@ -544,6 +570,19 @@ class_find_device_by_of_node(struct class *class, const struct device_node *np)
+>  	return class_find_device(class, NULL, np, device_match_of_node);
+>  }
+>  
+> +/**
+> + * class_find_device_by_fwnode : device iterator for locating a particular device
+> + * matching the fwnode.
+> + * @class: class type
+> + * @fwnode: fwnode of the device to match.
+> + */
+> +static inline struct device *
+> +class_find_device_by_fwnode(struct class *class,
+> +			    const struct fwnode_handle *fwnode)
+> +{
+> +	return class_find_device(class, NULL, fwnode, device_match_fwnode);
+> +}
+> +
+>  struct class_attribute {
+>  	struct attribute attr;
+>  	ssize_t (*show)(struct class *class, struct class_attribute *attr,
+> -- 
+> 2.21.0
 
-Acked-by:  Waiman Long <longman@redhat.com>
+thanks,
 
-Thanks for the patch.
--Longman
-
+-- 
+heikki
