@@ -2,173 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02B7B78E49
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 16:44:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EBE0578E54
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 16:46:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387586AbfG2Oot (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 10:44:49 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:45737 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387397AbfG2Oos (ORCPT
+        id S2387769AbfG2Oqm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 10:46:42 -0400
+Received: from mout.kundenserver.de ([212.227.126.130]:34085 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387678AbfG2Oqm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 10:44:48 -0400
-Received: by mail-qt1-f194.google.com with SMTP id x22so54978045qtp.12
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 07:44:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=DoNqX8RWU8p5wa0hRf4mpfQk5+CoY4k3BggOB+rTukY=;
-        b=sHqzXq5PwHZtuIuw1ukIGo+fe5NMbOu4SUFXjrLVOkqDRyz+N1r2gvvQwqP2IkRv1E
-         Rvn4w9kvoTBHkfi/bl88E2hHZntCzB7jyv92IaxxswoIavDJUGmuYthQQCKOKiFjtG0/
-         iwo+qxbRfIT3aHFaiDcKAJv4L6Vg6AriQIWxP2zdrzt9Bvb5J4h0hYvTDXegE0px5XCE
-         FF/ZTbUxTQmJ58sXkkwnMLeD0GLihhx69BJLhggC92Q7+b5f2V1xa76rDhZ6cJ5EmMmY
-         vClELkDdYBVvl5u5vq+wtXJ2/znFJMieta44MMO6M5vhCA40CvApBj3rPBzrD9Ti7UEC
-         OtAQ==
-X-Gm-Message-State: APjAAAVV6Z/68d8luxI0kDlL8hBz7Ja+nuG9tRI0yXbg34C22JZZV62x
-        XcNflgvRNVS7VlSzDzBBWSGQAg==
-X-Google-Smtp-Source: APXvYqzNcK5rFMdgsRbkuArHCZVYZl892hVxXOzQtGKKSReE48444ntmi3JNc+/o/FUr3NCS9WKM/g==
-X-Received: by 2002:ac8:384c:: with SMTP id r12mr77572808qtb.153.1564411487834;
-        Mon, 29 Jul 2019 07:44:47 -0700 (PDT)
-Received: from redhat.com (bzq-79-181-91-42.red.bezeqint.net. [79.181.91.42])
-        by smtp.gmail.com with ESMTPSA id h40sm35464987qth.4.2019.07.29.07.44.40
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 29 Jul 2019 07:44:46 -0700 (PDT)
-Date:   Mon, 29 Jul 2019 10:44:38 -0400
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     syzbot <syzbot+e58112d71f77113ddb7b@syzkaller.appspotmail.com>,
-        aarcange@redhat.com, akpm@linux-foundation.org,
-        christian@brauner.io, davem@davemloft.net, ebiederm@xmission.com,
-        elena.reshetova@intel.com, guro@fb.com, hch@infradead.org,
-        james.bottomley@hansenpartnership.com, jglisse@redhat.com,
-        keescook@chromium.org, ldv@altlinux.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-parisc@vger.kernel.org,
-        luto@amacapital.net, mhocko@suse.com, mingo@kernel.org,
-        namit@vmware.com, peterz@infradead.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
-        wad@chromium.org
-Subject: Re: WARNING in __mmdrop
-Message-ID: <20190729104028-mutt-send-email-mst@kernel.org>
-References: <11802a8a-ce41-f427-63d5-b6a4cf96bb3f@redhat.com>
- <20190726074644-mutt-send-email-mst@kernel.org>
- <5cc94f15-b229-a290-55f3-8295266edb2b@redhat.com>
- <20190726082837-mutt-send-email-mst@kernel.org>
- <ada10dc9-6cab-e189-5289-6f9d3ff8fed2@redhat.com>
- <aaefa93e-a0de-1c55-feb0-509c87aae1f3@redhat.com>
- <20190726094756-mutt-send-email-mst@kernel.org>
- <0792ee09-b4b7-673c-2251-e5e0ce0fbe32@redhat.com>
- <20190729045127-mutt-send-email-mst@kernel.org>
- <4d43c094-44ed-dbac-b863-48fc3d754378@redhat.com>
+        Mon, 29 Jul 2019 10:46:42 -0400
+Received: from [192.168.1.110] ([77.4.29.213]) by mrelayeu.kundenserver.de
+ (mreue012 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1MLzeb-1i9VJZ28DB-00HsEV; Mon, 29 Jul 2019 16:46:40 +0200
+Subject: Re: [PATCH] drivers: tty: serial: amba-pl011: use generic ops
+ request/release port
+To:     "Enrico Weigelt, metux IT consult" <info@metux.net>,
+        linux-kernel@vger.kernel.org
+Cc:     gregkh@linuxfoundation.org, linux-serial@vger.kernel.org
+References: <1564411445-26933-1-git-send-email-info@metux.net>
+From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
+Organization: metux IT consult
+Message-ID: <e831001d-0f9c-800c-94d5-7e767fa4fc5a@metux.net>
+Date:   Mon, 29 Jul 2019 16:46:39 +0200
+User-Agent: Mozilla/5.0 (X11; Linux i686 on x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <4d43c094-44ed-dbac-b863-48fc3d754378@redhat.com>
+In-Reply-To: <1564411445-26933-1-git-send-email-info@metux.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:NDOGCIwDVk1ZhvV95ebYf1KCeiiAOnqdoO+OSALd6FOaBYcdx/e
+ 51+1Mu0u6p4PO7O+2giflmIVZbH08qWI0oA3m2JrYganQ5VbVn7guCqV/9lWp8jHVlYMkOR
+ kvWSC5RGXazv19btQJyxJ8y7Eb87VAg12gznj1/0Z7+EvZQlLBenBuBRc966v49YHTzouue
+ oSHOuJZ/sPVhIkLh+XRkQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:QrU+R0Td6VM=:hds3pdj3lHzXrIaI8F6gk3
+ ORnps68m/qG9RCCIgybbtD17hhoa2RBmB/JUj2JpBK1tWyAIM5bfibX9BbxdXZ96Y9pJpW6Ag
+ CRIYV/z+9GK315norN+8lSYTn8GBn/bbTIGBLyJQ7ZKz28A17hVMq+tw6bp+gLbyEvSVz0A4s
+ 0q0TOExxU9S4O54HZEVPlJPxiwyP7ZUNKZksm1cQpe7Qol7NEgyyelcxBOTEAHTlMmgao0RZp
+ drOjshXOhQcpwUmwldVF+A/4g7OqahIG5jQdy49zJbxO9GobO16Q4I+p/z9Cwnds+bzagL6Cn
+ qGY4K6sjhtJ1mQF65CS9WM7+gN7gaP6a9a1byRDBB7GQxsL0Eqdne+49yN/VAF5NKS5Vl8VJK
+ C4CnlJF6imNVjrS4GmIzHUp0cm8M178h2MdoxM02MgMYQZR5GtOPzlikxTIUuFOLqWtgpgdkm
+ o5QXYL3O/kqvV0z6ED21zT9gQtnhYeg5+5R4ci1jbG2uqA6yZHFV0E5kEegZDqCelXSESkntz
+ hR6EsWXNJp7QI6hhJtqN5Wjeo0YK9taI41rIPqG5zv1P7OlpGrdbXucWr71ArVru5ZI70VVYn
+ Zh59dR7sCBRSg4SE8uNEOyOMUh9EQIlnLhFIDnE97p37b9jvTHwpw3IS2L5ckdjYQgtBUWbSC
+ 9CEQJ4t0NQ7pdxVd6fZ5k5RwH/SdL1OTTWQaxpoP0v9k6uni394PeLqyi1fb7HPZeb2MUZd88
+ DAhexZ4CZJyAej9njtUh4DOjaIY2K7JYEDHRtIbZoCAdx46VfbNeb9Bqrrw=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 29, 2019 at 10:24:43PM +0800, Jason Wang wrote:
+On 29.07.19 16:44, Enrico Weigelt, metux IT consult wrote:
+> From: Enrico Weigelt <info@metux.net>
 > 
-> On 2019/7/29 下午4:59, Michael S. Tsirkin wrote:
-> > On Mon, Jul 29, 2019 at 01:54:49PM +0800, Jason Wang wrote:
-> > > On 2019/7/26 下午9:49, Michael S. Tsirkin wrote:
-> > > > > > Ok, let me retry if necessary (but I do remember I end up with deadlocks
-> > > > > > last try).
-> > > > > Ok, I play a little with this. And it works so far. Will do more testing
-> > > > > tomorrow.
-> > > > > 
-> > > > > One reason could be I switch to use get_user_pages_fast() to
-> > > > > __get_user_pages_fast() which doesn't need mmap_sem.
-> > > > > 
-> > > > > Thanks
-> > > > OK that sounds good. If we also set a flag to make
-> > > > vhost_exceeds_weight exit, then I think it will be all good.
-> > > 
-> > > After some experiments, I came up two methods:
-> > > 
-> > > 1) switch to use vq->mutex, then we must take the vq lock during range
-> > > checking (but I don't see obvious slowdown for 16vcpus + 16queues). Setting
-> > > flags during weight check should work but it still can't address the worst
-> > > case: wait for the page to be swapped in. Is this acceptable?
-> > > 
-> > > 2) using current RCU but replace synchronize_rcu() with vhost_work_flush().
-> > > The worst case is the same as 1) but we can check range without holding any
-> > > locks.
-> > > 
-> > > Which one did you prefer?
-> > > 
-> > > Thanks
-> > I would rather we start with 1 and switch to 2 after we
-> > can show some gain.
-> > 
-> > But the worst case needs to be addressed.
-> 
-> 
-> Yes.
-> 
-> 
-> > How about sending a signal to
-> > the vhost thread?  We will need to fix up error handling (I think that
-> > at the moment it will error out in that case, handling this as EFAULT -
-> > and we don't want to drop packets if we can help it, and surely not
-> > enter any error states.  In particular it might be especially tricky if
-> > we wrote into userspace memory and are now trying to log the write.
-> > I guess we can disable the optimization if log is enabled?).
-> 
-> 
-> This may work but requires a lot of changes.
+> Reduce boilerplate by using generic implementation of the trivial
+> request_port/release_port operations. For that to work, we have to
+> set the mapsize field accordingly.
 
-I agree.
 
-> And actually it's the price of
-> using vq mutex. 
+Shit! Forget it. Somehow cherry-picked the wrong commit ID and forgot
+to check before posting. That wasn't supposed to be sent out yet.
 
-Not sure what's meant here.
+Sorry for the noise.
 
-> Actually, the critical section should be rather small, e.g
-> just inside memory accessors.
 
-Also true.
+--mtx
 
-> 
-> I wonder whether or not just do synchronize our self like:
-> 
-> static void inline vhost_inc_vq_ref(struct vhost_virtqueue *vq)
-> {
->         int ref = READ_ONCE(vq->ref);
-> 
->         WRITE_ONCE(vq->ref, ref + 1);
-> smp_rmb();
-> }
-> 
-> static void inline vhost_dec_vq_ref(struct vhost_virtqueue *vq)
-> {
->         int ref = READ_ONCE(vq->ref);
-> 
-> smp_wmb();
->         WRITE_ONCE(vq->ref, ref - 1);
-> }
-> 
-> static void inline vhost_wait_for_ref(struct vhost_virtqueue *vq)
-> {
->         while (READ_ONCE(vq->ref));
-> mb();
-> }
-
-Looks good but I'd like to think of a strategy/existing lock that let us
-block properly as opposed to spinning, that would be more friendly to
-e.g. the realtime patch.
-
-> 
-> Or using smp_load_acquire()/smp_store_release() instead?
-> 
-> Thanks
-
-These are cheaper on x86, yes.
-
-> > 
+-- 
+Enrico Weigelt, metux IT consult
+Free software and Linux embedded engineering
+info@metux.net -- +49-151-27565287
