@@ -2,250 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3454379823
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:06:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A38A379806
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:06:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727952AbfG2To4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 15:44:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33468 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389845AbfG2Tov (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:44:51 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D746820C01;
-        Mon, 29 Jul 2019 19:44:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564429489;
-        bh=s1YB5W5ELtm5BS5QaBGi/Ak7p8J1w2oYhu7OyzwYbjI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oCsiT5SIrk2hxZl5onanHCgtZZDtpU0A+ojOqnKuRdAXEfjMWGIvLkW7lvMMDZqc2
-         yF0CWhFI2JWzi+960sX14zCAi00GhiX7cgi1mUnG9WJRfZTDqNhHsdETv504cUl01A
-         qWiY0Fx8NtJ1Fl66qRNDiKGYIaomtonFzmYh4820=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vishal Verma <vishal.l.verma@intel.com>,
-        Jane Chu <jane.chu@oracle.com>,
-        Dan Williams <dan.j.williams@intel.com>
-Subject: [PATCH 4.19 112/113] libnvdimm/bus: Stop holding nvdimm_bus_list_mutex over __nd_ioctl()
-Date:   Mon, 29 Jul 2019 21:23:19 +0200
-Message-Id: <20190729190721.610390670@linuxfoundation.org>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190729190655.455345569@linuxfoundation.org>
-References: <20190729190655.455345569@linuxfoundation.org>
-User-Agent: quilt/0.66
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        id S2389294AbfG2TmT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 15:42:19 -0400
+Received: from mail-pf1-f201.google.com ([209.85.210.201]:39827 "EHLO
+        mail-pf1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389468AbfG2TmL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:42:11 -0400
+Received: by mail-pf1-f201.google.com with SMTP id 6so39152639pfi.6
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 12:42:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=Frj/SS/W3AFZFbyzaOV4LWLnrMlPxcryoFLQjik2HTI=;
+        b=NaqhEn+nWpsDdrbEejnjDaEBQITcPwt2PLGQeCcKpF/xtDBEPcIWyPuF7ZuPOpu8Pa
+         jNyFsHX1Aqgj2NKuQj4deoctFI5yaGYWN+NwWkczUhWZtYXHWdQy6rGievfB0HcQR0CW
+         80yz6PRH5wMlDl4QoAi3RlT1thGhUpyMhG5q208bELKjzUdINBEQDQSXotmYt7YzzewJ
+         3VhbznDQsUgjfVPiFM2RR34iJmx2dpisKe6LolVq3LOjZu0Xr1BHMc0iHTyYRxMEQRiz
+         JU4LhMPMcSrMTOwqhzoTY2rVjhoJaTHuS6CjxExljGBNKHF+98phmihBxTwGrkZSlXB/
+         Guvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=Frj/SS/W3AFZFbyzaOV4LWLnrMlPxcryoFLQjik2HTI=;
+        b=JnDx0T6fhUq4a0LF+PrvWj86DEpfXIasHrQNTfe+vZbiTcqi+D5tqyQQViqmL1Tz4D
+         Bh0QarKKMJG06CK3Y2dZzP6FcBof0rjsF3yfNiba2Qe6jsSgDkRsmYg9K5d/O3VzSMFH
+         s8HfIYqFtcL1UcvISei++FbPWM0OKSWD9U0OGPaaMD9jHRhEOYkgfFfBDYrJqtjOS5HG
+         XtqoF1m1251QwJxj86e1gIixOb4IkOmfR1HRhv6bCRTI6lre/Q35pCTEoyP+2C4zFrnR
+         CGcHQ3s7uJQ9aHQL4CqiVFQjC0FXyBv0fiDTVxVTBueCjR4n1EWSe50I2Poy9gk6AcXm
+         52NA==
+X-Gm-Message-State: APjAAAX7I2fWkCSSWQMOu9rOXLJh5d7WXbPs9BnsAu9IJfF0cHPqS1D+
+        t0ZeSm+iI757gU0BjLY+MiU5wp1VNHU=
+X-Google-Smtp-Source: APXvYqyf9K52n5I7/pZqfWtKK1UU5XmY8cIscUIXJkk8Ba5+O7oBV/xVhhZfFLdsElYAqR6YpFcVrndVWFg=
+X-Received: by 2002:a63:a346:: with SMTP id v6mr59564547pgn.57.1564429329902;
+ Mon, 29 Jul 2019 12:42:09 -0700 (PDT)
+Date:   Mon, 29 Jul 2019 12:42:05 -0700
+Message-Id: <20190729194205.212846-1-surenb@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.22.0.709.g102302147b-goog
+Subject: [PATCH 1/1] psi: do not require setsched permission from the trigger creator
+From:   Suren Baghdasaryan <surenb@google.com>
+To:     gregkh@linuxfoundation.org
+Cc:     lizefan@huawei.com, hannes@cmpxchg.org, axboe@kernel.dk,
+        dennis@kernel.org, dennisszhou@gmail.com, mingo@redhat.com,
+        peterz@infradead.org, akpm@linux-foundation.org,
+        linux-mm@kvack.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-team@android.com,
+        Suren Baghdasaryan <surenb@google.com>,
+        Nick Kralevich <nnk@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Williams <dan.j.williams@intel.com>
+When a process creates a new trigger by writing into /proc/pressure/*
+files, permissions to write such a file should be used to determine whether
+the process is allowed to do so or not. Current implementation would also
+require such a process to have setsched capability. Setting of psi trigger
+thread's scheduling policy is an implementation detail and should not be
+exposed to the user level. Remove the permission check by using _nocheck
+version of the function.
 
-commit b70d31d054ee3a6fc1034b9d7fc0ae1e481aa018 upstream.
-
-In preparation for fixing a deadlock between wait_for_bus_probe_idle()
-and the nvdimm_bus_list_mutex arrange for __nd_ioctl() without
-nvdimm_bus_list_mutex held. This also unifies the 'dimm' and 'bus' level
-ioctls into a common nd_ioctl() preamble implementation.
-
-Marked for -stable as it is a pre-requisite for a follow-on fix.
-
-Cc: <stable@vger.kernel.org>
-Fixes: bf9bccc14c05 ("libnvdimm: pmem label sets and namespace instantiation")
-Cc: Vishal Verma <vishal.l.verma@intel.com>
-Tested-by: Jane Chu <jane.chu@oracle.com>
-Link: https://lore.kernel.org/r/156341209518.292348.7183897251740665198.stgit@dwillia2-desk3.amr.corp.intel.com
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Suggested-by: Nick Kralevich <nnk@google.com>
+Signed-off-by: Suren Baghdasaryan <surenb@google.com>
 ---
- drivers/nvdimm/bus.c     |   94 ++++++++++++++++++++++++++++-------------------
- drivers/nvdimm/nd-core.h |    3 +
- 2 files changed, 59 insertions(+), 38 deletions(-)
+ kernel/sched/psi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/nvdimm/bus.c
-+++ b/drivers/nvdimm/bus.c
-@@ -86,7 +86,7 @@ static void nvdimm_bus_probe_end(struct
- {
- 	nvdimm_bus_lock(&nvdimm_bus->dev);
- 	if (--nvdimm_bus->probe_active == 0)
--		wake_up(&nvdimm_bus->probe_wait);
-+		wake_up(&nvdimm_bus->wait);
- 	nvdimm_bus_unlock(&nvdimm_bus->dev);
- }
- 
-@@ -348,7 +348,7 @@ struct nvdimm_bus *nvdimm_bus_register(s
- 		return NULL;
- 	INIT_LIST_HEAD(&nvdimm_bus->list);
- 	INIT_LIST_HEAD(&nvdimm_bus->mapping_list);
--	init_waitqueue_head(&nvdimm_bus->probe_wait);
-+	init_waitqueue_head(&nvdimm_bus->wait);
- 	nvdimm_bus->id = ida_simple_get(&nd_ida, 0, 0, GFP_KERNEL);
- 	mutex_init(&nvdimm_bus->reconfig_mutex);
- 	badrange_init(&nvdimm_bus->badrange);
-@@ -418,6 +418,9 @@ static int nd_bus_remove(struct device *
- 	list_del_init(&nvdimm_bus->list);
- 	mutex_unlock(&nvdimm_bus_list_mutex);
- 
-+	wait_event(nvdimm_bus->wait,
-+			atomic_read(&nvdimm_bus->ioctl_active) == 0);
-+
- 	nd_synchronize();
- 	device_for_each_child(&nvdimm_bus->dev, NULL, child_unregister);
- 
-@@ -838,7 +841,7 @@ void wait_nvdimm_bus_probe_idle(struct d
- 		if (nvdimm_bus->probe_active == 0)
- 			break;
- 		nvdimm_bus_unlock(&nvdimm_bus->dev);
--		wait_event(nvdimm_bus->probe_wait,
-+		wait_event(nvdimm_bus->wait,
- 				nvdimm_bus->probe_active == 0);
- 		nvdimm_bus_lock(&nvdimm_bus->dev);
- 	} while (true);
-@@ -1068,24 +1071,10 @@ static int __nd_ioctl(struct nvdimm_bus
- 	return rc;
- }
- 
--static long nd_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
--{
--	long id = (long) file->private_data;
--	int rc = -ENXIO, ro;
--	struct nvdimm_bus *nvdimm_bus;
--
--	ro = ((file->f_flags & O_ACCMODE) == O_RDONLY);
--	mutex_lock(&nvdimm_bus_list_mutex);
--	list_for_each_entry(nvdimm_bus, &nvdimm_bus_list, list) {
--		if (nvdimm_bus->id == id) {
--			rc = __nd_ioctl(nvdimm_bus, NULL, ro, cmd, arg);
--			break;
--		}
--	}
--	mutex_unlock(&nvdimm_bus_list_mutex);
--
--	return rc;
--}
-+enum nd_ioctl_mode {
-+	BUS_IOCTL,
-+	DIMM_IOCTL,
-+};
- 
- static int match_dimm(struct device *dev, void *data)
- {
-@@ -1100,31 +1089,62 @@ static int match_dimm(struct device *dev
- 	return 0;
- }
- 
--static long nvdimm_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
-+static long nd_ioctl(struct file *file, unsigned int cmd, unsigned long arg,
-+		enum nd_ioctl_mode mode)
-+
- {
--	int rc = -ENXIO, ro;
--	struct nvdimm_bus *nvdimm_bus;
-+	struct nvdimm_bus *nvdimm_bus, *found = NULL;
-+	long id = (long) file->private_data;
-+	struct nvdimm *nvdimm = NULL;
-+	int rc, ro;
- 
- 	ro = ((file->f_flags & O_ACCMODE) == O_RDONLY);
- 	mutex_lock(&nvdimm_bus_list_mutex);
- 	list_for_each_entry(nvdimm_bus, &nvdimm_bus_list, list) {
--		struct device *dev = device_find_child(&nvdimm_bus->dev,
--				file->private_data, match_dimm);
--		struct nvdimm *nvdimm;
-+		if (mode == DIMM_IOCTL) {
-+			struct device *dev;
- 
--		if (!dev)
--			continue;
-+			dev = device_find_child(&nvdimm_bus->dev,
-+					file->private_data, match_dimm);
-+			if (!dev)
-+				continue;
-+			nvdimm = to_nvdimm(dev);
-+			found = nvdimm_bus;
-+		} else if (nvdimm_bus->id == id) {
-+			found = nvdimm_bus;
-+		}
- 
--		nvdimm = to_nvdimm(dev);
--		rc = __nd_ioctl(nvdimm_bus, nvdimm, ro, cmd, arg);
--		put_device(dev);
--		break;
-+		if (found) {
-+			atomic_inc(&nvdimm_bus->ioctl_active);
-+			break;
-+		}
- 	}
- 	mutex_unlock(&nvdimm_bus_list_mutex);
- 
-+	if (!found)
-+		return -ENXIO;
-+
-+	nvdimm_bus = found;
-+	rc = __nd_ioctl(nvdimm_bus, nvdimm, ro, cmd, arg);
-+
-+	if (nvdimm)
-+		put_device(&nvdimm->dev);
-+	if (atomic_dec_and_test(&nvdimm_bus->ioctl_active))
-+		wake_up(&nvdimm_bus->wait);
-+
- 	return rc;
- }
- 
-+static long bus_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
-+{
-+	return nd_ioctl(file, cmd, arg, BUS_IOCTL);
-+}
-+
-+static long dimm_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
-+{
-+	return nd_ioctl(file, cmd, arg, DIMM_IOCTL);
-+}
-+
- static int nd_open(struct inode *inode, struct file *file)
- {
- 	long minor = iminor(inode);
-@@ -1136,16 +1156,16 @@ static int nd_open(struct inode *inode,
- static const struct file_operations nvdimm_bus_fops = {
- 	.owner = THIS_MODULE,
- 	.open = nd_open,
--	.unlocked_ioctl = nd_ioctl,
--	.compat_ioctl = nd_ioctl,
-+	.unlocked_ioctl = bus_ioctl,
-+	.compat_ioctl = bus_ioctl,
- 	.llseek = noop_llseek,
- };
- 
- static const struct file_operations nvdimm_fops = {
- 	.owner = THIS_MODULE,
- 	.open = nd_open,
--	.unlocked_ioctl = nvdimm_ioctl,
--	.compat_ioctl = nvdimm_ioctl,
-+	.unlocked_ioctl = dimm_ioctl,
-+	.compat_ioctl = dimm_ioctl,
- 	.llseek = noop_llseek,
- };
- 
---- a/drivers/nvdimm/nd-core.h
-+++ b/drivers/nvdimm/nd-core.h
-@@ -25,10 +25,11 @@ extern int nvdimm_major;
- 
- struct nvdimm_bus {
- 	struct nvdimm_bus_descriptor *nd_desc;
--	wait_queue_head_t probe_wait;
-+	wait_queue_head_t wait;
- 	struct list_head list;
- 	struct device dev;
- 	int id, probe_active;
-+	atomic_t ioctl_active;
- 	struct list_head mapping_list;
- 	struct mutex reconfig_mutex;
- 	struct badrange badrange;
-
+diff --git a/kernel/sched/psi.c b/kernel/sched/psi.c
+index 7acc632c3b82..ed9a1d573cb1 100644
+--- a/kernel/sched/psi.c
++++ b/kernel/sched/psi.c
+@@ -1061,7 +1061,7 @@ struct psi_trigger *psi_trigger_create(struct psi_group *group,
+ 			mutex_unlock(&group->trigger_lock);
+ 			return ERR_CAST(kworker);
+ 		}
+-		sched_setscheduler(kworker->task, SCHED_FIFO, &param);
++		sched_setscheduler_nocheck(kworker->task, SCHED_FIFO, &param);
+ 		kthread_init_delayed_work(&group->poll_work,
+ 				psi_poll_work);
+ 		rcu_assign_pointer(group->poll_kworker, kworker);
+-- 
+2.22.0.709.g102302147b-goog
 
