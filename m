@@ -2,36 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7009579674
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:52:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F95D79696
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:53:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403896AbfG2Tvu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 15:51:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43354 "EHLO mail.kernel.org"
+        id S2390883AbfG2TxU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 15:53:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44904 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390832AbfG2Tvp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:51:45 -0400
+        id S2403809AbfG2Tw6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:52:58 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C2A16217D6;
-        Mon, 29 Jul 2019 19:51:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BBB4B21773;
+        Mon, 29 Jul 2019 19:52:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564429904;
-        bh=mR1FLmnq7pjLipyqif7hMNk37vHvp94csEtKcUZc5co=;
+        s=default; t=1564429977;
+        bh=AdRfg07wYRZs/1CXoKUxgRtQxKpsPAOTu12g9s8NZcA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pUL12vBzP6Tnev5mXDrDz8suNxCJjURz5BZR8lqQ5mHCB0hf0pwtdt7bvNOlcGTk/
-         Y/2x/cVmAHD5SBlhlrQT79H4CTBDybjsrnv3a7Ur4wSfAbm6HPGZZhL6MvS0idS4He
-         6pyMdhZJiQISmaqworBcvo2vLLQ+JsDczKLJaSjg=
+        b=m8k5+i4FkLIxI66kTEQiLfhb7w0c/wWu/ytGdDHDt71rhwG6Xo8npTdOeuUNm9ejb
+         RnSS2mVoNw56pLHvoiZ/euWgl/49LTWQ3kitGpXkdE5NsPlb4SNnc/6PDpSXxk+mEo
+         QG36imUx619/1aKEGT4NuxLy3MUXwc1YDTLBEVF4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vasily Gorbik <gor@linux.ibm.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        stable@vger.kernel.org, Numfor Mbiziwo-Tiapo <nums@google.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@redhat.com>,
+        Mark Drayton <mbd@fb.com>, Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Song Liu <songliubraving@fb.com>,
+        Stephane Eranian <eranian@google.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 116/215] kallsyms: exclude kasan local symbols on s390
-Date:   Mon, 29 Jul 2019 21:21:52 +0200
-Message-Id: <20190729190759.168911402@linuxfoundation.org>
+Subject: [PATCH 5.2 119/215] perf test mmap-thread-lookup: Initialize variable to suppress memory sanitizer warning
+Date:   Mon, 29 Jul 2019 21:21:55 +0200
+Message-Id: <20190729190759.712792229@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190729190739.971253303@linuxfoundation.org>
 References: <20190729190739.971253303@linuxfoundation.org>
@@ -44,66 +50,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 33177f01ca3fe550146bb9001bec2fd806b2f40c ]
+[ Upstream commit 4e4cf62b37da5ff45c904a3acf242ab29ed5881d ]
 
-gcc asan instrumentation emits the following sequence to store frame pc
-when the kernel is built with CONFIG_RELOCATABLE:
-debug/vsprintf.s:
-        .section        .data.rel.ro.local,"aw"
-        .align  8
-.LC3:
-        .quad   .LASANPC4826@GOTOFF
-.text
-        .align  8
-        .type   number, @function
-number:
-.LASANPC4826:
+Running the 'perf test' command after building perf with a memory
+sanitizer causes a warning that says:
 
-and in case reloc is issued for LASANPC label it also gets into .symtab
-with the same address as actual function symbol:
-$ nm -n vmlinux | grep 0000000001397150
-0000000001397150 t .LASANPC4826
-0000000001397150 t number
+  WARNING: MemorySanitizer: use-of-uninitialized-value... in mmap-thread-lookup.c
 
-In the end kernel backtraces are almost unreadable:
-[  143.748476] Call Trace:
-[  143.748484] ([<000000002da3e62c>] .LASANPC2671+0x114/0x190)
-[  143.748492]  [<000000002eca1a58>] .LASANPC2612+0x110/0x160
-[  143.748502]  [<000000002de9d830>] print_address_description+0x80/0x3b0
-[  143.748511]  [<000000002de9dd64>] __kasan_report+0x15c/0x1c8
-[  143.748521]  [<000000002ecb56d4>] strrchr+0x34/0x60
-[  143.748534]  [<000003ff800a9a40>] kasan_strings+0xb0/0x148 [test_kasan]
-[  143.748547]  [<000003ff800a9bba>] kmalloc_tests_init+0xe2/0x528 [test_kasan]
-[  143.748555]  [<000000002da2117c>] .LASANPC4069+0x354/0x748
-[  143.748563]  [<000000002dbfbb16>] do_init_module+0x136/0x3b0
-[  143.748571]  [<000000002dbff3f4>] .LASANPC3191+0x2164/0x25d0
-[  143.748580]  [<000000002dbffc4c>] .LASANPC3196+0x184/0x1b8
-[  143.748587]  [<000000002ecdf2ec>] system_call+0xd8/0x2d8
+Initializing the go variable to 0 silences this harmless warning.
 
-Since LASANPC labels are not even unique and get into .symtab only due
-to relocs filter them out in kallsyms.
+Committer warning:
 
-Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+This was harmless, just a simple test writing whatever was at that
+sizeof(int) memory area just to signal another thread blocked reading
+that file created with pipe(). Initialize it tho so that we don't get
+this warning.
+
+Signed-off-by: Numfor Mbiziwo-Tiapo <nums@google.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Ian Rogers <irogers@google.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Mark Drayton <mbd@fb.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Song Liu <songliubraving@fb.com>
+Cc: Stephane Eranian <eranian@google.com>
+Link: http://lkml.kernel.org/r/20190702173716.181223-1-nums@google.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- scripts/kallsyms.c | 3 +++
- 1 file changed, 3 insertions(+)
+ tools/perf/tests/mmap-thread-lookup.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/scripts/kallsyms.c b/scripts/kallsyms.c
-index e17837f1d3f2..ae6504d07fd6 100644
---- a/scripts/kallsyms.c
-+++ b/scripts/kallsyms.c
-@@ -150,6 +150,9 @@ static int read_symbol(FILE *in, struct sym_entry *s)
- 	/* exclude debugging symbols */
- 	else if (stype == 'N' || stype == 'n')
- 		return -1;
-+	/* exclude s390 kasan local symbols */
-+	else if (!strncmp(sym, ".LASANPC", 8))
-+		return -1;
+diff --git a/tools/perf/tests/mmap-thread-lookup.c b/tools/perf/tests/mmap-thread-lookup.c
+index ba87e6e8d18c..0a4301a5155c 100644
+--- a/tools/perf/tests/mmap-thread-lookup.c
++++ b/tools/perf/tests/mmap-thread-lookup.c
+@@ -53,7 +53,7 @@ static void *thread_fn(void *arg)
+ {
+ 	struct thread_data *td = arg;
+ 	ssize_t ret;
+-	int go;
++	int go = 0;
  
- 	/* include the type field in the symbol name, so that it gets
- 	 * compressed together */
+ 	if (thread_init(td))
+ 		return NULL;
 -- 
 2.20.1
 
