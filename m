@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EEA847942E
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:28:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A5A017942F
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:29:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730020AbfG2T2t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 15:28:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41348 "EHLO mail.kernel.org"
+        id S1730042AbfG2T2y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 15:28:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41498 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726738AbfG2T2i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:28:38 -0400
+        id S1730011AbfG2T2r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:28:47 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AE6E42070B;
-        Mon, 29 Jul 2019 19:28:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 99CC521655;
+        Mon, 29 Jul 2019 19:28:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564428517;
-        bh=S4svMKdHuAGeN67O6kmLtk+ZNOQ7EGTIYKVayCpUo8g=;
+        s=default; t=1564428526;
+        bh=ARDh9vgOoUICoXPnoZ17qmCuc+eluowsNr0KVU08Rg0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nddZKNxj+h5VIs0IFXQVdsrgoWnPjcxcgeeNehuqhAhgtQOVERHMYLKZkNf9qZdJL
-         daA0IkJwzqkkVSWtHDWtAr2zsRAE58gGTAbymenuXLsRS3sqRXrwqqtuxrnDIrk4jU
-         ozY4+vwD6zCGy57izWEEljpxCoRz8h6Ndp46X3iA=
+        b=AdxBP7roQN8OcUd8BuSloHRbpihovD/qLCrzcLbQPzIVpxSUKtDJHb5lkNOCpRa1F
+         7PntcuYv7uW7cIbe1ohn8KpVUuZZfRmHguP3x8OweypniB5G0uHKFqOU5P8FkRawb8
+         FHB/LvB49sappJs58SJ3LnPEaXmXtKPXeeZ6kj1w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 062/293] media: s5p-mfc: Make additional clocks optional
-Date:   Mon, 29 Jul 2019 21:19:13 +0200
-Message-Id: <20190729190829.262713031@linuxfoundation.org>
+        stable@vger.kernel.org, Nathan Huckleberry <nhuck@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        john.stultz@linaro.org, sboyd@kernel.org,
+        clang-built-linux@googlegroups.com, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 065/293] timer_list: Guard procfs specific code
+Date:   Mon, 29 Jul 2019 21:19:16 +0200
+Message-Id: <20190729190829.623689977@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190729190820.321094988@linuxfoundation.org>
 References: <20190729190820.321094988@linuxfoundation.org>
@@ -46,42 +46,87 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit e08efef8fe7db87206314c19b341612c719f891a ]
+[ Upstream commit a9314773a91a1d3b36270085246a6715a326ff00 ]
 
-Since the beginning the second clock ('special', 'sclk') was optional and
-it is not available on some variants of Exynos SoCs (i.e. Exynos5420 with
-v7 of MFC hardware).
+With CONFIG_PROC_FS=n the following warning is emitted:
 
-However commit 1bce6fb3edf1 ("[media] s5p-mfc: Rework clock handling")
-made handling of all specified clocks mandatory. This patch restores
-original behavior of the driver and fixes its operation on
-Exynos5420 SoCs.
+kernel/time/timer_list.c:361:36: warning: unused variable
+'timer_list_sops' [-Wunused-const-variable]
+   static const struct seq_operations timer_list_sops = {
 
-Fixes: 1bce6fb3edf1 ("[media] s5p-mfc: Rework clock handling")
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Add #ifdef guard around procfs specific code.
+
+Signed-off-by: Nathan Huckleberry <nhuck@google.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Cc: john.stultz@linaro.org
+Cc: sboyd@kernel.org
+Cc: clang-built-linux@googlegroups.com
+Link: https://github.com/ClangBuiltLinux/linux/issues/534
+Link: https://lkml.kernel.org/r/20190614181604.112297-1-nhuck@google.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/platform/s5p-mfc/s5p_mfc_pm.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ kernel/time/timer_list.c | 36 +++++++++++++++++++-----------------
+ 1 file changed, 19 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_pm.c b/drivers/media/platform/s5p-mfc/s5p_mfc_pm.c
-index eb85cedc5ef3..5e080f32b0e8 100644
---- a/drivers/media/platform/s5p-mfc/s5p_mfc_pm.c
-+++ b/drivers/media/platform/s5p-mfc/s5p_mfc_pm.c
-@@ -38,6 +38,11 @@ int s5p_mfc_init_pm(struct s5p_mfc_dev *dev)
- 	for (i = 0; i < pm->num_clocks; i++) {
- 		pm->clocks[i] = devm_clk_get(pm->device, pm->clk_names[i]);
- 		if (IS_ERR(pm->clocks[i])) {
-+			/* additional clocks are optional */
-+			if (i && PTR_ERR(pm->clocks[i]) == -ENOENT) {
-+				pm->clocks[i] = NULL;
-+				continue;
-+			}
- 			mfc_err("Failed to get clock: %s\n",
- 				pm->clk_names[i]);
- 			return PTR_ERR(pm->clocks[i]);
+diff --git a/kernel/time/timer_list.c b/kernel/time/timer_list.c
+index 0ed768b56c60..7e9f149d34ea 100644
+--- a/kernel/time/timer_list.c
++++ b/kernel/time/timer_list.c
+@@ -289,23 +289,6 @@ static inline void timer_list_header(struct seq_file *m, u64 now)
+ 	SEQ_printf(m, "\n");
+ }
+ 
+-static int timer_list_show(struct seq_file *m, void *v)
+-{
+-	struct timer_list_iter *iter = v;
+-
+-	if (iter->cpu == -1 && !iter->second_pass)
+-		timer_list_header(m, iter->now);
+-	else if (!iter->second_pass)
+-		print_cpu(m, iter->cpu, iter->now);
+-#ifdef CONFIG_GENERIC_CLOCKEVENTS
+-	else if (iter->cpu == -1 && iter->second_pass)
+-		timer_list_show_tickdevices_header(m);
+-	else
+-		print_tickdevice(m, tick_get_device(iter->cpu), iter->cpu);
+-#endif
+-	return 0;
+-}
+-
+ void sysrq_timer_list_show(void)
+ {
+ 	u64 now = ktime_to_ns(ktime_get());
+@@ -324,6 +307,24 @@ void sysrq_timer_list_show(void)
+ 	return;
+ }
+ 
++#ifdef CONFIG_PROC_FS
++static int timer_list_show(struct seq_file *m, void *v)
++{
++	struct timer_list_iter *iter = v;
++
++	if (iter->cpu == -1 && !iter->second_pass)
++		timer_list_header(m, iter->now);
++	else if (!iter->second_pass)
++		print_cpu(m, iter->cpu, iter->now);
++#ifdef CONFIG_GENERIC_CLOCKEVENTS
++	else if (iter->cpu == -1 && iter->second_pass)
++		timer_list_show_tickdevices_header(m);
++	else
++		print_tickdevice(m, tick_get_device(iter->cpu), iter->cpu);
++#endif
++	return 0;
++}
++
+ static void *move_iter(struct timer_list_iter *iter, loff_t offset)
+ {
+ 	for (; offset; offset--) {
+@@ -395,3 +396,4 @@ static int __init init_timer_list_procfs(void)
+ 	return 0;
+ }
+ __initcall(init_timer_list_procfs);
++#endif
 -- 
 2.20.1
 
