@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 776EA794BF
+	by mail.lfdr.de (Postfix) with ESMTP id E008E794C0
 	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:35:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728508AbfG2TfE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 15:35:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49304 "EHLO mail.kernel.org"
+        id S1728653AbfG2TfJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 15:35:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49366 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388498AbfG2Te4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:34:56 -0400
+        id S2388477AbfG2Te7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:34:59 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D25F92070B;
-        Mon, 29 Jul 2019 19:34:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 70D3721773;
+        Mon, 29 Jul 2019 19:34:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564428895;
-        bh=HPL6Nhe5E/wS/WEEQvxSmxVoRnNhEPYzgfz2ZIYUhjg=;
+        s=default; t=1564428898;
+        bh=CeUhq4u7hoiRDwWUD7AM1Gg4yNUO7s/cPGRFzV5zmOA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=z1xGlAqTd6lLQJ1JB5kDeXbOiyhSaxg32fyuqcLeLR/qswiG0AVfTv6UUjBoQeS4O
-         XSmeLPSXhtE2j5HbACsTnZcmy9B6KGxprr0l6DwoSBKBJE1EAUKTgl9PywpKXqeLgc
-         E+LQlu83HgpgU5OXsVxWKYa3hcWNf7F7eoEZocnI=
+        b=HVXhqoOn5EiPcn3k0N2ssaGWhcRATOO8UEMMY/9KQNcCWbSAqqEueWE96SeSsipfE
+         +kSJW3r1tMf0tp7/WHdv/FNIYhpTyASUe6tZqRjxpRyEQ9b2HAfFwc5I/wH7+r+Jt2
+         5BbbaaoDoa9PnJo7HNJiQ05pnNKwK4EvOQVjkQCo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chris Tracy <ctracy@engr.scu.edu>,
+        stable@vger.kernel.org, Paul Menzel <pmenzel@molgen.mpg.de>,
         "J. Bruce Fields" <bfields@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 219/293] nfsd: fix performance-limiting session calculation
-Date:   Mon, 29 Jul 2019 21:21:50 +0200
-Message-Id: <20190729190841.287748515@linuxfoundation.org>
+Subject: [PATCH 4.14 220/293] nfsd: Fix overflow causing non-working mounts on 1 TB machines
+Date:   Mon, 29 Jul 2019 21:21:51 +0200
+Message-Id: <20190729190841.368516511@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190729190820.321094988@linuxfoundation.org>
 References: <20190729190820.321094988@linuxfoundation.org>
@@ -44,50 +44,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit c54f24e338ed2a35218f117a4a1afb5f9e2b4e64 ]
+[ Upstream commit 3b2d4dcf71c4a91b420f835e52ddea8192300a3b ]
 
-We're unintentionally limiting the number of slots per nfsv4.1 session
-to 10.  Often more than 10 simultaneous RPCs are needed for the best
-performance.
+Since commit 10a68cdf10 (nfsd: fix performance-limiting session
+calculation) (Linux 5.1-rc1 and 4.19.31), shares from NFS servers with
+1 TB of memory cannot be mounted anymore. The mount just hangs on the
+client.
 
-This calculation was meant to prevent any one client from using up more
-than a third of the limit we set for total memory use across all clients
-and sessions.  Instead, it's limiting the client to a third of the
-maximum for a single session.
+The gist of commit 10a68cdf10 is the change below.
 
-Fix this.
+    -avail = clamp_t(int, avail, slotsize, avail/3);
+    +avail = clamp_t(int, avail, slotsize, total_avail/3);
 
-Reported-by: Chris Tracy <ctracy@engr.scu.edu>
+Here are the macros.
+
+    #define min_t(type, x, y)       __careful_cmp((type)(x), (type)(y), <)
+    #define clamp_t(type, val, lo, hi) min_t(type, max_t(type, val, lo), hi)
+
+`total_avail` is 8,434,659,328 on the 1 TB machine. `clamp_t()` casts
+the values to `int`, which for 32-bit integers can only hold values
+−2,147,483,648 (−2^31) through 2,147,483,647 (2^31 − 1).
+
+`avail` (in the function signature) is just 65536, so that no overflow
+was happening. Before the commit the assignment would result in 21845,
+and `num = 4`.
+
+When using `total_avail`, it is causing the assignment to be
+18446744072226137429 (printed as %lu), and `num` is then 4164608182.
+
+My next guess is, that `nfsd_drc_mem_used` is then exceeded, and the
+server thinks there is no memory available any more for this client.
+
+Updating the arguments of `clamp_t()` and `min_t()` to `unsigned long`
+fixes the issue.
+
+Now, `avail = 65536` (before commit 10a68cdf10 `avail = 21845`), but
+`num = 4` remains the same.
+
+Fixes: c54f24e338ed (nfsd: fix performance-limiting session calculation)
 Cc: stable@vger.kernel.org
-Fixes: de766e570413 "nfsd: give out fewer session slots as limit approaches"
+Signed-off-by: Paul Menzel <pmenzel@molgen.mpg.de>
 Signed-off-by: J. Bruce Fields <bfields@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/nfsd/nfs4state.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ fs/nfsd/nfs4state.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
-index dd48353357d7..0bf88876c889 100644
+index 0bf88876c889..87ee9cbf7dcb 100644
 --- a/fs/nfsd/nfs4state.c
 +++ b/fs/nfsd/nfs4state.c
-@@ -1502,16 +1502,16 @@ static u32 nfsd4_get_drc_mem(struct nfsd4_channel_attrs *ca)
- {
- 	u32 slotsize = slot_bytes(ca);
- 	u32 num = ca->maxreqs;
--	int avail;
-+	unsigned long avail, total_avail;
- 
- 	spin_lock(&nfsd_drc_lock);
--	avail = min((unsigned long)NFSD_MAX_MEM_PER_SESSION,
--		    nfsd_drc_max_mem - nfsd_drc_mem_used);
-+	total_avail = nfsd_drc_max_mem - nfsd_drc_mem_used;
-+	avail = min((unsigned long)NFSD_MAX_MEM_PER_SESSION, total_avail);
- 	/*
+@@ -1511,7 +1511,7 @@ static u32 nfsd4_get_drc_mem(struct nfsd4_channel_attrs *ca)
  	 * Never use more than a third of the remaining memory,
  	 * unless it's the only way to give this client a slot:
  	 */
--	avail = clamp_t(int, avail, slotsize, avail/3);
-+	avail = clamp_t(int, avail, slotsize, total_avail/3);
+-	avail = clamp_t(int, avail, slotsize, total_avail/3);
++	avail = clamp_t(unsigned long, avail, slotsize, total_avail/3);
  	num = min_t(int, num, avail / slotsize);
  	nfsd_drc_mem_used += num * slotsize;
  	spin_unlock(&nfsd_drc_lock);
