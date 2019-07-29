@@ -2,125 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C51A478745
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 10:22:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 645C27875C
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 10:28:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727590AbfG2IWo convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 29 Jul 2019 04:22:44 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:46027 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726305AbfG2IWn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 04:22:43 -0400
-Received: by mail-wr1-f68.google.com with SMTP id f9so60749816wre.12
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 01:22:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=NRW+7eX1EamfMQ1j+7nziAgPDBExPLIJt9EL33UvSvA=;
-        b=nLdHcvw29iYz6szI4b9qUbCkm8VZ3p3aEkee7a9j5MwUIf9t+1B0G94ve0y+fH9A35
-         Cxm2IH8RExcTVj4YjuDB3UnEuauKQCG/VFXUL6SlsBGjamYtUVcSql91IwO9v1BlwpP1
-         Qrmd1Oeup5+SvzeM6LzRk4C0xsNki8q+E9ncjZpcvnNso6esNCjuGerwFyJxaCTcfC0M
-         VnRqMXIpGxZ/D2P1VT5zrIB+cPlqJYcJKiuP5/mRKeSUjXEFc9gQ12lIhtGZVO9sc0G7
-         9uSTyOIiEPKmPBFmurhHLmTg6CXs0lH3MWT31QLfjCIIZf6iRSKiLs68jivS+rgxoLYo
-         um3g==
-X-Gm-Message-State: APjAAAUGpAqA8Th679ccVZ8rH6YW0leaSgYtIViEmFVVDiTZa2gB0VIy
-        D07W2EJ+t2dBXrG4g7KysW/7TNPhmuVW0H4xfEs=
-X-Google-Smtp-Source: APXvYqwRd0NjKwuKsNQrhF/AofoCE6s79F/LxnezbkGgBQ9n8GYJ1SXbHX67MoW7rslVqa+H6NnYI2S15C+ysz3TrBo=
-X-Received: by 2002:adf:cd81:: with SMTP id q1mr117016959wrj.16.1564388561650;
- Mon, 29 Jul 2019 01:22:41 -0700 (PDT)
+        id S1727478AbfG2I2d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 04:28:33 -0400
+Received: from mga06.intel.com ([134.134.136.31]:22293 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726305AbfG2I2d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 04:28:33 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jul 2019 01:23:58 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,322,1559545200"; 
+   d="scan'208";a="176317959"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.122]) ([10.237.72.122])
+  by orsmga006.jf.intel.com with ESMTP; 29 Jul 2019 01:23:54 -0700
+Subject: Re: [PATCH 3/3] Fix insn.c misaligned address error
+To:     Masami Hiramatsu <mhiramat@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Numfor Mbiziwo-Tiapo <nums@google.com>, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com,
+        jolsa@redhat.com, namhyung@kernel.org, songliubraving@fb.com,
+        mbd@fb.com, linux-kernel@vger.kernel.org, irogers@google.com,
+        eranian@google.com
+References: <20190724184512.162887-1-nums@google.com>
+ <20190724184512.162887-4-nums@google.com> <20190726193806.GB24867@kernel.org>
+ <20190727184638.3263eb76c3cbde95f9896210@kernel.org>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <2bc0fcc6-0477-ba1d-7418-5497efa7d571@intel.com>
+Date:   Mon, 29 Jul 2019 11:22:34 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <20190728135826.GA10262@roeck-us.net> <a0e789dd-5244-6af3-56c2-970b03d264a8@embeddedor.com>
-In-Reply-To: <a0e789dd-5244-6af3-56c2-970b03d264a8@embeddedor.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 29 Jul 2019 10:22:29 +0200
-Message-ID: <CAMuHMdXJWUK8Y1f1+LA9ro6HvLmtOHbSOrvqhVpzo0KgvaCMfQ@mail.gmail.com>
-Subject: Re: [PATCH] Makefile: Globally enable fall-through warning
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Guenter Roeck <linux@roeck-us.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20190727184638.3263eb76c3cbde95f9896210@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Gustavo,
+On 27/07/19 12:46 PM, Masami Hiramatsu wrote:
+> On Fri, 26 Jul 2019 16:38:06 -0300
+> Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
+> 
+>> Em Wed, Jul 24, 2019 at 11:45:12AM -0700, Numfor Mbiziwo-Tiapo escreveu:
+>>> The ubsan (undefined behavior sanitizer) version of perf throws an
+>>> error on the 'x86 instruction decoder - new instructions' function
+>>> of perf test.
+>>>
+>>> To reproduce this run:
+>>> make -C tools/perf USE_CLANG=1 EXTRA_CFLAGS="-fsanitize=undefined"
+>>>
+>>> then run: tools/perf/perf test 62 -v
+>>>
+>>> The error occurs in the __get_next macro (line 34) where an int is
+>>> read from a potentially unaligned address. Using memcpy instead of
+>>> assignment from an unaligned pointer.
+>>
+>> Since this came from the kernel, don't we have to fix it there as well?
+>> Masami, Adrian?
+> 
+> I guess we don't need it, since x86 can access "unaligned address" and
+> x86 insn decoder in kernel runs only on x86. I'm not sure about perf's
+> that part. Maybe if we run it on other arch as cross-arch application,
+> it may cause unaligned pointer issue.
 
-On Sun, Jul 28, 2019 at 6:44 PM Gustavo A. R. Silva
-<gustavo@embeddedor.com> wrote:
-> On 7/28/19 8:58 AM, Guenter Roeck wrote:
-> > On Thu, Jun 06, 2019 at 07:46:17PM -0500, Gustavo A. R. Silva wrote:
-> >> Now that all the fall-through warnings have been addressed in the
-> >> kernel, enable the fall-through warning globally.
-> >>
-> >
-> > Not really "all".
-> >
-> > powerpc:85xx/sbc8548_defconfig:
-> >
-> > arch/powerpc/kernel/align.c: In function ‘emulate_spe’:
-> > arch/powerpc/kernel/align.c:178:8: error: this statement may fall through
-> >
-> > Plus many more similar errors in the same file.
-> >
-> > All sh builds:
-> >
-> > arch/sh/kernel/disassemble.c: In function 'print_sh_insn':
-> > arch/sh/kernel/disassemble.c:478:8: error: this statement may fall through
-> >
-> > Again, this is seen in several places.
-> >
-> > mips:cavium_octeon_defconfig:
-> >
-> > arch/mips/cavium-octeon/octeon-usb.c: In function 'dwc3_octeon_clocks_start':
-> > include/linux/device.h:1499:2: error: this statement may fall through
-> >
-> > None of those are from recent changes. And this is just from my small
-> > subset of test builds.
-> >
->
-> Thank you for letting me know about this. I don't have access to build
-> infrastructure like yours.
->
-> My build infrastructure is similar to that of Linus.
->
-> But if you send me all of those I can create a patch and send it back
-> to you to make sure what you see is addressed. If we can coordinate for
-> this it'd be great for everybody. :)
->
+Yes, theoretically Intel PT decoding can be done on any arch.
 
-More to be found in
-https://lore.kernel.org/lkml/20190729081727.6094-1-geert@linux-m68k.org/
+But the memcpy is probably sub-optimal for x86, so the patch as it stands
+does not seem suitable.  I notice the kernel has get_unaligned() and
+put_unaligned().
 
-and I saw the following in my local builds (not detected above due to
-kisskb using an older compiler for m68k builds):
+Obviously it would be better for a patch to be accepted to
+arch/x86/lib/insn.c also.
 
-arch/m68k/include/asm/amigahw.h: warning: this statement may fall
-through [-Wimplicit-fallthrough=]:  => 42:50
-drivers/block/ataflop.c: warning: this statement may fall through
-[-Wimplicit-fallthrough=]:  => 1728:3
-drivers/net/arcnet/com20020-isa.c: warning: this statement may fall
-through [-Wimplicit-fallthrough=]:  => 205:13, 203:10, 209:7, 201:11,
-207:8
-drivers/scsi/sun3_scsi.c: warning: this statement may fall through
-[-Wimplicit-fallthrough=]:  => 399:9, 403:9
-sound/oss/dmasound/dmasound_atari.c: warning: this statement may fall
-through [-Wimplicit-fallthrough=]:  => 1449:24
+> 
+> Thank you,
+> 
+>>
+>> [acme@quaco perf]$ find . -name insn.c
+>> ./arch/x86/lib/insn.c
+>> ./arch/arm/kernel/insn.c
+>> ./arch/arm64/kernel/insn.c
+>> ./tools/objtool/arch/x86/lib/insn.c
+>> ./tools/perf/util/intel-pt-decoder/insn.c
+>> [acme@quaco perf]$ diff -u ./tools/perf/util/intel-pt-decoder/insn.c ./arch/x86/lib/insn.c
+>> --- ./tools/perf/util/intel-pt-decoder/insn.c	2019-07-06 16:59:05.734265998 -0300
+>> +++ ./arch/x86/lib/insn.c	2019-07-06 16:59:01.369202998 -0300
+>> @@ -10,8 +10,8 @@
+>>  #else
+>>  #include <string.h>
+>>  #endif
+>> -#include "inat.h"
+>> -#include "insn.h"
+>> +#include <asm/inat.h>
+>> +#include <asm/insn.h>
+>>
+>>  /* Verify next sizeof(t) bytes can be on the same instruction */
+>>  #define validate_next(t, insn, n)	\
+>> [acme@quaco perf]$
+>>
+>>
+>> - Arnaldo
+>>  
+>>> Signed-off-by: Numfor Mbiziwo-Tiapo <nums@google.com>
+>>> ---
+>>>  tools/perf/util/intel-pt-decoder/insn.c | 3 ++-
+>>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/tools/perf/util/intel-pt-decoder/insn.c b/tools/perf/util/intel-pt-decoder/insn.c
+>>> index ca983e2bea8b..de1944c60aa9 100644
+>>> --- a/tools/perf/util/intel-pt-decoder/insn.c
+>>> +++ b/tools/perf/util/intel-pt-decoder/insn.c
+>>> @@ -31,7 +31,8 @@
+>>>  	((insn)->next_byte + sizeof(t) + n <= (insn)->end_kaddr)
+>>>  
+>>>  #define __get_next(t, insn)	\
+>>> -	({ t r = *(t*)insn->next_byte; insn->next_byte += sizeof(t); r; })
+>>> +	({ t r; memcpy(&r, insn->next_byte, sizeof(t)); \
+>>> +		insn->next_byte += sizeof(t); r; })
+>>>  
+>>>  #define __peek_nbyte_next(t, insn, n)	\
+>>>  	({ t r = *(t*)((insn)->next_byte + n); r; })
+>>> -- 
+>>> 2.22.0.657.g960e92d24f-goog
+>>
+>> -- 
+>>
+>> - Arnaldo
+> 
+> 
 
-Thanks for fixing ;-)
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
