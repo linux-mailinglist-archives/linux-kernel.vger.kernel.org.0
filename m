@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A98F1797CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:04:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F020B797C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:02:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390151AbfG2TqZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 15:46:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35618 "EHLO mail.kernel.org"
+        id S2388550AbfG2UCS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 16:02:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39348 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390125AbfG2TqW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:46:22 -0400
+        id S2390461AbfG2Ts7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:48:59 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5B6A320C01;
-        Mon, 29 Jul 2019 19:46:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 44A8A2054F;
+        Mon, 29 Jul 2019 19:48:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564429581;
-        bh=Y07Jhuh86TB1zC+Il3gXb0CrcePi+HPbIZrlTPtBLKQ=;
+        s=default; t=1564429738;
+        bh=oECJ7UF9WFWlDfQ3kjKWWh6o07C5LWhV8cJjOLM7LJI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pJxxOfyT4WnvDZqHafwrs9iBLZ0kOOQAwMw/X40YGgjYROf6cq8++nXOEYN/U5snp
-         2HgYyBXlv4zM8/qg3rgaeTt2JVjSbMMVF18uQzbWWLxC4z0qQB84WVnPGaWbTv5i2+
-         t7IGJJ79Zpp5uhxpHtavbi/HtNSnM8jkmKpmsiNY=
+        b=dWZ9I9IiOUz+FYo1yFKGNxZvNb255s9DFIt2HJIxSaYhFjvxpr9zhMA7FsYvf57W2
+         UZkRryGFuw7HPc/YYK2mm6M1N5bnq9twhBWN79PK987A7RSW8H/qeqgdXj2yBJ7WYA
+         Ip+Ku3L3FdJLpYDDHNWuYsoVk/Rc3gC2jJZgfgY0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oak Zeng <ozeng@amd.com>,
+        stable@vger.kernel.org, Oak Zeng <Oak.Zeng@amd.com>,
         Felix Kuehling <Felix.Kuehling@amd.com>,
         Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 029/215] drm/amdkfd: Fix a potential memory leak
-Date:   Mon, 29 Jul 2019 21:20:25 +0200
-Message-Id: <20190729190745.138948656@linuxfoundation.org>
+Subject: [PATCH 5.2 030/215] drm/amdkfd: Fix sdma queue map issue
+Date:   Mon, 29 Jul 2019 21:20:26 +0200
+Message-Id: <20190729190745.366931434@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190729190739.971253303@linuxfoundation.org>
 References: <20190729190739.971253303@linuxfoundation.org>
@@ -45,43 +45,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit e73390d181103a19e1111ec2f25559a0570e9fe0 ]
+[ Upstream commit 065e4bdfa1f3ab2884c110394d8b7e7ebe3b988c ]
 
-Free mqd_mem_obj it GTT buffer allocation for MQD+control stack fails.
+Previous codes assumes there are two sdma engines.
+This is not true e.g., Raven only has 1 SDMA engine.
+Fix the issue by using sdma engine number info in
+device_info.
 
-Signed-off-by: Oak Zeng <ozeng@amd.com>
+Signed-off-by: Oak Zeng <Oak.Zeng@amd.com>
 Reviewed-by: Felix Kuehling <Felix.Kuehling@amd.com>
 Signed-off-by: Felix Kuehling <Felix.Kuehling@amd.com>
 Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager_v9.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ .../drm/amd/amdkfd/kfd_device_queue_manager.c | 21 +++++++++++--------
+ 1 file changed, 12 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager_v9.c b/drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager_v9.c
-index 9dbba609450e..8fe74b821b32 100644
---- a/drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager_v9.c
-+++ b/drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager_v9.c
-@@ -76,6 +76,7 @@ static int init_mqd(struct mqd_manager *mm, void **mqd,
- 	struct v9_mqd *m;
- 	struct kfd_dev *kfd = mm->dev;
+diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c b/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c
+index ae381450601c..afbaf6f5131e 100644
+--- a/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c
++++ b/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c
+@@ -1268,12 +1268,17 @@ int amdkfd_fence_wait_timeout(unsigned int *fence_addr,
+ 	return 0;
+ }
  
-+	*mqd_mem_obj = NULL;
- 	/* From V9,  for CWSR, the control stack is located on the next page
- 	 * boundary after the mqd, we will use the gtt allocation function
- 	 * instead of sub-allocation function.
-@@ -93,8 +94,10 @@ static int init_mqd(struct mqd_manager *mm, void **mqd,
- 	} else
- 		retval = kfd_gtt_sa_allocate(mm->dev, sizeof(struct v9_mqd),
- 				mqd_mem_obj);
--	if (retval != 0)
-+	if (retval) {
-+		kfree(*mqd_mem_obj);
- 		return -ENOMEM;
+-static int unmap_sdma_queues(struct device_queue_manager *dqm,
+-				unsigned int sdma_engine)
++static int unmap_sdma_queues(struct device_queue_manager *dqm)
+ {
+-	return pm_send_unmap_queue(&dqm->packets, KFD_QUEUE_TYPE_SDMA,
+-			KFD_UNMAP_QUEUES_FILTER_DYNAMIC_QUEUES, 0, false,
+-			sdma_engine);
++	int i, retval = 0;
++
++	for (i = 0; i < dqm->dev->device_info->num_sdma_engines; i++) {
++		retval = pm_send_unmap_queue(&dqm->packets, KFD_QUEUE_TYPE_SDMA,
++			KFD_UNMAP_QUEUES_FILTER_DYNAMIC_QUEUES, 0, false, i);
++		if (retval)
++			return retval;
 +	}
++	return retval;
+ }
  
- 	m = (struct v9_mqd *) (*mqd_mem_obj)->cpu_ptr;
- 	addr = (*mqd_mem_obj)->gpu_addr;
+ /* dqm->lock mutex has to be locked before calling this function */
+@@ -1312,10 +1317,8 @@ static int unmap_queues_cpsch(struct device_queue_manager *dqm,
+ 	pr_debug("Before destroying queues, sdma queue count is : %u\n",
+ 		dqm->sdma_queue_count);
+ 
+-	if (dqm->sdma_queue_count > 0) {
+-		unmap_sdma_queues(dqm, 0);
+-		unmap_sdma_queues(dqm, 1);
+-	}
++	if (dqm->sdma_queue_count > 0)
++		unmap_sdma_queues(dqm);
+ 
+ 	retval = pm_send_unmap_queue(&dqm->packets, KFD_QUEUE_TYPE_COMPUTE,
+ 			filter, filter_param, false, 0);
 -- 
 2.20.1
 
