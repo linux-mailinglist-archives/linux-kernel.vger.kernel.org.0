@@ -2,36 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6EAF779505
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:38:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B71E8794D0
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:35:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388782AbfG2Ths (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 15:37:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52638 "EHLO mail.kernel.org"
+        id S2388539AbfG2Tft (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 15:35:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50120 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388750AbfG2Thq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:37:46 -0400
+        id S2388528AbfG2Tfq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:35:46 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2615020C01;
-        Mon, 29 Jul 2019 19:37:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 82145217D9;
+        Mon, 29 Jul 2019 19:35:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564429065;
-        bh=bDfhRMuXP5B3GwHpV1Bk3DWSkybPAdwcpwijME229TQ=;
+        s=default; t=1564428946;
+        bh=H5VIOUyEePA3e7YILjunOmQC973IRxnSoT1mO4GezMc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EN1wyJCbiBJF0S9Noh0wOBDi+6nTgxYZ4yrF6dyKgzwZWSRgDIX01HDqIXmu91CIN
-         cXnIfebgNUE+bg1ow+q73VOKdD2DLsr4+4R6eWPDXcuNXc8BNDwQZLnVASMuOezP0z
-         Z8VDc7+5F5DV9rM5mecGeFm5NKmSVy/49eong5xQ=
+        b=ge0sY79RohgICVETjNcTBc7DIreW3WXAzt/+VKS0u3uxvn3yaccdxwpmqslKuCoep
+         kjUykcHIUuLt3u0DgmC+C/BtF2TswQb0Bfipfn88lvIntYxfiUubpgHDpMG1JzWTRN
+         gqUv8z11iZVIM8szbwJanH/ULlKSktPrjrQ5xPRI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Kimmo Rautkoski <ext-kimmo.rautkoski@vaisala.com>,
+        stable@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 235/293] serial: 8250: Fix TX interrupt handling condition
-Date:   Mon, 29 Jul 2019 21:22:06 +0200
-Message-Id: <20190729190842.470737156@linuxfoundation.org>
+Subject: [PATCH 4.14 237/293] phy: renesas: rcar-gen2: Fix memory leak at error paths
+Date:   Mon, 29 Jul 2019 21:22:08 +0200
+Message-Id: <20190729190842.604743846@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190729190820.321094988@linuxfoundation.org>
 References: <20190729190820.321094988@linuxfoundation.org>
@@ -44,44 +46,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit db1b5bc047b3cadaedab3826bba82c3d9e023c4b ]
+[ Upstream commit d4a36e82924d3305a17ac987a510f3902df5a4b2 ]
 
-Interrupt handler checked THRE bit (transmitter holding register
-empty) in LSR to detect if TX fifo is empty.
-In case when there is only receive interrupts the TX handling
-got called because THRE bit in LSR is set when there is no
-transmission (FIFO empty). TX handling caused TX stop, which in
-RS-485 half-duplex mode actually resets receiver FIFO. This is not
-desired during reception because of possible data loss.
+This patch fixes memory leak at error paths of the probe function.
+In for_each_child_of_node, if the loop returns, the driver should
+call of_put_node() before returns.
 
-The fix is to check if THRI is set in IER in addition of the TX
-fifo status. THRI in IER is set when TX is started and cleared
-when TX is stopped.
-This ensures that TX handling is only called when there is really
-transmission on going and an interrupt for THRE and not when there
-are only RX interrupts.
-
-Signed-off-by: Kimmo Rautkoski <ext-kimmo.rautkoski@vaisala.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reported-by: Julia Lawall <julia.lawall@lip6.fr>
+Fixes: 1233f59f745b237 ("phy: Renesas R-Car Gen2 PHY driver")
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/serial/8250/8250_port.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/phy/renesas/phy-rcar-gen2.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/tty/serial/8250/8250_port.c b/drivers/tty/serial/8250/8250_port.c
-index ab0796d14ac1..a73d2bc4b685 100644
---- a/drivers/tty/serial/8250/8250_port.c
-+++ b/drivers/tty/serial/8250/8250_port.c
-@@ -1878,7 +1878,8 @@ int serial8250_handle_irq(struct uart_port *port, unsigned int iir)
- 			status = serial8250_rx_chars(up, status);
- 	}
- 	serial8250_modem_status(up);
--	if ((!up->dma || up->dma->tx_err) && (status & UART_LSR_THRE))
-+	if ((!up->dma || up->dma->tx_err) && (status & UART_LSR_THRE) &&
-+		(up->ier & UART_IER_THRI))
- 		serial8250_tx_chars(up);
- 
- 	spin_unlock_irqrestore(&port->lock, flags);
+diff --git a/drivers/phy/renesas/phy-rcar-gen2.c b/drivers/phy/renesas/phy-rcar-gen2.c
+index 97d4dd6ea924..aa02b19b7e0e 100644
+--- a/drivers/phy/renesas/phy-rcar-gen2.c
++++ b/drivers/phy/renesas/phy-rcar-gen2.c
+@@ -288,6 +288,7 @@ static int rcar_gen2_phy_probe(struct platform_device *pdev)
+ 		error = of_property_read_u32(np, "reg", &channel_num);
+ 		if (error || channel_num > 2) {
+ 			dev_err(dev, "Invalid \"reg\" property\n");
++			of_node_put(np);
+ 			return error;
+ 		}
+ 		channel->select_mask = select_mask[channel_num];
+@@ -303,6 +304,7 @@ static int rcar_gen2_phy_probe(struct platform_device *pdev)
+ 						   &rcar_gen2_phy_ops);
+ 			if (IS_ERR(phy->phy)) {
+ 				dev_err(dev, "Failed to create PHY\n");
++				of_node_put(np);
+ 				return PTR_ERR(phy->phy);
+ 			}
+ 			phy_set_drvdata(phy->phy, phy);
 -- 
 2.20.1
 
