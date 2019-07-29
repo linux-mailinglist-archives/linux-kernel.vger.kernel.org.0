@@ -2,105 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55558799E3
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:26:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 91B35799C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:20:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728513AbfG2U0G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 16:26:06 -0400
-Received: from gateway20.websitewelcome.com ([192.185.44.20]:49643 "EHLO
-        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725975AbfG2U0G (ORCPT
+        id S1728589AbfG2UUQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 16:20:16 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:37558 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726129AbfG2UUQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 16:26:06 -0400
-Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
-        by gateway20.websitewelcome.com (Postfix) with ESMTP id 561BF400D20E9
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 14:02:37 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id sBuHhgKUJ2PzOsBuHhmDWO; Mon, 29 Jul 2019 15:06:05 -0500
-X-Authority-Reason: nr=8
+        Mon, 29 Jul 2019 16:20:16 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        MIME-Version:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=a+saqhhJ62Tmb3k+GTqe/6Z8xWSbumJEIlxILgYZV68=; b=D21o2tT2ziSnE7MIh2vEJd6fYU
-        QGXkh3zZILMMexb09l2I6lwzM+bfCfVYIswj4T7rz2U6qeV5Pc9y8csMUc09Fyr7SNZhFZYBl0ev9
-        9oU7byiBVw5//0grrI305r6hNvsRqsRcldYxkGLXI2X/9UiFtJf5x+kEp46E+bh3ycsuyJoHQYadw
-        CtSYDIvDJVHnpz6UvVu328gp9aiXMx9XdRSnCGR8NVMij1zLnOORmJmOyf1okfJwOIUR/fKAZdQy+
-        GHoO6zX8b2EsMjupBOH5d1FJpLaDLCcqrUyVew5WN0BmHLt5tnbU8s8HAeoQeV6NmQBIHJYdq0o3t
-        5VxXyO+g==;
-Received: from [187.192.11.120] (port=59530 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1hsBuG-000wID-R4; Mon, 29 Jul 2019 15:06:04 -0500
-Date:   Mon, 29 Jul 2019 15:06:02 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Jim Cromie <jim.cromie@gmail.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>
-Cc:     linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: [PATCH] watchdog: scx200_wdt: Mark expected switch fall-through
-Message-ID: <20190729200602.GA6854@embeddedor>
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=wwTzfyTq9xH2jVCB72SSD9pIFJfoUBESNUKZEPJQU/c=; b=nn7AqtlNX0eCysL+6//+UX/4T
+        +AAPNROZ8E/00SYlmowzHnKikJN/2tuR5XgXgOdSAu891tr8GB/hO0snXfBkcCawN7AVTmMNAoFaA
+        FS7E5u5xeF/skleakEMEGT2Lqrl7asvHfRWJavS0/NBOivAh5rdMDIKuJ9E8xW5U8VaZo=;
+Received: from ypsilon.sirena.org.uk ([2001:470:1f1d:6b5::7])
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1hsC7m-0005MB-Uu; Mon, 29 Jul 2019 20:20:03 +0000
+Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
+        id 6B92C2742AAD; Mon, 29 Jul 2019 21:20:01 +0100 (BST)
+Date:   Mon, 29 Jul 2019 21:20:01 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Daniel Baluta <daniel.baluta@gmail.com>
+Cc:     Nicolin Chen <nicoleotsuka@gmail.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        Devicetree List <devicetree@vger.kernel.org>,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Timur Tabi <timur@kernel.org>, Rob Herring <robh@kernel.org>,
+        "S.j. Wang" <shengjiu.wang@nxp.com>,
+        "Angus Ainslie (Purism)" <angus@akkea.ca>,
+        Takashi Iwai <tiwai@suse.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Viorel Suman <viorel.suman@nxp.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Mihai Serban <mihai.serban@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>
+Subject: Re: [alsa-devel] [PATCH v2 1/7] ASoC: fsl_sai: Add registers
+ definition for multiple datalines
+Message-ID: <20190729202001.GC4787@sirena.org.uk>
+References: <20190728192429.1514-1-daniel.baluta@nxp.com>
+ <20190728192429.1514-2-daniel.baluta@nxp.com>
+ <20190729194214.GA20594@Asurada-Nvidia.nvidia.com>
+ <CAEnQRZDmnAmgUkRGv3V5S7b5EnYTd2BO5NFuME2CfGb1=nAHzQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="ABTtc+pdwF7KHXCz"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 187.192.11.120
-X-Source-L: No
-X-Exim-ID: 1hsBuG-000wID-R4
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [187.192.11.120]:59530
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 9
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <CAEnQRZDmnAmgUkRGv3V5S7b5EnYTd2BO5NFuME2CfGb1=nAHzQ@mail.gmail.com>
+X-Cookie: A man's house is his hassle.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mark switch cases where we are expecting to fall through.
 
-This patch fixes the following warning (Building: i386):
+--ABTtc+pdwF7KHXCz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-drivers/watchdog/scx200_wdt.c: In function ‘scx200_wdt_ioctl’:
-drivers/watchdog/scx200_wdt.c:188:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
-   scx200_wdt_ping();
-   ^~~~~~~~~~~~~~~~~
-drivers/watchdog/scx200_wdt.c:189:2: note: here
-  case WDIOC_GETTIMEOUT:
-  ^~~~
+On Mon, Jul 29, 2019 at 10:57:43PM +0300, Daniel Baluta wrote:
+> On Mon, Jul 29, 2019 at 10:42 PM Nicolin Chen <nicoleotsuka@gmail.com> wrote:
+> > On Sun, Jul 28, 2019 at 10:24:23PM +0300, Daniel Baluta wrote:
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/watchdog/scx200_wdt.c | 1 +
- 1 file changed, 1 insertion(+)
+> > > @@ -704,7 +711,14 @@ static bool fsl_sai_readable_reg(struct device *dev, unsigned int reg)
+> > >       case FSL_SAI_TCR3:
+> > >       case FSL_SAI_TCR4:
+> > >       case FSL_SAI_TCR5:
+> > > -     case FSL_SAI_TFR:
+> > > +     case FSL_SAI_TFR0:
 
-diff --git a/drivers/watchdog/scx200_wdt.c b/drivers/watchdog/scx200_wdt.c
-index efd7996694de..46268309ee9b 100644
---- a/drivers/watchdog/scx200_wdt.c
-+++ b/drivers/watchdog/scx200_wdt.c
-@@ -186,6 +186,7 @@ static long scx200_wdt_ioctl(struct file *file, unsigned int cmd,
- 		margin = new_margin;
- 		scx200_wdt_update_margin();
- 		scx200_wdt_ping();
-+		/* Fall through */
- 	case WDIOC_GETTIMEOUT:
- 		if (put_user(margin, p))
- 			return -EFAULT;
--- 
-2.22.0
+> > A tricky thing here is that those SAI instances on older SoC don't
+> > support multi data lines physically, while seemly having registers
+> > pre-defined. So your change doesn't sound doing anything wrong to
+> > them at all, I am still wondering if it is necessary to apply them
+> > to newer compatible only though, as for older compatibles of SAI,
+> > these registers would be useless and confusing if being exposed.
 
+> > What do you think?
+
+> Yes, I thought about this too. But, I tried to keep the code as short
+> as possible and technically it is not wrong. When 1 data line is supported
+> for example application will only care about TDR0, TFR0, etc.
+
+So long as it's safe to read the registers (you don't get a bus error or
+anything) I'd say it's more trouble than it's worth to have separate
+regmap configuations just for this.  The main reasons for restricting
+readability are where there's physical problems with doing the reads or
+to keep the size of the debugfs files under control for usability and
+performance reasons.
+
+--ABTtc+pdwF7KHXCz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl0/VPAACgkQJNaLcl1U
+h9DrPwf9F9mjf8fAHvxxejGLd/jN+TU84DVsVv13Qp3jhAgobbWx/oF2xmX3A+b6
+uyfWch7Ud2SYvm2wXm/31JAXXi3aTlTq7niolXa7Hal3cLO4JAGCyFl6ex5knCHa
+D6ddUZyPG8Rag+kjm/ef2DQpTGHxKcP9nV6OTsn3v6QfOtZZiyl0nzaZnuEpUoxW
+Qz2WR2OxuRoA0Q/KaPiQCCP72GHZ5Vr2qDdteQXunE49dMnI6M0+e/WSbbJu+1tO
+toN2vyGNnUtNZK9IKgLbes65ihBd0026Otqg+cQEehLspgy8pwSap7TyZ123sVhM
+Z+xhfS+8ong2rDpferXo+La8/+Tx0Q==
+=PIWO
+-----END PGP SIGNATURE-----
+
+--ABTtc+pdwF7KHXCz--
