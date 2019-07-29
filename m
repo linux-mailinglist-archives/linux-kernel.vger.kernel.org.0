@@ -2,79 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5984A79A45
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:48:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3501F79A1F
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:41:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388074AbfG2Usv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 16:48:51 -0400
-Received: from hall.aurel32.net ([195.154.113.88]:46344 "EHLO hall.aurel32.net"
+        id S1728715AbfG2UlC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 16:41:02 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:37548 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388000AbfG2Usv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 16:48:51 -0400
-X-Greylist: delayed 1545 seconds by postgrey-1.27 at vger.kernel.org; Mon, 29 Jul 2019 16:48:50 EDT
-Received: from [2a01:e35:2fdd:a4e1:fe91:fc89:bc43:b814] (helo=ohm.rr44.fr)
-        by hall.aurel32.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <aurelien@aurel32.net>)
-        id 1hsCAg-0003MP-On; Mon, 29 Jul 2019 22:23:02 +0200
-Received: from aurel32 by ohm.rr44.fr with local (Exim 4.92)
-        (envelope-from <aurelien@aurel32.net>)
-        id 1hsCAg-0007Jz-AQ; Mon, 29 Jul 2019 22:23:02 +0200
-Date:   Mon, 29 Jul 2019 22:23:02 +0200
-From:   Aurelien Jarno <aurelien@aurel32.net>
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        arnd@arndb.de, linux@dominikbrodowski.net, ebiederm@xmission.com,
-        akpm@linux-foundation.org, viro@zeniv.linux.org.uk,
-        oleg@redhat.com, steve.mcintyre@arm.com, dave.martin@arm.com
-Subject: Re: [PATCH 0/2] Don't use SIGMINSTKSZ when enforcing alternative
- signal stack size for compat tasks
-Message-ID: <20190729202302.GA3443@aurel32.net>
-Mail-Followup-To: Will Deacon <will.deacon@arm.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        arnd@arndb.de, linux@dominikbrodowski.net, ebiederm@xmission.com,
-        akpm@linux-foundation.org, viro@zeniv.linux.org.uk, oleg@redhat.com,
-        steve.mcintyre@arm.com, dave.martin@arm.com
-References: <1532526312-26993-1-git-send-email-will.deacon@arm.com>
+        id S1727320AbfG2UlC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 16:41:02 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id B3B40368E3;
+        Mon, 29 Jul 2019 20:41:01 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-160.bos.redhat.com [10.18.17.160])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id CD1435D9CA;
+        Mon, 29 Jul 2019 20:41:00 +0000 (UTC)
+Subject: Re: [PATCH v2] sched/core: Don't use dying mm as active_mm of
+ kthreads
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        Phil Auld <pauld@redhat.com>
+References: <20190727171047.31610-1-longman@redhat.com>
+ <20190729091249.GE9330@dhcp22.suse.cz>
+ <556445a2-8912-c017-413c-7a4f36c4b89e@redhat.com>
+ <20190729185853.GJ9330@dhcp22.suse.cz>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <9e403b46-e0cb-0841-4ff7-6ecb30580d33@redhat.com>
+Date:   Mon, 29 Jul 2019 16:41:00 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1532526312-26993-1-git-send-email-will.deacon@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190729185853.GJ9330@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Mon, 29 Jul 2019 20:41:01 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-07-25 14:45, Will Deacon wrote:
-> Hi all,
-> 
-> The Debian folks have observed a failure in the 32-bit arm glibc testsuite
-> when running under a 64-bit kernel. They tracked this down to sigaltstack(2)
-> enforcing the alternative signal stack to be at least SIGMINSTKSZ bytes,
-> which is higher for native arm64 tasks than compat 32-bit tasks.
-> 
-> These patches resolve the issue by allowing an architecture to define
-> COMPAT_SIGMINSTKSZ for compat tasks, which is then used by the sigaltstack
-> checking code.
-> 
-> Feedback welcome,
-> 
-> Will
-> 
-> --->8
-> 
-> Will Deacon (2):
->   signal: Introduce COMPAT_SIGMINSTKSZ for use in compat_sys_sigaltstack
->   arm64: compat: Provide definition for COMPAT_SIGMINSTKSZ
+On 7/29/19 2:58 PM, Michal Hocko wrote:
+> On Mon 29-07-19 11:27:35, Waiman Long wrote:
+>> On 7/29/19 5:12 AM, Michal Hocko wrote:
+>>> On Sat 27-07-19 13:10:47, Waiman Long wrote:
+>>>> It was found that a dying mm_struct where the owning task has exited
+>>>> can stay on as active_mm of kernel threads as long as no other user
+>>>> tasks run on those CPUs that use it as active_mm. This prolongs the
+>>>> life time of dying mm holding up memory and other resources like swap
+>>>> space that cannot be freed.
+>>> IIRC use_mm doesn't pin the address space. It only pins the mm_struct
+>>> itself. So what exactly is the problem here?
+>> As explained in my response to Peter, I found that resource like swap
+>> space were depleted even after the exit of the offending program in a
+>> mostly idle system. This patch is to make sure that those resources get
+>> freed after program exit ASAP.
+> Could you elaborate more? How can a mm counter (do not confuse with
+> mm_users) prevent address space to be torn down on exit?
 
-Only the first patch went to the stable kernels. The second one is
-missing, so the bug is still not fixed in those kernels. Would it be
-possible to also get it included?
+Many of the resources tied to mm_struct are indeed freed when mm_users
+becomes 0 including swap space reservation, I think. I was testing a mm
+patch and it did have a missing mmput bug that cause mm_users not going
+to 0. I fixed the bug, and with sched patch to speed up the release the
+mm_struct, every was fine. I didn't realize that fixing the mm bug is
+enough to free the swap space.
 
-Thanks,
-Aurelien
+Still there are some resources not being free when the mm_count is
+non-zero. It is certainly less serious than what I have thought. Sorry
+for the confusion.
 
--- 
-Aurelien Jarno                          GPG: 4096R/1DDD8C9B
-aurelien@aurel32.net                 http://www.aurel32.net
+Cheers,
+Longman
+
