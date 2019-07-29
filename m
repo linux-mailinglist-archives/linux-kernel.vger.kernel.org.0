@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 510A3795C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:46:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 946FD795C8
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:46:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390021AbfG2Tpr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 15:45:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34774 "EHLO mail.kernel.org"
+        id S2390046AbfG2TqA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 15:46:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35008 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389995AbfG2Tpq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:45:46 -0400
+        id S2389732AbfG2Tp5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:45:57 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 82215205F4;
-        Mon, 29 Jul 2019 19:45:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 924CF2171F;
+        Mon, 29 Jul 2019 19:45:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564429546;
-        bh=Bmj3arK8osb3gcfKp7r6VApdlAo2Uep41Ao0G+q59xo=;
+        s=default; t=1564429556;
+        bh=NljQuSTzO2M/JfMc0jAmcqezMEWVRtpAYocA8vn465Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HbWWcKIEIhAqnuq9lASb2uE77oxAzqHkhRjqcE7nyN922wput2RpmDwlwwQ8H4TF0
-         V6PdaQfx1S4U1NlSdSPEHNWxpc2hai4FpTQkmy4LQBl1Zgew6fbYdJF8pmaRDi6pZm
-         aeyWdtHeWFxruxprjZKZDeUJUWQmpcHtG5uUSKJ4=
+        b=mC1GbWLMIZat00zSifSOG3KRw2XE3DQWso6Nc6BLgSueU49hZjeNLjeivMiOOtIgC
+         xNkoD27tA4S3QRjsZX2O9UKU57czJm3KLi5IBZ7Vk3NGeyZoxQeyzvGy1bxD1yshEA
+         QkUSVnadQ8T9lIykU8oVI6WKflHUbt2Rp8A87ZB8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hulk Robot <hulkci@huawei.com>,
-        Kefeng Wang <wangkefeng.wang@huawei.com>,
-        Corey Minyard <cminyard@mvista.com>,
+        stable@vger.kernel.org, Anthony Koo <anthony.koo@amd.com>,
+        Aric Cyr <Aric.Cyr@amd.com>,
+        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 019/215] ipmi_ssif: fix unexpected driver unregister warning
-Date:   Mon, 29 Jul 2019 21:20:15 +0200
-Message-Id: <20190729190743.029001920@linuxfoundation.org>
+Subject: [PATCH 5.2 021/215] drm/amd/display: fix multi display seamless boot case
+Date:   Mon, 29 Jul 2019 21:20:17 +0200
+Message-Id: <20190729190743.425605466@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190729190739.971253303@linuxfoundation.org>
 References: <20190729190739.971253303@linuxfoundation.org>
@@ -45,60 +46,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 2cd0e54489e65b8e22124a8b053aff40815487f7 ]
+[ Upstream commit 4cd75ff096f4ef49c343093b52a952f27aba7796 ]
 
-If platform_driver_register() fails from init_ipmi_ssif(),
-platform_driver_unregister() called unconditionally will
-trigger following warning,
+[Why]
+There is a scenario that causes eDP to become blank if
+there are multiple displays connected, and the external
+display is set as the primary display such that the first
+flip comes to the external display.
 
-ipmi_ssif: Unable to register driver: -12
-------------[ cut here ]------------
-Unexpected driver unregister!
-WARNING: CPU: 1 PID: 6305 at drivers/base/driver.c:193 driver_unregister+0x60/0x70 drivers/base/driver.c:193
+In this scenario, we call our optimize function before
+the eDP even has a chance to flip.
 
-Fix it by adding platform_registered variable, only unregister platform
-driver when it is already successfully registered.
+[How]
+There is a check that prevents bandwidth optimize from
+occurring before first flip is complete on the seamless boot
+display.
+But actually it assumed the seamless boot display is the
+first one to flip. But in this scenario it is not.
+Modify the check to ensure the steam with the seamless
+boot flag set is the one that has completed the first flip.
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
-Message-Id: <20190524143724.43218-1-wangkefeng.wang@huawei.com>
-
-Signed-off-by: Corey Minyard <cminyard@mvista.com>
+Signed-off-by: Anthony Koo <anthony.koo@amd.com>
+Reviewed-by: Aric Cyr <Aric.Cyr@amd.com>
+Acked-by: Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/char/ipmi/ipmi_ssif.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/amd/display/dc/core/dc.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/char/ipmi/ipmi_ssif.c b/drivers/char/ipmi/ipmi_ssif.c
-index cf8156d6bc07..305fa5054274 100644
---- a/drivers/char/ipmi/ipmi_ssif.c
-+++ b/drivers/char/ipmi/ipmi_ssif.c
-@@ -303,6 +303,7 @@ struct ssif_info {
- 	((unsigned int) atomic_read(&(ssif)->stats[SSIF_STAT_ ## stat]))
+diff --git a/drivers/gpu/drm/amd/display/dc/core/dc.c b/drivers/gpu/drm/amd/display/dc/core/dc.c
+index 18c775a950cc..ee6b646180b6 100644
+--- a/drivers/gpu/drm/amd/display/dc/core/dc.c
++++ b/drivers/gpu/drm/amd/display/dc/core/dc.c
+@@ -1138,9 +1138,6 @@ static enum dc_status dc_commit_state_no_check(struct dc *dc, struct dc_state *c
+ 		const struct dc_link *link = context->streams[i]->link;
+ 		struct dc_stream_status *status;
  
- static bool initialized;
-+static bool platform_registered;
+-		if (context->streams[i]->apply_seamless_boot_optimization)
+-			context->streams[i]->apply_seamless_boot_optimization = false;
+-
+ 		if (!context->streams[i]->mode_changed)
+ 			continue;
  
- static void return_hosed_msg(struct ssif_info *ssif_info,
- 			     struct ipmi_smi_msg *msg);
-@@ -2088,6 +2089,8 @@ static int init_ipmi_ssif(void)
- 		rv = platform_driver_register(&ipmi_driver);
- 		if (rv)
- 			pr_err("Unable to register driver: %d\n", rv);
-+		else
-+			platform_registered = true;
+@@ -1792,10 +1789,15 @@ static void commit_planes_for_stream(struct dc *dc,
+ 	if (dc->optimize_seamless_boot && surface_count > 0) {
+ 		/* Optimize seamless boot flag keeps clocks and watermarks high until
+ 		 * first flip. After first flip, optimization is required to lower
+-		 * bandwidth.
++		 * bandwidth. Important to note that it is expected UEFI will
++		 * only light up a single display on POST, therefore we only expect
++		 * one stream with seamless boot flag set.
+ 		 */
+-		dc->optimize_seamless_boot = false;
+-		dc->optimized_required = true;
++		if (stream->apply_seamless_boot_optimization) {
++			stream->apply_seamless_boot_optimization = false;
++			dc->optimize_seamless_boot = false;
++			dc->optimized_required = true;
++		}
  	}
  
- 	ssif_i2c_driver.address_list = ssif_address_list();
-@@ -2111,7 +2114,7 @@ static void cleanup_ipmi_ssif(void)
- 
- 	kfree(ssif_i2c_driver.address_list);
- 
--	if (ssif_trydmi)
-+	if (ssif_trydmi && platform_registered)
- 		platform_driver_unregister(&ipmi_driver);
- 
- 	free_ssif_clients();
+ 	if (update_type == UPDATE_TYPE_FULL && !dc->optimize_seamless_boot) {
 -- 
 2.20.1
 
