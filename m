@@ -2,77 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C90C079B17
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 23:31:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA34079B19
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 23:31:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729798AbfG2VbD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 17:31:03 -0400
-Received: from ozlabs.org ([203.11.71.1]:42997 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387447AbfG2VbD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 17:31:03 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45yCY05ZxRz9sBF;
-        Tue, 30 Jul 2019 07:31:00 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1564435860;
-        bh=Po9+HUmzX5hL3NuL0JMT0eWxx2i4/OkdHWdvgrl87gQ=;
-        h=Date:From:To:Cc:Subject:From;
-        b=GAuJ8BFFsY9ufvTeB+5U64VafwIMb/w5S7k8LcLuVUZ0pJ4qQkkfe4g/N7YbhlCxB
-         RD8pryKby0mzUQoOL9mVr4KFJF7pYZOOO8Uj5acsdsK5wcRZ1eV1PT/7lnaP3lyf4r
-         Jnu2YzTDcU0QyVkpKhBeu6f+8Rkzssmccs9ogFOlMvWsQzHSv7pOViQ2rzFBCGZcJX
-         EAJyAAlPS+gvjRIK1nYdP7j3Fuyuk+6PMT0/fGDpY4xMLmOUl1TuJovau9h4v2hZrG
-         hSvWDO2j5Z/jtV9givVYzhgD3h2misqnx6XLAj1Zi/A0+ctODDGGaz7ttysWkxKUlp
-         ZMhTTS7958Rlg==
-Date:   Tue, 30 Jul 2019 07:30:58 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commit in the coresight tree
-Message-ID: <20190730073058.03ad7d6b@canb.auug.org.au>
+        id S2388662AbfG2Vbn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 17:31:43 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:59185 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387681AbfG2Vbn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 17:31:43 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6TLVarB2940954
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Mon, 29 Jul 2019 14:31:37 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6TLVarB2940954
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019071901; t=1564435897;
+        bh=HtnNMozDRxlUeuSMOyvRtTrAm3PMgQ9U0Z73vfRsYkI=;
+        h=Date:From:Cc:Reply-To:To:Subject:From;
+        b=4EoeX5A3QdXltF/+3V7MRA0BWLxM8yFSvBhPKLUH2lJu5wNE8PAdEDawH5N3bNIGU
+         wot4Lf8tEKn4UeiMly4/0x6NSSXk4T1DkdxEv0Y5Qku7zlBRx3SxqFINdqyR7VLqTR
+         HBYspyTVkFbmDFIN2lSiH/EFmsuh0IZW8GJ0gan0w/g2S99HZnT0CxekvKZX663RBk
+         dQfiQowRj7dbcSQ6z+5v00oEZDkJse8bZepyZNU3NSRdVFQ1XxDXMMb855HbWhNWkE
+         U47Wj73kI9+EhnEgKhEKcGYXT9NjvGfWNPyZgdX/d68tK3Im0sGe1rxd9M6ymapaB4
+         oQMeEe2PkhhYA==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6TLVaNj2940951;
+        Mon, 29 Jul 2019 14:31:36 -0700
+Date:   Mon, 29 Jul 2019 14:31:36 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-3br5e4t64e4lp0goo84che3s@git.kernel.org>
+Cc:     lclaudio@redhat.com, acme@redhat.com, linux-kernel@vger.kernel.org,
+        namhyung@kernel.org, jolsa@kernel.org, mingo@kernel.org,
+        adrian.hunter@intel.com, hpa@zytor.com, tglx@linutronix.de
+Reply-To: lclaudio@redhat.com, hpa@zytor.com, adrian.hunter@intel.com,
+          namhyung@kernel.org, linux-kernel@vger.kernel.org,
+          jolsa@kernel.org, mingo@kernel.org, acme@redhat.com,
+          tglx@linutronix.de
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/urgent] tools perf beauty: Fix usbdevfs_ioctl table
+ generator to handle _IOC()
+Git-Commit-ID: 7ee526152db7a75d7b8713346dac76ffc3662b29
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/Chphge1Ugu.UVoFMV7Vxln2";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-0.2 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
+        autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/Chphge1Ugu.UVoFMV7Vxln2
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Commit-ID:  7ee526152db7a75d7b8713346dac76ffc3662b29
+Gitweb:     https://git.kernel.org/tip/7ee526152db7a75d7b8713346dac76ffc3662b29
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Fri, 26 Jul 2019 15:29:56 -0300
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Mon, 29 Jul 2019 09:03:42 -0300
 
-Hi all,
+tools perf beauty: Fix usbdevfs_ioctl table generator to handle _IOC()
 
-Commit
+In addition to _IOW() and _IOR(), to handle this case:
 
-  7d131e267b7c ("coresight: funnel: Convert pr_warn to dev_warn for obsolet=
-e bindings")
+  #define USBDEVFS_CONNINFO_EX(len)  _IOC(_IOC_READ, 'U', 32, len)
 
-is missing a Signed-off-by from its committer.
+That will happen in the next sync of this header file.
 
---=20
-Cheers,
-Stephen Rothwell
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Luis Cláudio Gonçalves <lclaudio@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Link: https://lkml.kernel.org/n/tip-3br5e4t64e4lp0goo84che3s@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/trace/beauty/usbdevfs_ioctl.sh | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
---Sig_/Chphge1Ugu.UVoFMV7Vxln2
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0/ZZIACgkQAVBC80lX
-0GzK6wf+MfRi4MZiRstQ4rIOXrEWg4QPCmJvzo1OaRsUBvHuRUzUsMkZ0p4QY8n/
-tWlaWe55aCYfkOcy8MdoFKn+YCnrxspMBuKqlf902A3phWCeVwBEJTiG5grYiOuo
-RwQkJuIbA2QqkPfRvCjvDs7/fQ2Bt8mknxoI7cfqT31aDCgkGfCGY09Qa5aIw5Jf
-oghEvWLhER7/IN35R4kWFTvhPVp8k+TW1/szdv4czx6rgMlEixS3DitVo/cTuw6c
-3loeOn3GMkcVQIsuI/DvJ6SAmOu3yJ2DovvGA+fbAaodlFreDurC3dQw0SVJHY+w
-/ULXoRATKY3rXTJtK0x+WXD9XZjBjw==
-=IOQ2
------END PGP SIGNATURE-----
-
---Sig_/Chphge1Ugu.UVoFMV7Vxln2--
+diff --git a/tools/perf/trace/beauty/usbdevfs_ioctl.sh b/tools/perf/trace/beauty/usbdevfs_ioctl.sh
+index 930b80f422e8..aa597ae53747 100755
+--- a/tools/perf/trace/beauty/usbdevfs_ioctl.sh
++++ b/tools/perf/trace/beauty/usbdevfs_ioctl.sh
+@@ -3,10 +3,13 @@
+ 
+ [ $# -eq 1 ] && header_dir=$1 || header_dir=tools/include/uapi/linux/
+ 
++# also as:
++# #define USBDEVFS_CONNINFO_EX(len)  _IOC(_IOC_READ, 'U', 32, len)
++
+ printf "static const char *usbdevfs_ioctl_cmds[] = {\n"
+-regex="^#[[:space:]]*define[[:space:]]+USBDEVFS_(\w+)[[:space:]]+_IO[WR]{0,2}\([[:space:]]*'U'[[:space:]]*,[[:space:]]*([[:digit:]]+).*"
+-egrep $regex ${header_dir}/usbdevice_fs.h | egrep -v 'USBDEVFS_\w+32[[:space:]]' | \
+-	sed -r "s/$regex/\2 \1/g"	| \
++regex="^#[[:space:]]*define[[:space:]]+USBDEVFS_(\w+)(\(\w+\))?[[:space:]]+_IO[CWR]{0,2}\([[:space:]]*(_IOC_\w+,[[:space:]]*)?'U'[[:space:]]*,[[:space:]]*([[:digit:]]+).*"
++egrep "$regex" ${header_dir}/usbdevice_fs.h | egrep -v 'USBDEVFS_\w+32[[:space:]]' | \
++	sed -r "s/$regex/\4 \1/g"	| \
+ 	sort | xargs printf "\t[%s] = \"%s\",\n"
+ printf "};\n\n"
+ printf "#if 0\n"
