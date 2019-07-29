@@ -2,83 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB2D278E98
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 17:02:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ABDF378E9E
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 17:03:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728708AbfG2PCp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 11:02:45 -0400
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:36088 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727168AbfG2PCo (ORCPT
+        id S2387693AbfG2PDg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 11:03:36 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:37222 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728494AbfG2PDg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 11:02:44 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 3D4EF8EE128;
-        Mon, 29 Jul 2019 08:02:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1564412564;
-        bh=AXFFEJd9Z+18E4ObOxvkjLDLsngNOvQy6aoRiwcys2A=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=EprW1r+EW/YWTOUw/uvCXRsE7c7By6UIgumC4MaW1eJu2fXPEecjGfFRQfkdy0U2I
-         B8HdedUX5X0f0fbVa0MDGNpR6c/0Wl600FHmM+Z5t1Yj7ayetkPnygB+bcqiLnCkvs
-         r+9sqS+4sCpGDEZjL2W4X6Hl2wEe45cRXMEkmnWA=
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id ql8M7lsLqgpc; Mon, 29 Jul 2019 08:02:44 -0700 (PDT)
-Received: from jarvis.lan (unknown [50.35.71.147])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 943F48EE116;
-        Mon, 29 Jul 2019 08:02:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1564412564;
-        bh=AXFFEJd9Z+18E4ObOxvkjLDLsngNOvQy6aoRiwcys2A=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=EprW1r+EW/YWTOUw/uvCXRsE7c7By6UIgumC4MaW1eJu2fXPEecjGfFRQfkdy0U2I
-         B8HdedUX5X0f0fbVa0MDGNpR6c/0Wl600FHmM+Z5t1Yj7ayetkPnygB+bcqiLnCkvs
-         r+9sqS+4sCpGDEZjL2W4X6Hl2wEe45cRXMEkmnWA=
-Message-ID: <1564412562.3501.9.camel@HansenPartnership.com>
-Subject: Re: [PATCH] target: iscsi: iscsi_target_tpg: Fix a possible
- null-pointer dereference in iscsit_tpg_add_network_portal()
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Jia-Ju Bai <baijiaju1990@gmail.com>, martin.petersen@oracle.com,
-        kstewart@linuxfoundation.org, allison@lohutok.net,
-        rfontana@redhat.com, tglx@linutronix.de, gregkh@linuxfoundation.org
-Cc:     linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Mon, 29 Jul 2019 08:02:42 -0700
-In-Reply-To: <20190729022956.18192-1-baijiaju1990@gmail.com>
-References: <20190729022956.18192-1-baijiaju1990@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Mon, 29 Jul 2019 11:03:36 -0400
+Received: by mail-qk1-f196.google.com with SMTP id d15so44325432qkl.4
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 08:03:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=maine.edu; s=google;
+        h=from:date:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=GGm6OI70suTpFjV7qqNRDI5ovSLydBxQ6ymCIyOGOuM=;
+        b=XukWqnN+f7ASzP5xRS7xN7QmRS+fXyMi9aH+eIpObdFSFmM2Gwij6HW9xnCcGW2VFJ
+         0YVbOT+7tMf7rh/VIU4tRsqaFhkPC087YYO46peiQmEZm7rEYjEsOKMMguuBrnskL2zs
+         97Nu8ezE53m/foi6CrL4xGRPzJXyMEJvZD3aw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=GGm6OI70suTpFjV7qqNRDI5ovSLydBxQ6ymCIyOGOuM=;
+        b=ghIlV9ycyC32mLFPTVhtMCYnt5s9MVUMzPqSb6a46MH4dum3IjYXQb7EN0Kv4Sp9OZ
+         FMMsxQihwOfmwwP7n4pbqYwgD/PJd6TpAMkbGgBMXoEhYM/v1gvyWrTZSJDvaVtzDY8a
+         HZ3qxxns1JZjfh2CMK3fWm4C9kpTvohXNCuyHOiu0LGQX0I7AP0p6T4DB1kAMv1eZh0z
+         0i0xLpktg/kM1ywAc/I4YNFMKEL4b4YZcr7Y1D976eux3kezRSZerb7PoSdIEK9Kck5p
+         4fYMjH9aA+wxX7fb9zcMk8gxqplJ8e2KR53i+E+UXRUlMPm0sqy2Q8N05sjrW+iel2Wf
+         coQw==
+X-Gm-Message-State: APjAAAWyyZUJ3PLEGVsMZ6Iikk2qT2AT2Q6x1ZsXMW2MHcyVrlkRz4cj
+        Pj8brsGGFwimf456fEhqkUyPRseQfwc=
+X-Google-Smtp-Source: APXvYqzUFRaqL/T3JR8xJ5iKiBBlmGvkH1xB3cm3TfaXnPHjOK6x5UFBJP8eP/q4e8U2SNn6vsoWzw==
+X-Received: by 2002:a37:9d1:: with SMTP id 200mr71450094qkj.306.1564412615532;
+        Mon, 29 Jul 2019 08:03:35 -0700 (PDT)
+Received: from macbook-air (weaver.eece.maine.edu. [130.111.218.23])
+        by smtp.gmail.com with ESMTPSA id u1sm34198651qth.21.2019.07.29.08.03.33
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 29 Jul 2019 08:03:34 -0700 (PDT)
+From:   Vince Weaver <vincent.weaver@maine.edu>
+X-Google-Original-From: Vince Weaver <vince@maine.edu>
+Date:   Mon, 29 Jul 2019 11:03:26 -0400 (EDT)
+X-X-Sender: vince@macbook-air
+To:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+cc:     linux-kernel@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>
+Subject: Re: perf: perf report stuck in an infinite loop
+In-Reply-To: <20190726211415.GE24867@kernel.org>
+Message-ID: <alpine.DEB.2.21.1907291102500.31029@macbook-air>
+References: <alpine.DEB.2.21.1907261640590.27043@macbook-air> <20190726211415.GE24867@kernel.org>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-07-29 at 10:29 +0800, Jia-Ju Bai wrote:
-> In iscsit_tpg_add_network_portal(), there is an if statement on line
-> 496
-> to check whether tpg->tpg_tiqn is NULL:
->     if (tpg->tpg_tiqn)
-> 
-> When tpg->tpg_tiqn is NULL, it is used on line 508:
->     pr_debug(..., tpg->tpg_tiqn->tiqn, ...);
-> 
-> Thus, a possible null-pointer dereference may occur.
-> 
-> To fix this bug, tpg->tpg_tiqn is checked before being used.
-> 
-> This bug is found by a static analysis tool STCheck written by us.
+On Fri, 26 Jul 2019, Arnaldo Carvalho de Melo wrote:
 
-I don't really think this is helpful.  The first question is, is the
-implied might be NULL check correct?  The tpg_tiqn is always set by a
-non-dummy driver and I think network configuration is only done for the
-non dummy driver, so I suspect the NULL check is wrong.  Secondly even
-if the NULL check were correct, I think there's still a need for some
-debugging output, so the proposed patch also looks wrong.
+> Em Fri, Jul 26, 2019 at 04:46:51PM -0400, Vince Weaver escreveu:
+> > 
+> > Currently the perf_data_fuzzer causes perf report to get stuck in an 
+> > infinite loop.
+> > 
+> > >From what I can tell, the issue happens in reader__process_events()
+> > when an event is mapped using mmap(), but when it goes to process the
+> > event finds out the internal event header has the size (invalidly) set to 
+> > something much larger than the mmap buffer size.  This means 
+> > fetch_mmaped_event() fails, which gotos remap: which tries again with
+> > the exact same mmap size, and this will loop forever.
+> > 
+> > I haven't been able to puzzle out how to fix this, but maybe you have a 
+> > better feel for what's going on here.
+> 
+> Perhaps the patch below?
 
-James
+yes, with the patch you provided I can no longer trigger the infinite 
+loop.
 
+Tested-by: Vince Weaver <vincent.weaver@maine.edu>
