@@ -2,36 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0812D79904
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:12:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 671B1798FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:12:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730269AbfG2UMU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 16:12:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45164 "EHLO mail.kernel.org"
+        id S1730214AbfG2TcH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 15:32:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45232 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729353AbfG2TcB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:32:01 -0400
+        id S1729389AbfG2TcE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:32:04 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7FD2D217F4;
-        Mon, 29 Jul 2019 19:32:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1AE022070B;
+        Mon, 29 Jul 2019 19:32:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564428721;
-        bh=d8Rhx9wi7iBHJQRfIlU9sxJP5KGSpoaz0j5bTOi3UgA=;
+        s=default; t=1564428723;
+        bh=/mMcL1qO+DoVheTOpWO+mEUa2orPdN6aPdPc7je13yA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VD4bb8yTmDGiQx05IiWgLkNsQ7ym6a3nDukB5jYDshpPvkd+lWXXbJ1u68AtfL9c7
-         lyjq0UZdewVOhaOBpqd6VWz2mFqBhat4TQed1SSUey8+bWC5OZ1e9q+7BB+0bhOwQc
-         stoRZd0Ykbc8BWH9vSLkgkRylxwTkh7XqHmpWxJY=
+        b=qaHypbMm6/DkMSXM6PA+h/fv59H8bmXbVoq0B96N8+N69FMoN3Q6jsscaKB2oL9R3
+         +IyxmeT+dgkrnj2S4eD2Hd9MuhchQ5vjztutLvKfaw+cQcQZoY2lXGJ8zSRoZDuNfw
+         QXZ293WAg8qb0m3Gdrf/3KKrNUOJZP+qihJEZ8LM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dexuan Cui <decui@microsoft.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Michael Kelley <mikelley@microsoft.com>
-Subject: [PATCH 4.14 165/293] PCI: hv: Fix a use-after-free bug in hv_eject_device_work()
-Date:   Mon, 29 Jul 2019 21:20:56 +0200
-Message-Id: <20190729190837.187517038@linuxfoundation.org>
+        stable@vger.kernel.org, Horia Geanta <horia.geanta@nxp.com>,
+        Iuliana Prodan <iuliana.prodan@nxp.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.14 166/293] crypto: caam - limit output IV to CBC to work around CTR mode DMA issue
+Date:   Mon, 29 Jul 2019 21:20:57 +0200
+Message-Id: <20190729190837.249555862@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190729190820.321094988@linuxfoundation.org>
 References: <20190729190820.321094988@linuxfoundation.org>
@@ -44,81 +46,86 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dexuan Cui <decui@microsoft.com>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 
-commit 4df591b20b80cb77920953812d894db259d85bd7 upstream.
+commit ed527b13d800dd515a9e6c582f0a73eca65b2e1b upstream.
 
-Fix a use-after-free in hv_eject_device_work().
+The CAAM driver currently violates an undocumented and slightly
+controversial requirement imposed by the crypto stack that a buffer
+referred to by the request structure via its virtual address may not
+be modified while any scatterlists passed via the same request
+structure are mapped for inbound DMA.
 
-Fixes: 05f151a73ec2 ("PCI: hv: Fix a memory leak in hv_eject_device_work()")
-Signed-off-by: Dexuan Cui <decui@microsoft.com>
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Reviewed-by: Michael Kelley <mikelley@microsoft.com>
-Cc: stable@vger.kernel.org
+This may result in errors like
+
+  alg: aead: decryption failed on test 1 for gcm_base(ctr-aes-caam,ghash-generic): ret=74
+  alg: aead: Failed to load transform for gcm(aes): -2
+
+on non-cache coherent systems, due to the fact that the GCM driver
+passes an IV buffer by virtual address which shares a cacheline with
+the auth_tag buffer passed via a scatterlist, resulting in corruption
+of the auth_tag when the IV is updated while the DMA mapping is live.
+
+Since the IV that is returned to the caller is only valid for CBC mode,
+and given that the in-kernel users of CBC (such as CTS) don't trigger the
+same issue as the GCM driver, let's just disable the output IV generation
+for all modes except CBC for the time being.
+
+Fixes: 854b06f76879 ("crypto: caam - properly set IV after {en,de}crypt")
+Cc: Horia Geanta <horia.geanta@nxp.com>
+Cc: Iuliana Prodan <iuliana.prodan@nxp.com>
+Reported-by: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Reviewed-by: Horia Geanta <horia.geanta@nxp.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+[ Horia: backported to 4.14, 4.19 ]
+Signed-off-by: Horia Geantă <horia.geanta@nxp.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pci/host/pci-hyperv.c |   15 +++++++++------
+ drivers/crypto/caam/caamalg.c |   15 +++++++++------
  1 file changed, 9 insertions(+), 6 deletions(-)
 
---- a/drivers/pci/host/pci-hyperv.c
-+++ b/drivers/pci/host/pci-hyperv.c
-@@ -1912,6 +1912,7 @@ static void hv_pci_devices_present(struc
- static void hv_eject_device_work(struct work_struct *work)
- {
- 	struct pci_eject_response *ejct_pkt;
-+	struct hv_pcibus_device *hbus;
- 	struct hv_pci_dev *hpdev;
- 	struct pci_dev *pdev;
- 	unsigned long flags;
-@@ -1922,6 +1923,7 @@ static void hv_eject_device_work(struct
- 	} ctxt;
+--- a/drivers/crypto/caam/caamalg.c
++++ b/drivers/crypto/caam/caamalg.c
+@@ -853,6 +853,7 @@ static void ablkcipher_encrypt_done(stru
+ 	struct ablkcipher_request *req = context;
+ 	struct ablkcipher_edesc *edesc;
+ 	struct crypto_ablkcipher *ablkcipher = crypto_ablkcipher_reqtfm(req);
++	struct caam_ctx *ctx = crypto_ablkcipher_ctx(ablkcipher);
+ 	int ivsize = crypto_ablkcipher_ivsize(ablkcipher);
  
- 	hpdev = container_of(work, struct hv_pci_dev, wrk);
-+	hbus = hpdev->hbus;
+ #ifdef DEBUG
+@@ -877,10 +878,11 @@ static void ablkcipher_encrypt_done(stru
  
- 	if (hpdev->state != hv_pcichild_ejecting) {
- 		put_pcichild(hpdev, hv_pcidev_ref_pnp);
-@@ -1935,8 +1937,7 @@ static void hv_eject_device_work(struct
- 	 * because hbus->pci_bus may not exist yet.
+ 	/*
+ 	 * The crypto API expects us to set the IV (req->info) to the last
+-	 * ciphertext block. This is used e.g. by the CTS mode.
++	 * ciphertext block when running in CBC mode.
  	 */
- 	wslot = wslot_to_devfn(hpdev->desc.win_slot.slot);
--	pdev = pci_get_domain_bus_and_slot(hpdev->hbus->sysdata.domain, 0,
--					   wslot);
-+	pdev = pci_get_domain_bus_and_slot(hbus->sysdata.domain, 0, wslot);
- 	if (pdev) {
- 		pci_lock_rescan_remove();
- 		pci_stop_and_remove_bus_device(pdev);
-@@ -1944,9 +1945,9 @@ static void hv_eject_device_work(struct
- 		pci_unlock_rescan_remove();
- 	}
+-	scatterwalk_map_and_copy(req->info, req->dst, req->nbytes - ivsize,
+-				 ivsize, 0);
++	if ((ctx->cdata.algtype & OP_ALG_AAI_MASK) == OP_ALG_AAI_CBC)
++		scatterwalk_map_and_copy(req->info, req->dst, req->nbytes -
++					 ivsize, ivsize, 0);
  
--	spin_lock_irqsave(&hpdev->hbus->device_list_lock, flags);
-+	spin_lock_irqsave(&hbus->device_list_lock, flags);
- 	list_del(&hpdev->list_entry);
--	spin_unlock_irqrestore(&hpdev->hbus->device_list_lock, flags);
-+	spin_unlock_irqrestore(&hbus->device_list_lock, flags);
+ 	/* In case initial IV was generated, copy it in GIVCIPHER request */
+ 	if (edesc->iv_dir == DMA_FROM_DEVICE) {
+@@ -1609,10 +1611,11 @@ static int ablkcipher_decrypt(struct abl
  
- 	if (hpdev->pci_slot)
- 		pci_destroy_slot(hpdev->pci_slot);
-@@ -1955,14 +1956,16 @@ static void hv_eject_device_work(struct
- 	ejct_pkt = (struct pci_eject_response *)&ctxt.pkt.message;
- 	ejct_pkt->message_type.type = PCI_EJECTION_COMPLETE;
- 	ejct_pkt->wslot.slot = hpdev->desc.win_slot.slot;
--	vmbus_sendpacket(hpdev->hbus->hdev->channel, ejct_pkt,
-+	vmbus_sendpacket(hbus->hdev->channel, ejct_pkt,
- 			 sizeof(*ejct_pkt), (unsigned long)&ctxt.pkt,
- 			 VM_PKT_DATA_INBAND, 0);
+ 	/*
+ 	 * The crypto API expects us to set the IV (req->info) to the last
+-	 * ciphertext block.
++	 * ciphertext block when running in CBC mode.
+ 	 */
+-	scatterwalk_map_and_copy(req->info, req->src, req->nbytes - ivsize,
+-				 ivsize, 0);
++	if ((ctx->cdata.algtype & OP_ALG_AAI_MASK) == OP_ALG_AAI_CBC)
++		scatterwalk_map_and_copy(req->info, req->src, req->nbytes -
++					 ivsize, ivsize, 0);
  
- 	put_pcichild(hpdev, hv_pcidev_ref_childlist);
- 	put_pcichild(hpdev, hv_pcidev_ref_initial);
- 	put_pcichild(hpdev, hv_pcidev_ref_pnp);
--	put_hvpcibus(hpdev->hbus);
-+
-+	/* hpdev has been freed. Do not use it any more. */
-+	put_hvpcibus(hbus);
- }
- 
- /**
+ 	/* Create and submit job descriptor*/
+ 	init_ablkcipher_job(ctx->sh_desc_dec, ctx->sh_desc_dec_dma, edesc, req);
 
 
