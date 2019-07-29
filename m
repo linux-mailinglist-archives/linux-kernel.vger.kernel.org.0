@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 923E779662
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:51:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D89079664
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:51:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403844AbfG2TvS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 15:51:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42488 "EHLO mail.kernel.org"
+        id S2390255AbfG2TvW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 15:51:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42586 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390430AbfG2TvQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:51:16 -0400
+        id S2403846AbfG2TvT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:51:19 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 04F32205F4;
-        Mon, 29 Jul 2019 19:51:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8E6BF21773;
+        Mon, 29 Jul 2019 19:51:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564429875;
-        bh=PDKRh3yLK17oXfBPui/lkXXZPI+YwZkLMHVsggm9pio=;
+        s=default; t=1564429878;
+        bh=WC/j/sIjThtlobfzS6nVKzO7mZHYA9bZW6rokSFNWWI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ki67qqRe2WKDPD0ZG6UskLmM4UXr6AgsHu4tvqbJuUGrt/6vCkmUDcZRIKGCjupLb
-         VYELJ8ybHE4pxMxQVQRD04qHyOj8ibU2K1zqVnqfC05W/fukxEZ/NeJUL263EdIEay
-         ISx9Uf76OwQwyy11zmS1DY3ah/+MkUIA8d3tFHAI=
+        b=P0m1GikyM10M2aFm7plIQWVIjAqqWOestowzb4NVULm5EjLajk4EyznbR6/FW6Odr
+         OuPcU0kFaYbZaQtWFRpPHhhUhBG6dMkFIWYZfKXxtW5RPv2z7Alr744rX5wflYJukz
+         +xvbr/6S7KvxE5Z0392m/Jg8DiY4zU7FlK77wg7E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -50,9 +50,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-arm-kernel@lists.infradead.org,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 124/215] perf session: Fix potential NULL pointer dereference found by the smatch tool
-Date:   Mon, 29 Jul 2019 21:22:00 +0200
-Message-Id: <20190729190800.716035519@linuxfoundation.org>
+Subject: [PATCH 5.2 125/215] perf map: Fix potential NULL pointer dereference found by smatch tool
+Date:   Mon, 29 Jul 2019 21:22:01 +0200
+Message-Id: <20190729190800.952187231@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190729190739.971253303@linuxfoundation.org>
 References: <20190729190739.971253303@linuxfoundation.org>
@@ -65,33 +65,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit f3c8d90757724982e5f07cd77d315eb64ca145ac ]
+[ Upstream commit 363bbaef63ffebcc745239fe80a953ebb5ac9ec9 ]
 
-Based on the following report from Smatch, fix the potential
-NULL pointer dereference check.
+Based on the following report from Smatch, fix the potential NULL
+pointer dereference check.
 
-  tools/perf/util/session.c:1252
-  dump_read() error: we previously assumed 'evsel' could be null
-  (see line 1249)
+  tools/perf/util/map.c:479
+  map__fprintf_srccode() error: we previously assumed 'state' could be
+  null (see line 466)
 
-  tools/perf/util/session.c
-  1240 static void dump_read(struct perf_evsel *evsel, union perf_event *event)
-  1241 {
-  1242         struct read_event *read_event = &event->read;
-  1243         u64 read_format;
-  1244
-  1245         if (!dump_trace)
-  1246                 return;
-  1247
-  1248         printf(": %d %d %s %" PRIu64 "\n", event->read.pid, event->read.tid,
-  1249                evsel ? perf_evsel__name(evsel) : "FAIL",
-  1250                event->read.value);
-  1251
-  1252         read_format = evsel->attr.read_format;
-                             ^^^^^^^
+  tools/perf/util/map.c
+  465         /* Avoid redundant printing */
+  466         if (state &&
+  467             state->srcfile &&
+  468             !strcmp(state->srcfile, srcfile) &&
+  469             state->line == line) {
+  470                 free(srcfile);
+  471                 return 0;
+  472         }
+  473
+  474         srccode = find_sourceline(srcfile, line, &len);
+  475         if (!srccode)
+  476                 goto out_free_line;
+  477
+  478         ret = fprintf(fp, "|%-8d %.*s", line, len, srccode);
+  479         state->srcfile = srcfile;
+              ^^^^^^^
+  480         state->line = line;
+              ^^^^^^^
 
-'evsel' could be NULL pointer, for this case this patch directly bails
-out without dumping read_event.
+This patch validates 'state' pointer before access its elements.
 
 Signed-off-by: Leo Yan <leo.yan@linaro.org>
 Acked-by: Jiri Olsa <jolsa@kernel.org>
@@ -115,27 +118,32 @@ Cc: Suzuki Poulouse <suzuki.poulose@arm.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Thomas Richter <tmricht@linux.ibm.com>
 Cc: linux-arm-kernel@lists.infradead.org
-Link: http://lkml.kernel.org/r/20190702103420.27540-9-leo.yan@linaro.org
+Fixes: dd2e18e9ac20 ("perf tools: Support 'srccode' output")
+Link: http://lkml.kernel.org/r/20190702103420.27540-8-leo.yan@linaro.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/util/session.c | 3 +++
- 1 file changed, 3 insertions(+)
+ tools/perf/util/map.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
-index 54cf163347f7..2e61dd6a3574 100644
---- a/tools/perf/util/session.c
-+++ b/tools/perf/util/session.c
-@@ -1249,6 +1249,9 @@ static void dump_read(struct perf_evsel *evsel, union perf_event *event)
- 	       evsel ? perf_evsel__name(evsel) : "FAIL",
- 	       event->read.value);
+diff --git a/tools/perf/util/map.c b/tools/perf/util/map.c
+index ee71efb9db62..9c81ee092784 100644
+--- a/tools/perf/util/map.c
++++ b/tools/perf/util/map.c
+@@ -470,8 +470,11 @@ int map__fprintf_srccode(struct map *map, u64 addr,
+ 		goto out_free_line;
  
-+	if (!evsel)
-+		return;
+ 	ret = fprintf(fp, "|%-8d %.*s", line, len, srccode);
+-	state->srcfile = srcfile;
+-	state->line = line;
 +
- 	read_format = evsel->attr.read_format;
++	if (state) {
++		state->srcfile = srcfile;
++		state->line = line;
++	}
+ 	return ret;
  
- 	if (read_format & PERF_FORMAT_TOTAL_TIME_ENABLED)
+ out_free_line:
 -- 
 2.20.1
 
