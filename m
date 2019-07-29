@@ -2,64 +2,182 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4EFDA78FFB
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 17:59:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 64C3E79006
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 17:59:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388323AbfG2P7P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 11:59:15 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:48658 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388307AbfG2P7P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 11:59:15 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 218813082141;
-        Mon, 29 Jul 2019 15:59:15 +0000 (UTC)
-Received: from segfault.boston.devel.redhat.com (segfault.boston.devel.redhat.com [10.19.60.26])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5A1B86013A;
-        Mon, 29 Jul 2019 15:59:14 +0000 (UTC)
-From:   Jeff Moyer <jmoyer@redhat.com>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     "zhangyi \(F\)" <yi.zhang@huawei.com>, linux-aio@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        bcrl@kvack.org, wangkefeng.wang@huawei.com
-Subject: Re: [PATCH] aio: add timeout validity check for io_[p]getevents
-References: <1564039289-7672-1-git-send-email-yi.zhang@huawei.com>
-        <x49imrqb2e5.fsf@segfault.boston.devel.redhat.com>
-        <x49y30gnb16.fsf@segfault.boston.devel.redhat.com>
-        <20190729154720.GS1131@ZenIV.linux.org.uk>
-X-PGP-KeyID: 1F78E1B4
-X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
-Date:   Mon, 29 Jul 2019 11:59:13 -0400
-In-Reply-To: <20190729154720.GS1131@ZenIV.linux.org.uk> (Al Viro's message of
-        "Mon, 29 Jul 2019 16:47:20 +0100")
-Message-ID: <x49h874n86m.fsf@segfault.boston.devel.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        id S1728249AbfG2P7k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 11:59:40 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:35596 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726358AbfG2P7i (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 11:59:38 -0400
+Received: by mail-pg1-f196.google.com with SMTP id s1so22177656pgr.2
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 08:59:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=Fy+lN0OwLd6fOqqUGg68zG7G00YlFLJqLocnUSRFmVM=;
+        b=Zop7xNtPQ1s9WxoKX8f62BD7v3ypviuSQaZjaKt1TXInnW97keE9vqYkjWxXUaMdQ4
+         rUn7GmaBF0XbbuVOST4bzciPg2CXIfDz2nlxWHBSoMwUeX2QsP35YvJxE6KOduiD75gU
+         n/HF1X4kpBU0NeK98nN69yAK5iXshX+hgDPjk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Fy+lN0OwLd6fOqqUGg68zG7G00YlFLJqLocnUSRFmVM=;
+        b=Z0//T/qd6v6sbQ6PFkxLTsS+SrssT2VbrACVWXfeFlzkhz+6rh6oYrNj5AIJNHFWW1
+         o0BHAww33bDf41JNaL4IEpj8XDkLfb61bN9fOuxK6irAXYbMU6LG8Te0/+K6ww5oOnho
+         +plKFqGPwQFA8cOhgmJFX2ELO9iw2iSrgCzfMHdn3sA32t1HQCaS9tbZq3EsDyC9KzTV
+         8b+cenBPPJhBxMpPw8uM6cXnQ4ZQFeTLgs1zi887FtRUsQYpXdo4tLSozq/PWLbwbrwP
+         6ovIw/SC2wDPuDubvBhoOiSuc6SeqwDwm9w71F/Slt9IdleaEaa3lNdiTc5pR1O66w4f
+         z0/Q==
+X-Gm-Message-State: APjAAAUZwNvTZVcd2BBrHtl/c3Kf/1cuZzSkRaeQo2nqewsed+4W3kUQ
+        5SPZVMq9440iGEvTxVzp550w2A==
+X-Google-Smtp-Source: APXvYqxXhTl1Km+BhA4YLQk6yq84HYqbOSMG2rM4UatnZC9TQtbjXWxl323JxWbn0L12SnCRCo4UWw==
+X-Received: by 2002:a63:ee04:: with SMTP id e4mr80079542pgi.53.1564415977924;
+        Mon, 29 Jul 2019 08:59:37 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id i9sm61745740pgo.46.2019.07.29.08.59.36
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 29 Jul 2019 08:59:37 -0700 (PDT)
+Date:   Mon, 29 Jul 2019 08:59:36 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [PATCH] scsi: qlogicpti: Mark expected switch fall-throughs
+Message-ID: <201907290859.FCDA1B9F@keescook>
+References: <20190729110345.GA2603@embeddedor>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Mon, 29 Jul 2019 15:59:15 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190729110345.GA2603@embeddedor>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Al Viro <viro@zeniv.linux.org.uk> writes:
+On Mon, Jul 29, 2019 at 06:03:45AM -0500, Gustavo A. R. Silva wrote:
+> Mark switch cases where we are expecting to fall through.
+> 
+> This patch fixes the following warnings (Building: sparc defconfig):
+> 
+> drivers/scsi/qlogicpti.c: In function 'qlogicpti_mbox_command':
+> drivers/scsi/qlogicpti.c:202:10: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>   case 6: sbus_writew(param[5], qpti->qregs + MBOX5);
+>           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> drivers/scsi/qlogicpti.c:203:2: note: here
+>   case 5: sbus_writew(param[4], qpti->qregs + MBOX4);
+>   ^~~~
+> drivers/scsi/qlogicpti.c:203:10: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>   case 5: sbus_writew(param[4], qpti->qregs + MBOX4);
+>           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> drivers/scsi/qlogicpti.c:204:2: note: here
+>   case 4: sbus_writew(param[3], qpti->qregs + MBOX3);
+>   ^~~~
+> drivers/scsi/qlogicpti.c:204:10: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>   case 4: sbus_writew(param[3], qpti->qregs + MBOX3);
+>           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> drivers/scsi/qlogicpti.c:205:2: note: here
+>   case 3: sbus_writew(param[2], qpti->qregs + MBOX2);
+>   ^~~~
+> drivers/scsi/qlogicpti.c:205:10: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>   case 3: sbus_writew(param[2], qpti->qregs + MBOX2);
+>           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> drivers/scsi/qlogicpti.c:206:2: note: here
+>   case 2: sbus_writew(param[1], qpti->qregs + MBOX1);
+>   ^~~~
+> drivers/scsi/qlogicpti.c:206:10: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>   case 2: sbus_writew(param[1], qpti->qregs + MBOX1);
+>           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> drivers/scsi/qlogicpti.c:207:2: note: here
+>   case 1: sbus_writew(param[0], qpti->qregs + MBOX0);
+>   ^~~~
+> drivers/scsi/qlogicpti.c:256:19: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>   case 6: param[5] = sbus_readw(qpti->qregs + MBOX5);
+>           ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> drivers/scsi/qlogicpti.c:257:2: note: here
+>   case 5: param[4] = sbus_readw(qpti->qregs + MBOX4);
+>   ^~~~
+> drivers/scsi/qlogicpti.c:257:19: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>   case 5: param[4] = sbus_readw(qpti->qregs + MBOX4);
+>           ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> drivers/scsi/qlogicpti.c:258:2: note: here
+>   case 4: param[3] = sbus_readw(qpti->qregs + MBOX3);
+>   ^~~~
+> drivers/scsi/qlogicpti.c:258:19: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>   case 4: param[3] = sbus_readw(qpti->qregs + MBOX3);
+>           ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> drivers/scsi/qlogicpti.c:259:2: note: here
+>   case 3: param[2] = sbus_readw(qpti->qregs + MBOX2);
+>   ^~~~
+> drivers/scsi/qlogicpti.c:259:19: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>   case 3: param[2] = sbus_readw(qpti->qregs + MBOX2);
+>           ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> drivers/scsi/qlogicpti.c:260:2: note: here
+>   case 2: param[1] = sbus_readw(qpti->qregs + MBOX1);
+>   ^~~~
+> drivers/scsi/qlogicpti.c:260:19: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>   case 2: param[1] = sbus_readw(qpti->qregs + MBOX1);
+>           ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> drivers/scsi/qlogicpti.c:261:2: note: here
+>   case 1: param[0] = sbus_readw(qpti->qregs + MBOX0);
+>   ^~~~
+> 
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-> On Mon, Jul 29, 2019 at 10:57:41AM -0400, Jeff Moyer wrote:
->> Al, can you take this through your tree?
->
-> Umm...  Can do, but I had an impression that Arnd and Deepa
-> had a tree for timespec-related work.  OTOH, it had been
-> relatively quiet last cycle, so...  If they have nothing
-> in the area, I can take it through vfs.git.
+Reviewed-by: Kees Cook <keescook@chromium.org>
 
-Hmm, okay.  Yi, can you repost the patch, adding my Reviewed-by tag, and
-CC-ing Arnd and Deepa:
+-Kees
 
-Arnd Bergmann <arnd@arndb.de>
-Deepa Dinamani <deepa.kernel@gmail.com>
+> ---
+>  drivers/scsi/qlogicpti.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/drivers/scsi/qlogicpti.c b/drivers/scsi/qlogicpti.c
+> index 9335849f6bea..d539beef3ce8 100644
+> --- a/drivers/scsi/qlogicpti.c
+> +++ b/drivers/scsi/qlogicpti.c
+> @@ -200,10 +200,15 @@ static int qlogicpti_mbox_command(struct qlogicpti *qpti, u_short param[], int f
+>  	/* Write mailbox command registers. */
+>  	switch (mbox_param[param[0]] >> 4) {
+>  	case 6: sbus_writew(param[5], qpti->qregs + MBOX5);
+> +		/* Fall through */
+>  	case 5: sbus_writew(param[4], qpti->qregs + MBOX4);
+> +		/* Fall through */
+>  	case 4: sbus_writew(param[3], qpti->qregs + MBOX3);
+> +		/* Fall through */
+>  	case 3: sbus_writew(param[2], qpti->qregs + MBOX2);
+> +		/* Fall through */
+>  	case 2: sbus_writew(param[1], qpti->qregs + MBOX1);
+> +		/* Fall through */
+>  	case 1: sbus_writew(param[0], qpti->qregs + MBOX0);
+>  	}
+>  
+> @@ -254,10 +259,15 @@ static int qlogicpti_mbox_command(struct qlogicpti *qpti, u_short param[], int f
+>  	/* Read back output parameters. */
+>  	switch (mbox_param[param[0]] & 0xf) {
+>  	case 6: param[5] = sbus_readw(qpti->qregs + MBOX5);
+> +		/* Fall through */
+>  	case 5: param[4] = sbus_readw(qpti->qregs + MBOX4);
+> +		/* Fall through */
+>  	case 4: param[3] = sbus_readw(qpti->qregs + MBOX3);
+> +		/* Fall through */
+>  	case 3: param[2] = sbus_readw(qpti->qregs + MBOX2);
+> +		/* Fall through */
+>  	case 2: param[1] = sbus_readw(qpti->qregs + MBOX1);
+> +		/* Fall through */
+>  	case 1: param[0] = sbus_readw(qpti->qregs + MBOX0);
+>  	}
+>  
+> -- 
+> 2.22.0
+> 
 
-Thanks!
-Jeff
+-- 
+Kees Cook
