@@ -2,133 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9930796D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:56:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6488079671
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:52:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404294AbfG2T4A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 15:56:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48826 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404250AbfG2Tz5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:55:57 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E2A02204EC;
-        Mon, 29 Jul 2019 19:55:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564430156;
-        bh=wh1zoquakyM/0TPKZ8B93mtc776SuJUVqVduk7mbb1c=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=M3tuxRCYanLZzQp/zqBPSh71Iix5KaghalvfjpR7lHpWjc+L+t2Ddss9VRBz/z4h/
-         LYS2TT9P7F7gJ/kvZ6TtZt8ocy2e7GPkK7ohWQQvqz5xHPgZV5J+rMem+t/vaMw+VA
-         NnFUy4vcMYXqdtcHWbnHXHUpIYfuQ6wAGJW+EM2Q=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hrvoje Zeba <zeba.hrvoje@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 5.2 215/215] io_uring: dont use iov_iter_advance() for fixed buffers
-Date:   Mon, 29 Jul 2019 21:23:31 +0200
-Message-Id: <20190729190817.178599978@linuxfoundation.org>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190729190739.971253303@linuxfoundation.org>
-References: <20190729190739.971253303@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S2390400AbfG2TvH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 15:51:07 -0400
+Received: from esa5.hgst.iphmx.com ([216.71.153.144]:9311 "EHLO
+        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390475AbfG2TvE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:51:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1564429864; x=1595965864;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=NO/0MsVKP71zr1N2x8BGfD/IHsCvghxnvN3rCJWUCV4=;
+  b=rF+kku+uIsR7p4jUINCVC7nhz+q8oLp6TATcOp7NLpIs4utwijnVExVw
+   00NimPqLsePo6b+fpN0+sTwz9zioek9Pjmm+92wKcXHQPLCGV4CqoIq3X
+   L0FZcVm4FstL+Q5qzk8gQMc2SafQVJ6a1rc7F5JpHfQZiDSZMPN9kaUmP
+   JTn4rimrvb0Uf32jsuXNHjwp92guNEMS7s4dshflJFDHcSl7WCKTTBpLP
+   LYHUo/VRN93GvKV1hC/3cHJkPsTeLJ7JN7hMhn+Cgfrd02quwtSiNbDqr
+   3orAXFqmePWbPn4e80JtC7to4n9f+6pIM+KoOmDpeV/IQlrxvV0jXwPkO
+   A==;
+IronPort-SDR: gJZs9x29wo72RQLI5rHcDPbrbC+rxWTNycBh2lgauP5bp3kZ6zV6r2d2ehN4X45ps814+UglE/
+ FapRe4G+Kx97XUkWbYHrLsqlW0ATCarPQRvU+HRsN8XQFmlwgaV3z4vJG/ObDuZX6V1C2A3KWa
+ YcAORgXb7hEtPcw6/C9bXEAD2XQE2OmCU0RvDzOu6+XeYPbf8OaVn2nX7Jzl7eXJfNUtIv9vWp
+ 9A9p2sX72ooIqynOw9da9YHeu/SFymyK+c8OF+IMHBD0U+t55fpIgODW6DZ5+FXpUljBI0sj2H
+ nDA=
+X-IronPort-AV: E=Sophos;i="5.64,324,1559491200"; 
+   d="scan'208";a="115439495"
+Received: from mail-sn1nam01lp2057.outbound.protection.outlook.com (HELO NAM01-SN1-obe.outbound.protection.outlook.com) ([104.47.32.57])
+  by ob1.hgst.iphmx.com with ESMTP; 30 Jul 2019 03:51:03 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=HnpB+bVzG1zFbSj/AnvYkVjUPu7zwtioqYeLvw5t4VCJZUKebAo5M9Lpu0kQvW7pmG27XdQXMYC3ArfFVszOGRTaPAbS5D/esh/G26T6Dcy+/dBgN5yRffVRG9BzJxu/UwPmfXkmSmlkxcFwYzCq99SINAW5tdoE3BDwgH5DQTf1kvAdJg5NHhTlEvTqhg/pfyLQF4gLq+Jta3AfX+0YnY4Rr4gjo66uH80NJi5rTjogNwmKp85OKDjgG+2+cC4erceB4XIVsRVKXUboXP80qdhX7k4TfU9Lmves2YFB4GQAnYrNd2Me0nLJdfGfU8bLSz4FWmgOSA0e7E5cujpF2A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NO/0MsVKP71zr1N2x8BGfD/IHsCvghxnvN3rCJWUCV4=;
+ b=gZ1kLnDO5cdfAhPuhMCgQqyk/qpEclkHBcZ0AynVl/DXQYM9AGR6GYbxE315k/rM7niO4+FsxAGx8J/iH3o2q3ZFJN/kkN9e5oHBTA3gwzCIjfuf8HwgIV/+/I+Z9WrZdkUkEz+TSYDJcZJunVNMhdi9UlExG5AIjoUFH3WJQwYFiZLZQ7YQybHgSWNE8AqE+nCyTc9Nc6PNMA3Q+mvBRifGAtqsxbUOxDpQRc2qvHWcNghxM8/vu4bIuBry3iPg8FNMfBCC8KDEODgbHjdrrkWRmBeT1bBIk04s2eCeulzePbE6xZWdU227YyWPquX0Hv94jUnkAxf5fMXt6yxugQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
+ smtp.mailfrom=wdc.com;dmarc=pass action=none header.from=wdc.com;dkim=pass
+ header.d=wdc.com;arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NO/0MsVKP71zr1N2x8BGfD/IHsCvghxnvN3rCJWUCV4=;
+ b=lHaOAAdJ2eOWrESvG9cywMLVCDVHtLNk04JFk1Ln51tX1g05K1DogVIgfSV/Ub16AfG4aTu6Z+FdCnPqcii7YHAf3ouIWiuIe5xUBtbS0lreZ/gipNlAH3SNrF2RY2LLYlR9QN3tk9Q9+voK/cYMt5gu6UjwQDCE94AyNcwQuXM=
+Received: from BYAPR04MB3782.namprd04.prod.outlook.com (52.135.214.142) by
+ BYAPR04MB5432.namprd04.prod.outlook.com (20.178.51.17) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2115.10; Mon, 29 Jul 2019 19:51:00 +0000
+Received: from BYAPR04MB3782.namprd04.prod.outlook.com
+ ([fe80::ac9a:967e:70a5:e926]) by BYAPR04MB3782.namprd04.prod.outlook.com
+ ([fe80::ac9a:967e:70a5:e926%7]) with mapi id 15.20.2115.005; Mon, 29 Jul 2019
+ 19:51:00 +0000
+From:   Atish Patra <Atish.Patra@wdc.com>
+To:     "paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
+        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "palmer@sifive.com" <palmer@sifive.com>,
+        Anup Patel <Anup.Patel@wdc.com>
+CC:     "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
+        Alistair Francis <Alistair.Francis@wdc.com>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        "hch@infradead.org" <hch@infradead.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "anup@brainfault.org" <anup@brainfault.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 15/16] RISC-V: KVM: Add SBI v0.1 support
+Thread-Topic: [RFC PATCH 15/16] RISC-V: KVM: Add SBI v0.1 support
+Thread-Index: AQHVRgTdLbP8aD0d50+SPOvQQEaYeqbh/v2AgAAC3IA=
+Date:   Mon, 29 Jul 2019 19:51:00 +0000
+Message-ID: <0e19ff14a51e210af91c4b0f2e649b8f5e140ce1.camel@wdc.com>
+References: <20190729115544.17895-1-anup.patel@wdc.com>
+         <20190729115544.17895-16-anup.patel@wdc.com>
+         <b461c82f-960a-306e-b76b-f2c329cabf21@redhat.com>
+In-Reply-To: <b461c82f-960a-306e-b76b-f2c329cabf21@redhat.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Atish.Patra@wdc.com; 
+x-originating-ip: [199.255.45.61]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: cb898cc9-e796-4736-6019-08d7145e14e5
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:BYAPR04MB5432;
+x-ms-traffictypediagnostic: BYAPR04MB5432:
+x-microsoft-antispam-prvs: <BYAPR04MB54328E32EF693A367280E483FADD0@BYAPR04MB5432.namprd04.prod.outlook.com>
+wdcipoutbound: EOP-TRUE
+x-ms-oob-tlc-oobclassifiers: OLM:8882;
+x-forefront-prvs: 01136D2D90
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(396003)(346002)(376002)(136003)(39860400002)(366004)(189003)(199004)(476003)(446003)(11346002)(53546011)(186003)(256004)(2616005)(66066001)(26005)(66556008)(66946007)(36756003)(102836004)(486006)(6506007)(118296001)(305945005)(76116006)(64756008)(86362001)(25786009)(66446008)(76176011)(14454004)(7736002)(99286004)(71190400001)(71200400001)(66476007)(478600001)(5660300002)(4744005)(53936002)(2501003)(7416002)(68736007)(4326008)(2906002)(6116002)(2201001)(6512007)(110136005)(229853002)(6486002)(6436002)(6636002)(8936002)(8676002)(81166006)(54906003)(81156014)(6246003)(3846002)(316002);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR04MB5432;H:BYAPR04MB3782.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: dY9cpiUkzq9jMG/mBMslqduUDYmYHXcP0wHC0LpH1v4+72janntXmVUGi0U1qMAa3o9BVTM3zsdYSRmZnv9id5n3bbJRePR2i03qsYY+20XEN8CPP4mTKjslPHdpb/ajzZFvbaC9A1rdKFpKDRxGRytGcavPowGNXNm7jimVCLRHfp9w+Z/SATz4QT59j9TIZNJQdPwlEbNAJ6ZFfoywXDlzylmr3R7TZ4AOekn+ZaB5dk18Gl6rxa1NATC1P7m1R9Inn+Y+KC2OMCrL07HMAN/hZYSKUV64nxBOFe+S3rtmCrHYf7AOjXP+Eg9hk+irfNqdzL7/YT7P1yNYKE5bN2ApYb6wFRTPlqe64lkKIK+JCHMlN7PrWwTDFGL27+2jzIVxp2hoh2F1VSUAEyKN+SbmpPMVrQDrbMKTrQeHB7Y=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <DA894D5BDDBAB64FBD4E2016B8DCCBBF@namprd04.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cb898cc9-e796-4736-6019-08d7145e14e5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Jul 2019 19:51:00.4733
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Atish.Patra@wdc.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR04MB5432
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jens Axboe <axboe@kernel.dk>
-
-commit bd11b3a391e3df6fa958facbe4b3f9f4cca9bd49 upstream.
-
-Hrvoje reports that when a large fixed buffer is registered and IO is
-being done to the latter pages of said buffer, the IO submission time
-is much worse:
-
-reading to the start of the buffer: 11238 ns
-reading to the end of the buffer:   1039879 ns
-
-In fact, it's worse by two orders of magnitude. The reason for that is
-how io_uring figures out how to setup the iov_iter. We point the iter
-at the first bvec, and then use iov_iter_advance() to fast-forward to
-the offset within that buffer we need.
-
-However, that is abysmally slow, as it entails iterating the bvecs
-that we setup as part of buffer registration. There's really no need
-to use this generic helper, as we know it's a BVEC type iterator, and
-we also know that each bvec is PAGE_SIZE in size, apart from possibly
-the first and last. Hence we can just use a shift on the offset to
-find the right index, and then adjust the iov_iter appropriately.
-After this fix, the timings are:
-
-reading to the start of the buffer: 10135 ns
-reading to the end of the buffer:   1377 ns
-
-Or about an 755x improvement for the tail page.
-
-Reported-by: Hrvoje Zeba <zeba.hrvoje@gmail.com>
-Tested-by: Hrvoje Zeba <zeba.hrvoje@gmail.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
-
----
- fs/io_uring.c |   39 +++++++++++++++++++++++++++++++++++++--
- 1 file changed, 37 insertions(+), 2 deletions(-)
-
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -1001,8 +1001,43 @@ static int io_import_fixed(struct io_rin
- 	 */
- 	offset = buf_addr - imu->ubuf;
- 	iov_iter_bvec(iter, rw, imu->bvec, imu->nr_bvecs, offset + len);
--	if (offset)
--		iov_iter_advance(iter, offset);
-+
-+	if (offset) {
-+		/*
-+		 * Don't use iov_iter_advance() here, as it's really slow for
-+		 * using the latter parts of a big fixed buffer - it iterates
-+		 * over each segment manually. We can cheat a bit here, because
-+		 * we know that:
-+		 *
-+		 * 1) it's a BVEC iter, we set it up
-+		 * 2) all bvecs are PAGE_SIZE in size, except potentially the
-+		 *    first and last bvec
-+		 *
-+		 * So just find our index, and adjust the iterator afterwards.
-+		 * If the offset is within the first bvec (or the whole first
-+		 * bvec, just use iov_iter_advance(). This makes it easier
-+		 * since we can just skip the first segment, which may not
-+		 * be PAGE_SIZE aligned.
-+		 */
-+		const struct bio_vec *bvec = imu->bvec;
-+
-+		if (offset <= bvec->bv_len) {
-+			iov_iter_advance(iter, offset);
-+		} else {
-+			unsigned long seg_skip;
-+
-+			/* skip first vec */
-+			offset -= bvec->bv_len;
-+			seg_skip = 1 + (offset >> PAGE_SHIFT);
-+
-+			iter->bvec = bvec + seg_skip;
-+			iter->nr_segs -= seg_skip;
-+			iter->count -= (seg_skip << PAGE_SHIFT);
-+			iter->iov_offset = offset & ~PAGE_MASK;
-+			if (iter->iov_offset)
-+				iter->count -= iter->iov_offset;
-+		}
-+	}
- 
- 	/* don't drop a reference to these pages */
- 	iter->type |= ITER_BVEC_FLAG_NO_REF;
-
-
+T24gTW9uLCAyMDE5LTA3LTI5IGF0IDIxOjQwICswMjAwLCBQYW9sbyBCb256aW5pIHdyb3RlOg0K
+PiBPbiAyOS8wNy8xOSAxMzo1NywgQW51cCBQYXRlbCB3cm90ZToNCj4gPiArCWNzcl93cml0ZShD
+U1JfSFNUQVRVUywgdmNwdS0+YXJjaC5ndWVzdF9jb250ZXh0LmhzdGF0dXMgfA0KPiA+IEhTVEFU
+VVNfU1BSVik7DQo+ID4gKwljc3Jfd3JpdGUoQ1NSX1NTVEFUVVMsIHZjcHUtPmFyY2guZ3Vlc3Rf
+Y29udGV4dC5zc3RhdHVzKTsNCj4gPiArCXZhbCA9ICphZGRyOw0KPiANCj4gV2hhdCBoYXBwZW5z
+IGlmIHRoaXMgbG9hZCBmYXVsdHM/DQo+IA0KDQpJdCBzaG91bGQgcmVkaXJlY3QgdGhlIHRyYXAg
+YmFjayB0byBWUyBtb2RlLiBDdXJyZW50bHksIGl0IGlzIG5vdA0KaW1wbGVtZW50ZWQuIEl0IGlz
+IG9uIHRoZSBUTy1ETyBsaXN0IGZvciBmdXR1cmUgaXRlcmF0aW9uIG9mIHRoZQ0Kc2VyaWVzLg0K
+DQpSZWdhcmRzLA0KQXRpc2gNCj4gUGFvbG8NCg0K
