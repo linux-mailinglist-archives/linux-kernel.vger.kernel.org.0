@@ -2,270 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A55679A48
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:49:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E42E879A51
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:50:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388145AbfG2Utl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 16:49:41 -0400
-Received: from mail-vk1-f193.google.com ([209.85.221.193]:33584 "EHLO
-        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387867AbfG2Utk (ORCPT
+        id S2388240AbfG2Uup (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 16:50:45 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:39518 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387869AbfG2Uup (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 16:49:40 -0400
-Received: by mail-vk1-f193.google.com with SMTP id y130so12385023vkc.0
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 13:49:39 -0700 (PDT)
+        Mon, 29 Jul 2019 16:50:45 -0400
+Received: by mail-pg1-f193.google.com with SMTP id u17so28840670pgi.6
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 13:50:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=X7NRnVGXrnkZVd1ruHSDb2QmanWeOsJggEzv5XoJGLk=;
+        b=g8Xe3U6r1WMKS9LpTAo8v7PyLN4NImhzdcIDuTFJxjhqOMMqVGDOJjqGbC75u9jGrJ
+         9rsfp0fNe+B9+Hbw+xEHeY2lF+yRVDjVlZsBN1gUShyUBLJukIfvAsmnbEfn0tVfS53J
+         OAT0K+ESCnlT0PVCnpsbnTZ7Gr+WLrfaxnnnQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=PRIJ4TfP2I/EudPqYBbE6NTjDPN26M+T/0BcBoUEMZs=;
-        b=A/DJ598I8pfyQOvFKwQtGyOmw0+J/kjZXguXsd7/X6iTLJgN7IibCAwlWGsiHW/D6S
-         ZGT26XUCw857/nJojMPbDLB8KcbvZm4KQqpCYu+3nFp3bS3kaFan8roRouYt5Pairg7E
-         JeAwlG5zQkT/iOfmQaR0ZkCv/t2/fevGRXe+Nwww5hgE4V3FAhRYN5bUV4GugAaH7WiU
-         cK5MdmqJfQmxiZIDgbGNdsEKRJ3KYy1ham0nm+YoM0Tzb6pH8xHUPI7oEHtiLpdlt3mC
-         ORI85iXsMSzf1iUrecVPlJkj994LsqN6QojmiIvsj2nAIhilLML236/7y90BcMIuan4W
-         QY8A==
-X-Gm-Message-State: APjAAAWPyftJ6dh/c8QN1Diw40Var61tJF4Rfo4BSOCe5XV8ziKGKj5q
-        7YwcuJotFJk6zcLkxH5ZT4mYQQ==
-X-Google-Smtp-Source: APXvYqyZ2mQDQp3wmx55uctU3IaHQ1ajqwJ+px0wDejkAaJcwzYddnFA2nejLUpwNxTN7cXeiyZ2xg==
-X-Received: by 2002:a1f:3692:: with SMTP id d140mr42762673vka.88.1564433379267;
-        Mon, 29 Jul 2019 13:49:39 -0700 (PDT)
-Received: from redhat.com (bzq-79-181-91-42.red.bezeqint.net. [79.181.91.42])
-        by smtp.gmail.com with ESMTPSA id t190sm24001915vkt.31.2019.07.29.13.49.34
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=X7NRnVGXrnkZVd1ruHSDb2QmanWeOsJggEzv5XoJGLk=;
+        b=qtikcx+44AGPJG6xD9HNMe7JXFrOyD49xzLm1uf9OC/9m1jkT6OweM80O3WKkFGeJs
+         pm3+U0RIUS8TJFanJ1w1thF93g1LV5oaHlNiZh4TzSioM6+XDc8sPPDo1xO3bbj+nvfQ
+         wr0cArcV82bWRhDLvaLTjNe1afnqjGEZCvd+Oz71SJJBtTNs4Hxk+/hsyxNT2bMFMDWC
+         zjEavpEIn6FcmPzEuu2w2oz1HTnEch0jclmjF/Dq4KgmI2sdYSBTp8cnMHrrB9/zgokq
+         kKryq6fHWk4tLrrHp3U+fOYFLPdfx0gHjSjZ8vUA/P0FKbULi5czny1B5CSiCtZPgk9t
+         9VBA==
+X-Gm-Message-State: APjAAAUSLj26iSM909LxxGRmL/AjaQuCYtCtQtd5Tgoq1v36DyFUm+wl
+        fu4VWVggqLL62QXVl5cNt4NJvQ==
+X-Google-Smtp-Source: APXvYqxP+VotuzvhmIqzWu9T/9V4wCTVnjtv++12+Cq7MoRt8by6kh1T/3tOa+KoGk5BEbIp77zndA==
+X-Received: by 2002:aa7:9146:: with SMTP id 6mr37179555pfi.67.1564433444420;
+        Mon, 29 Jul 2019 13:50:44 -0700 (PDT)
+Received: from smtp.gmail.com ([2620:15c:202:1:534:b7c0:a63c:460c])
+        by smtp.gmail.com with ESMTPSA id l44sm55364485pje.29.2019.07.29.13.50.41
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 29 Jul 2019 13:49:38 -0700 (PDT)
-Date:   Mon, 29 Jul 2019 16:49:31 -0400
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Alexander Duyck <alexander.duyck@gmail.com>
-Cc:     wei.w.wang@intel.com, Nitesh Narayan Lal <nitesh@redhat.com>,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
-        kvm list <kvm@vger.kernel.org>,
-        David Hildenbrand <david@redhat.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Yang Zhang <yang.zhang.wz@gmail.com>, pagupta@redhat.com,
-        Rik van Riel <riel@surriel.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        lcapitulino@redhat.com, Andrea Arcangeli <aarcange@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>, dan.j.williams@intel.com
-Subject: Re: [PATCH v2 QEMU] virtio-balloon: Provide a interface for "bubble
- hinting"
-Message-ID: <20190729163053-mutt-send-email-mst@kernel.org>
-References: <20190724165158.6685.87228.stgit@localhost.localdomain>
- <20190724171050.7888.62199.stgit@localhost.localdomain>
- <20190724150224-mutt-send-email-mst@kernel.org>
- <6218af96d7d55935f2cf607d47680edc9b90816e.camel@linux.intel.com>
- <ee5387b1-89af-daf4-8492-8139216c6dcf@redhat.com>
- <20190724164023-mutt-send-email-mst@kernel.org>
- <CAKgT0Ud6jPpsvJWFAMSnQXAXeNZb116kR7D2Xb7U-7BOtctK_Q@mail.gmail.com>
- <20190729151805-mutt-send-email-mst@kernel.org>
- <CAKgT0Ufq9RE_4B5bdsYyEf65WJkZsDHMD+MEJVJyev22+J3XAg@mail.gmail.com>
+        Mon, 29 Jul 2019 13:50:43 -0700 (PDT)
+From:   Brian Norris <briannorris@chromium.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        <linux-kernel@vger.kernel.org>, andriy.shevchenko@linux.intel.com,
+        Salvatore Bellizzi <salvatore.bellizzi@linux.seppia.net>,
+        andy.shevchenko@gmail.com,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        egranata@chromium.org, egranata@google.com,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Gwendal Grignou <gwendal@chromium.org>,
+        linux-acpi@vger.kernel.org, Benson Leung <bleung@chromium.org>,
+        Brian Norris <briannorris@chromium.org>, stable@vger.kernel.org
+Subject: [PATCH] driver core: platform: return -ENXIO for missing GpioInt
+Date:   Mon, 29 Jul 2019 13:49:54 -0700
+Message-Id: <20190729204954.25510-1-briannorris@chromium.org>
+X-Mailer: git-send-email 2.22.0.709.g102302147b-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKgT0Ufq9RE_4B5bdsYyEf65WJkZsDHMD+MEJVJyev22+J3XAg@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 29, 2019 at 01:21:32PM -0700, Alexander Duyck wrote:
-> On Mon, Jul 29, 2019 at 12:25 PM Michael S. Tsirkin <mst@redhat.com> wrote:
-> >
-> > On Mon, Jul 29, 2019 at 09:58:04AM -0700, Alexander Duyck wrote:
-> > > On Wed, Jul 24, 2019 at 1:42 PM Michael S. Tsirkin <mst@redhat.com> wrote:
-> > > >
-> > > > On Wed, Jul 24, 2019 at 04:29:27PM -0400, Nitesh Narayan Lal wrote:
-> > > > >
-> > > > > On 7/24/19 4:18 PM, Alexander Duyck wrote:
-> > > > > > On Wed, 2019-07-24 at 15:02 -0400, Michael S. Tsirkin wrote:
-> > > > > >> On Wed, Jul 24, 2019 at 10:12:10AM -0700, Alexander Duyck wrote:
-> > > > > >>> From: Alexander Duyck <alexander.h.duyck@linux.intel.com>
-> > > > > >>>
-> > > > > >>> Add support for what I am referring to as "bubble hinting". Basically the
-> > > > > >>> idea is to function very similar to how the balloon works in that we
-> > > > > >>> basically end up madvising the page as not being used. However we don't
-> > > > > >>> really need to bother with any deflate type logic since the page will be
-> > > > > >>> faulted back into the guest when it is read or written to.
-> > > > > >>>
-> > > > > >>> This is meant to be a simplification of the existing balloon interface
-> > > > > >>> to use for providing hints to what memory needs to be freed. I am assuming
-> > > > > >>> this is safe to do as the deflate logic does not actually appear to do very
-> > > > > >>> much other than tracking what subpages have been released and which ones
-> > > > > >>> haven't.
-> > > > > >>>
-> > > > > >>> Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
-> > > > > >>> ---
-> > > > > >>>  hw/virtio/virtio-balloon.c                      |   40 +++++++++++++++++++++++
-> > > > > >>>  include/hw/virtio/virtio-balloon.h              |    2 +
-> > > > > >>>  include/standard-headers/linux/virtio_balloon.h |    1 +
-> > > > > >>>  3 files changed, 42 insertions(+), 1 deletion(-)
-> > > > > >>>
-> > > > > >>> diff --git a/hw/virtio/virtio-balloon.c b/hw/virtio/virtio-balloon.c
-> > > > > >>> index 2112874055fb..70c0004c0f88 100644
-> > > > > >>> --- a/hw/virtio/virtio-balloon.c
-> > > > > >>> +++ b/hw/virtio/virtio-balloon.c
-> > > > > >>> @@ -328,6 +328,39 @@ static void balloon_stats_set_poll_interval(Object *obj, Visitor *v,
-> > > > > >>>      balloon_stats_change_timer(s, 0);
-> > > > > >>>  }
-> > > > > >>>
-> > > > > >>> +static void virtio_bubble_handle_output(VirtIODevice *vdev, VirtQueue *vq)
-> > > > > >>> +{
-> > > > > >>> +    VirtQueueElement *elem;
-> > > > > >>> +
-> > > > > >>> +    while ((elem = virtqueue_pop(vq, sizeof(VirtQueueElement)))) {
-> > > > > >>> +         unsigned int i;
-> > > > > >>> +
-> > > > > >>> +        for (i = 0; i < elem->in_num; i++) {
-> > > > > >>> +            void *addr = elem->in_sg[i].iov_base;
-> > > > > >>> +            size_t size = elem->in_sg[i].iov_len;
-> > > > > >>> +            ram_addr_t ram_offset;
-> > > > > >>> +            size_t rb_page_size;
-> > > > > >>> +            RAMBlock *rb;
-> > > > > >>> +
-> > > > > >>> +            if (qemu_balloon_is_inhibited())
-> > > > > >>> +                continue;
-> > > > > >>> +
-> > > > > >>> +            rb = qemu_ram_block_from_host(addr, false, &ram_offset);
-> > > > > >>> +            rb_page_size = qemu_ram_pagesize(rb);
-> > > > > >>> +
-> > > > > >>> +            /* For now we will simply ignore unaligned memory regions */
-> > > > > >>> +            if ((ram_offset | size) & (rb_page_size - 1))
-> > > > > >>> +                continue;
-> > > > > >>> +
-> > > > > >>> +            ram_block_discard_range(rb, ram_offset, size);
-> > > > > >> I suspect this needs to do like the migration type of
-> > > > > >> hinting and get disabled if page poisoning is in effect.
-> > > > > >> Right?
-> > > > > > Shouldn't something like that end up getting handled via
-> > > > > > qemu_balloon_is_inhibited, or did I miss something there? I assumed cases
-> > > > > > like that would end up setting qemu_balloon_is_inhibited to true, if that
-> > > > > > isn't the case then I could add some additional conditions. I would do it
-> > > > > > in about the same spot as the qemu_balloon_is_inhibited check.
-> > > > > I don't think qemu_balloon_is_inhibited() will take care of the page poisoning
-> > > > > situations.
-> > > > > If I am not wrong we may have to look to extend VIRTIO_BALLOON_F_PAGE_POISON
-> > > > > support as per Michael's suggestion.
-> > > >
-> > > >
-> > > > BTW upstream qemu seems to ignore VIRTIO_BALLOON_F_PAGE_POISON ATM.
-> > > > Which is probably a bug.
-> > > > Wei, could you take a look pls?
-> > >
-> > > So I was looking at sorting out this for the unused page reporting
-> > > that I am working on and it occurred to me that I don't think we can
-> > > do the free page hinting if any sort of poison validation is present.
-> > > The problem is that free page hinting simply stops the page from being
-> > > migrated. As a result if there was stale data present it will just
-> > > leave it there instead of zeroing it or writing it to alternating 1s
-> > > and 0s.
-> >
-> > stale data where? on source or on destination?
-> > do you mean the case where memory was corrupted?
-> >
-> 
-> Actually I am getting my implementation and this one partially mixed
-> up again. I was thinking that the page just gets put back. However it
-> doesn't. Instead free_pages is called. As such it is going to dirty
-> the page by poisoning it as soon as the hinting is complete.
-> 
-> In some ways it is worse because I think page poisoning combined with
-> free page hinting will make the VM nearly unusable because it will be
-> burning cycles allocating all memory, and then poisoning all those
-> pages on free. So it will be populating the dirty bitmap with all free
-> memory each time it goes through and attempts to determine what memory
-> is free.
+Commit daaef255dc96 ("driver: platform: Support parsing GpioInt 0 in
+platform_get_irq()") broke the Embedded Controller driver on most LPC
+Chromebooks (i.e., most x86 Chromebooks), because cros_ec_lpc expects
+platform_get_irq() to return -ENXIO for non-existent IRQs.
+Unfortunately, acpi_dev_gpio_irq_get() doesn't follow this convention
+and returns -ENOENT instead. So we get this error from cros_ec_lpc:
 
-Right, it does make it useless.
+   couldn't retrieve IRQ number (-2)
 
-I really consider this a bug: page should be given to hypervisor after
-it's poisoned. Then at least with 0 poison we could just mark it clean.
-For non-zero poison, we could think about adding kvm APIs for
-aggressively mapping all freed pages to a single non-zero one with COW.
+I see a variety of drivers that treat -ENXIO specially, so rather than
+fix all of them, let's fix up the API to restore its previous behavior.
 
-I guess it's prudent to sacrifice another feature bit if/when
-we fix it properly, saving a feature bit isn't worth
-the risk that someone shipped a guest like this.
+I reported this on v2 of this patch:
 
-But it does show why just using alloc/free for hinting isn't
-as great an idea as it seems on the surface.
+https://lore.kernel.org/lkml/20190220180538.GA42642@google.com/
 
-> > >
-> > > Also it looks like the VIRTIO_BALLOON_F_PAGE_POISON feature is
-> > > assuming that 0 means that page poisoning is disabled,
-> > > when in reality
-> > > it might just mean we are using the value zero to poison pages instead
-> > > of the 0xaa pattern. As such I think there are several cases where we
-> > > could incorrectly flag the pages with the hint and result in the
-> > > migrated guest reporting pages that contain non-poison values.
-> > >
-> >
-> >
-> > Well guest has this code:
-> > static int virtballoon_validate(struct virtio_device *vdev)
-> > {
-> >         if (!page_poisoning_enabled())
-> >                 __virtio_clear_bit(vdev, VIRTIO_BALLOON_F_PAGE_POISON);
-> >
-> >         __virtio_clear_bit(vdev, VIRTIO_F_IOMMU_PLATFORM);
-> >         return 0;
-> > }
-> >
-> > So it seems that host can figure out what is going on easily enough.
-> > What did I miss?
-> 
-> Okay. So it is clearing that feature bit. I didn't see that part.
-> However that leads to the question of where we should be setting that
-> feature bit in the QEMU side of things. I was looking at setting that
-> bit in virtio_balloon_get_features(). Would that be the appropriate
-> place to set that so that the feature flag is reset when we are
-> changing OSes or rebooting the guest?
+but apparently the patch had already been merged before v3 got sent out:
 
-We have
-    DEFINE_PROP_BIT("free-page-hint", VirtIOBalloon, host_features,
-                    VIRTIO_BALLOON_F_FREE_PAGE_HINT, false),
-and poison should be there, too.
+https://lore.kernel.org/lkml/20190221193429.161300-1-egranata@chromium.org/
 
+and the result is that the bug landed and remains unfixed.
 
-> > > The zero assumption works for unused page reporting since we will be
-> > > zeroing out the page when it is faulted back into the guest, however
-> > > the same doesn't work for the free page hint since it is simply
-> > > skipping the migration of the recently dirtied page.
-> >
-> > Right but the dirtied page is normally full of 0 since that is the
-> > poison value, if we just leave it there we still get 0s, right?
-> 
-> So for the unused page reporting which I am working on we can still
-> hint the page away since it will be 0s, and us returning the pages
-> doesn't alter the page data. However for the free page hinting I don't
-> think we can.
-> 
-> With page poisoning and free page hinting I am thinking we should just
-> disable the free page hinting as I don't see how there can be any
-> advantage to it if page poisoning is enbled. Basically the thing that
-> makes the hinting "safe" will sabotage it since for every page we
-> don't migrate we will also be marking as dirty for the next iteration
-> through migration. As such we are just pushing the migration of any
-> free pages until the VM has stopped since the VM will just keep
-> dirtying the free pages until it stops hinting.
+I differ from the v3 patch by:
+ * allowing for ret==0, even though acpi_dev_gpio_irq_get() specifically
+   documents (and enforces) that 0 is not a valid return value (noted on
+   the v3 review)
+ * adding a small comment
 
+Reported-by: Brian Norris <briannorris@chromium.org>
+Reported-by: Salvatore Bellizzi <salvatore.bellizzi@linux.seppia.net>
+Cc: Enrico Granata <egranata@chromium.org>
+Cc: <stable@vger.kernel.org>
+Fixes: daaef255dc96 ("driver: platform: Support parsing GpioInt 0 in platform_get_irq()")
+Signed-off-by: Brian Norris <briannorris@chromium.org>
+---
+Side note: it might have helped alleviate some of this pain if there
+were email notifications to the mailing list when a patch gets applied.
+I didn't realize (and I'm not sure if Enrico did) that v2 was already
+merged by the time I noted its mistakes. If I had known, I would have
+suggested a follow-up patch, not a v3.
 
-Right this was discussed at the time for non-zero poison.
+I know some maintainers' "tip bots" do this, but not all apparently.
 
-For hinting, my argument was simple: the reason it's useless is contained
-within the hypervisor. So don't put the logic in the guest:
-hypervisor can see poison is set and not request hints from guest.
+ drivers/base/platform.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-
-For reporting, as you say it works with 0s and we can thinkably
-make it work with non-0s down the road.
-Until we do we can always have the hypervisor do something like
-
-	if (poisoning && poison != 0)
-		return;
-	madvise(MADV_FREE);
-
+diff --git a/drivers/base/platform.c b/drivers/base/platform.c
+index 506a0175a5a7..ec974ba9c0c4 100644
+--- a/drivers/base/platform.c
++++ b/drivers/base/platform.c
+@@ -157,8 +157,13 @@ int platform_get_irq(struct platform_device *dev, unsigned int num)
+ 	 * the device will only expose one IRQ, and this fallback
+ 	 * allows a common code path across either kind of resource.
+ 	 */
+-	if (num == 0 && has_acpi_companion(&dev->dev))
+-		return acpi_dev_gpio_irq_get(ACPI_COMPANION(&dev->dev), num);
++	if (num == 0 && has_acpi_companion(&dev->dev)) {
++		int ret = acpi_dev_gpio_irq_get(ACPI_COMPANION(&dev->dev), num);
++
++		/* Our callers expect -ENXIO for missing IRQs. */
++		if (ret >= 0 || ret == -EPROBE_DEFER)
++			return ret;
++	}
+ 
+ 	return -ENXIO;
+ #endif
 -- 
-MST
+2.22.0.709.g102302147b-goog
+
