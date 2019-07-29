@@ -2,121 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BF0779C6D
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 00:28:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0729A79C71
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 00:29:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728842AbfG2W14 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 18:27:56 -0400
-Received: from gateway24.websitewelcome.com ([192.185.51.35]:25244 "EHLO
-        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727202AbfG2W1z (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 18:27:55 -0400
-Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
-        by gateway24.websitewelcome.com (Postfix) with ESMTP id 5BD0AEA772
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 17:27:54 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id sE7WhkHHT3Qi0sE7WhV2cZ; Mon, 29 Jul 2019 17:27:54 -0500
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        MIME-Version:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=jilYGKdJFUI07LgQEXiOG/Wx5IwotOgB3vmpT+7jOis=; b=TDlUM0e1F+7nTBHCJv4IHNaNTR
-        vP2N3srXJTCTFRzhdCAXt5DbWsXElv57PG7gfXAA7OZEOngLZAcbO//tBgVofJ6sid1y94squEaLK
-        Ytg5+5G2lCXpDinW5Hdi6KscCuOVlSAsiEK9winQLRxL7oEXglqSvybdOgMcRA/EZzSHPm4QZmI4R
-        LQbqeScDgBKtLvf1PWmjl1ZjifjQYcLrLMylJ63pL1DAIOCyq/UzzHZ/EdDIDlBuCF1MLf/sxAWam
-        hE4o8u0Ak8BSfQryMq3rSCMtYsApxmu0TSvJIkILNE23gmqc4DoRjugGmMV8e8/s0QSyCSOeOhTIZ
-        HL7HQp7A==;
-Received: from [187.192.11.120] (port=60868 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1hsE7V-0025GC-2q; Mon, 29 Jul 2019 17:27:53 -0500
-Date:   Mon, 29 Jul 2019 17:27:52 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Vincent Abriou <vincent.abriou@st.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>
-Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: [PATCH] drm: sti: Mark expected switch fall-throughs
-Message-ID: <20190729222752.GA20277@embeddedor>
+        id S1729014AbfG2W3p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 18:29:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36278 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725894AbfG2W3o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 18:29:44 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 116DF2070D;
+        Mon, 29 Jul 2019 22:29:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564439384;
+        bh=JNZa/y24wXNDv30tuaj6kC0kdXk/z7BCg8JawB3obts=;
+        h=In-Reply-To:References:Cc:From:To:Subject:Date:From;
+        b=NxRV8PsJoRIZMOqn4xIbsmF2GL9TDcczIYDurDe3IMz/R+DKattIoWJbpF0FiXiYq
+         efBhSe5r6QPkFdQmLo4rGXOmq2NrUakQbDpwJ5+M6Fuv6rfNHmYY3AJYIt+T6TYfqD
+         6IEkE7SHbOp8MGy/bQESzADE7AowrIUrtnvHbSmo=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 187.192.11.120
-X-Source-L: No
-X-Exim-ID: 1hsE7V-0025GC-2q
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [187.192.11.120]:60868
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 25
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190703122614.3579-3-jbrunet@baylibre.com>
+References: <20190703122614.3579-1-jbrunet@baylibre.com> <20190703122614.3579-3-jbrunet@baylibre.com>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+From:   Stephen Boyd <sboyd@kernel.org>
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+Subject: Re: [PATCH 2/2] clk: meson: axg-audio: add g12a reset support
+User-Agent: alot/0.8.1
+Date:   Mon, 29 Jul 2019 15:29:43 -0700
+Message-Id: <20190729222944.116DF2070D@mail.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mark switch cases where we are expecting to fall through.
+Quoting Jerome Brunet (2019-07-03 05:26:14)
+> @@ -1005,8 +1087,27 @@ static int axg_audio_clkc_probe(struct platform_de=
+vice *pdev)
+>                 }
+>         }
+> =20
+> -       return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
+> -                                          data->hw_onecell_data);
+> +       ret =3D devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
+> +                                       data->hw_onecell_data);
+> +       if (ret)
+> +               return ret;
+> +
+> +       /* Stop here if there is no reset */
+> +       if (!data->reset_num)
+> +               return 0;
+> +
+> +       rst =3D devm_kzalloc(dev, sizeof(*rst), GFP_KERNEL);
+> +       if (!rst)
+> +               return -ENOMEM;
+> +
+> +       rst->map =3D map;
+> +       rst->offset =3D data->reset_offset;
+> +       rst->rstc.nr_resets =3D data->reset_num;
+> +       rst->rstc.ops =3D &axg_audio_rstc_ops;
+> +       rst->rstc.of_node =3D dev->of_node;
+> +       rst->rstc.owner =3D THIS_MODULE;
+> +
+> +       return ret =3D devm_reset_controller_register(dev, &rst->rstc);
 
-This patch fixes the following warning (Building: arm):
+IS this a typo? Just return devm instead?
 
-drivers/gpu/drm/sti/sti_hdmi.c: In function ‘hdmi_audio_configure’:
-drivers/gpu/drm/sti/sti_hdmi.c:851:13: warning: this statement may fall through [-Wimplicit-fallthrough=]
-   audio_cfg |= HDMI_AUD_CFG_CH78_VALID;
-drivers/gpu/drm/sti/sti_hdmi.c:852:2: note: here
-  case 6:
-  ^~~~
-drivers/gpu/drm/sti/sti_hdmi.c:853:13: warning: this statement may fall through [-Wimplicit-fallthrough=]
-   audio_cfg |= HDMI_AUD_CFG_CH56_VALID;
-drivers/gpu/drm/sti/sti_hdmi.c:854:2: note: here
-  case 4:
-  ^~~~
-drivers/gpu/drm/sti/sti_hdmi.c:855:13: warning: this statement may fall through [-Wimplicit-fallthrough=]
-   audio_cfg |= HDMI_AUD_CFG_CH34_VALID | HDMI_AUD_CFG_8CH;
-drivers/gpu/drm/sti/sti_hdmi.c:856:2: note: here
-  case 2:
-  ^~~~
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/gpu/drm/sti/sti_hdmi.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/gpu/drm/sti/sti_hdmi.c b/drivers/gpu/drm/sti/sti_hdmi.c
-index f03d617edc4c..1617c5098a50 100644
---- a/drivers/gpu/drm/sti/sti_hdmi.c
-+++ b/drivers/gpu/drm/sti/sti_hdmi.c
-@@ -849,10 +849,13 @@ static int hdmi_audio_configure(struct sti_hdmi *hdmi)
- 	switch (info->channels) {
- 	case 8:
- 		audio_cfg |= HDMI_AUD_CFG_CH78_VALID;
-+		/* fall through */
- 	case 6:
- 		audio_cfg |= HDMI_AUD_CFG_CH56_VALID;
-+		/* fall through */
- 	case 4:
- 		audio_cfg |= HDMI_AUD_CFG_CH34_VALID | HDMI_AUD_CFG_8CH;
-+		/* fall through */
- 	case 2:
- 		audio_cfg |= HDMI_AUD_CFG_CH12_VALID;
- 		break;
--- 
-2.22.0
-
+>  }
+> =20
+>  static const struct audioclk_data axg_audioclk_data =3D {
