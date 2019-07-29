@@ -2,38 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A77CA7956C
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:42:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B0A847956F
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:42:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389489AbfG2Tm0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 15:42:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58102 "EHLO mail.kernel.org"
+        id S2389507AbfG2Tmd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 15:42:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58160 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389454AbfG2TmW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:42:22 -0400
+        id S2388963AbfG2Tm0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:42:26 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4ACDB2054F;
-        Mon, 29 Jul 2019 19:42:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CF27B2054F;
+        Mon, 29 Jul 2019 19:42:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564429341;
-        bh=L8LWTTTAa3xAJp9P3YSmP/budIJojfLkiTbkPBeOfII=;
+        s=default; t=1564429345;
+        bh=+qdwOzhe7jaEDhHoYnSoTsCXmCW3kYF3aTRspMUM69g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GBLqRsYBIDGMkfO40QNF76TDPN+nwti0ugp4uiUZkF5l7YY61PZME0bMQMu7dfgCJ
-         x5F2TPB0F6U9r2ZxJRUX3+Y1htSOyvRW0v7eru2uyoHXsEjSnh5M7eMql7F0+yVY/6
-         FyZqRjj/KgnCfw6wpo+v10gjNMbqdp+ghBmPcRXk=
+        b=wXPqfZyZshV+A3eWZZLAH2wuHNiTOx8PP0J/l7zQE20VWGLDe4cbjljbO9svi+wuu
+         LZdmWnd4C15mc1zotcGLOoapbB3PGWfrEz6lsuBDrvowJoj92rZmYXgSu9knUQDKoC
+         VQR8lrNbSJ/yN4K2G1xHdkYpzpQrN9lHYTyHyCy4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hou Zhiqiang <Zhiqiang.Hou@nxp.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Minghuan Lian <Minghuan.Lian@nxp.com>,
-        Subrahmanya Lingappa <l.subrahmanya@mobiveil.co.in>,
+        stable@vger.kernel.org, Numfor Mbiziwo-Tiapo <nums@google.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@redhat.com>,
+        Mark Drayton <mbd@fb.com>, Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Song Liu <songliubraving@fb.com>,
+        Stephane Eranian <eranian@google.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 066/113] PCI: mobiveil: Use the 1st inbound window for MEM inbound transactions
-Date:   Mon, 29 Jul 2019 21:22:33 +0200
-Message-Id: <20190729190711.292162347@linuxfoundation.org>
+Subject: [PATCH 4.19 067/113] perf test mmap-thread-lookup: Initialize variable to suppress memory sanitizer warning
+Date:   Mon, 29 Jul 2019 21:22:34 +0200
+Message-Id: <20190729190711.501308480@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190729190655.455345569@linuxfoundation.org>
 References: <20190729190655.455345569@linuxfoundation.org>
@@ -46,43 +50,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit f7fee1b42fe4f8171a4b1cad05c61907c33c53f6 ]
+[ Upstream commit 4e4cf62b37da5ff45c904a3acf242ab29ed5881d ]
 
-The inbound and outbound windows have completely separate control
-registers sets in the host controller MMIO space. Windows control
-register are accessed through an MMIO base address and an offset
-that depends on the window index.
+Running the 'perf test' command after building perf with a memory
+sanitizer causes a warning that says:
 
-Since inbound and outbound windows control registers are completely
-separate there is no real need to use different window indexes in the
-inbound/outbound windows initialization routines to prevent clashing.
+  WARNING: MemorySanitizer: use-of-uninitialized-value... in mmap-thread-lookup.c
 
-To fix this inconsistency, change the MEM inbound window index to 0,
-mirroring the outbound window set-up.
+Initializing the go variable to 0 silences this harmless warning.
 
-Signed-off-by: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
-[lorenzo.pieralisi@arm.com: update commit log]
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Reviewed-by: Minghuan Lian <Minghuan.Lian@nxp.com>
-Reviewed-by: Subrahmanya Lingappa <l.subrahmanya@mobiveil.co.in>
+Committer warning:
+
+This was harmless, just a simple test writing whatever was at that
+sizeof(int) memory area just to signal another thread blocked reading
+that file created with pipe(). Initialize it tho so that we don't get
+this warning.
+
+Signed-off-by: Numfor Mbiziwo-Tiapo <nums@google.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Ian Rogers <irogers@google.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Mark Drayton <mbd@fb.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Song Liu <songliubraving@fb.com>
+Cc: Stephane Eranian <eranian@google.com>
+Link: http://lkml.kernel.org/r/20190702173716.181223-1-nums@google.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pci/controller/pcie-mobiveil.c | 2 +-
+ tools/perf/tests/mmap-thread-lookup.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pci/controller/pcie-mobiveil.c b/drivers/pci/controller/pcie-mobiveil.c
-index 2fe7ebdad2d2..a2d1e89d4867 100644
---- a/drivers/pci/controller/pcie-mobiveil.c
-+++ b/drivers/pci/controller/pcie-mobiveil.c
-@@ -553,7 +553,7 @@ static int mobiveil_host_init(struct mobiveil_pcie *pcie)
- 			resource_size(pcie->ob_io_res));
+diff --git a/tools/perf/tests/mmap-thread-lookup.c b/tools/perf/tests/mmap-thread-lookup.c
+index b1af2499a3c9..7a9b123c7bfc 100644
+--- a/tools/perf/tests/mmap-thread-lookup.c
++++ b/tools/perf/tests/mmap-thread-lookup.c
+@@ -52,7 +52,7 @@ static void *thread_fn(void *arg)
+ {
+ 	struct thread_data *td = arg;
+ 	ssize_t ret;
+-	int go;
++	int go = 0;
  
- 	/* memory inbound translation window */
--	program_ib_windows(pcie, WIN_NUM_1, 0, MEM_WINDOW_TYPE, IB_WIN_SIZE);
-+	program_ib_windows(pcie, WIN_NUM_0, 0, MEM_WINDOW_TYPE, IB_WIN_SIZE);
- 
- 	/* Get the I/O and memory ranges from DT */
- 	resource_list_for_each_entry_safe(win, tmp, &pcie->resources) {
+ 	if (thread_init(td))
+ 		return NULL;
 -- 
 2.20.1
 
