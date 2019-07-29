@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40F627984E
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:07:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C5EA97985D
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:07:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729724AbfG2UGw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 16:06:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56076 "EHLO mail.kernel.org"
+        id S2388502AbfG2Tjd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 15:39:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54604 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389200AbfG2Tko (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:40:44 -0400
+        id S2389007AbfG2Tj2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:39:28 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3D9B6206DD;
-        Mon, 29 Jul 2019 19:40:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C08B12054F;
+        Mon, 29 Jul 2019 19:39:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564429243;
-        bh=oYKF6OwrpFzDV1JX4t9Wv8N3vWDT3bA6fw+LG/qla+w=;
+        s=default; t=1564429167;
+        bh=ogbnlNUC6S7tpD8mTLT2XLlDbNBJ0HCrvSqhti6Jxuw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=v0Ux9lbvc4B3PfqFexYGT83yoT+SreFb+FjezzSZhIVhu4jHi+k2yRxuFaYdv7doJ
-         0dAQLqSPIrz6XvlhK/29ip5QCCuOfTSpGTsO1VaQyip5dmi30tti1Ov1cdvmQNqFja
-         PNHl/czbD60X76XLbvBNoU2fiBdRpS6C6/3Yxh8k=
+        b=2KapHvvS6dW9o+4e4HRc8FjdTmOoftIELdt8Cmlw9B9ze7L8fxvhbLvE/V/a+hUgq
+         XFxQ9bNRefFlYiL6DEq4X4ZbW+k4SjgOS4kYb0QHOEOQ40S0qjNty8XeG8bd/fC17X
+         YJecCYP1cmJo15h8ldnEj8X5D1KxkxmxJ0rnWvg0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wen Yang <wen.yang99@zte.com.cn>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Heiko Stuebner <heiko@sntech.de>, linux-gpio@vger.kernel.org,
-        linux-rockchip@lists.infradead.org, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 008/113] pinctrl: rockchip: fix leaked of_node references
-Date:   Mon, 29 Jul 2019 21:21:35 +0200
-Message-Id: <20190729190657.715591976@linuxfoundation.org>
+        stable@vger.kernel.org, Oak Zeng <ozeng@amd.com>,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 013/113] drm/amdkfd: Fix a potential memory leak
+Date:   Mon, 29 Jul 2019 21:21:40 +0200
+Message-Id: <20190729190658.972829549@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190729190655.455345569@linuxfoundation.org>
 References: <20190729190655.455345569@linuxfoundation.org>
@@ -45,40 +45,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 3c89c70634bb0b6f48512de873e7a45c7e1fbaa5 ]
+[ Upstream commit e73390d181103a19e1111ec2f25559a0570e9fe0 ]
 
-The call to of_parse_phandle returns a node pointer with refcount
-incremented thus it must be explicitly decremented after the last
-usage.
+Free mqd_mem_obj it GTT buffer allocation for MQD+control stack fails.
 
-Detected by coccinelle with the following warnings:
-./drivers/pinctrl/pinctrl-rockchip.c:3221:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 3196, but without a corresponding object release within this function.
-./drivers/pinctrl/pinctrl-rockchip.c:3223:1-7: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 3196, but without a corresponding object release within this function.
-
-Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Heiko Stuebner <heiko@sntech.de>
-Cc: linux-gpio@vger.kernel.org
-Cc: linux-rockchip@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Oak Zeng <ozeng@amd.com>
+Reviewed-by: Felix Kuehling <Felix.Kuehling@amd.com>
+Signed-off-by: Felix Kuehling <Felix.Kuehling@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/pinctrl-rockchip.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager_v9.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
-index f4a61429e06e..8d83817935da 100644
---- a/drivers/pinctrl/pinctrl-rockchip.c
-+++ b/drivers/pinctrl/pinctrl-rockchip.c
-@@ -3172,6 +3172,7 @@ static int rockchip_get_bank_data(struct rockchip_pin_bank *bank,
- 						    base,
- 						    &rockchip_regmap_config);
- 		}
-+		of_node_put(node);
- 	}
+diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager_v9.c b/drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager_v9.c
+index 0cedb37cf513..985bebde5a34 100644
+--- a/drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager_v9.c
++++ b/drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager_v9.c
+@@ -75,6 +75,7 @@ static int init_mqd(struct mqd_manager *mm, void **mqd,
+ 	struct v9_mqd *m;
+ 	struct kfd_dev *kfd = mm->dev;
  
- 	bank->irq = irq_of_parse_and_map(bank->of_node, 0);
++	*mqd_mem_obj = NULL;
+ 	/* From V9,  for CWSR, the control stack is located on the next page
+ 	 * boundary after the mqd, we will use the gtt allocation function
+ 	 * instead of sub-allocation function.
+@@ -92,8 +93,10 @@ static int init_mqd(struct mqd_manager *mm, void **mqd,
+ 	} else
+ 		retval = kfd_gtt_sa_allocate(mm->dev, sizeof(struct v9_mqd),
+ 				mqd_mem_obj);
+-	if (retval != 0)
++	if (retval) {
++		kfree(*mqd_mem_obj);
+ 		return -ENOMEM;
++	}
+ 
+ 	m = (struct v9_mqd *) (*mqd_mem_obj)->cpu_ptr;
+ 	addr = (*mqd_mem_obj)->gpu_addr;
 -- 
 2.20.1
 
