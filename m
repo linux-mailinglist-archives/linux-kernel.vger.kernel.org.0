@@ -2,61 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D4C478782
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 10:35:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F58F7878A
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 10:36:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727767AbfG2IfR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 04:35:17 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50370 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727109AbfG2IfR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 04:35:17 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 739D4B023;
-        Mon, 29 Jul 2019 08:35:16 +0000 (UTC)
-Date:   Mon, 29 Jul 2019 10:35:15 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Minchan Kim <minchan@kernel.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        Miguel de Dios <migueldedios@google.com>,
-        Wei Wang <wvw@google.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Mel Gorman <mgorman@techsingularity.net>
-Subject: Re: [PATCH] mm: release the spinlock on zap_pte_range
-Message-ID: <20190729083515.GD9330@dhcp22.suse.cz>
-References: <20190729071037.241581-1-minchan@kernel.org>
- <20190729074523.GC9330@dhcp22.suse.cz>
- <20190729082052.GA258885@google.com>
+        id S1727787AbfG2Igi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 04:36:38 -0400
+Received: from mout.kundenserver.de ([212.227.126.130]:48653 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726988AbfG2Igi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 04:36:38 -0400
+Received: from [192.168.1.110] ([77.4.29.213]) by mrelayeu.kundenserver.de
+ (mreue012 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1MZSJa-1huoPJ0xEc-00WVTJ; Mon, 29 Jul 2019 10:35:27 +0200
+Subject: Re: platform/x86/pcengines-apuv2: Missing apu4
+To:     Gerhard Wiesinger <lists@wiesinger.com>,
+        Florian Eckert <fe@dev.tdt.de>, Eckert.Florian@googlemail.com,
+        info@metux.net, dvhart@infradead.org, andy@infradead.org
+Cc:     platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <02b34d18-27bc-cb48-f698-03df61df7d91@wiesinger.com>
+From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
+Organization: metux IT consult
+Message-ID: <343400be-bd86-b59c-cfa0-862780493450@metux.net>
+Date:   Mon, 29 Jul 2019 10:35:24 +0200
+User-Agent: Mozilla/5.0 (X11; Linux i686 on x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190729082052.GA258885@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <02b34d18-27bc-cb48-f698-03df61df7d91@wiesinger.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:EYQW+pBb9mnBt37sECCdyu8aLvd3jAYgcpuzZejxR8oUQYJ+pLC
+ 3en+dryVKbf0yeQaWH/8FYu8LnLAzGpv+zUe05kvllEe5kKo3a/7THyndsTLDHK41HaaEBf
+ yvOyth09RSvpUzvPue2c3BCoKTbUQBOmI2fYC36uKskzLQX3yMqcpO/G+kKvl/HMOiq0UpW
+ tn5ljRGFk08gLamMrIrhQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:ZEEEIOHYPpA=:YhRTZxRfvidtRGaLn3sRPd
+ Sav0rJlpP4j53wdUEhBT1qtGUtIalk8NE5KBiC3d3kpzmwtON5s61KDzssJ4pnejAwnQYy6e7
+ yGHVkfy7Y9I7/7qeAD0d+V/a1bdozdZaIKmSoiDk53E6Le33oIh68SSYWasTbOXrSRGshiX/2
+ Hkr+NbRslBQZSn+vvsL7M/aoUN1ubnyoad5EfutyXPHpJCSTrIIjwRhejjsUU3n/hx7lNs5Lh
+ 0TI9DkjfM09WcfV0InW66qK8xiDyEuc0Mjm22/RbxrACp2GCMTaQ3w63l8DYjjmrvPjuR8sfy
+ 26rmGsLV8FcnD5detOVqc4T485XrKFMsuXiXI4+o9ZBRp1gyWTD0EPHOrkrU5bXS7TKXXc2oI
+ JdWMK0ECNwrk1eri8zuQg9PWV7y0iEL1j52P7sSfTIzHORlDAyOssTuK1IB2gX+1fumrd/6tZ
+ uILNTSPTfWVz8uSkq4fuLOwWi4sgGmYTXvb5pQf2BkEX3KS83feG5paW4B4EX9utbXwjWQl+X
+ kZGJE+MDpTreeQDOBr6uX/+iRG7JhZCwuzksPbr68zkkV6W7kDE+SHXg/V/5R0tTlyhaC1nlL
+ Z3pJ7r59dRJ+6c5PD9z0GHXd3Rnt4kq3H7gPRZJEMvarjiTrR6YU4Geiu9PxpCZHenW/Axg5f
+ WS4dEP6ZuEgpb1t1MGbLmabskQokpQ+yU0nc5jPIVZxdsn2UU6g6X7SgwoZiDwApMLOkhGCcR
+ J0l6HuWynL1faAhWtwf/KY+yNZq24YYhK1MLRWT7aXe6nl2ISzGnRd9KO2w=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 29-07-19 17:20:52, Minchan Kim wrote:
-> On Mon, Jul 29, 2019 at 09:45:23AM +0200, Michal Hocko wrote:
-> > On Mon 29-07-19 16:10:37, Minchan Kim wrote:
-> > > In our testing(carmera recording), Miguel and Wei found unmap_page_range
-> > > takes above 6ms with preemption disabled easily. When I see that, the
-> > > reason is it holds page table spinlock during entire 512 page operation
-> > > in a PMD. 6.2ms is never trivial for user experince if RT task couldn't
-> > > run in the time because it could make frame drop or glitch audio problem.
-> > 
-> > Where is the time spent during the tear down? 512 pages doesn't sound
-> > like a lot to tear down. Is it the TLB flushing?
+On 26.07.19 16:56, Gerhard Wiesinger wrote:
+> Hello,
 > 
-> Miguel confirmed there is no such big latency without mark_page_accessed
-> in zap_pte_range so I guess it's the contention of LRU lock as well as
-> heavy activate_page overhead which is not trivial, either.
+> I saw that the apu4 board is completly missing (also on 5.3rc1). Can you 
+> please add it. Should be very easy, see below.
 
-Please give us more details ideally with some numbers.
+Still in the pipeline - don't have an apu4 board for testing yet.
+
+
+--mtx
+
 -- 
-Michal Hocko
-SUSE Labs
+Enrico Weigelt, metux IT consult
+Free software and Linux embedded engineering
+info@metux.net -- +49-151-27565287
