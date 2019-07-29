@@ -2,80 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0050778F84
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 17:38:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 11CFF78F75
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 17:37:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728759AbfG2Pi3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 11:38:29 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:47720 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725209AbfG2Pi3 (ORCPT
+        id S1728236AbfG2PhE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 11:37:04 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:44395 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728124AbfG2PhD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 11:38:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=kTRobX83JJeBQVwIveyy0p4dpxyy2pND5viOSWqwu2A=; b=USrawQ6/HCifS+n9zc9f7rRgp
-        SS5hThycZpx1nxHNxbRjjHd58Mq1C1l4w9QEKwwQNaiogsS9aukVbw35Ie8ufchGdx5QtTCUwFcl3
-        FfwbK5zDhfFPOG9/uFIYxpbEjq5att4KMnfsyy6QymNjukfSwlA81zJW06X6fuXkyw7GTf3MgE/kA
-        zTAuXCQPr7aW2ZsXCalOGcV2p+X5RugQ0DbW7hKyFEYY5E78e/SGZcaC66r+TSJ8jNyEz/cfCvgHI
-        qo6m3Yc0CFtAMw4MfaFMG+zOuLdhKL8rgV3QbYm+hMBMow6/yIR4aMeSHHAm+RQP9Alg2UCMNJ/r6
-        cGy0ZFNJQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hs7jH-0001Zh-St; Mon, 29 Jul 2019 15:38:28 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 4705420AFFEAE; Mon, 29 Jul 2019 17:38:25 +0200 (CEST)
-Date:   Mon, 29 Jul 2019 17:38:25 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        Phil Auld <pauld@redhat.com>,
-        Will Deacon <will.deacon@kernel.org>,
-        Rik van Riel <riel@surriel.com>,
-        Andy Lutomirski <luto@kernel.org>
-Subject: Re: [PATCH v2] sched/core: Don't use dying mm as active_mm of
- kthreads
-Message-ID: <20190729153825.GI31398@hirez.programming.kicks-ass.net>
-References: <20190727171047.31610-1-longman@redhat.com>
- <20190729085235.GT31381@hirez.programming.kicks-ass.net>
- <20190729142756.GF31425@hirez.programming.kicks-ass.net>
- <2bc722b9-3eff-6d99-4ee7-1f4cab8b6c21@redhat.com>
+        Mon, 29 Jul 2019 11:37:03 -0400
+Received: by mail-pg1-f193.google.com with SMTP id i18so28448485pgl.11
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 08:37:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=4Is/zMn554z9J2hxXreLy6XnJ9I6/lu0GO7rlFj5dIE=;
+        b=CMiwYhMpeKX7zrj+EhHrELRJlZUUODDg6GvKOLaBfZXN5KAyPrQlwIcseruoh2UEDK
+         xbogLEb7lmZfGuO0CEijgBkAzICvFM5Gb6IskDvwdRNha93OUJ2i4YykRzSAqXiTLtTT
+         q6npjS0ceX9rYd3VW6cT/STqIfH8XMDBkMO202zXPTC41za3yHZDRmoD7hwn9pRjUh2j
+         gWEK5ZZBxzNPc8Qo+dTxGgBa8tDhFfYNSyXFglSRO336K5Real7ddhf02f856DbZraSW
+         jGEMygrhtb4JKsJOh1Rr1rgZU5jal0fDc+iRzG4Vh8cQ/oEtRdQ1eMIQJS16VC23+hcG
+         L+/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=4Is/zMn554z9J2hxXreLy6XnJ9I6/lu0GO7rlFj5dIE=;
+        b=Cfs4MbPt9hQa8dhhGo5F00f2qHJPC+P/8Z7PO7ShuLH0fTnkwLv0ZeMmwrI85NeX6v
+         z8zUPbLkSXvrifBeZ2U/YjiMUQZwoXN1yUwZ+hR8V5kB1d7nu12oen/+MSXXClxNwpL2
+         Ss/tse4beeBo6Nz5X17Zybp1lBT+7dD0LW705eLltUVTay6MOivD7TM7rXGw9cZtlM5b
+         /qrscMFxhZDOdGbGtOlSUhq48Qpfw4ytkEISUZMjlHgIIY5VVTkF2s/Msm3oTzyOuWzL
+         1v5BayR1Dx5nFsiGG1sGg/XN0WHxhlWXXg9LTGxnQbmBPrl3T21Ea5Idy6UnOdjcLKb2
+         hbUg==
+X-Gm-Message-State: APjAAAW8jL2y6ItNlXskn9tIvzZUz+wniBPM+p6z47u9JjbWzEozDdFY
+        QblkGNUwWBn5ccysYUa7Bh3auhuz7i0=
+X-Google-Smtp-Source: APXvYqyZ2izgeK8bZ2+UGCtJI2YDwDB+LtG/0K711MB8HWKCgCebhIN2V/5yP2YiYDSfGUrDUp+3zA==
+X-Received: by 2002:a63:9245:: with SMTP id s5mr106816006pgn.123.1564414622544;
+        Mon, 29 Jul 2019 08:37:02 -0700 (PDT)
+Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id z24sm109475644pfr.51.2019.07.29.08.37.00
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 29 Jul 2019 08:37:01 -0700 (PDT)
+Date:   Mon, 29 Jul 2019 08:38:26 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Sibi Sankar <sibis@codeaurora.org>
+Cc:     robh+dt@kernel.org, vkoul@kernel.org, aneela@codeaurora.org,
+        mark.rutland@arm.com, agross@kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, jassisinghbrar@gmail.com,
+        clew@codeaurora.org
+Subject: Re: [PATCH 0/6] Add support for Qualcomm SM8150 and SC7180 SoCs
+Message-ID: <20190729153826.GT7234@tuxbook-pro>
+References: <20190729120633.20451-1-sibis@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2bc722b9-3eff-6d99-4ee7-1f4cab8b6c21@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190729120633.20451-1-sibis@codeaurora.org>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 29, 2019 at 11:22:16AM -0400, Waiman Long wrote:
-> On 7/29/19 10:27 AM, Peter Zijlstra wrote:
+On Mon 29 Jul 05:06 PDT 2019, Sibi Sankar wrote:
 
-> > Also; why then not key off that owner tracking to free the resources
-> > (and leave the struct mm around) and avoid touching this scheduling
-> > hot-path ?
+> This patch series adds SCM, APSS shared mailbox and QMP AOSS PD/clock
+> support on SM8150 and SC7180 SoCs.
 > 
-> The resources are pinned by the reference count. Making a special case
-> will certainly mess up the existing code.
+
+Thanks Sibi, this looks good.
+
+Could you please update the last 5 patches to ensure/maintain sort order
+of the lists they affect.
+
+Regards,
+Bjorn
+
+> Sibi Sankar (6):
+>   soc: qcom: smem: Update max processor count
+>   dt-bindings: firmware: scm: Add SM8150 and SC7180 support
+>   dt-bindings: mailbox: Add APSS shared for SM8150 and SC7180 SoCs
+>   mailbox: qcom: Add support for Qualcomm SM8150 and SC7180 SoCs
+>   dt-bindings: soc: qcom: aoss: Add SM8150 and SC7180 support
+>   soc: qcom: aoss: Add AOSS QMP support
 > 
-> It is actually a problem for systems that are mostly idle. Only the
-> kernel->kernel case needs to be updated. If the CPUs isn't busy running
-> user tasks, a little bit more overhead shouldn't really hurt IMHO.
-
-But when you cannot find a new owner; you can start to strip mm_struct.
-That is, what's stopping you from freeing swap reservations when that
-happens?
-
-That is; I think the moment mm_users drops to 0, you can destroy the
-actual addres space. But you have to keep mm_struct around until
-mm_count goes to 0.
-
-This is going on the comments with mmget() and mmgrab(); they forever
-confuse me.
+>  Documentation/devicetree/bindings/firmware/qcom,scm.txt      | 2 ++
+>  .../devicetree/bindings/mailbox/qcom,apcs-kpss-global.txt    | 2 ++
+>  Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.txt | 5 ++++-
+>  drivers/mailbox/qcom-apcs-ipc-mailbox.c                      | 2 ++
+>  drivers/soc/qcom/qcom_aoss.c                                 | 2 ++
+>  drivers/soc/qcom/smem.c                                      | 2 +-
+>  6 files changed, 13 insertions(+), 2 deletions(-)
+> 
+> -- 
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+> 
