@@ -2,108 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 34AD179943
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:14:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 95E19799BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:17:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730581AbfG2UOY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 16:14:24 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:41282 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730525AbfG2UOW (ORCPT
+        id S1729485AbfG2UQ5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 16:16:57 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:40946 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727302AbfG2UQ4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 16:14:22 -0400
-Received: by mail-pg1-f194.google.com with SMTP id x15so18452937pgg.8;
-        Mon, 29 Jul 2019 13:14:21 -0700 (PDT)
+        Mon, 29 Jul 2019 16:16:56 -0400
+Received: by mail-oi1-f195.google.com with SMTP id w196so24897910oie.7
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 13:16:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=a80YhmstvkFSvpLxuuKLo03NoSn39TaxaZX6joqs8MA=;
-        b=oAW3tFK8X61jpoyXLcaKMiOnJ9TYUngRguXPgieCBQvf7vbjz8n4B8AGc7Yhk1Spov
-         jfeQDaW7HSUgWSQJmGbemqCvojoYvAv060EXEN4coAflTTTFW0sx6k1g9dG+HbyQ+kqe
-         qUQU0/i18Ci/UKnzWdJlUXx8+Ut03VJliGO3Ol7bvYUETBeW1y1xDi04lBy/SZvgDpl6
-         zl+NaAyW5bW5WdKekXOjlSfdQ9oDmyL0jqEAmq32QjWeml/Tl0I1Yc31Je+9sTMrqGj4
-         rjTSOmm/45LqyYqzmWonKjfTI0DCeWT4+80sPZ5FHFaQmYxVJ+gyW3Xw3n7TxC2z+RHd
-         TgfA==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=r8zi81LHOHqEUYJ5h1qiWav8ZTAlVex16b4xeeFlwaI=;
+        b=I6/EVoszemoOmGnO4iFjE+KkZf4mW8yad0zcnup0o2vWzk84+cO5qrk8H0szXoY/yT
+         dF/VG41/bLAp3LCro842eoAFVplvHIxwGBEpTU/93OM6j7gkkopwHpAJvhLbBWUoa2c2
+         ZNOWp8QWsyddeXwnUn00kHkCslGISArM1EWlRfLoh0nYkvglI+yW2KAZhojjjvK85wzI
+         RDRoh+mkhNIob/680owAhI9JomaSkwGmk7B89s2SD8EwAkFlhJplFkrqu57X92lglO0y
+         Kj1ugsHCxSV3muxvPQhnL1vEEgylOpVZ0Uf2YVjK34Vcxy11LZCmMGRZVZyYkR9KurSW
+         VZNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=a80YhmstvkFSvpLxuuKLo03NoSn39TaxaZX6joqs8MA=;
-        b=KI8aa0jgjSkK3Z5dBBMRdyHeYGw3E8+qhepVFpQud6JNPH9PGSdRWT9/DzbhZXvR1K
-         CsGnIEjjEXllFPvk4HusQLsx9aQgl8qx0vaXYUwvVp3Nk5P7Nq+jybRTBFpuBOxXpsOW
-         ai+2A7bBJ53wH097BNaRPAT8WJJEwPii54nWe9ky8WEodndIh+TZOaIbYUb4GyHC5agt
-         x60UBCUf/cxA3r9NVfDgTG+YVq4ddZ5OZ2xO4klIuWOGAG1a8m/drYcK5T252HvlzeSf
-         h6C0wo19A+Nx+YXV2XDgozOk+wYbM1lhmfiSG6/C785G3C5AgF8Bm+ov5kru4+sy0zFH
-         Wi0w==
-X-Gm-Message-State: APjAAAUsIxOxKSWUu52mJp9TYqmHs9yT0msxZWODMLJJwxd46wR6NQ4W
-        dZpd16329kwbsAT2ReyJHhA=
-X-Google-Smtp-Source: APXvYqzHimbts6Pzs9sE75ZW5J3eKE7GTyz7Rq8GUSY5Q6dToWV+ZKL5WQAvZY7dibUphM2oY0krmA==
-X-Received: by 2002:a17:90a:9a83:: with SMTP id e3mr111562668pjp.105.1564431261030;
-        Mon, 29 Jul 2019 13:14:21 -0700 (PDT)
-Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
-        by smtp.gmail.com with ESMTPSA id i74sm122243034pje.16.2019.07.29.13.14.20
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 29 Jul 2019 13:14:20 -0700 (PDT)
-Date:   Mon, 29 Jul 2019 13:15:09 -0700
-From:   Nicolin Chen <nicoleotsuka@gmail.com>
-To:     Daniel Baluta <daniel.baluta@nxp.com>
-Cc:     broonie@kernel.org, l.stach@pengutronix.de, mihai.serban@gmail.com,
-        alsa-devel@alsa-project.org, viorel.suman@nxp.com,
-        timur@kernel.org, shengjiu.wang@nxp.com, angus@akkea.ca,
-        tiwai@suse.com, linux-imx@nxp.com, kernel@pengutronix.de,
-        festevam@gmail.com, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, robh@kernel.org
-Subject: Re: [PATCH v2 4/7] ASoC: dt-bindings: Document dl-mask property
-Message-ID: <20190729201508.GB20594@Asurada-Nvidia.nvidia.com>
-References: <20190728192429.1514-1-daniel.baluta@nxp.com>
- <20190728192429.1514-5-daniel.baluta@nxp.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=r8zi81LHOHqEUYJ5h1qiWav8ZTAlVex16b4xeeFlwaI=;
+        b=ErD9PfVclletSLYSc/r4K+DmnM5WAUsqRQZ3wtxVSHeBI2CNitQ+b8aq8O2/Q7hA3y
+         1RCldfPCRkeQ36SmFjf3TbyKHj4B60Zt2Dun73u1PZyj7RpBfWxtwxT0U7ml3N1j5nOF
+         Uypwogulh0jm7/8Be3XZ4KUIHmpRyJh/OQ4mmG6PseanB0Z3miIQzZECTmwI7WQckRlv
+         WBdAvCQlygpx2uhPIRUpzYuBFlVhPuGAOJGr54kP3PncJqzwFzF03C6xWjjtpONQK5qW
+         V3SOZrVcDOBUnFPVeSs9YJf71+U83sipB44I2J/thooh+G5w7Y0uwI71uQ7H/HQdpM62
+         oAxA==
+X-Gm-Message-State: APjAAAXpyPZu2G++oV2tjCP4Q/bkLGJ7UD+eC1hU5tpQ5wVY7Q2R5NCm
+        pqakVunhtF4H/YpyT7LwbslTUqCzpjmo85gi2GAcbg==
+X-Google-Smtp-Source: APXvYqxQuUTl19e48sL3aGXbBTswfN2yF1G00rWJlxlH7ntf6qvxnBji1ehL0VdV8MXOEHv2+7g2wo55rorywH6+dhw=
+X-Received: by 2002:aca:1803:: with SMTP id h3mr21244210oih.24.1564431415085;
+ Mon, 29 Jul 2019 13:16:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190728192429.1514-5-daniel.baluta@nxp.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20190726231558.175130-1-saravanak@google.com> <20190729093545.kvnqxjkyx4nogddk@vireshk-i7>
+In-Reply-To: <20190729093545.kvnqxjkyx4nogddk@vireshk-i7>
+From:   Saravana Kannan <saravanak@google.com>
+Date:   Mon, 29 Jul 2019 13:16:19 -0700
+Message-ID: <CAGETcx8OBFGgP1-hj717Sk-_N95-kacVsz0yb288n3pej12n1Q@mail.gmail.com>
+Subject: Re: [PATCH v4 0/3] Introduce Bandwidth OPPs for interconnects
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Georgi Djakov <georgi.djakov@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        "Sweeney, Sean" <seansw@qti.qualcomm.com>,
+        David Dai <daidavid1@codeaurora.org>, adharmap@codeaurora.org,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Sibi Sankar <sibis@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Evan Green <evgreen@chromium.org>,
+        Android Kernel Team <kernel-team@android.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jul 28, 2019 at 10:24:26PM +0300, Daniel Baluta wrote:
-> SAI supports up to 8 data lines. This property let the user
-> configure how many data lines should be used per transfer
-> direction (Tx/Rx).
+On Mon, Jul 29, 2019 at 2:35 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+>
+> On 26-07-19, 16:15, Saravana Kannan wrote:
+> > Interconnects and interconnect paths quantify their performance levels in
+> > terms of bandwidth and not in terms of frequency. So similar to how we have
+> > frequency based OPP tables in DT and in the OPP framework, we need
+> > bandwidth OPP table support in DT and in the OPP framework.
+> >
+> > So with the DT bindings added in this patch series, the DT for a GPU
+> > that does bandwidth voting from GPU to Cache and GPU to DDR would look
+> > something like this:
+> >
+> > gpu_cache_opp_table: gpu_cache_opp_table {
+> >       compatible = "operating-points-v2";
+> >
+> >       gpu_cache_3000: opp-3000 {
+> >               opp-peak-KBps = <3000000>;
+> >               opp-avg-KBps = <1000000>;
+> >       };
+> >       gpu_cache_6000: opp-6000 {
+> >               opp-peak-KBps = <6000000>;
+> >               opp-avg-KBps = <2000000>;
+> >       };
+> >       gpu_cache_9000: opp-9000 {
+> >               opp-peak-KBps = <9000000>;
+> >               opp-avg-KBps = <9000000>;
+> >       };
+> > };
+> >
+> > gpu_ddr_opp_table: gpu_ddr_opp_table {
+> >       compatible = "operating-points-v2";
+> >
+> >       gpu_ddr_1525: opp-1525 {
+> >               opp-peak-KBps = <1525000>;
+> >               opp-avg-KBps = <452000>;
+> >       };
+> >       gpu_ddr_3051: opp-3051 {
+> >               opp-peak-KBps = <3051000>;
+> >               opp-avg-KBps = <915000>;
+> >       };
+> >       gpu_ddr_7500: opp-7500 {
+> >               opp-peak-KBps = <7500000>;
+> >               opp-avg-KBps = <3000000>;
+> >       };
+> > };
+> >
+> > gpu_opp_table: gpu_opp_table {
+> >       compatible = "operating-points-v2";
+> >       opp-shared;
+> >
+> >       opp-200000000 {
+> >               opp-hz = /bits/ 64 <200000000>;
+> >       };
+> >       opp-400000000 {
+> >               opp-hz = /bits/ 64 <400000000>;
+> >       };
+> > };
+> >
+> > gpu@7864000 {
+> >       ...
+> >       operating-points-v2 = <&gpu_opp_table>, <&gpu_cache_opp_table>, <&gpu_ddr_opp_table>;
+> >       ...
+> > };
+>
+> One feedback I missed giving earlier. Will it be possible to get some
+> user code merged along with this ? I want to make sure anything we add
+> ends up getting used.
 
-This sounds a bit less persuasive to me as we are adding a
-DT property that's used to describe a hardware connections
-and it would be probably better to mention that the mapping
-between the mask and the data lines could be more flexible
-than consecutive active data lines as you said previously.
+Sibi might be working on doing that for the SDM845 CPUfreq driver.
+Georgi could also change his GPU driver use case to use this BW OPP
+table and required-opps.
 
-> Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
-> ---
->  Documentation/devicetree/bindings/sound/fsl-sai.txt | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/sound/fsl-sai.txt b/Documentation/devicetree/bindings/sound/fsl-sai.txt
-> index 2e726b983845..2b38036a4883 100644
-> --- a/Documentation/devicetree/bindings/sound/fsl-sai.txt
-> +++ b/Documentation/devicetree/bindings/sound/fsl-sai.txt
-> @@ -49,6 +49,13 @@ Optional properties:
->  
->    - big-endian		: Boolean property, required if all the SAI
->  			  registers are big-endian rather than little-endian.
-> +  - fsl,dl-mask		: list of two integers (bitmask, first for RX, second
+The problem is that people don't want to start using this until we
+decide on the DT representation. So it's like a chicken and egg
+situation.
 
-I am leaving this naming to DT maintainer.
-
-> +			  for TX) representing enabled datalines. Bit 0
-> +			  represents first data line, bit 1 represents second
-> +			  data line and so on. Data line is enabled if
-> +			  corresponding bit is set to 1. By default, if property
-> +			  not present, only dataline 0 is enabled for both
-> +			  directions.
-
-To make this patch more convincing, could we add an example
-as well in the Example section of this binding file? Like:
-	/* RX data lines 0/1 and TX data lines 0/2 are connected */
-	fsl,dl-mask = <0x3 0x5>;
+-Saravana
