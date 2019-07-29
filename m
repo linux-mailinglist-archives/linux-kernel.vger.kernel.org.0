@@ -2,71 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6C11798F3
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:11:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 48D197990F
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:13:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730243AbfG2ULq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 16:11:46 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:44508 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727987AbfG2ULo (ORCPT
+        id S1730513AbfG2UMs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 16:12:48 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:40990 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730159AbfG2UMp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 16:11:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=tVzGNh46p11xJCp/QVEqOCFK+AgFdqni/w2NTMqBXpI=; b=ONNUn0+v6UKGefnLp5MlICEj8
-        rs8jlW8TeLmb6brykyu7WcXTpzoSEfnFKN2gctJaqCiYf3EOqHq3hx8B3WnL3+pBaZTx59kERW4/k
-        01EOXsLxSe8YpwCZOi4DlTw19lrVIKWakVQXSx+P7kPfrhjtA5/OMx4SHf33bdCYIeox6Ksbt/tCf
-        j88syn/qIMQNzel7ONs4JM9bF65DxADLWHOubUTPVrsZKg/sakq1GJ/fjoIxJxu5F/giZ6/eTdbzS
-        Q294ksVxVF7Ww7lUoe2qtKQATn96WFumplhPzXjaHOUtzF4kbEHfezrdK+nlUlAV7Wj++0ODviCcC
-        LvmH7Crbw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hsBza-0004j9-5c; Mon, 29 Jul 2019 20:11:34 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 971CE20AF2C00; Mon, 29 Jul 2019 22:11:32 +0200 (CEST)
-Date:   Mon, 29 Jul 2019 22:11:32 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Rik van Riel <riel@surriel.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
-        dietmar.eggemann@arm.com, mingo@redhat.com,
-        morten.rasmussen@arm.com, tglx@linutronix.de,
-        mgorman@techsingularity.net, vincent.guittot@linaro.org
-Subject: Re: [PATCH 03/14] sched,fair: redefine runnable_load_avg as the sum
- of task_h_load
-Message-ID: <20190729201132.GS31398@hirez.programming.kicks-ass.net>
-References: <20190722173348.9241-1-riel@surriel.com>
- <20190722173348.9241-4-riel@surriel.com>
+        Mon, 29 Jul 2019 16:12:45 -0400
+Received: by mail-ot1-f68.google.com with SMTP id o101so63869607ota.8
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 13:12:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rLtTrMx9bNgV2e5WT+U4GbHrtwL6tZTxsShVYrHD6s8=;
+        b=tGszBRzPbi6dD+NRM2bN3t9p9ftDIDFlandOwt8DpUAVkYZ4vU9DgEhnuPtU35uxQ/
+         KJflcPgXXlm6X0pPEHjnN6jl2/WiXLYOc8kTsFgZjm52JZb//9cc8NSlJ0h/z9Gntkww
+         IHh1MZfFJO8t/jlHNiHPzn2KUh++WFzQaiWc7R7+sEi8mVNA/wgN1EoPKSVvlaWeX9U4
+         Cqmw8jl8KuzAg9Pto9YHhmzF1ClROkAaxGZTDhB2AgrMQ6fC9wMp2k2yFzK7yUsFbviP
+         jHFwQ0oNY3I0nJ4xOe0eVdhRJm6bn2zkQQhWvisj0JWCFFjM/ME1xtG/G/UGYMcwvYHp
+         hFtw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rLtTrMx9bNgV2e5WT+U4GbHrtwL6tZTxsShVYrHD6s8=;
+        b=tJ6cNEP7m6bcJMAMU8aU64XSaPaBJvfLXd2mE9XzLCQiMBsulf10/6oPWU+g6w5StC
+         +x7adSolJe2MibHe+Q0wN8+G7HGsKl54D4+SE9UyI3LJvy9e6UTDv4gbuQ+x763R0qjr
+         3ghxcxDj8clh2TKn0fBWqiSBNq6YX2hpkd0s3mNNwo3yPFQ05h25YZ3wvx0a5zfanRgN
+         inDqucto24EBUXCTlYWhxPAf1AZ8Zdbkd0zLQUOYEWkZwprKkdeNxFYGRisfFIwiGuQd
+         6Fr/jpAzXRim0VDM04Kiu2Pdzgz1RF8D1kLFmRbT/ognq/kdoEUaD9v92++Rz/OhH8sR
+         SD3A==
+X-Gm-Message-State: APjAAAW7C3v7LlJA5SDHANx++pRnGHyfRsVchvF+X4c0r7Kx3k43otE0
+        iRTx89Fgn5OXvqcDwZA2FNJMnCI72ccfXOjDFxhLdg==
+X-Google-Smtp-Source: APXvYqyalfL7uKo9yflW1Pyt9NtQK1vzEzGUhuLM63HRXQD3JmtpxZUwdeQTJ4TkIvAAhjMpgK7mWf7IUvOUuGB9nzw=
+X-Received: by 2002:a9d:6256:: with SMTP id i22mr4789080otk.139.1564431164859;
+ Mon, 29 Jul 2019 13:12:44 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190722173348.9241-4-riel@surriel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190703011020.151615-1-saravanak@google.com> <20190717103220.f7cys267hq23fbsb@vireshk-i7>
+ <CAGETcx-tbjVzRKW8D-564zgNOhrA_z-NC1q5U70bhoUDBhp6VA@mail.gmail.com>
+ <20190718053746.64drmonk72vwnt4s@vireshk-i7> <CAGETcx_-=b3An9YdxLUnZap=0iaeczvWTEnw65FMLU8BwA3HfQ@mail.gmail.com>
+ <20190729092454.6lfqzmhkvrhpimsp@vireshk-i7>
+In-Reply-To: <20190729092454.6lfqzmhkvrhpimsp@vireshk-i7>
+From:   Saravana Kannan <saravanak@google.com>
+Date:   Mon, 29 Jul 2019 13:12:08 -0700
+Message-ID: <CAGETcx_7fK20VZ6Zn07Z+Ran1_O7gSPohck_tg-aEr5oONQ5iA@mail.gmail.com>
+Subject: Re: [PATCH v3 0/6] Introduce Bandwidth OPPs for interconnect paths
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Georgi Djakov <georgi.djakov@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        "Sweeney, Sean" <seansw@qti.qualcomm.com>,
+        David Dai <daidavid1@codeaurora.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Sibi Sankar <sibis@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Evan Green <evgreen@chromium.org>,
+        Android Kernel Team <kernel-team@android.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 22, 2019 at 01:33:37PM -0400, Rik van Riel wrote:
-> The runnable_load magic is used to quickly propagate information about
-> runnable tasks up the hierarchy of runqueues. The runnable_load_avg is
-> mostly used for the load balancing code, which only examines the value at
-> the root cfs_rq.
-> 
-> Redefine the root cfs_rq runnable_load_avg to be the sum of task_h_loads
-> of the runnable tasks. This works because the hierarchical runnable_load of
-> a task is already equal to the task_se_h_load today. This provides enough
-> information to the load balancer.
-> 
-> The runnable_load_avg of the cgroup cfs_rqs does not appear to be
-> used for anything, so don't bother calculating those.
-> 
-> This removes one of the things that the code currently traverses the
-> cgroup hierarchy for, and getting rid of it brings us one step closer
-> to a flat runqueue for the CPU controller.
+On Mon, Jul 29, 2019 at 2:24 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+>
+> On 18-07-19, 21:12, Saravana Kannan wrote:
+> > On Wed, Jul 17, 2019 at 10:37 PM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> > > I would like
+> > > to put this data in the GPU OPP table only. What about putting a
+> > > range in the GPU OPP table for the Bandwidth if it can change so much
+> > > for the same frequency.
+> >
+> > I don't think the range is going to work.
+>
+> Any specific reason for that ?
 
-Nice!
+The next sentence was literally explaining this :) Fine to debate
+that, but ignoring that and asking this question is kinda funny.
+
+> > If a GPU is doing purely
+> > computational work, it's not unreasonable for it to vote for the
+> > lowest bandwidth for any GPU frequency.
+>
+> I think that is fine, but if the GPU is able to find how much
+> bandwidth it needs why can't it just pass that value without needing
+> to have another OPP table for the path ?
+
+You were asking this question in the context of "can the GPU OPP just
+list all the range of bandwidth it might use per GPU frequency". My point
+is that the range would be useless because it would the entire
+available bandwidth range (because purely compute work might not need
+any bandwidth).
+
+Whereas, what the GPU's algorithm actually needs might be the list of
+"useful" bandwidth levels to use.
+
+Also, as we add more ICC request properties, this range idea will not scale.
+
+-Saravana
