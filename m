@@ -2,140 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3D537966B
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:51:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EAE5E79758
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:59:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403875AbfG2Tvj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 15:51:39 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:40420 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390587AbfG2Tvg (ORCPT
+        id S2403954AbfG2TxC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 15:53:02 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:42556 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2403808AbfG2Twt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:51:36 -0400
-Received: by mail-lj1-f194.google.com with SMTP id m8so26160688lji.7
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 12:51:35 -0700 (PDT)
+        Mon, 29 Jul 2019 15:52:49 -0400
+Received: by mail-pg1-f195.google.com with SMTP id t132so28763559pgb.9;
+        Mon, 29 Jul 2019 12:52:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=El7Ib0jTQtxwv9EQk3d/9hKJrGZteddjh0+HIjhP2fo=;
-        b=kQ7u2Z5De3ynsZA4y1P68rxHq30RnVHHlC09c4hOT6vJoDwyIv6DSwaSTbaVAM92Pv
-         1TahDbRIHgs/SWIeE6HzY6g9xHQ51ZQ5zZYicb15lxBgunoQ/egqY4zSsFVzcZvsJ9z6
-         /jkH3fkKht0WAtOabiND7dhBWBZLBAmy/ckrfV3RVnvJEODoamQy182/Y1NfIbPyZbd/
-         1ZUE+uEJRDrgK63qsJzjL0eMxk9Gtdfdtrp+7Ny0zciaIr0gjghMGsvkVFZhTqlbo46e
-         jnp85j0bXEkkyE7GICxMVSEZitxSjBtcaBUblR9nc6GmO5npRlHqhqNnxh44LsNKm9OO
-         VePA==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=uSaHP0QqkD0s9itI8zThvuVWmdKrdr4qQiU1/5TRtVY=;
+        b=KLl5ZrY+FHLEnaKKmPNzNyRaXomnJvIlw5WwWHtjyFMT3Em1Sf+5n4R84/NetDIyZc
+         nBj6tmZ+q6nz2ff7EtN+W3ZVMT6lbaIDPN/soMcRG777RJm9G9Yxi0W9GHU01/chwaXu
+         SD3X37AmZ9P9xvlFUv+QIPKC8akkJ/oEZEVgWA6c/tXpn4Go79aAkojC7csVd6cRhUtz
+         8MQ4cAAGFSMjXAYldJnyz0de6asyFctxu5mYG0rbswk/RfN2h5nmyErWnkIum/GfdSxC
+         GitLjKNvnV3j9qb6OebkqQWOD+jqS/KNHW0IFGqEtbe813XRpN6UKWzyztu9xPC0dvcc
+         5irA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=El7Ib0jTQtxwv9EQk3d/9hKJrGZteddjh0+HIjhP2fo=;
-        b=kARBh3RWHzVVrcKJnnYXfIeWro8MyuJVGawQRnTnarFxdrUm9v4bRAtk2QZ41muYeJ
-         vPr4DNf99BVEnS56KEjY3lepv0qCHAfu6XjSteHbunCa5UJ+7lKzFKye66qCTOnG+uqu
-         /YSDaytI6Ny9c03GrlL+EpqM6qCblBThsxYA8Aj0lAQS/4t4aaaDA0z4YyISvudQ8UPH
-         HLga87IbkOOxaOWHpcpViNHfuiBldCSpmlEMp/+3nmpGkgoGmR3pK6PPjIJdrugxhFw0
-         cQR13p9sYjshuKY77QEE6RJIOzJCtJgaBs7ojbLiClx0FvMD5IValzLwyrwtb+Ue6Bf4
-         JCxw==
-X-Gm-Message-State: APjAAAWpG21fF7u/lD/hVor4Bb5z5RUQ6UA+yztxXLoXrbCads7YyaqR
-        Q3p8exTlT95YQttw20GTgopg7YzG
-X-Google-Smtp-Source: APXvYqwmerTp9GT9ypUFcw81F3w6Ua2ebUM6nBiNjoQILyLAd8+1+ULuFfpyzKPNNcwa9HX4Oh8pTw==
-X-Received: by 2002:a2e:9048:: with SMTP id n8mr12228496ljg.37.1564429895116;
-        Mon, 29 Jul 2019 12:51:35 -0700 (PDT)
-Received: from localhost (customer-145-14-112-32.stosn.net. [145.14.112.32])
-        by smtp.gmail.com with ESMTPSA id y12sm12077703lfy.36.2019.07.29.12.51.34
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=uSaHP0QqkD0s9itI8zThvuVWmdKrdr4qQiU1/5TRtVY=;
+        b=JkVcvrJW8xhxkvwVQwlPukLanoan8eVvkKVpzn+El2lsOCPgjzyZrXm5kMqYaiBYlS
+         /mjw4MbzBZwQX1XZEfeVWX3Fc0ILnxfv9H0nPxH/8yrL32nIsei87hAsIwfCqcb/ISMf
+         5A8Mhcy5fqdZiyYb2YBtHbLOnYgkwReUMSw77EcFcfbsWIsOpIeTMciVeT49xJUpcEv5
+         G0OmyWOWRXO9hwntQRoE+Davs8tC/Jed+Ezs7ZC4+AsAZwFDXnB0w/KKwC324DgGQWlc
+         9/nj2ksTO5lVnWD0aURAuqjZV0JtYjQprYcY6nnnZvPbWnxczaJCX5uOUUoqe5OPSwVV
+         AAHA==
+X-Gm-Message-State: APjAAAWKLe6Z1tQtBhrIuhjULkCrr5CQbdW/mN903K6OqOraD9t04sjy
+        w+aIKX9+/DIuFN+Ife7451/dTPqS
+X-Google-Smtp-Source: APXvYqwK+8MFBJYhqU57T1JP6Eg7Bn/WXrT3D67wHlKHTUcyE6NiMd/0soZIJqdj7gB8RTNU9kbTug==
+X-Received: by 2002:a63:1f1b:: with SMTP id f27mr10071440pgf.233.1564429967729;
+        Mon, 29 Jul 2019 12:52:47 -0700 (PDT)
+Received: from localhost.lan (c-67-185-54-80.hsd1.wa.comcast.net. [67.185.54.80])
+        by smtp.gmail.com with ESMTPSA id z12sm43983750pfn.29.2019.07.29.12.52.46
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 29 Jul 2019 12:51:34 -0700 (PDT)
-Date:   Mon, 29 Jul 2019 21:51:34 +0200
-From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
-        <niklas.soderlund@ragnatech.se>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Kevin Hilman <khilman@kernel.org>,
-        Olof Johansson <olof@lixom.net>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: Add Geert as Renesas SoC Co-Maintainer
-Message-ID: <20190729195134.GF3186@bigcity.dyn.berto.se>
-References: <20190729175658.13672-1-geert+renesas@glider.be>
+        Mon, 29 Jul 2019 12:52:47 -0700 (PDT)
+From:   Andrey Smirnov <andrew.smirnov@gmail.com>
+To:     linux-serial@vger.kernel.org
+Cc:     Stefan Agner <stefan.agner@toradex.com>,
+        Max Krummenacher <max.krummenacher@toradex.com>,
+        Stefan Agner <stefan@agner.ch>,
+        Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>,
+        Chris Healy <cphealy@gmail.com>,
+        Cory Tusar <cory.tusar@zii.aero>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, linux-imx@nxp.com,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 02/24] tty: serial: fsl_lpuart: flush receive FIFO after overruns
+Date:   Mon, 29 Jul 2019 12:52:04 -0700
+Message-Id: <20190729195226.8862-3-andrew.smirnov@gmail.com>
+X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20190729195226.8862-1-andrew.smirnov@gmail.com>
+References: <20190729195226.8862-1-andrew.smirnov@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190729175658.13672-1-geert+renesas@glider.be>
-User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Geert, Simon,
+From: Stefan Agner <stefan.agner@toradex.com>
 
-On 2019-07-29 19:56:58 +0200, Geert Uytterhoeven wrote:
-> At the end of the v5.3 upstream kernel development cycle, Simon will be
-> stepping down from his role as Renesas SoC maintainer.  Starting with
-> the v5.4 development cycle, Geert is taking over this role.
+After overruns the FIFO pointers become misaligned. This
+typically shows by characters still being stuck in the FIFO
+despite the empty flag being asserted. After the first
+assertion of the overrun flag the empty flag still seems to
+indicate FIFO state correctly and all data can be read.
+However, after another overrun assertion the FIFO seems to
+be off by one such that the last received character is still
+in the FIFO (despite the empty flag being asserted).
 
-I would like to thank Simon for his good humor and support in all my 
-interactions with him as a maintainer. And wish Geert the best of luck 
-picking up the baton, not that you need it I know you will be just as 
-fun to work with.
+Flushing the receive FIFO reinitializes pointers. Hence it
+is recommended to flush the FIFO after overruns, see also:
+https://community.nxp.com/thread/321175
 
-> 
-> Add Geert as a co-maintainer, and add his git repository and branch.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Hence, on assertion of the overrun flag read the remaining
+data from the FIFO and flush buffers.
 
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Signed-off-by: Stefan Agner <stefan.agner@toradex.com>
+Acked-by: Max Krummenacher <max.krummenacher@toradex.com>
+Cc: Stefan Agner <stefan@agner.ch>
+Cc: Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>
+Cc: Chris Healy <cphealy@gmail.com>
+Cc: Cory Tusar <cory.tusar@zii.aero>
+Cc: Lucas Stach <l.stach@pengutronix.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jiri Slaby <jslaby@suse.com>
+Cc: linux-imx@nxp.com
+Cc: linux-serial@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+---
+ drivers/tty/serial/fsl_lpuart.c | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
 
-> ---
-> Stephen: Can you please add my branch to linux-next, after Simon's
-> 	 branch, which may still receive fixes for v5.3?
-> 
-> 	 Thanks!
-> ---
->  MAINTAINERS | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 6426db5198f05377..6de667021591fb52 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -2155,10 +2155,12 @@ F:	Documentation/devicetree/bindings/arm/realtek.txt
->  
->  ARM/RENESAS ARM64 ARCHITECTURE
->  M:	Simon Horman <horms@verge.net.au>
-> +M:	Geert Uytterhoeven <geert+renesas@glider.be>
->  M:	Magnus Damm <magnus.damm@gmail.com>
->  L:	linux-renesas-soc@vger.kernel.org
->  Q:	http://patchwork.kernel.org/project/linux-renesas-soc/list/
->  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git next
-> +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git next
->  S:	Supported
->  F:	arch/arm64/boot/dts/renesas/
->  F:	Documentation/devicetree/bindings/arm/renesas.yaml
-> @@ -2269,10 +2271,12 @@ F:	drivers/media/platform/s5p-mfc/
->  
->  ARM/SHMOBILE ARM ARCHITECTURE
->  M:	Simon Horman <horms@verge.net.au>
-> +M:	Geert Uytterhoeven <geert+renesas@glider.be>
->  M:	Magnus Damm <magnus.damm@gmail.com>
->  L:	linux-renesas-soc@vger.kernel.org
->  Q:	http://patchwork.kernel.org/project/linux-renesas-soc/list/
->  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git next
-> +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git next
->  S:	Supported
->  F:	arch/arm/boot/dts/emev2*
->  F:	arch/arm/boot/dts/gr-peach*
-> -- 
-> 2.17.1
-> 
-
+diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c
+index 586b3513a6b0..edb1a9425fac 100644
+--- a/drivers/tty/serial/fsl_lpuart.c
++++ b/drivers/tty/serial/fsl_lpuart.c
+@@ -798,7 +798,7 @@ static irqreturn_t lpuart_txint(int irq, void *dev_id)
+ static irqreturn_t lpuart_rxint(int irq, void *dev_id)
+ {
+ 	struct lpuart_port *sport = dev_id;
+-	unsigned int flg, ignored = 0;
++	unsigned int flg, ignored = 0, overrun = 0;
+ 	struct tty_port *port = &sport->port.state->port;
+ 	unsigned long flags;
+ 	unsigned char rx, sr;
+@@ -825,7 +825,7 @@ static irqreturn_t lpuart_rxint(int irq, void *dev_id)
+ 				sport->port.icount.frame++;
+ 
+ 			if (sr & UARTSR1_OR)
+-				sport->port.icount.overrun++;
++				overrun++;
+ 
+ 			if (sr & sport->port.ignore_status_mask) {
+ 				if (++ignored > 100)
+@@ -852,6 +852,17 @@ static irqreturn_t lpuart_rxint(int irq, void *dev_id)
+ 	}
+ 
+ out:
++	if (overrun) {
++		sport->port.icount.overrun += overrun;
++
++		/*
++		 * Overruns cause FIFO pointers to become missaligned.
++		 * Flushing the receive FIFO reinitializes the pointers.
++		 */
++		writeb(UARTCFIFO_RXFLUSH, sport->port.membase + UARTCFIFO);
++		writeb(UARTSFIFO_RXOF, sport->port.membase + UARTSFIFO);
++	}
++
+ 	spin_unlock_irqrestore(&sport->port.lock, flags);
+ 
+ 	tty_flip_buffer_push(port);
 -- 
-Regards,
-Niklas Söderlund
+2.21.0
+
