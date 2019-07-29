@@ -2,123 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E92078A74
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 13:27:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A162078A87
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 13:29:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387709AbfG2L1H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 07:27:07 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:42923 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387664AbfG2L1H (ORCPT
+        id S2387692AbfG2L3H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 07:29:07 -0400
+Received: from gateway21.websitewelcome.com ([192.185.45.38]:34125 "EHLO
+        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2387676AbfG2L3H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 07:27:07 -0400
-Received: by mail-wr1-f66.google.com with SMTP id x1so11517440wrr.9
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 04:27:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=XY9MnmnbN3bR4WP4q1Vs7UayuQZkuHXaeJmGe0r/6yw=;
-        b=XeA2XRTsnDiUkSjB8bCe8Zqi8r2puQr83xDNS2z/n7AKZncRLoQcsDdyg9xEl523JI
-         5lzcK5NxkiCwuNC39bsGji7PxoV1iqAZ9q5Fj80acoBQ8T45aya8VCk8sU93kI7gRS96
-         w5N/FdDNrAp8JVfifPy6Cd+L0/gfygNHgaOubW9K/t0YLuLfF9TvpuIBPCSOn44YmLif
-         5a3nXC4rXZKqGb4Ed8fIGU9AjjJsU9CbS1JDj2EbLtQYQpBiC8/mlQ9TyE8rEpkPFEFv
-         WJEkhRprp2atmHG6CQdbuzYhzwYS5nDPzQE8oU42Uw77sWN522KiXHQOpjHudCC1zVbV
-         tvgA==
-X-Gm-Message-State: APjAAAW8l7dPTMAYxIfTCFa2Jn3O3JrEkyZd6VtzQFsLquZO4qgn6D1l
-        /VhHPqd7AlQlGewdhuDawm0sWQ==
-X-Google-Smtp-Source: APXvYqy37KzTziTHSZm+RtNAM7/AEf2dZOKvrB2ThYc3rZPvpWRBF3G4cnA6pdkbGbsQuSRbXji5/w==
-X-Received: by 2002:a5d:4484:: with SMTP id j4mr120094209wrq.143.1564399625253;
-        Mon, 29 Jul 2019 04:27:05 -0700 (PDT)
-Received: from localhost.localdomain ([151.29.237.107])
-        by smtp.gmail.com with ESMTPSA id p18sm60039427wrm.16.2019.07.29.04.27.04
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 29 Jul 2019 04:27:04 -0700 (PDT)
-Date:   Mon, 29 Jul 2019 13:27:02 +0200
-From:   Juri Lelli <juri.lelli@redhat.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     mingo@kernel.org, linux-kernel@vger.kernel.org,
-        dietmar.eggemann@arm.com, luca.abeni@santannapisa.it,
-        bristot@redhat.com, balsini@android.com, dvyukov@google.com,
-        tglx@linutronix.de, vpillai@digitalocean.com, rostedt@goodmis.org
-Subject: Re: [RFC][PATCH 04/13] sched/{rt,deadline}: Fix set_next_task vs
- pick_next_task
-Message-ID: <20190729112702.GA8927@localhost.localdomain>
-References: <20190726145409.947503076@infradead.org>
- <20190726161357.579899041@infradead.org>
- <20190729092519.GR25636@localhost.localdomain>
- <20190729111510.GD31398@hirez.programming.kicks-ass.net>
+        Mon, 29 Jul 2019 07:29:07 -0400
+Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
+        by gateway21.websitewelcome.com (Postfix) with ESMTP id EE296400CBF9A
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 06:29:05 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id s3pxhKHHQiQers3pxhjRfK; Mon, 29 Jul 2019 06:29:05 -0500
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=nTNq8k0oMaS+PPNp0AqzfLae8nXfzeNscQDCOrTOOdA=; b=ls/83NAkEaXSGpDkCGJhhzQXmg
+        vhrXJ8dTfh17VYQYN2BgzQoyPHoCNjCemvTZ+Iq7rkUscRfwa7GlQmF38GnaxiUwKhgQeFW97IKJm
+        x2gcsRC29B18WF8wyaDo2UiCY+x6gpSl4B/ZSZt33xgIn+q7YBQVk8xB6Z13JNSnttExV2zX7N8J5
+        6qsBrJjgJVYHxygEsf3emqIhFjxvjeN3Jj4brrr9g+lnv/7kQQtcydf4ciwoe2mqfWz7WjMNUAK8U
+        p2FQH48AXxrPtCB3MRUf46dZk0PgIn1e632NMa1jFlzgI6BBFp+Mv2pDf84abUNLMap60DvWMFrd/
+        4E7P8TVg==;
+Received: from [187.192.11.120] (port=47322 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1hs3pw-000Joy-Pw; Mon, 29 Jul 2019 06:29:04 -0500
+Date:   Mon, 29 Jul 2019 06:29:02 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Michael Cyr <mikecyr@linux.ibm.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Kees Cook <keescook@chromium.org>
+Subject: [PATCH] scsi: ibmvscsi_tgt: Mark expected switch fall-throughs
+Message-ID: <20190729112902.GA3768@embeddedor>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190729111510.GD31398@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 187.192.11.120
+X-Source-L: No
+X-Exim-ID: 1hs3pw-000Joy-Pw
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [187.192.11.120]:47322
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 30
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29/07/19 13:15, Peter Zijlstra wrote:
-> On Mon, Jul 29, 2019 at 11:25:19AM +0200, Juri Lelli wrote:
-> > Hi,
-> > 
-> > On 26/07/19 16:54, Peter Zijlstra wrote:
-> > > Because pick_next_task() implies set_curr_task() and some of the
-> > > details haven't matter too much, some of what _should_ be in
-> > > set_curr_task() ended up in pick_next_task, correct this.
-> > > 
-> > > This prepares the way for a pick_next_task() variant that does not
-> > > affect the current state; allowing remote picking.
-> > > 
-> > > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> > > ---
-> > >  kernel/sched/deadline.c |   23 ++++++++++++-----------
-> > >  kernel/sched/rt.c       |   27 ++++++++++++++-------------
-> > >  2 files changed, 26 insertions(+), 24 deletions(-)
-> > > 
-> > > --- a/kernel/sched/deadline.c
-> > > +++ b/kernel/sched/deadline.c
-> > > @@ -1694,12 +1694,21 @@ static void start_hrtick_dl(struct rq *r
-> > >  }
-> > >  #endif
-> > >  
-> > > -static inline void set_next_task(struct rq *rq, struct task_struct *p)
-> > > +static void set_next_task_dl(struct rq *rq, struct task_struct *p)
-> > >  {
-> > >  	p->se.exec_start = rq_clock_task(rq);
-> > >  
-> > >  	/* You can't push away the running task */
-> > >  	dequeue_pushable_dl_task(rq, p);
-> > > +
-> > > +	if (hrtick_enabled(rq))
-> > > +		start_hrtick_dl(rq, p);
-> > > +
-> > > +	if (rq->curr->sched_class != &dl_sched_class)
-> > > +		update_dl_rq_load_avg(rq_clock_pelt(rq), rq, 0);
-> > > +
-> > > +	if (rq->curr != p)
-> > > +		deadline_queue_push_tasks(rq);
-> > 
-> > It's a minor thing, but I was wondering why you added the check on curr.
-> > deadline_queue_push_tasks() already checks if are there pushable tasks,
-> > plus curr can still be of a different class at this point?
-> 
-> Hmm, so by moving that code into set_next_task() it is exposed to the:
-> 
->   if (queued)
->     deuque_task();
->   if (running)
->     put_prev_task();
-> 
->   /* do stuff */
-> 
->   if (queued)
->     enqueue_task();
->   if (running)
->     set_next_task();
-> 
-> patter from core.c; and in that case nothing changes. That said; I
-> might've gotten it wrong.
+Mark switch cases where we are expecting to fall through.
 
-Right. But, I was wondering about the __schedule()->pick_next_task()
-case, where, say, prev (rq->curr) is RT/CFS and next (p) is DEADLINE.
+This patch fixes the following warnings (Building: powerpc allyesconfig):
+
+drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c: In function 'ibmvscsis_adapter_info':
+drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c:1582:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+   if (connection_broken(vscsi))
+      ^
+drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c:1584:2: note: here
+  default:
+  ^~~~~~~
+drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c: In function 'ibmvscsis_ping_response':
+drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c:2494:16: warning: this statement may fall through [-Wimplicit-fallthrough=]
+   vscsi->flags |= CLIENT_FAILED;
+drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c:2495:2: note: here
+  case H_DROPPED:
+  ^~~~
+drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c:2496:16: warning: this statement may fall through [-Wimplicit-fallthrough=]
+   vscsi->flags |= RESPONSE_Q_DOWN;
+drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c:2497:2: note: here
+  case H_REMOTE_PARM:
+  ^~~~
+
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c b/drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c
+index 7f9535392a93..a929fe76102b 100644
+--- a/drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c
++++ b/drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c
+@@ -1581,6 +1581,7 @@ static long ibmvscsis_adapter_info(struct scsi_info *vscsi,
+ 	case H_PERMISSION:
+ 		if (connection_broken(vscsi))
+ 			flag_bits = (RESPONSE_Q_DOWN | CLIENT_FAILED);
++		/* Fall through */
+ 	default:
+ 		dev_err(&vscsi->dev, "adapter_info: h_copy_rdma to client failed, rc %ld\n",
+ 			rc);
+@@ -2492,8 +2493,10 @@ static long ibmvscsis_ping_response(struct scsi_info *vscsi)
+ 		break;
+ 	case H_CLOSED:
+ 		vscsi->flags |= CLIENT_FAILED;
++		/* Fall through */
+ 	case H_DROPPED:
+ 		vscsi->flags |= RESPONSE_Q_DOWN;
++		/* Fall through */
+ 	case H_REMOTE_PARM:
+ 		dev_err(&vscsi->dev, "ping_response: h_send_crq failed, rc %ld\n",
+ 			rc);
+-- 
+2.22.0
+
