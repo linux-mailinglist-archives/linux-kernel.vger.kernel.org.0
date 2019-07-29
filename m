@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FA7979640
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:50:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 47B6979642
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:50:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390649AbfG2TuJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 15:50:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40922 "EHLO mail.kernel.org"
+        id S2390662AbfG2TuO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 15:50:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41060 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389663AbfG2TuH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:50:07 -0400
+        id S2389880AbfG2TuN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:50:13 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4A7452171F;
-        Mon, 29 Jul 2019 19:50:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9BEE92054F;
+        Mon, 29 Jul 2019 19:50:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564429805;
-        bh=FfBSftjkxA4VBM6W0bbDtLYMoU+8RUCpM3t+Nkg30sg=;
+        s=default; t=1564429812;
+        bh=YT0Kd2W3fZQBfMb/+keZDlejzkDQF5rC1uaRgJMDZnc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vdyaECKvL9grGwGAScU//wnQM3sAISpAq2X/wFvyfGkCkls1oNI+UeVsN39v7z1Dv
-         Hl1BvTQuJAXGXMp0uccTcuWVkqzWMF8xKRKn7Vy3KCm9ttkejo6EFjOL+FixQcQ6W6
-         vf2pBSrUhyA0PDR7idPNa5Q9p7iXf7BisPF6tJL0=
+        b=fy9u3dYT5jwhtfUutmNxIanG/csVgkgXFbATn1hHWLCDJIW4qq3jmtsHXgBpI9R6P
+         LVqJXy2ja92Slm5lQ9LMp47JXMGkluLR2K8ph8kAmR4vQwyp3x4QJkTXwltE1P9/4r
+         ntlUN0NQZbsHQ+7C7SBtBujfx86GVXxk8Y6U3nr8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>,
-        Richard Weinberger <richard@nod.at>,
+        stable@vger.kernel.org, Sahitya Tummala <stummala@codeaurora.org>,
+        Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 101/215] um: Silence lockdep complaint about mmap_sem
-Date:   Mon, 29 Jul 2019 21:21:37 +0200
-Message-Id: <20190729190756.571000194@linuxfoundation.org>
+Subject: [PATCH 5.2 102/215] f2fs: fix is_idle() check for discard type
+Date:   Mon, 29 Jul 2019 21:21:38 +0200
+Message-Id: <20190729190756.728874297@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190729190739.971253303@linuxfoundation.org>
 References: <20190729190739.971253303@linuxfoundation.org>
@@ -44,109 +44,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 80bf6ceaf9310b3f61934c69b382d4912deee049 ]
+[ Upstream commit 56659ce838456c6f2315ce8a4bd686ac4b23e9d1 ]
 
-When we get into activate_mm(), lockdep complains that we're doing
-something strange:
+The discard thread should issue upto dpolicy->max_requests at once
+and wait for all those discard requests at once it reaches
+dpolicy->max_requests. It should then sleep for dpolicy->min_interval
+timeout before issuing the next batch of discard requests. But in the
+current code of is_idle(), it checks for dcc_info->queued_discard and
+aborts issuing the discard batch of max_requests. This
+dcc_info->queued_discard will be true always once one discard command
+is issued.
 
-    WARNING: possible circular locking dependency detected
-    5.1.0-10252-gb00152307319-dirty #121 Not tainted
-    ------------------------------------------------------
-    inside.sh/366 is trying to acquire lock:
-    (____ptrval____) (&(&p->alloc_lock)->rlock){+.+.}, at: flush_old_exec+0x703/0x8d7
+It is thus resulting into this type of discard request pattern -
 
-    but task is already holding lock:
-    (____ptrval____) (&mm->mmap_sem){++++}, at: flush_old_exec+0x6c5/0x8d7
+- Issue discard request#1
+- is_idle() returns false, discard thread waits for request#1 and then
+  sleeps for min_interval 50ms.
+- Issue discard request#2
+- is_idle() returns false, discard thread waits for request#2 and then
+  sleeps for min_interval 50ms.
+- and so on for all other discard requests, assuming f2fs is idle w.r.t
+  other conditions.
 
-    which lock already depends on the new lock.
+With this fix, the pattern will look like this -
 
-    the existing dependency chain (in reverse order) is:
+- Issue discard request#1
+- Issue discard request#2
+  and so on upto max_requests of 8
+- Issue discard request#8
+- wait for min_interval 50ms.
 
-    -> #1 (&mm->mmap_sem){++++}:
-           [...]
-           __lock_acquire+0x12ab/0x139f
-           lock_acquire+0x155/0x18e
-           down_write+0x3f/0x98
-           flush_old_exec+0x748/0x8d7
-           load_elf_binary+0x2ca/0xddb
-           [...]
-
-    -> #0 (&(&p->alloc_lock)->rlock){+.+.}:
-           [...]
-           __lock_acquire+0x12ab/0x139f
-           lock_acquire+0x155/0x18e
-           _raw_spin_lock+0x30/0x83
-           flush_old_exec+0x703/0x8d7
-           load_elf_binary+0x2ca/0xddb
-           [...]
-
-    other info that might help us debug this:
-
-     Possible unsafe locking scenario:
-
-           CPU0                    CPU1
-           ----                    ----
-      lock(&mm->mmap_sem);
-                                   lock(&(&p->alloc_lock)->rlock);
-                                   lock(&mm->mmap_sem);
-      lock(&(&p->alloc_lock)->rlock);
-
-     *** DEADLOCK ***
-
-    2 locks held by inside.sh/366:
-     #0: (____ptrval____) (&sig->cred_guard_mutex){+.+.}, at: __do_execve_file+0x12d/0x869
-     #1: (____ptrval____) (&mm->mmap_sem){++++}, at: flush_old_exec+0x6c5/0x8d7
-
-    stack backtrace:
-    CPU: 0 PID: 366 Comm: inside.sh Not tainted 5.1.0-10252-gb00152307319-dirty #121
-    Stack:
-     [...]
-    Call Trace:
-     [<600420de>] show_stack+0x13b/0x155
-     [<6048906b>] dump_stack+0x2a/0x2c
-     [<6009ae64>] print_circular_bug+0x332/0x343
-     [<6009c5c6>] check_prev_add+0x669/0xdad
-     [<600a06b4>] __lock_acquire+0x12ab/0x139f
-     [<6009f3d0>] lock_acquire+0x155/0x18e
-     [<604a07e0>] _raw_spin_lock+0x30/0x83
-     [<60151e6a>] flush_old_exec+0x703/0x8d7
-     [<601a8eb8>] load_elf_binary+0x2ca/0xddb
-     [...]
-
-I think it's because in exec_mmap() we have
-
-	down_read(&old_mm->mmap_sem);
-...
-        task_lock(tsk);
-...
-	activate_mm(active_mm, mm);
-	(which does down_write(&mm->mmap_sem))
-
-I'm not really sure why lockdep throws in the whole knowledge
-about the task lock, but it seems that old_mm and mm shouldn't
-ever be the same (and it doesn't deadlock) so tell lockdep that
-they're different.
-
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-Signed-off-by: Richard Weinberger <richard@nod.at>
+Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/um/include/asm/mmu_context.h | 2 +-
+ fs/f2fs/f2fs.h | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/um/include/asm/mmu_context.h b/arch/um/include/asm/mmu_context.h
-index 9f4b4bb78120..00cefd33afdd 100644
---- a/arch/um/include/asm/mmu_context.h
-+++ b/arch/um/include/asm/mmu_context.h
-@@ -52,7 +52,7 @@ static inline void activate_mm(struct mm_struct *old, struct mm_struct *new)
- 	 * when the new ->mm is used for the first time.
- 	 */
- 	__switch_mm(&new->context.id);
--	down_write(&new->mmap_sem);
-+	down_write_nested(&new->mmap_sem, 1);
- 	uml_setup_stubs(new);
- 	up_write(&new->mmap_sem);
- }
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 9e6721e15b24..cbdc2f88a98c 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -2204,7 +2204,7 @@ static inline bool is_idle(struct f2fs_sb_info *sbi, int type)
+ 		get_pages(sbi, F2FS_DIO_WRITE))
+ 		return false;
+ 
+-	if (SM_I(sbi) && SM_I(sbi)->dcc_info &&
++	if (type != DISCARD_TIME && SM_I(sbi) && SM_I(sbi)->dcc_info &&
+ 			atomic_read(&SM_I(sbi)->dcc_info->queued_discard))
+ 		return false;
+ 
 -- 
 2.20.1
 
