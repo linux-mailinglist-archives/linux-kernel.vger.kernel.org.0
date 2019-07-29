@@ -2,117 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 23A1D79833
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:06:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ACF66797F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:04:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389387AbfG2Tlj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 15:41:39 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:45988 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389354AbfG2Tla (ORCPT
+        id S1730062AbfG2UEQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 16:04:16 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:41969 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389702AbfG2Tpo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:41:30 -0400
-Received: by mail-pg1-f194.google.com with SMTP id o13so28743647pgp.12;
-        Mon, 29 Jul 2019 12:41:30 -0700 (PDT)
+        Mon, 29 Jul 2019 15:45:44 -0400
+Received: by mail-lj1-f193.google.com with SMTP id d24so59742691ljg.8
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 12:45:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=/Dz0GgmO6qmE4MAFGR84AXHaHxqY/lTl7uea6qX+5fg=;
-        b=TflF0o6MX/qgWOrImqmQhbskmpRfUcujvsFhX2SQtANavL0oW5ZxLsZ8OihRYbMJLl
-         BNBPgCCLOpCPk5nNeYoGxtruxxdC4QCxCr42U0csHNkcMNLiTre3ZmXyuAeH7gbFPjc2
-         Dr8Mi5U2xT5ZW7ToeWuG6rbiKKuTYeGN+GTUhIjK0TO4c35oWVl/dtIIuZiWxxRAmOpw
-         LjyRvgswDWQl7v4Eyr8nsOl6Lpf+NGOmgHLLAz9iv+q4ICLFu4nOsj6rIWiFi5GjsEjE
-         GRE6MtkCpocWDtzFvils9en7a2003O3ljjYpsgsrUa7DWrqRmkMch0ONFm8IbTgt9I7Z
-         OaUg==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3Xj0KmdFEesb0An0pvpoI4nRdiLfdj9xAiXwnPK4NLM=;
+        b=i4fDxC9jgwYfkwAabdzbHKdotQBa5S7C9sw2mTATq9cGBTlThSmyjKilRde22eS4EQ
+         J1y54uKk3TdvfFz+IZixYBhYEDQKK00Yr5LCyxsLkgEpzD2QrreBz4/IrMb+XjkyZi4f
+         6P+ywrpTxBuWukUHucrzU54+yZN5I364s2E6o=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=/Dz0GgmO6qmE4MAFGR84AXHaHxqY/lTl7uea6qX+5fg=;
-        b=gUMbFr9uafrwB9Inh7NxeLOBbTDsUX0iechzf1hnGN9iyTJidqKxb+g/pP58CprQTm
-         MqUt5TwGJ2oK4Rfz07SXVSkL87mbO/nPmT96mrAd/+saxi28UVmpYnft1VZl1ycWK1UT
-         VGGP/kia1jvUx8fcc+WY7k988xhgRPLDaGcTy7tOUl9zlyJSHN8/bxRn2s7/bmbxJE7L
-         Lt+NoTMFndER6mozuJcyE7v3C3yKLDIV2XLkRMZE+IGwKbRwfFTPAXcN9cjUxj8wr0sB
-         4cK8g6JzO5x7uMwQ9FKCAMUrCc4WgxvESG0ft8V+do6W+CWcOUZWhOIvddLYNwD0xhFi
-         kyYA==
-X-Gm-Message-State: APjAAAWHlyGa7pnKBZ7hyvIx/z7SmRsXv5VXGEqHhDOpbg3erOLIIW/I
-        wCrdCmLZ4MhoIFYfi1XaHRM=
-X-Google-Smtp-Source: APXvYqwYFWImrD12nOO6O4tljP+JRCjkjw66pzAW6I8GeoaAGPbNiPFbQl+QlKHEMKqzZDwQjGv7JQ==
-X-Received: by 2002:a62:26c1:: with SMTP id m184mr36658332pfm.200.1564429289372;
-        Mon, 29 Jul 2019 12:41:29 -0700 (PDT)
-Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
-        by smtp.gmail.com with ESMTPSA id o24sm18978199pgn.93.2019.07.29.12.41.28
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 29 Jul 2019 12:41:28 -0700 (PDT)
-Date:   Mon, 29 Jul 2019 12:42:15 -0700
-From:   Nicolin Chen <nicoleotsuka@gmail.com>
-To:     Daniel Baluta <daniel.baluta@nxp.com>
-Cc:     broonie@kernel.org, l.stach@pengutronix.de, mihai.serban@gmail.com,
-        alsa-devel@alsa-project.org, viorel.suman@nxp.com,
-        timur@kernel.org, shengjiu.wang@nxp.com, angus@akkea.ca,
-        tiwai@suse.com, linux-imx@nxp.com, kernel@pengutronix.de,
-        festevam@gmail.com, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, robh@kernel.org
-Subject: Re: [PATCH v2 1/7] ASoC: fsl_sai: Add registers definition for
- multiple datalines
-Message-ID: <20190729194214.GA20594@Asurada-Nvidia.nvidia.com>
-References: <20190728192429.1514-1-daniel.baluta@nxp.com>
- <20190728192429.1514-2-daniel.baluta@nxp.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3Xj0KmdFEesb0An0pvpoI4nRdiLfdj9xAiXwnPK4NLM=;
+        b=jUU3vjDjFlKXNEIlnu9CBS9BGjUhx0VreCbDMAPK+fJikqy10jKfopbvnPeGolIcmk
+         SOJUJAZ21JL8SLg1zvz/Bf1m+fm5SkWNpGkkfTnB1D2Tvt86e/QcIfLFGkcfpqHQmr7d
+         Annot1SAO9ZtM5bzUXr0N6LFK0C0vHcy/D68I8Gg2l3TgLFqz8Gxrdyk/o+df6Vu3s+N
+         6oMxFH4xGA5nHSf8jRfIZphai/jNm93IbNuGsVYzvQWlumZ2r49LaDcOptlSiA//6d03
+         q+AGsHbDtEuWIWROPUPxv+xIAGh9HQhdXbLdeIkqBFDPEpl6mF2NUx4l41DzL8YjgFeF
+         x7ig==
+X-Gm-Message-State: APjAAAU1Eetz6Gh8VZDrlbGskE/2GJ45zTnTbobAGbPSWEhL9S8eY49I
+        wtze9WLzuYGM6RnCzlSXx+Nx92yqoOw=
+X-Google-Smtp-Source: APXvYqxmrJyu4mHeY340jv33GIOUR6sUBAP7nr/0oyJY7u9HGnDCYQO1Feys/MAjhuiwEQ3dgyxRVQ==
+X-Received: by 2002:a2e:86cc:: with SMTP id n12mr34201783ljj.146.1564429541762;
+        Mon, 29 Jul 2019 12:45:41 -0700 (PDT)
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com. [209.85.208.179])
+        by smtp.gmail.com with ESMTPSA id y194sm10751627lfa.5.2019.07.29.12.45.38
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Mon, 29 Jul 2019 12:45:38 -0700 (PDT)
+Received: by mail-lj1-f179.google.com with SMTP id y17so35180257ljk.10
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 12:45:38 -0700 (PDT)
+X-Received: by 2002:a2e:3602:: with SMTP id d2mr407913lja.112.1564429538156;
+ Mon, 29 Jul 2019 12:45:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190728192429.1514-2-daniel.baluta@nxp.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20190724194634.205718-1-briannorris@chromium.org> <s5hv9vkx21i.wl-tiwai@suse.de>
+In-Reply-To: <s5hv9vkx21i.wl-tiwai@suse.de>
+From:   Brian Norris <briannorris@chromium.org>
+Date:   Mon, 29 Jul 2019 12:45:26 -0700
+X-Gmail-Original-Message-ID: <CA+ASDXMEFew2Sg5G1ofKq-0gfOTFEOhZNjfyNJMRzRjv7ZFgXw@mail.gmail.com>
+Message-ID: <CA+ASDXMEFew2Sg5G1ofKq-0gfOTFEOhZNjfyNJMRzRjv7ZFgXw@mail.gmail.com>
+Subject: Re: [PATCH 5.3] mwifiex: fix 802.11n/WPA detection
+To:     Takashi Iwai <tiwai@suse.de>
+Cc:     Kalle Valo <kvalo@codeaurora.org>,
+        Ganapathi Bhat <gbhat@marvell.com>,
+        Nishant Sarmukadam <nishants@marvell.com>,
+        Amitkumar Karwar <amitkarwar@gmail.com>,
+        Xinming Hu <huxinming820@gmail.com>,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        stable <stable@vger.kernel.org>,
+        Johannes Berg <johannes@sipsolutions.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jul 28, 2019 at 10:24:23PM +0300, Daniel Baluta wrote:
-> SAI IP supports up to 8 data lines. The configuration of
-> supported number of data lines is decided at SoC integration
-> time.
-> 
-> This patch adds definitions for all related data TX/RX registers:
-> 	* TDR0..7, Transmit data register
-> 	* TFR0..7, Transmit FIFO register
-> 	* RDR0..7, Receive data register
-> 	* RFR0..7, Receive FIFO register
-> 
-> Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
-> ---
->  sound/soc/fsl/fsl_sai.c | 76 +++++++++++++++++++++++++++++++++++------
->  sound/soc/fsl/fsl_sai.h | 36 ++++++++++++++++---
->  2 files changed, 98 insertions(+), 14 deletions(-)
-> 
-> diff --git a/sound/soc/fsl/fsl_sai.c b/sound/soc/fsl/fsl_sai.c
-> index 6d3c6c8d50ce..17b0aff4ee8b 100644
-> --- a/sound/soc/fsl/fsl_sai.c
-> +++ b/sound/soc/fsl/fsl_sai.c
+On Mon, Jul 29, 2019 at 9:01 AM Takashi Iwai <tiwai@suse.de> wrote:
+> This isn't seen in linux-next yet.
 
-> @@ -704,7 +711,14 @@ static bool fsl_sai_readable_reg(struct device *dev, unsigned int reg)
->  	case FSL_SAI_TCR3:
->  	case FSL_SAI_TCR4:
->  	case FSL_SAI_TCR5:
-> -	case FSL_SAI_TFR:
-> +	case FSL_SAI_TFR0:
-> +	case FSL_SAI_TFR1:
-> +	case FSL_SAI_TFR2:
-> +	case FSL_SAI_TFR3:
-> +	case FSL_SAI_TFR4:
-> +	case FSL_SAI_TFR5:
-> +	case FSL_SAI_TFR6:
-> +	case FSL_SAI_TFR7:
->  	case FSL_SAI_TMR:
->  	case FSL_SAI_RCSR:
->  	case FSL_SAI_RCR1:
+Apparently not.
 
-A tricky thing here is that those SAI instances on older SoC don't
-support multi data lines physically, while seemly having registers
-pre-defined. So your change doesn't sound doing anything wrong to
-them at all, I am still wondering if it is necessary to apply them
-to newer compatible only though, as for older compatibles of SAI,
-these registers would be useless and confusing if being exposed.
+> Still pending review?
 
-What do you think?
+I guess? Probably mostly pending maintainer attention.
+
+Also, Johannes already had noticed (and privately messaged me): this
+patch took a while to show up on the linux-wireless Patchwork
+instance. So the first review (from Guenter Roeck) and my extra reply
+noting the -stable regression didn't make it to Patchwork:
+
+https://patchwork.kernel.org/patch/11057585/
+
+> In anyway,
+>   Reviewed-by: Takashi Iwai <tiwai@suse.de>
+
+Thanks. Hopefully Kalle can pick it up.
+
+Brian
