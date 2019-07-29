@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 001C378DD0
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 16:26:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E6EB78DDD
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 16:28:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727892AbfG2O0b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 10:26:31 -0400
-Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:40074 "EHLO
+        id S1727761AbfG2O2X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 10:28:23 -0400
+Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:40085 "EHLO
         herzl.nuvoton.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727409AbfG2O0a (ORCPT
+        with ESMTP id S1726478AbfG2O2X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 10:26:30 -0400
+        Mon, 29 Jul 2019 10:28:23 -0400
 Received: from taln60.nuvoton.co.il (ntil-fw [212.199.177.25])
-        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id x6TEP6lN025573;
-        Mon, 29 Jul 2019 17:25:06 +0300
+        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id x6TEP7Fj025574;
+        Mon, 29 Jul 2019 17:25:07 +0300
 Received: by taln60.nuvoton.co.il (Postfix, from userid 10070)
-        id C3EFF622ED; Mon, 29 Jul 2019 17:25:06 +0300 (IDT)
+        id 29394622F0; Mon, 29 Jul 2019 17:25:07 +0300 (IDT)
 From:   Tomer Maimon <tmaimon77@gmail.com>
 To:     broonie@kernel.org, dwmw2@infradead.org,
         computersforpeace@gmail.com, marek.vasut@gmail.com,
@@ -26,9 +26,9 @@ To:     broonie@kernel.org, dwmw2@infradead.org,
         frieder.schrempf@exceet.de, tglx@linutronix.de
 Cc:     linux-spi@vger.kernel.org, linux-mtd@lists.infradead.org,
         linux-kernel@vger.kernel.org, Tomer Maimon <tmaimon77@gmail.com>
-Subject: [RFC v1 2/3] spi: spi-mem: add callback function to spi-mem device
-Date:   Mon, 29 Jul 2019 17:25:03 +0300
-Message-Id: <20190729142504.188336-3-tmaimon77@gmail.com>
+Subject: [RFC v1 3/3] mtd: m25p80: add get Flash size callback support
+Date:   Mon, 29 Jul 2019 17:25:04 +0300
+Message-Id: <20190729142504.188336-4-tmaimon77@gmail.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20190729142504.188336-1-tmaimon77@gmail.com>
 References: <20190729142504.188336-1-tmaimon77@gmail.com>
@@ -37,47 +37,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add callback function support to the spi-mem device
-for passing an argument from the spi-mem layer
+Add get Flash size function support for
+passing Flash size through callback use
 to the spi layer.
+
+Add get Flash size function support
 
 Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
 ---
- include/linux/spi/spi-mem.h | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/mtd/devices/m25p80.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/include/linux/spi/spi-mem.h b/include/linux/spi/spi-mem.h
-index 5f7d20bd2b09..b9841a9030be 100644
---- a/include/linux/spi/spi-mem.h
-+++ b/include/linux/spi/spi-mem.h
-@@ -13,6 +13,8 @@
+diff --git a/drivers/mtd/devices/m25p80.c b/drivers/mtd/devices/m25p80.c
+index c50888670250..fd14c8c6d8d8 100644
+--- a/drivers/mtd/devices/m25p80.c
++++ b/drivers/mtd/devices/m25p80.c
+@@ -151,6 +151,15 @@ static ssize_t m25p80_read(struct spi_nor *nor, loff_t from, size_t len,
+ 	return len;
+ }
  
- #include <linux/spi/spi.h>
- 
-+typedef size_t (*spi_mem_callback)(void *spi_mem_param);
++/* Sending Flash size thourgh callback function to spi layer */
++size_t	m25p80_get_flash_size(void *param)
++{
++	struct spi_mem *spimem = param;
++	struct m25p *flash = spi_mem_get_drvdata(spimem);
 +
- #define SPI_MEM_OP_CMD(__opcode, __buswidth)			\
- 	{							\
- 		.buswidth = __buswidth,				\
-@@ -172,6 +174,9 @@ struct spi_mem_dirmap_desc {
-  * @spi: the underlying SPI device
-  * @drvpriv: spi_mem_driver private data
-  * @name: name of the SPI memory device
-+ * @callback: routine for passing an argument from the
-+ *            spi-mem layer to the spi layer.
-+ * @callback_param: general parameter to pass to the callback routine
-  *
-  * Extra information that describe the SPI memory device and may be needed by
-  * the controller to properly handle this device should be placed here.
-@@ -183,6 +188,8 @@ struct spi_mem {
- 	struct spi_device *spi;
- 	void *drvpriv;
- 	const char *name;
-+	spi_mem_callback callback;
-+	void *callback_param;
- };
++	return (u32)(flash->spi_nor.mtd.size >> 10) * 1024;
++}
++
+ /*
+  * board specific setup should have ensured the SPI clock used here
+  * matches what the READ command supports, at least until this driver
+@@ -188,6 +197,9 @@ static int m25p_probe(struct spi_mem *spimem)
+ 	spi_nor_set_flash_node(nor, spi->dev.of_node);
+ 	nor->priv = flash;
  
- /**
++	spimem->callback = m25p80_get_flash_size;
++	spimem->callback_param = spimem;
++
+ 	spi_mem_set_drvdata(spimem, flash);
+ 	flash->spimem = spimem;
+ 
 -- 
 2.18.0
 
