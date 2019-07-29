@@ -2,58 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4DF9578882
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 11:35:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 38D667886F
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 11:30:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387402AbfG2JfK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 05:35:10 -0400
-Received: from smtp687out1.syd.oss-core.net ([210.50.30.228]:39178 "EHLO
-        smtp687out1.syd.oss-core.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728017AbfG2JfH (ORCPT
+        id S1727983AbfG2JaU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 05:30:20 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:41032 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727931AbfG2JaT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 05:35:07 -0400
-X-Greylist: delayed 592 seconds by postgrey-1.27 at vger.kernel.org; Mon, 29 Jul 2019 05:35:06 EDT
-DomainKey-Signature: s=iprimus-dk; d=iprimus.com.au; c=simple; q=dns;
-  h=X-IronPort-AV:Received:MIME-Version:Content-Type:
-   Content-Transfer-Encoding:Date:From:To:Subject:Reply-To:
-   Mail-Reply-To:Message-ID:X-Sender:User-Agent:
-   X-Originating-IP;
-  b=vNwpCrRz68o/Emw5ndFK6KltIh5SokWqgvxXPUhUHe8IVpRXrgYot2ZM
-   zuDdQeDdKBQDeTs2tNLLf79UADUTLH0zXMGINJfz4JqqzBq1SXPDrh22R
-   LKCQPNZheCKqgtZBfwaU9dOczAPHJK08hcjpX7htzazQS9wiuGARCfblk
-   I=;
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=iprimus.com.au; i=@iprimus.com.au; l=103; q=dns/txt;
-  s=iprimus-dkim; t=1564392906; x=1595928906;
-  h=mime-version:content-transfer-encoding:date:from:to:
-   subject:reply-to:message-id;
-  bh=grPzzm6dFHTKXzT532+k5IBEwvLnmugmQ66PCU+coVA=;
-  b=u8+UMFJ4ZpFCZZ659t24Zwaza7QL3yXfzo22f4RpZK80ma3EAub3t91y
-   XjpO0Cm5DSflauzek+R0L+M+FUtvMAfsorKZgMUrtNRtR64xcMvHAQvfW
-   PLZqj5u4wlK6eh1TCHPd0yAYh4qLbdRMw9d3ODyqCssYv0dzTvdU4Nv60
-   Y=;
-X-IronPort-AV: E=Sophos;i="5.64,322,1559484000"; 
-   d="scan'208";a="428917055"
-Received: from 154.11.134.203.sta.m2core.net.au (HELO 0.0.0.0) ([203.134.11.154])
-  by smtp687.syd.oss-core.net with ESMTP; 29 Jul 2019 19:25:12 +1000
+        Mon, 29 Jul 2019 05:30:19 -0400
+Received: by mail-wr1-f66.google.com with SMTP id c2so57809179wrm.8
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 02:30:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=9avy5m8auN2z87gWKpbvtw9ce3O/3bqjjaiEc9X8IB4=;
+        b=l0EBy8mRk0PZpNrnPM8xY/uRDq+soEJyuSoJMmNsmMlmeyK+xU4Uy513PH8z0h1X1k
+         PYS1HaEQ0Ln7M3PyV+ISPjGHaq9wM4CSzGBOTflDpWLJar5q7GNKFjOACyUa8XlnR3Xs
+         tU8ilaZvgVK/d4BJk25g5YgC6Afr5moxsmBT7Bne5FfnpNN+LIGeT2P8xhqGkpI8IfcP
+         zpJpuND9Be5qkEUEVAD8BOsD+tmmOq71rAnTL0arK9PXyzG+6nvlplg1Xl5Nm/daM7Q3
+         cqISDqthefPZnqO03Fv+INIX1dKt5aizDzco+SBY3yha5t7zEA6oHE4qH45qWwn7A/Q2
+         NHrg==
+X-Gm-Message-State: APjAAAUmohHiJuzVJk/YpUzs7kDECiBpK5KP3RNou7W7nUOogfZLal3J
+        1L9bSxDs8pZ2K6ArYyhVu4zoSw==
+X-Google-Smtp-Source: APXvYqy0ukqUzu8jgOYkuviFDoJUTuAF/SmhWh3Yh9peouGgMoj42CbJFnks9ZQse0UPz648OOpZQw==
+X-Received: by 2002:adf:f28a:: with SMTP id k10mr41842741wro.343.1564392617641;
+        Mon, 29 Jul 2019 02:30:17 -0700 (PDT)
+Received: from ?IPv6:2001:b07:6468:f312:29d3:6123:6d5f:2c04? ([2001:b07:6468:f312:29d3:6123:6d5f:2c04])
+        by smtp.gmail.com with ESMTPSA id w24sm48173380wmc.30.2019.07.29.02.30.16
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Mon, 29 Jul 2019 02:30:17 -0700 (PDT)
+Subject: Re: [PATCH stable-4.19 1/2] KVM: nVMX: do not use dangling shadow
+ VMCS after guest reset
+To:     Jack Wang <jack.wang.usish@gmail.com>,
+        Sasha Levin <sashal@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>, stable@vger.kernel.org,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
+References: <20190725104645.30642-1-vkuznets@redhat.com>
+ <20190725104645.30642-2-vkuznets@redhat.com>
+ <CA+res+RfqpT=g1QbCqr3OkHVzFFSAt3cfCYNcwqiemWmOifFxg@mail.gmail.com>
+ <2ea5d588-8573-6653-b848-0b06d1f98310@redhat.com>
+ <CA+res+ShqmPcJWj+0F7X8=0DM_ys8HCP+rjg4Nv-7o06EipJQw@mail.gmail.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Message-ID: <471a1023-4f0a-5727-e7b2-48701f75188f@redhat.com>
+Date:   Mon, 29 Jul 2019 11:30:19 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+In-Reply-To: <CA+res+ShqmPcJWj+0F7X8=0DM_ys8HCP+rjg4Nv-7o06EipJQw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Date:   Mon, 29 Jul 2019 10:25:11 +0100
-From:   Mr Ade Goodchild <brad222@iprimus.com.au>
-To:     undisclosed-recipients:;
-Subject: from Ade Goodchild Charity Donation....
-Reply-To: mradegoodchild22@gmail.com
-Mail-Reply-To: mradegoodchild22@gmail.com
-Message-ID: <2b807f357032821125d40c6d55a0dc65@iprimus.com.au>
-X-Sender: brad222@iprimus.com.au
-User-Agent: Roundcube Webmail/1.2.9
-X-Originating-IP: [103.250.231.42]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A donation of 2 Million British Pounds to you in good faith from Ade 
-Goodchild Charity Donation....
+On 29/07/19 11:29, Jack Wang wrote:
+> Thanks Paolo for confirmation. I'm asking because we had one incident
+> in our production with 4.14.129 kernel,
+> System is Skylake Gold cpu, first kvm errors, host hung afterwards
+> 
+> kernel: [1186161.091160] kvm: vmptrld           (null)/6bfc00000000 failed
+> kernel: [1186161.091537] kvm: vmclear fail:           (null)/6bfc00000000
+> kernel: [1186186.490300] watchdog: BUG: soft lockup - CPU#54 stuck for
+> 23s! [qemu:16639]
+> 
+> Hi Sasha, hi Greg,
+> 
+> Would be great if you can pick this patch also to 4.14 kernel.
+
+Acked-by: Paolo Bonzini <pbonzini@redhat.com>
