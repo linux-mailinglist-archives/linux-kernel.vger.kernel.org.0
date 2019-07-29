@@ -2,127 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DABC17919A
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 18:58:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E044D7919E
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 18:59:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387654AbfG2Q6L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 12:58:11 -0400
-Received: from mail-io1-f72.google.com ([209.85.166.72]:33618 "EHLO
-        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726958AbfG2Q6I (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 12:58:08 -0400
-Received: by mail-io1-f72.google.com with SMTP id 132so68173085iou.0
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 09:58:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=zYSkCumP1m3hb2mgGhDNo5Y0jDgglbE754iR6vBUBG0=;
-        b=aVT1N6EKV04E43mgYT+ARty+Xiy3sGa6JRv7sL0L/yIuCtMQIGR1tEGgV6NwoLNDaA
-         UhAp46XSd4iJngOaMA+ia4BCNFnDTXRPMqofgbNNFeIf8xwbZg70C47bZ/6m9omy92AA
-         v68R5aXKJonstoxU0HwrKz57TimYwuAEGsCpdbFxNMUN42iZWqjc+P5xamokZiKdJ58H
-         2MWVXaqxoYurIkud21HoElNW3oc+t3MbxfBgOikYRUqfwuKXMHFE0OKwFgCAOO5+PSO2
-         qhrvMaTcJB3y6zw2BLRdPvMEkSEH5kMewLjYjtmAdO6mNTQuYQRENaji3cvVBwS2Quzp
-         U6Kw==
-X-Gm-Message-State: APjAAAWBYMqoxKSXHrv2BchBe894M1R8yN128CCZvhWSUsMbSomrpeAB
-        AYFE3T2wc7miS+ZZGKDupVsAIjou/mO9ou08k2LDRK6ZR2cY
-X-Google-Smtp-Source: APXvYqwuAgYNcogscmSVDpjnPxCyHn2aBg3ZoPD8eQBq+t81HbZYsudho/QxwG2zDw+sZzNmhiXgQ+5V54xCJdOGzWLkw7wZrAaz
+        id S1728728AbfG2Q7L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 12:59:11 -0400
+Received: from foss.arm.com ([217.140.110.172]:47964 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726845AbfG2Q7K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 12:59:10 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0A3F3337;
+        Mon, 29 Jul 2019 09:59:08 -0700 (PDT)
+Received: from [10.1.32.39] (unknown [10.1.32.39])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EFBDD3F694;
+        Mon, 29 Jul 2019 09:59:06 -0700 (PDT)
+Subject: Re: [PATCH 5/5] sched/deadline: Use return value of SCHED_WARN_ON()
+ in bw accounting
+To:     Peter Zijlstra <peterz@infradead.org>,
+        luca abeni <luca.abeni@santannapisa.it>
+Cc:     Ingo Molnar <mingo@kernel.org>, Juri Lelli <juri.lelli@redhat.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Valentin Schneider <Valentin.Schneider@arm.com>,
+        Qais Yousef <Qais.Yousef@arm.com>, linux-kernel@vger.kernel.org
+References: <20190726082756.5525-1-dietmar.eggemann@arm.com>
+ <20190726082756.5525-6-dietmar.eggemann@arm.com>
+ <20190726121819.32be6fb1@sweethome>
+ <20190729165434.GO31398@hirez.programming.kicks-ass.net>
+From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
+Message-ID: <a12e2330-50d4-b31f-14b5-5b386252d418@arm.com>
+Date:   Mon, 29 Jul 2019 17:59:04 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-X-Received: by 2002:a5d:94d7:: with SMTP id y23mr80916050ior.296.1564419487345;
- Mon, 29 Jul 2019 09:58:07 -0700 (PDT)
-Date:   Mon, 29 Jul 2019 09:58:07 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d2b175058ed4cb3f@google.com>
-Subject: INFO: trying to register non-static key in ida_destroy
-From:   syzbot <syzbot+c86454eb3af9e8a4da20@syzkaller.appspotmail.com>
-To:     andreyknvl@google.com, laurent.pinchart@ideasonboard.com,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-usb@vger.kernel.org, mchehab@kernel.org,
-        sakari.ailus@linux.intel.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <20190729165434.GO31398@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On 7/29/19 5:54 PM, Peter Zijlstra wrote:
+> On Fri, Jul 26, 2019 at 12:18:19PM +0200, luca abeni wrote:
+>> Hi Dietmar,
+>>
+>> On Fri, 26 Jul 2019 09:27:56 +0100
+>> Dietmar Eggemann <dietmar.eggemann@arm.com> wrote:
+>>
+>>> To make the decision whether to set rq or running bw to 0 in underflow
+>>> case use the return value of SCHED_WARN_ON() rather than an extra if
+>>> condition.
+>>
+>> I think I tried this at some point, but if I remember well this
+>> solution does not work correctly when SCHED_DEBUG is not enabled.
+> 
+> Well, it 'works' in so far that it compiles. But it might not be what
+> one expects. That is, for !SCHED_DEBUG the return value is an
+> unconditional false.
+> 
+> In this case I think that's fine, the WARN _should_ not be happending.
 
-syzbot found the following crash on:
+But there is commit 6d3aed3d ("sched/debug: Fix SCHED_WARN_ON() to
+return a value on !CONFIG_SCHED_DEBUG as well")?
 
-HEAD commit:    7f7867ff usb-fuzzer: main usb gadget fuzzer driver
-git tree:       https://github.com/google/kasan.git usb-fuzzer
-console output: https://syzkaller.appspot.com/x/log.txt?x=16ee1d7c600000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=792eb47789f57810
-dashboard link: https://syzkaller.appspot.com/bug?extid=c86454eb3af9e8a4da20
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15eacab4600000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=178293c8600000
+But it doesn't work with !CONFIG_SCHED_DEBUG
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+c86454eb3af9e8a4da20@syzkaller.appspotmail.com
+What compiles and work is (at least on Arm64).
 
-usb 1-1: config 0 interface 197 altsetting 0 bulk endpoint 0xA has invalid  
-maxpacket 0
-usb 1-1: New USB device found, idVendor=972f, idProduct=41a3,  
-bcdDevice=d9.98
-usb 1-1: New USB device strings: Mfr=0, Product=0, SerialNumber=0
-usb 1-1: config 0 descriptor??
-INFO: trying to register non-static key.
-the code is fine but needs lockdep annotation.
-turning off the locking correctness validator.
-CPU: 0 PID: 12 Comm: kworker/0:1 Not tainted 5.3.0-rc2+ #23
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Workqueue: usb_hub_wq hub_event
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0xca/0x13e lib/dump_stack.c:113
-  assign_lock_key kernel/locking/lockdep.c:813 [inline]
-  register_lock_class+0x1022/0x11d0 kernel/locking/lockdep.c:1122
-  __lock_acquire+0xfc/0x3b50 kernel/locking/lockdep.c:3762
-  lock_acquire+0x127/0x320 kernel/locking/lockdep.c:4412
-  __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-  _raw_spin_lock_irqsave+0x32/0x50 kernel/locking/spinlock.c:159
-  ida_destroy+0xb0/0x3a0 lib/idr.c:551
-  media_device_cleanup+0x15/0x70 drivers/media/mc/mc-device.c:722
-  uvc_delete+0x8e/0x2f0 drivers/media/usb/uvc/uvc_driver.c:1872
-  kref_put include/linux/kref.h:65 [inline]
-  uvc_probe+0xf95/0x64e4 drivers/media/usb/uvc/uvc_driver.c:2223
-  usb_probe_interface+0x305/0x7a0 drivers/usb/core/driver.c:361
-  really_probe+0x281/0x650 drivers/base/dd.c:548
-  driver_probe_device+0x101/0x1b0 drivers/base/dd.c:709
-  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:816
-  bus_for_each_drv+0x15c/0x1e0 drivers/base/bus.c:454
-  __device_attach+0x217/0x360 drivers/base/dd.c:882
-  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
-  device_add+0xae6/0x16f0 drivers/base/core.c:2114
-  usb_set_configuration+0xdf6/0x1670 drivers/usb/core/message.c:2023
-  generic_probe+0x9d/0xd5 drivers/usb/core/generic.c:210
-  usb_probe_device+0x99/0x100 drivers/usb/core/driver.c:266
-  really_probe+0x281/0x650 drivers/base/dd.c:548
-  driver_probe_device+0x101/0x1b0 drivers/base/dd.c:709
-  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:816
-  bus_for_each_drv+0x15c/0x1e0 drivers/base/bus.c:454
-  __device_attach+0x217/0x360 drivers/base/dd.c:882
-  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
-  device_add+0xae6/0x16f0 drivers/base/core.c:2114
-  usb_new_device.cold+0x6a4/0xe79 drivers/usb/core/hub.c:2536
-  hub_port_connect drivers/usb/core/hub.c:5098 [inline]
-  hub_port_connect_change drivers/usb/core/hub.c:5213 [inline]
-  port_event drivers/usb/core/hub.c:5359 [inline]
-  hub_event+0x1b5c/0x3640 drivers/usb/core/hub.c:5441
-  process_one_work+0x92b/0x1530 kernel/workqueue.c:2269
-  worker_thread+0x96/0xe20 kernel/workqueue.c:2415
-  kthread+0x318/0x420 kernel/kthread.c:255
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index 4012f98b9d26..494a767a4091 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -78,7 +78,7 @@
+ #ifdef CONFIG_SCHED_DEBUG
+ # define SCHED_WARN_ON(x)      WARN_ONCE(x, #x)
+ #else
+-# define SCHED_WARN_ON(x)      ({ (void)(x), 0; })
++# define SCHED_WARN_ON(x)      ({ (void)(x), x; })
 
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
