@@ -2,37 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC6D67961B
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:48:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 352D67961E
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:48:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390440AbfG2Tsu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 15:48:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39098 "EHLO mail.kernel.org"
+        id S2390452AbfG2Tsy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 15:48:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39132 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390175AbfG2Tsq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:48:46 -0400
+        id S2390237AbfG2Tst (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:48:49 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 76005205F4;
-        Mon, 29 Jul 2019 19:48:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1B58E2054F;
+        Mon, 29 Jul 2019 19:48:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564429725;
-        bh=ZGf008XEa+kzs0eBia5rOSkXGPa3AC0rjdIVA6F6TUQ=;
+        s=default; t=1564429728;
+        bh=ZmJcYVj3vIaFeFPJxeMpF8uhIBbkm+iqJEjV41m3/1M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2H9PCbCoxmKmR3tu/vqsDyh/7PMuly11Mnp8LSO+SvCe/2/jYg8KydbETsZJ11DL5
-         P4IBibspF004XIlIxHZ9jJqq6HsPQpgRv1bQ7kS8sdG8py3uibbToRkJjNa5XTdcgV
-         ysAuL4VP2dXKJdKsJYf+LeNe0XayYMbb+85HjxIA=
+        b=0KH1lNkOA2b4RYqNsbqVCP+PHUgtAKZ6Bm0P5QFZMSoYUkKUzpS3LzTf0IVWQjXrU
+         JDt4/d7HKDC+ngkASM5CxUs+0tND5bbhgc7f56FSgIlPFbvLhWHMTkdP4QwNFbJTZl
+         dCqa9W4QH+MKLHjyelFdH9ylrKLJzagUN8WA+FFM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jyri Sarha <jsarha@ti.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        stable@vger.kernel.org,
+        Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>,
+        Harry Wentland <Harry.Wentland@amd.com>,
+        Leo Li <sunpeng.li@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 036/215] drm/bridge: sii902x: pixel clock unit is 10kHz instead of 1kHz
-Date:   Mon, 29 Jul 2019 21:20:32 +0200
-Message-Id: <20190729190746.612168217@linuxfoundation.org>
+Subject: [PATCH 5.2 037/215] drm/amd/display: Reset planes for color management changes
+Date:   Mon, 29 Jul 2019 21:20:33 +0200
+Message-Id: <20190729190746.833737256@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190729190739.971253303@linuxfoundation.org>
 References: <20190729190739.971253303@linuxfoundation.org>
@@ -45,40 +47,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 8dbfc5b65023b67397aca28e8adb25c819f6398c ]
+[ Upstream commit 7316c4ad299663a16ca9ce13e5e817b4ca760809 ]
 
-The pixel clock unit in the first two registers (0x00 and 0x01) of
-sii9022 is 10kHz, not 1kHz as in struct drm_display_mode. Division by
-10 fixes the issue.
+[Why]
+For commits with allow_modeset=false and CRTC degamma changes the planes
+aren't reset. This results in incorrect rendering.
 
-Signed-off-by: Jyri Sarha <jsarha@ti.com>
-Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/1a2a8eae0b9d6333e7a5841026bf7fd65c9ccd09.1558964241.git.jsarha@ti.com
+[How]
+Reset the planes when color management has changed on the CRTC.
+Technically this will include regamma changes as well, but it doesn't
+really after legacy userspace since those commit with
+allow_modeset=true.
+
+Signed-off-by: Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>
+Reviewed-by: Harry Wentland <Harry.Wentland@amd.com>
+Acked-by: Leo Li <sunpeng.li@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/bridge/sii902x.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/gpu/drm/bridge/sii902x.c b/drivers/gpu/drm/bridge/sii902x.c
-index 1211b5379df1..8e3c5e599eba 100644
---- a/drivers/gpu/drm/bridge/sii902x.c
-+++ b/drivers/gpu/drm/bridge/sii902x.c
-@@ -229,10 +229,11 @@ static void sii902x_bridge_mode_set(struct drm_bridge *bridge,
- 	struct regmap *regmap = sii902x->regmap;
- 	u8 buf[HDMI_INFOFRAME_SIZE(AVI)];
- 	struct hdmi_avi_infoframe frame;
-+	u16 pixel_clock_10kHz = adj->clock / 10;
- 	int ret;
+diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+index 31530bfd002a..0e482349a5cb 100644
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+@@ -6331,6 +6331,10 @@ static bool should_reset_plane(struct drm_atomic_state *state,
+ 	if (!new_crtc_state)
+ 		return true;
  
--	buf[0] = adj->clock;
--	buf[1] = adj->clock >> 8;
-+	buf[0] = pixel_clock_10kHz & 0xff;
-+	buf[1] = pixel_clock_10kHz >> 8;
- 	buf[2] = adj->vrefresh;
- 	buf[3] = 0x00;
- 	buf[4] = adj->hdisplay;
++	/* CRTC Degamma changes currently require us to recreate planes. */
++	if (new_crtc_state->color_mgmt_changed)
++		return true;
++
+ 	if (drm_atomic_crtc_needs_modeset(new_crtc_state))
+ 		return true;
+ 
 -- 
 2.20.1
 
