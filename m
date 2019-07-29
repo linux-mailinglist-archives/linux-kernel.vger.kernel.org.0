@@ -2,76 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AA2E797E6
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:04:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E4FB0797E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:04:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729897AbfG2UDy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 16:03:54 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:50528 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390053AbfG2TqD (ORCPT
+        id S1729799AbfG2UDh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 16:03:37 -0400
+Received: from mail-pg1-f175.google.com ([209.85.215.175]:37137 "EHLO
+        mail-pg1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390195AbfG2Tql (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:46:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=arjAFJhp7h7y5/Rhm9vbvSAfd/7R4cvilJkOjN26CHs=; b=SN8oRnKNdwiYVQc5vagAqPbm+
-        nhxf5g6kbo+jKIaT6WgKBcfCA8UcqWtLb5tfvvfPr0DnCW4uPrM2lOtfI2Fox14O7d9d/Bl0Hvb2X
-        OQBjh31Ya9sBlmKEvwiddNcyOKFWtTMswOB+Iobowmyi48gpJUkxMGD1ABNN7QrOWfmR4/zORTOjr
-        ePtw/rxjoexYv6kZpzSRnYMWA6r+WBQxmFTho+98N2VB2Z6XXL5C1yglMxjq2KMDaoGzdMBu049b2
-        c8uWJ1RE7Qal8WtUdrLdzFAuyUPkktjOOqxfaZPtxSJvHqAhYYRA9B+mApJCjR2WJH+7hqvKtJp6r
-        gwnx5hhLg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hsBaj-0006AY-6P; Mon, 29 Jul 2019 19:45:53 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 8C45020C9B161; Mon, 29 Jul 2019 21:45:50 +0200 (CEST)
-Date:   Mon, 29 Jul 2019 21:45:50 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sebastian Siewior <bigeasy@linutronix.de>,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Juergen Gross <jgross@suse.com>
-Subject: Re: [patch 00/12] (hr)timers: Prepare for PREEMPT_RT support
-Message-ID: <20190729194550.GP31398@hirez.programming.kicks-ass.net>
-References: <20190726183048.982726647@linutronix.de>
+        Mon, 29 Jul 2019 15:46:41 -0400
+Received: by mail-pg1-f175.google.com with SMTP id i70so18025115pgd.4;
+        Mon, 29 Jul 2019 12:46:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=U4ngIyFeX8ApEnWIFC9G2C/8xAz/EgLX+z1iJ+q2AHg=;
+        b=BcPkRXVdhSe1/iAVct8pHAcEytxqGvtsr8oidFPs9ZtP4+b4rwvBznPjZ9hGIqtSc8
+         31WUEFWoVjWz0/Va6HDRBCM358AqiEAZ5F5zFpnoazM7ONH/m2mpzjL85UYHOc7vo7FI
+         C85UofKIElrJRGQcHss1zvKt7935lfz/KW3peqUJ6P/QPPBKeIxPDdWjlbxPHGhKW6rd
+         ylu0Iohugj8GIrW79G9a7Tyg7WASqsnPjCqToXXqHq5w2tXgD7rMx4IOXdhFm5liescS
+         H5uhP2FKYoDvwfHZ8IkoNNIKeIT+sNYlTCHLNLvOZuQcm2Sc8XtX0K2bJ+gjqJKv6NBm
+         oclg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=U4ngIyFeX8ApEnWIFC9G2C/8xAz/EgLX+z1iJ+q2AHg=;
+        b=CROnH3EbDhl4wsWZ7XZI9RNtXrQjlcvFu8ymq0Ha3FuhDB3Rdq0jiMvzoqyxwpozJC
+         NMNxNl3ordeaoZdZgg44KwyuN18tzHACDe6vP8q+z/UaTyvoMPwimz+CI6dFFa7Q4Amt
+         Oqndl/l/rW5NYBPLlZY6tFvpd/1HtN6IIUtUEOSLLX5HLcDAKq3tq0hKbhP2hgqR8LeE
+         VQUTa6PMdNskfgMj1quOg4RY5cTBewsNqPVrwEZCyYNoXQ9xZ9UBfwQsjn61ypByW6D9
+         a5HWQ/nGp8Y3IjVOe1jyP0qLGc+neNvnuKQ5PtUTBIkjy5mRmf+J+lRzol4zQekB8R2/
+         iNaA==
+X-Gm-Message-State: APjAAAX4XEiF1sIWTlq/z2kqJSvWb19k0HMs2MEz982MifR0jAWZVvfV
+        /GrMq5yq6cUE337e5RMBpLQ=
+X-Google-Smtp-Source: APXvYqwP1f0WiMeLnf541ppBHx0xe7jId0bWUnETovczbdtzGdDYlbp9osWMQ0Z62AYVqlz/EiuiZg==
+X-Received: by 2002:a63:3fc9:: with SMTP id m192mr107730991pga.429.1564429600629;
+        Mon, 29 Jul 2019 12:46:40 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:500::1:309b])
+        by smtp.gmail.com with ESMTPSA id j10sm28183281pfn.188.2019.07.29.12.46.39
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 29 Jul 2019 12:46:39 -0700 (PDT)
+Date:   Mon, 29 Jul 2019 12:46:37 -0700
+From:   Tejun Heo <tj@kernel.org>
+To:     Daniel Jordan <daniel.m.jordan@oracle.com>
+Cc:     Steffen Klassert <steffen.klassert@secunet.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC 2/9] workqueue: unconfine alloc/apply/free_workqueue_attrs()
+Message-ID: <20190729194637.GF569612@devbig004.ftw2.facebook.com>
+References: <20190725212505.15055-1-daniel.m.jordan@oracle.com>
+ <20190725212505.15055-3-daniel.m.jordan@oracle.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190726183048.982726647@linutronix.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190725212505.15055-3-daniel.m.jordan@oracle.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 26, 2019 at 08:30:48PM +0200, Thomas Gleixner wrote:
-> The following series brings the bulk of PREEMPT_RT specific changes for the
-> (hr)timer code:
+On Thu, Jul 25, 2019 at 05:24:58PM -0400, Daniel Jordan wrote:
+> padata will use these these interfaces in a later patch, so unconfine them.
 > 
->   - Handle timer deletion correctly under RT to avoid priority inversion
->     and life locks
-> 
->     This mechanism might be useful for VMs as well when a vCPU
->     executing a timer callback gets scheduled out and on another vCPU
->     del_timer_sync() or hrtimer_cancel() is invoked.
-> 
->     The mitigation would only work when paravirt spinlocks are
->     enabled. I've not implemented that, as I don't know whether this is a
->     real world issue. I just noticed that it is basically the same
->     problem. Adding it would be trivial.
-> 
->   - Prepare for moving most hrtimer callbacks into softirq context and mark
->     timers which need to expire in hard interrupt context even on RT so
->     they don't get moved.
-> 
+> Signed-off-by: Daniel Jordan <daniel.m.jordan@oracle.com>
 
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Acked-by: Tejun Heo <tj@kernel.org>
+
+Thanks.
+
+-- 
+tejun
