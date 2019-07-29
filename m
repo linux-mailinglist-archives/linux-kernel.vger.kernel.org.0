@@ -2,392 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07D8279290
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 19:49:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A37B7925F
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 19:43:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727562AbfG2Rs7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 13:48:59 -0400
-Received: from dougal.metanate.com ([90.155.101.14]:46140 "EHLO metanate.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726627AbfG2Rs6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 13:48:58 -0400
-X-Greylist: delayed 1429 seconds by postgrey-1.27 at vger.kernel.org; Mon, 29 Jul 2019 13:48:58 EDT
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=simple/simple; d=metanate.com;
-         s=stronger; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
-        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=7GYRN1d4HSVoVQmmV20GsD3CBVcMLj6PZvxlfQTzfC0=; b=W0wDekhcfDl3OLEnBfLVj2dit0
-        sMOTL+a4ujzeMCPNtVoEuXL6WCiqn2yHNZQC+ipxTd10WSd6ZzJoW6wAxQwIxcqXIbqcRafWMWYuo
-        W/xlpQuiDEktem0QBOSKjzEZoct3wIMF4Xy9Y00WSN3t+AICQg7E5AzXbQDzpzYbPHDskt+54AKmL
-        W6t1Q9zY5lBJAUzZFSaWZcKDKiuunCQ/jHjlcxcjO10iIvXndKeLhy9bnXkrSBDQ3LTuGTqXBdnu5
-        7Ie7YnZoqXJ0mY/Pf4HYXOs+irDqqdE9dG/e+LWU5X8qjjuEMDXh1S4OKFMjXpylGTYd/+eukbakQ
-        Y9a5RTaA==;
-Received: from dougal.metanate.com ([192.168.88.1] helo=localhost.localdomain)
-        by shrek.metanate.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <john@metanate.com>)
-        id 1hs9ON-0001Uh-Gl; Mon, 29 Jul 2019 18:24:59 +0100
-From:   John Keeping <john@metanate.com>
-Cc:     John Keeping <john@metanate.com>,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] perf unwind: fix libunwind when tid != pid
-Date:   Mon, 29 Jul 2019 18:24:30 +0100
-Message-Id: <20190729172430.14880-2-john@metanate.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190729172430.14880-1-john@metanate.com>
-References: <20190729172430.14880-1-john@metanate.com>
+        id S2388049AbfG2RnP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 13:43:15 -0400
+Received: from mout.gmx.net ([212.227.15.19]:50601 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387822AbfG2RnK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 13:43:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1564422129;
+        bh=RdzV7ibrX+DwP2/BCdjL01crPjcknaV01tD0aoWIdDg=;
+        h=X-UI-Sender-Class:From:To:Cc:Subject:Date;
+        b=R9ZrFy29vedWnJJeYzRWI5kBNGitmtGhHhCP3B9ig27ts59fWQFKCzV97vz/8OzDY
+         n6mCgzrWb1jtHN57Y6ItnOZCHxkP8tDgVFPdEL5iLjcvrd5ZsiqKmSnZEHKTLgK4Ir
+         DeeCkmABc5HnZPTN1+C1vbQYuY0J+H1KK2m2mVGU=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from localhost.localdomain ([185.76.97.79]) by mail.gmx.com
+ (mrgmx001 [212.227.17.190]) with ESMTPSA (Nemesis) id
+ 0LzskF-1iV7102Ez5-014xXw; Mon, 29 Jul 2019 19:42:09 +0200
+From:   Frank Wunderlich <frank-w@public-files.de>
+To:     Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Allison Randal <allison@lohutok.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        devicetree@vger.kernel.org, Eddie Huang <eddie.huang@mediatek.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-pm@vger.kernel.org,
+        linux-rtc@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Richard Fontana <rfontana@redhat.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Tianping . Fang" <tianping.fang@mediatek.com>
+Cc:     Frank Wunderlich <frank-w@public-files.de>
+Subject: [PATCH v3 00/10] implement poweroff for mt6323 / bpi-r2
+Date:   Mon, 29 Jul 2019 19:41:44 +0200
+Message-Id: <20190729174154.4335-1-frank-w@public-files.de>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Authenticated: YES
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:eaB03qW1RdZHhSSwGKsKQ5ipDCg+qmUpRIGapr9mOzrFy6CA0gx
+ pz2or5Jz0m/M9Qv2WF+ghf9EH2MsOqsPCwN08N5B7E1g7UGFfTI3HJ+h15PC4DVZUlZl3ms
+ Ho9F5fTbpA8NIggLdlvetC6qOgK+0GU9Baeq4OYqZUrc0peTECs3o5j/2V8HKESuUQIOeLd
+ mIQqBZ2JLaJTffUIw8qQw==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:/HfsKFt0IkQ=:O6NiHfNSSWLslNZ2emBoSG
+ 3VE4lb75JDVpkh0pU4mnlj4DCCz8wrM46AxzVryqq/4jrwBGdE8zf5nHHd8FCHwVeiwF2dQOe
+ c4hw7A3ZPyKQSTp+VjcSoY7ViYIocfgEQe1Rmtv1QKyKHYVB8RypT97Hl4xh9rsCNQKov31ZR
+ Kh09x91Fe6+V+QVYs1ldQ6ue/UPuf5x7Z5ttCRO4b/C/HupnIX8TELpRf4SJbs/fHjDUowMvS
+ s0WsYVHXi3Mf0kbI6w322RGXHO5ouSwsFPfuHMnYJcN6e9hMqg359/xdavduRXNfbjr9+66ag
+ b73SyLlBC+VvqVLr7LdZ1ulevSzFTtViC0lqqqQoKxC/YpxF+y2oAegEGos3xSR0NcOJ14tGO
+ Ix4oH90ojljyY5lMBZRPEnDIA1ciHvjd8aF1kN+07WPNpF8RfIabSMfgFx0kxDnPEM79DzWYW
+ 9CmniUHxAVkrLE73XiwRLpmiVxhICUdHtJtykDGiIFRYX1bsNbGRB3+lRVdcTcg1jjJ61Bkzc
+ XanCObGqjjwGQBV0lxtpsPoRdhI87GFqURmW+BQsYwKdOSBDqz1UdvzJYJNg5SnrZZcG0+bzW
+ v78/pNEbdvPI+PCoOSlFr48xxDQnIPo6FGGZhEX2kFRjDRTnKfl1fIS4nj7ytLwrkkLGZmR9g
+ joq8YSOAPXfUBhlR843i8iLLlgpptHakCm1DKZfV3g2nOb68J0iYHCfZYrinZUhhf3GkgJbBQ
+ NNfqYzbluzq7X/DH9sBz1gVSviWE+idaU7vg8uwUO1OCDB4ztzqK9ZtnI9mjbloc2zZ0hn8ux
+ pyZOmpSHSHtgN4X6EyF0uIwRBRQySv1FoA7QHuIF8WKf9d0sGJDK2xjc9D5mAXdy0e/DS6sG0
+ h5SI0fPzvoHtN/Ug6kttZOyAYptN2u5XGvb2fWfoNGaaTnkoSdychfXritF3eC5CsJJqsH2Ss
+ rKpjNiKlLZtK8NX+Cxk2dx41HbodyTigWZESf8vxyhdT2aYguOQYmYGWm+QXmEZv44qehYR9p
+ Y7riK9MFJTWkINuhFSe9O3LuLnzWJ0CWLgxNCjNKKBlq0EvaFiKjh3aa53x2vHO31WrK0AAcp
+ +5qSgXM+s/WGDPtW51uZ1Hg/NqmNalg2b8A
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit e5adfc3e7e77 ("perf map: Synthesize maps only for thread group
-leader") changed the recording side so that we no longer get mmap events
-for threads other than the thread group leader.
+mainline-driver does not support mt6323
 
-When a file recorded after this change is loaded, the lack of mmap
-records mean that unwinding is not set up for any other threads.
+this series makes some cleanup to mt6397-rtc-driver, adds mt6323 and
+implement power-controller on it.
 
-Following the rationale in that commit, move the libunwind fields into
-struct map_groups and update the libunwind functions to take this
-instead of the struct thread.  This is only required for
-unwind__finish_access which must now be called from map_groups__delete
-and the others are changed for symmetry.
+tested on bananapi-r2
 
-Note that unwind__get_entries keeps the thread argument since it is
-required for symbol lookup and the libdw unwind provider uses the thread
-ID.
+Original Patch from Josef Friedl
 
-Fixes: e5adfc3e7e77 ("perf map: Synthesize maps only for thread group leader")
-Cc: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Signed-off-by: John Keeping <john@metanate.com>
----
- tools/perf/util/map.c                    |  3 +-
- tools/perf/util/map_groups.h             |  4 +++
- tools/perf/util/thread.c                 |  7 ++---
- tools/perf/util/thread.h                 |  4 ---
- tools/perf/util/unwind-libunwind-local.c | 18 +++++------
- tools/perf/util/unwind-libunwind.c       | 40 ++++++++++--------------
- tools/perf/util/unwind.h                 | 25 ++++++++-------
- 7 files changed, 48 insertions(+), 53 deletions(-)
+changes since v2:
+	- Splitted some parts and rebased on 5.3-rc2:
 
-diff --git a/tools/perf/util/map.c b/tools/perf/util/map.c
-index 44b556812e4b..27b7b102e4a2 100644
---- a/tools/perf/util/map.c
-+++ b/tools/perf/util/map.c
-@@ -647,6 +647,7 @@ struct map_groups *map_groups__new(struct machine *machine)
- void map_groups__delete(struct map_groups *mg)
- {
- 	map_groups__exit(mg);
-+	unwind__finish_access(mg);
- 	free(mg);
- }
- 
-@@ -887,7 +888,7 @@ int map_groups__clone(struct thread *thread, struct map_groups *parent)
- 		if (new == NULL)
- 			goto out_unlock;
- 
--		err = unwind__prepare_access(thread, new, NULL);
-+		err = unwind__prepare_access(mg, new, NULL);
- 		if (err)
- 			goto out_unlock;
- 
-diff --git a/tools/perf/util/map_groups.h b/tools/perf/util/map_groups.h
-index 5f25efa6d6bc..77252e14008f 100644
---- a/tools/perf/util/map_groups.h
-+++ b/tools/perf/util/map_groups.h
-@@ -31,6 +31,10 @@ struct map_groups {
- 	struct maps	 maps;
- 	struct machine	 *machine;
- 	refcount_t	 refcnt;
-+#ifdef HAVE_LIBUNWIND_SUPPORT
-+	void				*addr_space;
-+	struct unwind_libunwind_ops	*unwind_libunwind_ops;
-+#endif
- };
- 
- #define KMAP_NAME_LEN 256
-diff --git a/tools/perf/util/thread.c b/tools/perf/util/thread.c
-index 873ab505ca80..28e76d11f161 100644
---- a/tools/perf/util/thread.c
-+++ b/tools/perf/util/thread.c
-@@ -105,7 +105,6 @@ void thread__delete(struct thread *thread)
- 	}
- 	up_write(&thread->comm_lock);
- 
--	unwind__finish_access(thread);
- 	nsinfo__zput(thread->nsinfo);
- 	srccode_state_free(&thread->srccode_state);
- 
-@@ -242,7 +241,7 @@ static int ____thread__set_comm(struct thread *thread, const char *str,
- 		list_add(&new->list, &thread->comm_list);
- 
- 		if (exec)
--			unwind__flush_access(thread);
-+			unwind__flush_access(thread->mg);
- 	}
- 
- 	thread->comm_set = true;
-@@ -322,7 +321,7 @@ int thread__insert_map(struct thread *thread, struct map *map)
- {
- 	int ret;
- 
--	ret = unwind__prepare_access(thread, map, NULL);
-+	ret = unwind__prepare_access(thread->mg, map, NULL);
- 	if (ret)
- 		return ret;
- 
-@@ -342,7 +341,7 @@ static int __thread__prepare_access(struct thread *thread)
- 	down_read(&maps->lock);
- 
- 	for (map = maps__first(maps); map; map = map__next(map)) {
--		err = unwind__prepare_access(thread, map, &initialized);
-+		err = unwind__prepare_access(thread->mg, map, &initialized);
- 		if (err || initialized)
- 			break;
- 	}
-diff --git a/tools/perf/util/thread.h b/tools/perf/util/thread.h
-index e97ef6977eb9..bf06113be4f3 100644
---- a/tools/perf/util/thread.h
-+++ b/tools/perf/util/thread.h
-@@ -44,10 +44,6 @@ struct thread {
- 	struct thread_stack	*ts;
- 	struct nsinfo		*nsinfo;
- 	struct srccode_state	srccode_state;
--#ifdef HAVE_LIBUNWIND_SUPPORT
--	void				*addr_space;
--	struct unwind_libunwind_ops	*unwind_libunwind_ops;
--#endif
- 	bool			filter;
- 	int			filter_entry_depth;
- };
-diff --git a/tools/perf/util/unwind-libunwind-local.c b/tools/perf/util/unwind-libunwind-local.c
-index 71a788921b62..ebdbb056510c 100644
---- a/tools/perf/util/unwind-libunwind-local.c
-+++ b/tools/perf/util/unwind-libunwind-local.c
-@@ -616,26 +616,26 @@ static unw_accessors_t accessors = {
- 	.get_proc_name		= get_proc_name,
- };
- 
--static int _unwind__prepare_access(struct thread *thread)
-+static int _unwind__prepare_access(struct map_groups *mg)
- {
--	thread->addr_space = unw_create_addr_space(&accessors, 0);
--	if (!thread->addr_space) {
-+	mg->addr_space = unw_create_addr_space(&accessors, 0);
-+	if (!mg->addr_space) {
- 		pr_err("unwind: Can't create unwind address space.\n");
- 		return -ENOMEM;
- 	}
- 
--	unw_set_caching_policy(thread->addr_space, UNW_CACHE_GLOBAL);
-+	unw_set_caching_policy(mg->addr_space, UNW_CACHE_GLOBAL);
- 	return 0;
- }
- 
--static void _unwind__flush_access(struct thread *thread)
-+static void _unwind__flush_access(struct map_groups *mg)
- {
--	unw_flush_cache(thread->addr_space, 0, 0);
-+	unw_flush_cache(mg->addr_space, 0, 0);
- }
- 
--static void _unwind__finish_access(struct thread *thread)
-+static void _unwind__finish_access(struct map_groups *mg)
- {
--	unw_destroy_addr_space(thread->addr_space);
-+	unw_destroy_addr_space(mg->addr_space);
- }
- 
- static int get_entries(struct unwind_info *ui, unwind_entry_cb_t cb,
-@@ -660,7 +660,7 @@ static int get_entries(struct unwind_info *ui, unwind_entry_cb_t cb,
- 	 */
- 	if (max_stack - 1 > 0) {
- 		WARN_ONCE(!ui->thread, "WARNING: ui->thread is NULL");
--		addr_space = ui->thread->addr_space;
-+		addr_space = ui->thread->mg->addr_space;
- 
- 		if (addr_space == NULL)
- 			return -1;
-diff --git a/tools/perf/util/unwind-libunwind.c b/tools/perf/util/unwind-libunwind.c
-index c0811977d7d5..6499b22b158b 100644
---- a/tools/perf/util/unwind-libunwind.c
-+++ b/tools/perf/util/unwind-libunwind.c
-@@ -11,13 +11,13 @@ struct unwind_libunwind_ops __weak *local_unwind_libunwind_ops;
- struct unwind_libunwind_ops __weak *x86_32_unwind_libunwind_ops;
- struct unwind_libunwind_ops __weak *arm64_unwind_libunwind_ops;
- 
--static void unwind__register_ops(struct thread *thread,
-+static void unwind__register_ops(struct map_groups *mg,
- 			  struct unwind_libunwind_ops *ops)
- {
--	thread->unwind_libunwind_ops = ops;
-+	mg->unwind_libunwind_ops = ops;
- }
- 
--int unwind__prepare_access(struct thread *thread, struct map *map,
-+int unwind__prepare_access(struct map_groups *mg, struct map *map,
- 			   bool *initialized)
- {
- 	const char *arch;
-@@ -28,7 +28,7 @@ int unwind__prepare_access(struct thread *thread, struct map *map,
- 	if (!dwarf_callchain_users)
- 		return 0;
- 
--	if (thread->addr_space) {
-+	if (mg->addr_space) {
- 		pr_debug("unwind: thread map already set, dso=%s\n",
- 			 map->dso->name);
- 		if (initialized)
-@@ -37,14 +37,14 @@ int unwind__prepare_access(struct thread *thread, struct map *map,
- 	}
- 
- 	/* env->arch is NULL for live-mode (i.e. perf top) */
--	if (!thread->mg->machine->env || !thread->mg->machine->env->arch)
-+	if (!mg->machine->env || !mg->machine->env->arch)
- 		goto out_register;
- 
--	dso_type = dso__type(map->dso, thread->mg->machine);
-+	dso_type = dso__type(map->dso, mg->machine);
- 	if (dso_type == DSO__TYPE_UNKNOWN)
- 		return 0;
- 
--	arch = perf_env__arch(thread->mg->machine->env);
-+	arch = perf_env__arch(mg->machine->env);
- 
- 	if (!strcmp(arch, "x86")) {
- 		if (dso_type != DSO__TYPE_64BIT)
-@@ -59,37 +59,31 @@ int unwind__prepare_access(struct thread *thread, struct map *map,
- 		return 0;
- 	}
- out_register:
--	unwind__register_ops(thread, ops);
-+	unwind__register_ops(mg, ops);
- 
--	err = thread->unwind_libunwind_ops->prepare_access(thread);
-+	err = mg->unwind_libunwind_ops->prepare_access(mg);
- 	if (initialized)
- 		*initialized = err ? false : true;
- 	return err;
- }
- 
--void unwind__flush_access(struct thread *thread)
-+void unwind__flush_access(struct map_groups *mg)
- {
--	if (!dwarf_callchain_users)
--		return;
--
--	if (thread->unwind_libunwind_ops)
--		thread->unwind_libunwind_ops->flush_access(thread);
-+	if (mg->unwind_libunwind_ops)
-+		mg->unwind_libunwind_ops->flush_access(mg);
- }
- 
--void unwind__finish_access(struct thread *thread)
-+void unwind__finish_access(struct map_groups *mg)
- {
--	if (!dwarf_callchain_users)
--		return;
--
--	if (thread->unwind_libunwind_ops)
--		thread->unwind_libunwind_ops->finish_access(thread);
-+	if (mg->unwind_libunwind_ops)
-+		mg->unwind_libunwind_ops->finish_access(mg);
- }
- 
- int unwind__get_entries(unwind_entry_cb_t cb, void *arg,
- 			 struct thread *thread,
- 			 struct perf_sample *data, int max_stack)
- {
--	if (thread->unwind_libunwind_ops)
--		return thread->unwind_libunwind_ops->get_entries(cb, arg, thread, data, max_stack);
-+	if (thread->mg->unwind_libunwind_ops)
-+		return thread->mg->unwind_libunwind_ops->get_entries(cb, arg, thread, data, max_stack);
- 	return 0;
- }
-diff --git a/tools/perf/util/unwind.h b/tools/perf/util/unwind.h
-index 8a44a1569a21..3a7d00c20d86 100644
---- a/tools/perf/util/unwind.h
-+++ b/tools/perf/util/unwind.h
-@@ -6,6 +6,7 @@
- #include <linux/types.h>
- 
- struct map;
-+struct map_groups;
- struct perf_sample;
- struct symbol;
- struct thread;
-@@ -19,9 +20,9 @@ struct unwind_entry {
- typedef int (*unwind_entry_cb_t)(struct unwind_entry *entry, void *arg);
- 
- struct unwind_libunwind_ops {
--	int (*prepare_access)(struct thread *thread);
--	void (*flush_access)(struct thread *thread);
--	void (*finish_access)(struct thread *thread);
-+	int (*prepare_access)(struct map_groups *mg);
-+	void (*flush_access)(struct map_groups *mg);
-+	void (*finish_access)(struct map_groups *mg);
- 	int (*get_entries)(unwind_entry_cb_t cb, void *arg,
- 			   struct thread *thread,
- 			   struct perf_sample *data, int max_stack);
-@@ -46,20 +47,20 @@ int unwind__get_entries(unwind_entry_cb_t cb, void *arg,
- #endif
- 
- int LIBUNWIND__ARCH_REG_ID(int regnum);
--int unwind__prepare_access(struct thread *thread, struct map *map,
-+int unwind__prepare_access(struct map_groups *mg, struct map *map,
- 			   bool *initialized);
--void unwind__flush_access(struct thread *thread);
--void unwind__finish_access(struct thread *thread);
-+void unwind__flush_access(struct map_groups *mg);
-+void unwind__finish_access(struct map_groups *mg);
- #else
--static inline int unwind__prepare_access(struct thread *thread __maybe_unused,
-+static inline int unwind__prepare_access(struct map_groups *mg __maybe_unused,
- 					 struct map *map __maybe_unused,
- 					 bool *initialized __maybe_unused)
- {
- 	return 0;
- }
- 
--static inline void unwind__flush_access(struct thread *thread __maybe_unused) {}
--static inline void unwind__finish_access(struct thread *thread __maybe_unused) {}
-+static inline void unwind__flush_access(struct map_groups *mg __maybe_unused) {}
-+static inline void unwind__finish_access(struct map_groups *mg __maybe_unused) {}
- #endif
- #else
- static inline int
-@@ -72,14 +73,14 @@ unwind__get_entries(unwind_entry_cb_t cb __maybe_unused,
- 	return 0;
- }
- 
--static inline int unwind__prepare_access(struct thread *thread __maybe_unused,
-+static inline int unwind__prepare_access(struct map_groups *mg __maybe_unused,
- 					 struct map *map __maybe_unused,
- 					 bool *initialized __maybe_unused)
- {
- 	return 0;
- }
- 
--static inline void unwind__flush_access(struct thread *thread __maybe_unused) {}
--static inline void unwind__finish_access(struct thread *thread __maybe_unused) {}
-+static inline void unwind__flush_access(struct map_groups *mg __maybe_unused) {}
-+static inline void unwind__finish_access(struct map_groups *mg __maybe_unused) {}
- #endif /* HAVE_DWARF_UNWIND_SUPPORT */
- #endif /* __UNWIND_H */
--- 
-2.22.0
+	v2.1 dt-bindings: add powercontroller =E2=80=93 try to make better subjec=
+t
+	v2.2 separate rtc-mt6397.txt (suggested by Alexandre Belloni)
+		add missing commit-message (suggested by Matthias Brugger)
+	v2.3 fix alloc after IRQ (suggested by Alexandre Belloni)
+		new compatible (splitting suggested by Alexandre Belloni)
+		needed due to different rtc-base/size see #7
+	v2.4 simplifications (Define-res-macros)
+		add mt6323 rtc+pwrc
+	v2.5 add poweroff-driver (no change)
+	v2.6 MAINTAINERS (no change)
+	v2.7 DTS-Changes (no change)
+
+changes since v1:
+	- splitted into functional parts
+	- more infos about changes
+
+Josef Friedl (10):
+  dt-bindings: add powercontroller
+  dt-bindings: add missing mt6397 rtc
+  rtc: mt6397: move some common definitions into rtc.h
+  rtc: mt6397: improvements of rtc driver
+  rtc: mt6397: add compatible for mt6323
+  mfd: mt6323: some improvements of mt6397-core
+  mfd: mt6323: add mt6323 rtc+pwrc
+  power: reset: add driver for mt6323 poweroff
+  MAINTAINERS: add Mediatek shutdown drivers
+  arm: dts: mt6323: add keys, power-controller, rtc and codec
+
+ .../devicetree/bindings/mfd/mt6397.txt        |  10 +-
+ .../bindings/power/reset/mt6323-poweroff.txt  |  20 ++++
+ .../devicetree/bindings/rtc/rtc-mt6397.txt    |  29 +++++
+ MAINTAINERS                                   |   7 ++
+ arch/arm/boot/dts/mt6323.dtsi                 |  27 +++++
+ drivers/mfd/mt6397-core.c                     |  40 +++++--
+ drivers/power/reset/Kconfig                   |  10 ++
+ drivers/power/reset/Makefile                  |   1 +
+ drivers/power/reset/mt6323-poweroff.c         |  97 ++++++++++++++++
+ drivers/rtc/rtc-mt6397.c                      | 107 ++++--------------
+ include/linux/mfd/mt6397/core.h               |   2 +
+ include/linux/mfd/mt6397/rtc.h                |  71 ++++++++++++
+ 12 files changed, 323 insertions(+), 98 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/power/reset/mt6323-p=
+oweroff.txt
+ create mode 100644 Documentation/devicetree/bindings/rtc/rtc-mt6397.txt
+ create mode 100644 drivers/power/reset/mt6323-poweroff.c
+ create mode 100644 include/linux/mfd/mt6397/rtc.h
+
+=2D-
+2.17.1
 
