@@ -2,68 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB4B178DE4
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 16:28:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 460D778DFC
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 16:29:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728129AbfG2O2s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 10:28:48 -0400
-Received: from foss.arm.com ([217.140.110.172]:45084 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726190AbfG2O2s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 10:28:48 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0306A28;
-        Mon, 29 Jul 2019 07:28:48 -0700 (PDT)
-Received: from [10.1.194.37] (e113632-lin.cambridge.arm.com [10.1.194.37])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DB0C13F71F;
-        Mon, 29 Jul 2019 07:28:46 -0700 (PDT)
-Subject: Re: [PATCH 3/5] sched/fair: rework load_balance
-To:     Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <Morten.Rasmussen@arm.com>,
-        Phil Auld <pauld@redhat.com>
-References: <1563523105-24673-1-git-send-email-vincent.guittot@linaro.org>
- <1563523105-24673-4-git-send-email-vincent.guittot@linaro.org>
- <d55f906e-6e91-9f49-5c2c-7ec2e6bd68b0@arm.com>
- <CAKfTPtD2hDxnHSaa5C_Jrtabb_ogJSgkLE=5UPyystKZqUmzWA@mail.gmail.com>
- <4d3a67f5-c9c4-6397-7405-6f0efbd49d5c@arm.com>
- <CAKfTPtBE5fzycHk33rf7Bky-tYSeCXaKd9oGR5cgaghzbL2TvA@mail.gmail.com>
- <aff49e6a-b4d3-baae-9124-3d5bb5abdbfe@arm.com>
- <CAKfTPtBTH10k56s-sU3TX+vL6Xas-QArLW-CBz7ZeqU0BNzMQA@mail.gmail.com>
-From:   Valentin Schneider <valentin.schneider@arm.com>
-Message-ID: <58f79135-4b6c-2507-3f5d-e3c7704bf8b3@arm.com>
-Date:   Mon, 29 Jul 2019 15:28:45 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1728031AbfG2O3e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 10:29:34 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:7928 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728045AbfG2O33 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 10:29:29 -0400
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6TERLrM022428;
+        Mon, 29 Jul 2019 16:29:17 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : subject :
+ date : message-id : mime-version : content-type :
+ content-transfer-encoding; s=STMicroelectronics;
+ bh=/E0GksnkJiKefciHBvFyL+s1X3i9mUeBZFhV3J5bfCA=;
+ b=MejLdAC5egEPFYo+PeRI2KZ59gQepBm4PjuE4dYHUmy2ipCTkYeM8cPmcIuSB5SWQNZc
+ RWkDgdoUWvw3LPq0VRRbTRfja20BeoQ43YZJjo73gjX75besD6SIgzfQwDq3U6bS6jX4
+ L9ELCvaiRoeRT73MTMLKzNRLuVenb8F1Kp+dQ3QMliTZWXCRQIjCAtmzQdq5k/AfDJSE
+ Jcm28weMNsKgnLktPyiKeaCpGOtZrBUi0IA3MLu/DH7f+Jm0RWGCxy/j4HwaUzG1/tlU
+ Sm0oYVM+dOOe63K/wy8W/kCEDgi0jnnm8h05EyWzJ4dJZfn1fAhTIaGveh3kVOEjKjcL +A== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2u0br9n7jv-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Mon, 29 Jul 2019 16:29:17 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 1F17F34;
+        Mon, 29 Jul 2019 14:29:16 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas24.st.com [10.75.90.94])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id D1D6B5A7C;
+        Mon, 29 Jul 2019 14:29:15 +0000 (GMT)
+Received: from SAFEX1HUBCAS23.st.com (10.75.90.47) by Safex1hubcas24.st.com
+ (10.75.90.94) with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 29 Jul
+ 2019 16:29:15 +0200
+Received: from localhost (10.201.23.97) by webmail-ga.st.com (10.75.90.48)
+ with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 29 Jul 2019 16:29:15
+ +0200
+From:   =?UTF-8?q?Yannick=20Fertr=C3=A9?= <yannick.fertre@st.com>
+To:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Benjamin Gaignard <benjamin.gaignard@st.com>,
+        Yannick Fertre <yannick.fertre@st.com>,
+        Philippe Cornu <philippe.cornu@st.com>,
+        Fabrice Gasnier <fabrice.gasnier@st.com>
+Subject: [PATCH] ARM: dts: stm32: add phy-dsi-supply property on stm32mp157c-ev1
+Date:   Mon, 29 Jul 2019 16:29:08 +0200
+Message-ID: <1564410548-20436-1-git-send-email-yannick.fertre@st.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <CAKfTPtBTH10k56s-sU3TX+vL6Xas-QArLW-CBz7ZeqU0BNzMQA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.201.23.97]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-29_07:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26/07/2019 15:47, Vincent Guittot wrote:
-[...]
->> If CPU0 runs the load balancer, balancing utilization would mean pulling
->> 2 tasks from CPU1 to reach the domain-average of 40%. The good side of this
->> is that we could save ourselves from running some newidle balances, but
->> I'll admit that's all quite "finger in the air".
-> 
-> Don't forget that scheduler also selects a cpu when task wakeup and
-> should cope with such situation
-> 
+The dsi physical layer is powered by the 1v8 power controller supply.
 
-Right, although I'm not sure even the slow wakeup path is any good at
-balancing utilization.
+Signed-off-by: Yannick Fertré <yannick.fertre@st.com>
+---
+ arch/arm/boot/dts/stm32mp157c-ev1.dts | 1 +
+ 1 file changed, 1 insertion(+)
 
->>
->>>> happen, but it'd be a shame to repeatedly do this when we could
->>>> preemptively balance utilization.
->>>>
+diff --git a/arch/arm/boot/dts/stm32mp157c-ev1.dts b/arch/arm/boot/dts/stm32mp157c-ev1.dts
+index feb8f77..19d69d0 100644
+--- a/arch/arm/boot/dts/stm32mp157c-ev1.dts
++++ b/arch/arm/boot/dts/stm32mp157c-ev1.dts
+@@ -101,6 +101,7 @@
+ &dsi {
+ 	#address-cells = <1>;
+ 	#size-cells = <0>;
++	phy-dsi-supply = <&reg18>;
+ 	status = "okay";
+ 
+ 	ports {
+-- 
+2.7.4
+
