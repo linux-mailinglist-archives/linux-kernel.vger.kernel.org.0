@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF772793C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:24:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD6D6793C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:24:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729494AbfG2TYW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 15:24:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36516 "EHLO mail.kernel.org"
+        id S1729524AbfG2TY3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 15:24:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36662 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387561AbfG2TYR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:24:17 -0400
+        id S1729501AbfG2TY0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:24:26 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2F30D2070B;
-        Mon, 29 Jul 2019 19:24:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 438D92070B;
+        Mon, 29 Jul 2019 19:24:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564428256;
-        bh=G2bbweMEWk37RuRfeZkhAnlhnD8IaKCChWQMszFGcC8=;
+        s=default; t=1564428265;
+        bh=PDqgGhIokdVoyL0gvsRBdGE+bCkPsovuKfj8ytoK7sg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dUHDWeDTQ+SFvMJBVMzwmyug92EKQFA0NSlA2qf8rsGX4MfAx1CfXiCDvSuggka6z
-         Gg3R/fDohqxxZlEvyD4OijFydlvv01v0UtSar+8aS7jlh/z6AaWTgrHD4dqBkwSPND
-         x99xD0bGQeTAwrAz1L12EfrkqCE51TwfYy75zWk4=
+        b=bc7gF8nK+U4Na7A3/HdHSwhrolTpse6gt7maC82k0/Y0dPh9BZF+ZgarGY9CqRfuC
+         I8awCXBEddy5eHDi5Vo5MIrsyk17/t1/rIuvx1fGKDAKX1GOmoaY5OTfQwBnSFaMFI
+         XF/1+ri+2cSO1RMQkThyDld86zmsbHpnZJWeL/UU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sven Van Asbroeck <TheSven73@gmail.com>,
-        Robin Gong <yibin.gong@nxp.com>, Vinod Koul <vkoul@kernel.org>,
+        stable@vger.kernel.org, Tim Schumacher <timschumi@gmx.de>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 005/293] dmaengine: imx-sdma: fix use-after-free on probe error path
-Date:   Mon, 29 Jul 2019 21:18:16 +0200
-Message-Id: <20190729190820.752569822@linuxfoundation.org>
+Subject: [PATCH 4.14 008/293] ath9k: Check for errors when reading SREV register
+Date:   Mon, 29 Jul 2019 21:18:19 +0200
+Message-Id: <20190729190820.973395916@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190729190820.321094988@linuxfoundation.org>
 References: <20190729190820.321094988@linuxfoundation.org>
@@ -44,105 +44,119 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 2b8066c3deb9140fdf258417a51479b2aeaa7622 ]
+[ Upstream commit 2f90c7e5d09437a4d8d5546feaae9f1cf48cfbe1 ]
 
-If probe() fails anywhere beyond the point where
-sdma_get_firmware() is called, then a kernel oops may occur.
+Right now, if an error is encountered during the SREV register
+read (i.e. an EIO in ath9k_regread()), that error code gets
+passed all the way to __ath9k_hw_init(), where it is visible
+during the "Chip rev not supported" message.
 
-Problematic sequence of events:
-1. probe() calls sdma_get_firmware(), which schedules the
-   firmware callback to run when firmware becomes available,
-   using the sdma instance structure as the context
-2. probe() encounters an error, which deallocates the
-   sdma instance structure
-3. firmware becomes available, firmware callback is
-   called with deallocated sdma instance structure
-4. use after free - kernel oops !
+    ath9k_htc 1-1.4:1.0: ath9k_htc: HTC initialized with 33 credits
+    ath: phy2: Mac Chip Rev 0x0f.3 is not supported by this driver
+    ath: phy2: Unable to initialize hardware; initialization status: -95
+    ath: phy2: Unable to initialize hardware; initialization status: -95
+    ath9k_htc: Failed to initialize the device
 
-Solution: only attempt to load firmware when we're certain
-that probe() will succeed. This guarantees that the firmware
-callback's context will remain valid.
+Check for -EIO explicitly in ath9k_hw_read_revisions() and return
+a boolean based on the success of the operation. Check for that in
+__ath9k_hw_init() and abort with a more debugging-friendly message
+if reading the revisions wasn't successful.
 
-Note that the remove() path is unaffected by this issue: the
-firmware loader will increment the driver module's use count,
-ensuring that the module cannot be unloaded while the
-firmware callback is pending or running.
+    ath9k_htc 1-1.4:1.0: ath9k_htc: HTC initialized with 33 credits
+    ath: phy2: Failed to read SREV register
+    ath: phy2: Could not read hardware revision
+    ath: phy2: Unable to initialize hardware; initialization status: -95
+    ath: phy2: Unable to initialize hardware; initialization status: -95
+    ath9k_htc: Failed to initialize the device
 
-Signed-off-by: Sven Van Asbroeck <TheSven73@gmail.com>
-Reviewed-by: Robin Gong <yibin.gong@nxp.com>
-[vkoul: fixed braces for if condition]
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+This helps when debugging by directly showing the first point of
+failure and it could prevent possible errors if a 0x0f.3 revision
+is ever supported.
+
+Signed-off-by: Tim Schumacher <timschumi@gmx.de>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/dma/imx-sdma.c | 48 ++++++++++++++++++++++++------------------
- 1 file changed, 27 insertions(+), 21 deletions(-)
+ drivers/net/wireless/ath/ath9k/hw.c | 32 +++++++++++++++++++++--------
+ 1 file changed, 23 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/dma/imx-sdma.c b/drivers/dma/imx-sdma.c
-index b8e7c2d8915e..0fc12a8783e3 100644
---- a/drivers/dma/imx-sdma.c
-+++ b/drivers/dma/imx-sdma.c
-@@ -1821,27 +1821,6 @@ static int sdma_probe(struct platform_device *pdev)
- 	if (pdata && pdata->script_addrs)
- 		sdma_add_scripts(sdma, pdata->script_addrs);
+diff --git a/drivers/net/wireless/ath/ath9k/hw.c b/drivers/net/wireless/ath/ath9k/hw.c
+index a7f506eb7b36..406b52f114f0 100644
+--- a/drivers/net/wireless/ath/ath9k/hw.c
++++ b/drivers/net/wireless/ath/ath9k/hw.c
+@@ -250,8 +250,9 @@ void ath9k_hw_get_channel_centers(struct ath_hw *ah,
+ /* Chip Revisions */
+ /******************/
  
--	if (pdata) {
--		ret = sdma_get_firmware(sdma, pdata->fw_name);
--		if (ret)
--			dev_warn(&pdev->dev, "failed to get firmware from platform data\n");
--	} else {
--		/*
--		 * Because that device tree does not encode ROM script address,
--		 * the RAM script in firmware is mandatory for device tree
--		 * probe, otherwise it fails.
--		 */
--		ret = of_property_read_string(np, "fsl,sdma-ram-script-name",
--					      &fw_name);
--		if (ret)
--			dev_warn(&pdev->dev, "failed to get firmware name\n");
--		else {
--			ret = sdma_get_firmware(sdma, fw_name);
--			if (ret)
--				dev_warn(&pdev->dev, "failed to get firmware from device tree\n");
--		}
--	}
--
- 	sdma->dma_device.dev = &pdev->dev;
+-static void ath9k_hw_read_revisions(struct ath_hw *ah)
++static bool ath9k_hw_read_revisions(struct ath_hw *ah)
+ {
++	u32 srev;
+ 	u32 val;
  
- 	sdma->dma_device.device_alloc_chan_resources = sdma_alloc_chan_resources;
-@@ -1883,6 +1862,33 @@ static int sdma_probe(struct platform_device *pdev)
- 		of_node_put(spba_bus);
+ 	if (ah->get_mac_revision)
+@@ -267,25 +268,33 @@ static void ath9k_hw_read_revisions(struct ath_hw *ah)
+ 			val = REG_READ(ah, AR_SREV);
+ 			ah->hw_version.macRev = MS(val, AR_SREV_REVISION2);
+ 		}
+-		return;
++		return true;
+ 	case AR9300_DEVID_AR9340:
+ 		ah->hw_version.macVersion = AR_SREV_VERSION_9340;
+-		return;
++		return true;
+ 	case AR9300_DEVID_QCA955X:
+ 		ah->hw_version.macVersion = AR_SREV_VERSION_9550;
+-		return;
++		return true;
+ 	case AR9300_DEVID_AR953X:
+ 		ah->hw_version.macVersion = AR_SREV_VERSION_9531;
+-		return;
++		return true;
+ 	case AR9300_DEVID_QCA956X:
+ 		ah->hw_version.macVersion = AR_SREV_VERSION_9561;
+-		return;
++		return true;
  	}
  
-+	/*
-+	 * Kick off firmware loading as the very last step:
-+	 * attempt to load firmware only if we're not on the error path, because
-+	 * the firmware callback requires a fully functional and allocated sdma
-+	 * instance.
-+	 */
-+	if (pdata) {
-+		ret = sdma_get_firmware(sdma, pdata->fw_name);
-+		if (ret)
-+			dev_warn(&pdev->dev, "failed to get firmware from platform data\n");
-+	} else {
-+		/*
-+		 * Because that device tree does not encode ROM script address,
-+		 * the RAM script in firmware is mandatory for device tree
-+		 * probe, otherwise it fails.
-+		 */
-+		ret = of_property_read_string(np, "fsl,sdma-ram-script-name",
-+					      &fw_name);
-+		if (ret) {
-+			dev_warn(&pdev->dev, "failed to get firmware name\n");
-+		} else {
-+			ret = sdma_get_firmware(sdma, fw_name);
-+			if (ret)
-+				dev_warn(&pdev->dev, "failed to get firmware from device tree\n");
-+		}
+-	val = REG_READ(ah, AR_SREV) & AR_SREV_ID;
++	srev = REG_READ(ah, AR_SREV);
++
++	if (srev == -EIO) {
++		ath_err(ath9k_hw_common(ah),
++			"Failed to read SREV register");
++		return false;
 +	}
 +
- 	return 0;
++	val = srev & AR_SREV_ID;
  
- err_register:
+ 	if (val == 0xFF) {
+-		val = REG_READ(ah, AR_SREV);
++		val = srev;
+ 		ah->hw_version.macVersion =
+ 			(val & AR_SREV_VERSION2) >> AR_SREV_TYPE2_S;
+ 		ah->hw_version.macRev = MS(val, AR_SREV_REVISION2);
+@@ -304,6 +313,8 @@ static void ath9k_hw_read_revisions(struct ath_hw *ah)
+ 		if (ah->hw_version.macVersion == AR_SREV_VERSION_5416_PCIE)
+ 			ah->is_pciexpress = true;
+ 	}
++
++	return true;
+ }
+ 
+ /************************************/
+@@ -557,7 +568,10 @@ static int __ath9k_hw_init(struct ath_hw *ah)
+ 	struct ath_common *common = ath9k_hw_common(ah);
+ 	int r = 0;
+ 
+-	ath9k_hw_read_revisions(ah);
++	if (!ath9k_hw_read_revisions(ah)) {
++		ath_err(common, "Could not read hardware revisions");
++		return -EOPNOTSUPP;
++	}
+ 
+ 	switch (ah->hw_version.macVersion) {
+ 	case AR_SREV_VERSION_5416_PCI:
 -- 
 2.20.1
 
