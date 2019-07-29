@@ -2,80 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C4D278D24
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 15:46:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D6E8C78D1E
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 15:45:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728332AbfG2Nqv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 09:46:51 -0400
-Received: from conssluserg-05.nifty.com ([210.131.2.90]:64229 "EHLO
-        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728311AbfG2Nqu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 09:46:50 -0400
-Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com [209.85.217.53]) (authenticated)
-        by conssluserg-05.nifty.com with ESMTP id x6TDkP0G011156;
-        Mon, 29 Jul 2019 22:46:25 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com x6TDkP0G011156
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1564407986;
-        bh=qLoqc8SgJBDFKaergokyblK4+gJ/6TiiJ/m2LMCPOyE=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=EQdW3LxzSgcfz3nL3LKBEKlgdNjgkQTjl0SJdSkDxamBZAXu/jLmuoDQxHRneeCFd
-         HdLUYc4d8wUVLlcKbh9nrnSZbbCwTfATuz9UClTmWHDSY+7OTG4SVWNUHT98gGxKUe
-         xvkm9jgUOQzduV1JfMpxFTA6Nbq9gDoX/DFVdAg6yP+LgScy5ysyPd6EF8O8w661cL
-         XnZbhAHpn+OLB5rDt1gjefINk6Yb3c3SwDt79g6fQHF/xhC/Hgkl8rIDq4KMWAQbyg
-         q5ymojhZlHbhdpm4DVyrXCGIS0htjMwugFmIkEaStrJD3g29y4DN5yqTZ0WdjpQ1CH
-         T2ZJ1sf55A59Q==
-X-Nifty-SrcIP: [209.85.217.53]
-Received: by mail-vs1-f53.google.com with SMTP id m8so40849464vsj.0;
-        Mon, 29 Jul 2019 06:46:25 -0700 (PDT)
-X-Gm-Message-State: APjAAAW115u0JlZ3ar45mFxbXnXLsCDDZqgXGL1SWM2lDTthmLMFxLQI
-        CczceCK+7kMgty3H0Ap+KAbzubgHGAmPKzCJ5I4=
-X-Google-Smtp-Source: APXvYqx0tQvho/eS+Vd4XAH38/PRJt4peo3nbQti7+g5DwIb7TijNjEmOVk9sZOM4iL75B9cLkHSgmLm5wJs1UX3RLk=
-X-Received: by 2002:a67:d46:: with SMTP id 67mr68024863vsn.181.1564407984713;
- Mon, 29 Jul 2019 06:46:24 -0700 (PDT)
+        id S2387682AbfG2Np5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 09:45:57 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:44786 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727632AbfG2Np5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 09:45:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=3Z/kfa9fM3G4V3a6xOuotsKa6lAoDW+2j1EfLl7AEuU=; b=Hy53qEOjo79ssYqLSRDTY4m1D+
+        jAAhCFM/KVIVhnYg4OdMgJDqJMzmxs3bA6JZnlmlzw4U/A8LOduOw0jX6KtRmC7UHzLIetv8MB7Mp
+        qz/Rt3WWfTMWcwWjpyqhKMI5luFT+cJLYh+TgXPLu4qiB1gQjyQyQIbhzh6aor9e8lBY=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
+        (envelope-from <andrew@lunn.ch>)
+        id 1hs5yL-0001QT-BW; Mon, 29 Jul 2019 15:45:53 +0200
+Date:   Mon, 29 Jul 2019 15:45:53 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Jia-Ju Bai <baijiaju1990@gmail.com>
+Cc:     f.fainelli@gmail.com, hkallweit1@gmail.com, davem@davemloft.net,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: phy: phy_led_triggers: Fix a possible null-pointer
+ dereference in phy_led_trigger_change_speed()
+Message-ID: <20190729134553.GC4110@lunn.ch>
+References: <20190729092424.30928-1-baijiaju1990@gmail.com>
 MIME-Version: 1.0
-References: <1562668156-12927-1-git-send-email-hayashi.kunihiko@socionext.com> <1562668156-12927-4-git-send-email-hayashi.kunihiko@socionext.com>
-In-Reply-To: <1562668156-12927-4-git-send-email-hayashi.kunihiko@socionext.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Mon, 29 Jul 2019 22:45:48 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARNHPwS50mKj72+3OWNODYaRUGDQx_b88mf=Fv34nR5yw@mail.gmail.com>
-Message-ID: <CAK7LNARNHPwS50mKj72+3OWNODYaRUGDQx_b88mf=Fv34nR5yw@mail.gmail.com>
-Subject: Re: [PATCH 3/5] pinctrl: uniphier: Add 4th LD20 MPEG2-TS input
- pin-mux setting
-To:     Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190729092424.30928-1-baijiaju1990@gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 9, 2019 at 7:29 PM Kunihiko Hayashi
-<hayashi.kunihiko@socionext.com> wrote:
->
-> The 4th serial TS interface uses the following pins:
+On Mon, Jul 29, 2019 at 05:24:24PM +0800, Jia-Ju Bai wrote:
+> In phy_led_trigger_change_speed(), there is an if statement on line 48
+> to check whether phy->last_triggered is NULL: 
+>     if (!phy->last_triggered)
+> 
+> When phy->last_triggered is NULL, it is used on line 52:
+>     led_trigger_event(&phy->last_triggered->trigger, LED_OFF);
+> 
+> Thus, a possible null-pointer dereference may occur.
+> 
+> To fix this bug, led_trigger_event(&phy->last_triggered->trigger,
+> LED_OFF) is called when phy->last_triggered is not NULL.
+> 
+> This bug is found by a static analysis tool STCheck written by us.
 
-This is the 5th pin-group
-(hscin0, hscin1, hscin2, hscin3, and hscin4)
-but I see what you mean.  So, I do not not mind.
+Who is 'us'? 
 
-Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-
-
-
->   hscin4_s: PCA[11-14]
->
-> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-> ---
-
-
-
---
-Best Regards
-Masahiro Yamada
+Thanks
+    Andrew
