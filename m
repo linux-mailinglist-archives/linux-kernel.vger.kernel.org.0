@@ -2,72 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E119478DD8
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 16:27:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 262E478DDB
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 16:28:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727624AbfG2O1u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 10:27:50 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:55517 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726674AbfG2O1u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 10:27:50 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 092973082120;
-        Mon, 29 Jul 2019 14:27:50 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.136])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 91E27600F8;
-        Mon, 29 Jul 2019 14:27:45 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Mon, 29 Jul 2019 16:27:49 +0200 (CEST)
-Date:   Mon, 29 Jul 2019 16:27:44 +0200
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Christian Brauner <christian@brauner.io>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        arnd@arndb.de, ebiederm@xmission.com, keescook@chromium.org,
-        joel@joelfernandes.org, tglx@linutronix.de, tj@kernel.org,
-        dhowells@redhat.com, jannh@google.com, luto@kernel.org,
-        akpm@linux-foundation.org, cyphar@cyphar.com,
-        viro@zeniv.linux.org.uk, kernel-team@android.com
-Subject: Re: [PATCH v3 1/2] pidfd: add P_PIDFD to waitid()
-Message-ID: <20190729142744.GA11349@redhat.com>
-References: <20190727222229.6516-1-christian@brauner.io>
- <20190727222229.6516-2-christian@brauner.io>
+        id S1727955AbfG2O2B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 10:28:01 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:46958 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726674AbfG2O2A (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 10:28:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Cgd07V1X1aWq4Nq8OV+7HBCsrLjmlGfJU51VxLF3KME=; b=HQ7rJIh3bHrwXb5N+hm1m1ta2
+        3xN8kgOWRqh7smEYAmFrsJkadsRGpGLLsb9/LHLQ7ywUfoljVN6vzmX+Bzw/03Co2DXcMu0BJRZyE
+        qox34odUC6mRHsYT2mmBBcIq58sAF1mXYmXtJm6jQ5YwJ96Fqx8c3dLNZR3ODeLP5LnWEYNF0xod5
+        eMq1JAQ/NAdU6bQ20v8FDHnuKmDlCGL1lXRg2R4BEu9qLOWxqHU7b/51x4ducyTPTFmu+731k6hXA
+        KwDWNZRXZr96XzMPdBleNmGzRwcOAlMP6kGNFFVV+gpKnCWbcVoyyamjgy+CHXCAQbcBJ8izHsMPN
+        R71FeIoDw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hs6d3-0002u2-Ca; Mon, 29 Jul 2019 14:27:57 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 2974320AFFEAD; Mon, 29 Jul 2019 16:27:56 +0200 (CEST)
+Date:   Mon, 29 Jul 2019 16:27:56 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Waiman Long <longman@redhat.com>
+Cc:     Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        Phil Auld <pauld@redhat.com>
+Subject: Re: [PATCH v2] sched/core: Don't use dying mm as active_mm of
+ kthreads
+Message-ID: <20190729142756.GF31425@hirez.programming.kicks-ass.net>
+References: <20190727171047.31610-1-longman@redhat.com>
+ <20190729085235.GT31381@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190727222229.6516-2-christian@brauner.io>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Mon, 29 Jul 2019 14:27:50 +0000 (UTC)
+In-Reply-To: <20190729085235.GT31381@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/28, Christian Brauner wrote:
->
-> +static struct pid *pidfd_get_pid(unsigned int fd)
-> +{
-> +	struct fd f;
-> +	struct pid *pid;
-> +
-> +	f = fdget(fd);
-> +	if (!f.file)
-> +		return ERR_PTR(-EBADF);
-> +
-> +	pid = pidfd_pid(f.file);
-> +	if (!IS_ERR(pid))
-> +		get_pid(pid);
-> +
-> +	fdput(f);
-> +	return pid;
-> +}
+On Mon, Jul 29, 2019 at 10:52:35AM +0200, Peter Zijlstra wrote:
+> On Sat, Jul 27, 2019 at 01:10:47PM -0400, Waiman Long wrote:
+> > It was found that a dying mm_struct where the owning task has exited
+> > can stay on as active_mm of kernel threads as long as no other user
+> > tasks run on those CPUs that use it as active_mm. This prolongs the
+> > life time of dying mm holding up memory and other resources like swap
+> > space that cannot be freed.
+> 
+> Sure, but this has been so 'forever', why is it a problem now?
+> 
+> > Fix that by forcing the kernel threads to use init_mm as the active_mm
+> > if the previous active_mm is dying.
+> > 
+> > The determination of a dying mm is based on the absence of an owning
+> > task. The selection of the owning task only happens with the CONFIG_MEMCG
+> > option. Without that, there is no simple way to determine the life span
+> > of a given mm. So it falls back to the old behavior.
+> > 
+> > Signed-off-by: Waiman Long <longman@redhat.com>
+> > ---
+> >  include/linux/mm_types.h | 15 +++++++++++++++
+> >  kernel/sched/core.c      | 13 +++++++++++--
+> >  mm/init-mm.c             |  4 ++++
+> >  3 files changed, 30 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+> > index 3a37a89eb7a7..32712e78763c 100644
+> > --- a/include/linux/mm_types.h
+> > +++ b/include/linux/mm_types.h
+> > @@ -623,6 +623,21 @@ static inline bool mm_tlb_flush_nested(struct mm_struct *mm)
+> >  	return atomic_read(&mm->tlb_flush_pending) > 1;
+> >  }
+> >  
+> > +#ifdef CONFIG_MEMCG
+> > +/*
+> > + * A mm is considered dying if there is no owning task.
+> > + */
+> > +static inline bool mm_dying(struct mm_struct *mm)
+> > +{
+> > +	return !mm->owner;
+> > +}
+> > +#else
+> > +static inline bool mm_dying(struct mm_struct *mm)
+> > +{
+> > +	return false;
+> > +}
+> > +#endif
+> > +
+> >  struct vm_fault;
+> 
+> Yuck. So people without memcg will still suffer the terrible 'whatever
+> it is this patch fixes'.
 
-Agreed, this looks better than the previous version.
-
-FWIW,
-
-Reviewed-by: Oleg Nesterov <oleg@redhat.com>
-
+Also; why then not key off that owner tracking to free the resources
+(and leave the struct mm around) and avoid touching this scheduling
+hot-path ?
