@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6306F79467
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:31:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9BF17944E
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:30:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727650AbfG2TbO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 15:31:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43852 "EHLO mail.kernel.org"
+        id S2387899AbfG2TaD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 15:30:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42726 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729709AbfG2TbH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:31:07 -0400
+        id S2387396AbfG2TaB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:30:01 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BDE7221773;
-        Mon, 29 Jul 2019 19:31:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 71E822070B;
+        Mon, 29 Jul 2019 19:30:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564428666;
-        bh=ZrwcrDWPK5yJpXj3jRuqmuZVxOYlfYoF/tZGNepahu0=;
+        s=default; t=1564428601;
+        bh=OgzOyEycRsQ5tZXTbgiVPzNADZxiQiXmkuy7t8sX45E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JgdM88yadFaCB1vsFtQVVNAApnlteAdzi4DknRfN99aPqPJm2GNcv+mND6Bofxwz8
-         ahnHMgSjoRG+dKCs5F27ueMwdeTrON/E97mIUfVHeS1bBtbSpBvAqpMpBurxIEFFyb
-         ekxDnG5+NO7GY96MK9ktTbo16T73355k4snsZifQ=
+        b=yB1sy4SUOYjATmcD9KmdLvxBfd5ngRW39P5lFa7AS2fn9OM26W5/m/jmxFETNiFdq
+         ckp0UV/5vJeO5z5NPRsoRr04rWYlLLiJAWVfM32dNd8I3xn857DxKd9kWJomgEUivg
+         vwLDK9B49I+Arw8NOuRH93czJuoABDIxVizJnl3w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Denis Efremov <efremov@ispras.ru>,
-        Willy Tarreau <w@1wt.eu>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 108/293] floppy: fix out-of-bounds read in next_valid_format
-Date:   Mon, 29 Jul 2019 21:19:59 +0200
-Message-Id: <20190729190832.933147012@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Grant Hernandez <granthernandez@google.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 4.14 127/293] Input: gtco - bounds check collection indent level
+Date:   Mon, 29 Jul 2019 21:20:18 +0200
+Message-Id: <20190729190834.317657678@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190729190820.321094988@linuxfoundation.org>
 References: <20190729190820.321094988@linuxfoundation.org>
@@ -45,79 +44,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 5635f897ed83fd539df78e98ba69ee91592f9bb8 ]
+From: Grant Hernandez <granthernandez@google.com>
 
-This fixes a global out-of-bounds read access in the next_valid_format
-function of the floppy driver.
+commit 2a017fd82c5402b3c8df5e3d6e5165d9e6147dc1 upstream.
 
-The values from autodetect field of the struct floppy_drive_params are
-used as indices for the floppy_type array in the next_valid_format
-function 'floppy_type[DP->autodetect[probed_format]].sect'.
+The GTCO tablet input driver configures itself from an HID report sent
+via USB during the initial enumeration process. Some debugging messages
+are generated during the parsing. A debugging message indentation
+counter is not bounds checked, leading to the ability for a specially
+crafted HID report to cause '-' and null bytes be written past the end
+of the indentation array. As long as the kernel has CONFIG_DYNAMIC_DEBUG
+enabled, this code will not be optimized out.  This was discovered
+during code review after a previous syzkaller bug was found in this
+driver.
 
-To trigger the bug, one could use a value out of range and set the drive
-parameters with the FDSETDRVPRM ioctl.  A floppy disk is not required to
-be inserted.
+Signed-off-by: Grant Hernandez <granthernandez@google.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-CAP_SYS_ADMIN is required to call FDSETDRVPRM.
-
-The patch adds the check for values of the autodetect field to be in the
-'0 <= x < ARRAY_SIZE(floppy_type)' range of the floppy_type array indices.
-
-The bug was found by syzkaller.
-
-Signed-off-by: Denis Efremov <efremov@ispras.ru>
-Tested-by: Willy Tarreau <w@1wt.eu>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/block/floppy.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ drivers/input/tablet/gtco.c |   20 +++++++++++++++++---
+ 1 file changed, 17 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/block/floppy.c b/drivers/block/floppy.c
-index 4c6c20376a83..a4f630ef2b75 100644
---- a/drivers/block/floppy.c
-+++ b/drivers/block/floppy.c
-@@ -3386,6 +3386,20 @@ static int fd_getgeo(struct block_device *bdev, struct hd_geometry *geo)
- 	return 0;
- }
+--- a/drivers/input/tablet/gtco.c
++++ b/drivers/input/tablet/gtco.c
+@@ -78,6 +78,7 @@ Scott Hill shill@gtcocalcomp.com
  
-+static bool valid_floppy_drive_params(const short autodetect[8])
-+{
-+	size_t floppy_type_size = ARRAY_SIZE(floppy_type);
-+	size_t i = 0;
+ /* Max size of a single report */
+ #define REPORT_MAX_SIZE       10
++#define MAX_COLLECTION_LEVELS  10
+ 
+ 
+ /* Bitmask whether pen is in range */
+@@ -223,8 +224,7 @@ static void parse_hid_report_descriptor(
+ 	char  maintype = 'x';
+ 	char  globtype[12];
+ 	int   indent = 0;
+-	char  indentstr[10] = "";
+-
++	char  indentstr[MAX_COLLECTION_LEVELS + 1] = { 0 };
+ 
+ 	dev_dbg(ddev, "======>>>>>>PARSE<<<<<<======\n");
+ 
+@@ -350,6 +350,13 @@ static void parse_hid_report_descriptor(
+ 			case TAG_MAIN_COL_START:
+ 				maintype = 'S';
+ 
++				if (indent == MAX_COLLECTION_LEVELS) {
++					dev_err(ddev, "Collection level %d would exceed limit of %d\n",
++						indent + 1,
++						MAX_COLLECTION_LEVELS);
++					break;
++				}
 +
-+	for (i = 0; i < 8; ++i) {
-+		if (autodetect[i] < 0 ||
-+		    autodetect[i] >= floppy_type_size)
-+			return false;
-+	}
+ 				if (data == 0) {
+ 					dev_dbg(ddev, "======>>>>>> Physical\n");
+ 					strcpy(globtype, "Physical");
+@@ -369,8 +376,15 @@ static void parse_hid_report_descriptor(
+ 				break;
+ 
+ 			case TAG_MAIN_COL_END:
+-				dev_dbg(ddev, "<<<<<<======\n");
+ 				maintype = 'E';
 +
-+	return true;
-+}
++				if (indent == 0) {
++					dev_err(ddev, "Collection level already at zero\n");
++					break;
++				}
 +
- static int fd_locked_ioctl(struct block_device *bdev, fmode_t mode, unsigned int cmd,
- 		    unsigned long param)
- {
-@@ -3512,6 +3526,8 @@ static int fd_locked_ioctl(struct block_device *bdev, fmode_t mode, unsigned int
- 		SUPBOUND(size, strlen((const char *)outparam) + 1);
- 		break;
- 	case FDSETDRVPRM:
-+		if (!valid_floppy_drive_params(inparam.dp.autodetect))
-+			return -EINVAL;
- 		*UDP = inparam.dp;
- 		break;
- 	case FDGETDRVPRM:
-@@ -3709,6 +3725,8 @@ static int compat_setdrvprm(int drive,
- 		return -EPERM;
- 	if (copy_from_user(&v, arg, sizeof(struct compat_floppy_drive_params)))
- 		return -EFAULT;
-+	if (!valid_floppy_drive_params(v.autodetect))
-+		return -EINVAL;
- 	mutex_lock(&floppy_mutex);
- 	UDP->cmos = v.cmos;
- 	UDP->max_dtr = v.max_dtr;
--- 
-2.20.1
-
++				dev_dbg(ddev, "<<<<<<======\n");
++
+ 				indent--;
+ 				for (x = 0; x < indent; x++)
+ 					indentstr[x] = '-';
 
 
