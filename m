@@ -2,36 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A466179520
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:40:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E82579521
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:40:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729053AbfG2Tiz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 15:38:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53706 "EHLO mail.kernel.org"
+        id S2388619AbfG2Ti5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 15:38:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53754 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388908AbfG2Tiq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:38:46 -0400
+        id S1727247AbfG2Tit (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:38:49 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 81D06206DD;
-        Mon, 29 Jul 2019 19:38:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0A380206DD;
+        Mon, 29 Jul 2019 19:38:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564429125;
-        bh=aoeShnV0MIzWhAgFVNAHStxRa1liCLThPH1T9JScSmU=;
+        s=default; t=1564429128;
+        bh=ZK3hZGNoAg4qgV9UlJLIID+6v6ypA+jGWdm0izOQr88=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KgHXeoeq3vpchqwo/9MxQivP3J4hpnArOUXINPxGG+l4VJBphSrc57LFfnz2O6M/T
-         uCmeNd4D1Qri04l60gW5LrygNhMVOa+VM5Gi3y9s6U/RiexXVZjbnzkzNZqNBEZGRe
-         Wnph+w1MiambNrool2C0QAkGdHHWXZ5jexb/08Yw=
+        b=WS76KBOQExUzQfp/J++LjYoHMfj1PMQ19zS4OD4Fbml7i+0qp+STDI/Ctoiiwn/b6
+         WPYd3T272b+FI+fte2i5B4c+HNYua64gOXb7iYEf4eiYBrNyK52KneXGC+QrPjQ5Uh
+         qwMfOBTtbK22EjEvdwKSOgqQrKb7hQ5t5SYU83JE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Praveen Pandey <Praveen.Pandey@in.ibm.com>,
-        Michael Neuling <mikey@neuling.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.14 292/293] powerpc/tm: Fix oops on sigreturn on systems without TM
-Date:   Mon, 29 Jul 2019 21:23:03 +0200
-Message-Id: <20190729190846.605183441@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Eric Dumazet <edumazet@google.com>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Jan Glauber <jglauber@marvell.com>,
+        Jiri Kosina <jikos@kernel.org>,
+        Jayachandran Chandrasekharan Nair <jnair@marvell.com>,
+        Greg KH <greg@kroah.com>, Kees Cook <keescook@chromium.org>,
+        David Howells <dhowells@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.14 293/293] access: avoid the RCU grace period for the temporary subjective credentials
+Date:   Mon, 29 Jul 2019 21:23:04 +0200
+Message-Id: <20190729190846.684672650@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190729190820.321094988@linuxfoundation.org>
 References: <20190729190820.321094988@linuxfoundation.org>
@@ -44,91 +54,174 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michael Neuling <mikey@neuling.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 
-commit f16d80b75a096c52354c6e0a574993f3b0dfbdfe upstream.
+commit d7852fbd0f0423937fa287a598bfde188bb68c22 upstream.
 
-On systems like P9 powernv where we have no TM (or P8 booted with
-ppc_tm=off), userspace can construct a signal context which still has
-the MSR TS bits set. The kernel tries to restore this context which
-results in the following crash:
+It turns out that 'access()' (and 'faccessat()') can cause a lot of RCU
+work because it installs a temporary credential that gets allocated and
+freed for each system call.
 
-  Unexpected TM Bad Thing exception at c0000000000022fc (msr 0x8000000102a03031) tm_scratch=800000020280f033
-  Oops: Unrecoverable exception, sig: 6 [#1]
-  LE PAGE_SIZE=64K MMU=Hash SMP NR_CPUS=2048 NUMA pSeries
-  Modules linked in:
-  CPU: 0 PID: 1636 Comm: sigfuz Not tainted 5.2.0-11043-g0a8ad0ffa4 #69
-  NIP:  c0000000000022fc LR: 00007fffb2d67e48 CTR: 0000000000000000
-  REGS: c00000003fffbd70 TRAP: 0700   Not tainted  (5.2.0-11045-g7142b497d8)
-  MSR:  8000000102a03031 <SF,VEC,VSX,FP,ME,IR,DR,LE,TM[E]>  CR: 42004242  XER: 00000000
-  CFAR: c0000000000022e0 IRQMASK: 0
-  GPR00: 0000000000000072 00007fffb2b6e560 00007fffb2d87f00 0000000000000669
-  GPR04: 00007fffb2b6e728 0000000000000000 0000000000000000 00007fffb2b6f2a8
-  GPR08: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-  GPR12: 0000000000000000 00007fffb2b76900 0000000000000000 0000000000000000
-  GPR16: 00007fffb2370000 00007fffb2d84390 00007fffea3a15ac 000001000a250420
-  GPR20: 00007fffb2b6f260 0000000010001770 0000000000000000 0000000000000000
-  GPR24: 00007fffb2d843a0 00007fffea3a14a0 0000000000010000 0000000000800000
-  GPR28: 00007fffea3a14d8 00000000003d0f00 0000000000000000 00007fffb2b6e728
-  NIP [c0000000000022fc] rfi_flush_fallback+0x7c/0x80
-  LR [00007fffb2d67e48] 0x7fffb2d67e48
-  Call Trace:
-  Instruction dump:
-  e96a0220 e96a02a8 e96a0330 e96a03b8 394a0400 4200ffdc 7d2903a6 e92d0c00
-  e94d0c08 e96d0c10 e82d0c18 7db242a6 <4c000024> 7db243a6 7db142a6 f82d0c18
+The allocation and freeing overhead is mostly benign, but because
+credentials can be accessed under the RCU read lock, the freeing
+involves a RCU grace period.
 
-The problem is the signal code assumes TM is enabled when
-CONFIG_PPC_TRANSACTIONAL_MEM is enabled. This may not be the case as
-with P9 powernv or if `ppc_tm=off` is used on P8.
+Which is not a huge deal normally, but if you have a lot of access()
+calls, this causes a fair amount of seconday damage: instead of having a
+nice alloc/free patterns that hits in hot per-CPU slab caches, you have
+all those delayed free's, and on big machines with hundreds of cores,
+the RCU overhead can end up being enormous.
 
-This means any local user can crash the system.
+But it turns out that all of this is entirely unnecessary.  Exactly
+because access() only installs the credential as the thread-local
+subjective credential, the temporary cred pointer doesn't actually need
+to be RCU free'd at all.  Once we're done using it, we can just free it
+synchronously and avoid all the RCU overhead.
 
-Fix the problem by returning a bad stack frame to the user if they try
-to set the MSR TS bits with sigreturn() on systems where TM is not
-supported.
+So add a 'non_rcu' flag to 'struct cred', which can be set by users that
+know they only use it in non-RCU context (there are other potential
+users for this).  We can make it a union with the rcu freeing list head
+that we need for the RCU case, so this doesn't need any extra storage.
 
-Found with sigfuz kernel selftest on P9.
+Note that this also makes 'get_current_cred()' clear the new non_rcu
+flag, in case we have filesystems that take a long-term reference to the
+cred and then expect the RCU delayed freeing afterwards.  It's not
+entirely clear that this is required, but it makes for clear semantics:
+the subjective cred remains non-RCU as long as you only access it
+synchronously using the thread-local accessors, but you _can_ use it as
+a generic cred if you want to.
 
-This fixes CVE-2019-13648.
+It is possible that we should just remove the whole RCU markings for
+->cred entirely.  Only ->real_cred is really supposed to be accessed
+through RCU, and the long-term cred copies that nfs uses might want to
+explicitly re-enable RCU freeing if required, rather than have
+get_current_cred() do it implicitly.
 
-Fixes: 2b0a576d15e0 ("powerpc: Add new transactional memory state to the signal context")
-Cc: stable@vger.kernel.org # v3.9
-Reported-by: Praveen Pandey <Praveen.Pandey@in.ibm.com>
-Signed-off-by: Michael Neuling <mikey@neuling.org>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://lore.kernel.org/r/20190719050502.405-1-mikey@neuling.org
+But this is a "minimal semantic changes" change for the immediate
+problem.
+
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Acked-by: Eric Dumazet <edumazet@google.com>
+Acked-by: Paul E. McKenney <paulmck@linux.ibm.com>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Cc: Jan Glauber <jglauber@marvell.com>
+Cc: Jiri Kosina <jikos@kernel.org>
+Cc: Jayachandran Chandrasekharan Nair <jnair@marvell.com>
+Cc: Greg KH <greg@kroah.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: David Howells <dhowells@redhat.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/kernel/signal_32.c |    3 +++
- arch/powerpc/kernel/signal_64.c |    5 +++++
- 2 files changed, 8 insertions(+)
+ fs/open.c            |   19 +++++++++++++++++++
+ include/linux/cred.h |    7 ++++++-
+ kernel/cred.c        |   21 +++++++++++++++++++--
+ 3 files changed, 44 insertions(+), 3 deletions(-)
 
---- a/arch/powerpc/kernel/signal_32.c
-+++ b/arch/powerpc/kernel/signal_32.c
-@@ -1279,6 +1279,9 @@ long sys_rt_sigreturn(int r3, int r4, in
- 			goto bad;
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -379,6 +379,25 @@ SYSCALL_DEFINE3(faccessat, int, dfd, con
+ 				override_cred->cap_permitted;
+ 	}
  
- 		if (MSR_TM_ACTIVE(msr_hi<<32)) {
-+			/* Trying to start TM on non TM system */
-+			if (!cpu_has_feature(CPU_FTR_TM))
-+				goto bad;
- 			/* We only recheckpoint on return if we're
- 			 * transaction.
- 			 */
---- a/arch/powerpc/kernel/signal_64.c
-+++ b/arch/powerpc/kernel/signal_64.c
-@@ -741,6 +741,11 @@ int sys_rt_sigreturn(unsigned long r3, u
- 	if (MSR_TM_ACTIVE(msr)) {
- 		/* We recheckpoint on return. */
- 		struct ucontext __user *uc_transact;
++	/*
++	 * The new set of credentials can *only* be used in
++	 * task-synchronous circumstances, and does not need
++	 * RCU freeing, unless somebody then takes a separate
++	 * reference to it.
++	 *
++	 * NOTE! This is _only_ true because this credential
++	 * is used purely for override_creds() that installs
++	 * it as the subjective cred. Other threads will be
++	 * accessing ->real_cred, not the subjective cred.
++	 *
++	 * If somebody _does_ make a copy of this (using the
++	 * 'get_current_cred()' function), that will clear the
++	 * non_rcu field, because now that other user may be
++	 * expecting RCU freeing. But normal thread-synchronous
++	 * cred accesses will keep things non-RCY.
++	 */
++	override_cred->non_rcu = 1;
 +
-+		/* Trying to start TM on non TM system */
-+		if (!cpu_has_feature(CPU_FTR_TM))
-+			goto badframe;
+ 	old_cred = override_creds(override_cred);
+ retry:
+ 	res = user_path_at(dfd, filename, lookup_flags, &path);
+--- a/include/linux/cred.h
++++ b/include/linux/cred.h
+@@ -145,7 +145,11 @@ struct cred {
+ 	struct user_struct *user;	/* real user ID subscription */
+ 	struct user_namespace *user_ns; /* user_ns the caps and keyrings are relative to. */
+ 	struct group_info *group_info;	/* supplementary groups for euid/fsgid */
+-	struct rcu_head	rcu;		/* RCU deletion hook */
++	/* RCU deletion */
++	union {
++		int non_rcu;			/* Can we skip RCU deletion? */
++		struct rcu_head	rcu;		/* RCU deletion hook */
++	};
+ } __randomize_layout;
+ 
+ extern void __put_cred(struct cred *);
+@@ -243,6 +247,7 @@ static inline const struct cred *get_cre
+ {
+ 	struct cred *nonconst_cred = (struct cred *) cred;
+ 	validate_creds(cred);
++	nonconst_cred->non_rcu = 0;
+ 	return get_new_cred(nonconst_cred);
+ }
+ 
+--- a/kernel/cred.c
++++ b/kernel/cred.c
+@@ -147,7 +147,10 @@ void __put_cred(struct cred *cred)
+ 	BUG_ON(cred == current->cred);
+ 	BUG_ON(cred == current->real_cred);
+ 
+-	call_rcu(&cred->rcu, put_cred_rcu);
++	if (cred->non_rcu)
++		put_cred_rcu(&cred->rcu);
++	else
++		call_rcu(&cred->rcu, put_cred_rcu);
+ }
+ EXPORT_SYMBOL(__put_cred);
+ 
+@@ -258,6 +261,7 @@ struct cred *prepare_creds(void)
+ 	old = task->cred;
+ 	memcpy(new, old, sizeof(struct cred));
+ 
++	new->non_rcu = 0;
+ 	atomic_set(&new->usage, 1);
+ 	set_cred_subscribers(new, 0);
+ 	get_group_info(new->group_info);
+@@ -537,7 +541,19 @@ const struct cred *override_creds(const
+ 
+ 	validate_creds(old);
+ 	validate_creds(new);
+-	get_cred(new);
 +
- 		if (__get_user(uc_transact, &uc->uc_link))
- 			goto badframe;
- 		if (restore_tm_sigcontexts(current, &uc->uc_mcontext,
++	/*
++	 * NOTE! This uses 'get_new_cred()' rather than 'get_cred()'.
++	 *
++	 * That means that we do not clear the 'non_rcu' flag, since
++	 * we are only installing the cred into the thread-synchronous
++	 * '->cred' pointer, not the '->real_cred' pointer that is
++	 * visible to other threads under RCU.
++	 *
++	 * Also note that we did validate_creds() manually, not depending
++	 * on the validation in 'get_cred()'.
++	 */
++	get_new_cred((struct cred *)new);
+ 	alter_cred_subscribers(new, 1);
+ 	rcu_assign_pointer(current->cred, new);
+ 	alter_cred_subscribers(old, -1);
+@@ -620,6 +636,7 @@ struct cred *prepare_kernel_cred(struct
+ 	validate_creds(old);
+ 
+ 	*new = *old;
++	new->non_rcu = 0;
+ 	atomic_set(&new->usage, 1);
+ 	set_cred_subscribers(new, 0);
+ 	get_uid(new->user);
 
 
