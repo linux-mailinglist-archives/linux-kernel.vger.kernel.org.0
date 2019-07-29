@@ -2,107 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F1E07790F1
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 18:33:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B3DA2790FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 18:34:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729127AbfG2Qdd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 12:33:33 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:38199 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729115AbfG2Qdb (ORCPT
+        id S1729159AbfG2Qe2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 12:34:28 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:45910 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727450AbfG2Qe1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 12:33:31 -0400
-Received: by mail-pl1-f193.google.com with SMTP id az7so27700464plb.5
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 09:33:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=OZSRVaoM+0+WmVEymEml5vQPpYtYXaF0mFy6wxL1q74=;
-        b=mZGupuQMoQYHI+QnKYUZdMKrRhU3YvfrCNNs6q6RO4lI2b5TDHy+xIzq6HsrC0/IA+
-         0EXUwzeCErYJ4pWYl5ih/unhL3xIc4hwKGc2lCX1jP190DhVD0a0eX/06alHjUbtVRWk
-         HkCm0cSpCmBNddCI6mRINbdIO4KoWEKeV+gi4=
+        Mon, 29 Jul 2019 12:34:27 -0400
+Received: by mail-lj1-f196.google.com with SMTP id m23so59152062lje.12
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 09:34:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=OZSRVaoM+0+WmVEymEml5vQPpYtYXaF0mFy6wxL1q74=;
-        b=l2Lv1yztcN/8y80kWHEn0aQz/UmFfpbzNYXv5Znaup8bBuWrQcluT58LPxfYNwRhT9
-         fljEtG6LWVcaps8D4cO+9zeKkYBIWMX3/Jfgv+IPsdN3JT+tFivOsFAOIQobk6nsqcMN
-         n0kXUh3NoJ11JUVLmQrZlrHsSFqF6Ohp8OgBOw5X1F3p1ql4wbSlbQ2ya3mOQunKdBxh
-         SPTmuisjUuL9ez1g9F7eF9BPcplPRTLRCLmYdfb+4iCtwhhlYCuQVRKmuvD8eVPWtU8U
-         +4evtvEXoF7jgQg7KJy1w9W1tocvD0R4bWiQby2Bprrsm+6h4XsD1v1vRvF3Hzr4hsSG
-         dW2w==
-X-Gm-Message-State: APjAAAUia3A7qCzcFj774xGNMu4TvDv6Hr5WXTENnnKv0eRRfvl5fFRQ
-        NWVAoe5uek3IG5+F5AaG2CcN4g==
-X-Google-Smtp-Source: APXvYqzFZvyeg4iqQvDoi5IW5U+rEL+TBAqu8DV6miguhTKiPv/OQfHqkaRDVvNhv1RWGgk5GEEHnw==
-X-Received: by 2002:a17:902:2889:: with SMTP id f9mr105224391plb.230.1564418010852;
-        Mon, 29 Jul 2019 09:33:30 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id cx22sm51949300pjb.25.2019.07.29.09.33.29
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 29 Jul 2019 09:33:30 -0700 (PDT)
-Date:   Mon, 29 Jul 2019 09:33:29 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Russell King <linux@armlinux.org.uk>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH] ARM: tegra: Mark expected switch fall-through
-Message-ID: <201907290933.7D54BDAB@keescook>
-References: <20190728231526.GA22066@embeddedor>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=UG3D/SqCJj11xnk2S6pE/fAYr6pWtAvwmUTxug894eQ=;
+        b=CYZL5Yth2mCbIS0Ce/2FGCmgoeOEqbEgX6Iy9SEALcR962gz9599OFbnmQuQeCS1O/
+         YrxhJS+djrVGT4J8VD6EgL4GdaIjY7qe5c8wGyltD+7oqeA146xHoO0tJlE4BHN1xPom
+         vzPusjs8CuOieJU80TJwl2hY4EoasWNAW460yVZ+Gt/t7boqbxYgZnkc3My2j2OkiWj6
+         akyPmBrqzdZqQEhpHFMb21Lhz0029AeKmB+qZ1XjYW99Gpy1lKgs2BSwhfeBzBrB6A4+
+         1wy3VcXAlGngQZgb4ttOHJ6EQxbGfP4KXmRATiPmlXfVMYhNVY42Nw0l+//bDqHnV64z
+         xW1w==
+X-Gm-Message-State: APjAAAUe+iZjuGXUKMeRwTI3SPU40iYAh4Wqn00KagUZ5LeheMAyo8um
+        ELIinaD6uMFCSctObISA7iPS1P2TAlBDKtvdG6/ufA==
+X-Google-Smtp-Source: APXvYqwaWzM1hn/JYuWG8xIWCCoQc0juPndzV2AWEI2sZ0zbeHQbhgIVf3GM5tGdjfmKdC05eoQItiSu7YXZ4SX7s6Q=
+X-Received: by 2002:a2e:2b01:: with SMTP id q1mr57284489lje.27.1564418064609;
+ Mon, 29 Jul 2019 09:34:24 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190728231526.GA22066@embeddedor>
+References: <CAGnkfhyT=2kPsiUy-V=aCA_s-C4BXgD++hAZ9ii1h0p94mMVQA@mail.gmail.com>
+ <20190729125421.32482-1-vincenzo.frascino@arm.com>
+In-Reply-To: <20190729125421.32482-1-vincenzo.frascino@arm.com>
+From:   Matteo Croce <mcroce@redhat.com>
+Date:   Mon, 29 Jul 2019 18:33:48 +0200
+Message-ID: <CAGnkfhw+=+50P=uaWsjZrtt_BuwJjXKZ_DSTjuJ8mzW4_kbu-w@mail.gmail.com>
+Subject: Re: [PATCH] arm64: vdso: Fix Makefile regression
+To:     Vincenzo Frascino <vincenzo.frascino@arm.com>
+Cc:     linux-arch@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Thomas Gleixner <tglx@linutronix.de>, salyzyn@android.com,
+        pcc@google.com, 0x7f454c46@gmail.com, linux@rasmusvillemoes.dk,
+        sthotton@marvell.com, andre.przywara@arm.com,
+        Andy Lutomirski <luto@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jul 28, 2019 at 06:15:26PM -0500, Gustavo A. R. Silva wrote:
-> Mark switch cases where we are expecting to fall through.
-> 
-> This patch fixes the following warning:
-> 
-> arch/arm/mach-tegra/reset.c: In function 'tegra_cpu_reset_handler_enable':
-> arch/arm/mach-tegra/reset.c:72:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
->    tegra_cpu_reset_handler_set(reset_address);
->    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> arch/arm/mach-tegra/reset.c:74:2: note: here
->   case 0:
->   ^~~~
-> 
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-
-Reviewed-by: Kees Cook <keescook@chromium.org>
-
--Kees
-
+On Mon, Jul 29, 2019 at 2:54 PM Vincenzo Frascino
+<vincenzo.frascino@arm.com> wrote:
+>
+> Using an old .config in combination with "make oldconfig" can cause
+> an incorrect detection of the compat compiler:
+>
+> $ grep CROSS_COMPILE_COMPAT .config
+> CONFIG_CROSS_COMPILE_COMPAT_VDSO=""
+>
+> $ make oldconfig && make
+> arch/arm64/Makefile:58: gcc not found, check CROSS_COMPILE_COMPAT.
+> Stop.
+>
+> Accordingly to the section 7.2 of the GNU Make manual "Syntax of
+> Conditionals", "When the value results from complex expansions of
+> variables and functions, expansions you would consider empty may
+> actually contain whitespace characters and thus are not seen as
+> empty. However, you can use the strip function to avoid interpreting
+> whitespace as a non-empty value."
+>
+> Fix the issue adding strip to the CROSS_COMPILE_COMPAT string
+> evaluation.
+>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Reported-by: Matteo Croce <mcroce@redhat.com>
+> Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
 > ---
->  arch/arm/mach-tegra/reset.c | 2 +-
+>  arch/arm64/Makefile | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm/mach-tegra/reset.c b/arch/arm/mach-tegra/reset.c
-> index 5a67a71f80cc..76a65df42d10 100644
-> --- a/arch/arm/mach-tegra/reset.c
-> +++ b/arch/arm/mach-tegra/reset.c
-> @@ -70,7 +70,7 @@ static void __init tegra_cpu_reset_handler_enable(void)
->  	switch (err) {
->  	case -ENOSYS:
->  		tegra_cpu_reset_handler_set(reset_address);
-> -		/* pass-through */
-> +		/* fall through */
->  	case 0:
->  		is_enabled = true;
->  		break;
-> -- 
+>
+> diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
+> index bb1f1dbb34e8..61de992bbea3 100644
+> --- a/arch/arm64/Makefile
+> +++ b/arch/arm64/Makefile
+> @@ -52,7 +52,7 @@ ifeq ($(CONFIG_GENERIC_COMPAT_VDSO), y)
+>
+>    ifeq ($(CONFIG_CC_IS_CLANG), y)
+>      $(warning CROSS_COMPILE_COMPAT is clang, the compat vDSO will not be built)
+> -  else ifeq ($(CROSS_COMPILE_COMPAT),)
+> +  else ifeq ($(strip $(CROSS_COMPILE_COMPAT)),)
+>      $(warning CROSS_COMPILE_COMPAT not defined or empty, the compat vDSO will not be built)
+>    else ifeq ($(shell which $(CROSS_COMPILE_COMPAT)gcc 2> /dev/null),)
+>      $(error $(CROSS_COMPILE_COMPAT)gcc not found, check CROSS_COMPILE_COMPAT)
+> --
 > 2.22.0
-> 
+>
+
+Tested-by: Matteo Croce <mcroce@redhat.com>
 
 -- 
-Kees Cook
+Matteo Croce
+per aspera ad upstream
