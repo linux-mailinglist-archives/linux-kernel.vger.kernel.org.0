@@ -2,36 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20F757980E
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:06:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ABB5D79832
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:06:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389564AbfG2Tmw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 15:42:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58792 "EHLO mail.kernel.org"
+        id S2390242AbfG2UFg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 16:05:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58926 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389557AbfG2Tms (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:42:48 -0400
+        id S2388748AbfG2Tmy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:42:54 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D374721655;
-        Mon, 29 Jul 2019 19:42:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 627F821655;
+        Mon, 29 Jul 2019 19:42:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564429367;
-        bh=zYpROnVsZzCeFQOKde21zbITF1meTJ/9cw4mH6Th/ng=;
+        s=default; t=1564429373;
+        bh=OJZZhcQqhVrtKpqeXpW6+ZqFpBpsNjwmQZbhkkcxWKY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lQhev5I49gD54aEhNO0iaa2kyq8OguweTL1UQXPsjo7BqXdYP67R9o4O/cZY89z4n
-         1ueS2/uS/zY1qa9EcXu8lFDuMSOn1o6R2Of5WdV6FjBCdXn9pO06sXhdFYoh0UA0MV
-         h7cPl6SpVmluHwwpmESp1IYTmttaLBjHHbOkcSN0=
+        b=aQ1AJwWOUTD52Ud+8PpbwoMqHAI2a9Z88jEOxlDqqoR7hexJuut2qUPb29nyycrat
+         xJO+Y+Ll1hfKHG0UR0KbMMaTZeJL3x41Jxgc1JapCJdSf6C3uggp092tVDc+QlK4Tr
+         BOzzYF6o0Sb5FNWVDdn3mlw6nXLn8+rrLk2soFQQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Rob Clark <robdclark@chromium.org>,
-        Sean Paul <seanpaul@chromium.org>,
+        stable@vger.kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Tejun Heo <tj@kernel.org>, Wolfram Sang <wsa@the-dreams.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 037/113] drm/msm: Depopulate platform on probe failure
-Date:   Mon, 29 Jul 2019 21:22:04 +0200
-Message-Id: <20190729190704.599374925@linuxfoundation.org>
+Subject: [PATCH 4.19 039/113] PCI: sysfs: Ignore lockdep for remove attribute
+Date:   Mon, 29 Jul 2019 21:22:06 +0200
+Message-Id: <20190729190705.053523194@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190729190655.455345569@linuxfoundation.org>
 References: <20190729190655.455345569@linuxfoundation.org>
@@ -44,58 +49,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 4368a1539c6b41ac3cddc06f5a5117952998804c ]
+[ Upstream commit dc6b698a86fe40a50525433eb8e92a267847f6f9 ]
 
-add_display_components() calls of_platform_populate, and we depopluate
-on pdev remove, but not when probe fails. So if we get a probe deferral
-in one of the components, we won't depopulate the platform. This causes
-the core to keep references to devices which should be destroyed, which
-causes issues when those same devices try to re-initialize on the next
-probe attempt.
+With CONFIG_PROVE_LOCKING=y, using sysfs to remove a bridge with a device
+below it causes a lockdep warning, e.g.,
 
-I think this is the reason we had issues with the gmu's device-managed
-resources on deferral (worked around in commit 94e3a17f33a5).
+  # echo 1 > /sys/class/pci_bus/0000:00/device/0000:00:00.0/remove
+  ============================================
+  WARNING: possible recursive locking detected
+  ...
+  pci_bus 0000:01: busn_res: [bus 01] is released
 
-Reviewed-by: Rob Clark <robdclark@chromium.org>
-Signed-off-by: Sean Paul <seanpaul@chromium.org>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190617201301.133275-3-sean@poorly.run
+The remove recursively removes the subtree below the bridge.  Each call
+uses a different lock so there's no deadlock, but the locks were all
+created with the same lockdep key so the lockdep checker can't tell them
+apart.
+
+Mark the "remove" sysfs attribute with __ATTR_IGNORE_LOCKDEP() as it is
+safe to ignore the lockdep check between different "remove" kernfs
+instances.
+
+There's discussion about a similar issue in USB at [1], which resulted in
+356c05d58af0 ("sysfs: get rid of some lockdep false positives") and
+e9b526fe7048 ("i2c: suppress lockdep warning on delete_device"), which do
+basically the same thing for USB "remove" and i2c "delete_device" files.
+
+[1] https://lore.kernel.org/r/Pine.LNX.4.44L0.1204251436140.1206-100000@iolanthe.rowland.org
+Link: https://lore.kernel.org/r/20190526225151.3865-1-marek.vasut@gmail.com
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+[bhelgaas: trim commit log, details at above links]
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Phil Edworthy <phil.edworthy@renesas.com>
+Cc: Simon Horman <horms+renesas@verge.net.au>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Wolfram Sang <wsa@the-dreams.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/msm/msm_drv.c | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
+ drivers/pci/pci-sysfs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/msm/msm_drv.c b/drivers/gpu/drm/msm/msm_drv.c
-index c1abad8a8612..ed9a3a1e50ef 100644
---- a/drivers/gpu/drm/msm/msm_drv.c
-+++ b/drivers/gpu/drm/msm/msm_drv.c
-@@ -1321,16 +1321,24 @@ static int msm_pdev_probe(struct platform_device *pdev)
- 
- 	ret = add_gpu_components(&pdev->dev, &match);
- 	if (ret)
--		return ret;
-+		goto fail;
- 
- 	/* on all devices that I am aware of, iommu's which can map
- 	 * any address the cpu can see are used:
- 	 */
- 	ret = dma_set_mask_and_coherent(&pdev->dev, ~0);
- 	if (ret)
--		return ret;
-+		goto fail;
-+
-+	ret = component_master_add_with_match(&pdev->dev, &msm_drm_ops, match);
-+	if (ret)
-+		goto fail;
- 
--	return component_master_add_with_match(&pdev->dev, &msm_drm_ops, match);
-+	return 0;
-+
-+fail:
-+	of_platform_depopulate(&pdev->dev);
-+	return ret;
+diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
+index 9ecfe13157c0..1edf5a1836ea 100644
+--- a/drivers/pci/pci-sysfs.c
++++ b/drivers/pci/pci-sysfs.c
+@@ -478,7 +478,7 @@ static ssize_t remove_store(struct device *dev, struct device_attribute *attr,
+ 		pci_stop_and_remove_bus_device_locked(to_pci_dev(dev));
+ 	return count;
  }
+-static struct device_attribute dev_remove_attr = __ATTR(remove,
++static struct device_attribute dev_remove_attr = __ATTR_IGNORE_LOCKDEP(remove,
+ 							(S_IWUSR|S_IWGRP),
+ 							NULL, remove_store);
  
- static int msm_pdev_remove(struct platform_device *pdev)
 -- 
 2.20.1
 
