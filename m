@@ -2,37 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06A9B79401
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:27:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 84C347940B
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:27:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729820AbfG2T0r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 15:26:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39210 "EHLO mail.kernel.org"
+        id S2388351AbfG2T1U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 15:27:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39914 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729059AbfG2T0p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:26:45 -0400
+        id S1729886AbfG2T1R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:27:17 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8BB6A20C01;
-        Mon, 29 Jul 2019 19:26:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C5A9F2171F;
+        Mon, 29 Jul 2019 19:27:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564428405;
-        bh=ozoPLPXd/jrSdZ2FR3JHy5bVrMxX2dEdna7OTOZWhpE=;
+        s=default; t=1564428437;
+        bh=WNEwlZmblCDELfMHFO9HduNW/EQ4DWBXMScy77tVMug=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Kfx+icDotBcaPoL5hdgNpPG/X+heuWxzTWYBfAxYsHk8sAwhG5IjqrlzrpZR052DK
-         avlpI8fzUjwHAQ8ScZ5daNjkG9y7fb1Qhb1bo3nKINqVpx9yv1JIQlO77UTZHGK46N
-         d+Qbzj6pTskUtG+Eye7569yAABmL1FrvWbyDeKbk=
+        b=xjyZQIsTvBSAD/RzUmU8a/S6Ho7dYKDS5hk07ej/oXK+ks1uJ6g10HCnt53ZyO7vT
+         zOPJDv+wbFVXZI9fyqmE8efuYGG9cVpg1z2HibnbQG0wER8AMD5EYJl9gIqXJYZAs5
+         RpibLLEWTW7dEy1MGB5tDMnu8RgcBv5lT31HrVCs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        Doug Ledford <dledford@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Pan Bian <bianpan2016@163.com>,
+        Borislav Petkov <bp@suse.de>,
+        James Morse <james.morse@arm.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-edac <linux-edac@vger.kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 058/293] ipoib: correcly show a VF hardware address
-Date:   Mon, 29 Jul 2019 21:19:09 +0200
-Message-Id: <20190729190828.664445391@linuxfoundation.org>
+Subject: [PATCH 4.14 059/293] EDAC/sysfs: Fix memory leak when creating a csrow object
+Date:   Mon, 29 Jul 2019 21:19:10 +0200
+Message-Id: <20190729190828.825030264@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190729190820.321094988@linuxfoundation.org>
 References: <20190729190820.321094988@linuxfoundation.org>
@@ -45,55 +47,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 64d701c608fea362881e823b666327f5d28d7ffd ]
+[ Upstream commit 585fb3d93d32dbe89e718b85009f9c322cc554cd ]
 
-in the case of IPoIB with SRIOV enabled hardware
-ip link show command incorrecly prints
-0 instead of a VF hardware address.
+In edac_create_csrow_object(), the reference to the object is not
+released when adding the device to the device hierarchy fails
+(device_add()). This may result in a memory leak.
 
-Before:
-11: ib1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 2044 qdisc pfifo_fast
-state UP mode DEFAULT group default qlen 256
-    link/infiniband
-80:00:00:66:fe:80:00:00:00:00:00:00:24:8a:07:03:00:a4:3e:7c brd
-00:ff:ff:ff:ff:12:40:1b:ff:ff:00:00:00:00:00:00:ff:ff:ff:ff
-    vf 0 MAC 00:00:00:00:00:00, spoof checking off, link-state disable,
-trust off, query_rss off
-...
-After:
-11: ib1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 2044 qdisc pfifo_fast
-state UP mode DEFAULT group default qlen 256
-    link/infiniband
-80:00:00:66:fe:80:00:00:00:00:00:00:24:8a:07:03:00:a4:3e:7c brd
-00:ff:ff:ff:ff:12:40:1b:ff:ff:00:00:00:00:00:00:ff:ff:ff:ff
-    vf 0     link/infiniband
-80:00:00:66:fe:80:00:00:00:00:00:00:24:8a:07:03:00:a4:3e:7c brd
-00:ff:ff:ff:ff:12:40:1b:ff:ff:00:00:00:00:00:00:ff:ff:ff:ff, spoof
-checking off, link-state disable, trust off, query_rss off
-
-v1->v2: just copy an address without modifing ifla_vf_mac
-v2->v3: update the changelog
-
-Signed-off-by: Denis Kirjanov <kda@linux-powerpc.org>
-Acked-by: Doug Ledford <dledford@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Pan Bian <bianpan2016@163.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: James Morse <james.morse@arm.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-edac <linux-edac@vger.kernel.org>
+Link: https://lkml.kernel.org/r/1555554438-103953-1-git-send-email-bianpan2016@163.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/ulp/ipoib/ipoib_main.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/edac/edac_mc_sysfs.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/infiniband/ulp/ipoib/ipoib_main.c b/drivers/infiniband/ulp/ipoib/ipoib_main.c
-index e6ff16b27acd..1a93d3d58c8a 100644
---- a/drivers/infiniband/ulp/ipoib/ipoib_main.c
-+++ b/drivers/infiniband/ulp/ipoib/ipoib_main.c
-@@ -1833,6 +1833,7 @@ static int ipoib_get_vf_config(struct net_device *dev, int vf,
- 		return err;
+diff --git a/drivers/edac/edac_mc_sysfs.c b/drivers/edac/edac_mc_sysfs.c
+index 79c13301bf41..148c4649b155 100644
+--- a/drivers/edac/edac_mc_sysfs.c
++++ b/drivers/edac/edac_mc_sysfs.c
+@@ -426,6 +426,8 @@ static inline int nr_pages_per_csrow(struct csrow_info *csrow)
+ static int edac_create_csrow_object(struct mem_ctl_info *mci,
+ 				    struct csrow_info *csrow, int index)
+ {
++	int err;
++
+ 	csrow->dev.type = &csrow_attr_type;
+ 	csrow->dev.bus = mci->bus;
+ 	csrow->dev.groups = csrow_dev_groups;
+@@ -438,7 +440,11 @@ static int edac_create_csrow_object(struct mem_ctl_info *mci,
+ 	edac_dbg(0, "creating (virtual) csrow node %s\n",
+ 		 dev_name(&csrow->dev));
  
- 	ivf->vf = vf;
-+	memcpy(ivf->mac, dev->dev_addr, dev->addr_len);
- 
- 	return 0;
+-	return device_add(&csrow->dev);
++	err = device_add(&csrow->dev);
++	if (err)
++		put_device(&csrow->dev);
++
++	return err;
  }
+ 
+ /* Create a CSROW object under specifed edac_mc_device */
 -- 
 2.20.1
 
