@@ -2,39 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 09A2D794A3
+	by mail.lfdr.de (Postfix) with ESMTP id E44DE794A5
 	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:34:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730305AbfG2Tdr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 15:33:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48008 "EHLO mail.kernel.org"
+        id S2387994AbfG2Td4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 15:33:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48090 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729402AbfG2Tdo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:33:44 -0400
+        id S1729938AbfG2Tdp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:33:45 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 443A12070B;
-        Mon, 29 Jul 2019 19:33:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E729C217D6;
+        Mon, 29 Jul 2019 19:33:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564428822;
-        bh=6tIyMhAmocpLo35jAQBAWhLR5BOUQsgzB1G264Fvzv8=;
+        s=default; t=1564428825;
+        bh=aEnpgOy44uHJZY4dNXHZpaFZVQC+Ewy6WCVunC76dXo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DNc4lPc2UNY+tNlVhsQ2qaLKMqph9DVR70RihN6789vag5IyQqwrLBINB+o3N5PTy
-         yi4cDQ6oJyJLXsbgZrAN/6mlLTN3kGGVGjtCuv7ZEXdx6xhp8YZcghYwWpIfT/cUII
-         lAz6ZyVdC9AkDw0qu/8LHTBZpArb4IM20cj2FuUw=
+        b=R3oXEyQSO8c90muPj5Py9bdc/LR7aJHussJhUcRY8wFXsjItLOpqf84B7rG+4csWm
+         FDWdPsiogcY9bPXK9+0rkTsd1AbAAgZ4Z9mbqJuw2SMxn1R2s4ZA8vNJSnSzvAQmH1
+         s+QWT4TPQDyIZq78eXhqyDzIeTDLjLBnUPyP2KhQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jay Vosburgh <j.vosburgh@gmail.com>,
-        Veaceslav Falico <vfalico@gmail.com>,
-        Andy Gospodarek <andy@greyhouse.net>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        syzbot+e5be16aa39ad6e755391@syzkaller.appspotmail.com
-Subject: [PATCH 4.14 198/293] bonding: validate ip header before check IPPROTO_IGMP
-Date:   Mon, 29 Jul 2019 21:21:29 +0200
-Message-Id: <20190729190839.642048519@linuxfoundation.org>
+        stable@vger.kernel.org, Florian Westphal <fw@strlen.de>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 199/293] net: make skb_dst_force return true when dst is refcounted
+Date:   Mon, 29 Jul 2019 21:21:30 +0200
+Message-Id: <20190729190839.726480062@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190729190820.321094988@linuxfoundation.org>
 References: <20190729190820.321094988@linuxfoundation.org>
@@ -47,85 +43,91 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Cong Wang <xiyou.wangcong@gmail.com>
+From: Florian Westphal <fw@strlen.de>
 
-[ Upstream commit 9d1bc24b52fb8c5d859f9a47084bf1179470e04c ]
+[ Upstream commit b60a77386b1d4868f72f6353d35dabe5fbe981f2 ]
 
-bond_xmit_roundrobin() checks for IGMP packets but it parses
-the IP header even before checking skb->protocol.
+netfilter did not expect that skb_dst_force() can cause skb to lose its
+dst entry.
 
-We should validate the IP header with pskb_may_pull() before
-using iph->protocol.
+I got a bug report with a skb->dst NULL dereference in netfilter
+output path.  The backtrace contains nf_reinject(), so the dst might have
+been cleared when skb got queued to userspace.
 
-Reported-and-tested-by: syzbot+e5be16aa39ad6e755391@syzkaller.appspotmail.com
-Fixes: a2fd940f4cff ("bonding: fix broken multicast with round-robin mode")
-Cc: Jay Vosburgh <j.vosburgh@gmail.com>
-Cc: Veaceslav Falico <vfalico@gmail.com>
-Cc: Andy Gospodarek <andy@greyhouse.net>
-Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Other users were fixed via
+if (skb_dst(skb)) {
+	skb_dst_force(skb);
+	if (!skb_dst(skb))
+		goto handle_err;
+}
+
+But I think its preferable to make the 'dst might be cleared' part
+of the function explicit.
+
+In netfilter case, skb with a null dst is expected when queueing in
+prerouting hook, so drop skb for the other hooks.
+
+v2:
+ v1 of this patch returned true in case skb had no dst entry.
+ Eric said:
+   Say if we have two skb_dst_force() calls for some reason
+   on the same skb, only the first one will return false.
+
+ This now returns false even when skb had no dst, as per Erics
+ suggestion, so callers might need to check skb_dst() first before
+ skb_dst_force().
+
+Signed-off-by: Florian Westphal <fw@strlen.de>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/bonding/bond_main.c |   37 +++++++++++++++++++++++--------------
- 1 file changed, 23 insertions(+), 14 deletions(-)
+ include/net/dst.h        |    5 ++++-
+ net/netfilter/nf_queue.c |    6 +++++-
+ 2 files changed, 9 insertions(+), 2 deletions(-)
 
---- a/drivers/net/bonding/bond_main.c
-+++ b/drivers/net/bonding/bond_main.c
-@@ -3817,8 +3817,8 @@ static u32 bond_rr_gen_slave_id(struct b
- static int bond_xmit_roundrobin(struct sk_buff *skb, struct net_device *bond_dev)
+--- a/include/net/dst.h
++++ b/include/net/dst.h
+@@ -329,8 +329,9 @@ static inline bool dst_hold_safe(struct
+  * @skb: buffer
+  *
+  * If dst is not yet refcounted and not destroyed, grab a ref on it.
++ * Returns true if dst is refcounted.
+  */
+-static inline void skb_dst_force(struct sk_buff *skb)
++static inline bool skb_dst_force(struct sk_buff *skb)
  {
- 	struct bonding *bond = netdev_priv(bond_dev);
--	struct iphdr *iph = ip_hdr(skb);
- 	struct slave *slave;
-+	int slave_cnt;
- 	u32 slave_id;
+ 	if (skb_dst_is_noref(skb)) {
+ 		struct dst_entry *dst = skb_dst(skb);
+@@ -341,6 +342,8 @@ static inline void skb_dst_force(struct
  
- 	/* Start with the curr_active_slave that joined the bond as the
-@@ -3827,23 +3827,32 @@ static int bond_xmit_roundrobin(struct s
- 	 * send the join/membership reports.  The curr_active_slave found
- 	 * will send all of this type of traffic.
- 	 */
--	if (iph->protocol == IPPROTO_IGMP && skb->protocol == htons(ETH_P_IP)) {
--		slave = rcu_dereference(bond->curr_active_slave);
--		if (slave)
--			bond_dev_queue_xmit(bond, skb, slave->dev);
--		else
--			bond_xmit_slave_id(bond, skb, 0);
--	} else {
--		int slave_cnt = ACCESS_ONCE(bond->slave_cnt);
-+	if (skb->protocol == htons(ETH_P_IP)) {
-+		int noff = skb_network_offset(skb);
-+		struct iphdr *iph;
+ 		skb->_skb_refdst = (unsigned long)dst;
+ 	}
 +
-+		if (unlikely(!pskb_may_pull(skb, noff + sizeof(*iph))))
-+			goto non_igmp;
++	return skb->_skb_refdst != 0UL;
+ }
  
--		if (likely(slave_cnt)) {
--			slave_id = bond_rr_gen_slave_id(bond);
--			bond_xmit_slave_id(bond, skb, slave_id % slave_cnt);
--		} else {
--			bond_tx_drop(bond_dev, skb);
-+		iph = ip_hdr(skb);
-+		if (iph->protocol == IPPROTO_IGMP) {
-+			slave = rcu_dereference(bond->curr_active_slave);
-+			if (slave)
-+				bond_dev_queue_xmit(bond, skb, slave->dev);
-+			else
-+				bond_xmit_slave_id(bond, skb, 0);
-+			return NETDEV_TX_OK;
- 		}
+ 
+--- a/net/netfilter/nf_queue.c
++++ b/net/netfilter/nf_queue.c
+@@ -138,6 +138,11 @@ static int __nf_queue(struct sk_buff *sk
+ 		goto err;
  	}
  
-+non_igmp:
-+	slave_cnt = ACCESS_ONCE(bond->slave_cnt);
-+	if (likely(slave_cnt)) {
-+		slave_id = bond_rr_gen_slave_id(bond);
-+		bond_xmit_slave_id(bond, skb, slave_id % slave_cnt);
-+	} else {
-+		bond_tx_drop(bond_dev, skb);
++	if (!skb_dst_force(skb) && state->hook != NF_INET_PRE_ROUTING) {
++		status = -ENETDOWN;
++		goto err;
 +	}
- 	return NETDEV_TX_OK;
- }
++
+ 	*entry = (struct nf_queue_entry) {
+ 		.skb	= skb,
+ 		.state	= *state,
+@@ -146,7 +151,6 @@ static int __nf_queue(struct sk_buff *sk
+ 	};
+ 
+ 	nf_queue_entry_get_refs(entry);
+-	skb_dst_force(skb);
+ 	afinfo->saveroute(skb, entry);
+ 	status = qh->outfn(entry, queuenum);
  
 
 
