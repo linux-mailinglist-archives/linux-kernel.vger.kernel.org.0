@@ -2,36 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DAE68797D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:04:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 11D9A797E3
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:04:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389902AbfG2Tq6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 15:46:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36344 "EHLO mail.kernel.org"
+        id S1729612AbfG2UDW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 16:03:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36990 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390250AbfG2Tqy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:46:54 -0400
+        id S2390301AbfG2TrU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:47:20 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E6ADB21655;
-        Mon, 29 Jul 2019 19:46:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0076F20C01;
+        Mon, 29 Jul 2019 19:47:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564429613;
-        bh=CRN43WNrqRPAVqAN/c4HT+feEqntlHj4W9K2/xl1oOY=;
+        s=default; t=1564429639;
+        bh=9B7N36wRk/AXY+rskVB91mp5QSNljimZaU8D+Ad43rI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0t3LTpxVoWboDXUOD1XQxKQbkd2Ym6z3hBPGNLdSiBmsl9xMPZdxLYcpxavBc3yf1
-         +/4P3NEEEpgQBHqL7ckG8rLq//gc9NXjtJnmNEag3LEwmb4k6Zb1DezUy1EkYlfcEK
-         MghNw3rMlDwKWeB05pFCW2eliQCHKrR8mcOe73n8=
+        b=wKfqgznftPiDesmiLbAsy+dTpN13rs2R903WcVUPZjOZlDE1mmFKs6IxYo6FHNYxk
+         UyoxJ/8vSygwEp7pUDkMSeCLLqw1ZOYAQcAG/NtboQUfzaYcDmZi886hmB02Ft7qg8
+         FnHyur+AxeN8IKou24gN0HGnxN1+9EbLBSJqoyhk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Rosenberg <drosen@google.com>,
-        Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
+        stable@vger.kernel.org, Pavel Machek <pavel@ucw.cz>,
+        Tony Lindgren <tony@atomide.com>,
+        Sebastian Reichel <sebastian.reichel@collabora.com>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 040/215] f2fs: Fix accounting for unusable blocks
-Date:   Mon, 29 Jul 2019 21:20:36 +0200
-Message-Id: <20190729190747.447728913@linuxfoundation.org>
+Subject: [PATCH 5.2 048/215] drm/omap: dont check dispc timings for DSI
+Date:   Mon, 29 Jul 2019 21:20:44 +0200
+Message-Id: <20190729190748.832081009@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190729190739.971253303@linuxfoundation.org>
 References: <20190729190739.971253303@linuxfoundation.org>
@@ -44,60 +46,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit a4c3ecaaadac5693f555cfef1c9eecf4c39df818 ]
+[ Upstream commit ad9df7d91b4a6e8f4b20c2bf539ac09b3b2ad6eb ]
 
-Fixes possible underflows when dealing with unusable blocks.
+While most display types only forward their VM to the DISPC, this
+is not true for DSI. DSI calculates the VM for DISPC based on its
+own, but it's not identical. Actually the DSI VM is not even a valid
+DISPC VM making this check fail. Let's restore the old behaviour
+and avoid checking the DISPC VM for DSI here.
 
-Signed-off-by: Daniel Rosenberg <drosen@google.com>
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Fixes: 7c27fa57ef31 ("drm/omap: Call dispc timings check operation directly")
+Acked-by: Pavel Machek <pavel@ucw.cz>
+Tested-by: Tony Lindgren <tony@atomide.com>
+Tested-by: Pavel Machek <pavel@ucw.cz>
+Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/f2fs.h | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/omapdrm/omap_crtc.c | 18 ++++++++++++++----
+ 1 file changed, 14 insertions(+), 4 deletions(-)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index d1b64cb77326..9e6721e15b24 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1767,8 +1767,12 @@ static inline int inc_valid_block_count(struct f2fs_sb_info *sbi,
+diff --git a/drivers/gpu/drm/omapdrm/omap_crtc.c b/drivers/gpu/drm/omapdrm/omap_crtc.c
+index 8712af79a49c..4c43dd282acc 100644
+--- a/drivers/gpu/drm/omapdrm/omap_crtc.c
++++ b/drivers/gpu/drm/omapdrm/omap_crtc.c
+@@ -384,10 +384,20 @@ static enum drm_mode_status omap_crtc_mode_valid(struct drm_crtc *crtc,
+ 	int r;
  
- 	if (!__allow_reserved_blocks(sbi, inode, true))
- 		avail_user_block_count -= F2FS_OPTION(sbi).root_reserved_blocks;
--	if (unlikely(is_sbi_flag_set(sbi, SBI_CP_DISABLED)))
--		avail_user_block_count -= sbi->unusable_block_count;
-+	if (unlikely(is_sbi_flag_set(sbi, SBI_CP_DISABLED))) {
-+		if (avail_user_block_count > sbi->unusable_block_count)
-+			avail_user_block_count -= sbi->unusable_block_count;
-+		else
-+			avail_user_block_count = 0;
+ 	drm_display_mode_to_videomode(mode, &vm);
+-	r = priv->dispc_ops->mgr_check_timings(priv->dispc, omap_crtc->channel,
+-					       &vm);
+-	if (r)
+-		return r;
++
++	/*
++	 * DSI might not call this, since the supplied mode is not a
++	 * valid DISPC mode. DSI will calculate and configure the
++	 * proper DISPC mode later.
++	 */
++	if (omap_crtc->pipe->output->next == NULL ||
++	    omap_crtc->pipe->output->next->type != OMAP_DISPLAY_TYPE_DSI) {
++		r = priv->dispc_ops->mgr_check_timings(priv->dispc,
++						       omap_crtc->channel,
++						       &vm);
++		if (r)
++			return r;
 +	}
- 	if (unlikely(sbi->total_valid_block_count > avail_user_block_count)) {
- 		diff = sbi->total_valid_block_count - avail_user_block_count;
- 		if (diff > *count)
-@@ -1968,7 +1972,7 @@ static inline int inc_valid_node_count(struct f2fs_sb_info *sbi,
- 					struct inode *inode, bool is_inode)
- {
- 	block_t	valid_block_count;
--	unsigned int valid_node_count;
-+	unsigned int valid_node_count, user_block_count;
- 	int err;
  
- 	if (is_inode) {
-@@ -1995,10 +1999,11 @@ static inline int inc_valid_node_count(struct f2fs_sb_info *sbi,
- 
- 	if (!__allow_reserved_blocks(sbi, inode, false))
- 		valid_block_count += F2FS_OPTION(sbi).root_reserved_blocks;
-+	user_block_count = sbi->user_block_count;
- 	if (unlikely(is_sbi_flag_set(sbi, SBI_CP_DISABLED)))
--		valid_block_count += sbi->unusable_block_count;
-+		user_block_count -= sbi->unusable_block_count;
- 
--	if (unlikely(valid_block_count > sbi->user_block_count)) {
-+	if (unlikely(valid_block_count > user_block_count)) {
- 		spin_unlock(&sbi->stat_lock);
- 		goto enospc;
- 	}
+ 	/* Check for bandwidth limit */
+ 	if (priv->max_bandwidth) {
 -- 
 2.20.1
 
