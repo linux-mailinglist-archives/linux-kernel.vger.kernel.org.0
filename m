@@ -2,40 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F63179781
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:01:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BD807977C
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:01:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404405AbfG2UAT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 16:00:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44590 "EHLO mail.kernel.org"
+        id S1729551AbfG2UAI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 16:00:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44668 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403810AbfG2Twp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:52:45 -0400
+        id S2403754AbfG2Tws (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:52:48 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3FF092171F;
-        Mon, 29 Jul 2019 19:52:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B3D9B21773;
+        Mon, 29 Jul 2019 19:52:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564429964;
-        bh=qtpQve33xVbuoeZIu8vd+agX2xDVDUpkDAhJEmLgQ8Y=;
+        s=default; t=1564429967;
+        bh=7gI2jRdswUqOZikL5g6HJFqgYXJPBbm5N+9BTbWMDY0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DPMZaMW/8GxmAi/Dh4YkcPOoVnKbt8IWWh3FRg3CM1zZHETs3LCe3BG+dA3MfhGDn
-         XTl6RCYErV/Zopn2IW/ajE/YxKDdifL0TRczNxHaWGHIvXzX0YFrRzBOHp+xACGjz5
-         jxMyj19dHIXxRmYW5SL7mOctFLcHr7ZDcD2pUMoA=
+        b=UOZJBu4erYTGVEzWfZiOHHNnaGZPNxKRwS1YJphXCKeRdwArOrpQ/rl+fcVfeAp1d
+         Kh5agMQjBeF966n+oOOYR3IrCiHkDqsEgqUD0FetlcWbSCjrXn1tZ0+raI6Egp5TEb
+         xGal4d8uBAwcU0hmUZzAEsxV0TsrVfPmH/pWQSP4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        Kees Cook <keescook@chromium.org>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
+        stable@vger.kernel.org, "Huang, Ying" <ying.huang@intel.com>,
         Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Hugh Dickins <hughd@google.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Yang Shi <yang.shi@linux.alibaba.com>,
+        David Rientjes <rientjes@google.com>,
+        Rik van Riel <riel@redhat.com>, Jan Kara <jack@suse.cz>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 151/215] 9p: pass the correct prototype to read_cache_page
-Date:   Mon, 29 Jul 2019 21:22:27 +0200
-Message-Id: <20190729190805.975538186@linuxfoundation.org>
+Subject: [PATCH 5.2 152/215] mm/mincore.c: fix race between swapoff and mincore
+Date:   Mon, 29 Jul 2019 21:22:28 +0200
+Message-Id: <20190729190806.168930852@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190729190739.971253303@linuxfoundation.org>
 References: <20190729190739.971253303@linuxfoundation.org>
@@ -48,49 +60,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit f053cbd4366051d7eb6ba1b8d529d20f719c2963 ]
+[ Upstream commit aeb309b81c6bada783c3695528a3e10748e97285 ]
 
-Fix the callback 9p passes to read_cache_page to actually have the
-proper type expected.  Casting around function pointers can easily
-hide typing bugs, and defeats control flow protection.
+Via commit 4b3ef9daa4fc ("mm/swap: split swap cache into 64MB trunks"),
+after swapoff, the address_space associated with the swap device will be
+freed.  So swap_address_space() users which touch the address_space need
+some kind of mechanism to prevent the address_space from being freed
+during accessing.
 
-Link: http://lkml.kernel.org/r/20190520055731.24538-5-hch@lst.de
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Cc: Sami Tolvanen <samitolvanen@google.com>
-Cc: Nick Desaulniers <ndesaulniers@google.com>
+When mincore processes an unmapped range for swapped shmem pages, it
+doesn't hold the lock to prevent swap device from being swapped off.  So
+the following race is possible:
+
+CPU1					CPU2
+do_mincore()				swapoff()
+  walk_page_range()
+    mincore_unmapped_range()
+      __mincore_unmapped_range
+        mincore_page
+	  as = swap_address_space()
+          ...				  exit_swap_address_space()
+          ...				    kvfree(spaces)
+	  find_get_page(as)
+
+The address space may be accessed after being freed.
+
+To fix the race, get_swap_device()/put_swap_device() is used to enclose
+find_get_page() to check whether the swap entry is valid and prevent the
+swap device from being swapoff during accessing.
+
+Link: http://lkml.kernel.org/r/20190611020510.28251-1-ying.huang@intel.com
+Fixes: 4b3ef9daa4fc ("mm/swap: split swap cache into 64MB trunks")
+Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Cc: Minchan Kim <minchan@kernel.org>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Tim Chen <tim.c.chen@linux.intel.com>
+Cc: Mel Gorman <mgorman@techsingularity.net>
+Cc: Jérôme Glisse <jglisse@redhat.com>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: Yang Shi <yang.shi@linux.alibaba.com>
+Cc: David Rientjes <rientjes@google.com>
+Cc: Rik van Riel <riel@redhat.com>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Dave Jiang <dave.jiang@intel.com>
+Cc: Daniel Jordan <daniel.m.jordan@oracle.com>
+Cc: Andrea Parri <andrea.parri@amarulasolutions.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/9p/vfs_addr.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ mm/mincore.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/fs/9p/vfs_addr.c b/fs/9p/vfs_addr.c
-index bc57ae9e2963..cce9ace651a2 100644
---- a/fs/9p/vfs_addr.c
-+++ b/fs/9p/vfs_addr.c
-@@ -35,8 +35,9 @@
-  * @page: structure to page
-  *
-  */
--static int v9fs_fid_readpage(struct p9_fid *fid, struct page *page)
-+static int v9fs_fid_readpage(void *data, struct page *page)
- {
-+	struct p9_fid *fid = data;
- 	struct inode *inode = page->mapping->host;
- 	struct bio_vec bvec = {.bv_page = page, .bv_len = PAGE_SIZE};
- 	struct iov_iter to;
-@@ -107,7 +108,8 @@ static int v9fs_vfs_readpages(struct file *filp, struct address_space *mapping,
- 	if (ret == 0)
- 		return ret;
- 
--	ret = read_cache_pages(mapping, pages, (void *)v9fs_vfs_readpage, filp);
-+	ret = read_cache_pages(mapping, pages, v9fs_fid_readpage,
-+			filp->private_data);
- 	p9_debug(P9_DEBUG_VFS, "  = %d\n", ret);
- 	return ret;
- }
+diff --git a/mm/mincore.c b/mm/mincore.c
+index c3f058bd0faf..4fe91d497436 100644
+--- a/mm/mincore.c
++++ b/mm/mincore.c
+@@ -68,8 +68,16 @@ static unsigned char mincore_page(struct address_space *mapping, pgoff_t pgoff)
+ 		 */
+ 		if (xa_is_value(page)) {
+ 			swp_entry_t swp = radix_to_swp_entry(page);
+-			page = find_get_page(swap_address_space(swp),
+-					     swp_offset(swp));
++			struct swap_info_struct *si;
++
++			/* Prevent swap device to being swapoff under us */
++			si = get_swap_device(swp);
++			if (si) {
++				page = find_get_page(swap_address_space(swp),
++						     swp_offset(swp));
++				put_swap_device(si);
++			} else
++				page = NULL;
+ 		}
+ 	} else
+ 		page = find_get_page(mapping, pgoff);
 -- 
 2.20.1
 
