@@ -2,143 +2,205 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0047978C90
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 15:17:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6808278C83
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 15:16:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388038AbfG2NRO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 09:17:14 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:43173 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387433AbfG2NRG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 09:17:06 -0400
-Received: by mail-wr1-f67.google.com with SMTP id p13so61786473wru.10
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 06:17:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=3T5zwzzf32/EMpw+oBsnUVI2h6RQdI7LnOERRC7yayA=;
-        b=Zj8OYpYCRhvnqKZNcGSoFxGLKe9CPT9SG3G+7tXcQ6dO5AuGbWUim4dOLDn/T4jOWv
-         L9si36ErtNWLcv+SbFJ3XH/tzBcc5Q3oSdDxi99gLaPTzSZQunEZdMVSdqzKfWelYlTL
-         mkY8WcgLNURyb26Q7llCyRsu8iaTkcKlYXyvPFqdxF7Kb76PUTA2svUxeTY6kn5qPPbl
-         GqROFw8E38nu96R440/14/yZIme6pdKeMNPE6R6E1GVXF6B5/1v3x0KK2IC7FgpKK57z
-         V0l0c/070NmQcxk3hDZ8omNaeZH5LsUcJfF8M/YDIa12LFszkVtyfbOfI4ygn6ply7Kt
-         e7Uw==
-X-Gm-Message-State: APjAAAXUU1mvSt0Eg0jQjzVAWi6/xf8CIRlGbunrA5F4WTf+G+QxUszQ
-        qluFMbgXEoJfYngM3YO2cWIoKg==
-X-Google-Smtp-Source: APXvYqwnZ+N26SDlNfrEqgUI3i3MZOmGTLSWO4BS+fJLA+8beXCNgUUWlkTT0HCgurm5WUJej/Na7A==
-X-Received: by 2002:adf:90e7:: with SMTP id i94mr87179767wri.224.1564406224074;
-        Mon, 29 Jul 2019 06:17:04 -0700 (PDT)
-Received: from localhost.localdomain ([151.29.237.107])
-        by smtp.gmail.com with ESMTPSA id m7sm50008378wrx.65.2019.07.29.06.17.02
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 29 Jul 2019 06:17:03 -0700 (PDT)
-Date:   Mon, 29 Jul 2019 15:17:01 +0200
-From:   Juri Lelli <juri.lelli@redhat.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     mingo@kernel.org, linux-kernel@vger.kernel.org,
-        dietmar.eggemann@arm.com, luca.abeni@santannapisa.it,
-        bristot@redhat.com, balsini@android.com, dvyukov@google.com,
-        tglx@linutronix.de, vpillai@digitalocean.com, rostedt@goodmis.org
-Subject: Re: [RFC][PATCH 04/13] sched/{rt,deadline}: Fix set_next_task vs
- pick_next_task
-Message-ID: <20190729131701.GB8927@localhost.localdomain>
-References: <20190726145409.947503076@infradead.org>
- <20190726161357.579899041@infradead.org>
- <20190729092519.GR25636@localhost.localdomain>
- <20190729111510.GD31398@hirez.programming.kicks-ass.net>
- <20190729112702.GA8927@localhost.localdomain>
- <20190729130438.GE31398@hirez.programming.kicks-ass.net>
+        id S1728102AbfG2NQU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 09:16:20 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:3231 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726173AbfG2NQT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 09:16:19 -0400
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id EEE4E407267BF28F5523;
+        Mon, 29 Jul 2019 21:16:12 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
+ 14.3.439.0; Mon, 29 Jul 2019 21:16:09 +0800
+From:   Mao Wenan <maowenan@huawei.com>
+To:     <gregkh@linuxfoundation.org>, <stable@vger.kernel.org>
+CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH stable 4.9] tcp: reset sk_send_head in tcp_write_queue_purge
+Date:   Mon, 29 Jul 2019 21:21:08 +0800
+Message-ID: <20190729132108.162320-1-maowenan@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190729130438.GE31398@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29/07/19 15:04, Peter Zijlstra wrote:
-> On Mon, Jul 29, 2019 at 01:27:02PM +0200, Juri Lelli wrote:
-> > On 29/07/19 13:15, Peter Zijlstra wrote:
-> > > On Mon, Jul 29, 2019 at 11:25:19AM +0200, Juri Lelli wrote:
-> > > > Hi,
-> > > > 
-> > > > On 26/07/19 16:54, Peter Zijlstra wrote:
-> > > > > Because pick_next_task() implies set_curr_task() and some of the
-> > > > > details haven't matter too much, some of what _should_ be in
-> > > > > set_curr_task() ended up in pick_next_task, correct this.
-> > > > > 
-> > > > > This prepares the way for a pick_next_task() variant that does not
-> > > > > affect the current state; allowing remote picking.
-> > > > > 
-> > > > > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> > > > > ---
-> > > > >  kernel/sched/deadline.c |   23 ++++++++++++-----------
-> > > > >  kernel/sched/rt.c       |   27 ++++++++++++++-------------
-> > > > >  2 files changed, 26 insertions(+), 24 deletions(-)
-> > > > > 
-> > > > > --- a/kernel/sched/deadline.c
-> > > > > +++ b/kernel/sched/deadline.c
-> > > > > @@ -1694,12 +1694,21 @@ static void start_hrtick_dl(struct rq *r
-> > > > >  }
-> > > > >  #endif
-> > > > >  
-> > > > > -static inline void set_next_task(struct rq *rq, struct task_struct *p)
-> > > > > +static void set_next_task_dl(struct rq *rq, struct task_struct *p)
-> > > > >  {
-> > > > >  	p->se.exec_start = rq_clock_task(rq);
-> > > > >  
-> > > > >  	/* You can't push away the running task */
-> > > > >  	dequeue_pushable_dl_task(rq, p);
-> > > > > +
-> > > > > +	if (hrtick_enabled(rq))
-> > > > > +		start_hrtick_dl(rq, p);
-> > > > > +
-> > > > > +	if (rq->curr->sched_class != &dl_sched_class)
-> > > > > +		update_dl_rq_load_avg(rq_clock_pelt(rq), rq, 0);
-> > > > > +
-> > > > > +	if (rq->curr != p)
-> > > > > +		deadline_queue_push_tasks(rq);
-> > > > 
-> > > > It's a minor thing, but I was wondering why you added the check on curr.
-> > > > deadline_queue_push_tasks() already checks if are there pushable tasks,
-> > > > plus curr can still be of a different class at this point?
-> > > 
-> > > Hmm, so by moving that code into set_next_task() it is exposed to the:
-> > > 
-> > >   if (queued)
-> > >     deuque_task();
-> > >   if (running)
-> > >     put_prev_task();
-> > > 
-> > >   /* do stuff */
-> > > 
-> > >   if (queued)
-> > >     enqueue_task();
-> > >   if (running)
-> > >     set_next_task();
-> > > 
-> > > patter from core.c; and in that case nothing changes. That said; I
-> > > might've gotten it wrong.
-> > 
-> > Right. But, I was wondering about the __schedule()->pick_next_task()
-> > case, where, say, prev (rq->curr) is RT/CFS and next (p) is DEADLINE.
-> 
-> So we do pick_next_task() first and then set rq->curr (obviously). So
-> the first set_next_task() will see rq->curr != p and we'll do the push
-> balance stuff.
-> 
-> Then the above pattern will always see rq->curr == p and we'll not
-> trigger push balancing.
-> 
-> Now, looking at it, this also doesn't do push balancing when we
-> re-select the same task, even though we really should be doing it. So I
-> suppose not adding the condition, and always doing the push balance,
-> while wasteful, is not wrong.
+From: Soheil Hassas Yeganeh <soheil@google.com>
 
-Right, also because deadline_queue_push_tasks() already checks if there
-are tasks to potentially push around before queuing the balance
-callback.
+tcp_write_queue_purge clears all the SKBs in the write queue
+but does not reset the sk_send_head. As a result, we can have
+a NULL pointer dereference anywhere that we use tcp_send_head
+instead of the tcp_write_queue_tail.
+
+For example, after a27fd7a8ed38 (tcp: purge write queue upon RST),
+we can purge the write queue on RST. Prior to
+75c119afe14f (tcp: implement rb-tree based retransmit queue),
+tcp_push will only check tcp_send_head and then accesses
+tcp_write_queue_tail to send the actual SKB. As a result, it will
+dereference a NULL pointer.
+
+This has been reported twice for 4.14 where we don't have
+75c119afe14f:
+
+By Timofey Titovets:
+
+[  422.081094] BUG: unable to handle kernel NULL pointer dereference
+at 0000000000000038
+[  422.081254] IP: tcp_push+0x42/0x110
+[  422.081314] PGD 0 P4D 0
+[  422.081364] Oops: 0002 [#1] SMP PTI
+
+By Yongjian Xu:
+
+BUG: unable to handle kernel NULL pointer dereference at 0000000000000038
+IP: tcp_push+0x48/0x120
+PGD 80000007ff77b067 P4D 80000007ff77b067 PUD 7fd989067 PMD 0
+Oops: 0002 [#18] SMP PTI
+Modules linked in: tcp_diag inet_diag tcp_bbr sch_fq iTCO_wdt
+iTCO_vendor_support pcspkr ixgbe mdio i2c_i801 lpc_ich joydev input_leds shpchp
+e1000e igb dca ptp pps_core hwmon mei_me mei ipmi_si ipmi_msghandler sg ses
+scsi_transport_sas enclosure ext4 jbd2 mbcache sd_mod ahci libahci megaraid_sas
+wmi ast ttm dm_mirror dm_region_hash dm_log dm_mod dax
+CPU: 6 PID: 14156 Comm: [ET_NET 6] Tainted: G D 4.14.26-1.el6.x86_64 #1
+Hardware name: LENOVO ThinkServer RD440 /ThinkServer RD440, BIOS A0TS80A
+09/22/2014
+task: ffff8807d78d8140 task.stack: ffffc9000e944000
+RIP: 0010:tcp_push+0x48/0x120
+RSP: 0018:ffffc9000e947a88 EFLAGS: 00010246
+RAX: 00000000000005b4 RBX: ffff880f7cce9c00 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: 0000000000000040 RDI: ffff8807d00f5000
+RBP: ffffc9000e947aa8 R08: 0000000000001c84 R09: 0000000000000000
+R10: ffff8807d00f5158 R11: 0000000000000000 R12: ffff8807d00f5000
+R13: 0000000000000020 R14: 00000000000256d4 R15: 0000000000000000
+FS: 00007f5916de9700(0000) GS:ffff88107fd00000(0000) knlGS:0000000000000000
+CS: 0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000000038 CR3: 00000007f8226004 CR4: 00000000001606e0
+Call Trace:
+tcp_sendmsg_locked+0x33d/0xe50
+tcp_sendmsg+0x37/0x60
+inet_sendmsg+0x39/0xc0
+sock_sendmsg+0x49/0x60
+sock_write_iter+0xb6/0x100
+do_iter_readv_writev+0xec/0x130
+? rw_verify_area+0x49/0xb0
+do_iter_write+0x97/0xd0
+vfs_writev+0x7e/0xe0
+? __wake_up_common_lock+0x80/0xa0
+? __fget_light+0x2c/0x70
+? __do_page_fault+0x1e7/0x530
+do_writev+0x60/0xf0
+? inet_shutdown+0xac/0x110
+SyS_writev+0x10/0x20
+do_syscall_64+0x6f/0x140
+? prepare_exit_to_usermode+0x8b/0xa0
+entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+RIP: 0033:0x3135ce0c57
+RSP: 002b:00007f5916de4b00 EFLAGS: 00000293 ORIG_RAX: 0000000000000014
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000003135ce0c57
+RDX: 0000000000000002 RSI: 00007f5916de4b90 RDI: 000000000000606f
+RBP: 0000000000000000 R08: 0000000000000000 R09: 00007f5916de8c38
+R10: 0000000000000000 R11: 0000000000000293 R12: 00000000000464cc
+R13: 00007f5916de8c30 R14: 00007f58d8bef080 R15: 0000000000000002
+Code: 48 8b 97 60 01 00 00 4c 8d 97 58 01 00 00 41 b9 00 00 00 00 41 89 f3 4c 39
+d2 49 0f 44 d1 41 81 e3 00 80 00 00 0f 85 b0 00 00 00 <80> 4a 38 08 44 8b 8f 74
+06 00 00 44 89 8f 7c 06 00 00 83 e6 01
+RIP: tcp_push+0x48/0x120 RSP: ffffc9000e947a88
+CR2: 0000000000000038
+---[ end trace 8d545c2e93515549 ]---
+
+There is other scenario which found in stable 4.4:
+Allocated:
+ [<ffffffff82f380a6>] __alloc_skb+0xe6/0x600 net/core/skbuff.c:218
+ [<ffffffff832466c3>] alloc_skb_fclone include/linux/skbuff.h:856 [inline]
+ [<ffffffff832466c3>] sk_stream_alloc_skb+0xa3/0x5d0 net/ipv4/tcp.c:833
+ [<ffffffff83249164>] tcp_sendmsg+0xd34/0x2b00 net/ipv4/tcp.c:1178
+ [<ffffffff83300ef3>] inet_sendmsg+0x203/0x4d0 net/ipv4/af_inet.c:755
+Freed:
+ [<ffffffff82f372fd>] __kfree_skb+0x1d/0x20 net/core/skbuff.c:676
+ [<ffffffff83288834>] sk_wmem_free_skb include/net/sock.h:1447 [inline]
+ [<ffffffff83288834>] tcp_write_queue_purge include/net/tcp.h:1460 [inline]
+ [<ffffffff83288834>] tcp_connect_init net/ipv4/tcp_output.c:3122 [inline]
+ [<ffffffff83288834>] tcp_connect+0xb24/0x30c0 net/ipv4/tcp_output.c:3261
+ [<ffffffff8329b991>] tcp_v4_connect+0xf31/0x1890 net/ipv4/tcp_ipv4.c:246
+
+BUG: KASAN: use-after-free in tcp_skb_pcount include/net/tcp.h:796 [inline]
+BUG: KASAN: use-after-free in tcp_init_tso_segs net/ipv4/tcp_output.c:1619 [inline]
+BUG: KASAN: use-after-free in tcp_write_xmit+0x3fc2/0x4cb0 net/ipv4/tcp_output.c:2056
+ [<ffffffff81515cd5>] kasan_report.cold.7+0x175/0x2f7 mm/kasan/report.c:408
+ [<ffffffff814f9784>] __asan_report_load2_noabort+0x14/0x20 mm/kasan/report.c:427
+ [<ffffffff83286582>] tcp_skb_pcount include/net/tcp.h:796 [inline]
+ [<ffffffff83286582>] tcp_init_tso_segs net/ipv4/tcp_output.c:1619 [inline]
+ [<ffffffff83286582>] tcp_write_xmit+0x3fc2/0x4cb0 net/ipv4/tcp_output.c:2056
+ [<ffffffff83287a40>] __tcp_push_pending_frames+0xa0/0x290 net/ipv4/tcp_output.c:2307
+
+stable 4.4 and stable 4.9 don't have the commit abb4a8b870b5 ("tcp: purge write queue upon RST")
+which is referred in dbbf2d1e4077,
+in tcp_connect_init, it calls tcp_write_queue_purge, and does not reset sk_send_head, then UAF.
+
+stable 4.14 have the commit abb4a8b870b5 ("tcp: purge write queue upon RST"),
+in tcp_reset, it calls tcp_write_queue_purge(sk), and does not reset sk_send_head, then UAF.
+
+So this patch can be used to fix stable 4.4 and 4.9.
+
+Fixes: a27fd7a8ed38 (tcp: purge write queue upon RST)
+Reported-by: Timofey Titovets <nefelim4ag@gmail.com>
+Reported-by: Yongjian Xu <yongjianchn@gmail.com>
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: Soheil Hassas Yeganeh <soheil@google.com>
+Tested-by: Yongjian Xu <yongjianchn@gmail.com>
+
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ include/net/tcp.h | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
+
+diff --git a/include/net/tcp.h b/include/net/tcp.h
+index d7047de952f0..1eda31f7f013 100644
+--- a/include/net/tcp.h
++++ b/include/net/tcp.h
+@@ -1512,6 +1512,11 @@ struct sock *tcp_try_fastopen(struct sock *sk, struct sk_buff *skb,
+ void tcp_fastopen_init_key_once(bool publish);
+ #define TCP_FASTOPEN_KEY_LENGTH 16
+ 
++static inline void tcp_init_send_head(struct sock *sk)
++{
++	sk->sk_send_head = NULL;
++}
++
+ /* Fastopen key context */
+ struct tcp_fastopen_context {
+ 	struct crypto_cipher	*tfm;
+@@ -1528,6 +1533,7 @@ static inline void tcp_write_queue_purge(struct sock *sk)
+ 		sk_wmem_free_skb(sk, skb);
+ 	sk_mem_reclaim(sk);
+ 	tcp_clear_all_retrans_hints(tcp_sk(sk));
++	tcp_init_send_head(sk);
+ 	inet_csk(sk)->icsk_backoff = 0;
+ }
+ 
+@@ -1589,11 +1595,6 @@ static inline void tcp_check_send_head(struct sock *sk, struct sk_buff *skb_unli
+ 		tcp_sk(sk)->highest_sack = NULL;
+ }
+ 
+-static inline void tcp_init_send_head(struct sock *sk)
+-{
+-	sk->sk_send_head = NULL;
+-}
+-
+ static inline void __tcp_add_write_queue_tail(struct sock *sk, struct sk_buff *skb)
+ {
+ 	__skb_queue_tail(&sk->sk_write_queue, skb);
+-- 
+2.20.1
+
