@@ -2,140 +2,181 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D6CC79CC0
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 01:24:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C36A079CBA
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 01:21:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729586AbfG2XYc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 19:24:32 -0400
-Received: from mga01.intel.com ([192.55.52.88]:25700 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726748AbfG2XYb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 19:24:31 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jul 2019 16:24:30 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,324,1559545200"; 
-   d="scan'208";a="346810144"
-Received: from skuppusw-desk.jf.intel.com ([10.54.74.33])
-  by orsmga005.jf.intel.com with ESMTP; 29 Jul 2019 16:24:30 -0700
-From:   sathyanarayanan.kuppuswamy@linux.intel.com
-To:     akpm@linux-foundation.org, urezki@gmail.com
-Cc:     dave.hansen@intel.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        sathyanarayanan.kuppuswamy@linux.intel.com
-Subject: [PATCH v1 1/1] mm/vmalloc.c: Fix percpu free VM area search criteria
-Date:   Mon, 29 Jul 2019 16:21:39 -0700
-Message-Id: <20190729232139.91131-1-sathyanarayanan.kuppuswamy@linux.intel.com>
-X-Mailer: git-send-email 2.21.0
+        id S1729551AbfG2XVn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 19:21:43 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:10849 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725818AbfG2XVn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 19:21:43 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d3f7f8e0000>; Mon, 29 Jul 2019 16:21:50 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 29 Jul 2019 16:21:42 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 29 Jul 2019 16:21:42 -0700
+Received: from rcampbell-dev.nvidia.com (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 29 Jul
+ 2019 23:21:40 +0000
+Subject: Re: [PATCH 3/9] nouveau: factor out device memory address calculation
+To:     Christoph Hellwig <hch@lst.de>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Ben Skeggs <bskeggs@redhat.com>
+CC:     Bharata B Rao <bharata@linux.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        <linux-mm@kvack.org>, <nouveau@lists.freedesktop.org>,
+        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+References: <20190729142843.22320-1-hch@lst.de>
+ <20190729142843.22320-4-hch@lst.de>
+X-Nvconfidentiality: public
+From:   Ralph Campbell <rcampbell@nvidia.com>
+Message-ID: <95ddc61c-edb9-b751-4e15-0d3f0aaca2e1@nvidia.com>
+Date:   Mon, 29 Jul 2019 16:21:40 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190729142843.22320-4-hch@lst.de>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1564442510; bh=Ck0Fwz/3L8okeuwUnKILoh2bth9zQ838mb2LNvYCu5c=;
+        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=POMfKb/YMF0u6+QGiDqjGdH9lbOIf7G6w6JvD3Msf4yBRa7229kVJVax+KSS+cY2C
+         d5sL+sjwl/l/cPBDDZ6mr9yOs4LmD+lnKlb2a4UWkgi29cfcPUkE3Hjh6QRDNITc++
+         6Hgfj18O7Qm9bo8QE4+aUxtixOr8Re8PDf2XSG89G3LI3hGIm3e4cA3bOEOO23SOw2
+         VB6snRW8LBYrVdYdYH+rkI9VIp3FMPJcIbB+0K61vvzQed4J36ReyESE1XXv0qBsOi
+         0SY7ti+YSimYNOBZrgriBZ3Nrutk/Qy/u6XFJ8Ss725m+jHO8fOeb8PPE0vKXsCdIv
+         y3TxYfGGepEjg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
 
-Recent changes to the vmalloc code by Commit 68ad4a330433
-("mm/vmalloc.c: keep track of free blocks for vmap allocation") can
-cause spurious percpu allocation failures. These, in turn, can result in
-panic()s in the slub code. One such possible panic was reported by
-Dave Hansen in following link https://lkml.org/lkml/2019/6/19/939.
-Another related panic observed is,
+On 7/29/19 7:28 AM, Christoph Hellwig wrote:
+> Factor out the repeated device memory address calculation into
+> a helper.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
- RIP: 0033:0x7f46f7441b9b
- Call Trace:
-  dump_stack+0x61/0x80
-  pcpu_alloc.cold.30+0x22/0x4f
-  mem_cgroup_css_alloc+0x110/0x650
-  cgroup_apply_control_enable+0x133/0x330
-  cgroup_mkdir+0x41b/0x500
-  kernfs_iop_mkdir+0x5a/0x90
-  vfs_mkdir+0x102/0x1b0
-  do_mkdirat+0x7d/0xf0
-  do_syscall_64+0x5b/0x180
-  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+Reviewed-by: Ralph Campbell <rcampbell@nvidia.com>
 
-VMALLOC memory manager divides the entire VMALLOC space (VMALLOC_START
-to VMALLOC_END) into multiple VM areas (struct vm_areas), and it mainly
-uses two lists (vmap_area_list & free_vmap_area_list) to track the used
-and free VM areas in VMALLOC space. And pcpu_get_vm_areas(offsets[],
-sizes[], nr_vms, align) function is used for allocating congruent VM
-areas for percpu memory allocator. In order to not conflict with VMALLOC
-users, pcpu_get_vm_areas allocates VM areas near the end of the VMALLOC
-space. So the search for free vm_area for the given requirement starts
-near VMALLOC_END and moves upwards towards VMALLOC_START.
-
-Prior to commit 68ad4a330433, the search for free vm_area in
-pcpu_get_vm_areas() involves following two main steps.
-
-Step 1:
-    Find a aligned "base" adress near VMALLOC_END.
-    va = free vm area near VMALLOC_END
-Step 2:
-    Loop through number of requested vm_areas and check,
-        Step 2.1:
-           if (base < VMALLOC_START)
-              1. fail with error
-        Step 2.2:
-           // end is offsets[area] + sizes[area]
-           if (base + end > va->vm_end)
-               1. Move the base downwards and repeat Step 2
-        Step 2.3:
-           if (base + start < va->vm_start)
-              1. Move to previous free vm_area node, find aligned
-                 base address and repeat Step 2
-
-But Commit 68ad4a330433 removed Step 2.2 and modified Step 2.3 as below:
-
-        Step 2.3:
-           if (base + start < va->vm_start || base + end > va->vm_end)
-              1. Move to previous free vm_area node, find aligned
-                 base address and repeat Step 2
-
-Above change is the root cause of spurious percpu memory allocation
-failures. For example, consider a case where a relatively large vm_area
-(~ 30 TB) was ignored in free vm_area search because it did not pass the
-base + end  < vm->vm_end boundary check. Ignoring such large free
-vm_area's would lead to not finding free vm_area within boundary of
-VMALLOC_start to VMALLOC_END which in turn leads to allocation failures.
-
-So modify the search algorithm to include Step 2.2.
-
-Fixes: 68ad4a330433 ("mm/vmalloc.c: keep track of free blocks for vmap allocation")
-Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
----
- mm/vmalloc.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
-
-diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index 4fa8d84599b0..1faa45a38c08 100644
---- a/mm/vmalloc.c
-+++ b/mm/vmalloc.c
-@@ -3269,10 +3269,20 @@ struct vm_struct **pcpu_get_vm_areas(const unsigned long *offsets,
- 		if (va == NULL)
- 			goto overflow;
- 
-+		/*
-+		 * If required width exeeds current VA block, move
-+		 * base downwards and then recheck.
-+		 */
-+		if (base + end > va->va_end) {
-+			base = pvm_determine_end_from_reverse(&va, align) - end;
-+			term_area = area;
-+			continue;
-+		}
-+
- 		/*
- 		 * If this VA does not fit, move base downwards and recheck.
- 		 */
--		if (base + start < va->va_start || base + end > va->va_end) {
-+		if (base + start < va->va_start) {
- 			va = node_to_va(rb_prev(&va->rb_node));
- 			base = pvm_determine_end_from_reverse(&va, align) - end;
- 			term_area = area;
--- 
-2.21.0
-
+> ---
+>   drivers/gpu/drm/nouveau/nouveau_dmem.c | 42 +++++++++++---------------
+>   1 file changed, 17 insertions(+), 25 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/nouveau/nouveau_dmem.c b/drivers/gpu/drm/nouveau/nouveau_dmem.c
+> index e696157f771e..d469bc334438 100644
+> --- a/drivers/gpu/drm/nouveau/nouveau_dmem.c
+> +++ b/drivers/gpu/drm/nouveau/nouveau_dmem.c
+> @@ -102,6 +102,14 @@ struct nouveau_migrate {
+>   	unsigned long dma_nr;
+>   };
+>   
+> +static unsigned long nouveau_dmem_page_addr(struct page *page)
+> +{
+> +	struct nouveau_dmem_chunk *chunk = page->zone_device_data;
+> +	unsigned long idx = page_to_pfn(page) - chunk->pfn_first;
+> +
+> +	return (idx << PAGE_SHIFT) + chunk->bo->bo.offset;
+> +}
+> +
+>   static void nouveau_dmem_page_free(struct page *page)
+>   {
+>   	struct nouveau_dmem_chunk *chunk = page->zone_device_data;
+> @@ -169,9 +177,7 @@ nouveau_dmem_fault_alloc_and_copy(struct vm_area_struct *vma,
+>   	/* Copy things over */
+>   	copy = drm->dmem->migrate.copy_func;
+>   	for (addr = start, i = 0; addr < end; addr += PAGE_SIZE, i++) {
+> -		struct nouveau_dmem_chunk *chunk;
+>   		struct page *spage, *dpage;
+> -		u64 src_addr, dst_addr;
+>   
+>   		dpage = migrate_pfn_to_page(dst_pfns[i]);
+>   		if (!dpage || dst_pfns[i] == MIGRATE_PFN_ERROR)
+> @@ -194,14 +200,10 @@ nouveau_dmem_fault_alloc_and_copy(struct vm_area_struct *vma,
+>   			continue;
+>   		}
+>   
+> -		dst_addr = fault->dma[fault->npages++];
+> -
+> -		chunk = spage->zone_device_data;
+> -		src_addr = page_to_pfn(spage) - chunk->pfn_first;
+> -		src_addr = (src_addr << PAGE_SHIFT) + chunk->bo->bo.offset;
+> -
+> -		ret = copy(drm, 1, NOUVEAU_APER_HOST, dst_addr,
+> -				   NOUVEAU_APER_VRAM, src_addr);
+> +		ret = copy(drm, 1, NOUVEAU_APER_HOST,
+> +				fault->dma[fault->npages++],
+> +				NOUVEAU_APER_VRAM,
+> +				nouveau_dmem_page_addr(spage));
+>   		if (ret) {
+>   			dst_pfns[i] = MIGRATE_PFN_ERROR;
+>   			__free_page(dpage);
+> @@ -687,18 +689,12 @@ nouveau_dmem_migrate_alloc_and_copy(struct vm_area_struct *vma,
+>   	/* Copy things over */
+>   	copy = drm->dmem->migrate.copy_func;
+>   	for (addr = start, i = 0; addr < end; addr += PAGE_SIZE, i++) {
+> -		struct nouveau_dmem_chunk *chunk;
+>   		struct page *spage, *dpage;
+> -		u64 src_addr, dst_addr;
+>   
+>   		dpage = migrate_pfn_to_page(dst_pfns[i]);
+>   		if (!dpage || dst_pfns[i] == MIGRATE_PFN_ERROR)
+>   			continue;
+>   
+> -		chunk = dpage->zone_device_data;
+> -		dst_addr = page_to_pfn(dpage) - chunk->pfn_first;
+> -		dst_addr = (dst_addr << PAGE_SHIFT) + chunk->bo->bo.offset;
+> -
+>   		spage = migrate_pfn_to_page(src_pfns[i]);
+>   		if (!spage || !(src_pfns[i] & MIGRATE_PFN_MIGRATE)) {
+>   			nouveau_dmem_page_free_locked(drm, dpage);
+> @@ -716,10 +712,10 @@ nouveau_dmem_migrate_alloc_and_copy(struct vm_area_struct *vma,
+>   			continue;
+>   		}
+>   
+> -		src_addr = migrate->dma[migrate->dma_nr++];
+> -
+> -		ret = copy(drm, 1, NOUVEAU_APER_VRAM, dst_addr,
+> -				   NOUVEAU_APER_HOST, src_addr);
+> +		ret = copy(drm, 1, NOUVEAU_APER_VRAM,
+> +				nouveau_dmem_page_addr(dpage),
+> +				NOUVEAU_APER_HOST,
+> +				migrate->dma[migrate->dma_nr++]);
+>   		if (ret) {
+>   			nouveau_dmem_page_free_locked(drm, dpage);
+>   			dst_pfns[i] = 0;
+> @@ -846,7 +842,6 @@ nouveau_dmem_convert_pfn(struct nouveau_drm *drm,
+>   
+>   	npages = (range->end - range->start) >> PAGE_SHIFT;
+>   	for (i = 0; i < npages; ++i) {
+> -		struct nouveau_dmem_chunk *chunk;
+>   		struct page *page;
+>   		uint64_t addr;
+>   
+> @@ -864,10 +859,7 @@ nouveau_dmem_convert_pfn(struct nouveau_drm *drm,
+>   			continue;
+>   		}
+>   
+> -		chunk = page->zone_device_data;
+> -		addr = page_to_pfn(page) - chunk->pfn_first;
+> -		addr = (addr + chunk->bo->bo.mem.start) << PAGE_SHIFT;
+> -
+> +		addr = nouveau_dmem_page_addr(page);
+>   		range->pfns[i] &= ((1UL << range->pfn_shift) - 1);
+>   		range->pfns[i] |= (addr >> PAGE_SHIFT) << range->pfn_shift;
+>   	}
+> 
