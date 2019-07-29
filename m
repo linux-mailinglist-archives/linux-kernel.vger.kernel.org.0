@@ -2,127 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90ADB790CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 18:28:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D9432790D3
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 18:28:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387531AbfG2Q2O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 12:28:14 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:37658 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727823AbfG2Q2N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 12:28:13 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 22DA04DB1F;
-        Mon, 29 Jul 2019 16:28:13 +0000 (UTC)
-Received: from linux-ws.nc.xsintricity.com (ovpn-112-50.rdu2.redhat.com [10.10.112.50])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0D26E5D9C3;
-        Mon, 29 Jul 2019 16:28:11 +0000 (UTC)
-Message-ID: <ee858ba02e8e560672aff68aead2323bc2136b6c.camel@redhat.com>
-Subject: Re: [PATCH] infiniband: hw: cxgb3: Fix a possible null-pointer
- dereference in connect_reply_upcall()
-From:   Doug Ledford <dledford@redhat.com>
-To:     Jia-Ju Bai <baijiaju1990@gmail.com>, bharat@chelsio.com,
-        jgg@ziepe.ca
-Cc:     linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Mon, 29 Jul 2019 12:28:09 -0400
-In-Reply-To: <20190725121508.16352-1-baijiaju1990@gmail.com>
-References: <20190725121508.16352-1-baijiaju1990@gmail.com>
-Organization: Red Hat, Inc.
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-YogQSHis/dLMip/kO+pD"
-User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
+        id S1728771AbfG2Q2i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 12:28:38 -0400
+Received: from smtprelay0046.hostedemail.com ([216.40.44.46]:32781 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727814AbfG2Q2i (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 12:28:38 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay06.hostedemail.com (Postfix) with ESMTP id B58A818224D97;
+        Mon, 29 Jul 2019 16:28:36 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::,RULES_HIT:41:355:379:599:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1538:1593:1594:1711:1714:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3350:3622:3866:3867:3868:3870:3871:3872:3874:4321:5007:10004:10400:10848:11232:11658:11914:12297:12740:12760:12895:13019:13069:13160:13229:13311:13357:13439:14659:14721:21080:21433:21627:21740:30054:30083:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.14.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:24,LUA_SUMMARY:none
+X-HE-Tag: stove18_681e57aab8a60
+X-Filterd-Recvd-Size: 2302
+Received: from XPS-9350 (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
+        (Authenticated sender: joe@perches.com)
+        by omf18.hostedemail.com (Postfix) with ESMTPA;
+        Mon, 29 Jul 2019 16:28:35 +0000 (UTC)
+Message-ID: <0b6936cb34ca0dcd76b155b9b38366e82b1376f0.camel@perches.com>
+Subject: Re: [Fwd: [PATCH 1/2] string: Add stracpy and stracpy_pad
+ mechanisms]
+From:   Joe Perches <joe@perches.com>
+To:     Julia Lawall <julia.lawall@lip6.fr>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>
+Cc:     David Laight <David.Laight@ACULAB.COM>,
+        cocci <cocci@systeme.lip6.fr>,
+        LKML <linux-kernel@vger.kernel.org>
+Date:   Mon, 29 Jul 2019 09:28:34 -0700
+In-Reply-To: <alpine.DEB.2.21.1907291004220.2686@hadrien>
+References: <7ab8957eaf9b0931a59eff6e2bd8c5169f2f6c41.1563841972.git.joe@perches.com>
+            <66fcdbf607d7d0bea41edb39e5579d63b62b7d84.camel@perches.com>
+            <alpine.DEB.2.21.1907231546090.2551@hadrien>
+            <0f3ba090dfc956f5651e6c7c430abdba94ddcb8b.camel@perches.com>
+         <alpine.DEB.2.21.1907232252260.2539@hadrien>
+            <d5993902fd44ce89915fab94f4db03f5081c3c8e.camel@perches.com>
+            <alpine.DEB.2.21.1907232326360.2539@hadrien>
+            <f909b4b31f123c7d88535db397a04421077ed0ab.camel@perches.com>
+            <563222fbfdbb44daa98078db9d404972@AcuMS.aculab.com>
+         <d2b2b528b9f296dfeb1d92554be024245abd678e.camel@perches.com>
+           <alpine.DEB.2.21.1907242040490.10108@hadrien>
+          <a0e892c3522f4df2991119a2a30cd62ec14c76cc.camel@perches.com>
+          <alpine.DEB.2.21.1907250856450.2555@hadrien>
+         <eaef283741c0a6a718040f99a17bdb9882bde665.camel@perches.com>
+         <alpine.DEB.2.21.1907291004220.2686@hadrien>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Mon, 29 Jul 2019 16:28:13 +0000 (UTC)
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, 2019-07-29 at 10:07 -0400, Julia Lawall wrote:
+> I see that stracpy is now in linux-next.  Would it be reasonable to send
+> patches adding uses now?
 
---=-YogQSHis/dLMip/kO+pD
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+My preference would be to have:
 
-On Thu, 2019-07-25 at 20:15 +0800, Jia-Ju Bai wrote:
-> In connect_reply_upcall(), there is an if statement on line 730 to
-> check
-> whether ep->com.cm_id is NULL:
->     if (ep->com.cm_id)
->=20
-> When ep->com.cm_id is NULL, it is used on line 736:
->     ep->com.cm_id->rem_ref(ep->com.cm_id);
->=20
-> Thus, a possible null-pointer dereference may occur.
->=20
-> To fix this bug, ep->com.cm_id is checked before being used.
->=20
-> This bug is found by a static analysis tool STCheck written by us.
+o A provably correct script  If a small subset of
+  possible conversions are skipped, that's fine.
+o As piecemeal patches cause a lot of churn, work
+  for individual maintainers, and also are not
+  universally applied, have that script run
+  kernel-wide after an rc1 and applied all-at-once.
 
-I think this is one of those theoretical issues that is a non-issue in
-practice.  The cxgb3 driver is older than dirt and only hangs around
-because people out there are still using it in a few places.  We have no
-reports of bugs in this function.  I looked through the code, but it
-wasn't quickly obvious why this isn't an issue, but I suspect the real
-answer is "we can never have a negative status and not have a cm_id" as
-a result of the design of the code.  Verifying that with an audit is
-more time than I want to spend though.  So, I'm going to drop this
-patch.  If you can find a plausible path by which this is actually a
-bug, then we can revisit it.  But I don't want to go around changing a
-known working for years driver on the basis of "my new static code
-checker found this thing" versus someone who reports an actual crash
-(which is what this bug would cause if it exists).
 
-> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-> ---
->  drivers/infiniband/hw/cxgb3/iwch_cm.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/infiniband/hw/cxgb3/iwch_cm.c
-> b/drivers/infiniband/hw/cxgb3/iwch_cm.c
-> index 0bca72cb4d9a..2b31c4726d3e 100644
-> --- a/drivers/infiniband/hw/cxgb3/iwch_cm.c
-> +++ b/drivers/infiniband/hw/cxgb3/iwch_cm.c
-> @@ -733,7 +733,8 @@ static void connect_reply_upcall(struct iwch_ep
-> *ep, int status)
->  		ep->com.cm_id->event_handler(ep->com.cm_id, &event);
->  	}
->  	if (status < 0) {
-> -		ep->com.cm_id->rem_ref(ep->com.cm_id);
-> +		if (ep->com.cm_id)
-> +			ep->com.cm_id->rem_ref(ep->com.cm_id);
->  		ep->com.cm_id =3D NULL;
->  		ep->com.qp =3D NULL;
->  	}
-
---=20
-Doug Ledford <dledford@redhat.com>
-    GPG KeyID: B826A3330E572FDD
-    Fingerprint =3D AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
-
---=-YogQSHis/dLMip/kO+pD
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEErmsb2hIrI7QmWxJ0uCajMw5XL90FAl0/HpkACgkQuCajMw5X
-L90CNw//Y6UQ1pxYfjyvEe7fu8Ltg+vL3hoLkfuH5MEGWSYUdyntysX3sj3iYWtP
-w4WniX9GtVbTcKZCU82FZrajQcFWvh+5+O/ouyKLeMXs6DXPej8G0zt4p8XnlI60
-1uct3Kjytw3Fmr3iGk86190S3Gh1eRx8CMOZhKPKeb84VhpJg2evqu9VTjwwcCSG
-a7k9sEBiXzfblUQT4kvWEDQF7ycbZtF5e2EO78gv2g+t66u5N8U+WWgzxIpLD1Jw
-qeIHnvV/ymp2OzW5aHZCjJPacZOTFlTBMy2CLJCpaRU5anh1KGIsb0e/mDprNL/w
-rX48cnTSQym67wq7w67HRj7mRfi+S38YEHqYlWZfkYvlf62yuKpNoQCTWTUYj8N7
-biWz2bvXEpFfTN5uw1QQmfx2bOyGByyCqj23ZrvcXSPE0dZigUXAOxAfi8LyuXil
-9PzLZ2ezuqxQOu5TJNTTe8kIJgFHjQZW2FrJqC40wRrcXcoqvDdQDbDmqWiNPSiw
-xihr213HIzlrNf4Hu5Bv+9ai/WeH0xrF124ieW7sYRNG8uh81b2C5Ammg2hgjeLs
-AU3KmQnY6gcVnlVrG0FwgxDeZi20lu8SPMwi3XMT5sq4Ytq/jXUnr0iEMUjv6NZ/
-5lSdWianq6yxOKeQjDm1fYIbHHl4mhoz3k4DGySjqXuFNE2aaJU=
-=dMEI
------END PGP SIGNATURE-----
-
---=-YogQSHis/dLMip/kO+pD--
 
