@@ -2,99 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4EAB7784EA
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 08:27:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 461E9784F3
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 08:31:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726797AbfG2G1h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 02:27:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49106 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725934AbfG2G1g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 02:27:36 -0400
-Received: from localhost (c-98-234-77-170.hsd1.ca.comcast.net [98.234.77.170])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AE1F22070B;
-        Mon, 29 Jul 2019 06:27:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564381655;
-        bh=eEx0tfy6aPFIS7G1N250q6V4oZYc59T12k/6VuKoVPg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=i/PDpCLZZOp8JsopUOk6P8DZ7g88WXGcbHCTZIrlJ9+HsEBtD2PZKtLN5faIawQqp
-         ym4H3iLdi1MdrcnRAPmHy+2PffkZK4DULhZ6nmD+2Rq+INEuK9ELmzckGZLUKO5s/2
-         ucU5Zl66a0LGwL1OX/O3CbMJ2aJr1w+0U2k8I3L8=
-Date:   Sun, 28 Jul 2019 23:27:35 -0700
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     Chao Yu <chao@kernel.org>
-Cc:     Daniel Rosenberg <drosen@google.com>, Chao Yu <yuchao0@huawei.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        linux-f2fs-devel@lists.sourceforge.net, linux-doc@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, kernel-team@android.com
-Subject: Re: [f2fs-dev] [PATCH v4 3/3] f2fs: Support case-insensitive file
- name lookups
-Message-ID: <20190729062735.GA98839@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20190723230529.251659-1-drosen@google.com>
- <20190723230529.251659-4-drosen@google.com>
- <9362e4ed-2be8-39f5-b4d9-9c86e37ab993@kernel.org>
+        id S1726765AbfG2GbZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 02:31:25 -0400
+Received: from smtprelay0238.hostedemail.com ([216.40.44.238]:38460 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725934AbfG2GbY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 02:31:24 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay03.hostedemail.com (Postfix) with ESMTP id AC68383777ED;
+        Mon, 29 Jul 2019 06:31:22 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::::::::::,RULES_HIT:41:355:379:599:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2553:2559:2562:2693:2828:3138:3139:3140:3141:3142:3354:3622:3865:3866:3867:3868:3870:3871:3873:4250:4321:5007:6742:7875:7904:10004:10400:10848:11026:11232:11473:11658:11914:12043:12114:12296:12297:12438:12555:12740:12760:12895:13069:13311:13357:13439:14096:14097:14180:14181:14659:14721:21060:21080:21627:30054:30090:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:24,LUA_SUMMARY:none
+X-HE-Tag: star39_8018288ec7e4b
+X-Filterd-Recvd-Size: 3529
+Received: from XPS-9350.home (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
+        (Authenticated sender: joe@perches.com)
+        by omf05.hostedemail.com (Postfix) with ESMTPA;
+        Mon, 29 Jul 2019 06:31:20 +0000 (UTC)
+Message-ID: <b0deb4e6b12ea1f943855440a3cc99a6e47d0717.camel@perches.com>
+Subject: Re: [EXTERNAL][PATCH 1/5] PCI: Convert pci_resource_to_user to a
+ weak function
+From:   Joe Perches <joe@perches.com>
+To:     Paul Burton <paul.burton@mips.com>,
+        Denis Efremov <efremov@linux.com>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>,
+        Michal Simek <monstr@monstr.eu>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Date:   Sun, 28 Jul 2019 23:31:18 -0700
+In-Reply-To: <20190728224953.kezztdozc6k24ya3@pburton-laptop>
+References: <20190728202213.15550-1-efremov@linux.com>
+         <20190728202213.15550-2-efremov@linux.com>
+         <20190728224953.kezztdozc6k24ya3@pburton-laptop>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9362e4ed-2be8-39f5-b4d9-9c86e37ab993@kernel.org>
-User-Agent: Mutt/1.8.2 (2017-04-18)
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/28, Chao Yu wrote:
-> On 2019-7-24 7:05, Daniel Rosenberg via Linux-f2fs-devel wrote:
-> >  /* Flags that are appropriate for regular files (all but dir-specific ones). */
-> >  #define F2FS_REG_FLMASK		(~(F2FS_DIRSYNC_FL | F2FS_PROJINHERIT_FL))
+On Sun, 2019-07-28 at 22:49 +0000, Paul Burton wrote:
+> Hi Denis,
 > 
-> We missed to add F2FS_CASEFOLD_FL here to exclude it in F2FS_REG_FLMASK.
-
-Applied.
-
-> 
-> > @@ -1660,7 +1660,16 @@ static int f2fs_setflags_common(struct inode *inode, u32 iflags, u32 mask)
-> >  		return -EPERM;
+> On Sun, Jul 28, 2019 at 11:22:09PM +0300, Denis Efremov wrote:
+> > diff --git a/include/linux/pci.h b/include/linux/pci.h
+> > index 9e700d9f9f28..1a19d0151b0a 100644
+> > --- a/include/linux/pci.h
+> > +++ b/include/linux/pci.h
+> > @@ -1870,25 +1870,13 @@ static inline const char *pci_name(const struct pci_dev *pdev)
+> >  	return dev_name(&pdev->dev);
+> >  }
 > >  
-> >  	oldflags = fi->i_flags;
-> > +	if ((iflags ^ oldflags) & F2FS_CASEFOLD_FL) {
-> > +		if (!f2fs_sb_has_casefold(F2FS_I_SB(inode)))
-> > +			return -EOPNOTSUPP;
-> > +
-> > +		if (!S_ISDIR(inode->i_mode))
-> > +			return -ENOTDIR;
+> > -
+> >  /*
+> >   * Some archs don't want to expose struct resource to userland as-is
+> >   * in sysfs and /proc
+> >   */
+> > -#ifdef HAVE_ARCH_PCI_RESOURCE_TO_USER
+> > -void pci_resource_to_user(const struct pci_dev *dev, int bar,
+> > -			  const struct resource *rsrc,
+> > -			  resource_size_t *start, resource_size_t *end);
+> > -#else
+> > -static inline void pci_resource_to_user(const struct pci_dev *dev, int bar,
+> > -		const struct resource *rsrc, resource_size_t *start,
+> > -		resource_size_t *end)
+> > -{
+> > -	*start = rsrc->start;
+> > -	*end = rsrc->end;
+> > -}
+> > -#endif /* HAVE_ARCH_PCI_RESOURCE_TO_USER */
+> > -
+> > +void __weak pci_resource_to_user(const struct pci_dev *dev, int bar,
+> > +				 const struct resource *rsrc,
+> > +				 resource_size_t *start, resource_size_t *end);
 > >  
-> > +		if (!f2fs_empty_dir(inode))
-> > +			return -ENOTEMPTY;
-> > +	}
-
-Modified like this:
-@@ -1665,6 +1665,13 @@ static int f2fs_setflags_common(struct inode *inode, u32 iflags, u32 mask)
-        if (IS_NOQUOTA(inode))
-                return -EPERM;
-
-+       if ((iflags ^ fi->i_flags) & F2FS_CASEFOLD_FL) {
-+               if (!f2fs_sb_has_casefold(F2FS_I_SB(inode)))
-+                       return -EOPNOTSUPP;
-+               if (!f2fs_empty_dir(inode))
-+                       return -ENOTEMPTY;
-+       }
-+
-
-Note that, directory is checked by above change.
-
-I've uploaded in f2fs.git, so could you check it out and test a bit?
-
-Thanks,
-
+> >  /*
+> >   * The world is not perfect and supplies us with broken PCI devices.
 > 
-> I applied the patches based on last Jaegeuk's dev branch, it seems we needs to
-> adjust above code a bit. Otherwise it looks good to me.
+> This is wrong - using __weak on the declaration in a header will cause
+> the weak attribute to be applied to all implementations too (presuming
+> the C files containing the implementations include the header). You then
+> get whichever impleentation the linker chooses, which isn't necessarily
+> the one you wanted.
 > 
-> BTW, it looks the patchset works fine with generic/556 testcase.
-> 
-> Thanks,
+> checkpatch.pl should produce an error about this - see the
+> WEAK_DECLARATION error introduced in commit 619a908aa334 ("checkpatch:
+> add error on use of attribute((weak)) or __weak declarations").
+
+Unfortunately, checkpatch is pretty stupid and only emits
+this on single line declarations.
+
+
