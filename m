@@ -2,76 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 907E5782DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 02:38:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A2D01782EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 02:56:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726417AbfG2AiF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 28 Jul 2019 20:38:05 -0400
-Received: from mail-io1-f70.google.com ([209.85.166.70]:45441 "EHLO
-        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726276AbfG2AiB (ORCPT
+        id S1726375AbfG2A4r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 28 Jul 2019 20:56:47 -0400
+Received: from gateway20.websitewelcome.com ([192.185.54.2]:29038 "EHLO
+        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726238AbfG2A4r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 28 Jul 2019 20:38:01 -0400
-Received: by mail-io1-f70.google.com with SMTP id e20so65394761ioe.12
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2019 17:38:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=P/bfC/9DYsjpqYrAz/GLNeevsKIsGM5ry8dJO/L9Ihk=;
-        b=fwGbijWyk21hktHDVCfeslAZSHjhNnooeoq1S4kUCSY5eQ6V4ZuzHmbAJ1xXpApsD8
-         tYmwVWBoE5/fIGTihbC4CVG0FL5xHD1Fdhi/NPmdUgbGLi+OOivwNiCjWeDrSm4H8zip
-         YoFNEg78WcG3kyRFsaUhAPNm4Sx3++ZT3B9F+ydYsG30D2Hl9fYGLElQoGettTpsjIJx
-         947a6i5rs8NSA9NQfj+SIv3AK6qpkLIWCPKrfOfmHQ8lbUI875b2vRvPscQITdQ8oTjy
-         3Syj3oYNQ9DrgYjdAE6GmhisqerMV6JR9NGA1a4XOh+9UuB2yoK4mvu97ofx4x1QkNTS
-         y1pw==
-X-Gm-Message-State: APjAAAWJWwP/GziXj5nqPgPFbyf7QBsje00ur451ynuG3lKvG3DIOyHt
-        o8AV3byAs6JELnC6owdDcwhPqqsVBkgsiTHmd0K5URGGTIUZ
-X-Google-Smtp-Source: APXvYqwVilF5qTRSsaLkhL6POlQdbplmHCUtbsaCjcw6sv9rHxSg5wY2IEL+f/ULWS/npxF51AhFcSpVnuGNfy6+mXTXpQgpNXm3
+        Sun, 28 Jul 2019 20:56:47 -0400
+X-Greylist: delayed 1319 seconds by postgrey-1.27 at vger.kernel.org; Sun, 28 Jul 2019 20:56:46 EDT
+Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
+        by gateway20.websitewelcome.com (Postfix) with ESMTP id 38C50400C5FBE
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2019 18:29:28 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id rtawhEdRbiQerrtawhdspi; Sun, 28 Jul 2019 19:32:54 -0500
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=jsM2jggX28X4Rf3N6HWALVQI3TBcdvqhgj8CBeNFHos=; b=rB+czlHihcm6fnZHM7M1wvFA/j
+        Fz96eEIAmbxFRb6sK+q8LAvnlvJ0ORK5bwwZt89pTIMkG/8DyF6NV48kquwxdS6T7EXMGlitLH50j
+        8nq37GT5uLfD+xwcFFzD4m9Te1vffD/s9SwYDcgmTcYor+ZVGGxpKzyWj4pyqj/1FbfDYGCn904q0
+        Y2uYU9ya/+hsCdd59bSYLLOdmm3ozNrrWJhW7xIFxJuzHjSrN07r2o5j0pkaE5wW2gtoue4t0EM35
+        JGs9+Zj3cex28r44D11jcYsVOUEYSLrjP93YKnRAN3h0EdIcM+WCIv03KlkeeWc4LvHFnVR9PK4/g
+        jYH96FWg==;
+Received: from [187.192.11.120] (port=40114 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1hrtav-0040c6-7s; Sun, 28 Jul 2019 19:32:53 -0500
+Date:   Sun, 28 Jul 2019 19:32:51 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Ishizaki Kou <kou.ishizaki@toshiba.co.jp>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Kees Cook <keescook@chromium.org>
+Subject: [PATCH] net: spider_net: Mark expected switch fall-through
+Message-ID: <20190729003251.GA25556@embeddedor>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:40c:: with SMTP id q12mr81494815jap.17.1564360680847;
- Sun, 28 Jul 2019 17:38:00 -0700 (PDT)
-Date:   Sun, 28 Jul 2019 17:38:00 -0700
-In-Reply-To: <000000000000c75fb7058ba0c0e4@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000aec4ec058ec71a3d@google.com>
-Subject: Re: memory leak in bio_copy_user_iov
-From:   syzbot <syzbot+03e5c8ebd22cc6c3a8cb@syzkaller.appspotmail.com>
-To:     agk@redhat.com, axboe@kernel.dk, coreteam@netfilter.org,
-        davem@davemloft.net, dm-devel@redhat.com, hdanton@sina.com,
-        kaber@trash.net, kadlec@blackhole.kfki.hu,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-raid@vger.kernel.org, netdev@vger.kernel.org,
-        netfilter-devel@vger.kernel.org, pablo@netfilter.org,
-        shli@kernel.org, snitzer@redhat.com,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 187.192.11.120
+X-Source-L: No
+X-Exim-ID: 1hrtav-0040c6-7s
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [187.192.11.120]:40114
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 58
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has bisected this bug to:
+Mark switch cases where we are expecting to fall through.
 
-commit 664820265d70a759dceca87b6eb200cd2b93cda8
-Author: Mike Snitzer <snitzer@redhat.com>
-Date:   Thu Feb 18 20:44:39 2016 +0000
+This patch fixes the following warning:
 
-     dm: do not return target from dm_get_live_table_for_ioctl()
+drivers/net/ethernet/toshiba/spider_net.c: In function 'spider_net_release_tx_chain':
+drivers/net/ethernet/toshiba/spider_net.c:783:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
+    if (!brutal) {
+       ^
+drivers/net/ethernet/toshiba/spider_net.c:792:3: note: here
+   case SPIDER_NET_DESCR_RESPONSE_ERROR:
+   ^~~~
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13f4eb64600000
-start commit:   0011572c Merge branch 'for-5.2-fixes' of git://git.kernel...
-git tree:       upstream
-final crash:    https://syzkaller.appspot.com/x/report.txt?x=100ceb64600000
-console output: https://syzkaller.appspot.com/x/log.txt?x=17f4eb64600000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=cb38d33cd06d8d48
-dashboard link: https://syzkaller.appspot.com/bug?extid=03e5c8ebd22cc6c3a8cb
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13244221a00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=117b2432a00000
+Notice that, in this particular case, the code comment is
+modified in accordance with what GCC is expecting to find.
 
-Reported-by: syzbot+03e5c8ebd22cc6c3a8cb@syzkaller.appspotmail.com
-Fixes: 664820265d70 ("dm: do not return target from  
-dm_get_live_table_for_ioctl()")
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/net/ethernet/toshiba/spider_net.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+diff --git a/drivers/net/ethernet/toshiba/spider_net.c b/drivers/net/ethernet/toshiba/spider_net.c
+index 5b196ebfed49..0f346761a2b2 100644
+--- a/drivers/net/ethernet/toshiba/spider_net.c
++++ b/drivers/net/ethernet/toshiba/spider_net.c
+@@ -788,6 +788,7 @@ spider_net_release_tx_chain(struct spider_net_card *card, int brutal)
+ 			/* fallthrough, if we release the descriptors
+ 			 * brutally (then we don't care about
+ 			 * SPIDER_NET_DESCR_CARDOWNED) */
++			/* Fall through */
+ 
+ 		case SPIDER_NET_DESCR_RESPONSE_ERROR:
+ 		case SPIDER_NET_DESCR_PROTECTION_ERROR:
+-- 
+2.22.0
+
