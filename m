@@ -2,35 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AFB26798C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:10:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DA1D8798C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:10:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730419AbfG2UK2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 16:10:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48940 "EHLO mail.kernel.org"
+        id S2388475AbfG2Teo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 15:34:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49054 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388434AbfG2Tef (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:34:35 -0400
+        id S2388344AbfG2Tel (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:34:41 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 108ED2070B;
-        Mon, 29 Jul 2019 19:34:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 41E9B21655;
+        Mon, 29 Jul 2019 19:34:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564428873;
-        bh=rKgG8ym8zReOiunIK9uNJ3w/5eypGJN1hEPXU3m7NDE=;
+        s=default; t=1564428879;
+        bh=DBxuIdXXEGkzb8kZ1WbKf384j2DKFnAhtb36t7aZy2E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cEbB3eTozp+PuNbcn8kz2ASpEUEwyV7Q6rFd+zOCEIbUSDM3o/TosvcFy5KtV8mnd
-         ygXG8MicpKj9touJ0nH+LLYqAoXvYDs6GKU0JmPDzC77bCGGdteq7IdOcgQppyb9We
-         DxJFwytQU0VlhkSlMH/fDGZ1pgf1xlpAg9fZRGTk=
+        b=haNZHjj7vm/AnY/zo73amSNg8s05bvfelHO3ldTCW30ovzHAuSW0/XR1n1+pp0U5Z
+         Ug0F1xDLFTkE45cx1LjFbeG1ogJiHpdW+Z6WDDp5M69SXUTB6Gt59igf6+QVH4d3UA
+         5UOi2oofER5Z+hjORiTdYaMIdNy75rtgL7vnWXyw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
-        stable@kernel.org
-Subject: [PATCH 4.14 213/293] ext4: allow directory holes
-Date:   Mon, 29 Jul 2019 21:21:44 +0200
-Message-Id: <20190729190840.796313703@linuxfoundation.org>
+        stable@vger.kernel.org, Kuo-Hsin Yang <vovoy@chromium.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Sonny Rao <sonnyrao@chromium.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Rik van Riel <riel@redhat.com>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.14 214/293] mm: vmscan: scan anonymous pages on file refaults
+Date:   Mon, 29 Jul 2019 21:21:45 +0200
+Message-Id: <20190729190840.885952466@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190729190820.321094988@linuxfoundation.org>
 References: <20190729190820.321094988@linuxfoundation.org>
@@ -43,198 +51,241 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Theodore Ts'o <tytso@mit.edu>
+From: Kuo-Hsin Yang <vovoy@chromium.org>
 
-commit 4e19d6b65fb4fc42e352ce9883649e049da14743 upstream.
+commit 2c012a4ad1a2cd3fb5a0f9307b9d219f84eda1fa upstream.
 
-The largedir feature was intended to allow ext4 directories to have
-unmapped directory blocks (e.g., directory holes).  And so the
-released e2fsprogs no longer enforces this for largedir file systems;
-however, the corresponding change to the kernel-side code was not made.
+When file refaults are detected and there are many inactive file pages,
+the system never reclaim anonymous pages, the file pages are dropped
+aggressively when there are still a lot of cold anonymous pages and
+system thrashes.  This issue impacts the performance of applications
+with large executable, e.g.  chrome.
 
-This commit fixes this oversight.
+With this patch, when file refault is detected, inactive_list_is_low()
+always returns true for file pages in get_scan_count() to enable
+scanning anonymous pages.
 
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Cc: stable@kernel.org
+The problem can be reproduced by the following test program.
+
+---8<---
+void fallocate_file(const char *filename, off_t size)
+{
+	struct stat st;
+	int fd;
+
+	if (!stat(filename, &st) && st.st_size >= size)
+		return;
+
+	fd = open(filename, O_WRONLY | O_CREAT, 0600);
+	if (fd < 0) {
+		perror("create file");
+		exit(1);
+	}
+	if (posix_fallocate(fd, 0, size)) {
+		perror("fallocate");
+		exit(1);
+	}
+	close(fd);
+}
+
+long *alloc_anon(long size)
+{
+	long *start = malloc(size);
+	memset(start, 1, size);
+	return start;
+}
+
+long access_file(const char *filename, long size, long rounds)
+{
+	int fd, i;
+	volatile char *start1, *end1, *start2;
+	const int page_size = getpagesize();
+	long sum = 0;
+
+	fd = open(filename, O_RDONLY);
+	if (fd == -1) {
+		perror("open");
+		exit(1);
+	}
+
+	/*
+	 * Some applications, e.g. chrome, use a lot of executable file
+	 * pages, map some of the pages with PROT_EXEC flag to simulate
+	 * the behavior.
+	 */
+	start1 = mmap(NULL, size / 2, PROT_READ | PROT_EXEC, MAP_SHARED,
+		      fd, 0);
+	if (start1 == MAP_FAILED) {
+		perror("mmap");
+		exit(1);
+	}
+	end1 = start1 + size / 2;
+
+	start2 = mmap(NULL, size / 2, PROT_READ, MAP_SHARED, fd, size / 2);
+	if (start2 == MAP_FAILED) {
+		perror("mmap");
+		exit(1);
+	}
+
+	for (i = 0; i < rounds; ++i) {
+		struct timeval before, after;
+		volatile char *ptr1 = start1, *ptr2 = start2;
+		gettimeofday(&before, NULL);
+		for (; ptr1 < end1; ptr1 += page_size, ptr2 += page_size)
+			sum += *ptr1 + *ptr2;
+		gettimeofday(&after, NULL);
+		printf("File access time, round %d: %f (sec)
+", i,
+		       (after.tv_sec - before.tv_sec) +
+		       (after.tv_usec - before.tv_usec) / 1000000.0);
+	}
+	return sum;
+}
+
+int main(int argc, char *argv[])
+{
+	const long MB = 1024 * 1024;
+	long anon_mb, file_mb, file_rounds;
+	const char filename[] = "large";
+	long *ret1;
+	long ret2;
+
+	if (argc != 4) {
+		printf("usage: thrash ANON_MB FILE_MB FILE_ROUNDS
+");
+		exit(0);
+	}
+	anon_mb = atoi(argv[1]);
+	file_mb = atoi(argv[2]);
+	file_rounds = atoi(argv[3]);
+
+	fallocate_file(filename, file_mb * MB);
+	printf("Allocate %ld MB anonymous pages
+", anon_mb);
+	ret1 = alloc_anon(anon_mb * MB);
+	printf("Access %ld MB file pages
+", file_mb);
+	ret2 = access_file(filename, file_mb * MB, file_rounds);
+	printf("Print result to prevent optimization: %ld
+",
+	       *ret1 + ret2);
+	return 0;
+}
+---8<---
+
+Running the test program on 2GB RAM VM with kernel 5.2.0-rc5, the program
+fills ram with 2048 MB memory, access a 200 MB file for 10 times.  Without
+this patch, the file cache is dropped aggresively and every access to the
+file is from disk.
+
+  $ ./thrash 2048 200 10
+  Allocate 2048 MB anonymous pages
+  Access 200 MB file pages
+  File access time, round 0: 2.489316 (sec)
+  File access time, round 1: 2.581277 (sec)
+  File access time, round 2: 2.487624 (sec)
+  File access time, round 3: 2.449100 (sec)
+  File access time, round 4: 2.420423 (sec)
+  File access time, round 5: 2.343411 (sec)
+  File access time, round 6: 2.454833 (sec)
+  File access time, round 7: 2.483398 (sec)
+  File access time, round 8: 2.572701 (sec)
+  File access time, round 9: 2.493014 (sec)
+
+With this patch, these file pages can be cached.
+
+  $ ./thrash 2048 200 10
+  Allocate 2048 MB anonymous pages
+  Access 200 MB file pages
+  File access time, round 0: 2.475189 (sec)
+  File access time, round 1: 2.440777 (sec)
+  File access time, round 2: 2.411671 (sec)
+  File access time, round 3: 1.955267 (sec)
+  File access time, round 4: 0.029924 (sec)
+  File access time, round 5: 0.000808 (sec)
+  File access time, round 6: 0.000771 (sec)
+  File access time, round 7: 0.000746 (sec)
+  File access time, round 8: 0.000738 (sec)
+  File access time, round 9: 0.000747 (sec)
+
+Checked the swap out stats during the test [1], 19006 pages swapped out
+with this patch, 3418 pages swapped out without this patch. There are
+more swap out, but I think it's within reasonable range when file backed
+data set doesn't fit into the memory.
+
+$ ./thrash 2000 100 2100 5 1 # ANON_MB FILE_EXEC FILE_NOEXEC ROUNDS
+PROCESSES Allocate 2000 MB anonymous pages active_anon: 1613644,
+inactive_anon: 348656, active_file: 892, inactive_file: 1384 (kB)
+pswpout: 7972443, pgpgin: 478615246 Access 100 MB executable file pages
+Access 2100 MB regular file pages File access time, round 0: 12.165,
+(sec) active_anon: 1433788, inactive_anon: 478116, active_file: 17896,
+inactive_file: 24328 (kB) File access time, round 1: 11.493, (sec)
+active_anon: 1430576, inactive_anon: 477144, active_file: 25440,
+inactive_file: 26172 (kB) File access time, round 2: 11.455, (sec)
+active_anon: 1427436, inactive_anon: 476060, active_file: 21112,
+inactive_file: 28808 (kB) File access time, round 3: 11.454, (sec)
+active_anon: 1420444, inactive_anon: 473632, active_file: 23216,
+inactive_file: 35036 (kB) File access time, round 4: 11.479, (sec)
+active_anon: 1413964, inactive_anon: 471460, active_file: 31728,
+inactive_file: 32224 (kB) pswpout: 7991449 (+ 19006), pgpgin: 489924366
+(+ 11309120)
+
+With 4 processes accessing non-overlapping parts of a large file, 30316
+pages swapped out with this patch, 5152 pages swapped out without this
+patch.  The swapout number is small comparing to pgpgin.
+
+[1]: https://github.com/vovo/testing/blob/master/mem_thrash.c
+
+Link: http://lkml.kernel.org/r/20190701081038.GA83398@google.com
+Fixes: e9868505987a ("mm,vmscan: only evict file pages when we have plenty")
+Fixes: 7c5bd705d8f9 ("mm: memcg: only evict file pages when we have plenty")
+Signed-off-by: Kuo-Hsin Yang <vovoy@chromium.org>
+Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Sonny Rao <sonnyrao@chromium.org>
+Cc: Mel Gorman <mgorman@techsingularity.net>
+Cc: Rik van Riel <riel@redhat.com>
+Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
+Cc: Minchan Kim <minchan@kernel.org>
+Cc: <stable@vger.kernel.org>	[4.12+]
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+[backported to 4.14.y, 4.19.y, 5.1.y: adjust context]
+Signed-off-by: Kuo-Hsin Yang <vovoy@chromium.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/dir.c   |   19 +++++++++----------
- fs/ext4/namei.c |   45 +++++++++++++++++++++++++++++++++++++--------
- 2 files changed, 46 insertions(+), 18 deletions(-)
+ mm/vmscan.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/fs/ext4/dir.c
-+++ b/fs/ext4/dir.c
-@@ -107,7 +107,6 @@ static int ext4_readdir(struct file *fil
- 	struct inode *inode = file_inode(file);
- 	struct super_block *sb = inode->i_sb;
- 	struct buffer_head *bh = NULL;
--	int dir_has_error = 0;
- 	struct fscrypt_str fstr = FSTR_INIT(NULL, 0);
- 
- 	if (ext4_encrypted_inode(inode)) {
-@@ -143,8 +142,6 @@ static int ext4_readdir(struct file *fil
- 			return err;
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -2120,7 +2120,7 @@ static void shrink_active_list(unsigned
+  *   10TB     320        32GB
+  */
+ static bool inactive_list_is_low(struct lruvec *lruvec, bool file,
+-				 struct scan_control *sc, bool actual_reclaim)
++				 struct scan_control *sc, bool trace)
+ {
+ 	enum lru_list active_lru = file * LRU_FILE + LRU_ACTIVE;
+ 	struct pglist_data *pgdat = lruvec_pgdat(lruvec);
+@@ -2146,7 +2146,7 @@ static bool inactive_list_is_low(struct
+ 	 * rid of the stale workingset quickly.
+ 	 */
+ 	refaults = lruvec_page_state(lruvec, WORKINGSET_ACTIVATE);
+-	if (file && actual_reclaim && lruvec->refaults != refaults) {
++	if (file && lruvec->refaults != refaults) {
+ 		inactive_ratio = 0;
+ 	} else {
+ 		gb = (inactive + active) >> (30 - PAGE_SHIFT);
+@@ -2156,7 +2156,7 @@ static bool inactive_list_is_low(struct
+ 			inactive_ratio = 1;
  	}
  
--	offset = ctx->pos & (sb->s_blocksize - 1);
--
- 	while (ctx->pos < inode->i_size) {
- 		struct ext4_map_blocks map;
- 
-@@ -153,9 +150,18 @@ static int ext4_readdir(struct file *fil
- 			goto errout;
- 		}
- 		cond_resched();
-+		offset = ctx->pos & (sb->s_blocksize - 1);
- 		map.m_lblk = ctx->pos >> EXT4_BLOCK_SIZE_BITS(sb);
- 		map.m_len = 1;
- 		err = ext4_map_blocks(NULL, inode, &map, 0);
-+		if (err == 0) {
-+			/* m_len should never be zero but let's avoid
-+			 * an infinite loop if it somehow is */
-+			if (map.m_len == 0)
-+				map.m_len = 1;
-+			ctx->pos += map.m_len * sb->s_blocksize;
-+			continue;
-+		}
- 		if (err > 0) {
- 			pgoff_t index = map.m_pblk >>
- 					(PAGE_SHIFT - inode->i_blkbits);
-@@ -174,13 +180,6 @@ static int ext4_readdir(struct file *fil
- 		}
- 
- 		if (!bh) {
--			if (!dir_has_error) {
--				EXT4_ERROR_FILE(file, 0,
--						"directory contains a "
--						"hole at offset %llu",
--					   (unsigned long long) ctx->pos);
--				dir_has_error = 1;
--			}
- 			/* corrupt size?  Maybe no more blocks to read */
- 			if (ctx->pos > inode->i_blocks << 9)
- 				break;
---- a/fs/ext4/namei.c
-+++ b/fs/ext4/namei.c
-@@ -80,8 +80,18 @@ static struct buffer_head *ext4_append(h
- static int ext4_dx_csum_verify(struct inode *inode,
- 			       struct ext4_dir_entry *dirent);
- 
-+/*
-+ * Hints to ext4_read_dirblock regarding whether we expect a directory
-+ * block being read to be an index block, or a block containing
-+ * directory entries (and if the latter, whether it was found via a
-+ * logical block in an htree index block).  This is used to control
-+ * what sort of sanity checkinig ext4_read_dirblock() will do on the
-+ * directory block read from the storage device.  EITHER will means
-+ * the caller doesn't know what kind of directory block will be read,
-+ * so no specific verification will be done.
-+ */
- typedef enum {
--	EITHER, INDEX, DIRENT
-+	EITHER, INDEX, DIRENT, DIRENT_HTREE
- } dirblock_type_t;
- 
- #define ext4_read_dirblock(inode, block, type) \
-@@ -107,11 +117,14 @@ static struct buffer_head *__ext4_read_d
- 
- 		return bh;
- 	}
--	if (!bh) {
-+	if (!bh && (type == INDEX || type == DIRENT_HTREE)) {
- 		ext4_error_inode(inode, func, line, block,
--				 "Directory hole found");
-+				 "Directory hole found for htree %s block",
-+				 (type == INDEX) ? "index" : "leaf");
- 		return ERR_PTR(-EFSCORRUPTED);
- 	}
-+	if (!bh)
-+		return NULL;
- 	dirent = (struct ext4_dir_entry *) bh->b_data;
- 	/* Determine whether or not we have an index block */
- 	if (is_dx(inode)) {
-@@ -978,7 +991,7 @@ static int htree_dirblock_to_tree(struct
- 
- 	dxtrace(printk(KERN_INFO "In htree dirblock_to_tree: block %lu\n",
- 							(unsigned long)block));
--	bh = ext4_read_dirblock(dir, block, DIRENT);
-+	bh = ext4_read_dirblock(dir, block, DIRENT_HTREE);
- 	if (IS_ERR(bh))
- 		return PTR_ERR(bh);
- 
-@@ -1508,7 +1521,7 @@ static struct buffer_head * ext4_dx_find
- 		return (struct buffer_head *) frame;
- 	do {
- 		block = dx_get_block(frame->at);
--		bh = ext4_read_dirblock(dir, block, DIRENT);
-+		bh = ext4_read_dirblock(dir, block, DIRENT_HTREE);
- 		if (IS_ERR(bh))
- 			goto errout;
- 
-@@ -2088,6 +2101,11 @@ static int ext4_add_entry(handle_t *hand
- 	blocks = dir->i_size >> sb->s_blocksize_bits;
- 	for (block = 0; block < blocks; block++) {
- 		bh = ext4_read_dirblock(dir, block, DIRENT);
-+		if (bh == NULL) {
-+			bh = ext4_bread(handle, dir, block,
-+					EXT4_GET_BLOCKS_CREATE);
-+			goto add_to_new_block;
-+		}
- 		if (IS_ERR(bh)) {
- 			retval = PTR_ERR(bh);
- 			bh = NULL;
-@@ -2108,6 +2126,7 @@ static int ext4_add_entry(handle_t *hand
- 		brelse(bh);
- 	}
- 	bh = ext4_append(handle, dir, &block);
-+add_to_new_block:
- 	if (IS_ERR(bh)) {
- 		retval = PTR_ERR(bh);
- 		bh = NULL;
-@@ -2152,7 +2171,7 @@ again:
- 		return PTR_ERR(frame);
- 	entries = frame->entries;
- 	at = frame->at;
--	bh = ext4_read_dirblock(dir, dx_get_block(frame->at), DIRENT);
-+	bh = ext4_read_dirblock(dir, dx_get_block(frame->at), DIRENT_HTREE);
- 	if (IS_ERR(bh)) {
- 		err = PTR_ERR(bh);
- 		bh = NULL;
-@@ -2700,7 +2719,10 @@ bool ext4_empty_dir(struct inode *inode)
- 		EXT4_ERROR_INODE(inode, "invalid size");
- 		return true;
- 	}
--	bh = ext4_read_dirblock(inode, 0, EITHER);
-+	/* The first directory block must not be a hole,
-+	 * so treat it as DIRENT_HTREE
-+	 */
-+	bh = ext4_read_dirblock(inode, 0, DIRENT_HTREE);
- 	if (IS_ERR(bh))
- 		return true;
- 
-@@ -2722,6 +2744,10 @@ bool ext4_empty_dir(struct inode *inode)
- 			brelse(bh);
- 			lblock = offset >> EXT4_BLOCK_SIZE_BITS(sb);
- 			bh = ext4_read_dirblock(inode, lblock, EITHER);
-+			if (bh == NULL) {
-+				offset += sb->s_blocksize;
-+				continue;
-+			}
- 			if (IS_ERR(bh))
- 				return true;
- 			de = (struct ext4_dir_entry_2 *) bh->b_data;
-@@ -3292,7 +3318,10 @@ static struct buffer_head *ext4_get_firs
- 	struct buffer_head *bh;
- 
- 	if (!ext4_has_inline_data(inode)) {
--		bh = ext4_read_dirblock(inode, 0, EITHER);
-+		/* The first directory block must not be a hole, so
-+		 * treat it as DIRENT_HTREE
-+		 */
-+		bh = ext4_read_dirblock(inode, 0, DIRENT_HTREE);
- 		if (IS_ERR(bh)) {
- 			*retval = PTR_ERR(bh);
- 			return NULL;
+-	if (actual_reclaim)
++	if (trace)
+ 		trace_mm_vmscan_inactive_list_is_low(pgdat->node_id, sc->reclaim_idx,
+ 			lruvec_lru_size(lruvec, inactive_lru, MAX_NR_ZONES), inactive,
+ 			lruvec_lru_size(lruvec, active_lru, MAX_NR_ZONES), active,
 
 
