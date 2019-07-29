@@ -2,142 +2,221 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39E7D7891D
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 12:04:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 492767892D
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 12:05:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728243AbfG2KEC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 06:04:02 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:42720 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728151AbfG2KDx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 06:03:53 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 35D8F2014D2;
-        Mon, 29 Jul 2019 12:03:51 +0200 (CEST)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 260172014CE;
-        Mon, 29 Jul 2019 12:03:51 +0200 (CEST)
-Received: from fsr-ub1664-016.ea.freescale.net (fsr-ub1664-016.ea.freescale.net [10.171.71.216])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id B199A205F3;
-        Mon, 29 Jul 2019 12:03:50 +0200 (CEST)
-From:   Claudiu Manoil <claudiu.manoil@nxp.com>
-To:     "David S . Miller" <davem@davemloft.net>
-Cc:     andrew@lunn.ch, Rob Herring <robh+dt@kernel.org>,
-        Li Yang <leoyang.li@nxp.com>, alexandru.marginean@nxp.com,
-        netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH net-next v3 4/4] arm64: dts: fsl: ls1028a: Enable eth port1 on the ls1028a QDS board
-Date:   Mon, 29 Jul 2019 13:03:47 +0300
-Message-Id: <1564394627-3810-5-git-send-email-claudiu.manoil@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1564394627-3810-1-git-send-email-claudiu.manoil@nxp.com>
-References: <1564394627-3810-1-git-send-email-claudiu.manoil@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1728289AbfG2KEy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 06:04:54 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:50186 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726470AbfG2KEy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 06:04:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=bVrlXLTKjzQSrCNbyRFlcQ9T4V/M3MWibCOzfM4QNPw=; b=PJ8/+ox28kUya6Uv3tkBtkFyO
+        2Rlsaep34YBsQKZuZAMOQx8NVTH0BZpscj74VkHWZ2rhzFz7qpUFrlFGVQqqTboti0XpThDGeNGVm
+        MQ4GuWHGlSZbiwaApIBH2IFjgvg5qBbXqzbquoxEZiL1qxWCFH5UH1iztjljSyvKR72sN8ds/Irwp
+        aKEnzxYgof5adDUR+4FgCaalprWb/egrMxjR93TPTtsT5/Ozsv6FJzTQeDwvzX+Ve7pnpZSKIVawz
+        +bPWvPHe5ikaLPbtziSK9VFsLIdnzMzPGIfny7Lg4I++HVA8eXxTnBhPIqZdqrDLq3MeKxxnP8euC
+        0v/WxCZew==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hs2WP-0005UM-79; Mon, 29 Jul 2019 10:04:49 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 1F5C32025E7A9; Mon, 29 Jul 2019 12:04:47 +0200 (CEST)
+Date:   Mon, 29 Jul 2019 12:04:47 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Alexey Dobriyan <adobriyan@gmail.com>
+Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        x86@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86: drop REG_OUT macro from hweight functions
+Message-ID: <20190729100447.GD31425@hirez.programming.kicks-ass.net>
+References: <20190728115140.GA32463@avx2>
+ <20190729094329.GW31381@hirez.programming.kicks-ass.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190729094329.GW31381@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-LS1028a has one Ethernet management interface. On the QDS board, the
-MDIO signals are multiplexed to either on-board AR8035 PHY device or
-to 4 PCIe slots allowing for SGMII cards.
-To enable the Ethernet ENETC Port 1, which can only be connected to a
-RGMII PHY, the multiplexer needs to be configured to route the MDIO to
-the AR8035 PHY.  The MDIO/MDC routing is controlled by bits 7:4 of FPGA
-board config register 0x54, and value 0 selects the on-board RGMII PHY.
-The FPGA board config registers are accessible on the i2c bus, at address
-0x66.
+On Mon, Jul 29, 2019 at 11:43:29AM +0200, Peter Zijlstra wrote:
 
-The PF3 MDIO PCIe integrated endpoint device allows for centralized access
-to the MDIO bus.  Add the corresponding devicetree node and set it to be
-the MDIO bus parent.
+> I _think_ something like the below should also work:
+> 
+> (fwiw _ASM_ARG 5 and 6 are broken, as are all the QLWB variants)
 
-Signed-off-by: Alex Marginean <alexandru.marginean@nxp.com>
-Signed-off-by: Claudiu Manoil <claudiu.manoil@nxp.com>
+Fixed that, because
+
+> ---
+> diff --git a/arch/x86/include/asm/arch_hweight.h b/arch/x86/include/asm/arch_hweight.h
+> index ba88edd0d58b..88704612b2f7 100644
+> --- a/arch/x86/include/asm/arch_hweight.h
+> +++ b/arch/x86/include/asm/arch_hweight.h
+> @@ -3,22 +3,15 @@
+>  #define _ASM_X86_HWEIGHT_H
+>  
+>  #include <asm/cpufeatures.h>
+> -
+> -#ifdef CONFIG_64BIT
+> -#define REG_IN "D"
+> -#define REG_OUT "a"
+> -#else
+> -#define REG_IN "a"
+> -#define REG_OUT "a"
+> -#endif
+> +#include <asm/asm.h>
+>  
+>  static __always_inline unsigned int __arch_hweight32(unsigned int w)
+>  {
+>  	unsigned int res;
+>  
+>  	asm (ALTERNATIVE("call __sw_hweight32", "popcntl %1, %0", X86_FEATURE_POPCNT)
+> -			 : "="REG_OUT (res)
+> -			 : REG_IN (w));
+> +			 : "=a" (res)
+> +			 : _ASM_ARG1 (w));
+
+That needs _ASM_ARG1L because popcntl..
+
 ---
-v1 - none
-v2 - none
-v3 - none
-
- .../boot/dts/freescale/fsl-ls1028a-qds.dts    | 40 +++++++++++++++++++
- .../arm64/boot/dts/freescale/fsl-ls1028a.dtsi |  6 +++
- 2 files changed, 46 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a-qds.dts b/arch/arm64/boot/dts/freescale/fsl-ls1028a-qds.dts
-index de6ef39f3118..663c4b728c07 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1028a-qds.dts
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a-qds.dts
-@@ -85,6 +85,26 @@
- 			system-clock-frequency = <25000000>;
- 		};
- 	};
-+
-+	mdio-mux {
-+		compatible = "mdio-mux-multiplexer";
-+		mux-controls = <&mux 0>;
-+		mdio-parent-bus = <&enetc_mdio_pf3>;
-+		#address-cells=<1>;
-+		#size-cells = <0>;
-+
-+		/* on-board RGMII PHY */
-+		mdio@0 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0>;
-+
-+			qds_phy1: ethernet-phy@5 {
-+				/* Atheros 8035 */
-+				reg = <5>;
-+			};
-+		};
-+	};
- };
+diff --git a/arch/x86/include/asm/arch_hweight.h b/arch/x86/include/asm/arch_hweight.h
+index ba88edd0d58b..3cab7f382a43 100644
+--- a/arch/x86/include/asm/arch_hweight.h
++++ b/arch/x86/include/asm/arch_hweight.h
+@@ -3,22 +3,15 @@
+ #define _ASM_X86_HWEIGHT_H
  
- &duart0 {
-@@ -164,6 +184,26 @@
- 			};
- 		};
- 	};
-+
-+	fpga@66 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "fsl,ls1028aqds-fpga", "fsl,fpga-qixis-i2c",
-+			     "simple-mfd";
-+		reg = <0x66>;
-+
-+		mux: mux-controller {
-+			compatible = "reg-mux";
-+			#mux-control-cells = <1>;
-+			mux-reg-masks = <0x54 0xf0>; /* 0: reg 0x54, bits 7:4 */
-+		};
-+	};
-+
-+};
-+
-+&enetc_port1 {
-+	phy-handle = <&qds_phy1>;
-+	phy-connection-type = "rgmii-id";
- };
+ #include <asm/cpufeatures.h>
+-
+-#ifdef CONFIG_64BIT
+-#define REG_IN "D"
+-#define REG_OUT "a"
+-#else
+-#define REG_IN "a"
+-#define REG_OUT "a"
+-#endif
++#include <asm/asm.h>
  
- &sai1 {
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-index 7975519b4f56..de71153fda00 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-@@ -536,6 +536,12 @@
- 				compatible = "fsl,enetc";
- 				reg = <0x000100 0 0 0 0>;
- 			};
-+			enetc_mdio_pf3: mdio@0,3 {
-+				compatible = "fsl,enetc-mdio";
-+				reg = <0x000300 0 0 0 0>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+			};
- 			ethernet@0,4 {
- 				compatible = "fsl,enetc-ptp";
- 				reg = <0x000400 0 0 0 0>;
--- 
-2.17.1
-
+ static __always_inline unsigned int __arch_hweight32(unsigned int w)
+ {
+ 	unsigned int res;
+ 
+ 	asm (ALTERNATIVE("call __sw_hweight32", "popcntl %1, %0", X86_FEATURE_POPCNT)
+-			 : "="REG_OUT (res)
+-			 : REG_IN (w));
++			 : "=a" (res)
++			 : _ASM_ARG1L (w));
+ 
+ 	return res;
+ }
+@@ -45,8 +38,8 @@ static __always_inline unsigned long __arch_hweight64(__u64 w)
+ 	unsigned long res;
+ 
+ 	asm (ALTERNATIVE("call __sw_hweight64", "popcntq %1, %0", X86_FEATURE_POPCNT)
+-			 : "="REG_OUT (res)
+-			 : REG_IN (w));
++			 : "=a" (res)
++			 : _ASM_ARG1 (w));
+ 
+ 	return res;
+ }
+diff --git a/arch/x86/include/asm/asm.h b/arch/x86/include/asm/asm.h
+index 3ff577c0b102..0bb0bbcd4551 100644
+--- a/arch/x86/include/asm/asm.h
++++ b/arch/x86/include/asm/asm.h
+@@ -53,17 +53,17 @@
+ #define _ASM_ARG2	_ASM_DX
+ #define _ASM_ARG3	_ASM_CX
+ 
+-#define _ASM_ARG1L	eax
+-#define _ASM_ARG2L	edx
+-#define _ASM_ARG3L	ecx
++#define _ASM_ARG1L	_ASM_ARG1
++#define _ASM_ARG2L	_ASM_ARG2
++#define _ASM_ARG3L	_ASM_ARG3
+ 
+-#define _ASM_ARG1W	ax
+-#define _ASM_ARG2W	dx
+-#define _ASM_ARG3W	cx
++#define _ASM_ARG1W	__ASM_FORM_RAW(ax)
++#define _ASM_ARG2W	__ASM_FORM_RAW(dx)
++#define _ASM_ARG3W	__ASM_FORM_RAW(cx)
+ 
+-#define _ASM_ARG1B	al
+-#define _ASM_ARG2B	dl
+-#define _ASM_ARG3B	cl
++#define _ASM_ARG1B	__ASM_FORM_RAW(al)
++#define _ASM_ARG2B	__ASM_FORM_RAW(dl)
++#define _ASM_ARG3B	__ASM_FORM_RAW(cl)
+ 
+ #else
+ /* 64 bit */
+@@ -72,36 +72,29 @@
+ #define _ASM_ARG2	_ASM_SI
+ #define _ASM_ARG3	_ASM_DX
+ #define _ASM_ARG4	_ASM_CX
+-#define _ASM_ARG5	r8
+-#define _ASM_ARG6	r9
+-
+-#define _ASM_ARG1Q	rdi
+-#define _ASM_ARG2Q	rsi
+-#define _ASM_ARG3Q	rdx
+-#define _ASM_ARG4Q	rcx
+-#define _ASM_ARG5Q	r8
+-#define _ASM_ARG6Q	r9
+-
+-#define _ASM_ARG1L	edi
+-#define _ASM_ARG2L	esi
+-#define _ASM_ARG3L	edx
+-#define _ASM_ARG4L	ecx
+-#define _ASM_ARG5L	r8d
+-#define _ASM_ARG6L	r9d
+-
+-#define _ASM_ARG1W	di
+-#define _ASM_ARG2W	si
+-#define _ASM_ARG3W	dx
+-#define _ASM_ARG4W	cx
+-#define _ASM_ARG5W	r8w
+-#define _ASM_ARG6W	r9w
+-
+-#define _ASM_ARG1B	dil
+-#define _ASM_ARG2B	sil
+-#define _ASM_ARG3B	dl
+-#define _ASM_ARG4B	cl
+-#define _ASM_ARG5B	r8b
+-#define _ASM_ARG6B	r9b
++#define _ASM_ARG5	__ASM_REG(8)
++#define _ASM_ARG6	__ASM_REG(9)
++
++#define _ASM_ARG1L	__ASM_FORM_RAW(edi)
++#define _ASM_ARG2L	__ASM_FORM_RAW(esi)
++#define _ASM_ARG3L	__ASM_FORM_RAW(edx)
++#define _ASM_ARG4L	__ASM_FORM_RAW(ecx)
++#define _ASM_ARG5L	__ASM_FORM_RAW(r8d)
++#define _ASM_ARG6L	__ASM_FORM_RAW(r9d)
++
++#define _ASM_ARG1W	__ASM_FORM_RAW(di)
++#define _ASM_ARG2W	__ASM_FORM_RAW(si)
++#define _ASM_ARG3W	__ASM_FORM_RAW(dx)
++#define _ASM_ARG4W	__ASM_FORM_RAW(cx)
++#define _ASM_ARG5W	__ASM_FORM_RAW(r8w)
++#define _ASM_ARG6W	__ASM_FORM_RAW(r9w)
++
++#define _ASM_ARG1B	__ASM_FORM_RAW(dil)
++#define _ASM_ARG2B	__ASM_FORM_RAW(sil)
++#define _ASM_ARG3B	__ASM_FORM_RAW(dl)
++#define _ASM_ARG4B	__ASM_FORM_RAW(cl)
++#define _ASM_ARG5B	__ASM_FORM_RAW(r8b)
++#define _ASM_ARG6B	__ASM_FORM_RAW(r9b)
+ 
+ #endif
+ 
