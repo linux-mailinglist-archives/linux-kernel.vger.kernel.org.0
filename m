@@ -2,141 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B1E978DC6
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 16:25:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 28A6278DD2
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 16:26:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727761AbfG2OZJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 10:25:09 -0400
-Received: from mga14.intel.com ([192.55.52.115]:45406 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726780AbfG2OZH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 10:25:07 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jul 2019 07:25:06 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,323,1559545200"; 
-   d="scan'208";a="190601545"
-Received: from kuha.fi.intel.com ([10.237.72.189])
-  by fmsmga001.fm.intel.com with SMTP; 29 Jul 2019 07:25:01 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 29 Jul 2019 17:25:00 +0300
-Date:   Mon, 29 Jul 2019 17:25:00 +0300
-From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To:     Chunfeng Yun <chunfeng.yun@mediatek.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
-        Li Jun <jun.li@nxp.com>,
-        Badhri Jagan Sridharan <badhri@google.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Min Guo <min.guo@mediatek.com>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v8 08/11] usb: roles: get usb-role-switch from parent
-Message-ID: <20190729142500.GE28600@kuha.fi.intel.com>
-References: <1563958245-6321-1-git-send-email-chunfeng.yun@mediatek.com>
- <1563958245-6321-9-git-send-email-chunfeng.yun@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1563958245-6321-9-git-send-email-chunfeng.yun@mediatek.com>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+        id S1727776AbfG2O0b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 10:26:31 -0400
+Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:40073 "EHLO
+        herzl.nuvoton.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726167AbfG2O0a (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 10:26:30 -0400
+Received: from taln60.nuvoton.co.il (ntil-fw [212.199.177.25])
+        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id x6TEP5TO025571;
+        Mon, 29 Jul 2019 17:25:06 +0300
+Received: by taln60.nuvoton.co.il (Postfix, from userid 10070)
+        id D6FB761FD3; Mon, 29 Jul 2019 17:25:05 +0300 (IDT)
+From:   Tomer Maimon <tmaimon77@gmail.com>
+To:     broonie@kernel.org, dwmw2@infradead.org,
+        computersforpeace@gmail.com, marek.vasut@gmail.com,
+        miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
+        bbrezillon@kernel.org, yogeshnarayan.gaur@nxp.com,
+        tudor.ambarus@microchip.com, gregkh@linuxfoundation.org,
+        frieder.schrempf@exceet.de, tglx@linutronix.de
+Cc:     linux-spi@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Tomer Maimon <tmaimon77@gmail.com>
+Subject: [RFC v1 0/3] *spi-mem: adding setup and callback function 
+Date:   Mon, 29 Jul 2019 17:25:01 +0300
+Message-Id: <20190729142504.188336-1-tmaimon77@gmail.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 24, 2019 at 04:50:42PM +0800, Chunfeng Yun wrote:
-> when the USB host controller is the parent of the connector,
-> usually type-B, sometimes don't need the graph, so we should
-> check whether it's parent registers usb-role-switch or not
-> firstly, and get it if exists.
-> 
-> Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Lately we have working on Flash interface unit (FIU) SPI driver that 
+using spi-mem interface, Our FIU HW module support direct Flash Rd//Wr.
 
-I don't think I actually wrote the patch. I may have proposed the code
-for you, but I never prepared a patch out out that. Please drop the
-above Signed-off-by line if that is the case. I case I really did
-write the patch, then you are missing the "From: Heikki..." first
-line, but I really don't remember preparing the patch.
+In our SOC (32 bit dual core ARM) we have 3 FIU's that using memory mapping as follow:
 
-If the idea came from me, you can use for example the suggested-by
-tag: "Suggested-by: Heikki Krogerus <heikki.krogerus...".
+FIU0 - have 2 chip select and each one have 128MB memory mapping (total 256MB memory mapping)
+FIU1 - have 4 chip select and each one have 128MB memory mapping (total 512MB memory mapping)
+FIU2 - have 4 chip select and each one have 16MB memory mapping (total 32MB memory mapping)
 
-> Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
-> ---
-> v8: no changes
-> v7:
->   add signed-off-by Chunfeng
-> 
-> v6:
->   new patch
-> ---
->  drivers/usb/roles/class.c | 25 +++++++++++++++++++++----
->  1 file changed, 21 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/usb/roles/class.c b/drivers/usb/roles/class.c
-> index 5b637aaf311f..87439a84c983 100644
-> --- a/drivers/usb/roles/class.c
-> +++ b/drivers/usb/roles/class.c
-> @@ -114,6 +114,19 @@ static void *usb_role_switch_match(struct device_connection *con, int ep,
->  	return dev ? to_role_switch(dev) : ERR_PTR(-EPROBE_DEFER);
->  }
->  
-> +static struct usb_role_switch *
-> +usb_role_switch_is_parent(struct fwnode_handle *fwnode)
-> +{
-> +	struct fwnode_handle *parent = fwnode_get_parent(fwnode);
-> +	struct device *dev;
-> +
-> +	if (!parent || !fwnode_property_present(parent, "usb-role-switch"))
-> +		return NULL;
-> +
-> +	dev = class_find_device(role_class, NULL, parent, switch_fwnode_match);
-> +	return dev ? to_role_switch(dev) : ERR_PTR(-EPROBE_DEFER);
-> +}
-> +
->  /**
->   * usb_role_switch_get - Find USB role switch linked with the caller
->   * @dev: The caller device
-> @@ -125,8 +138,10 @@ struct usb_role_switch *usb_role_switch_get(struct device *dev)
->  {
->  	struct usb_role_switch *sw;
->  
-> -	sw = device_connection_find_match(dev, "usb-role-switch", NULL,
-> -					  usb_role_switch_match);
-> +	sw = usb_role_switch_is_parent(dev_fwnode(dev));
-> +	if (!sw)
-> +		sw = device_connection_find_match(dev, "usb-role-switch", NULL,
-> +						  usb_role_switch_match);
->  
->  	if (!IS_ERR_OR_NULL(sw))
->  		WARN_ON(!try_module_get(sw->dev.parent->driver->owner));
-> @@ -146,8 +161,10 @@ struct usb_role_switch *fwnode_usb_role_switch_get(struct fwnode_handle *fwnode)
->  {
->  	struct usb_role_switch *sw;
->  
-> -	sw = fwnode_connection_find_match(fwnode, "usb-role-switch", NULL,
-> -					  usb_role_switch_match);
-> +	sw = usb_role_switch_is_parent(fwnode);
-> +	if (!sw)
-> +		sw = fwnode_connection_find_match(fwnode, "usb-role-switch",
-> +						  NULL, usb_role_switch_match);
->  	if (!IS_ERR_OR_NULL(sw))
->  		WARN_ON(!try_module_get(sw->dev.parent->driver->owner));
->  
-> -- 
-> 2.21.0
+Totally 800MB memory mapping.
 
-thanks,
+When the FIU driver probe it don't know the size of each Flash that 
+connected to the FIU, so the entire memory mapping is allocated for each FIU 
+according the FIU device tree memory map parameters.
+It means, if we enable all three FIU's the drivers will try to allocate totally 800MB.
+
+In 32bit system it is problematic because the kernel have only 1GB 
+of memory allocation so the vmalloc cannot take 800MB.
+
+When implementing the FIU driver in the mtd/spi-nor we allocating memory address only 
+for detected Flash with exact size (usually we are not using 128MB Flash), and in that case usually we allocating much less memory.
+
+To solve this issue we needed to overcome two things:
+
+1.	Get argument from the upper layer (spi-mem layer) 
+2.	Calling the get argument function after SPI_NOR_SCAN function. (the MTD Flash size filled in  SPI_NOR_SCAN function)
+
+The attach patch set solving the describe issue by:
+
+1.	Add spi-mem callback function and value to the SPI device 
+	for passing an argument from the spi-mem layer to the spi layer
+2.	Add spi-mem setup function to the spi-memory operation that running 
+	after the spi-mem probe finished.
+3.	Implement function callback in the m25p80 driver that execute 
+	get Flash size.
+
+The patch set tested on NPCM750 EVB with FIU driver (implemented with SPI-MEM interface).
+
+Thanks for your attention.
+
+Tomer
+
+Tomer Maimon (3):
+  spi: spi-mem: add spi-mem setup function
+  spi: spi-mem: add callback function to spi-mem device
+  mtd: m25p80: add get Flash size callback support
+
+ drivers/mtd/devices/m25p80.c | 12 ++++++++++++
+ drivers/spi/spi-mem.c        | 27 ++++++++++++++++++++++++++-
+ include/linux/spi/spi-mem.h  | 11 +++++++++++
+ 3 files changed, 49 insertions(+), 1 deletion(-)
 
 -- 
-heikki
+2.18.0
+
