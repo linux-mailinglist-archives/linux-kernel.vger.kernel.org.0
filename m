@@ -2,37 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 530D4797C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:02:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 849DE797BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:02:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388883AbfG2UCc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 16:02:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38692 "EHLO mail.kernel.org"
+        id S2390143AbfG2Tse (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 15:48:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38746 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390001AbfG2Ts3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:48:29 -0400
+        id S2390094AbfG2Tsc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:48:32 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DD60721655;
-        Mon, 29 Jul 2019 19:48:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9923E205F4;
+        Mon, 29 Jul 2019 19:48:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564429708;
-        bh=WdrHKz/K3QX9mTPzujPiV0e9Ku7Nh1BB4Ow0C7qRfzc=;
+        s=default; t=1564429711;
+        bh=dY4+MCoX2L9K8Jk3aHUD3La1eiee6KJrz9EY35TJmxw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nH+8Hgk4Kg94NrjzuqX3AwHqCtEtLmzyLWbuFHhBAcjpZJ8lhf6pYP2iOcPqcQLug
-         5Xag7r4B3/h8kL9zUWYLsf/Puqx4XoFutpoMmIRdg3QUUE7RcKglYybIePTWq8EVAQ
-         O4CO1wSfDa3BxGBuDS80QcIL8YLvt0DnhvVx34mQ=
+        b=GJxluEHPg3whow8CBaLV4zMZSuE/GQuQP/UnmCAuB8pj7xrqQQragvQt8CfxFvC3N
+         7SLh9hxLNeyZpyaa/u9fbira06CsZS5uoFqQqqXuHqJ+GZF0mVYyIHWgj8lGxUu7j9
+         B7+A8IcDMMrUrIB6c/XKZkQmmmR4q8/Psx8w8wIs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
-        Michal Simek <michal.simek@xilinx.com>,
+        stable@vger.kernel.org, Serge Semin <fancer.lancer@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 068/215] serial: uartps: Use the same dynamic major number for all ports
-Date:   Mon, 29 Jul 2019 21:21:04 +0200
-Message-Id: <20190729190752.123069943@linuxfoundation.org>
+Subject: [PATCH 5.2 069/215] tty: serial_core: Set port active bit in uart_port_activate
+Date:   Mon, 29 Jul 2019 21:21:05 +0200
+Message-Id: <20190729190752.259653310@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190729190739.971253303@linuxfoundation.org>
 References: <20190729190739.971253303@linuxfoundation.org>
@@ -45,61 +43,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit ab262666018de6f4e206b021386b93ed0c164316 ]
+[ Upstream commit 13b18d35909707571af9539f7731389fbf0feb31 ]
 
-Let kernel to find out major number dynamically for the first device and
-then reuse it for other instances.
-This fixes the issue that each uart is registered with a
-different major number.
+A bug was introduced by commit b3b576461864 ("tty: serial_core: convert
+uart_open to use tty_port_open"). It caused a constant warning printed
+into the system log regarding the tty and port counter mismatch:
 
-After the patch:
-crw-------    1 root     root      253,   0 Jun 10 08:31 /dev/ttyPS0
-crw--w----    1 root     root      253,   1 Jan  1  1970 /dev/ttyPS1
+[   21.644197] ttyS ttySx: tty_port_close_start: tty->count = 1 port count = 2
 
-Fixes: 024ca329bfb9 ("serial: uartps: Register own uart console and driver structures")
-Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+in case if session hangup was detected so the warning is printed starting
+from the second open-close iteration.
+
+Particularly the problem was discovered in situation when there is a
+serial tty device without hardware back-end being setup. It is considered
+by the tty-serial subsystems as a hardware problem with session hang up.
+In this case uart_startup() will return a positive value with TTY_IO_ERROR
+flag set in corresponding tty_struct instance. The same value will get
+passed to be returned from the activate() callback and then being returned
+from tty_port_open(). But since in this case tty_port_block_til_ready()
+isn't called the TTY_PORT_ACTIVE flag isn't set (while the method had been
+called before tty_port_open conversion was introduced and the rest of the
+subsystem code expected the bit being set in this case), which prevents the
+uart_hangup() method to perform any cleanups including the tty port
+counter setting to zero. So the next attempt to open/close the tty device
+will discover the counters mismatch.
+
+In order to fix the problem we need to manually set the TTY_PORT_ACTIVE
+flag in case if uart_startup() returned a positive value. In this case
+the hang up procedure will perform a full set of cleanup actions including
+the port ref-counter resetting.
+
+Fixes: b3b576461864 "tty: serial_core: convert uart_open to use tty_port_open"
+Signed-off-by: Serge Semin <fancer.lancer@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/serial/xilinx_uartps.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/tty/serial/serial_core.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/tty/serial/xilinx_uartps.c b/drivers/tty/serial/xilinx_uartps.c
-index 605354fd60b1..9dcc4d855ddd 100644
---- a/drivers/tty/serial/xilinx_uartps.c
-+++ b/drivers/tty/serial/xilinx_uartps.c
-@@ -29,12 +29,12 @@
+diff --git a/drivers/tty/serial/serial_core.c b/drivers/tty/serial/serial_core.c
+index 83f4dd0bfd74..4223cb496764 100644
+--- a/drivers/tty/serial/serial_core.c
++++ b/drivers/tty/serial/serial_core.c
+@@ -1777,6 +1777,7 @@ static int uart_port_activate(struct tty_port *port, struct tty_struct *tty)
+ {
+ 	struct uart_state *state = container_of(port, struct uart_state, port);
+ 	struct uart_port *uport;
++	int ret;
  
- #define CDNS_UART_TTY_NAME	"ttyPS"
- #define CDNS_UART_NAME		"xuartps"
--#define CDNS_UART_MAJOR		0	/* use dynamic node allocation */
- #define CDNS_UART_FIFO_SIZE	64	/* FIFO size */
- #define CDNS_UART_REGISTER_SPACE	0x1000
- 
- /* Rx Trigger level */
- static int rx_trigger_level = 56;
-+static int uartps_major;
- module_param(rx_trigger_level, uint, S_IRUGO);
- MODULE_PARM_DESC(rx_trigger_level, "Rx trigger level, 1-63 bytes");
- 
-@@ -1517,7 +1517,7 @@ static int cdns_uart_probe(struct platform_device *pdev)
- 	cdns_uart_uart_driver->owner = THIS_MODULE;
- 	cdns_uart_uart_driver->driver_name = driver_name;
- 	cdns_uart_uart_driver->dev_name	= CDNS_UART_TTY_NAME;
--	cdns_uart_uart_driver->major = CDNS_UART_MAJOR;
-+	cdns_uart_uart_driver->major = uartps_major;
- 	cdns_uart_uart_driver->minor = cdns_uart_data->id;
- 	cdns_uart_uart_driver->nr = 1;
- 
-@@ -1546,6 +1546,7 @@ static int cdns_uart_probe(struct platform_device *pdev)
- 		goto err_out_id;
- 	}
- 
-+	uartps_major = cdns_uart_uart_driver->tty_driver->major;
- 	cdns_uart_data->cdns_uart_driver = cdns_uart_uart_driver;
- 
+ 	uport = uart_port_check(state);
+ 	if (!uport || uport->flags & UPF_DEAD)
+@@ -1787,7 +1788,11 @@ static int uart_port_activate(struct tty_port *port, struct tty_struct *tty)
  	/*
+ 	 * Start up the serial port.
+ 	 */
+-	return uart_startup(tty, state, 0);
++	ret = uart_startup(tty, state, 0);
++	if (ret > 0)
++		tty_port_set_active(port, 1);
++
++	return ret;
+ }
+ 
+ static const char *uart_type(struct uart_port *port)
 -- 
 2.20.1
 
