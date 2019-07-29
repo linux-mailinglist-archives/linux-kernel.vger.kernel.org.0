@@ -2,36 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE368798CD
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:11:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C147798D3
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:11:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388222AbfG2TeJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 15:34:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48450 "EHLO mail.kernel.org"
+        id S1730426AbfG2UKh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 16:10:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48646 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388199AbfG2TeE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:34:04 -0400
+        id S2388099AbfG2TeP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:34:15 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D459E2171F;
-        Mon, 29 Jul 2019 19:34:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0D9052171F;
+        Mon, 29 Jul 2019 19:34:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564428844;
-        bh=mU/cphH8ryHrVmuO9omVALk2fgtD/LhRfsJrntv7E2o=;
+        s=default; t=1564428854;
+        bh=0FtMzQeacx4AziLkDO6Q+rba4VKfE90ATh2vY7YtSE0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TMV9blYZKpjeEIji5DmT2mpWBJQyQNryBQ4jLwpvIv3Ri9Q8mKRaQLFwGWaV0TZnb
-         MnHIi45MvYKG4U6SOkgXX+DlGL4Tlp18kaTBHqb8YrbMgGpodzQ/FVpB7F8ToKjZ+9
-         j9qEx3MnzwIBdGK8W7Bmyb7kQQhp9k/x6bpqPsT4=
+        b=fR0aqyqrWNZN/+nMj7fKTtfPOU1v1qa0y/8Q5folA3kmz0S1RRkKDB2hsJHotYyH+
+         vCQIp0Vx6tPWxQWOKz2hPaSj1MRCe/QYIFjEkJZjpemWV+8e1A2xgaX1g7V8yTin96
+         eRCnUPLGWdMif0+NR6ittRIJZdGSYkiSyWZZ42xM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 204/293] net: bridge: stp: dont cache eth dest pointer before skb pull
-Date:   Mon, 29 Jul 2019 21:21:35 +0200
-Message-Id: <20190729190840.091972186@linuxfoundation.org>
+        stable@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>, od@zcrc.me,
+        linux-mips@vger.kernel.org
+Subject: [PATCH 4.14 207/293] MIPS: lb60: Fix pin mappings
+Date:   Mon, 29 Jul 2019 21:21:38 +0200
+Message-Id: <20190729190840.314387141@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190729190820.321094988@linuxfoundation.org>
 References: <20190729190820.321094988@linuxfoundation.org>
@@ -44,38 +47,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+From: Paul Cercueil <paul@crapouillou.net>
 
-[ Upstream commit 2446a68ae6a8cee6d480e2f5b52f5007c7c41312 ]
+commit 1323c3b72a987de57141cabc44bf9cd83656bc70 upstream.
 
-Don't cache eth dest pointer before calling pskb_may_pull.
+The pin mappings introduced in commit 636f8ba67fb6
+("MIPS: JZ4740: Qi LB60: Add pinctrl configuration for several drivers")
+are completely wrong. The pinctrl driver name is incorrect, and the
+function and group fields are swapped.
 
-Fixes: cf0f02d04a83 ("[BRIDGE]: use llc for receiving STP packets")
-Signed-off-by: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 636f8ba67fb6 ("MIPS: JZ4740: Qi LB60: Add pinctrl configuration for several drivers")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: James Hogan <jhogan@kernel.org>
+Cc: od@zcrc.me
+Cc: linux-mips@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/bridge/br_stp_bpdu.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/net/bridge/br_stp_bpdu.c
-+++ b/net/bridge/br_stp_bpdu.c
-@@ -147,7 +147,6 @@ void br_send_tcn_bpdu(struct net_bridge_
- void br_stp_rcv(const struct stp_proto *proto, struct sk_buff *skb,
- 		struct net_device *dev)
- {
--	const unsigned char *dest = eth_hdr(skb)->h_dest;
- 	struct net_bridge_port *p;
- 	struct net_bridge *br;
- 	const unsigned char *buf;
-@@ -176,7 +175,7 @@ void br_stp_rcv(const struct stp_proto *
- 	if (p->state == BR_STATE_DISABLED)
- 		goto out;
+---
+ arch/mips/jz4740/board-qi_lb60.c |   16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+--- a/arch/mips/jz4740/board-qi_lb60.c
++++ b/arch/mips/jz4740/board-qi_lb60.c
+@@ -456,27 +456,27 @@ static unsigned long pin_cfg_bias_disabl
+ static struct pinctrl_map pin_map[] __initdata = {
+ 	/* NAND pin configuration */
+ 	PIN_MAP_MUX_GROUP_DEFAULT("jz4740-nand",
+-			"10010000.jz4740-pinctrl", "nand", "nand-cs1"),
++			"10010000.pin-controller", "nand-cs1", "nand"),
  
--	if (!ether_addr_equal(dest, br->group_addr))
-+	if (!ether_addr_equal(eth_hdr(skb)->h_dest, br->group_addr))
- 		goto out;
+ 	/* fbdev pin configuration */
+ 	PIN_MAP_MUX_GROUP("jz4740-fb", PINCTRL_STATE_DEFAULT,
+-			"10010000.jz4740-pinctrl", "lcd", "lcd-8bit"),
++			"10010000.pin-controller", "lcd-8bit", "lcd"),
+ 	PIN_MAP_MUX_GROUP("jz4740-fb", PINCTRL_STATE_SLEEP,
+-			"10010000.jz4740-pinctrl", "lcd", "lcd-no-pins"),
++			"10010000.pin-controller", "lcd-no-pins", "lcd"),
  
- 	if (p->flags & BR_BPDU_GUARD) {
+ 	/* MMC pin configuration */
+ 	PIN_MAP_MUX_GROUP_DEFAULT("jz4740-mmc.0",
+-			"10010000.jz4740-pinctrl", "mmc", "mmc-1bit"),
++			"10010000.pin-controller", "mmc-1bit", "mmc"),
+ 	PIN_MAP_MUX_GROUP_DEFAULT("jz4740-mmc.0",
+-			"10010000.jz4740-pinctrl", "mmc", "mmc-4bit"),
++			"10010000.pin-controller", "mmc-4bit", "mmc"),
+ 	PIN_MAP_CONFIGS_PIN_DEFAULT("jz4740-mmc.0",
+-			"10010000.jz4740-pinctrl", "PD0", pin_cfg_bias_disable),
++			"10010000.pin-controller", "PD0", pin_cfg_bias_disable),
+ 	PIN_MAP_CONFIGS_PIN_DEFAULT("jz4740-mmc.0",
+-			"10010000.jz4740-pinctrl", "PD2", pin_cfg_bias_disable),
++			"10010000.pin-controller", "PD2", pin_cfg_bias_disable),
+ 
+ 	/* PWM pin configuration */
+ 	PIN_MAP_MUX_GROUP_DEFAULT("jz4740-pwm",
+-			"10010000.jz4740-pinctrl", "pwm4", "pwm4"),
++			"10010000.pin-controller", "pwm4", "pwm4"),
+ };
+ 
+ 
 
 
