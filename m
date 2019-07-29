@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3B3F793EC
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:26:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB295793EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:26:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729726AbfG2TZz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 15:25:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38234 "EHLO mail.kernel.org"
+        id S2388322AbfG2T0B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 15:26:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38366 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729714AbfG2TZw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:25:52 -0400
+        id S2388304AbfG2TZ7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:25:59 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 87BC52070B;
-        Mon, 29 Jul 2019 19:25:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2520521655;
+        Mon, 29 Jul 2019 19:25:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564428352;
-        bh=7qawMTny9KFtJNDsICFl5Oou8NOsKIS9zej45N24Lfw=;
+        s=default; t=1564428358;
+        bh=gAAXZVb4sqR+WEAU9rVh6bY0RZbiYUM1aZ4gQ/M1Fgk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OCusRr0ngJXXZRlBMirUq2K67qrw23y51YTJbD07Qq4WDhxEqcQYdwMtMIgymSnoE
-         sukvFIk7c3x3k/DkuaVmkxgeqXRUedJgTREemvwbrOWkfkuz78t4U0NoTSp5q9jkXm
-         r7LEF+jl13KAG8MQpKxoAPwU6bKld9FhOjLDyTd4=
+        b=hKXnhj4ohATaAtXGqhq0KcB3nIHOmYDskINnAbQ/zD0DWhzPwNxTxEQSqGLMlJ2KR
+         6bEZ/shrvvHd7MHUZ3yr1N2bbaaugtSw+J8zbfhCaoxRH25phWLW8WQLVx2wnk6Cvd
+         dOzTVeF/GxM/mmZSRzLQWKuRIMS/CsGby9mhULbo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Waiman Long <longman@redhat.com>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 047/293] regmap: fix bulk writes on paged registers
-Date:   Mon, 29 Jul 2019 21:18:58 +0200
-Message-Id: <20190729190826.798989049@linuxfoundation.org>
+Subject: [PATCH 4.14 049/293] rcu: Force inlining of rcu_read_lock()
+Date:   Mon, 29 Jul 2019 21:19:00 +0200
+Message-Id: <20190729190827.141825109@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190729190820.321094988@linuxfoundation.org>
 References: <20190729190820.321094988@linuxfoundation.org>
@@ -45,40 +44,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit db057679de3e9e6a03c1bcd5aee09b0d25fd9f5b ]
+[ Upstream commit 6da9f775175e516fc7229ceaa9b54f8f56aa7924 ]
 
-On buses like SlimBus and SoundWire which does not support
-gather_writes yet in regmap, A bulk write on paged register
-would be silently ignored after programming page.
-This is because local variable 'ret' value in regmap_raw_write_impl()
-gets reset to 0 once page register is written successfully and the
-code below checks for 'ret' value to be -ENOTSUPP before linearising
-the write buffer to send to bus->write().
+When debugging options are turned on, the rcu_read_lock() function
+might not be inlined. This results in lockdep's print_lock() function
+printing "rcu_read_lock+0x0/0x70" instead of rcu_read_lock()'s caller.
+For example:
 
-Fix this by resetting the 'ret' value to -ENOTSUPP in cases where
-gather_writes() is not supported or single register write is
-not possible.
+[   10.579995] =============================
+[   10.584033] WARNING: suspicious RCU usage
+[   10.588074] 4.18.0.memcg_v2+ #1 Not tainted
+[   10.593162] -----------------------------
+[   10.597203] include/linux/rcupdate.h:281 Illegal context switch in
+RCU read-side critical section!
+[   10.606220]
+[   10.606220] other info that might help us debug this:
+[   10.606220]
+[   10.614280]
+[   10.614280] rcu_scheduler_active = 2, debug_locks = 1
+[   10.620853] 3 locks held by systemd/1:
+[   10.624632]  #0: (____ptrval____) (&type->i_mutex_dir_key#5){.+.+}, at: lookup_slow+0x42/0x70
+[   10.633232]  #1: (____ptrval____) (rcu_read_lock){....}, at: rcu_read_lock+0x0/0x70
+[   10.640954]  #2: (____ptrval____) (rcu_read_lock){....}, at: rcu_read_lock+0x0/0x70
 
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+These "rcu_read_lock+0x0/0x70" strings are not providing any useful
+information.  This commit therefore forces inlining of the rcu_read_lock()
+function so that rcu_read_lock()'s caller is instead shown.
+
+Signed-off-by: Waiman Long <longman@redhat.com>
+Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/base/regmap/regmap.c | 2 ++
- 1 file changed, 2 insertions(+)
+ include/linux/rcupdate.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/base/regmap/regmap.c b/drivers/base/regmap/regmap.c
-index 8fd08023c0f5..013d0a2b3ba0 100644
---- a/drivers/base/regmap/regmap.c
-+++ b/drivers/base/regmap/regmap.c
-@@ -1509,6 +1509,8 @@ int _regmap_raw_write(struct regmap *map, unsigned int reg,
- 					     map->format.reg_bytes +
- 					     map->format.pad_bytes,
- 					     val, val_len);
-+	else
-+		ret = -ENOTSUPP;
- 
- 	/* If that didn't work fall back on linearising by hand. */
- 	if (ret == -ENOTSUPP) {
+diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
+index f960c85cd9ec..8d570190e9b4 100644
+--- a/include/linux/rcupdate.h
++++ b/include/linux/rcupdate.h
+@@ -622,7 +622,7 @@ static inline void rcu_preempt_sleep_check(void) { }
+  * read-side critical sections may be preempted and they may also block, but
+  * only when acquiring spinlocks that are subject to priority inheritance.
+  */
+-static inline void rcu_read_lock(void)
++static __always_inline void rcu_read_lock(void)
+ {
+ 	__rcu_read_lock();
+ 	__acquire(RCU);
 -- 
 2.20.1
 
