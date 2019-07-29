@@ -2,109 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4844779104
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 18:35:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CF7879107
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 18:35:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729208AbfG2Qe6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 12:34:58 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:43285 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729195AbfG2Qe6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 12:34:58 -0400
-Received: by mail-pf1-f196.google.com with SMTP id i189so28309456pfg.10
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 09:34:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=sDSCepMkR2bL5Wr/nR20Z2uWmhbnLcrsn71Gn90luLw=;
-        b=XbJNhEas82gAqvT7+0uKPnBQXmY1bdSWMvlhGYnRuK2Tz53TPDGRi+sZihvQRqBA9E
-         eH7iEjvJVAtqr4SwQkBV7kLJd9vGJP8LDI4g6xbbGLgfkVlamu0amAGZa06ft0WabEhb
-         dW/YDi4mgPWPnbznja2Au4bxUF8sISHe/hfaI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=sDSCepMkR2bL5Wr/nR20Z2uWmhbnLcrsn71Gn90luLw=;
-        b=aQrieRP50UazgbPkvufaNHWWLtHIasoTdG6Ck6lUsN5f0xVuHmwFRjd7L5tBORFGfx
-         fpt55cJQ6F0OV+aSbtKofrIc3ZNT3fv1w0T1IAPKxL3vUtj9xsaEhaKtSJlzYNbFAn06
-         kOdBVN+knw9yV06aUbWGwrWjvpo3X6IDD0EGdaOOHZp7q4ZTn3wYgKrCb12d60Crp1PM
-         MkMOJqyF0W6eLhjNMQgheQ54af43rLCiK6WbOFMvjU36xPNBkFqb9cIkziHt/09mS88K
-         T/9AzNekTgEKVLGCrx/sUx2nmcKrIg2E2k00XyQ6sAVqF5HLypD7C4Vsx0pC0bzyHHk8
-         qMdA==
-X-Gm-Message-State: APjAAAVWPmko1DfCIzREbWTcOMuAv66g3K+ucTSZC2DukuIWnNG/2tzy
-        2FBTUBshHBP/7l2KdZJRLQlYnVZi+Ss=
-X-Google-Smtp-Source: APXvYqxaKTxKSNNjt8UOl7wNOOomuHl6ngrDpmPTgBkq84LNTpXKwVVinqdCXykfOa5exwsXSmvowQ==
-X-Received: by 2002:a17:90a:b104:: with SMTP id z4mr112755496pjq.102.1564418097415;
-        Mon, 29 Jul 2019 09:34:57 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id 2sm110616451pgm.39.2019.07.29.09.34.56
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 29 Jul 2019 09:34:56 -0700 (PDT)
-Date:   Mon, 29 Jul 2019 09:34:55 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH] i2c: s3c2410: Mark expected switch fall-through
-Message-ID: <201907290934.959721D@keescook>
-References: <20190728235138.GA23429@embeddedor>
+        id S1729228AbfG2QfL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 12:35:11 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:45372 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729210AbfG2QfL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 12:35:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=xO0CP8AV1H6UAZ0iA2YeRu/E0C6+LBoCdmOpD6uQBuw=; b=fLUYnMvBS4xOpFiXxiBEXt0C9k
+        XRhUToIX6rC1gVoie4UGaQHmN9lGhxCpPerfuv2b7S4COFNcwL2l3KeoaoQ5DzHAN/AyM4cTV2fGd
+        Zbf7Wu+nJelHm3XNhcpGWb8COKANWnTQiKQ+7eZlGoPX5eIoZKG+2/ZSkW87nFIY+oKQ=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
+        (envelope-from <andrew@lunn.ch>)
+        id 1hs8c6-00030c-N5; Mon, 29 Jul 2019 18:35:06 +0200
+Date:   Mon, 29 Jul 2019 18:35:06 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Ioana Ciornei <ioana.ciornei@nxp.com>
+Cc:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, davem@davemloft.net, f.fainelli@gmail.com,
+        jiri@mellanox.com
+Subject: Re: [PATCH 0/5] staging: fsl-dpaa2/ethsw: add the .ndo_fdb_dump
+ callback
+Message-ID: <20190729163506.GJ4110@lunn.ch>
+References: <1564416712-16946-1-git-send-email-ioana.ciornei@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190728235138.GA23429@embeddedor>
+In-Reply-To: <1564416712-16946-1-git-send-email-ioana.ciornei@nxp.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jul 28, 2019 at 06:51:38PM -0500, Gustavo A. R. Silva wrote:
-> Mark switch cases where we are expecting to fall through.
+On Mon, Jul 29, 2019 at 07:11:47PM +0300, Ioana Ciornei wrote:
+> This patch set adds some features and small fixes in the
+> FDB table manipulation area.
 > 
-> This patch fixes the following warning:
+> First of all, we implement the .ndo_fdb_dump netdev callback so that all
+> offloaded FDB entries, either static or learnt, are available to the user.
+> This is necessary because the DPAA2 switch does not emit interrupts when a
+> new FDB is learnt or deleted, thus we are not able to keep the software
+> bridge state and the HW in sync by calling the switchdev notifiers.
 > 
-> drivers/i2c/busses/i2c-s3c2410.c: In function 'i2c_s3c_irq_nextbyte':
-> drivers/i2c/busses/i2c-s3c2410.c:431:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
->    if (i2c->state == STATE_READ)
->       ^
-> drivers/i2c/busses/i2c-s3c2410.c:439:2: note: here
->   case STATE_WRITE:
->   ^~~~
+> The patch set also adds the .ndo_fdb_[add|del] callbacks in order to
+> facilitate adding FDB entries not associated with any master device.
 > 
-> Notice that, in this particular case, the code comment is
-> modified in accordance with what GCC is expecting to find.
-> 
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> One interesting thing that I observed is that when adding an FDB entry
+> associated with a bridge (ie using the 'master' keywork appended to the
+> bridge command) and then dumping the FDB entries, there will be duplicates
+> of the same entry: one listed by the bridge device and one by the
+> driver's .ndo_fdb_dump).
+> It raises the question whether this is the expected behavior or not.
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
+DSA devices are the same, they don't provide an interrupt when a new
+entry is added by the hardware. So we can have two entries, or just
+the SW bridge entry, or just the HW entry, depending on ageing.
+ 
+> Another concern is regarding the correct/desired machanism for drivers to
+> signal errors back to switchdev on adding or deleting an FDB entry.
+> In the switchdev documentation, there is a TODO in the place of this topic.
 
--Kees
+It used to be a two state prepare/commit transaction, but that was
+changed a while back.
 
-> ---
->  drivers/i2c/busses/i2c-s3c2410.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
-> index d97fb857b0ea..c98ef4c4a0c9 100644
-> --- a/drivers/i2c/busses/i2c-s3c2410.c
-> +++ b/drivers/i2c/busses/i2c-s3c2410.c
-> @@ -435,6 +435,7 @@ static int i2c_s3c_irq_nextbyte(struct s3c24xx_i2c *i2c, unsigned long iicstat)
->  		 * fall through to the write state, as we will need to
->  		 * send a byte as well
->  		 */
-> +		/* Fall through */
->  
->  	case STATE_WRITE:
->  		/*
-> -- 
-> 2.22.0
-> 
+Maybe the DSA core code can give you ideas?
 
--- 
-Kees Cook
+      Andrew
