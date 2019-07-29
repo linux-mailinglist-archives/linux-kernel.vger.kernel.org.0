@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6EB1879551
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:41:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6445279554
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:41:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389268AbfG2TlH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 15:41:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56468 "EHLO mail.kernel.org"
+        id S2389299AbfG2TlY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 15:41:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56706 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389242AbfG2TlD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:41:03 -0400
+        id S2389354AbfG2TlS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:41:18 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E89C6217D9;
-        Mon, 29 Jul 2019 19:41:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3AD9C206DD;
+        Mon, 29 Jul 2019 19:41:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564429262;
-        bh=QxH2mou0ZhhzmjsCzvNUYTR3sj0Y2sitMANirnGFbOo=;
+        s=default; t=1564429277;
+        bh=gMtJx6n2k6Cgtgh0FR7msq+MIrOSZmtui9BJYIUlbLk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cjr9Mk4TD6EGWBS17jC+kdU8EUpzrvGRHrbFpb57Xd33glxVE2pDXgStwZYlt+gcc
-         O2ijOlaM68B3+qpQA7y+KjjQUbLTz2+fyjTFg6BPn/lB8VYmCG47VqPAOkhhdxI7FD
-         xAJ6tkFiEtMXCnFFknjc3I5T/A2fkt96FfUYbQHs=
+        b=1tvDAnBaDj3l9iL1DymS3OfYvbq285SjanDHnVn19pCJ0AVj4dU56dNdOZ6TWNu5+
+         vjfIIO0AFwoLLH2MRu6w1GNRd9KzFud/1hX2uz5qfaJgKtNieiiKggJFPHG7KBY7k4
+         On3/HBUHNmgerYIvzUGZBjOCbt4+LZLuZb5h6W3A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>,
-        Bharat Kumar Gogada <bharat.kumar.gogada@xilinx.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        stable@vger.kernel.org,
+        Javier Martinez Canillas <javier@dowhile0.org>,
+        Daniel Gomez <dagmcr@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 043/113] PCI: xilinx-nwl: Fix Multi MSI data programming
-Date:   Mon, 29 Jul 2019 21:22:10 +0200
-Message-Id: <20190729190705.962255545@linuxfoundation.org>
+Subject: [PATCH 4.19 048/113] mfd: madera: Add missing of table registration
+Date:   Mon, 29 Jul 2019 21:22:15 +0200
+Message-Id: <20190729190707.024661411@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190729190655.455345569@linuxfoundation.org>
 References: <20190729190655.455345569@linuxfoundation.org>
@@ -45,95 +46,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 181fa434d0514e40ebf6e9721f2b72700287b6e2 ]
+[ Upstream commit 5aa3709c0a5c026735b0ddd4ec80810a23d65f5b ]
 
-According to the PCI Local Bus specification Revision 3.0,
-section 6.8.1.3 (Message Control for MSI), endpoints that
-are Multiple Message Capable as defined by bits [3:1] in
-the Message Control for MSI can request a number of vectors
-that is power of two aligned.
+MODULE_DEVICE_TABLE(of, <of_match_table>) should be called to complete DT
+OF mathing mechanism and register it.
 
-As specified in section 6.8.1.6 "Message data for MSI", the Multiple
-Message Enable field (bits [6:4] of the Message Control register)
-defines the number of low order message data bits the function is
-permitted to modify to generate its system software allocated
-vectors.
+Before this patch:
+modinfo ./drivers/mfd/madera.ko | grep alias
 
-The MSI controller in the Xilinx NWL PCIe controller supports a number
-of MSI vectors specified through a bitmap and the hwirq number for an
-MSI, that is the value written in the MSI data TLP is determined by
-the bitmap allocation.
+After this patch:
+modinfo ./drivers/mfd/madera.ko | grep alias
+alias:          of:N*T*Ccirrus,wm1840C*
+alias:          of:N*T*Ccirrus,wm1840
+alias:          of:N*T*Ccirrus,cs47l91C*
+alias:          of:N*T*Ccirrus,cs47l91
+alias:          of:N*T*Ccirrus,cs47l90C*
+alias:          of:N*T*Ccirrus,cs47l90
+alias:          of:N*T*Ccirrus,cs47l85C*
+alias:          of:N*T*Ccirrus,cs47l85
+alias:          of:N*T*Ccirrus,cs47l35C*
+alias:          of:N*T*Ccirrus,cs47l35
 
-For instance, in a situation where two endpoints sitting on
-the PCI bus request the following MSI configuration, with
-the current PCI Xilinx bitmap allocation code (that does not
-align MSI vector allocation on a power of two boundary):
-
-Endpoint #1: Requesting 1 MSI vector - allocated bitmap bits 0
-Endpoint #2: Requesting 2 MSI vectors - allocated bitmap bits [1,2]
-
-The bitmap value(s) corresponds to the hwirq number that is programmed
-into the Message Data for MSI field in the endpoint MSI capability
-and is detected by the root complex to fire the corresponding
-MSI irqs. The value written in Message Data for MSI field corresponds
-to the first bit allocated in the bitmap for Multi MSI vectors.
-
-The current Xilinx NWL MSI allocation code allows a bitmap allocation
-that is not a power of two boundaries, so endpoint #2, is allowed to
-toggle Message Data bit[0] to differentiate between its two vectors
-(meaning that the MSI data will be respectively 0x0 and 0x1 for the two
-vectors allocated to endpoint #2).
-
-This clearly aliases with the Endpoint #1 vector allocation, resulting
-in a broken Multi MSI implementation.
-
-Update the code to allocate MSI bitmap ranges with a power of two
-alignment, fixing the bug.
-
-Fixes: ab597d35ef11 ("PCI: xilinx-nwl: Add support for Xilinx NWL PCIe Host Controller")
-Suggested-by: Marc Zyngier <marc.zyngier@arm.com>
-Signed-off-by: Bharat Kumar Gogada <bharat.kumar.gogada@xilinx.com>
-[lorenzo.pieralisi@arm.com: updated commit log]
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Acked-by: Marc Zyngier <marc.zyngier@arm.com>
+Reported-by: Javier Martinez Canillas <javier@dowhile0.org>
+Signed-off-by: Daniel Gomez <dagmcr@gmail.com>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pci/controller/pcie-xilinx-nwl.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+ drivers/mfd/madera-core.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/pci/controller/pcie-xilinx-nwl.c b/drivers/pci/controller/pcie-xilinx-nwl.c
-index fb32840ce8e6..4850a1b8eec1 100644
---- a/drivers/pci/controller/pcie-xilinx-nwl.c
-+++ b/drivers/pci/controller/pcie-xilinx-nwl.c
-@@ -483,15 +483,13 @@ static int nwl_irq_domain_alloc(struct irq_domain *domain, unsigned int virq,
- 	int i;
+diff --git a/drivers/mfd/madera-core.c b/drivers/mfd/madera-core.c
+index 8cfea969b060..45c7d8b97349 100644
+--- a/drivers/mfd/madera-core.c
++++ b/drivers/mfd/madera-core.c
+@@ -278,6 +278,7 @@ const struct of_device_id madera_of_match[] = {
+ 	{ .compatible = "cirrus,wm1840", .data = (void *)WM1840 },
+ 	{}
+ };
++MODULE_DEVICE_TABLE(of, madera_of_match);
+ EXPORT_SYMBOL_GPL(madera_of_match);
  
- 	mutex_lock(&msi->lock);
--	bit = bitmap_find_next_zero_area(msi->bitmap, INT_PCI_MSI_NR, 0,
--					 nr_irqs, 0);
--	if (bit >= INT_PCI_MSI_NR) {
-+	bit = bitmap_find_free_region(msi->bitmap, INT_PCI_MSI_NR,
-+				      get_count_order(nr_irqs));
-+	if (bit < 0) {
- 		mutex_unlock(&msi->lock);
- 		return -ENOSPC;
- 	}
- 
--	bitmap_set(msi->bitmap, bit, nr_irqs);
--
- 	for (i = 0; i < nr_irqs; i++) {
- 		irq_domain_set_info(domain, virq + i, bit + i, &nwl_irq_chip,
- 				domain->host_data, handle_simple_irq,
-@@ -509,7 +507,8 @@ static void nwl_irq_domain_free(struct irq_domain *domain, unsigned int virq,
- 	struct nwl_msi *msi = &pcie->msi;
- 
- 	mutex_lock(&msi->lock);
--	bitmap_clear(msi->bitmap, data->hwirq, nr_irqs);
-+	bitmap_release_region(msi->bitmap, data->hwirq,
-+			      get_count_order(nr_irqs));
- 	mutex_unlock(&msi->lock);
- }
- 
+ static int madera_get_reset_gpio(struct madera *madera)
 -- 
 2.20.1
 
