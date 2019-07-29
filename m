@@ -2,39 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D881A7951A
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:40:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A66C97958F
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:44:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388896AbfG2Til (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 15:38:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53524 "EHLO mail.kernel.org"
+        id S2389278AbfG2Tns (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 15:43:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60174 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388559AbfG2Tid (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:38:33 -0400
+        id S2389168AbfG2Tnn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:43:43 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BE5A720C01;
-        Mon, 29 Jul 2019 19:38:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A9E2621655;
+        Mon, 29 Jul 2019 19:43:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564429112;
-        bh=HRmdymFz9CoKWHbTLjLYlSb8GYeHY4UE37+eJqbgQPE=;
+        s=default; t=1564429422;
+        bh=c/1hPGg/6CR6iTEm4wN+3cRAbYNxlzSAfACA9J40vec=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QYrRAU1y8pOxOOlIr+Vu6NFMKm20CjQDPOOLlMtJ4+b+tT6A7kHsCpHn76u6Dqk9J
-         nNTdH8R4dMQRjmGCfK33ak2Bb2nnuYlwGMTEKAooSCvAYSP7HV0W8aOIOWQZfrCN6U
-         B/bygsyfHK5lXzEKj1wfp5uOdLFSNJb5UQjk6QMU=
+        b=1vy2i3wACVTnkLOaveJG//BgvUe0ZokOqSWwxBbODCOH8G7D6JNASFevNt4xoh8bj
+         8T8qC1HmGQvs2Zjjw1NLTnkPuHlM2MRA8y/+/gpzZbvwkyX1msVyG84tU9YdapRP1S
+         g9pwu7jb1WnGjdlcUAXZ0cF3R4fmHYOBKg3g/L9E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kefeng Wang <wangkefeng.wang@huawei.com>,
-        Zhang HongJun <zhanghongjun2@huawei.com>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 4.14 288/293] hpet: Fix division by zero in hpet_time_div()
+        stable@vger.kernel.org,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Roman Gushchin <guro@fb.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>,
+        =?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 092/113] proc: use down_read_killable mmap_sem for /proc/pid/map_files
 Date:   Mon, 29 Jul 2019 21:22:59 +0200
-Message-Id: <20190729190846.309781280@linuxfoundation.org>
+Message-Id: <20190729190717.491633878@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190729190820.321094988@linuxfoundation.org>
-References: <20190729190820.321094988@linuxfoundation.org>
+In-Reply-To: <20190729190655.455345569@linuxfoundation.org>
+References: <20190729190655.455345569@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,67 +55,103 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kefeng Wang <wangkefeng.wang@huawei.com>
+[ Upstream commit cd9e2bb8271c971d9f37c722be2616c7f8ba0664 ]
 
-commit 0c7d37f4d9b8446956e97b7c5e61173cdb7c8522 upstream.
+Do not remain stuck forever if something goes wrong.  Using a killable
+lock permits cleanup of stuck tasks and simplifies investigation.
 
-The base value in do_div() called by hpet_time_div() is truncated from
-unsigned long to uint32_t, resulting in a divide-by-zero exception.
+It seems ->d_revalidate() could return any error (except ECHILD) to abort
+validation and pass error as result of lookup sequence.
 
-UBSAN: Undefined behaviour in ../drivers/char/hpet.c:572:2
-division by zero
-CPU: 1 PID: 23682 Comm: syz-executor.3 Not tainted 4.4.184.x86_64+ #4
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
- 0000000000000000 b573382df1853d00 ffff8800a3287b98 ffffffff81ad7561
- ffff8800a3287c00 ffffffff838b35b0 ffffffff838b3860 ffff8800a3287c20
- 0000000000000000 ffff8800a3287bb0 ffffffff81b8f25e ffffffff838b35a0
-Call Trace:
- [<ffffffff81ad7561>] __dump_stack lib/dump_stack.c:15 [inline]
- [<ffffffff81ad7561>] dump_stack+0xc1/0x120 lib/dump_stack.c:51
- [<ffffffff81b8f25e>] ubsan_epilogue+0x12/0x8d lib/ubsan.c:166
- [<ffffffff81b900cb>] __ubsan_handle_divrem_overflow+0x282/0x2c8 lib/ubsan.c:262
- [<ffffffff823560dd>] hpet_time_div drivers/char/hpet.c:572 [inline]
- [<ffffffff823560dd>] hpet_ioctl_common drivers/char/hpet.c:663 [inline]
- [<ffffffff823560dd>] hpet_ioctl_common.cold+0xa8/0xad drivers/char/hpet.c:577
- [<ffffffff81e63d56>] hpet_ioctl+0xc6/0x180 drivers/char/hpet.c:676
- [<ffffffff81711590>] vfs_ioctl fs/ioctl.c:43 [inline]
- [<ffffffff81711590>] file_ioctl fs/ioctl.c:470 [inline]
- [<ffffffff81711590>] do_vfs_ioctl+0x6e0/0xf70 fs/ioctl.c:605
- [<ffffffff81711eb4>] SYSC_ioctl fs/ioctl.c:622 [inline]
- [<ffffffff81711eb4>] SyS_ioctl+0x94/0xc0 fs/ioctl.c:613
- [<ffffffff82846003>] tracesys_phase2+0x90/0x95
-
-The main C reproducer autogenerated by syzkaller,
-
-  syscall(__NR_mmap, 0x20000000, 0x1000000, 3, 0x32, -1, 0);
-  memcpy((void*)0x20000100, "/dev/hpet\000", 10);
-  syscall(__NR_openat, 0xffffffffffffff9c, 0x20000100, 0, 0);
-  syscall(__NR_ioctl, r[0], 0x40086806, 0x40000000000000);
-
-Fix it by using div64_ul().
-
-Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
-Signed-off-by: Zhang HongJun <zhanghongjun2@huawei.com>
-Cc: stable <stable@vger.kernel.org>
-Reviewed-by: Arnd Bergmann <arnd@arndb.de>
-Link: https://lore.kernel.org/r/20190711132757.130092-1-wangkefeng.wang@huawei.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+[akpm@linux-foundation.org: fix proc_map_files_lookup() return value, per Andrei]
+Link: http://lkml.kernel.org/r/156007493995.3335.9595044802115356911.stgit@buzz
+Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Reviewed-by: Roman Gushchin <guro@fb.com>
+Reviewed-by: Cyrill Gorcunov <gorcunov@gmail.com>
+Reviewed-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Cc: Alexey Dobriyan <adobriyan@gmail.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Michal Koutný <mkoutny@suse.com>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/char/hpet.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ fs/proc/base.c | 28 ++++++++++++++++++++++------
+ 1 file changed, 22 insertions(+), 6 deletions(-)
 
---- a/drivers/char/hpet.c
-+++ b/drivers/char/hpet.c
-@@ -570,8 +570,7 @@ static inline unsigned long hpet_time_di
- 	unsigned long long m;
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index f999e8bd3771..a7fbda72afeb 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -1960,9 +1960,12 @@ static int map_files_d_revalidate(struct dentry *dentry, unsigned int flags)
+ 		goto out;
  
- 	m = hpets->hp_tick_freq + (dis >> 1);
--	do_div(m, dis);
--	return (unsigned long)m;
-+	return div64_ul(m, dis);
- }
+ 	if (!dname_to_vma_addr(dentry, &vm_start, &vm_end)) {
+-		down_read(&mm->mmap_sem);
+-		exact_vma_exists = !!find_exact_vma(mm, vm_start, vm_end);
+-		up_read(&mm->mmap_sem);
++		status = down_read_killable(&mm->mmap_sem);
++		if (!status) {
++			exact_vma_exists = !!find_exact_vma(mm, vm_start,
++							    vm_end);
++			up_read(&mm->mmap_sem);
++		}
+ 	}
  
- static int
+ 	mmput(mm);
+@@ -2008,8 +2011,11 @@ static int map_files_get_link(struct dentry *dentry, struct path *path)
+ 	if (rc)
+ 		goto out_mmput;
+ 
++	rc = down_read_killable(&mm->mmap_sem);
++	if (rc)
++		goto out_mmput;
++
+ 	rc = -ENOENT;
+-	down_read(&mm->mmap_sem);
+ 	vma = find_exact_vma(mm, vm_start, vm_end);
+ 	if (vma && vma->vm_file) {
+ 		*path = vma->vm_file->f_path;
+@@ -2105,7 +2111,11 @@ static struct dentry *proc_map_files_lookup(struct inode *dir,
+ 	if (!mm)
+ 		goto out_put_task;
+ 
+-	down_read(&mm->mmap_sem);
++	result = ERR_PTR(-EINTR);
++	if (down_read_killable(&mm->mmap_sem))
++		goto out_put_mm;
++
++	result = ERR_PTR(-ENOENT);
+ 	vma = find_exact_vma(mm, vm_start, vm_end);
+ 	if (!vma)
+ 		goto out_no_vma;
+@@ -2116,6 +2126,7 @@ static struct dentry *proc_map_files_lookup(struct inode *dir,
+ 
+ out_no_vma:
+ 	up_read(&mm->mmap_sem);
++out_put_mm:
+ 	mmput(mm);
+ out_put_task:
+ 	put_task_struct(task);
+@@ -2157,7 +2168,12 @@ proc_map_files_readdir(struct file *file, struct dir_context *ctx)
+ 	mm = get_task_mm(task);
+ 	if (!mm)
+ 		goto out_put_task;
+-	down_read(&mm->mmap_sem);
++
++	ret = down_read_killable(&mm->mmap_sem);
++	if (ret) {
++		mmput(mm);
++		goto out_put_task;
++	}
+ 
+ 	nr_files = 0;
+ 
+-- 
+2.20.1
+
 
 
