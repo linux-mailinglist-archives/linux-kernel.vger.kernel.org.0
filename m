@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8533879545
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:41:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC3D379636
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:49:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389191AbfG2Tkk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 15:40:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55898 "EHLO mail.kernel.org"
+        id S2390389AbfG2Ttv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 15:49:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40566 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389176AbfG2Tke (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:40:34 -0400
+        id S2389840AbfG2Ttu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:49:50 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 19E9A206DD;
-        Mon, 29 Jul 2019 19:40:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 71BD221655;
+        Mon, 29 Jul 2019 19:49:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564429233;
-        bh=f7tBDxzUivvdbQFNLAvWicQS27YxUC57cCcTbYDlg+Q=;
+        s=default; t=1564429788;
+        bh=1Np7r3LAsxti73689pvspT3FnyQs5zyBYCe9YqO5YqI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=V2kg0wbW9UKG6rSj/lRePlmFAs6QDGigw7SK1yTAliqLPLX0c+zG7ZbihwGaIJciH
-         J3Ryk56HZ7jrIdu5D26zsJgSmg4Jc3CAAD+nU1dT4AKIL2KBQjpFggppTLT8wQ1KHE
-         efwNUmJY93OQPu0wocHxmCAVj9C5n6p8lT2BL7ro=
+        b=elDc/BnBuLKQ47e//BXXnO5wfThU3U65rt8LvPDc2XvNxS2UArP7IfDZpMLwaLRlZ
+         44jHJx2xslkLzunPDKCAsBxfiEDIoC7+WsUG2wdt8fsn3j0giP8xstIb23cdu7ro3+
+         grLU5Cg0rjehDbyHTE98FcaNcBojELgd5tst5qPo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Quentin Deslandes <quentin.deslandes@itdev.co.uk>,
+        Javier Martinez Canillas <javier@dowhile0.org>,
+        Daniel Gomez <dagmcr@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 005/113] staging: vt6656: use meaningful error code during buffer allocation
+Subject: [PATCH 5.2 096/215] mfd: madera: Add missing of table registration
 Date:   Mon, 29 Jul 2019 21:21:32 +0200
-Message-Id: <20190729190656.986288140@linuxfoundation.org>
+Message-Id: <20190729190755.827160052@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190729190655.455345569@linuxfoundation.org>
-References: <20190729190655.455345569@linuxfoundation.org>
+In-Reply-To: <20190729190739.971253303@linuxfoundation.org>
+References: <20190729190739.971253303@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,124 +46,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit d8c2869300ab5f7a19bf6f5a04fe473c5c9887e3 ]
+[ Upstream commit 5aa3709c0a5c026735b0ddd4ec80810a23d65f5b ]
 
-Check on called function's returned value for error and return 0 on
-success or a negative errno value on error instead of a boolean value.
+MODULE_DEVICE_TABLE(of, <of_match_table>) should be called to complete DT
+OF mathing mechanism and register it.
 
-Signed-off-by: Quentin Deslandes <quentin.deslandes@itdev.co.uk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Before this patch:
+modinfo ./drivers/mfd/madera.ko | grep alias
+
+After this patch:
+modinfo ./drivers/mfd/madera.ko | grep alias
+alias:          of:N*T*Ccirrus,wm1840C*
+alias:          of:N*T*Ccirrus,wm1840
+alias:          of:N*T*Ccirrus,cs47l91C*
+alias:          of:N*T*Ccirrus,cs47l91
+alias:          of:N*T*Ccirrus,cs47l90C*
+alias:          of:N*T*Ccirrus,cs47l90
+alias:          of:N*T*Ccirrus,cs47l85C*
+alias:          of:N*T*Ccirrus,cs47l85
+alias:          of:N*T*Ccirrus,cs47l35C*
+alias:          of:N*T*Ccirrus,cs47l35
+
+Reported-by: Javier Martinez Canillas <javier@dowhile0.org>
+Signed-off-by: Daniel Gomez <dagmcr@gmail.com>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/staging/vt6656/main_usb.c | 42 ++++++++++++++++++++-----------
- 1 file changed, 28 insertions(+), 14 deletions(-)
+ drivers/mfd/madera-core.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/staging/vt6656/main_usb.c b/drivers/staging/vt6656/main_usb.c
-index ccafcc2c87ac..70433f756d8e 100644
---- a/drivers/staging/vt6656/main_usb.c
-+++ b/drivers/staging/vt6656/main_usb.c
-@@ -402,16 +402,19 @@ static void vnt_free_int_bufs(struct vnt_private *priv)
- 	kfree(priv->int_buf.data_buf);
- }
+diff --git a/drivers/mfd/madera-core.c b/drivers/mfd/madera-core.c
+index 2a77988d0462..826b971ccb86 100644
+--- a/drivers/mfd/madera-core.c
++++ b/drivers/mfd/madera-core.c
+@@ -286,6 +286,7 @@ const struct of_device_id madera_of_match[] = {
+ 	{ .compatible = "cirrus,wm1840", .data = (void *)WM1840 },
+ 	{}
+ };
++MODULE_DEVICE_TABLE(of, madera_of_match);
+ EXPORT_SYMBOL_GPL(madera_of_match);
  
--static bool vnt_alloc_bufs(struct vnt_private *priv)
-+static int vnt_alloc_bufs(struct vnt_private *priv)
- {
-+	int ret = 0;
- 	struct vnt_usb_send_context *tx_context;
- 	struct vnt_rcb *rcb;
- 	int ii;
- 
- 	for (ii = 0; ii < priv->num_tx_context; ii++) {
- 		tx_context = kmalloc(sizeof(*tx_context), GFP_KERNEL);
--		if (!tx_context)
-+		if (!tx_context) {
-+			ret = -ENOMEM;
- 			goto free_tx;
-+		}
- 
- 		priv->tx_context[ii] = tx_context;
- 		tx_context->priv = priv;
-@@ -419,16 +422,20 @@ static bool vnt_alloc_bufs(struct vnt_private *priv)
- 
- 		/* allocate URBs */
- 		tx_context->urb = usb_alloc_urb(0, GFP_KERNEL);
--		if (!tx_context->urb)
-+		if (!tx_context->urb) {
-+			ret = -ENOMEM;
- 			goto free_tx;
-+		}
- 
- 		tx_context->in_use = false;
- 	}
- 
- 	for (ii = 0; ii < priv->num_rcb; ii++) {
- 		priv->rcb[ii] = kzalloc(sizeof(*priv->rcb[ii]), GFP_KERNEL);
--		if (!priv->rcb[ii])
-+		if (!priv->rcb[ii]) {
-+			ret = -ENOMEM;
- 			goto free_rx_tx;
-+		}
- 
- 		rcb = priv->rcb[ii];
- 
-@@ -436,39 +443,46 @@ static bool vnt_alloc_bufs(struct vnt_private *priv)
- 
- 		/* allocate URBs */
- 		rcb->urb = usb_alloc_urb(0, GFP_KERNEL);
--		if (!rcb->urb)
-+		if (!rcb->urb) {
-+			ret = -ENOMEM;
- 			goto free_rx_tx;
-+		}
- 
- 		rcb->skb = dev_alloc_skb(priv->rx_buf_sz);
--		if (!rcb->skb)
-+		if (!rcb->skb) {
-+			ret = -ENOMEM;
- 			goto free_rx_tx;
-+		}
- 
- 		rcb->in_use = false;
- 
- 		/* submit rx urb */
--		if (vnt_submit_rx_urb(priv, rcb))
-+		ret = vnt_submit_rx_urb(priv, rcb);
-+		if (ret)
- 			goto free_rx_tx;
- 	}
- 
- 	priv->interrupt_urb = usb_alloc_urb(0, GFP_KERNEL);
--	if (!priv->interrupt_urb)
-+	if (!priv->interrupt_urb) {
-+		ret = -ENOMEM;
- 		goto free_rx_tx;
-+	}
- 
- 	priv->int_buf.data_buf = kmalloc(MAX_INTERRUPT_SIZE, GFP_KERNEL);
- 	if (!priv->int_buf.data_buf) {
--		usb_free_urb(priv->interrupt_urb);
--		goto free_rx_tx;
-+		ret = -ENOMEM;
-+		goto free_rx_tx_urb;
- 	}
- 
--	return true;
-+	return 0;
- 
-+free_rx_tx_urb:
-+	usb_free_urb(priv->interrupt_urb);
- free_rx_tx:
- 	vnt_free_rx_bufs(priv);
--
- free_tx:
- 	vnt_free_tx_bufs(priv);
--
--	return false;
-+	return ret;
- }
- 
- static void vnt_tx_80211(struct ieee80211_hw *hw,
+ static int madera_get_reset_gpio(struct madera *madera)
 -- 
 2.20.1
 
