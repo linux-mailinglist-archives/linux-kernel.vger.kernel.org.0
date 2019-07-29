@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 671B1798FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:12:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 84226798F7
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:12:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730214AbfG2TcH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 15:32:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45232 "EHLO mail.kernel.org"
+        id S1730361AbfG2UMB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 16:12:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46104 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729389AbfG2TcE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:32:04 -0400
+        id S1729269AbfG2Tcd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:32:33 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1AE022070B;
-        Mon, 29 Jul 2019 19:32:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 389D1217D4;
+        Mon, 29 Jul 2019 19:32:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564428723;
-        bh=/mMcL1qO+DoVheTOpWO+mEUa2orPdN6aPdPc7je13yA=;
+        s=default; t=1564428752;
+        bh=HFU/DbYWq2H2LL/Ks3RT4dJnz4zgG/Hmhvvi2tRXXQg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qaHypbMm6/DkMSXM6PA+h/fv59H8bmXbVoq0B96N8+N69FMoN3Q6jsscaKB2oL9R3
-         +IyxmeT+dgkrnj2S4eD2Hd9MuhchQ5vjztutLvKfaw+cQcQZoY2lXGJ8zSRoZDuNfw
-         QXZ293WAg8qb0m3Gdrf/3KKrNUOJZP+qihJEZ8LM=
+        b=wjkDVj0bESS8Quf1mHX5+0jQ2oYc6bjzzVmrzvbTV3LSlAk9qL+Qm0R4I8YUiEfY3
+         a5NWWNqQ4Q2fGeh49vkMtRh/RVOeIeDE1OBv+I9/uanu5edisSBP15zBQvXgsIE3++
+         Sr2u+S2amZczkQwctO7PqnQzFCrpiiOvuiJZEi+0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Horia Geanta <horia.geanta@nxp.com>,
-        Iuliana Prodan <iuliana.prodan@nxp.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.14 166/293] crypto: caam - limit output IV to CBC to work around CTR mode DMA issue
-Date:   Mon, 29 Jul 2019 21:20:57 +0200
-Message-Id: <20190729190837.249555862@linuxfoundation.org>
+        stable@vger.kernel.org, "Lee, Chiasheng" <chiasheng.lee@intel.com>,
+        Mathias Nyman <mathias.nyman@linux.intel.com>,
+        Lee@vger.kernel.org
+Subject: [PATCH 4.14 174/293] usb: Handle USB3 remote wakeup for LPM enabled devices correctly
+Date:   Mon, 29 Jul 2019 21:21:05 +0200
+Message-Id: <20190729190837.847991420@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190729190820.321094988@linuxfoundation.org>
 References: <20190729190820.321094988@linuxfoundation.org>
@@ -46,86 +44,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+From: Lee, Chiasheng <chiasheng.lee@intel.com>
 
-commit ed527b13d800dd515a9e6c582f0a73eca65b2e1b upstream.
+commit e244c4699f859cf7149b0781b1894c7996a8a1df upstream.
 
-The CAAM driver currently violates an undocumented and slightly
-controversial requirement imposed by the crypto stack that a buffer
-referred to by the request structure via its virtual address may not
-be modified while any scatterlists passed via the same request
-structure are mapped for inbound DMA.
+With Link Power Management (LPM) enabled USB3 links transition to low
+power U1/U2 link states from U0 state automatically.
 
-This may result in errors like
+Current hub code detects USB3 remote wakeups by checking if the software
+state still shows suspended, but the link has transitioned from suspended
+U3 to enabled U0 state.
 
-  alg: aead: decryption failed on test 1 for gcm_base(ctr-aes-caam,ghash-generic): ret=74
-  alg: aead: Failed to load transform for gcm(aes): -2
+As it takes some time before the hub thread reads the port link state
+after a USB3 wake notification, the link may have transitioned from U0
+to U1/U2, and wake is not detected by hub code.
 
-on non-cache coherent systems, due to the fact that the GCM driver
-passes an IV buffer by virtual address which shares a cacheline with
-the auth_tag buffer passed via a scatterlist, resulting in corruption
-of the auth_tag when the IV is updated while the DMA mapping is live.
+Fix this by handling U1/U2 states in the same way as U0 in USB3 wakeup
+handling
 
-Since the IV that is returned to the caller is only valid for CBC mode,
-and given that the in-kernel users of CBC (such as CTS) don't trigger the
-same issue as the GCM driver, let's just disable the output IV generation
-for all modes except CBC for the time being.
+This patch should be added to stable kernels since 4.13 where LPM was
+kept enabled during suspend/resume
 
-Fixes: 854b06f76879 ("crypto: caam - properly set IV after {en,de}crypt")
-Cc: Horia Geanta <horia.geanta@nxp.com>
-Cc: Iuliana Prodan <iuliana.prodan@nxp.com>
-Reported-by: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Reviewed-by: Horia Geanta <horia.geanta@nxp.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
-[ Horia: backported to 4.14, 4.19 ]
-Signed-off-by: Horia Geantă <horia.geanta@nxp.com>
+Cc: <stable@vger.kernel.org> # v4.13+
+Signed-off-by: Lee, Chiasheng <chiasheng.lee@intel.com>
+Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/caam/caamalg.c |   15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+ drivers/usb/core/hub.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/drivers/crypto/caam/caamalg.c
-+++ b/drivers/crypto/caam/caamalg.c
-@@ -853,6 +853,7 @@ static void ablkcipher_encrypt_done(stru
- 	struct ablkcipher_request *req = context;
- 	struct ablkcipher_edesc *edesc;
- 	struct crypto_ablkcipher *ablkcipher = crypto_ablkcipher_reqtfm(req);
-+	struct caam_ctx *ctx = crypto_ablkcipher_ctx(ablkcipher);
- 	int ivsize = crypto_ablkcipher_ivsize(ablkcipher);
+--- a/drivers/usb/core/hub.c
++++ b/drivers/usb/core/hub.c
+@@ -3532,6 +3532,7 @@ static int hub_handle_remote_wakeup(stru
+ 	struct usb_device *hdev;
+ 	struct usb_device *udev;
+ 	int connect_change = 0;
++	u16 link_state;
+ 	int ret;
  
- #ifdef DEBUG
-@@ -877,10 +878,11 @@ static void ablkcipher_encrypt_done(stru
+ 	hdev = hub->hdev;
+@@ -3541,9 +3542,11 @@ static int hub_handle_remote_wakeup(stru
+ 			return 0;
+ 		usb_clear_port_feature(hdev, port, USB_PORT_FEAT_C_SUSPEND);
+ 	} else {
++		link_state = portstatus & USB_PORT_STAT_LINK_STATE;
+ 		if (!udev || udev->state != USB_STATE_SUSPENDED ||
+-				 (portstatus & USB_PORT_STAT_LINK_STATE) !=
+-				 USB_SS_PORT_LS_U0)
++				(link_state != USB_SS_PORT_LS_U0 &&
++				 link_state != USB_SS_PORT_LS_U1 &&
++				 link_state != USB_SS_PORT_LS_U2))
+ 			return 0;
+ 	}
  
- 	/*
- 	 * The crypto API expects us to set the IV (req->info) to the last
--	 * ciphertext block. This is used e.g. by the CTS mode.
-+	 * ciphertext block when running in CBC mode.
- 	 */
--	scatterwalk_map_and_copy(req->info, req->dst, req->nbytes - ivsize,
--				 ivsize, 0);
-+	if ((ctx->cdata.algtype & OP_ALG_AAI_MASK) == OP_ALG_AAI_CBC)
-+		scatterwalk_map_and_copy(req->info, req->dst, req->nbytes -
-+					 ivsize, ivsize, 0);
- 
- 	/* In case initial IV was generated, copy it in GIVCIPHER request */
- 	if (edesc->iv_dir == DMA_FROM_DEVICE) {
-@@ -1609,10 +1611,11 @@ static int ablkcipher_decrypt(struct abl
- 
- 	/*
- 	 * The crypto API expects us to set the IV (req->info) to the last
--	 * ciphertext block.
-+	 * ciphertext block when running in CBC mode.
- 	 */
--	scatterwalk_map_and_copy(req->info, req->src, req->nbytes - ivsize,
--				 ivsize, 0);
-+	if ((ctx->cdata.algtype & OP_ALG_AAI_MASK) == OP_ALG_AAI_CBC)
-+		scatterwalk_map_and_copy(req->info, req->src, req->nbytes -
-+					 ivsize, ivsize, 0);
- 
- 	/* Create and submit job descriptor*/
- 	init_ablkcipher_job(ctx->sh_desc_dec, ctx->sh_desc_dec_dma, edesc, req);
 
 
