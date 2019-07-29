@@ -2,211 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00A3078CC4
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 15:26:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CE4478CCE
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 15:27:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388081AbfG2N0f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 09:26:35 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:51927 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728192AbfG2N0b (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 09:26:31 -0400
-Received: by mail-wm1-f68.google.com with SMTP id 207so53867902wma.1
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 06:26:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=psri534TGQYpMyCVplqyeofs1QfcYeU7WkgCVFj60dg=;
-        b=AWV1HIDjgaPyw0nsmP5dhe+Ngz4Q0EcGIck4ApWyvgJ6Jfsao8uQogHunjDC5vPPIl
-         6t+ZJIQ6U4NZcKHp8Cht/cpY3VCAu9InbjUDPejNj8gdqopzXI6O/jtWRMfV7S/XE4Uq
-         B2kcf++11c8rE/XvLeYuAEeH9nTSlASQ2I0O2/pnvhizZWMaRe8XXHlVgwXeXQcAp04y
-         SYVhu7zEPj6bDrtR4GdNsXoNc5KCRbuWJq+odgUJFNIgwPIT8Qj8WKgQLvgA1EdkmV51
-         FoyY214lee5rtcF7086LpKzz43gbZct/nQL9wg9PtX08ydpTjfSC8y9FhKt5bw0n9mmz
-         4KEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=psri534TGQYpMyCVplqyeofs1QfcYeU7WkgCVFj60dg=;
-        b=VEQJo+Lcn3ayw/OFuTb0BbgGpK0eFlqWTdRlLO/YmQlzK8awFYP/6Ze+aJgnmDkcjF
-         YoFwXAHWT8QEDwO1Ty6DilmuEogJeHQZCXhdDiYMlr8wexfk29bga42SV+C8eXGgYMuh
-         hEZTkmLlx8i3oIUsfp7nV1Atcf4Kpiku8Byu1Ky7/RFjSJBhRh6rOyyB5DQO6rF2szwE
-         h4GnAn9QssT+nD0vzVWVvmM2WGuEyhcx1QSrAWnucfTMMdo3nUdWFAXKjIOh5m1H5gAo
-         oR67qj0PR9v0BpPBLNyCrCYePGGarxQSpGzBkiCNpdN6XMihOFyYo9jmF9QhvtyOwW44
-         8P8w==
-X-Gm-Message-State: APjAAAXLo24z++lo1HsqVKWDM2+Cz7yd3F8AmP5RnRxtPGjfzSnFLeps
-        82T0klj/sdVPVtIk2pET3M7/Qak9F2U=
-X-Google-Smtp-Source: APXvYqwFBdSaUVjBx+qD57HcQvEgonQ30assiZ63H4UmIyoLVl92zSebfZNK3fcAdq7+NaGDfpvj4w==
-X-Received: by 2002:a1c:63d7:: with SMTP id x206mr101165457wmb.19.1564406789577;
-        Mon, 29 Jul 2019 06:26:29 -0700 (PDT)
-Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id y2sm50270053wrl.4.2019.07.29.06.26.28
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 29 Jul 2019 06:26:29 -0700 (PDT)
-From:   Neil Armstrong <narmstrong@baylibre.com>
-To:     khilman@baylibre.com
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH 6/6] arm64: dts: meson-g12b-odroid-n2: enable DVFS
-Date:   Mon, 29 Jul 2019 15:26:22 +0200
-Message-Id: <20190729132622.7566-7-narmstrong@baylibre.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190729132622.7566-1-narmstrong@baylibre.com>
-References: <20190729132622.7566-1-narmstrong@baylibre.com>
+        id S2388071AbfG2N06 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 09:26:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38790 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726960AbfG2N04 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 09:26:56 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5A304206E0;
+        Mon, 29 Jul 2019 13:26:55 +0000 (UTC)
+Date:   Mon, 29 Jul 2019 09:26:53 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Scott Wood <swood@redhat.com>
+Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Clark Williams <williams@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-rt-users@vger.kernel.org
+Subject: Re: [PATCH RT 1/8] sched: migrate_enable: Use sleeping_lock to
+ indicate involuntary sleep
+Message-ID: <20190729092653.20bcc45e@gandalf.local.home>
+In-Reply-To: <20190727055638.20443-2-swood@redhat.com>
+References: <20190727055638.20443-1-swood@redhat.com>
+        <20190727055638.20443-2-swood@redhat.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable DVFS for the Odroid-N2 by setting the clock, OPP and supply
-for each cores of each CPU clusters.
+On Sat, 27 Jul 2019 00:56:31 -0500
+Scott Wood <swood@redhat.com> wrote:
 
-The first cluster uses the "VDDCPU_B" power supply, and the second
-cluster uses the "VDDCPU_A" power supply.
+> Without this, rcu_note_context_switch() will complain if an RCU read
+> lock is held when migrate_enable() calls stop_one_cpu().
+> 
+> Signed-off-by: Scott Wood <swood@redhat.com>
+>
 
-Each power supply can achieve 0.73V to 1.01V using 2 distinct PWM
-outputs clocked at 800KHz with an inverse duty-cycle.
+> index d3c6542b306f..c3407707e367 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -7405,7 +7405,9 @@ void migrate_enable(void)
+>  			unpin_current_cpu();
+>  			preempt_lazy_enable();
+>  			preempt_enable();
 
-DVFS has been tested by running the arm64 cpuburn at [1] and cycling
-between all the possible cpufreq translations of each cluster and
-checking the final frequency using the clock-measurer, script at [2].
+This looks like it needs a comment to explain why this is.
 
-[1] https://github.com/ssvb/cpuburn-arm/blob/master/cpuburn-a53.S
-[2] https://gist.github.com/superna9999/d4de964dbc0f84b7d527e1df2ddea25f
+-- Steve
 
-Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- .../boot/dts/amlogic/meson-g12b-odroid-n2.dts | 96 +++++++++++++++++++
- 1 file changed, 96 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts
-index 4e916e1f71f7..777bfb938854 100644
---- a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts
-@@ -115,6 +115,44 @@
- 		/* FIXME: actually controlled by VDDCPU_B_EN */
- 	};
- 
-+	vddcpu_a: regulator-vddcpu-a {
-+		/*
-+		 * MP8756GD Regulator.
-+		 */
-+		compatible = "pwm-regulator";
-+
-+		regulator-name = "VDDCPU_A";
-+		regulator-min-microvolt = <721000>;
-+		regulator-max-microvolt = <1022000>;
-+
-+		vin-supply = <&main_12v>;
-+
-+		pwms = <&pwm_ab 0 1250 0>;
-+		pwm-dutycycle-range = <100 0>;
-+
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
-+	vddcpu_b: regulator-vddcpu-b {
-+		/*
-+		 * Silergy SY8120B1ABC Regulator.
-+		 */
-+		compatible = "pwm-regulator";
-+
-+		regulator-name = "VDDCPU_B";
-+		regulator-min-microvolt = <721000>;
-+		regulator-max-microvolt = <1022000>;
-+
-+		vin-supply = <&main_12v>;
-+
-+		pwms = <&pwm_AO_cd 1 1250 0>;
-+		pwm-dutycycle-range = <100 0>;
-+
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
- 	hub_5v: regulator-hub_5v {
- 		compatible = "regulator-fixed";
- 		regulator-name = "HUB_5V";
-@@ -246,6 +284,48 @@
- 	status = "okay";
- };
- 
-+&cpu0 {
-+	cpu-supply = <&vddcpu_b>;
-+	operating-points-v2 = <&cpu_opp_table_0>;
-+	clocks = <&clkc CLKID_CPU_CLK>;
-+	clock-latency = <50000>;
-+};
-+
-+&cpu1 {
-+	cpu-supply = <&vddcpu_b>;
-+	operating-points-v2 = <&cpu_opp_table_0>;
-+	clocks = <&clkc CLKID_CPU_CLK>;
-+	clock-latency = <50000>;
-+};
-+
-+&cpu100 {
-+	cpu-supply = <&vddcpu_a>;
-+	operating-points-v2 = <&cpub_opp_table_1>;
-+	clocks = <&clkc CLKID_CPUB_CLK>;
-+	clock-latency = <50000>;
-+};
-+
-+&cpu101 {
-+	cpu-supply = <&vddcpu_a>;
-+	operating-points-v2 = <&cpub_opp_table_1>;
-+	clocks = <&clkc CLKID_CPUB_CLK>;
-+	clock-latency = <50000>;
-+};
-+
-+&cpu102 {
-+	cpu-supply = <&vddcpu_a>;
-+	operating-points-v2 = <&cpub_opp_table_1>;
-+	clocks = <&clkc CLKID_CPUB_CLK>;
-+	clock-latency = <50000>;
-+};
-+
-+&cpu103 {
-+	cpu-supply = <&vddcpu_a>;
-+	operating-points-v2 = <&cpub_opp_table_1>;
-+	clocks = <&clkc CLKID_CPUB_CLK>;
-+	clock-latency = <50000>;
-+};
-+
- &ext_mdio {
- 	external_phy: ethernet-phy@0 {
- 		/* Realtek RTL8211F (0x001cc916) */	
-@@ -317,6 +397,22 @@
- 	pinctrl-names = "default";
- };
- 
-+&pwm_ab {
-+	pinctrl-0 = <&pwm_a_e_pins>;
-+	pinctrl-names = "default";
-+	clocks = <&xtal>;
-+	clock-names = "clkin0";
-+	status = "okay";
-+};
-+
-+&pwm_AO_cd {
-+	pinctrl-0 = <&pwm_ao_d_e_pins>;
-+	pinctrl-names = "default";
-+	clocks = <&xtal>;
-+	clock-names = "clkin1";
-+	status = "okay";
-+};
-+
- /* SD card */
- &sd_emmc_b {
- 	status = "okay";
--- 
-2.22.0
+> +			sleeping_lock_inc();
+>  			stop_one_cpu(task_cpu(p), migration_cpu_stop, &arg);
+> +			sleeping_lock_dec();
+>  			return;
+>  		}
+>  	}
 
