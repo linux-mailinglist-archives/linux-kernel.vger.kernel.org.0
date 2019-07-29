@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72077794A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:34:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 59032794A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:35:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387909AbfG2Tdx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 15:33:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48158 "EHLO mail.kernel.org"
+        id S2388146AbfG2TeA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 15:34:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48280 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729402AbfG2Tdu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:33:50 -0400
+        id S2387979AbfG2Td4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:33:56 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 990542171F;
-        Mon, 29 Jul 2019 19:33:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0782821655;
+        Mon, 29 Jul 2019 19:33:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564428829;
-        bh=XhTA8PoUkzEYG4NqiODIrmkO834GvK3lKmU38uHhakc=;
+        s=default; t=1564428835;
+        bh=cAcRbMmQFhqZjfgA2FaeIp5lhOgqthVDL8dxEd5KDdU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rMHhqusw1EhMgrKWtihkdkRNarwcGT8p3eGNNYe//vtbl7mJAG7qePfEvqTWOZ3tX
-         nAPxtV9Q56ZK8pmgO2yA7jNsxnGjh0MUL5E6GAbrBqZUgwuaWCOHqf8xxCPwT6ReTX
-         YZA6zIuArRul3gGlG4AVhIRdImu/KfFUzc4gsABE=
+        b=cmZ1WlAJCKj8vWz6r89MnLUzcM8gkWw+gLSrLgUxGK/7V0vCNs77P8QLOrUVQvJd8
+         8fZj/Lwm31pOlzLyOEQjfr8jcBp4oIfmheM5anPfN+CRrTr7g9Q+JswyF1fn1IhawD
+         CeTRCLmlMYHz8Sa9zQM5uJnif4FTYRepZIh41hFE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Lawrence Brakmo <brakmo@fb.com>,
-        Neal Cardwell <ncardwell@google.com>,
+        stable@vger.kernel.org, Martin Weinelt <martin@linuxlounge.net>,
+        Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 200/293] tcp: fix tcp_set_congestion_control() use from bpf hook
-Date:   Mon, 29 Jul 2019 21:21:31 +0200
-Message-Id: <20190729190839.809665460@linuxfoundation.org>
+Subject: [PATCH 4.14 202/293] net: bridge: mcast: fix stale nsrcs pointer in igmp3/mld2 report handling
+Date:   Mon, 29 Jul 2019 21:21:33 +0200
+Message-Id: <20190729190839.960985249@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190729190820.321094988@linuxfoundation.org>
 References: <20190729190820.321094988@linuxfoundation.org>
@@ -45,103 +44,173 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Dumazet <edumazet@google.com>
+From: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
 
-[ Upstream commit 8d650cdedaabb33e85e9b7c517c0c71fcecc1de9 ]
+[ Upstream commit e57f61858b7cf478ed6fa23ed4b3876b1c9625c4 ]
 
-Neal reported incorrect use of ns_capable() from bpf hook.
+We take a pointer to grec prior to calling pskb_may_pull and use it
+afterwards to get nsrcs so record nsrcs before the pull when handling
+igmp3 and we get a pointer to nsrcs and call pskb_may_pull when handling
+mld2 which again could lead to reading 2 bytes out-of-bounds.
 
-bpf_setsockopt(...TCP_CONGESTION...)
-  -> tcp_set_congestion_control()
-   -> ns_capable(sock_net(sk)->user_ns, CAP_NET_ADMIN)
-    -> ns_capable_common()
-     -> current_cred()
-      -> rcu_dereference_protected(current->cred, 1)
+ ==================================================================
+ BUG: KASAN: use-after-free in br_multicast_rcv+0x480c/0x4ad0 [bridge]
+ Read of size 2 at addr ffff8880421302b4 by task ksoftirqd/1/16
 
-Accessing 'current' in bpf context makes no sense, since packets
-are processed from softirq context.
+ CPU: 1 PID: 16 Comm: ksoftirqd/1 Tainted: G           OE     5.2.0-rc6+ #1
+ Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
+ Call Trace:
+  dump_stack+0x71/0xab
+  print_address_description+0x6a/0x280
+  ? br_multicast_rcv+0x480c/0x4ad0 [bridge]
+  __kasan_report+0x152/0x1aa
+  ? br_multicast_rcv+0x480c/0x4ad0 [bridge]
+  ? br_multicast_rcv+0x480c/0x4ad0 [bridge]
+  kasan_report+0xe/0x20
+  br_multicast_rcv+0x480c/0x4ad0 [bridge]
+  ? br_multicast_disable_port+0x150/0x150 [bridge]
+  ? ktime_get_with_offset+0xb4/0x150
+  ? __kasan_kmalloc.constprop.6+0xa6/0xf0
+  ? __netif_receive_skb+0x1b0/0x1b0
+  ? br_fdb_update+0x10e/0x6e0 [bridge]
+  ? br_handle_frame_finish+0x3c6/0x11d0 [bridge]
+  br_handle_frame_finish+0x3c6/0x11d0 [bridge]
+  ? br_pass_frame_up+0x3a0/0x3a0 [bridge]
+  ? virtnet_probe+0x1c80/0x1c80 [virtio_net]
+  br_handle_frame+0x731/0xd90 [bridge]
+  ? select_idle_sibling+0x25/0x7d0
+  ? br_handle_frame_finish+0x11d0/0x11d0 [bridge]
+  __netif_receive_skb_core+0xced/0x2d70
+  ? virtqueue_get_buf_ctx+0x230/0x1130 [virtio_ring]
+  ? do_xdp_generic+0x20/0x20
+  ? virtqueue_napi_complete+0x39/0x70 [virtio_net]
+  ? virtnet_poll+0x94d/0xc78 [virtio_net]
+  ? receive_buf+0x5120/0x5120 [virtio_net]
+  ? __netif_receive_skb_one_core+0x97/0x1d0
+  __netif_receive_skb_one_core+0x97/0x1d0
+  ? __netif_receive_skb_core+0x2d70/0x2d70
+  ? _raw_write_trylock+0x100/0x100
+  ? __queue_work+0x41e/0xbe0
+  process_backlog+0x19c/0x650
+  ? _raw_read_lock_irq+0x40/0x40
+  net_rx_action+0x71e/0xbc0
+  ? __switch_to_asm+0x40/0x70
+  ? napi_complete_done+0x360/0x360
+  ? __switch_to_asm+0x34/0x70
+  ? __switch_to_asm+0x40/0x70
+  ? __schedule+0x85e/0x14d0
+  __do_softirq+0x1db/0x5f9
+  ? takeover_tasklets+0x5f0/0x5f0
+  run_ksoftirqd+0x26/0x40
+  smpboot_thread_fn+0x443/0x680
+  ? sort_range+0x20/0x20
+  ? schedule+0x94/0x210
+  ? __kthread_parkme+0x78/0xf0
+  ? sort_range+0x20/0x20
+  kthread+0x2ae/0x3a0
+  ? kthread_create_worker_on_cpu+0xc0/0xc0
+  ret_from_fork+0x35/0x40
 
-As Neal stated : The capability check in tcp_set_congestion_control()
-was written assuming a system call context, and then was reused from
-a BPF call site.
+ The buggy address belongs to the page:
+ page:ffffea0001084c00 refcount:0 mapcount:-128 mapping:0000000000000000 index:0x0
+ flags: 0xffffc000000000()
+ raw: 00ffffc000000000 ffffea0000cfca08 ffffea0001098608 0000000000000000
+ raw: 0000000000000000 0000000000000003 00000000ffffff7f 0000000000000000
+ page dumped because: kasan: bad access detected
 
-The fix is to add a new parameter to tcp_set_congestion_control(),
-so that the ns_capable() call is only performed under the right
-context.
+ Memory state around the buggy address:
+ ffff888042130180: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+ ffff888042130200: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+ > ffff888042130280: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+                                     ^
+ ffff888042130300: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+ ffff888042130380: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+ ==================================================================
+ Disabling lock debugging due to kernel taint
 
-Fixes: 91b5b21c7c16 ("bpf: Add support for changing congestion control")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Cc: Lawrence Brakmo <brakmo@fb.com>
-Reported-by: Neal Cardwell <ncardwell@google.com>
-Acked-by: Neal Cardwell <ncardwell@google.com>
-Acked-by: Lawrence Brakmo <brakmo@fb.com>
+Fixes: bc8c20acaea1 ("bridge: multicast: treat igmpv3 report with INCLUDE and no sources as a leave")
+Reported-by: Martin Weinelt <martin@linuxlounge.net>
+Signed-off-by: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+Tested-by: Martin Weinelt <martin@linuxlounge.net>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/net/tcp.h   |    3 ++-
- net/core/filter.c   |    3 ++-
- net/ipv4/tcp.c      |    4 +++-
- net/ipv4/tcp_cong.c |    6 +++---
- 4 files changed, 10 insertions(+), 6 deletions(-)
+ net/bridge/br_multicast.c |   27 ++++++++++++++++-----------
+ 1 file changed, 16 insertions(+), 11 deletions(-)
 
---- a/include/net/tcp.h
-+++ b/include/net/tcp.h
-@@ -1043,7 +1043,8 @@ void tcp_get_default_congestion_control(
- void tcp_get_available_congestion_control(char *buf, size_t len);
- void tcp_get_allowed_congestion_control(char *buf, size_t len);
- int tcp_set_allowed_congestion_control(char *allowed);
--int tcp_set_congestion_control(struct sock *sk, const char *name, bool load, bool reinit);
-+int tcp_set_congestion_control(struct sock *sk, const char *name, bool load,
-+			       bool reinit, bool cap_net_admin);
- u32 tcp_slow_start(struct tcp_sock *tp, u32 acked);
- void tcp_cong_avoid_ai(struct tcp_sock *tp, u32 w, u32 acked);
+--- a/net/bridge/br_multicast.c
++++ b/net/bridge/br_multicast.c
+@@ -1120,6 +1120,7 @@ static int br_ip4_multicast_igmp3_report
+ 	int type;
+ 	int err = 0;
+ 	__be32 group;
++	u16 nsrcs;
  
---- a/net/core/filter.c
-+++ b/net/core/filter.c
-@@ -3122,7 +3122,8 @@ BPF_CALL_5(bpf_setsockopt, struct bpf_so
- 			strncpy(name, optval, min_t(long, optlen,
- 						    TCP_CA_NAME_MAX-1));
- 			name[TCP_CA_NAME_MAX-1] = 0;
--			ret = tcp_set_congestion_control(sk, name, false, reinit);
-+			ret = tcp_set_congestion_control(sk, name, false,
-+							 reinit, true);
+ 	ih = igmpv3_report_hdr(skb);
+ 	num = ntohs(ih->ngrec);
+@@ -1133,8 +1134,9 @@ static int br_ip4_multicast_igmp3_report
+ 		grec = (void *)(skb->data + len - sizeof(*grec));
+ 		group = grec->grec_mca;
+ 		type = grec->grec_type;
++		nsrcs = ntohs(grec->grec_nsrcs);
+ 
+-		len += ntohs(grec->grec_nsrcs) * 4;
++		len += nsrcs * 4;
+ 		if (!pskb_may_pull(skb, len))
+ 			return -EINVAL;
+ 
+@@ -1155,7 +1157,7 @@ static int br_ip4_multicast_igmp3_report
+ 		src = eth_hdr(skb)->h_source;
+ 		if ((type == IGMPV3_CHANGE_TO_INCLUDE ||
+ 		     type == IGMPV3_MODE_IS_INCLUDE) &&
+-		    ntohs(grec->grec_nsrcs) == 0) {
++		    nsrcs == 0) {
+ 			br_ip4_multicast_leave_group(br, port, group, vid, src);
  		} else {
- 			struct tcp_sock *tp = tcp_sk(sk);
+ 			err = br_ip4_multicast_add_group(br, port, group, vid,
+@@ -1190,23 +1192,26 @@ static int br_ip6_multicast_mld2_report(
+ 	len = skb_transport_offset(skb) + sizeof(*icmp6h);
  
---- a/net/ipv4/tcp.c
-+++ b/net/ipv4/tcp.c
-@@ -2500,7 +2500,9 @@ static int do_tcp_setsockopt(struct sock
- 		name[val] = 0;
+ 	for (i = 0; i < num; i++) {
+-		__be16 *nsrcs, _nsrcs;
++		__be16 *_nsrcs, __nsrcs;
++		u16 nsrcs;
  
- 		lock_sock(sk);
--		err = tcp_set_congestion_control(sk, name, true, true);
-+		err = tcp_set_congestion_control(sk, name, true, true,
-+						 ns_capable(sock_net(sk)->user_ns,
-+							    CAP_NET_ADMIN));
- 		release_sock(sk);
- 		return err;
- 	}
---- a/net/ipv4/tcp_cong.c
-+++ b/net/ipv4/tcp_cong.c
-@@ -338,7 +338,8 @@ out:
-  * tcp_reinit_congestion_control (if the current congestion control was
-  * already initialized.
-  */
--int tcp_set_congestion_control(struct sock *sk, const char *name, bool load, bool reinit)
-+int tcp_set_congestion_control(struct sock *sk, const char *name, bool load,
-+			       bool reinit, bool cap_net_admin)
- {
- 	struct inet_connection_sock *icsk = inet_csk(sk);
- 	const struct tcp_congestion_ops *ca;
-@@ -372,8 +373,7 @@ int tcp_set_congestion_control(struct so
+-		nsrcs = skb_header_pointer(skb,
+-					   len + offsetof(struct mld2_grec,
+-							  grec_nsrcs),
+-					   sizeof(_nsrcs), &_nsrcs);
+-		if (!nsrcs)
++		_nsrcs = skb_header_pointer(skb,
++					    len + offsetof(struct mld2_grec,
++							   grec_nsrcs),
++					    sizeof(__nsrcs), &__nsrcs);
++		if (!_nsrcs)
+ 			return -EINVAL;
+ 
++		nsrcs = ntohs(*_nsrcs);
++
+ 		if (!pskb_may_pull(skb,
+ 				   len + sizeof(*grec) +
+-				   sizeof(struct in6_addr) * ntohs(*nsrcs)))
++				   sizeof(struct in6_addr) * nsrcs))
+ 			return -EINVAL;
+ 
+ 		grec = (struct mld2_grec *)(skb->data + len);
+ 		len += sizeof(*grec) +
+-		       sizeof(struct in6_addr) * ntohs(*nsrcs);
++		       sizeof(struct in6_addr) * nsrcs;
+ 
+ 		/* We treat these as MLDv1 reports for now. */
+ 		switch (grec->grec_type) {
+@@ -1225,7 +1230,7 @@ static int br_ip6_multicast_mld2_report(
+ 		src = eth_hdr(skb)->h_source;
+ 		if ((grec->grec_type == MLD2_CHANGE_TO_INCLUDE ||
+ 		     grec->grec_type == MLD2_MODE_IS_INCLUDE) &&
+-		    ntohs(*nsrcs) == 0) {
++		    nsrcs == 0) {
+ 			br_ip6_multicast_leave_group(br, port, &grec->grec_mca,
+ 						     vid, src);
  		} else {
- 			err = -EBUSY;
- 		}
--	} else if (!((ca->flags & TCP_CONG_NON_RESTRICTED) ||
--		     ns_capable(sock_net(sk)->user_ns, CAP_NET_ADMIN))) {
-+	} else if (!((ca->flags & TCP_CONG_NON_RESTRICTED) || cap_net_admin)) {
- 		err = -EPERM;
- 	} else if (!try_module_get(ca->owner)) {
- 		err = -EBUSY;
 
 
