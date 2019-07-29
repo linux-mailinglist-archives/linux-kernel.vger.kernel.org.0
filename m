@@ -2,159 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BDECD791E5
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 19:19:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B638B791F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 19:20:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728172AbfG2RTe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 13:19:34 -0400
-Received: from outils.crapouillou.net ([89.234.176.41]:40900 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726601AbfG2RTd (ORCPT
+        id S1728585AbfG2RUc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 13:20:32 -0400
+Received: from mo4-p00-ob.smtp.rzone.de ([81.169.146.162]:31787 "EHLO
+        mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725934AbfG2RUb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 13:19:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1564420771; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=n8E4jxEmkny3KYi/27FNI9LuXpecTWt4GD8+XB/Ki9w=;
-        b=ld68ao2693if3y+5k9n2v4iD3Tr1wo1bSDYqyRtQDHGrjbRHNm7d9GIybz2nt4o9eaDwU8
-        rBzd0kmXRaz+ZaRywMxBbQbxdD8JPP/VqzC9w2NwU3ftcutP1d5G4iVUZ+TWOe0JqExRww
-        wohj74rYHgC/H7/SaegAykIc20AFXuc=
-Date:   Mon, 29 Jul 2019 13:19:14 -0400
-From:   Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH 1/4 v4] irqchip: Ingenic: Change interrupt handling form
- cascade to chained_irq.
-To:     Zhou Yanjie <zhouyanjie@zoho.com>
-Cc:     linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, robh+dt@kernel.org,
-        paul.burton@mips.com, tglx@linutronix.de, mark.rutland@arm.com,
-        jason@lakedaemon.net, marc.zyngier@arm.com
-Message-Id: <1564420754.6633.0@crapouillou.net>
-In-Reply-To: <1564335273-22931-2-git-send-email-zhouyanjie@zoho.com>
-References: <1548517123-60058-1-git-send-email-zhouyanjie@zoho.com>
-        <1564335273-22931-1-git-send-email-zhouyanjie@zoho.com>
-        <1564335273-22931-2-git-send-email-zhouyanjie@zoho.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Transfer-Encoding: quoted-printable
+        Mon, 29 Jul 2019 13:20:31 -0400
+X-Greylist: delayed 360 seconds by postgrey-1.27 at vger.kernel.org; Mon, 29 Jul 2019 13:20:29 EDT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1564420829;
+        s=strato-dkim-0002; d=schoebel-theuer.de;
+        h=Message-Id:Date:Subject:To:From:X-RZG-CLASS-ID:X-RZG-AUTH:From:
+        Subject:Sender;
+        bh=iMzsSmyHefLZA/P1kofSAbiRT9d3nYNPP5ssDRjmA50=;
+        b=PGWox2geMSB96NAXjV52cVSfmOigpRa6mZcEBjQodbgmdZz61b5BsdN3cK0PGG2t09
+        RDAY0gcM+mRkv/gq/qXRjvt3H7dpqbOf4RP0aAzaHvpfsXs8UXj0h96yB3Z7bDBRf8C2
+        2TK9WyyokEDSAJEtfo/Rh+LN4d69GlRjVpYx2eg8t52eM267QG3/QZ9OuBnTkw01ECdU
+        Yk3EtxPFscX4Lr4VDTGSNw3KftJadtQ7HwWk7JCSRzcx3sibA2uvOZwEBVddrxPl2kbi
+        VPASB413dFAisrKCf/9rdsGqM52VpKv6SFxDusDxNzznnZi+SIOcZZX3CaPO3oyYg4U7
+        AjuA==
+X-RZG-AUTH: ":OH8QVVOrc/CP6za/qRmbF3BWedPGA1vjs2e0bDjfg8SjapJoMy/ngEsCKWYOdqxseLQOewnkIF1PDSXJ"
+X-RZG-CLASS-ID: mo00
+Received: from schoebel-theuer.de
+        by smtp.strato.de (RZmta 44.24 DYNA|AUTH)
+        with ESMTPSA id e0059dv6THERHNu
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Mon, 29 Jul 2019 19:14:27 +0200 (CEST)
+From:   Thomas Schoebel-Theuer <tst@schoebel-theuer.de>
+To:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel@vger.kernel.org (open list:SCHEDULER)
+Subject: [PATCH] sched/wait: fix endless kthread loop at timeout
+Date:   Mon, 29 Jul 2019 19:14:26 +0200
+Message-Id: <20190729171427.6234-1-tst@schoebel-theuer.de>
+X-Mailer: git-send-email 2.12.3
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Zhou,
+From: Thomas Schoebel-Theuer <tst@1und1.de>
 
+Scenario, possible since kernel 4.11.x and later:
 
+1) kthread calls a waiting function with a timeout, and blocks.
+2) kthread_stop() is called by somebody else.
+3) The waiting condition does not change for a long time.
+4) Nothing happens => normally the timeout would be reached by the kthread.
 
-Le dim. 28 juil. 2019 =E0 13:34, Zhou Yanjie <zhouyanjie@zoho.com> a=20
-=E9crit :
-> The interrupt handling method is changed from old-style cascade to
-> chained_irq which is more appropriate. Also, it can process the
-> corner situation that more than one irq is coming to a single
-> chip at the same time.
->=20
-> Signed-off-by: Zhou Yanjie <zhouyanjie@zoho.com>
-> ---
->  drivers/irqchip/irq-ingenic.c | 37=20
-> +++++++++++++++++++++++--------------
->  1 file changed, 23 insertions(+), 14 deletions(-)
->=20
-> diff --git a/drivers/irqchip/irq-ingenic.c=20
-> b/drivers/irqchip/irq-ingenic.c
-> index f126255..49f7685 100644
-> --- a/drivers/irqchip/irq-ingenic.c
-> +++ b/drivers/irqchip/irq-ingenic.c
-> @@ -1,7 +1,7 @@
->  // SPDX-License-Identifier: GPL-2.0-or-later
->  /*
->   *  Copyright (C) 2009-2010, Lars-Peter Clausen <lars@metafoo.de>
-> - *  JZ4740 platform IRQ support
-> + *  Ingenic XBurst platform IRQ support
->   */
->=20
->  #include <linux/errno.h>
-> @@ -10,6 +10,7 @@
->  #include <linux/interrupt.h>
->  #include <linux/ioport.h>
->  #include <linux/irqchip.h>
-> +#include <linux/irqchip/chained_irq.h>
->  #include <linux/irqchip/ingenic.h>
->  #include <linux/of_address.h>
->  #include <linux/of_irq.h>
-> @@ -32,22 +33,34 @@ struct ingenic_intc_data {
->  #define JZ_REG_INTC_PENDING	0x10
->  #define CHIP_SIZE		0x20
->=20
-> -static irqreturn_t intc_cascade(int irq, void *data)
-> +static void ingenic_chained_handle_irq(struct irq_desc *desc)
->  {
-> -	struct ingenic_intc_data *intc =3D irq_get_handler_data(irq);
-> -	uint32_t irq_reg;
-> +	struct ingenic_intc_data *intc =3D irq_desc_get_handler_data(desc);
-> +	struct irq_chip *chip =3D irq_desc_get_chip(desc);
-> +	bool have_irq =3D false;
-> +	uint32_t pending;
->  	unsigned i;
->=20
-> +	chained_irq_enter(chip, desc);
->  	for (i =3D 0; i < intc->num_chips; i++) {
-> -		irq_reg =3D readl(intc->base + (i * CHIP_SIZE) +
-> +		pending =3D readl(intc->base + (i * CHIP_SIZE) +
->  				JZ_REG_INTC_PENDING);
-> -		if (!irq_reg)
-> +		if (!pending)
->  			continue;
->=20
-> -		generic_handle_irq(__fls(irq_reg) + (i * 32) + JZ4740_IRQ_BASE);
-> +		have_irq =3D true;
-> +		while (pending) {
-> +			int bit =3D __fls(pending);
+However, the && in wait_woken() now prevents any call to
+schedule_timeout().
 
-Use the for_each_set_bit() macro here, that will be simpler.
+As a consequence, the timeout value will never be decreased, resulting
+not only in never reaching the timeout, but also in an endless loop,
+burning the CPU in kernel mode.
 
+This fix ensures the following semantics: kthread_should_stop() is treated
+as equivalent to a timeout. This is beneficial because most users do not
+want to wait for the timeout, but to stop the kthread as soon as possible.
+It appears that this semantics was probably intended (otherwise the check
+is_kthread_should_stop() would not make much sense), but just went wrong
+due to the bug.
 
-> +
-> +			generic_handle_irq(bit + (i * 32) + JZ4740_IRQ_BASE);
-> +			pending &=3D ~BIT(bit);
-> +		}
->  	}
->=20
-> -	return IRQ_HANDLED;
-> +	if (!have_irq)
-> +		spurious_interrupt();
-> +
-> +	chained_irq_exit(chip, desc);
->  }
->=20
->  static void intc_irq_set_mask(struct irq_chip_generic *gc, uint32_t=20
-> mask)
-> @@ -70,11 +83,6 @@ void ingenic_intc_irq_resume(struct irq_data *data)
->  	intc_irq_set_mask(gc, gc->mask_cache);
->  }
->=20
-> -static struct irqaction intc_cascade_action =3D {
-> -	.handler =3D intc_cascade,
-> -	.name =3D "SoC intc cascade interrupt",
-> -};
-> -
->  static int __init ingenic_intc_of_init(struct device_node *node,
->  				       unsigned num_chips)
->  {
-> @@ -139,7 +147,8 @@ static int __init ingenic_intc_of_init(struct=20
-> device_node *node,
->  	if (!domain)
->  		pr_warn("unable to register IRQ domain\n");
->=20
-> -	setup_irq(parent_irq, &intc_cascade_action);
-> +	irq_set_chained_handler_and_data(parent_irq,
-> +					ingenic_chained_handle_irq, intc);
->  	return 0;
->=20
->  out_unmap_irq:
-> --
-> 2.7.4
+Here is an example, triggered by external kernel module MARS on a
+production kernel. However, the problem can be triggered by other
+kthreads and on newer kernels, and also in very different scenarios,
+not only during tcp_revcmsg().
 
-=
+In the following example, the kthread simply waits for network packets
+to arrive, but in the test scenario the network had been blocked
+underneath by a firewall rule in order to trigger the bug:
+
+Mar 08 07:40:08 icpu5133 kernel: watchdog: BUG: soft lockup - CPU#29 stuck for 23s! [mars_receiver8.:8139]
+Mar 08 07:40:08 icpu5133 kernel: Modules linked in: mars(-) ip6table_mangle ip6table_raw iptable_raw ip_set_bitmap_port xt_DSCP xt_multiport ip_set_hash_ip xt_own
+Mar 08 07:40:08 icpu5133 kernel: irq event stamp: 300719885
+Mar 08 07:40:08 icpu5133 kernel: hardirqs last  enabled at (300719883): [<ffffffff81bb96d0>] _raw_spin_unlock_irqrestore+0x3d/0x4f
+Mar 08 07:40:08 icpu5133 kernel: hardirqs last disabled at (300719885): [<ffffffff81c01a02>] apic_timer_interrupt+0x82/0x90
+Mar 08 07:40:08 icpu5133 kernel: softirqs last  enabled at (300719878): [<ffffffff819de0af>] lock_sock_nested+0x50/0x98
+Mar 08 07:40:08 icpu5133 kernel: softirqs last disabled at (300719884): [<ffffffff819df5f2>] release_sock+0x16/0xda
+Mar 08 07:40:08 icpu5133 kernel: CPU: 29 PID: 8139 Comm: mars_receiver8. Not tainted 4.14.104+ #121
+Mar 08 07:40:08 icpu5133 kernel: Hardware name: Dell Inc. PowerEdge R630/02C2CP, BIOS 2.5.5 08/16/2017
+Mar 08 07:40:08 icpu5133 kernel: task: ffff88bf82764fc0 task.stack: ffffc90012430000
+Mar 08 07:40:08 icpu5133 kernel: RIP: 0010:arch_local_irq_restore+0x2/0x8
+Mar 08 07:40:08 icpu5133 kernel: RSP: 0018:ffffc90012433b78 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff10
+Mar 08 07:40:08 icpu5133 kernel: RAX: 0000000000000000 RBX: ffff88bf82764fc0 RCX: 00000000fec792b4
+Mar 08 07:40:08 icpu5133 kernel: RDX: 00000000c18b50d3 RSI: 0000000000000000 RDI: 0000000000000246
+Mar 08 07:40:08 icpu5133 kernel: RBP: 0000000000000001 R08: 0000000000000001 R09: 0000000000000000
+Mar 08 07:40:08 icpu5133 kernel: R10: ffffc90012433b08 R11: ffffc90012433ba8 R12: 0000000000000246
+Mar 08 07:40:08 icpu5133 kernel: R13: ffffffff819df735 R14: 0000000000000001 R15: ffff88bf82765818
+Mar 08 07:40:08 icpu5133 kernel: FS:  0000000000000000(0000) GS:ffff88c05fb80000(0000) knlGS:0000000000000000
+Mar 08 07:40:08 icpu5133 kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+Mar 08 07:40:08 icpu5133 kernel: CR2: 000055abd12eb688 CR3: 000000000241e006 CR4: 00000000001606e0
+Mar 08 07:40:08 icpu5133 kernel: Call Trace:
+Mar 08 07:40:08 icpu5133 kernel:  lock_release+0x32f/0x33b
+Mar 08 07:40:08 icpu5133 kernel:  release_sock+0x90/0xda
+Mar 08 07:40:08 icpu5133 kernel:  sk_wait_data+0x7f/0x13f
+Mar 08 07:40:08 icpu5133 kernel:  ? prepare_to_wait_exclusive+0xc1/0xc1
+Mar 08 07:40:08 icpu5133 kernel:  tcp_recvmsg+0x4e6/0x91a
+Mar 08 07:40:08 icpu5133 kernel:  ? flush_signals+0x2b/0x6a
+Mar 08 07:40:08 icpu5133 kernel:  ? lock_acquire+0x20a/0x25a
+Mar 08 07:40:08 icpu5133 kernel:  inet_recvmsg+0x8d/0xc0
+Mar 08 07:40:08 icpu5133 kernel:  kernel_recvmsg+0x8f/0xaa
+Mar 08 07:40:08 icpu5133 kernel:  ? ___might_sleep+0xf2/0x256
+Mar 08 07:40:08 icpu5133 kernel:  mars_recv_raw+0x22a/0x4da [mars]
+Mar 08 07:40:08 icpu5133 kernel:  desc_recv_struct+0x40/0x375 [mars]
+Mar 08 07:40:08 icpu5133 kernel:  receiver_thread+0xa2/0x61a [mars]
+Mar 08 07:40:08 icpu5133 kernel:  ? _hash_insert+0x160/0x160 [mars]
+Mar 08 07:40:08 icpu5133 kernel:  ? kthread+0x1a6/0x1ae
+Mar 08 07:40:08 icpu5133 kernel:  kthread+0x1a6/0x1ae
+Mar 08 07:40:08 icpu5133 kernel:  ? __list_del_entry+0x60/0x60
+Mar 08 07:40:08 icpu5133 kernel:  ret_from_fork+0x3a/0x50
+Mar 08 07:40:08 icpu5133 kernel: Code: ee e8 c5 17 00 00 48 85 db 75 0e 31 f6 48 c7 c7 c0 5f 53 82 e8 68 b9 58 00 48 89 5b 58 58 5b 5d c3 9c 58 0f 1f 44 00 00 c3
+
+Signed-off-by: Thomas Schoebel-Theuer <tst@1und1.de>
+---
+ kernel/sched/wait.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/sched/wait.c b/kernel/sched/wait.c
+index c1e566a114ca..08f121154a91 100644
+--- a/kernel/sched/wait.c
++++ b/kernel/sched/wait.c
+@@ -412,8 +412,15 @@ long wait_woken(struct wait_queue_entry *wq_entry, unsigned mode, long timeout)
+ 	 * or woken_wake_function() sees our store to current->state.
+ 	 */
+ 	set_current_state(mode); /* A */
+-	if (!(wq_entry->flags & WQ_FLAG_WOKEN) && !is_kthread_should_stop())
+-		timeout = schedule_timeout(timeout);
++	if (!(wq_entry->flags & WQ_FLAG_WOKEN)) {
++		/*
++		 * Treat kthread stopping as equivalent to a timeout.
++		 */
++		if (is_kthread_should_stop())
++			timeout = 0;
++		else
++			timeout = schedule_timeout(timeout);
++	}
+ 	__set_current_state(TASK_RUNNING);
+ 
+ 	/*
+-- 
+2.12.3
 
