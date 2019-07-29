@@ -2,90 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D220787D8
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 10:58:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 829C2787DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 10:59:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727254AbfG2I6o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 04:58:44 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:34672 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727195AbfG2I6o (ORCPT
+        id S1727328AbfG2I7i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 04:59:38 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:42536 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726432AbfG2I7i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 04:58:44 -0400
-Received: by mail-lf1-f68.google.com with SMTP id b29so34247708lfq.1;
-        Mon, 29 Jul 2019 01:58:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=I1Kj7YUPvkqZu0AVoqLEWB0rMOmtYob12XhQjO3Ri6Q=;
-        b=cqvfLHPFUr5VxLj7mTj7MPXkdMQrlElRYzxTAKvcRGsHMjXI10VTKm4NlH9fEjQCX7
-         +HyrBLZh73kMWXuARtvgjMlo6mHSUe5xs+i/Jhy4EblsDE7sji2m1JzJ3oaeyt/EuFnb
-         mK0hJ18HHpmV3uHcNB5U6SBZc7ICPlwSSgwX5eQbHPsRuHa9PhFEJnjhPo29ufjn+mwK
-         REBtU646Guh/uerj6wz5DOsVddH3mBBhJ/5AGJO97VwAofsGZeelKO0q0Lemqj50c/Dz
-         nsneBBBi7xzaAPaX/70YoFTn0x2CY4K+SXJKHtxuWSOA8+6uFU4I2i+2HPZNAGKevH7s
-         fV4w==
+        Mon, 29 Jul 2019 04:59:38 -0400
+Received: by mail-qt1-f195.google.com with SMTP id h18so58897820qtm.9
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 01:59:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=I1Kj7YUPvkqZu0AVoqLEWB0rMOmtYob12XhQjO3Ri6Q=;
-        b=MgHmd4uYtFe8WB38OOp4+SUMj6T76r5U+PX7+WqTQePF+FWrZqlLYdvvtH9SbuxYff
-         RfHnvD+7JlYP/ogyZMlyCZRHI2Ny2wTd230B9EBwEMKWPFj0J5Wk616AdU0OlXXO09Ew
-         /WUOhJjegZbdXNouxW4CH3q+rW7xPRdeZmiEM00WYgppMc7pIGkLHTd+hsZY0Qa/Htfx
-         QYHyCh3fRXpLPd676/YpiXA5rr5Ldj/v6c4vXgNxb93YwMqfHDJq0a2tI6y736u0hCyl
-         a5Yb/g1uJHyUCLm5oJa1DqgcbAkeEn46kzTHmIwn7JxEh3S2wmbPuW5paej+s3LLeJn6
-         tVgw==
-X-Gm-Message-State: APjAAAXBZryT5ctImfqcZnTuRQsY2Nta8R30GPnHmVuSWY2ELajUXD5D
-        7Ak0m4er+tJAn+yHcGB4BqX6bjm2z3qPuUtD9/1iIA==
-X-Google-Smtp-Source: APXvYqwEYMRATv6hJXcp2sN2uBqY7MeCPBYc/cx7vGGCDzzL9FkPA8m7NHC3RC8RJW7yXkhUwM+YmkfaE0n50XYnM0E=
-X-Received: by 2002:a19:4349:: with SMTP id m9mr50210064lfj.64.1564390721868;
- Mon, 29 Jul 2019 01:58:41 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=Q68Dj7R63I2Ecvb2PPGzHjYhrCQecwVv+3ZzbHMtRrM=;
+        b=qas8u396FI0+gXYAvrXIYHISyvn/1Us62eFPlofRAeluIwUYnFOcCQKaXYJbYn0+J6
+         F2Xz3iNw142Xluz3SwI7R2WGVFhxfhCXOx9EOJ4iAb0BF3FEt47gCLR7zCWWaBr9FHw6
+         O91wFa5hvBD4++bJlS1oHJyMWkw1wA/yOtGV8UeABwLm/FDTh3AUNYKFG5DNTXKrAYZA
+         ydYONGim5rFxvsYu9iqO8ajoiYX6J1YdaFnyW2tJbnjKvAYd3BYakkhByn2QVVXVmBOZ
+         ttwXLlXBPQUP4UddkjftK6DKs6tO0w++TkRjfxrZAc0E0DBkA3N7yaYuhWRpGCuNW9fh
+         nzHw==
+X-Gm-Message-State: APjAAAVciAo62fiK1Vg6J8tNBNq9UfPkJaqy4OLy0SiO1yvOVSc0tblo
+        cBmT5OJfKf4WLkl3yrTD6jkt+Q==
+X-Google-Smtp-Source: APXvYqzdpBbLibFicHdiT5TefWqFoQxYcTCr3KhKgWnun67P5z4zFpu5Vd0tQv7j2SaN95sYflY5Ng==
+X-Received: by 2002:aed:39e7:: with SMTP id m94mr80555924qte.0.1564390777624;
+        Mon, 29 Jul 2019 01:59:37 -0700 (PDT)
+Received: from redhat.com (bzq-79-181-91-42.red.bezeqint.net. [79.181.91.42])
+        by smtp.gmail.com with ESMTPSA id z1sm27810714qke.122.2019.07.29.01.59.30
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 29 Jul 2019 01:59:36 -0700 (PDT)
+Date:   Mon, 29 Jul 2019 04:59:27 -0400
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     syzbot <syzbot+e58112d71f77113ddb7b@syzkaller.appspotmail.com>,
+        aarcange@redhat.com, akpm@linux-foundation.org,
+        christian@brauner.io, davem@davemloft.net, ebiederm@xmission.com,
+        elena.reshetova@intel.com, guro@fb.com, hch@infradead.org,
+        james.bottomley@hansenpartnership.com, jglisse@redhat.com,
+        keescook@chromium.org, ldv@altlinux.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-parisc@vger.kernel.org,
+        luto@amacapital.net, mhocko@suse.com, mingo@kernel.org,
+        namit@vmware.com, peterz@infradead.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
+        wad@chromium.org
+Subject: Re: WARNING in __mmdrop
+Message-ID: <20190729045127-mutt-send-email-mst@kernel.org>
+References: <84bb2e31-0606-adff-cf2a-e1878225a847@redhat.com>
+ <20190725092332-mutt-send-email-mst@kernel.org>
+ <11802a8a-ce41-f427-63d5-b6a4cf96bb3f@redhat.com>
+ <20190726074644-mutt-send-email-mst@kernel.org>
+ <5cc94f15-b229-a290-55f3-8295266edb2b@redhat.com>
+ <20190726082837-mutt-send-email-mst@kernel.org>
+ <ada10dc9-6cab-e189-5289-6f9d3ff8fed2@redhat.com>
+ <aaefa93e-a0de-1c55-feb0-509c87aae1f3@redhat.com>
+ <20190726094756-mutt-send-email-mst@kernel.org>
+ <0792ee09-b4b7-673c-2251-e5e0ce0fbe32@redhat.com>
 MIME-Version: 1.0
-References: <20190725104645.30642-1-vkuznets@redhat.com> <20190725104645.30642-2-vkuznets@redhat.com>
-In-Reply-To: <20190725104645.30642-2-vkuznets@redhat.com>
-From:   Jack Wang <jack.wang.usish@gmail.com>
-Date:   Mon, 29 Jul 2019 10:58:30 +0200
-Message-ID: <CA+res+RfqpT=g1QbCqr3OkHVzFFSAt3cfCYNcwqiemWmOifFxg@mail.gmail.com>
-Subject: Re: [PATCH stable-4.19 1/2] KVM: nVMX: do not use dangling shadow
- VMCS after guest reset
-To:     Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc:     stable@vger.kernel.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <0792ee09-b4b7-673c-2251-e5e0ce0fbe32@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Vitaly Kuznetsov <vkuznets@redhat.com> =E4=BA=8E2019=E5=B9=B47=E6=9C=8825=
-=E6=97=A5=E5=91=A8=E5=9B=9B =E4=B8=8B=E5=8D=883:29=E5=86=99=E9=81=93=EF=BC=
-=9A
->
-> From: Paolo Bonzini <pbonzini@redhat.com>
->
-> [ Upstream commit 88dddc11a8d6b09201b4db9d255b3394d9bc9e57 ]
->
-> If a KVM guest is reset while running a nested guest, free_nested will
-> disable the shadow VMCS execution control in the vmcs01.  However,
-> on the next KVM_RUN vmx_vcpu_run would nevertheless try to sync
-> the VMCS12 to the shadow VMCS which has since been freed.
->
-> This causes a vmptrld of a NULL pointer on my machime, but Jan reports
-> the host to hang altogether.  Let's see how much this trivial patch fixes=
-.
->
-> Reported-by: Jan Kiszka <jan.kiszka@siemens.com>
-> Cc: Liran Alon <liran.alon@oracle.com>
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+On Mon, Jul 29, 2019 at 01:54:49PM +0800, Jason Wang wrote:
+> 
+> On 2019/7/26 下午9:49, Michael S. Tsirkin wrote:
+> > > > Ok, let me retry if necessary (but I do remember I end up with deadlocks
+> > > > last try).
+> > > Ok, I play a little with this. And it works so far. Will do more testing
+> > > tomorrow.
+> > > 
+> > > One reason could be I switch to use get_user_pages_fast() to
+> > > __get_user_pages_fast() which doesn't need mmap_sem.
+> > > 
+> > > Thanks
+> > OK that sounds good. If we also set a flag to make
+> > vhost_exceeds_weight exit, then I think it will be all good.
+> 
+> 
+> After some experiments, I came up two methods:
+> 
+> 1) switch to use vq->mutex, then we must take the vq lock during range
+> checking (but I don't see obvious slowdown for 16vcpus + 16queues). Setting
+> flags during weight check should work but it still can't address the worst
+> case: wait for the page to be swapped in. Is this acceptable?
+> 
+> 2) using current RCU but replace synchronize_rcu() with vhost_work_flush().
+> The worst case is the same as 1) but we can check range without holding any
+> locks.
+> 
+> Which one did you prefer?
+> 
+> Thanks
 
-Hi all,
+I would rather we start with 1 and switch to 2 after we
+can show some gain.
 
-Do we need to backport the fix also to stable 4.14?  It applies
-cleanly and compiles fine.
+But the worst case needs to be addressed.  How about sending a signal to
+the vhost thread?  We will need to fix up error handling (I think that
+at the moment it will error out in that case, handling this as EFAULT -
+and we don't want to drop packets if we can help it, and surely not
+enter any error states.  In particular it might be especially tricky if
+we wrote into userspace memory and are now trying to log the write.
+I guess we can disable the optimization if log is enabled?).
 
-Regards,
-Jack Wang
+-- 
+MST
