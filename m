@@ -2,77 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6448D783BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 05:54:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D4F8783BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 05:54:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726574AbfG2DyN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 28 Jul 2019 23:54:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53320 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726134AbfG2DyM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 28 Jul 2019 23:54:12 -0400
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6826B21655
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 03:54:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564372451;
-        bh=2tQuQHTnu/mJjklJUZsHAQI0kaAk3Bi3c79GlFJnet8=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=LjpAREuKb+1hbftFyPqNYMkp3woKKhr2b/xHD86G8/XOG2/HqU20ZDei2Za6qUDjv
-         NhliTYYQuvTUzRx4lCxBkS5glhuezc4dly9I6qeEzB/jVlMy2YtxpcECvflyiAxD85
-         gIKr07F+OCIx3PUpjCdjeuBZ/ArPjmebpT5OSlyU=
-Received: by mail-wr1-f41.google.com with SMTP id f9so60112048wre.12
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2019 20:54:11 -0700 (PDT)
-X-Gm-Message-State: APjAAAVQWFCN3AUhhPp/DZCeLej0xx+52vIO3SDcmYO1NkeITZWNhzaK
-        kFZCM+O3ckWYtDVmSGQJPhWfZ+WxjXPYXMAlgCQgmQ==
-X-Google-Smtp-Source: APXvYqx9kG3JhSn4ejzWbB2Y6ZZXlzbRvrHqILc4LGopmKRBvxtYUVZM7ewWknjCh0gGn94azjkdPJGXhhbOHIAqf6Q=
-X-Received: by 2002:adf:f28a:: with SMTP id k10mr39238424wro.343.1564372449880;
- Sun, 28 Jul 2019 20:54:09 -0700 (PDT)
+        id S1726441AbfG2DyH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 28 Jul 2019 23:54:07 -0400
+Received: from mail-pf1-f169.google.com ([209.85.210.169]:32885 "EHLO
+        mail-pf1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726134AbfG2DyG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 28 Jul 2019 23:54:06 -0400
+Received: by mail-pf1-f169.google.com with SMTP id g2so27276669pfq.0
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2019 20:54:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:subject:to:cc:message-id:date:user-agent:mime-version
+         :content-transfer-encoding:content-language;
+        bh=8PRy5r0RLK0DMjkOaMUsvRFz+2ENwpqQIfeTXdyxYK0=;
+        b=Ya4JdOTtk+x6/WCvUjb2tHR2eBqA9nEE7GaNgrR9Cvp3n4aNQiBKTO/KUreWTbnn+I
+         MTw4x1ddRkXHwAKdh8LnjiCPvxOcHgL+YAZPVlKrrtTOjqXGQpGyJmbSiojE4I3VeEsJ
+         XFdtruFZadpL1WH+7cgoJoaEDiYNoHjhklqRZ2XXh7sNfA/aD3hmU63YIU76FHfEWGTW
+         NRAga2YcRMPVlu8PRBmHMG/aMnb571NUgr/oUgLjVDwinjlx57p8GKlm0NtElrS8G8dd
+         GeIDFa6sNLkG5/q22rnueLxVheiqt9kPwgzU1SScz5K3Xg3PCNUz5Ulst/Ob3zmUqgSh
+         8/WQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:subject:to:cc:message-id:date:user-agent
+         :mime-version:content-transfer-encoding:content-language;
+        bh=8PRy5r0RLK0DMjkOaMUsvRFz+2ENwpqQIfeTXdyxYK0=;
+        b=ZDzYGzRIzpzVh6b1MrKWwn5gy3Gya/Wi7EKwA0lj4poRg9nEn1gRffLT2paIoN+tUf
+         M90xB2lg4xCDVJvFB7yWsLv2+RROUOYEOMRUz8sj/C7R7itYPYJbtjzeGKLRDJ1gulqO
+         +P5RVXsTAGa+IU5V10UWPRT8mnBnk2B4nSejNkMkkFgfN7bA6HwCBSSucTD/gNhff6I0
+         XRwjKj9MtzaE8FEcors8il14nv1DZZAqt/4F4I8Hxe/nN2nVM52I9PoWOoGwrh4sagAy
+         BZQSVXZdkPuzg14QN75mzDWclGNh1Vbgbwg+a0n606F8BMHWwagdbeeJyilOOKPNMMAt
+         vm3w==
+X-Gm-Message-State: APjAAAW+yzWC79RT9maXEcxYq/dHNWF+buiLPUGoHWggOnHq39QQWGzW
+        95+VcPeM7PVzdoAH6qX1EVRyeRcCrVw=
+X-Google-Smtp-Source: APXvYqzaSZlyNwojCKSRH77jCfkI7OwlkitSUcLjmx4okU8a8s+2C+PeVVqlmMNMzjcULr3fyy8JsQ==
+X-Received: by 2002:a65:5183:: with SMTP id h3mr9557074pgq.250.1564372446085;
+        Sun, 28 Jul 2019 20:54:06 -0700 (PDT)
+Received: from ?IPv6:2402:f000:4:72:808::177e? ([2402:f000:4:72:808::177e])
+        by smtp.gmail.com with ESMTPSA id p26sm5438031pgl.64.2019.07.28.20.54.03
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 28 Jul 2019 20:54:05 -0700 (PDT)
+From:   Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [BUG] ALSA: core: seq: a possible double-lock bug in
+ snd_seq_midisynth_remove()
+To:     perex@perex.cz, Takashi Iwai <tiwai@suse.de>,
+        gregkh@linuxfoundation.org, rfontana@redhat.com,
+        allison@lohutok.net, tglx@linutronix.de
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+Message-ID: <50b3b4c4-fe36-8c65-345b-f0a51193726c@gmail.com>
+Date:   Mon, 29 Jul 2019 11:54:07 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <20190729015933.18049-1-dja@axtens.net>
-In-Reply-To: <20190729015933.18049-1-dja@axtens.net>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Sun, 28 Jul 2019 20:53:58 -0700
-X-Gmail-Original-Message-ID: <CALCETrX_+_zT8iKp9QMpaN0+NPS9_rmhZvPgG=ejN-5KkBbfdQ@mail.gmail.com>
-Message-ID: <CALCETrX_+_zT8iKp9QMpaN0+NPS9_rmhZvPgG=ejN-5KkBbfdQ@mail.gmail.com>
-Subject: Re: [PATCH] x86: panic when a kernel stack overflow is detected
-To:     Daniel Axtens <dja@axtens.net>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     kasan-dev <kasan-dev@googlegroups.com>, X86 ML <x86@kernel.org>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Andrew Lutomirski <luto@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Marco Elver <elver@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jul 28, 2019 at 6:59 PM Daniel Axtens <dja@axtens.net> wrote:
->
-> Currently, when a kernel stack overflow is detected via VMAP_STACK,
-> the task is killed with die().
->
-> This isn't safe, because we don't know how that process has affected
-> kernel state. In particular, we don't know what locks have been taken.
-> For example, we can hit a case with lkdtm where a thread takes a
-> stack overflow in printk() after taking the logbuf_lock. In that case,
-> we deadlock when the kernel next does a printk.
->
-> Do not attempt to kill the process when a kernel stack overflow is
-> detected. The system state is unknown, the only safe thing to do is
-> panic(). (panic() also prints without taking locks so a useful debug
-> splat is printed even when logbuf_lock is held.)
+In snd_seq_midisynth_remove(), there is a possible double-lock bug:
+snd_seq_midisynth_remove()
+     mutex_lock(&register_mutex); -- line 421
+     snd_seq_delete_kernel_client() --- line 436
+         seq_free_client() -- line 2244
+             mutex_lock(&register_mutex); -- line 294
 
-The thing I don't like about this is that it reduces the chance that
-we successfully log anything to disk.
+This bug is found by a static analysis tool STCheck written by us.
 
-PeterZ, do you have any useful input here?  I wonder if we could do
-something like printk_oh_crap() that is just printk() except that it
-panics if it fails to return after a few seconds.
+I do not know how to correctly fix this bug, so I only report it.
+A possible fix is to release the mutex lock before calling 
+seq_free_client() in snd_seq_delete_kernel_client() and then acquiring 
+the lock again after calling seq_free_client().
 
---Andy
+
+Best wishes,
+Jia-Ju Bai
