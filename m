@@ -2,149 +2,217 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B638B791F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 19:20:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B77179205
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 19:24:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728585AbfG2RUc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 13:20:32 -0400
-Received: from mo4-p00-ob.smtp.rzone.de ([81.169.146.162]:31787 "EHLO
-        mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725934AbfG2RUb (ORCPT
+        id S1728773AbfG2RYX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 13:24:23 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:46825 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725934AbfG2RYX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 13:20:31 -0400
-X-Greylist: delayed 360 seconds by postgrey-1.27 at vger.kernel.org; Mon, 29 Jul 2019 13:20:29 EDT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1564420829;
-        s=strato-dkim-0002; d=schoebel-theuer.de;
-        h=Message-Id:Date:Subject:To:From:X-RZG-CLASS-ID:X-RZG-AUTH:From:
-        Subject:Sender;
-        bh=iMzsSmyHefLZA/P1kofSAbiRT9d3nYNPP5ssDRjmA50=;
-        b=PGWox2geMSB96NAXjV52cVSfmOigpRa6mZcEBjQodbgmdZz61b5BsdN3cK0PGG2t09
-        RDAY0gcM+mRkv/gq/qXRjvt3H7dpqbOf4RP0aAzaHvpfsXs8UXj0h96yB3Z7bDBRf8C2
-        2TK9WyyokEDSAJEtfo/Rh+LN4d69GlRjVpYx2eg8t52eM267QG3/QZ9OuBnTkw01ECdU
-        Yk3EtxPFscX4Lr4VDTGSNw3KftJadtQ7HwWk7JCSRzcx3sibA2uvOZwEBVddrxPl2kbi
-        VPASB413dFAisrKCf/9rdsGqM52VpKv6SFxDusDxNzznnZi+SIOcZZX3CaPO3oyYg4U7
-        AjuA==
-X-RZG-AUTH: ":OH8QVVOrc/CP6za/qRmbF3BWedPGA1vjs2e0bDjfg8SjapJoMy/ngEsCKWYOdqxseLQOewnkIF1PDSXJ"
-X-RZG-CLASS-ID: mo00
-Received: from schoebel-theuer.de
-        by smtp.strato.de (RZmta 44.24 DYNA|AUTH)
-        with ESMTPSA id e0059dv6THERHNu
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Mon, 29 Jul 2019 19:14:27 +0200 (CEST)
-From:   Thomas Schoebel-Theuer <tst@schoebel-theuer.de>
-To:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-kernel@vger.kernel.org (open list:SCHEDULER)
-Subject: [PATCH] sched/wait: fix endless kthread loop at timeout
-Date:   Mon, 29 Jul 2019 19:14:26 +0200
-Message-Id: <20190729171427.6234-1-tst@schoebel-theuer.de>
-X-Mailer: git-send-email 2.12.3
+        Mon, 29 Jul 2019 13:24:23 -0400
+Received: by mail-oi1-f196.google.com with SMTP id 65so45817127oid.13
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 10:24:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=H82CfpsAPxY1U4pICmy55gvPsfNE9tQu1bS2v8fGtDA=;
+        b=hoTHoIe4KGfmjmWVbXeqcu2ZFyS3273iHszAwfnIijiaVLSvzliPZa86nMrhXe87ux
+         CM9hn8aYM4If4h+4Y5c+mJIJPpVFX9SWC1i6+xlBF4Zh0SSzpQ+XZcijD1FopSIEGbym
+         591+5DcB+Ute2WaU7H+qDuSLslk2Ga15lHChI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=H82CfpsAPxY1U4pICmy55gvPsfNE9tQu1bS2v8fGtDA=;
+        b=NLqaubugzmHXQHBNILfEpGhSbWvl6RnocxmvPPtwvIwaEzGCn9K5U1TWNdAtTmPEyO
+         tJ1ouI9sNnl9kP8UQzF79ZXFoyzrw8DhMEEjU8HSvMelVisiMrzZmvIm9lMIxvy1WYdw
+         Jf18flGlKNDxUO1y4AjdjowzMOZBUXo4Z1fK4p+lFEGCBlZvRBileQv8kZ2/PERMv0zy
+         PQZ2eXDtVIZnD54yU+jiG3Xlup6D89iBU4vTXexvXfrcCVspvgkczw4LClOL8a9MwBoU
+         C+x1/IzllmZrEdfH1KkZLD9ZlUL96nLlZud2j1eePFIgYb57l5ckzGaC0KgFEgCOMYSL
+         QvTw==
+X-Gm-Message-State: APjAAAWZfZXh+29QG8gvgoGhiTEVhTw6YsxBXUDZQYjn9YjcWVVyVxXv
+        qD44T6D9H+cXrVKJvj+QKsuY0wQD8gU=
+X-Google-Smtp-Source: APXvYqxog5fGbN+fubJAkodyuav6j8Qij8fX9NSX8oeh3MZLnhd+UgLp0CKXp/N8D4xP60LuCekZ7Q==
+X-Received: by 2002:aca:191a:: with SMTP id l26mr55459766oii.4.1564421061784;
+        Mon, 29 Jul 2019 10:24:21 -0700 (PDT)
+Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com. [209.85.210.52])
+        by smtp.gmail.com with ESMTPSA id s82sm22050261oie.40.2019.07.29.10.24.21
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Mon, 29 Jul 2019 10:24:21 -0700 (PDT)
+Received: by mail-ot1-f52.google.com with SMTP id x21so24902270otq.12
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 10:24:21 -0700 (PDT)
+X-Received: by 2002:a9d:19cd:: with SMTP id k71mr48832659otk.351.1564420662376;
+ Mon, 29 Jul 2019 10:17:42 -0700 (PDT)
+MIME-Version: 1.0
+References: <1564387659-62064-1-git-send-email-rtresidd@electromag.com.au>
+In-Reply-To: <1564387659-62064-1-git-send-email-rtresidd@electromag.com.au>
+From:   Nick Crews <ncrews@chromium.org>
+Date:   Mon, 29 Jul 2019 11:17:31 -0600
+X-Gmail-Original-Message-ID: <CAHX4x86Afz2BXG476sVNNc4QP8jdO7F7n0QXqAG5+hRDwAAQGg@mail.gmail.com>
+Message-ID: <CAHX4x86Afz2BXG476sVNNc4QP8jdO7F7n0QXqAG5+hRDwAAQGg@mail.gmail.com>
+Subject: Re: [PATCH v3 1/1] power/supply/sbs-battery: Fix confusing battery
+ status when idle or empty
+To:     Richard Tresidder <rtresidd@electromag.com.au>
+Cc:     Sebastian Reichel <sre@kernel.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        andrew.smirnov@gmail.com, Guenter Roeck <groeck@chromium.org>,
+        david@lechnology.com, Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        rfontana@redhat.com, allison@lohutok.net,
+        Baolin Wang <baolin.wang@linaro.org>, linux-pm@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Schoebel-Theuer <tst@1und1.de>
+On Mon, Jul 29, 2019 at 2:07 AM Richard Tresidder
+<rtresidd@electromag.com.au> wrote:
+>
+> When a battery or batteries in a system are in parallel then one or more
+> may not be providing any current to the system.
+> This fixes an incorrect status indication of FULL for the battery simply
+> because it wasn't discharging at that point in time.
+> The battery will now be flagged as NOT CHARGING.
+> Have also added the additional check for the battery FULL DISCHARGED flag
+> which will now flag a status of EMPTY.
+>
+> Signed-off-by: Richard Tresidder <rtresidd@electromag.com.au>
+> ---
+>
+> Notes:
+>     power/supply/sbs-battery: Fix confusing battery status when idle or empty
+>
+>     When a battery or batteries in a system are in parallel then one or more
+>     may not be providing any current to the system.
+>     This fixes an incorrect status indication of FULL for the battery simply
+>     because it wasn't discharging at that point in time.
+>     The battery will now be flagged as NOT CHARGING.
+>     Have also added the additional check for the battery FULL DISCHARGED flag
+>     which will now flag a status of EMPTY.
+>
+>     v2: Missed a later merge that should have been included in original patch
+>     v3: Refactor the sbs_status_correct function to capture all the states for
+>         normal operation rather than being spread across multile functions.
+>
+>  drivers/power/supply/power_supply_sysfs.c |  2 +-
+>  drivers/power/supply/sbs-battery.c        | 44 +++++++++++--------------------
+>  include/linux/power_supply.h              |  1 +
+>  3 files changed, 18 insertions(+), 29 deletions(-)
+>
+> diff --git a/drivers/power/supply/power_supply_sysfs.c b/drivers/power/supply/power_supply_sysfs.c
+> index f37ad4e..305e833 100644
+> --- a/drivers/power/supply/power_supply_sysfs.c
+> +++ b/drivers/power/supply/power_supply_sysfs.c
+> @@ -51,7 +51,7 @@
+>  };
+>
+>  static const char * const power_supply_status_text[] = {
+> -       "Unknown", "Charging", "Discharging", "Not charging", "Full"
+> +       "Unknown", "Charging", "Discharging", "Not charging", "Full", "Empty"
+>  };
+>
+>  static const char * const power_supply_charge_type_text[] = {
+> diff --git a/drivers/power/supply/sbs-battery.c b/drivers/power/supply/sbs-battery.c
+> index 048d205..b28402d 100644
+> --- a/drivers/power/supply/sbs-battery.c
+> +++ b/drivers/power/supply/sbs-battery.c
+> @@ -293,16 +293,18 @@ static int sbs_status_correct(struct i2c_client *client, int *intval)
 
-Scenario, possible since kernel 4.11.x and later:
+sbs_status_correct() sounds like it is checking for a condition. Change
+to sbs_correct_status() or sbs_correct_battery_status() to imply that it
+is performing an action. Also, change "intval" to "status"?
 
-1) kthread calls a waiting function with a timeout, and blocks.
-2) kthread_stop() is called by somebody else.
-3) The waiting condition does not change for a long time.
-4) Nothing happens => normally the timeout would be reached by the kthread.
+>
+>         ret = (s16)ret;
+>
+> -       /* Not drawing current means full (cannot be not charging) */
+> -       if (ret == 0)
+> -               *intval = POWER_SUPPLY_STATUS_FULL;
+> -
+> -       if (*intval == POWER_SUPPLY_STATUS_FULL) {
+> -               /* Drawing or providing current when full */
+> -               if (ret > 0)
+> -                       *intval = POWER_SUPPLY_STATUS_CHARGING;
+> -               else if (ret < 0)
+> -                       *intval = POWER_SUPPLY_STATUS_DISCHARGING;
+> +       if (ret > 0)
+> +               *intval = POWER_SUPPLY_STATUS_CHARGING;
+> +       else if (ret < 0)
+> +               *intval = POWER_SUPPLY_STATUS_DISCHARGING;
+> +       else {
+> +               /* Current is 0, so how full is the battery? */
+> +               if (*intval & BATTERY_FULL_CHARGED)
+> +                       *intval = POWER_SUPPLY_STATUS_FULL;
+> +               else if (*intval & BATTERY_FULL_DISCHARGED)
+> +                       *intval = POWER_SUPPLY_STATUS_EMPTY;
+> +               else
+> +                       *intval = POWER_SUPPLY_STATUS_NOT_CHARGING;
 
-However, the && in wait_woken() now prevents any call to
-schedule_timeout().
+This will cause some behavior changes for users. Can we get the opinion
+of someone familiar with the users of this driver as to whether this is OK?
 
-As a consequence, the timeout value will never be decreased, resulting
-not only in never reaching the timeout, but also in an endless loop,
-burning the CPU in kernel mode.
-
-This fix ensures the following semantics: kthread_should_stop() is treated
-as equivalent to a timeout. This is beneficial because most users do not
-want to wait for the timeout, but to stop the kthread as soon as possible.
-It appears that this semantics was probably intended (otherwise the check
-is_kthread_should_stop() would not make much sense), but just went wrong
-due to the bug.
-
-Here is an example, triggered by external kernel module MARS on a
-production kernel. However, the problem can be triggered by other
-kthreads and on newer kernels, and also in very different scenarios,
-not only during tcp_revcmsg().
-
-In the following example, the kthread simply waits for network packets
-to arrive, but in the test scenario the network had been blocked
-underneath by a firewall rule in order to trigger the bug:
-
-Mar 08 07:40:08 icpu5133 kernel: watchdog: BUG: soft lockup - CPU#29 stuck for 23s! [mars_receiver8.:8139]
-Mar 08 07:40:08 icpu5133 kernel: Modules linked in: mars(-) ip6table_mangle ip6table_raw iptable_raw ip_set_bitmap_port xt_DSCP xt_multiport ip_set_hash_ip xt_own
-Mar 08 07:40:08 icpu5133 kernel: irq event stamp: 300719885
-Mar 08 07:40:08 icpu5133 kernel: hardirqs last  enabled at (300719883): [<ffffffff81bb96d0>] _raw_spin_unlock_irqrestore+0x3d/0x4f
-Mar 08 07:40:08 icpu5133 kernel: hardirqs last disabled at (300719885): [<ffffffff81c01a02>] apic_timer_interrupt+0x82/0x90
-Mar 08 07:40:08 icpu5133 kernel: softirqs last  enabled at (300719878): [<ffffffff819de0af>] lock_sock_nested+0x50/0x98
-Mar 08 07:40:08 icpu5133 kernel: softirqs last disabled at (300719884): [<ffffffff819df5f2>] release_sock+0x16/0xda
-Mar 08 07:40:08 icpu5133 kernel: CPU: 29 PID: 8139 Comm: mars_receiver8. Not tainted 4.14.104+ #121
-Mar 08 07:40:08 icpu5133 kernel: Hardware name: Dell Inc. PowerEdge R630/02C2CP, BIOS 2.5.5 08/16/2017
-Mar 08 07:40:08 icpu5133 kernel: task: ffff88bf82764fc0 task.stack: ffffc90012430000
-Mar 08 07:40:08 icpu5133 kernel: RIP: 0010:arch_local_irq_restore+0x2/0x8
-Mar 08 07:40:08 icpu5133 kernel: RSP: 0018:ffffc90012433b78 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff10
-Mar 08 07:40:08 icpu5133 kernel: RAX: 0000000000000000 RBX: ffff88bf82764fc0 RCX: 00000000fec792b4
-Mar 08 07:40:08 icpu5133 kernel: RDX: 00000000c18b50d3 RSI: 0000000000000000 RDI: 0000000000000246
-Mar 08 07:40:08 icpu5133 kernel: RBP: 0000000000000001 R08: 0000000000000001 R09: 0000000000000000
-Mar 08 07:40:08 icpu5133 kernel: R10: ffffc90012433b08 R11: ffffc90012433ba8 R12: 0000000000000246
-Mar 08 07:40:08 icpu5133 kernel: R13: ffffffff819df735 R14: 0000000000000001 R15: ffff88bf82765818
-Mar 08 07:40:08 icpu5133 kernel: FS:  0000000000000000(0000) GS:ffff88c05fb80000(0000) knlGS:0000000000000000
-Mar 08 07:40:08 icpu5133 kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-Mar 08 07:40:08 icpu5133 kernel: CR2: 000055abd12eb688 CR3: 000000000241e006 CR4: 00000000001606e0
-Mar 08 07:40:08 icpu5133 kernel: Call Trace:
-Mar 08 07:40:08 icpu5133 kernel:  lock_release+0x32f/0x33b
-Mar 08 07:40:08 icpu5133 kernel:  release_sock+0x90/0xda
-Mar 08 07:40:08 icpu5133 kernel:  sk_wait_data+0x7f/0x13f
-Mar 08 07:40:08 icpu5133 kernel:  ? prepare_to_wait_exclusive+0xc1/0xc1
-Mar 08 07:40:08 icpu5133 kernel:  tcp_recvmsg+0x4e6/0x91a
-Mar 08 07:40:08 icpu5133 kernel:  ? flush_signals+0x2b/0x6a
-Mar 08 07:40:08 icpu5133 kernel:  ? lock_acquire+0x20a/0x25a
-Mar 08 07:40:08 icpu5133 kernel:  inet_recvmsg+0x8d/0xc0
-Mar 08 07:40:08 icpu5133 kernel:  kernel_recvmsg+0x8f/0xaa
-Mar 08 07:40:08 icpu5133 kernel:  ? ___might_sleep+0xf2/0x256
-Mar 08 07:40:08 icpu5133 kernel:  mars_recv_raw+0x22a/0x4da [mars]
-Mar 08 07:40:08 icpu5133 kernel:  desc_recv_struct+0x40/0x375 [mars]
-Mar 08 07:40:08 icpu5133 kernel:  receiver_thread+0xa2/0x61a [mars]
-Mar 08 07:40:08 icpu5133 kernel:  ? _hash_insert+0x160/0x160 [mars]
-Mar 08 07:40:08 icpu5133 kernel:  ? kthread+0x1a6/0x1ae
-Mar 08 07:40:08 icpu5133 kernel:  kthread+0x1a6/0x1ae
-Mar 08 07:40:08 icpu5133 kernel:  ? __list_del_entry+0x60/0x60
-Mar 08 07:40:08 icpu5133 kernel:  ret_from_fork+0x3a/0x50
-Mar 08 07:40:08 icpu5133 kernel: Code: ee e8 c5 17 00 00 48 85 db 75 0e 31 f6 48 c7 c7 c0 5f 53 82 e8 68 b9 58 00 48 89 5b 58 58 5b 5d c3 9c 58 0f 1f 44 00 00 c3
-
-Signed-off-by: Thomas Schoebel-Theuer <tst@1und1.de>
----
- kernel/sched/wait.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/sched/wait.c b/kernel/sched/wait.c
-index c1e566a114ca..08f121154a91 100644
---- a/kernel/sched/wait.c
-+++ b/kernel/sched/wait.c
-@@ -412,8 +412,15 @@ long wait_woken(struct wait_queue_entry *wq_entry, unsigned mode, long timeout)
- 	 * or woken_wake_function() sees our store to current->state.
- 	 */
- 	set_current_state(mode); /* A */
--	if (!(wq_entry->flags & WQ_FLAG_WOKEN) && !is_kthread_should_stop())
--		timeout = schedule_timeout(timeout);
-+	if (!(wq_entry->flags & WQ_FLAG_WOKEN)) {
-+		/*
-+		 * Treat kthread stopping as equivalent to a timeout.
-+		 */
-+		if (is_kthread_should_stop())
-+			timeout = 0;
-+		else
-+			timeout = schedule_timeout(timeout);
-+	}
- 	__set_current_state(TASK_RUNNING);
- 
- 	/*
--- 
-2.12.3
-
+>         }
+>
+>         return 0;
+> @@ -421,14 +423,9 @@ static int sbs_get_battery_property(struct i2c_client *client,
+>                         return 0;
+>                 }
+>
+> -               if (ret & BATTERY_FULL_CHARGED)
+> -                       val->intval = POWER_SUPPLY_STATUS_FULL;
+> -               else if (ret & BATTERY_DISCHARGING)
+> -                       val->intval = POWER_SUPPLY_STATUS_DISCHARGING;
+> -               else
+> -                       val->intval = POWER_SUPPLY_STATUS_CHARGING;
+> -
+> -               sbs_status_correct(client, &val->intval);
+> +               ret = sbs_status_correct(client, &val->intval);
+> +               if (ret < 0)
+> +                       return ret;
+>
+>                 if (chip->poll_time == 0)
+>                         chip->last_state = val->intval;
+> @@ -773,20 +770,11 @@ static void sbs_delayed_work(struct work_struct *work)
+>
+>         ret = sbs_read_word_data(chip->client, sbs_data[REG_STATUS].addr);
+>         /* if the read failed, give up on this work */
+> -       if (ret < 0) {
+> +       if ((ret < 0) || (sbs_status_correct(chip->client, &ret) < 0)) {
+>                 chip->poll_time = 0;
+>                 return;
+>         }
+>
+> -       if (ret & BATTERY_FULL_CHARGED)
+> -               ret = POWER_SUPPLY_STATUS_FULL;
+> -       else if (ret & BATTERY_DISCHARGING)
+> -               ret = POWER_SUPPLY_STATUS_DISCHARGING;
+> -       else
+> -               ret = POWER_SUPPLY_STATUS_CHARGING;
+> -
+> -       sbs_status_correct(chip->client, &ret);
+> -
+>         if (chip->last_state != ret) {
+>                 chip->poll_time = 0;
+>                 power_supply_changed(chip->power_supply);
+> diff --git a/include/linux/power_supply.h b/include/linux/power_supply.h
+> index 28413f7..8fb10ec 100644
+> --- a/include/linux/power_supply.h
+> +++ b/include/linux/power_supply.h
+> @@ -37,6 +37,7 @@ enum {
+>         POWER_SUPPLY_STATUS_DISCHARGING,
+>         POWER_SUPPLY_STATUS_NOT_CHARGING,
+>         POWER_SUPPLY_STATUS_FULL,
+> +       POWER_SUPPLY_STATUS_EMPTY,
+>  };
+>
+>  /* What algorithm is the charger using? */
+> --
+> 1.8.3.1
+>
