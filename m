@@ -2,59 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0926D78C88
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 15:17:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1EF2F78C8A
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 15:17:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728564AbfG2NRC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 09:17:02 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:38525 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728034AbfG2NRB (ORCPT
+        id S2388028AbfG2NRH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 09:17:07 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:52750 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728063AbfG2NRC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 09:17:01 -0400
-Received: by mail-wm1-f66.google.com with SMTP id s15so32091549wmj.3
+        Mon, 29 Jul 2019 09:17:02 -0400
+Received: by mail-wm1-f65.google.com with SMTP id s3so53805220wms.2
         for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 06:17:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=oynpEq+Rva8XBfHeYWHdmuSsXuLqJ4yySPhy6VhqL9A=;
-        b=va/m4r4dkyOP1H7msYfzDxN4+0vxPlSoe+oUQ4l/rirf0OhntUYksvZZwImE3yEz0T
-         oBaLe8s00sw6YpMAmKbDDfMJ3mCl28yLI59Ef6CiNZUUKGfhFf+NDo5mic6oiM20KxKR
-         8e2iXUVWGg/5SBAy23v8YvJvjir1BgTnUhFoiSVojDGfS2Uv0NQw5UX04REnvkVV5RsO
-         0/xJ5HncMOscX99UEea1qAz6NyeqODccTnEm/p0TXkddx0FI8A9rkhv5U4Sx3hcD6Mpn
-         SkQhDKIsiBKPMOhr/4Bm1s4lGW8Pr24oT4yPFoPKpTRnPfszLYYMnc4VIcdgJtC2qpZJ
-         K8tg==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=sLpjjKS1ce8bNQv8q/Qa2SJ22ctxx4jp20Vf7E5q7wU=;
+        b=CLMiw/2aayuVDYeC8v+Hbs9eP9dRkSbExFD5+zaZD8XVZntLt21BOp69K1tnRRpjbW
+         h1x6kbaocxmTZlgdkOUZgm3WJWxq1hMdlN8cTBLsyjebws2ydUOJ6ty5W1EE1SsdSXLC
+         XDvlDjLNYQsTpJELOf5Goop1SSsDjIerBO2nq949ozhky/+DVkMb6ZCcqiAxOA+ulJ/m
+         ddqoDYpU4+h9G1Jt9DOM6Ni4fwIoDJbAvBQyFiY5fLci9NEtaNz/LfRCK+zi4cjHTz/n
+         tl2sSIZsHc1nOwvWY7yhIHw0wek4Pbo7+DYcXof7ZE7saR6s4hFgKhah7o+7+Bo1SpgV
+         0W4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=oynpEq+Rva8XBfHeYWHdmuSsXuLqJ4yySPhy6VhqL9A=;
-        b=RvLZcFA4RdhNcUsMU+ybQoH6pMjI5zY9/NAq/akomyiNZ/1Ftll7Gzmyuxe8M40g24
-         O9p3NKUmpsSf+eElLHJS1VeEntLPxvbbv7FZMiRbEOcTFIOD3RUoTLxUVgJta3Ap/xCb
-         w9CeDxqkQrbqigHZP7oqdsBrlDDwJ448YCluqYw4pvNKEtr+cSJfpvS2NT9VgVVPtd+A
-         5WKOqymKsE6wajNPSwlE5tRQNBMzsynSczuNFJ/f2Kro27yr0Pwi6r+mV6mBNWGtvw1E
-         v9HpMj5t2JMMWNheUgzdCylfJcic3Ut5dy5JXvcTnX6O8Opdm8xCkbNDz1N3WxinXuBQ
-         7EYw==
-X-Gm-Message-State: APjAAAXsoqU0EPGsq3t2NEjVC+v2a1EnDRRgqaO1Pu6F3YZ6Fa9nsA21
-        oAFHhIsKLzF09A9Q39BYxOOttw==
-X-Google-Smtp-Source: APXvYqytSS4CaOtshhSxLAUA/SqcXHfZnGVeXdez8xfDM0v0eOvC2DS2WChVjk847i77QN6BlJ/9OA==
-X-Received: by 2002:a7b:c954:: with SMTP id i20mr18655712wml.169.1564406219328;
-        Mon, 29 Jul 2019 06:16:59 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=sLpjjKS1ce8bNQv8q/Qa2SJ22ctxx4jp20Vf7E5q7wU=;
+        b=nrh2WjpMmonX2D/ece3bvdn8VZqPa2dFKc73xElX0rjpN08MGysUCe6kk1NCEFIb8Z
+         RRrRU4a3zCUB/Ofm8q6CmenMZaJZ8Rg7wrB7G/TaxjJDNKae6QTazxTVcq6eIIoF9Dsl
+         slU5igvgtMbMS9/0kPO/suCWYoJW1pBlsBjp38/uGldjtaRBNzvXKJ5HJ9Wu5KoYKEWT
+         bhcn1RJUrQv1CTyuDr48En8eFr/zbnNkbNuTeVZlaj1luSuc/r8GsMQL0NwXchHMAdRD
+         TdL5E+gwaqLlG45zbla0nWlQEct2AjLgKC4X2fBH1QSbNla5UFexVXWw90xrvs7aMUGq
+         57dg==
+X-Gm-Message-State: APjAAAUfEQhQkKoTupg4BAv9llpcK72JMoKqTVUnDxzgETiqXrHIJEZz
+        IEgQuDT7+/dIgI9hcUvaviq4Pg==
+X-Google-Smtp-Source: APXvYqx9NaFkCsFk23eBGAF2Pv6Iu97a1Kl1E5TPuDeCk21lE8wkpH5qEfKm7if84d09Xzyl2Cz8fQ==
+X-Received: by 2002:a1c:f418:: with SMTP id z24mr50475428wma.80.1564406220079;
+        Mon, 29 Jul 2019 06:17:00 -0700 (PDT)
 Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id b5sm52520490wru.69.2019.07.29.06.16.58
+        by smtp.gmail.com with ESMTPSA id b5sm52520490wru.69.2019.07.29.06.16.59
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 29 Jul 2019 06:16:58 -0700 (PDT)
+        Mon, 29 Jul 2019 06:16:59 -0700 (PDT)
 From:   Neil Armstrong <narmstrong@baylibre.com>
 To:     sboyd@kernel.org, jbrunet@baylibre.com
 Cc:     Neil Armstrong <narmstrong@baylibre.com>,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 0/4] clk: meson: g12a: add support for DVFS
-Date:   Mon, 29 Jul 2019 15:16:52 +0200
-Message-Id: <20190729131656.7308-1-narmstrong@baylibre.com>
+        linux-arm-kernel@lists.infradead.org,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH 1/4] clk: core: introduce clk_hw_set_parent()
+Date:   Mon, 29 Jul 2019 15:16:53 +0200
+Message-Id: <20190729131656.7308-2-narmstrong@baylibre.com>
 X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20190729131656.7308-1-narmstrong@baylibre.com>
+References: <20190729131656.7308-1-narmstrong@baylibre.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -62,68 +65,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The G12A/G12B Socs embeds a specific clock tree for each CPU cluster :
-cpu_clk / cpub_clk
-|   \- cpu_clk_dyn
-|      |  \- cpu_clk_premux0
-|      |        |- cpu_clk_postmux0
-|      |        |    |- cpu_clk_dyn0_div
-|      |        |    \- xtal/fclk_div2/fclk_div3
-|      |        \- xtal/fclk_div2/fclk_div3
-|      \- cpu_clk_premux1
-|            |- cpu_clk_postmux1
-|            |    |- cpu_clk_dyn1_div
-|            |    \- xtal/fclk_div2/fclk_div3
-|            \- xtal/fclk_div2/fclk_div3
-\ sys_pll / sys1_pll
+Introduce the clk_hw_set_parent() provider call to change parent of
+a clock by using the clk_hw pointers.
 
-This patchset adds notifiers on cpu_clk / cpub_clk, cpu_clk_dyn,
-cpu_clk_premux0 and sys_pll / sys1_pll to permit change frequency of
-the CPU clock in a safe way as recommended by the vendor Documentation
-and reference code.
+This eases the clock reparenting from clock rate notifiers and
+implementing DVFS with simpler code avoiding the boilerplates
+functions as __clk_lookup(clk_hw_get_name()) then clk_set_parent().
 
-This patchset :
-- introduces needed core and meson clk changes
-- adds the clock notifiers
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Acked-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+---
+ drivers/clk/clk.c            | 6 ++++++
+ include/linux/clk-provider.h | 1 +
+ 2 files changed, 7 insertions(+)
 
-Dependencies:
-- None
-
-This patchset is split from the v3 RFC/RFC patchset at [3]
-
-Changes from RFT/RFC v3 at [3]:
-- Rebased on clk-meson v5.4/drivers tree with Alexandre's patches
-- Removed the eeclk setup() callback, moved to a toplevel g12a-data struct
-
-Changes since RFT/RFC v2 at [2]:
-- Rebased on clk-meson v5.3/drivers trees
-- added Kevin's review tags
-
-Changes since RFT/RFC v1 at [1]:
-- Added EXPORT_SYMBOL_GPL() to clk_hw_set_parent
-- Added missing static to g12b_cpub_clk_mux0_div_ops and g12a_cpu_clk_mux_nb
-- Simplified g12a_cpu_clk_mux_notifier_cb() without switch/case
-- Fixed typo in "this the current path" in g12a.c
-- Fixed various checkpatch errors
-
-[1] https://patchwork.kernel.org/cover/11006929/
-[2] https://patchwork.kernel.org/cover/11017273/
-[3] https://patchwork.kernel.org/cover/11025309/
-
-Neil Armstrong (4):
-  clk: core: introduce clk_hw_set_parent()
-  clk: meson: regmap: export regmap_div ops functions
-  clk: meson: g12a: add notifiers to handle cpu clock change
-  clk: meson: g12a: expose CPUB clock ID for G12B
-
- drivers/clk/clk.c                     |   6 +
- drivers/clk/meson/clk-regmap.c        |  10 +-
- drivers/clk/meson/clk-regmap.h        |   5 +
- drivers/clk/meson/g12a.c              | 567 +++++++++++++++++++++++---
- include/dt-bindings/clock/g12a-clkc.h |   1 +
- include/linux/clk-provider.h          |   1 +
- 6 files changed, 540 insertions(+), 50 deletions(-)
-
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index c0990703ce54..c11b1781d24a 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2487,6 +2487,12 @@ static int clk_core_set_parent_nolock(struct clk_core *core,
+ 	return ret;
+ }
+ 
++int clk_hw_set_parent(struct clk_hw *hw, struct clk_hw *parent)
++{
++	return clk_core_set_parent_nolock(hw->core, parent->core);
++}
++EXPORT_SYMBOL_GPL(clk_hw_set_parent);
++
+ /**
+  * clk_set_parent - switch the parent of a mux clk
+  * @clk: the mux clk whose input we are switching
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 2ae7604783dd..dce5521a9bf6 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -817,6 +817,7 @@ unsigned int clk_hw_get_num_parents(const struct clk_hw *hw);
+ struct clk_hw *clk_hw_get_parent(const struct clk_hw *hw);
+ struct clk_hw *clk_hw_get_parent_by_index(const struct clk_hw *hw,
+ 					  unsigned int index);
++int clk_hw_set_parent(struct clk_hw *hw, struct clk_hw *new_parent);
+ unsigned int __clk_get_enable_count(struct clk *clk);
+ unsigned long clk_hw_get_rate(const struct clk_hw *hw);
+ unsigned long __clk_get_flags(struct clk *clk);
 -- 
 2.22.0
 
