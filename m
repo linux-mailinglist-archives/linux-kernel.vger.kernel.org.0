@@ -2,93 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F23DD79893
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:09:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 410B5799BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:17:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730368AbfG2UIp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 16:08:45 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:33054 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730336AbfG2UId (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 16:08:33 -0400
-Received: by mail-wm1-f66.google.com with SMTP id h19so43764208wme.0
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 13:08:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=6rsC8apArHKEVoNHEE6WG1aGK7OUBEY0mfmbG+EETjA=;
-        b=H1azFqjdQbGzYylgI0HfhobbrDa1fXZCrhjr/xbfTQ3GrM1HfJth4ol7CblK/OvV1B
-         5l1UXrq/AgWYduSIlH2K9B72Ha25v3cvYXeLm6duV10AAN4l/tDOboj+J2Oxm55xUHyi
-         ucL1i0gFBbnYxgAbD5XiJniwDjv4JTevpZWPSFiBiRolvikpClTAfiZ1ucxc7poBnpbu
-         8+XPgwSCxg28cqdeXpOJd0uQX9H9N5Px1qRZrVOWtrulaUvwdTd64RngQP16UAUqkVAG
-         wA+XmyS8EzRlyb9nLWZrn0HhTs78XyCh0wCnAYcFynCw0nf3HRKOQO7bviijwVUfznhW
-         aORg==
-X-Gm-Message-State: APjAAAWFmx/zqKStmmShFsEj0A9OO4DPsukGPFs4OtuNjBn6AiclOXe1
-        mbElpTQKwgg8Bs7Il/p6wfZLAnExIeU=
-X-Google-Smtp-Source: APXvYqxyEEo5XtUOjp1CdVRP84iqaQNMR2dGcZMgh/1fmCKwlmEs/P5oV9wEcoLLXuWQbjicsjgaWQ==
-X-Received: by 2002:a1c:d10c:: with SMTP id i12mr101100699wmg.152.1564430911427;
-        Mon, 29 Jul 2019 13:08:31 -0700 (PDT)
-Received: from ?IPv6:2001:b07:6468:f312:29d3:6123:6d5f:2c04? ([2001:b07:6468:f312:29d3:6123:6d5f:2c04])
-        by smtp.gmail.com with ESMTPSA id j33sm131236463wre.42.2019.07.29.13.08.30
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Mon, 29 Jul 2019 13:08:30 -0700 (PDT)
-Subject: Re: [RFC PATCH 15/16] RISC-V: KVM: Add SBI v0.1 support
-To:     Atish Patra <Atish.Patra@wdc.com>,
-        "paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
-        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
-        "palmer@sifive.com" <palmer@sifive.com>,
-        Anup Patel <Anup.Patel@wdc.com>
-Cc:     "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
-        Alistair Francis <Alistair.Francis@wdc.com>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        "hch@infradead.org" <hch@infradead.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "anup@brainfault.org" <anup@brainfault.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20190729115544.17895-1-anup.patel@wdc.com>
- <20190729115544.17895-16-anup.patel@wdc.com>
- <b461c82f-960a-306e-b76b-f2c329cabf21@redhat.com>
- <0e19ff14a51e210af91c4b0f2e649b8f5e140ce1.camel@wdc.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Message-ID: <b6c884cc-e156-d125-b3a2-c8a843de34c2@redhat.com>
-Date:   Mon, 29 Jul 2019 22:08:32 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1728842AbfG2UQV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 16:16:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36552 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387988AbfG2TYU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:24:20 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C675A216C8;
+        Mon, 29 Jul 2019 19:24:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564428259;
+        bh=t7Di/nW8zHaZ4oltp5kAHKlaau4jSGhr1gABisjElM0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=1+uB1y0UBVlFQcVZj1zaqEAqPvLU9Oh/HzVZdNIzmfGgkfqyEe+c4y29kRR9AlQ4R
+         dOS9xTEWG/chhucBHjhD2YeE3MERQk7Ax+BCC6qlWZfa5WexiBHHJqB+CjcnT0FBMJ
+         RTdb29ycDDnD9fDT2/5khazVGPJ+41X9Pn1XOtvA=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Maya Erez <merez@codeaurora.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 006/293] wil6210: fix potential out-of-bounds read
+Date:   Mon, 29 Jul 2019 21:18:17 +0200
+Message-Id: <20190729190820.822625516@linuxfoundation.org>
+X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20190729190820.321094988@linuxfoundation.org>
+References: <20190729190820.321094988@linuxfoundation.org>
+User-Agent: quilt/0.66
 MIME-Version: 1.0
-In-Reply-To: <0e19ff14a51e210af91c4b0f2e649b8f5e140ce1.camel@wdc.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29/07/19 21:51, Atish Patra wrote:
-> On Mon, 2019-07-29 at 21:40 +0200, Paolo Bonzini wrote:
->> On 29/07/19 13:57, Anup Patel wrote:
->>> +	csr_write(CSR_HSTATUS, vcpu->arch.guest_context.hstatus |
->>> HSTATUS_SPRV);
->>> +	csr_write(CSR_SSTATUS, vcpu->arch.guest_context.sstatus);
->>> +	val = *addr;
->>
->> What happens if this load faults?
->>
-> 
-> It should redirect the trap back to VS mode. Currently, it is not
-> implemented. It is on the TO-DO list for future iteration of the
-> series.
+[ Upstream commit bfabdd6997323adbedccb13a3fed1967fb8cf8f5 ]
 
-Ok, please add TODO comments for the more important tasks like this one
-(and/or post a somewhat complete list in reply to 00/16).
+Notice that *rc* can evaluate to up to 5, include/linux/netdevice.h:
 
-Thanks!
+enum gro_result {
+        GRO_MERGED,
+        GRO_MERGED_FREE,
+        GRO_HELD,
+        GRO_NORMAL,
+        GRO_DROP,
+        GRO_CONSUMED,
+};
+typedef enum gro_result gro_result_t;
 
-Paolo
+In case *rc* evaluates to 5, we end up having an out-of-bounds read
+at drivers/net/wireless/ath/wil6210/txrx.c:821:
+
+	wil_dbg_txrx(wil, "Rx complete %d bytes => %s\n",
+		     len, gro_res_str[rc]);
+
+Fix this by adding element "GRO_CONSUMED" to array gro_res_str.
+
+Addresses-Coverity-ID: 1444666 ("Out-of-bounds read")
+Fixes: 194b482b5055 ("wil6210: Debug print GRO Rx result")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Reviewed-by: Maya Erez <merez@codeaurora.org>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/net/wireless/ath/wil6210/txrx.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/net/wireless/ath/wil6210/txrx.c b/drivers/net/wireless/ath/wil6210/txrx.c
+index 389c718cd257..16750056b8b5 100644
+--- a/drivers/net/wireless/ath/wil6210/txrx.c
++++ b/drivers/net/wireless/ath/wil6210/txrx.c
+@@ -732,6 +732,7 @@ void wil_netif_rx_any(struct sk_buff *skb, struct net_device *ndev)
+ 		[GRO_HELD]		= "GRO_HELD",
+ 		[GRO_NORMAL]		= "GRO_NORMAL",
+ 		[GRO_DROP]		= "GRO_DROP",
++		[GRO_CONSUMED]		= "GRO_CONSUMED",
+ 	};
+ 
+ 	if (ndev->features & NETIF_F_RXHASH)
+-- 
+2.20.1
+
+
 
