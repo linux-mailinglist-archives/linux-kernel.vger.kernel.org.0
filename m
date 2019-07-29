@@ -2,98 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A221D78F8F
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 17:40:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D48778F97
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 17:41:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388083AbfG2PkE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 11:40:04 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:50994 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387496AbfG2PkE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 11:40:04 -0400
-Received: by mail-wm1-f66.google.com with SMTP id v15so54313856wml.0;
-        Mon, 29 Jul 2019 08:40:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=CmXay1x1IIZbcae9B/nzgC2i3GQA4IAuHtEVfu4g9Tw=;
-        b=UcKVtZ+GtKoGy23ls5y7hSLAMqN0maOm/n84NQv7B2QKT3CXLXVTcMzy4xYpSSxQ0Z
-         7KaB0jDrm/HJNiLSSQcAgQu/6BziGAcPrQqan4fX0WrW2YSbdVmKSVQFudJC+h+Qa+09
-         YillfqN8G0jMA/n4BECainDr0rp6tku2Xnhze1x2i8g/NxiAYgqnJS0JLKce6B9uD9hp
-         8c57jiTUQqwf+3q1jrlbMAvWDVIfeBFmyr1pLuCda2Z+uKJyYXpD1Dji00+WATg4eSEo
-         rpt3sVcB0R734uQo7iz/nsDdKeJGCpCnkuDYb+CObpFoJi/BeaJl2x4EfLsuqeMs9tTE
-         YAhw==
-X-Gm-Message-State: APjAAAUfY8ahv9y1SHcII8Kzr1ax78LMSZ9oPB0bcupYLejJxDK5MOOV
-        f4tfCiGcucXHQiY0ie6/k9HQvonLUUcSxx4WlZI=
-X-Google-Smtp-Source: APXvYqyQ3OcPxTZE79jySvwMYC8vjamWQiriNCux9/VdFtqDzRVM9Aw+s9kJqqoO9rN8rBLFEyB5tDfAGslo++GFlu8=
-X-Received: by 2002:a7b:c310:: with SMTP id k16mr59906778wmj.133.1564414801859;
- Mon, 29 Jul 2019 08:40:01 -0700 (PDT)
+        id S2388149AbfG2PlB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 11:41:01 -0400
+Received: from mail.monom.org ([188.138.9.77]:49950 "EHLO mail.monom.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388120AbfG2Pk4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 11:40:56 -0400
+Received: from mail.monom.org (localhost [127.0.0.1])
+        by filter.mynetwork.local (Postfix) with ESMTP id 0EAC45006EC;
+        Mon, 29 Jul 2019 17:40:51 +0200 (CEST)
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on mail.monom.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.5 required=5.0 tests=ALL_TRUSTED,BAYES_00
+        autolearn=ham autolearn_force=no version=3.4.2
+Received: from localhost (b9168f76.cgn.dg-w.de [185.22.143.118])
+        by mail.monom.org (Postfix) with ESMTPSA id D47805005D6;
+        Mon, 29 Jul 2019 17:40:50 +0200 (CEST)
+From:   Daniel Wagner <wagi@monom.org>
+To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Greg KH <gregkh@linuxfoundation.org>,
+        Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH 4.4 0/2] vmstat backports
+Date:   Mon, 29 Jul 2019 17:40:44 +0200
+Message-Id: <20190729154046.8824-1-wagi@monom.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20190729143007.GA8067@embeddedor>
-In-Reply-To: <20190729143007.GA8067@embeddedor>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 29 Jul 2019 17:39:49 +0200
-Message-ID: <CAMuHMdXEU4eUEdNyY=K2B_Tj=unJV2eSJo1BQ8vDwZ-D-2wDWg@mail.gmail.com>
-Subject: Re: [PATCH] scsi: sun3_scsi: Mark expected switch fall-throughs
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Finn Thain <fthain@telegraphics.com.au>,
-        Michael Schmitz <schmitzmic@gmail.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        scsi <linux-scsi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Gustavo,
+Hi Greg,
 
-On Mon, Jul 29, 2019 at 4:32 PM Gustavo A. R. Silva
-<gustavo@embeddedor.com> wrote:
-> Mark switch cases where we are expecting to fall through.
->
-> This patch fixes the following warnings:
->
-> drivers/scsi/sun3_scsi.c: warning: this statement may fall through
-> [-Wimplicit-fallthrough=]:  => 399:9, 403:9
->
-> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Second attempt on this topic [1]:
 
-Thanks!
-Tested-by: Geert Uytterhoeven <geert@linux-m68k.org>
+"""
+Upstream commmit 0eb77e988032 ("vmstat: make vmstat_updater deferrable
+again and shut down on idle") was back ported in v4.4.178
+(bdf3c006b9a2). For -rt we definitely need the bugfix f01f17d3705b
+("mm, vmstat: make quiet_vmstat lighter") as well.
 
-> --- a/drivers/scsi/sun3_scsi.c
-> +++ b/drivers/scsi/sun3_scsi.c
-> @@ -397,10 +397,12 @@ static int sun3scsi_dma_finish(int write_flag)
->                 case CSR_LEFT_3:
->                         *vaddr = (dregs->bpack_lo & 0xff00) >> 8;
->                         vaddr--;
-> +                       /* Fall through */
->
->                 case CSR_LEFT_2:
->                         *vaddr = (dregs->bpack_hi & 0x00ff);
->                         vaddr--;
-> +                       /* Fall through */
->
+Since the offending patch was back ported to v4.4 stable only, the
+other stable branches don't need an update (offending patch and bug
+fix are already in).
+"""
 
-I think it would be clearer if you would drop the blank lines.
+Though I missed a dependency as Jon noted[2]. The missing patch is
+587198ba5206 ("vmstat: Remove BUG_ON from vmstat_update"). I've tested
+this on a Tegra K1 one board which exposed the bug. With this should
+be fine.
 
->                 case CSR_LEFT_1:
->                         *vaddr = (dregs->bpack_hi & 0xff00) >> 8;
+While at it, I looked on all relevant changes for
+vmstat_updated(). These two patches are the only relevant changes
+which are missing. It seems almost all changes from mainline have made
+it back to v4.
 
-Gr{oetje,eeting}s,
+Could you please queue the above patches for v4.4.y?
 
-                        Geert
+Thanks,
+Daniel
+
+[1] https://lore.kernel.org/stable/20190513061237.4915-1-wagi@monom.org
+[2] https://lore.kernel.org/stable/f32de22f-c928-2eaa-ee3f-d2b26c184dd4@nvidia.com
+
+
+Christoph Lameter (1):
+  vmstat: Remove BUG_ON from vmstat_update
+
+Michal Hocko (1):
+  mm, vmstat: make quiet_vmstat lighter
+
+ mm/vmstat.c | 80 +++++++++++++++++++++++++++++++----------------------
+ 1 file changed, 47 insertions(+), 33 deletions(-)
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.20.1
