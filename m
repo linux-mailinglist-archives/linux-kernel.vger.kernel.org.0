@@ -2,126 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CFA707995E
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:15:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 34AD179943
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:14:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730152AbfG2UPD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 16:15:03 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:7438 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727559AbfG2UPB (ORCPT
+        id S1730581AbfG2UOY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 16:14:24 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:41282 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730525AbfG2UOW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 16:15:01 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d3f53bb0000>; Mon, 29 Jul 2019 13:14:51 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 29 Jul 2019 13:14:59 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 29 Jul 2019 13:14:59 -0700
-Received: from [10.110.48.28] (172.20.13.39) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 29 Jul
- 2019 20:14:59 +0000
-Subject: Re: [PATCH] rdma: siw: remove unused variable
-To:     Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>
-CC:     Anders Roxell <anders.roxell@linaro.org>, <bmt@zurich.ibm.com>,
-        <linux-rdma@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-References: <20190726092540.22467-1-anders.roxell@linaro.org>
- <08d1942fa99465329348a1bbfd55823b590921c2.camel@redhat.com>
- <20190729190326.GG17990@ziepe.ca>
- <b5775622b2e8360e77f90dddfff9aa84af48240e.camel@redhat.com>
-From:   John Hubbard <jhubbard@nvidia.com>
-X-Nvconfidentiality: public
-Message-ID: <f7500581-c3df-a0cb-8229-b832f12fcf05@nvidia.com>
-Date:   Mon, 29 Jul 2019 13:14:59 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Mon, 29 Jul 2019 16:14:22 -0400
+Received: by mail-pg1-f194.google.com with SMTP id x15so18452937pgg.8;
+        Mon, 29 Jul 2019 13:14:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=a80YhmstvkFSvpLxuuKLo03NoSn39TaxaZX6joqs8MA=;
+        b=oAW3tFK8X61jpoyXLcaKMiOnJ9TYUngRguXPgieCBQvf7vbjz8n4B8AGc7Yhk1Spov
+         jfeQDaW7HSUgWSQJmGbemqCvojoYvAv060EXEN4coAflTTTFW0sx6k1g9dG+HbyQ+kqe
+         qUQU0/i18Ci/UKnzWdJlUXx8+Ut03VJliGO3Ol7bvYUETBeW1y1xDi04lBy/SZvgDpl6
+         zl+NaAyW5bW5WdKekXOjlSfdQ9oDmyL0jqEAmq32QjWeml/Tl0I1Yc31Je+9sTMrqGj4
+         rjTSOmm/45LqyYqzmWonKjfTI0DCeWT4+80sPZ5FHFaQmYxVJ+gyW3Xw3n7TxC2z+RHd
+         TgfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=a80YhmstvkFSvpLxuuKLo03NoSn39TaxaZX6joqs8MA=;
+        b=KI8aa0jgjSkK3Z5dBBMRdyHeYGw3E8+qhepVFpQud6JNPH9PGSdRWT9/DzbhZXvR1K
+         CsGnIEjjEXllFPvk4HusQLsx9aQgl8qx0vaXYUwvVp3Nk5P7Nq+jybRTBFpuBOxXpsOW
+         ai+2A7bBJ53wH097BNaRPAT8WJJEwPii54nWe9ky8WEodndIh+TZOaIbYUb4GyHC5agt
+         x60UBCUf/cxA3r9NVfDgTG+YVq4ddZ5OZ2xO4klIuWOGAG1a8m/drYcK5T252HvlzeSf
+         h6C0wo19A+Nx+YXV2XDgozOk+wYbM1lhmfiSG6/C785G3C5AgF8Bm+ov5kru4+sy0zFH
+         Wi0w==
+X-Gm-Message-State: APjAAAUsIxOxKSWUu52mJp9TYqmHs9yT0msxZWODMLJJwxd46wR6NQ4W
+        dZpd16329kwbsAT2ReyJHhA=
+X-Google-Smtp-Source: APXvYqzHimbts6Pzs9sE75ZW5J3eKE7GTyz7Rq8GUSY5Q6dToWV+ZKL5WQAvZY7dibUphM2oY0krmA==
+X-Received: by 2002:a17:90a:9a83:: with SMTP id e3mr111562668pjp.105.1564431261030;
+        Mon, 29 Jul 2019 13:14:21 -0700 (PDT)
+Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
+        by smtp.gmail.com with ESMTPSA id i74sm122243034pje.16.2019.07.29.13.14.20
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 29 Jul 2019 13:14:20 -0700 (PDT)
+Date:   Mon, 29 Jul 2019 13:15:09 -0700
+From:   Nicolin Chen <nicoleotsuka@gmail.com>
+To:     Daniel Baluta <daniel.baluta@nxp.com>
+Cc:     broonie@kernel.org, l.stach@pengutronix.de, mihai.serban@gmail.com,
+        alsa-devel@alsa-project.org, viorel.suman@nxp.com,
+        timur@kernel.org, shengjiu.wang@nxp.com, angus@akkea.ca,
+        tiwai@suse.com, linux-imx@nxp.com, kernel@pengutronix.de,
+        festevam@gmail.com, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, robh@kernel.org
+Subject: Re: [PATCH v2 4/7] ASoC: dt-bindings: Document dl-mask property
+Message-ID: <20190729201508.GB20594@Asurada-Nvidia.nvidia.com>
+References: <20190728192429.1514-1-daniel.baluta@nxp.com>
+ <20190728192429.1514-5-daniel.baluta@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <b5775622b2e8360e77f90dddfff9aa84af48240e.camel@redhat.com>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1564431291; bh=4uhSuXtsJxEPWIma4eracBI9ZaEU9XbH/JW6QFfPO/0=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=LqMSti86GIJ+cd/+7fUdQAPgfcFNX6ObqSp7MXDkUEgTSoUOs51kK8bKZ6Rr2p/mn
-         +ZDODHoQpGGv6VvrIa4rXlneqMSKydDQGoS8IDqgHrqD/HoGAr1u8VQO825dMy84D6
-         mKPswW11L7ZzIMCzvu/MwdTfSaqOOOGHwRmUct+oX0/tHUMvLygv9NJf1IXmgesofw
-         RqFY3WT0BYoqXvs2V0liyJjNPVJ+TrpqmtaYnPvxjitFPBQnlb7iAmkD5NqYAIM0eH
-         klCpNhdVcFo7TF29hPTCqSqV3BTJGeXqOSG2K4afrl5hJrPNWV4wHBx6bA0OKAhfNb
-         NUVd2Pl6b4mOw==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190728192429.1514-5-daniel.baluta@nxp.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/29/19 12:45 PM, Doug Ledford wrote:
-> On Mon, 2019-07-29 at 16:03 -0300, Jason Gunthorpe wrote:
->> On Mon, Jul 29, 2019 at 02:19:35PM -0400, Doug Ledford wrote:
->>> On Fri, 2019-07-26 at 11:25 +0200, Anders Roxell wrote:
->>>> The variable 'p' si no longer used and the compiler rightly
->>>> complains
->>>> that it should be removed.
->>>>
->>>> ../drivers/infiniband/sw/siw/siw_mem.c: In function
->>>> =E2=80=98siw_free_plist=E2=80=99:
->>>> ../drivers/infiniband/sw/siw/siw_mem.c:66:16: warning: unused
->>>> variable
->>>>  =E2=80=98p=E2=80=99 [-Wunused-variable]
->>>>   struct page **p =3D chunk->plist;
->>>>                 ^
->>>>
->>>> Rework to remove unused variable.
->>>>
->>>> Fixes: 8288d030447f ("mm/gup: add make_dirty arg to
->>>> put_user_pages_dirty_lock()")
->>>
->>> This commit hash and the commit subject does not exist in Linus'
->>> tree as
->>> of today.  What tree is this being merged through, and is it slated
->>> to
->>> merge soon or is this a for-next item?
->>
->> This is though -mm, maybe John knows what is what
->=20
-> Hmmm...if it's through -mm, doesn't that mean that we can't rely on the
-> hash because the next time Andrew's tree rebases (using quilt or
-> whatever it is he does) that the hash will change?  It doesn't really
-> matter too much...we can't take the fix anyway, it should probably be
-> squashed into the patch that it's fixing, and if you follow Bernard's
-> advice, you fix the problem by eliminating this function and changing
-> the sole call site to just call put_user_pages_dirty_lock() directly.
->=20
+On Sun, Jul 28, 2019 at 10:24:26PM +0300, Daniel Baluta wrote:
+> SAI supports up to 8 data lines. This property let the user
+> configure how many data lines should be used per transfer
+> direction (Tx/Rx).
 
-Hi,
+This sounds a bit less persuasive to me as we are adding a
+DT property that's used to describe a hardware connections
+and it would be probably better to mention that the mapping
+between the mask and the data lines could be more flexible
+than consecutive active data lines as you said previously.
 
-Although I don't know which tree has 8288d030447f, I did get a report
-from linux-next last night with that report about the warning, and so
-I believe that the patch flowed from Andrew's -mm tree (which has=20
-speculatively added my patches), to linux-next
+> Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
+> ---
+>  Documentation/devicetree/bindings/sound/fsl-sai.txt | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/sound/fsl-sai.txt b/Documentation/devicetree/bindings/sound/fsl-sai.txt
+> index 2e726b983845..2b38036a4883 100644
+> --- a/Documentation/devicetree/bindings/sound/fsl-sai.txt
+> +++ b/Documentation/devicetree/bindings/sound/fsl-sai.txt
+> @@ -49,6 +49,13 @@ Optional properties:
+>  
+>    - big-endian		: Boolean property, required if all the SAI
+>  			  registers are big-endian rather than little-endian.
+> +  - fsl,dl-mask		: list of two integers (bitmask, first for RX, second
 
-(+CC Andrew)
+I am leaving this naming to DT maintainer.
 
-I also sent out a fix for it, as a reply-to the warning report:
+> +			  for TX) representing enabled datalines. Bit 0
+> +			  represents first data line, bit 1 represents second
+> +			  data line and so on. Data line is enabled if
+> +			  corresponding bit is set to 1. By default, if property
+> +			  not present, only dataline 0 is enabled for both
+> +			  directions.
 
-    https://lore.kernel.org/r/20190729074306.10368-1-jhubbard@nvidia.com
-
-Pasting in my response (minus the trivial fix), to save you a click:
-
-"This fixes the warning. Ideally this should be merged with the commit
-that it fixes, if that's still possible.
-
-"Andrew, would you also like a fixed version of this patch posted
-as a new version of the 3-patch set that it came with?"
-
-thanks,
---=20
-John Hubbard
-NVIDIA
+To make this patch more convincing, could we add an example
+as well in the Example section of this binding file? Like:
+	/* RX data lines 0/1 and TX data lines 0/2 are connected */
+	fsl,dl-mask = <0x3 0x5>;
