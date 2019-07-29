@@ -2,40 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D63E37987D
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:08:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CC9BA79830
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:06:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730169AbfG2UH4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 16:07:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53332 "EHLO mail.kernel.org"
+        id S2390402AbfG2UFN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 16:05:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60534 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387731AbfG2TiY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:38:24 -0400
+        id S2389203AbfG2Tn4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:43:56 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3928021773;
-        Mon, 29 Jul 2019 19:38:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 591A520C01;
+        Mon, 29 Jul 2019 19:43:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564429103;
-        bh=fjuEbsoJsz/8BtvzJHjIfCmO5QHPJ5no2YLmeQCMmik=;
+        s=default; t=1564429435;
+        bh=QlRxDaIWmUxVA6DHWBBI528oV9qu+xRdOM6oOA2tRzw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=osdCOARnyh2OVsDASTzYyVu1X/Uu9D/eCGwhv8PTNDEPxCoSGg8Y+4thi39BlqiBb
-         /q02j3gzBoahk5+pU+AkVR0PcZz/jzBekW8yil/SM162ooF9AEt0sQmbuaXQwkjUoE
-         DXGuO10M9b1i2tidUGem3FzjN/zV1swAyi+H/6r4=
+        b=g4KsCGiRJHyBUSKzY5jGo6+j0TM5ybmuBe/3qvhWHaONbRag3tSylvavJrLonk/Yo
+         3Gt+5R/sS89DhaPi202AmS8hg4l8cttmIaEnSywToCVLwuDFOageQgbdNPmUbkLG2K
+         iHA2uvqB048i1T9Aj30H4Le1YACZQjMwXl5SfTkc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+8b3c354d33c4ac78bfad@syzkaller.appspotmail.com,
-        Hridya Valsaraju <hridya@google.com>,
-        Todd Kjos <tkjos@google.com>
-Subject: [PATCH 4.14 286/293] binder: prevent transactions to context manager from its own process.
-Date:   Mon, 29 Jul 2019 21:22:57 +0200
-Message-Id: <20190729190846.170358376@linuxfoundation.org>
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        =?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Roman Gushchin <guro@fb.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 096/113] mm: use down_read_killable for locking mmap_sem in access_remote_vm
+Date:   Mon, 29 Jul 2019 21:23:03 +0200
+Message-Id: <20190729190718.502020243@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190729190820.321094988@linuxfoundation.org>
-References: <20190729190820.321094988@linuxfoundation.org>
+In-Reply-To: <20190729190655.455345569@linuxfoundation.org>
+References: <20190729190655.455345569@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,37 +55,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hridya Valsaraju <hridya@google.com>
+[ Upstream commit 1e426fe28261b03f297992e89da3320b42816f4e ]
 
-commit 49ed96943a8e0c62cc5a9b0a6cfc88be87d1fcec upstream.
+This function is used by ptrace and proc files like /proc/pid/cmdline and
+/proc/pid/environ.
 
-Currently, a transaction to context manager from its own process
-is prevented by checking if its binder_proc struct is the same as
-that of the sender. However, this would not catch cases where the
-process opens the binder device again and uses the new fd to send
-a transaction to the context manager.
+Access_remote_vm never returns error codes, all errors are ignored and
+only size of successfully read data is returned.  So, if current task was
+killed we'll simply return 0 (bytes read).
 
-Reported-by: syzbot+8b3c354d33c4ac78bfad@syzkaller.appspotmail.com
-Signed-off-by: Hridya Valsaraju <hridya@google.com>
-Acked-by: Todd Kjos <tkjos@google.com>
-Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20190715191804.112933-1-hridya@google.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Mmap_sem could be locked for a long time or forever if something goes
+wrong.  Using a killable lock permits cleanup of stuck tasks and
+simplifies investigation.
 
+Link: http://lkml.kernel.org/r/156007494202.3335.16782303099589302087.stgit@buzz
+Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Reviewed-by: Michal Koutný <mkoutny@suse.com>
+Acked-by: Oleg Nesterov <oleg@redhat.com>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Cc: Alexey Dobriyan <adobriyan@gmail.com>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Cyrill Gorcunov <gorcunov@gmail.com>
+Cc: Kirill Tkhai <ktkhai@virtuozzo.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Roman Gushchin <guro@fb.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/android/binder.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ mm/memory.c | 4 +++-
+ mm/nommu.c  | 3 ++-
+ 2 files changed, 5 insertions(+), 2 deletions(-)
 
---- a/drivers/android/binder.c
-+++ b/drivers/android/binder.c
-@@ -2785,7 +2785,7 @@ static void binder_transaction(struct bi
- 			else
- 				return_error = BR_DEAD_REPLY;
- 			mutex_unlock(&context->context_mgr_node_lock);
--			if (target_node && target_proc == proc) {
-+			if (target_node && target_proc->pid == proc->pid) {
- 				binder_user_error("%d:%d got transaction to context manager from process owning it\n",
- 						  proc->pid, thread->pid);
- 				return_error = BR_FAILED_REPLY;
+diff --git a/mm/memory.c b/mm/memory.c
+index e0010cb870e0..fb5655b518c9 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -4491,7 +4491,9 @@ int __access_remote_vm(struct task_struct *tsk, struct mm_struct *mm,
+ 	void *old_buf = buf;
+ 	int write = gup_flags & FOLL_WRITE;
+ 
+-	down_read(&mm->mmap_sem);
++	if (down_read_killable(&mm->mmap_sem))
++		return 0;
++
+ 	/* ignore errors, just check how much was successfully transferred */
+ 	while (len) {
+ 		int bytes, ret, offset;
+diff --git a/mm/nommu.c b/mm/nommu.c
+index e4aac33216ae..1d63ecfc98c5 100644
+--- a/mm/nommu.c
++++ b/mm/nommu.c
+@@ -1779,7 +1779,8 @@ int __access_remote_vm(struct task_struct *tsk, struct mm_struct *mm,
+ 	struct vm_area_struct *vma;
+ 	int write = gup_flags & FOLL_WRITE;
+ 
+-	down_read(&mm->mmap_sem);
++	if (down_read_killable(&mm->mmap_sem))
++		return 0;
+ 
+ 	/* the access must start within one of the target process's mappings */
+ 	vma = find_vma(mm, addr);
+-- 
+2.20.1
+
 
 
