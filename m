@@ -2,124 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 480D278D66
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 16:05:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A646B78D71
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 16:07:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728401AbfG2OFB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 10:05:01 -0400
-Received: from mga04.intel.com ([192.55.52.120]:45046 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727324AbfG2OFA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 10:05:00 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jul 2019 07:05:00 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,322,1559545200"; 
-   d="diff'?scan'208";a="190577036"
-Received: from kuha.fi.intel.com ([10.237.72.189])
-  by fmsmga001.fm.intel.com with SMTP; 29 Jul 2019 07:04:57 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 29 Jul 2019 17:04:57 +0300
-Date:   Mon, 29 Jul 2019 17:04:57 +0300
-From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To:     Guenter Roeck <linux@roeck-us.net>,
-        Douglas Gilbert <dgilbert@interlog.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] usb: typec: tcpm: Ignore unsupported/unknown
- alternate mode requests
-Message-ID: <20190729140457.GC28600@kuha.fi.intel.com>
-References: <1564029037-22929-1-git-send-email-linux@roeck-us.net>
+        id S1728489AbfG2OHV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 10:07:21 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:34803 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726556AbfG2OHV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 10:07:21 -0400
+Received: by mail-pf1-f193.google.com with SMTP id b13so28104920pfo.1
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 07:07:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=message-id:mime-version:content-transfer-encoding:in-reply-to
+         :references:from:to:subject:cc:user-agent:date;
+        bh=9Nybox5Ems434Y8f3uqSl08wrdR2vXIjQfpnAfsknyE=;
+        b=m6J4d8MLpDyS0VX2HOOIiddbS2yNdkHuPM8c0SDZ1G48A3hCxTPHNGwFSpl629Rh0S
+         Mx7Ji294l7tBty6/kP3U0Q9wuVavXqhq7w3cFZB5ZwBbSKuaLlIaF+Nq1xDfAtYGUYVF
+         zJkWY/NjMrKnQgzpDXc0BlOgWU7R5e5kpNBXE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:mime-version
+         :content-transfer-encoding:in-reply-to:references:from:to:subject:cc
+         :user-agent:date;
+        bh=9Nybox5Ems434Y8f3uqSl08wrdR2vXIjQfpnAfsknyE=;
+        b=tmlSHmj1npAqPiQ9fO1FHBpByyzdNP8T+OzuudlgMS2bFyrGC9dXWAce5+ieH2N9S9
+         4POGRPncDZ7GVviVgXzlwIZ6PPFujfI/7kKZm68TkUn3f8lvUnHG5qSbV2bRGkIFWmS4
+         PR/tUAVoyo6efgkQcZNj13f7qJHfSwkySxiIAZgBTa5tZtj7TFmM/Bu3bodk5gOR/H7F
+         chVws+M7uktLSXHYuLzkeNx6WO9fWRnn9Ghs7DvYGZzCB/kFZhMaGMWPSjLnTX2WkMA+
+         DwMg2g4cS5LRKWD5egLxoB8HMBmrmYeNFLjXPl/nt5R5bfWFOBRahJv6OpDG7fbDccAd
+         Ve5Q==
+X-Gm-Message-State: APjAAAVPYFkhZpBiXuO0yQ35LXqIAwSPUdymP1AOPaRKLIN8N8CPiAlT
+        DBwPazwpaUbh2vNRjpt/ztFAObRaG5o=
+X-Google-Smtp-Source: APXvYqwa80ZrMiQQWSZwZ3dtH8/0siPpnsrbdnWv4yQ+VOXFFERc9PmbfcA/ZdJfwPd71fBJTxgB2w==
+X-Received: by 2002:a63:dd4e:: with SMTP id g14mr32640178pgj.227.1564409240743;
+        Mon, 29 Jul 2019 07:07:20 -0700 (PDT)
+Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id m31sm69058880pjb.6.2019.07.29.07.07.19
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 29 Jul 2019 07:07:20 -0700 (PDT)
+Message-ID: <5d3efd98.1c69fb81.5f60d.059a@mx.google.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="82I3+IH0IqGh5yIs"
-Content-Disposition: inline
-In-Reply-To: <1564029037-22929-1-git-send-email-linux@roeck-us.net>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CAJZ5v0hroRuGQ5N42Z8=yFVXiJPdid3wJrHoKqr2BZVx=sfnBQ@mail.gmail.com>
+References: <20190727011040.89582-1-swboyd@chromium.org> <CAJZ5v0hroRuGQ5N42Z8=yFVXiJPdid3wJrHoKqr2BZVx=sfnBQ@mail.gmail.com>
+From:   Stephen Boyd <swboyd@chromium.org>
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Subject: Re: [PATCH] PM / wakeup: Avoid dev_name collisions in wakeup class
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Tri Vo <trong@android.com>,
+        Kalesh Singh <kaleshsingh@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ravi Chandra Sadineni <ravisadineni@chromium.org>
+User-Agent: alot/0.8.1
+Date:   Mon, 29 Jul 2019 07:07:19 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Quoting Rafael J. Wysocki (2019-07-27 06:10:00)
+> On Sat, Jul 27, 2019 at 3:11 AM Stephen Boyd <swboyd@chromium.org> wrote:
+> >
+> > If a device is wakeup capable and the driver calls device_wakeup_init()
+> > on it during probe and then userspace writes 'enabled' to that device's
+> > power/wakeup file in sysfs we'll try to create the same named wakeup
+> > device in sysfs. The kernel will complain about duplicate file names.
+> >
+> > sysfs: cannot create duplicate filename '/devices/virtual/wakeup/1-1.1'
+> > kobject_add_internal failed for 1-1.1 with -EEXIST, don't try to regist=
+er things with the same name in the same directory.
+> >
+> > It may be advantageous to not write 'enabled' to the wakeup file (see
+> > wakeup_store()) from userspace for these devices because we allocate
+> > devices and register them and then throw them all away later on if the
+> > device driver has already initialized the wakeup attribute. The
+> > implementation currently tries to avoid taking locks here so it seems
+> > best to optimize that path in a separate patch.
+> >
+> > Let's rename the wakeup class devices as 'wakeupN' with an IDA that's
+> > simple enough to just return some sort of number. In addition, let's
+> > make the device registering the wakeup the parent and include a 'name'
+> > attribute in case userspace wants to figure out the type of wakeup it is
+> > (in the case of virtual wakeups) or the device associated with the
+> > wakeup. This makes it easier for userspace to go from /sys/class/wakeup
+> > to a place in the device hierarchy where the wakeup is generated from
+> > like an input device.
+> >
+> > Cc: Tri Vo <trong@android.com>
+> > Cc: Kalesh Singh <kaleshsingh@google.com>
+> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > Cc: Ravi Chandra Sadineni <ravisadineni@chromium.org>
+> > Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+>=20
+> I'd rather change the commit that introduced this issue which is only
+> in linux-next for now.
 
---82I3+IH0IqGh5yIs
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Feel free to squash the two patches together and throw my signed-off-by
+on it. I forgot to add 'name' to the Documentation directory. Here's
+something to that effect.
 
-Hi,
-
-On Wed, Jul 24, 2019 at 09:30:37PM -0700, Guenter Roeck wrote:
-> TCPM may receive PD messages associated with unknown or unsupported
-> alternate modes. If that happens, calls to typec_match_altmode()
-> will return NULL. The tcpm code does not currently take this into
-> account. This results in crashes.
-> 
-> Unable to handle kernel NULL pointer dereference at virtual address 000001f0
-> pgd = 41dad9a1
-> [000001f0] *pgd=00000000
-> Internal error: Oops: 5 [#1] THUMB2
-> Modules linked in: tcpci tcpm
-> CPU: 0 PID: 2338 Comm: kworker/u2:0 Not tainted 5.1.18-sama5-armv7-r2 #6
-> Hardware name: Atmel SAMA5
-> Workqueue: 2-0050 tcpm_pd_rx_handler [tcpm]
-> PC is at typec_altmode_attention+0x0/0x14
-> LR is at tcpm_pd_rx_handler+0xa3b/0xda0 [tcpm]
-> ...
-> [<c03fbee8>] (typec_altmode_attention) from [<bf8030fb>]
-> 				(tcpm_pd_rx_handler+0xa3b/0xda0 [tcpm])
-> [<bf8030fb>] (tcpm_pd_rx_handler [tcpm]) from [<c012082b>]
-> 				(process_one_work+0x123/0x2a8)
-> [<c012082b>] (process_one_work) from [<c0120a6d>]
-> 				(worker_thread+0xbd/0x3b0)
-> [<c0120a6d>] (worker_thread) from [<c012431f>] (kthread+0xcf/0xf4)
-> [<c012431f>] (kthread) from [<c01010f9>] (ret_from_fork+0x11/0x38)
-> 
-> Ignore PD messages if the asociated alternate mode is not supported.
-> 
-> Reported-by: Douglas Gilbert <dgilbert@interlog.com>
-> Cc: Douglas Gilbert <dgilbert@interlog.com>
-> Fixes: e9576fe8e605c ("usb: typec: tcpm: Support for Alternate Modes")
-> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-> ---
-> Taking a stab at the problem. I don't really know if this is the correct
-> fix, or even if my understanding of the problem is correct, thus marking
-> the patch as RFC.
-
-My guess is that typec_match_altmode() is the real culprit. We can't
-rely on the partner mode index number when identifying the port alt
-mode.
-
-Douglas, can you test the attached hack instead of this patch?
-
-
-thanks,
-
--- 
-heikki
-
---82I3+IH0IqGh5yIs
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment; filename="tcpm_hack.diff"
-
-diff --git a/drivers/usb/typec/tcpm/tcpm.c b/drivers/usb/typec/tcpm/tcpm.c
-index ec525811a9eb..033dc097ba83 100644
---- a/drivers/usb/typec/tcpm/tcpm.c
-+++ b/drivers/usb/typec/tcpm/tcpm.c
-@@ -1067,12 +1067,11 @@ static int tcpm_pd_svdm(struct tcpm_port *port, const __le32 *payload, int cnt,
- 
- 	modep = &port->mode_data;
- 
--	adev = typec_match_altmode(port->port_altmode, ALTMODE_DISCOVERY_MAX,
--				   PD_VDO_VID(p[0]), PD_VDO_OPOS(p[0]));
--
- 	pdev = typec_match_altmode(port->partner_altmode, ALTMODE_DISCOVERY_MAX,
- 				   PD_VDO_VID(p[0]), PD_VDO_OPOS(p[0]));
- 
-+	adev = (void *)typec_altmode_get_partner(pdev);
+-----8<-----
+diff --git a/Documentation/ABI/testing/sysfs-class-wakeup b/Documentation/A=
+BI/testing/sysfs-class-wakeup
+index 30fb23eb9112..b83a87380d2c 100644
+--- a/Documentation/ABI/testing/sysfs-class-wakeup
++++ b/Documentation/ABI/testing/sysfs-class-wakeup
+@@ -5,6 +5,13 @@ Description:
+ 		The /sys/class/wakeup/ directory contains pointers to all
+ 		wakeup sources in the kernel at that moment in time.
+=20
++What:		/sys/class/wakeup/.../name
++Date:		June 2019
++Contact:	Tri Vo <trong@android.com>
++Description:
++		This file contains the name of the wakeup source when
++		it was created.
 +
- 	switch (cmd_type) {
- 	case CMDT_INIT:
- 		switch (cmd) {
-
---82I3+IH0IqGh5yIs--
+ What:		/sys/class/wakeup/.../active_count
+ Date:		June 2019
+ Contact:	Tri Vo <trong@android.com>
