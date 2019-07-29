@@ -2,135 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 403F6790CC
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 18:27:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA9E5790D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 18:28:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728792AbfG2Q1e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 12:27:34 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:45171 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727823AbfG2Q1e (ORCPT
+        id S2387643AbfG2Q2a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 12:28:30 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:42535 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387559AbfG2Q23 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 12:27:34 -0400
-Received: by mail-wr1-f65.google.com with SMTP id f9so62511318wre.12
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 09:27:32 -0700 (PDT)
+        Mon, 29 Jul 2019 12:28:29 -0400
+Received: by mail-io1-f66.google.com with SMTP id e20so90951474iob.9
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 09:28:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=mHHPMQ336CdhvDwSHAm2ZkUObmC6MYlngRuFkjj6+rQ=;
-        b=DwZvqBjX9KZPS22QyEa1iILLH2hTN+dUD4/1b4KsFWjmUYFEpnvMp5tSzwCOjk7nXb
-         47dFo9DlBP6wgTwKxLmF9vyO4cn8qs5wQBO3Omtt8RKttUKk/isZrTTkLcrQdd1Z7rRs
-         D46FJFRHuv3mVsh6Y7jppOHWDuC0krJot6cLHZjhOkilCIqI+IccrKR5Wgj8v288QNhh
-         Tm5F5iCRaAl3tKxEvEcc8RgJY7oAHbrGH0Ly1ylK9L/y6pN0E7y5Qftdv8n8Pr5y5F9q
-         oicicY+3MN+3DuQaNUXBk9ldinCIorc4sLE/AzB8zq6Q6VeVknCRYat0EcKOmFDaTqsI
-         ZCQg==
+        d=brauner.io; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=DHVMtSjxHblhx8srqB8OuNrRbChIr9eVS1c++J6kqsE=;
+        b=gUuXkOS07DLB8rjER8sOfxYBZ+PMPgw7mBd1QVP1d65kxP/UIs2709LyQoUtAXNzNv
+         J3MmeaV+fCaVKcet3Un0AFU2HUO+1a2cTxpyEIAX2Enpo3OBBsFYJEU/VV3UeUo1gtNY
+         PoWQUb1d/KjvGocN+bLnYjfV2U3TO9FNzIMJFCwo0FWCLHBa0HuON7k/Akw/dNzZDh7v
+         ZgbjHEAuwJoLqBk1/bezqbp3ewiO8MeMfsuVX2KGfBjzvhLA7X2pDloMS0tRzXJDzZ2B
+         d4wmWv9q46Ypwxs/o5sD+gGYQrbjfeyf0Y84jBWa1dW8MabeWz13NApFWdqFValIBtVl
+         +zJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mHHPMQ336CdhvDwSHAm2ZkUObmC6MYlngRuFkjj6+rQ=;
-        b=uNsq7FD2GzBk+QieX4VeN0eVW6eGqyBqfQz9CQAvAkGtc3G5D/Xdy8AMeCYXYcgDMD
-         THXblzgfYmfikOa1nLQTS0dzoIvtg/QA+4bIh5sO0UzYRwNB6o8iTW66CUlsevf66wdM
-         rvTdr0c1zDxTwVrUL66d3tx7kvwHnWTs7jyTgwDKkD3+V2Uy3kqUMhtKk/XI1KUkBh0Y
-         BQwLo07V/9W3yUvq1o+P6vV42qoFMDhvXVQbrncPTcM8qJuXAnje8hbkHscfebgmkyss
-         BVsVk/bInXXPZfgheup73fZykfgeR7fyFbajcpQbiDNUzsxlVAcAziOK/UcVZzugduKo
-         4AMw==
-X-Gm-Message-State: APjAAAWX5nvxj7CmtskjUbh9+lVNVddBuyrBQNn5QL20SxynpN9rRKqv
-        iEZCopVXC09CNqgdGEzWQ4Y9c64oPG5oA2OzR+VPnA==
-X-Google-Smtp-Source: APXvYqzQB1oJO3+x7XEVtNxM0vZcfRsQTHn2vaqSNFdzqGSy1CwX28tXj8TGjJHa9RkugwuUHla2pK2K30V09V6Y15E=
-X-Received: by 2002:adf:e50c:: with SMTP id j12mr37995479wrm.117.1564417651286;
- Mon, 29 Jul 2019 09:27:31 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=DHVMtSjxHblhx8srqB8OuNrRbChIr9eVS1c++J6kqsE=;
+        b=HsAFCCLOSjtuTme+fzliIZwW6ANBci4h2liYfAK79DGgfcsxssVE/zL5P6gOdh1MCX
+         03EKw5B4pYeKyJsg29ZOhfmrqmCexczRYfSCSxT7n4JXRhaGGrrwDvchNyo3BdHQ0SxD
+         yWQ9kc+HSx2YSgQURKZneCk4R8BttEEM5UyNKm5dkx2uY9rVgEIiOtW3n3xR3ICwsJOM
+         QLBirBr2h6UXIsexggAU0IwCez2kgvvpAT9IFL8VEDzH6z0Nl7DkwpBTw4f3iQZ3hkuA
+         HH2z/0oGXhS7tgXR3BnLf5YbdwAdGSci74BcPfIU6w7CNCiKN7zEcsJeXdrwKebYQDka
+         l1uQ==
+X-Gm-Message-State: APjAAAVb9O/ULq+uDwvAQ9Chk6o234f0FeISiesKXWPWztMme6gDRjV+
+        SxwBzluPjezKNOpQLsWab7s=
+X-Google-Smtp-Source: APXvYqyskFjQclHZ6gnHk7M17Uzais67Lqu10XVHEYQYCYjkRKzKm2IR24VvJaPj4kAUd4cuQvh/Pg==
+X-Received: by 2002:a02:8814:: with SMTP id r20mr17712166jai.115.1564417708655;
+        Mon, 29 Jul 2019 09:28:28 -0700 (PDT)
+Received: from localhost.localdomain ([162.223.5.124])
+        by smtp.gmail.com with ESMTPSA id l11sm45420026ioj.32.2019.07.29.09.28.27
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 29 Jul 2019 09:28:27 -0700 (PDT)
+From:   Christian Brauner <christian@brauner.io>
+To:     oleg@redhat.com, linux-kernel@vger.kernel.org
+Cc:     akpm@linux-foundation.org, tj@kernel.org, tglx@linutronix.de,
+        prsood@codeaurora.org, avagin@gmail.com,
+        Christian Brauner <christian@brauner.io>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH] exit: make setting exit_state consistent
+Date:   Mon, 29 Jul 2019 18:27:57 +0200
+Message-Id: <20190729162757.22694-1-christian@brauner.io>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-References: <1563864339-2621-1-git-send-email-kerneljasonxing@linux.alibaba.com>
- <20190729152957.GA21958@cmpxchg.org>
-In-Reply-To: <20190729152957.GA21958@cmpxchg.org>
-From:   Suren Baghdasaryan <surenb@google.com>
-Date:   Mon, 29 Jul 2019 09:27:20 -0700
-Message-ID: <CAJuCfpFsPn9MeS-pWcrAj1ZcVZXJNn94Vina6se2MgApgEFxHQ@mail.gmail.com>
-Subject: Re: [PATCH] psi: get poll_work to run when calling poll syscall next time
-To:     Johannes Weiner <hannes@cmpxchg.org>
-Cc:     Jason Xing <kerneljasonxing@linux.alibaba.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Dennis Zhou <dennis@kernel.org>, axboe@kernel.dk,
-        lizefan@huawei.com, Tejun Heo <tj@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 29, 2019 at 8:30 AM Johannes Weiner <hannes@cmpxchg.org> wrote:
->
-> Hi Jason,
->
-> On Tue, Jul 23, 2019 at 02:45:39PM +0800, Jason Xing wrote:
-> > Only when calling the poll syscall the first time can user
-> > receive POLLPRI correctly. After that, user always fails to
-> > acquire the event signal.
-> >
-> > Reproduce case:
-> > 1. Get the monitor code in Documentation/accounting/psi.txt
-> > 2. Run it, and wait for the event triggered.
-> > 3. Kill and restart the process.
-> >
-> > If the user doesn't kill the monitor process, it seems the
-> > poll_work works fine. After killing and restarting the monitor,
-> > the poll_work in kernel will never run again due to the wrong
-> > value of poll_scheduled. Therefore, we should reset the value
-> > as group_init() does after the last trigger is destroyed.
-> >
-> > Signed-off-by: Jason Xing <kerneljasonxing@linux.alibaba.com>
->
-> Good catch, and the fix makes sense to me. However, it was a bit hard
-> to understand how the problem occurs:
->
-> > ---
-> >  kernel/sched/psi.c | 6 ++++++
-> >  1 file changed, 6 insertions(+)
-> >
-> > diff --git a/kernel/sched/psi.c b/kernel/sched/psi.c
-> > index 7acc632..66f4385 100644
-> > --- a/kernel/sched/psi.c
-> > +++ b/kernel/sched/psi.c
-> > @@ -1133,6 +1133,12 @@ static void psi_trigger_destroy(struct kref *ref)
-> >       if (kworker_to_destroy) {
-> >               kthread_cancel_delayed_work_sync(&group->poll_work);
-> >               kthread_destroy_worker(kworker_to_destroy);
-> > +             /*
-> > +              * The poll_work should have the chance to be put into the
-> > +              * kthread queue when calling poll syscall next time. So
-> > +              * reset poll_scheduled to zero as group_init() does
-> > +              */
-> > +             atomic_set(&group->poll_scheduled, 0);
->
-> The question is why we can end up with poll_scheduled = 1 but the work
-> not running (which would reset it to 0). And the answer is because the
-> scheduling side sees group->poll_kworker under RCU protection and then
-> schedules it, but here we cancel the work and destroy the worker. The
-> cancel needs to pair with resetting the poll_scheduled flag:
->
->         if (kworker_to_destroy) {
->                 /*
->                  * After the RCU grace period has expired, the worker
->                  * can no longer be found through group->poll_kworker.
->                  * But it might have been already scheduled before
->                  * that - deschedule it cleanly before destroying it.
->                  */
->                 kthread_cancel_delayed_work_sync(&group->poll_work);
->                 atomic_set(&group->poll_scheduled, 0);
->
->                 kthread_destroy_worker(kworker_to_destroy);
->         }
->
-> With that change, please add:
->
-> Acked-by: Johannes Weiner <hannes@cmpxchg.org>
->
-> Thanks!
+Since commit [1] we unconditionally set exit_state to EXIT_ZOMBIE before
+calling into do_notify_parent(). This was done to eliminate a race when
+querying exit_state in do_notify_pidfd().
+Back then we decided to do the absolute minimal thing to fix this and
+not touch the rest of the exit_notify() function where exit_state is
+set.
+Since this fix has not caused any issues change the setting of
+exit_state to EXIT_DEAD in the autoreap case to account for the fact hat
+exit_state is set to EXIT_ZOMBIE unconditionally. This fix was planned
+but also explicitly requested in [2] and makes the whole code more
+consistent.
 
-The changes makes sense to me as well. Thanks!
+/* References */
+[1]: b191d6491be6 ("pidfd: fix a poll race when setting exit_state")
+[2]: https://lore.kernel.org/lkml/CAHk-=wigcxGFR2szue4wavJtH5cYTTeNES=toUBVGsmX0rzX+g@mail.gmail.com
 
-Reviewed-by: Suren Baghdasaryan <surenb@google.com>
+Signed-off-by: Christian Brauner <christian@brauner.io>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+---
+ kernel/exit.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/exit.c b/kernel/exit.c
+index 4436158a6d30..5b4a5dcce8f8 100644
+--- a/kernel/exit.c
++++ b/kernel/exit.c
+@@ -734,9 +734,10 @@ static void exit_notify(struct task_struct *tsk, int group_dead)
+ 		autoreap = true;
+ 	}
+ 
+-	tsk->exit_state = autoreap ? EXIT_DEAD : EXIT_ZOMBIE;
+-	if (tsk->exit_state == EXIT_DEAD)
++	if (autoreap) {
++		tsk->exit_state = EXIT_DEAD;
+ 		list_add(&tsk->ptrace_entry, &dead);
++	}
+ 
+ 	/* mt-exec, de_thread() is waiting for group leader */
+ 	if (unlikely(tsk->signal->notify_count < 0))
+-- 
+2.22.0
+
