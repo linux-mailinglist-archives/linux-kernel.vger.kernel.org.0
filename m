@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C54D79440
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:29:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF2E479434
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:29:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728413AbfG2T3h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 15:29:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42196 "EHLO mail.kernel.org"
+        id S1730064AbfG2T3G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 15:29:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41718 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387545AbfG2T3c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:29:32 -0400
+        id S1730048AbfG2T3A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:29:00 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 927152171F;
-        Mon, 29 Jul 2019 19:29:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 782FD2070B;
+        Mon, 29 Jul 2019 19:28:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564428571;
-        bh=/JwY3h9nUS0LG/9eBVEMdwzjPajL0hD0NRE551e2B1k=;
+        s=default; t=1564428539;
+        bh=YHh7Ki8cG3PLKbuJicjYSL7b+d/UKNTDJG7wmwaq3HM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=s1a084XKqDhePyu8RnIi+yurtCbTBkSMD+2DYDUBS5ZLWFNxuzuGRvn4SDhyXvhah
-         Xo82N/1/hDilgdTUpWfIH9AV1ecAt9HHJUzImKMEj+kX5TNXVqhfTwCK7TjIoKM7Za
-         yuzA59VRLzGE60qknfLUsOZ/CbLQjOaEcgqjkv8k=
+        b=c6zVSKTvHBdO9GEVnCe7YbG5NlTYxlPEf4xB4WigyHCIYI/oIOva4WyI+uT73HAAb
+         7WfsH7fyXKYWB9UhjHIUtA0QuFtUIo/WKHX3ETUxiEyG9iFgIra5ERTXYYZgbjZwrz
+         mAvM2yiXmWOILgGmCu2YtZWFd1JxqQCGqV0kRf70=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Denis Efremov <efremov@ispras.ru>,
+        Willy Tarreau <w@1wt.eu>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 101/293] gtp: fix suspicious RCU usage
-Date:   Mon, 29 Jul 2019 21:19:52 +0200
-Message-Id: <20190729190832.381864907@linuxfoundation.org>
+Subject: [PATCH 4.14 109/293] floppy: fix invalid pointer dereference in drive_name
+Date:   Mon, 29 Jul 2019 21:20:00 +0200
+Message-Id: <20190729190832.999899592@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190729190820.321094988@linuxfoundation.org>
 References: <20190729190820.321094988@linuxfoundation.org>
@@ -44,90 +45,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit e198987e7dd7d3645a53875151cd6f8fc425b706 ]
+[ Upstream commit 9b04609b784027968348796a18f601aed9db3789 ]
 
-gtp_encap_enable_socket() and gtp_encap_destroy() are not protected
-by rcu_read_lock(). and it's not safe to write sk->sk_user_data.
-This patch make these functions to use lock_sock() instead of
-rcu_dereference_sk_user_data().
+This fixes the invalid pointer dereference in the drive_name function of
+the floppy driver.
 
-Test commands:
-    gtp-link add gtp1
+The native_format field of the struct floppy_drive_params is used as
+floppy_type array index in the drive_name function.  Thus, the field
+should be checked the same way as the autodetect field.
 
-Splat looks like:
-[   83.238315] =============================
-[   83.239127] WARNING: suspicious RCU usage
-[   83.239702] 5.2.0-rc6+ #49 Not tainted
-[   83.240268] -----------------------------
-[   83.241205] drivers/net/gtp.c:799 suspicious rcu_dereference_check() usage!
-[   83.243828]
-[   83.243828] other info that might help us debug this:
-[   83.243828]
-[   83.246325]
-[   83.246325] rcu_scheduler_active = 2, debug_locks = 1
-[   83.247314] 1 lock held by gtp-link/1008:
-[   83.248523]  #0: 0000000017772c7f (rtnl_mutex){+.+.}, at: __rtnl_newlink+0x5f5/0x11b0
-[   83.251503]
-[   83.251503] stack backtrace:
-[   83.252173] CPU: 0 PID: 1008 Comm: gtp-link Not tainted 5.2.0-rc6+ #49
-[   83.253271] Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
-[   83.254562] Call Trace:
-[   83.254995]  dump_stack+0x7c/0xbb
-[   83.255567]  gtp_encap_enable_socket+0x2df/0x360 [gtp]
-[   83.256415]  ? gtp_find_dev+0x1a0/0x1a0 [gtp]
-[   83.257161]  ? memset+0x1f/0x40
-[   83.257843]  gtp_newlink+0x90/0xa21 [gtp]
-[   83.258497]  ? __netlink_ns_capable+0xc3/0xf0
-[   83.259260]  __rtnl_newlink+0xb9f/0x11b0
-[   83.260022]  ? rtnl_link_unregister+0x230/0x230
-[ ... ]
+To trigger the bug, one could use a value out of range and set the drive
+parameters with the FDSETDRVPRM ioctl.  Next, FDGETDRVTYP ioctl should
+be used to call the drive_name.  A floppy disk is not required to be
+inserted.
 
-Fixes: 1e3a3abd8b28 ("gtp: make GTP sockets in gtp_newlink optional")
-Signed-off-by: Taehee Yoo <ap420073@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+CAP_SYS_ADMIN is required to call FDSETDRVPRM.
+
+The patch adds the check for a value of the native_format field to be in
+the '0 <= x < ARRAY_SIZE(floppy_type)' range of the floppy_type array
+indices.
+
+The bug was found by syzkaller.
+
+Signed-off-by: Denis Efremov <efremov@ispras.ru>
+Tested-by: Willy Tarreau <w@1wt.eu>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/gtp.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/block/floppy.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/gtp.c b/drivers/net/gtp.c
-index dba3869b61be..2756edd84abc 100644
---- a/drivers/net/gtp.c
-+++ b/drivers/net/gtp.c
-@@ -293,12 +293,14 @@ static void gtp_encap_destroy(struct sock *sk)
+diff --git a/drivers/block/floppy.c b/drivers/block/floppy.c
+index a4f630ef2b75..b4051e251041 100644
+--- a/drivers/block/floppy.c
++++ b/drivers/block/floppy.c
+@@ -3386,7 +3386,8 @@ static int fd_getgeo(struct block_device *bdev, struct hd_geometry *geo)
+ 	return 0;
+ }
+ 
+-static bool valid_floppy_drive_params(const short autodetect[8])
++static bool valid_floppy_drive_params(const short autodetect[8],
++		int native_format)
  {
- 	struct gtp_dev *gtp;
- 
--	gtp = rcu_dereference_sk_user_data(sk);
-+	lock_sock(sk);
-+	gtp = sk->sk_user_data;
- 	if (gtp) {
- 		udp_sk(sk)->encap_type = 0;
- 		rcu_assign_sk_user_data(sk, NULL);
- 		sock_put(sk);
+ 	size_t floppy_type_size = ARRAY_SIZE(floppy_type);
+ 	size_t i = 0;
+@@ -3397,6 +3398,9 @@ static bool valid_floppy_drive_params(const short autodetect[8])
+ 			return false;
  	}
-+	release_sock(sk);
+ 
++	if (native_format < 0 || native_format >= floppy_type_size)
++		return false;
++
+ 	return true;
  }
  
- static void gtp_encap_disable_sock(struct sock *sk)
-@@ -798,7 +800,8 @@ static struct sock *gtp_encap_enable_socket(int fd, int type,
- 		goto out_sock;
- 	}
- 
--	if (rcu_dereference_sk_user_data(sock->sk)) {
-+	lock_sock(sock->sk);
-+	if (sock->sk->sk_user_data) {
- 		sk = ERR_PTR(-EBUSY);
- 		goto out_sock;
- 	}
-@@ -814,6 +817,7 @@ static struct sock *gtp_encap_enable_socket(int fd, int type,
- 	setup_udp_tunnel_sock(sock_net(sock->sk), sock, &tuncfg);
- 
- out_sock:
-+	release_sock(sock->sk);
- 	sockfd_put(sock);
- 	return sk;
- }
+@@ -3526,7 +3530,8 @@ static int fd_locked_ioctl(struct block_device *bdev, fmode_t mode, unsigned int
+ 		SUPBOUND(size, strlen((const char *)outparam) + 1);
+ 		break;
+ 	case FDSETDRVPRM:
+-		if (!valid_floppy_drive_params(inparam.dp.autodetect))
++		if (!valid_floppy_drive_params(inparam.dp.autodetect,
++				inparam.dp.native_format))
+ 			return -EINVAL;
+ 		*UDP = inparam.dp;
+ 		break;
+@@ -3725,7 +3730,7 @@ static int compat_setdrvprm(int drive,
+ 		return -EPERM;
+ 	if (copy_from_user(&v, arg, sizeof(struct compat_floppy_drive_params)))
+ 		return -EFAULT;
+-	if (!valid_floppy_drive_params(v.autodetect))
++	if (!valid_floppy_drive_params(v.autodetect, v.native_format))
+ 		return -EINVAL;
+ 	mutex_lock(&floppy_mutex);
+ 	UDP->cmos = v.cmos;
 -- 
 2.20.1
 
