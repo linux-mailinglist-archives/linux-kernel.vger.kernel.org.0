@@ -2,95 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3E0578D26
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 15:46:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 55EB278D4C
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 15:59:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728367AbfG2Nq4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 09:46:56 -0400
-Received: from conssluserg-01.nifty.com ([210.131.2.80]:59229 "EHLO
-        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728311AbfG2Nqz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 09:46:55 -0400
-Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com [209.85.222.41]) (authenticated)
-        by conssluserg-01.nifty.com with ESMTP id x6TDklL3027983;
-        Mon, 29 Jul 2019 22:46:48 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com x6TDklL3027983
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1564408008;
-        bh=OXAwzcS+yj3HJ7cjotHiQBWSZMqRmd+eaHeK7a8Qodc=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=WHIlUFj0Fr6+u9VhwFQ3KKety5ZhLznB8tvxe3Hzcj4JJfy2b1HEi37DLdwA3klVC
-         38X2hi96W35jsZK4G33P4ZLpOAokwz7SCeUNUlCBtpEErIPQYv0px9sNPlx10GQ4jV
-         uBVDUVmbHLkzR1rLuFun9V8YCBDXc3fix8Q1w8PD1qWlSOPPApcx/RXAWut3N8C5Uy
-         CfPzI9f4nAKANV2TMCHUYJF1Q327GZcZkRVBC0p9vy1MsfT8OaWkY2BuWELOLWnf3D
-         154mhLKpRxAgdc57Ig8izs4OaqvKIBuufZBzo/zV3q3d5PZ1TCq6VRNntlsAAr49OH
-         mlkDfCpl1D7cw==
-X-Nifty-SrcIP: [209.85.222.41]
-Received: by mail-ua1-f41.google.com with SMTP id v18so23946724uad.12;
-        Mon, 29 Jul 2019 06:46:48 -0700 (PDT)
-X-Gm-Message-State: APjAAAWaJWtDBBUu73Sn9q4n1U+gMlerYqydL2NottZZGaICI9T5YdVG
-        7/76Mhr+yc2SJUb3/jIlyvv9aHWhijI61sM3ylk=
-X-Google-Smtp-Source: APXvYqxBnsoC1Jnb//kCLbSm9sQ83FtOlg02dE5xpIz+U7QjTrOwrYvuAX/wOf6r3jwto/ZIARCGREU1Md5zkDRhxOM=
-X-Received: by 2002:a9f:2265:: with SMTP id 92mr53903777uad.121.1564408007070;
- Mon, 29 Jul 2019 06:46:47 -0700 (PDT)
+        id S1727977AbfG2N71 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 09:59:27 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:33868 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726767AbfG2N71 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 09:59:27 -0400
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id AC2E8B87C8480C7DA8F3;
+        Mon, 29 Jul 2019 21:43:42 +0800 (CST)
+Received: from [127.0.0.1] (10.177.96.203) by DGGEMS403-HUB.china.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server id 14.3.439.0; Mon, 29 Jul 2019
+ 21:43:36 +0800
+Subject: Re: [RFC PATCH 08/10] powerpc/fsl_booke/kaslr: clear the original
+ kernel if randomized
+To:     Christophe Leroy <christophe.leroy@c-s.fr>, <mpe@ellerman.id.au>,
+        <linuxppc-dev@lists.ozlabs.org>, <diana.craciun@nxp.com>,
+        <benh@kernel.crashing.org>, <paulus@samba.org>,
+        <npiggin@gmail.com>, <keescook@chromium.org>,
+        <kernel-hardening@lists.openwall.com>
+CC:     <linux-kernel@vger.kernel.org>, <wangkefeng.wang@huawei.com>,
+        <yebin10@huawei.com>, <thunder.leizhen@huawei.com>,
+        <jingxiangfeng@huawei.com>, <fanchengyang@huawei.com>
+References: <20190717080621.40424-1-yanaijie@huawei.com>
+ <20190717080621.40424-9-yanaijie@huawei.com>
+ <a09b4f53-2ccd-e675-4385-b53fd91fbafc@c-s.fr>
+From:   Jason Yan <yanaijie@huawei.com>
+Message-ID: <704624a1-36b7-50d7-cf8d-2923b2a97367@huawei.com>
+Date:   Mon, 29 Jul 2019 21:43:35 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-References: <1562668156-12927-1-git-send-email-hayashi.kunihiko@socionext.com> <1562668156-12927-6-git-send-email-hayashi.kunihiko@socionext.com>
-In-Reply-To: <1562668156-12927-6-git-send-email-hayashi.kunihiko@socionext.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Mon, 29 Jul 2019 22:46:11 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARok8dbc3pVgj8VunZCVtLiPf6oE_zL7tNLCe3pfG2nSQ@mail.gmail.com>
-Message-ID: <CAK7LNARok8dbc3pVgj8VunZCVtLiPf6oE_zL7tNLCe3pfG2nSQ@mail.gmail.com>
-Subject: Re: [PATCH 5/5] pinctrl: uniphier: Fix Pro5 SD pin-mux setting
-To:     Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <a09b4f53-2ccd-e675-4385-b53fd91fbafc@c-s.fr>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.177.96.203]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 9, 2019 at 7:29 PM Kunihiko Hayashi
-<hayashi.kunihiko@socionext.com> wrote:
->
-> SD uses the following pins starting from 247:
->     SDCD, SDWP, SDVOLC, SDCLK, SDCMD, SDDAT{0,1,2,3}
->
-> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
 
+On 2019/7/29 19:19, Christophe Leroy wrote:
+> 
+> 
+> Le 17/07/2019 à 10:06, Jason Yan a écrit :
+>> The original kernel still exists in the memory, clear it now.
+>>
+>> Signed-off-by: Jason Yan <yanaijie@huawei.com>
+>> Cc: Diana Craciun <diana.craciun@nxp.com>
+>> Cc: Michael Ellerman <mpe@ellerman.id.au>
+>> Cc: Christophe Leroy <christophe.leroy@c-s.fr>
+>> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+>> Cc: Paul Mackerras <paulus@samba.org>
+>> Cc: Nicholas Piggin <npiggin@gmail.com>
+>> Cc: Kees Cook <keescook@chromium.org>
+>> ---
+>>   arch/powerpc/kernel/kaslr_booke.c  | 11 +++++++++++
+>>   arch/powerpc/mm/mmu_decl.h         |  2 ++
+>>   arch/powerpc/mm/nohash/fsl_booke.c |  1 +
+>>   3 files changed, 14 insertions(+)
+>>
+>> diff --git a/arch/powerpc/kernel/kaslr_booke.c 
+>> b/arch/powerpc/kernel/kaslr_booke.c
+>> index 90357f4bd313..00339c05879f 100644
+>> --- a/arch/powerpc/kernel/kaslr_booke.c
+>> +++ b/arch/powerpc/kernel/kaslr_booke.c
+>> @@ -412,3 +412,14 @@ notrace void __init kaslr_early_init(void 
+>> *dt_ptr, phys_addr_t size)
+>>       reloc_kernel_entry(dt_ptr, kimage_vaddr);
+>>   }
+>> +
+>> +void __init kaslr_second_init(void)
+>> +{
+>> +    /* If randomized, clear the original kernel */
+>> +    if (kimage_vaddr != KERNELBASE) {
+>> +        unsigned long kernel_sz;
+>> +
+>> +        kernel_sz = (unsigned long)_end - kimage_vaddr;
+>> +        memset((void *)KERNELBASE, 0, kernel_sz);
+> 
+> Why are we clearing ? Is that just to tidy up or is it of security 
+> importance ?
+> 
 
-Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+If we leave it there, attackers can still find the kernel object very
+easy, it's still dangerous especially if without 
+CONFIG_STRICT_KERNEL_RWX enabled.
 
+> If so, maybe memzero_explicit() should be used instead ?
+> 
 
+OK
 
+>> +    }
+>> +}
+>> diff --git a/arch/powerpc/mm/mmu_decl.h b/arch/powerpc/mm/mmu_decl.h
+>> index 754ae1e69f92..9912ee598f9b 100644
+>> --- a/arch/powerpc/mm/mmu_decl.h
+>> +++ b/arch/powerpc/mm/mmu_decl.h
+>> @@ -150,8 +150,10 @@ extern void loadcam_multi(int first_idx, int num, 
+>> int tmp_idx);
+>>   #ifdef CONFIG_RANDOMIZE_BASE
+>>   extern void kaslr_early_init(void *dt_ptr, phys_addr_t size);
+>> +extern void kaslr_second_init(void);
+> 
+> No new 'extern' please.
+> 
+>>   #else
+>>   static inline void kaslr_early_init(void *dt_ptr, phys_addr_t size) {}
+>> +static inline void kaslr_second_init(void) {}
+>>   #endif
+>>   struct tlbcam {
+>> diff --git a/arch/powerpc/mm/nohash/fsl_booke.c 
+>> b/arch/powerpc/mm/nohash/fsl_booke.c
+>> index 8d25a8dc965f..fa5a87f5c08e 100644
+>> --- a/arch/powerpc/mm/nohash/fsl_booke.c
+>> +++ b/arch/powerpc/mm/nohash/fsl_booke.c
+>> @@ -269,6 +269,7 @@ notrace void __init relocate_init(u64 dt_ptr, 
+>> phys_addr_t start)
+>>       kernstart_addr = start;
+>>       if (is_second_reloc) {
+>>           virt_phys_offset = PAGE_OFFSET - memstart_addr;
+>> +        kaslr_second_init();
+>>           return;
+>>       }
+>>
+> 
+> Christophe
+> 
+> .
+> 
 
-> ---
->  drivers/pinctrl/uniphier/pinctrl-uniphier-pro5.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/pinctrl/uniphier/pinctrl-uniphier-pro5.c b/drivers/pinctrl/uniphier/pinctrl-uniphier-pro5.c
-> index 577f12e..22ce0a5 100644
-> --- a/drivers/pinctrl/uniphier/pinctrl-uniphier-pro5.c
-> +++ b/drivers/pinctrl/uniphier/pinctrl-uniphier-pro5.c
-> @@ -807,7 +807,7 @@ static const unsigned nand_pins[] = {19, 20, 21, 22, 23, 24, 25, 28, 29, 30,
->  static const int nand_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
->  static const unsigned nand_cs1_pins[] = {26, 27};
->  static const int nand_cs1_muxvals[] = {0, 0};
-> -static const unsigned sd_pins[] = {250, 251, 252, 253, 254, 255, 256, 257, 258};
-> +static const unsigned sd_pins[] = {247, 248, 249, 250, 251, 252, 253, 254, 255};
->  static const int sd_muxvals[] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
->  static const unsigned spi0_pins[] = {120, 121, 122, 123};
->  static const int spi0_muxvals[] = {0, 0, 0, 0};
-> --
-> 2.7.4
->
-
-
---
-Best Regards
-Masahiro Yamada
