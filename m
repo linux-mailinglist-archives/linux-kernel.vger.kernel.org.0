@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A0F479430
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:29:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 06A9B79401
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:27:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728978AbfG2T26 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 15:28:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41608 "EHLO mail.kernel.org"
+        id S1729820AbfG2T0r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 15:26:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39210 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727564AbfG2T2x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:28:53 -0400
+        id S1729059AbfG2T0p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:26:45 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 22C692070B;
-        Mon, 29 Jul 2019 19:28:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8BB6A20C01;
+        Mon, 29 Jul 2019 19:26:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564428532;
-        bh=wK7b6COeD7dL3yqszsDzRkPT8M+NtPOZ+usPFbJcXvs=;
+        s=default; t=1564428405;
+        bh=ozoPLPXd/jrSdZ2FR3JHy5bVrMxX2dEdna7OTOZWhpE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QEk4dfNT2LOBs2CGwzTFq2SucBWmLlVzRJ/Sit8IapDl3cyVE7yUQwTEUOnuuG/0c
-         ccC2vzqbB7/wIy0rTmrWx/ubmNRhBlNOkx4/PUhCqLKy6ynmry9cv7K3jUxh2zdRyB
-         Mrynq+iTXzuCD6RzsJdEAgPnHDOIq/T4kUkQoPVM=
+        b=Kfx+icDotBcaPoL5hdgNpPG/X+heuWxzTWYBfAxYsHk8sAwhG5IjqrlzrpZR052DK
+         avlpI8fzUjwHAQ8ScZ5daNjkG9y7fb1Qhb1bo3nKINqVpx9yv1JIQlO77UTZHGK46N
+         d+Qbzj6pTskUtG+Eye7569yAABmL1FrvWbyDeKbk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jason Wang <jasowang@redhat.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
+        stable@vger.kernel.org, Denis Kirjanov <kda@linux-powerpc.org>,
+        Doug Ledford <dledford@redhat.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 057/293] vhost_net: disable zerocopy by default
-Date:   Mon, 29 Jul 2019 21:19:08 +0200
-Message-Id: <20190729190828.485573190@linuxfoundation.org>
+Subject: [PATCH 4.14 058/293] ipoib: correcly show a VF hardware address
+Date:   Mon, 29 Jul 2019 21:19:09 +0200
+Message-Id: <20190729190828.664445391@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190729190820.321094988@linuxfoundation.org>
 References: <20190729190820.321094988@linuxfoundation.org>
@@ -45,41 +45,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 098eadce3c622c07b328d0a43dda379b38cf7c5e ]
+[ Upstream commit 64d701c608fea362881e823b666327f5d28d7ffd ]
 
-Vhost_net was known to suffer from HOL[1] issues which is not easy to
-fix. Several downstream disable the feature by default. What's more,
-the datapath was split and datacopy path got the support of batching
-and XDP support recently which makes it faster than zerocopy part for
-small packets transmission.
+in the case of IPoIB with SRIOV enabled hardware
+ip link show command incorrecly prints
+0 instead of a VF hardware address.
 
-It looks to me that disable zerocopy by default is more
-appropriate. It cold be enabled by default again in the future if we
-fix the above issues.
+Before:
+11: ib1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 2044 qdisc pfifo_fast
+state UP mode DEFAULT group default qlen 256
+    link/infiniband
+80:00:00:66:fe:80:00:00:00:00:00:00:24:8a:07:03:00:a4:3e:7c brd
+00:ff:ff:ff:ff:12:40:1b:ff:ff:00:00:00:00:00:00:ff:ff:ff:ff
+    vf 0 MAC 00:00:00:00:00:00, spoof checking off, link-state disable,
+trust off, query_rss off
+...
+After:
+11: ib1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 2044 qdisc pfifo_fast
+state UP mode DEFAULT group default qlen 256
+    link/infiniband
+80:00:00:66:fe:80:00:00:00:00:00:00:24:8a:07:03:00:a4:3e:7c brd
+00:ff:ff:ff:ff:12:40:1b:ff:ff:00:00:00:00:00:00:ff:ff:ff:ff
+    vf 0     link/infiniband
+80:00:00:66:fe:80:00:00:00:00:00:00:24:8a:07:03:00:a4:3e:7c brd
+00:ff:ff:ff:ff:12:40:1b:ff:ff:00:00:00:00:00:00:ff:ff:ff:ff, spoof
+checking off, link-state disable, trust off, query_rss off
 
-[1] https://patchwork.kernel.org/patch/3787671/
+v1->v2: just copy an address without modifing ifla_vf_mac
+v2->v3: update the changelog
 
-Signed-off-by: Jason Wang <jasowang@redhat.com>
-Acked-by: Michael S. Tsirkin <mst@redhat.com>
+Signed-off-by: Denis Kirjanov <kda@linux-powerpc.org>
+Acked-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/vhost/net.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/infiniband/ulp/ipoib/ipoib_main.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
-index b40e8ded49c6..4d11152e60c1 100644
---- a/drivers/vhost/net.c
-+++ b/drivers/vhost/net.c
-@@ -35,7 +35,7 @@
+diff --git a/drivers/infiniband/ulp/ipoib/ipoib_main.c b/drivers/infiniband/ulp/ipoib/ipoib_main.c
+index e6ff16b27acd..1a93d3d58c8a 100644
+--- a/drivers/infiniband/ulp/ipoib/ipoib_main.c
++++ b/drivers/infiniband/ulp/ipoib/ipoib_main.c
+@@ -1833,6 +1833,7 @@ static int ipoib_get_vf_config(struct net_device *dev, int vf,
+ 		return err;
  
- #include "vhost.h"
+ 	ivf->vf = vf;
++	memcpy(ivf->mac, dev->dev_addr, dev->addr_len);
  
--static int experimental_zcopytx = 1;
-+static int experimental_zcopytx = 0;
- module_param(experimental_zcopytx, int, 0444);
- MODULE_PARM_DESC(experimental_zcopytx, "Enable Zero Copy TX;"
- 		                       " 1 -Enable; 0 - Disable");
+ 	return 0;
+ }
 -- 
 2.20.1
 
