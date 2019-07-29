@@ -2,91 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 197C079BED
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 00:00:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E49E79BD5
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 00:00:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389366AbfG2V6w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 17:58:52 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:44466 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389282AbfG2V6s (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 17:58:48 -0400
-Received: by mail-pg1-f195.google.com with SMTP id i18so28916867pgl.11
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 14:58:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ZGX4E0zL337coMpGxL1XEgxTmtLdDc56kYr2P6tXetM=;
-        b=L8guUWxOYjK6XiCshtZZcKoxR/54Vz5NjX2WheEEHk63qf19d87Faxvv5kgSZfMxFc
-         jOOMWrMPyinWN0CrAYeiKy7ktsraRmF80lRehlRtDEXhOcO+YWw4WpvZEy7Trgi8ed4N
-         V7yHbdKDGfCFZArRwTdbTz0F4d5ZRgndfjc97JKYE6PwuAaKIWQz1nK23nmf2W6ULnbv
-         +maT59ZjSl9MxEFz2OHzVE1tO+deOpoiRFovw3VweVn2WCrEZGNn5AItcw4DxmxTkO7u
-         Pb1ZjgHR0yzNeEKO8oIdWV7X3V5GUvCj2Y+JIDNnOStLn0aG5+rdCdB5SgbETi4nL91W
-         KoCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ZGX4E0zL337coMpGxL1XEgxTmtLdDc56kYr2P6tXetM=;
-        b=e7bdTmwA3m3PCJt1H09VQnp7NXK//14HWw3KWXtK1tLcmS5leFt9FEKbQcEkI2hTbt
-         u+yUUjd6AmCtcrZuqKn7A/kP4dVVDmE84jouVLDGldiAhZ67MF43s2s0GfTO3mm7esVw
-         AiV1f0iFv+QRWpkFQMHK9UZzYLv8NvmzA/begiUA/ssVZu20bGJ/ku7AdRYyvIemxhMg
-         P69jt6qwQ1QtFAbHKPx+nlBoyQrXMkTvRk2O/oc12gbOIkpih2Im+n/hnqk9dn75J5B3
-         hMtV1wRAmvQZhZhm3zW/+yjjMPaS2z3+aIviSZ7avy9JAa8Up8CGRTtFiXX6JW3HTj+V
-         1xXA==
-X-Gm-Message-State: APjAAAWqJ6KfVjXUMofmYV+JZMM1o9uBBNABcC/BrdHt1JfSSw1tFWGT
-        glGs5wPc2DaUr5LR5AX7zL/N8eLJ0tSr3WOf+WP02LmQOcSZDQ==
-X-Google-Smtp-Source: APXvYqwkmUwldi+ySYyBzJGzi0pYkpahJyKEqbVx57yA9DvkEPW3DJukefD/8uJY2Yiev/nqvJakt6MjXBFzNaT83og=
-X-Received: by 2002:a63:2cd1:: with SMTP id s200mr101643560pgs.10.1564437527160;
- Mon, 29 Jul 2019 14:58:47 -0700 (PDT)
+        id S1730614AbfG2V7W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 17:59:22 -0400
+Received: from mx.kolabnow.com ([95.128.36.42]:29794 "EHLO mx.kolabnow.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730602AbfG2V7V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 17:59:21 -0400
+Received: from localhost (unknown [127.0.0.1])
+        by ext-mx-out001.mykolab.com (Postfix) with ESMTP id 2221C5B5;
+        Mon, 29 Jul 2019 23:59:19 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kolabnow.com; h=
+        content-transfer-encoding:content-type:content-type:mime-version
+        :message-id:date:date:subject:subject:from:from:received
+        :received:received; s=dkim20160331; t=1564437558; x=1566251959;
+         bh=gmrks1gL8rsotA022rT28bK42uNcWkGQHEPJY39U71w=; b=WBSjQ597086J
+        LZMCKHP/8Pwv73dnSnLFg177Cs/8lH6bQ3/j7n25tVkEf1QZeuDWZ5kTbK1lUS90
+        R1ZUgIQW996FjzCadA6aOM3wXtTYar0C6pE5YecvwsUzOLn8Jkx3Fh9AR+hRQtNM
+        y3+KqSa+XsdiDyv9N4BFQcZduillxAtRCm4X8y4P1GANKrBnnbXP9KDYZ50M51cF
+        5ea0TxZxYBpKXb3j7L96qYYLm/J7+85gle8VJpjkwcVHY5VKXbzEtclrhFA55am/
+        Ea4BE9hUs7WQ1lpKvq7RxBFLnLzy+43wFVU9S6Ou6j9Tk1HD4ggYFGedHjhwGKP2
+        nju7MCwtKCzxd6Y/Bz0oHRi2hehqiaoiY20j8EUidTyNVSZpW6qZ+8+VclY7wL6l
+        aG+Nib9G37L09U0XHyTpF5xcTSoJq/zBagbeaUALPMAyx1JX0c+vjSNCQ97U80kN
+        KlsPD/Z/7ARr3+LRuYn+/U7gTJVs3Id78qL5mjm2ZBvzxJ2JCCOX4HhT9NDYMxJi
+        6mzZrWCSVSfSQvsXvx+uXcEUwpZguQQjkhDgOkBHIZEJfxexkndiI4vDkzmX7NnJ
+        vZTFBC/N4lvMSlNWBodj2hGht3UB7WRb4357GYRZoaxn6D0aNWYUWhbRqorTWjxZ
+        I6EBiJ4a5kMGmUiHrAL/IQ0GfomBLxU=
+X-Virus-Scanned: amavisd-new at mykolab.com
+X-Spam-Flag: NO
+X-Spam-Score: -1.9
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.9 tagged_above=-10 required=5
+        tests=[BAYES_00=-1.9] autolearn=ham autolearn_force=no
+Received: from mx.kolabnow.com ([127.0.0.1])
+        by localhost (ext-mx-out001.mykolab.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id Wqn3w0dfto0H; Mon, 29 Jul 2019 23:59:18 +0200 (CEST)
+Received: from int-mx001.mykolab.com (unknown [10.9.13.1])
+        by ext-mx-out001.mykolab.com (Postfix) with ESMTPS id 7413135F;
+        Mon, 29 Jul 2019 23:59:17 +0200 (CEST)
+Received: from ext-subm003.mykolab.com (unknown [10.9.6.3])
+        by int-mx001.mykolab.com (Postfix) with ESMTPS id 52444B23;
+        Mon, 29 Jul 2019 23:59:16 +0200 (CEST)
+From:   Federico Vaga <federico.vaga@vaga.pv.it>
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Federico Vaga <federico.vaga@vaga.pv.it>,
+        Alessia Mantegazza <amantegazza@vaga.pv.it>
+Subject: [PATCH] doc:it_IT: align translation to mainline
+Date:   Mon, 29 Jul 2019 23:58:56 +0200
+Message-Id: <20190729215856.11128-1-federico.vaga@vaga.pv.it>
 MIME-Version: 1.0
-References: <201907291442.B9953EBED@keescook> <3e515b31-0779-4f65-debf-49e462f9cd25@kernel.dk>
-In-Reply-To: <3e515b31-0779-4f65-debf-49e462f9cd25@kernel.dk>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Mon, 29 Jul 2019 14:58:35 -0700
-Message-ID: <CAKwvOdkRxJ6Vtm8CX1ZgDgzzAywSyx7Y-nNFn+tVPf35YQc2YQ@mail.gmail.com>
-Subject: Re: [PATCH v2] libata: zpodd: Fix small read overflow in zpodd_get_mech_type()
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Jeffrin Jose T <jeffrin@rajagiritech.edu.in>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        tobin@kernel.org, Dmitry Vyukov <dvyukov@google.com>,
-        Alexander Potapenko <glider@google.com>,
-        Tejun Heo <tj@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 29, 2019 at 2:55 PM Jens Axboe <axboe@kernel.dk> wrote:
->
-> On 7/29/19 3:47 PM, Kees Cook wrote:
-> > Jeffrin reported a KASAN issue:
-> >
-> >    BUG: KASAN: global-out-of-bounds in ata_exec_internal_sg+0x50f/0xc70
-> >    Read of size 16 at addr ffffffff91f41f80 by task scsi_eh_1/149
-> >    ...
-> >    The buggy address belongs to the variable:
-> >      cdb.48319+0x0/0x40
-> >
-> > Much like commit 18c9a99bce2a ("libata: zpodd: small read overflow in
-> > eject_tray()"), this fixes a cdb[] buffer length, this time in
-> > zpodd_get_mech_type():
-> >
-> > We read from the cdb[] buffer in ata_exec_internal_sg(). It has to be
-> > ATAPI_CDB_LEN (16) bytes long, but this buffer is only 12 bytes.
->
-> Applied, thanks.
+The patch translates the following patches in Italian:
 
-Dropped my reviewed by tag. :(
-https://lkml.org/lkml/2019/7/22/865
+1fb12b35e5ff kbuild: Raise the minimum required binutils version to 2.21
+9c3c0c204814 isdn: remove isdn4linux
+
+Signed-off-by: Federico Vaga <federico.vaga@vaga.pv.it>
+---
+ .../translations/it_IT/process/changes.rst    | 22 ++++---------------
+ 1 file changed, 4 insertions(+), 18 deletions(-)
+
+diff --git a/Documentation/translations/it_IT/process/changes.rst b/Documentation/translations/it_IT/process/changes.rst
+index d0874327f301..94a6499742ac 100644
+--- a/Documentation/translations/it_IT/process/changes.rst
++++ b/Documentation/translations/it_IT/process/changes.rst
+@@ -26,16 +26,15 @@ Prima di pensare d'avere trovato un baco, aggiornate i seguenti programmi
+ usando, il comando indicato dovrebbe dirvelo.
+ 
+ Questa lista presume che abbiate già un kernel Linux funzionante.  In aggiunta,
+-non tutti gli strumenti sono necessari ovunque; ovviamente, se non avete un
+-modem ISDN, per esempio, probabilmente non dovreste preoccuparvi di
+-isdn4k-utils.
++non tutti gli strumenti sono necessari ovunque; ovviamente, se non avete una
++PC Card, per esempio, probabilmente non dovreste preoccuparvi di pcmciautils.
+ 
+ ====================== =================  ========================================
+         Programma       Versione minima       Comando per verificare la versione
+ ====================== =================  ========================================
+ GNU C                  4.6                gcc --version
+ GNU make               3.81               make --version
+-binutils               2.20               ld -v
++binutils               2.21               ld -v
+ flex                   2.5.35             flex --version
+ bison                  2.0                bison --version
+ util-linux             2.10o              fdformat --version
+@@ -49,7 +48,6 @@ btrfs-progs            0.18               btrfsck
+ pcmciautils            004                pccardctl -V
+ quota-tools            3.09               quota -V
+ PPP                    2.4.0              pppd --version
+-isdn4k-utils           3.1pre1            isdnctrl 2>&1|grep version
+ nfs-utils              1.0.5              showmount --version
+ procps                 3.2.0              ps --version
+ oprofile               0.9                oprofiled --version
+@@ -81,10 +79,7 @@ Per compilare il kernel vi servirà GNU make 3.81 o successivo.
+ Binutils
+ --------
+ 
+-Il sistema di compilazione, dalla versione 4.13,  per la produzione dei passi
+-intermedi, si è convertito all'uso di *thin archive* (`ar T`) piuttosto che
+-all'uso del *linking* incrementale (`ld -r`). Questo richiede binutils 2.20 o
+-successivo.
++Per generare il kernel è necessario avere Binutils 2.21 o superiore.
+ 
+ pkg-config
+ ----------
+@@ -286,11 +281,6 @@ col seguente comando::
+ 
+   mknod /dev/ppp c 108 0
+ 
+-Isdn4k-utils
+-------------
+-
+-Per via della modifica del campo per il numero di telefono, il pacchetto
+-isdn4k-utils dev'essere ricompilato o (preferibilmente) aggiornato.
+ 
+ NFS-utils
+ ---------
+@@ -456,10 +446,6 @@ PPP
+ 
+ - <ftp://ftp.samba.org/pub/ppp/>
+ 
+-Isdn4k-utils
+-------------
+-
+-- <ftp://ftp.isdn4linux.de/pub/isdn4linux/utils/>
+ 
+ NFS-utils
+ ---------
 -- 
-Thanks,
-~Nick Desaulniers
+2.21.0
+
