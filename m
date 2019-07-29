@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9D777969E
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:54:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 923E779662
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:51:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390900AbfG2Txd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 15:53:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45278 "EHLO mail.kernel.org"
+        id S2403844AbfG2TvS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 15:51:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42488 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403963AbfG2TxK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:53:10 -0400
+        id S2390430AbfG2TvQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:51:16 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BEFF52184B;
-        Mon, 29 Jul 2019 19:53:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 04F32205F4;
+        Mon, 29 Jul 2019 19:51:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564429989;
-        bh=IuQ35tiPs50YWvIuyyRt+BzuJkrV/5QXgKWzYtVS5ow=;
+        s=default; t=1564429875;
+        bh=PDKRh3yLK17oXfBPui/lkXXZPI+YwZkLMHVsggm9pio=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=a8dBa6rG6S8/W45Sy8UArsLDnox7OEVntuvzhtrcakpHiy/uQDVVCo7eFSvdSWw70
-         VswURLzo40U3ZS1KPEssXS3NNeH1oG0v2BjT06D8YuwuqNi/HK3SF4CkbISiSqP8LK
-         6hBB9NUkOHZr4czlzbNMxmQ83IF0arA1mV0otW/8=
+        b=ki67qqRe2WKDPD0ZG6UskLmM4UXr6AgsHu4tvqbJuUGrt/6vCkmUDcZRIKGCjupLb
+         VYELJ8ybHE4pxMxQVQRD04qHyOj8ibU2K1zqVnqfC05W/fukxEZ/NeJUL263EdIEay
+         ISx9Uf76OwQwyy11zmS1DY3ah/+MkUIA8d3tFHAI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -50,9 +50,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-arm-kernel@lists.infradead.org,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 123/215] perf trace: Fix potential NULL pointer dereference found by the smatch tool
-Date:   Mon, 29 Jul 2019 21:21:59 +0200
-Message-Id: <20190729190800.504666262@linuxfoundation.org>
+Subject: [PATCH 5.2 124/215] perf session: Fix potential NULL pointer dereference found by the smatch tool
+Date:   Mon, 29 Jul 2019 21:22:00 +0200
+Message-Id: <20190729190800.716035519@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190729190739.971253303@linuxfoundation.org>
 References: <20190729190739.971253303@linuxfoundation.org>
@@ -65,28 +65,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 7a6d49dc8cad8fa1f3d63994102af8f9ae9c859f ]
+[ Upstream commit f3c8d90757724982e5f07cd77d315eb64ca145ac ]
 
-Based on the following report from Smatch, fix the potential NULL
-pointer dereference check.
+Based on the following report from Smatch, fix the potential
+NULL pointer dereference check.
 
-  tools/perf/builtin-trace.c:1044
-  thread_trace__new() error: we previously assumed 'ttrace' could be
-  null (see line 1041).
+  tools/perf/util/session.c:1252
+  dump_read() error: we previously assumed 'evsel' could be null
+  (see line 1249)
 
-  tools/perf/builtin-trace.c
-  1037 static struct thread_trace *thread_trace__new(void)
-  1038 {
-  1039         struct thread_trace *ttrace =  zalloc(sizeof(struct thread_trace));
-  1040
-  1041         if (ttrace)
-  1042                 ttrace->files.max = -1;
-  1043
-  1044         ttrace->syscall_stats = intlist__new(NULL);
-               ^^^^^^^^
-  1045
-  1046         return ttrace;
-  1047 }
+  tools/perf/util/session.c
+  1240 static void dump_read(struct perf_evsel *evsel, union perf_event *event)
+  1241 {
+  1242         struct read_event *read_event = &event->read;
+  1243         u64 read_format;
+  1244
+  1245         if (!dump_trace)
+  1246                 return;
+  1247
+  1248         printf(": %d %d %s %" PRIu64 "\n", event->read.pid, event->read.tid,
+  1249                evsel ? perf_evsel__name(evsel) : "FAIL",
+  1250                event->read.value);
+  1251
+  1252         read_format = evsel->attr.read_format;
+                             ^^^^^^^
+
+'evsel' could be NULL pointer, for this case this patch directly bails
+out without dumping read_event.
 
 Signed-off-by: Leo Yan <leo.yan@linaro.org>
 Acked-by: Jiri Olsa <jolsa@kernel.org>
@@ -110,32 +115,27 @@ Cc: Suzuki Poulouse <suzuki.poulose@arm.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Thomas Richter <tmricht@linux.ibm.com>
 Cc: linux-arm-kernel@lists.infradead.org
-Link: http://lkml.kernel.org/r/20190702103420.27540-6-leo.yan@linaro.org
-[ Just made it look like other tools/perf constructors, same end result ]
+Link: http://lkml.kernel.org/r/20190702103420.27540-9-leo.yan@linaro.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/builtin-trace.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ tools/perf/util/session.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index 52fadc858ef0..909e68545bb8 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -997,10 +997,10 @@ static struct thread_trace *thread_trace__new(void)
- {
- 	struct thread_trace *ttrace =  zalloc(sizeof(struct thread_trace));
+diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
+index 54cf163347f7..2e61dd6a3574 100644
+--- a/tools/perf/util/session.c
++++ b/tools/perf/util/session.c
+@@ -1249,6 +1249,9 @@ static void dump_read(struct perf_evsel *evsel, union perf_event *event)
+ 	       evsel ? perf_evsel__name(evsel) : "FAIL",
+ 	       event->read.value);
  
--	if (ttrace)
-+	if (ttrace) {
- 		ttrace->files.max = -1;
--
--	ttrace->syscall_stats = intlist__new(NULL);
-+		ttrace->syscall_stats = intlist__new(NULL);
-+	}
++	if (!evsel)
++		return;
++
+ 	read_format = evsel->attr.read_format;
  
- 	return ttrace;
- }
+ 	if (read_format & PERF_FORMAT_TOTAL_TIME_ENABLED)
 -- 
 2.20.1
 
