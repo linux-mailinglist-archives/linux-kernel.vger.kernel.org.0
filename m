@@ -2,104 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 989CA78F74
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 17:37:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6FC7478F7E
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 17:37:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728057AbfG2PhC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 11:37:02 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:40256 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725945AbfG2PhB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 11:37:01 -0400
-Received: by mail-wr1-f68.google.com with SMTP id r1so62357724wrl.7
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 08:36:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=kbdqHLDZjC9a+s2gzn3LKNYZtrgZuml85rJixr3NhMA=;
-        b=WpEpoZQZZ9PDYpfnO7sTpeHWy1slYQ9JUt3NCK1aXFPqPAfgRIhMG17DK5BIbefwnZ
-         XTJa2sVb5R7Q0QSQOIbgdnMLiE7s5EUcOvMb6SBm4BGKkp3GyOdpgHUQecn+OfJ69g6T
-         D0oN4rXaoeIC95gRUmz8yb88OyoF2pVKAQYpf/99OOta6zR3GEQouuSLwEnucsGgfBcK
-         1+PD99+YrsOC3ADcaz6X29SK2AYmrRnEO0I3gpuzsmsq2USB30qW199VcdxJDokH87Xo
-         z+uMixplN0sKEZbI4ddjIWG+6KT/utCJbfqDUHMQtpqtBclhBtz66aoef/LSBMdvCVQE
-         LsEg==
-X-Gm-Message-State: APjAAAXJEeqwlcABode0wWNjnYHJLLIX13+KNpT5XCM684ddDEvb8llt
-        Rj8DLDcNGPpl3HEJw/fXjxX2bQ==
-X-Google-Smtp-Source: APXvYqyIgEmmE4cqBkrJP3fc56zTUtO2PgG0o7WjOjV8vL0usOvWpBwWKxfFJk/mZ144VJ835dKMgA==
-X-Received: by 2002:adf:e705:: with SMTP id c5mr73459454wrm.270.1564414619334;
-        Mon, 29 Jul 2019 08:36:59 -0700 (PDT)
-Received: from steredhat (host122-201-dynamic.13-79-r.retail.telecomitalia.it. [79.13.201.122])
-        by smtp.gmail.com with ESMTPSA id p63sm13455498wmp.45.2019.07.29.08.36.58
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 29 Jul 2019 08:36:58 -0700 (PDT)
-Date:   Mon, 29 Jul 2019 17:36:56 +0200
-From:   Stefano Garzarella <sgarzare@redhat.com>
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        virtualization@lists.linux-foundation.org,
-        Jason Wang <jasowang@redhat.com>, kvm@vger.kernel.org
-Subject: Re: [PATCH v4 1/5] vsock/virtio: limit the memory used per-socket
-Message-ID: <20190729153656.zk4q4rob5oi6iq7l@steredhat>
-References: <20190717113030.163499-1-sgarzare@redhat.com>
- <20190717113030.163499-2-sgarzare@redhat.com>
- <20190729095956-mutt-send-email-mst@kernel.org>
+        id S1728580AbfG2Pht (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 11:37:49 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:60733 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725209AbfG2Pht (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 11:37:49 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id DE805300CA4D;
+        Mon, 29 Jul 2019 15:37:48 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-160.bos.redhat.com [10.18.17.160])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 11B105C1A1;
+        Mon, 29 Jul 2019 15:37:47 +0000 (UTC)
+Subject: Re: [PATCH v2] sched/core: Don't use dying mm as active_mm of
+ kthreads
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        Phil Auld <pauld@redhat.com>, Rik van Riel <riel@surriel.com>,
+        Andy Lutomirski <luto@kernel.org>
+References: <20190727171047.31610-1-longman@redhat.com>
+ <20190729085235.GT31381@hirez.programming.kicks-ass.net>
+ <4cd17c3a-428c-37a0-b3a2-04e6195a61d5@redhat.com>
+ <20190729150338.GF31398@hirez.programming.kicks-ass.net>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <c2dfc884-b3e1-6fb3-b05f-2b1f299853f4@redhat.com>
+Date:   Mon, 29 Jul 2019 11:37:47 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190729095956-mutt-send-email-mst@kernel.org>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190729150338.GF31398@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Mon, 29 Jul 2019 15:37:48 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 29, 2019 at 10:04:29AM -0400, Michael S. Tsirkin wrote:
-> On Wed, Jul 17, 2019 at 01:30:26PM +0200, Stefano Garzarella wrote:
-> > Since virtio-vsock was introduced, the buffers filled by the host
-> > and pushed to the guest using the vring, are directly queued in
-> > a per-socket list. These buffers are preallocated by the guest
-> > with a fixed size (4 KB).
-> > 
-> > The maximum amount of memory used by each socket should be
-> > controlled by the credit mechanism.
-> > The default credit available per-socket is 256 KB, but if we use
-> > only 1 byte per packet, the guest can queue up to 262144 of 4 KB
-> > buffers, using up to 1 GB of memory per-socket. In addition, the
-> > guest will continue to fill the vring with new 4 KB free buffers
-> > to avoid starvation of other sockets.
-> > 
-> > This patch mitigates this issue copying the payload of small
-> > packets (< 128 bytes) into the buffer of last packet queued, in
-> > order to avoid wasting memory.
-> > 
-> > Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
-> > Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
-> 
-> This is good enough for net-next, but for net I think we
-> should figure out how to address the issue completely.
-> Can we make the accounting precise? What happens to
-> performance if we do?
-> 
+On 7/29/19 11:03 AM, Peter Zijlstra wrote:
+> On Mon, Jul 29, 2019 at 10:51:51AM -0400, Waiman Long wrote:
+>> On 7/29/19 4:52 AM, Peter Zijlstra wrote:
+>>> On Sat, Jul 27, 2019 at 01:10:47PM -0400, Waiman Long wrote:
+>>>> It was found that a dying mm_struct where the owning task has exited
+>>>> can stay on as active_mm of kernel threads as long as no other user
+>>>> tasks run on those CPUs that use it as active_mm. This prolongs the
+>>>> life time of dying mm holding up memory and other resources like swap
+>>>> space that cannot be freed.
+>>> Sure, but this has been so 'forever', why is it a problem now?
+>> I ran into this probem when running a test program that keeps on
+>> allocating and touch memory and it eventually fails as the swap space is
+>> full. After the failure, I could not rerun the test program again
+>> because the swap space remained full. I finally track it down to the
+>> fact that the mm stayed on as active_mm of kernel threads. I have to
+>> make sure that all the idle cpus get a user task to run to bump the
+>> dying mm off the active_mm of those cpus, but this is just a workaround,
+>> not a solution to this problem.
+> The 'sad' part is that x86 already switches to init_mm on idle and we
+> only keep the active_mm around for 'stupid'.
+>
+> Rik and Andy were working on getting that 'fixed' a while ago, not sure
+> where that went.
 
-In order to do more precise accounting maybe we can use the buffer size,
-instead of payload size when we update the credit available.
-In this way, the credit available for each socket will reflect the memory
-actually used.
+Good, perhaps the right thing to do is for the idle->kernel case to keep
+init_mm as the active_mm instead of reuse whatever left behind the last
+time around.
 
-I should check better, because I'm not sure what happen if the peer sees
-1KB of space available, then it sends 1KB of payload (using a 4KB
-buffer).
+Cheers,
+Longman
 
-The other option is to copy each packet in a new buffer like I did in
-the v2 [2], but this forces us to make a copy for each packet that does
-not fill the entire buffer, perhaps too expensive.
-
-[2] https://patchwork.kernel.org/patch/10938741/
-
-
-Thanks,
-Stefano
