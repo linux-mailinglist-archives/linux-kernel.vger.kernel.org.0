@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8ADDA79614
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:48:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE62179617
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:48:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390127AbfG2Tsa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 15:48:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38538 "EHLO mail.kernel.org"
+        id S2390224AbfG2Tsj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 15:48:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38904 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390094AbfG2TsX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:48:23 -0400
+        id S2390133AbfG2Tsh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:48:37 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2562221655;
-        Mon, 29 Jul 2019 19:48:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 084032171F;
+        Mon, 29 Jul 2019 19:48:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564429702;
-        bh=lZnPLW3H5pSLGCa7gLcah8frpSSrusmtoBFA1HBMCkU=;
+        s=default; t=1564429716;
+        bh=2wxzt5JMsqqpQOcd2Ku1eTy6OT7lVsReh/kZknImlaw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aknBraGI+VqQ4xZS97XxEew611+E4BTvY45aZMa29JKtBy2WhsK6ePMrNeIgYyIXd
-         UtLQw3Cx7Eu92//YTfBjgP1f3ULDXklYJc/cfeblfKdZlxHnT/gs15aMaNr+9bSrk5
-         JXm0HwYMVahbgCS9kUAIJANkW73ZOhAsSJNkBT5k=
+        b=k3tH/Stvj4Mz6yVvKbr0motY7fodWwi6u+FjW5SE1C0y75NAeCNhgy+fXciz+hKQx
+         vui0Yb5Dvtn5dGsZUso4/kAJYiqa6t8GGN5fjKfjIcl4etWMqXAXM1mvVsW45OulMO
+         qog1C6Qxy20fbLIsZ2urkQT4nhP3ryK9qxtgE/Ro=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Alexandru Ardelean <alexandru.ardelean@analog.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Andrzej Pietrasiewicz <andrzej.p@collabora.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 066/215] iio: adxl372: fix iio_triggered_buffer_{pre,post}enable positions
-Date:   Mon, 29 Jul 2019 21:21:02 +0200
-Message-Id: <20190729190751.829614219@linuxfoundation.org>
+Subject: [PATCH 5.2 070/215] usb: gadget: Zero ffs_io_data
+Date:   Mon, 29 Jul 2019 21:21:06 +0200
+Message-Id: <20190729190752.430092823@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190729190739.971253303@linuxfoundation.org>
 References: <20190729190739.971253303@linuxfoundation.org>
@@ -45,89 +45,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 0e4f0b42f42d88507b48282c8915f502551534e4 ]
+[ Upstream commit 508595515f4bcfe36246e4a565cf280937aeaade ]
 
-The iio_triggered_buffer_{predisable,postenable} functions attach/detach
-the poll functions.
+In some cases the "Allocate & copy" block in ffs_epfile_io() is not
+executed. Consequently, in such a case ffs_alloc_buffer() is never called
+and struct ffs_io_data is not initialized properly. This in turn leads to
+problems when ffs_free_buffer() is called at the end of ffs_epfile_io().
 
-For the predisable hook, the disable code should occur before detaching
-the poll func, and for the postenable hook, the poll func should be
-attached before the enable code.
+This patch uses kzalloc() instead of kmalloc() in the aio case and memset()
+in non-aio case to properly initialize struct ffs_io_data.
 
-Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iio/accel/adxl372.c | 27 ++++++++++++++++-----------
- 1 file changed, 16 insertions(+), 11 deletions(-)
+ drivers/usb/gadget/function/f_fs.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/iio/accel/adxl372.c b/drivers/iio/accel/adxl372.c
-index 3b84cb243a87..055227cb3d43 100644
---- a/drivers/iio/accel/adxl372.c
-+++ b/drivers/iio/accel/adxl372.c
-@@ -782,10 +782,14 @@ static int adxl372_buffer_postenable(struct iio_dev *indio_dev)
- 	unsigned int mask;
- 	int i, ret;
+diff --git a/drivers/usb/gadget/function/f_fs.c b/drivers/usb/gadget/function/f_fs.c
+index c7ed90084d1a..213ff03c8a9f 100644
+--- a/drivers/usb/gadget/function/f_fs.c
++++ b/drivers/usb/gadget/function/f_fs.c
+@@ -1183,11 +1183,12 @@ static ssize_t ffs_epfile_write_iter(struct kiocb *kiocb, struct iov_iter *from)
+ 	ENTER();
  
--	ret = adxl372_set_interrupts(st, ADXL372_INT1_MAP_FIFO_FULL_MSK, 0);
-+	ret = iio_triggered_buffer_postenable(indio_dev);
- 	if (ret < 0)
- 		return ret;
- 
-+	ret = adxl372_set_interrupts(st, ADXL372_INT1_MAP_FIFO_FULL_MSK, 0);
-+	if (ret < 0)
-+		goto err;
-+
- 	mask = *indio_dev->active_scan_mask;
- 
- 	for (i = 0; i < ARRAY_SIZE(adxl372_axis_lookup_table); i++) {
-@@ -793,8 +797,10 @@ static int adxl372_buffer_postenable(struct iio_dev *indio_dev)
- 			break;
+ 	if (!is_sync_kiocb(kiocb)) {
+-		p = kmalloc(sizeof(io_data), GFP_KERNEL);
++		p = kzalloc(sizeof(io_data), GFP_KERNEL);
+ 		if (unlikely(!p))
+ 			return -ENOMEM;
+ 		p->aio = true;
+ 	} else {
++		memset(p, 0, sizeof(*p));
+ 		p->aio = false;
  	}
  
--	if (i == ARRAY_SIZE(adxl372_axis_lookup_table))
--		return -EINVAL;
-+	if (i == ARRAY_SIZE(adxl372_axis_lookup_table)) {
-+		ret = -EINVAL;
-+		goto err;
-+	}
+@@ -1219,11 +1220,12 @@ static ssize_t ffs_epfile_read_iter(struct kiocb *kiocb, struct iov_iter *to)
+ 	ENTER();
  
- 	st->fifo_format = adxl372_axis_lookup_table[i].fifo_format;
- 	st->fifo_set_size = bitmap_weight(indio_dev->active_scan_mask,
-@@ -814,26 +820,25 @@ static int adxl372_buffer_postenable(struct iio_dev *indio_dev)
- 	if (ret < 0) {
- 		st->fifo_mode = ADXL372_FIFO_BYPASSED;
- 		adxl372_set_interrupts(st, 0, 0);
--		return ret;
-+		goto err;
+ 	if (!is_sync_kiocb(kiocb)) {
+-		p = kmalloc(sizeof(io_data), GFP_KERNEL);
++		p = kzalloc(sizeof(io_data), GFP_KERNEL);
+ 		if (unlikely(!p))
+ 			return -ENOMEM;
+ 		p->aio = true;
+ 	} else {
++		memset(p, 0, sizeof(*p));
+ 		p->aio = false;
  	}
  
--	return iio_triggered_buffer_postenable(indio_dev);
-+	return 0;
-+
-+err:
-+	iio_triggered_buffer_predisable(indio_dev);
-+	return ret;
- }
- 
- static int adxl372_buffer_predisable(struct iio_dev *indio_dev)
- {
- 	struct adxl372_state *st = iio_priv(indio_dev);
--	int ret;
--
--	ret = iio_triggered_buffer_predisable(indio_dev);
--	if (ret < 0)
--		return ret;
- 
- 	adxl372_set_interrupts(st, 0, 0);
- 	st->fifo_mode = ADXL372_FIFO_BYPASSED;
- 	adxl372_configure_fifo(st);
- 
--	return 0;
-+	return iio_triggered_buffer_predisable(indio_dev);
- }
- 
- static const struct iio_buffer_setup_ops adxl372_buffer_ops = {
 -- 
 2.20.1
 
