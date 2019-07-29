@@ -2,108 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B575278814
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 11:13:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F06078822
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 11:16:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727297AbfG2JNr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 05:13:47 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:41492 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726694AbfG2JNq (ORCPT
+        id S1727461AbfG2JQa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 05:16:30 -0400
+Received: from conuserg-10.nifty.com ([210.131.2.77]:61233 "EHLO
+        conuserg-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726496AbfG2JQ3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 05:13:46 -0400
-Received: by mail-pg1-f195.google.com with SMTP id x15so17579591pgg.8;
-        Mon, 29 Jul 2019 02:13:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=FGIwEmsmTeBKX3uv2HVGT5VBixZ3R6wVRQMK4paWxpY=;
-        b=lw+XYkhVr+PEZB+phyk0I6km3bOOaGbdtNO/kXkC12rrILqw+YRwECQZVi8/o/ch/d
-         FwYRsi1Kvse+W+A4JRicaZyeia6dTsFLnXRMP0eAoAePV3RQUPmXo9sqPTSWGYwk3jiX
-         vXNoWev4TtgmW2u/9Xfljd3zqVwBHPl991rZAuc+fempjV7OS86C723iUiLdw6Yni/VY
-         Tw7koGZ6fzFCVgbaZTiYr+TtrWmy4JeQlUPVkqd0S2Y89pTNoHCXOfaiCjhCembiVM8x
-         xd9s9Ejlw3OfsZ1kzYTCJnvRivlWItn16oEpuNA3S8SIF4TdlejwUsCdvyyOcKtyN/I6
-         /NRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=FGIwEmsmTeBKX3uv2HVGT5VBixZ3R6wVRQMK4paWxpY=;
-        b=nakSdvdrLfX0h96OFOefH5YmBpKkjrk/0OtMcvoWxD3+yR2vrG7PEOR/42wckvs5hN
-         8fqJQYj5S9Kin2dOxiEdwH9uWnM2Cto1lMqxxcgpq+NFq0FaD1DrbMP7KPLjsYFZq3KB
-         ub0sOle/jILzC2k1zQgEuexRh/krZz2BFVrB37jytlLbG0RRltF8+8xY9jtoYsAlGOSJ
-         TzMc9zWBHjYUfV0JpoHY/PYIeCJ9jjkrBEbNwxk5I0VMqSvfZu6Lipgc2rNT74466II6
-         Tcx9yR44Rothp5vu5POmEqlDh49SpDepWAezCMAJFFu/CswThwTS8pxFb85UhYUWVSZs
-         IeTw==
-X-Gm-Message-State: APjAAAVivEHOWiBYLoD25kpLKcgfdmaPnCPvgxXV3K9cmltwyjYie9im
-        mY81lQScTN+Xi2tB2eVhZ1/lEuVxkhI=
-X-Google-Smtp-Source: APXvYqxAfAb1vND3S11uFh91InBJQZ/lXjcy2xGtpgE+ZVcN6esyoWcuH92OZSd+pEPH3Hi1n+B0JA==
-X-Received: by 2002:a63:494d:: with SMTP id y13mr105020405pgk.109.1564391626074;
-        Mon, 29 Jul 2019 02:13:46 -0700 (PDT)
-Received: from oslab.tsinghua.edu.cn ([2402:f000:4:72:808::3ca])
-        by smtp.gmail.com with ESMTPSA id g2sm64643446pfi.26.2019.07.29.02.13.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 29 Jul 2019 02:13:45 -0700 (PDT)
-From:   Jia-Ju Bai <baijiaju1990@gmail.com>
-To:     lduncan@suse.com, cleech@redhat.com, jejb@linux.ibm.com,
-        martin.petersen@oracle.com
-Cc:     open-iscsi@googlegroups.com, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [PATCH] scsi: libiscsi: Fix possible null-pointer dereferences in iscsi_conn_get_addr_param()
-Date:   Mon, 29 Jul 2019 17:13:39 +0800
-Message-Id: <20190729091339.30815-1-baijiaju1990@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        Mon, 29 Jul 2019 05:16:29 -0400
+Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-10.nifty.com with ESMTP id x6T9FQFU007006;
+        Mon, 29 Jul 2019 18:15:26 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com x6T9FQFU007006
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1564391727;
+        bh=16VOGPWZt50QIHw/yZwbKWLNAnF5eIhm7sbfTUqTMxA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=u/TOvPqsajpOhFpabeQCcu9qwyoIyMmujb5rMmt9gB0Wd+b+HQleb4MRmthDq5rGL
+         9MJfl3XWc796KP5LciGQTI0lDcDnuMBMCX0hsvK0G33oq5rGnxkOD7DAHhd9cWviI9
+         R9otBuj5iDdjHfKzzE/Ll53q0VQ01ujIpNhDDyiJWbd8s8go7BT3YWNKG4LITpsIJG
+         /y0WY7HleQol3+W8Zu8r85nJofkrjLEvbnTcF/AOyQj/4A+vRYHv+vkT/Xgql+b/ky
+         HfQSevJduCNBLGpsqSuKkt9pUACuU3kTG5QH9i1CZUjx3DuXo7onZNdSRE6GVSfoYT
+         zmkzFARkmZQkQ==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-kbuild@vger.kernel.org
+Cc:     Stephen Boyd <swboyd@chromium.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        stable@vger.kernel.org, Michal Marek <michal.lkml@markovi.net>,
+        clang-built-linux@googlegroups.com, linux-kernel@vger.kernel.org
+Subject: [PATCH] kbuild: initialize CLANG_FLAGS correctly in the top Makefile
+Date:   Mon, 29 Jul 2019 18:15:17 +0900
+Message-Id: <20190729091517.5334-1-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In iscsi_conn_get_addr_param(), sin6 may be NULL when reaching lines
-3479 and 3487:
-    len = sprintf(buf, "%pI6\n", &sin6->sin6_addr);
-    len = sprintf(buf, "%hu\n", be16_to_cpu(sin6->sin6_port));
+CLANG_FLAGS is initialized by the following line:
 
-Thus, possible null-pointer dereferences may occur.
+  CLANG_FLAGS     := --target=$(notdir $(CROSS_COMPILE:%-=%))
 
-To fix these bugs, sin6 is checked before being used, and len is
-initialized to -EINVAL.
+..., which is run only when CROSS_COMPILE is set.
 
-These bugs are found by a static analysis tool STCheck written by us.
+Some build targets (bindeb-pkg etc.) recurse to the top Makefile.
 
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+When you build the kernel with Clang but without CROSS_COMPILE,
+the same compiler flags such as -no-integrated-as are accumulated
+into CLANG_FLAGS.
+
+If you run 'make CC=clang' and then 'make CC=clang bindeb-pkg',
+Kbuild will recompile everything needlessly due to the build command
+change.
+
+Fix this by correctly initializing CLANG_FLAGS.
+
+Fixes: 238bcbc4e07f ("kbuild: consolidate Clang compiler flags")
+Cc: <stable@vger.kernel.org> # v4.20+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
- drivers/scsi/libiscsi.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/scsi/libiscsi.c b/drivers/scsi/libiscsi.c
-index ebd47c0cf9e9..58f072d5c43f 100644
---- a/drivers/scsi/libiscsi.c
-+++ b/drivers/scsi/libiscsi.c
-@@ -3457,7 +3457,7 @@ int iscsi_conn_get_addr_param(struct sockaddr_storage *addr,
- {
- 	struct sockaddr_in6 *sin6 = NULL;
- 	struct sockaddr_in *sin = NULL;
--	int len;
-+	int len = -EINVAL;
+ Makefile | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index fa0fbe7851ea..5ee6f6889869 100644
+--- a/Makefile
++++ b/Makefile
+@@ -472,6 +472,7 @@ KBUILD_CFLAGS_MODULE  := -DMODULE
+ KBUILD_LDFLAGS_MODULE := -T $(srctree)/scripts/module-common.lds
+ KBUILD_LDFLAGS :=
+ GCC_PLUGINS_CFLAGS :=
++CLANG_FLAGS :=
  
- 	switch (addr->ss_family) {
- 	case AF_INET:
-@@ -3475,14 +3475,14 @@ int iscsi_conn_get_addr_param(struct sockaddr_storage *addr,
- 	case ISCSI_HOST_PARAM_IPADDRESS:
- 		if (sin)
- 			len = sprintf(buf, "%pI4\n", &sin->sin_addr.s_addr);
--		else
-+		else if (sin6)
- 			len = sprintf(buf, "%pI6\n", &sin6->sin6_addr);
- 		break;
- 	case ISCSI_PARAM_CONN_PORT:
- 	case ISCSI_PARAM_LOCAL_PORT:
- 		if (sin)
- 			len = sprintf(buf, "%hu\n", be16_to_cpu(sin->sin_port));
--		else
-+		else if (sin6)
- 			len = sprintf(buf, "%hu\n",
- 				      be16_to_cpu(sin6->sin6_port));
- 		break;
+ export ARCH SRCARCH CONFIG_SHELL HOSTCC KBUILD_HOSTCFLAGS CROSS_COMPILE AS LD CC
+ export CPP AR NM STRIP OBJCOPY OBJDUMP PAHOLE KBUILD_HOSTLDFLAGS KBUILD_HOSTLDLIBS
+@@ -519,7 +520,7 @@ endif
+ 
+ ifneq ($(shell $(CC) --version 2>&1 | head -n 1 | grep clang),)
+ ifneq ($(CROSS_COMPILE),)
+-CLANG_FLAGS	:= --target=$(notdir $(CROSS_COMPILE:%-=%))
++CLANG_FLAGS	+= --target=$(notdir $(CROSS_COMPILE:%-=%))
+ GCC_TOOLCHAIN_DIR := $(dir $(shell which $(CROSS_COMPILE)elfedit))
+ CLANG_FLAGS	+= --prefix=$(GCC_TOOLCHAIN_DIR)
+ GCC_TOOLCHAIN	:= $(realpath $(GCC_TOOLCHAIN_DIR)/..)
 -- 
-2.17.0
+2.17.1
 
