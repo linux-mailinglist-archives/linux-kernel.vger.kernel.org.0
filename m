@@ -2,115 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D52D7934B
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 20:42:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B4E4A79352
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 20:43:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388160AbfG2SmW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 14:42:22 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:41161 "EHLO
+        id S2388189AbfG2Sn0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 14:43:26 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:44855 "EHLO
         mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387980AbfG2SmW (ORCPT
+        with ESMTP id S2387397AbfG2Sn0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 14:42:22 -0400
-Received: by mail-io1-f67.google.com with SMTP id j5so118171266ioj.8
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 11:42:21 -0700 (PDT)
+        Mon, 29 Jul 2019 14:43:26 -0400
+Received: by mail-io1-f67.google.com with SMTP id s7so122163420iob.11;
+        Mon, 29 Jul 2019 11:43:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=3tfpxcMIOawO8s0nF6u5AxpRiYOClgINgvc5ma6ttZw=;
-        b=IQmmqup/6r9M4vGzFNJ2eQeqgw7xlIoAUs5jeMBIFXwMw1/6E8KZwGF59gU1R/s1wr
-         od8n0zVv12PnonheCchmyOFja2Rj5CqOQgVE6IuSCXp0atpMNpN4A4t4/7Vf5jI1f1tC
-         bqmDTxp9EjXqdrgmgE7jOAMpjGGp01BzpAfRmS/bOjpScIYhwcfWKhJCbOf4mGM/MuOx
-         kfDC4rfXTjw6TLq0kV/0cEZZi4Hv/UOPJ9FqlF/1RHxu+j97c80UihRGIktDhfVOQUtm
-         u+Knabw655Ohtf9vz38yQiZVVGmgt0OllVIj/2aK5dgiGvZqqDwcxin29m4BabmpHLuu
-         rFwg==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=geRb+xmd/f1jkfORhsVtE+k/0a+B//EFaGFVIsLhObc=;
+        b=bVGeuI7+q/E6mMswliDCz5OpxuOF2eZwPcikFI3x4GEAaaAXOXFZ+8Htj8ll/l9F2t
+         /Q/VMn6gBqwyipbpE8ng2QfLvCZpmE6bdnvk7aOgwIY2JaHwhTF0UgMlMLiSpvImPTKR
+         HigBQNrJF8VslcQO9/DI1GUodVbgwlm17LlysCTTUShA8QNosP1S/Nf2w+8tZebujVZp
+         Bf0oEFRr9pNxj1oJHJWuaxcisdKodimMFYVrKHpC/VTEBiXwrm9119y6yOI88ozlWomw
+         HKOrJsEoLIHCvmw1cyr5vrfVo0KK7UEIiRpg2fLiysi5SgYWm8qeOj87mMO/LVnoDGrH
+         JOEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3tfpxcMIOawO8s0nF6u5AxpRiYOClgINgvc5ma6ttZw=;
-        b=tGaHCJLMBl7hNuGXr4e1dJs7eYUbdo91MJ2igJ0HgW/B/VutQBDDkX+pBPsRTkby6n
-         G1ZHR3+fSZrHAdRJ+Z4aeyUv4Dq03cqPh4S02MkSVd+gz+h1Yfr3zbq9RN69aE3rmX+5
-         0wyVjDt839dATRkizYAlnpI44c78xIs871iddv8fIqMbULF6el1DKIpXNG9tJeGYCD66
-         4Lac3uvrRM2wK61HvZxwsXFQEGTYR/jtuCg/0fAp+TPMg8m3q9F+CXLeKSB42k0kXc/g
-         GztbIHdJCmfUvmYZ7MA4bOgG4KUgxMdzBTj0zPIpMVM+sIXs1DljImh4X3COFYpWpooj
-         KJGw==
-X-Gm-Message-State: APjAAAU4a0y4CPnzxAbcSJ/PcMT1yRWoQ/bw7EbZEtIsAYDynyzoRNdS
-        G/o3ktOBXwRC9fggIQ+AlHtFiR3ljPhujH+MK4GnYw==
-X-Google-Smtp-Source: APXvYqwjLiqzT6+l8biMGbT+ubzfDFZQP3pdxi7Bs2LEIu59aazQJHsn2226HIPI6J8GkYWgkqquogjLf6r6kCe70Dg=
-X-Received: by 2002:a6b:c38b:: with SMTP id t133mr38575856iof.162.1564425741290;
- Mon, 29 Jul 2019 11:42:21 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=geRb+xmd/f1jkfORhsVtE+k/0a+B//EFaGFVIsLhObc=;
+        b=MM4oxbzb1dx8EYMbx/vT94u9M3eDoJbsr+RSganQsdewoopXCLnrP3Kgxzrs3LKvWm
+         tsSqpgeNLRPfFdy9cJtNEDA+2Mgf2729UHj/cHdQGkbovw7MfbTNjE1sEnHWl4jqqgE4
+         qd9+LamDN2bhJXc9nBAjSjhXOgcm0XPsFOfG6ei/HIYSlIlIgihmFyCM27Fif7/b150P
+         M88zBs1u90X+Zhxq4ZY+1QcLBWkm0PyBkGiPRzOtBVA7XcPEYWxB3UsTu22LOiy4OnVA
+         3HCWcIRQeA3RcVD1P/fRHRyKs9W5uSJ30u8IiGTuHe2AqOfagdXo9NNohHxk6WobVaKF
+         vLzQ==
+X-Gm-Message-State: APjAAAUfr9FXRqLvf4kdSVW1cdnStcdsRunDjcwRHrJx8FLfUH5UJGd4
+        hVqhTNUCl+tbSbLP52V2tcc=
+X-Google-Smtp-Source: APXvYqzChUsC55AGMMrdotkBYf7SylCuLSJNaWeI3qCUXDnZzs22DtP+LVRSR2fdOOx7zcHNUg6HRA==
+X-Received: by 2002:a02:710f:: with SMTP id n15mr75388873jac.119.1564425805584;
+        Mon, 29 Jul 2019 11:43:25 -0700 (PDT)
+Received: from localhost ([8.46.76.96])
+        by smtp.gmail.com with ESMTPSA id u4sm60634224iol.59.2019.07.29.11.43.23
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 29 Jul 2019 11:43:25 -0700 (PDT)
+Date:   Mon, 29 Jul 2019 20:43:06 +0200
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     "Enrico Weigelt, metux IT consult" <lkml@metux.net>
+Cc:     "Enrico Weigelt, metux IT consult" <info@metux.net>,
+        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
+Subject: Re: [PATCH 1/2] input: keyboard: gpio_keys_polled: use gpio lookup
+ table
+Message-ID: <20190729184306.GA767@penguin>
+References: <1564415994-22871-1-git-send-email-info@metux.net>
+ <20190729172607.GB755@penguin>
+ <b2912c1d-a6d8-ad2a-3e37-19e4d3d1bd3b@metux.net>
 MIME-Version: 1.0
-References: <20190726224810.79660-1-henryburns@google.com> <20190726224810.79660-2-henryburns@google.com>
- <CA+VK+GPC+akF0qGrKFivtNneweEfdC9uEx=QgmztB4M_xvMeKQ@mail.gmail.com>
-In-Reply-To: <CA+VK+GPC+akF0qGrKFivtNneweEfdC9uEx=QgmztB4M_xvMeKQ@mail.gmail.com>
-From:   Henry Burns <henryburns@google.com>
-Date:   Mon, 29 Jul 2019 11:41:45 -0700
-Message-ID: <CAGQXPTi8+EanC2ygr4W7qDN1bnas_3utxFkSCj4Xdzo4H134nw@mail.gmail.com>
-Subject: Re: [PATCH] mm/z3fold.c: Fix z3fold_destroy_pool() race condition
-To:     Jonathan Adams <jwadams@google.com>
-Cc:     Vitaly Vul <vitaly.vul@sony.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        David Howells <dhowells@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux-MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b2912c1d-a6d8-ad2a-3e37-19e4d3d1bd3b@metux.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The constraint from the zpool use of z3fold_destroy_pool() is there
-are no outstanding handles to memory (so no active allocations), but
-it is possible for there to be outstanding work on either of the two
-wqs in the pool.
+On Mon, Jul 29, 2019 at 08:14:52PM +0200, Enrico Weigelt, metux IT consult wrote:
+> On 29.07.19 19:26, Dmitry Torokhov wrote:
+> 
+> Hi,
+> 
+> > As I think I mentioned a while back I would prefer to get gpiolob >
+> > support swnode-backed properties so that the driver would not need
+> to> know about differences between ACPI, DT and static board files.
+> Indeed would be nice. But I think we should get rid of raw gpio IDs in
+> favour of gpiod lookup tables first.
+> 
+> > I just recently re-posted patches for this, let's see if we can get them > landed in the kernel.
+> Can you give me a pointer ?
 
-Calling z3fold_deregister_migration() before the workqueues are drained
-means that there can be allocated pages referencing a freed inode,
-causing any thread in compaction to be able to trip over the bad
-pointer in PageMovable().
+https://patchwork.kernel.org/cover/11042915/
 
-Fixes: 1f862989b04a ("mm/z3fold.c: support page migration")
+I tried putting you on CC list there, did you not get them?
 
-Signed-off-by: Henry Burns <henryburns@google.com>
+Thanks.
 
-> Reviewed-by: Shakeel Butt <shakeelb@google.com>
-> Reviewed-by: Jonathan Adams <jwadams@google.com>
->
-> > Cc: <stable@vger.kernel.org>
-> > ---
-> >  mm/z3fold.c | 5 ++++-
-> >  1 file changed, 4 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/mm/z3fold.c b/mm/z3fold.c
-> > index 43de92f52961..ed19d98c9dcd 100644
-> > --- a/mm/z3fold.c
-> > +++ b/mm/z3fold.c
-> > @@ -817,16 +817,19 @@ static struct z3fold_pool *z3fold_create_pool(const char *name, gfp_t gfp,
-> >  static void z3fold_destroy_pool(struct z3fold_pool *pool)
-> >  {
-> >         kmem_cache_destroy(pool->c_handle);
-> > -       z3fold_unregister_migration(pool);
-> >
-> >         /*
-> >          * We need to destroy pool->compact_wq before pool->release_wq,
-> >          * as any pending work on pool->compact_wq will call
-> >          * queue_work(pool->release_wq, &pool->work).
-> > +        *
-> > +        * There are still outstanding pages until both workqueues are drained,
-> > +        * so we cannot unregister migration until then.
-> >          */
-> >
-> >         destroy_workqueue(pool->compact_wq);
-> >         destroy_workqueue(pool->release_wq);
-> > +       z3fold_unregister_migration(pool);
-> >         kfree(pool);
-> >  }
-> >
-> > --
-> > 2.22.0.709.g102302147b-goog
-> >
+-- 
+Dmitry
