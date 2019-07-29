@@ -2,92 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0DFC79CAE
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 01:18:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D6CC79CC0
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 01:24:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729465AbfG2XSS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 19:18:18 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:16914 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727808AbfG2XSR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 19:18:17 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d3f7eba0000>; Mon, 29 Jul 2019 16:18:18 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 29 Jul 2019 16:18:17 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 29 Jul 2019 16:18:17 -0700
-Received: from rcampbell-dev.nvidia.com (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 29 Jul
- 2019 23:18:13 +0000
-Subject: Re: [PATCH 2/9] nouveau: reset dma_nr in
- nouveau_dmem_migrate_alloc_and_copy
-To:     Christoph Hellwig <hch@lst.de>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Ben Skeggs <bskeggs@redhat.com>
-CC:     Bharata B Rao <bharata@linux.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        <linux-mm@kvack.org>, <nouveau@lists.freedesktop.org>,
-        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-References: <20190729142843.22320-1-hch@lst.de>
- <20190729142843.22320-3-hch@lst.de>
-X-Nvconfidentiality: public
-From:   Ralph Campbell <rcampbell@nvidia.com>
-Message-ID: <26260dd4-f28d-f962-9e38-8bde45335099@nvidia.com>
-Date:   Mon, 29 Jul 2019 16:18:12 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1729586AbfG2XYc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 19:24:32 -0400
+Received: from mga01.intel.com ([192.55.52.88]:25700 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726748AbfG2XYb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 19:24:31 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jul 2019 16:24:30 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,324,1559545200"; 
+   d="scan'208";a="346810144"
+Received: from skuppusw-desk.jf.intel.com ([10.54.74.33])
+  by orsmga005.jf.intel.com with ESMTP; 29 Jul 2019 16:24:30 -0700
+From:   sathyanarayanan.kuppuswamy@linux.intel.com
+To:     akpm@linux-foundation.org, urezki@gmail.com
+Cc:     dave.hansen@intel.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
+        sathyanarayanan.kuppuswamy@linux.intel.com
+Subject: [PATCH v1 1/1] mm/vmalloc.c: Fix percpu free VM area search criteria
+Date:   Mon, 29 Jul 2019 16:21:39 -0700
+Message-Id: <20190729232139.91131-1-sathyanarayanan.kuppuswamy@linux.intel.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-In-Reply-To: <20190729142843.22320-3-hch@lst.de>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1564442298; bh=wffttBld7HfMmTsUtcVoraIE8ihlJ8+LyvWPe1N6NlM=;
-        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=qJYB6wAPLve6SzMmp5MpWUWQdHoVK+fKim4roGerZZ+H77Co/BQ9+sH3W3tA6tGo6
-         Qw/ilm9/0g7HpgRfqMM+KqB6PldKNV2/X0EkW+vFmEjKH+/0MNIWB6wXrj1YRUXzwL
-         RCt1HZmcafUvz8j6lns2XXyvcNxg18HpUEpVLEIFOxdtlbLEFvJd6EcuvIHmAssuwk
-         Cu4w6L02s0iaeg0/0OBAUj/7DCbe0uWiSDRevgQpB8N02P0daSKT5OUL6ZfFrUxc/w
-         HIneiuZFGw8uM87zuhdk7izVmIFJFBcoLp4P1KO4Qcu2x+7vZZLRIMwj2jxvykh/K3
-         cvQCTOyBkvhYA==
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
 
-On 7/29/19 7:28 AM, Christoph Hellwig wrote:
-> When we start a new batch of dma_map operations we need to reset dma_nr,
-> as we start filling a newly allocated array.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+Recent changes to the vmalloc code by Commit 68ad4a330433
+("mm/vmalloc.c: keep track of free blocks for vmap allocation") can
+cause spurious percpu allocation failures. These, in turn, can result in
+panic()s in the slub code. One such possible panic was reported by
+Dave Hansen in following link https://lkml.org/lkml/2019/6/19/939.
+Another related panic observed is,
 
-Reviewed-by: Ralph Campbell <rcampbell@nvidia.com>
+ RIP: 0033:0x7f46f7441b9b
+ Call Trace:
+  dump_stack+0x61/0x80
+  pcpu_alloc.cold.30+0x22/0x4f
+  mem_cgroup_css_alloc+0x110/0x650
+  cgroup_apply_control_enable+0x133/0x330
+  cgroup_mkdir+0x41b/0x500
+  kernfs_iop_mkdir+0x5a/0x90
+  vfs_mkdir+0x102/0x1b0
+  do_mkdirat+0x7d/0xf0
+  do_syscall_64+0x5b/0x180
+  entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-> ---
->   drivers/gpu/drm/nouveau/nouveau_dmem.c | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/gpu/drm/nouveau/nouveau_dmem.c b/drivers/gpu/drm/nouveau/nouveau_dmem.c
-> index 38416798abd4..e696157f771e 100644
-> --- a/drivers/gpu/drm/nouveau/nouveau_dmem.c
-> +++ b/drivers/gpu/drm/nouveau/nouveau_dmem.c
-> @@ -682,6 +682,7 @@ nouveau_dmem_migrate_alloc_and_copy(struct vm_area_struct *vma,
->   	migrate->dma = kmalloc(sizeof(*migrate->dma) * npages, GFP_KERNEL);
->   	if (!migrate->dma)
->   		goto error;
-> +	migrate->dma_nr = 0;
->   
->   	/* Copy things over */
->   	copy = drm->dmem->migrate.copy_func;
-> 
+VMALLOC memory manager divides the entire VMALLOC space (VMALLOC_START
+to VMALLOC_END) into multiple VM areas (struct vm_areas), and it mainly
+uses two lists (vmap_area_list & free_vmap_area_list) to track the used
+and free VM areas in VMALLOC space. And pcpu_get_vm_areas(offsets[],
+sizes[], nr_vms, align) function is used for allocating congruent VM
+areas for percpu memory allocator. In order to not conflict with VMALLOC
+users, pcpu_get_vm_areas allocates VM areas near the end of the VMALLOC
+space. So the search for free vm_area for the given requirement starts
+near VMALLOC_END and moves upwards towards VMALLOC_START.
+
+Prior to commit 68ad4a330433, the search for free vm_area in
+pcpu_get_vm_areas() involves following two main steps.
+
+Step 1:
+    Find a aligned "base" adress near VMALLOC_END.
+    va = free vm area near VMALLOC_END
+Step 2:
+    Loop through number of requested vm_areas and check,
+        Step 2.1:
+           if (base < VMALLOC_START)
+              1. fail with error
+        Step 2.2:
+           // end is offsets[area] + sizes[area]
+           if (base + end > va->vm_end)
+               1. Move the base downwards and repeat Step 2
+        Step 2.3:
+           if (base + start < va->vm_start)
+              1. Move to previous free vm_area node, find aligned
+                 base address and repeat Step 2
+
+But Commit 68ad4a330433 removed Step 2.2 and modified Step 2.3 as below:
+
+        Step 2.3:
+           if (base + start < va->vm_start || base + end > va->vm_end)
+              1. Move to previous free vm_area node, find aligned
+                 base address and repeat Step 2
+
+Above change is the root cause of spurious percpu memory allocation
+failures. For example, consider a case where a relatively large vm_area
+(~ 30 TB) was ignored in free vm_area search because it did not pass the
+base + end  < vm->vm_end boundary check. Ignoring such large free
+vm_area's would lead to not finding free vm_area within boundary of
+VMALLOC_start to VMALLOC_END which in turn leads to allocation failures.
+
+So modify the search algorithm to include Step 2.2.
+
+Fixes: 68ad4a330433 ("mm/vmalloc.c: keep track of free blocks for vmap allocation")
+Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+---
+ mm/vmalloc.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
+
+diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+index 4fa8d84599b0..1faa45a38c08 100644
+--- a/mm/vmalloc.c
++++ b/mm/vmalloc.c
+@@ -3269,10 +3269,20 @@ struct vm_struct **pcpu_get_vm_areas(const unsigned long *offsets,
+ 		if (va == NULL)
+ 			goto overflow;
+ 
++		/*
++		 * If required width exeeds current VA block, move
++		 * base downwards and then recheck.
++		 */
++		if (base + end > va->va_end) {
++			base = pvm_determine_end_from_reverse(&va, align) - end;
++			term_area = area;
++			continue;
++		}
++
+ 		/*
+ 		 * If this VA does not fit, move base downwards and recheck.
+ 		 */
+-		if (base + start < va->va_start || base + end > va->va_end) {
++		if (base + start < va->va_start) {
+ 			va = node_to_va(rb_prev(&va->rb_node));
+ 			base = pvm_determine_end_from_reverse(&va, align) - end;
+ 			term_area = area;
+-- 
+2.21.0
+
