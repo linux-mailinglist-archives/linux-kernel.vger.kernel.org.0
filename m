@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A81B793FF
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:27:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FF14793CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:24:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729809AbfG2T0o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 15:26:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39122 "EHLO mail.kernel.org"
+        id S2388057AbfG2TYn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 15:24:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36884 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729793AbfG2T0j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:26:39 -0400
+        id S2388179AbfG2TYi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:24:38 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 92179216C8;
-        Mon, 29 Jul 2019 19:26:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DA7D32070B;
+        Mon, 29 Jul 2019 19:24:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564428399;
-        bh=h0JsN0BwHh3MpJJOiJZT34Tdihv9K2+y44PteLNWKoM=;
+        s=default; t=1564428278;
+        bh=CjlvBsiFhwAUEMeUHdDLO23FbcGoZf9Zz4/59VqwbkI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Egyx5cb6vvb5NpMVU1Tn+++pE+/rpCskfaexb7PQ03oPQLhC6qwVjlLm1Iy9BuYIu
-         9n3KzSJANLgccPbBGDKTtaL85ZItHzo1FeiJi03+6PrT44WvgbHsXbKXFziw+ralRD
-         hvrZespzBtfVxkl0w106ydgoRShV68f6cdDjHsPI=
+        b=pQAyZFnSDf+bTRA5a2U8Lba7wB6ufsLmW2Qa/01HXXMqBeSt5WwheISWlofRr3JSG
+         2pLgqbhSuB6cpGfhRIky5/nUcj7m5nnxZpxOjvpLVLeaOP8LMJJ1MnA2l/dAHzY+9n
+         6buj0cDPp7rdd/4Pmpki3HzAriactJj2Ur76nAu4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        stable@vger.kernel.org,
+        Shailendra Verma <shailendra.v@samsung.com>,
         Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 025/293] media: mc-device.c: dont memset __user pointer contents
-Date:   Mon, 29 Jul 2019 21:18:36 +0200
-Message-Id: <20190729190823.362359878@linuxfoundation.org>
+Subject: [PATCH 4.14 026/293] media: staging: media: davinci_vpfe: - Fix for memory leak if decoder initialization fails.
+Date:   Mon, 29 Jul 2019 21:18:37 +0200
+Message-Id: <20190729190823.499575110@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190729190820.321094988@linuxfoundation.org>
 References: <20190729190820.321094988@linuxfoundation.org>
@@ -45,41 +45,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 518fa4e0e0da97ea2e17c95ab57647ce748a96e2 ]
+[ Upstream commit 6995a659101bd4effa41cebb067f9dc18d77520d ]
 
-You can't memset the contents of a __user pointer. Instead, call copy_to_user to
-copy links.reserved (which is zeroed) to the user memory.
+Fix to avoid possible memory leak if the decoder initialization
+got failed.Free the allocated memory for file handle object
+before return in case decoder initialization fails.
 
-This fixes this sparse warning:
-
-SPARSE:drivers/media/mc/mc-device.c drivers/media/mc/mc-device.c:521:16:  warning: incorrect type in argument 1 (different address spaces)
-
-Fixes: f49308878d720 ("media: media_device_enum_links32: clean a reserved field")
-
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Reviewed-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Shailendra Verma <shailendra.v@samsung.com>
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/media-device.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/staging/media/davinci_vpfe/vpfe_video.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/media/media-device.c b/drivers/media/media-device.c
-index a6d56154fac7..4eb51a618fe1 100644
---- a/drivers/media/media-device.c
-+++ b/drivers/media/media-device.c
-@@ -486,8 +486,9 @@ static long media_device_enum_links32(struct media_device *mdev,
- 	if (ret)
- 		return ret;
- 
--	memset(ulinks->reserved, 0, sizeof(ulinks->reserved));
--
-+	if (copy_to_user(ulinks->reserved, links.reserved,
-+			 sizeof(ulinks->reserved)))
-+		return -EFAULT;
- 	return 0;
- }
- 
+diff --git a/drivers/staging/media/davinci_vpfe/vpfe_video.c b/drivers/staging/media/davinci_vpfe/vpfe_video.c
+index 155e8c758e4b..346e60d230f3 100644
+--- a/drivers/staging/media/davinci_vpfe/vpfe_video.c
++++ b/drivers/staging/media/davinci_vpfe/vpfe_video.c
+@@ -422,6 +422,9 @@ static int vpfe_open(struct file *file)
+ 	/* If decoder is not initialized. initialize it */
+ 	if (!video->initialized && vpfe_update_pipe_state(video)) {
+ 		mutex_unlock(&video->lock);
++		v4l2_fh_del(&handle->vfh);
++		v4l2_fh_exit(&handle->vfh);
++		kfree(handle);
+ 		return -ENODEV;
+ 	}
+ 	/* Increment device users counter */
 -- 
 2.20.1
 
