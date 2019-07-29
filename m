@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC3D379636
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:49:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D6A079547
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:41:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390389AbfG2Ttv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 15:49:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40566 "EHLO mail.kernel.org"
+        id S2388711AbfG2Tkp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 15:40:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55946 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389840AbfG2Ttu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:49:50 -0400
+        id S2389184AbfG2Tki (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:40:38 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 71BD221655;
-        Mon, 29 Jul 2019 19:49:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D6FB6206DD;
+        Mon, 29 Jul 2019 19:40:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564429788;
-        bh=1Np7r3LAsxti73689pvspT3FnyQs5zyBYCe9YqO5YqI=;
+        s=default; t=1564429237;
+        bh=lCZ5oIwP5bwvvV48Eg1OMEB3VgrGPYIoZutGWqKmJkc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=elDc/BnBuLKQ47e//BXXnO5wfThU3U65rt8LvPDc2XvNxS2UArP7IfDZpMLwaLRlZ
-         44jHJx2xslkLzunPDKCAsBxfiEDIoC7+WsUG2wdt8fsn3j0giP8xstIb23cdu7ro3+
-         grLU5Cg0rjehDbyHTE98FcaNcBojELgd5tst5qPo=
+        b=ZITAI7vAYXh5eHOPp554ua2odXcnYfZSYPwDI0V9fA8jBr+BDVi3+mCsJWT+6S3xv
+         xVaEuTlTd2yeqE+6g1GGCMXfuOUqqn8FF8+u6wyLbnTFKI7Xz57fVwtbKubAQs/ZyS
+         mZqs50ZX+Tqp+4FnFwsQce0INVKZBmJigHlj3uoo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Javier Martinez Canillas <javier@dowhile0.org>,
-        Daniel Gomez <dagmcr@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
+        stable@vger.kernel.org, Thinh Nguyen <thinhn@synopsys.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 096/215] mfd: madera: Add missing of table registration
-Date:   Mon, 29 Jul 2019 21:21:32 +0200
-Message-Id: <20190729190755.827160052@linuxfoundation.org>
+Subject: [PATCH 4.19 006/113] usb: core: hub: Disable hub-initiated U1/U2
+Date:   Mon, 29 Jul 2019 21:21:33 +0200
+Message-Id: <20190729190657.217754958@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190729190739.971253303@linuxfoundation.org>
-References: <20190729190739.971253303@linuxfoundation.org>
+In-Reply-To: <20190729190655.455345569@linuxfoundation.org>
+References: <20190729190655.455345569@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,47 +43,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 5aa3709c0a5c026735b0ddd4ec80810a23d65f5b ]
+[ Upstream commit 561759292774707b71ee61aecc07724905bb7ef1 ]
 
-MODULE_DEVICE_TABLE(of, <of_match_table>) should be called to complete DT
-OF mathing mechanism and register it.
+If the device rejects the control transfer to enable device-initiated
+U1/U2 entry, then the device will not initiate U1/U2 transition. To
+improve the performance, the downstream port should not initate
+transition to U1/U2 to avoid the delay from the device link command
+response (no packet can be transmitted while waiting for a response from
+the device). If the device has some quirks and does not implement U1/U2,
+it may reject all the link state change requests, and the downstream
+port may resend and flood the bus with more requests. This will affect
+the device performance even further. This patch disables the
+hub-initated U1/U2 if the device-initiated U1/U2 entry fails.
 
-Before this patch:
-modinfo ./drivers/mfd/madera.ko | grep alias
+Reference: USB 3.2 spec 7.2.4.2.3
 
-After this patch:
-modinfo ./drivers/mfd/madera.ko | grep alias
-alias:          of:N*T*Ccirrus,wm1840C*
-alias:          of:N*T*Ccirrus,wm1840
-alias:          of:N*T*Ccirrus,cs47l91C*
-alias:          of:N*T*Ccirrus,cs47l91
-alias:          of:N*T*Ccirrus,cs47l90C*
-alias:          of:N*T*Ccirrus,cs47l90
-alias:          of:N*T*Ccirrus,cs47l85C*
-alias:          of:N*T*Ccirrus,cs47l85
-alias:          of:N*T*Ccirrus,cs47l35C*
-alias:          of:N*T*Ccirrus,cs47l35
-
-Reported-by: Javier Martinez Canillas <javier@dowhile0.org>
-Signed-off-by: Daniel Gomez <dagmcr@gmail.com>
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
+Signed-off-by: Thinh Nguyen <thinhn@synopsys.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mfd/madera-core.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/usb/core/hub.c | 28 ++++++++++++++++------------
+ 1 file changed, 16 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/mfd/madera-core.c b/drivers/mfd/madera-core.c
-index 2a77988d0462..826b971ccb86 100644
---- a/drivers/mfd/madera-core.c
-+++ b/drivers/mfd/madera-core.c
-@@ -286,6 +286,7 @@ const struct of_device_id madera_of_match[] = {
- 	{ .compatible = "cirrus,wm1840", .data = (void *)WM1840 },
- 	{}
- };
-+MODULE_DEVICE_TABLE(of, madera_of_match);
- EXPORT_SYMBOL_GPL(madera_of_match);
+diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
+index f4e8e869649a..8018f813972e 100644
+--- a/drivers/usb/core/hub.c
++++ b/drivers/usb/core/hub.c
+@@ -3961,6 +3961,9 @@ static int usb_set_lpm_timeout(struct usb_device *udev,
+  * control transfers to set the hub timeout or enable device-initiated U1/U2
+  * will be successful.
+  *
++ * If the control transfer to enable device-initiated U1/U2 entry fails, then
++ * hub-initiated U1/U2 will be disabled.
++ *
+  * If we cannot set the parent hub U1/U2 timeout, we attempt to let the xHCI
+  * driver know about it.  If that call fails, it should be harmless, and just
+  * take up more slightly more bus bandwidth for unnecessary U1/U2 exit latency.
+@@ -4015,23 +4018,24 @@ static void usb_enable_link_state(struct usb_hcd *hcd, struct usb_device *udev,
+ 		 * host know that this link state won't be enabled.
+ 		 */
+ 		hcd->driver->disable_usb3_lpm_timeout(hcd, udev, state);
+-	} else {
+-		/* Only a configured device will accept the Set Feature
+-		 * U1/U2_ENABLE
+-		 */
+-		if (udev->actconfig)
+-			usb_set_device_initiated_lpm(udev, state, true);
++		return;
++	}
  
- static int madera_get_reset_gpio(struct madera *madera)
+-		/* As soon as usb_set_lpm_timeout(timeout) returns 0, the
+-		 * hub-initiated LPM is enabled. Thus, LPM is enabled no
+-		 * matter the result of usb_set_device_initiated_lpm().
+-		 * The only difference is whether device is able to initiate
+-		 * LPM.
+-		 */
++	/* Only a configured device will accept the Set Feature
++	 * U1/U2_ENABLE
++	 */
++	if (udev->actconfig &&
++	    usb_set_device_initiated_lpm(udev, state, true) == 0) {
+ 		if (state == USB3_LPM_U1)
+ 			udev->usb3_lpm_u1_enabled = 1;
+ 		else if (state == USB3_LPM_U2)
+ 			udev->usb3_lpm_u2_enabled = 1;
++	} else {
++		/* Don't request U1/U2 entry if the device
++		 * cannot transition to U1/U2.
++		 */
++		usb_set_lpm_timeout(udev, state, 0);
++		hcd->driver->disable_usb3_lpm_timeout(hcd, udev, state);
+ 	}
+ }
+ 
 -- 
 2.20.1
 
