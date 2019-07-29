@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D89079664
+	by mail.lfdr.de (Postfix) with ESMTP id F163579665
 	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:51:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390255AbfG2TvW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 15:51:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42586 "EHLO mail.kernel.org"
+        id S2390355AbfG2TvZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 15:51:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42710 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403846AbfG2TvT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:51:19 -0400
+        id S2403850AbfG2TvW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:51:22 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8E6BF21773;
-        Mon, 29 Jul 2019 19:51:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 36B00217D6;
+        Mon, 29 Jul 2019 19:51:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564429878;
-        bh=WC/j/sIjThtlobfzS6nVKzO7mZHYA9bZW6rokSFNWWI=;
+        s=default; t=1564429881;
+        bh=weIz1uBlyldbyeAv5HDGI4Fix09FhaoFEQLoHR14ie8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=P0m1GikyM10M2aFm7plIQWVIjAqqWOestowzb4NVULm5EjLajk4EyznbR6/FW6Odr
-         OuPcU0kFaYbZaQtWFRpPHhhUhBG6dMkFIWYZfKXxtW5RPv2z7Alr744rX5wflYJukz
-         +xvbr/6S7KvxE5Z0392m/Jg8DiY4zU7FlK77wg7E=
+        b=PFE5piDe3XbzXX/b9rJFPGMucgtkiA6Q1t03tAX/4w/kAtMu/+vNYA9PlJ8LPY9GA
+         +UL+Mm5jpZJU0opd5KKO5aek80m/a6E9vS2b6a0hSemo9hkKOHZB1pvcVvA2fD7GfV
+         6OkpmdmOXnxfwyyFMkPKVze78VmE8P8w1Im6pjJA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -50,9 +50,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-arm-kernel@lists.infradead.org,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 125/215] perf map: Fix potential NULL pointer dereference found by smatch tool
-Date:   Mon, 29 Jul 2019 21:22:01 +0200
-Message-Id: <20190729190800.952187231@linuxfoundation.org>
+Subject: [PATCH 5.2 126/215] perf annotate: Fix dereferencing freed memory found by the smatch tool
+Date:   Mon, 29 Jul 2019 21:22:02 +0200
+Message-Id: <20190729190801.169409742@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190729190739.971253303@linuxfoundation.org>
 References: <20190729190739.971253303@linuxfoundation.org>
@@ -65,36 +65,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 363bbaef63ffebcc745239fe80a953ebb5ac9ec9 ]
+[ Upstream commit 600c787dbf6521d8d07ee717ab7606d5070103ea ]
 
-Based on the following report from Smatch, fix the potential NULL
-pointer dereference check.
+Based on the following report from Smatch, fix the potential
+dereferencing freed memory check.
 
-  tools/perf/util/map.c:479
-  map__fprintf_srccode() error: we previously assumed 'state' could be
-  null (see line 466)
+  tools/perf/util/annotate.c:1125
+  disasm_line__parse() error: dereferencing freed memory 'namep'
 
-  tools/perf/util/map.c
-  465         /* Avoid redundant printing */
-  466         if (state &&
-  467             state->srcfile &&
-  468             !strcmp(state->srcfile, srcfile) &&
-  469             state->line == line) {
-  470                 free(srcfile);
-  471                 return 0;
-  472         }
-  473
-  474         srccode = find_sourceline(srcfile, line, &len);
-  475         if (!srccode)
-  476                 goto out_free_line;
-  477
-  478         ret = fprintf(fp, "|%-8d %.*s", line, len, srccode);
-  479         state->srcfile = srcfile;
-              ^^^^^^^
-  480         state->line = line;
-              ^^^^^^^
+  tools/perf/util/annotate.c
+  1100 static int disasm_line__parse(char *line, const char **namep, char **rawp)
+  1101 {
+  1102         char tmp, *name = ltrim(line);
 
-This patch validates 'state' pointer before access its elements.
+  [...]
+
+  1114         *namep = strdup(name);
+  1115
+  1116         if (*namep == NULL)
+  1117                 goto out_free_name;
+
+  [...]
+
+  1124 out_free_name:
+  1125         free((void *)namep);
+                            ^^^^^
+  1126         *namep = NULL;
+               ^^^^^^
+  1127         return -1;
+  1128 }
+
+If strdup() fails to allocate memory space for *namep, we don't need to
+free memory with pointer 'namep', which is resident in data structure
+disasm_line::ins::name; and *namep is NULL pointer for this failure, so
+it's pointless to assign NULL to *namep again.
+
+Committer note:
+
+Freeing namep, which is the address of the first entry of the 'struct
+ins' that is the first member of struct disasm_line would in fact free
+that disasm_line instance, if it was allocated via malloc/calloc, which,
+later, would a dereference of freed memory.
 
 Signed-off-by: Leo Yan <leo.yan@linaro.org>
 Acked-by: Jiri Olsa <jolsa@kernel.org>
@@ -118,32 +129,36 @@ Cc: Suzuki Poulouse <suzuki.poulose@arm.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Thomas Richter <tmricht@linux.ibm.com>
 Cc: linux-arm-kernel@lists.infradead.org
-Fixes: dd2e18e9ac20 ("perf tools: Support 'srccode' output")
-Link: http://lkml.kernel.org/r/20190702103420.27540-8-leo.yan@linaro.org
+Link: http://lkml.kernel.org/r/20190702103420.27540-5-leo.yan@linaro.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/util/map.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ tools/perf/util/annotate.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/tools/perf/util/map.c b/tools/perf/util/map.c
-index ee71efb9db62..9c81ee092784 100644
---- a/tools/perf/util/map.c
-+++ b/tools/perf/util/map.c
-@@ -470,8 +470,11 @@ int map__fprintf_srccode(struct map *map, u64 addr,
- 		goto out_free_line;
+diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
+index c8ce13419d9b..b8dfcfe08bb1 100644
+--- a/tools/perf/util/annotate.c
++++ b/tools/perf/util/annotate.c
+@@ -1113,16 +1113,14 @@ static int disasm_line__parse(char *line, const char **namep, char **rawp)
+ 	*namep = strdup(name);
  
- 	ret = fprintf(fp, "|%-8d %.*s", line, len, srccode);
--	state->srcfile = srcfile;
--	state->line = line;
-+
-+	if (state) {
-+		state->srcfile = srcfile;
-+		state->line = line;
-+	}
- 	return ret;
+ 	if (*namep == NULL)
+-		goto out_free_name;
++		goto out;
  
- out_free_line:
+ 	(*rawp)[0] = tmp;
+ 	*rawp = ltrim(*rawp);
+ 
+ 	return 0;
+ 
+-out_free_name:
+-	free((void *)namep);
+-	*namep = NULL;
++out:
+ 	return -1;
+ }
+ 
 -- 
 2.20.1
 
