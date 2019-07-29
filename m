@@ -2,41 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BA4C7993F
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:14:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DC7D7994E
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:15:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730496AbfG2UOK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 16:14:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41552 "EHLO mail.kernel.org"
+        id S1729857AbfG2T07 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 15:26:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39386 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730022AbfG2T2v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:28:51 -0400
+        id S1729842AbfG2T04 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:26:56 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 79BE52171F;
-        Mon, 29 Jul 2019 19:28:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 861D0217D6;
+        Mon, 29 Jul 2019 19:26:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564428530;
-        bh=AQNp5ECe9sgyjFWOGgvv1e6tRkk2iwL30xwMF+qUeZU=;
+        s=default; t=1564428415;
+        bh=HMrFMfx9FRBx1x87FYuAdelbhrEu472Dp/Lip/dBYBo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=y9EnJhSZ3jwZdGyexIDK9WfXewr0s1Wr0UcVpjQMx0f5zUBg6G9JUyUX51xydxT/W
-         k/b06tnSa2j7QqRKd3va9gJCqC3SJxXjVnRmeFw5iREfFNnQppgyKdfKZuQLVt2mis
-         m+wFhEM5tBGlorXQR7pkYao4U4//Vmh9PJgaBEdU=
+        b=Lv99SiPQ5Lbx2QeV6KrkX9A12pAUMoV1MspmB4Kyjwm4MC1kwZMxQPsNSe3YsR3rb
+         BIUBt01x4YtKG/J9LQ6LfUXVuMzfuU+snxX8mN4htIXjO9uSvz37qUt3lsDb620lfu
+         s24o6oj52n0nj4WXJMySS32ciu+eVQ6ixt4seiAQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sudeep Holla <sudeep.holla@arm.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Graeme Gregory <graeme.gregory@linaro.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Hanjun Guo <guohanjun@huawei.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
+        stable@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 066/293] acpi/arm64: ignore 5.1 FADTs that are reported as 5.0
-Date:   Mon, 29 Jul 2019 21:19:17 +0200
-Message-Id: <20190729190829.714016734@linuxfoundation.org>
+Subject: [PATCH 4.14 069/293] media: coda: increment sequence offset for the last returned frame
+Date:   Mon, 29 Jul 2019 21:19:20 +0200
+Message-Id: <20190729190829.969512308@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190729190820.321094988@linuxfoundation.org>
 References: <20190729190820.321094988@linuxfoundation.org>
@@ -49,50 +45,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 2af22f3ec3ca452f1e79b967f634708ff01ced8a ]
+[ Upstream commit b3b7d96817cdb8b6fc353867705275dce8f41ccc ]
 
-Some Qualcomm Snapdragon based laptops built to run Microsoft Windows
-are clearly ACPI 5.1 based, given that that is the first ACPI revision
-that supports ARM, and introduced the FADT 'arm_boot_flags' field,
-which has a non-zero field on those systems.
+If no more frames are decoded in bitstream end mode, and a previously
+decoded frame has been returned, the firmware still increments the frame
+number. To avoid a sequence number mismatch after decoder restart,
+increment the sequence_offset correction parameter.
 
-So in these cases, infer from the ARM boot flags that the FADT must be
-5.1 or later, and treat it as 5.1.
-
-Acked-by: Sudeep Holla <sudeep.holla@arm.com>
-Tested-by: Lee Jones <lee.jones@linaro.org>
-Reviewed-by: Graeme Gregory <graeme.gregory@linaro.org>
-Acked-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Acked-by: Hanjun Guo <guohanjun@huawei.com>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/kernel/acpi.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ drivers/media/platform/coda/coda-bit.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/arm64/kernel/acpi.c b/arch/arm64/kernel/acpi.c
-index b3162715ed78..285f0b4851fc 100644
---- a/arch/arm64/kernel/acpi.c
-+++ b/arch/arm64/kernel/acpi.c
-@@ -157,10 +157,14 @@ static int __init acpi_fadt_sanity_check(void)
- 	 */
- 	if (table->revision < 5 ||
- 	   (table->revision == 5 && fadt->minor_revision < 1)) {
--		pr_err("Unsupported FADT revision %d.%d, should be 5.1+\n",
-+		pr_err(FW_BUG "Unsupported FADT revision %d.%d, should be 5.1+\n",
- 		       table->revision, fadt->minor_revision);
--		ret = -EINVAL;
--		goto out;
-+
-+		if (!fadt->arm_boot_flags) {
-+			ret = -EINVAL;
-+			goto out;
-+		}
-+		pr_err("FADT has ARM boot flags set, assuming 5.1\n");
- 	}
- 
- 	if (!(fadt->flags & ACPI_FADT_HW_REDUCED)) {
+diff --git a/drivers/media/platform/coda/coda-bit.c b/drivers/media/platform/coda/coda-bit.c
+index 43eb5d51cf23..f0f2175265a9 100644
+--- a/drivers/media/platform/coda/coda-bit.c
++++ b/drivers/media/platform/coda/coda-bit.c
+@@ -2091,6 +2091,9 @@ static void coda_finish_decode(struct coda_ctx *ctx)
+ 		else if (ctx->display_idx < 0)
+ 			ctx->hold = true;
+ 	} else if (decoded_idx == -2) {
++		if (ctx->display_idx >= 0 &&
++		    ctx->display_idx < ctx->num_internal_frames)
++			ctx->sequence_offset++;
+ 		/* no frame was decoded, we still return remaining buffers */
+ 	} else if (decoded_idx < 0 || decoded_idx >= ctx->num_internal_frames) {
+ 		v4l2_err(&dev->v4l2_dev,
 -- 
 2.20.1
 
