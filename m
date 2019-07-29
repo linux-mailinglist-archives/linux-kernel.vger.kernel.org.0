@@ -2,38 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C4B1E79669
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:51:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 829D57966D
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:51:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390570AbfG2Tvd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 15:51:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42948 "EHLO mail.kernel.org"
+        id S2390829AbfG2Tvm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 15:51:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43162 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390775AbfG2Tvb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:51:31 -0400
+        id S2403873AbfG2Tvj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:51:39 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E0676204EC;
-        Mon, 29 Jul 2019 19:51:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 50E56204EC;
+        Mon, 29 Jul 2019 19:51:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564429890;
-        bh=xqhnROkAuFWOa9hoLUMsZoXHogbMEhZx5u0bQNKIWwY=;
+        s=default; t=1564429898;
+        bh=IdEMgGy0pL2VQ26yIXXQLlHAcV2TSQxywE3X7xeZwE8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=W/HJtaq95Xw4+1sFxFvqbklIKcrHjz1jhHtzbG8J3R0HOOq37WnUnfhr9vO2OmCdr
-         3bxObsphKf3NLo269tmphM9E1s6usDtB75cIz/JpE3DETEvlxxW/FU6gRxt71seQjy
-         /uAVP0Pai8C+TB5GKcK/dfSbX+lU+lef3nxlSp6M=
+        b=RGHn6vC/WtuCioAzjjinAmfdPfq9yVj+67xoAkK50/y57NZkaE5G65xnU3lzyrT02
+         wlXS+j7bVafDP8UsFTaUhDrnTxQwKprwKOyLaR8V1ttsHO6jH8SqBwqZafLS/F6WGS
+         LE1EGlU5w63kLOfh4jA+YHTxh0M7/2GECpt7wPxQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hulk Robot <hulkci@huawei.com>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 129/215] PCI: dwc: pci-dra7xx: Fix compilation when !CONFIG_GPIOLIB
-Date:   Mon, 29 Jul 2019 21:22:05 +0200
-Message-Id: <20190729190801.744441299@linuxfoundation.org>
+        stable@vger.kernel.org, Alan Mikhak <alan.mikhak@sifive.com>,
+        Christoph Hellwig <hch@lst.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.2 132/215] nvme-pci: check for NULL return from pci_alloc_p2pmem()
+Date:   Mon, 29 Jul 2019 21:22:08 +0200
+Message-Id: <20190729190802.348929092@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190729190739.971253303@linuxfoundation.org>
 References: <20190729190739.971253303@linuxfoundation.org>
@@ -46,49 +43,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 381ed79c8655a40268ee7391f716edd90c5c3a97 ]
+[ Upstream commit bfac8e9f55cf62a000b643a0081488badbe92d96 ]
 
-If CONFIG_GPIOLIB is not selected the compilation results in the
-following build errors:
+Modify nvme_alloc_sq_cmds() to call pci_free_p2pmem() to free the memory
+it allocated using pci_alloc_p2pmem() in case pci_p2pmem_virt_to_bus()
+returns null.
 
-drivers/pci/controller/dwc/pci-dra7xx.c:
- In function dra7xx_pcie_probe:
-drivers/pci/controller/dwc/pci-dra7xx.c:777:10:
- error: implicit declaration of function devm_gpiod_get_optional;
- did you mean devm_regulator_get_optional? [-Werror=implicit-function-declaration]
+Makes sure not to call pci_free_p2pmem() if pci_alloc_p2pmem() returned
+NULL, which can happen if CONFIG_PCI_P2PDMA is not configured.
 
-  reset = devm_gpiod_get_optional(dev, NULL, GPIOD_OUT_HIGH);
+The current implementation is not expected to leak since
+pci_p2pmem_virt_to_bus() is expected to fail only if pci_alloc_p2pmem()
+returns null. However, checking the return value of pci_alloc_p2pmem()
+is more explicit.
 
-drivers/pci/controller/dwc/pci-dra7xx.c:778:45: error: ‘GPIOD_OUT_HIGH’
-undeclared (first use in this function); did you mean ‘GPIOF_INIT_HIGH’?
-  reset = devm_gpiod_get_optional(dev, NULL, GPIOD_OUT_HIGH);
-                                             ^~~~~~~~~~~~~~
-                                             GPIOF_INIT_HIGH
-
-Fix them by including the appropriate header file.
-
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-[lorenzo.pieralisi@arm.com: commit log]
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
+Signed-off-by: Alan Mikhak <alan.mikhak@sifive.com>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pci/controller/dwc/pci-dra7xx.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/nvme/host/pci.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/pci/controller/dwc/pci-dra7xx.c b/drivers/pci/controller/dwc/pci-dra7xx.c
-index 419451efd58c..4234ddb4722f 100644
---- a/drivers/pci/controller/dwc/pci-dra7xx.c
-+++ b/drivers/pci/controller/dwc/pci-dra7xx.c
-@@ -26,6 +26,7 @@
- #include <linux/types.h>
- #include <linux/mfd/syscon.h>
- #include <linux/regmap.h>
-+#include <linux/gpio/consumer.h>
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index f5bc1c30cef5..245b6e2151c1 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -1456,11 +1456,15 @@ static int nvme_alloc_sq_cmds(struct nvme_dev *dev, struct nvme_queue *nvmeq,
  
- #include "../../pci.h"
- #include "pcie-designware.h"
+ 	if (qid && dev->cmb_use_sqes && (dev->cmbsz & NVME_CMBSZ_SQS)) {
+ 		nvmeq->sq_cmds = pci_alloc_p2pmem(pdev, SQ_SIZE(depth));
+-		nvmeq->sq_dma_addr = pci_p2pmem_virt_to_bus(pdev,
+-						nvmeq->sq_cmds);
+-		if (nvmeq->sq_dma_addr) {
+-			set_bit(NVMEQ_SQ_CMB, &nvmeq->flags);
+-			return 0; 
++		if (nvmeq->sq_cmds) {
++			nvmeq->sq_dma_addr = pci_p2pmem_virt_to_bus(pdev,
++							nvmeq->sq_cmds);
++			if (nvmeq->sq_dma_addr) {
++				set_bit(NVMEQ_SQ_CMB, &nvmeq->flags);
++				return 0;
++			}
++
++			pci_free_p2pmem(pdev, nvmeq->sq_cmds, SQ_SIZE(depth));
+ 		}
+ 	}
+ 
 -- 
 2.20.1
 
