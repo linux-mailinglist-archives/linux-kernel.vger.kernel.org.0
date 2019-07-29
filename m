@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB3407947A
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:32:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FE867947D
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:32:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730209AbfG2TcD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 15:32:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45058 "EHLO mail.kernel.org"
+        id S1729413AbfG2TcK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 15:32:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45358 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730202AbfG2Tb6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:31:58 -0400
+        id S1730213AbfG2TcI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:32:08 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BB10F21773;
-        Mon, 29 Jul 2019 19:31:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CB188217D9;
+        Mon, 29 Jul 2019 19:32:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564428717;
-        bh=6EyA4BUqKDgjHynT9MTmCSzzqmkbv0iQoAtfbugv96Q=;
+        s=default; t=1564428727;
+        bh=ty97BlOGJMlLKNU2GM8hXIFhIkRgTfbUOV9TcJh/z+I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PTKspnlvZrVy8k04dQrJs4Ycg0V508YJY0XOs6F0nmM8LGLCUfGOnSrXCIlOglKCE
-         lwcCmfMGVZ49S6fkXGG5E+790u5Md34tIYofaWPwPBKZtqP5ILWNgnPMG8sp0LPNVe
-         Cj2cqfaSglx5KCyvP02uo+usX8PLK/WkVPqYtc5g=
+        b=jmzwzLAxXnOA4y3nuVATWqgDlnAHU91KCBHKhi7Xq2MEMkobLWYxF8bWKtKGi357M
+         SZFu13TZe4UbqCc6eiGiQRFYssYxA4/wfcu13LrPTxLNm029jhZBFQI4D68FdtDIr+
+         jNdDlRN9Me/kx2L6KigGMFoihjBBQL4mHMsV0hjc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Steve Longerbeam <slongerbeam@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Subject: [PATCH 4.14 164/293] gpu: ipu-v3: ipu-ic: Fix saturation bit offset in TPMEM
-Date:   Mon, 29 Jul 2019 21:20:55 +0200
-Message-Id: <20190729190837.128133198@linuxfoundation.org>
+        stable@vger.kernel.org, Rolf Eike Beer <eike-kernel@sf-tec.de>,
+        Helge Deller <deller@gmx.de>
+Subject: [PATCH 4.14 167/293] parisc: Ensure userspace privilege for ptraced processes in regset functions
+Date:   Mon, 29 Jul 2019 21:20:58 +0200
+Message-Id: <20190729190837.314198313@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190729190820.321094988@linuxfoundation.org>
 References: <20190729190820.321094988@linuxfoundation.org>
@@ -43,36 +43,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Steve Longerbeam <slongerbeam@gmail.com>
+From: Helge Deller <deller@gmx.de>
 
-commit 3d1f62c686acdedf5ed9642b763f3808d6a47d1e upstream.
+commit 34c32fc603311a72cb558e5e337555434f64c27b upstream.
 
-The saturation bit was being set at bit 9 in the second 32-bit word
-of the TPMEM CSC. This isn't correct, the saturation bit is bit 42,
-which is bit 10 of the second word.
+On parisc the privilege level of a process is stored in the lowest two bits of
+the instruction pointers (IAOQ0 and IAOQ1). On Linux we use privilege level 0
+for the kernel and privilege level 3 for user-space. So userspace should not be
+allowed to modify IAOQ0 or IAOQ1 of a ptraced process to change it's privilege
+level to e.g. 0 to try to gain kernel privileges.
 
-Fixes: 1aa8ea0d2bd5d ("gpu: ipu-v3: Add Image Converter unit")
+This patch prevents such modifications in the regset support functions by
+always setting the two lowest bits to one (which relates to privilege level 3
+for user-space) if IAOQ0 or IAOQ1 are modified via ptrace regset calls.
 
-Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: stable@vger.kernel.org
-Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+Link: https://bugs.gentoo.org/481768
+Cc: <stable@vger.kernel.org> # v4.7+
+Tested-by: Rolf Eike Beer <eike-kernel@sf-tec.de>
+Signed-off-by: Helge Deller <deller@gmx.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/ipu-v3/ipu-ic.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/parisc/kernel/ptrace.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/gpu/ipu-v3/ipu-ic.c
-+++ b/drivers/gpu/ipu-v3/ipu-ic.c
-@@ -256,7 +256,7 @@ static int init_csc(struct ipu_ic *ic,
- 	writel(param, base++);
- 
- 	param = ((a[0] & 0x1fe0) >> 5) | (params->scale << 8) |
--		(params->sat << 9);
-+		(params->sat << 10);
- 	writel(param, base++);
- 
- 	param = ((a[1] & 0x1f) << 27) | ((c[0][1] & 0x1ff) << 18) |
+--- a/arch/parisc/kernel/ptrace.c
++++ b/arch/parisc/kernel/ptrace.c
+@@ -500,7 +500,8 @@ static void set_reg(struct pt_regs *regs
+ 			return;
+ 	case RI(iaoq[0]):
+ 	case RI(iaoq[1]):
+-			regs->iaoq[num - RI(iaoq[0])] = val;
++			/* set 2 lowest bits to ensure userspace privilege: */
++			regs->iaoq[num - RI(iaoq[0])] = val | 3;
+ 			return;
+ 	case RI(sar):	regs->sar = val;
+ 			return;
 
 
