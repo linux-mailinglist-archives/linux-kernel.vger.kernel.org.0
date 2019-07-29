@@ -2,140 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED91478B85
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 14:15:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 951EF78B65
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 14:11:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727609AbfG2MPS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 08:15:18 -0400
-Received: from mail-eopbgr750049.outbound.protection.outlook.com ([40.107.75.49]:40654
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726953AbfG2MPS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 08:15:18 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=U96lCyEQ0s+/Sg5KLeINhKlSa54+I39lKQXMqGw7LUs0qZqT1009RTSR3dlUtfDbVDb5WbFXmSJrd/2jFG5OQVu3Ctw8PY9SAKmbSPK2Kk8Nk/7ZiNKfUHmwmii4C9yMCFxapbSi4BmnKbstjsljEG6130+b+pTpz6KUzdS2fvxLCFhuiYpCU7hPw/qymzms2li0vlYn5lsSoxbSR5xLwHVQ23XhI/CFMs9+Zy6hRyT//gqkQZdgkd06i+vVDCIgr8wY8jCLUsmJJtFesebXdHWE3rBfUQau64sI5gt3sBkIWjowQWAB2cbYL1QcHEpy51Nd8Rqxdix8bChQ/yADGQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2fz4utKxUE7fldrbZ2bvj3Cc8O6BbWVdybm87o97p0c=;
- b=XK451W0Yru3YdXXRQZARlEFOtZ3XYZ8Xbx4QEZFDiN+WJgkG172r+OkflGRBEYy3y0giokVssLqies+tBn84/vVeHO5Kayzq+XX2tsN9E03dJUho1Ot3RKkwsHVu3USkOLkjZuy+cdFiE8V6V+LsZilB7hTY5rd7Gt9ntE6u7X7hGl4y6wvhrlcBEpk2c1zp+RxM/D1X8bm7XCcnVJEYb5wxv96A+xBsvnzKoagn6u85lBE6Kw0GSeNIggezILHnJ7g0Bg/CE2rhjf0Zu++mKywmECFG5gJ76pi/TJOZFP7GO4piSVkBOAK8ayTUfr0LOL/1bAeuAcMfPZMuJX9MQA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=none (sender ip is
- 165.204.84.17) smtp.rcpttodomain=alsa-project.org
- smtp.mailfrom=amd.com;dmarc=permerror action=none
- header.from=amd.com;dkim=none (message not signed);arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amdcloud-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2fz4utKxUE7fldrbZ2bvj3Cc8O6BbWVdybm87o97p0c=;
- b=xfag+hcz6HIKQKRKU18EXrtNl92vkLOA9UAbGV/3RMeYxsNcgW1V+w46Txy7rl8solEGsCkw5I4sdYd72IULQ/ag3cgpmt9IHmnNQO9N2cWpOm4RvNE0jwQoza8sc81Ac2x4+A6qbRS4aPFJgcHXk2FWPfHfkNBB8xuQuA+3/ak=
-Received: from DM6PR12CA0026.namprd12.prod.outlook.com (2603:10b6:5:1c0::39)
- by MW2PR12MB2426.namprd12.prod.outlook.com (2603:10b6:907:8::25) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2073.14; Mon, 29 Jul
- 2019 12:15:15 +0000
-Received: from DM3NAM03FT035.eop-NAM03.prod.protection.outlook.com
- (2a01:111:f400:7e49::201) by DM6PR12CA0026.outlook.office365.com
- (2603:10b6:5:1c0::39) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.2115.15 via Frontend
- Transport; Mon, 29 Jul 2019 12:15:15 +0000
-Authentication-Results: spf=none (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; alsa-project.org; dkim=none (message not signed)
- header.d=none;alsa-project.org; dmarc=permerror action=none
- header.from=amd.com;
-Received-SPF: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-Received: from SATLEXCHOV02.amd.com (165.204.84.17) by
- DM3NAM03FT035.mail.protection.outlook.com (10.152.82.188) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.2115.10 via Frontend Transport; Mon, 29 Jul 2019 12:15:14 +0000
-Received: from vishnu-All-Series.amd.com (10.34.1.3) by SATLEXCHOV02.amd.com
- (10.181.40.72) with Microsoft SMTP Server id 14.3.389.1; Mon, 29 Jul 2019
- 07:15:13 -0500
-From:   Ravulapati Vishnu vardhan rao 
-        <Vishnuvardhanrao.Ravulapati@amd.com>
-CC:     <Alexander.Deucher@amd.com>,
-        Ravulapati Vishnu vardhan rao 
-        <Vishnuvardhanrao.Ravulapati@amd.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        "Takashi Iwai" <tiwai@suse.com>,
-        Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
-        Maruthi Srinivas Bayyavarapu <Maruthi.Bayyavarapu@amd.com>,
-        Sanju R Mehta <sanju.mehta@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
-        <alsa-devel@alsa-project.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: [PATCH 3/3] ASoC : amd: reduced period size
-Date:   Mon, 29 Jul 2019 17:38:31 +0530
-Message-ID: <1564402115-5043-3-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1564402115-5043-1-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
-References: <1564402115-5043-1-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
+        id S1726716AbfG2MLg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 08:11:36 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:45714 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726482AbfG2MLg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 08:11:36 -0400
+Received: from [192.168.0.20] (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 04E6ACC;
+        Mon, 29 Jul 2019 14:11:32 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1564402293;
+        bh=858qY4EmDwiMBdRHoxTSaL+Ublt1kQgaIWAAkh9Vhz4=;
+        h=Reply-To:Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=GTFtRr1beIO6Ck5gVW8Jpc6Pz9mR6bbeN0BszzKi3IdNAjsuVO4jiVCqsGsrii/EF
+         H/6DASPoxE07EVkchiHLuLct8aByzOGl3myccmxEn7WAHs74SvFOgI1BP7C0sVyznM
+         fcYvq62vXTR7DOuAhotT10l3nVUeQXUXBu9Gv98Y=
+Reply-To: kieran.bingham+renesas@ideasonboard.com
+Subject: Re: [PATCH] media: vsp1: fix memory leak of dl on error return path
+To:     Colin King <colin.king@canonical.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190728171124.14202-1-colin.king@canonical.com>
+From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Organization: Ideas on Board
+Message-ID: <e5c3dede-2c59-4c64-7a8c-f022ee06cbfa@ideasonboard.com>
+Date:   Mon, 29 Jul 2019 13:11:30 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:165.204.84.17;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(979002)(4636009)(396003)(39860400002)(136003)(376002)(346002)(2980300002)(428003)(189003)(199004)(86362001)(8676002)(446003)(476003)(11346002)(126002)(316002)(16586007)(54906003)(2616005)(426003)(478600001)(70206006)(6666004)(356004)(70586007)(336012)(5660300002)(36756003)(53416004)(81166006)(81156014)(109986005)(305945005)(50226002)(50466002)(48376002)(4326008)(8936002)(486006)(68736007)(2906002)(53936002)(47776003)(186003)(7696005)(51416003)(1671002)(76176011)(26005)(266003)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:MW2PR12MB2426;H:SATLEXCHOV02.amd.com;FPR:;SPF:None;LANG:en;PTR:InfoDomainNonexistent;MX:1;A:1;
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 59e3deac-f884-4931-282b-08d7141e6989
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328);SRVR:MW2PR12MB2426;
-X-MS-TrafficTypeDiagnostic: MW2PR12MB2426:
-X-Microsoft-Antispam-PRVS: <MW2PR12MB2426086EEEDB13D7806D5000E7DD0@MW2PR12MB2426.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:296;
-X-Forefront-PRVS: 01136D2D90
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Message-Info: V+70G1wmObDP1XtV2jPbXEssiLYblU4iJQVG45Rli+GC+hJT4LMpFb4u42i5Ws63kec16VG/r1d1o0kuddXAbYHgv5fdNHa8MI8iffFmttlJGYYKkHwocPBX9XW9kN2WiKN0900YoW3//vD3lGh+jmblcPTrT0TXtKtjP0mGrTrL8zZ4BGc8cNUNgmut5XLYkGhzvIt6rm9NorCY24y+zAEroYmuMqN8H30h2TphZMAntpxjzMBJNRQ4LKrtYppsHrbvirST5UcRCaf6VwzS/T5EMIieJwppgUl9Xw7/W0k+VB2yJmgmLyB4m9oG7TkyHZ+haKASxgZC+pC65CBlcHmP4TkMj5PgIgx3kvpPcbq8o41TMzy4+ke2lu7X80CkSxlPWn5DmENrN6QnvbQT4eJs7AqFFum2zbUOffoGYVo=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jul 2019 12:15:14.5512
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 59e3deac-f884-4931-282b-08d7141e6989
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXCHOV02.amd.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW2PR12MB2426
-To:     unlisted-recipients:; (no To-header on input)
+In-Reply-To: <20190728171124.14202-1-colin.king@canonical.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reduced period size and offsets.
+Hi Colin,
 
-Signed-off-by:Ravulapati, Vishnu vardhan rao <Vishnuvardhanrao.Ravulapati@amd.com>
----
- sound/soc/amd/raven/acp3x.h | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+On 28/07/2019 18:11, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Currently when the call vsp1_dl_body_get fails and returns null the
+> error return path leaks the allocation of dl. Fix this by kfree'ing
+> dl before returning.
 
-diff --git a/sound/soc/amd/raven/acp3x.h b/sound/soc/amd/raven/acp3x.h
-index 4f2cadd..033e2a9 100644
---- a/sound/soc/amd/raven/acp3x.h
-+++ b/sound/soc/amd/raven/acp3x.h
-@@ -23,17 +23,17 @@
- #define ACP_SRAM_PTE_OFFSET	0x02050000
- #define PAGE_SIZE_4K_ENABLE 0x2
- #define MEM_WINDOW_START	0x4000000
--#define PLAYBACK_FIFO_ADDR_OFFSET 0x400
--#define CAPTURE_FIFO_ADDR_OFFSET  0x500
-+#define PLAYBACK_FIFO_ADDR_OFFSET 0x00
-+#define CAPTURE_FIFO_ADDR_OFFSET  0x04
- 
- #define PLAYBACK_MIN_NUM_PERIODS    2
- #define PLAYBACK_MAX_NUM_PERIODS    8
--#define PLAYBACK_MAX_PERIOD_SIZE    16384
--#define PLAYBACK_MIN_PERIOD_SIZE    4096
-+#define PLAYBACK_MAX_PERIOD_SIZE    8192
-+#define PLAYBACK_MIN_PERIOD_SIZE    1024
- #define CAPTURE_MIN_NUM_PERIODS     2
- #define CAPTURE_MAX_NUM_PERIODS     8
--#define CAPTURE_MAX_PERIOD_SIZE     16384
--#define CAPTURE_MIN_PERIOD_SIZE     4096
-+#define CAPTURE_MAX_PERIOD_SIZE     8192
-+#define CAPTURE_MIN_PERIOD_SIZE     1024
- 
- #define MAX_BUFFER (PLAYBACK_MAX_PERIOD_SIZE * PLAYBACK_MAX_NUM_PERIODS)
- #define MIN_BUFFER MAX_BUFFER
--- 
-2.7.4
+Eeep. This does indeed look to be the case.
+
+> 
+> Addresses-Coverity: ("Resource leak")
+> Fixes: 5d7936b8e27d ("media: vsp1: Convert display lists to use new body pool")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+
+Thank you!
+
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+
+
+> ---
+>  drivers/media/platform/vsp1/vsp1_dl.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
+> index 104b6f514536..d7b43037e500 100644
+> --- a/drivers/media/platform/vsp1/vsp1_dl.c
+> +++ b/drivers/media/platform/vsp1/vsp1_dl.c
+> @@ -557,8 +557,10 @@ static struct vsp1_dl_list *vsp1_dl_list_alloc(struct vsp1_dl_manager *dlm)
+>  
+>  	/* Get a default body for our list. */
+>  	dl->body0 = vsp1_dl_body_get(dlm->pool);
+> -	if (!dl->body0)
+> +	if (!dl->body0) {
+> +		kfree(dl);
+>  		return NULL;
+> +	}
+>  
+>  	header_offset = dl->body0->max_entries * sizeof(*dl->body0->entries);
+>  
+> 
 
