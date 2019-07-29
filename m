@@ -2,59 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7764678C37
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 15:03:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 16A0578C3C
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 15:04:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727357AbfG2NDn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 09:03:43 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:53201 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726767AbfG2NDn (ORCPT
+        id S1727816AbfG2NEc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 09:04:32 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:34835 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726674AbfG2NEb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 09:03:43 -0400
-Received: by mail-wm1-f67.google.com with SMTP id s3so53762480wms.2
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 06:03:41 -0700 (PDT)
+        Mon, 29 Jul 2019 09:04:31 -0400
+Received: by mail-wm1-f65.google.com with SMTP id l2so53383772wmg.0
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 06:04:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:openpgp:autocrypt:organization
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=RXlHdBnB10fuwh6aSvTLtcepntLQhveHrykk/Fy2LNM=;
-        b=UiP7Q1Mmej8KjqTRrga8h/xooCYzS2JF0Z+aD5SMRhvzyG9fiKp91UmHjB6nHngHiW
-         +v1OXomCRPdMbP/vqZO4QdI9j4zwgvWJNuzYqaY+x6AH/8hzzv5Cf+Tv6uw/A0vmpXz/
-         qFDDsUBiy444vaFM46P8xrz3VCPtIwZp4fankDD/cOsbhSgs7XW2aMboBuH9NwA43i4d
-         +ClAKmlNFZaTGYN3YEMTUWK9BwPsmwJUzN5tryUpmHik3eNxLOrqu0gjC/bTQFE5gJMT
-         /vObD/QwSo3ZzkMEcCTEbjNeAZo1bn2sLfD/ekSDjtGso19xUQMTGcFzDDSG/4uNI/wW
-         9VYg==
+        bh=pOCkuIpr6BhQzQiluCHcFgCcQrubHBjUxnpP1eOGXt0=;
+        b=LnS5pu/bDE06Du84FfKCMcv/5kK64zGcOHTep/9Q9lhq0ZZz5EgtkoH9WrR2YSUEAp
+         JECNHLYzwmK5bWzpEUcxlgSxpek0dCPmVvePoEdovskH1NX8t/GhWZ2mgQoLGZhhypvW
+         n9l7ken9o9hqv2dCrrH8ssIycPc5qZA7Le8SSroDBjaIdGr48RHycLzcIG0dMmAwjCN7
+         T8rl+sARGfPwrlvCQY0CdYu5L/WBtvxJgfpnGGPjTdbsiLAduImtL8Ue0k0uaGtj9atJ
+         csRdQNt/X3KPDp2YTFQEZS+lk9QrvAHian6lFWyVHhPZr8M1m1r3GeNnncAHwWBRCoGD
+         Hp7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
          :organization:message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=RXlHdBnB10fuwh6aSvTLtcepntLQhveHrykk/Fy2LNM=;
-        b=VE/G0cE5EfaRETXURZtq6P2Nny0ziVQvGVXemiqJh1OjUXXXf9f0QCLJYw9ajtanRA
-         eogXTeniZjwrIQJ0Qj2LQTLwTGdSZ0nFqh/Q5LmtK15w+BTCElChbLg4EqfeTdXG1Pq0
-         5l6Wej7pDRfzX3rzR4G9Jfjrx5HjUYnHdliVoAsixRAzWSOk072tB1ktj4xXVODFRGzc
-         Fq0TE+JTTnXslCqSMlSWBlTOXHqbepS9x7UhqmB45W25+WdIv1vKnJnY/yVpEP/5Xw6P
-         t+IRsXd06Di+t0Q5ofEcqZib6MZgOfKiQ+6fdPnbiUn8zHseales+uQCyh+qUj7H3Lak
-         RvbQ==
-X-Gm-Message-State: APjAAAV31F5rZn++i3gAjqYZXMvu3Hcv4B3T2Yl+l6oSTzVH+AK9DtKo
-        ySuZ9Z9/m3BkJtGYpTGXdqiyZw==
-X-Google-Smtp-Source: APXvYqyCkyYOnH8vWPye37z4DmJSqAaowhWMzsCKpMAqK9jjMTNaa2W4Kxpd8Twh7VrjuliANPCVFQ==
-X-Received: by 2002:a05:600c:20c3:: with SMTP id y3mr102678210wmm.3.1564405420826;
-        Mon, 29 Jul 2019 06:03:40 -0700 (PDT)
+        bh=pOCkuIpr6BhQzQiluCHcFgCcQrubHBjUxnpP1eOGXt0=;
+        b=rzlwNjIuUSRTAA0I1s/gxdcG41rOAPVadMi+mTQbvddZ6usgdJTzBjc0sk12peWP5U
+         XGSuJfjD/ZVizQNDAL/K9UFI1WHCewncqsDsLRDqRlGD45MRn9ZILrx79M684ypaeIyY
+         Hsq/Yle7TI9uxyDMKpA6QK+aaJlnvwkV7e9VMbOzOS9Pa42pQtAzLJBgmGnpKMB1AH5G
+         UxwxgYCiMpyf7u/AeI61CQN/eL8cZGGeGgT8g6SQM/WvYtx3UobhOKDetrK5HpCeDkeU
+         5qL2CSIeG8reiv8m7PXavqLi6yo9N+6aCPk/YrTuCPJ3pwNj5NcV2o8EiponxdTL8dK8
+         rY7w==
+X-Gm-Message-State: APjAAAWtjvukjdHFkZCYq2B0hpj2jwA6zmgmPxotTE0+TWzxq8ANHHqt
+        /YaA3Hw+VcystlIKcUMnVkIigjBaQeQ=
+X-Google-Smtp-Source: APXvYqzIPsR5qt9mUsWCf7G9w4lv3dLBs/+bqFrXqun+n/VNAUdR0zQALE5MPuni59O4oOKowCVYkA==
+X-Received: by 2002:a05:600c:20d:: with SMTP id 13mr100133113wmi.141.1564405468573;
+        Mon, 29 Jul 2019 06:04:28 -0700 (PDT)
 Received: from [10.1.2.12] (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id a67sm67556778wmh.40.2019.07.29.06.03.40
+        by smtp.gmail.com with ESMTPSA id s2sm49282668wmj.33.2019.07.29.06.04.27
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 29 Jul 2019 06:03:40 -0700 (PDT)
-Subject: Re: [PATCH] net: stmmac: manage errors returned by
- of_get_mac_address()
+        Mon, 29 Jul 2019 06:04:28 -0700 (PDT)
+Subject: Re: [PATCH v2] nvmem: meson-mx-efuse: allow reading data smaller than
+ word_size
 To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        peppe.cavallaro@st.com, alexandre.torgue@st.com,
-        joabreu@synopsys.com, davem@davemloft.net, netdev@vger.kernel.org
-Cc:     linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-References: <20190727192137.27881-1-martin.blumenstingl@googlemail.com>
+        linux-amlogic@lists.infradead.org, srinivas.kandagatla@linaro.org
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20190727193414.11371-1-martin.blumenstingl@googlemail.com>
 From:   Neil Armstrong <narmstrong@baylibre.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
@@ -107,12 +105,12 @@ Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
  VsbXrP9BZ6snXyHfebPnno/te5XRqZTL9aJOytB/1iUna+1MAwBxGFPvqeEUUyT+gx1l3Acl
  ZaTUOEkgIor5losDrePdPgE=
 Organization: Baylibre
-Message-ID: <afb321f0-5754-f916-7461-8cd062526a34@baylibre.com>
-Date:   Mon, 29 Jul 2019 15:03:39 +0200
+Message-ID: <affe16d6-b289-34c6-ea32-beb855f72be9@baylibre.com>
+Date:   Mon, 29 Jul 2019 15:04:27 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <20190727192137.27881-1-martin.blumenstingl@googlemail.com>
+In-Reply-To: <20190727193414.11371-1-martin.blumenstingl@googlemail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -121,43 +119,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 27/07/2019 21:21, Martin Blumenstingl wrote:
-> Commit d01f449c008a ("of_net: add NVMEM support to of_get_mac_address")
-> added support for reading the MAC address from an nvmem-cell. This
-> required changing the logic to return an error pointer upon failure.
+On 27/07/2019 21:34, Martin Blumenstingl wrote:
+> Some Amlogic boards store the Ethernet MAC address inside the eFuse. The
+> Ethernet MAC address uses 6 bytes. The existing logic in
+> meson_mx_efuse_read() would write beyond the end of the data buffer when
+> trying to read data with a size that is not aligned to word_size (4
+> bytes on Meson8, Meson8b and Meson8m2).
 > 
-> If stmmac is loaded before the nvmem provider driver then
-> of_get_mac_address() return an error pointer with -EPROBE_DEFER.
+> Calculate the remaining data to copy inside meson_mx_efuse_read() so
+> reading 6 bytes doesn't write beyond the end of the data buffer.
 > 
-> Propagate this error so the stmmac driver will be probed again after the
-> nvmem provider driver is loaded.
-> Default to a random generated MAC address in case of any other error,
-> instead of using the error pointer as MAC address.
-> 
-> Fixes: d01f449c008a ("of_net: add NVMEM support to of_get_mac_address")
 > Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 > ---
->  drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c | 7 +++++++
->  1 file changed, 7 insertions(+)
+> Changes since v1:
+> - switch from min() to min_t() to get rid of a compiler warning
 > 
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-> index 73fc2524372e..154daf4d1072 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-> @@ -370,6 +370,13 @@ stmmac_probe_config_dt(struct platform_device *pdev, const char **mac)
->  		return ERR_PTR(-ENOMEM);
+> 
+>  drivers/nvmem/meson-mx-efuse.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/nvmem/meson-mx-efuse.c b/drivers/nvmem/meson-mx-efuse.c
+> index 2976aef87c82..e8fc0baa09e7 100644
+> --- a/drivers/nvmem/meson-mx-efuse.c
+> +++ b/drivers/nvmem/meson-mx-efuse.c
+> @@ -155,7 +155,8 @@ static int meson_mx_efuse_read(void *context, unsigned int offset,
+>  		if (err)
+>  			break;
 >  
->  	*mac = of_get_mac_address(np);
-> +	if (IS_ERR(*mac)) {
-> +		if (PTR_ERR(*mac) == -EPROBE_DEFER)
-> +			return ERR_CAST(*mac);
-> +
-> +		*mac = NULL;
-> +	}
-> +
->  	plat->interface = of_get_phy_mode(np);
+> -		memcpy(buf + i, &tmp, efuse->config.word_size);
+> +		memcpy(buf + i, &tmp,
+> +		       min_t(size_t, bytes - i, efuse->config.word_size));
+>  	}
 >  
->  	/* Some wrapper drivers still rely on phy_node. Let's save it while
+>  	meson_mx_efuse_mask_bits(efuse, MESON_MX_EFUSE_CNTL1,
 > 
 
 Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
