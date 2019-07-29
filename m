@@ -2,94 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22DBE787FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 11:04:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B398A78800
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 11:07:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727677AbfG2JEg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 05:04:36 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:42512 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726432AbfG2JEf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 05:04:35 -0400
-Received: by mail-pg1-f195.google.com with SMTP id t132so27903157pgb.9;
-        Mon, 29 Jul 2019 02:04:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=v/A21rAwjhZMNLCDz5qblCoOcY3twfiyDKBiZflQpBQ=;
-        b=Dpmv/JAygDIespOi7yY+Pll4NwJss+4gHitbFUWYnGC8LgfvYn0OlweiqB9Vi4w2Ni
-         XLp94Y5QJ0tSLmKin/zDMce9xpI8+S9yRgkyMEWulc+/HLE0sz8sp/Zr5IT6U7D7vpb/
-         oQQz9LOW0CxOBqdDk5+ThBOMpIEFQGBW5rYceBD59U9ICIKUhQ557jYViwHNcXgAHIHc
-         L1MfSwJ/WhcHlm8Bk3AWCdp+pQKJLlf/IlmQ1ruyR7m/YBgeWk1ujfJpCUTua4Qa9uJh
-         m+vKcvusOHAygtUf6PA3YFx7qLs3l9T2sST9dbgkkYgk2LZch1LJSs5cLD53opL8Y3Wp
-         mSlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=v/A21rAwjhZMNLCDz5qblCoOcY3twfiyDKBiZflQpBQ=;
-        b=Nr028G8H4GV3f+XycgII/CsuGZlgWoaYEhZ4p2EW0nc0G1xzGU1XzxTMsx0FuiSs80
-         Jmr5vAMCz0fUrVE1q43zy5HoD8YOgTRUVQkkm6S2trpjVDwcKcROIV6nC9CMO+7qLhCP
-         BIauzEEvbMEsB3iqMHbWi5UbxGKfX/4g8rflJKB8JjKFRJbCWK/pe+4nz9xgSjGZuOHN
-         CsllcJrc5MSl5HsH77sVC5MLB0f0idtF6cP9fQIcF0Nc7lLe94fWJ24oyV4dHAwt2eoe
-         zNsjSUrJYCciOhXMCXvRr/oax8wpB5gqpm/ZSQjSKYGUynJ2M+9UjYKxpy66/LGwn0jk
-         V20w==
-X-Gm-Message-State: APjAAAWXsuYgx4HydQ4owV839/FuFNz0FNFeJz4bGq+rgKm9iTm/A8FP
-        6eUyQjz203FNasSxUgtLd/k=
-X-Google-Smtp-Source: APXvYqwpAAAlCWGA6TCIkU80kb4HRWXdT1LVGsa211XYFZoBbK1cuefj+7QZRS7MNa1z9AQPXoxOdw==
-X-Received: by 2002:a63:5c07:: with SMTP id q7mr50879183pgb.436.1564391074974;
-        Mon, 29 Jul 2019 02:04:34 -0700 (PDT)
-Received: from oslab.tsinghua.edu.cn ([2402:f000:4:72:808::3ca])
-        by smtp.gmail.com with ESMTPSA id 30sm140861632pjk.17.2019.07.29.02.04.33
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 29 Jul 2019 02:04:34 -0700 (PDT)
-From:   Jia-Ju Bai <baijiaju1990@gmail.com>
-To:     b-liu@ti.com, gregkh@linuxfoundation.org
-Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [PATCH] usb: musb: Fix a possible null-pointer dereference in musb_handle_intr_connect()
-Date:   Mon, 29 Jul 2019 17:04:28 +0800
-Message-Id: <20190729090428.29508-1-baijiaju1990@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        id S1727785AbfG2JHG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 05:07:06 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:36054 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725917AbfG2JHF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 05:07:05 -0400
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 39A4953CA7CE7A5079F3;
+        Mon, 29 Jul 2019 17:07:03 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS407-HUB.china.huawei.com
+ (10.3.19.207) with Microsoft SMTP Server id 14.3.439.0; Mon, 29 Jul 2019
+ 17:06:55 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <a.hajda@samsung.com>, <narmstrong@baylibre.com>,
+        <Laurent.pinchart@ideasonboard.com>, <jonas@kwiboo.se>,
+        <jernej.skrabec@siol.net>, <airlied@linux.ie>, <daniel@ffwll.ch>
+CC:     <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH] drm/bridge: tc358764: Fix build error
+Date:   Mon, 29 Jul 2019 17:05:20 +0800
+Message-ID: <20190729090520.25968-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In musb_handle_intr_connect(), there is an if statement on line 783 to
-check whether musb->hcd is NULL:
-    if (musb->hcd)
+If CONFIG_DRM_TOSHIBA_TC358764=y but CONFIG_DRM_KMS_HELPER=m,
+building fails:
 
-When musb->hcd is NULL, it is used on line 797:
-    musb_host_poke_root_hub(musb);
-        if (musb->hcd->status_urb)
+drivers/gpu/drm/bridge/tc358764.o:(.rodata+0x228): undefined reference to `drm_atomic_helper_connector_reset'
+drivers/gpu/drm/bridge/tc358764.o:(.rodata+0x240): undefined reference to `drm_helper_probe_single_connector_modes'
+drivers/gpu/drm/bridge/tc358764.o:(.rodata+0x268): undefined reference to `drm_atomic_helper_connector_duplicate_state'
+drivers/gpu/drm/bridge/tc358764.o:(.rodata+0x270): undefined reference to `drm_atomic_helper_connector_destroy_state'
 
-Thus, a possible null-pointer dereference may occur.
+Like TC358767, select DRM_KMS_HELPER to fix this, and
+change to select DRM_PANEL to avoid recursive dependency.
 
-To fix this bug, musb->hcd is checked before calling
-musb_host_poke_root_hub().
-
-This bug is found by a static analysis tool STCheck written by us.
-
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Fixes: f38b7cca6d0e ("drm/bridge: tc358764: Add DSI to LVDS bridge driver")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/usb/musb/musb_core.c | 3 ++-
+ drivers/gpu/drm/bridge/Kconfig | 3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/usb/musb/musb_core.c b/drivers/usb/musb/musb_core.c
-index 9f5a4819a744..329ff52f8167 100644
---- a/drivers/usb/musb/musb_core.c
-+++ b/drivers/usb/musb/musb_core.c
-@@ -794,7 +794,8 @@ static void musb_handle_intr_connect(struct musb *musb, u8 devctl, u8 int_usb)
- 		break;
- 	}
+diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
+index a6eec90..323f72d 100644
+--- a/drivers/gpu/drm/bridge/Kconfig
++++ b/drivers/gpu/drm/bridge/Kconfig
+@@ -116,9 +116,10 @@ config DRM_THINE_THC63LVD1024
  
--	musb_host_poke_root_hub(musb);
-+	if (musb->hcd)
-+		musb_host_poke_root_hub(musb);
+ config DRM_TOSHIBA_TC358764
+ 	tristate "TC358764 DSI/LVDS bridge"
+-	depends on DRM && DRM_PANEL
+ 	depends on OF
+ 	select DRM_MIPI_DSI
++	select DRM_KMS_HELPER
++	select DRM_PANEL
+ 	help
+ 	  Toshiba TC358764 DSI/LVDS bridge driver.
  
- 	musb_dbg(musb, "CONNECT (%s) devctl %02x",
- 			usb_otg_state_string(musb->xceiv->otg->state), devctl);
 -- 
-2.17.0
+2.7.4
+
 
