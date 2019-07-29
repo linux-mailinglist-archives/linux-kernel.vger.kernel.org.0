@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E7FDE79888
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:09:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 20F757980E
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:06:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388753AbfG2Tho (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 15:37:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52520 "EHLO mail.kernel.org"
+        id S2389564AbfG2Tmw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 15:42:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58792 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388731AbfG2Thl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:37:41 -0400
+        id S2389557AbfG2Tms (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:42:48 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C08952171F;
-        Mon, 29 Jul 2019 19:37:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D374721655;
+        Mon, 29 Jul 2019 19:42:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564429060;
-        bh=sw7NaxbdxmEM6aRee2IGjhr908nG873HqFG3gLRoZso=;
+        s=default; t=1564429367;
+        bh=zYpROnVsZzCeFQOKde21zbITF1meTJ/9cw4mH6Th/ng=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HeX3dHfVoIMM5hOFuqr2H+9+Pj7L76ANiC2hY/Er3gksYvrEcBemoSGYxc2tzzpPJ
-         w6u/Ydq/u21Fix4ciP0XfhqKZ5KXPFIT5Y5yEIA+2HoA3lzXka/b7LoNoOF+L2POUR
-         aVdNXkbbFkWLybNfoQw9tVsQV0ykpZmCDZuK6b6U=
+        b=lQhev5I49gD54aEhNO0iaa2kyq8OguweTL1UQXPsjo7BqXdYP67R9o4O/cZY89z4n
+         1ueS2/uS/zY1qa9EcXu8lFDuMSOn1o6R2Of5WdV6FjBCdXn9pO06sXhdFYoh0UA0MV
+         h7cPl6SpVmluHwwpmESp1IYTmttaLBjHHbOkcSN0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hulk Robot <hulkci@huawei.com>,
-        Kefeng Wang <wangkefeng.wang@huawei.com>,
-        Baruch Siach <baruch@tkos.co.il>,
+        stable@vger.kernel.org, Rob Clark <robdclark@chromium.org>,
+        Sean Paul <seanpaul@chromium.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 233/293] tty/serial: digicolor: Fix digicolor-usart already registered warning
+Subject: [PATCH 4.19 037/113] drm/msm: Depopulate platform on probe failure
 Date:   Mon, 29 Jul 2019 21:22:04 +0200
-Message-Id: <20190729190842.338566469@linuxfoundation.org>
+Message-Id: <20190729190704.599374925@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190729190820.321094988@linuxfoundation.org>
-References: <20190729190820.321094988@linuxfoundation.org>
+In-Reply-To: <20190729190655.455345569@linuxfoundation.org>
+References: <20190729190655.455345569@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,42 +44,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit c7ad9ba0611c53cfe194223db02e3bca015f0674 ]
+[ Upstream commit 4368a1539c6b41ac3cddc06f5a5117952998804c ]
 
-When modprobe/rmmod/modprobe module, if platform_driver_register() fails,
-the kernel complained,
+add_display_components() calls of_platform_populate, and we depopluate
+on pdev remove, but not when probe fails. So if we get a probe deferral
+in one of the components, we won't depopulate the platform. This causes
+the core to keep references to devices which should be destroyed, which
+causes issues when those same devices try to re-initialize on the next
+probe attempt.
 
-  proc_dir_entry 'driver/digicolor-usart' already registered
-  WARNING: CPU: 1 PID: 5636 at fs/proc/generic.c:360 proc_register+0x19d/0x270
+I think this is the reason we had issues with the gmu's device-managed
+resources on deferral (worked around in commit 94e3a17f33a5).
 
-Fix this by adding uart_unregister_driver() when platform_driver_register() fails.
-
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
-Acked-by: Baruch Siach <baruch@tkos.co.il>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reviewed-by: Rob Clark <robdclark@chromium.org>
+Signed-off-by: Sean Paul <seanpaul@chromium.org>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190617201301.133275-3-sean@poorly.run
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/serial/digicolor-usart.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/msm/msm_drv.c | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/tty/serial/digicolor-usart.c b/drivers/tty/serial/digicolor-usart.c
-index 02ad6953b167..50ec5f1ac77f 100644
---- a/drivers/tty/serial/digicolor-usart.c
-+++ b/drivers/tty/serial/digicolor-usart.c
-@@ -545,7 +545,11 @@ static int __init digicolor_uart_init(void)
- 	if (ret)
- 		return ret;
+diff --git a/drivers/gpu/drm/msm/msm_drv.c b/drivers/gpu/drm/msm/msm_drv.c
+index c1abad8a8612..ed9a3a1e50ef 100644
+--- a/drivers/gpu/drm/msm/msm_drv.c
++++ b/drivers/gpu/drm/msm/msm_drv.c
+@@ -1321,16 +1321,24 @@ static int msm_pdev_probe(struct platform_device *pdev)
  
--	return platform_driver_register(&digicolor_uart_platform);
-+	ret = platform_driver_register(&digicolor_uart_platform);
-+	if (ret)
-+		uart_unregister_driver(&digicolor_uart);
+ 	ret = add_gpu_components(&pdev->dev, &match);
+ 	if (ret)
+-		return ret;
++		goto fail;
+ 
+ 	/* on all devices that I am aware of, iommu's which can map
+ 	 * any address the cpu can see are used:
+ 	 */
+ 	ret = dma_set_mask_and_coherent(&pdev->dev, ~0);
+ 	if (ret)
+-		return ret;
++		goto fail;
 +
++	ret = component_master_add_with_match(&pdev->dev, &msm_drm_ops, match);
++	if (ret)
++		goto fail;
+ 
+-	return component_master_add_with_match(&pdev->dev, &msm_drm_ops, match);
++	return 0;
++
++fail:
++	of_platform_depopulate(&pdev->dev);
 +	return ret;
  }
- module_init(digicolor_uart_init);
  
+ static int msm_pdev_remove(struct platform_device *pdev)
 -- 
 2.20.1
 
