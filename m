@@ -2,73 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E811F78A20
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 13:07:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BD4078A26
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 13:08:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387565AbfG2LHb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 07:07:31 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:49774 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387469AbfG2LHa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 07:07:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=J8SecCHFAYNhISRn2gyDpuWW772w3hItu/yd4iRurZs=; b=nfAVIyvwOvu5mJxYbjzOPhZdx
-        uugr83y7XKK1cjiO5jGGjHsCheAhouPpGABKL/0NlIFNBX/rvxEJlhTnOnuSVsat8iR6MBWyB6JUc
-        QqAso2peSPdD8xVCuYdDlNN/ejrScq524Y8WsgGyJDtn9ImNR8qI0CQGZnqpf/r8uO9jPMnFfrJe+
-        XIZm006y2L5N5Dhn30XW2aXq9tS86Ct9jRgW1uiK4IrnjSmbZfedvuxrLGEAcYgFQYBMaoITo9Ztl
-        yM6ZVEiwTE6BnTSErwTFei4lE0DPe6uv1eauzupGx2diDo5+dtXK19AihtiZ5m4P/ZyCGMzkfBJ72
-        DktEcOZfQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hs3V3-0005yc-UH; Mon, 29 Jul 2019 11:07:30 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id A051A20B51713; Mon, 29 Jul 2019 13:07:27 +0200 (CEST)
-Date:   Mon, 29 Jul 2019 13:07:27 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Mukesh Ojha <mojha@codeaurora.org>
-Cc:     mingo@redhat.com, will@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] locking/mutex: Use mutex flags macro instead of hard
- code value
-Message-ID: <20190729110727.GB31398@hirez.programming.kicks-ass.net>
-References: <1564397578-28423-1-git-send-email-mojha@codeaurora.org>
- <1564397578-28423-2-git-send-email-mojha@codeaurora.org>
+        id S2387586AbfG2LIR convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 29 Jul 2019 07:08:17 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:33830 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2387457AbfG2LIQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 07:08:16 -0400
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id E9A9B49CBBCFC5F6072D;
+        Mon, 29 Jul 2019 19:08:14 +0800 (CST)
+Received: from localhost (10.202.226.61) by DGGEMS411-HUB.china.huawei.com
+ (10.3.19.211) with Microsoft SMTP Server id 14.3.439.0; Mon, 29 Jul 2019
+ 19:08:11 +0800
+Date:   Mon, 29 Jul 2019 12:08:02 +0100
+From:   Jonathan Cameron <jonathan.cameron@huawei.com>
+To:     Brian Masney <masneyb@onstation.org>
+CC:     Chuhong Yuan <hslester96@gmail.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] iio: tsl2772: Use device-managed API
+Message-ID: <20190729120802.000025e8@huawei.com>
+In-Reply-To: <20190729080307.GA360@onstation.org>
+References: <20190726123058.22915-1-hslester96@gmail.com>
+        <20190727125749.63297c28@archlinux>
+        <20190728083141.GA14194@onstation.org>
+        <CANhBUQ3QiV1mPD6p+AROv6YnK+1CB5voVAHKbmzueUWc7P6vcQ@mail.gmail.com>
+        <20190729080307.GA360@onstation.org>
+Organization: Huawei
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; i686-w64-mingw32)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1564397578-28423-2-git-send-email-mojha@codeaurora.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+X-Originating-IP: [10.202.226.61]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 29, 2019 at 04:22:58PM +0530, Mukesh Ojha wrote:
-> Let's use the mutex flag macro(which got moved from mutex.c
-> to linux/mutex.h in the last patch) instead of hard code
-> value which was used in __mutex_owner().
-> 
-> Signed-off-by: Mukesh Ojha <mojha@codeaurora.org>
-> ---
->  include/linux/mutex.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/mutex.h b/include/linux/mutex.h
-> index 79b28be..c3833ba 100644
-> --- a/include/linux/mutex.h
-> +++ b/include/linux/mutex.h
-> @@ -87,7 +87,7 @@ struct mutex {
->   */
->  static inline struct task_struct *__mutex_owner(struct mutex *lock)
->  {
-> -	return (struct task_struct *)(atomic_long_read(&lock->owner) & ~0x07);
-> +	return (struct task_struct *)(atomic_long_read(&lock->owner) & ~MUTEX_FLAGS);
->  }
+On Mon, 29 Jul 2019 04:03:07 -0400
+Brian Masney <masneyb@onstation.org> wrote:
 
-I would _much_ rather move __mutex_owner() out of line, you're exposing
-far too much stuff.
+> On Mon, Jul 29, 2019 at 11:03:00AM +0800, Chuhong Yuan wrote:
+> > Brian Masney <masneyb@onstation.org> 于2019年7月28日周日 下午4:31写道：  
+> > > devm_add_action() could be used in the probe function to schedule the call
+> > > to tsl2772_chip_off(). That would eliminate the need for
+> > > tsl2772_remove(). See tsl2772_disable_regulators_action() for an example in
+> > > that driver.
+> > >  
+> > 
+> > I find that we can use devm_add_action_or_reset() for
+> > tsl2772_disable_regulators_action() to eliminate the fault handling code.
+> > 
+> > I am not sure whether devm_add_action() can be used for
+> > tsl2772_chip_off() because it returns an integer, not void.
+> > And the return value is used in several functions.  
+> 
+> I would add a wrapper function (tsl2772_chip_off_action?) with the
+> expected declaration that calls tsl2772_chip_off().
+> 
+> > > Chuhong: Another potential cleanup to shrink the size of this driver is
+> > > to move it over to the regulator_bulk_() API. I didn't realize that API
+> > > existed at the time I introduced the regulator support. If you're
+> > > interested in taking on that cleanup as well, I can test those changes
+> > > for you if you don't have the hardware.
+> > >
+> > > Brian
+> > >  
+> > 
+> > Does that mean merging vdd_supply and vddio_supply to an array of
+> > regulator_bulk_data and utilize regulator_bulk_() API to operate them
+> > together?  
+> 
+> Yes.
+> 
+> > I have an additional question that I find regulator_disable() is used in the
+> > end of many .remove functions of drivers, which hinders us to use devm
+> > functions.
+> > One example is drivers/iio/light/gp2ap020a00f.c.
+> > Is there any solution to this problem?  
+> 
+> There are devm_regulator_*() variants of the regulator API available
+> that you can use. Lots of other APIs in the kernel have devm variants
+> to simply drivers.
+I don't think there are any devm_ versions of regulator disable.
+
+IIRC the argument made when this last came up was that it was rarely correct
+to be as course grained as a lot of IIO drivers are.   We should probably
+do runtime pm and turn these regulators off a lot more frequently.
+
+The reality is that it is an optimization that doesn't get done in 
+IIO drivers that often as we mostly just want them to work and many
+usecases aren't actually power constrained,
+
+So we end up doing a lot of devm_add_action_or_reset to power down the
+regulators.
+
+Jonathan
+> 
+> Brian
+
+
