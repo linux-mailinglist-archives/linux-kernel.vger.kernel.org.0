@@ -2,75 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B398A78800
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 11:07:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 09115787FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 11:05:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727785AbfG2JHG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 05:07:06 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:36054 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725917AbfG2JHF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 05:07:05 -0400
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 39A4953CA7CE7A5079F3;
-        Mon, 29 Jul 2019 17:07:03 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS407-HUB.china.huawei.com
- (10.3.19.207) with Microsoft SMTP Server id 14.3.439.0; Mon, 29 Jul 2019
- 17:06:55 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <a.hajda@samsung.com>, <narmstrong@baylibre.com>,
-        <Laurent.pinchart@ideasonboard.com>, <jonas@kwiboo.se>,
-        <jernej.skrabec@siol.net>, <airlied@linux.ie>, <daniel@ffwll.ch>
-CC:     <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH] drm/bridge: tc358764: Fix build error
-Date:   Mon, 29 Jul 2019 17:05:20 +0800
-Message-ID: <20190729090520.25968-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S1727772AbfG2JFl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 05:05:41 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:33726 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726432AbfG2JFl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 05:05:41 -0400
+Received: by mail-wr1-f67.google.com with SMTP id n9so61030954wru.0;
+        Mon, 29 Jul 2019 02:05:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qxGXy8FtO6vZfwLC9EabJrzvuG/ZhokgOoU0Ki4Dhbw=;
+        b=jDc4wGfMkBV7POTrZPf6hRcIPHyA7llZULoVLQ31Q6ZHqzBEgwKjDFFDLyTaxKMnik
+         Bqo3nTdgPdbCnPJonIrLmo6JswTmmtPdpPSQ99rys4/zCosjaH/LdEOr1a0BPhA5yLS7
+         4H+SVPuieUkzpflESR16ZAVGLfk74r3QckmTp7UBqpfcCoCnYZ3Muk/THo+TT4xPvfS5
+         vFfcjf6AeVJnJE8Y0qnxmY4iHOHgZ03geQnfNKBmJ3kME2EDPfKfV43aa+qfcwZQJ5rJ
+         /riV80osvB47VCHoGjS95d8aapqli9K8u7Fy41vKHdybTYHiptP2LmGfUNXlp3Owk0G3
+         qAFA==
+X-Gm-Message-State: APjAAAWKwpeNfQ4c3qJqv9WRq81Ke+2poT4A1W47PrW/fFJwb6JdLpuL
+        h7LCdXqnjCDIoiDpUryTVp+D7WhViZE/ce9b33g=
+X-Google-Smtp-Source: APXvYqz6uojkUazaZHHYCxUOpwqlKfsC3vg/+iiUOP1b3dFA5D9/TZrHUuJeGqZvqozJ1+Et2HptvgBmlSS7h66vIBY=
+X-Received: by 2002:adf:cd81:: with SMTP id q1mr117369836wrj.16.1564391138795;
+ Mon, 29 Jul 2019 02:05:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+References: <20190725180825.31508-1-max@enpas.org>
+In-Reply-To: <20190725180825.31508-1-max@enpas.org>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 29 Jul 2019 11:05:27 +0200
+Message-ID: <CAMuHMdURm-9nazOBTL8uRH8WMt7gi=QUYy0qr9kaxzczCr+ujg@mail.gmail.com>
+Subject: Re: [PATCH v3] ata/pata_buddha: Probe via modalias instead of initcall
+To:     Max Staudt <max@enpas.org>
+Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+        Michael Schmitz <schmitzmic@gmail.com>,
+        linux-ide@vger.kernel.org,
+        "Linux/m68k" <linux-m68k@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If CONFIG_DRM_TOSHIBA_TC358764=y but CONFIG_DRM_KMS_HELPER=m,
-building fails:
+Hi Max,
 
-drivers/gpu/drm/bridge/tc358764.o:(.rodata+0x228): undefined reference to `drm_atomic_helper_connector_reset'
-drivers/gpu/drm/bridge/tc358764.o:(.rodata+0x240): undefined reference to `drm_helper_probe_single_connector_modes'
-drivers/gpu/drm/bridge/tc358764.o:(.rodata+0x268): undefined reference to `drm_atomic_helper_connector_duplicate_state'
-drivers/gpu/drm/bridge/tc358764.o:(.rodata+0x270): undefined reference to `drm_atomic_helper_connector_destroy_state'
+On Thu, Jul 25, 2019 at 8:08 PM Max Staudt <max@enpas.org> wrote:
+> Up until now, the pata_buddha driver would only check for cards on
+> initcall time. Now, the kernel will call its probe function as soon
+> as a compatible card is detected.
+>
+> v3: Clean up devm_*, implement device removal.
+>
+> v2: Rename 'zdev' to 'z' to make the patch easy to analyse with
+>     git diff --ignore-space-change
+>
+> Tested-by: Max Staudt <max@enpas.org>
+> Signed-off-by: Max Staudt <max@enpas.org>
 
-Like TC358767, select DRM_KMS_HELPER to fix this, and
-change to select DRM_PANEL to avoid recursive dependency.
+Sorry, I only noticed v3 after I replied to v2.
+My comments are still valid, though.
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Fixes: f38b7cca6d0e ("drm/bridge: tc358764: Add DSI to LVDS bridge driver")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/gpu/drm/bridge/Kconfig | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+> --- a/drivers/ata/pata_buddha.c
+> +++ b/drivers/ata/pata_buddha.c
 
-diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
-index a6eec90..323f72d 100644
---- a/drivers/gpu/drm/bridge/Kconfig
-+++ b/drivers/gpu/drm/bridge/Kconfig
-@@ -116,9 +116,10 @@ config DRM_THINE_THC63LVD1024
- 
- config DRM_TOSHIBA_TC358764
- 	tristate "TC358764 DSI/LVDS bridge"
--	depends on DRM && DRM_PANEL
- 	depends on OF
- 	select DRM_MIPI_DSI
-+	select DRM_KMS_HELPER
-+	select DRM_PANEL
- 	help
- 	  Toshiba TC358764 DSI/LVDS bridge driver.
- 
+> +static const struct zorro_device_id pata_buddha_zorro_tbl[] = {
+> +       { ZORRO_PROD_INDIVIDUAL_COMPUTERS_BUDDHA, },
+> +       { ZORRO_PROD_INDIVIDUAL_COMPUTERS_CATWEASEL, },
+> +       { ZORRO_PROD_INDIVIDUAL_COMPUTERS_X_SURF, },
+
+drivers/net/ethernet/8390/zorro8390.c also matches against
+ZORRO_PROD_INDIVIDUAL_COMPUTERS_X_SURF, while only
+a single zorro_driver can bind to it.  Hence you can no longer use both
+IDE and Ethernet on X-Surf :-(
+Before, this worked, as the IDE driver just walked the list of devices.
+
+I think the proper solution is to create MFD devices for Zorro boards
+with multiple functions, and bind against the individual MFD cells.
+That would also get rid of the nr_ports loop in the IDE driver, as each
+instance would have its own cell.
+
+I played with this a long time ago, but never finished it.
+It worked fine for my Ariadne Ethernet card.
+Last state at
+https://git.kernel.org/pub/scm/linux/kernel/git/geert/linux-m68k.git/log/?h=zorro-mfd
+
+Oh, seems I wrote up most of this before in
+https://lore.kernel.org/lkml/CAMuHMdVe1KgQWYZ_BfBkSo3zr0c+TenLMEw3T=BLEQNoZ6ex7A@mail.gmail.com/
+
+> +       { 0 }
+> +};
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.7.4
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
