@@ -2,41 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF884797B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:02:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D13F79869
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:07:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390502AbfG2TtS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 15:49:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39758 "EHLO mail.kernel.org"
+        id S2388978AbfG2TjS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 15:39:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54310 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389931AbfG2TtR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:49:17 -0400
+        id S2388966AbfG2TjQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:39:16 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 17A3C21655;
-        Mon, 29 Jul 2019 19:49:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 39E332054F;
+        Mon, 29 Jul 2019 19:39:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564429756;
-        bh=KPPBZK6p8Y6ZUCrK3RWkKednYxSPHn12Xv31/wi0bvI=;
+        s=default; t=1564429154;
+        bh=91tiYwS4y9/NUYIX4urBs3s97IX04GwoDVbuXLA2XgI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fd1K7AZKlCxSj6l9DIKXyLU8PLIWhUn2F4zWWqBD1693z4Wcvc+xoJ7YApofcamxT
-         XHoNzoBXKDBrVJKyVUQGYr5dvrsBSxr8DqrFzjKJFRB8kVEfCcOezz2fZvykXzv4Sc
-         8fmkG1aLeMSI/ATQIYL7JXmK66GSm7mi4+mvZBbw=
+        b=Ppq0IdsMZnznG1CMkJ3U/gRaq2I3mfPUzFb5LAjoFa27MpQm0CdCcZxaZwebLANJh
+         rOh3DkZ5LDzRXy0qaISzqnV/uJduFzF3neR8eMsONIlKrlT9yd2MwBWU2NwgFZ8r29
+         HsE9syhHOn5DXq7EKAyvjnLXeVp/uZMnADf5bDGU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
+        stable@vger.kernel.org, Sunil Muthuswamy <sunilmut@microsoft.com>,
+        Dexuan Cui <decui@microsoft.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 086/215] phy: meson-g12a-usb3-pcie: disable locking for cr_regmap
-Date:   Mon, 29 Jul 2019 21:21:22 +0200
-Message-Id: <20190729190754.386740892@linuxfoundation.org>
+Subject: [PATCH 4.19 001/113] hvsock: fix epollout hang from race condition
+Date:   Mon, 29 Jul 2019 21:21:28 +0200
+Message-Id: <20190729190655.965740325@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190729190739.971253303@linuxfoundation.org>
-References: <20190729190739.971253303@linuxfoundation.org>
+In-Reply-To: <20190729190655.455345569@linuxfoundation.org>
+References: <20190729190655.455345569@linuxfoundation.org>
 User-Agent: quilt/0.66
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -45,69 +47,146 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 5fc2aa3ec9efad97dd7c316f3c8e4c6268bbed9b ]
+[ Upstream commit cb359b60416701c8bed82fec79de25a144beb893 ]
 
-Locking is not needed for the phy_g12a_usb3_pcie_cr_bus_read/write() and
-currently it causes the following BUG because of the usage of the
-regmap_read_poll_timeout() running in spinlock_irq, configured by regmap fast_io.
+Currently, hvsock can enter into a state where epoll_wait on EPOLLOUT will
+not return even when the hvsock socket is writable, under some race
+condition. This can happen under the following sequence:
+- fd = socket(hvsocket)
+- fd_out = dup(fd)
+- fd_in = dup(fd)
+- start a writer thread that writes data to fd_out with a combination of
+  epoll_wait(fd_out, EPOLLOUT) and
+- start a reader thread that reads data from fd_in with a combination of
+  epoll_wait(fd_in, EPOLLIN)
+- On the host, there are two threads that are reading/writing data to the
+  hvsocket
 
-Simply disable locking in the cr_regmap config since it's only used from the
-PHY init callback function.
+stack:
+hvs_stream_has_space
+hvs_notify_poll_out
+vsock_poll
+sock_poll
+ep_poll
 
-BUG: sleeping function called from invalid context at drivers/phy/amlogic/phy-meson-g12a-usb3-pcie.c:85
-in_atomic(): 1, irqs_disabled(): 128, pid: 60, name: kworker/3:1
-[snip]
-Workqueue: events deferred_probe_work_func
-Call trace:
- dump_backtrace+0x0/0x190
- show_stack+0x14/0x20
- dump_stack+0x90/0xb4
- ___might_sleep+0xec/0x110
- __might_sleep+0x50/0x88
- phy_g12a_usb3_pcie_cr_bus_addr.isra.0+0x80/0x1a8
- phy_g12a_usb3_pcie_cr_bus_read+0x34/0x1d8
- _regmap_read+0x60/0xe0
- _regmap_update_bits+0xc4/0x110
- regmap_update_bits_base+0x60/0x90
- phy_g12a_usb3_pcie_init+0xdc/0x210
- phy_init+0x74/0xd0
- dwc3_meson_g12a_probe+0x2cc/0x4d0
- platform_drv_probe+0x50/0xa0
- really_probe+0x20c/0x3b8
- driver_probe_device+0x68/0x150
- __device_attach_driver+0xa8/0x170
- bus_for_each_drv+0x64/0xc8
- __device_attach+0xd8/0x158
- device_initial_probe+0x10/0x18
- bus_probe_device+0x90/0x98
- deferred_probe_work_func+0x94/0xe8
- process_one_work+0x1e0/0x338
- worker_thread+0x230/0x458
- kthread+0x134/0x138
- ret_from_fork+0x10/0x1c
+Race condition:
+check for epollout from ep_poll():
+	assume no writable space in the socket
+	hvs_stream_has_space() returns 0
+check for epollin from ep_poll():
+	assume socket has some free space < HVS_PKT_LEN(HVS_SEND_BUF_SIZE)
+	hvs_stream_has_space() will clear the channel pending send size
+	host will not notify the guest because the pending send size has
+		been cleared and so the hvsocket will never mark the
+		socket writable
 
-Fixes: 36077e16c050 ("phy: amlogic: Add Amlogic G12A USB3 + PCIE Combo PHY Driver")
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-Tested-by: Kevin Hilman <khilman@baylibre.com>
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+Now, the EPOLLOUT will never return even if the socket write buffer is
+empty.
+
+The fix is to set the pending size to the default size and never change it.
+This way the host will always notify the guest whenever the writable space
+is bigger than the pending size. The host is already optimized to *only*
+notify the guest when the pending size threshold boundary is crossed and
+not everytime.
+
+This change also reduces the cpu usage somewhat since hv_stream_has_space()
+is in the hotpath of send:
+vsock_stream_sendmsg()->hv_stream_has_space()
+Earlier hv_stream_has_space was setting/clearing the pending size on every
+call.
+
+Signed-off-by: Sunil Muthuswamy <sunilmut@microsoft.com>
+Reviewed-by: Dexuan Cui <decui@microsoft.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/phy/amlogic/phy-meson-g12a-usb3-pcie.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/vmw_vsock/hyperv_transport.c | 44 ++++++++------------------------
+ 1 file changed, 11 insertions(+), 33 deletions(-)
 
-diff --git a/drivers/phy/amlogic/phy-meson-g12a-usb3-pcie.c b/drivers/phy/amlogic/phy-meson-g12a-usb3-pcie.c
-index 6233a7979a93..ac322d643c7a 100644
---- a/drivers/phy/amlogic/phy-meson-g12a-usb3-pcie.c
-+++ b/drivers/phy/amlogic/phy-meson-g12a-usb3-pcie.c
-@@ -188,7 +188,7 @@ static const struct regmap_config phy_g12a_usb3_pcie_cr_regmap_conf = {
- 	.reg_read = phy_g12a_usb3_pcie_cr_bus_read,
- 	.reg_write = phy_g12a_usb3_pcie_cr_bus_write,
- 	.max_register = 0xffff,
--	.fast_io = true,
-+	.disable_locking = true,
- };
+diff --git a/net/vmw_vsock/hyperv_transport.c b/net/vmw_vsock/hyperv_transport.c
+index a827547aa102..b131561a9469 100644
+--- a/net/vmw_vsock/hyperv_transport.c
++++ b/net/vmw_vsock/hyperv_transport.c
+@@ -217,18 +217,6 @@ static void hvs_set_channel_pending_send_size(struct vmbus_channel *chan)
+ 	set_channel_pending_send_size(chan,
+ 				      HVS_PKT_LEN(HVS_SEND_BUF_SIZE));
  
- static int phy_g12a_usb3_init(struct phy *phy)
+-	/* See hvs_stream_has_space(): we must make sure the host has seen
+-	 * the new pending send size, before we can re-check the writable
+-	 * bytes.
+-	 */
+-	virt_mb();
+-}
+-
+-static void hvs_clear_channel_pending_send_size(struct vmbus_channel *chan)
+-{
+-	set_channel_pending_send_size(chan, 0);
+-
+-	/* Ditto */
+ 	virt_mb();
+ }
+ 
+@@ -298,9 +286,6 @@ static void hvs_channel_cb(void *ctx)
+ 	if (hvs_channel_readable(chan))
+ 		sk->sk_data_ready(sk);
+ 
+-	/* See hvs_stream_has_space(): when we reach here, the writable bytes
+-	 * may be already less than HVS_PKT_LEN(HVS_SEND_BUF_SIZE).
+-	 */
+ 	if (hv_get_bytes_to_write(&chan->outbound) > 0)
+ 		sk->sk_write_space(sk);
+ }
+@@ -328,8 +313,9 @@ static void hvs_open_connection(struct vmbus_channel *chan)
+ 
+ 	struct sockaddr_vm addr;
+ 	struct sock *sk, *new = NULL;
+-	struct vsock_sock *vnew;
+-	struct hvsock *hvs, *hvs_new;
++	struct vsock_sock *vnew = NULL;
++	struct hvsock *hvs = NULL;
++	struct hvsock *hvs_new = NULL;
+ 	int ret;
+ 
+ 	if_type = &chan->offermsg.offer.if_type;
+@@ -388,6 +374,13 @@ static void hvs_open_connection(struct vmbus_channel *chan)
+ 	set_per_channel_state(chan, conn_from_host ? new : sk);
+ 	vmbus_set_chn_rescind_callback(chan, hvs_close_connection);
+ 
++	/* Set the pending send size to max packet size to always get
++	 * notifications from the host when there is enough writable space.
++	 * The host is optimized to send notifications only when the pending
++	 * size boundary is crossed, and not always.
++	 */
++	hvs_set_channel_pending_send_size(chan);
++
+ 	if (conn_from_host) {
+ 		new->sk_state = TCP_ESTABLISHED;
+ 		sk->sk_ack_backlog++;
+@@ -651,23 +644,8 @@ static s64 hvs_stream_has_data(struct vsock_sock *vsk)
+ static s64 hvs_stream_has_space(struct vsock_sock *vsk)
+ {
+ 	struct hvsock *hvs = vsk->trans;
+-	struct vmbus_channel *chan = hvs->chan;
+-	s64 ret;
+-
+-	ret = hvs_channel_writable_bytes(chan);
+-	if (ret > 0)  {
+-		hvs_clear_channel_pending_send_size(chan);
+-	} else {
+-		/* See hvs_channel_cb() */
+-		hvs_set_channel_pending_send_size(chan);
+-
+-		/* Re-check the writable bytes to avoid race */
+-		ret = hvs_channel_writable_bytes(chan);
+-		if (ret > 0)
+-			hvs_clear_channel_pending_send_size(chan);
+-	}
+ 
+-	return ret;
++	return hvs_channel_writable_bytes(hvs->chan);
+ }
+ 
+ static u64 hvs_stream_rcvhiwat(struct vsock_sock *vsk)
 -- 
 2.20.1
 
