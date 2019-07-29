@@ -2,127 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D2DB078734
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 10:21:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C51A478745
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 10:22:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727516AbfG2IU6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 04:20:58 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:33456 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726305AbfG2IU6 (ORCPT
+        id S1727590AbfG2IWo convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 29 Jul 2019 04:22:44 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:46027 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726305AbfG2IWn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 04:20:58 -0400
-Received: by mail-pl1-f196.google.com with SMTP id c14so27145173plo.0
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 01:20:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=2sHb6igh5/VG31vZ5TimH3Lv/XXcD5eHvB6x/vi/sxg=;
-        b=gmynHK9gyyTGbg08KX1ZQt/n4uNaNufyxFQUsiO6i7otivMqyM4q94qS47AsyjiSVz
-         sh/KPvUiy8JFTmCXgaBbyvbzFmuebJJpq7OKcH656fOdOUDx1Ff2mlmF7RiGQiBYHtwU
-         jbwDZsWevu5V4BTlyjpzZh3wGR1cUNovfzrkFOPT1JpXxKGxXa+IDLkxqbMdq1PEiyVk
-         rrIqoI562bWsu3KXIN6408heothnZN4VbnypkaWfRf5oJo1Q3PchVIpQHMX43q+tpgCs
-         MmeT9qhO+HEm7abd7SjLKzzuBbMqTIWzxZhZLX1kfTOnCT/q+up4nY4kIku7111SK4a1
-         2d/w==
+        Mon, 29 Jul 2019 04:22:43 -0400
+Received: by mail-wr1-f68.google.com with SMTP id f9so60749816wre.12
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 01:22:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=2sHb6igh5/VG31vZ5TimH3Lv/XXcD5eHvB6x/vi/sxg=;
-        b=B1Zq6v9ZgQ3bmKWGpOx2ZaorRDYCrpNTcrO3XqbXO8ZP8RFRCqw3jjoYzxtlDLCKx9
-         9pqnHz0q67yQGtgQ6/ZigaqSflqo9MoSIX3FVQ2+MppnjyxRcuJVwjY10MhqHc4Gxiy9
-         eJv5JmBdTPRspoZxfjFOsdxJ9KrwWJDp8R9wBC0mURDZMaDf4waCprQLcK37OYQzU2T+
-         M9RCe3bwuT6q4zyzgEiQhLwU1ZYqZxlmDknhRhAKFpvwbIC+7nlOvt/G/oxFI0jK4a5w
-         wFr65JtZk/T5TjVN4BL8gXcOrztqwoNgm66Aeh8prXRSJY54/l2rHw2isNN9zNs1lnhu
-         ZfPg==
-X-Gm-Message-State: APjAAAX00mG9vsR9XH7N7V4DPxEq5kZDQ4cLvztHHwrX7ewszcYSaXF0
-        ZA8bDsubWzcBCuydZQTXl0YeD66a
-X-Google-Smtp-Source: APXvYqzPD2uMU0BPGJcyzlG6gVZffWUBi8HGnNgWln9aj61e+obG9uHjQlq+n0jJV4ijNPnNUaKatg==
-X-Received: by 2002:a17:902:ea:: with SMTP id a97mr33346954pla.182.1564388457651;
-        Mon, 29 Jul 2019 01:20:57 -0700 (PDT)
-Received: from google.com ([2401:fa00:d:0:98f1:8b3d:1f37:3e8])
-        by smtp.gmail.com with ESMTPSA id n98sm60659702pjc.26.2019.07.29.01.20.54
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 29 Jul 2019 01:20:56 -0700 (PDT)
-Date:   Mon, 29 Jul 2019 17:20:52 +0900
-From:   Minchan Kim <minchan@kernel.org>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        Miguel de Dios <migueldedios@google.com>,
-        Wei Wang <wvw@google.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Mel Gorman <mgorman@techsingularity.net>
-Subject: Re: [PATCH] mm: release the spinlock on zap_pte_range
-Message-ID: <20190729082052.GA258885@google.com>
-References: <20190729071037.241581-1-minchan@kernel.org>
- <20190729074523.GC9330@dhcp22.suse.cz>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=NRW+7eX1EamfMQ1j+7nziAgPDBExPLIJt9EL33UvSvA=;
+        b=nLdHcvw29iYz6szI4b9qUbCkm8VZ3p3aEkee7a9j5MwUIf9t+1B0G94ve0y+fH9A35
+         Cxm2IH8RExcTVj4YjuDB3UnEuauKQCG/VFXUL6SlsBGjamYtUVcSql91IwO9v1BlwpP1
+         Qrmd1Oeup5+SvzeM6LzRk4C0xsNki8q+E9ncjZpcvnNso6esNCjuGerwFyJxaCTcfC0M
+         VnRqMXIpGxZ/D2P1VT5zrIB+cPlqJYcJKiuP5/mRKeSUjXEFc9gQ12lIhtGZVO9sc0G7
+         9uSTyOIiEPKmPBFmurhHLmTg6CXs0lH3MWT31QLfjCIIZf6iRSKiLs68jivS+rgxoLYo
+         um3g==
+X-Gm-Message-State: APjAAAUGpAqA8Th679ccVZ8rH6YW0leaSgYtIViEmFVVDiTZa2gB0VIy
+        D07W2EJ+t2dBXrG4g7KysW/7TNPhmuVW0H4xfEs=
+X-Google-Smtp-Source: APXvYqwRd0NjKwuKsNQrhF/AofoCE6s79F/LxnezbkGgBQ9n8GYJ1SXbHX67MoW7rslVqa+H6NnYI2S15C+ysz3TrBo=
+X-Received: by 2002:adf:cd81:: with SMTP id q1mr117016959wrj.16.1564388561650;
+ Mon, 29 Jul 2019 01:22:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190729074523.GC9330@dhcp22.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190728135826.GA10262@roeck-us.net> <a0e789dd-5244-6af3-56c2-970b03d264a8@embeddedor.com>
+In-Reply-To: <a0e789dd-5244-6af3-56c2-970b03d264a8@embeddedor.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 29 Jul 2019 10:22:29 +0200
+Message-ID: <CAMuHMdXJWUK8Y1f1+LA9ro6HvLmtOHbSOrvqhVpzo0KgvaCMfQ@mail.gmail.com>
+Subject: Re: [PATCH] Makefile: Globally enable fall-through warning
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     Guenter Roeck <linux@roeck-us.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 29, 2019 at 09:45:23AM +0200, Michal Hocko wrote:
-> On Mon 29-07-19 16:10:37, Minchan Kim wrote:
-> > In our testing(carmera recording), Miguel and Wei found unmap_page_range
-> > takes above 6ms with preemption disabled easily. When I see that, the
-> > reason is it holds page table spinlock during entire 512 page operation
-> > in a PMD. 6.2ms is never trivial for user experince if RT task couldn't
-> > run in the time because it could make frame drop or glitch audio problem.
-> 
-> Where is the time spent during the tear down? 512 pages doesn't sound
-> like a lot to tear down. Is it the TLB flushing?
+Hi Gustavo,
 
-Miguel confirmed there is no such big latency without mark_page_accessed
-in zap_pte_range so I guess it's the contention of LRU lock as well as
-heavy activate_page overhead which is not trivial, either.
+On Sun, Jul 28, 2019 at 6:44 PM Gustavo A. R. Silva
+<gustavo@embeddedor.com> wrote:
+> On 7/28/19 8:58 AM, Guenter Roeck wrote:
+> > On Thu, Jun 06, 2019 at 07:46:17PM -0500, Gustavo A. R. Silva wrote:
+> >> Now that all the fall-through warnings have been addressed in the
+> >> kernel, enable the fall-through warning globally.
+> >>
+> >
+> > Not really "all".
+> >
+> > powerpc:85xx/sbc8548_defconfig:
+> >
+> > arch/powerpc/kernel/align.c: In function ‘emulate_spe’:
+> > arch/powerpc/kernel/align.c:178:8: error: this statement may fall through
+> >
+> > Plus many more similar errors in the same file.
+> >
+> > All sh builds:
+> >
+> > arch/sh/kernel/disassemble.c: In function 'print_sh_insn':
+> > arch/sh/kernel/disassemble.c:478:8: error: this statement may fall through
+> >
+> > Again, this is seen in several places.
+> >
+> > mips:cavium_octeon_defconfig:
+> >
+> > arch/mips/cavium-octeon/octeon-usb.c: In function 'dwc3_octeon_clocks_start':
+> > include/linux/device.h:1499:2: error: this statement may fall through
+> >
+> > None of those are from recent changes. And this is just from my small
+> > subset of test builds.
+> >
+>
+> Thank you for letting me know about this. I don't have access to build
+> infrastructure like yours.
+>
+> My build infrastructure is similar to that of Linus.
+>
+> But if you send me all of those I can create a patch and send it back
+> to you to make sure what you see is addressed. If we can coordinate for
+> this it'd be great for everybody. :)
+>
 
-> 
-> > This patch adds preemption point like coyp_pte_range.
-> > 
-> > Reported-by: Miguel de Dios <migueldedios@google.com>
-> > Reported-by: Wei Wang <wvw@google.com>
-> > Cc: Michal Hocko <mhocko@kernel.org>
-> > Cc: Johannes Weiner <hannes@cmpxchg.org>
-> > Cc: Mel Gorman <mgorman@techsingularity.net>
-> > Signed-off-by: Minchan Kim <minchan@kernel.org>
-> > ---
-> >  mm/memory.c | 19 ++++++++++++++++---
-> >  1 file changed, 16 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/mm/memory.c b/mm/memory.c
-> > index 2e796372927fd..bc3e0c5e4f89b 100644
-> > --- a/mm/memory.c
-> > +++ b/mm/memory.c
-> > @@ -1007,6 +1007,7 @@ static unsigned long zap_pte_range(struct mmu_gather *tlb,
-> >  				struct zap_details *details)
-> >  {
-> >  	struct mm_struct *mm = tlb->mm;
-> > +	int progress = 0;
-> >  	int force_flush = 0;
-> >  	int rss[NR_MM_COUNTERS];
-> >  	spinlock_t *ptl;
-> > @@ -1022,7 +1023,16 @@ static unsigned long zap_pte_range(struct mmu_gather *tlb,
-> >  	flush_tlb_batched_pending(mm);
-> >  	arch_enter_lazy_mmu_mode();
-> >  	do {
-> > -		pte_t ptent = *pte;
-> > +		pte_t ptent;
-> > +
-> > +		if (progress >= 32) {
-> > +			progress = 0;
-> > +			if (need_resched())
-> > +				break;
-> > +		}
-> > +		progress += 8;
-> 
-> Why 8?
+More to be found in
+https://lore.kernel.org/lkml/20190729081727.6094-1-geert@linux-m68k.org/
 
-Just copied from copy_pte_range.
+and I saw the following in my local builds (not detected above due to
+kisskb using an older compiler for m68k builds):
+
+arch/m68k/include/asm/amigahw.h: warning: this statement may fall
+through [-Wimplicit-fallthrough=]:  => 42:50
+drivers/block/ataflop.c: warning: this statement may fall through
+[-Wimplicit-fallthrough=]:  => 1728:3
+drivers/net/arcnet/com20020-isa.c: warning: this statement may fall
+through [-Wimplicit-fallthrough=]:  => 205:13, 203:10, 209:7, 201:11,
+207:8
+drivers/scsi/sun3_scsi.c: warning: this statement may fall through
+[-Wimplicit-fallthrough=]:  => 399:9, 403:9
+sound/oss/dmasound/dmasound_atari.c: warning: this statement may fall
+through [-Wimplicit-fallthrough=]:  => 1449:24
+
+Thanks for fixing ;-)
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
