@@ -2,70 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28F607851E
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 08:43:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 20E5178536
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 08:48:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726781AbfG2GnN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 02:43:13 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:36904 "EHLO inva020.nxp.com"
+        id S1726899AbfG2Gsr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 02:48:47 -0400
+Received: from verein.lst.de ([213.95.11.211]:36940 "EHLO verein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726088AbfG2GnM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 02:43:12 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 0BBBD1A00ED;
-        Mon, 29 Jul 2019 08:43:11 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 9DE3F1A13EB;
-        Mon, 29 Jul 2019 08:43:06 +0200 (CEST)
-Received: from localhost.localdomain (mega.ap.freescale.net [10.192.208.232])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id EDFDC402F1;
-        Mon, 29 Jul 2019 14:43:00 +0800 (SGT)
-From:   Yinbo Zhu <yinbo.zhu@nxp.com>
-To:     Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org (open list)
-Cc:     yinbo.zhu@nxp.com, xiaobo.xie@nxp.com, jiafei.pan@nxp.com,
-        Ran Wang <ran.wang_1@nxp.com>
-Subject: [PATCH v1] usb: dwc3: remove the call trace of USBx_GFLADJ
-Date:   Mon, 29 Jul 2019 14:46:07 +0800
-Message-Id: <20190729064607.8131-1-yinbo.zhu@nxp.com>
-X-Mailer: git-send-email 2.17.1
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1726088AbfG2Gsq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 02:48:46 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 03FB168B02; Mon, 29 Jul 2019 08:48:42 +0200 (CEST)
+Date:   Mon, 29 Jul 2019 08:48:42 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Bharath Vedartham <linux.bhar@gmail.com>
+Cc:     sivanich@sgi.com, arnd@arndb.de, ira.weiny@intel.com,
+        jhubbard@nvidia.com, jglisse@redhat.com,
+        gregkh@linuxfoundation.org, william.kucharski@oracle.com,
+        hch@lst.de, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v3 1/1] sgi-gru: Remove *pte_lookup functions
+Message-ID: <20190729064842.GA3853@lst.de>
+References: <1564170120-11882-1-git-send-email-linux.bhar@gmail.com> <1564170120-11882-2-git-send-email-linux.bhar@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1564170120-11882-2-git-send-email-linux.bhar@gmail.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-layerscape board sometimes reported some usb call trace, that is due to
-kernel sent LPM tokerns automatically when it has no pending transfers
-and think that the link is idle enough to enter L1, which procedure will
-ask usb register has a recovery,then kernel will compare USBx_GFLADJ and
-set GFLADJ_30MHZ, GFLADJ_30MHZ_REG until GFLADJ_30MHZ is equal 0x20, if
-the conditions were met then issue occur, but whatever the conditions
-whether were met that usb is all need keep GFLADJ_30MHZ of value is 0x20
-(xhci spec ask use GFLADJ_30MHZ to adjust any offset from clock source
-that generates the clock that drives the SOF counter, 0x20 is default
-value of it)That is normal logic, so need remove the call trace.
+On Sat, Jul 27, 2019 at 01:12:00AM +0530, Bharath Vedartham wrote:
+> +		ret = get_user_pages_fast(vaddr, 1, write, &page);
 
-Signed-off-by: Yinbo Zhu <yinbo.zhu@nxp.com>
----
- drivers/usb/dwc3/core.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
-index 98bce85c29d0..a133d8490322 100644
---- a/drivers/usb/dwc3/core.c
-+++ b/drivers/usb/dwc3/core.c
-@@ -300,8 +300,7 @@ static void dwc3_frame_length_adjustment(struct dwc3 *dwc)
- 
- 	reg = dwc3_readl(dwc->regs, DWC3_GFLADJ);
- 	dft = reg & DWC3_GFLADJ_30MHZ_MASK;
--	if (!dev_WARN_ONCE(dwc->dev, dft == dwc->fladj,
--	    "request value same as default, ignoring\n")) {
-+	if (dft != dwc->fladj) {
- 		reg &= ~DWC3_GFLADJ_30MHZ_MASK;
- 		reg |= DWC3_GFLADJ_30MHZ_SDBND_SEL | dwc->fladj;
- 		dwc3_writel(dwc->regs, DWC3_GFLADJ, reg);
--- 
-2.17.1
-
+I think you want to pass "write ? FOLL_WRITE : 0" here, as
+get_user_pages_fast takes a gup_flags argument, not a boolean
+write flag.
