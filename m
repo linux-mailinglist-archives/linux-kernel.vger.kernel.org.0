@@ -2,62 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D5FD797C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:02:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 102E979780
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:01:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389440AbfG2UCp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 16:02:45 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:51716 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389868AbfG2TsP (ORCPT
+        id S2404124AbfG2UAR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 16:00:17 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:42554 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390586AbfG2Twq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:48:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=zzcP4I/goZHDVfJXWOZ0ZR8llcddHlHoO7PLqf6pRVc=; b=paAeo85eyveVhvF3PvCr0gLul
-        N4tE2hr/ulUCH6rCdBtQx6AAqXUFZPDbMfuESM9eAHKPeM2ASegUoDVOmBfvfzUPIWySv/Fh9Ke38
-        Vju0hZWjPPPdCjoOYrWHW/ttnN46zitw618lMV849kuYRuOKBVGCAR3u3Kd7J2KvjPK7pUWD4pF1g
-        mKL1prjQ9Em8SYPBK/5bMGkkUkuZnYT8xnDbaLu6qKwzUJqhmB3qIQVpnXtg278n829UzBhqlaC6P
-        u5p7PdlIwYycn9LKFueufo3y0FdxVx2+5a9blEkhA9f8zXfdTPGfo5pdu0i903WjP2rjwlttXDNUN
-        GQ8Rfn+qw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hsBcv-0001d4-CN; Mon, 29 Jul 2019 19:48:09 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 473E020C9B163; Mon, 29 Jul 2019 21:48:07 +0200 (CEST)
-Date:   Mon, 29 Jul 2019 21:48:07 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
-        Steven Rostedt <rostedt@goodmis.org>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: Re: [patch 0/8] core, x86: Preparatory steps for RT
-Message-ID: <20190729194807.GQ31398@hirez.programming.kicks-ass.net>
-References: <20190726211936.226129163@linutronix.de>
+        Mon, 29 Jul 2019 15:52:46 -0400
+Received: by mail-pg1-f196.google.com with SMTP id t132so28763504pgb.9;
+        Mon, 29 Jul 2019 12:52:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=BisbOojm1L0chpN6FgWkwkJa3SL7jxklJpQDnyixEqU=;
+        b=f+rwx8XC7zkZr/aTm1JcdENObmj3+KH0SoKNOkobp+pzzdBULNYK6xgsuFty9Y77RQ
+         A8lLAIjK1g19EohWEKzNxTIf15wAVexuwRpclK+dPJqPEeyEEq+/Mg7JN5pb09HYnVFQ
+         1XXlznRn3qF5LoVg8/32Bbfiq8TY2XOig5TdnCAt3RmD79dwk82BacqNSBUJ4LmM7qEQ
+         HbcTzUzqSCIZLp1HR760haA2wDyixxnE/GoHDquH/h+0F8sy2HmyFcL2H1pBy6OSN85W
+         f4R+K62/V0H//xJPAWAL0nmkt/8lAfgrnKMtQtzEUYd5zbCoaw4wQ60D1RNxCFfQyZL+
+         6+qw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=BisbOojm1L0chpN6FgWkwkJa3SL7jxklJpQDnyixEqU=;
+        b=jpiYTanBmiQgZTN6Qe0xI8d+OvH8KqFZR9NduyR0f+u9VESDsv6amKCvW8xIIq+a+d
+         5jvkMLf3guCZCYkp1D2tf42e3dhpVGph9ItHStyL35dEoreOY2MhQTHi+hsNcUhkBVQp
+         g9KeSh997qnI7ZWnA+l5hDaNgMIPzTpUSdcudNCxiA8tTf0IzP5WA6PvOrH+w4zT8wpA
+         mw0YniwqRkCiPcfKOfgm7fgydUenx2Ujp8XF3B8uTtpf1WePjbkkWJYAmhRNRMuREEYs
+         O6Jtt98/EeDqTE443J3w1lKNKTvlsbggeV5CpTnGraM4u2v/daBIdupDTGH8PrOQOf+Z
+         lgTg==
+X-Gm-Message-State: APjAAAWF2YPa7FzJbyiwr7uzNRayKhZODarx2d8l4HZHewIDJuzfc9mM
+        p60xmsQfQnboI+a5QF6keaN7PK+t
+X-Google-Smtp-Source: APXvYqwa8Ei33RrNsx5dj7nvc/Lp68l06u/Bs/qK2sj3O+Zom8jIey/fEY2K+AP7tGUuQjiXOZS0Zw==
+X-Received: by 2002:a63:1908:: with SMTP id z8mr103078604pgl.433.1564429964812;
+        Mon, 29 Jul 2019 12:52:44 -0700 (PDT)
+Received: from localhost.lan (c-67-185-54-80.hsd1.wa.comcast.net. [67.185.54.80])
+        by smtp.gmail.com with ESMTPSA id z12sm43983750pfn.29.2019.07.29.12.52.43
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 29 Jul 2019 12:52:44 -0700 (PDT)
+From:   Andrey Smirnov <andrew.smirnov@gmail.com>
+To:     linux-serial@vger.kernel.org
+Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Stefan Agner <stefan@agner.ch>,
+        Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>,
+        Chris Healy <cphealy@gmail.com>,
+        Cory Tusar <cory.tusar@zii.aero>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, linux-imx@nxp.com,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 00/24] LPUART fixes and improvements
+Date:   Mon, 29 Jul 2019 12:52:02 -0700
+Message-Id: <20190729195226.8862-1-andrew.smirnov@gmail.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190726211936.226129163@linutronix.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 26, 2019 at 11:19:36PM +0200, Thomas Gleixner wrote:
-> CONFIG_PREEMPTION is selected by CONFIG_PREEMPT and by
-> CONFIG_PREEMPT_RT. Both PREEMPT and PREEMPT_RT require the same
-> functionality which today depends on CONFIG_PREEMPT.
-> 
-> The following series adjusts the core and x86 code to use
-> CONFIG_PREEMPTION where appropriate and extends the x86 dumpstack
-> implementation to display PREEMPT_RT instead of PREEMPT on a RT
-> enabled kernel.
+Everyone:
 
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+This series contains fixes/improvements to LPUART dirver I came up
+with recently as well as fixes picked up from Toradex and NXP Vybrid
+repos.
+
+Feedback is welcome!
+
+Thanks,
+Andrey Smirnov
+
+Andrey Smirnov (22):
+  tty: serial: fsl_lpuart: Flush HW FIFOs in .flush_buffer
+  tty: serial: fsl_lpuart: Simplify RX/TX IRQ handlers
+  tty: serial: fsl_lpuart: Fix bogus indentation
+  tty: serial: fsl_lpuart: Drop unnecessary sg_set_buf() call
+  tty: serial: fsl_lpuart: Drop unnecessary uart_write_wakeup()
+  tty: serial: fsl_lpuart: Fix issue in software flow control
+  tty: serial: fls_lpuart: Split shared TX IRQ handler into two
+  tty: serial: fsl_lpuart: Drop no-op bit opearation
+  tty: serial: fsl_lpuart: Drop unnecessary extra parenthesis
+  tty: serial: fsl_lpuart: Clear CSTOPB unconditionally
+  tty: serial: fsl_lpuart: Use appropriate lpuart32_* I/O funcs
+  tty: serial: fsl_lpuart: Introduce lpuart_wait_bit_set()
+  tty: serial: fsl_lpuart: Use cpu_relax() instead of barrier()
+  tty: serial: fsl_lpuart: Introduce lpuart_stopped_or_empty()
+  tty: serial: fsl_lpuart: Drop unnecessary lpuart*_stop_tx()
+  tty: serial: fsl_lpuart: Introduce lpuart_dma_shutdown()
+  tty: serial: fsl_lpuart: Introduce lpuart_tx_dma_startup()
+  tty: serial: fsl_lpuart: Introduce lpuart_rx_dma_startup()
+  tty: serial: fsl_lpuart: Introduce lpuart32_configure()
+  tty: serial: fsl_lpuart: Introduce lpuart*_setup_watermark_enable()
+  tty: serial: fsl_lpuart: Don't enable TIE in .startup() or .resume()
+  tty: serial: fsl_lpuart: Ignore TX/RX interrupts if DMA is enabled
+
+Stefan Agner (2):
+  tty: serial: fsl_lpuart: fix framing error handling when using DMA
+  tty: serial: fsl_lpuart: flush receive FIFO after overruns
+
+ drivers/tty/serial/fsl_lpuart.c | 495 +++++++++++++++++---------------
+ 1 file changed, 261 insertions(+), 234 deletions(-)
+
+-- 
+2.21.0
+
