@@ -2,137 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3481A79A6A
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:56:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 09E3779A74
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:57:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388391AbfG2U4P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 16:56:15 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:38743 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388360AbfG2U4P (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 16:56:15 -0400
-Received: by mail-pg1-f196.google.com with SMTP id f5so20025795pgu.5
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 13:56:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=message-id:mime-version:content-transfer-encoding:in-reply-to
-         :references:from:to:subject:cc:user-agent:date;
-        bh=Iq6W5b285KrUDE+rxE5CdrYmcMCWWImQEwlR0dFM2bE=;
-        b=f/yeuiNDbPrjXuT+RnwPpAsP/eViKYRpJZVzyM+Kngqn9apFLepG8/tWmQ0UEm/NAf
-         aRlMlR3PHw4Ccfb/+nqMIrd66PNnGAsuRmhYTNOUgj/5ouxZgyKD7rOzPrSI4jrivIR9
-         sylL9kP0Oeu/CdzSZLM/BgzeeJdOUPJyexvGs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:mime-version
-         :content-transfer-encoding:in-reply-to:references:from:to:subject:cc
-         :user-agent:date;
-        bh=Iq6W5b285KrUDE+rxE5CdrYmcMCWWImQEwlR0dFM2bE=;
-        b=oM/YTr5xDcbbUSwLBBBBrMRJtvHKPqB2dkBYWBo4VnJ77YXhtZzr0DBj+PMjLOsWcd
-         Y0fchNeBC/RW9cwdTEuC4yl5Yy266TSUFkM5bni4zw5Vgc5l5ALJC2ZVcXquD7REzsau
-         CiQfFaxCDSLGr59qs3hRTd/rjlAeasrtVBnNZ/z7cLa+nX0X8sDr5SirGiIg6r8EPXW8
-         qvmw01ZFiZYlcSyGJfp/SK05wSuDziiu1AQ5+4A33vZMyigjsAJ6dR9yovy+8AyiQYSS
-         0VhoOT3PZiXMN6vWdFZnlHFzMrSwWShmCQtOqqGLwCLQ4A/5M6oCbnj+uzKZ1X/hzQSt
-         Z3Nw==
-X-Gm-Message-State: APjAAAU9CmC4pK0Gp9iRyWYhRrZMR6WQIbWgEAWN7yoMw+j1RrYfLPe5
-        bLtxSW6RNEUxpogbFY/jTzicP2KQX4U=
-X-Google-Smtp-Source: APXvYqxqNY1XzBr6zHWT88SCXbqLK4lnF+uhJjvBY48N+vni0IQclaJTI8ui1Q2aOdFllxYi8GjHOg==
-X-Received: by 2002:a63:2c8:: with SMTP id 191mr104332462pgc.139.1564433774298;
-        Mon, 29 Jul 2019 13:56:14 -0700 (PDT)
-Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id o24sm121273158pfp.135.2019.07.29.13.56.13
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 29 Jul 2019 13:56:13 -0700 (PDT)
-Message-ID: <5d3f5d6d.1c69fb81.4c1e2.5be6@mx.google.com>
-Content-Type: text/plain; charset="utf-8"
+        id S1729630AbfG2U5j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 16:57:39 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:37004 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729405AbfG2U5i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 16:57:38 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 40047C060204;
+        Mon, 29 Jul 2019 20:57:37 +0000 (UTC)
+Received: from redhat.com (ovpn-112-31.rdu2.redhat.com [10.10.112.31])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1D8C65C219;
+        Mon, 29 Jul 2019 20:57:24 +0000 (UTC)
+Date:   Mon, 29 Jul 2019 16:57:21 -0400
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     john.hubbard@gmail.com, Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Jason Wang <jasowang@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        "Michael S . Tsirkin" <mst@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>, ceph-devel@vger.kernel.org,
+        kvm@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-rdma@vger.kernel.org,
+        netdev@vger.kernel.org, samba-technical@lists.samba.org,
+        v9fs-developer@lists.sourceforge.net,
+        virtualization@lists.linux-foundation.org,
+        John Hubbard <jhubbard@nvidia.com>,
+        Minwoo Im <minwoo.im.dev@gmail.com>
+Subject: Re: [PATCH 03/12] block: bio_release_pages: use flags arg instead of
+ bool
+Message-ID: <20190729205721.GB3760@redhat.com>
+References: <20190724042518.14363-1-jhubbard@nvidia.com>
+ <20190724042518.14363-4-jhubbard@nvidia.com>
+ <20190724053053.GA18330@infradead.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190729190139.GH18620@codeaurora.org>
-References: <20190722215340.3071-1-ilina@codeaurora.org> <20190722215340.3071-2-ilina@codeaurora.org> <5d3769df.1c69fb81.55d03.aa33@mx.google.com> <20190724145251.GB18620@codeaurora.org> <5d38b38e.1c69fb81.e8e5d.035b@mx.google.com> <20190724203610.GE18620@codeaurora.org> <CAD=FV=UYj55m99EcQXmkYhs257A46x8DaarE0DC-GRF_3dY3-Q@mail.gmail.com> <20190725151851.GG18620@codeaurora.org> <CAD=FV=X2ENqt5+vdUoRnLTRbedj_sFdQD3Me-yYEW0fDOdBCvg@mail.gmail.com> <20190729190139.GH18620@codeaurora.org>
-From:   Stephen Boyd <swboyd@chromium.org>
-To:     Doug Anderson <dianders@chromium.org>,
-        Lina Iyer <ilina@codeaurora.org>
-Subject: Re: [PATCH V2 2/4] drivers: qcom: rpmh-rsc: avoid locking in the interrupt handler
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>, mkshah@codeaurora.org
-User-Agent: alot/0.8.1
-Date:   Mon, 29 Jul 2019 13:56:12 -0700
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190724053053.GA18330@infradead.org>
+User-Agent: Mutt/1.12.0 (2019-05-25)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Mon, 29 Jul 2019 20:57:38 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Lina Iyer (2019-07-29 12:01:39)
-> On Thu, Jul 25 2019 at 09:44 -0600, Doug Anderson wrote:
-> >On Thu, Jul 25, 2019 at 8:18 AM Lina Iyer <ilina@codeaurora.org> wrote:
-> >>
-> >> On Wed, Jul 24 2019 at 17:28 -0600, Doug Anderson wrote:
-> >> >
-> >> >Jumping in without reading all the context, but I saw this fly by and
-> >> >it seemed odd.  If I'm way off base then please ignore...
-> >> >
-> >> >Can you give more details?  Why are these drivers in atomic contexts?
-> >> >If they are in atomic contexts because they are running in the context
-> >> >of an interrupt then your next patch in the series isn't so correct.
-> >> >
-> >> >Also: when people submit requests in atomic context are they always
-> >> >submitting an asynchronous request?  In that case we could
-> >> >(presumably) just use a spinlock to protect the queue of async
-> >> >requests and a mutex for everything else?
-> >> Yes, drivers only make async requests in interrupt contexts.
-> >
-> >So correct me if I'm off base, but you're saying that drivers make
-> >requests in interrupt contexts even after your whole series and that's
-> >why you're using spinlocks instead of mutexes.  ...but then in patch
-> >#3 in your series you say:
-> >
-> >> Switch over from using _irqsave/_irqrestore variants since we no longer
-> >> race with a lock from the interrupt handler.
-> >
-> >Those seem like contradictions.  What happens if someone is holding
-> >the lock, then an interrupt fires, then the interrupt routine wants to
-> >do an async request.  Boom, right?
-> >
-> The interrupt routine is handled by the driver and only completes the
-> waiting object (for sync requests). No other requests can be made from
-> our interrupt handler.
+On Tue, Jul 23, 2019 at 10:30:53PM -0700, Christoph Hellwig wrote:
+> On Tue, Jul 23, 2019 at 09:25:09PM -0700, john.hubbard@gmail.com wrote:
+> > From: John Hubbard <jhubbard@nvidia.com>
+> > 
+> > In commit d241a95f3514 ("block: optionally mark pages dirty in
+> > bio_release_pages"), new "bool mark_dirty" argument was added to
+> > bio_release_pages.
+> > 
+> > In upcoming work, another bool argument (to indicate that the pages came
+> > from get_user_pages) is going to be added. That's one bool too many,
+> > because it's not desirable have calls of the form:
+> 
+> All pages releases by bio_release_pages should come from
+> get_get_user_pages, so I don't really see the point here.
 
-The question is more if an interrupt handler for some consumer driver
-can call into this code and make an async request. Is that possible? If
-so, the concern is that the driver's interrupt handler can run and try
-to grab the lock on a CPU that already holds the lock in a non-irq
-disabled context. This would lead to a deadlock while the CPU servicing
-the interrupt waits for the lock held by another task that's been
-interrupted.
+No they do not all comes from GUP for see various callers
+of bio_check_pages_dirty() for instance iomap_dio_zero()
 
->=20
-> >> They cannot
-> >> use the sync variants. The async and sync variants are streamlined into
-> >> the same code path. Hence the use of spinlocks instead of mutexes
-> >> through the critical path.
-> >
-> >I will perhaps defer to Stephen who was the one thinking that a mutex
-> >would be a big win here.  ...but if a mutex truly is a big win then it
-> >doesn't seem like it'd be that hard to have a linked list (protected
-> >by a spinlock) and then some type of async worker that:
-> >
-> >1. Grab the spinlock, pops one element off the linked list, release the =
-spinlock
-> >2. Grab the mutex, send the one element, release the mutex
-> This would be a problem when the request is made from an irq handler. We
-> want to keep things simple and quick.
->=20
+I have carefully tracked down all this and i did not do
+anyconvertion just for the fun of it :)
 
-Is the problem that you want to use RPMh code from deep within the idle
-thread? As part of some sort of CPU idle driver for qcom platforms? The
-way this discussion is going it sounds like nothing is standing in the
-way of a design that use a kthread to pump messages off a queue of
-messages that is protected by a spinlock. The kthread would be woken up
-by the sync or async write to continue to pump messages out until the
-queue is empty.
-
+Cheers,
+Jérôme
