@@ -2,93 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8502779CD2
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 01:30:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C12DE79CE5
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 01:37:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729613AbfG2X36 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 19:29:58 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:18374 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726748AbfG2X35 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 19:29:57 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d3f81750000>; Mon, 29 Jul 2019 16:29:57 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Mon, 29 Jul 2019 16:29:57 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Mon, 29 Jul 2019 16:29:57 -0700
-Received: from rcampbell-dev.nvidia.com (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 29 Jul
- 2019 23:29:55 +0000
-Subject: Re: [PATCH 7/9] mm: remove the unused MIGRATE_PFN_ERROR flag
-To:     Christoph Hellwig <hch@lst.de>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Ben Skeggs <bskeggs@redhat.com>
-CC:     Bharata B Rao <bharata@linux.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        <linux-mm@kvack.org>, <nouveau@lists.freedesktop.org>,
-        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-References: <20190729142843.22320-1-hch@lst.de>
- <20190729142843.22320-8-hch@lst.de>
-X-Nvconfidentiality: public
-From:   Ralph Campbell <rcampbell@nvidia.com>
-Message-ID: <32f08aa4-c9a3-9545-69aa-2cc3695e15df@nvidia.com>
-Date:   Mon, 29 Jul 2019 16:29:55 -0700
+        id S1729812AbfG2Xhz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 19:37:55 -0400
+Received: from mga14.intel.com ([192.55.52.115]:18711 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727533AbfG2Xhy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 19:37:54 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jul 2019 16:37:52 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,324,1559545200"; 
+   d="scan'208";a="165650561"
+Received: from ahanamuk-mobl.amr.corp.intel.com (HELO [10.251.134.69]) ([10.251.134.69])
+  by orsmga008.jf.intel.com with ESMTP; 29 Jul 2019 16:37:51 -0700
+Subject: Re: [alsa-devel] [RFC PATCH 17/40] soundwire: bus: use
+ runtime_pm_get_sync/pm when enabled
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     alsa-devel@alsa-project.org,
+        "Rafael J. Wysocki" <rafael@kernel.org>, tiwai@suse.de,
+        gregkh@linuxfoundation.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, vkoul@kernel.org, broonie@kernel.org,
+        srinivas.kandagatla@linaro.org, jank@cadence.com,
+        slawomir.blauciak@intel.com, Sanyog Kale <sanyog.r.kale@intel.com>
+References: <20190725234032.21152-1-pierre-louis.bossart@linux.intel.com>
+ <20190725234032.21152-18-pierre-louis.bossart@linux.intel.com>
+ <45a912c5-134b-8642-70ef-8c1060389300@linux.intel.com>
+ <20190726190823.GD9224@smile.fi.intel.com>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <5a16d9e6-0a9c-a0a8-3b11-d046247f3879@linux.intel.com>
+Date:   Mon, 29 Jul 2019 17:07:39 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <20190729142843.22320-8-hch@lst.de>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
+In-Reply-To: <20190726190823.GD9224@smile.fi.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1564442997; bh=0+thxvZnJ+gcbF/O0zGGEBA6QvsuJ+b1Oc5FzJoq0pI=;
-        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=jjOqVbu0SE9IxctyMwqyl6NjiHxbcjJTt/QVPTeHFWZn91g7rXHLoSsXIJCkRMepQ
-         4RDY3eiq+JBeMQ2R9fiv8HeECvSmM4knWmk7sjO4TB+BOlqd8o0nizQlMk7DYq6sLe
-         +sqF9pqPZKgpUwuguZXMwVmav3HEr6qCsATcyT863EyZfvbK1jjnL6yqbPEQd9ijjJ
-         ydsHBn1jU60iHnXNioMmy0fn3Po4Y09SrgrhUiGTMRt6lWOqkn7isWclIxYgC0avDf
-         v8q4S08zaE3ikIRtGMn7WjLZkqBtGEBL5IeWH0mes0o8HnufoNHBj4X8jpeZ1nRHSl
-         igU0UgPAUNzQQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-On 7/29/19 7:28 AM, Christoph Hellwig wrote:
-> We don't use this flag anymore, so remove it.
+
+On 7/26/19 2:08 PM, Andy Shevchenko wrote:
+> On Fri, Jul 26, 2019 at 01:08:57PM -0500, Pierre-Louis Bossart wrote:
+>> This thread became unreadable with interleaved top-posting, allow me restate
+>> the options and ask PM folks what they think
+>>
+>> On 7/25/19 6:40 PM, Pierre-Louis Bossart wrote:
+>>> Not all platforms support runtime_pm for now, let's use runtime_pm
+>>> only when enabled.
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-
-Reviewed-by: Ralph Campbell <rcampbell@nvidia.com>
-
-> ---
->   include/linux/migrate.h | 1 -
->   1 file changed, 1 deletion(-)
+> Just a side note below...
 > 
-> diff --git a/include/linux/migrate.h b/include/linux/migrate.h
-> index 093d67fcf6dd..229153c2c496 100644
-> --- a/include/linux/migrate.h
-> +++ b/include/linux/migrate.h
-> @@ -167,7 +167,6 @@ static inline int migrate_misplaced_transhuge_page(struct mm_struct *mm,
->   #define MIGRATE_PFN_LOCKED	(1UL << 2)
->   #define MIGRATE_PFN_WRITE	(1UL << 3)
->   #define MIGRATE_PFN_DEVICE	(1UL << 4)
-> -#define MIGRATE_PFN_ERROR	(1UL << 5)
->   #define MIGRATE_PFN_SHIFT	6
-
-The MIGRATE_PFN_SHIFT could be reduced to 5 since it is only used
-to make room for the flags.
-
->   static inline struct page *migrate_pfn_to_page(unsigned long mpfn)
+>>> -	ret = pm_runtime_get_sync(slave->bus->dev);
+>>> -	if (ret < 0)
 > 
+> Here...
+> 
+>>> -		return ret;
+>>> +	if (pm_runtime_enabled(slave->bus->dev)) {
+>>> +		ret = pm_runtime_get_sync(slave->bus->dev);
+>>> +		if (ret < 0)
+> 
+> ...and thus here...
+> 
+>>> +			return ret;
+>>> +	}
+>>>    	ret = sdw_transfer(slave->bus, &msg);
+>>> -	pm_runtime_put(slave->bus->dev);
+>>> +
+>>> +	if (pm_runtime_enabled(slave->bus->dev))
+>>> +		pm_runtime_put(slave->bus->dev);
+>>
+>> This is option1: we explicitly test if pm_runtime is enabled before calling
+>> _get_sync() and _put()
+>>
+>> option2 (suggested by Jan Kotas): catch the -EACCESS error code
+>>
+>>   	ret = pm_runtime_get_sync(slave->bus->dev);
+>> -	if (ret < 0)
+>> +	if (ret < 0 && ret != -EACCES)
+> 
+> ...and here, the pm_runtime_put_noidle() call is missed.
+
+yes but in the example you provided, they actually do more work than 
+just decrement the device usage counter:
+
+static int
+radeonfb_open(struct fb_info *info, int user)
+{
+	struct radeon_fbdev *rfbdev = info->par;
+	struct radeon_device *rdev = rfbdev->rdev;
+	int ret = pm_runtime_get_sync(rdev->ddev->dev);
+	if (ret < 0 && ret != -EACCES) {
+		pm_runtime_mark_last_busy(rdev->ddev->dev);
+		pm_runtime_put_autosuspend(rdev->ddev->dev);
+		return ret;
+	}
+	return 0;
+}
+
+unless I am missing something pm_runtime_put_noidle() and 
+_put_autosuspend() are not equivalent, are they?
