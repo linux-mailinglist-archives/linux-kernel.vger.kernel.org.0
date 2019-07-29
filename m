@@ -2,114 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 77413782D4
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 02:31:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 907E5782DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 02:38:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726430AbfG2Abi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 28 Jul 2019 20:31:38 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:40055 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726216AbfG2Abh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 28 Jul 2019 20:31:37 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45xgbp5h33z9s3l;
-        Mon, 29 Jul 2019 10:31:34 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1564360295;
-        bh=+JTon61vz1+YQHFE94AbS2eZpOMWfyvWSxXSDsfyxy8=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=GroEowRPhDqwkchQUSkgl6VRvtoatP01fbTBL+bZv7bh/2Jo+prb+Tp1EkMoSVOnc
-         3ZCWekF1FZPMOfYCl+k+ZLz71r2Ekxd33NhaJeqdgbw3d7tJ0laAGlMbL17XliBkyF
-         oexSKAHtAO7CzBfnZ4x5riOnxLXj0B+uo3wWJSKqaaT9f3zKSea9iw/dnj2cWBBkxy
-         84lzGhPrb5D+lcOpuMzp/1TrfbTX+HnikV2EH+7rdynUv9yX1QHSWq7j3sQF/y97Dv
-         oXpd4WzBbIU2Yh1hKKRAqwcGTYZ6wBdaTKqFXj6sC9VVDIvjrbnwNWWlk5kPGEcZ2t
-         xuKLaHVFdP3bg==
-Date:   Mon, 29 Jul 2019 10:31:33 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Intel Graphics <intel-gfx@lists.freedesktop.org>,
-        DRI <dri-devel@lists.freedesktop.org>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Imre Deak <imre.deak@intel.com>
-Subject: Re: linux-next: manual merge of the drm-intel tree with the
- kspp-gustavo tree
-Message-ID: <20190729103133.5a3deb85@canb.auug.org.au>
-In-Reply-To: <20190723110331.1967d000@canb.auug.org.au>
-References: <20190723110331.1967d000@canb.auug.org.au>
+        id S1726417AbfG2AiF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 28 Jul 2019 20:38:05 -0400
+Received: from mail-io1-f70.google.com ([209.85.166.70]:45441 "EHLO
+        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726276AbfG2AiB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 28 Jul 2019 20:38:01 -0400
+Received: by mail-io1-f70.google.com with SMTP id e20so65394761ioe.12
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2019 17:38:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=P/bfC/9DYsjpqYrAz/GLNeevsKIsGM5ry8dJO/L9Ihk=;
+        b=fwGbijWyk21hktHDVCfeslAZSHjhNnooeoq1S4kUCSY5eQ6V4ZuzHmbAJ1xXpApsD8
+         tYmwVWBoE5/fIGTihbC4CVG0FL5xHD1Fdhi/NPmdUgbGLi+OOivwNiCjWeDrSm4H8zip
+         YoFNEg78WcG3kyRFsaUhAPNm4Sx3++ZT3B9F+ydYsG30D2Hl9fYGLElQoGettTpsjIJx
+         947a6i5rs8NSA9NQfj+SIv3AK6qpkLIWCPKrfOfmHQ8lbUI875b2vRvPscQITdQ8oTjy
+         3Syj3oYNQ9DrgYjdAE6GmhisqerMV6JR9NGA1a4XOh+9UuB2yoK4mvu97ofx4x1QkNTS
+         y1pw==
+X-Gm-Message-State: APjAAAWJWwP/GziXj5nqPgPFbyf7QBsje00ur451ynuG3lKvG3DIOyHt
+        o8AV3byAs6JELnC6owdDcwhPqqsVBkgsiTHmd0K5URGGTIUZ
+X-Google-Smtp-Source: APXvYqwVilF5qTRSsaLkhL6POlQdbplmHCUtbsaCjcw6sv9rHxSg5wY2IEL+f/ULWS/npxF51AhFcSpVnuGNfy6+mXTXpQgpNXm3
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/DqgcD_x8eYr0_R2i9O0jMTP";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+X-Received: by 2002:a05:6638:40c:: with SMTP id q12mr81494815jap.17.1564360680847;
+ Sun, 28 Jul 2019 17:38:00 -0700 (PDT)
+Date:   Sun, 28 Jul 2019 17:38:00 -0700
+In-Reply-To: <000000000000c75fb7058ba0c0e4@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000aec4ec058ec71a3d@google.com>
+Subject: Re: memory leak in bio_copy_user_iov
+From:   syzbot <syzbot+03e5c8ebd22cc6c3a8cb@syzkaller.appspotmail.com>
+To:     agk@redhat.com, axboe@kernel.dk, coreteam@netfilter.org,
+        davem@davemloft.net, dm-devel@redhat.com, hdanton@sina.com,
+        kaber@trash.net, kadlec@blackhole.kfki.hu,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-raid@vger.kernel.org, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, pablo@netfilter.org,
+        shli@kernel.org, snitzer@redhat.com,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/DqgcD_x8eYr0_R2i9O0jMTP
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+syzbot has bisected this bug to:
 
-Hi all,
+commit 664820265d70a759dceca87b6eb200cd2b93cda8
+Author: Mike Snitzer <snitzer@redhat.com>
+Date:   Thu Feb 18 20:44:39 2016 +0000
 
-On Tue, 23 Jul 2019 11:03:31 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> Today's linux-next merge of the drm-intel tree got a conflict in:
->=20
->   drivers/gpu/drm/i915/display/intel_dp.c
->=20
-> between commit:
->=20
->   b6ac32eac063 ("drm/i915: Mark expected switch fall-throughs")
+     dm: do not return target from dm_get_live_table_for_ioctl()
 
-This is now commit
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13f4eb64600000
+start commit:   0011572c Merge branch 'for-5.2-fixes' of git://git.kernel...
+git tree:       upstream
+final crash:    https://syzkaller.appspot.com/x/report.txt?x=100ceb64600000
+console output: https://syzkaller.appspot.com/x/log.txt?x=17f4eb64600000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=cb38d33cd06d8d48
+dashboard link: https://syzkaller.appspot.com/bug?extid=03e5c8ebd22cc6c3a8cb
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13244221a00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=117b2432a00000
 
-  2defb94edb44 (""drm/i915: Mark expected switch fall-throughs")
+Reported-by: syzbot+03e5c8ebd22cc6c3a8cb@syzkaller.appspotmail.com
+Fixes: 664820265d70 ("dm: do not return target from  
+dm_get_live_table_for_ioctl()")
 
-from Linus' tree.
-
-> from the kspp-gustavo tree and commit:
->=20
->   bc85328ff431 ("drm/i915: Move the TypeC port handling code to a separat=
-e file")
->   4f36afb26cbe ("drm/i915: Sanitize the TypeC FIA lane configuration deco=
-ding")
->=20
-> from the drm-intel tree.
->=20
-> I fixed it up (bc85328ff431 moved the function updated by b6ac32eac063
-> and 4f36afb26cbe added an equivalent fixup) and can carry the fix as
-> necessary. This is now fixed as far as linux-next is concerned, but any
-> non trivial conflicts should be mentioned to your upstream maintainer
-> when your tree is submitted for merging.  You may also want to consider
-> cooperating with the maintainer of the conflicting tree to minimise any
-> particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/DqgcD_x8eYr0_R2i9O0jMTP
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0+PmUACgkQAVBC80lX
-0Gz6bQf+KJXRHgo9OonMtR1Pc5z36XAnT9kMF0gp1cqGpTIdX0avC7dzI/tkcpS1
-hdUOEYF1oc0DHbeb1HHWyRjfoPUgL9EUJwxCATyOuFv7V3UKbTxOZ3N5wSC1z5Yb
-lA8IiuOW9xkyf4Pbf6BOYCErtzyicskwARI3AzW7qCHgRe3+WpGaV6LayJzuOcX6
-TRefqb/dFGeo2ly9mkvcPpY8CgT5rKCjWchgbGICNqyGH9LMMH2jIxIfyXjV09AX
-q9sXlyVxeJTNP8Eqpb2C/TBbaceCvRNt3/iLpuL4ZYdFr4QaMVJvOj6accgzpvCV
-p3EWr5ky/iGRDcekwNbkyVVmsMEz1A==
-=TFsE
------END PGP SIGNATURE-----
-
---Sig_/DqgcD_x8eYr0_R2i9O0jMTP--
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
