@@ -2,39 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E564379525
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:40:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A6C6795B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:46:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388968AbfG2TjP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 15:39:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54254 "EHLO mail.kernel.org"
+        id S2389928AbfG2TpS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 15:45:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33984 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388956AbfG2TjM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:39:12 -0400
+        id S2389899AbfG2TpM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:45:12 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 070CB2054F;
-        Mon, 29 Jul 2019 19:39:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E3BFC2054F;
+        Mon, 29 Jul 2019 19:45:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564429151;
-        bh=18PvMK3IzPiBGJaA0mcdhTC0A3bQpt3XEH68L8UAk+k=;
+        s=default; t=1564429511;
+        bh=NfgZ0V/VlJYE29DGNuK3YYHUhOGyFNa1Qcljxa/Qb0U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GQxifqedc8bJ5MZ0RA5ACtoiJv2zMaKAC6ICFXA76LeXSpj5m6rFhFpoMD6IlIv/p
-         flwJNAerCqWHFrceFNJaGLd+LmmBnVILNyLS4bzUSzj5Xp9GQs3EfJ8qRroOGk3VTR
-         EtFjTCHD7qG444WwFBjYzT810yABW3gSAYzaEN8I=
+        b=jim7EQWMNNczEdOma/IHEHiC6u6ZPKLnbj+k/gXsNKHkDi10/4/h5PHIt9z+t5non
+         oHLE9BBRHjfZy1C0eXjrYKQPQWDvAIKSDJbNd1G2Q8HPgaKFZq+jmUkMxvEeLBLoCu
+         TDaVXBGHrCmcIaaObxqBneK/6+jfOhFu3tKZ6cWo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Morten Borup Petersen <morten_bp@live.dk>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
+        stable@vger.kernel.org, Leo Yan <leo.yan@linaro.org>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Suzuki Poulouse <suzuki.poulose@arm.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 267/293] mailbox: handle failed named mailbox channel request
-Date:   Mon, 29 Jul 2019 21:22:38 +0200
-Message-Id: <20190729190844.826530235@linuxfoundation.org>
+Subject: [PATCH 4.19 072/113] perf hists browser: Fix potential NULL pointer dereference found by the smatch tool
+Date:   Mon, 29 Jul 2019 21:22:39 +0200
+Message-Id: <20190729190712.702228564@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190729190820.321094988@linuxfoundation.org>
-References: <20190729190820.321094988@linuxfoundation.org>
+In-Reply-To: <20190729190655.455345569@linuxfoundation.org>
+References: <20190729190655.455345569@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,42 +52,89 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 25777e5784a7b417967460d4fcf9660d05a0c320 ]
+[ Upstream commit ceb75476db1617a88cc29b09839acacb69aa076e ]
 
-Previously, if mbox_request_channel_byname was used with a name
-which did not exist in the "mbox-names" property of a mailbox
-client, the mailbox corresponding to the last entry in the
-"mbox-names" list would be incorrectly selected.
-With this patch, -EINVAL is returned if the named mailbox is
-not found.
+Based on the following report from Smatch, fix the potential
+NULL pointer dereference check.
 
-Signed-off-by: Morten Borup Petersen <morten_bp@live.dk>
-Signed-off-by: Jassi Brar <jaswinder.singh@linaro.org>
+  tools/perf/ui/browsers/hists.c:641
+  hist_browser__run() error: we previously assumed 'hbt' could be
+  null (see line 625)
+
+  tools/perf/ui/browsers/hists.c:3088
+  perf_evsel__hists_browse() error: we previously assumed
+  'browser->he_selection' could be null (see line 2902)
+
+  tools/perf/ui/browsers/hists.c:3272
+  perf_evsel_menu__run() error: we previously assumed 'hbt' could be
+  null (see line 3260)
+
+This patch firstly validating the pointers before access them, so can
+fix potential NULL pointer dereference.
+
+Signed-off-by: Leo Yan <leo.yan@linaro.org>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Suzuki Poulouse <suzuki.poulose@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Link: http://lkml.kernel.org/r/20190708143937.7722-2-leo.yan@linaro.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mailbox/mailbox.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ tools/perf/ui/browsers/hists.c | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/mailbox/mailbox.c b/drivers/mailbox/mailbox.c
-index 537f4f6d009b..44b49a2676f0 100644
---- a/drivers/mailbox/mailbox.c
-+++ b/drivers/mailbox/mailbox.c
-@@ -391,11 +391,13 @@ struct mbox_chan *mbox_request_channel_byname(struct mbox_client *cl,
+diff --git a/tools/perf/ui/browsers/hists.c b/tools/perf/ui/browsers/hists.c
+index a96f62ca984a..692d2fa31c35 100644
+--- a/tools/perf/ui/browsers/hists.c
++++ b/tools/perf/ui/browsers/hists.c
+@@ -633,7 +633,11 @@ int hist_browser__run(struct hist_browser *browser, const char *help,
+ 		switch (key) {
+ 		case K_TIMER: {
+ 			u64 nr_entries;
+-			hbt->timer(hbt->arg);
++
++			WARN_ON_ONCE(!hbt);
++
++			if (hbt)
++				hbt->timer(hbt->arg);
  
- 	of_property_for_each_string(np, "mbox-names", prop, mbox_name) {
- 		if (!strncmp(name, mbox_name, strlen(name)))
--			break;
-+			return mbox_request_channel(cl, index);
- 		index++;
- 	}
+ 			if (hist_browser__has_filter(browser) ||
+ 			    symbol_conf.report_hierarchy)
+@@ -2707,7 +2711,7 @@ static int perf_evsel__hists_browse(struct perf_evsel *evsel, int nr_events,
+ {
+ 	struct hists *hists = evsel__hists(evsel);
+ 	struct hist_browser *browser = perf_evsel_browser__new(evsel, hbt, env, annotation_opts);
+-	struct branch_info *bi;
++	struct branch_info *bi = NULL;
+ #define MAX_OPTIONS  16
+ 	char *options[MAX_OPTIONS];
+ 	struct popup_action actions[MAX_OPTIONS];
+@@ -2973,7 +2977,9 @@ static int perf_evsel__hists_browse(struct perf_evsel *evsel, int nr_events,
+ 			goto skip_annotation;
  
--	return mbox_request_channel(cl, index);
-+	dev_err(cl->dev, "%s() could not locate channel named \"%s\"\n",
-+		__func__, name);
-+	return ERR_PTR(-EINVAL);
- }
- EXPORT_SYMBOL_GPL(mbox_request_channel_byname);
+ 		if (sort__mode == SORT_MODE__BRANCH) {
+-			bi = browser->he_selection->branch_info;
++
++			if (browser->he_selection)
++				bi = browser->he_selection->branch_info;
  
+ 			if (bi == NULL)
+ 				goto skip_annotation;
+@@ -3144,7 +3150,8 @@ static int perf_evsel_menu__run(struct perf_evsel_menu *menu,
+ 
+ 		switch (key) {
+ 		case K_TIMER:
+-			hbt->timer(hbt->arg);
++			if (hbt)
++				hbt->timer(hbt->arg);
+ 
+ 			if (!menu->lost_events_warned &&
+ 			    menu->lost_events &&
 -- 
 2.20.1
 
