@@ -2,164 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD8C479B82
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 23:51:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE35879B90
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 23:53:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388883AbfG2VvB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 17:51:01 -0400
-Received: from relay7-d.mail.gandi.net ([217.70.183.200]:60255 "EHLO
-        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727129AbfG2VvA (ORCPT
+        id S2388960AbfG2VxT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 17:53:19 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:39312 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388937AbfG2VxS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 17:51:00 -0400
-X-Originating-IP: 37.176.111.81
-Received: from uno.localdomain (mob-37-176-111-81.net.vodafone.it [37.176.111.81])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id 9443C20005;
-        Mon, 29 Jul 2019 21:50:56 +0000 (UTC)
-Date:   Mon, 29 Jul 2019 23:52:14 +0200
-From:   Jacopo Mondi <jacopo@jmondi.org>
-To:     Joe Perches <joe@perches.com>
-Cc:     Jonathan Cameron <jic23@kernel.org>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        linux-iio@vger.kernel.org
-Subject: Re: [PATCH 04/12] iio: adc: max9611: Fix misuse of GENMASK macro
-Message-ID: <20190729215214.eueitve4tfxmqer3@uno.localdomain>
-References: <cover.1562734889.git.joe@perches.com>
- <2929234bd4ecec41c0d012edc52416ef80f3e368.1562734889.git.joe@perches.com>
- <20190714125403.0789dc9e@archlinux>
- <b3744e64b22de98bfe8885f76811d4fc7e41b8eb.camel@perches.com>
+        Mon, 29 Jul 2019 17:53:18 -0400
+Received: by mail-lf1-f67.google.com with SMTP id v85so43109008lfa.6
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 14:53:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Hr9lqY2qIqoidNcb1If245IBNP+0DnlTQyMBCAdK+Ik=;
+        b=HyKoqtCfFxuQVsAb5+vFCCMS0YilOQ1m3ow3QG9i/222LTjAwb0dTsHGlPD+wgv5xz
+         yxGmG2uQ+GXy8aVfTb8iVnwyvC/tFZrzdYTE/IZ4sxhoD+JyDgZyLo7es1i3GvdlHBsQ
+         9KgXU0BH2XWgII/r1JW3XwxEm3xlRUdaD2PMugZ8eAgETdmbyqtgWltBwZADfZ/JOgK8
+         KGO+bVSe18/XMctvQdt5o+uFkTKAodeWoduSv9MReky4YEXExt/yAYz8vY8G82yiywnH
+         zQxG63/KMWFy9NT3upE0a37RA41t81MOhYrxs1P+JPFnQ5o1xJWIKRx+3guc5NFy4d/Y
+         LVww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Hr9lqY2qIqoidNcb1If245IBNP+0DnlTQyMBCAdK+Ik=;
+        b=TIn4xKemmLq8dYaeMZbj2hpx9jKyzk1l6z1PZHSItpu02KnD1qz2Kxd5LonmbzDPWG
+         WpeaI82HIicZm/34LzljzirkDw9FeEe0Abwts9L4ZvRtuIN4ENWO8Ld/avsKoj/WGjgQ
+         yLxWzGToOh+ARaic1MZRy2mKUBsF6KLnhSHQpbNOJno3ET8x/BKXkZz16HBIrFa1zH+p
+         HN0ZFwu0EHEFKeEQfqsY0ZTNt5JTOk46q8MyztW1cqcjv6UFP1CFJvb3erisYDawcOyE
+         g/+p2t1ceWviNUaj7pKl1OXd3Q7ajgrdn/9AimxQ6XATQBVO3IvJ52YE6J2gaAEqAR6F
+         GO9A==
+X-Gm-Message-State: APjAAAUeGRcs/ltgkgQ0dAZjD5i9/XrgN/jQXfOhiljNC9746I/BRfem
+        XqrBcMlXUKACKs6j0KkOEtdz/1ze0FemWnehcsXUOA==
+X-Google-Smtp-Source: APXvYqxrcwQ2xt2eOrJdooqGsibkSjjLkGu0LUS1zOLSFKz3m+Xi0j4+Rh01BXuTGe2jOXpQKVloomM4o+1wiK44pnk=
+X-Received: by 2002:ac2:5c42:: with SMTP id s2mr42403912lfp.61.1564437196737;
+ Mon, 29 Jul 2019 14:53:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="bspti6iz3s7zaaw6"
-Content-Disposition: inline
-In-Reply-To: <b3744e64b22de98bfe8885f76811d4fc7e41b8eb.camel@perches.com>
-User-Agent: NeoMutt/20180716
+References: <20190724081313.12934-1-andrew@aj.id.au>
+In-Reply-To: <20190724081313.12934-1-andrew@aj.id.au>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 29 Jul 2019 23:53:04 +0200
+Message-ID: <CACRpkdapypySGPrLgSMSNy1fzkca2BfMUGzf3koFWQZ-M5VOvg@mail.gmail.com>
+Subject: Re: [PATCH 0/3] ARM: dts: aspeed: Deprecate g[45]-style compatibles
+To:     Andrew Jeffery <andrew@aj.id.au>
+Cc:     linux-aspeed <linux-aspeed@lists.ozlabs.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Joel Stanley <joel@jms.id.au>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Jul 24, 2019 at 10:13 AM Andrew Jeffery <andrew@aj.id.au> wrote:
 
---bspti6iz3s7zaaw6
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+> It's probably best if we push the three patches all through one tree rather
+> than fragmenting. Is everyone happy if Joel applies them to the aspeed tree?
 
-Hello,
-  so I finally run some test and...
+If you are sure it will not collide with parallell work in the
+pinctrl tree, yes.
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-On Sun, Jul 14, 2019 at 05:19:32AM -0700, Joe Perches wrote:
-> On Sun, 2019-07-14 at 12:54 +0100, Jonathan Cameron wrote:
-> > On Tue,  9 Jul 2019 22:04:17 -0700
-> > Joe Perches <joe@perches.com> wrote:
-> >
-> > > Arguments are supposed to be ordered high then low.
-> > >
-> > > Signed-off-by: Joe Perches <joe@perches.com>
-> >
-> > Applied to the fixes-togreg branch of iio.git and marked for
-> > stable etc.
+(If it does collide I'd prefer to take the pinctrl patches and fix the
+conflicts in my tree.)
 
-I don't see it in v5.3-rc2, has it been collected or are we still in
-time for an additional fix?
-
->
-> This mask is used in an init function called from a probe.
->
-> I don't have this hardware but it looks as if it could
-> never have worked so I doubt the driver and the hardware
-> have ever been tested.
->
-> Does anyone have this device in actual use?
-
-Because it turns out this is 2 times embarrassing. The mask definition
-is indeed wrong, as Joe reported and fixed, but also this line
->
-> 	regval = ret & MAX9611_TEMP_MASK;
-
-is very wrong as regval is read as:
-        ret = max9611_read_single(max9611, CONF_TEMP, &regval);
-
-So that should actually be:
-        regval &= MAX9611_TEMP_MASK;
-not
- 	regval = ret & MAX9611_TEMP_MASK;
-Ups...
-
-Yes, it worked by chance, as regval was always 0, which is in the
-range of acceptable temperatures :/
-
->
-> 	if ((regval > MAX9611_TEMP_MAX_POS &&
-> 	     regval < MAX9611_TEMP_MIN_NEG) ||
-> 	     regval > MAX9611_TEMP_MAX_NEG) {
-
-Also reading this condition and how I had defined the temperature
-calculation formula makes me wonder if this it totally correct, but
-for the moment:
-
-1) if Joe's patch has been collected, I can send an additional patch to
-fix how regval is computed.
-2) If Joe's patch still have to be collected, the regval computation
-might be fixed there.
-
-Sorry for taking so long to get back to you and thanks for noticing.
-
-Thanks
-  j
-
-> 		dev_err(max9611->dev,
-> 			"Invalid value received from ADC 0x%4x: aborting\n",
-> 			regval);
-> 		return -EIO;
-> 	}
->
->
-> > Thanks,
-> >
-> > Jonathan
-> >
-> > > ---
-> > >  drivers/iio/adc/max9611.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > >
-> > > diff --git a/drivers/iio/adc/max9611.c b/drivers/iio/adc/max9611.c
-> > > index 917223d5ff5b..0e3c6529fc4c 100644
-> > > --- a/drivers/iio/adc/max9611.c
-> > > +++ b/drivers/iio/adc/max9611.c
-> > > @@ -83,7 +83,7 @@
-> > >  #define MAX9611_TEMP_MAX_POS		0x7f80
-> > >  #define MAX9611_TEMP_MAX_NEG		0xff80
-> > >  #define MAX9611_TEMP_MIN_NEG		0xd980
-> > > -#define MAX9611_TEMP_MASK		GENMASK(7, 15)
-> > > +#define MAX9611_TEMP_MASK		GENMASK(15, 7)
-> > >  #define MAX9611_TEMP_SHIFT		0x07
-> > >  #define MAX9611_TEMP_RAW(_r)		((_r) >> MAX9611_TEMP_SHIFT)
-> > >  #define MAX9611_TEMP_SCALE_NUM		1000000
->
-
---bspti6iz3s7zaaw6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAl0/aogACgkQcjQGjxah
-VjyVXBAAjXySZDbxeeH6TCp5TWOwWLpebJjJ99v++lJUK4A6ohVeqyyGbyZt7ak6
-ADGJEjNkeh1ilm/DXcyCCqTQ7w4loj6RsYPK5AHPT2jYaCf43VIkHArYg20SKtYI
-5nREJc2RYXpmOk+2s3oaosA4RgL6WV2shsLF/OYGubvdDWhGfRlAlPAZTtNG/siv
-GLidkma6RAbi1iqQUw4hsI7LJTmFn6F1T4wkiRx0SejBkLqHmLnrtvFjsWH1hgXW
-k9urqsRYR9Io3wVBvMOiKcQUVrfneOW6wo2KMYMVhNfxwUtKU6NWyWUzfgGpk8Hl
-jDG1FoRs3u86e3gTsN+yT4JSZuOjsPovuGOo7NO0MepRRGbfHqFJRBBL7Z9T04pL
-QySWlgMZvVQIi40uI/QHLmgm0ztzl19Ez/rJm6fYVSyBE8VKtLCkySI+pmiL8OWl
-JcjfMMq2KgElToxFfSF+CuU0Qe6hn8ye/boKsnuWfz9Vk7em07uPGaCDTe+gD4RR
-c3pQLaGO16FhSQygRDpiO9/3K9OsGUDCDPrkOoCi5nDqXjmBD4Uu2OEJvch86rku
-bmnyJ4ejXzsStjpUUbsNP1AmLT8yPxMA+SvZ8nrUIvfeKkEbD4Mff61ndJP52BX/
-g1yN+rSGk8OWRoB++9TUqmHr5EXxgLyJI0hJ9+B+chlgmvapGCM=
-=5EgF
------END PGP SIGNATURE-----
-
---bspti6iz3s7zaaw6--
+Yours,
+Linus Walleij
