@@ -2,99 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 05378789E5
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 12:54:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E8F38789E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 12:54:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387549AbfG2KyR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 06:54:17 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:40566 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387444AbfG2KyR (ORCPT
+        id S2387551AbfG2Kym (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 06:54:42 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:38452 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387424AbfG2Kym (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 06:54:17 -0400
-Received: by mail-io1-f66.google.com with SMTP id h6so32360405iom.7;
-        Mon, 29 Jul 2019 03:54:17 -0700 (PDT)
+        Mon, 29 Jul 2019 06:54:42 -0400
+Received: by mail-wm1-f67.google.com with SMTP id s15so31683208wmj.3
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 03:54:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Q8iqs/lSQVwY/t+gDmVcPAuTj0Q+h2kk0gSLp1nf66E=;
-        b=en4fjHFHPiZuiYjLWFL5ihDQesbUNCfuRyhmaj91oj/ylqOLhTIflQnMpSYDZpyze6
-         7SJw3muzq4JdL/XpnXYEKkq58Wvh6xqiP28d4FQZfu+M3qTyIVIXvWoWbp2kfCI+6wjf
-         o/se6EME6KkyfIV0yXstoyQWfyd/RGTiJn9JbKnSkE/zNQgtEw+rTM7xJZ6SvUoZBokJ
-         DHzNUz8qhk1KvlWrlHR7eG1J7kBVJjsT8otTC9WxefpOcUncZb9KlVTo0N2jm3HDh9eA
-         SKnFC8B/kch8YM03AUMNFCQxHD8v/652YuKLb6xhIowtkBSsDmPlwLygREHySRiK0lbG
-         sWjg==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:in-reply-to:references:date:message-id
+         :mime-version;
+        bh=eqfg5Eacmy1+/MhOFkxqCtwYHlycdYQaxotBimNO4tM=;
+        b=JN7vSXEF75Oelp0EyviFYoaWimsb5xVHwKIwNhCJKpemuYt2P19a659u41EmU9aChL
+         yODZRtKntrTQMkND9VKWTh3/CWtbDhCgXSNZPBByMpRkb1wveyF2ziL8brQWucZM09Df
+         h5DY8xv6kItvcWN4idyU/uw91bzFa0QZ0n6k/oKQktSeoni48jh1f6qcI8HfNX85cXr5
+         D5G7Yq9PLAH7WxozX1uhTTOUU/PU1ixyPhaP34lykwEOlQOgkWwwZeXfrBxXDYFfCzt7
+         wW0mGlJsjhJHLsP7cdo3Dmlm6xKep00TNMIc5OQMZeS1dOW26fPzBTKTQuXk+pxI5om+
+         vwpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Q8iqs/lSQVwY/t+gDmVcPAuTj0Q+h2kk0gSLp1nf66E=;
-        b=KLkQ0Xe0S5kqF6yOty0ogosZX0pNU94kjdxdRp9jWt4h3zBcRaLIh+XfS986EKbzOo
-         s/+iyN9q8gVSsCM4FpNFUk/vLRt3KmXaUu+KPCxV6muofMYdXOaHOeXw96NvPXvboCxg
-         y9WOQIv365Qy4QWo8DKaJP9JJ8o6NJXoVkI9h8e1O0oPp6QRXs2P0RAW9ckF9m+Uu/g2
-         b+Y0KBSBZKehhuv53BvYEcyWwDFZi8GwIqdxHDXPiFI4OHemlmnU4IxOx2XXuZiDM09M
-         4HMSPvT+vgi5tZg+GG05lcw+WbdJnVF7Xs0rZ+R9UnagHiXySxnmFlqFHAsKC+JO2558
-         vr1Q==
-X-Gm-Message-State: APjAAAV+chULOOO/VA/ynZx4lN+GseJFSdcoLZHD9WFiVqRlTQSAUaUa
-        nNH4Md1jgfAbDr06qGE389L8F8N+BLhKMiZ1v5M=
-X-Google-Smtp-Source: APXvYqwKkT5tIBwNGEgYfklsdvr8XCZxuj7SbGRVLa0scIYwQBhSGytpuWUJXX4Z168xOQFckbEIol4rJPZmst9FA7c=
-X-Received: by 2002:a5e:c241:: with SMTP id w1mr94473273iop.58.1564397656857;
- Mon, 29 Jul 2019 03:54:16 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=eqfg5Eacmy1+/MhOFkxqCtwYHlycdYQaxotBimNO4tM=;
+        b=F3H6jmgrC2BGISyY25GsuYF87N96G6tgEfYIUSThsKILsaHKR2F9T+AAzJyHffy5lU
+         fqriv8AA8EfRUouetbSOhSFscl0XUmYukAYNo8Ah5JKjx/oTXnbaN6bPkbU73CKjOcxT
+         ONUVfdiCuAlIbhTxU65kMNNIX6JJ+zoK+CpuZzB8LRkqYfx7rdWrQ5zGATn5/P38AiEw
+         KeLDXaaC8uTe3FpoGfb8xPuZ6qPB1F89Kc8PVFjAFXJhV8Lu5HtwObfgCk/6p60p+ZyX
+         RsJ2yAvH9oGf4QVwBudB3Lvy2OmI15Xxs5VYAUTarR1paRhCPSwnUijWk5el8j56NPrb
+         7fJw==
+X-Gm-Message-State: APjAAAXVnk7KOPIjtey8PfV+/qtw8RWbopeN737g9WN9ggCb0BRqLbLW
+        0Wc86SVs6GKST7DQmFfo0e7TnQ==
+X-Google-Smtp-Source: APXvYqwIfLdaKYHkYVTTbNZVS5iy+6EEZOZyCe/3q44b3hbfmzHduJ3sHM2CB1fUjblr88CN7uiAjQ==
+X-Received: by 2002:a05:600c:23d2:: with SMTP id p18mr93463026wmb.160.1564397680266;
+        Mon, 29 Jul 2019 03:54:40 -0700 (PDT)
+Received: from localhost ([2a01:e34:eeb6:4690:ecfa:1144:aa53:4a82])
+        by smtp.gmail.com with ESMTPSA id o26sm126645461wro.53.2019.07.29.03.54.39
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 29 Jul 2019 03:54:39 -0700 (PDT)
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Alexandre Mergnat <amergnat@baylibre.com>
+Cc:     khilman@baylibre.com, sboyd@kernel.org, narmstrong@baylibre.com,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        baylibre-upstreaming@groups.io,
+        Alexandre Mergnat <amergnat@baylibre.com>
+Subject: Re: [PATCH v2 0/8] clk: meson: ee: use the new parent description method
+In-Reply-To: <20190725164238.27991-1-amergnat@baylibre.com>
+References: <20190725164238.27991-1-amergnat@baylibre.com>
+Date:   Mon, 29 Jul 2019 12:54:38 +0200
+Message-ID: <1jzhkx861d.fsf@starbuckisacylon.baylibre.com>
 MIME-Version: 1.0
-References: <1563873380-2003-1-git-send-email-gkulkarni@marvell.com>
-In-Reply-To: <1563873380-2003-1-git-send-email-gkulkarni@marvell.com>
-From:   Ganapatrao Kulkarni <gklkml16@gmail.com>
-Date:   Mon, 29 Jul 2019 16:24:05 +0530
-Message-ID: <CAKTKpr5kmG3k4b85Zf05Q9xXpxMNZJyzWN7RXqZdteYUdMkc6g@mail.gmail.com>
-Subject: Re: [PATCH v3 0/2] Add CCPI2 PMU support
-To:     Ganapatrao Kulkarni <gkulkarni@marvell.com>,
-        "will@kernel.org" <will@kernel.org>
-Cc:     "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        Jayachandran Chandrasekharan Nair <jnair@marvell.com>,
-        Robert Richter <rrichter@marvell.com>,
-        Jan Glauber <jglauber@marvell.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Will,
+On Thu 25 Jul 2019 at 18:42, Alexandre Mergnat <amergnat@baylibre.com> wrote:
 
-Any comments to this patchset?
+> Meson SoCs clock controllers use the string comparison method to describe
+> parent relation between the clocks, which is not optimized.
+>
+> Its also use bypass clock made from device-tree clock to provide an input
+> clock which can be access through global name, but it still not optimal.
+>
+> A recent patch [0] allows parents to be directly specified with
+> device-tree clock name or without string names from localy declared clocks.
+>
+> This patchset replaces clock string names by clock pointers (as possible),
+> removes bypass clocks and uses directly device-tree clock names in parent
+> assignment.
+>
+> Tested on GXL, GXBB, Meson8b, AXG SoCs by comparing the clock summary
+> (orphan too) before and after migration.
+>
+> [0] commit fc0c209c147f ("clk: Allow parents to be specified without string names")
+>
+> Change since v1:
+> - Improve comments in gxbb, g12a and meson8b files
+>
+> Alexandre Mergnat (8):
+>   clk: meson: g12a: move clock declaration to dependency order
+>   clk: meson: g12a: migrate to the new parent description method
+>   clk: meson: gxbb: migrate to the new parent description method
+>   clk: meson: axg: migrate to the new parent description method
+>   clk: meson: meson8b: migrate to the new parent description method
+>   clk: meson: clk-regmap: migrate to new parent description method
+>   clk: meson: remove ee input bypass clocks
+>   clk: meson: remove clk input helper
 
-On Tue, Jul 23, 2019 at 2:46 PM Ganapatrao Kulkarni
-<gkulkarni@marvell.com> wrote:
+Squashed patch 1 and 2
+Applied
+
+Thanks !
+
 >
-> Add Cavium Coherent Processor Interconnect (CCPI2) PMU
-> support in ThunderX2 Uncore driver.
+>  drivers/clk/meson/Kconfig       |    4 -
+>  drivers/clk/meson/Makefile      |    1 -
+>  drivers/clk/meson/axg.c         |  207 ++++--
+>  drivers/clk/meson/clk-input.c   |   49 --
+>  drivers/clk/meson/clk-input.h   |   19 -
+>  drivers/clk/meson/clk-regmap.h  |   12 +-
+>  drivers/clk/meson/g12a.c        | 1093 ++++++++++++++++++++-----------
+>  drivers/clk/meson/gxbb.c        |  657 +++++++++++++------
+>  drivers/clk/meson/meson-eeclk.c |   10 -
+>  drivers/clk/meson/meson-eeclk.h |    2 -
+>  drivers/clk/meson/meson8b.c     |  710 ++++++++++++++------
+>  11 files changed, 1805 insertions(+), 959 deletions(-)
+>  delete mode 100644 drivers/clk/meson/clk-input.c
+>  delete mode 100644 drivers/clk/meson/clk-input.h
 >
-> v3: Rebased to 5.3-rc1
->
-> v2: Updated with review comments [1]
->
-> [1] https://lkml.org/lkml/2019/6/14/965
->
-> v1: initial patch
->
-> Ganapatrao Kulkarni (2):
->   Documentation: perf: Update documentation for ThunderX2 PMU uncore
->     driver
->   drivers/perf: Add CCPI2 PMU support in ThunderX2 UNCORE driver.
->
->  .../admin-guide/perf/thunderx2-pmu.rst        |  20 +-
->  drivers/perf/thunderx2_pmu.c                  | 248 +++++++++++++++---
->  2 files changed, 225 insertions(+), 43 deletions(-)
->
-> --
+> -- 
 > 2.17.1
->
-
-Thanks,
-Ganapat
