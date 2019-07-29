@@ -2,55 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BD807977C
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:01:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C81279894
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:09:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729551AbfG2UAI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 16:00:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44668 "EHLO mail.kernel.org"
+        id S2388669AbfG2ThO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 15:37:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51570 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403754AbfG2Tws (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:52:48 -0400
+        id S1726805AbfG2ThD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:37:03 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B3D9B21773;
-        Mon, 29 Jul 2019 19:52:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3D38320C01;
+        Mon, 29 Jul 2019 19:37:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564429967;
-        bh=7gI2jRdswUqOZikL5g6HJFqgYXJPBbm5N+9BTbWMDY0=;
+        s=default; t=1564429022;
+        bh=PU7Dd+5IV7sWwb4ymWOHQ82+VRVcPHi0ngUL0BtacQk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UOZJBu4erYTGVEzWfZiOHHNnaGZPNxKRwS1YJphXCKeRdwArOrpQ/rl+fcVfeAp1d
-         Kh5agMQjBeF966n+oOOYR3IrCiHkDqsEgqUD0FetlcWbSCjrXn1tZ0+raI6Egp5TEb
-         xGal4d8uBAwcU0hmUZzAEsxV0TsrVfPmH/pWQSP4=
+        b=FkV/uCmRiMDO0Ps6xAM0YX0IvrRUYbT8C8WzuHKF2a787KGM98MFFgq95MKZ9zR5q
+         4bBLiFHsNViw1rcqw8rOhae9fdxPZuzyAckstah5A2nebL9FWYlCboznP61kpWW/LI
+         sjKdTvAbs2CQYiP20KEBkA/9aqJ94FWeZKzzkid8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Huang, Ying" <ying.huang@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Hugh Dickins <hughd@google.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Yang Shi <yang.shi@linux.alibaba.com>,
-        David Rientjes <rientjes@google.com>,
-        Rik van Riel <riel@redhat.com>, Jan Kara <jack@suse.cz>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Vasily Gorbik <gor@linux.ibm.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 152/215] mm/mincore.c: fix race between swapoff and mincore
-Date:   Mon, 29 Jul 2019 21:22:28 +0200
-Message-Id: <20190729190806.168930852@linuxfoundation.org>
+Subject: [PATCH 4.14 259/293] kallsyms: exclude kasan local symbols on s390
+Date:   Mon, 29 Jul 2019 21:22:30 +0200
+Message-Id: <20190729190844.262976455@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190729190739.971253303@linuxfoundation.org>
-References: <20190729190739.971253303@linuxfoundation.org>
+In-Reply-To: <20190729190820.321094988@linuxfoundation.org>
+References: <20190729190820.321094988@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -60,85 +44,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit aeb309b81c6bada783c3695528a3e10748e97285 ]
+[ Upstream commit 33177f01ca3fe550146bb9001bec2fd806b2f40c ]
 
-Via commit 4b3ef9daa4fc ("mm/swap: split swap cache into 64MB trunks"),
-after swapoff, the address_space associated with the swap device will be
-freed.  So swap_address_space() users which touch the address_space need
-some kind of mechanism to prevent the address_space from being freed
-during accessing.
+gcc asan instrumentation emits the following sequence to store frame pc
+when the kernel is built with CONFIG_RELOCATABLE:
+debug/vsprintf.s:
+        .section        .data.rel.ro.local,"aw"
+        .align  8
+.LC3:
+        .quad   .LASANPC4826@GOTOFF
+.text
+        .align  8
+        .type   number, @function
+number:
+.LASANPC4826:
 
-When mincore processes an unmapped range for swapped shmem pages, it
-doesn't hold the lock to prevent swap device from being swapped off.  So
-the following race is possible:
+and in case reloc is issued for LASANPC label it also gets into .symtab
+with the same address as actual function symbol:
+$ nm -n vmlinux | grep 0000000001397150
+0000000001397150 t .LASANPC4826
+0000000001397150 t number
 
-CPU1					CPU2
-do_mincore()				swapoff()
-  walk_page_range()
-    mincore_unmapped_range()
-      __mincore_unmapped_range
-        mincore_page
-	  as = swap_address_space()
-          ...				  exit_swap_address_space()
-          ...				    kvfree(spaces)
-	  find_get_page(as)
+In the end kernel backtraces are almost unreadable:
+[  143.748476] Call Trace:
+[  143.748484] ([<000000002da3e62c>] .LASANPC2671+0x114/0x190)
+[  143.748492]  [<000000002eca1a58>] .LASANPC2612+0x110/0x160
+[  143.748502]  [<000000002de9d830>] print_address_description+0x80/0x3b0
+[  143.748511]  [<000000002de9dd64>] __kasan_report+0x15c/0x1c8
+[  143.748521]  [<000000002ecb56d4>] strrchr+0x34/0x60
+[  143.748534]  [<000003ff800a9a40>] kasan_strings+0xb0/0x148 [test_kasan]
+[  143.748547]  [<000003ff800a9bba>] kmalloc_tests_init+0xe2/0x528 [test_kasan]
+[  143.748555]  [<000000002da2117c>] .LASANPC4069+0x354/0x748
+[  143.748563]  [<000000002dbfbb16>] do_init_module+0x136/0x3b0
+[  143.748571]  [<000000002dbff3f4>] .LASANPC3191+0x2164/0x25d0
+[  143.748580]  [<000000002dbffc4c>] .LASANPC3196+0x184/0x1b8
+[  143.748587]  [<000000002ecdf2ec>] system_call+0xd8/0x2d8
 
-The address space may be accessed after being freed.
+Since LASANPC labels are not even unique and get into .symtab only due
+to relocs filter them out in kallsyms.
 
-To fix the race, get_swap_device()/put_swap_device() is used to enclose
-find_get_page() to check whether the swap entry is valid and prevent the
-swap device from being swapoff during accessing.
-
-Link: http://lkml.kernel.org/r/20190611020510.28251-1-ying.huang@intel.com
-Fixes: 4b3ef9daa4fc ("mm/swap: split swap cache into 64MB trunks")
-Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Cc: Hugh Dickins <hughd@google.com>
-Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-Cc: Minchan Kim <minchan@kernel.org>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>
-Cc: Mel Gorman <mgorman@techsingularity.net>
-Cc: Jérôme Glisse <jglisse@redhat.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Yang Shi <yang.shi@linux.alibaba.com>
-Cc: David Rientjes <rientjes@google.com>
-Cc: Rik van Riel <riel@redhat.com>
-Cc: Jan Kara <jack@suse.cz>
-Cc: Dave Jiang <dave.jiang@intel.com>
-Cc: Daniel Jordan <daniel.m.jordan@oracle.com>
-Cc: Andrea Parri <andrea.parri@amarulasolutions.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- mm/mincore.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ scripts/kallsyms.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/mm/mincore.c b/mm/mincore.c
-index c3f058bd0faf..4fe91d497436 100644
---- a/mm/mincore.c
-+++ b/mm/mincore.c
-@@ -68,8 +68,16 @@ static unsigned char mincore_page(struct address_space *mapping, pgoff_t pgoff)
- 		 */
- 		if (xa_is_value(page)) {
- 			swp_entry_t swp = radix_to_swp_entry(page);
--			page = find_get_page(swap_address_space(swp),
--					     swp_offset(swp));
-+			struct swap_info_struct *si;
-+
-+			/* Prevent swap device to being swapoff under us */
-+			si = get_swap_device(swp);
-+			if (si) {
-+				page = find_get_page(swap_address_space(swp),
-+						     swp_offset(swp));
-+				put_swap_device(si);
-+			} else
-+				page = NULL;
- 		}
- 	} else
- 		page = find_get_page(mapping, pgoff);
+diff --git a/scripts/kallsyms.c b/scripts/kallsyms.c
+index 1dd24c5b9b47..b471022c8162 100644
+--- a/scripts/kallsyms.c
++++ b/scripts/kallsyms.c
+@@ -160,6 +160,9 @@ static int read_symbol(FILE *in, struct sym_entry *s)
+ 	/* exclude debugging symbols */
+ 	else if (stype == 'N' || stype == 'n')
+ 		return -1;
++	/* exclude s390 kasan local symbols */
++	else if (!strncmp(sym, ".LASANPC", 8))
++		return -1;
+ 
+ 	/* include the type field in the symbol name, so that it gets
+ 	 * compressed together */
 -- 
 2.20.1
 
