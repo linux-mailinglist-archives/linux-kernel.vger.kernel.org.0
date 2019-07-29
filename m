@@ -2,137 +2,211 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CAC0478C66
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 15:13:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F2ED678C71
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 15:13:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387998AbfG2NNE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 09:13:04 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:41527 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726167AbfG2NNE (ORCPT
+        id S1728507AbfG2NN6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 09:13:58 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:37773 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728077AbfG2NN5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 09:13:04 -0400
-Received: by mail-wr1-f66.google.com with SMTP id c2so58595440wrm.8;
-        Mon, 29 Jul 2019 06:13:02 -0700 (PDT)
+        Mon, 29 Jul 2019 09:13:57 -0400
+Received: by mail-lj1-f194.google.com with SMTP id z28so4296477ljn.4
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 06:13:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=OHQOPPy7/4hwyYGA/vv5wVuORcQr6NchGp5zyU89wG0=;
-        b=P/a9JaSMUmsNOp66pm4/R4RFIEQFC8Es01OH1gh0MDWPS/RnQH0rtCEI/iDBv1f9Ni
-         WxEA9J/3m3OGS42vbFjgpnbNYs7Tf2K0iRZp6vaXGRyOBWZFdQIzncA6FPxHFXtzurU9
-         3c33csWVjCIx0g+r7ekeYxAUjueWvsm8xWlE39fvRVjHh9FNj7mZe/wb1eSmnRLLKd8b
-         t+sQDgr4DQuNiu1Hd5NX2tcDQgA4KPTSudCRwgdJjC0F/JqHKrHejEua3r9wMQmjw148
-         LnEEDE7LrrWePTwwrSjlWJYDEcY14u1hAzqzrQhj2+BIiaxXIcK4MZywFSltIJNfTNGE
-         3J/Q==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=CKQDL2I9Hvug1vr4XsFN5hEugWYt2/ZUAQmrZwDJrns=;
+        b=rhaPG1aLchXR6WBP771DpOoicyGcNXJyl9fYnTySbX8UwpfkuS7m+zFFUvW5U+cdTd
+         mg9G3iU8EPKRpA9zK3rk0IoSR9rZo9oYQOB1yl0+jx9HO780HdQuq0zohU9jLuYHmxLL
+         W60xZVi4YzKA0/r5A3K3NL3w4jiU+stY9wm924irY6Q55eEo0RGTTgUm8z8QDMiALXy4
+         9v7FPDVuywacS8Y9SK8psywCvWOzE6InOqicRKXPkLs4VYSHw3AbbW/fRJJWetJlzJJT
+         8fq7K3r4Y0YdxSTpZdT0BKt1zSXMcpeC6M57I40tymiLnYOP3pt7KDZy4IL8N9pZ0ukP
+         PPnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=OHQOPPy7/4hwyYGA/vv5wVuORcQr6NchGp5zyU89wG0=;
-        b=CGN9GuLjfEd+w6BIn5mF+tRfeypZ7v7a3rGQG6uB21XLutypFMttyucuDhotUjDhCR
-         77NqgMTtxrjww/w3kDdHI+utB5E1p3Y0Zyu+8vhm5izsF8ySWg96AjP9pHZ3Kyk07HXm
-         9AuqwhATjTeL7Ym1dlC7DzVdDUazMtVyyy4rFArcLK7sPYDNIOt9iMvLs1pLKuvbkR+T
-         XaNnGio8sBZVl+igYk7s+NB2pRdAYoHgxOmU39TY5Ve34PQhJDfuxt6VSlOGtmImTeGN
-         q3JJSwCg3xoKKmYLOy95GiQVv8oVeaIlb32dszSD9sRFqjXvnPHWzxKjYPJvBGGV2Gsn
-         +wCA==
-X-Gm-Message-State: APjAAAWPYY/wXavmzoWYBcEQJhuDF2pO8gdUrXq/VJs0VcClbto5JhmO
-        A0Hshp9IbJO0pX/7uSYyEMnGYzAIbWdrhA==
-X-Google-Smtp-Source: APXvYqzvfTuzes+bHEgolmvEBkRLWuJKdlVEp7pcE1/Xi2hdZ9+35M+JXXfDbjbWyLqFKoVnUFEvOQ==
-X-Received: by 2002:adf:efc8:: with SMTP id i8mr64680709wrp.220.1564405981926;
-        Mon, 29 Jul 2019 06:13:01 -0700 (PDT)
-Received: from localhost ([51.15.41.238])
-        by smtp.gmail.com with ESMTPSA id i18sm81642557wrp.91.2019.07.29.06.13.00
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 29 Jul 2019 06:13:00 -0700 (PDT)
-Date:   Mon, 29 Jul 2019 14:12:59 +0100
-From:   Stefan Hajnoczi <stefanha@gmail.com>
-To:     Stefano Garzarella <sgarzare@redhat.com>
-Cc:     Stefan Hajnoczi <stefanha@redhat.com>, kvm@vger.kernel.org,
-        "Michael S. Tsirkin" <mst@redhat.com>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        "David S. Miller" <davem@davemloft.net>
-Subject: Re: [PATCH v4 0/5] vsock/virtio: optimizations to increase the
- throughput
-Message-ID: <20190729131259.GA6771@stefanha-x1.localdomain>
-References: <20190717113030.163499-1-sgarzare@redhat.com>
- <20190722090835.GF24934@stefanha-x1.localdomain>
- <20190722091434.tzf7lxw3tvrs5w5v@steredhat>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=CKQDL2I9Hvug1vr4XsFN5hEugWYt2/ZUAQmrZwDJrns=;
+        b=FGUKJ9buQ7N09NaWUbdivxuwYnR7IF+h3GINxUw5Mh3WgHyNpHr/rjPUdauPZ0fWuw
+         PUqXK0REV7isqdnbG5l3VgekMD7jdMSele84LaMNti5h+Oq2ydTAF/AVcEQaLpzonZYK
+         KSWSokVaHX8mWn2MhRb9/VZ9WuaEBI1cWl/zchQsKwO8vjs7M1woJWOcKSTxtYqJMKpF
+         F+XGUpHi3LUflD4inyFPpu5lTQBjKdL/ILtbz0v6B6PPVbTGq6ZYOxZxOOYeK+EVqnZA
+         9r85R5jsnY1cBr5rkxpbdRDjnQfuD83QxJWn9sePfEAGVQvKqgfgXvITa/k33T2kgOdI
+         H7Aw==
+X-Gm-Message-State: APjAAAV7DIP6xE24vegW+grlWadL3hFmQnlnTRIRxp4vGgGJWM/32UMP
+        q5azFCwahMBYoDnkG37jU3P8nQdt8gJMPRkmtt/B1w==
+X-Google-Smtp-Source: APXvYqz2jjMUco8euz7gowK7qLRiVo9UGuMteDf3ZTjbJn5vk1Z1jGwCr1q01S1xQ5A5Z4inG8v0or0IuJ+WdilBugo=
+X-Received: by 2002:a2e:970a:: with SMTP id r10mr54631712lji.115.1564406034852;
+ Mon, 29 Jul 2019 06:13:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="tKW2IUtsqtDRztdT"
-Content-Disposition: inline
-In-Reply-To: <20190722091434.tzf7lxw3tvrs5w5v@steredhat>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+References: <1560421833-27414-1-git-send-email-sumit.garg@linaro.org>
+ <1560421833-27414-4-git-send-email-sumit.garg@linaro.org> <20190708153908.GA28253@jax>
+ <CAFA6WYNzs=RErreWaa5BmF-P03Vf9nzQjvY_JpMckw87k9z12w@mail.gmail.com>
+ <20190709070354.GA5791@jax> <CAFA6WYPHVXbsOjzGVT1WWziMRKmWns=3YkD6_j+C1OJxTUbDmw@mail.gmail.com>
+ <CAHUa44GBt-8Z8ZniTraJYHgFVEUgMTjTJLEden3m2jhhY9qc-w@mail.gmail.com>
+In-Reply-To: <CAHUa44GBt-8Z8ZniTraJYHgFVEUgMTjTJLEden3m2jhhY9qc-w@mail.gmail.com>
+From:   Sumit Garg <sumit.garg@linaro.org>
+Date:   Mon, 29 Jul 2019 18:43:43 +0530
+Message-ID: <CAFA6WYPNoFGiCft_QewGN55YFjNUjvfJxJ-p0VTG522JZtXGag@mail.gmail.com>
+Subject: Re: [RFC 3/7] tee: add private login method for kernel clients
+To:     Jens Wiklander <jens.wiklander@linaro.org>
+Cc:     keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Jonathan Corbet <corbet@lwn.net>, dhowells@redhat.com,
+        jejb@linux.ibm.com,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Mimi Zohar <zohar@linux.ibm.com>, jmorris@namei.org,
+        serge@hallyn.com, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "tee-dev @ lists . linaro . org" <tee-dev@lists.linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, 29 Jul 2019 at 12:39, Jens Wiklander <jens.wiklander@linaro.org> wrote:
+>
+> Hi Sumit,
+>
+> On Tue, Jul 9, 2019 at 11:36 AM Sumit Garg <sumit.garg@linaro.org> wrote:
+> >
+> > On Tue, 9 Jul 2019 at 12:33, Jens Wiklander <jens.wiklander@linaro.org> wrote:
+> > >
+> > > On Tue, Jul 09, 2019 at 11:26:19AM +0530, Sumit Garg wrote:
+> > > > Thanks Jens for your comments.
+> > > >
+> > > > On Mon, 8 Jul 2019 at 21:09, Jens Wiklander <jens.wiklander@linaro.org> wrote:
+> > > > >
+> > > > > Hi Sumit,
+> > > > >
+> > > > > On Thu, Jun 13, 2019 at 04:00:29PM +0530, Sumit Garg wrote:
+> > > > > > There are use-cases where user-space shouldn't be allowed to communicate
+> > > > > > directly with a TEE device which is dedicated to provide a specific
+> > > > > > service for a kernel client. So add a private login method for kernel
+> > > > > > clients and disallow user-space to open-session using this login method.
+> > > > > >
+> > > > > > Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
+> > > > > > ---
+> > > > > >  drivers/tee/tee_core.c   | 6 ++++++
+> > > > > >  include/uapi/linux/tee.h | 2 ++
+> > > > > >  2 files changed, 8 insertions(+)
+> > > > > >
+> > > > > > diff --git a/drivers/tee/tee_core.c b/drivers/tee/tee_core.c
+> > > > > > index 0f16d9f..4581bd1 100644
+> > > > > > --- a/drivers/tee/tee_core.c
+> > > > > > +++ b/drivers/tee/tee_core.c
+> > > > > > @@ -334,6 +334,12 @@ static int tee_ioctl_open_session(struct tee_context *ctx,
+> > > > > >                       goto out;
+> > > > > >       }
+> > > > > >
+> > > > > > +     if (arg.clnt_login == TEE_IOCTL_LOGIN_REE_KERNEL) {
+> > > > > TEE_IOCTL_LOGIN_REE_KERNEL is defined as 0x80000000 which is in the
+> > > > > range specified and implementation defined by the GP spec. I wonder if
+> > > > > we shouldn't filter the entire implementation defined range instead of
+> > > > > just this value.
+> > > >
+> > > > Agree. Will rather check for entire implementation defined range:
+> > > > 0x80000000 - 0xFFFFFFFF.
+> > > >
+> >
+> > I had a second thought on this. It would be more restrictive for
+> > user-space TEE client library which may need to use implementation
+> > defined login method. So either we could define specific ranges for
+> > kernel and user-space or we can start with single login method
+> > reserved for kernel.
+>
+> I think we should reserve a range for kernel internal use. Only
+> reserving a single single login for kernel could force us to restrict
+> the API once more later, better to take a chunk now and be done with
+> it. Half of 0x80000000 - 0xFFFFFFFF is probably more than enough too
+> to leave a range for user space too.
+>
 
---tKW2IUtsqtDRztdT
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Ok then, will rather reserve this range for kernel.
 
-On Mon, Jul 22, 2019 at 11:14:34AM +0200, Stefano Garzarella wrote:
-> On Mon, Jul 22, 2019 at 10:08:35AM +0100, Stefan Hajnoczi wrote:
-> > On Wed, Jul 17, 2019 at 01:30:25PM +0200, Stefano Garzarella wrote:
-> > > This series tries to increase the throughput of virtio-vsock with sli=
-ght
-> > > changes.
-> > > While I was testing the v2 of this series I discovered an huge use of=
- memory,
-> > > so I added patch 1 to mitigate this issue. I put it in this series in=
- order
-> > > to better track the performance trends.
-> > >=20
-> > > v4:
-> > > - rebased all patches on current master (conflicts is Patch 4)
-> > > - Patch 1: added Stefan's R-b
-> > > - Patch 3: removed lock when buf_alloc is written [David];
-> > >            moved this patch after "vsock/virtio: reduce credit update=
- messages"
-> > >            to make it clearer
-> > > - Patch 4: vhost_exceeds_weight() is recently introduced, so I've sol=
-ved some
-> > >            conflicts
-> >=20
-> > Stefano: Do you want to continue experimenting before we merge this
-> > patch series?  The code looks functionally correct and the performance
-> > increases, so I'm happy for it to be merged.
->=20
-> I think we can merge this series.
->=20
-> I'll continue to do other experiments (e.g. removing TX workers, allocati=
-ng
-> pages, etc.) but I think these changes are prerequisites for the other pa=
-tches,
-> so we can merge them.
->=20
-> Thank you very much for the reviews!
+> >
+> > > > >
+> > > > > > +             pr_err("login method not allowed for user-space client\n");
+> > > > > pr_debug(), if it's needed at all.
+> > > > >
+> > > >
+> > > > Ok will use pr_debug() instead.
+> > > >
+> > > > > > +             rc = -EPERM;
+> > > > > > +             goto out;
+> > > > > > +     }
+> > > > > > +
+> > > > > >       rc = ctx->teedev->desc->ops->open_session(ctx, &arg, params);
+> > > > > >       if (rc)
+> > > > > >               goto out;
+> > > > > > diff --git a/include/uapi/linux/tee.h b/include/uapi/linux/tee.h
+> > > > > > index 4b9eb06..f33c69c 100644
+> > > > > > --- a/include/uapi/linux/tee.h
+> > > > > > +++ b/include/uapi/linux/tee.h
+> > > > > > @@ -172,6 +172,8 @@ struct tee_ioctl_buf_data {
+> > > > > >  #define TEE_IOCTL_LOGIN_APPLICATION          4
+> > > > > >  #define TEE_IOCTL_LOGIN_USER_APPLICATION     5
+> > > > > >  #define TEE_IOCTL_LOGIN_GROUP_APPLICATION    6
+> > > > > > +/* Private login method for REE kernel clients */
+> > > > > It's worth noting that this is filtered by the TEE framework, compared
+> > > > > to everything else which is treated opaquely.
+> > > > >
+> > > >
+> > > > IIUC, you are referring to login filter in optee_os. Change to prevent
+> > > > filter for this login method is part of this PR [1].
+> > > >
+> > > > [1] https://github.com/OP-TEE/optee_os/pull/3082
+> > >
+> > > No, I was referring to the changes in tee_ioctl_open_session() above.
+> > > It's relevant for user space to know since it will be prevented from
+> > > using that range of login identifiers.
+> >
+> > Ok, so you mean to extend the comment here for user-space to know that
+> > this login method/range is filtered by the TEE framework. Will do
+> > that.
+> >
+> > > This will restrict the user space
+> > > API, but I think the risk of breakage is minimal as OP-TEE is the only
+> > > in-tree driver registering in the TEE framework. I'm not aware of any
+> > > out-of-tree drivers registering.
+> >
+> > I am not sure if I follow you here. How do you expect this change to
+> > break out-of-tree TEE driver registration?
+>
+> It's a change in common code that put restrictions on the API.
+>
 
-All patches have been reviewed by here.  Have an Ack for good measure:
+Okay.
 
-Acked-by: Stefan Hajnoczi <stefanha@redhat.com>
+-Sumit
 
-The topics discussed in sub-threads relate to longer-term optimization
-work that doesn't block this series.  Please merge.
-
---tKW2IUtsqtDRztdT
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAl0+8NsACgkQnKSrs4Gr
-c8gLNgf/Y63sHjZ3yrw3pup1KDkZmcZX9U+gUxzFkEnpGo8Uz20pFa0UQ8EgfdIP
-Ow+qZ9hm77WDbeAx8lyWTwAV1C2WS1k5RMpqWJzBdI45MixObQ2+2/ddp+igHDAJ
-L7pDH+Wwc/7p0FcMuUqqQKl6MM2yJ9zHrRu/5xVtrWNuw4Hdt7BvWshvE0G496kv
-0itr7U5WqDstqYPBWm1DbGBr6Nnwv7a3R/3lslRsTiN3em63/Gl+hVgb+jvk/wSl
-W8BS+9/UJkaBG0vv+f89e7xqqvCP90S8CPGtk3LhUhufdf+5I/Hekm+eY7MDN+Au
-xX2HJr/ZEPFdghVj8F+OODK+aDR6aw==
-=tIn+
------END PGP SIGNATURE-----
-
---tKW2IUtsqtDRztdT--
+> Thanks,
+> Jens
+>
+>
+> >
+> > -Sumit
+> >
+> > >
+> > > Thanks,
+> > > Jens
+> > >
+> > > >
+> > > > -Sumit
+> > > >
+> > > > > > +#define TEE_IOCTL_LOGIN_REE_KERNEL           0x80000000
+> > > > > >
+> > > > > >  /**
+> > > > > >   * struct tee_ioctl_param - parameter
+> > > > > > --
+> > > > > > 2.7.4
+> > > > > >
+> > > > >
+> > > > > Thanks,
+> > > > > Jens
