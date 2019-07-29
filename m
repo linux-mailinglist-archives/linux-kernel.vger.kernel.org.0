@@ -2,112 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48D197990F
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:13:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A0ACD7992C
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:13:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730513AbfG2UMs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 16:12:48 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:40990 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730159AbfG2UMp (ORCPT
+        id S1730565AbfG2UNn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 16:13:43 -0400
+Received: from gateway24.websitewelcome.com ([192.185.51.35]:11397 "EHLO
+        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728525AbfG2UNj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 16:12:45 -0400
-Received: by mail-ot1-f68.google.com with SMTP id o101so63869607ota.8
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 13:12:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rLtTrMx9bNgV2e5WT+U4GbHrtwL6tZTxsShVYrHD6s8=;
-        b=tGszBRzPbi6dD+NRM2bN3t9p9ftDIDFlandOwt8DpUAVkYZ4vU9DgEhnuPtU35uxQ/
-         KJflcPgXXlm6X0pPEHjnN6jl2/WiXLYOc8kTsFgZjm52JZb//9cc8NSlJ0h/z9Gntkww
-         IHh1MZfFJO8t/jlHNiHPzn2KUh++WFzQaiWc7R7+sEi8mVNA/wgN1EoPKSVvlaWeX9U4
-         Cqmw8jl8KuzAg9Pto9YHhmzF1ClROkAaxGZTDhB2AgrMQ6fC9wMp2k2yFzK7yUsFbviP
-         jHFwQ0oNY3I0nJ4xOe0eVdhRJm6bn2zkQQhWvisj0JWCFFjM/ME1xtG/G/UGYMcwvYHp
-         hFtw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rLtTrMx9bNgV2e5WT+U4GbHrtwL6tZTxsShVYrHD6s8=;
-        b=tJ6cNEP7m6bcJMAMU8aU64XSaPaBJvfLXd2mE9XzLCQiMBsulf10/6oPWU+g6w5StC
-         +x7adSolJe2MibHe+Q0wN8+G7HGsKl54D4+SE9UyI3LJvy9e6UTDv4gbuQ+x763R0qjr
-         3ghxcxDj8clh2TKn0fBWqiSBNq6YX2hpkd0s3mNNwo3yPFQ05h25YZ3wvx0a5zfanRgN
-         inDqucto24EBUXCTlYWhxPAf1AZ8Zdbkd0zLQUOYEWkZwprKkdeNxFYGRisfFIwiGuQd
-         6Fr/jpAzXRim0VDM04Kiu2Pdzgz1RF8D1kLFmRbT/ognq/kdoEUaD9v92++Rz/OhH8sR
-         SD3A==
-X-Gm-Message-State: APjAAAW7C3v7LlJA5SDHANx++pRnGHyfRsVchvF+X4c0r7Kx3k43otE0
-        iRTx89Fgn5OXvqcDwZA2FNJMnCI72ccfXOjDFxhLdg==
-X-Google-Smtp-Source: APXvYqyalfL7uKo9yflW1Pyt9NtQK1vzEzGUhuLM63HRXQD3JmtpxZUwdeQTJ4TkIvAAhjMpgK7mWf7IUvOUuGB9nzw=
-X-Received: by 2002:a9d:6256:: with SMTP id i22mr4789080otk.139.1564431164859;
- Mon, 29 Jul 2019 13:12:44 -0700 (PDT)
+        Mon, 29 Jul 2019 16:13:39 -0400
+Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
+        by gateway24.websitewelcome.com (Postfix) with ESMTP id E249F8787
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 15:12:32 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id sC0WhH7uMdnCesC0WhkTyz; Mon, 29 Jul 2019 15:12:32 -0500
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        MIME-Version:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=oENqlPZb6frT+9DV38Oo3+KZ9Fe2eujoFK1IJWgO4vw=; b=bvchi7hMrWhQPxGx54HWPe1FFE
+        9Q7FdSp3dSqUxWMZ+3xyYnsciVZgTrxHcDFC371vq/52zy+/8aD/Hz/ggxNEn2bwxK3flx8V3/g2g
+        l7sfwySfRiFiZq9P3gVtkvj/emQCy/xz3ccUV2c999hwW9IqmPuVRsCn/LXhRnjBiKzTI28sAKyHf
+        lE9nn1YYGg3ji/WXTmN+J7XAE6mIimvc6ZhHwqMzGiwyTiNWol3A4FK13CZFKKY3ZMilxo3uITFrW
+        rY27zgrimQSiK5JbrN+igpeqSesCY2ah3B+6RZf0HhxA3la4QRsbCyutGKebvwisgI03eU+eO+ByX
+        5Ufd6JwQ==;
+Received: from [187.192.11.120] (port=59540 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1hsC0V-000znM-P1; Mon, 29 Jul 2019 15:12:31 -0500
+Date:   Mon, 29 Jul 2019 15:12:31 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Thomas Sailer <t.sailer@alumni.ethz.ch>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     linux-hams@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: [PATCH] net: hamradio: baycom_epp: Mark expected switch fall-through
+Message-ID: <20190729201231.GA7576@embeddedor>
 MIME-Version: 1.0
-References: <20190703011020.151615-1-saravanak@google.com> <20190717103220.f7cys267hq23fbsb@vireshk-i7>
- <CAGETcx-tbjVzRKW8D-564zgNOhrA_z-NC1q5U70bhoUDBhp6VA@mail.gmail.com>
- <20190718053746.64drmonk72vwnt4s@vireshk-i7> <CAGETcx_-=b3An9YdxLUnZap=0iaeczvWTEnw65FMLU8BwA3HfQ@mail.gmail.com>
- <20190729092454.6lfqzmhkvrhpimsp@vireshk-i7>
-In-Reply-To: <20190729092454.6lfqzmhkvrhpimsp@vireshk-i7>
-From:   Saravana Kannan <saravanak@google.com>
-Date:   Mon, 29 Jul 2019 13:12:08 -0700
-Message-ID: <CAGETcx_7fK20VZ6Zn07Z+Ran1_O7gSPohck_tg-aEr5oONQ5iA@mail.gmail.com>
-Subject: Re: [PATCH v3 0/6] Introduce Bandwidth OPPs for interconnect paths
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Georgi Djakov <georgi.djakov@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        "Sweeney, Sean" <seansw@qti.qualcomm.com>,
-        David Dai <daidavid1@codeaurora.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Evan Green <evgreen@chromium.org>,
-        Android Kernel Team <kernel-team@android.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 187.192.11.120
+X-Source-L: No
+X-Exim-ID: 1hsC0V-000znM-P1
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [187.192.11.120]:59540
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 15
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 29, 2019 at 2:24 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
->
-> On 18-07-19, 21:12, Saravana Kannan wrote:
-> > On Wed, Jul 17, 2019 at 10:37 PM Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> > > I would like
-> > > to put this data in the GPU OPP table only. What about putting a
-> > > range in the GPU OPP table for the Bandwidth if it can change so much
-> > > for the same frequency.
-> >
-> > I don't think the range is going to work.
->
-> Any specific reason for that ?
+Mark switch cases where we are expecting to fall through.
 
-The next sentence was literally explaining this :) Fine to debate
-that, but ignoring that and asking this question is kinda funny.
+This patch fixes the following warning (Building: i386):
 
-> > If a GPU is doing purely
-> > computational work, it's not unreasonable for it to vote for the
-> > lowest bandwidth for any GPU frequency.
->
-> I think that is fine, but if the GPU is able to find how much
-> bandwidth it needs why can't it just pass that value without needing
-> to have another OPP table for the path ?
+drivers/net/hamradio/baycom_epp.c: In function ‘transmit’:
+drivers/net/hamradio/baycom_epp.c:491:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
+    if (i) {
+       ^
+drivers/net/hamradio/baycom_epp.c:504:3: note: here
+   default:  /* fall through */
+   ^~~~~~~
 
-You were asking this question in the context of "can the GPU OPP just
-list all the range of bandwidth it might use per GPU frequency". My point
-is that the range would be useless because it would the entire
-available bandwidth range (because purely compute work might not need
-any bandwidth).
+Notice that, in this particular case, the code comment is
+modified in accordance with what GCC is expecting to find.
 
-Whereas, what the GPU's algorithm actually needs might be the list of
-"useful" bandwidth levels to use.
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/net/hamradio/baycom_epp.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Also, as we add more ICC request properties, this range idea will not scale.
+diff --git a/drivers/net/hamradio/baycom_epp.c b/drivers/net/hamradio/baycom_epp.c
+index daab2c07d891..9303aeb2595f 100644
+--- a/drivers/net/hamradio/baycom_epp.c
++++ b/drivers/net/hamradio/baycom_epp.c
+@@ -500,8 +500,9 @@ static int transmit(struct baycom_state *bc, int cnt, unsigned char stat)
+ 				}
+ 				break;
+ 			}
++			/* fall through */
+ 
+-		default:  /* fall through */
++		default:
+ 			if (bc->hdlctx.calibrate <= 0)
+ 				return 0;
+ 			i = min_t(int, cnt, bc->hdlctx.calibrate);
+-- 
+2.22.0
 
--Saravana
