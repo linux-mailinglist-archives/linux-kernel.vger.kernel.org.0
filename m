@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7647797F7
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:04:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 24BC7797F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:04:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389957AbfG2Tp0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 15:45:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34262 "EHLO mail.kernel.org"
+        id S2389982AbfG2Tpk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 15:45:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34518 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389292AbfG2TpV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:45:21 -0400
+        id S2389684AbfG2Tpe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:45:34 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 54FDA2171F;
-        Mon, 29 Jul 2019 19:45:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 103592054F;
+        Mon, 29 Jul 2019 19:45:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564429520;
-        bh=f7tBDxzUivvdbQFNLAvWicQS27YxUC57cCcTbYDlg+Q=;
+        s=default; t=1564429533;
+        bh=8JFWAouRfci5VnEtp4/OWU62qL5P6hS03Li64OSWmEY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lrUCE8p76KDszrfRbWrsEGMIc7SHPbkmJLJ8PHUtTzy+zpdDrm1yqleAOXSjvVvyK
-         ga5WRraf4weCUiy2FY7Uh+Fr/2qG5DT9BrSU0+bnH5aqFQN8GuRDHthhsWQuQgJDQE
-         53CmGOblAQ8OyPaKe7mX/HD6p5JuYrCkzNg0ExBU=
+        b=h4DRSkQB6iRxr+bTP19zVolf7/L4TevBPdWTMdulWc4ZFHC091/sf6HGZDFCH4Fjd
+         caDpODQyGoVtcHKzoyQrpYBK5TcKgQKCrzxJDGH2ASr5se/U/XezVlQpuoeLw24iZd
+         si55W6HenwIn2BrSMNw5EPkzOUJe6Qoxurc1B1Ac=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Quentin Deslandes <quentin.deslandes@itdev.co.uk>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 011/215] staging: vt6656: use meaningful error code during buffer allocation
-Date:   Mon, 29 Jul 2019 21:20:07 +0200
-Message-Id: <20190729190741.507584655@linuxfoundation.org>
+        stable@vger.kernel.org, Wen Yang <wen.yang99@zte.com.cn>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Heiko Stuebner <heiko@sntech.de>, linux-gpio@vger.kernel.org,
+        linux-rockchip@lists.infradead.org, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.2 015/215] pinctrl: rockchip: fix leaked of_node references
+Date:   Mon, 29 Jul 2019 21:20:11 +0200
+Message-Id: <20190729190742.091745059@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190729190739.971253303@linuxfoundation.org>
 References: <20190729190739.971253303@linuxfoundation.org>
@@ -44,124 +45,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit d8c2869300ab5f7a19bf6f5a04fe473c5c9887e3 ]
+[ Upstream commit 3c89c70634bb0b6f48512de873e7a45c7e1fbaa5 ]
 
-Check on called function's returned value for error and return 0 on
-success or a negative errno value on error instead of a boolean value.
+The call to of_parse_phandle returns a node pointer with refcount
+incremented thus it must be explicitly decremented after the last
+usage.
 
-Signed-off-by: Quentin Deslandes <quentin.deslandes@itdev.co.uk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Detected by coccinelle with the following warnings:
+./drivers/pinctrl/pinctrl-rockchip.c:3221:2-8: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 3196, but without a corresponding object release within this function.
+./drivers/pinctrl/pinctrl-rockchip.c:3223:1-7: ERROR: missing of_node_put; acquired a node pointer with refcount incremented on line 3196, but without a corresponding object release within this function.
+
+Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Heiko Stuebner <heiko@sntech.de>
+Cc: linux-gpio@vger.kernel.org
+Cc: linux-rockchip@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/staging/vt6656/main_usb.c | 42 ++++++++++++++++++++-----------
- 1 file changed, 28 insertions(+), 14 deletions(-)
+ drivers/pinctrl/pinctrl-rockchip.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/staging/vt6656/main_usb.c b/drivers/staging/vt6656/main_usb.c
-index ccafcc2c87ac..70433f756d8e 100644
---- a/drivers/staging/vt6656/main_usb.c
-+++ b/drivers/staging/vt6656/main_usb.c
-@@ -402,16 +402,19 @@ static void vnt_free_int_bufs(struct vnt_private *priv)
- 	kfree(priv->int_buf.data_buf);
- }
- 
--static bool vnt_alloc_bufs(struct vnt_private *priv)
-+static int vnt_alloc_bufs(struct vnt_private *priv)
- {
-+	int ret = 0;
- 	struct vnt_usb_send_context *tx_context;
- 	struct vnt_rcb *rcb;
- 	int ii;
- 
- 	for (ii = 0; ii < priv->num_tx_context; ii++) {
- 		tx_context = kmalloc(sizeof(*tx_context), GFP_KERNEL);
--		if (!tx_context)
-+		if (!tx_context) {
-+			ret = -ENOMEM;
- 			goto free_tx;
-+		}
- 
- 		priv->tx_context[ii] = tx_context;
- 		tx_context->priv = priv;
-@@ -419,16 +422,20 @@ static bool vnt_alloc_bufs(struct vnt_private *priv)
- 
- 		/* allocate URBs */
- 		tx_context->urb = usb_alloc_urb(0, GFP_KERNEL);
--		if (!tx_context->urb)
-+		if (!tx_context->urb) {
-+			ret = -ENOMEM;
- 			goto free_tx;
-+		}
- 
- 		tx_context->in_use = false;
+diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
+index 807a3263d849..62a622159006 100644
+--- a/drivers/pinctrl/pinctrl-rockchip.c
++++ b/drivers/pinctrl/pinctrl-rockchip.c
+@@ -3204,6 +3204,7 @@ static int rockchip_get_bank_data(struct rockchip_pin_bank *bank,
+ 						    base,
+ 						    &rockchip_regmap_config);
+ 		}
++		of_node_put(node);
  	}
  
- 	for (ii = 0; ii < priv->num_rcb; ii++) {
- 		priv->rcb[ii] = kzalloc(sizeof(*priv->rcb[ii]), GFP_KERNEL);
--		if (!priv->rcb[ii])
-+		if (!priv->rcb[ii]) {
-+			ret = -ENOMEM;
- 			goto free_rx_tx;
-+		}
- 
- 		rcb = priv->rcb[ii];
- 
-@@ -436,39 +443,46 @@ static bool vnt_alloc_bufs(struct vnt_private *priv)
- 
- 		/* allocate URBs */
- 		rcb->urb = usb_alloc_urb(0, GFP_KERNEL);
--		if (!rcb->urb)
-+		if (!rcb->urb) {
-+			ret = -ENOMEM;
- 			goto free_rx_tx;
-+		}
- 
- 		rcb->skb = dev_alloc_skb(priv->rx_buf_sz);
--		if (!rcb->skb)
-+		if (!rcb->skb) {
-+			ret = -ENOMEM;
- 			goto free_rx_tx;
-+		}
- 
- 		rcb->in_use = false;
- 
- 		/* submit rx urb */
--		if (vnt_submit_rx_urb(priv, rcb))
-+		ret = vnt_submit_rx_urb(priv, rcb);
-+		if (ret)
- 			goto free_rx_tx;
- 	}
- 
- 	priv->interrupt_urb = usb_alloc_urb(0, GFP_KERNEL);
--	if (!priv->interrupt_urb)
-+	if (!priv->interrupt_urb) {
-+		ret = -ENOMEM;
- 		goto free_rx_tx;
-+	}
- 
- 	priv->int_buf.data_buf = kmalloc(MAX_INTERRUPT_SIZE, GFP_KERNEL);
- 	if (!priv->int_buf.data_buf) {
--		usb_free_urb(priv->interrupt_urb);
--		goto free_rx_tx;
-+		ret = -ENOMEM;
-+		goto free_rx_tx_urb;
- 	}
- 
--	return true;
-+	return 0;
- 
-+free_rx_tx_urb:
-+	usb_free_urb(priv->interrupt_urb);
- free_rx_tx:
- 	vnt_free_rx_bufs(priv);
--
- free_tx:
- 	vnt_free_tx_bufs(priv);
--
--	return false;
-+	return ret;
- }
- 
- static void vnt_tx_80211(struct ieee80211_hw *hw,
+ 	bank->irq = irq_of_parse_and_map(bank->of_node, 0);
 -- 
 2.20.1
 
