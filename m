@@ -2,75 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 948DB79061
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 18:10:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 960A479063
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 18:10:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728792AbfG2QK2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 12:10:28 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:43406 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727714AbfG2QK2 (ORCPT
+        id S1728857AbfG2QKe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 12:10:34 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:36849 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727714AbfG2QKc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 12:10:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=HSyRm8Kmm8l8JMI1hY/zT50xKLMEAchWqs4a2VQweLg=; b=NCotWPN/8B+g7XsmW9W7qsWAs
-        lymhAfOfY6DBBAa+g3VaynKq2A8l/3wC8aT3mic3pVD7DWggQjxL9lrv6v5OtybxU0ECZ4/POo1XN
-        CQ+QKkUgHi6kE9z91R/xvivjaI0MxeAPlomThdTi80nTDy1h5dzH7UeEJWKcZInheuC5geRQbBZiV
-        +3aAJ6z7uOlE4kW9sbNBVlpLD6C063WDFBuplPlZk6wGyx978LydtUu2Ct6208pUNNnO+Wg16dutF
-        tBjXW8UxlgDoaCrATWSZb/fLkgaxt40jCBiaYzWYPlf537m+cuxWvrO5PBT28J66l5g2V5/YlMw76
-        N6srPsqUA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hs8ED-0000Xh-Fk; Mon, 29 Jul 2019 16:10:25 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 9B8F220AFFEAD; Mon, 29 Jul 2019 18:10:23 +0200 (CEST)
-Date:   Mon, 29 Jul 2019 18:10:23 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc:     luca abeni <luca.abeni@santannapisa.it>,
-        Ingo Molnar <mingo@kernel.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Valentin Schneider <Valentin.Schneider@arm.com>,
-        Qais Yousef <Qais.Yousef@arm.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/5] sched/deadline: Fix double accounting of rq/running
- bw in push_dl_task()
-Message-ID: <20190729161023.GK31398@hirez.programming.kicks-ass.net>
-References: <20190726082756.5525-1-dietmar.eggemann@arm.com>
- <20190726082756.5525-2-dietmar.eggemann@arm.com>
- <20190726121159.10fd1138@sweethome>
- <531f753a-57ba-408f-42e0-15252d7b1c32@arm.com>
+        Mon, 29 Jul 2019 12:10:32 -0400
+Received: by mail-lf1-f67.google.com with SMTP id q26so42493361lfc.3
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 09:10:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=npRMv0SA0p7PANP5eaT2dvKRy5JgSkEUbJ98gB+GiNA=;
+        b=kyxTI6kAj6pudtAvy2uPFUZdvC2mEvsH9RAuosmIvkEdE89FXzSgL3gTBEaqAgO9Ke
+         txA7wcAGjbL+v+3OV4KCv9a5ZSnjvEL73vbaRGfZ4swVZ0m8XOx3Q/lz/hpsdu1y4Zom
+         DEHmi/26n2aPc+fdyjlt+qAowiXJ4HD2dlPVzFqCJKYg7+T3HBSUrqTLkltaafB18aa7
+         Id1eomu8LsbZ6Gn4p71PptmeIXAU29NXY0ZwrBXQ2/8vcTNlUupL7JpsOMLwj74sjAMk
+         mbufnAXbQhbZHPjn7FjOHUvODjpyjK3KOfOR+OdrpEIFsrNcZYRvoqPvezfLYcg0Ex9W
+         liEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=npRMv0SA0p7PANP5eaT2dvKRy5JgSkEUbJ98gB+GiNA=;
+        b=SRCtt+MCgMssSU+UKM7KuILOtwkU5TXCz2x+mCgyuAz7SyX9JRBKV3zyjNiJrP28F+
+         FJsoSxnW/zvJibg83WxevkkOwOQ0EhnVaU2hkLuJW9RzlpgpmVHoidtvfQsH7rKeZJaO
+         p4IX5ocGq1Ujt3uJXHtttDUnXc5Tj4PoTswa7E9ABZiXBhyStmZcW+gcWOBnOdu+N1cQ
+         ZckUC+fR5uzloASdSqPDxIsK8NMKeshFM8UMCQ2eTJA4Tu4ZlrMMKN6FgnMCSdu70osA
+         /0mT8vp+P3QBtgyOZqT+oIPHGjhd9Idp0FbkD91PAc7M8givZvDfHrCAiQ6Sa7hDILd1
+         Wu/A==
+X-Gm-Message-State: APjAAAV0Z7xuxE6ynFQWt6sbaGm9KD3swm2Yt2ZItcZQxpKVYxOj+lEn
+        GaqR8loN4f8LC3R9AZs1h6+l3Rk8L1/f59y/8Ak=
+X-Google-Smtp-Source: APXvYqwdz1CgAj9YWJEywVjy5/+ZOXM2PAZBpcZzhiq77Jtw7OAINgOfRbirJI/QNRtMdrSjifGSh2pMRBRpwUejJb8=
+X-Received: by 2002:a05:6512:21e:: with SMTP id a30mr32590426lfo.107.1564416630026;
+ Mon, 29 Jul 2019 09:10:30 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <531f753a-57ba-408f-42e0-15252d7b1c32@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190729142316.21900-1-martin@kaiser.cx>
+In-Reply-To: <20190729142316.21900-1-martin@kaiser.cx>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Mon, 29 Jul 2019 13:10:35 -0300
+Message-ID: <CAOMZO5BDY5poV=bGGZZB8=xYTNw-Q7rTXRmqarpTLJMxngB4+g@mail.gmail.com>
+Subject: Re: [PATCH] ARM: dts: imx25-pdk: native-mode is part of display-timings
+To:     Martin Kaiser <martin@kaiser.cx>
+Cc:     NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 29, 2019 at 09:59:28AM +0100, Dietmar Eggemann wrote:
-> On 7/26/19 11:11 AM, luca abeni wrote:
-> > Hi Dietmar,
-> > 
-> > On Fri, 26 Jul 2019 09:27:52 +0100
-> > Dietmar Eggemann <dietmar.eggemann@arm.com> wrote:
-> > 
-> >> push_dl_task() always calls deactivate_task() with flags=0 which sets
-> >> p->on_rq=TASK_ON_RQ_MIGRATING.
-> > 
-> > Uhm... This is a recent change in the deactivate_task() behaviour,
-> > right? Because I tested SCHED_DEADLINE a lot, but I've never seen this
-> > issue :)
-> 
-> Looks like it was v5.2 commit 7dd778841164 ("sched/core: Unify p->on_rq
-> updates").
+On Mon, Jul 29, 2019 at 11:23 AM Martin Kaiser <martin@kaiser.cx> wrote:
+>
+> Move the native-mode property inside the display-timings node.
+>
+> According to
+> Documentation/devicetree/bindings/display/panel/display-timing.txt.
+> native-mode is a property of the display-timings node.
+>
+> If it's located outside of display-timings, the native-mode setting is
+> ignored and the first display timing is used (which is a problem only if
+> someone adds another display timing).
+>
+> Signed-off-by: Martin Kaiser <martin@kaiser.cx>
 
-Argh, that wasn't intentional (obviously); please post v2 with that as
-Fixes and I'll get it in sched/urgent and stable.
+Reviewed-by: Fabio Estevam <festevam@gmail.com>
