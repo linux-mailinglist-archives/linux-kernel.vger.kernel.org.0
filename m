@@ -2,45 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E434F78D74
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 16:07:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4693578D7A
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 16:08:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728530AbfG2OHf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 10:07:35 -0400
-Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:22396 "EHLO
-        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727569AbfG2OHd (ORCPT
+        id S1728584AbfG2OIs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 10:08:48 -0400
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:51348 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728391AbfG2OIp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 10:07:33 -0400
-X-IronPort-AV: E=Sophos;i="5.64,322,1559512800"; 
-   d="scan'208";a="393742892"
-Received: from 71-219-88-14.chvl.qwest.net (HELO hadrien.PK5001Z) ([71.219.88.14])
-  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jul 2019 16:07:30 +0200
-Date:   Mon, 29 Jul 2019 10:07:29 -0400 (EDT)
-From:   Julia Lawall <julia.lawall@lip6.fr>
-X-X-Sender: jll@hadrien
-To:     Joe Perches <joe@perches.com>
-cc:     David Laight <David.Laight@ACULAB.COM>,
-        cocci <cocci@systeme.lip6.fr>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [Fwd: [PATCH 1/2] string: Add stracpy and stracpy_pad
- mechanisms]
-In-Reply-To: <eaef283741c0a6a718040f99a17bdb9882bde665.camel@perches.com>
-Message-ID: <alpine.DEB.2.21.1907291004220.2686@hadrien>
-References: <7ab8957eaf9b0931a59eff6e2bd8c5169f2f6c41.1563841972.git.joe@perches.com>    <66fcdbf607d7d0bea41edb39e5579d63b62b7d84.camel@perches.com>    <alpine.DEB.2.21.1907231546090.2551@hadrien>    <0f3ba090dfc956f5651e6c7c430abdba94ddcb8b.camel@perches.com>
-  <alpine.DEB.2.21.1907232252260.2539@hadrien>    <d5993902fd44ce89915fab94f4db03f5081c3c8e.camel@perches.com>    <alpine.DEB.2.21.1907232326360.2539@hadrien>    <f909b4b31f123c7d88535db397a04421077ed0ab.camel@perches.com>    <563222fbfdbb44daa98078db9d404972@AcuMS.aculab.com>
-  <d2b2b528b9f296dfeb1d92554be024245abd678e.camel@perches.com>   <alpine.DEB.2.21.1907242040490.10108@hadrien>  <a0e892c3522f4df2991119a2a30cd62ec14c76cc.camel@perches.com>  <alpine.DEB.2.21.1907250856450.2555@hadrien>
- <eaef283741c0a6a718040f99a17bdb9882bde665.camel@perches.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Mon, 29 Jul 2019 10:08:45 -0400
+Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177]) (authenticated)
+        by conssluserg-03.nifty.com with ESMTP id x6TE8XuF013627;
+        Mon, 29 Jul 2019 23:08:33 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com x6TE8XuF013627
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1564409314;
+        bh=uSPQx/lOeIWy3VSnjzeRdBwGgXuOHDLD+EQgSpgUB+Q=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=DHLEfAhPo6fyvFS/z/p2S642b0+jDXKEd//M2loX+Hjh9ZIkssKftTmqCQzzpEb1v
+         V+0gKA9uAW+2Fo3GQ7vJaV3hMNwKki9SFpvZRrsOwvguJt+7M7slgVFQR1E+t3aqrJ
+         3fJgS33rRwcnA/amwMcbbDS6hcibUcBDTqViHt1BraEKmC00yHqKSYiG0nmikqjP8o
+         O9GrmyIvuRUmlmofCjbHkBsugKBiDsf8H32gpbvbuZTsbiXWV+rfszZR7HdpOonbhE
+         BkdlYNxH2TY9Crr5xZvwuJnSpV9F9kYG9Ssy5P3RH0Fes+6vd7Z7pCklCbtiS7Mve6
+         ayU0f4Zv7H/Nw==
+X-Nifty-SrcIP: [209.85.221.177]
+Received: by mail-vk1-f177.google.com with SMTP id b64so11976993vke.13;
+        Mon, 29 Jul 2019 07:08:33 -0700 (PDT)
+X-Gm-Message-State: APjAAAWcqPWChJKILf5dv4D7fbh115EHMIPWeKdbo+xRxlfy7n/R9AeI
+        b/JEZpkL5E5DykZaKrMonvz/MCLXr7tq2nlCHR8=
+X-Google-Smtp-Source: APXvYqwczpnrvR30MjqU1/slK/sm/xbhh0ihUQ9ff7momkusfqIbyZmm2cVmkjBbhhbW9HmVE//A01oYj0B+5GpQ9q4=
+X-Received: by 2002:a1f:b0b:: with SMTP id 11mr40548573vkl.64.1564409312295;
+ Mon, 29 Jul 2019 07:08:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20190728155138.29803-1-yamada.masahiro@socionext.com> <20190729131528.4vl6zpyyoyqd7np6@salvia>
+In-Reply-To: <20190729131528.4vl6zpyyoyqd7np6@salvia>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Mon, 29 Jul 2019 23:07:56 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAS4zC0=Ptf2_ux6d=kXhWELeaV_tp6+ZBaD-oDKdCEfrA@mail.gmail.com>
+Message-ID: <CAK7LNAS4zC0=Ptf2_ux6d=kXhWELeaV_tp6+ZBaD-oDKdCEfrA@mail.gmail.com>
+Subject: Re: [PATCH] netfilter: add include guard to xt_connlabel.h
+To:     Pablo Neira Ayuso <pablo@netfilter.org>
+Cc:     Jozsef Kadlecsik <kadlec@netfilter.org>,
+        Florian Westphal <fw@strlen.de>,
+        Netfilter Development Mailing list 
+        <netfilter-devel@vger.kernel.org>, coreteam@netfilter.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I see that stracpy is now in linux-next.  Would it be reasonable to send
-patches adding uses now?  Are there any rules for adding calls to
-stracpy_pad?
+On Mon, Jul 29, 2019 at 10:15 PM Pablo Neira Ayuso <pablo@netfilter.org> wrote:
+>
+> On Mon, Jul 29, 2019 at 12:51:38AM +0900, Masahiro Yamada wrote:
+> > Add a header include guard just in case.
+>
+> Applied to nf.git, thanks.
+>
+> BTW, is the _UAPI_ prefix really needed? I can see netfilter headers
+> under include/uapi/ sometimes are prefixed by UAPI and sometimes not.
 
-julia
+
+The _UAPI prefix will be useful when you happen to
+add the corresponding kernel-space header
+since it is often the case to have the same name headers
+for kernel-space and uapi.
+
+
+
+For example, compare the include guards of the following.
+
+include/linux/kernel.h
+include/uapi/linux/kernel.h
+
+
+Or, if you want to see an example for netfilter,
+
+include/linux/netfilter/xt_hashlimit.h
+include/uapi/linux/netfilter/xt_hashlimit.h
+
+
+
+I recommend to add _UAPI prefix to headers
+under include/uapi/
+to avoid include guard conflict.
+
+The _UAPI prefix is ripped off by
+scripts/headers_install.sh
+when exported to user-space.
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
