@@ -2,117 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E84DE78ACB
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 13:45:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D404078AD5
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 13:48:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387743AbfG2Lp5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 07:45:57 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:43736 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387638AbfG2Lp4 (ORCPT
+        id S2387814AbfG2LsH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 07:48:07 -0400
+Received: from mail-io1-f70.google.com ([209.85.166.70]:46838 "EHLO
+        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387717AbfG2LsG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 07:45:56 -0400
-Received: by mail-wr1-f65.google.com with SMTP id p13so61457329wru.10
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 04:45:55 -0700 (PDT)
+        Mon, 29 Jul 2019 07:48:06 -0400
+Received: by mail-io1-f70.google.com with SMTP id s83so67272496iod.13
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 04:48:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=wswpQoJgwyGyzPq8XXsD+wjeWZTbEbjja41h5xGOJVQ=;
-        b=ddz4Wor4yo8TmxH/uvHUEtv/+ZD88N5kD3iXKJe55xA17xsP3AWWW9F3z8Ta4be6kA
-         XuXKQM+XxegdmkctCTzC4e5UiG+MySlTUFrl0HlGqApGgNgfJF9uXeDIUDQtYDpczjp3
-         7Jp2Yh8/bpZEa4MqbaTXIRDUpYouXZ+iFGAfSOur2UmD97540jocfdJ+ec7pG2/Tbai3
-         ZwuKb5e9DU/soMxrPdmuNpQGh6ni63Eg0mBMRArNTKBb7J/Ep2oV/HtbwZiYG+krtpSK
-         LvKE5JuQGFO65vm7y6cQVnHcgjawFDJVwF0TK35sHBqk2wvwzSFlOLt06+63ELO7KHZr
-         tnKQ==
-X-Gm-Message-State: APjAAAUI3RiyYpoPkyoCVeU4B1VcCTCKc+fU783jlQDcOszmbWBHfT/N
-        YACvh/w+MZWwQXMNjzQvMq/PvQ==
-X-Google-Smtp-Source: APXvYqxe+aP64hAMwZCKl2r96RQuNJ8QO4qV5Nz/0wIXQvSs0/a1KeBhexRENJdUdvzJDmVJ3Lt07Q==
-X-Received: by 2002:a5d:498f:: with SMTP id r15mr113353676wrq.353.1564400754574;
-        Mon, 29 Jul 2019 04:45:54 -0700 (PDT)
-Received: from t460s.bristot.redhat.com (nat-cataldo.sssup.it. [193.205.81.5])
-        by smtp.gmail.com with ESMTPSA id k17sm78744410wrq.83.2019.07.29.04.45.53
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Mon, 29 Jul 2019 04:45:53 -0700 (PDT)
-Subject: Re: [RFC][PATCH 01/13] sched/deadline: Impose global limits on
- sched_attr::sched_period
-To:     Juri Lelli <juri.lelli@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     mingo@kernel.org, linux-kernel@vger.kernel.org,
-        dietmar.eggemann@arm.com, luca.abeni@santannapisa.it,
-        balsini@android.com, dvyukov@google.com, tglx@linutronix.de,
-        vpillai@digitalocean.com, rostedt@goodmis.org
-References: <20190726145409.947503076@infradead.org>
- <20190726161357.397880775@infradead.org>
- <20190729085711.GQ25636@localhost.localdomain>
-From:   Daniel Bristot de Oliveira <bristot@redhat.com>
-Message-ID: <a7928ec6-b198-015e-edfb-7272de05a953@redhat.com>
-Date:   Mon, 29 Jul 2019 13:45:52 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=10YzApYX/avNXF6ZFt6vid0PEZbfySrLNEEQGc5K4jg=;
+        b=tvssJlGIdbcKIc3Sm9Lvh1oqNalszsQ9qSDetn+PeS++sI+3rA0FdWY8fFrOHX2F6U
+         jsRj9y/2BLcU8AGgbcTkcD8D8z9CLTQLaXUXkK7/iO+nIyMDR3qffGoFASRLo8KRBFIi
+         QgXkIXBIghFrDy7Ao0oDniCTAdZa91VoP7A+6ojoPxKlbPST9KNb7MSZ/MZyOnNUVlDZ
+         CEUNW+D5W0UTWHkUnBxXPJYyLlQMMIocOZQNa9OaqaKQcYVFW71SDCBxrLLskipgWn+Q
+         FlissBg7kTeZruGFiTD/fGE3yDQfUp5/hv+4aJYr2Xq1jOOedQOuutlw0XVhv3mXY/RP
+         0+MA==
+X-Gm-Message-State: APjAAAV7iT4SiranbaKaOCuiAD+brISYWmspV48V0Uhatd9SXhg3HIvy
+        3fifjrCZ+PQOktsqMJvqN1SGHKFxhZRdEBdwiUgjWNXPsqiT
+X-Google-Smtp-Source: APXvYqxxWdOUcOlusGz8LpB0MiCo7q2JuSFiVdDcfXEXlqmNxf928J2k3JEod2y5bBvt8GJWPL8xdfAfdFTuM4CSJdDQpnlXFZlO
 MIME-Version: 1.0
-In-Reply-To: <20190729085711.GQ25636@localhost.localdomain>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a02:a595:: with SMTP id b21mr19416107jam.28.1564400885829;
+ Mon, 29 Jul 2019 04:48:05 -0700 (PDT)
+Date:   Mon, 29 Jul 2019 04:48:05 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000161dc3058ed0777c@google.com>
+Subject: WARNING in usbhid_raw_request/usb_submit_urb
+From:   syzbot <syzbot+a7a6b9c609b9457c62c6@syzkaller.appspotmail.com>
+To:     andreyknvl@google.com, gregkh@linuxfoundation.org,
+        gustavo@embeddedor.com, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29/07/2019 10:57, Juri Lelli wrote:
-> Hi,
-> 
-> On 26/07/19 16:54, Peter Zijlstra wrote:
->> Cc: Daniel Bristot de Oliveira <bristot@redhat.com>
->> Cc: Luca Abeni <luca.abeni@santannapisa.it>
->> Cc: Juri Lelli <juri.lelli@redhat.com>
->> Cc: Dmitry Vyukov <dvyukov@google.com>
->> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
->> ---
->>  include/linux/sched/sysctl.h |    3 +++
->>  kernel/sched/deadline.c      |   23 +++++++++++++++++++++--
->>  kernel/sysctl.c              |   14 ++++++++++++++
->>  3 files changed, 38 insertions(+), 2 deletions(-)
->>
->> --- a/include/linux/sched/sysctl.h
->> +++ b/include/linux/sched/sysctl.h
->> @@ -56,6 +56,9 @@ int sched_proc_update_handler(struct ctl
->>  extern unsigned int sysctl_sched_rt_period;
->>  extern int sysctl_sched_rt_runtime;
->>  
->> +extern unsigned int sysctl_sched_dl_period_max;
->> +extern unsigned int sysctl_sched_dl_period_min;
->> +
->>  #ifdef CONFIG_UCLAMP_TASK
->>  extern unsigned int sysctl_sched_uclamp_util_min;
->>  extern unsigned int sysctl_sched_uclamp_util_max;
->> --- a/kernel/sched/deadline.c
->> +++ b/kernel/sched/deadline.c
->> @@ -2597,6 +2597,14 @@ void __getparam_dl(struct task_struct *p
->>  }
->>  
->>  /*
->> + * Default limits for DL period; on the top end we guard against small util
->> + * tasks still getting rediculous long effective runtimes, on the bottom end we
-> s/rediculous/ridiculous/
-> 
->> + * guard against timer DoS.
->> + */
->> +unsigned int sysctl_sched_dl_period_max = 1 << 22; /* ~4 seconds */
->> +unsigned int sysctl_sched_dl_period_min = 100;     /* 100 us */
-> These limits look sane to me. I've actually been experimenting with 10us
-> period tasks and throttling seemed to behave fine, but I guess 100us is
-> a saner default.
-> 
-> So, (with a few lines of changelog :)
-> 
-> Acked-by: Juri Lelli <juri.lelli@redhat.com>
+Hello,
+
+syzbot found the following crash on:
+
+HEAD commit:    6a3599ce usb-fuzzer: main usb gadget fuzzer driver
+git tree:       https://github.com/google/kasan.git usb-fuzzer
+console output: https://syzkaller.appspot.com/x/log.txt?x=12386cb4600000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=700ca426ab83faae
+dashboard link: https://syzkaller.appspot.com/bug?extid=a7a6b9c609b9457c62c6
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+
+Unfortunately, I don't have any reproducer for this crash yet.
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+a7a6b9c609b9457c62c6@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+usb 2-1: BOGUS urb xfer, pipe 2 != type 2
+WARNING: CPU: 0 PID: 3730 at drivers/usb/core/urb.c:477  
+usb_submit_urb+0x1188/0x13b0 drivers/usb/core/urb.c:477
+Kernel panic - not syncing: panic_on_warn set ...
+CPU: 0 PID: 3730 Comm: syz-executor.1 Not tainted 5.2.0-rc6+ #15
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0xca/0x13e lib/dump_stack.c:113
+  panic+0x292/0x6c9 kernel/panic.c:219
+  __warn.cold+0x20/0x4b kernel/panic.c:576
+  report_bug+0x262/0x2a0 lib/bug.c:186
+  fixup_bug arch/x86/kernel/traps.c:179 [inline]
+  fixup_bug arch/x86/kernel/traps.c:174 [inline]
+  do_error_trap+0x12b/0x1e0 arch/x86/kernel/traps.c:272
+  do_invalid_op+0x32/0x40 arch/x86/kernel/traps.c:291
+  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:986
+RIP: 0010:usb_submit_urb+0x1188/0x13b0 drivers/usb/core/urb.c:477
+Code: 4d 85 ed 74 2c e8 f8 d3 f4 fd 4c 89 f7 e8 a0 51 1c ff 41 89 d8 44 89  
+e1 4c 89 ea 48 89 c6 48 c7 c7 00 0e f7 85 e8 83 98 ca fd <0f> 0b e9 20 f4  
+ff ff e8 cc d3 f4 fd 4c 89 f2 48 b8 00 00 00 00 00
+RSP: 0018:ffff8881d4f479d0 EFLAGS: 00010282
+RAX: 0000000000000000 RBX: 0000000000000002 RCX: 0000000000000000
+RDX: 0000000000005dfa RSI: ffffffff8127ef3d RDI: ffffed103a9e8f2c
+RBP: 0000000000000000 R08: ffff8881af663000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000002
+R13: ffff8881d462ed38 R14: ffff8881d18f9a20 R15: ffff8881d80e1c00
+  usb_start_wait_urb+0x108/0x2b0 drivers/usb/core/message.c:57
+  usb_internal_control_msg drivers/usb/core/message.c:101 [inline]
+  usb_control_msg+0x31c/0x4a0 drivers/usb/core/message.c:152
+  usbhid_set_raw_report drivers/hid/usbhid/hid-core.c:917 [inline]
+  usbhid_raw_request+0x21f/0x640 drivers/hid/usbhid/hid-core.c:1265
+  hid_hw_raw_request include/linux/hid.h:1079 [inline]
+  hidraw_send_report+0x296/0x500 drivers/hid/hidraw.c:151
+  hidraw_ioctl+0x5b4/0xaf0 drivers/hid/hidraw.c:421
+  vfs_ioctl fs/ioctl.c:46 [inline]
+  file_ioctl fs/ioctl.c:509 [inline]
+  do_vfs_ioctl+0xcda/0x12e0 fs/ioctl.c:696
+  ksys_ioctl+0x9b/0xc0 fs/ioctl.c:713
+  __do_sys_ioctl fs/ioctl.c:720 [inline]
+  __se_sys_ioctl fs/ioctl.c:718 [inline]
+  __x64_sys_ioctl+0x6f/0xb0 fs/ioctl.c:718
+  do_syscall_64+0xb7/0x560 arch/x86/entry/common.c:301
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x459829
+Code: fd b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 cb b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007fe142c43c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000459829
+RDX: 0000000020000000 RSI: 00000000c0404806 RDI: 0000000000000004
+RBP: 000000000075bfc8 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007fe142c446d4
+R13: 00000000004c22ab R14: 00000000004d5630 R15: 00000000ffffffff
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
 
-Looks sane to me too!
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Acked-by: Daniel Bristot de Oliveira <bristot@redhat.com>
-
--- Daniel
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
