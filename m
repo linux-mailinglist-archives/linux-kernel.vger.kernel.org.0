@@ -2,140 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55EB278D4C
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 15:59:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 819B978D30
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 15:51:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727977AbfG2N71 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 09:59:27 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:33868 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726767AbfG2N71 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 09:59:27 -0400
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id AC2E8B87C8480C7DA8F3;
-        Mon, 29 Jul 2019 21:43:42 +0800 (CST)
-Received: from [127.0.0.1] (10.177.96.203) by DGGEMS403-HUB.china.huawei.com
- (10.3.19.203) with Microsoft SMTP Server id 14.3.439.0; Mon, 29 Jul 2019
- 21:43:36 +0800
-Subject: Re: [RFC PATCH 08/10] powerpc/fsl_booke/kaslr: clear the original
- kernel if randomized
-To:     Christophe Leroy <christophe.leroy@c-s.fr>, <mpe@ellerman.id.au>,
-        <linuxppc-dev@lists.ozlabs.org>, <diana.craciun@nxp.com>,
-        <benh@kernel.crashing.org>, <paulus@samba.org>,
-        <npiggin@gmail.com>, <keescook@chromium.org>,
-        <kernel-hardening@lists.openwall.com>
-CC:     <linux-kernel@vger.kernel.org>, <wangkefeng.wang@huawei.com>,
-        <yebin10@huawei.com>, <thunder.leizhen@huawei.com>,
-        <jingxiangfeng@huawei.com>, <fanchengyang@huawei.com>
-References: <20190717080621.40424-1-yanaijie@huawei.com>
- <20190717080621.40424-9-yanaijie@huawei.com>
- <a09b4f53-2ccd-e675-4385-b53fd91fbafc@c-s.fr>
-From:   Jason Yan <yanaijie@huawei.com>
-Message-ID: <704624a1-36b7-50d7-cf8d-2923b2a97367@huawei.com>
-Date:   Mon, 29 Jul 2019 21:43:35 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        id S1727168AbfG2NvP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 09:51:15 -0400
+Received: from onstation.org ([52.200.56.107]:35686 "EHLO onstation.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726281AbfG2NvO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 09:51:14 -0400
+Received: from localhost (c-98-239-145-235.hsd1.wv.comcast.net [98.239.145.235])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: masneyb)
+        by onstation.org (Postfix) with ESMTPSA id EC8B83E910;
+        Mon, 29 Jul 2019 13:51:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=onstation.org;
+        s=default; t=1564408274;
+        bh=89xXheC+LLFYyAGIZ9A+v7CcZyeg5IL9Z5vUpZcHPb8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=kbsI0aGkwYytIrBOPD/CK+DXISYKi28m6BHuin/ZTIMgn3x17Vakg34uk1Wx0bumG
+         K6AhnmXln3A7avFH4ZPkG2sIJBeVqWBfdw3u+IvSGH2HhCJ+49kmuUKSCQ4gzCwUzt
+         quVBmys2OrnS790WbkkIQ9oMPDLtyjWRNLbG1pKU=
+Date:   Mon, 29 Jul 2019 09:51:13 -0400
+From:   Brian Masney <masneyb@onstation.org>
+To:     Jonathan Cameron <jonathan.cameron@huawei.com>
+Cc:     Chuhong Yuan <hslester96@gmail.com>,
+        Jonathan Cameron <jic23@kernel.org>, linux-iio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iio: tsl2772: Use device-managed API
+Message-ID: <20190729135113.GA3049@onstation.org>
+References: <20190726123058.22915-1-hslester96@gmail.com>
+ <20190727125749.63297c28@archlinux>
+ <20190728083141.GA14194@onstation.org>
+ <CANhBUQ3QiV1mPD6p+AROv6YnK+1CB5voVAHKbmzueUWc7P6vcQ@mail.gmail.com>
+ <20190729080307.GA360@onstation.org>
+ <20190729120802.000025e8@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <a09b4f53-2ccd-e675-4385-b53fd91fbafc@c-s.fr>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.177.96.203]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190729120802.000025e8@huawei.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Jul 29, 2019 at 12:08:02PM +0100, Jonathan Cameron wrote:
+> On Mon, 29 Jul 2019 04:03:07 -0400
+> Brian Masney <masneyb@onstation.org> wrote:
+> > There are devm_regulator_*() variants of the regulator API available
+> > that you can use. Lots of other APIs in the kernel have devm variants
+> > to simply drivers.
+> I don't think there are any devm_ versions of regulator disable.
+> 
+> IIRC the argument made when this last came up was that it was rarely correct
+> to be as course grained as a lot of IIO drivers are.   We should probably
+> do runtime pm and turn these regulators off a lot more frequently.
+> 
+> The reality is that it is an optimization that doesn't get done in 
+> IIO drivers that often as we mostly just want them to work and many
+> usecases aren't actually power constrained,
+> 
+> So we end up doing a lot of devm_add_action_or_reset to power down the
+> regulators.
 
-On 2019/7/29 19:19, Christophe Leroy wrote:
-> 
-> 
-> Le 17/07/2019 à 10:06, Jason Yan a écrit :
->> The original kernel still exists in the memory, clear it now.
->>
->> Signed-off-by: Jason Yan <yanaijie@huawei.com>
->> Cc: Diana Craciun <diana.craciun@nxp.com>
->> Cc: Michael Ellerman <mpe@ellerman.id.au>
->> Cc: Christophe Leroy <christophe.leroy@c-s.fr>
->> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
->> Cc: Paul Mackerras <paulus@samba.org>
->> Cc: Nicholas Piggin <npiggin@gmail.com>
->> Cc: Kees Cook <keescook@chromium.org>
->> ---
->>   arch/powerpc/kernel/kaslr_booke.c  | 11 +++++++++++
->>   arch/powerpc/mm/mmu_decl.h         |  2 ++
->>   arch/powerpc/mm/nohash/fsl_booke.c |  1 +
->>   3 files changed, 14 insertions(+)
->>
->> diff --git a/arch/powerpc/kernel/kaslr_booke.c 
->> b/arch/powerpc/kernel/kaslr_booke.c
->> index 90357f4bd313..00339c05879f 100644
->> --- a/arch/powerpc/kernel/kaslr_booke.c
->> +++ b/arch/powerpc/kernel/kaslr_booke.c
->> @@ -412,3 +412,14 @@ notrace void __init kaslr_early_init(void 
->> *dt_ptr, phys_addr_t size)
->>       reloc_kernel_entry(dt_ptr, kimage_vaddr);
->>   }
->> +
->> +void __init kaslr_second_init(void)
->> +{
->> +    /* If randomized, clear the original kernel */
->> +    if (kimage_vaddr != KERNELBASE) {
->> +        unsigned long kernel_sz;
->> +
->> +        kernel_sz = (unsigned long)_end - kimage_vaddr;
->> +        memset((void *)KERNELBASE, 0, kernel_sz);
-> 
-> Why are we clearing ? Is that just to tidy up or is it of security 
-> importance ?
-> 
+That makes sense. I have an out-of-tree patch where I started to add
+runtime pm support to the tsl2772 driver around the time I was working
+on the staging cleanup. I was unsure of how to do this when the user
+configures an interrupt threshold via sysfs since we don't want to
+completely power off the chip in that case. At the time, I couldn't
+find any other examples in IIO that showed how to do that. I should
+dust off that patch and send it out as a RFC to get some feedback.
 
-If we leave it there, attackers can still find the kernel object very
-easy, it's still dangerous especially if without 
-CONFIG_STRICT_KERNEL_RWX enabled.
-
-> If so, maybe memzero_explicit() should be used instead ?
-> 
-
-OK
-
->> +    }
->> +}
->> diff --git a/arch/powerpc/mm/mmu_decl.h b/arch/powerpc/mm/mmu_decl.h
->> index 754ae1e69f92..9912ee598f9b 100644
->> --- a/arch/powerpc/mm/mmu_decl.h
->> +++ b/arch/powerpc/mm/mmu_decl.h
->> @@ -150,8 +150,10 @@ extern void loadcam_multi(int first_idx, int num, 
->> int tmp_idx);
->>   #ifdef CONFIG_RANDOMIZE_BASE
->>   extern void kaslr_early_init(void *dt_ptr, phys_addr_t size);
->> +extern void kaslr_second_init(void);
-> 
-> No new 'extern' please.
-> 
->>   #else
->>   static inline void kaslr_early_init(void *dt_ptr, phys_addr_t size) {}
->> +static inline void kaslr_second_init(void) {}
->>   #endif
->>   struct tlbcam {
->> diff --git a/arch/powerpc/mm/nohash/fsl_booke.c 
->> b/arch/powerpc/mm/nohash/fsl_booke.c
->> index 8d25a8dc965f..fa5a87f5c08e 100644
->> --- a/arch/powerpc/mm/nohash/fsl_booke.c
->> +++ b/arch/powerpc/mm/nohash/fsl_booke.c
->> @@ -269,6 +269,7 @@ notrace void __init relocate_init(u64 dt_ptr, 
->> phys_addr_t start)
->>       kernstart_addr = start;
->>       if (is_second_reloc) {
->>           virt_phys_offset = PAGE_OFFSET - memstart_addr;
->> +        kaslr_second_init();
->>           return;
->>       }
->>
-> 
-> Christophe
-> 
-> .
-> 
-
+Brian
