@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A5C77997E
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:15:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 71ECA79938
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:14:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729782AbfG2UP3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 16:15:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38532 "EHLO mail.kernel.org"
+        id S1729994AbfG2T2q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 15:28:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41406 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727320AbfG2T0I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:26:08 -0400
+        id S1730008AbfG2T2k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:28:40 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DCB20216C8;
-        Mon, 29 Jul 2019 19:26:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6E1632171F;
+        Mon, 29 Jul 2019 19:28:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564428367;
-        bh=07VBAsveBrdgZ5ePYPkbGGr1G6Jm+1mfsZFXSSEGM6w=;
+        s=default; t=1564428519;
+        bh=QZgE5vkXhftBKTob9HNATHqbyzaacXCAFu0qhLBvlsY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hGr/JtjKKyfCaKFzGcJYmhjIaO9aitcF272uT6FHf2FkZAHzkQSLlGGAwECEhlWIA
-         d1/JAGFxo6KodBY+ug8MO+gvgFAgR0wVXhuxdu0/l/GUijeNIi609VfncVMZDfX5cu
-         kjAlGInEHxH78dY/rJV9Uf2tbuqH8RFoLxAV2QTE=
+        b=H8nlaEh+D54+88Keelet4CMbRt7+DxbTJpTcXk37OvsHc9U4JJCYfKvVZp0jhQn4q
+         zUe9woBXfvt78I5SFwcTnCc6IcAyyo6u7juTlqrcJaSIgNseF5MpgYtd6V2aDVFQpf
+         81XQbGXjDqaFjPUe/YrBZ5VFd+Z1hQ+kL+67Pfi8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anirudh Gupta <anirudh.gupta@sophos.com>,
-        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
+        stable@vger.kernel.org, Anders Roxell <anders.roxell@linaro.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 052/293] xfrm: fix sa selector validation
-Date:   Mon, 29 Jul 2019 21:19:03 +0200
-Message-Id: <20190729190827.685603526@linuxfoundation.org>
+Subject: [PATCH 4.14 063/293] media: i2c: fix warning same module names
+Date:   Mon, 29 Jul 2019 21:19:14 +0200
+Message-Id: <20190729190829.386726510@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190729190820.321094988@linuxfoundation.org>
 References: <20190729190820.321094988@linuxfoundation.org>
@@ -46,40 +45,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit b8d6d0079757cbd1b69724cfd1c08e2171c68cee ]
+[ Upstream commit b2ce5617dad254230551feda3599f2cc68e53ad8 ]
 
-After commit b38ff4075a80, the following command does not work anymore:
-$ ip xfrm state add src 10.125.0.2 dst 10.125.0.1 proto esp spi 34 reqid 1 \
-  mode tunnel enc 'cbc(aes)' 0xb0abdba8b782ad9d364ec81e3a7d82a1 auth-trunc \
-  'hmac(sha1)' 0xe26609ebd00acb6a4d51fca13e49ea78a72c73e6 96 flag align4
+When building with CONFIG_VIDEO_ADV7511 and CONFIG_DRM_I2C_ADV7511
+enabled as loadable modules, we see the following warning:
 
-In fact, the selector is not mandatory, allow the user to provide an empty
-selector.
+  drivers/gpu/drm/bridge/adv7511/adv7511.ko
+  drivers/media/i2c/adv7511.ko
 
-Fixes: b38ff4075a80 ("xfrm: Fix xfrm sel prefix length validation")
-CC: Anirudh Gupta <anirudh.gupta@sophos.com>
-Signed-off-by: Nicolas Dichtel <nicolas.dichtel@6wind.com>
-Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+Rework so that the file is named adv7511-v4l2.c.
+
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/xfrm/xfrm_user.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/media/i2c/Makefile                      | 2 +-
+ drivers/media/i2c/{adv7511.c => adv7511-v4l2.c} | 5 +++++
+ 2 files changed, 6 insertions(+), 1 deletion(-)
+ rename drivers/media/i2c/{adv7511.c => adv7511-v4l2.c} (99%)
 
-diff --git a/net/xfrm/xfrm_user.c b/net/xfrm/xfrm_user.c
-index b25b68ae7c74..150c58dc8a7b 100644
---- a/net/xfrm/xfrm_user.c
-+++ b/net/xfrm/xfrm_user.c
-@@ -166,6 +166,9 @@ static int verify_newsa_info(struct xfrm_usersa_info *p,
- 	}
+diff --git a/drivers/media/i2c/Makefile b/drivers/media/i2c/Makefile
+index f104650d6000..0f5c5a3cdca3 100644
+--- a/drivers/media/i2c/Makefile
++++ b/drivers/media/i2c/Makefile
+@@ -33,7 +33,7 @@ obj-$(CONFIG_VIDEO_ADV748X) += adv748x/
+ obj-$(CONFIG_VIDEO_ADV7604) += adv7604.o
+ obj-$(CONFIG_VIDEO_ADV7842) += adv7842.o
+ obj-$(CONFIG_VIDEO_AD9389B) += ad9389b.o
+-obj-$(CONFIG_VIDEO_ADV7511) += adv7511.o
++obj-$(CONFIG_VIDEO_ADV7511) += adv7511-v4l2.o
+ obj-$(CONFIG_VIDEO_VPX3220) += vpx3220.o
+ obj-$(CONFIG_VIDEO_VS6624)  += vs6624.o
+ obj-$(CONFIG_VIDEO_BT819) += bt819.o
+diff --git a/drivers/media/i2c/adv7511.c b/drivers/media/i2c/adv7511-v4l2.c
+similarity index 99%
+rename from drivers/media/i2c/adv7511.c
+rename to drivers/media/i2c/adv7511-v4l2.c
+index 80c20404334a..ef1144668809 100644
+--- a/drivers/media/i2c/adv7511.c
++++ b/drivers/media/i2c/adv7511-v4l2.c
+@@ -17,6 +17,11 @@
+  * SOFTWARE.
+  */
  
- 	switch (p->sel.family) {
-+	case AF_UNSPEC:
-+		break;
++/*
++ * This file is named adv7511-v4l2.c so it doesn't conflict with the Analog
++ * Device ADV7511 (config fragment CONFIG_DRM_I2C_ADV7511).
++ */
 +
- 	case AF_INET:
- 		if (p->sel.prefixlen_d > 32 || p->sel.prefixlen_s > 32)
- 			goto out;
+ 
+ #include <linux/kernel.h>
+ #include <linux/module.h>
 -- 
 2.20.1
 
