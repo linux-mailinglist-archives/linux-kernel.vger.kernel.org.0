@@ -2,90 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55497796C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:55:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B2C5579715
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:57:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404207AbfG2Tz1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 15:55:27 -0400
-Received: from mail-pg1-f182.google.com ([209.85.215.182]:38256 "EHLO
-        mail-pg1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404195AbfG2TzY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:55:24 -0400
-Received: by mail-pg1-f182.google.com with SMTP id f5so19954672pgu.5
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 12:55:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=PoQj5bEbw5DgB4+Vtw/Kx+8Nt4AUC+W30y4VQmAUYGQ=;
-        b=T8iue3piNchupgT7mqf964+e9/b6WAOSlJxP/kBLBqRb1BlhgM8bAY36UH5r/OK5bU
-         QmAEbI3/srBFsvqcE7iUGNuL2VSPV0F7etn2zsD08ym41FcSuk9iJxueCUwO13QIhbfq
-         xCMP0VZhLmiVfK+xuWP8aghLbD5jj6yopDHxsqR17PP734CeIh/+qF1/Jv7x8HjbmL9Z
-         lx3l/XDdQEX9KwJUmTjosgyMfK87SLkSaeQNc2mI1UOOQ680QPuLAnuuN58nYzeKAE0w
-         Pr1TYBeh5iBrhlo3ZPLGdXl/pKCyhUaeWwh9pewtZ9sYRJkPOVQfYf/skcZwLna6xdZz
-         iTxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=PoQj5bEbw5DgB4+Vtw/Kx+8Nt4AUC+W30y4VQmAUYGQ=;
-        b=G22gQ6rS3/V7BbjQlcOqA6o2ojna2jKluv7aU2VA5R8MoJkeN7Xer5hJnp+NmOMbvf
-         XFRLszVi3m1x+4VEHPaGoPdyL7ana6H1Tfs9qAvUIhBt4eLbMeUteYKGvKfXW6YcgDA3
-         +wEi5N7ZLW9szB8twQk2vc5A7YlLk7HFU1lwdx6s3DzFwrB2t8VuZkskwv3t8HKmdPL9
-         35IfDiLwPOxoOk8p+qnGopjW9TG91Tsk5sPL5XnsNW+nJ2kTORUCWXun2SN+fE3hYlN6
-         aeXzacbNiLw/vmGb5vzJXJa4TWe/JHQmrPge7zCrrL0KKfkCRBTQRicAQc35W+jfELtD
-         TEPA==
-X-Gm-Message-State: APjAAAU1nOl8222z1i7oVtASlIkkhtOrsf1fa7rTPapaU1/warf1neDX
-        nkYVNEU8y/bvfJgEXzvc2vg=
-X-Google-Smtp-Source: APXvYqzqSHFFeD0eCklaF+WfzV+ZbTBUstqmn+iGofPGNz4Jx53Fxtdl9ETANxsnifUV2i54HTElkg==
-X-Received: by 2002:a62:b411:: with SMTP id h17mr36628377pfn.99.1564430123468;
-        Mon, 29 Jul 2019 12:55:23 -0700 (PDT)
-Received: from [192.168.1.188] (66.29.164.166.static.utbb.net. [66.29.164.166])
-        by smtp.gmail.com with ESMTPSA id y10sm63212568pfm.66.2019.07.29.12.55.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 29 Jul 2019 12:55:22 -0700 (PDT)
-Subject: Re: BUG: KASAN: global-out-of-bounds in
- ata_exec_internal_sg+0x50f/0xc70
-To:     Jeffrin Thalakkottoor <jeffrin@rajagiritech.edu.in>,
-        Kees Cook <keescook@chromium.org>
-Cc:     Nick Desaulniers <ndesaulniers@google.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        tobin@kernel.org, lkml <linux-kernel@vger.kernel.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Alexander Potapenko <glider@google.com>
-References: <CAG=yYw=S197+2TzdPaiEaz-9MRuVtd+Q_L9W8GOf4jKwyppNjQ@mail.gmail.com>
- <CAKwvOdmg2b2PMzuzNmutacFArBNagjtwG=_VZvKhb4okzSkdiA@mail.gmail.com>
- <201907181423.E808958@keescook>
- <CAG=yYwmTdW0THoVGJc-Le+TyGMaHKZD-NHTRfXczNes65T8qWA@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <ec210573-dada-bb6e-b0ee-f54bea62e2ce@kernel.dk>
-Date:   Mon, 29 Jul 2019 13:55:20 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S2404123AbfG2T5w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 15:57:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50216 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2403935AbfG2T5t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:57:49 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 392A6217D7;
+        Mon, 29 Jul 2019 19:57:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564430268;
+        bh=Aa2gIj8xdhHIpCrPfiCJxrfbEsiESRZUaNjO6jjdaio=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=brvTLQ3dY465JfO+z3L0iZVh2jqQkRCPWznTlE+jMyhKrcO3KaEjw561toHX4MuuS
+         vOs82SEdhwHpVHQ5ViPY4p7n8mlObyBgwqHHO8TZubFFr1iHGYQ+uU31vMm4mgvmDu
+         MS1Tqlc+RIcebF09im977FUSFOeAwGQb10JDUIaQ=
+Date:   Mon, 29 Jul 2019 21:56:14 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Suren Baghdasaryan <surenb@google.com>
+Cc:     lizefan@huawei.com, hannes@cmpxchg.org, axboe@kernel.dk,
+        dennis@kernel.org, dennisszhou@gmail.com, mingo@redhat.com,
+        peterz@infradead.org, akpm@linux-foundation.org,
+        linux-mm@kvack.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-team@android.com,
+        Nick Kralevich <nnk@google.com>
+Subject: Re: [PATCH 1/1] psi: do not require setsched permission from the
+ trigger creator
+Message-ID: <20190729195614.GA31529@kroah.com>
+References: <20190729194205.212846-1-surenb@google.com>
 MIME-Version: 1.0
-In-Reply-To: <CAG=yYwmTdW0THoVGJc-Le+TyGMaHKZD-NHTRfXczNes65T8qWA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190729194205.212846-1-surenb@google.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/29/19 1:34 PM, Jeffrin Thalakkottoor wrote:
-> hello Kees Cook,
+On Mon, Jul 29, 2019 at 12:42:05PM -0700, Suren Baghdasaryan wrote:
+> When a process creates a new trigger by writing into /proc/pressure/*
+> files, permissions to write such a file should be used to determine whether
+> the process is allowed to do so or not. Current implementation would also
+> require such a process to have setsched capability. Setting of psi trigger
+> thread's scheduling policy is an implementation detail and should not be
+> exposed to the user level. Remove the permission check by using _nocheck
+> version of the function.
 > 
-> i tested your fix and i think it worked like a charm !
-> kasan message related disappeared during boot time and it does not
-> show in the output of "sudo dmesg -l err"
-> anyway thanks a lot !
+> Suggested-by: Nick Kralevich <nnk@google.com>
+> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> ---
+>  kernel/sched/psi.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Kees, could you send that out as a proper patch?
+$ ./scripts/get_maintainer.pl --file kernel/sched/psi.c
+Ingo Molnar <mingo@redhat.com> (maintainer:SCHEDULER)
+Peter Zijlstra <peterz@infradead.org> (maintainer:SCHEDULER)
+linux-kernel@vger.kernel.org (open list:SCHEDULER)
 
--- 
-Jens Axboe
 
+No where am I listed there, so why did you send this "To:" me?
+
+please fix up and resend.
+
+greg k-h
