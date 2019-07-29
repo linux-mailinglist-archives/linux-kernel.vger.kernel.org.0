@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7076178561
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 08:53:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B62E07856A
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 08:53:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727358AbfG2Gwy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 02:52:54 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:56598 "EHLO huawei.com"
+        id S1727408AbfG2GxN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 02:53:13 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:56608 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727296AbfG2Gws (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 02:52:48 -0400
+        id S1727294AbfG2GxL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 02:53:11 -0400
 Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 5B7E54FD6EB467559D91;
+        by Forcepoint Email with ESMTP id 60B6363F9D6113796B92;
         Mon, 29 Jul 2019 14:52:45 +0800 (CST)
 Received: from architecture4.huawei.com (10.140.130.215) by smtp.huawei.com
  (10.3.19.210) with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 29 Jul
- 2019 14:52:34 +0800
+ 2019 14:52:35 +0800
 From:   Gao Xiang <gaoxiang25@huawei.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         <devel@driverdev.osuosl.org>
@@ -25,9 +25,9 @@ CC:     LKML <linux-kernel@vger.kernel.org>,
         Miao Xie <miaoxie@huawei.com>, <weidu.du@huawei.com>,
         Fang Wei <fangwei1@huawei.com>,
         Gao Xiang <gaoxiang25@huawei.com>
-Subject: [PATCH 19/22] staging: erofs: tidy up utils.c
-Date:   Mon, 29 Jul 2019 14:51:56 +0800
-Message-ID: <20190729065159.62378-20-gaoxiang25@huawei.com>
+Subject: [PATCH 20/22] staging: erofs: tidy up internal.h
+Date:   Mon, 29 Jul 2019 14:51:57 +0800
+Message-ID: <20190729065159.62378-21-gaoxiang25@huawei.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190729065159.62378-1-gaoxiang25@huawei.com>
 References: <20190729065159.62378-1-gaoxiang25@huawei.com>
@@ -41,86 +41,96 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 keep in line with erofs-outofstaging patchset:
- - Update comments in erofs_try_to_release_workgroup;
- - code style cleanup.
+ - remove an extra #ifdef CONFIG_EROFS_FS_ZIP;
+ - add tags at the end of #endif acrossing several lines.
 
 Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
 ---
- drivers/staging/erofs/utils.c | 27 +++++++++++++--------------
- 1 file changed, 13 insertions(+), 14 deletions(-)
+ drivers/staging/erofs/internal.h | 29 +++++++++++++----------------
+ 1 file changed, 13 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/staging/erofs/utils.c b/drivers/staging/erofs/utils.c
-index 0e6308b15717..814c2ee037ae 100644
---- a/drivers/staging/erofs/utils.c
-+++ b/drivers/staging/erofs/utils.c
-@@ -114,8 +114,7 @@ int erofs_register_workgroup(struct super_block *sb,
- 	 */
- 	__erofs_workgroup_get(grp);
+diff --git a/drivers/staging/erofs/internal.h b/drivers/staging/erofs/internal.h
+index 43f9d90195bc..39d009554094 100644
+--- a/drivers/staging/erofs/internal.h
++++ b/drivers/staging/erofs/internal.h
+@@ -49,7 +49,7 @@ struct erofs_fault_info {
+ 	unsigned int inject_rate;
+ 	unsigned int inject_type;
+ };
+-#endif
++#endif	/* CONFIG_EROFS_FAULT_INJECTION */
  
--	err = radix_tree_insert(&sbi->workstn_tree,
--				grp->index, grp);
-+	err = radix_tree_insert(&sbi->workstn_tree, grp->index, grp);
- 	if (unlikely(err))
- 		/*
- 		 * it's safe to decrease since the workgroup isn't visible
-@@ -156,18 +155,18 @@ static bool erofs_try_to_release_workgroup(struct erofs_sb_info *sbi,
- 					   bool cleanup)
+ /* EROFS_SUPER_MAGIC_V1 to represent the whole file system */
+ #define EROFS_SUPER_MAGIC   EROFS_SUPER_MAGIC_V1
+@@ -138,7 +138,7 @@ static inline bool time_to_inject(struct erofs_sb_info *sbi, int type)
+ static inline void erofs_show_injection_info(int type)
  {
- 	/*
--	 * for managed cache enabled, the refcount of workgroups
--	 * themselves could be < 0 (freezed). So there is no guarantee
--	 * that all refcount > 0 if managed cache is enabled.
-+	 * If managed cache is on, refcount of workgroups
-+	 * themselves could be < 0 (freezed). In other words,
-+	 * there is no guarantee that all refcounts > 0.
- 	 */
- 	if (!erofs_workgroup_try_to_freeze(grp, 1))
- 		return false;
+ }
+-#endif
++#endif	/* !CONFIG_EROFS_FAULT_INJECTION */
  
- 	/*
--	 * note that all cached pages should be unlinked
--	 * before delete it from the radix tree.
--	 * Otherwise some cached pages of an orphan old workgroup
--	 * could be still linked after the new one is available.
-+	 * Note that all cached pages should be unattached
-+	 * before deleted from the radix tree. Otherwise some
-+	 * cached pages could be still attached to the orphan
-+	 * old workgroup when the new one is available in the tree.
- 	 */
- 	if (erofs_try_to_free_all_cached_pages(sbi, grp)) {
- 		erofs_workgroup_unfreeze(grp, 1);
-@@ -175,7 +174,7 @@ static bool erofs_try_to_release_workgroup(struct erofs_sb_info *sbi,
- 	}
+ static inline void *erofs_kmalloc(struct erofs_sb_info *sbi,
+ 					size_t size, gfp_t flags)
+@@ -236,8 +236,14 @@ static inline int erofs_wait_on_workgroup_freezed(struct erofs_workgroup *grp)
+ 	DBG_BUGON(v == EROFS_LOCKED_MAGIC);
+ 	return v;
+ }
+-#endif
+-#endif	/* CONFIG_EROFS_FS_ZIP */
++#endif	/* !CONFIG_SMP */
++
++/* hard limit of pages per compressed cluster */
++#define Z_EROFS_CLUSTER_MAX_PAGES       (CONFIG_EROFS_FS_CLUSTER_PAGE_LIMIT)
++#define EROFS_PCPUBUF_NR_PAGES          Z_EROFS_CLUSTER_MAX_PAGES
++#else
++#define EROFS_PCPUBUF_NR_PAGES          0
++#endif	/* !CONFIG_EROFS_FS_ZIP */
  
- 	/*
--	 * it is impossible to fail after the workgroup is freezed,
-+	 * It's impossible to fail after the workgroup is freezed,
- 	 * however in order to avoid some race conditions, add a
- 	 * DBG_BUGON to observe this in advance.
- 	 */
-@@ -183,8 +182,8 @@ static bool erofs_try_to_release_workgroup(struct erofs_sb_info *sbi,
- 						     grp->index)) != grp);
+ /* we strictly follow PAGE_SIZE and no buffer head yet */
+ #define LOG_BLOCK_SIZE		PAGE_SHIFT
+@@ -256,15 +262,6 @@ static inline int erofs_wait_on_workgroup_freezed(struct erofs_workgroup *grp)
  
- 	/*
--	 * if managed cache is enable, the last refcount
--	 * should indicate the related workstation.
-+	 * If managed cache is on, last refcount should indicate
-+	 * the related workstation.
- 	 */
- 	erofs_workgroup_unfreeze_final(grp);
- 	return true;
-@@ -273,9 +272,9 @@ static unsigned long erofs_shrink_scan(struct shrinker *shrink,
- 	unsigned long freed = 0;
+ #define ROOT_NID(sb)		((sb)->root_nid)
  
- 	spin_lock(&erofs_sb_list_lock);
--	do
-+	do {
- 		run_no = ++shrinker_run_no;
--	while (run_no == 0);
-+	} while (run_no == 0);
+-#ifdef CONFIG_EROFS_FS_ZIP
+-/* hard limit of pages per compressed cluster */
+-#define Z_EROFS_CLUSTER_MAX_PAGES       (CONFIG_EROFS_FS_CLUSTER_PAGE_LIMIT)
+-
+-#define EROFS_PCPUBUF_NR_PAGES          Z_EROFS_CLUSTER_MAX_PAGES
+-#else
+-#define EROFS_PCPUBUF_NR_PAGES          0
+-#endif
+-
+ #define erofs_blknr(addr)       ((addr) / EROFS_BLKSIZ)
+ #define erofs_blkoff(addr)      ((addr) % EROFS_BLKSIZ)
+ #define blknr_to_addr(nr)       ((erofs_off_t)(nr) * EROFS_BLKSIZ)
+@@ -304,7 +301,7 @@ struct erofs_vnode {
+ 			unsigned char  z_logical_clusterbits;
+ 			unsigned char  z_physical_clusterbits[2];
+ 		};
+-#endif
++#endif	/* CONFIG_EROFS_FS_ZIP */
+ 	};
+ 	/* the corresponding vfs inode */
+ 	struct inode vfs_inode;
+@@ -412,7 +409,7 @@ static inline int z_erofs_map_blocks_iter(struct inode *inode,
+ {
+ 	return -ENOTSUPP;
+ }
+-#endif
++#endif	/* !CONFIG_EROFS_FS_ZIP */
  
- 	/* Iterate over all mounted superblocks and try to shrink them */
- 	p = erofs_sb_list.next;
+ /* data.c */
+ static inline struct bio *erofs_grab_bio(struct super_block *sb,
+@@ -548,7 +545,7 @@ static inline int erofs_init_shrinker(void) { return 0; }
+ static inline void erofs_exit_shrinker(void) {}
+ static inline int z_erofs_init_zip_subsystem(void) { return 0; }
+ static inline void z_erofs_exit_zip_subsystem(void) {}
+-#endif
++#endif	/* !CONFIG_EROFS_FS_ZIP */
+ 
+ #endif	/* __EROFS_INTERNAL_H */
+ 
 -- 
 2.17.1
 
