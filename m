@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67C377976B
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:01:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4004379787
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:01:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390754AbfG2Twk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 15:52:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44250 "EHLO mail.kernel.org"
+        id S2391093AbfG2UAh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 16:00:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44306 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403898AbfG2Tw0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:52:26 -0400
+        id S2390436AbfG2Tw2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:52:28 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 22F4A2171F;
-        Mon, 29 Jul 2019 19:52:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AF0EB217D7;
+        Mon, 29 Jul 2019 19:52:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564429945;
-        bh=dLN48frxHIgBkJc6jUET3AT4ObeOAhRSb1d7Fprxev4=;
+        s=default; t=1564429948;
+        bh=tX+IshYVTHGNNujMt94bhRNsrEcqv6riFvKMfNSTxh4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=F/9MAQgVMnq0M/+EmvwH7cl2Bged338bNhegx0KiHT6NUqBu+3BNuCIZSjqIfyUYK
-         Ner678Th/gaT5+aLrbti098Wgu1hG7NvKjH2FtVm/7yKF9O/UEOAT6bh1vEu3nUdpq
-         ZYV567KcFG6lSUNgS6yflA4vFXcPRCmTcQZL9Sjk=
+        b=QagjrEMy8rQf8huRXDWemO/3rv2kWKUhkXjwdAbrB9lao//Bb97dTjgbSZMuADJx9
+         bleVdpR991GxIrJhbouajBqwLSJyTmLVLhAJ9uymResH8wqyzxdlmI9BzfZqgz7MfC
+         nqQbJok7j1MeK0FLA3l8gYLdBx/SZ6lKEJSM7AuU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sachin Sant <sachinp@linux.vnet.ibm.com>,
-        Oliver OHalloran <oohall@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Hulk Robot <hulkci@huawei.com>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 145/215] powerpc/eeh: Handle hugepages in ioremap space
-Date:   Mon, 29 Jul 2019 21:22:21 +0200
-Message-Id: <20190729190804.835475505@linuxfoundation.org>
+Subject: [PATCH 5.2 146/215] platform/x86: Fix PCENGINES_APU2 Kconfig warning
+Date:   Mon, 29 Jul 2019 21:22:22 +0200
+Message-Id: <20190729190805.047820359@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190729190739.971253303@linuxfoundation.org>
 References: <20190729190739.971253303@linuxfoundation.org>
@@ -45,66 +45,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 33439620680be5225c1b8806579a291e0d761ca0 ]
+[ Upstream commit 7d67c8ac25fbc66ee254aa3e33329d1c9bc152ce ]
 
-In commit 4a7b06c157a2 ("powerpc/eeh: Handle hugepages in ioremap
-space") support for using hugepages in the vmalloc and ioremap areas was
-enabled for radix. Unfortunately this broke EEH MMIO error checking.
+Fix Kconfig warning for PCENGINES_APU2 symbol:
 
-Detection works by inserting a hook which checks the results of the
-ioreadXX() set of functions.  When a read returns a 0xFFs response we
-need to check for an error which we do by mapping the (virtual) MMIO
-address back to a physical address, then mapping physical address to a
-PCI device via an interval tree.
+WARNING: unmet direct dependencies detected for GPIO_AMD_FCH
+  Depends on [n]: GPIOLIB [=n] && HAS_IOMEM [=y]
+  Selected by [y]:
+  - PCENGINES_APU2 [=y] && X86 [=y] && X86_PLATFORM_DEVICES [=y] && INPUT [=y] && INPUT_KEYBOARD [=y] && LEDS_CLASS [=y]
 
-When translating virt -> phys we currently assume the ioremap space is
-only populated by PAGE_SIZE mappings. If a hugepage mapping is found we
-emit a WARN_ON(), but otherwise handles the check as though a normal
-page was found. In pathalogical cases such as copying a buffer
-containing a lot of 0xFFs from BAR memory this can result in the system
-not booting because it's too busy printing WARN_ON()s.
+WARNING: unmet direct dependencies detected for KEYBOARD_GPIO_POLLED
+  Depends on [n]: !UML && INPUT [=y] && INPUT_KEYBOARD [=y] && GPIOLIB [=n]
+  Selected by [y]:
+  - PCENGINES_APU2 [=y] && X86 [=y] && X86_PLATFORM_DEVICES [=y] && INPUT [=y] && INPUT_KEYBOARD [=y] && LEDS_CLASS [=y]
 
-There's no real reason to assume huge pages can't be present and we're
-prefectly capable of handling them, so do that.
+Add GPIOLIB dependency to fix it.
 
-Fixes: 4a7b06c157a2 ("powerpc/eeh: Handle hugepages in ioremap space")
-Reported-by: Sachin Sant <sachinp@linux.vnet.ibm.com>
-Signed-off-by: Oliver O'Halloran <oohall@gmail.com>
-Tested-by: Sachin Sant <sachinp@linux.vnet.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://lore.kernel.org/r/20190710150517.27114-1-oohall@gmail.com
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Fixes: f8eb0235f659 ("x86: pcengines apuv2 gpio/leds/keys platform driver")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/kernel/eeh.c | 15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
+ drivers/platform/x86/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/powerpc/kernel/eeh.c b/arch/powerpc/kernel/eeh.c
-index f192d57db47d..c0e4b73191f3 100644
---- a/arch/powerpc/kernel/eeh.c
-+++ b/arch/powerpc/kernel/eeh.c
-@@ -354,10 +354,19 @@ static inline unsigned long eeh_token_to_phys(unsigned long token)
- 	ptep = find_init_mm_pte(token, &hugepage_shift);
- 	if (!ptep)
- 		return token;
--	WARN_ON(hugepage_shift);
--	pa = pte_pfn(*ptep) << PAGE_SHIFT;
+diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+index 5d5cc6111081..7c2fd1d72e18 100644
+--- a/drivers/platform/x86/Kconfig
++++ b/drivers/platform/x86/Kconfig
+@@ -1317,7 +1317,7 @@ config HUAWEI_WMI
  
--	return pa | (token & (PAGE_SIZE-1));
-+	pa = pte_pfn(*ptep);
-+
-+	/* On radix we can do hugepage mappings for io, so handle that */
-+	if (hugepage_shift) {
-+		pa <<= hugepage_shift;
-+		pa |= token & ((1ul << hugepage_shift) - 1);
-+	} else {
-+		pa <<= PAGE_SHIFT;
-+		pa |= token & (PAGE_SIZE - 1);
-+	}
-+
-+	return pa;
- }
- 
- /*
+ config PCENGINES_APU2
+ 	tristate "PC Engines APUv2/3 front button and LEDs driver"
+-	depends on INPUT && INPUT_KEYBOARD
++	depends on INPUT && INPUT_KEYBOARD && GPIOLIB
+ 	depends on LEDS_CLASS
+ 	select GPIO_AMD_FCH
+ 	select KEYBOARD_GPIO_POLLED
 -- 
 2.20.1
 
