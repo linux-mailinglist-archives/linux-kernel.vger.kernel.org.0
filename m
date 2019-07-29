@@ -2,50 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC32F79B1A
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 23:32:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F39479B20
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 23:33:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729954AbfG2Vc1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 17:32:27 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:58439 "EHLO
+        id S1730110AbfG2VdQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 17:33:16 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:53925 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729617AbfG2Vc1 (ORCPT
+        with ESMTP id S2388456AbfG2VdO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 17:32:27 -0400
+        Mon, 29 Jul 2019 17:33:14 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6TLWJdP2940995
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6TLX4rw2941263
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Mon, 29 Jul 2019 14:32:20 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6TLWJdP2940995
+        Mon, 29 Jul 2019 14:33:04 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6TLX4rw2941263
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019071901; t=1564435940;
-        bh=+4hyKuvT1G85IjzoZat9raL2Ex6BzlCk8uTRTUKeB9o=;
+        s=2019071901; t=1564435984;
+        bh=RxgWcWjCvogAMMGpY81mcbBrBjbvnNV5HfFJSOgJxs8=;
         h=Date:From:Cc:Reply-To:To:Subject:From;
-        b=CJ0QZTDaoOxK0/znfoPBNRoPl1SqldAl09h+WoeqShAGdO7NPUI+vfexwruP4A9ZP
-         LR/Hhf1AbmQcvhtl2ItZr2ycIlDl2IKwmbL1jVsgN0W2pr4TFZWsgt/ID49gLSo6F2
-         37CK6MdRar81eK31iNm7eiku9iebLyn2YELWEhbV/G1cMhbC97ok1XzAi+DFsYAVXr
-         ZrzkAToBgD1KGiq/5SnvynEgfOgBodRrdrbZKAZ1YLyn7qHqequWE0RH6XkkdJJWaK
-         khfWuh0Y4J0ACxNXS39/TSxUOF4Sw1hW1MM64aEVq4hvm9bXvTnsbilAt618ZIOlaV
-         19H73NMJ9OYIg==
+        b=L0y/MpgCLewMKl1O2YYbPrVOhFNB0QLxXR2eB3YXfJG1CSikJahDkeB2eq9mup7nT
+         AzYSaTCaBHQAh3FmhBjZcgmGaK16DwZQRunzUZW9QUFFvk0gbwcOJFt/vw5NFAy5Ia
+         jilU48OJstxwmdwA5eT8cW4UhWE4IA2omGxTucqAw25AQjN2u2MY7WFrHbdLauvONX
+         tdSsGPzIozHFhzgCSyuibps6TLopiaHqTR29LspE9TDnbQ+FBQBayqO8oFBoLF8kVM
+         FGHKTMU0a6ds6wR/saeMZ9qwNfLCQlDGQqsCZiVSoV8IcWt2B+u2vA60muNhhiEkEP
+         4BcaStENnR/cQ==
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6TLWJDx2940992;
-        Mon, 29 Jul 2019 14:32:19 -0700
-Date:   Mon, 29 Jul 2019 14:32:19 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6TLX4HN2941258;
+        Mon, 29 Jul 2019 14:33:04 -0700
+Date:   Mon, 29 Jul 2019 14:33:04 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-tkdfbgzqypwco96b309c0ovd@git.kernel.org>
-Cc:     adrian.hunter@intel.com, jolsa@kernel.org, lclaudio@redhat.com,
-        gregkh@linuxfoundation.org, namhyung@kernel.org,
-        dmitry.torokhov@gmail.com, tglx@linutronix.de, hpa@zytor.com,
-        acme@redhat.com, mingo@kernel.org, linux-kernel@vger.kernel.org
-Reply-To: acme@redhat.com, mingo@kernel.org, linux-kernel@vger.kernel.org,
-          adrian.hunter@intel.com, jolsa@kernel.org, lclaudio@redhat.com,
-          gregkh@linuxfoundation.org, namhyung@kernel.org,
-          dmitry.torokhov@gmail.com, tglx@linutronix.de, hpa@zytor.com
+Message-ID: <tip-mtrpsjrux5hgyr5uf8l1aa46@git.kernel.org>
+Cc:     christian@brauner.io, jolsa@kernel.org, lclaudio@redhat.com,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        adrian.hunter@intel.com, acme@redhat.com, hpa@zytor.com,
+        patrick.bellasi@arm.com, mingo@kernel.org, namhyung@kernel.org
+Reply-To: lclaudio@redhat.com, tglx@linutronix.de,
+          linux-kernel@vger.kernel.org, christian@brauner.io,
+          jolsa@kernel.org, mingo@kernel.org, patrick.bellasi@arm.com,
+          namhyung@kernel.org, adrian.hunter@intel.com, acme@redhat.com,
+          hpa@zytor.com
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] tools headers UAPI: Sync usbdevice_fs.h with the
- kernels to get new ioctl
-Git-Commit-ID: 0f58163c9d5702efbc242d144fd038e54b4c6ad0
+Subject: [tip:perf/urgent] tools headers UAPI: Sync sched.h with the kernel
+Git-Commit-ID: c093de6bd3c50d3dd597ff9fa5cf7a30acbb3eb7
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -54,118 +54,103 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-X-Spam-Status: No, score=1.9 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        FREEMAIL_FORGED_REPLYTO autolearn=no autolearn_force=no version=3.4.2
-X-Spam-Level: *
+X-Spam-Status: No, score=-0.2 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
+        autolearn=no autolearn_force=no version=3.4.2
 X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  0f58163c9d5702efbc242d144fd038e54b4c6ad0
-Gitweb:     https://git.kernel.org/tip/0f58163c9d5702efbc242d144fd038e54b4c6ad0
+Commit-ID:  c093de6bd3c50d3dd597ff9fa5cf7a30acbb3eb7
+Gitweb:     https://git.kernel.org/tip/c093de6bd3c50d3dd597ff9fa5cf7a30acbb3eb7
 Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Fri, 26 Jul 2019 15:31:25 -0300
+AuthorDate: Fri, 26 Jul 2019 15:41:09 -0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Mon, 29 Jul 2019 09:03:43 -0300
 
-tools headers UAPI: Sync usbdevice_fs.h with the kernels to get new ioctl
+tools headers UAPI: Sync sched.h with the kernel
 
 To get the changes in:
 
-  6d101f24f1dd ("USB: add usbfs ioctl to retrieve the connection parameters")
+  a509a7cd7974 ("sched/uclamp: Extend sched_setattr() to support utilization clamping")
+  1d6362fa0cfc ("sched/core: Allow sched_setattr() to use the current policy")
+  7f192e3cd316 ("fork: add clone3")
 
-And address this perf build warning:
+And silence this perf build warning:
 
-  Warning: Kernel ABI header at 'tools/include/uapi/linux/usbdevice_fs.h' differs from latest version at 'include/uapi/linux/usbdevice_fs.h'
-  diff -u tools/include/uapi/linux/usbdevice_fs.h include/uapi/linux/usbdevice_fs.h
+  Warning: Kernel ABI header at 'tools/include/uapi/linux/sched.h' differs from latest version at 'include/uapi/linux/sched.h'
+  diff -u tools/include/uapi/linux/sched.h include/uapi/linux/sched.h
 
-Which ends up autogenerating a ioctl_cmd->string table used by 'perf
-trace':
-
-  $ tools/perf/trace/beauty/usbdevfs_ioctl.sh > before
-  $ cp include/uapi/linux/usbdevice_fs.h tools/include/uapi/linux/usbdevice_fs.h
-  $ tools/perf/trace/beauty/usbdevfs_ioctl.sh > after
-  $ diff -u before after
-  --- before 2019-07-26 15:26:55.513636844 -0300
-  +++ after 2019-07-26 15:29:11.650518677 -0300
-  @@ -23,6 +23,7 @@
-          [2] = "BULK",
-          [30] = "DROP_PRIVILEGES",
-          [31] = "GET_SPEED",
-  +       [32] = "CONNINFO_EX",
-          [3] = "RESETEP",
-          [4] = "SETINTERFACE",
-          [5] = "SETCONFIGURATION",
-  $
-
-Now 'perf trace' ioctl beautifier will translate this new ioctl to a
-string and at some point will allow filtering the 'ioctl' syscall with
-something like this in a system wide strace-like sessin:
-
-  # perf trace -e ioctl/cmd=USBDEVFS_CONNINFO_EX/
+No changes in tools/ due to the above.
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Christian Brauner <christian@brauner.io>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Luis Cláudio Gonçalves <lclaudio@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-tkdfbgzqypwco96b309c0ovd@git.kernel.org
+Cc: Patrick Bellasi <patrick.bellasi@arm.com>
+Link: https://lkml.kernel.org/n/tip-mtrpsjrux5hgyr5uf8l1aa46@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/include/uapi/linux/usbdevice_fs.h | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+ tools/include/uapi/linux/sched.h | 30 +++++++++++++++++++++++++++++-
+ 1 file changed, 29 insertions(+), 1 deletion(-)
 
-diff --git a/tools/include/uapi/linux/usbdevice_fs.h b/tools/include/uapi/linux/usbdevice_fs.h
-index 964e87217be4..78efe870c2b7 100644
---- a/tools/include/uapi/linux/usbdevice_fs.h
-+++ b/tools/include/uapi/linux/usbdevice_fs.h
-@@ -76,6 +76,26 @@ struct usbdevfs_connectinfo {
- 	unsigned char slow;
- };
+diff --git a/tools/include/uapi/linux/sched.h b/tools/include/uapi/linux/sched.h
+index ed4ee170bee2..b3105ac1381a 100644
+--- a/tools/include/uapi/linux/sched.h
++++ b/tools/include/uapi/linux/sched.h
+@@ -2,6 +2,8 @@
+ #ifndef _UAPI_LINUX_SCHED_H
+ #define _UAPI_LINUX_SCHED_H
  
-+struct usbdevfs_conninfo_ex {
-+	__u32 size;		/* Size of the structure from the kernel's */
-+				/* point of view. Can be used by userspace */
-+				/* to determine how much data can be       */
-+				/* used/trusted.                           */
-+	__u32 busnum;           /* USB bus number, as enumerated by the    */
-+				/* kernel, the device is connected to.     */
-+	__u32 devnum;           /* Device address on the bus.              */
-+	__u32 speed;		/* USB_SPEED_* constants from ch9.h        */
-+	__u8 num_ports;		/* Number of ports the device is connected */
-+				/* to on the way to the root hub. It may   */
-+				/* be bigger than size of 'ports' array so */
-+				/* userspace can detect overflows.         */
-+	__u8 ports[7];		/* List of ports on the way from the root  */
-+				/* hub to the device. Current limit in     */
-+				/* USB specification is 7 tiers (root hub, */
-+				/* 5 intermediate hubs, device), which     */
-+				/* gives at most 6 port entries.           */
++#include <linux/types.h>
++
+ /*
+  * cloning flags:
+  */
+@@ -31,6 +33,20 @@
+ #define CLONE_NEWNET		0x40000000	/* New network namespace */
+ #define CLONE_IO		0x80000000	/* Clone io context */
+ 
++/*
++ * Arguments for the clone3 syscall
++ */
++struct clone_args {
++	__aligned_u64 flags;
++	__aligned_u64 pidfd;
++	__aligned_u64 child_tid;
++	__aligned_u64 parent_tid;
++	__aligned_u64 exit_signal;
++	__aligned_u64 stack;
++	__aligned_u64 stack_size;
++	__aligned_u64 tls;
 +};
 +
- #define USBDEVFS_URB_SHORT_NOT_OK	0x01
- #define USBDEVFS_URB_ISO_ASAP		0x02
- #define USBDEVFS_URB_BULK_CONTINUATION	0x04
-@@ -137,6 +157,7 @@ struct usbdevfs_hub_portinfo {
- #define USBDEVFS_CAP_REAP_AFTER_DISCONNECT	0x10
- #define USBDEVFS_CAP_MMAP			0x20
- #define USBDEVFS_CAP_DROP_PRIVILEGES		0x40
-+#define USBDEVFS_CAP_CONNINFO_EX		0x80
+ /*
+  * Scheduling policies
+  */
+@@ -51,9 +67,21 @@
+ #define SCHED_FLAG_RESET_ON_FORK	0x01
+ #define SCHED_FLAG_RECLAIM		0x02
+ #define SCHED_FLAG_DL_OVERRUN		0x04
++#define SCHED_FLAG_KEEP_POLICY		0x08
++#define SCHED_FLAG_KEEP_PARAMS		0x10
++#define SCHED_FLAG_UTIL_CLAMP_MIN	0x20
++#define SCHED_FLAG_UTIL_CLAMP_MAX	0x40
++
++#define SCHED_FLAG_KEEP_ALL	(SCHED_FLAG_KEEP_POLICY | \
++				 SCHED_FLAG_KEEP_PARAMS)
++
++#define SCHED_FLAG_UTIL_CLAMP	(SCHED_FLAG_UTIL_CLAMP_MIN | \
++				 SCHED_FLAG_UTIL_CLAMP_MAX)
  
- /* USBDEVFS_DISCONNECT_CLAIM flags & struct */
+ #define SCHED_FLAG_ALL	(SCHED_FLAG_RESET_ON_FORK	| \
+ 			 SCHED_FLAG_RECLAIM		| \
+-			 SCHED_FLAG_DL_OVERRUN)
++			 SCHED_FLAG_DL_OVERRUN		| \
++			 SCHED_FLAG_KEEP_ALL		| \
++			 SCHED_FLAG_UTIL_CLAMP)
  
-@@ -197,5 +218,10 @@ struct usbdevfs_streams {
- #define USBDEVFS_FREE_STREAMS      _IOR('U', 29, struct usbdevfs_streams)
- #define USBDEVFS_DROP_PRIVILEGES   _IOW('U', 30, __u32)
- #define USBDEVFS_GET_SPEED         _IO('U', 31)
-+/*
-+ * Returns struct usbdevfs_conninfo_ex; length is variable to allow
-+ * extending size of the data returned.
-+ */
-+#define USBDEVFS_CONNINFO_EX(len)  _IOC(_IOC_READ, 'U', 32, len)
- 
- #endif /* _UAPI_LINUX_USBDEVICE_FS_H */
+ #endif /* _UAPI_LINUX_SCHED_H */
