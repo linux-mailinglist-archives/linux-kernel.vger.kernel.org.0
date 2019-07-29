@@ -2,44 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ABB5D79832
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:06:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA2F879793
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:01:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390242AbfG2UFg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 16:05:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58926 "EHLO mail.kernel.org"
+        id S2403866AbfG2Tvh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 15:51:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43028 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388748AbfG2Tmy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:42:54 -0400
+        id S2390790AbfG2Tve (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:51:34 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 627F821655;
-        Mon, 29 Jul 2019 19:42:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C24242054F;
+        Mon, 29 Jul 2019 19:51:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564429373;
-        bh=OJZZhcQqhVrtKpqeXpW6+ZqFpBpsNjwmQZbhkkcxWKY=;
+        s=default; t=1564429893;
+        bh=+msWdbPn29tMENfyQxYBG+5FjIxE3qx68j5Xh9RrvLE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aQ1AJwWOUTD52Ud+8PpbwoMqHAI2a9Z88jEOxlDqqoR7hexJuut2qUPb29nyycrat
-         xJO+Y+Ll1hfKHG0UR0KbMMaTZeJL3x41Jxgc1JapCJdSf6C3uggp092tVDc+QlK4Tr
-         BOzzYF6o0Sb5FNWVDdn3mlw6nXLn8+rrLk2soFQQ=
+        b=JVs9C+dTFnWRpbJHT43PWIGQBwBdhaayXLVJtyHce16K6Stz91womZqKupuHj1WLf
+         62Wz62oLGiTuktPzCgIq5cJGTmN9sQhQbSXqCyazbK+QqQgufTqvMbw6BVavUdcNov
+         QqfUE6qODUGSQY8wX97KvJl9ek8McLgDqThdI3fo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Tejun Heo <tj@kernel.org>, Wolfram Sang <wsa@the-dreams.de>,
+        stable@vger.kernel.org, Leo Yan <leo.yan@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Suzuki Poulouse <suzuki.poulose@arm.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 039/113] PCI: sysfs: Ignore lockdep for remove attribute
+Subject: [PATCH 5.2 130/215] perf intel-bts: Fix potential NULL pointer dereference found by the smatch tool
 Date:   Mon, 29 Jul 2019 21:22:06 +0200
-Message-Id: <20190729190705.053523194@linuxfoundation.org>
+Message-Id: <20190729190801.948791723@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190729190655.455345569@linuxfoundation.org>
-References: <20190729190655.455345569@linuxfoundation.org>
+In-Reply-To: <20190729190739.971253303@linuxfoundation.org>
+References: <20190729190739.971253303@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -49,58 +51,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit dc6b698a86fe40a50525433eb8e92a267847f6f9 ]
+[ Upstream commit 1d481458816d9424c8a05833ce0ebe72194a350e ]
 
-With CONFIG_PROVE_LOCKING=y, using sysfs to remove a bridge with a device
-below it causes a lockdep warning, e.g.,
+Based on the following report from Smatch, fix the potential NULL
+pointer dereference check.
 
-  # echo 1 > /sys/class/pci_bus/0000:00/device/0000:00:00.0/remove
-  ============================================
-  WARNING: possible recursive locking detected
-  ...
-  pci_bus 0000:01: busn_res: [bus 01] is released
+  tools/perf/util/intel-bts.c:898
+  intel_bts_process_auxtrace_info() error: we previously assumed
+  'session->itrace_synth_opts' could be null (see line 894)
 
-The remove recursively removes the subtree below the bridge.  Each call
-uses a different lock so there's no deadlock, but the locks were all
-created with the same lockdep key so the lockdep checker can't tell them
-apart.
+  tools/perf/util/intel-bts.c:899
+  intel_bts_process_auxtrace_info() warn: variable dereferenced before
+  check 'session->itrace_synth_opts' (see line 898)
 
-Mark the "remove" sysfs attribute with __ATTR_IGNORE_LOCKDEP() as it is
-safe to ignore the lockdep check between different "remove" kernfs
-instances.
+  tools/perf/util/intel-bts.c
+  894         if (session->itrace_synth_opts && session->itrace_synth_opts->set) {
+  895                 bts->synth_opts = *session->itrace_synth_opts;
+  896         } else {
+  897                 itrace_synth_opts__set_default(&bts->synth_opts,
+  898                                 session->itrace_synth_opts->default_no_sample);
+                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  899                 if (session->itrace_synth_opts)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  900                         bts->synth_opts.thread_stack =
+  901                                 session->itrace_synth_opts->thread_stack;
+  902         }
 
-There's discussion about a similar issue in USB at [1], which resulted in
-356c05d58af0 ("sysfs: get rid of some lockdep false positives") and
-e9b526fe7048 ("i2c: suppress lockdep warning on delete_device"), which do
-basically the same thing for USB "remove" and i2c "delete_device" files.
+'session->itrace_synth_opts' is impossible to be a NULL pointer in
+intel_bts_process_auxtrace_info(), thus this patch removes the NULL test
+for 'session->itrace_synth_opts'.
 
-[1] https://lore.kernel.org/r/Pine.LNX.4.44L0.1204251436140.1206-100000@iolanthe.rowland.org
-Link: https://lore.kernel.org/r/20190526225151.3865-1-marek.vasut@gmail.com
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-[bhelgaas: trim commit log, details at above links]
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Phil Edworthy <phil.edworthy@renesas.com>
-Cc: Simon Horman <horms+renesas@verge.net.au>
-Cc: Tejun Heo <tj@kernel.org>
-Cc: Wolfram Sang <wsa@the-dreams.de>
+Signed-off-by: Leo Yan <leo.yan@linaro.org>
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Suzuki Poulouse <suzuki.poulose@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Link: http://lkml.kernel.org/r/20190708143937.7722-3-leo.yan@linaro.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pci/pci-sysfs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/util/intel-bts.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
-index 9ecfe13157c0..1edf5a1836ea 100644
---- a/drivers/pci/pci-sysfs.c
-+++ b/drivers/pci/pci-sysfs.c
-@@ -478,7 +478,7 @@ static ssize_t remove_store(struct device *dev, struct device_attribute *attr,
- 		pci_stop_and_remove_bus_device_locked(to_pci_dev(dev));
- 	return count;
- }
--static struct device_attribute dev_remove_attr = __ATTR(remove,
-+static struct device_attribute dev_remove_attr = __ATTR_IGNORE_LOCKDEP(remove,
- 							(S_IWUSR|S_IWGRP),
- 							NULL, remove_store);
+diff --git a/tools/perf/util/intel-bts.c b/tools/perf/util/intel-bts.c
+index e32dbffebb2f..625ad3639a7e 100644
+--- a/tools/perf/util/intel-bts.c
++++ b/tools/perf/util/intel-bts.c
+@@ -891,13 +891,12 @@ int intel_bts_process_auxtrace_info(union perf_event *event,
+ 	if (dump_trace)
+ 		return 0;
+ 
+-	if (session->itrace_synth_opts && session->itrace_synth_opts->set) {
++	if (session->itrace_synth_opts->set) {
+ 		bts->synth_opts = *session->itrace_synth_opts;
+ 	} else {
+ 		itrace_synth_opts__set_default(&bts->synth_opts,
+ 				session->itrace_synth_opts->default_no_sample);
+-		if (session->itrace_synth_opts)
+-			bts->synth_opts.thread_stack =
++		bts->synth_opts.thread_stack =
+ 				session->itrace_synth_opts->thread_stack;
+ 	}
  
 -- 
 2.20.1
