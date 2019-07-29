@@ -2,125 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BBF48799C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:19:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 946F5799DF
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:24:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728766AbfG2UTW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 16:19:22 -0400
-Received: from mail-eopbgr760050.outbound.protection.outlook.com ([40.107.76.50]:12162
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726129AbfG2UTW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 16:19:22 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=eTcTVFuuv621FdeymNDkfbW67ZT596hQeuiZpIU9CD6tnRPbsPSNLi1OzLk5J+gejZDQpFXNArYSTrV9U1e6HdWuEnEuVgq3x+D486ey36x4eahyMQtpBHSjZWArf2xKUtBolTn9+GFm/9Dh89vV1mWP7kvMUoD1VE2xKbUz4KIHpd9zKfXxaNHbKl0onwRI1AIj4uBE6zat0J8pI8cysbw9bDKv2XlIJLH9aizmzz/qExFhM550QBl7+Xe/5p+mqxdLpkuRQxetNagCizpxGw0DAjJ8sArY3FQyqNnBn/i7aCu2ON92LFHZb3kIAE7ajlPa0asf6/BE/0x7l1Uokg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Ku2AX2xeHMwUAqR6QKKmykWEKrefbcCIsB7R5dfmYVM=;
- b=kbjjA5t3zxxuXMan0jQkIOCpTuGIt1eiYK29UueqicSW9bCROQmJulLgZWM8dkqn3nrK/Gfs1lvNIqIKnADMeUVFVScYwHxytUvblf1s8AhunurNZAFKRtxWTuU+S8Q/P6AlNxEeSXzXq9UpoS74M1sciH01eoAuKJTVZI5jC2gPS1QJvp+JX6CDCD725MGGHNa1Jq/afsvJDUGpdYWYqmop1byFhM9p1yh6sOFFdD+6Qak9BzlOR2A3R48nHJZZLzGoclAIIszEmLxK3wHmKYtupUDZwKWCKiqsIEW6NDNYT0qIy8Ws1kXXx3+BHAZctm00MrAQq8Zz/vKQJrCdmg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
- smtp.mailfrom=vmware.com;dmarc=pass action=none
- header.from=vmware.com;dkim=pass header.d=vmware.com;arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Ku2AX2xeHMwUAqR6QKKmykWEKrefbcCIsB7R5dfmYVM=;
- b=RL529QfU/APPxAj3cWto1LcPNTAZA6OyJSJ8WTXfXQQmzRLNH9C634SZ/5SIGbhtnlUAiv/yoafWpYyhK070tVfVN+VgpALQNdnE0tDZE5OHSA32S7Srye1vD9P8QJb0EHukIDIgSgu8t1EaL67Nbxnhhv1tM0rU50pBEQlxULQ=
-Received: from CY4PR05MB3494.namprd05.prod.outlook.com (10.171.246.163) by
- CY4PR05MB3223.namprd05.prod.outlook.com (10.172.155.147) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2136.11; Mon, 29 Jul 2019 20:19:19 +0000
-Received: from CY4PR05MB3494.namprd05.prod.outlook.com
- ([fe80::84f3:3266:347a:26bf]) by CY4PR05MB3494.namprd05.prod.outlook.com
- ([fe80::84f3:3266:347a:26bf%4]) with mapi id 15.20.2136.010; Mon, 29 Jul 2019
- 20:19:19 +0000
-From:   Matt Helsley <mhelsley@vmware.com>
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-CC:     LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH v3 10/13] objtool: Make recordmcount into an objtool
- subcmd
-Thread-Topic: [PATCH v3 10/13] objtool: Make recordmcount into an objtool
- subcmd
-Thread-Index: AQHVQmOPeoJWuwCabUiE8rj942+rB6bgVLCAgAG8VQA=
-Importance: high
-X-Priority: 1
-Date:   Mon, 29 Jul 2019 20:19:19 +0000
-Message-ID: <D036FA27-FA50-445D-BEFA-1CD384A7478B@vmware.com>
-References: <cover.1563992889.git.mhelsley@vmware.com>
- <13ef7e93410f99579fa9b8a44bdd313e8300b706.1563992889.git.mhelsley@vmware.com>
- <20190728174859.v767keld5x3zylq7@treble>
-In-Reply-To: <20190728174859.v767keld5x3zylq7@treble>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=mhelsley@vmware.com; 
-x-originating-ip: [73.25.163.201]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: d47c6c1d-d80b-424c-0e06-08d71462096f
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:CY4PR05MB3223;
-x-ms-traffictypediagnostic: CY4PR05MB3223:
-x-microsoft-antispam-prvs: <CY4PR05MB3223F711B1B3157781BC64C1A0DD0@CY4PR05MB3223.namprd05.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:6430;
-x-forefront-prvs: 01136D2D90
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(346002)(376002)(366004)(39860400002)(136003)(199004)(189003)(14444005)(66476007)(6916009)(486006)(64756008)(66946007)(102836004)(478600001)(86362001)(66556008)(446003)(76116006)(476003)(2616005)(11346002)(99286004)(76176011)(36756003)(316002)(5660300002)(81686011)(6506007)(7736002)(53546011)(91956017)(186003)(66446008)(26005)(71200400001)(68736007)(229853002)(3846002)(6436002)(25786009)(305945005)(2906002)(6246003)(4326008)(8936002)(33656002)(54906003)(81166006)(256004)(81156014)(6116002)(8676002)(6512007)(6486002)(66066001)(71190400001)(14454004)(53936002);DIR:OUT;SFP:1101;SCL:1;SRVR:CY4PR05MB3223;H:CY4PR05MB3494.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: vmware.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: zIH6aBdaETYryCokhwzrlz8+GeXpPsQUAkBKXNCYXPcpmxe9+lfVQja9fusnM3qP0ivoSwnz/tZzah9rb3tWH5ly12F5oRQzct0PQV3gTruaPuUEQ0Ws/zhxfmkmL394aJGqwOCofDao4dtgd8/6/STwmkd6pURdR0vvwczshAoWH+To/dlTUvxtD/MJkpr4f7pZjhUdXkbV2/nVdrQghgSq6WgndMdSCFs3hswRHtIljTNqo1FmWGvj1CcbytnC6YrFwkZLujeuBkTDi7EBUOlbI/FwatB36GVJDBV9YGABAA23g4PlRbcLWSY/laq3oqLxzdz8lHa6zyCsEwxqhXGy3Ea7GqkBbIFmcnfbdBT94ChgDUmYjrt89H9c5PrCoGC86MbXLMxKHjsfQNCUAGvhia99vRZm91sRDVdut30=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <4ABD2730C82B4C4BAD58DC5FA25BA1E8@namprd05.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S2387849AbfG2UY1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 16:24:27 -0400
+Received: from gateway20.websitewelcome.com ([192.185.44.20]:11551 "EHLO
+        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2387512AbfG2UY0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 16:24:26 -0400
+X-Greylist: delayed 1364 seconds by postgrey-1.27 at vger.kernel.org; Mon, 29 Jul 2019 16:24:26 EDT
+Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
+        by gateway20.websitewelcome.com (Postfix) with ESMTP id DD19E400CCC8E
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 13:58:12 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id sBq1hg8Ty4FKpsBq1hpxG4; Mon, 29 Jul 2019 15:01:41 -0500
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        MIME-Version:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=8IG03zJ4dGQM2zbEUf5K8f+GqYdtT4wDuV0aUuJyIEc=; b=h3AQ9EvojkPpBuTQyEEMrXpXZq
+        nSPz/PMP8BOP/Gkpovpf4ecOi0Bgk1Nj5vZeZuBCjFi7MHcr8mrCsTfHJtd6xdHjqwmCv/2Vtauqa
+        OZ//RWt45ZLleJ711Q0j3wzO75rler0Spa/gO0E1YCVNVtiImHsDaFqUby2/WfTdQZl68xzDsE5Xu
+        0T6Y4kiSO98nkftvORk+VbjLpfg0oEYNZZPMPpZHe7COxSx95ZGsKvvyEuFf536pc3khda2KjBwe9
+        vV0xJFcJCOokYnV+JNKOahJIvEUkJ9RGdHY4zg0Dk9CNfxeah9RUVHS7yGdWmSNd/C33YeA7xswHQ
+        aYERSh3Q==;
+Received: from [187.192.11.120] (port=59520 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1hsBq0-000tYi-Gi; Mon, 29 Jul 2019 15:01:40 -0500
+Date:   Mon, 29 Jul 2019 15:01:39 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     "David S. Miller" <davem@davemloft.net>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: [PATCH] net: wan: sdla: Mark expected switch fall-through
+Message-ID: <20190729200139.GA6102@embeddedor>
 MIME-Version: 1.0
-X-OriginatorOrg: vmware.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d47c6c1d-d80b-424c-0e06-08d71462096f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Jul 2019 20:19:19.2309
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: mhelsley@vmware.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR05MB3223
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 187.192.11.120
+X-Source-L: No
+X-Exim-ID: 1hsBq0-000tYi-Gi
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [187.192.11.120]:59520
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 3
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCj4gT24gSnVsIDI4LCAyMDE5LCBhdCAxMDo0OCBBTSwgSm9zaCBQb2ltYm9ldWYgPGpwb2lt
-Ym9lQHJlZGhhdC5jb20+IHdyb3RlOg0KPiANCj4gT24gV2VkLCBKdWwgMjQsIDIwMTkgYXQgMDI6
-MDU6MDRQTSAtMDcwMCwgTWF0dCBIZWxzbGV5IHdyb3RlOg0KPj4gZGlmZiAtLWdpdCBhL3Njcmlw
-dHMvTWFrZWZpbGUuYnVpbGQgYi9zY3JpcHRzL01ha2VmaWxlLmJ1aWxkDQo+PiBpbmRleCAwOGI3
-MGVlOTYxNGEuLjQzNzA3NDkxMzE3YyAxMDA2NDQNCj4+IC0tLSBhL3NjcmlwdHMvTWFrZWZpbGUu
-YnVpbGQNCj4+ICsrKyBiL3NjcmlwdHMvTWFrZWZpbGUuYnVpbGQNCj4+IEBAIC0xNzAsMjIgKzE3
-MCwyMSBAQCBlbmRpZg0KPj4gDQo+PiBpZmRlZiBDT05GSUdfRlRSQUNFX01DT1VOVF9SRUNPUkQN
-Cj4+IGlmbmRlZiBDQ19VU0lOR19SRUNPUkRfTUNPVU5UDQo+PiAtIyBjb21waWxlciB3aWxsIG5v
-dCBnZW5lcmF0ZSBfX21jb3VudF9sb2MgdXNlIHJlY29yZG1jb3VudCBvciByZWNvcmRtY291bnQu
-cGwNCj4+IC1pZmRlZiBCVUlMRF9DX1JFQ09SRE1DT1VOVA0KPj4gKyMgY29tcGlsZXIgd2lsbCBu
-b3QgZ2VuZXJhdGUgX19tY291bnRfbG9jIHVzZSBvYmp0b29sIG1jb3VudCByZWNvcmQgb3IgcmVj
-b3JkbWNvdW50LnBsDQo+IA0KPiBUaGlzIGNvbW1lbnQgY291bGQgdXNlIHNvbWUgRW5nbGlzaC1p
-ZmljYXRpb24sIHNvbWV0aGluZyBsaWtlOg0KPiANCj4gIyBUaGUgY29tcGlsZXIgZG9lc24ndCBz
-dXBwb3J0IGdlbmVyYXRpb24gb2YgdGhlIF9fbWNvdW50X2xvYyBzZWN0aW9uLg0KPiAjIEdlbmVy
-YXRlIGl0IG1hbnVhbGx5IHdpdGggIm9ianRvb2wgbWNvdW50IHJlY29yZCIgb3IgcmVjb3JkbWNv
-dW50LnBsLg0KDQpPSywgbWFrZXMgc2Vuc2UuDQoNCj4gDQo+PiBAQCAtMjM2LDkgKzIzNSwxMCBA
-QCBlbmRpZiAjIFNLSVBfU1RBQ0tfVkFMSURBVElPTg0KPj4gZW5kaWYgIyBDT05GSUdfU1RBQ0tf
-VkFMSURBVElPTg0KPj4gDQo+PiAjIFJlYnVpbGQgYWxsIG9iamVjdHMgd2hlbiBvYmp0b29sIGNo
-YW5nZXMsIG9yIGlzIGVuYWJsZWQvZGlzYWJsZWQuDQo+PiAtb2JqdG9vbF9kZXAgPSAkKG9ianRv
-b2xfb2JqKQkJCQkJXA0KPj4gK29ianRvb2xfZGVwICs9ICQob2JqdG9vbF9vYmopCQkJCQlcDQo+
-PiAJICAgICAgJCh3aWxkY2FyZCBpbmNsdWRlL2NvbmZpZy9vcmMvdW53aW5kZXIuaAkJXA0KPj4g
-LQkJCSBpbmNsdWRlL2NvbmZpZy9zdGFjay92YWxpZGF0aW9uLmgpDQo+PiArCQkJIGluY2x1ZGUv
-Y29uZmlnL3N0YWNrL3ZhbGlkYXRpb24uaAlcDQo+PiArCQkJIGluY2x1ZGUvY29uZmlnL2Z0cmFj
-ZS9tY291bnQvcmVjb3JkLmgpDQo+IA0KPiBJIHRoaW5rIHRoZSAnKz0nIGlzbid0IG5lZWRlZCBh
-cyB0aGlzIGlzIHRoZSBvbmx5IHBsYWNlIG9ianRvb2xfZGVwIGdldHMNCj4gc2V0Pw0KDQpJbmRl
-ZWQuIEkgdGhpbmsgdGhpcyBpcyAgYW4gYXJ0aWZhY3Qgb2YgdGhlIHdheSBJIGluaXRpYWxseSB3
-cm90ZSB0aGVzZSBjaGFuZ2VzIOKAlCBJIHRyaWVkIHRvIGVsaW1pbmF0ZSBzb21lIHJlY29yZG1j
-b3VudCB2YXJpYWJsZXMgYnkgdXNpbmcgb2JqdG9vbF9kZXAgaW4gdGhlIHJlY29yZG1jb3VudCBw
-b3J0aW9ucyBvZiB0aGUgTWFrZWZpbGUuIFRoZW4gSSByZWFsaXplZCB0aGUgLmNvbmZpZyB2YXJp
-YWJsZSBjb21iaW5hdGlvbnMgbWVhbnQgdGhlIG1vc3QgY2xlYXJseS1jb3JyZWN0IHdheSB0byB3
-cml0ZSBpdCBpcyBzdGlsbCB3aXRoIHNlcGFyYXRlIHZhcmlhYmxlcy4NCg0KV2lsbCBmaXggc28g
-aXTigJlzIGNsZWFyIHRoaXMgaXMgdGhlIG9ubHkgYXNzaWdubWVudC4NCg0KQ2hlZXJzLA0KICAg
-IC1NYXR0
+Mark switch cases where we are expecting to fall through.
+
+This patch fixes the following warning (Building: i386):
+
+drivers/net/wan/sdla.c: In function ‘sdla_errors’:
+drivers/net/wan/sdla.c:414:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
+    if (cmd == SDLA_INFORMATION_WRITE)
+       ^
+drivers/net/wan/sdla.c:417:3: note: here
+   default:
+   ^~~~~~~
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/net/wan/sdla.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/net/wan/sdla.c b/drivers/net/wan/sdla.c
+index a9ac3f37b904..e2e679a01b65 100644
+--- a/drivers/net/wan/sdla.c
++++ b/drivers/net/wan/sdla.c
+@@ -413,6 +413,7 @@ static void sdla_errors(struct net_device *dev, int cmd, int dlci, int ret, int
+ 		case SDLA_RET_NO_BUFS:
+ 			if (cmd == SDLA_INFORMATION_WRITE)
+ 				break;
++			/* Else, fall through */
+ 
+ 		default: 
+ 			netdev_dbg(dev, "Cmd 0x%02X generated return code 0x%02X\n",
+-- 
+2.22.0
+
