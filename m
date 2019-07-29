@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73BD979769
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:01:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A38879852
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:07:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403902AbfG2Twd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 15:52:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44136 "EHLO mail.kernel.org"
+        id S2389140AbfG2TkU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 15:40:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55540 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403753AbfG2TwU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:52:20 -0400
+        id S2388834AbfG2TkP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:40:15 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D159B21655;
-        Mon, 29 Jul 2019 19:52:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0031A21773;
+        Mon, 29 Jul 2019 19:40:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564429939;
-        bh=EHOYCqdFJJuNXpQX4tmYZLiS2CDBP0SO1pXydWmDMgA=;
+        s=default; t=1564429214;
+        bh=L+tRwcr+gkZhY0fZr/oRffdokB2aqA3LwmbU+a2UaPY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HbMxJHTsqNai3n1kJCxjN0MgW/les2qLI5yvwOsaaswjYwd9dmtTL1u5B4vSMQU6x
-         PuOLxgv4fYcrkTKvI6sv9Kq59R/L53gaTI4a4M7064wd6yeVhlytjiOXtCgupYT3pv
-         oKFqRkD2CTAnUpmpx+TB1++gqNF05g/VXVUJqaVo=
+        b=pZ/NsHOtpv9gVM/A2QKjBbCT0NVpwn1Ys/9Cih7OesIYZ4DlzQ6MSKOtaGyQh42mg
+         vzfkN1nwipdA5zgcd1/i0Aa5tNDJe2iTS2zHYBlHQBU0VcO7BcpTYj7wtA05cfX1nT
+         Jm88nJjlnBsNZlkHwX84A7lq64geJG9RupeCavMg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hou Zhiqiang <Zhiqiang.Hou@nxp.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Minghuan Lian <Minghuan.Lian@nxp.com>,
-        Subrahmanya Lingappa <l.subrahmanya@mobiveil.co.in>,
+        stable@vger.kernel.org, David Riley <davidriley@chromium.org>,
+        Gerd Hoffmann <kraxel@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 117/215] PCI: mobiveil: Initialize Primary/Secondary/Subordinate bus numbers
-Date:   Mon, 29 Jul 2019 21:21:53 +0200
-Message-Id: <20190729190759.367430013@linuxfoundation.org>
+Subject: [PATCH 4.19 027/113] drm/virtio: Add memory barriers for capset cache.
+Date:   Mon, 29 Jul 2019 21:21:54 +0200
+Message-Id: <20190729190702.363655497@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190729190739.971253303@linuxfoundation.org>
-References: <20190729190739.971253303@linuxfoundation.org>
+In-Reply-To: <20190729190655.455345569@linuxfoundation.org>
+References: <20190729190655.455345569@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,40 +44,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 6f3ab451aa5c2cbff33197d82fe8489cbd55ad91 ]
+[ Upstream commit 9ff3a5c88e1f1ab17a31402b96d45abe14aab9d7 ]
 
-The reset value of Primary, Secondary and Subordinate bus numbers is
-zero which is a broken setup.
+After data is copied to the cache entry, atomic_set is used indicate
+that the data is the entry is valid without appropriate memory barriers.
+Similarly the read side was missing the corresponding memory barriers.
 
-Program a sensible default value for Primary/Secondary/Subordinate
-bus numbers.
-
-Signed-off-by: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Reviewed-by: Minghuan Lian <Minghuan.Lian@nxp.com>
-Reviewed-by: Subrahmanya Lingappa <l.subrahmanya@mobiveil.co.in>
+Signed-off-by: David Riley <davidriley@chromium.org>
+Link: http://patchwork.freedesktop.org/patch/msgid/20190610211810.253227-5-davidriley@chromium.org
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pci/controller/pcie-mobiveil.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/gpu/drm/virtio/virtgpu_ioctl.c | 3 +++
+ drivers/gpu/drm/virtio/virtgpu_vq.c    | 2 ++
+ 2 files changed, 5 insertions(+)
 
-diff --git a/drivers/pci/controller/pcie-mobiveil.c b/drivers/pci/controller/pcie-mobiveil.c
-index 88e9b70081fc..e4a1964e1b43 100644
---- a/drivers/pci/controller/pcie-mobiveil.c
-+++ b/drivers/pci/controller/pcie-mobiveil.c
-@@ -501,6 +501,12 @@ static int mobiveil_host_init(struct mobiveil_pcie *pcie)
- 		return err;
- 	}
+diff --git a/drivers/gpu/drm/virtio/virtgpu_ioctl.c b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
+index 7bdf6f0e58a5..8d2f5ded86d6 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_ioctl.c
++++ b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
+@@ -528,6 +528,9 @@ static int virtio_gpu_get_caps_ioctl(struct drm_device *dev,
+ 	if (!ret)
+ 		return -EBUSY;
  
-+	/* setup bus numbers */
-+	value = csr_readl(pcie, PCI_PRIMARY_BUS);
-+	value &= 0xff000000;
-+	value |= 0x00ff0100;
-+	csr_writel(pcie, value, PCI_PRIMARY_BUS);
++	/* is_valid check must proceed before copy of the cache entry. */
++	smp_rmb();
 +
- 	/*
- 	 * program Bus Master Enable Bit in Command Register in PAB Config
- 	 * Space
+ 	ptr = cache_ent->caps_cache;
+ 
+ copy_exit:
+diff --git a/drivers/gpu/drm/virtio/virtgpu_vq.c b/drivers/gpu/drm/virtio/virtgpu_vq.c
+index 020070d483d3..c8a581b1f4c4 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_vq.c
++++ b/drivers/gpu/drm/virtio/virtgpu_vq.c
+@@ -588,6 +588,8 @@ static void virtio_gpu_cmd_capset_cb(struct virtio_gpu_device *vgdev,
+ 		    cache_ent->id == le32_to_cpu(cmd->capset_id)) {
+ 			memcpy(cache_ent->caps_cache, resp->capset_data,
+ 			       cache_ent->size);
++			/* Copy must occur before is_valid is signalled. */
++			smp_wmb();
+ 			atomic_set(&cache_ent->is_valid, 1);
+ 			break;
+ 		}
 -- 
 2.20.1
 
