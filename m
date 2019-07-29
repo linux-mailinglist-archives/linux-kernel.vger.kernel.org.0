@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 360767951F
+	by mail.lfdr.de (Postfix) with ESMTP id A466179520
 	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:40:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728835AbfG2Tiw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 15:38:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53680 "EHLO mail.kernel.org"
+        id S1729053AbfG2Tiz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 15:38:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53706 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388901AbfG2Tin (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:38:43 -0400
+        id S2388908AbfG2Tiq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:38:46 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EBFD320C01;
-        Mon, 29 Jul 2019 19:38:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 81D06206DD;
+        Mon, 29 Jul 2019 19:38:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564429122;
-        bh=fvGRNs2FZrfT4aZyjiQgrhFmO0UphcPFILCJdOuup+Q=;
+        s=default; t=1564429125;
+        bh=aoeShnV0MIzWhAgFVNAHStxRa1liCLThPH1T9JScSmU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pQzYb8XJYHa5Fko2a+NfL9gAiKfRkUSZwh4d1j4jKPRnPSCcL9y0vOSlabsTpBsX3
-         j3fYZyJkF9ZkyUfFs3bLFNfFNH3FTDWquXPx1xgte20LsjT9KJ5k8GV8xP5THdegaq
-         RkKzgj8CUmrW7LNkDfgQTU6cagr0bv18ji1Uhxls=
+        b=KgHXeoeq3vpchqwo/9MxQivP3J4hpnArOUXINPxGG+l4VJBphSrc57LFfnz2O6M/T
+         uCmeNd4D1Qri04l60gW5LrygNhMVOa+VM5Gi3y9s6U/RiexXVZjbnzkzNZqNBEZGRe
+         Wnph+w1MiambNrool2C0QAkGdHHWXZ5jexb/08Yw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Indira P. Joga" <indira.priya@in.ibm.com>,
-        "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>,
+        stable@vger.kernel.org, Praveen Pandey <Praveen.Pandey@in.ibm.com>,
+        Michael Neuling <mikey@neuling.org>,
         Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.14 291/293] powerpc/xive: Fix loop exit-condition in xive_find_target_in_mask()
-Date:   Mon, 29 Jul 2019 21:23:02 +0200
-Message-Id: <20190729190846.540136064@linuxfoundation.org>
+Subject: [PATCH 4.14 292/293] powerpc/tm: Fix oops on sigreturn on systems without TM
+Date:   Mon, 29 Jul 2019 21:23:03 +0200
+Message-Id: <20190729190846.605183441@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190729190820.321094988@linuxfoundation.org>
 References: <20190729190820.321094988@linuxfoundation.org>
@@ -44,119 +44,91 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gautham R. Shenoy <ego@linux.vnet.ibm.com>
+From: Michael Neuling <mikey@neuling.org>
 
-commit 4d202c8c8ed3822327285747db1765967110b274 upstream.
+commit f16d80b75a096c52354c6e0a574993f3b0dfbdfe upstream.
 
-xive_find_target_in_mask() has the following for(;;) loop which has a
-bug when @first == cpumask_first(@mask) and condition 1 fails to hold
-for every CPU in @mask. In this case we loop forever in the for-loop.
+On systems like P9 powernv where we have no TM (or P8 booted with
+ppc_tm=off), userspace can construct a signal context which still has
+the MSR TS bits set. The kernel tries to restore this context which
+results in the following crash:
 
-  first = cpu;
-  for (;;) {
-  	  if (cpu_online(cpu) && xive_try_pick_target(cpu)) // condition 1
-		  return cpu;
-	  cpu = cpumask_next(cpu, mask);
-	  if (cpu == first) // condition 2
-		  break;
+  Unexpected TM Bad Thing exception at c0000000000022fc (msr 0x8000000102a03031) tm_scratch=800000020280f033
+  Oops: Unrecoverable exception, sig: 6 [#1]
+  LE PAGE_SIZE=64K MMU=Hash SMP NR_CPUS=2048 NUMA pSeries
+  Modules linked in:
+  CPU: 0 PID: 1636 Comm: sigfuz Not tainted 5.2.0-11043-g0a8ad0ffa4 #69
+  NIP:  c0000000000022fc LR: 00007fffb2d67e48 CTR: 0000000000000000
+  REGS: c00000003fffbd70 TRAP: 0700   Not tainted  (5.2.0-11045-g7142b497d8)
+  MSR:  8000000102a03031 <SF,VEC,VSX,FP,ME,IR,DR,LE,TM[E]>  CR: 42004242  XER: 00000000
+  CFAR: c0000000000022e0 IRQMASK: 0
+  GPR00: 0000000000000072 00007fffb2b6e560 00007fffb2d87f00 0000000000000669
+  GPR04: 00007fffb2b6e728 0000000000000000 0000000000000000 00007fffb2b6f2a8
+  GPR08: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+  GPR12: 0000000000000000 00007fffb2b76900 0000000000000000 0000000000000000
+  GPR16: 00007fffb2370000 00007fffb2d84390 00007fffea3a15ac 000001000a250420
+  GPR20: 00007fffb2b6f260 0000000010001770 0000000000000000 0000000000000000
+  GPR24: 00007fffb2d843a0 00007fffea3a14a0 0000000000010000 0000000000800000
+  GPR28: 00007fffea3a14d8 00000000003d0f00 0000000000000000 00007fffb2b6e728
+  NIP [c0000000000022fc] rfi_flush_fallback+0x7c/0x80
+  LR [00007fffb2d67e48] 0x7fffb2d67e48
+  Call Trace:
+  Instruction dump:
+  e96a0220 e96a02a8 e96a0330 e96a03b8 394a0400 4200ffdc 7d2903a6 e92d0c00
+  e94d0c08 e96d0c10 e82d0c18 7db242a6 <4c000024> 7db243a6 7db142a6 f82d0c18
 
-	  if (cpu >= nr_cpu_ids) // condition 3
-		  cpu = cpumask_first(mask);
-  }
+The problem is the signal code assumes TM is enabled when
+CONFIG_PPC_TRANSACTIONAL_MEM is enabled. This may not be the case as
+with P9 powernv or if `ppc_tm=off` is used on P8.
 
-This is because, when @first == cpumask_first(@mask), we never hit the
-condition 2 (cpu == first) since prior to this check, we would have
-executed "cpu = cpumask_next(cpu, mask)" which will set the value of
-@cpu to a value greater than @first or to nr_cpus_ids. When this is
-coupled with the fact that condition 1 is not met, we will never exit
-this loop.
+This means any local user can crash the system.
 
-This was discovered by the hard-lockup detector while running LTP test
-concurrently with SMT switch tests.
+Fix the problem by returning a bad stack frame to the user if they try
+to set the MSR TS bits with sigreturn() on systems where TM is not
+supported.
 
- watchdog: CPU 12 detected hard LOCKUP on other CPUs 68
- watchdog: CPU 12 TB:85587019220796, last SMP heartbeat TB:85578827223399 (15999ms ago)
- watchdog: CPU 68 Hard LOCKUP
- watchdog: CPU 68 TB:85587019361273, last heartbeat TB:85576815065016 (19930ms ago)
- CPU: 68 PID: 45050 Comm: hxediag Kdump: loaded Not tainted 4.18.0-100.el8.ppc64le #1
- NIP:  c0000000006f5578 LR: c000000000cba9ec CTR: 0000000000000000
- REGS: c000201fff3c7d80 TRAP: 0100   Not tainted  (4.18.0-100.el8.ppc64le)
- MSR:  9000000002883033 <SF,HV,VEC,VSX,FP,ME,IR,DR,RI,LE>  CR: 24028424  XER: 00000000
- CFAR: c0000000006f558c IRQMASK: 1
- GPR00: c0000000000afc58 c000201c01c43400 c0000000015ce500 c000201cae26ec18
- GPR04: 0000000000000800 0000000000000540 0000000000000800 00000000000000f8
- GPR08: 0000000000000020 00000000000000a8 0000000080000000 c00800001a1beed8
- GPR12: c0000000000b1410 c000201fff7f4c00 0000000000000000 0000000000000000
- GPR16: 0000000000000000 0000000000000000 0000000000000540 0000000000000001
- GPR20: 0000000000000048 0000000010110000 c00800001a1e3780 c000201cae26ed18
- GPR24: 0000000000000000 c000201cae26ed8c 0000000000000001 c000000001116bc0
- GPR28: c000000001601ee8 c000000001602494 c000201cae26ec18 000000000000001f
- NIP [c0000000006f5578] find_next_bit+0x38/0x90
- LR [c000000000cba9ec] cpumask_next+0x2c/0x50
- Call Trace:
- [c000201c01c43400] [c000201cae26ec18] 0xc000201cae26ec18 (unreliable)
- [c000201c01c43420] [c0000000000afc58] xive_find_target_in_mask+0x1b8/0x240
- [c000201c01c43470] [c0000000000b0228] xive_pick_irq_target.isra.3+0x168/0x1f0
- [c000201c01c435c0] [c0000000000b1470] xive_irq_startup+0x60/0x260
- [c000201c01c43640] [c0000000001d8328] __irq_startup+0x58/0xf0
- [c000201c01c43670] [c0000000001d844c] irq_startup+0x8c/0x1a0
- [c000201c01c436b0] [c0000000001d57b0] __setup_irq+0x9f0/0xa90
- [c000201c01c43760] [c0000000001d5aa0] request_threaded_irq+0x140/0x220
- [c000201c01c437d0] [c00800001a17b3d4] bnx2x_nic_load+0x188c/0x3040 [bnx2x]
- [c000201c01c43950] [c00800001a187c44] bnx2x_self_test+0x1fc/0x1f70 [bnx2x]
- [c000201c01c43a90] [c000000000adc748] dev_ethtool+0x11d8/0x2cb0
- [c000201c01c43b60] [c000000000b0b61c] dev_ioctl+0x5ac/0xa50
- [c000201c01c43bf0] [c000000000a8d4ec] sock_do_ioctl+0xbc/0x1b0
- [c000201c01c43c60] [c000000000a8dfb8] sock_ioctl+0x258/0x4f0
- [c000201c01c43d20] [c0000000004c9704] do_vfs_ioctl+0xd4/0xa70
- [c000201c01c43de0] [c0000000004ca274] sys_ioctl+0xc4/0x160
- [c000201c01c43e30] [c00000000000b388] system_call+0x5c/0x70
- Instruction dump:
- 78aad182 54a806be 3920ffff 78a50664 794a1f24 7d294036 7d43502a 7d295039
- 4182001c 48000034 78a9d182 79291f24 <7d23482a> 2fa90000 409e0020 38a50040
+Found with sigfuz kernel selftest on P9.
 
-To fix this, move the check for condition 2 after the check for
-condition 3, so that we are able to break out of the loop soon after
-iterating through all the CPUs in the @mask in the problem case. Use
-do..while() to achieve this.
+This fixes CVE-2019-13648.
 
-Fixes: 243e25112d06 ("powerpc/xive: Native exploitation of the XIVE interrupt controller")
-Cc: stable@vger.kernel.org # v4.12+
-Reported-by: Indira P. Joga <indira.priya@in.ibm.com>
-Signed-off-by: Gautham R. Shenoy <ego@linux.vnet.ibm.com>
+Fixes: 2b0a576d15e0 ("powerpc: Add new transactional memory state to the signal context")
+Cc: stable@vger.kernel.org # v3.9
+Reported-by: Praveen Pandey <Praveen.Pandey@in.ibm.com>
+Signed-off-by: Michael Neuling <mikey@neuling.org>
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://lore.kernel.org/r/1563359724-13931-1-git-send-email-ego@linux.vnet.ibm.com
+Link: https://lore.kernel.org/r/20190719050502.405-1-mikey@neuling.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/sysdev/xive/common.c |    7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ arch/powerpc/kernel/signal_32.c |    3 +++
+ arch/powerpc/kernel/signal_64.c |    5 +++++
+ 2 files changed, 8 insertions(+)
 
---- a/arch/powerpc/sysdev/xive/common.c
-+++ b/arch/powerpc/sysdev/xive/common.c
-@@ -482,7 +482,7 @@ static int xive_find_target_in_mask(cons
- 	 * Now go through the entire mask until we find a valid
- 	 * target.
- 	 */
--	for (;;) {
-+	do {
- 		/*
- 		 * We re-check online as the fallback case passes us
- 		 * an untested affinity mask
-@@ -490,12 +490,11 @@ static int xive_find_target_in_mask(cons
- 		if (cpu_online(cpu) && xive_try_pick_target(cpu))
- 			return cpu;
- 		cpu = cpumask_next(cpu, mask);
--		if (cpu == first)
--			break;
- 		/* Wrap around */
- 		if (cpu >= nr_cpu_ids)
- 			cpu = cpumask_first(mask);
--	}
-+	} while (cpu != first);
-+
- 	return -1;
- }
+--- a/arch/powerpc/kernel/signal_32.c
++++ b/arch/powerpc/kernel/signal_32.c
+@@ -1279,6 +1279,9 @@ long sys_rt_sigreturn(int r3, int r4, in
+ 			goto bad;
  
+ 		if (MSR_TM_ACTIVE(msr_hi<<32)) {
++			/* Trying to start TM on non TM system */
++			if (!cpu_has_feature(CPU_FTR_TM))
++				goto bad;
+ 			/* We only recheckpoint on return if we're
+ 			 * transaction.
+ 			 */
+--- a/arch/powerpc/kernel/signal_64.c
++++ b/arch/powerpc/kernel/signal_64.c
+@@ -741,6 +741,11 @@ int sys_rt_sigreturn(unsigned long r3, u
+ 	if (MSR_TM_ACTIVE(msr)) {
+ 		/* We recheckpoint on return. */
+ 		struct ucontext __user *uc_transact;
++
++		/* Trying to start TM on non TM system */
++		if (!cpu_has_feature(CPU_FTR_TM))
++			goto badframe;
++
+ 		if (__get_user(uc_transact, &uc->uc_link))
+ 			goto badframe;
+ 		if (restore_tm_sigcontexts(current, &uc->uc_mcontext,
 
 
