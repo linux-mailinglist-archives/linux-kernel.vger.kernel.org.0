@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 85BA479870
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:07:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E02DA79864
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:07:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730115AbfG2UHj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 16:07:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54036 "EHLO mail.kernel.org"
+        id S2388950AbfG2TjK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 15:39:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54170 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388921AbfG2TjC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:39:02 -0400
+        id S2388939AbfG2TjG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:39:06 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 96C6E206DD;
-        Mon, 29 Jul 2019 19:39:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CE33E2054F;
+        Mon, 29 Jul 2019 19:39:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564429141;
-        bh=hIvLzSMFIklJ8+m8wmolvyy/M8acELv/Jtlw11xSbsU=;
+        s=default; t=1564429146;
+        bh=C2ERHxkMjstK/3REuWR56W15NHHguzmwGCiAkdCUl30=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nbMnbzG4RU6gQasoqf7CSAGP4Lt4e720kABAS30DKStmHiZ/DOo9WanaG9EhGwJKv
-         tcpDTfreW/HcpLvcUMe1iGKc4tEi+P5vO/FMljDorDmh+xmi4b6KZf70+01J65LvvW
-         Sf82W43NIFfhPNOB5K42SbCRJzRwx5axJTY/i360=
+        b=1Y6gneybSTOC1aJQ/suVXem0uja9DJ84hM6KHfiFLCt/2NEADdqf4K9vTHKRyffiA
+         pKnKVzvk4LXqIMWyM8R4Dyhq12nDMohM2oBM7s3YksBm8gGrtnF/ti7JFhONAxh1ki
+         /TXhdRK+abGpZxaRsCXayBE0t1dWb4H7ZU85XceQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
+        stable@vger.kernel.org,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        Michal Hocko <mhocko@suse.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Robin Murphy <robin.murphy@arm.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 273/293] mm/gup.c: mark undo_dev_pagemap as __maybe_unused
-Date:   Mon, 29 Jul 2019 21:22:44 +0200
-Message-Id: <20190729190845.233364232@linuxfoundation.org>
+Subject: [PATCH 4.14 275/293] mm/mmu_notifier: use hlist_add_head_rcu()
+Date:   Mon, 29 Jul 2019 21:22:46 +0200
+Message-Id: <20190729190845.383054872@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190729190820.321094988@linuxfoundation.org>
 References: <20190729190820.321094988@linuxfoundation.org>
@@ -48,42 +48,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 790c73690c2bbecb3f6f8becbdb11ddc9bcff8cc ]
+[ Upstream commit 543bdb2d825fe2400d6e951f1786d92139a16931 ]
 
-Several mips builds generate the following build warning.
+Make mmu_notifier_register() safer by issuing a memory barrier before
+registering a new notifier.  This fixes a theoretical bug on weakly
+ordered CPUs.  For example, take this simplified use of notifiers by a
+driver:
 
-  mm/gup.c:1788:13: warning: 'undo_dev_pagemap' defined but not used
+	my_struct->mn.ops = &my_ops; /* (1) */
+	mmu_notifier_register(&my_struct->mn, mm)
+		...
+		hlist_add_head(&mn->hlist, &mm->mmu_notifiers); /* (2) */
+		...
 
-The function is declared unconditionally but only called from behind
-various ifdefs. Mark it __maybe_unused.
+Once mmu_notifier_register() releases the mm locks, another thread can
+invalidate a range:
 
-Link: http://lkml.kernel.org/r/1562072523-22311-1-git-send-email-linux@roeck-us.net
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Robin Murphy <robin.murphy@arm.com>
-Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+	mmu_notifier_invalidate_range()
+		...
+		hlist_for_each_entry_rcu(mn, &mm->mmu_notifiers, hlist) {
+			if (mn->ops->invalidate_range)
+
+The read side relies on the data dependency between mn and ops to ensure
+that the pointer is properly initialized.  But the write side doesn't have
+any dependency between (1) and (2), so they could be reordered and the
+readers could dereference an invalid mn->ops.  mmu_notifier_register()
+does take all the mm locks before adding to the hlist, but those have
+acquire semantics which isn't sufficient.
+
+By calling hlist_add_head_rcu() instead of hlist_add_head() we update the
+hlist using a store-release, ensuring that readers see prior
+initialization of my_struct.  This situation is better illustated by
+litmus test MP+onceassign+derefonce.
+
+Link: http://lkml.kernel.org/r/20190502133532.24981-1-jean-philippe.brucker@arm.com
+Fixes: cddb8a5c14aa ("mmu-notifiers: core")
+Signed-off-by: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+Cc: Jérôme Glisse <jglisse@redhat.com>
+Cc: Michal Hocko <mhocko@suse.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- mm/gup.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ mm/mmu_notifier.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/mm/gup.c b/mm/gup.c
-index babcbd6d99c3..cee599d1692c 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -1364,7 +1364,8 @@ static inline pte_t gup_get_pte(pte_t *ptep)
- }
- #endif
+diff --git a/mm/mmu_notifier.c b/mm/mmu_notifier.c
+index 314285284e6e..70d0efb06374 100644
+--- a/mm/mmu_notifier.c
++++ b/mm/mmu_notifier.c
+@@ -267,7 +267,7 @@ static int do_mmu_notifier_register(struct mmu_notifier *mn,
+ 	 * thanks to mm_take_all_locks().
+ 	 */
+ 	spin_lock(&mm->mmu_notifier_mm->lock);
+-	hlist_add_head(&mn->hlist, &mm->mmu_notifier_mm->list);
++	hlist_add_head_rcu(&mn->hlist, &mm->mmu_notifier_mm->list);
+ 	spin_unlock(&mm->mmu_notifier_mm->lock);
  
--static void undo_dev_pagemap(int *nr, int nr_start, struct page **pages)
-+static void __maybe_unused undo_dev_pagemap(int *nr, int nr_start,
-+					    struct page **pages)
- {
- 	while ((*nr) - nr_start) {
- 		struct page *page = pages[--(*nr)];
+ 	mm_drop_all_locks(mm);
 -- 
 2.20.1
 
