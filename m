@@ -2,103 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DC117874E
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 10:25:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB47D78763
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 10:30:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727645AbfG2IZm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 04:25:42 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:46374 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727241AbfG2IZm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 04:25:42 -0400
-Received: by mail-pl1-f194.google.com with SMTP id c2so27187099plz.13;
-        Mon, 29 Jul 2019 01:25:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=NH4lN7mu8BOKkfv6t88t7ZhBrCg11QlAHHEp1XAW710=;
-        b=qwWgHodvvihYWDb0UOMMmCxPqDWo3t6/8zVyQ7tP749NrTsPt5HMs7KWdu3nXGkmj8
-         SpQS8XhQBvxpZ0KOv/qBD8tdrtdMesvjtq/kvBfQotUqqq0TTbqcj0j/mZ/BIPPD2p4P
-         cnfYdlJtNcQSWyAb6CsaWUZmTCnFfwiAE7nHfUaDL5a/w7xg/c05bfZxccDpI3CLzTt5
-         T5spntzFBadJb4y9sC8zVNI2mgHz94lOWLcGEp0OfLvP2I2oCvAdipuyXkTeDam+Cgz8
-         hwjXLE8f4UNj+b7HKD6dqt9QU/n4gZ/9/nxLj8HFtL0StrgZzw/RuJuz+s6TE54KFUKV
-         seWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=NH4lN7mu8BOKkfv6t88t7ZhBrCg11QlAHHEp1XAW710=;
-        b=YB5OgKzkD4oEuFuObguYmJCVssZC7TGuE8dHY6AncFEDwPXUKYdstvlxjqaFIS2uVM
-         2MFFpMEJ7TbOxG2CUz0rWCmhiog8js02/w+iquhRPHy+48ODdOtm8I9evDI6JVrJg9+H
-         xOUXzC7fg9/oUo810kgEszxikavxG2ZGAj2bjDnxBJS/1HfJd6koU5XzV10L0xN17Aqx
-         Nr8Syapf5DZrM14mONxGcJnrcAiRJTpqlh37Ik/gl63gnzCHFW7EiZXSVN4MyOsnYaTy
-         ei8Yl/dNkave5+JS5KiP5n/ss5Wue2unEvBuaaH00sirAaqbCtLOjOtjHsfOqRA5tPYB
-         UovQ==
-X-Gm-Message-State: APjAAAWzIFbyoclVgejxHKf9Hfr0C4C9siPM1eeWJqm+awV4nh5QUn8n
-        Gbk9Ys02gv3utOC9SF/RxJOVLsh+AKc=
-X-Google-Smtp-Source: APXvYqzUL8MoUKRpHICLcWOcctUAGjZsDzWU9jLkSmVyIZRBrM4Kv24LNMtcqZFN1hX61REQ3ly6Cw==
-X-Received: by 2002:a17:902:7887:: with SMTP id q7mr110530731pll.129.1564388741261;
-        Mon, 29 Jul 2019 01:25:41 -0700 (PDT)
-Received: from ?IPv6:2402:f000:4:72:808::177e? ([2402:f000:4:72:808::177e])
-        by smtp.gmail.com with ESMTPSA id w132sm62425631pfd.78.2019.07.29.01.25.39
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 29 Jul 2019 01:25:40 -0700 (PDT)
-Subject: Re: [PATCH v2] net: sched: Fix a possible null-pointer dereference in
- dequeue_func()
-To:     Jiri Pirko <jiri@resnulli.us>
-Cc:     jhs@mojatatu.com, xiyou.wangcong@gmail.com, davem@davemloft.net,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190729080018.28678-1-baijiaju1990@gmail.com>
- <20190729081854.GC2211@nanopsycho>
-From:   Jia-Ju Bai <baijiaju1990@gmail.com>
-Message-ID: <4619ec69-b800-1a61-7082-85ef4fa9af74@gmail.com>
-Date:   Mon, 29 Jul 2019 16:25:41 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1727552AbfG2Iao (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 04:30:44 -0400
+Received: from foss.arm.com ([217.140.110.172]:39876 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726305AbfG2Ian (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 04:30:43 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9EF77337;
+        Mon, 29 Jul 2019 01:30:42 -0700 (PDT)
+Received: from e107158-lin.cambridge.arm.com (unknown [10.1.194.30])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B62643F575;
+        Mon, 29 Jul 2019 01:30:41 -0700 (PDT)
+Date:   Mon, 29 Jul 2019 09:30:39 +0100
+From:   Qais Yousef <qais.yousef@arm.com>
+To:     Eiichi Tsukata <devel@etsukata.com>
+Cc:     tglx@linutronix.de, luto@kernel.org, mingo@redhat.com,
+        peterz@infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sched/core: Remove the unused schedule_user() function
+Message-ID: <20190729083039.kwamco7q6glsoo6e@e107158-lin.cambridge.arm.com>
+References: <20190727165513.25636-1-devel@etsukata.com>
 MIME-Version: 1.0
-In-Reply-To: <20190729081854.GC2211@nanopsycho>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190727165513.25636-1-devel@etsukata.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 07/28/19 01:55, Eiichi Tsukata wrote:
+> Since commit 02bc7768fe44 ("x86/asm/entry/64: Migrate error and IRQ exit
+> work to C and remove old assembly code"), it's no longer used.
 
+It seems to me that powerpc and sparc are still using it?
 
-On 2019/7/29 16:18, Jiri Pirko wrote:
-> Mon, Jul 29, 2019 at 10:00:18AM CEST, baijiaju1990@gmail.com wrote:
->> In dequeue_func(), there is an if statement on line 74 to check whether
->> skb is NULL:
->>     if (skb)
->>
->> When skb is NULL, it is used on line 77:
->>     prefetch(&skb->end);
->>
->> Thus, a possible null-pointer dereference may occur.
->>
->> To fix this bug, skb->end is used when skb is not NULL.
->>
->> This bug is found by a static analysis tool STCheck written by us.
->>
->> Fixes: 79bdc4c862af ("codel: generalize the implementation")
-> Looks like this is something being there since the beginning:
-> commit 76e3cc126bb223013a6b9a0e2a51238d1ef2e409
-> Author: Eric Dumazet <edumazet@google.com>
-> Date:   Thu May 10 07:51:25 2012 +0000
->
->      codel: Controlled Delay AQM
->
->
-> Please adjust "Fixes:".
+$ git grep SCHEDULE_USER
+arch/powerpc/include/asm/context_tracking.h:#define SCHEDULE_USER bl    schedule_user
+arch/powerpc/include/asm/context_tracking.h:#define SCHEDULE_USER bl    schedule
+arch/powerpc/kernel/entry_64.S: SCHEDULE_USER
+arch/sparc/kernel/rtrap_64.S:# define SCHEDULE_USER schedule_user
+arch/sparc/kernel/rtrap_64.S:# define SCHEDULE_USER schedule
+arch/sparc/kernel/rtrap_64.S:           call                    SCHEDULE_USER
 
-Thanks for the advice :)
-I have sent a v3 patch.
+Cheers
 
+--
+Qais Yousef
 
-Best wishes,
-Jia-Ju Bai
+> 
+> Signed-off-by: Eiichi Tsukata <devel@etsukata.com>
+> ---
+>  kernel/sched/core.c | 19 -------------------
+>  1 file changed, 19 deletions(-)
+> 
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index 2b037f195473..0079bebe0086 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -3973,25 +3973,6 @@ void __sched schedule_idle(void)
+>  	} while (need_resched());
+>  }
+>  
+> -#ifdef CONFIG_CONTEXT_TRACKING
+> -asmlinkage __visible void __sched schedule_user(void)
+> -{
+> -	/*
+> -	 * If we come here after a random call to set_need_resched(),
+> -	 * or we have been woken up remotely but the IPI has not yet arrived,
+> -	 * we haven't yet exited the RCU idle mode. Do it here manually until
+> -	 * we find a better solution.
+> -	 *
+> -	 * NB: There are buggy callers of this function.  Ideally we
+> -	 * should warn if prev_state != CONTEXT_USER, but that will trigger
+> -	 * too frequently to make sense yet.
+> -	 */
+> -	enum ctx_state prev_state = exception_enter();
+> -	schedule();
+> -	exception_exit(prev_state);
+> -}
+> -#endif
+> -
+>  /**
+>   * schedule_preempt_disabled - called with preemption disabled
+>   *
+> -- 
+> 2.21.0
+> 
