@@ -2,77 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D115C79228
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 19:33:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D7F679224
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 19:32:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728988AbfG2RdT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 13:33:19 -0400
-Received: from rcdn-iport-8.cisco.com ([173.37.86.79]:1752 "EHLO
+        id S1728353AbfG2RcJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 13:32:09 -0400
+Received: from rcdn-iport-8.cisco.com ([173.37.86.79]:1356 "EHLO
         rcdn-iport-8.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727438AbfG2RdT (ORCPT
+        with ESMTP id S1726516AbfG2RcI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 13:33:19 -0400
+        Mon, 29 Jul 2019 13:32:08 -0400
+X-Greylist: delayed 354 seconds by postgrey-1.27 at vger.kernel.org; Mon, 29 Jul 2019 13:32:07 EDT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=cisco.com; i=@cisco.com; l=462; q=dns/txt; s=iport;
-  t=1564421598; x=1565631198;
+  d=cisco.com; i=@cisco.com; l=456; q=dns/txt; s=iport;
+  t=1564421527; x=1565631127;
   h=from:to:cc:subject:date:message-id:references:
    in-reply-to:content-id:content-transfer-encoding:
    mime-version;
-  bh=DnzRDcKw8LCr6kwuLsFsSDdA5JtrsMkypm5zzHhVE3Y=;
-  b=ko2iqzL4llDCHDw3CMt3XE1QdZ6aY8V5lb3FyKun2eaBxWvqatU6pZeL
-   +8fQkVEqnI7PZr/wYm1HIBztT4igkZls24mPrZGaM/YIb4EdH/j7Y7lry
-   pj/0IepOFNujhfFNN8HpcekqhBxTP86qs8s+8U6dn7WEgtmmJr/MdJUPp
-   8=;
-IronPort-PHdr: =?us-ascii?q?9a23=3A/+6wqxAGfVJBZFDZA7RrUyQJPHJ1sqjoPgMT9p?=
- =?us-ascii?q?ssgq5PdaLm5Zn5IUjD/qs03kTRU9Dd7PRJw6rNvqbsVHZIwK7JsWtKMfkuHw?=
- =?us-ascii?q?QAld1QmgUhBMCfDkiuN+XhbyU3F8dqX15+9Hb9Ok9QS47z?=
+  bh=ceMV1HsgTfN3GfDUcZ5zW2rzvBFNz0hpgiZSDaFK71Q=;
+  b=nDrLoiOOj6yVt63YUsTt8qShAwtDi5lrMH+d6UwM9fdqlqCJRg4H2LKo
+   6hjQ1F3gDq39XPeuLU/kz1RokEWF//I0im+hNdeJpIWNnc45LO1/mU4ih
+   ow3R2gonQfogtH7gkUWKmIv6K4baFLNdhXiihHC7RPaJYSj11W34DQDdV
+   s=;
+IronPort-PHdr: =?us-ascii?q?9a23=3AJAHC5B1YXIAEhmd2smDT+zVfbzU7u7jyIg8e44?=
+ =?us-ascii?q?YmjLQLaKm44pD+JxKGt+51ggrPWoPWo7JfhuzavrqoeFRI4I3J8RVgOIdJSw?=
+ =?us-ascii?q?dDjMwXmwI6B8vQElbwLPfnZC8SF8VZX1gj9Ha+YgBY?=
 X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A0ATAAAWKz9d/5ldJa1mGgEBAQEBAgE?=
- =?us-ascii?q?BAQEHAgEBAQGBVQMBAQEBCwGBQ1ADgUIgBAsqh2UDjQOCW5dTgS6BJANUCQE?=
- =?us-ascii?q?BAQwBAS0CAQGEQAKCbCM2Bw4BAwEBBAEBAgEGbYUeDIVLAQEBAgESLgEBNwE?=
- =?us-ascii?q?ECwIBCEYyJQIEAQ0FIoMAgWsDDg8BoUUCgTiIYIIjgnoBAQWFCxiCEwmBNAG?=
- =?us-ascii?q?LXxeBQD+BEScfgkw+iAGCJo5Nhi6WAAkCghqUFBuCHpVwjTuXVgIEAgQFAg4?=
- =?us-ascii?q?BAQWBVwongVhwFWUBgkGCQoNxilNygSmNQwEB?=
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A0AJAAAvLD9d/5NdJa1mGgEBAQEBAgE?=
+ =?us-ascii?q?BAQEHAgEBAQGBUwUBAQEBCwGBQ1ADgUIgBAsqh2UDhFKIMYI2JZdTgS6BJAN?=
+ =?us-ascii?q?UCQEBAQwBAS0CAQGEQAKCbCM0CQ4BAwEBBAEBAgEGbYUeDIVLAQEBAgESLgE?=
+ =?us-ascii?q?BNwEECwIBCEYyJQIEAQ0FIoMAgWsDDg8BoUYCgTiIYIIjgnoBAQWFCxiCEwm?=
+ =?us-ascii?q?BNAGLXxeBQD+BEScME4JMPoQNg3SCJo5NhVNblgAJAoIalBQUB4IelXCNO5d?=
+ =?us-ascii?q?WAgQCBAUCDgEBBYFQOIFYcBVlAYJBgkI3gzqKU3KBKYpxglIBAQ?=
 X-IronPort-AV: E=Sophos;i="5.64,323,1559520000"; 
-   d="scan'208";a="605095987"
-Received: from rcdn-core-2.cisco.com ([173.37.93.153])
-  by rcdn-iport-8.cisco.com with ESMTP/TLS/DHE-RSA-SEED-SHA; 29 Jul 2019 17:26:12 +0000
-Received: from XCH-ALN-001.cisco.com (xch-aln-001.cisco.com [173.36.7.11])
-        by rcdn-core-2.cisco.com (8.15.2/8.15.2) with ESMTPS id x6THQCvM032638
+   d="scan'208";a="605097458"
+Received: from rcdn-core-11.cisco.com ([173.37.93.147])
+  by rcdn-iport-8.cisco.com with ESMTP/TLS/DHE-RSA-SEED-SHA; 29 Jul 2019 17:29:05 +0000
+Received: from xch-rcd-011.cisco.com (xch-rcd-011.cisco.com [173.37.102.21])
+        by rcdn-core-11.cisco.com (8.15.2/8.15.2) with ESMTPS id x6THT5X5019098
         (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=FAIL);
-        Mon, 29 Jul 2019 17:26:12 GMT
-Received: from xhs-aln-003.cisco.com (173.37.135.120) by XCH-ALN-001.cisco.com
- (173.36.7.11) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 29 Jul
- 2019 12:26:11 -0500
-Received: from xhs-aln-002.cisco.com (173.37.135.119) by xhs-aln-003.cisco.com
- (173.37.135.120) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 29 Jul
- 2019 12:26:11 -0500
-Received: from NAM04-SN1-obe.outbound.protection.outlook.com (173.37.151.57)
- by xhs-aln-002.cisco.com (173.37.135.119) with Microsoft SMTP Server (TLS) id
- 15.0.1473.3 via Frontend Transport; Mon, 29 Jul 2019 12:26:11 -0500
+        Mon, 29 Jul 2019 17:29:05 GMT
+Received: from xhs-rtp-003.cisco.com (64.101.210.230) by XCH-RCD-011.cisco.com
+ (173.37.102.21) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 29 Jul
+ 2019 12:29:04 -0500
+Received: from xhs-rtp-002.cisco.com (64.101.210.229) by xhs-rtp-003.cisco.com
+ (64.101.210.230) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 29 Jul
+ 2019 13:29:02 -0400
+Received: from NAM01-BY2-obe.outbound.protection.outlook.com (64.101.32.56) by
+ xhs-rtp-002.cisco.com (64.101.210.229) with Microsoft SMTP Server (TLS) id
+ 15.0.1473.3 via Frontend Transport; Mon, 29 Jul 2019 13:29:02 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=GNIK0bXNlOwzjjNqhAzELU9kNrgF51BsmEsRyJblrPubY9jj7vN81JPz6V2s1YQVVnffEJsQC0P0Q4r5RO6eF4QHHu+feLRTT2BzKh9auSx9Fa2pHjtU3RwKWQxRcXZn60dndUoZEE5HfxnlL4te4dwRy9705GTf7xbz1vOIH3Wb+isrKixms5MhBTF28xPVTDsI5ZAsTOO83TYRIuW/CIQZraSXWXF2wW/HjPAr1J3C/7EsZtPUxbJWTQkbRqov/NEgt8xYl/5p/bh+OF85G8uH8YC7pC2Zy+FJcfyyyipVHs7I4jfzYf7mxj3ANN0fbqZ2HiOwvKrQFMOjZb2ZBA==
+ b=hlGy4ACrHN++civwXfwptYNhTeaMzce1iKt+TrvCHOwlvt3rZsStRxWD7JYnd/ys83GzmG0J7sZmzX6KLh/zyxMwn2hNCFgB/ixRGZkDSynGBuRHEq9rBDaqZ3sqZkrfdsBgr6d6q3c3o+oA51HuK+F1ABvwFvB4FsEgxvffHTbKDDx9SN0fa3ydCsfh3xu8QQMNcLLAefbmaAGEEq2PS7T/96pmkG7eETL+GidD/EuCP47K/2KYvALLs8D10g5doJjLnFnzr2pmr4pi/idEwZ7uQyhGT65gvAfsaqoSoymznHvhpK3V5zhS5MfePvDDFP4xMFW8vbCDmq2xoRw3RA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sTchYUz6py+HpzKadvTZ38+nJ+pBLombCgxcw/5c0h8=;
- b=fFY+de+tIVCX4LfJGIeLv/0dZ10t+kyfQNNWrRIIa92035or5gzE7kJUUHjarCQGshARRPtnq9VdLFV47Cm/0/02H2V+ezV4PEVQpNnbALVRU7tfBzB4JHEwTyNU6sVllbIXa2yFRUXsp32eq0txhIfxMVALpGcQd2FU8meJHH7Z+gIUD/6EikTtVVPDn6dn4fxrA0OhmE8HO6zcSfqdebuPb4wdOBbUC5cu24P8/ugAZ6IRAAq8EDcr4aS5XsW3hGYOO2Mu0iA/sbLCaJj2FxHA3FKFN3HBlAe3FkvddPgNz466l+CQzQ1/MdKBHZ1WXVK01NVV15rqRWPL08ZBKA==
+ bh=C54rsf+b5DPterrMjfWuADkLCorY8sMzXgpZkUj9PXQ=;
+ b=E/IY9YlZevY3FuRak8tovCJrZ/muFeuYLz2V8949jziBEePZgbZIt0unF9uRyx61T7dqUI4QHo8uH3wep5eEovn61guHM4zIcxXCW3qPPkoHnkI66th/72aQmMDhxAcF47f653dkQbSR5k90coi5qU669iqG2ejZC+GTl32IfK53wl+eKJ7Kqk1OLaZ3mT6Nwt3Sw9Kk356hLngxCIyssgurZBy9oic81eu9QjndoMlEL8/lq/AabAQm/dGlyFssLYnWKxsWVfsnwZFWVdsIigssRTbQn+vcTlKmabJkuqgf1ckRAu7u133SRiDwkixlCi7eLCV+O611abpc4SfGFA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
  smtp.mailfrom=cisco.com;dmarc=pass action=none
  header.from=cisco.com;dkim=pass header.d=cisco.com;arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cisco.onmicrosoft.com;
  s=selector2-cisco-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sTchYUz6py+HpzKadvTZ38+nJ+pBLombCgxcw/5c0h8=;
- b=ecWDMY/3seZbW62Uiz5hqKFxoJcLuMjF02qBCjpTpfOnuNd6hwz5mi7dqFrpVmE9r9Zlw+oqAk862leSnWi/vt0RDfc43dMSHxrjMave1IN4ekajjfG+AnpDPtzWYIgUHiVZcqAWa2iWoCypB7UovQLWnFM4GITY7EJk+ryER/Y=
+ bh=C54rsf+b5DPterrMjfWuADkLCorY8sMzXgpZkUj9PXQ=;
+ b=0+ZBmQ4SlxZPaRjbpOhF4+wce0M3VH8MHsS5UTp3GnMKS1lGxWo/bDP3MMlFWqHjxtRV0otuwApyTOBMKVqWen6xsvxh+SkD4u+y7SUz1aBQLhNSeA90SyUJzPW3MF3bzdCmFkugIQqFDacmEGG3A2Wg12Ng7JSmHyCSrwe1o2M=
 Received: from BY5PR11MB4007.namprd11.prod.outlook.com (10.255.161.92) by
- BY5PR11MB3928.namprd11.prod.outlook.com (10.255.161.30) with Microsoft SMTP
+ BY5PR11MB3880.namprd11.prod.outlook.com (10.255.160.16) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2115.15; Mon, 29 Jul 2019 17:26:10 +0000
+ 15.20.2115.10; Mon, 29 Jul 2019 17:29:01 +0000
 Received: from BY5PR11MB4007.namprd11.prod.outlook.com
  ([fe80::a9a1:897e:f584:9d6f]) by BY5PR11MB4007.namprd11.prod.outlook.com
  ([fe80::a9a1:897e:f584:9d6f%6]) with mapi id 15.20.2115.005; Mon, 29 Jul 2019
- 17:26:10 +0000
+ 17:29:01 +0000
 From:   "Stefan Schaeckeler (sschaeck)" <sschaeck@cisco.com>
 To:     Andrew Jeffery <andrew@aj.id.au>,
         "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>
@@ -83,14 +84,16 @@ CC:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
         "linux-arm-kernel@lists.infradead.org" 
         <linux-arm-kernel@lists.infradead.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 01/17] ARM: dts: aspeed-g5: Move EDAC node to APB
-Thread-Topic: [PATCH 01/17] ARM: dts: aspeed-g5: Move EDAC node to APB
-Thread-Index: AQHVQ3SkzIRhhRUUW0+FMgPuy4Chg6bhaSoA
-Date:   Mon, 29 Jul 2019 17:26:10 +0000
-Message-ID: <8F0B09F9-A2EA-4A88-BE8A-A8869FCE178A@cisco.com>
+Subject: Re: [PATCH 02/17] ARM: dts: aspeed-g5: Use recommended generic node
+ name for SDMC
+Thread-Topic: [PATCH 02/17] ARM: dts: aspeed-g5: Use recommended generic node
+ name for SDMC
+Thread-Index: AQHVQ3SkIHcc3CSkQUy+2gvzeKU5DabhafaA
+Date:   Mon, 29 Jul 2019 17:29:01 +0000
+Message-ID: <EF113919-7590-442F-A1EE-12143FA4D960@cisco.com>
 References: <20190726053959.2003-1-andrew@aj.id.au>
- <20190726053959.2003-2-andrew@aj.id.au>
-In-Reply-To: <20190726053959.2003-2-andrew@aj.id.au>
+ <20190726053959.2003-3-andrew@aj.id.au>
+In-Reply-To: <20190726053959.2003-3-andrew@aj.id.au>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -100,32 +103,32 @@ authentication-results: spf=none (sender IP is )
  smtp.mailfrom=sschaeck@cisco.com; 
 x-originating-ip: [2001:420:30d:1254:1000:5c0c:8a0d:62f5]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 290499c3-57b7-4bc6-d03c-08d71449d931
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:BY5PR11MB3928;
-x-ms-traffictypediagnostic: BY5PR11MB3928:
-x-microsoft-antispam-prvs: <BY5PR11MB39288983C7EAAF8EDC1BF363C7DD0@BY5PR11MB3928.namprd11.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:4125;
+x-ms-office365-filtering-correlation-id: 4d2facdc-ed70-481b-51ce-08d7144a3f09
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:BY5PR11MB3880;
+x-ms-traffictypediagnostic: BY5PR11MB3880:
+x-microsoft-antispam-prvs: <BY5PR11MB38803E2407D1FDC4D9D8B5A2C7DD0@BY5PR11MB3880.namprd11.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:2399;
 x-forefront-prvs: 01136D2D90
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(396003)(366004)(376002)(346002)(39860400002)(189003)(199004)(66556008)(102836004)(6116002)(66476007)(71190400001)(76116006)(53546011)(5660300002)(6506007)(66446008)(36756003)(64756008)(71200400001)(99286004)(486006)(66946007)(76176011)(6246003)(14454004)(186003)(53936002)(305945005)(6512007)(54906003)(110136005)(229853002)(5024004)(256004)(6436002)(81166006)(81156014)(11346002)(4326008)(68736007)(4744005)(316002)(2906002)(8676002)(33656002)(2616005)(8936002)(478600001)(6486002)(2501003)(446003)(7736002)(476003)(58126008)(86362001)(46003)(25786009);DIR:OUT;SFP:1101;SCL:1;SRVR:BY5PR11MB3928;H:BY5PR11MB4007.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(979002)(4636009)(136003)(346002)(39860400002)(376002)(396003)(366004)(189003)(199004)(446003)(66946007)(66446008)(64756008)(66556008)(66476007)(476003)(8936002)(36756003)(71200400001)(54906003)(81156014)(2616005)(81166006)(76116006)(11346002)(6512007)(6436002)(86362001)(6486002)(58126008)(110136005)(14454004)(2906002)(99286004)(33656002)(102836004)(8676002)(53936002)(71190400001)(229853002)(6506007)(486006)(186003)(53546011)(478600001)(46003)(316002)(4744005)(6246003)(2501003)(25786009)(4326008)(305945005)(7736002)(76176011)(6116002)(256004)(14444005)(5660300002)(68736007)(41533002)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:BY5PR11MB3880;H:BY5PR11MB4007.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: cisco.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: UFo7tZdMmSrDEQWmUTk7cNubH0pmCcmG3xLyZvW66PbdiCMzXst7Abok7MIqoZXtpvb6WEnE6rbwfNO0jIrVM4LwYQ7yHrUo1A2j32Ukt8Jf3Vw3qwZHqj7KxhN1VO+1XVEIJNxvCsrX0uK87ZJVPL3aG9z69/pmKuv4liFElmJfqKz71m3uB8bhT0HpoZDAnLd57jockQB4NM+KevP5WtTgZiiutqrpZ0huYunxtYeybIZOpVosCLm7l3n6PD324OVoqDSOodaaNIO95j8i36OmJM7bx3IqUfaKM+G7cvivS1B6gvywCp8G0CEtl0U+0zwhNpPdTUw4+3f5OtRadkVWKhROwKiqRrP7NnQozYVPouC/4XluvOydeBZTpX9CV5//OIVOqY9aHhq7qMoOUw00FxDkP2LZSPzrC36jevY=
+x-microsoft-antispam-message-info: 0MymAVkWwBDg7NsRlj7EVo2UFpQ+Qtjl2Uy89p7HnkeHusmzB32n++6JgPjLjdqq51YBvuYFyqBggKkwna/kwFeLHR0qyH0KZhzokRyIU9abZq0UXouqsjKD0Nh29kwkkLrkSa3csZjRzKOQvenvksTD3cXZniQvAU8/PBhuEHWRaZNHdYp3JgNDLcO2aOQJX61H8ln5nzwlrzRJzfI0eYx0LjUHhPDX5IAhMKkc6lzQlxOyCClhFf8nhhbxWlrSDxAjfCD5Dzx2DicMQw5SU8jO6tjR3oGZMnxbyo21gydW2P6PJTXLwCcGaPbeA92onsqbzy7hvj7B7MH0MnOEOY8ew99CNOsROgNAfGNPHPZn25dd6lZB7ouNh01ROXe5BhfJaHViWd4Oc89bYQUvH5yaAr7UfOUN7F+0JLBht44=
 Content-Type: text/plain; charset="iso-8859-1"
-Content-ID: <756A23CAC08DC448858086B25C1F218A@namprd11.prod.outlook.com>
+Content-ID: <CAA3C299B7A78046AC880CC515AC5AC9@namprd11.prod.outlook.com>
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 290499c3-57b7-4bc6-d03c-08d71449d931
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Jul 2019 17:26:10.2564
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4d2facdc-ed70-481b-51ce-08d7144a3f09
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Jul 2019 17:29:01.2416
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 5ae1af62-9505-4097-a69a-c1553ef7840e
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
 X-MS-Exchange-CrossTenant-userprincipalname: sschaeck@cisco.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR11MB3928
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR11MB3880
 X-OriginatorOrg: cisco.com
-X-Outbound-SMTP-Client: 173.36.7.11, xch-aln-001.cisco.com
-X-Outbound-Node: rcdn-core-2.cisco.com
+X-Outbound-SMTP-Client: 173.37.102.21, xch-rcd-011.cisco.com
+X-Outbound-Node: rcdn-core-11.cisco.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -133,15 +136,14 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Thursday, July 25, 2019 at 10:40 PM, Andrew Jeffery wrote:
 
-> Previously the register interface was not attached to any internal bus,
-> which is not correct - it lives on the APB.
+> The EDAC is a sub-function of the SDRAM Memory Controller. Rename the
+> node to the appropriate generic node name.
 >
 > Cc: Stefan M Schaeckeler <sschaeck@cisco.com>
 > Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
 > ---
->  arch/arm/boot/dts/aspeed-g5.dtsi | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
-
-Reviewed-by: Stefan Schaeckeler <sschaeck@cisco.com>
-
+>  arch/arm/boot/dts/aspeed-g5.dtsi | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+   =20
+Reviewed-by: Stefan Schaeckeler <sschaeck@cisco.com>   =20
 
