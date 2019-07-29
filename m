@@ -2,98 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C801787F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 11:03:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C2277787F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 11:04:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727554AbfG2JDP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 05:03:15 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:17274 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726432AbfG2JDP (ORCPT
+        id S1727645AbfG2JD7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 05:03:59 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:42432 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726432AbfG2JD7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 05:03:15 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d3eb65a0000>; Mon, 29 Jul 2019 02:03:22 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Mon, 29 Jul 2019 02:03:14 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Mon, 29 Jul 2019 02:03:14 -0700
-Received: from [10.21.132.148] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 29 Jul
- 2019 09:03:11 +0000
-Subject: Re: [PATCH 5.2 00/66] 5.2.4-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-        <ben.hutchings@codethink.co.uk>, <lkft-triage@lists.linaro.org>,
-        <stable@vger.kernel.org>, linux-tegra <linux-tegra@vger.kernel.org>
-References: <20190726152301.936055394@linuxfoundation.org>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <df4d349b-03a1-58b1-cf82-4e76d5820614@nvidia.com>
-Date:   Mon, 29 Jul 2019 10:03:10 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Mon, 29 Jul 2019 05:03:59 -0400
+Received: by mail-wr1-f68.google.com with SMTP id x1so11014022wrr.9;
+        Mon, 29 Jul 2019 02:03:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=7y+B0NsHK08ns87YYWWmTZg44ekWnBl+gyEZRdNH7dk=;
+        b=Q3NGlBhYcmY7gU7pa16M4xiyd4vGtiytI6d390UxmvVqpbpPMRQrlvlHUz0UP8G+os
+         BCn59Q5YiDmTmmJUy0RRvJWMcQj9ENlFM5DJahpwI6dWPxbZ+gKMN2FgHQp01b4uHr3X
+         lFwKQ9aBY+LCEihdfxwmsiC3o0xRn0WlcEgSOkC/XCwR++CHeME1MRbLGMifhwVfZyIB
+         tPT7vERlOK82OnoEPIKs4H43XD7k1KcIH3XBSeclCTmaUAtnRIWZOuQZa38li4tMj2w8
+         6Bo77DH/eulrOOkNA8Ofw8gHuPCuFOz8b7Ec6YZY4DlGcMOxX5v94wRhWa9RsG80Xgrr
+         dImg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=7y+B0NsHK08ns87YYWWmTZg44ekWnBl+gyEZRdNH7dk=;
+        b=maXhu0awdH4aFKs2OxijuF+/nqh6Fj2RmaM63/GgIMxuTJhV2M7ml6kVQExvUEruSx
+         xrJdjK9HcHiuJnGC1rx+cMtOow58pE3kbFGg+sGcjmK2PKVCY/nD+7MFvG/NV4dp3TNF
+         GVU1C73vez+Oo7QzrlX0j6APPT/XoiRWB3p3ATivnEfnxh/sgdlx/SW3PVLlX6akpVpP
+         DXW3vhHkse5GkOD/xhulGJVYMvQx83a8HhV7CeW/MPxmAaEyQasPfh+ltY21raEMkZu4
+         2xo8Ojg4D8ZtjyNW1bitwclmnf/ObCiqD5WDGronF50mjqSW2+DjB0vRn8A5Aur+7x12
+         5Zjw==
+X-Gm-Message-State: APjAAAVa9yG8/NQWzrursvz4hC+8bU10dBmdZX/LRA5DQMeOx7pTis7c
+        SSKjRvUVfDqHehKW1XDBj2ANM8mDkSTZmNRyuUs=
+X-Google-Smtp-Source: APXvYqxr49mqHWNHmDv+kvjF41anGCxPRTZve8h+rl+VxZ+94QVxFkj3HV+j0emyuMOH5LeC2mJrrnrQpEI4SlZ0SLc=
+X-Received: by 2002:a05:6000:14b:: with SMTP id r11mr45325987wrx.196.1564391036430;
+ Mon, 29 Jul 2019 02:03:56 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190726152301.936055394@linuxfoundation.org>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1564391002; bh=8XCwXG3bSoPGoVaqWvCQLwGWu4+QUH2urSLln44fk+A=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=KuC6J7DHg7P9VENLrBHysk+8WL3VTuK+Nbfc8raWib1iwAmZNY63cvUXWTmZ0zgPB
-         aOscvcWidrkyTMTl02+1ziIdtwW2lRhFWbxgMHbXqobrDaGpGGRCcgixq8GH7HbNXw
-         Doar6klqDlhwdhDV2gBpv/7xah9F5iU387D/++1qv9L908MHblNh5V/7XhtSswtOBT
-         pnXfPgIFYMuea063519gj0G/S7+XW1Rru02jtWVVbDEU5Ft4PB9ngCALYofUouWJ6x
-         pJ7TdFigAn9o9r16ijfAl6nrG/bs3T+MrO3LhzoYHYryPBTZU3JU9oYk8a8KJuNK62
-         wcKp9Q9u2uFvw==
+References: <20190728141218.12702-1-daniel.baluta@nxp.com> <20190729083130.GA3904@bogon.m.sigxcpu.org>
+In-Reply-To: <20190729083130.GA3904@bogon.m.sigxcpu.org>
+From:   Daniel Baluta <daniel.baluta@gmail.com>
+Date:   Mon, 29 Jul 2019 12:03:45 +0300
+Message-ID: <CAEnQRZDwAQZ7E=ayJeZCvXJ8fyayCmpAqe9=oLm4gxw8zoN0oQ@mail.gmail.com>
+Subject: Re: [PATCH v3] arm64: dts: imx8mq: Init rates and parents configs for clocks
+To:     =?UTF-8?Q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>
+Cc:     Daniel Baluta <daniel.baluta@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Carlo Caione <ccaione@baylibre.com>,
+        Abel Vesa <abel.vesa@nxp.com>, baruch@tkos.co.il,
+        Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Devicetree List <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "S.j. Wang" <shengjiu.wang@nxp.com>,
+        "Angus Ainslie (Purism)" <angus@akkea.ca>,
+        Anson Huang <Anson.Huang@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Jul 29, 2019 at 11:32 AM Guido G=C3=BCnther <agx@sigxcpu.org> wrote=
+:
+>
+> Hi,
+> On Sun, Jul 28, 2019 at 05:12:18PM +0300, Daniel Baluta wrote:
+> > From: Abel Vesa <abel.vesa@nxp.com>
+> >
+> > Add the initial configuration for clocks that need default parent and r=
+ate
+> > setting. This is based on the vendor tree clock provider parents and ra=
+tes
+> > configuration except this is doing the setup in dts rather then using c=
+lock
+> > consumer API in a clock provider driver.
+> >
+> > Note that by adding the initial rate setting for audio_pll1/audio_pll
+> > setting we need to remove it from imx8mq-librem5-devkit.dts
+> > imx8mq-librem5-devkit.dts
+> >
+> > Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+> > Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
+> > ---
+> > Changes since v2:
+> >       - set rate for audio_pll1/audio_pll2  in the dtsi file and
+> >       remove the setting from imx8mq-librem5-devkit.dts
+> >
+> >  .../dts/freescale/imx8mq-librem5-devkit.dts   |  5 -----
+> >  arch/arm64/boot/dts/freescale/imx8mq.dtsi     | 21 +++++++++++++++++++
+> >  2 files changed, 21 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts b/=
+arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts
+> > index 683a11035643..c702ccc82867 100644
+> > --- a/arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts
+> > +++ b/arch/arm64/boot/dts/freescale/imx8mq-librem5-devkit.dts
+> > @@ -169,11 +169,6 @@
+> >       };
+> >  };
+> >
+> > -&clk {
+> > -     assigned-clocks =3D <&clk IMX8MQ_AUDIO_PLL1>, <&clk IMX8MQ_AUDIO_=
+PLL2>;
+> > -     assigned-clock-rates =3D <786432000>, <722534400>;
+> > -};
+> > -
+> >  &dphy {
+> >       status =3D "okay";
+> >  };
+> > diff --git a/arch/arm64/boot/dts/freescale/imx8mq.dtsi b/arch/arm64/boo=
+t/dts/freescale/imx8mq.dtsi
+> > index 02fbd0625318..c67625a881a4 100644
+> > --- a/arch/arm64/boot/dts/freescale/imx8mq.dtsi
+> > +++ b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
+> > @@ -494,6 +494,27 @@
+> >                               clock-names =3D "ckil", "osc_25m", "osc_2=
+7m",
+> >                                             "clk_ext1", "clk_ext2",
+> >                                             "clk_ext3", "clk_ext4";
+> > +                             assigned-clocks =3D <&clk IMX8MQ_VIDEO_PL=
+L1>,
+> > +                                     <&clk IMX8MQ_AUDIO_PLL1>,
+> > +                                     <&clk IMX8MQ_AUDIO_PLL2>,
+> > +                                     <&clk IMX8MQ_CLK_AHB>,
+> > +                                     <&clk IMX8MQ_CLK_NAND_USDHC_BUS>,
+> > +                                     <&clk IMX8MQ_CLK_AUDIO_AHB>,
+> > +                                     <&clk IMX8MQ_VIDEO_PLL1_REF_SEL>,
+> > +                                     <&clk IMX8MQ_CLK_NOC>;
+> > +                             assigned-clock-parents =3D <0>,
+> > +                                             <0>,
+> > +                                             <0>,
+> > +                                             <&clk IMX8MQ_SYS1_PLL_133=
+M>,
+> > +                                             <&clk IMX8MQ_SYS1_PLL_266=
+M>,
+> > +                                             <&clk IMX8MQ_SYS2_PLL_500=
+M>,
+> > +                                             <&clk IMX8MQ_CLK_27M>,
+> > +                                             <&clk IMX8MQ_SYS1_PLL_800=
+M>;
+> > +                             assigned-clock-rates =3D <593999999>,
+> > +                                             <786432000>,
+> > +                                             <722534400>;
+> > +
+> > +
+> >                       };
+> >
+> >                       src: reset-controller@30390000 {
+>
+> togethe with http://code.bulix.org/pd88jp-812381?raw tested on
+> linux-20190725 (plus mipi dsi):
+>
+> Tested-by: Guido G=C3=BCnther <agx@sigxcpu.org>
 
-On 26/07/2019 16:23, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.2.4 release.
-> There are 66 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sun 28 Jul 2019 03:21:13 PM UTC.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.2.4-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.2.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+Thanks for testing this Guido. Can you please add your Tested-by
+to my fourth version of the patch.
 
-All tests are passing for Tegra ...
-
-Test results for stable-v5.2:
-    12 builds:	12 pass, 0 fail
-    22 boots:	22 pass, 0 fail
-    38 tests:	38 pass, 0 fail
-
-Linux version:	5.2.4-gfc89179bfa10
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra20-ventana,
-                tegra210-p2371-2180, tegra30-cardhu-a04
-
-Cheers
-Jon
-
--- 
-nvpublic
+[PATCH v4] arm64: dts: imx8mq: Init rates and parents configs for clocks
