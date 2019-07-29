@@ -2,104 +2,218 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0474179B1C
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 23:33:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F6CE79B14
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 23:30:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730003AbfG2VdM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 17:33:12 -0400
-Received: from gateway20.websitewelcome.com ([192.185.59.4]:12775 "EHLO
-        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728894AbfG2VdL (ORCPT
+        id S2388558AbfG2VaW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 17:30:22 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:42273 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727952AbfG2VaW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 17:33:11 -0400
-X-Greylist: delayed 1336 seconds by postgrey-1.27 at vger.kernel.org; Mon, 29 Jul 2019 17:33:11 EDT
-Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
-        by gateway20.websitewelcome.com (Postfix) with ESMTP id 8DDC6400D1C60
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 15:07:26 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id sCv1hhE6i4FKpsCv1hr2JK; Mon, 29 Jul 2019 16:10:55 -0500
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        MIME-Version:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=Vyp07Q2BMZxkBU4I91lGXX/CgC/9r6rOUx013x0Y1/g=; b=dc0L4KP/HtmIe4hcEzHC+YuT1A
-        cUbxGgV3pXJAvpHt4MZ9EvTS3AtAF3Fw9DoZ7DNyikCjesw7pthWqml/8BWGAOSKWnDBSDkAK205g
-        6CU1I/oXWNav0CYtfi5RvFV2mJcLRK35CpwESSwraUhf46MFi6axNphdI1S0hu5SU5r/Inv5VLWGR
-        t+fy+IGmvMZCeKdKqkOOpwQewQJPCh4D8j8uKSL0NZsrwfWfznDp+wW+YsAhcAmvxd4gwH9JsTWk/
-        4BW2Ajk622cRYA3iKfocNTRmi6OMVfNis9/OIKya4DTF2ZbF/h5iPPuj9jt/OCh2MRaVGqsHQsI04
-        I5DWICaA==;
-Received: from [187.192.11.120] (port=60400 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1hsCv0-001Tpb-2B; Mon, 29 Jul 2019 16:10:54 -0500
-Date:   Mon, 29 Jul 2019 16:10:53 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: [PATCH] ataflop: Mark expected switch fall-through
-Message-ID: <20190729211053.GA6735@embeddedor>
+        Mon, 29 Jul 2019 17:30:22 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6TLU9Q52940848
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Mon, 29 Jul 2019 14:30:09 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6TLU9Q52940848
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019071901; t=1564435810;
+        bh=hzGhLpR2fcVwu+IlVksH3f8Q3dephyCErzWfeOqEbSU=;
+        h=Date:From:Cc:Reply-To:To:Subject:From;
+        b=A/Z1UCRueTVzBhDe1ah39y5byu8sD2VdNR1+gnQgnXowFfLD98BSQeZTY5aWWBQL6
+         W6P4GJmzdUcsNGe0heu0l518sRk2UqemSVAHF/3FAI6a8mEQyvnNQHKw1NFJtoVJCC
+         b7hqus+Dy+0ZLPQKjkR5559xYk2kptiR9QAmg2s1Q1h/6aHzKzyXr19+Ez6ZVIxeyL
+         Mgxb6wukIJM18cahCHaTt/lfUO7OzqhKKv1mMpHftCjybFn0yYkFjV+g+ZgSAWEtid
+         5QXeLSCdg85SOOruGYnYVCv26cZoyw0d6SUJHYpeFSoxeBAvfeazca8VkBSp8acEuL
+         oxXQ+gqLhcv1A==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6TLU9X62940845;
+        Mon, 29 Jul 2019 14:30:09 -0700
+Date:   Mon, 29 Jul 2019 14:30:09 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-fzqvzni9megaurmsp0k4vy27@git.kernel.org>
+Cc:     adrian.hunter@intel.com, hpa@zytor.com, hch@lst.de,
+        acme@redhat.com, namhyung@kernel.org, linux-kernel@vger.kernel.org,
+        aneesh.kumar@linux.ibm.com, mingo@kernel.org, tglx@linutronix.de,
+        jolsa@kernel.org, lclaudio@redhat.com
+Reply-To: lclaudio@redhat.com, jolsa@kernel.org, tglx@linutronix.de,
+          aneesh.kumar@linux.ibm.com, mingo@kernel.org,
+          linux-kernel@vger.kernel.org, adrian.hunter@intel.com,
+          hpa@zytor.com, hch@lst.de, acme@redhat.com, namhyung@kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/urgent] tools headers UAPI: Update tools's copy of mman.h
+ headers
+Git-Commit-ID: b830f94f7303a49d509d5b1bb34ecb2e648b23c4
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 187.192.11.120
-X-Source-L: No
-X-Exim-ID: 1hsCv0-001Tpb-2B
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [187.192.11.120]:60400
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 8
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-0.2 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
+        autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mark switch cases where we are expecting to fall through.
+Commit-ID:  b830f94f7303a49d509d5b1bb34ecb2e648b23c4
+Gitweb:     https://git.kernel.org/tip/b830f94f7303a49d509d5b1bb34ecb2e648b23c4
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Fri, 26 Jul 2019 12:49:00 -0300
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Mon, 29 Jul 2019 09:02:58 -0300
 
-This patch fixes the following warning (Building: m68k):
+tools headers UAPI: Update tools's copy of mman.h headers
 
-drivers/block/ataflop.c: In function ‘fd_locked_ioctl’:
-drivers/block/ataflop.c:1728:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
-   set_capacity(floppy->disk, MAX_DISK_SIZE * 2);
-   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/block/ataflop.c:1729:2: note: here
-  case FDFMTEND:
-  ^~~~
+To pick up the changes from:
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+  8aa3c927ec10 ("mm/mmap: move common defines to mman-common.h")
+  22fcea6f85f2 ("mm: move MAP_SYNC to asm-generic/mman-common.h")
+  0bf5f9492389 ("mm: fix the MAP_UNINITIALIZED flag")
+
+To address the following perf build warnings:
+
+  Warning: Kernel ABI header at 'tools/include/uapi/asm-generic/mman-common.h' differs from latest version at 'include/uapi/asm-generic/mman-common.h'
+  diff -u tools/include/uapi/asm-generic/mman-common.h include/uapi/asm-generic/mman-common.h
+  Warning: Kernel ABI header at 'tools/include/uapi/asm-generic/mman.h' differs from latest version at 'include/uapi/asm-generic/mman.h'
+  diff -u tools/include/uapi/asm-generic/mman.h include/uapi/asm-generic/mman.h
+
+That ends up just moving a bit the auto-generated code->string tables:
+
+  $ tools/perf/trace/beauty/mmap_flags.sh > before
+  $ cp include/uapi/asm-generic/mman.h tools/include/uapi/asm-generic/mman.h
+  $ cp include/uapi/asm-generic/mman-common.h tools/include/uapi/asm-generic/mman-common.h
+  $ tools/perf/trace/beauty/mmap_flags.sh > after
+  $ diff -u before after
+  --- before 2019-07-26 12:45:02.948335904 -0300
+  +++ after 2019-07-26 12:48:05.342893539 -0300
+  @@ -4,15 +4,15 @@
+          [ilog2(0x02) + 1] = "PRIVATE",
+          [ilog2(0x10) + 1] = "FIXED",
+          [ilog2(0x20) + 1] = "ANONYMOUS",
+  +       [ilog2(0x008000) + 1] = "POPULATE",
+  +       [ilog2(0x010000) + 1] = "NONBLOCK",
+  +       [ilog2(0x020000) + 1] = "STACK",
+  +       [ilog2(0x040000) + 1] = "HUGETLB",
+  +       [ilog2(0x080000) + 1] = "SYNC",
+          [ilog2(0x100000) + 1] = "FIXED_NOREPLACE",
+          [ilog2(0x0100) + 1] = "GROWSDOWN",
+          [ilog2(0x0800) + 1] = "DENYWRITE",
+          [ilog2(0x1000) + 1] = "EXECUTABLE",
+          [ilog2(0x2000) + 1] = "LOCKED",
+          [ilog2(0x4000) + 1] = "NORESERVE",
+  -       [ilog2(0x8000) + 1] = "POPULATE",
+  -       [ilog2(0x10000) + 1] = "NONBLOCK",
+  -       [ilog2(0x20000) + 1] = "STACK",
+  -       [ilog2(0x40000) + 1] = "HUGETLB",
+  -       [ilog2(0x80000) + 1] = "SYNC",
+   };
+  $
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Luis Cláudio Gonçalves <lclaudio@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Link: https://lkml.kernel.org/n/tip-fzqvzni9megaurmsp0k4vy27@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- drivers/block/ataflop.c | 1 +
- 1 file changed, 1 insertion(+)
+ tools/arch/powerpc/include/uapi/asm/mman.h   |  4 ----
+ tools/arch/sparc/include/uapi/asm/mman.h     |  4 ----
+ tools/include/uapi/asm-generic/mman-common.h | 15 +++++++++------
+ tools/include/uapi/asm-generic/mman.h        | 10 ++++------
+ 4 files changed, 13 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/block/ataflop.c b/drivers/block/ataflop.c
-index 85f20e371f2f..bd7d3bb8b890 100644
---- a/drivers/block/ataflop.c
-+++ b/drivers/block/ataflop.c
-@@ -1726,6 +1726,7 @@ static int fd_locked_ioctl(struct block_device *bdev, fmode_t mode,
- 		/* MSch: invalidate default_params */
- 		default_params[drive].blocks  = 0;
- 		set_capacity(floppy->disk, MAX_DISK_SIZE * 2);
-+		/* Fall through */
- 	case FDFMTEND:
- 	case FDFLUSH:
- 		/* invalidate the buffer track to force a reread */
--- 
-2.22.0
-
+diff --git a/tools/arch/powerpc/include/uapi/asm/mman.h b/tools/arch/powerpc/include/uapi/asm/mman.h
+index f33105bc5ca6..8601d824a9c6 100644
+--- a/tools/arch/powerpc/include/uapi/asm/mman.h
++++ b/tools/arch/powerpc/include/uapi/asm/mman.h
+@@ -4,12 +4,8 @@
+ #define MAP_DENYWRITE	0x0800
+ #define MAP_EXECUTABLE	0x1000
+ #define MAP_GROWSDOWN	0x0100
+-#define MAP_HUGETLB	0x40000
+ #define MAP_LOCKED	0x80
+-#define MAP_NONBLOCK	0x10000
+ #define MAP_NORESERVE   0x40
+-#define MAP_POPULATE	0x8000
+-#define MAP_STACK	0x20000
+ #include <uapi/asm-generic/mman-common.h>
+ /* MAP_32BIT is undefined on powerpc, fix it for perf */
+ #define MAP_32BIT	0
+diff --git a/tools/arch/sparc/include/uapi/asm/mman.h b/tools/arch/sparc/include/uapi/asm/mman.h
+index 38920eed8cbf..7b94dccc843d 100644
+--- a/tools/arch/sparc/include/uapi/asm/mman.h
++++ b/tools/arch/sparc/include/uapi/asm/mman.h
+@@ -4,12 +4,8 @@
+ #define MAP_DENYWRITE	0x0800
+ #define MAP_EXECUTABLE	0x1000
+ #define MAP_GROWSDOWN	0x0200
+-#define MAP_HUGETLB	0x40000
+ #define MAP_LOCKED      0x100
+-#define MAP_NONBLOCK	0x10000
+ #define MAP_NORESERVE   0x40
+-#define MAP_POPULATE	0x8000
+-#define MAP_STACK	0x20000
+ #include <uapi/asm-generic/mman-common.h>
+ /* MAP_32BIT is undefined on sparc, fix it for perf */
+ #define MAP_32BIT	0
+diff --git a/tools/include/uapi/asm-generic/mman-common.h b/tools/include/uapi/asm-generic/mman-common.h
+index abd238d0f7a4..63b1f506ea67 100644
+--- a/tools/include/uapi/asm-generic/mman-common.h
++++ b/tools/include/uapi/asm-generic/mman-common.h
+@@ -19,15 +19,18 @@
+ #define MAP_TYPE	0x0f		/* Mask for type of mapping */
+ #define MAP_FIXED	0x10		/* Interpret addr exactly */
+ #define MAP_ANONYMOUS	0x20		/* don't use a file */
+-#ifdef CONFIG_MMAP_ALLOW_UNINITIALIZED
+-# define MAP_UNINITIALIZED 0x4000000	/* For anonymous mmap, memory could be uninitialized */
+-#else
+-# define MAP_UNINITIALIZED 0x0		/* Don't support this flag */
+-#endif
+ 
+-/* 0x0100 - 0x80000 flags are defined in asm-generic/mman.h */
++/* 0x0100 - 0x4000 flags are defined in asm-generic/mman.h */
++#define MAP_POPULATE		0x008000	/* populate (prefault) pagetables */
++#define MAP_NONBLOCK		0x010000	/* do not block on IO */
++#define MAP_STACK		0x020000	/* give out an address that is best suited for process/thread stacks */
++#define MAP_HUGETLB		0x040000	/* create a huge page mapping */
++#define MAP_SYNC		0x080000 /* perform synchronous page faults for the mapping */
+ #define MAP_FIXED_NOREPLACE	0x100000	/* MAP_FIXED which doesn't unmap underlying mapping */
+ 
++#define MAP_UNINITIALIZED 0x4000000	/* For anonymous mmap, memory could be
++					 * uninitialized */
++
+ /*
+  * Flags for mlock
+  */
+diff --git a/tools/include/uapi/asm-generic/mman.h b/tools/include/uapi/asm-generic/mman.h
+index 36c197fc44a0..406f7718f9ad 100644
+--- a/tools/include/uapi/asm-generic/mman.h
++++ b/tools/include/uapi/asm-generic/mman.h
+@@ -9,13 +9,11 @@
+ #define MAP_EXECUTABLE	0x1000		/* mark it as an executable */
+ #define MAP_LOCKED	0x2000		/* pages are locked */
+ #define MAP_NORESERVE	0x4000		/* don't check for reservations */
+-#define MAP_POPULATE	0x8000		/* populate (prefault) pagetables */
+-#define MAP_NONBLOCK	0x10000		/* do not block on IO */
+-#define MAP_STACK	0x20000		/* give out an address that is best suited for process/thread stacks */
+-#define MAP_HUGETLB	0x40000		/* create a huge page mapping */
+-#define MAP_SYNC	0x80000		/* perform synchronous page faults for the mapping */
+ 
+-/* Bits [26:31] are reserved, see mman-common.h for MAP_HUGETLB usage */
++/*
++ * Bits [26:31] are reserved, see asm-generic/hugetlb_encode.h
++ * for MAP_HUGETLB usage
++ */
+ 
+ #define MCL_CURRENT	1		/* lock all current mappings */
+ #define MCL_FUTURE	2		/* lock all future mappings */
