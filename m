@@ -2,88 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C39F797E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:04:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D5FD797C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:02:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727944AbfG2UDT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 16:03:19 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:39952 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389655AbfG2TrY (ORCPT
+        id S2389440AbfG2UCp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 16:02:45 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:51716 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389868AbfG2TsP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:47:24 -0400
-Received: by mail-pf1-f194.google.com with SMTP id p184so28539471pfp.7;
-        Mon, 29 Jul 2019 12:47:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=2JgYHzqNnYMbq7QqePEAwhLQIzlDp4XtBvYAFqSnWLk=;
-        b=LPpKEy+A5eKaoM6ZZUwmP4ih1i45Cfa5UJ19jSn6m23KtwH5q1K7qnK69JmnVU8AgB
-         17ntomkNGHdLJYXaSO2jdDsif7xbc53qoQ+CWC/RF1L5zClPyMx7JXUGZAh1BQgPkJpb
-         W8MjQqNFV2pcDyI4/HhKljCNJla9si10VOwB1ogAbDJ44LVF3x5qDRiYg8O5qZqGwriG
-         o84XT8dTON0IPRTmft3svncKt/seI/0ifmxgJtpjaAGMoQ5tMbRyw4eVX0ls9a5RL2KS
-         Ti8q3EG+yBbiuNzYI8d1RYplzyglgivxtwPvIqMLP73KeEcQq5BW1YRhxJc5rQJea6We
-         N5iw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=2JgYHzqNnYMbq7QqePEAwhLQIzlDp4XtBvYAFqSnWLk=;
-        b=e9KAFPwPNtvtjC8oKvk3WGgiCjXI+72xV1UXr/8A4gsgil/B9+5eFsR9MrtqpqZBbU
-         3IrgFAvxdIoi4vrX5jQEViQFqN1ZE5jnxxi+8jXGuMSt9zfYXDcp3Y6/+BeQIFv0jToo
-         wZfjJ89QSQODPw0ZbEhffgQXqxtXLf+pvUdzSdRxVXay7+zDlUF8at+cTCxZMvQOQAPc
-         RQSSjeKeUx8Xkoy/smkztrLUekgfGC+jaRf9DxoGc9Ck2HHMWLBcx1qsaIh9/JVDNNS4
-         ZXb4RiPFyh2xr+YSpxY7kwhyzQLLzbBoatsIwxPry0peh9yOYO4+R6rB+Q+DWItXXb4v
-         pR+g==
-X-Gm-Message-State: APjAAAVzC7DiCrC8zr8YSWvPogf8dzuTu7NWido+k11uLZibNX5Ugdes
-        INyoyoR83Ps7XCqwvyrKgAE=
-X-Google-Smtp-Source: APXvYqwBf0nTxIgL92NZbxqAJPF/sLgeYwP6UdQlrpMicCppeAM83QBPHj4IGPp5tG6F6kCKrlj/3Q==
-X-Received: by 2002:aa7:8102:: with SMTP id b2mr38661685pfi.105.1564429643669;
-        Mon, 29 Jul 2019 12:47:23 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:500::1:309b])
-        by smtp.gmail.com with ESMTPSA id a25sm36604374pfo.60.2019.07.29.12.47.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 29 Jul 2019 12:47:23 -0700 (PDT)
-Date:   Mon, 29 Jul 2019 12:47:21 -0700
-From:   Tejun Heo <tj@kernel.org>
-To:     Daniel Jordan <daniel.m.jordan@oracle.com>
-Cc:     Steffen Klassert <steffen.klassert@secunet.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC 3/9] workqueue: require CPU hotplug read exclusion for
- apply_workqueue_attrs
-Message-ID: <20190729194721.GG569612@devbig004.ftw2.facebook.com>
-References: <20190725212505.15055-1-daniel.m.jordan@oracle.com>
- <20190725212505.15055-4-daniel.m.jordan@oracle.com>
+        Mon, 29 Jul 2019 15:48:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=zzcP4I/goZHDVfJXWOZ0ZR8llcddHlHoO7PLqf6pRVc=; b=paAeo85eyveVhvF3PvCr0gLul
+        N4tE2hr/ulUCH6rCdBtQx6AAqXUFZPDbMfuESM9eAHKPeM2ASegUoDVOmBfvfzUPIWySv/Fh9Ke38
+        Vju0hZWjPPPdCjoOYrWHW/ttnN46zitw618lMV849kuYRuOKBVGCAR3u3Kd7J2KvjPK7pUWD4pF1g
+        mKL1prjQ9Em8SYPBK/5bMGkkUkuZnYT8xnDbaLu6qKwzUJqhmB3qIQVpnXtg278n829UzBhqlaC6P
+        u5p7PdlIwYycn9LKFueufo3y0FdxVx2+5a9blEkhA9f8zXfdTPGfo5pdu0i903WjP2rjwlttXDNUN
+        GQ8Rfn+qw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hsBcv-0001d4-CN; Mon, 29 Jul 2019 19:48:09 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 473E020C9B163; Mon, 29 Jul 2019 21:48:07 +0200 (CEST)
+Date:   Mon, 29 Jul 2019 21:48:07 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
+        Steven Rostedt <rostedt@goodmis.org>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: Re: [patch 0/8] core, x86: Preparatory steps for RT
+Message-ID: <20190729194807.GQ31398@hirez.programming.kicks-ass.net>
+References: <20190726211936.226129163@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190725212505.15055-4-daniel.m.jordan@oracle.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20190726211936.226129163@linutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 25, 2019 at 05:24:59PM -0400, Daniel Jordan wrote:
-> Change the calling convention for apply_workqueue_attrs to require CPU
-> hotplug read exclusion.
+On Fri, Jul 26, 2019 at 11:19:36PM +0200, Thomas Gleixner wrote:
+> CONFIG_PREEMPTION is selected by CONFIG_PREEMPT and by
+> CONFIG_PREEMPT_RT. Both PREEMPT and PREEMPT_RT require the same
+> functionality which today depends on CONFIG_PREEMPT.
 > 
-> Avoids lockdep complaints about nested calls to get_online_cpus in a
-> future patch where padata calls apply_workqueue_attrs when changing
-> other CPU-hotplug-sensitive data structures with the CPU read lock
-> already held.
-> 
-> Signed-off-by: Daniel Jordan <daniel.m.jordan@oracle.com>
+> The following series adjusts the core and x86 code to use
+> CONFIG_PREEMPTION where appropriate and extends the x86 dumpstack
+> implementation to display PREEMPT_RT instead of PREEMPT on a RT
+> enabled kernel.
 
-Acked-by: Tejun Heo <tj@kernel.org>
-
-Please feel free to route with the rest of the patchset.
-
-Thanks.
-
--- 
-tejun
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
