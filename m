@@ -2,111 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E550B798C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:11:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 270FB798BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:10:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388060AbfG2Td6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 15:33:58 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:36358 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387892AbfG2Tdx (ORCPT
+        id S2388509AbfG2TfH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 15:35:07 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:44101 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387510AbfG2Te7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:33:53 -0400
-Received: by mail-io1-f65.google.com with SMTP id o9so19054806iom.3
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 12:33:52 -0700 (PDT)
+        Mon, 29 Jul 2019 15:34:59 -0400
+Received: by mail-pg1-f193.google.com with SMTP id i18so28751173pgl.11
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 12:34:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=LLxn7C9aC5wuodbKHEOV6mkYITys5cF1PQfnyuR0FjI=;
-        b=JPljb8ZTyaVb8h4Bz4OJBKZhLNaT6av3N0ZgV0E/ky43qADdbSBt98vbCOUKbI11pC
-         HEizJCNey/IubUXtKezPS1EbSH6NSZEr9kV+Zb8Xpyocg45dThxNyvtslPdnYTjx5v4k
-         zldwju6QUAX2SYTda4ERbi5mbE5KsBp11LgqP8NXIFFMpPVgsWFZlcYsa8jHahiQGifh
-         TWwX/HdoXNkdTW1xXfarPSShdWEsf7w5nMmwno4aMZVtLU2AnGWpj8j7YmvMvqefG9mi
-         bptkFuW6yivA6aevgFjxNhKICMDih547P/5zPm3pRtrJZ1nr49vWlKHQ2c0tbeZpUNMg
-         BmYA==
+        d=rajagiritech-edu-in.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=byWzZ+ebvntD/pIF8IWQsVrt4IxJU9AaeSArf/PQmE0=;
+        b=mC+Tkr3ExXxYMOrEnO8QAI/6QlDfVo3EnBsIjar9B7b2AV1wZNgMJrpXVf6a10+XC0
+         NxpRho35xFarKvktehtjUImE2nh6kUVJkP/Tof27ACvq3IrGat1mmauAqM68d6QZx9S7
+         9AkGXwAp+0ozTatv3CSna0bUpVkkEgQnAgaX40/pODjNnYwZn9RIEhDD99IBBYbzUeVb
+         HSORXq3HztcTOacZ7x9QsJTmu2OtKbcg00mi3nNFcRP6wO9JHCrS6Uny/T7YWHJbfYWY
+         PlE4WCr63+g4QIxBv47YCYzOt+WuRjHrdawV70moxjheGhGHqwhTcunw3jPhj75++7zm
+         A73Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=LLxn7C9aC5wuodbKHEOV6mkYITys5cF1PQfnyuR0FjI=;
-        b=Vc/Pya5kpx16bkQa2MK6seryodGYQCAvhKD6ywVOpgpqWyecsj8fRrPirxpF5Cwghn
-         f3/sFSi4zaeewDukrsbgKatmQ4NBwQ8p1uB3FcQMXNv5XFSbB2y+rRLEwqqHDERwL9V6
-         cuiqomEQm1JpUSXKMP3nLOaPMc4dYhPf4oo0CuGBdw/4RiPHI8U23YeDsKpu1EvCdAOU
-         hcIhv6a1S/283dQbYQVb5TqqN6M6VgJPW3pWL2Vx23NyZq+/m6D30oFxh7ZWWyT1GSsW
-         hGe6Z4B8kD1YXSokyRIMmMEYITPGFCCJJX+VvUkiErDkpB/22scfDTR7k6E2ggcqO7EI
-         lvqQ==
-X-Gm-Message-State: APjAAAVj0JCzM3jLGVdKiedkChkGTFfGnz89T3vhw/YU9KjET4sZsuE4
-        VtjY99eNm7+XF5inp7lq9sY=
-X-Google-Smtp-Source: APXvYqxTJRKvff2VQ2AbO/A2hHFCWdKiEgIw3/LPhUvFbJn1sc9MbAcMf20K3siEvKJKXPFmDpeNSg==
-X-Received: by 2002:a02:cb4b:: with SMTP id k11mr114182524jap.109.1564428832072;
-        Mon, 29 Jul 2019 12:33:52 -0700 (PDT)
-Received: from brauner.io ([162.223.5.124])
-        by smtp.gmail.com with ESMTPSA id h8sm56813084ioq.61.2019.07.29.12.33.50
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 29 Jul 2019 12:33:51 -0700 (PDT)
-Date:   Mon, 29 Jul 2019 21:33:50 +0200
-From:   Christian Brauner <christian@brauner.io>
-To:     Dmitry Safonov <0x7f454c46@gmail.com>
-Cc:     Adrian Reber <areber@redhat.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Pavel Emelianov <xemul@virtuozzo.com>,
-        Jann Horn <jannh@google.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Andrei Vagin <avagin@gmail.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Radostin Stoyanov <rstoyanov1@gmail.com>
-Subject: Re: [PATCH 1/2] fork: extend clone3() to support CLONE_SET_TID
-Message-ID: <20190729193349.d5b6aivfx7w4plwq@brauner.io>
-References: <20190729163355.4530-1-areber@redhat.com>
- <CAJwJo6Z5qHThG5wECSn+jiS0iM3smuXA1OS96Gho1HL-gD=RKQ@mail.gmail.com>
- <CAJwJo6baR_w_sE8Qtr4Le9KTLWx0Qzi99qmoTm+6hd1j1UkmFA@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=byWzZ+ebvntD/pIF8IWQsVrt4IxJU9AaeSArf/PQmE0=;
+        b=NpQJnbe4Iqr9M/wd8SDjgP06jyEitVKogCe9sNAWl9/+RJM/KvXqQn4TQXt+sNnUSm
+         pBqRQc0KRdB9fJ6LsrAL4a0QZfeWWNWw3Gj/R+J4bt/upt/4v27cvRzKnoNm4ANwBhof
+         LlMvLzbHUUtfn8NI1tqibp0vM7O02hGNK2xAB03h5JNkGybYtxUmZ8MuYJgAOpQefDBB
+         wqdvznlNuEV5IKnnhQFCgdBrDaLdUKF6/i1QHffFAk8GAa0JubSuWlXgvzP7o8uE9SdG
+         2WXbkiL3uZpgijpt7qak/ReFVqVahKQ6qBF9y8BCUS0pH5V6X2UpBG4oiF/SLDV0eK1k
+         Y/pw==
+X-Gm-Message-State: APjAAAX7jPlRC8TpSvL5BJcQfYxSPdXLh+sMpZA3I4NVx89NVzDNo2wn
+        U5Ebm+IbywNGSVyFSUBNxfsbh0/o8pxCRe3A82yuMg==
+X-Google-Smtp-Source: APXvYqwUtusKdriEytqu3Mo88BMqu1nwBnQlRuKdgqlJiIOMjckKv9aqtzaRWLkkP5qg+5jFSBu8VQGexGKhuv1D7vg=
+X-Received: by 2002:a62:3895:: with SMTP id f143mr37735364pfa.116.1564428897838;
+ Mon, 29 Jul 2019 12:34:57 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAJwJo6baR_w_sE8Qtr4Le9KTLWx0Qzi99qmoTm+6hd1j1UkmFA@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+References: <CAG=yYw=S197+2TzdPaiEaz-9MRuVtd+Q_L9W8GOf4jKwyppNjQ@mail.gmail.com>
+ <CAKwvOdmg2b2PMzuzNmutacFArBNagjtwG=_VZvKhb4okzSkdiA@mail.gmail.com> <201907181423.E808958@keescook>
+In-Reply-To: <201907181423.E808958@keescook>
+From:   Jeffrin Thalakkottoor <jeffrin@rajagiritech.edu.in>
+Date:   Tue, 30 Jul 2019 01:04:17 +0530
+Message-ID: <CAG=yYwmTdW0THoVGJc-Le+TyGMaHKZD-NHTRfXczNes65T8qWA@mail.gmail.com>
+Subject: Re: BUG: KASAN: global-out-of-bounds in ata_exec_internal_sg+0x50f/0xc70
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Nick Desaulniers <ndesaulniers@google.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        tobin@kernel.org, lkml <linux-kernel@vger.kernel.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Alexander Potapenko <glider@google.com>, axboe@kernel.dk
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 29, 2019 at 08:17:58PM +0100, Dmitry Safonov wrote:
-> On Mon, 29 Jul 2019 at 20:12, Dmitry Safonov <0x7f454c46@gmail.com> wrote:
-> >
-> > On Mon, 29 Jul 2019 at 17:52, Adrian Reber <areber@redhat.com> wrote:
-> > [..]
-> > > --- a/include/uapi/linux/sched.h
-> > > +++ b/include/uapi/linux/sched.h
-> > > @@ -32,6 +32,7 @@
-> > >  #define CLONE_NEWPID           0x20000000      /* New pid namespace */
-> > >  #define CLONE_NEWNET           0x40000000      /* New network namespace */
-> > >  #define CLONE_IO               0x80000000      /* Clone io context */
-> > > +#define CLONE_SET_TID          0x100000000ULL  /* set if the desired TID is set in set_tid */
-> > >
-> > >  /*
-> > >   * Arguments for the clone3 syscall
-> > > @@ -45,6 +46,7 @@ struct clone_args {
-> > >         __aligned_u64 stack;
-> > >         __aligned_u64 stack_size;
-> > >         __aligned_u64 tls;
-> > > +       __aligned_u64 set_tid;
-> > >  };
-> > >
-> >
-> > I don't see a change to
-> > :    if (unlikely(size < sizeof(struct clone_args)))
-> > :        return -EINVAL;
-> >
-> > That seems backwards-incompatible, but I may miss some part..
-> 
-> On the other hand, clone3() was merged in v5.3 window, so probably,
-> it doesn't matter.
+hello Kees Cook,
 
-It would matter. Even if this were to be accepted and preferred over the
-existing /proc/sys/kernel/ns_last_pid interface the earliest point in
-time I'd consider this for would be 5.4. So I think this would need to
-be changed. :)
+i tested your fix and i think it worked like a charm !
+kasan message related disappeared during boot time and it does not
+show in the output of "sudo dmesg -l err"
+anyway thanks a lot !
 
-Christian
+On Fri, Jul 19, 2019 at 3:05 AM Kees Cook <keescook@chromium.org> wrote:
+>
+> On Tue, Jul 16, 2019 at 11:28:29AM -0700, Nick Desaulniers wrote:
+> > On Wed, Jul 10, 2019 at 10:44 AM Jeffrin Thalakkottoor
+> > <jeffrin@rajagiritech.edu.in> wrote:
+> > >
+> > > hello all ,
+> > >
+> > > i encountered a KASAN bug related .    here are some related information...
+> > >
+> > >
+> > > -------------------x-----------------------------x------------------
+> > > [   30.037312] BUG: KASAN: global-out-of-bounds in
+> > > ata_exec_internal_sg+0x50f/0xc70
+> > > [   30.037447] Read of size 16 at addr ffffffff91f41f80 by task scsi_eh_1/149
+> > >
+> > >
+> > > [   30.039935] The buggy address belongs to the variable:
+> > > [   30.040059]  cdb.48319+0x0/0x40
+> > > (gdb) l *ata_exec_internal_sg+0x50f
+> > > 0xffffffff81c7b59f is in ata_exec_internal_sg (./include/linux/string.h:359).
+> >
+> > So looks like ata_exec_internal_sg() is panic'ing when...
+> >
+> > > 354 if (q_size < size)
+> > > 355 __read_overflow2();
+> > > 356 }
+> > > 357 if (p_size < size || q_size < size)
+> > > 358 fortify_panic(__func__);
+> > > 359 return __builtin_memcpy(p, q, size);
+>
+> ^^^ here, so within memcpy(), but after the "easy" sanity checks.
+>
+> The only place where I see ata_exec_internal_sg() calling memcpy() is
+> here:
+>
+>         /* prepare & issue qc */
+>         qc->tf = *tf;
+>         if (cdb)
+>                 memcpy(qc->cdb, cdb, ATAPI_CDB_LEN);
+>
+> the "16" is consistent with the report:
+>
+> include/linux/ata.h:    ATAPI_CDB_LEN           = 16,
+>
+> which matches the claim about the cdb variable from KASAN. And it's a
+> read, so "cdb" is wrong. Do you have a longer back trace? What called
+> ata_exec_internal_sg()?
+>
+> ata_exec_internal() is the only caller of ata_exec_internal_sg(). Nearly
+> all callers of ata_exec_internal() pass a NULL cdb. Those that don't
+> are:
+>
+> atapi_eh_tur()
+>         u8 cdb[ATAPI_CDB_LEN] = ...
+> atapi_eh_request_sense()
+>         u8 cdb[ATAPI_CDB_LEN] = ...
+>
+> These two are on the static and correctly sized.
+>
+> eject_tray()
+>         static const char cdb[ATAPI_CDB_LEN] = ...
+> zpodd_get_mech_type()
+>         static const char cdb[] = ...
+>
+> These are both in rodata, and only the first is correctly sized. I
+> assume the following will fix it:
+>
+>
+> diff --git a/drivers/ata/libata-zpodd.c b/drivers/ata/libata-zpodd.c
+> index 173e6f2dd9af..eefda51f97d3 100644
+> --- a/drivers/ata/libata-zpodd.c
+> +++ b/drivers/ata/libata-zpodd.c
+> @@ -56,7 +56,7 @@ static enum odd_mech_type zpodd_get_mech_type(struct ata_device *dev)
+>         unsigned int ret;
+>         struct rm_feature_desc *desc;
+>         struct ata_taskfile tf;
+> -       static const char cdb[] = {  GPCMD_GET_CONFIGURATION,
+> +       static const char cdb[ATAPI_CDB_LEN] = {  GPCMD_GET_CONFIGURATION,
+>                         2,      /* only 1 feature descriptor requested */
+>                         0, 3,   /* 3, removable medium feature */
+>                         0, 0, 0,/* reserved */
+>
+>
+>
+> --
+> Kees Cook
+
+
+
+-- 
+software engineer
+rajagiri school of engineering and technology
