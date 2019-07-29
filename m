@@ -2,118 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C5B779062
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 18:10:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 06DCE7905F
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 18:10:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728843AbfG2QKd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 12:10:33 -0400
-Received: from mga02.intel.com ([134.134.136.20]:23364 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727038AbfG2QKc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 12:10:32 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jul 2019 08:38:18 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,323,1559545200"; 
-   d="scan'208";a="179417951"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.145])
-  by FMSMGA003.fm.intel.com with ESMTP; 29 Jul 2019 08:38:17 -0700
-Received: from andy by smile with local (Exim 4.92)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1hs7j5-0000EB-Kh; Mon, 29 Jul 2019 18:38:15 +0300
-Date:   Mon, 29 Jul 2019 18:38:15 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>
-Subject: [GIT PULL] platform-drivers-x86 for 5.3-3
-Message-ID: <20190729153815.GA853@smile.fi.intel.com>
+        id S1728536AbfG2QKP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 12:10:15 -0400
+Received: from shelob.surriel.com ([96.67.55.147]:33160 "EHLO
+        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727038AbfG2QKO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 12:10:14 -0400
+Received: from imladris.surriel.com ([96.67.55.152])
+        by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.92)
+        (envelope-from <riel@shelob.surriel.com>)
+        id 1hs8E0-0006Sx-QS; Mon, 29 Jul 2019 12:10:12 -0400
+Message-ID: <aba144fbb176666a479420eb75e5d2032a893c83.camel@surriel.com>
+Subject: Re: [PATCH v2] sched/core: Don't use dying mm as active_mm of
+ kthreads
+From:   Rik van Riel <riel@surriel.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Waiman Long <longman@redhat.com>, Ingo Molnar <mingo@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Phil Auld <pauld@redhat.com>, Andy Lutomirski <luto@kernel.org>
+Date:   Mon, 29 Jul 2019 12:10:12 -0400
+In-Reply-To: <20190729154419.GJ31398@hirez.programming.kicks-ass.net>
+References: <20190727171047.31610-1-longman@redhat.com>
+         <20190729085235.GT31381@hirez.programming.kicks-ass.net>
+         <4cd17c3a-428c-37a0-b3a2-04e6195a61d5@redhat.com>
+         <20190729150338.GF31398@hirez.programming.kicks-ass.net>
+         <25cd74fcee33dfd0b9604a8d1612187734037394.camel@surriel.com>
+         <20190729154419.GJ31398@hirez.programming.kicks-ass.net>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-Wc6jN0+BMJTfEPLvJuKE"
+User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
 
-Business as usual for PDx86, few fixes and new ID
-(missed merge window due to dependency).
+--=-Wc6jN0+BMJTfEPLvJuKE
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Thanks,
+On Mon, 2019-07-29 at 17:44 +0200, Peter Zijlstra wrote:
+> On Mon, Jul 29, 2019 at 11:28:04AM -0400, Rik van Riel wrote:
+> > On Mon, 2019-07-29 at 17:03 +0200, Peter Zijlstra wrote:
+> >=20
+> > > The 'sad' part is that x86 already switches to init_mm on idle
+> > > and we
+> > > only keep the active_mm around for 'stupid'.
+> >=20
+> > Wait, where do we do that?
+>=20
+> drivers/idle/intel_idle.c:              leave_mm(cpu);
+> drivers/acpi/processor_idle.c:  acpi_unlazy_tlb(smp_processor_id());
 
-With Best Regards,
-Andy Shevchenko
+This is only done for deeper c-states, isn't it?
 
-The following changes since commit 5f9e832c137075045d15cd6899ab0505cfb2ca4b:
+> > > Rik and Andy were working on getting that 'fixed' a while ago,
+> > > not
+> > > sure
+> > > where that went.
+> >=20
+> > My lazy TLB stuff got merged last year.=20
+>=20
+> Yes, but we never got around to getting rid of active_mm for x86,
+> right?
 
-  Linus 5.3-rc1 (2019-07-21 14:05:38 -0700)
+True, we still use active_mm. Getting rid of the
+active_mm refcounting alltogether did not look
+entirely worthwhile the hassle.
 
-are available in the Git repository at:
+--=20
+All Rights Reversed.
 
-  git://git.infradead.org/linux-platform-drivers-x86.git tags/platform-drivers-x86-v5.3-3
+--=-Wc6jN0+BMJTfEPLvJuKE
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
-for you to fetch changes up to f14312a93b34b9350dc33ff0b4215c24f4c82617:
+-----BEGIN PGP SIGNATURE-----
 
-  platform/x86: pcengines-apuv2: use KEY_RESTART for front button (2019-07-29 18:24:59 +0300)
+iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAl0/GmQACgkQznnekoTE
+3oN1Mwf+M8ilckJKazPB0sap6Gw+VcoPa1Ij8YnYtR0OIXGLktOKIWlJY9b3hYfY
+Gn4yYJDoz1z8seaj6Ww+spOBzCxlS9qJlRxSqbijqR9zS4pC19y22l6OUfVPX0AO
+zXirw8e+2OSbVcb26eAe4pzamJtW0kmf9YQgxJ545nZo4xV4uJ1FyJGKxL9OyJdR
+/0JS1Vdi9Nlisa7YQw61k2USbGyFROvO3igHf5ii/2M2Rk1JictO4cYSfQrMYBy+
+B3R3zlc0v5bNVl9MnBw6AjQs/sseEY/912Vzrsss05OyLI6zgmgsxBF+xsiEGsQW
+nVdkkuBHbSQwKIQGKfM+JzF/F+ltrw==
+=TidT
+-----END PGP SIGNATURE-----
 
-----------------------------------------------------------------
-platform-drivers-x86 for v5.3-3
-
-PC Engines APU got one fix for software dependencies to automatically load them
-and another fix for mapping of key button in the front to issue restart event.
-
-OLPC driver is now can be probed automatically based on module device table.
-
-Intel PMC core driver supports Intel Ice Lake NNPI processor.
-
-WMI driver missed description of new field in the structure that has been added.
-
-The following is an automated git shortlog grouped by driver:
-
-intel_pmc_core:
- -  Add ICL-NNPI support to PMC Core
-
-pcengines-apuv2:
- -  use KEY_RESTART for front button
- -  Fix softdep statement
-
-OLPC:
- -  add SPI MODULE_DEVICE_TABLE
-
-wmi:
- -  add missing struct parameter description
-
-----------------------------------------------------------------
-Enrico Weigelt (1):
-      platform/x86: pcengines-apuv2: use KEY_RESTART for front button
-
-Jean Delvare (1):
-      platform/x86: pcengines-apuv2: Fix softdep statement
-
-Lubomir Rintel (1):
-      Platform: OLPC: add SPI MODULE_DEVICE_TABLE
-
-Mattias Jacobsson (1):
-      platform/x86: wmi: add missing struct parameter description
-
-Rajneesh Bhardwaj (1):
-      platform/x86: intel_pmc_core: Add ICL-NNPI support to PMC Core
-
- drivers/platform/olpc/olpc-xo175-ec.c  | 6 ++++++
- drivers/platform/x86/intel_pmc_core.c  | 1 +
- drivers/platform/x86/pcengines-apuv2.c | 6 ++----
- include/linux/mod_devicetable.h        | 1 +
- 4 files changed, 10 insertions(+), 4 deletions(-)
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+--=-Wc6jN0+BMJTfEPLvJuKE--
 
