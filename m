@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC57B7965D
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:51:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 318D37965E
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:51:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390477AbfG2TvE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 15:51:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42106 "EHLO mail.kernel.org"
+        id S2390749AbfG2TvJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 15:51:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42210 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403829AbfG2TvA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:51:00 -0400
+        id S2390468AbfG2TvE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:51:04 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B81592054F;
-        Mon, 29 Jul 2019 19:50:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 92C5F217D7;
+        Mon, 29 Jul 2019 19:51:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564429859;
-        bh=7vje2itFpn752mX8Yf8zqkH//JVLSqFrMo8kkfuZFns=;
+        s=default; t=1564429863;
+        bh=xOnV7f5ym/exTxlja/kuIQvzOZ45BlGKnjTMMzCfWHQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=L0pfKsYlbWq0pDBWyTPA5kUx0oSsF13a3Ks2z6YwJYjiaQQFVmZeaxyXtuohAWm7X
-         UD1PNEPfxoSuBG38WgGY2k/RV6QM4OB3o6GA7tDL3LTRD0DMtGudtrEXUZJN7+rOqw
-         DKSEnulUU04YoxVS49Nvr376xJK0IUFBGQEcm084=
+        b=miGxDseOVteeespgNvP8EdbPN3HUVKBWtQoYeoj8KDyBlKltPH7tiAY/OzjL9IZYb
+         K94tgky8neSbOyqS+3pRsh0yD5G9Wj+XQ2ff2Fif4xz3MzWzTjeMr34scvdNmHu5Tu
+         FaveKkDfcFSNFTuMbBsMUC8xjVQkSxSjumlJZvuU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefan Roese <sr@denx.de>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Yegor Yefremov <yegorslists@googlemail.com>,
-        Giulio Benetti <giulio.benetti@micronovasrl.com>,
+        stable@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 079/215] serial: mctrl_gpio: Check if GPIO property exisits before requesting it
-Date:   Mon, 29 Jul 2019 21:21:15 +0200
-Message-Id: <20190729190753.521871557@linuxfoundation.org>
+Subject: [PATCH 5.2 080/215] phy: renesas: rcar-gen3-usb2: fix imbalance powered flag
+Date:   Mon, 29 Jul 2019 21:21:16 +0200
+Message-Id: <20190729190753.662264113@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190729190739.971253303@linuxfoundation.org>
 References: <20190729190739.971253303@linuxfoundation.org>
@@ -47,108 +47,162 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit d99482673f950817b30caf3fcdfb31179b050ce1 ]
+[ Upstream commit 5c9dc6379f539c68a0fdd39e39a9d359545649e9 ]
 
-This patch adds a check for the GPIOs property existence, before the
-GPIO is requested. This fixes an issue seen when the 8250 mctrl_gpio
-support is added (2nd patch in this patch series) on x86 platforms using
-ACPI.
+The powered flag should be set for any other phys anyway. Also
+the flag should be locked by the channel. Otherwise, after we have
+revised the device tree for the usb phy, the following warning
+happened during a second system suspend. And if the driver doesn't
+lock the flag, an imbalance is possible when enabling the regulator
+during system resume. So, this patch fixes the issues.
 
-Here Mika's comments from 2016-08-09:
+< The warning >
+[   56.026531] unbalanced disables for USB20_VBUS0
+[   56.031108] WARNING: CPU: 3 PID: 513 at drivers/regulator/core.c:2593 _regula
+tor_disable+0xe0/0x1c0
+[   56.040146] Modules linked in: rcar_du_drm rcar_lvds drm_kms_helper drm drm_p
+anel_orientation_quirks vsp1 videobuf2_vmalloc videobuf2_dma_contig videobuf2_me
+mops videobuf2_v4l2 videobuf2_common videodev snd_soc_rcar renesas_usbhs snd_soc
+_audio_graph_card media snd_soc_simple_card_utils crct10dif_ce renesas_usb3 snd_
+soc_ak4613 rcar_fcp pwm_rcar usb_dmac phy_rcar_gen3_usb3 pwm_bl ipv6
+[   56.074047] CPU: 3 PID: 513 Comm: kworker/u16:19 Not tainted 5.2.0-rc3-00001-
+g5f20a19 #6
+[   56.082129] Hardware name: Renesas Salvator-X board based on r8a7795 ES2.0+ (
+DT)
+[   56.089524] Workqueue: events_unbound async_run_entry_fn
+[   56.094832] pstate: 40000005 (nZcv daif -PAN -UAO)
+[   56.099617] pc : _regulator_disable+0xe0/0x1c0
+[   56.104054] lr : _regulator_disable+0xe0/0x1c0
+[   56.108489] sp : ffff0000121c3ae0
+[   56.111796] x29: ffff0000121c3ae0 x28: 0000000000000000
+[   56.117102] x27: 0000000000000000 x26: ffff000010fe0e60
+[   56.122407] x25: 0000000000000002 x24: 0000000000000001
+[   56.127712] x23: 0000000000000002 x22: ffff8006f99d4000
+[   56.133017] x21: ffff8006f99cc000 x20: ffff8006f9846800
+[   56.138322] x19: ffff8006f9846800 x18: ffffffffffffffff
+[   56.143626] x17: 0000000000000000 x16: 0000000000000000
+[   56.148931] x15: ffff0000112f96c8 x14: ffff0000921c37f7
+[   56.154235] x13: ffff0000121c3805 x12: ffff000011312000
+[   56.159540] x11: 0000000005f5e0ff x10: ffff0000112f9f20
+[   56.164844] x9 : ffff0000112d3018 x8 : 00000000000001ad
+[   56.170149] x7 : 00000000ffffffcc x6 : ffff8006ff768180
+[   56.175453] x5 : ffff8006ff768180 x4 : 0000000000000000
+[   56.180758] x3 : ffff8006ff76ef10 x2 : ffff8006ff768180
+[   56.186062] x1 : 3d2eccbaead8fb00 x0 : 0000000000000000
+[   56.191367] Call trace:
+[   56.193808]  _regulator_disable+0xe0/0x1c0
+[   56.197899]  regulator_disable+0x40/0x78
+[   56.201820]  rcar_gen3_phy_usb2_power_off+0x3c/0x50
+[   56.206692]  phy_power_off+0x48/0xd8
+[   56.210263]  usb_phy_roothub_power_off+0x30/0x50
+[   56.214873]  usb_phy_roothub_suspend+0x1c/0x50
+[   56.219311]  hcd_bus_suspend+0x13c/0x168
+[   56.223226]  generic_suspend+0x4c/0x58
+[   56.226969]  usb_suspend_both+0x1ac/0x238
+[   56.230972]  usb_suspend+0xcc/0x170
+[   56.234455]  usb_dev_suspend+0x10/0x18
+[   56.238199]  dpm_run_callback.isra.6+0x20/0x68
+[   56.242635]  __device_suspend+0x110/0x308
+[   56.246637]  async_suspend+0x24/0xa8
+[   56.250205]  async_run_entry_fn+0x40/0xf8
+[   56.254210]  process_one_work+0x1e0/0x320
+[   56.258211]  worker_thread+0x40/0x450
+[   56.261867]  kthread+0x124/0x128
+[   56.265094]  ret_from_fork+0x10/0x18
+[   56.268661] ---[ end trace 86d7ec5de5c517af ]---
+[   56.273290] phy phy-ee080200.usb-phy.10: phy poweroff failed --> -5
 
-"
-I noticed that with v4.8-rc1 serial console of some of our Broxton
-systems does not work properly anymore. I'm able to see output but input
-does not work.
-
-I bisected it down to commit 4ef03d328769eddbfeca1f1c958fdb181a69c341
-("tty/serial/8250: use mctrl_gpio helpers").
-
-The reason why it fails is that in ACPI we do not have names for GPIOs
-(except when _DSD is used) so we use the "idx" to index into _CRS GPIO
-resources. Now mctrl_gpio_init_noauto() goes through a list of GPIOs
-calling devm_gpiod_get_index_optional() passing "idx" of 0 for each. The
-UART device in Broxton has following (simplified) ACPI description:
-
-    Device (URT4)
-    {
-        ...
-        Name (_CRS, ResourceTemplate () {
-            GpioIo (Exclusive, PullDefault, 0x0000, 0x0000, IoRestrictionOutputOnly,
-                    "\\_SB.GPO0", 0x00, ResourceConsumer)
-            {
-                0x003A
-            }
-            GpioIo (Exclusive, PullDefault, 0x0000, 0x0000, IoRestrictionOutputOnly,
-                    "\\_SB.GPO0", 0x00, ResourceConsumer)
-            {
-                0x003D
-            }
-        })
-
-In this case it finds the first GPIO (0x003A which happens to be RX pin
-for that UART), turns it into GPIO which then breaks input for the UART
-device. This also breaks systems with bluetooth connected to UART (those
-typically have some GPIOs in their _CRS).
-
-Any ideas how to fix this?
-
-We cannot just drop the _CRS index lookup fallback because that would
-break many existing machines out there so maybe we can limit this to
-only DT enabled machines. Or alternatively probe if the property first
-exists before trying to acquire the GPIOs (using
-device_property_present()).
-"
-
-This patch implements the fix suggested by Mika in his statement above.
-
-Signed-off-by: Stefan Roese <sr@denx.de>
-Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Tested-by: Yegor Yefremov <yegorslists@googlemail.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Yegor Yefremov <yegorslists@googlemail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Giulio Benetti <giulio.benetti@micronovasrl.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Fixes: 549b6b55b005 ("phy: renesas: rcar-gen3-usb2: enable/disable independent irqs")
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/serial/serial_mctrl_gpio.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ drivers/phy/renesas/phy-rcar-gen3-usb2.c | 19 +++++++++++++++----
+ 1 file changed, 15 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/tty/serial/serial_mctrl_gpio.c b/drivers/tty/serial/serial_mctrl_gpio.c
-index 39ed56214cd3..2b400189be91 100644
---- a/drivers/tty/serial/serial_mctrl_gpio.c
-+++ b/drivers/tty/serial/serial_mctrl_gpio.c
-@@ -12,6 +12,7 @@
- #include <linux/termios.h>
- #include <linux/serial_core.h>
+diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+index 1322185a00a2..8ffba67568ec 100644
+--- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
++++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+@@ -13,6 +13,7 @@
+ #include <linux/interrupt.h>
+ #include <linux/io.h>
  #include <linux/module.h>
-+#include <linux/property.h>
++#include <linux/mutex.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+ #include <linux/of_device.h>
+@@ -106,6 +107,7 @@ struct rcar_gen3_chan {
+ 	struct rcar_gen3_phy rphys[NUM_OF_PHYS];
+ 	struct regulator *vbus;
+ 	struct work_struct work;
++	struct mutex lock;	/* protects rphys[...].powered */
+ 	enum usb_dr_mode dr_mode;
+ 	bool extcon_host;
+ 	bool is_otg_channel;
+@@ -437,15 +439,16 @@ static int rcar_gen3_phy_usb2_power_on(struct phy *p)
+ 	struct rcar_gen3_chan *channel = rphy->ch;
+ 	void __iomem *usb2_base = channel->base;
+ 	u32 val;
+-	int ret;
++	int ret = 0;
  
- #include "serial_mctrl_gpio.h"
++	mutex_lock(&channel->lock);
+ 	if (!rcar_gen3_are_all_rphys_power_off(channel))
+-		return 0;
++		goto out;
  
-@@ -116,6 +117,19 @@ struct mctrl_gpios *mctrl_gpio_init_noauto(struct device *dev, unsigned int idx)
+ 	if (channel->vbus) {
+ 		ret = regulator_enable(channel->vbus);
+ 		if (ret)
+-			return ret;
++			goto out;
+ 	}
  
- 	for (i = 0; i < UART_GPIO_MAX; i++) {
- 		enum gpiod_flags flags;
-+		char *gpio_str;
-+		bool present;
+ 	val = readl(usb2_base + USB2_USBCTR);
+@@ -454,7 +457,10 @@ static int rcar_gen3_phy_usb2_power_on(struct phy *p)
+ 	val &= ~USB2_USBCTR_PLL_RST;
+ 	writel(val, usb2_base + USB2_USBCTR);
+ 
++out:
++	/* The powered flag should be set for any other phys anyway */
+ 	rphy->powered = true;
++	mutex_unlock(&channel->lock);
+ 
+ 	return 0;
+ }
+@@ -465,14 +471,18 @@ static int rcar_gen3_phy_usb2_power_off(struct phy *p)
+ 	struct rcar_gen3_chan *channel = rphy->ch;
+ 	int ret = 0;
+ 
++	mutex_lock(&channel->lock);
+ 	rphy->powered = false;
+ 
+ 	if (!rcar_gen3_are_all_rphys_power_off(channel))
+-		return 0;
++		goto out;
+ 
+ 	if (channel->vbus)
+ 		ret = regulator_disable(channel->vbus);
+ 
++out:
++	mutex_unlock(&channel->lock);
 +
-+		/* Check if GPIO property exists and continue if not */
-+		gpio_str = kasprintf(GFP_KERNEL, "%s-gpios",
-+				     mctrl_gpios_desc[i].name);
-+		if (!gpio_str)
-+			continue;
-+
-+		present = device_property_present(dev, gpio_str);
-+		kfree(gpio_str);
-+		if (!present)
-+			continue;
+ 	return ret;
+ }
  
- 		if (mctrl_gpios_desc[i].dir_out)
- 			flags = GPIOD_OUT_LOW;
+@@ -639,6 +649,7 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
+ 	if (!phy_usb2_ops)
+ 		return -EINVAL;
+ 
++	mutex_init(&channel->lock);
+ 	for (i = 0; i < NUM_OF_PHYS; i++) {
+ 		channel->rphys[i].phy = devm_phy_create(dev, NULL,
+ 							phy_usb2_ops);
 -- 
 2.20.1
 
