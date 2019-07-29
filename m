@@ -2,130 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28C7C78E4C
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 16:45:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 82CB778E3A
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 16:40:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387632AbfG2OpC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 10:45:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49846 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727034AbfG2OpC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 10:45:02 -0400
-Received: from localhost.localdomain (unknown [180.111.32.87])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5CA22206BA;
-        Mon, 29 Jul 2019 14:44:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564411500;
-        bh=ZJaCH6/EG+GnwaN6bqP7F/RqkgpTASOAGcigZFAnIpA=;
-        h=From:To:Cc:Subject:Date:From;
-        b=TmvZSnG9lh5mWO+cGUplu/CmjSJvwa2qTah96YjGVYfbj9ierPPBmN9AieTmH7SRJ
-         AYCDXgiyWmdeT3MzmJ2zd5kkoAg5OHeQXQBCE5L28CUqt+mLFfjiTSsAhpkPWZF3Y7
-         f97y+zozRZJ/mGj4OJcR/r2n/uRUKi0xGdpYwuLc=
-From:   Chao Yu <chao@kernel.org>
-To:     jaegeuk@kernel.org
-Cc:     linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH v3] f2fs: introduce sb.required_features to store incompatible features
-Date:   Sun, 28 Jul 2019 23:15:26 +0800
-Message-Id: <20190728151526.11845-1-chao@kernel.org>
-X-Mailer: git-send-email 2.22.0
+        id S1728587AbfG2Okj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 10:40:39 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:51746 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726197AbfG2Oki (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 10:40:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=FYNwer5O4SIKv9en8AjVTkT4U2QOeVJ1BOl6QlGXUIw=; b=e9qnk018gQZbcpCtHTD/UzOlI
+        UgHjs7V5dJQqfd650YEyLfq0RphEwCrZDJ0szt/NiNGUlLPzq+bfNoFCkkiOaDHp32w1kSnUEZ0Mr
+        S3gPHjwv5PCnLRRBicTOg8kfobIYYq/ENXnUpzJMlIS4n85tWkT0UotMQjM6udXYU3Skr7C9QmSCV
+        hYPJQzGZ9pFXoq2F6yQ33GdADAerY898aBxWI1kd+rS3xoupPd9bT9x3OxCa8uKGK9fpBoCT5ThWA
+        LXbLDP+CfLyMeuvTsxlwW+eHXqxi76eQP/mPNmv9SfvtTNaAg52YyD4wa8qehVKLq6VqiYZq8ihp1
+        oO5slJG9A==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hs6p9-0002sm-4f; Mon, 29 Jul 2019 14:40:27 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 43D3F20AF2C00; Mon, 29 Jul 2019 16:40:25 +0200 (CEST)
+Date:   Mon, 29 Jul 2019 16:40:25 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Juri Lelli <juri.lelli@redhat.com>
+Cc:     mingo@kernel.org, linux-kernel@vger.kernel.org,
+        dietmar.eggemann@arm.com, luca.abeni@santannapisa.it,
+        bristot@redhat.com, balsini@android.com, dvyukov@google.com,
+        tglx@linutronix.de, vpillai@digitalocean.com, rostedt@goodmis.org
+Subject: Re: [RFC][PATCH 04/13] sched/{rt,deadline}: Fix set_next_task vs
+ pick_next_task
+Message-ID: <20190729144025.GD31381@hirez.programming.kicks-ass.net>
+References: <20190726145409.947503076@infradead.org>
+ <20190726161357.579899041@infradead.org>
+ <20190729092519.GR25636@localhost.localdomain>
+ <20190729111510.GD31398@hirez.programming.kicks-ass.net>
+ <20190729112702.GA8927@localhost.localdomain>
+ <20190729130438.GE31398@hirez.programming.kicks-ass.net>
+ <20190729131701.GB8927@localhost.localdomain>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190729131701.GB8927@localhost.localdomain>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chao Yu <yuchao0@huawei.com>
+On Mon, Jul 29, 2019 at 03:17:01PM +0200, Juri Lelli wrote:
+> On 29/07/19 15:04, Peter Zijlstra wrote:
 
-Later after this patch was merged, all new incompatible feature's
-bit should be added into sb.required_features field, and define new
-feature function with F2FS_INCOMPAT_FEATURE_FUNCS() macro.
+> > Now, looking at it, this also doesn't do push balancing when we
+> > re-select the same task, even though we really should be doing it. So I
+> > suppose not adding the condition, and always doing the push balance,
+> > while wasteful, is not wrong.
+> 
+> Right, also because deadline_queue_push_tasks() already checks if there
+> are tasks to potentially push around before queuing the balance
+> callback.
 
-Then during mount, we will do sanity check with enabled features in
-image, if there are features in sb.required_features that kernel can
-not recognize, just fail the mount.
+Yes, but in the overloaded case, where there is always a task to push,
+but nowhere to push it to, we can waste a 'lot' of time looking for
+naught in case of extra pushes.
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
-v3:
-- change commit title.
-- fix wrong macro name.
- fs/f2fs/f2fs.h          | 15 +++++++++++++++
- fs/f2fs/super.c         | 10 ++++++++++
- include/linux/f2fs_fs.h |  3 ++-
- 3 files changed, 27 insertions(+), 1 deletion(-)
+So in that regard the check you reference is not sufficient.
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index a6eb828af57f..b8e17d4ddb8d 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -163,6 +163,15 @@ struct f2fs_mount_info {
- #define F2FS_CLEAR_FEATURE(sbi, mask)					\
- 	(sbi->raw_super->feature &= ~cpu_to_le32(mask))
- 
-+#define F2FS_INCOMPAT_FEATURES		0
-+
-+#define F2FS_HAS_INCOMPAT_FEATURE(sbi, mask)				\
-+	((sbi->raw_super->required_features & cpu_to_le32(mask)) != 0)
-+#define F2FS_SET_INCOMPAT_FEATURE(sbi, mask)				\
-+	(sbi->raw_super->required_features |= cpu_to_le32(mask))
-+#define F2FS_CLEAR_INCOMPAT_FEATURE(sbi, mask)				\
-+	(sbi->raw_super->required_features &= ~cpu_to_le32(mask))
-+
- /*
-  * Default values for user and/or group using reserved blocks
-  */
-@@ -3585,6 +3594,12 @@ F2FS_FEATURE_FUNCS(lost_found, LOST_FOUND);
- F2FS_FEATURE_FUNCS(sb_chksum, SB_CHKSUM);
- F2FS_FEATURE_FUNCS(casefold, CASEFOLD);
- 
-+#define F2FS_INCOMPAT_FEATURE_FUNCS(name, flagname) \
-+static inline int f2fs_sb_has_##name(struct f2fs_sb_info *sbi) \
-+{ \
-+	return F2FS_HAS_INCOMPAT_FEATURE(sbi, F2FS_FEATURE_##flagname); \
-+}
-+
- #ifdef CONFIG_BLK_DEV_ZONED
- static inline bool f2fs_blkz_is_seq(struct f2fs_sb_info *sbi, int devi,
- 				    block_t blkaddr)
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 5540fee0fe3f..3701dcce90e6 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -2513,6 +2513,16 @@ static int sanity_check_raw_super(struct f2fs_sb_info *sbi,
- 		return -EINVAL;
- 	}
- 
-+	/* check whether current kernel supports all features on image */
-+	if (le32_to_cpu(raw_super->required_features) &
-+			~F2FS_INCOMPAT_FEATURES) {
-+		f2fs_info(sbi, "Unsupported feature: %x: supported: %x",
-+			  le32_to_cpu(raw_super->required_features) ^
-+			  F2FS_INCOMPAT_FEATURES,
-+			  F2FS_INCOMPAT_FEATURES);
-+		return -EINVAL;
-+	}
-+
- 	/* Check checksum_offset and crc in superblock */
- 	if (__F2FS_HAS_FEATURE(raw_super, F2FS_FEATURE_SB_CHKSUM)) {
- 		crc_offset = le32_to_cpu(raw_super->checksum_offset);
-diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
-index a2b36b2e286f..4141be3f219c 100644
---- a/include/linux/f2fs_fs.h
-+++ b/include/linux/f2fs_fs.h
-@@ -117,7 +117,8 @@ struct f2fs_super_block {
- 	__u8 hot_ext_count;		/* # of hot file extension */
- 	__le16	s_encoding;		/* Filename charset encoding */
- 	__le16	s_encoding_flags;	/* Filename charset encoding flags */
--	__u8 reserved[306];		/* valid reserved region */
-+	__le32 required_features;       /* incompatible features to old kernel */
-+	__u8 reserved[302];		/* valid reserved region */
- 	__le32 crc;			/* checksum of superblock */
- } __packed;
- 
--- 
-2.22.0
-
+Anyway, let me change this for now.
