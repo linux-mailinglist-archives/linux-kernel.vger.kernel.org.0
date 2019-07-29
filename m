@@ -2,39 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA01E7943F
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:29:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 357FE79442
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:29:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728150AbfG2T3d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 15:29:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42156 "EHLO mail.kernel.org"
+        id S1729052AbfG2T3l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 15:29:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42298 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387484AbfG2T3a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:29:30 -0400
+        id S1728897AbfG2T3i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:29:38 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E192F2070B;
-        Mon, 29 Jul 2019 19:29:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B38CF21655;
+        Mon, 29 Jul 2019 19:29:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564428568;
-        bh=32sw+/2hBRIK2hQxyimGd9HkHEKOeZLzu/p6gHeeew0=;
+        s=default; t=1564428577;
+        bh=l3KunXrgj1/1PR7Nhw1HPBgQkLWACq+ht0INIonY6F0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Q9DxrtaH9RwIDdRgKdjFJCro40KgTsDmoc/3mwDHIpF1nFmGde6u89bpTQrIAwuJO
-         QDiusCWGV/uWOBs6pC/v6N12HdRtOBP+WN+qclKAMbPkPc15CdPu2WTsuzdKLOm0Ap
-         UKUE4c4/W5CGYgCF3TrTlO1XZAaNFXc93zqIB+Cg=
+        b=fwmS1x6mfw61d6HDb6p0F9faSxxiDHjYBScgW80a+RdvpXE36klmL38PypFklSzoi
+         kGNQlwpaM4/zEys3as16DpjujVRJO859Hh9tjhHDnVR6sN88ushuvDsHCoDATA6bSE
+         zhHWPPrh789y8ZnCk2+f4f1Q9aumgaGxNO5KrxDE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Schmitz <schmitzmic@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Finn Thain <fthain@telegraphics.com.au>,
-        Chris Jones <chris@martin-jones.com>,
-        Stan Johnson <userm57@yahoo.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.14 118/293] scsi: mac_scsi: Fix pseudo DMA implementation, take 2
-Date:   Mon, 29 Jul 2019 21:20:09 +0200
-Message-Id: <20190729190833.632054609@linuxfoundation.org>
+        stable@vger.kernel.org, Cfir Cohen <cfir@google.com>,
+        Gary R Hook <gary.hook@amd.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.14 120/293] crypto: ccp - Validate the the error value used to index error messages
+Date:   Mon, 29 Jul 2019 21:20:11 +0200
+Message-Id: <20190729190833.779164353@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190729190820.321094988@linuxfoundation.org>
 References: <20190729190820.321094988@linuxfoundation.org>
@@ -47,484 +44,146 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Finn Thain <fthain@telegraphics.com.au>
+From: Hook, Gary <Gary.Hook@amd.com>
 
-commit 78ff751f8e6a9446e9fb26b2bff0b8d3f8974cbd upstream.
+commit 52393d617af7b554f03531e6756facf2ea687d2e upstream.
 
-A system bus error during a PDMA transfer can mess up the calculation of
-the transfer residual (the PDMA handshaking hardware lacks a byte
-counter). This results in data corruption.
+The error code read from the queue status register is only 6 bits wide,
+but we need to verify its value is within range before indexing the error
+messages.
 
-The algorithm in this patch anticipates a bus error by starting each
-transfer with a MOVE.B instruction. If a bus error is caught the transfer
-will be retried. If a bus error is caught later in the transfer (for a
-MOVE.W instruction) the transfer gets failed and subsequent requests for
-that target will use PIO instead of PDMA.
-
-This avoids the "!REQ and !ACK" error so the severity level of that message
-is reduced to KERN_DEBUG.
-
-Cc: Michael Schmitz <schmitzmic@gmail.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: stable@vger.kernel.org # v4.14+
-Fixes: 3a0f64bfa907 ("mac_scsi: Fix pseudo DMA implementation")
-Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
-Reported-by: Chris Jones <chris@martin-jones.com>
-Tested-by: Stan Johnson <userm57@yahoo.com>
-Tested-by: Michael Schmitz <schmitzmic@gmail.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Fixes: 81422badb3907 ("crypto: ccp - Make syslog errors human-readable")
+Cc: <stable@vger.kernel.org>
+Reported-by: Cfir Cohen <cfir@google.com>
+Signed-off-by: Gary R Hook <gary.hook@amd.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/mac_scsi.c |  369 ++++++++++++++++++++++++++++--------------------
- 1 file changed, 217 insertions(+), 152 deletions(-)
+ drivers/crypto/ccp/ccp-dev.c |   96 ++++++++++++++++++++++---------------------
+ drivers/crypto/ccp/ccp-dev.h |    2 
+ 2 files changed, 52 insertions(+), 46 deletions(-)
 
---- a/drivers/scsi/mac_scsi.c
-+++ b/drivers/scsi/mac_scsi.c
-@@ -3,6 +3,8 @@
-  *
-  * Copyright 1998, Michael Schmitz <mschmitz@lbl.gov>
-  *
-+ * Copyright 2019 Finn Thain
-+ *
-  * derived in part from:
-  */
- /*
-@@ -11,6 +13,7 @@
-  * Copyright 1995, Russell King
-  */
+--- a/drivers/crypto/ccp/ccp-dev.c
++++ b/drivers/crypto/ccp/ccp-dev.c
+@@ -35,56 +35,62 @@ struct ccp_tasklet_data {
+ };
  
-+#include <linux/delay.h>
- #include <linux/types.h>
- #include <linux/module.h>
- #include <linux/ioport.h>
-@@ -89,101 +92,217 @@ static int __init mac_scsi_setup(char *s
- __setup("mac5380=", mac_scsi_setup);
- #endif /* !MODULE */
+ /* Human-readable error strings */
++#define CCP_MAX_ERROR_CODE	64
+ static char *ccp_error_codes[] = {
+ 	"",
+-	"ERR 01: ILLEGAL_ENGINE",
+-	"ERR 02: ILLEGAL_KEY_ID",
+-	"ERR 03: ILLEGAL_FUNCTION_TYPE",
+-	"ERR 04: ILLEGAL_FUNCTION_MODE",
+-	"ERR 05: ILLEGAL_FUNCTION_ENCRYPT",
+-	"ERR 06: ILLEGAL_FUNCTION_SIZE",
+-	"ERR 07: Zlib_MISSING_INIT_EOM",
+-	"ERR 08: ILLEGAL_FUNCTION_RSVD",
+-	"ERR 09: ILLEGAL_BUFFER_LENGTH",
+-	"ERR 10: VLSB_FAULT",
+-	"ERR 11: ILLEGAL_MEM_ADDR",
+-	"ERR 12: ILLEGAL_MEM_SEL",
+-	"ERR 13: ILLEGAL_CONTEXT_ID",
+-	"ERR 14: ILLEGAL_KEY_ADDR",
+-	"ERR 15: 0xF Reserved",
+-	"ERR 16: Zlib_ILLEGAL_MULTI_QUEUE",
+-	"ERR 17: Zlib_ILLEGAL_JOBID_CHANGE",
+-	"ERR 18: CMD_TIMEOUT",
+-	"ERR 19: IDMA0_AXI_SLVERR",
+-	"ERR 20: IDMA0_AXI_DECERR",
+-	"ERR 21: 0x15 Reserved",
+-	"ERR 22: IDMA1_AXI_SLAVE_FAULT",
+-	"ERR 23: IDMA1_AIXI_DECERR",
+-	"ERR 24: 0x18 Reserved",
+-	"ERR 25: ZLIBVHB_AXI_SLVERR",
+-	"ERR 26: ZLIBVHB_AXI_DECERR",
+-	"ERR 27: 0x1B Reserved",
+-	"ERR 27: ZLIB_UNEXPECTED_EOM",
+-	"ERR 27: ZLIB_EXTRA_DATA",
+-	"ERR 30: ZLIB_BTYPE",
+-	"ERR 31: ZLIB_UNDEFINED_SYMBOL",
+-	"ERR 32: ZLIB_UNDEFINED_DISTANCE_S",
+-	"ERR 33: ZLIB_CODE_LENGTH_SYMBOL",
+-	"ERR 34: ZLIB _VHB_ILLEGAL_FETCH",
+-	"ERR 35: ZLIB_UNCOMPRESSED_LEN",
+-	"ERR 36: ZLIB_LIMIT_REACHED",
+-	"ERR 37: ZLIB_CHECKSUM_MISMATCH0",
+-	"ERR 38: ODMA0_AXI_SLVERR",
+-	"ERR 39: ODMA0_AXI_DECERR",
+-	"ERR 40: 0x28 Reserved",
+-	"ERR 41: ODMA1_AXI_SLVERR",
+-	"ERR 42: ODMA1_AXI_DECERR",
+-	"ERR 43: LSB_PARITY_ERR",
++	"ILLEGAL_ENGINE",
++	"ILLEGAL_KEY_ID",
++	"ILLEGAL_FUNCTION_TYPE",
++	"ILLEGAL_FUNCTION_MODE",
++	"ILLEGAL_FUNCTION_ENCRYPT",
++	"ILLEGAL_FUNCTION_SIZE",
++	"Zlib_MISSING_INIT_EOM",
++	"ILLEGAL_FUNCTION_RSVD",
++	"ILLEGAL_BUFFER_LENGTH",
++	"VLSB_FAULT",
++	"ILLEGAL_MEM_ADDR",
++	"ILLEGAL_MEM_SEL",
++	"ILLEGAL_CONTEXT_ID",
++	"ILLEGAL_KEY_ADDR",
++	"0xF Reserved",
++	"Zlib_ILLEGAL_MULTI_QUEUE",
++	"Zlib_ILLEGAL_JOBID_CHANGE",
++	"CMD_TIMEOUT",
++	"IDMA0_AXI_SLVERR",
++	"IDMA0_AXI_DECERR",
++	"0x15 Reserved",
++	"IDMA1_AXI_SLAVE_FAULT",
++	"IDMA1_AIXI_DECERR",
++	"0x18 Reserved",
++	"ZLIBVHB_AXI_SLVERR",
++	"ZLIBVHB_AXI_DECERR",
++	"0x1B Reserved",
++	"ZLIB_UNEXPECTED_EOM",
++	"ZLIB_EXTRA_DATA",
++	"ZLIB_BTYPE",
++	"ZLIB_UNDEFINED_SYMBOL",
++	"ZLIB_UNDEFINED_DISTANCE_S",
++	"ZLIB_CODE_LENGTH_SYMBOL",
++	"ZLIB _VHB_ILLEGAL_FETCH",
++	"ZLIB_UNCOMPRESSED_LEN",
++	"ZLIB_LIMIT_REACHED",
++	"ZLIB_CHECKSUM_MISMATCH0",
++	"ODMA0_AXI_SLVERR",
++	"ODMA0_AXI_DECERR",
++	"0x28 Reserved",
++	"ODMA1_AXI_SLVERR",
++	"ODMA1_AXI_DECERR",
+ };
  
--/* Pseudo DMA asm originally by Ove Edlund */
-+/*
-+ * According to "Inside Macintosh: Devices", Mac OS requires disk drivers to
-+ * specify the number of bytes between the delays expected from a SCSI target.
-+ * This allows the operating system to "prevent bus errors when a target fails
-+ * to deliver the next byte within the processor bus error timeout period."
-+ * Linux SCSI drivers lack knowledge of the timing behaviour of SCSI targets
-+ * so bus errors are unavoidable.
-+ *
-+ * If a MOVE.B instruction faults, we assume that zero bytes were transferred
-+ * and simply retry. That assumption probably depends on target behaviour but
-+ * seems to hold up okay. The NOP provides synchronization: without it the
-+ * fault can sometimes occur after the program counter has moved past the
-+ * offending instruction. Post-increment addressing can't be used.
-+ */
-+
-+#define MOVE_BYTE(operands) \
-+	asm volatile ( \
-+		"1:     moveb " operands "     \n" \
-+		"11:    nop                    \n" \
-+		"       addq #1,%0             \n" \
-+		"       subq #1,%1             \n" \
-+		"40:                           \n" \
-+		"                              \n" \
-+		".section .fixup,\"ax\"        \n" \
-+		".even                         \n" \
-+		"90:    movel #1, %2           \n" \
-+		"       jra 40b                \n" \
-+		".previous                     \n" \
-+		"                              \n" \
-+		".section __ex_table,\"a\"     \n" \
-+		".align  4                     \n" \
-+		".long   1b,90b                \n" \
-+		".long  11b,90b                \n" \
-+		".previous                     \n" \
-+		: "+a" (addr), "+r" (n), "+r" (result) : "a" (io))
- 
--#define CP_IO_TO_MEM(s,d,n)				\
--__asm__ __volatile__					\
--    ("    cmp.w  #4,%2\n"				\
--     "    bls    8f\n"					\
--     "    move.w %1,%%d0\n"				\
--     "    neg.b  %%d0\n"				\
--     "    and.w  #3,%%d0\n"				\
--     "    sub.w  %%d0,%2\n"				\
--     "    bra    2f\n"					\
--     " 1: move.b (%0),(%1)+\n"				\
--     " 2: dbf    %%d0,1b\n"				\
--     "    move.w %2,%%d0\n"				\
--     "    lsr.w  #5,%%d0\n"				\
--     "    bra    4f\n"					\
--     " 3: move.l (%0),(%1)+\n"				\
--     "31: move.l (%0),(%1)+\n"				\
--     "32: move.l (%0),(%1)+\n"				\
--     "33: move.l (%0),(%1)+\n"				\
--     "34: move.l (%0),(%1)+\n"				\
--     "35: move.l (%0),(%1)+\n"				\
--     "36: move.l (%0),(%1)+\n"				\
--     "37: move.l (%0),(%1)+\n"				\
--     " 4: dbf    %%d0,3b\n"				\
--     "    move.w %2,%%d0\n"				\
--     "    lsr.w  #2,%%d0\n"				\
--     "    and.w  #7,%%d0\n"				\
--     "    bra    6f\n"					\
--     " 5: move.l (%0),(%1)+\n"				\
--     " 6: dbf    %%d0,5b\n"				\
--     "    and.w  #3,%2\n"				\
--     "    bra    8f\n"					\
--     " 7: move.b (%0),(%1)+\n"				\
--     " 8: dbf    %2,7b\n"				\
--     "    moveq.l #0, %2\n"				\
--     " 9: \n"						\
--     ".section .fixup,\"ax\"\n"				\
--     "    .even\n"					\
--     "91: moveq.l #1, %2\n"				\
--     "    jra 9b\n"					\
--     "94: moveq.l #4, %2\n"				\
--     "    jra 9b\n"					\
--     ".previous\n"					\
--     ".section __ex_table,\"a\"\n"			\
--     "   .align 4\n"					\
--     "   .long  1b,91b\n"				\
--     "   .long  3b,94b\n"				\
--     "   .long 31b,94b\n"				\
--     "   .long 32b,94b\n"				\
--     "   .long 33b,94b\n"				\
--     "   .long 34b,94b\n"				\
--     "   .long 35b,94b\n"				\
--     "   .long 36b,94b\n"				\
--     "   .long 37b,94b\n"				\
--     "   .long  5b,94b\n"				\
--     "   .long  7b,91b\n"				\
--     ".previous"					\
--     : "=a"(s), "=a"(d), "=d"(n)			\
--     : "0"(s), "1"(d), "2"(n)				\
--     : "d0")
-+/*
-+ * If a MOVE.W (or MOVE.L) instruction faults, it cannot be retried because
-+ * the residual byte count would be uncertain. In that situation the MOVE_WORD
-+ * macro clears n in the fixup section to abort the transfer.
-+ */
-+
-+#define MOVE_WORD(operands) \
-+	asm volatile ( \
-+		"1:     movew " operands "     \n" \
-+		"11:    nop                    \n" \
-+		"       subq #2,%1             \n" \
-+		"40:                           \n" \
-+		"                              \n" \
-+		".section .fixup,\"ax\"        \n" \
-+		".even                         \n" \
-+		"90:    movel #0, %1           \n" \
-+		"       movel #2, %2           \n" \
-+		"       jra 40b                \n" \
-+		".previous                     \n" \
-+		"                              \n" \
-+		".section __ex_table,\"a\"     \n" \
-+		".align  4                     \n" \
-+		".long   1b,90b                \n" \
-+		".long  11b,90b                \n" \
-+		".previous                     \n" \
-+		: "+a" (addr), "+r" (n), "+r" (result) : "a" (io))
-+
-+#define MOVE_16_WORDS(operands) \
-+	asm volatile ( \
-+		"1:     movew " operands "     \n" \
-+		"2:     movew " operands "     \n" \
-+		"3:     movew " operands "     \n" \
-+		"4:     movew " operands "     \n" \
-+		"5:     movew " operands "     \n" \
-+		"6:     movew " operands "     \n" \
-+		"7:     movew " operands "     \n" \
-+		"8:     movew " operands "     \n" \
-+		"9:     movew " operands "     \n" \
-+		"10:    movew " operands "     \n" \
-+		"11:    movew " operands "     \n" \
-+		"12:    movew " operands "     \n" \
-+		"13:    movew " operands "     \n" \
-+		"14:    movew " operands "     \n" \
-+		"15:    movew " operands "     \n" \
-+		"16:    movew " operands "     \n" \
-+		"17:    nop                    \n" \
-+		"       subl  #32,%1           \n" \
-+		"40:                           \n" \
-+		"                              \n" \
-+		".section .fixup,\"ax\"        \n" \
-+		".even                         \n" \
-+		"90:    movel #0, %1           \n" \
-+		"       movel #2, %2           \n" \
-+		"       jra 40b                \n" \
-+		".previous                     \n" \
-+		"                              \n" \
-+		".section __ex_table,\"a\"     \n" \
-+		".align  4                     \n" \
-+		".long   1b,90b                \n" \
-+		".long   2b,90b                \n" \
-+		".long   3b,90b                \n" \
-+		".long   4b,90b                \n" \
-+		".long   5b,90b                \n" \
-+		".long   6b,90b                \n" \
-+		".long   7b,90b                \n" \
-+		".long   8b,90b                \n" \
-+		".long   9b,90b                \n" \
-+		".long  10b,90b                \n" \
-+		".long  11b,90b                \n" \
-+		".long  12b,90b                \n" \
-+		".long  13b,90b                \n" \
-+		".long  14b,90b                \n" \
-+		".long  15b,90b                \n" \
-+		".long  16b,90b                \n" \
-+		".long  17b,90b                \n" \
-+		".previous                     \n" \
-+		: "+a" (addr), "+r" (n), "+r" (result) : "a" (io))
-+
-+#define MAC_PDMA_DELAY		32
-+
-+static inline int mac_pdma_recv(void __iomem *io, unsigned char *start, int n)
-+{
-+	unsigned char *addr = start;
-+	int result = 0;
-+
-+	if (n >= 1) {
-+		MOVE_BYTE("%3@,%0@");
-+		if (result)
-+			goto out;
-+	}
-+	if (n >= 1 && ((unsigned long)addr & 1)) {
-+		MOVE_BYTE("%3@,%0@");
-+		if (result)
-+			goto out;
-+	}
-+	while (n >= 32)
-+		MOVE_16_WORDS("%3@,%0@+");
-+	while (n >= 2)
-+		MOVE_WORD("%3@,%0@+");
-+	if (result)
-+		return start - addr; /* Negated to indicate uncertain length */
-+	if (n == 1)
-+		MOVE_BYTE("%3@,%0@");
-+out:
-+	return addr - start;
-+}
-+
-+static inline int mac_pdma_send(unsigned char *start, void __iomem *io, int n)
-+{
-+	unsigned char *addr = start;
-+	int result = 0;
-+
-+	if (n >= 1) {
-+		MOVE_BYTE("%0@,%3@");
-+		if (result)
-+			goto out;
-+	}
-+	if (n >= 1 && ((unsigned long)addr & 1)) {
-+		MOVE_BYTE("%0@,%3@");
-+		if (result)
-+			goto out;
-+	}
-+	while (n >= 32)
-+		MOVE_16_WORDS("%0@+,%3@");
-+	while (n >= 2)
-+		MOVE_WORD("%0@+,%3@");
-+	if (result)
-+		return start - addr; /* Negated to indicate uncertain length */
-+	if (n == 1)
-+		MOVE_BYTE("%0@,%3@");
-+out:
-+	return addr - start;
-+}
- 
- static inline int macscsi_pread(struct NCR5380_hostdata *hostdata,
-                                 unsigned char *dst, int len)
+-void ccp_log_error(struct ccp_device *d, int e)
++void ccp_log_error(struct ccp_device *d, unsigned int e)
  {
- 	u8 __iomem *s = hostdata->pdma_io + (INPUT_DATA_REG << 4);
- 	unsigned char *d = dst;
--	int n = len;
--	int transferred;
+-	dev_err(d->dev, "CCP error: %s (0x%x)\n", ccp_error_codes[e], e);
++	if (WARN_ON(e >= CCP_MAX_ERROR_CODE))
++		return;
 +
-+	hostdata->pdma_residual = len;
- 
- 	while (!NCR5380_poll_politely(hostdata, BUS_AND_STATUS_REG,
- 	                              BASR_DRQ | BASR_PHASE_MATCH,
- 	                              BASR_DRQ | BASR_PHASE_MATCH, HZ / 64)) {
--		CP_IO_TO_MEM(s, d, n);
-+		int bytes;
-+
-+		bytes = mac_pdma_recv(s, d, min(hostdata->pdma_residual, 512));
- 
--		transferred = d - dst - n;
--		hostdata->pdma_residual = len - transferred;
-+		if (bytes > 0) {
-+			d += bytes;
-+			hostdata->pdma_residual -= bytes;
-+		}
- 
--		/* No bus error. */
--		if (n == 0)
-+		if (hostdata->pdma_residual == 0)
- 			return 0;
- 
--		/* Target changed phase early? */
- 		if (NCR5380_poll_politely2(hostdata, STATUS_REG, SR_REQ, SR_REQ,
--		                           BUS_AND_STATUS_REG, BASR_ACK, BASR_ACK, HZ / 64) < 0)
--			scmd_printk(KERN_ERR, hostdata->connected,
-+		                           BUS_AND_STATUS_REG, BASR_ACK,
-+		                           BASR_ACK, HZ / 64) < 0)
-+			scmd_printk(KERN_DEBUG, hostdata->connected,
- 			            "%s: !REQ and !ACK\n", __func__);
- 		if (!(NCR5380_read(BUS_AND_STATUS_REG) & BASR_PHASE_MATCH))
- 			return 0;
- 
-+		if (bytes == 0)
-+			udelay(MAC_PDMA_DELAY);
-+
-+		if (bytes >= 0)
-+			continue;
-+
- 		dsprintk(NDEBUG_PSEUDO_DMA, hostdata->host,
--		         "%s: bus error (%d/%d)\n", __func__, transferred, len);
-+		         "%s: bus error (%d/%d)\n", __func__, d - dst, len);
- 		NCR5380_dprint(NDEBUG_PSEUDO_DMA, hostdata->host);
--		d = dst + transferred;
--		n = len - transferred;
-+		return -1;
- 	}
- 
- 	scmd_printk(KERN_ERR, hostdata->connected,
-@@ -192,93 +311,27 @@ static inline int macscsi_pread(struct N
- 	return -1;
++	if (e < ARRAY_SIZE(ccp_error_codes))
++		dev_err(d->dev, "CCP error %d: %s\n", e, ccp_error_codes[e]);
++	else
++		dev_err(d->dev, "CCP error %d: Unknown Error\n", e);
  }
  
--
--#define CP_MEM_TO_IO(s,d,n)				\
--__asm__ __volatile__					\
--    ("    cmp.w  #4,%2\n"				\
--     "    bls    8f\n"					\
--     "    move.w %0,%%d0\n"				\
--     "    neg.b  %%d0\n"				\
--     "    and.w  #3,%%d0\n"				\
--     "    sub.w  %%d0,%2\n"				\
--     "    bra    2f\n"					\
--     " 1: move.b (%0)+,(%1)\n"				\
--     " 2: dbf    %%d0,1b\n"				\
--     "    move.w %2,%%d0\n"				\
--     "    lsr.w  #5,%%d0\n"				\
--     "    bra    4f\n"					\
--     " 3: move.l (%0)+,(%1)\n"				\
--     "31: move.l (%0)+,(%1)\n"				\
--     "32: move.l (%0)+,(%1)\n"				\
--     "33: move.l (%0)+,(%1)\n"				\
--     "34: move.l (%0)+,(%1)\n"				\
--     "35: move.l (%0)+,(%1)\n"				\
--     "36: move.l (%0)+,(%1)\n"				\
--     "37: move.l (%0)+,(%1)\n"				\
--     " 4: dbf    %%d0,3b\n"				\
--     "    move.w %2,%%d0\n"				\
--     "    lsr.w  #2,%%d0\n"				\
--     "    and.w  #7,%%d0\n"				\
--     "    bra    6f\n"					\
--     " 5: move.l (%0)+,(%1)\n"				\
--     " 6: dbf    %%d0,5b\n"				\
--     "    and.w  #3,%2\n"				\
--     "    bra    8f\n"					\
--     " 7: move.b (%0)+,(%1)\n"				\
--     " 8: dbf    %2,7b\n"				\
--     "    moveq.l #0, %2\n"				\
--     " 9: \n"						\
--     ".section .fixup,\"ax\"\n"				\
--     "    .even\n"					\
--     "91: moveq.l #1, %2\n"				\
--     "    jra 9b\n"					\
--     "94: moveq.l #4, %2\n"				\
--     "    jra 9b\n"					\
--     ".previous\n"					\
--     ".section __ex_table,\"a\"\n"			\
--     "   .align 4\n"					\
--     "   .long  1b,91b\n"				\
--     "   .long  3b,94b\n"				\
--     "   .long 31b,94b\n"				\
--     "   .long 32b,94b\n"				\
--     "   .long 33b,94b\n"				\
--     "   .long 34b,94b\n"				\
--     "   .long 35b,94b\n"				\
--     "   .long 36b,94b\n"				\
--     "   .long 37b,94b\n"				\
--     "   .long  5b,94b\n"				\
--     "   .long  7b,91b\n"				\
--     ".previous"					\
--     : "=a"(s), "=a"(d), "=d"(n)			\
--     : "0"(s), "1"(d), "2"(n)				\
--     : "d0")
--
- static inline int macscsi_pwrite(struct NCR5380_hostdata *hostdata,
-                                  unsigned char *src, int len)
- {
- 	unsigned char *s = src;
- 	u8 __iomem *d = hostdata->pdma_io + (OUTPUT_DATA_REG << 4);
--	int n = len;
--	int transferred;
-+
-+	hostdata->pdma_residual = len;
+ /* List of CCPs, CCP count, read-write access lock, and access functions
+--- a/drivers/crypto/ccp/ccp-dev.h
++++ b/drivers/crypto/ccp/ccp-dev.h
+@@ -632,7 +632,7 @@ struct ccp5_desc {
+ void ccp_add_device(struct ccp_device *ccp);
+ void ccp_del_device(struct ccp_device *ccp);
  
- 	while (!NCR5380_poll_politely(hostdata, BUS_AND_STATUS_REG,
- 	                              BASR_DRQ | BASR_PHASE_MATCH,
- 	                              BASR_DRQ | BASR_PHASE_MATCH, HZ / 64)) {
--		CP_MEM_TO_IO(s, d, n);
-+		int bytes;
+-extern void ccp_log_error(struct ccp_device *, int);
++extern void ccp_log_error(struct ccp_device *, unsigned int);
  
--		transferred = s - src - n;
--		hostdata->pdma_residual = len - transferred;
-+		bytes = mac_pdma_send(s, d, min(hostdata->pdma_residual, 512));
- 
--		/* Target changed phase early? */
--		if (NCR5380_poll_politely2(hostdata, STATUS_REG, SR_REQ, SR_REQ,
--		                           BUS_AND_STATUS_REG, BASR_ACK, BASR_ACK, HZ / 64) < 0)
--			scmd_printk(KERN_ERR, hostdata->connected,
--			            "%s: !REQ and !ACK\n", __func__);
--		if (!(NCR5380_read(BUS_AND_STATUS_REG) & BASR_PHASE_MATCH))
--			return 0;
-+		if (bytes > 0) {
-+			s += bytes;
-+			hostdata->pdma_residual -= bytes;
-+		}
- 
--		/* No bus error. */
--		if (n == 0) {
-+		if (hostdata->pdma_residual == 0) {
- 			if (NCR5380_poll_politely(hostdata, TARGET_COMMAND_REG,
- 			                          TCR_LAST_BYTE_SENT,
- 			                          TCR_LAST_BYTE_SENT, HZ / 64) < 0)
-@@ -287,17 +340,29 @@ static inline int macscsi_pwrite(struct
- 			return 0;
- 		}
- 
-+		if (NCR5380_poll_politely2(hostdata, STATUS_REG, SR_REQ, SR_REQ,
-+		                           BUS_AND_STATUS_REG, BASR_ACK,
-+		                           BASR_ACK, HZ / 64) < 0)
-+			scmd_printk(KERN_DEBUG, hostdata->connected,
-+			            "%s: !REQ and !ACK\n", __func__);
-+		if (!(NCR5380_read(BUS_AND_STATUS_REG) & BASR_PHASE_MATCH))
-+			return 0;
-+
-+		if (bytes == 0)
-+			udelay(MAC_PDMA_DELAY);
-+
-+		if (bytes >= 0)
-+			continue;
-+
- 		dsprintk(NDEBUG_PSEUDO_DMA, hostdata->host,
--		         "%s: bus error (%d/%d)\n", __func__, transferred, len);
-+		         "%s: bus error (%d/%d)\n", __func__, s - src, len);
- 		NCR5380_dprint(NDEBUG_PSEUDO_DMA, hostdata->host);
--		s = src + transferred;
--		n = len - transferred;
-+		return -1;
- 	}
- 
- 	scmd_printk(KERN_ERR, hostdata->connected,
- 	            "%s: phase mismatch or !DRQ\n", __func__);
- 	NCR5380_dprint(NDEBUG_PSEUDO_DMA, hostdata->host);
--
- 	return -1;
- }
- 
+ struct ccp_device *ccp_alloc_struct(struct sp_device *sp);
+ bool ccp_queues_suspended(struct ccp_device *ccp);
 
 
