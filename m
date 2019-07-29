@@ -2,133 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF41A78DDF
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 16:28:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A41778DC8
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 16:25:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728015AbfG2O2c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 10:28:32 -0400
-Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:40090 "EHLO
-        herzl.nuvoton.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726478AbfG2O2b (ORCPT
+        id S1727467AbfG2OZN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 10:25:13 -0400
+Received: from gateway24.websitewelcome.com ([192.185.50.73]:30587 "EHLO
+        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727739AbfG2OZJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 10:28:31 -0400
-Received: from taln60.nuvoton.co.il (ntil-fw [212.199.177.25])
-        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id x6TEP6AT025572;
-        Mon, 29 Jul 2019 17:25:06 +0300
-Received: by taln60.nuvoton.co.il (Postfix, from userid 10070)
-        id 5665861FD4; Mon, 29 Jul 2019 17:25:06 +0300 (IDT)
-From:   Tomer Maimon <tmaimon77@gmail.com>
-To:     broonie@kernel.org, dwmw2@infradead.org,
-        computersforpeace@gmail.com, marek.vasut@gmail.com,
-        miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
-        bbrezillon@kernel.org, yogeshnarayan.gaur@nxp.com,
-        tudor.ambarus@microchip.com, gregkh@linuxfoundation.org,
-        frieder.schrempf@exceet.de, tglx@linutronix.de
-Cc:     linux-spi@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Tomer Maimon <tmaimon77@gmail.com>
-Subject: [RFC v1 1/3] spi: spi-mem: add spi-mem setup function
-Date:   Mon, 29 Jul 2019 17:25:02 +0300
-Message-Id: <20190729142504.188336-2-tmaimon77@gmail.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20190729142504.188336-1-tmaimon77@gmail.com>
-References: <20190729142504.188336-1-tmaimon77@gmail.com>
+        Mon, 29 Jul 2019 10:25:09 -0400
+Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
+        by gateway24.websitewelcome.com (Postfix) with ESMTP id 55E9053F43A
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 09:25:07 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id s6aJhNIr8iQers6aJhmRsG; Mon, 29 Jul 2019 09:25:07 -0500
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=NBg3ypbm56vJ5nByaMp1eHrBG/oKINIBK+Vq+wESKT0=; b=A7uomH9Hb4wDBRLWnhYsJYAm7d
+        FNXmzwRvmbx2dE54sBW398poQFOThzC6Re1aLy1TBI6QAZY7G0ixMNgyT2/rOih1iZoS3XTrw8Vdw
+        9mKhy+5taaBkKjM7FdByOfZT6fnYet9UevPJUQHn5HurjFBKCTNEEwjLJwcseIv2bfMlGyj25/34d
+        8J36GY+IAE90BzW425xXPtX+ellj4uw+yTI1sxvvOOBTUzQD4lv/2ZGbR4u3+9CI2IDMx8x4ZFLuq
+        NTTej80qtXt2gs+dgDXZaZqxU0y5/CvgC8MeIh7LCdl4SgQz7cCdnExD8KT+mn++DHVxpHvXEOU69
+        YeWTw38Q==;
+Received: from [187.192.11.120] (port=50414 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1hs6aH-002Hdm-Vp; Mon, 29 Jul 2019 09:25:06 -0500
+Date:   Mon, 29 Jul 2019 09:25:03 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Michael Grzeschik <m.grzeschik@pengutronix.de>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Kees Cook <keescook@chromium.org>
+Subject: [PATCH] arcnet: com20020-isa: Mark expected switch fall-throughs
+Message-ID: <20190729142503.GA7917@embeddedor>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 187.192.11.120
+X-Source-L: No
+X-Exim-ID: 1hs6aH-002Hdm-Vp
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [187.192.11.120]:50414
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 4
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add spi-mem setup function support SPI memory
-operations the spi-mem setup function running
-after the spi-mem probe function if the spi-mem
-setup function implemented.
+Mark switch cases where we are expecting to fall through.
 
-Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
+This patch fixes the following warnings:
+
+drivers/net/arcnet/com20020-isa.c: warning: this statement may fall
+through [-Wimplicit-fallthrough=]:  => 205:13, 203:10, 209:7, 201:11,
+207:8
+
+Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- drivers/spi/spi-mem.c       | 27 ++++++++++++++++++++++++++-
- include/linux/spi/spi-mem.h |  4 ++++
- 2 files changed, 30 insertions(+), 1 deletion(-)
+ drivers/net/arcnet/com20020-isa.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/spi/spi-mem.c b/drivers/spi/spi-mem.c
-index 9f0fa9f3116d..21fe3a75d636 100644
---- a/drivers/spi/spi-mem.c
-+++ b/drivers/spi/spi-mem.c
-@@ -398,6 +398,26 @@ const char *spi_mem_get_name(struct spi_mem *mem)
- }
- EXPORT_SYMBOL_GPL(spi_mem_get_name);
- 
-+/**
-+ * spi_mem_setup() - Execute spi memory setup
-+ * @mem: the SPI memory
-+ *
-+ * This function allows SPI mem users to execute spi memory
-+ * setup after the probe finished.
-+ *
-+ * Return: 0 in case of success, a negative error code otherwise.
-+ */
-+int spi_mem_setup(struct spi_mem *mem)
-+{
-+	struct spi_controller *ctlr = mem->spi->controller;
-+
-+	if (ctlr->mem_ops && ctlr->mem_ops->setup)
-+		return ctlr->mem_ops->setup(mem);
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(spi_mem_setup);
-+
- /**
-  * spi_mem_adjust_op_size() - Adjust the data size of a SPI mem operation to
-  *			      match controller limitations
-@@ -723,6 +743,7 @@ static int spi_mem_probe(struct spi_device *spi)
- 	struct spi_mem_driver *memdrv = to_spi_mem_drv(spi->dev.driver);
- 	struct spi_controller *ctlr = spi->controller;
- 	struct spi_mem *mem;
-+	int ret;
- 
- 	mem = devm_kzalloc(&spi->dev, sizeof(*mem), GFP_KERNEL);
- 	if (!mem)
-@@ -740,7 +761,11 @@ static int spi_mem_probe(struct spi_device *spi)
- 
- 	spi_set_drvdata(spi, mem);
- 
--	return memdrv->probe(mem);
-+	ret = memdrv->probe(mem);
-+	if (ret)
-+		return ret;
-+
-+	return spi_mem_setup(mem);
- }
- 
- static int spi_mem_remove(struct spi_device *spi)
-diff --git a/include/linux/spi/spi-mem.h b/include/linux/spi/spi-mem.h
-index af9ff2f0f1b2..5f7d20bd2b09 100644
---- a/include/linux/spi/spi-mem.h
-+++ b/include/linux/spi/spi-mem.h
-@@ -222,6 +222,7 @@ static inline void *spi_mem_get_drvdata(struct spi_mem *mem)
-  *	      Note that if the implementation of this function allocates memory
-  *	      dynamically, then it should do so with devm_xxx(), as we don't
-  *	      have a ->free_name() function.
-+ * @setup: execute a SPI memory setup
-  * @dirmap_create: create a direct mapping descriptor that can later be used to
-  *		   access the memory device. This method is optional
-  * @dirmap_destroy: destroy a memory descriptor previous created by
-@@ -256,6 +257,7 @@ struct spi_controller_mem_ops {
- 	int (*exec_op)(struct spi_mem *mem,
- 		       const struct spi_mem_op *op);
- 	const char *(*get_name)(struct spi_mem *mem);
-+	int (*setup)(struct spi_mem *mem);
- 	int (*dirmap_create)(struct spi_mem_dirmap_desc *desc);
- 	void (*dirmap_destroy)(struct spi_mem_dirmap_desc *desc);
- 	ssize_t (*dirmap_read)(struct spi_mem_dirmap_desc *desc,
-@@ -334,6 +336,8 @@ int spi_mem_exec_op(struct spi_mem *mem,
- 
- const char *spi_mem_get_name(struct spi_mem *mem);
- 
-+int spi_mem_setup(struct spi_mem *mem);
-+
- struct spi_mem_dirmap_desc *
- spi_mem_dirmap_create(struct spi_mem *mem,
- 		      const struct spi_mem_dirmap_info *info);
+diff --git a/drivers/net/arcnet/com20020-isa.c b/drivers/net/arcnet/com20020-isa.c
+index 28510e33924f..cd27fdc1059b 100644
+--- a/drivers/net/arcnet/com20020-isa.c
++++ b/drivers/net/arcnet/com20020-isa.c
+@@ -197,16 +197,22 @@ static int __init com20020isa_setup(char *s)
+ 	switch (ints[0]) {
+ 	default:		/* ERROR */
+ 		pr_info("Too many arguments\n");
++		/* Fall through */
+ 	case 6:		/* Timeout */
+ 		timeout = ints[6];
++		/* Fall through */
+ 	case 5:		/* CKP value */
+ 		clockp = ints[5];
++		/* Fall through */
+ 	case 4:		/* Backplane flag */
+ 		backplane = ints[4];
++		/* Fall through */
+ 	case 3:		/* Node ID */
+ 		node = ints[3];
++		/* Fall through */
+ 	case 2:		/* IRQ */
+ 		irq = ints[2];
++		/* Fall through */
+ 	case 1:		/* IO address */
+ 		io = ints[1];
+ 	}
 -- 
-2.18.0
+2.22.0
 
