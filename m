@@ -2,84 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D4EC783B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 05:48:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6448D783BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 05:54:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726508AbfG2DsT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 28 Jul 2019 23:48:19 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:37195 "EHLO ozlabs.org"
+        id S1726574AbfG2DyN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 28 Jul 2019 23:54:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53320 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726134AbfG2DsT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 28 Jul 2019 23:48:19 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        id S1726134AbfG2DyM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 28 Jul 2019 23:54:12 -0400
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45xlym5739z9s3l;
-        Mon, 29 Jul 2019 13:48:16 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1564372096;
-        bh=cmM63/7lK54E3ACi1o07jmlKAFIfgPMeQr3s68YCImo=;
-        h=Date:From:To:Cc:Subject:From;
-        b=CO/mKSBpC586w5dX9nCV+WiPH+BtkscrI7zy63mgqzwLhH1dnQrRcqSkcXLhDAtdy
-         vMfu1Uv+CBR9sNXcEA8oTwoPUAQdSeDeKSoJXQk+MKV3TQwi0MCxWQA/rpceEcv04j
-         BZkY/tnNTUuqAyyNQKKk7l0tlSysmkrpT+MydWShslh/61jXsDfL/ERVPjHtZNFaU9
-         k2Pj4k3luLHioNKMlvNESM3vfCsm8jpDYktyEXxas0likrIuMUf7SN0BFd/zChz0iM
-         5U61cd411CrhiOr/nlcLsm9oMWl/MvydZYoPeDkItjZ/5b1tsF3jdmITOxr7yOMT4S
-         9urSWkvJSiR6A==
-Date:   Mon, 29 Jul 2019 13:48:16 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        John Hubbard <jhubbard@nvidia.com>
-Subject: linux-next: build warning after merge of the akpm-current tree
-Message-ID: <20190729134816.605ff6d3@canb.auug.org.au>
+        by mail.kernel.org (Postfix) with ESMTPSA id 6826B21655
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 03:54:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564372451;
+        bh=2tQuQHTnu/mJjklJUZsHAQI0kaAk3Bi3c79GlFJnet8=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=LjpAREuKb+1hbftFyPqNYMkp3woKKhr2b/xHD86G8/XOG2/HqU20ZDei2Za6qUDjv
+         NhliTYYQuvTUzRx4lCxBkS5glhuezc4dly9I6qeEzB/jVlMy2YtxpcECvflyiAxD85
+         gIKr07F+OCIx3PUpjCdjeuBZ/ArPjmebpT5OSlyU=
+Received: by mail-wr1-f41.google.com with SMTP id f9so60112048wre.12
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2019 20:54:11 -0700 (PDT)
+X-Gm-Message-State: APjAAAVQWFCN3AUhhPp/DZCeLej0xx+52vIO3SDcmYO1NkeITZWNhzaK
+        kFZCM+O3ckWYtDVmSGQJPhWfZ+WxjXPYXMAlgCQgmQ==
+X-Google-Smtp-Source: APXvYqx9kG3JhSn4ejzWbB2Y6ZZXlzbRvrHqILc4LGopmKRBvxtYUVZM7ewWknjCh0gGn94azjkdPJGXhhbOHIAqf6Q=
+X-Received: by 2002:adf:f28a:: with SMTP id k10mr39238424wro.343.1564372449880;
+ Sun, 28 Jul 2019 20:54:09 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/HS1=9Lb1rBLiOXqtGdl+4Uy";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+References: <20190729015933.18049-1-dja@axtens.net>
+In-Reply-To: <20190729015933.18049-1-dja@axtens.net>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Sun, 28 Jul 2019 20:53:58 -0700
+X-Gmail-Original-Message-ID: <CALCETrX_+_zT8iKp9QMpaN0+NPS9_rmhZvPgG=ejN-5KkBbfdQ@mail.gmail.com>
+Message-ID: <CALCETrX_+_zT8iKp9QMpaN0+NPS9_rmhZvPgG=ejN-5KkBbfdQ@mail.gmail.com>
+Subject: Re: [PATCH] x86: panic when a kernel stack overflow is detected
+To:     Daniel Axtens <dja@axtens.net>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     kasan-dev <kasan-dev@googlegroups.com>, X86 ML <x86@kernel.org>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Andrew Lutomirski <luto@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Marco Elver <elver@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/HS1=9Lb1rBLiOXqtGdl+4Uy
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Sun, Jul 28, 2019 at 6:59 PM Daniel Axtens <dja@axtens.net> wrote:
+>
+> Currently, when a kernel stack overflow is detected via VMAP_STACK,
+> the task is killed with die().
+>
+> This isn't safe, because we don't know how that process has affected
+> kernel state. In particular, we don't know what locks have been taken.
+> For example, we can hit a case with lkdtm where a thread takes a
+> stack overflow in printk() after taking the logbuf_lock. In that case,
+> we deadlock when the kernel next does a printk.
+>
+> Do not attempt to kill the process when a kernel stack overflow is
+> detected. The system state is unknown, the only safe thing to do is
+> panic(). (panic() also prints without taking locks so a useful debug
+> splat is printed even when logbuf_lock is held.)
 
-Hi all,
+The thing I don't like about this is that it reduces the chance that
+we successfully log anything to disk.
 
-After merging the akpm-current tree, today's linux-next build (x86_64
-allmodconfig) produced this warning:
+PeterZ, do you have any useful input here?  I wonder if we could do
+something like printk_oh_crap() that is just printk() except that it
+panics if it fails to return after a few seconds.
 
-drivers/infiniband/sw/siw/siw_mem.c: In function 'siw_free_plist':
-drivers/infiniband/sw/siw/siw_mem.c:66:16: warning: unused variable 'p' [-W=
-unused-variable]
-  struct page **p =3D chunk->plist;
-                ^
-
-Introduced by commit
-
-  63630f9a8d72 ("mm/gup: add make_dirty arg to put_user_pages_dirty_lock()")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/HS1=9Lb1rBLiOXqtGdl+4Uy
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0+bIAACgkQAVBC80lX
-0GxIRwgAhvQSTAktG/+8HkyBrP7E5e1K/hKmwNC8I73HcqFshHmLrRWGmkDf1st1
-81B41pvjWDMbqEOPcpUCR9mFF/uJ1mTusVgmP/05xQzF74/JV0Zp/nDcsNhJOwWW
-NWt17WOwAF8/TlmT+4gis5wIj6ZbK/UsTYoKW61JQH1+eVOD7269SPByb5YH62sE
-5NX3zYt+/nqyzaVSPBX3v03RA1dFtM82Jb2CFzLMbEHiBnbXqTsdJ4hJyQ3p7haP
-GXq2jii1pqiYl/Js0tQ0J2galrIrV/DTALKrY95wouUK5cTe6YkrtZFVO26nzfY0
-fEUsAEg0NjS+lW4MIw8daD3wQubQzA==
-=AjZl
------END PGP SIGNATURE-----
-
---Sig_/HS1=9Lb1rBLiOXqtGdl+4Uy--
+--Andy
