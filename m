@@ -2,111 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A0ACD7992C
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:13:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D2E179944
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:14:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730565AbfG2UNn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 16:13:43 -0400
-Received: from gateway24.websitewelcome.com ([192.185.51.35]:11397 "EHLO
-        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728525AbfG2UNj (ORCPT
+        id S1730150AbfG2UOe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 16:14:34 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:33379 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730044AbfG2UOd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 16:13:39 -0400
-Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
-        by gateway24.websitewelcome.com (Postfix) with ESMTP id E249F8787
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 15:12:32 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id sC0WhH7uMdnCesC0WhkTyz; Mon, 29 Jul 2019 15:12:32 -0500
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        MIME-Version:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=oENqlPZb6frT+9DV38Oo3+KZ9Fe2eujoFK1IJWgO4vw=; b=bvchi7hMrWhQPxGx54HWPe1FFE
-        9Q7FdSp3dSqUxWMZ+3xyYnsciVZgTrxHcDFC371vq/52zy+/8aD/Hz/ggxNEn2bwxK3flx8V3/g2g
-        l7sfwySfRiFiZq9P3gVtkvj/emQCy/xz3ccUV2c999hwW9IqmPuVRsCn/LXhRnjBiKzTI28sAKyHf
-        lE9nn1YYGg3ji/WXTmN+J7XAE6mIimvc6ZhHwqMzGiwyTiNWol3A4FK13CZFKKY3ZMilxo3uITFrW
-        rY27zgrimQSiK5JbrN+igpeqSesCY2ah3B+6RZf0HhxA3la4QRsbCyutGKebvwisgI03eU+eO+ByX
-        5Ufd6JwQ==;
-Received: from [187.192.11.120] (port=59540 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1hsC0V-000znM-P1; Mon, 29 Jul 2019 15:12:31 -0500
-Date:   Mon, 29 Jul 2019 15:12:31 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Thomas Sailer <t.sailer@alumni.ethz.ch>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     linux-hams@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: [PATCH] net: hamradio: baycom_epp: Mark expected switch fall-through
-Message-ID: <20190729201231.GA7576@embeddedor>
+        Mon, 29 Jul 2019 16:14:33 -0400
+Received: by mail-pg1-f194.google.com with SMTP id f20so19568087pgj.0
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 13:14:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rajagiritech-edu-in.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4keJAShqq2q/IDLzL2p7jjpoZMeQRV3FU23AJeNycVA=;
+        b=JtAVStV+qYUB/ArkMRlEhkdK6ZnJDpeNjtT5z/JG5u9vUvaM01WO2YcLvVQHikjip2
+         yXyEXrEWBIC/JnvrJGvWDf/+oxhnP2VEshm127BxsGbwVqqEhJbK9dW/muTeETtXui1W
+         ozqImJGewtf163mLx/QF8Gmm7cpinTpKd/k4gD+j8PMiYx1LBAmbE8SgRYnVpvXWc6pX
+         kvPoL0Xe9jFiH4tRZNk97oF6ubPo/GAMlK1oSjwIhjgQgjXQL4VPyOgFXgaVNbKwnTaV
+         Q81p8VC26BE5lME7nv62flGyWCXwwYRxSONbcyLIwdiQ+Y0QbQkFQqTtSyADMpVZFNLg
+         OODA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4keJAShqq2q/IDLzL2p7jjpoZMeQRV3FU23AJeNycVA=;
+        b=Vi6L7tE3ZephtMkK2gAesHdhUNdeUi9LpjYrH5k8980gLbzv36iBtyfn5e3P0k2aBd
+         fl44pZ3zIZj/4H5XLafm2jpKhYPgEeHoopAPNckF/RjXC88G6fwGimDobbTMV6uVzxs1
+         Y0sFQFz0d7O0N94QP8hZqZ9reqPxgUc2+u77eYpvj6ATFrvpflZKC5w3wyDI370fuGb6
+         bs8K+zzi39A6VXJVvLYs9v6A4LCh7SGI5182a9IfG+nNnzGnvn6+pc2mqRM2sQSKQmQY
+         1GoEMt48LXNCOQG9vpxnVrsYpPfRzCex8+/6B1wbUvW5R4kx/wL7poTejjCqoukEJy94
+         XvEg==
+X-Gm-Message-State: APjAAAVy5MMVpRXW1l8jYfBxMqDI9RHQU1smiXX8ceHMEyhUWGoUQaUe
+        565InoC/ygmINx4zjsBNFIEhg0ry0ynDlyBJT9U=
+X-Google-Smtp-Source: APXvYqy/5Bg/DGakidcOCN+mJroP8j11+A23pRgyE6m5fhgP67ISRmMTRVQId0R3vgBCuylnPSD8+jIMNZ1bBhJswSM=
+X-Received: by 2002:a17:90a:28e4:: with SMTP id f91mr110090286pjd.99.1564431272178;
+ Mon, 29 Jul 2019 13:14:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 187.192.11.120
-X-Source-L: No
-X-Exim-ID: 1hsC0V-000znM-P1
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [187.192.11.120]:59540
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 15
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+References: <CAG=yYw=S197+2TzdPaiEaz-9MRuVtd+Q_L9W8GOf4jKwyppNjQ@mail.gmail.com>
+ <CAKwvOdmg2b2PMzuzNmutacFArBNagjtwG=_VZvKhb4okzSkdiA@mail.gmail.com>
+ <201907181423.E808958@keescook> <CAG=yYwmTdW0THoVGJc-Le+TyGMaHKZD-NHTRfXczNes65T8qWA@mail.gmail.com>
+ <ec210573-dada-bb6e-b0ee-f54bea62e2ce@kernel.dk>
+In-Reply-To: <ec210573-dada-bb6e-b0ee-f54bea62e2ce@kernel.dk>
+From:   Jeffrin Thalakkottoor <jeffrin@rajagiritech.edu.in>
+Date:   Tue, 30 Jul 2019 01:43:55 +0530
+Message-ID: <CAG=yYw=w-Y2zJG-hfUdC7eZ+c7CykB82gBnHpgZMcpHquWzRXw@mail.gmail.com>
+Subject: Re: BUG: KASAN: global-out-of-bounds in ata_exec_internal_sg+0x50f/0xc70
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        tobin@kernel.org, lkml <linux-kernel@vger.kernel.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Alexander Potapenko <glider@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mark switch cases where we are expecting to fall through.
+hello Kees,
 
-This patch fixes the following warning (Building: i386):
+please mention  me ...
+Reported-by:  Jeffrin Jose T  <jeffrin@rajagiritech.edu.in>
+Tested-by: Jeffrin Jose T  <jeffrin@rajagiritech.edu.in>
 
-drivers/net/hamradio/baycom_epp.c: In function ‘transmit’:
-drivers/net/hamradio/baycom_epp.c:491:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
-    if (i) {
-       ^
-drivers/net/hamradio/baycom_epp.c:504:3: note: here
-   default:  /* fall through */
-   ^~~~~~~
+On Tue, Jul 30, 2019 at 1:25 AM Jens Axboe <axboe@kernel.dk> wrote:
+>
+> On 7/29/19 1:34 PM, Jeffrin Thalakkottoor wrote:
+> > hello Kees Cook,
+> >
+> > i tested your fix and i think it worked like a charm !
+> > kasan message related disappeared during boot time and it does not
+> > show in the output of "sudo dmesg -l err"
+> > anyway thanks a lot !
+>
+> Kees, could you send that out as a proper patch?
+>
+> --
+> Jens Axboe
+>
 
-Notice that, in this particular case, the code comment is
-modified in accordance with what GCC is expecting to find.
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/net/hamradio/baycom_epp.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/net/hamradio/baycom_epp.c b/drivers/net/hamradio/baycom_epp.c
-index daab2c07d891..9303aeb2595f 100644
---- a/drivers/net/hamradio/baycom_epp.c
-+++ b/drivers/net/hamradio/baycom_epp.c
-@@ -500,8 +500,9 @@ static int transmit(struct baycom_state *bc, int cnt, unsigned char stat)
- 				}
- 				break;
- 			}
-+			/* fall through */
- 
--		default:  /* fall through */
-+		default:
- 			if (bc->hdlctx.calibrate <= 0)
- 				return 0;
- 			i = min_t(int, cnt, bc->hdlctx.calibrate);
 -- 
-2.22.0
-
+software engineer
+rajagiri school of engineering and technology
