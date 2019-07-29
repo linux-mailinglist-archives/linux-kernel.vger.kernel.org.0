@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B55CC79ADF
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 23:15:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 29CAB79AE0
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 23:15:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388769AbfG2VPd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 17:15:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57418 "EHLO mail.kernel.org"
+        id S2388794AbfG2VPe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 17:15:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57484 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388719AbfG2VPa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 17:15:30 -0400
+        id S2388767AbfG2VPd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 17:15:33 -0400
 Received: from quaco.ghostprotocols.net (unknown [179.97.35.50])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 73DE6217D6;
-        Mon, 29 Jul 2019 21:15:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CF05A2073F;
+        Mon, 29 Jul 2019 21:15:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564434929;
-        bh=q4r3/xXyQIdY27voN2IGQxMw00U3Yk78rY1J9t+EXfc=;
+        s=default; t=1564434932;
+        bh=2Zs67whJ+85SJ2uOz8DdSbMk8H9EJiYZv9dXUnkcVnw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ddj4/dje2vUjyW3GTLJ7deMBZf/03/hs90DUIlNJZuBgCX11Mdyf/UrP8yT6dSyZh
-         FDJNGt0BLYCwfMmttrnqy4i/4xui6sSwTmfU1gwWRRGNkrD+4fDsWMl2IV2E+VqtCz
-         cMs7JfFseeLeLRwJjHazVa7ehs1iiLXVeJl5nw6g=
+        b=zJLvRHmdvhLeHQ2Z/I/zfmOofTcEZeorPnUntzGI0Y+myD4HEgydqQNNUP2fo6fmC
+         +nezygGcrrNjARB1Cf0q+L56TemGOoIxeib9Qeomgl1W6elYkHdYz/WwOhJMaJ6Xjx
+         hoBXbmvoqQuMR46bg5GJ40Aj87su3QeghFRZBS7E=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
@@ -31,12 +31,12 @@ Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Adrian Hunter <adrian.hunter@intel.com>,
-        Christian Brauner <christian@brauner.io>,
+        "David S . Miller" <davem@davemloft.net>,
         =?UTF-8?q?Luis=20Cl=C3=A1udio=20Gon=C3=A7alves?= 
-        <lclaudio@redhat.com>, Patrick Bellasi <patrick.bellasi@arm.com>
-Subject: [PATCH 07/12] tools headers UAPI: Sync sched.h with the kernel
-Date:   Mon, 29 Jul 2019 18:14:54 -0300
-Message-Id: <20190729211456.6380-8-acme@kernel.org>
+        <lclaudio@redhat.com>, Vincent Bernat <vincent@bernat.ch>
+Subject: [PATCH 08/12] tools headers UAPI: Sync if_link.h with the kernel
+Date:   Mon, 29 Jul 2019 18:14:55 -0300
+Message-Id: <20190729211456.6380-9-acme@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190729211456.6380-1-acme@kernel.org>
 References: <20190729211456.6380-1-acme@kernel.org>
@@ -50,88 +50,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-To get the changes in:
+To pick the changes in:
 
-  a509a7cd7974 ("sched/uclamp: Extend sched_setattr() to support utilization clamping")
-  1d6362fa0cfc ("sched/core: Allow sched_setattr() to use the current policy")
-  7f192e3cd316 ("fork: add clone3")
+  07a4ddec3ce9 ("bonding: add an option to specify a delay between peer notifications")
 
-And silence this perf build warning:
+And silence this build warning:
 
-  Warning: Kernel ABI header at 'tools/include/uapi/linux/sched.h' differs from latest version at 'include/uapi/linux/sched.h'
-  diff -u tools/include/uapi/linux/sched.h include/uapi/linux/sched.h
-
-No changes in tools/ due to the above.
+  Kernel ABI header at 'tools/include/uapi/linux/if_link.h' differs from latest version at 'include/uapi/linux/if_link.h'
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Christian Brauner <christian@brauner.io>
+Cc: David S. Miller <davem@davemloft.net>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Luis Cláudio Gonçalves <lclaudio@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Patrick Bellasi <patrick.bellasi@arm.com>
-Link: https://lkml.kernel.org/n/tip-mtrpsjrux5hgyr5uf8l1aa46@git.kernel.org
+Cc: Vincent Bernat <vincent@bernat.ch>
+Link: https://lkml.kernel.org/n/tip-3liw4exxh8goc0rq9xryl2kv@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/include/uapi/linux/sched.h | 30 +++++++++++++++++++++++++++++-
- 1 file changed, 29 insertions(+), 1 deletion(-)
+ tools/include/uapi/linux/if_link.h | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/tools/include/uapi/linux/sched.h b/tools/include/uapi/linux/sched.h
-index ed4ee170bee2..b3105ac1381a 100644
---- a/tools/include/uapi/linux/sched.h
-+++ b/tools/include/uapi/linux/sched.h
-@@ -2,6 +2,8 @@
- #ifndef _UAPI_LINUX_SCHED_H
- #define _UAPI_LINUX_SCHED_H
+diff --git a/tools/include/uapi/linux/if_link.h b/tools/include/uapi/linux/if_link.h
+index 7d113a9602f0..4a8c02cafa9a 100644
+--- a/tools/include/uapi/linux/if_link.h
++++ b/tools/include/uapi/linux/if_link.h
+@@ -695,6 +695,7 @@ enum {
+ 	IFLA_VF_IB_NODE_GUID,	/* VF Infiniband node GUID */
+ 	IFLA_VF_IB_PORT_GUID,	/* VF Infiniband port GUID */
+ 	IFLA_VF_VLAN_LIST,	/* nested list of vlans, option for QinQ */
++	IFLA_VF_BROADCAST,	/* VF broadcast */
+ 	__IFLA_VF_MAX,
+ };
  
-+#include <linux/types.h>
-+
- /*
-  * cloning flags:
-  */
-@@ -31,6 +33,20 @@
- #define CLONE_NEWNET		0x40000000	/* New network namespace */
- #define CLONE_IO		0x80000000	/* Clone io context */
+@@ -705,6 +706,10 @@ struct ifla_vf_mac {
+ 	__u8 mac[32]; /* MAX_ADDR_LEN */
+ };
  
-+/*
-+ * Arguments for the clone3 syscall
-+ */
-+struct clone_args {
-+	__aligned_u64 flags;
-+	__aligned_u64 pidfd;
-+	__aligned_u64 child_tid;
-+	__aligned_u64 parent_tid;
-+	__aligned_u64 exit_signal;
-+	__aligned_u64 stack;
-+	__aligned_u64 stack_size;
-+	__aligned_u64 tls;
++struct ifla_vf_broadcast {
++	__u8 broadcast[32];
 +};
 +
- /*
-  * Scheduling policies
-  */
-@@ -51,9 +67,21 @@
- #define SCHED_FLAG_RESET_ON_FORK	0x01
- #define SCHED_FLAG_RECLAIM		0x02
- #define SCHED_FLAG_DL_OVERRUN		0x04
-+#define SCHED_FLAG_KEEP_POLICY		0x08
-+#define SCHED_FLAG_KEEP_PARAMS		0x10
-+#define SCHED_FLAG_UTIL_CLAMP_MIN	0x20
-+#define SCHED_FLAG_UTIL_CLAMP_MAX	0x40
-+
-+#define SCHED_FLAG_KEEP_ALL	(SCHED_FLAG_KEEP_POLICY | \
-+				 SCHED_FLAG_KEEP_PARAMS)
-+
-+#define SCHED_FLAG_UTIL_CLAMP	(SCHED_FLAG_UTIL_CLAMP_MIN | \
-+				 SCHED_FLAG_UTIL_CLAMP_MAX)
- 
- #define SCHED_FLAG_ALL	(SCHED_FLAG_RESET_ON_FORK	| \
- 			 SCHED_FLAG_RECLAIM		| \
--			 SCHED_FLAG_DL_OVERRUN)
-+			 SCHED_FLAG_DL_OVERRUN		| \
-+			 SCHED_FLAG_KEEP_ALL		| \
-+			 SCHED_FLAG_UTIL_CLAMP)
- 
- #endif /* _UAPI_LINUX_SCHED_H */
+ struct ifla_vf_vlan {
+ 	__u32 vf;
+ 	__u32 vlan; /* 0 - 4095, 0 disables VLAN filter */
 -- 
 2.21.0
 
