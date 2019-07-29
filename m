@@ -2,36 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8ECBF797F2
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:04:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE896797EC
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:04:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389913AbfG2UEW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 16:04:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34684 "EHLO mail.kernel.org"
+        id S1730003AbfG2UEH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 16:04:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34916 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389981AbfG2Tpk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:45:40 -0400
+        id S2390032AbfG2Tpx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:45:53 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4D98020C01;
-        Mon, 29 Jul 2019 19:45:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E2AE12171F;
+        Mon, 29 Jul 2019 19:45:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564429539;
-        bh=nsfP82QPrsH9+pwdLvCOq51KQy4SE8oz+B42GGwG1Go=;
+        s=default; t=1564429552;
+        bh=ZY24zMzUl487W9Xmc++d2mlHBn6l28pMRDTmBKYGDcA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=smNvxCz8QkqNjMvfzirnrL+3NqEwuUxy/i/pL12jAylDbKe0N6ksTw77zwusMDMnc
-         EBPLJxA+OdCxOSYVsFp1SpqU25lF1JbU5UShZKtT9jAoda02QrvtwaULkZk3RTWSD+
-         A9Y0FvJ93/ajco/8Cl5nWKt7ILm+AzSu5+Qs+/l0=
+        b=kYTDqltIi04W86xvV6nXTkqTrJqgj/a/7Fk4rKXOwcISil7WlehuDbb7lHIVruReh
+         TRiC6ekB0bmsGHq9KxrFlmOVb24MYwJkfeoI2msv3ZGOU/9NR8SIbI5LZOGrcSPwu4
+         2DCBGdmATRJjeJ9Wv31f3W+/l8dLPc4gcaCS2lRY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Park Ju Hyung <qkrwngud825@gmail.com>,
-        Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
+        stable@vger.kernel.org,
+        Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>,
+        Roman Li <Roman.Li@amd.com>,
+        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 017/215] f2fs: fix to check layout on last valid checkpoint park
-Date:   Mon, 29 Jul 2019 21:20:13 +0200
-Message-Id: <20190729190742.519767411@linuxfoundation.org>
+Subject: [PATCH 5.2 020/215] drm/amd/display: Fill prescale_params->scale for RGB565
+Date:   Mon, 29 Jul 2019 21:20:16 +0200
+Message-Id: <20190729190743.225595152@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190729190739.971253303@linuxfoundation.org>
 References: <20190729190739.971253303@linuxfoundation.org>
@@ -44,107 +47,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 5dae2d39074dde941cc3150dcbb7840d88179743 ]
+[ Upstream commit 1352c779cb74d427f4150cbe779a2f7886f70cae ]
 
-As Ju Hyung reported:
+[Why]
+An assertion is thrown when using SURFACE_PIXEL_FORMAT_GRPH_RGB565
+formats on DCE since the prescale_params->scale wasn't being filled.
 
-"
-I was semi-forced today to use the new kernel and test f2fs.
+Found by a dmesg-fail when running the
+igt@kms_plane@pixel-format-pipe-a-planes test on Baffin.
 
-My Ubuntu initramfs got a bit wonky and I had to boot into live CD and
-fix some stuffs. The live CD was using 4.15 kernel, and just mounting
-the f2fs partition there corrupted f2fs and my 4.19(with 5.1-rc1-4.19
-f2fs-stable merged) refused to mount with "SIT is corrupted node"
-message.
+[How]
+Fill in the scale parameter.
 
-I used the latest f2fs-tools sent by Chao including "fsck.f2fs: fix to
-repair cp_loads blocks at correct position"
-
-It spit out 140M worth of output, but at least I didn't have to run it
-twice. Everything returned "Ok" in the 2nd run.
-The new log is at
-http://arter97.com/f2fs/final
-
-After fixing the image, I used my 4.19 kernel with 5.2-rc1-4.19
-f2fs-stable merged and it mounted.
-
-But, I got this:
-[    1.047791] F2FS-fs (nvme0n1p3): layout of large_nat_bitmap is
-deprecated, run fsck to repair, chksum_offset: 4092
-[    1.081307] F2FS-fs (nvme0n1p3): Found nat_bits in checkpoint
-[    1.161520] F2FS-fs (nvme0n1p3): recover fsync data on readonly fs
-[    1.162418] F2FS-fs (nvme0n1p3): Mounted with checkpoint version = 761c7e00
-
-But after doing a reboot, the message is gone:
-[    1.098423] F2FS-fs (nvme0n1p3): Found nat_bits in checkpoint
-[    1.177771] F2FS-fs (nvme0n1p3): recover fsync data on readonly fs
-[    1.178365] F2FS-fs (nvme0n1p3): Mounted with checkpoint version = 761c7eda
-
-I'm not exactly sure why the kernel detected that I'm still using the
-old layout on the first boot. Maybe fsck didn't fix it properly, or
-the check from the kernel is improper.
-"
-
-Although we have rebuild the old deprecated checkpoint with new layout
-during repair, we only repair last checkpoint park, the other old one is
-remained.
-
-Once the image was mounted, we will 1) sanity check layout and 2) decide
-which checkpoint park to use according to cp_ver. So that we will print
-reported message unnecessarily at step 1), to avoid it, we simply move
-layout check into f2fs_sanity_check_ckpt() after step 2).
-
-Reported-by: Park Ju Hyung <qkrwngud825@gmail.com>
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>
+Reviewed-by: Roman Li <Roman.Li@amd.com>
+Acked-by: Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/checkpoint.c | 11 -----------
- fs/f2fs/super.c      |  9 +++++++++
- 2 files changed, 9 insertions(+), 11 deletions(-)
+ drivers/gpu/drm/amd/display/dc/dce110/dce110_hw_sequencer.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index ed70b68b2b38..d0539ddad6e2 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -832,17 +832,6 @@ static int get_checkpoint_version(struct f2fs_sb_info *sbi, block_t cp_addr,
- 		return -EINVAL;
- 	}
+diff --git a/drivers/gpu/drm/amd/display/dc/dce110/dce110_hw_sequencer.c b/drivers/gpu/drm/amd/display/dc/dce110/dce110_hw_sequencer.c
+index 7ac50ab1b762..7d7e93c87c28 100644
+--- a/drivers/gpu/drm/amd/display/dc/dce110/dce110_hw_sequencer.c
++++ b/drivers/gpu/drm/amd/display/dc/dce110/dce110_hw_sequencer.c
+@@ -242,6 +242,9 @@ static void build_prescale_params(struct ipp_prescale_params *prescale_params,
+ 	prescale_params->mode = IPP_PRESCALE_MODE_FIXED_UNSIGNED;
  
--	if (__is_set_ckpt_flags(*cp_block, CP_LARGE_NAT_BITMAP_FLAG)) {
--		if (crc_offset != CP_MIN_CHKSUM_OFFSET) {
--			f2fs_put_page(*cp_page, 1);
--			f2fs_msg(sbi->sb, KERN_WARNING,
--				"layout of large_nat_bitmap is deprecated, "
--				"run fsck to repair, chksum_offset: %zu",
--				crc_offset);
--			return -EINVAL;
--		}
--	}
--
- 	crc = f2fs_checkpoint_chksum(sbi, *cp_block);
- 	if (crc != cur_cp_crc(*cp_block)) {
- 		f2fs_put_page(*cp_page, 1);
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 6b959bbb336a..856f9081c599 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -2718,6 +2718,15 @@ int f2fs_sanity_check_ckpt(struct f2fs_sb_info *sbi)
- 		return 1;
- 	}
- 
-+	if (__is_set_ckpt_flags(ckpt, CP_LARGE_NAT_BITMAP_FLAG) &&
-+		le32_to_cpu(ckpt->checksum_offset) != CP_MIN_CHKSUM_OFFSET) {
-+		f2fs_msg(sbi->sb, KERN_WARNING,
-+			"layout of large_nat_bitmap is deprecated, "
-+			"run fsck to repair, chksum_offset: %u",
-+			le32_to_cpu(ckpt->checksum_offset));
-+		return 1;
-+	}
-+
- 	if (unlikely(f2fs_cp_error(sbi))) {
- 		f2fs_msg(sbi->sb, KERN_ERR, "A bug case: need to run fsck");
- 		return 1;
+ 	switch (plane_state->format) {
++	case SURFACE_PIXEL_FORMAT_GRPH_RGB565:
++		prescale_params->scale = 0x2082;
++		break;
+ 	case SURFACE_PIXEL_FORMAT_GRPH_ARGB8888:
+ 	case SURFACE_PIXEL_FORMAT_GRPH_ABGR8888:
+ 		prescale_params->scale = 0x2020;
 -- 
 2.20.1
 
