@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 563F27949E
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:33:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B87F794A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:34:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730354AbfG2Tde (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 15:33:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47678 "EHLO mail.kernel.org"
+        id S1729232AbfG2Tdn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 15:33:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47830 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729096AbfG2Tdb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:33:31 -0400
+        id S2387604AbfG2Tdg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:33:36 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AB3162070B;
-        Mon, 29 Jul 2019 19:33:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E66F621773;
+        Mon, 29 Jul 2019 19:33:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564428810;
-        bh=4H05V33b22NBKbavxlsFHLdxSESXPpMrppj84sOSSIE=;
+        s=default; t=1564428816;
+        bh=6E5EdRJFvwwKHTg6u4GGDRI6rGEUkE2S1UcB+Lhht64=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vGru/Li2f9/xp0jYxVo0v00xz7B0T5lx/dP+LRjxqAFeI6FpkuYwJdycWOxlr8b9Q
-         tUBTOjm0vOLvlno58ERLaTVrfFapUDGlhnBRO3mW6sPUvH9/P7yglnAV8FrKSWYbhk
-         vPtCnBTjwdCShBdC8q31G2ZwFSeOqeB8Wunhm7AI=
+        b=pZbVSYS1j499uu8rlH9GyT2u1k7uh5AQKpAWQ2cyfOI5GaErvWi44frzaB+KY92lz
+         dvMYUrj+w4QGQ5K38t3IFK9fTsfGgpc0MhI4QJgVF0GJCA6OvHR9hCoaPF6F4Zc3a4
+         5sjnZXJNY1SAA98eM8l5CMmgOXb8RUxpzb1zo4Nc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andreas Steinmetz <ast@domdv.de>,
-        Willem de Bruijn <willemb@google.com>,
+        stable@vger.kernel.org,
+        syzbot+d6636a36d3c34bd88938@syzkaller.appspotmail.com,
+        Cong Wang <xiyou.wangcong@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 194/293] macsec: fix use-after-free of skb during RX
-Date:   Mon, 29 Jul 2019 21:21:25 +0200
-Message-Id: <20190729190839.332167533@linuxfoundation.org>
+Subject: [PATCH 4.14 196/293] netrom: fix a memory leak in nr_rx_frame()
+Date:   Mon, 29 Jul 2019 21:21:27 +0200
+Message-Id: <20190729190839.483361877@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190729190820.321094988@linuxfoundation.org>
 References: <20190729190820.321094988@linuxfoundation.org>
@@ -44,34 +45,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andreas Steinmetz <ast@domdv.de>
+From: Cong Wang <xiyou.wangcong@gmail.com>
 
-[ Upstream commit 095c02da80a41cf6d311c504d8955d6d1c2add10 ]
+[ Upstream commit c8c8218ec5af5d2598381883acbefbf604e56b5e ]
 
-Fix use-after-free of skb when rx_handler returns RX_HANDLER_PASS.
+When the skb is associated with a new sock, just assigning
+it to skb->sk is not sufficient, we have to set its destructor
+to free the sock properly too.
 
-Signed-off-by: Andreas Steinmetz <ast@domdv.de>
-Acked-by: Willem de Bruijn <willemb@google.com>
+Reported-by: syzbot+d6636a36d3c34bd88938@syzkaller.appspotmail.com
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/macsec.c |    5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ net/netrom/af_netrom.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/net/macsec.c
-+++ b/drivers/net/macsec.c
-@@ -1099,10 +1099,9 @@ static rx_handler_result_t macsec_handle
- 	}
+--- a/net/netrom/af_netrom.c
++++ b/net/netrom/af_netrom.c
+@@ -871,7 +871,7 @@ int nr_rx_frame(struct sk_buff *skb, str
+ 	unsigned short frametype, flags, window, timeout;
+ 	int ret;
  
- 	skb = skb_unshare(skb, GFP_ATOMIC);
--	if (!skb) {
--		*pskb = NULL;
-+	*pskb = skb;
-+	if (!skb)
- 		return RX_HANDLER_CONSUMED;
--	}
+-	skb->sk = NULL;		/* Initially we don't know who it's for */
++	skb_orphan(skb);
  
- 	pulled_sci = pskb_may_pull(skb, macsec_extra_len(true));
- 	if (!pulled_sci) {
+ 	/*
+ 	 *	skb->data points to the netrom frame start
+@@ -970,6 +970,7 @@ int nr_rx_frame(struct sk_buff *skb, str
+ 	window = skb->data[20];
+ 
+ 	skb->sk             = make;
++	skb->destructor     = sock_efree;
+ 	make->sk_state	    = TCP_ESTABLISHED;
+ 
+ 	/* Fill in his circuit details */
 
 
