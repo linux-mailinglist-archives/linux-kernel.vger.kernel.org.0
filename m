@@ -2,31 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E471C78DF8
+	by mail.lfdr.de (Postfix) with ESMTP id 0654A78DF6
 	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 16:29:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728447AbfG2O3S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 10:29:18 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:46980 "EHLO
+        id S1728547AbfG2O3U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 10:29:20 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:46996 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727129AbfG2O3R (ORCPT
+        with ESMTP id S1728486AbfG2O3T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 10:29:17 -0400
+        Mon, 29 Jul 2019 10:29:19 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
         :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=ADCug91zuoANeBM/f4yCo270YqgttY1AZGH+RTcphSg=; b=PoRZVZGWUXTPpfSubNbeDA1LdQ
-        b1LU/fQcfLbyytc2sKwhS9XHDPhN/gAt57LwReU5qOooafXp0ZDGWpFF/2t4PTI/oaQv6W14tY4mb
-        rza6MeZTZ9XBJh/slw1Y3bcBA1QSUV+n4ZlZw0NYQfKPrQTDFtZI5E9tOFs20qu0RAJJTghI3SRgm
-        YgD2M6gbXV0E6tWBxPYGCgN/DTlYlaMlgZrQe+O/igafLpjEuov7/uqXg2nCrGYgEePTo7BvTg3Gz
-        k3Lax/R6rvcpq4mDKiz84UhDA+aZJS5tGJi7fwLDd/1s0vbKGIGuHFzxXh6MbT37dORGy06wuzQKy
-        8BoJHZmQ==;
+        bh=btXxqezSTYpMi2lLCeQ3gcAVYHUyBBOdSXXsZurrEew=; b=ZXUwnk7xK0eKvyNMCJiotaRVYY
+        rDFhDzOGkIe8OqjwqnrED1/er13fgyYhrlvT/BdF5iqD2+fHbtr+SI6BVjX7Y8UUDrM5++0RTtGD+
+        A6wiqxzp5hNljbLRwzQ62Oxo0eirdUqNPJBq/QV7OfJFQt+QafoC8dV+5GO3zFNzfnYPHLQIGe9Me
+        uVgP7tYhnsmBNwE9+DLYy6MFGcMI2KOY40RRE4FWvTaRyAvNOgfRu14N1QeGfaqlBnzHHd60ZFwpx
+        XrKs7PeR4RmkKc8b/thC2CTBP75FhQaJQp1/nAV/tBf5G2wLyPJyvf25PxBVnv3It7Os91C9hkzNf
+        KazPletQ==;
 Received: from [195.167.85.94] (helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hs6eI-0006N3-7M; Mon, 29 Jul 2019 14:29:14 +0000
+        id 1hs6eK-0006O9-Rc; Mon, 29 Jul 2019 14:29:17 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
         Jason Gunthorpe <jgg@mellanox.com>,
@@ -36,9 +36,9 @@ Cc:     Ralph Campbell <rcampbell@nvidia.com>,
         Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
         nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 7/9] mm: remove the unused MIGRATE_PFN_ERROR flag
-Date:   Mon, 29 Jul 2019 17:28:41 +0300
-Message-Id: <20190729142843.22320-8-hch@lst.de>
+Subject: [PATCH 8/9] mm: remove the unused MIGRATE_PFN_DEVICE flag
+Date:   Mon, 29 Jul 2019 17:28:42 +0300
+Message-Id: <20190729142843.22320-9-hch@lst.de>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190729142843.22320-1-hch@lst.de>
 References: <20190729142843.22320-1-hch@lst.de>
@@ -50,25 +50,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We don't use this flag anymore, so remove it.
+No one ever checks this flag, and we could easily get that information
+from the page if needed.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- include/linux/migrate.h | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/gpu/drm/nouveau/nouveau_dmem.c | 3 +--
+ include/linux/migrate.h                | 1 -
+ mm/migrate.c                           | 4 ++--
+ 3 files changed, 3 insertions(+), 5 deletions(-)
 
+diff --git a/drivers/gpu/drm/nouveau/nouveau_dmem.c b/drivers/gpu/drm/nouveau/nouveau_dmem.c
+index 6cb930755970..f04686a2c21f 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_dmem.c
++++ b/drivers/gpu/drm/nouveau/nouveau_dmem.c
+@@ -582,8 +582,7 @@ static unsigned long nouveau_dmem_migrate_copy_one(struct nouveau_drm *drm,
+ 			*dma_addr))
+ 		goto out_dma_unmap;
+ 
+-	return migrate_pfn(page_to_pfn(dpage)) |
+-		MIGRATE_PFN_LOCKED | MIGRATE_PFN_DEVICE;
++	return migrate_pfn(page_to_pfn(dpage)) | MIGRATE_PFN_LOCKED;
+ 
+ out_dma_unmap:
+ 	dma_unmap_page(dev, *dma_addr, PAGE_SIZE, DMA_BIDIRECTIONAL);
 diff --git a/include/linux/migrate.h b/include/linux/migrate.h
-index 093d67fcf6dd..229153c2c496 100644
+index 229153c2c496..8b46cfdb1a0e 100644
 --- a/include/linux/migrate.h
 +++ b/include/linux/migrate.h
-@@ -167,7 +167,6 @@ static inline int migrate_misplaced_transhuge_page(struct mm_struct *mm,
+@@ -166,7 +166,6 @@ static inline int migrate_misplaced_transhuge_page(struct mm_struct *mm,
+ #define MIGRATE_PFN_MIGRATE	(1UL << 1)
  #define MIGRATE_PFN_LOCKED	(1UL << 2)
  #define MIGRATE_PFN_WRITE	(1UL << 3)
- #define MIGRATE_PFN_DEVICE	(1UL << 4)
--#define MIGRATE_PFN_ERROR	(1UL << 5)
+-#define MIGRATE_PFN_DEVICE	(1UL << 4)
  #define MIGRATE_PFN_SHIFT	6
  
  static inline struct page *migrate_pfn_to_page(unsigned long mpfn)
+diff --git a/mm/migrate.c b/mm/migrate.c
+index dc4e60a496f2..74735256e260 100644
+--- a/mm/migrate.c
++++ b/mm/migrate.c
+@@ -2237,8 +2237,8 @@ static int migrate_vma_collect_pmd(pmd_t *pmdp,
+ 				goto next;
+ 
+ 			page = device_private_entry_to_page(entry);
+-			mpfn = migrate_pfn(page_to_pfn(page))|
+-				MIGRATE_PFN_DEVICE | MIGRATE_PFN_MIGRATE;
++			mpfn = migrate_pfn(page_to_pfn(page)) |
++					MIGRATE_PFN_MIGRATE;
+ 			if (is_write_device_private_entry(entry))
+ 				mpfn |= MIGRATE_PFN_WRITE;
+ 		} else {
 -- 
 2.20.1
 
