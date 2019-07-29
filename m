@@ -2,82 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E4E5B786C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 09:56:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 48CDA786E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 09:59:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727263AbfG2H4L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 03:56:11 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:49286 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726673AbfG2H4K (ORCPT
+        id S1727309AbfG2H7Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 03:59:25 -0400
+Received: from mail-lj1-f181.google.com ([209.85.208.181]:41743 "EHLO
+        mail-lj1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726586AbfG2H7Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 03:56:10 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id B3CDB6030E; Mon, 29 Jul 2019 07:56:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1564386969;
-        bh=Q3GrgOXXJ5DPh+opvjNnjdxQLGAJvH18gDZjL4btvwI=;
-        h=From:To:Cc:Subject:Date:From;
-        b=eiwUf6EUoSDmVOr0mHNiFXEU8PH4vsF0rM3Cameeiaz6xX80foLVR6RgWuTel8f9h
-         6qVZzhpgsexRnuSS292/I5YnpFE8zDjVy6j1RRmlxtyuMas8GiAezV7rDu+NFYUUMO
-         X/b5FWttoAY1IOffS6IbJxmIROhClDzDNNa1ROrQ=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
-        version=3.4.0
-Received: from mojha-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: mojha@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id F3EC5602AE;
-        Mon, 29 Jul 2019 07:56:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1564386969;
-        bh=Q3GrgOXXJ5DPh+opvjNnjdxQLGAJvH18gDZjL4btvwI=;
-        h=From:To:Cc:Subject:Date:From;
-        b=eiwUf6EUoSDmVOr0mHNiFXEU8PH4vsF0rM3Cameeiaz6xX80foLVR6RgWuTel8f9h
-         6qVZzhpgsexRnuSS292/I5YnpFE8zDjVy6j1RRmlxtyuMas8GiAezV7rDu+NFYUUMO
-         X/b5FWttoAY1IOffS6IbJxmIROhClDzDNNa1ROrQ=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F3EC5602AE
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=mojha@codeaurora.org
-From:   Mukesh Ojha <mojha@codeaurora.org>
-To:     paulmck@linux.ibm.com, rcu@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Mukesh Ojha <mojha@codeaurora.org>
-Subject: [PATCH] rcu: Fix spelling mistake "greate"->"great"
-Date:   Mon, 29 Jul 2019 13:25:57 +0530
-Message-Id: <1564386957-22833-1-git-send-email-mojha@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        Mon, 29 Jul 2019 03:59:24 -0400
+Received: by mail-lj1-f181.google.com with SMTP id d24so57623022ljg.8
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 00:59:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=z0X7I7dffw1LhnC4nVMW+8AwSH2HYvA+5a9p+PbDV/Y=;
+        b=Nas8riKaV3xLiD0o4ofuXxboO3JqjVoBPp5N9a0U3KM2ZU7sXVpZZDpKWJsLivA+7A
+         R3qXXmhqUxa0qnlY68HEqMJ6TGqOawcrkhJQNv0v0FOR+oyE9Yzycg1xaUXfXxcJICYo
+         d1YwkIjVz4gQOg3V3fP/VvYXtxUphOAwherXDKc3JQzvKGvLS8KqYqBF0CzBfxG67yDC
+         ZxH91aP5jvijZxM1GR0ibgb7XacAJ9Bo8z4w6nHolk9j6yDPeb7XsepJFEDF2QdympPR
+         gaU+Ph+eNB/R6q72gyZpjUtD9LzmvdrG6a8FGY9tZ+c8D+93k165hS9/J/PyBO4YQhtL
+         LSEQ==
+X-Gm-Message-State: APjAAAVFwiwbn2+eNgB5pRp5W3i2+ZpaudYCuBZJCzOovOlMVm6iTjTl
+        NborSROBVBqFoAMM38oneYmwGu6trqE8nCaN/perEg==
+X-Google-Smtp-Source: APXvYqw7/YBCA9dzyYL9QUBcjLEFOBq8sQ4hNsuED2wZFCVGwW+UaBuvGY/RNusnwUxtFEAT3PdLAci/FZVk4o03W9A=
+X-Received: by 2002:a2e:8756:: with SMTP id q22mr57841858ljj.108.1564387162794;
+ Mon, 29 Jul 2019 00:59:22 -0700 (PDT)
+MIME-Version: 1.0
+References: <CAGnkfhySwXY7YwuQezyx6cEpemZW4Hox1_4fQJm3-5hvM3G6gw@mail.gmail.com>
+ <20190729044403.GA27065@OpenSuse>
+In-Reply-To: <20190729044403.GA27065@OpenSuse>
+From:   Matteo Croce <mcroce@redhat.com>
+Date:   Mon, 29 Jul 2019 09:58:46 +0200
+Message-ID: <CAGnkfhz=RgsPVqk964=hg1kJc=FJJ0WA7ysbhN6B3aNZgbD2aQ@mail.gmail.com>
+Subject: Re: build error
+To:     Bhaskar Chowdhury <unixbhaskar@gmail.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is a spelling mistake in file tree_exp.h,
-fix this.
+On Mon, Jul 29, 2019 at 6:44 AM Bhaskar Chowdhury <unixbhaskar@gmail.com> wrote:
+>
+>
+> Matteo,
+>
+> it's look like gcc is not in your normal PATH. Could you please locate
+> that fellow and realign it ,where is suppose to be.
+>
+> Or if I understood right (I doubt that is why asking) that you might put
+> explicitly the architecture to target build with make also, that might
+> help.
+>
+> Please do let me know, if I derailed grossly ...am not sure.. :)
+>
+> Thanks,
+> Bhaskar
+>
+> On 22:08 Sun 28 Jul 2019, Matteo Croce wrote:
+> >Hi,
+> >
+> >I get this build error with 5.3-rc2"
+> >
+> ># make
+> >arch/arm64/Makefile:58: gcc not found, check CROSS_COMPILE_COMPAT.  Stop.
+> >
+> >I didn't bisect the tree, but I guess that this kconfig can be related
+> >
+> ># grep CROSS_COMPILE_COMPAT .config
+> >CONFIG_CROSS_COMPILE_COMPAT_VDSO=""
+> >
+> >Does someone have any idea? Am I missing something?
+> >
+> >Thanks,
+> >--
+> >Matteo Croce
+> >per aspera ad upstream
 
-Signed-off-by: Mukesh Ojha <mojha@codeaurora.org>
----
- kernel/rcu/tree_exp.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I've  "fixed" the error by unsetting CONFIG_COMPAT
+There should be something broken in the CROSS_COMPILE_COMPAT handling
 
-diff --git a/kernel/rcu/tree_exp.h b/kernel/rcu/tree_exp.h
-index af7e7b9..609fc87 100644
---- a/kernel/rcu/tree_exp.h
-+++ b/kernel/rcu/tree_exp.h
-@@ -781,7 +781,7 @@ static int rcu_print_task_exp_stall(struct rcu_node *rnp)
-  * other hand, if the CPU is not in an RCU read-side critical section,
-  * the IPI handler reports the quiescent state immediately.
-  *
-- * Although this is a greate improvement over previous expedited
-+ * Although this is a great improvement over previous expedited
-  * implementations, it is still unfriendly to real-time workloads, so is
-  * thus not recommended for any sort of common-case code.  In fact, if
-  * you are using synchronize_rcu_expedited() in a loop, please restructure
 -- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center,
-Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project
-
+Matteo Croce
+per aspera ad upstream
