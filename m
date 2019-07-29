@@ -2,104 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 56A5C79167
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 18:49:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 956D679175
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 18:51:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728869AbfG2Qti (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 12:49:38 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:44104 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726828AbfG2Qti (ORCPT
+        id S1728961AbfG2QvM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 12:51:12 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:41067 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728291AbfG2QvI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 12:49:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=xI0s6PYhr6DR7oAWn8RUyWqKiAToRVS5nz7hhing0QI=; b=GarIFwvTlU4x3LbxX3aMpja/+
-        PBFiKi94Bzysqmf1a4vfE7V2BZ16AwbtYZW8NG7/dIqhPqBR33fJs8qLBPWV6XuSW1E4xdsx7gpKc
-        GxoHAvOQsHQmoGX89IE6qpPwXmoz31Y2RT1GSpVbDsmXP62X/TBPqq4ow5PKaCTL9TICuTno+VEet
-        Gq+XbMIXycydWP09FEXynd3XjNfBPCiWFgWCvz0QXLhHbXthtZ8BRzR5daMKMHQyv+Lh3qrUbysAQ
-        LFf/5xckqUCJB223/DyGl0wsjwFRmR7UeQz6ncJgu+I13U9L5LvybzuKaT4cPBxg3TlqBIjk84uvD
-        iYtVg1rwg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hs8q6-0004FY-82; Mon, 29 Jul 2019 16:49:34 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 346C420C7FF01; Mon, 29 Jul 2019 18:49:32 +0200 (CEST)
-Date:   Mon, 29 Jul 2019 18:49:32 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc:     Ingo Molnar <mingo@kernel.org>, Juri Lelli <juri.lelli@redhat.com>,
-        Luca Abeni <luca.abeni@santannapisa.it>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Valentin Schneider <Valentin.Schneider@arm.com>,
-        Qais Yousef <Qais.Yousef@arm.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/5] sched/deadline: Cleanup on_dl_rq() handling
-Message-ID: <20190729164932.GN31398@hirez.programming.kicks-ass.net>
-References: <20190726082756.5525-1-dietmar.eggemann@arm.com>
- <20190726082756.5525-5-dietmar.eggemann@arm.com>
+        Mon, 29 Jul 2019 12:51:08 -0400
+Received: by mail-io1-f68.google.com with SMTP id j5so117392752ioj.8
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 09:51:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=1rG5B+o2VjO9RrL+xsfmgF+x6faimyKuyYbtOh0syfs=;
+        b=iMJBO7CzFDXrKhFARbuDHHMTaO9XVZ8Ne4nthG6sBNughIMiW/tIyaCEt/UWLV4snj
+         c5Wz8IRuJq5/HBOtvn0tdicUlfabqLSnYTuauXbU0NHzKZxTplbqTcMojnU6W7MO+4Id
+         RNB3zlnATDGznsQemONTue4F1yoPEjfvkANdUR246NFIFKZGUuEZ4uoB6BvRwcq0r6Wd
+         uIy98cksW9s+alA+MGQ3XTuLQsdIaWUOTb5OFjJ7Gd8OnerwB4SXx2luTuhjyjMxdEnk
+         AwmYFVWGDEaXkcW4D5MQ2cvV+IpMvDhwyREZt/uI72HEqxFHqN0RN/77lG8qQi9Pomyk
+         zWAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1rG5B+o2VjO9RrL+xsfmgF+x6faimyKuyYbtOh0syfs=;
+        b=hn57vTZIRvbkqJMq+NPeMKGKwwN49tYS3YvPuDHp5HTf8QD7MA5FAjZnbANN6w4Xrj
+         lVApXEAFxDySbnq+HAkE3XSkO54sWgyOeKNmSjPeoPF7EgYNA+XT/YpitIqHieoNDlYr
+         /ys2kvUYPhiDdRvHJqfxhsEERKLjw82iiOHXyK+aSA5CT+kEvd9cKANRvXqL58e1GtHs
+         8OnCAOvBhQ8pmgJC9kS1i7sIa7I3PT1bhXgh2OcQ9OPwmCDd0AF5BHOnJyKVPSFxWQix
+         pfgqlusy2s7PLM67Th7IhNqsz5z/k3ZAcZ1XLQunbT7nvDKvoF9UUamnwFmZKwhu2zSC
+         mBIg==
+X-Gm-Message-State: APjAAAUkNZxNk++fD1gZV4TTJ+lU7r3Z2LEk6ni6EBHU2ZtEzMQf5u3Z
+        ubx1tLqi190qbALL83ysHMxexEz/dcwgCzPugxOZ
+X-Google-Smtp-Source: APXvYqwrO2Cgbb8VcmJ9nnp34EygSZZ0Ch4eVbj7Lx9YeY3iqvmkcPh+cj+5AYR0nZXcZoPcJa+0ZG2wl+BIm/aXwjs=
+X-Received: by 2002:a02:cd83:: with SMTP id l3mr78290994jap.66.1564419067206;
+ Mon, 29 Jul 2019 09:51:07 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190726082756.5525-5-dietmar.eggemann@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190729164307.200716-1-avifishman70@gmail.com>
+In-Reply-To: <20190729164307.200716-1-avifishman70@gmail.com>
+From:   Avi Fishman <avifishman70@gmail.com>
+Date:   Mon, 29 Jul 2019 19:50:17 +0300
+Message-ID: <CAKKbWA6=9rBhR7iTfH27FZXPtuin9FengQh77T6Qgb3XDuZaYA@mail.gmail.com>
+Subject: [PATCH] [v4] clocksource/drivers/npcm: fix GENMASK and timer operation
+To:     Tomer Maimon <tmaimon77@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Avi Fishman <avifishman70@gmail.com>
+Cc:     OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 26, 2019 at 09:27:55AM +0100, Dietmar Eggemann wrote:
-> Remove BUG_ON() in __enqueue_dl_entity() since there is already one in
-> enqueue_dl_entity().
-> 
-> Move the check that the dl_se is not on the dl_rq from
-> __dequeue_dl_entity() to dequeue_dl_entity() to align with the enqueue
-> side and use the on_dl_rq() helper function.
-> 
-> Signed-off-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
-> ---
->  kernel/sched/deadline.c | 8 +++-----
->  1 file changed, 3 insertions(+), 5 deletions(-)
-> 
-> diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-> index 1fa005f79307..a9cb52ceb761 100644
-> --- a/kernel/sched/deadline.c
-> +++ b/kernel/sched/deadline.c
-> @@ -1407,8 +1407,6 @@ static void __enqueue_dl_entity(struct sched_dl_entity *dl_se)
->  	struct sched_dl_entity *entry;
->  	int leftmost = 1;
->  
-> -	BUG_ON(!RB_EMPTY_NODE(&dl_se->rb_node));
-> -
->  	while (*link) {
->  		parent = *link;
->  		entry = rb_entry(parent, struct sched_dl_entity, rb_node);
-> @@ -1430,9 +1428,6 @@ static void __dequeue_dl_entity(struct sched_dl_entity *dl_se)
->  {
->  	struct dl_rq *dl_rq = dl_rq_of_se(dl_se);
->  
-> -	if (RB_EMPTY_NODE(&dl_se->rb_node))
-> -		return;
-> -
->  	rb_erase_cached(&dl_se->rb_node, &dl_rq->root);
->  	RB_CLEAR_NODE(&dl_se->rb_node);
->  
-> @@ -1466,6 +1461,9 @@ enqueue_dl_entity(struct sched_dl_entity *dl_se,
->  
->  static void dequeue_dl_entity(struct sched_dl_entity *dl_se)
->  {
-> +	if (!on_dl_rq(dl_se))
-> +		return;
+NPCM7XX_Tx_OPER GENMASK bits where wrong,
+Since NPCM7XX_REG_TICR0 register reset value of those bits was 0,
+it did not cause an issue.
+in npcm7xx_timer_oneshot() the original NPCM7XX_REG_TCSR0 register was
+read again after masking it with ~NPCM7XX_Tx_OPER so the masking didn't
+take effect.
 
-Why allow double dequeue instead of WARN?
+npcm7xx_timer_periodic() was not wrong but it wrote to NPCM7XX_REG_TICR0
+in a middle of read modify write to NPCM7XX_REG_TCSR0 which is
+confusing.
+npcm7xx_timer_oneshot() did wrong calculation
 
-> +
->  	__dequeue_dl_entity(dl_se);
->  }
->  
-> -- 
-> 2.17.1
-> 
+Signed-off-by: Avi Fishman <avifishman70@gmail.com>
+---
+ drivers/clocksource/timer-npcm7xx.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/clocksource/timer-npcm7xx.c
+b/drivers/clocksource/timer-npcm7xx.c
+index 8a30da7f083b..9780ffd8010e 100644
+--- a/drivers/clocksource/timer-npcm7xx.c
++++ b/drivers/clocksource/timer-npcm7xx.c
+@@ -32,7 +32,7 @@
+ #define NPCM7XX_Tx_INTEN               BIT(29)
+ #define NPCM7XX_Tx_COUNTEN             BIT(30)
+ #define NPCM7XX_Tx_ONESHOT             0x0
+-#define NPCM7XX_Tx_OPER                        GENMASK(27, 3)
++#define NPCM7XX_Tx_OPER                        GENMASK(28, 27)
+ #define NPCM7XX_Tx_MIN_PRESCALE                0x1
+ #define NPCM7XX_Tx_TDR_MASK_BITS       24
+ #define NPCM7XX_Tx_MAX_CNT             0xFFFFFF
+@@ -84,8 +84,6 @@ static int npcm7xx_timer_oneshot(struct
+clock_event_device *evt)
+
+        val = readl(timer_of_base(to) + NPCM7XX_REG_TCSR0);
+        val &= ~NPCM7XX_Tx_OPER;
+-
+-       val = readl(timer_of_base(to) + NPCM7XX_REG_TCSR0);
+        val |= NPCM7XX_START_ONESHOT_Tx;
+        writel(val, timer_of_base(to) + NPCM7XX_REG_TCSR0);
+
+@@ -97,12 +95,11 @@ static int npcm7xx_timer_periodic(struct
+clock_event_device *evt)
+        struct timer_of *to = to_timer_of(evt);
+        u32 val;
+
++       writel(timer_of_period(to), timer_of_base(to) + NPCM7XX_REG_TICR0);
++
+        val = readl(timer_of_base(to) + NPCM7XX_REG_TCSR0);
+        val &= ~NPCM7XX_Tx_OPER;
+-
+-       writel(timer_of_period(to), timer_of_base(to) + NPCM7XX_REG_TICR0);
+        val |= NPCM7XX_START_PERIODIC_Tx;
+-
+        writel(val, timer_of_base(to) + NPCM7XX_REG_TCSR0);
+
+        return 0;
+--
+2.18.0
