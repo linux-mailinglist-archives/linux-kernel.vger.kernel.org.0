@@ -2,138 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6CF278C81
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 15:15:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0926D78C88
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 15:17:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387988AbfG2NPw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 09:15:52 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:35852 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726973AbfG2NPv (ORCPT
+        id S1728564AbfG2NRC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 09:17:02 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:38525 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728034AbfG2NRB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 09:15:51 -0400
-Received: by mail-io1-f65.google.com with SMTP id o9so16255077iom.3;
-        Mon, 29 Jul 2019 06:15:51 -0700 (PDT)
+        Mon, 29 Jul 2019 09:17:01 -0400
+Received: by mail-wm1-f66.google.com with SMTP id s15so32091549wmj.3
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 06:17:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=hesoZG+TcuR2ee3ESupVuTZ9BAyVWJDa4N1y2VQSFbA=;
-        b=dxlI/uKS1x/I62djieCFmuyPj9xjbstOXhRIT8tlirULC+Cfrf57qeguUW32ksAFai
-         0cCDFsrNt6NNxY7+AW3VzzbTEZNcBvxoMRSPIrPQMdenQIG4v5CDboDBA4A3XsfXTVLU
-         HFmb9d54USSK1Jw7k3B8Nk+OXD7+PF3vBjayG1RUASPYxvowPUKmw65c6Q0TyRWurLb/
-         ZOXNTgFWYirtvTvDlKr8AK+7nRHxZeUs5ARsC8Afvqza6XSWdMt+7VqM6SCYfvidaxsL
-         ivcnl5ug5bRl4IE6nxW7vpF3qTqnze7ewJaaTGMvMs7zYv1UYY4MDdG2WH0qJZZSgMwS
-         KTvQ==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=oynpEq+Rva8XBfHeYWHdmuSsXuLqJ4yySPhy6VhqL9A=;
+        b=va/m4r4dkyOP1H7msYfzDxN4+0vxPlSoe+oUQ4l/rirf0OhntUYksvZZwImE3yEz0T
+         oBaLe8s00sw6YpMAmKbDDfMJ3mCl28yLI59Ef6CiNZUUKGfhFf+NDo5mic6oiM20KxKR
+         8e2iXUVWGg/5SBAy23v8YvJvjir1BgTnUhFoiSVojDGfS2Uv0NQw5UX04REnvkVV5RsO
+         0/xJ5HncMOscX99UEea1qAz6NyeqODccTnEm/p0TXkddx0FI8A9rkhv5U4Sx3hcD6Mpn
+         SkQhDKIsiBKPMOhr/4Bm1s4lGW8Pr24oT4yPFoPKpTRnPfszLYYMnc4VIcdgJtC2qpZJ
+         K8tg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=hesoZG+TcuR2ee3ESupVuTZ9BAyVWJDa4N1y2VQSFbA=;
-        b=LNcHsfSYZJv6KkgwbeVuhZu3IL1zzD8ZybAmiLgOthE2m0QnKkg6/whD+daHaARy73
-         Sei70dTDST+DVzgj//RLdSvgI4UGn7pNbGzMlvEYdPDbrWY6GUcoPbm4BYfwpTGTL5sE
-         8q+lBzA+OWtgW+BAtGS5uN61ZY9DPbknFxVyb4h9U3WVvAM2fK/f8p08R6x+fApPSy10
-         jFIPOBB6vi0sRD1ZJF69apeawq9cYxyQBV+pAnvs8uZ70Az5ErLRBb+E6GHePW35n9Wg
-         5Joi8trPfVFoWbjmdKmSMlFCzkPKOqgpwUEL7z7gNQCCvAky//LIpVmEA79+GvPGa+Oj
-         KHqw==
-X-Gm-Message-State: APjAAAWlHdKq8QdDyKJ79k+FHgpeddsWyxTz0e9pe1IalS5NLmqnAU9F
-        7B/o0T/ZgJoH+XsywbsNxnU=
-X-Google-Smtp-Source: APXvYqwoWQTwF5tIsbtyIfsCRBRQp5dFcjhYZlqA4xw1kFYGOW8RBewbcLjn8mmgVWtwQYUdZPRcCA==
-X-Received: by 2002:a5d:8347:: with SMTP id q7mr95370134ior.277.1564406150592;
-        Mon, 29 Jul 2019 06:15:50 -0700 (PDT)
-Received: from localhost ([8.46.76.96])
-        by smtp.gmail.com with ESMTPSA id n22sm100665148iob.37.2019.07.29.06.15.48
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 29 Jul 2019 06:15:49 -0700 (PDT)
-Date:   Mon, 29 Jul 2019 15:15:32 +0200
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        "Enrico Weigelt, metux IT consult" <info@metux.net>,
-        linux-input@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH 1/2] drivers: base: swnode: link devices to software nodes
-Message-ID: <20190729131532.GA1201@penguin>
-References: <20190713075259.243565-1-dmitry.torokhov@gmail.com>
- <20190713075259.243565-2-dmitry.torokhov@gmail.com>
- <20190729120715.GA28600@kuha.fi.intel.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=oynpEq+Rva8XBfHeYWHdmuSsXuLqJ4yySPhy6VhqL9A=;
+        b=RvLZcFA4RdhNcUsMU+ybQoH6pMjI5zY9/NAq/akomyiNZ/1Ftll7Gzmyuxe8M40g24
+         O9p3NKUmpsSf+eElLHJS1VeEntLPxvbbv7FZMiRbEOcTFIOD3RUoTLxUVgJta3Ap/xCb
+         w9CeDxqkQrbqigHZP7oqdsBrlDDwJ448YCluqYw4pvNKEtr+cSJfpvS2NT9VgVVPtd+A
+         5WKOqymKsE6wajNPSwlE5tRQNBMzsynSczuNFJ/f2Kro27yr0Pwi6r+mV6mBNWGtvw1E
+         v9HpMj5t2JMMWNheUgzdCylfJcic3Ut5dy5JXvcTnX6O8Opdm8xCkbNDz1N3WxinXuBQ
+         7EYw==
+X-Gm-Message-State: APjAAAXsoqU0EPGsq3t2NEjVC+v2a1EnDRRgqaO1Pu6F3YZ6Fa9nsA21
+        oAFHhIsKLzF09A9Q39BYxOOttw==
+X-Google-Smtp-Source: APXvYqytSS4CaOtshhSxLAUA/SqcXHfZnGVeXdez8xfDM0v0eOvC2DS2WChVjk847i77QN6BlJ/9OA==
+X-Received: by 2002:a7b:c954:: with SMTP id i20mr18655712wml.169.1564406219328;
+        Mon, 29 Jul 2019 06:16:59 -0700 (PDT)
+Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id b5sm52520490wru.69.2019.07.29.06.16.58
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 29 Jul 2019 06:16:58 -0700 (PDT)
+From:   Neil Armstrong <narmstrong@baylibre.com>
+To:     sboyd@kernel.org, jbrunet@baylibre.com
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 0/4] clk: meson: g12a: add support for DVFS
+Date:   Mon, 29 Jul 2019 15:16:52 +0200
+Message-Id: <20190729131656.7308-1-narmstrong@baylibre.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190729120715.GA28600@kuha.fi.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 29, 2019 at 03:07:15PM +0300, Heikki Krogerus wrote:
-> On Sat, Jul 13, 2019 at 12:52:58AM -0700, Dmitry Torokhov wrote:
-> > It is helpful to know what device, if any, a software node is tied to, so
-> > let's store a pointer to the device in software node structure. Note that
-> > children software nodes will inherit their parent's device pointer, so we
-> > do not have to traverse hierarchy to see what device the [sub]tree belongs
-> > to.
-> > 
-> > We will be using the device pointer to locate GPIO lookup tables for
-> > devices with static properties.
-> > 
-> > Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> > ---
-> >  drivers/base/property.c  |  1 +
-> >  drivers/base/swnode.c    | 35 ++++++++++++++++++++++++++++++++++-
-> >  include/linux/property.h |  5 +++++
-> >  3 files changed, 40 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/base/property.c b/drivers/base/property.c
-> > index 348b37e64944..3bc93d4b35c4 100644
-> > --- a/drivers/base/property.c
-> > +++ b/drivers/base/property.c
-> > @@ -527,6 +527,7 @@ int device_add_properties(struct device *dev,
-> >  	if (IS_ERR(fwnode))
-> >  		return PTR_ERR(fwnode);
-> >  
-> > +	software_node_link_device(fwnode, dev);
-> >  	set_secondary_fwnode(dev, fwnode);
-> >  	return 0;
-> >  }
-> > diff --git a/drivers/base/swnode.c b/drivers/base/swnode.c
-> > index 7fc5a18e02ad..fd12eea539b6 100644
-> > --- a/drivers/base/swnode.c
-> > +++ b/drivers/base/swnode.c
-> > @@ -24,6 +24,9 @@ struct software_node {
-> >  
-> >  	/* properties */
-> >  	const struct property_entry *properties;
-> > +
-> > +	/* device this node is associated with */
-> > +	struct device *dev;
-> >  };
-> 
-> Let's not do that! The nodes can be, and in many cases are, associated
-> with multiple devices.
+The G12A/G12B Socs embeds a specific clock tree for each CPU cluster :
+cpu_clk / cpub_clk
+|   \- cpu_clk_dyn
+|      |  \- cpu_clk_premux0
+|      |        |- cpu_clk_postmux0
+|      |        |    |- cpu_clk_dyn0_div
+|      |        |    \- xtal/fclk_div2/fclk_div3
+|      |        \- xtal/fclk_div2/fclk_div3
+|      \- cpu_clk_premux1
+|            |- cpu_clk_postmux1
+|            |    |- cpu_clk_dyn1_div
+|            |    \- xtal/fclk_div2/fclk_div3
+|            \- xtal/fclk_div2/fclk_div3
+\ sys_pll / sys1_pll
 
-They do? Where? I see that set of properties can be shared between
-several devices, but when we instantiate SW node we create a new
-instance for device. This is also how ACPI and OF properties work; they
-not shared between devices (or, rather, the kernel creates distinct _and
-single_ devices for instance of ACPI or OF node). I do not think we want
-swnodes work differently from the other firmware nodes.
+This patchset adds notifiers on cpu_clk / cpub_clk, cpu_clk_dyn,
+cpu_clk_premux0 and sys_pll / sys1_pll to permit change frequency of
+the CPU clock in a safe way as recommended by the vendor Documentation
+and reference code.
 
-> 
-> Every device is already linked with the software node kobject, so
-> isn't it possible to simply walk trough those links in order to check
-> the devices associated with the node?
+This patchset :
+- introduces needed core and meson clk changes
+- adds the clock notifiers
 
-No, we need to know the exact instance of a device, not a set of
-devices, because even though some properties can be shared, others can
-not. For example, even if 2 exactly same touch controllers in the system
-have "reset-gpios" property, they won't be the same GPIO for the both of
-them.
+Dependencies:
+- None
 
-Thanks.
+This patchset is split from the v3 RFC/RFC patchset at [3]
+
+Changes from RFT/RFC v3 at [3]:
+- Rebased on clk-meson v5.4/drivers tree with Alexandre's patches
+- Removed the eeclk setup() callback, moved to a toplevel g12a-data struct
+
+Changes since RFT/RFC v2 at [2]:
+- Rebased on clk-meson v5.3/drivers trees
+- added Kevin's review tags
+
+Changes since RFT/RFC v1 at [1]:
+- Added EXPORT_SYMBOL_GPL() to clk_hw_set_parent
+- Added missing static to g12b_cpub_clk_mux0_div_ops and g12a_cpu_clk_mux_nb
+- Simplified g12a_cpu_clk_mux_notifier_cb() without switch/case
+- Fixed typo in "this the current path" in g12a.c
+- Fixed various checkpatch errors
+
+[1] https://patchwork.kernel.org/cover/11006929/
+[2] https://patchwork.kernel.org/cover/11017273/
+[3] https://patchwork.kernel.org/cover/11025309/
+
+Neil Armstrong (4):
+  clk: core: introduce clk_hw_set_parent()
+  clk: meson: regmap: export regmap_div ops functions
+  clk: meson: g12a: add notifiers to handle cpu clock change
+  clk: meson: g12a: expose CPUB clock ID for G12B
+
+ drivers/clk/clk.c                     |   6 +
+ drivers/clk/meson/clk-regmap.c        |  10 +-
+ drivers/clk/meson/clk-regmap.h        |   5 +
+ drivers/clk/meson/g12a.c              | 567 +++++++++++++++++++++++---
+ include/dt-bindings/clock/g12a-clkc.h |   1 +
+ include/linux/clk-provider.h          |   1 +
+ 6 files changed, 540 insertions(+), 50 deletions(-)
 
 -- 
-Dmitry
+2.22.0
+
