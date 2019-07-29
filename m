@@ -2,110 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 05BF278639
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 09:22:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D7D067864B
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 09:23:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726863AbfG2HW1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 03:22:27 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:3229 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725917AbfG2HW1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 03:22:27 -0400
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 75FAC6D82EC4BAD96A58;
-        Mon, 29 Jul 2019 15:22:24 +0800 (CST)
-Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
- (10.3.19.207) with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 29 Jul
- 2019 15:22:22 +0800
-Subject: Re: [f2fs-dev] [PATCH v4 3/3] f2fs: Support case-insensitive file
- name lookups
-To:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
-CC:     Daniel Rosenberg <drosen@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-doc@vger.kernel.org>, <linux-api@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <kernel-team@android.com>
-References: <20190723230529.251659-1-drosen@google.com>
- <20190723230529.251659-4-drosen@google.com>
- <9362e4ed-2be8-39f5-b4d9-9c86e37ab993@kernel.org>
- <20190729062735.GA98839@jaegeuk-macbookpro.roam.corp.google.com>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <fa07a09d-92c9-4e0b-7c2b-e87771273dce@huawei.com>
-Date:   Mon, 29 Jul 2019 15:22:21 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1726953AbfG2HXm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 03:23:42 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:38988 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725917AbfG2HXm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 03:23:42 -0400
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6T7GbUO017808;
+        Mon, 29 Jul 2019 09:23:10 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=STMicroelectronics;
+ bh=knB1CFf+dV5YYBti2FACI1fBFDRzZJ7xPVnkJzKHsnw=;
+ b=vF21dSF/PU8U7f7SbGvtjtdeSN+ptbef8kPnk+134RREY8U9s9kwdEFIauzD3qkRPYJf
+ aLJwaGsAOlR+vL0bzGOfOK4VgPqFFCsOlbar4SxW9kC5XJSsm4KMRy0pM0S7vmzXke4h
+ +r0cazmiUUD0kKVceMGb+QKcsgOWIYN9vGTQ+WwRwJNmkRhBR8pEdQVxTx8LYzhUMxrh
+ Gz9W+F+cEgtAfmFWV8ozPzQbAAM8UkQ/cVpdRzUEf3gJztwKlxGEqzHy2vtvKMp+MpUZ
+ q8iXCUU0wUVlODhzGr+Rq5US6v/ycIAZ1xPn1U2+PL0oi/Gacod75c1gFnNLC9jOrSW8 Kw== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2u0dggtn0k-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Mon, 29 Jul 2019 09:23:10 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 376CD34;
+        Mon, 29 Jul 2019 07:23:08 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id F2CD456C5;
+        Mon, 29 Jul 2019 07:23:07 +0000 (GMT)
+Received: from lmecxl0912.lme.st.com (10.75.127.51) by SFHDAG3NODE2.st.com
+ (10.75.127.8) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 29 Jul
+ 2019 09:23:07 +0200
+Subject: Re: [PATCH v2 3/3] ARM: dts: stm32: add syscfg to ADC on stm32mp157c
+To:     Fabrice Gasnier <fabrice.gasnier@st.com>, <jic23@kernel.org>,
+        <robh+dt@kernel.org>
+CC:     <mark.rutland@arm.com>, <mcoquelin.stm32@gmail.com>,
+        <lars@metafoo.de>, <knaack.h@gmx.de>, <pmeerw@pmeerw.net>,
+        <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1562148496-26789-1-git-send-email-fabrice.gasnier@st.com>
+ <1562148496-26789-4-git-send-email-fabrice.gasnier@st.com>
+From:   Alexandre Torgue <alexandre.torgue@st.com>
+Message-ID: <0687ec4c-0930-058d-4a55-c4cf712ab83c@st.com>
+Date:   Mon, 29 Jul 2019 09:23:06 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <20190729062735.GA98839@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Type: text/plain; charset="windows-1252"
+In-Reply-To: <1562148496-26789-4-git-send-email-fabrice.gasnier@st.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+X-Originating-IP: [10.75.127.51]
+X-ClientProxiedBy: SFHDAG8NODE1.st.com (10.75.127.22) To SFHDAG3NODE2.st.com
+ (10.75.127.8)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-29_04:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/7/29 14:27, Jaegeuk Kim wrote:
-> On 07/28, Chao Yu wrote:
->> On 2019-7-24 7:05, Daniel Rosenberg via Linux-f2fs-devel wrote:
->>>  /* Flags that are appropriate for regular files (all but dir-specific ones). */
->>>  #define F2FS_REG_FLMASK		(~(F2FS_DIRSYNC_FL | F2FS_PROJINHERIT_FL))
->>
->> We missed to add F2FS_CASEFOLD_FL here to exclude it in F2FS_REG_FLMASK.
-> 
-> Applied.
-> 
->>
->>> @@ -1660,7 +1660,16 @@ static int f2fs_setflags_common(struct inode *inode, u32 iflags, u32 mask)
->>>  		return -EPERM;
->>>  
->>>  	oldflags = fi->i_flags;
->>> +	if ((iflags ^ oldflags) & F2FS_CASEFOLD_FL) {
->>> +		if (!f2fs_sb_has_casefold(F2FS_I_SB(inode)))
->>> +			return -EOPNOTSUPP;
->>> +
->>> +		if (!S_ISDIR(inode->i_mode))
->>> +			return -ENOTDIR;
->>>  
->>> +		if (!f2fs_empty_dir(inode))
->>> +			return -ENOTEMPTY;
->>> +	}
-> 
-> Modified like this:
-> @@ -1665,6 +1665,13 @@ static int f2fs_setflags_common(struct inode *inode, u32 iflags, u32 mask)
->         if (IS_NOQUOTA(inode))
->                 return -EPERM;
-> 
-> +       if ((iflags ^ fi->i_flags) & F2FS_CASEFOLD_FL) {
-> +               if (!f2fs_sb_has_casefold(F2FS_I_SB(inode)))
-> +                       return -EOPNOTSUPP;
-> +               if (!f2fs_empty_dir(inode))
-> +                       return -ENOTEMPTY;
-> +       }
-> +
-> 
-> Note that, directory is checked by above change.
-> 
-> I've uploaded in f2fs.git, so could you check it out and test a bit?
+Hi fabrice
 
-I've checked it out, it looks good to me now, and later I will test this new
-version.
-
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-
-Thanks,
-
+On 7/3/19 12:08 PM, Fabrice Gasnier wrote:
+> On stm32mp157c, the ADC inputs are multiplexed with analog switches which
+> have reduced performances when their supply is below 2.7V (vdda by
+> default).
+> Add syscfg registers that can be used on stm32mp157c, to get full ADC
+> analog performances.
 > 
-> Thanks,
+> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+> ---
+>   arch/arm/boot/dts/stm32mp157c.dtsi | 1 +
+>   1 file changed, 1 insertion(+)
 > 
->>
->> I applied the patches based on last Jaegeuk's dev branch, it seems we needs to
->> adjust above code a bit. Otherwise it looks good to me.
->>
->> BTW, it looks the patchset works fine with generic/556 testcase.
->>
->> Thanks,
-> .
+> diff --git a/arch/arm/boot/dts/stm32mp157c.dtsi b/arch/arm/boot/dts/stm32mp157c.dtsi
+> index 2dd5162..b9a5b58 100644
+> --- a/arch/arm/boot/dts/stm32mp157c.dtsi
+> +++ b/arch/arm/boot/dts/stm32mp157c.dtsi
+> @@ -862,6 +862,7 @@
+>   			clocks = <&rcc ADC12>, <&rcc ADC12_K>;
+>   			clock-names = "bus", "adc";
+>   			interrupt-controller;
+> +			st,syscfg = <&syscfg>;
+>   			#interrupt-cells = <1>;
+>   			#address-cells = <1>;
+>   			#size-cells = <0>;
 > 
+
+
+Applied on stm32-next.
+
+Thanks.
+Alex
