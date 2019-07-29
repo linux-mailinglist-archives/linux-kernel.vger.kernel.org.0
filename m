@@ -2,83 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB84E790FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 18:34:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B2DFE79101
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 18:34:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729146AbfG2QeY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 12:34:24 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:34091 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727450AbfG2QeY (ORCPT
+        id S1729192AbfG2Qen (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 12:34:43 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:40498 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727450AbfG2Qem (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 12:34:24 -0400
-Received: by mail-pg1-f193.google.com with SMTP id n9so22304785pgc.1
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 09:34:24 -0700 (PDT)
+        Mon, 29 Jul 2019 12:34:42 -0400
+Received: by mail-pg1-f195.google.com with SMTP id w10so28534611pgj.7
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 09:34:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=Ca+YSd8mbC6/QP7bucgP0RJlJ7s9mNS/b3WYrRyYNxU=;
-        b=C2WlU1yyqjL71V6kYoq5pfDYgiupYLoaryJQzFrERxCtl8dzx4LENMCf5NpqhOY66Z
-         OL/iIv/XfZHiho9OuRY6/jKyuDN8Xp3PYswuMXE8xvg8SeBOQRnXEpmmem3h6GQTnSaR
-         lspoxVEtOP7JJUfXUw+sOhtIO43IZP6jnlFdA=
+        bh=vUjj6N1I6vMTCipD+qtqP93tKHcPzr/XHddLallJiUQ=;
+        b=BQkHvxRpF2AAJ+UdBJQXbbI0xM/Y+dARaYo49C03ziIYjkFz5pUP1pQh04+R5Ouyh8
+         06mEgzgPvGk/qWvvHfl4pn0hU+pE1OSamQLzLmTH7T/u40C4LYsLNa/aHdaA1+xkB3f5
+         hIUIsGBkANMp3WAfzYKV3fmFZOJei+Rp2FsUs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=Ca+YSd8mbC6/QP7bucgP0RJlJ7s9mNS/b3WYrRyYNxU=;
-        b=Luew/N25K6VoZ/fjOT8PKKmJFE0Fsx/NGw/X3zHXL+ms1aJnjFz9unW5J6DogUDshu
-         Gd54Bnjo8vDOYGc/1TQxeO2pqwmUD99UVKcrh9nm+4UnYIP/7Kgh7e8wEcrQXWW6clHm
-         sz2Ywut/s1ZMwUO303tpgrQoDiVwIlUXA3l4J9F0aZjW7sMsmxpRU4OtTP7jCBsaAgqW
-         8+S25ILIXGC2TmJA4DGshHUQcrAu2paNyzTV+cJM+FBK0W4NuBukTJFAaaqHD+JTqKfj
-         o7NDkECPo7uxFJ5DkFeS2MHYS+cmA5+75ZqD+q1ifOrnzHS3VTPy4FBGzoTEFlgO0/5u
-         ZiJg==
-X-Gm-Message-State: APjAAAUY3T8qbsDrxhuvt4uyWoosI2kgL2TBIWX7fo3HL/nVLXmmxfaX
-        HKhx8Lym9r7f4m+mgLdKiuMRDQ==
-X-Google-Smtp-Source: APXvYqyIayTp3rVKZYtqsF3Mjt/igbA32g+weE6tcF1VgFU4F/YQAN4kZpUcLtbNEwET5wPs8Wk2yg==
-X-Received: by 2002:a63:1723:: with SMTP id x35mr6763433pgl.442.1564418063762;
-        Mon, 29 Jul 2019 09:34:23 -0700 (PDT)
+        bh=vUjj6N1I6vMTCipD+qtqP93tKHcPzr/XHddLallJiUQ=;
+        b=BSpIusid5Ht3/TZw0jKAJzCS/Hg6r1KUzxFpfLlfg3r6BaJI2Kxsi/K+eTHifIXyis
+         5bXRBvXV4XBWMv00+SNgEmEb/dj8lAYLzbcDqQazDuHxfHXCzuC2KNpT+AzW95ZvTegO
+         L+W+Of05ZaZwvX3VAxomUCbJQBwKoclKYsxm1CzmsRT2irOhYhAdH6MGA6YsMoi4YPOD
+         qwThkTACHmBmPJNZedxAWwvq0C+2bODvN7g9/yHotMwpypJzhUwRyiX4E6H/YHadJMmB
+         DLMFx42K6HYB+ddm7DavbGk1zAvAogGc919jT13nsb79tOhsDeWmRbQRLy0NdkCdAKJp
+         g4hg==
+X-Gm-Message-State: APjAAAVTzwUdXIz8zSda5w5Q6ih9naUoX3nqHFQkkX941yNsQhiL8Gm2
+        JwJZqzNJ0cGauXH28qqCc/5nEQ==
+X-Google-Smtp-Source: APXvYqx2FkrDdwq2i3WnLGDnQvHrZD/9LANeryz6v82uCSLvbbMEBPBAp1/MW4dWZBLjPOrNhzDhlw==
+X-Received: by 2002:a63:eb56:: with SMTP id b22mr106511441pgk.355.1564418081835;
+        Mon, 29 Jul 2019 09:34:41 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id i14sm96530950pfk.0.2019.07.29.09.34.22
+        by smtp.gmail.com with ESMTPSA id c23sm56307412pgj.62.2019.07.29.09.34.40
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 29 Jul 2019 09:34:23 -0700 (PDT)
-Date:   Mon, 29 Jul 2019 09:34:21 -0700
+        Mon, 29 Jul 2019 09:34:41 -0700 (PDT)
+Date:   Mon, 29 Jul 2019 09:34:40 -0700
 From:   Kees Cook <keescook@chromium.org>
 To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+Cc:     Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Tony Lindgren <tony@atomide.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
         Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH] ARM: alignment: Mark expected switch fall-throughs
-Message-ID: <201907290934.7C7C914@keescook>
-References: <20190728231920.GA22247@embeddedor>
+Subject: Re: [PATCH] ARM: OMAP: dma: Mark expected switch fall-throughs
+Message-ID: <201907290934.B2053972E3@keescook>
+References: <20190728232240.GA22393@embeddedor>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190728231920.GA22247@embeddedor>
+In-Reply-To: <20190728232240.GA22393@embeddedor>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jul 28, 2019 at 06:19:20PM -0500, Gustavo A. R. Silva wrote:
+On Sun, Jul 28, 2019 at 06:22:40PM -0500, Gustavo A. R. Silva wrote:
 > Mark switch cases where we are expecting to fall through.
 > 
 > This patch fixes the following warnings:
 > 
-> arch/arm/mm/alignment.c: In function 'thumb2arm':
-> arch/arm/mm/alignment.c:688:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
->    if ((tinstr & (3 << 9)) == 0x0400) {
+> arch/arm/plat-omap/dma.c: In function 'omap_set_dma_src_burst_mode':
+> arch/arm/plat-omap/dma.c:384:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>    if (dma_omap2plus()) {
 >       ^
-> arch/arm/mm/alignment.c:700:2: note: here
+> arch/arm/plat-omap/dma.c:393:2: note: here
+>   case OMAP_DMA_DATA_BURST_16:
+>   ^~~~
+> arch/arm/plat-omap/dma.c:394:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>    if (dma_omap2plus()) {
+>       ^
+> arch/arm/plat-omap/dma.c:402:2: note: here
 >   default:
 >   ^~~~~~~
-> arch/arm/mm/alignment.c: In function 'do_alignment_t32_to_handler':
-> arch/arm/mm/alignment.c:753:15: warning: this statement may fall through [-Wimplicit-fallthrough=]
->    poffset->un = (tinst2 & 0xff) << 2;
->    ~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~
-> arch/arm/mm/alignment.c:754:2: note: here
->   case 0xe940:
->   ^~~~
+> arch/arm/plat-omap/dma.c: In function 'omap_set_dma_dest_burst_mode':
+> arch/arm/plat-omap/dma.c:473:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>    if (dma_omap2plus()) {
+>       ^
+> arch/arm/plat-omap/dma.c:481:2: note: here
+>   default:
+>   ^~~~~~~
+> 
+> Notice that, in this particular case, the code comment is
+> modified in accordance with what GCC is expecting to find.
 > 
 > Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
 > Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
@@ -88,31 +100,47 @@ Reviewed-by: Kees Cook <keescook@chromium.org>
 -Kees
 
 > ---
->  arch/arm/mm/alignment.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+>  arch/arm/plat-omap/dma.c | 14 +++++---------
+>  1 file changed, 5 insertions(+), 9 deletions(-)
 > 
-> diff --git a/arch/arm/mm/alignment.c b/arch/arm/mm/alignment.c
-> index 8cdb78642e93..04b36436cbc0 100644
-> --- a/arch/arm/mm/alignment.c
-> +++ b/arch/arm/mm/alignment.c
-> @@ -695,7 +695,7 @@ thumb2arm(u16 tinstr)
->  			return subset[(L<<1) | ((tinstr & (1<<8)) >> 8)] |
->  			    (tinstr & 255);		/* register_list */
+> diff --git a/arch/arm/plat-omap/dma.c b/arch/arm/plat-omap/dma.c
+> index 79f43acf9acb..08c99413d02c 100644
+> --- a/arch/arm/plat-omap/dma.c
+> +++ b/arch/arm/plat-omap/dma.c
+> @@ -388,17 +388,15 @@ void omap_set_dma_src_burst_mode(int lch, enum omap_dma_burst_mode burst_mode)
+>  		/*
+>  		 * not supported by current hardware on OMAP1
+>  		 * w |= (0x03 << 7);
+> -		 * fall through
+>  		 */
+> +		/* fall through */
+>  	case OMAP_DMA_DATA_BURST_16:
+>  		if (dma_omap2plus()) {
+>  			burst = 0x3;
+>  			break;
 >  		}
-> -		/* Else fall through for illegal instruction case */
-> +		/* Else, fall through - for illegal instruction case */
->  
+> -		/*
+> -		 * OMAP1 don't support burst 16
+> -		 * fall through
+> -		 */
+> +		/* OMAP1 don't support burst 16 */
+> +		/* fall through */
 >  	default:
->  		return BAD_INSTR;
-> @@ -751,6 +751,8 @@ do_alignment_t32_to_handler(unsigned long *pinstr, struct pt_regs *regs,
->  	case 0xe8e0:
->  	case 0xe9e0:
->  		poffset->un = (tinst2 & 0xff) << 2;
-> +		/* Fall through */
-> +
->  	case 0xe940:
->  	case 0xe9c0:
->  		return do_alignment_ldrdstrd;
+>  		BUG();
+>  	}
+> @@ -474,10 +472,8 @@ void omap_set_dma_dest_burst_mode(int lch, enum omap_dma_burst_mode burst_mode)
+>  			burst = 0x3;
+>  			break;
+>  		}
+> -		/*
+> -		 * OMAP1 don't support burst 16
+> -		 * fall through
+> -		 */
+> +		/* OMAP1 don't support burst 16 */
+> +		/* fall through */
+>  	default:
+>  		printk(KERN_ERR "Invalid DMA burst mode\n");
+>  		BUG();
 > -- 
 > 2.22.0
 > 
