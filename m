@@ -2,106 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 42927782EC
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 02:55:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DCEF782F2
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 03:04:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726297AbfG2AzT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 28 Jul 2019 20:55:19 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:39067 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726238AbfG2AzT (ORCPT
+        id S1726422AbfG2BEm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 28 Jul 2019 21:04:42 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:56114 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726216AbfG2BEl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 28 Jul 2019 20:55:19 -0400
-Received: by mail-pf1-f194.google.com with SMTP id f17so23091035pfn.6
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2019 17:55:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=hGjJJlgqf6fIZSYi0mQxt5rqQsfHh14p1KL8R7bqkag=;
-        b=h/A1tD8sZhM/v7+RhsC11wSVFXSwvl1nieW+O+yBXi1T6IcOt/iyzsP0danqDHl3If
-         EiMovzmXIpZ6a4yeWiLLWBocBfGVofuspHURaV752iQnXN95SEOtoI132oPpKIsPhe+L
-         dOrVhiDAQWg0OokDiIIWhrFDs5y0lk3yMY/3dhZSMBOHAKBNw/bJeLdpv7bJ4VJXwy/D
-         PWUQzxXW8kSvWm+azVhd44dOKo9Aw98CRIfOHQQhbdkCGwdub2hNUQvXMlHJEXOKBY50
-         kQcgdE47s1P8T8yv0odSj87jXcrztl61FQMCMJIsay49iIqYbD69vr6zETn5X5eLCFcz
-         Jhrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=hGjJJlgqf6fIZSYi0mQxt5rqQsfHh14p1KL8R7bqkag=;
-        b=iACrjrKn8nejNYF9Jjglh61kDdJNW145hK1Kyfu73h+hBNdTlOvLNFDqh3dpuIzrMq
-         yUYg7f8CSScIKPPFdH3eyFykyJtixJ/MRzq2MeNkZ6CvplVMNCNRK/KLAppLRvSyHRow
-         H5N4ZX+0EKAKCr8GMjVRyM4pNlBXChkMorruvYBWWj72wNT+u6z+xGpv9jS0FDsdIoYM
-         GHJ8jbXbAl72EO5e1SC1WPLwIQ/uKA/YDpROK1/ltF+oqHnckjALO6PdzewhHGFj8BP5
-         7HEUl0zSc5qXy7cuR0d8net7CmtPcEid5Av3SdmY+RHPWP5HhnsasImawpbAQbXpfq9F
-         0B5A==
-X-Gm-Message-State: APjAAAX01aF8LzGLXHGdxx11UGs3XolfCm0esl3DW821EPx8IJ+gmNmh
-        eKqtQXDAJAVVe2TyqHAKtgQVpA==
-X-Google-Smtp-Source: APXvYqz2PSVwN5dKDaP+S/qEaEHuy+/ZLKEjdJ0szwpHKcNw3tpo1lQ9Z3MmyOBXuI4l1b9E1lGNFA==
-X-Received: by 2002:a63:1020:: with SMTP id f32mr72808691pgl.203.1564361718219;
-        Sun, 28 Jul 2019 17:55:18 -0700 (PDT)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id k22sm62936954pfk.157.2019.07.28.17.55.16
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Sun, 28 Jul 2019 17:55:17 -0700 (PDT)
-Date:   Sun, 28 Jul 2019 17:56:41 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        kernel-build-reports@lists.linaro.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org
-Subject: Re: next/master boot: 254 boots: 16 failed, 231 passed with 4
- offline, 1 untried/unknown, 2 conflicts (next-20190726)
-Message-ID: <20190729005641.GR7234@tuxbook-pro>
-References: <5d3aef79.1c69fb81.111b9.a701@mx.google.com>
- <20190726134843.GC55803@sirena.org.uk>
+        Sun, 28 Jul 2019 21:04:41 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6T13Z7j002189;
+        Mon, 29 Jul 2019 01:03:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=PdcdzZqByBsaJyFO6zEiMqm8RLM0rmvXzok8u84h7X0=;
+ b=B82Lq/jHSPm245ufPF5M6jy2Eo6E1wZPk3U4D7Yb5mvr3xuSNflB6H5sN+awMaP5/Nx5
+ /TbzU3VSBQ4la/fRMI5hdNQA8u9NbGBkC4UdGEw0tksCWU8hqsMbBUukJyQ6YrF420TU
+ RWQPElUdaIj/mdBhdRahbwuZc8c8WNnR1h1XH6h7RpjEPDVy/KmdoHcpKyVLU5MMLO+6
+ BwkhFag5ysFg1ATmZqnmPp/pMnh8rwoaRTzyxu/hT3vzGzUaDQDvfWmomyhjB0pq4voa
+ Kcc7DZehQqFfwpxyDZ69ha2zE6pGOmd2xAMyf7ivC72uW7QsQBZCGZKmjXT4viLBEv9w 7A== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2130.oracle.com with ESMTP id 2u0e1tcfc2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 29 Jul 2019 01:03:34 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6T12tCC124045;
+        Mon, 29 Jul 2019 01:03:34 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3020.oracle.com with ESMTP id 2u0ee3n58p-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 29 Jul 2019 01:03:33 +0000
+Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x6T13UEn008054;
+        Mon, 29 Jul 2019 01:03:30 GMT
+Received: from [192.168.1.14] (/180.165.87.209)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Sun, 28 Jul 2019 18:03:30 -0700
+Subject: Re: memory leak in bio_copy_user_iov
+To:     syzbot <syzbot+03e5c8ebd22cc6c3a8cb@syzkaller.appspotmail.com>,
+        agk@redhat.com, axboe@kernel.dk, coreteam@netfilter.org,
+        davem@davemloft.net, dm-devel@redhat.com, hdanton@sina.com,
+        kaber@trash.net, kadlec@blackhole.kfki.hu,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-raid@vger.kernel.org, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, pablo@netfilter.org,
+        shli@kernel.org, snitzer@redhat.com,
+        syzkaller-bugs@googlegroups.com
+References: <000000000000aec4ec058ec71a3d@google.com>
+From:   Bob Liu <bob.liu@oracle.com>
+Message-ID: <81dcfa59-152c-4f22-2054-615662364394@oracle.com>
+Date:   Mon, 29 Jul 2019 09:03:21 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190726134843.GC55803@sirena.org.uk>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <000000000000aec4ec058ec71a3d@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9332 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1907290010
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9332 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1907290010
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 26 Jul 06:48 PDT 2019, Mark Brown wrote:
+On 7/29/19 8:38 AM, syzbot wrote:
+> syzbot has bisected this bug to:
+> 
+> commit 664820265d70a759dceca87b6eb200cd2b93cda8
+> Author: Mike Snitzer <snitzer@redhat.com>
+> Date:   Thu Feb 18 20:44:39 2016 +0000
+> 
+>     dm: do not return target from dm_get_live_table_for_ioctl()
+> 
 
-> On Fri, Jul 26, 2019 at 05:18:01AM -0700, kernelci.org bot wrote:
-> 
-> The past few versions of -next failed to boot on apq8096-db820c:
-> 
-> >     defconfig:
-> >         gcc-8:
-> >             apq8096-db820c: 1 failed lab
-> 
-> with an RCU stall towards the end of boot:
-> 
-> 00:03:40.521336  [   18.487538] qcom_q6v5_pas adsp-pil: adsp-pil supply px not found, using dummy regulator
-> 00:04:01.523104  [   39.499613] rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
-> 00:04:01.533371  [   39.499657] rcu: 	2-...!: (0 ticks this GP) idle=9ca/1/0x4000000000000000 softirq=1450/1450 fqs=50
-> 00:04:01.537544  [   39.504689] 	(detected by 0, t=5252 jiffies, g=2425, q=619)
-> 00:04:01.541727  [   39.513539] Task dump for CPU 2:
-> 00:04:01.547929  [   39.519096] seq             R  running task        0   199    198 0x00000000
-> 
-> Full details and logs at:
-> 
-> 	https://kernelci.org/boot/id/5d3aa7ea59b5142ba868890f/
-> 
-> The last version that worked was from the 15th and there seem to be
-> similar issues in mainline since -rc1.
+This(and previous bisection) look not related to the reported leak.
 
-Thanks for the report Mark, afaict the problem showed up in v5.3-rc1 as
-well.
 
-I think the problem is that the regulator supplying the GPU power
-domain(s) isn't enabled - and I think there's a lack of agreement of how
-this should be controlled.
+A possible reason may be KASAN can't recognize the failure path of bio_alloc_bioset()
+where mempool_free() is called but not kmalloc(p).
 
-But we have a partial fix for this floating around, I will give it a
-spin.
+But it's not a real bug, because we have the condition if (nr_iovecs > inline_vecs).
 
-Regards,
-Bjorn
+Below fix may avoid the syzbot bug report..
+
+diff --git a/block/bio.c b/block/bio.c
+index 4db1008..04a7879 100644
+--- a/block/bio.c
++++ b/block/bio.c
+@@ -513,8 +513,10 @@ struct bio *bio_alloc_bioset(gfp_t gfp_mask, unsigned int nr_iovecs,
+                        bvl = bvec_alloc(gfp_mask, nr_iovecs, &idx, &bs->bvec_pool);
+                }
+ 
+-               if (unlikely(!bvl))
+-                       goto err_free;
++               if (unlikely(!bvl)) {
++                       mempool_free(p, &bs->bio_pool);
++                       return NULL;
++               }
+ 
+                bio->bi_flags |= idx << BVEC_POOL_OFFSET;
+        } else if (nr_iovecs) {
+@@ -525,10 +527,6 @@ struct bio *bio_alloc_bioset(gfp_t gfp_mask, unsigned int nr_iovecs,
+        bio->bi_max_vecs = nr_iovecs;
+        bio->bi_io_vec = bvl;
+        return bio;
+-
+-err_free:
+-       mempool_free(p, &bs->bio_pool);
+-       return NULL;
+ }
+ EXPORT_SYMBOL(bio_alloc_bioset);
+
+
+Regards, -Bob
+
+> bisection log:  https://urldefense.proofpoint.com/v2/url?u=https-3A__syzkaller.appspot.com_x_bisect.txt-3Fx-3D13f4eb64600000&d=DwIBaQ&c=RoP1YumCXCgaWHvlZYR8PZh8Bv7qIrMUB65eapI_JnE&r=1ktT0U2YS_I8Zz2o-MS1YcCAzWZ6hFGtyTgvVMGM7gI&m=NfGQRVxYCfZacAKiml9Wue-G1r2h8qkuAhAMOx_uFcc&s=MNjYy_nft_s0ErmK2n89p7y2yhKmeWlxWch0z7_dsm8&e=start commit:   0011572c Merge branch 'for-5.2-fixes' of git://git.kernel...
+> git tree:       upstream
+> final crash:    https://urldefense.proofpoint.com/v2/url?u=https-3A__syzkaller.appspot.com_x_report.txt-3Fx-3D100ceb64600000&d=DwIBaQ&c=RoP1YumCXCgaWHvlZYR8PZh8Bv7qIrMUB65eapI_JnE&r=1ktT0U2YS_I8Zz2o-MS1YcCAzWZ6hFGtyTgvVMGM7gI&m=NfGQRVxYCfZacAKiml9Wue-G1r2h8qkuAhAMOx_uFcc&s=iviPOQNPEIjkuqBma_VWEQ9l1Ve3eOiTwads42E4ZPo&e=console output: https://urldefense.proofpoint.com/v2/url?u=https-3A__syzkaller.appspot.com_x_log.txt-3Fx-3D17f4eb64600000&d=DwIBaQ&c=RoP1YumCXCgaWHvlZYR8PZh8Bv7qIrMUB65eapI_JnE&r=1ktT0U2YS_I8Zz2o-MS1YcCAzWZ6hFGtyTgvVMGM7gI&m=NfGQRVxYCfZacAKiml9Wue-G1r2h8qkuAhAMOx_uFcc&s=MBwnFwjEcSQfYymfv8EYt_EawVdK9vD-OAqDMutO-YY&e=kernel config:  https://urldefense.proofpoint.com/v2/url?u=https-3A__syzkaller.appspot.com_x_.config-3Fx-3Dcb38d33cd06d8d48&d=DwIBaQ&c=RoP1YumCXCgaWHvlZYR8PZh8Bv7qIrMUB65eapI_JnE&r=1ktT0U2YS_I8Zz2o-MS1YcCAzWZ6hFGtyTgvVMGM7gI&m=NfGQRVxYCfZacAKiml9Wue-G1r2h8qkuAhAMOx_uFcc&s=SqmDUenNFS-961PGgiMW5mIUv0nIBrf0oBrzUxYZ8Do&e=dashboard link:
+> https://urldefense.proofpoint.com/v2/url?u=https-3A__syzkaller.appspot.com_bug-3Fextid-3D03e5c8ebd22cc6c3a8cb&d=DwIBaQ&c=RoP1YumCXCgaWHvlZYR8PZh8Bv7qIrMUB65eapI_JnE&r=1ktT0U2YS_I8Zz2o-MS1YcCAzWZ6hFGtyTgvVMGM7gI&m=NfGQRVxYCfZacAKiml9Wue-G1r2h8qkuAhAMOx_uFcc&s=jKd2ocY5X94uyB8Or-OC3yffbOgClPQPlXqFnLzvvSY&e=syz repro:      https://urldefense.proofpoint.com/v2/url?u=https-3A__syzkaller.appspot.com_x_repro.syz-3Fx-3D13244221a00000&d=DwIBaQ&c=RoP1YumCXCgaWHvlZYR8PZh8Bv7qIrMUB65eapI_JnE&r=1ktT0U2YS_I8Zz2o-MS1YcCAzWZ6hFGtyTgvVMGM7gI&m=NfGQRVxYCfZacAKiml9Wue-G1r2h8qkuAhAMOx_uFcc&s=K-C39Kcd1oEOtJKwnby-s1EyEZZA10mr9bcXZ0J9Kh0&e=C reproducer:   https://urldefense.proofpoint.com/v2/url?u=https-3A__syzkaller.appspot.com_x_repro.c-3Fx-3D117b2432a00000&d=DwIBaQ&c=RoP1YumCXCgaWHvlZYR8PZh8Bv7qIrMUB65eapI_JnE&r=1ktT0U2YS_I8Zz2o-MS1YcCAzWZ6hFGtyTgvVMGM7gI&m=NfGQRVxYCfZacAKiml9Wue-G1r2h8qkuAhAMOx_uFcc&s=7J685CwQN6_FA2KgO3Vgy1msF0zi5O0OqZj_bgvEqBE&e=
+> Reported-by: syzbot+03e5c8ebd22cc6c3a8cb@syzkaller.appspotmail.com
+> Fixes: 664820265d70 ("dm: do not return target from dm_get_live_table_for_ioctl()")
+> 
+> For information about bisection process see: https://urldefense.proofpoint.com/v2/url?u=https-3A__goo.gl_tpsmEJ-23bisection&d=DwIBaQ&c=RoP1YumCXCgaWHvlZYR8PZh8Bv7qIrMUB65eapI_JnE&r=1ktT0U2YS_I8Zz2o-MS1YcCAzWZ6hFGtyTgvVMGM7gI&m=NfGQRVxYCfZacAKiml9Wue-G1r2h8qkuAhAMOx_uFcc&s=rs52TkiEQCrV4V8YQa2wT55HD8E-0AX9pn7MNIDcje4&e=
+
