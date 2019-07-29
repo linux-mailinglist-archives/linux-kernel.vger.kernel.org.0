@@ -2,111 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E59FA78DBC
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 16:24:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F9E578DC4
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 16:25:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727542AbfG2OXm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 10:23:42 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:37974 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726738AbfG2OXl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 10:23:41 -0400
-Received: by mail-pg1-f196.google.com with SMTP id f5so19530392pgu.5
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 07:23:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=message-id:mime-version:content-transfer-encoding:in-reply-to
-         :references:from:to:subject:cc:user-agent:date;
-        bh=kqUnPKiz6VvTqc0+3BE84kZ35KLnOhXxMY+yopDUPhY=;
-        b=k86W0aohKTIyLzBKu/wc2N16ENz7QVuJCm9eOV3rf+vXz48wbkR6TSL3KnMNu+Qg9u
-         QwKbRBGZVkYTYR7rmUEX9cVlei8WTfWGVGQeVr42nqCKd7VzgcrsSLCm88DonZsNdxaY
-         e9jZiEiFJMVjy054rF8KvLZqdz94yA3Q0rK/M=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:mime-version
-         :content-transfer-encoding:in-reply-to:references:from:to:subject:cc
-         :user-agent:date;
-        bh=kqUnPKiz6VvTqc0+3BE84kZ35KLnOhXxMY+yopDUPhY=;
-        b=F0F+94Fg/maxnUSJaYBrBxIYewKYoglTPHlsHKnr6Kbx9xVdWKRS8DNOyNAfsJrWHv
-         Dj9jDnutfYdMl6VxQz+ut+wxyNC+ZFpmh4sd1xPOXpB4DgAYpRViVOQDV0mBvVmIzhyU
-         5oPpnLWyfgmLxX3trDUGYuZxqvgyL2PE245gvINXiaSFb3og3dj9RwRXQkDQS5/48dMT
-         FkdvBfH4p8ZX3XDNMDo0V8RZvZaQOX5gmrAJSTKZJxl/hXIerMgM2Hjbuk2BzsAn+x8Y
-         NHG+pp/qlXeZcFy4j7fUiEspqkNL6j7euhLKokiRaH3vWiehiUsZ2URoqrTeICDGiY5A
-         ct+g==
-X-Gm-Message-State: APjAAAXJMZUcr0LsqVdUT15ecHCxXIDiOMXxHp5y7vC8OfID1qqvXas8
-        PJFgpKuTlYLl8Bob+7IrOu51+Jgpd8w=
-X-Google-Smtp-Source: APXvYqw/PF2vE+zBYn0D8DUzj3HuB5GsG03DneqIHvSfRszws4YVVcUlAfy/9QpCj7nC6Zl53Whsmw==
-X-Received: by 2002:a63:5c07:: with SMTP id q7mr52206048pgb.436.1564410221179;
-        Mon, 29 Jul 2019 07:23:41 -0700 (PDT)
-Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id y14sm11289667pge.7.2019.07.29.07.23.40
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 29 Jul 2019 07:23:40 -0700 (PDT)
-Message-ID: <5d3f016c.1c69fb81.b4775.c7d0@mx.google.com>
-Content-Type: text/plain; charset="utf-8"
+        id S1727238AbfG2OZA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 10:25:00 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:37868 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726780AbfG2OY7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 10:24:59 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 81BE3C049E12;
+        Mon, 29 Jul 2019 14:24:58 +0000 (UTC)
+Received: from [10.72.12.68] (ovpn-12-68.pek2.redhat.com [10.72.12.68])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 14E8E5D6A0;
+        Mon, 29 Jul 2019 14:24:44 +0000 (UTC)
+Subject: Re: WARNING in __mmdrop
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     syzbot <syzbot+e58112d71f77113ddb7b@syzkaller.appspotmail.com>,
+        aarcange@redhat.com, akpm@linux-foundation.org,
+        christian@brauner.io, davem@davemloft.net, ebiederm@xmission.com,
+        elena.reshetova@intel.com, guro@fb.com, hch@infradead.org,
+        james.bottomley@hansenpartnership.com, jglisse@redhat.com,
+        keescook@chromium.org, ldv@altlinux.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-parisc@vger.kernel.org,
+        luto@amacapital.net, mhocko@suse.com, mingo@kernel.org,
+        namit@vmware.com, peterz@infradead.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
+        wad@chromium.org
+References: <84bb2e31-0606-adff-cf2a-e1878225a847@redhat.com>
+ <20190725092332-mutt-send-email-mst@kernel.org>
+ <11802a8a-ce41-f427-63d5-b6a4cf96bb3f@redhat.com>
+ <20190726074644-mutt-send-email-mst@kernel.org>
+ <5cc94f15-b229-a290-55f3-8295266edb2b@redhat.com>
+ <20190726082837-mutt-send-email-mst@kernel.org>
+ <ada10dc9-6cab-e189-5289-6f9d3ff8fed2@redhat.com>
+ <aaefa93e-a0de-1c55-feb0-509c87aae1f3@redhat.com>
+ <20190726094756-mutt-send-email-mst@kernel.org>
+ <0792ee09-b4b7-673c-2251-e5e0ce0fbe32@redhat.com>
+ <20190729045127-mutt-send-email-mst@kernel.org>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <4d43c094-44ed-dbac-b863-48fc3d754378@redhat.com>
+Date:   Mon, 29 Jul 2019 22:24:43 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CAK7LNAQZJgkx-yEwgHcTapKFayExgUCb3=zLBpJmVMJMeEA_WA@mail.gmail.com>
-References: <20190725154730.80169-1-swboyd@chromium.org> <CAK7LNAQZJgkx-yEwgHcTapKFayExgUCb3=zLBpJmVMJMeEA_WA@mail.gmail.com>
-From:   Stephen Boyd <swboyd@chromium.org>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: Re: [PATCH v2] kbuild: Check for unknown options with cc-option usage in Kconfig and clang
-Cc:     Michal Marek <michal.lkml@markovi.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Peter Smith <peter.smith@linaro.org>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Douglas Anderson <dianders@chromium.org>
-User-Agent: alot/0.8.1
-Date:   Mon, 29 Jul 2019 07:23:39 -0700
+In-Reply-To: <20190729045127-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Mon, 29 Jul 2019 14:24:59 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Masahiro Yamada (2019-07-29 03:02:40)
->=20
-> Thanks for catching this.
->=20
-> I wonder if we could fix this issue
-> by one-liner, like this:
->=20
->=20
-> diff --git a/scripts/Kconfig.include b/scripts/Kconfig.include
-> index 8a5c4d645eb1..4bbf4fc163a2 100644
-> --- a/scripts/Kconfig.include
-> +++ b/scripts/Kconfig.include
-> @@ -25,7 +25,7 @@ failure =3D $(if-success,$(1),n,y)
->=20
->  # $(cc-option,<flag>)
->  # Return y if the compiler supports <flag>, n otherwise
-> -cc-option =3D $(success,$(CC) -Werror $(1) -E -x c /dev/null -o /dev/nul=
-l)
-> +cc-option =3D $(success,$(CC) -Werror $(CLANG_FLAGS) $(1) -E -x c
-> /dev/null -o /dev/null)
->=20
->  # $(ld-option,<flag>)
->  # Return y if the linker supports <flag>, n otherwise
->=20
->=20
->=20
-> This propagates not only -Werror=3Dunknown-warning-option
-> but also other clang flags to Kconfig.
->=20
->=20
-> Currently, we do not pass the target triplet to Kconfig.
-> This means, cc-option in Kconfig evaluates the given flags
-> against host-arch instead of target-arch.
-> The compiler flags are mostly independent of the architecture,
-> and this is not a big deal, I think.
-> But, maybe, would it make more sense to pass the other
-> basic clang flags as well?
->=20
 
-Yes that also works and I had that earlier. I wanted to mirror what was
-done in scripts/Kbuild.include where there's a CC_OPTION_CFLAGS
-variable. I'm happy either way, so it's up to you.
+On 2019/7/29 下午4:59, Michael S. Tsirkin wrote:
+> On Mon, Jul 29, 2019 at 01:54:49PM +0800, Jason Wang wrote:
+>> On 2019/7/26 下午9:49, Michael S. Tsirkin wrote:
+>>>>> Ok, let me retry if necessary (but I do remember I end up with deadlocks
+>>>>> last try).
+>>>> Ok, I play a little with this. And it works so far. Will do more testing
+>>>> tomorrow.
+>>>>
+>>>> One reason could be I switch to use get_user_pages_fast() to
+>>>> __get_user_pages_fast() which doesn't need mmap_sem.
+>>>>
+>>>> Thanks
+>>> OK that sounds good. If we also set a flag to make
+>>> vhost_exceeds_weight exit, then I think it will be all good.
+>>
+>> After some experiments, I came up two methods:
+>>
+>> 1) switch to use vq->mutex, then we must take the vq lock during range
+>> checking (but I don't see obvious slowdown for 16vcpus + 16queues). Setting
+>> flags during weight check should work but it still can't address the worst
+>> case: wait for the page to be swapped in. Is this acceptable?
+>>
+>> 2) using current RCU but replace synchronize_rcu() with vhost_work_flush().
+>> The worst case is the same as 1) but we can check range without holding any
+>> locks.
+>>
+>> Which one did you prefer?
+>>
+>> Thanks
+> I would rather we start with 1 and switch to 2 after we
+> can show some gain.
+>
+> But the worst case needs to be addressed.
 
+
+Yes.
+
+
+> How about sending a signal to
+> the vhost thread?  We will need to fix up error handling (I think that
+> at the moment it will error out in that case, handling this as EFAULT -
+> and we don't want to drop packets if we can help it, and surely not
+> enter any error states.  In particular it might be especially tricky if
+> we wrote into userspace memory and are now trying to log the write.
+> I guess we can disable the optimization if log is enabled?).
+
+
+This may work but requires a lot of changes. And actually it's the price 
+of using vq mutex. Actually, the critical section should be rather 
+small, e.g just inside memory accessors.
+
+I wonder whether or not just do synchronize our self like:
+
+static void inline vhost_inc_vq_ref(struct vhost_virtqueue *vq)
+{
+         int ref = READ_ONCE(vq->ref);
+
+         WRITE_ONCE(vq->ref, ref + 1);
+smp_rmb();
+}
+
+static void inline vhost_dec_vq_ref(struct vhost_virtqueue *vq)
+{
+         int ref = READ_ONCE(vq->ref);
+
+smp_wmb();
+         WRITE_ONCE(vq->ref, ref - 1);
+}
+
+static void inline vhost_wait_for_ref(struct vhost_virtqueue *vq)
+{
+         while (READ_ONCE(vq->ref));
+mb();
+}
+
+
+Or using smp_load_acquire()/smp_store_release() instead?
+
+Thanks
+
+>
