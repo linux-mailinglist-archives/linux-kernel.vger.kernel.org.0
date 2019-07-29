@@ -2,36 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71DA9799B7
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:17:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C5A77799A3
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:16:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728750AbfG2TYv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 15:24:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37016 "EHLO mail.kernel.org"
+        id S1729575AbfG2TZA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 15:25:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37226 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388022AbfG2TYq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:24:46 -0400
+        id S1725818AbfG2TYz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:24:55 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ADEE221773;
-        Mon, 29 Jul 2019 19:24:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 799952070B;
+        Mon, 29 Jul 2019 19:24:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564428285;
-        bh=DoTqwVFTyAxASKtJGnOTzi4ztiwCJuSpxgeUHydExzc=;
+        s=default; t=1564428295;
+        bh=7WNEyGJ2ikqqjSTeU1QkTbXK3/MsiQHU9I9QZ+4RW98=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XzmeCWlhAANeS96C9fjhdWZkfafTMsMoOgzGfoYpi2NPhUIN06Zwe7RktI+7VEpFu
-         FFOeqirAV6QMnEFOp/GLW8a8SjIvl2F0SikiqQkWgAUQ+15P+wQuOcyJDwafZXG/aO
-         u7iULbJK/wWcbIiLGxf5QXsIL72Vnig3vjEWbyTU=
+        b=XEMXrB9xkuFaiZNv/nwJBgQLI7jGJnd/iA8ydOPcLMnquWtdYcpZQQ6JRZ4W0t+7t
+         0VRKtWF5YhT5pUILcJWLtQ2OPgN50rGWmtdrn+imIt+nxrPaDg359hC3U31ZmmXZjG
+         Kt+127+Do9U/1jJHeJMLv+BzutJK4ZFK3vCQRN0Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 028/293] crypto: talitos - properly handle split ICV.
-Date:   Mon, 29 Jul 2019 21:18:39 +0200
-Message-Id: <20190729190823.840328555@linuxfoundation.org>
+        stable@vger.kernel.org, Imre Deak <imre.deak@intel.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
+        <ville.syrjala@linux.intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will.deacon@arm.com>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 031/293] locking/lockdep: Fix merging of hlocks with non-zero references
+Date:   Mon, 29 Jul 2019 21:18:42 +0200
+Message-Id: <20190729190824.223012577@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190729190820.321094988@linuxfoundation.org>
 References: <20190729190820.321094988@linuxfoundation.org>
@@ -44,95 +49,100 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit eae55a586c3c8b50982bad3c3426e9c9dd7a0075 ]
+[ Upstream commit d9349850e188b8b59e5322fda17ff389a1c0cd7d ]
 
-The driver assumes that the ICV is as a single piece in the last
-element of the scatterlist. This assumption is wrong.
+The sequence
 
-This patch ensures that the ICV is properly handled regardless of
-the scatterlist layout.
+	static DEFINE_WW_CLASS(test_ww_class);
 
-Fixes: 9c4a79653b35 ("crypto: talitos - Freescale integrated security engine (SEC) driver")
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+	struct ww_acquire_ctx ww_ctx;
+	struct ww_mutex ww_lock_a;
+	struct ww_mutex ww_lock_b;
+	struct ww_mutex ww_lock_c;
+	struct mutex lock_c;
+
+	ww_acquire_init(&ww_ctx, &test_ww_class);
+
+	ww_mutex_init(&ww_lock_a, &test_ww_class);
+	ww_mutex_init(&ww_lock_b, &test_ww_class);
+	ww_mutex_init(&ww_lock_c, &test_ww_class);
+
+	mutex_init(&lock_c);
+
+	ww_mutex_lock(&ww_lock_a, &ww_ctx);
+
+	mutex_lock(&lock_c);
+
+	ww_mutex_lock(&ww_lock_b, &ww_ctx);
+	ww_mutex_lock(&ww_lock_c, &ww_ctx);
+
+	mutex_unlock(&lock_c);	(*)
+
+	ww_mutex_unlock(&ww_lock_c);
+	ww_mutex_unlock(&ww_lock_b);
+	ww_mutex_unlock(&ww_lock_a);
+
+	ww_acquire_fini(&ww_ctx); (**)
+
+will trigger the following error in __lock_release() when calling
+mutex_release() at **:
+
+	DEBUG_LOCKS_WARN_ON(depth <= 0)
+
+The problem is that the hlock merging happening at * updates the
+references for test_ww_class incorrectly to 3 whereas it should've
+updated it to 4 (representing all the instances for ww_ctx and
+ww_lock_[abc]).
+
+Fix this by updating the references during merging correctly taking into
+account that we can have non-zero references (both for the hlock that we
+merge into another hlock or for the hlock we are merging into).
+
+Signed-off-by: Imre Deak <imre.deak@intel.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Will Deacon <will.deacon@arm.com>
+Link: https://lkml.kernel.org/r/20190524201509.9199-2-imre.deak@intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/crypto/talitos.c | 26 +++++++++++++++-----------
- 1 file changed, 15 insertions(+), 11 deletions(-)
+ kernel/locking/lockdep.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/crypto/talitos.c b/drivers/crypto/talitos.c
-index 8707607039d3..62dca638105d 100644
---- a/drivers/crypto/talitos.c
-+++ b/drivers/crypto/talitos.c
-@@ -984,7 +984,6 @@ static void ipsec_esp_encrypt_done(struct device *dev,
- 	struct crypto_aead *authenc = crypto_aead_reqtfm(areq);
- 	unsigned int authsize = crypto_aead_authsize(authenc);
- 	struct talitos_edesc *edesc;
--	struct scatterlist *sg;
- 	void *icvdata;
+diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
+index bf694c709b96..565005a3b8f0 100644
+--- a/kernel/locking/lockdep.c
++++ b/kernel/locking/lockdep.c
+@@ -3402,17 +3402,17 @@ static int __lock_acquire(struct lockdep_map *lock, unsigned int subclass,
+ 	if (depth && !cross_lock(lock)) {
+ 		hlock = curr->held_locks + depth - 1;
+ 		if (hlock->class_idx == class_idx && nest_lock) {
+-			if (hlock->references) {
+-				/*
+-				 * Check: unsigned int references:12, overflow.
+-				 */
+-				if (DEBUG_LOCKS_WARN_ON(hlock->references == (1 << 12)-1))
+-					return 0;
++			if (!references)
++				references++;
  
- 	edesc = container_of(desc, struct talitos_edesc, desc);
-@@ -998,9 +997,8 @@ static void ipsec_esp_encrypt_done(struct device *dev,
- 		else
- 			icvdata = &edesc->link_tbl[edesc->src_nents +
- 						   edesc->dst_nents + 2];
--		sg = sg_last(areq->dst, edesc->dst_nents);
--		memcpy((char *)sg_virt(sg) + sg->length - authsize,
--		       icvdata, authsize);
-+		sg_pcopy_from_buffer(areq->dst, edesc->dst_nents ? : 1, icvdata,
-+				     authsize, areq->assoclen + areq->cryptlen);
- 	}
- 
- 	kfree(edesc);
-@@ -1016,7 +1014,6 @@ static void ipsec_esp_decrypt_swauth_done(struct device *dev,
- 	struct crypto_aead *authenc = crypto_aead_reqtfm(req);
- 	unsigned int authsize = crypto_aead_authsize(authenc);
- 	struct talitos_edesc *edesc;
--	struct scatterlist *sg;
- 	char *oicv, *icv;
- 	struct talitos_private *priv = dev_get_drvdata(dev);
- 	bool is_sec1 = has_ftr_sec1(priv);
-@@ -1026,9 +1023,18 @@ static void ipsec_esp_decrypt_swauth_done(struct device *dev,
- 	ipsec_esp_unmap(dev, edesc, req);
- 
- 	if (!err) {
-+		char icvdata[SHA512_DIGEST_SIZE];
-+		int nents = edesc->dst_nents ? : 1;
-+		unsigned int len = req->assoclen + req->cryptlen;
++			if (!hlock->references)
+ 				hlock->references++;
+-			} else {
+-				hlock->references = 2;
+-			}
 +
- 		/* auth check */
--		sg = sg_last(req->dst, edesc->dst_nents ? : 1);
--		icv = (char *)sg_virt(sg) + sg->length - authsize;
-+		if (nents > 1) {
-+			sg_pcopy_to_buffer(req->dst, nents, icvdata, authsize,
-+					   len - authsize);
-+			icv = icvdata;
-+		} else {
-+			icv = (char *)sg_virt(req->dst) + len - authsize;
-+		}
++			hlock->references += references;
++
++			/* Overflow */
++			if (DEBUG_LOCKS_WARN_ON(hlock->references < references))
++				return 0;
  
- 		if (edesc->dma_len) {
- 			if (is_sec1)
-@@ -1458,7 +1464,6 @@ static int aead_decrypt(struct aead_request *req)
- 	struct talitos_ctx *ctx = crypto_aead_ctx(authenc);
- 	struct talitos_private *priv = dev_get_drvdata(ctx->dev);
- 	struct talitos_edesc *edesc;
--	struct scatterlist *sg;
- 	void *icvdata;
- 
- 	req->cryptlen -= authsize;
-@@ -1493,9 +1498,8 @@ static int aead_decrypt(struct aead_request *req)
- 	else
- 		icvdata = &edesc->link_tbl[0];
- 
--	sg = sg_last(req->src, edesc->src_nents ? : 1);
--
--	memcpy(icvdata, (char *)sg_virt(sg) + sg->length - authsize, authsize);
-+	sg_pcopy_to_buffer(req->src, edesc->src_nents ? : 1, icvdata, authsize,
-+			   req->assoclen + req->cryptlen - authsize);
- 
- 	return ipsec_esp(edesc, req, ipsec_esp_decrypt_swauth_done);
- }
+ 			return 1;
+ 		}
 -- 
 2.20.1
 
