@@ -2,35 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97939794B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:35:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 784CB794B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:35:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388462AbfG2Teg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 15:34:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48892 "EHLO mail.kernel.org"
+        id S2388483AbfG2Teq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 15:34:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49132 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388446AbfG2Teb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:34:31 -0400
+        id S2388281AbfG2Tem (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:34:42 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6158B2171F;
-        Mon, 29 Jul 2019 19:34:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1E0E92070B;
+        Mon, 29 Jul 2019 19:34:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564428869;
-        bh=ItaiDneyzVoTv3qjq7MuM6mtz8MIKKdHSZqu5PLeKSA=;
+        s=default; t=1564428882;
+        bh=XO+6JP4T9omkolO039O/6hZFh57nRKGvyiVIMiYPqpw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ND7pr93K997W8kvDv7eP6ewVDeU/urIjnVfKPk+KlkjsekRx4nbYnjjzV5vaxK+Nm
-         k/5WhZhnMsCCGn2+n167ybOimFTS/cfvG9iWsTRYttTMv5PZy4QRDcRuFHef9CWNau
-         RT5/QasWCA+tkxHWgObb3H+MSHsFgEZoqUpaD6io=
+        b=J/hiwckXqNYQhii+RRJZuRazem/PcnJIZ3tbrNXzfQ5LKB+qeGiI/k48fnfnb4vXX
+         kTcIpi00l/KcWc7MFx/Dpar7VbVsx2GLM4sYB69t5L+JKxuZLob/rixjViK4bLDSGd
+         1fJmXASwhg1+N0El/vfZsqUjR5baERndBG7LLcs4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ross Zwisler <zwisler@google.com>,
-        Theodore Tso <tytso@mit.edu>, Jan Kara <jack@suse.cz>
-Subject: [PATCH 4.14 212/293] ext4: use jbd2_inode dirty range scoping
-Date:   Mon, 29 Jul 2019 21:21:43 +0200
-Message-Id: <20190729190840.707790839@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+        Borislav Petkov <bp@suse.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 215/293] perf/events/amd/uncore: Fix amd_uncore_llc ID to use pre-defined cpu_llc_id
+Date:   Mon, 29 Jul 2019 21:21:46 +0200
+Message-Id: <20190729190840.965994077@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190729190820.321094988@linuxfoundation.org>
 References: <20190729190820.321094988@linuxfoundation.org>
@@ -43,96 +48,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ross Zwisler <zwisler@chromium.org>
+[ Upstream commit 812af433038f984fd951224e8239b09188e36a13 ]
 
-commit 73131fbb003b3691cfcf9656f234b00da497fcd6 upstream.
+Current logic iterates over CPUID Fn8000001d leafs (Cache Properties)
+to detect the last level cache, and derive the last-level cache ID.
+However, this information is already available in the cpu_llc_id.
+Therefore, make use of it instead.
 
-Use the newly introduced jbd2_inode dirty range scoping to prevent us
-from waiting forever when trying to complete a journal transaction.
-
-Signed-off-by: Ross Zwisler <zwisler@google.com>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Cc: stable@vger.kernel.org
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>
+Cc: Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>
+Link: http://lkml.kernel.org/r/1524864877-111962-3-git-send-email-suravee.suthikulpanit@amd.com
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/ext4/ext4_jbd2.h   |   12 ++++++------
- fs/ext4/inode.c       |   13 ++++++++++---
- fs/ext4/move_extent.c |    3 ++-
- 3 files changed, 18 insertions(+), 10 deletions(-)
+ arch/x86/events/amd/uncore.c | 21 ++-------------------
+ 1 file changed, 2 insertions(+), 19 deletions(-)
 
---- a/fs/ext4/ext4_jbd2.h
-+++ b/fs/ext4/ext4_jbd2.h
-@@ -364,20 +364,20 @@ static inline int ext4_journal_force_com
- }
+diff --git a/arch/x86/events/amd/uncore.c b/arch/x86/events/amd/uncore.c
+index 3a9ab16d9c2b..baa7e36073f9 100644
+--- a/arch/x86/events/amd/uncore.c
++++ b/arch/x86/events/amd/uncore.c
+@@ -19,6 +19,7 @@
+ #include <asm/cpufeature.h>
+ #include <asm/perf_event.h>
+ #include <asm/msr.h>
++#include <asm/smp.h>
  
- static inline int ext4_jbd2_inode_add_write(handle_t *handle,
--					    struct inode *inode)
-+		struct inode *inode, loff_t start_byte, loff_t length)
- {
- 	if (ext4_handle_valid(handle))
--		return jbd2_journal_inode_add_write(handle,
--						    EXT4_I(inode)->jinode);
-+		return jbd2_journal_inode_ranged_write(handle,
-+				EXT4_I(inode)->jinode, start_byte, length);
- 	return 0;
- }
- 
- static inline int ext4_jbd2_inode_add_wait(handle_t *handle,
--					   struct inode *inode)
-+		struct inode *inode, loff_t start_byte, loff_t length)
- {
- 	if (ext4_handle_valid(handle))
--		return jbd2_journal_inode_add_wait(handle,
--						   EXT4_I(inode)->jinode);
-+		return jbd2_journal_inode_ranged_wait(handle,
-+				EXT4_I(inode)->jinode, start_byte, length);
- 	return 0;
- }
- 
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -728,10 +728,16 @@ out_sem:
- 		    !(flags & EXT4_GET_BLOCKS_ZERO) &&
- 		    !ext4_is_quota_file(inode) &&
- 		    ext4_should_order_data(inode)) {
-+			loff_t start_byte =
-+				(loff_t)map->m_lblk << inode->i_blkbits;
-+			loff_t length = (loff_t)map->m_len << inode->i_blkbits;
-+
- 			if (flags & EXT4_GET_BLOCKS_IO_SUBMIT)
--				ret = ext4_jbd2_inode_add_wait(handle, inode);
-+				ret = ext4_jbd2_inode_add_wait(handle, inode,
-+						start_byte, length);
- 			else
--				ret = ext4_jbd2_inode_add_write(handle, inode);
-+				ret = ext4_jbd2_inode_add_write(handle, inode,
-+						start_byte, length);
- 			if (ret)
- 				return ret;
- 		}
-@@ -4004,7 +4010,8 @@ static int __ext4_block_zero_page_range(
- 		err = 0;
- 		mark_buffer_dirty(bh);
- 		if (ext4_should_order_data(inode))
--			err = ext4_jbd2_inode_add_write(handle, inode);
-+			err = ext4_jbd2_inode_add_write(handle, inode, from,
-+					length);
+ #define NUM_COUNTERS_NB		4
+ #define NUM_COUNTERS_L2		4
+@@ -414,26 +415,8 @@ static int amd_uncore_cpu_starting(unsigned int cpu)
  	}
  
- unlock:
---- a/fs/ext4/move_extent.c
-+++ b/fs/ext4/move_extent.c
-@@ -400,7 +400,8 @@ data_copy:
+ 	if (amd_uncore_llc) {
+-		unsigned int apicid = cpu_data(cpu).apicid;
+-		unsigned int nshared, subleaf, prev_eax = 0;
+-
+ 		uncore = *per_cpu_ptr(amd_uncore_llc, cpu);
+-		/*
+-		 * Iterate over Cache Topology Definition leaves until no
+-		 * more cache descriptions are available.
+-		 */
+-		for (subleaf = 0; subleaf < 5; subleaf++) {
+-			cpuid_count(0x8000001d, subleaf, &eax, &ebx, &ecx, &edx);
+-
+-			/* EAX[0:4] gives type of cache */
+-			if (!(eax & 0x1f))
+-				break;
+-
+-			prev_eax = eax;
+-		}
+-		nshared = ((prev_eax >> 14) & 0xfff) + 1;
+-
+-		uncore->id = apicid - (apicid % nshared);
++		uncore->id = per_cpu(cpu_llc_id, cpu);
  
- 	/* Even in case of data=writeback it is reasonable to pin
- 	 * inode to transaction, to prevent unexpected data loss */
--	*err = ext4_jbd2_inode_add_write(handle, orig_inode);
-+	*err = ext4_jbd2_inode_add_write(handle, orig_inode,
-+			(loff_t)orig_page_offset << PAGE_SHIFT, replaced_size);
- 
- unlock_pages:
- 	unlock_page(pagep[0]);
+ 		uncore = amd_uncore_find_online_sibling(uncore, amd_uncore_llc);
+ 		*per_cpu_ptr(amd_uncore_llc, cpu) = uncore;
+-- 
+2.20.1
+
 
 
