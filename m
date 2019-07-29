@@ -2,74 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 490FE782B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 02:09:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5759C782B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 02:11:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726550AbfG2AJQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 28 Jul 2019 20:09:16 -0400
-Received: from mail-ua1-f65.google.com ([209.85.222.65]:34905 "EHLO
-        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726370AbfG2AJQ (ORCPT
+        id S1726346AbfG2AL1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 28 Jul 2019 20:11:27 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:44651 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726247AbfG2AL1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 28 Jul 2019 20:09:16 -0400
-Received: by mail-ua1-f65.google.com with SMTP id j21so23329826uap.2
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2019 17:09:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=BrTkYGT/CoRQ7U7g4N9efxmX5N2ln4oVBYUSCIHtobA=;
-        b=PzymwHY3qDkbMYZTzeizBDQJ/hsIX7j69RDepqsMXPQxcKyEj1tX6WLafAen0xqNEk
-         m7xYz73dxPLdjIGEMnlk9dvWlf2xsYMLzXLSNYL42fyVyjOaSyXvuLHHbwnwzrXQ8m0T
-         N5DWdehMOzzODuRzFtDqmrzwCAUjrxJuBGzMl7H0KnzolHIPSU1JmAa2MFGhEZNBDt1C
-         BaFv3VPF3+4vv6hAHKjwdUzhrdlyXxi61X8GeiJ6weS2SgPzAqRmz+nTDJ3gU5w4Muj+
-         JAZS2an9pDMQ5N8bZStygPcocXRArQRK37vBlgUNW45j1XoCqefHT9/bw1tY70nS+DYr
-         5LRw==
+        Sun, 28 Jul 2019 20:11:27 -0400
+Received: by mail-wr1-f68.google.com with SMTP id p17so59827223wrf.11
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Jul 2019 17:11:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=BrTkYGT/CoRQ7U7g4N9efxmX5N2ln4oVBYUSCIHtobA=;
-        b=FDJ9G0fSkqXSygGYU6fT5GQLghK/7BloYo90PvsPeQgLUEOMM4sUoUipSqBWqK9Sgq
-         aHTiZd09AkBNkBdq64fgjpSzcDZgG8D58u6BxIPZOdjunoVRjIHRvuTb+q1eKe3sc/M1
-         FguOmuD+4e218B+e2VI+B0hVq5TcjLrVX3/tn7DdTMlhxJmCHDqQi7JfsBtm9EUBmy0I
-         iR6nJXdQgUOAi0AFDQsSwAj7objAQnjDSGBlT9vV1Pr/KD+eMCHspP5BH/+ckvmP6gbY
-         Pg/yXG1Pi69xGuYBig0Ed4hVr+9dyuuHBQPQ+R7CYEm5UeKulhSMvs4p7FjJhkC97CNv
-         hIQg==
-X-Gm-Message-State: APjAAAWoOzdIT8oEBphl0S+/2S9rU4fL1pvOluOg0rBYG7NdwjnpwNse
-        RSXdEoTgkj2tNiXOKA6VYCMlHN7w7g8CMCH62eM=
-X-Google-Smtp-Source: APXvYqyQvU3nsRdp4KEx+KWyp06PGtLh01BESTkI+50LyOAOlXbUhqVAT1MB0W7GHzUIUritb0JwkIBKTBcyyCvhaMA=
-X-Received: by 2002:ab0:290a:: with SMTP id v10mr38508402uap.74.1564358955371;
- Sun, 28 Jul 2019 17:09:15 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=VA4nO4VREXkp8GYoBYLdJmNPFBFhMx5Fwe9xzhsD62A=;
+        b=PhhB9+drCP9XxGFoqQN9KxudjfF79AIV8FJxeV6nmajYnCbC6kQy/02yDrvBQZU/Mt
+         e/li4iA9jG5mnOgMHG8CvTPqsiRMniCrWVFZZQpbJXsp94zG4/RHQi0jiEZjHKdaa0p3
+         7+Fo5DjwyZpo2B44YvnbKhKFJQhz4v7dBjRaQU6ZUe9Xs3fuQH9z70DOS0Jb7G2Bum/y
+         rDXBy3Cy/4VVqxEDcreh30M7B280rPwEnK9nb5qSGN2wzOTmwh5DH+OaaSo14dATxyPv
+         UDBjehBwlaMPT1Z02sEmiovnEuX3RpWdbBfDE+RHCNjspFfN9vNnPJ/G4yq9K2p0vtH6
+         rSgg==
+X-Gm-Message-State: APjAAAV6UlfpdGO5Fp+jz4gxxl4Pst+wBfXikt8HA5G1+sUy1LBWbA29
+        QD8/C15j8rc/6PBshpBAVayKgI/Rj2M+JQ==
+X-Google-Smtp-Source: APXvYqxlCPZOCQaX9cCmhJ0AWaUNs3g8toqFhmMxgNhHERKGyTHjZiEBPP1KLVxjF6QUZJbRWiqupQ==
+X-Received: by 2002:adf:eec4:: with SMTP id a4mr108237314wrp.85.1564359085228;
+        Sun, 28 Jul 2019 17:11:25 -0700 (PDT)
+Received: from mcroce-redhat.homenet.telecomitalia.it (host221-208-dynamic.27-79-r.retail.telecomitalia.it. [79.27.208.221])
+        by smtp.gmail.com with ESMTPSA id o20sm154140692wrh.8.2019.07.28.17.11.24
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Sun, 28 Jul 2019 17:11:24 -0700 (PDT)
+From:   Matteo Croce <mcroce@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <maz@kernel.org>
+Subject: [PATCH] irqchip/gic-v3: mark expected switch fall-through
+Date:   Mon, 29 Jul 2019 02:11:19 +0200
+Message-Id: <20190729001119.2478-1-mcroce@redhat.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Received: by 2002:a67:80c8:0:0:0:0:0 with HTTP; Sun, 28 Jul 2019 17:09:15
- -0700 (PDT)
-Reply-To: williamrobert416@gmail.com
-From:   "Mr. Robert William" <officialuse87@gmail.com>
-Date:   Mon, 29 Jul 2019 01:09:15 +0100
-Message-ID: <CAD00q08NQAJowEQ68nB7MBvuketXYjvPMQqMNEAf9uicn-qqFw@mail.gmail.com>
-Subject: Its Urgent
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Mark switch cases where we are expecting to fall through,
+fixes the following warnings:
+
+drivers/irqchip/irq-gic-v3.c: In function ‘gic_cpu_sys_reg_init’:
+./arch/arm64/include/asm/sysreg.h:853:2: warning: this statement may fall through [-Wimplicit-fallthrough=]
+  asm volatile(__msr_s(r, "%x0") : : "rZ" (__val));  \
+  ^~~
+./arch/arm64/include/asm/arch_gicv3.h:20:29: note: in expansion of macro ‘write_sysreg_s’
+ #define write_gicreg(v, r)  write_sysreg_s(v, SYS_ ## r)
+                             ^~~~~~~~~~~~~~
+drivers/irqchip/irq-gic-v3.c:773:4: note: in expansion of macro ‘write_gicreg’
+    write_gicreg(0, ICC_AP0R2_EL1);
+    ^~~~~~~~~~~~
+drivers/irqchip/irq-gic-v3.c:774:3: note: here
+   case 6:
+   ^~~~
+
+drivers/irqchip/irq-gic-v3.c:788:3: note: in expansion of macro ‘write_gicreg’
+   write_gicreg(0, ICC_AP1R2_EL1);
+   ^~~~~~~~~~~~
+  CC      net/ipv4/af_inet.o
+drivers/irqchip/irq-gic-v3.c:789:2: note: here
+  case 6:
+  ^~~~
+
+./arch/arm64/include/asm/arch_gicv3.h:20:29: note: in expansion of macro ‘write_sysreg_s’
+ #define write_gicreg(v, r)  write_sysreg_s(v, SYS_ ## r)
+                             ^~~~~~~~~~~~~~
+drivers/irqchip/irq-gic-v3.c:790:3: note: in expansion of macro ‘write_gicreg’
+   write_gicreg(0, ICC_AP1R1_EL1);
+   ^~~~~~~~~~~~
+drivers/irqchip/irq-gic-v3.c:791:2: note: here
+  case 5:
+  ^~~~
+
+Signed-off-by: Matteo Croce <mcroce@redhat.com>
+---
+ drivers/irqchip/irq-gic-v3.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
+index 9bca4896fa6f..4a5d220698f6 100644
+--- a/drivers/irqchip/irq-gic-v3.c
++++ b/drivers/irqchip/irq-gic-v3.c
+@@ -771,8 +771,10 @@ static void gic_cpu_sys_reg_init(void)
+ 		case 7:
+ 			write_gicreg(0, ICC_AP0R3_EL1);
+ 			write_gicreg(0, ICC_AP0R2_EL1);
++			/* fallthrough */
+ 		case 6:
+ 			write_gicreg(0, ICC_AP0R1_EL1);
++			/* fallthrough */
+ 		case 5:
+ 		case 4:
+ 			write_gicreg(0, ICC_AP0R0_EL1);
+@@ -786,8 +788,10 @@ static void gic_cpu_sys_reg_init(void)
+ 	case 7:
+ 		write_gicreg(0, ICC_AP1R3_EL1);
+ 		write_gicreg(0, ICC_AP1R2_EL1);
++		/* fallthrough */
+ 	case 6:
+ 		write_gicreg(0, ICC_AP1R1_EL1);
++		/* fallthrough */
+ 	case 5:
+ 	case 4:
+ 		write_gicreg(0, ICC_AP1R0_EL1);
 -- 
-Hello,
+2.21.0
 
-I am Eng. Robert William, a retired Marine Engineer residing in
-Trinidad & Tobago.
-Unfortunately i am admitted to the hospital for a cancer (Sickness)
-over a year now,my doctor reported that i have only few months to pass
-away. Please i need your consent to invest my money (USD$1.8 Million)
-in any business of your
-
-choice in your country before i die, i have no other relatives not
-even children because i lost my family in a fire disaster in 2005.
-Please i need your urgent and
-
-kind response to enable me send you more information on how to contact
-my bank as my next of kin to process the fund into your bank account.
-
-Mr Robert William
