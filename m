@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E0F157978F
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:01:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1126379843
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:06:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391139AbfG2UBA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 16:01:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43438 "EHLO mail.kernel.org"
+        id S2389286AbfG2TlO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 15:41:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56520 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403887AbfG2Tvs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:51:48 -0400
+        id S2389256AbfG2TlG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:41:06 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BCC2B204EC;
-        Mon, 29 Jul 2019 19:51:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A080220C01;
+        Mon, 29 Jul 2019 19:41:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564429907;
-        bh=sizR6Xq3/RQtR4jQO/vuWDORMl5pzGPn+/xcWFwpwYo=;
+        s=default; t=1564429265;
+        bh=5QHtL0XNAjyJtuF2bZOQbdAb4gdb/YztsPUiD+UjgXg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LxSrKCH9yVK1Ie1P5NPiOt4lpwafiOTCASNo5XZNg4LHeakJy7MDqsWq05HTbc0vC
-         7h/qwnXnyPF5QpQvZNZi2MjOf8mKmn4wTIAZCS3h/eGBbe3ZLfd9WCyN9KPoHbVYfH
-         mBGQ2wWX4fdHsAQ0DgLzz0UAvfG/EEbI9xRDMbmM=
+        b=QhIlWxU63lZ4pS6EaT6oyrlG24wcyvp4kRHMZ1hxv0eRvr3LfQfwdexkG/FJE3L/+
+         CAjiVCxzQwUsM/zyYbCpV/kOomVyGOmyCssnQvrlyWlDUc0rJB2xic751zICsQxMyY
+         sG+kRgMeU0ZLosTeLTMJL9Ufas9crH5rjyz9ZK2Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mikhail Skorzhinskii <mskorzhinskiy@solarflare.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Christoph Hellwig <hch@lst.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 134/215] nvme-tcp: dont use sendpage for SLAB pages
-Date:   Mon, 29 Jul 2019 21:22:10 +0200
-Message-Id: <20190729190802.778876364@linuxfoundation.org>
+        stable@vger.kernel.org, Bastien Nocera <hadess@hadess.net>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 044/113] iio: iio-utils: Fix possible incorrect mask calculation
+Date:   Mon, 29 Jul 2019 21:22:11 +0200
+Message-Id: <20190729190706.217460325@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190729190739.971253303@linuxfoundation.org>
-References: <20190729190739.971253303@linuxfoundation.org>
+In-Reply-To: <20190729190655.455345569@linuxfoundation.org>
+References: <20190729190655.455345569@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,41 +44,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 37c15219599f7a4baa73f6e3432afc69ba7cc530 ]
+[ Upstream commit 208a68c8393d6041a90862992222f3d7943d44d6 ]
 
-According to commit a10674bf2406 ("tcp: detecting the misuse of
-.sendpage for Slab objects") and previous discussion, tcp_sendpage
-should not be used for pages that is managed by SLAB, as SLAB is not
-taking page reference counters into consideration.
+On some machines, iio-sensor-proxy was returning all 0's for IIO sensor
+values. It turns out that the bits_used for this sensor is 32, which makes
+the mask calculation:
 
-Signed-off-by: Mikhail Skorzhinskii <mskorzhinskiy@solarflare.com>
-Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
+*mask = (1 << 32) - 1;
+
+If the compiler interprets the 1 literals as 32-bit ints, it generates
+undefined behavior depending on compiler version and optimization level.
+On my system, it optimizes out the shift, so the mask value becomes
+
+*mask = (1) - 1;
+
+With a mask value of 0, iio-sensor-proxy will always return 0 for every axis.
+
+Avoid incorrect 0 values caused by compiler optimization.
+
+See original fix by Brett Dutro <brett.dutro@gmail.com> in
+iio-sensor-proxy:
+https://github.com/hadess/iio-sensor-proxy/commit/9615ceac7c134d838660e209726cd86aa2064fd3
+
+Signed-off-by: Bastien Nocera <hadess@hadess.net>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/nvme/host/tcp.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ tools/iio/iio_utils.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/nvme/host/tcp.c b/drivers/nvme/host/tcp.c
-index 08a2501b9357..606b13d35d16 100644
---- a/drivers/nvme/host/tcp.c
-+++ b/drivers/nvme/host/tcp.c
-@@ -860,7 +860,14 @@ static int nvme_tcp_try_send_data(struct nvme_tcp_request *req)
- 		else
- 			flags |= MSG_MORE;
+diff --git a/tools/iio/iio_utils.c b/tools/iio/iio_utils.c
+index 7a6d61c6c012..55272fef3b50 100644
+--- a/tools/iio/iio_utils.c
++++ b/tools/iio/iio_utils.c
+@@ -159,9 +159,9 @@ int iioutils_get_type(unsigned *is_signed, unsigned *bytes, unsigned *bits_used,
+ 			*be = (endianchar == 'b');
+ 			*bytes = padint / 8;
+ 			if (*bits_used == 64)
+-				*mask = ~0;
++				*mask = ~(0ULL);
+ 			else
+-				*mask = (1ULL << *bits_used) - 1;
++				*mask = (1ULL << *bits_used) - 1ULL;
  
--		ret = kernel_sendpage(queue->sock, page, offset, len, flags);
-+		/* can't zcopy slab pages */
-+		if (unlikely(PageSlab(page))) {
-+			ret = sock_no_sendpage(queue->sock, page, offset, len,
-+					flags);
-+		} else {
-+			ret = kernel_sendpage(queue->sock, page, offset, len,
-+					flags);
-+		}
- 		if (ret <= 0)
- 			return ret;
- 
+ 			*is_signed = (signchar == 's');
+ 			if (fclose(sysfsfp)) {
 -- 
 2.20.1
 
