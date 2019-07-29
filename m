@@ -2,141 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 645C27875C
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 10:28:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3288E78749
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 10:23:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727478AbfG2I2d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 04:28:33 -0400
-Received: from mga06.intel.com ([134.134.136.31]:22293 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726305AbfG2I2d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 04:28:33 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jul 2019 01:23:58 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,322,1559545200"; 
-   d="scan'208";a="176317959"
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.122]) ([10.237.72.122])
-  by orsmga006.jf.intel.com with ESMTP; 29 Jul 2019 01:23:54 -0700
-Subject: Re: [PATCH 3/3] Fix insn.c misaligned address error
-To:     Masami Hiramatsu <mhiramat@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Numfor Mbiziwo-Tiapo <nums@google.com>, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com,
-        jolsa@redhat.com, namhyung@kernel.org, songliubraving@fb.com,
-        mbd@fb.com, linux-kernel@vger.kernel.org, irogers@google.com,
-        eranian@google.com
-References: <20190724184512.162887-1-nums@google.com>
- <20190724184512.162887-4-nums@google.com> <20190726193806.GB24867@kernel.org>
- <20190727184638.3263eb76c3cbde95f9896210@kernel.org>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <2bc0fcc6-0477-ba1d-7418-5497efa7d571@intel.com>
-Date:   Mon, 29 Jul 2019 11:22:34 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <20190727184638.3263eb76c3cbde95f9896210@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1727613AbfG2IXj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 04:23:39 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:46253 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726305AbfG2IXj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 04:23:39 -0400
+Received: by mail-pl1-f194.google.com with SMTP id c2so27185012plz.13;
+        Mon, 29 Jul 2019 01:23:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=px4UPlf0dAssmmR/aVHt6FhvemexiyDz/1qhQq2NUko=;
+        b=ONbOeXSmBYXhAmPzT9WtjuC9mlCj/p1+djw0YyAE2aYD4rh1JfRiBZ4PC1G86lbcTU
+         lGY9O270uWbF+5G11ST2jnjdxYFNR1ndEhglFejjFTxEipn6CaYEhmyLGwwfgkP5HPup
+         oazngm8PlyM3KuwTXYhf2hWfHezsIhgRqM7HgqVRm+t2aKsOCNgqnCNrw8KHPJPXOzhF
+         LCx885R0hZmk55jpRmzQE69ENjT4o9p1HL3jkA59VB4PMKVl80Em59LpCuxdpMVZqb8K
+         +CezBpo4j3cdStmCqHbf4aqiz4HqKygnXNntizZCqgamf6o0XUCsJ/WQH9hJ0KV4novq
+         mRlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=px4UPlf0dAssmmR/aVHt6FhvemexiyDz/1qhQq2NUko=;
+        b=SrqzU7Ojx+ID+Qmwk5hDo/QkNpGkHN7F5oH22HV4JudKGGYi3EUMyjJs20xrdNNNUc
+         QVbt6v/cDhis2Cg5ESkhiX3v0mzzh26CUSdgLx1/WlI43ojg0WkULpn3JmiiGLS0d4DL
+         bmeq+6pBbVw0wl/Eza0l/OhnZbRc6T/HSwmmWjjsGMiG3or90jZ5kQ/XcOx++sOzIXuy
+         Z8XHgYE+gMXfUMi9OfEOO6WfvyCRcaWD25wi7TE1ps+eRwaXh3/pVju5bMeGHqC89KMr
+         vBxKyXog1mcLjrr2Wd/krDJlKMtVNNlNXLXpLngZ5Ys0qoafu+UYtZQTSX31/qoYSZsx
+         ioKg==
+X-Gm-Message-State: APjAAAW0sRNznw525r7TkdW4mZMicRFzvWSZf4kKxqdldAlrVCJo/zRe
+        VAPk80LsSTpH4WvG+2+5sR8=
+X-Google-Smtp-Source: APXvYqwKLTOEqmF07kbxWKw/jeRR659gFxXIBuV+9xCSArtaGiaB8k3HB0lu4Cq2asUQVU6/c6Ibvw==
+X-Received: by 2002:a17:902:4501:: with SMTP id m1mr109309896pld.111.1564388618785;
+        Mon, 29 Jul 2019 01:23:38 -0700 (PDT)
+Received: from oslab.tsinghua.edu.cn ([2402:f000:4:72:808::3ca])
+        by smtp.gmail.com with ESMTPSA id c70sm5905731pfb.36.2019.07.29.01.23.36
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 29 Jul 2019 01:23:38 -0700 (PDT)
+From:   Jia-Ju Bai <baijiaju1990@gmail.com>
+To:     johannes@sipsolutions.net, kvalo@codeaurora.org,
+        davem@davemloft.net
+Cc:     linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH] mac80211_hwsim: Fix possible null-pointer dereferences in hwsim_dump_radio_nl()
+Date:   Mon, 29 Jul 2019 16:23:32 +0800
+Message-Id: <20190729082332.28895-1-baijiaju1990@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 27/07/19 12:46 PM, Masami Hiramatsu wrote:
-> On Fri, 26 Jul 2019 16:38:06 -0300
-> Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
-> 
->> Em Wed, Jul 24, 2019 at 11:45:12AM -0700, Numfor Mbiziwo-Tiapo escreveu:
->>> The ubsan (undefined behavior sanitizer) version of perf throws an
->>> error on the 'x86 instruction decoder - new instructions' function
->>> of perf test.
->>>
->>> To reproduce this run:
->>> make -C tools/perf USE_CLANG=1 EXTRA_CFLAGS="-fsanitize=undefined"
->>>
->>> then run: tools/perf/perf test 62 -v
->>>
->>> The error occurs in the __get_next macro (line 34) where an int is
->>> read from a potentially unaligned address. Using memcpy instead of
->>> assignment from an unaligned pointer.
->>
->> Since this came from the kernel, don't we have to fix it there as well?
->> Masami, Adrian?
-> 
-> I guess we don't need it, since x86 can access "unaligned address" and
-> x86 insn decoder in kernel runs only on x86. I'm not sure about perf's
-> that part. Maybe if we run it on other arch as cross-arch application,
-> it may cause unaligned pointer issue.
+In hwsim_dump_radio_nl(), when genlmsg_put() on line 3617 fails, hdr is 
+assigned to NULL. Then hdr is used on lines 3622 and 3623:
+    genl_dump_check_consistent(cb, hdr);
+    genlmsg_end(skb, hdr);
 
-Yes, theoretically Intel PT decoding can be done on any arch.
+Thus, possible null-pointer dereferences may occur.
 
-But the memcpy is probably sub-optimal for x86, so the patch as it stands
-does not seem suitable.  I notice the kernel has get_unaligned() and
-put_unaligned().
+To fix these bugs, hdr is used here when it is not NULL.
 
-Obviously it would be better for a patch to be accepted to
-arch/x86/lib/insn.c also.
+This bug is found by a static analysis tool STCheck written by us.
 
-> 
-> Thank you,
-> 
->>
->> [acme@quaco perf]$ find . -name insn.c
->> ./arch/x86/lib/insn.c
->> ./arch/arm/kernel/insn.c
->> ./arch/arm64/kernel/insn.c
->> ./tools/objtool/arch/x86/lib/insn.c
->> ./tools/perf/util/intel-pt-decoder/insn.c
->> [acme@quaco perf]$ diff -u ./tools/perf/util/intel-pt-decoder/insn.c ./arch/x86/lib/insn.c
->> --- ./tools/perf/util/intel-pt-decoder/insn.c	2019-07-06 16:59:05.734265998 -0300
->> +++ ./arch/x86/lib/insn.c	2019-07-06 16:59:01.369202998 -0300
->> @@ -10,8 +10,8 @@
->>  #else
->>  #include <string.h>
->>  #endif
->> -#include "inat.h"
->> -#include "insn.h"
->> +#include <asm/inat.h>
->> +#include <asm/insn.h>
->>
->>  /* Verify next sizeof(t) bytes can be on the same instruction */
->>  #define validate_next(t, insn, n)	\
->> [acme@quaco perf]$
->>
->>
->> - Arnaldo
->>  
->>> Signed-off-by: Numfor Mbiziwo-Tiapo <nums@google.com>
->>> ---
->>>  tools/perf/util/intel-pt-decoder/insn.c | 3 ++-
->>>  1 file changed, 2 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/tools/perf/util/intel-pt-decoder/insn.c b/tools/perf/util/intel-pt-decoder/insn.c
->>> index ca983e2bea8b..de1944c60aa9 100644
->>> --- a/tools/perf/util/intel-pt-decoder/insn.c
->>> +++ b/tools/perf/util/intel-pt-decoder/insn.c
->>> @@ -31,7 +31,8 @@
->>>  	((insn)->next_byte + sizeof(t) + n <= (insn)->end_kaddr)
->>>  
->>>  #define __get_next(t, insn)	\
->>> -	({ t r = *(t*)insn->next_byte; insn->next_byte += sizeof(t); r; })
->>> +	({ t r; memcpy(&r, insn->next_byte, sizeof(t)); \
->>> +		insn->next_byte += sizeof(t); r; })
->>>  
->>>  #define __peek_nbyte_next(t, insn, n)	\
->>>  	({ t r = *(t*)((insn)->next_byte + n); r; })
->>> -- 
->>> 2.22.0.657.g960e92d24f-goog
->>
->> -- 
->>
->> - Arnaldo
-> 
-> 
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+---
+ drivers/net/wireless/mac80211_hwsim.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/net/wireless/mac80211_hwsim.c b/drivers/net/wireless/mac80211_hwsim.c
+index 519b4ee88c5c..61a8b6429e09 100644
+--- a/drivers/net/wireless/mac80211_hwsim.c
++++ b/drivers/net/wireless/mac80211_hwsim.c
+@@ -3617,10 +3617,11 @@ static int hwsim_dump_radio_nl(struct sk_buff *skb,
+ 		hdr = genlmsg_put(skb, NETLINK_CB(cb->skb).portid,
+ 				  cb->nlh->nlmsg_seq, &hwsim_genl_family,
+ 				  NLM_F_MULTI, HWSIM_CMD_GET_RADIO);
+-		if (!hdr)
++		if (hdr) {
++			genl_dump_check_consistent(cb, hdr);
++			genlmsg_end(skb, hdr);
++		} else
+ 			res = -EMSGSIZE;
+-		genl_dump_check_consistent(cb, hdr);
+-		genlmsg_end(skb, hdr);
+ 	}
+ 
+ done:
+-- 
+2.17.0
 
