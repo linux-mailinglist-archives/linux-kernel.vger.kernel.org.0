@@ -2,143 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A72778A24
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 13:08:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CE2078A29
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 13:08:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387575AbfG2LIK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 07:08:10 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:15122 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387457AbfG2LIK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 07:08:10 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 45xxkC44QKz9v9MV;
-        Mon, 29 Jul 2019 13:08:03 +0200 (CEST)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=arONxYLf; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id ESTVg6lnoUGW; Mon, 29 Jul 2019 13:08:03 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 45xxkC2ztgz9v9Lx;
-        Mon, 29 Jul 2019 13:08:03 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1564398483; bh=5INwHw7XbuC/K2OjMZ4KYRax0cv2G+pbjXkMo1syWiI=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=arONxYLfYazH1Zuv1sjYhl+98rYh7/IMm8wcB9t915KfBP0mg7p23qtwKyOzwnotp
-         W40nOf8zFdXdk+whAYptqqCcrHrHC6a8ulMz3YYeOFBKwQhFMNHEzDbTqPDV1UtWXJ
-         Wm699DyCi1utuj1uMB5IRkKVDDV3wBaTlHP6sh5E=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 449968B7CB;
-        Mon, 29 Jul 2019 13:08:08 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id vS0yC_BC0m1Z; Mon, 29 Jul 2019 13:08:08 +0200 (CEST)
-Received: from [172.25.230.101] (po15451.idsi0.si.c-s.fr [172.25.230.101])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 13A6E8B7B3;
-        Mon, 29 Jul 2019 13:08:08 +0200 (CEST)
-Subject: Re: [RFC PATCH 05/10] powerpc/fsl_booke/32: introduce
- reloc_kernel_entry() helper
-To:     Jason Yan <yanaijie@huawei.com>, mpe@ellerman.id.au,
-        linuxppc-dev@lists.ozlabs.org, diana.craciun@nxp.com,
-        benh@kernel.crashing.org, paulus@samba.org, npiggin@gmail.com,
-        keescook@chromium.org, kernel-hardening@lists.openwall.com
-Cc:     linux-kernel@vger.kernel.org, wangkefeng.wang@huawei.com,
-        yebin10@huawei.com, thunder.leizhen@huawei.com,
-        jingxiangfeng@huawei.com, fanchengyang@huawei.com
-References: <20190717080621.40424-1-yanaijie@huawei.com>
- <20190717080621.40424-6-yanaijie@huawei.com>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <e4ccd015-a9c4-b0a6-e3ca-d37a04e29ec6@c-s.fr>
-Date:   Mon, 29 Jul 2019 13:08:08 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S2387595AbfG2LIa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 07:08:30 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:45854 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387457AbfG2LI3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 07:08:29 -0400
+Received: by mail-io1-f67.google.com with SMTP id g20so118963114ioc.12
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 04:08:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=U3DaRRgpLj/uGSL399j7IMa9G4GhvVqiLRKGA1q5ZiY=;
+        b=lvsRVHESmsKtrfUmE3oYHPSZngETasXxWpHs6GDX0x78UQShr4gRHYHndcarQk2ujX
+         SAikAhnYCVWq/TqAHBHiUqRsi+69JhVuxkB5naa+IwscaqwfslK9/OuLB4X6heBovhe/
+         vEocnR4/WyW4hVtn1eljixutmTUYHLC86HdphjyHfCnMKJQ+eB85R/vcg4bq+rylaXSc
+         yo4LGTFn3ZioKDWSo0o+MFVJUzydGWM2RcmKmp+eUnN2WM5ilWRA0nceGHDzf6S9AZ+X
+         iiY78Wg3EpTnld9tl1qBMx6Baj8j7f4mXsIX2I8fvFoLnp1bcR1gddWtUogvRA9I7BRD
+         gaeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=U3DaRRgpLj/uGSL399j7IMa9G4GhvVqiLRKGA1q5ZiY=;
+        b=GmJtPaJYcpwGnne1MIR5BIqF2puhH69x6fqm2T2QTjw8rJAoyV0d2MVqn7pcNwkI6S
+         Shoz2dm/84tyL7L665S4SEeJ57V9yuXThASwaa4EEBDV9oRvmRQjvEttEcDdL8usugCT
+         JVXkUCVBWuRvrn++37QeYpsGR9i0Wph5anVULKdEdDsd2MdlS7IL/eYWboOmX2Ety83T
+         F+Fom42CcoX6+vnNkavPA2NjRZ6493osqbZw3858Qqh+qonu+Td7L4Hq3wmYTPjJCF2m
+         ZhtODUItvG1GWh6k6kaEozKSBGzv4+Hp5ERTBRpxWoBNswlZPh67299tziOlocW1F+nD
+         KX+w==
+X-Gm-Message-State: APjAAAWOAKqSYH2nOgunpcbVLG/U3r6/ghd7f39aB17GY/iApPBJg9EA
+        Ls6aVqiBKHJp9mYKXgKxe3/g1YjQj191Ce2/y9eAfA==
+X-Google-Smtp-Source: APXvYqwqnsYVXt7mxm9UQA6RoyUlfFLVXYfEgvB3jdmtllmT0MlaUIIYyoPAIwh3WyiiMvtVhTqLKcqQNhqQPU+/19Q=
+X-Received: by 2002:a5e:c241:: with SMTP id w1mr94529516iop.58.1564398508067;
+ Mon, 29 Jul 2019 04:08:28 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190717080621.40424-6-yanaijie@huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+References: <CACT4Y+Y3nN=nLEkHXLFcX7vxp_vs1JrD=8auJ3cX9we6TQHO+w@mail.gmail.com>
+In-Reply-To: <CACT4Y+Y3nN=nLEkHXLFcX7vxp_vs1JrD=8auJ3cX9we6TQHO+w@mail.gmail.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Mon, 29 Jul 2019 13:08:16 +0200
+Message-ID: <CACT4Y+YXQBF1QQwEPEkR3b3-RoeZw_We5B-o_71xxc9HMSyTdw@mail.gmail.com>
+Subject: Re: syzbot bisection analysis
+To:     syzkaller <syzkaller@googlegroups.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Eric Biggers <ebiggers@google.com>,
+        Eric Dumazet <edumazet@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Mar 27, 2019 at 6:20 PM Dmitry Vyukov <dvyukov@google.com> wrote:
+>
+> Hello,
+>
+> As most of you probably already noticed, syzbot started bisecting
+> cause commits for crashes about 2 weeks ago and sending emails like
+> this:
+> https://groups.google.com/d/msg/syzkaller-bugs/2XhfN2Kfbqs/0U3YnKsGBQAJ
+> The bisection results are also available on the dashboard, e.g.:
+> https://syzkaller.appspot.com/bug?id=02bde0600a225e8efa31bdce2e7f1b822542fef1
+>
+> Bisection was probably the most popular feature request for syzbot.
+> Cause commits allow to add the right people to CC and also should help
+> to pin-point the harder bugs. If you are interested in details of the
+> bisection process, some are described here:
+> https://github.com/google/syzkaller/blob/master/docs/syzbot.md#bisection
+> The next step step will be fix commit bisection to help identify and
+> close bugs that are already fixed but syzbot is not aware yet.
+>
+> As expected automatic bisection of kernel bugs is not completely
+> trivial and we've got lots of incorrect results. To better understand
+> what happens, why and how we are doing, I've analyzed the 118
+> bisections that we have so far for the following metrics:
+>  - if the bisection was correct or not
+>  - the crash has multiple manifestations (on the same commit or on
+> different commits)
+>  - if the fact that bug hard to reproduce contributed to incorrect bisection
+>  - if unrelated bugs contributed to incorrect bisection
+>  - if skipped commits contributed to incorrect bisection
+>  - if disabled configs contributed to incorrect bisection
+> There are also some auto-extracted metrics like the start release of
+> bisection, start/end crash, etc. I won't claim that the analysis is
+> 100% correct, which would require spending a day on each case. But it
+> should be 95% correct or so. The results are here (there is a second
+> tab with raw data):
+> https://docs.google.com/spreadsheets/d/1WdBAN54-csaZpD3LgmTcIMR7NDFuQoOZZqPZ-CUqQgA
+>
+> Total success rate is slightly above 50%. But there is strong
+> correlation with how far back in history we have to go: for recently
+> introduced bugs the rate is 70+%. And for bugs introduced since v5.0
+> it's 95%. So hopefully this is a good forecast for future.
+>
+> The 2 major contributors to incorrect results look quite fundamental:
+>  - unrelated bugs contributed to 66% of incorrect results
+>  - hard to reproduce bugs contributed to 46% of incorrect results
+>
+> I've started collecting feedback/ideas re improving bisection quality here:
+> https://github.com/google/syzkaller/issues/1051
+> But so far no magic bullet come up. So please continue treating the
+> results with understanding. The incorrect results were usually easy to
+> identify: commit to a completely unrelated subsystem, or even
+> non-current arch. There is always a detailed bisection log attached as
+> well.
+>
+> If you are still here, there were some curious cases too, e.g.:
+> A bug bisected to a comment-only commit:
+> https://groups.google.com/d/msg/syzkaller-bugs/1BSkmb_fawo/vz7GhBd0CQAJ
+> A bug bisected to a release tag:
+> https://groups.google.com/d/msg/syzkaller-bugs/38HP_pUXJ3s/ehD37HSxDAAJ
+> And a fault-injection-provoked bug bisected to addition of the fault
+> injection facility by me (which is, well, kinda expected):
+> https://groups.google.com/d/msg/syzkaller-bugs/GYiA5CKTPXw/MA4mO01wDAAJ
+>
+> Thanks
 
+A mini analysis of memory leaks bisection:
+https://docs.google.com/spreadsheets/d/1WdBAN54-csaZpD3LgmTcIMR7NDFuQoOZZqPZ-CUqQgA/edit#gid=1421280815
 
-Le 17/07/2019 à 10:06, Jason Yan a écrit :
-> Add a new helper reloc_kernel_entry() to jump back to the start of the
-> new kernel. After we put the new kernel in a randomized place we can use
-> this new helper to enter the kernel and begin to relocate again.
-> 
-> Signed-off-by: Jason Yan <yanaijie@huawei.com>
-> Cc: Diana Craciun <diana.craciun@nxp.com>
-> Cc: Michael Ellerman <mpe@ellerman.id.au>
-> Cc: Christophe Leroy <christophe.leroy@c-s.fr>
-> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-> Cc: Paul Mackerras <paulus@samba.org>
-> Cc: Nicholas Piggin <npiggin@gmail.com>
-> Cc: Kees Cook <keescook@chromium.org>
-> ---
->   arch/powerpc/kernel/head_fsl_booke.S | 16 ++++++++++++++++
->   arch/powerpc/mm/mmu_decl.h           |  1 +
->   2 files changed, 17 insertions(+)
-> 
-> diff --git a/arch/powerpc/kernel/head_fsl_booke.S b/arch/powerpc/kernel/head_fsl_booke.S
-> index a57d44638031..ce40f96dae20 100644
-> --- a/arch/powerpc/kernel/head_fsl_booke.S
-> +++ b/arch/powerpc/kernel/head_fsl_booke.S
-> @@ -1144,6 +1144,22 @@ _GLOBAL(create_tlb_entry)
->   	sync
->   	blr
->   
-> +/*
-> + * Return to the start of the relocated kernel and run again
-> + * r3 - virtual address of fdt
-> + * r4 - entry of the kernel
-> + */
-> +_GLOBAL(reloc_kernel_entry)
-> +	mfmsr	r7
-> +	li	r8,(MSR_IS | MSR_DS)
-> +	andc	r7,r7,r8
+Out of 12 leak bisections that happened so far only 2 are semi-correct:
+1. The bug is too old, so syzbot just proved that it happens back to
+the horizon (v4.1):
+https://syzkaller.appspot.com/bug?id=ecc7f04cd94b5c062c000865d43bfb682d718b8e
+2. The bug requires both leak detection and fault injection, was
+bisected to the commit that allows them to work together:
+https://syzkaller.appspot.com/bug?id=58c436c13ed984480edba66a224daff9c184de12
+Both results are not too useful.
 
-Instead of the li/andc, what about the following:
+The remaining 10 were all diverged due to other unrelated memory leaks
+and other non-leak bugs. It seems the main 2 reasons for this:
+1. Lots of leaks are old (kernel is under-tested with KMEMLEAK).
+2. Lots of unrelated bugs.
+It's unclear how much KMEMLEAK potential for false positives is in
+play. For example, lots of bisections are diverged by "memory leak in
+batadv_tvlv_handler_register", but this is a true bug reported at:
+https://syzkaller.appspot.com/bug?id=0654529ad3cc1d67a6d9812d8b75489c03dfb983
+However, some are diverged by e.g. "memory leak in __neigh_create" and
+"memory leak in copy_process" and these were not reported as separate
+leaks, so either false positives or true leaks fixed in previous
+releases.
 
-rlwinm r7, r7, 0, ~(MSR_IS | MSR_DS)
-
-> +
-> +	mtspr	SPRN_SRR0,r4
-> +	mtspr	SPRN_SRR1,r7
-> +	isync
-> +	sync
-> +	rfi
-
-Are the isync/sync really necessary ? AFAIK, rfi is context synchronising.
-
-> +
->   /*
->    * Create a tlb entry with the same effective and physical address as
->    * the tlb entry used by the current running code. But set the TS to 1.
-> diff --git a/arch/powerpc/mm/mmu_decl.h b/arch/powerpc/mm/mmu_decl.h
-> index d7737cf97cee..dae8e9177574 100644
-> --- a/arch/powerpc/mm/mmu_decl.h
-> +++ b/arch/powerpc/mm/mmu_decl.h
-> @@ -143,6 +143,7 @@ extern void adjust_total_lowmem(void);
->   extern int switch_to_as1(void);
->   extern void restore_to_as0(int esel, int offset, void *dt_ptr, int bootcpu);
->   extern void create_tlb_entry(phys_addr_t phys, unsigned long virt, int entry);
-> +extern void reloc_kernel_entry(void *fdt, int addr);
-
-No new 'extern' please, see 
-https://openpower.xyz/job/snowpatch/job/snowpatch-linux-checkpatch/8125//artifact/linux/checkpatch.log
-
-
->   #endif
->   extern void loadcam_entry(unsigned int index);
->   extern void loadcam_multi(int first_idx, int num, int tmp_idx);
-> 
-
-Christophe
+I am going to turn off leak bisection for now (easiest way to raise
+average bisection precision).
+Maybe when we get overall bug levels down, and in particular number of
+memory leaks, then newly-introduced leaks will be at least as
+bisectable as other bug types. But this will probably require at least
+several years of active work.
