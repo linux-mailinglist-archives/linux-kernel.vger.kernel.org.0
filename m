@@ -2,51 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B60EF79C01
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 00:03:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ABDFC79C18
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 00:04:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729083AbfG2V6W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 17:58:22 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:51173 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389250AbfG2V6S (ORCPT
+        id S1729559AbfG2WBs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 18:01:48 -0400
+Received: from mail-wm1-f52.google.com ([209.85.128.52]:40243 "EHLO
+        mail-wm1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389255AbfG2V6S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 29 Jul 2019 17:58:18 -0400
-Received: by mail-wm1-f67.google.com with SMTP id v15so55210896wml.0
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 14:58:16 -0700 (PDT)
+Received: by mail-wm1-f52.google.com with SMTP id v19so54829144wmj.5
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 14:58:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=arista.com; s=googlenew;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=CL7BuFSrbJFNxj7ShYd110TtYKaJGS9/+ZXIwtFyKB0=;
-        b=n7mF5N4Y31jDw1naKhkxwokqodl0+81LKojt1OmSg1cQlk+r4WTap4L3dSwiu9kJwq
-         VHc51PQ2aGcV0zv0c+0cZLgM09rW1kGxW7fHKRO5lxTS4W6Cof3x8OjNthPxdDMHPfC2
-         oc1n7O1w58MOt9Hb3qEVSsmG0Zs+PNX6x5ZT80FFOh91I1kFpZqB4Pu31G+76wLIQbNT
-         erlC500m6/V5lcuX+gOuvaqR8If2IodE4mruUOrlBIo7PsV6cag2SxN7/RqPf4vkU547
-         Ufq/qcevG5uuGQ9YPENLjLcp57HT+WaervgK7fF5xy18fs6k3BbEjS63dac0NaKgJ0fe
-         eeQA==
+        bh=s8TNpPfRzkd/STVPqA/OmSveOcsf2nPj4laDcq0UFS8=;
+        b=J/yMUgi7iMEAQ2WpRqDSNy6MFsL7kyNsDQu8Yi4RlvU6lloGIOeUeFvcMpb5kPY2N0
+         Gxkcp/BjRuLchidbhOtgSwup/V35CZHd7VHsru3aHwngyl+hRdK6FjhtBK9At4mvD7ar
+         KMYMBtfNKHePWUWFEdzL0JAYRq0hLB3z5luoUHvQXJV6CISw24ahW4oW3qlGkV12wYBl
+         IT7urvkxHJjWRScu6Mcg3fMKVJmsOYKLqV1IKGMzxlNi2FWaw2KY8thOvrRg/8lTiXUg
+         Ef67SrP0z3GKttqi6QNH6tAB5ek+uo9Rnlex07Nl3oGJl7gvOrtC3wwMFZwPUKdwtJ2j
+         qXbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=CL7BuFSrbJFNxj7ShYd110TtYKaJGS9/+ZXIwtFyKB0=;
-        b=TAzWW5zapk6yXKN109Jsl3+TWLvy+JKubD5IYphndqZq1hr7ZZGn9nXW/etZG0xdg3
-         UaXm3hWlRL9gKGw9oevpyGNGhw60VBu3EDiZG9B0zN0EhkJthQdT85DPRuUy9PS3e3YM
-         3vpg1B0YlADR159+KlJLusqSQ5RkzwpAn6f6zMGLuUpz45TeXSablK1/3tSLRDRAPquU
-         YsbPac1CTWCSJHUIYqr4TsQ4usmriVJnO1GQMjNluL8gYpoTCuiBQyKbpWGlgNtxl0l1
-         L1go+4TqmqWHym40Kxw7JFx2a3oSj3UxrbdQiwcfWtR5mlH+yMURSNKneoHPrK/rQ0/6
-         /ytA==
-X-Gm-Message-State: APjAAAVWJWbxn5HXpJOXMeBZzSK7VQhgM6Mc47QMpVtpUxBmOBXSesWZ
-        q26gFdoiAwRSJzD085bIecZFjxpIl4azgn4itlTvPWmT3VQXm9z8oX85+dIAK/wzOrCDSsD5n2h
-        BqUGnSph5KLSoFRsyLo7KCi45sbasTocodDtzCrcrEbIANx5Ensex3BWDVSxmPdVkw2xCr2M0W7
-        NekloIsWaNjrPvPTD4bNTxcSojICag8TpHniM7sVY=
-X-Google-Smtp-Source: APXvYqx5iz2o6SvSGcoO1F7NoeIhRAN/6eGgdUUVZlDoXesZdLXrHe3iOasMyCZyS4bqyPaoSe02JQ==
-X-Received: by 2002:a1c:4041:: with SMTP id n62mr41295154wma.100.1564437495430;
-        Mon, 29 Jul 2019 14:58:15 -0700 (PDT)
+        bh=s8TNpPfRzkd/STVPqA/OmSveOcsf2nPj4laDcq0UFS8=;
+        b=XsZ1gi0JhWk88uugZpynCJlOgY/JyG41iqeOELnICiYXTLhdNR+toEoW510ReluP0u
+         Ul6wtKPZVK3f4p3cqLdFsu0HciqBqZEWdwaJbPeJKwAXH9ZkkDCOv5ZGae9q9o/9VopF
+         b+rxbHP5xCWnnQLvrdv5tFS+UYyUuLrPHPLwSBOUEKaVEq5AvFqlE3LK8NEN6Z8LYaqr
+         7zYLkj9l001pgXzDdFq+nB/BPnGuEYH1lVE2aBBcpVJ5SlXFAZPzr/tztqV+lRXBzYQy
+         /rF61UpDEx9zjvAC75nOyHiX6iQWfV7Ir5j2P6VgIyqK/xTBS4m9Y3gAQnpckNbSN9QZ
+         CWuw==
+X-Gm-Message-State: APjAAAU50M7UhWGdAttOo1S2/3xzGj95v+ERVi7HF7FXp7pbOZaOI1vl
+        6yNvG5NvWBPQGapfMZvV5hugBfp5MetGzzd1TGykPXX5modcNnowlPpnVS3sWzP9kVt/ZPwUxD4
+        lzHRKSCA4wDEcZ6775NL1SHLk7UuTIv0SiaDjLO3KqYlqx/vO+I2HNgX4SbieMmKwLX+hZOqrPM
+        Au/SzJ1LT1PSW4QR6npPpTjOkoI5uDN565KsTb7pE=
+X-Google-Smtp-Source: APXvYqz4176aOTeCNi73iY0yQuzJl+7nAo4SUM4laukIpgBNIU5mgcUz6o/ihZnr144Lr2TFEiP/bQ==
+X-Received: by 2002:a7b:c8d4:: with SMTP id f20mr104786959wml.90.1564437496783;
+        Mon, 29 Jul 2019 14:58:16 -0700 (PDT)
 Received: from Mindolluin.ire.aristanetworks.com ([217.173.96.166])
-        by smtp.gmail.com with ESMTPSA id x20sm49230728wmc.1.2019.07.29.14.58.14
+        by smtp.gmail.com with ESMTPSA id x20sm49230728wmc.1.2019.07.29.14.58.15
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 29 Jul 2019 14:58:14 -0700 (PDT)
+        Mon, 29 Jul 2019 14:58:16 -0700 (PDT)
 From:   Dmitry Safonov <dima@arista.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
@@ -68,9 +68,9 @@ Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
         Vincenzo Frascino <vincenzo.frascino@arm.com>,
         containers@lists.linux-foundation.org, criu@openvz.org,
         linux-api@vger.kernel.org, x86@kernel.org
-Subject: [PATCHv5 11/37] kernel: Add do_timens_ktime_to_host() helper
-Date:   Mon, 29 Jul 2019 22:56:53 +0100
-Message-Id: <20190729215758.28405-12-dima@arista.com>
+Subject: [PATCHv5 12/37] timerfd: Make timerfd_settime() time namespace aware
+Date:   Mon, 29 Jul 2019 22:56:54 +0100
+Message-Id: <20190729215758.28405-13-dima@arista.com>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190729215758.28405-1-dima@arista.com>
 References: <20190729215758.28405-1-dima@arista.com>
@@ -87,106 +87,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Andrei Vagin <avagin@gmail.com>
 
-The helper subtracts namespace's clock offset from the given time
-and checks that the result is in [0, KTIME_MAX].
+timerfd_settime() accepts an absolute value of the experation time if
+TFD_TIMER_ABSTIME is specified. This value is in task's time namespace
+and has to be converted to the host's time namespace.
 
 Signed-off-by: Andrei Vagin <avagin@gmail.com>
 Co-developed-by: Dmitry Safonov <dima@arista.com>
 Signed-off-by: Dmitry Safonov <dima@arista.com>
 ---
- include/linux/time_namespace.h | 17 ++++++++++++++
- kernel/time_namespace.c        | 43 ++++++++++++++++++++++++++++++++++
- 2 files changed, 60 insertions(+)
+ fs/timerfd.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/include/linux/time_namespace.h b/include/linux/time_namespace.h
-index 334c1a1c6607..9ba9664ff0ab 100644
---- a/include/linux/time_namespace.h
-+++ b/include/linux/time_namespace.h
-@@ -56,6 +56,18 @@ static inline void timens_add_boottime(struct timespec64 *ts)
- 		*ts = timespec64_add(*ts, ns_offsets->boottime);
- }
+diff --git a/fs/timerfd.c b/fs/timerfd.c
+index 6a6fc8aa1de7..9b0c2f65e7e8 100644
+--- a/fs/timerfd.c
++++ b/fs/timerfd.c
+@@ -26,6 +26,7 @@
+ #include <linux/syscalls.h>
+ #include <linux/compat.h>
+ #include <linux/rcupdate.h>
++#include <linux/time_namespace.h>
  
-+ktime_t do_timens_ktime_to_host(clockid_t clockid, ktime_t tim,
-+				struct timens_offsets *offsets);
-+static inline ktime_t timens_ktime_to_host(clockid_t clockid, ktime_t tim)
-+{
-+	struct timens_offsets *offsets = current->nsproxy->time_ns->offsets;
-+
-+	if (!offsets)
-+		return tim;
-+
-+	return do_timens_ktime_to_host(clockid, tim, offsets);
-+}
-+
- #else
- static inline struct time_namespace *get_time_ns(struct time_namespace *ns)
- {
-@@ -82,6 +94,11 @@ static inline int timens_on_fork(struct nsproxy *nsproxy, struct task_struct *ts
+ struct timerfd_ctx {
+ 	union {
+@@ -196,6 +197,8 @@ static int timerfd_setup(struct timerfd_ctx *ctx, int flags,
+ 	}
  
- static inline void timens_add_monotonic(struct timespec64 *ts) {}
- static inline void timens_add_boottime(struct timespec64 *ts) {}
-+
-+static inline ktime_t timens_ktime_to_host(clockid_t clockid, ktime_t tim)
-+{
-+	return tim;
-+}
- #endif
- 
- #endif /* _LINUX_TIMENS_H */
-diff --git a/kernel/time_namespace.c b/kernel/time_namespace.c
-index f849c59f1108..9807c5c90cb2 100644
---- a/kernel/time_namespace.c
-+++ b/kernel/time_namespace.c
-@@ -16,6 +16,49 @@
- #include <linux/err.h>
- #include <linux/mm.h>
- 
-+ktime_t do_timens_ktime_to_host(clockid_t clockid, ktime_t tim,
-+				struct timens_offsets *ns_offsets)
-+{
-+	ktime_t offset;
-+
-+	switch (clockid) {
-+	case CLOCK_MONOTONIC:
-+		offset = timespec64_to_ktime(ns_offsets->monotonic);
-+		break;
-+	case CLOCK_BOOTTIME:
-+	case CLOCK_BOOTTIME_ALARM:
-+		offset = timespec64_to_ktime(ns_offsets->boottime);
-+		break;
-+	default:
-+		return tim;
-+	}
-+
-+	/*
-+	 * Check that @tim value is in [offset, KTIME_MAX + offset]
-+	 * and subtract offset.
-+	 */
-+	if (tim < offset) {
-+		/*
-+		 * User can specify @tim *absolute* value - if it's lesser than
-+		 * the time namespace's offset - it's already expired.
-+		 */
-+		tim = 0;
-+	} else if (KTIME_MAX - tim < -offset) {
-+		/*
-+		 * User-supplied @tim may be close or even equal KTIME_MAX
-+		 * and time namespace offset can be negative.
-+		 * Let's check (tim - offset) for an overflow.
-+		 * Return KTIME_MAX in such case, as the time value is
-+		 * thousands *years* in future anyway.
-+		 */
-+		tim = KTIME_MAX;
-+	} else {
-+		tim = ktime_sub(tim, offset);
-+	}
-+
-+	return tim;
-+}
-+
- static struct ucounts *inc_time_namespaces(struct user_namespace *ns)
- {
- 	return inc_ucount(ns, current_euid(), UCOUNT_TIME_NAMESPACES);
+ 	if (texp != 0) {
++		if (flags & TFD_TIMER_ABSTIME)
++			texp = timens_ktime_to_host(clockid, texp);
+ 		if (isalarm(ctx)) {
+ 			if (flags & TFD_TIMER_ABSTIME)
+ 				alarm_start(&ctx->t.alarm, texp);
 -- 
 2.22.0
 
