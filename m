@@ -2,83 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3983378F92
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 17:40:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 15CC478F99
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 17:41:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388086AbfG2Pkt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 11:40:49 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:39660 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725209AbfG2Pks (ORCPT
+        id S2388155AbfG2Pl1 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 29 Jul 2019 11:41:27 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:39521 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387467AbfG2Pl0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 11:40:48 -0400
-Received: by mail-lf1-f65.google.com with SMTP id v85so42360690lfa.6;
-        Mon, 29 Jul 2019 08:40:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ygvdaoF3+MRGVxrKdrfWYm+4OCrrKROdzHxrvWgJex4=;
-        b=m8XxYqkfG1lFlK0q9OvLEvaxXZdlYLP2pqDe3rEKCzGuY5WY6tUh7BdeOCFzUrsZGL
-         hP6pkfRusqmRGKtRrmcAlLrzp/f3CvqADN6p/InmKpPflgowHxWAD5+PR8H3ZS6m3dt7
-         agZoRJte8xXzCerRKAGx8qHYSRI8vJJDJDNssaahxMZYp+c28xKEjeVOC/hBJs/EsZEf
-         kIMX8+9MCLPYXfYx75LGeb2aC/DKUBVWaqlgyzZSTgbGRcC/Bfj5/CIZoonINMw1Zr0s
-         K3Q3Ojd1w1IAlqxTvxnI31xez3rsG6/pasKCkvGealgN7waki/8m5rItbOsiCt++T58d
-         rKNA==
+        Mon, 29 Jul 2019 11:41:26 -0400
+Received: by mail-wr1-f65.google.com with SMTP id x4so9211160wrt.6;
+        Mon, 29 Jul 2019 08:41:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ygvdaoF3+MRGVxrKdrfWYm+4OCrrKROdzHxrvWgJex4=;
-        b=Oe5P5ae+vKVV9TVRCGGlpAVibhbnTPESmpcLzEET+Zd8ZqcaagOBJscmbUVveLptmw
-         +cwYB8GvKBR9GJhlMQKDuTBgSx2bHtwizK7IJWb87nDUG8xTCHH2DsVPkBm2XHkCc3Iy
-         nH/x1Be3HCAlH5tSNZxNWEZZxLVegwwpF86hLdEvpwcaeYo0XxUDRbnHx90PsxVx2iQa
-         vt2BJ86cSI3RZMCtHHs+Tby7KZzpuwoEdLinQNdKCo8VZoDkTSvKQFFADF46RQea8Tj3
-         CDpbnDxwfGHu6/tU5xl51MifMMFsND8wAEcPB1et/PhpvABoniec9D/Io72atbxRbetM
-         6U/Q==
-X-Gm-Message-State: APjAAAXTLIQXjkMhlSv+Mt834nBsg1WS55OfHCoBJvdt9xG2Mh5ck/7C
-        ePKOXL2kiHVKH0iwJ6ZOA04P7VLppAd/+JG9yDY=
-X-Google-Smtp-Source: APXvYqytcOJq5av6hjEfe681aqs4buj3oTGGah+PBtkNvnzioLMiUV0ZMVFGTtZSBbHSH8ik1gCq894GR8C2lvaebnw=
-X-Received: by 2002:a19:6e41:: with SMTP id q1mr42182072lfk.20.1564414846457;
- Mon, 29 Jul 2019 08:40:46 -0700 (PDT)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=xxQXIw3jvl/S1k9A2H6zSUmpyqWCq7mlSHIXxho7oz4=;
+        b=cLBiBB40wi15LCSyOkN9cF8lZffAAzx9m/5n26T8h9MOFkL4LF04Gi42I3MrHHyxch
+         But74+nQtwtiBBax4hTo5MA+noIEm7lI9Ni4G6/DJDzQzpFeNs2+TPUCLrfwV5mCK6sW
+         S5nAO5j1AlTuNdZ+tMZ/0Mxq0EV6dE8w+eTXLxc0R3+Dpr0VEDOp/VRC3+bpc0ym3R7U
+         ZZMnJP+XxTuXbFj5fH/Hv6DctA8frBlDY0MXbJGC880P7bhVJNQXK9jKs7sEbRmd+m7d
+         Gbx5z0dZliydleMO0jLCdNfS5FaEKf1p863Gte38nwg46AOoPzkpj0sSkA4WmaJS2XxG
+         ZjYQ==
+X-Gm-Message-State: APjAAAXP01NX2WaoecJBnp8efumObjIJDnmv/hA+DdhfHoNueHyLtHR9
+        SDt2cKE4VqkSydXQe2mT4WMJRmiIa6BL3l7ZXIM=
+X-Google-Smtp-Source: APXvYqzBEqFSoJ1b9bepaHXMbEjq8XzMAZPHCa1KyWJ5zIgkVHJt4qD8XzWJwRTNIsQa/rLsiut1qhGf43oicKWImwQ=
+X-Received: by 2002:adf:f08f:: with SMTP id n15mr37064306wro.213.1564414883303;
+ Mon, 29 Jul 2019 08:41:23 -0700 (PDT)
 MIME-Version: 1.0
-References: <1564384997-16775-1-git-send-email-abel.vesa@nxp.com>
- <CAOMZO5C0WbaDzFcjeXeS1PivWUme=bzPur6Hj_xNz1oVzvpW2Q@mail.gmail.com> <20190729150712.3ah2ayeonhdfrt5n@fsr-ub1664-175>
-In-Reply-To: <20190729150712.3ah2ayeonhdfrt5n@fsr-ub1664-175>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Mon, 29 Jul 2019 12:40:51 -0300
-Message-ID: <CAOMZO5Bn0zeuDsMk7SbJxaqFsHtd8oO1xiN48Sx-RSkeGQ3dhw@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: imx8mq: Mark AHB clock as critical
-To:     Abel Vesa <abel.vesa@nxp.com>
-Cc:     Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Guido Gunther <agx@sigxcpu.org>,
-        Anson Huang <anson.huang@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
+References: <20190725180825.31508-1-max@enpas.org> <CAMuHMdURm-9nazOBTL8uRH8WMt7gi=QUYy0qr9kaxzczCr+ujg@mail.gmail.com>
+ <9cde6e79-52da-e0c0-f452-6afc2e5fa5ee@enpas.org> <CAMuHMdUGsfzQg8xy2OqWfuo09MxwZ5OJz=t5CARJp+A1ZVtqaA@mail.gmail.com>
+ <b7473bd6-650d-f0b6-0d30-99e3b6b942b5@enpas.org> <CAMuHMdXVzX6cm4uTe7OipAuR4viye32yKuHWJBzuLpR_wqyRhQ@mail.gmail.com>
+ <7a6f887f-b674-4db7-a09a-a028219ebce0@enpas.org>
+In-Reply-To: <7a6f887f-b674-4db7-a09a-a028219ebce0@enpas.org>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 29 Jul 2019 17:41:11 +0200
+Message-ID: <CAMuHMdXwWHz9pkOKf4NiPF=GXS-vTU20Hu9QNni9ZWVds2bWGw@mail.gmail.com>
+Subject: Re: [PATCH v3] ata/pata_buddha: Probe via modalias instead of initcall
+To:     Max <max@enpas.org>
+Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+        Michael Schmitz <schmitzmic@gmail.com>,
+        linux-ide@vger.kernel.org,
+        "Linux/m68k" <linux-m68k@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Abel,
+Hi Max,
 
-On Mon, Jul 29, 2019 at 12:07 PM Abel Vesa <abel.vesa@nxp.com> wrote:
-
-> Please have a the explanation here:
+On Mon, Jul 29, 2019 at 5:38 PM Max <max@enpas.org> wrote:
+> On 07/29/2019 05:26 PM, Geert Uytterhoeven wrote:
+> >> We *could* also temporarily split off a pata_buddha_xsurf driver: pata_buddha would be auto-probed by the new framework, and pata_buddha_xsurf would do the old module_init() dance.
+> >> That is, until the MFD conversion happens.
+> >
+> > Or add temporarily a late_initcall() to find all X-Surf boards using
+> > zorro_find_device(), create fake zorro_device_id entries, and pass both
+> > to pata_buddha_probe()?  A big ugly, but that should work.
 >
-> https://lkml.org/lkml/2019/7/28/306
+> Sounds good, and it replaces modile_init() at the same time. I'll implement this.
 
-I read that and it is still not clear for me: which hang exactly are
-you referring to in your comment below the --- line?
+Thanks!
 
-Reading the commit log it is not clear if the patch fixes a real bug
-or if it is just an improvement.
+> >>> Your single Buddha should be sufficient to convert pata_buddha.c from
+> >>> a plain Zorro driver to an MFD cell driver, and test it.
+> >>> I expect the buddha-mfd.c MFD driver from my zorro-mfd branch to
+> >>> work as-is, or with very minor changes.
+> >>>
+> >>> However, to keep X-Surf working, this needs to be synchronized with
+> >>> a Zorro MFD conversion of the zorro8390 driver, too.
+> >>
+> >> Yeah, this second part is where I get caught up. I'd really like to test this with a real X-Surf, or have someone test it, before sending it upstream.
+> >
+> > Of course it should be tested ;-)
+> > Converting zorro8390.c from a zorro driver to an MFD cell driver should
+> > not require that many changes, most bugs should be caught by code review.
+> > I already have a skeleton 8390-cell.c driver in my zorro-mfd branch.
+>
+> Honestly, at this point I'd rather do the hack above and keep the MFD stuff for later. Let's take it step by step. I'd prefer not to touch 8390 for now, unless I can get my hands on an X-Surf. I'd like to help with the MFD stuff as a way to enable the clockport and my SilverSurfer on it, but for the moment I'd rather move that further down the road.
 
-Please make this clear in the commit log.
+OK, fine for me, of course.
+
+> >>> Yes, the clockport could be added as an extra MFD cell.  Later, drivers can
+> >>> be written to bind against the clockport cell.
+> >>
+> >> Yes, but how can we assign specific drivers to specific clockports? As they are non-enumerable (are they?), we can't auto-probe them.
+> >
+> > That's something the user has to configure.
+> > The Buddha MFD driver registers an "a1200-clockport" cell, which is
+> > really a separate platform device.
+> > The user writes the name of the actual driver to use to the device's
+> > driver_override file in sysfs, after which the driver is bound
+> > automatically.  See Documentation/ABI/testing/sysfs-bus-platform,
+>
+> That sounds just like what I was hoping for, thanks.
+
+I'm happy you like it ;-)
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
