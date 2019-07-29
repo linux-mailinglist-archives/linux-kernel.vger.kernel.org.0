@@ -2,117 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7068478FC8
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 17:49:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BE5578FD3
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 17:49:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388268AbfG2PtK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 11:49:10 -0400
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:40509 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387495AbfG2PtK (ORCPT
+        id S2387583AbfG2Ptr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 11:49:47 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:36536 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387461AbfG2Ptr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 11:49:10 -0400
-Received: by mail-vs1-f66.google.com with SMTP id a186so39499069vsd.7
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 08:49:09 -0700 (PDT)
+        Mon, 29 Jul 2019 11:49:47 -0400
+Received: by mail-wr1-f66.google.com with SMTP id n4so62485105wrs.3
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 08:49:45 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=/niwkJuj+kTChFIxAZJ7R3qyc1S8YzIk+KDkO6xs7tI=;
-        b=SJxA4BD402OPY1nJjj4RNi9QQ4HJlKuQsgAlE5qIrFcjm29XwqUoZ724tXEb5yRqXV
-         C6cKjpaCMNY6tph5ZHWMIn3eW9D9EE0avh5SUehbdjDNOHGw4/jA0QlHgccLox3vxIcs
-         peDG4FQJ1y/mbKOuXOMg/9lZ0xWr9NwWHgPFEBzLsr9WfvZ4RbeECdwS1bTMw9txdcEx
-         9weSVsybHHDmsFF7U5E6YjAr9k8312U09z0vkA8o7gta6EjXhA6KZZ8l05F2Cp+gEbEa
-         S0XZkV3gp7UHapU+esjrGEoWGuEreLYTb0vzeRrVg/DIWExYBEh0NJPEN8RO391KTLZF
-         MZCw==
-X-Gm-Message-State: APjAAAVhOJAABpK3CGXGDZpZvDrJ3LfpQujeCxJTI4N0xSG6olqZtPrm
-        o4eCwcZQWHW1td2B6NxHNtzB3Q==
-X-Google-Smtp-Source: APXvYqzLzOdW28+st9J99eGOoagZRY/+6mNu7Jt6yXi0Ig2fmuLKwy4BkNu3szWlUISUaVAULlX13Q==
-X-Received: by 2002:a67:694f:: with SMTP id e76mr14283114vsc.77.1564415349351;
-        Mon, 29 Jul 2019 08:49:09 -0700 (PDT)
-Received: from redhat.com (bzq-79-181-91-42.red.bezeqint.net. [79.181.91.42])
-        by smtp.gmail.com with ESMTPSA id h81sm16021382vka.19.2019.07.29.08.49.05
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 29 Jul 2019 08:49:08 -0700 (PDT)
-Date:   Mon, 29 Jul 2019 11:49:02 -0400
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Stefano Garzarella <sgarzare@redhat.com>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        virtualization@lists.linux-foundation.org,
-        Jason Wang <jasowang@redhat.com>, kvm@vger.kernel.org
-Subject: Re: [PATCH v4 1/5] vsock/virtio: limit the memory used per-socket
-Message-ID: <20190729114302-mutt-send-email-mst@kernel.org>
-References: <20190717113030.163499-1-sgarzare@redhat.com>
- <20190717113030.163499-2-sgarzare@redhat.com>
- <20190729095956-mutt-send-email-mst@kernel.org>
- <20190729153656.zk4q4rob5oi6iq7l@steredhat>
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=r1zF/Xvf5xstuaSmuvOpiw5SBlzxXv+2sIQrb0XvTxI=;
+        b=Y8WlkZYe0pMA5IRA3skWWFgS1MQW84PUyx3WbRJ1wvO9h9pSF/76PJ8QLsKSjPE5s5
+         ig5wBotqnh3aSnU2+bs4YPTwAFJ8mLrqjHyDi4vAM+NDqrc19GTH8vIv6ykkR4CBZAPZ
+         j0z0LyjlwomHeEc5d+ML21ibbs5rcx/wshr7wwwGwXEchyDkUX0sLO3YwQ2bCj/Y6A4C
+         ui3Dl0KtBD7ZC63udXh+YYibIfB9qGbNzRbjaJhbDUdeAhMRmlPUvYh+BpX/mAdJvwrf
+         Axd1d+qfkr3tjiV5CFXXIqYdcNtH7BVKo8FsPC1uUr/dzkQII98Aronoa3OhHBZYGEBg
+         2WZw==
+X-Gm-Message-State: APjAAAVuO/0NtLu1XZDoJl6aiMpRivmr8dB8Pyf60lXZPThyAAfHeY+y
+        sr5ENZrsj89r6eP2P9+XioUOKA==
+X-Google-Smtp-Source: APXvYqwG1kkdqyheJ5L/2tF9vxiXysI2Qf0EqMWIGET334y6sf3M1167NNNxYUgurF+LYlcv+lW2ng==
+X-Received: by 2002:a5d:428b:: with SMTP id k11mr87739246wrq.174.1564415385095;
+        Mon, 29 Jul 2019 08:49:45 -0700 (PDT)
+Received: from shalem.localdomain (84-106-84-65.cable.dynamic.v4.ziggo.nl. [84.106.84.65])
+        by smtp.gmail.com with ESMTPSA id r14sm54428995wrx.57.2019.07.29.08.49.44
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Mon, 29 Jul 2019 08:49:44 -0700 (PDT)
+Subject: Re: [Regression] 5.3-rc1: hid_llogitech_dj does not work
+From:   Hans de Goede <hdegoede@redhat.com>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     Linux Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Jiri Kosina <jikos@kernel.org>, linux-input@vger.kernel.org
+References: <CAHk-=wjm7FQxdF=RKa8Xe23CLNNpbGDOACewgo8e-hwDJ8TyQg@mail.gmail.com>
+ <2480108.bWkXKoXas6@kreacher>
+ <1dddedba-ca02-1014-36e0-ba4e3631f28b@redhat.com>
+Message-ID: <5036172e-1fa9-d038-4473-b4f257764b78@redhat.com>
+Date:   Mon, 29 Jul 2019 17:49:43 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190729153656.zk4q4rob5oi6iq7l@steredhat>
+In-Reply-To: <1dddedba-ca02-1014-36e0-ba4e3631f28b@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 29, 2019 at 05:36:56PM +0200, Stefano Garzarella wrote:
-> On Mon, Jul 29, 2019 at 10:04:29AM -0400, Michael S. Tsirkin wrote:
-> > On Wed, Jul 17, 2019 at 01:30:26PM +0200, Stefano Garzarella wrote:
-> > > Since virtio-vsock was introduced, the buffers filled by the host
-> > > and pushed to the guest using the vring, are directly queued in
-> > > a per-socket list. These buffers are preallocated by the guest
-> > > with a fixed size (4 KB).
-> > > 
-> > > The maximum amount of memory used by each socket should be
-> > > controlled by the credit mechanism.
-> > > The default credit available per-socket is 256 KB, but if we use
-> > > only 1 byte per packet, the guest can queue up to 262144 of 4 KB
-> > > buffers, using up to 1 GB of memory per-socket. In addition, the
-> > > guest will continue to fill the vring with new 4 KB free buffers
-> > > to avoid starvation of other sockets.
-> > > 
-> > > This patch mitigates this issue copying the payload of small
-> > > packets (< 128 bytes) into the buffer of last packet queued, in
-> > > order to avoid wasting memory.
-> > > 
-> > > Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
-> > > Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
-> > 
-> > This is good enough for net-next, but for net I think we
-> > should figure out how to address the issue completely.
-> > Can we make the accounting precise? What happens to
-> > performance if we do?
-> > 
-> 
-> In order to do more precise accounting maybe we can use the buffer size,
-> instead of payload size when we update the credit available.
-> In this way, the credit available for each socket will reflect the memory
-> actually used.
-> 
-> I should check better, because I'm not sure what happen if the peer sees
-> 1KB of space available, then it sends 1KB of payload (using a 4KB
-> buffer).
-> 
-> The other option is to copy each packet in a new buffer like I did in
-> the v2 [2], but this forces us to make a copy for each packet that does
-> not fill the entire buffer, perhaps too expensive.
-> 
-> [2] https://patchwork.kernel.org/patch/10938741/
-> 
-> 
-> Thanks,
-> Stefano
+Hi Rafael,
 
-Interesting. You are right, and at some level the protocol forces copies.
+On 25-07-19 17:50, Hans de Goede wrote:
+> Hi Rafael,
+> 
+> On 25-07-19 12:07, Rafael J. Wysocki wrote:
+>> Hi Hans,
+>>
+>> This is similar to a problem I reported some time ago:
+>>
+>> https://lore.kernel.org/lkml/2268131.Lc39eCoc3j@kreacher/
+>>
+>> and the device affected by it is the same.
+>>
+>> The symptom is simply that the mouse just doesn't work (no reaction).  If I do
+>> "rmmod hid_llogitech_dj", it says "Killed", but the module does go away and
+>> the mouse starts to work (through the generic code I suppose), but then
+>> the machine hangs on attempts to suspend (nasty).
+>>
+>> Reverting all of the hid_llogitech_dj changes between 5.2 and 5.3-rc1:
+>>
+>> dbcbabf7da92 HID: logitech-dj: fix return value of logi_dj_recv_query_hidpp_devices
+>> 39d21e7e0043 HID: logitech-dj: make const array template static
+>> 423dfbc362b7 HID: logitech-dj: Add usb-id for the 27MHz MX3000 receiver
+>>
+>> helps here, but the first two don't really look like they can make any difference,
+>> so I guess I'm an unlucky owner of a MX3000 that doesn't quite work as expected.
+>>
+>> Any help will be appreciated. :-)
+> 
+> Actually we received another bug report about this and the reporter there
+> has come up with a patch with points to
+> 
+> dbcbabf7da92 HID: logitech-dj: fix return value of logi_dj_recv_query_hidpp_devices
+> 
+> Being the culprit, can you try just reverting that one?
+> 
+> I will take a closer look at this soonish.
 
-We could try to detect that the actual memory is getting close to
-admin limits and force copies on queued packets after the fact.
-Is that practical?
+Thank you for reporting this.
 
-And yes we can extend the credit accounting to include buffer size.
-That's a protocol change but maybe it makes sense.
+After upgrading to 5.3-rc2 I can reproduce this myself and the dbcbabf7da92 commit
+indeed is the culprit. I've prepared a fix for this which I'm about to submit upstream.
 
--- 
-MST
+I've put you in the Cc of the fix.
+
+Regards,
+
+Hans
