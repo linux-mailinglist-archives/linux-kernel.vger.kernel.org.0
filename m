@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E98CD795E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:47:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A89A3795BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 21:46:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390240AbfG2Tqr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 15:46:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36102 "EHLO mail.kernel.org"
+        id S2389943AbfG2TpY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 15:45:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34156 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389666AbfG2Tqo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:46:44 -0400
+        id S2389926AbfG2TpT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:45:19 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2567D205F4;
-        Mon, 29 Jul 2019 19:46:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9BA4D20C01;
+        Mon, 29 Jul 2019 19:45:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564429603;
-        bh=+5NC13wVq7LZOXSnmNaYA6zVq/LnATFKJG7TkWDHLfs=;
+        s=default; t=1564429518;
+        bh=yeTAuFahqmXqEmkHPSWKWadwHKXV7MUiDIPBshyOIVI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ehGv0jiFXNALT3iJPH94a0FearYxxtR7EYTsziI0UpC9oirLJrRPRLqRC9+dkpwsu
-         T2MALu8nMId2nw+P5sQ6axS4skl3rDbX5HPq1wPJyGp3BmYyaHeHlRy0D4p9y0S2OR
-         EpnCysKYZj6iaCjonP+F9KuvTbUjlJPSikvq93LA=
+        b=EYJ6zT48Tp2NfJGlMWpRV0oAX4bhlZI7miJUcPAPL9pNBRps8U5lPU6dA1AaCodyo
+         fnIRnxFRTGoZ9v3WImO3u7/8iYZ31G7ZwxVndI+1wwWly13vJgV6znxLMVRzp87pcw
+         O2RNSXqEdMcJwOUD+KD4v9SkQKVpoWthnfbMvyT8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jeremy Sowden <jeremy@azazel.net>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
+        stable@vger.kernel.org, Hulk Robot <hulkci@huawei.com>,
+        Kefeng Wang <wangkefeng.wang@huawei.com>,
+        Corey Minyard <cminyard@mvista.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 009/215] staging: kpc2000: added missing clean-up to probe_core_uio.
-Date:   Mon, 29 Jul 2019 21:20:05 +0200
-Message-Id: <20190729190741.213814791@linuxfoundation.org>
+Subject: [PATCH 5.2 010/215] ipmi_si: fix unexpected driver unregister warning
+Date:   Mon, 29 Jul 2019 21:20:06 +0200
+Message-Id: <20190729190741.373869238@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190729190739.971253303@linuxfoundation.org>
 References: <20190729190739.971253303@linuxfoundation.org>
@@ -44,56 +45,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit abb611d2c21c0a4fa8eab35dc936c80d9a07acd8 ]
+[ Upstream commit 2f66353963043e1d8dfacfbdf509acc5d3be7698 ]
 
-On error, probe_core_uio just returned an error without freeing
-resources which had previously been allocated.  Added the missing
-clean-up code.
+If ipmi_si_platform_init()->platform_driver_register() fails,
+platform_driver_unregister() called unconditionally will trigger
+following warning,
 
-Updated TODO.
+ipmi_platform: Unable to register driver: -12
+------------[ cut here ]------------
+Unexpected driver unregister!
+WARNING: CPU: 1 PID: 7210 at drivers/base/driver.c:193 driver_unregister+0x60/0x70 drivers/base/driver.c:193
 
-Signed-off-by: Jeremy Sowden <jeremy@azazel.net>
-Reviewed-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fix it by adding platform_registered variable, only unregister platform
+driver when it is already successfully registered.
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+Message-Id: <20190517101245.4341-1-wangkefeng.wang@huawei.com>
+
+Signed-off-by: Corey Minyard <cminyard@mvista.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/staging/kpc2000/TODO                 | 1 -
- drivers/staging/kpc2000/kpc2000/cell_probe.c | 3 +++
- 2 files changed, 3 insertions(+), 1 deletion(-)
+ drivers/char/ipmi/ipmi_si_platform.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/staging/kpc2000/TODO b/drivers/staging/kpc2000/TODO
-index 8c7af29fefae..ed951acc829a 100644
---- a/drivers/staging/kpc2000/TODO
-+++ b/drivers/staging/kpc2000/TODO
-@@ -1,7 +1,6 @@
- - the kpc_spi driver doesn't seem to let multiple transactions (to different instances of the core) happen in parallel...
- - The kpc_i2c driver is a hot mess, it should probably be cleaned up a ton.  It functions against current hardware though.
- - pcard->card_num in kp2000_pcie_probe() is a global variable and needs atomic / locking / something better.
--- probe_core_uio() probably needs error handling
- - the loop in kp2000_probe_cores() that uses probe_core_uio() also probably needs error handling
- - would be nice if the AIO fileops in kpc_dma could be made to work
-     - probably want to add a CONFIG_ option to control compilation of the AIO functions
-diff --git a/drivers/staging/kpc2000/kpc2000/cell_probe.c b/drivers/staging/kpc2000/kpc2000/cell_probe.c
-index e0dba91e7fa8..d6b57f550876 100644
---- a/drivers/staging/kpc2000/kpc2000/cell_probe.c
-+++ b/drivers/staging/kpc2000/kpc2000/cell_probe.c
-@@ -295,6 +295,7 @@ int  probe_core_uio(unsigned int core_num, struct kp2000_device *pcard, char *na
-     kudev->dev = device_create(kpc_uio_class, &pcard->pdev->dev, MKDEV(0,0), kudev, "%s.%d.%d.%d", kudev->uioinfo.name, pcard->card_num, cte.type, kudev->core_num);
-     if (IS_ERR(kudev->dev)) {
-         dev_err(&pcard->pdev->dev, "probe_core_uio device_create failed!\n");
-+        kfree(kudev);
-         return -ENODEV;
-     }
-     dev_set_drvdata(kudev->dev, kudev);
-@@ -302,6 +303,8 @@ int  probe_core_uio(unsigned int core_num, struct kp2000_device *pcard, char *na
-     rv = uio_register_device(kudev->dev, &kudev->uioinfo);
-     if (rv){
-         dev_err(&pcard->pdev->dev, "probe_core_uio failed uio_register_device: %d\n", rv);
-+        put_device(kudev->dev);
-+        kfree(kudev);
-         return rv;
-     }
-     
+diff --git a/drivers/char/ipmi/ipmi_si_platform.c b/drivers/char/ipmi/ipmi_si_platform.c
+index f2a91c4d8cab..0cd849675d99 100644
+--- a/drivers/char/ipmi/ipmi_si_platform.c
++++ b/drivers/char/ipmi/ipmi_si_platform.c
+@@ -19,6 +19,7 @@
+ #include "ipmi_si.h"
+ #include "ipmi_dmi.h"
+ 
++static bool platform_registered;
+ static bool si_tryplatform = true;
+ #ifdef CONFIG_ACPI
+ static bool          si_tryacpi = true;
+@@ -469,9 +470,12 @@ void ipmi_si_platform_init(void)
+ 	int rv = platform_driver_register(&ipmi_platform_driver);
+ 	if (rv)
+ 		pr_err("Unable to register driver: %d\n", rv);
++	else
++		platform_registered = true;
+ }
+ 
+ void ipmi_si_platform_shutdown(void)
+ {
+-	platform_driver_unregister(&ipmi_platform_driver);
++	if (platform_registered)
++		platform_driver_unregister(&ipmi_platform_driver);
+ }
 -- 
 2.20.1
 
