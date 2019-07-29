@@ -2,181 +2,276 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D2228782F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 03:07:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 48FC078301
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 03:17:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726441AbfG2BHi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 28 Jul 2019 21:07:38 -0400
-Received: from esa2.hgst.iphmx.com ([68.232.143.124]:7313 "EHLO
-        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726238AbfG2BHi (ORCPT
+        id S1726320AbfG2BRe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 28 Jul 2019 21:17:34 -0400
+Received: from mailout1.samsung.com ([203.254.224.24]:58440 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726248AbfG2BRd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 28 Jul 2019 21:07:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1564362490; x=1595898490;
-  h=from:to:cc:subject:date:message-id:references:
-   content-transfer-encoding:mime-version;
-  bh=nvQAwXQESaD8r47OneMmmvI3DSsj/9xG5KCdHJjxPpk=;
-  b=opBp2U+FB6JxeZvIKztidHh1w0asP5Nubjw7YZD9milruvYMRwph3meG
-   OMWzDEnxsFVaA7jWcX6o1JbAnymKakAkuL6MBmlQ0TlZ6F+6msU1Bfgga
-   4c4zEsrWce5oBamkNVx3oS4+jmMM4Yrhdvh6FWkzOLzAzH0Qye44ZJeNz
-   c+PRsoYSZfAa0IWZG4iSITbpBAjqMUK0tthsoPnS8ikvrqKbhwXvOtyMZ
-   EZKDWGADhTuWO6TyaN1784dGynEFSNWa0acqc1aQNzZ2yyYiq589fAm+3
-   cGNeXCvKLM0NMF6DhPBrIRVvCCYaZwv+tILkCT5kDcUg30QMjP4Hk32zQ
-   w==;
-IronPort-SDR: +ywUGU6tV2T7VgyXtrOcVy0uHgBcmK0S69FEzHBjwIXk+rms3t1tx3zeRSpIRS0cueZDu1L7cB
- VIkWM+bdSIZVoje4YQtu85XaYPD10bjrbrbOMj2nV1uW7BX9tLpIa4yU0i5RVxDoCN34dWO4IL
- Q0mH3nQSfbLCoVAPmNHsN4pDtC0sQENugvJwEfIGXTDj7XY4WMJV+k6QAWdYgn1jnmOw5dwtJQ
- ycs/BkY4v5wC0X54WVW17+8cLxjaJE6Giw5lWDfmbnT2vNtahpoO+GBIPda7nqO8lAjiVcSrcf
- fYo=
-X-IronPort-AV: E=Sophos;i="5.64,320,1559491200"; 
-   d="scan'208";a="214511064"
-Received: from mail-co1nam04lp2057.outbound.protection.outlook.com (HELO NAM04-CO1-obe.outbound.protection.outlook.com) ([104.47.45.57])
-  by ob1.hgst.iphmx.com with ESMTP; 29 Jul 2019 09:08:08 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=evU35/QEHVdfssbFlfLNdwaRxbSVR6HKuQd4PhX5NjKyRkMAa6FihEI51qTiZ4UrLlz9NV70vrPO7xP/tbdtmv8uTfU14A+/bCv/8JVYCf8wlxYvZ4n4m3UxeVkGLlp55HuiW2kkVGOwmALv/PE6/3n/5Xs9DxoZniPDVvqFNNJBZ/X3jF3fpwGedGC6DPlxrBpIsYncwcifH+NkjniiBNw1nIXo5LrEXVeCkEVimE9Jjnj+5HOiYDTPat+/CqxHibOBF05tKJgosy6VAZY5fLM255JLm5B82WHMpXcb4MFlUge2Q3QZTHL2Jw1nT789J/M8kon+lzHtJw7BGsC3oA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CJft120ztxYMIFn2/z/AhgEYiv693fuVpXmTbYBJw/g=;
- b=anGGOYGmckT7EHU1/HGhvkW1laxxdhvGDRog3rE42T9zBto3/ixh3HsA5rZe2sXemXUuQzyRy3AOGGns4wJTcfPZoYZW5Xc9Sv09yBoTWAajsr8v9b6+ShXHlGeOgvOTMxn9TKzg/FQhlPSQHRomACHo3TVOLFDjskA7nE6UTkwJwy9ylSUF/p9Ryc5BKQgQnvDew0Ydq0ZGCZBjw1tDghdiVSqZFTanyzlsorsC6nK0PGjZrCJtFwdG7PJUww9HOenEhik/wSfrIL8UxB3E5hwMGXevDCsdPPPgXMmjAGESubsgicE+lX54BdVIps1J4R8AUWNae3yVuJRCgf/wPw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
- smtp.mailfrom=wdc.com;dmarc=pass action=none header.from=wdc.com;dkim=pass
- header.d=wdc.com;arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CJft120ztxYMIFn2/z/AhgEYiv693fuVpXmTbYBJw/g=;
- b=BiaXnYJc2vj5F7qqGnKp/HVnzzGdNiadenL/LePuQxenkalQ23U8K24EQPpDpMd95bosVk7oKVymqbj60U/RJ+8YBQNKqdOHFCHAWEELyjI8ahj8CvBKD/paI8UXC5bqcnbFWC+8H8KDxY7VXGyAVQoKQPf+FjppQlU9hxcbfrs=
-Received: from BYAPR04MB5816.namprd04.prod.outlook.com (20.179.58.207) by
- BYAPR04MB4214.namprd04.prod.outlook.com (20.176.250.151) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2094.11; Mon, 29 Jul 2019 01:07:34 +0000
-Received: from BYAPR04MB5816.namprd04.prod.outlook.com
- ([fe80::65a9:db0a:646d:eb1e]) by BYAPR04MB5816.namprd04.prod.outlook.com
- ([fe80::65a9:db0a:646d:eb1e%6]) with mapi id 15.20.2094.017; Mon, 29 Jul 2019
- 01:07:34 +0000
-From:   Damien Le Moal <Damien.LeMoal@wdc.com>
-To:     Dave Chinner <david@fromorbit.com>
-CC:     "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Christoph Hellwig <hch@infradead.org>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Naohiro Aota <Naohiro.Aota@wdc.com>,
-        Masato Suzuki <masato.suzuki@wdc.com>
-Subject: Re: [PATCH] ext4: Fix deadlock on page reclaim
-Thread-Topic: [PATCH] ext4: Fix deadlock on page reclaim
-Thread-Index: AQHVQswib+fLuRINzEOhyZKScmS/IQ==
-Date:   Mon, 29 Jul 2019 01:07:34 +0000
-Message-ID: <BYAPR04MB5816C422BCCC0ACBC82E731EE7DD0@BYAPR04MB5816.namprd04.prod.outlook.com>
-References: <20190725093358.30679-1-damien.lemoal@wdc.com>
- <20190725115442.GA15733@infradead.org>
- <20190726224423.GE7777@dread.disaster.area> <20190726225508.GA13729@mit.edu>
- <BYAPR04MB58162929012135E47C68923AE7C30@BYAPR04MB5816.namprd04.prod.outlook.com>
- <20190728234110.GH7777@dread.disaster.area>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Damien.LeMoal@wdc.com; 
-x-originating-ip: [199.255.47.11]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 72146712-dc0c-41c1-2265-08d713c123b8
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:BYAPR04MB4214;
-x-ms-traffictypediagnostic: BYAPR04MB4214:
-x-microsoft-antispam-prvs: <BYAPR04MB42147164AD32EDBB774FD9AEE7DD0@BYAPR04MB4214.namprd04.prod.outlook.com>
-wdcipoutbound: EOP-TRUE
-x-ms-oob-tlc-oobclassifiers: OLM:10000;
-x-forefront-prvs: 01136D2D90
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(346002)(136003)(39860400002)(396003)(366004)(376002)(189003)(199004)(7696005)(186003)(26005)(66066001)(8676002)(86362001)(256004)(229853002)(6246003)(14444005)(14454004)(478600001)(52536014)(71190400001)(74316002)(25786009)(6436002)(71200400001)(4326008)(316002)(305945005)(7736002)(55016002)(9686003)(3846002)(486006)(6116002)(8936002)(6916009)(66556008)(2906002)(66446008)(446003)(64756008)(76176011)(99286004)(5660300002)(76116006)(68736007)(54906003)(102836004)(66476007)(66946007)(53546011)(6506007)(53936002)(91956017)(33656002)(476003)(81156014)(81166006);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR04MB4214;H:BYAPR04MB5816.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: yEpfwoc22uuPXiDTkXa29gFpfe4OwsVPFRfPbLwwr7CvpGyPrO9oDcGvHk4UVe7i9mSoLtgy2Dsl7tEejUCoBMcZ5+sBMOV8xPlebdacPOwbaBiZDYfXrROIeg+AvNhK5ioDrhRbjiKV4s3DAwDNV0nve5j6jd/lfzctyb+iNxrT8osoESpnvF9pnc08Uq2kM7EBsU6ANVG/z2eRnsei3FJp0wre3TMvP0JBlP7DvGwHGOwUPGrD8Wf4MxOplfNcCh8dx/UniRsojCiep/n75qpRP0csBVUrTfOf/tuyYrwaNh70GXdasrir9OAblMsZQlwfoDO+68PH0zVnF5nptIZadY503WzpS+BlF9C0lT/FOuAtKwgonNUFOSGko7xx9jaL1iqmThJYxlPnudMHVboadUzsH6IKG1S7LULjqOQ=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Sun, 28 Jul 2019 21:17:33 -0400
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20190729011729epoutp012788881420f2be2810150439c35f850a~1u_efYJml0420004200epoutp01Y
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 01:17:29 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20190729011729epoutp012788881420f2be2810150439c35f850a~1u_efYJml0420004200epoutp01Y
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1564363049;
+        bh=S6WvFuHyC3NX9s6k4IjzrHq6hRq/ZQFcaSzn6Sw1BmA=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=NSti5Mub5ui1d98vSVw4ffDwBRw+AQx/tqrjpIAcZjo+xQtayFTDxecgfakGfQQ1b
+         A2LOztQfIhR7usqT9IKXNmN8Bb3pfZpW0kaaJZfnG0ncjZpsdAN9xiunZrRO5XYA5k
+         8ehCzR7DMLc+I/B4i47WLhhqsC2qIky5igSDdo/U=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+        20190729011728epcas1p32a387721ae32336480c6ab141ef236a1~1u_d7Wn3a2966729667epcas1p3q;
+        Mon, 29 Jul 2019 01:17:28 +0000 (GMT)
+Received: from epsmges1p1.samsung.com (unknown [182.195.40.158]) by
+        epsnrtp1.localdomain (Postfix) with ESMTP id 45xhch635NzMqYls; Mon, 29 Jul
+        2019 01:17:24 +0000 (GMT)
+Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
+        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+        2D.7E.04088.F194E3D5; Mon, 29 Jul 2019 10:17:19 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20190729011718epcas1p27e2688e814efde7913e27a4050c3ace3~1u_VAXdu72470324703epcas1p2R;
+        Mon, 29 Jul 2019 01:17:18 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20190729011718epsmtrp1de5659750d6cffc81b1eb1afb6647a7e~1u_U-jPy-2021620216epsmtrp1R;
+        Mon, 29 Jul 2019 01:17:18 +0000 (GMT)
+X-AuditID: b6c32a35-85dff70000000ff8-69-5d3e491fb4b4
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        DE.90.03706.E194E3D5; Mon, 29 Jul 2019 10:17:18 +0900 (KST)
+Received: from [10.113.221.102] (unknown [10.113.221.102]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20190729011718epsmtip2eebd1c41819dae9d269918a295727d26~1u_Uwk3X61549815498epsmtip2b;
+        Mon, 29 Jul 2019 01:17:18 +0000 (GMT)
+Subject: Re: [RFC PATCH 08/11] arm: dts: exynos: Add parents and
+ #interconnect-cells to Exynos4412
+To:     Marek Szyprowski <m.szyprowski@samsung.com>, cwchoi00@gmail.com,
+        =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon@partner.samsung.com>
+Cc:     devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>, inki.dae@samsung.com,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        georgi.djakov@linaro.org
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+Message-ID: <64416ab4-855e-2bb6-199c-64086663a29f@samsung.com>
+Date:   Mon, 29 Jul 2019 10:20:44 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.8.0
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 72146712-dc0c-41c1-2265-08d713c123b8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Jul 2019 01:07:34.2791
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Damien.LeMoal@wdc.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR04MB4214
+In-Reply-To: <cc4c48c3-06a5-c58f-20de-0aa18ae8667e@samsung.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrOJsWRmVeSWpSXmKPExsWy7bCmga68p12swdGD0haHjm1lt3h2VNti
+        /pFzrBZXvr5ns5i+dxObxaT7E1gszp/fwG6x6fE1VovLu+awWXzuPcJoMeP8PiaLtUfuslvc
+        blzBZjFj8ks2Bz6PnbPusntsWtXJ5nHn2h42j/vdx5k8Ni+p9zj4bg+TR9+WVYwenzfJBXBE
+        ZdtkpCampBYppOYl56dk5qXbKnkHxzvHm5oZGOoaWlqYKynkJeam2iq5+AToumXmAJ2tpFCW
+        mFMKFApILC5W0rezKcovLUlVyMgvLrFVSi1IySmwLNArTswtLs1L10vOz7UyNDAwMgUqTMjO
+        WNR0nqXgs2HFjw0HGRsYHyh0MXJwSAiYSGx4btrFyMUhJLCDUaJvx0U2COcTkHPwKzuE841R
+        4s6bI4xdjJxgHT/PPoJK7GWU2HNrHiuE855RYsruaWBVwgIpEi/2nWUESYgItDFK7P3dCjaY
+        WeAqs0TvpEMsIFVsAloS+1/cYAOx+QUUJa7+eAzWzStgJ/FoZycriM0ioCqx8c5HsLioQITE
+        pweHWSFqBCVOznwCNodTwF7i9IoNYHFmAXGJW0/mM0HY8hLNW2czgyyWENjHLjHjxBRmiCdc
+        JDo/HmKDsIUlXh3fwg5hS0m87G+DsqslVp48wgbR3MEosWX/BVaIhLHE/qWTmUDhxyygKbF+
+        lz5EWFFi5++5jBCL+STefe1hhQQxr0RHmxBEibLE5Qd3mSBsSYnF7Z1sExiVZiF5ZxaSF2Yh
+        eWEWwrIFjCyrGMVSC4pz01OLDQsMkeN7EyM4UWuZ7mCccs7nEKMAB6MSD++La7axQqyJZcWV
+        uYcYJTiYlUR4tyhZxwrxpiRWVqUW5ccXleakFh9iNAWG9kRmKdHkfGAWySuJNzQ1MjY2tjAx
+        NDM1NFQS5134wyJWSCA9sSQ1OzW1ILUIpo+Jg1OqgVFUTvrSp8pJTaxTXQ/6GdtluYdZyjtV
+        pf0t9ve89mV7w4oP8e8vbU79ZrHYV3nqQ5OLr+dOSyte+2HePP+50jnFAk8y3+rMf6UqG8cr
+        YnhpW0HRCleZ1hl7rMUmnE542Ph+99IZa8IVoyRfltavt3ZQvnviVXPT9SeHwrN+ZzqtXKfR
+        nlqwr0mJpTgj0VCLuag4EQAlOg4c6gMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrEIsWRmVeSWpSXmKPExsWy7bCSvK6cp12swbxOfYtDx7ayWzw7qm0x
+        /8g5VosrX9+zWUzfu4nNYtL9CSwW589vYLfY9Pgaq8XlXXPYLD73HmG0mHF+H5PF2iN32S1u
+        N65gs5gx+SWbA5/Hzll32T02repk87hzbQ+bx/3u40wem5fUexx8t4fJo2/LKkaPz5vkAjii
+        uGxSUnMyy1KL9O0SuDIWNZ1nKfhsWPFjw0HGBsYHCl2MnBwSAiYSP88+Yu9i5OIQEtjNKPFh
+        +ilWiISkxLSLR5m7GDmAbGGJw4eLIWreMkrsWL6KGaRGWCBF4sW+s4wgCRGBNkaJbeuamEAc
+        ZoHrzBKvL3xkhGg5ySQxY/8NNpAWNgEtif0vIGx+AUWJqz8eM4LYvAJ2Eo92doKtZhFQldh4
+        5yNYXFQgQuLwjllQNYISJ2c+YQGxOQXsJU6v2ABWzyygLvFn3iVmCFtc4taT+UwQtrxE89bZ
+        zBMYhWchaZ+FpGUWkpZZSFoWMLKsYpRMLSjOTc8tNiwwzEst1ytOzC0uzUvXS87P3cQIjlkt
+        zR2Ml5fEH2IU4GBU4uF1uGkbK8SaWFZcmXuIUYKDWUmEd4uSdawQb0piZVVqUX58UWlOavEh
+        RmkOFiVx3qd5xyKFBNITS1KzU1MLUotgskwcnFINjOkGp2/z5fBZLU+flvvygm+kx2xB38cd
+        Xx5tzQ/LthWN6OLiSjP6/X365uUTd856cUn29mnJ29/SuZdXyu+bn7+e8WyM/kv2vzfOnCs4
+        c5ZR65KGuOsloavaflPmnL7jHfrDbMfdVqPzLf9Wyk6fumqf2K2kRZvMpzJMz1Gu0f5f2rTk
+        cdGZl9uUWIozEg21mIuKEwFGwdtI1QIAAA==
+X-CMS-MailID: 20190729011718epcas1p27e2688e814efde7913e27a4050c3ace3
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20190723122027eucas1p24b1d76e3139f7cc52614d7613ff9ba98
+References: <CGME20190723122027eucas1p24b1d76e3139f7cc52614d7613ff9ba98@eucas1p2.samsung.com>
+        <20190723122016.30279-1-a.swigon@partner.samsung.com>
+        <20190723122016.30279-9-a.swigon@partner.samsung.com>
+        <CAGTfZH1_Qk+vNa_AJW_8OA8MJbnZa3yCTLLRs2w23bNTm72gyQ@mail.gmail.com>
+        <cc4c48c3-06a5-c58f-20de-0aa18ae8667e@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/07/29 8:42, Dave Chinner wrote:=0A=
-> On Sat, Jul 27, 2019 at 02:59:59AM +0000, Damien Le Moal wrote:=0A=
->> On 2019/07/27 7:55, Theodore Y. Ts'o wrote:=0A=
->>> On Sat, Jul 27, 2019 at 08:44:23AM +1000, Dave Chinner wrote:=0A=
->>>>>=0A=
->>>>> This looks like something that could hit every file systems, so=0A=
->>>>> shouldn't we fix this in common code?  We could also look into=0A=
->>>>> just using memalloc_nofs_save for the page cache allocation path=0A=
->>>>> instead of the per-mapping gfp_mask.=0A=
->>>>=0A=
->>>> I think it has to be the entire IO path - any allocation from the=0A=
->>>> underlying filesystem could recurse into the top level filesystem=0A=
->>>> and then deadlock if the memory reclaim submits IO or blocks on=0A=
->>>> IO completion from the upper filesystem. That's a bloody big hammer=0A=
->>>> for something that is only necessary when there are stacked=0A=
->>>> filesystems like this....=0A=
->>>=0A=
->>> Yeah.... that's why using memalloc_nofs_save() probably makes the most=
-=0A=
->>> sense, and dm_zoned should use that before it calls into ext4.=0A=
->>=0A=
->> Unfortunately, with this particular setup, that will not solve the probl=
-em.=0A=
->> dm-zoned submit BIOs to its backend drive in response to XFS activity. T=
-he=0A=
->> requests for these BIOs are passed along to the kernel tcmu HBA and end =
-up in=0A=
->> that HBA command ring. The commands themselves are read from the ring an=
-d=0A=
->> executed by the tcmu-runner user process which executes them doing=0A=
->> pread()/pwrite() to the ext4 file. The tcmu-runner process being a diffe=
-rent=0A=
->> context than the dm-zoned worker thread issuing the BIO,=0A=
->> memalloc_nofs_save/restore() calls in dm-zoned will have no effect.=0A=
-> =0A=
-> Right, I'm talking about using memalloc_nofs_save() as a huge hammer=0A=
-> in the pread/pwrite() calling context, not the bio submission=0A=
-> context (which is typically GFP_NOFS above submit_bio() and GFP_NOIO=0A=
-> below).=0A=
-=0A=
-Yes, I understood your point. And I agree that it indeed would be a big ham=
-mer.=0A=
-We should be able to do better than that :)=0A=
-=0A=
->> One simple hack would be an fcntl() or mount option to tell the FS to us=
-e=0A=
->> GFP_NOFS unconditionally, but avoiding the bug would mean making sure th=
-at the=0A=
->> applications or system setup is correct. So not so safe.=0A=
-> =0A=
-> Wasn't there discussion at some point in the past about an interface=0A=
-> for special processes to be able to mark themselves as PF_MEMALLOC=0A=
-> (some kind of prctl, I think) for things like FUSE daemons? That=0A=
-> would prevent direct reclaim recursion for these userspace daemons=0A=
-> that are in the kernel memory reclaim IO path. It's the same=0A=
-> situation there, isn't it? How does fuse deal with this problem?=0A=
-=0A=
-I do not recall such discussion. But indeed FUSE may give some hints. Good =
-idea.=0A=
-Thanks. I will check.=0A=
-=0A=
-=0A=
--- =0A=
-Damien Le Moal=0A=
-Western Digital Research=0A=
+Hi,
+
+On 19. 7. 26. 오후 9:02, Marek Szyprowski wrote:
+> Hi
+> 
+> On 2019-07-25 15:13, Chanwoo Choi wrote:
+>> 2019년 7월 24일 (수) 오전 8:07, Artur Świgoń <a.swigon@partner.samsung.com>님이 작성:
+>>> This patch adds two fields tp the Exynos4412 DTS:
+>>>    - parent: to declare connections between nodes that are not in a
+>>>      parent-child relation in devfreq;
+>>>    - #interconnect-cells: required by the interconnect framework.
+>>>
+>>> Please note that #interconnect-cells is always zero and node IDs are not
+>>> hardcoded anywhere.
+>>>
+>>> Signed-off-by: Artur Świgoń <a.swigon@partner.samsung.com>
+>>> ---
+>>>   arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 1 +
+>>>   arch/arm/boot/dts/exynos4412.dtsi               | 9 +++++++++
+>>>   2 files changed, 10 insertions(+)
+>>>
+>>> diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+>>> index ea55f377d17c..bdd61ae86103 100644
+>>> --- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+>>> +++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+>>> @@ -106,6 +106,7 @@
+>>>   &bus_leftbus {
+>>>          devfreq-events = <&ppmu_leftbus_3>, <&ppmu_rightbus_3>;
+>>>          vdd-supply = <&buck3_reg>;
+>>> +       parent = <&bus_dmc>;
+>> It is wrong. 'bus_leftbus' has not any h/w dependency of 'bus_dmc'
+>> and 'bus_leftbus' is not child of 'bus_dmc'.
+>>
+>> Even it there are some PMQoS requirement between them,
+>> it it not proper to tie both 'bus_leftbus' and 'bus_dmc'.
+> 
+> There is strict dependency between them. DMC bus running at frequency 
+> lower than left (or right) bus really doesn't make much sense, because 
+> it will limit the left bus performance. This dependency should be 
+> modeled somehow.
+
+I misunderstood new 'parent' prototype as the existing 'devfreq' property.
+I didn't understand why use the 'devfreq' property because 'bus_dmc' and
+'bus_leftbus' don't share the power line. Please ignore my previous comment.
+
+Basically, I agree that it is necessary to support the QoS requirement
+between buses or if possible, between bus and gpu.
+
+To support the interconnect between bus_dmc, bus_leftbus and bus_display,
+it used the either 'devfreq' or 'parent' properties to connect them.
+
+In order to catch the meaning of 'devfreq' and 'parent' properties,
+If possible, it would be separate the usage role of between 'devfreq'
+or 'parent' properties. Because it is possible to connect the 'buses'
+with only using 'parent' property if all buses in the path uses
+the devfreq governors except for 'passive' governor.
+
+- If 'devfreq' property is used between buses,
+  it indicates that there are requirement of shading of power line.
+- If 'parent' property is used between buses,
+  it indicates that there are requirement of interconnect connection.
+
+> 
+>>>          status = "okay";
+>>>   };
+>>>
+>>> diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
+>>> index d20db2dfe8e2..a70a671acacd 100644
+>>> --- a/arch/arm/boot/dts/exynos4412.dtsi
+>>> +++ b/arch/arm/boot/dts/exynos4412.dtsi
+>>> @@ -390,6 +390,7 @@
+>>>                          clocks = <&clock CLK_DIV_DMC>;
+>>>                          clock-names = "bus";
+>>>                          operating-points-v2 = <&bus_dmc_opp_table>;
+>>> +                       #interconnect-cells = <0>;
+>>>                          status = "disabled";
+>>>                  };
+>>>
+>>> @@ -398,6 +399,7 @@
+>>>                          clocks = <&clock CLK_DIV_ACP>;
+>>>                          clock-names = "bus";
+>>>                          operating-points-v2 = <&bus_acp_opp_table>;
+>>> +                       #interconnect-cells = <0>;
+>>>                          status = "disabled";
+>>>                  };
+>>>
+>>> @@ -406,6 +408,7 @@
+>>>                          clocks = <&clock CLK_DIV_C2C>;
+>>>                          clock-names = "bus";
+>>>                          operating-points-v2 = <&bus_dmc_opp_table>;
+>>> +                       #interconnect-cells = <0>;
+>>>                          status = "disabled";
+>>>                  };
+>>>
+>>> @@ -459,6 +462,7 @@
+>>>                          clocks = <&clock CLK_DIV_GDL>;
+>>>                          clock-names = "bus";
+>>>                          operating-points-v2 = <&bus_leftbus_opp_table>;
+>>> +                       #interconnect-cells = <0>;
+>>>                          status = "disabled";
+>>>                  };
+>>>
+>>> @@ -467,6 +471,7 @@
+>>>                          clocks = <&clock CLK_DIV_GDR>;
+>>>                          clock-names = "bus";
+>>>                          operating-points-v2 = <&bus_leftbus_opp_table>;
+>>> +                       #interconnect-cells = <0>;
+>>>                          status = "disabled";
+>>>                  };
+>>>
+>>> @@ -475,6 +480,7 @@
+>>>                          clocks = <&clock CLK_ACLK160>;
+>>>                          clock-names = "bus";
+>>>                          operating-points-v2 = <&bus_display_opp_table>;
+>>> +                       #interconnect-cells = <0>;
+>>>                          status = "disabled";
+>>>                  };
+>>>
+>>> @@ -483,6 +489,7 @@
+>>>                          clocks = <&clock CLK_ACLK133>;
+>>>                          clock-names = "bus";
+>>>                          operating-points-v2 = <&bus_fsys_opp_table>;
+>>> +                       #interconnect-cells = <0>;
+>>>                          status = "disabled";
+>>>                  };
+>>>
+>>> @@ -491,6 +498,7 @@
+>>>                          clocks = <&clock CLK_ACLK100>;
+>>>                          clock-names = "bus";
+>>>                          operating-points-v2 = <&bus_peri_opp_table>;
+>>> +                       #interconnect-cells = <0>;
+>>>                          status = "disabled";
+>>>                  };
+>>>
+>>> @@ -499,6 +507,7 @@
+>>>                          clocks = <&clock CLK_SCLK_MFC>;
+>>>                          clock-names = "bus";
+>>>                          operating-points-v2 = <&bus_leftbus_opp_table>;
+>>> +                       #interconnect-cells = <0>;
+>>>                          status = "disabled";
+>>>                  };
+>>>
+>>> --
+>>> 2.17.1
+>>>
+>>
+> Best regards
+> 
+
+
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
