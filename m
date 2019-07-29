@@ -2,126 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE5B579A80
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:58:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 442EF79A88
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 23:01:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729856AbfG2U56 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 16:57:58 -0400
-Received: from mail-pl1-f202.google.com ([209.85.214.202]:45284 "EHLO
-        mail-pl1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727481AbfG2U54 (ORCPT
+        id S1729446AbfG2VBV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 17:01:21 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:33925 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727241AbfG2VBV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 16:57:56 -0400
-Received: by mail-pl1-f202.google.com with SMTP id y9so33865104plp.12
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 13:57:55 -0700 (PDT)
+        Mon, 29 Jul 2019 17:01:21 -0400
+Received: by mail-pg1-f194.google.com with SMTP id n9so22633191pgc.1
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 14:01:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=BApBF9lDyDUHtKy92pMwude8bSQOUkXYIpIspp3IQpA=;
-        b=YBDPtnbLOaDIZ32zQrem6Tg6fvI9ktw3miPRNDTLwvUqYnnUr49flmT4t6947OxrnF
-         67rOusbkgcVLnWu+Zo3pyV+f56esS7HKcDhmtASU3kei4n7q4vAdAco6TYgjDU2lpgKV
-         18b6Or8UWO8gScO5qSzAPKiup/SzEeV5T8ENJXf6x/+oWa2zHJWiBjijX5LB3zx1W4k3
-         jv0TIW1SWLiX+XTErkt3L7VaFh8h12/cNcdHb5zqS5FpaeNsHoZ1GzmO2z3qPAdPRxAD
-         JCI3qE3hALJoWmD64vskGSnYlmk6USzDTpxegiLgRapxdsqRStbgmGJKTBHj70icp04V
-         J/UA==
+        bh=B1pxBQK50aNcVoP8CcZn7ZUgislLWflfkS2yonacWrE=;
+        b=VEo7UP9bT9B9nfOoYCkdJEM5gW2QD7xnTf1vczhfC1oEl45RhkdRC46U4pzWzAX4fZ
+         7EVJd2cUG0Y/UHEUPD1NhDd5mBoYSgJN2UFG5M4G80NIocIsRGYeh+Mc4GE8wY0mLqj+
+         Lkr1Y1cdJ1955081Hsczt/ZGmipz5Y4e76Y1TmPkuhSPQ80VFYjhbqo0ZrrPHCDfxood
+         BY7qvupauFyEKOyDwAxZXzpiBpVAK+flBTmTwq6iFInQ6LlHUajlYhhd7MlTVlslRohN
+         pcrVivF8AhgMYZcy+AnLj/ZoA9NBMV4xuhmGgnc/houMPrSF8NMxX8qAVUuPCQd54eeY
+         fdKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=BApBF9lDyDUHtKy92pMwude8bSQOUkXYIpIspp3IQpA=;
-        b=aRUB9DQmn8VBIOblk/byi3WDC2tf5AhMXnXV/wP0NufsPpbFNVPKTye4tWENiRPjNy
-         YPCQhQ5EfDUzPIkPiy8/rGtkSx7Eag4HnSf9S9fH7yZgY0AfTv/WYqac29g2Vg9uvqin
-         IB6ff50NoNXJtKv7GCYyPLPShGzsfWmvy6BSq+75nh70n0CU8CdTnuUid2x9tt+N7jhX
-         7LWhoCwxs/wuhzovmZi21x/+Gg8LvJbH11OQUn3zwEEPVLbI88kTYZDH3w97RfQquKaH
-         8B+kkFek+uNcwvfwwn4DJ47AQ9U3oF400vB9qi+expgqDz+I97YfH9CBgXYN0IVwU54R
-         Eu+A==
-X-Gm-Message-State: APjAAAXPunMMUbxo2wM4Eb5Ylkq9b7Ug/qt21+Kx3BiV4h3NaDb2EZ/3
-        Y2P20VdvKSItKSsyLG+9bAM3VP7I
-X-Google-Smtp-Source: APXvYqxpU7HIKbLo26FiBb7vEN5Gw6pEK3HyNip6jO2J1tE5yUrNzkbW7tuCl6SZ1UyQNqzhJxbRE0Wp
-X-Received: by 2002:a65:500a:: with SMTP id f10mr75139654pgo.105.1564433874773;
- Mon, 29 Jul 2019 13:57:54 -0700 (PDT)
-Date:   Mon, 29 Jul 2019 13:57:50 -0700
-In-Reply-To: <20190726194044.GC24867@kernel.org>
-Message-Id: <20190729205750.193289-1-nums@google.com>
-Mime-Version: 1.0
-References: <20190726194044.GC24867@kernel.org>
-X-Mailer: git-send-email 2.22.0.709.g102302147b-goog
-Subject: [PATCH v2] Fix annotate.c use of uninitialized value error
-From:   Numfor Mbiziwo-Tiapo <nums@google.com>
-To:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, songliubraving@fb.com, mbd@fb.com
-Cc:     linux-kernel@vger.kernel.org, irogers@google.com,
-        eranian@google.com, Numfor Mbiziwo-Tiapo <nums@google.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=B1pxBQK50aNcVoP8CcZn7ZUgislLWflfkS2yonacWrE=;
+        b=DHM4pzIxpSwbc2zLxAg/qgZhlItvh2pnWa8c+VpEUaV5CtdXhx353xJOX4E8FZG+IO
+         lEUzlwqV04eDQrLqan8dXfBJhMVrPgtxD33SCeb5lWIjZfQXePjW6cg7QRJBK70Ume8P
+         /ZSbQDifnD97jEH7aNogFOtIduqzU2N2leHbN1hUaGbkC4kLpAE3nhWgpgpfoYG3FIjk
+         8R80ZvLETifnkV8r/w2/3N3B7j0o89sL3Ccq24sgpjhWVO6YRlVipLYJ4arQZPqAFje2
+         BiHOsAoMG0RphmLsHCJUma9LgsQh6hE//bXynFNmhVWHRpAOUsMZZ+r7xpD3NON5n7SH
+         knRw==
+X-Gm-Message-State: APjAAAWlX2sXtJlpJu47LZV5oEJl/aKlfAByRRvE4f0OOYQoXEN1Ckri
+        tgERx81gQ3KOCya9ZUgLS4zcQEQsBkEKgC6a3wCNYQ==
+X-Google-Smtp-Source: APXvYqw6mpG+SmS3TWiNIlzXGS9ZhffK0hsjP9aY7A1YJzXMBuhs8W5WALBAkp89RL519hINz64n4mpxrDvJtK8e6Vk=
+X-Received: by 2002:a17:90a:bf02:: with SMTP id c2mr114790294pjs.73.1564434079710;
+ Mon, 29 Jul 2019 14:01:19 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190729190739.971253303@linuxfoundation.org> <20190729190753.998851246@linuxfoundation.org>
+ <20190729205422.GH250418@google.com> <20190729205746.GI250418@google.com>
+In-Reply-To: <20190729205746.GI250418@google.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Mon, 29 Jul 2019 14:01:08 -0700
+Message-ID: <CAKwvOdmwaUN70e8TLDS4ZXvge7j1a--kYPPO0dm9ycPKLRqfvA@mail.gmail.com>
+Subject: Re: [PATCH 5.2 083/215] net/ipv4: fib_trie: Avoid cryptic ternary expressions
+To:     Matthias Kaehlcke <mka@chromium.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "# 3.4.x" <stable@vger.kernel.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>,
+        =?UTF-8?Q?Toralf_F=C3=B6rster?= <toralf.foerster@gmx.de>,
+        Nathan Huckleberry <nhuck@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Our local MSAN (Memory Sanitizer) build of perf throws a warning
-that comes from the "dso__disassemble_filename" function in
-"tools/perf/util/annotate.c" when running perf record.
+On Mon, Jul 29, 2019 at 1:57 PM Matthias Kaehlcke <mka@chromium.org> wrote:
+>
+> On Mon, Jul 29, 2019 at 01:54:22PM -0700, Matthias Kaehlcke wrote:
+> > Hi Greg,
+> >
+> > Toralf just pointed out in another thread that the commit message and
+> > the content of this patch don't match (https://lkml.org/lkml/2019/7/29/1475)
+> >
+> > I did some minor digging, the content of the queued patch is:
+> >
+> > commit 4df607cc6fe8e46b258ff2a53d0a60ca3008ffc7
+> > Author: Nathan Huckleberry <nhuck@google.com>
+> > Date:   Mon Jun 17 10:28:29 2019 -0700
+> >
+> >     kbuild: Remove unnecessary -Wno-unused-value
+> >
+> >
+> > however the commit message is from:
+> >
+> > commit 25cec756891e8733433efea63b2254ddc93aa5cc
+> > Author: Matthias Kaehlcke <mka@chromium.org>
+> > Date:   Tue Jun 18 14:14:40 2019 -0700
+> >
+> >     net/ipv4: fib_trie: Avoid cryptic ternary expressions
+> >
+> >
+> > It seems this hasn't been commited to -stable yet, so we are probably
+> > in time to remove it from the queue before it becomes git history and
+> > have Nathan re-spin the patch(es).
+>
+> s/Nathan/Sasha/
+>
+> For some reason I thought Nathan backported this and wondered that his
+> SOB is missing. The correct SOB is actually there.
 
-The warning stems from the call to readlink, in which "build_id_path"
-was being read into "linkname". Since readlink does not null terminate,
-an uninitialized memory access would later occur when "linkname" is
-passed into the strstr function. This is simply fixed by null-terminating
-"linkname" after the call to readlink.
+I don't think Nathan explicitly tried to backport anything.  This
+looks to me like AUTOSEL maybe took a commit message from a different
+commit, and applied it to this diff.
 
-To reproduce this warning, build perf by running:
-make -C tools/perf CLANG=1 CC=clang EXTRA_CFLAGS="-fsanitize=memory\
- -fsanitize-memory-track-origins"
+ie. I don't think this is a bug in a manual backport, I think AUTOSEL
+did something funny and created a backport with commit message A but
+commit diff B.
 
-(Additionally, llvm might have to be installed and clang might have to
-be specified as the compiler - export CC=/usr/bin/clang)
-
-then running:
-tools/perf/perf record -o - ls / | tools/perf/perf --no-pager annotate\
- -i - --stdio
-
-Please see the cover letter for why false positive warnings may be
-generated.
-
-Signed-off-by: Numfor Mbiziwo-Tiapo <nums@google.com>
----
- tools/perf/util/annotate.c | 15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
-
-diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-index 70de8f6b3aee..e1b075b52dce 100644
---- a/tools/perf/util/annotate.c
-+++ b/tools/perf/util/annotate.c
-@@ -1627,6 +1627,7 @@ static int dso__disassemble_filename(struct dso *dso, char *filename, size_t fil
- 	char *build_id_filename;
- 	char *build_id_path = NULL;
- 	char *pos;
-+	int len;
- 
- 	if (dso->symtab_type == DSO_BINARY_TYPE__KALLSYMS &&
- 	    !dso__is_kcore(dso))
-@@ -1655,10 +1656,16 @@ static int dso__disassemble_filename(struct dso *dso, char *filename, size_t fil
- 	if (pos && strlen(pos) < SBUILD_ID_SIZE - 2)
- 		dirname(build_id_path);
- 
--	if (dso__is_kcore(dso) ||
--	    readlink(build_id_path, linkname, sizeof(linkname)) < 0 ||
--	    strstr(linkname, DSO__NAME_KALLSYMS) ||
--	    access(filename, R_OK)) {
-+	if (dso__is_kcore(dso))
-+		goto fallback;
-+
-+	len = readlink(build_id_path, linkname, sizeof(linkname) - 1);
-+	if (len < 0)
-+		goto fallback;
-+
-+	linkname[len] = '\0';
-+	if (strstr(linkname, DSO__NAME_KALLSYMS) ||
-+		access(filename, R_OK)) {
- fallback:
- 		/*
- 		 * If we don't have build-ids or the build-id file isn't in the
 -- 
-2.22.0.709.g102302147b-goog
-
+Thanks,
+~Nick Desaulniers
