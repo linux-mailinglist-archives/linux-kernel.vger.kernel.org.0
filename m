@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5836079941
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:14:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 44FE579913
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:13:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730535AbfG2UOV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 16:14:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40934 "EHLO mail.kernel.org"
+        id S1730546AbfG2UNA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 16:13:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43930 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728280AbfG2T2P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:28:15 -0400
+        id S1729464AbfG2TbK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:31:10 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DF3F421655;
-        Mon, 29 Jul 2019 19:28:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 63C30217F4;
+        Mon, 29 Jul 2019 19:31:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564428494;
-        bh=2o22tR3EhmUoGO81eu0w4DIxcCBKxG35WXyGeRSq6xM=;
+        s=default; t=1564428669;
+        bh=WlJ4yrxopqTT3+7UsmQK1o/hzQ+WKHc5DJDQr2AXGWs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=X4SQrCaogZ9ulT/8AjByxn4+Tdm0NYr+h6wi8mB95BZPoqx17FNiGkA+Ny3iClXgd
-         UnTZBpovxK+8178tT6+R8QiT67/Vv7r4RspUXRJRnJ27bsOisv/HaNEpdebrlFXvGl
-         dIf6VhSi3DQ7rMnnfGtc7vT19fbxL8Y/kQDtW2rk=
+        b=uYYsFaS6xLwkEqOS7S69EISfh5nodjcLNdpjfNX/WEAiKrTBSkM3mBD4eDLh+sAXR
+         VpFrR6Y/h687kUwzE+HVy6xUOaoU7rGpOXA+swyZczFkjKJJM7Zm9pevfdZn29gmG8
+         Xwu2jIKLNaRBmVg+291zWz4a/fZTAj8EWaC8O2C4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andi Kleen <ak@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 093/293] perf stat: Make metric event lookup more robust
-Date:   Mon, 29 Jul 2019 21:19:44 +0200
-Message-Id: <20190729190831.731409775@linuxfoundation.org>
+Subject: [PATCH 4.14 099/293] gtp: add missing gtp_encap_disable_sock() in gtp_encap_enable()
+Date:   Mon, 29 Jul 2019 21:19:50 +0200
+Message-Id: <20190729190832.220102907@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190729190820.321094988@linuxfoundation.org>
 References: <20190729190820.321094988@linuxfoundation.org>
@@ -46,49 +44,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 145c407c808352acd625be793396fd4f33c794f8 ]
+[ Upstream commit e30155fd23c9c141cbe7d99b786e10a83a328837 ]
 
-After setting up metric groups through the event parser, the metricgroup
-code looks them up again in the event list.
+If an invalid role is sent from user space, gtp_encap_enable() will fail.
+Then, it should call gtp_encap_disable_sock() but current code doesn't.
+It makes memory leak.
 
-Make sure we only look up events that haven't been used by some other
-metric. The data structures currently cannot handle more than one metric
-per event. This avoids problems with multiple events partially
-overlapping.
-
-Signed-off-by: Andi Kleen <ak@linux.intel.com>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Link: http://lkml.kernel.org/r/20190624193711.35241-2-andi@firstfloor.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Fixes: 91ed81f9abc7 ("gtp: support SGSN-side tunnels")
+Signed-off-by: Taehee Yoo <ap420073@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/util/stat-shadow.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/net/gtp.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/util/stat-shadow.c b/tools/perf/util/stat-shadow.c
-index 37363869c9a1..eadc9a2aef16 100644
---- a/tools/perf/util/stat-shadow.c
-+++ b/tools/perf/util/stat-shadow.c
-@@ -271,7 +271,7 @@ static struct perf_evsel *perf_stat__find_event(struct perf_evlist *evsel_list,
- 	struct perf_evsel *c2;
+diff --git a/drivers/net/gtp.c b/drivers/net/gtp.c
+index f38e32a7ec9c..dba3869b61be 100644
+--- a/drivers/net/gtp.c
++++ b/drivers/net/gtp.c
+@@ -845,8 +845,13 @@ static int gtp_encap_enable(struct gtp_dev *gtp, struct nlattr *data[])
  
- 	evlist__for_each_entry (evsel_list, c2) {
--		if (!strcasecmp(c2->name, name))
-+		if (!strcasecmp(c2->name, name) && !c2->collect_stat)
- 			return c2;
+ 	if (data[IFLA_GTP_ROLE]) {
+ 		role = nla_get_u32(data[IFLA_GTP_ROLE]);
+-		if (role > GTP_ROLE_SGSN)
++		if (role > GTP_ROLE_SGSN) {
++			if (sk0)
++				gtp_encap_disable_sock(sk0);
++			if (sk1u)
++				gtp_encap_disable_sock(sk1u);
+ 			return -EINVAL;
++		}
  	}
- 	return NULL;
-@@ -310,7 +310,8 @@ void perf_stat__collect_metric_expr(struct perf_evlist *evsel_list)
- 			if (leader) {
- 				/* Search in group */
- 				for_each_group_member (oc, leader) {
--					if (!strcasecmp(oc->name, metric_names[i])) {
-+					if (!strcasecmp(oc->name, metric_names[i]) &&
-+						!oc->collect_stat) {
- 						found = true;
- 						break;
- 					}
+ 
+ 	gtp->sk0 = sk0;
 -- 
 2.20.1
 
