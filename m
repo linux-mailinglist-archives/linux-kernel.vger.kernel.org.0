@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C5A77799A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:16:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 04B6879999
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:15:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729575AbfG2TZA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 15:25:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37226 "EHLO mail.kernel.org"
+        id S1728204AbfG2TZg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 15:25:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37872 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725818AbfG2TYz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:24:55 -0400
+        id S1728910AbfG2TZe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:25:34 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 799952070B;
-        Mon, 29 Jul 2019 19:24:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 82B1A21655;
+        Mon, 29 Jul 2019 19:25:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564428295;
-        bh=7WNEyGJ2ikqqjSTeU1QkTbXK3/MsiQHU9I9QZ+4RW98=;
+        s=default; t=1564428333;
+        bh=blHjgIZHXCdXeJcyEHyC4xgbYKAKEIj5JANjXEsjWs0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XEMXrB9xkuFaiZNv/nwJBgQLI7jGJnd/iA8ydOPcLMnquWtdYcpZQQ6JRZ4W0t+7t
-         0VRKtWF5YhT5pUILcJWLtQ2OPgN50rGWmtdrn+imIt+nxrPaDg359hC3U31ZmmXZjG
-         Kt+127+Do9U/1jJHeJMLv+BzutJK4ZFK3vCQRN0Q=
+        b=0Trs2QKHPVGQrfLI/XU8rVBW4Ly+s1ba9NnLBRxKWKzapPq1SnbfKreFbOa4v9Y85
+         tXTB6YUVdUgGvD4LKB4MxDhkZhnfAJZX7SJr0rJdrIbFfSw+E03gxgjcYBmJdvtwCd
+         BFcQNnrYwcyuG+BsBIlrE38jWCvBUEQ1Ko7q8Hdg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Imre Deak <imre.deak@intel.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
-        <ville.syrjala@linux.intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 031/293] locking/lockdep: Fix merging of hlocks with non-zero references
-Date:   Mon, 29 Jul 2019 21:18:42 +0200
-Message-Id: <20190729190824.223012577@linuxfoundation.org>
+        stable@vger.kernel.org, Thomas Richter <tmricht@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 042/293] perf test 6: Fix missing kvm module load for s390
+Date:   Mon, 29 Jul 2019 21:18:53 +0200
+Message-Id: <20190729190825.902254287@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190729190820.321094988@linuxfoundation.org>
 References: <20190729190820.321094988@linuxfoundation.org>
@@ -49,100 +47,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit d9349850e188b8b59e5322fda17ff389a1c0cd7d ]
+[ Upstream commit 53fe307dfd309e425b171f6272d64296a54f4dff ]
 
-The sequence
+Command
 
-	static DEFINE_WW_CLASS(test_ww_class);
+   # perf test -Fv 6
 
-	struct ww_acquire_ctx ww_ctx;
-	struct ww_mutex ww_lock_a;
-	struct ww_mutex ww_lock_b;
-	struct ww_mutex ww_lock_c;
-	struct mutex lock_c;
+fails with error
 
-	ww_acquire_init(&ww_ctx, &test_ww_class);
+   running test 100 'kvm-s390:kvm_s390_create_vm' failed to parse
+    event 'kvm-s390:kvm_s390_create_vm', err -1, str 'unknown tracepoint'
+    event syntax error: 'kvm-s390:kvm_s390_create_vm'
+                         \___ unknown tracepoint
 
-	ww_mutex_init(&ww_lock_a, &test_ww_class);
-	ww_mutex_init(&ww_lock_b, &test_ww_class);
-	ww_mutex_init(&ww_lock_c, &test_ww_class);
+when the kvm module is not loaded or not built in.
 
-	mutex_init(&lock_c);
+Fix this by adding a valid function which tests if the module
+is loaded. Loaded modules (or builtin KVM support) have a
+directory named
+  /sys/kernel/debug/tracing/events/kvm-s390
+for this tracepoint.
 
-	ww_mutex_lock(&ww_lock_a, &ww_ctx);
+Check for existence of this directory.
 
-	mutex_lock(&lock_c);
-
-	ww_mutex_lock(&ww_lock_b, &ww_ctx);
-	ww_mutex_lock(&ww_lock_c, &ww_ctx);
-
-	mutex_unlock(&lock_c);	(*)
-
-	ww_mutex_unlock(&ww_lock_c);
-	ww_mutex_unlock(&ww_lock_b);
-	ww_mutex_unlock(&ww_lock_a);
-
-	ww_acquire_fini(&ww_ctx); (**)
-
-will trigger the following error in __lock_release() when calling
-mutex_release() at **:
-
-	DEBUG_LOCKS_WARN_ON(depth <= 0)
-
-The problem is that the hlock merging happening at * updates the
-references for test_ww_class incorrectly to 3 whereas it should've
-updated it to 4 (representing all the instances for ww_ctx and
-ww_lock_[abc]).
-
-Fix this by updating the references during merging correctly taking into
-account that we can have non-zero references (both for the hlock that we
-merge into another hlock or for the hlock we are merging into).
-
-Signed-off-by: Imre Deak <imre.deak@intel.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Will Deacon <will.deacon@arm.com>
-Link: https://lkml.kernel.org/r/20190524201509.9199-2-imre.deak@intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+Reviewed-by: Christian Borntraeger <borntraeger@de.ibm.com>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
+Link: http://lkml.kernel.org/r/20190604053504.43073-1-tmricht@linux.ibm.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/locking/lockdep.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ tools/perf/tests/parse-events.c | 27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
 
-diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index bf694c709b96..565005a3b8f0 100644
---- a/kernel/locking/lockdep.c
-+++ b/kernel/locking/lockdep.c
-@@ -3402,17 +3402,17 @@ static int __lock_acquire(struct lockdep_map *lock, unsigned int subclass,
- 	if (depth && !cross_lock(lock)) {
- 		hlock = curr->held_locks + depth - 1;
- 		if (hlock->class_idx == class_idx && nest_lock) {
--			if (hlock->references) {
--				/*
--				 * Check: unsigned int references:12, overflow.
--				 */
--				if (DEBUG_LOCKS_WARN_ON(hlock->references == (1 << 12)-1))
--					return 0;
-+			if (!references)
-+				references++;
+diff --git a/tools/perf/tests/parse-events.c b/tools/perf/tests/parse-events.c
+index f0679613bd18..424b82a7d078 100644
+--- a/tools/perf/tests/parse-events.c
++++ b/tools/perf/tests/parse-events.c
+@@ -19,6 +19,32 @@
+ #define PERF_TP_SAMPLE_TYPE (PERF_SAMPLE_RAW | PERF_SAMPLE_TIME | \
+ 			     PERF_SAMPLE_CPU | PERF_SAMPLE_PERIOD)
  
-+			if (!hlock->references)
- 				hlock->references++;
--			} else {
--				hlock->references = 2;
--			}
++#if defined(__s390x__)
++/* Return true if kvm module is available and loaded. Test this
++ * and retun success when trace point kvm_s390_create_vm
++ * exists. Otherwise this test always fails.
++ */
++static bool kvm_s390_create_vm_valid(void)
++{
++	char *eventfile;
++	bool rc = false;
 +
-+			hlock->references += references;
++	eventfile = get_events_file("kvm-s390");
 +
-+			/* Overflow */
-+			if (DEBUG_LOCKS_WARN_ON(hlock->references < references))
-+				return 0;
- 
- 			return 1;
- 		}
++	if (eventfile) {
++		DIR *mydir = opendir(eventfile);
++
++		if (mydir) {
++			rc = true;
++			closedir(mydir);
++		}
++		put_events_file(eventfile);
++	}
++
++	return rc;
++}
++#endif
++
+ static int test__checkevent_tracepoint(struct perf_evlist *evlist)
+ {
+ 	struct perf_evsel *evsel = perf_evlist__first(evlist);
+@@ -1600,6 +1626,7 @@ static struct evlist_test test__events[] = {
+ 	{
+ 		.name  = "kvm-s390:kvm_s390_create_vm",
+ 		.check = test__checkevent_tracepoint,
++		.valid = kvm_s390_create_vm_valid,
+ 		.id    = 100,
+ 	},
+ #endif
 -- 
 2.20.1
 
