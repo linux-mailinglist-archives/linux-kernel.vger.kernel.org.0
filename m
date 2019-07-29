@@ -2,93 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D2E179944
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:14:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CFA707995E
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:15:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730150AbfG2UOe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 16:14:34 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:33379 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730044AbfG2UOd (ORCPT
+        id S1730152AbfG2UPD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 16:15:03 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:7438 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727559AbfG2UPB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 16:14:33 -0400
-Received: by mail-pg1-f194.google.com with SMTP id f20so19568087pgj.0
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 13:14:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rajagiritech-edu-in.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=4keJAShqq2q/IDLzL2p7jjpoZMeQRV3FU23AJeNycVA=;
-        b=JtAVStV+qYUB/ArkMRlEhkdK6ZnJDpeNjtT5z/JG5u9vUvaM01WO2YcLvVQHikjip2
-         yXyEXrEWBIC/JnvrJGvWDf/+oxhnP2VEshm127BxsGbwVqqEhJbK9dW/muTeETtXui1W
-         ozqImJGewtf163mLx/QF8Gmm7cpinTpKd/k4gD+j8PMiYx1LBAmbE8SgRYnVpvXWc6pX
-         kvPoL0Xe9jFiH4tRZNk97oF6ubPo/GAMlK1oSjwIhjgQgjXQL4VPyOgFXgaVNbKwnTaV
-         Q81p8VC26BE5lME7nv62flGyWCXwwYRxSONbcyLIwdiQ+Y0QbQkFQqTtSyADMpVZFNLg
-         OODA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4keJAShqq2q/IDLzL2p7jjpoZMeQRV3FU23AJeNycVA=;
-        b=Vi6L7tE3ZephtMkK2gAesHdhUNdeUi9LpjYrH5k8980gLbzv36iBtyfn5e3P0k2aBd
-         fl44pZ3zIZj/4H5XLafm2jpKhYPgEeHoopAPNckF/RjXC88G6fwGimDobbTMV6uVzxs1
-         Y0sFQFz0d7O0N94QP8hZqZ9reqPxgUc2+u77eYpvj6ATFrvpflZKC5w3wyDI370fuGb6
-         bs8K+zzi39A6VXJVvLYs9v6A4LCh7SGI5182a9IfG+nNnzGnvn6+pc2mqRM2sQSKQmQY
-         1GoEMt48LXNCOQG9vpxnVrsYpPfRzCex8+/6B1wbUvW5R4kx/wL7poTejjCqoukEJy94
-         XvEg==
-X-Gm-Message-State: APjAAAVy5MMVpRXW1l8jYfBxMqDI9RHQU1smiXX8ceHMEyhUWGoUQaUe
-        565InoC/ygmINx4zjsBNFIEhg0ry0ynDlyBJT9U=
-X-Google-Smtp-Source: APXvYqy/5Bg/DGakidcOCN+mJroP8j11+A23pRgyE6m5fhgP67ISRmMTRVQId0R3vgBCuylnPSD8+jIMNZ1bBhJswSM=
-X-Received: by 2002:a17:90a:28e4:: with SMTP id f91mr110090286pjd.99.1564431272178;
- Mon, 29 Jul 2019 13:14:32 -0700 (PDT)
+        Mon, 29 Jul 2019 16:15:01 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d3f53bb0000>; Mon, 29 Jul 2019 13:14:51 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 29 Jul 2019 13:14:59 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 29 Jul 2019 13:14:59 -0700
+Received: from [10.110.48.28] (172.20.13.39) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 29 Jul
+ 2019 20:14:59 +0000
+Subject: Re: [PATCH] rdma: siw: remove unused variable
+To:     Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>
+CC:     Anders Roxell <anders.roxell@linaro.org>, <bmt@zurich.ibm.com>,
+        <linux-rdma@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+References: <20190726092540.22467-1-anders.roxell@linaro.org>
+ <08d1942fa99465329348a1bbfd55823b590921c2.camel@redhat.com>
+ <20190729190326.GG17990@ziepe.ca>
+ <b5775622b2e8360e77f90dddfff9aa84af48240e.camel@redhat.com>
+From:   John Hubbard <jhubbard@nvidia.com>
+X-Nvconfidentiality: public
+Message-ID: <f7500581-c3df-a0cb-8229-b832f12fcf05@nvidia.com>
+Date:   Mon, 29 Jul 2019 13:14:59 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <CAG=yYw=S197+2TzdPaiEaz-9MRuVtd+Q_L9W8GOf4jKwyppNjQ@mail.gmail.com>
- <CAKwvOdmg2b2PMzuzNmutacFArBNagjtwG=_VZvKhb4okzSkdiA@mail.gmail.com>
- <201907181423.E808958@keescook> <CAG=yYwmTdW0THoVGJc-Le+TyGMaHKZD-NHTRfXczNes65T8qWA@mail.gmail.com>
- <ec210573-dada-bb6e-b0ee-f54bea62e2ce@kernel.dk>
-In-Reply-To: <ec210573-dada-bb6e-b0ee-f54bea62e2ce@kernel.dk>
-From:   Jeffrin Thalakkottoor <jeffrin@rajagiritech.edu.in>
-Date:   Tue, 30 Jul 2019 01:43:55 +0530
-Message-ID: <CAG=yYw=w-Y2zJG-hfUdC7eZ+c7CykB82gBnHpgZMcpHquWzRXw@mail.gmail.com>
-Subject: Re: BUG: KASAN: global-out-of-bounds in ata_exec_internal_sg+0x50f/0xc70
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        tobin@kernel.org, lkml <linux-kernel@vger.kernel.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Alexander Potapenko <glider@google.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <b5775622b2e8360e77f90dddfff9aa84af48240e.camel@redhat.com>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1564431291; bh=4uhSuXtsJxEPWIma4eracBI9ZaEU9XbH/JW6QFfPO/0=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=LqMSti86GIJ+cd/+7fUdQAPgfcFNX6ObqSp7MXDkUEgTSoUOs51kK8bKZ6Rr2p/mn
+         +ZDODHoQpGGv6VvrIa4rXlneqMSKydDQGoS8IDqgHrqD/HoGAr1u8VQO825dMy84D6
+         mKPswW11L7ZzIMCzvu/MwdTfSaqOOOGHwRmUct+oX0/tHUMvLygv9NJf1IXmgesofw
+         RqFY3WT0BYoqXvs2V0liyJjNPVJ+TrpqmtaYnPvxjitFPBQnlb7iAmkD5NqYAIM0eH
+         klCpNhdVcFo7TF29hPTCqSqV3BTJGeXqOSG2K4afrl5hJrPNWV4wHBx6bA0OKAhfNb
+         NUVd2Pl6b4mOw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-hello Kees,
+On 7/29/19 12:45 PM, Doug Ledford wrote:
+> On Mon, 2019-07-29 at 16:03 -0300, Jason Gunthorpe wrote:
+>> On Mon, Jul 29, 2019 at 02:19:35PM -0400, Doug Ledford wrote:
+>>> On Fri, 2019-07-26 at 11:25 +0200, Anders Roxell wrote:
+>>>> The variable 'p' si no longer used and the compiler rightly
+>>>> complains
+>>>> that it should be removed.
+>>>>
+>>>> ../drivers/infiniband/sw/siw/siw_mem.c: In function
+>>>> =E2=80=98siw_free_plist=E2=80=99:
+>>>> ../drivers/infiniband/sw/siw/siw_mem.c:66:16: warning: unused
+>>>> variable
+>>>>  =E2=80=98p=E2=80=99 [-Wunused-variable]
+>>>>   struct page **p =3D chunk->plist;
+>>>>                 ^
+>>>>
+>>>> Rework to remove unused variable.
+>>>>
+>>>> Fixes: 8288d030447f ("mm/gup: add make_dirty arg to
+>>>> put_user_pages_dirty_lock()")
+>>>
+>>> This commit hash and the commit subject does not exist in Linus'
+>>> tree as
+>>> of today.  What tree is this being merged through, and is it slated
+>>> to
+>>> merge soon or is this a for-next item?
+>>
+>> This is though -mm, maybe John knows what is what
+>=20
+> Hmmm...if it's through -mm, doesn't that mean that we can't rely on the
+> hash because the next time Andrew's tree rebases (using quilt or
+> whatever it is he does) that the hash will change?  It doesn't really
+> matter too much...we can't take the fix anyway, it should probably be
+> squashed into the patch that it's fixing, and if you follow Bernard's
+> advice, you fix the problem by eliminating this function and changing
+> the sole call site to just call put_user_pages_dirty_lock() directly.
+>=20
 
-please mention  me ...
-Reported-by:  Jeffrin Jose T  <jeffrin@rajagiritech.edu.in>
-Tested-by: Jeffrin Jose T  <jeffrin@rajagiritech.edu.in>
+Hi,
 
-On Tue, Jul 30, 2019 at 1:25 AM Jens Axboe <axboe@kernel.dk> wrote:
->
-> On 7/29/19 1:34 PM, Jeffrin Thalakkottoor wrote:
-> > hello Kees Cook,
-> >
-> > i tested your fix and i think it worked like a charm !
-> > kasan message related disappeared during boot time and it does not
-> > show in the output of "sudo dmesg -l err"
-> > anyway thanks a lot !
->
-> Kees, could you send that out as a proper patch?
->
-> --
-> Jens Axboe
->
+Although I don't know which tree has 8288d030447f, I did get a report
+from linux-next last night with that report about the warning, and so
+I believe that the patch flowed from Andrew's -mm tree (which has=20
+speculatively added my patches), to linux-next
 
+(+CC Andrew)
 
--- 
-software engineer
-rajagiri school of engineering and technology
+I also sent out a fix for it, as a reply-to the warning report:
+
+    https://lore.kernel.org/r/20190729074306.10368-1-jhubbard@nvidia.com
+
+Pasting in my response (minus the trivial fix), to save you a click:
+
+"This fixes the warning. Ideally this should be merged with the commit
+that it fixes, if that's still possible.
+
+"Andrew, would you also like a fixed version of this patch posted
+as a new version of the 3-patch set that it came with?"
+
+thanks,
+--=20
+John Hubbard
+NVIDIA
