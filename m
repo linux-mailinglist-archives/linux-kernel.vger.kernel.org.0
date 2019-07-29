@@ -2,94 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CCC179C58
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 00:16:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8742179C66
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 00:22:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729288AbfG2WQt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 18:16:49 -0400
-Received: from eddie.linux-mips.org ([148.251.95.138]:45984 "EHLO
-        cvs.linux-mips.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726869AbfG2WQs (ORCPT
+        id S1729790AbfG2WWT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 18:22:19 -0400
+Received: from alln-iport-5.cisco.com ([173.37.142.92]:63639 "EHLO
+        alln-iport-5.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728170AbfG2WWS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 18:16:48 -0400
-Received: (from localhost user: 'macro', uid#1010) by eddie.linux-mips.org
-        with ESMTP id S23992779AbfG2WQpdRPci (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org> + 1 other);
-        Tue, 30 Jul 2019 00:16:45 +0200
-Date:   Mon, 29 Jul 2019 23:16:45 +0100 (BST)
-From:   "Maciej W. Rozycki" <macro@linux-mips.org>
-To:     Nick Desaulniers <ndesaulniers@google.com>
-cc:     Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Eli Friedman <efriedma@quicinc.com>,
-        Hassan Naveed <hnaveed@wavecomp.com>,
-        Stephen Kitt <steve@sk2.org>,
-        Serge Semin <fancer.lancer@gmail.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>, linux-mips@vger.kernel.org,
-        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com
-Subject: Re: [PATCH] mips: avoid explicit UB in assignment of
- mips_io_port_base
-In-Reply-To: <20190729211014.39333-1-ndesaulniers@google.com>
-Message-ID: <alpine.LFD.2.21.1907292302451.16059@eddie.linux-mips.org>
-References: <20190729211014.39333-1-ndesaulniers@google.com>
-User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Mon, 29 Jul 2019 18:22:18 -0400
+X-Greylist: delayed 425 seconds by postgrey-1.27 at vger.kernel.org; Mon, 29 Jul 2019 18:22:18 EDT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=cisco.com; i=@cisco.com; l=3015; q=dns/txt; s=iport;
+  t=1564438938; x=1565648538;
+  h=from:to:cc:subject:date:message-id;
+  bh=DrO2yKnFyi8F+66k61q6HgiBESDEHiaC3GUOr1F7f5k=;
+  b=E//483uplBqW6fDkI7s5IQcU10++KMwi4ymYcEgyPwggbwfz7nuIzG5D
+   cupF19aqelh3AEMfszT67Sfc1fuWRjroRBAVFlIpus1Ez2NOXtiTU4KBk
+   06UPOAnrntG8XAJnzb9sSAv7m1LcrnFUZbCV7gOheDwB+khlnDW4U28Qo
+   4=;
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A0CfAQCWbz9d/4ENJK1mGwEBAQEDAQE?=
+ =?us-ascii?q?BBwMBAQGBZ4IXgT4BMiqhKJEaCQEBAQwBAS8BAYRAgm4jOBMBAwEBBAEBAgE?=
+ =?us-ascii?q?GbYUqhXhSgT4BEoMigXcUrgAziHqBSBSBIIcJglCCBxeBQD+BEYNQiicEqnc?=
+ =?us-ascii?q?JghyUCAwbmA0BjTuXVgIECwIVgWchgVhwFYMnkQY/AzCOZAEB?=
+X-IronPort-AV: E=Sophos;i="5.64,324,1559520000"; 
+   d="scan'208";a="302124420"
+Received: from alln-core-9.cisco.com ([173.36.13.129])
+  by alln-iport-5.cisco.com with ESMTP/TLS/DHE-RSA-SEED-SHA; 29 Jul 2019 22:15:09 +0000
+Received: from sjc-ads-7132.cisco.com (sjc-ads-7132.cisco.com [10.30.217.207])
+        (authenticated bits=0)
+        by alln-core-9.cisco.com (8.15.2/8.15.2) with ESMTPSA id x6TMF85J006800
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Mon, 29 Jul 2019 22:15:09 GMT
+From:   Taras Kondratiuk <takondra@cisco.com>
+To:     Jon Maloy <jon.maloy@ericsson.com>,
+        Ying Xue <ying.xue@windriver.com>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     netdev@vger.kernel.org, tipc-discussion@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, xe-linux-external@cisco.com,
+        stable@vger.kernel.org
+Subject: [PATCH] tipc: compat: allow tipc commands without arguments
+Date:   Mon, 29 Jul 2019 22:15:07 +0000
+Message-Id: <20190729221507.48893-1-takondra@cisco.com>
+X-Mailer: git-send-email 2.18.1
+X-Auto-Response-Suppress: DR, OOF, AutoReply
+X-Authenticated-User: takondra@cisco.com
+X-Outbound-SMTP-Client: 10.30.217.207, sjc-ads-7132.cisco.com
+X-Outbound-Node: alln-core-9.cisco.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 29 Jul 2019, Nick Desaulniers wrote:
+Commit 2753ca5d9009 ("tipc: fix uninit-value in tipc_nl_compat_doit")
+broke older tipc tools that use compat interface (e.g. tipc-config from
+tipcutils package):
 
-> The code in question is modifying a variable declared const through
-> pointer manipulation.  Such code is explicitly undefined behavior, and
-> is the lone issue preventing malta_defconfig from booting when built
-> with Clang:
-> 
-> If an attempt is made to modify an object defined with a const-qualified
-> type through use of an lvalue with non-const-qualified type, the
-> behavior is undefined.
-> 
-> LLVM is removing such assignments. A simple fix is to not declare
-> variables const that you plan on modifying.  Limiting the scope would be
-> a better method of preventing unwanted writes to such a variable.
-> 
-> Further, the code in question mentions "compiler bugs" without any links
-> to bug reports, so it is difficult to know if the issue is resolved in
-> GCC. The patch was authored in 2006, which would have been GCC 4.0.3 or
-> 4.1.1. The minimal supported version of GCC in the Linux kernel is
-> currently 4.6.
+% tipc-config -p
+operation not supported
 
- It's somewhat older than that.  My investigation points to:
+The commit started to reject TIPC netlink compat messages that do not
+have attributes. It is too restrictive because some of such messages are
+valid (they don't need any arguments):
 
-commit c94e57dcd61d661749d53ee876ab265883b0a103
-Author: Ralf Baechle <ralf@linux-mips.org>
-Date:   Sun Nov 25 09:25:53 2001 +0000
+% grep 'tx none' include/uapi/linux/tipc_config.h
+#define  TIPC_CMD_NOOP              0x0000    /* tx none, rx none */
+#define  TIPC_CMD_GET_MEDIA_NAMES   0x0002    /* tx none, rx media_name(s) */
+#define  TIPC_CMD_GET_BEARER_NAMES  0x0003    /* tx none, rx bearer_name(s) */
+#define  TIPC_CMD_SHOW_PORTS        0x0006    /* tx none, rx ultra_string */
+#define  TIPC_CMD_GET_REMOTE_MNG    0x4003    /* tx none, rx unsigned */
+#define  TIPC_CMD_GET_MAX_PORTS     0x4004    /* tx none, rx unsigned */
+#define  TIPC_CMD_GET_NETID         0x400B    /* tx none, rx unsigned */
+#define  TIPC_CMD_NOT_NET_ADMIN     0xC001    /* tx none, rx none */
 
-    Cleanup of include/asm-mips/io.h.  Now looks neat and harmless.
+This patch relaxes the original fix and rejects messages without
+arguments only if such arguments are expected by a command (reg_type is
+non zero).
 
-However the purpose of the arrangement does not appear to me to be 
-particularly specific to a compiler version.
+Fixes: 2753ca5d9009 ("tipc: fix uninit-value in tipc_nl_compat_doit")
+Cc: stable@vger.kernel.org
+Signed-off-by: Taras Kondratiuk <takondra@cisco.com>
+---
+The patch is based on v5.3-rc2.
 
-> For what its worth, there was UB before the commit in question, it just
-> added a barrier and got lucky IRT codegen. I don't think there's any
-> actual compiler bugs related, just runtime bugs due to UB.
+ net/tipc/netlink_compat.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
- Does your solution preserves the original purpose of the hack though as 
-documented in the comment you propose to be removed?
+diff --git a/net/tipc/netlink_compat.c b/net/tipc/netlink_compat.c
+index d86030ef1232..e135d4e11231 100644
+--- a/net/tipc/netlink_compat.c
++++ b/net/tipc/netlink_compat.c
+@@ -55,6 +55,7 @@ struct tipc_nl_compat_msg {
+ 	int rep_type;
+ 	int rep_size;
+ 	int req_type;
++	int req_size;
+ 	struct net *net;
+ 	struct sk_buff *rep;
+ 	struct tlv_desc *req;
+@@ -257,7 +258,8 @@ static int tipc_nl_compat_dumpit(struct tipc_nl_compat_cmd_dump *cmd,
+ 	int err;
+ 	struct sk_buff *arg;
+ 
+-	if (msg->req_type && !TLV_CHECK_TYPE(msg->req, msg->req_type))
++	if (msg->req_type && (!msg->req_size ||
++			      !TLV_CHECK_TYPE(msg->req, msg->req_type)))
+ 		return -EINVAL;
+ 
+ 	msg->rep = tipc_tlv_alloc(msg->rep_size);
+@@ -354,7 +356,8 @@ static int tipc_nl_compat_doit(struct tipc_nl_compat_cmd_doit *cmd,
+ {
+ 	int err;
+ 
+-	if (msg->req_type && !TLV_CHECK_TYPE(msg->req, msg->req_type))
++	if (msg->req_type && (!msg->req_size ||
++			      !TLV_CHECK_TYPE(msg->req, msg->req_type)))
+ 		return -EINVAL;
+ 
+ 	err = __tipc_nl_compat_doit(cmd, msg);
+@@ -1278,8 +1281,8 @@ static int tipc_nl_compat_recv(struct sk_buff *skb, struct genl_info *info)
+ 		goto send;
+ 	}
+ 
+-	len = nlmsg_attrlen(req_nlh, GENL_HDRLEN + TIPC_GENL_HDRLEN);
+-	if (!len || !TLV_OK(msg.req, len)) {
++	msg.req_size = nlmsg_attrlen(req_nlh, GENL_HDRLEN + TIPC_GENL_HDRLEN);
++	if (msg.req_size && !TLV_OK(msg.req, msg.req_size)) {
+ 		msg.rep = tipc_get_err_tlv(TIPC_CFG_NOT_SUPPORTED);
+ 		err = -EOPNOTSUPP;
+ 		goto send;
+-- 
+2.19.1
 
- Clearly it was defined enough to work for almost 18 years, so it would be 
-good to keep the optimisation functionally by using different means that 
-do not rely on UB.  This variable is assigned at most once throughout the 
-life of the kernel and then early on, so considering it r/w with all the 
-consequences for all accesses does not appear to me to be a good use of 
-it.
-
- Maybe a piece of inline asm to hide the initialisation or suchlike then?
-
-  Maciej
