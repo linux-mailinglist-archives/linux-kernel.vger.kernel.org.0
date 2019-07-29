@@ -2,47 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 372A278F94
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 17:41:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A221D78F8F
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 17:40:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388117AbfG2Pkx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 11:40:53 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:55975 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388095AbfG2Pkv (ORCPT
+        id S2388083AbfG2PkE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 11:40:04 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:50994 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387496AbfG2PkE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 11:40:51 -0400
-Received: by mail-wm1-f67.google.com with SMTP id a15so54298233wmj.5
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 08:40:50 -0700 (PDT)
+        Mon, 29 Jul 2019 11:40:04 -0400
+Received: by mail-wm1-f66.google.com with SMTP id v15so54313856wml.0;
+        Mon, 29 Jul 2019 08:40:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=URFGNdCuc17w2MBn3hDVUpGm+HQA2LH5HoY9qPXf7MA=;
-        b=HsarULrvPIVMn7c1QyfPwjOsy1zs5UPCaPoKu0honm5MVFId+ZT9qkJ+moGP2LGl04
-         IPa8eYtMSgIgar8u1XqKFpWmwNTz6U/WI621BoNULiqR7nVy41um6bt1uImFsY0qt6HL
-         8EnVFrNEl++fEWJYa4UC1vZpcEazwCrUhsSx7KSGheueCNjhnoiUjA3aZTUS6E6iVbol
-         AQRmeqoCRKV2wvurHwxRHZaGVdke59V4yE6g6oUTCG/YrwzZsAq/x1uv5T6ejTTCsTpI
-         dZE6/S3iJ14iVtYMDoZRUH4ufuPFe+BiqDO7sCiSw180okF91HDbGOb/F7B0S//DHNTJ
-         3wIA==
-X-Gm-Message-State: APjAAAUh73eLxMFogf5ta+3fKUE1GytQICoWhUCVq39Tijm5I/teXqwV
-        OoDXCZpDjffPbmRJcwdSptMV/QDskfZZyVHq8sY=
-X-Google-Smtp-Source: APXvYqw7qmwWisTaRdLSAWkSTuob8FAbalj1bCbmoQk6YVPW+oWh9x4EXQXccBLfkn/tUQWVE662tyJJHi/aThNuUV8=
-X-Received: by 2002:a1c:a7c6:: with SMTP id q189mr101660403wme.146.1564414528469;
- Mon, 29 Jul 2019 08:35:28 -0700 (PDT)
+        bh=CmXay1x1IIZbcae9B/nzgC2i3GQA4IAuHtEVfu4g9Tw=;
+        b=UcKVtZ+GtKoGy23ls5y7hSLAMqN0maOm/n84NQv7B2QKT3CXLXVTcMzy4xYpSSxQ0Z
+         7KaB0jDrm/HJNiLSSQcAgQu/6BziGAcPrQqan4fX0WrW2YSbdVmKSVQFudJC+h+Qa+09
+         YillfqN8G0jMA/n4BECainDr0rp6tku2Xnhze1x2i8g/NxiAYgqnJS0JLKce6B9uD9hp
+         8c57jiTUQqwf+3q1jrlbMAvWDVIfeBFmyr1pLuCda2Z+uKJyYXpD1Dji00+WATg4eSEo
+         rpt3sVcB0R734uQo7iz/nsDdKeJGCpCnkuDYb+CObpFoJi/BeaJl2x4EfLsuqeMs9tTE
+         YAhw==
+X-Gm-Message-State: APjAAAUfY8ahv9y1SHcII8Kzr1ax78LMSZ9oPB0bcupYLejJxDK5MOOV
+        f4tfCiGcucXHQiY0ie6/k9HQvonLUUcSxx4WlZI=
+X-Google-Smtp-Source: APXvYqyQ3OcPxTZE79jySvwMYC8vjamWQiriNCux9/VdFtqDzRVM9Aw+s9kJqqoO9rN8rBLFEyB5tDfAGslo++GFlu8=
+X-Received: by 2002:a7b:c310:: with SMTP id k16mr59906778wmj.133.1564414801859;
+ Mon, 29 Jul 2019 08:40:01 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190729143320.GA8212@embeddedor>
-In-Reply-To: <20190729143320.GA8212@embeddedor>
+References: <20190729143007.GA8067@embeddedor>
+In-Reply-To: <20190729143007.GA8067@embeddedor>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 29 Jul 2019 17:35:16 +0200
-Message-ID: <CAMuHMdWAboq1YxVVJUop0woJTcantfpftVoR8T5qm3KsAMyCPg@mail.gmail.com>
-Subject: Re: [PATCH] sound: dmasound_atari: Mark expected switch fall-through
+Date:   Mon, 29 Jul 2019 17:39:49 +0200
+Message-ID: <CAMuHMdXEU4eUEdNyY=K2B_Tj=unJV2eSJo1BQ8vDwZ-D-2wDWg@mail.gmail.com>
+Subject: Re: [PATCH] scsi: sun3_scsi: Mark expected switch fall-throughs
 To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
+Cc:     Finn Thain <fthain@telegraphics.com.au>,
+        Michael Schmitz <schmitzmic@gmail.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        scsi <linux-scsi@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>
+        Kees Cook <keescook@chromium.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -51,45 +53,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hi Gustavo,
 
-Thanks for your patch!
-
-On Mon, Jul 29, 2019 at 4:33 PM Gustavo A. R. Silva
+On Mon, Jul 29, 2019 at 4:32 PM Gustavo A. R. Silva
 <gustavo@embeddedor.com> wrote:
 > Mark switch cases where we are expecting to fall through.
 >
-> This patch fixes the following warning:
+> This patch fixes the following warnings:
 >
-> sound/oss/dmasound/dmasound_atari.c: warning: this statement may fall
-> through [-Wimplicit-fallthrough=]:  => 1449:24
+> drivers/scsi/sun3_scsi.c: warning: this statement may fall through
+> [-Wimplicit-fallthrough=]:  => 399:9, 403:9
 >
-> Notice that, in this particular case, the code comment is
-> modified in accordance with what GCC is expecting to find.
-
-Have you compile-tested this?
-
-This doesn't work with gcc version 8.2.0 (Ubuntu 8.2.0-1ubuntu2~18.04).
-Turns out the warning only goes away when converting the indentation
-of the switch() statement to match kernel style... Silly gcc...
-
 > Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
 > Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> ---
->  sound/oss/dmasound/dmasound_atari.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+
+Thanks!
+Tested-by: Geert Uytterhoeven <geert@linux-m68k.org>
+
+> --- a/drivers/scsi/sun3_scsi.c
+> +++ b/drivers/scsi/sun3_scsi.c
+> @@ -397,10 +397,12 @@ static int sun3scsi_dma_finish(int write_flag)
+>                 case CSR_LEFT_3:
+>                         *vaddr = (dregs->bpack_lo & 0xff00) >> 8;
+>                         vaddr--;
+> +                       /* Fall through */
 >
-> diff --git a/sound/oss/dmasound/dmasound_atari.c b/sound/oss/dmasound/dmasound_atari.c
-> index 83653683fd68..b5845e904ba1 100644
-> --- a/sound/oss/dmasound/dmasound_atari.c
-> +++ b/sound/oss/dmasound/dmasound_atari.c
-> @@ -1449,7 +1449,7 @@ static int FalconMixerIoctl(u_int cmd, u_long arg)
->                 tt_dmasnd.input_gain =
->                         RECLEVEL_VOXWARE_TO_GAIN(data & 0xff) << 4 |
->                         RECLEVEL_VOXWARE_TO_GAIN(data >> 8 & 0xff);
-> -               /* fall thru, return set value */
-> +               /* fall through - return set value */
->             case SOUND_MIXER_READ_MIC:
->                 return IOCTL_OUT(arg,
->                         RECLEVEL_GAIN_TO_VOXWARE(tt_dmasnd.input_gain >> 4 & 0xf) |
+>                 case CSR_LEFT_2:
+>                         *vaddr = (dregs->bpack_hi & 0x00ff);
+>                         vaddr--;
+> +                       /* Fall through */
+>
+
+I think it would be clearer if you would drop the blank lines.
+
+>                 case CSR_LEFT_1:
+>                         *vaddr = (dregs->bpack_hi & 0xff00) >> 8;
 
 Gr{oetje,eeting}s,
 
