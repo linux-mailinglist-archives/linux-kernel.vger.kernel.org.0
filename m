@@ -2,106 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D394679ADB
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 23:15:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 239C879AEE
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 23:19:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388633AbfG2VPR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 17:15:17 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:41226 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388613AbfG2VPP (ORCPT
+        id S2388547AbfG2VTl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 17:19:41 -0400
+Received: from outils.crapouillou.net ([89.234.176.41]:43848 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388438AbfG2VTk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 17:15:15 -0400
-Received: by mail-wr1-f68.google.com with SMTP id c2so60166214wrm.8;
-        Mon, 29 Jul 2019 14:15:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=A5FSwkiZuOd2qVcx76ksBBkSMhb0oMJooHYS8KoQW0U=;
-        b=APHVrMA7CyunmcDO/kR4Hlr4F3cviT/0NhU0qTv+4KhGVlwpuxy3XFaZqE9iVlmSfF
-         Fgpy9d+Y0bRjOfNq1LzMtpWvrcjTFU2PnZukyWUykaBiznzt/B0B5kohs555aKXgvBfj
-         slVRQBfzaJp0aAbGvpGcCVXW3cwNhnp+H57BLw45h8GvmSJcqmIKHKtCcgiIZtHuxbzm
-         ECzpSZTKT8WW7SgMpf3DLAi9pVBoXe7Iu0rWZHEuhv60BvbApcIKxbE4fxJDKYEXyFd3
-         zUdd+vrY0NOUV0+S8eKwOYpS2QrNuzGjxC8ZKEuKEDPx5EAyKADZXkYknrJxao3PiHWr
-         G0DA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=A5FSwkiZuOd2qVcx76ksBBkSMhb0oMJooHYS8KoQW0U=;
-        b=N0mELLQ3c41pjhmMOb2CzZN+w6GPrB7zqXgs9xa08kdYvv1gjfaZJ/BOsK5HxTsx35
-         i2fysjv0w9o4BQSy17hZkk55AjZ0/lV9Xrl/nnMtRD+BZ7fwxafa/MCxrL6WI4sSJK5X
-         wFUPgUftYioGksB21GK71v2PF0sojQ31QGE5vAwZbieo4QyH2IPNsXp/fZp9TiykXEje
-         2BulhEdROIx8/aj/Gf1Jot3vwV5nJuIM731uPDFSt5vw4j04p1vPVSsXIm12aBvP01nt
-         rkjlFT1P0FbTjeY9juoVLvDy2c7Y0qCY5ls+pyGvOqkSxcn7AFuHG1dN54Q6ZkOmuK/K
-         SDCw==
-X-Gm-Message-State: APjAAAVLvEIEeSt0DwGoxj/2lYqbyV/nx91ZjQaftxMIP0PY/j+LJ/xN
-        q38ISsUoOIYp71wWL03yiCk=
-X-Google-Smtp-Source: APXvYqxJpG4av0jRqJ9O0M6U7e7cLJ+Ts6vB5e3SraHmKL4YKdmytwl/thpFe1SiAc+RZzkMbOyr5g==
-X-Received: by 2002:adf:de8e:: with SMTP id w14mr2995656wrl.79.1564434914080;
-        Mon, 29 Jul 2019 14:15:14 -0700 (PDT)
-Received: from archlinux-threadripper ([2a01:4f8:222:2f1b::2])
-        by smtp.gmail.com with ESMTPSA id j16sm4516071wrp.62.2019.07.29.14.15.13
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 29 Jul 2019 14:15:13 -0700 (PDT)
-Date:   Mon, 29 Jul 2019 14:15:11 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     ralf@linux-mips.org, paul.burton@mips.com, jhogan@kernel.org,
-        Eli Friedman <efriedma@quicinc.com>,
-        "Maciej W. Rozycki" <macro@linux-mips.org>,
-        Hassan Naveed <hnaveed@wavecomp.com>,
-        Stephen Kitt <steve@sk2.org>,
-        Serge Semin <fancer.lancer@gmail.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>, linux-mips@vger.kernel.org,
-        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com
-Subject: Re: [PATCH] mips: avoid explicit UB in assignment of
- mips_io_port_base
-Message-ID: <20190729211511.GA74577@archlinux-threadripper>
-References: <20190729211014.39333-1-ndesaulniers@google.com>
+        Mon, 29 Jul 2019 17:19:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1564435178; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=QmEPIGFBMm6hTexG00Zc+PEgLZAbvvk8D/QaFLV1UTU=;
+        b=x4tH5xz6Tnwv9keFVRYGBUv2iYQ1Nh1fmK+6DvgUAs/VqBGsLKMDw72yTxoQ6praZ4VV6J
+        9TjVBzJnbiL5PgvbnCGWrF0f6NUce24hSRlN+8V8w1r/aK1OJyoQzofAzVaqBRp4apw/ZZ
+        c2fSPStyF4N+bQT061Q+azuv2epAOJY=
+Date:   Mon, 29 Jul 2019 17:19:23 -0400
+From:   Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH v2 3/6] pwm: jz4740: Apply configuration atomically
+To:     Uwe =?iso-8859-1?q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, od@zcrc.me,
+        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel@pengutronix.de
+Message-Id: <1564435163.6633.4@crapouillou.net>
+In-Reply-To: <20190724064745.7ghecdpg3gmxsiim@pengutronix.de>
+References: <20190607154410.10633-1-paul@crapouillou.net>
+        <20190607154410.10633-4-paul@crapouillou.net>
+        <20190722193456.h4hfte5cczucermd@pengutronix.de>
+        <1563914800.1918.0@crapouillou.net>
+        <20190724064745.7ghecdpg3gmxsiim@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190729211014.39333-1-ndesaulniers@google.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 29, 2019 at 02:10:12PM -0700, Nick Desaulniers wrote:
-> The code in question is modifying a variable declared const through
-> pointer manipulation.  Such code is explicitly undefined behavior, and
-> is the lone issue preventing malta_defconfig from booting when built
-> with Clang:
-> 
-> If an attempt is made to modify an object defined with a const-qualified
-> type through use of an lvalue with non-const-qualified type, the
-> behavior is undefined.
-> 
-> LLVM is removing such assignments. A simple fix is to not declare
-> variables const that you plan on modifying.  Limiting the scope would be
-> a better method of preventing unwanted writes to such a variable.
-> 
-> Further, the code in question mentions "compiler bugs" without any links
-> to bug reports, so it is difficult to know if the issue is resolved in
-> GCC. The patch was authored in 2006, which would have been GCC 4.0.3 or
-> 4.1.1. The minimal supported version of GCC in the Linux kernel is
-> currently 4.6.
-> 
-> For what its worth, there was UB before the commit in question, it just
-> added a barrier and got lucky IRT codegen. I don't think there's any
-> actual compiler bugs related, just runtime bugs due to UB.
-> 
-> Link: https://github.com/ClangBuiltLinux/linux/issues/610
-> Fixes: 966f4406d903 ("[MIPS] Work around bad code generation for <asm/io.h>.")
-> Reported-by: Nathan Chancellor <natechancellor@gmail.com>
-> Debugged-by: Nathan Chancellor <natechancellor@gmail.com>
-> Suggested-by: Eli Friedman <efriedma@quicinc.com>
-> Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+Hi Uwe,
 
-Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
-Tested-by: Nathan Chancellor <natechancellor@gmail.com>
+
+Le mer. 24 juil. 2019 =E0 2:47, Uwe =3D?iso-8859-1?q?Kleine-K=3DF6nig?=3D=20
+<u.kleine-koenig@pengutronix.de> a =E9crit :
+> Hello Paul,
+>=20
+> On Tue, Jul 23, 2019 at 04:46:40PM -0400, Paul Cercueil wrote:
+>>  Le lun. 22 juil. 2019 =E0 15:34, Uwe =3D?iso-8859-1?q?Kleine-K=3DF6nig?=
+=3D
+>>  <u.kleine-koenig@pengutronix.de> a =E9crit :
+>>  > On Fri, Jun 07, 2019 at 05:44:07PM +0200, Paul Cercueil wrote:
+>>  > >  -	is_enabled =3D jz4740_timer_is_enabled(pwm->hwpwm);
+>>  > >  -	if (is_enabled)
+>>  > >  -		jz4740_pwm_disable(chip, pwm);
+>>  > >  +	jz4740_pwm_disable(chip, pwm);
+>>  >
+>>  > I assume this stops the PWM. Does this complete the currently=20
+>> running
+>>  > period? How does the PWM behave then? (Does it still drive the=20
+>> output?
+>>  > If so, on which level?)
+>>=20
+>>  Some PWM channels work in one mode "TCU1" and others work in=20
+>> "TCU2". The
+>>  mode in which channels work depends on the version of the SoC.
+>>=20
+>>  When stopped, the pins of TCU1 channels will be driven to the=20
+>> inactive
+>>  level (which depends on the polarity). It is unknown whether or not=20
+>> the
+>>  currently running period is completed. We set a bit to configure for
+>>  "abrupt shutdown", so I expect that it's not, but somebody would=20
+>> need
+>>  to hook up a logic analyzer to see what's the exact behaviour with
+>>  and without that bit.
+>=20
+> This might be done even without a logic analyzer. Just do something
+> like:
+>=20
+> 	pwm_apply_state(pwm, { .enabled =3D 1, .period =3D 5s })
+> 	pwm_apply_state(pwm, { .enabled =3D 1, .period =3D 5s, .duty =3D 5s })
+>=20
+> and if that takes less then 5s the period is not completed.
+>=20
+> And note that "abrupt shutdown" is a bug.
+
+I remember you asked that already in an older patchset.
+The result of this test is that the period is never completed,
+independently of the "abrupt shutdown" bit.
+
+Cheers,
+-Paul
+
+
+>>  TCU2 channels on the other hand will stop in the middle of a period,
+>>  leaving the pin hanging at whatever level it was before the stop.
+>>  That's the rationale behind the trick in commit 6580fd173070 ("pwm:
+>>  jz4740: Force TCU2 channels to return to their init level").
+>=20
+> Strange, but ok.
+>=20
+> Best regards
+> Uwe
+>=20
+> --
+> Pengutronix e.K.                           | Uwe Kleine-K=F6nig       =20
+>     |
+> Industrial Linux Solutions                 |=20
+> http://www.pengutronix.de/  |
+
+=
+
