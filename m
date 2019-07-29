@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C13E179908
-	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:12:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0812D79904
+	for <lists+linux-kernel@lfdr.de>; Mon, 29 Jul 2019 22:12:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730504AbfG2UMd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 16:12:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44626 "EHLO mail.kernel.org"
+        id S1730269AbfG2UMU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 16:12:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45164 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728034AbfG2Tbm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 15:31:42 -0400
+        id S1729353AbfG2TcB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 15:32:01 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5769621655;
-        Mon, 29 Jul 2019 19:31:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7FD2D217F4;
+        Mon, 29 Jul 2019 19:32:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564428701;
-        bh=K1bO5Gk86XNoSF6ZVsVtn3ix8y8sXVakZ2UdX4Ob7Kc=;
+        s=default; t=1564428721;
+        bh=d8Rhx9wi7iBHJQRfIlU9sxJP5KGSpoaz0j5bTOi3UgA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=v87bVCxP8A/pwxP/EmNmuv8c0PwNJjYVXrLUjfm4ptKslf+FepZaf/xdU7cg6Fgrx
-         MRupJMXGtljIM2X5aGVvhIgyNYqAbJJdW2oNFzw32aPR3hDEtR9OZ+WMWDU4Vom5ef
-         44g3GfR1PoU6GoD16C9/daUorcr+iySmfHipyatU=
+        b=VD4bb8yTmDGiQx05IiWgLkNsQ7ym6a3nDukB5jYDshpPvkd+lWXXbJ1u68AtfL9c7
+         lyjq0UZdewVOhaOBpqd6VWz2mFqBhat4TQed1SSUey8+bWC5OZ1e9q+7BB+0bhOwQc
+         stoRZd0Ykbc8BWH9vSLkgkRylxwTkh7XqHmpWxJY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Aaron Armstrong Skomra <aaron.skomra@wacom.com>,
-        Jason Gerecke <jason.gerecke@wacom.com>,
-        Jiri Kosina <jkosina@suse.cz>
-Subject: [PATCH 4.14 160/293] HID: wacom: generic: only switch the mode on devices with LEDs
-Date:   Mon, 29 Jul 2019 21:20:51 +0200
-Message-Id: <20190729190836.812203072@linuxfoundation.org>
+        stable@vger.kernel.org, Dexuan Cui <decui@microsoft.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Michael Kelley <mikelley@microsoft.com>
+Subject: [PATCH 4.14 165/293] PCI: hv: Fix a use-after-free bug in hv_eject_device_work()
+Date:   Mon, 29 Jul 2019 21:20:56 +0200
+Message-Id: <20190729190837.187517038@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190729190820.321094988@linuxfoundation.org>
 References: <20190729190820.321094988@linuxfoundation.org>
@@ -45,67 +44,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Aaron Armstrong Skomra <skomra@gmail.com>
+From: Dexuan Cui <decui@microsoft.com>
 
-commit d8e9806005f28bbb49899dab2068e3359e22ba35 upstream.
+commit 4df591b20b80cb77920953812d894db259d85bd7 upstream.
 
-Currently, the driver will attempt to set the mode on all
-devices with a center button, but some devices with a center
-button lack LEDs, and attempting to set the LEDs on devices
-without LEDs results in the kernel error message of the form:
+Fix a use-after-free in hv_eject_device_work().
 
-"leds input8::wacom-0.1: Setting an LED's brightness failed (-32)"
-
-This is because the generic codepath erroneously assumes that the
-BUTTON_CENTER usage indicates that the device has LEDs, the
-previously ignored TOUCH_RING_SETTING usage is a more accurate
-indication of the existence of LEDs on the device.
-
-Fixes: 10c55cacb8b2 ("HID: wacom: generic: support LEDs")
-Cc: <stable@vger.kernel.org> # v4.11+
-Signed-off-by: Aaron Armstrong Skomra <aaron.skomra@wacom.com>
-Reviewed-by: Jason Gerecke <jason.gerecke@wacom.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Fixes: 05f151a73ec2 ("PCI: hv: Fix a memory leak in hv_eject_device_work()")
+Signed-off-by: Dexuan Cui <decui@microsoft.com>
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Reviewed-by: Michael Kelley <mikelley@microsoft.com>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hid/wacom_sys.c |    3 +++
- drivers/hid/wacom_wac.c |    2 --
- drivers/hid/wacom_wac.h |    1 +
- 3 files changed, 4 insertions(+), 2 deletions(-)
+ drivers/pci/host/pci-hyperv.c |   15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
 
---- a/drivers/hid/wacom_sys.c
-+++ b/drivers/hid/wacom_sys.c
-@@ -118,6 +118,9 @@ static void wacom_feature_mapping(struct
- 	u32 n;
+--- a/drivers/pci/host/pci-hyperv.c
++++ b/drivers/pci/host/pci-hyperv.c
+@@ -1912,6 +1912,7 @@ static void hv_pci_devices_present(struc
+ static void hv_eject_device_work(struct work_struct *work)
+ {
+ 	struct pci_eject_response *ejct_pkt;
++	struct hv_pcibus_device *hbus;
+ 	struct hv_pci_dev *hpdev;
+ 	struct pci_dev *pdev;
+ 	unsigned long flags;
+@@ -1922,6 +1923,7 @@ static void hv_eject_device_work(struct
+ 	} ctxt;
  
- 	switch (equivalent_usage) {
-+	case WACOM_HID_WD_TOUCH_RING_SETTING:
-+		wacom->generic_has_leds = true;
-+		break;
- 	case HID_DG_CONTACTMAX:
- 		/* leave touch_max as is if predefined */
- 		if (!features->touch_max) {
---- a/drivers/hid/wacom_wac.c
-+++ b/drivers/hid/wacom_wac.c
-@@ -1871,8 +1871,6 @@ static void wacom_wac_pad_usage_mapping(
- 		features->device_type |= WACOM_DEVICETYPE_PAD;
- 		break;
- 	case WACOM_HID_WD_BUTTONCENTER:
--		wacom->generic_has_leds = true;
--		/* fall through */
- 	case WACOM_HID_WD_BUTTONHOME:
- 	case WACOM_HID_WD_BUTTONUP:
- 	case WACOM_HID_WD_BUTTONDOWN:
---- a/drivers/hid/wacom_wac.h
-+++ b/drivers/hid/wacom_wac.h
-@@ -140,6 +140,7 @@
- #define WACOM_HID_WD_OFFSETBOTTOM       (WACOM_HID_UP_WACOMDIGITIZER | 0x0d33)
- #define WACOM_HID_WD_DATAMODE           (WACOM_HID_UP_WACOMDIGITIZER | 0x1002)
- #define WACOM_HID_WD_DIGITIZERINFO      (WACOM_HID_UP_WACOMDIGITIZER | 0x1013)
-+#define WACOM_HID_WD_TOUCH_RING_SETTING (WACOM_HID_UP_WACOMDIGITIZER | 0x1032)
- #define WACOM_HID_UP_G9                 0xff090000
- #define WACOM_HID_G9_PEN                (WACOM_HID_UP_G9 | 0x02)
- #define WACOM_HID_G9_TOUCHSCREEN        (WACOM_HID_UP_G9 | 0x11)
+ 	hpdev = container_of(work, struct hv_pci_dev, wrk);
++	hbus = hpdev->hbus;
+ 
+ 	if (hpdev->state != hv_pcichild_ejecting) {
+ 		put_pcichild(hpdev, hv_pcidev_ref_pnp);
+@@ -1935,8 +1937,7 @@ static void hv_eject_device_work(struct
+ 	 * because hbus->pci_bus may not exist yet.
+ 	 */
+ 	wslot = wslot_to_devfn(hpdev->desc.win_slot.slot);
+-	pdev = pci_get_domain_bus_and_slot(hpdev->hbus->sysdata.domain, 0,
+-					   wslot);
++	pdev = pci_get_domain_bus_and_slot(hbus->sysdata.domain, 0, wslot);
+ 	if (pdev) {
+ 		pci_lock_rescan_remove();
+ 		pci_stop_and_remove_bus_device(pdev);
+@@ -1944,9 +1945,9 @@ static void hv_eject_device_work(struct
+ 		pci_unlock_rescan_remove();
+ 	}
+ 
+-	spin_lock_irqsave(&hpdev->hbus->device_list_lock, flags);
++	spin_lock_irqsave(&hbus->device_list_lock, flags);
+ 	list_del(&hpdev->list_entry);
+-	spin_unlock_irqrestore(&hpdev->hbus->device_list_lock, flags);
++	spin_unlock_irqrestore(&hbus->device_list_lock, flags);
+ 
+ 	if (hpdev->pci_slot)
+ 		pci_destroy_slot(hpdev->pci_slot);
+@@ -1955,14 +1956,16 @@ static void hv_eject_device_work(struct
+ 	ejct_pkt = (struct pci_eject_response *)&ctxt.pkt.message;
+ 	ejct_pkt->message_type.type = PCI_EJECTION_COMPLETE;
+ 	ejct_pkt->wslot.slot = hpdev->desc.win_slot.slot;
+-	vmbus_sendpacket(hpdev->hbus->hdev->channel, ejct_pkt,
++	vmbus_sendpacket(hbus->hdev->channel, ejct_pkt,
+ 			 sizeof(*ejct_pkt), (unsigned long)&ctxt.pkt,
+ 			 VM_PKT_DATA_INBAND, 0);
+ 
+ 	put_pcichild(hpdev, hv_pcidev_ref_childlist);
+ 	put_pcichild(hpdev, hv_pcidev_ref_initial);
+ 	put_pcichild(hpdev, hv_pcidev_ref_pnp);
+-	put_hvpcibus(hpdev->hbus);
++
++	/* hpdev has been freed. Do not use it any more. */
++	put_hvpcibus(hbus);
+ }
+ 
+ /**
 
 
