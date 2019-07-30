@@ -2,26 +2,25 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49C767AB7A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 16:55:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A36307AB95
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 16:57:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729210AbfG3Ozn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 10:55:43 -0400
-Received: from mxout017.mail.hostpoint.ch ([217.26.49.177]:29888 "EHLO
-        mxout017.mail.hostpoint.ch" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727129AbfG3Ozn (ORCPT
+        id S1731782AbfG3O5z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 10:57:55 -0400
+Received: from mxout013.mail.hostpoint.ch ([217.26.49.173]:35535 "EHLO
+        mxout013.mail.hostpoint.ch" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731709AbfG3O5s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 10:55:43 -0400
-X-Greylist: delayed 525 seconds by postgrey-1.27 at vger.kernel.org; Tue, 30 Jul 2019 10:55:42 EDT
+        Tue, 30 Jul 2019 10:57:48 -0400
 Received: from [10.0.2.46] (helo=asmtp013.mail.hostpoint.ch)
-        by mxout017.mail.hostpoint.ch with esmtp (Exim 4.92 (FreeBSD))
+        by mxout013.mail.hostpoint.ch with esmtp (Exim 4.92 (FreeBSD))
         (envelope-from <dev@pschenker.ch>)
-        id 1hsTXQ-000EH5-6y; Tue, 30 Jul 2019 16:55:40 +0200
+        id 1hsTZR-000Fl8-4l; Tue, 30 Jul 2019 16:57:45 +0200
 Received: from [46.140.72.82] (helo=philippe-pc.toradex.int)
         by asmtp013.mail.hostpoint.ch with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
         (Exim 4.91 (FreeBSD))
         (envelope-from <dev@pschenker.ch>)
-        id 1hsTP3-000Mva-I9; Tue, 30 Jul 2019 16:47:01 +0200
+        id 1hsTP4-000Mva-4n; Tue, 30 Jul 2019 16:47:02 +0200
 X-Authenticated-Sender-Id: dev@pschenker.ch
 From:   Philippe Schenker <dev@pschenker.ch>
 To:     marcel.ziswiler@toradex.com, max.krummenacher@toradex.com,
@@ -35,9 +34,9 @@ Cc:     Philippe Schenker <philippe.schenker@toradex.com>,
         Pengutronix Kernel Team <kernel@pengutronix.de>,
         NXP Linux Team <linux-imx@nxp.com>,
         Sascha Hauer <s.hauer@pengutronix.de>
-Subject: [PATCH 10/22] ARM: dts: imx6qdl-colibri: Add missing pin declaration in iomuxc
-Date:   Tue, 30 Jul 2019 16:46:37 +0200
-Message-Id: <20190730144649.19022-11-dev@pschenker.ch>
+Subject: [PATCH 11/22] ARM: dts: imx6: Add sleep state to can interfaces
+Date:   Tue, 30 Jul 2019 16:46:38 +0200
+Message-Id: <20190730144649.19022-12-dev@pschenker.ch>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190730144649.19022-1-dev@pschenker.ch>
 References: <20190730144649.19022-1-dev@pschenker.ch>
@@ -50,47 +49,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Philippe Schenker <philippe.schenker@toradex.com>
 
-This adds the muxing for the optional pins usb-oc (overcurrent) and
-usb-id.
+This patch prepares the devicetree for the new Ixora V1.2 where we are
+able to turn off the supply of the can transceiver. This implies to use
+a sleep state on transmission pins in order to prevent backfeeding.
 
 Signed-off-by: Philippe Schenker <philippe.schenker@toradex.com>
 ---
 
- arch/arm/boot/dts/imx6qdl-colibri.dtsi | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ arch/arm/boot/dts/imx6qdl-apalis.dtsi | 27 +++++++++++++++++++++------
+ 1 file changed, 21 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm/boot/dts/imx6qdl-colibri.dtsi b/arch/arm/boot/dts/imx6qdl-colibri.dtsi
-index 019dda6b88ad..9a63debab0b5 100644
---- a/arch/arm/boot/dts/imx6qdl-colibri.dtsi
-+++ b/arch/arm/boot/dts/imx6qdl-colibri.dtsi
-@@ -615,6 +615,13 @@
+diff --git a/arch/arm/boot/dts/imx6qdl-apalis.dtsi b/arch/arm/boot/dts/imx6qdl-apalis.dtsi
+index 7c4ad541c3f5..59ed2e4a1fd1 100644
+--- a/arch/arm/boot/dts/imx6qdl-apalis.dtsi
++++ b/arch/arm/boot/dts/imx6qdl-apalis.dtsi
+@@ -148,14 +148,16 @@
+ };
+ 
+ &can1 {
+-	pinctrl-names = "default";
+-	pinctrl-0 = <&pinctrl_flexcan1>;
++	pinctrl-names = "default", "sleep";
++	pinctrl-0 = <&pinctrl_flexcan1_default>;
++	pinctrl-1 = <&pinctrl_flexcan1_sleep>;
+ 	status = "disabled";
+ };
+ 
+ &can2 {
+-	pinctrl-names = "default";
+-	pinctrl-0 = <&pinctrl_flexcan2>;
++	pinctrl-names = "default", "sleep";
++	pinctrl-0 = <&pinctrl_flexcan2_default>;
++	pinctrl-1 = <&pinctrl_flexcan2_sleep>;
+ 	status = "disabled";
+ };
+ 
+@@ -599,19 +601,32 @@
  		>;
  	};
  
-+	pinctrl_usbh_oc_1: usbh_oc-1 {
-+		fsl,pins = <
-+			/* USBH_OC */
-+			MX6QDL_PAD_EIM_D30__GPIO3_IO30		0x1b0b0
-+		>;
-+	};
-+
- 	pinctrl_spdif: spdifgrp {
+-	pinctrl_flexcan1: flexcan1grp {
++	pinctrl_flexcan1_default: flexcan1defgrp {
  		fsl,pins = <
- 			MX6QDL_PAD_GPIO_17__SPDIF_OUT 0x1b0b0
-@@ -681,6 +688,13 @@
+ 			MX6QDL_PAD_GPIO_7__FLEXCAN1_TX 0x1b0b0
+ 			MX6QDL_PAD_GPIO_8__FLEXCAN1_RX 0x1b0b0
  		>;
  	};
  
-+	pinctrl_usbc_id_1: usbc_id-1 {
+-	pinctrl_flexcan2: flexcan2grp {
++	pinctrl_flexcan1_sleep: flexcan1slpgrp {
 +		fsl,pins = <
-+			/* USBC_ID */
-+			MX6QDL_PAD_NANDF_D2__GPIO2_IO02		0x1b0b0
++			MX6QDL_PAD_GPIO_7__GPIO1_IO07 0x0
++			MX6QDL_PAD_GPIO_8__GPIO1_IO08 0x0
 +		>;
 +	};
 +
- 	pinctrl_usdhc1: usdhc1grp {
++	pinctrl_flexcan2_default: flexcan2defgrp {
  		fsl,pins = <
- 			MX6QDL_PAD_SD1_CMD__SD1_CMD	0x17071
+ 			MX6QDL_PAD_KEY_COL4__FLEXCAN2_TX 0x1b0b0
+ 			MX6QDL_PAD_KEY_ROW4__FLEXCAN2_RX 0x1b0b0
+ 		>;
+ 	};
++	pinctrl_flexcan2_sleep: flexcan2slpgrp {
++		fsl,pins = <
++			MX6QDL_PAD_KEY_COL4__GPIO4_IO14 0x0
++			MX6QDL_PAD_KEY_ROW4__GPIO4_IO15 0x0
++		>;
++	};
+ 
+ 	pinctrl_gpio_bl_on: gpioblon {
+ 		fsl,pins = <
 -- 
 2.22.0
 
