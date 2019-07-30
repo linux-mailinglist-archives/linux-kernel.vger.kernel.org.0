@@ -2,120 +2,185 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55C257B1F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:27:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CAC27B1F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:28:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729618AbfG3S1g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 14:27:36 -0400
-Received: from shelob.surriel.com ([96.67.55.147]:32838 "EHLO
-        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727948AbfG3S1f (ORCPT
+        id S1729707AbfG3S2L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 14:28:11 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:40351 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726522AbfG3S2I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 14:27:35 -0400
-Received: from imladris.surriel.com ([96.67.55.152])
-        by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.92)
-        (envelope-from <riel@shelob.surriel.com>)
-        id 1hsWqI-0000go-Lu; Tue, 30 Jul 2019 14:27:22 -0400
-Message-ID: <d38c5d5b5adfc9b9b4f386f912daa8c581ec6328.camel@surriel.com>
-Subject: Re: [PATCH RFC v3 0/14] sched,fair: flatten CPU controller runqueues
-From:   Rik van Riel <riel@surriel.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
-        dietmar.eggemann@arm.com, mingo@redhat.com,
-        morten.rasmussen@arm.com, tglx@linutronix.de,
-        mgorman@techsingularity.net, vincent.guittot@linaro.org
-Date:   Tue, 30 Jul 2019 14:27:22 -0400
-In-Reply-To: <20190730162933.GW31398@hirez.programming.kicks-ass.net>
-References: <20190722173348.9241-1-riel@surriel.com>
-         <20190730162933.GW31398@hirez.programming.kicks-ass.net>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-w+XrJxZWZMVSU7Dom0r+"
-User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
+        Tue, 30 Jul 2019 14:28:08 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6UIRueh3330138
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Tue, 30 Jul 2019 11:27:56 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6UIRueh3330138
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019071901; t=1564511277;
+        bh=dxJbtl4/otJ2aQWWJR0CyGiTiB2QSntuTNV6GbD5jeI=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=AnI1bx/dO9IxBczSj2/iQMsNQ4ED54UOcW7lZXdELBt8R+vw/JxnX9E6TXWOJ00mj
+         /qLNPGo0nsfFfi++CcFp6EjSr6M2MfCYEngNEog0MRTWuDd3mDn77Y7nS1owagVfb4
+         8dUb5DLybu2PQN8LP+RCd9UHfDY/ABBgiHgw15mHcNM1W3wEplDKIIu3yMCs+YhGfT
+         zkK9zD88DiD51XPIphPHaGYdLEA/qWK1UG+LhhCzcu4gK6z9621CDZz6ep4OrJCjFo
+         mVKtTZeyznz1L8wi3sYx+wKbHj2sfNy1xOZFQ68YwY8XJZlZX87u5qdx0T8TDwvZBr
+         GLUnzuP/G87Nw==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6UIRtd93330134;
+        Tue, 30 Jul 2019 11:27:55 -0700
+Date:   Tue, 30 Jul 2019 11:27:55 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
+Message-ID: <tip-959b83c769389b24d64759f60e64c4c62620ff02@git.kernel.org>
+Cc:     jolsa@kernel.org, acme@redhat.com, hpa@zytor.com,
+        linux-kernel@vger.kernel.org, mpetlan@redhat.com,
+        tglx@linutronix.de, alexey.budankov@linux.intel.com,
+        mingo@kernel.org, namhyung@kernel.org,
+        alexander.shishkin@linux.intel.com, ak@linux.intel.com,
+        peterz@infradead.org
+Reply-To: alexey.budankov@linux.intel.com, ak@linux.intel.com,
+          alexander.shishkin@linux.intel.com, peterz@infradead.org,
+          namhyung@kernel.org, mingo@kernel.org, tglx@linutronix.de,
+          mpetlan@redhat.com, jolsa@kernel.org, hpa@zytor.com,
+          linux-kernel@vger.kernel.org, acme@redhat.com
+In-Reply-To: <20190721112506.12306-29-jolsa@kernel.org>
+References: <20190721112506.12306-29-jolsa@kernel.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] libperf: Add perf_cpu_map struct
+Git-Commit-ID: 959b83c769389b24d64759f60e64c4c62620ff02
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-0.2 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
+        autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Commit-ID:  959b83c769389b24d64759f60e64c4c62620ff02
+Gitweb:     https://git.kernel.org/tip/959b83c769389b24d64759f60e64c4c62620ff02
+Author:     Jiri Olsa <jolsa@kernel.org>
+AuthorDate: Sun, 21 Jul 2019 13:24:15 +0200
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Mon, 29 Jul 2019 18:34:44 -0300
 
---=-w+XrJxZWZMVSU7Dom0r+
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+libperf: Add perf_cpu_map struct
 
-On Tue, 2019-07-30 at 18:29 +0200, Peter Zijlstra wrote:
-> On Mon, Jul 22, 2019 at 01:33:34PM -0400, Rik van Riel wrote:
-> > Plan for the CONFIG_CFS_BANDWIDTH reimplementation:
-> > - When a cgroup gets throttled, mark the cgroup and its children
-> >   as throttled.
-> > - When pick_next_entity finds a task that is on a throttled cgroup,
-> >   stash it on the cgroup runqueue (which is not used for runnable
-> >   tasks any more). Leave the vruntime unchanged, and adjust that
-> >   runqueue's vruntime to be that of the left-most task.
->=20
-> and ignore such tasks for the load-balancer; I suppose
+Add perf_cpu_map struct to libperf.
 
-Good point. I suppose we need to find a lazy way of doing
-this, too...
+It's added as a declaration into:
 
-> > - When a cgroup gets unthrottled, and has tasks on it, place it on
-> >   a vruntime ordered heap separate from the main runqueue.
->=20
-> and expose said heap to the load-balancer..
->=20
-> Now, I suppose you do this because merging heaps is easier than
-> merging
-> RB trees? (not in complexity iirc, but probably in code)
->=20
-> > - Have pick_next_task_fair grab one task off that heap every time
-> > it
-> >   is called, and the min vruntime of that heap is lower than the
-> >   vruntime of the CPU's cfs_rq (or the CPU has no other runnable
-> > tasks).
->=20
-> That's like a smeared out merge :-) But since the other tasks kept on
-> running, this CPUs vruntime will be (much) advanced vs those
-> throttled
-> tasks and we'll most likely end up picking them all before we pick a
-> 'normal' task.
+  include/perf/cpumap.h
 
-The GENTLE_FAIR_SLEEPERS code should place the vruntime
-of newly unthrottled tasks to the right of that of the
-current top task on the runqueue, to prevent thundering
-herd effects (and the throttled group immediately going
-over its quota again, while causing bad latency for others).
+which will be included by users.
 
-> > - Place that selected task on the CPU's cfs_rq, renormalizing its
-> >   vruntime with the GENTLE_FAIR_SLEEPERS logic. That should help
-> >   interleave the already runnable tasks with the recently
-> > unthrottled
-> >   group, and prevent thundering herd issues.
-> > - If the group gets throttled again before all of its task had a
-> > chance
-> >   to run, vruntime sorting ensures all the tasks in the throttled
-> > cgroup
-> >   get a chance to run over time.
->=20
->=20
---=20
-All Rights Reversed.
+The perf_cpu_map struct definition is added into:
 
---=-w+XrJxZWZMVSU7Dom0r+
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
+  include/internal/cpumap.h
 
------BEGIN PGP SIGNATURE-----
+which is not to be included by users, but shared within perf and
+libperf.
 
-iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAl1AjAoACgkQznnekoTE
-3oN7bgf+MY2UaY9JEX5tYWJt1qyr3gnTvUVp9YZnbcH/BllW6+etzLkgj4inKUzd
-NKOQXFnm+VNCQ4DMHxgAKL03EqoR45bvryo0Il4Fvk9QiS1T13KJvKtIZ/MA35Hq
-wgBqk6/M/teBQ+hFschJa4kgAJH6YoNYgi+8nVPVgOyiy9ktWD9yiggJSiqau1Zj
-5X6nAxtJD//nhMIIN7YfaP3244gyQqFV87LJiuAJPUBrz4BsHlAkGb/Xq7tJQrwa
-ROwDOiqXFUh6VwOvu3M/hcSxWrBfOcJvsJGkjZmwhWH2eb0rYwPwrOIV6VbXZTYx
-EK/hpWWG0J52GXdsLdsLRGNtwb7G1g==
-=7eJP
------END PGP SIGNATURE-----
+We tried the total separation of the perf_cpu_map struct in libperf, but
+it lead to complications and much bigger changes in perf code, so we
+decided to share the declaration.
 
---=-w+XrJxZWZMVSU7Dom0r+--
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Michael Petlan <mpetlan@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/20190721112506.12306-29-jolsa@kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/lib/Build                     |  1 +
+ tools/perf/lib/cpumap.c                  |  5 +++++
+ tools/perf/lib/include/internal/cpumap.h | 13 +++++++++++++
+ tools/perf/lib/include/perf/cpumap.h     |  7 +++++++
+ tools/perf/util/cpumap.h                 |  7 +------
+ 5 files changed, 27 insertions(+), 6 deletions(-)
 
+diff --git a/tools/perf/lib/Build b/tools/perf/lib/Build
+index 5196958cec01..195b274db49a 100644
+--- a/tools/perf/lib/Build
++++ b/tools/perf/lib/Build
+@@ -1 +1,2 @@
+ libperf-y += core.o
++libperf-y += cpumap.o
+diff --git a/tools/perf/lib/cpumap.c b/tools/perf/lib/cpumap.c
+new file mode 100644
+index 000000000000..86a199c26f20
+--- /dev/null
++++ b/tools/perf/lib/cpumap.c
+@@ -0,0 +1,5 @@
++// SPDX-License-Identifier: GPL-2.0-only
++#include <perf/cpumap.h>
++#include <stdlib.h>
++#include <linux/refcount.h>
++#include <internal/cpumap.h>
+diff --git a/tools/perf/lib/include/internal/cpumap.h b/tools/perf/lib/include/internal/cpumap.h
+new file mode 100644
+index 000000000000..53ce95374b05
+--- /dev/null
++++ b/tools/perf/lib/include/internal/cpumap.h
+@@ -0,0 +1,13 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef __LIBPERF_INTERNAL_CPUMAP_H
++#define __LIBPERF_INTERNAL_CPUMAP_H
++
++#include <linux/refcount.h>
++
++struct perf_cpu_map {
++	refcount_t	refcnt;
++	int		nr;
++	int		map[];
++};
++
++#endif /* __LIBPERF_INTERNAL_CPUMAP_H */
+diff --git a/tools/perf/lib/include/perf/cpumap.h b/tools/perf/lib/include/perf/cpumap.h
+new file mode 100644
+index 000000000000..8355d3ce7d0c
+--- /dev/null
++++ b/tools/perf/lib/include/perf/cpumap.h
+@@ -0,0 +1,7 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef __LIBPERF_CPUMAP_H
++#define __LIBPERF_CPUMAP_H
++
++struct perf_cpu_map;
++
++#endif /* __LIBPERF_CPUMAP_H */
+diff --git a/tools/perf/util/cpumap.h b/tools/perf/util/cpumap.h
+index 22729beae959..c2ba9ae195f7 100644
+--- a/tools/perf/util/cpumap.h
++++ b/tools/perf/util/cpumap.h
+@@ -5,16 +5,11 @@
+ #include <stdio.h>
+ #include <stdbool.h>
+ #include <linux/refcount.h>
++#include <internal/cpumap.h>
+ 
+ #include "perf.h"
+ #include "util/debug.h"
+ 
+-struct perf_cpu_map {
+-	refcount_t refcnt;
+-	int nr;
+-	int map[];
+-};
+-
+ struct perf_cpu_map *cpu_map__new(const char *cpu_list);
+ struct perf_cpu_map *cpu_map__empty_new(int nr);
+ struct perf_cpu_map *cpu_map__dummy_new(void);
