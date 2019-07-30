@@ -2,69 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9421D7AA40
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 15:55:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 246787AA3D
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 15:55:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728400AbfG3Nzi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 09:55:38 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:3225 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725871AbfG3Nzh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 09:55:37 -0400
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id E803C32C4CC4C3C17D3C;
-        Tue, 30 Jul 2019 21:55:32 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS413-HUB.china.huawei.com
- (10.3.19.213) with Microsoft SMTP Server id 14.3.439.0; Tue, 30 Jul 2019
- 21:55:23 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <gregkh@linuxfoundation.org>, <willy@infradead.org>,
-        <davem@davemloft.net>
-CC:     <linux-kernel@vger.kernel.org>, <devel@driverdev.osuosl.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH] staging/octeon: Fix build error without CONFIG_NETDEVICES
-Date:   Tue, 30 Jul 2019 21:53:45 +0800
-Message-ID: <20190730135345.42760-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S1728333AbfG3NzC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 09:55:02 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:33712 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725871AbfG3NzC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 09:55:02 -0400
+Received: from pendragon.ideasonboard.com (ae138143.dynamic.ppp.asahi-net.or.jp [14.3.138.143])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 353A4CC;
+        Tue, 30 Jul 2019 15:54:58 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1564494900;
+        bh=XpIPjfe/F3FQ+H5+8txaijGuPyeYSuXcxTVBGDeoaSw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=GkDRK5OGcQwkOY6aSOLLY9pfaLrd8cqoicWK6CuCSE5NHAox4osG5mZHElhGRr7ln
+         wr92dUagk49vEuU8Gxd/KncXEHOJTDXAtFWEg2ugKgpAIuqzBTsvYYaO2sTgb6GeiQ
+         6PI0qQB828wC6m6ODIJjj4xKQNLqhzlVzgdecrTk=
+Date:   Tue, 30 Jul 2019 16:54:55 +0300
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     a.hajda@samsung.com, narmstrong@baylibre.com, jonas@kwiboo.se,
+        jernej.skrabec@siol.net, airlied@linux.ie, daniel@ffwll.ch,
+        eric@anholt.net, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v2] drm/bridge: lvds-encoder: Fix build error while
+ CONFIG_DRM_KMS_HELPER=m
+Message-ID: <20190730135455.GB4806@pendragon.ideasonboard.com>
+References: <20190729065344.9680-1-yuehaibing@huawei.com>
+ <20190729071216.27488-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190729071216.27488-1-yuehaibing@huawei.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-While do COMPILE_TEST build without CONFIG_NETDEVICES,
-we get Kconfig warning:
+Hi Yue,
 
-WARNING: unmet direct dependencies detected for PHYLIB
-  Depends on [n]: NETDEVICES [=n]
-  Selected by [y]:
-  - OCTEON_ETHERNET [=y] && STAGING [=y] && (CAVIUM_OCTEON_SOC && NETDEVICES [=n] || COMPILE_TEST [=y])
+Thank you for the patch.
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Fixes: 171a9bae68c7 ("staging/octeon: Allow test build on !MIPS")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/staging/octeon/Kconfig | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+On Mon, Jul 29, 2019 at 03:12:16PM +0800, YueHaibing wrote:
+> If DRM_LVDS_ENCODER=y but CONFIG_DRM_KMS_HELPER=m,
+> build fails:
+> 
+> drivers/gpu/drm/bridge/lvds-encoder.o: In function `lvds_encoder_probe':
+> lvds-encoder.c:(.text+0x155): undefined reference to `devm_drm_panel_bridge_add'
+> 
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Fixes: dbb58bfd9ae6 ("drm/bridge: Fix lvds-encoder since the panel_bridge rework.")
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-diff --git a/drivers/staging/octeon/Kconfig b/drivers/staging/octeon/Kconfig
-index 5b39946..5319909 100644
---- a/drivers/staging/octeon/Kconfig
-+++ b/drivers/staging/octeon/Kconfig
-@@ -1,7 +1,8 @@
- # SPDX-License-Identifier: GPL-2.0
- config OCTEON_ETHERNET
- 	tristate "Cavium Networks Octeon Ethernet support"
--	depends on CAVIUM_OCTEON_SOC && NETDEVICES || COMPILE_TEST
-+	depends on CAVIUM_OCTEON_SOC || COMPILE_TEST
-+	depends on NETDEVICES
- 	select PHYLIB
- 	select MDIO_OCTEON
- 	help
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> ---
+> v2: remove tc358764 log in commit log, also fix Fixes tag
+> ---
+>  drivers/gpu/drm/bridge/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
+> index a6eec90..77e4b95 100644
+> --- a/drivers/gpu/drm/bridge/Kconfig
+> +++ b/drivers/gpu/drm/bridge/Kconfig
+> @@ -48,6 +48,7 @@ config DRM_DUMB_VGA_DAC
+>  config DRM_LVDS_ENCODER
+>  	tristate "Transparent parallel to LVDS encoder support"
+>  	depends on OF
+> +	select DRM_KMS_HELPER
+>  	select DRM_PANEL_BRIDGE
+>  	help
+>  	  Support for transparent parallel to LVDS encoders that don't require
+
 -- 
-2.7.4
+Regards,
 
-
+Laurent Pinchart
