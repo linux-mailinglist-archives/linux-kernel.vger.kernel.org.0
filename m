@@ -2,98 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C7E57B60F
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 01:06:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 812A47B60B
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 01:06:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729067AbfG3XGU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 19:06:20 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:43519 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727259AbfG3XGU (ORCPT
+        id S1727235AbfG3XF6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 19:05:58 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:34566 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726145AbfG3XF6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 19:06:20 -0400
-Received: by mail-ot1-f68.google.com with SMTP id j11so10824909otp.10
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 16:06:19 -0700 (PDT)
+        Tue, 30 Jul 2019 19:05:58 -0400
+Received: by mail-ed1-f68.google.com with SMTP id s49so29144565edb.1
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 16:05:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=GWk710+kd17q1OMPpu/V4kqYNuYX+KuVsErBpC5nLIk=;
-        b=WrAabiJo3Dd0TtRAdJPNb1JBiYkFvBRm3vSWFQpJ+gwuoytfTPfI3f8PTELhhVKlyD
-         Rhp07QkokIAzB6efv9wY6sdxtKIkuJTwvqZULuS9AfQ1pK3jcRPLwP5gxssPI/Ugw1H3
-         tBK4pFecWaDN42C5f8c1CnMEoWW0vrwdcxuHjvtXSAvbkbAKwVQhmLFLECySRswMmtCs
-         iJftiD9zxs5YSMoAkdp/M78U764JOqBiJhvvhAplQjacULBgh1O+teQhg2blsWFp540R
-         8ZQSCjurivZoKK0qnm1XrlEo+kzJzeohTGG8uFoxO5TFALHfsShQTJ6Ae71NzRVe9gon
-         H+xw==
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Wtr/OvD1dXcu2GnVTbhNUmnV1ZmXytBZHy9HlMnyIzc=;
+        b=rESudm6UMf6HX+kgVT50kjl1k4DOJGXY+gDTBiiv+sLZP3Wlk1A14/t3Pc3BEth4QG
+         oBi0cpH0gGrZ5tLRqVwxNqVJwo7O5F1WSZCTOmb5oRvjC6U2ORjcz6RVVN/ES7ioGgpT
+         dHEcr0EtzlO8gnn3rfOxhCfwCBgOQ60BxpFn4SriL/8zAN4KF8mHQ60q8pFJVgQ7E5BB
+         M49mnVcLEDEABE8I2bclPTZw++JAPRzkCipKHV5UlZ8JRRuZBIjRcC2SKDFsTFpUYvnf
+         QNLc7mqphS00RhaARGuPr23bNFoS2X+DKSWHEvY04YgPNq/NYFCVp3Kiwl+6KHbO83wm
+         sQRA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GWk710+kd17q1OMPpu/V4kqYNuYX+KuVsErBpC5nLIk=;
-        b=KD//G40oyD7PfJz53hNu039MaAxGK+8RyYH7nVb/ZBR5V+7YKQ5Xm0HB8axoH8cK6Y
-         q10K9aFJRR9NWeTxb46g4+SXZTIVhK3fQdY/MjKu8Y2+XddN82zEvUj5Szi9vPMYk9pw
-         Vdmw7Ee/mqkTVejKAESXDg/mzZnP/foKqBd19USj4fp2jT0JbAnjbj1MhJqfElmQ3NtU
-         TxcUzEZD1/PEnkf7gnazSDnNxspt4L2i8vB+sEI4v1x9aAIxLue16g8YTGxGGYlG1elJ
-         iRz43MyRgvzAMmsPXyocQr/XOQpEokD0b6lRoRqqPHmTWneapbYc0ouLrV2S76Jl9zEn
-         fYyg==
-X-Gm-Message-State: APjAAAU1Pe7t2f+FWa+5bIwubLiPkIEZU6gsYAvrXni5W7HMV4cRwRvo
-        LIoaf1jdxdI8gG6++ZlBRzUnZ2c5ea5Bd+HmMGlUqg==
-X-Google-Smtp-Source: APXvYqwRZBGclW0RsoKetYGEdOPnQk2VEPJBoWqPKFhs6YkunF2OBOxQev4HLUxITQUhOPKxNUn5nu5CyC5NSPsHFsA=
-X-Received: by 2002:a05:6830:160c:: with SMTP id g12mr33175342otr.231.1564527978919;
- Tue, 30 Jul 2019 16:06:18 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Wtr/OvD1dXcu2GnVTbhNUmnV1ZmXytBZHy9HlMnyIzc=;
+        b=c5z0/N4DpLTgvphOaDo/FdWNWmNVrbVytKTqqjWNTBSp/CR/CtpoQ8ao1gpI3xnJQP
+         UK7iEfRhYzIGPzbWsYHwwxFfDHgAIGGtV5oDYTfY//SA1/gAg0NWuK34xK2SlWl+RWIL
+         5dLqxaA0SmLxeyAPI3kZazduZ0/uwxAau65/6Y7u21GUCNkkvlycz0UMRlHhj1fceOVv
+         A5g8Yvl/OwIsoVqEFCWB5/wL5cXvDtSzOBJG4fS6XuVZQl/QfDdeQbb6DfZtp36O7kUv
+         XIMS6v/RuFZvUkihQ3B2qURDnKa2phJwkQHfr5poJXDncpm1AOJh7OVmexxV1ZoP9g0Q
+         V9jQ==
+X-Gm-Message-State: APjAAAXz0M0bEIyQlZ83SJp6XXaz1MF4re9JnEpOJ1jH1EwFuH+t9aCV
+        tOOvq2FZxgdpj685ydlyn+0=
+X-Google-Smtp-Source: APXvYqziTwNLCqI/xgVzHpbzgUdfqRPf11DI7dLBqBI85HKduT7kUl+xAloT256qE/IUhiIa2l/X+g==
+X-Received: by 2002:a05:6402:129a:: with SMTP id w26mr103452834edv.167.1564527956403;
+        Tue, 30 Jul 2019 16:05:56 -0700 (PDT)
+Received: from box.localdomain ([86.57.175.117])
+        by smtp.gmail.com with ESMTPSA id r10sm16535344edp.25.2019.07.30.16.05.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Jul 2019 16:05:55 -0700 (PDT)
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+X-Google-Original-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Received: by box.localdomain (Postfix, from userid 1000)
+        id 3938C104078; Wed, 31 Jul 2019 02:05:55 +0300 (+03)
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>
+Cc:     x86@kernel.org, "Luck, Tony" <tony.luck@intel.com>,
+        "Lin, Jing" <jing.lin@intel.com>,
+        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
+        linux-kernel@vger.kernel.org,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: [PATCH] x86/asm: Add support for MOVDIR64B instruction
+Date:   Wed, 31 Jul 2019 02:05:54 +0300
+Message-Id: <20190730230554.8291-1-kirill.shutemov@linux.intel.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-References: <20190717222340.137578-1-saravanak@google.com> <20190717222340.137578-4-saravanak@google.com>
- <CAJMQK-jQA6aeSMmrRKDeJz+mGDsu09=ywPv+kfuo26GhQJD4Ug@mail.gmail.com>
-In-Reply-To: <CAJMQK-jQA6aeSMmrRKDeJz+mGDsu09=ywPv+kfuo26GhQJD4Ug@mail.gmail.com>
-From:   Saravana Kannan <saravanak@google.com>
-Date:   Tue, 30 Jul 2019 16:05:43 -0700
-Message-ID: <CAGETcx_qKTDd+pid-jdapi4XqVnN1k4EBP9Vt238rUzhDTHzig@mail.gmail.com>
-Subject: Re: [PATCH v3 3/5] OPP: Improve require-opps linking
-To:     Hsin-Yi Wang <hsinyi@chromium.org>
-Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        Android Kernel Team <kernel-team@android.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 30, 2019 at 4:03 PM Hsin-Yi Wang <hsinyi@chromium.org> wrote:
->
-> On Wed, Jul 17, 2019 at 10:23 PM Saravana Kannan <saravanak@google.com> wrote:
->
-> > -free_required_tables:
-> > -       _opp_table_free_required_tables(opp_table);
-> > -put_np:
-> > -       of_node_put(np);
-> > +       for (i = 0; i < src->required_opp_count; i++) {
-> > +               if (src->required_opp_tables[i])
-> > +                       continue;
-> > +
-> > +               req_np = of_parse_required_opp(src_opp->np, i);
-> > +               if (!req_np)
-> > +                       continue;
-> > +
-> > +               req_table = _find_table_of_opp_np(req_np);
-> Not yet tested in v4, but in v3:
-> In _find_table_of_opp_np(), there's a lockdep check:
-> lockdep_assert_held(&opp_table_lock);
-> which would lead to lockdep warnings.
->
-> Call trace:
-> _find_table_of_opp_np
-> _of_lazy_link_required_tables
-> dev_pm_opp_xlate_opp
+Add support for a new instruction MOVDIR64B. The instruction moves
+64-bytes as direct-store with 64-byte write atomicity from source memory
+address to destination memory address.
 
-Thanks for testing. I'll keep this in mind based on where the rest of
-the discussion goes.
+MOVDIR64B requires the destination address to be 64-byte aligned. No
+alignment restriction is enforced for source operand.
 
--Saravana
+See Intel Software Developer’s Manual for more information on the
+instruction.
+
+Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+---
+
+Several upcoming patchsets will make use of the helper.
+
+---
+ arch/x86/include/asm/special_insns.h | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/arch/x86/include/asm/special_insns.h b/arch/x86/include/asm/special_insns.h
+index 219be88a59d2..059e7bd331d2 100644
+--- a/arch/x86/include/asm/special_insns.h
++++ b/arch/x86/include/asm/special_insns.h
+@@ -248,6 +248,13 @@ static inline void clwb(volatile void *__p)
+ 
+ #define nop() asm volatile ("nop")
+ 
++static inline void movdir64b(void *dst, const void *src)
++{
++	/* movdir64b [rdx], rax */
++	asm volatile(".byte 0x66, 0x0f, 0x38, 0xf8, 0x02"
++			: "=m" (*(char *)dst)
++			: "d" (src), "a" (dst));
++}
+ 
+ #endif /* __KERNEL__ */
+ 
+-- 
+2.21.0
+
