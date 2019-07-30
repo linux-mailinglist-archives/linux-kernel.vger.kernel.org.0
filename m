@@ -2,65 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C61167B5C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 00:36:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DA9A17B5C8
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 00:40:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729282AbfG3WgV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 18:36:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58346 "EHLO mail.kernel.org"
+        id S2388216AbfG3WkG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 18:40:06 -0400
+Received: from mga04.intel.com ([192.55.52.120]:25382 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729250AbfG3WgU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 18:36:20 -0400
-Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A9047206E0;
-        Tue, 30 Jul 2019 22:36:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564526179;
-        bh=pBZlE6TKHTNpaSnKT2xBOqnrpLRxD4BputMpN6MCdcA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=B4h6YrEZ98gJeVQSy+GjtmSA4aXzmqQPkrvsFj6ehO3wknimcuBAocoO7KtW5s8FP
-         8iOb5hGRIa3niv82H+q2r1I503S1vXByrMdryQ4P9zqhHZaWZjX65TnkWwrVTm2ORn
-         b00m0rEYlJtVKqy+LEq72/iQaH5Vs2LjtnxMyZwU=
-Date:   Tue, 30 Jul 2019 18:36:18 -0400
-From:   Sasha Levin <sashal@kernel.org>
-To:     Dexuan Cui <decui@microsoft.com>
-Cc:     "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        KY Srinivasan <kys@microsoft.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Michael Kelley <mikelley@microsoft.com>,
-        Tianyu Lan <Tianyu.Lan@microsoft.com>,
-        "olaf@aepfle.de" <olaf@aepfle.de>,
-        "apw@canonical.com" <apw@canonical.com>,
-        "jasowang@redhat.com" <jasowang@redhat.com>,
-        vkuznets <vkuznets@redhat.com>,
-        "marcelo.cerri@canonical.com" <marcelo.cerri@canonical.com>
-Subject: Re: [PATCH 1/2] hv_balloon: Use a static page for the balloon_up
- send buffer
-Message-ID: <20190730223618.GK29162@sasha-vm>
-References: <1560537692-37400-1-git-send-email-decui@microsoft.com>
+        id S1729318AbfG3WkF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 18:40:05 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jul 2019 15:40:05 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,327,1559545200"; 
+   d="scan'208";a="162868018"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga007.jf.intel.com with ESMTP; 30 Jul 2019 15:40:05 -0700
+Received: from [10.54.74.33] (skuppusw-desk.jf.intel.com [10.54.74.33])
+        by linux.intel.com (Postfix) with ESMTP id 52A6E58060A;
+        Tue, 30 Jul 2019 15:40:05 -0700 (PDT)
+Reply-To: sathyanarayanan.kuppuswamy@linux.intel.com
+Subject: Re: [PATCH v1 1/1] mm/vmalloc.c: Fix percpu free VM area search
+ criteria
+To:     Uladzislau Rezki <urezki@gmail.com>
+Cc:     Dave Hansen <dave.hansen@intel.com>, akpm@linux-foundation.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20190729232139.91131-1-sathyanarayanan.kuppuswamy@linux.intel.com>
+ <20190730204643.tsxgc3n4adb63rlc@pc636>
+ <d121eb22-01fd-c549-a6e8-9459c54d7ead@intel.com>
+ <9fdd44c2-a10e-23f0-a71c-bf8f3e6fc384@linux.intel.com>
+ <20190730223400.hzsyjrxng2s5gk4u@pc636>
+From:   sathyanarayanan kuppuswamy 
+        <sathyanarayanan.kuppuswamy@linux.intel.com>
+Organization: Intel
+Message-ID: <63e48375-afa4-4ab6-240d-1633d7cc9ea4@linux.intel.com>
+Date:   Tue, 30 Jul 2019 15:37:33 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <1560537692-37400-1-git-send-email-decui@microsoft.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190730223400.hzsyjrxng2s5gk4u@pc636>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 14, 2019 at 06:42:17PM +0000, Dexuan Cui wrote:
->It's unnecessary to dynamically allocate the buffer.
+
+On 7/30/19 3:34 PM, Uladzislau Rezki wrote:
+> Hello, Sathyanarayanan.
 >
->Signed-off-by: Dexuan Cui <decui@microsoft.com>
+>> I agree with Dave. I don't think this issue is related to NUMA. The problem
+>> here is about the logic we use to find appropriate vm_area that satisfies
+>> the offset and size requirements of pcpu memory allocator.
+>>
+>> In my test case, I can reproduce this issue if we make request with offset
+>> (ffff000000) and size (600000).
+>>
+> Just to clarify, does it mean that on your setup you have only one area with the
+> 600000 size and 0xffff000000 offset?
+No, its 2 areas. with offset (0, ffff000000) and size (a00000, 600000).
+>
+> Thank you.
+>
+> --
+> Vlad Rezki
+>
+-- 
+Sathyanarayanan Kuppuswamy
+Linux kernel developer
 
-I've queued these up for hyperv-next, thanks!
-
---
-Thanks,
-Sasha
