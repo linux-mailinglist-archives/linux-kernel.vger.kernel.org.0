@@ -2,115 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6943B7AAC3
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 16:20:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1278A7AACF
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 16:20:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730909AbfG3OTx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 10:19:53 -0400
-Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:7460 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726937AbfG3OTw (ORCPT
+        id S1731120AbfG3OUi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 10:20:38 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:46448 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726225AbfG3OUg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 10:19:52 -0400
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-        by mx0a-001ae601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x6UEEUj1010238;
-        Tue, 30 Jul 2019 09:18:25 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=PODMain02222019;
- bh=16TtY1AqhnRkUXcrlSdlYeSs6q0dlo2RqTFOF7duXMs=;
- b=HWMR49/XS0fWtn/X6ImxVX/kKU4meBn+91iR6j5k88+HhNyK/5yr3+UyjZ53XTfpqtnF
- skkTu3ULE67+GQkuNj3GrJgsfKGTkDc1BlezFXyKDlcdTooBq+nSibsDqSv+/u9hhfL8
- m3K9F9o1qAGIRUPXidKbxoh503yFFBFcrXJIEd21U3jsL3lbMaaFeR8PMBQhv56p7xkP
- EnP8oQ6w8YGzVxYGvXsxSvPWe9sEOQ42sCJUQj6cuosjENwDLTQO2eaZkUsdUkO7j2XX
- S8BtNJPKm5aGA23PGFvzge9HdyOSWNmQkiTh8acX0l60VBOoL72PHmH452aCys+Y1EYy dw== 
-Authentication-Results: ppops.net;
-        spf=fail smtp.mailfrom=ckeepax@opensource.cirrus.com
-Received: from ediex01.ad.cirrus.com ([87.246.76.36])
-        by mx0a-001ae601.pphosted.com with ESMTP id 2u0mapmxef-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Tue, 30 Jul 2019 09:18:25 -0500
-Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Tue, 30 Jul
- 2019 15:18:22 +0100
-Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server id 15.1.1591.10 via Frontend
- Transport; Tue, 30 Jul 2019 15:18:22 +0100
-Received: from ediswmail.ad.cirrus.com (ediswmail.ad.cirrus.com [198.61.86.93])
-        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id DD3C42C5;
-        Tue, 30 Jul 2019 15:18:22 +0100 (BST)
-Date:   Tue, 30 Jul 2019 15:18:22 +0100
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+        Tue, 30 Jul 2019 10:20:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=UlNNdsBx6Baw2fuddPCcOCkY2XtucT+E1ZdJLnPYjRk=; b=GX29Id9GIy648eX4mkkvrZCNR
+        +K+KQOYmAhU03++KERmWLtllkU8sxhtlPCsUVzpmy049izlwm+6drN6ph7qMOO4fX8scf48WEmyn2
+        Hh3wcxcIEjS+rlotusZoUCGNzfSxtQHnkRzJN5itUrCtKXV4KGf1Hj1gv7UQ85TaO6ir4=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1hsSyW-0007is-5f; Tue, 30 Jul 2019 14:19:36 +0000
+Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
+        id 607C42742CB5; Tue, 30 Jul 2019 15:19:35 +0100 (BST)
+Date:   Tue, 30 Jul 2019 15:19:35 +0100
+From:   Mark Brown <broonie@kernel.org>
 To:     Thomas Preston <thomas.preston@codethink.co.uk>
-CC:     Mark Rutland <mark.rutland@arm.com>, <devicetree@vger.kernel.org>,
-        <alsa-devel@alsa-project.org>,
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
         Marco Felsch <m.felsch@pengutronix.de>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Paul Cercueil <paul@crapouillou.net>,
         Kirill Marinushkin <kmarinushkin@birdec.tech>,
         Cheng-Yi Chiang <cychiang@chromium.org>,
-        <linux-kernel@vger.kernel.org>, Takashi Iwai <tiwai@suse.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Vinod Koul <vkoul@kernel.org>, Mark Brown <broonie@kernel.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Vinod Koul <vkoul@kernel.org>,
         Annaliese McDermond <nh6z@nh6z.net>,
-        Jerome Brunet <jbrunet@baylibre.com>
-Subject: Re: [alsa-devel] [PATCH v2 3/3] ASoC: TDA7802: Add turn-on
- diagnostic routine
-Message-ID: <20190730141822.GI54126@ediswmail.ad.cirrus.com>
+        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] ASoC: TDA7802: Add turn-on diagnostic routine
+Message-ID: <20190730141935.GF4264@sirena.org.uk>
 References: <20190730120937.16271-1-thomas.preston@codethink.co.uk>
  <20190730120937.16271-4-thomas.preston@codethink.co.uk>
- <20190730124158.GH54126@ediswmail.ad.cirrus.com>
- <e7a879d3-36c2-2df8-97c0-3c4bbd2e7ea2@codethink.co.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="8JPrznbw0YAQ/KXy"
 Content-Disposition: inline
-In-Reply-To: <e7a879d3-36c2-2df8-97c0-3c4bbd2e7ea2@codethink.co.uk>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Proofpoint-SPF-Result: fail
-X-Proofpoint-SPF-Record: v=spf1 include:spf-001ae601.pphosted.com include:spf.protection.outlook.com
- -all
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 bulkscore=0 phishscore=0
- impostorscore=0 clxscore=1015 suspectscore=0 spamscore=0
- lowpriorityscore=0 mlxlogscore=820 priorityscore=1501 mlxscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1906280000 definitions=main-1907300147
+In-Reply-To: <20190730120937.16271-4-thomas.preston@codethink.co.uk>
+X-Cookie: Times approximate.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 30, 2019 at 03:04:19PM +0100, Thomas Preston wrote:
-> On 30/07/2019 13:41, Charles Keepax wrote:
-> >> +static int tda7802_bulk_update(struct regmap *map, struct reg_update *update,
-> >> +		size_t update_count)
-> >> +{
-> >> +	int i, err;
-> >> +
-> >> +	for (i = 0; i < update_count; i++) {
-> >> +		err = regmap_update_bits(map, update[i].reg, update[i].mask,
-> >> +				update[i].val);
-> >> +		if (err < 0)
-> >> +			return err;
-> >> +	}
-> >> +
-> >> +	return i;
-> >> +}
-> > 
-> > This could probably be removed using regmap_multi_reg_write.
-> > 
-> 
-> The problem is that I want to retain the state of the other bits in those
-> registers. Maybe I should make a copy of the backed up state, set the bits
-> I want to off-device, then either:
-> 
-> 1. Write the changes with regmap_multi_reg_write
-> 2. Write all six regs again (if my device doesn't support the multi_reg)
-> 
 
-Nah sorry my bad you are probably better off they way you are.
+--8JPrznbw0YAQ/KXy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Thanks,
-Charles
+On Tue, Jul 30, 2019 at 01:09:37PM +0100, Thomas Preston wrote:
+
+> +	struct dentry *debugfs;
+> +	struct mutex diagnostic_mutex;
+> +};
+
+It is unclear what this mutex usefully protects, it only gets taken when
+writing to the debugfs file to trigger this diagnostic mode but doesn't
+do anything to control interactions with any other code path in the
+driver.
+
+> +static int run_turn_on_diagnostic(struct tda7802_priv *tda7802, u8 *status)
+> +{
+> +	struct device *dev = &tda7802->i2c->dev;
+> +	int err_status, err;
+> +	unsigned int val;
+> +	u8 state[NUM_IB];
+
+> +	/* We must wait 20ms for device to settle, otherwise diagnostics will
+> +	 * not start and regmap poll will timeout.
+> +	 */
+> +	msleep(DIAGNOSTIC_SETTLE_MS);
+
+The comment and define might go out of sync...
+
+> +	err = regmap_bulk_read(tda7802->regmap, TDA7802_DB1, status, 4);
+> +	if (err < 0) {
+> +		dev_err(dev, "Could not read channel status, %d\n", err);
+> +		goto diagnostic_restore;
+> +	}
+
+...but here we use a magic number for the array size :(
+
+> +static int tda7802_diagnostic_show(struct seq_file *f, void *p)
+> +{
+> +	char *buf = kmalloc(PAGE_SIZE, GFP_KERNEL);
+
+We neither use nor free buf?
+
+> +static int tda7802_probe(struct snd_soc_component *component)
+> +{
+> +	struct tda7802_priv *tda7802 = snd_soc_component_get_drvdata(component);
+> +	struct device *dev = &tda7802->i2c->dev;
+> +	int err;
+
+Why is this done at the component level?
+
+--8JPrznbw0YAQ/KXy
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl1AUfYACgkQJNaLcl1U
+h9BW0wf+PaVQnb5XffJ21Ypo9xRgaGWwcL6bpKaVDfNRL94hrZz1wDnFe0ZbKzEY
+hIOheUHZJdsf65s/VqhPR6hprJoLCHtcEcnGVcT0ghx2rkyYEM0DrTZIZ/BzzD8I
+dCbzuqE3Zh3JjiBrLup0wTyeeEFwP9/z9mmVZCfy5jOcErgm+TObJYq/kPsu1bXv
+txX1/W1cPk3+FuPxa2DZC9AFW2Lxv0VnQ0PgBeUwaOI/5ykbFyN51boKVLXFKh6H
+FsEA0Y8qQ2OhufKK4pZnqip4RAgzPa+8DkV1cWaABjlgI+ECI0/sEcXD63MOx3cS
+oovWVqTESFF8RhUnU/HXI7WswbziRg==
+=GUqM
+-----END PGP SIGNATURE-----
+
+--8JPrznbw0YAQ/KXy--
