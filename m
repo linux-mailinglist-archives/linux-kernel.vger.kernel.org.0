@@ -2,157 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 120C979EB7
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 04:31:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6669979EC0
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 04:32:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731290AbfG3CbF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 22:31:05 -0400
-Received: from ozlabs.org ([203.11.71.1]:55741 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730983AbfG3CbC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 22:31:02 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 45yLC71Kk8z9s8m;
-        Tue, 30 Jul 2019 12:30:59 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1564453859;
-        bh=z4v0JCS58MHFvgEhRgTB4IMjS5Og2vWkb3qkjrAaSTY=;
-        h=Date:From:To:Cc:Subject:From;
-        b=A9DF8nat5eJ5dwEVyz9TneA2i/FXwyd046rTjpj5ZrOUzqV183w05sycXDlwcH1ey
-         KDHiUk5H3442TZmGs9oEtnmuQAD+kUNPlf3F2nK2j+gdBIoi6BbTdepO1n5vEB6s/n
-         PKzXoxdWE1uf5/U5l7FhaW/ZNm0yMSAFal7N6weMGJsOUEDHAAwGFClyjvRPD1/Cuo
-         wJilWQcLGaSqbx71QgQGTtb7AkaC+uYicPiMlXzt8Clvs9vsT4FnUWfke7460ppCTW
-         /wiUkAmxhAJzavoouMk3cgHEoXP3qRoJV+mXXceK4nlVo3cH9m8+1Tjzh9bzxCV7En
-         1q9rWUFS39IHA==
-Date:   Tue, 30 Jul 2019 12:30:42 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     David Howells <dhowells@redhat.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: build warnings after merge of the keys tree
-Message-ID: <20190730123042.1f17cdd4@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/M2=CJBp9oFdhZAfgX7jrZgk";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+        id S1731262AbfG3CcT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 22:32:19 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:45393 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729370AbfG3CcS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 22:32:18 -0400
+Received: by mail-pg1-f195.google.com with SMTP id o13so29196935pgp.12;
+        Mon, 29 Jul 2019 19:32:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=YV/+iCS4EeSNAMRIOjIIW+INsj2i8EpPe81QUMDSEVs=;
+        b=m0a1l+F+LVO7Qb/hH9dKdcZfBbYrqyWJpSE3O4a6VhZERbnGovGqSJ+PI1OaqLuga/
+         6gHT2yYrjsfdiVWXtBE8tb+cNJPUgZi3j8wFDvkO/Y/AfG/NUxSppeEEFzUDrrs8O3yd
+         uhrIaAgThHdBTWpTWxkfebhsjhaM9HSzdPqTPlY1eFuQUz7/GMusGTao000YYocoAV4n
+         63zrD5eV8H4DI2HGx5yTUwBZw5bxsmKqJYYGju3nx4KPVV2TmhhVu3HnUNLVLqVfe2zv
+         JCOMMttOjkv+zV4eXJF70uvcSohEb9ouQZ3o1IksE4HnCmO4/iYPTAI+vPpmMwIvYaLu
+         2HBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=YV/+iCS4EeSNAMRIOjIIW+INsj2i8EpPe81QUMDSEVs=;
+        b=f+yV3VYT9MXpXddoSjc60lq9VG56IlcWq8zBbQotgHIzmgtNW0OuI+g38q63F494w7
+         AnGHYRbYDE76O4jjmVcyFtAxiTlerCsQisJYglt4yBmT2vhAGfzDn8gRcctEsjMh9tl2
+         FrwO8KelWCWt2Gfb46/wxSpVsc/DfMqzdl6GGQrEHoYVpUlnlq1MQ7KHLt3ANM7SXH4U
+         GPbwg0NTzCOTbjfeuzi39y6BYseQx4P8zJGFtfQFEm2N1mnySjB66gvqEv9xGAoXUivA
+         XYWh7rlaFu5lBxyezicjLIZ4qBns77GX18/RY9nNK64gePHWxW46JfeNs4QRLgOdVU5y
+         BkBw==
+X-Gm-Message-State: APjAAAX+dLyXeVHyChbojEFjM+dCVq2l7Ct9GfaFn9q33GXwR0D42mAL
+        FqXpVBIPAGwtHDg8licISLS9wx2OVGA=
+X-Google-Smtp-Source: APXvYqxrRdSbPTKzt4ly+c7dnzUq640ClO3tO2ssYDjVziJsbu2BmD86x8kgJ96v+75QQxPN6EIqig==
+X-Received: by 2002:a62:ac1a:: with SMTP id v26mr40341590pfe.184.1564453938159;
+        Mon, 29 Jul 2019 19:32:18 -0700 (PDT)
+Received: from oslab.tsinghua.edu.cn ([2402:f000:4:72:808::3ca])
+        by smtp.gmail.com with ESMTPSA id q24sm56689312pjp.14.2019.07.29.19.32.16
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 29 Jul 2019 19:32:17 -0700 (PDT)
+From:   Jia-Ju Bai <baijiaju1990@gmail.com>
+To:     darrick.wong@oracle.com, bfoster@redhat.com, sandeen@sandeen.net
+Cc:     linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH v2] fs: xfs: Fix possible null-pointer dereferences in xchk_da_btree_block_check_sibling()
+Date:   Tue, 30 Jul 2019 10:32:06 +0800
+Message-Id: <20190730023206.14587-1-baijiaju1990@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/M2=CJBp9oFdhZAfgX7jrZgk
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+In xchk_da_btree_block_check_sibling(), there is an if statement on
+line 274 to check whether ds->state->altpath.blk[level].bp is NULL:
+    if (ds->state->altpath.blk[level].bp)
 
-Hi all,
+When ds->state->altpath.blk[level].bp is NULL, it is used on line 281:
+    xfs_trans_brelse(..., ds->state->altpath.blk[level].bp);
+        struct xfs_buf_log_item *bip = bp->b_log_item;
+        ASSERT(bp->b_transp == tp);
 
-After merging the keys tree, today's linux-next build (x86_64
-allmodconfig) produced these warnings:
+Thus, possible null-pointer dereferences may occur.
 
-In file included from include/linux/keyctl.h:11,
-                 from include/linux/key.h:35,
-                 from include/linux/cred.h:13,
-                 from fs/verity/signature.c:10:
-fs/verity/signature.c: In function 'fsverity_init_signature':
-include/uapi/linux/keyctl.h:52:24: warning: passing argument 5 of 'keyring_=
-alloc' makes pointer from integer without a cast [-Wint-conversion]
- #define KEY_POS_SEARCH 0x08000000 /* possessor can find a key in search / =
-search a keyring */
-                        ^
-fs/verity/signature.c:140:25: note: in expansion of macro 'KEY_POS_SEARCH'
-         current_cred(), KEY_POS_SEARCH |
-                         ^~~~~~~~~~~~~~
-In file included from include/linux/cred.h:13,
-                 from fs/verity/signature.c:10:
-include/linux/key.h:386:20: note: expected 'struct key_acl *' but argument =
-is of type 'int'
- extern struct key *keyring_alloc(const char *description, kuid_t uid, kgid=
-_t gid,
-                    ^~~~~~~~~~~~~
+To fix these bugs, ds->state->altpath.blk[level].bp is checked before
+being used.
 
-Caused by commit
+These bugs are found by a static analysis tool STCheck written by us.
 
-  f802f2b3a991 ("keys: Replace uid/gid/perm permissions checking with an AC=
-L")
-
-interacting with commit
-
-  318ce3c7b2ff ("fs-verity: support builtin file signatures")
-
-from the fsverity tree.
-
-(Have I mentioned that I have API changes? ;-))
-
-I have applied the following merge fix patch:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 30 Jul 2019 12:13:38 +1000
-Subject: [PATCH] fsverity: merge fix for keyring_alloc API change
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
 ---
- fs/verity/signature.c | 17 ++++++++++++++---
- 1 file changed, 14 insertions(+), 3 deletions(-)
+v2:
+* Adjust the code and add an assignment. 
+  Thank Darrick J. Wong for helpful advice. 
 
-diff --git a/fs/verity/signature.c b/fs/verity/signature.c
-index c8b255232de5..a7aac30c56ae 100644
---- a/fs/verity/signature.c
-+++ b/fs/verity/signature.c
-@@ -131,15 +131,26 @@ static inline int __init fsverity_sysctl_init(void)
- }
- #endif /* !CONFIG_SYSCTL */
-=20
-+static struct key_acl fsverity_acl =3D {
-+	.usage	=3D REFCOUNT_INIT(1),
-+	.possessor_viewable =3D true,
-+	.nr_ace	=3D 2,
-+	.aces =3D {
-+		KEY_POSSESSOR_ACE(KEY_ACE_SEARCH | KEY_ACE_JOIN |
-+				  KEY_ACE_INVAL),
-+		KEY_OWNER_ACE(KEY_ACE_VIEW | KEY_ACE_READ | KEY_ACE_WRITE |
-+			      KEY_ACE_CLEAR | KEY_ACE_SEARCH |
-+			      KEY_ACE_SET_SECURITY | KEY_ACE_REVOKE),
+---
+ fs/xfs/scrub/dabtree.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/fs/xfs/scrub/dabtree.c b/fs/xfs/scrub/dabtree.c
+index 94c4f1de1922..77ff9f97bcda 100644
+--- a/fs/xfs/scrub/dabtree.c
++++ b/fs/xfs/scrub/dabtree.c
+@@ -278,7 +278,11 @@ xchk_da_btree_block_check_sibling(
+ 	/* Compare upper level pointer to sibling pointer. */
+ 	if (ds->state->altpath.blk[level].blkno != sibling)
+ 		xchk_da_set_corrupt(ds, level);
+-	xfs_trans_brelse(ds->dargs.trans, ds->state->altpath.blk[level].bp);
++	if (ds->state->altpath.blk[level].bp) {
++		xfs_trans_brelse(ds->dargs.trans,
++				ds->state->altpath.blk[level].bp);
++		ds->state->altpath.blk[level].bp = NULL;
 +	}
-+};
-+
- int __init fsverity_init_signature(void)
- {
- 	struct key *ring;
- 	int err;
-=20
- 	ring =3D keyring_alloc(".fs-verity", KUIDT_INIT(0), KGIDT_INIT(0),
--			     current_cred(), KEY_POS_SEARCH |
--				KEY_USR_VIEW | KEY_USR_READ | KEY_USR_WRITE |
--				KEY_USR_SEARCH | KEY_USR_SETATTR,
-+			     current_cred(), &fsverity_acl,
- 			     KEY_ALLOC_NOT_IN_QUOTA, NULL, NULL);
- 	if (IS_ERR(ring))
- 		return PTR_ERR(ring);
---=20
-2.20.1
+ out:
+ 	return error;
+ }
+-- 
+2.17.0
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/M2=CJBp9oFdhZAfgX7jrZgk
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl0/q9IACgkQAVBC80lX
-0Gy2fwf7Bw/v1qRHrP001IkgRGwCkUTGj7uNtJkZzlEm2/COKldcxF8Lw0HYrG/P
-3I/pPCjnHfo2EjDlG42Rm7LsjxsBoDvjz+hDGnD6nBRf4kexfoDq/gx7xnhlXLYH
-9izMIQEaFtSWHdvTmeWb6P+7UA44cXK3kaA2eEZ/3mwi+/xUOtGaYXmVO9/cupyb
-kLRbR2EcYMtipuJPpj3ywzFX5+5x8DYdn+qt+PfCg+yEqZTj5PdpiOFri686y5Pb
-xrsMfONrI5rZA0FtfVbGxt/GPe+FvrD6qI8YsCjFF43iU6PruO35zVRhup7k/SP+
-U6Jab3fiMgDItTX58+Zdi10i0iO9QQ==
-=Z7gH
------END PGP SIGNATURE-----
-
---Sig_/M2=CJBp9oFdhZAfgX7jrZgk--
