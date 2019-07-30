@@ -2,53 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 457DA7B1A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:19:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 18F427B16E
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:16:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729034AbfG3STJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 14:19:09 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:33880 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387988AbfG3SQZ (ORCPT
+        id S2388092AbfG3SQh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 14:16:37 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:35300 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387944AbfG3SQ0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 14:16:25 -0400
-Received: by mail-pf1-f195.google.com with SMTP id b13so30263705pfo.1
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 11:16:25 -0700 (PDT)
+        Tue, 30 Jul 2019 14:16:26 -0400
+Received: by mail-pl1-f194.google.com with SMTP id w24so29209334plp.2
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 11:16:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=CcrcqbSBreCJS7uJne8GpJj61wViAUI4K2/Lf2cLuPY=;
-        b=EPouwpjMEXPBtswaaSdTpHv1R/k+gdvXnvUVX8N78PZwDSNQUys+4hHA5zPoEw5dZF
-         UTLxBoQUlKddhN40ooAjurYN8/D31g2xJATtJwJEpY2w7tGYIa56mW7AT99u08D2hVHi
-         sY2wAgTmQpR95aokyAc9zlb5dW423iZgOGFHE=
+        bh=AZvanaYGQHCeCe8d2+RSzqNKocPRl2CR5zzefJtoMkI=;
+        b=HF5OnRSmMh2mz0tcIzJD/fB71owMPCZLGeTM1w0J44yIRKz6ezQnukLhlUbQs54QH0
+         VcTZU85lRduHS+pPoNoiI/1gOtnVnUcym28dtLh/iqXnU3l60s9c85wMcauQgZQgPQLQ
+         hjYmYUEvujlBiprv/pluRVkJKsrv1XJGt7f0Y=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=CcrcqbSBreCJS7uJne8GpJj61wViAUI4K2/Lf2cLuPY=;
-        b=hcExI3p46XGo7WakllI1aCZhmM+dugnqx3Y34kxclj2m9vOyn5AeTQjrPODZDbQ9iY
-         cNK61xbG/THiHQGsevesPo66jy9myR2DbPdaLfutpyCGawnsoFOjyFKrmMGg98/g/m54
-         k84BaFHf/jvb8RMOpVwlEmp6uYzonOalXecqyTkN6vg2jxWP/Z0vZvxFM/pj6AMLXU4U
-         Xp7/6GWgOXT2+zQhzULorewAJDLlC3cYfhjztqP9pgAQYXaxsJVcHuiINqxmmkoI6wn+
-         o7ipWw+lF1YTVD6HZLTXPo9cWWec49pOHJKSbnqwXI5mE/oijaXclrlBIEfTy9d+9QF4
-         r9ZQ==
-X-Gm-Message-State: APjAAAUKd6PvHuz6HX6DBTNk8OOcZpAw2q2h40ZUzaLqvbbP/zuCmeI3
-        z2Pj4pHTAIoMxyTHws3vL63Zlkwn+oI=
-X-Google-Smtp-Source: APXvYqwOcbjUPq2A3QjeCYzA8NJwoU1Uvb+pSksnkt7ZhsMNYf4CPQzElwOS0Na858Wy03pxrjdtgg==
-X-Received: by 2002:a62:2f04:: with SMTP id v4mr42010418pfv.14.1564510584638;
-        Tue, 30 Jul 2019 11:16:24 -0700 (PDT)
+        bh=AZvanaYGQHCeCe8d2+RSzqNKocPRl2CR5zzefJtoMkI=;
+        b=aICk7eFBWe9Ra8vc7GhIch7TOwUayo2UIWnDuNb3ZJy9GnUWTC9Ln5NXd5FrbbLQWz
+         d2+so767UxThmj+z1ugePu7tOchPX6vs/vlb5TYGe3Jm6zD0lKeE2b4TWpbVMmflgQbG
+         fTOlBmPBzL6slmApEG5b+C+iD6lVtzvDiXRy7ux/EmzVOtFfS/pfdeVsTfRh9PYIhpKA
+         kyFnKbBSEzUaJwELwDsGYRnBRy198mh3SshGrmZacY2asMvqMBjY+7B/IuUvMrQaz8sZ
+         3780LRUahfjnuaBg1qOhHlQoV+a+2LYqA/yAnXVZaaPOcvh3GDcqKujBaSzqa3y0IBfN
+         vuPQ==
+X-Gm-Message-State: APjAAAVRSGdutLbACrv85EjP4plj/x4xGXWZXg6bKG3PUk0mMIUvPxJD
+        XIxSP4H0H5QrfwFMkgrlsuoDrMdFumv9ZQ==
+X-Google-Smtp-Source: APXvYqzp3gdb8JqpjQ0n3ss05I71VUq27CGUDkIsctzC6HmCCofvpLMH1Tg0Gl+4gJbHgu+hPLZPew==
+X-Received: by 2002:a17:902:ac87:: with SMTP id h7mr120307087plr.36.1564510585537;
+        Tue, 30 Jul 2019 11:16:25 -0700 (PDT)
 Received: from smtp.gmail.com ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id g1sm106744083pgg.27.2019.07.30.11.16.23
+        by smtp.gmail.com with ESMTPSA id g1sm106744083pgg.27.2019.07.30.11.16.24
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
         Tue, 30 Jul 2019 11:16:24 -0700 (PDT)
 From:   Stephen Boyd <swboyd@chromium.org>
 To:     linux-kernel@vger.kernel.org
-Cc:     Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+Cc:     Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH v6 31/57] pci: Remove dev_err() usage after platform_get_irq()
-Date:   Tue, 30 Jul 2019 11:15:31 -0700
-Message-Id: <20190730181557.90391-32-swboyd@chromium.org>
+Subject: [PATCH v6 32/57] perf: Remove dev_err() usage after platform_get_irq()
+Date:   Tue, 30 Jul 2019 11:15:32 -0700
+Message-Id: <20190730181557.90391-33-swboyd@chromium.org>
 X-Mailer: git-send-email 2.22.0.709.g102302147b-goog
 In-Reply-To: <20190730181557.90391-1-swboyd@chromium.org>
 References: <20190730181557.90391-1-swboyd@chromium.org>
@@ -94,421 +95,104 @@ if ( \( ret < 0 \| ret <= 0 \) )
 While we're here, remove braces on if statements that only have one
 statement (manually).
 
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-pci@vger.kernel.org
+Cc: Will Deacon <will@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Stephen Boyd <swboyd@chromium.org>
 ---
 
 Please apply directly to subsystem trees
 
- drivers/pci/controller/dwc/pci-dra7xx.c     |  8 ++------
- drivers/pci/controller/dwc/pci-exynos.c     |  8 ++------
- drivers/pci/controller/dwc/pci-imx6.c       |  4 +---
- drivers/pci/controller/dwc/pci-keystone.c   |  4 +---
- drivers/pci/controller/dwc/pci-meson.c      |  4 +---
- drivers/pci/controller/dwc/pcie-armada8k.c  |  4 +---
- drivers/pci/controller/dwc/pcie-artpec6.c   |  4 +---
- drivers/pci/controller/dwc/pcie-histb.c     |  4 +---
- drivers/pci/controller/dwc/pcie-kirin.c     |  5 +----
- drivers/pci/controller/dwc/pcie-spear13xx.c |  4 +---
- drivers/pci/controller/pci-tegra.c          |  8 ++------
- drivers/pci/controller/pci-v3-semi.c        |  4 +---
- drivers/pci/controller/pci-xgene-msi.c      |  2 --
- drivers/pci/controller/pcie-altera-msi.c    |  1 -
- drivers/pci/controller/pcie-altera.c        |  4 +---
- drivers/pci/controller/pcie-mobiveil.c      |  4 +---
- drivers/pci/controller/pcie-rockchip-host.c | 12 +++---------
- drivers/pci/controller/pcie-tango.c         |  4 +---
- drivers/pci/controller/pcie-xilinx-nwl.c    | 11 ++---------
- 19 files changed, 23 insertions(+), 76 deletions(-)
+ drivers/perf/hisilicon/hisi_uncore_ddrc_pmu.c | 4 +---
+ drivers/perf/hisilicon/hisi_uncore_hha_pmu.c  | 4 +---
+ drivers/perf/hisilicon/hisi_uncore_l3c_pmu.c  | 4 +---
+ drivers/perf/qcom_l2_pmu.c                    | 6 +-----
+ drivers/perf/xgene_pmu.c                      | 4 +---
+ 5 files changed, 5 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/pci/controller/dwc/pci-dra7xx.c b/drivers/pci/controller/dwc/pci-dra7xx.c
-index 4234ddb4722f..5ab34ce963f1 100644
---- a/drivers/pci/controller/dwc/pci-dra7xx.c
-+++ b/drivers/pci/controller/dwc/pci-dra7xx.c
-@@ -462,10 +462,8 @@ static int __init dra7xx_add_pcie_port(struct dra7xx_pcie *dra7xx,
- 	struct resource *res;
+diff --git a/drivers/perf/hisilicon/hisi_uncore_ddrc_pmu.c b/drivers/perf/hisilicon/hisi_uncore_ddrc_pmu.c
+index 6ad0823bcf23..e42d4464c2cf 100644
+--- a/drivers/perf/hisilicon/hisi_uncore_ddrc_pmu.c
++++ b/drivers/perf/hisilicon/hisi_uncore_ddrc_pmu.c
+@@ -217,10 +217,8 @@ static int hisi_ddrc_pmu_init_irq(struct hisi_pmu *ddrc_pmu,
  
- 	pp->irq = platform_get_irq(pdev, 1);
--	if (pp->irq < 0) {
--		dev_err(dev, "missing IRQ resource\n");
-+	if (pp->irq < 0)
- 		return pp->irq;
+ 	/* Read and init IRQ */
+ 	irq = platform_get_irq(pdev, 0);
+-	if (irq < 0) {
+-		dev_err(&pdev->dev, "DDRC PMU get irq fail; irq:%d\n", irq);
++	if (irq < 0)
+ 		return irq;
 -	}
  
- 	ret = devm_request_irq(dev, pp->irq, dra7xx_pcie_msi_irq_handler,
- 			       IRQF_SHARED | IRQF_NO_THREAD,
-@@ -713,10 +711,8 @@ static int __init dra7xx_pcie_probe(struct platform_device *pdev)
- 	pci->ops = &dw_pcie_ops;
+ 	ret = devm_request_irq(&pdev->dev, irq, hisi_ddrc_pmu_isr,
+ 			       IRQF_NOBALANCING | IRQF_NO_THREAD,
+diff --git a/drivers/perf/hisilicon/hisi_uncore_hha_pmu.c b/drivers/perf/hisilicon/hisi_uncore_hha_pmu.c
+index 4f2917f3e25e..f28063873e11 100644
+--- a/drivers/perf/hisilicon/hisi_uncore_hha_pmu.c
++++ b/drivers/perf/hisilicon/hisi_uncore_hha_pmu.c
+@@ -207,10 +207,8 @@ static int hisi_hha_pmu_init_irq(struct hisi_pmu *hha_pmu,
+ 
+ 	/* Read and init IRQ */
+ 	irq = platform_get_irq(pdev, 0);
+-	if (irq < 0) {
+-		dev_err(&pdev->dev, "HHA PMU get irq fail; irq:%d\n", irq);
++	if (irq < 0)
+ 		return irq;
+-	}
+ 
+ 	ret = devm_request_irq(&pdev->dev, irq, hisi_hha_pmu_isr,
+ 			      IRQF_NOBALANCING | IRQF_NO_THREAD,
+diff --git a/drivers/perf/hisilicon/hisi_uncore_l3c_pmu.c b/drivers/perf/hisilicon/hisi_uncore_l3c_pmu.c
+index 9153e093f9df..078b8dc57250 100644
+--- a/drivers/perf/hisilicon/hisi_uncore_l3c_pmu.c
++++ b/drivers/perf/hisilicon/hisi_uncore_l3c_pmu.c
+@@ -206,10 +206,8 @@ static int hisi_l3c_pmu_init_irq(struct hisi_pmu *l3c_pmu,
+ 
+ 	/* Read and init IRQ */
+ 	irq = platform_get_irq(pdev, 0);
+-	if (irq < 0) {
+-		dev_err(&pdev->dev, "L3C PMU get irq fail; irq:%d\n", irq);
++	if (irq < 0)
+ 		return irq;
+-	}
+ 
+ 	ret = devm_request_irq(&pdev->dev, irq, hisi_l3c_pmu_isr,
+ 			       IRQF_NOBALANCING | IRQF_NO_THREAD,
+diff --git a/drivers/perf/qcom_l2_pmu.c b/drivers/perf/qcom_l2_pmu.c
+index d06182fe14b8..21d6991dbe0b 100644
+--- a/drivers/perf/qcom_l2_pmu.c
++++ b/drivers/perf/qcom_l2_pmu.c
+@@ -909,12 +909,8 @@ static int l2_cache_pmu_probe_cluster(struct device *dev, void *data)
+ 	cluster->cluster_id = fw_cluster_id;
+ 
+ 	irq = platform_get_irq(sdev, 0);
+-	if (irq < 0) {
+-		dev_err(&pdev->dev,
+-			"Failed to get valid irq for cluster %ld\n",
+-			fw_cluster_id);
++	if (irq < 0)
+ 		return irq;
+-	}
+ 	irq_set_status_flags(irq, IRQ_NOAUTOEN);
+ 	cluster->irq = irq;
+ 
+diff --git a/drivers/perf/xgene_pmu.c b/drivers/perf/xgene_pmu.c
+index 3259e2ebeb39..7e328d6385c3 100644
+--- a/drivers/perf/xgene_pmu.c
++++ b/drivers/perf/xgene_pmu.c
+@@ -1901,10 +1901,8 @@ static int xgene_pmu_probe(struct platform_device *pdev)
+ 	}
  
  	irq = platform_get_irq(pdev, 0);
 -	if (irq < 0) {
--		dev_err(dev, "missing IRQ resource: %d\n", irq);
+-		dev_err(&pdev->dev, "No IRQ resource\n");
 +	if (irq < 0)
- 		return irq;
--	}
- 
- 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "ti_conf");
- 	base = devm_ioremap_nocache(dev, res->start, resource_size(res));
-diff --git a/drivers/pci/controller/dwc/pci-exynos.c b/drivers/pci/controller/dwc/pci-exynos.c
-index cee5f2f590e2..a3e005b5f93d 100644
---- a/drivers/pci/controller/dwc/pci-exynos.c
-+++ b/drivers/pci/controller/dwc/pci-exynos.c
-@@ -402,10 +402,8 @@ static int __init exynos_add_pcie_port(struct exynos_pcie *ep,
- 	int ret;
- 
- 	pp->irq = platform_get_irq(pdev, 1);
--	if (pp->irq < 0) {
--		dev_err(dev, "failed to get irq\n");
-+	if (pp->irq < 0)
- 		return pp->irq;
--	}
- 	ret = devm_request_irq(dev, pp->irq, exynos_pcie_irq_handler,
- 				IRQF_SHARED, "exynos-pcie", ep);
- 	if (ret) {
-@@ -415,10 +413,8 @@ static int __init exynos_add_pcie_port(struct exynos_pcie *ep,
- 
- 	if (IS_ENABLED(CONFIG_PCI_MSI)) {
- 		pp->msi_irq = platform_get_irq(pdev, 0);
--		if (pp->msi_irq < 0) {
--			dev_err(dev, "failed to get msi irq\n");
-+		if (pp->msi_irq < 0)
- 			return pp->msi_irq;
--		}
- 	}
- 
- 	pp->ops = &exynos_pcie_host_ops;
-diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
-index 9b5cb5b70389..a969ec82ca5f 100644
---- a/drivers/pci/controller/dwc/pci-imx6.c
-+++ b/drivers/pci/controller/dwc/pci-imx6.c
-@@ -867,10 +867,8 @@ static int imx6_add_pcie_port(struct imx6_pcie *imx6_pcie,
- 
- 	if (IS_ENABLED(CONFIG_PCI_MSI)) {
- 		pp->msi_irq = platform_get_irq_byname(pdev, "msi");
--		if (pp->msi_irq <= 0) {
--			dev_err(dev, "failed to get MSI irq\n");
-+		if (pp->msi_irq <= 0)
- 			return -ENODEV;
--		}
- 	}
- 
- 	pp->ops = &imx6_pcie_host_ops;
-diff --git a/drivers/pci/controller/dwc/pci-keystone.c b/drivers/pci/controller/dwc/pci-keystone.c
-index af677254a072..3878208cfd44 100644
---- a/drivers/pci/controller/dwc/pci-keystone.c
-+++ b/drivers/pci/controller/dwc/pci-keystone.c
-@@ -1247,10 +1247,8 @@ static int __init ks_pcie_probe(struct platform_device *pdev)
- 	pci->version = version;
- 
- 	irq = platform_get_irq(pdev, 0);
--	if (irq < 0) {
--		dev_err(dev, "missing IRQ resource: %d\n", irq);
-+	if (irq < 0)
- 		return irq;
--	}
- 
- 	ret = request_irq(irq, ks_pcie_err_irq_handler, IRQF_SHARED,
- 			  "ks-pcie-error-irq", ks_pcie);
-diff --git a/drivers/pci/controller/dwc/pci-meson.c b/drivers/pci/controller/dwc/pci-meson.c
-index e35e9eaa50ee..419c30034dc8 100644
---- a/drivers/pci/controller/dwc/pci-meson.c
-+++ b/drivers/pci/controller/dwc/pci-meson.c
-@@ -500,10 +500,8 @@ static int meson_add_pcie_port(struct meson_pcie *mp,
- 
- 	if (IS_ENABLED(CONFIG_PCI_MSI)) {
- 		pp->msi_irq = platform_get_irq(pdev, 0);
--		if (pp->msi_irq < 0) {
--			dev_err(dev, "failed to get MSI IRQ\n");
-+		if (pp->msi_irq < 0)
- 			return pp->msi_irq;
--		}
- 	}
- 
- 	pp->ops = &meson_pcie_host_ops;
-diff --git a/drivers/pci/controller/dwc/pcie-armada8k.c b/drivers/pci/controller/dwc/pcie-armada8k.c
-index 3d55dc78d999..33309ce70ad5 100644
---- a/drivers/pci/controller/dwc/pcie-armada8k.c
-+++ b/drivers/pci/controller/dwc/pcie-armada8k.c
-@@ -249,10 +249,8 @@ static int armada8k_add_pcie_port(struct armada8k_pcie *pcie,
- 	pp->ops = &armada8k_pcie_host_ops;
- 
- 	pp->irq = platform_get_irq(pdev, 0);
--	if (pp->irq < 0) {
--		dev_err(dev, "failed to get irq for port\n");
-+	if (pp->irq < 0)
- 		return pp->irq;
--	}
- 
- 	ret = devm_request_irq(dev, pp->irq, armada8k_pcie_irq_handler,
- 			       IRQF_SHARED, "armada8k-pcie", pcie);
-diff --git a/drivers/pci/controller/dwc/pcie-artpec6.c b/drivers/pci/controller/dwc/pcie-artpec6.c
-index d00252bd8fae..7fa7f8d134b6 100644
---- a/drivers/pci/controller/dwc/pcie-artpec6.c
-+++ b/drivers/pci/controller/dwc/pcie-artpec6.c
-@@ -393,10 +393,8 @@ static int artpec6_add_pcie_port(struct artpec6_pcie *artpec6_pcie,
- 
- 	if (IS_ENABLED(CONFIG_PCI_MSI)) {
- 		pp->msi_irq = platform_get_irq_byname(pdev, "msi");
--		if (pp->msi_irq < 0) {
--			dev_err(dev, "failed to get MSI irq\n");
-+		if (pp->msi_irq < 0)
- 			return pp->msi_irq;
--		}
- 	}
- 
- 	pp->ops = &artpec6_pcie_host_ops;
-diff --git a/drivers/pci/controller/dwc/pcie-histb.c b/drivers/pci/controller/dwc/pcie-histb.c
-index 954bc2b74bbc..6612072bd720 100644
---- a/drivers/pci/controller/dwc/pcie-histb.c
-+++ b/drivers/pci/controller/dwc/pcie-histb.c
-@@ -402,10 +402,8 @@ static int histb_pcie_probe(struct platform_device *pdev)
- 
- 	if (IS_ENABLED(CONFIG_PCI_MSI)) {
- 		pp->msi_irq = platform_get_irq_byname(pdev, "msi");
--		if (pp->msi_irq < 0) {
--			dev_err(dev, "Failed to get MSI IRQ\n");
-+		if (pp->msi_irq < 0)
- 			return pp->msi_irq;
--		}
- 	}
- 
- 	hipcie->phy = devm_phy_get(dev, "phy");
-diff --git a/drivers/pci/controller/dwc/pcie-kirin.c b/drivers/pci/controller/dwc/pcie-kirin.c
-index 8df1914226be..dc08551e3f8d 100644
---- a/drivers/pci/controller/dwc/pcie-kirin.c
-+++ b/drivers/pci/controller/dwc/pcie-kirin.c
-@@ -455,11 +455,8 @@ static int kirin_pcie_add_msi(struct dw_pcie *pci,
- 
- 	if (IS_ENABLED(CONFIG_PCI_MSI)) {
- 		irq = platform_get_irq(pdev, 0);
--		if (irq < 0) {
--			dev_err(&pdev->dev,
--				"failed to get MSI IRQ (%d)\n", irq);
-+		if (irq < 0)
- 			return irq;
--		}
- 
- 		pci->pp.msi_irq = irq;
- 	}
-diff --git a/drivers/pci/controller/dwc/pcie-spear13xx.c b/drivers/pci/controller/dwc/pcie-spear13xx.c
-index 7d0cdfd8138b..26d3a734ce0d 100644
---- a/drivers/pci/controller/dwc/pcie-spear13xx.c
-+++ b/drivers/pci/controller/dwc/pcie-spear13xx.c
-@@ -198,10 +198,8 @@ static int spear13xx_add_pcie_port(struct spear13xx_pcie *spear13xx_pcie,
- 	int ret;
- 
- 	pp->irq = platform_get_irq(pdev, 0);
--	if (pp->irq < 0) {
--		dev_err(dev, "failed to get irq\n");
-+	if (pp->irq < 0)
- 		return pp->irq;
--	}
- 	ret = devm_request_irq(dev, pp->irq, spear13xx_pcie_irq_handler,
- 			       IRQF_SHARED | IRQF_NO_THREAD,
- 			       "spear1340-pcie", spear13xx_pcie);
-diff --git a/drivers/pci/controller/pci-tegra.c b/drivers/pci/controller/pci-tegra.c
-index 9a917b2456f6..43b6e0848b91 100644
---- a/drivers/pci/controller/pci-tegra.c
-+++ b/drivers/pci/controller/pci-tegra.c
-@@ -1549,10 +1549,8 @@ static int tegra_pcie_get_resources(struct tegra_pcie *pcie)
- 
- 	/* request interrupt */
- 	err = platform_get_irq_byname(pdev, "intr");
--	if (err < 0) {
--		dev_err(dev, "failed to get IRQ: %d\n", err);
-+	if (err < 0)
- 		goto phys_put;
--	}
- 
- 	pcie->irq = err;
- 
-@@ -1767,10 +1765,8 @@ static int tegra_pcie_msi_setup(struct tegra_pcie *pcie)
- 	}
- 
- 	err = platform_get_irq_byname(pdev, "msi");
--	if (err < 0) {
--		dev_err(dev, "failed to get IRQ: %d\n", err);
-+	if (err < 0)
- 		goto free_irq_domain;
--	}
- 
- 	msi->irq = err;
- 
-diff --git a/drivers/pci/controller/pci-v3-semi.c b/drivers/pci/controller/pci-v3-semi.c
-index d219404bad92..7c9d898cde71 100644
---- a/drivers/pci/controller/pci-v3-semi.c
-+++ b/drivers/pci/controller/pci-v3-semi.c
-@@ -804,10 +804,8 @@ static int v3_pci_probe(struct platform_device *pdev)
- 
- 	/* Get and request error IRQ resource */
- 	irq = platform_get_irq(pdev, 0);
--	if (irq <= 0) {
--		dev_err(dev, "unable to obtain PCIv3 error IRQ\n");
-+	if (irq <= 0)
- 		return -ENODEV;
--	}
- 	ret = devm_request_irq(dev, irq, v3_irq, 0,
- 			"PCIv3 error", v3);
- 	if (ret < 0) {
-diff --git a/drivers/pci/controller/pci-xgene-msi.c b/drivers/pci/controller/pci-xgene-msi.c
-index f4c02da84e59..02271c6d17a1 100644
---- a/drivers/pci/controller/pci-xgene-msi.c
-+++ b/drivers/pci/controller/pci-xgene-msi.c
-@@ -478,8 +478,6 @@ static int xgene_msi_probe(struct platform_device *pdev)
- 	for (irq_index = 0; irq_index < NR_HW_IRQS; irq_index++) {
- 		virt_msir = platform_get_irq(pdev, irq_index);
- 		if (virt_msir < 0) {
--			dev_err(&pdev->dev, "Cannot translate IRQ index %d\n",
--				irq_index);
- 			rc = virt_msir;
- 			goto error;
- 		}
-diff --git a/drivers/pci/controller/pcie-altera-msi.c b/drivers/pci/controller/pcie-altera-msi.c
-index 16d938920ca5..bec666eda1eb 100644
---- a/drivers/pci/controller/pcie-altera-msi.c
-+++ b/drivers/pci/controller/pcie-altera-msi.c
-@@ -256,7 +256,6 @@ static int altera_msi_probe(struct platform_device *pdev)
- 
- 	msi->irq = platform_get_irq(pdev, 0);
- 	if (msi->irq < 0) {
--		dev_err(&pdev->dev, "failed to map IRQ: %d\n", msi->irq);
- 		ret = msi->irq;
- 		goto err;
- 	}
-diff --git a/drivers/pci/controller/pcie-altera.c b/drivers/pci/controller/pcie-altera.c
-index d2497ca43828..0ef01b06efda 100644
---- a/drivers/pci/controller/pcie-altera.c
-+++ b/drivers/pci/controller/pcie-altera.c
-@@ -747,10 +747,8 @@ static int altera_pcie_parse_dt(struct altera_pcie *pcie)
- 
- 	/* setup IRQ */
- 	pcie->irq = platform_get_irq(pdev, 0);
--	if (pcie->irq < 0) {
--		dev_err(dev, "failed to get IRQ: %d\n", pcie->irq);
-+	if (pcie->irq < 0)
- 		return pcie->irq;
--	}
- 
- 	irq_set_chained_handler_and_data(pcie->irq, altera_pcie_isr, pcie);
- 	return 0;
-diff --git a/drivers/pci/controller/pcie-mobiveil.c b/drivers/pci/controller/pcie-mobiveil.c
-index 672e633601c7..34400ea5a7c3 100644
---- a/drivers/pci/controller/pcie-mobiveil.c
-+++ b/drivers/pci/controller/pcie-mobiveil.c
-@@ -453,10 +453,8 @@ static int mobiveil_pcie_parse_dt(struct mobiveil_pcie *pcie)
- 		pcie->ppio_wins = MAX_PIO_WINDOWS;
- 
- 	pcie->irq = platform_get_irq(pdev, 0);
--	if (pcie->irq <= 0) {
--		dev_err(dev, "failed to map IRQ: %d\n", pcie->irq);
-+	if (pcie->irq <= 0)
- 		return -ENODEV;
--	}
- 
- 	return 0;
- }
-diff --git a/drivers/pci/controller/pcie-rockchip-host.c b/drivers/pci/controller/pcie-rockchip-host.c
-index 8d20f1793a61..edbf872a76d5 100644
---- a/drivers/pci/controller/pcie-rockchip-host.c
-+++ b/drivers/pci/controller/pcie-rockchip-host.c
-@@ -549,10 +549,8 @@ static int rockchip_pcie_setup_irq(struct rockchip_pcie *rockchip)
- 	struct platform_device *pdev = to_platform_device(dev);
- 
- 	irq = platform_get_irq_byname(pdev, "sys");
--	if (irq < 0) {
--		dev_err(dev, "missing sys IRQ resource\n");
-+	if (irq < 0)
- 		return irq;
--	}
- 
- 	err = devm_request_irq(dev, irq, rockchip_pcie_subsys_irq_handler,
- 			       IRQF_SHARED, "pcie-sys", rockchip);
-@@ -562,20 +560,16 @@ static int rockchip_pcie_setup_irq(struct rockchip_pcie *rockchip)
- 	}
- 
- 	irq = platform_get_irq_byname(pdev, "legacy");
--	if (irq < 0) {
--		dev_err(dev, "missing legacy IRQ resource\n");
-+	if (irq < 0)
- 		return irq;
--	}
- 
- 	irq_set_chained_handler_and_data(irq,
- 					 rockchip_pcie_legacy_int_handler,
- 					 rockchip);
- 
- 	irq = platform_get_irq_byname(pdev, "client");
--	if (irq < 0) {
--		dev_err(dev, "missing client IRQ resource\n");
-+	if (irq < 0)
- 		return irq;
--	}
- 
- 	err = devm_request_irq(dev, irq, rockchip_pcie_client_irq_handler,
- 			       IRQF_SHARED, "pcie-client", rockchip);
-diff --git a/drivers/pci/controller/pcie-tango.c b/drivers/pci/controller/pcie-tango.c
-index 21a208da3f59..b87aa9041480 100644
---- a/drivers/pci/controller/pcie-tango.c
-+++ b/drivers/pci/controller/pcie-tango.c
-@@ -273,10 +273,8 @@ static int tango_pcie_probe(struct platform_device *pdev)
- 		writel_relaxed(0, pcie->base + SMP8759_ENABLE + offset);
- 
- 	virq = platform_get_irq(pdev, 1);
--	if (virq <= 0) {
--		dev_err(dev, "Failed to map IRQ\n");
-+	if (virq <= 0)
- 		return -ENXIO;
--	}
- 
- 	irq_dom = irq_domain_create_linear(fwnode, MSI_MAX, &dom_ops, pcie);
- 	if (!irq_dom) {
-diff --git a/drivers/pci/controller/pcie-xilinx-nwl.c b/drivers/pci/controller/pcie-xilinx-nwl.c
-index 45c0f344ccd1..743244db09d1 100644
---- a/drivers/pci/controller/pcie-xilinx-nwl.c
-+++ b/drivers/pci/controller/pcie-xilinx-nwl.c
-@@ -586,7 +586,6 @@ static int nwl_pcie_enable_msi(struct nwl_pcie *pcie)
- 	/* Get msi_1 IRQ number */
- 	msi->irq_msi1 = platform_get_irq_byname(pdev, "msi1");
- 	if (msi->irq_msi1 < 0) {
--		dev_err(dev, "failed to get IRQ#%d\n", msi->irq_msi1);
- 		ret = -EINVAL;
- 		goto err;
- 	}
-@@ -597,7 +596,6 @@ static int nwl_pcie_enable_msi(struct nwl_pcie *pcie)
- 	/* Get msi_0 IRQ number */
- 	msi->irq_msi0 = platform_get_irq_byname(pdev, "msi0");
- 	if (msi->irq_msi0 < 0) {
--		dev_err(dev, "failed to get IRQ#%d\n", msi->irq_msi0);
- 		ret = -EINVAL;
- 		goto err;
- 	}
-@@ -728,11 +726,8 @@ static int nwl_pcie_bridge_init(struct nwl_pcie *pcie)
- 
- 	/* Get misc IRQ number */
- 	pcie->irq_misc = platform_get_irq_byname(pdev, "misc");
--	if (pcie->irq_misc < 0) {
--		dev_err(dev, "failed to get misc IRQ %d\n",
--			pcie->irq_misc);
-+	if (pcie->irq_misc < 0)
  		return -EINVAL;
 -	}
  
- 	err = devm_request_irq(dev, pcie->irq_misc,
- 			       nwl_pcie_misc_handler, IRQF_SHARED,
-@@ -797,10 +792,8 @@ static int nwl_pcie_parse_dt(struct nwl_pcie *pcie,
- 
- 	/* Get intx IRQ number */
- 	pcie->irq_intx = platform_get_irq_byname(pdev, "intx");
--	if (pcie->irq_intx < 0) {
--		dev_err(dev, "failed to get intx IRQ %d\n", pcie->irq_intx);
-+	if (pcie->irq_intx < 0)
- 		return pcie->irq_intx;
--	}
- 
- 	irq_set_chained_handler_and_data(pcie->irq_intx,
- 					 nwl_pcie_leg_handler, pcie);
+ 	rc = devm_request_irq(&pdev->dev, irq, xgene_pmu_isr,
+ 				IRQF_NOBALANCING | IRQF_NO_THREAD,
 -- 
 Sent by a computer through tubes
 
