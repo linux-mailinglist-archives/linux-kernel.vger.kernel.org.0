@@ -2,115 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3861D7A18E
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 09:02:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC8AA7A190
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 09:03:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729442AbfG3HCs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 03:02:48 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:40655 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729303AbfG3HCr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 03:02:47 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 45ySDh686Mz9v4h1;
-        Tue, 30 Jul 2019 09:02:44 +0200 (CEST)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=eW4f61P8; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id QcEtw8KqWF5p; Tue, 30 Jul 2019 09:02:44 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 45ySDh4cr1z9v4h0;
-        Tue, 30 Jul 2019 09:02:44 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1564470164; bh=bWFtKsw+3UAAT5I5cI+YLfmPdp4W+J6fqe8KYjCREkI=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=eW4f61P8Noa8AZB3iSyf7Hb0Bt3dw3pzEADfkhidVc6H8KGeuP+TZhVbMVg06uPDP
-         ejZE21GlJgmWv0nG3WGrhV2Cepz+HnJI1ib3XUhUsN4lLM65NybPMbBG54Cu49tcnC
-         bTWz3kyR0MSOc2sLN4Pn1VoZZFyKJpl7pQauqBHI=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 6D3768B7F3;
-        Tue, 30 Jul 2019 09:02:45 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id OXFoUiHJ8vv9; Tue, 30 Jul 2019 09:02:45 +0200 (CEST)
-Received: from [172.25.230.101] (po15451.idsi0.si.c-s.fr [172.25.230.101])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 448228B74F;
-        Tue, 30 Jul 2019 09:02:45 +0200 (CEST)
-Subject: Re: [PATCH] powerpc: Support CMDLINE_EXTEND
-To:     Chris Packham <chris.packham@alliedtelesis.co.nz>,
-        benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-References: <20190724053303.24317-1-chris.packham@alliedtelesis.co.nz>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <59674457-eda5-fe3b-65e0-29c20102fe4d@c-s.fr>
-Date:   Tue, 30 Jul 2019 09:02:45 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1729473AbfG3HDd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 03:03:33 -0400
+Received: from smtprelay0043.hostedemail.com ([216.40.44.43]:35977 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728470AbfG3HDc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 03:03:32 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay03.hostedemail.com (Postfix) with ESMTP id 586E983777EE;
+        Tue, 30 Jul 2019 07:03:31 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 50,3,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::,RULES_HIT:41:152:355:379:599:800:960:967:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2525:2553:2559:2563:2682:2685:2691:2827:2859:2893:2898:2902:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3353:3622:3834:3865:3866:3867:3868:3870:3871:3872:3874:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4321:4830:5007:6119:7858:7903:8531:9025:9040:10004:10400:10450:10455:10848:11026:11232:11658:11783:11914:12043:12294:12297:12438:12555:12663:12740:12895:13069:13311:13357:13845:13894:14096:14097:14181:14659:14721:19904:19999:21080:21324:21433:21627:21740:30054:30070:30090:30091,0,RBL:error,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:3,LUA_SUMMARY:none
+X-HE-Tag: anger88_1e83daf9ea507
+X-Filterd-Recvd-Size: 2841
+Received: from XPS-9350.home (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
+        (Authenticated sender: joe@perches.com)
+        by omf12.hostedemail.com (Postfix) with ESMTPA;
+        Tue, 30 Jul 2019 07:03:29 +0000 (UTC)
+Message-ID: <80fbaf63ddbe66cbbf3391256402295af1a3336f.camel@perches.com>
+Subject: Re: [PATCH 01/12] rdmacg: Replace strncmp with str_has_prefix
+From:   Joe Perches <joe@perches.com>
+To:     Chuhong Yuan <hslester96@gmail.com>,
+        Kees Cook <keescook@chromium.org>
+Cc:     Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Laura Abbott <labbott@redhat.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Steven Rostedt <rostedt@goodmis.org>
+Date:   Tue, 30 Jul 2019 00:03:28 -0700
+In-Reply-To: <CANhBUQ3V2A-TBVizVh+eMLSi5Gzw5sMBY7C-0a8=-z15qyQ75w@mail.gmail.com>
+References: <20190729151346.9280-1-hslester96@gmail.com>
+         <201907292117.DA40CA7D@keescook>
+         <CANhBUQ3V2A-TBVizVh+eMLSi5Gzw5sMBY7C-0a8=-z15qyQ75w@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
 MIME-Version: 1.0
-In-Reply-To: <20190724053303.24317-1-chris.packham@alliedtelesis.co.nz>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-Le 24/07/2019 à 07:33, Chris Packham a écrit :
-> Device tree aware platforms can make use of CMDLINE_EXTEND to extend the
-> kernel command line provided by the bootloader. This is particularly
-> useful to set parameters for built-in modules that would otherwise be
-> done at module insertion. Add support for this in the powerpc
-> architecture.
+On Tue, 2019-07-30 at 14:39 +0800, Chuhong Yuan wrote:
+> Kees Cook <keescook@chromium.org> 于2019年7月30日周二 下午12:26写道：
+> > On Mon, Jul 29, 2019 at 11:13:46PM +0800, Chuhong Yuan wrote:
+> > > strncmp(str, const, len) is error-prone.
+> > > We had better use newly introduced
+> > > str_has_prefix() instead of it.
+> > 
+> > Wait, stop. :) After Laura called my attention to your conversion series,
+> > mpe pointed out that str_has_prefix() is almost redundant to strstarts()
+> > (from 2009), and the latter has many more users. Let's fix strstarts()
+> > match str_has_prefix()'s return behavior (all the existing callers are
+> > doing boolean tests, so the change in return value won't matter), and
+> > then we can continue with this replacement. (And add some documentation
+> > to Documenation/process/deprecated.rst along with a checkpatch.pl test
+> > maybe too?)
+> > 
 > 
-> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
-> ---
->   arch/powerpc/Kconfig | 12 ++++++++++++
-
-I think you also have to implement some stuff in early_cmdline_parse() 
-in arch/powerpc/kernel/prom_init.c
-
-Maybe look at https://patchwork.ozlabs.org/patch/1074126/
-
-Christophe
-
->   1 file changed, 12 insertions(+)
+> Thanks for your advice!
+> Does that mean replacing strstarts()'s implementation with
+> str_has_prefix()'s and then use strstarts() to substitute
+> strncmp?
 > 
-> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-> index d8dcd8820369..cd9b3974aa36 100644
-> --- a/arch/powerpc/Kconfig
-> +++ b/arch/powerpc/Kconfig
-> @@ -851,6 +851,11 @@ config CMDLINE
->   	  some command-line options at build time by entering them here.  In
->   	  most cases you will need to specify the root device here.
->   
-> +choice
-> +	prompt "Kernel command line type" if CMDLINE != ""
-> +	default CMDLINE_FORCE
-> +	depends on CMDLINE_BOOL
-> +
->   config CMDLINE_FORCE
->   	bool "Always use the default kernel command string"
->   	depends on CMDLINE_BOOL
-> @@ -860,6 +865,13 @@ config CMDLINE_FORCE
->   	  This is useful if you cannot or don't want to change the
->   	  command-line options your boot loader passes to the kernel.
->   
-> +config CMDLINE_EXTEND
-> +	bool "Extend bootloader kernel arguments"
-> +	help
-> +	  The command-line arguments provided by the boot loader will be
-> +	  appended to the default kernel command string.
-> +endchoice
-> +
->   config EXTRA_TARGETS
->   	string "Additional default image types"
->   	help
-> 
+> I am not very clear about how to add the test into checkpatch.pl.
+> Should I write a check for this pattern or directly add strncmp into
+> deprecated_apis?
+
+After Nitin's patch gets applied: (which btw wasn't cc'd to lkml)
+
+(sorry about the bad link, something about it hits some
+ spam filter)
+
+open wall . com/lists/kernel-hardening/2019/07/28/1
+
+Add it to deprecated_string_apis
+
+And we've had this sort of discussion before:
+
+https://lore.kernel.org/patchwork/patch/1026598/
+
+I believe I'm still in favor of global conversion of
+strstarts to str_has_prefix.
+
+
