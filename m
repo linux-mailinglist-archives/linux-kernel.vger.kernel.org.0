@@ -2,133 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9173F7AEEE
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 19:08:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F2FD17AEF1
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 19:08:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728997AbfG3RHv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 13:07:51 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:46266 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725911AbfG3RHv (ORCPT
+        id S1729181AbfG3RIN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 13:08:13 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:35971 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728647AbfG3RIN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 13:07:51 -0400
-Received: by mail-pf1-f193.google.com with SMTP id c3so7028137pfa.13
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 10:07:51 -0700 (PDT)
+        Tue, 30 Jul 2019 13:08:13 -0400
+Received: by mail-pf1-f196.google.com with SMTP id r7so30171998pfl.3;
+        Tue, 30 Jul 2019 10:08:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=Ij5IHsIz5m1k/TZ9G+k0vjjrXKuI8zvs4XWvYMUv6xA=;
-        b=P7x6iRL+potI/UXe2GL2bGfRW6KNMvSV5ppccdYt283WmoDUkRdzp4koQgOgunvvzl
-         snnlVm7+LveboI+FEM9Sxiqv4tsYw40jcdadwsRQ4ypLgBK/XrqJnb9wZOPcxftcsBwJ
-         DqurscVqXfKuZu8Sjv4SL2ydKIbof4EZcvndE=
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=nnvZBnEEdZuLp4XlEeG764rYU22mYDAA8+9O3TP4fyY=;
+        b=JgerthkRz1vAlzzQycx9Yqri53uzEMIO9AzXm3UeSE3VNjX+4hCtqgLF+2JZh3MGOn
+         U7qjCCT8HA7RWoYyMKcMJQdYc4X+ORGNJgK5HQaIRxHvLpXH509q3AWM3dZC/wEZ1xkJ
+         tLY27naCHkt7Kf6XoYDL10tYlx2JU5vGiRd/vNHl0t6TQmty0Hgq8W8C5W61KzGoETVH
+         gEkY0B0eDDAFl2A9xK/DycMUwnQP9o7h9/nbxHDKuym5gwYYF1RWq/iVZT4ogb1+55Sa
+         0XmgfwNhDePlrjKRfNDMpHc/2Z4dMv+dMvsAnwT5u5q/MNq4h8SoTxITc6IE+PmjXHEN
+         5g+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Ij5IHsIz5m1k/TZ9G+k0vjjrXKuI8zvs4XWvYMUv6xA=;
-        b=LmwEiOS9Xy8XyOvqZPe8puowwQEUo+fDTHSCfAJPQEMMBTod/BSdirKpxV3jmi69I6
-         OpchNDoXsfvMmwvp77F/H1wdeyDF7L9dtAuaRz9n5goanhvzQUYmo5z0g++/JacfzRsq
-         oCmnTw6U/LRASe5Bkzo5nNgLjZfIocLhvHtGt8Gh1iCCawp8TWPmJ6M5ZqVIPnxODmgw
-         fhIhoxkfkiCef6jPLnUmY6BAD8RacSVlLafGeunAR567a2nRNZmZvhuHx4TxkA1w1pqF
-         ytGLiPXy7X3Rt+GFkeRQwP6Ki08hETzCZRyzIe1LE/iYbzLiooRus0QnblOxJ+o2MLSS
-         PHnQ==
-X-Gm-Message-State: APjAAAW/1DpPHhqs90aOmaY+6/G6PyUdJq9LothkhjGQrv5UuoKxmEgA
-        B8CnQezAPsx2OsY8oNjRm8dO7TECAlQ=
-X-Google-Smtp-Source: APXvYqxJ+yRT5SoyqEcmrG5qDLkr0gEeD/gtdMxDd4IXybXkd0K5WhnE3L10kkcRHqj8qn91kuZIng==
-X-Received: by 2002:aa7:9298:: with SMTP id j24mr41520880pfa.58.1564506470984;
-        Tue, 30 Jul 2019 10:07:50 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id f6sm67441648pga.50.2019.07.30.10.07.49
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 30 Jul 2019 10:07:50 -0700 (PDT)
-Date:   Tue, 30 Jul 2019 10:07:49 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Michael Ellerman <mpe@ellerman.id.au>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        PowerPC <linuxppc-dev@lists.ozlabs.org>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Linux kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] drivers/macintosh/smu.c: Mark expected switch
- fall-through
-Message-ID: <201907301005.0661E63CF@keescook>
-References: <20190730143704.060a2606@canb.auug.org.au>
- <878ssfzjdk.fsf@concordia.ellerman.id.au>
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=nnvZBnEEdZuLp4XlEeG764rYU22mYDAA8+9O3TP4fyY=;
+        b=BG5WShxKKpjfQBuBGKpnA10WO4ob811pWVSpQgiEY1rdSkkdBRB8dX9m8VMPEE1Pk1
+         tKfXLPpBV3X+dxfXUwWJbqIOCtvfzKYJi2M8gcwP3nwnpoVbnvg5qc4rxFxSoRXAknzN
+         YCMBvYRfrmkPKuONSFE1NKJTj4jAbuZSD5tBPtUXNlNglDhqutpmg2hpkdIlqjjvaBgn
+         qVYTRYmmfGGYf6FUuZ9UyGmpv90c0myMtNe9NUSvzu5H61dcsqPGAUKCZYJPlqJw14Di
+         7mQd4Ubgs9XByi+Nf3mq387DOhenDTeJC0EqiHpS/HrjCmB/ETfEMtgyt0gi2c+9XJE1
+         Ai/g==
+X-Gm-Message-State: APjAAAVWpwruuE91U8ofkeFqPNvlcy+nny5YmQWrXwOtlOSswryyUhCE
+        WahOoXiN3jnH/mlNTydbfbU=
+X-Google-Smtp-Source: APXvYqzGPYxStVf6hwBkFBp+5QiileRkDsIvuod93h13BkdRX8kRcoQm4LQFWfjVnSvfq1iOY9Db2w==
+X-Received: by 2002:a17:90a:a404:: with SMTP id y4mr122045239pjp.58.1564506492564;
+        Tue, 30 Jul 2019 10:08:12 -0700 (PDT)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id r6sm147906900pjb.22.2019.07.30.10.08.11
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Jul 2019 10:08:12 -0700 (PDT)
+Date:   Tue, 30 Jul 2019 10:08:11 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     Jim Cromie <jim.cromie@gmail.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH] watchdog: scx200_wdt: Mark expected switch fall-through
+Message-ID: <20190730170811.GA20680@roeck-us.net>
+References: <20190729200602.GA6854@embeddedor>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <878ssfzjdk.fsf@concordia.ellerman.id.au>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190729200602.GA6854@embeddedor>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 31, 2019 at 12:28:55AM +1000, Michael Ellerman wrote:
-> Stephen Rothwell <sfr@canb.auug.org.au> writes:
-> > Mark switch cases where we are expecting to fall through.
-> >
-> > This patch fixes the following warning (Building: powerpc):
-> >
-> > drivers/macintosh/smu.c: In function 'smu_queue_i2c':
-> > drivers/macintosh/smu.c:854:21: warning: this statement may fall through [-Wimplicit-fallthrough=]
-> >    cmd->info.devaddr &= 0xfe;
-> >    ~~~~~~~~~~~~~~~~~~^~~~~~~
-> > drivers/macintosh/smu.c:855:2: note: here
-> >   case SMU_I2C_TRANSFER_STDSUB:
-> >   ^~~~
-> >
-> > Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-> > Cc: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> > Cc: Kees Cook <keescook@chromium.org>
-> > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> > ---
-> >  drivers/macintosh/smu.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/drivers/macintosh/smu.c b/drivers/macintosh/smu.c
-> > index 276065c888bc..23f1f41c8602 100644
-> > --- a/drivers/macintosh/smu.c
-> > +++ b/drivers/macintosh/smu.c
-> > @@ -852,6 +852,7 @@ int smu_queue_i2c(struct smu_i2c_cmd *cmd)
-> >  		break;
-> >  	case SMU_I2C_TRANSFER_COMBINED:
-> >  		cmd->info.devaddr &= 0xfe;
-> > +		/* fall through */
-> >  	case SMU_I2C_TRANSFER_STDSUB:
-> >  		if (cmd->info.sublen > 3)
-> >  			return -EINVAL;
+On Mon, Jul 29, 2019 at 03:06:02PM -0500, Gustavo A. R. Silva wrote:
+> Mark switch cases where we are expecting to fall through.
 > 
-> Why do we think it's an expected fall through? I can't really convince
-> myself from the surrounding code that it's definitely intentional.
+> This patch fixes the following warning (Building: i386):
+> 
+> drivers/watchdog/scx200_wdt.c: In function ‘scx200_wdt_ioctl’:
+> drivers/watchdog/scx200_wdt.c:188:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>    scx200_wdt_ping();
+>    ^~~~~~~~~~~~~~~~~
+> drivers/watchdog/scx200_wdt.c:189:2: note: here
+>   case WDIOC_GETTIMEOUT:
+>   ^~~~
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> Reviewed-by: Kees Cook <keescook@chromium.org>
 
-Yeah, good question. Just now when I went looking for who
-used SMU_I2C_TRANSFER_COMBINED, I found the only caller in
-arch/powerpc/platforms/powermac/low_i2c.c and it is clearly using a
-fall-through for building the command for "stdsub" and "combined",
-so I think that's justification enough:
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 
-        switch(bus->mode) {
-        case pmac_i2c_mode_std:
-                if (subsize != 0)
-                        return -EINVAL;
-                cmd->info.type = SMU_I2C_TRANSFER_SIMPLE;
-                break;
-        case pmac_i2c_mode_stdsub:
-        case pmac_i2c_mode_combined:
-                if (subsize > 3 || subsize < 1)
-                        return -EINVAL;
-                cmd->info.sublen = subsize;
-                /* that's big-endian only but heh ! */
-                memcpy(&cmd->info.subaddr, ((char *)&subaddr) + (4 - subsize),
-                       subsize);
-                if (bus->mode == pmac_i2c_mode_stdsub)
-                        cmd->info.type = SMU_I2C_TRANSFER_STDSUB;
-                else
-                        cmd->info.type = SMU_I2C_TRANSFER_COMBINED;
-
-
-Reviewed-by: Kees Cook <keescook@chromium.org>
-
--- 
-Kees Cook
+> ---
+>  drivers/watchdog/scx200_wdt.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/watchdog/scx200_wdt.c b/drivers/watchdog/scx200_wdt.c
+> index efd7996694de..46268309ee9b 100644
+> --- a/drivers/watchdog/scx200_wdt.c
+> +++ b/drivers/watchdog/scx200_wdt.c
+> @@ -186,6 +186,7 @@ static long scx200_wdt_ioctl(struct file *file, unsigned int cmd,
+>  		margin = new_margin;
+>  		scx200_wdt_update_margin();
+>  		scx200_wdt_ping();
+> +		/* Fall through */
+>  	case WDIOC_GETTIMEOUT:
+>  		if (put_user(margin, p))
+>  			return -EFAULT;
