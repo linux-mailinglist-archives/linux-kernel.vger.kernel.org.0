@@ -2,89 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02D2A7A7CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 14:10:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E20607A7CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 14:10:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731015AbfG3MKX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 08:10:23 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:50959 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727816AbfG3MKX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 08:10:23 -0400
-Received: by mail-wm1-f65.google.com with SMTP id v15so56942254wml.0;
-        Tue, 30 Jul 2019 05:10:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=QkeDROUoXwLlgXXy7EUAOuurhZkrp9WRpgXOGNLEWM0=;
-        b=T/gPmxwAUp1gwuwZ+lZZAegOVF1OVZW3X1kwn+rTAnsGZq6abftG3LmGS1RrfZtxPg
-         LvbOyQfNw2DH5YI6ZPkvXndlREF4NA1h8MI6dSTyq2SMkW3ToqApLKO2f1k76PA8D2NO
-         bm1+e2FZhgkJ1xTXb7yswKfT3W/pk2ksXMRk9SxwxlXaoyuL5rmLlF+0oON5uCcuVotH
-         qD2cGwuja3T/CkPL1+7j1VFD0FBza0113BJ47NVvkwZ+d79aZMa8/IE1N0btyhrAXwVR
-         O8W9Z/KsVEZ+Y3cBAusYXHnMtygCTE1WvA9pWYQ5HOX8wcqDMK97ezErT5GhAw31h1H7
-         bQ6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=QkeDROUoXwLlgXXy7EUAOuurhZkrp9WRpgXOGNLEWM0=;
-        b=U7zIzumXd4HVDF09lzqfOJIucPeuWf+2dH4BxWefcp/GMU8gTmuAIZnUSZRcyOc+yB
-         FmMyK5fR+2O6R2ZPLFUHuB0qmm5/tjC6rwlgUXnLcvpBt42JoyYkW/YEzaB/5G1haAab
-         RHyXnjXHmjOy0N0KI4sjbzkmLT5d/T6jPFtC93kGfrxTAi3ASvmGPShBBxQWW694hNQF
-         Ybk0Brw1T44ll+khxhTa6Wz1hdIrW3yX8SSij/tKVcH1ws/tjeTJ6byxXnrwfxLN3M1B
-         cLVtBElQI8kV3Xv1NUtFWmzR40uFuPtitsicpgX5r/nAItEpK9i1xqCJlYSGCBtzfvSv
-         yfqw==
-X-Gm-Message-State: APjAAAWIWNp4z6QKYqdrwKEjG3luqYk1C4MXFd3tr6byp+WWpERZQ1LT
-        /cuu6jrkuVsKrSBv67Bxu4J1AWZFUywCopXOVJw=
-X-Google-Smtp-Source: APXvYqyL7oSgEhIDgDjdxzWP0gzpWYtndYfnKUEaOl4e/hwGHH45JozOs5Bs8578NNYNXrXZ/NwMJICP7T6km6HdAlw=
-X-Received: by 2002:a1c:c188:: with SMTP id r130mr99724413wmf.73.1564488621402;
- Tue, 30 Jul 2019 05:10:21 -0700 (PDT)
+        id S1730546AbfG3MKr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 08:10:47 -0400
+Received: from mail-eopbgr10067.outbound.protection.outlook.com ([40.107.1.67]:62471
+        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726717AbfG3MKq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 08:10:46 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Dk97nsOYb91fzhQDJhnZ1RWVxLxhwD8sLH2V0Nzv4H3gxNwMSwqn2LEhB4GTfFj/6Qodd0C9wAV+dhC3CevZ2Aa1SFazUPmrNx7DMTljJSjJjJyV+1nbDRP2jqkRvkiVofKMgaLO1Etd/mcAzTOACC6WGG7H6cCGqCDvd+1HxoT4EB9xLpNNThm1MDg/7y/YOTd7ESfZUA/M3oxpmGTZuZfUjDLxGC09kVclPjZJCejdywIG5D4hMKwQ+QKxCbsSxrp76F5H3LFnflFdSS2fKCAx2AoeHBjYLBIdL682bVxqWHs2zSmRYr4aR9Y8KNnUADYCbeLHuJv82mbYEx7a5A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zNzGLUP7Or2D6hK6jTYTP2FOsutzS0OhQCA1HL5QsSM=;
+ b=jMiqt6lb35o2h7AknEfJIZWGCgRGL5EiiOJID58UbXxWB5Np5XTfH+79SKAx+9J7ujCanIOAK399fvPdLePXEXXQJ8M3JBYHQMqILVARXaBknHwZD7NZYpUx53YzQiPHrLIqhopYHUHoRTcp/L2JP+wdRra4jXX7HuM7iWHo/6fzM1XR5BoNsYGIYHGGCs2DXGsMJNecbKQkQpVHWoBCdIY00NLBXwZsNIsj2PdjYEe6LjTzxCoyHhEqwo9MGpXRaOvUSFa0J5V8B30yZaWxYK67CzjmByHCrWH22tg0q0pVSpouqPOrVz+kMNhTOzAEG7/Q6o81w/tAoTwCenjZnQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
+ smtp.mailfrom=nxp.com;dmarc=pass action=none header.from=nxp.com;dkim=pass
+ header.d=nxp.com;arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zNzGLUP7Or2D6hK6jTYTP2FOsutzS0OhQCA1HL5QsSM=;
+ b=GDfnlLWkNPtSnjafvTG/+dzzC18z6DgVpfLIpV8aXO3IHPVbtsKGf1nvqmJd0fUO1nwD8MuTtrgpYMy/lBpgbi6hW9xOnTaV2ttmR/jWFSNB9lIxAIqbV4Vqy4fVinrDYhmLi4xvS9tFZ5N25ukFqMiL69tDGveipuU6xVwn/P0=
+Received: from VI1PR04MB4445.eurprd04.prod.outlook.com (20.177.55.161) by
+ VI1PR04MB5166.eurprd04.prod.outlook.com (20.177.50.207) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2115.15; Tue, 30 Jul 2019 12:10:42 +0000
+Received: from VI1PR04MB4445.eurprd04.prod.outlook.com
+ ([fe80::8d42:8283:ede8:9abf]) by VI1PR04MB4445.eurprd04.prod.outlook.com
+ ([fe80::8d42:8283:ede8:9abf%7]) with mapi id 15.20.2115.005; Tue, 30 Jul 2019
+ 12:10:42 +0000
+From:   Iuliana Prodan <iuliana.prodan@nxp.com>
+To:     Herbert Xu <herbert@gondor.apana.org.au>,
+        Horia Geanta <horia.geanta@nxp.com>,
+        Aymen Sghaier <aymen.sghaier@nxp.com>
+CC:     "David S. Miller" <davem@davemloft.net>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH v4 09/14] crypto: caam - keep both virtual and dma key
+ addresses
+Thread-Topic: [PATCH v4 09/14] crypto: caam - keep both virtual and dma key
+ addresses
+Thread-Index: AQHVRsbo/K7duR/t8kGtx4yGfVP2+w==
+Date:   Tue, 30 Jul 2019 12:10:42 +0000
+Message-ID: <VI1PR04MB4445EE29118E184B73974CB58CDC0@VI1PR04MB4445.eurprd04.prod.outlook.com>
+References: <1564484805-28735-1-git-send-email-iuliana.prodan@nxp.com>
+ <1564484805-28735-10-git-send-email-iuliana.prodan@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=iuliana.prodan@nxp.com; 
+x-originating-ip: [212.146.100.6]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: a109383a-d7e8-4fee-e46f-08d714e6f1e1
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR04MB5166;
+x-ms-traffictypediagnostic: VI1PR04MB5166:
+x-microsoft-antispam-prvs: <VI1PR04MB5166AEF1295CD45A33AC01018CDC0@VI1PR04MB5166.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7219;
+x-forefront-prvs: 0114FF88F6
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(396003)(346002)(39860400002)(136003)(376002)(199004)(189003)(86362001)(110136005)(4744005)(66066001)(6636002)(476003)(53546011)(14444005)(7696005)(8676002)(44832011)(81156014)(76176011)(14454004)(186003)(229853002)(81166006)(102836004)(478600001)(26005)(7736002)(8936002)(6436002)(68736007)(33656002)(486006)(54906003)(6506007)(2906002)(316002)(66446008)(66476007)(66556008)(64756008)(66946007)(91956017)(6246003)(25786009)(4326008)(53936002)(3846002)(256004)(6116002)(74316002)(9686003)(52536014)(305945005)(5660300002)(55016002)(99286004)(446003)(71200400001)(76116006)(71190400001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB5166;H:VI1PR04MB4445.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: svXeshaRFZNubqvm0yC8YGSsgspgUfdmA9fBvPd4Qxg7wL4VYiMzQZ3a6tbDMySqvUfbwAW0FfQnM74Sr2qMjglI1zdeuuJgVOotTOIJFZEF66DM1MXKJkHpNzf4X7+KA9cBUqXHk/NZKECTDyRCsVbUtmowgEBFJqb9kfS9ijqyRUXbVSwLfFmUbAbwOTOXw99GY0fT6NaUjknMBiUfuen22Hy7myZl+eCfwLG7JmYn62KS0eQUtiZHGD/kEou5QUp/m49OEvtNUk9utv+VQQnjTHaoDp9j4jRmuw9GTzvvLmsPM8+jzJsshCwOdZv6O6dwnypwOqUW9AxKJfXnTS+7npEAcYPH3cDAAILKu0v1bWm7TEaXheH4iGQHPrDnEJZEWdhqhPyaaKdIGw7phJdbg5hZmDglUY+7O/vQq1s=
+Content-Type: text/plain; charset="iso-8859-2"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <20190728192429.1514-1-daniel.baluta@nxp.com> <20190728192429.1514-8-daniel.baluta@nxp.com>
- <20190730080135.GB5892@Asurada> <CAEnQRZAUOzmP2yPb4utyDTnYUDNyqesXJPb5-Ms0tfPy8TMBig@mail.gmail.com>
- <20190730120455.GA4264@sirena.org.uk>
-In-Reply-To: <20190730120455.GA4264@sirena.org.uk>
-From:   Daniel Baluta <daniel.baluta@gmail.com>
-Date:   Tue, 30 Jul 2019 15:10:10 +0300
-Message-ID: <CAEnQRZAfsQBjKcJm9e7VJ7aOLSBzgOQC+HWNs0XSLAT2L-GudA@mail.gmail.com>
-Subject: Re: [alsa-devel] [PATCH v2 7/7] ASoC: dt-bindings: Introduce
- compatible strings for 7ULP and 8MQ
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Nicolin Chen <nicoleotsuka@gmail.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        Devicetree List <devicetree@vger.kernel.org>,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Timur Tabi <timur@kernel.org>, Rob Herring <robh@kernel.org>,
-        "S.j. Wang" <shengjiu.wang@nxp.com>,
-        "Angus Ainslie (Purism)" <angus@akkea.ca>,
-        Takashi Iwai <tiwai@suse.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Viorel Suman <viorel.suman@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Mihai Serban <mihai.serban@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a109383a-d7e8-4fee-e46f-08d714e6f1e1
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Jul 2019 12:10:42.7872
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: iuliana.prodan@nxp.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5166
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 30, 2019 at 3:05 PM Mark Brown <broonie@kernel.org> wrote:
->
-> On Tue, Jul 30, 2019 at 03:02:30PM +0300, Daniel Baluta wrote:
->
-> > I removed the 'or' on purpose because I don't want to move it
-> > around each time we add a new compatible.
->
-> > Anyhow, I can put it back if this is the convention.
->
-> You could convert to the YAML binding format and sidestep the problem a
-> different way!
-
-Someone needs to do that in the end, so will try to change to yaml
-with the next version
-of the patch series.
+On 7/30/2019 2:06 PM, Iuliana Prodan wrote:=0A=
+> From: Horia Geant=E3 <horia.geanta@nxp.com>=0A=
+> =0A=
+> Update alginfo struct to keep both virtual and dma key addresses,=0A=
+> so that descriptors have them at hand.=0A=
+> One example where this is needed is in the xcbc(aes) shared descriptors,=
+=0A=
+> which are updated in current patch.=0A=
+> Another example is the upcoming fix for DKP.=0A=
+> =0A=
+> Signed-off-by: Horia Geant=E3 <horia.geanta@nxp.com>=0A=
+> ---=0A=
+Reviewed-by: Iuliana Prodan <iuliana.prodan@nxp.com>=0A=
+=0A=
+Thanks,=0A=
+Iulia=0A=
