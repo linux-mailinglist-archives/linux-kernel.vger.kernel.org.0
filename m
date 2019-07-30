@@ -2,87 +2,174 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3AF9D7AD87
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 18:29:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C9C77AD94
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 18:32:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728221AbfG3Q34 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 12:29:56 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:59886 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725889AbfG3Q3z (ORCPT
+        id S1732790AbfG3QcW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 12:32:22 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:56213 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726703AbfG3QcV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 12:29:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=zGVc/pyY2Km9LX6V8SnBhWdxyvSk4iYd46CX7MaxL3Q=; b=1aV4lQCWTmXBt4QcQjDXfTMiZ
-        Wr0I/mX++WkGkzyNfbVhdjUHzy9CPYAyQJbEnFJx6sBwusmKgo2EJA2w51dH4KC3O3uHiiWGuWrQZ
-        nQanZdrwUV8UzKDMHW5n7CvjWVRNgIhQc1odz/mGtd0bqwDC6rzo9fWH2GdDcb3E+zfhVd1cGMbYH
-        oGabreNrHpY4CwHEJD2Cw8K3AD/Nz6OH7QVV5PYg5jY6OLKmyeomV2tmfbrBmBEh/hcuQI0I6+LnD
-        RxvmkmvysPFD0KRJOswc3oDPff+LOdVTBDDCPJN1dd64tqmD21vV/PeRj36DZ5jIdgit47+QkiKvO
-        wmWrBidrg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hsV0I-00019U-F3; Tue, 30 Jul 2019 16:29:34 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 2A9852029FD58; Tue, 30 Jul 2019 18:29:33 +0200 (CEST)
-Date:   Tue, 30 Jul 2019 18:29:33 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Rik van Riel <riel@surriel.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
-        dietmar.eggemann@arm.com, mingo@redhat.com,
-        morten.rasmussen@arm.com, tglx@linutronix.de,
-        mgorman@techsingularity.net, vincent.guittot@linaro.org
-Subject: Re: [PATCH RFC v3 0/14] sched,fair: flatten CPU controller runqueues
-Message-ID: <20190730162933.GW31398@hirez.programming.kicks-ass.net>
-References: <20190722173348.9241-1-riel@surriel.com>
+        Tue, 30 Jul 2019 12:32:21 -0400
+Received: by mail-wm1-f67.google.com with SMTP id a15so57773918wmj.5;
+        Tue, 30 Jul 2019 09:32:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=mJBhLQBGKw9W1CH7iiRGJ+NYhLg8OsmSZT/MaVZztU0=;
+        b=AdDy3qZl8TR2Dr1ieEe5a5RTbAFUsZYCOin0+uegsJi40aexEm9s9f5pH/eBmtBmDz
+         0CnvAX+yGvHGbmRHR7ZpbwynG/J7kkhff4Vf2ORSOm85OBZYRyQ+CVLmMxjyk/BTfbBh
+         jEry6Pw3UceY7nIpklVt4xnekAU7zKpl65JVaTyLfp8y14f7Z5cIuNnrB/45ZcRBsiAu
+         +ok2rbCYVIg/s/i9N7WixRlRLhcPOaTVABOuV2YHdUwKUdKk24b8JcjXQCU8ez6TIsf7
+         J2MUlDdFt6wgXFzA+ib79IUJwXGF8HFlFj74B3cfe3KwxVXy/gAlv4joKETKQjwdgIPA
+         hMdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=mJBhLQBGKw9W1CH7iiRGJ+NYhLg8OsmSZT/MaVZztU0=;
+        b=ip8YF5kQf1twtj5HC6Ff4yu20qcvjTh2jaLzLbPWqrB78xNxksvaunfZRL5KnoqOwf
+         ydWA6i86xyqasejNNABUGgawL6+lxFrcn/kQTXVjS03d00GZaO7Met3cpugMCFPJfx+N
+         zM6pQJyj94L5zUnSd7iTHyCa+P4+SHAHDDTYXjfNVgAt82gTByMR7fCRDaniBaTzXceY
+         mkXnQAhWawE65jtameAhJSsq7aUeLBG3wQTLyo4buKG8S208HNpMW8nNQbok8vVDLN8S
+         COgX/BhwD/lYw1JJlvir9JhFFJb20VcRYAiWg9lnGixd8Ny218DC+EUTK16jCfgvNPgW
+         OBoA==
+X-Gm-Message-State: APjAAAWrWAE3aB/PH/pod5vhpfiLUr/ez4b4CWivb8kNiJjLiKz+FPxz
+        moHRvtBY27wPsym5/2/cZ7k=
+X-Google-Smtp-Source: APXvYqz1etbIwSkmRp08u8llnZcMpY7U9CUtUhBXvOw2c/P42fpeq1ZAX2ECdyDaCfdoWk1fKhxi5Q==
+X-Received: by 2002:a1c:c542:: with SMTP id v63mr103080598wmf.97.1564504338780;
+        Tue, 30 Jul 2019 09:32:18 -0700 (PDT)
+Received: from localhost.localdomain (ppp91-78-220-99.pppoe.mtu-net.ru. [91.78.220.99])
+        by smtp.gmail.com with ESMTPSA id c65sm64835175wma.44.2019.07.30.09.32.17
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Jul 2019 09:32:18 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Cc:     linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v5 00/20] More improvements for Tegra30 devfreq driver
+Date:   Tue, 30 Jul 2019 19:22:16 +0300
+Message-Id: <20190730162236.6063-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190722173348.9241-1-riel@surriel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 22, 2019 at 01:33:34PM -0400, Rik van Riel wrote:
-> Plan for the CONFIG_CFS_BANDWIDTH reimplementation:
-> - When a cgroup gets throttled, mark the cgroup and its children
->   as throttled.
-> - When pick_next_entity finds a task that is on a throttled cgroup,
->   stash it on the cgroup runqueue (which is not used for runnable
->   tasks any more). Leave the vruntime unchanged, and adjust that
->   runqueue's vruntime to be that of the left-most task.
+Hello,
 
-and ignore such tasks for the load-balancer; I suppose
+This series addresses some additional review comments that were made by
+Thierry Reding to [1], makes several important changes to the driver,
+fixing excessive interrupts activity, and adds new features. In the end
+I'm proposing myself as a maintainer for the Tegra devfreq drivers.
 
-> - When a cgroup gets unthrottled, and has tasks on it, place it on
->   a vruntime ordered heap separate from the main runqueue.
+[1] https://lore.kernel.org/lkml/0fb50eb1-a173-1756-6889-2526a10ac707@gmail.com/T/
 
-and expose said heap to the load-balancer..
+Changelog:
 
-Now, I suppose you do this because merging heaps is easier than merging
-RB trees? (not in complexity iirc, but probably in code)
+v5:  Addressed review comments that were made by Chanwoo Choi to v4 by
+     squashing few patches, dropping some questionable patches, rewording
+     comments to the code, restructuring the code and etc.
 
-> - Have pick_next_task_fair grab one task off that heap every time it
->   is called, and the min vruntime of that heap is lower than the
->   vruntime of the CPU's cfs_rq (or the CPU has no other runnable tasks).
+     These patches are now dropped from the series:
 
-That's like a smeared out merge :-) But since the other tasks kept on
-running, this CPUs vruntime will be (much) advanced vs those throttled
-tasks and we'll most likely end up picking them all before we pick a
-'normal' task.
+       PM / devfreq: tegra30: Use tracepoints for debugging
+       PM / devfreq: tegra30: Inline all one-line functions
 
-> - Place that selected task on the CPU's cfs_rq, renormalizing its
->   vruntime with the GENTLE_FAIR_SLEEPERS logic. That should help
->   interleave the already runnable tasks with the recently unthrottled
->   group, and prevent thundering herd issues.
-> - If the group gets throttled again before all of its task had a chance
->   to run, vruntime sorting ensures all the tasks in the throttled cgroup
->   get a chance to run over time.
+     The interrupt-optimization patches are squashed into a single patch:
 
+       PM / devfreq: tegra30: Reduce unnecessary interrupts activity
+
+     because it's better to keep the optimizations as a separate change and
+     this also helps to reduce code churning, since the code changes depend
+     on a previous patch in order to stay cleaner.
+
+     Fixed a lockup bug that I spotted recently, which is caused by a
+     clk-notifier->cpufreq_get()->clk_set_rate() sequence. Now a non-blocking
+     variant of CPU's frequency retrieving is used, i.e. cpufreq_quick_get().
+
+     Further optimized the CPUFreq notifier by postponing the delayed
+     updating in accordance to the polling interval, this actually uncovered
+     the above lockup bug.
+
+     Implemented new minor driver feature in the new patch:
+
+       PM / devfreq: tegra30: Support variable polling interval
+
+v4:  Added two new patches to the series:
+
+       PM / devfreq: tegra30: Synchronize average count on target's update
+       PM / devfreq: tegra30: Increase sampling period to 16ms
+
+     The first patch addresses problem where governor could get stuck due
+     to outdated "average count" value which is snapshoted by ISR and there
+     are cases where manual update of the value is required.
+
+     The second patch is just a minor optimization.
+
+v3:  Added support for tracepoints, replacing the debug messages.
+     Fixed few more bugs with the help of tracepoints.
+
+     New patches in this version:
+
+       PM / devfreq: tegra30: Use tracepoints for debugging
+       PM / devfreq: tegra30: Optimize CPUFreq notifier
+       PM / devfreq: tegra30: Optimize upper consecutive watermark selection
+       PM / devfreq: tegra30: Optimize upper average watermark selection
+       PM / devfreq: tegra30: Include appropriate header
+
+     Some of older patches of this series also got some extra minor polish.
+
+v2:  Added more patches that are cleaning driver's code further and
+     squashing another kHz conversion bug.
+
+     The patch "Rework frequency management logic" of the v1 series is now
+     converted to "Set up watermarks properly" because I found some problems
+     in the original patch and then realized that there is no need to change
+     the logic much. So the logic mostly preserved and only got improvements.
+
+     The series is based on the today's linux-next (25 Jun) and takes into
+     account minor changes that MyungJoo Ham made to the already queued
+     patches from the first batch [1].
+
+Dmitry Osipenko (20):
+  PM / devfreq: tegra30: Change irq type to unsigned int
+  PM / devfreq: tegra30: Keep interrupt disabled while governor is
+    stopped
+  PM / devfreq: tegra30: Handle possible round-rate error
+  PM / devfreq: tegra30: Drop write-barrier
+  PM / devfreq: tegra30: Set up watermarks properly
+  PM / devfreq: tegra30: Tune up boosting thresholds
+  PM / devfreq: tegra30: Fix integer overflow on CPU's freq max out
+  PM / devfreq: tegra30: Ensure that target freq won't overflow
+  PM / devfreq: tegra30: Use kHz units uniformly in the code
+  PM / devfreq: tegra30: Reduce unnecessary interrupts activity
+  PM / devfreq: tegra30: Use CPUFreq notifier
+  PM / devfreq: tegra30: Move clk-notifier's registration to governor's
+    start
+  PM / devfreq: tegra30: Reset boosting on startup
+  PM / devfreq: tegra30: Don't enable consecutive-down interrupt on
+    startup
+  PM / devfreq: tegra30: Constify structs
+  PM / devfreq: tegra30: Include appropriate header
+  PM / devfreq: tegra30: Increase sampling period to 16ms
+  PM / devfreq: tegra30: Define ACTMON_DEV_CTRL_STOP
+  PM / devfreq: tegra30: Support variable polling interval
+  PM / devfreq: tegra20/30: Add Dmitry as a maintainer
+
+ MAINTAINERS                       |   9 +
+ drivers/devfreq/tegra30-devfreq.c | 706 +++++++++++++++++++++++-------
+ 2 files changed, 555 insertions(+), 160 deletions(-)
+
+-- 
+2.22.0
 
