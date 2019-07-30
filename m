@@ -2,85 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 246787AA3D
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 15:55:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CA747AA49
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 15:57:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728333AbfG3NzC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 09:55:02 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:33712 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725871AbfG3NzC (ORCPT
+        id S1728441AbfG3N5h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 09:57:37 -0400
+Received: from dc8-smtprelay2.synopsys.com ([198.182.47.102]:52326 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725871AbfG3N5h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 09:55:02 -0400
-Received: from pendragon.ideasonboard.com (ae138143.dynamic.ppp.asahi-net.or.jp [14.3.138.143])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 353A4CC;
-        Tue, 30 Jul 2019 15:54:58 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1564494900;
-        bh=XpIPjfe/F3FQ+H5+8txaijGuPyeYSuXcxTVBGDeoaSw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=GkDRK5OGcQwkOY6aSOLLY9pfaLrd8cqoicWK6CuCSE5NHAox4osG5mZHElhGRr7ln
-         wr92dUagk49vEuU8Gxd/KncXEHOJTDXAtFWEg2ugKgpAIuqzBTsvYYaO2sTgb6GeiQ
-         6PI0qQB828wC6m6ODIJjj4xKQNLqhzlVzgdecrTk=
-Date:   Tue, 30 Jul 2019 16:54:55 +0300
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     a.hajda@samsung.com, narmstrong@baylibre.com, jonas@kwiboo.se,
-        jernej.skrabec@siol.net, airlied@linux.ie, daniel@ffwll.ch,
-        eric@anholt.net, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v2] drm/bridge: lvds-encoder: Fix build error while
- CONFIG_DRM_KMS_HELPER=m
-Message-ID: <20190730135455.GB4806@pendragon.ideasonboard.com>
-References: <20190729065344.9680-1-yuehaibing@huawei.com>
- <20190729071216.27488-1-yuehaibing@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190729071216.27488-1-yuehaibing@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Tue, 30 Jul 2019 09:57:37 -0400
+Received: from mailhost.synopsys.com (mdc-mailhost1.synopsys.com [10.225.0.209])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id EEE85C01EC;
+        Tue, 30 Jul 2019 13:57:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1564495056; bh=+Frtc0dG6BHyi2YIPiv1kiBX3xPQtzw2fnWMGHBYnQU=;
+        h=From:To:Cc:Subject:Date:From;
+        b=X73C+VCdT/Ev8CiZNgGQDfGtPAtpuQJMuBI/h3MHAWEFTOAj/pjdWdTfXxa1dRqIL
+         8nC6Ymu0Tn882kLdhCHjBQOsN1avF6ajt/K8wsGFruGajkqEzCH8JnW+XE2am3CExL
+         GF7NNmU4V0N0QOCj5l5sIsxZktNvKU9xs+3M15gBr/BhgkhnusjDCXcA70Z1RwOPOL
+         AjJIPc1lFmZuNTol9YAXGyKVYqyb/BwYxOL//EvFZjM15/pGMb7XTWA2eqTWGHrQU2
+         N3Rpchhz7bKHMXnIHgnIcN0Li579OaCSW0LS3mFsAHpcF5V8VoXCoHPuNWLP4BZMB+
+         zWEnSkh3OZjhg==
+Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
+        by mailhost.synopsys.com (Postfix) with ESMTP id E0BECA0057;
+        Tue, 30 Jul 2019 13:57:28 +0000 (UTC)
+From:   Jose Abreu <Jose.Abreu@synopsys.com>
+To:     netdev@vger.kernel.org
+Cc:     Joao Pinto <Joao.Pinto@synopsys.com>,
+        Jose Abreu <Jose.Abreu@synopsys.com>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH net] net: stmmac: Sync RX Buffer upon allocation
+Date:   Tue, 30 Jul 2019 15:57:16 +0200
+Message-Id: <3601e3ae4357d48b3294f42781d0f19095d1b00e.1564479382.git.joabreu@synopsys.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Yue,
+With recent changes that introduced support for Page Pool in stmmac, Jon
+reported that NFS boot was no longer working on an ARM64 based platform
+that had the IP behind an IOMMU.
 
-Thank you for the patch.
+As Page Pool API does not guarantee DMA syncing because of the use of
+DMA_ATTR_SKIP_CPU_SYNC flag, we have to explicit sync the whole buffer upon
+re-allocation because we are always re-using same pages.
 
-On Mon, Jul 29, 2019 at 03:12:16PM +0800, YueHaibing wrote:
-> If DRM_LVDS_ENCODER=y but CONFIG_DRM_KMS_HELPER=m,
-> build fails:
-> 
-> drivers/gpu/drm/bridge/lvds-encoder.o: In function `lvds_encoder_probe':
-> lvds-encoder.c:(.text+0x155): undefined reference to `devm_drm_panel_bridge_add'
-> 
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Fixes: dbb58bfd9ae6 ("drm/bridge: Fix lvds-encoder since the panel_bridge rework.")
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+In fact, ARM64 code invalidates the DMA area upon two situations [1]:
+	- sync_single_for_cpu(): Invalidates if direction != DMA_TO_DEVICE
+	- sync_single_for_device(): Invalidates if direction == DMA_FROM_DEVICE
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+So, as we must invalidate both the current RX buffer and the newly allocated
+buffer we propose this fix.
 
-> ---
-> v2: remove tc358764 log in commit log, also fix Fixes tag
-> ---
->  drivers/gpu/drm/bridge/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
-> index a6eec90..77e4b95 100644
-> --- a/drivers/gpu/drm/bridge/Kconfig
-> +++ b/drivers/gpu/drm/bridge/Kconfig
-> @@ -48,6 +48,7 @@ config DRM_DUMB_VGA_DAC
->  config DRM_LVDS_ENCODER
->  	tristate "Transparent parallel to LVDS encoder support"
->  	depends on OF
-> +	select DRM_KMS_HELPER
->  	select DRM_PANEL_BRIDGE
->  	help
->  	  Support for transparent parallel to LVDS encoders that don't require
+[1] arch/arm64/mm/cache.S
 
+Reported-by: Jon Hunter <jonathanh@nvidia.com>
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+Fixes: 2af6106ae949 ("net: stmmac: Introducing support for Page Pool")
+Signed-off-by: Jose Abreu <joabreu@synopsys.com>
+---
+Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
+Cc: Alexandre Torgue <alexandre.torgue@st.com>
+Cc: Jose Abreu <joabreu@synopsys.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc: netdev@vger.kernel.org
+Cc: linux-stm32@st-md-mailman.stormreply.com
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+Cc: Jon Hunter <jonathanh@nvidia.com>
+---
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+index 98b1a5c6d537..9a4a56ad35cd 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -3271,9 +3271,11 @@ static inline int stmmac_rx_threshold_count(struct stmmac_rx_queue *rx_q)
+ static inline void stmmac_rx_refill(struct stmmac_priv *priv, u32 queue)
+ {
+ 	struct stmmac_rx_queue *rx_q = &priv->rx_queue[queue];
+-	int dirty = stmmac_rx_dirty(priv, queue);
++	int len, dirty = stmmac_rx_dirty(priv, queue);
+ 	unsigned int entry = rx_q->dirty_rx;
+ 
++	len = DIV_ROUND_UP(priv->dma_buf_sz, PAGE_SIZE) * PAGE_SIZE;
++
+ 	while (dirty-- > 0) {
+ 		struct stmmac_rx_buffer *buf = &rx_q->buf_pool[entry];
+ 		struct dma_desc *p;
+@@ -3291,6 +3293,13 @@ static inline void stmmac_rx_refill(struct stmmac_priv *priv, u32 queue)
+ 		}
+ 
+ 		buf->addr = page_pool_get_dma_addr(buf->page);
++
++		/* Sync whole allocation to device. This will invalidate old
++		 * data.
++		 */
++		dma_sync_single_for_device(priv->device, buf->addr, len,
++					   DMA_FROM_DEVICE);
++
+ 		stmmac_set_desc_addr(priv, p, buf->addr);
+ 		stmmac_refill_desc3(priv, rx_q, p);
+ 
+@@ -3425,8 +3434,6 @@ static int stmmac_rx(struct stmmac_priv *priv, int limit, u32 queue)
+ 			skb_copy_to_linear_data(skb, page_address(buf->page),
+ 						frame_len);
+ 			skb_put(skb, frame_len);
+-			dma_sync_single_for_device(priv->device, buf->addr,
+-						   frame_len, DMA_FROM_DEVICE);
+ 
+ 			if (netif_msg_pktdata(priv)) {
+ 				netdev_dbg(priv->dev, "frame received (%dbytes)",
 -- 
-Regards,
+2.7.4
 
-Laurent Pinchart
