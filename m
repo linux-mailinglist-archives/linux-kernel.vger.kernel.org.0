@@ -2,143 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 145A67A519
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 11:47:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 976657A522
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 11:48:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732070AbfG3Jrt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 05:47:49 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:62192 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731948AbfG3Jrk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 05:47:40 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 45yWtx4J8rz9vBLV;
-        Tue, 30 Jul 2019 11:47:37 +0200 (CEST)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=D9yvfTFg; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id 8iuiIZs2SoI6; Tue, 30 Jul 2019 11:47:37 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 45yWtx37D2z9vBLN;
-        Tue, 30 Jul 2019 11:47:37 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1564480057; bh=8Elcq5DvNm2PwJ3AEzgoFiT2sWRlD923ZYF11Klazfg=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=D9yvfTFgfaMwYumReHctJgExqulPG0Dwg03sF4s8sufaJg+yAduTAZt8K7iWVJrl2
-         1RU9GUaDh63kKxC4/iTS8RBVoJChSQZQ1fBCeojBQmDX2cuhNVezgHvf7hh5oBBG3q
-         axwEZCdn7ECTc4gNLkJxCGYcyi4XWH1xQQ5cH48g=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id B83938B801;
-        Tue, 30 Jul 2019 11:47:37 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id qh6NCYNUGaNl; Tue, 30 Jul 2019 11:47:37 +0200 (CEST)
-Received: from [172.25.230.101] (po15451.idsi0.si.c-s.fr [172.25.230.101])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id EF2458B805;
-        Tue, 30 Jul 2019 11:47:34 +0200 (CEST)
-Subject: Re: [PATCH v2 08/10] powerpc/fsl_booke/kaslr: clear the original
- kernel if randomized
-To:     Jason Yan <yanaijie@huawei.com>, mpe@ellerman.id.au,
-        linuxppc-dev@lists.ozlabs.org, diana.craciun@nxp.com,
-        benh@kernel.crashing.org, paulus@samba.org, npiggin@gmail.com,
-        keescook@chromium.org, kernel-hardening@lists.openwall.com
-Cc:     linux-kernel@vger.kernel.org, wangkefeng.wang@huawei.com,
-        yebin10@huawei.com, thunder.leizhen@huawei.com,
-        jingxiangfeng@huawei.com, fanchengyang@huawei.com,
-        zhaohongjiang@huawei.com
-References: <20190730074225.39544-1-yanaijie@huawei.com>
- <20190730074225.39544-9-yanaijie@huawei.com>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <fc1bf072-8256-f944-cc60-f0da50d319ff@c-s.fr>
-Date:   Tue, 30 Jul 2019 11:47:34 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1732091AbfG3Jsp convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 30 Jul 2019 05:48:45 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:26698 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727770AbfG3Jsp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 05:48:45 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-174-SV6Xl8A9OrKA0tVNQBwUCg-1; Tue, 30 Jul 2019 10:48:38 +0100
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b::d117) by AcuMS.aculab.com
+ (fd9f:af1c:a25b::d117) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue,
+ 30 Jul 2019 10:48:38 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Tue, 30 Jul 2019 10:48:38 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Stanislaw Gruszka' <sgruszka@redhat.com>,
+        Jian-Hong Pan <jian-hong@endlessm.com>
+CC:     Yan-Hsuan Chuang <yhchuang@realtek.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux@endlessm.com" <linux@endlessm.com>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: RE: [PATCH] rtw88: pci: Use general byte arrays as the elements of RX
+ ring
+Thread-Topic: [PATCH] rtw88: pci: Use general byte arrays as the elements of
+ RX ring
+Thread-Index: AQHVRro3Kaj7ufhACkSCuQV9Pmu/hqbi59sQ
+Date:   Tue, 30 Jul 2019 09:48:38 +0000
+Message-ID: <962a8a8e735946d6b3944b7d0e228309@AcuMS.aculab.com>
+References: <20190725080925.6575-1-jian-hong@endlessm.com>
+ <20190730093533.GC3174@redhat.com>
+In-Reply-To: <20190730093533.GC3174@redhat.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-In-Reply-To: <20190730074225.39544-9-yanaijie@huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+X-MC-Unique: SV6Xl8A9OrKA0tVNQBwUCg-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-Le 30/07/2019 à 09:42, Jason Yan a écrit :
-> The original kernel still exists in the memory, clear it now.
+From: Stanislaw Gruszka
+> Sent: 30 July 2019 10:36
+...
+> > +		len = pkt_stat.pkt_len + pkt_offset;
+> > +		skb = dev_alloc_skb(len);
+> > +		if (WARN_ONCE(!skb, "rx routine starvation\n"))
+> >  			goto next_rp;
+> >
+> >  		/* put the DMA data including rx_desc from phy to new skb */
+> > -		skb_put_data(new, skb->data, new_len);
+> > +		skb_put_data(skb, rx_desc, len);
 > 
-> Signed-off-by: Jason Yan <yanaijie@huawei.com>
-> Cc: Diana Craciun <diana.craciun@nxp.com>
-> Cc: Michael Ellerman <mpe@ellerman.id.au>
-> Cc: Christophe Leroy <christophe.leroy@c-s.fr>
-> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-> Cc: Paul Mackerras <paulus@samba.org>
-> Cc: Nicholas Piggin <npiggin@gmail.com>
-> Cc: Kees Cook <keescook@chromium.org>
+> Coping big packets it quite inefficient. What drivers usually do is
+> copy only for small packets and for big ones allocate new rx buf
+> (drop packet alloc if fail) and pas old buf to network stack via
+> skb_add_rx_frag(). See iwlmvm as example.
 
-Reviewed-by: Christophe Leroy <christophe.leroy@c-s.fr>
+If you have to do iommu setup/teardown then the breakeven point
+for (not) copying may be surprisingly large.
+You do need to do the measurements on a range of hardware.
+Coping is also likely to affect the L1 cache - unless you can
+copy quickly without polluting the cache.
 
-Is kaslr_second_init() the best name ?
-What about kaslr_late_init() or kaslr_clear_early_kernel() or ... ?
+It is all 'swings and roundabouts'.
 
-Christophe
+	David
 
-> ---
->   arch/powerpc/kernel/kaslr_booke.c  | 11 +++++++++++
->   arch/powerpc/mm/mmu_decl.h         |  2 ++
->   arch/powerpc/mm/nohash/fsl_booke.c |  1 +
->   3 files changed, 14 insertions(+)
-> 
-> diff --git a/arch/powerpc/kernel/kaslr_booke.c b/arch/powerpc/kernel/kaslr_booke.c
-> index 0bb02e45b928..f032ac119457 100644
-> --- a/arch/powerpc/kernel/kaslr_booke.c
-> +++ b/arch/powerpc/kernel/kaslr_booke.c
-> @@ -412,3 +412,14 @@ notrace void __init kaslr_early_init(void *dt_ptr, phys_addr_t size)
->   
->   	reloc_kernel_entry(dt_ptr, kimage_vaddr);
->   }
-> +
-> +void __init kaslr_second_init(void)
-> +{
-> +	/* If randomized, clear the original kernel */
-> +	if (kimage_vaddr != KERNELBASE) {
-> +		unsigned long kernel_sz;
-> +
-> +		kernel_sz = (unsigned long)_end - kimage_vaddr;
-> +		memzero_explicit((void *)KERNELBASE, kernel_sz);
-> +	}
-> +}
-> diff --git a/arch/powerpc/mm/mmu_decl.h b/arch/powerpc/mm/mmu_decl.h
-> index 9332772c8a66..550c8d742f88 100644
-> --- a/arch/powerpc/mm/mmu_decl.h
-> +++ b/arch/powerpc/mm/mmu_decl.h
-> @@ -150,8 +150,10 @@ extern void loadcam_multi(int first_idx, int num, int tmp_idx);
->   
->   #ifdef CONFIG_RANDOMIZE_BASE
->   void kaslr_early_init(void *dt_ptr, phys_addr_t size);
-> +void kaslr_second_init(void);
->   #else
->   static inline void kaslr_early_init(void *dt_ptr, phys_addr_t size) {}
-> +static inline void kaslr_second_init(void) {}
->   #endif
->   
->   struct tlbcam {
-> diff --git a/arch/powerpc/mm/nohash/fsl_booke.c b/arch/powerpc/mm/nohash/fsl_booke.c
-> index 8d25a8dc965f..fa5a87f5c08e 100644
-> --- a/arch/powerpc/mm/nohash/fsl_booke.c
-> +++ b/arch/powerpc/mm/nohash/fsl_booke.c
-> @@ -269,6 +269,7 @@ notrace void __init relocate_init(u64 dt_ptr, phys_addr_t start)
->   	kernstart_addr = start;
->   	if (is_second_reloc) {
->   		virt_phys_offset = PAGE_OFFSET - memstart_addr;
-> +		kaslr_second_init();
->   		return;
->   	}
->   
-> 
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
+
