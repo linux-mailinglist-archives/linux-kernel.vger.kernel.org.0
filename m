@@ -2,144 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68C8579E29
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 03:50:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D066079E24
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 03:50:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730803AbfG3BuE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 21:50:04 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:36533 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730780AbfG3Bt7 (ORCPT
+        id S1730774AbfG3Bt5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 21:49:57 -0400
+Received: from gateway30.websitewelcome.com ([192.185.148.2]:31268 "EHLO
+        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730736AbfG3Btr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 21:49:59 -0400
-Received: by mail-pg1-f196.google.com with SMTP id l21so29163037pgm.3;
-        Mon, 29 Jul 2019 18:49:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=xC2OMhdvxaLcA9We7nJNC9uJnugsrezxvB9jzWvgvfs=;
-        b=ZJ/pOTcX70i3pJxOfMJ0R187ZTJcXEXsQOkZLMvoUDkHfEzOQD0CbPWvV6rIQSQso/
-         J/4DvvhcXqcFuvNZ0QIE3LCvefC42aYyCRlJOylUU7na5VdgFiDnUZjn0QekEuHMUYzB
-         FvIR7w48Y3O3lfURiBHAcS20jIE8rH1eE03AuDGI6g63Zhuky1g0wWAs4EpjHU42BKUd
-         gNFCefrxVGaQ6oBI0uGmP1vD/mcPIS3rSCRNVGnJxtwyV7WB1++jAmiwHWxQx1567OdQ
-         NaWwVs1Zbr9Jdzjr3gasypWX2zMNphChaearxJf7PNHKGut45z0UsUGtAWOJ1B8/YJP/
-         L+HA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=xC2OMhdvxaLcA9We7nJNC9uJnugsrezxvB9jzWvgvfs=;
-        b=nOrnNGEFQwlukfnC1zkbf8cWEFDNnpj0eaYtxGujicdZmeTIN/02bX5L+bX0e43wuG
-         tkqR6DjN2QlXCLJHtHPZSv76eoHx+/gmjKN4EPvHBxKp9sXwNiPQku4OfLU8rFNhkOiJ
-         qp0E97FAgiOnn9FBHGO9xORZF7CJcQmwfudhwuyYt4YD5ZAzZ/0LaJ7b7/ldb0V6DBfW
-         Z7GyD0qm6KVS71lFT1xNvSBYIDeVRKjvVc6N5wE2u6FBq0uG2iJsY+2SXqtFDOFTSrFN
-         9S0Cn7oIIdLTAdAfq4XOuYuuxjI1OnGzL4JqjGnl6CKfPcIO9u+OERFo/Iy383Sc7LZm
-         L+iw==
-X-Gm-Message-State: APjAAAVkEyneJcgbh3OfbMrznkiI0rtYLnnmjJ26IKa6sM1mrQ/V5xYa
-        VhWsXYHVk9SlMaA9wYCffH4=
-X-Google-Smtp-Source: APXvYqwjN90VyCjAvq+0tZfhUxx2OyOgUKS5+4BbB5flOCXXyElRWY0uJnx0fdtJok+5LyYc/20JQg==
-X-Received: by 2002:a63:f13:: with SMTP id e19mr106525919pgl.132.1564451399146;
-        Mon, 29 Jul 2019 18:49:59 -0700 (PDT)
-Received: from deepa-ubuntu.lan (c-98-234-52-230.hsd1.ca.comcast.net. [98.234.52.230])
-        by smtp.gmail.com with ESMTPSA id r6sm138807156pjb.22.2019.07.29.18.49.58
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 29 Jul 2019 18:49:58 -0700 (PDT)
-From:   Deepa Dinamani <deepa.kernel@gmail.com>
-To:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, arnd@arndb.de,
-        y2038@lists.linaro.org
-Subject: [PATCH 02/20] vfs: Add timestamp_truncate() api
-Date:   Mon, 29 Jul 2019 18:49:06 -0700
-Message-Id: <20190730014924.2193-3-deepa.kernel@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190730014924.2193-1-deepa.kernel@gmail.com>
-References: <20190730014924.2193-1-deepa.kernel@gmail.com>
+        Mon, 29 Jul 2019 21:49:47 -0400
+Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
+        by gateway30.websitewelcome.com (Postfix) with ESMTP id 135482EA4
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 20:49:46 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id sHGshkSpX4FKpsHGshuErR; Mon, 29 Jul 2019 20:49:46 -0500
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        MIME-Version:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=THMhZ3Z9UJJLl14GwuPwJ19Y8ZFPT6dx5E0Ehq+rKsk=; b=woXdxnVNQCm+KQCOv+3gvr4h7D
+        6d4HVNgIHdRa43w/l7B3jIgUjpKSz6SBRm15c29pVGlCR6fwZ41WLTXkfEZOObhXKE7O79DiPFJ49
+        3cYYXGFmc/r3Agl6S48wB7SbjFfIwjCYLJXgSjKpNbidaA1CDcaWyKSjykwwneaOgW3P2F+LPoZGk
+        paap30gIBvJ9EbKG2siWyQC2ctXSFKq9IkY1acbAbFT1XChWs4n0K89seG+8sxEzOTvAJEzFgquHw
+        GCWB/4FTHLImorxUQ1mHMU8wpauRWabn/BWFPKE43IupzPv85nGioNW11g7BqJ2fyQrc/iB/DbKxp
+        UL/H3d/Q==;
+Received: from [187.192.11.120] (port=37264 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1hsHGq-003dAx-V6; Mon, 29 Jul 2019 20:49:45 -0500
+Date:   Mon, 29 Jul 2019 20:49:44 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: [PATCH] ALSA: sparc: Mark expected switch fall-throughs
+Message-ID: <20190730014944.GA31900@embeddedor>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 187.192.11.120
+X-Source-L: No
+X-Exim-ID: 1hsHGq-003dAx-V6
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [187.192.11.120]:37264
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 9
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-timespec_trunc() function is used to truncate a
-filesystem timestamp to the right granularity.
-But, the function does not clamp tv_sec part of the
-timestamps according to the filesystem timestamp limits.
+Mark switch cases where we are expecting to fall through.
 
-The replacement api: timestamp_truncate() also alters the
-signature of the function to accommodate filesystem
-timestamp clamping according to flesystem limits.
+This patch fixes the following warnings (Building: sparc64):
 
-Note that the tv_nsec part is set to 0 if tv_sec is not within
-the range supported for the filesystem.
+sound/sparc/dbri.c: In function ‘reverse_bytes’:
+sound/sparc/dbri.c:582:5: warning: this statement may fall through [-Wimplicit-fallthrough=]
+   b = ((b & 0xffff0000) >> 16) | ((b & 0x0000ffff) << 16);
+   ~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+sound/sparc/dbri.c:583:2: note: here
+  case 16:
+  ^~~~
+sound/sparc/dbri.c:584:5: warning: this statement may fall through [-Wimplicit-fallthrough=]
+   b = ((b & 0xff00ff00) >> 8) | ((b & 0x00ff00ff) << 8);
+   ~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+sound/sparc/dbri.c:585:2: note: here
+  case 8:
+  ^~~~
+sound/sparc/dbri.c:586:5: warning: this statement may fall through [-Wimplicit-fallthrough=]
+   b = ((b & 0xf0f0f0f0) >> 4) | ((b & 0x0f0f0f0f) << 4);
+   ~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+sound/sparc/dbri.c:587:2: note: here
+  case 4:
+  ^~~~
+sound/sparc/dbri.c:588:5: warning: this statement may fall through [-Wimplicit-fallthrough=]
+   b = ((b & 0xcccccccc) >> 2) | ((b & 0x33333333) << 2);
+   ~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+sound/sparc/dbri.c:589:2: note: here
+  case 2:
+  ^~~~
 
-Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- fs/inode.c         | 33 ++++++++++++++++++++++++++++++++-
- include/linux/fs.h |  2 ++
- 2 files changed, 34 insertions(+), 1 deletion(-)
+ sound/sparc/dbri.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/fs/inode.c b/fs/inode.c
-index 5f5431ec3d62..0fb1f0fb296a 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -2166,6 +2166,37 @@ struct timespec64 timespec64_trunc(struct timespec64 t, unsigned gran)
- }
- EXPORT_SYMBOL(timespec64_trunc);
- 
-+/**
-+ * timestamp_truncate - Truncate timespec to a granularity
-+ * @t: Timespec
-+ * @inode: inode being updated
-+ *
-+ * Truncate a timespec to the granularity supported by the fs
-+ * containing the inode. Always rounds down. gran must
-+ * not be 0 nor greater than a second (NSEC_PER_SEC, or 10^9 ns).
-+ */
-+struct timespec64 timestamp_truncate(struct timespec64 t, struct inode *inode)
-+{
-+	struct super_block *sb = inode->i_sb;
-+	unsigned int gran = sb->s_time_gran;
-+
-+	t.tv_sec = clamp(t.tv_sec, sb->s_time_min, sb->s_time_max);
-+	if (unlikely(t.tv_sec == sb->s_time_max || t.tv_sec == sb->s_time_min))
-+		t.tv_nsec = 0;
-+
-+	/* Avoid division in the common cases 1 ns and 1 s. */
-+	if (gran == 1)
-+		; /* nothing */
-+	else if (gran == NSEC_PER_SEC)
-+		t.tv_nsec = 0;
-+	else if (gran > 1 && gran < NSEC_PER_SEC)
-+		t.tv_nsec -= t.tv_nsec % gran;
-+	else
-+		WARN(1, "invalid file time granularity: %u", gran);
-+	return t;
-+}
-+EXPORT_SYMBOL(timestamp_truncate);
-+
- /**
-  * current_time - Return FS time
-  * @inode: inode.
-@@ -2187,6 +2218,6 @@ struct timespec64 current_time(struct inode *inode)
- 		return now;
- 	}
- 
--	return timespec64_trunc(now, inode->i_sb->s_time_gran);
-+	return timestamp_truncate(now, inode);
- }
- EXPORT_SYMBOL(current_time);
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index e9d04e4e5628..fdfe51d096fa 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -726,6 +726,8 @@ struct inode {
- 	void			*i_private; /* fs or device private pointer */
- } __randomize_layout;
- 
-+struct timespec64 timestamp_truncate(struct timespec64 t, struct inode *inode);
-+
- static inline unsigned int i_blocksize(const struct inode *node)
- {
- 	return (1 << node->i_blkbits);
+diff --git a/sound/sparc/dbri.c b/sound/sparc/dbri.c
+index 010113156239..6e065d44060e 100644
+--- a/sound/sparc/dbri.c
++++ b/sound/sparc/dbri.c
+@@ -580,12 +580,16 @@ static __u32 reverse_bytes(__u32 b, int len)
+ 	switch (len) {
+ 	case 32:
+ 		b = ((b & 0xffff0000) >> 16) | ((b & 0x0000ffff) << 16);
++		/* fall through */
+ 	case 16:
+ 		b = ((b & 0xff00ff00) >> 8) | ((b & 0x00ff00ff) << 8);
++		/* fall through */
+ 	case 8:
+ 		b = ((b & 0xf0f0f0f0) >> 4) | ((b & 0x0f0f0f0f) << 4);
++		/* fall through */
+ 	case 4:
+ 		b = ((b & 0xcccccccc) >> 2) | ((b & 0x33333333) << 2);
++		/* fall through */
+ 	case 2:
+ 		b = ((b & 0xaaaaaaaa) >> 1) | ((b & 0x55555555) << 1);
+ 	case 1:
 -- 
-2.17.1
+2.22.0
 
