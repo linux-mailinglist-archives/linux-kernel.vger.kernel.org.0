@@ -2,128 +2,312 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87A1A7A228
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 09:25:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BDA47A24B
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 09:30:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730387AbfG3HZv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 03:25:51 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:3220 "EHLO huawei.com"
+        id S1730469AbfG3Had (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 03:30:33 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:51772 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729914AbfG3HZo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 03:25:44 -0400
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 2408271F06A0DF12B75F;
-        Tue, 30 Jul 2019 15:25:40 +0800 (CST)
-Received: from huawei.com (10.175.124.28) by DGGEMS413-HUB.china.huawei.com
- (10.3.19.213) with Microsoft SMTP Server id 14.3.439.0; Tue, 30 Jul 2019
- 15:25:31 +0800
-From:   Jason Yan <yanaijie@huawei.com>
-To:     <mpe@ellerman.id.au>, <linuxppc-dev@lists.ozlabs.org>,
-        <diana.craciun@nxp.com>, <christophe.leroy@c-s.fr>,
-        <benh@kernel.crashing.org>, <paulus@samba.org>,
-        <npiggin@gmail.com>, <keescook@chromium.org>,
-        <kernel-hardening@lists.openwall.com>
-CC:     <linux-kernel@vger.kernel.org>, <wangkefeng.wang@huawei.com>,
-        <yebin10@huawei.com>, <thunder.leizhen@huawei.com>,
-        <jingxiangfeng@huawei.com>, <fanchengyang@huawei.com>,
-        <zhaohongjiang@huawei.com>, Jason Yan <yanaijie@huawei.com>
-Subject: [PATCH v2 10/10] powerpc/fsl_booke/kaslr: dump out kernel offset information on panic
-Date:   Tue, 30 Jul 2019 15:42:25 +0800
-Message-ID: <20190730074225.39544-11-yanaijie@huawei.com>
-X-Mailer: git-send-email 2.17.2
-In-Reply-To: <20190730074225.39544-1-yanaijie@huawei.com>
-References: <20190730074225.39544-1-yanaijie@huawei.com>
+        id S1726432AbfG3Hac (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 03:30:32 -0400
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id BC66B84379F6C465A5BD;
+        Tue, 30 Jul 2019 15:14:51 +0800 (CST)
+Received: from architecture4.huawei.com (10.140.130.215) by smtp.huawei.com
+ (10.3.19.210) with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 30 Jul
+ 2019 15:14:43 +0800
+From:   Gao Xiang <gaoxiang25@huawei.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Theodore Ts'o <tytso@mit.edu>,
+        "David Sterba" <dsterba@suse.cz>,
+        Amir Goldstein <amir73il@gmail.com>,
+        "Christoph Hellwig" <hch@infradead.org>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, "Jan Kara" <jack@suse.cz>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+CC:     <linux-fsdevel@vger.kernel.org>, <devel@driverdev.osuosl.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        <linux-erofs@lists.ozlabs.org>, Chao Yu <yuchao0@huawei.com>,
+        Miao Xie <miaoxie@huawei.com>,
+        Li Guifu <bluce.liguifu@huawei.com>,
+        Fang Wei <fangwei1@huawei.com>,
+        Gao Xiang <gaoxiang25@huawei.com>
+Subject: [PATCH v5 09/24] erofs: support tracepoint
+Date:   Tue, 30 Jul 2019 15:13:58 +0800
+Message-ID: <20190730071413.11871-10-gaoxiang25@huawei.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190730071413.11871-1-gaoxiang25@huawei.com>
+References: <20190730071413.11871-1-gaoxiang25@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Originating-IP: [10.175.124.28]
+X-Originating-IP: [10.140.130.215]
 X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When kaslr is enabled, the kernel offset is different for every boot.
-This brings some difficult to debug the kernel. Dump out the kernel
-offset when panic so that we can easily debug the kernel.
+Add basic tracepoints for ->readpage{,s}, ->lookup,
+->destroy_inode, fill_inode and map_blocks.
 
-Signed-off-by: Jason Yan <yanaijie@huawei.com>
-Cc: Diana Craciun <diana.craciun@nxp.com>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Christophe Leroy <christophe.leroy@c-s.fr>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Paul Mackerras <paulus@samba.org>
-Cc: Nicholas Piggin <npiggin@gmail.com>
-Cc: Kees Cook <keescook@chromium.org>
+Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
 ---
- arch/powerpc/include/asm/page.h     |  5 +++++
- arch/powerpc/kernel/machine_kexec.c |  1 +
- arch/powerpc/kernel/setup-common.c  | 19 +++++++++++++++++++
- 3 files changed, 25 insertions(+)
+ include/trace/events/erofs.h | 241 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 241 insertions(+)
+ create mode 100644 include/trace/events/erofs.h
 
-diff --git a/arch/powerpc/include/asm/page.h b/arch/powerpc/include/asm/page.h
-index 60a68d3a54b1..cd3ac530e58d 100644
---- a/arch/powerpc/include/asm/page.h
-+++ b/arch/powerpc/include/asm/page.h
-@@ -317,6 +317,11 @@ struct vm_area_struct;
- 
- extern unsigned long kimage_vaddr;
- 
-+static inline unsigned long kaslr_offset(void)
-+{
-+	return kimage_vaddr - KERNELBASE;
-+}
+diff --git a/include/trace/events/erofs.h b/include/trace/events/erofs.h
+new file mode 100644
+index 000000000000..0c5847c54b60
+--- /dev/null
++++ b/include/trace/events/erofs.h
+@@ -0,0 +1,241 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++#undef TRACE_SYSTEM
++#define TRACE_SYSTEM erofs
 +
- #include <asm-generic/memory_model.h>
- #endif /* __ASSEMBLY__ */
- #include <asm/slice.h>
-diff --git a/arch/powerpc/kernel/machine_kexec.c b/arch/powerpc/kernel/machine_kexec.c
-index c4ed328a7b96..078fe3d76feb 100644
---- a/arch/powerpc/kernel/machine_kexec.c
-+++ b/arch/powerpc/kernel/machine_kexec.c
-@@ -86,6 +86,7 @@ void arch_crash_save_vmcoreinfo(void)
- 	VMCOREINFO_STRUCT_SIZE(mmu_psize_def);
- 	VMCOREINFO_OFFSET(mmu_psize_def, shift);
- #endif
-+	vmcoreinfo_append_str("KERNELOFFSET=%lx\n", kaslr_offset());
- }
- 
- /*
-diff --git a/arch/powerpc/kernel/setup-common.c b/arch/powerpc/kernel/setup-common.c
-index 1f8db666468d..064075f02837 100644
---- a/arch/powerpc/kernel/setup-common.c
-+++ b/arch/powerpc/kernel/setup-common.c
-@@ -715,12 +715,31 @@ static struct notifier_block ppc_panic_block = {
- 	.priority = INT_MIN /* may not return; must be done last */
- };
- 
-+/*
-+ * Dump out kernel offset information on panic.
-+ */
-+static int dump_kernel_offset(struct notifier_block *self, unsigned long v,
-+			      void *p)
-+{
-+	pr_emerg("Kernel Offset: 0x%lx from 0x%lx\n",
-+		 kaslr_offset(), KERNELBASE);
++#if !defined(_TRACE_EROFS_H) || defined(TRACE_HEADER_MULTI_READ)
++#define _TRACE_EROFS_H
 +
-+	return 0;
-+}
++#include <linux/tracepoint.h>
 +
-+static struct notifier_block kernel_offset_notifier = {
-+	.notifier_call = dump_kernel_offset
-+};
++#define show_dev(dev)		MAJOR(dev), MINOR(dev)
++#define show_dev_nid(entry)	show_dev(entry->dev), entry->nid
 +
- void __init setup_panic(void)
- {
- 	/* PPC64 always does a hard irq disable in its panic handler */
- 	if (!IS_ENABLED(CONFIG_PPC64) && !ppc_md.panic)
- 		return;
- 	atomic_notifier_chain_register(&panic_notifier_list, &ppc_panic_block);
-+	if (IS_ENABLED(CONFIG_RANDOMIZE_BASE) && kaslr_offset() > 0)
-+		atomic_notifier_chain_register(&panic_notifier_list,
-+					       &kernel_offset_notifier);
- }
- 
- #ifdef CONFIG_CHECK_CACHE_COHERENCY
++#define show_file_type(type)						\
++	__print_symbolic(type,						\
++		{ 0,		"FILE" },				\
++		{ 1,		"DIR" })
++
++#define show_map_flags(flags) __print_flags(flags, "|",	\
++	{ EROFS_GET_BLOCKS_RAW,	"RAW" })
++
++#define show_mflags(flags) __print_flags(flags, "",	\
++	{ EROFS_MAP_MAPPED,	"M" },			\
++	{ EROFS_MAP_META,	"I" })
++
++TRACE_EVENT(erofs_lookup,
++
++	TP_PROTO(struct inode *dir, struct dentry *dentry, unsigned int flags),
++
++	TP_ARGS(dir, dentry, flags),
++
++	TP_STRUCT__entry(
++		__field(dev_t,		dev	)
++		__field(erofs_nid_t,	nid	)
++		__field(const char *,	name	)
++		__field(unsigned int,	flags	)
++	),
++
++	TP_fast_assign(
++		__entry->dev	= dir->i_sb->s_dev;
++		__entry->nid	= EROFS_V(dir)->nid;
++		__entry->name	= dentry->d_name.name;
++		__entry->flags	= flags;
++	),
++
++	TP_printk("dev = (%d,%d), pnid = %llu, name:%s, flags:%x",
++		show_dev_nid(__entry),
++		__entry->name,
++		__entry->flags)
++);
++
++TRACE_EVENT(erofs_fill_inode,
++	TP_PROTO(struct inode *inode, int isdir),
++	TP_ARGS(inode, isdir),
++
++	TP_STRUCT__entry(
++		__field(dev_t,		dev	)
++		__field(erofs_nid_t,	nid	)
++		__field(erofs_blk_t,	blkaddr )
++		__field(unsigned int,	ofs	)
++		__field(int,		isdir	)
++	),
++
++	TP_fast_assign(
++		__entry->dev		= inode->i_sb->s_dev;
++		__entry->nid		= EROFS_V(inode)->nid;
++		__entry->blkaddr	= erofs_blknr(iloc(EROFS_I_SB(inode), __entry->nid));
++		__entry->ofs		= erofs_blkoff(iloc(EROFS_I_SB(inode), __entry->nid));
++		__entry->isdir		= isdir;
++	),
++
++	TP_printk("dev = (%d,%d), nid = %llu, blkaddr %u ofs %u, isdir %d",
++		  show_dev_nid(__entry),
++		  __entry->blkaddr, __entry->ofs,
++		  __entry->isdir)
++);
++
++TRACE_EVENT(erofs_readpage,
++
++	TP_PROTO(struct page *page, bool raw),
++
++	TP_ARGS(page, raw),
++
++	TP_STRUCT__entry(
++		__field(dev_t,		dev	)
++		__field(erofs_nid_t,    nid     )
++		__field(int,		dir	)
++		__field(pgoff_t,	index	)
++		__field(int,		uptodate)
++		__field(bool,		raw	)
++	),
++
++	TP_fast_assign(
++		__entry->dev	= page->mapping->host->i_sb->s_dev;
++		__entry->nid	= EROFS_V(page->mapping->host)->nid;
++		__entry->dir	= S_ISDIR(page->mapping->host->i_mode);
++		__entry->index	= page->index;
++		__entry->uptodate = PageUptodate(page);
++		__entry->raw = raw;
++	),
++
++	TP_printk("dev = (%d,%d), nid = %llu, %s, index = %lu, uptodate = %d "
++		"raw = %d",
++		show_dev_nid(__entry),
++		show_file_type(__entry->dir),
++		(unsigned long)__entry->index,
++		__entry->uptodate,
++		__entry->raw)
++);
++
++TRACE_EVENT(erofs_readpages,
++
++	TP_PROTO(struct inode *inode, struct page *page, unsigned int nrpage,
++		bool raw),
++
++	TP_ARGS(inode, page, nrpage, raw),
++
++	TP_STRUCT__entry(
++		__field(dev_t,		dev	)
++		__field(erofs_nid_t,	nid	)
++		__field(pgoff_t,	start	)
++		__field(unsigned int,	nrpage	)
++		__field(bool,		raw	)
++	),
++
++	TP_fast_assign(
++		__entry->dev	= inode->i_sb->s_dev;
++		__entry->nid	= EROFS_V(inode)->nid;
++		__entry->start	= page->index;
++		__entry->nrpage	= nrpage;
++		__entry->raw	= raw;
++	),
++
++	TP_printk("dev = (%d,%d), nid = %llu, start = %lu nrpage = %u raw = %d",
++		show_dev_nid(__entry),
++		(unsigned long)__entry->start,
++		__entry->nrpage,
++		__entry->raw)
++);
++
++DECLARE_EVENT_CLASS(erofs__map_blocks_enter,
++	TP_PROTO(struct inode *inode, struct erofs_map_blocks *map,
++		 unsigned int flags),
++
++	TP_ARGS(inode, map, flags),
++
++	TP_STRUCT__entry(
++		__field(	dev_t,		dev		)
++		__field(	erofs_nid_t,	nid		)
++		__field(	erofs_off_t,	la		)
++		__field(	u64,		llen		)
++		__field(	unsigned int,	flags		)
++	),
++
++	TP_fast_assign(
++		__entry->dev    = inode->i_sb->s_dev;
++		__entry->nid    = EROFS_V(inode)->nid;
++		__entry->la	= map->m_la;
++		__entry->llen	= map->m_llen;
++		__entry->flags	= flags;
++	),
++
++	TP_printk("dev = (%d,%d), nid = %llu, la %llu llen %llu flags %s",
++		  show_dev_nid(__entry),
++		  __entry->la, __entry->llen,
++		  __entry->flags ? show_map_flags(__entry->flags) : "NULL")
++);
++
++DEFINE_EVENT(erofs__map_blocks_enter, erofs_map_blocks_flatmode_enter,
++	TP_PROTO(struct inode *inode, struct erofs_map_blocks *map,
++		 unsigned flags),
++
++	TP_ARGS(inode, map, flags)
++);
++
++DECLARE_EVENT_CLASS(erofs__map_blocks_exit,
++	TP_PROTO(struct inode *inode, struct erofs_map_blocks *map,
++		 unsigned int flags, int ret),
++
++	TP_ARGS(inode, map, flags, ret),
++
++	TP_STRUCT__entry(
++		__field(	dev_t,		dev		)
++		__field(	erofs_nid_t,	nid		)
++		__field(        unsigned int,   flags           )
++		__field(	erofs_off_t,	la		)
++		__field(	erofs_off_t,	pa		)
++		__field(	u64,		llen		)
++		__field(	u64,		plen		)
++		__field(        unsigned int,	mflags		)
++		__field(	int,		ret		)
++	),
++
++	TP_fast_assign(
++		__entry->dev    = inode->i_sb->s_dev;
++		__entry->nid    = EROFS_V(inode)->nid;
++		__entry->flags	= flags;
++		__entry->la	= map->m_la;
++		__entry->pa	= map->m_pa;
++		__entry->llen	= map->m_llen;
++		__entry->plen	= map->m_plen;
++		__entry->mflags	= map->m_flags;
++		__entry->ret	= ret;
++	),
++
++	TP_printk("dev = (%d,%d), nid = %llu, flags %s "
++		  "la %llu pa %llu llen %llu plen %llu mflags %s ret %d",
++		  show_dev_nid(__entry),
++		  __entry->flags ? show_map_flags(__entry->flags) : "NULL",
++		  __entry->la, __entry->pa, __entry->llen, __entry->plen,
++		  show_mflags(__entry->mflags), __entry->ret)
++);
++
++DEFINE_EVENT(erofs__map_blocks_exit, erofs_map_blocks_flatmode_exit,
++	TP_PROTO(struct inode *inode, struct erofs_map_blocks *map,
++		 unsigned flags, int ret),
++
++	TP_ARGS(inode, map, flags, ret)
++);
++
++TRACE_EVENT(erofs_destroy_inode,
++	TP_PROTO(struct inode *inode),
++
++	TP_ARGS(inode),
++
++	TP_STRUCT__entry(
++		__field(	dev_t,		dev		)
++		__field(	erofs_nid_t,	nid		)
++	),
++
++	TP_fast_assign(
++		__entry->dev	= inode->i_sb->s_dev;
++		__entry->nid	= EROFS_V(inode)->nid;
++	),
++
++	TP_printk("dev = (%d,%d), nid = %llu", show_dev_nid(__entry))
++);
++
++#endif /* _TRACE_EROFS_H */
++
++ /* This part must be outside protection */
++#include <trace/define_trace.h>
 -- 
-2.17.2
+2.17.1
 
