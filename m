@@ -2,93 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F17697A6D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 13:24:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4941E7A6DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 13:26:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729771AbfG3LYT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 07:24:19 -0400
-Received: from foss.arm.com ([217.140.110.172]:59496 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725934AbfG3LYT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 07:24:19 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 423FB28;
-        Tue, 30 Jul 2019 04:24:18 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 746E93F575;
-        Tue, 30 Jul 2019 04:24:17 -0700 (PDT)
-Date:   Tue, 30 Jul 2019 12:24:15 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc:     Anders Roxell <anders.roxell@linaro.org>, will@kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm_pmu: Mark expected switch fall-through
-Message-ID: <20190730112415.GB51922@lakrids.cambridge.arm.com>
-References: <20190726112737.19309-1-anders.roxell@linaro.org>
- <20190726122956.GC26088@lakrids.cambridge.arm.com>
- <20190726151825.GA12552@e121166-lin.cambridge.arm.com>
+        id S1729852AbfG3L0n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 07:26:43 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:54900 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726505AbfG3L0n (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 07:26:43 -0400
+Received: by mail-wm1-f66.google.com with SMTP id p74so56754043wme.4
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 04:26:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=zRulNL5qCAi/81YynxGrimpN6FxyJ33F7yQYkhCyZlk=;
+        b=OYvbI1zTY58lGpUwpA1FJYmgNGlcs9wGpyol5GSVeyqPzfF0ivihPsGoCR9dTYr2Li
+         VRVJhFa7bDiPzrOw3fJ0XXHjwYJhQQgp1WDZsYQK+3I5lQtJM5jt6gksAvJwTRTl32D5
+         CsHfNcIHAlTHxHI2qzbNjkFLBcfUJAfM06ugwECwPZ0qe6t1I/lKKnty0O+/+QgTbb5x
+         +Ybknd6N4jGrjacSb+DcWv4yzs1SahM7XpXi1sTtvxC9Lp0vnWHYaKBP6tsFeCzpW+Wo
+         1FVENZoeCtJN9rR8xgeTdpyK7AHcVAwcQFux6Lx4T3q8k6ZMs7C1fBejFMwyBvTsjqwS
+         25Sw==
+X-Gm-Message-State: APjAAAWeVDRpRuERKNg18qc4CDWoFyRxoFMV9+axku+35AqC241pnSWb
+        svHHezd8cm/MxgtXmG7CrFWOiPK2gIQ=
+X-Google-Smtp-Source: APXvYqxo5UHLG3tyCvJ9QKdkC6ZVQFG9DiXwMjRxFm5zOjg0AFUbgZKXZO3dtvVP5tdG02WNBFwMlQ==
+X-Received: by 2002:a1c:e009:: with SMTP id x9mr103306392wmg.5.1564486001151;
+        Tue, 30 Jul 2019 04:26:41 -0700 (PDT)
+Received: from [192.168.10.150] ([93.56.166.5])
+        by smtp.gmail.com with ESMTPSA id 4sm146590471wro.78.2019.07.30.04.26.39
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Jul 2019 04:26:40 -0700 (PDT)
+Subject: Re: [RFC PATCH 13/16] RISC-V: KVM: Add timer functionality
+To:     Anup Patel <Anup.Patel@wdc.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Radim K <rkrcmar@redhat.com>
+Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Atish Patra <Atish.Patra@wdc.com>,
+        Alistair Francis <Alistair.Francis@wdc.com>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Anup Patel <anup@brainfault.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20190729115544.17895-1-anup.patel@wdc.com>
+ <20190729115544.17895-14-anup.patel@wdc.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <abedb067-b91f-8821-9bce-d27f6c4efdee@redhat.com>
+Date:   Tue, 30 Jul 2019 13:26:38 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
+In-Reply-To: <20190729115544.17895-14-anup.patel@wdc.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190726151825.GA12552@e121166-lin.cambridge.arm.com>
-User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 26, 2019 at 04:18:25PM +0100, Lorenzo Pieralisi wrote:
-> On Fri, Jul 26, 2019 at 01:29:56PM +0100, Mark Rutland wrote:
-> > On Fri, Jul 26, 2019 at 01:27:37PM +0200, Anders Roxell wrote:
-> > > When fall-through warnings was enabled by default the following warning
-> > > was starting to show up:
-> > > 
-> > > ../drivers/perf/arm_pmu.c: In function ‘cpu_pm_pmu_notify’:
-> > > ../drivers/perf/arm_pmu.c:726:3: warning: this statement may fall
-> > >  through [-Wimplicit-fallthrough=]
-> > >    cpu_pm_pmu_setup(armpmu, cmd);
-> > >    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> > > ../drivers/perf/arm_pmu.c:727:2: note: here
-> > >   case CPU_PM_ENTER_FAILED:
-> > >   ^~~~
-> > > 
-> > > Rework so that the compiler doesn't warn about fall-through.
-> > > 
-> > > Fixes: d93512ef0f0e ("Makefile: Globally enable fall-through warning")
-> > > Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
-> > > ---
-> > > 
-> > > I'm not convinced that this is the correct patch to fix this issue.
-> > > However, I can't see why we do 'armpmu->start(armpmu);' only in 'case
-> > > CPU_PM_ENTER_FAILED' and why we not call function cpu_pm_pmu_setup()
-> > > there also, since in cpu_pm_pmu_setup() has a case prepared for
-> > > CPU_PM_ENTER_FAILED.
-> > 
-> > I agree, think that should be:
-> > 
-> > 	case CPU_PM_EXIT:
-> > 	case CPU_PM_ENTER_FAILED:
-> > 		cpu_pm_pmu_setup(armpmu, cmd);
-> > 		armpmu->start(armpmu);
-> > 		break;
-> > 
-> > ... so that we re-start the events before we start the PMU.
-> > 
-> > That would be a fix for commit:
-> > 
-> >   da4e4f18afe0f372 ("drivers/perf: arm_pmu: implement CPU_PM notifier")
-> 
-> Yes that's correct, apologies. Probably we did not hit it because CPU PM
-> notifier entry failures are a pretty rare event; regardless:
-> 
-> Acked-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-> 
-> I can send the updated fix, just let me know.
+On 29/07/19 13:57, Anup Patel wrote:
+> +	if (delta_ns > VCPU_TIMER_PROGRAM_THRESHOLD_NS) {
+> +		hrtimer_start(&t->hrt, ktime_add_ns(ktime_get(), delta_ns),
 
-I'm not sure what Will wants, but assuming you do so:
+I think the guest would prefer if you saved the time before enabling
+interrupts on the host, and use that here instead of ktime_get().
+Otherwise the timer could be delayed arbitrarily by host interrupts.
 
-Acked-by: Mark Rutland <mark.rutland@arm.com>
+(Because the RISC-V SBI timer is relative only---which is
+unfortunate---guests will already pay a latency price due to the extra
+cost of the SBI call compared to a bare metal implementation.  Sooner or
+later you may want to implement something like x86's heuristic to
+advance the timer deadline by a few hundred nanoseconds; perhaps add a
+TODO now).
 
-Thanks,
-Mark.
+Paolo
+
+> +				HRTIMER_MODE_ABS);
+> +		t->is_set = true;
+> +	} else
+> +		kvm_riscv_vcpu_set_interrupt(vcpu, IRQ_S_TIMER);
+> +
