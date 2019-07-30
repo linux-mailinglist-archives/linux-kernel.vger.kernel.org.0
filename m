@@ -2,53 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 946597B175
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:17:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6138C7B171
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:16:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388144AbfG3SQo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 14:16:44 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:47066 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387938AbfG3SQe (ORCPT
+        id S2388159AbfG3SQp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 14:16:45 -0400
+Received: from mail-pf1-f173.google.com ([209.85.210.173]:33971 "EHLO
+        mail-pf1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388066AbfG3SQe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 30 Jul 2019 14:16:34 -0400
-Received: by mail-pg1-f194.google.com with SMTP id k189so11432932pgk.13
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 11:16:33 -0700 (PDT)
+Received: by mail-pf1-f173.google.com with SMTP id b13so30263934pfo.1
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 11:16:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Lq5YOME9SJvkP+7h5/eaD21iJkRR/ZFFJs+yUEnR9bw=;
-        b=B7fOtndyzo76u4a5cLCLF8cSI6zqNuLs5F56F3PuufnPT2kCQO9Nc+fKysMchrEYfV
-         UygpXKOn8dpCIjH+RFGkfYhwFLNRrVcGqTZwKNSCcSjom5fis2Y8hGtDvKRW3rdHlvjo
-         F44dTKYq2Jy31y3Jy5lIGxCDVL/+ZKtuFW1P4=
+        bh=LY1WwoQKlA0oziJ9kjjyUXkW+p97jOQ5086OAuAZECQ=;
+        b=ltdGp0n/hOTbii9iXo9JRwLODulU135U1oqgBZgsM5F8NH7mxvHpZAbQ5aX/M21n2c
+         9zcLQHPsbYmk3NEb/WB84XD/PdXySxlwRgANBgnlXQ1DOf67lmFoLJFG1UCcLeoyBBiC
+         Mf1+Y5iExsn9vJOWD3DnggnyK9WPiBcUm2/04=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Lq5YOME9SJvkP+7h5/eaD21iJkRR/ZFFJs+yUEnR9bw=;
-        b=YOpfZ2jz8GD5D3bANupdY4ube5L9xUhMaTyOyNmp/q0WaU2TNba8Btju8DpZJ1gn61
-         MFOxEB3PTpatp1VUXLzz4uhwYvLxB3SZQ8RjntNIZ2qdEiC0hN0rSzAQ9ibEBefpsL5C
-         z3TMYLs+Yzwhw4cUrVvUcWt4B3LEjA0Mrot5cgzvyfzdIOkE/WVeaSJ8Gy2BxcILwk/+
-         EHlmdoX87Praw/uOv3/5Mom7w2E+A0CD8+DKxDcSiAFEOSCY48r+hTpXHpEsvGs4Base
-         I3qGW9ueefUbBqRRSRL53eu+6hcb4eQGx7AH3Pbxb5LKk2pQV7HZxIuhqUPHEER1TOsk
-         w7hw==
-X-Gm-Message-State: APjAAAVhDLP8HKKx3BH3L3HO0zBqxaGD7mKjrJGT4V7zPcDh4Ih4c+NR
-        FzM1lDP7JupLgI06L8fxfOTCN3x43Lkqrg==
-X-Google-Smtp-Source: APXvYqzSpevLynY0mDE+1t0ILoWJYiUY29t3t6/58glIhMXo9zVgjIyHGdB7WEsQLaX/3vCniDQuCQ==
-X-Received: by 2002:a63:c03:: with SMTP id b3mr46551464pgl.23.1564510592663;
-        Tue, 30 Jul 2019 11:16:32 -0700 (PDT)
+        bh=LY1WwoQKlA0oziJ9kjjyUXkW+p97jOQ5086OAuAZECQ=;
+        b=Yw6KcoL4Uzo2ibiQQN0oEAIzm5zOONbREVQNyognhA+kfNhvgiy/Nfi2omOIj40ji0
+         Jy3cjDLZ/cYWeMALhU6NVejejoTSV5PBZ6H3lNf8ju8M/l1lmPcmlhfG4zSpCKA+ZSoQ
+         xr7Z/URvFVa9Tggk+nabimnVhcV7Iw5e0/gAmQLpsyqhT/5gYzxQqkxp9KxTvHddFJLZ
+         dg5CE3v0wMQLJjiyDMe52rmRpY4l2RGcd9FLoqsN88SHErik8Ih33a8jDDneGsIOMePe
+         LF11dDn7ibox+UExB+rtM8cD5pNqrQaCdOKnlpoc0EbLsCeuHkHqbKQttARSu+3p+0LH
+         UCDA==
+X-Gm-Message-State: APjAAAUVBaJsQ5IiJwKU/emBIqJoM9GzQrHIpzM1F0CNfV08jmU+mp2O
+        f6IQOHQSS4EPYqXu9MCTnZxxC6SWTJOwoQ==
+X-Google-Smtp-Source: APXvYqzj1c9dVdUvFCpAR/vStlaxFMtTXEqTwndnMRN3UqiYF6seJokLOmyHO1pZlXVedVhtr0R0jQ==
+X-Received: by 2002:aa7:843c:: with SMTP id q28mr43863220pfn.152.1564510593350;
+        Tue, 30 Jul 2019 11:16:33 -0700 (PDT)
 Received: from smtp.gmail.com ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id g1sm106744083pgg.27.2019.07.30.11.16.31
+        by smtp.gmail.com with ESMTPSA id g1sm106744083pgg.27.2019.07.30.11.16.32
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 30 Jul 2019 11:16:32 -0700 (PDT)
+        Tue, 30 Jul 2019 11:16:33 -0700 (PDT)
 From:   Stephen Boyd <swboyd@chromium.org>
 To:     linux-kernel@vger.kernel.org
-Cc:     Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH v6 41/57] spi: Remove dev_err() usage after platform_get_irq()
-Date:   Tue, 30 Jul 2019 11:15:41 -0700
-Message-Id: <20190730181557.90391-42-swboyd@chromium.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org
+Subject: [PATCH v6 42/57] staging: Remove dev_err() usage after platform_get_irq()
+Date:   Tue, 30 Jul 2019 11:15:42 -0700
+Message-Id: <20190730181557.90391-43-swboyd@chromium.org>
 X-Mailer: git-send-email 2.22.0.709.g102302147b-goog
 In-Reply-To: <20190730181557.90391-1-swboyd@chromium.org>
 References: <20190730181557.90391-1-swboyd@chromium.org>
@@ -94,581 +94,255 @@ if ( \( ret < 0 \| ret <= 0 \) )
 While we're here, remove braces on if statements that only have one
 statement (manually).
 
-Cc: Mark Brown <broonie@kernel.org>
-Cc: linux-spi@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: devel@driverdev.osuosl.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Stephen Boyd <swboyd@chromium.org>
 ---
 
 Please apply directly to subsystem trees
 
- drivers/spi/atmel-quadspi.c     |  1 -
- drivers/spi/spi-armada-3700.c   |  1 -
- drivers/spi/spi-bcm2835.c       |  1 -
- drivers/spi/spi-bcm2835aux.c    |  1 -
- drivers/spi/spi-bcm63xx-hsspi.c |  4 +---
- drivers/spi/spi-bcm63xx.c       |  4 +---
- drivers/spi/spi-cadence.c       |  1 -
- drivers/spi/spi-dw-mmio.c       |  4 +---
- drivers/spi/spi-efm32.c         |  4 +---
- drivers/spi/spi-ep93xx.c        |  4 +---
- drivers/spi/spi-fsl-dspi.c      |  1 -
- drivers/spi/spi-fsl-qspi.c      |  4 +---
- drivers/spi/spi-geni-qcom.c     |  4 +---
- drivers/spi/spi-lantiq-ssc.c    | 12 +++---------
- drivers/spi/spi-mt65xx.c        |  1 -
- drivers/spi/spi-npcm-pspi.c     |  1 -
- drivers/spi/spi-nuc900.c        |  1 -
- drivers/spi/spi-nxp-fspi.c      |  4 +---
- drivers/spi/spi-pic32-sqi.c     |  1 -
- drivers/spi/spi-pic32.c         | 12 +++---------
- drivers/spi/spi-qcom-qspi.c     |  4 +---
- drivers/spi/spi-s3c24xx.c       |  1 -
- drivers/spi/spi-sh-msiof.c      |  1 -
- drivers/spi/spi-sh.c            |  4 +---
- drivers/spi/spi-sifive.c        |  1 -
- drivers/spi/spi-slave-mt27xx.c  |  1 -
- drivers/spi/spi-sprd.c          |  4 +---
- drivers/spi/spi-stm32-qspi.c    |  5 +----
- drivers/spi/spi-sun4i.c         |  1 -
- drivers/spi/spi-sun6i.c         |  1 -
- drivers/spi/spi-synquacer.c     |  2 --
- drivers/spi/spi-ti-qspi.c       |  1 -
- drivers/spi/spi-uniphier.c      |  1 -
- drivers/spi/spi-xlp.c           |  4 +---
- drivers/spi/spi-zynq-qspi.c     |  1 -
- drivers/spi/spi-zynqmp-gqspi.c  |  1 -
- 36 files changed, 19 insertions(+), 80 deletions(-)
+ drivers/staging/emxx_udc/emxx_udc.c                          | 4 +---
+ drivers/staging/goldfish/goldfish_audio.c                    | 4 +---
+ drivers/staging/media/allegro-dvt/allegro-core.c             | 4 +---
+ drivers/staging/media/hantro/hantro_drv.c                    | 4 +---
+ drivers/staging/media/imx/imx7-media-csi.c                   | 4 +---
+ drivers/staging/media/imx/imx7-mipi-csis.c                   | 4 +---
+ drivers/staging/media/meson/vdec/esparser.c                  | 4 +---
+ drivers/staging/media/omap4iss/iss.c                         | 1 -
+ drivers/staging/media/sunxi/cedrus/cedrus_hw.c               | 5 +----
+ drivers/staging/most/dim2/dim2.c                             | 2 --
+ drivers/staging/mt7621-dma/mtk-hsdma.c                       | 4 +---
+ drivers/staging/nvec/nvec.c                                  | 4 +---
+ drivers/staging/ralink-gdma/ralink-gdma.c                    | 4 +---
+ .../vc04_services/interface/vchiq_arm/vchiq_2835_arm.c       | 4 +---
+ 14 files changed, 12 insertions(+), 40 deletions(-)
 
-diff --git a/drivers/spi/atmel-quadspi.c b/drivers/spi/atmel-quadspi.c
-index 6a7d7b553d95..fd8007ebb145 100644
---- a/drivers/spi/atmel-quadspi.c
-+++ b/drivers/spi/atmel-quadspi.c
-@@ -526,7 +526,6 @@ static int atmel_qspi_probe(struct platform_device *pdev)
- 	/* Request the IRQ */
- 	irq = platform_get_irq(pdev, 0);
- 	if (irq < 0) {
--		dev_err(&pdev->dev, "missing IRQ\n");
- 		err = irq;
- 		goto disable_qspick;
- 	}
-diff --git a/drivers/spi/spi-armada-3700.c b/drivers/spi/spi-armada-3700.c
-index 032888344822..119ae87cc26e 100644
---- a/drivers/spi/spi-armada-3700.c
-+++ b/drivers/spi/spi-armada-3700.c
-@@ -864,7 +864,6 @@ static int a3700_spi_probe(struct platform_device *pdev)
- 
- 	irq = platform_get_irq(pdev, 0);
- 	if (irq < 0) {
--		dev_err(dev, "could not get irq: %d\n", irq);
- 		ret = -ENXIO;
- 		goto error;
- 	}
-diff --git a/drivers/spi/spi-bcm2835.c b/drivers/spi/spi-bcm2835.c
-index 6f243a90c844..c96797844688 100644
---- a/drivers/spi/spi-bcm2835.c
-+++ b/drivers/spi/spi-bcm2835.c
-@@ -1015,7 +1015,6 @@ static int bcm2835_spi_probe(struct platform_device *pdev)
- 
- 	bs->irq = platform_get_irq(pdev, 0);
- 	if (bs->irq <= 0) {
--		dev_err(&pdev->dev, "could not get IRQ: %d\n", bs->irq);
- 		err = bs->irq ? bs->irq : -ENODEV;
- 		goto out_controller_put;
- 	}
-diff --git a/drivers/spi/spi-bcm2835aux.c b/drivers/spi/spi-bcm2835aux.c
-index bb57035c5770..b18ce69c0375 100644
---- a/drivers/spi/spi-bcm2835aux.c
-+++ b/drivers/spi/spi-bcm2835aux.c
-@@ -540,7 +540,6 @@ static int bcm2835aux_spi_probe(struct platform_device *pdev)
- 
- 	bs->irq = platform_get_irq(pdev, 0);
- 	if (bs->irq <= 0) {
--		dev_err(&pdev->dev, "could not get IRQ: %d\n", bs->irq);
- 		err = bs->irq ? bs->irq : -ENODEV;
- 		goto out_master_put;
- 	}
-diff --git a/drivers/spi/spi-bcm63xx-hsspi.c b/drivers/spi/spi-bcm63xx-hsspi.c
-index 9a06ffdb73b8..373cb53579e0 100644
---- a/drivers/spi/spi-bcm63xx-hsspi.c
-+++ b/drivers/spi/spi-bcm63xx-hsspi.c
-@@ -338,10 +338,8 @@ static int bcm63xx_hsspi_probe(struct platform_device *pdev)
- 	u32 reg, rate, num_cs = HSSPI_SPI_MAX_CS;
+diff --git a/drivers/staging/emxx_udc/emxx_udc.c b/drivers/staging/emxx_udc/emxx_udc.c
+index 4f3c2c13a225..489cde4e915e 100644
+--- a/drivers/staging/emxx_udc/emxx_udc.c
++++ b/drivers/staging/emxx_udc/emxx_udc.c
+@@ -3094,10 +3094,8 @@ static int nbu2ss_drv_probe(struct platform_device *pdev)
+ 		return PTR_ERR(mmio_base);
  
  	irq = platform_get_irq(pdev, 0);
 -	if (irq < 0) {
--		dev_err(dev, "no irq: %d\n", irq);
-+	if (irq < 0)
- 		return irq;
--	}
- 
- 	res_mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	regs = devm_ioremap_resource(dev, res_mem);
-diff --git a/drivers/spi/spi-bcm63xx.c b/drivers/spi/spi-bcm63xx.c
-index df1c94a131e6..fdd7eaa0b8ed 100644
---- a/drivers/spi/spi-bcm63xx.c
-+++ b/drivers/spi/spi-bcm63xx.c
-@@ -520,10 +520,8 @@ static int bcm63xx_spi_probe(struct platform_device *pdev)
- 	}
- 
- 	irq = platform_get_irq(pdev, 0);
--	if (irq < 0) {
--		dev_err(dev, "no irq: %d\n", irq);
-+	if (irq < 0)
- 		return irq;
--	}
- 
- 	clk = devm_clk_get(dev, "spi");
- 	if (IS_ERR(clk)) {
-diff --git a/drivers/spi/spi-cadence.c b/drivers/spi/spi-cadence.c
-index 7c41e4e82849..1c35eaaac838 100644
---- a/drivers/spi/spi-cadence.c
-+++ b/drivers/spi/spi-cadence.c
-@@ -540,7 +540,6 @@ static int cdns_spi_probe(struct platform_device *pdev)
- 	irq = platform_get_irq(pdev, 0);
- 	if (irq <= 0) {
- 		ret = -ENXIO;
--		dev_err(&pdev->dev, "irq number is invalid\n");
- 		goto clk_dis_all;
- 	}
- 
-diff --git a/drivers/spi/spi-dw-mmio.c b/drivers/spi/spi-dw-mmio.c
-index 18c06568805e..e6e1b9818c4d 100644
---- a/drivers/spi/spi-dw-mmio.c
-+++ b/drivers/spi/spi-dw-mmio.c
-@@ -158,10 +158,8 @@ static int dw_spi_mmio_probe(struct platform_device *pdev)
- 	}
- 
- 	dws->irq = platform_get_irq(pdev, 0);
--	if (dws->irq < 0) {
--		dev_err(&pdev->dev, "no irq resource?\n");
-+	if (dws->irq < 0)
- 		return dws->irq; /* -ENXIO */
--	}
- 
- 	dwsmmio->clk = devm_clk_get(&pdev->dev, NULL);
- 	if (IS_ERR(dwsmmio->clk))
-diff --git a/drivers/spi/spi-efm32.c b/drivers/spi/spi-efm32.c
-index eb1f2142a335..64d4c441b641 100644
---- a/drivers/spi/spi-efm32.c
-+++ b/drivers/spi/spi-efm32.c
-@@ -400,10 +400,8 @@ static int efm32_spi_probe(struct platform_device *pdev)
- 	}
- 
- 	ret = platform_get_irq(pdev, 0);
--	if (ret <= 0) {
--		dev_err(&pdev->dev, "failed to get rx irq (%d)\n", ret);
-+	if (ret <= 0)
- 		goto err;
--	}
- 
- 	ddata->rxirq = ret;
- 
-diff --git a/drivers/spi/spi-ep93xx.c b/drivers/spi/spi-ep93xx.c
-index 4034e3ec0ba2..4e1ccd4e52b6 100644
---- a/drivers/spi/spi-ep93xx.c
-+++ b/drivers/spi/spi-ep93xx.c
-@@ -656,10 +656,8 @@ static int ep93xx_spi_probe(struct platform_device *pdev)
- 	}
- 
- 	irq = platform_get_irq(pdev, 0);
--	if (irq < 0) {
--		dev_err(&pdev->dev, "failed to get irq resources\n");
-+	if (irq < 0)
- 		return -EBUSY;
--	}
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	if (!res) {
-diff --git a/drivers/spi/spi-fsl-dspi.c b/drivers/spi/spi-fsl-dspi.c
-index 53335ccc98f6..96eacbe6ae27 100644
---- a/drivers/spi/spi-fsl-dspi.c
-+++ b/drivers/spi/spi-fsl-dspi.c
-@@ -1105,7 +1105,6 @@ static int dspi_probe(struct platform_device *pdev)
- 	dspi_init(dspi);
- 	dspi->irq = platform_get_irq(pdev, 0);
- 	if (dspi->irq < 0) {
--		dev_err(&pdev->dev, "can't get platform irq\n");
- 		ret = dspi->irq;
- 		goto out_clk_put;
- 	}
-diff --git a/drivers/spi/spi-fsl-qspi.c b/drivers/spi/spi-fsl-qspi.c
-index 41a49b93ca60..443d4c1196c2 100644
---- a/drivers/spi/spi-fsl-qspi.c
-+++ b/drivers/spi/spi-fsl-qspi.c
-@@ -860,10 +860,8 @@ static int fsl_qspi_probe(struct platform_device *pdev)
- 
- 	/* find the irq */
- 	ret = platform_get_irq(pdev, 0);
--	if (ret < 0) {
--		dev_err(dev, "failed to get the irq: %d\n", ret);
-+	if (ret < 0)
- 		goto err_disable_clk;
--	}
- 
- 	ret = devm_request_irq(dev, ret,
- 			fsl_qspi_irq_handler, 0, pdev->name, q);
-diff --git a/drivers/spi/spi-geni-qcom.c b/drivers/spi/spi-geni-qcom.c
-index 5f0b0d5bfef4..242b6c86cf12 100644
---- a/drivers/spi/spi-geni-qcom.c
-+++ b/drivers/spi/spi-geni-qcom.c
-@@ -539,10 +539,8 @@ static int spi_geni_probe(struct platform_device *pdev)
- 	struct clk *clk;
- 
- 	irq = platform_get_irq(pdev, 0);
--	if (irq < 0) {
--		dev_err(&pdev->dev, "Err getting IRQ %d\n", irq);
-+	if (irq < 0)
- 		return irq;
--	}
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	base = devm_ioremap_resource(&pdev->dev, res);
-diff --git a/drivers/spi/spi-lantiq-ssc.c b/drivers/spi/spi-lantiq-ssc.c
-index 8f01858c0ae6..9dfe8b04e688 100644
---- a/drivers/spi/spi-lantiq-ssc.c
-+++ b/drivers/spi/spi-lantiq-ssc.c
-@@ -819,22 +819,16 @@ static int lantiq_ssc_probe(struct platform_device *pdev)
- 	}
- 
- 	rx_irq = platform_get_irq_byname(pdev, LTQ_SPI_RX_IRQ_NAME);
--	if (rx_irq < 0) {
--		dev_err(dev, "failed to get %s\n", LTQ_SPI_RX_IRQ_NAME);
-+	if (rx_irq < 0)
- 		return -ENXIO;
--	}
- 
- 	tx_irq = platform_get_irq_byname(pdev, LTQ_SPI_TX_IRQ_NAME);
--	if (tx_irq < 0) {
--		dev_err(dev, "failed to get %s\n", LTQ_SPI_TX_IRQ_NAME);
-+	if (tx_irq < 0)
- 		return -ENXIO;
--	}
- 
- 	err_irq = platform_get_irq_byname(pdev, LTQ_SPI_ERR_IRQ_NAME);
--	if (err_irq < 0) {
--		dev_err(dev, "failed to get %s\n", LTQ_SPI_ERR_IRQ_NAME);
-+	if (err_irq < 0)
- 		return -ENXIO;
--	}
- 
- 	master = spi_alloc_master(dev, sizeof(struct lantiq_ssc_spi));
- 	if (!master)
-diff --git a/drivers/spi/spi-mt65xx.c b/drivers/spi/spi-mt65xx.c
-index 45d8a7048b6c..1f5f716016a2 100644
---- a/drivers/spi/spi-mt65xx.c
-+++ b/drivers/spi/spi-mt65xx.c
-@@ -664,7 +664,6 @@ static int mtk_spi_probe(struct platform_device *pdev)
- 
- 	irq = platform_get_irq(pdev, 0);
- 	if (irq < 0) {
--		dev_err(&pdev->dev, "failed to get irq (%d)\n", irq);
- 		ret = irq;
- 		goto err_put_master;
- 	}
-diff --git a/drivers/spi/spi-npcm-pspi.c b/drivers/spi/spi-npcm-pspi.c
-index 734a2b956959..5c56caea04f0 100644
---- a/drivers/spi/spi-npcm-pspi.c
-+++ b/drivers/spi/spi-npcm-pspi.c
-@@ -388,7 +388,6 @@ static int npcm_pspi_probe(struct platform_device *pdev)
- 
- 	irq = platform_get_irq(pdev, 0);
- 	if (irq < 0) {
 -		dev_err(&pdev->dev, "failed to get IRQ\n");
- 		ret = irq;
- 		goto out_disable_clk;
- 	}
-diff --git a/drivers/spi/spi-nuc900.c b/drivers/spi/spi-nuc900.c
-index 37e2034ad4d5..f65a029e3fe9 100644
---- a/drivers/spi/spi-nuc900.c
-+++ b/drivers/spi/spi-nuc900.c
-@@ -367,7 +367,6 @@ static int nuc900_spi_probe(struct platform_device *pdev)
- 
- 	hw->irq = platform_get_irq(pdev, 0);
- 	if (hw->irq < 0) {
--		dev_err(&pdev->dev, "No IRQ specified\n");
- 		err = -ENOENT;
- 		goto err_pdata;
- 	}
-diff --git a/drivers/spi/spi-nxp-fspi.c b/drivers/spi/spi-nxp-fspi.c
-index 8894f98cc99c..501b923f2c27 100644
---- a/drivers/spi/spi-nxp-fspi.c
-+++ b/drivers/spi/spi-nxp-fspi.c
-@@ -1007,10 +1007,8 @@ static int nxp_fspi_probe(struct platform_device *pdev)
- 
- 	/* find the irq */
- 	ret = platform_get_irq(pdev, 0);
--	if (ret < 0) {
--		dev_err(dev, "failed to get the irq: %d\n", ret);
-+	if (ret < 0)
- 		goto err_disable_clk;
++	if (irq < 0)
+ 		return irq;
 -	}
+ 	status = devm_request_irq(&pdev->dev, irq, _nbu2ss_udc_irq,
+ 				  0, driver_name, udc);
  
- 	ret = devm_request_irq(dev, ret,
- 			nxp_fspi_irq_handler, 0, pdev->name, f);
-diff --git a/drivers/spi/spi-pic32-sqi.c b/drivers/spi/spi-pic32-sqi.c
-index b635526ad414..11b692923fd7 100644
---- a/drivers/spi/spi-pic32-sqi.c
-+++ b/drivers/spi/spi-pic32-sqi.c
-@@ -590,7 +590,6 @@ static int pic32_sqi_probe(struct platform_device *pdev)
- 	/* irq */
- 	sqi->irq = platform_get_irq(pdev, 0);
- 	if (sqi->irq < 0) {
--		dev_err(&pdev->dev, "no irq found\n");
- 		ret = sqi->irq;
- 		goto err_free_master;
- 	}
-diff --git a/drivers/spi/spi-pic32.c b/drivers/spi/spi-pic32.c
-index 10cebeaa1e6b..69f517ec59c6 100644
---- a/drivers/spi/spi-pic32.c
-+++ b/drivers/spi/spi-pic32.c
-@@ -711,22 +711,16 @@ static int pic32_spi_hw_probe(struct platform_device *pdev,
+diff --git a/drivers/staging/goldfish/goldfish_audio.c b/drivers/staging/goldfish/goldfish_audio.c
+index 24a738238f9f..0c65a0121dde 100644
+--- a/drivers/staging/goldfish/goldfish_audio.c
++++ b/drivers/staging/goldfish/goldfish_audio.c
+@@ -302,10 +302,8 @@ static int goldfish_audio_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
  
- 	/* get irq resources: err-irq, rx-irq, tx-irq */
- 	pic32s->fault_irq = platform_get_irq_byname(pdev, "fault");
--	if (pic32s->fault_irq < 0) {
--		dev_err(&pdev->dev, "fault-irq not found\n");
-+	if (pic32s->fault_irq < 0)
- 		return pic32s->fault_irq;
+ 	data->irq = platform_get_irq(pdev, 0);
+-	if (data->irq < 0) {
+-		dev_err(&pdev->dev, "platform_get_irq failed\n");
++	if (data->irq < 0)
+ 		return -ENODEV;
 -	}
- 
- 	pic32s->rx_irq = platform_get_irq_byname(pdev, "rx");
--	if (pic32s->rx_irq < 0) {
--		dev_err(&pdev->dev, "rx-irq not found\n");
-+	if (pic32s->rx_irq < 0)
- 		return pic32s->rx_irq;
--	}
- 
- 	pic32s->tx_irq = platform_get_irq_byname(pdev, "tx");
--	if (pic32s->tx_irq < 0) {
--		dev_err(&pdev->dev, "tx-irq not found\n");
-+	if (pic32s->tx_irq < 0)
- 		return pic32s->tx_irq;
--	}
- 
- 	/* get clock */
- 	pic32s->clk = devm_clk_get(&pdev->dev, "mck0");
-diff --git a/drivers/spi/spi-qcom-qspi.c b/drivers/spi/spi-qcom-qspi.c
-index e0f061139c8f..a0ad73f1cc01 100644
---- a/drivers/spi/spi-qcom-qspi.c
-+++ b/drivers/spi/spi-qcom-qspi.c
-@@ -454,10 +454,8 @@ static int qcom_qspi_probe(struct platform_device *pdev)
- 		goto exit_probe_master_put;
- 
- 	ret = platform_get_irq(pdev, 0);
--	if (ret < 0) {
--		dev_err(dev, "Failed to get irq %d\n", ret);
-+	if (ret < 0)
- 		goto exit_probe_master_put;
--	}
- 	ret = devm_request_irq(dev, ret, qcom_qspi_irq,
- 			IRQF_TRIGGER_HIGH, dev_name(dev), ctrl);
- 	if (ret) {
-diff --git a/drivers/spi/spi-s3c24xx.c b/drivers/spi/spi-s3c24xx.c
-index 48d8dff05a3a..aea8fd98a31f 100644
---- a/drivers/spi/spi-s3c24xx.c
-+++ b/drivers/spi/spi-s3c24xx.c
-@@ -545,7 +545,6 @@ static int s3c24xx_spi_probe(struct platform_device *pdev)
- 
- 	hw->irq = platform_get_irq(pdev, 0);
- 	if (hw->irq < 0) {
--		dev_err(&pdev->dev, "No IRQ specified\n");
- 		err = -ENOENT;
- 		goto err_no_pdata;
- 	}
-diff --git a/drivers/spi/spi-sh-msiof.c b/drivers/spi/spi-sh-msiof.c
-index b50bdbc27e58..f73f811c9ba7 100644
---- a/drivers/spi/spi-sh-msiof.c
-+++ b/drivers/spi/spi-sh-msiof.c
-@@ -1346,7 +1346,6 @@ static int sh_msiof_spi_probe(struct platform_device *pdev)
- 
- 	i = platform_get_irq(pdev, 0);
- 	if (i < 0) {
--		dev_err(&pdev->dev, "cannot get IRQ\n");
- 		ret = i;
- 		goto err1;
- 	}
-diff --git a/drivers/spi/spi-sh.c b/drivers/spi/spi-sh.c
-index f1ee58208216..20bdae5fdf3b 100644
---- a/drivers/spi/spi-sh.c
-+++ b/drivers/spi/spi-sh.c
-@@ -437,10 +437,8 @@ static int spi_sh_probe(struct platform_device *pdev)
+ 	data->buffer_virt = dmam_alloc_coherent(&pdev->dev,
+ 						COMBINED_BUFFER_SIZE,
+ 						&buf_addr, GFP_KERNEL);
+diff --git a/drivers/staging/media/allegro-dvt/allegro-core.c b/drivers/staging/media/allegro-dvt/allegro-core.c
+index f050c7347fd5..6f0cd0784786 100644
+--- a/drivers/staging/media/allegro-dvt/allegro-core.c
++++ b/drivers/staging/media/allegro-dvt/allegro-core.c
+@@ -2947,10 +2947,8 @@ static int allegro_probe(struct platform_device *pdev)
  	}
  
  	irq = platform_get_irq(pdev, 0);
 -	if (irq < 0) {
--		dev_err(&pdev->dev, "platform_get_irq error: %d\n", irq);
-+	if (irq < 0)
- 		return irq;
--	}
- 
- 	master = spi_alloc_master(&pdev->dev, sizeof(struct spi_sh_data));
- 	if (master == NULL) {
-diff --git a/drivers/spi/spi-sifive.c b/drivers/spi/spi-sifive.c
-index 93ec2c6cdbfd..5bf2b57e6929 100644
---- a/drivers/spi/spi-sifive.c
-+++ b/drivers/spi/spi-sifive.c
-@@ -323,7 +323,6 @@ static int sifive_spi_probe(struct platform_device *pdev)
- 
- 	irq = platform_get_irq(pdev, 0);
- 	if (irq < 0) {
--		dev_err(&pdev->dev, "Unable to find interrupt\n");
- 		ret = irq;
- 		goto put_master;
- 	}
-diff --git a/drivers/spi/spi-slave-mt27xx.c b/drivers/spi/spi-slave-mt27xx.c
-index d1075433f6a6..61bc43b0fe57 100644
---- a/drivers/spi/spi-slave-mt27xx.c
-+++ b/drivers/spi/spi-slave-mt27xx.c
-@@ -410,7 +410,6 @@ static int mtk_spi_slave_probe(struct platform_device *pdev)
- 
- 	irq = platform_get_irq(pdev, 0);
- 	if (irq < 0) {
--		dev_err(&pdev->dev, "failed to get irq (%d)\n", irq);
- 		ret = irq;
- 		goto err_put_ctlr;
- 	}
-diff --git a/drivers/spi/spi-sprd.c b/drivers/spi/spi-sprd.c
-index 1b7eebb72c07..8c9021b7f7a9 100644
---- a/drivers/spi/spi-sprd.c
-+++ b/drivers/spi/spi-sprd.c
-@@ -843,10 +843,8 @@ static int sprd_spi_irq_init(struct platform_device *pdev, struct sprd_spi *ss)
- 	int ret;
- 
- 	ss->irq = platform_get_irq(pdev, 0);
--	if (ss->irq < 0) {
 -		dev_err(&pdev->dev, "failed to get irq resource\n");
-+	if (ss->irq < 0)
- 		return ss->irq;
++	if (irq < 0)
+ 		return irq;
 -	}
+ 	ret = devm_request_threaded_irq(&pdev->dev, irq,
+ 					allegro_hardirq,
+ 					allegro_irq_thread,
+diff --git a/drivers/staging/media/hantro/hantro_drv.c b/drivers/staging/media/hantro/hantro_drv.c
+index c3665f0e87a2..4a7afad2af92 100644
+--- a/drivers/staging/media/hantro/hantro_drv.c
++++ b/drivers/staging/media/hantro/hantro_drv.c
+@@ -733,10 +733,8 @@ static int hantro_probe(struct platform_device *pdev)
+ 			continue;
  
- 	ret = devm_request_irq(&pdev->dev, ss->irq, sprd_spi_handle_irq,
- 				0, pdev->name, ss);
-diff --git a/drivers/spi/spi-stm32-qspi.c b/drivers/spi/spi-stm32-qspi.c
-index 655e4afbfb2a..9ac6f9fe13cf 100644
---- a/drivers/spi/spi-stm32-qspi.c
-+++ b/drivers/spi/spi-stm32-qspi.c
-@@ -570,11 +570,8 @@ static int stm32_qspi_probe(struct platform_device *pdev)
+ 		irq = platform_get_irq_byname(vpu->pdev, irq_name);
+-		if (irq <= 0) {
+-			dev_err(vpu->dev, "Could not get %s IRQ.\n", irq_name);
++		if (irq <= 0)
+ 			return -ENXIO;
+-		}
+ 
+ 		ret = devm_request_irq(vpu->dev, irq,
+ 				       vpu->variant->irqs[i].handler, 0,
+diff --git a/drivers/staging/media/imx/imx7-media-csi.c b/drivers/staging/media/imx/imx7-media-csi.c
+index 500b4c08d967..d7d38dd9f168 100644
+--- a/drivers/staging/media/imx/imx7-media-csi.c
++++ b/drivers/staging/media/imx/imx7-media-csi.c
+@@ -1194,10 +1194,8 @@ static int imx7_csi_probe(struct platform_device *pdev)
  	}
  
- 	irq = platform_get_irq(pdev, 0);
+ 	csi->irq = platform_get_irq(pdev, 0);
+-	if (csi->irq < 0) {
+-		dev_err(dev, "Missing platform resources data\n");
++	if (csi->irq < 0)
+ 		return csi->irq;
+-	}
+ 
+ 	csi->regbase = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(csi->regbase))
+diff --git a/drivers/staging/media/imx/imx7-mipi-csis.c b/drivers/staging/media/imx/imx7-mipi-csis.c
+index d1cdf011c8f1..73d8354e618c 100644
+--- a/drivers/staging/media/imx/imx7-mipi-csis.c
++++ b/drivers/staging/media/imx/imx7-mipi-csis.c
+@@ -975,10 +975,8 @@ static int mipi_csis_probe(struct platform_device *pdev)
+ 		return PTR_ERR(state->regs);
+ 
+ 	state->irq = platform_get_irq(pdev, 0);
+-	if (state->irq < 0) {
+-		dev_err(dev, "Failed to get irq\n");
++	if (state->irq < 0)
+ 		return state->irq;
+-	}
+ 
+ 	ret = mipi_csis_clk_get(state);
+ 	if (ret < 0)
+diff --git a/drivers/staging/media/meson/vdec/esparser.c b/drivers/staging/media/meson/vdec/esparser.c
+index 3a21a8cec799..95102a4bdc62 100644
+--- a/drivers/staging/media/meson/vdec/esparser.c
++++ b/drivers/staging/media/meson/vdec/esparser.c
+@@ -301,10 +301,8 @@ int esparser_init(struct platform_device *pdev, struct amvdec_core *core)
+ 	int irq;
+ 
+ 	irq = platform_get_irq_byname(pdev, "esparser");
 -	if (irq < 0) {
--		if (irq != -EPROBE_DEFER)
--			dev_err(dev, "IRQ error missing or invalid\n");
+-		dev_err(dev, "Failed getting ESPARSER IRQ from dtb\n");
 +	if (irq < 0)
  		return irq;
 -	}
  
- 	ret = devm_request_irq(dev, irq, stm32_qspi_irq, 0,
- 			       dev_name(dev), qspi);
-diff --git a/drivers/spi/spi-sun4i.c b/drivers/spi/spi-sun4i.c
-index 5194bc07fd60..92e5c667b6a1 100644
---- a/drivers/spi/spi-sun4i.c
-+++ b/drivers/spi/spi-sun4i.c
-@@ -449,7 +449,6 @@ static int sun4i_spi_probe(struct platform_device *pdev)
+ 	ret = devm_request_irq(dev, irq, esparser_isr, IRQF_SHARED,
+ 			       "esparserirq", core);
+diff --git a/drivers/staging/media/omap4iss/iss.c b/drivers/staging/media/omap4iss/iss.c
+index c8be1db532ab..1a966cb2f3a6 100644
+--- a/drivers/staging/media/omap4iss/iss.c
++++ b/drivers/staging/media/omap4iss/iss.c
+@@ -1276,7 +1276,6 @@ static int iss_probe(struct platform_device *pdev)
+ 	/* Interrupt */
+ 	ret = platform_get_irq(pdev, 0);
+ 	if (ret <= 0) {
+-		dev_err(iss->dev, "No IRQ resource\n");
+ 		ret = -ENODEV;
+ 		goto error_iss;
+ 	}
+diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_hw.c b/drivers/staging/media/sunxi/cedrus/cedrus_hw.c
+index c34aec7c6e40..9ce3a65903c5 100644
+--- a/drivers/staging/media/sunxi/cedrus/cedrus_hw.c
++++ b/drivers/staging/media/sunxi/cedrus/cedrus_hw.c
+@@ -160,11 +160,8 @@ int cedrus_hw_probe(struct cedrus_dev *dev)
+ 	dev->capabilities = variant->capabilities;
  
- 	irq = platform_get_irq(pdev, 0);
+ 	irq_dec = platform_get_irq(dev->pdev, 0);
+-	if (irq_dec <= 0) {
+-		dev_err(dev->dev, "Failed to get IRQ\n");
+-
++	if (irq_dec <= 0)
+ 		return irq_dec;
+-	}
+ 	ret = devm_request_irq(dev->dev, irq_dec, cedrus_irq,
+ 			       0, dev_name(dev->dev), dev);
+ 	if (ret) {
+diff --git a/drivers/staging/most/dim2/dim2.c b/drivers/staging/most/dim2/dim2.c
+index 31fbc1a75b06..c8bec3c34c2c 100644
+--- a/drivers/staging/most/dim2/dim2.c
++++ b/drivers/staging/most/dim2/dim2.c
+@@ -797,7 +797,6 @@ static int dim2_probe(struct platform_device *pdev)
+ 
+ 	irq = platform_get_irq(pdev, AHB0_INT_IDX);
  	if (irq < 0) {
--		dev_err(&pdev->dev, "No spi IRQ specified\n");
- 		ret = -ENXIO;
- 		goto err_free_master;
- 	}
-diff --git a/drivers/spi/spi-sun6i.c b/drivers/spi/spi-sun6i.c
-index ee2bdaf5b856..1cf3051bba5e 100644
---- a/drivers/spi/spi-sun6i.c
-+++ b/drivers/spi/spi-sun6i.c
-@@ -456,7 +456,6 @@ static int sun6i_spi_probe(struct platform_device *pdev)
- 
- 	irq = platform_get_irq(pdev, 0);
- 	if (irq < 0) {
--		dev_err(&pdev->dev, "No spi IRQ specified\n");
- 		ret = -ENXIO;
- 		goto err_free_master;
- 	}
-diff --git a/drivers/spi/spi-synquacer.c b/drivers/spi/spi-synquacer.c
-index f99abd85c50a..ae17c99cce03 100644
---- a/drivers/spi/spi-synquacer.c
-+++ b/drivers/spi/spi-synquacer.c
-@@ -670,7 +670,6 @@ static int synquacer_spi_probe(struct platform_device *pdev)
- 
- 	rx_irq = platform_get_irq(pdev, 0);
- 	if (rx_irq <= 0) {
--		dev_err(&pdev->dev, "get rx_irq failed (%d)\n", rx_irq);
- 		ret = rx_irq;
- 		goto put_spi;
- 	}
-@@ -685,7 +684,6 @@ static int synquacer_spi_probe(struct platform_device *pdev)
- 
- 	tx_irq = platform_get_irq(pdev, 1);
- 	if (tx_irq <= 0) {
--		dev_err(&pdev->dev, "get tx_irq failed (%d)\n", tx_irq);
- 		ret = tx_irq;
- 		goto put_spi;
- 	}
-diff --git a/drivers/spi/spi-ti-qspi.c b/drivers/spi/spi-ti-qspi.c
-index 6ca600702470..3cb65371ae3b 100644
---- a/drivers/spi/spi-ti-qspi.c
-+++ b/drivers/spi/spi-ti-qspi.c
-@@ -717,7 +717,6 @@ static int ti_qspi_probe(struct platform_device *pdev)
- 
- 	irq = platform_get_irq(pdev, 0);
- 	if (irq < 0) {
--		dev_err(&pdev->dev, "no irq resource?\n");
+-		dev_err(&pdev->dev, "failed to get ahb0_int irq: %d\n", irq);
  		ret = irq;
- 		goto free_master;
+ 		goto err_shutdown_dim;
  	}
-diff --git a/drivers/spi/spi-uniphier.c b/drivers/spi/spi-uniphier.c
-index b32c77df5d49..c1e6f3245557 100644
---- a/drivers/spi/spi-uniphier.c
-+++ b/drivers/spi/spi-uniphier.c
-@@ -454,7 +454,6 @@ static int uniphier_spi_probe(struct platform_device *pdev)
+@@ -811,7 +810,6 @@ static int dim2_probe(struct platform_device *pdev)
  
- 	irq = platform_get_irq(pdev, 0);
+ 	irq = platform_get_irq(pdev, MLB_INT_IDX);
  	if (irq < 0) {
--		dev_err(&pdev->dev, "failed to get IRQ\n");
+-		dev_err(&pdev->dev, "failed to get mlb_int irq: %d\n", irq);
  		ret = irq;
- 		goto out_disable_clk;
+ 		goto err_shutdown_dim;
  	}
-diff --git a/drivers/spi/spi-xlp.c b/drivers/spi/spi-xlp.c
-index 1dc479fab98c..4eb5bc9250fc 100644
---- a/drivers/spi/spi-xlp.c
-+++ b/drivers/spi/spi-xlp.c
-@@ -384,10 +384,8 @@ static int xlp_spi_probe(struct platform_device *pdev)
- 		return PTR_ERR(xspi->base);
+diff --git a/drivers/staging/mt7621-dma/mtk-hsdma.c b/drivers/staging/mt7621-dma/mtk-hsdma.c
+index 60db06768c8a..d964642d95a3 100644
+--- a/drivers/staging/mt7621-dma/mtk-hsdma.c
++++ b/drivers/staging/mt7621-dma/mtk-hsdma.c
+@@ -675,10 +675,8 @@ static int mtk_hsdma_probe(struct platform_device *pdev)
+ 	tasklet_init(&hsdma->task, mtk_hsdma_tasklet, (unsigned long)hsdma);
  
  	irq = platform_get_irq(pdev, 0);
 -	if (irq < 0) {
--		dev_err(&pdev->dev, "no IRQ resource found: %d\n", irq);
+-		dev_err(&pdev->dev, "failed to get irq\n");
 +	if (irq < 0)
+ 		return -EINVAL;
+-	}
+ 	ret = devm_request_irq(&pdev->dev, irq, mtk_hsdma_irq,
+ 			       0, dev_name(&pdev->dev), hsdma);
+ 	if (ret) {
+diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
+index 08027a36e0bc..1cbd7b71fc38 100644
+--- a/drivers/staging/nvec/nvec.c
++++ b/drivers/staging/nvec/nvec.c
+@@ -796,10 +796,8 @@ static int tegra_nvec_probe(struct platform_device *pdev)
+ 		return PTR_ERR(base);
+ 
+ 	nvec->irq = platform_get_irq(pdev, 0);
+-	if (nvec->irq < 0) {
+-		dev_err(dev, "no irq resource?\n");
++	if (nvec->irq < 0)
+ 		return -ENODEV;
+-	}
+ 
+ 	i2c_clk = devm_clk_get(dev, "div-clk");
+ 	if (IS_ERR(i2c_clk)) {
+diff --git a/drivers/staging/ralink-gdma/ralink-gdma.c b/drivers/staging/ralink-gdma/ralink-gdma.c
+index 5854551d0a52..900424db9b97 100644
+--- a/drivers/staging/ralink-gdma/ralink-gdma.c
++++ b/drivers/staging/ralink-gdma/ralink-gdma.c
+@@ -826,10 +826,8 @@ static int gdma_dma_probe(struct platform_device *pdev)
+ 	tasklet_init(&dma_dev->task, gdma_dma_tasklet, (unsigned long)dma_dev);
+ 
+ 	irq = platform_get_irq(pdev, 0);
+-	if (irq < 0) {
+-		dev_err(&pdev->dev, "failed to get irq\n");
++	if (irq < 0)
+ 		return -EINVAL;
+-	}
+ 	ret = devm_request_irq(&pdev->dev, irq, gdma_dma_irq,
+ 			       0, dev_name(&pdev->dev), dma_dev);
+ 	if (ret) {
+diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_2835_arm.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_2835_arm.c
+index 61c69f353cdb..8dc730cfe7a6 100644
+--- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_2835_arm.c
++++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_2835_arm.c
+@@ -141,10 +141,8 @@ int vchiq_platform_init(struct platform_device *pdev, struct vchiq_state *state)
+ 		return PTR_ERR(g_regs);
+ 
+ 	irq = platform_get_irq(pdev, 0);
+-	if (irq <= 0) {
+-		dev_err(dev, "failed to get IRQ\n");
++	if (irq <= 0)
  		return irq;
 -	}
- 	err = devm_request_irq(&pdev->dev, irq, xlp_spi_interrupt, 0,
- 			pdev->name, xspi);
- 	if (err) {
-diff --git a/drivers/spi/spi-zynq-qspi.c b/drivers/spi/spi-zynq-qspi.c
-index c6bee67decb5..3155e2cabb1e 100644
---- a/drivers/spi/spi-zynq-qspi.c
-+++ b/drivers/spi/spi-zynq-qspi.c
-@@ -671,7 +671,6 @@ static int zynq_qspi_probe(struct platform_device *pdev)
- 	xqspi->irq = platform_get_irq(pdev, 0);
- 	if (xqspi->irq <= 0) {
- 		ret = -ENXIO;
--		dev_err(&pdev->dev, "irq resource not found\n");
- 		goto remove_master;
- 	}
- 	ret = devm_request_irq(&pdev->dev, xqspi->irq, zynq_qspi_irq,
-diff --git a/drivers/spi/spi-zynqmp-gqspi.c b/drivers/spi/spi-zynqmp-gqspi.c
-index 07a83ca164c2..5e9ea8a38163 100644
---- a/drivers/spi/spi-zynqmp-gqspi.c
-+++ b/drivers/spi/spi-zynqmp-gqspi.c
-@@ -1077,7 +1077,6 @@ static int zynqmp_qspi_probe(struct platform_device *pdev)
- 	xqspi->irq = platform_get_irq(pdev, 0);
- 	if (xqspi->irq <= 0) {
- 		ret = -ENXIO;
--		dev_err(dev, "irq resource not found\n");
- 		goto clk_dis_all;
- 	}
- 	ret = devm_request_irq(&pdev->dev, xqspi->irq, zynqmp_qspi_irq,
+ 
+ 	err = devm_request_irq(dev, irq, vchiq_doorbell_irq, IRQF_IRQPOLL,
+ 			       "VCHIQ doorbell", state);
 -- 
 Sent by a computer through tubes
 
