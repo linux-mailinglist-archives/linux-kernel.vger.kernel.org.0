@@ -2,166 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3291A7A3DD
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 11:18:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF7847A417
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 11:26:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730667AbfG3JS3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 05:18:29 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:41187 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728835AbfG3JS3 (ORCPT
+        id S1731193AbfG3J04 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 05:26:56 -0400
+Received: from sender-pp-o92.zoho.com ([135.84.80.237]:25442 "EHLO
+        sender-pp-o92.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729020AbfG3J04 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 05:18:29 -0400
-Received: by mail-lj1-f195.google.com with SMTP id d24so61359669ljg.8
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 02:18:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=6iUjqyu7puaZGhpAi6MyRyG6cTzBcQl5BSzTgNmE43Y=;
-        b=QpXAV1PjcCAsOVKYPbvsUi/MbeltGu7SOf75gvXfyM7t2DO9dqkAa7qEHxjSfXrcge
-         eyVU1TH8JWkOfLhgMUNxhYPVQ/vV38mwqOtEqBlp9VvH1YZg2IwH/nIqOy3e6Hfx/7yN
-         jAplWlFWVN8tySXVcKGC/RBH54E7bwStzqrvttZcyd9Sl4z0mediMIgiINo1/3HGyCs2
-         BltjE6Bxj9UDFLyavMRT9l2etRHORbtcHoky86uKMZkwwcwug7sOzVpQEtH0IcCchRNR
-         udNIVaNpy59blTsjJbOkWK8r8Bbe7FwxJBAesmmse4UDPw5jEKaEwURCp23lxJN2M8hk
-         3KRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=6iUjqyu7puaZGhpAi6MyRyG6cTzBcQl5BSzTgNmE43Y=;
-        b=GKQddmRHS2EG60y92XsxCcguRbg9t1eTkoFcB/mtfrDSEajhNii7rUNaKDBAXONlVL
-         dPBEQ+Ox/BABZLBKFOeNfK6IdnRGxwT50tL+tYKUGVypmVMwrJ0a3v/nIqaM0cC8UDxg
-         7u2HQuzBLyHlus9RFtIBPEY4Br+ff14rmLoDj1FKWxJ3GhVdXD4kEmiSgO0c9AacTwJM
-         jzLaxmR0bXdPzhlTMvT0G2Qp5J5SjLVZC12SWYvzJoUuOKYP5tD/2dxKTmLCjq4b4ffr
-         4vAJsGWW3TQCGNY2mGcqH4aSkyQmxeAwkgu0KOjjDTo274Up1tuvzdzgrjr/iNRte8Mu
-         rcAQ==
-X-Gm-Message-State: APjAAAVqPdpZf/+WUIFspniOLV8Ey8qY7yXd7vuo2RJGUnPjHlr4VpuS
-        ZnjFZn8OynhYZAqgCYNLVfEGE6RIe+5ym3ojVIRRMw==
-X-Google-Smtp-Source: APXvYqyxC3pATEXcCowDql2D3+Tg0p6F77KDXN36EYaTIN7KU33y/6ocxvauwWGduun50JgpjIqfC98kTw6UxZLmnL8=
-X-Received: by 2002:a2e:8559:: with SMTP id u25mr60111856ljj.224.1564478306874;
- Tue, 30 Jul 2019 02:18:26 -0700 (PDT)
+        Tue, 30 Jul 2019 05:26:56 -0400
+ARC-Seal: i=1; a=rsa-sha256; t=1564478802; cv=none; 
+        d=zoho.com; s=zohoarc; 
+        b=g4GBX0zjUqPghOUaZdN8hDcN6Ciq87XF2OS+vOd8iAhiE8amWj+4qhZEHSya4p+i72aUNvmfrwFz9DFn9beyaLtDS+Aqi0Dr9DKloY878leEaWKAlQFugZrJ/OfA4gO59pw13Bgvg8Dbvyrd6ypsIDezz0B+iOxcCaYsHLgUuJU=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
+        t=1564478802; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To:ARC-Authentication-Results; 
+        bh=ASKwkj0b5qg5Fwxkz3wYNADsEou8Um77UtYwS51eowk=; 
+        b=O07PNCCJFUFWjxb42LXn+Tuqh7eaSnrE7sE7+aZI/yWFApYTh0vYpQJBiH6J2j6iZC30tH0F/VEHeg3pHfeCxjA4gptPd7o+xqSIIc0Vi6rapBbUvk0AGEoqllYjPWlDxjwWOpDrKX3sLp51LMpwG4BJrkfyL59mh5/7n05eD/A=
+ARC-Authentication-Results: i=1; mx.zoho.com;
+        dkim=pass  header.i=zoho.com;
+        spf=pass  smtp.mailfrom=zhouyanjie@zoho.com;
+        dmarc=pass header.from=<zhouyanjie@zoho.com> header.from=<zhouyanjie@zoho.com>
+DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws; 
+  s=zapps768; d=zoho.com; 
+  h=subject:to:references:cc:from:message-id:date:user-agent:mime-version:in-reply-to:content-type; 
+  b=eNewHd+DC3QHjVzaOiZIxPefbajvaQt1P0vdVP23LE5U4ej0+H+OGWOrYRmDAqTZc7k24grXD5gN
+    V5SFgOHI4piSTWk2KGO82nZzDk+rcB16VHWFVomV87Zvuvf6WRte  
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1564478802;
+        s=zm2019; d=zoho.com; i=zhouyanjie@zoho.com;
+        h=Subject:To:References:Cc:From:Message-ID:Date:MIME-Version:In-Reply-To:Content-Type:Content-Transfer-Encoding;
+        l=2316; bh=ASKwkj0b5qg5Fwxkz3wYNADsEou8Um77UtYwS51eowk=;
+        b=L6DSmzQpRjEQFpemZIj+HFhAMTzWjDprAdGag2faKe7EPVVYFPp9oTAE8h+IcMuF
+        MAStIBT2fPWr1wkqAN8tLZPeZb3ZlrXxK7LacX5b0fIvdE3wscxORkLkfXAuXd2355a
+        M0wOTI76Au7un7kSfFxZspnWWkJ9Cd7cSpZbYXVc=
+Received: from [192.168.88.139] (171.221.113.137 [171.221.113.137]) by mx.zohomail.com
+        with SMTPS id 1564478800053174.88358763329188; Tue, 30 Jul 2019 02:26:40 -0700 (PDT)
+Subject: Re: [PATCH 4/4 v4] irqchip: Ingenic: Add support for new Ingenic
+ Socs.
+To:     Paul Cercueil <paul@crapouillou.net>
+References: <1548517123-60058-1-git-send-email-zhouyanjie@zoho.com>
+ <1564335273-22931-1-git-send-email-zhouyanjie@zoho.com>
+ <1564335273-22931-5-git-send-email-zhouyanjie@zoho.com>
+ <1564421133.6633.1@crapouillou.net>
+Cc:     linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, robh+dt@kernel.org,
+        paul.burton@mips.com, tglx@linutronix.de, mark.rutland@arm.com,
+        jason@lakedaemon.net, marc.zyngier@arm.com
+From:   Zhou Yanjie <zhouyanjie@zoho.com>
+Message-ID: <5D3FE309.7020103@zoho.com>
+Date:   Tue, 30 Jul 2019 14:26:17 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.8.0
 MIME-Version: 1.0
-References: <20190729190739.971253303@linuxfoundation.org>
-In-Reply-To: <20190729190739.971253303@linuxfoundation.org>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Tue, 30 Jul 2019 14:48:15 +0530
-Message-ID: <CA+G9fYvpvFXfoiaiaKTgTVggvEi--xFS=4y=R9a4+Xw1Havb9w@mail.gmail.com>
-Subject: Re: [PATCH 5.2 000/215] 5.2.5-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1564421133.6633.1@crapouillou.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
+X-ZohoMailClient: External
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 30 Jul 2019 at 01:16, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
+Hi Paul,
+It seems very strange to appear another soc model in one soc's devicetree,
+and before submitting this patch I referred to some other irq drivers.=20
+Similar
+usage was found in irq-sunxi-nmi.c and irq-omap-intc.c, and the original
+irq-ingenic.c was declare jz4770, jz4775, jz4780 in the same way. So I=20
+followed
+the same method to add the declare of jz4760/x1000/x1500, this may be a=20
+little
+better.
+
+On 2019=E5=B9=B407=E6=9C=8830=E6=97=A5 01:25, Paul Cercueil wrote:
 >
-> This is the start of the stable review cycle for the 5.2.5 release.
-> There are 215 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
 >
-> Responses should be made by Wed 31 Jul 2019 07:05:01 PM UTC.
-> Anything received after that time might be too late.
+> Le dim. 28 juil. 2019 =C3=A0 13:34, Zhou Yanjie <zhouyanjie@zoho.com> a=
+=20
+> =C3=A9crit :
+>> Add support for probing the irq-ingenic driver on the JZ4760/JZ4760B
+>> and the X1000/X1000E and the X1500 Socs from Ingenic.
+>>
+>> Signed-off-by: Zhou Yanjie <zhouyanjie@zoho.com>
+>> ---
+>>  drivers/irqchip/irq-ingenic.c | 5 +++++
+>>  1 file changed, 5 insertions(+)
+>>
+>> diff --git a/drivers/irqchip/irq-ingenic.c=20
+>> b/drivers/irqchip/irq-ingenic.c
+>> index 8430f5a..b72430c 100644
+>> --- a/drivers/irqchip/irq-ingenic.c
+>> +++ b/drivers/irqchip/irq-ingenic.c
+>> @@ -173,6 +173,11 @@ static int __init intc_2chip_of_init(struct=20
+>> device_node *node,
+>>  {
+>>      return ingenic_intc_of_init(node, 2);
+>>  }
+>> +IRQCHIP_DECLARE(jz4760_intc, "ingenic,jz4760-intc",=20
+>> intc_2chip_of_init);
+>> +IRQCHIP_DECLARE(jz4760b_intc, "ingenic,jz4760b-intc",=20
+>> intc_2chip_of_init);
+>>  IRQCHIP_DECLARE(jz4770_intc, "ingenic,jz4770-intc",=20
+>> intc_2chip_of_init);
+>>  IRQCHIP_DECLARE(jz4775_intc, "ingenic,jz4775-intc",=20
+>> intc_2chip_of_init);
+>>  IRQCHIP_DECLARE(jz4780_intc, "ingenic,jz4780-intc",=20
+>> intc_2chip_of_init);
+>> +IRQCHIP_DECLARE(x1000_intc, "ingenic,x1000-intc", intc_2chip_of_init);
+>> +IRQCHIP_DECLARE(x1000e_intc, "ingenic,x1000e-intc",=20
+>> intc_2chip_of_init);
+>> +IRQCHIP_DECLARE(x1500_intc, "ingenic,x1500-intc", intc_2chip_of_init);
 >
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-=
-5.2.5-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-5.2.y
-> and the diffstat can be found below.
+> All these compatible strings point to the exact same behaviour. It was
+> already a mistake to have the three "ingenic,jz47[70,75,80]-intc" here;
+> there should have been only one, e.g. "ingenic,jz4770-intc" and the other
+> two SoCs using it as a fallback compatible.
 >
-> thanks,
+> I think you don't need to add these, and in your devicetree just use
+> "ingenic,jz4780-intc" as a fallback compatible.
 >
-> greg k-h
-
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
-
-Summary
-------------------------------------------------------------------------
-
-kernel: 5.2.5-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git
-git branch: linux-5.2.y
-git commit: 0c4d120e771a048ef7ae9a4130169b1cf03c36da
-git describe: v5.2.4-216-g0c4d120e771a
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-5.2-oe/bui=
-ld/v5.2.4-216-g0c4d120e771a
+> Cheers,
+> -Paul
+>
+>
 
 
-No regressions (compared to build v5.2.4)
 
-
-No fixes (compared to build v5.2.4)
-
-Ran 22523 total tests in the following environments and test suites.
-
-Environments
---------------
-- dragonboard-410c
-- hi6220-hikey
-- i386
-- juno-r2
-- qemu_arm
-- qemu_arm64
-- qemu_i386
-- qemu_x86_64
-- x15
-- x86
-
-Test Suites
------------
-* build
-* install-android-platform-tools-r2600
-* kselftest
-* libgpiod
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-commands-tests
-* ltp-containers-tests
-* ltp-cpuhotplug-tests
-* ltp-cve-tests
-* ltp-dio-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-mm-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* network-basic-tests
-* perf
-* spectre-meltdown-checker-test
-* v4l2-compliance
-* ltp-fs-tests
-* ltp-open-posix-tests
-* kvm-unit-tests
-* kselftest-vsyscall-mode-native
-* kselftest-vsyscall-mode-none
-
---=20
-Linaro LKFT
-https://lkft.linaro.org
