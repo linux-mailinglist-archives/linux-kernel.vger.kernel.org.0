@@ -2,185 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07FEC7B15A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:15:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B98CB7B162
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:16:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728377AbfG3SPO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 14:15:14 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:50599 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726576AbfG3SPO (ORCPT
+        id S1728732AbfG3SQD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 14:16:03 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:45317 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728581AbfG3SQB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 14:15:14 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6UIF2Dd3325987
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Tue, 30 Jul 2019 11:15:02 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6UIF2Dd3325987
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019071901; t=1564510503;
-        bh=RIDbHj4dcX0LAT0D1AlS8luBMzGaCde1C2650N2QVkU=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=eZe6oH4MgXWYgCnMi0zP4eS8Kz4nxM9ltUuU0N7K3f5tsZ1bJUCUcsO1S3xq5TLsa
-         K0AxVcGmC5Dk/r3xKvwIFjGhiPIQV+0lwhO1OvjECmGoB/uArKJ2CzZ5MA7NP+EqD+
-         jIjZmmRBfhLAZ+Kj65gWI9lRY1LwWyHF7jD/7TF47WZgHN0x+vEp1Nvfpfpuz6QZh4
-         PJrHZzDD8F8Fc4NanlL7AvjN+xUsmKRaMuxvPfJBDG4HD183T82QBv+y1OFVlRpzj0
-         TAjpcDCJjLF+4Chts3UpL4eT0NBTAXdg0h+4+rJ8eFQenZ7MeklRBVg9UMUVo1e8Hp
-         eDxJCBvZykUow==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6UIF1sa3325926;
-        Tue, 30 Jul 2019 11:15:01 -0700
-Date:   Tue, 30 Jul 2019 11:15:01 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
-Message-ID: <tip-365c3ae7452ca95e0a8f1e4716dd806550ade706@git.kernel.org>
-Cc:     alexey.budankov@linux.intel.com, ak@linux.intel.com,
-        alexander.shishkin@linux.intel.com, mpetlan@redhat.com,
-        acme@redhat.com, namhyung@kernel.org, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, peterz@infradead.org, hpa@zytor.com,
-        jolsa@kernel.org, mingo@kernel.org
-Reply-To: hpa@zytor.com, peterz@infradead.org, mingo@kernel.org,
-          jolsa@kernel.org, mpetlan@redhat.com, acme@redhat.com,
-          ak@linux.intel.com, alexey.budankov@linux.intel.com,
-          alexander.shishkin@linux.intel.com, namhyung@kernel.org,
-          linux-kernel@vger.kernel.org, tglx@linutronix.de
-In-Reply-To: <20190721112506.12306-12-jolsa@kernel.org>
-References: <20190721112506.12306-12-jolsa@kernel.org>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf evsel: Rename perf_evsel__new() to
- evsel__new()
-Git-Commit-ID: 365c3ae7452ca95e0a8f1e4716dd806550ade706
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 30 Jul 2019 14:16:01 -0400
+Received: by mail-pf1-f194.google.com with SMTP id r1so30253088pfq.12
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 11:16:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=tblS6BVfocVa/rJGDu0MAsbUNCheBT9eaxwmPT42hss=;
+        b=Y6IBXfaOrrf4DvYbUVSN4l/eoXWSrdJZ+oKj9SEL5KymdE/wLLqwHq2yDUrJxQOmpH
+         03e0bQ3NmwQkX7PRSsbzb4l06yliLX508MuAb0Erk/73Q3CWM4vFIjzua0Z/YeZXt8yJ
+         m9XWFP4IAQUYfweqNfjEOG/zia5oYgx/ewr+g=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=tblS6BVfocVa/rJGDu0MAsbUNCheBT9eaxwmPT42hss=;
+        b=LHM2iiUHEYU6hJsEyaxMermY7MFJiIywRXpQjpAqav1ag+LLjqmpTtb+M74YE81tcQ
+         8AcKrkpG4xRx3BmcWSK3bI7rs58k0nqiTzGGZmeKbzIs8iAtUwNijrohBpWm0XyOBqiR
+         WUDD+K30O7zLB1aLw+m+/TFoVgeVC7F9TbefOeLjMpgMN32eYVONpArmuyHw2KjAdi2r
+         mGCRWtyTyYrnLR8gst6X7ftij9iJjp0o5Wb547U8YcvvABWn6Mhfay3Yd0cC59PWFdzb
+         VXbGe+jFgIztcP7Ssqmu2ezKHBU60TsJ7qoYSz2URpRTxVTQpHeJ3kefU1wUizTNYSkQ
+         SL3Q==
+X-Gm-Message-State: APjAAAV0mfNFw99amnExZ3B1L56lPr5RMWhmyWmP8vUvH9gyugVBbdUL
+        zb0yzhnmiye+Vp0iINwe4ipW4W8uuyQ=
+X-Google-Smtp-Source: APXvYqynQRi9eEPfwOzKRakpOvoPSklMlI3EDqT/HFgfvEAhxEKIpDr63Ydcwmi7AVNwd29oCjUTOQ==
+X-Received: by 2002:aa7:989a:: with SMTP id r26mr30665218pfl.232.1564510560726;
+        Tue, 30 Jul 2019 11:16:00 -0700 (PDT)
+Received: from smtp.gmail.com ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id g1sm106744083pgg.27.2019.07.30.11.16.00
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 30 Jul 2019 11:16:00 -0700 (PDT)
+From:   Stephen Boyd <swboyd@chromium.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Subject: [PATCH v6 02/57] bus: sunxi-rsb: Remove dev_err() usage after platform_get_irq()
+Date:   Tue, 30 Jul 2019 11:15:02 -0700
+Message-Id: <20190730181557.90391-3-swboyd@chromium.org>
+X-Mailer: git-send-email 2.22.0.709.g102302147b-goog
+In-Reply-To: <20190730181557.90391-1-swboyd@chromium.org>
+References: <20190730181557.90391-1-swboyd@chromium.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-X-Spam-Status: No, score=-0.2 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
-        autolearn=no autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  365c3ae7452ca95e0a8f1e4716dd806550ade706
-Gitweb:     https://git.kernel.org/tip/365c3ae7452ca95e0a8f1e4716dd806550ade706
-Author:     Jiri Olsa <jolsa@kernel.org>
-AuthorDate: Sun, 21 Jul 2019 13:23:58 +0200
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Mon, 29 Jul 2019 18:34:43 -0300
+We don't need dev_err() messages when platform_get_irq() fails now that
+platform_get_irq() prints an error message itself when something goes
+wrong. Let's remove these prints with a simple semantic patch.
 
-perf evsel: Rename perf_evsel__new() to evsel__new()
+// <smpl>
+@@
+expression ret;
+struct platform_device *E;
+@@
 
-Rename perf_evsel__new() to evsel__new(), so we don't have a name clash
-when we add perf_evsel__new() in libperf.
+ret =
+(
+platform_get_irq(E, ...)
+|
+platform_get_irq_byname(E, ...)
+);
 
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Michael Petlan <mpetlan@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20190721112506.12306-12-jolsa@kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+if ( \( ret < 0 \| ret <= 0 \) )
+{
+(
+-if (ret != -EPROBE_DEFER)
+-{ ...
+-dev_err(...);
+-... }
+|
+...
+-dev_err(...);
+)
+...
+}
+// </smpl>
+
+While we're here, remove braces on if statements that only have one
+statement (manually).
+
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Stephen Boyd <swboyd@chromium.org>
 ---
- tools/perf/builtin-trace.c     | 2 +-
- tools/perf/tests/sw-clock.c    | 2 +-
- tools/perf/util/evsel.c        | 2 +-
- tools/perf/util/evsel.h        | 2 +-
- tools/perf/util/header.c       | 4 ++--
- tools/perf/util/parse-events.c | 2 +-
- 6 files changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index 0f7d1859a2d1..c5eb47f4e42e 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -2657,7 +2657,7 @@ static struct evsel *perf_evsel__new_pgfault(u64 config)
+Please apply directly to subsystem trees
+
+ drivers/bus/sunxi-rsb.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/bus/sunxi-rsb.c b/drivers/bus/sunxi-rsb.c
+index 1b76d9585902..be79d6c6a4e4 100644
+--- a/drivers/bus/sunxi-rsb.c
++++ b/drivers/bus/sunxi-rsb.c
+@@ -651,10 +651,8 @@ static int sunxi_rsb_probe(struct platform_device *pdev)
+ 		return PTR_ERR(rsb->regs);
  
- 	event_attr_init(&attr);
+ 	irq = platform_get_irq(pdev, 0);
+-	if (irq < 0) {
+-		dev_err(dev, "failed to retrieve irq: %d\n", irq);
++	if (irq < 0)
+ 		return irq;
+-	}
  
--	evsel = perf_evsel__new(&attr);
-+	evsel = evsel__new(&attr);
- 	if (evsel)
- 		evsel->handler = trace__pgfault;
- 
-diff --git a/tools/perf/tests/sw-clock.c b/tools/perf/tests/sw-clock.c
-index 1c7d8adb43d0..247d3734686e 100644
---- a/tools/perf/tests/sw-clock.c
-+++ b/tools/perf/tests/sw-clock.c
-@@ -49,7 +49,7 @@ static int __test__sw_clock_freq(enum perf_sw_ids clock_id)
- 		return -1;
- 	}
- 
--	evsel = perf_evsel__new(&attr);
-+	evsel = evsel__new(&attr);
- 	if (evsel == NULL) {
- 		pr_debug("perf_evsel__new\n");
- 		goto out_delete_evlist;
-diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index de379b63f1ce..c9723c2d57c9 100644
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -301,7 +301,7 @@ struct evsel *perf_evsel__new_cycles(bool precise)
- 	 * to kick in when we return and before perf_evsel__open() is called.
- 	 */
- new_event:
--	evsel = perf_evsel__new(&attr);
-+	evsel = evsel__new(&attr);
- 	if (evsel == NULL)
- 		goto out;
- 
-diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
-index 20b4e31b63a9..ecea51a918e0 100644
---- a/tools/perf/util/evsel.h
-+++ b/tools/perf/util/evsel.h
-@@ -219,7 +219,7 @@ int perf_evsel__object_config(size_t object_size,
- 
- struct evsel *perf_evsel__new_idx(struct perf_event_attr *attr, int idx);
- 
--static inline struct evsel *perf_evsel__new(struct perf_event_attr *attr)
-+static inline struct evsel *evsel__new(struct perf_event_attr *attr)
- {
- 	return perf_evsel__new_idx(attr, 0);
- }
-diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
-index 29bbfd699226..7760ddc4bc18 100644
---- a/tools/perf/util/header.c
-+++ b/tools/perf/util/header.c
-@@ -3583,7 +3583,7 @@ int perf_session__read_header(struct perf_session *session)
- 		}
- 
- 		tmp = lseek(fd, 0, SEEK_CUR);
--		evsel = perf_evsel__new(&f_attr.attr);
-+		evsel = evsel__new(&f_attr.attr);
- 
- 		if (evsel == NULL)
- 			goto out_delete_evlist;
-@@ -4021,7 +4021,7 @@ int perf_event__process_attr(struct perf_tool *tool __maybe_unused,
- 			return -ENOMEM;
- 	}
- 
--	evsel = perf_evsel__new(&event->attr.attr);
-+	evsel = evsel__new(&event->attr.attr);
- 	if (evsel == NULL)
- 		return -ENOMEM;
- 
-diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
-index cc63367f6e45..40087cf74dd1 100644
---- a/tools/perf/util/parse-events.c
-+++ b/tools/perf/util/parse-events.c
-@@ -2318,7 +2318,7 @@ static bool is_event_supported(u8 type, unsigned config)
- 	if (tmap == NULL)
- 		return false;
- 
--	evsel = perf_evsel__new(&attr);
-+	evsel = evsel__new(&attr);
- 	if (evsel) {
- 		open_return = perf_evsel__open(evsel, NULL, tmap);
- 		ret = open_return >= 0;
+ 	rsb->clk = devm_clk_get(dev, NULL);
+ 	if (IS_ERR(rsb->clk)) {
+-- 
+Sent by a computer through tubes
+
