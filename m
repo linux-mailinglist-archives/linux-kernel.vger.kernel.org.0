@@ -2,157 +2,251 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52D307B1F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:28:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 68F877B1FA
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:30:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729670AbfG3S2H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 14:28:07 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:38594 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726522AbfG3S2H (ORCPT
+        id S1729772AbfG3S3H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 14:29:07 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:45185 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727948AbfG3S3G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 14:28:07 -0400
-Received: by mail-wm1-f66.google.com with SMTP id s15so36167834wmj.3;
-        Tue, 30 Jul 2019 11:28:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=wvsOsY5CLQsky8uz4ClfHVAjHjhjUTEeWUp/GJcH9vg=;
-        b=rrckOx3Ihb+ID9d4P65+Fyq+4f0d0RK+viITtEC/PCnIRlbUYceRhBOVpLCZEV//zb
-         y6hTtV2C9CMqNsjje6RId2eo8D5fq4iq8TW0qR5cWN3+VMJSPvthhpDvoCxsbzPqK+rV
-         7LlHLYu/9J3Fs3ej8sCF3XhoqF3dMRSJ6rbQHzcGjjkNly36gQ8WUg7EC2YxAN2zscM6
-         +I7OBL2/87MTAIrAF4X+BRRPp0aNzsEZlgqRlyWVlTjyUMCkpnHqWjiBk9yJTewEouiY
-         BSQBfz0bMPXWS3pgzBIHY4HxzRZJk5eaMqlw7v28M1gkIpwrTnKkMDSyMYGihCMw5svS
-         jGpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=wvsOsY5CLQsky8uz4ClfHVAjHjhjUTEeWUp/GJcH9vg=;
-        b=Ss/MxwEbsFaNt/NeziGxTysXKuQpbmMEdY8qiJglWzLF0CHB6Ff1fz3FLarUX5h8qY
-         RCuhAXXobsxd/F3sQ65DyPbk/bF28Yi659h/80YQT4muDMfe2LgXh7UXohQbMZZLl8rE
-         LkfGUfou/1FB90AD0x8RoeLx1wcwi+wd23GfHzOJvFfHp2jkYlRo2RWg1wkaOW8j4xuW
-         qYvdQgFD0dIK1APzL8LQAoyOsMnePEtwgIQURFivp/mRc+M38TaWYCl/ZTF1koDULcLr
-         5k/p01J7pIRQpsOPrO1O6SDRJJlu7Pom4FvKyGZ/tk1einRkT+9ROOwU7Jy2JXSadt/j
-         X8IA==
-X-Gm-Message-State: APjAAAVv71KNsoEIk04U/fBJhNund6BCj7brsrJG3XKlkDEstNX9yaf1
-        wmLlYo8rKj/13Kkhw6CaGFI=
-X-Google-Smtp-Source: APXvYqwn6kyl9fuKU9XTfrr8jZzivv/H5Z7x6p9WbogCsbSL5AnBIA5zWpXTjxtjUjpzWKZCagASaw==
-X-Received: by 2002:a7b:cf0b:: with SMTP id l11mr111949106wmg.143.1564511283748;
-        Tue, 30 Jul 2019 11:28:03 -0700 (PDT)
-Received: from archlinux-threadripper ([2a01:4f8:222:2f1b::2])
-        by smtp.gmail.com with ESMTPSA id v204sm69670944wma.20.2019.07.30.11.28.02
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 30 Jul 2019 11:28:02 -0700 (PDT)
-Date:   Tue, 30 Jul 2019 11:28:01 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Qian Cai <cai@lca.pw>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: Re: [PATCH 4.14 054/293] sched/fair: Fix "runnable_avg_yN_inv" not
- used warnings
-Message-ID: <20190730182801.GA94301@archlinux-threadripper>
-References: <20190729190820.321094988@linuxfoundation.org>
- <20190729190828.058944959@linuxfoundation.org>
+        Tue, 30 Jul 2019 14:29:06 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6UISmfi3330222
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Tue, 30 Jul 2019 11:28:48 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6UISmfi3330222
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019071901; t=1564511329;
+        bh=pToQUPfldVvvefI/KcPWfo05CJpusqv4Ul6tFXsdEIU=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=Vz1Qa64xm4i/fMOGjUPpr5HmJXJfVRp1sckXmGgoXeTp9JjnJ74M/iKGeTDd2Aclq
+         qFe3mymR7b5nA9c7+IV2K60OI3EwBBQ2YgsCiDT/ncFSB4GAc2eK9O3/ZxSthTVO4S
+         TV9KMgvpWcakKpqc4p2gc9MRb+piKI9Zdv24EHfUd+tTo79bD5bo7W/y7g0BzXAvAd
+         xyljbpUd8BYmQZ651RmfpeFJPIZkKaHR/m0VLr9w4CvcXB26ymeBwI7qe5/A6tDvRM
+         jDvqcA7AbcrcFdYkKD8qUuOSF1xKctKGv/i0YweTd/9jQBjgJRxznmIltug9UDOOxB
+         iEzexLJgf17Iw==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6UISm1K3330219;
+        Tue, 30 Jul 2019 11:28:48 -0700
+Date:   Tue, 30 Jul 2019 11:28:48 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
+Message-ID: <tip-397721e06e52d017cfdd403f63284ed0995d4caf@git.kernel.org>
+Cc:     tglx@linutronix.de, hpa@zytor.com, mingo@kernel.org,
+        namhyung@kernel.org, alexey.budankov@linux.intel.com,
+        jolsa@kernel.org, peterz@infradead.org, acme@redhat.com,
+        mpetlan@redhat.com, ak@linux.intel.com,
+        linux-kernel@vger.kernel.org, alexander.shishkin@linux.intel.com
+Reply-To: alexey.budankov@linux.intel.com, jolsa@kernel.org,
+          peterz@infradead.org, acme@redhat.com, mpetlan@redhat.com,
+          ak@linux.intel.com, alexander.shishkin@linux.intel.com,
+          linux-kernel@vger.kernel.org, tglx@linutronix.de, hpa@zytor.com,
+          mingo@kernel.org, namhyung@kernel.org
+In-Reply-To: <20190721112506.12306-30-jolsa@kernel.org>
+References: <20190721112506.12306-30-jolsa@kernel.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] libperf: Add perf_cpu_map__dummy_new() function
+Git-Commit-ID: 397721e06e52d017cfdd403f63284ed0995d4caf
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20190729190828.058944959@linuxfoundation.org>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Spam-Status: No, score=-0.2 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
+        autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 29, 2019 at 09:19:05PM +0200, Greg Kroah-Hartman wrote:
-> [ Upstream commit 509466b7d480bc5d22e90b9fbe6122ae0e2fbe39 ]
-> 
-> runnable_avg_yN_inv[] is only used in kernel/sched/pelt.c but was
-> included in several other places because they need other macros all
-> came from kernel/sched/sched-pelt.h which was generated by
-> Documentation/scheduler/sched-pelt. As the result, it causes compilation
-> a lot of warnings,
-> 
->   kernel/sched/sched-pelt.h:4:18: warning: 'runnable_avg_yN_inv' defined but not used [-Wunused-const-variable=]
->   kernel/sched/sched-pelt.h:4:18: warning: 'runnable_avg_yN_inv' defined but not used [-Wunused-const-variable=]
->   kernel/sched/sched-pelt.h:4:18: warning: 'runnable_avg_yN_inv' defined but not used [-Wunused-const-variable=]
->   ...
-> 
-> Silence it by appending the __maybe_unused attribute for it, so all
-> generated variables and macros can still be kept in the same file.
-> 
-> Signed-off-by: Qian Cai <cai@lca.pw>
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Link: https://lkml.kernel.org/r/1559596304-31581-1-git-send-email-cai@lca.pw
-> Signed-off-by: Ingo Molnar <mingo@kernel.org>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
-> ---
->  Documentation/scheduler/sched-pelt.c | 3 ++-
->  kernel/sched/sched-pelt.h            | 2 +-
->  2 files changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/scheduler/sched-pelt.c b/Documentation/scheduler/sched-pelt.c
-> index e4219139386a..7238b355919c 100644
-> --- a/Documentation/scheduler/sched-pelt.c
-> +++ b/Documentation/scheduler/sched-pelt.c
-> @@ -20,7 +20,8 @@ void calc_runnable_avg_yN_inv(void)
->  	int i;
->  	unsigned int x;
->  
-> -	printf("static const u32 runnable_avg_yN_inv[] = {");
-> +	/* To silence -Wunused-but-set-variable warnings. */
-> +	printf("static const u32 runnable_avg_yN_inv[] __maybe_unused = {");
->  	for (i = 0; i < HALFLIFE; i++) {
->  		x = ((1UL<<32)-1)*pow(y, i);
->  
-> diff --git a/kernel/sched/sched-pelt.h b/kernel/sched/sched-pelt.h
-> index a26473674fb7..c529706bed11 100644
-> --- a/kernel/sched/sched-pelt.h
-> +++ b/kernel/sched/sched-pelt.h
-> @@ -1,7 +1,7 @@
->  /* SPDX-License-Identifier: GPL-2.0 */
->  /* Generated by Documentation/scheduler/sched-pelt; do not modify. */
->  
-> -static const u32 runnable_avg_yN_inv[] = {
-> +static const u32 runnable_avg_yN_inv[] __maybe_unused = {
->  	0xffffffff, 0xfa83b2da, 0xf5257d14, 0xefe4b99a, 0xeac0c6e6, 0xe5b906e6,
->  	0xe0ccdeeb, 0xdbfbb796, 0xd744fcc9, 0xd2a81d91, 0xce248c14, 0xc9b9bd85,
->  	0xc5672a10, 0xc12c4cc9, 0xbd08a39e, 0xb8fbaf46, 0xb504f333, 0xb123f581,
-> -- 
-> 2.20.1
-> 
-> 
-> 
+Commit-ID:  397721e06e52d017cfdd403f63284ed0995d4caf
+Gitweb:     https://git.kernel.org/tip/397721e06e52d017cfdd403f63284ed0995d4caf
+Author:     Jiri Olsa <jolsa@kernel.org>
+AuthorDate: Sun, 21 Jul 2019 13:24:16 +0200
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Mon, 29 Jul 2019 18:34:44 -0300
 
-This patch does nothing in 4.14. There is no kernel/sched/pelt.c.
+libperf: Add perf_cpu_map__dummy_new() function
 
-$ fd pelt
-kernel/sched/sched-pelt.h
-Documentation/scheduler/sched-pelt.c
+Move cpu_map__dummy_new() to libperf as perf_cpu_map__dummy_new() function.
 
-runnable_avg_yN_inv is only used in one location in 4.14.134, in fair.c
-behind CONFIG_SMP, which is also the guard that includes sched-pelt.h.
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Michael Petlan <mpetlan@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/20190721112506.12306-30-jolsa@kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/lib/cpumap.c              | 13 +++++++++++++
+ tools/perf/lib/include/perf/cpumap.h |  4 ++++
+ tools/perf/lib/libperf.map           |  1 +
+ tools/perf/tests/sw-clock.c          |  2 +-
+ tools/perf/tests/task-exit.c         |  2 +-
+ tools/perf/util/cpumap.c             | 15 +--------------
+ tools/perf/util/cpumap.h             |  2 +-
+ tools/perf/util/evlist.c             |  2 +-
+ tools/perf/util/evsel.c              |  2 +-
+ 9 files changed, 24 insertions(+), 19 deletions(-)
 
-$ rg --no-heading -g '!Documentation' runnable_avg_yN_inv
-kernel/sched/sched-pelt.h:4:static const u32 runnable_avg_yN_inv[] = {
-kernel/sched/fair.c:2849:       val = mul_u64_u32_shr(val, runnable_avg_yN_inv[local_n], 32);
-
-$ rg --no-heading -B 2 "sched-pelt.h"
-kernel/sched/fair.c-707-#ifdef CONFIG_SMP
-kernel/sched/fair.c-708-
-kernel/sched/fair.c:709:#include "sched-pelt.h"
-
-I see no way for the warnings in this patch to occur here, making it
-pointless. I get two trivial conflicts in my msm-4.14 tree from this
-patch that I would like to avoid dealing with.
-
-Please consider dropping this patch, thanks!
-Nathan
+diff --git a/tools/perf/lib/cpumap.c b/tools/perf/lib/cpumap.c
+index 86a199c26f20..80d587ab95aa 100644
+--- a/tools/perf/lib/cpumap.c
++++ b/tools/perf/lib/cpumap.c
+@@ -3,3 +3,16 @@
+ #include <stdlib.h>
+ #include <linux/refcount.h>
+ #include <internal/cpumap.h>
++
++struct perf_cpu_map *perf_cpu_map__dummy_new(void)
++{
++	struct perf_cpu_map *cpus = malloc(sizeof(*cpus) + sizeof(int));
++
++	if (cpus != NULL) {
++		cpus->nr = 1;
++		cpus->map[0] = -1;
++		refcount_set(&cpus->refcnt, 1);
++	}
++
++	return cpus;
++}
+diff --git a/tools/perf/lib/include/perf/cpumap.h b/tools/perf/lib/include/perf/cpumap.h
+index 8355d3ce7d0c..fa1e5aa9d662 100644
+--- a/tools/perf/lib/include/perf/cpumap.h
++++ b/tools/perf/lib/include/perf/cpumap.h
+@@ -2,6 +2,10 @@
+ #ifndef __LIBPERF_CPUMAP_H
+ #define __LIBPERF_CPUMAP_H
+ 
++#include <perf/core.h>
++
+ struct perf_cpu_map;
+ 
++LIBPERF_API struct perf_cpu_map *perf_cpu_map__dummy_new(void);
++
+ #endif /* __LIBPERF_CPUMAP_H */
+diff --git a/tools/perf/lib/libperf.map b/tools/perf/lib/libperf.map
+index 3536242c545c..65201c6cbe7e 100644
+--- a/tools/perf/lib/libperf.map
++++ b/tools/perf/lib/libperf.map
+@@ -1,6 +1,7 @@
+ LIBPERF_0.0.1 {
+ 	global:
+ 		libperf_set_print;
++		perf_cpu_map__dummy_new;
+ 	local:
+ 		*;
+ };
+diff --git a/tools/perf/tests/sw-clock.c b/tools/perf/tests/sw-clock.c
+index ba033a6e6c0f..c6d3f4488b73 100644
+--- a/tools/perf/tests/sw-clock.c
++++ b/tools/perf/tests/sw-clock.c
+@@ -56,7 +56,7 @@ static int __test__sw_clock_freq(enum perf_sw_ids clock_id)
+ 	}
+ 	evlist__add(evlist, evsel);
+ 
+-	cpus = cpu_map__dummy_new();
++	cpus = perf_cpu_map__dummy_new();
+ 	threads = thread_map__new_by_tid(getpid());
+ 	if (!cpus || !threads) {
+ 		err = -ENOMEM;
+diff --git a/tools/perf/tests/task-exit.c b/tools/perf/tests/task-exit.c
+index d17effdd55c8..c094fb8cc877 100644
+--- a/tools/perf/tests/task-exit.c
++++ b/tools/perf/tests/task-exit.c
+@@ -63,7 +63,7 @@ int test__task_exit(struct test *test __maybe_unused, int subtest __maybe_unused
+ 	 * perf_evlist__prepare_workload we'll fill in the only thread
+ 	 * we're monitoring, the one forked there.
+ 	 */
+-	cpus = cpu_map__dummy_new();
++	cpus = perf_cpu_map__dummy_new();
+ 	threads = thread_map__new_by_tid(-1);
+ 	if (!cpus || !threads) {
+ 		err = -ENOMEM;
+diff --git a/tools/perf/util/cpumap.c b/tools/perf/util/cpumap.c
+index 5eb4e1fbb877..acda9bfb4002 100644
+--- a/tools/perf/util/cpumap.c
++++ b/tools/perf/util/cpumap.c
+@@ -189,7 +189,7 @@ struct perf_cpu_map *cpu_map__new(const char *cpu_list)
+ 	else if (*cpu_list != '\0')
+ 		cpus = cpu_map__default_new();
+ 	else
+-		cpus = cpu_map__dummy_new();
++		cpus = perf_cpu_map__dummy_new();
+ invalid:
+ 	free(tmp_cpus);
+ out:
+@@ -256,19 +256,6 @@ size_t cpu_map__fprintf(struct perf_cpu_map *map, FILE *fp)
+ #undef BUFSIZE
+ }
+ 
+-struct perf_cpu_map *cpu_map__dummy_new(void)
+-{
+-	struct perf_cpu_map *cpus = malloc(sizeof(*cpus) + sizeof(int));
+-
+-	if (cpus != NULL) {
+-		cpus->nr = 1;
+-		cpus->map[0] = -1;
+-		refcount_set(&cpus->refcnt, 1);
+-	}
+-
+-	return cpus;
+-}
+-
+ struct perf_cpu_map *cpu_map__empty_new(int nr)
+ {
+ 	struct perf_cpu_map *cpus = malloc(sizeof(*cpus) + sizeof(int) * nr);
+diff --git a/tools/perf/util/cpumap.h b/tools/perf/util/cpumap.h
+index c2ba9ae195f7..0ce3f6bd9449 100644
+--- a/tools/perf/util/cpumap.h
++++ b/tools/perf/util/cpumap.h
+@@ -6,13 +6,13 @@
+ #include <stdbool.h>
+ #include <linux/refcount.h>
+ #include <internal/cpumap.h>
++#include <perf/cpumap.h>
+ 
+ #include "perf.h"
+ #include "util/debug.h"
+ 
+ struct perf_cpu_map *cpu_map__new(const char *cpu_list);
+ struct perf_cpu_map *cpu_map__empty_new(int nr);
+-struct perf_cpu_map *cpu_map__dummy_new(void);
+ struct perf_cpu_map *cpu_map__new_data(struct cpu_map_data *data);
+ struct perf_cpu_map *cpu_map__read(FILE *file);
+ size_t cpu_map__snprint(struct perf_cpu_map *map, char *buf, size_t size);
+diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
+index 1bedec28e58f..461c1e68e9e7 100644
+--- a/tools/perf/util/evlist.c
++++ b/tools/perf/util/evlist.c
+@@ -1086,7 +1086,7 @@ int perf_evlist__create_maps(struct evlist *evlist, struct target *target)
+ 		return -1;
+ 
+ 	if (target__uses_dummy_map(target))
+-		cpus = cpu_map__dummy_new();
++		cpus = perf_cpu_map__dummy_new();
+ 	else
+ 		cpus = cpu_map__new(target->cpu_list);
+ 
+diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+index 5aeb7260c8e1..a389752840a9 100644
+--- a/tools/perf/util/evsel.c
++++ b/tools/perf/util/evsel.c
+@@ -1840,7 +1840,7 @@ int evsel__open(struct evsel *evsel, struct perf_cpu_map *cpus,
+ 		static struct perf_cpu_map *empty_cpu_map;
+ 
+ 		if (empty_cpu_map == NULL) {
+-			empty_cpu_map = cpu_map__dummy_new();
++			empty_cpu_map = perf_cpu_map__dummy_new();
+ 			if (empty_cpu_map == NULL)
+ 				return -ENOMEM;
+ 		}
