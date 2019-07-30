@@ -2,54 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 18F427B16E
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:16:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D047B7B1A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:19:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388092AbfG3SQh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 14:16:37 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:35300 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387944AbfG3SQ0 (ORCPT
+        id S1729355AbfG3STE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 14:19:04 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:43525 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727028AbfG3SQ1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 14:16:26 -0400
-Received: by mail-pl1-f194.google.com with SMTP id w24so29209334plp.2
+        Tue, 30 Jul 2019 14:16:27 -0400
+Received: by mail-pf1-f196.google.com with SMTP id i189so30265166pfg.10
         for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 11:16:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=AZvanaYGQHCeCe8d2+RSzqNKocPRl2CR5zzefJtoMkI=;
-        b=HF5OnRSmMh2mz0tcIzJD/fB71owMPCZLGeTM1w0J44yIRKz6ezQnukLhlUbQs54QH0
-         VcTZU85lRduHS+pPoNoiI/1gOtnVnUcym28dtLh/iqXnU3l60s9c85wMcauQgZQgPQLQ
-         hjYmYUEvujlBiprv/pluRVkJKsrv1XJGt7f0Y=
+        bh=798KcEGTrSwLx5Xm6lM4Wt7zSKkXup1N6a2rN1l+UxY=;
+        b=XpWt56F9ZUXmWs3TPgoQ2NGKo/rPugYvYIBgS3UseXcF/J1rXuk4GMhje99H9mjZni
+         Q0lEn/Lu+lOmX29Sx5qRLdFE17hm6H82MAdmRlvSX7giM257M826Wmux64CoLQKTOpa9
+         czolyJSPK0NQDtxoPm1fygXMjN0QomV2SQwBA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=AZvanaYGQHCeCe8d2+RSzqNKocPRl2CR5zzefJtoMkI=;
-        b=aICk7eFBWe9Ra8vc7GhIch7TOwUayo2UIWnDuNb3ZJy9GnUWTC9Ln5NXd5FrbbLQWz
-         d2+so767UxThmj+z1ugePu7tOchPX6vs/vlb5TYGe3Jm6zD0lKeE2b4TWpbVMmflgQbG
-         fTOlBmPBzL6slmApEG5b+C+iD6lVtzvDiXRy7ux/EmzVOtFfS/pfdeVsTfRh9PYIhpKA
-         kyFnKbBSEzUaJwELwDsGYRnBRy198mh3SshGrmZacY2asMvqMBjY+7B/IuUvMrQaz8sZ
-         3780LRUahfjnuaBg1qOhHlQoV+a+2LYqA/yAnXVZaaPOcvh3GDcqKujBaSzqa3y0IBfN
-         vuPQ==
-X-Gm-Message-State: APjAAAVRSGdutLbACrv85EjP4plj/x4xGXWZXg6bKG3PUk0mMIUvPxJD
-        XIxSP4H0H5QrfwFMkgrlsuoDrMdFumv9ZQ==
-X-Google-Smtp-Source: APXvYqzp3gdb8JqpjQ0n3ss05I71VUq27CGUDkIsctzC6HmCCofvpLMH1Tg0Gl+4gJbHgu+hPLZPew==
-X-Received: by 2002:a17:902:ac87:: with SMTP id h7mr120307087plr.36.1564510585537;
-        Tue, 30 Jul 2019 11:16:25 -0700 (PDT)
+        bh=798KcEGTrSwLx5Xm6lM4Wt7zSKkXup1N6a2rN1l+UxY=;
+        b=CGz7pqwkq9L/gYY4nDHeyNwVSsi5u+YszMyi0wa4M1irHcnKQaivgKDquDPn0Qaj7P
+         RX2eCntxmv3F0Ww9XxyymkIUNUucRssER7f3uGRj8kd4SggU3GrXowgZzHZ5guhVixo7
+         2iFSXnoMvN6vBHepzJpLshOr6i4cLZhrMUZYGKIk6t297sOe4ezz6YCTD5+eSm+8ADAg
+         MhpkS7PA/z4IJSc8/gssx0v4q/2NtRU3YZFT2A06SpTP1MCEN/CYZKm69fROCu8xXNRI
+         o6RFT3Gxm78k/BBGKq5KogsDqw/b2Grwi5AxNmZtqKBtA/RbZRbtaQyxXE5A/svwwsBV
+         OFHA==
+X-Gm-Message-State: APjAAAUFW48VIxac0HKCzl1T11nUIbXtnlpOO+KYF3f2ozf7Op3SxDC7
+        Prn3YD4ycY9kuzngZCH8OUchqq3+LXM=
+X-Google-Smtp-Source: APXvYqzNRIBqN8b5v2paGctHdWin+ApXWdXI47XHsE/7P2JmxL4D0RP51NvavvSimwV77P2m3C7cTw==
+X-Received: by 2002:aa7:93bb:: with SMTP id x27mr44484534pff.10.1564510586198;
+        Tue, 30 Jul 2019 11:16:26 -0700 (PDT)
 Received: from smtp.gmail.com ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id g1sm106744083pgg.27.2019.07.30.11.16.24
+        by smtp.gmail.com with ESMTPSA id g1sm106744083pgg.27.2019.07.30.11.16.25
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 30 Jul 2019 11:16:24 -0700 (PDT)
+        Tue, 30 Jul 2019 11:16:25 -0700 (PDT)
 From:   Stephen Boyd <swboyd@chromium.org>
 To:     linux-kernel@vger.kernel.org
-Cc:     Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org,
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH v6 32/57] perf: Remove dev_err() usage after platform_get_irq()
-Date:   Tue, 30 Jul 2019 11:15:32 -0700
-Message-Id: <20190730181557.90391-33-swboyd@chromium.org>
+Subject: [PATCH v6 33/57] pinctrl: Remove dev_err() usage after platform_get_irq()
+Date:   Tue, 30 Jul 2019 11:15:33 -0700
+Message-Id: <20190730181557.90391-34-swboyd@chromium.org>
 X-Mailer: git-send-email 2.22.0.709.g102302147b-goog
 In-Reply-To: <20190730181557.90391-1-swboyd@chromium.org>
 References: <20190730181557.90391-1-swboyd@chromium.org>
@@ -95,104 +95,119 @@ if ( \( ret < 0 \| ret <= 0 \) )
 While we're here, remove braces on if statements that only have one
 statement (manually).
 
-Cc: Will Deacon <will@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Stephen Boyd <swboyd@chromium.org>
 ---
 
 Please apply directly to subsystem trees
 
- drivers/perf/hisilicon/hisi_uncore_ddrc_pmu.c | 4 +---
- drivers/perf/hisilicon/hisi_uncore_hha_pmu.c  | 4 +---
- drivers/perf/hisilicon/hisi_uncore_l3c_pmu.c  | 4 +---
- drivers/perf/qcom_l2_pmu.c                    | 6 +-----
- drivers/perf/xgene_pmu.c                      | 4 +---
- 5 files changed, 5 insertions(+), 17 deletions(-)
+ drivers/pinctrl/pinctrl-amd.c           | 4 +---
+ drivers/pinctrl/pinctrl-oxnas.c         | 4 +---
+ drivers/pinctrl/pinctrl-pic32.c         | 4 +---
+ drivers/pinctrl/pinctrl-stmfx.c         | 4 +---
+ drivers/pinctrl/qcom/pinctrl-msm.c      | 4 +---
+ drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c | 5 +----
+ 6 files changed, 6 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/perf/hisilicon/hisi_uncore_ddrc_pmu.c b/drivers/perf/hisilicon/hisi_uncore_ddrc_pmu.c
-index 6ad0823bcf23..e42d4464c2cf 100644
---- a/drivers/perf/hisilicon/hisi_uncore_ddrc_pmu.c
-+++ b/drivers/perf/hisilicon/hisi_uncore_ddrc_pmu.c
-@@ -217,10 +217,8 @@ static int hisi_ddrc_pmu_init_irq(struct hisi_pmu *ddrc_pmu,
+diff --git a/drivers/pinctrl/pinctrl-amd.c b/drivers/pinctrl/pinctrl-amd.c
+index 9b9c61e3f065..60d88e1df272 100644
+--- a/drivers/pinctrl/pinctrl-amd.c
++++ b/drivers/pinctrl/pinctrl-amd.c
+@@ -861,10 +861,8 @@ static int amd_gpio_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
  
- 	/* Read and init IRQ */
+ 	irq_base = platform_get_irq(pdev, 0);
+-	if (irq_base < 0) {
+-		dev_err(&pdev->dev, "Failed to get gpio IRQ: %d\n", irq_base);
++	if (irq_base < 0)
+ 		return irq_base;
+-	}
+ 
+ #ifdef CONFIG_PM_SLEEP
+ 	gpio_dev->saved_regs = devm_kcalloc(&pdev->dev, amd_pinctrl_desc.npins,
+diff --git a/drivers/pinctrl/pinctrl-oxnas.c b/drivers/pinctrl/pinctrl-oxnas.c
+index b4edbe0d9a73..4f6a196a663a 100644
+--- a/drivers/pinctrl/pinctrl-oxnas.c
++++ b/drivers/pinctrl/pinctrl-oxnas.c
+@@ -1229,10 +1229,8 @@ static int oxnas_gpio_probe(struct platform_device *pdev)
+ 		return PTR_ERR(bank->reg_base);
+ 
  	irq = platform_get_irq(pdev, 0);
 -	if (irq < 0) {
--		dev_err(&pdev->dev, "DDRC PMU get irq fail; irq:%d\n", irq);
+-		dev_err(&pdev->dev, "irq get failed\n");
 +	if (irq < 0)
  		return irq;
 -	}
  
- 	ret = devm_request_irq(&pdev->dev, irq, hisi_ddrc_pmu_isr,
- 			       IRQF_NOBALANCING | IRQF_NO_THREAD,
-diff --git a/drivers/perf/hisilicon/hisi_uncore_hha_pmu.c b/drivers/perf/hisilicon/hisi_uncore_hha_pmu.c
-index 4f2917f3e25e..f28063873e11 100644
---- a/drivers/perf/hisilicon/hisi_uncore_hha_pmu.c
-+++ b/drivers/perf/hisilicon/hisi_uncore_hha_pmu.c
-@@ -207,10 +207,8 @@ static int hisi_hha_pmu_init_irq(struct hisi_pmu *hha_pmu,
+ 	bank->id = id;
+ 	bank->gpio_chip.parent = &pdev->dev;
+diff --git a/drivers/pinctrl/pinctrl-pic32.c b/drivers/pinctrl/pinctrl-pic32.c
+index 6dc98e22f9f5..e7f6dd5ab578 100644
+--- a/drivers/pinctrl/pinctrl-pic32.c
++++ b/drivers/pinctrl/pinctrl-pic32.c
+@@ -2222,10 +2222,8 @@ static int pic32_gpio_probe(struct platform_device *pdev)
+ 		return PTR_ERR(bank->reg_base);
  
- 	/* Read and init IRQ */
  	irq = platform_get_irq(pdev, 0);
 -	if (irq < 0) {
--		dev_err(&pdev->dev, "HHA PMU get irq fail; irq:%d\n", irq);
+-		dev_err(&pdev->dev, "irq get failed\n");
 +	if (irq < 0)
  		return irq;
 -	}
  
- 	ret = devm_request_irq(&pdev->dev, irq, hisi_hha_pmu_isr,
- 			      IRQF_NOBALANCING | IRQF_NO_THREAD,
-diff --git a/drivers/perf/hisilicon/hisi_uncore_l3c_pmu.c b/drivers/perf/hisilicon/hisi_uncore_l3c_pmu.c
-index 9153e093f9df..078b8dc57250 100644
---- a/drivers/perf/hisilicon/hisi_uncore_l3c_pmu.c
-+++ b/drivers/perf/hisilicon/hisi_uncore_l3c_pmu.c
-@@ -206,10 +206,8 @@ static int hisi_l3c_pmu_init_irq(struct hisi_pmu *l3c_pmu,
- 
- 	/* Read and init IRQ */
- 	irq = platform_get_irq(pdev, 0);
--	if (irq < 0) {
--		dev_err(&pdev->dev, "L3C PMU get irq fail; irq:%d\n", irq);
-+	if (irq < 0)
- 		return irq;
--	}
- 
- 	ret = devm_request_irq(&pdev->dev, irq, hisi_l3c_pmu_isr,
- 			       IRQF_NOBALANCING | IRQF_NO_THREAD,
-diff --git a/drivers/perf/qcom_l2_pmu.c b/drivers/perf/qcom_l2_pmu.c
-index d06182fe14b8..21d6991dbe0b 100644
---- a/drivers/perf/qcom_l2_pmu.c
-+++ b/drivers/perf/qcom_l2_pmu.c
-@@ -909,12 +909,8 @@ static int l2_cache_pmu_probe_cluster(struct device *dev, void *data)
- 	cluster->cluster_id = fw_cluster_id;
- 
- 	irq = platform_get_irq(sdev, 0);
--	if (irq < 0) {
--		dev_err(&pdev->dev,
--			"Failed to get valid irq for cluster %ld\n",
--			fw_cluster_id);
-+	if (irq < 0)
- 		return irq;
--	}
- 	irq_set_status_flags(irq, IRQ_NOAUTOEN);
- 	cluster->irq = irq;
- 
-diff --git a/drivers/perf/xgene_pmu.c b/drivers/perf/xgene_pmu.c
-index 3259e2ebeb39..7e328d6385c3 100644
---- a/drivers/perf/xgene_pmu.c
-+++ b/drivers/perf/xgene_pmu.c
-@@ -1901,10 +1901,8 @@ static int xgene_pmu_probe(struct platform_device *pdev)
+ 	bank->clk = devm_clk_get(&pdev->dev, NULL);
+ 	if (IS_ERR(bank->clk)) {
+diff --git a/drivers/pinctrl/pinctrl-stmfx.c b/drivers/pinctrl/pinctrl-stmfx.c
+index d3332da35637..5735ef5a71d5 100644
+--- a/drivers/pinctrl/pinctrl-stmfx.c
++++ b/drivers/pinctrl/pinctrl-stmfx.c
+@@ -608,10 +608,8 @@ static int stmfx_pinctrl_probe(struct platform_device *pdev)
  	}
  
  	irq = platform_get_irq(pdev, 0);
--	if (irq < 0) {
--		dev_err(&pdev->dev, "No IRQ resource\n");
-+	if (irq < 0)
- 		return -EINVAL;
+-	if (irq <= 0) {
+-		dev_err(pctl->dev, "failed to get irq\n");
++	if (irq <= 0)
+ 		return -ENXIO;
 -	}
  
- 	rc = devm_request_irq(&pdev->dev, irq, xgene_pmu_isr,
- 				IRQF_NOBALANCING | IRQF_NO_THREAD,
+ 	mutex_init(&pctl->lock);
+ 
+diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
+index 7f35c196bb3e..45975ed31205 100644
+--- a/drivers/pinctrl/qcom/pinctrl-msm.c
++++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+@@ -1160,10 +1160,8 @@ int msm_pinctrl_probe(struct platform_device *pdev,
+ 	msm_pinctrl_setup_pm_reset(pctrl);
+ 
+ 	pctrl->irq = platform_get_irq(pdev, 0);
+-	if (pctrl->irq < 0) {
+-		dev_err(&pdev->dev, "No interrupt defined for msmgpio\n");
++	if (pctrl->irq < 0)
+ 		return pctrl->irq;
+-	}
+ 
+ 	pctrl->desc.owner = THIS_MODULE;
+ 	pctrl->desc.pctlops = &msm_pinctrl_ops;
+diff --git a/drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c b/drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c
+index 076ba085a6a1..3d8b1d74fa2f 100644
+--- a/drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c
++++ b/drivers/pinctrl/qcom/pinctrl-ssbi-mpp.c
+@@ -791,11 +791,8 @@ static int pm8xxx_mpp_probe(struct platform_device *pdev)
+ 	for (i = 0; i < pctrl->desc.npins; i++) {
+ 		pin_data[i].reg = SSBI_REG_ADDR_MPP(i);
+ 		pin_data[i].irq = platform_get_irq(pdev, i);
+-		if (pin_data[i].irq < 0) {
+-			dev_err(&pdev->dev,
+-				"missing interrupts for pin %d\n", i);
++		if (pin_data[i].irq < 0)
+ 			return pin_data[i].irq;
+-		}
+ 
+ 		ret = pm8xxx_pin_populate(pctrl, &pin_data[i]);
+ 		if (ret)
 -- 
 Sent by a computer through tubes
 
