@@ -2,67 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D02E87AC32
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 17:23:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A76397AC40
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 17:25:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730873AbfG3PXl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 11:23:41 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:43446 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730013AbfG3PXl (ORCPT
+        id S1732313AbfG3PZG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 11:25:06 -0400
+Received: from atlmailgw2.ami.com ([63.147.10.42]:60948 "EHLO
+        atlmailgw2.ami.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729202AbfG3PZG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 11:23:41 -0400
-Received: by mail-qt1-f194.google.com with SMTP id w17so19103289qto.10
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 08:23:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=QfRDMATF/mD0ld+JXOHOTIFlNh/Cdg0uTO/akzNNHqM=;
-        b=YCMEkeShRKYHL1fAITQSHrm6GKBzWOi9Cj5BMTQ/wsewHD0oGTkGsR2KTPcsSzBSlv
-         SRHGapq6m98wElol4lk+W2MNYgZSs9i6S1E/bgAs31n+cWePXQF9Nlc7JbvS/7FaYnk+
-         +as6+qiPlitksrSD72nb0OyQNx099Iev1rjnyErJiGXJ7UCPPBZf9+8Dgos9Mp2jUSyu
-         bpG13qEUC1ewkBA+yUMYOZsvWE0d/OReLm0K1rqF99DdcDUZRwo1WObNXqMc5dv10OBT
-         16Oa15cXnKxJ5nnEUH/nJN7woB1oKBHOOstA8ktVSyLH84tYL3wGB3NL2A7UYSOr40xo
-         Ohyw==
-X-Gm-Message-State: APjAAAWEmOjh1nYCwBqPkwXmrBXH/nT/+ZKvuvUhfEpSvX9c49bSxqH7
-        3l4cc9DbyK0FXQ3YZ3G2gy7fgLgB4lPyz5HDQdQ=
-X-Google-Smtp-Source: APXvYqwDK/J3NCjNWITj7Ip0SyX5Ri5CKH+r2xLJkFHtEoRIvmzE++N6L56dMPBT75xhK9Us76wxfBPEk3mS6pYxIdo=
-X-Received: by 2002:aed:33a4:: with SMTP id v33mr79997791qtd.18.1564500220464;
- Tue, 30 Jul 2019 08:23:40 -0700 (PDT)
-MIME-Version: 1.0
-References: <CAK8P3a3jjDh6aEVf0bBFYc=8GtB38kL6sWVZGJiUe427A7m2ng@mail.gmail.com>
- <CAK8P3a1ss9-G_mr48-UMOenrA0XDGWUFik4TC=m0WFfimoFdnQ@mail.gmail.com>
- <CAK8P3a3VsArSUgMwoPVxm8JcTPAQDoztg22MGqX4Vj5cjtADZg@mail.gmail.com> <CAKKbWA6aUBec8tTQNCJow8c6=SyS-y4HUC=3sMJp6_Oz51iF=A@mail.gmail.com>
-In-Reply-To: <CAKKbWA6aUBec8tTQNCJow8c6=SyS-y4HUC=3sMJp6_Oz51iF=A@mail.gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 30 Jul 2019 17:23:24 +0200
-Message-ID: <CAK8P3a07KOgXKksbtQceqAKiZ-ykr4nDoM2xvb+WXtrXmNn2uA@mail.gmail.com>
-Subject: Re: RFC: remove Nuvoton w90x900/nuc900 platform?
-To:     Avi Fishman <avifishman70@gmail.com>
-Cc:     Tomer Maimon <tmaimon77@gmail.com>,
-        Patrick Venture <venture@google.com>,
+        Tue, 30 Jul 2019 11:25:06 -0400
+X-AuditID: ac10606f-d27ff70000003324-fb-5d406151cc24
+Received: from atlms1.us.megatrends.com (atlms1.us.megatrends.com [172.16.96.144])
+        (using TLS with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by atlmailgw2.ami.com (Symantec Messaging Gateway) with SMTP id 24.AC.13092.151604D5; Tue, 30 Jul 2019 11:25:05 -0400 (EDT)
+Received: from hongweiz-Ubuntu-AMI.us.megatrends.com (172.16.98.93) by
+ atlms1.us.megatrends.com (172.16.96.144) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Tue, 30 Jul 2019 11:25:04 -0400
+From:   Hongwei Zhang <hongweiz@ami.com>
+To:     Andrew Jeffery <andrew@aj.id.au>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Wanzongshun (Vincent)" <wanzongshun@huawei.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Benjamin Fair <benjaminfair@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        <linux-gpio@vger.kernel.org>
+CC:     Hongwei Zhang <hongweiz@ami.com>, Joel Stanley <joel@jms.id.au>,
+        <devicetree@vger.kernel.org>, <linux-aspeed@lists.ozlabs.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: [v6 0/2] gpio: aspeed: Add SGPIO driver
+Date:   Tue, 30 Jul 2019 11:24:26 -0400
+Message-ID: <1564500268-2627-1-git-send-email-hongweiz@ami.com>
+X-Mailer: git-send-email 2.7.4
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [172.16.98.93]
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrDLMWRmVeSWpSXmKPExsWyRiBhgm5gokOswdedEha7LnNYfJl7isVi
+        /pFzrBa/z/9ltpjyZzmTxabH11gtmlefY7bYPP8Po8XlXXPYLJZev8hk0br3CLsDt8fV9l3s
+        HmvmrWH0eH+jld3j4sdjzB6bVnWyedy5tofNY/OSeo/zMxYyenzeJBfAGcVlk5Kak1mWWqRv
+        l8CV8ez7aZaCk2wVN6+5NDAuZO1i5OSQEDCReN9/nR3EFhLYxSTRssyni5ELyD7MKNGx+CwL
+        SIJNQE1i7+Y5TCC2iECexOH1b1lBipgFTjFJzNjXCTZJWMBA4vOa72wgNouAqkTzw8tgNq+A
+        vcSp6TOZIbbJSdw818kMEReUODnzCdgCZgEJiYMvXjBDXCErcevQYyaIegWJ532PWSYw8s1C
+        0jILScsCRqZVjEKJJTm5iZk56eVGeom5mXrJ+bmbGCEhnr+D8eNH80OMTByMhxglOJiVRHgX
+        i9vHCvGmJFZWpRblxxeV5qQWH2KU5mBREuddteZbjJBAemJJanZqakFqEUyWiYNTqoGRU6+k
+        SrhkctiU/MjKL0dzmDYIv9uZKR8lfV7QefHnJ0Y7fwtZzuT4V+c26f4z3qXvjcUv3xdcyNwu
+        4VzCmh+b/5lDve3elgMbJ8h5SC2z3HZr7ZILvOynL5zSOMKa9r3VZ2cP87RdGw/mbzgadO6m
+        SRJLdeedhQv2/1V6enna9E/SHzxqn7BJK7EUZyQaajEXFScCAI781llfAgAA
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 30, 2019 at 3:59 PM Avi Fishman <avifishman70@gmail.com> wrote:
->
-> Note that we we are going to add soon drivers/net/ethernet/nuvoton/npcm7xx_emc.c
-> so maybe don't remove drivers/net/ethernet/nuvoton
+Hello,
 
-Ok, thanks for a taking a look. I can leave an empty Makefile/Kconfig
-pair there then.
+This short series introduce dt-binding document and a driver for the 
+Aspeed AST2500 SGPIO controller. Please review.
 
-     Arnd
+[v6]:	Changes between v5 and v6:
+	- fix a bug in aspeed_sgpio_dir_out()
+	- v5 feedback updates, some comments cleanup
+
+The related SGPM pinmux dt-binding document, dts, and pinctrl driver
+updates have been accepted and merged:
+_http://patchwork.ozlabs.org/patch/1110210/
+
+
+Hongwei Zhang (2):
+  dt-bindings: gpio: aspeed: Add SGPIO support
+  gpio: aspeed: Add SGPIO driver
+
+ .../devicetree/bindings/gpio/sgpio-aspeed.txt      |  55 +++
+ drivers/gpio/sgpio-aspeed.c                        | 521 +++++++++++++++++++++
+ 2 files changed, 576 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/sgpio-aspeed.txt
+ create mode 100644 drivers/gpio/sgpio-aspeed.c
+
+-- 
+2.7.4
+
