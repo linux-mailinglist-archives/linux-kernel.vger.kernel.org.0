@@ -2,117 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 61AC07AD46
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 18:08:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE4847AD4D
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 18:11:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728771AbfG3QIj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 12:08:39 -0400
-Received: from foss.arm.com ([217.140.110.172]:35178 "EHLO foss.arm.com"
+        id S1730588AbfG3QLS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 12:11:18 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:48762 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727698AbfG3QIi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 12:08:38 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F244528;
-        Tue, 30 Jul 2019 09:08:37 -0700 (PDT)
-Received: from [10.1.194.23] (unknown [10.1.194.23])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id ECDAB3F694;
-        Tue, 30 Jul 2019 09:08:36 -0700 (PDT)
-Subject: Re: [PATCH 5/5] sched/deadline: Use return value of SCHED_WARN_ON()
- in bw accounting
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     luca abeni <luca.abeni@santannapisa.it>,
-        Ingo Molnar <mingo@kernel.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>,
-        Valentin Schneider <Valentin.Schneider@arm.com>,
-        Qais Yousef <Qais.Yousef@arm.com>, linux-kernel@vger.kernel.org
-References: <20190726082756.5525-1-dietmar.eggemann@arm.com>
- <20190726082756.5525-6-dietmar.eggemann@arm.com>
- <20190726121819.32be6fb1@sweethome>
- <20190729165434.GO31398@hirez.programming.kicks-ass.net>
- <a12e2330-50d4-b31f-14b5-5b386252d418@arm.com>
- <20190730082316.GK31381@hirez.programming.kicks-ass.net>
-From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
-Message-ID: <7da6555c-baff-39df-b562-2510566ba4bf@arm.com>
-Date:   Tue, 30 Jul 2019 17:08:35 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1727988AbfG3QLR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 12:11:17 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 2A55481F25;
+        Tue, 30 Jul 2019 16:11:17 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.136])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 3B4561001938;
+        Tue, 30 Jul 2019 16:11:15 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Tue, 30 Jul 2019 18:11:16 +0200 (CEST)
+Date:   Tue, 30 Jul 2019 18:11:14 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Song Liu <songliubraving@fb.com>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        akpm@linux-foundation.org, matthew.wilcox@oracle.com,
+        kirill.shutemov@linux.intel.com, kernel-team@fb.com,
+        william.kucharski@oracle.com, srikar@linux.vnet.ibm.com
+Subject: Re: [PATCH v10 3/4] mm, thp: introduce FOLL_SPLIT_PMD
+Message-ID: <20190730161113.GC18501@redhat.com>
+References: <20190730052305.3672336-1-songliubraving@fb.com>
+ <20190730052305.3672336-4-songliubraving@fb.com>
 MIME-Version: 1.0
-In-Reply-To: <20190730082316.GK31381@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190730052305.3672336-4-songliubraving@fb.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Tue, 30 Jul 2019 16:11:17 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/30/19 9:23 AM, Peter Zijlstra wrote:
-> On Mon, Jul 29, 2019 at 05:59:04PM +0100, Dietmar Eggemann wrote:
->> On 7/29/19 5:54 PM, Peter Zijlstra wrote:
->>> On Fri, Jul 26, 2019 at 12:18:19PM +0200, luca abeni wrote:
->>>> Hi Dietmar,
->>>>
->>>> On Fri, 26 Jul 2019 09:27:56 +0100
->>>> Dietmar Eggemann <dietmar.eggemann@arm.com> wrote:
->>>>
->>>>> To make the decision whether to set rq or running bw to 0 in underflow
->>>>> case use the return value of SCHED_WARN_ON() rather than an extra if
->>>>> condition.
->>>>
->>>> I think I tried this at some point, but if I remember well this
->>>> solution does not work correctly when SCHED_DEBUG is not enabled.
->>>
->>> Well, it 'works' in so far that it compiles. But it might not be what
->>> one expects. That is, for !SCHED_DEBUG the return value is an
->>> unconditional false.
->>>
->>> In this case I think that's fine, the WARN _should_ not be happending.
->>
->> But there is commit 6d3aed3d ("sched/debug: Fix SCHED_WARN_ON() to
->> return a value on !CONFIG_SCHED_DEBUG as well")?
->>
->> But it doesn't work with !CONFIG_SCHED_DEBUG
->>
->> What compiles and work is (at least on Arm64).
->>
->> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
->> index 4012f98b9d26..494a767a4091 100644
->> --- a/kernel/sched/sched.h
->> +++ b/kernel/sched/sched.h
->> @@ -78,7 +78,7 @@
->>  #ifdef CONFIG_SCHED_DEBUG
->>  # define SCHED_WARN_ON(x)      WARN_ONCE(x, #x)
->>  #else
->> -# define SCHED_WARN_ON(x)      ({ (void)(x), 0; })
->> +# define SCHED_WARN_ON(x)      ({ (void)(x), x; })
-> 
-> Why doesn't the ,0 compile? That should work just fine. The thing is,
-> the two existing users:
-> 
-> kernel/sched/fair.c:            if (SCHED_WARN_ON(!se->on_rq))
-> kernel/sched/fair.c:            if (SCHED_WARN_ON(!se->on_rq))
-> 
-> seem to compile just fine with it.
+I don't understand this code, so I can't review, but.
 
-You're right, compiling is not an issue. But it looks like the code does
-different things depending on CONFIG_SCHED_DEBUG.
+On 07/29, Song Liu wrote:
+>
+> This patches introduces a new foll_flag: FOLL_SPLIT_PMD. As the name says
+> FOLL_SPLIT_PMD splits huge pmd for given mm_struct, the underlining huge
+> page stays as-is.
+>
+> FOLL_SPLIT_PMD is useful for cases where we need to use regular pages,
+> but would switch back to huge page and huge pmd on. One of such example
+> is uprobe. The following patches use FOLL_SPLIT_PMD in uprobe.
 
-E.g. in set_last_buddy() we would return if '!se->on_rq' with
-CONFIG_SCHED_DEBUG and continue the for_each_sched_entity() with
-!CONFIG_SCHED_DEBUG.
+So after the next patch we have a single user of FOLL_SPLIT_PMD (uprobes)
+and a single user of FOLL_SPLIT: arch/s390/mm/gmap.c:thp_split_mm().
 
-IMHO, this forced Luca e.g. in __sub_running_bw() to code:
+Hmm.
 
-SCHED_WARN_ON(dl_rq->running_bw > old);
-if (dl_rq->running_bw > old)
-    dl_rq->running_bw = 0;
+> @@ -399,7 +399,7 @@ static struct page *follow_pmd_mask(struct vm_area_struct *vma,
+>  		spin_unlock(ptl);
+>  		return follow_page_pte(vma, address, pmd, flags, &ctx->pgmap);
+>  	}
+> -	if (flags & FOLL_SPLIT) {
+> +	if (flags & (FOLL_SPLIT | FOLL_SPLIT_PMD)) {
+>  		int ret;
+>  		page = pmd_page(*pmd);
+>  		if (is_huge_zero_page(page)) {
+> @@ -408,7 +408,7 @@ static struct page *follow_pmd_mask(struct vm_area_struct *vma,
+>  			split_huge_pmd(vma, pmd, address);
+>  			if (pmd_trans_unstable(pmd))
+>  				ret = -EBUSY;
+> -		} else {
+> +		} else if (flags & FOLL_SPLIT) {
+>  			if (unlikely(!try_get_page(page))) {
+>  				spin_unlock(ptl);
+>  				return ERR_PTR(-ENOMEM);
+> @@ -420,6 +420,10 @@ static struct page *follow_pmd_mask(struct vm_area_struct *vma,
+>  			put_page(page);
+>  			if (pmd_none(*pmd))
+>  				return no_page_table(vma, flags);
+> +		} else {  /* flags & FOLL_SPLIT_PMD */
+> +			spin_unlock(ptl);
+> +			split_huge_pmd(vma, pmd, address);
+> +			ret = pte_alloc(mm, pmd);
 
-and not:
+I fail to understand why this differs from the is_huge_zero_page() case above.
 
-if (SCHED_WARN_ON(dl_rq->running_bw > old))
-    dl_rq->running_bw = 0;
+Anyway, ret = pte_alloc(mm, pmd) can't be correct. If __pte_alloc() fails pte_alloc()
+will return 1. This will fool the IS_ERR(page) check in __get_user_pages().
 
-I experimented with '# define SCHED_WARN_ON(x) ({ (void)(x), x; })' and
-in this case code inside an 'if (SCHED_WARN_ON(cond))' is also executed
-with !CONFIG_SCHED_DEBUG.
+Oleg.
+
