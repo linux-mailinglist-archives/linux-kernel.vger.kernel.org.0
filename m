@@ -2,75 +2,265 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A38917B23A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:44:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 60BF97B249
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:45:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387979AbfG3SoC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 14:44:02 -0400
-Received: from mail-io1-f71.google.com ([209.85.166.71]:48478 "EHLO
-        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387847AbfG3SoB (ORCPT
+        id S2388253AbfG3So5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 14:44:57 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:48021 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388157AbfG3So5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 14:44:01 -0400
-Received: by mail-io1-f71.google.com with SMTP id z19so72512611ioi.15
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 11:44:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=fmJowBjHOviryjb2uUOgQ9a1aEAnn80EMfZUz4dp24E=;
-        b=Is7srEe86fM1oHMvR9NiCGGN8yqP7N/7/O8UcjUerO0c7UEfBzIMvExyTZZC3w3fVa
-         EROPPCLx1b83i7BOaSz/u0AaqLaUyQSUQxKtBlvrxCV92xtD2l1/XPS+A0BUNY9znuv3
-         kkw+0lnh7JrZiQAv9fyOmd+URRxl6lEvSkwYNRK7/rPp66v6TrBRQrdjiWM7wfm8whM+
-         O3qjug3Jd2jgiDKHDUSWgkDVzYIcaicOzRt3HLpops3fxwQGUuvf16xbsR5kDeZ/EXxO
-         Uqt3xhbc262OOGxysGcmfx+EwiDJfNNTWb3UdGnt3YaSxhU3jRli6lLd2GlGVkcD/qOV
-         wGeA==
-X-Gm-Message-State: APjAAAWsUayshRisvMxHqMmFbw2O8gpJLL8ialNnYKqB3mOiUL4LvRur
-        krRGxY3baOVWBr5JVHDW0DWBkeOqkuOoyN/q2L+nLcLsdlqc
-X-Google-Smtp-Source: APXvYqzoNj4GkC6AvA/IixrfS8pKQM1y3yNNpmunmeiyXret+F6oMMDeESdIhA7JVKpU0ewJTz8RVY49EHSoE0rHng5ABCf8LyYm
+        Tue, 30 Jul 2019 14:44:57 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6UIijeg3334516
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Tue, 30 Jul 2019 11:44:45 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6UIijeg3334516
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019071901; t=1564512285;
+        bh=BNMSP7P24XwlLcqMH3XbRFR8VX5/cKmAfqSVdJAhPCM=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=XlyY6FMXZm2EWPMmsVWPNaeRFkDHH+b8RmZhvTPH4dWIge5gT3x5FzoyoONAG8rA5
+         nhfzcb0asP2Y7M4MfoWwU+AL98sFw/k1z6BauEP3v7EWMWJEsJ+OMSuEnSLWd8KSjQ
+         D2BdfR3gmbh5ZhLhTNzwUEST4U/N+qlO/8XtgQaKI3z6N9QPuOCF5kFNettnMxKw4g
+         UMfgWZtrE00B2yXK8Mpx4RrDB4rF4T2k54RUWb2KDhJ5z7CaStCqCh9EhBL4x6as6E
+         HtJ01dIpu6CO0pIP4SmhT+3qskBriLp4u5HNiLIHKgU8KDLkUmrEQd6jJoRvS5VQRv
+         E0g9EJPsrm9NA==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6UIii113334513;
+        Tue, 30 Jul 2019 11:44:44 -0700
+Date:   Tue, 30 Jul 2019 11:44:44 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
+Message-ID: <tip-d400bd3abf2cc68df2df32047d3533faf690f404@git.kernel.org>
+Cc:     jolsa@kernel.org, namhyung@kernel.org, acme@redhat.com,
+        alexey.budankov@linux.intel.com, tglx@linutronix.de,
+        mingo@kernel.org, alexander.shishkin@linux.intel.com,
+        ak@linux.intel.com, linux-kernel@vger.kernel.org, hpa@zytor.com,
+        peterz@infradead.org, mpetlan@redhat.com
+Reply-To: alexander.shishkin@linux.intel.com, ak@linux.intel.com,
+          tglx@linutronix.de, mingo@kernel.org,
+          alexey.budankov@linux.intel.com, jolsa@kernel.org,
+          namhyung@kernel.org, acme@redhat.com, mpetlan@redhat.com,
+          peterz@infradead.org, hpa@zytor.com, linux-kernel@vger.kernel.org
+In-Reply-To: <20190721112506.12306-51-jolsa@kernel.org>
+References: <20190721112506.12306-51-jolsa@kernel.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] libperf: Add cpus to struct perf_evsel
+Git-Commit-ID: d400bd3abf2cc68df2df32047d3533faf690f404
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-X-Received: by 2002:a5d:8c81:: with SMTP id g1mr43882953ion.239.1564512240868;
- Tue, 30 Jul 2019 11:44:00 -0700 (PDT)
-Date:   Tue, 30 Jul 2019 11:44:00 -0700
-In-Reply-To: <00000000000057102e058e722bba@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000005d23d0058eea64a6@google.com>
-Subject: Re: INFO: task hung in perf_event_free_task
-From:   syzbot <syzbot+7692cea7450c97fa2a0a@syzkaller.appspotmail.com>
-To:     acme@kernel.org, acme@redhat.com,
-        alexander.shishkin@linux.intel.com, ast@kernel.org,
-        bpf@vger.kernel.org, daniel@iogearbox.net, eranian@google.com,
-        jolsa@redhat.com, kafai@fb.com, linux-kernel@vger.kernel.org,
-        mark.rutland@arm.com, mingo@kernel.org, mingo@redhat.com,
-        namhyung@kernel.org, netdev@vger.kernel.org, peterz@infradead.org,
-        songliubraving@fb.com, syzkaller-bugs@googlegroups.com,
-        tglx@linutronix.de, torvalds@linux-foundation.org,
-        vincent.weaver@maine.edu, yhs@fb.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-0.2 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
+        autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has bisected this bug to:
+Commit-ID:  d400bd3abf2cc68df2df32047d3533faf690f404
+Gitweb:     https://git.kernel.org/tip/d400bd3abf2cc68df2df32047d3533faf690f404
+Author:     Jiri Olsa <jolsa@kernel.org>
+AuthorDate: Sun, 21 Jul 2019 13:24:37 +0200
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Mon, 29 Jul 2019 18:34:45 -0300
 
-commit 1cf8dfe8a661f0462925df943140e9f6d1ea5233
-Author: Peter Zijlstra <peterz@infradead.org>
-Date:   Sat Jul 13 09:21:25 2019 +0000
+libperf: Add cpus to struct perf_evsel
 
-     perf/core: Fix race between close() and fork()
+Mov the 'cpus' field from tools/perf's evsel to libperf's perf_evsel.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1523f40c600000
-start commit:   c6dd78fc Merge branch 'x86-urgent-for-linus' of git://git...
-git tree:       upstream
-final crash:    https://syzkaller.appspot.com/x/report.txt?x=1723f40c600000
-console output: https://syzkaller.appspot.com/x/log.txt?x=1323f40c600000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=7937b718ddac333b
-dashboard link: https://syzkaller.appspot.com/bug?extid=7692cea7450c97fa2a0a
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17e888cc600000
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Michael Petlan <mpetlan@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/20190721112506.12306-51-jolsa@kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/builtin-record.c                            |  2 +-
+ tools/perf/builtin-script.c                            |  2 +-
+ tools/perf/lib/include/internal/evsel.h                |  7 +++++--
+ tools/perf/util/evlist.c                               | 14 +++++++-------
+ tools/perf/util/evsel.c                                |  4 ++--
+ tools/perf/util/evsel.h                                |  3 +--
+ tools/perf/util/parse-events.c                         |  2 +-
+ tools/perf/util/scripting-engines/trace-event-python.c |  2 +-
+ tools/perf/util/stat-display.c                         |  2 +-
+ 9 files changed, 20 insertions(+), 18 deletions(-)
 
-Reported-by: syzbot+7692cea7450c97fa2a0a@syzkaller.appspotmail.com
-Fixes: 1cf8dfe8a661 ("perf/core: Fix race between close() and fork()")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
+index b7d2c27c4164..090aaa2cf4b3 100644
+--- a/tools/perf/builtin-record.c
++++ b/tools/perf/builtin-record.c
+@@ -739,7 +739,7 @@ static int record__open(struct record *rec)
+ 
+ 	evlist__for_each_entry(evlist, pos) {
+ try_again:
+-		if (evsel__open(pos, pos->cpus, pos->threads) < 0) {
++		if (evsel__open(pos, pos->core.cpus, pos->threads) < 0) {
+ 			if (perf_evsel__fallback(pos, errno, msg, sizeof(msg))) {
+ 				if (verbose > 0)
+ 					ui__warning("%s\n", msg);
+diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
+index 69133b35bbc1..35f07dde5ad4 100644
+--- a/tools/perf/builtin-script.c
++++ b/tools/perf/builtin-script.c
+@@ -1920,7 +1920,7 @@ static void __process_stat(struct evsel *counter, u64 tstamp)
+ 			counts = perf_counts(counter->counts, cpu, thread);
+ 
+ 			printf("%3d %8d %15" PRIu64 " %15" PRIu64 " %15" PRIu64 " %15" PRIu64 " %s\n",
+-				counter->cpus->map[cpu],
++				counter->core.cpus->map[cpu],
+ 				thread_map__pid(counter->threads, thread),
+ 				counts->val,
+ 				counts->ena,
+diff --git a/tools/perf/lib/include/internal/evsel.h b/tools/perf/lib/include/internal/evsel.h
+index c2e0bd104c94..b2c76e1a6244 100644
+--- a/tools/perf/lib/include/internal/evsel.h
++++ b/tools/perf/lib/include/internal/evsel.h
+@@ -5,9 +5,12 @@
+ #include <linux/types.h>
+ #include <linux/perf_event.h>
+ 
++struct perf_cpu_map;
++
+ struct perf_evsel {
+-	struct list_head	node;
+-	struct perf_event_attr	attr;
++	struct list_head	 node;
++	struct perf_event_attr	 attr;
++	struct perf_cpu_map	*cpus;
+ };
+ 
+ #endif /* __LIBPERF_INTERNAL_EVSEL_H */
+diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
+index 67c67e9a38cd..713968130d1d 100644
+--- a/tools/perf/util/evlist.c
++++ b/tools/perf/util/evlist.c
+@@ -160,11 +160,11 @@ static void __perf_evlist__propagate_maps(struct evlist *evlist,
+ 	 * keep it, if there's no target cpu list defined.
+ 	 */
+ 	if (!evsel->own_cpus || evlist->has_user_cpus) {
+-		perf_cpu_map__put(evsel->cpus);
+-		evsel->cpus = perf_cpu_map__get(evlist->cpus);
+-	} else if (evsel->cpus != evsel->own_cpus) {
+-		perf_cpu_map__put(evsel->cpus);
+-		evsel->cpus = perf_cpu_map__get(evsel->own_cpus);
++		perf_cpu_map__put(evsel->core.cpus);
++		evsel->core.cpus = perf_cpu_map__get(evlist->cpus);
++	} else if (evsel->core.cpus != evsel->own_cpus) {
++		perf_cpu_map__put(evsel->core.cpus);
++		evsel->core.cpus = perf_cpu_map__get(evsel->own_cpus);
+ 	}
+ 
+ 	perf_thread_map__put(evsel->threads);
+@@ -786,7 +786,7 @@ static int perf_evlist__mmap_per_evsel(struct evlist *evlist, int idx,
+ 		if (evsel->system_wide && thread)
+ 			continue;
+ 
+-		cpu = cpu_map__idx(evsel->cpus, evlist_cpu);
++		cpu = cpu_map__idx(evsel->core.cpus, evlist_cpu);
+ 		if (cpu == -1)
+ 			continue;
+ 
+@@ -1407,7 +1407,7 @@ int evlist__open(struct evlist *evlist)
+ 	perf_evlist__update_id_pos(evlist);
+ 
+ 	evlist__for_each_entry(evlist, evsel) {
+-		err = evsel__open(evsel, evsel->cpus, evsel->threads);
++		err = evsel__open(evsel, evsel->core.cpus, evsel->threads);
+ 		if (err < 0)
+ 			goto out_err;
+ 	}
+diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+index 089582e644d7..651f66ee902e 100644
+--- a/tools/perf/util/evsel.c
++++ b/tools/perf/util/evsel.c
+@@ -1325,7 +1325,7 @@ void perf_evsel__exit(struct evsel *evsel)
+ 	perf_evsel__free_id(evsel);
+ 	perf_evsel__free_config_terms(evsel);
+ 	cgroup__put(evsel->cgrp);
+-	perf_cpu_map__put(evsel->cpus);
++	perf_cpu_map__put(evsel->core.cpus);
+ 	perf_cpu_map__put(evsel->own_cpus);
+ 	perf_thread_map__put(evsel->threads);
+ 	zfree(&evsel->group_name);
+@@ -3064,7 +3064,7 @@ static int store_evsel_ids(struct evsel *evsel, struct evlist *evlist)
+ 
+ int perf_evsel__store_ids(struct evsel *evsel, struct evlist *evlist)
+ {
+-	struct perf_cpu_map *cpus = evsel->cpus;
++	struct perf_cpu_map *cpus = evsel->core.cpus;
+ 	struct perf_thread_map *threads = evsel->threads;
+ 
+ 	if (perf_evsel__alloc_id(evsel, cpus->nr, threads->nr))
+diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
+index 43f66158de3b..8ece5edf65ac 100644
+--- a/tools/perf/util/evsel.h
++++ b/tools/perf/util/evsel.h
+@@ -123,7 +123,6 @@ struct evsel {
+ 	u64			db_id;
+ 	struct cgroup		*cgrp;
+ 	void			*handler;
+-	struct perf_cpu_map	*cpus;
+ 	struct perf_cpu_map	*own_cpus;
+ 	struct perf_thread_map *threads;
+ 	unsigned int		sample_size;
+@@ -198,7 +197,7 @@ struct record_opts;
+ 
+ static inline struct perf_cpu_map *evsel__cpus(struct evsel *evsel)
+ {
+-	return evsel->cpus;
++	return evsel->core.cpus;
+ }
+ 
+ static inline int perf_evsel__nr_cpus(struct evsel *evsel)
+diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
+index db2460d6b625..a27771eca9c2 100644
+--- a/tools/perf/util/parse-events.c
++++ b/tools/perf/util/parse-events.c
+@@ -333,7 +333,7 @@ __add_event(struct list_head *list, int *idx,
+ 		return NULL;
+ 
+ 	(*idx)++;
+-	evsel->cpus        = perf_cpu_map__get(cpus);
++	evsel->core.cpus   = perf_cpu_map__get(cpus);
+ 	evsel->own_cpus    = perf_cpu_map__get(cpus);
+ 	evsel->system_wide = pmu ? pmu->is_uncore : false;
+ 	evsel->auto_merge_stats = auto_merge_stats;
+diff --git a/tools/perf/util/scripting-engines/trace-event-python.c b/tools/perf/util/scripting-engines/trace-event-python.c
+index 78b40c1d688e..c5f520e0885b 100644
+--- a/tools/perf/util/scripting-engines/trace-event-python.c
++++ b/tools/perf/util/scripting-engines/trace-event-python.c
+@@ -1393,7 +1393,7 @@ static void python_process_stat(struct perf_stat_config *config,
+ 				struct evsel *counter, u64 tstamp)
+ {
+ 	struct perf_thread_map *threads = counter->threads;
+-	struct perf_cpu_map *cpus = counter->cpus;
++	struct perf_cpu_map *cpus = counter->core.cpus;
+ 	int cpu, thread;
+ 
+ 	if (config->aggr_mode == AGGR_GLOBAL) {
+diff --git a/tools/perf/util/stat-display.c b/tools/perf/util/stat-display.c
+index 99bda99a1b2d..e84f8063c2db 100644
+--- a/tools/perf/util/stat-display.c
++++ b/tools/perf/util/stat-display.c
+@@ -745,7 +745,7 @@ static void print_aggr_thread(struct perf_stat_config *config,
+ {
+ 	FILE *output = config->output;
+ 	int nthreads = thread_map__nr(counter->threads);
+-	int ncpus = cpu_map__nr(counter->cpus);
++	int ncpus = cpu_map__nr(counter->core.cpus);
+ 	int thread, sorted_threads, id;
+ 	struct perf_aggr_thread_value *buf;
+ 
