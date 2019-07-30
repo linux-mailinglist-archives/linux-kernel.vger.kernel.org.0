@@ -2,55 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D8A57B1BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:20:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 330F67B1C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:20:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728960AbfG3SQR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 14:16:17 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:43501 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728878AbfG3SQJ (ORCPT
+        id S1729072AbfG3SUS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 14:20:18 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:36268 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728908AbfG3SQL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 14:16:09 -0400
-Received: by mail-pf1-f194.google.com with SMTP id i189so30264763pfg.10
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 11:16:09 -0700 (PDT)
+        Tue, 30 Jul 2019 14:16:11 -0400
+Received: by mail-pf1-f195.google.com with SMTP id r7so30265393pfl.3
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 11:16:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Dycfr8v1fdba663pIpdzjcaqpiqeC9jW3WU7WRUspIM=;
-        b=TQZZoOLvt58dfKVYoj15whJcQ7tnhbLU89aCOVDpcoqllL3LKtld2+Q4MLeOghIXbF
-         Z0oHqm159YrVMrXWR7iUVI8WTDdJvDZe1RsBVUBXHQG8eIhHBrUG0s52gHmhK4GjESCv
-         YvAjtxLeiT3Nu3PuZP+vBz7AU16SXrtXmSth4=
+        bh=E+MiLS+xhjrkSb6B0r1a1/QGKNXodQxyYWlsCL6Y4A4=;
+        b=G96811NZowBWx8RM/8lPqU0uWnzoV43lyEhEiNDC0B8Ntygzpg57aZQieTSTQPjbXc
+         jwoQ8euvvqXmq+10x180vCL7O299Dl8mj60LA7ya5Zo4b/p6YLPXYGgk8b4PQbjxNGKy
+         BB3zQ98TWq99wGSkt3z/iLzylpg7+dRw7u2NQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Dycfr8v1fdba663pIpdzjcaqpiqeC9jW3WU7WRUspIM=;
-        b=mgHrm7iOVcWlPzkdF4D2Oh9NCFuvbU8GqM5WyPZm9ZRkp3wyhAVxYbkq1FMJ2GLrlV
-         EUIF9VcGNkl//NGjvcWd3v7Z/3GWM3tKq+DPOFK/Nr9EKpJaOLHPt9B0Vt0F+/00eVWc
-         IO4G6KnuGF8M5dNZjWWhtSyp3I1raK3vW7r86lsm125feq2oG4h2jrfg6QXeDmNcCh7f
-         IbNTdJ0PQFAxKePiBLWWfneiY7fB7sC0oJz7Bi0+yMt8Qe7wgN5lcp6ck6LQ1RPrlaIj
-         u2OXBGgTkfXbR4utOqjz7kLyixJXxu9kGBWrZ/g8uHaUHYUp5PuyQlcm45bRHIDjvKF1
-         dQrA==
-X-Gm-Message-State: APjAAAU9y2lwQKmGZf87v2YSCYt7nczZA9/cuKoqICJfKFEmtIbXG0xo
-        D2LXQ8xCY2DgCZ0S2u7WhjSPrrvQluc=
-X-Google-Smtp-Source: APXvYqxhgatm4ea/UR+LHTwGkQink6xwt7eAaph3+IuuaJMRKEdnT5Ph9WsXOO++1OHrj8aVKflyFA==
-X-Received: by 2002:a63:2006:: with SMTP id g6mr108309530pgg.287.1564510568689;
-        Tue, 30 Jul 2019 11:16:08 -0700 (PDT)
+        bh=E+MiLS+xhjrkSb6B0r1a1/QGKNXodQxyYWlsCL6Y4A4=;
+        b=Kt3bcMEKKVsy/mkC3tPVOYc1WsKF2nNGukGuHR8oHstzsvBoFx1EdIfWcqhimgKJ8H
+         wg4JmFFiuagNJANwGSMC/Z5ewo/2wZUdH8y1NcwEPEQzTBuPAxvmumIiXUJozJZVOTz/
+         rNhM/7DEAuR3iskqDZage8iNUZVJQkAtdRMqeGPLviJeWPG8WhSeUnWcUsg1hrUJoKQq
+         1EmZjF3RlCkAZfok9Z4K1mM3SkW1m6BRUYmhOC6xPTyNLhXdK8meauUw4ZUzui/8qOBJ
+         reW6ntBs64jOVia3eGri4kjeSrgWQWid+rsVDAoj3nu5kUHxDFG3f7fp9Eay0enb3umB
+         ppWw==
+X-Gm-Message-State: APjAAAWZKb3Fq4VEVRSBw6pY2qfvgc2TShG8z5funucV9uAfNvcKy6v0
+        C/7g3KCUTwC6kstgr1ajxXAlCobE6ns=
+X-Google-Smtp-Source: APXvYqzbrY/tkzXZgdp9CMLN1AYx+zVWfEtA8YA9y8O02ruiBFQxYiMzRzG8nCy5OiSmhBfC0UU7Cg==
+X-Received: by 2002:a17:90a:9301:: with SMTP id p1mr117756399pjo.22.1564510570617;
+        Tue, 30 Jul 2019 11:16:10 -0700 (PDT)
 Received: from smtp.gmail.com ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id g1sm106744083pgg.27.2019.07.30.11.16.07
+        by smtp.gmail.com with ESMTPSA id g1sm106744083pgg.27.2019.07.30.11.16.09
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 30 Jul 2019 11:16:08 -0700 (PDT)
+        Tue, 30 Jul 2019 11:16:09 -0700 (PDT)
 From:   Stephen Boyd <swboyd@chromium.org>
 To:     linux-kernel@vger.kernel.org
-Cc:     Borislav Petkov <bp@alien8.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        James Morse <james.morse@arm.com>, linux-edac@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH v6 11/57] edac: Remove dev_err() usage after platform_get_irq()
-Date:   Tue, 30 Jul 2019 11:15:11 -0700
-Message-Id: <20190730181557.90391-12-swboyd@chromium.org>
+Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Stephen Boyd <sboyd@kernel.org>
+Subject: [PATCH v6 13/57] firmware: Remove dev_err() usage after platform_get_irq()
+Date:   Tue, 30 Jul 2019 11:15:13 -0700
+Message-Id: <20190730181557.90391-14-swboyd@chromium.org>
 X-Mailer: git-send-email 2.22.0.709.g102302147b-goog
 In-Reply-To: <20190730181557.90391-1-swboyd@chromium.org>
 References: <20190730181557.90391-1-swboyd@chromium.org>
@@ -96,73 +97,48 @@ if ( \( ret < 0 \| ret <= 0 \) )
 While we're here, remove braces on if statements that only have one
 statement (manually).
 
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: James Morse <james.morse@arm.com>
-Cc: linux-edac@vger.kernel.org
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Stephen Boyd <sboyd@kernel.org>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Stephen Boyd <swboyd@chromium.org>
 ---
 
 Please apply directly to subsystem trees
 
- drivers/edac/altera_edac.c | 13 +++----------
- drivers/edac/xgene_edac.c  |  1 -
- 2 files changed, 3 insertions(+), 11 deletions(-)
+ drivers/firmware/tegra/bpmp-tegra210.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/edac/altera_edac.c b/drivers/edac/altera_edac.c
-index c2e693e34d43..5405bd727731 100644
---- a/drivers/edac/altera_edac.c
-+++ b/drivers/edac/altera_edac.c
-@@ -347,11 +347,8 @@ static int altr_sdram_probe(struct platform_device *pdev)
+diff --git a/drivers/firmware/tegra/bpmp-tegra210.c b/drivers/firmware/tegra/bpmp-tegra210.c
+index ae15940a078e..890186abeac0 100644
+--- a/drivers/firmware/tegra/bpmp-tegra210.c
++++ b/drivers/firmware/tegra/bpmp-tegra210.c
+@@ -202,10 +202,8 @@ static int tegra210_bpmp_init(struct tegra_bpmp *bpmp)
  	}
  
- 	irq = platform_get_irq(pdev, 0);
--	if (irq < 0) {
--		edac_printk(KERN_ERR, EDAC_MC,
--			    "No irq %d in DT\n", irq);
-+	if (irq < 0)
- 		return -ENODEV;
+ 	err = platform_get_irq_byname(pdev, "tx");
+-	if (err < 0) {
+-		dev_err(&pdev->dev, "failed to get TX IRQ: %d\n", err);
++	if (err < 0)
+ 		return err;
 -	}
  
- 	/* Arria10 has a 2nd IRQ */
- 	irq2 = platform_get_irq(pdev, 1);
-@@ -2177,10 +2174,8 @@ static int altr_edac_a10_probe(struct platform_device *pdev)
+ 	priv->tx_irq_data = irq_get_irq_data(err);
+ 	if (!priv->tx_irq_data) {
+@@ -214,10 +212,8 @@ static int tegra210_bpmp_init(struct tegra_bpmp *bpmp)
  	}
  
- 	edac->sb_irq = platform_get_irq(pdev, 0);
--	if (edac->sb_irq < 0) {
--		dev_err(&pdev->dev, "No SBERR IRQ resource\n");
-+	if (edac->sb_irq < 0)
- 		return edac->sb_irq;
+ 	err = platform_get_irq_byname(pdev, "rx");
+-	if (err < 0) {
+-		dev_err(&pdev->dev, "failed to get rx IRQ: %d\n", err);
++	if (err < 0)
+ 		return err;
 -	}
  
- 	irq_set_chained_handler_and_data(edac->sb_irq,
- 					 altr_edac_a10_irq_handler,
-@@ -2212,10 +2207,8 @@ static int altr_edac_a10_probe(struct platform_device *pdev)
- 	}
- #else
- 	edac->db_irq = platform_get_irq(pdev, 1);
--	if (edac->db_irq < 0) {
--		dev_err(&pdev->dev, "No DBERR IRQ resource\n");
-+	if (edac->db_irq < 0)
- 		return edac->db_irq;
--	}
- 	irq_set_chained_handler_and_data(edac->db_irq,
- 					 altr_edac_a10_irq_handler, edac);
- #endif
-diff --git a/drivers/edac/xgene_edac.c b/drivers/edac/xgene_edac.c
-index e4a1032ba0b5..cb26ce5d5798 100644
---- a/drivers/edac/xgene_edac.c
-+++ b/drivers/edac/xgene_edac.c
-@@ -1921,7 +1921,6 @@ static int xgene_edac_probe(struct platform_device *pdev)
- 		for (i = 0; i < 3; i++) {
- 			irq = platform_get_irq(pdev, i);
- 			if (irq < 0) {
--				dev_err(&pdev->dev, "No IRQ resource\n");
- 				rc = -EINVAL;
- 				goto out_err;
- 			}
+ 	err = devm_request_irq(&pdev->dev, err, rx_irq,
+ 			       IRQF_NO_SUSPEND, dev_name(&pdev->dev), bpmp);
 -- 
 Sent by a computer through tubes
 
