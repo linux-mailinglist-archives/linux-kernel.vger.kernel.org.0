@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0A377B311
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 21:14:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C4B77B306
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 21:13:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388320AbfG3TN7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 15:13:59 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:41693 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388005AbfG3TNS (ORCPT
+        id S2388277AbfG3TNY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 15:13:24 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:34585 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388075AbfG3TNU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 15:13:18 -0400
-Received: by mail-pg1-f194.google.com with SMTP id x15so20205374pgg.8
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 12:13:17 -0700 (PDT)
+        Tue, 30 Jul 2019 15:13:20 -0400
+Received: by mail-pg1-f195.google.com with SMTP id n9so24330517pgc.1
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 12:13:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=okwXTawHyuFa4icd55twJCHtmhUjDA75Nfe9+fhiSRI=;
-        b=WTaj/tCWBI6QVlq4nKTsAxYz1lBPqS7a9eK0QDXPMmbAPy3XkclyuEpGhNiM9+Qc+a
-         GfZPY1tJuv8B58Sdyy1D7YxyiHEVqzCtOyRukRfXTl4S9nHMyfrDJWQu9PKz6P5BMI8I
-         gB3+kX3pX//wpXa3Ez7mNRLg83QLHpddaT690=
+        bh=Qa0vdqU/e4QPHFVnoNOrEozPMumAGtkoZQ9IP0jYnkg=;
+        b=m0iQTXUNy9Ivxk8S8rx6UuqUrCNk/lmb9ABT6tX720KuMWsD28POJqIHBW6/ecVDNQ
+         1wbWq2OFtsCV/gCMaCWhi/N9ivwFCLXmf8NoCB80kLVtvh5oGNjC8TdkekyoWfngXYpv
+         g4yOAr38UwABJuJh4u7l9MRi4cavnGZbRi9Oc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=okwXTawHyuFa4icd55twJCHtmhUjDA75Nfe9+fhiSRI=;
-        b=RBflFaP8caW0uXMy6dL13sShTlWWMi3QLNHQWs6Iur2xmHyoJzGUOPlL1jLRIwNZFB
-         Pspef2eS2FEnPF/y1iAp4k4pOdQTU6qR0jUsiOvlo3WTlLHDmeuiRotcI4gQLTmjt3T6
-         +XNesofyaxZvvdaUS2v55BiGnHhG+Ssl3wYmVYkJXQrSACKqIo4hg6wXemaa9V/AtnJI
-         fMwgUSlUGXb+c8nDcGrm4hxHgb+SxQMZdtEAZldMHrCoJuviHsek/nS/8D9u3KNBRn7a
-         6KIPkpiJR03oyV+k7SFJPGLur5plO+SfQg6/43zMuQxYiAprqcMO4ET3q0sYPqsLaeRz
-         dU/g==
-X-Gm-Message-State: APjAAAViDEcNYl+SOUUMkzgF+4CFA3lzKnhbHqELkt2f3ICHDOv6OKqq
-        qq2Ci563HUSjWlZK7p38yN7OOA==
-X-Google-Smtp-Source: APXvYqyboxn+AlEAdie6u7CC57V8sWfALD8FpbLQHIYoEr0y0DEAHDVqK2YOnXcRGhf2UDGdqqHftQ==
-X-Received: by 2002:a63:184b:: with SMTP id 11mr49666372pgy.112.1564513997493;
-        Tue, 30 Jul 2019 12:13:17 -0700 (PDT)
+        bh=Qa0vdqU/e4QPHFVnoNOrEozPMumAGtkoZQ9IP0jYnkg=;
+        b=AODDATy8YZtpA1twKk7mjCsZ8N01GF3Jwct1ihRKgkBZBjIYRJHaaE/G30Uv1GmzlV
+         3pzHe6qYiC+fjV0vRoLcXgaZdWtUKz2jbDfrnywrbYzmJUnqkSE/xbdz7EQ8a3tXHqYP
+         hnJ2lmK2j+klXG6kFxFaPz1M3Al9wYOsl5obGoydhIO4a8qiWdgJzSjTXCEicUJbr+89
+         Y8SLrzHcU36ogepllx8YS5q7ZSgNJacZSLIinG4N0ZXXTz8Z7NUgEQhqA/J5PHXvm/fU
+         QuNf3hbEqkN5L40Rz69Kdid8QdL39PUOLJ00cgpKd0yKqdq9O/AFPkIbXGYT210G1as6
+         Ldvg==
+X-Gm-Message-State: APjAAAWEGAaiBVNDRmVnwELgpjCaEk+nXYZ48/VKS6PjmqH8iUmKLKXD
+        XB7GuykKgOX4CF8i9Wlwm1Vb1Q==
+X-Google-Smtp-Source: APXvYqw4FhQAyLlzTXXeXnWi4AdlBXSr5qODFDIUZbZ8fdBVPq/Zyh+2sg3WQmjXFcNGWYaH8U26QA==
+X-Received: by 2002:a17:90a:b115:: with SMTP id z21mr56057575pjq.64.1564513999646;
+        Tue, 30 Jul 2019 12:13:19 -0700 (PDT)
 Received: from skynet.sea.corp.google.com ([2620:0:1008:1100:c4b5:ec23:d87b:d6d3])
-        by smtp.gmail.com with ESMTPSA id n89sm84649540pjc.0.2019.07.30.12.13.16
+        by smtp.gmail.com with ESMTPSA id n89sm84649540pjc.0.2019.07.30.12.13.18
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 30 Jul 2019 12:13:17 -0700 (PDT)
+        Tue, 30 Jul 2019 12:13:19 -0700 (PDT)
 From:   Thomas Garnier <thgarnie@chromium.org>
 To:     kernel-hardening@lists.openwall.com
 Cc:     kristen@linux.intel.com, keescook@chromium.org,
@@ -49,10 +49,13 @@ Cc:     kristen@linux.intel.com, keescook@chromium.org,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v9 05/11] x86: pm-trace - Adapt assembly for PIE support
-Date:   Tue, 30 Jul 2019 12:12:49 -0700
-Message-Id: <20190730191303.206365-6-thgarnie@chromium.org>
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Len Brown <len.brown@intel.com>,
+        Andy Lutomirski <luto@kernel.org>, linux-kernel@vger.kernel.org
+Subject: [PATCH v9 06/11] x86/CPU: Adapt assembly for PIE support
+Date:   Tue, 30 Jul 2019 12:12:50 -0700
+Message-Id: <20190730191303.206365-7-thgarnie@chromium.org>
 X-Mailer: git-send-email 2.22.0.770.g0f2c4a37fd-goog
 In-Reply-To: <20190730191303.206365-1-thgarnie@chromium.org>
 References: <20190730191303.206365-1-thgarnie@chromium.org>
@@ -63,31 +66,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Change assembly to use the new _ASM_MOVABS macro instead of _ASM_MOV for
-the assembly to be PIE compatible.
+Change the assembly code to use only relative references of symbols for the
+kernel to be PIE compatible.
 
 Position Independent Executable (PIE) support will allow to extend the
 KASLR randomization range below 0xffffffff80000000.
 
 Signed-off-by: Thomas Garnier <thgarnie@chromium.org>
-Reviewed-by: Kees Cook <keescook@chromium.org>
 ---
- arch/x86/include/asm/pm-trace.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/include/asm/processor.h | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/include/asm/pm-trace.h b/arch/x86/include/asm/pm-trace.h
-index bfa32aa428e5..972070806ce9 100644
---- a/arch/x86/include/asm/pm-trace.h
-+++ b/arch/x86/include/asm/pm-trace.h
-@@ -8,7 +8,7 @@
- do {								\
- 	if (pm_trace_enabled) {					\
- 		const void *tracedata;				\
--		asm volatile(_ASM_MOV " $1f,%0\n"		\
-+		asm volatile(_ASM_MOVABS " $1f,%0\n"		\
- 			     ".section .tracedata,\"a\"\n"	\
- 			     "1:\t.word %c1\n\t"		\
- 			     _ASM_PTR " %c2\n"			\
+diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
+index 6e0a3b43d027..bf333d62889e 100644
+--- a/arch/x86/include/asm/processor.h
++++ b/arch/x86/include/asm/processor.h
+@@ -713,11 +713,13 @@ static inline void sync_core(void)
+ 		"pushfq\n\t"
+ 		"mov %%cs, %0\n\t"
+ 		"pushq %q0\n\t"
+-		"pushq $1f\n\t"
++		"leaq 1f(%%rip), %q0\n\t"
++		"pushq %q0\n\t"
+ 		"iretq\n\t"
+ 		UNWIND_HINT_RESTORE
+ 		"1:"
+-		: "=&r" (tmp), ASM_CALL_CONSTRAINT : : "cc", "memory");
++		: "=&r" (tmp), ASM_CALL_CONSTRAINT
++		: : "cc", "memory");
+ #endif
+ }
+ 
 -- 
 2.22.0.770.g0f2c4a37fd-goog
 
