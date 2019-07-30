@@ -2,100 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B24557B053
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 19:41:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B0517B048
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 19:40:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731428AbfG3RlR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 13:41:17 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:36266 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726992AbfG3RlO (ORCPT
+        id S1731357AbfG3Rkm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 13:40:42 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:41220 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728121AbfG3Rkm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 13:41:14 -0400
-Received: by mail-lj1-f193.google.com with SMTP id i21so62915724ljj.3;
-        Tue, 30 Jul 2019 10:41:13 -0700 (PDT)
+        Tue, 30 Jul 2019 13:40:42 -0400
+Received: by mail-io1-f66.google.com with SMTP id j5so125931733ioj.8
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 10:40:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=nYoIRB4hdud/dqLrHKUsBQqYVNNWUy/cBvAXB5JEb04=;
-        b=Lbo+5wDMrbFMru7CZxX4Rxj6u+llEYRos7P+oAp3FdWciGiCRSc+LdidOYBPwROQ5P
-         d3NGyKGMKa6zn+h+R/ni0bSvTxdqPt/c5W9tyWpadE7Ti1qBZV8UYRMq8t1DSWOJY8sJ
-         flKn3sKJ396/TULgfMQsxs0ORuvU1ieWc4tooUHVFvqV7lOWwuxAMC5+Fl2npYFcA9q1
-         oGMc+57D+T/MGcj/5hv84iJrr+Bc3a5OQOMN7OwwqkWWsBM+pvwBhQBRFi/szQBREk5C
-         NmKQDpWVQEzBFaRo01YIb2zxUequp9khzbd3hipsySvqISuti/+0ninTjqIazIgWwHQS
-         xsSA==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=BFeR4tAU5ONwRxrZH74vD9rAw7q+rir0LAtgn600pQo=;
+        b=QYqMqliMOGNxlsIuyMiYTDi/8qLlryHF904OuiWIPby5+f+Zti2FYyn7bGij7xfWSc
+         sZxvxYZjN1IgFmeo0Nr8e2FItipeC18I9dpXvWk2QV9e7Y4IEEn88pYVeKFt/J9VYEK8
+         60bvc1Ljcp06AS/1bY3KfN39DgfYkIKnHr7zzhAH/Vvid9WNpeXdwIqXxM6SuFZo+wbg
+         EvP+R2/sf76vXi55+Ib/CNpKNW4SCqDJg9yk2Dqa/tjnZF/BAl10c//pUbwi7/+TlfgR
+         BriluIdEHMp17zMb8ChyGrvo/r2DT7ss5a877gh6nOb3Ht7IpjxiCbdZo3dmVL8FY0tR
+         U6Og==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=nYoIRB4hdud/dqLrHKUsBQqYVNNWUy/cBvAXB5JEb04=;
-        b=dnbkPPV6FtaZ6L62jxHiptH50emkV80DpE5NMoN2jQYeJQr6BMDV7ZInE/bH03DYrI
-         zEJCCDvPKXme1fFwjHFZ4qS+acK8PDO7yxOIZVum/3vjMkF6DJm7oaOU7HXdlmX7R014
-         2uWVg732n+nAesBr/+rpL1STrpyYteNQUu3IVXU6N8bQ0N0O1fdJMJqfdjMPiH3ehTS1
-         h0ZETxlKfQp4kp9gQE5PKOgrvyYB4r0AiNswlifATGYGGOjSI/kI2PCNTrGG0cTDACGo
-         TI5q2kMP+NYLG8M+CF3NCQtpaoXpfLGuYLF6IOz8SAdXTzmQBVTDP/2ztt5j2kU3sabC
-         9iSg==
-X-Gm-Message-State: APjAAAVF2PbK8IeU8AJlgfQNPucZCwbSLmc9QKgRANp1gDtrZn23OvTx
-        9TdGjedYfqjcMaffVg5RxCg=
-X-Google-Smtp-Source: APXvYqwXtAm48fuuVXdJWivjrdfYyG/kEw+mvmixs+YOrm8bl8QlLP+RQ8jA7URpssf7Xoaf3N/KWQ==
-X-Received: by 2002:a2e:5bdd:: with SMTP id m90mr59141281lje.46.1564508473035;
-        Tue, 30 Jul 2019 10:41:13 -0700 (PDT)
-Received: from localhost.localdomain (ppp91-78-220-99.pppoe.mtu-net.ru. [91.78.220.99])
-        by smtp.gmail.com with ESMTPSA id g5sm13721177ljj.69.2019.07.30.10.41.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Jul 2019 10:41:12 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 2/2] soc/tegra: pmc: Remove unnecessary memory barrier
-Date:   Tue, 30 Jul 2019 20:40:20 +0300
-Message-Id: <20190730174020.15878-2-digetx@gmail.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190730174020.15878-1-digetx@gmail.com>
-References: <20190730174020.15878-1-digetx@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BFeR4tAU5ONwRxrZH74vD9rAw7q+rir0LAtgn600pQo=;
+        b=HNbQVxmM7b9sdbpcrMMrst1ZC6GvbEe2ORtG1Pf5SqHpVGQXr75ACLudwMIy4/R9GF
+         1HncoYpjD3ZfCKZd1BnGfNugcSlrWs8hg6RPGfBRT52ndC4HjkRjkVRXJ4Dr7gyE6Mhx
+         ffDr96xYyXscR0V4J1vyXsWaNh7XdD3NRO2YOZi+1oN9dhpRfI8pQTXGQDtMw24NbXE5
+         g3LCj1VgAVyrh7PPolTRGNA7o9F8K18XWT8KFfRHvcqxfb3lcGmmkZDMGZGR+xS8ohnl
+         nq63BBgLSy+ILQPHg2hGtcm41Ywo6sDX+WQyBeXZYXEtiRHgykrEmjezqnS1N1a7yvn9
+         H1Cg==
+X-Gm-Message-State: APjAAAXHHJHbGCJtXqBe5hYCgdN7W7mP7WMtXK/mcsZPaq5Dmz8fxRs6
+        mD7OoyYKQPXGOrzBBacCApq15UPeYMwAKBMnEipMwQ==
+X-Google-Smtp-Source: APXvYqyFyzeZEgjdnOHpTCFYjQXdvTAFGxut6M5XUcyeytb3kogaKxVjONsRirs4U6naOSG1mOZAA9EZ8Zq62eP1is4=
+X-Received: by 2002:a5e:c241:: with SMTP id w1mr101182344iop.58.1564508441663;
+ Tue, 30 Jul 2019 10:40:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190726160839.12478-1-suzuki.poulose@arm.com>
+In-Reply-To: <20190726160839.12478-1-suzuki.poulose@arm.com>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Tue, 30 Jul 2019 11:40:30 -0600
+Message-ID: <CANLsYkzFY_N=JfgJ2fOcA3SDKHXL1+cGvPN_-3r4hD-_G=49Ow@mail.gmail.com>
+Subject: Re: [PATCH] coresight: acpi: Static funnel support
+To:     Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Coresight ML <coresight@lists.linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The removed barrier isn't needed because the writes/reads are strictly
-ordered and even if PMC had separate ports for the writes, it wouldn't
-matter since the hardware logic takes into effect after triggering CPU's
-power-gating and at that point all CPU accesses are guaranteed to be
-completed. Hence remove the barrier to eliminate the confusion.
+On Fri, 26 Jul 2019 at 10:08, Suzuki K Poulose <suzuki.poulose@arm.com> wrote:
+>
+> The ACPI bindings for CoreSight has been updated to add the device
+> id for non-programmable CoreSight funnels (aka static funnels) as of
+> v1.1 [0]. Add the ACPI id for static funnels in the driver.
+>
+> [0] https://static.docs.arm.com/den0067/a/DEN0067_CoreSight_ACPI_1.1.pdf
+>
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> ---
+>  drivers/hwtracing/coresight/coresight-funnel.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+>
+> diff --git a/drivers/hwtracing/coresight/coresight-funnel.c b/drivers/hwtracing/coresight/coresight-funnel.c
+> index fa97cb9ab4f9..0c99848a5d69 100644
+> --- a/drivers/hwtracing/coresight/coresight-funnel.c
+> +++ b/drivers/hwtracing/coresight/coresight-funnel.c
+> @@ -5,6 +5,7 @@
+>   * Description: CoreSight Funnel driver
+>   */
+>
+> +#include <linux/acpi.h>
+>  #include <linux/kernel.h>
+>  #include <linux/init.h>
+>  #include <linux/types.h>
+> @@ -302,11 +303,19 @@ static const struct of_device_id static_funnel_match[] = {
+>         {}
+>  };
+>
+> +#ifdef CONFIG_ACPI
+> +static const struct acpi_device_id static_funnel_ids[] = {
+> +       {"ARMHC9FE", 0},
+> +       {},
+> +};
+> +#endif
+> +
+>  static struct platform_driver static_funnel_driver = {
+>         .probe          = static_funnel_probe,
+>         .driver         = {
+>                 .name   = "coresight-static-funnel",
+>                 .of_match_table = static_funnel_match,
+> +               .acpi_match_table = ACPI_PTR(static_funnel_ids),
+>                 .pm     = &funnel_dev_pm_ops,
+>                 .suppress_bind_attrs = true,
+>         },
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
+I haved also applied this patch.
 
-Changelog:
+Mathieu
 
-v3: No changes.
-
-v2: New patch that was added after Jon's Hunter pointing that it's better
-    not to change the barrier's placement in the code. In fact the barrier
-    is not needed at all.
-
- drivers/soc/tegra/pmc.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index aba3396b2e73..3044809f1c10 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -1457,8 +1457,6 @@ void tegra_pmc_enter_suspend_mode(enum tegra_suspend_mode mode)
- 	do_div(ticks, USEC_PER_SEC);
- 	tegra_pmc_writel(pmc, ticks, PMC_CPUPWROFF_TIMER);
- 
--	wmb();
--
- 	value = tegra_pmc_readl(pmc, PMC_CNTRL);
- 	value &= ~PMC_CNTRL_SIDE_EFFECT_LP0;
- 	value |= PMC_CNTRL_CPU_PWRREQ_OE;
--- 
-2.22.0
-
+> --
+> 2.21.0
+>
