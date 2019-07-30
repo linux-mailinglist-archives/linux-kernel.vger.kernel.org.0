@@ -2,98 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BBEF97A099
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 07:52:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CC967A0B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 07:52:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727699AbfG3FwE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 01:52:04 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:51842 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726169AbfG3FwD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 01:52:03 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7C74259455;
-        Tue, 30 Jul 2019 05:52:03 +0000 (UTC)
-Received: from rt4.app.eng.rdu2.redhat.com (rt4.app.eng.rdu2.redhat.com [10.10.161.56])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 476045DAA4;
-        Tue, 30 Jul 2019 05:52:03 +0000 (UTC)
-Received: from rt4.app.eng.rdu2.redhat.com (localhost [127.0.0.1])
-        by rt4.app.eng.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id x6U5q270005348;
-        Tue, 30 Jul 2019 01:52:02 -0400
-Received: (from apache@localhost)
-        by rt4.app.eng.rdu2.redhat.com (8.14.4/8.14.4/Submit) id x6U5q1aH005347;
-        Tue, 30 Jul 2019 01:52:01 -0400
-From:   Red Hat Product Security <secalert@redhat.com>
-X-PGP-Public-Key: https://www.redhat.com/security/650d5882.txt
-Subject: [engineering.redhat.com #494735] Re: [PATCH] nbd_genl_status: null check for nla_nest_start
-Reply-To: secalert@redhat.com
-In-Reply-To: <20190729164226.22632-1-navid.emamdoost@gmail.com>
-References: <RT-Ticket-494735@engineering.redhat.com>
- <20190729130912.7imtg3hfnvb4lt2y@MacBook-Pro-91.local>
- <20190729164226.22632-1-navid.emamdoost@gmail.com>
-Message-ID: <rt-4.0.13-5201-1564465920-1304.494735-5-0@engineering.redhat.com>
-X-RT-Loop-Prevention: engineering.redhat.com
-RT-Ticket: engineering.redhat.com #494735
-Managed-BY: RT 4.0.13 (http://www.bestpractical.com/rt/)
-RT-Originator: darunesh@redhat.com
-To:     navid.emamdoost@gmail.com
-CC:     axboe@kernel.dk, emamd001@umn.edu, josef@toxicpanda.com,
-        kjlu@umn.edu, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, nbd@other.debian.org,
-        smccaman@umn.edu
+        id S1728673AbfG3Fwy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 01:52:54 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:47008 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729685AbfG3Fwv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 01:52:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
+        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
+        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=WWqUlWBk9SeNDsTgchqiBvCPPdXQGby4eLwA4l1Wn/c=; b=UQt+nBOCFLuTt9lR9m80f7mUgE
+        lS9m/3kgkBnUgWm075wpjDvoWcfsvGjj6XNdiPu0xYJSsIR91F3EVZwqjOtGPHT3tWlZR1g4Z/KQV
+        sMdXE4d3yo6a78yBkEuoY1UtuG8aYk83pTsB59Pqnw9yKDyyqlzcymrOVg3Ou7ovmKyZvBhF6NEzZ
+        YLcfiBi183KQGYbKJQFVbR+/FEJmnM8Cf0NcQFhzluMjCVBfbn7EewshSuoqwtxhgBLdNx+a/2VgS
+        05Skzq6tlpaW0rNMPwXleuGdfG+87MF1AAS0XJXPfCY9/nfdHzoMBWXoCqJG0YWhBv5LN55u8SyqL
+        DNIqFunQ==;
+Received: from [195.167.85.94] (helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hsL43-0001QQ-Bt; Tue, 30 Jul 2019 05:52:47 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        Felix Kuehling <Felix.Kuehling@amd.com>
+Cc:     Ralph Campbell <rcampbell@nvidia.com>, linux-mm@kvack.org,
+        nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 11/13] mm: cleanup the hmm_vma_handle_pmd stub
+Date:   Tue, 30 Jul 2019 08:52:01 +0300
+Message-Id: <20190730055203.28467-12-hch@lst.de>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190730055203.28467-1-hch@lst.de>
+References: <20190730055203.28467-1-hch@lst.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset="utf-8"
-X-RT-Original-Encoding: utf-8
-Date:   Tue, 30 Jul 2019 01:52:01 -0400
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Tue, 30 Jul 2019 05:52:03 +0000 (UTC)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Navid,
+Stub out the whole function when CONFIG_TRANSPARENT_HUGEPAGE is not set
+to make the function easier to read.
 
-Thank you for you report. I have forwarded this to our analysis team. Once I'll
-get an update on your reported vulnerability and it's patched I'll let you
-know.
-Please let me know if you have any questions or concerns.
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ mm/hmm.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-On Mon Jul 29 12:42:56 2019, navid.emamdoost@gmail.com wrote:
-> nla_nest_start may fail and return NULL. The check is inserted, and
-> errno is selected based on other call sites within the same source
-> code.
-> Update: removed extra new line.
->
-> Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
-> ---
-> drivers/block/nbd.c | 5 +++++
-> 1 file changed, 5 insertions(+)
->
-> diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
-> index 9bcde2325893..2410812d1e82 100644
-> --- a/drivers/block/nbd.c
-> +++ b/drivers/block/nbd.c
-> @@ -2149,6 +2149,11 @@ static int nbd_genl_status(struct sk_buff *skb,
-> struct genl_info *info)
-> }
->
-> dev_list = nla_nest_start_noflag(reply, NBD_ATTR_DEVICE_LIST);
-> + if (!dev_list) {
-> + ret = -EMSGSIZE;
-> + goto out;
-> + }
-> +
-> if (index == -1) {
-> ret = idr_for_each(&nbd_index_idr, &status_cb, reply);
-> if (ret) {
-
-
---
-Best Regards,
-Dhananjay Arunesh, Red Hat Product Security
-7F45 FDD1 BB92 2DA8 CD05 F034 9B3D 8FE3 50EC 5D74
+diff --git a/mm/hmm.c b/mm/hmm.c
+index 4d3bd41b6522..f4e90ea5779f 100644
+--- a/mm/hmm.c
++++ b/mm/hmm.c
+@@ -455,13 +455,10 @@ static inline uint64_t pmd_to_hmm_pfn_flags(struct hmm_range *range, pmd_t pmd)
+ 				range->flags[HMM_PFN_VALID];
+ }
+ 
+-static int hmm_vma_handle_pmd(struct mm_walk *walk,
+-			      unsigned long addr,
+-			      unsigned long end,
+-			      uint64_t *pfns,
+-			      pmd_t pmd)
+-{
+ #ifdef CONFIG_TRANSPARENT_HUGEPAGE
++static int hmm_vma_handle_pmd(struct mm_walk *walk, unsigned long addr,
++		unsigned long end, uint64_t *pfns, pmd_t pmd)
++{
+ 	struct hmm_vma_walk *hmm_vma_walk = walk->private;
+ 	struct hmm_range *range = hmm_vma_walk->range;
+ 	struct dev_pagemap *pgmap = NULL;
+@@ -490,11 +487,14 @@ static int hmm_vma_handle_pmd(struct mm_walk *walk,
+ 		put_dev_pagemap(pgmap);
+ 	hmm_vma_walk->last = end;
+ 	return 0;
+-#else
+-	/* If THP is not enabled then we should never reach this code ! */
++}
++#else /* CONFIG_TRANSPARENT_HUGEPAGE */
++static int hmm_vma_handle_pmd(struct mm_walk *walk, unsigned long addr,
++		unsigned long end, uint64_t *pfns, pmd_t pmd)
++{
+ 	return -EINVAL;
+-#endif
+ }
++#endif /* CONFIG_TRANSPARENT_HUGEPAGE */
+ 
+ static inline uint64_t pte_to_hmm_pfn_flags(struct hmm_range *range, pte_t pte)
+ {
+-- 
+2.20.1
 
