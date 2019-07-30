@@ -2,155 +2,312 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C61257B233
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:42:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C0F47B23F
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:44:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730334AbfG3Smp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 14:42:45 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:56271 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726165AbfG3Smo (ORCPT
+        id S2388067AbfG3Sok (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 14:44:40 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:42620 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388028AbfG3Soj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 14:42:44 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6UIgVUR3332712
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Tue, 30 Jul 2019 11:42:31 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6UIgVUR3332712
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019071901; t=1564512152;
-        bh=X5gCfAk+g0cp1gr4qLew4B2332f1Yt1iR4j3L3nbSlw=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=CyEz86T7tXAZ9R3USYq+ak7aZ7vKyVdisMIm1HRmiJJ//IYHgtleYO/vgR6PxaDcP
-         hYoK3iAV84jAQ7G3Mv+pp5276OnONf6Q92v4GWsw9xm0KH81t+dtfzG64ddzLnaDvC
-         XDKDD5HkbKqgB7pikF4dTnoKQ+JJBMB9AQPjX2j4ZiyfMIf89XYZrVcRRivv1JYTyT
-         tyA2FyPw+WPpYx5wVmHGdXzhWQjZRBsMcQZS4H+ISH8mxPH+5w9WAWBTJcb9shwDcB
-         wxk7W1R/zVdkddQMS/88bwFw1tOknzP3ZHMtlt1nTM0VdaNClN09kqMaAs1eM61X3p
-         ZhGv7dj00j7EA==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6UIgVr23332709;
-        Tue, 30 Jul 2019 11:42:31 -0700
-Date:   Tue, 30 Jul 2019 11:42:31 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
-Message-ID: <tip-651bf38ce10a65ef8efb901fc33187127c023e97@git.kernel.org>
-Cc:     hpa@zytor.com, ak@linux.intel.com, jolsa@kernel.org,
-        acme@redhat.com, peterz@infradead.org,
-        alexey.budankov@linux.intel.com, mingo@kernel.org,
-        alexander.shishkin@linux.intel.com, namhyung@kernel.org,
-        linux-kernel@vger.kernel.org, mpetlan@redhat.com,
-        tglx@linutronix.de
-Reply-To: acme@redhat.com, peterz@infradead.org,
-          alexey.budankov@linux.intel.com, mingo@kernel.org,
-          alexander.shishkin@linux.intel.com, linux-kernel@vger.kernel.org,
-          namhyung@kernel.org, mpetlan@redhat.com, tglx@linutronix.de,
-          hpa@zytor.com, ak@linux.intel.com, jolsa@kernel.org
-In-Reply-To: <20190721112506.12306-48-jolsa@kernel.org>
-References: <20190721112506.12306-48-jolsa@kernel.org>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] libperf: Add perf_evlist__for_each_evsel() iterator
-Git-Commit-ID: 651bf38ce10a65ef8efb901fc33187127c023e97
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 30 Jul 2019 14:44:39 -0400
+Received: from floko.floko.floko (unknown [IPv6:2804:431:c7f1:ce2f:ec1:e6e6:2e9f:e76e])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: koike)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 282C428B911;
+        Tue, 30 Jul 2019 19:44:32 +0100 (BST)
+From:   Helen Koike <helen.koike@collabora.com>
+To:     linux-rockchip@lists.infradead.org
+Cc:     devicetree@vger.kernel.org, eddie.cai.linux@gmail.com,
+        mchehab@kernel.org, heiko@sntech.de, jacob2.chen@rock-chips.com,
+        jeffy.chen@rock-chips.com, zyc@rock-chips.com,
+        linux-kernel@vger.kernel.org, tfiga@chromium.org,
+        hans.verkuil@cisco.com, laurent.pinchart@ideasonboard.com,
+        sakari.ailus@linux.intel.com, kernel@collabora.com,
+        ezequiel@collabora.com, linux-media@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, zhengsq@rock-chips.com,
+        Helen Koike <helen.koike@collabora.com>
+Subject: [PATCH v8 00/14] Rockchip ISP1 Driver
+Date:   Tue, 30 Jul 2019 15:42:42 -0300
+Message-Id: <20190730184256.30338-1-helen.koike@collabora.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-X-Spam-Status: No, score=-0.2 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
-        autolearn=no autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  651bf38ce10a65ef8efb901fc33187127c023e97
-Gitweb:     https://git.kernel.org/tip/651bf38ce10a65ef8efb901fc33187127c023e97
-Author:     Jiri Olsa <jolsa@kernel.org>
-AuthorDate: Sun, 21 Jul 2019 13:24:34 +0200
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Mon, 29 Jul 2019 18:34:45 -0300
+Hello,
 
-libperf: Add perf_evlist__for_each_evsel() iterator
+I'm re-sending a new version of ISP(Camera) v4l2 driver for rockchip
+rk3399 SoC.
 
-Add a perf_evlist__for_each_evsel() macro to iterate perf_evsel objects
-in evlist.
+I didn't change much from the last version, just applying the
+suggestions made in the previous one.
 
-Introduce the perf_evlist__next() function to do that without exposing
-'struct perf_evlist' internals.
+This patchset is also available at:
+https://gitlab.collabora.com/koike/linux/tree/rockchip/isp/v8
 
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Michael Petlan <mpetlan@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20190721112506.12306-48-jolsa@kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/lib/evlist.c              | 20 ++++++++++++++++++++
- tools/perf/lib/include/perf/evlist.h |  7 +++++++
- tools/perf/lib/libperf.map           |  1 +
- 3 files changed, 28 insertions(+)
+Libcamera patched to work with this version:
+https://gitlab.collabora.com/koike/libcamera
+(also sent to the mailing list)
 
-diff --git a/tools/perf/lib/evlist.c b/tools/perf/lib/evlist.c
-index 0517deb4cb1c..979ee423490f 100644
---- a/tools/perf/lib/evlist.c
-+++ b/tools/perf/lib/evlist.c
-@@ -34,3 +34,23 @@ struct perf_evlist *perf_evlist__new(void)
- 
- 	return evlist;
- }
-+
-+struct perf_evsel *
-+perf_evlist__next(struct perf_evlist *evlist, struct perf_evsel *prev)
-+{
-+	struct perf_evsel *next;
-+
-+	if (!prev) {
-+		next = list_first_entry(&evlist->entries,
-+					struct perf_evsel,
-+					node);
-+	} else {
-+		next = list_next_entry(prev, node);
-+	}
-+
-+	/* Empty list is noticed here so don't need checking on entry. */
-+	if (&next->node == &evlist->entries)
-+		return NULL;
-+
-+	return next;
-+}
-diff --git a/tools/perf/lib/include/perf/evlist.h b/tools/perf/lib/include/perf/evlist.h
-index 7255a60869a1..5092b622935b 100644
---- a/tools/perf/lib/include/perf/evlist.h
-+++ b/tools/perf/lib/include/perf/evlist.h
-@@ -13,5 +13,12 @@ LIBPERF_API void perf_evlist__add(struct perf_evlist *evlist,
- LIBPERF_API void perf_evlist__remove(struct perf_evlist *evlist,
- 				     struct perf_evsel *evsel);
- LIBPERF_API struct perf_evlist *perf_evlist__new(void);
-+LIBPERF_API struct perf_evsel* perf_evlist__next(struct perf_evlist *evlist,
-+						 struct perf_evsel *evsel);
-+
-+#define perf_evlist__for_each_evsel(evlist, pos)	\
-+	for ((pos) = perf_evlist__next((evlist), NULL);	\
-+	     (pos) != NULL;				\
-+	     (pos) = perf_evlist__next((evlist), (pos)))
- 
- #endif /* __LIBPERF_EVLIST_H */
-diff --git a/tools/perf/lib/libperf.map b/tools/perf/lib/libperf.map
-index e3eac9b60726..c0968226f7b6 100644
---- a/tools/perf/lib/libperf.map
-+++ b/tools/perf/lib/libperf.map
-@@ -17,6 +17,7 @@ LIBPERF_0.0.1 {
- 		perf_evlist__init;
- 		perf_evlist__add;
- 		perf_evlist__remove;
-+		perf_evlist__next;
- 	local:
- 		*;
- };
+I tested on the rockpi 4 with a rpi v1.3 sensor and also with the
+Scarlet Chromebook.
+
+Known issues (same as in v7):
+-------------
+- Reloading the module doesn't work (there is some missing cleanup when
+unloading)
+- When capturing in bayer format, changing the size doesn't seem to
+affect the image.
+- crop needs more tests
+- v4l2-compliance error:
+        fail: v4l2-test-controls.cpp(824): subscribe event for control 'Image Processing Controls' failed
+test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: FAIL
+It seems that if controls are supported, v4l2-compliance says that
+controls of type 'Image Processing Controls' are mandatory, is this
+correct?
+- It seems there are still some issues with interrupts, but I couldn't
+isolate them yet.
+
+Previous changelog:
+-------------------
+
+changes in V6:
+  - add mipi txrx phy support
+  - remove bool and enum from uapi header
+  - add buf_prepare op
+  - correct some spelling problems
+  - return all queued buffers when starting stream failed
+
+changes in V5: Sync with local changes,
+  - fix the SP height limit
+  - speed up the second stream capture
+  - the second stream can't force sync for rsz when start/stop streaming
+  - add frame id to param vb2 buf
+  - enable luminance maximum threshold
+
+changes in V4:
+  - fix some bugs during development
+  - move quantization settings to rkisp1 subdev
+  - correct some spelling problems
+  - describe ports in dt-binding documents
+
+changes in V3:
+  - add some comments
+  - fix wrong use of v4l2_async_subdev_notifier_register
+  - optimize two paths capture at a time
+  - remove compose
+  - re-struct headers
+  - add a tmp wiki page: http://opensource.rock-chips.com/wiki_Rockchip-isp1
+
+changes in V2:
+  mipi-phy:
+    - use async probing
+    - make it be a child device of the GRF
+  isp:
+    - add dummy buffer
+    - change the way to get bus configuration, which make it possible to
+            add parallel sensor support in the future(without mipi-phy driver).
+
+------------------
+
+Changes in v8:
+- Add SPDX in the header
+- Remove emacs configs
+- Fix doc style
+- Remove boiler plate license text
+
+Changes in v7:
+- s/IPU3/RK_ISP1
+- s/correspond/corresponding
+- s/use/uses
+- s/docuemnt/document
+- Fix checkpatch errors (lines over 80 and SPDX)
+- Add TODO to improve docs
+- Migrate dphy specific code from
+drivers/media/platform/rockchip/isp1/mipi_dphy_sy.c
+to drivers/phy/rockchip/phy-rockchip-dphy.c
+- Drop support for rk3288
+- Drop support for dphy txrx
+- code styling and checkpatch fixes
+- fixed warning because of unknown entity type
+- fixed v4l2-compliance errors regarding rkisp1 formats, try formats
+and default values
+- fix typo riksp1/rkisp1
+- redesign: remove mipi/csi subdevice, sensors connect directly to the
+isp subdevice in the media topology now. As a consequence, remove the
+hack in mipidphy_g_mbus_config() where information from the sensor was
+being propagated through the topology.
+- From the old dphy:
+        * cache get_remote_sensor() in s_stream
+        * use V4L2_CID_PIXEL_RATE instead of V4L2_CID_LINK_FREQ
+- Replace stream state with a boolean
+- code styling and checkpatch fixes
+- fix stop_stream (return after calling stop, do not reenable the stream)
+- fix rkisp1_isp_sd_get_selection when V4L2_SUBDEV_FORMAT_TRY is set
+- fix get format in output (isp_sd->out_fmt.mbus_code was being ignored)
+- s/intput/input
+- remove #define sd_to_isp_sd(_sd), add a static inline as it will be
+reused by the capture
+- s/strlcpy/strscpy
+- sort out the locks in isp stats
+- code styling and checkpatch fixes
+- s/strlcpy/strscpy
+- s/strcpy/strscpy
+- fix config lsc error
+LSC data table size is 17x17, but when configuring data to ISP,
+should be aligned to 18x17. That means every last data of last
+line should be filled with 0, and not filled with the data of
+next line.
+- Update new ISP parameters immediately
+For those sub modules that have shadow registers in core isp, the
+new programing parameters would not be active if both
+CIF_ISP_CTRL_ISP_CFG_UPD_PERMANENT and CFG_UPD are not set. Now
+we configure CFG_UPD to force update the shadow registers when new
+ISP parameters are configured.
+- fix some ISP parameters config error
+Some ISP parameter config functions may override the old enable
+bit value, because the enable bits of these modules are in the
+same registers with parameters. So we should save the old enable
+bits firstly.
+- code styling and checkpatch fixes
+- s/strlcpy/strscpy
+- Fix v4l2-compliance issues:
+        * remove input ioctls
+media api can be used to define the topology, this input api is not
+required. Besides it, if an input is enumerated, v4l2-compliance is not
+happy with G_FMT returning the default colorspace instead of something
+more specific.
+        * return the pixelformat to the userspace
+G_/S_/TRY_ FORMAT should return a valid pixelformat to the user, even if
+the user gave an invalid one
+        * add missing default colorspace and ycbcr
+        * fix wrong pixformat in mp_fmts[] table
+        * add buf type check in s_/g_selection
+        * queue_setup - check sizes
+        * normalize bus_info name
+        * fix field any v4l2-compliance -s complain - set field none
+        when streaming
+- Fix compiling error: s/vidioc_enum_fmt_vid_cap_mplane/vidioc_enum_fmt_vid_cap
+- Replace stream state with a boolean
+The rkisp1_state enum consists only of 3 entries, where 1 is completely
+unused and the other two respectively mean not streaming or streaming.
+Replace it with a boolean called "streaming".
+- Simplify MI interrupt handling
+Rather than adding unnecessary indirection, just use stream index to
+handle MI interrupt enable/disable/clear, since the stream index matches
+the order of bits now, thanks to previous patch. While at it, remove
+some dead code.
+- code styling and checkpatch fixes
+- add link_validate: don't allow a link with bayer/non-bayer mismatch
+- VIDEO_ROCKCHIP_ISP1 selects VIDEOBUF2_VMALLOC
+- add PHY_ROCKCHIP_DPHY as a dependency for VIDEO_ROCKCHIP_ISP1
+- Fix compilation and runtime errors due to bitrotting
+The code has bit-rotten since March 2018, fix compilation errors.
+The new V4L2 async notifier API requires notifiers to be initialized by
+a call to v4l2_async_notifier_init() before being used, do so.
+- Add missing module device table
+- use clk_bulk framework
+- add missing notifiers cleanups
+- s/strlcpy/strscpy
+- normalize bus_info name
+- fix s_stream error path, stream_cnt wans't being decremented properly
+- use devm_platform_ioremap_resource() helper
+- s/deice/device
+- redesign: remove mipi/csi subdevice, sensors connect directly to the
+isp subdevice in the media topology now.
+- remove "saved_state" member from rkisp1_stream struct
+- Reverse the order of MIs
+- Simplify MI interrupt handling
+Rather than adding unnecessary indirection, just use stream index to
+handle MI interrupt enable/disable/clear, since the stream index matches
+the order of bits now, thanks to previous patch. While at it, remove
+some dead code.
+- code styling and checkpatch fixes
+- update document with new design and tested example
+- updated doc with new design and tested example
+- add phy properties
+- add ports
+- add phy-cells
+
+Helen Koike (1):
+  MAINTAINERS: add entry for Rockchip ISP1 driver
+
+Jacob Chen (9):
+  media: doc: add document for rkisp1 meta buffer format
+  media: rkisp1: add Rockchip MIPI Synopsys DPHY driver
+  media: rkisp1: add Rockchip ISP1 subdev driver
+  media: rkisp1: add ISP1 statistics driver
+  media: rkisp1: add ISP1 params driver
+  media: rkisp1: add capture device driver
+  media: rkisp1: add rockchip isp1 core driver
+  dt-bindings: Document the Rockchip ISP1 bindings
+  dt-bindings: Document the Rockchip MIPI RX D-PHY bindings
+
+Jeffy Chen (1):
+  media: rkisp1: Add user space ABI definitions
+
+Shunqian Zheng (3):
+  media: videodev2.h, v4l2-ioctl: add rkisp1 meta buffer format
+  arm64: dts: rockchip: add isp0 node for rk3399
+  arm64: dts: rockchip: add rx0 mipi-phy for rk3399
+
+ .../bindings/media/rockchip-isp1.txt          |   71 +
+ .../bindings/media/rockchip-mipi-dphy.txt     |   38 +
+ Documentation/media/uapi/v4l/meta-formats.rst |    2 +
+ .../uapi/v4l/pixfmt-meta-rkisp1-params.rst    |   23 +
+ .../uapi/v4l/pixfmt-meta-rkisp1-stat.rst      |   22 +
+ MAINTAINERS                                   |    8 +
+ arch/arm64/boot/dts/rockchip/rk3399.dtsi      |   36 +
+ drivers/media/platform/Kconfig                |   12 +
+ drivers/media/platform/Makefile               |    1 +
+ drivers/media/platform/rockchip/isp1/Makefile |    7 +
+ .../media/platform/rockchip/isp1/capture.c    | 1754 +++++++++++++++++
+ .../media/platform/rockchip/isp1/capture.h    |  164 ++
+ drivers/media/platform/rockchip/isp1/common.h |  101 +
+ drivers/media/platform/rockchip/isp1/dev.c    |  675 +++++++
+ drivers/media/platform/rockchip/isp1/dev.h    |   97 +
+ .../media/platform/rockchip/isp1/isp_params.c | 1604 +++++++++++++++
+ .../media/platform/rockchip/isp1/isp_params.h |   50 +
+ .../media/platform/rockchip/isp1/isp_stats.c  |  508 +++++
+ .../media/platform/rockchip/isp1/isp_stats.h  |   60 +
+ drivers/media/platform/rockchip/isp1/regs.c   |  223 +++
+ drivers/media/platform/rockchip/isp1/regs.h   | 1525 ++++++++++++++
+ drivers/media/platform/rockchip/isp1/rkisp1.c | 1286 ++++++++++++
+ drivers/media/platform/rockchip/isp1/rkisp1.h |  111 ++
+ drivers/media/v4l2-core/v4l2-ioctl.c          |    2 +
+ drivers/phy/rockchip/Kconfig                  |    8 +
+ drivers/phy/rockchip/Makefile                 |    1 +
+ drivers/phy/rockchip/phy-rockchip-dphy.c      |  408 ++++
+ include/uapi/linux/rkisp1-config.h            |  816 ++++++++
+ include/uapi/linux/videodev2.h                |    4 +
+ 29 files changed, 9617 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/rockchip-isp1.txt
+ create mode 100644 Documentation/devicetree/bindings/media/rockchip-mipi-dphy.txt
+ create mode 100644 Documentation/media/uapi/v4l/pixfmt-meta-rkisp1-params.rst
+ create mode 100644 Documentation/media/uapi/v4l/pixfmt-meta-rkisp1-stat.rst
+ create mode 100644 drivers/media/platform/rockchip/isp1/Makefile
+ create mode 100644 drivers/media/platform/rockchip/isp1/capture.c
+ create mode 100644 drivers/media/platform/rockchip/isp1/capture.h
+ create mode 100644 drivers/media/platform/rockchip/isp1/common.h
+ create mode 100644 drivers/media/platform/rockchip/isp1/dev.c
+ create mode 100644 drivers/media/platform/rockchip/isp1/dev.h
+ create mode 100644 drivers/media/platform/rockchip/isp1/isp_params.c
+ create mode 100644 drivers/media/platform/rockchip/isp1/isp_params.h
+ create mode 100644 drivers/media/platform/rockchip/isp1/isp_stats.c
+ create mode 100644 drivers/media/platform/rockchip/isp1/isp_stats.h
+ create mode 100644 drivers/media/platform/rockchip/isp1/regs.c
+ create mode 100644 drivers/media/platform/rockchip/isp1/regs.h
+ create mode 100644 drivers/media/platform/rockchip/isp1/rkisp1.c
+ create mode 100644 drivers/media/platform/rockchip/isp1/rkisp1.h
+ create mode 100644 drivers/phy/rockchip/phy-rockchip-dphy.c
+ create mode 100644 include/uapi/linux/rkisp1-config.h
+
+-- 
+2.22.0
+
