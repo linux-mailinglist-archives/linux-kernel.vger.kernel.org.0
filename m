@@ -2,138 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33EE77B17E
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:18:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DFEA7B185
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:18:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727567AbfG3SR0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 14:17:26 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:38595 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387519AbfG3SQr (ORCPT
+        id S2387510AbfG3SSC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 14:18:02 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:48531 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388117AbfG3SQm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 14:16:47 -0400
-Received: by mail-pg1-f196.google.com with SMTP id f5so21657993pgu.5
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 11:16:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=drpvbwUEmUOqA3rSa/EHTjOXz8bDuvvIlVQlOazqbgk=;
-        b=nn4jyTtoTH9EMFWnV9qKEVgmKzU6j7rTN7ZN81N8sybrrR929M2kyR8mWylfC5gGIf
-         bu5GBll3oHbvOyBmuQu+k7OVAvIQlaQ3I2+3kCQhOQlP61Y+XxlbSeyZi1Az2wTEt7aW
-         jzN6RM4Zk6JorcmqOmzg2N6UBzSygP63SU10I=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=drpvbwUEmUOqA3rSa/EHTjOXz8bDuvvIlVQlOazqbgk=;
-        b=k43jvlZmotbr0kaZnOo9CzfnkHJfA+jDZn3gXDUG1l34rbSrvbdWVpyw9S/NQ3lQiK
-         2GBAhHAQMZGptfCimHf0dOk1xqBSwXyM3psPX6Y3Ap0YcshkaqZpXVsL3bZpaZnIUo5M
-         HuVMjANiPTjso6O//V28g5wgS9NCq1otvFqZLd8fiqoohJAmyoyfnQKZDCA89wKAIZ8q
-         9J0SPVORPznpVCYWDG6s01/HSSslABVIOFgN6+bLr8lHhQNcNm/TQdPDHwEH3zJQHmDo
-         VWsZzID3oDBYUejCuStQrcDtrpnLCOQb6nodPr7GvoFPi/RkXI3gwpNqb5Z6lo7tK2KV
-         pVQw==
-X-Gm-Message-State: APjAAAU9x14tqkjIRxDk5E8tKD8fwwd9DZA5+HOBQQHQEg9AslWg7hKI
-        2LUASpaAtcLerx5EY3Qy0IaIeF/RuqgkUw==
-X-Google-Smtp-Source: APXvYqxN5aOtZPn1fNcdcsOE/IvEp6rYADNvu5y7Uo8PjkknLasyDwZtavI+yaiFRABIEE/tUaqmHA==
-X-Received: by 2002:a63:e54f:: with SMTP id z15mr109671681pgj.4.1564510606703;
-        Tue, 30 Jul 2019 11:16:46 -0700 (PDT)
-Received: from smtp.gmail.com ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id g1sm106744083pgg.27.2019.07.30.11.16.45
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 30 Jul 2019 11:16:46 -0700 (PDT)
-From:   Stephen Boyd <swboyd@chromium.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
-        <ville.syrjala@linux.intel.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        alsa-devel@alsa-project.org
-Subject: [PATCH v6 57/57] ALSA: x86: Remove dev_err() usage after platform_get_irq()
-Date:   Tue, 30 Jul 2019 11:15:57 -0700
-Message-Id: <20190730181557.90391-58-swboyd@chromium.org>
-X-Mailer: git-send-email 2.22.0.709.g102302147b-goog
-In-Reply-To: <20190730181557.90391-1-swboyd@chromium.org>
-References: <20190730181557.90391-1-swboyd@chromium.org>
+        Tue, 30 Jul 2019 14:16:42 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6UIGUwL3326166
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Tue, 30 Jul 2019 11:16:30 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6UIGUwL3326166
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019071901; t=1564510591;
+        bh=v8Efk4gwISrpLfv/YaUK/3HiF/epzkl++w7peLRhhPE=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=YDcUC9F5dw6A4zpkbQ/En3WtKzWZwNrU2xZ5b4QyNj+1KkUaGYR251gXGAXOaIQ+d
+         61CEV3ogV7N21t78AhNqwYD/Yz95aXrgSNAY57A6pHyYwtOOeVCAbtXFxkc3k5B5Kk
+         AT6TlAJOFSP2L2hLD0L9GSXHRQB6NSfTpONK+fVIYPk7BLJX+wqsEZTaAZuRz+o4W7
+         BjKcNiAO0d94rO1+9xSh5jqycjDIUH6+FgGPlnYmwlhQm0fX7z7jv8MZS2czyh2mG3
+         DhuYMs/6939+PtVFqkREMpgjWTMk+HxNybAVv/49pFuFZmNyrem/Ww1h46d3VNR4EX
+         tDJ7QV3V/JrmQ==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6UIGThX3326163;
+        Tue, 30 Jul 2019 11:16:29 -0700
+Date:   Tue, 30 Jul 2019 11:16:29 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
+Message-ID: <tip-1625102764a578b11fb407b8194cb0521129d919@git.kernel.org>
+Cc:     mpetlan@redhat.com, acme@redhat.com, linux-kernel@vger.kernel.org,
+        jolsa@kernel.org, tglx@linutronix.de, mingo@kernel.org,
+        peterz@infradead.org, alexander.shishkin@linux.intel.com,
+        hpa@zytor.com, ak@linux.intel.com, alexey.budankov@linux.intel.com,
+        namhyung@kernel.org
+Reply-To: acme@redhat.com, mpetlan@redhat.com,
+          linux-kernel@vger.kernel.org, tglx@linutronix.de, hpa@zytor.com,
+          ak@linux.intel.com, peterz@infradead.org, mingo@kernel.org,
+          jolsa@kernel.org, alexander.shishkin@linux.intel.com,
+          namhyung@kernel.org, alexey.budankov@linux.intel.com
+In-Reply-To: <20190721112506.12306-14-jolsa@kernel.org>
+References: <20190721112506.12306-14-jolsa@kernel.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf evlist: Rename perf_evlist__remove() to
+ evlist__remove()
+Git-Commit-ID: 1625102764a578b11fb407b8194cb0521129d919
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-0.2 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
+        autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We don't need dev_err() messages when platform_get_irq() fails now that
-platform_get_irq() prints an error message itself when something goes
-wrong. Let's remove these prints with a simple semantic patch.
+Commit-ID:  1625102764a578b11fb407b8194cb0521129d919
+Gitweb:     https://git.kernel.org/tip/1625102764a578b11fb407b8194cb0521129d919
+Author:     Jiri Olsa <jolsa@kernel.org>
+AuthorDate: Sun, 21 Jul 2019 13:24:00 +0200
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Mon, 29 Jul 2019 18:34:43 -0300
 
-// <smpl>
-@@
-expression ret;
-struct platform_device *E;
-@@
+perf evlist: Rename perf_evlist__remove() to evlist__remove()
 
-ret =
-(
-platform_get_irq(E, ...)
-|
-platform_get_irq_byname(E, ...)
-);
+Rename perf_evlist__remove() to evlist__remove(), so we don't have a
+name clash when we add perf_evlist__remove() in libperf.
 
-if ( \( ret < 0 \| ret <= 0 \) )
-{
-(
--if (ret != -EPROBE_DEFER)
--{ ...
--dev_err(...);
--... }
-|
-...
--dev_err(...);
-)
-...
-}
-// </smpl>
-
-While we're here, remove braces on if statements that only have one
-statement (manually).
-
-Cc: Jaroslav Kysela <perex@perex.cz>
-Cc: Takashi Iwai <tiwai@suse.com>
-Cc: Chris Wilson <chris@chris-wilson.co.uk>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: "Ville Syrjälä" <ville.syrjala@linux.intel.com>
-Cc: Colin Ian King <colin.king@canonical.com>
-Cc: alsa-devel@alsa-project.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Michael Petlan <mpetlan@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/20190721112506.12306-14-jolsa@kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
+ tools/perf/builtin-inject.c | 4 ++--
+ tools/perf/util/evlist.c    | 2 +-
+ tools/perf/util/evlist.h    | 2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
 
-Please apply directly to subsystem trees
-
- sound/x86/intel_hdmi_audio.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/sound/x86/intel_hdmi_audio.c b/sound/x86/intel_hdmi_audio.c
-index 5fd4e32247a6..cd389d21219a 100644
---- a/sound/x86/intel_hdmi_audio.c
-+++ b/sound/x86/intel_hdmi_audio.c
-@@ -1708,10 +1708,8 @@ static int hdmi_lpe_audio_probe(struct platform_device *pdev)
+diff --git a/tools/perf/builtin-inject.c b/tools/perf/builtin-inject.c
+index 917c8fb4baa5..4e56e399bbc8 100644
+--- a/tools/perf/builtin-inject.c
++++ b/tools/perf/builtin-inject.c
+@@ -622,7 +622,7 @@ static void strip_fini(struct perf_inject *inject)
+ 		if (evsel->handler == drop_sample &&
+ 		    ok_to_remove(evlist, evsel)) {
+ 			pr_debug("Deleting %s\n", perf_evsel__name(evsel));
+-			perf_evlist__remove(evlist, evsel);
++			evlist__remove(evlist, evsel);
+ 			evsel__delete(evsel);
+ 		}
+ 	}
+@@ -724,7 +724,7 @@ static int __cmd_inject(struct perf_inject *inject)
+ 			if (evsel) {
+ 				pr_debug("Deleting %s\n",
+ 					 perf_evsel__name(evsel));
+-				perf_evlist__remove(session->evlist, evsel);
++				evlist__remove(session->evlist, evsel);
+ 				evsel__delete(evsel);
+ 			}
+ 			if (inject->strip)
+diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
+index 7741e12bdcb0..47516db62424 100644
+--- a/tools/perf/util/evlist.c
++++ b/tools/perf/util/evlist.c
+@@ -190,7 +190,7 @@ void evlist__add(struct evlist *evlist, struct evsel *entry)
+ 	__perf_evlist__propagate_maps(evlist, entry);
+ }
  
- 	/* get resources */
- 	irq = platform_get_irq(pdev, 0);
--	if (irq < 0) {
--		dev_err(&pdev->dev, "Could not get irq resource: %d\n", irq);
-+	if (irq < 0)
- 		return irq;
--	}
+-void perf_evlist__remove(struct evlist *evlist, struct evsel *evsel)
++void evlist__remove(struct evlist *evlist, struct evsel *evsel)
+ {
+ 	evsel->evlist = NULL;
+ 	list_del_init(&evsel->node);
+diff --git a/tools/perf/util/evlist.h b/tools/perf/util/evlist.h
+index d52b29a1d852..b3a44e2eed08 100644
+--- a/tools/perf/util/evlist.h
++++ b/tools/perf/util/evlist.h
+@@ -74,7 +74,7 @@ void perf_evlist__exit(struct evlist *evlist);
+ void evlist__delete(struct evlist *evlist);
  
- 	res_mmio = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	if (!res_mmio) {
--- 
-Sent by a computer through tubes
-
+ void evlist__add(struct evlist *evlist, struct evsel *entry);
+-void perf_evlist__remove(struct evlist *evlist, struct evsel *evsel);
++void evlist__remove(struct evlist *evlist, struct evsel *evsel);
+ 
+ int __perf_evlist__add_default(struct evlist *evlist, bool precise);
+ 
