@@ -2,71 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EBB1B7AB05
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 16:30:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD4077AB0C
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 16:31:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731360AbfG3Oaj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 10:30:39 -0400
-Received: from conssluserg-04.nifty.com ([210.131.2.83]:17204 "EHLO
-        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727785AbfG3Oaj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 10:30:39 -0400
-Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com [209.85.217.41]) (authenticated)
-        by conssluserg-04.nifty.com with ESMTP id x6UEUEHW013457;
-        Tue, 30 Jul 2019 23:30:14 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com x6UEUEHW013457
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1564497014;
-        bh=JMSt+hweIJak1wcxcE6FJKFOSL1Mxz8lHsp0Ef6quLI=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=rcRzWCPeijGAGABuSv0gOMMO562JQ0LAMRm5dDhqHIbr7YGcxh1QMBCy7olAFYGsj
-         wmpGMvON1FsyFqZcus7JWVqxmFe6hQMCX286NwqdWna+JDXJEU9Ch98Gx+IvFBvS+m
-         5IZddcL1CDlputOY7hljZkRmug01BF4+gSdZN7mfVjyA+7wN98AfvBMRGPytaRCUZF
-         GCnsEHv5IPyoE2ZjiTD1ugGjiSlbAWNAfMUnLRQjPl30t1xJow+XY0iFvCgj1579YA
-         T4JIt1WuxRXIp1cwOlM67yu51q0c/snOKi2WTkZlnNxQk0Tr0m4tPAenXBgCFYiXS9
-         40hR+5gYc/epg==
-X-Nifty-SrcIP: [209.85.217.41]
-Received: by mail-vs1-f41.google.com with SMTP id m8so43678196vsj.0;
-        Tue, 30 Jul 2019 07:30:14 -0700 (PDT)
-X-Gm-Message-State: APjAAAXnZsnREanfgNd/b7Ad9eeb9+RrT5sEroK2UiuM4rr+FAEnVDO4
-        YfqbC29rufK264sM4T2ugsI9oJQ9ODGX9NP1qPQ=
-X-Google-Smtp-Source: APXvYqxC686Km/0VHbBnLd+UeAwL8cwY74P1tc2OVLxLH6J+Oxr4y6XeleXfMvfWTJZ5WBmOPpmrhO/o9GyN3LmIvLM=
-X-Received: by 2002:a67:fc45:: with SMTP id p5mr11100750vsq.179.1564497013549;
- Tue, 30 Jul 2019 07:30:13 -0700 (PDT)
+        id S1731397AbfG3ObR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 10:31:17 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:3254 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727785AbfG3ObR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 10:31:17 -0400
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 4D35179A98F3D92FA255;
+        Tue, 30 Jul 2019 22:31:14 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS411-HUB.china.huawei.com
+ (10.3.19.211) with Microsoft SMTP Server id 14.3.439.0; Tue, 30 Jul 2019
+ 22:31:06 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <claudiu.manoil@nxp.com>, <davem@davemloft.net>
+CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH] enetc: Fix build error without PHYLIB
+Date:   Tue, 30 Jul 2019 22:29:59 +0800
+Message-ID: <20190730142959.50892-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-References: <1564465410-9165-1-git-send-email-hayashi.kunihiko@socionext.com> <1564465410-9165-3-git-send-email-hayashi.kunihiko@socionext.com>
-In-Reply-To: <1564465410-9165-3-git-send-email-hayashi.kunihiko@socionext.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Tue, 30 Jul 2019 23:29:37 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARi=zV9dzJ1Pi2buJ7UH8whQwZbJ-z0AB1V3_OypQ519A@mail.gmail.com>
-Message-ID: <CAK7LNARi=zV9dzJ1Pi2buJ7UH8whQwZbJ-z0AB1V3_OypQ519A@mail.gmail.com>
-Subject: Re: [PATCH v2 2/5] pinctrl: uniphier: Add another audio I/O pin-mux
- settings for LD20
-To:     Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 30, 2019 at 2:43 PM Kunihiko Hayashi
-<hayashi.kunihiko@socionext.com> wrote:
->
-> This adds support for pinmux settings of aout1b group. This group includes
-> audio I/O signals derived from xirq pins, and it is equivalent to "aout1"
-> in functionality.
->
-> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-> ---
+If PHYLIB is not set, build enetc will fails:
 
-Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+drivers/net/ethernet/freescale/enetc/enetc.o: In function `enetc_open':
+enetc.c: undefined reference to `phy_disconnect'
+enetc.c: undefined reference to `phy_start'
+drivers/net/ethernet/freescale/enetc/enetc.o: In function `enetc_close':
+enetc.c: undefined reference to `phy_stop'
+enetc.c: undefined reference to `phy_disconnect'
+drivers/net/ethernet/freescale/enetc/enetc_ethtool.o: undefined reference to `phy_ethtool_get_link_ksettings'
+drivers/net/ethernet/freescale/enetc/enetc_ethtool.o: undefined reference to `phy_ethtool_set_link_ksettings'
+drivers/net/ethernet/freescale/enetc/enetc_mdio.o: In function `enetc_mdio_probe':
+enetc_mdio.c: undefined reference to `mdiobus_alloc_size'
+enetc_mdio.c: undefined reference to `mdiobus_free'
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Fixes: d4fd0404c1c9 ("enetc: Introduce basic PF and VF ENETC ethernet drivers")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/net/ethernet/freescale/enetc/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/net/ethernet/freescale/enetc/Kconfig b/drivers/net/ethernet/freescale/enetc/Kconfig
+index ed0d010..46fdf36b 100644
+--- a/drivers/net/ethernet/freescale/enetc/Kconfig
++++ b/drivers/net/ethernet/freescale/enetc/Kconfig
+@@ -2,6 +2,7 @@
+ config FSL_ENETC
+ 	tristate "ENETC PF driver"
+ 	depends on PCI && PCI_MSI && (ARCH_LAYERSCAPE || COMPILE_TEST)
++	select PHYLIB
+ 	help
+ 	  This driver supports NXP ENETC gigabit ethernet controller PCIe
+ 	  physical function (PF) devices, managing ENETC Ports at a privileged
 -- 
-Best Regards
-Masahiro Yamada
+2.7.4
+
+
