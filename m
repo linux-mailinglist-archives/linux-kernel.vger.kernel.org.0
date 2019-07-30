@@ -2,130 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50AC47B5C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 00:38:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE38A7B5B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 00:30:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729301AbfG3WiM convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 30 Jul 2019 18:38:12 -0400
-Received: from mgw-02.mpynet.fi ([82.197.21.91]:56930 "EHLO mgw-02.mpynet.fi"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726847AbfG3WiM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 18:38:12 -0400
-X-Greylist: delayed 485 seconds by postgrey-1.27 at vger.kernel.org; Tue, 30 Jul 2019 18:38:10 EDT
-Received: from pps.filterd (mgw-02.mpynet.fi [127.0.0.1])
-        by mgw-02.mpynet.fi (8.16.0.27/8.16.0.27) with SMTP id x6UMSZio119596;
-        Wed, 31 Jul 2019 01:28:35 +0300
-Received: from ex13.tuxera.com (ex13.tuxera.com [178.16.184.72])
-        by mgw-02.mpynet.fi with ESMTP id 2u0a9uvs4r-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Wed, 31 Jul 2019 01:28:34 +0300
-Received: from tuxera-exch.ad.tuxera.com (10.20.48.11) by
- tuxera-exch.ad.tuxera.com (10.20.48.11) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 31 Jul 2019 01:28:34 +0300
-Received: from tuxera-exch.ad.tuxera.com ([fe80::552a:f9f0:68c3:d789]) by
- tuxera-exch.ad.tuxera.com ([fe80::552a:f9f0:68c3:d789%12]) with mapi id
- 15.00.1395.000; Wed, 31 Jul 2019 01:28:34 +0300
-From:   Anton Altaparmakov <anton@tuxera.com>
-To:     Deepa Dinamani <deepa.kernel@gmail.com>
-CC:     OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "y2038 Mailman List" <y2038@lists.linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Artem Bityutskiy <dedekind1@gmail.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        stoph Hellwig <hch@lst.de>, Jaegeuk Kim <jaegeuk@kernel.org>,
-        Joel Becker <jlbec@evilplan.org>,
-        Richard Weinberger <richard@nod.at>, Tejun Heo <tj@kernel.org>,
-        "yuchao0@huawei.com" <yuchao0@huawei.com>,
-        "Linux F2FS DEV, Mailing List" 
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        "linux-ntfs-dev@lists.sourceforge.net" 
-        <linux-ntfs-dev@lists.sourceforge.net>,
-        linux-mtd <linux-mtd@lists.infradead.org>
-Subject: Re: [PATCH 03/20] timestamp_truncate: Replace users of
- timespec64_trunc
-Thread-Topic: [PATCH 03/20] timestamp_truncate: Replace users of
- timespec64_trunc
-Thread-Index: AQHVRrCO7mUMDQahbUu7RSH43rBZCqbjOCQAgABUboA=
-Date:   Tue, 30 Jul 2019 22:28:33 +0000
-Message-ID: <5340224D-5625-48A6-909E-70B24D2084BC@tuxera.com>
-References: <20190730014924.2193-1-deepa.kernel@gmail.com>
- <20190730014924.2193-4-deepa.kernel@gmail.com>
- <87d0hsapwr.fsf@mail.parknet.co.jp>
- <CABeXuvqgaxDSR8N_D1Tdw06g_5PGinZS--6nx-bPtAWP4v+mwg@mail.gmail.com>
-In-Reply-To: <CABeXuvqgaxDSR8N_D1Tdw06g_5PGinZS--6nx-bPtAWP4v+mwg@mail.gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [86.151.122.143]
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <92684FF0F17B42478243313B03823A34@tuxera.com>
-Content-Transfer-Encoding: 8BIT
+        id S1729210AbfG3WaP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 18:30:15 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:40534 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727512AbfG3WaP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 18:30:15 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6UMSiaL124824;
+        Tue, 30 Jul 2019 22:29:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=DnsYsIWegt9l1UBcTIBMqkBPp/Z4PoSnSabztVhnAYw=;
+ b=bC6D72d7moiLsAalyEGzAE+j0Ynu+OUEM3Ra7c6sx6serKTsuGlnXMo+1i9GP/jAerti
+ 8E3vbnXpfk6XO1EEMgrbBSTUmuA+F6eTUtD6kbFx8VinFtAttBSvmzXOe941gLu0EZM5
+ jqZ1Nn1b2M0aIuaHbK2RowJMWjtOKf/5TDqP3+0BmC9BE5wsXY7ukpikSfMc9/sM8rVL
+ lpo6C8BGU96iIgupFo3nxmueooJUAdVWhR47DZ5ZofT0useuifdh/LWOPlIdXclE3l07
+ VKToN/Xu0cM81Dzakceow7uAlEc2YQzwGlD0kThggxREtiiLft49UccAD5wxmxk9IqbQ Bg== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2130.oracle.com with ESMTP id 2u0e1tsg9m-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 30 Jul 2019 22:29:47 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6UMSGPW017624;
+        Tue, 30 Jul 2019 22:29:47 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3030.oracle.com with ESMTP id 2u0bque8un-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 30 Jul 2019 22:29:47 +0000
+Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x6UMTkOV022728;
+        Tue, 30 Jul 2019 22:29:46 GMT
+Received: from dhcp-10-10-45-25.usdhcp.oraclecorp.com (/10.10.45.25)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 30 Jul 2019 15:29:45 -0700
+Subject: Re: [PATCH 7/7] tracing: Un-export ftrace_set_clr_event
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     linux-kernel@vger.kernel.org, Joe Jin <joe.jin@oracle.com>,
+        Aruna Ramakrishna <aruna.ramakrishna@oracle.com>,
+        Srinivas Eeda <srinivas.eeda@oracle.com>
+References: <1564444954-28685-1-git-send-email-divya.indi@oracle.com>
+ <1564444954-28685-8-git-send-email-divya.indi@oracle.com>
+ <20190729205138.689864d2@gandalf.local.home>
+From:   Divya Indi <divya.indi@oracle.com>
+Message-ID: <8e50d405-a4fb-fadf-509e-157b031d7542@oracle.com>
+Date:   Tue, 30 Jul 2019 15:29:41 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
+ Gecko/20100101 Thunderbird/60.8.0
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-30_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=800
+In-Reply-To: <20190729205138.689864d2@gandalf.local.home>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9334 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1906280000 definitions=main-1907300224
+ engine=8.0.1-1906280000 definitions=main-1907300225
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9334 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=3 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1907300225
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Deepa,
+Hi Steven,
 
-> On 30 Jul 2019, at 18:26, Deepa Dinamani <deepa.kernel@gmail.com> wrote:
-> 
-> On Tue, Jul 30, 2019 at 1:27 AM OGAWA Hirofumi
-> <hirofumi@mail.parknet.co.jp> wrote:
->> 
->> Deepa Dinamani <deepa.kernel@gmail.com> writes:
->> 
->>> diff --git a/fs/fat/misc.c b/fs/fat/misc.c
->>> index 1e08bd54c5fb..53bb7c6bf993 100644
->>> --- a/fs/fat/misc.c
->>> +++ b/fs/fat/misc.c
->>> @@ -307,8 +307,9 @@ int fat_truncate_time(struct inode *inode, struct timespec64 *now, int flags)
->>>              inode->i_atime = (struct timespec64){ seconds, 0 };
->>>      }
->>>      if (flags & S_CTIME) {
->>> -             if (sbi->options.isvfat)
->>> -                     inode->i_ctime = timespec64_trunc(*now, 10000000);
->>> +             if (sbi->options.isvfat) {
->>> +                     inode->i_ctime = timestamp_truncate(*now, inode);
->>> +             }
->>>              else
->>>                      inode->i_ctime = fat_timespec64_trunc_2secs(*now);
->>>      }
->> 
->> Looks like broken. It changed to sb->s_time_gran from 10000000, and
->> changed coding style.
-> 
-> This is using a new api: timestamp_truncate(). granularity is gotten
-> by inode->sb->s_time_gran. See Patch [2/20]:
-> https://lkml.org/lkml/2019/7/29/1853
-> 
-> So this is not broken if fat is filling in the right granularity in the sb.
+On 7/29/19 5:51 PM, Steven Rostedt wrote:
+> On Mon, 29 Jul 2019 17:02:34 -0700
+> Divya Indi <divya.indi@oracle.com> wrote:
+>
+>> Use "trace_array_set_clr_event" to enable/disable events to a trace
+>> array from other kernel modules/components.
+>> Hence, we no longer need to have ftrace_set_clr_event as an exported API.
+> Hmm, this simply reverts patch 1. Why have patch 1 and this patch in
+> the first place?
 
-It is broken for FAT because FAT has different granularities for different timestamps so it cannot put the correct value in the sb as that only allows one granularity.  Your patch is totally broken for fat as it would be immediately obvious if you spent a few minutes looking at the code...
+Right! First patch fixes issues in a previous commit and then this patch 
+reverts the part of previous commit that required the fix.
 
-Best regards,
-
-	Anton
-
-> 
-> -Deepa
+We can eliminate the first patch if it seems counter intuitive.
 
 
--- 
-Anton Altaparmakov <anton at tuxera.com> (replace at with @)
-Lead in File System Development, Tuxera Inc., http://www.tuxera.com/
-Linux NTFS maintainer
+Thanks,
 
+Divya
+
+>
+> -- Steve
+>
+>> Signed-off-by: Divya Indi <divya.indi@oracle.com>
+>> Reviewed-By: Aruna Ramakrishna <aruna.ramakrishna@oracle.com>
