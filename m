@@ -2,140 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A9D297A667
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 13:03:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B8BDF7A670
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 13:04:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729954AbfG3LDh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 07:03:37 -0400
-Received: from foss.arm.com ([217.140.110.172]:59290 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725974AbfG3LDh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 07:03:37 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 929AE344;
-        Tue, 30 Jul 2019 04:03:36 -0700 (PDT)
-Received: from [10.1.194.37] (e113632-lin.cambridge.arm.com [10.1.194.37])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BD0F93F575;
-        Tue, 30 Jul 2019 04:03:35 -0700 (PDT)
-Subject: Re: [PATCH v2 0/2] Refactor snapshot vs nocow writers locking
-From:   Valentin Schneider <valentin.schneider@arm.com>
-To:     Catalin Marinas <catalin.marinas@arm.com>
-Cc:     Nikolay Borisov <nborisov@suse.com>, linux-btrfs@vger.kernel.org,
-        paulmck@linux.ibm.com, andrea.parri@amarulasolutions.com,
-        linux-kernel@vger.kernel.org
-References: <20190719083949.5351-1-nborisov@suse.com>
- <ed015bb1-490e-7102-d172-73c1d069476c@arm.com>
- <20190729153319.GH2368@arrakis.emea.arm.com>
- <60eda0ab-08b3-de82-5b06-98386ee1928f@arm.com>
-Message-ID: <69ef76a2-ebd6-956e-c611-2e742606ed95@arm.com>
-Date:   Tue, 30 Jul 2019 12:03:34 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1730039AbfG3LEJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 07:04:09 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:55589 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726432AbfG3LEI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 07:04:08 -0400
+Received: by mail-wm1-f68.google.com with SMTP id a15so56723737wmj.5
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 04:04:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=kAaSPn1SAnhMdouNiZFncd+kh2nGtT7o+fO0/xriDJM=;
+        b=rtURJ5tjTGQezYchXptus1tZePK5IushptflcrP+I4zOEDOzawXa8lEWlpLTyABP05
+         WcvP42levCh9WFweBkXwjLV1O5gjaYCtAwo+LxmXtdams5440uB9Au+0IOqlvgvCQDox
+         0QOqGc7cZaSYRFIthov7WGk9xFRrfQ0yCDdK0rjX6zdeViKjkIRWrKXe9a22hTtEjF5w
+         KGjWactDJtFahKEJAaqTgK/W8UYIa3JZ9O0X+MmpSKu+T2/MtMpStwlLkpTtXNhqkvZn
+         rOUJC9iwH8FJ0XRoZsS1uEXPEwUTIwGTrq2+SSYaj9QV4vsq0oNdAjo25MqtWEk3+RUF
+         80Jg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kAaSPn1SAnhMdouNiZFncd+kh2nGtT7o+fO0/xriDJM=;
+        b=txfgu3ivM+2XWo2K5baRkW2lS5sAkOdHajDJVJ52oD5182tLUb35ngsd/BpdycmxV5
+         XaXUafRcjtLt5mpWPHED2NISgb0J4K0yI0Dx5vu2kkd0P9EETDJhxzu0K1MtzkMJN0RN
+         PW4w76E2J57HRYltnwyty8lAmwEwaHH2NvDpLp50hgbEATSHdaN+L++d4SrX+FQ/m77G
+         cmY6k9InmFzHMxEN31/+W+7FFm2wOWTrwe7XlVpadFvyarp4hUZq5ZNHjo+5AAfnNwJd
+         qY032+qFt+8FEWv23MnkFdx4XY86a5XWb56JeXUxHybxt1wQYKxE63RhJCU6jXgpyf8l
+         BZUw==
+X-Gm-Message-State: APjAAAXRw0V+Ka8e14sREMIDKefWfE96hZS5tLvIwkqYkm8qZ4CX4Ta0
+        v86lIhWaFqzmAtcrErileX9pub7LpW/nBwJ5gzU=
+X-Google-Smtp-Source: APXvYqyCdoUNtlHs7orkEBhS8EG9A8IbKL4dk2VepkFVzYAN9ZWH2nTWL3pZtJ3WiTvF6eb5BbRHk5ldhvDUkb7rXyU=
+X-Received: by 2002:a05:600c:254b:: with SMTP id e11mr97733084wma.171.1564484646738;
+ Tue, 30 Jul 2019 04:04:06 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <60eda0ab-08b3-de82-5b06-98386ee1928f@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190729115544.17895-1-anup.patel@wdc.com> <20190729115544.17895-4-anup.patel@wdc.com>
+ <d1157450-258b-91c1-72cb-867c96f929d8@redhat.com>
+In-Reply-To: <d1157450-258b-91c1-72cb-867c96f929d8@redhat.com>
+From:   Anup Patel <anup@brainfault.org>
+Date:   Tue, 30 Jul 2019 16:33:55 +0530
+Message-ID: <CAAhSdy3n5DBKZ-_Vq39wYvbQ5iLYvdB2gXctkh+NuhynWzQJzQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 03/16] RISC-V: Add initial skeletal KVM support
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Anup Patel <Anup.Patel@wdc.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Radim K <rkrcmar@redhat.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Atish Patra <Atish.Patra@wdc.com>,
+        Alistair Francis <Alistair.Francis@wdc.com>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29/07/2019 17:32, Valentin Schneider wrote:
-> On 29/07/2019 16:33, Catalin Marinas wrote:
-[...]
->> I'd say that's one of the pitfalls of PlusCal. The above is executed
->> atomically, so you'd have the lock_state read and updated in the same
->> action. Looking at the C patches, there is an
->> atomic_read(&lock->readers) followed by a
->> percpu_counter_inc(&lock->writers). Between these two, you can have
->> "readers" becoming non-zero via a different CPU.
->>
->> My suggestion would be to use procedures with labels to express the
->> non-atomicity of such sequences.
->>
-> 
+On Tue, Jul 30, 2019 at 2:55 PM Paolo Bonzini <pbonzini@redhat.com> wrote:
+>
+> On 29/07/19 13:56, Anup Patel wrote:
+> > +void kvm_riscv_halt_guest(struct kvm *kvm)
+> > +{
+> > +     int i;
+> > +     struct kvm_vcpu *vcpu;
+> > +
+> > +     kvm_for_each_vcpu(i, vcpu, kvm)
+> > +             vcpu->arch.pause = true;
+> > +     kvm_make_all_cpus_request(kvm, KVM_REQ_SLEEP);
+> > +}
+> > +
+> > +void kvm_riscv_resume_guest(struct kvm *kvm)
+> > +{
+> > +     int i;
+> > +     struct kvm_vcpu *vcpu;
+> > +
+> > +     kvm_for_each_vcpu(i, vcpu, kvm) {
+> > +             vcpu->arch.pause = false;
+> > +             swake_up_one(kvm_arch_vcpu_wq(vcpu));
+> > +     }
+>
+> Are these unused?  (Perhaps I'm just blind :))
 
-FYI, with a very simple and stupid modification of the spec:
+Not used as of now.
 
------>8-----
-macro ReadUnlock()
-{
-    reader_count := reader_count - 1;
-    \* Condition variable signal is "implicit" here
-}
+The intention was to have APIs for freezing/unfreezing Guest
+which can be used to do some work which is atomic from
+Guest perspective.
 
-macro WriteUnlock()
-{
-    writer_count := writer_count - 1;
-    \* Ditto on the cond var
-}
+I will remove it and add it back when required.
 
-procedure ReadLock()
-{
-add:
-    reader_count := reader_count + 1;
-lock:
-    await writer_count = 0;
-    return;
-}
-
-procedure WriteLock()
-{
-add:
-    writer_count := writer_count + 1;
-lock:
-    await reader_count = 0;
-    return;
-};
------8<-----
-
-it's quite easy to trigger the case Paul pointed out in [1]:
-
------>8-----
-Error: Deadlock reached.
-Error: The behavior up to this point is:
-State 1: <Initial predicate>
-/\ stack = (<<reader, 1>> :> <<>> @@ <<writer, 1>> :> <<>>)
-/\ pc = (<<reader, 1>> :> "loop" @@ <<writer, 1>> :> "loop_")
-/\ writer_count = 0
-/\ reader_count = 0
-/\ lock_state = "idle"
-
-State 2: <loop_ line 159, col 16 to line 164, col 72 of module specs>
-/\ stack = ( <<reader, 1>> :> <<>> @@
-  <<writer, 1>> :> <<[pc |-> "write_cs", procedure |-> "WriteLock"]>> )
-/\ pc = (<<reader, 1>> :> "loop" @@ <<writer, 1>> :> "add")
-/\ writer_count = 0
-/\ reader_count = 0
-/\ lock_state = "idle"
-
-State 3: <add line 146, col 14 to line 149, col 63 of module specs>
-/\ stack = ( <<reader, 1>> :> <<>> @@
-  <<writer, 1>> :> <<[pc |-> "write_cs", procedure |-> "WriteLock"]>> )
-/\ pc = (<<reader, 1>> :> "loop" @@ <<writer, 1>> :> "lock")
-/\ writer_count = 1
-/\ reader_count = 0
-/\ lock_state = "idle"
-
-State 4: <loop line 179, col 15 to line 184, col 71 of module specs>
-/\ stack = ( <<reader, 1>> :> <<[pc |-> "read_cs", procedure |-> "ReadLock"]>> @@
-  <<writer, 1>> :> <<[pc |-> "write_cs", procedure |-> "WriteLock"]>> )
-/\ pc = (<<reader, 1>> :> "add_" @@ <<writer, 1>> :> "lock")
-/\ writer_count = 1
-/\ reader_count = 0
-/\ lock_state = "idle"
-
-State 5: <add_ line 133, col 15 to line 136, col 64 of module specs>
-/\ stack = ( <<reader, 1>> :> <<[pc |-> "read_cs", procedure |-> "ReadLock"]>> @@
-  <<writer, 1>> :> <<[pc |-> "write_cs", procedure |-> "WriteLock"]>> )
-/\ pc = (<<reader, 1>> :> "lock_" @@ <<writer, 1>> :> "lock")
-/\ writer_count = 1
-/\ reader_count = 1
-/\ lock_state = "idle"
------8<-----
-
-Which I think is pretty cool considering the effort that was required
-(read: not much).
-
-[1]: https://lore.kernel.org/lkml/20190607105251.GB28207@linux.ibm.com/
+Regards,
+Anup
