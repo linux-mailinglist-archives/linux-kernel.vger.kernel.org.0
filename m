@@ -2,104 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84EBC7AAA5
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 16:12:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E7CDD7AAAB
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 16:14:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730570AbfG3OMb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 10:12:31 -0400
-Received: from imap1.codethink.co.uk ([176.9.8.82]:48267 "EHLO
-        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727338AbfG3OMb (ORCPT
+        id S1730306AbfG3OOx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 10:14:53 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:40422 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727338AbfG3OOx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 10:12:31 -0400
-Received: from [167.98.27.226] (helo=[10.35.6.253])
-        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
-        id 1hsSrW-000700-Ep; Tue, 30 Jul 2019 15:12:22 +0100
-Subject: Re: [alsa-devel] [PATCH v2 1/3] dt-bindings: ASoC: Add TDA7802
- amplifier
-To:     Marco Felsch <m.felsch@pengutronix.de>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
-        alsa-devel@alsa-project.org, Rob Duncan <rduncan@tesla.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Kirill Marinushkin <kmarinushkin@birdec.tech>,
-        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        Takashi Iwai <tiwai@suse.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Annaliese McDermond <nh6z@nh6z.net>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Vinod Koul <vkoul@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Nate Case <ncase@tesla.com>,
-        Cheng-Yi Chiang <cychiang@chromium.org>,
-        Patrick Glaser <pglaser@tesla.com>,
-        Jerome Brunet <jbrunet@baylibre.com>
-References: <20190730120937.16271-1-thomas.preston@codethink.co.uk>
- <20190730120937.16271-2-thomas.preston@codethink.co.uk>
- <20190730122748.GF54126@ediswmail.ad.cirrus.com>
- <20190730131209.rdv2kdlrpfeouh66@pengutronix.de>
-From:   Thomas Preston <thomas.preston@codethink.co.uk>
-Message-ID: <16a99e45-fd5a-2878-acf9-63518f9ca527@codethink.co.uk>
-Date:   Tue, 30 Jul 2019 15:12:21 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Tue, 30 Jul 2019 10:14:53 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: sre)
+        with ESMTPSA id 06DF828A5E8
+Received: by earth.universe (Postfix, from userid 1000)
+        id 27ED63C0943; Tue, 30 Jul 2019 16:14:48 +0200 (CEST)
+Date:   Tue, 30 Jul 2019 16:14:48 +0200
+From:   Sebastian Reichel <sebastian.reichel@collabora.com>
+To:     Pavel Machek <pavel@denx.de>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Tony Lindgren <tony@atomide.com>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: Re: [PATCH 5.2 048/215] drm/omap: dont check dispc timings for DSI
+Message-ID: <20190730141448.hvmkffa4s23pweci@earth.universe>
+References: <20190729190739.971253303@linuxfoundation.org>
+ <20190729190748.832081009@linuxfoundation.org>
+ <20190730113751.GB21815@amd>
 MIME-Version: 1.0
-In-Reply-To: <20190730131209.rdv2kdlrpfeouh66@pengutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="2voqpcm7kqxghyvb"
+Content-Disposition: inline
+In-Reply-To: <20190730113751.GB21815@amd>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30/07/2019 14:12, Marco Felsch wrote:
-> Hi Charles,
-> 
-> sorry for jumping in..
-> 
-> On 19-07-30 13:27, Charles Keepax wrote:
->> On Tue, Jul 30, 2019 at 01:09:35PM +0100, Thomas Preston wrote:
->>> Signed-off-by: Thomas Preston <thomas.preston@codethink.co.uk>
->>> Cc: Patrick Glaser <pglaser@tesla.com>
->>> Cc: Rob Duncan <rduncan@tesla.com>
->>> Cc: Nate Case <ncase@tesla.com>
->>> ---
->>>  .../devicetree/bindings/sound/tda7802.txt     | 26 +++++++++++++++++++
->>>  1 file changed, 26 insertions(+)
->>>  create mode 100644 Documentation/devicetree/bindings/sound/tda7802.txt
->>>
->>> diff --git a/Documentation/devicetree/bindings/sound/tda7802.txt b/Documentation/devicetree/bindings/sound/tda7802.txt
->>> new file mode 100644
->>> index 000000000000..f80aaf4f1ba0
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/sound/tda7802.txt
->>> @@ -0,0 +1,26 @@
->>> +ST TDA7802 audio processor
->>> +
->>> +This device supports I2C only.
->>> +
->>> +Required properties:
->>> +
->>> +- compatible : "st,tda7802"
->>> +- reg : the I2C address of the device
->>> +- enable-supply : a regulator spec for the PLLen pin
-> 
-> Shouldn't that be a pin called 'pllen-gpios'? IMHO I would not use a
-> regulator for that.
-> 
-> Regards,
->   Marco
-> 
 
-Hi Marco,
-We have multiple amplifiers hooked up in a chain, and all the PLLens
-are connected to one GPIO. So we need to use a regulator so that
-i2c-TDA7802:00 doesn't turn off the PLLen which i2c-TDA7802:01 still
-requires.
+--2voqpcm7kqxghyvb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This is why we use a regulator. Is there GPIO support for this?
+Hi,
 
-Thanks,
-Thomas
+On Tue, Jul 30, 2019 at 01:37:51PM +0200, Pavel Machek wrote:
+> On Mon 2019-07-29 21:20:44, Greg Kroah-Hartman wrote:
+> > [ Upstream commit ad9df7d91b4a6e8f4b20c2bf539ac09b3b2ad6eb ]
+> >=20
+> > While most display types only forward their VM to the DISPC, this
+> > is not true for DSI. DSI calculates the VM for DISPC based on its
+> > own, but it's not identical. Actually the DSI VM is not even a valid
+> > DISPC VM making this check fail. Let's restore the old behaviour
+> > and avoid checking the DISPC VM for DSI here.
+> >=20
+> > Fixes: 7c27fa57ef31 ("drm/omap: Call dispc timings check operation dire=
+ctly")
+> > Acked-by: Pavel Machek <pavel@ucw.cz>
+> > Tested-by: Tony Lindgren <tony@atomide.com>
+> > Tested-by: Pavel Machek <pavel@ucw.cz>
+> > Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+> > Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
+> > Signed-off-by: Sasha Levin <sashal@kernel.org>
+>=20
+> Not sure if this is good idea for stable. IIRC there's series of
+> patches to enable display on droid4 (etc), which is useful, but this
+> patch is not going to do any good on its own.
+
+It does not hurt to have it. I know that some people have out of
+tree omapdrm DSI drivers and those also need this regression fix.
+
+-- Sebastian
+
+>=20
+> 								Pavel
+>=20
+> >  drivers/gpu/drm/omapdrm/omap_crtc.c | 18 ++++++++++++++----
+> >  1 file changed, 14 insertions(+), 4 deletions(-)
+> >=20
+> > diff --git a/drivers/gpu/drm/omapdrm/omap_crtc.c b/drivers/gpu/drm/omap=
+drm/omap_crtc.c
+> > index 8712af79a49c..4c43dd282acc 100644
+> > --- a/drivers/gpu/drm/omapdrm/omap_crtc.c
+> > +++ b/drivers/gpu/drm/omapdrm/omap_crtc.c
+> > @@ -384,10 +384,20 @@ static enum drm_mode_status omap_crtc_mode_valid(=
+struct drm_crtc *crtc,
+> >  	int r;
+> > =20
+> >  	drm_display_mode_to_videomode(mode, &vm);
+> > -	r =3D priv->dispc_ops->mgr_check_timings(priv->dispc, omap_crtc->chan=
+nel,
+> > -					       &vm);
+> > -	if (r)
+> > -		return r;
+> > +
+> > +	/*
+> > +	 * DSI might not call this, since the supplied mode is not a
+> > +	 * valid DISPC mode. DSI will calculate and configure the
+> > +	 * proper DISPC mode later.
+> > +	 */
+> > +	if (omap_crtc->pipe->output->next =3D=3D NULL ||
+> > +	    omap_crtc->pipe->output->next->type !=3D OMAP_DISPLAY_TYPE_DSI) {
+> > +		r =3D priv->dispc_ops->mgr_check_timings(priv->dispc,
+> > +						       omap_crtc->channel,
+> > +						       &vm);
+> > +		if (r)
+> > +			return r;
+> > +	}
+> > =20
+> >  	/* Check for bandwidth limit */
+> >  	if (priv->max_bandwidth) {
+>=20
+> --=20
+> (english) http://www.livejournal.com/~pavelmachek
+> (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/b=
+log.html
+
+
+
+--2voqpcm7kqxghyvb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAl1AUNQACgkQ2O7X88g7
++poS5g//YmueoR3bKp2q+77bUwb7W+OhoUliO31RrKvQ/d5HaNu1HwV9XqUJ9QrB
+ujOV8iozVKup60KZDYSuQ2L3CAocmeIx3dTl4BfWENnhJlBGb3yZF8W9JkC+dKiq
+rIFvgSZZh+Jvyt1SffYG+TW9xEK7jTBDAnu0UgR6JU/79RRBrBA6lvNkYrNojV4o
+DBGUaepe0wR/im0xGxlJYVuwruvDOKD8BRrV1V1JajctFx/pZOGZLX4qjgtQnPG1
+dxp5i7l9j8LKpBwD6SrXg1hJr/e6H+n9Sh04iEVy7WRrZSSEL/UlX+CO/d0LVR3R
+mOJcK9bC687HvGovK57Ru9BgObeypGQoLbUn1nU3O9A2jNiLyi5zTTzBrFqPuIhv
+AaqoYAmnM0Nr3Hb6UJg2dvpGW4HgTu4mgsS1CFv7w/Ca4jE7PSv2we3t9C7T+rUe
+jnRF6Ar27dI5TePYAhX2OpA34oEKgDOcJcO6hrrDeoTJfc73dKm4/ZdKT1V5NvLr
+C5pVCsXXqaMM0w1XJlGWskC0e2I0WBarGroA/JXfia7HZOgN5uqlAyFHF9Vf1zKG
+tH+pDSW2BzK9wQmvdkjyL/RmAE7ehwOIY3bU2wvrz5vTfH0TSbzIBitml7u5iT8Q
+8oy8QOK3uo/ikKESp/2x5cRnJ8YSHcSct2itlXVAkpkxhBDTSLg=
+=8pit
+-----END PGP SIGNATURE-----
+
+--2voqpcm7kqxghyvb--
