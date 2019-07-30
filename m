@@ -2,79 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 235A77B1E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:25:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 734797B1ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:26:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729459AbfG3SZG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 14:25:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53742 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725935AbfG3SZG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 14:25:06 -0400
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E66F82087F;
-        Tue, 30 Jul 2019 18:25:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564511105;
-        bh=2xncdpK2J1RersRdjUzIlXExFmZioyenQiPobsms38I=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=wkG/el70Z3il0Z8+OdQuanuSkDxOvC+ZkzjEzWuTzbFHpKZv+kLZuaQXwOJ5GinhX
-         1Vm+dEqxDYq8jNWNdMxQw5CFKnO99k9uuzCsdVjFY1FoSWpGbndvVX5t8pu/eTrBvy
-         h0sJpcy4GffeO7R5WdLzSlefy0e6Qf/9B8+xW87M=
-Date:   Tue, 30 Jul 2019 13:25:03 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Denis Efremov <efremov@linux.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Michal Simek <monstr@monstr.eu>, linux-mips@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, sparclinux@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/5] PCI: Convert pci_resource_to_user() to a weak
- function
-Message-ID: <20190730182503.GJ203187@google.com>
-References: <20190729101401.28068-1-efremov@linux.com>
+        id S1729025AbfG3S0x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 14:26:53 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:43491 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725935AbfG3S0x (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 14:26:53 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6UIPdhD3329703
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Tue, 30 Jul 2019 11:25:40 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6UIPdhD3329703
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019071901; t=1564511140;
+        bh=o7YUERV5UcgrDolXx8bdO0m0RzSFYJomDQBxU6bukb4=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=BEkqk5EC8lzT77KhXKWDY3t11n/Ny17/M6/o9cIgRKKfcPD2c1AWLPW9z/qQuENdX
+         u5Qe78yEK2Qd3/M+ewSQs/9W4nuFbjr3IKVSiVxaaI4qF+v4WMsENXWfeH4xXZ6Mxi
+         Xn7WrQeQphQDd2BaQ3Q1K5XzHBwyf0YjV3Uko88KjclUfE046G6Wz91fLNc6uWrxLH
+         B2J/cZrIxm4oMnoPhkDKvKpzg7TzNqtyGGUINWkwo2ISzt07vAqKbk94lcanDvxlPa
+         +92nBb2qDNy+omZlT62uY02Byflwg4kwfdzUR5nIW0lmYZ8UibY7zo+mAB4ZEeccwR
+         kT9upC95FPQuQ==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6UIPdEw3329700;
+        Tue, 30 Jul 2019 11:25:39 -0700
+Date:   Tue, 30 Jul 2019 11:25:39 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
+Message-ID: <tip-a429dcb8feb60b8500fed81e2275c1944e3091fc@git.kernel.org>
+Cc:     alexey.budankov@linux.intel.com,
+        alexander.shishkin@linux.intel.com, tglx@linutronix.de,
+        jolsa@kernel.org, ak@linux.intel.com, namhyung@kernel.org,
+        acme@redhat.com, hpa@zytor.com, mpetlan@redhat.com,
+        mingo@kernel.org, peterz@infradead.org,
+        linux-kernel@vger.kernel.org
+Reply-To: acme@redhat.com, hpa@zytor.com, mpetlan@redhat.com,
+          peterz@infradead.org, linux-kernel@vger.kernel.org,
+          mingo@kernel.org, alexander.shishkin@linux.intel.com,
+          tglx@linutronix.de, jolsa@kernel.org,
+          alexey.budankov@linux.intel.com, ak@linux.intel.com,
+          namhyung@kernel.org
+In-Reply-To: <20190721112506.12306-26-jolsa@kernel.org>
+References: <20190721112506.12306-26-jolsa@kernel.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] libperf: Add libperf to the python.so build
+Git-Commit-ID: a429dcb8feb60b8500fed81e2275c1944e3091fc
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20190729101401.28068-1-efremov@linux.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Spam-Status: No, score=-0.2 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
+        autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 29, 2019 at 01:13:56PM +0300, Denis Efremov wrote:
-> Architectures currently define HAVE_ARCH_PCI_RESOURCE_TO_USER if they want
-> to provide their own pci_resource_to_user() implementation. This could be
-> simplified if we make the generic version a weak function. Thus,
-> architecture specific versions will automatically override the generic one.
-> 
-> Changes in v2:
-> 1. Removed __weak from pci_resource_to_user() declaration
-> 2. Fixed typo s/spark/sparc/g
-> 
-> Denis Efremov (5):
->   PCI: Convert pci_resource_to_user to a weak function
->   microblaze/PCI: Remove HAVE_ARCH_PCI_RESOURCE_TO_USER
->   mips/PCI: Remove HAVE_ARCH_PCI_RESOURCE_TO_USER
->   powerpc/PCI: Remove HAVE_ARCH_PCI_RESOURCE_TO_USER
->   sparc/PCI: Remove HAVE_ARCH_PCI_RESOURCE_TO_USER
-> 
->  arch/microblaze/include/asm/pci.h |  2 --
->  arch/mips/include/asm/pci.h       |  1 -
->  arch/powerpc/include/asm/pci.h    |  2 --
->  arch/sparc/include/asm/pci.h      |  2 --
->  drivers/pci/pci.c                 |  8 ++++++++
->  include/linux/pci.h               | 12 ------------
->  6 files changed, 8 insertions(+), 19 deletions(-)
+Commit-ID:  a429dcb8feb60b8500fed81e2275c1944e3091fc
+Gitweb:     https://git.kernel.org/tip/a429dcb8feb60b8500fed81e2275c1944e3091fc
+Author:     Jiri Olsa <jolsa@kernel.org>
+AuthorDate: Sun, 21 Jul 2019 13:24:12 +0200
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Mon, 29 Jul 2019 18:34:44 -0300
 
-Thanks, I added Paul's ack, squashed into a single patch since I think
-it's easier to see what's going on then, and applied to pci/misc for
-v4.5.
+libperf: Add libperf to the python.so build
+
+Link libperf.a with python.so.
+
+Committer testing:
+
+Continues to work:
+
+  # perf test python
+  18: 'import perf' in python                               : Ok
+  #
+
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Michael Petlan <mpetlan@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/20190721112506.12306-26-jolsa@kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/Makefile.perf | 1 +
+ tools/perf/util/setup.py | 3 ++-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
+index 6e7e7d44ffac..67512a12276b 100644
+--- a/tools/perf/Makefile.perf
++++ b/tools/perf/Makefile.perf
+@@ -307,6 +307,7 @@ LIBBPF = $(BPF_PATH)libbpf.a
+ LIBSUBCMD = $(SUBCMD_PATH)libsubcmd.a
+ 
+ LIBPERF = $(LIBPERF_PATH)libperf.a
++export LIBPERF
+ 
+ # python extension build directories
+ PYTHON_EXTBUILD     := $(OUTPUT)python_ext_build/
+diff --git a/tools/perf/util/setup.py b/tools/perf/util/setup.py
+index a1a68a2fa917..d48f9cd58964 100644
+--- a/tools/perf/util/setup.py
++++ b/tools/perf/util/setup.py
+@@ -48,6 +48,7 @@ build_lib = getenv('PYTHON_EXTBUILD_LIB')
+ build_tmp = getenv('PYTHON_EXTBUILD_TMP')
+ libtraceevent = getenv('LIBTRACEEVENT')
+ libapikfs = getenv('LIBAPI')
++libperf = getenv('LIBPERF')
+ 
+ ext_sources = [f.strip() for f in open('util/python-ext-sources')
+ 				if len(f.strip()) > 0 and f[0] != '#']
+@@ -64,7 +65,7 @@ perf = Extension('perf',
+ 		  include_dirs = ['util/include'],
+ 		  libraries = extra_libraries,
+ 		  extra_compile_args = cflags,
+-		  extra_objects = [libtraceevent, libapikfs],
++		  extra_objects = [libtraceevent, libapikfs, libperf],
+                  )
+ 
+ setup(name='perf',
