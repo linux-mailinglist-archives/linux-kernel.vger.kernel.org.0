@@ -2,95 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC86D7B606
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 01:03:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C7E57B60F
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 01:06:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727088AbfG3XDk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 19:03:40 -0400
-Received: from fieldses.org ([173.255.197.46]:41902 "EHLO fieldses.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726343AbfG3XDk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 19:03:40 -0400
-Received: by fieldses.org (Postfix, from userid 2815)
-        id DADB82010; Tue, 30 Jul 2019 19:03:39 -0400 (EDT)
-Date:   Tue, 30 Jul 2019 19:03:39 -0400
-From:   "J. Bruce Fields" <bfields@fieldses.org>
-To:     Jia-Ju Bai <baijiaju1990@gmail.com>
-Cc:     chuck.lever@oracle.com, linux-nfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fs: nfsd: Fix three possible null-pointer dereferences
-Message-ID: <20190730230339.GD3544@fieldses.org>
-References: <20190724082803.1077-1-baijiaju1990@gmail.com>
+        id S1729067AbfG3XGU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 19:06:20 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:43519 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727259AbfG3XGU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 19:06:20 -0400
+Received: by mail-ot1-f68.google.com with SMTP id j11so10824909otp.10
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 16:06:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=GWk710+kd17q1OMPpu/V4kqYNuYX+KuVsErBpC5nLIk=;
+        b=WrAabiJo3Dd0TtRAdJPNb1JBiYkFvBRm3vSWFQpJ+gwuoytfTPfI3f8PTELhhVKlyD
+         Rhp07QkokIAzB6efv9wY6sdxtKIkuJTwvqZULuS9AfQ1pK3jcRPLwP5gxssPI/Ugw1H3
+         tBK4pFecWaDN42C5f8c1CnMEoWW0vrwdcxuHjvtXSAvbkbAKwVQhmLFLECySRswMmtCs
+         iJftiD9zxs5YSMoAkdp/M78U764JOqBiJhvvhAplQjacULBgh1O+teQhg2blsWFp540R
+         8ZQSCjurivZoKK0qnm1XrlEo+kzJzeohTGG8uFoxO5TFALHfsShQTJ6Ae71NzRVe9gon
+         H+xw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=GWk710+kd17q1OMPpu/V4kqYNuYX+KuVsErBpC5nLIk=;
+        b=KD//G40oyD7PfJz53hNu039MaAxGK+8RyYH7nVb/ZBR5V+7YKQ5Xm0HB8axoH8cK6Y
+         q10K9aFJRR9NWeTxb46g4+SXZTIVhK3fQdY/MjKu8Y2+XddN82zEvUj5Szi9vPMYk9pw
+         Vdmw7Ee/mqkTVejKAESXDg/mzZnP/foKqBd19USj4fp2jT0JbAnjbj1MhJqfElmQ3NtU
+         TxcUzEZD1/PEnkf7gnazSDnNxspt4L2i8vB+sEI4v1x9aAIxLue16g8YTGxGGYlG1elJ
+         iRz43MyRgvzAMmsPXyocQr/XOQpEokD0b6lRoRqqPHmTWneapbYc0ouLrV2S76Jl9zEn
+         fYyg==
+X-Gm-Message-State: APjAAAU1Pe7t2f+FWa+5bIwubLiPkIEZU6gsYAvrXni5W7HMV4cRwRvo
+        LIoaf1jdxdI8gG6++ZlBRzUnZ2c5ea5Bd+HmMGlUqg==
+X-Google-Smtp-Source: APXvYqwRZBGclW0RsoKetYGEdOPnQk2VEPJBoWqPKFhs6YkunF2OBOxQev4HLUxITQUhOPKxNUn5nu5CyC5NSPsHFsA=
+X-Received: by 2002:a05:6830:160c:: with SMTP id g12mr33175342otr.231.1564527978919;
+ Tue, 30 Jul 2019 16:06:18 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190724082803.1077-1-baijiaju1990@gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+References: <20190717222340.137578-1-saravanak@google.com> <20190717222340.137578-4-saravanak@google.com>
+ <CAJMQK-jQA6aeSMmrRKDeJz+mGDsu09=ywPv+kfuo26GhQJD4Ug@mail.gmail.com>
+In-Reply-To: <CAJMQK-jQA6aeSMmrRKDeJz+mGDsu09=ywPv+kfuo26GhQJD4Ug@mail.gmail.com>
+From:   Saravana Kannan <saravanak@google.com>
+Date:   Tue, 30 Jul 2019 16:05:43 -0700
+Message-ID: <CAGETcx_qKTDd+pid-jdapi4XqVnN1k4EBP9Vt238rUzhDTHzig@mail.gmail.com>
+Subject: Re: [PATCH v3 3/5] OPP: Improve require-opps linking
+To:     Hsin-Yi Wang <hsinyi@chromium.org>
+Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Sibi Sankar <sibis@codeaurora.org>,
+        Android Kernel Team <kernel-team@android.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 24, 2019 at 04:28:03PM +0800, Jia-Ju Bai wrote:
-> In nfs4_xdr_dec_cb_recall(), nfs4_xdr_dec_cb_layout() and
-> nfs4_xdr_dec_cb_notify_lock(), there is an if statement to check whether
-> cb is NULL.
-> 
-> When cb is NULL, the three functions all call:
->     decode_cb_op_status(..., &cb->cb_status);
-> 
-> Thus, possible null-pointer dereferences may occur.
-> 
-> To fix these possible bugs, -EINVAL is returned when cb is NULL.
-> 
-> These bugs are found by a static analysis tool STCheck written by us.
+On Tue, Jul 30, 2019 at 4:03 PM Hsin-Yi Wang <hsinyi@chromium.org> wrote:
+>
+> On Wed, Jul 17, 2019 at 10:23 PM Saravana Kannan <saravanak@google.com> wrote:
+>
+> > -free_required_tables:
+> > -       _opp_table_free_required_tables(opp_table);
+> > -put_np:
+> > -       of_node_put(np);
+> > +       for (i = 0; i < src->required_opp_count; i++) {
+> > +               if (src->required_opp_tables[i])
+> > +                       continue;
+> > +
+> > +               req_np = of_parse_required_opp(src_opp->np, i);
+> > +               if (!req_np)
+> > +                       continue;
+> > +
+> > +               req_table = _find_table_of_opp_np(req_np);
+> Not yet tested in v4, but in v3:
+> In _find_table_of_opp_np(), there's a lockdep check:
+> lockdep_assert_held(&opp_table_lock);
+> which would lead to lockdep warnings.
+>
+> Call trace:
+> _find_table_of_opp_np
+> _of_lazy_link_required_tables
+> dev_pm_opp_xlate_opp
 
-Thanks!  But I think actually the correct fix is just to remove the NULL
-checks entirely.
+Thanks for testing. I'll keep this in mind based on where the rest of
+the discussion goes.
 
---b.
-
-> 
-> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-> ---
->  fs/nfsd/nfs4callback.c | 11 ++++++++---
->  1 file changed, 8 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/nfsd/nfs4callback.c b/fs/nfsd/nfs4callback.c
-> index 397eb7820929..55949a158b6b 100644
-> --- a/fs/nfsd/nfs4callback.c
-> +++ b/fs/nfsd/nfs4callback.c
-> @@ -516,7 +516,8 @@ static int nfs4_xdr_dec_cb_recall(struct rpc_rqst *rqstp,
->  		status = decode_cb_sequence4res(xdr, cb);
->  		if (unlikely(status || cb->cb_seq_status))
->  			return status;
-> -	}
-> +	} else
-> +		return -EINVAL;
->  
->  	return decode_cb_op_status(xdr, OP_CB_RECALL, &cb->cb_status);
->  }
-> @@ -608,7 +609,9 @@ static int nfs4_xdr_dec_cb_layout(struct rpc_rqst *rqstp,
->  		status = decode_cb_sequence4res(xdr, cb);
->  		if (unlikely(status || cb->cb_seq_status))
->  			return status;
-> -	}
-> +	} else
-> +		return -EINVAL;
-> +
->  	return decode_cb_op_status(xdr, OP_CB_LAYOUTRECALL, &cb->cb_status);
->  }
->  #endif /* CONFIG_NFSD_PNFS */
-> @@ -667,7 +670,9 @@ static int nfs4_xdr_dec_cb_notify_lock(struct rpc_rqst *rqstp,
->  		status = decode_cb_sequence4res(xdr, cb);
->  		if (unlikely(status || cb->cb_seq_status))
->  			return status;
-> -	}
-> +	} else
-> +		return -EINVAL;
-> +	
->  	return decode_cb_op_status(xdr, OP_CB_NOTIFY_LOCK, &cb->cb_status);
->  }
->  
-> -- 
-> 2.17.0
+-Saravana
