@@ -2,87 +2,184 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E71B17ACB7
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 17:49:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 862277ACC1
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 17:50:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732574AbfG3PtJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 11:49:09 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:40627 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728874AbfG3PtJ (ORCPT
+        id S1732615AbfG3Ptw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 11:49:52 -0400
+Received: from imap1.codethink.co.uk ([176.9.8.82]:51548 "EHLO
+        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727534AbfG3Pts (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 11:49:09 -0400
-Received: by mail-pf1-f193.google.com with SMTP id p184so30048377pfp.7
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 08:49:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=43Zzz7LDd7UVoaQey8hQ90fg18MtS6aSB7Sxnrox+yo=;
-        b=XYVSFu6II2aBDHgCkklPATMigNKxVdX5hsABv9qco4xcXRUO5H1NfhNMqScJ2S3vOV
-         rDN3+QjWKTzv+sLY6CKLUCwOhn4T27//DHgfh4jwubFLko0w8AhUllRAzf6eBiPbOLik
-         0OO8Tdlev9i60cz12tGqeKdWhqiCR4pec7uqoWRg89UFy/LuaJ6Pw6w65mIn8XpJ3GXg
-         oAOMNJN8FkZUt9r/2hbckySe8tEwJxozKR2R8RT/TVNlPUjUFZO6z0dg2tB/H4N0X/WU
-         uNPbYRP5LlevI1hWa/75T18uRIG+jSI9KDe9tsAlVs+lAwXizR2aB7hxII58zhRuKZfe
-         x1ug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mime-version:content-disposition:user-agent;
-        bh=43Zzz7LDd7UVoaQey8hQ90fg18MtS6aSB7Sxnrox+yo=;
-        b=bEF8sg5myleXoS5CPkynZojgQFaIaji8ZhKuM81YQWxWifX1nOibqFGxQ1ZwnGEi8l
-         +Z/16I4xgmUeVBNctzXdXmC/+ZSQbvb8ax7X/ABtcC4cP8CWb2XQHjgIc4+zA8eE90hQ
-         9DoelO4K8Qh8srbplcEQ97BX7tXdIGVOrbRliJs3ZVVfNA6cu0TIoc9muSahK3Lm1lVe
-         f3BMLJ/LcCKxIYNggbabHxZuoQqEgHnsL/Welo077hYjFczERWBs9DckvBvdAhcnV1N4
-         LQLmX1eJcitMUkfCd86o0bHgf1pDsC2TjN6JtKC81RQHoaBTU43ayUyb3WNbWZnbvnAJ
-         hLkQ==
-X-Gm-Message-State: APjAAAUzC+j8TQAhaDDAdf8Jy/u9QcHqDidSNzWkrFobgZ+UBQd7la+9
-        V504M2/FeQSubCfbN/2khZn1ccEx
-X-Google-Smtp-Source: APXvYqxNBAFY8CKbzGQKaZUyBaeqeFmtEyI64K+kkg8zg2UN3DZaSo1UW5eHEZs7+nYcHqr/c2wOpA==
-X-Received: by 2002:aa7:81d4:: with SMTP id c20mr42810553pfn.235.1564501748648;
-        Tue, 30 Jul 2019 08:49:08 -0700 (PDT)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id p187sm103274235pfg.89.2019.07.30.08.49.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Jul 2019 08:49:07 -0700 (PDT)
-Date:   Tue, 30 Jul 2019 08:49:06 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Yoshinori Sato <ysato@users.sourceforge.jp>
-Cc:     uclinux-h8-devel@lists.sourceforge.jp, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] h8300: Add missing symbol "BOOT_LINK_OFFSET"
-Message-ID: <20190730154906.GA18870@roeck-us.net>
+        Tue, 30 Jul 2019 11:49:48 -0400
+Received: from [167.98.27.226] (helo=[10.35.6.253])
+        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
+        id 1hsUNZ-0001X8-C3; Tue, 30 Jul 2019 16:49:33 +0100
+Subject: Re: [alsa-devel] [PATCH v2 2/3] ASoC: Add codec driver for ST TDA7802
+To:     Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc:     Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
+        alsa-devel@alsa-project.org,
+        Marco Felsch <m.felsch@pengutronix.de>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Kirill Marinushkin <kmarinushkin@birdec.tech>,
+        Cheng-Yi Chiang <cychiang@chromium.org>,
+        linux-kernel@vger.kernel.org, Nate Case <ncase@tesla.com>,
+        Takashi Iwai <tiwai@suse.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Vinod Koul <vkoul@kernel.org>, Mark Brown <broonie@kernel.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Annaliese McDermond <nh6z@nh6z.net>,
+        Rob Duncan <rduncan@tesla.com>,
+        Patrick Glaser <pglaser@tesla.com>,
+        Jerome Brunet <jbrunet@baylibre.com>
+References: <20190730120937.16271-1-thomas.preston@codethink.co.uk>
+ <20190730120937.16271-3-thomas.preston@codethink.co.uk>
+ <20190730123825.GG54126@ediswmail.ad.cirrus.com>
+From:   Thomas Preston <thomas.preston@codethink.co.uk>
+Message-ID: <4285701d-ae61-208b-8f38-ac44e77ad9b5@codethink.co.uk>
+Date:   Tue, 30 Jul 2019 16:49:32 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20190730123825.GG54126@ediswmail.ad.cirrus.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 17, 2019 at 10:55:00PM +0900, Yoshinori Sato wrote:
-> Signed-off-by: Yoshinori Sato <ysato@users.sourceforge.jp>
-> ---
->  arch/h8300/Kconfig | 3 +++
->  1 file changed, 3 insertions(+)
+On 30/07/2019 13:38, Charles Keepax wrote:
+> On Tue, Jul 30, 2019 at 01:09:36PM +0100, Thomas Preston wrote:
+>> Add an I2C based codec driver for ST TDA7802 amplifier. The amplifier
+>> supports 4 audio channels but can support up to 16 with multiple
+>> devices.
+>>
+>> Signed-off-by: Thomas Preston <thomas.preston@codethink.co.uk>
+>> Cc: Patrick Glaser <pglaser@tesla.com>
+>> Cc: Rob Duncan <rduncan@tesla.com>
+>> Cc: Nate Case <ncase@tesla.com>
+>> ---
+>> Changes since v1:
+>> - Use ALSA kcontrol interface to expose device controls to userland
+>> 	- Gain
+>> 	- Channel diagnostic mode
+>> 	- Impedance efficiency optimiser. I decided against setting this
+>> 	  as a DT property since it seems like something that can be
+>> 	  changed on the fly.
+>> - Add regmap default values
+>> 	- Channel unmute by default is added in a downstream patch.
+>> 	- I'm not sure if I should keep this since they're all zero,
+>> 	  although there are other drivers will all-zero reg_defaults.
+>> - I believe the "//" style is used for SPDX headers in normal C source files.
+>>   https://lwn.net/Articles/739183/
+>> - Drop the "enable" sysfs device attribute.
+>> - Don't set TDM format using magic numbers.
+>> - Set sample rate using hw_params.
+>> - Remove unecessary defines.
+>> - Use DAPM to handle AMP_ON.
+>> - Cosmetic fixups
+>>
+>>  sound/soc/codecs/Kconfig   |   6 +
+>>  sound/soc/codecs/Makefile  |   2 +
+>>  sound/soc/codecs/tda7802.c | 509 +++++++++++++++++++++++++++++++++++++
+>>  3 files changed, 517 insertions(+)
+>>  create mode 100644 sound/soc/codecs/tda7802.c
+>>
+>> +++ b/sound/soc/codecs/tda7802.c
+>> @@ -0,0 +1,509 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * tda7802.c  --  codec driver for ST TDA7802
+>> + *
+>> + * Copyright (C) 2016-2019 Tesla Motors, Inc.
+>> + */
 > 
-> diff --git a/arch/h8300/Kconfig b/arch/h8300/Kconfig
-> index ecfc4b4b6373..6974513b1ae9 100644
-> --- a/arch/h8300/Kconfig
-> +++ b/arch/h8300/Kconfig
-> @@ -45,4 +45,7 @@ config NR_CPUS
->  	int
->  	default 1
->  
-> +config BOOT_LINK_OFFSET
-> +	hex	"zImage link offset"
-> +
+> Better to make the whole comment // see something like
+> sound/soc/codecs/cs47l35.c for an example.
+> 
 
-"hex" requires a default value. The above declaration generates
-"CONFIG_BOOT_LINK_OFFSET=" in the configuration file, which is invalid
-and can not be fixed with "make ARCH=h8300 olddefconfig". This in turn
-results in "make" requesting a value when it encounters the symbol,
-meaning that automated builds of h8300 images are no longer possible,
-at least not without workarounds.
+I will update to "//" style. Is this a new standard? There aren't many
+comments like that in 4.14 (my target kernel) - I can see a lot more
+in 5.3.
 
-Guenter
+My intention was:
+
+1. Apply the SPDX rules to SPDX bit.     Documentation/process/license-rules.rst
+2. Use multi-line comments for the rest. Documentation/process/coding-style.rst
+
+>> +static int tda7802_set_bias_level(struct snd_soc_component *component,
+>> +		enum snd_soc_bias_level level)
+>> +{
+>> +	const struct tda7802_priv *tda7802 =
+>> +		snd_soc_component_get_drvdata(component);
+>> +	struct snd_soc_dapm_context *dapm_context =
+>> +			snd_soc_component_get_dapm(component);
+>> +	const enum snd_soc_bias_level oldlevel =
+>> +		snd_soc_dapm_get_bias_level(dapm_context);
+>> +	int err = 0;
+>> +
+>> +	dev_dbg(component->dev, "%s level %d\n", __func__, level);
+>> +
+>> +	switch (level) {
+>> +	case SND_SOC_BIAS_ON:
+>> +		break;
+>> +	case SND_SOC_BIAS_PREPARE:
+>> +		break;
+>> +	case SND_SOC_BIAS_STANDBY:
+>> +		err = regulator_enable(tda7802->enable_reg);
+>> +		if (err < 0) {
+>> +			dev_err(component->dev, "Could not enable.\n");
+>> +			return err;
+>> +		}
+>> +		dev_dbg(component->dev, "Regulator enabled\n");
+>> +		msleep(ENABLE_DELAY_MS);
+>> +
+>> +		if (oldlevel == SND_SOC_BIAS_OFF) {
+>> +			dev_dbg(component->dev, "Syncing regcache\n");
+>> +			err = regcache_sync(component->regmap);
+>> +			if (err < 0)
+>> +				dev_err(component->dev,
+>> +					"Could not sync regcache, %d\n", err);
+> 
+> If your doing a regcache_sync I would probably have expected to
+> see calls to regcache_cache_only.
+> 
+> If the device needs syncing that implies the hardware registers
+> have lost state, so there is little point in writing to them
+> if they are unavailable/about to loose their state.
+> 
+
+Ah, from the comments I thought I only needed to call regcache_mark_dirty...
+
+>> +		}
+>> +		break;
+>> +	case SND_SOC_BIAS_OFF:
+>> +		regcache_mark_dirty(component->regmap);
+>> +		err = regulator_disable(tda7802->enable_reg);
+>> +		if (err < 0)
+>> +			dev_err(component->dev, "Could not disable.\n");
+>> +		break;
+>> +	}
+>> +
+>> +	return err;
+>> +}
+
+So I think the correct order is:
+
+device_off:
+	regcache_cache_only
+	power-off (enable)
+	regcache_mark_dirty
+
+device_on:
+	power-on (enable)
+	regcache_sync
+
+I will double-check the register state is actually lost too. Fiddling
+with the cache might be completely unnecessary.
+
+Many thanks
