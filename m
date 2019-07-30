@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B6367B17C
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:18:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 74DD87B183
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:18:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728844AbfG3SRH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 14:17:07 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:43941 "EHLO
+        id S1729158AbfG3SRx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 14:17:53 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:47079 "EHLO
         mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388132AbfG3SQn (ORCPT
+        with ESMTP id S2388111AbfG3SQo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 14:16:43 -0400
-Received: by mail-pg1-f195.google.com with SMTP id r22so2876955pgk.10
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 11:16:42 -0700 (PDT)
+        Tue, 30 Jul 2019 14:16:44 -0400
+Received: by mail-pg1-f195.google.com with SMTP id k189so11433148pgk.13
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 11:16:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=fKD21YltjNdX0Gh4aRiK3v6esh13LM/jUbhsmCEcsM8=;
-        b=c9/kS111G3SGImYr1U5vCbj0hdX0U7JXwROeG49nc6dkg0afxl5NMuC6U0VYyvNoml
-         IQ7k9VCSv8yu7OhA1vsV/1QXI1xTj1+8lh0VVirk0n2tUisVVdmz9ZNIWsz5X55idcjN
-         hYzGHEpH+7gqW/uQVu/s2qHD1YFhx1L5qIWS0=
+        bh=esFlUhCptDaWsW0v+X0craB1CNFJYps3K4bWgEnCePY=;
+        b=GV9K5BkAy9wGdDD6oWn+1HJFE+ISkUbed5XqU9gEC4s9US0JqZLWCPZTRdPQYDoHNc
+         rIfH2V2gzSUdS67p4oCPgoP7iGqBg8yyrGYTuulbLj9TXtR84tZzj06ca73c0yEi9Hor
+         OXgzFGpIwGoH93vqWViIaoYXAE3z83KUDYeIk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=fKD21YltjNdX0Gh4aRiK3v6esh13LM/jUbhsmCEcsM8=;
-        b=CKqyr31NsGbvdR/hshrqMUqcTXZ95LbiIle5XG6uSpMPhpjiJxyT/X1laHYAgbQd6g
-         xmQZZoLhTCWOYWpiw+mly1WLqjbWN7uZevI3aMgvIlXVT6oFDA+lBA7AknEd7ungGrUD
-         GFwXfJmO5wwoZ1+9rpeekLGLFHUJEBhgrWuqjHpsKg6vBR0iCMAOtrAfJUjsL8pHL8j4
-         EZfpEU6Porg8YihjvGP6nXjgQPpIl6VCXtvTrBVXc0a0H8iTz9aLhnO2cTZWf7fifmDU
-         7h7NIikoSDVRyg0xwLQTBt+M43xxDUTEcqNKxYAeqUwDBGAgDXzN6fArGTafRZvK/n/s
-         UV1w==
-X-Gm-Message-State: APjAAAVwD+DWl5Hb68pAeJQoXI0LPGkM/IaVTH9Qre/a2eM6cvOfQDrU
-        Xgz2RTuyh78ZVJJqW40nMHv6j6UpNC8eSg==
-X-Google-Smtp-Source: APXvYqzToMhXlwFnTe0eItZa7Mbn4k5gYXMT9SLGPEuDAtawXB9pVcnXtqUyvvp+gcIgurPoOgRswQ==
-X-Received: by 2002:a65:4844:: with SMTP id i4mr111825638pgs.113.1564510602339;
-        Tue, 30 Jul 2019 11:16:42 -0700 (PDT)
+        bh=esFlUhCptDaWsW0v+X0craB1CNFJYps3K4bWgEnCePY=;
+        b=snvGlX06iGQTOFFCpt33uuObw4uFITF8VSTpkUs0V83WPblTr+qHbYRtjAGfc8IZj+
+         A1qXZ8vNt1iVnklCGfm/T6KSJA+lBdPe++0OIk3Zzqzh6sZLt8f0E5GEYbkqxvrkSvey
+         x0V3K0LgUIIUX10r7oXo9pw5EkFS1qlog2fFu4Cu/Dqt2oPHBdIcDbxJ5vurKldJdSwv
+         nDOSRiWWIVt09Li3FhFYP0TT2195L754x9w9H3Jtlciy7KMri0QtJRqLvq85GT/wYD4x
+         zzRoMi/SOygoHuW6H+XftQUAQsEGFqkDZcdZnJgKiTaiNT7lBlyUE+pu1zKUiYDkgNjd
+         ZFvA==
+X-Gm-Message-State: APjAAAX+SeBROTaGwfG6d7Prsby4FNpjd0XW5rAa+5tMztZZKvKlPPIN
+        yaElWz2vJHuxxdzJKG0UbSVQ48hBHF3zgA==
+X-Google-Smtp-Source: APXvYqwtoIKdacZ5zLpKXHjF6IHA+Pp6SRbe6vrRSajOM6VEBh7rEC181vgN4wE/eZqSNzhsT/vvQw==
+X-Received: by 2002:a65:57ca:: with SMTP id q10mr113399970pgr.52.1564510603340;
+        Tue, 30 Jul 2019 11:16:43 -0700 (PDT)
 Received: from smtp.gmail.com ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id g1sm106744083pgg.27.2019.07.30.11.16.41
+        by smtp.gmail.com with ESMTPSA id g1sm106744083pgg.27.2019.07.30.11.16.42
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 30 Jul 2019 11:16:41 -0700 (PDT)
+        Tue, 30 Jul 2019 11:16:42 -0700 (PDT)
 From:   Stephen Boyd <swboyd@chromium.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
@@ -51,9 +51,9 @@ Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         "Darren Hart (VMware)" <dvhart@infradead.org>,
         Roman Kiryanov <rkir@google.com>,
         Vadim Pasternak <vadimp@mellanox.com>
-Subject: [PATCH v6 52/57] platform/x86: intel_pmc_ipc: Remove dev_err() usage after platform_get_irq()
-Date:   Tue, 30 Jul 2019 11:15:52 -0700
-Message-Id: <20190730181557.90391-53-swboyd@chromium.org>
+Subject: [PATCH v6 53/57] platform/mellanox: mlxreg-hotplug: Remove dev_err() usage after platform_get_irq()
+Date:   Tue, 30 Jul 2019 11:15:53 -0700
+Message-Id: <20190730181557.90391-54-swboyd@chromium.org>
 X-Mailer: git-send-email 2.22.0.709.g102302147b-goog
 In-Reply-To: <20190730181557.90391-1-swboyd@chromium.org>
 References: <20190730181557.90391-1-swboyd@chromium.org>
@@ -112,25 +112,26 @@ Signed-off-by: Stephen Boyd <swboyd@chromium.org>
 
 Please apply directly to subsystem trees
 
- drivers/platform/x86/intel_pmc_ipc.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/platform/mellanox/mlxreg-hotplug.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/platform/x86/intel_pmc_ipc.c b/drivers/platform/x86/intel_pmc_ipc.c
-index 55037ff258f8..5c1da2bb1435 100644
---- a/drivers/platform/x86/intel_pmc_ipc.c
-+++ b/drivers/platform/x86/intel_pmc_ipc.c
-@@ -936,10 +936,8 @@ static int ipc_plat_probe(struct platform_device *pdev)
- 	spin_lock_init(&ipcdev.gcr_lock);
+diff --git a/drivers/platform/mellanox/mlxreg-hotplug.c b/drivers/platform/mellanox/mlxreg-hotplug.c
+index f85a1b9d129b..706207d192ae 100644
+--- a/drivers/platform/mellanox/mlxreg-hotplug.c
++++ b/drivers/platform/mellanox/mlxreg-hotplug.c
+@@ -642,11 +642,8 @@ static int mlxreg_hotplug_probe(struct platform_device *pdev)
+ 		priv->irq = pdata->irq;
+ 	} else {
+ 		priv->irq = platform_get_irq(pdev, 0);
+-		if (priv->irq < 0) {
+-			dev_err(&pdev->dev, "Failed to get platform irq: %d\n",
+-				priv->irq);
++		if (priv->irq < 0)
+ 			return priv->irq;
+-		}
+ 	}
  
- 	ipcdev.irq = platform_get_irq(pdev, 0);
--	if (ipcdev.irq < 0) {
--		dev_err(&pdev->dev, "Failed to get irq\n");
-+	if (ipcdev.irq < 0)
- 		return -EINVAL;
--	}
- 
- 	ret = ipc_plat_get_res(pdev);
- 	if (ret) {
+ 	priv->regmap = pdata->regmap;
 -- 
 Sent by a computer through tubes
 
