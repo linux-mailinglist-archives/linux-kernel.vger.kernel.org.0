@@ -2,31 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D5B737A0A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 07:52:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 484187A0A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 07:52:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728123AbfG3Fw0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 01:52:26 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:46118 "EHLO
+        id S1728215AbfG3Fwa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 01:52:30 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:46144 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726225AbfG3FwX (ORCPT
+        with ESMTP id S1726225AbfG3Fw1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 01:52:23 -0400
+        Tue, 30 Jul 2019 01:52:27 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
         :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=MiAJz6/LGZ9crHwvj8CLjPFMqAcUr7sr54tyumAelRs=; b=Rg7K55yowl6k/ZPgtgKzOFotco
-        EVRGBimUYALuPVAK+Kd0lIYGAgz8qtzz4r7Rt2jsMd0MtpQWT8xWTjMhSpjmP6B+WzSAt0NQxsH3z
-        +abmLHxfsepvGEZ16JG88WTk4KK/xmmi/835FUkRt3rJXl5jFfuGcN+T4XXHJZr+nfh2bJRDlW3PY
-        pEOwZbQr5FVYHNr00EG+63WsoZ6aeTTX2HHITa6njQqVgFg/XDoSqkAj0N5KDOYMSp9n85MUhgF5D
-        whhEQ2w7Jug4LOPnVeW4QA+7KPrsRNLvw5OSVDmss722pMK5UEW5tPkequZrhaCLygy8OXTJOT9po
-        zeDCXljw==;
+        bh=bXbV3qDGfzrx7WoIjFecJlqT5ZuyvFJhVzdpdqMjsLk=; b=P6NBNZSercDK8PYpn8hH4MT1dI
+        LpeRr03gX2BviYGoHk1vN9m29L2aP2JhMjHHKYLSgQm/itVvfO8okrbldueEpgHoKa86lEIRMpOb3
+        Vadg+4NxBVvm9X02muhLuK9XEa07t1zyqX82xhH+XnZCyZUzTvEDSdfex9WY0BKYXunC85J5XmVjC
+        h+fn0T7fEHa9Kh7H8LMhMwKH6XegmVI8DqDmLPtmEV4p+LQ9BAyqkcXhjbIGixsN6bXWtF7i7uc2Q
+        6n/rnpFHFsp8rPWmIOvJj+RA9WpDkFQkiAYcd6WMzaNCgY+bK/6n3141sAZN02rOHPPE+SpY+MKVp
+        HCEwdPvA==;
 Received: from [195.167.85.94] (helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hsL3c-00015E-DZ; Tue, 30 Jul 2019 05:52:20 +0000
+        id 1hsL3f-00015T-Jl; Tue, 30 Jul 2019 05:52:24 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
         Jason Gunthorpe <jgg@mellanox.com>,
@@ -35,9 +35,9 @@ To:     =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
 Cc:     Ralph Campbell <rcampbell@nvidia.com>, linux-mm@kvack.org,
         nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
         amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 02/13] amdgpu: don't initialize range->list in amdgpu_hmm_init_range
-Date:   Tue, 30 Jul 2019 08:51:52 +0300
-Message-Id: <20190730055203.28467-3-hch@lst.de>
+Subject: [PATCH 03/13] nouveau: pass struct nouveau_svmm to nouveau_range_fault
+Date:   Tue, 30 Jul 2019 08:51:53 +0300
+Message-Id: <20190730055203.28467-4-hch@lst.de>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190730055203.28467-1-hch@lst.de>
 References: <20190730055203.28467-1-hch@lst.de>
@@ -49,25 +49,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The list is used to add the range to another list as an entry in the
-core hmm code, so there is no need to initialize it in a driver.
+This avoid having to abuse the vma field in struct hmm_range to unlock
+the mmap_sem.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/gpu/drm/nouveau/nouveau_svm.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c
-index b698b423b25d..60b9fc9561d7 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c
-@@ -484,6 +484,5 @@ void amdgpu_hmm_init_range(struct hmm_range *range)
- 		range->flags = hmm_range_flags;
- 		range->values = hmm_range_values;
- 		range->pfn_shift = PAGE_SHIFT;
--		INIT_LIST_HEAD(&range->list);
- 	}
+diff --git a/drivers/gpu/drm/nouveau/nouveau_svm.c b/drivers/gpu/drm/nouveau/nouveau_svm.c
+index a74530b5a523..b889d5ec4c7e 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_svm.c
++++ b/drivers/gpu/drm/nouveau/nouveau_svm.c
+@@ -485,14 +485,14 @@ nouveau_range_done(struct hmm_range *range)
  }
+ 
+ static int
+-nouveau_range_fault(struct hmm_mirror *mirror, struct hmm_range *range)
++nouveau_range_fault(struct nouveau_svmm *svmm, struct hmm_range *range)
+ {
+ 	long ret;
+ 
+ 	range->default_flags = 0;
+ 	range->pfn_flags_mask = -1UL;
+ 
+-	ret = hmm_range_register(range, mirror,
++	ret = hmm_range_register(range, &svmm->mirror,
+ 				 range->start, range->end,
+ 				 PAGE_SHIFT);
+ 	if (ret) {
+@@ -689,7 +689,7 @@ nouveau_svm_fault(struct nvif_notify *notify)
+ 		range.values = nouveau_svm_pfn_values;
+ 		range.pfn_shift = NVIF_VMM_PFNMAP_V0_ADDR_SHIFT;
+ again:
+-		ret = nouveau_range_fault(&svmm->mirror, &range);
++		ret = nouveau_range_fault(svmm, &range);
+ 		if (ret == 0) {
+ 			mutex_lock(&svmm->mutex);
+ 			if (!nouveau_range_done(&range)) {
 -- 
 2.20.1
 
