@@ -2,71 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C791B7AA62
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 15:59:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BF9B57AA66
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 15:59:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729009AbfG3N71 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 09:59:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60728 "EHLO mail.kernel.org"
+        id S1729106AbfG3N7y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 09:59:54 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:38748 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728974AbfG3N71 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 09:59:27 -0400
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1726351AbfG3N7y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 09:59:54 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 33E7A206E0;
-        Tue, 30 Jul 2019 13:59:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564495166;
-        bh=RN3WLgtLO9LxEGGK8h3FFzXxmqTQiS7tuLP6iCmYr9E=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=Wcf45IXHQGtvtPZzwWCv+1yYZsKFZjU6J+s0yIuoJ4Qilj7f06eaJ/UnF1xBTcTgP
-         6rP9YBijd3MkEKRmmOksXnGR1R7Z7oipGfGvk5wrrChyA0Ppm7G0mZtXLZZEFjTXx4
-         fIv1vTLyUjYdpXTMaHGMKVIdErgNhVR6fCHWTBMU=
-Subject: Re: [PATCH 4.14 000/293] 4.14.135-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org, shuah <shuah@kernel.org>
-References: <20190729190820.321094988@linuxfoundation.org>
-From:   shuah <shuah@kernel.org>
-Message-ID: <850e4aba-cf24-d4b3-9d0f-59e8c4c6a46b@kernel.org>
-Date:   Tue, 30 Jul 2019 07:59:14 -0600
+        by mx1.redhat.com (Postfix) with ESMTPS id 0BE5D81F0E;
+        Tue, 30 Jul 2019 13:59:54 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-160.bos.redhat.com [10.18.17.160])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 208BA60856;
+        Tue, 30 Jul 2019 13:59:53 +0000 (UTC)
+Subject: Re: [PATCH v3] sched/core: Don't use dying mm as active_mm of
+ kthreads
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        Phil Auld <pauld@redhat.com>, Michal Hocko <mhocko@kernel.org>,
+        Rik van Riel <riel@surriel.com>
+References: <20190729210728.21634-1-longman@redhat.com>
+ <20190730084321.GL31381@hirez.programming.kicks-ass.net>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <396ac6c6-6c99-3cb8-6ff7-106c82df29ab@redhat.com>
+Date:   Tue, 30 Jul 2019 09:59:52 -0400
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-In-Reply-To: <20190729190820.321094988@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+In-Reply-To: <20190730084321.GL31381@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Tue, 30 Jul 2019 13:59:54 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/29/19 1:18 PM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.14.135 release.
-> There are 293 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Wed 31 Jul 2019 07:05:01 PM UTC.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.135-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
+On 7/30/19 4:43 AM, Peter Zijlstra wrote:
+> On Mon, Jul 29, 2019 at 05:07:28PM -0400, Waiman Long wrote:
+>> It was found that a dying mm_struct where the owning task has exited
+>> can stay on as active_mm of kernel threads as long as no other user
+>> tasks run on those CPUs that use it as active_mm. This prolongs the
+>> life time of dying mm holding up some resources that cannot be freed
+>> on a mostly idle system.
+>>
+>> Fix that by forcing the kernel threads to use init_mm as the active_mm
+>> during a kernel thread to kernel thread transition if the previous
+>> active_mm is dying (!mm_users). This will allows the freeing of resources
+>> associated with the dying mm ASAP.
+>>
+>> The presence of a kernel-to-kernel thread transition indicates that
+>> the cpu is probably idling with no higher priority user task to run.
+>> So the overhead of loading the mm_users cacheline should not really
+>> matter in this case.
+>>
+>> My testing on an x86 system showed that the mm_struct was freed within
+>> seconds after the task exited instead of staying alive for minutes or
+>> even longer on a mostly idle system before this patch.
+>>
+>> Signed-off-by: Waiman Long <longman@redhat.com>
+>> ---
+>>  kernel/sched/core.c | 21 +++++++++++++++++++--
+>>  1 file changed, 19 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+>> index 795077af4f1a..41997e676251 100644
+>> --- a/kernel/sched/core.c
+>> +++ b/kernel/sched/core.c
+>> @@ -3214,6 +3214,8 @@ static __always_inline struct rq *
+>>  context_switch(struct rq *rq, struct task_struct *prev,
+>>  	       struct task_struct *next, struct rq_flags *rf)
+>>  {
+>> +	struct mm_struct *next_mm = next->mm;
+>> +
+>>  	prepare_task_switch(rq, prev, next);
+>>  
+>>  	/*
+>> @@ -3229,8 +3231,22 @@ context_switch(struct rq *rq, struct task_struct *prev,
+>>  	 *
+>>  	 * kernel ->   user   switch + mmdrop() active
+>>  	 *   user ->   user   switch
+>> +	 *
+>> +	 * kernel -> kernel and !prev->active_mm->mm_users:
+>> +	 *   switch to init_mm + mmgrab() + mmdrop()
+>>  	 */
+>> -	if (!next->mm) {                                // to kernel
+>> +	if (!next_mm) {					// to kernel
+>> +		/*
+>> +		 * Checking is only done on kernel -> kernel transition
+>> +		 * to avoid any performance overhead while user tasks
+>> +		 * are running.
+>> +		 */
+>> +		if (unlikely(!prev->mm &&
+>> +			     !atomic_read(&prev->active_mm->mm_users))) {
+>> +			next_mm = next->active_mm = &init_mm;
+>> +			mmgrab(next_mm);
+>> +			goto mm_switch;
+>> +		}
+>>  		enter_lazy_tlb(prev->active_mm, next);
+>>  
+>>  		next->active_mm = prev->active_mm;
+> So I _really_ hate this complication. I'm thinking if you really care
+> about this the time is much better spend getting rid of the active_mm
+> tracking for x86 entirely.
+>
+That is fine. I won't pursue further. I will take a look at your
+suggestion when I have time, but it will probably be a while :-)
 
-Compiled and booted on my test system. No dmesg regressions.
+Cheers,
+Longman
 
-thanks,
--- Shuah
