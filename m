@@ -2,124 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CBBC47ABC8
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 17:01:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A480F7ABCD
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 17:01:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731622AbfG3PBM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 11:01:12 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:42678 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729745AbfG3PBM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 11:01:12 -0400
-Received: by mail-ed1-f66.google.com with SMTP id v15so62888331eds.9
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 08:01:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=bQWucyIKvCKeKopDX4ZksHy14UtOcimGNYOu7selEmU=;
-        b=GdNRwja+/25H4SxUZ4ralc99QLXtPYO2kj4H0jLiarKQZUn/l8l1B/z2ZXWZRqNuZz
-         Bo97G25Ewtp9jrs7GZbl+3mcVqn/Z6kURcIxMGDgvQxtCGAakJaf/QdyTAVoApyqsPCi
-         +KeelUNoacnfmu1MSDGt1BE4PkOnW93teyfZjh0bIJ++GsJrR+OqNatermEhdUGCzqvs
-         MR5irSWphHO6klpLr30FcWHLDfGZR65mQYzA7D2nmY0kJui2TgthhRjXVcKuBE9X5ooQ
-         Y2u+Fy9LUIhK3lJN/lDzNl8X1ZwlZ5ztF/YApdnpbYcs7UzifwAgUuDC5YHTQ6AJ8kA+
-         CLsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=bQWucyIKvCKeKopDX4ZksHy14UtOcimGNYOu7selEmU=;
-        b=HDwqnO5Dva6Xd8r6J1oHb0MroJqVBUOSwxqZYyJAZWFfEYqe+pmdWbkwC0yBV0Npo0
-         EP/CMJg02uExtBFyAr75H7Kbanv2ZJaeaH4X2X5JFiIc7pCYCrR8NjReSLmw47UNSFKx
-         IymCdLs6wvyrS3ZasLuoqIvY595XKWf+VnnHAitYPkOJr6XBHwJRLVu8hLwJGBWaJKkO
-         ZYKW9PmZOuHMXS2p5TrVy78YS2JX3JJU5/WUk/dWxkGLK+Ws/04TibTcHpZxsbXIh1Jy
-         FLJz2RxjQ0l2u8w+VcbLgrCrneEz1UtRzluy0oMCRYpyiShKorteHmBWhaEBYnvs3+zf
-         0QBQ==
-X-Gm-Message-State: APjAAAVGxDlAU1SrvYg0bWimHDMbte7OgEc/+LJ4WSgrKB1VInus7kpL
-        9CDB5A+NN2unyYu2PGSzN/A=
-X-Google-Smtp-Source: APXvYqyL2odYUrW+8WuVCn0Ui36foqk2fFzmQK1cuc8eMBoSNxrRogxxj3ymkZEHr7GpPbiBvSWG9w==
-X-Received: by 2002:a50:9107:: with SMTP id e7mr102905767eda.280.1564498870080;
-        Tue, 30 Jul 2019 08:01:10 -0700 (PDT)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id 34sm16475720eds.5.2019.07.30.08.01.09
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Jul 2019 08:01:09 -0700 (PDT)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id BB4A2100AD0; Tue, 30 Jul 2019 18:01:10 +0300 (+03)
-Date:   Tue, 30 Jul 2019 18:01:10 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Song Liu <songliubraving@fb.com>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        akpm@linux-foundation.org, matthew.wilcox@oracle.com,
-        kirill.shutemov@linux.intel.com, oleg@redhat.com,
-        kernel-team@fb.com, william.kucharski@oracle.com,
-        srikar@linux.vnet.ibm.com
-Subject: Re: [PATCH 2/2] uprobe: collapse THP pmd after removing all uprobes
-Message-ID: <20190730150110.yqib7bawsude2vqt@box>
-References: <20190729054335.3241150-1-songliubraving@fb.com>
- <20190729054335.3241150-3-songliubraving@fb.com>
+        id S1731986AbfG3PBW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 11:01:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53174 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731351AbfG3PBW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 11:01:22 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 820EA206A2;
+        Tue, 30 Jul 2019 15:01:20 +0000 (UTC)
+Date:   Tue, 30 Jul 2019 11:01:18 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Joe Perches <joe@perches.com>
+Cc:     Chuhong Yuan <hslester96@gmail.com>,
+        Kees Cook <keescook@chromium.org>, Tejun Heo <tj@kernel.org>,
+        Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Laura Abbott <labbott@redhat.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: Re: [PATCH 01/12] rdmacg: Replace strncmp with str_has_prefix
+Message-ID: <20190730110118.36853a8b@gandalf.local.home>
+In-Reply-To: <80fbaf63ddbe66cbbf3391256402295af1a3336f.camel@perches.com>
+References: <20190729151346.9280-1-hslester96@gmail.com>
+        <201907292117.DA40CA7D@keescook>
+        <CANhBUQ3V2A-TBVizVh+eMLSi5Gzw5sMBY7C-0a8=-z15qyQ75w@mail.gmail.com>
+        <80fbaf63ddbe66cbbf3391256402295af1a3336f.camel@perches.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190729054335.3241150-3-songliubraving@fb.com>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jul 28, 2019 at 10:43:35PM -0700, Song Liu wrote:
-> After all uprobes are removed from the huge page (with PTE pgtable), it
-> is possible to collapse the pmd and benefit from THP again. This patch
-> does the collapse by calling khugepaged_add_pte_mapped_thp().
-> 
-> Signed-off-by: Song Liu <songliubraving@fb.com>
-> ---
->  kernel/events/uprobes.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-> index 58ab7fc7272a..cc53789fefc6 100644
-> --- a/kernel/events/uprobes.c
-> +++ b/kernel/events/uprobes.c
-> @@ -26,6 +26,7 @@
->  #include <linux/percpu-rwsem.h>
->  #include <linux/task_work.h>
->  #include <linux/shmem_fs.h>
-> +#include <linux/khugepaged.h>
->  
->  #include <linux/uprobes.h>
->  
-> @@ -470,6 +471,7 @@ int uprobe_write_opcode(struct arch_uprobe *auprobe, struct mm_struct *mm,
->  	struct page *old_page, *new_page;
->  	struct vm_area_struct *vma;
->  	int ret, is_register, ref_ctr_updated = 0;
-> +	bool orig_page_huge = false;
->  
->  	is_register = is_swbp_insn(&opcode);
->  	uprobe = container_of(auprobe, struct uprobe, arch);
-> @@ -525,6 +527,9 @@ int uprobe_write_opcode(struct arch_uprobe *auprobe, struct mm_struct *mm,
->  
->  				/* dec_mm_counter for old_page */
->  				dec_mm_counter(mm, MM_ANONPAGES);
-> +
-> +				if (PageCompound(orig_page))
-> +					orig_page_huge = true;
->  			}
->  			put_page(orig_page);
->  		}
-> @@ -543,6 +548,10 @@ int uprobe_write_opcode(struct arch_uprobe *auprobe, struct mm_struct *mm,
->  	if (ret && is_register && ref_ctr_updated)
->  		update_ref_ctr(uprobe, mm, -1);
->  
-> +	/* try collapse pmd for compound page */
-> +	if (!ret && orig_page_huge)
-> +		khugepaged_add_pte_mapped_thp(mm, vaddr & HPAGE_PMD_MASK);
-> +
+On Tue, 30 Jul 2019 00:03:28 -0700
+Joe Perches <joe@perches.com> wrote:
 
-IIUC, here you have all locks taken, so you should be able to call
-collapse_pte_mapped_thp() directly, shouldn't you?
+> I believe I'm still in favor of global conversion of
+> strstarts to str_has_prefix.
+> 
 
--- 
- Kirill A. Shutemov
+So am I.
+
+-- Steve
