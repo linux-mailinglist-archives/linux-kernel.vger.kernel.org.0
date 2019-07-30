@@ -2,55 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DCD67B1D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:23:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D9FF7B1DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:24:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728824AbfG3SXX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 14:23:23 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:37335 "EHLO
+        id S1729401AbfG3SYR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 14:24:17 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:56097 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727481AbfG3SXX (ORCPT
+        with ESMTP id S1725935AbfG3SYR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 14:23:23 -0400
+        Tue, 30 Jul 2019 14:24:17 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6UINACF3327617
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6UIO4L73328013
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Tue, 30 Jul 2019 11:23:11 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6UINACF3327617
+        Tue, 30 Jul 2019 11:24:04 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6UIO4L73328013
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019071901; t=1564510991;
-        bh=rQ1lPdnAFGVYbXuHqMCEqZMhm2INZaWN6kHVP6ThGLE=;
+        s=2019071901; t=1564511045;
+        bh=6UvPL9nvS9M4UuJE9KbzySXBI2PxwEDyliwtC97/PRc=;
         h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=IeeNQ5l5+YlqLI0JP43eDBFZf8izhMnHoDhJpI52ou7NjhmmE6C0HcHL7a+KKfHqx
-         T3VHeWDVevjtLXqofS3DXUyyJV89YSyRl0CCK1fWhIMDrZxPapzLlgkwJ7abeX0rGX
-         EB9PMIMmTFz3KLXJ1HcNXY9I34sGT2RVE1cL9OIRrtLHj5UYRH5Kdt0tUXrOzejtu7
-         hel2PJsfdKaZY1vgcqud259JvbGkWEHfMpodkJNtTnfp2ViZiVisip7lwqYOF78UXC
-         U11cBnmZ8Vvu/8dd3PMXpF9Achob/zzzNMJn0pWpyqXMMdYoYU+VvlkVbRJsQSfXmA
-         AoCXFRQO1rWvQ==
+        b=OX6RdBzn8JvDTp6mLwlaouWCitlIAEOgH5H1I8m/Zw9c+YUQbwfpurZa1A04iVAfk
+         uRNj/rz8AgPy4bnc/vsGPH8DZgBQkqnFXZltzka5oEGntUHmBTDYybEv29uGD6xngi
+         v1j4WhzMw/PJY97Cbbf+ddLleRa33rJ1J/jjB4ZcxB56zXHi88IXnS4j+3mMyKkhrm
+         O2oYq0xBpApZO1FBp4uZOvpWsrpIWtjlCTKEKLvIDnNAtqx0YWL6eCnvU9YEBHTbVN
+         mrYn9egWG/iwurhmGjweQglewLlvI7Giu3naSTyBGku+40XoHpbVhVmlhEYigY44K5
+         z159ZXQKLhvUg==
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6UINAbB3327614;
-        Tue, 30 Jul 2019 11:23:10 -0700
-Date:   Tue, 30 Jul 2019 11:23:10 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6UIO3KI3327949;
+        Tue, 30 Jul 2019 11:24:03 -0700
+Date:   Tue, 30 Jul 2019 11:24:03 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
-Message-ID: <tip-e74676debaae7dcce20a34817ef145478887ba95@git.kernel.org>
-Cc:     alexander.shishkin@linux.intel.com, mpetlan@redhat.com,
-        namhyung@kernel.org, alexey.budankov@linux.intel.com,
-        acme@redhat.com, jolsa@kernel.org, ak@linux.intel.com,
-        linux-kernel@vger.kernel.org, mingo@kernel.org,
-        peterz@infradead.org, hpa@zytor.com, tglx@linutronix.de
-Reply-To: alexander.shishkin@linux.intel.com,
-          alexey.budankov@linux.intel.com, acme@redhat.com,
-          mingo@kernel.org, linux-kernel@vger.kernel.org,
-          peterz@infradead.org, mpetlan@redhat.com, jolsa@kernel.org,
-          ak@linux.intel.com, namhyung@kernel.org, hpa@zytor.com,
-          tglx@linutronix.de
-In-Reply-To: <20190721112506.12306-23-jolsa@kernel.org>
-References: <20190721112506.12306-23-jolsa@kernel.org>
+Message-ID: <tip-3143504918105156d03e8f927e127f7b9ea260d2@git.kernel.org>
+Cc:     jolsa@kernel.org, peterz@infradead.org, hpa@zytor.com,
+        mingo@kernel.org, acme@redhat.com, namhyung@kernel.org,
+        linux-kernel@vger.kernel.org, ak@linux.intel.com,
+        alexey.budankov@linux.intel.com,
+        alexander.shishkin@linux.intel.com, mpetlan@redhat.com,
+        tglx@linutronix.de
+Reply-To: alexey.budankov@linux.intel.com, tglx@linutronix.de,
+          mpetlan@redhat.com, alexander.shishkin@linux.intel.com,
+          namhyung@kernel.org, ak@linux.intel.com,
+          linux-kernel@vger.kernel.org, mingo@kernel.org,
+          peterz@infradead.org, jolsa@kernel.org, hpa@zytor.com,
+          acme@redhat.com
+In-Reply-To: <20190721112506.12306-24-jolsa@kernel.org>
+References: <20190721112506.12306-24-jolsa@kernel.org>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf evlist: Rename perf_evlist__disable() to
- evlist__disable()
-Git-Commit-ID: e74676debaae7dcce20a34817ef145478887ba95
+Subject: [tip:perf/core] libperf: Make libperf.a part of the perf build
+Git-Commit-ID: 3143504918105156d03e8f927e127f7b9ea260d2
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -68,254 +68,278 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  e74676debaae7dcce20a34817ef145478887ba95
-Gitweb:     https://git.kernel.org/tip/e74676debaae7dcce20a34817ef145478887ba95
+Commit-ID:  3143504918105156d03e8f927e127f7b9ea260d2
+Gitweb:     https://git.kernel.org/tip/3143504918105156d03e8f927e127f7b9ea260d2
 Author:     Jiri Olsa <jolsa@kernel.org>
-AuthorDate: Sun, 21 Jul 2019 13:24:09 +0200
+AuthorDate: Sun, 21 Jul 2019 13:24:10 +0200
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Mon, 29 Jul 2019 18:34:43 -0300
 
-perf evlist: Rename perf_evlist__disable() to evlist__disable()
+libperf: Make libperf.a part of the perf build
 
-Rename perf_evlist__disable() to evlist__disable(), so we don't have a
-name clash when we add perf_evlist__disable() in libperf.
+Add an empty libperf.a under tools/perf/lib and link it with perf.
+
+It can also be built separately with:
+
+  $ cd tools/perf/lib && make
+    CC       core.o
+    LD       libperf-in.o
+    AR       libperf.a
+    LINK     libperf.so
+
+Committer testing:
+
+  $ make O=/tmp/build/perf -C tools/perf/lib/
+  make: Entering directory '/home/acme/git/perf/tools/perf/lib'
+    LINK     /tmp/build/perf/libperf.so
+  make: Leaving directory '/home/acme/git/perf/tools/perf/lib'
+  $ ls -la /tmp/build/perf/libperf.so
+  -rwxrwxr-x. 1 acme acme 16232 Jul 22 15:30 /tmp/build/perf/libperf.so
+  $ file /tmp/build/perf/libperf.so
+  /tmp/build/perf/libperf.so: ELF 64-bit LSB shared object, x86-64, version 1 (SYSV), dynamically linked, BuildID[sha1]=7a51d227d871b381ddb686dcf94145c4dd908221, not stripped
+  $ git status tools/perf
+  On branch perf/core
+  nothing to commit, working tree clean
+  $
+  $ ls -lart tools/perf/lib/
+  total 16
+  drwxrwxr-x. 16 acme acme 4096 Jul 22 15:29 ..
+  -rw-rw-r--.  1 acme acme 1633 Jul 22 15:29 Makefile
+  -rw-rw-r--.  1 acme acme    0 Jul 22 15:29 core.c
+  -rw-rw-r--.  1 acme acme   20 Jul 22 15:29 Build
+  drwxrwxr-x.  2 acme acme 4096 Jul 22 15:29 .
+  $
+
+Committer notes:
+
+Need to add -I$(srctree)/tools/arch/$(ARCH)/include/uapi
+-I$(srctree)/tools/include/uapi to tools/perf/lib/Makefile's INCLUDE
+variable to pick up the latest versions of kernel headers, even in older
+systems, this is in line with what is in tools/lib/bpf/Makefile.
 
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: Alexey Budankov <alexey.budankov@linux.intel.com>
 Cc: Andi Kleen <ak@linux.intel.com>
 Cc: Michael Petlan <mpetlan@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20190721112506.12306-23-jolsa@kernel.org
+Link: http://lkml.kernel.org/r/20190721112506.12306-24-jolsa@kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/arch/x86/tests/perf-time-to-tsc.c | 2 +-
- tools/perf/builtin-kvm.c                     | 2 +-
- tools/perf/builtin-record.c                  | 2 +-
- tools/perf/builtin-stat.c                    | 2 +-
- tools/perf/builtin-trace.c                   | 4 ++--
- tools/perf/tests/backward-ring-buffer.c      | 2 +-
- tools/perf/tests/bpf.c                       | 2 +-
- tools/perf/tests/code-reading.c              | 2 +-
- tools/perf/tests/keep-tracking.c             | 6 +++---
- tools/perf/tests/sw-clock.c                  | 2 +-
- tools/perf/tests/switch-tracking.c           | 4 ++--
- tools/perf/util/evlist.c                     | 4 ++--
- tools/perf/util/evlist.h                     | 2 +-
- 13 files changed, 18 insertions(+), 18 deletions(-)
+ tools/perf/Makefile.config                         |  1 +
+ tools/perf/Makefile.perf                           | 30 +++++----
+ tools/perf/lib/Build                               |  1 +
+ tools/perf/lib/Makefile                            | 74 ++++++++++++++++++++++
+ .../Makefile.boot => tools/perf/lib/core.c         |  0
+ 5 files changed, 92 insertions(+), 14 deletions(-)
 
-diff --git a/tools/perf/arch/x86/tests/perf-time-to-tsc.c b/tools/perf/arch/x86/tests/perf-time-to-tsc.c
-index aa5a5c972ce5..8b70e9ee341a 100644
---- a/tools/perf/arch/x86/tests/perf-time-to-tsc.c
-+++ b/tools/perf/arch/x86/tests/perf-time-to-tsc.c
-@@ -107,7 +107,7 @@ int test__perf_time_to_tsc(struct test *test __maybe_unused, int subtest __maybe
- 	comm2 = "Test COMM 2";
- 	CHECK__(prctl(PR_SET_NAME, (unsigned long)comm2, 0, 0, 0));
+diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
+index 89ac5a1f1550..e4988f49ea79 100644
+--- a/tools/perf/Makefile.config
++++ b/tools/perf/Makefile.config
+@@ -277,6 +277,7 @@ ifeq ($(DEBUG),0)
+   endif
+ endif
  
--	perf_evlist__disable(evlist);
-+	evlist__disable(evlist);
++INC_FLAGS += -I$(src-perf)/lib/include
+ INC_FLAGS += -I$(src-perf)/util/include
+ INC_FLAGS += -I$(src-perf)/arch/$(SRCARCH)/include
+ INC_FLAGS += -I$(srctree)/tools/include/uapi
+diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
+index 0fffd2bb6cd9..6e7e7d44ffac 100644
+--- a/tools/perf/Makefile.perf
++++ b/tools/perf/Makefile.perf
+@@ -224,6 +224,7 @@ LIB_DIR         = $(srctree)/tools/lib/api/
+ TRACE_EVENT_DIR = $(srctree)/tools/lib/traceevent/
+ BPF_DIR         = $(srctree)/tools/lib/bpf/
+ SUBCMD_DIR      = $(srctree)/tools/lib/subcmd/
++LIBPERF_DIR     = $(srctree)/tools/perf/lib/
  
- 	for (i = 0; i < evlist->nr_mmaps; i++) {
- 		md = &evlist->mmap[i];
-diff --git a/tools/perf/builtin-kvm.c b/tools/perf/builtin-kvm.c
-index 9207bd49583e..3370eba0d3f3 100644
---- a/tools/perf/builtin-kvm.c
-+++ b/tools/perf/builtin-kvm.c
-@@ -993,7 +993,7 @@ static int kvm_events_live_report(struct perf_kvm_stat *kvm)
- 			err = fdarray__poll(fda, 100);
- 	}
+ # Set FEATURE_TESTS to 'all' so all possible feature checkers are executed.
+ # Without this setting the output feature dump file misses some features, for
+@@ -272,6 +273,7 @@ ifneq ($(OUTPUT),)
+   TE_PATH=$(OUTPUT)
+   BPF_PATH=$(OUTPUT)
+   SUBCMD_PATH=$(OUTPUT)
++  LIBPERF_PATH=$(OUTPUT)
+ ifneq ($(subdir),)
+   API_PATH=$(OUTPUT)/../lib/api/
+ else
+@@ -282,6 +284,7 @@ else
+   API_PATH=$(LIB_DIR)
+   BPF_PATH=$(BPF_DIR)
+   SUBCMD_PATH=$(SUBCMD_DIR)
++  LIBPERF_PATH=$(LIBPERF_DIR)
+ endif
  
--	perf_evlist__disable(kvm->evlist);
-+	evlist__disable(kvm->evlist);
+ LIBTRACEEVENT = $(TE_PATH)libtraceevent.a
+@@ -303,6 +306,8 @@ LIBBPF = $(BPF_PATH)libbpf.a
  
- 	if (err == 0) {
- 		sort_result(kvm);
-diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-index 8e20ead0ddbe..c0962ddfad04 100644
---- a/tools/perf/builtin-record.c
-+++ b/tools/perf/builtin-record.c
-@@ -1605,7 +1605,7 @@ static int __cmd_record(struct record *rec, int argc, const char **argv)
- 		 */
- 		if (done && !disabled && !target__none(&opts->target)) {
- 			trigger_off(&auxtrace_snapshot_trigger);
--			perf_evlist__disable(rec->evlist);
-+			evlist__disable(rec->evlist);
- 			disabled = true;
- 		}
- 	}
-diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-index c0e9d94b6dd5..36e66a4f3c57 100644
---- a/tools/perf/builtin-stat.c
-+++ b/tools/perf/builtin-stat.c
-@@ -373,7 +373,7 @@ static void disable_counters(void)
- 	 * from counting before reading their constituent counters.
- 	 */
- 	if (!target__none(&target))
--		perf_evlist__disable(evsel_list);
-+		evlist__disable(evsel_list);
- }
+ LIBSUBCMD = $(SUBCMD_PATH)libsubcmd.a
  
- static volatile int workload_exec_errno;
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index 46fab1ff92dc..51d142594a12 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -3451,7 +3451,7 @@ again:
- 				goto out_disable;
++LIBPERF = $(LIBPERF_PATH)libperf.a
++
+ # python extension build directories
+ PYTHON_EXTBUILD     := $(OUTPUT)python_ext_build/
+ PYTHON_EXTBUILD_LIB := $(PYTHON_EXTBUILD)lib/
+@@ -348,9 +353,7 @@ endif
  
- 			if (done && !draining) {
--				perf_evlist__disable(evlist);
-+				evlist__disable(evlist);
- 				draining = true;
- 			}
- 		}
-@@ -3477,7 +3477,7 @@ again:
- out_disable:
- 	thread__zput(trace->current);
+ export PERL_PATH
  
--	perf_evlist__disable(evlist);
-+	evlist__disable(evlist);
+-LIBPERF_A=$(OUTPUT)libperf.a
+-
+-PERFLIBS = $(LIBAPI) $(LIBTRACEEVENT) $(LIBSUBCMD)
++PERFLIBS = $(LIBAPI) $(LIBTRACEEVENT) $(LIBSUBCMD) $(LIBPERF)
+ ifndef NO_LIBBPF
+   PERFLIBS += $(LIBBPF)
+ endif
+@@ -583,8 +586,6 @@ JEVENTS_IN    := $(OUTPUT)pmu-events/jevents-in.o
  
- 	if (trace->sort_events)
- 		ordered_events__flush(&trace->oe.data, OE_FLUSH__FINAL);
-diff --git a/tools/perf/tests/backward-ring-buffer.c b/tools/perf/tests/backward-ring-buffer.c
-index f4b45702821d..9bdf66139099 100644
---- a/tools/perf/tests/backward-ring-buffer.c
-+++ b/tools/perf/tests/backward-ring-buffer.c
-@@ -70,7 +70,7 @@ static int do_test(struct evlist *evlist, int mmap_pages,
+ PMU_EVENTS_IN := $(OUTPUT)pmu-events/pmu-events-in.o
  
- 	evlist__enable(evlist);
- 	testcase();
--	perf_evlist__disable(evlist);
-+	evlist__disable(evlist);
+-LIBPERF_IN := $(OUTPUT)libperf-in.o
+-
+ export JEVENTS
  
- 	err = count_samples(evlist, sample_count, comm_count);
- 	perf_evlist__munmap(evlist);
-diff --git a/tools/perf/tests/bpf.c b/tools/perf/tests/bpf.c
-index 92fed94f4b6c..e16f927f38b6 100644
---- a/tools/perf/tests/bpf.c
-+++ b/tools/perf/tests/bpf.c
-@@ -173,7 +173,7 @@ static int do_test(struct bpf_object *obj, int (*func)(void),
+ build := -f $(srctree)/tools/build/Makefile.build dir=. obj
+@@ -601,12 +602,9 @@ $(JEVENTS): $(JEVENTS_IN)
+ $(PMU_EVENTS_IN): $(JEVENTS) FORCE
+ 	$(Q)$(MAKE) -f $(srctree)/tools/build/Makefile.build dir=pmu-events obj=pmu-events
  
- 	evlist__enable(evlist);
- 	(*func)();
--	perf_evlist__disable(evlist);
-+	evlist__disable(evlist);
+-$(LIBPERF_IN): prepare FORCE
+-	$(Q)$(MAKE) $(build)=libperf
+-
+-$(OUTPUT)perf: $(PERFLIBS) $(PERF_IN) $(PMU_EVENTS_IN) $(LIBPERF_IN) $(LIBTRACEEVENT_DYNAMIC_LIST)
++$(OUTPUT)perf: $(PERFLIBS) $(PERF_IN) $(PMU_EVENTS_IN) $(LIBTRACEEVENT_DYNAMIC_LIST)
+ 	$(QUIET_LINK)$(CC) $(CFLAGS) $(LDFLAGS) $(LIBTRACEEVENT_DYNAMIC_LIST_LDFLAGS) \
+-		$(PERF_IN) $(PMU_EVENTS_IN) $(LIBPERF_IN) $(LIBS) -o $@
++		$(PERF_IN) $(PMU_EVENTS_IN) $(LIBS) -o $@
  
- 	for (i = 0; i < evlist->nr_mmaps; i++) {
- 		union perf_event *event;
-diff --git a/tools/perf/tests/code-reading.c b/tools/perf/tests/code-reading.c
-index 8d38e001160d..ec4b0bf28270 100644
---- a/tools/perf/tests/code-reading.c
-+++ b/tools/perf/tests/code-reading.c
-@@ -684,7 +684,7 @@ static int do_test_code_reading(bool try_kcore)
+ $(GTK_IN): FORCE
+ 	$(Q)$(MAKE) $(build)=gtk
+@@ -727,9 +725,6 @@ endif
  
- 	do_something();
+ $(patsubst perf-%,%.o,$(PROGRAMS)): $(wildcard */*.h)
  
--	perf_evlist__disable(evlist);
-+	evlist__disable(evlist);
+-$(LIBPERF_A): $(LIBPERF_IN)
+-	$(QUIET_AR)$(RM) $@ && $(AR) rcs $@ $(LIBPERF_IN) $(LIB_OBJS)
+-
+ LIBTRACEEVENT_FLAGS += plugin_dir=$(plugindir_SQ) 'EXTRA_CFLAGS=$(EXTRA_CFLAGS)' 'LDFLAGS=$(LDFLAGS)'
  
- 	ret = process_events(machine, evlist, &state);
- 	if (ret < 0)
-diff --git a/tools/perf/tests/keep-tracking.c b/tools/perf/tests/keep-tracking.c
-index c333b9c765e8..7bfc859971e5 100644
---- a/tools/perf/tests/keep-tracking.c
-+++ b/tools/perf/tests/keep-tracking.c
-@@ -112,7 +112,7 @@ int test__keep_tracking(struct test *test __maybe_unused, int subtest __maybe_un
- 	comm = "Test COMM 1";
- 	CHECK__(prctl(PR_SET_NAME, (unsigned long)comm, 0, 0, 0));
+ $(LIBTRACEEVENT): FORCE
+@@ -762,6 +757,13 @@ $(LIBBPF)-clean:
+ 	$(call QUIET_CLEAN, libbpf)
+ 	$(Q)$(MAKE) -C $(BPF_DIR) O=$(OUTPUT) clean >/dev/null
  
--	perf_evlist__disable(evlist);
-+	evlist__disable(evlist);
++$(LIBPERF): FORCE
++	$(Q)$(MAKE) -C $(LIBPERF_DIR) O=$(OUTPUT) $(OUTPUT)libperf.a
++
++$(LIBPERF)-clean:
++	$(call QUIET_CLEAN, libperf)
++	$(Q)$(MAKE) -C $(LIBPERF_DIR) O=$(OUTPUT) clean >/dev/null
++
+ $(LIBSUBCMD): FORCE
+ 	$(Q)$(MAKE) -C $(SUBCMD_DIR) O=$(OUTPUT) $(OUTPUT)libsubcmd.a
  
- 	found = find_comm(evlist, comm);
- 	if (found != 1) {
-@@ -134,7 +134,7 @@ int test__keep_tracking(struct test *test __maybe_unused, int subtest __maybe_un
- 	comm = "Test COMM 2";
- 	CHECK__(prctl(PR_SET_NAME, (unsigned long)comm, 0, 0, 0));
+@@ -948,7 +950,7 @@ config-clean:
+ python-clean:
+ 	$(python-clean)
  
--	perf_evlist__disable(evlist);
-+	evlist__disable(evlist);
- 
- 	found = find_comm(evlist, comm);
- 	if (found != 1) {
-@@ -146,7 +146,7 @@ int test__keep_tracking(struct test *test __maybe_unused, int subtest __maybe_un
- 
- out_err:
- 	if (evlist) {
--		perf_evlist__disable(evlist);
-+		evlist__disable(evlist);
- 		evlist__delete(evlist);
- 	} else {
- 		cpu_map__put(cpus);
-diff --git a/tools/perf/tests/sw-clock.c b/tools/perf/tests/sw-clock.c
-index 4ab316c04ce7..ba033a6e6c0f 100644
---- a/tools/perf/tests/sw-clock.c
-+++ b/tools/perf/tests/sw-clock.c
-@@ -92,7 +92,7 @@ static int __test__sw_clock_freq(enum perf_sw_ids clock_id)
- 	for (i = 0; i < NR_LOOPS; i++)
- 		tmp++;
- 
--	perf_evlist__disable(evlist);
-+	evlist__disable(evlist);
- 
- 	md = &evlist->mmap[0];
- 	if (perf_mmap__read_init(md) < 0)
-diff --git a/tools/perf/tests/switch-tracking.c b/tools/perf/tests/switch-tracking.c
-index ea214313f22b..d5537edb47db 100644
---- a/tools/perf/tests/switch-tracking.c
-+++ b/tools/perf/tests/switch-tracking.c
-@@ -528,7 +528,7 @@ int test__switch_tracking(struct test *test __maybe_unused, int subtest __maybe_
- 		goto out_err;
- 	}
- 
--	perf_evlist__disable(evlist);
-+	evlist__disable(evlist);
- 
- 	switch_tracking.switch_evsel = switch_evsel;
- 	switch_tracking.cycles_evsel = cycles_evsel;
-@@ -566,7 +566,7 @@ int test__switch_tracking(struct test *test __maybe_unused, int subtest __maybe_
- 	}
- out:
- 	if (evlist) {
--		perf_evlist__disable(evlist);
-+		evlist__disable(evlist);
- 		evlist__delete(evlist);
- 	} else {
- 		cpu_map__put(cpus);
-diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
-index 94825c37a35f..1bedec28e58f 100644
---- a/tools/perf/util/evlist.c
-+++ b/tools/perf/util/evlist.c
-@@ -343,7 +343,7 @@ static int perf_evlist__nr_threads(struct evlist *evlist,
- 		return thread_map__nr(evlist->threads);
- }
- 
--void perf_evlist__disable(struct evlist *evlist)
-+void evlist__disable(struct evlist *evlist)
- {
- 	struct evsel *pos;
- 
-@@ -371,7 +371,7 @@ void evlist__enable(struct evlist *evlist)
- 
- void perf_evlist__toggle_enable(struct evlist *evlist)
- {
--	(evlist->enabled ? perf_evlist__disable : evlist__enable)(evlist);
-+	(evlist->enabled ? evlist__disable : evlist__enable)(evlist);
- }
- 
- static int perf_evlist__enable_event_cpu(struct evlist *evlist,
-diff --git a/tools/perf/util/evlist.h b/tools/perf/util/evlist.h
-index ab48bbfbca41..99621c056d09 100644
---- a/tools/perf/util/evlist.h
-+++ b/tools/perf/util/evlist.h
-@@ -184,7 +184,7 @@ void perf_evlist__munmap(struct evlist *evlist);
- 
- size_t perf_evlist__mmap_size(unsigned long pages);
- 
--void perf_evlist__disable(struct evlist *evlist);
-+void evlist__disable(struct evlist *evlist);
- void evlist__enable(struct evlist *evlist);
- void perf_evlist__toggle_enable(struct evlist *evlist);
- 
+-clean:: $(LIBTRACEEVENT)-clean $(LIBAPI)-clean $(LIBBPF)-clean $(LIBSUBCMD)-clean config-clean fixdep-clean python-clean
++clean:: $(LIBTRACEEVENT)-clean $(LIBAPI)-clean $(LIBBPF)-clean $(LIBSUBCMD)-clean $(LIBPERF)-clean config-clean fixdep-clean python-clean
+ 	$(call QUIET_CLEAN, core-objs)  $(RM) $(LIBPERF_A) $(OUTPUT)perf-archive $(OUTPUT)perf-with-kcore $(LANG_BINDINGS)
+ 	$(Q)find $(if $(OUTPUT),$(OUTPUT),.) -name '*.o' -delete -o -name '\.*.cmd' -delete -o -name '\.*.d' -delete
+ 	$(Q)$(RM) $(OUTPUT).config-detected
+diff --git a/tools/perf/lib/Build b/tools/perf/lib/Build
+new file mode 100644
+index 000000000000..5196958cec01
+--- /dev/null
++++ b/tools/perf/lib/Build
+@@ -0,0 +1 @@
++libperf-y += core.o
+diff --git a/tools/perf/lib/Makefile b/tools/perf/lib/Makefile
+new file mode 100644
+index 000000000000..33046e7c6a2a
+--- /dev/null
++++ b/tools/perf/lib/Makefile
+@@ -0,0 +1,74 @@
++# SPDX-License-Identifier: (LGPL-2.1 OR BSD-2-Clause)
++# Most of this file is copied from tools/lib/bpf/Makefile
++
++MAKEFLAGS += --no-print-directory
++
++ifeq ($(srctree),)
++srctree := $(patsubst %/,%,$(dir $(CURDIR)))
++srctree := $(patsubst %/,%,$(dir $(srctree)))
++srctree := $(patsubst %/,%,$(dir $(srctree)))
++#$(info Determined 'srctree' to be $(srctree))
++endif
++
++include $(srctree)/tools/scripts/Makefile.include
++include $(srctree)/tools/scripts/Makefile.arch
++
++ifeq ("$(origin V)", "command line")
++  VERBOSE = $(V)
++endif
++ifndef VERBOSE
++  VERBOSE = 0
++endif
++
++ifeq ($(VERBOSE),1)
++  Q =
++else
++  Q = @
++endif
++
++# Set compile option CFLAGS
++ifdef EXTRA_CFLAGS
++  CFLAGS := $(EXTRA_CFLAGS)
++else
++  CFLAGS := -g -Wall
++endif
++
++INCLUDES = -I$(srctree)/tools/perf/lib/include -I$(srctree)/tools/include -I$(srctree)/tools/arch/$(ARCH)/include/ -I$(srctree)/tools/arch/$(ARCH)/include/uapi -I$(srctree)/tools/include/uapi
++
++# Append required CFLAGS
++override CFLAGS += $(EXTRA_WARNINGS)
++override CFLAGS += -Werror -Wall
++override CFLAGS += -fPIC
++override CFLAGS += $(INCLUDES)
++override CFLAGS += -fvisibility=hidden
++
++all:
++
++export srctree OUTPUT CC LD CFLAGS V
++include $(srctree)/tools/build/Makefile.include
++
++LIBPERF_SO := $(OUTPUT)libperf.so
++LIBPERF_A  := $(OUTPUT)libperf.a
++LIBPERF_IN := $(OUTPUT)libperf-in.o
++
++$(LIBPERF_IN): FORCE
++	$(Q)$(MAKE) $(build)=libperf
++
++$(LIBPERF_A): $(LIBPERF_IN)
++	$(QUIET_AR)$(RM) $@ && $(AR) rcs $@ $(LIBPERF_IN)
++
++$(LIBPERF_SO): $(LIBPERF_IN)
++	$(QUIET_LINK)$(CC) --shared -Wl,-soname,libperf.so $^ -o $@
++
++libs: $(LIBPERF_A) $(LIBPERF_SO)
++
++all: fixdep
++	$(Q)$(MAKE) libs
++
++clean:
++	$(call QUIET_CLEAN, libperf) $(RM) $(LIBPERF_A) \
++                *.o *~ *.a *.so .*.d .*.cmd LIBPERF-CFLAGS
++
++FORCE:
++
++.PHONY: all install clean FORCE
+diff --git a/arch/arm/mach-imx/Makefile.boot b/tools/perf/lib/core.c
+similarity index 100%
+copy from arch/arm/mach-imx/Makefile.boot
+copy to tools/perf/lib/core.c
