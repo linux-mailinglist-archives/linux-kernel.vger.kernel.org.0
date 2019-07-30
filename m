@@ -2,135 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D5F77A484
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 11:36:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 891CC7A497
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 11:37:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731665AbfG3Jge (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 05:36:34 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:56488 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731650AbfG3Jgc (ORCPT
+        id S1731696AbfG3JhW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 05:37:22 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:37323 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730463AbfG3JhV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 05:36:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=BjOHjVPfh/LIDc/7yA8zCGr8rEtbAuSVPSXO0TtCsmw=; b=Yda1/XJjb3FN+q2ECDJ6KEagM
-        ssrhRStV83jWbvjnRgBm4fIf0BySi2pU8EmlG1CVG6llnlNT2ROpmZ1k/0wdr1T4il5KRcgzOXRY1
-        pZSxaC8CuYkwo49Ou5K5mcpbjII5VAtWsT9fFZdryg4TaTGb/ZSCX5wxcswS9EeK+iE2fYJ+7jTPB
-        aw6JDXO3ptJ93jRGtmec0PMMwCP8uikcIYbDAc7lmSogV4ml8q8l41vyAspIIiT4rOnxwSP435Ckw
-        poCOgxq6WRUm4Z9aBoOQuYOWo7w9PiShNmnlh0ZuCZnBYK66uhmBmyUmpdhfal6aMhH/sG5odmrt6
-        GmZJFR6rw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hsOYO-00062W-Kf; Tue, 30 Jul 2019 09:36:20 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 7558520AFFE9E; Tue, 30 Jul 2019 11:36:17 +0200 (CEST)
-Date:   Tue, 30 Jul 2019 11:36:17 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Rik van Riel <riel@surriel.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
-        dietmar.eggemann@arm.com, mingo@redhat.com,
-        morten.rasmussen@arm.com, tglx@linutronix.de,
-        mgorman@techsingularity.net, vincent.guittot@linaro.org
-Subject: Re: [PATCH 09/14] sched,fair: refactor enqueue/dequeue_entity
-Message-ID: <20190730093617.GV31398@hirez.programming.kicks-ass.net>
-References: <20190722173348.9241-1-riel@surriel.com>
- <20190722173348.9241-10-riel@surriel.com>
+        Tue, 30 Jul 2019 05:37:21 -0400
+Received: by mail-qt1-f195.google.com with SMTP id y26so62342063qto.4
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 02:37:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=2U2XELV6OQ7Q7usKr+BHGIyWi1o0ek672exBpyDXgPY=;
+        b=QpvJLcejliU1b0iPLW/IKiK4O69hLE2vF90QgluyUk6DICdEnd2LBG93PM8PQBe/Vk
+         IUqJlxtWwvYS6WZsKTqg/9Ge+5pcXxFUg1km6E0b3S8W66BCGquRsQvlS/DP3gSus1ku
+         +Vh3Q+k38UJrLoAL18uuzM7GXmbkJLsLGmS63JpreJEPeBBPAt4BzQCB4dxTkzGTFjD6
+         TzTmvsb8iQgFP6sD1sZ5Fm3f9R+Y2gbMFITXkC4cR3X/Fs6DqgHVJU2ooOZZSJs2phL4
+         YeF5bmaPtiucrDm1XtYAMbpiVY1V5ZX1Dxmcs8+C+WUEaD2NYAJaost81g4p1ZlJnkoR
+         2UkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=2U2XELV6OQ7Q7usKr+BHGIyWi1o0ek672exBpyDXgPY=;
+        b=WPuGjh0Et5qrjlsC6cZhbScoRVkbUO/0mLljeLqmFs7DrOnuQtjs1wHGAxjjwIdNBy
+         W3IBKG24ubTNaHxMd7KPlw+OTHnBAithXI39mIix0iWviBLFlxQKRPbd/d7XMfEpQa5h
+         s+G9Nql1h5lOL1Wd/N6h9F5fyVHrDqImPBaQ9sJ1qEJCYYeROp7reMhWGePCtF/3vBB3
+         RECf7DxiK5GhdUaCjZOdlcmW/s3e+mF9f9Rej+h4SZs6srUpK2ySG+WvUO+ZDZBdRaVy
+         P+gQM5Ufbat1qF7NOy9SgtrQRO+ILOmo6GyRzGYBm5u2tzJk0bR7JJDtjpyOHRuBuiMG
+         pdXg==
+X-Gm-Message-State: APjAAAXANivJ6WeNmSFxVcgE7Ra2PLe6j6oviAFgeobsWQJWHspbaRy+
+        FO7DHCHTTcXDxM34ISU37v0FCQhDkOJ3L5AMg0c5pQ==
+X-Google-Smtp-Source: APXvYqw++xmk4Rm4JFPEbxhw5iuhrucLQNtXIKLxG9r03NlYXhGzckzRaIlD8ksq8xztS0T6so9iHAJ7x22JPWBQiLQ=
+X-Received: by 2002:ac8:3364:: with SMTP id u33mr82742323qta.115.1564479439876;
+ Tue, 30 Jul 2019 02:37:19 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190722173348.9241-10-riel@surriel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190729222752.GA20277@embeddedor>
+In-Reply-To: <20190729222752.GA20277@embeddedor>
+From:   Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Date:   Tue, 30 Jul 2019 11:37:09 +0200
+Message-ID: <CA+M3ks6mxV4PTWWj_0AuLcwj-SPWi85-VwXHx7iBbuo=kCPggg@mail.gmail.com>
+Subject: Re: [PATCH] drm: sti: Mark expected switch fall-throughs
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     Vincent Abriou <vincent.abriou@st.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        ML dri-devel <dri-devel@lists.freedesktop.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 22, 2019 at 01:33:43PM -0400, Rik van Riel wrote:
-> Refactor enqueue_entity, dequeue_entity, and update_load_avg, in order
-> to split out the things we still want to happen at every level in the
-> cgroup hierarchy with a flat runqueue from the things we only need to
-> happen once.
-> 
-> No functional changes.
+Le mar. 30 juil. 2019 =C3=A0 00:27, Gustavo A. R. Silva
+<gustavo@embeddedor.com> a =C3=A9crit :
+>
+> Mark switch cases where we are expecting to fall through.
+>
+> This patch fixes the following warning (Building: arm):
+>
+> drivers/gpu/drm/sti/sti_hdmi.c: In function =E2=80=98hdmi_audio_configure=
+=E2=80=99:
+> drivers/gpu/drm/sti/sti_hdmi.c:851:13: warning: this statement may fall t=
+hrough [-Wimplicit-fallthrough=3D]
+>    audio_cfg |=3D HDMI_AUD_CFG_CH78_VALID;
+> drivers/gpu/drm/sti/sti_hdmi.c:852:2: note: here
+>   case 6:
+>   ^~~~
+> drivers/gpu/drm/sti/sti_hdmi.c:853:13: warning: this statement may fall t=
+hrough [-Wimplicit-fallthrough=3D]
+>    audio_cfg |=3D HDMI_AUD_CFG_CH56_VALID;
+> drivers/gpu/drm/sti/sti_hdmi.c:854:2: note: here
+>   case 4:
+>   ^~~~
+> drivers/gpu/drm/sti/sti_hdmi.c:855:13: warning: this statement may fall t=
+hrough [-Wimplicit-fallthrough=3D]
+>    audio_cfg |=3D HDMI_AUD_CFG_CH34_VALID | HDMI_AUD_CFG_8CH;
+> drivers/gpu/drm/sti/sti_hdmi.c:856:2: note: here
+>   case 2:
+>   ^~~~
+>
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-> @@ -3500,7 +3500,7 @@ static void detach_entity_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *s
->  #define DO_ATTACH	0x4
->  
->  /* Update task and its cfs_rq load average */
-> -static inline void update_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
-> +static inline bool update_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
->  {
->  	u64 now = cfs_rq_clock_pelt(cfs_rq);
->  	int decayed;
-> @@ -3529,6 +3529,8 @@ static inline void update_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *s
->  
->  	} else if (decayed && (flags & UPDATE_TG))
->  		update_tg_load_avg(cfs_rq, 0);
-> +
-> +	return decayed;
->  }
->  
->  #ifndef CONFIG_64BIT
-> @@ -3745,9 +3747,10 @@ static inline void update_misfit_status(struct task_struct *p, struct rq *rq)
->  #define SKIP_AGE_LOAD	0x0
->  #define DO_ATTACH	0x0
->  
-> -static inline void update_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *se, int not_used1)
-> +static inline bool update_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *se, int not_used1)
->  {
->  	cfs_rq_util_change(cfs_rq, 0);
-> +	return false;
->  }
->  
->  static inline void remove_entity_load_avg(struct sched_entity *se) {}
-> @@ -3870,6 +3873,24 @@ static inline void check_schedstat_required(void)
->   * CPU and an up-to-date min_vruntime on the destination CPU.
->   */
->  
-> +static bool
-> +enqueue_entity_groups(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
-> +{
-> +	/*
-> +	 * When enqueuing a sched_entity, we must:
-> +	 *   - Update loads to have both entity and cfs_rq synced with now.
-> +	 *   - Add its load to cfs_rq->runnable_avg
-> +	 *   - For group_entity, update its weight to reflect the new share of
-> +	 *     its group cfs_rq
-> +	 *   - Add its new weight to cfs_rq->load.weight
-> +	 */
-> +	if (!update_load_avg(cfs_rq, se, UPDATE_TG | DO_ATTACH))
-> +		return false;
-> +
-> +	update_cfs_group(se);
-> +	return true;
-> +}
-> +
->  static void
->  enqueue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
->  {
-> @@ -3894,16 +3915,6 @@ enqueue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
->  	if (renorm && !curr)
->  		se->vruntime += cfs_rq->min_vruntime;
->  
-> -	/*
-> -	 * When enqueuing a sched_entity, we must:
-> -	 *   - Update loads to have both entity and cfs_rq synced with now.
-> -	 *   - Add its load to cfs_rq->runnable_avg
-> -	 *   - For group_entity, update its weight to reflect the new share of
-> -	 *     its group cfs_rq
-> -	 *   - Add its new weight to cfs_rq->load.weight
-> -	 */
-> -	update_load_avg(cfs_rq, se, UPDATE_TG | DO_ATTACH);
-> -	update_cfs_group(se);
->  	enqueue_runnable_load_avg(cfs_rq, se);
->  	account_entity_enqueue(cfs_rq, se);
->  
+Applied on drm-misc-next,
 
-No functional, but you did make update_cfs_group() conditional. Now that
-looks OK, but maybe you can do that part in a separate patch with a
-little justification of its own.
+Thanks,
+
+Benjamin
+
+> ---
+>  drivers/gpu/drm/sti/sti_hdmi.c | 3 +++
+>  1 file changed, 3 insertions(+)
+>
+> diff --git a/drivers/gpu/drm/sti/sti_hdmi.c b/drivers/gpu/drm/sti/sti_hdm=
+i.c
+> index f03d617edc4c..1617c5098a50 100644
+> --- a/drivers/gpu/drm/sti/sti_hdmi.c
+> +++ b/drivers/gpu/drm/sti/sti_hdmi.c
+> @@ -849,10 +849,13 @@ static int hdmi_audio_configure(struct sti_hdmi *hd=
+mi)
+>         switch (info->channels) {
+>         case 8:
+>                 audio_cfg |=3D HDMI_AUD_CFG_CH78_VALID;
+> +               /* fall through */
+>         case 6:
+>                 audio_cfg |=3D HDMI_AUD_CFG_CH56_VALID;
+> +               /* fall through */
+>         case 4:
+>                 audio_cfg |=3D HDMI_AUD_CFG_CH34_VALID | HDMI_AUD_CFG_8CH=
+;
+> +               /* fall through */
+>         case 2:
+>                 audio_cfg |=3D HDMI_AUD_CFG_CH12_VALID;
+>                 break;
+> --
+> 2.22.0
+>
