@@ -2,101 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 302207A170
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 08:49:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 147AD7A176
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 08:51:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729205AbfG3GtW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 02:49:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36782 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729169AbfG3GtV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 02:49:21 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 60A1F2087F;
-        Tue, 30 Jul 2019 06:49:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564469360;
-        bh=Lsl3RqHMrjwokN7eaK+/lMAsA9tj6roAriyHTwAklIg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=u663JfPTPps45y+mpqiwMvawaMkIGThPkUdklUv3MR700R5IQmpyy/m0OyVjyxwtw
-         BpsMkz3sosOwZXstLN6u0lRY+vsqpy46CTyeuR5H6NcSQuTn/L6gwD0bHg86hsb/Ri
-         IrVQtTlz+UbysJEwNjvJodkr2PJT5KdYbIxRmXho=
-Date:   Tue, 30 Jul 2019 08:49:17 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Javier Martinez Canillas <javierm@redhat.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Mark Brown <broonie@kernel.org>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Markus Elfring <Markus.Elfring@web.de>
-Subject: Re: [PATCH v5 2/3] treewide: Remove dev_err() usage after
- platform_get_irq()
-Message-ID: <20190730064917.GB1213@kroah.com>
-References: <20190730053845.126834-1-swboyd@chromium.org>
- <20190730053845.126834-3-swboyd@chromium.org>
+        id S1729292AbfG3Gvs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 02:51:48 -0400
+Received: from mx2.suse.de ([195.135.220.15]:45072 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726833AbfG3Gvs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 02:51:48 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 97E03AE5C;
+        Tue, 30 Jul 2019 06:51:46 +0000 (UTC)
+From:   Andreas Schwab <schwab@suse.de>
+To:     Atish Patra <Atish.Patra@wdc.com>
+Cc:     Anup Patel <Anup.Patel@wdc.com>,
+        "linux-riscv\@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "hch\@infradead.org" <hch@infradead.org>,
+        "daniel.lezcano\@linaro.org" <daniel.lezcano@linaro.org>,
+        Alistair Francis <Alistair.Francis@wdc.com>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        "paul.walmsley\@sifive.com" <paul.walmsley@sifive.com>,
+        "rkrcmar\@redhat.com" <rkrcmar@redhat.com>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "tglx\@linutronix.de" <tglx@linutronix.de>,
+        "anup\@brainfault.org" <anup@brainfault.org>,
+        "kvm\@vger.kernel.org" <kvm@vger.kernel.org>,
+        "palmer\@sifive.com" <palmer@sifive.com>,
+        "pbonzini\@redhat.com" <pbonzini@redhat.com>
+Subject: Re: [RFC PATCH 13/16] RISC-V: KVM: Add timer functionality
+References: <20190729115544.17895-1-anup.patel@wdc.com>
+        <20190729115544.17895-14-anup.patel@wdc.com> <mvmpnlsc39p.fsf@suse.de>
+        <d26a4582fad27d0f475cf8bca4d3e6c49987d37d.camel@wdc.com>
+X-Yow:  This is a NO-FRILLS flight -- hold th' CANADIAN BACON!!
+Date:   Tue, 30 Jul 2019 08:51:43 +0200
+In-Reply-To: <d26a4582fad27d0f475cf8bca4d3e6c49987d37d.camel@wdc.com> (Atish
+        Patra's message of "Mon, 29 Jul 2019 18:02:00 +0000")
+Message-ID: <mvma7cwaubk.fsf@suse.de>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.2.90 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190730053845.126834-3-swboyd@chromium.org>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 29, 2019 at 10:38:44PM -0700, Stephen Boyd wrote:
-> We don't need dev_err() messages when platform_get_irq() fails now that
-> platform_get_irq() prints an error message itself when something goes
-> wrong. Let's remove these prints with a simple semantic patch.
-> 
-> // <smpl>
-> @@
-> expression ret;
-> struct platform_device *E;
-> @@
-> 
-> ret =
-> (
-> platform_get_irq(E, ...)
-> |
-> platform_get_irq_byname(E, ...)
-> );
-> 
-> if ( \( ret < 0 \| ret <= 0 \) )
-> {
-> (
-> -if (ret != -EPROBE_DEFER)
-> -{ ...
-> -dev_err(...);
-> -... }
-> |
-> ...
-> -dev_err(...);
-> )
-> ...
-> }
-> // </smpl>
-> 
-> While we're here, remove braces on if statements that only have one
-> statement (manually).
+On Jul 29 2019, Atish Patra <Atish.Patra@wdc.com> wrote:
 
-I like this, and I like patch 1/3, but this is going to conflict like
-crazy all over the tree with who ever ends up taking it in their tree.
+> Strange. We never saw this error.
 
-Can you just break this up into per-subsystem pieces and send it through
-those trees, and any remaining ones I can take, but at least give
-maintainers a chance to take it.
+It is part of CONFIG_KERNEL_HEADER_TEST.  Everyone developing a driver
+should enable it.
 
-You are also going to have to do a sweep every other release or so to
-catch the stragglers.
+> #include <linux/types.h>
+>
+> Can you try it at your end and confirm please ?
 
-thanks,
+Confirmed.
 
-greg k-h
+Andreas.
+
+-- 
+Andreas Schwab, SUSE Labs, schwab@suse.de
+GPG Key fingerprint = 0196 BAD8 1CE9 1970 F4BE  1748 E4D4 88E3 0EEA B9D7
+"And now for something completely different."
