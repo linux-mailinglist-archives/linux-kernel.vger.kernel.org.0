@@ -2,142 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 421A57B245
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:44:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D0A97B235
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:42:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388152AbfG3Sou (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 14:44:50 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:42670 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729968AbfG3Sou (ORCPT
+        id S1730373AbfG3Sms (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 14:42:48 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:38921 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726165AbfG3Smq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 14:44:50 -0400
-Received: from floko.floko.floko (unknown [IPv6:2804:431:c7f1:ce2f:ec1:e6e6:2e9f:e76e])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: koike)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 8A69A28B920;
-        Tue, 30 Jul 2019 19:44:43 +0100 (BST)
-From:   Helen Koike <helen.koike@collabora.com>
-To:     linux-rockchip@lists.infradead.org
-Cc:     devicetree@vger.kernel.org, eddie.cai.linux@gmail.com,
-        mchehab@kernel.org, heiko@sntech.de, jacob2.chen@rock-chips.com,
-        jeffy.chen@rock-chips.com, zyc@rock-chips.com,
-        linux-kernel@vger.kernel.org, tfiga@chromium.org,
-        hans.verkuil@cisco.com, laurent.pinchart@ideasonboard.com,
-        sakari.ailus@linux.intel.com, kernel@collabora.com,
-        ezequiel@collabora.com, linux-media@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, zhengsq@rock-chips.com,
-        Jacob Chen <jacob-chen@rock-chips.com>,
-        Helen Koike <helen.koike@collabora.com>
-Subject: [PATCH v8 02/14] media: doc: add document for rkisp1 meta buffer format
-Date:   Tue, 30 Jul 2019 15:42:44 -0300
-Message-Id: <20190730184256.30338-3-helen.koike@collabora.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190730184256.30338-1-helen.koike@collabora.com>
-References: <20190730184256.30338-1-helen.koike@collabora.com>
+        Tue, 30 Jul 2019 14:42:46 -0400
+Received: by mail-pl1-f193.google.com with SMTP id b7so29282035pls.6;
+        Tue, 30 Jul 2019 11:42:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=z8mvbPQ0gJJm02R53S5piSlJ+PP4rINSfRQKtE076Lo=;
+        b=c/KTscEBi7xKomx+47xC61dmg11ku2TAgLmc0sJLcpRED4VH8aeVP+2HFFXvwrsjzG
+         CJpVZ40+8UWYe0NAtjKkEHtFLSi60OmoVvO29YRmXu/5gqofi5QiBYvJZVm1GufYjGSQ
+         ZDRQ8pR5l+dxd3CETqH/F85t3wHWQ5dRASwnErZ+TwU7OWIDchIdfBc8dIhH4jbGmGbQ
+         CwXER8qJ2aF3/1JW3HA6NWSWYE+fbnQtrRRGRKb4pUAQCSbXQ7t2sm4MkjmS+Cib0oMb
+         UKdZqiVW8b22NCM95Sh9GstJdd7g79j++5K66sjCGdANYEBqk/cj3+RsNx+ybOosFsfQ
+         M2WA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=z8mvbPQ0gJJm02R53S5piSlJ+PP4rINSfRQKtE076Lo=;
+        b=S1GupP7YIkQBTHzrpfCuyhEZ91uEU7jXQ0OkbEVQvycsKySPYB7NHA1wM3QiijiObj
+         hiDfVP3F3a90L7yawP8K30gM8h4uBT0rQft3n5HojECZT9bXa15jEQm8q1ozH6pKPKlm
+         QxbnKCPS3EimBgTdWMaMtOqEpL8+qjYrIJV3epcfiGqDsKu4KiY0n7x4uSOcWw1NeTbD
+         PrLaaNTP9VpeNA143NgSgzGlCsOCupCWW7OeW06uCJnkGyixoBCeZIsWh0nfwYu2+L9G
+         WjNs/xzaG2M8YhJ7ZyGtp0MeqlrqlzzRLC7mQuoQR2defHrIGueEEb+MDF7q38eW40HZ
+         3Dqg==
+X-Gm-Message-State: APjAAAV+mgVgtWV5oukHU8bYm4Zj3kNpU9lqqbUHIskn86h86kasl27S
+        tb+F2F7SJhsuN9EhK26HRinGWXs8
+X-Google-Smtp-Source: APXvYqxC9dRGcyfhyQQzRB9FSA4+PhSR42IIMVH2H64yTq6g693UuuMzPzJUXQccVrxf/JWl/c+BAw==
+X-Received: by 2002:a17:902:a413:: with SMTP id p19mr117396869plq.134.1564512166162;
+        Tue, 30 Jul 2019 11:42:46 -0700 (PDT)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id h14sm83345092pfq.22.2019.07.30.11.42.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Jul 2019 11:42:45 -0700 (PDT)
+Date:   Tue, 30 Jul 2019 11:42:44 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 4.19 000/113] 4.19.63-stable review
+Message-ID: <20190730184244.GC32293@roeck-us.net>
+References: <20190729190655.455345569@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190729190655.455345569@linuxfoundation.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jacob Chen <jacob2.chen@rock-chips.com>
+On Mon, Jul 29, 2019 at 09:21:27PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.19.63 release.
+> There are 113 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed 31 Jul 2019 07:05:01 PM UTC.
+> Anything received after that time might be too late.
+> 
 
-This commit add document for rkisp1 meta buffer format
+Build results:
+	total: 156 pass: 156 fail: 0
+Qemu test results:
+	total: 364 pass: 364 fail: 0
 
-Signed-off-by: Jacob Chen <jacob-chen@rock-chips.com>
-Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
-[update for upstream]
-Signed-off-by: Helen Koike <helen.koike@collabora.com>
-
----
-
-Changes in v8:
-- Add SPDX in the header
-- Remove emacs configs
-- Fix doc style
-
-Changes in v7:
-- s/correspond/corresponding
-- s/use/uses
-- s/docuemnt/document
-
- Documentation/media/uapi/v4l/meta-formats.rst |  2 ++
- .../uapi/v4l/pixfmt-meta-rkisp1-params.rst    | 23 +++++++++++++++++++
- .../uapi/v4l/pixfmt-meta-rkisp1-stat.rst      | 22 ++++++++++++++++++
- 3 files changed, 47 insertions(+)
- create mode 100644 Documentation/media/uapi/v4l/pixfmt-meta-rkisp1-params.rst
- create mode 100644 Documentation/media/uapi/v4l/pixfmt-meta-rkisp1-stat.rst
-
-diff --git a/Documentation/media/uapi/v4l/meta-formats.rst b/Documentation/media/uapi/v4l/meta-formats.rst
-index b10ca9ee3968..5de621fea3cc 100644
---- a/Documentation/media/uapi/v4l/meta-formats.rst
-+++ b/Documentation/media/uapi/v4l/meta-formats.rst
-@@ -24,3 +24,5 @@ These formats are used for the :ref:`metadata` interface only.
-     pixfmt-meta-uvc
-     pixfmt-meta-vsp1-hgo
-     pixfmt-meta-vsp1-hgt
-+    pixfmt-meta-rkisp1-params
-+    pixfmt-meta-rkisp1-stat
-diff --git a/Documentation/media/uapi/v4l/pixfmt-meta-rkisp1-params.rst b/Documentation/media/uapi/v4l/pixfmt-meta-rkisp1-params.rst
-new file mode 100644
-index 000000000000..103b5cb79b7c
---- /dev/null
-+++ b/Documentation/media/uapi/v4l/pixfmt-meta-rkisp1-params.rst
-@@ -0,0 +1,23 @@
-+.. SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+
-+.. _v4l2-meta-fmt-rkisp1-params:
-+
-+============================
-+V4L2_META_FMT_RK_ISP1_PARAMS
-+============================
-+
-+Rockchip ISP1 Parameters Data
-+
-+Description
-+===========
-+
-+This format describes input parameters for the Rockchip ISP1.
-+
-+It uses c-struct :c:type:`rkisp1_isp_params_cfg`, which is defined in
-+the ``linux/rkisp1-config.h`` header file.
-+
-+The parameters consist of multiple modules.
-+The module won't be updated if the corresponding bit was not set in module_*_update.
-+
-+.. kernel-doc:: include/uapi/linux/rkisp1-config.h
-+   :functions: rkisp1_isp_params_cfg
-diff --git a/Documentation/media/uapi/v4l/pixfmt-meta-rkisp1-stat.rst b/Documentation/media/uapi/v4l/pixfmt-meta-rkisp1-stat.rst
-new file mode 100644
-index 000000000000..4ad303f96421
---- /dev/null
-+++ b/Documentation/media/uapi/v4l/pixfmt-meta-rkisp1-stat.rst
-@@ -0,0 +1,22 @@
-+.. SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+
-+.. _v4l2-meta-fmt-rkisp1-stat:
-+
-+=============================
-+V4L2_META_FMT_RK_ISP1_STAT_3A
-+=============================
-+
-+
-+Rockchip ISP1 Statistics Data
-+
-+Description
-+===========
-+
-+This format describes image color statistics information generated by the Rockchip
-+ISP1.
-+
-+It uses c-struct :c:type:`rkisp1_stat_buffer`, which is defined in
-+the ``linux/rkisp1-config.h`` header file.
-+
-+.. kernel-doc:: include/uapi/linux/rkisp1-config.h
-+   :functions: rkisp1_stat_buffer
--- 
-2.22.0
-
+Guenter
