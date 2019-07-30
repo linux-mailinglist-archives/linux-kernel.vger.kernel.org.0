@@ -2,85 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D3507A230
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 09:26:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB5337A23F
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 09:28:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730449AbfG3H0E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 03:26:04 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:35798 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729997AbfG3HZo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 03:25:44 -0400
-Received: by mail-wr1-f67.google.com with SMTP id y4so64543300wrm.2
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 00:25:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=zHsfGOiHudmcq3LRs8Aej8bkXt/7q6tGTs328qFT3fk=;
-        b=LrczV40PBYaEexs2nulDPR9CbIEw7ONJ5yLSnCOFXbBboSYj4LvB840cLolZPaw7D7
-         2SH/3EZ21korc3Uq3tCl5SXaAiI8mZ/Qh6D+mIJstzIy1ez/cPVHYOdwB0h2O0dVyohc
-         nxGd5YiRj3L5zZ7QzRfEaUwQFuL2R8291rzLiLCJWEY7dWxNSKh525tdU02FOSmR67l0
-         5qd8nclSVf1X3wt81DKacMW3Az7iMY2pq0tKyalbqZ0+SpswNxqkNPCeKU5+CW++CaT0
-         0i00b+aNdPcm9Ydin1BMYTueOxMbaRh5qYlmxtwSbiG1CjFl/xxjpkuVu0HVzlN7I/2z
-         BolQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zHsfGOiHudmcq3LRs8Aej8bkXt/7q6tGTs328qFT3fk=;
-        b=SxoyFQIYEUNx+yh45O+NLQCeN2ruxELmSVYgMJ8Sz635dPpsczynycevUycr3Zo6N/
-         Bn2mlwdeUyu7i3nmnpwKBM1EfcGBCJRe3jv7zTDPqwpBPSOoAuUk4Amke7KBMot1HmCQ
-         DW82W7/5vq5a+R+hq9Vco0zVQW720o9C43etg7wDAEIkUyq5M0R9eLRZQf5qT6rCF5Aw
-         bMpzk4A5gD9QDf1R6KJHrd+MgZO292bF7WPIS5yBH1Vrn9mEsTgWghTl+pRGg7iaF9hN
-         hNHEbDVj188ABiJIZZP0X2abnLjxyNRz+qP+cabqtwTEvwa1Q3ZAaND6ZMgQC4F2k7Ia
-         LXKg==
-X-Gm-Message-State: APjAAAX3vH1OqcMY3RBEHI2ZPlyyLN2/4TOD67j6Vgp+JvGlmt10rYwj
-        ZD2SjUGCFWDVYZc/wKu225hbhokQzgBVIJ/7t6o=
-X-Google-Smtp-Source: APXvYqzfPqQlTpifZXrLgaPOHcYZc+NXl65yC/U+gpC8aBM5EAS2Ozjrobt3zBDfVK+pW5CxK1jdZLTWfym4UfgP5I0=
-X-Received: by 2002:adf:b1cb:: with SMTP id r11mr118068531wra.328.1564471542194;
- Tue, 30 Jul 2019 00:25:42 -0700 (PDT)
+        id S1730047AbfG3H04 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 03:26:56 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:3246 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726432AbfG3H04 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 03:26:56 -0400
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 977212EF994AA4D160AD;
+        Tue, 30 Jul 2019 15:26:51 +0800 (CST)
+Received: from [10.151.23.176] (10.151.23.176) by smtp.huawei.com
+ (10.3.19.204) with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 30 Jul
+ 2019 15:26:42 +0800
+Subject: Re: [PATCH 01/22] staging: erofs: update source file headers
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     <devel@driverdev.osuosl.org>, <linux-erofs@lists.ozlabs.org>,
+        Chao Yu <chao@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        <weidu.du@huawei.com>, Fang Wei <fangwei1@huawei.com>,
+        Miao Xie <miaoxie@huawei.com>
+References: <20190729065159.62378-1-gaoxiang25@huawei.com>
+ <20190729065159.62378-2-gaoxiang25@huawei.com>
+ <20190730072003.GA31548@kroah.com>
+From:   Gao Xiang <gaoxiang25@huawei.com>
+Message-ID: <17ef206b-cb90-b04a-d4e0-978786741238@huawei.com>
+Date:   Tue, 30 Jul 2019 15:26:36 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-References: <20190729115544.17895-1-anup.patel@wdc.com> <mvm5znkau8u.fsf@suse.de>
-In-Reply-To: <mvm5znkau8u.fsf@suse.de>
-From:   Anup Patel <anup@brainfault.org>
-Date:   Tue, 30 Jul 2019 12:55:30 +0530
-Message-ID: <CAAhSdy2jKQspZNwvd5VnZ8iyWjwe0fGXR+3WwP9cn5pEOcSfVg@mail.gmail.com>
-Subject: Re: [RFC PATCH 00/16] KVM RISC-V Support
-To:     Andreas Schwab <schwab@suse.de>
-Cc:     Anup Patel <Anup.Patel@wdc.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim K <rkrcmar@redhat.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Atish Patra <Atish.Patra@wdc.com>,
-        Alistair Francis <Alistair.Francis@wdc.com>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190730072003.GA31548@kroah.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.151.23.176]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 30, 2019 at 12:23 PM Andreas Schwab <schwab@suse.de> wrote:
->
-> ERROR: "riscv_cs_get_mult_shift" [arch/riscv/kvm/kvm.ko] undefined!
-> ERROR: "riscv_isa" [arch/riscv/kvm/kvm.ko] undefined!
-> ERROR: "smp_send_reschedule" [arch/riscv/kvm/kvm.ko] undefined!
-> ERROR: "riscv_timebase" [arch/riscv/kvm/kvm.ko] undefined!
+Hi Greg,
 
-Strange, we are not seeing these compile errors.
+On 2019/7/30 15:20, Greg Kroah-Hartman wrote:
+> On Mon, Jul 29, 2019 at 02:51:38PM +0800, Gao Xiang wrote:
+>> - Use the correct style for all SPDX License Identifiers;
+>> - Get rid of the unnecessary license boilerplate;
+>> - Use "GPL-2.0-only" instead of "GPL-2.0" suggested-by Stephen.
+> 
+> Note, either tag works just fine, they are identical.  I'll take this,
+> but just be aware of this in the future please.
 
-Anyway, please ensure that you apply Atish's KVM prep patches
-(https://lkml.org/lkml/2019/7/26/1271) on Linux-5.3-rcX before applying
-this series.
+Okay, got it. I will keep track of potential GPL3.0+ stuffes
+if community has such license discussions again.
 
-Regards,
-Anup
+It seems fine for now. :)
+
+Thanks,
+Gao Xiang
+
+> 
+> thanks,
+> 
+> greg k-h
+> 
