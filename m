@@ -2,89 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F33B67ACC5
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 17:51:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 97C157ACD2
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 17:52:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732631AbfG3PuR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 11:50:17 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:55410 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726870AbfG3PuQ (ORCPT
+        id S1732665AbfG3Pvz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 11:51:55 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:58752 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725974AbfG3Pvz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 11:50:16 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 47DE7602BC; Tue, 30 Jul 2019 15:50:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1564501816;
-        bh=NFSJDHsvNcgma1AqAO7YILkTxwa/9aujCss4icGjbpg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LTrOfle7Tdlq3dfMJpX1XLGhiXotFpnpc1QtQOgvFAnM/K+jC6bEO22v0XcORf5Ro
-         qQoyWQR/Dlihrg8Zp9qyqNWj5ryF9l3btQ3XbPNo+XWYUFi6Qci6D+cd7DtP5zSk+V
-         K+JPc8T/6a2Rz5rAbZgfx2c7randDWYcgRLZJbc8=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
-        version=3.4.0
-Received: from mojha-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: mojha@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3500660D0C;
-        Tue, 30 Jul 2019 15:50:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1564501815;
-        bh=NFSJDHsvNcgma1AqAO7YILkTxwa/9aujCss4icGjbpg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Z6YOImB7WqNkYO655VwI/WodNxpXvp3n3Ybgm43TIziP4ibVYQE9ArTeg8Y/teptw
-         42Auiqq6qlmxMYOENUh7t1Mi2eradYtccMLTwtimiEQ+9l2ns2RX13DqGWIbIMJ8Gk
-         vC2VxVYVjE6fDD6w0afNn0u9R2sQBRLmOrZKyJHQ=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3500660D0C
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=mojha@codeaurora.org
-From:   Mukesh Ojha <mojha@codeaurora.org>
-To:     peterz@infradead.org, mingo@redhat.com, will@kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Mukesh Ojha <mojha@codeaurora.org>
-Subject: [PATCH 2/2 v2] locking/mutex: Use mutex flags macro instead of hard code value
-Date:   Tue, 30 Jul 2019 21:19:54 +0530
-Message-Id: <1564501794-11379-2-git-send-email-mojha@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1564501794-11379-1-git-send-email-mojha@codeaurora.org>
-References: <20190730080308.GF31381@hirez.programming.kicks-ass.net>
- <1564501794-11379-1-git-send-email-mojha@codeaurora.org>
+        Tue, 30 Jul 2019 11:51:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Satq2eEMXIbB0aB+E4vC0WoAtw8SMBMHI0WXpWtRuYs=; b=J1ZC52QIsMjMi5k2i2Fvr0+nV
+        AuizVSMIB5ohxsLuqMXvxPDnGN3s7Ru76VojFpPcd5fQqygq3HMaOXKDD0VEBrs7Btv2YSwqH73rL
+        2gC9VPKgK6bIMpJY5oFm8wW8bzuPYLpVtZ+MBg74aqkS+Q2G++Vy42i1p1GAoxDhc9XAc=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1hsUOT-0007rr-3R; Tue, 30 Jul 2019 15:50:29 +0000
+Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
+        id E52FC2742CB5; Tue, 30 Jul 2019 16:50:27 +0100 (BST)
+Date:   Tue, 30 Jul 2019 16:50:27 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Thomas Preston <thomas.preston@codethink.co.uk>
+Cc:     Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
+        alsa-devel@alsa-project.org,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Kirill Marinushkin <kmarinushkin@birdec.tech>,
+        Cheng-Yi Chiang <cychiang@chromium.org>,
+        Marco Felsch <m.felsch@pengutronix.de>,
+        Takashi Iwai <tiwai@suse.com>,
+        Annaliese McDermond <nh6z@nh6z.net>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Vinod Koul <vkoul@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        linux-kernel@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>
+Subject: Re: [alsa-devel] [PATCH v2 3/3] ASoC: TDA7802: Add turn-on
+ diagnostic routine
+Message-ID: <20190730155027.GJ4264@sirena.org.uk>
+References: <20190730120937.16271-1-thomas.preston@codethink.co.uk>
+ <20190730120937.16271-4-thomas.preston@codethink.co.uk>
+ <20190730141935.GF4264@sirena.org.uk>
+ <45156592-a90f-b4f8-4d30-9631c03f1280@codethink.co.uk>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="DesjdUuHQDwS2t4N"
+Content-Disposition: inline
+In-Reply-To: <45156592-a90f-b4f8-4d30-9631c03f1280@codethink.co.uk>
+X-Cookie: Times approximate.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the mutex flag macro instead of hard code value inside
-__mutex_owner().
 
-Signed-off-by: Mukesh Ojha <mojha@codeaurora.org>
----
-Changes in v2:
- - Framed the commit according the changes done in 1/2 of
-   the patchset.
+--DesjdUuHQDwS2t4N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
- kernel/locking/mutex.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Tue, Jul 30, 2019 at 04:25:56PM +0100, Thomas Preston wrote:
+> On 30/07/2019 15:19, Mark Brown wrote:
 
-diff --git a/kernel/locking/mutex.c b/kernel/locking/mutex.c
-index f73250a..1c8f86a 100644
---- a/kernel/locking/mutex.c
-+++ b/kernel/locking/mutex.c
-@@ -72,7 +72,7 @@
-  */
- static inline struct task_struct *__mutex_owner(struct mutex *lock)
- {
--	return (struct task_struct *)(atomic_long_read(&lock->owner) & ~0x07);
-+	return (struct task_struct *)(atomic_long_read(&lock->owner) & ~MUTEX_FLAGS);
- }
- 
- /**
--- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center,
-Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project
+> > It is unclear what this mutex usefully protects, it only gets taken when
+> > writing to the debugfs file to trigger this diagnostic mode but doesn't
+> > do anything to control interactions with any other code path in the
+> > driver.
 
+> If another process reads the debugfs node "diagnostic" while the turn-on=
+=20
+> diagnostic mode is running, this mutex prevents the second process
+> restarting the diagnostics.
+
+> This is redundant if debugfs reads are atomic, but I don't think they are.
+
+Like I say it's not just debugfs though, there's the standard driver
+interface too.
+
+--DesjdUuHQDwS2t4N
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl1AZ0MACgkQJNaLcl1U
+h9A+KQgAgi4HkmsbIandzuTrFA6N2E9Zrc7WMisuFB9GE/OnLiU559yFfrABha81
+2AJ4vwv4WOwP6Cl48kFT7W90WgsJljB6F0d/SaiwvhNmwf2ifUVANo+tkNv8L2kn
+W/7p0/OQ1tuFhU9OI98e1YbqSI/TEcgQx3CEp0diUdcmv1C55X6cn1tjj5Mn0+hz
+Mf2IV9Q1KMJQBeHqm6PvdWjzxbnQ7iUEPQ6SoP6PwTjEvpWN/+Cv7q/wo1FCs1hb
+1nYLoWrVYhOaQyzAxxJ/S2bRl5TybnmgSJOpj1ZNMRcHdED93sk3GMNSqqAOD68L
+nQQV16tM/EvyPsbQE+AMJFrAKfZLdg==
+=H0id
+-----END PGP SIGNATURE-----
+
+--DesjdUuHQDwS2t4N--
