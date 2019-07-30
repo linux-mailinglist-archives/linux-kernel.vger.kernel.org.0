@@ -2,140 +2,190 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B523D7B28D
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:48:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED4A17B284
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:47:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388390AbfG3SsK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 14:48:10 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:51325 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388028AbfG3SsJ (ORCPT
+        id S2388270AbfG3Srl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 14:47:41 -0400
+Received: from mail-pg1-f202.google.com ([209.85.215.202]:40679 "EHLO
+        mail-pg1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728574AbfG3Srl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 14:48:09 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6UIkufc3334995
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Tue, 30 Jul 2019 11:46:56 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6UIkufc3334995
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019071901; t=1564512417;
-        bh=bCdFtbl9rLVZRmw/ALUKM6Lv8KXBqJ0jF+YzBICirOE=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=WTWAeZb9TLRl1NtOW2h/MMv9fcApizsDe7yem6VdvKRzxi+6Uf/gkUVTyFoZhvbuI
-         mgoD4Qt73j8OmE8vt0zWPCQwIFsOq8ibeTXaK1RRXLghdjbOoFt8xkJAfutkQgG9jv
-         kem5Cqn637URLsfKGr/zBdZ5Hhjsdj/H7MLSqtYBUpGEZ2te+UGdNw2AWcv9MMH3Oc
-         jAH2KpvKvJRuKBIsiECxtuTcptXx2WMeAz8YZrjeoYh/6J7MxP18o7y0bPiqfQyexx
-         4RUIIGI/VEvFdQSLPL4Hl7iBfq2VNlj8evJpnXAb4dWa0m/5oZXTvqYco6P61ev0Uw
-         NwwkI/wf3mk6A==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6UIkuAP3334992;
-        Tue, 30 Jul 2019 11:46:56 -0700
-Date:   Tue, 30 Jul 2019 11:46:56 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
-Message-ID: <tip-ec903f264f0184a0aba62b42d7717c61f1893450@git.kernel.org>
-Cc:     jolsa@kernel.org, hpa@zytor.com, mpetlan@redhat.com,
-        namhyung@kernel.org, linux-kernel@vger.kernel.org,
-        mingo@kernel.org, alexey.budankov@linux.intel.com,
-        peterz@infradead.org, alexander.shishkin@linux.intel.com,
-        tglx@linutronix.de, ak@linux.intel.com, acme@redhat.com
-Reply-To: alexey.budankov@linux.intel.com,
-          alexander.shishkin@linux.intel.com, peterz@infradead.org,
-          ak@linux.intel.com, acme@redhat.com, tglx@linutronix.de,
-          mingo@kernel.org, linux-kernel@vger.kernel.org,
-          mpetlan@redhat.com, namhyung@kernel.org, jolsa@kernel.org,
-          hpa@zytor.com
-In-Reply-To: <20190721112506.12306-54-jolsa@kernel.org>
-References: <20190721112506.12306-54-jolsa@kernel.org>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] libperf: Add has_user_cpus to struct perf_evlist
-Git-Commit-ID: ec903f264f0184a0aba62b42d7717c61f1893450
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-X-Spam-Status: No, score=-0.2 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
-        autolearn=no autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+        Tue, 30 Jul 2019 14:47:41 -0400
+Received: by mail-pg1-f202.google.com with SMTP id m19so26676878pgv.7
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 11:47:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+         :cc;
+        bh=0pXH41oDr5n5A5Nqy3r8yf+zNgEME8ywg2NvLGu1usI=;
+        b=tNsT5UytdZLcCZd0C7EgSOYaigaGXMUScGxN0gDTyqpWT45H44j3LfHzphHUobVkL4
+         RcU4adigiMxAZXh10qbjMVLNUNASoXCRecfBxQjos3FUv/gFdXjcXhXEW7yiQpQLqsfr
+         vxHaX0032jt+/tJfcIUYbo/dXfj6tap4ospXabSre+S9+fKsoIZbo2Tm3lQd8gFD8hyu
+         HHX/3zfc7cqkDrDXl8MY9V92WDfj5h7cqWs2N9DAQbGd5LXyANGDL6jfMea7rwIx5fcu
+         FGz0vLPdVrtVHJfyAMNwQRq47+Bf5WOLQ1ifCHhnus6oqnmKwUdwaN2klkSY1cIBnpSX
+         De1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=0pXH41oDr5n5A5Nqy3r8yf+zNgEME8ywg2NvLGu1usI=;
+        b=tCD7cFDndN+qFvwsKFoDVKMqL3kL3aZi6dnPIk6imlM80BQcp4hFEerbYRQBKcN+Mi
+         Ct/FOWhMsna6gbqNxXKEDS4n3u6N+u8fSo+gzWkifNRPiQFhD8XCEAdsWVX5WHzvTLcf
+         vzMvlTKnkhI721WaOsXN9IkOFoUslIEROBV4SH9xj/6TV3Ma9iuSgh07V6VqGFSa6mHo
+         hFEYzATQxHgHhhJR7vQWprIDVVMYPa54ECUxlLpcnWXXiUUcjleH2gTmwfsWWh090q/9
+         YFD8xYoDBqegGjhJuhABuw6od2E24civZoJh5NBVpnxLQYpnxOONzOorkt2oYWWr8nXO
+         ZTUw==
+X-Gm-Message-State: APjAAAUIwXyE+RgPjNR0ORs5xy/foeN+ahamY0hkWJh2j6R3g3KJGywW
+        vPmqm/d5JhG0nVx0GfRI/fR5tZDEFCwgvUciljZDiw==
+X-Google-Smtp-Source: APXvYqzYjVpc+zHP0Gem9lR+d9nkJoivQJ2232f3VwG1MjXQ5j9+3YlYMKtT9Yp3lBjH8G56CWKxH8Rabxg8b3nRG2Vj6A==
+X-Received: by 2002:a63:d941:: with SMTP id e1mr76211750pgj.75.1564512459798;
+ Tue, 30 Jul 2019 11:47:39 -0700 (PDT)
+Date:   Tue, 30 Jul 2019 11:47:34 -0700
+In-Reply-To: <20190724222354.7cbd6c6e@oasis.local.home>
+Message-Id: <20190730184734.202386-1-matthewgarrett@google.com>
+Mime-Version: 1.0
+References: <20190724222354.7cbd6c6e@oasis.local.home>
+X-Mailer: git-send-email 2.22.0.770.g0f2c4a37fd-goog
+Subject: [PATCH] tracefs: Restrict tracefs when the kernel is locked down
+From:   Matthew Garrett <matthewgarrett@google.com>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     jmorris@namei.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        Matthew Garrett <matthewgarrett@google.com>,
+        Matthew Garrett <mjg59@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  ec903f264f0184a0aba62b42d7717c61f1893450
-Gitweb:     https://git.kernel.org/tip/ec903f264f0184a0aba62b42d7717c61f1893450
-Author:     Jiri Olsa <jolsa@kernel.org>
-AuthorDate: Sun, 21 Jul 2019 13:24:40 +0200
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Mon, 29 Jul 2019 18:34:45 -0300
+Tracefs may release more information about the kernel than desirable, so
+restrict it when the kernel is locked down in confidentiality mode by
+preventing open().
 
-libperf: Add has_user_cpus to struct perf_evlist
-
-Move has_user_cpus from tools/perf's evlist to libbperf's perf_evlist struct.
-
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Michael Petlan <mpetlan@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20190721112506.12306-54-jolsa@kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Matthew Garrett <mjg59@google.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
 ---
- tools/perf/lib/include/internal/evlist.h | 1 +
- tools/perf/util/evlist.c                 | 4 ++--
- tools/perf/util/evlist.h                 | 1 -
- 3 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/tools/perf/lib/include/internal/evlist.h b/tools/perf/lib/include/internal/evlist.h
-index a12c712a9197..9964e4a9456e 100644
---- a/tools/perf/lib/include/internal/evlist.h
-+++ b/tools/perf/lib/include/internal/evlist.h
-@@ -5,6 +5,7 @@
- struct perf_evlist {
- 	struct list_head	entries;
- 	int			nr_entries;
-+	bool			has_user_cpus;
+Added the iput()
+
+ fs/tracefs/inode.c           | 40 +++++++++++++++++++++++++++++++++++-
+ include/linux/security.h     |  1 +
+ security/lockdown/lockdown.c |  1 +
+ 3 files changed, 41 insertions(+), 1 deletion(-)
+
+diff --git a/fs/tracefs/inode.c b/fs/tracefs/inode.c
+index eeeae0475da9..fb4d1d89ce53 100644
+--- a/fs/tracefs/inode.c
++++ b/fs/tracefs/inode.c
+@@ -20,6 +20,7 @@
+ #include <linux/parser.h>
+ #include <linux/magic.h>
+ #include <linux/slab.h>
++#include <linux/security.h>
+ 
+ #define TRACEFS_DEFAULT_MODE	0700
+ 
+@@ -27,6 +28,23 @@ static struct vfsmount *tracefs_mount;
+ static int tracefs_mount_count;
+ static bool tracefs_registered;
+ 
++static int default_open_file(struct inode *inode, struct file *filp)
++{
++	struct dentry *dentry = filp->f_path.dentry;
++	struct file_operations *real_fops;
++	int ret;
++
++	if (!dentry)
++		return -EINVAL;
++
++	ret = security_locked_down(LOCKDOWN_TRACEFS);
++	if (ret)
++		return ret;
++
++	real_fops = dentry->d_fsdata;
++	return real_fops->open(inode, filp);
++}
++
+ static ssize_t default_read_file(struct file *file, char __user *buf,
+ 				 size_t count, loff_t *ppos)
+ {
+@@ -221,6 +239,12 @@ static int tracefs_apply_options(struct super_block *sb)
+ 	return 0;
+ }
+ 
++static void tracefs_destroy_inode(struct inode *inode)
++{
++	if (S_ISREG(inode->i_mode))
++		kfree(inode->i_fop);
++}
++
+ static int tracefs_remount(struct super_block *sb, int *flags, char *data)
+ {
+ 	int err;
+@@ -256,6 +280,7 @@ static int tracefs_show_options(struct seq_file *m, struct dentry *root)
+ 
+ static const struct super_operations tracefs_super_operations = {
+ 	.statfs		= simple_statfs,
++	.destroy_inode  = tracefs_destroy_inode,
+ 	.remount_fs	= tracefs_remount,
+ 	.show_options	= tracefs_show_options,
+ };
+@@ -387,6 +412,7 @@ struct dentry *tracefs_create_file(const char *name, umode_t mode,
+ 				   struct dentry *parent, void *data,
+ 				   const struct file_operations *fops)
+ {
++	struct file_operations *proxy_fops;
+ 	struct dentry *dentry;
+ 	struct inode *inode;
+ 
+@@ -402,8 +428,20 @@ struct dentry *tracefs_create_file(const char *name, umode_t mode,
+ 	if (unlikely(!inode))
+ 		return failed_creating(dentry);
+ 
++	proxy_fops = kzalloc(sizeof(struct file_operations), GFP_KERNEL);
++	if (unlikely(!proxy_fops)) {
++		iput(inode);
++		return failed_creating(dentry);
++	}
++
++	if (!fops)
++		fops = &tracefs_file_operations;
++
++	dentry->d_fsdata = (void *)fops;
++	memcpy(proxy_fops, fops, sizeof(*proxy_fops));
++	proxy_fops->open = default_open_file;
+ 	inode->i_mode = mode;
+-	inode->i_fop = fops ? fops : &tracefs_file_operations;
++	inode->i_fop = proxy_fops;
+ 	inode->i_private = data;
+ 	d_instantiate(dentry, inode);
+ 	fsnotify_create(dentry->d_parent->d_inode, dentry);
+diff --git a/include/linux/security.h b/include/linux/security.h
+index d92323b44a3f..807dc0d24982 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -121,6 +121,7 @@ enum lockdown_reason {
+ 	LOCKDOWN_KPROBES,
+ 	LOCKDOWN_BPF_READ,
+ 	LOCKDOWN_PERF,
++	LOCKDOWN_TRACEFS,
+ 	LOCKDOWN_CONFIDENTIALITY_MAX,
  };
  
- #endif /* __LIBPERF_INTERNAL_EVLIST_H */
-diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
-index 5ce8fc730453..23a8ead4512f 100644
---- a/tools/perf/util/evlist.c
-+++ b/tools/perf/util/evlist.c
-@@ -159,7 +159,7 @@ static void __perf_evlist__propagate_maps(struct evlist *evlist,
- 	 * We already have cpus for evsel (via PMU sysfs) so
- 	 * keep it, if there's no target cpu list defined.
- 	 */
--	if (!evsel->core.own_cpus || evlist->has_user_cpus) {
-+	if (!evsel->core.own_cpus || evlist->core.has_user_cpus) {
- 		perf_cpu_map__put(evsel->core.cpus);
- 		evsel->core.cpus = perf_cpu_map__get(evlist->cpus);
- 	} else if (evsel->core.cpus != evsel->core.own_cpus) {
-@@ -1095,7 +1095,7 @@ int perf_evlist__create_maps(struct evlist *evlist, struct target *target)
- 	if (!cpus)
- 		goto out_delete_threads;
+diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
+index 88064ce1c844..173191562047 100644
+--- a/security/lockdown/lockdown.c
++++ b/security/lockdown/lockdown.c
+@@ -36,6 +36,7 @@ static char *lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1] = {
+ 	[LOCKDOWN_KPROBES] = "use of kprobes",
+ 	[LOCKDOWN_BPF_READ] = "use of bpf to read kernel RAM",
+ 	[LOCKDOWN_PERF] = "unsafe use of perf",
++	[LOCKDOWN_TRACEFS] = "use of tracefs",
+ 	[LOCKDOWN_CONFIDENTIALITY_MAX] = "confidentiality",
+ };
  
--	evlist->has_user_cpus = !!target->cpu_list;
-+	evlist->core.has_user_cpus = !!target->cpu_list;
- 
- 	perf_evlist__set_maps(evlist, cpus, threads);
- 
-diff --git a/tools/perf/util/evlist.h b/tools/perf/util/evlist.h
-index 17dd83021a79..35cca0242631 100644
---- a/tools/perf/util/evlist.h
-+++ b/tools/perf/util/evlist.h
-@@ -31,7 +31,6 @@ struct evlist {
- 	int		 nr_groups;
- 	int		 nr_mmaps;
- 	bool		 enabled;
--	bool		 has_user_cpus;
- 	size_t		 mmap_len;
- 	int		 id_pos;
- 	int		 is_pos;
+-- 
+2.22.0.770.g0f2c4a37fd-goog
+
