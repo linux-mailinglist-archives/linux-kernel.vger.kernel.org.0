@@ -2,96 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE4847AD4D
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 18:11:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7357F7AD56
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 18:14:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730588AbfG3QLS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 12:11:18 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:48762 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727988AbfG3QLR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 12:11:17 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2A55481F25;
-        Tue, 30 Jul 2019 16:11:17 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.136])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 3B4561001938;
-        Tue, 30 Jul 2019 16:11:15 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Tue, 30 Jul 2019 18:11:16 +0200 (CEST)
-Date:   Tue, 30 Jul 2019 18:11:14 +0200
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Song Liu <songliubraving@fb.com>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        akpm@linux-foundation.org, matthew.wilcox@oracle.com,
-        kirill.shutemov@linux.intel.com, kernel-team@fb.com,
-        william.kucharski@oracle.com, srikar@linux.vnet.ibm.com
-Subject: Re: [PATCH v10 3/4] mm, thp: introduce FOLL_SPLIT_PMD
-Message-ID: <20190730161113.GC18501@redhat.com>
-References: <20190730052305.3672336-1-songliubraving@fb.com>
- <20190730052305.3672336-4-songliubraving@fb.com>
+        id S1730756AbfG3QOm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 12:14:42 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:38734 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727988AbfG3QOl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 12:14:41 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6UGDm0R012637;
+        Tue, 30 Jul 2019 16:13:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2018-07-02;
+ bh=mZvdEtHT1IHCixeTgGoyQtz4Ve18vviw6EtEdtv9tNI=;
+ b=G5BysJ7aYfc6U5Pha375DxwLWdJBhki0MY8Vi1jqGNZn9e8laI6FcSAKVpElSNP1zcs2
+ Qvxgp+o/fWRjnpwojybHq4TkhElYbw6uWvjqi6S2OUIHZoa2TpeTxO9CdjI/yYYZwCiS
+ x8pSzfWrbTTJJluSHxEhN8Gv2ynpeGTfwYmSwb1a8idsHez0HSO9iAWrqaTLm3CTsxSj
+ lY3p/VKEPpX2Ju5IYC5sGJrvNbXuFVtYqnGq0So+YdER4qyC7M4Bd6EO98S1vfuPxfFO
+ op6jvgKyyvQswfl2i9ToWzXT8gsL2XLNeshQMmhajX/uGZY3csloTkHd5N6Xb4pVNnjA Lw== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2120.oracle.com with ESMTP id 2u0f8qyh4n-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 30 Jul 2019 16:13:48 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6UGDTjJ110753;
+        Tue, 30 Jul 2019 16:13:46 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3030.oracle.com with ESMTP id 2u0bqu8xj0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 30 Jul 2019 16:13:46 +0000
+Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x6UGDhsu016424;
+        Tue, 30 Jul 2019 16:13:43 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 30 Jul 2019 09:13:42 -0700
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     <jejb@linux.ibm.com>, <martin.petersen@oracle.com>,
+        <jthumshirn@suse.de>, <dan.carpenter@oracle.com>,
+        <linux-kernel@vger.kernel.org>, <linux-scsi@vger.kernel.org>
+Subject: Re: [PATCH -next] scsi: aic94xx: Remove unnecessary null check
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <20190711141539.13892-1-yuehaibing@huawei.com>
+Date:   Tue, 30 Jul 2019 12:13:40 -0400
+In-Reply-To: <20190711141539.13892-1-yuehaibing@huawei.com>
+        (yuehaibing@huawei.com's message of "Thu, 11 Jul 2019 22:15:39 +0800")
+Message-ID: <yq18ssfo5zf.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190730052305.3672336-4-songliubraving@fb.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Tue, 30 Jul 2019 16:11:17 +0000 (UTC)
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9334 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=894
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1907300168
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9334 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=961 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1907300168
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I don't understand this code, so I can't review, but.
 
-On 07/29, Song Liu wrote:
->
-> This patches introduces a new foll_flag: FOLL_SPLIT_PMD. As the name says
-> FOLL_SPLIT_PMD splits huge pmd for given mm_struct, the underlining huge
-> page stays as-is.
->
-> FOLL_SPLIT_PMD is useful for cases where we need to use regular pages,
-> but would switch back to huge page and huge pmd on. One of such example
-> is uprobe. The following patches use FOLL_SPLIT_PMD in uprobe.
+YueHaibing,
 
-So after the next patch we have a single user of FOLL_SPLIT_PMD (uprobes)
-and a single user of FOLL_SPLIT: arch/s390/mm/gmap.c:thp_split_mm().
+> kmem_cache_destroy() can handle NULL pointer correctly, so there is
+> no need to check NULL pointer before calling kmem_cache_destroy().
 
-Hmm.
+Applied to 5.4/scsi-queue. Thanks!
 
-> @@ -399,7 +399,7 @@ static struct page *follow_pmd_mask(struct vm_area_struct *vma,
->  		spin_unlock(ptl);
->  		return follow_page_pte(vma, address, pmd, flags, &ctx->pgmap);
->  	}
-> -	if (flags & FOLL_SPLIT) {
-> +	if (flags & (FOLL_SPLIT | FOLL_SPLIT_PMD)) {
->  		int ret;
->  		page = pmd_page(*pmd);
->  		if (is_huge_zero_page(page)) {
-> @@ -408,7 +408,7 @@ static struct page *follow_pmd_mask(struct vm_area_struct *vma,
->  			split_huge_pmd(vma, pmd, address);
->  			if (pmd_trans_unstable(pmd))
->  				ret = -EBUSY;
-> -		} else {
-> +		} else if (flags & FOLL_SPLIT) {
->  			if (unlikely(!try_get_page(page))) {
->  				spin_unlock(ptl);
->  				return ERR_PTR(-ENOMEM);
-> @@ -420,6 +420,10 @@ static struct page *follow_pmd_mask(struct vm_area_struct *vma,
->  			put_page(page);
->  			if (pmd_none(*pmd))
->  				return no_page_table(vma, flags);
-> +		} else {  /* flags & FOLL_SPLIT_PMD */
-> +			spin_unlock(ptl);
-> +			split_huge_pmd(vma, pmd, address);
-> +			ret = pte_alloc(mm, pmd);
-
-I fail to understand why this differs from the is_huge_zero_page() case above.
-
-Anyway, ret = pte_alloc(mm, pmd) can't be correct. If __pte_alloc() fails pte_alloc()
-will return 1. This will fool the IS_ERR(page) check in __get_user_pages().
-
-Oleg.
-
+-- 
+Martin K. Petersen	Oracle Linux Engineering
