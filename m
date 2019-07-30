@@ -2,128 +2,165 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FBF87B055
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 19:41:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D34B87B04F
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 19:41:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731436AbfG3RlV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 13:41:21 -0400
-Received: from sender-pp-o92.zoho.com ([135.84.80.237]:25401 "EHLO
-        sender-pp-o92.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726432AbfG3RlQ (ORCPT
+        id S1731407AbfG3RlO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 13:41:14 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:39816 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726432AbfG3RlO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 13:41:16 -0400
-ARC-Seal: i=1; a=rsa-sha256; t=1564508422; cv=none; 
-        d=zoho.com; s=zohoarc; 
-        b=du1Elyexm7ALYNjVm2ylWhySii8zUx7LoPwc2ifiFchS7A9hsjpQRY5aLGvh62Rk3631ueJ0SvFhJVFBf6f8L5zbev+04v8W/QcSDi4bPHZh+zpL9fjZFDEfdI/Ng9L7w34BGfv1peLKKNWXzK07rPIghSp9/Eewj07WHUP2U/A=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
-        t=1564508422; h=Cc:Date:From:In-Reply-To:Message-ID:References:Subject:To:ARC-Authentication-Results; 
-        bh=728HodtxlQspuSWgc0WI2C4ZB/XnFKgXz7EKp0oAYhw=; 
-        b=noUnok43K/jGVu//UsP1+FRgFXEnB3PrwyMwBP173Gc/rOKxUcyGb7Zcstqk6vsdjCUDzuoUDGbnZnfSh33OxlXncQGKIYBAew2qYGdLv4MV73vIegYi9USmxUEQXS7SuAarA7Q/NP7LXK2lAizKvcYnmIoJ9ji8mnoscrTxJSw=
-ARC-Authentication-Results: i=1; mx.zoho.com;
-        dkim=pass  header.i=zoho.com;
-        spf=pass  smtp.mailfrom=zhouyanjie@zoho.com;
-        dmarc=pass header.from=<zhouyanjie@zoho.com> header.from=<zhouyanjie@zoho.com>
-DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws; 
-  s=zapps768; d=zoho.com; 
-  h=from:to:cc:subject:date:message-id:in-reply-to:references; 
-  b=k9Mkye7d4RBrUeacHCGizzV6cKDVvaXSAs8ErlpQz/n2THTM3gwDa04+Wpzw9rs6OJhhBZKFBrCv
-    jK9lNC8xiEGg/8iTAJtCLeYhpBdCh9GX5piwRt2sXnMJzucPgLKO  
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1564508422;
-        s=zm2019; d=zoho.com; i=zhouyanjie@zoho.com;
-        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References;
-        l=2231; bh=728HodtxlQspuSWgc0WI2C4ZB/XnFKgXz7EKp0oAYhw=;
-        b=PDCa/6/+P25Vb2iXqAfxpxF+ISNuxUF4Da8ly34ghulpmXWh1k8YfpN5OA5tEIKP
-        hmFqEOQEvNfG+k4KG8xo/coR26+VJKteF7w+abMPSmQS6tk+az8KeSUMY7A0+cVN/4D
-        DorXm91bZgtfFr/XqoF9UAYDPhYJTWk6mqMIRkB8=
-Received: from localhost.localdomain (171.221.113.137 [171.221.113.137]) by mx.zohomail.com
-        with SMTPS id 156450842112058.53911824379736; Tue, 30 Jul 2019 10:40:21 -0700 (PDT)
-From:   Zhou Yanjie <zhouyanjie@zoho.com>
-To:     linux-mips@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, ralf@linux-mips.org,
-        paul@crapouillou.net, paul.burton@mips.com, jhogan@kernel.org,
-        malat@debian.org, chenhc@lemote.com, tglx@linutronix.de,
-        allison@lohutok.net, syq@debian.org, jiaxun.yang@flygoat.com
-Subject: [PATCH] MIPS: Ingenic: Fix bugs when detecting X1000's parameters.
-Date:   Tue, 30 Jul 2019 22:55:10 +0800
-Message-Id: <1564498510-3751-2-git-send-email-zhouyanjie@zoho.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1564498510-3751-1-git-send-email-zhouyanjie@zoho.com>
-References: <1564498510-3751-1-git-send-email-zhouyanjie@zoho.com>
-X-ZohoMailClient: External
+        Tue, 30 Jul 2019 13:41:14 -0400
+Received: by mail-lj1-f194.google.com with SMTP id v18so62843790ljh.6;
+        Tue, 30 Jul 2019 10:41:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=grLUxdosb4UfR11DOl+yWibactqQToHflORrwM4FNak=;
+        b=tSIqv7snetyrULMsaKUF2ChW5E9SUEIs16EvBthhyGM7T7ODFVW3gS8eEkCbg8XLeC
+         9Al+EMaKmgyQ10bUU64P+SVcaNPq5Jut4bRyjYPPZXgWkbYu5bGx36ghhfwLVlWTg+Pa
+         qNzKVHDDZOzJe7wmRB3KPggVfgTuG5dH5vWSd6tLKlUU0mq0/dPcvlzmAKJzKJ3lsNnq
+         hf5759A/YDYnFUVvnmpd8GJKog+obZdPxK31zt2Dq6a2cvSXKybH00rg2pzrZsylDLQM
+         FsjtfYg+dMeOOTMhbFhzCtHeU0MiyEmxyuYrz+xx4QdO75a/MrH+F1LO9yFr5yYGlJ18
+         5j8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=grLUxdosb4UfR11DOl+yWibactqQToHflORrwM4FNak=;
+        b=onuolSUFRRxZL4adwdEH03EUAPennpu1un/GFNlbXjz5kUTTHtp2UHa96G/eukvMEd
+         kyk4Q8U1Sanl1DeHo1jo6YykuvvxtLJUZH5nBASISL8BrPkTC/R6XU9NADFhrH2ZS3NE
+         VNPHI7S6cvOSpuPM42bn8BGOlAyCIEeNqP970JlcVxt7kZBdOshJiP2PmPKNF3j+yS0/
+         6cwi7GYuXtQkQUwZlnpSn2A014VvPWNerSZRJDlDOiyKXbeCwKmHfHmpPwwO4u5+w4is
+         sdKVjS8hjnolnzbZHuTM/GCyiM8cCOwrrJHxWn8SvnaLNaKxt5BTeFSKOuUAY0tvKQQK
+         ICUA==
+X-Gm-Message-State: APjAAAWxPGA3fgEOJqkJk0LWRFGSqHgo2aebhkMtxt791Q5olCzEqCcq
+        QDSddj5d9wtlkliYksbyfS0H2+jT
+X-Google-Smtp-Source: APXvYqznqvIJwgJKC8HTDr44K2775kb8iGYAE0g60AOMLy6IfSsQOZCCo7vtjx53/UGOGL+cs4xAgQ==
+X-Received: by 2002:a2e:93cc:: with SMTP id p12mr62833417ljh.11.1564508472098;
+        Tue, 30 Jul 2019 10:41:12 -0700 (PDT)
+Received: from localhost.localdomain (ppp91-78-220-99.pppoe.mtu-net.ru. [91.78.220.99])
+        by smtp.gmail.com with ESMTPSA id g5sm13721177ljj.69.2019.07.30.10.41.11
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Jul 2019 10:41:11 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 1/2] soc/tegra: pmc: Query PCLK clock rate at probe time
+Date:   Tue, 30 Jul 2019 20:40:19 +0300
+Message-Id: <20190730174020.15878-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.22.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-1.fix bugs when detecting L2 cache sets value.
-2.fix bugs when detecting L2 cache ways value.
-3.fix bugs when calculate bogoMips and loops_per_jiffy.
+The PCLK clock is running off SCLK, which is a critical clock that is
+very unlikely to randomly change its rate. It is possible to get a
+lockup if kernel decides to enter LP2 cpuidle from a clk-notifier, which
+happens occasionally in a case of Tegra30 EMC driver that waits for the
+clk-change event in the clk-notify handler, because CCF's 'prepare' mutex
+in kept locked and thus clk_get_rate() wants to sleep with interrupts
+being disabled.
 
-Signed-off-by: Zhou Yanjie <zhouyanjie@zoho.com>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/mips/kernel/cpu-probe.c |  7 ++++++-
- arch/mips/mm/sc-mips.c       | 18 +++++++++++++++---
- 2 files changed, 21 insertions(+), 4 deletions(-)
 
-diff --git a/arch/mips/kernel/cpu-probe.c b/arch/mips/kernel/cpu-probe.c
-index eb527a1..a914435 100644
---- a/arch/mips/kernel/cpu-probe.c
-+++ b/arch/mips/kernel/cpu-probe.c
-@@ -1960,11 +1960,16 @@ static inline void cpu_probe_ingenic(struct cpuinfo_mips *c, unsigned int cpu)
- 	c->options &= ~MIPS_CPU_COUNTER;
- 	BUG_ON(!__builtin_constant_p(cpu_has_counter) || cpu_has_counter);
- 	switch (c->processor_id & PRID_IMP_MASK) {
--	case PRID_IMP_XBURST:
-+	case PRID_IMP_XBURST: {
-+		unsigned int config7;
- 		c->cputype = CPU_XBURST;
- 		c->writecombine = _CACHE_UNCACHED_ACCELERATED;
- 		__cpu_name[cpu] = "Ingenic XBurst";
-+		config7 = read_c0_config7();
-+		config7 |= (1 << 4);
-+		write_c0_config7(config7);
+Changelog:
+
+v3: Changed commit's message because I actually recalled what was the
+    initial reason for the patch, since the problem reoccurred once again.
+
+v2: Addressed review comments that were made by Jon Hunter to v1 by
+    not moving the memory barrier, replacing one missed clk_get_rate()
+    with pmc->rate, handling possible clk_get_rate() error on probe and
+    slightly adjusting the commits message.
+
+ drivers/soc/tegra/pmc.c | 34 ++++++++++++++++------------------
+ 1 file changed, 16 insertions(+), 18 deletions(-)
+
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index 9f9c1c677cf4..aba3396b2e73 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -1192,7 +1192,7 @@ static int tegra_io_pad_prepare(struct tegra_pmc *pmc, enum tegra_io_pad id,
+ 		return err;
+ 
+ 	if (pmc->clk) {
+-		rate = clk_get_rate(pmc->clk);
++		rate = pmc->rate;
+ 		if (!rate) {
+ 			dev_err(pmc->dev, "failed to get clock rate\n");
+ 			return -ENODEV;
+@@ -1433,6 +1433,7 @@ void tegra_pmc_set_suspend_mode(enum tegra_suspend_mode mode)
+ void tegra_pmc_enter_suspend_mode(enum tegra_suspend_mode mode)
+ {
+ 	unsigned long long rate = 0;
++	u64 ticks;
+ 	u32 value;
+ 
+ 	switch (mode) {
+@@ -1441,31 +1442,22 @@ void tegra_pmc_enter_suspend_mode(enum tegra_suspend_mode mode)
  		break;
-+	}
+ 
+ 	case TEGRA_SUSPEND_LP2:
+-		rate = clk_get_rate(pmc->clk);
++		rate = pmc->rate;
+ 		break;
+ 
  	default:
- 		panic("Unknown Ingenic Processor ID!");
  		break;
-diff --git a/arch/mips/mm/sc-mips.c b/arch/mips/mm/sc-mips.c
-index 9385ddb..ed953d4 100644
---- a/arch/mips/mm/sc-mips.c
-+++ b/arch/mips/mm/sc-mips.c
-@@ -215,6 +215,14 @@ static inline int __init mips_sc_probe(void)
- 	else
- 		return 0;
+ 	}
  
-+	/*
-+	 * According to config2 it would be 512-sets, but that is contradicted
-+	 * by all documentation.
-+	 */
-+	if (current_cpu_type() == CPU_XBURST &&
-+				mips_machtype == MACH_INGENIC_X1000)
-+		c->scache.sets = 256;
-+
- 	tmp = (config2 >> 0) & 0x0f;
- 	if (tmp <= 7)
- 		c->scache.ways = tmp + 1;
-@@ -225,9 +233,13 @@ static inline int __init mips_sc_probe(void)
- 	 * According to config2 it would be 5-ways, but that is contradicted
- 	 * by all documentation.
- 	 */
--	if (current_cpu_type() == CPU_XBURST &&
--				mips_machtype == MACH_INGENIC_JZ4770)
--		c->scache.ways = 4;
-+	if (current_cpu_type() == CPU_XBURST) {
-+		switch (mips_machtype) {
-+		case MACH_INGENIC_JZ4770:
-+		case MACH_INGENIC_X1000:
-+			c->scache.ways = 4;
-+		}
+-	if (WARN_ON_ONCE(rate == 0))
+-		rate = 100000000;
++	ticks = pmc->cpu_good_time * rate + USEC_PER_SEC - 1;
++	do_div(ticks, USEC_PER_SEC);
++	tegra_pmc_writel(pmc, ticks, PMC_CPUPWRGOOD_TIMER);
+ 
+-	if (rate != pmc->rate) {
+-		u64 ticks;
++	ticks = pmc->cpu_off_time * rate + USEC_PER_SEC - 1;
++	do_div(ticks, USEC_PER_SEC);
++	tegra_pmc_writel(pmc, ticks, PMC_CPUPWROFF_TIMER);
+ 
+-		ticks = pmc->cpu_good_time * rate + USEC_PER_SEC - 1;
+-		do_div(ticks, USEC_PER_SEC);
+-		tegra_pmc_writel(pmc, ticks, PMC_CPUPWRGOOD_TIMER);
+-
+-		ticks = pmc->cpu_off_time * rate + USEC_PER_SEC - 1;
+-		do_div(ticks, USEC_PER_SEC);
+-		tegra_pmc_writel(pmc, ticks, PMC_CPUPWROFF_TIMER);
+-
+-		wmb();
+-
+-		pmc->rate = rate;
+-	}
++	wmb();
+ 
+ 	value = tegra_pmc_readl(pmc, PMC_CNTRL);
+ 	value &= ~PMC_CNTRL_SIDE_EFFECT_LP0;
+@@ -2082,8 +2074,14 @@ static int tegra_pmc_probe(struct platform_device *pdev)
+ 		pmc->clk = NULL;
+ 	}
+ 
++	pmc->rate = clk_get_rate(pmc->clk);
+ 	pmc->dev = &pdev->dev;
+ 
++	if (!pmc->rate) {
++		dev_err(&pdev->dev, "failed to get pclk rate\n");
++		pmc->rate = 100000000;
 +	}
++
+ 	tegra_pmc_init(pmc);
  
- 	c->scache.waysize = c->scache.sets * c->scache.linesz;
- 	c->scache.waybit = __ffs(c->scache.waysize);
+ 	tegra_pmc_init_tsense_reset(pmc);
 -- 
-2.7.4
-
+2.22.0
 
