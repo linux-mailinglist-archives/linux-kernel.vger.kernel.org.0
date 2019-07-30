@@ -2,207 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E7B927A05E
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 07:34:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BAF07A058
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 07:31:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729360AbfG3Feu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 01:34:50 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:52102 "EHLO inva020.nxp.com"
+        id S1729330AbfG3Fb0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 01:31:26 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:58516 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728789AbfG3Fes (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 01:34:48 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 14DDB1A003A;
-        Tue, 30 Jul 2019 07:34:46 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 538791A0155;
-        Tue, 30 Jul 2019 07:34:42 +0200 (CEST)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id B0DC5402E8;
-        Tue, 30 Jul 2019 13:34:37 +0800 (SGT)
-From:   Richard Zhu <hongxing.zhu@nxp.com>
-To:     jassisinghbrar@gmail.com, o.rempel@pengutronix.de,
-        aisheng.dong@nxp.com
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Richard Zhu <hongxing.zhu@nxp.com>
-Subject: [PATCH v3] mailbox: imx: add support for imx v1 mu
-Date:   Tue, 30 Jul 2019 13:12:23 +0800
-Message-Id: <1564463543-5611-2-git-send-email-hongxing.zhu@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1564463543-5611-1-git-send-email-hongxing.zhu@nxp.com>
-References: <1564463543-5611-1-git-send-email-hongxing.zhu@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1728656AbfG3Fb0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 01:31:26 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 45yQCH3NcVzB09ZT;
+        Tue, 30 Jul 2019 07:31:23 +0200 (CEST)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=qyEzDSXc; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id rd-v7jPqQJgu; Tue, 30 Jul 2019 07:31:23 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 45yQCH2HdXzB09ZN;
+        Tue, 30 Jul 2019 07:31:23 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1564464683; bh=ePSetGxy2Hgvqtd+MAQAGKMxy2rhqR0kq9ZlpTUXHps=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=qyEzDSXcnwLMN8hHx717ZrDE0Jv3hY6oYqpm8o29LeHg0T2Nl8V/kNdFsQgoV6CQT
+         LbYMXDw+LGfxTyJliNgft9h1Jv2zGxQ6PnhCVndsAxlVYD749/0E2dNnzcY3frc2uu
+         /hVX8u33apZRbxJSLbuTXC1ChrxEpO0T22sRdr/w=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 27A588B7F1;
+        Tue, 30 Jul 2019 07:31:24 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id 8Lk1aYWXxBaY; Tue, 30 Jul 2019 07:31:24 +0200 (CEST)
+Received: from [172.25.230.101] (po15451.idsi0.si.c-s.fr [172.25.230.101])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id F1AFC8B74F;
+        Tue, 30 Jul 2019 07:31:23 +0200 (CEST)
+Subject: Re: [PATCH] powerpc: workaround clang codegen bug in dcbz
+To:     Nathan Chancellor <natechancellor@gmail.com>,
+        Nick Desaulniers <ndesaulniers@google.com>
+Cc:     mpe@ellerman.id.au, segher@kernel.crashing.org, arnd@arndb.de,
+        kbuild test robot <lkp@intel.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        clang-built-linux@googlegroups.com
+References: <20190729202542.205309-1-ndesaulniers@google.com>
+ <20190729203246.GA117371@archlinux-threadripper>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <8f2331db-151f-a481-23e0-ec6dd9ba6f1c@c-s.fr>
+Date:   Tue, 30 Jul 2019 07:31:23 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <20190729203246.GA117371@archlinux-threadripper>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is a version1.0 MU on i.MX7ULP platform.
-One new version ID register is added, and it's offset is 0.
-TRn registers are defined at the offset 0x20 ~ 0x2C.
-RRn registers are defined at the offset 0x40 ~ 0x4C.
-SR/CR registers are defined at 0x60/0x64.
-Extend this driver to support it.
 
-Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
-Suggested-by: Oleksij Rempel <o.rempel@pengutronix.de>
-Reviewed-by: Dong Aisheng <aisheng.dong@nxp.com>
-Reviewed-by: Oleksij Rempel <o.rempel@pengutronix.de>
----
- drivers/mailbox/imx-mailbox.c | 55 ++++++++++++++++++++++++++++++-------------
- 1 file changed, 38 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/mailbox/imx-mailbox.c b/drivers/mailbox/imx-mailbox.c
-index 25be8bb..c81be1c 100644
---- a/drivers/mailbox/imx-mailbox.c
-+++ b/drivers/mailbox/imx-mailbox.c
-@@ -12,19 +12,11 @@
- #include <linux/of_device.h>
- #include <linux/slab.h>
- 
--/* Transmit Register */
--#define IMX_MU_xTRn(x)		(0x00 + 4 * (x))
--/* Receive Register */
--#define IMX_MU_xRRn(x)		(0x10 + 4 * (x))
--/* Status Register */
--#define IMX_MU_xSR		0x20
- #define IMX_MU_xSR_GIPn(x)	BIT(28 + (3 - (x)))
- #define IMX_MU_xSR_RFn(x)	BIT(24 + (3 - (x)))
- #define IMX_MU_xSR_TEn(x)	BIT(20 + (3 - (x)))
- #define IMX_MU_xSR_BRDIP	BIT(9)
- 
--/* Control Register */
--#define IMX_MU_xCR		0x24
- /* General Purpose Interrupt Enable */
- #define IMX_MU_xCR_GIEn(x)	BIT(28 + (3 - (x)))
- /* Receive Interrupt Enable */
-@@ -44,6 +36,13 @@ enum imx_mu_chan_type {
- 	IMX_MU_TYPE_RXDB,	/* Rx doorbell */
- };
- 
-+struct imx_mu_dcfg {
-+	u32	xTR[4];		/* Transmit Registers */
-+	u32	xRR[4];		/* Receive Registers */
-+	u32	xSR;		/* Status Register */
-+	u32	xCR;		/* Control Register */
-+};
-+
- struct imx_mu_con_priv {
- 	unsigned int		idx;
- 	char			irq_desc[IMX_MU_CHAN_NAME_SIZE];
-@@ -61,12 +60,27 @@ struct imx_mu_priv {
- 	struct mbox_chan	mbox_chans[IMX_MU_CHANS];
- 
- 	struct imx_mu_con_priv  con_priv[IMX_MU_CHANS];
-+	const struct imx_mu_dcfg	*dcfg;
- 	struct clk		*clk;
- 	int			irq;
- 
- 	bool			side_b;
- };
- 
-+static const struct imx_mu_dcfg imx_mu_cfg_imx6sx = {
-+	.xTR	= {0x0, 0x4, 0x8, 0xc},
-+	.xRR	= {0x10, 0x14, 0x18, 0x1c},
-+	.xSR	= 0x20,
-+	.xCR	= 0x24,
-+};
-+
-+static const struct imx_mu_dcfg imx_mu_cfg_imx7ulp = {
-+	.xTR	= {0x20, 0x24, 0x28, 0x2c},
-+	.xRR	= {0x40, 0x44, 0x48, 0x4c},
-+	.xSR	= 0x60,
-+	.xCR	= 0x64,
-+};
-+
- static struct imx_mu_priv *to_imx_mu_priv(struct mbox_controller *mbox)
- {
- 	return container_of(mbox, struct imx_mu_priv, mbox);
-@@ -88,10 +102,10 @@ static u32 imx_mu_xcr_rmw(struct imx_mu_priv *priv, u32 set, u32 clr)
- 	u32 val;
- 
- 	spin_lock_irqsave(&priv->xcr_lock, flags);
--	val = imx_mu_read(priv, IMX_MU_xCR);
-+	val = imx_mu_read(priv, priv->dcfg->xCR);
- 	val &= ~clr;
- 	val |= set;
--	imx_mu_write(priv, val, IMX_MU_xCR);
-+	imx_mu_write(priv, val, priv->dcfg->xCR);
- 	spin_unlock_irqrestore(&priv->xcr_lock, flags);
- 
- 	return val;
-@@ -111,8 +125,8 @@ static irqreturn_t imx_mu_isr(int irq, void *p)
- 	struct imx_mu_con_priv *cp = chan->con_priv;
- 	u32 val, ctrl, dat;
- 
--	ctrl = imx_mu_read(priv, IMX_MU_xCR);
--	val = imx_mu_read(priv, IMX_MU_xSR);
-+	ctrl = imx_mu_read(priv, priv->dcfg->xCR);
-+	val = imx_mu_read(priv, priv->dcfg->xSR);
- 
- 	switch (cp->type) {
- 	case IMX_MU_TYPE_TX:
-@@ -138,10 +152,10 @@ static irqreturn_t imx_mu_isr(int irq, void *p)
- 		imx_mu_xcr_rmw(priv, 0, IMX_MU_xCR_TIEn(cp->idx));
- 		mbox_chan_txdone(chan, 0);
- 	} else if (val == IMX_MU_xSR_RFn(cp->idx)) {
--		dat = imx_mu_read(priv, IMX_MU_xRRn(cp->idx));
-+		dat = imx_mu_read(priv, priv->dcfg->xRR[cp->idx]);
- 		mbox_chan_received_data(chan, (void *)&dat);
- 	} else if (val == IMX_MU_xSR_GIPn(cp->idx)) {
--		imx_mu_write(priv, IMX_MU_xSR_GIPn(cp->idx), IMX_MU_xSR);
-+		imx_mu_write(priv, IMX_MU_xSR_GIPn(cp->idx), priv->dcfg->xSR);
- 		mbox_chan_received_data(chan, NULL);
- 	} else {
- 		dev_warn_ratelimited(priv->dev, "Not handled interrupt\n");
-@@ -159,7 +173,7 @@ static int imx_mu_send_data(struct mbox_chan *chan, void *data)
- 
- 	switch (cp->type) {
- 	case IMX_MU_TYPE_TX:
--		imx_mu_write(priv, *arg, IMX_MU_xTRn(cp->idx));
-+		imx_mu_write(priv, *arg, priv->dcfg->xTR[cp->idx]);
- 		imx_mu_xcr_rmw(priv, IMX_MU_xCR_TIEn(cp->idx), 0);
- 		break;
- 	case IMX_MU_TYPE_TXDB:
-@@ -257,7 +271,7 @@ static void imx_mu_init_generic(struct imx_mu_priv *priv)
- 		return;
- 
- 	/* Set default MU configuration */
--	imx_mu_write(priv, 0, IMX_MU_xCR);
-+	imx_mu_write(priv, 0, priv->dcfg->xCR);
- }
- 
- static int imx_mu_probe(struct platform_device *pdev)
-@@ -265,6 +279,7 @@ static int imx_mu_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	struct device_node *np = dev->of_node;
- 	struct imx_mu_priv *priv;
-+	const struct imx_mu_dcfg *dcfg;
- 	unsigned int i;
- 	int ret;
- 
-@@ -282,6 +297,11 @@ static int imx_mu_probe(struct platform_device *pdev)
- 	if (priv->irq < 0)
- 		return priv->irq;
- 
-+	dcfg = of_device_get_match_data(dev);
-+	if (!dcfg)
-+		return -EINVAL;
-+	priv->dcfg = dcfg;
-+
- 	priv->clk = devm_clk_get(dev, NULL);
- 	if (IS_ERR(priv->clk)) {
- 		if (PTR_ERR(priv->clk) != -ENOENT)
-@@ -335,7 +355,8 @@ static int imx_mu_remove(struct platform_device *pdev)
- }
- 
- static const struct of_device_id imx_mu_dt_ids[] = {
--	{ .compatible = "fsl,imx6sx-mu" },
-+	{ .compatible = "fsl,imx7ulp-mu", .data = &imx_mu_cfg_imx7ulp },
-+	{ .compatible = "fsl,imx6sx-mu", .data = &imx_mu_cfg_imx6sx },
- 	{ },
- };
- MODULE_DEVICE_TABLE(of, imx_mu_dt_ids);
--- 
-2.7.4
+Le 29/07/2019 à 22:32, Nathan Chancellor a écrit :
+> On Mon, Jul 29, 2019 at 01:25:41PM -0700, Nick Desaulniers wrote:
+>> Commit 6c5875843b87 ("powerpc: slightly improve cache helpers") exposed
+>> what looks like a codegen bug in Clang's handling of `%y` output
+>> template with `Z` constraint. This is resulting in panics during boot
+>> for 32b powerpc builds w/ Clang, as reported by our CI.
+>>
+>> Add back the original code that worked behind a preprocessor check for
+>> __clang__ until we can fix LLVM.
+>>
+>> Further, it seems that clang allnoconfig builds are unhappy with `Z`, as
+>> reported by 0day bot. This is likely because Clang warns about inline
+>> asm constraints when the constraint requires inlining to be semantically
+>> valid.
+>>
+>> Link: https://bugs.llvm.org/show_bug.cgi?id=42762
+>> Link: https://github.com/ClangBuiltLinux/linux/issues/593
+>> Link: https://lore.kernel.org/lkml/20190721075846.GA97701@archlinux-threadripper/
+>> Debugged-by: Nathan Chancellor <natechancellor@gmail.com>
+>> Reported-by: Nathan Chancellor <natechancellor@gmail.com>
+>> Reported-by: kbuild test robot <lkp@intel.com>
+>> Suggested-by: Nathan Chancellor <natechancellor@gmail.com>
+>> Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+>> ---
+>> Alternatively, we could just revert 6c5875843b87. It seems that GCC
+>> generates the same code for these functions for out of line versions.
+>> But I'm not sure how the inlined code generated would be affected.
+> 
+> For the record:
+> 
+> https://godbolt.org/z/z57VU7
+> 
+> This seems consistent with what Michael found so I don't think a revert
+> is entirely unreasonable.
 
+Your example functions are too simple to show anything. The functions 
+takes only one parameter so of course GCC won't use two registers 
+allthough given the opportunity.
+
+Christophe
+
+> 
+> Either way:
+> 
+> Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
+> 
