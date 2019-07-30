@@ -2,54 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D4237B1CB
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:20:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 86C1F7B1B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:20:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729559AbfG3SUk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 14:20:40 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:39992 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728707AbfG3SQD (ORCPT
+        id S1728840AbfG3SQI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 14:16:08 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:33196 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728743AbfG3SQG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 14:16:03 -0400
-Received: by mail-pf1-f193.google.com with SMTP id p184so30255273pfp.7
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 11:16:02 -0700 (PDT)
+        Tue, 30 Jul 2019 14:16:06 -0400
+Received: by mail-pf1-f194.google.com with SMTP id g2so30264694pfq.0
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 11:16:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=WqnP5pBY6aQYlpjg6EOYyndcooTiqsLsFL8lZlLzN+U=;
-        b=MTmVbzT3m0PXTQ9blNFhLXdJJ1/PA9DulRvg9x45w14FOHgKM5QBLmsH+mBfY2XflK
-         ReHiXz0JsNu4/f/5PZJ8crgr/2/VaA3sveOh5vrV3ygXnjK0/7GpiESxhi9vzsNGo3Dn
-         tMK/mpQwKLyLYsQd+eE2qD339vyfdxhUMRsgQ=
+        bh=50VWY4DOvJCsLbogXvcfIy87Phisvb7R/qkulHRQtQE=;
+        b=b3mg+KDmpIO81yQrcZUSpzOusHXsPRu2YTZBtorn1AEo3N6GiptcooL6U8tMTo+gTG
+         lIYB8l6l6OrtiBRTPCwwVeU7F0QlclDCDwnUbiuFLyyK+81JVEa7Lq5TKHvVQ610YkBF
+         neATcqsL6f5giH+IoqxpKjFEtws9P29MaAOJY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=WqnP5pBY6aQYlpjg6EOYyndcooTiqsLsFL8lZlLzN+U=;
-        b=kd3bnKrPHjNrIUvf47UzD0Cio7cuV2OJ4BSoxb8CqmwWZtKGdMuJ1wvJ1+RSkKIIM2
-         tWMOkEFOp3d/jODJbPIQDh1Zcldg84R7cv54OkanJi94+goonZmLZ0SmibrfZsvmRhUK
-         BeIKYUIgqvGx5F3wlC7T7LhZRpUF4WZ79F3IAktTvrC6A3qXX/+xszEMVWgO8d2O5grv
-         ZyrxgfU0VSL8hUJ7xyIZDufKgBP8jGeXKO0XA5Jmhb2RnUCZW00ZCjoHprg9TwqvPX11
-         +uo9kRaKOYAP/vETeyWnr5I1NIhP6/WsBg/jFGth+ALhsPQK4xlJIRyvnqSoGgslfxm/
-         VpMw==
-X-Gm-Message-State: APjAAAX1UDuXDhx1M/bUl3TbioSD+ZHLB+7s+L2qpDJu0dzPVk4/jdyD
-        INmHcvzTi043EgPqboDuvLuVDpaeynw=
-X-Google-Smtp-Source: APXvYqx3NAn8hmPXUNVhZt3irZVuWFfprkMsdB5KsNDxO+BhG8v0uXxUdNs0kGYdTa0IeW/sz59WoQ==
-X-Received: by 2002:a63:5d54:: with SMTP id o20mr93933941pgm.413.1564510562231;
-        Tue, 30 Jul 2019 11:16:02 -0700 (PDT)
+        bh=50VWY4DOvJCsLbogXvcfIy87Phisvb7R/qkulHRQtQE=;
+        b=Ne0omnCWVcG5E5rvd4rFGCEuKIdfR7k3WnjTXMTQoWbUDmXUJvG3L8xnufOoKlyEDI
+         iYtz5UaynnUHWNhbIT8zQ3Q1AQdfDBG/dofIcoxsKKj2rx6bJJiZlRI1SZtcjitz6CJm
+         w1nRVpRIfBq2LJmrVvht4OyUGiPIwLt1CGsFbrLlalJFFsXmI+y4fXSMih7j66nuL8To
+         DhHj/b7zMIJIz2o5452Q0aaCxehce+lsNrFIATSHQuHPvTO4Di1MWqmAmzO2Py6D2647
+         l+8hJPfv/bVXnZZ4AbCM0A1xbuPwoZbUKKbxVMJnMSV4/7iaYyZKlkQZidgWOIV5WPnO
+         cUUg==
+X-Gm-Message-State: APjAAAV2NRxXpZWsSl0XglqPoDK9H4K42g0+tg5LL7LCS9dOPZD2C7Ik
+        IVG6Q+XNJKecUv3A53GlJAmCxnFRzzM=
+X-Google-Smtp-Source: APXvYqwur07swqKyif5Dp1u0EIDJAkQU8t63hD8i7gGz9LNFXf5yqejN6CfyDWSarneFR2nt+qIVAA==
+X-Received: by 2002:a65:64c6:: with SMTP id t6mr112287304pgv.323.1564510565436;
+        Tue, 30 Jul 2019 11:16:05 -0700 (PDT)
 Received: from smtp.gmail.com ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id g1sm106744083pgg.27.2019.07.30.11.16.01
+        by smtp.gmail.com with ESMTPSA id g1sm106744083pgg.27.2019.07.30.11.16.04
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 30 Jul 2019 11:16:01 -0700 (PDT)
+        Tue, 30 Jul 2019 11:16:05 -0700 (PDT)
 From:   Stephen Boyd <swboyd@chromium.org>
 To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH v6 04/57] clocksource: Remove dev_err() usage after platform_get_irq()
-Date:   Tue, 30 Jul 2019 11:15:04 -0700
-Message-Id: <20190730181557.90391-5-swboyd@chromium.org>
+Cc:     Russell King <linux@armlinux.org.uk>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Chen-Yu Tsai <wens@csie.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH v6 07/57] ARM: Remove dev_err() usage after platform_get_irq()
+Date:   Tue, 30 Jul 2019 11:15:07 -0700
+Message-Id: <20190730181557.90391-8-swboyd@chromium.org>
 X-Mailer: git-send-email 2.22.0.709.g102302147b-goog
 In-Reply-To: <20190730181557.90391-1-swboyd@chromium.org>
 References: <20190730181557.90391-1-swboyd@chromium.org>
@@ -95,69 +100,69 @@ if ( \( ret < 0 \| ret <= 0 \) )
 While we're here, remove braces on if statements that only have one
 statement (manually).
 
+Cc: Russell King <linux@armlinux.org.uk>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Tony Lindgren <tony@atomide.com>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: Simon Horman <horms+renesas@verge.net.au>
+Cc: Chen-Yu Tsai <wens@csie.org>
+Cc: linux-arm-kernel@lists.infradead.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Stephen Boyd <swboyd@chromium.org>
 ---
 
 Please apply directly to subsystem trees
 
- drivers/clocksource/em_sti.c | 4 +---
- drivers/clocksource/sh_cmt.c | 5 +----
- drivers/clocksource/sh_tmu.c | 5 +----
- 3 files changed, 3 insertions(+), 11 deletions(-)
+ arch/arm/plat-omap/dma.c    | 1 -
+ arch/arm/plat-pxa/ssp.c     | 5 ++---
+ arch/arm/plat-samsung/adc.c | 4 +---
+ 3 files changed, 3 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/clocksource/em_sti.c b/drivers/clocksource/em_sti.c
-index 8e12b11e81b0..9039df4f90e2 100644
---- a/drivers/clocksource/em_sti.c
-+++ b/drivers/clocksource/em_sti.c
-@@ -291,10 +291,8 @@ static int em_sti_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, p);
+diff --git a/arch/arm/plat-omap/dma.c b/arch/arm/plat-omap/dma.c
+index 79f43acf9acb..9386b2e9b332 100644
+--- a/arch/arm/plat-omap/dma.c
++++ b/arch/arm/plat-omap/dma.c
+@@ -1371,7 +1371,6 @@ static int omap_system_dma_probe(struct platform_device *pdev)
+ 		strcpy(irq_name, "0");
+ 		dma_irq = platform_get_irq_byname(pdev, irq_name);
+ 		if (dma_irq < 0) {
+-			dev_err(&pdev->dev, "failed: request IRQ %d", dma_irq);
+ 			ret = dma_irq;
+ 			goto exit_dma_lch_fail;
+ 		}
+diff --git a/arch/arm/plat-pxa/ssp.c b/arch/arm/plat-pxa/ssp.c
+index 9a6e4923bd69..88b5dd99f6bc 100644
+--- a/arch/arm/plat-pxa/ssp.c
++++ b/arch/arm/plat-pxa/ssp.c
+@@ -146,10 +146,9 @@ static int pxa_ssp_probe(struct platform_device *pdev)
+ 	}
  
- 	irq = platform_get_irq(pdev, 0);
--	if (irq < 0) {
--		dev_err(&pdev->dev, "failed to get irq\n");
-+	if (irq < 0)
- 		return irq;
+ 	ssp->irq = platform_get_irq(pdev, 0);
+-	if (ssp->irq < 0) {
+-		dev_err(dev, "no IRQ resource defined\n");
++	if (ssp->irq < 0)
+ 		return -ENODEV;
+-	}
++
+ 
+ 	if (dev->of_node) {
+ 		const struct of_device_id *id =
+diff --git a/arch/arm/plat-samsung/adc.c b/arch/arm/plat-samsung/adc.c
+index ee3d5c989a76..4bbeca3cbd9e 100644
+--- a/arch/arm/plat-samsung/adc.c
++++ b/arch/arm/plat-samsung/adc.c
+@@ -354,10 +354,8 @@ static int s3c_adc_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	adc->irq = platform_get_irq(pdev, 1);
+-	if (adc->irq <= 0) {
+-		dev_err(dev, "failed to get adc irq\n");
++	if (adc->irq <= 0)
+ 		return -ENOENT;
 -	}
  
- 	/* map memory, let base point to the STI instance */
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-diff --git a/drivers/clocksource/sh_cmt.c b/drivers/clocksource/sh_cmt.c
-index 55d3e03f2cd4..f6424b61e212 100644
---- a/drivers/clocksource/sh_cmt.c
-+++ b/drivers/clocksource/sh_cmt.c
-@@ -776,11 +776,8 @@ static int sh_cmt_register_clockevent(struct sh_cmt_channel *ch,
- 	int ret;
- 
- 	irq = platform_get_irq(ch->cmt->pdev, ch->index);
--	if (irq < 0) {
--		dev_err(&ch->cmt->pdev->dev, "ch%u: failed to get irq\n",
--			ch->index);
-+	if (irq < 0)
- 		return irq;
--	}
- 
- 	ret = request_irq(irq, sh_cmt_interrupt,
- 			  IRQF_TIMER | IRQF_IRQPOLL | IRQF_NOBALANCING,
-diff --git a/drivers/clocksource/sh_tmu.c b/drivers/clocksource/sh_tmu.c
-index 49f1c805fc95..8c4f3753b36e 100644
---- a/drivers/clocksource/sh_tmu.c
-+++ b/drivers/clocksource/sh_tmu.c
-@@ -462,11 +462,8 @@ static int sh_tmu_channel_setup(struct sh_tmu_channel *ch, unsigned int index,
- 		ch->base = tmu->mapbase + 8 + ch->index * 12;
- 
- 	ch->irq = platform_get_irq(tmu->pdev, index);
--	if (ch->irq < 0) {
--		dev_err(&tmu->pdev->dev, "ch%u: failed to get irq\n",
--			ch->index);
-+	if (ch->irq < 0)
- 		return ch->irq;
--	}
- 
- 	ch->cs_enabled = false;
- 	ch->enable_count = 0;
+ 	ret = devm_request_irq(dev, adc->irq, s3c_adc_irq, 0, dev_name(dev),
+ 				adc);
 -- 
 Sent by a computer through tubes
 
