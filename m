@@ -2,129 +2,186 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73DE37B204
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:32:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 44CE17B208
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:33:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387527AbfG3Scu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 14:32:50 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:34656 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726050AbfG3Sct (ORCPT
+        id S1729160AbfG3Sdh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 14:33:37 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:38348 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726210AbfG3Sdg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 14:32:49 -0400
-Received: by mail-pg1-f194.google.com with SMTP id n9so24278098pgc.1;
-        Tue, 30 Jul 2019 11:32:49 -0700 (PDT)
+        Tue, 30 Jul 2019 14:33:36 -0400
+Received: by mail-pf1-f193.google.com with SMTP id y15so30292633pfn.5
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 11:33:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=6fCIBt83Qg0xm9/csFeyeLFWARKqAMvTELcBmphTpo0=;
-        b=JUA9FbUPr0F6xNgBd5J9MHwHtCHrMpBJuNDTvZBzKBZeCmNsbohHado2HBbGTi0It9
-         yThD+OL5Bkf6Da9wJnEKF7n1ZuYfE+RCaAChBqmkI/jmB2QhloDai+ucTPidoKT2u6UQ
-         29UC6QoAyrEf4tN2GNQniwXjZkr83rJH4ak6SFrbJFSb15jmyMBIWZiHh1EgvVH6j48q
-         cZKmuIlqPfwxsnRzt4ye0SXQ2NpyGAmqO03R0RsRzNRYkzGXP/3U1W6hIGXqsFMnjHXR
-         g7Xo3I2gA+uPgrVqyPZw3rp948eNJFIjP60aR0GcG/CsRV9BR7dafhIdCpB5PUi2sogn
-         ixHw==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=lDPYNtNZJ8yMTUdTAjpzX/W7EtPR+4qG3lY6BbMAYq8=;
+        b=p11LdXDyKKeh447fOhCgRaMAzsyR7+b+4r3QdcFMXX4YPeQgAV63+1jBgYOJ83lIR9
+         FFLsZZVo8bcU/RJL1X8uCSQn/s9e6IOwqi/MkrlRliLbPpW2K03D3YjXNkPlg7UudIOE
+         EUVifs1wywLHbhfkzvtG+f6MLjAPS302FxSzgtMpKy4Ot0k/b63rbsKenGiedxcbEVo/
+         kfRtudPNat2bnfXPhqCn4YRxyzWJbj6cVJSJHSKN9AZpztgC2c8Aflv73rh/Yz/k4aCF
+         r0sXBoGB050cWx6tMzXuJ316g/gJqzqOUgMKhrucaAa07SmaLgpYoD2uHccZls1FoDNU
+         o24Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=6fCIBt83Qg0xm9/csFeyeLFWARKqAMvTELcBmphTpo0=;
-        b=H2MThA67qYPZW3whWUWmv1wpTsz4n7hsBi7YYWQkbmeHxkouQeztlHvj9RcEP2YNn/
-         0bwbajJxRfrMD44wa89uP7Dyb0ZLNl8GeNHGMFpcsl+zjMR2/0U2MZM7xR2AfVVAOyyP
-         ySAOjbAHq5an67cbAQy7/+z2qKgkxbKTBwA6mn+mjgOTCUEguZDzwTUJwLq1EQdqMeQA
-         C68ov5HTq0IrrpgaJDl9nhbjTLPsm8vADBrGZVfxGaH97Spo4SRiaTOWjWOodtKarK/O
-         HpxR9l51rzNZLJRkfV+VG+LPgCbl9Fu6klAwlX6yNdvW+rmj+2hV2SzigMnRpfOF5Rev
-         DBiw==
-X-Gm-Message-State: APjAAAVXcbBUhpFx6is2mQzzo94H1HRSnUYaALZaIcjlLU45TIMTGjCW
-        3G0iro+5s8tdu7cTBDFZ+6E=
-X-Google-Smtp-Source: APXvYqz3TKO5CR8bm9L/zAhw0K/5mmOOXYnkeug29AHRYcKaRz4UPuCN4Qa7WYzWXEa+PlUkZGXEBw==
-X-Received: by 2002:a62:754d:: with SMTP id q74mr42050335pfc.211.1564511568653;
-        Tue, 30 Jul 2019 11:32:48 -0700 (PDT)
-Received: from jordon-HP-15-Notebook-PC.domain.name ([106.51.16.0])
-        by smtp.gmail.com with ESMTPSA id j5sm57328671pgp.59.2019.07.30.11.32.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 30 Jul 2019 11:32:47 -0700 (PDT)
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-To:     boris.ostrovsky@oracle.com, jgross@suse.com,
-        sstabellini@kernel.org, marmarek@invisiblethingslab.com
-Cc:     willy@infradead.org, akpm@linux-foundation.org,
-        linux@armlinux.org.uk, linux-mm@kvack.org,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, gregkh@linuxfoundation.org,
-        Souptick Joarder <jrdr.linux@gmail.com>
-Subject: [PATCH] xen/gntdev.c: Replace vm_map_pages() with vm_map_pages_zero()
-Date:   Wed, 31 Jul 2019 00:04:56 +0530
-Message-Id: <1564511696-4044-1-git-send-email-jrdr.linux@gmail.com>
-X-Mailer: git-send-email 1.9.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=lDPYNtNZJ8yMTUdTAjpzX/W7EtPR+4qG3lY6BbMAYq8=;
+        b=EHstGlYAvltW/kk8WBm+VgSrhO0mANtE2E/22dbY5Dsn6+GJIxZ2SJUx1zPHfm2BjZ
+         km0axM2vfyIApINMo+HFG1/DuukeuNVRIbYkl+EJyZlntZ410o2ZnbVAgHLJBip2mt70
+         nIMvugPsjwTvlV5MTwDK1UObytQ/nDfJVNtgs4UJezBRqpPIp3QgX+6a6b1DUj4Ec6rJ
+         YAUfeq84oqxAkbDaYVjUMgAgTUPwilQnY9c3Z1jrcZYRyH6banXIvMA7JiFkfcOdegL8
+         qUe4AXAWRVjCRQxWzAlHNYapxy+fRLVKTiUdCLCpt/Cg/4wcFEjj8h4SBUpO5lTieauU
+         sWmQ==
+X-Gm-Message-State: APjAAAVVRkNM+pPD6hjiXufk4PVaW2XKlj43YJFHMKDwca/JV/fQL1CI
+        0AOdMxtCqhgT35lHgEEB4lKY8w==
+X-Google-Smtp-Source: APXvYqzfgBI4iXsr5pRAAwelL8b2mO0Nt8hSO3ORfYNg0MQq3HCpHPBL0sK+W4Js31d42EuVrD7Xmw==
+X-Received: by 2002:a17:90a:c68c:: with SMTP id n12mr118759494pjt.33.1564511615883;
+        Tue, 30 Jul 2019 11:33:35 -0700 (PDT)
+Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id j15sm76958349pfe.3.2019.07.30.11.33.34
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 30 Jul 2019 11:33:35 -0700 (PDT)
+Date:   Tue, 30 Jul 2019 11:35:03 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     linux-kernel@vger.kernel.org, Andy Gross <andy.gross@linaro.org>,
+        Thierry Reding <treding@nvidia.com>,
+        Li Yang <leoyang.li@nxp.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH v6 40/57] soc: Remove dev_err() usage after
+ platform_get_irq()
+Message-ID: <20190730183503.GX7234@tuxbook-pro>
+References: <20190730181557.90391-1-swboyd@chromium.org>
+ <20190730181557.90391-41-swboyd@chromium.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190730181557.90391-41-swboyd@chromium.org>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-'commit df9bde015a72 ("xen/gntdev.c: convert to use vm_map_pages()")'
-breaks gntdev driver. If vma->vm_pgoff > 0, vm_map_pages()
-will:
- - use map->pages starting at vma->vm_pgoff instead of 0
- - verify map->count against vma_pages()+vma->vm_pgoff instead of just
-   vma_pages().
+On Tue 30 Jul 11:15 PDT 2019, Stephen Boyd wrote:
 
-In practice, this breaks using a single gntdev FD for mapping multiple
-grants.
+> We don't need dev_err() messages when platform_get_irq() fails now that
+> platform_get_irq() prints an error message itself when something goes
+> wrong. Let's remove these prints with a simple semantic patch.
+> 
+> // <smpl>
+> @@
+> expression ret;
+> struct platform_device *E;
+> @@
+> 
+> ret =
+> (
+> platform_get_irq(E, ...)
+> |
+> platform_get_irq_byname(E, ...)
+> );
+> 
+> if ( \( ret < 0 \| ret <= 0 \) )
+> {
+> (
+> -if (ret != -EPROBE_DEFER)
+> -{ ...
+> -dev_err(...);
+> -... }
+> |
+> ...
+> -dev_err(...);
+> )
+> ...
+> }
+> // </smpl>
+> 
+> While we're here, remove braces on if statements that only have one
+> statement (manually).
+> 
+> Cc: Andy Gross <andy.gross@linaro.org>
+> Cc: Thierry Reding <treding@nvidia.com>
+> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-relevant strace output:
-[pid   857] ioctl(7, IOCTL_GNTDEV_MAP_GRANT_REF, 0x7ffd3407b6d0) = 0
-[pid   857] mmap(NULL, 4096, PROT_READ|PROT_WRITE, MAP_SHARED, 7, 0) =
-0x777f1211b000
-[pid   857] ioctl(7, IOCTL_GNTDEV_SET_UNMAP_NOTIFY, 0x7ffd3407b710) = 0
-[pid   857] ioctl(7, IOCTL_GNTDEV_MAP_GRANT_REF, 0x7ffd3407b6d0) = 0
-[pid   857] mmap(NULL, 4096, PROT_READ|PROT_WRITE, MAP_SHARED, 7,
-0x1000) = -1 ENXIO (No such device or address)
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-details here:
-https://github.com/QubesOS/qubes-issues/issues/5199
+> Cc: Li Yang <leoyang.li@nxp.com>
+> Cc: Simon Horman <horms+renesas@verge.net.au>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+> ---
+> 
+> Please apply directly to subsystem trees
+> 
+>  drivers/soc/fsl/qbman/bman_portal.c | 4 +---
+>  drivers/soc/fsl/qbman/qman_portal.c | 4 +---
+>  drivers/soc/qcom/smp2p.c            | 4 +---
 
-The reason is -> ( copying Marek's word from discussion)
+If you had split this in a fsl and a qcom patch I would have just merged
+the latter.
 
-vma->vm_pgoff is used as index passed to gntdev_find_map_index. It's
-basically using this parameter for "which grant reference to map".
-map struct returned by gntdev_find_map_index() describes just the pages
-to be mapped. Specifically map->pages[0] should be mapped at
-vma->vm_start, not vma->vm_start+vma->vm_pgoff*PAGE_SIZE.
+I don't see a problem with Li taking this patch through the Freescale
+tree though (or vise versa).
 
-When trying to map grant with index (aka vma->vm_pgoff) > 1,
-__vm_map_pages() will refuse to map it because it will expect map->count
-to be at least vma_pages(vma)+vma->vm_pgoff, while it is exactly
-vma_pages(vma).
+Regards,
+Bjorn
 
-Converting vm_map_pages() to use vm_map_pages_zero() will fix the
-problem.
-
-Marek has tested and confirmed the same.
-
-Reported-by: Marek Marczykowski-Górecki <marmarek@invisiblethingslab.com>
-Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-Tested-by: Marek Marczykowski-Górecki <marmarek@invisiblethingslab.com>
----
- drivers/xen/gntdev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/xen/gntdev.c b/drivers/xen/gntdev.c
-index 4c339c7..a446a72 100644
---- a/drivers/xen/gntdev.c
-+++ b/drivers/xen/gntdev.c
-@@ -1143,7 +1143,7 @@ static int gntdev_mmap(struct file *flip, struct vm_area_struct *vma)
- 		goto out_put_map;
- 
- 	if (!use_ptemod) {
--		err = vm_map_pages(vma, map->pages, map->count);
-+		err = vm_map_pages_zero(vma, map->pages, map->count);
- 		if (err)
- 			goto out_put_map;
- 	} else {
--- 
-1.9.1
-
+>  3 files changed, 3 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/soc/fsl/qbman/bman_portal.c b/drivers/soc/fsl/qbman/bman_portal.c
+> index cf4f10d6f590..e4ef35abb508 100644
+> --- a/drivers/soc/fsl/qbman/bman_portal.c
+> +++ b/drivers/soc/fsl/qbman/bman_portal.c
+> @@ -135,10 +135,8 @@ static int bman_portal_probe(struct platform_device *pdev)
+>  	pcfg->cpu = -1;
+>  
+>  	irq = platform_get_irq(pdev, 0);
+> -	if (irq <= 0) {
+> -		dev_err(dev, "Can't get %pOF IRQ'\n", node);
+> +	if (irq <= 0)
+>  		goto err_ioremap1;
+> -	}
+>  	pcfg->irq = irq;
+>  
+>  	pcfg->addr_virt_ce = memremap(addr_phys[0]->start,
+> diff --git a/drivers/soc/fsl/qbman/qman_portal.c b/drivers/soc/fsl/qbman/qman_portal.c
+> index e2186b681d87..991c35a72e00 100644
+> --- a/drivers/soc/fsl/qbman/qman_portal.c
+> +++ b/drivers/soc/fsl/qbman/qman_portal.c
+> @@ -275,10 +275,8 @@ static int qman_portal_probe(struct platform_device *pdev)
+>  	pcfg->channel = val;
+>  	pcfg->cpu = -1;
+>  	irq = platform_get_irq(pdev, 0);
+> -	if (irq <= 0) {
+> -		dev_err(dev, "Can't get %pOF IRQ\n", node);
+> +	if (irq <= 0)
+>  		goto err_ioremap1;
+> -	}
+>  	pcfg->irq = irq;
+>  
+>  	pcfg->addr_virt_ce = memremap(addr_phys[0]->start,
+> diff --git a/drivers/soc/qcom/smp2p.c b/drivers/soc/qcom/smp2p.c
+> index c7300d54e444..07183d731d74 100644
+> --- a/drivers/soc/qcom/smp2p.c
+> +++ b/drivers/soc/qcom/smp2p.c
+> @@ -474,10 +474,8 @@ static int qcom_smp2p_probe(struct platform_device *pdev)
+>  		goto report_read_failure;
+>  
+>  	irq = platform_get_irq(pdev, 0);
+> -	if (irq < 0) {
+> -		dev_err(&pdev->dev, "unable to acquire smp2p interrupt\n");
+> +	if (irq < 0)
+>  		return irq;
+> -	}
+>  
+>  	smp2p->mbox_client.dev = &pdev->dev;
+>  	smp2p->mbox_client.knows_txdone = true;
+> -- 
+> Sent by a computer through tubes
+> 
