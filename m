@@ -2,57 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 126D97A933
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 15:10:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 90FEE7A934
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 15:11:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729700AbfG3NKm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 09:10:42 -0400
-Received: from verein.lst.de ([213.95.11.211]:51176 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728761AbfG3NKl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 09:10:41 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 98FD768AFE; Tue, 30 Jul 2019 15:10:38 +0200 (CEST)
-Date:   Tue, 30 Jul 2019 15:10:38 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Jason Gunthorpe <jgg@mellanox.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 03/13] nouveau: pass struct nouveau_svmm to
- nouveau_range_fault
-Message-ID: <20190730131038.GB4566@lst.de>
-References: <20190730055203.28467-1-hch@lst.de> <20190730055203.28467-4-hch@lst.de> <20190730123554.GD24038@mellanox.com>
+        id S1729885AbfG3NL3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 09:11:29 -0400
+Received: from mx2.suse.de ([195.135.220.15]:36182 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728761AbfG3NL3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 09:11:29 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 02C8DB03A;
+        Tue, 30 Jul 2019 13:11:27 +0000 (UTC)
+Date:   Tue, 30 Jul 2019 15:11:27 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     David Rientjes <rientjes@google.com>, Mel Gorman <mgorman@suse.de>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Zi Yan <zi.yan@cs.rutgers.edu>,
+        Stefan Priebe - Profihost AG <s.priebe@profihost.ag>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] Revert "mm, thp: restore node-local hugepage
+ allocations"
+Message-ID: <20190730131127.GT9330@dhcp22.suse.cz>
+References: <20190503223146.2312-1-aarcange@redhat.com>
+ <20190503223146.2312-3-aarcange@redhat.com>
+ <alpine.DEB.2.21.1905151304190.203145@chino.kir.corp.google.com>
+ <20190520153621.GL18914@techsingularity.net>
+ <alpine.DEB.2.21.1905201018480.96074@chino.kir.corp.google.com>
+ <20190523175737.2fb5b997df85b5d117092b5b@linux-foundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190730123554.GD24038@mellanox.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20190523175737.2fb5b997df85b5d117092b5b@linux-foundation.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 30, 2019 at 12:35:59PM +0000, Jason Gunthorpe wrote:
-> On Tue, Jul 30, 2019 at 08:51:53AM +0300, Christoph Hellwig wrote:
-> > This avoid having to abuse the vma field in struct hmm_range to unlock
-> > the mmap_sem.
-> 
-> I think the change inside hmm_range_fault got lost on rebase, it is
-> now using:
-> 
->                 up_read(&range->hmm->mm->mmap_sem);
-> 
-> But, yes, lets change it to use svmm->mm and try to keep struct hmm
-> opaque to drivers
+On Thu 23-05-19 17:57:37, Andrew Morton wrote:
+[...]
+> It does appear to me that this patch does more good than harm for the
+> totality of kernel users, so I'm inclined to push it through and to try
+> to talk Linus out of reverting it again.  
 
-It got lost somewhat intentionally as I didn't want the churn, but I
-forgot to update the changelog.  But if you are fine with changing it
-over I can bring it back.
+What is the status here? I do not see the patch upstream nor in the
+mmotm tree.
+-- 
+Michal Hocko
+SUSE Labs
