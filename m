@@ -2,131 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EAB3A7AB76
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 16:52:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A226E7AB85
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 16:56:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728261AbfG3OwS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 10:52:18 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:40249 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726535AbfG3OwS (ORCPT
+        id S1730988AbfG3O4q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 10:56:46 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:65220 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727129AbfG3O4p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 10:52:18 -0400
-Received: by mail-lf1-f66.google.com with SMTP id b17so44958096lff.7;
-        Tue, 30 Jul 2019 07:52:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=vLDKuH+/Y6R1wGAQGSCIi/9agKk/j9gR7pNqj2Ro2Ic=;
-        b=iuQpUu6a8JnbGLjoBITZrEilnUrTWiH26PXOZvr0eJQhTGXYXPQKMEzNw2wB2Zdhwg
-         O1s79fuH/+qKj9qM+F5N7WUORuY3bi2XPxK5gT8Guf2uZd9D6oyAtYDwhskz/FMsfn6o
-         lKk6nD1IBmzrEbMo1z8fbSNSoKGZUfXjLfcnm5mKawQB8u+vap+bsQ1AUfdjGTiXN2ty
-         tL6eFXIjDfZ571OcOPQwvXVAUX+46G+xpgSdufwNKOjBmDF3XP8A7mx0CfXSR6UXqbUn
-         dguHNLtM+ir+qgid1b0WJ9SI3b8hxcX2P6U5NkAvYIDJKRzUwkVnKHJszs5C7d/SjcoV
-         C0AQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=vLDKuH+/Y6R1wGAQGSCIi/9agKk/j9gR7pNqj2Ro2Ic=;
-        b=NGKkLnA3hd2NE4ghB6+4hIJSTtb9cJr6cmxiq2kByYTcHaMMPuXfTna4e9gbFu71KV
-         0+2i8dk7lLBpKWbif4YO2GlQZDEHSmzC5x/AXN9o1R6D+DA3j16adeONyzHjihQl3Ate
-         vXyUXu/Nk2VT/F9WV0kk5Rx1b3dOBo/b8mQOGnf+KkkfF754NYokhQsrG46G0FsFS6af
-         5FxhCh10lwiGL7r59EDa4u/OfcxWvWN5XXVhr6S9EgvZzJJK9/2CWxKGXzYs4n+9AIsI
-         VR4Z1TrlLrMbpzCfl8JMkC8D6kAsneqVk+f5H7jzUzH4WDAjJx0bIu48WODzUb193Bjt
-         +YOQ==
-X-Gm-Message-State: APjAAAURGDLiJx2rt9SaVWaZH/4vSPhunCbqFT8Yw94P4XM0Vxd03yba
-        AK0mT27eiIhOokDDR+0ITTbx7mM9Yt3W/8VirXQQyg==
-X-Google-Smtp-Source: APXvYqwtNV8PHczquSPB8e+BmF7PEr+3WvMBui8pMbhp0rAOkLkZq6TteMkvwzTbZj0eIDgOEAic/3pWWOYVMC6LbUU=
-X-Received: by 2002:a19:c1cc:: with SMTP id r195mr53854149lff.95.1564498336043;
- Tue, 30 Jul 2019 07:52:16 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190215024830.GA26477@jordon-HP-15-Notebook-PC>
- <20190728180611.GA20589@mail-itl> <CAFqt6zaMDnpB-RuapQAyYAub1t7oSdHH_pTD=f5k-s327ZvqMA@mail.gmail.com>
- <CAFqt6zY+07JBxAVfMqb+X78mXwFOj2VBh0nbR2tGnQOP9RrNkQ@mail.gmail.com>
- <20190729133642.GQ1250@mail-itl> <CAFqt6zZN+6r6wYJY+f15JAjj8dY+o30w_+EWH9Vy2kUXCKSBog@mail.gmail.com>
- <bf02becc-9db0-bb78-8efc-9e25cc115237@oracle.com> <20190730142233.GR1250@mail-itl>
-In-Reply-To: <20190730142233.GR1250@mail-itl>
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-Date:   Tue, 30 Jul 2019 20:22:02 +0530
-Message-ID: <CAFqt6zZOymx8RH75F69exukLYcGd45xpUHkRHK8nYXpwF8co6g@mail.gmail.com>
-Subject: Re: [Xen-devel] [PATCH v4 8/9] xen/gntdev.c: Convert to use vm_map_pages()
-To:     =?UTF-8?Q?Marek_Marczykowski=2DG=C3=B3recki?= 
-        <marmarek@invisiblethingslab.com>
-Cc:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Juergen Gross <jgross@suse.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        robin.murphy@arm.com, xen-devel@lists.xenproject.org,
-        linux-kernel@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
-        stable@vger.kernel.org, Greg KH <gregkh@linuxfoundation.org>
+        Tue, 30 Jul 2019 10:56:45 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6UErli7110338
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 10:56:44 -0400
+Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2u2nnt79ar-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 10:56:44 -0400
+Received: from localhost
+        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <jejb@linux.ibm.com>;
+        Tue, 30 Jul 2019 15:56:41 +0100
+Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
+        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 30 Jul 2019 15:56:39 +0100
+Received: from b01ledav001.gho.pok.ibm.com (b01ledav001.gho.pok.ibm.com [9.57.199.106])
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x6UEuci351446036
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 30 Jul 2019 14:56:38 GMT
+Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 906EF2805E;
+        Tue, 30 Jul 2019 14:56:38 +0000 (GMT)
+Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CCA2E28059;
+        Tue, 30 Jul 2019 14:56:37 +0000 (GMT)
+Received: from jarvis.ext.hansenpartnership.com (unknown [9.85.131.103])
+        by b01ledav001.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue, 30 Jul 2019 14:56:37 +0000 (GMT)
+Subject: Re: [PATCH] scsi: 3w-sas: Fix unterminated strncpy
+From:   James Bottomley <jejb@linux.ibm.com>
+To:     Chuhong Yuan <hslester96@gmail.com>
+Cc:     Adam Radford <aradford@gmail.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Tue, 30 Jul 2019 07:56:37 -0700
+In-Reply-To: <20190730084047.26482-1-hslester96@gmail.com>
+References: <20190730084047.26482-1-hslester96@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19073014-0064-0000-0000-000004047A97
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00011523; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000287; SDB=6.01239635; UDB=6.00653626; IPR=6.01021048;
+ MB=3.00027958; MTD=3.00000008; XFM=3.00000015; UTC=2019-07-30 14:56:41
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19073014-0065-0000-0000-00003E79B900
+Message-Id: <1564498597.4300.10.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-30_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=728 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1907300154
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 30, 2019 at 7:52 PM Marek Marczykowski-G=C3=B3recki
-<marmarek@invisiblethingslab.com> wrote:
->
-> On Tue, Jul 30, 2019 at 10:05:42AM -0400, Boris Ostrovsky wrote:
-> > On 7/30/19 2:03 AM, Souptick Joarder wrote:
-> > > On Mon, Jul 29, 2019 at 7:06 PM Marek Marczykowski-G=C3=B3recki
-> > > <marmarek@invisiblethingslab.com> wrote:
-> > >> On Mon, Jul 29, 2019 at 02:02:54PM +0530, Souptick Joarder wrote:
-> > >>> On Mon, Jul 29, 2019 at 1:35 PM Souptick Joarder <jrdr.linux@gmail.=
-com> wrote:
-> > >>>> On Sun, Jul 28, 2019 at 11:36 PM Marek Marczykowski-G=C3=B3recki
-> > >>>> <marmarek@invisiblethingslab.com> wrote:
-> > >>>>> On Fri, Feb 15, 2019 at 08:18:31AM +0530, Souptick Joarder wrote:
-> > >>>>>> Convert to use vm_map_pages() to map range of kernel
-> > >>>>>> memory to user vma.
-> > >>>>>>
-> > >>>>>> map->count is passed to vm_map_pages() and internal API
-> > >>>>>> verify map->count against count ( count =3D vma_pages(vma))
-> > >>>>>> for page array boundary overrun condition.
-> > >>>>> This commit breaks gntdev driver. If vma->vm_pgoff > 0, vm_map_pa=
-ges
-> > >>>>> will:
-> > >>>>>  - use map->pages starting at vma->vm_pgoff instead of 0
-> > >>>> The actual code ignores vma->vm_pgoff > 0 scenario and mapped
-> > >>>> the entire map->pages[i]. Why the entire map->pages[i] needs to be=
- mapped
-> > >>>> if vma->vm_pgoff > 0 (in original code) ?
-> > >> vma->vm_pgoff is used as index passed to gntdev_find_map_index. It's
-> > >> basically (ab)using this parameter for "which grant reference to map=
-".
-> > >>
-> > >>>> are you referring to set vma->vm_pgoff =3D 0 irrespective of value=
- passed
-> > >>>> from user space ? If yes, using vm_map_pages_zero() is an alternat=
-e
-> > >>>> option.
-> > >> Yes, that should work.
-> > > I prefer to use vm_map_pages_zero() to resolve both the issues. Alter=
-natively
-> > > the patch can be reverted as you suggested. Let me know you opinion a=
-nd wait
-> > > for feedback from others.
-> > >
-> > > Boris, would you like to give any feedback ?
-> >
-> > vm_map_pages_zero() looks good to me. Marek, does it work for you?
->
-> Yes, replacing vm_map_pages() with vm_map_pages_zero() fixes the
-> problem for me.
+On Tue, 2019-07-30 at 16:40 +0800, Chuhong Yuan wrote:
+> strncpy(dest, src, strlen(src)) leads to unterminated
+> dest, which is dangerous.
 
-Marek, I can send a patch for the same if you are ok.
-We need to cc stable as this changes are available in 5.2.4.
+I don't buy that.  The structure is only used for the
+TW_IOCTL_GET_COMPATIBILITY_INFO ioctl and all the fields for that are
+fixed width and are copied over as such.
 
->
-> --
-> Best Regards,
-> Marek Marczykowski-G=C3=B3recki
-> Invisible Things Lab
-> A: Because it messes up the order in which people normally read text.
-> Q: Why is top-posting such a bad thing?
+> Here driver_version's len is 32 and TW_DRIVER_VERSION
+> is shorter than 32.
+> Therefore strcpy is OK.
+
+The best practice for copying a string to a fixed width destination
+that does get printed within the kernel would be what the 3w-9xxx.c
+does
+
+	strlcpy(tw_dev->tw_compat_info.driver_version, TW_DRIVER_VERSION,
+		sizeof(tw_dev->tw_compat_info.driver_version));
+
+But as I said, it doesn't really matter for a fixed width field that's
+never printed within the kernel.
+
+James
+
