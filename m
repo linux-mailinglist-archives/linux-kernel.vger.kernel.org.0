@@ -2,65 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E97517A944
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 15:17:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 09AA67A94F
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 15:20:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730662AbfG3NRd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 09:17:33 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:47598 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729351AbfG3NRd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 09:17:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=f6K5S1qRFYNJHT7vCxBKxMwimioP8M0YvDEtZLFUidM=; b=ulkwRLMN0NSamHlRyeWM0BYiYk
-        roPACqXghaUfOj2riCufKHlIAWV8SXjAvG2ABaETa3G9y/D+3cp4gTfesQR8+EJujK80syg8YbMXm
-        pIbyFAm7KCDI44IKy14Lo7QKc9BsbINHl7YZh7LH+W8RGticPo8skwayxUAleVLyz2ko=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
-        (envelope-from <andrew@lunn.ch>)
-        id 1hsS0F-0007XB-M0; Tue, 30 Jul 2019 15:17:19 +0200
-Date:   Tue, 30 Jul 2019 15:17:19 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Vladimir Oltean <olteanv@gmail.com>
-Cc:     Tao Ren <taoren@fb.com>, Florian Fainelli <f.fainelli@gmail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Arun Parameswaran <arun.parameswaran@broadcom.com>,
-        Justin Chen <justinpopo6@gmail.com>,
-        netdev <netdev@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        "openbmc@lists.ozlabs.org" <openbmc@lists.ozlabs.org>
-Subject: Re: [PATCH net-next 2/2] net: phy: broadcom: add 1000Base-X support
- for BCM54616S
-Message-ID: <20190730131719.GA28552@lunn.ch>
-References: <20190730002549.86824-1-taoren@fb.com>
- <CA+h21hq1+E6-ScFx425hXwTPTZHTVZbBuAm7RROFZTBOFvD8vQ@mail.gmail.com>
- <3987251b-9679-dfbe-6e15-f991c2893bac@fb.com>
- <CA+h21ho1KOGS3WsNBHzfHkpSyE4k5HTE1tV9wUtnkZhjUZGeUw@mail.gmail.com>
+        id S1730780AbfG3NTk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 09:19:40 -0400
+Received: from mx0b-00128a01.pphosted.com ([148.163.139.77]:53744 "EHLO
+        mx0b-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730677AbfG3NTk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 09:19:40 -0400
+Received: from pps.filterd (m0167090.ppops.net [127.0.0.1])
+        by mx0b-00128a01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6UDHdG9009744;
+        Tue, 30 Jul 2019 09:18:17 -0400
+Received: from nam05-dm3-obe.outbound.protection.outlook.com (mail-dm3nam05lp2054.outbound.protection.outlook.com [104.47.49.54])
+        by mx0b-00128a01.pphosted.com with ESMTP id 2u2hg2s452-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 30 Jul 2019 09:18:17 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ZDQ9W+ChQoSeB6QPdI7mQ8xwNdCH4A+RnmHaqdjU95CzYECq7ov8eCGxOGmdcYfFlXdlh8YGgh9V1A0ORHQvhO1+cSS8Dj9tt4Jvw0iUqCwTSvV3WDo8Nal6Q/fOb0tauGggiXymOepCRiaOLnqfCpOmlnsWPfe06rrBFOBjfXC74LcNAlMXi4iReKpmyQFAMh9tIU5EV6C363TmCDHGf33duIm31SL7AXjkyTJiMmY12Yjiv3OGZHynStxDB/W38uqVNJ4zMHoh+CIMnCpCPyqLiBVXCPXNi32lvtuUjXw6Ate4yZS47UrX7PDwC+FodnbFrZUlYqVW1nwcpds2QA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3vhIBzF7o9s9IV+oDAH/51sb9qmmAMyW8WmkcvxdtTQ=;
+ b=JebIo0AorH5paxdGA9AcVrfouZfGBdTWoBEUWTUeEl2RUUb1GrfkJf/N216F0wVCp8pEr/ys3xYr7/SeBrfkmE68mBRy4I2r5SJsXPeZhQ5FvLiDqVA49D0c71YfR6zISewr1QCpS2A5uG9NNHt9inYjLSToPF+1fMT7UZr8KRCZ+WNzmBo+vIaw0QSP27Rd6MNNQPQQeQeyOb69n35/DTba8mR3hLlUDW2slrsphydOnnzqQtdkloTher9peO2a39gc0Oo8oerblMBY0CR5xXxQGZJ+g85alOSIEo/hegHPbrlHwEC9aDU27MB8QdlL8KNtvK20WgoARqsofhZXZw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass (sender ip is
+ 137.71.25.57) smtp.rcpttodomain=kernel.org
+ smtp.mailfrom=analog.com;dmarc=bestguesspass action=none
+ header.from=analog.com;dkim=none (message not signed);arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=analog.onmicrosoft.com; s=selector2-analog-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3vhIBzF7o9s9IV+oDAH/51sb9qmmAMyW8WmkcvxdtTQ=;
+ b=2UBxR4XUDBV/T9SW1m7cqzphHZ3rIvI4GYegAbNYMjpEPgdthTPJLRW1tLRghdB+/+RG16o8lkDrEOBBhEsRx2zPOgk6ef060MOP/4p6OpzIjBnjlHqa2ntQ0B32pmNRNu6sgv9BisXAnk+b7XAXUdAafUcGWXdUTJC6SCJRVRg=
+Received: from CY4PR03CA0004.namprd03.prod.outlook.com (2603:10b6:903:33::14)
+ by CY4PR03MB3141.namprd03.prod.outlook.com (2603:10b6:910:53::30) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2115.15; Tue, 30 Jul
+ 2019 13:18:14 +0000
+Received: from SN1NAM02FT031.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e44::209) by CY4PR03CA0004.outlook.office365.com
+ (2603:10b6:903:33::14) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.2136.12 via Frontend
+ Transport; Tue, 30 Jul 2019 13:18:13 +0000
+Received-SPF: Pass (protection.outlook.com: domain of analog.com designates
+ 137.71.25.57 as permitted sender) receiver=protection.outlook.com;
+ client-ip=137.71.25.57; helo=nwd2mta2.analog.com;
+Received: from nwd2mta2.analog.com (137.71.25.57) by
+ SN1NAM02FT031.mail.protection.outlook.com (10.152.72.116) with Microsoft SMTP
+ Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.2115.10
+ via Frontend Transport; Tue, 30 Jul 2019 13:18:12 +0000
+Received: from NWD2HUBCAS7.ad.analog.com (nwd2hubcas7.ad.analog.com [10.64.69.107])
+        by nwd2mta2.analog.com (8.13.8/8.13.8) with ESMTP id x6UDIA6b025852
+        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
+        Tue, 30 Jul 2019 06:18:10 -0700
+Received: from btogorean-pc.ad.analog.com (10.48.65.146) by
+ NWD2HUBCAS7.ad.analog.com (10.64.69.107) with Microsoft SMTP Server id
+ 14.3.408.0; Tue, 30 Jul 2019 09:18:09 -0400
+From:   Bogdan Togorean <bogdan.togorean@analog.com>
+To:     <dri-devel@lists.freedesktop.org>
+CC:     <airlied@linux.ie>, <daniel@ffwll.ch>, <robh+dt@kernel.org>,
+        <a.hajda@samsung.com>, <Laurent.pinchart@ideasonboard.com>,
+        <sam@ravnborg.org>, <gregkh@linuxfoundation.org>,
+        <allison@lohutok.net>, <tglx@linutronix.de>,
+        <matt.redfearn@thinci.com>, <linux-kernel@vger.kernel.org>,
+        Bogdan Togorean <bogdan.togorean@analog.com>
+Subject: [PATCH 0/2] drm: bridge: adv7511: Add support For ADV7535
+Date:   Tue, 30 Jul 2019 16:17:34 +0300
+Message-ID: <20190730131736.30187-1-bogdan.togorean@analog.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+h21ho1KOGS3WsNBHzfHkpSyE4k5HTE1tV9wUtnkZhjUZGeUw@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ADIRoutedOnPrem: True
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:137.71.25.57;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(2980300002)(189003)(199004)(6916009)(48376002)(7416002)(36756003)(54906003)(336012)(305945005)(50466002)(356004)(6666004)(86362001)(44832011)(486006)(126002)(2616005)(476003)(2906002)(47776003)(426003)(106002)(8936002)(246002)(8676002)(26005)(498600001)(2351001)(51416003)(1076003)(186003)(4744005)(4326008)(107886003)(50226002)(70206006)(2870700001)(70586007)(7696005)(5660300002)(7636002)(16060500001);DIR:OUT;SFP:1101;SCL:1;SRVR:CY4PR03MB3141;H:nwd2mta2.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail11.analog.com;MX:1;A:1;
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 19383bb7-71dd-46e5-7553-08d714f05fe4
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(4709080)(1401327)(2017052603328);SRVR:CY4PR03MB3141;
+X-MS-TrafficTypeDiagnostic: CY4PR03MB3141:
+X-Microsoft-Antispam-PRVS: <CY4PR03MB314179B8932E47F7E1ECCD089BDC0@CY4PR03MB3141.namprd03.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:2803;
+X-Forefront-PRVS: 0114FF88F6
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam-Message-Info: zNNra4X1jUJ1sEpOCwNGytJ60YjErlxVDDa5tYd0VGEyb1tcRPWP9U4ODzFh0Ejqjy5vDl966oNxndKJXNejtgv1Bxnuj5w1cN7pAIPWSQ4FZXK9GbvSjpdO7lwzj6ZfySAICbeB80h+aAb99ZA6NSeLohZ8bEesIgrF+KctxmQSWjG6EtpDOAJZYhxf1pqFDX7sFp8v+JvTu16kC5jei/jngQIvjYjfJ5r3000GSKLyP79dsuhS81qjq7fOp4slzo7kAYT663JsFZbChowGg30y+hNmFYpinmhk/10fHdnaWUVPvXy5n3WxXPcvipZsJ1jP2xsdolrKd5/rf+Rx9v/g/bU8M4EgxFV/xEsnNa0PvASz3+Oet9sZRFoVkGCQFRFlCjbZt29EG3yGleSuBLY1Gy76Ct9CIXwOOyQveJc=
+X-OriginatorOrg: analog.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jul 2019 13:18:12.4384
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 19383bb7-71dd-46e5-7553-08d714f05fe4
+X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.57];Helo=[nwd2mta2.analog.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR03MB3141
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-30_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=833 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1907300141
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Again, I don't think Linux has generic support for overwriting (or
-> even describing) the operating mode of a PHY, although maybe that's a
-> direction we would want to push the discussion towards. RGMII to
-> copper, RGMII to fiber, SGMII to copper, copper to fiber (media
-> converter), even RGMII to SGMII (RTL8211FS supports this) - lots of
-> modes, and this is only for gigabit PHYs...
+This patch-set add support for ADV7535 part in ADV7511 driver.
 
-This is something Russell King has PHYLINK patches for, which have not
-yet been merged. There are some boards which use a PHY as a media
-converter, placed between the MAC and an SFP.
+ADV7535 and ADV7533 are pin to pin compatible parts but ADV7535
+support TMDS clock upto 148.5Mhz and resolutions up to 1080p@60Hz.
 
-	   Andrew
+Bogdan Togorean (2):
+  dt-bindings: drm: bridge: adv7511: Add ADV7535 support
+  drm: bridge: adv7511: Add support for ADV7535
+
+ .../bindings/display/bridge/adi,adv7511.txt   | 23 +++++++-------
+ drivers/gpu/drm/bridge/adv7511/adv7511.h      |  2 ++
+ drivers/gpu/drm/bridge/adv7511/adv7511_drv.c  | 31 ++++++++++++++-----
+ 3 files changed, 37 insertions(+), 19 deletions(-)
+
+-- 
+2.22.0
+
