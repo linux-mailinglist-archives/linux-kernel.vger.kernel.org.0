@@ -2,82 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C840F7A3ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 11:23:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E79497A3F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 11:23:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730931AbfG3JXb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 05:23:31 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:55318 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725934AbfG3JX1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 05:23:27 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 153091A00BF;
-        Tue, 30 Jul 2019 11:23:26 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 8BDE21A0606;
-        Tue, 30 Jul 2019 11:23:22 +0200 (CEST)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id DA7AE402F1;
-        Tue, 30 Jul 2019 17:23:17 +0800 (SGT)
-From:   Biwen Li <biwen.li@nxp.com>
-To:     robh+dt@kernel.org, mark.rutland@arm.com, leoyang.li@nxp.com
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Biwen Li <biwen.li@nxp.com>
-Subject: [3/3] arm: dts: ls1021a: add ftm_alarm0 DT node
-Date:   Tue, 30 Jul 2019 17:13:47 +0800
-Message-Id: <20190730091347.25593-3-biwen.li@nxp.com>
-X-Mailer: git-send-email 2.9.5
-In-Reply-To: <20190730091347.25593-1-biwen.li@nxp.com>
-References: <20190730091347.25593-1-biwen.li@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1730983AbfG3JXp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 05:23:45 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:35889 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725965AbfG3JXo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 05:23:44 -0400
+Received: by mail-wm1-f68.google.com with SMTP id g67so51841945wme.1
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 02:23:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=mWMZh3wUcWsqPn07oFt7cBOH5RBu0IlIBiCukBD3l9o=;
+        b=Bitkvbdi/4L9CmILWmwwpZcuGSjsHwHzUhWvhRVEExo81XaK7DiC6xJbBQClrYnICc
+         0zgSuj6XFr/fYLJ5YEhAN+JDXw9bIIu5MFhsFDuEDCDo065+J/1r4Cs6jrYae59Jl0P8
+         ApmK3/UFgEheRpmfLm0v7XbL6SuZp5JDn80YP5oNHD7MG6exzT1P8SB9fm5VZBpKrgps
+         TETqe4c1XivQrWZAo3RUPsMsU8HCbJCUPuLAd0f/JqcyH/G7llkr35zjUNf9H1S1HlGw
+         mFtRHCefeOfXLxj2QD0OGq8lmm5sNfDP/3IWOu6t1iVLI5NBhDCsc+sZz7hXDOLYllkf
+         J5IQ==
+X-Gm-Message-State: APjAAAUBCTGQibQDgbpdfO075U9xjO5Xu3Q7OSqT/JokJaX2n4PWyi6R
+        9H7A0sXEx0zl7XrTQz7lhLRMvntCCck=
+X-Google-Smtp-Source: APXvYqyjkTFE8K19/Ax2T+TuTtN5zUHOBpO/LA8yzScwVqCfBWpuwT+J9Qb8/NNoeIAkuB0HbwVZzQ==
+X-Received: by 2002:a7b:cc04:: with SMTP id f4mr40005383wmh.125.1564478622449;
+        Tue, 30 Jul 2019 02:23:42 -0700 (PDT)
+Received: from ?IPv6:2001:b07:6468:f312:29d3:6123:6d5f:2c04? ([2001:b07:6468:f312:29d3:6123:6d5f:2c04])
+        by smtp.gmail.com with ESMTPSA id s10sm48654942wrt.49.2019.07.30.02.23.40
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Jul 2019 02:23:41 -0700 (PDT)
+Subject: Re: [RFC PATCH 03/16] RISC-V: Add initial skeletal KVM support
+To:     Anup Patel <Anup.Patel@wdc.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Radim K <rkrcmar@redhat.com>
+Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Atish Patra <Atish.Patra@wdc.com>,
+        Alistair Francis <Alistair.Francis@wdc.com>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Anup Patel <anup@brainfault.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20190729115544.17895-1-anup.patel@wdc.com>
+ <20190729115544.17895-4-anup.patel@wdc.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <309b9fb3-9909-48d6-eabf-88356df4bb3b@redhat.com>
+Date:   Tue, 30 Jul 2019 11:23:40 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <20190729115544.17895-4-anup.patel@wdc.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch add ftm_alarm0 DT node
-	- add rcpm node
-	- add ftm_alarm0 node
-	- aliases ftm_alarm0 as rtc1
+On 29/07/19 13:56, Anup Patel wrote:
+> +	case KVM_CAP_DEVICE_CTRL:
+> +	case KVM_CAP_USER_MEMORY:
+> +	case KVM_CAP_SYNC_MMU:
 
-Signed-off-by: Biwen Li <biwen.li@nxp.com>
----
- arch/arm/boot/dts/ls1021a.dtsi | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+Technically KVM_CAP_SYNC_MMU should only be added after you add MMU
+notifiers.
 
-diff --git a/arch/arm/boot/dts/ls1021a.dtsi b/arch/arm/boot/dts/ls1021a.dtsi
-index 464df4290ffc..2a14a1fdd2da 100644
---- a/arch/arm/boot/dts/ls1021a.dtsi
-+++ b/arch/arm/boot/dts/ls1021a.dtsi
-@@ -66,6 +66,7 @@
- 		serial4 = &lpuart4;
- 		serial5 = &lpuart5;
- 		sysclk = &sysclk;
-+		rtc1 = &ftm_alarm0;
- 	};
- 
- 	cpus {
-@@ -985,5 +986,19 @@
- 			big-endian;
- 		};
- 
-+		rcpm: rcpm@1ee2140 {
-+			compatible = "fsl,ls1021a-rcpm", "fsl,qoriq-rcpm-2.1+";
-+			reg = <0x0 0x1ee2140 0x0 0x8>;
-+			#fsl,rcpm-wakeup-cells = <2>;
-+		};
-+
-+		ftm_alarm0: timer0@29d0000 {
-+			compatible = "fsl,ls1021a-ftm-alarm";
-+			reg = <0x0 0x29d0000 0x0 0x10000>;
-+			reg-names = "ftm";
-+			fsl,rcpm-wakeup = <&rcpm 0x20000 0x0>;
-+			interrupts = <GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>;
-+			big-endian;
-+		};
- 	};
- };
--- 
-2.17.1
+Paolo
+
+> +	case KVM_CAP_DESTROY_MEMORY_REGION_WORKS:
+> +	case KVM_CAP_ONE_REG:
+> +	case KVM_CAP_READONLY_MEM:
+> +	case KVM_CAP_MP_STATE:
+> +	case KVM_CAP_IMMEDIATE_EXIT:
+> +		r = 1;
+> +		break;
 
