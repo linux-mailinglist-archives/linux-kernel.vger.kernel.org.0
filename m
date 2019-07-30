@@ -2,119 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43D2B7A863
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 14:28:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 33CA87A869
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 14:28:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728089AbfG3M2B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 08:28:01 -0400
-Received: from mail-eopbgr10064.outbound.protection.outlook.com ([40.107.1.64]:62511
-        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726167AbfG3M2B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 08:28:01 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=j4CDS7NQuNYaC50HyQfSGEZZfxoSTRTcWVO8yoWPfr1Mdl/UFBcAsUgQybYmW5G7SihllJykFhwRmv/48bqDcXh9AqMpBE8UWfdBzUkqd+aK1QojPwneT/ug1XiblMjtfdNJ9VH/RZl+wfHuZRthiOqg48zqMhTRS+OdIFme+im7g1IfMKHQJ6hefk+TNpjX6m+PRIwGh2q+X6EGTZOQ6cDMixqSm+NMtAdcrene9VK10SSXIW3GqEbScA7Spgv8Ke/nuShNoWU8UhDC+mVer0s3lztZoNIxH7YJuHw2Tq2GVQZMkq2Wh+8Bwu2Bz3Ad4CakAVV8Q9CneR/QJ4PszA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XwoxgYJDfCkn2n8/y2mCQ+M7ba+48jQyrxholrGcctU=;
- b=KQJD5ul+QC1wNQYchKzxF1U/qMqH9xVoJCu5Xn08vK05sYUJicTMkCMs/5xVtb2++YMMHDfnpAUVqBFsgRW37Z1h2+VlzZzxv/JqxhQQ/75m7nqEdyDxFe7btyyBW1ajIxLXqW2KbFgcVieMtvlmYYpzS5kDdA/vXNtFP3tX9fDewwZoU1F6eGgddgGa6O+iTbHMgX1QXeHaz0AbF5f+Ez71A2TTQJ3OEbW+37toOUa5HUzMtecxAN0cTOWjlpZCPju7tmoK7dLE7IsHxtkEpRQVog5kfKFJfIjW2vX7fXKAi2VjWjSBqBze3T6eWrxN2RnOtjcTZbD1EHmu01hlpw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
- smtp.mailfrom=nxp.com;dmarc=pass action=none header.from=nxp.com;dkim=pass
- header.d=nxp.com;arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XwoxgYJDfCkn2n8/y2mCQ+M7ba+48jQyrxholrGcctU=;
- b=rd3g0H7rTgmdBA/+yL2dDDBwURzJmESdL66JU8CC63VlftvNZD/VUWjXlRl2y6fp+MQipo2EsPvHSy7qdsvhujglK5E8fPBkB3iYsShtHJo3dqr9U7umewjq6VCYNnUk4iaPLeFeM1qhfXm+/u6tomvJxhFh5RaAcxNvsIwVKmY=
-Received: from VI1PR04MB4445.eurprd04.prod.outlook.com (20.177.55.161) by
- VI1PR04MB4112.eurprd04.prod.outlook.com (52.133.14.153) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2115.10; Tue, 30 Jul 2019 12:27:56 +0000
-Received: from VI1PR04MB4445.eurprd04.prod.outlook.com
- ([fe80::8d42:8283:ede8:9abf]) by VI1PR04MB4445.eurprd04.prod.outlook.com
- ([fe80::8d42:8283:ede8:9abf%7]) with mapi id 15.20.2115.005; Tue, 30 Jul 2019
- 12:27:56 +0000
-From:   Iuliana Prodan <iuliana.prodan@nxp.com>
-To:     Herbert Xu <herbert@gondor.apana.org.au>,
-        Horia Geanta <horia.geanta@nxp.com>,
-        Aymen Sghaier <aymen.sghaier@nxp.com>
-CC:     "David S. Miller" <davem@davemloft.net>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH v4 10/14] crypto: caam - fix MDHA key derivation for
- certain user key lengths
-Thread-Topic: [PATCH v4 10/14] crypto: caam - fix MDHA key derivation for
- certain user key lengths
-Thread-Index: AQHVRsbnGt/UawgfPUat+h6bvvIJAw==
-Date:   Tue, 30 Jul 2019 12:27:56 +0000
-Message-ID: <VI1PR04MB4445047FD7ABADD93F3D70338CDC0@VI1PR04MB4445.eurprd04.prod.outlook.com>
-References: <1564484805-28735-1-git-send-email-iuliana.prodan@nxp.com>
- <1564484805-28735-11-git-send-email-iuliana.prodan@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=iuliana.prodan@nxp.com; 
-x-originating-ip: [212.146.100.6]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 0a43c3b2-a8d2-48e7-b857-08d714e95a11
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR04MB4112;
-x-ms-traffictypediagnostic: VI1PR04MB4112:
-x-microsoft-antispam-prvs: <VI1PR04MB4112D27F3B78C43C81A5DD3C8CDC0@VI1PR04MB4112.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
-x-forefront-prvs: 0114FF88F6
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(376002)(346002)(366004)(39860400002)(396003)(189003)(199004)(6506007)(64756008)(4326008)(446003)(52536014)(71200400001)(71190400001)(256004)(486006)(66476007)(86362001)(7736002)(229853002)(66946007)(53546011)(478600001)(76116006)(305945005)(91956017)(68736007)(66446008)(66556008)(6246003)(74316002)(6436002)(5660300002)(3846002)(4744005)(6116002)(2906002)(76176011)(53936002)(66066001)(7696005)(55016002)(14454004)(8676002)(8936002)(110136005)(9686003)(25786009)(44832011)(54906003)(81166006)(81156014)(102836004)(186003)(316002)(476003)(33656002)(26005)(99286004)(6636002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB4112;H:VI1PR04MB4445.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: Uo9ZZkubFo3LrqPUi60Af05Nji716AHwFaQocKQOL3OgDebrlIRxhwXi7oZKMy3X9AGmc9mtY5ZLuupBJyyR+qgoruTs2TgMHUHD9SoNKxYRG0aLK21Qs+AKFoKDEIV88oyYgT7yoi+lWsBZgnzP2ncqRsAXBSUSYAnOSlLB4MxNggtiZW2adB/wDhJOeglRUvFsMjiAjhCcYu2LPN7yvFsZrcbVCE9QxJA6IwlFudfHy1BS/j6zKZ9diiXg7T+/QIgMlTeWTOSihNZlIVX7M8fKEF51LlEdHv1s7KMP8fLPk8qWEFqk2NketH1vvZvSPQ9LK+BiIJLmh8aEOrB1zmwPfNqYYkE4cMW8lz7qMbhv4akD+CBadfiKUFxfQwp+L+LK4qTiIWOUAzBKqeQGJJQO+cG5Wlh7q2Wqtu3zxaU=
-Content-Type: text/plain; charset="iso-8859-2"
-Content-Transfer-Encoding: quoted-printable
+        id S1729518AbfG3M2I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 08:28:08 -0400
+Received: from mail-io1-f70.google.com ([209.85.166.70]:37867 "EHLO
+        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728346AbfG3M2H (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 08:28:07 -0400
+Received: by mail-io1-f70.google.com with SMTP id v3so71274423ios.4
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 05:28:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=hZMo4mC2RIyBYAfOxySX5UABZRRMH2Q/dZ4zcgNImT8=;
+        b=TM7kMBsa2Al+Iabfpy4yMNq0Om099ldQuHM8ubSLBUFPyLlFVd+R+WvnvWo36BDbfh
+         T26o5J22dCMR2J6AIr/WCQeL/dzyJCw52fzka7GMa1W6r0yKWp/mj6GJmrOs3x9cQ7hf
+         HZtcg2QmqzabcXFplCP2uNq/nkyGW53C6VqndzxZx9k5K8L9ukCQp6/uFoavOvH8aiuS
+         WNdcLcQhOF4Vmz1ZxTsmtpz9PalwVjkDbbKu+qxL53Epjz1hc1jrdfALoFXnYxKjUugS
+         q2Qp+J1+U8dbW5WbOvQqeHdFrVqG6unnDxuri6kJVJ7m0tRirRReytMzLMcCklAIQDFK
+         LfSA==
+X-Gm-Message-State: APjAAAUhkcHXHBsD2bnU1fE3m3Fwy4G2wKOpfl2yf5Mw93waJugeB/YS
+        V15FS2GTMYKjnslPAv/3A8EJOZ4Iubld/VDcVRN2KibJcOZ+
+X-Google-Smtp-Source: APXvYqz9DN92bNusuAriRi22SyjDQxEx6rnZguhdzOOVXYpum2QebL80O/zC1jM1YPGv5w4HsMU3xQqZxOd+TwmYrgIkwg9N2DQI
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0a43c3b2-a8d2-48e7-b857-08d714e95a11
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Jul 2019 12:27:56.5431
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: iuliana.prodan@nxp.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB4112
+X-Received: by 2002:a05:6602:114:: with SMTP id s20mr62738414iot.122.1564489686756;
+ Tue, 30 Jul 2019 05:28:06 -0700 (PDT)
+Date:   Tue, 30 Jul 2019 05:28:06 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000008b8c6058ee52407@google.com>
+Subject: KASAN: slab-out-of-bounds Read in hidraw_ioctl
+From:   syzbot <syzbot+5a6c4ec678a0c6ee84ba@syzkaller.appspotmail.com>
+To:     andreyknvl@google.com, benjamin.tissoires@redhat.com,
+        jikos@kernel.org, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/30/2019 2:06 PM, Iuliana Prodan wrote:=0A=
-> From: Horia Geant=E3 <horia.geanta@nxp.com>=0A=
-> =0A=
-> Fuzz testing uncovered an issue when |user key| > |derived key|.=0A=
-> Derived key generation has to be fixed in two cases:=0A=
-> =0A=
-> 1. Era >=3D 6 (DKP is available)=0A=
-> DKP cannot be used with immediate input key if |user key| > |derived key|=
-,=0A=
-> since the resulting descriptor (after DKP execution) would be invalid -=
-=0A=
-> having a few bytes from user key left in descriptor buffer=0A=
-> as incorrect opcodes.=0A=
-> =0A=
-> Fix DKP usage both in standalone hmac and in authenc algorithms.=0A=
-> For authenc the logic is simplified, by always storing both virtual=0A=
-> and dma key addresses.=0A=
-> =0A=
-> 2. Era < 6=0A=
-> The same case (|user key| > |derived key|) fails when DKP=0A=
-> is not available.=0A=
-> Make sure gen_split_key() dma maps max(|user key|, |derived key|),=0A=
-> since this is an in-place (bidirectional) operation.=0A=
-> =0A=
-> Signed-off-by: Horia Geant=E3 <horia.geanta@nxp.com>=0A=
-> ---=0A=
-Reviewed-by: Iuliana Prodan <iuliana.prodan@nxp.com>=0A=
-=0A=
-Thanks,=0A=
-Iulia=0A=
+Hello,
+
+syzbot found the following crash on:
+
+HEAD commit:    7f7867ff usb-fuzzer: main usb gadget fuzzer driver
+git tree:       https://github.com/google/kasan.git usb-fuzzer
+console output: https://syzkaller.appspot.com/x/log.txt?x=15e293c8600000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=792eb47789f57810
+dashboard link: https://syzkaller.appspot.com/bug?extid=5a6c4ec678a0c6ee84ba
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+
+Unfortunately, I don't have any reproducer for this crash yet.
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+5a6c4ec678a0c6ee84ba@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KASAN: slab-out-of-bounds in strlen+0x79/0x90 lib/string.c:525
+Read of size 1 at addr ffff8881ca981f10 by task syz-executor.4/7644
+
+CPU: 1 PID: 7644 Comm: syz-executor.4 Not tainted 5.3.0-rc2+ #23
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0xca/0x13e lib/dump_stack.c:113
+  print_address_description+0x6a/0x32c mm/kasan/report.c:351
+  __kasan_report.cold+0x1a/0x33 mm/kasan/report.c:482
+  kasan_report+0xe/0x12 mm/kasan/common.c:612
+  strlen+0x79/0x90 lib/string.c:525
+  strlen include/linux/string.h:281 [inline]
+  hidraw_ioctl+0x245/0xae0 drivers/hid/hidraw.c:446
+  vfs_ioctl fs/ioctl.c:46 [inline]
+  file_ioctl fs/ioctl.c:509 [inline]
+  do_vfs_ioctl+0xd2d/0x1330 fs/ioctl.c:696
+  ksys_ioctl+0x9b/0xc0 fs/ioctl.c:713
+  __do_sys_ioctl fs/ioctl.c:720 [inline]
+  __se_sys_ioctl fs/ioctl.c:718 [inline]
+  __x64_sys_ioctl+0x6f/0xb0 fs/ioctl.c:718
+  do_syscall_64+0xb7/0x580 arch/x86/entry/common.c:296
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x459829
+Code: fd b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 cb b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007fed5bb22c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000459829
+RDX: 0000000020000180 RSI: 0000000080404805 RDI: 0000000000000003
+RBP: 000000000075bfc8 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007fed5bb236d4
+R13: 00000000004c21c6 R14: 00000000004d5528 R15: 00000000ffffffff
+
+Allocated by task 1607:
+  save_stack+0x1b/0x80 mm/kasan/common.c:69
+  set_track mm/kasan/common.c:77 [inline]
+  __kasan_kmalloc mm/kasan/common.c:487 [inline]
+  __kasan_kmalloc.constprop.0+0xbf/0xd0 mm/kasan/common.c:460
+  kmalloc include/linux/slab.h:552 [inline]
+  syslog_print kernel/printk/printk.c:1346 [inline]
+  do_syslog kernel/printk/printk.c:1519 [inline]
+  do_syslog+0x540/0x1380 kernel/printk/printk.c:1493
+  kmsg_read+0x8a/0xb0 fs/proc/kmsg.c:40
+  proc_reg_read+0x1c1/0x280 fs/proc/inode.c:223
+  __vfs_read+0x76/0x100 fs/read_write.c:425
+  vfs_read+0x1ea/0x430 fs/read_write.c:461
+  ksys_read+0x127/0x250 fs/read_write.c:587
+  do_syscall_64+0xb7/0x580 arch/x86/entry/common.c:296
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Freed by task 1607:
+  save_stack+0x1b/0x80 mm/kasan/common.c:69
+  set_track mm/kasan/common.c:77 [inline]
+  __kasan_slab_free+0x130/0x180 mm/kasan/common.c:449
+  slab_free_hook mm/slub.c:1423 [inline]
+  slab_free_freelist_hook mm/slub.c:1470 [inline]
+  slab_free mm/slub.c:3012 [inline]
+  kfree+0xe4/0x2f0 mm/slub.c:3953
+  syslog_print kernel/printk/printk.c:1405 [inline]
+  do_syslog kernel/printk/printk.c:1519 [inline]
+  do_syslog+0x1098/0x1380 kernel/printk/printk.c:1493
+  kmsg_read+0x8a/0xb0 fs/proc/kmsg.c:40
+  proc_reg_read+0x1c1/0x280 fs/proc/inode.c:223
+  __vfs_read+0x76/0x100 fs/read_write.c:425
+  vfs_read+0x1ea/0x430 fs/read_write.c:461
+  ksys_read+0x127/0x250 fs/read_write.c:587
+  do_syscall_64+0xb7/0x580 arch/x86/entry/common.c:296
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+The buggy address belongs to the object at ffff8881ca981b00
+  which belongs to the cache kmalloc-1k of size 1024
+The buggy address is located 16 bytes to the right of
+  1024-byte region [ffff8881ca981b00, ffff8881ca981f00)
+The buggy address belongs to the page:
+page:ffffea00072a6000 refcount:1 mapcount:0 mapping:ffff8881da002280  
+index:0x0 compound_mapcount: 0
+flags: 0x200000000010200(slab|head)
+raw: 0200000000010200 dead000000000100 dead000000000122 ffff8881da002280
+raw: 0000000000000000 00000000000e000e 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff8881ca981e00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8881ca981e80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> ffff8881ca981f00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+                          ^
+  ffff8881ca981f80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8881ca982000: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
