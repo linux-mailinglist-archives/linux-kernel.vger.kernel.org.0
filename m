@@ -2,86 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71DCB7A6D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 13:24:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 81CAD7A6D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 13:24:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729709AbfG3LYK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 07:24:10 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:42486 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725934AbfG3LYK (ORCPT
+        id S1729826AbfG3LYZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 07:24:25 -0400
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:39564 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725934AbfG3LYZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 07:24:10 -0400
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x6UBNwSL086590;
-        Tue, 30 Jul 2019 06:23:58 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1564485838;
-        bh=bePICY9kNLcLOXhYrJoI3GRMfK4jeDEPCdEecBOuYVk=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=UbPMT9XRI32A7NfJlQJkwhI/3bf2x6G4IPZOIFWxzr7e2OAOsKEdh2AWsPGcNXTT2
-         OKCD8225QykWeITsIkSCv+cqVx3N6I7UhfGXxaGI/w0Oy3nhMD1DPsujkuwphwrwb5
-         mvQhBzvAY4UFSqy/rv8nhvCq0svgUNYCaFmV4wlY=
-Received: from DFLE101.ent.ti.com (dfle101.ent.ti.com [10.64.6.22])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x6UBNwmZ057992
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 30 Jul 2019 06:23:58 -0500
-Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 30
- Jul 2019 06:23:58 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Tue, 30 Jul 2019 06:23:58 -0500
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x6UBNuKk043545;
-        Tue, 30 Jul 2019 06:23:57 -0500
-Subject: Re: [PATCH] dma-mapping: remove dma_{alloc,free,mmap}_writecombine
-To:     Christoph Hellwig <hch@lst.de>
-CC:     <laurent.pinchart@ideasonboard.com>,
-        <dri-devel@lists.freedesktop.org>,
-        <iommu@lists.linux-foundation.org>, <linux-kernel@vger.kernel.org>
-References: <20190730061849.29686-1-hch@lst.de>
- <5f73f400-eff2-6c7b-887d-c768642d8df1@ti.com> <20190730102050.GA1663@lst.de>
-From:   Tomi Valkeinen <tomi.valkeinen@ti.com>
-Message-ID: <f8425921-dc50-0cbd-72cb-b73a1194cfb7@ti.com>
-Date:   Tue, 30 Jul 2019 14:23:56 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Tue, 30 Jul 2019 07:24:25 -0400
+Received: by mail-vs1-f68.google.com with SMTP id u3so43173230vsh.6
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 04:24:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qy8b6pAXT1g85uDKbfjr6dpN6mEfPaoI9G12nmWUecQ=;
+        b=BHel+7L4QsLoebhk7Re1KWwPfxlofOR5sOWeAKaPO+F+6XBPaegT1bMbpOrJ+X/NCt
+         boAsGFcqUtP5mxuthp1/ZXtQIobta7ItmM3NhyNXNUsXy5eqlGw3u/oGJT9SwQuIIcMz
+         BVc4UKcDTnqdLVWi8S3QrLy8spyZJJpA8nuYcl1Rg5tqAQ2CYFhBrUBPLXAbnrWJ4pa0
+         v4e+xZOP2hP1OnP3kjDm6ppgFyneHNfwkeQp4k3Bck+oBDvF00ncxuHq5Mx+KE6xjt8V
+         PKKmES6fpPYmLgkyIi3zceJ/TD51D0sbrO18/Omkk/jCfAEp1mG3GKDW0252JqHELS5b
+         teyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qy8b6pAXT1g85uDKbfjr6dpN6mEfPaoI9G12nmWUecQ=;
+        b=KJT7gmetdkJals81bkmxQGETCgkzC74+EsrH149FoeQ/bHD9eqjE19W0rLwuGq+7mD
+         rYctqDEvnpCI8H2SfG+VBtDDpHfgCOsc4Yttw74gZB1GipBpIIDNUFacuTfndOnTcOYd
+         wPW4GPzjoYcE+5COHhFd8HlYRJsdheCFIvotFjtJe27vDR2ooTlnyMPxNQV90AbFysBG
+         5MNpZxklKkPteauxtt26QNGrHnnktP6MdZHBTVz2PwdSz0BDIkpA31uwyHjP4yKY5S9S
+         EnDSzmzyUWaJsDTaXl8yoyc24v+2T5+q4sbCcjG9xY29WTkMYAaHD5Rs3vWWPLf1O6BE
+         EOyA==
+X-Gm-Message-State: APjAAAWCXqMPZ02Ck/zDE5F/j3VP4cNNZzZdksKXk7I+ZACqrlUL4gCV
+        sCta6zAD/22Bj10mXGL7aILgHyiHK1gAi+Wc/5E=
+X-Google-Smtp-Source: APXvYqww39n/S9WrQJCAzIN84Mni9AHD1WpQdD9/9K0BU5F0LI8Wzfhs3zZ+99C8KqNvrAOmTsXBIhnVPoiGXLT3q5s=
+X-Received: by 2002:a67:dd81:: with SMTP id i1mr51787134vsk.236.1564485864055;
+ Tue, 30 Jul 2019 04:24:24 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190730102050.GA1663@lst.de>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20190730094724.18691-1-oded.gabbay@gmail.com> <20190730094724.18691-8-oded.gabbay@gmail.com>
+ <20190730104207.GB7325@kroah.com>
+In-Reply-To: <20190730104207.GB7325@kroah.com>
+From:   Oded Gabbay <oded.gabbay@gmail.com>
+Date:   Tue, 30 Jul 2019 14:23:57 +0300
+Message-ID: <CAFCwf11VFEN0o1sAxPjuv3SvoebD_C4QLrsc9Ea8GiVRdztbnA@mail.gmail.com>
+Subject: Re: [PATCH v2 7/7] habanalabs: create two char devices per ASIC
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>,
+        Omer Shpigelman <oshpigelman@habana.ai>,
+        Tomer Tayar <ttayar@habana.ai>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30/07/2019 13:20, Christoph Hellwig wrote:
-> On Tue, Jul 30, 2019 at 10:50:32AM +0300, Tomi Valkeinen wrote:
->> On 30/07/2019 09:18, Christoph Hellwig wrote:
->>> We can already use DMA_ATTR_WRITE_COMBINE or the _wc prefixed version,
->>> so remove the third way of doing things.
->>>
->>> Signed-off-by: Christoph Hellwig <hch@lst.de>
->>> ---
->>>    drivers/gpu/drm/omapdrm/dss/dispc.c | 11 +++++------
->>>    include/linux/dma-mapping.h         |  9 ---------
->>>    2 files changed, 5 insertions(+), 15 deletions(-)
->>
->> Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
->>
->> Which tree should this be applied to?
-> 
-> I'd like to add it to the dma-mapping tree if possible.
+On Tue, Jul 30, 2019 at 1:42 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+>
+> On Tue, Jul 30, 2019 at 12:47:24PM +0300, Oded Gabbay wrote:
+> > This patch changes the driver to create two char devices for each ASIC
+> > it discovers. This is done to allow system/monitoring applications to
+> > query the device for stats, information, idle state and more, while also
+> > allowing the deep-learning application to send work to the ASIC.
+> >
+> > One char device is the original device, hlX. IOCTL calls through this
+> > device file can perform any task on the device (compute, memory, queries).
+> > The open function for this device will fail if it was called before but
+> > the file-descriptor it created was not completely released yet (the
+> > release callback function is not called from the kernel until all
+> > instances of that FD are closed). The driver needs to keep this behavior
+> > to support backward compatibility with existing userspace, which count
+> > that the open will fail if the device is "occupied".
+> >
+> > The second char device is called "hl_controlDx", where x is the minor
+> > number of the original char device + 64 (HL_CONTROL_MINOR). Applications
+> > that open this device can only call the INFO IOCTL. There is no limitation
+> > on the number of applications opening this device.
+> >
+> > Signed-off-by: Oded Gabbay <oded.gabbay@gmail.com>
+>
+> This reminds me of the old tty "control" devices we finally got rid of
+> many years ago.  The more things change... :)
+>
+> Anyway, looks sane to me.  If you are ok with this userspace api, no
+> objection from me.
+>
+> Only one comment below:
+>
+> > --- a/drivers/misc/habanalabs/habanalabs.h
+> > +++ b/drivers/misc/habanalabs/habanalabs.h
+> > @@ -51,6 +51,8 @@
+> >  /* MMU */
+> >  #define MMU_HASH_TABLE_BITS          7 /* 1 << 7 buckets */
+> >
+> > +#define HL_CONTROL_MINOR             64
+>
+> Don't try to segment your "dev" and "control" device nodes by minor
+> number range, as you will run into problems once you have a system with
+> more than 64 of these in the box at once.
+>
+> Just use the whole range, and do:
+>         dev = minor N
+>         control = minor N+1
+> and so on.  That makes your control device node an "odd" minor and your
+> "real" device an "even".
+>
+> Given that all existing systems should be using devtmpfs, you should not
+> have any problem with changing the minor number of them at the next
+> reboot, right?
+>
+> thanks,
+>
+> greg k-h
 
-That's ok for me.
-
-  Tomi
-
--- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+I agree, will change that and re-send.
+Oded
