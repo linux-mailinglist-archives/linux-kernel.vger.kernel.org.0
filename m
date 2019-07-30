@@ -2,75 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6859F7A0B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 07:53:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 356C17A0C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 07:54:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729756AbfG3FxB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 01:53:01 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:47530 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729741AbfG3Fw5 (ORCPT
+        id S1729075AbfG3Fxt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 01:53:49 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:45614 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726205AbfG3Fxt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 01:52:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
-        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=oeVqzqKgfl2aD6OHsHwpo1ch5592YFZchzgyQdMtYkM=; b=nqj2e5EIZMkVf+8w9hLeGVYCxs
-        wdgEDivjCVoIGZbSaAkz3m0Aa7F44xnNI9z9ymc+9rjF5EAY5xgPXlBSUFqXLwPFeeVU3p8Kny9Ci
-        fVesCkD2VXf5mq/sNI7dWav6POKUDEzzF4PFZkU+Sp4ftE+haMVcYARlpyIu8wUu3FtqOLhPpXRx4
-        rD/U9jRX3Vp4sKK2FXFKTxABMdp8hILpluwAqHq1MSeceWcuDL5ShI5QKZN89NMwkOt6aavp3OD+F
-        /euujoS2VqYYiPfYoUIBTNX2wbHkZ3H2aeas2hZTAbQ5Gzd5tys/swezApCF2bDC6z1pzrN2v5hnW
-        AibQy3Zg==;
-Received: from [195.167.85.94] (helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hsL49-0001W7-9f; Tue, 30 Jul 2019 05:52:53 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Felix Kuehling <Felix.Kuehling@amd.com>
-Cc:     Ralph Campbell <rcampbell@nvidia.com>, linux-mm@kvack.org,
-        nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 13/13] mm: allow HMM_MIRROR on all architectures with MMU
-Date:   Tue, 30 Jul 2019 08:52:03 +0300
-Message-Id: <20190730055203.28467-14-hch@lst.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190730055203.28467-1-hch@lst.de>
-References: <20190730055203.28467-1-hch@lst.de>
+        Tue, 30 Jul 2019 01:53:49 -0400
+Received: by mail-ot1-f65.google.com with SMTP id x21so26620161otq.12
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 22:53:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=z9yhVZrCo2Ym96O9jSbeb4ViFfqeymdVjMGrDKz2FPM=;
+        b=N17K/Md9kf9zsF+8d2jNQ4qeEMqeDzuH2Fn+lKJIzHgbcXXOjdXqxhe19pt/7H+kfK
+         XIK9MUmRSzEkvOdZxeQ6792Oxc44al7rEb96Qa4TRYkiZNU+2QBvoxA5HSBjy2Qbr6W8
+         karZdmF31kOYyjULxZJDgpCSFY/y12xphn+Ku0jhWDm02Ic0UcY97gI3Q798ydEBPQYd
+         +ddBmLBRhnl5/3zOGgNhGxyitb7DltzQm7fjlDExtim+zNKXNt1MRCHizz3F+SBjicNQ
+         nOI9ItTaH6hxoO9MeQTvvhUsb+gY3mSY/yxaPeWHKRA3MkxO3883J0ao/X5SwFU2hK48
+         Cu/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=z9yhVZrCo2Ym96O9jSbeb4ViFfqeymdVjMGrDKz2FPM=;
+        b=TzAheF3hKyAcQyll1vLPy0zm4+9eCEmOm+sO4N2kmHe7qYgPpBcoZaRyspuzvuw0hy
+         ICj/LNAdAPYlERxsntapyaIJZwuDQSjCon2wjFiSfFkXNJtBxgSWG6bl/TtC4NmEJ96B
+         r9MPaz5GtpE1MuERuSfEYaK86b0MDzIasK4AQPR7n8j1+wDLCsr/d8OdXM6yxOH3VdoH
+         X/RCZ2tfuZn12YXwTf3aJm/4dYbWLx92T/iT1HJZZ9yqRQVUo3bA3rFE2lytwdQxs9M7
+         vKnXNaB5CL0RAVNduLHAQzv1MyXK5PC0ZAVbsL6ZstVHsHuocDMKz9tUO7D2exbESGrJ
+         xDSA==
+X-Gm-Message-State: APjAAAUrbW8FR+XRZEvP6mt2iiMvPrsYOIXFu7KVrbx3viDB3fWMAPZT
+        4fy9bhOLdFhA6doYUMptXcJ+SWEifzdn4P2k2EuTMw==
+X-Google-Smtp-Source: APXvYqw7aEwNPWqA3eNN9XZ6LCef/h3vqbjo/cS8W1eUnYiAmCC4A8v/J5cB8Qphwz409QxSDP0CwBJE6rzqfg/0x8I=
+X-Received: by 2002:a9d:6201:: with SMTP id g1mr86267586otj.195.1564466028394;
+ Mon, 29 Jul 2019 22:53:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+References: <20190726231558.175130-1-saravanak@google.com> <20190729093545.kvnqxjkyx4nogddk@vireshk-i7>
+ <CAGETcx8OBFGgP1-hj717Sk-_N95-kacVsz0yb288n3pej12n1Q@mail.gmail.com>
+ <20190730024640.xk27jgdfl2j6ucx7@vireshk-i7> <361effba-4433-24d9-243c-201af39214cc@codeaurora.org>
+In-Reply-To: <361effba-4433-24d9-243c-201af39214cc@codeaurora.org>
+From:   Saravana Kannan <saravanak@google.com>
+Date:   Mon, 29 Jul 2019 22:53:12 -0700
+Message-ID: <CAGETcx_BpJswxA4AGARogZ1xRJPqm=_zTOZq1xJ2vgx+DUYsqQ@mail.gmail.com>
+Subject: Re: [PATCH v4 0/3] Introduce Bandwidth OPPs for interconnects
+To:     Sibi Sankar <sibis@codeaurora.org>
+Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
+        Georgi Djakov <georgi.djakov@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        "Sweeney, Sean" <seansw@qti.qualcomm.com>,
+        David Dai <daidavid1@codeaurora.org>, adharmap@codeaurora.org,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Evan Green <evgreen@chromium.org>,
+        Android Kernel Team <kernel-team@android.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There isn't really any architecture specific code in this page table
-walk implementation, so drop the dependencies.
+On Mon, Jul 29, 2019 at 10:28 PM Sibi Sankar <sibis@codeaurora.org> wrote:
+>
+> Hey Viresh,
+>
+> On 7/30/19 8:16 AM, Viresh Kumar wrote:
+> > On 29-07-19, 13:16, Saravana Kannan wrote:
+> >> Sibi might be working on doing that for the SDM845 CPUfreq driver.
+> >> Georgi could also change his GPU driver use case to use this BW OPP
+> >> table and required-opps.
+> >>
+> >> The problem is that people don't want to start using this until we
+> >> decide on the DT representation. So it's like a chicken and egg
+> >> situation.
+> >
+> > Yeah, I agree to that.
+> >
+> > @Georgi and @Sibi: This is your chance to speak up about the proposal
+> > from Saravana and if you find anything wrong with them. And specially
+> > that it is mostly about interconnects here, I would like to have an
+> > explicit Ack from Georgi on this.
+> >
+> > And if you guys are all okay about this then please at least commit
+> > that you will convert your stuff based on this in coming days.
+>
+> I've been using both Saravana's and Georgi's series for a while
+> now to scale DDR and L3 on SDM845. There is currently no consensus
+> as to where the votes are to be actuated from, hence couldn't post
+> anything out.
+>
+> DCVS based on Saravana's series + passive governor:
+> https://github.com/QuinAsura/linux/tree/lnext-072619-SK-series
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- mm/Kconfig | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Thanks Sibi! You might want to convert your patches so that until the
+passive governor is ready, you just look up the required opps and vote
+for BW directly from the cpufreq driver. Once devfreq governor is
+ready, you can switch to it.
 
-diff --git a/mm/Kconfig b/mm/Kconfig
-index 56cec636a1fc..b18782be969c 100644
---- a/mm/Kconfig
-+++ b/mm/Kconfig
-@@ -677,8 +677,7 @@ config DEV_PAGEMAP_OPS
- 
- config HMM_MIRROR
- 	bool "HMM mirror CPU page table into a device page table"
--	depends on (X86_64 || PPC64)
--	depends on MMU && 64BIT
-+	depends on MMU
- 	select MMU_NOTIFIER
- 	help
- 	  Select HMM_MIRROR if you want to mirror range of the CPU page table of a
--- 
-2.20.1
+-Saravana
 
+>
+> DCVS based on Georgi's series: (I had already posted this out)
+> https://github.com/QuinAsura/linux/tree/lnext-072619-GJ-series
+>
+> --
+> Qualcomm Innovation Center, Inc.
+> Qualcomm Innovation Center, Inc, is a member of Code Aurora Forum,
+> a Linux Foundation Collaborative Project
