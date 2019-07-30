@@ -2,58 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 423827AEB0
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 19:00:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 980907AE84
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 18:58:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729557AbfG3Q6I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 12:58:08 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:37626 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727297AbfG3Q6F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 12:58:05 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4C3F930A7C6E;
-        Tue, 30 Jul 2019 16:58:05 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.136])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 898415D6A7;
-        Tue, 30 Jul 2019 16:58:03 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Tue, 30 Jul 2019 18:58:04 +0200 (CEST)
-Date:   Tue, 30 Jul 2019 18:58:02 +0200
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Song Liu <songliubraving@fb.com>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        akpm@linux-foundation.org, matthew.wilcox@oracle.com,
-        kirill.shutemov@linux.intel.com, kernel-team@fb.com,
-        william.kucharski@oracle.com, srikar@linux.vnet.ibm.com
-Subject: Re: [PATCH v10 2/4] uprobe: use original page when all uprobes are
- removed
-Message-ID: <20190730165801.GF18501@redhat.com>
-References: <20190730052305.3672336-1-songliubraving@fb.com>
- <20190730052305.3672336-3-songliubraving@fb.com>
+        id S1729621AbfG3Q6J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 12:58:09 -0400
+Received: from mail-io1-f72.google.com ([209.85.166.72]:40258 "EHLO
+        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729490AbfG3Q6G (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 12:58:06 -0400
+Received: by mail-io1-f72.google.com with SMTP id v11so72072908iop.7
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 09:58:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=mSxvpAdL6N4fH/Hu5gQqP4xurABkshFnMu5lEyO1QyQ=;
+        b=pm2JsL+VIox33R/CUyTvYc7v01K/0ifweLujGAthvb/ik+2QWgN1h2DO7K9AJeUFFH
+         zoIghpri4x9eKBPNA7jLE+2QKbVWPtbaSzMjf2EMagNwj9fag7y0CjqsZ5LOjSKheXlq
+         ytqCvCW3rnObgYJt3Hmm1RC6nKEZ6FXdrgybE009Glrk2eFXCpdyB/fj/FO178SK3pc+
+         lmxsXDH5+eplmLdGm7RAoaBubrIcW0GFMCTYP41l0Hu8AePPVmLyz79gL80xz/6SdpLh
+         XPTKad3UM7nHEiVb5+qn787RWbW+73b4oaUBPtkqAvq8ayMd/CjXQ/1VjiUxQMsE0YxS
+         ptyw==
+X-Gm-Message-State: APjAAAW2arffzrLzEhuyuSeuOux6gRSMJIdFLa7gjcfcM/fkEB1nUd/N
+        5uX7jDKeIBCF2LoSeTOt8MycPyzqj56rBYZ0yOuAUd8xcgqp
+X-Google-Smtp-Source: APXvYqxXG/IlT4HYMEvfo7WVTd5GOs1Vz/yiR1XopLuL+fw5tEIeYsJjbyfDleGdhO2NdW9dOeI5rsKKxAAKnzI+bU3dgFtKwST4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190730052305.3672336-3-songliubraving@fb.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Tue, 30 Jul 2019 16:58:05 +0000 (UTC)
+X-Received: by 2002:a5e:9e03:: with SMTP id i3mr37411748ioq.66.1564505885712;
+ Tue, 30 Jul 2019 09:58:05 -0700 (PDT)
+Date:   Tue, 30 Jul 2019 09:58:05 -0700
+In-Reply-To: <000000000000161dc3058ed0777c@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000912b79058ee8e939@google.com>
+Subject: Re: WARNING in usbhid_raw_request/usb_submit_urb
+From:   syzbot <syzbot+a7a6b9c609b9457c62c6@syzkaller.appspotmail.com>
+To:     andreyknvl@google.com, gregkh@linuxfoundation.org,
+        gustavo@embeddedor.com, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org, oneukum@suse.com,
+        stern@rowland.harvard.edu, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/29, Song Liu wrote:
->
-> This patch allows uprobe to use original page when possible (all uprobes
-> on the page are already removed).
+syzbot has found a reproducer for the following crash on:
 
-Again, the changelog is not 100% accurate. all uprobes removed _and_
-the original page is in page cache and uptodate.
+HEAD commit:    7f7867ff usb-fuzzer: main usb gadget fuzzer driver
+git tree:       https://github.com/google/kasan.git usb-fuzzer
+console output: https://syzkaller.appspot.com/x/log.txt?x=10619cec600000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=792eb47789f57810
+dashboard link: https://syzkaller.appspot.com/bug?extid=a7a6b9c609b9457c62c6
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10606c42600000
 
-Otherwise looks correct...
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+a7a6b9c609b9457c62c6@syzkaller.appspotmail.com
 
-Oleg.
+------------[ cut here ]------------
+usb 2-1: BOGUS urb xfer, pipe 2 != type 2
+WARNING: CPU: 1 PID: 7429 at drivers/usb/core/urb.c:477  
+usb_submit_urb+0x1188/0x13b0 drivers/usb/core/urb.c:477
+Kernel panic - not syncing: panic_on_warn set ...
+CPU: 1 PID: 7429 Comm: syz-executor.1 Not tainted 5.3.0-rc2+ #23
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0xca/0x13e lib/dump_stack.c:113
+  panic+0x2a3/0x6da kernel/panic.c:219
+  __warn.cold+0x20/0x4a kernel/panic.c:576
+  report_bug+0x262/0x2a0 lib/bug.c:186
+  fixup_bug arch/x86/kernel/traps.c:179 [inline]
+  fixup_bug arch/x86/kernel/traps.c:174 [inline]
+  do_error_trap+0x12b/0x1e0 arch/x86/kernel/traps.c:272
+  do_invalid_op+0x32/0x40 arch/x86/kernel/traps.c:291
+  invalid_op+0x23/0x30 arch/x86/entry/entry_64.S:1026
+RIP: 0010:usb_submit_urb+0x1188/0x13b0 drivers/usb/core/urb.c:477
+Code: 4d 85 ed 74 2c e8 38 e8 ed fd 4c 89 f7 e8 70 dc 1a ff 41 89 d8 44 89  
+e1 4c 89 ea 48 89 c6 48 c7 c7 60 cc f8 85 e8 4d b9 c3 fd <0f> 0b e9 20 f4  
+ff ff e8 0c e8 ed fd 4c 89 f2 48 b8 00 00 00 00 00
+RSP: 0018:ffff8881cef0f9d0 EFLAGS: 00010282
+RAX: 0000000000000000 RBX: 0000000000000002 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: ffffffff812830fd RDI: ffffed1039de1f2c
+RBP: 0000000000000000 R08: ffff8881c853e000 R09: fffffbfff115e1a2
+R10: fffffbfff115e1a1 R11: ffffffff88af0d0f R12: 0000000000000002
+R13: ffff8881d976b0a8 R14: ffff8881d0e02b20 R15: ffff8881d1720600
+  usb_start_wait_urb+0x108/0x2b0 drivers/usb/core/message.c:57
+  usb_internal_control_msg drivers/usb/core/message.c:101 [inline]
+  usb_control_msg+0x31c/0x4a0 drivers/usb/core/message.c:152
+  usbhid_set_raw_report drivers/hid/usbhid/hid-core.c:917 [inline]
+  usbhid_raw_request+0x21f/0x640 drivers/hid/usbhid/hid-core.c:1265
+  hid_hw_raw_request include/linux/hid.h:1079 [inline]
+  hidraw_send_report+0x296/0x500 drivers/hid/hidraw.c:151
+  hidraw_ioctl+0x5b4/0xae0 drivers/hid/hidraw.c:421
+  vfs_ioctl fs/ioctl.c:46 [inline]
+  file_ioctl fs/ioctl.c:509 [inline]
+  do_vfs_ioctl+0xd2d/0x1330 fs/ioctl.c:696
+  ksys_ioctl+0x9b/0xc0 fs/ioctl.c:713
+  __do_sys_ioctl fs/ioctl.c:720 [inline]
+  __se_sys_ioctl fs/ioctl.c:718 [inline]
+  __x64_sys_ioctl+0x6f/0xb0 fs/ioctl.c:718
+  do_syscall_64+0xb7/0x580 arch/x86/entry/common.c:296
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x459829
+Code: fd b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 cb b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f6a91f44c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000459829
+RDX: 0000000020000240 RSI: 00000000c0404806 RDI: 0000000000000004
+RBP: 000000000075bf20 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f6a91f456d4
+R13: 00000000004c22c3 R14: 00000000004d5688 R15: 00000000ffffffff
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
