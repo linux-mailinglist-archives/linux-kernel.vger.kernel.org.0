@@ -2,151 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C96F7A58A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 12:05:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BBE7F7A56E
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 12:04:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732374AbfG3KFx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 06:05:53 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:63029 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728647AbfG3KFO (ORCPT
+        id S1732210AbfG3KEV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 06:04:21 -0400
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:60059 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725947AbfG3KEV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 06:05:14 -0400
-Received: from 79.184.255.110.ipv4.supernova.orange.pl (79.184.255.110) (HELO kreacher.localnet)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.275)
- id efe23e57fc714eb3; Tue, 30 Jul 2019 12:05:11 +0200
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Linux ACPI <linux-acpi@vger.kernel.org>
-Cc:     Linux PM <linux-pm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v2 7/8] ACPI: EC: PM: Consolidate some code depending on PM_SLEEP
-Date:   Tue, 30 Jul 2019 12:03:26 +0200
-Message-ID: <2742454.g7L1spr0te@kreacher>
-In-Reply-To: <7528887.mqcfy9PZua@kreacher>
-References: <7528887.mqcfy9PZua@kreacher>
+        Tue, 30 Jul 2019 06:04:21 -0400
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailout.nyi.internal (Postfix) with ESMTP id ED71922008;
+        Tue, 30 Jul 2019 06:04:19 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute3.internal (MEProxy); Tue, 30 Jul 2019 06:04:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=4x/UZ/
+        xEBDLMoUYduJWBoXB4D8gSXgfle7LDtguVQOU=; b=yl+ByKipshbQWlcGGWaZ7A
+        G05dGg7yl/WKB0u+14NYk1HCjPyecJosakRL2pjT3GVEYVXJk4F8HuNpNZ6DbDGY
+        9K91qA0mvLCx2Dlvvv9SdQ5FwK00TbLKyruezdCr/YFZEHQYRG/OCgjprFMsIqaS
+        GmwkjaKzeG1jgILzFJJbWkaubUbV21+Kj5CXeaeUY4Eq5rZAeVdFbav+n2nPLJxT
+        gqdBZzSvZamOxYw/FDtc3a53iZiZYzgOIpwlnxtyuCBJfvMmwKlltmBd43xjz9US
+        jJm2UyHN9Xeu5R0o/Hxw81T+idqcHp5K4gFXcAvPdSpAbL0rSy4E3kB9m0MocVYA
+        ==
+X-ME-Sender: <xms:IxZAXbeWMqnU2swpdCtKedZnHJQIK7lPPYKkb17JmSpI9AansB-4WA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrleefgddvvdcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvuffkfhggtggujggfsehttdertddtredvnecuhfhrohhmpefkughoucfu
+    tghhihhmmhgvlhcuoehiughoshgthhesihguohhstghhrdhorhhgqeenucfkphepudelfe
+    drgeejrdduieehrddvhedunecurfgrrhgrmhepmhgrihhlfhhrohhmpehiughoshgthhes
+    ihguohhstghhrdhorhhgnecuvehluhhsthgvrhfuihiivgeptd
+X-ME-Proxy: <xmx:IxZAXaL0ChDvMwGR4S1FpLnYDpVt8BTJRI9h68OW5uSeVQxHYh69Ng>
+    <xmx:IxZAXR0jhE9ElSUfUVggxCgnOmTnIoMqPtWRx_ArjfbWyggTk8mm9Q>
+    <xmx:IxZAXQq0KAaSWXYsx7HLqhfl6RrCon0-Imem2GaXThjU6Gm4ysdHCw>
+    <xmx:IxZAXajkh7oW-fYMdHL1Zn1ievzh8XZS60ESayIVm2eMLdws0k3lzg>
+Received: from localhost (unknown [193.47.165.251])
+        by mail.messagingengine.com (Postfix) with ESMTPA id B1BB9380086;
+        Tue, 30 Jul 2019 06:04:18 -0400 (EDT)
+Date:   Tue, 30 Jul 2019 13:04:16 +0300
+From:   Ido Schimmel <idosch@idosch.org>
+To:     "Allan W. Nielsen" <allan.nielsen@microchip.com>
+Cc:     Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
+        Horatiu Vultur <horatiu.vultur@microchip.com>,
+        roopa@cumulusnetworks.com, davem@davemloft.net,
+        bridge@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: bridge: Allow bridge to joing multicast groups
+Message-ID: <20190730100416.GA13250@splinter>
+References: <95315f9e-0d31-2d34-ba50-11e1bbc1465c@cumulusnetworks.com>
+ <20190729131420.tqukz55tz26jkg73@lx-anielsen.microsemi.net>
+ <3cc69103-d194-2eca-e7dd-e2fa6a730223@cumulusnetworks.com>
+ <20190729135205.oiuthcyesal4b4ct@lx-anielsen.microsemi.net>
+ <e4cd0db9-695a-82a7-7dc0-623ded66a4e5@cumulusnetworks.com>
+ <20190729143508.tcyebbvleppa242d@lx-anielsen.microsemi.net>
+ <20190729175136.GA28572@splinter>
+ <20190730062721.p4vrxo5sxbtulkrx@lx-anielsen.microsemi.net>
+ <20190730070626.GA508@splinter>
+ <20190730083027.biuzy7h5dbq7pik3@lx-anielsen.microsemi.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190730083027.biuzy7h5dbq7pik3@lx-anielsen.microsemi.net>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Tue, Jul 30, 2019 at 10:30:28AM +0200, Allan W. Nielsen wrote:
+> The 07/30/2019 10:06, Ido Schimmel wrote:
+> > As a bonus, existing drivers could benefit from it, as MDB entries are already
+> > notified by MAC.
+> Not sure I follow. When FDB entries are added, it also generates notification
+> events.
 
-Move some routines, including acpi_ec_dispatch_gpe(), that are only
-used if CONFIG_PM_SLEEP is set to the #ifdef block containing the EC
-suspend and resume callbacks, to make the "full EC PM picture" easier
-to follow.
+I meant the switchdev notification sent to drivers:
 
-While at it, move the header of acpi_ec_dispatch_gpe() in the
-header file to a CONFIG_PM_SLEEP #ifdef block.
+/* SWITCHDEV_OBJ_ID_PORT_MDB */
+struct switchdev_obj_port_mdb {
+	struct switchdev_obj obj;
+	unsigned char addr[ETH_ALEN];
+	u16 vid;
+};
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
+By extending MDB entries to also be keyed by MAC you basically get a lot
+of things for free without duplicating the same code for multicast FDBs.
 
-New in v2.
-
----
- drivers/acpi/ec.c       |   54 +++++++++++++++++++++++-------------------------
- drivers/acpi/internal.h |    2 -
- 2 files changed, 27 insertions(+), 29 deletions(-)
-
-Index: linux-pm/drivers/acpi/internal.h
-===================================================================
---- linux-pm.orig/drivers/acpi/internal.h
-+++ linux-pm/drivers/acpi/internal.h
-@@ -194,7 +194,6 @@ void acpi_ec_ecdt_probe(void);
- void acpi_ec_dsdt_probe(void);
- void acpi_ec_block_transactions(void);
- void acpi_ec_unblock_transactions(void);
--bool acpi_ec_dispatch_gpe(void);
- int acpi_ec_add_query_handler(struct acpi_ec *ec, u8 query_bit,
- 			      acpi_handle handle, acpi_ec_query_func func,
- 			      void *data);
-@@ -202,6 +201,7 @@ void acpi_ec_remove_query_handler(struct
- 
- #ifdef CONFIG_PM_SLEEP
- void acpi_ec_flush_work(void);
-+bool acpi_ec_dispatch_gpe(void);
- #endif
- 
- 
-Index: linux-pm/drivers/acpi/ec.c
-===================================================================
---- linux-pm.orig/drivers/acpi/ec.c
-+++ linux-pm/drivers/acpi/ec.c
-@@ -1049,33 +1049,6 @@ void acpi_ec_unblock_transactions(void)
- 		acpi_ec_start(first_ec, true);
- }
- 
--#ifdef CONFIG_PM_SLEEP
--void acpi_ec_mark_gpe_for_wake(void)
--{
--	if (first_ec && !ec_no_wakeup)
--		acpi_mark_gpe_for_wake(NULL, first_ec->gpe);
--}
--EXPORT_SYMBOL_GPL(acpi_ec_mark_gpe_for_wake);
--
--void acpi_ec_set_gpe_wake_mask(u8 action)
--{
--	if (pm_suspend_no_platform() && first_ec && !ec_no_wakeup)
--		acpi_set_gpe_wake_mask(NULL, first_ec->gpe, action);
--}
--EXPORT_SYMBOL_GPL(acpi_ec_set_gpe_wake_mask);
--#endif
--
--bool acpi_ec_dispatch_gpe(void)
--{
--	u32 ret;
--
--	if (!first_ec)
--		return false;
--
--	ret = acpi_dispatch_gpe(NULL, first_ec->gpe);
--	return ret == ACPI_INTERRUPT_HANDLED;
--}
--
- /* --------------------------------------------------------------------------
-                                 Event Management
-    -------------------------------------------------------------------------- */
-@@ -1984,7 +1957,32 @@ static int acpi_ec_resume(struct device
- 	acpi_ec_enable_event(ec);
- 	return 0;
- }
--#endif
-+
-+void acpi_ec_mark_gpe_for_wake(void)
-+{
-+	if (first_ec && !ec_no_wakeup)
-+		acpi_mark_gpe_for_wake(NULL, first_ec->gpe);
-+}
-+EXPORT_SYMBOL_GPL(acpi_ec_mark_gpe_for_wake);
-+
-+void acpi_ec_set_gpe_wake_mask(u8 action)
-+{
-+	if (pm_suspend_no_platform() && first_ec && !ec_no_wakeup)
-+		acpi_set_gpe_wake_mask(NULL, first_ec->gpe, action);
-+}
-+EXPORT_SYMBOL_GPL(acpi_ec_set_gpe_wake_mask);
-+
-+bool acpi_ec_dispatch_gpe(void)
-+{
-+	u32 ret;
-+
-+	if (!first_ec)
-+		return false;
-+
-+	ret = acpi_dispatch_gpe(NULL, first_ec->gpe);
-+	return ret == ACPI_INTERRUPT_HANDLED;
-+}
-+#endif /* CONFIG_PM_SLEEP */
- 
- static const struct dev_pm_ops acpi_ec_pm = {
- 	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(acpi_ec_suspend_noirq, acpi_ec_resume_noirq)
-
-
-
+AFAICS, then only change in the fast path is in br_mdb_get() where you
+need to use DMAC as key in case Ethertype is not IPv4/IPv6.
