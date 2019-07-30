@@ -2,112 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A51BC7A8A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 14:36:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3400E7A8CA
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 14:39:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730267AbfG3MgD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 08:36:03 -0400
-Received: from mail-eopbgr150044.outbound.protection.outlook.com ([40.107.15.44]:54862
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726190AbfG3MgD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 08:36:03 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=jI5SRYAnYIijNuRmwtKcwNBZkTDnhieVRH34qMcZ4WzTdo7uUpXyMnuqnfI68UqSEyg+KZPCNP2z0TYFYNotnapVNhSpbN7iq2/D2GCXJutL0A0DDOI8dZsWyXVb0zAeQcAlOyca/sTgdW5NWkAdEVufCa6xa+b3tjliS0Z1btqZL2lGOW+U9B3LkYnRicQ+S80Q21FAMgKHUObOKakMlF5iTNZo4MKtRy3FLrmd6cwcynFRG/Ww2pJACJw0NayEdPeUybuZ+4fDSVMcr1fBu+d3Wk2JHMmZP+zqZFJ0B6EIp0u9zG9V9kGtiXRry2uLdtJm+fwKrkYlagHHP6Nq/w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=O4TVTJA+gABdiNdlWD+jMmeLLVFPhepHDShRadvZNbo=;
- b=nUqBXkJuK6v7z+Hu5fwJcW8E60lrTQ/0sUegpfW9vJrGszv6eh8e6JYw5SXdDxYuApK7gzGlwqTPwuLHA0T+UF6xE6ebVpBLZHb/GIUOh7t2InSHvZd18OIDxfJU+99yrdRd2KtAt+qkRJkhyqVIky4Mlw1SM6wpcFQLG/Oe2d1BAQSZpJ2GHa7nVTUURnPkZQFtkEbQA02AMuDebI9y7kVU50LCHDiIP6LyPpcMGzimXhAwNBG3Pu5uVT7b5F3HGyCLwH9t9zpURAB9hvTQYRnv1nt7Z3QV6pyhoqE4Pb0lLsEwNF2GGR3dnpKuyAxMmqXi0/Qta61gb0Kmp1V+iQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
- smtp.mailfrom=mellanox.com;dmarc=pass action=none
- header.from=mellanox.com;dkim=pass header.d=mellanox.com;arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=O4TVTJA+gABdiNdlWD+jMmeLLVFPhepHDShRadvZNbo=;
- b=cC9lMLgmA4esewA20G85rm4Y8IYUa7nrfI0s7JgmMJITmXpDAShtXEkBgfdEUgaBYJij/9Y27e/EG6Uo4FQM4wYAJouNjl62YsgvIc1qjnPH2yKu5VMsN08jcLcM52CxmVGoR1MGxZcSsQKyU2aPAhLwWI8kP8B7kIZ+myrcB2s=
-Received: from VI1PR05MB4141.eurprd05.prod.outlook.com (10.171.182.144) by
- VI1PR05MB4285.eurprd05.prod.outlook.com (52.133.12.26) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2115.14; Tue, 30 Jul 2019 12:36:00 +0000
-Received: from VI1PR05MB4141.eurprd05.prod.outlook.com
- ([fe80::5c6f:6120:45cd:2880]) by VI1PR05MB4141.eurprd05.prod.outlook.com
- ([fe80::5c6f:6120:45cd:2880%4]) with mapi id 15.20.2115.005; Tue, 30 Jul 2019
- 12:36:00 +0000
-From:   Jason Gunthorpe <jgg@mellanox.com>
-To:     Christoph Hellwig <hch@lst.de>
-CC:     =?iso-8859-1?Q?J=E9r=F4me_Glisse?= <jglisse@redhat.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 03/13] nouveau: pass struct nouveau_svmm to
- nouveau_range_fault
-Thread-Topic: [PATCH 03/13] nouveau: pass struct nouveau_svmm to
- nouveau_range_fault
-Thread-Index: AQHVRpr4kL6aKlcudUqEUBBy4/lXjabjGXIA
-Date:   Tue, 30 Jul 2019 12:35:59 +0000
-Message-ID: <20190730123554.GD24038@mellanox.com>
-References: <20190730055203.28467-1-hch@lst.de>
- <20190730055203.28467-4-hch@lst.de>
-In-Reply-To: <20190730055203.28467-4-hch@lst.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: YTOPR0101CA0034.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b00:15::47) To VI1PR05MB4141.eurprd05.prod.outlook.com
- (2603:10a6:803:4d::16)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=jgg@mellanox.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [156.34.55.100]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: bcaac139-dd9c-43d2-96c3-08d714ea79eb
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR05MB4285;
-x-ms-traffictypediagnostic: VI1PR05MB4285:
-x-microsoft-antispam-prvs: <VI1PR05MB4285D71442379CCEE6F90061CFDC0@VI1PR05MB4285.eurprd05.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:4303;
-x-forefront-prvs: 0114FF88F6
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(346002)(396003)(136003)(366004)(39860400002)(199004)(189003)(4744005)(186003)(66066001)(36756003)(1076003)(7736002)(52116002)(446003)(26005)(66946007)(305945005)(6246003)(102836004)(6486002)(54906003)(486006)(386003)(6506007)(76176011)(11346002)(66446008)(66556008)(64756008)(316002)(99286004)(4326008)(476003)(256004)(53936002)(2616005)(229853002)(33656002)(6116002)(8676002)(3846002)(71200400001)(6916009)(81156014)(5660300002)(66476007)(68736007)(6436002)(478600001)(6512007)(8936002)(86362001)(25786009)(7416002)(14454004)(81166006)(71190400001)(2906002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR05MB4285;H:VI1PR05MB4141.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: mellanox.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: Q2KmhPGNj5HjLnOX9wOLnVhYsnoFZFzOMElEIQGQqevpRB/pG6O+y7IcfQYAN21ZMM1bvNXKsQo8PV/7BTUZMJt75GrDG8o8Ix76UrZiqRtxfcBTUTC9wdIsymwHmQfjHQz2YYg/0Me+wMfmRsKmCWZY7EwoIKoQIjfrwRLxA9XsMA35yxIOrZPa4Ire9MSa0jhyvbRoVB9eiKJzIAx2YfGX8m+K1RbnbHxOS4qGjEibdrG8gguS7MAIx4WH/gaVEusQ9tU+5RgSCggbBO/n/6YhMTOdoXZwlEC4Pr9yeto17BbWFFYb+DGnalIpxQjsozwl02R1hiyFH5G8U7as7+mTEB3A8dGF0rDFeclmJRnY2OKQMEuyJVlHS94c4zbt3l/0sWFdSDEGWh7kPK3HaFzr0ab5k65cT7g4AElZrSc=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-ID: <673CF3972C47014CA0CAB676E69F0322@eurprd05.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        id S1730494AbfG3Mjb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 08:39:31 -0400
+Received: from mga05.intel.com ([192.55.52.43]:10807 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729579AbfG3Mjb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 08:39:31 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jul 2019 05:39:31 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,326,1559545200"; 
+   d="scan'208";a="195783793"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.145])
+  by fmsmga004.fm.intel.com with ESMTP; 30 Jul 2019 05:39:29 -0700
+Received: from andy by smile with local (Exim 4.92)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1hsRPb-0003Pd-RD; Tue, 30 Jul 2019 15:39:27 +0300
+Date:   Tue, 30 Jul 2019 15:39:27 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     "Life is hard, and then you die" <ronald@innovation.ch>
+Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Mao Wenan <maowenan@huawei.com>,
+        Federico Lorenzi <federico@travelground.com>,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] Input: applespi - register touchpad device
+ synchronously in probe
+Message-ID: <20190730123927.GN23480@smile.fi.intel.com>
+References: <20190721070523.24695-1-ronald@innovation.ch>
+ <20190729132203.GB1201@penguin>
+ <20190730065648.GA20206@innovation.ch>
 MIME-Version: 1.0
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bcaac139-dd9c-43d2-96c3-08d714ea79eb
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Jul 2019 12:35:59.8778
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: jgg@mellanox.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR05MB4285
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190730065648.GA20206@innovation.ch>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 30, 2019 at 08:51:53AM +0300, Christoph Hellwig wrote:
-> This avoid having to abuse the vma field in struct hmm_range to unlock
-> the mmap_sem.
+On Mon, Jul 29, 2019 at 11:56:48PM -0700, Life is hard, and then you die wrote:
+> On Mon, Jul 29, 2019 at 03:22:03PM +0200, Dmitry Torokhov wrote:
+> > On Sun, Jul 21, 2019 at 12:05:23AM -0700, Ronald Tschalär wrote:
 
-I think the change inside hmm_range_fault got lost on rebase, it is
-now using:
+> > Question: is it possible to read command response synchronously as well?
+> > I.e. I was wondering if we could add 2 (or 1?) more read xfers for the
+> > actual result that is coming after the status response, and then we
+> > could use spi_sync() to send the command and read the whole thing.
+> 
+> Yes'ish. But you still need to wait for the GPE to know when to read
+> the response, and while you're doing so any number of keyboard and
+> trackpad events may arrive (i.e. you may need to do any number of read
+> xfers). I suppose those events could all just be discarded, though. So
+> something like this:
+> 
+>     assemble-info-cmd(write_msg)
 
-                up_read(&range->hmm->mm->mmap_sem);
+>     spi_sync(write_msg)
+>     
+>     while (1) {
+>         wait_event_timeout(wait_queue, gpe_received, timeout)
+>         spi_sync(read_msg)
+>         if (is-info-cmd-response(read_msg))
+>             break
+>     }
 
-But, yes, lets change it to use svmm->mm and try to keep struct hmm
-opaque to drivers
+Just a side note if you ever going to implement such loops.
 
-Jason
+Consider in this or similar case do {} while approach with more straight exit
+conditional.
+
+Like
+
+	assemble-info-cmd(write_msg)
+
+	do {
+		spi_sync(read_msg)
+		wait_event_timeout(wait_queue, gpe_received, timeout)
+	} while (!is-info-cmd-response(read_msg)
+
+> and also modify the gpe-handler to wake the wait_queue instead of
+> issuing an spy_async() while doing the above.
+> 
+> I guess the advantage would certainly be the need to avoid the
+> spi-flushing in case of a timeout, at the expense of some slight
+> duplication of some of the received-message handling logic (would
+> refactor make most re-usable, of course).
+> 
+> So would this be the preferred approach then?
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
