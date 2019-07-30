@@ -2,99 +2,189 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E3D47A9B5
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 15:34:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 613CF7A9B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 15:35:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727236AbfG3Ner (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 09:34:47 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:43646 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725889AbfG3Neq (ORCPT
+        id S1728526AbfG3Nfb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 09:35:31 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:46633 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725889AbfG3Nfb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 09:34:46 -0400
-Received: by mail-lj1-f196.google.com with SMTP id y17so37544320ljk.10
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 06:34:45 -0700 (PDT)
+        Tue, 30 Jul 2019 09:35:31 -0400
+Received: by mail-pl1-f194.google.com with SMTP id c2so28883455plz.13;
+        Tue, 30 Jul 2019 06:35:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=q+SJpskgfMnTCRFMZUPJ6DCcRxHGN/U3+VEXWp8iNXI=;
-        b=IC2qPshm3z3yvPd/A81cBRZ8HL/1XX8NjWtrqS9cxOwb0UATXaGXg0vydLNLHqrLSY
-         ZgssXKNkpElBRekecOTBtdZ/YG/IS7DflAv/uzE7i7XJU535yA1KjAv+h3fRF1SUxpso
-         qcN8jcGhR/00OkW97P6Eh9QcCfr16Btace56JjlTG7XLePcyZiw9gPCyoxj718IoHqnk
-         R7YiqhakGKXjouX6GI2s2MTTQE/A0gtOQj0RY3kNRIEb0/eMS7w6ZG9XkoH8Ei34D2M+
-         Vd5+UcYvcA2aaSf//UyXvBE/soJv3ZSd/xsOYt3iHRs23hC9xjbPyCckTPYIbwnD/j8J
-         u1bA==
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=D0myQa878LoDhB10dhpZ38+k3ChAHNGIV6DAjCm92ls=;
+        b=hUFM9W8Gj4mPlzEJyOjPQiGt5ZeJSZ4NBK0060jBEGBRBh3AR5QYMJiQZr1LaqWQD+
+         SBjZBnkB72KzONPwvYCsT/HhUapKkqVx1MEL1mLT8lhPsAq+YSXi/MnjxrQ4GaYehGsO
+         GrYFacs5UiwMYucENV4vGKFCJPHvJ5LAEvnaph3Unn9lxxOlYKbmiA1yNdu7nA6ycsIr
+         VBRkw7M9nMn6NlE2IfaxmU2mb3C9pnssOSe+Tnx5KewLH39cb58fhjVX6+U+fkVhb5PR
+         p+KVh4Wg9GS3/u8fcU4RmKessByo7eQSEIH0AR2W186hP/gbfwnFlRZhi27dwVsje0eZ
+         tUtg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=q+SJpskgfMnTCRFMZUPJ6DCcRxHGN/U3+VEXWp8iNXI=;
-        b=p5r1MRbVNVH4tM9wO2MtA7nWlbZlCtCW45kEtzzIqwDZiyhtWUoq+pWM4e358iEHXL
-         IbcvLZUdi/RWoH9FNJKHtcC79mhQRCIQcTJy9tLVUz0HMY132bYO+WEylmeKVVxzE2uq
-         LvR2vwmoTV4pfNeBqLQjXJQBpnmnDEJWDe5Fh2DmNotPdwOoHdUmu83jOV8w6ttQoUnb
-         4+odVfZv92yfaYCda7Aa/bNmoPwXJd/F/NvNjyV4f1lPSchCvEg4jPwWP+LO3BR8752w
-         ZHdGqUiPbCVqJfjleWBokwOClSzt02Z9YFbPH4iWFiGbOHEH0tQtwGEeKMIMRZpAsQX9
-         Razg==
-X-Gm-Message-State: APjAAAWfP8BUehVR20vKAkUdw9dk0UH69r7FFW7V8OWD8H6jsS/HtLCk
-        kLR5ZgGfE3PDhzjnmshDuJ6f6qGDuaBwuHKpvPQ=
-X-Google-Smtp-Source: APXvYqzD44WXPM7lPAEBiJqY+mhQVb4faJ4pdxH+Z9YtUpCLoLq+QIIryrwtma7oeA8xlWXMItNJzo0vcsfYog9/fDE=
-X-Received: by 2002:a2e:3013:: with SMTP id w19mr61253994ljw.73.1564493684909;
- Tue, 30 Jul 2019 06:34:44 -0700 (PDT)
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=D0myQa878LoDhB10dhpZ38+k3ChAHNGIV6DAjCm92ls=;
+        b=llSqXFQFd7yhUAJIVfjxEOMYYqyF8wjV0/aYST5PnC1gFHCOioyg9Su3ohcV1A4xfR
+         M5MsZjOo/WMEr812UYuNmj7jVoMFcq7U3rxvqlSwneBRkfOhrYx56hfqxEsxYmEOUuAR
+         ez+kQt/MCsCpg5RokOe32ldnEu9Yf8fbW4NJ/m0/xoC+okmxZg3g8DFtZNizoMD1AAec
+         Mr0p5q7L+itkYVnFDm6Gqnv3Ni3NTEakxMIMZrx3ViqLL3cvpMNEk+QmttRLkRR7hngC
+         dz6LIPLDb7uJRUCGg2ZLN2L+o4D3TRPr7CR7uIoEBWmhIMlQhYTWzX7aD51uDsWxad6W
+         W3xQ==
+X-Gm-Message-State: APjAAAWehQ5dMtcb8JuHJC7YltASNG2iTp8xhA0uuV0rpv0qEdqb5fVX
+        dT+onUDFIrtmXSKXWaIldKo=
+X-Google-Smtp-Source: APXvYqywgDjfpG/mRBois7D/7Z/tVtbteNVt5H2Bw8ZXuMw2EIqqPAX9RIhBUWbFXCxtOA5LZl1auA==
+X-Received: by 2002:a17:902:a409:: with SMTP id p9mr116469763plq.218.1564493730500;
+        Tue, 30 Jul 2019 06:35:30 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id u3sm58383392pjn.5.2019.07.30.06.35.29
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Jul 2019 06:35:29 -0700 (PDT)
+Subject: Re: [PATCH] bfq: Check if bfqq is NULL in bfq_insert_request
+To:     Paolo Valente <paolo.valente@linaro.org>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        linux-block <linux-block@vger.kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Hsin-Yi Wang <hsinyi@google.com>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Doug Anderson <dianders@chromium.org>
+References: <1563816648-12057-1-git-send-email-linux@roeck-us.net>
+ <20190728151931.GA29181@roeck-us.net>
+ <0BCD5EDA-6D08-4023-9EEA-087F0AB99D47@linaro.org>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <23890163-facd-3838-ddee-770b7c2f32ea@roeck-us.net>
+Date:   Tue, 30 Jul 2019 06:35:28 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Received: by 2002:ab3:7208:0:0:0:0:0 with HTTP; Tue, 30 Jul 2019 06:34:44
- -0700 (PDT)
-Reply-To: marinaadams08@gmail.com
-From:   Marina Adams <jamwood450@gmail.com>
-Date:   Tue, 30 Jul 2019 08:34:44 -0500
-Message-ID: <CAGXjViYAc8i34bGzj3BfGGYb8MtsCH_=YuYq+DpnHWVTi-QY2A@mail.gmail.com>
-Subject: PLEASE MY DEAR BELOVED ONE
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <0BCD5EDA-6D08-4023-9EEA-087F0AB99D47@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Good day Dear God's Chosen,
+On 7/30/19 1:55 AM, Paolo Valente wrote:
+> Hi Guenter,
+> sorry for the delay (Dolomiti's fault).
+> 
+> I didn't consider that rq->elv-icq might have been NULL also
+> because of OOM.  Thanks for spotting this issue.
+> 
+> As for the other places where the return value of bfq_init_rq is used,
+> unfortunately I think they matter too.  Those other places are related
+> to request merging, which is the alternative destiny of requests
+> (instead of being just inserted).  But, regardless of whether a
+> request is to be merged or inserted, that request may be destined to a
+> bfq_queue (possibly merged with a request already in a bfq_queue), and
+> a NULL return value by bfq_init_rq leads to a crash.  I guess you can
+> reproduce your failure also for the merge case, by generating
+> sequential, direct I/O with queue depth > 1, and of course by enabling
+> failslab.
+> 
+My assumption was that requests would only be merged if they are associated
+with the same io context. In that case, that IO context isn't reallocated
+with ioc_create_icq() but reused, and icq would thus never be NULL.
+I guess that assumption was wrong.
 
-Calvary Greetings in the name of the LORD Almighty and Our LORD JESUS
-CHRIST the giver of every good thing. Good day, i know this letter
-will definitely come to you as a huge surprise, but I implore you to
-take the time to go through it carefully as the decision you make will
-go off a long way to determine my future and continued existence. I am
-Mrs.  Marina Adams aging widow of 79 years old suffering from long
-time illness Cancer. I have some funds I inherited from my late
-husband, The sum of (US$8.5 Million Dollars) and I needed a very
-honest and God fearing who can withdraw this money then use the funds
-for Charity works. I WISH TO GIVE THIS FUNDS TO YOU FOR CHARITY WORKS.
-I found your contact through social network after honest prayers to
-the LORD to bring me a helper and i decided to contact you if you may
-be willing and interested to handle these trust funds in good faith
-before anything happens to me.
+> If my considerations above are correct, do you want to propose a
+> complete fix yourself?
+> 
 
-I accept this decision because I do not have any child who will
-inherit this money after I die. I want your urgent reply to me so that
-I will give you the deposit receipt which the COMPANY issued to me as
-next of king for immediate transfer of the money to your account in
-your country, to start the good work of God, I want you to use the
-40/percent of the total amount to help yourself in doing the project.
+Sure, I'll send an updated patch.
 
-I am desperately in keen need of assistance and I have summoned up
-courage to contact you for this task, you must not fail me and the
-millions of the poor people in our today=E2=80=99s WORLD. This is not stole=
-n
-money and there are no dangers involved,100% RISK FREE with full legal
-proof. Please if you would be able to use the funds for the Charity
-works kindly let me know immediately. I will appreciate your utmost
-confidentiality and trust in this matter to accomplish my heart
-desire, as I don't want anything that will jeopardize my last wish. I
-want you to take 40 percent of the total money for your personal use
-while 60% of the money will go to charity. I will appreciate your
-utmost confidentiality and trust in this matter to accomplish my heart
-desire, as I don't want anything that will jeopardize my last wish as
-i said before please.
+Thanks,
+Guenter
 
-Thanks and God bless you
-Mrs. Marina Adams
+> Thanks,
+> Paolo
+> 
+>> Il giorno 28 lug 2019, alle ore 17:19, Guenter Roeck <linux@roeck-us.net> ha scritto:
+>>
+>> ping ... just in case this patch got lost in Paolo's queue.
+>>
+>> Guenter
+>>
+>> On Mon, Jul 22, 2019 at 10:30:48AM -0700, Guenter Roeck wrote:
+>>> In bfq_insert_request(), bfqq is initialized with:
+>>> 	bfqq = bfq_init_rq(rq);
+>>> In bfq_init_rq(), we find:
+>>> 	if (unlikely(!rq->elv.icq))
+>>> 		return NULL;
+>>> Indeed, rq->elv.icq can be NULL if the memory allocation in
+>>> create_task_io_context() failed.
+>>>
+>>> A comment in bfq_insert_request() suggests that bfqq is supposed to be
+>>> non-NULL if 'at_head || blk_rq_is_passthrough(rq)' is false. Yet, as
+>>> debugging and practical experience shows, this is not the case in the
+>>> above situation.
+>>>
+>>> This results in the following crash.
+>>>
+>>> Unable to handle kernel NULL pointer dereference
+>>> 	at virtual address 00000000000001b0
+>>> ...
+>>> Call trace:
+>>> bfq_setup_cooperator+0x44/0x134
+>>> bfq_insert_requests+0x10c/0x630
+>>> blk_mq_sched_insert_requests+0x60/0xb4
+>>> blk_mq_flush_plug_list+0x290/0x2d4
+>>> blk_flush_plug_list+0xe0/0x230
+>>> blk_finish_plug+0x30/0x40
+>>> generic_writepages+0x60/0x94
+>>> blkdev_writepages+0x24/0x30
+>>> do_writepages+0x74/0xac
+>>> __filemap_fdatawrite_range+0x94/0xc8
+>>> file_write_and_wait_range+0x44/0xa0
+>>> blkdev_fsync+0x38/0x68
+>>> vfs_fsync_range+0x68/0x80
+>>> do_fsync+0x44/0x80
+>>>
+>>> The problem is relatively easy to reproduce by running an image with
+>>> failslab enabled, such as with:
+>>>
+>>> cd /sys/kernel/debug/failslab
+>>> echo 10 > probability
+>>> echo 300 > times
+>>>
+>>> Avoid the problem by checking if bfqq is NULL before using it. With the
+>>> NULL check in place, requests with missing io context are queued
+>>> immediately, and the crash is no longer seen.
+>>>
+>>> Fixes: 18e5a57d79878 ("block, bfq: postpone rq preparation to insert or merge")
+>>> Reported-by: Hsin-Yi Wang  <hsinyi@google.com>
+>>> Cc: Hsin-Yi Wang <hsinyi@google.com>
+>>> Cc: Nicolas Boichat <drinkcat@chromium.org>
+>>> Cc: Doug Anderson <dianders@chromium.org>
+>>> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+>>> ---
+>>> block/bfq-iosched.c | 2 +-
+>>> 1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
+>>> index 72860325245a..56f3f4227010 100644
+>>> --- a/block/bfq-iosched.c
+>>> +++ b/block/bfq-iosched.c
+>>> @@ -5417,7 +5417,7 @@ static void bfq_insert_request(struct blk_mq_hw_ctx *hctx, struct request *rq,
+>>>
+>>> 	spin_lock_irq(&bfqd->lock);
+>>> 	bfqq = bfq_init_rq(rq);
+>>> -	if (at_head || blk_rq_is_passthrough(rq)) {
+>>> +	if (!bfqq || at_head || blk_rq_is_passthrough(rq)) {
+>>> 		if (at_head)
+>>> 			list_add(&rq->queuelist, &bfqd->dispatch);
+>>> 		else
+>>> -- 
+>>> 2.7.4
+>>>
+> 
+> 
+
