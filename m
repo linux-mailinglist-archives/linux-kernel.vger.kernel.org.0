@@ -2,126 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EEF6C7B010
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 19:32:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E46237AFFF
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 19:31:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731122AbfG3RcW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 13:32:22 -0400
-Received: from mga04.intel.com ([192.55.52.120]:3584 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731095AbfG3RcS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 13:32:18 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jul 2019 10:32:11 -0700
-X-IronPort-AV: E=Sophos;i="5.64,327,1559545200"; 
-   d="scan'208";a="162655298"
-Received: from rchatre-s.jf.intel.com ([10.54.70.76])
-  by orsmga007-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jul 2019 10:32:10 -0700
-From:   Reinette Chatre <reinette.chatre@intel.com>
-To:     tglx@linutronix.de, fenghua.yu@intel.com, bp@alien8.de,
-        tony.luck@intel.com
-Cc:     kuo-lang.tseng@intel.com, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, linux-kernel@vger.kernel.org,
-        Reinette Chatre <reinette.chatre@intel.com>
-Subject: [PATCH V2 10/10] x86/resctrl: Only pseudo-lock L3 cache when inclusive
-Date:   Tue, 30 Jul 2019 10:29:44 -0700
-Message-Id: <08551f6aed73bbc122430c8e0c57bfe6c720a263.1564504902.git.reinette.chatre@intel.com>
-X-Mailer: git-send-email 2.17.2
-In-Reply-To: <cover.1564504901.git.reinette.chatre@intel.com>
-References: <cover.1564504901.git.reinette.chatre@intel.com>
-In-Reply-To: <cover.1564504901.git.reinette.chatre@intel.com>
-References: <cover.1564504901.git.reinette.chatre@intel.com>
+        id S1730893AbfG3RaN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 13:30:13 -0400
+Received: from mxout014.mail.hostpoint.ch ([217.26.49.174]:61009 "EHLO
+        mxout014.mail.hostpoint.ch" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728891AbfG3RaM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 13:30:12 -0400
+Received: from [10.0.2.46] (helo=asmtp013.mail.hostpoint.ch)
+        by mxout014.mail.hostpoint.ch with esmtp (Exim 4.92 (FreeBSD))
+        (envelope-from <dev@pschenker.ch>)
+        id 1hsVwv-000GMa-Gt; Tue, 30 Jul 2019 19:30:09 +0200
+Received: from [46.140.72.82] (helo=philippe-pc.toradex.int)
+        by asmtp013.mail.hostpoint.ch with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.91 (FreeBSD))
+        (envelope-from <dev@pschenker.ch>)
+        id 1hsVwv-000BNr-D6; Tue, 30 Jul 2019 19:30:09 +0200
+X-Authenticated-Sender-Id: dev@pschenker.ch
+From:   Philippe Schenker <dev@pschenker.ch>
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
+Cc:     Philippe Schenker <philippe.schenker@toradex.com>
+Subject: [RFC PATCH 0/2] Hello
+Date:   Tue, 30 Jul 2019 19:30:03 +0200
+Message-Id: <20190730173006.15823-1-dev@pschenker.ch>
+X-Mailer: git-send-email 2.22.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Cache pseudo-locking is a model specific feature and platforms
-supporting this feature are added by adding the x86 model data to the
-source code after cache pseudo-locking has been validated for the
-particular platform.
+From: Philippe Schenker <philippe.schenker@toradex.com>
 
-Indicating support for cache pseudo-locking for an entire platform is
-sufficient when the cache characteristics of the platform is the same
-for all instances of the platform. If this is not the case then an
-additional check needs to be added. In particular, it is currently only
-possible to pseudo-lock an L3 cache region if the L3 cache is inclusive
-of lower level caches. If the L3 cache is not inclusive then any
-pseudo-locked data would be evicted from the pseudo-locked region when
-it is moved to the L2 cache.
 
-When some SKUs of a platform may have inclusive cache while other SKUs
-may have non inclusive cache it is necessary to, in addition of checking
-if the platform supports cache pseudo-locking, also check if the cache
-being pseudo-locked is inclusive.
+On our Colibri iMX6ULL board there is a circuit for switching the
+power supply of the ethernet PHY with the 50MHz RMII clock.
 
-Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
----
- arch/x86/kernel/cpu/resctrl/pseudo_lock.c | 35 +++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
+This works quite fine but has one big problem. It is quite slow when
+switching the supply, so Linux has to wait there. I think this switch
+is at best represented as a fixed-regulator. In that way I can use
+"startup-delay-us" to represent slow switching regulator.
 
-diff --git a/arch/x86/kernel/cpu/resctrl/pseudo_lock.c b/arch/x86/kernel/cpu/resctrl/pseudo_lock.c
-index 7ab4e85a33a7..b4fff88572bd 100644
---- a/arch/x86/kernel/cpu/resctrl/pseudo_lock.c
-+++ b/arch/x86/kernel/cpu/resctrl/pseudo_lock.c
-@@ -125,6 +125,30 @@ static unsigned int get_cache_line_size(unsigned int cpu, int level)
- 	return 0;
- }
- 
-+/**
-+ * get_cache_inclusive - Determine if cache is inclusive of lower levels
-+ * @cpu: CPU with which cache is associated
-+ * @level: Cache level
-+ *
-+ * Context: @cpu has to be online.
-+ * Return: 1 if cache is inclusive of lower cache levels, 0 if cache is not
-+ *         inclusive of lower cache levels or on failure.
-+ */
-+static unsigned int get_cache_inclusive(unsigned int cpu, int level)
-+{
-+	struct cpu_cacheinfo *ci;
-+	int i;
-+
-+	ci = get_cpu_cacheinfo(cpu);
-+
-+	for (i = 0; i < ci->num_leaves; i++) {
-+		if (ci->info_list[i].level == level)
-+			return ci->info_list[i].inclusive;
-+	}
-+
-+	return 0;
-+}
-+
- /**
-  * pseudo_lock_minor_get - Obtain available minor number
-  * @minor: Pointer to where new minor number will be stored
-@@ -317,6 +341,12 @@ static int pseudo_lock_single_portion_valid(struct pseudo_lock_region *plr,
- 		goto err_cpu;
- 	}
- 
-+	if (p->r->cache_level == 3 &&
-+	    !get_cache_inclusive(plr->cpu, p->r->cache_level)) {
-+		rdt_last_cmd_puts("L3 cache not inclusive\n");
-+		goto err_cpu;
-+	}
-+
- 	plr->line_size = get_cache_line_size(plr->cpu, p->r->cache_level);
- 	if (plr->line_size == 0) {
- 		rdt_last_cmd_puts("Unable to compute cache line length\n");
-@@ -418,6 +448,11 @@ static int pseudo_lock_l2_l3_portions_valid(struct pseudo_lock_region *plr,
- 		goto err_cpu;
- 	}
- 
-+	if (!get_cache_inclusive(plr->cpu, l3_p->r->cache_level)) {
-+		rdt_last_cmd_puts("L3 cache not inclusive\n");
-+		goto err_cpu;
-+	}
-+
- 	return 0;
- 
- err_cpu:
+But there's no current possibility to enable fixed-regulator with a
+clock. In this RFC I send a patch after we would be able to add a clock
+to a fixed-regulator in devicetree and then add the "startup-delay-us"
+which would solve all my problems relatively elegant.
+This works also the other way, if the PHY now needs power the
+clock is not powered off because regulator depends on it.
+
+Because this would need to change code in regulator core I like to
+ask for your oppinion first, or if anyone has another idea how
+I could solve that problem.
+
+Thanks in advance for your feedback!
+
+Philippe
+
+
+Philippe Schenker (2):
+  Regulator: Core: Add clock-enable to fixed-regulator
+  ARM: dts: imx6ull: Add phy-supply to fec
+
+ arch/arm/boot/dts/imx6ull-colibri.dtsi | 12 ++++++++++++
+ drivers/regulator/core.c               | 15 +++++++++++++++
+ drivers/regulator/fixed.c              |  6 ++++++
+ include/linux/regulator/driver.h       |  3 +++
+ include/linux/regulator/fixed.h        |  1 +
+ 5 files changed, 37 insertions(+)
+
 -- 
-2.17.2
+2.22.0
 
