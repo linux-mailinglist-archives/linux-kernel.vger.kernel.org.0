@@ -2,133 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 272037AB68
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 16:50:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D9FDB7AB8F
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 16:57:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730626AbfG3Otz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 10:49:55 -0400
-Received: from mga12.intel.com ([192.55.52.136]:28859 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728722AbfG3Oty (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 10:49:54 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jul 2019 07:49:51 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,327,1559545200"; 
-   d="scan'208";a="323228335"
-Received: from rjwysock-mobl1.ger.corp.intel.com (HELO [10.249.145.48]) ([10.249.145.48])
-  by orsmga004.jf.intel.com with ESMTP; 30 Jul 2019 07:49:51 -0700
-Subject: Re: [PATCH 1/2] drivers: base: swnode: link devices to software nodes
-To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        "Enrico Weigelt, metux IT consult" <info@metux.net>,
-        linux-input@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-References: <20190713075259.243565-1-dmitry.torokhov@gmail.com>
- <20190713075259.243565-2-dmitry.torokhov@gmail.com>
- <20190729120715.GA28600@kuha.fi.intel.com> <20190729131532.GA1201@penguin>
- <20190730115247.GK28600@kuha.fi.intel.com>
-From:   "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Organization: Intel Technology Poland Sp. z o. o., KRS 101882, ul. Slowackiego
- 173, 80-298 Gdansk
-Message-ID: <e36fb47b-2969-5f53-97d4-8e94b4c98283@intel.com>
-Date:   Tue, 30 Jul 2019 16:49:50 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1731683AbfG3O5d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 10:57:33 -0400
+Received: from mxout017.mail.hostpoint.ch ([217.26.49.177]:30343 "EHLO
+        mxout017.mail.hostpoint.ch" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727129AbfG3O5d (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 10:57:33 -0400
+Received: from [10.0.2.46] (helo=asmtp013.mail.hostpoint.ch)
+        by mxout017.mail.hostpoint.ch with esmtp (Exim 4.92 (FreeBSD))
+        (envelope-from <dev@pschenker.ch>)
+        id 1hsTOx-000CPG-Vt; Tue, 30 Jul 2019 16:46:55 +0200
+Received: from [46.140.72.82] (helo=philippe-pc.toradex.int)
+        by asmtp013.mail.hostpoint.ch with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.91 (FreeBSD))
+        (envelope-from <dev@pschenker.ch>)
+        id 1hsTOx-000Mva-QK; Tue, 30 Jul 2019 16:46:55 +0200
+X-Authenticated-Sender-Id: dev@pschenker.ch
+From:   Philippe Schenker <dev@pschenker.ch>
+To:     marcel.ziswiler@toradex.com, max.krummenacher@toradex.com,
+        stefan@agner.ch, devicetree@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     Philippe Schenker <philippe.schenker@toradex.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>
+Subject: [PATCH 01/22] ARM: dts: imx7-colibri: make sure module supplies are always on
+Date:   Tue, 30 Jul 2019 16:46:28 +0200
+Message-Id: <20190730144649.19022-2-dev@pschenker.ch>
+X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20190730144649.19022-1-dev@pschenker.ch>
+References: <20190730144649.19022-1-dev@pschenker.ch>
 MIME-Version: 1.0
-In-Reply-To: <20190730115247.GK28600@kuha.fi.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/30/2019 1:52 PM, Heikki Krogerus wrote:
-> On Mon, Jul 29, 2019 at 03:15:32PM +0200, Dmitry Torokhov wrote:
->> On Mon, Jul 29, 2019 at 03:07:15PM +0300, Heikki Krogerus wrote:
->>> On Sat, Jul 13, 2019 at 12:52:58AM -0700, Dmitry Torokhov wrote:
->>>> It is helpful to know what device, if any, a software node is tied to, so
->>>> let's store a pointer to the device in software node structure. Note that
->>>> children software nodes will inherit their parent's device pointer, so we
->>>> do not have to traverse hierarchy to see what device the [sub]tree belongs
->>>> to.
->>>>
->>>> We will be using the device pointer to locate GPIO lookup tables for
->>>> devices with static properties.
->>>>
->>>> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
->>>> ---
->>>>   drivers/base/property.c  |  1 +
->>>>   drivers/base/swnode.c    | 35 ++++++++++++++++++++++++++++++++++-
->>>>   include/linux/property.h |  5 +++++
->>>>   3 files changed, 40 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/drivers/base/property.c b/drivers/base/property.c
->>>> index 348b37e64944..3bc93d4b35c4 100644
->>>> --- a/drivers/base/property.c
->>>> +++ b/drivers/base/property.c
->>>> @@ -527,6 +527,7 @@ int device_add_properties(struct device *dev,
->>>>   	if (IS_ERR(fwnode))
->>>>   		return PTR_ERR(fwnode);
->>>>   
->>>> +	software_node_link_device(fwnode, dev);
->>>>   	set_secondary_fwnode(dev, fwnode);
->>>>   	return 0;
->>>>   }
->>>> diff --git a/drivers/base/swnode.c b/drivers/base/swnode.c
->>>> index 7fc5a18e02ad..fd12eea539b6 100644
->>>> --- a/drivers/base/swnode.c
->>>> +++ b/drivers/base/swnode.c
->>>> @@ -24,6 +24,9 @@ struct software_node {
->>>>   
->>>>   	/* properties */
->>>>   	const struct property_entry *properties;
->>>> +
->>>> +	/* device this node is associated with */
->>>> +	struct device *dev;
->>>>   };
->>> Let's not do that! The nodes can be, and in many cases are, associated
->>> with multiple devices.
->> They do? Where? I see that set of properties can be shared between
->> several devices, but when we instantiate SW node we create a new
->> instance for device. This is also how ACPI and OF properties work; they
->> not shared between devices (or, rather, the kernel creates distinct _and
->> single_ devices for instance of ACPI or OF node). I do not think we want
->> swnodes work differently from the other firmware nodes.
-> Having multiple devices linked to a single node is quite normal. Most
-> multifunctional devices will share a single node. The USB port devices
-> will share their node (if they have one) with any device that is
-> attached to them. Etc.
->
-> If you want to check how this works with ACPI, then find
-> "physical_node" named files from sysfs. The ACPI node folders in sysfs
-> have symlinks named "physical_node<n>" for every device they are bind
-> to. The first one is named just "physical_node", the second
-> "physical_node1", the third "physical_node2", and so on.
->
->>> Every device is already linked with the software node kobject, so
->>> isn't it possible to simply walk trough those links in order to check
->>> the devices associated with the node?
->> No, we need to know the exact instance of a device, not a set of
->> devices, because even though some properties can be shared, others can
->> not. For example, even if 2 exactly same touch controllers in the system
->> have "reset-gpios" property, they won't be the same GPIO for the both of
->> them.
-> I don't think I completely understand the use case you had in mind for
-> this API, but since you planned to use it with the GPIO lookup tables,
-> I'm going to assume it's not needed after all. Let's replace those
-> with the references instead like I proposed in my reply to the 2/2
-> patch.
->
-> Linking a single device with a node like that is in any case not
-> acceptable nor possible.
->
-I think I need to withdraw my ACK here at this point.
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
+Prevent regulators from being switched off.
+
+Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Signed-off-by: Philippe Schenker <philippe.schenker@toradex.com>
+---
+
+ arch/arm/boot/dts/imx7-colibri.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/arch/arm/boot/dts/imx7-colibri.dtsi b/arch/arm/boot/dts/imx7-colibri.dtsi
+index 895fbde4d433..f1c1971f2160 100644
+--- a/arch/arm/boot/dts/imx7-colibri.dtsi
++++ b/arch/arm/boot/dts/imx7-colibri.dtsi
+@@ -54,6 +54,7 @@
+ 		regulator-name = "+V3.3";
+ 		regulator-min-microvolt = <3300000>;
+ 		regulator-max-microvolt = <3300000>;
++		regulator-always-on;
+ 	};
+ 
+ 	reg_module_3v3_avdd: regulator-module-3v3-avdd {
+@@ -61,6 +62,7 @@
+ 		regulator-name = "+V3.3_AVDD_AUDIO";
+ 		regulator-min-microvolt = <3300000>;
+ 		regulator-max-microvolt = <3300000>;
++		regulator-always-on;
+ 	};
+ 
+ 	sound {
+-- 
+2.22.0
 
