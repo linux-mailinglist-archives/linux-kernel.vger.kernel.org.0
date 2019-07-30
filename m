@@ -2,63 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 877AA7AAEF
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 16:28:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA43F7AAFA
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 16:29:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728843AbfG3O2G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 10:28:06 -0400
-Received: from mga14.intel.com ([192.55.52.115]:55563 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725911AbfG3O2F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 10:28:05 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jul 2019 07:28:05 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,327,1559545200"; 
-   d="scan'208";a="179744647"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.41])
-  by FMSMGA003.fm.intel.com with ESMTP; 30 Jul 2019 07:28:05 -0700
-Date:   Tue, 30 Jul 2019 07:28:05 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
-        Andy Lutomirski <luto@kernel.org>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Paul Bolle <pebolle@tiscali.nl>, Will Deacon <will@kernel.org>
-Subject: Re: [patch V2 3/5] lib/vdso/32: Provide legacy syscall fallbacks
-Message-ID: <20190730142804.GA1622@linux.intel.com>
-References: <20190728131251.622415456@linutronix.de>
- <20190728131648.786513965@linutronix.de>
- <20190729144831.GA21120@linux.intel.com>
- <alpine.DEB.2.21.1907301134470.1738@nanos.tec.linutronix.de>
+        id S1731353AbfG3O3K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 10:29:10 -0400
+Received: from conssluserg-04.nifty.com ([210.131.2.83]:61647 "EHLO
+        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727865AbfG3O3J (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 10:29:09 -0400
+Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com [209.85.217.53]) (authenticated)
+        by conssluserg-04.nifty.com with ESMTP id x6UESv7a009658;
+        Tue, 30 Jul 2019 23:28:58 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com x6UESv7a009658
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1564496938;
+        bh=v84lwITMwCbRgHyGZMYws7mMj8il4DSwjrW7UNUSg5s=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=RtdPT8ltnUvK47R3j68P8C1ZgZzYqVWotPMaw0LJAVvePrrX+Fl2GRu1+yayV2Nej
+         nNfIbaRCYKuyhQoJFWYR0M4UPhPlwTqm9WBgqtUfKh5MoapJ2kDfKMQniqIpqFmPZk
+         JsehKH42e+hVl8+kgz864YFu0qtgBVkyxQ0T4ijQQEB0TpJUwPNY4iGb1Amipx2ySq
+         BWtjM1G9j+kHvie/qINAqOViDgXoVyrWIiM8nKMB9FJ9EtbBWACYdZhH5y0lXX9zS7
+         uXOrnxe0cJFUBF56IrkgG54aFmpx4ToY+GCfdbRFYLK5wwjULseJm8pOIWP2pZM+cu
+         RHydlHo73dWOg==
+X-Nifty-SrcIP: [209.85.217.53]
+Received: by mail-vs1-f53.google.com with SMTP id a186so42001316vsd.7;
+        Tue, 30 Jul 2019 07:28:57 -0700 (PDT)
+X-Gm-Message-State: APjAAAURssm5Fpnj99TI7Pv9RTKZuYk/rVnzynKjsXouHRQaMzTAS7vf
+        ltKVfsiQF2Fibfet4+FToA2OOzAZko0cYmrtSXw=
+X-Google-Smtp-Source: APXvYqw4h6Qez6BRRK5N+FsF/UXKydbLOoQOr33HDGNPcw0K68jyVimtbBSfZetRbfL80Q7Iojj0TJk60p/dT3uJL08=
+X-Received: by 2002:a67:cd1a:: with SMTP id u26mr72503702vsl.155.1564496936927;
+ Tue, 30 Jul 2019 07:28:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1907301134470.1738@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <20190725154730.80169-1-swboyd@chromium.org> <CAK7LNAQZJgkx-yEwgHcTapKFayExgUCb3=zLBpJmVMJMeEA_WA@mail.gmail.com>
+ <5d3f016c.1c69fb81.b4775.c7d0@mx.google.com>
+In-Reply-To: <5d3f016c.1c69fb81.b4775.c7d0@mx.google.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Tue, 30 Jul 2019 23:28:20 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASoNRsMHHBW=d_Lkjo7eLpq5=gkU_g+k8NwEB0BwV37ZQ@mail.gmail.com>
+Message-ID: <CAK7LNASoNRsMHHBW=d_Lkjo7eLpq5=gkU_g+k8NwEB0BwV37ZQ@mail.gmail.com>
+Subject: Re: [PATCH v2] kbuild: Check for unknown options with cc-option usage
+ in Kconfig and clang
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     Michal Marek <michal.lkml@markovi.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Peter Smith <peter.smith@linaro.org>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Douglas Anderson <dianders@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 30, 2019 at 11:38:50AM +0200, Thomas Gleixner wrote:
-> To address the regression which causes seccomp to deny applications the
-> access to clock_gettime64() and clock_getres64() syscalls because they
-> are not enabled in the existing filters.
-> 
-> That trips over the fact that 32bit VDSOs use the new clock_gettime64() and
-> clock_getres64() syscalls in the fallback path.
-> 
-> Add a conditional to invoke the 32bit legacy fallback syscalls instead of
-> the new 64bit variants. The conditional can go away once all architectures
-> are converted.
-> 
-> Fixes: 00b26474c2f1 ("lib/vdso: Provide generic VDSO implementation")
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> ---
+On Mon, Jul 29, 2019 at 11:23 PM Stephen Boyd <swboyd@chromium.org> wrote:
+>
+> Quoting Masahiro Yamada (2019-07-29 03:02:40)
+> >
+> > Thanks for catching this.
+> >
+> > I wonder if we could fix this issue
+> > by one-liner, like this:
+> >
+> >
+> > diff --git a/scripts/Kconfig.include b/scripts/Kconfig.include
+> > index 8a5c4d645eb1..4bbf4fc163a2 100644
+> > --- a/scripts/Kconfig.include
+> > +++ b/scripts/Kconfig.include
+> > @@ -25,7 +25,7 @@ failure = $(if-success,$(1),n,y)
+> >
+> >  # $(cc-option,<flag>)
+> >  # Return y if the compiler supports <flag>, n otherwise
+> > -cc-option = $(success,$(CC) -Werror $(1) -E -x c /dev/null -o /dev/null)
+> > +cc-option = $(success,$(CC) -Werror $(CLANG_FLAGS) $(1) -E -x c
+> > /dev/null -o /dev/null)
+> >
+> >  # $(ld-option,<flag>)
+> >  # Return y if the linker supports <flag>, n otherwise
+> >
+> >
+> >
+> > This propagates not only -Werror=unknown-warning-option
+> > but also other clang flags to Kconfig.
+> >
+> >
+> > Currently, we do not pass the target triplet to Kconfig.
+> > This means, cc-option in Kconfig evaluates the given flags
+> > against host-arch instead of target-arch.
+> > The compiler flags are mostly independent of the architecture,
+> > and this is not a big deal, I think.
+> > But, maybe, would it make more sense to pass the other
+> > basic clang flags as well?
+> >
+>
+> Yes that also works and I had that earlier. I wanted to mirror what was
+> done in scripts/Kbuild.include where there's a CC_OPTION_CFLAGS
+> variable. I'm happy either way, so it's up to you.
+>
 
-Reviewed-and-tested-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Can you post v3 with $(CLANG_FLAGS) ?
+
+Thanks.
+
+-- 
+Best Regards
+Masahiro Yamada
