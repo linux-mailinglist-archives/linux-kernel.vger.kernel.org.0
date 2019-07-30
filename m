@@ -2,91 +2,178 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03F787B1DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:24:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 42BFA7B1E2
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:25:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729423AbfG3SYd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 14:24:33 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:33285 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725935AbfG3SYc (ORCPT
+        id S1729555AbfG3SZH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 14:25:07 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:53717 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729466AbfG3SZG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 14:24:32 -0400
-Received: by mail-qk1-f195.google.com with SMTP id r6so47332803qkc.0
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 11:24:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ELs8WXXvt2Nkvxci62TT76ZUPbF4S3pMgT3/gsD16Yg=;
-        b=bDEzt8bmtnk66qMuKWwlviDej60p3bMheuXWAzxg4rt8nq3rq281U2XnF3vi4Yzfsn
-         jdizUMUFpUjEWVef6LoIpFfW2xYYTrm8VaoNFHKM7v//1LSh9ARpZb4DFFeIbtkB4dok
-         LqHpl+oPPaU4mAwNEQb1A2j6oZrUgpTTqCA3WwkH6UveIe3tRQiFchxrPhshJgRQZcli
-         J7RGDLRzzdCeRCFWquDRIKwhAVkNPhiKRlYhbyKycii/ISTQcK0w+kLLBzWSEP0hO1cT
-         eE2J+9dmP6NIAp7L8dh9kVHVbYaPdZqXtxYkQBPG3erxjAydnExIBj/3QRUBKRIHb0Nh
-         /r4g==
-X-Gm-Message-State: APjAAAUpGHN4qZ9iEHldnGkfWv9mlN3oDr/RDFapqvptWRuCCB1dKJG8
-        d4H+6qDslh9DlgQHqEOOwVw/Fg6pmGqH4Wu8FqQ=
-X-Google-Smtp-Source: APXvYqw0YE69zRoJRlHpqf+lgOqtR/yc+lKsnQOITZmISxo4fV9UOHAPi3cwNRHYae2yNSx6QOkQGDl/06JVPF1xutQ=
-X-Received: by 2002:a37:ad12:: with SMTP id f18mr32660393qkm.3.1564511071739;
- Tue, 30 Jul 2019 11:24:31 -0700 (PDT)
+        Tue, 30 Jul 2019 14:25:06 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6UIOs903329578
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Tue, 30 Jul 2019 11:24:54 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6UIOs903329578
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019071901; t=1564511095;
+        bh=3cEHUcuCH+S2gz452vOsoAatPpID/4Q6oBDEFau3ysc=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=GTpbXm29K1Y74c9H2aa4Tmf0DKrYeavScgVp/w6yldIQqfWtVYxXu6Ts5tJ5c6aKN
+         1AvAyuYYwrPwsCCuG5YEddS57ss6mdOCPlMGb9LMFE5CHa5OpygqlKMgepynSEGIu8
+         35XTnL+4yG4sJGOU45Rdm+VR7fWP444GbpdGA7YnsAa5xQ5DAMHm2Rhyg9/X7Pm9O5
+         7lJ/BF6gMpE9RCPSjamuWl699gd3oOUL1+N0xI9oQFDCZUGw1/gD+14PwLkHyhcU0L
+         C5MAkwevCqgXGk3BSfU0WK+s2YCEQ8wUar3pvQmAGG2G3NOlory4T1W8xjoPVOPm9s
+         Tb955PBe+h+Ig==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6UIOsY23329575;
+        Tue, 30 Jul 2019 11:24:54 -0700
+Date:   Tue, 30 Jul 2019 11:24:54 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
+Message-ID: <tip-47f9bccc79cb067103ad5e9790e0d01c94839429@git.kernel.org>
+Cc:     jolsa@kernel.org, alexey.budankov@linux.intel.com,
+        mpetlan@redhat.com, ak@linux.intel.com, acme@redhat.com,
+        peterz@infradead.org, namhyung@kernel.org, mingo@kernel.org,
+        hpa@zytor.com, linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        alexander.shishkin@linux.intel.com
+Reply-To: linux-kernel@vger.kernel.org, hpa@zytor.com, tglx@linutronix.de,
+          mingo@kernel.org, alexander.shishkin@linux.intel.com,
+          alexey.budankov@linux.intel.com, jolsa@kernel.org,
+          mpetlan@redhat.com, ak@linux.intel.com, acme@redhat.com,
+          namhyung@kernel.org, peterz@infradead.org
+In-Reply-To: <20190721112506.12306-25-jolsa@kernel.org>
+References: <20190721112506.12306-25-jolsa@kernel.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] libperf: Add build version support
+Git-Commit-ID: 47f9bccc79cb067103ad5e9790e0d01c94839429
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-References: <20190729202542.205309-1-ndesaulniers@google.com>
- <20190729203246.GA117371@archlinux-threadripper> <20190729215200.GN31406@gate.crashing.org>
- <CAK8P3a1GQSyCj1L8fFG4Pah8dr5Lanw=1yuimX1o+53ARzOX+Q@mail.gmail.com>
- <20190730134856.GO31406@gate.crashing.org> <CAK8P3a2755_6xq453C2AePLW8BeQk_Jg=HfjB_F-zyVMnQDfdg@mail.gmail.com>
- <20190730161637.GP31406@gate.crashing.org>
-In-Reply-To: <20190730161637.GP31406@gate.crashing.org>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 30 Jul 2019 20:24:14 +0200
-Message-ID: <CAK8P3a0_ovcX9tOo1UQ3_1UmM=+A2X=yErw27i2pHOj4XD40-A@mail.gmail.com>
-Subject: Re: [PATCH] powerpc: workaround clang codegen bug in dcbz
-To:     Segher Boessenkool <segher@kernel.crashing.org>
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        christophe leroy <christophe.leroy@c-s.fr>,
-        kbuild test robot <lkp@intel.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-0.2 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
+        autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 30, 2019 at 6:16 PM Segher Boessenkool
-<segher@kernel.crashing.org> wrote:
->
-> On Tue, Jul 30, 2019 at 04:30:29PM +0200, Arnd Bergmann wrote:
-> > On Tue, Jul 30, 2019 at 3:49 PM Segher Boessenkool
-> > <segher@kernel.crashing.org> wrote:
-> > >
-> > > On Tue, Jul 30, 2019 at 09:34:28AM +0200, Arnd Bergmann wrote:
-> > > > Upon a second look, I think the issue is that the "Z" is an input argument
-> > > > when it should be an output. clang decides that it can make a copy of the
-> > > > input and pass that into the inline asm. This is not the most efficient
-> > > > way, but it seems entirely correct according to the constraints.
-> > >
-> > > Most dcb* (and all icb*) do not change the memory pointed to.  The
-> > > memory is an input here, logically as well, and that is obvious.
-> >
-> > Ah, right. I had only thought of dcbz here, but you are right that using
-> > an output makes little sense for the others.
-> >
-> > readl() is another example where powerpc currently uses "Z" for an
-> > input, which illustrates this even better.
->
-> in_le32 and friends?  Yeah, huh.  If LLVM copies that to the stack as
-> well, its (not byte reversing) read will be atomic just fine, so things
-> will still work correctly.
+Commit-ID:  47f9bccc79cb067103ad5e9790e0d01c94839429
+Gitweb:     https://git.kernel.org/tip/47f9bccc79cb067103ad5e9790e0d01c94839429
+Author:     Jiri Olsa <jolsa@kernel.org>
+AuthorDate: Sun, 21 Jul 2019 13:24:11 +0200
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Mon, 29 Jul 2019 18:34:43 -0300
 
-byteorder is fine, the problem I was thinking of is when moving the load/store
-instructions around the barriers that synchronize with DMA, or turning
-them into different-size accesses. Changing two consecutive 16-bit mmio reads
-into an unaligned 32-bit read will rarely have the intended effect ;-)
+libperf: Add build version support
 
-       Arnd
+Add a shared library version, generating the following files:
+
+  $ ll tools/perf/lib/libperf.so*
+  libperf.so -> libperf.so.0.0.1
+  libperf.so.0 -> libperf.so.0.0.1
+  libperf.so.0.0.1
+
+Committer testing:
+
+One has to build just libbperf to get this, building perf so far doesn't
+trigger this, i.e. I tried:
+
+  $ make O=/tmp/build/perf -C tools/perf
+
+And the files above were not created, so one has to do:
+
+  $ make O=/tmp/build/perf -C tools/perf/lib/
+  make: Entering directory '/home/acme/git/perf/tools/perf/lib'
+    LINK     /tmp/build/perf/libperf.so.0.0.1
+  make: Leaving directory '/home/acme/git/perf/tools/perf/lib'
+  $ ls -la /tmp/build/perf/*.so.*
+  lrwxrwxrwx. 1 acme acme    16 Jul 22 15:37 /tmp/build/perf/libperf.so.0 -> libperf.so.0.0.1
+  -rwxrwxr-x. 1 acme acme 16368 Jul 22 15:37 /tmp/build/perf/libperf.so.0.0.1
+  $
+
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Michael Petlan <mpetlan@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/20190721112506.12306-25-jolsa@kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/lib/Makefile    | 20 +++++++++++++++++---
+ tools/perf/lib/libperf.map |  4 ++++
+ 2 files changed, 21 insertions(+), 3 deletions(-)
+
+diff --git a/tools/perf/lib/Makefile b/tools/perf/lib/Makefile
+index 33046e7c6a2a..cd571ec648ad 100644
+--- a/tools/perf/lib/Makefile
++++ b/tools/perf/lib/Makefile
+@@ -1,6 +1,10 @@
+ # SPDX-License-Identifier: (LGPL-2.1 OR BSD-2-Clause)
+ # Most of this file is copied from tools/lib/bpf/Makefile
+ 
++LIBPERF_VERSION = 0
++LIBPERF_PATCHLEVEL = 0
++LIBPERF_EXTRAVERSION = 1
++
+ MAKEFLAGS += --no-print-directory
+ 
+ ifeq ($(srctree),)
+@@ -47,7 +51,13 @@ all:
+ export srctree OUTPUT CC LD CFLAGS V
+ include $(srctree)/tools/build/Makefile.include
+ 
+-LIBPERF_SO := $(OUTPUT)libperf.so
++VERSION_SCRIPT := libperf.map
++
++PATCHLEVEL    = $(LIBPERF_PATCHLEVEL)
++EXTRAVERSION  = $(LIBPERF_EXTRAVERSION)
++VERSION       = $(LIBPERF_VERSION).$(LIBPERF_PATCHLEVEL).$(LIBPERF_EXTRAVERSION)
++
++LIBPERF_SO := $(OUTPUT)libperf.so.$(VERSION)
+ LIBPERF_A  := $(OUTPUT)libperf.a
+ LIBPERF_IN := $(OUTPUT)libperf-in.o
+ 
+@@ -58,7 +68,11 @@ $(LIBPERF_A): $(LIBPERF_IN)
+ 	$(QUIET_AR)$(RM) $@ && $(AR) rcs $@ $(LIBPERF_IN)
+ 
+ $(LIBPERF_SO): $(LIBPERF_IN)
+-	$(QUIET_LINK)$(CC) --shared -Wl,-soname,libperf.so $^ -o $@
++	$(QUIET_LINK)$(CC) --shared -Wl,-soname,libperf.so \
++                                    -Wl,--version-script=$(VERSION_SCRIPT) $^ -o $@
++	@ln -sf $(@F) $(OUTPUT)libperf.so
++	@ln -sf $(@F) $(OUTPUT)libperf.so.$(LIBPERF_VERSION)
++
+ 
+ libs: $(LIBPERF_A) $(LIBPERF_SO)
+ 
+@@ -67,7 +81,7 @@ all: fixdep
+ 
+ clean:
+ 	$(call QUIET_CLEAN, libperf) $(RM) $(LIBPERF_A) \
+-                *.o *~ *.a *.so .*.d .*.cmd LIBPERF-CFLAGS
++                *.o *~ *.a *.so *.so.$(VERSION) *.so.$(LIBPERF_VERSION) .*.d .*.cmd LIBPERF-CFLAGS
+ 
+ FORCE:
+ 
+diff --git a/tools/perf/lib/libperf.map b/tools/perf/lib/libperf.map
+new file mode 100644
+index 000000000000..a8e913988edf
+--- /dev/null
++++ b/tools/perf/lib/libperf.map
+@@ -0,0 +1,4 @@
++LIBPERF_0.0.1 {
++	local:
++		*;
++};
