@@ -2,135 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CAC9D7B110
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:01:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8563F7B115
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:02:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728648AbfG3SBq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 14:01:46 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:43523 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726174AbfG3SBq (ORCPT
+        id S1729583AbfG3SB7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 14:01:59 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:35023 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728722AbfG3SB5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 14:01:46 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6UI1dJp3322030
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Tue, 30 Jul 2019 11:01:39 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6UI1dJp3322030
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019071901; t=1564509699;
-        bh=1OlgqSvUGeBROryyBiZsTZTNNaumYpmf4gr3ODSVCdA=;
-        h=Date:From:Cc:Reply-To:To:Subject:From;
-        b=oqnkJpatR7SiOJdUq6eH2i6vlpQs0gOdJlqcQLupUmLei6e4A05XTJ4Y1hgkFpQ6Z
-         OQfzCC1GV3yHAS6oELY1FqNy4X0y6bdehvBOoLBS/vGtZ5rRjDqK4MvKcDRNEnT68+
-         GA+/x7sm+3B3t+bwV+xxN16zv9jNwvGj6plvxYw55e3YmTQBAZMD7qZ7g9m7qzykKa
-         vcQAlIZFe0/IrMY9vifiSjmD0G2kMLd5Ne/UeM+L9O9tSUwXh0tb41rvb7JSgZ8yoI
-         3Amrk4g0bFmhMF+CTXIDBF1fNCSjalgmeSOr2w2HIu8VjMIILJqEJNb7cfOJi0NHJ1
-         btnYp39qvAv1A==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6UI1cE43322027;
-        Tue, 30 Jul 2019 11:01:38 -0700
-Date:   Tue, 30 Jul 2019 11:01:38 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-p0l0rlvq19v5zf8qc2x2itow@git.kernel.org>
-Cc:     namhyung@kernel.org, mingo@kernel.org, tglx@linutronix.de,
-        jolsa@kernel.org, acme@redhat.com, adrian.hunter@intel.com,
-        linux-kernel@vger.kernel.org, lclaudio@redhat.com, hpa@zytor.com
-Reply-To: mingo@kernel.org, tglx@linutronix.de, namhyung@kernel.org,
-          jolsa@kernel.org, acme@redhat.com, hpa@zytor.com,
-          adrian.hunter@intel.com, lclaudio@redhat.com,
-          linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf trace beauty: Beautify 'sendto's sockaddr arg
-Git-Commit-ID: 3c475bc021be1f5e0a00dc1a13dc85ce7924a7d6
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 30 Jul 2019 14:01:57 -0400
+Received: by mail-io1-f68.google.com with SMTP id m24so130245300ioo.2
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 11:01:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=NcAR3GqqxpAusQVog8Fhc1feuDH351bpfQTCcdx/nxs=;
+        b=STnYbrirbKr1yAmc2nPF92sj0DFq3tq71Bs1c1x0ibWy4hdKDtZ8Tq4VPh1Kn85/6B
+         w6lcKTR8uT01woEtqCg9jLmTWvC64bWHDataDtPgVlKtQQaaffkWMeVo4I/xwBfioTRL
+         EcR2XKnbW3Nia+1xvzACV2DzMbUJEtS9EKIhY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=NcAR3GqqxpAusQVog8Fhc1feuDH351bpfQTCcdx/nxs=;
+        b=jfxFdt40sXMtHcxZEGQuTmHXCBRxxtvdfAqhiJkWpcPxNCQBXPWfwpc7ArHsfEnrcF
+         G5IW06NAO82MkIwLte9gBw6yX1p4A0RA2EYvGQnQDAh+o2DY9J+tvoybr976h4xUlqzi
+         NtdDXnAT5nRCOyrOhsNmdYruPbWWZasuMHnFbZeGTYgnrruJr6UFWSpsIej2scZrmNN0
+         ISV5k+JgTCO6CgVXnklkS3cTSN2g+4XPGmtNbxVoqEgOd7P2Hkazkr61TZSb+4lE3UoS
+         VvF6ja4NZ611YmfbtpSyh6h489bcPBgREjHwMOTrXYZZvsjXga+eCVEVXBTJl6+3IHir
+         8VeA==
+X-Gm-Message-State: APjAAAUA2oLGphDipHKw6uM90HXBmMzHR32f7pxF6STyxWLFxHm8bQ8g
+        OsDc0/okb2xGGoBGjj1rgmceFOq+26o=
+X-Google-Smtp-Source: APXvYqxIqoRuiHLLcGKnBahSPUOJF6C5DU2Hbo29rzmy7JD4c4gC643Kfj8XGG+Js1EOwMWWcDg/kA==
+X-Received: by 2002:a6b:fb0f:: with SMTP id h15mr3657309iog.266.1564509715609;
+        Tue, 30 Jul 2019 11:01:55 -0700 (PDT)
+Received: from mail-io1-f50.google.com (mail-io1-f50.google.com. [209.85.166.50])
+        by smtp.gmail.com with ESMTPSA id l5sm118829382ioq.83.2019.07.30.11.01.54
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Jul 2019 11:01:54 -0700 (PDT)
+Received: by mail-io1-f50.google.com with SMTP id k8so130266059iot.1
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 11:01:54 -0700 (PDT)
+X-Received: by 2002:a6b:5103:: with SMTP id f3mr103345503iob.142.1564509714317;
+ Tue, 30 Jul 2019 11:01:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-X-Spam-Status: No, score=-0.2 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
-        autolearn=no autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+References: <20190730173444.56741-1-mka@chromium.org>
+In-Reply-To: <20190730173444.56741-1-mka@chromium.org>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Tue, 30 Jul 2019 11:01:42 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=Wub9Wkc5t4iQRjBK8R_d_oh4PoHPwLHb4T5+Meij7sSg@mail.gmail.com>
+Message-ID: <CAD=FV=Wub9Wkc5t4iQRjBK8R_d_oh4PoHPwLHb4T5+Meij7sSg@mail.gmail.com>
+Subject: Re: [PATCH] ARM: dts: rockchip: A few fixes for veyron-{fievel,tiger}
+To:     Matthias Kaehlcke <mka@chromium.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Heiko Stuebner <heiko@sntech.de>, devicetree@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  3c475bc021be1f5e0a00dc1a13dc85ce7924a7d6
-Gitweb:     https://git.kernel.org/tip/3c475bc021be1f5e0a00dc1a13dc85ce7924a7d6
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Tue, 16 Jul 2019 17:33:39 -0300
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Mon, 29 Jul 2019 18:34:41 -0300
+Hi,
 
-perf trace beauty: Beautify 'sendto's sockaddr arg
+On Tue, Jul 30, 2019 at 10:34 AM Matthias Kaehlcke <mka@chromium.org> wrote:
+>
+> @@ -130,12 +138,13 @@
+>                         regulator-max-microvolt = <1800000>;
+>                         regulator-name = "vdd18_lcdt";
+>                         regulator-state-mem {
+> -                               regulator-on-in-suspend;
+> +                               regulator-off-in-suspend;
+>                                 regulator-suspend-microvolt = <1800000>;
 
-By just writing the collector in the augmented_raw_syscalls.c BPF
-program:
+Please remove "regulator-suspend-microvolt = <1800000>;" which doesn't
+make sense once you have "regulator-off-in-suspend".
 
-  # perf trace -e sendto
-  <SNIP>
-  ping/23492 sendto(3, 0x56253bbef700, 64, NONE, { .family: PF_INET, port: 0, addr: 10.10.161.32 }, 0x10) = 64
-  ping/23492 sendto(3, 0x56253bbef700, 64, NONE, { .family: PF_INET, port: 0, addr: 10.10.161.32 }, 0x10) = 64
-  ping/23492 sendto(3, 0x56253bbef700, 64, NONE, { .family: PF_INET, port: 0, addr: 10.10.161.32 }, 0x10) = 64
-  ping/23492 sendto(3, 0x56253bbef700, 64, NONE, { .family: PF_INET, port: 0, addr: 10.10.161.32 }, 0x10) = 64
-  Socket Thread/3573 sendto(247, 0x7fb32d49c000, 120, NONE, { .family: PF_UNSPEC }, NULL) = 120
-  DNS Res~er #18/11374 sendto(242, 0x7fb342cfe420, 20, NONE, { .family: PF_NETLINK }, 0xc) = 20
-  DNS Res~er #18/11374 sendto(242, 0x7fb342cfcca0, 42, MSG_NOSIGNAL, { .family: PF_UNSPEC }, NULL) = 42
-  DNS Res~er #18/11374 sendto(242, 0x7fb342cfcccc, 42, MSG_NOSIGNAL, { .family: PF_UNSPEC }, NULL) = 42
-  ping/23492 sendto(3, 0x56253bbef700, 64, NONE, { .family: PF_INET, port: 0, addr: 10.10.161.32 }, 0x10) = 64
-  Socket Thread/3573 sendto(242, 0x7fb308bb1c08, 296, NONE, { .family: PF_UNSPEC }, NULL) = 296
-  ping/23492 sendto(3, 0x56253bbef700, 64, NONE, { .family: PF_INET, port: 0, addr: 10.10.161.32 }, 0x10) = 64
-  ping/23492 sendto(3, 0x56253bbef700, 64, NONE, { .family: PF_INET, port: 0, addr: 10.10.161.32 }, 0x10) = 64
-  ping/23492 sendto(3, 0x56253bbef700, 64, NONE, { .family: PF_INET, port: 0, addr: 10.10.161.32 }, 0x10) = 64
-  ping/23492 sendto(3, 0x56253bbef700, 64, NONE, { .family: PF_INET, port: 0, addr: 10.10.161.32 }, 0x10) = 64
-  ^C
-  #
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Luis Cláudio Gonçalves <lclaudio@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-p0l0rlvq19v5zf8qc2x2itow@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/examples/bpf/augmented_raw_syscalls.c | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+>                         };
+>                 };
+>
+> -               /* This is not a pwren anymore, but the real power supply,
+> +               /*
+> +                * This is not a pwren anymore, but the real power supply,
+>                  * vdd10_lcd for HDMI_AVDD_1V0
+>                  */
+>                 vdd10_lcd: LDO_REG7 {
+> @@ -145,7 +154,7 @@
+>                         regulator-max-microvolt = <1000000>;
+>                         regulator-name = "vdd10_lcd";
+>                         regulator-state-mem {
+> -                               regulator-on-in-suspend;
+> +                               regulator-off-in-suspend;
+>                                 regulator-suspend-microvolt = <1000000>;
 
-diff --git a/tools/perf/examples/bpf/augmented_raw_syscalls.c b/tools/perf/examples/bpf/augmented_raw_syscalls.c
-index d7a292d7ee2f..9c2228b01ee6 100644
---- a/tools/perf/examples/bpf/augmented_raw_syscalls.c
-+++ b/tools/perf/examples/bpf/augmented_raw_syscalls.c
-@@ -142,6 +142,27 @@ int sys_enter_connect(struct syscall_enter_args *args)
- 	return perf_event_output(args, &__augmented_syscalls__, BPF_F_CURRENT_CPU, augmented_args, len + socklen);
- }
- 
-+SEC("!syscalls:sys_enter_sendto")
-+int sys_enter_sendto(struct syscall_enter_args *args)
-+{
-+	int key = 0;
-+	struct augmented_args_payload *augmented_args = bpf_map_lookup_elem(&augmented_args_tmp, &key);
-+	const void *sockaddr_arg = (const void *)args->args[4];
-+	unsigned int socklen = args->args[5];
-+	unsigned int len = sizeof(augmented_args->args);
-+
-+        if (augmented_args == NULL)
-+                return 1; /* Failure: don't filter */
-+
-+	if (socklen > sizeof(augmented_args->saddr))
-+		socklen = sizeof(augmented_args->saddr);
-+
-+	probe_read(&augmented_args->saddr, socklen, sockaddr_arg);
-+
-+	/* If perf_event_output fails, return non-zero so that it gets recorded unaugmented */
-+	return perf_event_output(args, &__augmented_syscalls__, BPF_F_CURRENT_CPU, augmented_args, len + socklen);
-+}
-+
- SEC("!syscalls:sys_enter_open")
- int sys_enter_open(struct syscall_enter_args *args)
- {
+Please remove "regulator-suspend-microvolt = <1000000>;" which doesn't
+make sense once you have "regulator-off-in-suspend".
+
+
+>                         };
+>
+> @@ -159,7 +168,7 @@
+>                         regulator-max-microvolt = <3300000>;
+>                         regulator-name = "vcc33_ccd";
+>                         regulator-state-mem {
+> -                               regulator-on-in-suspend;
+> +                               regulator-off-in-suspend;
+>                                 regulator-suspend-microvolt = <3300000>;
+
+Please remove "regulator-suspend-microvolt = <3300000>;" which doesn't
+make sense once you have "regulator-off-in-suspend".
+
+
+Other than those things, this patch looks good to me and feel free to
+add my Reviewed-by.  NOTE: when I tried applying this to my tree git
+complained and I had to apply manually.  Could you try sending this
+patch atop Heiko's for-next tree?  The yell I got:
+
+error: sha1 information is lacking or useless
+(arch/arm/boot/dts/rk3288-veyron-fievel.dts).
+error: could not build fake ancestor
+
+
+-Doug
