@@ -2,171 +2,288 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 457F37B2A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:51:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D3DD97B2AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:52:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388388AbfG3SuJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 14:50:09 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:47182 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388056AbfG3SuJ (ORCPT
+        id S2388450AbfG3SwC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 14:52:02 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:59795 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388066AbfG3SwC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 14:50:09 -0400
-Received: from mail-pl1-f200.google.com ([209.85.214.200])
-        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <kai.heng.feng@canonical.com>)
-        id 1hsXCI-0008Q5-O6
-        for linux-kernel@vger.kernel.org; Tue, 30 Jul 2019 18:50:06 +0000
-Received: by mail-pl1-f200.google.com with SMTP id g18so35837480plj.19
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 11:50:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=8AX9oe3ZacxjT4EiPIUnCdg/jOWgIIX7DxG+k/pFbS8=;
-        b=lL1qS6aD+30s/o8taL9axehgYi0B+Y1iekfC9eXrTmSjrTNPj1ApbCHEpcYBBJcC9C
-         w3k6BS+dGs+PBfaMOwlEmMWUKuaFQwyNoKhD+M4fPRgC/bRu4ic8pxk7CekBxdT1d4Ot
-         1akODstW4RS1wsagyzuKGDOCs8Pdb2qUOBfsQpTWrPeEikhWLqin/hZJH9mqQYLCmMuo
-         a+wuhVCHFcP8dvppjZ9PV2qp6Xy3EgOJYYV4kMNR2L+FyU+8Irub1wnBqPu9WSGXsssA
-         q72tX4M9iZrDBua9EI/OP6uJdW8mrGKg2c5Ex/WNMOOtsupAXNzFk9qzmGUdx2tmsOZr
-         vk7g==
-X-Gm-Message-State: APjAAAVKFrscDwPj59iSdKZDm4rwKjl1u7SaW4EaHEOATe2rgMQKFV5a
-        E0dc1yviUR3g8uqnVnQPn+XZU4xt4k0nBto4aaRg0mjkAo38YVM4LICdKbPCndxEP838AMY3n8t
-        KfqtzCfwOdFBPD5h2/H8Ub0GhF9hF1yPqutc5bMoT1g==
-X-Received: by 2002:a17:902:6b81:: with SMTP id p1mr113381986plk.91.1564512605415;
-        Tue, 30 Jul 2019 11:50:05 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqxvCU5ize3AwSJB2TM51RQU/Q2wBF3GrSjiotc5LGGtRBCPjWjkrkKo6GCfdHilGoejjSBy7g==
-X-Received: by 2002:a17:902:6b81:: with SMTP id p1mr113381952plk.91.1564512605139;
-        Tue, 30 Jul 2019 11:50:05 -0700 (PDT)
-Received: from 2001-b011-380f-37d3-91ca-5fad-3233-fb26.dynamic-ip6.hinet.net (2001-b011-380f-37d3-91ca-5fad-3233-fb26.dynamic-ip6.hinet.net. [2001:b011:380f:37d3:91ca:5fad:3233:fb26])
-        by smtp.gmail.com with ESMTPSA id h1sm88791118pfo.152.2019.07.30.11.50.02
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Jul 2019 11:50:04 -0700 (PDT)
-Content-Type: text/plain;
-        charset=us-ascii;
-        delsp=yes;
-        format=flowed
-Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.11\))
-Subject: Re: [Regression] Commit "nvme/pci: Use host managed power state for
- suspend" has problems
-From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
-In-Reply-To: <100ba4aff1c6434a81e47774ab4acddc@AUSX13MPC105.AMER.DELL.COM>
-Date:   Wed, 31 Jul 2019 02:50:01 +0800
-Cc:     Keith Busch <kbusch@kernel.org>, rjw@rjwysocki.net,
-        keith.busch@intel.com, hch@lst.de, sagi@grimberg.me,
-        linux-nvme@lists.infradead.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, rajatja@google.com
-Content-Transfer-Encoding: 7bit
-Message-Id: <8246360B-F7D9-42EB-94FC-82995A769E28@canonical.com>
-References: <2332799.izEFUvJP67@kreacher>
- <4323ed84dd07474eab65699b4d007aaf@AUSX13MPC105.AMER.DELL.COM>
- <CAJZ5v0iDQ4=kTUgW94tKGt7oJzA_3uVU_M6HAMbNCRXwp_do8A@mail.gmail.com>
- <47415939.KV5G6iaeJG@kreacher> <20190730144134.GA12844@localhost.localdomain>
- <100ba4aff1c6434a81e47774ab4acddc@AUSX13MPC105.AMER.DELL.COM>
-To:     Mario.Limonciello@dell.com
-X-Mailer: Apple Mail (2.3445.104.11)
+        Tue, 30 Jul 2019 14:52:02 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6UIonfX3335707
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Tue, 30 Jul 2019 11:50:50 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6UIonfX3335707
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019071901; t=1564512650;
+        bh=k7Sq4+EW5Y4vXc8rB45Ch/nurUvxc6mTv2n4IqE0nGQ=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=BeIB81q94D5g0X5mWfsvlsDLTqj7duXk47cIfnvsULvKhmFEyffLO3j5dnh1qUn+o
+         dfTtRNIEjFVOflJlOTuLJrRGNH/kk3DjTjkXFrckciAwS/XUv18bVHnNn7gxThbZb7
+         i3hZq8yo9PbRAU5lp1c1oQ0SHO7XA/bqmN5bpypupSl5HsqBLElYYO3nw21lDwdzRD
+         HCnWeY1bml2flHKiuD3+53pfaTLYb1MydXRbT0Y19mmrWuzaN21pJKhIShSOLwfdQy
+         gvO2k3GyR8DYAOfHaTj0dXhSR+sv4fRRWZKgU9kdbrRNy1KrFT4d3uvFKcMGz9KNHl
+         lNOxHmFUPQnXg==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6UIon9U3335704;
+        Tue, 30 Jul 2019 11:50:49 -0700
+Date:   Tue, 30 Jul 2019 11:50:49 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
+Message-ID: <tip-9dfcb7599084382884fec6d0fd9ca33945fa7578@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, jolsa@kernel.org,
+        alexander.shishkin@linux.intel.com, mingo@kernel.org,
+        acme@redhat.com, tglx@linutronix.de,
+        alexey.budankov@linux.intel.com, ak@linux.intel.com,
+        peterz@infradead.org, hpa@zytor.com, namhyung@kernel.org,
+        mpetlan@redhat.com
+Reply-To: ak@linux.intel.com, peterz@infradead.org, tglx@linutronix.de,
+          alexey.budankov@linux.intel.com, namhyung@kernel.org,
+          mpetlan@redhat.com, hpa@zytor.com, linux-kernel@vger.kernel.org,
+          jolsa@kernel.org, mingo@kernel.org, acme@redhat.com,
+          alexander.shishkin@linux.intel.com
+In-Reply-To: <20190721112506.12306-59-jolsa@kernel.org>
+References: <20190721112506.12306-59-jolsa@kernel.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] libperf: Move fd array from perf's evsel to
+ lobperf's perf_evsel class
+Git-Commit-ID: 9dfcb7599084382884fec6d0fd9ca33945fa7578
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-0.2 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
+        autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-at 01:14, <Mario.Limonciello@dell.com> <Mario.Limonciello@dell.com> wrote:
+Commit-ID:  9dfcb7599084382884fec6d0fd9ca33945fa7578
+Gitweb:     https://git.kernel.org/tip/9dfcb7599084382884fec6d0fd9ca33945fa7578
+Author:     Jiri Olsa <jolsa@kernel.org>
+AuthorDate: Sun, 21 Jul 2019 13:24:45 +0200
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Mon, 29 Jul 2019 18:34:46 -0300
 
->> -----Original Message-----
->> From: Keith Busch <kbusch@kernel.org>
->> Sent: Tuesday, July 30, 2019 9:42 AM
->> To: Rafael J. Wysocki
->> Cc: Busch, Keith; Limonciello, Mario; Kai-Heng Feng; Christoph Hellwig;  
->> Sagi
->> Grimberg; linux-nvme; Linux PM; Linux Kernel Mailing List; Rajat Jain
->> Subject: Re: [Regression] Commit "nvme/pci: Use host managed power state  
->> for
->> suspend" has problems
->>
->>
->> [EXTERNAL EMAIL]
->>
->> On Tue, Jul 30, 2019 at 03:45:31AM -0700, Rafael J. Wysocki wrote:
->>> So I can reproduce this problem with plain 5.3-rc1 and the patch below  
->>> fixes it.
->>>
->>> Also Mario reports that the same patch needs to be applied for his 9380  
->>> to
->> reach
->>> SLP_S0 after some additional changes under testing/review now, so here it
->> goes.
->>> [The changes mentioned above are in the pm-s2idle-testing branch in the
->>>  linux-pm.git tree at kernel.org.]
->>>
->>> ---
->>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->>> Subject: [PATCH] nvme-pci: Do not prevent PCI bus-level PM from being  
->>> used
->>>
->>> One of the modifications made by commit d916b1be94b6 ("nvme-pci: use
->>> host managed power state for suspend") was adding a pci_save_state()
->>> call to nvme_suspend() in order to prevent the PCI bus-level PM from
->>> being applied to the suspended NVMe devices, but that causes the NVMe
->>> drive (PC401 NVMe SK hynix 256GB) in my Dell XPS13 9380 to prevent
->>> the SoC from reaching package idle states deeper than PC3, which is
->>> way insufficient for system suspend.
->>>
->>> Fix this issue by removing the pci_save_state() call in question.
->>
->> I'm okay with the patch if we can get confirmation this doesn't break
->> any previously tested devices. I recall we add the pci_save_state() in
->> the first place specifically to prevent PCI D3 since that was reported
->> to break some devices' low power settings. Kai-Heng or Mario, any input
->> here?
->
-> It's entirely possible that in fixing the shutdown/flush/send NVME power  
-> state command
-> that D3 will be OK now but it will take some time to double check across  
-> the variety of disks that
-> we tested before.
+libperf: Move fd array from perf's evsel to lobperf's perf_evsel class
 
-Just did a quick test, this patch regress SK Hynix BC501, the SoC stays at  
-PC3 once the patch is applied.
+Move the fd array from perf's evsel to libperf's perf_evsel class.
 
-Kai-Heng
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Michael Petlan <mpetlan@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/20190721112506.12306-59-jolsa@kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/lib/include/internal/evsel.h |  1 +
+ tools/perf/util/bpf-loader.c            |  2 +-
+ tools/perf/util/evlist.c                | 10 +++++-----
+ tools/perf/util/evsel.c                 | 30 +++++++++++++++---------------
+ tools/perf/util/evsel.h                 |  1 -
+ 5 files changed, 22 insertions(+), 22 deletions(-)
 
->
-> What's kernel policy in terms of adding a module parameter and removing  
-> it later?  My gut
-> reaction is I'd like to see that behind a module parameter and if we see  
-> that all the disks
-> are actually OK we can potentially rip it out in a future release.  Also  
-> gives us a knob for easier
-> wider testing outside of the 4 of us.
->
->>> Fixes: d916b1be94b6 ("nvme-pci: use host managed power state for  
->>> suspend")
->>> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->>> ---
->>>  drivers/nvme/host/pci.c |    8 +-------
->>>  1 file changed, 1 insertion(+), 7 deletions(-)
->>>
->>> Index: linux-pm/drivers/nvme/host/pci.c
->> ==============================================================
->> =====
->>> --- linux-pm.orig/drivers/nvme/host/pci.c
->>> +++ linux-pm/drivers/nvme/host/pci.c
->>> @@ -2897,14 +2897,8 @@ static int nvme_suspend(struct device *d
->>>  		nvme_dev_disable(ndev, true);
->>>  		ctrl->npss = 0;
->>>  		ret = 0;
->>> -		goto unfreeze;
->>>  	}
->>> -	/*
->>> -	 * A saved state prevents pci pm from generically controlling the
->>> -	 * device's power. If we're using protocol specific settings, we don't
->>> -	 * want pci interfering.
->>> -	 */
->>> -	pci_save_state(pdev);
->>> +
->>>  unfreeze:
->>>  	nvme_unfreeze(ctrl);
->>>  	return ret;
-
-
+diff --git a/tools/perf/lib/include/internal/evsel.h b/tools/perf/lib/include/internal/evsel.h
+index 8340fd883a3d..df4078194e9a 100644
+--- a/tools/perf/lib/include/internal/evsel.h
++++ b/tools/perf/lib/include/internal/evsel.h
+@@ -14,6 +14,7 @@ struct perf_evsel {
+ 	struct perf_cpu_map	*cpus;
+ 	struct perf_cpu_map	*own_cpus;
+ 	struct perf_thread_map	*threads;
++	struct xyarray		*fd;
+ };
+ 
+ #endif /* __LIBPERF_INTERNAL_EVSEL_H */
+diff --git a/tools/perf/util/bpf-loader.c b/tools/perf/util/bpf-loader.c
+index 4df8bdea14ac..9c219d413e57 100644
+--- a/tools/perf/util/bpf-loader.c
++++ b/tools/perf/util/bpf-loader.c
+@@ -1403,7 +1403,7 @@ static int
+ apply_config_evsel_for_key(const char *name, int map_fd, void *pkey,
+ 			   struct evsel *evsel)
+ {
+-	struct xyarray *xy = evsel->fd;
++	struct xyarray *xy = evsel->core.fd;
+ 	struct perf_event_attr *attr;
+ 	unsigned int key, events;
+ 	bool check_pass = false;
+diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
+index 4433b656cfb7..e4b1a9914ea4 100644
+--- a/tools/perf/util/evlist.c
++++ b/tools/perf/util/evlist.c
+@@ -40,7 +40,7 @@
+ int sigqueue(pid_t pid, int sig, const union sigval value);
+ #endif
+ 
+-#define FD(e, x, y) (*(int *)xyarray__entry(e->fd, x, y))
++#define FD(e, x, y) (*(int *)xyarray__entry(e->core.fd, x, y))
+ #define SID(e, x, y) xyarray__entry(e->sample_id, x, y)
+ 
+ void evlist__init(struct evlist *evlist, struct perf_cpu_map *cpus,
+@@ -321,7 +321,7 @@ void evlist__disable(struct evlist *evlist)
+ 	struct evsel *pos;
+ 
+ 	evlist__for_each_entry(evlist, pos) {
+-		if (pos->disabled || !perf_evsel__is_group_leader(pos) || !pos->fd)
++		if (pos->disabled || !perf_evsel__is_group_leader(pos) || !pos->core.fd)
+ 			continue;
+ 		evsel__disable(pos);
+ 	}
+@@ -334,7 +334,7 @@ void evlist__enable(struct evlist *evlist)
+ 	struct evsel *pos;
+ 
+ 	evlist__for_each_entry(evlist, pos) {
+-		if (!perf_evsel__is_group_leader(pos) || !pos->fd)
++		if (!perf_evsel__is_group_leader(pos) || !pos->core.fd)
+ 			continue;
+ 		evsel__enable(pos);
+ 	}
+@@ -353,7 +353,7 @@ static int perf_evlist__enable_event_cpu(struct evlist *evlist,
+ 	int thread;
+ 	int nr_threads = perf_evlist__nr_threads(evlist, evsel);
+ 
+-	if (!evsel->fd)
++	if (!evsel->core.fd)
+ 		return -EINVAL;
+ 
+ 	for (thread = 0; thread < nr_threads; thread++) {
+@@ -371,7 +371,7 @@ static int perf_evlist__enable_event_thread(struct evlist *evlist,
+ 	int cpu;
+ 	int nr_cpus = cpu_map__nr(evlist->core.cpus);
+ 
+-	if (!evsel->fd)
++	if (!evsel->core.fd)
+ 		return -EINVAL;
+ 
+ 	for (cpu = 0; cpu < nr_cpus; cpu++) {
+diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+index f7758ce0dd5c..8d087d0e55f1 100644
+--- a/tools/perf/util/evsel.c
++++ b/tools/perf/util/evsel.c
+@@ -90,7 +90,7 @@ set_methods:
+ 	return 0;
+ }
+ 
+-#define FD(e, x, y) (*(int *)xyarray__entry(e->fd, x, y))
++#define FD(e, x, y) (*(int *)xyarray__entry(e->core.fd, x, y))
+ 
+ int __perf_evsel__sample_size(u64 sample_type)
+ {
+@@ -1155,9 +1155,9 @@ void perf_evsel__config(struct evsel *evsel, struct record_opts *opts,
+ 
+ static int perf_evsel__alloc_fd(struct evsel *evsel, int ncpus, int nthreads)
+ {
+-	evsel->fd = xyarray__new(ncpus, nthreads, sizeof(int));
++	evsel->core.fd = xyarray__new(ncpus, nthreads, sizeof(int));
+ 
+-	if (evsel->fd) {
++	if (evsel->core.fd) {
+ 		int cpu, thread;
+ 		for (cpu = 0; cpu < ncpus; cpu++) {
+ 			for (thread = 0; thread < nthreads; thread++) {
+@@ -1166,7 +1166,7 @@ static int perf_evsel__alloc_fd(struct evsel *evsel, int ncpus, int nthreads)
+ 		}
+ 	}
+ 
+-	return evsel->fd != NULL ? 0 : -ENOMEM;
++	return evsel->core.fd != NULL ? 0 : -ENOMEM;
+ }
+ 
+ static int perf_evsel__run_ioctl(struct evsel *evsel,
+@@ -1174,8 +1174,8 @@ static int perf_evsel__run_ioctl(struct evsel *evsel,
+ {
+ 	int cpu, thread;
+ 
+-	for (cpu = 0; cpu < xyarray__max_x(evsel->fd); cpu++) {
+-		for (thread = 0; thread < xyarray__max_y(evsel->fd); thread++) {
++	for (cpu = 0; cpu < xyarray__max_x(evsel->core.fd); cpu++) {
++		for (thread = 0; thread < xyarray__max_y(evsel->core.fd); thread++) {
+ 			int fd = FD(evsel, cpu, thread),
+ 			    err = ioctl(fd, ioc, arg);
+ 
+@@ -1283,8 +1283,8 @@ int perf_evsel__alloc_id(struct evsel *evsel, int ncpus, int nthreads)
+ 
+ static void perf_evsel__free_fd(struct evsel *evsel)
+ {
+-	xyarray__delete(evsel->fd);
+-	evsel->fd = NULL;
++	xyarray__delete(evsel->core.fd);
++	evsel->core.fd = NULL;
+ }
+ 
+ static void perf_evsel__free_id(struct evsel *evsel)
+@@ -1309,8 +1309,8 @@ void perf_evsel__close_fd(struct evsel *evsel)
+ {
+ 	int cpu, thread;
+ 
+-	for (cpu = 0; cpu < xyarray__max_x(evsel->fd); cpu++)
+-		for (thread = 0; thread < xyarray__max_y(evsel->fd); ++thread) {
++	for (cpu = 0; cpu < xyarray__max_x(evsel->core.fd); cpu++)
++		for (thread = 0; thread < xyarray__max_y(evsel->core.fd); ++thread) {
+ 			close(FD(evsel, cpu, thread));
+ 			FD(evsel, cpu, thread) = -1;
+ 		}
+@@ -1555,7 +1555,7 @@ static int get_group_fd(struct evsel *evsel, int cpu, int thread)
+ 	 * Leader must be already processed/open,
+ 	 * if not it's a bug.
+ 	 */
+-	BUG_ON(!leader->fd);
++	BUG_ON(!leader->core.fd);
+ 
+ 	fd = FD(leader, cpu, thread);
+ 	BUG_ON(fd == -1);
+@@ -1865,7 +1865,7 @@ int evsel__open(struct evsel *evsel, struct perf_cpu_map *cpus,
+ 	else
+ 		nthreads = threads->nr;
+ 
+-	if (evsel->fd == NULL &&
++	if (evsel->core.fd == NULL &&
+ 	    perf_evsel__alloc_fd(evsel, cpus->nr, nthreads) < 0)
+ 		return -ENOMEM;
+ 
+@@ -2075,7 +2075,7 @@ out_close:
+ 
+ void perf_evsel__close(struct evsel *evsel)
+ {
+-	if (evsel->fd == NULL)
++	if (evsel->core.fd == NULL)
+ 		return;
+ 
+ 	perf_evsel__close_fd(evsel);
+@@ -3048,8 +3048,8 @@ static int store_evsel_ids(struct evsel *evsel, struct evlist *evlist)
+ {
+ 	int cpu, thread;
+ 
+-	for (cpu = 0; cpu < xyarray__max_x(evsel->fd); cpu++) {
+-		for (thread = 0; thread < xyarray__max_y(evsel->fd);
++	for (cpu = 0; cpu < xyarray__max_x(evsel->core.fd); cpu++) {
++		for (thread = 0; thread < xyarray__max_y(evsel->core.fd);
+ 		     thread++) {
+ 			int fd = FD(evsel, cpu, thread);
+ 
+diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
+index 1f9f66fe43f4..6056ce64bfdf 100644
+--- a/tools/perf/util/evsel.h
++++ b/tools/perf/util/evsel.h
+@@ -104,7 +104,6 @@ struct evsel {
+ 	struct perf_evsel	core;
+ 	struct evlist	*evlist;
+ 	char			*filter;
+-	struct xyarray		*fd;
+ 	struct xyarray		*sample_id;
+ 	u64			*id;
+ 	struct perf_counts	*counts;
