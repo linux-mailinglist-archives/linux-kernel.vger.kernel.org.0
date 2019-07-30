@@ -2,228 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF4C87B19E
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:19:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D364F7B1A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:19:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729326AbfG3SS7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 14:18:59 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:55541 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729269AbfG3SSy (ORCPT
+        id S2388262AbfG3STW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 14:19:22 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:34909 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387845AbfG3STT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 14:18:54 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6UIIgrV3326787
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Tue, 30 Jul 2019 11:18:42 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6UIIgrV3326787
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019071901; t=1564510723;
-        bh=9q1ANxLLGirwIn9gcyATJsNx3oJ4QsGskdhYaoHp+e8=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=c/Eb6AsBTbf9lkoBbdFiouDZpd96oB5im+53tgih85MYLMJOd+ivweFNL/ntIsDDq
-         7eUg+dLYLjuwyboNuFnmmBRb2kKZgzUkaVjkiNLF8JGNi7GKAw9PMQ3guby702oOHP
-         YZCtKEyG+XZlrSgek6aZwOkqpYU1yr3NiEC92B9itTEfRxJle8S8WUw8nXLttajHvx
-         6OkEY/0eaZvNd7tUFVFtKOCluXHhIirUcaUTvZ9vqLigzEqZtdFZFcKsJ+70kcuj29
-         cgowAXPSYpQavlSLBQMii/SrvgOs0Gwj1DwdzfLMkhuhwdQAVo7ptATWxWE+zw+FfH
-         TPNN770Cj+L/g==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6UIIgrh3326784;
-        Tue, 30 Jul 2019 11:18:42 -0700
-Date:   Tue, 30 Jul 2019 11:18:42 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
-Message-ID: <tip-9a10bb22897ae9c2aa0ac9c2071f539f406ef942@git.kernel.org>
-Cc:     tglx@linutronix.de, peterz@infradead.org,
-        linux-kernel@vger.kernel.org, mpetlan@redhat.com,
-        namhyung@kernel.org, ak@linux.intel.com, acme@redhat.com,
-        alexander.shishkin@linux.intel.com, mingo@kernel.org,
-        jolsa@kernel.org, alexey.budankov@linux.intel.com, hpa@zytor.com
-Reply-To: tglx@linutronix.de, peterz@infradead.org, mingo@kernel.org,
-          alexander.shishkin@linux.intel.com,
-          alexey.budankov@linux.intel.com, jolsa@kernel.org,
-          namhyung@kernel.org, mpetlan@redhat.com,
-          linux-kernel@vger.kernel.org, acme@redhat.com,
-          ak@linux.intel.com, hpa@zytor.com
-In-Reply-To: <20190721112506.12306-17-jolsa@kernel.org>
-References: <20190721112506.12306-17-jolsa@kernel.org>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf evsel: Rename perf_evsel__disable() to
- evsel__disable()
-Git-Commit-ID: 9a10bb22897ae9c2aa0ac9c2071f539f406ef942
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 30 Jul 2019 14:19:19 -0400
+Received: by mail-pf1-f195.google.com with SMTP id u14so30286874pfn.2
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 11:19:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=WYV3lJkZz1M8QFLTNcbisKstq4q45qxIoF6vMekR4Ik=;
+        b=mZqGk/cUp6ZNJEsrEHgluVspbQqD/bx8uYW6vGDU/FpCW5W4GoxK+4/b1HjJ4bSDCq
+         xyW3ZS0uf0DfYXzWcHQIeKMfCqgFrRDayoLgDTv4QOWbhe8Raxi6hVsR1bQ6j1+njf6I
+         kMOQ/nc0tCcPOfurVrxe/F1hJnYiinkBApcH4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=WYV3lJkZz1M8QFLTNcbisKstq4q45qxIoF6vMekR4Ik=;
+        b=LUn5vnIrWKYxfxpg+DQdV2hdhbcPS52kBHQQ1cPczd+sRoUm61wUMkUWfcRCpMDFSa
+         nGKMKigDTAdpT46jndITriPMG9argZryU+9OKRkvfwY+D59y4RmkksbcAp7mxK1PkBue
+         RLPARFlN8+IjxluXvriSQjSDMfyTXa1YevZeswBTuJzgmn+VqmYrDYh7iRHXKS6iLlC5
+         U02cWyhXPO68MqlBot3F9ICun5o05a6ruDxymfqefimMIe6DZTZfnY4bnA71iVYCaFCJ
+         klZnV8CGVokc3yo/qaFM9uKRHTu1TmnywLPFUKk14UX8vFPb3Lxt/XqTXkDb10uBXynL
+         bjGQ==
+X-Gm-Message-State: APjAAAVu8TlrbTl6wnsAG0sAQWRGm7z/gKmRiIlSB+XYaF1Ffl+WvJbf
+        beKIkKI0p9QPcgnFKvN6ei7jQg==
+X-Google-Smtp-Source: APXvYqw4/yqmb0Rlt+53Fv5Ar1d4LMo3nzvzPjOQ1bEXUP20GHFA0n4fefD4ezGXYZ/+3e25mhoUqg==
+X-Received: by 2002:a17:90a:360c:: with SMTP id s12mr120028251pjb.30.1564510759254;
+        Tue, 30 Jul 2019 11:19:19 -0700 (PDT)
+Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
+        by smtp.gmail.com with ESMTPSA id h12sm79833057pje.12.2019.07.30.11.19.18
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Jul 2019 11:19:18 -0700 (PDT)
+Date:   Tue, 30 Jul 2019 11:19:16 -0700
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Doug Anderson <dianders@chromium.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Heiko Stuebner <heiko@sntech.de>, devicetree@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ARM: dts: rockchip: A few fixes for veyron-{fievel,tiger}
+Message-ID: <20190730181916.GJ250418@google.com>
+References: <20190730173444.56741-1-mka@chromium.org>
+ <CAD=FV=Wub9Wkc5t4iQRjBK8R_d_oh4PoHPwLHb4T5+Meij7sSg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-X-Spam-Status: No, score=-0.2 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
-        autolearn=no autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+In-Reply-To: <CAD=FV=Wub9Wkc5t4iQRjBK8R_d_oh4PoHPwLHb4T5+Meij7sSg@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  9a10bb22897ae9c2aa0ac9c2071f539f406ef942
-Gitweb:     https://git.kernel.org/tip/9a10bb22897ae9c2aa0ac9c2071f539f406ef942
-Author:     Jiri Olsa <jolsa@kernel.org>
-AuthorDate: Sun, 21 Jul 2019 13:24:03 +0200
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Mon, 29 Jul 2019 18:34:43 -0300
+On Tue, Jul 30, 2019 at 11:01:42AM -0700, Doug Anderson wrote:
+> Hi,
+> 
+> On Tue, Jul 30, 2019 at 10:34 AM Matthias Kaehlcke <mka@chromium.org> wrote:
+> >
+> > @@ -130,12 +138,13 @@
+> >                         regulator-max-microvolt = <1800000>;
+> >                         regulator-name = "vdd18_lcdt";
+> >                         regulator-state-mem {
+> > -                               regulator-on-in-suspend;
+> > +                               regulator-off-in-suspend;
+> >                                 regulator-suspend-microvolt = <1800000>;
+> 
+> Please remove "regulator-suspend-microvolt = <1800000>;" which doesn't
+> make sense once you have "regulator-off-in-suspend".
 
-perf evsel: Rename perf_evsel__disable() to evsel__disable()
+will remove all instances
 
-Renaming perf_evsel__disable() to evsel__disable(), so we don't have a
-name clash when we add perf_evsel__disable() in libperf.
+> >                         };
+> >                 };
+> >
+> > -               /* This is not a pwren anymore, but the real power supply,
+> > +               /*
+> > +                * This is not a pwren anymore, but the real power supply,
+> >                  * vdd10_lcd for HDMI_AVDD_1V0
+> >                  */
+> >                 vdd10_lcd: LDO_REG7 {
+> > @@ -145,7 +154,7 @@
+> >                         regulator-max-microvolt = <1000000>;
+> >                         regulator-name = "vdd10_lcd";
+> >                         regulator-state-mem {
+> > -                               regulator-on-in-suspend;
+> > +                               regulator-off-in-suspend;
+> >                                 regulator-suspend-microvolt = <1000000>;
+> 
+> Please remove "regulator-suspend-microvolt = <1000000>;" which doesn't
+> make sense once you have "regulator-off-in-suspend".
+> 
+> 
+> >                         };
+> >
+> > @@ -159,7 +168,7 @@
+> >                         regulator-max-microvolt = <3300000>;
+> >                         regulator-name = "vcc33_ccd";
+> >                         regulator-state-mem {
+> > -                               regulator-on-in-suspend;
+> > +                               regulator-off-in-suspend;
+> >                                 regulator-suspend-microvolt = <3300000>;
+> 
+> Please remove "regulator-suspend-microvolt = <3300000>;" which doesn't
+> make sense once you have "regulator-off-in-suspend".
+> 
+> 
+> Other than those things, this patch looks good to me and feel free to
+> add my Reviewed-by.
 
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Michael Petlan <mpetlan@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20190721112506.12306-17-jolsa@kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/arch/arm/util/cs-etm.c    | 2 +-
- tools/perf/arch/x86/util/intel-bts.c | 2 +-
- tools/perf/arch/x86/util/intel-pt.c  | 2 +-
- tools/perf/builtin-trace.c           | 2 +-
- tools/perf/tests/keep-tracking.c     | 2 +-
- tools/perf/tests/switch-tracking.c   | 4 ++--
- tools/perf/util/evlist.c             | 2 +-
- tools/perf/util/evsel.c              | 2 +-
- tools/perf/util/evsel.h              | 2 +-
- 9 files changed, 10 insertions(+), 10 deletions(-)
+Thanks for your review!
 
-diff --git a/tools/perf/arch/arm/util/cs-etm.c b/tools/perf/arch/arm/util/cs-etm.c
-index 4b70b9504603..268fcb31cd53 100644
---- a/tools/perf/arch/arm/util/cs-etm.c
-+++ b/tools/perf/arch/arm/util/cs-etm.c
-@@ -821,7 +821,7 @@ static int cs_etm_snapshot_start(struct auxtrace_record *itr)
- 
- 	evlist__for_each_entry(ptr->evlist, evsel) {
- 		if (evsel->attr.type == ptr->cs_etm_pmu->type)
--			return perf_evsel__disable(evsel);
-+			return evsel__disable(evsel);
- 	}
- 	return -EINVAL;
- }
-diff --git a/tools/perf/arch/x86/util/intel-bts.c b/tools/perf/arch/x86/util/intel-bts.c
-index d27832fcb34c..8b0a53d748c9 100644
---- a/tools/perf/arch/x86/util/intel-bts.c
-+++ b/tools/perf/arch/x86/util/intel-bts.c
-@@ -317,7 +317,7 @@ static int intel_bts_snapshot_start(struct auxtrace_record *itr)
- 
- 	evlist__for_each_entry(btsr->evlist, evsel) {
- 		if (evsel->attr.type == btsr->intel_bts_pmu->type)
--			return perf_evsel__disable(evsel);
-+			return evsel__disable(evsel);
- 	}
- 	return -EINVAL;
- }
-diff --git a/tools/perf/arch/x86/util/intel-pt.c b/tools/perf/arch/x86/util/intel-pt.c
-index e3dacb2bf01b..4ce157a4e5e2 100644
---- a/tools/perf/arch/x86/util/intel-pt.c
-+++ b/tools/perf/arch/x86/util/intel-pt.c
-@@ -788,7 +788,7 @@ static int intel_pt_snapshot_start(struct auxtrace_record *itr)
- 
- 	evlist__for_each_entry(ptr->evlist, evsel) {
- 		if (evsel->attr.type == ptr->intel_pt_pmu->type)
--			return perf_evsel__disable(evsel);
-+			return evsel__disable(evsel);
- 	}
- 	return -EINVAL;
- }
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index 89ae4737ef74..95ecefa9ff7e 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -2400,7 +2400,7 @@ static int trace__event_handler(struct trace *trace, struct evsel *evsel,
- 			++trace->nr_events_printed;
- 
- 			if (evsel->max_events != ULONG_MAX && ++evsel->nr_events_printed == evsel->max_events) {
--				perf_evsel__disable(evsel);
-+				evsel__disable(evsel);
- 				perf_evsel__close(evsel);
- 			}
- 		}
-diff --git a/tools/perf/tests/keep-tracking.c b/tools/perf/tests/keep-tracking.c
-index cdc19bcc7523..1976ccb3c812 100644
---- a/tools/perf/tests/keep-tracking.c
-+++ b/tools/perf/tests/keep-tracking.c
-@@ -129,7 +129,7 @@ int test__keep_tracking(struct test *test __maybe_unused, int subtest __maybe_un
- 
- 	evsel = perf_evlist__last(evlist);
- 
--	CHECK__(perf_evsel__disable(evsel));
-+	CHECK__(evsel__disable(evsel));
- 
- 	comm = "Test COMM 2";
- 	CHECK__(prctl(PR_SET_NAME, (unsigned long)comm, 0, 0, 0));
-diff --git a/tools/perf/tests/switch-tracking.c b/tools/perf/tests/switch-tracking.c
-index acc4b5ff0cea..5662dc1c6bd3 100644
---- a/tools/perf/tests/switch-tracking.c
-+++ b/tools/perf/tests/switch-tracking.c
-@@ -464,7 +464,7 @@ int test__switch_tracking(struct test *test __maybe_unused, int subtest __maybe_
- 
- 	perf_evlist__enable(evlist);
- 
--	err = perf_evsel__disable(cpu_clocks_evsel);
-+	err = evsel__disable(cpu_clocks_evsel);
- 	if (err) {
- 		pr_debug("perf_evlist__disable_event failed!\n");
- 		goto out_err;
-@@ -483,7 +483,7 @@ int test__switch_tracking(struct test *test __maybe_unused, int subtest __maybe_
- 		goto out_err;
- 	}
- 
--	err = perf_evsel__disable(cycles_evsel);
-+	err = evsel__disable(cycles_evsel);
- 	if (err) {
- 		pr_debug("perf_evlist__disable_event failed!\n");
- 		goto out_err;
-diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
-index e87c43e339d0..9461583c53d9 100644
---- a/tools/perf/util/evlist.c
-+++ b/tools/perf/util/evlist.c
-@@ -350,7 +350,7 @@ void perf_evlist__disable(struct evlist *evlist)
- 	evlist__for_each_entry(evlist, pos) {
- 		if (pos->disabled || !perf_evsel__is_group_leader(pos) || !pos->fd)
- 			continue;
--		perf_evsel__disable(pos);
-+		evsel__disable(pos);
- 	}
- 
- 	evlist->enabled = false;
-diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index 7adae1736191..855d286298eb 100644
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -1244,7 +1244,7 @@ int evsel__enable(struct evsel *evsel)
- 	return err;
- }
- 
--int perf_evsel__disable(struct evsel *evsel)
-+int evsel__disable(struct evsel *evsel)
- {
- 	int err = perf_evsel__run_ioctl(evsel, PERF_EVENT_IOC_DISABLE, 0);
- 	/*
-diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
-index fa26c583a606..c338ce14e8aa 100644
---- a/tools/perf/util/evsel.h
-+++ b/tools/perf/util/evsel.h
-@@ -296,7 +296,7 @@ int perf_evsel__append_addr_filter(struct evsel *evsel,
- 				   const char *filter);
- int perf_evsel__apply_filter(struct evsel *evsel, const char *filter);
- int evsel__enable(struct evsel *evsel);
--int perf_evsel__disable(struct evsel *evsel);
-+int evsel__disable(struct evsel *evsel);
- 
- int perf_evsel__open_per_cpu(struct evsel *evsel,
- 			     struct perf_cpu_map *cpus);
+> NOTE: when I tried applying this to my tree git
+> complained and I had to apply manually.  Could you try sending this
+> patch atop Heiko's for-next tree?  The yell I got:
+> 
+> error: sha1 information is lacking or useless
+> (arch/arm/boot/dts/rk3288-veyron-fievel.dts).
+> error: could not build fake ancestor
+
+Ok, I'll rebase v2 on Heiko's for-next
