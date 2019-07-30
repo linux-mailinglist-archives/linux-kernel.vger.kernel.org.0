@@ -2,99 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA84579F54
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 05:02:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D0C6779F5C
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 05:03:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732845AbfG3DCh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 23:02:37 -0400
-Received: from anchovy2.45ru.net.au ([203.30.46.146]:36426 "EHLO
-        anchovy2.45ru.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732834AbfG3DCf (ORCPT
+        id S1732870AbfG3DCt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 23:02:49 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:44470 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732730AbfG3DCr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 23:02:35 -0400
-Received: (qmail 342 invoked by uid 5089); 30 Jul 2019 03:02:33 -0000
-Received: by simscan 1.2.0 ppid: 32701, pid: 32702, t: 0.3042s
-         scanners: regex: 1.2.0 attach: 1.2.0 clamav: 0.88.3/m:40/d:1950 spam: 3.1.4
-X-Spam-Checker-Version: SpamAssassin 3.4.1 (2015-04-28) on anchovy2
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=6.0 tests=ALL_TRUSTED,AWL
-        autolearn=disabled version=3.4.1
-Received: from unknown (HELO ?192.168.0.34?) (rtresidd@electromag.com.au@203.59.235.95)
-  by anchovy3.45ru.net.au with ESMTPA; 30 Jul 2019 03:02:32 -0000
-Subject: Re: [PATCH 1/1] power: supply: sbs-battery: Add ability to force load
- a battery via the devicetree
-To:     sre@kernel.org, kstewart@linuxfoundation.org,
-        gregkh@linuxfoundation.org, tglx@linutronix.de,
-        rfontana@redhat.com, allison@lohutok.net, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Nick Crews <ncrews@chromium.org>,
-        Guenter Roeck <groeck@google.com>
-References: <1564030601-14639-1-git-send-email-rtresidd@electromag.com.au>
-From:   Richard Tresidder <rtresidd@electromag.com.au>
-Message-ID: <5023c937-0662-57e0-c104-bb9c23b07a49@electromag.com.au>
-Date:   Tue, 30 Jul 2019 11:02:29 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Mon, 29 Jul 2019 23:02:47 -0400
+Received: by mail-pl1-f196.google.com with SMTP id t14so28251248plr.11;
+        Mon, 29 Jul 2019 20:02:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=+wCRrWmIk4Nc0ISlty592sI89pc1yeuZmJCIRwRKr38=;
+        b=ghT6fDpVNQ07/bhniKx+0CDugTQLh2JuWxcYh3Pb//LfguBMq+Gqu7hVYuz3aijLPn
+         yWnIUQvZfjFLY6DTd3CazPQc+N5vQQhVfzWHDQNWSrEZRyTRJ9K4K9zcsJqqI7uAoakU
+         b4hZTOP2udpN3kw7efV2bfANPqRPKCUt0ATxHzXtlddSyNZuTiHq3y+YUf4EREpqSCg6
+         9cqK6u5eOem9eU25GHVttXUcSdqxcZzx1nBqkLMnEdTvzn5sWvJ6eI1plWCcCFlKlO4l
+         o/YczNKWpyo5ACc2aBofLGx5MVnfyKEdeUxNqqXurvAF4Tox+sdngD8OwjBAXQepyUfa
+         8Maw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=+wCRrWmIk4Nc0ISlty592sI89pc1yeuZmJCIRwRKr38=;
+        b=IFCs/W5xtvuXu96OaIAFFaSr2Bp+RZH4fHNNjRuPsV34n4sAm7Urx209leISa5WCGc
+         U9rmTIVUAcUwDovlg3VG6+HESehFaHtlZF+H+/b8Db1DIqzyGVHhbLWn9rk7gHWiSR4I
+         4Y/Cc/yonRNB8b6Ts838J9HPefUCuj0pucEs0D/QlDOMmMFn9WVS1O3lC2yjP43BpZuk
+         v7gM297VEwzXMakBiYQlbX6TRxLsQkZQCPOe+ocHnAg3AwAmOzvvMeVefgJwANcI9Uw3
+         4Xq/H3hAtxkdHQ2BrQ31xNXa8uPCJplk8EjfEM5LOq1u3h1BxIknjr3UAC0CIIcbtQLn
+         t9RQ==
+X-Gm-Message-State: APjAAAUxKZUbPZYwodRxe37WUzrVjMWidryivMLujZcRiMW0zORp6z5Z
+        IioUgKsQdk9HAGkZRhIKxQU=
+X-Google-Smtp-Source: APXvYqwtEg9oc+Ub8h8Ztki2a4IVL/OlCf+NImHZ83H+rMfXxdSJaWW1wJI9LMdfpoOlIOryu4ft3w==
+X-Received: by 2002:a17:902:8bc1:: with SMTP id r1mr64301099plo.42.1564455766537;
+        Mon, 29 Jul 2019 20:02:46 -0700 (PDT)
+Received: from suzukaze.ipads-lab.se.sjtu.edu.cn ([89.31.126.54])
+        by smtp.gmail.com with ESMTPSA id h26sm66277793pfq.64.2019.07.29.20.02.44
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 29 Jul 2019 20:02:45 -0700 (PDT)
+From:   Chuhong Yuan <hslester96@gmail.com>
+Cc:     Richard Henderson <rth@twiddle.net>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>, linux-alpha@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>
+Subject: [PATCH v2] alpha: Replace strncmp with str_has_prefix
+Date:   Tue, 30 Jul 2019 11:02:39 +0800
+Message-Id: <20190730030239.17983-1-hslester96@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <1564030601-14639-1-git-send-email-rtresidd@electromag.com.au>
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Language: en-AU
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Nick and Guenter
-Just adding you to this one also seeing as you're looking at that other 
-sbs_battery patch for me.
-Not sure why the get maintainers didn't list you for this one.
+In commit b6b2735514bc
+("tracing: Use str_has_prefix() instead of using fixed sizes")
+the newly introduced str_has_prefix() was used
+to replace error-prone strncmp(str, const, len).
+Here fix codes with the same pattern.
 
-Cheers
-    Richard Tresidder
-> Add the ability to force load a hot pluggable battery during boot where
-> there is no gpio detect method available and the module is statically
-> built. Normal polling will then occur on that battery when it is inserted.
->
-> Signed-off-by: Richard Tresidder <rtresidd@electromag.com.au>
-> ---
->
-> Notes:
->      Add the ability to force load a hot pluggable battery during boot where
->      there is no gpio detect method available and the module is statically
->      built. Normal polling will then occur on that battery when it is inserted.
->
->   drivers/power/supply/sbs-battery.c | 6 +++++-
->   1 file changed, 5 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/power/supply/sbs-battery.c b/drivers/power/supply/sbs-battery.c
-> index 048d205..ea8ba3e 100644
-> --- a/drivers/power/supply/sbs-battery.c
-> +++ b/drivers/power/supply/sbs-battery.c
-> @@ -161,6 +161,7 @@ struct sbs_info {
->   	int				poll_time;
->   	u32				i2c_retry_count;
->   	u32				poll_retry_count;
-> +	bool				force_load;
->   	struct delayed_work		work;
->   	struct mutex			mode_lock;
->   	u32				flags;
-> @@ -852,6 +853,9 @@ static int sbs_probe(struct i2c_client *client,
->   	if (rc)
->   		chip->poll_retry_count = 0;
->   
-> +	chip->force_load = of_property_read_bool(client->dev.of_node,
-> +						"sbs,force-load");
-> +
->   	if (pdata) {
->   		chip->poll_retry_count = pdata->poll_retry_count;
->   		chip->i2c_retry_count  = pdata->i2c_retry_count;
-> @@ -890,7 +894,7 @@ static int sbs_probe(struct i2c_client *client,
->   	 * Before we register, we might need to make sure we can actually talk
->   	 * to the battery.
->   	 */
-> -	if (!(force_load || chip->gpio_detect)) {
-> +	if (!(force_load || chip->gpio_detect || chip->force_load)) {
->   		rc = sbs_read_word_data(client, sbs_data[REG_STATUS].addr);
->   
->   		if (rc < 0) {
+Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+---
+Changes in v2:
+  - Revise the indent and aligning.
+
+ arch/alpha/boot/tools/objstrip.c | 2 +-
+ arch/alpha/kernel/setup.c        | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/alpha/boot/tools/objstrip.c b/arch/alpha/boot/tools/objstrip.c
+index 825a16f5f622..08b430d25a31 100644
+--- a/arch/alpha/boot/tools/objstrip.c
++++ b/arch/alpha/boot/tools/objstrip.c
+@@ -148,7 +148,7 @@ main (int argc, char *argv[])
+ #ifdef __ELF__
+     elf = (struct elfhdr *) buf;
+ 
+-    if (elf->e_ident[0] == 0x7f && strncmp((char *)elf->e_ident + 1, "ELF", 3) == 0) {
++    if (elf->e_ident[0] == 0x7f && str_has_prefix((char *)elf->e_ident + 1, "ELF")) {
+ 	if (elf->e_type != ET_EXEC) {
+ 	    fprintf(stderr, "%s: %s is not an ELF executable\n",
+ 		    prog_name, inname);
+diff --git a/arch/alpha/kernel/setup.c b/arch/alpha/kernel/setup.c
+index 5d4c76a77a9f..e82e45d5fd96 100644
+--- a/arch/alpha/kernel/setup.c
++++ b/arch/alpha/kernel/setup.c
+@@ -466,7 +466,7 @@ setup_arch(char **cmdline_p)
+ #ifndef alpha_using_srm
+ 	/* Assume that we've booted from SRM if we haven't booted from MILO.
+ 	   Detect the later by looking for "MILO" in the system serial nr.  */
+-	alpha_using_srm = strncmp((const char *)hwrpb->ssn, "MILO", 4) != 0;
++	alpha_using_srm = !str_has_prefix((const char *)hwrpb->ssn, "MILO");
+ #endif
+ #ifndef alpha_using_qemu
+ 	/* Similarly, look for QEMU.  */
+-- 
+2.20.1
 
