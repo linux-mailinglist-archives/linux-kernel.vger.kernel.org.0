@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B502379F5E
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 05:03:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BAA479F33
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 05:01:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732875AbfG3DDN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 23:03:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49856 "EHLO mail.kernel.org"
+        id S1729745AbfG3DAj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 23:00:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49926 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730288AbfG3DAd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 23:00:33 -0400
+        id S1732425AbfG3DAh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 23:00:37 -0400
 Received: from quaco.ghostprotocols.net (unknown [179.97.35.50])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E61FF216C8;
-        Tue, 30 Jul 2019 03:00:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 725C72171F;
+        Tue, 30 Jul 2019 03:00:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564455633;
-        bh=M+9uVDaMoUFEtmZ49b2HF/3gLCVAbAJlLITH3hReZk4=;
+        s=default; t=1564455636;
+        bh=lTNvaO0CotrZLKshR9mp9rx7k2kR1edto+egP3ezFjo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EMaiCb8jesSxvxdJ544PIMuoH5m8sgnxXVIhg/OW7NWMzbp2lFGMF97FBZapmiTAC
-         mcqjTOptZNQRUSa29df+ErBsfdOgTXR4GApbNU9lix5Yj2BZI8Ua+mTeT5AjzD/eVX
-         HDbqsId0M9OMMCoFEEDrux3Xy18MQq0uTP4Vxo7c=
+        b=EUXUnBhMMBpuM5TwzvvIKHjFLZV7uHcf1YqmyrlJvwtcitGc2ILxAOXcbyUMxHrpk
+         kPsf5TZdetEN2AK5twU7I1z9tRz9d+KpUA5+w4rZJIllqKsqA5N24Txi8mtXhN7Nkz
+         ZhmalBxv857xZ0KzNqja9bA/67qO7BDx5a5wlKuA=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
@@ -35,9 +35,9 @@ Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         Michael Petlan <mpetlan@redhat.com>,
         Peter Zijlstra <peterz@infradead.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 075/107] libperf: Add perf_evlist__delete() function
-Date:   Mon, 29 Jul 2019 23:55:38 -0300
-Message-Id: <20190730025610.22603-76-acme@kernel.org>
+Subject: [PATCH 076/107] libperf: Add perf_evsel__delete() function
+Date:   Mon, 29 Jul 2019 23:55:39 -0300
+Message-Id: <20190730025610.22603-77-acme@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190730025610.22603-1-acme@kernel.org>
 References: <20190730025610.22603-1-acme@kernel.org>
@@ -50,7 +50,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jiri Olsa <jolsa@kernel.org>
 
-Add the perf_evlist__delete() function to delete a perf_evlist instance.
+Add the perf_evsel__delete() function to delete a perf_evsel instance.
 
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
@@ -59,59 +59,58 @@ Cc: Andi Kleen <ak@linux.intel.com>
 Cc: Michael Petlan <mpetlan@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20190721112506.12306-49-jolsa@kernel.org
+Link: http://lkml.kernel.org/r/20190721112506.12306-50-jolsa@kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/lib/evlist.c              | 6 ++++++
- tools/perf/lib/include/perf/evlist.h | 1 +
- tools/perf/lib/libperf.map           | 1 +
+ tools/perf/lib/evsel.c              | 6 ++++++
+ tools/perf/lib/include/perf/evsel.h | 1 +
+ tools/perf/lib/libperf.map          | 1 +
  3 files changed, 8 insertions(+)
 
-diff --git a/tools/perf/lib/evlist.c b/tools/perf/lib/evlist.c
-index 979ee423490f..087ef76ea8fd 100644
---- a/tools/perf/lib/evlist.c
-+++ b/tools/perf/lib/evlist.c
-@@ -4,6 +4,7 @@
- #include <internal/evlist.h>
+diff --git a/tools/perf/lib/evsel.c b/tools/perf/lib/evsel.c
+index 8e91738c5c38..ddc3ad447bfb 100644
+--- a/tools/perf/lib/evsel.c
++++ b/tools/perf/lib/evsel.c
+@@ -3,6 +3,7 @@
+ #include <linux/list.h>
  #include <internal/evsel.h>
  #include <linux/zalloc.h>
 +#include <stdlib.h>
  
- void perf_evlist__init(struct perf_evlist *evlist)
+ void perf_evsel__init(struct perf_evsel *evsel, struct perf_event_attr *attr)
  {
-@@ -54,3 +55,8 @@ perf_evlist__next(struct perf_evlist *evlist, struct perf_evsel *prev)
+@@ -19,3 +20,8 @@ struct perf_evsel *perf_evsel__new(struct perf_event_attr *attr)
  
- 	return next;
+ 	return evsel;
  }
 +
-+void perf_evlist__delete(struct perf_evlist *evlist)
++void perf_evsel__delete(struct perf_evsel *evsel)
 +{
-+	free(evlist);
++	free(evsel);
 +}
-diff --git a/tools/perf/lib/include/perf/evlist.h b/tools/perf/lib/include/perf/evlist.h
-index 5092b622935b..9a126fd0773c 100644
---- a/tools/perf/lib/include/perf/evlist.h
-+++ b/tools/perf/lib/include/perf/evlist.h
-@@ -13,6 +13,7 @@ LIBPERF_API void perf_evlist__add(struct perf_evlist *evlist,
- LIBPERF_API void perf_evlist__remove(struct perf_evlist *evlist,
- 				     struct perf_evsel *evsel);
- LIBPERF_API struct perf_evlist *perf_evlist__new(void);
-+LIBPERF_API void perf_evlist__delete(struct perf_evlist *evlist);
- LIBPERF_API struct perf_evsel* perf_evlist__next(struct perf_evlist *evlist,
- 						 struct perf_evsel *evsel);
+diff --git a/tools/perf/lib/include/perf/evsel.h b/tools/perf/lib/include/perf/evsel.h
+index 21b66fc1937f..a57efc0f5c8b 100644
+--- a/tools/perf/lib/include/perf/evsel.h
++++ b/tools/perf/lib/include/perf/evsel.h
+@@ -10,5 +10,6 @@ struct perf_event_attr;
+ LIBPERF_API void perf_evsel__init(struct perf_evsel *evsel,
+ 				  struct perf_event_attr *attr);
+ LIBPERF_API struct perf_evsel *perf_evsel__new(struct perf_event_attr *attr);
++LIBPERF_API void perf_evsel__delete(struct perf_evsel *evsel);
  
+ #endif /* __LIBPERF_EVSEL_H */
 diff --git a/tools/perf/lib/libperf.map b/tools/perf/lib/libperf.map
-index c0968226f7b6..153e77cd6739 100644
+index 153e77cd6739..28ed04cbd223 100644
 --- a/tools/perf/lib/libperf.map
 +++ b/tools/perf/lib/libperf.map
-@@ -14,6 +14,7 @@ LIBPERF_0.0.1 {
+@@ -12,6 +12,7 @@ LIBPERF_0.0.1 {
+ 		perf_thread_map__get;
+ 		perf_thread_map__put;
  		perf_evsel__new;
++		perf_evsel__delete;
  		perf_evsel__init;
  		perf_evlist__new;
-+		perf_evlist__delete;
- 		perf_evlist__init;
- 		perf_evlist__add;
- 		perf_evlist__remove;
+ 		perf_evlist__delete;
 -- 
 2.21.0
 
