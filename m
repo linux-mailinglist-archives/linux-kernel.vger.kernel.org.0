@@ -2,101 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E82037AE98
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 18:58:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A0D767AE7C
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 18:56:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726601AbfG3Q6j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 12:58:39 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:40949 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729890AbfG3Q6c (ORCPT
+        id S1729379AbfG3Q4k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 12:56:40 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:51896 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725911AbfG3Q4j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 12:58:32 -0400
-Received: by mail-wr1-f66.google.com with SMTP id r1so66553256wrl.7;
-        Tue, 30 Jul 2019 09:58:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=3ErUctKt9CJ3rgf9ZExT4u2Tmx1X1fVjtqY74IUmVOo=;
-        b=HnygVzhc23N0TVSn56fyEHozfoday5Q5qyZSBDgvJBGlsLMdm3Qbts7SA/Vnnk5IlX
-         m9/PIoh03y3kOh2AZGvg9CTQOQaJoES2oGjp+fJ9m1zEJSp+7WevhikwyFBWTKIRVo38
-         cOxtmLwqyK58zBBXCb6dyQWmEkc8UTAWKfautl+SCi+y2FKdvunIpCJg0WdOfvvbZFyK
-         0UYNcDmIHji5GbKuywnNSQA4gmwIJq8l8AWFSDGr8GIDT6WzGwth+5Dcm+Q8BtIWKNIb
-         /77rN9rwYSX0WbPWF3XxuMbMzXkLwtHJibQNrXG+vnTLu7Sqz3G/KhyAYA0Ik5QnyNRr
-         tbPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=3ErUctKt9CJ3rgf9ZExT4u2Tmx1X1fVjtqY74IUmVOo=;
-        b=n6acDeorev20HlhmFvgx88n+sqx2mJEy079LhE7Mki05wd4et3Gpxitap2mjg48lrF
-         TN08oYAghUtu52Iz2QDE0SD5jkbB3IV8g8DJjX+wbWFo1cQPN2lq+zMQfEIZ3+sYqjsW
-         2YzWQRykjO/4/rw12M7FT3J58Q8QpsjNO9VWXHWSkhJarnPYSSj82gLU3+F+6m2lkpIX
-         Wlb1nASkp2J1BcrwEpm7AQVXe3EO57y3KuLVvh32Je8aCoXB6xHNlAFtoV+rWUHgCNwy
-         V65HGGtR6E80yPkL1KSlUi7a3CMWWuh5mfGjr3xHht8VSUQCWvMktDP2DGE6U7XKXfOD
-         p/gQ==
-X-Gm-Message-State: APjAAAVDN353Tk5VYluONZLDn7GoJs8u0RhNU0fney/Z0xVKRc8Dbpf1
-        VDPzj8iRBHvf8sqBSJ3iRxQ=
-X-Google-Smtp-Source: APXvYqx/6LmFrKfTmYiDLP053J634y1HszPItk3QNsNQK0mRdBV3YW6Fc9O5fM9aKNJ6EuYMU+4R+g==
-X-Received: by 2002:adf:b1d1:: with SMTP id r17mr129414217wra.273.1564505909913;
-        Tue, 30 Jul 2019 09:58:29 -0700 (PDT)
-Received: from localhost.localdomain (ppp91-78-220-99.pppoe.mtu-net.ru. [91.78.220.99])
-        by smtp.gmail.com with ESMTPSA id r5sm70845040wmh.35.2019.07.30.09.58.28
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Jul 2019 09:58:29 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Joseph Lo <josephl@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v9 15/15] ARM: dts: tegra30: Add External Memory Controller node
-Date:   Tue, 30 Jul 2019 19:56:18 +0300
-Message-Id: <20190730165618.10122-16-digetx@gmail.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190730165618.10122-1-digetx@gmail.com>
-References: <20190730165618.10122-1-digetx@gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Tue, 30 Jul 2019 12:56:39 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::d71])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id B63FD1264EC71;
+        Tue, 30 Jul 2019 09:56:36 -0700 (PDT)
+Date:   Tue, 30 Jul 2019 09:56:36 -0700 (PDT)
+Message-Id: <20190730.095636.109543400421016878.davem@davemloft.net>
+To:     h.feurstein@gmail.com
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        andrew@lunn.ch, vivien.didelot@gmail.com, f.fainelli@gmail.com
+Subject: Re: [PATCH] net: dsa: mv88e6xxx: use link-down-define instead of
+ plain value
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20190730101142.548-1-h.feurstein@gmail.com>
+References: <20190730101142.548-1-h.feurstein@gmail.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 30 Jul 2019 09:56:37 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add External Memory Controller node to the device-tree.
+From: Hubert Feurstein <h.feurstein@gmail.com>
+Date: Tue, 30 Jul 2019 12:11:42 +0200
 
-Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- arch/arm/boot/dts/tegra30.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
+> Using the define here makes the code more expressive.
+> 
+> Signed-off-by: Hubert Feurstein <h.feurstein@gmail.com>
 
-diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
-index e074258d4518..8355264e2265 100644
---- a/arch/arm/boot/dts/tegra30.dtsi
-+++ b/arch/arm/boot/dts/tegra30.dtsi
-@@ -732,6 +732,15 @@
- 		#reset-cells = <1>;
- 	};
- 
-+	memory-controller@7000f400 {
-+		compatible = "nvidia,tegra30-emc";
-+		reg = <0x7000f400 0x400>;
-+		interrupts = <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&tegra_car TEGRA30_CLK_EMC>;
-+
-+		nvidia,memory-controller = <&mc>;
-+	};
-+
- 	fuse@7000f800 {
- 		compatible = "nvidia,tegra30-efuse";
- 		reg = <0x7000f800 0x400>;
--- 
-2.22.0
-
+Applied, thank you.
