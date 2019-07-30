@@ -2,56 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 330F67B1C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:20:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 48D947B1C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:20:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729072AbfG3SUS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 14:20:18 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:36268 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728908AbfG3SQL (ORCPT
+        id S1729438AbfG3SUN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 14:20:13 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:39163 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387867AbfG3SQN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 14:16:11 -0400
-Received: by mail-pf1-f195.google.com with SMTP id r7so30265393pfl.3
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 11:16:11 -0700 (PDT)
+        Tue, 30 Jul 2019 14:16:13 -0400
+Received: by mail-pf1-f193.google.com with SMTP id f17so26270011pfn.6
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 11:16:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=E+MiLS+xhjrkSb6B0r1a1/QGKNXodQxyYWlsCL6Y4A4=;
-        b=G96811NZowBWx8RM/8lPqU0uWnzoV43lyEhEiNDC0B8Ntygzpg57aZQieTSTQPjbXc
-         jwoQ8euvvqXmq+10x180vCL7O299Dl8mj60LA7ya5Zo4b/p6YLPXYGgk8b4PQbjxNGKy
-         BB3zQ98TWq99wGSkt3z/iLzylpg7+dRw7u2NQ=
+        bh=oZRgwUFN7aB4QupotMQ9tCg3mqSsJrrXGetSngfezJs=;
+        b=Q5shA3Enjh1aYJkGa7CHLSK5+sfgQkSZ+NssvYjmWJOmz6jPyn+icjg9Ylr31wCfKr
+         ZQI1t3egzlysQAdSvtwCbBUBWF1hpTVJl2f4qWWYhcrXx7l3Yk1St/5UbhioCBq+y38u
+         VTZLnVf7MATNHqp7i9IZjh2oBrf6QEpd8zFVg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=E+MiLS+xhjrkSb6B0r1a1/QGKNXodQxyYWlsCL6Y4A4=;
-        b=Kt3bcMEKKVsy/mkC3tPVOYc1WsKF2nNGukGuHR8oHstzsvBoFx1EdIfWcqhimgKJ8H
-         wg4JmFFiuagNJANwGSMC/Z5ewo/2wZUdH8y1NcwEPEQzTBuPAxvmumIiXUJozJZVOTz/
-         rNhM/7DEAuR3iskqDZage8iNUZVJQkAtdRMqeGPLviJeWPG8WhSeUnWcUsg1hrUJoKQq
-         1EmZjF3RlCkAZfok9Z4K1mM3SkW1m6BRUYmhOC6xPTyNLhXdK8meauUw4ZUzui/8qOBJ
-         reW6ntBs64jOVia3eGri4kjeSrgWQWid+rsVDAoj3nu5kUHxDFG3f7fp9Eay0enb3umB
-         ppWw==
-X-Gm-Message-State: APjAAAWZKb3Fq4VEVRSBw6pY2qfvgc2TShG8z5funucV9uAfNvcKy6v0
-        C/7g3KCUTwC6kstgr1ajxXAlCobE6ns=
-X-Google-Smtp-Source: APXvYqzbrY/tkzXZgdp9CMLN1AYx+zVWfEtA8YA9y8O02ruiBFQxYiMzRzG8nCy5OiSmhBfC0UU7Cg==
-X-Received: by 2002:a17:90a:9301:: with SMTP id p1mr117756399pjo.22.1564510570617;
-        Tue, 30 Jul 2019 11:16:10 -0700 (PDT)
+        bh=oZRgwUFN7aB4QupotMQ9tCg3mqSsJrrXGetSngfezJs=;
+        b=A+ba38pTfoD+yKhzq74YCEpcTypaTMMtGZ2LRLjKE3o4bogyZFL7pIMUGnjMSlAdZR
+         mxk2Olrigs8ly7mZAlsepGc3cjSoaep+JM35mNgVKawg5u5zBF6eiO/395w/jNC/vc0H
+         /9PFNU8KL1DMK1b34XXbWWXTK83zIrUTe1XuBX8RStPmdDc0XXV4Egm+mUKaUObB6F6X
+         KZNSbDgzXWbP7YsKAjYvLLVgfydX7j4uFEQm8UI9Xq0pitseguFjafA3O0+KiQb7CTix
+         po3YS0750AbXeVdLRfGigA0zVZ04B8e0C8t4tjj11XPYN2DWD0RjeVVrf9Rir1EcBTas
+         TFpQ==
+X-Gm-Message-State: APjAAAUw4ABMxD1Z5akjrwjF+xyr2TIU5vWS4h4bKcotRIvokxT7JDQm
+        hS1a7MOPlHoe1SnU1/2CGShj+lYGsnk=
+X-Google-Smtp-Source: APXvYqx19ne61WVROHtoaGvilmfZoa4IZoWg57447aBLoak0f0PYFfDKEDRft6xPTUrf1EGZY5Vgsw==
+X-Received: by 2002:a17:90a:bb8a:: with SMTP id v10mr119609285pjr.78.1564510572816;
+        Tue, 30 Jul 2019 11:16:12 -0700 (PDT)
 Received: from smtp.gmail.com ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id g1sm106744083pgg.27.2019.07.30.11.16.09
+        by smtp.gmail.com with ESMTPSA id g1sm106744083pgg.27.2019.07.30.11.16.11
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 30 Jul 2019 11:16:09 -0700 (PDT)
+        Tue, 30 Jul 2019 11:16:12 -0700 (PDT)
 From:   Stephen Boyd <swboyd@chromium.org>
 To:     linux-kernel@vger.kernel.org
-Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: [PATCH v6 13/57] firmware: Remove dev_err() usage after platform_get_irq()
-Date:   Tue, 30 Jul 2019 11:15:13 -0700
-Message-Id: <20190730181557.90391-14-swboyd@chromium.org>
+Cc:     Sebastian Reichel <sre@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH v6 16/57] HSI: Remove dev_err() usage after platform_get_irq()
+Date:   Tue, 30 Jul 2019 11:15:16 -0700
+Message-Id: <20190730181557.90391-17-swboyd@chromium.org>
 X-Mailer: git-send-email 2.22.0.709.g102302147b-goog
 In-Reply-To: <20190730181557.90391-1-swboyd@chromium.org>
 References: <20190730181557.90391-1-swboyd@chromium.org>
@@ -97,48 +94,49 @@ if ( \( ret < 0 \| ret <= 0 \) )
 While we're here, remove braces on if statements that only have one
 statement (manually).
 
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: Sebastian Reichel <sre@kernel.org>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Stephen Boyd <swboyd@chromium.org>
 ---
 
 Please apply directly to subsystem trees
 
- drivers/firmware/tegra/bpmp-tegra210.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+ drivers/hsi/controllers/omap_ssi_core.c | 4 +---
+ drivers/hsi/controllers/omap_ssi_port.c | 4 +---
+ 2 files changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/firmware/tegra/bpmp-tegra210.c b/drivers/firmware/tegra/bpmp-tegra210.c
-index ae15940a078e..890186abeac0 100644
---- a/drivers/firmware/tegra/bpmp-tegra210.c
-+++ b/drivers/firmware/tegra/bpmp-tegra210.c
-@@ -202,10 +202,8 @@ static int tegra210_bpmp_init(struct tegra_bpmp *bpmp)
- 	}
- 
- 	err = platform_get_irq_byname(pdev, "tx");
+diff --git a/drivers/hsi/controllers/omap_ssi_core.c b/drivers/hsi/controllers/omap_ssi_core.c
+index 0cba567ee2d7..4bc4a201f0f6 100644
+--- a/drivers/hsi/controllers/omap_ssi_core.c
++++ b/drivers/hsi/controllers/omap_ssi_core.c
+@@ -370,10 +370,8 @@ static int ssi_add_controller(struct hsi_controller *ssi,
+ 	if (err < 0)
+ 		goto out_err;
+ 	err = platform_get_irq_byname(pd, "gdd_mpu");
 -	if (err < 0) {
--		dev_err(&pdev->dev, "failed to get TX IRQ: %d\n", err);
+-		dev_err(&pd->dev, "GDD IRQ resource missing\n");
++	if (err < 0)
+ 		goto out_err;
+-	}
+ 	omap_ssi->gdd_irq = err;
+ 	tasklet_init(&omap_ssi->gdd_tasklet, ssi_gdd_tasklet,
+ 							(unsigned long)ssi);
+diff --git a/drivers/hsi/controllers/omap_ssi_port.c b/drivers/hsi/controllers/omap_ssi_port.c
+index 2cd93119515f..a0cb5be246e1 100644
+--- a/drivers/hsi/controllers/omap_ssi_port.c
++++ b/drivers/hsi/controllers/omap_ssi_port.c
+@@ -1038,10 +1038,8 @@ static int ssi_port_irq(struct hsi_port *port, struct platform_device *pd)
+ 	int err;
+ 
+ 	err = platform_get_irq(pd, 0);
+-	if (err < 0) {
+-		dev_err(&port->device, "Port IRQ resource missing\n");
 +	if (err < 0)
  		return err;
 -	}
- 
- 	priv->tx_irq_data = irq_get_irq_data(err);
- 	if (!priv->tx_irq_data) {
-@@ -214,10 +212,8 @@ static int tegra210_bpmp_init(struct tegra_bpmp *bpmp)
- 	}
- 
- 	err = platform_get_irq_byname(pdev, "rx");
--	if (err < 0) {
--		dev_err(&pdev->dev, "failed to get rx IRQ: %d\n", err);
-+	if (err < 0)
- 		return err;
--	}
- 
- 	err = devm_request_irq(&pdev->dev, err, rx_irq,
- 			       IRQF_NO_SUSPEND, dev_name(&pdev->dev), bpmp);
+ 	omap_port->irq = err;
+ 	err = devm_request_threaded_irq(&port->device, omap_port->irq, NULL,
+ 				ssi_pio_thread, IRQF_ONESHOT, "SSI PORT", port);
 -- 
 Sent by a computer through tubes
 
