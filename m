@@ -2,54 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 498587B156
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:13:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D31C37B159
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:14:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728192AbfG3SNs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 14:13:48 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:60209 "EHLO
+        id S2387863AbfG3SOc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 14:14:32 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:41025 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726133AbfG3SNr (ORCPT
+        with ESMTP id S1727215AbfG3SOc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 14:13:47 -0400
+        Tue, 30 Jul 2019 14:14:32 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6UIDYCB3325778
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6UIEIVF3325833
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Tue, 30 Jul 2019 11:13:34 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6UIDYCB3325778
+        Tue, 30 Jul 2019 11:14:18 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6UIEIVF3325833
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019071901; t=1564510415;
-        bh=kGzr1+/gf3I06wq2e9KEs3FdQ3Sv7l5epVHm//nhI8o=;
+        s=2019071901; t=1564510459;
+        bh=BwGFZ0E5ir3djK+EjNFs/WKw1INNTsfq1xeQJtJqyBg=;
         h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=b6ZqXvmZcJnE+f1GZXWLg6BRNzX2D+oBbVr+AuRhSfEmX5h/N1RGx/67FNoyoWm1i
-         svyNcmIReyP6UqwHa7wTL9am2MnLDEDTj+MEoPL/LK6quaBrrIlf3rxMrN6NCYs6xj
-         nLou8ZO/wvOoWkV1VbElb1dGzAw1w7WF3381tj/7/v9PEHGkouDVeOF2ltYV+fZMQI
-         TpUIZ0Ev4XhONolemiwRSgGsWcUFtvSEWwedr70oj9FbYBPIzL0Y+tGc9Esmn+3m94
-         jAiRymfteELhxnPCTg4NHED+jgGIPEUJ6inZa17wAQR5bbVEk36q3zEHBe9jw+OGuK
-         HRpfk2Op8Rc5A==
+        b=aqyUhqs/rWVNcRbqpPzQ+f/Td2rvUD15luDFcBWMriRo0vd5U3l1hDgQ49VQCXlgi
+         xleV6Q/v/hn9Dxt6U7rU/YiqzM6bQnr9Qs0XzJ4d6hvGL3mQXuxwV8f9AYlah2hJTK
+         E99yY2UrAI69VoMx9H6/lax4nPXW7400DoxVRp8wdF5Xf5QBWa/3tVzvEdHeY1Ms5n
+         0n9QXjwINe3h5rGKmfcn31GnASokmaV7j+/+gcW96Gf3rsfbIob+NXRiHTp0reVYku
+         YGhAbrnKPKGN54ICc2NgiHMPS1/VPetO1gvryf7r34ew93g7K0pvHO7dyHS6sFIh5r
+         PN6H0oB07zf0A==
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6UIDXGi3325775;
-        Tue, 30 Jul 2019 11:13:33 -0700
-Date:   Tue, 30 Jul 2019 11:13:33 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6UIEHf93325830;
+        Tue, 30 Jul 2019 11:14:17 -0700
+Date:   Tue, 30 Jul 2019 11:14:17 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
-Message-ID: <tip-c12995a55474e1cefac52da38c7fc47c024de067@git.kernel.org>
-Cc:     alexander.shishkin@linux.intel.com, mpetlan@redhat.com,
-        jolsa@kernel.org, peterz@infradead.org, mingo@kernel.org,
-        linux-kernel@vger.kernel.org, hpa@zytor.com, namhyung@kernel.org,
-        acme@redhat.com, tglx@linutronix.de,
-        alexey.budankov@linux.intel.com, ak@linux.intel.com
-Reply-To: acme@redhat.com, tglx@linutronix.de, hpa@zytor.com,
-          namhyung@kernel.org, mingo@kernel.org,
-          linux-kernel@vger.kernel.org, alexander.shishkin@linux.intel.com,
-          mpetlan@redhat.com, jolsa@kernel.org, peterz@infradead.org,
-          ak@linux.intel.com, alexey.budankov@linux.intel.com
-In-Reply-To: <20190721112506.12306-10-jolsa@kernel.org>
-References: <20190721112506.12306-10-jolsa@kernel.org>
+Message-ID: <tip-5eb2dd2ade8354dcbe4cef54cd1719622af8f2dc@git.kernel.org>
+Cc:     ak@linux.intel.com, alexey.budankov@linux.intel.com,
+        peterz@infradead.org, acme@redhat.com, hpa@zytor.com,
+        jolsa@kernel.org, linux-kernel@vger.kernel.org, mpetlan@redhat.com,
+        alexander.shishkin@linux.intel.com, mingo@kernel.org,
+        namhyung@kernel.org, tglx@linutronix.de
+Reply-To: jolsa@kernel.org, hpa@zytor.com, mingo@kernel.org,
+          acme@redhat.com, alexander.shishkin@linux.intel.com,
+          tglx@linutronix.de, namhyung@kernel.org, ak@linux.intel.com,
+          mpetlan@redhat.com, peterz@infradead.org,
+          alexey.budankov@linux.intel.com, linux-kernel@vger.kernel.org
+In-Reply-To: <20190721112506.12306-11-jolsa@kernel.org>
+References: <20190721112506.12306-11-jolsa@kernel.org>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf evlist: Rename perf_evlist__delete() to
- evlist__delete()
-Git-Commit-ID: c12995a55474e1cefac52da38c7fc47c024de067
+Subject: [tip:perf/core] perf evsel: Rename perf_evsel__delete() to
+ evsel__delete()
+Git-Commit-ID: 5eb2dd2ade8354dcbe4cef54cd1719622af8f2dc
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -67,17 +67,19 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  c12995a55474e1cefac52da38c7fc47c024de067
-Gitweb:     https://git.kernel.org/tip/c12995a55474e1cefac52da38c7fc47c024de067
+Commit-ID:  5eb2dd2ade8354dcbe4cef54cd1719622af8f2dc
+Gitweb:     https://git.kernel.org/tip/5eb2dd2ade8354dcbe4cef54cd1719622af8f2dc
 Author:     Jiri Olsa <jolsa@kernel.org>
-AuthorDate: Sun, 21 Jul 2019 13:23:56 +0200
+AuthorDate: Sun, 21 Jul 2019 13:23:57 +0200
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Mon, 29 Jul 2019 18:34:43 -0300
 
-perf evlist: Rename perf_evlist__delete() to evlist__delete()
+perf evsel: Rename perf_evsel__delete() to evsel__delete()
 
-Rename perf_evlist__delete() to evlist__delete(), so we don't have a
-name clash when we add perf_evlist__delete() in libperf.
+Remame perf_evsel__delete() to evsel__delete(), so we don't have a name
+clash when we add perf_evsel__delete() in libperf.
+
+Also renaming perf_evsel__delete_priv() to evsel__delete_priv().
 
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
@@ -86,540 +88,212 @@ Cc: Andi Kleen <ak@linux.intel.com>
 Cc: Michael Petlan <mpetlan@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20190721112506.12306-10-jolsa@kernel.org
+Link: http://lkml.kernel.org/r/20190721112506.12306-11-jolsa@kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/arch/x86/tests/intel-cqm.c        |  2 +-
- tools/perf/arch/x86/tests/perf-time-to-tsc.c |  2 +-
- tools/perf/builtin-ftrace.c                  |  2 +-
- tools/perf/builtin-kvm.c                     |  4 ++--
- tools/perf/builtin-record.c                  |  2 +-
- tools/perf/builtin-stat.c                    |  2 +-
- tools/perf/builtin-top.c                     |  2 +-
- tools/perf/builtin-trace.c                   |  2 +-
- tools/perf/tests/backward-ring-buffer.c      |  2 +-
- tools/perf/tests/bpf.c                       |  2 +-
- tools/perf/tests/code-reading.c              |  4 ++--
- tools/perf/tests/event-times.c               |  2 +-
- tools/perf/tests/evsel-roundtrip-name.c      |  4 ++--
- tools/perf/tests/hists_cumulate.c            |  2 +-
- tools/perf/tests/hists_filter.c              |  2 +-
- tools/perf/tests/hists_link.c                |  2 +-
- tools/perf/tests/hists_output.c              |  2 +-
- tools/perf/tests/keep-tracking.c             |  2 +-
- tools/perf/tests/mmap-basic.c                |  2 +-
- tools/perf/tests/openat-syscall-tp-fields.c  |  2 +-
- tools/perf/tests/parse-events.c              |  2 +-
- tools/perf/tests/parse-no-sample-id-all.c    |  2 +-
- tools/perf/tests/perf-record.c               |  2 +-
- tools/perf/tests/sw-clock.c                  |  2 +-
- tools/perf/tests/switch-tracking.c           |  2 +-
- tools/perf/tests/task-exit.c                 |  2 +-
- tools/perf/util/data-convert-bt.c            |  2 +-
- tools/perf/util/evlist.c                     | 12 ++++++------
- tools/perf/util/evlist.h                     |  2 +-
- tools/perf/util/header.c                     |  4 ++--
- tools/perf/util/parse-events.c               |  2 +-
- tools/perf/util/record.c                     |  4 ++--
- 32 files changed, 42 insertions(+), 42 deletions(-)
+ tools/perf/builtin-inject.c                |  4 ++--
+ tools/perf/builtin-trace.c                 | 12 ++++++------
+ tools/perf/tests/evsel-tp-sched.c          |  4 ++--
+ tools/perf/tests/openat-syscall-all-cpus.c |  2 +-
+ tools/perf/tests/openat-syscall.c          |  2 +-
+ tools/perf/util/evlist.c                   |  4 ++--
+ tools/perf/util/evsel.c                    |  4 ++--
+ tools/perf/util/evsel.h                    |  2 +-
+ tools/perf/util/parse-events.c             |  4 ++--
+ 9 files changed, 19 insertions(+), 19 deletions(-)
 
-diff --git a/tools/perf/arch/x86/tests/intel-cqm.c b/tools/perf/arch/x86/tests/intel-cqm.c
-index 8089a33c6c16..2a105e3b2ad1 100644
---- a/tools/perf/arch/x86/tests/intel-cqm.c
-+++ b/tools/perf/arch/x86/tests/intel-cqm.c
-@@ -124,6 +124,6 @@ int test__intel_cqm_count_nmi_context(struct test *test __maybe_unused, int subt
- 	kill(pid, SIGKILL);
- 	wait(NULL);
- out:
--	perf_evlist__delete(evlist);
-+	evlist__delete(evlist);
- 	return err;
- }
-diff --git a/tools/perf/arch/x86/tests/perf-time-to-tsc.c b/tools/perf/arch/x86/tests/perf-time-to-tsc.c
-index da9a3302d8e6..09b6cef76f5b 100644
---- a/tools/perf/arch/x86/tests/perf-time-to-tsc.c
-+++ b/tools/perf/arch/x86/tests/perf-time-to-tsc.c
-@@ -163,6 +163,6 @@ next_event:
- 	err = 0;
- 
- out_err:
--	perf_evlist__delete(evlist);
-+	evlist__delete(evlist);
- 	return err;
- }
-diff --git a/tools/perf/builtin-ftrace.c b/tools/perf/builtin-ftrace.c
-index b8bdc593e5b8..105ef2a17a9c 100644
---- a/tools/perf/builtin-ftrace.c
-+++ b/tools/perf/builtin-ftrace.c
-@@ -508,7 +508,7 @@ int cmd_ftrace(int argc, const char **argv)
- 	ret = __cmd_ftrace(&ftrace, argc, argv);
- 
- out_delete_evlist:
--	perf_evlist__delete(ftrace.evlist);
-+	evlist__delete(ftrace.evlist);
- 
- out_delete_filters:
- 	delete_filter_func(&ftrace.filters);
-diff --git a/tools/perf/builtin-kvm.c b/tools/perf/builtin-kvm.c
-index ee896b8a9fe8..8f54bdfb5743 100644
---- a/tools/perf/builtin-kvm.c
-+++ b/tools/perf/builtin-kvm.c
-@@ -1325,7 +1325,7 @@ static struct evlist *kvm_live_event_list(void)
- 
- out:
- 	if (err) {
--		perf_evlist__delete(evlist);
-+		evlist__delete(evlist);
- 		evlist = NULL;
- 	}
- 
-@@ -1460,7 +1460,7 @@ static int kvm_events_live(struct perf_kvm_stat *kvm,
- out:
- 	perf_session__delete(kvm->session);
- 	kvm->session = NULL;
--	perf_evlist__delete(kvm->evlist);
-+	evlist__delete(kvm->evlist);
- 
- 	return err;
- }
-diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-index e8aa8a078dff..06966a2c2cdd 100644
---- a/tools/perf/builtin-record.c
-+++ b/tools/perf/builtin-record.c
-@@ -2449,7 +2449,7 @@ int cmd_record(int argc, const char **argv)
- 
- 	err = __cmd_record(&record, argc, argv);
- out:
--	perf_evlist__delete(rec->evlist);
-+	evlist__delete(rec->evlist);
- 	symbol__exit();
- 	auxtrace_record__free(rec->itr);
- 	return err;
-diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-index ee0dc8088ac0..d28d4d71d9b7 100644
---- a/tools/perf/builtin-stat.c
-+++ b/tools/perf/builtin-stat.c
-@@ -2015,7 +2015,7 @@ out:
- 	if (smi_cost && smi_reset)
- 		sysfs__write_int(FREEZE_ON_SMI_PATH, 0);
- 
--	perf_evlist__delete(evsel_list);
-+	evlist__delete(evsel_list);
- 
- 	runtime_stat_delete(&stat_config);
- 
-diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
-index e4b7146cd666..6c0c2b78093a 100644
---- a/tools/perf/builtin-top.c
-+++ b/tools/perf/builtin-top.c
-@@ -1661,7 +1661,7 @@ int cmd_top(int argc, const char **argv)
- 		perf_evlist__stop_sb_thread(sb_evlist);
- 
- out_delete_evlist:
--	perf_evlist__delete(top.evlist);
-+	evlist__delete(top.evlist);
- 	perf_session__delete(top.session);
- 
- 	return status;
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index 767b04eaaf45..e133204b3bb9 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -3498,7 +3498,7 @@ out_disable:
- out_delete_evlist:
- 	trace__symbols__exit(trace);
- 
--	perf_evlist__delete(evlist);
-+	evlist__delete(evlist);
- 	cgroup__put(trace->cgroup);
- 	trace->evlist = NULL;
- 	trace->live = false;
-diff --git a/tools/perf/tests/backward-ring-buffer.c b/tools/perf/tests/backward-ring-buffer.c
-index 3883b315b25b..ef3c6db2fae4 100644
---- a/tools/perf/tests/backward-ring-buffer.c
-+++ b/tools/perf/tests/backward-ring-buffer.c
-@@ -150,6 +150,6 @@ int test__backward_ring_buffer(struct test *test __maybe_unused, int subtest __m
- 
- 	ret = TEST_OK;
- out_delete_evlist:
--	perf_evlist__delete(evlist);
-+	evlist__delete(evlist);
- 	return ret;
- }
-diff --git a/tools/perf/tests/bpf.c b/tools/perf/tests/bpf.c
-index d15f62dc4261..313ff1aadd9c 100644
---- a/tools/perf/tests/bpf.c
-+++ b/tools/perf/tests/bpf.c
-@@ -200,7 +200,7 @@ static int do_test(struct bpf_object *obj, int (*func)(void),
- 	ret = TEST_OK;
- 
- out_delete_evlist:
--	perf_evlist__delete(evlist);
-+	evlist__delete(evlist);
- 	return ret;
- }
- 
-diff --git a/tools/perf/tests/code-reading.c b/tools/perf/tests/code-reading.c
-index dd0325eabc25..1c7f092a7388 100644
---- a/tools/perf/tests/code-reading.c
-+++ b/tools/perf/tests/code-reading.c
-@@ -658,7 +658,7 @@ static int do_test_code_reading(bool try_kcore)
- 				cpu_map__get(cpus);
- 				thread_map__get(threads);
- 				perf_evlist__set_maps(evlist, NULL, NULL);
--				perf_evlist__delete(evlist);
-+				evlist__delete(evlist);
- 				evlist = NULL;
- 				continue;
- 			}
-@@ -703,7 +703,7 @@ out_put:
- out_err:
- 
- 	if (evlist) {
--		perf_evlist__delete(evlist);
-+		evlist__delete(evlist);
- 	} else {
- 		cpu_map__put(cpus);
- 		thread_map__put(threads);
-diff --git a/tools/perf/tests/event-times.c b/tools/perf/tests/event-times.c
-index 8d3cf9792d9e..0f74ca103c41 100644
---- a/tools/perf/tests/event-times.c
-+++ b/tools/perf/tests/event-times.c
-@@ -204,7 +204,7 @@ static int test_times(int (attach)(struct evlist *),
- 		 count.ena, count.run);
- 
- out_err:
--	perf_evlist__delete(evlist);
-+	evlist__delete(evlist);
- 	return !err ? TEST_OK : TEST_FAIL;
- }
- 
-diff --git a/tools/perf/tests/evsel-roundtrip-name.c b/tools/perf/tests/evsel-roundtrip-name.c
-index 74e79d6b7e96..5330f106a6ee 100644
---- a/tools/perf/tests/evsel-roundtrip-name.c
-+++ b/tools/perf/tests/evsel-roundtrip-name.c
-@@ -60,7 +60,7 @@ static int perf_evsel__roundtrip_cache_name_test(void)
+diff --git a/tools/perf/builtin-inject.c b/tools/perf/builtin-inject.c
+index d2131fc863be..917c8fb4baa5 100644
+--- a/tools/perf/builtin-inject.c
++++ b/tools/perf/builtin-inject.c
+@@ -623,7 +623,7 @@ static void strip_fini(struct perf_inject *inject)
+ 		    ok_to_remove(evlist, evsel)) {
+ 			pr_debug("Deleting %s\n", perf_evsel__name(evsel));
+ 			perf_evlist__remove(evlist, evsel);
+-			perf_evsel__delete(evsel);
++			evsel__delete(evsel);
  		}
  	}
+ }
+@@ -725,7 +725,7 @@ static int __cmd_inject(struct perf_inject *inject)
+ 				pr_debug("Deleting %s\n",
+ 					 perf_evsel__name(evsel));
+ 				perf_evlist__remove(session->evlist, evsel);
+-				perf_evsel__delete(evsel);
++				evsel__delete(evsel);
+ 			}
+ 			if (inject->strip)
+ 				strip_fini(inject);
+diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+index e133204b3bb9..0f7d1859a2d1 100644
+--- a/tools/perf/builtin-trace.c
++++ b/tools/perf/builtin-trace.c
+@@ -274,10 +274,10 @@ static int perf_evsel__init_tp_ptr_field(struct evsel *evsel,
+ 	({ struct syscall_tp *sc = evsel->priv;\
+ 	   perf_evsel__init_tp_ptr_field(evsel, &sc->name, #name); })
  
--	perf_evlist__delete(evlist);
-+	evlist__delete(evlist);
+-static void perf_evsel__delete_priv(struct evsel *evsel)
++static void evsel__delete_priv(struct evsel *evsel)
+ {
+ 	zfree(&evsel->priv);
+-	perf_evsel__delete(evsel);
++	evsel__delete(evsel);
+ }
+ 
+ static int perf_evsel__init_syscall_tp(struct evsel *evsel)
+@@ -368,7 +368,7 @@ static struct evsel *perf_evsel__raw_syscall_newtp(const char *direction, void *
+ 	return evsel;
+ 
+ out_delete:
+-	perf_evsel__delete_priv(evsel);
++	evsel__delete_priv(evsel);
+ 	return NULL;
+ }
+ 
+@@ -2638,7 +2638,7 @@ static bool perf_evlist__add_vfs_getname(struct evlist *evlist)
+ 
+ 		list_del_init(&evsel->node);
+ 		evsel->evlist = NULL;
+-		perf_evsel__delete(evsel);
++		evsel__delete(evsel);
+ 	}
+ 
+ 	return found;
+@@ -2739,9 +2739,9 @@ out:
+ 	return ret;
+ 
+ out_delete_sys_exit:
+-	perf_evsel__delete_priv(sys_exit);
++	evsel__delete_priv(sys_exit);
+ out_delete_sys_enter:
+-	perf_evsel__delete_priv(sys_enter);
++	evsel__delete_priv(sys_enter);
+ 	goto out;
+ }
+ 
+diff --git a/tools/perf/tests/evsel-tp-sched.c b/tools/perf/tests/evsel-tp-sched.c
+index 0170e9d2e329..261e6eaaee99 100644
+--- a/tools/perf/tests/evsel-tp-sched.c
++++ b/tools/perf/tests/evsel-tp-sched.c
+@@ -64,7 +64,7 @@ int test__perf_evsel__tp_sched_test(struct test *test __maybe_unused, int subtes
+ 	if (perf_evsel__test_field(evsel, "next_prio", 4, true))
+ 		ret = -1;
+ 
+-	perf_evsel__delete(evsel);
++	evsel__delete(evsel);
+ 
+ 	evsel = perf_evsel__newtp("sched", "sched_wakeup");
+ 
+@@ -85,6 +85,6 @@ int test__perf_evsel__tp_sched_test(struct test *test __maybe_unused, int subtes
+ 	if (perf_evsel__test_field(evsel, "target_cpu", 4, true))
+ 		ret = -1;
+ 
+-	perf_evsel__delete(evsel);
++	evsel__delete(evsel);
  	return ret;
  }
- 
-@@ -91,7 +91,7 @@ static int __perf_evsel__name_array_test(const char *names[], int nr_names)
- 	}
- 
- out_delete_evlist:
--	perf_evlist__delete(evlist);
-+	evlist__delete(evlist);
- 	return err;
- }
- 
-diff --git a/tools/perf/tests/hists_cumulate.c b/tools/perf/tests/hists_cumulate.c
-index 897e74b5ed1f..1f3de85ae18b 100644
---- a/tools/perf/tests/hists_cumulate.c
-+++ b/tools/perf/tests/hists_cumulate.c
-@@ -731,7 +731,7 @@ int test__hists_cumulate(struct test *test __maybe_unused, int subtest __maybe_u
- 
- out:
- 	/* tear down everything */
--	perf_evlist__delete(evlist);
-+	evlist__delete(evlist);
- 	machines__exit(&machines);
- 
- 	return err;
-diff --git a/tools/perf/tests/hists_filter.c b/tools/perf/tests/hists_filter.c
-index b0468db74ca3..a274716fc438 100644
---- a/tools/perf/tests/hists_filter.c
-+++ b/tools/perf/tests/hists_filter.c
-@@ -321,7 +321,7 @@ int test__hists_filter(struct test *test __maybe_unused, int subtest __maybe_unu
- 
- out:
- 	/* tear down everything */
--	perf_evlist__delete(evlist);
-+	evlist__delete(evlist);
- 	reset_output_field();
- 	machines__exit(&machines);
- 
-diff --git a/tools/perf/tests/hists_link.c b/tools/perf/tests/hists_link.c
-index 878cb5bfbe78..b25383aa2e6e 100644
---- a/tools/perf/tests/hists_link.c
-+++ b/tools/perf/tests/hists_link.c
-@@ -334,7 +334,7 @@ int test__hists_link(struct test *test __maybe_unused, int subtest __maybe_unuse
- 
- out:
- 	/* tear down everything */
--	perf_evlist__delete(evlist);
-+	evlist__delete(evlist);
- 	reset_output_field();
- 	machines__exit(&machines);
- 
-diff --git a/tools/perf/tests/hists_output.c b/tools/perf/tests/hists_output.c
-index 87a05e7afb7e..009888adf4b3 100644
---- a/tools/perf/tests/hists_output.c
-+++ b/tools/perf/tests/hists_output.c
-@@ -618,7 +618,7 @@ int test__hists_output(struct test *test __maybe_unused, int subtest __maybe_unu
- 
- out:
- 	/* tear down everything */
--	perf_evlist__delete(evlist);
-+	evlist__delete(evlist);
- 	machines__exit(&machines);
- 
- 	return err;
-diff --git a/tools/perf/tests/keep-tracking.c b/tools/perf/tests/keep-tracking.c
-index 4c73377bfccb..cdc19bcc7523 100644
---- a/tools/perf/tests/keep-tracking.c
-+++ b/tools/perf/tests/keep-tracking.c
-@@ -147,7 +147,7 @@ int test__keep_tracking(struct test *test __maybe_unused, int subtest __maybe_un
- out_err:
- 	if (evlist) {
- 		perf_evlist__disable(evlist);
--		perf_evlist__delete(evlist);
-+		evlist__delete(evlist);
- 	} else {
- 		cpu_map__put(cpus);
- 		thread_map__put(threads);
-diff --git a/tools/perf/tests/mmap-basic.c b/tools/perf/tests/mmap-basic.c
-index 8d1be34fd951..7f96bb72f7e5 100644
---- a/tools/perf/tests/mmap-basic.c
-+++ b/tools/perf/tests/mmap-basic.c
-@@ -151,7 +151,7 @@ out_init:
- 	}
- 
- out_delete_evlist:
--	perf_evlist__delete(evlist);
-+	evlist__delete(evlist);
- 	cpus	= NULL;
- 	threads = NULL;
- out_free_cpus:
-diff --git a/tools/perf/tests/openat-syscall-tp-fields.c b/tools/perf/tests/openat-syscall-tp-fields.c
-index 141592437520..0263420f4495 100644
---- a/tools/perf/tests/openat-syscall-tp-fields.c
-+++ b/tools/perf/tests/openat-syscall-tp-fields.c
-@@ -134,7 +134,7 @@ int test__syscall_openat_tp_fields(struct test *test __maybe_unused, int subtest
- out_ok:
- 	err = 0;
- out_delete_evlist:
--	perf_evlist__delete(evlist);
-+	evlist__delete(evlist);
- out:
- 	return err;
- }
-diff --git a/tools/perf/tests/parse-events.c b/tools/perf/tests/parse-events.c
-index 6e81a930b224..2365dd655c88 100644
---- a/tools/perf/tests/parse-events.c
-+++ b/tools/perf/tests/parse-events.c
-@@ -1790,7 +1790,7 @@ static int test_event(struct evlist_test *e)
- 		ret = e->check(evlist);
- 	}
- 
--	perf_evlist__delete(evlist);
-+	evlist__delete(evlist);
- 
- 	return ret;
- }
-diff --git a/tools/perf/tests/parse-no-sample-id-all.c b/tools/perf/tests/parse-no-sample-id-all.c
-index fc0213246aaf..396e40d68922 100644
---- a/tools/perf/tests/parse-no-sample-id-all.c
-+++ b/tools/perf/tests/parse-no-sample-id-all.c
-@@ -46,7 +46,7 @@ static int process_events(union perf_event **events, size_t count)
- 	for (i = 0; i < count && !err; i++)
- 		err = process_event(&evlist, events[i]);
- 
--	perf_evlist__delete(evlist);
-+	evlist__delete(evlist);
- 
- 	return err;
- }
-diff --git a/tools/perf/tests/perf-record.c b/tools/perf/tests/perf-record.c
-index 99b2d26881f9..779d5996428b 100644
---- a/tools/perf/tests/perf-record.c
-+++ b/tools/perf/tests/perf-record.c
-@@ -325,7 +325,7 @@ found_exit:
- 		++errs;
- 	}
- out_delete_evlist:
--	perf_evlist__delete(evlist);
-+	evlist__delete(evlist);
- out:
- 	return (err < 0 || errs > 0) ? -1 : 0;
- }
-diff --git a/tools/perf/tests/sw-clock.c b/tools/perf/tests/sw-clock.c
-index 88a75cbae230..1c7d8adb43d0 100644
---- a/tools/perf/tests/sw-clock.c
-+++ b/tools/perf/tests/sw-clock.c
-@@ -128,7 +128,7 @@ out_free_maps:
+diff --git a/tools/perf/tests/openat-syscall-all-cpus.c b/tools/perf/tests/openat-syscall-all-cpus.c
+index 4bf73896695a..001a0e8e6998 100644
+--- a/tools/perf/tests/openat-syscall-all-cpus.c
++++ b/tools/perf/tests/openat-syscall-all-cpus.c
+@@ -118,7 +118,7 @@ int test__openat_syscall_event_on_all_cpus(struct test *test __maybe_unused, int
+ out_close_fd:
+ 	perf_evsel__close_fd(evsel);
+ out_evsel_delete:
+-	perf_evsel__delete(evsel);
++	evsel__delete(evsel);
+ out_cpu_map_delete:
  	cpu_map__put(cpus);
+ out_thread_map_delete:
+diff --git a/tools/perf/tests/openat-syscall.c b/tools/perf/tests/openat-syscall.c
+index f3efadd05863..20e353fbfdd0 100644
+--- a/tools/perf/tests/openat-syscall.c
++++ b/tools/perf/tests/openat-syscall.c
+@@ -59,7 +59,7 @@ int test__openat_syscall_event(struct test *test __maybe_unused, int subtest __m
+ out_close_fd:
+ 	perf_evsel__close_fd(evsel);
+ out_evsel_delete:
+-	perf_evsel__delete(evsel);
++	evsel__delete(evsel);
+ out_thread_map_delete:
  	thread_map__put(threads);
- out_delete_evlist:
--	perf_evlist__delete(evlist);
-+	evlist__delete(evlist);
  	return err;
- }
- 
-diff --git a/tools/perf/tests/switch-tracking.c b/tools/perf/tests/switch-tracking.c
-index 89bc20b2178a..ac5da4fd222f 100644
---- a/tools/perf/tests/switch-tracking.c
-+++ b/tools/perf/tests/switch-tracking.c
-@@ -567,7 +567,7 @@ int test__switch_tracking(struct test *test __maybe_unused, int subtest __maybe_
- out:
- 	if (evlist) {
- 		perf_evlist__disable(evlist);
--		perf_evlist__delete(evlist);
-+		evlist__delete(evlist);
- 	} else {
- 		cpu_map__put(cpus);
- 		thread_map__put(threads);
-diff --git a/tools/perf/tests/task-exit.c b/tools/perf/tests/task-exit.c
-index 5c2cdb0ccb96..698ee5369c02 100644
---- a/tools/perf/tests/task-exit.c
-+++ b/tools/perf/tests/task-exit.c
-@@ -138,6 +138,6 @@ out_free_maps:
- 	cpu_map__put(cpus);
- 	thread_map__put(threads);
- out_delete_evlist:
--	perf_evlist__delete(evlist);
-+	evlist__delete(evlist);
- 	return err;
- }
-diff --git a/tools/perf/util/data-convert-bt.c b/tools/perf/util/data-convert-bt.c
-index 083101ae7b77..ca30bb25b3c5 100644
---- a/tools/perf/util/data-convert-bt.c
-+++ b/tools/perf/util/data-convert-bt.c
-@@ -1319,7 +1319,7 @@ static void cleanup_events(struct perf_session *session)
- 		zfree(&evsel->priv);
- 	}
- 
--	perf_evlist__delete(evlist);
-+	evlist__delete(evlist);
- 	session->evlist = NULL;
- }
- 
 diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
-index 317b2d64ba6d..9fa3663068b4 100644
+index 9fa3663068b4..986d20c15778 100644
 --- a/tools/perf/util/evlist.c
 +++ b/tools/perf/util/evlist.c
-@@ -70,7 +70,7 @@ struct evlist *perf_evlist__new_default(void)
- 	struct evlist *evlist = evlist__new();
- 
- 	if (evlist && perf_evlist__add_default(evlist)) {
--		perf_evlist__delete(evlist);
-+		evlist__delete(evlist);
- 		evlist = NULL;
+@@ -121,7 +121,7 @@ static void perf_evlist__purge(struct evlist *evlist)
+ 	evlist__for_each_entry_safe(evlist, n, pos) {
+ 		list_del_init(&pos->node);
+ 		pos->evlist = NULL;
+-		perf_evsel__delete(pos);
++		evsel__delete(pos);
  	}
  
-@@ -82,7 +82,7 @@ struct evlist *perf_evlist__new_dummy(void)
- 	struct evlist *evlist = evlist__new();
+ 	evlist->nr_entries = 0;
+@@ -277,7 +277,7 @@ static int perf_evlist__add_attrs(struct evlist *evlist,
  
- 	if (evlist && perf_evlist__add_dummy(evlist)) {
--		perf_evlist__delete(evlist);
-+		evlist__delete(evlist);
- 		evlist = NULL;
- 	}
- 
-@@ -134,7 +134,7 @@ void perf_evlist__exit(struct evlist *evlist)
- 	fdarray__exit(&evlist->pollfd);
+ out_delete_partial_list:
+ 	__evlist__for_each_entry_safe(&head, n, evsel)
+-		perf_evsel__delete(evsel);
++		evsel__delete(evsel);
+ 	return -1;
  }
  
--void perf_evlist__delete(struct evlist *evlist)
-+void evlist__delete(struct evlist *evlist)
+diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+index 97bee83f0f98..de379b63f1ce 100644
+--- a/tools/perf/util/evsel.c
++++ b/tools/perf/util/evsel.c
+@@ -316,7 +316,7 @@ new_event:
+ out:
+ 	return evsel;
+ error_free:
+-	perf_evsel__delete(evsel);
++	evsel__delete(evsel);
+ 	evsel = NULL;
+ 	goto out;
+ }
+@@ -1333,7 +1333,7 @@ void perf_evsel__exit(struct evsel *evsel)
+ 	perf_evsel__object.fini(evsel);
+ }
+ 
+-void perf_evsel__delete(struct evsel *evsel)
++void evsel__delete(struct evsel *evsel)
  {
- 	if (evlist == NULL)
- 		return;
-@@ -1859,7 +1859,7 @@ int perf_evlist__add_sb_event(struct evlist **evlist,
+ 	perf_evsel__exit(evsel);
+ 	free(evsel);
+diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
+index af230d92fbef..20b4e31b63a9 100644
+--- a/tools/perf/util/evsel.h
++++ b/tools/perf/util/evsel.h
+@@ -240,7 +240,7 @@ struct tep_event *event_format__new(const char *sys, const char *name);
  
- out_err:
- 	if (new_evlist) {
--		perf_evlist__delete(*evlist);
-+		evlist__delete(*evlist);
- 		*evlist = NULL;
- 	}
- 	return -1;
-@@ -1938,7 +1938,7 @@ int perf_evlist__start_sb_thread(struct evlist *evlist,
- 	return 0;
+ void evsel__init(struct evsel *evsel, struct perf_event_attr *attr, int idx);
+ void perf_evsel__exit(struct evsel *evsel);
+-void perf_evsel__delete(struct evsel *evsel);
++void evsel__delete(struct evsel *evsel);
  
- out_delete_evlist:
--	perf_evlist__delete(evlist);
-+	evlist__delete(evlist);
- 	evlist = NULL;
- 	return -1;
- }
-@@ -1949,5 +1949,5 @@ void perf_evlist__stop_sb_thread(struct evlist *evlist)
- 		return;
- 	evlist->thread.done = 1;
- 	pthread_join(evlist->thread.th, NULL);
--	perf_evlist__delete(evlist);
-+	evlist__delete(evlist);
- }
-diff --git a/tools/perf/util/evlist.h b/tools/perf/util/evlist.h
-index 60e1c9268e9e..12a5fd6972df 100644
---- a/tools/perf/util/evlist.h
-+++ b/tools/perf/util/evlist.h
-@@ -71,7 +71,7 @@ struct evlist *perf_evlist__new_dummy(void);
- void evlist__init(struct evlist *evlist, struct perf_cpu_map *cpus,
- 		  struct perf_thread_map *threads);
- void perf_evlist__exit(struct evlist *evlist);
--void perf_evlist__delete(struct evlist *evlist);
-+void evlist__delete(struct evlist *evlist);
+ struct callchain_param;
  
- void perf_evlist__add(struct evlist *evlist, struct evsel *entry);
- void perf_evlist__remove(struct evlist *evlist, struct evsel *evsel);
-diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
-index 5b90786a8436..29bbfd699226 100644
---- a/tools/perf/util/header.c
-+++ b/tools/perf/util/header.c
-@@ -3591,7 +3591,7 @@ int perf_session__read_header(struct perf_session *session)
- 		evsel->needs_swap = header->needs_swap;
- 		/*
- 		 * Do it before so that if perf_evsel__alloc_id fails, this
--		 * entry gets purged too at perf_evlist__delete().
-+		 * entry gets purged too at evlist__delete().
- 		 */
- 		perf_evlist__add(session->evlist, evsel);
- 
-@@ -3628,7 +3628,7 @@ out_errno:
- 	return -errno;
- 
- out_delete_evlist:
--	perf_evlist__delete(session->evlist);
-+	evlist__delete(session->evlist);
- 	session->evlist = NULL;
- 	return -ENOMEM;
- }
 diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
-index d341b11fb141..6a4bfc7ab0c1 100644
+index 6a4bfc7ab0c1..cc63367f6e45 100644
 --- a/tools/perf/util/parse-events.c
 +++ b/tools/perf/util/parse-events.c
-@@ -1935,7 +1935,7 @@ int parse_events(struct evlist *evlist, const char *str,
+@@ -662,7 +662,7 @@ static int add_bpf_event(const char *group, const char *event, int fd, struct bp
+ 			 group, event);
+ 		list_for_each_entry_safe(evsel, tmp, &new_evsels, node) {
+ 			list_del_init(&evsel->node);
+-			perf_evsel__delete(evsel);
++			evsel__delete(evsel);
+ 		}
+ 		return err;
+ 	}
+@@ -2334,7 +2334,7 @@ static bool is_event_supported(u8 type, unsigned config)
+ 			evsel->attr.exclude_kernel = 1;
+ 			ret = perf_evsel__open(evsel, NULL, tmap) >= 0;
+ 		}
+-		perf_evsel__delete(evsel);
++		evsel__delete(evsel);
+ 	}
  
- 	/*
- 	 * There are 2 users - builtin-record and builtin-test objects.
--	 * Both call perf_evlist__delete in case of error, so we dont
-+	 * Both call evlist__delete in case of error, so we dont
- 	 * need to bother.
- 	 */
- 	return ret;
-diff --git a/tools/perf/util/record.c b/tools/perf/util/record.c
-index a23c69137dfc..9f8841548539 100644
---- a/tools/perf/util/record.c
-+++ b/tools/perf/util/record.c
-@@ -53,7 +53,7 @@ static int perf_do_probe_api(setup_probe_fn_t fn, int cpu, const char *str)
- 	err = 0;
- 
- out_delete:
--	perf_evlist__delete(evlist);
-+	evlist__delete(evlist);
- 	return err;
- }
- 
-@@ -299,7 +299,7 @@ bool perf_evlist__can_select_event(struct evlist *evlist, const char *str)
- 	ret = true;
- 
- out_delete:
--	perf_evlist__delete(temp_evlist);
-+	evlist__delete(temp_evlist);
- 	return ret;
- }
- 
+ 	thread_map__put(tmap);
