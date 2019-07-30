@@ -2,107 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0C6779F5C
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 05:03:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DBE9E79F6B
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 05:04:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732870AbfG3DCt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 23:02:49 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:44470 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732730AbfG3DCr (ORCPT
+        id S1730164AbfG3DEV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 23:04:21 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:41546 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726386AbfG3DES (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 23:02:47 -0400
-Received: by mail-pl1-f196.google.com with SMTP id t14so28251248plr.11;
-        Mon, 29 Jul 2019 20:02:46 -0700 (PDT)
+        Mon, 29 Jul 2019 23:04:18 -0400
+Received: by mail-pg1-f193.google.com with SMTP id x15so18903723pgg.8
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 20:04:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=+wCRrWmIk4Nc0ISlty592sI89pc1yeuZmJCIRwRKr38=;
-        b=ghT6fDpVNQ07/bhniKx+0CDugTQLh2JuWxcYh3Pb//LfguBMq+Gqu7hVYuz3aijLPn
-         yWnIUQvZfjFLY6DTd3CazPQc+N5vQQhVfzWHDQNWSrEZRyTRJ9K4K9zcsJqqI7uAoakU
-         b4hZTOP2udpN3kw7efV2bfANPqRPKCUt0ATxHzXtlddSyNZuTiHq3y+YUf4EREpqSCg6
-         9cqK6u5eOem9eU25GHVttXUcSdqxcZzx1nBqkLMnEdTvzn5sWvJ6eI1plWCcCFlKlO4l
-         o/YczNKWpyo5ACc2aBofLGx5MVnfyKEdeUxNqqXurvAF4Tox+sdngD8OwjBAXQepyUfa
-         8Maw==
+        h=date:from:to:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=gD5mfEMWuXarGCctKEueAm1TQYwfzvdTbbmFFyNOtWo=;
+        b=UVBvxgZ6r/zLyKNUUmC7qzvDk5EBxkpH1aC3y+kIo97u1sg42yewB7FkZdIpZMqvpS
+         QIB4TpEnF3SyEtGHbXb/AB4jlJ9mRLrxHLY5bz5G9UFc70g+I+IJA+g1/ySrcOw/pfWt
+         tzD7FDrpyDosPIvxQacedkrga26Bv7MfrsThJiWoy5ymskilTpMy8SO2zzUd7beqKfsl
+         u4Bbb9PSRp/zymco+TgOhWf3RH0SNTve4sqmjJQ8YX7KeQehRXgKMlEsLB5DVtQL2FOR
+         sfTCYP4R/1c2eDlXt/0WCDtWBVhW7r29c2S1WcHEstdLYrR/syUqDu72U6O9LfaWd3Qt
+         0WkQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=+wCRrWmIk4Nc0ISlty592sI89pc1yeuZmJCIRwRKr38=;
-        b=IFCs/W5xtvuXu96OaIAFFaSr2Bp+RZH4fHNNjRuPsV34n4sAm7Urx209leISa5WCGc
-         U9rmTIVUAcUwDovlg3VG6+HESehFaHtlZF+H+/b8Db1DIqzyGVHhbLWn9rk7gHWiSR4I
-         4Y/Cc/yonRNB8b6Ts838J9HPefUCuj0pucEs0D/QlDOMmMFn9WVS1O3lC2yjP43BpZuk
-         v7gM297VEwzXMakBiYQlbX6TRxLsQkZQCPOe+ocHnAg3AwAmOzvvMeVefgJwANcI9Uw3
-         4Xq/H3hAtxkdHQ2BrQ31xNXa8uPCJplk8EjfEM5LOq1u3h1BxIknjr3UAC0CIIcbtQLn
-         t9RQ==
-X-Gm-Message-State: APjAAAUxKZUbPZYwodRxe37WUzrVjMWidryivMLujZcRiMW0zORp6z5Z
-        IioUgKsQdk9HAGkZRhIKxQU=
-X-Google-Smtp-Source: APXvYqwtEg9oc+Ub8h8Ztki2a4IVL/OlCf+NImHZ83H+rMfXxdSJaWW1wJI9LMdfpoOlIOryu4ft3w==
-X-Received: by 2002:a17:902:8bc1:: with SMTP id r1mr64301099plo.42.1564455766537;
-        Mon, 29 Jul 2019 20:02:46 -0700 (PDT)
-Received: from suzukaze.ipads-lab.se.sjtu.edu.cn ([89.31.126.54])
-        by smtp.gmail.com with ESMTPSA id h26sm66277793pfq.64.2019.07.29.20.02.44
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 29 Jul 2019 20:02:45 -0700 (PDT)
-From:   Chuhong Yuan <hslester96@gmail.com>
-Cc:     Richard Henderson <rth@twiddle.net>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>, linux-alpha@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>
-Subject: [PATCH v2] alpha: Replace strncmp with str_has_prefix
-Date:   Tue, 30 Jul 2019 11:02:39 +0800
-Message-Id: <20190730030239.17983-1-hslester96@gmail.com>
-X-Mailer: git-send-email 2.20.1
+        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=gD5mfEMWuXarGCctKEueAm1TQYwfzvdTbbmFFyNOtWo=;
+        b=jr2YxxwkZB144QFs+EM7HhCpaGkjj2wW9umSfAv7QGoMM6MfirOQcodRh0agiJTKJj
+         EliL/kx5uJ1TNFu6LxkSjJf3ELh8xy4Umh6Rn2fqYoKFoZp/3DzrHTkTiaKmNEBsVjNI
+         2HrnPi6OTx+ZgF2VgSZa43VDG6EbyHsnM9c4amBDKpZw8UTLyQ4ydVhd7riRvUpY33jp
+         SuFRPhNa1y4grVCMf+cJg//cRMYWUOLewVmsaFcSzDugseWGfG+m2rkz4/Ek7hMmJaeE
+         VC5tL7zPVID9B0Qj3N0h9Nq1PntR138mnSlWc1e+MXezn2J97z7xDIyJzqfov51ry6z/
+         04eQ==
+X-Gm-Message-State: APjAAAXnyrmAYaFkycbmNgiA3687iBEKXplkwbgEaut1kLCdzPgRNaTZ
+        P8U1VozEsNTxV/bV2yPqTJ8=
+X-Google-Smtp-Source: APXvYqzdWv0EJeJ8yPP/yNdZlsxyvWTQ6kqL8q4wcSPSHXHBf6Lp1lQKBVsPsqDq/ZrNU2RgtE/OJA==
+X-Received: by 2002:a17:90a:1aa4:: with SMTP id p33mr116749314pjp.27.1564455858074;
+        Mon, 29 Jul 2019 20:04:18 -0700 (PDT)
+Received: from hari-Inspiron-1545 ([183.83.86.126])
+        by smtp.gmail.com with ESMTPSA id n185sm45771965pga.16.2019.07.29.20.04.14
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 29 Jul 2019 20:04:17 -0700 (PDT)
+Date:   Tue, 30 Jul 2019 08:34:11 +0530
+From:   Hariprasad Kelam <hariprasad.kelam@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jeeeun Evans <jeeeunevans@gmail.com>,
+        Hardik Singh Rathore <hardiksingh.k@gmail.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Mukesh Ojha <mojha@codeaurora.org>,
+        Hariprasad Kelam <hariprasad.kelam@gmail.com>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        hdegoede@redhat.com, Larry.Finger@lwfinger.net
+Subject: [PATCH] staging: rtl8723bs: core: Remove Macro
+ "IS_MAC_ADDRESS_BROADCAST"
+Message-ID: <20190730030411.GA6140@hari-Inspiron-1545>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In commit b6b2735514bc
-("tracing: Use str_has_prefix() instead of using fixed sizes")
-the newly introduced str_has_prefix() was used
-to replace error-prone strncmp(str, const, len).
-Here fix codes with the same pattern.
+Remove unused macro IS_MAC_ADDRESS_BROADCAST. In future if one wants use
+it ,use generic API "is_broadcast_ether_addr"
 
-Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
 ---
-Changes in v2:
-  - Revise the indent and aligning.
+ drivers/staging/rtl8723bs/core/rtw_ioctl_set.c | 7 -------
+ 1 file changed, 7 deletions(-)
 
- arch/alpha/boot/tools/objstrip.c | 2 +-
- arch/alpha/kernel/setup.c        | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/alpha/boot/tools/objstrip.c b/arch/alpha/boot/tools/objstrip.c
-index 825a16f5f622..08b430d25a31 100644
---- a/arch/alpha/boot/tools/objstrip.c
-+++ b/arch/alpha/boot/tools/objstrip.c
-@@ -148,7 +148,7 @@ main (int argc, char *argv[])
- #ifdef __ELF__
-     elf = (struct elfhdr *) buf;
+diff --git a/drivers/staging/rtl8723bs/core/rtw_ioctl_set.c b/drivers/staging/rtl8723bs/core/rtw_ioctl_set.c
+index 8eb0ff5..eb08569 100644
+--- a/drivers/staging/rtl8723bs/core/rtw_ioctl_set.c
++++ b/drivers/staging/rtl8723bs/core/rtw_ioctl_set.c
+@@ -9,13 +9,6 @@
+ #include <drv_types.h>
+ #include <rtw_debug.h>
  
--    if (elf->e_ident[0] == 0x7f && strncmp((char *)elf->e_ident + 1, "ELF", 3) == 0) {
-+    if (elf->e_ident[0] == 0x7f && str_has_prefix((char *)elf->e_ident + 1, "ELF")) {
- 	if (elf->e_type != ET_EXEC) {
- 	    fprintf(stderr, "%s: %s is not an ELF executable\n",
- 		    prog_name, inname);
-diff --git a/arch/alpha/kernel/setup.c b/arch/alpha/kernel/setup.c
-index 5d4c76a77a9f..e82e45d5fd96 100644
---- a/arch/alpha/kernel/setup.c
-+++ b/arch/alpha/kernel/setup.c
-@@ -466,7 +466,7 @@ setup_arch(char **cmdline_p)
- #ifndef alpha_using_srm
- 	/* Assume that we've booted from SRM if we haven't booted from MILO.
- 	   Detect the later by looking for "MILO" in the system serial nr.  */
--	alpha_using_srm = strncmp((const char *)hwrpb->ssn, "MILO", 4) != 0;
-+	alpha_using_srm = !str_has_prefix((const char *)hwrpb->ssn, "MILO");
- #endif
- #ifndef alpha_using_qemu
- 	/* Similarly, look for QEMU.  */
+-#define IS_MAC_ADDRESS_BROADCAST(addr) \
+-(\
+-	((addr[0] == 0xff) && (addr[1] == 0xff) && \
+-		(addr[2] == 0xff) && (addr[3] == 0xff) && \
+-		(addr[4] == 0xff) && (addr[5] == 0xff))  ? true : false \
+-)
+-
+ u8 rtw_validate_bssid(u8 *bssid)
+ {
+ 	u8 ret = true;
 -- 
-2.20.1
+2.7.4
 
