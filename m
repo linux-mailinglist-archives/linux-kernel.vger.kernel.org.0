@@ -2,49 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1874A7B589
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 00:15:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 801837B58F
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 00:17:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728994AbfG3WP5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 18:15:57 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:51189 "EHLO
+        id S1729029AbfG3WRI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 18:17:08 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:41501 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726210AbfG3WP5 (ORCPT
+        with ESMTP id S1727221AbfG3WRH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 18:15:57 -0400
+        Tue, 30 Jul 2019 18:17:07 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6UMFiLI3398823
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6UMGTGf3398928
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Tue, 30 Jul 2019 15:15:44 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6UMFiLI3398823
+        Tue, 30 Jul 2019 15:16:29 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6UMGTGf3398928
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019071901; t=1564524944;
-        bh=qctDV/DofJjZAu0TvRJH+IMKXEgAUtUomRmCSuVCz+0=;
+        s=2019071901; t=1564524989;
+        bh=4h1lRGvK45JmQtMrFgN8U5BoqpxjyRh0ehQ63FWqXJ0=;
         h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=aK9wjhLBffqHKePNzHslNSzVp3VK5SXAm7XIU3BtCQQ2++9G+FX1w9tX2i085YFcD
-         TMItzJlcEIMsXJbHd2GXsKltSSN+u+3dXHhzD9i8b/Iwrmg0Nce98KwjMLaUY/5xvP
-         KlKDjV5iNNVj+1x7nO6Eyklt5VuhWNFJ2hoVAEz8dddJSD+QekX6/Ck6RMFO6kKSU0
-         niB/OhwYLlojM7hY20kXI+irnMUKYMagYITV0WsGLrIgrTmcrhFs1MDYokGuClM8b+
-         GnuMcetj9KpHfLLQWZ5FUFgb73h/1+7AgLzO+QoJtKF6srxhXMjwlVv85JQYstPAeK
-         SztSzl0I8VX6A==
+        b=qdCC/eu24mfLA+OuJ79/hBaKPJJ+h0jui69vnVo+laM0JHOovH75CIiZPib9MMJnv
+         6bVtLYdHhc0wwa1GWS7iupQ8I+0T2ZImy/597mkZZD2HRxUOx0R7pi0ryUn/0hky2J
+         80dbXhvW/6dXknlthJ+SGCpgSURjZsJ84hDpSHv5mgPJ7eBcp/LKFCu6FJIk6bgTAA
+         wvpUT8QoyYZRgiXX2UYgoDfjThKNvBFNv4ANMOl2TNOqnZoCwekZ9APnDHTVg335YR
+         EakWOpxhcX7zb1/xoqtfU8oKPol/dZjXyZQXdvA1W0hoNs4ajjGczwOcIXp+KrFT0m
+         WlBuDtqZWUqlg==
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6UMFh2o3398820;
-        Tue, 30 Jul 2019 15:15:43 -0700
-Date:   Tue, 30 Jul 2019 15:15:43 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6UMGScZ3398925;
+        Tue, 30 Jul 2019 15:16:28 -0700
+Date:   Tue, 30 Jul 2019 15:16:28 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Sebastian Andrzej Siewior <tipbot@zytor.com>
-Message-ID: <tip-f4f9a0e3f4c01a11043aca77006532c3c889c9ba@git.kernel.org>
-Cc:     bigeasy@linutronix.de, hpa@zytor.com, peterz@infradead.org,
-        tglx@linutronix.de, linux-kernel@vger.kernel.org, mingo@kernel.org
-Reply-To: tglx@linutronix.de, peterz@infradead.org, mingo@kernel.org,
-          linux-kernel@vger.kernel.org, bigeasy@linutronix.de,
-          hpa@zytor.com
-In-Reply-To: <20190726185753.551967692@linutronix.de>
-References: <20190726185753.551967692@linutronix.de>
+Message-ID: <tip-a6bc84e64a7dbfdeaae02f434ad1b296f2f9cd1e@git.kernel.org>
+Cc:     bigeasy@linutronix.de, rostedt@goodmis.org,
+        linux-kernel@vger.kernel.org, peterz@infradead.org,
+        tglx@linutronix.de, hpa@zytor.com, mingo@kernel.org
+Reply-To: tglx@linutronix.de, mingo@kernel.org, hpa@zytor.com,
+          bigeasy@linutronix.de, rostedt@goodmis.org,
+          linux-kernel@vger.kernel.org, peterz@infradead.org
+In-Reply-To: <20190726185753.645792403@linutronix.de>
+References: <20190726185753.645792403@linutronix.de>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:timers/core] hrtimer: Move unmarked hrtimers to soft interrupt
- expiry on RT
-Git-Commit-ID: f4f9a0e3f4c01a11043aca77006532c3c889c9ba
+Subject: [tip:timers/core] hrtimer: Determine hard/soft expiry mode for
+ hrtimer sleepers on RT
+Git-Commit-ID: a6bc84e64a7dbfdeaae02f434ad1b296f2f9cd1e
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -62,64 +63,94 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  f4f9a0e3f4c01a11043aca77006532c3c889c9ba
-Gitweb:     https://git.kernel.org/tip/f4f9a0e3f4c01a11043aca77006532c3c889c9ba
+Commit-ID:  a6bc84e64a7dbfdeaae02f434ad1b296f2f9cd1e
+Gitweb:     https://git.kernel.org/tip/a6bc84e64a7dbfdeaae02f434ad1b296f2f9cd1e
 Author:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-AuthorDate: Fri, 26 Jul 2019 20:30:57 +0200
+AuthorDate: Fri, 26 Jul 2019 20:30:58 +0200
 Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Tue, 30 Jul 2019 23:57:56 +0200
+CommitDate: Tue, 30 Jul 2019 23:57:57 +0200
 
-hrtimer: Move unmarked hrtimers to soft interrupt expiry on RT
+hrtimer: Determine hard/soft expiry mode for hrtimer sleepers on RT
 
-On PREEMPT_RT not all hrtimers can be expired in hard interrupt context
-even if that is perfectly fine on a PREEMPT_RT=n kernel, e.g. because they
-take regular spinlocks. Also for latency reasons PREEMPT_RT tries to defer
-most hrtimers' expiry into softirq context.
+On PREEMPT_RT enabled kernels hrtimers which are not explicitely marked for
+hard interrupt expiry mode are moved into soft interrupt context either for
+latency reasons or because the hrtimer callback takes regular spinlocks or
+invokes other functions which are not suitable for hard interrupt context
+on PREEMPT_RT.
 
-hrtimers marked with HRTIMER_MODE_HARD must be kept in hard interrupt
-context expiry mode. Add the required logic.
+The hrtimer_sleeper callback is RT compatible in hard interrupt context,
+but there is a latency concern: Untrusted userspace can spawn many threads
+which arm timers for the same expiry time on the same CPU. On expiry that
+causes a latency spike due to the wakeup of a gazillion threads.
 
-No functional change for PREEMPT_RT=n kernels.
+OTOH, priviledged real-time user space applications rely on the low latency
+of hard interrupt wakeups. These syscall related wakeups are all based on
+hrtimer sleepers.
+
+If the current task is in a real-time scheduling class, mark the mode for
+hard interrupt expiry.
 
 [ tglx: Split out of a larger combo patch. Added changelog ]
 
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lkml.kernel.org/r/20190726185753.551967692@linutronix.de
+Link: https://lkml.kernel.org/r/20190726185753.645792403@linutronix.de
 
 ---
- kernel/time/hrtimer.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ kernel/time/hrtimer.c | 34 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
 
 diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
-index 0ace301a56f4..90dcc4d95e91 100644
+index 90dcc4d95e91..c101f88ae8aa 100644
 --- a/kernel/time/hrtimer.c
 +++ b/kernel/time/hrtimer.c
-@@ -1275,8 +1275,17 @@ static void __hrtimer_init(struct hrtimer *timer, clockid_t clock_id,
- 			   enum hrtimer_mode mode)
+@@ -1676,6 +1676,16 @@ static enum hrtimer_restart hrtimer_wakeup(struct hrtimer *timer)
+ void hrtimer_sleeper_start_expires(struct hrtimer_sleeper *sl,
+ 				   enum hrtimer_mode mode)
  {
- 	bool softtimer = !!(mode & HRTIMER_MODE_SOFT);
--	int base = softtimer ? HRTIMER_MAX_CLOCK_BASES / 2 : 0;
- 	struct hrtimer_cpu_base *cpu_base;
-+	int base;
++	/*
++	 * Make the enqueue delivery mode check work on RT. If the sleeper
++	 * was initialized for hard interrupt delivery, force the mode bit.
++	 * This is a special case for hrtimer_sleepers because
++	 * hrtimer_init_sleeper() determines the delivery mode on RT so the
++	 * fiddling with this decision is avoided at the call sites.
++	 */
++	if (IS_ENABLED(CONFIG_PREEMPT_RT) && sl->timer.is_hard)
++		mode |= HRTIMER_MODE_HARD;
 +
+ 	hrtimer_start_expires(&sl->timer, mode);
+ }
+ EXPORT_SYMBOL_GPL(hrtimer_sleeper_start_expires);
+@@ -1683,6 +1693,30 @@ EXPORT_SYMBOL_GPL(hrtimer_sleeper_start_expires);
+ static void __hrtimer_init_sleeper(struct hrtimer_sleeper *sl,
+ 				   clockid_t clock_id, enum hrtimer_mode mode)
+ {
 +	/*
 +	 * On PREEMPT_RT enabled kernels hrtimers which are not explicitely
 +	 * marked for hard interrupt expiry mode are moved into soft
-+	 * interrupt context for latency reasons and because the callbacks
-+	 * can invoke functions which might sleep on RT, e.g. spin_lock().
++	 * interrupt context either for latency reasons or because the
++	 * hrtimer callback takes regular spinlocks or invokes other
++	 * functions which are not suitable for hard interrupt context on
++	 * PREEMPT_RT.
++	 *
++	 * The hrtimer_sleeper callback is RT compatible in hard interrupt
++	 * context, but there is a latency concern: Untrusted userspace can
++	 * spawn many threads which arm timers for the same expiry time on
++	 * the same CPU. That causes a latency spike due to the wakeup of
++	 * a gazillion threads.
++	 *
++	 * OTOH, priviledged real-time user space applications rely on the
++	 * low latency of hard interrupt wakeups. If the current task is in
++	 * a real-time scheduling class, mark the mode for hard interrupt
++	 * expiry.
 +	 */
-+	if (IS_ENABLED(CONFIG_PREEMPT_RT) && !(mode & HRTIMER_MODE_HARD))
-+		softtimer = true;
- 
- 	memset(timer, 0, sizeof(struct hrtimer));
- 
-@@ -1290,6 +1299,7 @@ static void __hrtimer_init(struct hrtimer *timer, clockid_t clock_id,
- 	if (clock_id == CLOCK_REALTIME && mode & HRTIMER_MODE_REL)
- 		clock_id = CLOCK_MONOTONIC;
- 
-+	base = softtimer ? HRTIMER_MAX_CLOCK_BASES / 2 : 0;
- 	base += hrtimer_clockid_to_base(clock_id);
- 	timer->is_soft = softtimer;
- 	timer->is_hard = !softtimer;
++	if (IS_ENABLED(CONFIG_PREEMPT_RT)) {
++		if (task_is_realtime(current) && !(mode & HRTIMER_MODE_SOFT))
++			mode |= HRTIMER_MODE_HARD;
++	}
++
+ 	__hrtimer_init(&sl->timer, clock_id, mode);
+ 	sl->timer.function = hrtimer_wakeup;
+ 	sl->task = current;
