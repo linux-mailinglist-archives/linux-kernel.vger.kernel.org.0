@@ -2,73 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07CDE7ADAC
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 18:33:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 161317ADDD
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 18:36:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733027AbfG3QdR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 12:33:17 -0400
-Received: from mx2.suse.de ([195.135.220.15]:60568 "EHLO mx1.suse.de"
+        id S1728679AbfG3QfB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 12:35:01 -0400
+Received: from mx2.suse.de ([195.135.220.15]:32978 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727924AbfG3QdP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 12:33:15 -0400
+        id S1726770AbfG3QfB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 12:35:01 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 992B1B03C;
-        Tue, 30 Jul 2019 16:33:14 +0000 (UTC)
-Received: by ds.suse.cz (Postfix, from userid 10065)
-        id 5990ADA808; Tue, 30 Jul 2019 18:33:49 +0200 (CEST)
-Date:   Tue, 30 Jul 2019 18:33:49 +0200
-From:   David Sterba <dsterba@suse.cz>
-To:     Jia-Ju Bai <baijiaju1990@gmail.com>
-Cc:     clm@fb.com, josef@toxicpanda.com, dsterba@suse.cz,
-        quwenruo.btrfs@gmx.com, linux-btrfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fs: btrfs: Add an assertion to warn incorrct case in
- insert_inline_extent()
-Message-ID: <20190730163349.GD28208@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz, Jia-Ju Bai <baijiaju1990@gmail.com>,
-        clm@fb.com, josef@toxicpanda.com, quwenruo.btrfs@gmx.com,
-        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190727085113.11530-1-baijiaju1990@gmail.com>
+        by mx1.suse.de (Postfix) with ESMTP id 45EB2AC9B;
+        Tue, 30 Jul 2019 16:35:00 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id DCA0B1E4370; Tue, 30 Jul 2019 18:34:58 +0200 (CEST)
+Date:   Tue, 30 Jul 2019 18:34:58 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Chengguang Xu <cgxu519@zoho.com.cn>
+Cc:     Jan Kara <jack@suse.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] quota: fix condition for resetting time limit in
+ do_set_dqblk()
+Message-ID: <20190730163458.GI28829@quack2.suse.cz>
+References: <20190724053216.19392-1-cgxu519@zoho.com.cn>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190727085113.11530-1-baijiaju1990@gmail.com>
-User-Agent: Mutt/1.5.23.1 (2014-03-12)
+In-Reply-To: <20190724053216.19392-1-cgxu519@zoho.com.cn>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jul 27, 2019 at 04:51:13PM +0800, Jia-Ju Bai wrote:
-> In insert_inline_extent(), the case that compressed_size > 0 
-> and compressed_pages = NULL cannot occur, otherwise a null-pointer
-> dereference may occur on line 215:
->      cpage = compressed_pages[i];
+On Wed 24-07-19 13:32:16, Chengguang Xu wrote:
+> We reset time limit when current usage is smaller
+> or equal to soft limit in other place, so follow
+> this rule in do_set_dqblk().
 > 
-> To warn this incorrect case, an assertion is added.
-> Thank Qu Wenruo and David Sterba for good advice.
-> 
-> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+> Signed-off-by: Chengguang Xu <cgxu519@zoho.com.cn>
+
+Thanks! Applied.
+
+								Honza
+
 > ---
->  fs/btrfs/inode.c | 3 +++
->  1 file changed, 3 insertions(+)
+>  fs/quota/dquot.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-> index 1af069a9a0c7..21d6e2dcc25f 100644
-> --- a/fs/btrfs/inode.c
-> +++ b/fs/btrfs/inode.c
-> @@ -178,6 +178,9 @@ static int insert_inline_extent(struct btrfs_trans_handle *trans,
->  	size_t cur_size = size;
->  	unsigned long offset;
+> diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
+> index be9c471cdbc8..6e826b454082 100644
+> --- a/fs/quota/dquot.c
+> +++ b/fs/quota/dquot.c
+> @@ -2731,7 +2731,7 @@ static int do_set_dqblk(struct dquot *dquot, struct qc_dqblk *di)
 >  
-> +	ASSERT((compressed_size > 0 && compressed_pages) ||
-> +			(compressed_size == 0 && !compressed_pages))
-
-Thanks. I expect that the static checking tools can be instructed to
-understand that the condition has been checked and is not missing in the
-code below. ASSERT is conditinally a BUG() wrapper, otherwise a no-op.
-
-Btw, it's also good to check that the code compiles, the statement is
-missing semicolon.
+>  	if (check_blim) {
+>  		if (!dm->dqb_bsoftlimit ||
+> -		    dm->dqb_curspace + dm->dqb_rsvspace < dm->dqb_bsoftlimit) {
+> +		    dm->dqb_curspace + dm->dqb_rsvspace <= dm->dqb_bsoftlimit) {
+>  			dm->dqb_btime = 0;
+>  			clear_bit(DQ_BLKS_B, &dquot->dq_flags);
+>  		} else if (!(di->d_fieldmask & QC_SPC_TIMER))
+> @@ -2740,7 +2740,7 @@ static int do_set_dqblk(struct dquot *dquot, struct qc_dqblk *di)
+>  	}
+>  	if (check_ilim) {
+>  		if (!dm->dqb_isoftlimit ||
+> -		    dm->dqb_curinodes < dm->dqb_isoftlimit) {
+> +		    dm->dqb_curinodes <= dm->dqb_isoftlimit) {
+>  			dm->dqb_itime = 0;
+>  			clear_bit(DQ_INODES_B, &dquot->dq_flags);
+>  		} else if (!(di->d_fieldmask & QC_INO_TIMER))
+> -- 
+> 2.20.1
+> 
+> 
+> 
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
