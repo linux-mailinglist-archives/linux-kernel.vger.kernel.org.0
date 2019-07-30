@@ -2,55 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 76EF97A990
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 15:30:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 75CC87A9C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 15:36:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730142AbfG3Nab (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 09:30:31 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:47656 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726382AbfG3Nab (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 09:30:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=tZfqFV1mC7mjoGwJp7O3BavJOel8ZxAd9ytjtyhys4s=; b=u+YNmT48vGmDMbMfOWrSeCDUfD
-        enHCxebeZ9BjoW3i24I+yk2UQIfTK0zmG8k+4p3IjwODwuD+Cr/I3puGYpT/koy87J8QqGf2Rxo0y
-        XP7Sjce4ycQUzjQ4l/SuLMNH+0svT/neij9rv8TKuj+SNiWoMJ2P3KFOIRaYViNkrLU4=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
-        (envelope-from <andrew@lunn.ch>)
-        id 1hsSCz-0007gW-0u; Tue, 30 Jul 2019 15:30:29 +0200
-Date:   Tue, 30 Jul 2019 15:30:29 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Hubert Feurstein <h.feurstein@gmail.com>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: Re: [PATCH] net: phy: fixed_phy: print gpio error only if gpio node
- is present
-Message-ID: <20190730133029.GC28552@lunn.ch>
-References: <20190730094623.31640-1-h.feurstein@gmail.com>
+        id S1731109AbfG3NgZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 09:36:25 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:3224 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726358AbfG3NgZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 09:36:25 -0400
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id B571A76C86F14882582D;
+        Tue, 30 Jul 2019 21:36:21 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS413-HUB.china.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server id 14.3.439.0; Tue, 30 Jul 2019
+ 21:36:13 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <ronald@innovation.ch>, <dmitry.torokhov@gmail.com>,
+        <nikolas@gnu.org>
+CC:     <linux-kernel@vger.kernel.org>, <linux-input@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH v2] Input: applespi - Fix build error
+Date:   Tue, 30 Jul 2019 21:34:14 +0800
+Message-ID: <20190730133414.49008-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
+In-Reply-To: <20190729031455.59400-1-yuehaibing@huawei.com>
+References: <20190729031455.59400-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190730094623.31640-1-h.feurstein@gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 30, 2019 at 11:46:23AM +0200, Hubert Feurstein wrote:
-> It is perfectly ok to not have an gpio attached to the fixed-link node. So
-> the driver should not throw an error message when the gpio is missing.
-> 
-> Signed-off-by: Hubert Feurstein <h.feurstein@gmail.com>
+If CONFIG_KEYBOARD_APPLESPI=y but CONFIG_LEDS_CLASS=m
+building fails:
 
-Fixes: 5468e82f7034 ("net: phy: fixed-phy: Drop GPIO from fixed_phy_add()")
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+drivers/input/keyboard/applespi.o: In function `applespi_probe':
+applespi.c:(.text+0x1fcd): undefined reference to `devm_led_classdev_register_ext'
 
-    Andrew
+Add "depends on LEDS_CLASS" to the Konfig
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Fixes: 038b1a05eae6 ("Input: add Apple SPI keyboard and trackpad driver")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+v2: use 'depends on LEDS_CLASS'
+---
+ drivers/input/keyboard/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/input/keyboard/Kconfig b/drivers/input/keyboard/Kconfig
+index ebb19e2..90e8a7f 100644
+--- a/drivers/input/keyboard/Kconfig
++++ b/drivers/input/keyboard/Kconfig
+@@ -76,6 +76,7 @@ config KEYBOARD_APPLESPI
+ 	depends on ACPI && EFI
+ 	depends on SPI
+ 	depends on X86 || COMPILE_TEST
++	depends on LEDS_CLASS
+ 	select CRC16
+ 	help
+ 	  Say Y here if you are running Linux on any Apple MacBook8,1 or later,
+-- 
+2.7.4
+
+
