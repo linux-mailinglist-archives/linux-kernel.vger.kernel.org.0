@@ -2,129 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C82057A413
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 11:26:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 602407A41A
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 11:27:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731311AbfG3J0Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 05:26:25 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:36291 "EHLO pegase1.c-s.fr"
+        id S1731295AbfG3J1h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 05:27:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60242 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729566AbfG3J0Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 05:26:24 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 45yWQQ4Dlkz9v6rL;
-        Tue, 30 Jul 2019 11:26:22 +0200 (CEST)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=LguhQ+mC; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id KZgfe_18yVyX; Tue, 30 Jul 2019 11:26:22 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 45yWQQ358Sz9v6rD;
-        Tue, 30 Jul 2019 11:26:22 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1564478782; bh=W494YaqgUnZA2FNm31/aP5pf5NOo4mChfve8KHyIrgo=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=LguhQ+mCh1Cl3JcH0/tMBY4TpGOZyqIb++mijiTCVHZV09QnAoXuaDmUQdnmZ57bd
-         uf6sUo38sJhtq7e2HwZwA24AxJF+bkaGLEpd049BpDFMLI3hds8qFwgxi7w51ec2+X
-         +hsuVhzyeJirIeuY8ttS9wqtcP8mSTxpvyoaAOyM=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 848AD8B800;
-        Tue, 30 Jul 2019 11:26:23 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id jTKB_g-k_myc; Tue, 30 Jul 2019 11:26:23 +0200 (CEST)
-Received: from [172.25.230.101] (po15451.idsi0.si.c-s.fr [172.25.230.101])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 40AC08B74F;
-        Tue, 30 Jul 2019 11:26:23 +0200 (CEST)
-Subject: Re: [PATCH v2 05/10] powerpc/fsl_booke/32: introduce
- reloc_kernel_entry() helper
-To:     Jason Yan <yanaijie@huawei.com>, mpe@ellerman.id.au,
-        linuxppc-dev@lists.ozlabs.org, diana.craciun@nxp.com,
-        benh@kernel.crashing.org, paulus@samba.org, npiggin@gmail.com,
-        keescook@chromium.org, kernel-hardening@lists.openwall.com
-Cc:     linux-kernel@vger.kernel.org, wangkefeng.wang@huawei.com,
-        yebin10@huawei.com, thunder.leizhen@huawei.com,
-        jingxiangfeng@huawei.com, fanchengyang@huawei.com,
-        zhaohongjiang@huawei.com
-References: <20190730074225.39544-1-yanaijie@huawei.com>
- <20190730074225.39544-6-yanaijie@huawei.com>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <a1159f8e-ba34-5568-aef0-31f3a8b65449@c-s.fr>
-Date:   Tue, 30 Jul 2019 11:26:23 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1727247AbfG3J1h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 05:27:37 -0400
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2096C20665;
+        Tue, 30 Jul 2019 09:27:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564478856;
+        bh=SKrtRvl5PY+xSQMY/2ee+4a4/9Fd63llyHB3gzj8fMw=;
+        h=Date:From:To:Subject:References:In-Reply-To:From;
+        b=ygueO2xHBORMlwOlZoAFuDF440R5FDSKuhZ6cPycOBVLY2icVq7RQyfm3gj9MSltQ
+         EHD+sP8Ok6RCtCfOCoL5CJl+xCOS2htNHA+QTX7X/jUH2Lk8lKAQqIijLVZ4zNz5SG
+         yPCiZ48mMqNN5WmPkqyAY/FcD3m9BDPNi0n9uRZI=
+Date:   Tue, 30 Jul 2019 10:27:31 +0100
+From:   Will Deacon <will@kernel.org>
+To:     Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, arnd@arndb.de,
+        linux@dominikbrodowski.net, ebiederm@xmission.com,
+        akpm@linux-foundation.org, viro@zeniv.linux.org.uk,
+        oleg@redhat.com, steve.mcintyre@arm.com, dave.martin@arm.com
+Subject: Re: [PATCH 0/2] Don't use SIGMINSTKSZ when enforcing alternative
+ signal stack size for compat tasks
+Message-ID: <20190730092730.q6djqrv6ag7fcofs@willie-the-truck>
+References: <1532526312-26993-1-git-send-email-will.deacon@arm.com>
+ <20190729202302.GA3443@aurel32.net>
 MIME-Version: 1.0
-In-Reply-To: <20190730074225.39544-6-yanaijie@huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190729202302.GA3443@aurel32.net>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-Le 30/07/2019 à 09:42, Jason Yan a écrit :
-> Add a new helper reloc_kernel_entry() to jump back to the start of the
-> new kernel. After we put the new kernel in a randomized place we can use
-> this new helper to enter the kernel and begin to relocate again.
+On Mon, Jul 29, 2019 at 10:23:02PM +0200, Aurelien Jarno wrote:
+> On 2018-07-25 14:45, Will Deacon wrote:
+> > Hi all,
+> > 
+> > The Debian folks have observed a failure in the 32-bit arm glibc testsuite
+> > when running under a 64-bit kernel. They tracked this down to sigaltstack(2)
+> > enforcing the alternative signal stack to be at least SIGMINSTKSZ bytes,
+> > which is higher for native arm64 tasks than compat 32-bit tasks.
+> > 
+> > These patches resolve the issue by allowing an architecture to define
+> > COMPAT_SIGMINSTKSZ for compat tasks, which is then used by the sigaltstack
+> > checking code.
+> > 
+> > Feedback welcome,
+> > 
+> > Will
+> > 
+> > --->8
+> > 
+> > Will Deacon (2):
+> >   signal: Introduce COMPAT_SIGMINSTKSZ for use in compat_sys_sigaltstack
+> >   arm64: compat: Provide definition for COMPAT_SIGMINSTKSZ
 > 
-> Signed-off-by: Jason Yan <yanaijie@huawei.com>
-> Cc: Diana Craciun <diana.craciun@nxp.com>
-> Cc: Michael Ellerman <mpe@ellerman.id.au>
-> Cc: Christophe Leroy <christophe.leroy@c-s.fr>
-> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-> Cc: Paul Mackerras <paulus@samba.org>
-> Cc: Nicholas Piggin <npiggin@gmail.com>
-> Cc: Kees Cook <keescook@chromium.org>
+> Only the first patch went to the stable kernels. The second one is
+> missing, so the bug is still not fixed in those kernels. Would it be
+> possible to also get it included?
 
-Reviewed-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Damn, you're right. I think the autosel bot picked the first commit but not
+the second. In hindsight, we should've tagged them both, but oh well. I've
+posted the patch here for -stable, with you on cc:
 
-> ---
->   arch/powerpc/kernel/head_fsl_booke.S | 13 +++++++++++++
->   arch/powerpc/mm/mmu_decl.h           |  1 +
->   2 files changed, 14 insertions(+)
-> 
-> diff --git a/arch/powerpc/kernel/head_fsl_booke.S b/arch/powerpc/kernel/head_fsl_booke.S
-> index 04d124fee17d..2083382dd662 100644
-> --- a/arch/powerpc/kernel/head_fsl_booke.S
-> +++ b/arch/powerpc/kernel/head_fsl_booke.S
-> @@ -1143,6 +1143,19 @@ _GLOBAL(create_tlb_entry)
->   	sync
->   	blr
->   
-> +/*
-> + * Return to the start of the relocated kernel and run again
-> + * r3 - virtual address of fdt
-> + * r4 - entry of the kernel
-> + */
-> +_GLOBAL(reloc_kernel_entry)
-> +	mfmsr	r7
-> +	rlwinm	r7, r7, 0, ~(MSR_IS | MSR_DS)
-> +
-> +	mtspr	SPRN_SRR0,r4
-> +	mtspr	SPRN_SRR1,r7
-> +	rfi
-> +
->   /*
->    * Create a tlb entry with the same effective and physical address as
->    * the tlb entry used by the current running code. But set the TS to 1.
-> diff --git a/arch/powerpc/mm/mmu_decl.h b/arch/powerpc/mm/mmu_decl.h
-> index a09f89d3aa0f..804da298beb3 100644
-> --- a/arch/powerpc/mm/mmu_decl.h
-> +++ b/arch/powerpc/mm/mmu_decl.h
-> @@ -143,6 +143,7 @@ extern void adjust_total_lowmem(void);
->   extern int switch_to_as1(void);
->   extern void restore_to_as0(int esel, int offset, void *dt_ptr, int bootcpu);
->   void create_tlb_entry(phys_addr_t phys, unsigned long virt, int entry);
-> +void reloc_kernel_entry(void *fdt, int addr);
->   #endif
->   extern void loadcam_entry(unsigned int index);
->   extern void loadcam_multi(int first_idx, int num, int tmp_idx);
-> 
+https://lore.kernel.org/lkml/20190730092547.1284-1-will@kernel.org/T/#u
+
+Will
