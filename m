@@ -2,122 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5150A7A71F
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 13:37:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 851C07A724
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 13:38:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730744AbfG3Lhy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 07:37:54 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:60277 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730614AbfG3Lhy (ORCPT
+        id S1730818AbfG3Lia (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 07:38:30 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:36759 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730796AbfG3Li3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 07:37:54 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 39FA3802B5; Tue, 30 Jul 2019 13:37:40 +0200 (CEST)
-Date:   Tue, 30 Jul 2019 13:37:51 +0200
-From:   Pavel Machek <pavel@denx.de>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Tony Lindgren <tony@atomide.com>,
-        Sebastian Reichel <sebastian.reichel@collabora.com>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: Re: [PATCH 5.2 048/215] drm/omap: dont check dispc timings for DSI
-Message-ID: <20190730113751.GB21815@amd>
-References: <20190729190739.971253303@linuxfoundation.org>
- <20190729190748.832081009@linuxfoundation.org>
+        Tue, 30 Jul 2019 07:38:29 -0400
+Received: by mail-wr1-f67.google.com with SMTP id n4so65468935wrs.3
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 04:38:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=fNgx7LSZsCgbXKdsyr24bMY9+rQUrrZFZQRC4AZtF9c=;
+        b=UzuA4+3dWD5gJ/bdWkmp+oOn2TquUqRLyhTvpv71pz7iZ2sw04Dfi/dVMU4rPFxtYF
+         zcafGzR25HcoGTuB2y6cMFwz1ybVu1AguN6miO5wUzRZ7j7sRtem7g6Q6+auwoAhpzVz
+         qCzhMOWs34dfxcAg2dx64MnMRAdLen7WE1g38sa22lJRwwiHHlk7KZ35yq1lrK5aWI66
+         l1c7ytZfhr5kiQrJ8s/w/amYJf5nkGFW5IYYdh5xMogGWyEQQ3KamGRmD/GrgzgrvAJ2
+         52WnysO1TMySTSb5Z3nGjpIdG+YdE/b+LxWVdczZ9H9YUb4eM9+Gk9uN7YCn/zx3Uq+y
+         M0XA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=fNgx7LSZsCgbXKdsyr24bMY9+rQUrrZFZQRC4AZtF9c=;
+        b=TZaoYy7FLWJCT29Nxnp0KUkxQeI69rP536E2oveR00die4C2dZPjPOGKu66Nky3xu3
+         zZIu3qzPGsaDMNxHZq+DDoHumekO85kfaSikPasv4oY8TyKCfiueBZttqYXrE+ZQKCgh
+         bnO/LHVlqpDpU63NgjC48ZqPzNF/tqLjiiX9pAFXV1UMnNpq8YsQOU/uIIcJ8UjC1Xjf
+         564I+b9yqre8IqoYCX4nKhX888kudrV5QQM7+7sZSAnVT31p/6ymea3a0jtr6X2gw/d1
+         ozLx2infmedMaiaFWen3c3y4711JPpWc4Bm9QeZo8uSW/fbB0CgW5bPyxL+61974STg3
+         N9Kg==
+X-Gm-Message-State: APjAAAWfDJ3z2Q2888Ry91F+sVu8tTb5sTgrUBTP3BWjsa4/fvCUI3zn
+        YCFqkftkFC82ZDchWc5IZagHHFus
+X-Google-Smtp-Source: APXvYqyrOWXJtJJE/Z8rh0NjaFzqXq9A4xuhHNIQKEOvXvJTncEPAOI8h6PfJJZs4V3dUopUN741Pg==
+X-Received: by 2002:adf:f646:: with SMTP id x6mr134917936wrp.18.1564486707429;
+        Tue, 30 Jul 2019 04:38:27 -0700 (PDT)
+Received: from debian-brgl.home ([2a01:cb1d:af:5b00:e921:c4e4:a1d5:45d1])
+        by smtp.gmail.com with ESMTPSA id r11sm99600810wre.14.2019.07.30.04.38.26
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 30 Jul 2019 04:38:26 -0700 (PDT)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc:     netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Frode Isaksen <fisaksen@baylibre.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH] net: stmmac: Use netif_tx_napi_add() for TX polling function
+Date:   Tue, 30 Jul 2019 13:38:14 +0200
+Message-Id: <20190730113814.13825-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="1LKvkjL3sHcu1TtY"
-Content-Disposition: inline
-In-Reply-To: <20190729190748.832081009@linuxfoundation.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Frode Isaksen <fisaksen@baylibre.com>
 
---1LKvkjL3sHcu1TtY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This variant of netif_napi_add() should be used from drivers
+using NAPI to exclusively poll a TX queue.
 
-On Mon 2019-07-29 21:20:44, Greg Kroah-Hartman wrote:
-> [ Upstream commit ad9df7d91b4a6e8f4b20c2bf539ac09b3b2ad6eb ]
->=20
-> While most display types only forward their VM to the DISPC, this
-> is not true for DSI. DSI calculates the VM for DISPC based on its
-> own, but it's not identical. Actually the DSI VM is not even a valid
-> DISPC VM making this check fail. Let's restore the old behaviour
-> and avoid checking the DISPC VM for DSI here.
->=20
-> Fixes: 7c27fa57ef31 ("drm/omap: Call dispc timings check operation direct=
-ly")
-> Acked-by: Pavel Machek <pavel@ucw.cz>
-> Tested-by: Tony Lindgren <tony@atomide.com>
-> Tested-by: Pavel Machek <pavel@ucw.cz>
-> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-> Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Frode Isaksen <fisaksen@baylibre.com>
+Tested-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Not sure if this is good idea for stable. IIRC there's series of
-patches to enable display on droid4 (etc), which is useful, but this
-patch is not going to do any good on its own.
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+index 98b1a5c6d537..390dad5b9819 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -4313,8 +4313,9 @@ int stmmac_dvr_probe(struct device *device,
+ 				       NAPI_POLL_WEIGHT);
+ 		}
+ 		if (queue < priv->plat->tx_queues_to_use) {
+-			netif_napi_add(ndev, &ch->tx_napi, stmmac_napi_poll_tx,
+-				       NAPI_POLL_WEIGHT);
++			netif_tx_napi_add(ndev, &ch->tx_napi,
++					  stmmac_napi_poll_tx,
++					  NAPI_POLL_WEIGHT);
+ 		}
+ 	}
+ 
+-- 
+2.21.0
 
-								Pavel
-
->  drivers/gpu/drm/omapdrm/omap_crtc.c | 18 ++++++++++++++----
->  1 file changed, 14 insertions(+), 4 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/omapdrm/omap_crtc.c b/drivers/gpu/drm/omapdr=
-m/omap_crtc.c
-> index 8712af79a49c..4c43dd282acc 100644
-> --- a/drivers/gpu/drm/omapdrm/omap_crtc.c
-> +++ b/drivers/gpu/drm/omapdrm/omap_crtc.c
-> @@ -384,10 +384,20 @@ static enum drm_mode_status omap_crtc_mode_valid(st=
-ruct drm_crtc *crtc,
->  	int r;
-> =20
->  	drm_display_mode_to_videomode(mode, &vm);
-> -	r =3D priv->dispc_ops->mgr_check_timings(priv->dispc, omap_crtc->channe=
-l,
-> -					       &vm);
-> -	if (r)
-> -		return r;
-> +
-> +	/*
-> +	 * DSI might not call this, since the supplied mode is not a
-> +	 * valid DISPC mode. DSI will calculate and configure the
-> +	 * proper DISPC mode later.
-> +	 */
-> +	if (omap_crtc->pipe->output->next =3D=3D NULL ||
-> +	    omap_crtc->pipe->output->next->type !=3D OMAP_DISPLAY_TYPE_DSI) {
-> +		r =3D priv->dispc_ops->mgr_check_timings(priv->dispc,
-> +						       omap_crtc->channel,
-> +						       &vm);
-> +		if (r)
-> +			return r;
-> +	}
-> =20
->  	/* Check for bandwidth limit */
->  	if (priv->max_bandwidth) {
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---1LKvkjL3sHcu1TtY
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAl1ALA8ACgkQMOfwapXb+vLivwCfSxC4OWQN/14fhb5nIvRRnOS+
-JMwAnix68z/VpEm39HRi2R0vnq3K7lOU
-=mnTv
------END PGP SIGNATURE-----
-
---1LKvkjL3sHcu1TtY--
