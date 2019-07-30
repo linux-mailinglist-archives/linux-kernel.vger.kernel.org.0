@@ -2,91 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F2D17A33B
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 10:41:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 78D297A343
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 10:44:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730996AbfG3Ikx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 04:40:53 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:33663 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728354AbfG3Ikx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 04:40:53 -0400
-Received: by mail-pg1-f193.google.com with SMTP id f20so20454950pgj.0;
-        Tue, 30 Jul 2019 01:40:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=oht354i7nlKO87/dRT8d2R9vughNR8TfvgXEqGm1tuc=;
-        b=HA5f+/WosIJHoAnUdpExXjkFvcjZ8PqeonpPEaug0kxLT+HDAG5PFC8VSZbbPacAqB
-         tnpBGfCnOIU2ghnvy5ooo05Pd/VcuiM6yCrMm66kbs5Kpa+7b72A8+vhG5O6584koEJc
-         9xLpvRLXMwd5NzrkgiXErFub01sC9pr/2nmwONgOLu3Zyntyr0lTC1ZgBg8ack9FmeB/
-         BCluqjV7XsJ0l+V7LNNXaj22P3I3FtMKvsu2L/r/TtsnZuIRb7T5VruDuj1lyHxBiEpN
-         JlB5xbZ9TgWM2EXHUKZu+Wa9Ng3z4ULnBd9QWq5/wlGY7ODwLCxI0V9lxDiC5CaRGBYW
-         O+jA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=oht354i7nlKO87/dRT8d2R9vughNR8TfvgXEqGm1tuc=;
-        b=CAGH/6LBykFXzr9PRi6tLLMhDAni1wE1k+ya8naf4h2NhaLcDIjNHn8uYzY+t+WJdG
-         WxeBmblthucaBgHtQgjUbtRytHkI/iLWASdueHxcT3pjjOoWo6QjmrnuCE3GL89faBND
-         W9FUgcndzEyNhWA7yMjd4kmAsEozY0jtpqY4+RjPya0C6+/nP1imQwMFDEKsh/sr57D0
-         CsFkXtP8ReuGc+Ev8i+4zhYBtdkDvogweXY/sBMNRfzvOvPo8rYWOnaW4uLvy71i9WML
-         HPVp+Va9nVch8QcCchXc8rhv/wFqrND47GaqMwnPjjnyYMyq2DwyHp01CwtYwp7sh+zL
-         /Hbw==
-X-Gm-Message-State: APjAAAWTFje4O3hfG/yksN3PW8VHEbncmBEU2+TA+yFiVPVISQlt5JY5
-        DppxKaQjHJe7RiMxd/m1pqs=
-X-Google-Smtp-Source: APXvYqwWh4taE6b552+xWeQnh2QXA/XQN0XAPxd0ucxcVOReiXhx0SNiyHXX5+T/cCyLrqStwDL1KA==
-X-Received: by 2002:a63:ab08:: with SMTP id p8mr18894180pgf.340.1564476052524;
-        Tue, 30 Jul 2019 01:40:52 -0700 (PDT)
-Received: from suzukaze.ipads-lab.se.sjtu.edu.cn ([89.31.126.54])
-        by smtp.gmail.com with ESMTPSA id m9sm108158454pgr.24.2019.07.30.01.40.50
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 30 Jul 2019 01:40:51 -0700 (PDT)
-From:   Chuhong Yuan <hslester96@gmail.com>
-Cc:     Adam Radford <aradford@gmail.com>,
-        "James E . J . Bottomley" <jejb@linux.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Chuhong Yuan <hslester96@gmail.com>
-Subject: [PATCH] scsi: 3w-sas: Fix unterminated strncpy
-Date:   Tue, 30 Jul 2019 16:40:47 +0800
-Message-Id: <20190730084047.26482-1-hslester96@gmail.com>
-X-Mailer: git-send-email 2.20.1
+        id S1731016AbfG3Imq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 04:42:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44006 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726255AbfG3Imq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 04:42:46 -0400
+Received: from linux-8ccs (unknown [92.117.234.120])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BEA68206A2;
+        Tue, 30 Jul 2019 08:42:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564476165;
+        bh=YK2IrKjOsWEiencRzwtkuliQzDg5iArYwQoLPINIRA8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ZhAE4XiAR0lxtgqgtoYxN5SYyXm0adhMlJdrSkEJ6XXgah/SpUVb5UExJLe5pTPCr
+         cbJXtlcPxXvaWI/EQk7jDxsMsploMkUqXkVi9o7f4RTfWKOUGQsDFjixpUghXXo1nZ
+         6mvX52uc1uXN9atQc5ejGExZkxF+9GEt7h4ESHMM=
+Date:   Tue, 30 Jul 2019 10:42:39 +0200
+From:   Jessica Yu <jeyu@kernel.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Yang Yingliang <yangyingliang@huawei.com>,
+        Jian Cheng <cj.chengjian@huawei.com>,
+        Nadav Amit <namit@vmware.com>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        David Lechner <david@lechnology.com>,
+        Adam Ford <aford173@gmail.com>, Martin Kaiser <lists@kaiser.cx>
+Subject: Re: [PATCH] modules: always page-align module section allocations
+Message-ID: <20190730084239.GA19748@linux-8ccs>
+References: <20190724150156.28526-1-jeyu@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20190724150156.28526-1-jeyu@kernel.org>
+X-OS:   Linux linux-8ccs 4.12.14-lp150.12.28-default x86_64
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-strncpy(dest, src, strlen(src)) leads to unterminated
-dest, which is dangerous.
-Here driver_version's len is 32 and TW_DRIVER_VERSION
-is shorter than 32.
-Therefore strcpy is OK.
++++ Jessica Yu [24/07/19 17:01 +0200]:
+>Some arches (e.g., arm64, x86) have moved towards non-executable
+>module_alloc() allocations for security hardening reasons. That means
+>that the module loader will need to set the text section of a module to
+>executable, regardless of whether or not CONFIG_STRICT_MODULE_RWX is set.
+>
+>When CONFIG_STRICT_MODULE_RWX=y, module section allocations are always
+>page-aligned to handle memory rwx permissions. On some arches with
+>CONFIG_STRICT_MODULE_RWX=n however, when setting the module text to
+>executable, the BUG_ON() in frob_text() gets triggered since module
+>section allocations are not page-aligned when CONFIG_STRICT_MODULE_RWX=n.
+>Since the set_memory_* API works with pages, and since we need to call
+>set_memory_x() regardless of whether CONFIG_STRICT_MODULE_RWX is set, we
+>might as well page-align all module section allocations for ease of
+>managing rwx permissions of module sections (text, rodata, etc).
+>
+>Fixes: 2eef1399a866 ("modules: fix BUG when load module with rodata=n")
+>Reported-by: Martin Kaiser <lists@kaiser.cx>
+>Reported-by: Bartosz Golaszewski <brgl@bgdev.pl>
+>Tested-by: David Lechner <david@lechnology.com>
+>Tested-by: Martin Kaiser <martin@kaiser.cx>
+>Signed-off-by: Jessica Yu <jeyu@kernel.org>
 
-Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
----
- drivers/scsi/3w-sas.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Applied, thanks everyone for testing.
 
-diff --git a/drivers/scsi/3w-sas.c b/drivers/scsi/3w-sas.c
-index dda6fa857709..96f529c613a6 100644
---- a/drivers/scsi/3w-sas.c
-+++ b/drivers/scsi/3w-sas.c
-@@ -1328,7 +1328,7 @@ static int twl_reset_sequence(TW_Device_Extension *tw_dev, int soft_reset)
- 		}
- 
- 		/* Load rest of compatibility struct */
--		strncpy(tw_dev->tw_compat_info.driver_version, TW_DRIVER_VERSION, strlen(TW_DRIVER_VERSION));
-+		strcpy(tw_dev->tw_compat_info.driver_version, TW_DRIVER_VERSION);
- 		tw_dev->tw_compat_info.driver_srl_high = TW_CURRENT_DRIVER_SRL;
- 		tw_dev->tw_compat_info.driver_branch_high = TW_CURRENT_DRIVER_BRANCH;
- 		tw_dev->tw_compat_info.driver_build_high = TW_CURRENT_DRIVER_BUILD;
--- 
-2.20.1
-
+> kernel/module.c | 7 +------
+> 1 file changed, 1 insertion(+), 6 deletions(-)
+>
+>diff --git a/kernel/module.c b/kernel/module.c
+>index 5933395af9a0..cd8df516666d 100644
+>--- a/kernel/module.c
+>+++ b/kernel/module.c
+>@@ -64,14 +64,9 @@
+>
+> /*
+>  * Modules' sections will be aligned on page boundaries
+>- * to ensure complete separation of code and data, but
+>- * only when CONFIG_STRICT_MODULE_RWX=y
+>+ * to ensure complete separation of code and data
+>  */
+>-#ifdef CONFIG_STRICT_MODULE_RWX
+> # define debug_align(X) ALIGN(X, PAGE_SIZE)
+>-#else
+>-# define debug_align(X) (X)
+>-#endif
+>
+> /* If this is set, the section belongs in the init part of the module */
+> #define INIT_OFFSET_MASK (1UL << (BITS_PER_LONG-1))
+>-- 
+>2.16.4
+>
