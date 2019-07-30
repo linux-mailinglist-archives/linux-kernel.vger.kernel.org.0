@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6DB47AEBC
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 19:00:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E8D97AEC7
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 19:00:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729821AbfG3Q6U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 12:58:20 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:52841 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729166AbfG3Q6R (ORCPT
+        id S1730417AbfG3Q7X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 12:59:23 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:43642 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729736AbfG3Q6S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 12:58:17 -0400
-Received: by mail-wm1-f67.google.com with SMTP id s3so57824557wms.2;
-        Tue, 30 Jul 2019 09:58:15 -0700 (PDT)
+        Tue, 30 Jul 2019 12:58:18 -0400
+Received: by mail-wr1-f67.google.com with SMTP id p13so66548942wru.10;
+        Tue, 30 Jul 2019 09:58:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Y0shjWZR4s9zJHqVWwZPltTGcrU0R1di6AYm7h2L5QM=;
-        b=gaOdoMuOJcuk4YlHcKJ+CXgHCK8nzLnuZHNma04tNZ3dRlt+py+fB3CPsfjiZJ3KSx
-         UCsCNKDMhFducbHbDGVW5ms5kZTnnBZ/VPVzESJMwHGFCYR0q/XBVzp6peYSXWwXe93G
-         rriCYoZconuOGyTWsgvkqpMlCJds5WCpe8L0VhItO6BJZCj45YAttaB1E7diEpfvro6B
-         ywA/VhSIiPwQYB7M5ag4aLEEhdXrQ8SEctV44yX0SCGwdQPhbx2wBDbaTzWM6jEq6O03
-         WYrf+pn8HLoYgbz1bD5U8u8DHH95HPIaWj9htwmubyfOAn80qhljdXxyLThh0cWzox9X
-         9lmQ==
+        bh=cHY/PWsCS9Gy0qH6S2V8hqONNTeRxBp0T3nKwM2El6E=;
+        b=RgWL5H0abdsOwXIac0uk/56Qpu8Dml3donOrYITO24N5I+EnLII2X5yAKHLyjnUUks
+         k6SiXHGvJjI3cynhy48jDglqa+w5KNfWmnDN40HOdpLfxidJIQ6x6SGnhf91KoX6cT/7
+         rIIwoMVNT0LHM3Ojm3bcz/ywA5X7gmej0lVsuWO2NJwmQk0aODkAIjXzAbS1xMLDPPXH
+         LXxngxauImVR5cZ/IeUt4oX9KBlva8JWARcA9omSG+bYJCW0E+7lC8AQChsnFP+bhlSz
+         kU8jHeM5B5CX909YH65KKhO64jncXB3WD8XIRQ3wtw9QOJc4CxwsMos499pKdsdtlb4D
+         xc5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Y0shjWZR4s9zJHqVWwZPltTGcrU0R1di6AYm7h2L5QM=;
-        b=LK0cYdw7edK4rSHMrxYk8n7Sg4i6Zr6i+O0rbgBd2Tjw/4XSdexZC+0dfyI8FWYiuh
-         bPLFPTxSVxtey0I5p+1aEOTb121ccBFC5YtClLfHLrJE4TLadoyMfwZjgrZ+rB+YYTtC
-         7W/1MA0Rz7/B6nBz6s7sH27btyhs2zF3+der+WeoWwq9C+gez119xjRAiivct08D5Sis
-         wCJnavlX+SS+7dLYOvTumM7qLs6rYr/xWVapStZKDLL06tbZunp7AanXfKbjYzSnwo49
-         17cQKNeBN2eqp7HYtNaYwT+H4kOGoRrKk1B8OqHJ8K8Pqna1Os9hjyGA9nqRsyX2S5nD
-         8Y3g==
-X-Gm-Message-State: APjAAAVdq9z7ERzdLcgWUaTBdX7t+M5RMOSYC1P0eB4/7PxCzGdNWcl6
-        V4Ax9fe4O52bDbseRc1twIY=
-X-Google-Smtp-Source: APXvYqzd4HLIXrliMrPBIjMLd0ov7QAEyx399Ia6eRH8ACdOUuN3ILGPUwzuUrJbRM6o0qw3f1Zrug==
-X-Received: by 2002:a7b:cb08:: with SMTP id u8mr103929592wmj.167.1564505895091;
-        Tue, 30 Jul 2019 09:58:15 -0700 (PDT)
+        bh=cHY/PWsCS9Gy0qH6S2V8hqONNTeRxBp0T3nKwM2El6E=;
+        b=BAPCYk4OBEgb1JsaYwiPTKmD8Sb4h5kcr47CoTbsaqlokEPXo1dIO0NiCe//DsLD3z
+         VOSjHJVhF9V8pFxVGvFs7jjyxc0Z5GLEkNf3gv3GV3MO8D7JFO6lakpVyv8JwAO7h+eo
+         jrijPIKWM/awjZFPCYndhTFkH0ax3eN8RurKXPEgYQITb9IctDqeExYyqc9+NjeeZnrq
+         siJ8yn45dzKAbwCXt8jp9rdvgjFGxjmnNh6NoyhncWzO3M/FVfeAq7rjhPnKMrAfzQsy
+         rqEVkohKCsSoti3Ht7iJdLWFIGlV1Q4wwyknpwOMliGvc4tcKUme3kqg3xJsVxZVSObv
+         ENcg==
+X-Gm-Message-State: APjAAAUJ/IJABGqYuFIc+KrnNRXaF0SIBvw4LORbW0/OXFEzSnAhKkNV
+        vEExxwh57kOdd8RppZuRcsMD/MCP
+X-Google-Smtp-Source: APXvYqyrsktUZZ3xbBXfS16fNrP8gGuWqmcaULBm5PX+z5WSnr534qgc8EXw5VVqQNiKjXWTTRZktA==
+X-Received: by 2002:a5d:50d1:: with SMTP id f17mr74521257wrt.124.1564505896476;
+        Tue, 30 Jul 2019 09:58:16 -0700 (PDT)
 Received: from localhost.localdomain (ppp91-78-220-99.pppoe.mtu-net.ru. [91.78.220.99])
-        by smtp.gmail.com with ESMTPSA id r5sm70845040wmh.35.2019.07.30.09.58.13
+        by smtp.gmail.com with ESMTPSA id r5sm70845040wmh.35.2019.07.30.09.58.15
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Jul 2019 09:58:14 -0700 (PDT)
+        Tue, 30 Jul 2019 09:58:16 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
@@ -56,9 +56,9 @@ To:     Rob Herring <robh+dt@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>
 Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v9 05/15] memory: tegra20-emc: Pre-configure debug register
-Date:   Tue, 30 Jul 2019 19:56:08 +0300
-Message-Id: <20190730165618.10122-6-digetx@gmail.com>
+Subject: [PATCH v9 06/15] memory: tegra20-emc: Print a brief info message about the timings
+Date:   Tue, 30 Jul 2019 19:56:09 +0300
+Message-Id: <20190730165618.10122-7-digetx@gmail.com>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190730165618.10122-1-digetx@gmail.com>
 References: <20190730165618.10122-1-digetx@gmail.com>
@@ -69,61 +69,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The driver expects certain debug features to be disabled in order to
-work properly. Let's disable them explicitly for consistency and to not
-rely on a boot state.
+During boot print how many memory timings got the driver and what's the
+RAM code. This is a very useful information when something is wrong with
+boards memory timing.
 
-Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+Suggested-by: Marc Dietrich <marvin24@gmx.de>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/memory/tegra/tegra20-emc.c | 17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
+ drivers/memory/tegra/tegra20-emc.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
 diff --git a/drivers/memory/tegra/tegra20-emc.c b/drivers/memory/tegra/tegra20-emc.c
-index 1ce351dd5461..85c24f285fd4 100644
+index 85c24f285fd4..25a6aad6a7a9 100644
 --- a/drivers/memory/tegra/tegra20-emc.c
 +++ b/drivers/memory/tegra/tegra20-emc.c
-@@ -22,6 +22,7 @@
+@@ -368,6 +368,13 @@ static int tegra_emc_load_timings_from_dt(struct tegra_emc *emc,
+ 	sort(emc->timings, emc->num_timings, sizeof(*timing), cmp_timings,
+ 	     NULL);
  
- #define EMC_INTSTATUS				0x000
- #define EMC_INTMASK				0x004
-+#define EMC_DBG					0x008
- #define EMC_TIMING_CONTROL			0x028
- #define EMC_RC					0x02c
- #define EMC_RFC					0x030
-@@ -80,6 +81,12 @@
- #define EMC_REFRESH_OVERFLOW_INT		BIT(3)
- #define EMC_CLKCHANGE_COMPLETE_INT		BIT(4)
- 
-+#define EMC_DBG_READ_MUX_ASSEMBLY		BIT(0)
-+#define EMC_DBG_WRITE_MUX_ACTIVE		BIT(1)
-+#define EMC_DBG_FORCE_UPDATE			BIT(2)
-+#define EMC_DBG_READ_DQM_CTRL			BIT(9)
-+#define EMC_DBG_CFG_PRIORITY			BIT(24)
-+
- static const u16 emc_timing_registers[] = {
- 	EMC_RC,
- 	EMC_RFC,
-@@ -396,7 +403,7 @@ tegra_emc_find_node_by_ram_code(struct device *dev)
- static int emc_setup_hw(struct tegra_emc *emc)
- {
- 	u32 intmask = EMC_REFRESH_OVERFLOW_INT | EMC_CLKCHANGE_COMPLETE_INT;
--	u32 emc_cfg;
-+	u32 emc_cfg, emc_dbg;
- 
- 	emc_cfg = readl_relaxed(emc->regs + EMC_CFG_2);
- 
-@@ -419,6 +426,14 @@ static int emc_setup_hw(struct tegra_emc *emc)
- 	writel_relaxed(intmask, emc->regs + EMC_INTMASK);
- 	writel_relaxed(intmask, emc->regs + EMC_INTSTATUS);
- 
-+	/* ensure that unwanted debug features are disabled */
-+	emc_dbg = readl_relaxed(emc->regs + EMC_DBG);
-+	emc_dbg |= EMC_DBG_CFG_PRIORITY;
-+	emc_dbg &= ~EMC_DBG_READ_MUX_ASSEMBLY;
-+	emc_dbg &= ~EMC_DBG_WRITE_MUX_ACTIVE;
-+	emc_dbg &= ~EMC_DBG_FORCE_UPDATE;
-+	writel_relaxed(emc_dbg, emc->regs + EMC_DBG);
++	dev_info(emc->dev,
++		 "got %u timings for RAM code %u (min %luMHz max %luMHz)\n",
++		 emc->num_timings,
++		 tegra_read_ram_code(),
++		 emc->timings[0].rate / 1000000,
++		 emc->timings[emc->num_timings - 1].rate / 1000000);
 +
  	return 0;
  }
