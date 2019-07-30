@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0D1A79F4F
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 05:02:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 25F5379F50
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 05:02:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732781AbfG3DCQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 23:02:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51566 "EHLO mail.kernel.org"
+        id S1732795AbfG3DCV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 23:02:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51622 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732723AbfG3DCN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 23:02:13 -0400
+        id S1732779AbfG3DCR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 23:02:17 -0400
 Received: from quaco.ghostprotocols.net (unknown [179.97.35.50])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9EA2B208E3;
-        Tue, 30 Jul 2019 03:02:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3120C21726;
+        Tue, 30 Jul 2019 03:02:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564455732;
-        bh=Ru/awM1Wdi+TeP8fL1DWVvy1WECVE+gkngLXzs4wnxk=;
+        s=default; t=1564455736;
+        bh=9Q/t4L+WrSWCQ5YpOlazXkHz8GQ+0Gzu8XN2Qs/CYac=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WTYpA7x/eK8CWlLu7BBNhRRuzuB+Z5CD6uXRP/M7ayAG6hl6WkfzR9J81s9XuSB7h
-         Wte41rMlAnUj7MCF4ymiVdIRCc1koLPuRf5E3r7ZeX4ZksyjOU1AJgvP1GsN0QSqRO
-         INVR3PsEkCfNeuksXRou6U9Zv9MYcC2P9JnOXFbk=
+        b=gZY/rQaC6Dn3Tg8fyTPu+vL8e51OtClMn/CwLYYlrfvYLzk57cja2i9dTv7aSoz3P
+         HNU/Bx1xluavqC3ZJ7GiOfDlsLjJwTFew0pXb5awaPIEATVWp7O0zKKXLBJEeVoen1
+         zrwoj822V6TnZ6XJkER1Dpl5/rGplsnv/rrRYN/U=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
@@ -35,9 +35,9 @@ Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         Andi Kleen <ak@linux.intel.com>,
         Michael Petlan <mpetlan@redhat.com>,
         Peter Zijlstra <peterz@infradead.org>
-Subject: [PATCH 103/107] libperf: Add perf_evsel tests
-Date:   Mon, 29 Jul 2019 23:56:06 -0300
-Message-Id: <20190730025610.22603-104-acme@kernel.org>
+Subject: [PATCH 104/107] libperf: Add perf_evlist__enable/disable test
+Date:   Mon, 29 Jul 2019 23:56:07 -0300
+Message-Id: <20190730025610.22603-105-acme@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190730025610.22603-1-acme@kernel.org>
 References: <20190730025610.22603-1-acme@kernel.org>
@@ -50,8 +50,8 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jiri Olsa <jolsa@kernel.org>
 
-Add 2 simple perf_evsel tests to test counters reading interface through
-the struct evsel object.
+Add simple perf_evlist enable/disable test together with evlist counter
+reading interface.
 
 Committer testing:
 
@@ -86,80 +86,35 @@ Cc: Andi Kleen <ak@linux.intel.com>
 Cc: Michael Petlan <mpetlan@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20190721112506.12306-77-jolsa@kernel.org
+Link: http://lkml.kernel.org/r/20190721112506.12306-78-jolsa@kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/lib/tests/Makefile     |  2 +-
- tools/perf/lib/tests/test-evsel.c | 82 +++++++++++++++++++++++++++++++
- 2 files changed, 83 insertions(+), 1 deletion(-)
- create mode 100644 tools/perf/lib/tests/test-evsel.c
+ tools/perf/lib/tests/test-evlist.c | 63 ++++++++++++++++++++++++++++++
+ 1 file changed, 63 insertions(+)
 
-diff --git a/tools/perf/lib/tests/Makefile b/tools/perf/lib/tests/Makefile
-index e66ed090f08e..1ee4e9ba848b 100644
---- a/tools/perf/lib/tests/Makefile
-+++ b/tools/perf/lib/tests/Makefile
-@@ -1,6 +1,6 @@
- # SPDX-License-Identifier: (LGPL-2.1 OR BSD-2-Clause)
+diff --git a/tools/perf/lib/tests/test-evlist.c b/tools/perf/lib/tests/test-evlist.c
+index f24c531afcb6..4e1407f20ffd 100644
+--- a/tools/perf/lib/tests/test-evlist.c
++++ b/tools/perf/lib/tests/test-evlist.c
+@@ -111,12 +111,75 @@ static int test_stat_thread(void)
+ 	return 0;
+ }
  
--TESTS = test-cpumap test-threadmap test-evlist
-+TESTS = test-cpumap test-threadmap test-evlist test-evsel
- 
- TESTS_SO := $(addsuffix -so,$(TESTS))
- TESTS_A  := $(addsuffix -a,$(TESTS))
-diff --git a/tools/perf/lib/tests/test-evsel.c b/tools/perf/lib/tests/test-evsel.c
-new file mode 100644
-index 000000000000..268712292f60
---- /dev/null
-+++ b/tools/perf/lib/tests/test-evsel.c
-@@ -0,0 +1,82 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <linux/perf_event.h>
-+#include <perf/cpumap.h>
-+#include <perf/threadmap.h>
-+#include <perf/evsel.h>
-+#include <internal/tests.h>
-+
-+static int test_stat_cpu(void)
-+{
-+	struct perf_cpu_map *cpus;
-+	struct perf_evsel *evsel;
-+	struct perf_event_attr attr = {
-+		.type	= PERF_TYPE_SOFTWARE,
-+		.config	= PERF_COUNT_SW_CPU_CLOCK,
-+	};
-+	int err, cpu, tmp;
-+
-+	cpus = perf_cpu_map__new(NULL);
-+	__T("failed to create cpus", cpus);
-+
-+	evsel = perf_evsel__new(&attr);
-+	__T("failed to create evsel", evsel);
-+
-+	err = perf_evsel__open(evsel, cpus, NULL);
-+	__T("failed to open evsel", err == 0);
-+
-+	perf_cpu_map__for_each_cpu(cpu, tmp, cpus) {
-+		struct perf_counts_values counts = { .val = 0 };
-+
-+		perf_evsel__read(evsel, cpu, 0, &counts);
-+		__T("failed to read value for evsel", counts.val != 0);
-+	}
-+
-+	perf_evsel__close(evsel);
-+	perf_evsel__delete(evsel);
-+
-+	perf_cpu_map__put(cpus);
-+	return 0;
-+}
-+
-+static int test_stat_thread(void)
++static int test_stat_thread_enable(void)
 +{
 +	struct perf_counts_values counts = { .val = 0 };
 +	struct perf_thread_map *threads;
++	struct perf_evlist *evlist;
 +	struct perf_evsel *evsel;
-+	struct perf_event_attr attr = {
-+		.type	= PERF_TYPE_SOFTWARE,
-+		.config	= PERF_COUNT_SW_TASK_CLOCK,
++	struct perf_event_attr attr1 = {
++		.type	  = PERF_TYPE_SOFTWARE,
++		.config	  = PERF_COUNT_SW_CPU_CLOCK,
++		.disabled = 1,
++	};
++	struct perf_event_attr attr2 = {
++		.type	  = PERF_TYPE_SOFTWARE,
++		.config	  = PERF_COUNT_SW_TASK_CLOCK,
++		.disabled = 1,
 +	};
 +	int err;
 +
@@ -168,32 +123,55 @@ index 000000000000..268712292f60
 +
 +	perf_thread_map__set_pid(threads, 0, 0);
 +
-+	evsel = perf_evsel__new(&attr);
-+	__T("failed to create evsel", evsel);
++	evlist = perf_evlist__new();
++	__T("failed to create evlist", evlist);
 +
-+	err = perf_evsel__open(evsel, NULL, threads);
++	evsel = perf_evsel__new(&attr1);
++	__T("failed to create evsel1", evsel);
++
++	perf_evlist__add(evlist, evsel);
++
++	evsel = perf_evsel__new(&attr2);
++	__T("failed to create evsel2", evsel);
++
++	perf_evlist__add(evlist, evsel);
++
++	perf_evlist__set_maps(evlist, NULL, threads);
++
++	err = perf_evlist__open(evlist);
 +	__T("failed to open evsel", err == 0);
 +
-+	perf_evsel__read(evsel, 0, 0, &counts);
-+	__T("failed to read value for evsel", counts.val != 0);
++	perf_evlist__for_each_evsel(evlist, evsel) {
++		perf_evsel__read(evsel, 0, 0, &counts);
++		__T("failed to read value for evsel", counts.val == 0);
++	}
 +
-+	perf_evsel__close(evsel);
-+	perf_evsel__delete(evsel);
++	perf_evlist__enable(evlist);
++
++	perf_evlist__for_each_evsel(evlist, evsel) {
++		perf_evsel__read(evsel, 0, 0, &counts);
++		__T("failed to read value for evsel", counts.val != 0);
++	}
++
++	perf_evlist__disable(evlist);
++
++	perf_evlist__close(evlist);
++	perf_evlist__delete(evlist);
 +
 +	perf_thread_map__put(threads);
 +	return 0;
 +}
 +
-+int main(int argc, char **argv)
-+{
-+	__T_START;
-+
-+	test_stat_cpu();
-+	test_stat_thread();
-+
-+	__T_OK;
-+	return 0;
-+}
+ int main(int argc, char **argv)
+ {
+ 	__T_START;
+ 
+ 	test_stat_cpu();
+ 	test_stat_thread();
++	test_stat_thread_enable();
+ 
+ 	__T_OK;
+ 	return 0;
 -- 
 2.21.0
 
