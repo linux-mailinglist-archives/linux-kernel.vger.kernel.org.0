@@ -2,81 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 509F079E05
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 03:43:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B15279E18
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 03:46:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730630AbfG3BnE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 21:43:04 -0400
-Received: from mga11.intel.com ([192.55.52.93]:52810 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730584AbfG3BnE (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 21:43:04 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jul 2019 18:43:04 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,325,1559545200"; 
-   d="scan'208";a="371358430"
-Received: from yjin15-mobl.ccr.corp.intel.com (HELO [10.239.196.86]) ([10.239.196.86])
-  by fmsmga006.fm.intel.com with ESMTP; 29 Jul 2019 18:43:02 -0700
-Subject: Re: [PATCH] perf pmu-events: Fix the missing "cpu_clk_unhalted.core"
-To:     Andi Kleen <ak@linux.intel.com>
-Cc:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com,
-        Linux-kernel@vger.kernel.org, kan.liang@intel.com,
-        yao.jin@intel.com
-References: <20190729072755.2166-1-yao.jin@linux.intel.com>
- <20190729181658.GH25319@tassilo.jf.intel.com>
-From:   "Jin, Yao" <yao.jin@linux.intel.com>
-Message-ID: <0100c287-21b0-4754-a0a7-aee2318fdf0d@linux.intel.com>
-Date:   Tue, 30 Jul 2019 09:43:01 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1730717AbfG3Bqy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 21:46:54 -0400
+Received: from gateway31.websitewelcome.com ([192.185.143.52]:46082 "EHLO
+        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730676AbfG3Bqx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 21:46:53 -0400
+Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
+        by gateway31.websitewelcome.com (Postfix) with ESMTP id B06D1D53ED
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 20:46:52 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id sHE4hkZhy2PzOsHE4hqOeV; Mon, 29 Jul 2019 20:46:52 -0500
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        MIME-Version:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=0JGj6mzO9kTiIaCb4sA56WU7/HQECJdHfPE3UcX48CU=; b=tEn/+GPfrhGLuEKJjmVRPzMtW3
+        wqPUSUPUHNFEBb9s0PmNQH3MkxS1KprWF6CNRjJTRpeEUH1/3b6df5TmIKqRZk5izak7ekYycw5Zk
+        zYzEu+ggxUlOHeKSMBhoLgi/NFJ4Rk/5LrER49PevYx5FL40mSXWqHIKANewduRllU/E738FtMbfo
+        UagUc8uQgSleI7CbZl4bVEI9vGlqR+yn+VYTqwZh9ll4SX24RB3W4nP9Cxx4Rkah09r2B7v8+7YBT
+        ZslF5Qs4JGx72P6/R1CHDxBw3zNqBRbM9ghCQxE9Zb98r1316+CzFaI6fPgusq6+rasDfZW31B9hU
+        j+IzCMRA==;
+Received: from [187.192.11.120] (port=37256 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1hsHE3-003bjI-Kn; Mon, 29 Jul 2019 20:46:51 -0500
+Date:   Mon, 29 Jul 2019 20:46:50 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>
+Cc:     linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: [PATCH] watchdog: riowd: Mark expected switch fall-through
+Message-ID: <20190730014650.GA31309@embeddedor>
 MIME-Version: 1.0
-In-Reply-To: <20190729181658.GH25319@tassilo.jf.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 187.192.11.120
+X-Source-L: No
+X-Exim-ID: 1hsHE3-003bjI-Kn
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [187.192.11.120]:37256
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 4
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Mark switch cases where we are expecting to fall through.
 
+This patch fixes the following warnings (Building: sparc64):
 
-On 7/30/2019 2:16 AM, Andi Kleen wrote:
->> diff --git a/tools/perf/pmu-events/jevents.c b/tools/perf/pmu-events/jevents.c
->> index 1a91a197cafb..d413761621b0 100644
->> --- a/tools/perf/pmu-events/jevents.c
->> +++ b/tools/perf/pmu-events/jevents.c
->> @@ -453,6 +453,7 @@ static struct fixed {
->>   	{ "inst_retired.any_p", "event=0xc0" },
->>   	{ "cpu_clk_unhalted.ref", "event=0x0,umask=0x03" },
->>   	{ "cpu_clk_unhalted.thread", "event=0x3c" },
->> +	{ "cpu_clk_unhalted.core", "event=0x3c" },
-> 
-> Not sure this is correct for non Atom.
-> 
-> On Atom thread==core, but that is not true with SMT/HyperThreading.
-> 
-> The big cores currently don't have this event, so it would
-> match incorrectly.
-> 
-> This has to be handled on the event list level, perhaps with
-> some enhancements.
-> 
-> -Andi
-> 
+drivers/watchdog/riowd.c: In function ‘riowd_ioctl’:
+drivers/watchdog/riowd.c:136:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
+   riowd_writereg(p, riowd_timeout, WDTO_INDEX);
+   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/watchdog/riowd.c:139:2: note: here
+  case WDIOC_GETTIMEOUT:
+  ^~~~
 
-Hi Andi,
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/watchdog/riowd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-It is used to handle the fixed counter encodings between JSON and perf. 
-If big cores don't have this event, nothing will be generated in perf list.
+diff --git a/drivers/watchdog/riowd.c b/drivers/watchdog/riowd.c
+index 41a2a11535a6..b35f7be20c00 100644
+--- a/drivers/watchdog/riowd.c
++++ b/drivers/watchdog/riowd.c
+@@ -134,7 +134,7 @@ static long riowd_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ 			return -EINVAL;
+ 		riowd_timeout = (new_margin + 59) / 60;
+ 		riowd_writereg(p, riowd_timeout, WDTO_INDEX);
+-		/* Fall */
++		/* Fall through */
+ 
+ 	case WDIOC_GETTIMEOUT:
+ 		return put_user(riowd_timeout * 60, (int __user *)argp);
+-- 
+2.22.0
 
-In big cores pipeline.json, there is only "CPU_CLK_UNHALTED.THREAD", and 
-there is no "CPU_CLK_UNHALTED.CORE" defined. So at least for now, 
-CPU_CLK_UNHALTED.CORE will not be generated for big core.
-
-Thanks
-Jin Yao
