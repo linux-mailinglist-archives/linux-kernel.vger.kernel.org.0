@@ -2,107 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4414E7B5A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 00:22:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 393517B59F
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 00:20:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388099AbfG3WVv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 18:21:51 -0400
-Received: from mga05.intel.com ([192.55.52.43]:56213 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387904AbfG3WVu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 18:21:50 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jul 2019 15:21:50 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,327,1559545200"; 
-   d="scan'208";a="347277138"
-Received: from sai-dev-mach.sc.intel.com ([143.183.140.153])
-  by orsmga005.jf.intel.com with ESMTP; 30 Jul 2019 15:21:49 -0700
-From:   Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-To:     linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Cc:     dave.hansen@intel.com,
-        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH] fork: Improve error message for corrupted page tables
-Date:   Tue, 30 Jul 2019 15:18:20 -0700
-Message-Id: <20190730221820.7738-1-sai.praneeth.prakhya@intel.com>
-X-Mailer: git-send-email 2.19.1
+        id S1729174AbfG3WUr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 18:20:47 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:45909 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727221AbfG3WUr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 18:20:47 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6UMKdPE3399978
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Tue, 30 Jul 2019 15:20:40 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6UMKdPE3399978
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019071901; t=1564525240;
+        bh=0AWJICeI4PbNjv8pSuF32JmgoQZJ5aMSzFDsHN1eeGU=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=p2FloagVuYifRP0sZ6P7UbFPAJIL6wQVocw3Hp88jpTwvLIihfHkS1RHAkyf/kogQ
+         jIyhJA8V1UrVFi4LQvYjYfAMJqqcdbF8ce6LMvH/mGXeJMskCFXQiNZOb2HjNQdAMI
+         eC+9Kbj3cO3m12c8DIAwaJbg+SajSvu2WK+MSov3eSYvE3YYztXn41Vf/tl6KNJVGU
+         FPi+FOH+sGkPjjadTGYs3jiXLQDYkXA2J0ce4+994KMkmh1kXSvSWxNOj3sn9S9i3+
+         dw+9Rp05OrnikkCltcgIUKwxdecOAo3UyAmjv7jEEa9sP+VibfvBjZliExUYmctV32
+         zSghY7nb/5Nuw==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6UMKcZd3399974;
+        Tue, 30 Jul 2019 15:20:38 -0700
+Date:   Tue, 30 Jul 2019 15:20:38 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Thomas Gleixner <tipbot@zytor.com>
+Message-ID: <tip-c60a32ea4f459f99b98d383cad3b1ac7cfb3f4be@git.kernel.org>
+Cc:     mingo@kernel.org, tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        sean.j.christopherson@intel.com, hpa@zytor.com
+Reply-To: hpa@zytor.com, sean.j.christopherson@intel.com,
+          tglx@linutronix.de, linux-kernel@vger.kernel.org,
+          mingo@kernel.org
+In-Reply-To: <alpine.DEB.2.21.1907301134470.1738@nanos.tec.linutronix.de>
+References: <alpine.DEB.2.21.1907301134470.1738@nanos.tec.linutronix.de>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:timers/urgent] lib/vdso/32: Provide legacy syscall fallbacks
+Git-Commit-ID: c60a32ea4f459f99b98d383cad3b1ac7cfb3f4be
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-0.2 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
+        autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When a user process exits, the kernel cleans up the mm_struct of the user
-process and during cleanup, check_mm() checks the page tables of the user
-process for corruption (E.g: unexpected page flags set/cleared). For
-corrupted page tables, the error message printed by check_mm() isn't very
-clear as it prints the loop index instead of page table type (E.g: Resident
-file mapping pages vs Resident shared memory pages). Hence, improve the
-error message so that it's more informative.
+Commit-ID:  c60a32ea4f459f99b98d383cad3b1ac7cfb3f4be
+Gitweb:     https://git.kernel.org/tip/c60a32ea4f459f99b98d383cad3b1ac7cfb3f4be
+Author:     Thomas Gleixner <tglx@linutronix.de>
+AuthorDate: Tue, 30 Jul 2019 11:38:50 +0200
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Wed, 31 Jul 2019 00:09:09 +0200
 
-Without patch:
---------------
-[  204.836425] mm/pgtable-generic.c:29: bad p4d 0000000089eb4e92(800000025f941467)
-[  204.836544] BUG: Bad rss-counter state mm:00000000f75895ea idx:0 val:2
-[  204.836615] BUG: Bad rss-counter state mm:00000000f75895ea idx:1 val:5
-[  204.836685] BUG: non-zero pgtables_bytes on freeing mm: 20480
+lib/vdso/32: Provide legacy syscall fallbacks
 
-With patch:
------------
-[   69.815453] mm/pgtable-generic.c:29: bad p4d 0000000084653642(800000025ca37467)
-[   69.815872] BUG: Bad rss-counter state mm:00000000014a6c03 type:MM_FILEPAGES val:2
-[   69.815962] BUG: Bad rss-counter state mm:00000000014a6c03 type:MM_ANONPAGES val:5
-[   69.816050] BUG: non-zero pgtables_bytes on freeing mm: 20480
+To address the regression which causes seccomp to deny applications the
+access to clock_gettime64() and clock_getres64() syscalls because they
+are not enabled in the existing filters.
 
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Suggested-by/Acked-by: Dave Hansen <dave.hansen@intel.com>
-Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+That trips over the fact that 32bit VDSOs use the new clock_gettime64() and
+clock_getres64() syscalls in the fallback path.
+
+Add a conditional to invoke the 32bit legacy fallback syscalls instead of
+the new 64bit variants. The conditional can go away once all architectures
+are converted.
+
+Fixes: 00b26474c2f1 ("lib/vdso: Provide generic VDSO implementation")
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Reviewed-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Link: https://lkml.kernel.org/r/alpine.DEB.2.21.1907301134470.1738@nanos.tec.linutronix.de
+
 ---
- include/linux/mm_types_task.h | 7 +++++++
- kernel/fork.c                 | 4 ++--
- 2 files changed, 9 insertions(+), 2 deletions(-)
+ lib/vdso/gettimeofday.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/mm_types_task.h b/include/linux/mm_types_task.h
-index d7016dcb245e..881f4ea3a1b5 100644
---- a/include/linux/mm_types_task.h
-+++ b/include/linux/mm_types_task.h
-@@ -44,6 +44,13 @@ enum {
- 	NR_MM_COUNTERS
- };
+diff --git a/lib/vdso/gettimeofday.c b/lib/vdso/gettimeofday.c
+index a9e7fd029593..e630e7ff57f1 100644
+--- a/lib/vdso/gettimeofday.c
++++ b/lib/vdso/gettimeofday.c
+@@ -125,14 +125,18 @@ __cvdso_clock_gettime32(clockid_t clock, struct old_timespec32 *res)
  
-+static const char * const resident_page_types[NR_MM_COUNTERS] = {
-+	"MM_FILEPAGES",
-+	"MM_ANONPAGES",
-+	"MM_SWAPENTS",
-+	"MM_SHMEMPAGES",
-+};
-+
- #if USE_SPLIT_PTE_PTLOCKS && defined(CONFIG_MMU)
- #define SPLIT_RSS_COUNTING
- /* per-thread cached information, */
-diff --git a/kernel/fork.c b/kernel/fork.c
-index 2852d0e76ea3..6aef5842d4e0 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -649,8 +649,8 @@ static void check_mm(struct mm_struct *mm)
- 		long x = atomic_long_read(&mm->rss_stat.count[i]);
+ 	ret = __cvdso_clock_gettime_common(clock, &ts);
  
- 		if (unlikely(x))
--			printk(KERN_ALERT "BUG: Bad rss-counter state "
--					  "mm:%p idx:%d val:%ld\n", mm, i, x);
-+			pr_alert("BUG: Bad rss-counter state mm:%p type:%s val:%ld\n",
-+				 mm, resident_page_types[i], x);
++#ifdef VDSO_HAS_32BIT_FALLBACK
++	if (unlikely(ret))
++		return clock_gettime32_fallback(clock, res);
++#else
+ 	if (unlikely(ret))
+ 		ret = clock_gettime_fallback(clock, &ts);
++#endif
+ 
+ 	if (likely(!ret)) {
+ 		res->tv_sec = ts.tv_sec;
+ 		res->tv_nsec = ts.tv_nsec;
  	}
+-
+ 	return ret;
+ }
  
- 	if (mm_pgtables_bytes(mm))
--- 
-2.19.1
-
+@@ -232,8 +236,14 @@ __cvdso_clock_getres_time32(clockid_t clock, struct old_timespec32 *res)
+ 	int ret;
+ 
+ 	ret = __cvdso_clock_getres_common(clock, &ts);
++
++#ifdef VDSO_HAS_32BIT_FALLBACK
++	if (unlikely(ret))
++		return clock_getres32_fallback(clock, res);
++#else
+ 	if (unlikely(ret))
+ 		ret = clock_getres_fallback(clock, &ts);
++#endif
+ 
+ 	if (likely(!ret)) {
+ 		res->tv_sec = ts.tv_sec;
