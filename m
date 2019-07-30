@@ -2,102 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C4E37AC2F
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 17:22:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D02E87AC32
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 17:23:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732267AbfG3PWd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 11:22:33 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:38623 "EHLO
+        id S1730873AbfG3PXl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 11:23:41 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:43446 "EHLO
         mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728855AbfG3PWd (ORCPT
+        with ESMTP id S1730013AbfG3PXl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 11:22:33 -0400
-Received: by mail-qt1-f194.google.com with SMTP id n11so63400689qtl.5
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 08:22:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0/VikeT/40/94mlzafqQ+br06jiibogiKOd39iZFxVU=;
-        b=S3vv2HDTN4GlOLWRrQu3XWT4f7svDBLxxP3BZ+0r+2d9QzUmW4mbQN09LYmtyL1+p+
-         HD0LZROqt+yxspDRIhYZIywaOnDd7tAyFU81sKIzQMxVoR22sbVFXRz0CkULNmEjq8PU
-         FeZsgGbmbAg/rUHJZCIixw7umVesNt7VUdF+Y=
+        Tue, 30 Jul 2019 11:23:41 -0400
+Received: by mail-qt1-f194.google.com with SMTP id w17so19103289qto.10
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 08:23:40 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=0/VikeT/40/94mlzafqQ+br06jiibogiKOd39iZFxVU=;
-        b=ILeEZYXxC/Fpqqt8nckJfSbkgPpQLCBu/gDmgKPtlxyHz7Nr3bAFXSiIIu6pj/aOUe
-         u+PNgXf2Ar7YQ3DlaLn+s7pIblulIlFRwchbTYSe2rzoGE2kjK5ur4kz7Rn3Oqp2WlGU
-         lKuCd0SG+pfPRXFE2TysFNMSPqVZoEmwyCYTuokAKkG4d8vDS4EDqZo7hj19IcwDBp6L
-         vSL0Xdnkx67pJl9Fn5sGE6GpskqWZSnt2VT3D8WmsYprfTtzmUNp7qf4TkcpPveqL2Kb
-         6yYN0z0sjv1L1pEX0w/frCMU0++CzgA+RnACU+w7puBgRjtkk32UYV5yiVfAnOtsoeZ8
-         t8HQ==
-X-Gm-Message-State: APjAAAUOPR7UkwMXV1dWzbgChXmRX5cTiXn7i64UDbvGRj4D1/2qgWk6
-        YRV2Ok+8ZGmcFguL17WMnz6o6j7zlKZo/AWb7xcQbA==
-X-Google-Smtp-Source: APXvYqxiF9XqXsJgYZY66tLmHlKA6YyZSyll6VNgtMH212HpnhK5C6yShyQYlQFVlW6Wd6QG22HtLlKUmTWvPqbkc58=
-X-Received: by 2002:ac8:6619:: with SMTP id c25mr44624329qtp.221.1564500152521;
- Tue, 30 Jul 2019 08:22:32 -0700 (PDT)
+        bh=QfRDMATF/mD0ld+JXOHOTIFlNh/Cdg0uTO/akzNNHqM=;
+        b=YCMEkeShRKYHL1fAITQSHrm6GKBzWOi9Cj5BMTQ/wsewHD0oGTkGsR2KTPcsSzBSlv
+         SRHGapq6m98wElol4lk+W2MNYgZSs9i6S1E/bgAs31n+cWePXQF9Nlc7JbvS/7FaYnk+
+         +as6+qiPlitksrSD72nb0OyQNx099Iev1rjnyErJiGXJ7UCPPBZf9+8Dgos9Mp2jUSyu
+         bpG13qEUC1ewkBA+yUMYOZsvWE0d/OReLm0K1rqF99DdcDUZRwo1WObNXqMc5dv10OBT
+         16Oa15cXnKxJ5nnEUH/nJN7woB1oKBHOOstA8ktVSyLH84tYL3wGB3NL2A7UYSOr40xo
+         Ohyw==
+X-Gm-Message-State: APjAAAWEmOjh1nYCwBqPkwXmrBXH/nT/+ZKvuvUhfEpSvX9c49bSxqH7
+        3l4cc9DbyK0FXQ3YZ3G2gy7fgLgB4lPyz5HDQdQ=
+X-Google-Smtp-Source: APXvYqwDK/J3NCjNWITj7Ip0SyX5Ri5CKH+r2xLJkFHtEoRIvmzE++N6L56dMPBT75xhK9Us76wxfBPEk3mS6pYxIdo=
+X-Received: by 2002:aed:33a4:: with SMTP id v33mr79997791qtd.18.1564500220464;
+ Tue, 30 Jul 2019 08:23:40 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190723072605.103456-1-drinkcat@chromium.org>
- <CACT4Y+bi5KkZ8igSeYVxjwtr8t0Vjz55gzWfAu_c8VMAqw0zPA@mail.gmail.com>
- <CANMq1KB8ECeRqNhSWyUf3amAkF7qvAmS3aU6rGNnZ=kUV3LC5Q@mail.gmail.com> <095e2bc3-9284-e72d-8ed8-e2c6ec3f7c23@virtuozzo.com>
-In-Reply-To: <095e2bc3-9284-e72d-8ed8-e2c6ec3f7c23@virtuozzo.com>
-From:   Nicolas Boichat <drinkcat@chromium.org>
-Date:   Tue, 30 Jul 2019 08:22:21 -0700
-Message-ID: <CANMq1KDrPDjHB=hsVBrW4WCiTBBAm6T2TS0yo3icU8Zt0krNog@mail.gmail.com>
-Subject: Re: [PATCH] kmemleak: Increase maximum early log entries to 1000000
-To:     Andrey Ryabinin <aryabinin@virtuozzo.com>
-Cc:     Dmitry Vyukov <dvyukov@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Kees Cook <keescook@chromium.org>,
-        Petr Mladek <pmladek@suse.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Sri Krishna chowdary <schowdary@nvidia.com>,
-        Uladzislau Rezki <urezki@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Changbin Du <changbin.du@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Catalin Marinas <catalin.marinas@arm.com>
+References: <CAK8P3a3jjDh6aEVf0bBFYc=8GtB38kL6sWVZGJiUe427A7m2ng@mail.gmail.com>
+ <CAK8P3a1ss9-G_mr48-UMOenrA0XDGWUFik4TC=m0WFfimoFdnQ@mail.gmail.com>
+ <CAK8P3a3VsArSUgMwoPVxm8JcTPAQDoztg22MGqX4Vj5cjtADZg@mail.gmail.com> <CAKKbWA6aUBec8tTQNCJow8c6=SyS-y4HUC=3sMJp6_Oz51iF=A@mail.gmail.com>
+In-Reply-To: <CAKKbWA6aUBec8tTQNCJow8c6=SyS-y4HUC=3sMJp6_Oz51iF=A@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 30 Jul 2019 17:23:24 +0200
+Message-ID: <CAK8P3a07KOgXKksbtQceqAKiZ-ykr4nDoM2xvb+WXtrXmNn2uA@mail.gmail.com>
+Subject: Re: RFC: remove Nuvoton w90x900/nuc900 platform?
+To:     Avi Fishman <avifishman70@gmail.com>
+Cc:     Tomer Maimon <tmaimon77@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Wanzongshun (Vincent)" <wanzongshun@huawei.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Benjamin Fair <benjaminfair@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 24, 2019 at 2:01 AM Andrey Ryabinin <aryabinin@virtuozzo.com> wrote:
+On Tue, Jul 30, 2019 at 3:59 PM Avi Fishman <avifishman70@gmail.com> wrote:
 >
->
->
-> On 7/23/19 11:13 AM, Nicolas Boichat wrote:
-> > On Tue, Jul 23, 2019 at 3:46 PM Dmitry Vyukov <dvyukov@google.com> wrote:
-> >>
-> >> On Tue, Jul 23, 2019 at 9:26 AM Nicolas Boichat <drinkcat@chromium.org> wrote:
-> >>>
-> >>> When KASan is enabled, a lot of memory is allocated early on,
-> >>> and kmemleak complains (this is on a 4GB RAM system):
-> >>> kmemleak: Early log buffer exceeded (129846), please increase
-> >>>   DEBUG_KMEMLEAK_EARLY_LOG_SIZE
-> >>>
-> >>> Let's increase the upper limit to 1M entry. That would take up
-> >>> 160MB of RAM at init (each early_log entry is 160 bytes), but
-> >>> the memory would later be freed (early_log is __initdata).
-> >>
-> >> Interesting. Is it on an arm64 system?
-> >
-> > Yes arm64. And this is chromiumos-4.19 tree. I didn't try to track
-> > down where these allocations come from...
-> >
->
-> Is this still a problem in upstream tree? 4.19 doesn't have fed84c785270 ("mm/memblock.c: skip kmemleak for kasan_init()")
+> Note that we we are going to add soon drivers/net/ethernet/nuvoton/npcm7xx_emc.c
+> so maybe don't remove drivers/net/ethernet/nuvoton
 
-Sorry for the delay, and thanks for the hint, indeed, not a problem
-with that patch backported to our 4.19 tree: the number of allocations
-shrinks from 100K+ to 1K+.
+Ok, thanks for a taking a look. I can leave an empty Makefile/Kconfig
+pair there then.
 
-However, I think Dmitry is still right that the default (400) is too
-low, I will send a patch for that.
+     Arnd
