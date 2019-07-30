@@ -2,55 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A23BE7B17F
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:18:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 76C797B18E
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:18:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729068AbfG3SRa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 14:17:30 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:47153 "EHLO
+        id S2387651AbfG3SSS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 14:18:18 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:46533 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729028AbfG3SR0 (ORCPT
+        with ESMTP id S1729160AbfG3SSL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 14:17:26 -0400
+        Tue, 30 Jul 2019 14:18:11 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6UIHEgO3326279
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6UIHw4m3326404
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Tue, 30 Jul 2019 11:17:14 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6UIHEgO3326279
+        Tue, 30 Jul 2019 11:17:58 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6UIHw4m3326404
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019071901; t=1564510635;
-        bh=1eAeU/fHywiWnZVdmtHZTeQgZ4kG2ecHxk31YYIvtFs=;
+        s=2019071901; t=1564510679;
+        bh=ET6K1jG5TCHqj2/cbkRQGBp30EitV7XrqE0z3OlVrt0=;
         h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=Rnhm8hoNs35h+0gOAeXodY2mvvj2x+kQja4991QReF28lud3XxMFr73b8SBtzVww2
-         iBbFq0RJe7KZ13ujwh1aPsB0QEVacOop+EOM5n4nyJ4OR3gi9FfFraEP3LrZoLmcLc
-         v1FgBQIWTW/vL1j/BTvcGV4O25cGVMyfWndIF9KjWkRrfMKDGbpxH0t5APSzP4mpAy
-         1b7rREuidnHMyuOhxJgHCwlXutFiyFa76zCBosv13asNVf+g75HdPj8EqFG8WoIdjW
-         bbhyK31ooJT1FyxYIJuWTI3wteOFe870VW6GpGZwWkE5K+LmTstyrjggOfwOlgAi3L
-         LpmRp9ZouUopQ==
+        b=f68eZCcOeowJQFzmmu4bihumnj1vKW9cw8HZVJdGNRqEvpCIqESls1FwTrT0OdRO1
+         wwDo+hA/QJR5FlEi7JFoAEFyVaBsc1hc/Up5j8C07ymrE2l+gyW7Pu20fzlcb0145s
+         tPnsHhBnAayUuYFNw8mXQ9vpYYsaZrQhhwiJZaGI3/2/eiiOaXi+hlaq1sPTZ+RBvG
+         mM41fnYHkHbPk+WfWtELE7QobCPouO2FYplG/i5rKpri1/a1nJFNK33PO07wezpofR
+         zylhKA8EdCF7Ogp2sE09pAW+kViwpLJRPoYRZGsqKe3sqXnyG2NCPFTpNAxie+f7nD
+         +rSRNNdfCY8mA==
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6UIHEkh3326272;
-        Tue, 30 Jul 2019 11:17:14 -0700
-Date:   Tue, 30 Jul 2019 11:17:14 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6UIHwnU3326401;
+        Tue, 30 Jul 2019 11:17:58 -0700
+Date:   Tue, 30 Jul 2019 11:17:58 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
-Message-ID: <tip-5972d1e07bd95c7458e2d7f484391d69008affc7@git.kernel.org>
-Cc:     hpa@zytor.com, mingo@kernel.org, acme@redhat.com,
-        peterz@infradead.org, mpetlan@redhat.com,
-        linux-kernel@vger.kernel.org, alexander.shishkin@linux.intel.com,
-        ak@linux.intel.com, tglx@linutronix.de,
-        alexey.budankov@linux.intel.com, jolsa@kernel.org,
-        namhyung@kernel.org
-Reply-To: namhyung@kernel.org, peterz@infradead.org, tglx@linutronix.de,
-          alexey.budankov@linux.intel.com, jolsa@kernel.org,
-          mingo@kernel.org, acme@redhat.com, ak@linux.intel.com,
-          alexander.shishkin@linux.intel.com, hpa@zytor.com,
-          linux-kernel@vger.kernel.org, mpetlan@redhat.com
-In-Reply-To: <20190721112506.12306-15-jolsa@kernel.org>
-References: <20190721112506.12306-15-jolsa@kernel.org>
+Message-ID: <tip-ec7f24ef44fc5a4eb5cb71658c33db538ed66003@git.kernel.org>
+Cc:     peterz@infradead.org, mpetlan@redhat.com,
+        alexey.budankov@linux.intel.com, hpa@zytor.com, acme@redhat.com,
+        tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+        mingo@kernel.org, namhyung@kernel.org, ak@linux.intel.com
+Reply-To: tglx@linutronix.de, acme@redhat.com, mingo@kernel.org,
+          hpa@zytor.com, jolsa@kernel.org, mpetlan@redhat.com,
+          alexey.budankov@linux.intel.com, peterz@infradead.org,
+          alexander.shishkin@linux.intel.com, ak@linux.intel.com,
+          namhyung@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20190721112506.12306-16-jolsa@kernel.org>
+References: <20190721112506.12306-16-jolsa@kernel.org>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf evsel: Rename perf_evsel__open() to
- evsel__open()
-Git-Commit-ID: 5972d1e07bd95c7458e2d7f484391d69008affc7
+Subject: [tip:perf/core] perf evsel: Rename perf_evsel__enable() to
+ evsel__enable()
+Git-Commit-ID: ec7f24ef44fc5a4eb5cb71658c33db538ed66003
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -68,17 +67,17 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  5972d1e07bd95c7458e2d7f484391d69008affc7
-Gitweb:     https://git.kernel.org/tip/5972d1e07bd95c7458e2d7f484391d69008affc7
+Commit-ID:  ec7f24ef44fc5a4eb5cb71658c33db538ed66003
+Gitweb:     https://git.kernel.org/tip/ec7f24ef44fc5a4eb5cb71658c33db538ed66003
 Author:     Jiri Olsa <jolsa@kernel.org>
-AuthorDate: Sun, 21 Jul 2019 13:24:01 +0200
+AuthorDate: Sun, 21 Jul 2019 13:24:02 +0200
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Mon, 29 Jul 2019 18:34:43 -0300
 
-perf evsel: Rename perf_evsel__open() to evsel__open()
+perf evsel: Rename perf_evsel__enable() to evsel__enable()
 
-Rename perf_evsel__open() to evsel__open(), so we don't have a name
-clash when we add perf_evsel__open() in libperf.
+Rename perf_evsel__enable() to evsel__enable(), so we don't have a name
+clash when we add perf_evsel__enable() in libperf.
 
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
@@ -87,172 +86,147 @@ Cc: Andi Kleen <ak@linux.intel.com>
 Cc: Michael Petlan <mpetlan@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20190721112506.12306-15-jolsa@kernel.org
+Link: http://lkml.kernel.org/r/20190721112506.12306-16-jolsa@kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-record.c                | 2 +-
- tools/perf/builtin-top.c                   | 2 +-
- tools/perf/tests/mmap-basic.c              | 2 +-
- tools/perf/tests/openat-syscall-all-cpus.c | 2 +-
- tools/perf/util/evlist.c                   | 4 ++--
- tools/perf/util/evsel.c                    | 8 ++++----
- tools/perf/util/evsel.h                    | 4 ++--
- tools/perf/util/parse-events.c             | 4 ++--
- tools/perf/util/python.c                   | 2 +-
- 9 files changed, 15 insertions(+), 15 deletions(-)
+ tools/perf/arch/arm/util/cs-etm.c    | 2 +-
+ tools/perf/arch/x86/util/intel-bts.c | 2 +-
+ tools/perf/arch/x86/util/intel-pt.c  | 2 +-
+ tools/perf/tests/event-times.c       | 6 +++---
+ tools/perf/tests/switch-tracking.c   | 2 +-
+ tools/perf/util/evlist.c             | 4 ++--
+ tools/perf/util/evsel.c              | 2 +-
+ tools/perf/util/evsel.h              | 2 +-
+ 8 files changed, 11 insertions(+), 11 deletions(-)
 
-diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-index 06966a2c2cdd..7f933997b6d0 100644
---- a/tools/perf/builtin-record.c
-+++ b/tools/perf/builtin-record.c
-@@ -739,7 +739,7 @@ static int record__open(struct record *rec)
+diff --git a/tools/perf/arch/arm/util/cs-etm.c b/tools/perf/arch/arm/util/cs-etm.c
+index 91c64daa4487..4b70b9504603 100644
+--- a/tools/perf/arch/arm/util/cs-etm.c
++++ b/tools/perf/arch/arm/util/cs-etm.c
+@@ -834,7 +834,7 @@ static int cs_etm_snapshot_finish(struct auxtrace_record *itr)
  
- 	evlist__for_each_entry(evlist, pos) {
- try_again:
--		if (perf_evsel__open(pos, pos->cpus, pos->threads) < 0) {
-+		if (evsel__open(pos, pos->cpus, pos->threads) < 0) {
- 			if (perf_evsel__fallback(pos, errno, msg, sizeof(msg))) {
- 				if (verbose > 0)
- 					ui__warning("%s\n", msg);
-diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
-index 6c0c2b78093a..5886389f6a40 100644
---- a/tools/perf/builtin-top.c
-+++ b/tools/perf/builtin-top.c
-@@ -989,7 +989,7 @@ static int perf_top__start_counters(struct perf_top *top)
+ 	evlist__for_each_entry(ptr->evlist, evsel) {
+ 		if (evsel->attr.type == ptr->cs_etm_pmu->type)
+-			return perf_evsel__enable(evsel);
++			return evsel__enable(evsel);
+ 	}
+ 	return -EINVAL;
+ }
+diff --git a/tools/perf/arch/x86/util/intel-bts.c b/tools/perf/arch/x86/util/intel-bts.c
+index c845531d383a..d27832fcb34c 100644
+--- a/tools/perf/arch/x86/util/intel-bts.c
++++ b/tools/perf/arch/x86/util/intel-bts.c
+@@ -330,7 +330,7 @@ static int intel_bts_snapshot_finish(struct auxtrace_record *itr)
  
- 	evlist__for_each_entry(evlist, counter) {
- try_again:
--		if (perf_evsel__open(counter, top->evlist->cpus,
-+		if (evsel__open(counter, top->evlist->cpus,
- 				     top->evlist->threads) < 0) {
+ 	evlist__for_each_entry(btsr->evlist, evsel) {
+ 		if (evsel->attr.type == btsr->intel_bts_pmu->type)
+-			return perf_evsel__enable(evsel);
++			return evsel__enable(evsel);
+ 	}
+ 	return -EINVAL;
+ }
+diff --git a/tools/perf/arch/x86/util/intel-pt.c b/tools/perf/arch/x86/util/intel-pt.c
+index e4dfe8c3d5c3..e3dacb2bf01b 100644
+--- a/tools/perf/arch/x86/util/intel-pt.c
++++ b/tools/perf/arch/x86/util/intel-pt.c
+@@ -801,7 +801,7 @@ static int intel_pt_snapshot_finish(struct auxtrace_record *itr)
  
- 			/*
-diff --git a/tools/perf/tests/mmap-basic.c b/tools/perf/tests/mmap-basic.c
-index 16b8a4e5de8f..40511025208f 100644
---- a/tools/perf/tests/mmap-basic.c
-+++ b/tools/perf/tests/mmap-basic.c
-@@ -84,7 +84,7 @@ int test__basic_mmap(struct test *test __maybe_unused, int subtest __maybe_unuse
- 
- 		evlist__add(evlist, evsels[i]);
- 
--		if (perf_evsel__open(evsels[i], cpus, threads) < 0) {
-+		if (evsel__open(evsels[i], cpus, threads) < 0) {
- 			pr_debug("failed to open counter: %s, "
- 				 "tweak /proc/sys/kernel/perf_event_paranoid?\n",
- 				 str_error_r(errno, sbuf, sizeof(sbuf)));
-diff --git a/tools/perf/tests/openat-syscall-all-cpus.c b/tools/perf/tests/openat-syscall-all-cpus.c
-index 001a0e8e6998..f96cbd304024 100644
---- a/tools/perf/tests/openat-syscall-all-cpus.c
-+++ b/tools/perf/tests/openat-syscall-all-cpus.c
-@@ -48,7 +48,7 @@ int test__openat_syscall_event_on_all_cpus(struct test *test __maybe_unused, int
- 		goto out_cpu_map_delete;
+ 	evlist__for_each_entry(ptr->evlist, evsel) {
+ 		if (evsel->attr.type == ptr->intel_pt_pmu->type)
+-			return perf_evsel__enable(evsel);
++			return evsel__enable(evsel);
+ 	}
+ 	return -EINVAL;
+ }
+diff --git a/tools/perf/tests/event-times.c b/tools/perf/tests/event-times.c
+index 0f74ca103c41..6f9995df2c27 100644
+--- a/tools/perf/tests/event-times.c
++++ b/tools/perf/tests/event-times.c
+@@ -77,7 +77,7 @@ static int attach__current_disabled(struct evlist *evlist)
  	}
  
--	if (perf_evsel__open(evsel, cpus, threads) < 0) {
-+	if (evsel__open(evsel, cpus, threads) < 0) {
- 		pr_debug("failed to open counter: %s, "
- 			 "tweak /proc/sys/kernel/perf_event_paranoid?\n",
- 			 str_error_r(errno, sbuf, sizeof(sbuf)));
+ 	thread_map__put(threads);
+-	return perf_evsel__enable(evsel) == 0 ? TEST_OK : TEST_FAIL;
++	return evsel__enable(evsel) == 0 ? TEST_OK : TEST_FAIL;
+ }
+ 
+ static int attach__current_enabled(struct evlist *evlist)
+@@ -104,7 +104,7 @@ static int detach__disable(struct evlist *evlist)
+ {
+ 	struct evsel *evsel = perf_evlist__last(evlist);
+ 
+-	return perf_evsel__enable(evsel);
++	return evsel__enable(evsel);
+ }
+ 
+ static int attach__cpu_disabled(struct evlist *evlist)
+@@ -133,7 +133,7 @@ static int attach__cpu_disabled(struct evlist *evlist)
+ 	}
+ 
+ 	cpu_map__put(cpus);
+-	return perf_evsel__enable(evsel);
++	return evsel__enable(evsel);
+ }
+ 
+ static int attach__cpu_enabled(struct evlist *evlist)
+diff --git a/tools/perf/tests/switch-tracking.c b/tools/perf/tests/switch-tracking.c
+index ac5da4fd222f..acc4b5ff0cea 100644
+--- a/tools/perf/tests/switch-tracking.c
++++ b/tools/perf/tests/switch-tracking.c
+@@ -509,7 +509,7 @@ int test__switch_tracking(struct test *test __maybe_unused, int subtest __maybe_
+ 		goto out_err;
+ 	}
+ 
+-	err = perf_evsel__enable(cycles_evsel);
++	err = evsel__enable(cycles_evsel);
+ 	if (err) {
+ 		pr_debug("perf_evlist__disable_event failed!\n");
+ 		goto out_err;
 diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
-index 47516db62424..4627cc47de3e 100644
+index 4627cc47de3e..e87c43e339d0 100644
 --- a/tools/perf/util/evlist.c
 +++ b/tools/perf/util/evlist.c
-@@ -1405,7 +1405,7 @@ int perf_evlist__open(struct evlist *evlist)
- 	perf_evlist__update_id_pos(evlist);
- 
- 	evlist__for_each_entry(evlist, evsel) {
--		err = perf_evsel__open(evsel, evsel->cpus, evsel->threads);
-+		err = evsel__open(evsel, evsel->cpus, evsel->threads);
- 		if (err < 0)
- 			goto out_err;
+@@ -363,7 +363,7 @@ void perf_evlist__enable(struct evlist *evlist)
+ 	evlist__for_each_entry(evlist, pos) {
+ 		if (!perf_evsel__is_group_leader(pos) || !pos->fd)
+ 			continue;
+-		perf_evsel__enable(pos);
++		evsel__enable(pos);
  	}
-@@ -1918,7 +1918,7 @@ int perf_evlist__start_sb_thread(struct evlist *evlist,
+ 
+ 	evlist->enabled = true;
+@@ -1927,7 +1927,7 @@ int perf_evlist__start_sb_thread(struct evlist *evlist,
  		goto out_delete_evlist;
  
  	evlist__for_each_entry(evlist, counter) {
--		if (perf_evsel__open(counter, evlist->cpus,
-+		if (evsel__open(counter, evlist->cpus,
- 				     evlist->threads) < 0)
+-		if (perf_evsel__enable(counter))
++		if (evsel__enable(counter))
  			goto out_delete_evlist;
  	}
+ 
 diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index c9723c2d57c9..f365d0685268 100644
+index f365d0685268..7adae1736191 100644
 --- a/tools/perf/util/evsel.c
 +++ b/tools/perf/util/evsel.c
-@@ -1825,8 +1825,8 @@ static int perf_event_open(struct evsel *evsel,
- 	return fd;
+@@ -1234,7 +1234,7 @@ int perf_evsel__append_addr_filter(struct evsel *evsel, const char *filter)
+ 	return perf_evsel__append_filter(evsel, "%s,%s", filter);
  }
  
--int perf_evsel__open(struct evsel *evsel, struct perf_cpu_map *cpus,
--		     struct perf_thread_map *threads)
-+int evsel__open(struct evsel *evsel, struct perf_cpu_map *cpus,
-+		struct perf_thread_map *threads)
+-int perf_evsel__enable(struct evsel *evsel)
++int evsel__enable(struct evsel *evsel)
  {
- 	int cpu, thread, nthreads;
- 	unsigned long flags = PERF_FLAG_FD_CLOEXEC;
-@@ -2086,13 +2086,13 @@ void perf_evsel__close(struct evsel *evsel)
- int perf_evsel__open_per_cpu(struct evsel *evsel,
- 			     struct perf_cpu_map *cpus)
- {
--	return perf_evsel__open(evsel, cpus, NULL);
-+	return evsel__open(evsel, cpus, NULL);
- }
+ 	int err = perf_evsel__run_ioctl(evsel, PERF_EVENT_IOC_ENABLE, 0);
  
- int perf_evsel__open_per_thread(struct evsel *evsel,
- 				struct perf_thread_map *threads)
- {
--	return perf_evsel__open(evsel, NULL, threads);
-+	return evsel__open(evsel, NULL, threads);
- }
- 
- static int perf_evsel__parse_id_sample(const struct evsel *evsel,
 diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
-index ecea51a918e0..d43409bb07c5 100644
+index d43409bb07c5..fa26c583a606 100644
 --- a/tools/perf/util/evsel.h
 +++ b/tools/perf/util/evsel.h
-@@ -302,8 +302,8 @@ int perf_evsel__open_per_cpu(struct evsel *evsel,
- 			     struct perf_cpu_map *cpus);
- int perf_evsel__open_per_thread(struct evsel *evsel,
- 				struct perf_thread_map *threads);
--int perf_evsel__open(struct evsel *evsel, struct perf_cpu_map *cpus,
--		     struct perf_thread_map *threads);
-+int evsel__open(struct evsel *evsel, struct perf_cpu_map *cpus,
-+		struct perf_thread_map *threads);
- void perf_evsel__close(struct evsel *evsel);
+@@ -295,7 +295,7 @@ int perf_evsel__append_tp_filter(struct evsel *evsel, const char *filter);
+ int perf_evsel__append_addr_filter(struct evsel *evsel,
+ 				   const char *filter);
+ int perf_evsel__apply_filter(struct evsel *evsel, const char *filter);
+-int perf_evsel__enable(struct evsel *evsel);
++int evsel__enable(struct evsel *evsel);
+ int perf_evsel__disable(struct evsel *evsel);
  
- struct perf_sample;
-diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
-index 40087cf74dd1..decb66d243ca 100644
---- a/tools/perf/util/parse-events.c
-+++ b/tools/perf/util/parse-events.c
-@@ -2320,7 +2320,7 @@ static bool is_event_supported(u8 type, unsigned config)
- 
- 	evsel = evsel__new(&attr);
- 	if (evsel) {
--		open_return = perf_evsel__open(evsel, NULL, tmap);
-+		open_return = evsel__open(evsel, NULL, tmap);
- 		ret = open_return >= 0;
- 
- 		if (open_return == -EACCES) {
-@@ -2332,7 +2332,7 @@ static bool is_event_supported(u8 type, unsigned config)
- 			 *
- 			 */
- 			evsel->attr.exclude_kernel = 1;
--			ret = perf_evsel__open(evsel, NULL, tmap) >= 0;
-+			ret = evsel__open(evsel, NULL, tmap) >= 0;
- 		}
- 		evsel__delete(evsel);
- 	}
-diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
-index 48c951a4a76b..3eb7348d29f8 100644
---- a/tools/perf/util/python.c
-+++ b/tools/perf/util/python.c
-@@ -817,7 +817,7 @@ static PyObject *pyrf_evsel__open(struct pyrf_evsel *pevsel,
- 	 * This will group just the fds for this single evsel, to group
- 	 * multiple events, use evlist.open().
- 	 */
--	if (perf_evsel__open(evsel, cpus, threads) < 0) {
-+	if (evsel__open(evsel, cpus, threads) < 0) {
- 		PyErr_SetFromErrno(PyExc_OSError);
- 		return NULL;
- 	}
+ int perf_evsel__open_per_cpu(struct evsel *evsel,
