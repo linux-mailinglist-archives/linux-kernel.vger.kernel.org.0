@@ -2,89 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 900917A253
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 09:34:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E4C017A25E
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 09:36:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730531AbfG3Heq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 03:34:46 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:39390 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730509AbfG3Hep (ORCPT
+        id S1730582AbfG3HgZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 03:36:25 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:43342 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726432AbfG3HgZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 03:34:45 -0400
-Received: by mail-qk1-f196.google.com with SMTP id w190so45875972qkc.6
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 00:34:45 -0700 (PDT)
+        Tue, 30 Jul 2019 03:36:25 -0400
+Received: by mail-qt1-f196.google.com with SMTP id w17so17757351qto.10;
+        Tue, 30 Jul 2019 00:36:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Zr+6M31Gi9RIhd6WGjh1Vbf2RuBt7+NJdVFSHL2O2pg=;
-        b=TaryWMMIw1asCdXr3irLnmKCisZfKs2JnwOX+AU+LBQY7fPxHjBGquXZ5VUbY8z6uF
-         5SWh1YeuPiG9my9J9OvEiHQqSa/nZ2bzqIsoydKeTtEqULZH68Fl9xRs6ri1H4y4G3oV
-         IGf+sQcSR24ajyj2+CmpAIs83qhyyOhf1UVGjUuTTARleCmXIIvFTVkAKgUaiFv0ewlS
-         0JvNneuONzluJbjYAFeHu0NsrQa2dFE0AKiVqmaOw8742Ve0MDJuY6XlQ/l6/DvjSG7d
-         7QTwIKe1SV8eDwsw/nGPP9ErdGSi7KQXRwbYYM4JJICPR6O2DfnplFxt9ghKQl/IOHIe
-         FKOw==
-X-Gm-Message-State: APjAAAUHmOolOfkWMBMovuNy8qwwXYhIPjmBCv4WRSbsw1WgXmFiiFdE
-        nt5E3o8iRWTZYd0EV5oH7pX27JAUzjicy+sjdIM=
-X-Google-Smtp-Source: APXvYqybWuHcjdBPufsxlBAq5PrDmFRv9hpZANXgyII0B0Cjj/Yb3Q0KornkEI4utqv4T45sDGzfGDmznwSLfL3qQig=
-X-Received: by 2002:a37:76c5:: with SMTP id r188mr74856027qkc.394.1564472084625;
- Tue, 30 Jul 2019 00:34:44 -0700 (PDT)
+        bh=KfrVJyXLBlSE9J2lD7NyucDQMOlxGjPdY+ssj9/d310=;
+        b=ekg/TIdh/5CdjTpsKc8y61wYzehVJwT+LlG8dPrqCiCjB3VyDdJzW0PjSoD8TE0GSS
+         TvocylAHjmGHvNpJ/TQxJudjfsAyPjsz3Gue57NEXpKP325F9eq6cf02WD5uQKRqF4s5
+         6Vz99UKj+7/6RbZGAGVMANWyufR8ahxfROVYAi4IP1G7/AGSyPuZpTa3nbUby4Jhxmd2
+         ku7zkfb8QnZuQEXR+hGCiL+XPKJ4uUpyG4UPVXCKOAowGP++agQ0cmKnbn0b4+bv1Jhe
+         uteqf6aSKsYiTF5+klK/e1oO8vH61TZJg9TxiMxnsxBVAJHNkfCCdV3ZtDpgTO1BJ6Ge
+         D/Pw==
+X-Gm-Message-State: APjAAAWReeNUa2eXbv+a+f6lXNafhqiHOPMW5Cd6mtdQ6boGSvJNTX90
+        hDEcQU6K/MS8bYiAe8v5EW9GOUhO8YL0s/lBa/k=
+X-Google-Smtp-Source: APXvYqxMF2mFh+jvacCLXH4Q8wX+v35Rhqc4s/okUitEq0NfFz96icl/A98K5zPxFiZM3Zjr3+btQsm5HWzBXkh4esI=
+X-Received: by 2002:aed:3e7c:: with SMTP id m57mr80607136qtf.204.1564472184297;
+ Tue, 30 Jul 2019 00:36:24 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190729202542.205309-1-ndesaulniers@google.com>
- <20190729203246.GA117371@archlinux-threadripper> <20190729215200.GN31406@gate.crashing.org>
-In-Reply-To: <20190729215200.GN31406@gate.crashing.org>
+References: <20190730014924.2193-1-deepa.kernel@gmail.com> <20190730014924.2193-20-deepa.kernel@gmail.com>
+ <201907292129.AC796230@keescook>
+In-Reply-To: <201907292129.AC796230@keescook>
 From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 30 Jul 2019 09:34:28 +0200
-Message-ID: <CAK8P3a1GQSyCj1L8fFG4Pah8dr5Lanw=1yuimX1o+53ARzOX+Q@mail.gmail.com>
-Subject: Re: [PATCH] powerpc: workaround clang codegen bug in dcbz
-To:     Segher Boessenkool <segher@kernel.crashing.org>
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        christophe leroy <christophe.leroy@c-s.fr>,
-        kbuild test robot <lkp@intel.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+Date:   Tue, 30 Jul 2019 09:36:08 +0200
+Message-ID: <CAK8P3a2rWEciT=PegCYUww-n-3smQHNjvW4duBqoS2PLSGdhYw@mail.gmail.com>
+Subject: Re: [PATCH 19/20] pstore: fs superblock limits
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Deepa Dinamani <deepa.kernel@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Anton Vorontsov <anton@enomsg.org>,
+        Colin Cross <ccross@android.com>,
+        Tony Luck <tony.luck@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 29, 2019 at 11:52 PM Segher Boessenkool
-<segher@kernel.crashing.org> wrote:
+On Tue, Jul 30, 2019 at 6:31 AM Kees Cook <keescook@chromium.org> wrote:
 >
-> On Mon, Jul 29, 2019 at 01:32:46PM -0700, Nathan Chancellor wrote:
-> > For the record:
-> >
-> > https://godbolt.org/z/z57VU7
-> >
-> > This seems consistent with what Michael found so I don't think a revert
-> > is entirely unreasonable.
+> On Mon, Jul 29, 2019 at 06:49:23PM -0700, Deepa Dinamani wrote:
+> > Also update the gran since pstore has microsecond granularity.
 >
-> Try this:
+> So, I'm fine with this, but technically the granularity depends on the
+> backend storage... many have no actual time keeping, though. My point is,
+> pstore's timestamps are really mostly a lie, but the most common backend
+> (ramoops) is seconds-granularity.
 >
->   https://godbolt.org/z/6_ZfVi
+> So, I'm fine with this, but it's a lie but it's a lie that doesn't
+> matter, so ...
 >
-> This matters in non-trivial loops, for example.  But all current cases
-> where such non-trivial loops are done with cache block instructions are
-> actually written in real assembler already, using two registers.
-> Because performance matters.  Not that I recommend writing code as
-> critical as memset in C with inline asm :-)
+> Acked-by: Kees Cook <keescook@chromium.org>
+>
+> I'm open to suggestions to improve it...
 
-Upon a second look, I think the issue is that the "Z" is an input argument
-when it should be an output. clang decides that it can make a copy of the
-input and pass that into the inline asm. This is not the most efficient
-way, but it seems entirely correct according to the constraints.
-
-Changing it to an output "=Z" constraint seems to make it work:
-
-https://godbolt.org/z/FwEqHf
-
-Clang still doesn't use the optimum form, but it passes the correct pointer.
+If we don't care about using sub-second granularity, then setting it
+to one second unconditionally here will make it always use that and
+report it correctly.
 
        Arnd
