@@ -2,86 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A57A7ACC9
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 17:51:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A73AF7ACCE
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 17:51:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732643AbfG3PvP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 11:51:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36820 "EHLO mail.kernel.org"
+        id S1732654AbfG3Pvl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 11:51:41 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:54784 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725974AbfG3PvP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 11:51:15 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1725974AbfG3Pvl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 11:51:41 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 458572089E;
-        Tue, 30 Jul 2019 15:51:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564501874;
-        bh=+zIKgxWzgm9vej6ra4Vrdj4C+Vws8RdPp548Vt9jqJU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=zRp7dl4N9C23i9nkZO/6b5gQnMGXnLsDBSGNsIuy6d/60n2Rmrj7tnHJ6aEtEG/bj
-         HGJyiYRxytRdR7Y6nGrKEemnenN36Byyx4ohGe2l3fFqmaIYjBG1S8L//Kt7/ynOUV
-         QUl+nXffUP+Nhlcu53dCEiyTxbcKSy6MDjYeDjeQ=
-Date:   Tue, 30 Jul 2019 17:51:12 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc:     linux-serial@vger.kernel.org, Stefan Agner <stefan@agner.ch>,
-        Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>,
-        Chris Healy <cphealy@gmail.com>,
-        Cory Tusar <cory.tusar@zii.aero>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Jiri Slaby <jslaby@suse.com>, linux-imx@nxp.com,
+        by mx1.redhat.com (Postfix) with ESMTPS id BBA843E2D3;
+        Tue, 30 Jul 2019 15:51:40 +0000 (UTC)
+Received: from redhat.com (ovpn-112-36.rdu2.redhat.com [10.10.112.36])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id DFACB608A5;
+        Tue, 30 Jul 2019 15:51:37 +0000 (UTC)
+Date:   Tue, 30 Jul 2019 11:51:34 -0400
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jason Gunthorpe <jgg@mellanox.com>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        Bharata B Rao <bharata@linux.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 06/24] tty: serial: fsl_lpuart: Drop unnecessary
- sg_set_buf() call
-Message-ID: <20190730155112.GA11837@kroah.com>
-References: <20190729195226.8862-1-andrew.smirnov@gmail.com>
- <20190729195226.8862-7-andrew.smirnov@gmail.com>
+Subject: Re: [PATCH 9/9] mm: remove the MIGRATE_PFN_WRITE flag
+Message-ID: <20190730155134.GA10366@redhat.com>
+References: <20190729142843.22320-1-hch@lst.de>
+ <20190729142843.22320-10-hch@lst.de>
+ <20190729233044.GA7171@redhat.com>
+ <20190730054633.GA28515@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20190729195226.8862-7-andrew.smirnov@gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190730054633.GA28515@lst.de>
+User-Agent: Mutt/1.12.0 (2019-05-25)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Tue, 30 Jul 2019 15:51:41 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 29, 2019 at 12:52:08PM -0700, Andrey Smirnov wrote:
-> Sg_init_one() will already call sg_set_buf(), so another explicit call
-> right after it is unnecessary. Drop it.
+On Tue, Jul 30, 2019 at 07:46:33AM +0200, Christoph Hellwig wrote:
+> On Mon, Jul 29, 2019 at 07:30:44PM -0400, Jerome Glisse wrote:
+> > On Mon, Jul 29, 2019 at 05:28:43PM +0300, Christoph Hellwig wrote:
+> > > The MIGRATE_PFN_WRITE is only used locally in migrate_vma_collect_pmd,
+> > > where it can be replaced with a simple boolean local variable.
+> > > 
+> > > Signed-off-by: Christoph Hellwig <hch@lst.de>
+> > 
+> > NAK that flag is useful, for instance a anonymous vma might have
+> > some of its page read only even if the vma has write permission.
+> > 
+> > It seems that the code in nouveau is wrong (probably lost that
+> > in various rebase/rework) as this flag should be use to decide
+> > wether to map the device memory with write permission or not.
+> > 
+> > I am traveling right now, i will investigate what happened to
+> > nouveau code.
 > 
-> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-> Cc: Stefan Agner <stefan@agner.ch>
-> Cc: Bhuvanchandra DV <bhuvanchandra.dv@toradex.com>
-> Cc: Chris Healy <cphealy@gmail.com>
-> Cc: Cory Tusar <cory.tusar@zii.aero>
-> Cc: Lucas Stach <l.stach@pengutronix.de>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Jiri Slaby <jslaby@suse.com>
-> Cc: linux-imx@nxp.com
-> Cc: linux-serial@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> ---
->  drivers/tty/serial/fsl_lpuart.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c
-> index 1b3f2a87e558..b600f591c8c2 100644
-> --- a/drivers/tty/serial/fsl_lpuart.c
-> +++ b/drivers/tty/serial/fsl_lpuart.c
-> @@ -1144,7 +1144,6 @@ static inline int lpuart_start_rx_dma(struct lpuart_port *sport)
->  		return -ENOMEM;
->  
->  	sg_init_one(&sport->rx_sgl, ring->buf, sport->rx_dma_rng_buf_len);
-> -	sg_set_buf(&sport->rx_sgl, ring->buf, sport->rx_dma_rng_buf_len);
->  	nent = dma_map_sg(sport->port.dev, &sport->rx_sgl, 1, DMA_FROM_DEVICE);
->  
->  	if (!nent) {
+> We can add it back when needed pretty easily.  Much of this has bitrotted
+> way to fast, and the pending ppc kvmhmm code doesn't need it either.
 
-This patch doesn't apply, is it already in the tree from someone else?
+Not using is a serious bug, i will investigate this friday.
 
-thanks,
-
-greg k-h
+Cheers,
+Jérôme
