@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0545F7B182
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:18:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B9B8B7B17D
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:18:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729129AbfG3SRo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 14:17:44 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:40026 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388148AbfG3SQp (ORCPT
+        id S1729011AbfG3SRL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 14:17:11 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:46700 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388066AbfG3SQp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 30 Jul 2019 14:16:45 -0400
-Received: by mail-pg1-f193.google.com with SMTP id w10so30484908pgj.7
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 11:16:44 -0700 (PDT)
+Received: by mail-pf1-f193.google.com with SMTP id c3so7122435pfa.13
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 11:16:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=e+ftxlHygcLTMnV6ovKYGNOcO/becl15s7w7AJh5ieo=;
-        b=iltPRF12M4kTR89xqPOF1f8ILEoGf9Uhmw+ZsFJao7VfBq8DZDGzzspUsv5gSSUnbQ
-         ZfWQOFp0qryiJFz3QGQRhNLk9NL/WrtFqrAO+ZkqnSVIWHd95KOg/xXuUb2xQrYbKz9K
-         QNqmf5or4Tl2FU5FIGqqdhqu9FgWFEtPtZ/8E=
+        bh=+82S8/9l3RlSCvnKeKawflqrH/StvaK39xoOnKGt6wU=;
+        b=TlcSYsi7glyOH7X4H9JlbNDkm8XjBQAstYeWbgqw07zas2P03f2K8Fjku1aCMmICrP
+         I/C/tHGKoIOIBF7EgAlxUMLYRlZ6t7WXDgkenvI4mrfT0xj76QqFx55XnQa+kJAf2quY
+         JbDflPAIZvaWBK9jq09BWz9zZL2Y3ZafI6Q3A=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=e+ftxlHygcLTMnV6ovKYGNOcO/becl15s7w7AJh5ieo=;
-        b=LO7wNRtJ9MYFFLcg8wv/wqXty33yCzFDPUjHMDPfZMdhCccfHN5XAyIvSoNsd3+ACy
-         vnh6pWbZf3i5c8O+b5hUvNX/XIYBtpZdPh+lswMe0Mlkd2JQnOel4l8rBPCPi3lCkZ6e
-         7O2ZbIl0elqd6/fxr/xDmoBLTYUjgpkk3NH58XN0Gxln/gRvgjOEyOSYzhmQbMbNEHu5
-         wKhaSbWyN6D4IWdn/ddIejBH+8Rfr/NKs8yOUKMAHrPnCxGSu9h16QXYw6e/Ji/3ABub
-         65XziEVPenXmsNIvl/fdnqj8hWC0PGOkyuS2La866bJuf56Q1fQkiIZVnqdCqs3+R7NC
-         kWrA==
-X-Gm-Message-State: APjAAAUOqsjDun4EiOQS18hRn5SbH+IzUCj0ckIYOJcSlDzNOsfYIHVy
-        IePLhSoBO62Qn52f2KvrUq4R9B5LgeImuA==
-X-Google-Smtp-Source: APXvYqxRypCVtQvbF/lW3j9E9/Kxp9ws1ALm7ty5+QabMPmOJLd0mrApno2hJBvadBUilpRGz1i0/A==
-X-Received: by 2002:a17:90a:1904:: with SMTP id 4mr121483484pjg.116.1564510604198;
+        bh=+82S8/9l3RlSCvnKeKawflqrH/StvaK39xoOnKGt6wU=;
+        b=fgGyArfJHlz91EycrnIM04JBJX9n/vfsmQgmZvYuvIcKoEM37BuyheJH4yYaJhuB5O
+         7RV695tS19hCwYRHS1S3e10yfXJ4IZenLVOPlYY7VELm0JZsKeNORMZcjUEfGLEb9ozD
+         xqeiTjBaRCf0W27FG2FdKxcge6ndetX765nBnRdS/mb97czGzfrkMXFJFSQE0br0MPQu
+         dj9mEFrK/qNubz/LmQCAUxFKPleVrM4V8vgisGRaticf57qnYEaYfVKCemsS0hbSnPMe
+         F0WM2DMf/lisPwWdPDpvpVROjqKCuuFo0DYh/juFUmHlVocLtHnj9zuV+6JwEuH4jesh
+         VwYw==
+X-Gm-Message-State: APjAAAV9GMKXLeDOMmatos//+CYcPpXJxkuUcTydFBUnthMUS/s7Sm3a
+        w1YSbOhyUufLHPo/AV3tHWra5owdQh+YLw==
+X-Google-Smtp-Source: APXvYqzspcViBxAdQFIJUu2zDdjB8LRveAOvdGlL903eu8SOsqoKLVYBqb+YpIQB9b+wpB2mcyLdYg==
+X-Received: by 2002:a63:8a49:: with SMTP id y70mr15165970pgd.271.1564510604947;
         Tue, 30 Jul 2019 11:16:44 -0700 (PDT)
 Received: from smtp.gmail.com ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id g1sm106744083pgg.27.2019.07.30.11.16.43
+        by smtp.gmail.com with ESMTPSA id g1sm106744083pgg.27.2019.07.30.11.16.44
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 30 Jul 2019 11:16:43 -0700 (PDT)
+        Tue, 30 Jul 2019 11:16:44 -0700 (PDT)
 From:   Stephen Boyd <swboyd@chromium.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
@@ -51,9 +51,9 @@ Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         "Darren Hart (VMware)" <dvhart@infradead.org>,
         Roman Kiryanov <rkir@google.com>,
         Vadim Pasternak <vadimp@mellanox.com>
-Subject: [PATCH v6 54/57] platform/x86: intel_bxtwc_tmu: Remove dev_err() usage after platform_get_irq()
-Date:   Tue, 30 Jul 2019 11:15:54 -0700
-Message-Id: <20190730181557.90391-55-swboyd@chromium.org>
+Subject: [PATCH v6 55/57] platform/x86: intel_int0002_vgpio: Remove dev_err() usage after platform_get_irq()
+Date:   Tue, 30 Jul 2019 11:15:55 -0700
+Message-Id: <20190730181557.90391-56-swboyd@chromium.org>
 X-Mailer: git-send-email 2.22.0.709.g102302147b-goog
 In-Reply-To: <20190730181557.90391-1-swboyd@chromium.org>
 References: <20190730181557.90391-1-swboyd@chromium.org>
@@ -112,26 +112,25 @@ Signed-off-by: Stephen Boyd <swboyd@chromium.org>
 
 Please apply directly to subsystem trees
 
- drivers/platform/x86/intel_bxtwc_tmu.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/platform/x86/intel_int0002_vgpio.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/platform/x86/intel_bxtwc_tmu.c b/drivers/platform/x86/intel_bxtwc_tmu.c
-index 951c105bafc1..7ccf583649e6 100644
---- a/drivers/platform/x86/intel_bxtwc_tmu.c
-+++ b/drivers/platform/x86/intel_bxtwc_tmu.c
-@@ -60,11 +60,8 @@ static int bxt_wcove_tmu_probe(struct platform_device *pdev)
- 	wctmu->regmap = pmic->regmap;
+diff --git a/drivers/platform/x86/intel_int0002_vgpio.c b/drivers/platform/x86/intel_int0002_vgpio.c
+index d9542c661ddc..4f3f30152a27 100644
+--- a/drivers/platform/x86/intel_int0002_vgpio.c
++++ b/drivers/platform/x86/intel_int0002_vgpio.c
+@@ -166,10 +166,8 @@ static int int0002_probe(struct platform_device *pdev)
+ 		return -ENODEV;
  
  	irq = platform_get_irq(pdev, 0);
--
 -	if (irq < 0) {
--		dev_err(&pdev->dev, "invalid irq %d\n", irq);
+-		dev_err(dev, "Error getting IRQ: %d\n", irq);
 +	if (irq < 0)
  		return irq;
 -	}
  
- 	regmap_irq_chip = pmic->irq_chip_data_tmu;
- 	virq = regmap_irq_get_virq(regmap_irq_chip, irq);
+ 	chip = devm_kzalloc(dev, sizeof(*chip), GFP_KERNEL);
+ 	if (!chip)
 -- 
 Sent by a computer through tubes
 
