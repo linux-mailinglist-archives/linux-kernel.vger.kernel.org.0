@@ -2,94 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DEAE47A583
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 12:05:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 581077A59B
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 12:08:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732353AbfG3KFm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 06:05:42 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:51865 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732336AbfG3KFj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 06:05:39 -0400
-Received: by mail-wm1-f66.google.com with SMTP id 207so56564840wma.1
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 03:05:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=OKHPgt351A2QI/YnAoBew430R/eEud4lktf6EqpjGpg=;
-        b=RqBfxw97A4nmG8mtwYF0ixTRO1L2KitydpEs0s7A9mThwfv3W3lssL9LdVrwBCNSTL
-         6aTa3QikOhqtxE8YBtXu8RFvVtc0749oRJnZzvfR2Jf1aXTQ1KGUb60z4+d7aqpxpuFt
-         Yimlk5DPLJT8+c3Gvq8/wpNlwQDJoT4InUI8dySJ+VfY9eE2glqRn98uvt9rstvIlgkb
-         ujoyIDTr3IF+RcBEuw60GT1gGg+/z6IFD/bcphdQG9oFzRNxt7d2bV96UeLvKqZPqa1G
-         57xWhKorvU+Mz7lw8uXpGHPgX4epyPFoX+aBQbvdKc287NFLi0I40AcA5VkoBBcGPrrB
-         cI7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=OKHPgt351A2QI/YnAoBew430R/eEud4lktf6EqpjGpg=;
-        b=et3Gd+pg3CNL7ignxuufq4EwJ8JX1xfM1CT57X3lGGID8MxU6Hs5ueRS3xyR0WqfMY
-         KFCMWBUztDvTmXasenYFOlIBebtcOrIJ86Lio5iMnbI5IdmzwZJjJN95v2HL5l4t+3LZ
-         ymLXZ4efjTpi1f+FGJjtGNeuFTrzjV3YU52OdswUmXGoHH/kMpW4KDpDDBrDjfY0T/1t
-         i/RPi5SDOlhZgV4v0M91+dNRLNJxjocTCc7kcPf5r4ZhbUATUTdxcVqLi3MyMpsASeux
-         7M447YM+Vu/moetnYdgKg1Vh8H8l+9GNfIpuLuZdPUP3HjeJXxYoR/o1V49GNMD1C1/I
-         A8/g==
-X-Gm-Message-State: APjAAAUHXP1m8ACGgxt18Jd4c8s0oGHBUtVp8+03EN8SDO80lQCPXDc0
-        fZOqmCktKUDJiZPJ9f04Qg3ahw==
-X-Google-Smtp-Source: APXvYqzMcRBOGS9JyQwlv9X1JATjMYuUOHXer2CbHw/UNsXtIbzYshroVuyxhY0awf3K6l7Q+DIEDA==
-X-Received: by 2002:a1c:1f4e:: with SMTP id f75mr101927560wmf.137.1564481137788;
-        Tue, 30 Jul 2019 03:05:37 -0700 (PDT)
-Received: from holly.lan (cpc152527-shef18-2-0-cust115.17-1.cable.virginm.net. [77.99.252.116])
-        by smtp.gmail.com with ESMTPSA id s12sm59321417wmh.34.2019.07.30.03.05.37
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 30 Jul 2019 03:05:37 -0700 (PDT)
-Date:   Tue, 30 Jul 2019 11:05:35 +0100
-From:   Daniel Thompson <daniel.thompson@linaro.org>
-To:     Chuhong Yuan <hslester96@gmail.com>
-Cc:     Jason Wessel <jason.wessel@windriver.com>,
-        kgdb-bugreport@lists.sourceforge.net, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 02/12] kdb: Replace strncmp with str_has_prefix
-Message-ID: <20190730100535.iv7blrsktbenjfwv@holly.lan>
-References: <20190729151359.9334-1-hslester96@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190729151359.9334-1-hslester96@gmail.com>
-User-Agent: NeoMutt/20180716
+        id S1727115AbfG3KH7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 06:07:59 -0400
+Received: from mx2.suse.de ([195.135.220.15]:43014 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725209AbfG3KH7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 06:07:59 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 12C59AFB1;
+        Tue, 30 Jul 2019 10:07:57 +0000 (UTC)
+Date:   Tue, 30 Jul 2019 12:07:56 +0200
+Message-ID: <s5hwofzvnr7.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Hillf Danton <hdanton@sina.com>
+Cc:     alsa-devel@alsa-project.org, gregkh@linuxfoundation.org,
+        linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        linux-kernel@vger.kernel.org,
+        Andrey Konovalov <andreyknvl@google.com>,
+        syzbot <syzbot+d59c4387bfb6eced94e2@syzkaller.appspotmail.com>
+Subject: Re: [alsa-devel] [PATCH] ALSA: usb-audio: Fix gpf in   snd_usb_pipe_sanity_check
+In-Reply-To: <20190730092436.232-1-hdanton@sina.com>
+References: <20190730092436.232-1-hdanton@sina.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 29, 2019 at 11:13:59PM +0800, Chuhong Yuan wrote:
-> strncmp(str, const, len) is error-prone.
-> We had better use newly introduced
-> str_has_prefix() instead of it.
+On Tue, 30 Jul 2019 11:24:36 +0200,
+Hillf Danton wrote:
 > 
-> Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+> 
+> syzbot found the following crash on:
+> 
+> HEAD commit:    7f7867ff usb-fuzzer: main usb gadget fuzzer driver
+> git tree:       https://github.com/google/kasan.git usb-fuzzer
+> console output: https://syzkaller.appspot.com/x/log.txt?x=12befdc8600000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=792eb47789f57810
+> dashboard link: https://syzkaller.appspot.com/bug?extid=d59c4387bfb6eced94e2
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16efc49fa00000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13245854600000
+> 
+> usb 1-1: New USB device found, idVendor=07fd, idProduct=0004, bcdDevice=d5.ac
+> usb 1-1: New USB device strings: Mfr=0, Product=0, SerialNumber=0
+> usb 1-1: config 0 descriptor??
+> usb 1-1: string descriptor 0 read error: -71
+> usb 1-1: Waiting for MOTU Microbook II to boot up...
+> kasan: CONFIG_KASAN_INLINE enabled
+> kasan: GPF could be caused by NULL-ptr deref or user memory access
+> general protection fault: 0000 [#1] SMP KASAN
+> CPU: 1 PID: 21 Comm: kworker/1:1 Not tainted 5.3.0-rc2+ #23
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+> Workqueue: usb_hub_wq hub_event
+> RIP: 0010:snd_usb_pipe_sanity_check+0x80/0x130 sound/usb/helper.c:75
+> Code: 48 c1 ea 03 80 3c 02 00 0f 85 b3 00 00 00 48 8b 6d 00 c1 eb 1e 48 b8  
+> 00 00 00 00 00 fc ff df 48 8d 7d 03 48 89 fa 48 c1 ea 03 <0f> b6 04 02 48  
+> 89 fa 83 e2 07 38 d0 7f 04 84 c0 75 7b 48 b8 00 00
+> RSP: 0018:ffff8881da2f7010 EFLAGS: 00010246
+> RAX: dffffc0000000000 RBX: 0000000000000001 RCX: ffffffff8484d252
+> RDX: 0000000000000000 RSI: ffffffff8484d26c RDI: 0000000000000003
+> RBP: 0000000000000000 R08: ffff8881da22e000 R09: ffffed103b665d58
+> R10: ffffed103b665d57 R11: ffff8881db32eabf R12: 0000000000000000
+> R13: ffff8881d400ba80 R14: 1ffff1103b45ee06 R15: ffff8881c79244a0
+> FS:  0000000000000000(0000) GS:ffff8881db300000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f31b2a87000 CR3: 00000001d3fd4000 CR4: 00000000001406e0
+> Call Trace:
+>   snd_usb_motu_microbookii_communicate.constprop.0+0xa0/0x2fb  sound/usb/quirks.c:1007
+>   snd_usb_motu_microbookii_boot_quirk sound/usb/quirks.c:1051 [inline]
+>   snd_usb_apply_boot_quirk.cold+0x163/0x370 sound/usb/quirks.c:1280
+>   usb_audio_probe+0x2ec/0x2010 sound/usb/card.c:576
+>   usb_probe_interface+0x305/0x7a0 drivers/usb/core/driver.c:361
+>   really_probe+0x281/0x650 drivers/base/dd.c:548
+>   driver_probe_device+0x101/0x1b0 drivers/base/dd.c:709
+>   __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:816
+>   bus_for_each_drv+0x15c/0x1e0 drivers/base/bus.c:454
+>   __device_attach+0x217/0x360 drivers/base/dd.c:882
+>   bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
+>   device_add+0xae6/0x16f0 drivers/base/core.c:2114
+>   usb_set_configuration+0xdf6/0x1670 drivers/usb/core/message.c:2023
+>   generic_probe+0x9d/0xd5 drivers/usb/core/generic.c:210
+>   usb_probe_device+0x99/0x100 drivers/usb/core/driver.c:266
+>   really_probe+0x281/0x650 drivers/base/dd.c:548
+>   driver_probe_device+0x101/0x1b0 drivers/base/dd.c:709
+>   __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:816
+>   bus_for_each_drv+0x15c/0x1e0 drivers/base/bus.c:454
+>   __device_attach+0x217/0x360 drivers/base/dd.c:882
+>   bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
+>   device_add+0xae6/0x16f0 drivers/base/core.c:2114
+>   usb_new_device.cold+0x6a4/0xe79 drivers/usb/core/hub.c:2536
+>   hub_port_connect drivers/usb/core/hub.c:5098 [inline]
+>   hub_port_connect_change drivers/usb/core/hub.c:5213 [inline]
+>   port_event drivers/usb/core/hub.c:5359 [inline]
+>   hub_event+0x1b5c/0x3640 drivers/usb/core/hub.c:5441
+>   process_one_work+0x92b/0x1530 kernel/workqueue.c:2269
+>   worker_thread+0x96/0xe20 kernel/workqueue.c:2415
+>   kthread+0x318/0x420 kernel/kthread.c:255
+>   ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+> Modules linked in:
+> [ end trace 41e8577a8c48635e ]
 
-Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
+You don't have to copy the whole these texts at all.
+In general, it'd suffice to point out the dashboard URL, and if the
+stack trace is mandatory, drop the useless hex numbers and just show
+the significant part of the stack trace.
 
+> It was introduced in commit 801ebf1043ae for checking pipe and endpoint
+> types. It is fixed by adding a check of the ep pointer in question.
+> 
+> Reported-by: syzbot <syzbot+d59c4387bfb6eced94e2@syzkaller.appspotmail.com>
+> Fixes: commit 801ebf1043ae ("ALSA: usb-audio: Sanity checks for each pipe and EP types")
 
+Drop "commit" word.
+
+> Cc: Andrey Konovalov <andreyknvl@google.com>
+> Signed-off-by: Hillf Danton <dhanton@sina.com>
 > ---
->  kernel/debug/kdb/kdb_main.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/kernel/debug/kdb/kdb_main.c b/kernel/debug/kdb/kdb_main.c
-> index 9ecfa37c7fbf..4567fe998c30 100644
-> --- a/kernel/debug/kdb/kdb_main.c
-> +++ b/kernel/debug/kdb/kdb_main.c
-> @@ -830,7 +830,7 @@ static void parse_grep(const char *str)
->  	cp++;
->  	while (isspace(*cp))
->  		cp++;
-> -	if (strncmp(cp, "grep ", 5)) {
-> +	if (!str_has_prefix(cp, "grep ")) {
->  		kdb_printf("invalid 'pipe', see grephelp\n");
->  		return;
->  	}
-> -- 
-> 2.20.1
-> 
+> This is to make syzbot happy for now and in long run we can make
+> snd_usb_pipe_sanity_check() available outside sound/usb by making
+> usb_urb_ep_type_check() a wrapper of the former. We will revisit
+> sound/usb once when things in the usb/core get in place.
+
+Actually I expected to apply the "long-term" fix now.  The same kind
+of fix was already submitted from me (<s5hlfwn376e.wl-tiwai@suse.de>),
+but I didn't merge it because working on the usb core helper would be
+a saner solution.
+
+If the usb core helper change would take more time, I'm going to merge
+this workaround for now with corrections.
+
+
+thanks,
+
+Takashi
