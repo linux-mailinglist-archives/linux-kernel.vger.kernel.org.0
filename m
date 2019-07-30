@@ -2,79 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BCC47B3FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 22:04:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0909F7B3E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 22:02:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727801AbfG3UDw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 16:03:52 -0400
-Received: from mout.kundenserver.de ([217.72.192.73]:47489 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726174AbfG3UDw (ORCPT
+        id S1727491AbfG3UCT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 16:02:19 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47466 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726469AbfG3UCT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 16:03:52 -0400
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue109 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1MFK8N-1i8DfT26g5-00FkfH; Tue, 30 Jul 2019 22:03:50 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH v5 29/29] compat_ioctl: remove unused convert_in_user macro
-Date:   Tue, 30 Jul 2019 22:01:34 +0200
-Message-Id: <20190730200145.1081541-10-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
-In-Reply-To: <20190730200145.1081541-1-arnd@arndb.de>
-References: <20190730192552.4014288-1-arnd@arndb.de>
- <20190730200145.1081541-1-arnd@arndb.de>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:UPHnmaxQO2Y5UPjFxToRbWqVgMBmWu69lOVcBLM59CbYK+TCCtk
- iXAL+WGyqVxND7dGZvj3prqCvzu+zKPkck1Y19QGgPFfYZKw/1a19odfItMh+3Xs7fk20ih
- KmzNO5tvoX1a2eonX0BqH09rjq6NlGlMujBwXAL6X862s+Rf1an9ITfEdxlm4gfufZMGn+w
- 8Qs8oUnx83kAYmE6uccPg==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:8BsgjV30L1s=:7g7Z6TZ7orqgEjViPiUUIW
- pQ+vmo7sdb3mi3EDA8aGDQkEkx1UheLDituizs76GJw+v/VWNY9Lg8/pL/ca+AsxcHYCKDLJ5
- 7oK6vWEPjf7aqoEpbKKKfHR7uJeJ4pGHMIcN1f7h2veYqD2aZPC3V8N+DnOZiQjgZp8JYecTK
- MCUXDF3GzFJblnKEWQfr0ckbWQh2LyK4gvl01WmmWfMp4e3YueaT6bWWvzeeiDgDV7alEmv6G
- lTeI1OMwweQetjIry0nKLkVOLT0lcrWjnp2g+hrThGrQkBtPrgQF1A7VRMhlWeyKDgyY129na
- LemT5BUDGA+fp1Q084pdR5yDHpqPFqHZH+fqAsJ4RW3NvaqiX9VY8gs4rKPpJ16p+v4UN9jRd
- vhESgtItrUDm1+1F/Rp7hB6NR1KmaZJ3/k8U4VXfqofaGL1+QDS9987yYOoRK9Rnm3ODdU5b6
- FJHOLPALtXHpWhnEsiVu6c/BXRuSMNK21tU6oI7mE7cH3zZe+58oHQs2O53w7z77kayiYH/Eo
- fonUwuIO8hjF56fze0YkgUEV4GPW4bG0+uIySxFSbqS6t2YnQJKVX7zItCTv7NzcmgR0imOJy
- M1J5T3p/bcywTehZizolm1PwPSo8rKuUiKIogMbJMEskSt9/H3kRtTYGNVkuayI4NS28MeQXh
- vVui0n2TB6SDM2zUTVQdbbxEhOoW8QlKGLXR6LvFZnyUZQavfcUeLwpJ2IQ7Qb8W4oD5N6JOG
- +b9uwCsZ8qG8eJ6IQAUi2y4lYGkHUw/05idSiA==
+        Tue, 30 Jul 2019 16:02:19 -0400
+Received: from X1 (unknown [76.191.170.112])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D2C13333F;
+        Tue, 30 Jul 2019 20:02:16 +0000 (UTC)
+Date:   Tue, 30 Jul 2019 13:02:15 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Catalin Marinas <catalin.marinas@arm.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Michal Hocko <mhocko@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>, Qian Cai <cai@lca.pw>
+Subject: Re: [PATCH v2] mm: kmemleak: Use mempool allocations for kmemleak
+ objects
+Message-Id: <20190730130215.919b31c19df935cc5f1483e6@linux-foundation.org>
+In-Reply-To: <20190727132334.9184-1-catalin.marinas@arm.com>
+References: <20190727132334.9184-1-catalin.marinas@arm.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The last users are all gone, so let's remove the macro as well.
+On Sat, 27 Jul 2019 14:23:33 +0100 Catalin Marinas <catalin.marinas@arm.com> wrote:
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- fs/compat_ioctl.c | 7 -------
- 1 file changed, 7 deletions(-)
+> Add mempool allocations for struct kmemleak_object and
+> kmemleak_scan_area as slightly more resilient than kmem_cache_alloc()
+> under memory pressure. Additionally, mask out all the gfp flags passed
+> to kmemleak other than GFP_KERNEL|GFP_ATOMIC.
+> 
+> A boot-time tuning parameter (kmemleak.mempool) is added to allow a
+> different minimum pool size (defaulting to NR_CPUS * 4).
 
-diff --git a/fs/compat_ioctl.c b/fs/compat_ioctl.c
-index 1ed32cca2176..1e740f4406d3 100644
---- a/fs/compat_ioctl.c
-+++ b/fs/compat_ioctl.c
-@@ -52,13 +52,6 @@
- 
- #include <linux/sort.h>
- 
--#define convert_in_user(srcptr, dstptr)			\
--({							\
--	typeof(*srcptr) val;				\
--							\
--	get_user(val, srcptr) || put_user(val, dstptr);	\
--})
--
- static int do_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- {
- 	int err;
--- 
-2.20.0
+btw, the checkpatch warnings are valid:
 
+WARNING: usage of NR_CPUS is often wrong - consider using cpu_possible(), num_possible_cpus(), for_each_possible_cpu(), etc
+#70: FILE: mm/kmemleak.c:197:
++static int min_object_pool = NR_CPUS * 4;
+
+WARNING: usage of NR_CPUS is often wrong - consider using cpu_possible(), num_possible_cpus(), for_each_possible_cpu(), etc
+#71: FILE: mm/kmemleak.c:198:
++static int min_scan_area_pool = NR_CPUS * 1;
+
+There can be situations where NR_CPUS is much larger than
+num_possible_cpus().  Can we initialize these tunables within
+kmemleak_init()?
