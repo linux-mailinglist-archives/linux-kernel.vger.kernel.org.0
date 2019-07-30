@@ -2,126 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF0C27A9BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 15:35:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B17FE7A9C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 15:36:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729641AbfG3Nfz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 09:35:55 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:50394 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727860AbfG3Nfz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 09:35:55 -0400
-Received: by mail-wm1-f66.google.com with SMTP id v15so57220062wml.0
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 06:35:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=NG5L1QTdBmlmtrEe2guVH/gymGPjaWoNXWl+si7exOk=;
-        b=XSdmFwgubGe6ca2jGD5P1QJGT8CMbYWIzlLpz6Eoj+crQJqBbRxtfRD03xHciSbZGR
-         HgUyaRoMJGBJUl9AwrhDY+LY7BICoqGRLUutuIVrFlpmCSbb/YaPHn24DdtSWT8nSQNJ
-         HNbIoQ24ijM0pkBajjUiUloMmrG1qV2j02BgwU/pfsCZOMg8nrkLHj5PugJjNWUI08i6
-         46IURZmK0iph3Xtai5f296l4eygKizR6AshPA/dYIsTcknbdn5XbSr701seqEAcIstYg
-         ECXNyvnLr3qFLKD8U3sno1GkJ0fpfMp6BHMaI5Cx9/og+JT02Rb8tm2Ntr6rNFYwen4k
-         M4bA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NG5L1QTdBmlmtrEe2guVH/gymGPjaWoNXWl+si7exOk=;
-        b=DAqkEpmvp9gHMPOmh04ROts4/oJBhbm3AJ7nHI+H7sCYuRWeR+TJonsKeQ1jm6m7Zb
-         Im/lpRyHXGoIOBGH/PzylNXOXCKZoAyNliemhX+SUeIU3nLuFgQyaLzyKOpYiu54T4+k
-         rVAgSq3cs3k8/aSERcHyiTiGJTvPygn27czCo4bRNcMjFs0/dKQXjZkKE4WZ2j3mVxOQ
-         nsxiE6xqe273oVKWGd1PyqsoBaHN71kjYszU2SwmFblNTQF7Wvgn+cf5DOLCrqKIhxs+
-         zEYFOALphWe/3fH3DJHPyULJueiG1eiLoeGeV0E4s5rVW1fppKi9K0m0VFE30wLFBaay
-         AN/Q==
-X-Gm-Message-State: APjAAAV/1Z7dHNXw8dKcTabnqEWJRV6wPvp6z7N6QYO9Jw4THfj26kG8
-        UZICddF72AKS0XRrEj3kltrOStjqETpidpG5UxI=
-X-Google-Smtp-Source: APXvYqxccJmasmD750CGSJBvzrIk3e3w01M+2BaH0U+cbtfDEGerCX82OKGoBEM5uz4uOjwIh9jycbWjkeugcNuIUi8=
-X-Received: by 2002:a1c:9d53:: with SMTP id g80mr100562254wme.103.1564493752815;
- Tue, 30 Jul 2019 06:35:52 -0700 (PDT)
+        id S1731132AbfG3Ngd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 09:36:33 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:47680 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726358AbfG3Ngd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 09:36:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=RC6tIGwZC6KZ5xjgsAj/6/FxTVS/oIHkMk0TVJBI0t4=; b=NPTsPRllk0O6lF3vymU3DqlDO3
+        jAkE+qu1eomwPDxkBAXbLqDioo7M326DnwK+lAbJb0FiukxRBEub7/HQpjJ5HAeruE4sU5NS4mVCp
+        zU/RD11ZUSY57jZb3GWH7OQ5fr2eLTbbvkZZfTxYNSFbStJj9GRJpZDL5cX616tIArBk=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
+        (envelope-from <andrew@lunn.ch>)
+        id 1hsSIl-0007kn-Nf; Tue, 30 Jul 2019 15:36:27 +0200
+Date:   Tue, 30 Jul 2019 15:36:27 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Hubert Feurstein <h.feurstein@gmail.com>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Rasmus Villemoes <rasmus.villemoes@prevas.dk>
+Subject: Re: [PATCH 1/4] net: dsa: mv88e6xxx: add support for MV88E6220
+Message-ID: <20190730133627.GE28552@lunn.ch>
+References: <20190730100429.32479-1-h.feurstein@gmail.com>
+ <20190730100429.32479-2-h.feurstein@gmail.com>
 MIME-Version: 1.0
-References: <20190729115544.17895-1-anup.patel@wdc.com> <20190729115544.17895-6-anup.patel@wdc.com>
- <9f9d09e5-49bc-f8e3-cfe1-bd5221e3b683@redhat.com> <CAAhSdy3JZVEEnPnssALaxvCsyznF=rt=7-d5J_OgQEJv6cPhxQ@mail.gmail.com>
- <66c4e468-7a69-31e7-778b-228908f0e737@redhat.com> <CAAhSdy3b-o6y1fsYi1iQcCN=9ZuC98TLCqjHCYAzOCx+N+_89w@mail.gmail.com>
- <828f01a9-2f11-34b6-7753-dc8fa7aa0d18@redhat.com>
-In-Reply-To: <828f01a9-2f11-34b6-7753-dc8fa7aa0d18@redhat.com>
-From:   Anup Patel <anup@brainfault.org>
-Date:   Tue, 30 Jul 2019 19:05:40 +0530
-Message-ID: <CAAhSdy19_dEL7e_sEFYi-hXvhVerm_cr3BdZ-TRw0aTTL-O9ZQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 05/16] RISC-V: KVM: Implement VCPU interrupts and
- requests handling
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Anup Patel <Anup.Patel@wdc.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Radim K <rkrcmar@redhat.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Atish Patra <Atish.Patra@wdc.com>,
-        Alistair Francis <Alistair.Francis@wdc.com>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190730100429.32479-2-h.feurstein@gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 30, 2019 at 6:48 PM Paolo Bonzini <pbonzini@redhat.com> wrote:
->
-> On 30/07/19 14:45, Anup Patel wrote:
-> > Here's some text from RISC-V spec regarding SIP CSR:
-> > "software interrupt-pending (SSIP) bit in the sip register. A pending
-> > supervisor-level software interrupt can be cleared by writing 0 to the SSIP bit
-> > in sip. Supervisor-level software interrupts are disabled when the SSIE bit in
-> > the sie register is clear."
-> >
-> > Without RISC-V hypervisor extension, the SIP is essentially a restricted
-> > view of MIP CSR. Also as-per above, S-mode SW can only write 0 to SSIP
-> > bit in SIP CSR whereas it can only be set by M-mode SW or some HW
-> > mechanism (such as S-mode CLINT).
->
-> But that's not what the spec says.  It just says (just before the
-> sentence you quoted):
->
->    A supervisor-level software interrupt is triggered on the current
->    hart by writing 1 to its supervisor software interrupt-pending (SSIP)
->    bit in the sip register.
+On Tue, Jul 30, 2019 at 12:04:26PM +0200, Hubert Feurstein wrote:
+> The MV88E6220 is almost the same as MV88E6250 except that the ports 2-4 are
+> not routed to pins. So the usable ports are 0, 1, 5 and 6.
+> 
+> Signed-off-by: Hubert Feurstein <h.feurstein@gmail.com>
+> ---
+>  drivers/net/dsa/mv88e6xxx/chip.c | 25 +++++++++++++++++++++++++
+>  drivers/net/dsa/mv88e6xxx/chip.h |  3 ++-
+>  drivers/net/dsa/mv88e6xxx/port.h |  1 +
+>  3 files changed, 28 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/dsa/mv88e6xxx/chip.c b/drivers/net/dsa/mv88e6xxx/chip.c
+> index 6b17cd961d06..c4982ced908e 100644
+> --- a/drivers/net/dsa/mv88e6xxx/chip.c
+> +++ b/drivers/net/dsa/mv88e6xxx/chip.c
+> @@ -4283,6 +4283,31 @@ static const struct mv88e6xxx_info mv88e6xxx_table[] = {
+>  		.ops = &mv88e6240_ops,
+>  	},
 
-Unfortunately, this statement does not state who is allowed to write 1
-in SIP.SSIP bit.
+Hi Hubert
 
-I quoted MIP CSR documentation to highlight the fact that only M-mode
-SW can set SSIP bit.
+We try to keep all these lists in strict numerical order. Please can
+you add 6220 before 6240, in all the places you have added it.
 
-In fact, I had same understanding as you have regarding SSIP bit
-until we had MSIP issue in OpenSBI.
-(https://github.com/riscv/opensbi/issues/128)
-
->
-> and it's not written anywhere that S-mode SW cannot write 1.  In fact
-> that text is even under sip, not under mip, so IMO there's no doubt that
-> S-mode SW _can_ write 1, and the hypervisor must operate accordingly.
-
-Without hypervisor support, SIP CSR is nothing but a restricted view of
-MIP CSR thats why MIP CSR documentation applies here.
-
-I think this discussion deserves a Github issue on RISC-V ISA manual.
-
-If my interpretation is incorrect then it would be really strange that
-HART in S-mode SW can inject IPI to itself by writing 1 to SIP.SSIP bit.
-
->
-> In fact I'm sure that if Windows were ever ported to RISC-V, it would be
-> very happy to use that feature.  On x86, Intel even accelerated it
-> specifically for Microsoft. :)
-
-That would be indeed very strange usage.  :)
-
-Regards,
-Anup
+    Thanks
+	Andrew
