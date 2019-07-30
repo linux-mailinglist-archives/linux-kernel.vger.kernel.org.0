@@ -2,25 +2,25 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B3D5F7ABCA
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 17:01:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DBF0B7ABEB
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 17:05:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731960AbfG3PBP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 11:01:15 -0400
-Received: from mxout014.mail.hostpoint.ch ([217.26.49.174]:38541 "EHLO
-        mxout014.mail.hostpoint.ch" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731351AbfG3PBN (ORCPT
+        id S1732138AbfG3PEy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 11:04:54 -0400
+Received: from mxout013.mail.hostpoint.ch ([217.26.49.173]:37563 "EHLO
+        mxout013.mail.hostpoint.ch" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725913AbfG3PEy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 11:01:13 -0400
+        Tue, 30 Jul 2019 11:04:54 -0400
 Received: from [10.0.2.46] (helo=asmtp013.mail.hostpoint.ch)
-        by mxout014.mail.hostpoint.ch with esmtp (Exim 4.92 (FreeBSD))
+        by mxout013.mail.hostpoint.ch with esmtp (Exim 4.92 (FreeBSD))
         (envelope-from <dev@pschenker.ch>)
-        id 1hsTP0-0005LY-Gc; Tue, 30 Jul 2019 16:46:58 +0200
+        id 1hsTP1-000DY6-6W; Tue, 30 Jul 2019 16:46:59 +0200
 Received: from [46.140.72.82] (helo=philippe-pc.toradex.int)
         by asmtp013.mail.hostpoint.ch with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
         (Exim 4.91 (FreeBSD))
         (envelope-from <dev@pschenker.ch>)
-        id 1hsTP0-000Mva-BD; Tue, 30 Jul 2019 16:46:58 +0200
+        id 1hsTP1-000Mva-0R; Tue, 30 Jul 2019 16:46:59 +0200
 X-Authenticated-Sender-Id: dev@pschenker.ch
 From:   Philippe Schenker <dev@pschenker.ch>
 To:     marcel.ziswiler@toradex.com, max.krummenacher@toradex.com,
@@ -28,16 +28,16 @@ To:     marcel.ziswiler@toradex.com, max.krummenacher@toradex.com,
         Rob Herring <robh+dt@kernel.org>,
         Shawn Guo <shawnguo@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
-Cc:     Oleksandr Suvorov <oleksandr.suvorov@toradex.com>,
+Cc:     Stefan Agner <stefan.agner@toradex.com>,
         Philippe Schenker <philippe.schenker@toradex.com>,
         Fabio Estevam <festevam@gmail.com>,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Pengutronix Kernel Team <kernel@pengutronix.de>,
         NXP Linux Team <linux-imx@nxp.com>,
         Sascha Hauer <s.hauer@pengutronix.de>
-Subject: [PATCH 05/22] ARM: dts: add recovery for I2C for iMX7
-Date:   Tue, 30 Jul 2019 16:46:32 +0200
-Message-Id: <20190730144649.19022-6-dev@pschenker.ch>
+Subject: [PATCH 06/22] ARM: dts: imx7-colibri: add GPIO wakeup key
+Date:   Tue, 30 Jul 2019 16:46:33 +0200
+Message-Id: <20190730144649.19022-7-dev@pschenker.ch>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190730144649.19022-1-dev@pschenker.ch>
 References: <20190730144649.19022-1-dev@pschenker.ch>
@@ -48,77 +48,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
+From: Stefan Agner <stefan.agner@toradex.com>
 
-- add recovery mode for applicable i2c buses for
-  Colibri iMX7 module.
+Add wakeup GPIO key which is able to wake the system from sleep
+modes (e.g. Suspend-to-Memory).
 
-Signed-off-by: Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
+Signed-off-by: Stefan Agner <stefan.agner@toradex.com>
 Signed-off-by: Philippe Schenker <philippe.schenker@toradex.com>
 ---
 
- arch/arm/boot/dts/imx7-colibri.dtsi | 25 +++++++++++++++++++++++--
- 1 file changed, 23 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/imx7-colibri-eval-v3.dtsi | 14 ++++++++++++++
+ arch/arm/boot/dts/imx7-colibri.dtsi         |  7 ++++++-
+ 2 files changed, 20 insertions(+), 1 deletion(-)
 
+diff --git a/arch/arm/boot/dts/imx7-colibri-eval-v3.dtsi b/arch/arm/boot/dts/imx7-colibri-eval-v3.dtsi
+index 3f2746169181..d4dbc4fc1adf 100644
+--- a/arch/arm/boot/dts/imx7-colibri-eval-v3.dtsi
++++ b/arch/arm/boot/dts/imx7-colibri-eval-v3.dtsi
+@@ -52,6 +52,20 @@
+ 		clock-frequency = <16000000>;
+ 	};
+ 
++	gpio-keys {
++		compatible = "gpio-keys";
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinctrl_gpiokeys>;
++
++		power {
++			label = "Wake-Up";
++			gpios = <&gpio1 1 GPIO_ACTIVE_HIGH>;
++			linux,code = <KEY_WAKEUP>;
++			debounce-interval = <10>;
++			gpio-key,wakeup;
++		};
++	};
++
+ 	panel: panel {
+ 		compatible = "edt,et057090dhu";
+ 		backlight = <&bl>;
 diff --git a/arch/arm/boot/dts/imx7-colibri.dtsi b/arch/arm/boot/dts/imx7-colibri.dtsi
-index a8d992f3e897..2480623c92ff 100644
+index 2480623c92ff..16d1a1ed1aff 100644
 --- a/arch/arm/boot/dts/imx7-colibri.dtsi
 +++ b/arch/arm/boot/dts/imx7-colibri.dtsi
-@@ -140,8 +140,12 @@
+@@ -741,12 +741,17 @@
  
- &i2c1 {
- 	clock-frequency = <100000>;
--	pinctrl-names = "default";
-+	pinctrl-names = "default", "gpio";
- 	pinctrl-0 = <&pinctrl_i2c1 &pinctrl_i2c1_int>;
-+	pinctrl-1 = <&pinctrl_i2c1_recovery &pinctrl_i2c1_int>;
-+	scl-gpios = <&gpio1 4 GPIO_ACTIVE_HIGH>;
-+	sda-gpios = <&gpio1 5 GPIO_ACTIVE_HIGH>;
-+
- 	status = "okay";
- 
- 	codec: sgtl5000@a {
-@@ -242,8 +246,11 @@
- 
- &i2c4 {
- 	clock-frequency = <100000>;
--	pinctrl-names = "default";
-+	pinctrl-names = "default", "gpio";
- 	pinctrl-0 = <&pinctrl_i2c4>;
-+	pinctrl-1 = <&pinctrl_i2c4_recovery>;
-+	scl-gpios = <&gpio7 8 GPIO_ACTIVE_HIGH>;
-+	sda-gpios = <&gpio7 9 GPIO_ACTIVE_HIGH>;
- };
- 
- &lcdif {
-@@ -540,6 +547,13 @@
+ 	pinctrl_gpio_lpsr: gpio1-grp {
+ 		fsl,pins = <
+-			MX7D_PAD_LPSR_GPIO1_IO01__GPIO1_IO1	0x59
+ 			MX7D_PAD_LPSR_GPIO1_IO02__GPIO1_IO2	0x59
+ 			MX7D_PAD_LPSR_GPIO1_IO03__GPIO1_IO3	0x59
  		>;
  	};
  
-+	pinctrl_i2c4_recovery: i2c4-recoverygrp {
++	pinctrl_gpiokeys: gpiokeysgrp {
 +		fsl,pins = <
-+			MX7D_PAD_ENET1_RGMII_TD2__GPIO7_IO8	0x4000007f
-+			MX7D_PAD_ENET1_RGMII_TD3__GPIO7_IO9	0x4000007f
++			MX7D_PAD_LPSR_GPIO1_IO01__GPIO1_IO1	0x19
 +		>;
 +	};
 +
- 	pinctrl_lcdif_dat: lcdif-dat-grp {
+ 	pinctrl_i2c1: i2c1-grp {
  		fsl,pins = <
- 			MX7D_PAD_LCD_DATA00__LCD_DATA0		0x79
-@@ -740,6 +754,13 @@
- 		>;
- 	};
- 
-+	pinctrl_i2c1_recovery: i2c1-recoverygrp {
-+		fsl,pins = <
-+			MX7D_PAD_LPSR_GPIO1_IO04__GPIO1_IO4	0x4000007f
-+			MX7D_PAD_LPSR_GPIO1_IO05__GPIO1_IO5	0x4000007f
-+		>;
-+	};
-+
- 	pinctrl_cd_usdhc1: usdhc1-cd-grp {
- 		fsl,pins = <
- 			MX7D_PAD_LPSR_GPIO1_IO00__GPIO1_IO0	0x59 /* CD */
+ 			MX7D_PAD_LPSR_GPIO1_IO05__I2C1_SDA	0x4000007f
 -- 
 2.22.0
 
