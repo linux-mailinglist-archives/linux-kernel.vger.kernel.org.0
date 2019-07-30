@@ -2,51 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48D4B7B469
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 22:41:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 075187B46D
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 22:41:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387444AbfG3UkV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 16:40:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37072 "EHLO mail.kernel.org"
+        id S2387508AbfG3Ukc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 16:40:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37108 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728305AbfG3UkU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 16:40:20 -0400
-Subject: Re: [GIT PULL] Please pull RDMA subsystem changes
+        id S2387404AbfG3UkV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 16:40:21 -0400
+Subject: Re: [GIT PULL] Kselftest update for Linux 5.3-rc3
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564519219;
-        bh=G70ij5Rx72+9VaiE25ukujWYmxqSpJpseXxJYn4AENQ=;
+        s=default; t=1564519220;
+        bh=HSlx0d/cPvgoJG3la7Dojvd4y52cxHYRfIqdF7GDmqE=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=bw0XJII7U9qArJkEiHnFP3jHXWfBNrQ9eeApcmIohimsNU9yjvsbUZHOXFsXj6QQo
-         RNkkqmL84kK12bIrytq6lGOMAJKc6z9zMbq/x33JdD7IPQATOFkmA97QJMWo5WNtGk
-         b/NRDX1/bxqScbhukc2IvkZJsfEU+Dmnav3zJtCg=
+        b=k61qCgxYzWfHkQMVciipzygFz1bIoCF9Rqux7NLkt+I9JYEQ+eQ9TwvNm0tppJcUL
+         8b8dPhHxyj3l3X/MRW2AzM/UoGOY1spIulXlkJ63CGZLmIhSSkkU9eCU+vT8OcW/9o
+         legK71ZfAgc4mqKtVE0D/evZ4IYxxNltxnk0PCmw=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190730121455.GA23902@ziepe.ca>
-References: <20190730121455.GA23902@ziepe.ca>
+In-Reply-To: <9b7fa63d-7c3f-bb3a-663b-e5279a0a0086@linuxfoundation.org>
+References: <9b7fa63d-7c3f-bb3a-663b-e5279a0a0086@linuxfoundation.org>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190730121455.GA23902@ziepe.ca>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git tags/for-linus
-X-PR-Tracked-Commit-Id: b7165bd0d6cbb93732559be6ea8774653b204480
+X-PR-Tracked-Message-Id: <9b7fa63d-7c3f-bb3a-663b-e5279a0a0086@linuxfoundation.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest
+ tags/linux-kselftest-5.3-rc3
+X-PR-Tracked-Commit-Id: 527d37e9e575bc0e9024de9b499385e7bb31f1ad
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 32a024b9a9f3b40f84bc55a6dd35eaa770ea26a4
-Message-Id: <156451921926.18459.15979200829555980420.pr-tracker-bot@kernel.org>
-Date:   Tue, 30 Jul 2019 20:40:19 +0000
-To:     Jason Gunthorpe <jgg@mellanox.com>
+X-PR-Merge-Commit-Id: 2f6f0a996218cdd9d275aac41828f54367e6fa28
+Message-Id: <156451922037.18459.15117834535691114931.pr-tracker-bot@kernel.org>
+Date:   Tue, 30 Jul 2019 20:40:20 +0000
+To:     Shuah Khan <skhan@linuxfoundation.org>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Doug Ledford <dledford@redhat.com>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+        Shuah Khan <skhan@linuxfoundation.org>,
+        joe.lawrence@redhat.com, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Tue, 30 Jul 2019 12:15:01 +0000:
+The pull request you sent on Tue, 30 Jul 2019 10:33:47 -0600:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git tags/for-linus
+> git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest tags/linux-kselftest-5.3-rc3
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/32a024b9a9f3b40f84bc55a6dd35eaa770ea26a4
+https://git.kernel.org/torvalds/c/2f6f0a996218cdd9d275aac41828f54367e6fa28
 
 Thank you!
 
