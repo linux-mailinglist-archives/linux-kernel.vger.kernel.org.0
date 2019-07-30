@@ -2,59 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0909F7B3E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 22:02:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 06DE17B3ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 22:03:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727491AbfG3UCT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 16:02:19 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47466 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726469AbfG3UCT (ORCPT
+        id S1727565AbfG3UDB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 16:03:01 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:42254 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726174AbfG3UDB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 16:02:19 -0400
-Received: from X1 (unknown [76.191.170.112])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D2C13333F;
-        Tue, 30 Jul 2019 20:02:16 +0000 (UTC)
-Date:   Tue, 30 Jul 2019 13:02:15 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Catalin Marinas <catalin.marinas@arm.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Michal Hocko <mhocko@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>, Qian Cai <cai@lca.pw>
-Subject: Re: [PATCH v2] mm: kmemleak: Use mempool allocations for kmemleak
- objects
-Message-Id: <20190730130215.919b31c19df935cc5f1483e6@linux-foundation.org>
-In-Reply-To: <20190727132334.9184-1-catalin.marinas@arm.com>
-References: <20190727132334.9184-1-catalin.marinas@arm.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Tue, 30 Jul 2019 16:03:01 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6UJwTu3003829;
+        Tue, 30 Jul 2019 20:02:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2018-07-02;
+ bh=PRuifwtBdlMAtrPrUPTDS6ONh/DQGdobk5Ch65KcSmo=;
+ b=S0AuQAcR4+/LS+GqDZF/Kz+HLGXGn1dGVHhYKZ+ZDb15xSE7vhFvLLu16rcbRcrOwyOm
+ ZkH5EKJDaEsKSK7lPSByt8mfiUZF2szLKpyjGTp/B36DzVjnUa2pSuFCT4VAyW1fsz70
+ kRh/zRj8ySK8woBrP9ALZAaNPXNaxCptnmNzAITAU3iZhWGvHQRhdqiePnNm/G/VZO22
+ f1ZwBdwPzZz79rF1r10CSj0oHMY6zFC1hawqSiL02vkJAGd/Ie6aRVr7HeINZ2WSKfIa
+ rVEor7rZm7OMnvo4wE/BcVc1qQ1KQr1iFRJ9f9Dq3HQoV7ZAyiHBSPTb3SaavlK95AJ8 gQ== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2130.oracle.com with ESMTP id 2u0e1trwjd-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 30 Jul 2019 20:02:54 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6UK2qnY165614;
+        Tue, 30 Jul 2019 20:02:53 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3030.oracle.com with ESMTP id 2u0xv8e5xb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 30 Jul 2019 20:02:52 +0000
+Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x6UK2mD0030873;
+        Tue, 30 Jul 2019 20:02:48 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 30 Jul 2019 13:02:47 -0700
+To:     Minwoo Im <minwoo.im.dev@gmail.com>
+Cc:     linux-scsi@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Euihyeok Kwon <eh81.kwon@samsung.com>,
+        Sarah Cho <sohyeon.jo@samsung.com>,
+        Sanggwan Lee <sanggwan.lee@samsung.com>,
+        Gyeongmin Nam <gm.nam@samsung.com>,
+        Sungjun Park <sj1228.park@samsung.com>,
+        Minwoo Im <minwoo.im@samsung.com>,
+        Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
+        Suganath Prabu Subramani 
+        <suganath-prabu.subramani@broadcom.com>,
+        Sathya Prakash <sathya.prakash@broadcom.com>,
+        "James E . J . Bottomley" <jejb@linux.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        MPT-FusionLinux.pdl@broadcom.com
+Subject: Re: [RESEND PATCH] mpt3sas: support target smid for [abort|query] task
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <20190727185337.19299-1-minwoo.im.dev@gmail.com>
+Date:   Tue, 30 Jul 2019 16:02:44 -0400
+In-Reply-To: <20190727185337.19299-1-minwoo.im.dev@gmail.com> (Minwoo Im's
+        message of "Sun, 28 Jul 2019 03:53:37 +0900")
+Message-ID: <yq1sgqnl28r.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9334 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1907300204
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9334 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1907300203
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 27 Jul 2019 14:23:33 +0100 Catalin Marinas <catalin.marinas@arm.com> wrote:
 
-> Add mempool allocations for struct kmemleak_object and
-> kmemleak_scan_area as slightly more resilient than kmem_cache_alloc()
-> under memory pressure. Additionally, mask out all the gfp flags passed
-> to kmemleak other than GFP_KERNEL|GFP_ATOMIC.
-> 
-> A boot-time tuning parameter (kmemleak.mempool) is added to allow a
-> different minimum pool size (defaulting to NR_CPUS * 4).
+Minwoo,
 
-btw, the checkpatch warnings are valid:
+> We can request task management IOCTL
+> command(MPI2_FUNCTION_SCSI_TASK_MGMT) to /dev/mpt3ctl.  If the given
+> task_type is either abort task or query task, it may need a field
+> named "Initiator Port Transfer Tag to Manage" in the IU.
 
-WARNING: usage of NR_CPUS is often wrong - consider using cpu_possible(), num_possible_cpus(), for_each_possible_cpu(), etc
-#70: FILE: mm/kmemleak.c:197:
-+static int min_object_pool = NR_CPUS * 4;
+Applied to 5.4/scsi-queue, thank you!
 
-WARNING: usage of NR_CPUS is often wrong - consider using cpu_possible(), num_possible_cpus(), for_each_possible_cpu(), etc
-#71: FILE: mm/kmemleak.c:198:
-+static int min_scan_area_pool = NR_CPUS * 1;
-
-There can be situations where NR_CPUS is much larger than
-num_possible_cpus().  Can we initialize these tunables within
-kmemleak_init()?
+-- 
+Martin K. Petersen	Oracle Linux Engineering
