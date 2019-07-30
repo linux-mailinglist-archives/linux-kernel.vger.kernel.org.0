@@ -2,58 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF1AA7AFBE
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 19:24:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 451BB7AFBF
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 19:24:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730705AbfG3RYN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 13:24:13 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:33838 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728195AbfG3RYN (ORCPT
+        id S1730711AbfG3RYR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 13:24:17 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:37696 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727720AbfG3RYO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 13:24:13 -0400
-Received: by mail-lj1-f196.google.com with SMTP id p17so62863702ljg.1;
-        Tue, 30 Jul 2019 10:24:11 -0700 (PDT)
+        Tue, 30 Jul 2019 13:24:14 -0400
+Received: by mail-lj1-f194.google.com with SMTP id z28so8608255ljn.4;
+        Tue, 30 Jul 2019 10:24:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=JEH0DrU2VPn5tM7KZVuLkPvwPGH6U+jg9rxw5dRufkw=;
-        b=EMs1FvJOMqC3dkyeDFvvu5ThT7CVnfdJHlTnl7qyV1Awlog+PKdDI+ZLjg+AT70AQM
-         vCYyb1N0w9NAxSzkUON5xYLDatvgHpvMDulduqhWMnpWNMZOhQ/+II8ZrSuIGW5t13uu
-         xf8l7w6OEBRLbbQuOE6+sz8Q0VwgsOXYWGAwLGURZl5PyISettNlZUQCeaCCLI81yNQw
-         3ifRthQED15E7WkOWLWyAaByoscyho2He7iTgnN1lMTUqr5EoquIJw3CHxL/+5D4E7VL
-         xhCXxMB6gprqBOTBgCe4MwLyOXy1xVZ0sjRHTrKtTkpgymchTVaURED9+GflsMjH71Zl
-         2qqw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=BzusjStSC705ddcrZJxz4h/GqHJ0Wvp0CyBksrxFkjE=;
+        b=K7+YqnzoAJbcU3re3wvsGQtqgYzrtZ1iEPoAqUapFLwAMFGLUNq+TVIRvNGosVXOA6
+         nb6/RWLlyEBowGgmB+l8Z/G5X3JZC4GQKRYSUDSWJHK/2aX3UUWwJibvS04BBFsWodis
+         Z8k96jE4jRqOa1mwwiQzTRw0bEdX3X2tZeOenCDe/D0n+JinOJBVyEpl/qOaJ43tZwNW
+         vZul+f5+46IBmg68+jKhactPoiL17qj8Ico+KKuiJBeua5YcpvJDEGchyAv/8vyD7Cm2
+         I/0a67mdWhDeWosKOQhnGgxegdPiMCC/n4pnc9jgM+Q3oFDu+EBXhXAOOFwlB9vlsc0g
+         g0hA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=JEH0DrU2VPn5tM7KZVuLkPvwPGH6U+jg9rxw5dRufkw=;
-        b=FftQ463C9y3zYDIR9fbkmng1JDwwWySYvJHsqhbxbZhhDHEAdA7h1ZlVByRnkH1B3F
-         AQ2I0h6YlG/5sqK+kaKavwBeZ5J9c2TwmOLuou8QLttsa9rN+SgbipUugutGZ206yi0I
-         oUOA7pa9cj9n5p7FamhpmI5We06war4777AgpTqjENCAwhgWR+yJ4L4fjzKnnTYAz/Rh
-         Dqv28BenkHyUpCuHM86v+D6lbUJvkxbpJbKPyg5rSgQt34QwGhUoCfpXt84ubviLeFJ4
-         El0R9OcZDkuSYOLdSSoe1gcAy1rEigUG+CP0UEhq6d+zPP4VwGOjYTdzv/D9/jRH/v5q
-         Yw8g==
-X-Gm-Message-State: APjAAAV1T9Zv/p/FdC8wrYN5iyPdE8+U3lnzE9B4vmasF0AzYkS/Vpn2
-        bogVx4O8tGfc4wewXnTxsWg=
-X-Google-Smtp-Source: APXvYqz+cWNHwCPglgibA466K4PSEJDcFdakRsePZbAAU2Re2ry8/H9Y+DuI16QbkAA4Q/CBYIl90w==
-X-Received: by 2002:a05:651c:20d:: with SMTP id y13mr59546561ljn.204.1564507451190;
-        Tue, 30 Jul 2019 10:24:11 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=BzusjStSC705ddcrZJxz4h/GqHJ0Wvp0CyBksrxFkjE=;
+        b=eDW1mjZ5BZrNHkd1phUzWSGVBd1rezAJq1Yg9Vx+IVU9RwGogYo3gfu74tv+tAFaCZ
+         /9oklRIi+cGgiyVFyLYZz0EnbeV9EG7Ta8dCW6Zjv2GgBU+5+4M9vgcmWU1TRFKuJ0Uk
+         pYFCQmVi8VVU4JCq7PLMdwFqbpumfnb5lS+hoW1NsBxf17I1tzMSEiO9VasNLR2dpQgp
+         63NRCRsgdwLQLovCTJW+VhsqI1j/e/nTGuCGbjQh7m2RCLUXcbXeVYQnO7PKlvQ+yl7a
+         6rtChjOO8Gc5gMcWDn/cHUKsQEEigl7eQndPykTqsldpCratUGTzv3mthWFpjE4q6WcX
+         eBxQ==
+X-Gm-Message-State: APjAAAUpVCpbTrKxdFIGkEM3E0LCTShdBCpn4nia38IjBg7L9Qqjn/Xj
+        2yT+fnr1axmqd8g3I9VVdew=
+X-Google-Smtp-Source: APXvYqxwOlxxTeAD55uAjPuC/+LQv1P7kUzP7AJk5u+SGEErv+gOa4wEFviXvLQNPBY4hxLZextcyA==
+X-Received: by 2002:a2e:9188:: with SMTP id f8mr16185563ljg.33.1564507452137;
+        Tue, 30 Jul 2019 10:24:12 -0700 (PDT)
 Received: from localhost.localdomain (ppp91-78-220-99.pppoe.mtu-net.ru. [91.78.220.99])
-        by smtp.gmail.com with ESMTPSA id c15sm13345252lja.79.2019.07.30.10.24.10
+        by smtp.gmail.com with ESMTPSA id c15sm13345252lja.79.2019.07.30.10.24.11
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Jul 2019 10:24:10 -0700 (PDT)
+        Tue, 30 Jul 2019 10:24:11 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Peter De Schrijver <pdeschrijver@nvidia.com>
 Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 0/2] Tegra30+ CPU suspend-resume bug-fixes
-Date:   Tue, 30 Jul 2019 20:23:38 +0300
-Message-Id: <20190730172340.14037-1-digetx@gmail.com>
+Subject: [PATCH v2 1/2] ARM: tegra: Fix FLOW_CTLR_HALT register clobbering by tegra_resume()
+Date:   Tue, 30 Jul 2019 20:23:39 +0300
+Message-Id: <20190730172340.14037-2-digetx@gmail.com>
 X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20190730172340.14037-1-digetx@gmail.com>
+References: <20190730172340.14037-1-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -61,25 +63,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+There is an unfortunate typo in the code that results in writing to
+FLOW_CTLR_HALT instead of FLOW_CTLR_CSR.
 
-This small series addresses two suspend-resume bugs: one affects Tegra30+
-due to a typo in the code, other fixes CPU hang on Tegra30 specifically.
+Cc: <stable@vger.kernel.org>
+Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ arch/arm/mach-tegra/reset-handler.S | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Changelog:
-
-v2: Reworded comment to the code to make it sound better in the patch
-    "Use WFE for power-gating on Tegra30".
-
-Dmitry Osipenko (2):
-  ARM: tegra: Fix FLOW_CTLR_HALT register clobbering by tegra_resume()
-  ARM: tegra: Use WFE for power-gating on Tegra30
-
- arch/arm/mach-tegra/reset-handler.S |  6 +++---
- arch/arm/mach-tegra/sleep-tegra30.S |  4 +++-
- drivers/soc/tegra/flowctrl.c        | 19 +++++++++++++++++--
- 3 files changed, 23 insertions(+), 6 deletions(-)
-
+diff --git a/arch/arm/mach-tegra/reset-handler.S b/arch/arm/mach-tegra/reset-handler.S
+index df44828a34d3..53123ae4ac3b 100644
+--- a/arch/arm/mach-tegra/reset-handler.S
++++ b/arch/arm/mach-tegra/reset-handler.S
+@@ -44,16 +44,16 @@ ENTRY(tegra_resume)
+ 	cmp	r6, #TEGRA20
+ 	beq	1f				@ Yes
+ 	/* Clear the flow controller flags for this CPU. */
+-	cpu_to_csr_reg r1, r0
++	cpu_to_csr_reg r3, r0
+ 	mov32	r2, TEGRA_FLOW_CTRL_BASE
+-	ldr	r1, [r2, r1]
++	ldr	r1, [r2, r3]
+ 	/* Clear event & intr flag */
+ 	orr	r1, r1, \
+ 		#FLOW_CTRL_CSR_INTR_FLAG | FLOW_CTRL_CSR_EVENT_FLAG
+ 	movw	r0, #0x3FFD	@ enable, cluster_switch, immed, bitmaps
+ 				@ & ext flags for CPU power mgnt
+ 	bic	r1, r1, r0
+-	str	r1, [r2]
++	str	r1, [r2, r3]
+ 1:
+ 
+ 	mov32	r9, 0xc09
 -- 
 2.22.0
 
