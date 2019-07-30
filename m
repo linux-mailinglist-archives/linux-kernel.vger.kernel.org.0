@@ -2,54 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B4FB7B1B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:19:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A9B37B168
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:16:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387918AbfG3SQT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 14:16:19 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:41948 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727512AbfG3SQK (ORCPT
+        id S2387941AbfG3SQW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 14:16:22 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:35387 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728655AbfG3SQM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 14:16:10 -0400
-Received: by mail-pf1-f193.google.com with SMTP id m30so30270958pff.8
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 11:16:10 -0700 (PDT)
+        Tue, 30 Jul 2019 14:16:12 -0400
+Received: by mail-pg1-f193.google.com with SMTP id s1so24174646pgr.2
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 11:16:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=LxEPX0Crt+HozwMckgTER6BzS7Gj7DRj6+re4zZk/6c=;
-        b=GVGjSJLrWBTsdA1KeCTr4CnfI7MnJBxVGr27mIz4n6aw7/OB+K0ph/a7E4sQqaNoY3
-         2nPzxcjkDDEkxnRsbIWiUrVSiT9uoK2eb2oQrwGDOaWIrPaGLF2/30/A0yBuV3Kl6PKl
-         PE0ND22m63oDOPxMaiv0vPBd0xZ6g8YBoelBM=
+        bh=pSxaD1cvDX0l0dBtzAMeJgIp940IH2B46uMy0iM1GB4=;
+        b=dVuSDzMLTviKBGZ53KKiOY0XqYsOyAgG25J621ZBW6qyaxu0WMuC8HeQIxZkmWGKhh
+         /EdV7NmqaIEZRNmikoQx4MADMjjEpHXudU1KTzY2LyXQu5ugIjzuQeTcWX5PgXyiVUEo
+         4j3e25Qx8a+r6/FIMt2T10YU0KCfd/Gw/6R84=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=LxEPX0Crt+HozwMckgTER6BzS7Gj7DRj6+re4zZk/6c=;
-        b=B2FXg755K/qF6hmEfdbIEV2jE4ouimvBYmjiZJxrMXase2M4qRxkmoyATTn4BhsEhE
-         VIbWGl0XcOVA5wfWPbjldZdMaz9aiDsQrpvBM2tiI1vffOIbEFbVJ5h2ZtNL3Xs9xa2U
-         gWopT5DoGpPLd0kXyv/HMnt4TPm/uN1D4kxk/5Tb/Tt7RAtrmtabBYBaWmtkyl3k7pDs
-         JlngyyFrOBAgwzVlxkJCVl+fB5QgcHKzj4g+QiTJAwErzO2SsS+D2s7vU/v16hbkmPis
-         /4+uFSQmXL4wlA4urE6IU2uV5aq0TGw1Jt4ySWSocFbcdxNzW7KEjadBxC/ha+xCCWOT
-         I1Wg==
-X-Gm-Message-State: APjAAAVWGurw+0XleBEkVvkepX+bObz39cpwEtrO4TiTL0pyOCsKh91J
-        4DgGu1Zy5hTQBrHmtWN2NlTFhzsQOac=
-X-Google-Smtp-Source: APXvYqzqmgMouzy2XYEH6mPfeX1+PAdYNUs9PEZtUnzeyupIW0G/pvkGPsmC8euAlb2LGoaeXNisJw==
-X-Received: by 2002:a17:90a:ad93:: with SMTP id s19mr117904573pjq.36.1564510569568;
-        Tue, 30 Jul 2019 11:16:09 -0700 (PDT)
+        bh=pSxaD1cvDX0l0dBtzAMeJgIp940IH2B46uMy0iM1GB4=;
+        b=PGnUncN3jvZh2vQ7REGCt1MgiPlmKR6Xbz83naE6ZY7OoL4YEq7qJ6SjkZPyeNArIH
+         LYTh8Rhoj8wnZNUi1cAWNwiWAU7LTmQmpD95kAINqdOmqBFkJEBxjUz7mzmc/dDE+yC6
+         0FYYYkklFG+TJg08nPU4ZX4+XdWKLHGmtIhH7gDIgDyORIOfeRUYD0EHrGB/euw3cQ/K
+         UIXoTv8fjr3/jJ+ViPlPATtFEl0GWyaHYPjJ5VErx/RUqrHfV/EK/hJaNzMOzmQvc02t
+         VsfvHKi6Ika6henQ32r0rB4IwnirnbtvwA0P0oPfhbrY4D/pojFhBLChm7moEPBbPudj
+         LVhw==
+X-Gm-Message-State: APjAAAXO0VvWnbj343Zrre2DXvHTPMO6M4zWy3wkoKwD44C/8EcDno7p
+        yZ7hyaGzEzU5QFA7B1MgGmyc0SEPNlE=
+X-Google-Smtp-Source: APXvYqxSiEVJeXi09dB4/iinN17Ab01YAZHjh+BReb6f6qTSeScWj6ZV6UNPwu5NIoes1J0qimKkKA==
+X-Received: by 2002:a62:1bd1:: with SMTP id b200mr42338409pfb.210.1564510571326;
+        Tue, 30 Jul 2019 11:16:11 -0700 (PDT)
 Received: from smtp.gmail.com ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id g1sm106744083pgg.27.2019.07.30.11.16.08
+        by smtp.gmail.com with ESMTPSA id g1sm106744083pgg.27.2019.07.30.11.16.10
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 30 Jul 2019 11:16:09 -0700 (PDT)
+        Tue, 30 Jul 2019 11:16:10 -0700 (PDT)
 From:   Stephen Boyd <swboyd@chromium.org>
 To:     linux-kernel@vger.kernel.org
-Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
+Cc:     Moritz Fischer <mdf@kernel.org>, linux-fpga@vger.kernel.org,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH v6 12/57] extcon: Remove dev_err() usage after platform_get_irq()
-Date:   Tue, 30 Jul 2019 11:15:12 -0700
-Message-Id: <20190730181557.90391-13-swboyd@chromium.org>
+Subject: [PATCH v6 14/57] fpga: Remove dev_err() usage after platform_get_irq()
+Date:   Tue, 30 Jul 2019 11:15:14 -0700
+Message-Id: <20190730181557.90391-15-swboyd@chromium.org>
 X-Mailer: git-send-email 2.22.0.709.g102302147b-goog
 In-Reply-To: <20190730181557.90391-1-swboyd@chromium.org>
 References: <20190730181557.90391-1-swboyd@chromium.org>
@@ -95,33 +94,33 @@ if ( \( ret < 0 \| ret <= 0 \) )
 While we're here, remove braces on if statements that only have one
 statement (manually).
 
-Cc: MyungJoo Ham <myungjoo.ham@samsung.com>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Moritz Fischer <mdf@kernel.org>
+Cc: linux-fpga@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Stephen Boyd <swboyd@chromium.org>
 ---
 
 Please apply directly to subsystem trees
 
- drivers/extcon/extcon-adc-jack.c | 4 +---
+ drivers/fpga/zynq-fpga.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/extcon/extcon-adc-jack.c b/drivers/extcon/extcon-adc-jack.c
-index ee9b5f70bfa4..ad02dc6747a4 100644
---- a/drivers/extcon/extcon-adc-jack.c
-+++ b/drivers/extcon/extcon-adc-jack.c
-@@ -140,10 +140,8 @@ static int adc_jack_probe(struct platform_device *pdev)
- 		return err;
+diff --git a/drivers/fpga/zynq-fpga.c b/drivers/fpga/zynq-fpga.c
+index 31ef38e38537..ee7765049607 100644
+--- a/drivers/fpga/zynq-fpga.c
++++ b/drivers/fpga/zynq-fpga.c
+@@ -578,10 +578,8 @@ static int zynq_fpga_probe(struct platform_device *pdev)
+ 	init_completion(&priv->dma_done);
  
- 	data->irq = platform_get_irq(pdev, 0);
--	if (data->irq < 0) {
--		dev_err(&pdev->dev, "platform_get_irq failed\n");
-+	if (data->irq < 0)
- 		return -ENODEV;
+ 	priv->irq = platform_get_irq(pdev, 0);
+-	if (priv->irq < 0) {
+-		dev_err(dev, "No IRQ available\n");
++	if (priv->irq < 0)
+ 		return priv->irq;
 -	}
  
- 	err = request_any_context_irq(data->irq, adc_jack_irq_thread,
- 			pdata->irq_flags, pdata->name, data);
+ 	priv->clk = devm_clk_get(dev, "ref_clk");
+ 	if (IS_ERR(priv->clk)) {
 -- 
 Sent by a computer through tubes
 
