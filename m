@@ -2,124 +2,190 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B0CD7B181
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:18:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 503547B161
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:16:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729085AbfG3SRi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 14:17:38 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:41634 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388167AbfG3SQq (ORCPT
+        id S1728651AbfG3SQB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 14:16:01 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:34813 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726940AbfG3SP7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 14:16:46 -0400
-Received: by mail-pg1-f194.google.com with SMTP id x15so20131573pgg.8
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 11:16:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Ejbky3Ait/2fuVRBv/Aea0ZW9E8YvQRjIE68KrxG858=;
-        b=g7NxQfqoHmAHu6FjiviV+l42gg60rayxYXW9umctHkawL0+ZOaMmX4rSGjSIgYitw/
-         JwYphBkhREl0mc9HGhGRpP4mJRGKBlCHFsIf4zXpF7AwUnneoonMz0J6Fi+rLAp6N6PY
-         M/6I/sE+dEfMD36MCDCUmiNTGgs+7tt2vwqqA=
+        Tue, 30 Jul 2019 14:15:59 -0400
+Received: by mail-wm1-f68.google.com with SMTP id w9so45841371wmd.1;
+        Tue, 30 Jul 2019 11:15:58 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Ejbky3Ait/2fuVRBv/Aea0ZW9E8YvQRjIE68KrxG858=;
-        b=gKaupRK5VrSWxSOtWPG36iBENaaEEIL7m3UdfOp6kxH2rd8QQeD1fJt8AvK42hj0Zv
-         tVnAEMgPJcjoZx9qI2Rge1Qt/iPKNjsEXOwOv4OGbVzcjuAPzWhHWvCMXN9Qi8/Ent3U
-         KL0iAmwDm2HEsNpI3NJ38BpL1xH/N3VB1V0TbTxmilUpqDO8KSdu0GkMmv6hOAWPTVh5
-         47BsvauFrpG0n0KTr5ov0lTHHVLD2HUGwQmFpmUyiZrFvdZfmt1db8hpw2stTXKS1Noa
-         HdBBiTiLgOUE5EDXD3IMq4o1vEorIzmRVAjqXxCOxFpKrHfWtOpRA6fYYrfqRnhVT/yA
-         TdLQ==
-X-Gm-Message-State: APjAAAUC2/7bKuJsTMw9QM/bwYuEs6gQ8ivUSpycclkfSl59p0K264Ss
-        r3R7VvjNwMP/gTKQdLs2FVCniKS5s6BmlA==
-X-Google-Smtp-Source: APXvYqzaS9Quj+uj+10jY75vRg+7pd4gpdEfZ85MzPRqS6VPRENa+I85aezt52LGvJ1whXawhY8vFg==
-X-Received: by 2002:a65:680b:: with SMTP id l11mr15407071pgt.35.1564510605774;
-        Tue, 30 Jul 2019 11:16:45 -0700 (PDT)
-Received: from smtp.gmail.com ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id g1sm106744083pgg.27.2019.07.30.11.16.45
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 30 Jul 2019 11:16:45 -0700 (PDT)
-From:   Stephen Boyd <swboyd@chromium.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH v6 56/57] scsi: Remove dev_err() usage after platform_get_irq()
-Date:   Tue, 30 Jul 2019 11:15:56 -0700
-Message-Id: <20190730181557.90391-57-swboyd@chromium.org>
-X-Mailer: git-send-email 2.22.0.709.g102302147b-goog
-In-Reply-To: <20190730181557.90391-1-swboyd@chromium.org>
-References: <20190730181557.90391-1-swboyd@chromium.org>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=4op4WRhPdkD/9TU23YWYe9Lz+UwxrV5bf6YuYJBYGKU=;
+        b=J73vSv5wNyisKtAgCp4LZLbYBZGViwRAOi5cUxd70vO1YkT7G5V2qVvJe/pltvOUVz
+         AqcOPvtlxHpXUDSsbe9C73uzZrbjMiIwutHnHO2HyQFPwZVMQvzCdzl+1cUxF0DxJ4iG
+         tCxNhv+d7WzXV22/M6g6Eo/IXaYtc+/O+SaV/vlN7Qf2IkoIUNNshhpaThF+kevSOJGK
+         wPEgETvvPZ/dXr8COBHavV3CidjznyqhGEALNRBx6YEqqvJtdl64B6ODQ8/q74cwNPoA
+         xtX7j+p7BMmF98ngxdHdU6L3oaeX3jKT0oR0P7U9v5STK24PjEJLxmUpbg2+n1YnvFKH
+         F8uw==
+X-Gm-Message-State: APjAAAX9tbU/yTmskO4aU9Jub+QF4cDsliNmEdzKdnqjZ6yhyLeQn61O
+        fz6BaCzeJQHJ3txO7Fz020TeTIvw
+X-Google-Smtp-Source: APXvYqwI3b2sP9K4kR6r9LV9enTjKY+gIvygfzOPSMEn73IonY84EeKh0JXGv/8gZA4/spRzQM+7jA==
+X-Received: by 2002:a7b:c748:: with SMTP id w8mr32051525wmk.36.1564510558030;
+        Tue, 30 Jul 2019 11:15:58 -0700 (PDT)
+Received: from [192.168.1.105] ([194.135.60.194])
+        by smtp.gmail.com with ESMTPSA id i12sm78179177wrx.61.2019.07.30.11.15.57
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Jul 2019 11:15:57 -0700 (PDT)
+Subject: Re: [PATCH v4] modpost: check for static EXPORT_SYMBOL* functions
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Michal Marek <michal.lkml@markovi.net>,
+        Emil Velikov <emil.l.velikov@gmail.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190714152817.24693-1-efremov@linux.com>
+ <20190730181146.6507-1-efremov@linux.com>
+From:   Denis Efremov <efremov@linux.com>
+Message-ID: <e206f4ff-1fbe-68e4-3614-85f4cbc0223f@linux.com>
+Date:   Tue, 30 Jul 2019 21:15:56 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190730181146.6507-1-efremov@linux.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We don't need dev_err() messages when platform_get_irq() fails now that
-platform_get_irq() prints an error message itself when something goes
-wrong. Let's remove these prints with a simple semantic patch.
+Changes in v1:
+1. Fixed indentations.
+2. Removed lkml links from the description of the commit.
+Changes in v2:
+1. Changed the 'n' variable type in the main function from size_t to
+    int.
+Changes in v3:
+1. Changed warning message from "%s is the static EXPORT_*" to
+    "%s a static ..."
+2. Improved the commit description from "approx. 1 min" to
+    "less than a minute". Thanks Stephen Rothwell for additional
+    measurements.
+Changes in v4:
+1. Dropped ELF_ST_TYPE check. This fixes false-positives detected by
+    Stephen Rothwell.
+2. Moved ELF_ST_BIND check before the call to find_symbol. Thanks
+    Masahiro Yamada for suggesting it.
 
-// <smpl>
-@@
-expression ret;
-struct platform_device *E;
-@@
+Denis
 
-ret =
-(
-platform_get_irq(E, ...)
-|
-platform_get_irq_byname(E, ...)
-);
-
-if ( \( ret < 0 \| ret <= 0 \) )
-{
-(
--if (ret != -EPROBE_DEFER)
--{ ...
--dev_err(...);
--... }
-|
-...
--dev_err(...);
-)
-...
-}
-// </smpl>
-
-While we're here, remove braces on if statements that only have one
-statement (manually).
-
-Cc: "James E.J. Bottomley" <jejb@linux.ibm.com>
-Cc: "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Stephen Boyd <swboyd@chromium.org>
----
-
-Please apply directly to subsystem trees
-
- drivers/scsi/ufs/ufshcd-pltfrm.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/scsi/ufs/ufshcd-pltfrm.c b/drivers/scsi/ufs/ufshcd-pltfrm.c
-index d7d521b394c3..f84943553454 100644
---- a/drivers/scsi/ufs/ufshcd-pltfrm.c
-+++ b/drivers/scsi/ufs/ufshcd-pltfrm.c
-@@ -404,7 +404,6 @@ int ufshcd_pltfrm_init(struct platform_device *pdev,
- 
- 	irq = platform_get_irq(pdev, 0);
- 	if (irq < 0) {
--		dev_err(dev, "IRQ resource not available\n");
- 		err = -ENODEV;
- 		goto out;
- 	}
--- 
-Sent by a computer through tubes
-
+On 30.07.2019 21:11, Denis Efremov wrote:
+> This patch adds a check to warn about static EXPORT_SYMBOL* functions
+> during the modpost. In most of the cases, a static symbol marked for
+> exporting is an odd combination that should be fixed either by deleting
+> the exporting mark or by removing the static attribute and adding the
+> appropriate declaration to headers.
+> 
+> This check could help to detect the following problems:
+> 1. 550113d4e9f5 ("i2c: add newly exported functions to the header, too")
+> 2. 54638c6eaf44 ("net: phy: make exported variables non-static")
+> 3. 98ef2046f28b ("mm: remove the exporting of totalram_pages")
+> 4. 73df167c819e ("s390/zcrypt: remove the exporting of ap_query_configuration")
+> 5. a57caf8c527f ("sunrpc/cache: remove the exporting of cache_seq_next")
+> 6. e4e4730698c9 ("crypto: skcipher - remove the exporting of skcipher_walk_next")
+> 7. 14b4c48bb1ce ("gve: Remove the exporting of gve_probe")
+> 8. 9b79ee9773a8 ("scsi: libsas: remove the exporting of sas_wait_eh")
+> 9. ...
+> 
+> Build time impact, allmodconfig, Dell XPS 15 9570 (measurements 3x):
+> $ make mrproper; make allmodconfig; time make -j12; \
+>    git checkout HEAD~1; \
+>    make mrproper; make allmodconfig; time make -j12
+> 1.
+>     (with patch) 17635,94s user 1895,54s system 1085% cpu 29:59,22 total
+>     (w/o  patch) 17275,42s user 1803,87s system 1112% cpu 28:35,66 total
+> 2.
+>     (with patch) 17369,51s user 1763,28s system 1111% cpu 28:41,47 total
+>     (w/o  patch) 16880,50s user 1670,93s system 1113% cpu 27:46,56 total
+> 3.
+>     (with patch) 17937,88s user 1842,53s system 1109% cpu 29:42,26 total
+>     (w/o  patch) 17267,55s user 1725,09s system 1111% cpu 28:28,17 total
+> 
+> The check adds less than a minute to a usual build.
+> 
+> Acked-by: Emil Velikov <emil.l.velikov@gmail.com>
+> Signed-off-by: Denis Efremov <efremov@linux.com>
+> ---
+>   scripts/mod/modpost.c | 31 +++++++++++++++++++++++++++++++
+>   1 file changed, 31 insertions(+)
+> 
+> diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
+> index f277e116e0eb..3e6d36ddfcdf 100644
+> --- a/scripts/mod/modpost.c
+> +++ b/scripts/mod/modpost.c
+> @@ -169,6 +169,7 @@ struct symbol {
+>   	unsigned int kernel:1;     /* 1 if symbol is from kernel
+>   				    *  (only for external modules) **/
+>   	unsigned int preloaded:1;  /* 1 if symbol from Module.symvers, or crc */
+> +	unsigned int is_static:1;  /* 1 if symbol is not global */
+>   	enum export  export;       /* Type of export */
+>   	char name[0];
+>   };
+> @@ -201,6 +202,7 @@ static struct symbol *alloc_symbol(const char *name, unsigned int weak,
+>   	strcpy(s->name, name);
+>   	s->weak = weak;
+>   	s->next = next;
+> +	s->is_static = 1;
+>   	return s;
+>   }
+>   
+> @@ -1980,6 +1982,21 @@ static void read_symbols(const char *modname)
+>   		handle_modversions(mod, &info, sym, symname);
+>   		handle_moddevtable(mod, &info, sym, symname);
+>   	}
+> +
+> +	// check for static EXPORT_SYMBOL_* functions && global vars
+> +	for (sym = info.symtab_start; sym < info.symtab_stop; sym++) {
+> +		unsigned char bind = ELF_ST_BIND(sym->st_info);
+> +
+> +		if (bind == STB_GLOBAL || bind == STB_WEAK) {
+> +			struct symbol *s =
+> +				find_symbol(remove_dot(info.strtab +
+> +						       sym->st_name));
+> +
+> +			if (s)
+> +				s->is_static = 0;
+> +		}
+> +	}
+> +
+>   	if (!is_vmlinux(modname) || vmlinux_section_warnings)
+>   		check_sec_ref(mod, modname, &info);
+>   
+> @@ -2425,6 +2442,7 @@ int main(int argc, char **argv)
+>   	char *dump_write = NULL, *files_source = NULL;
+>   	int opt;
+>   	int err;
+> +	int n;
+>   	struct ext_sym_list *extsym_iter;
+>   	struct ext_sym_list *extsym_start = NULL;
+>   
+> @@ -2520,6 +2538,19 @@ int main(int argc, char **argv)
+>   	if (sec_mismatch_count && sec_mismatch_fatal)
+>   		fatal("modpost: Section mismatches detected.\n"
+>   		      "Set CONFIG_SECTION_MISMATCH_WARN_ONLY=y to allow them.\n");
+> +	for (n = 0; n < SYMBOL_HASH_SIZE; n++) {
+> +		struct symbol *s = symbolhash[n];
+> +
+> +		while (s) {
+> +			if (s->is_static)
+> +				warn("\"%s\" [%s] is a static %s\n",
+> +				     s->name, s->module->name,
+> +				     export_str(s->export));
+> +
+> +			s = s->next;
+> +		}
+> +	}
+> +
+>   	free(buf.p);
+>   
+>   	return err;
+> 
