@@ -2,119 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C7117AC50
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 17:26:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CC3937AC53
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 17:26:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732374AbfG3P0D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 11:26:03 -0400
-Received: from imap1.codethink.co.uk ([176.9.8.82]:50754 "EHLO
-        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730358AbfG3P0D (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 11:26:03 -0400
-Received: from [167.98.27.226] (helo=[10.35.6.253])
-        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
-        id 1hsU0k-0000og-32; Tue, 30 Jul 2019 16:25:58 +0100
-Subject: Re: [alsa-devel] [PATCH v2 3/3] ASoC: TDA7802: Add turn-on diagnostic
- routine
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
-        alsa-devel@alsa-project.org,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Kirill Marinushkin <kmarinushkin@birdec.tech>,
-        Cheng-Yi Chiang <cychiang@chromium.org>,
-        Marco Felsch <m.felsch@pengutronix.de>,
-        Takashi Iwai <tiwai@suse.com>,
-        Annaliese McDermond <nh6z@nh6z.net>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Vinod Koul <vkoul@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        linux-kernel@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>
-References: <20190730120937.16271-1-thomas.preston@codethink.co.uk>
- <20190730120937.16271-4-thomas.preston@codethink.co.uk>
- <20190730141935.GF4264@sirena.org.uk>
-From:   Thomas Preston <thomas.preston@codethink.co.uk>
-Message-ID: <45156592-a90f-b4f8-4d30-9631c03f1280@codethink.co.uk>
-Date:   Tue, 30 Jul 2019 16:25:56 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1732387AbfG3P0H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 11:26:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54636 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730358AbfG3P0G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 11:26:06 -0400
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 46D89206E0;
+        Tue, 30 Jul 2019 15:26:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564500365;
+        bh=cyeRiBni7SuzwXceJSbBai+SAVPR79ccBM2xDiF7Qsg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=lqV1ZTJo+V6m8AOFtBhU9I32ADwWfOw/v5O54IHwgGH9d6LTFPbEo5tcntliWrtRB
+         xP3CnUpzrubt1AH+/OzUsf5kgjV6+Uv3oh6HfTa2E5YFSEnxge64zSwPPnW9UtURRp
+         KSadpsgy9Rp680FRBFXkOhVzfeaWaIUI2E2ZxH5g=
+Date:   Tue, 30 Jul 2019 16:26:01 +0100
+From:   Will Deacon <will@kernel.org>
+To:     Anders Roxell <anders.roxell@linaro.org>
+Cc:     joro@8bytes.org, linux-arm-kernel@lists.infradead.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        robin.murphy@arm.com
+Subject: Re: [PATCH v2] iommu: arm-smmu-v3: Mark expected switch fall-through
+Message-ID: <20190730152600.643mg43y6567pchi@willie-the-truck>
+References: <20190730152012.2615-1-anders.roxell@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <20190730141935.GF4264@sirena.org.uk>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190730152012.2615-1-anders.roxell@linaro.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30/07/2019 15:19, Mark Brown wrote:
-> On Tue, Jul 30, 2019 at 01:09:37PM +0100, Thomas Preston wrote:
+On Tue, Jul 30, 2019 at 05:20:11PM +0200, Anders Roxell wrote:
+> Now that -Wimplicit-fallthrough is passed to GCC by default, the
+> following warning shows up:
 > 
->> +	struct dentry *debugfs;
->> +	struct mutex diagnostic_mutex;
->> +};
+> ../drivers/iommu/arm-smmu-v3.c: In function ‘arm_smmu_write_strtab_ent’:
+> ../drivers/iommu/arm-smmu-v3.c:1189:7: warning: this statement may fall
+>  through [-Wimplicit-fallthrough=]
+>     if (disable_bypass)
+>        ^
+> ../drivers/iommu/arm-smmu-v3.c:1191:3: note: here
+>    default:
+>    ^~~~~~~
 > 
-> It is unclear what this mutex usefully protects, it only gets taken when
-> writing to the debugfs file to trigger this diagnostic mode but doesn't
-> do anything to control interactions with any other code path in the
-> driver.
+> Rework so that the compiler doesn't warn about fall-through. Make it
+> clearer by calling 'BUG_ON()' when disable_bypass is set, and always
+> 'break;'
 > 
+> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+> ---
+>  drivers/iommu/arm-smmu-v3.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
+> index a9a9fabd3968..c5c93e48b4db 100644
+> --- a/drivers/iommu/arm-smmu-v3.c
+> +++ b/drivers/iommu/arm-smmu-v3.c
+> @@ -1186,8 +1186,8 @@ static void arm_smmu_write_strtab_ent(struct arm_smmu_master *master, u32 sid,
+>  			ste_live = true;
+>  			break;
+>  		case STRTAB_STE_0_CFG_ABORT:
+> -			if (disable_bypass)
+> -				break;
+> +			BUG_ON(!disable_bypass);
+> +			break;
+>  		default:
+>  			BUG(); /* STE corruption */
+>  		}
+> -- 
+> 2.20.1
 
-If another process reads the debugfs node "diagnostic" while the turn-on 
-diagnostic mode is running, this mutex prevents the second process
-restarting the diagnostics.
+Acked-by: Will Deacon <will@kernel.org>
 
-This is redundant if debugfs reads are atomic, but I don't think they are.
+Joerg -- if you'd like to pick this up as a fix, feel free, otherwise I'll
+include it in my pull request for 5.4.
 
+Cheers,
 
->> +static int run_turn_on_diagnostic(struct tda7802_priv *tda7802, u8 *status)
->> +{
->> +	struct device *dev = &tda7802->i2c->dev;
->> +	int err_status, err;
->> +	unsigned int val;
->> +	u8 state[NUM_IB];
-> 
->> +	/* We must wait 20ms for device to settle, otherwise diagnostics will
->> +	 * not start and regmap poll will timeout.
->> +	 */
->> +	msleep(DIAGNOSTIC_SETTLE_MS);
-> 
-> The comment and define might go out of sync...
-> 
-
-Thanks, I will remove the 20ms but keep the comment here.
-
->> +	err = regmap_bulk_read(tda7802->regmap, TDA7802_DB1, status, 4);
->> +	if (err < 0) {
->> +		dev_err(dev, "Could not read channel status, %d\n", err);
->> +		goto diagnostic_restore;
->> +	}
-> 
-> ...but here we use a magic number for the array size :(
-> 
-
-Thanks, will update.
-
->> +static int tda7802_diagnostic_show(struct seq_file *f, void *p)
->> +{
->> +	char *buf = kmalloc(PAGE_SIZE, GFP_KERNEL);
-> 
-> We neither use nor free buf?
-> 
->> +static int tda7802_probe(struct snd_soc_component *component)
->> +{
->> +	struct tda7802_priv *tda7802 = snd_soc_component_get_drvdata(component);
->> +	struct device *dev = &tda7802->i2c->dev;
->> +	int err;
-> 
-> Why is this done at the component level?
-> 
-
-Argh my bad, a previous iteration required the buf and component. I missed
-this, sorry for the noise.
-
-Thanks for feedback, I'll go back and tend to all of this.
+Will
