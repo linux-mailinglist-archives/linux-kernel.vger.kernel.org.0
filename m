@@ -2,105 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 865827A895
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 14:34:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 88D7B7A87E
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 14:30:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729899AbfG3Mep (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 08:34:45 -0400
-Received: from esa3.microchip.iphmx.com ([68.232.153.233]:9746 "EHLO
-        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726241AbfG3Meo (ORCPT
+        id S1729668AbfG3Mam (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 08:30:42 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:43781 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728361AbfG3Mak (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 08:34:44 -0400
-Received-SPF: Pass (esa3.microchip.iphmx.com: domain of
-  Allan.Nielsen@microchip.com designates 198.175.253.82 as
-  permitted sender) identity=mailfrom;
-  client-ip=198.175.253.82; receiver=esa3.microchip.iphmx.com;
-  envelope-from="Allan.Nielsen@microchip.com";
-  x-sender="Allan.Nielsen@microchip.com";
-  x-conformance=spf_only; x-record-type="v=spf1";
-  x-record-text="v=spf1 mx a:ushub1.microchip.com
-  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
-  a:mx2.microchip.iphmx.com include:servers.mcsv.net
-  include:mktomail.com include:spf.protection.outlook.com ~all"
-Received-SPF: None (esa3.microchip.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@email.microchip.com) identity=helo;
-  client-ip=198.175.253.82; receiver=esa3.microchip.iphmx.com;
-  envelope-from="Allan.Nielsen@microchip.com";
-  x-sender="postmaster@email.microchip.com";
-  x-conformance=spf_only
-Authentication-Results: esa3.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Allan.Nielsen@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
-IronPort-SDR: TSh6xGslQ9l146S4CGMt2voFWYTBMZFjzfO0F+tyOSvlW8IqkZu39CbH8BeW2uVOwa8FqpNu2U
- GOe+4WH1ohE0A3/Wo0vQNf0ORGdz/va7Ngy2+hN4JR6FKah3xwWFw2sR0Dz4OepiY78jqH0PLX
- csxXCYV3So2uWZWAELCBc0g7zpdKKF/K8VVI7Kb+kTQLvXdBFG0JRVuA2k2HEY9SnV7evaW2B9
- 53ygqY+n+2UhcHUL2wc6ItKg2n03Kgy5DSg1ebkjzhfHJ94PoBxXtFbew9FwgIHHNhnijEHLqG
- emA=
-X-IronPort-AV: E=Sophos;i="5.64,326,1559545200"; 
-   d="scan'208";a="43277834"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 30 Jul 2019 05:34:43 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Tue, 30 Jul 2019 05:19:51 -0700
-Received: from localhost (10.10.85.251) by chn-vm-ex02.mchp-main.com
- (10.10.85.144) with Microsoft SMTP Server id 15.1.1713.5 via Frontend
- Transport; Tue, 30 Jul 2019 05:19:51 -0700
-Date:   Tue, 30 Jul 2019 14:19:51 +0200
-From:   "Allan W. Nielsen" <allan.nielsen@microchip.com>
-To:     Ido Schimmel <idosch@idosch.org>
-CC:     Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
-        Horatiu Vultur <horatiu.vultur@microchip.com>,
-        <roopa@cumulusnetworks.com>, <davem@davemloft.net>,
-        <bridge@lists.linux-foundation.org>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] net: bridge: Allow bridge to joing multicast groups
-Message-ID: <20190730121950.pyxtu5k4qphmshy4@lx-anielsen.microsemi.net>
-References: <20190729131420.tqukz55tz26jkg73@lx-anielsen.microsemi.net>
- <3cc69103-d194-2eca-e7dd-e2fa6a730223@cumulusnetworks.com>
- <20190729135205.oiuthcyesal4b4ct@lx-anielsen.microsemi.net>
- <e4cd0db9-695a-82a7-7dc0-623ded66a4e5@cumulusnetworks.com>
- <20190729143508.tcyebbvleppa242d@lx-anielsen.microsemi.net>
- <20190729175136.GA28572@splinter>
- <20190730062721.p4vrxo5sxbtulkrx@lx-anielsen.microsemi.net>
- <20190730070626.GA508@splinter>
- <20190730083027.biuzy7h5dbq7pik3@lx-anielsen.microsemi.net>
- <20190730100416.GA13250@splinter>
+        Tue, 30 Jul 2019 08:30:40 -0400
+Received: by mail-lf1-f67.google.com with SMTP id c19so44580873lfm.10
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 05:30:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=CSfAM+gQ83XDaCNQg7r2LymDSaYozQKa9yvOaipRrHw=;
+        b=YcHbAFaq93T4Zd6Gr5USiR2fPHQ71TjN2iFO68zfokUsiUXHtSvTQhdwY4Fwwhw4p2
+         QAFwFQe3kSqg7/+Ad4vM4NoB5JGqpFcMIDw38BlA9kIe8YNk3A89nlp9hz5D9hNSAdxR
+         51sz9+kqtPSfhaH4zUX6M2DK9Gl46AeG3S/uvMj68hNHzdgx4Uas/1yi4sP0kkJuSIf+
+         DloKwpPnqTb+gN4kQEj3C/DOiShZrBI979u3ZLjl9we3uYL5sMQdidw5IN1h9v2C24k1
+         gP7wOmDYR4KBmq1AQTULDiNPw61vGuHnG4HiCjYNdSTEX/0J/yZX8K2kz1PR98Ic2abB
+         zMCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=CSfAM+gQ83XDaCNQg7r2LymDSaYozQKa9yvOaipRrHw=;
+        b=sBZAoRJKGhARvbNYxezb2sSN+1cgGFpq0u/zKcj9f9m/yx+gNGlUSzIckBdxcjaLip
+         FUo2xSz8a+irLpwEQ87SORXWxvFlRAguIMXD9Tgtb8iuMGGqFw1PggzRt/kauqECuLE3
+         RYUc6Jl8ltK7bBSutiHoXMxVo8ktf/RB1znkusEOFiBH4QX/H1tw5nS4LHDzRGXXho3K
+         Rh4y3II3aeBvB+6aprIg1ypX4Ar4PFYrXK5vIXLA/Mpysy3UjuwSYuB0P3p0lHqqgeYV
+         HD8CF4G+MN86md+pd/Nza22io1HG7gkWqeHKD9gn+180NGbCnQImH7PqbwK4GQVeAgqG
+         FWBg==
+X-Gm-Message-State: APjAAAWs0B1wrSloe7UJQUn1tSgCdGcd9VB6EHxAlR+BZep0k2zEvSrD
+        Ua6m/uR+EEv6F+05VQ322P9y/NdffIM3EQGklyj8ow==
+X-Google-Smtp-Source: APXvYqwfYsLN+ZvekCLKF3p2gBcRgDY5HwZspqX9F2tsBCNfvaaPjNDOymzkH2LYNrRBJDwAY/7q4iGv3TvWJHaT59o=
+X-Received: by 2002:ac2:4c82:: with SMTP id d2mr37163207lfl.89.1564489838284;
+ Tue, 30 Jul 2019 05:30:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-In-Reply-To: <20190730100416.GA13250@splinter>
-User-Agent: NeoMutt/20180716
+References: <20190726112737.19309-1-anders.roxell@linaro.org>
+ <20190726122956.GC26088@lakrids.cambridge.arm.com> <20190726151825.GA12552@e121166-lin.cambridge.arm.com>
+ <20190730112415.GB51922@lakrids.cambridge.arm.com> <20190730112758.ctgg6l5gldsefdgs@willie-the-truck>
+In-Reply-To: <20190730112758.ctgg6l5gldsefdgs@willie-the-truck>
+From:   Anders Roxell <anders.roxell@linaro.org>
+Date:   Tue, 30 Jul 2019 14:30:27 +0200
+Message-ID: <CADYN=9+9wnpX1jSaDmowDov9GerQsdobxnVqwAf=WGk=7-VcRw@mail.gmail.com>
+Subject: Re: [PATCH] arm_pmu: Mark expected switch fall-through
+To:     Will Deacon <will@kernel.org>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The 07/30/2019 13:04, Ido Schimmel wrote:
-> On Tue, Jul 30, 2019 at 10:30:28AM +0200, Allan W. Nielsen wrote:
-> > The 07/30/2019 10:06, Ido Schimmel wrote:
-> > > As a bonus, existing drivers could benefit from it, as MDB entries are already
-> > > notified by MAC.
-> > Not sure I follow. When FDB entries are added, it also generates notification
-> > events.
-> 
-> I meant the switchdev notification sent to drivers:
-> 
-> /* SWITCHDEV_OBJ_ID_PORT_MDB */
-> struct switchdev_obj_port_mdb {
-> 	struct switchdev_obj obj;
-> 	unsigned char addr[ETH_ALEN];
-> 	u16 vid;
-> };
-> 
-> By extending MDB entries to also be keyed by MAC you basically get a lot
-> of things for free without duplicating the same code for multicast FDBs.
-Agree, this should be the same.
+On Tue, 30 Jul 2019 at 13:28, Will Deacon <will@kernel.org> wrote:
+>
+> On Tue, Jul 30, 2019 at 12:24:15PM +0100, Mark Rutland wrote:
+> > On Fri, Jul 26, 2019 at 04:18:25PM +0100, Lorenzo Pieralisi wrote:
+> > > On Fri, Jul 26, 2019 at 01:29:56PM +0100, Mark Rutland wrote:
+> > > > On Fri, Jul 26, 2019 at 01:27:37PM +0200, Anders Roxell wrote:
+> > > > > When fall-through warnings was enabled by default the following w=
+arning
+> > > > > was starting to show up:
+> > > > >
+> > > > > ../drivers/perf/arm_pmu.c: In function =E2=80=98cpu_pm_pmu_notify=
+=E2=80=99:
+> > > > > ../drivers/perf/arm_pmu.c:726:3: warning: this statement may fall
+> > > > >  through [-Wimplicit-fallthrough=3D]
+> > > > >    cpu_pm_pmu_setup(armpmu, cmd);
+> > > > >    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> > > > > ../drivers/perf/arm_pmu.c:727:2: note: here
+> > > > >   case CPU_PM_ENTER_FAILED:
+> > > > >   ^~~~
+> > > > >
+> > > > > Rework so that the compiler doesn't warn about fall-through.
+> > > > >
+> > > > > Fixes: d93512ef0f0e ("Makefile: Globally enable fall-through warn=
+ing")
+> > > > > Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+> > > > > ---
+> > > > >
+> > > > > I'm not convinced that this is the correct patch to fix this issu=
+e.
+> > > > > However, I can't see why we do 'armpmu->start(armpmu);' only in '=
+case
+> > > > > CPU_PM_ENTER_FAILED' and why we not call function cpu_pm_pmu_setu=
+p()
+> > > > > there also, since in cpu_pm_pmu_setup() has a case prepared for
+> > > > > CPU_PM_ENTER_FAILED.
+> > > >
+> > > > I agree, think that should be:
+> > > >
+> > > >   case CPU_PM_EXIT:
+> > > >   case CPU_PM_ENTER_FAILED:
+> > > >           cpu_pm_pmu_setup(armpmu, cmd);
+> > > >           armpmu->start(armpmu);
+> > > >           break;
+> > > >
+> > > > ... so that we re-start the events before we start the PMU.
+> > > >
+> > > > That would be a fix for commit:
+> > > >
+> > > >   da4e4f18afe0f372 ("drivers/perf: arm_pmu: implement CPU_PM notifi=
+er")
+> > >
+> > > Yes that's correct, apologies. Probably we did not hit it because CPU=
+ PM
+> > > notifier entry failures are a pretty rare event; regardless:
+> > >
+> > > Acked-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> > >
+> > > I can send the updated fix, just let me know.
+> >
+> > I'm not sure what Will wants, but assuming you do so:
+> >
+> > Acked-by: Mark Rutland <mark.rutland@arm.com>
+>
+> I gave up waiting
 
-> AFAICS, then only change in the fast path is in br_mdb_get() where you
-> need to use DMAC as key in case Ethertype is not IPv4/IPv6.
-That would be nice.
+I'm sorry for letting you wait.
 
--- 
-/Allan
+>, so it's already queued here:
+>
+> https://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git/commit/?h=
+=3Dfor-next/fixes&id=3D0d7fd70f26039bd4b33444ca47f0e69ce3ae0354
+
+Thanks for fixing it.
+
+Cheers,
+Anders
