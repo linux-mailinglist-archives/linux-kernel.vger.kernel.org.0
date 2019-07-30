@@ -2,76 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 892887B1E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:25:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 235A77B1E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:25:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729625AbfG3SZQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 14:25:16 -0400
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:38410 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729112AbfG3SZP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 14:25:15 -0400
-Received: by mail-qk1-f194.google.com with SMTP id a27so47329286qkk.5
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 11:25:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hgkfIZTZT31YAwT292CElgRNymWNb2JeX6gELGSJ0g8=;
-        b=tz2jIMAats3GShbrBatOfygDiXbx4xC6GBe7dsfYS0myEKbOYqqFZAEE8syt92sQ2i
-         rqjsgQr0kw+vao1ZYeV4hQbUsU7K+r7yrk8lSyp6ByzMzyQdSAqiW+x54g6D2tWjKlHs
-         1cyUq/PAMrUslwQ70wDk8MgUtPE2Iv0KbSAWZXw7+NHk81OggK3Kq/k+JlyiGoBbG+B6
-         gvKWSIxh1aRf42P9n4BhK4abEL4sLKb/na1nAtiV3WCowpcDlMXENtI7KCgUKW0YMyZw
-         kY7SqbeIr5YOveetT/tdy0x1RvuVZ1PGWHlSPgouK9u37VSYrWawQXTxvyV36iJQ6153
-         AIjQ==
-X-Gm-Message-State: APjAAAWajXGGpJtsqSMRHuMmOPxPNmJCoeV3sfl/BK1GZmA/GM6R4y3H
-        4T9GCjB5Yki6cS1LMa4Wapdj9hraObLzyzFNeWCeiiFb
-X-Google-Smtp-Source: APXvYqzFirM6D707r7849pKu3mn8W9JDE1PQUJxlpX8j1dY4OgVkWtzE1LzAAxSPeGNSezpGWMOaXX5pMloR0DGpBHM=
-X-Received: by 2002:a05:620a:b:: with SMTP id j11mr43867129qki.352.1564511114607;
- Tue, 30 Jul 2019 11:25:14 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190729202542.205309-1-ndesaulniers@google.com>
- <20190729203246.GA117371@archlinux-threadripper> <20190729215200.GN31406@gate.crashing.org>
- <CAK8P3a1GQSyCj1L8fFG4Pah8dr5Lanw=1yuimX1o+53ARzOX+Q@mail.gmail.com>
- <20190730134856.GO31406@gate.crashing.org> <CAK8P3a2755_6xq453C2AePLW8BeQk_Jg=HfjB_F-zyVMnQDfdg@mail.gmail.com>
- <20190730161637.GP31406@gate.crashing.org> <20190730170728.GQ31406@gate.crashing.org>
-In-Reply-To: <20190730170728.GQ31406@gate.crashing.org>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 30 Jul 2019 20:24:58 +0200
-Message-ID: <CAK8P3a2mT7S4VkxqhzsH_3A8HWs6PHQFO8AinLEaHmvAmT8Kug@mail.gmail.com>
-Subject: Re: [PATCH] powerpc: workaround clang codegen bug in dcbz
-To:     Segher Boessenkool <segher@kernel.crashing.org>
-Cc:     kbuild test robot <lkp@intel.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
+        id S1729459AbfG3SZG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 14:25:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53742 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725935AbfG3SZG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 14:25:06 -0400
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E66F82087F;
+        Tue, 30 Jul 2019 18:25:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564511105;
+        bh=2xncdpK2J1RersRdjUzIlXExFmZioyenQiPobsms38I=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=wkG/el70Z3il0Z8+OdQuanuSkDxOvC+ZkzjEzWuTzbFHpKZv+kLZuaQXwOJ5GinhX
+         1Vm+dEqxDYq8jNWNdMxQw5CFKnO99k9uuzCsdVjFY1FoSWpGbndvVX5t8pu/eTrBvy
+         h0sJpcy4GffeO7R5WdLzSlefy0e6Qf/9B8+xW87M=
+Date:   Tue, 30 Jul 2019 13:25:03 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Denis Efremov <efremov@linux.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Content-Type: text/plain; charset="UTF-8"
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Michal Simek <monstr@monstr.eu>, linux-mips@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, sparclinux@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/5] PCI: Convert pci_resource_to_user() to a weak
+ function
+Message-ID: <20190730182503.GJ203187@google.com>
+References: <20190729101401.28068-1-efremov@linux.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190729101401.28068-1-efremov@linux.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 30, 2019 at 7:07 PM Segher Boessenkool
-<segher@kernel.crashing.org> wrote:
->
-> On Tue, Jul 30, 2019 at 11:16:37AM -0500, Segher Boessenkool wrote:
-> > in_le32 and friends?  Yeah, huh.  If LLVM copies that to the stack as
-> > well, its (not byte reversing) read will be atomic just fine, so things
-> > will still work correctly.
-> >
-> > The things defined with DEF_MMIO_IN_D (instead of DEF_MMIO_IN_X) do not
-> > look like they will work correctly if an update form address is chosen,
-> > but that won't happen because the constraint is "m" instead of "m<>",
-> > making the %Un pretty useless (it will always be the empty string).
->
-> Btw, this is true since GCC 4.8; before 4.8, plain "m" *could* have an
-> automodify (autoinc, autodec, etc.) side effect.  What is the minimum
-> GCC version required, these days?
+On Mon, Jul 29, 2019 at 01:13:56PM +0300, Denis Efremov wrote:
+> Architectures currently define HAVE_ARCH_PCI_RESOURCE_TO_USER if they want
+> to provide their own pci_resource_to_user() implementation. This could be
+> simplified if we make the generic version a weak function. Thus,
+> architecture specific versions will automatically override the generic one.
+> 
+> Changes in v2:
+> 1. Removed __weak from pci_resource_to_user() declaration
+> 2. Fixed typo s/spark/sparc/g
+> 
+> Denis Efremov (5):
+>   PCI: Convert pci_resource_to_user to a weak function
+>   microblaze/PCI: Remove HAVE_ARCH_PCI_RESOURCE_TO_USER
+>   mips/PCI: Remove HAVE_ARCH_PCI_RESOURCE_TO_USER
+>   powerpc/PCI: Remove HAVE_ARCH_PCI_RESOURCE_TO_USER
+>   sparc/PCI: Remove HAVE_ARCH_PCI_RESOURCE_TO_USER
+> 
+>  arch/microblaze/include/asm/pci.h |  2 --
+>  arch/mips/include/asm/pci.h       |  1 -
+>  arch/powerpc/include/asm/pci.h    |  2 --
+>  arch/sparc/include/asm/pci.h      |  2 --
+>  drivers/pci/pci.c                 |  8 ++++++++
+>  include/linux/pci.h               | 12 ------------
+>  6 files changed, 8 insertions(+), 19 deletions(-)
 
-gcc-4.6, but an architecture can require a higher version.
-
-         Arnd
+Thanks, I added Paul's ack, squashed into a single patch since I think
+it's easier to see what's going on then, and applied to pci/misc for
+v4.5.
