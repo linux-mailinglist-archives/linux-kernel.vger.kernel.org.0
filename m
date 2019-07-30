@@ -2,133 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AD857AED5
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 19:03:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AAF0E7AEE1
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 19:06:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727118AbfG3RDb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 13:03:31 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:57692 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726510AbfG3RDa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 13:03:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=sjiuOj4pMy3XulfjH+DlQM2jh5+llnycx9G2HKmD8Vc=; b=tynKo5h1HQy7lnlRTfMfJI0pk
-        7ax4izVZLE13fK7Cnt+YJSjkC5S9KF2xgwaJexGTyyumMr0wljno8OXBZ9dFLeaEl/Qz3rmVPNRoW
-        g7B8mddz/HHVNh4rJzkAfwNzwxZ/hOWEqoD+MX2L5jW7MVuNp+H5Y2L+e2RmPd1mwKAoQ2MEPPj6J
-        eYhy22Kd64NFLgHXi/mfKsOOcSQBC2LuBDXYS3LG0ePdhgsD/Tple33zqS2yLdqY8XkmblbgsSd9z
-        rzb83uC2QeEG1fK6eSlKeg4bne9CZYu0mshYUz07DDDpYDRj4eejwt92HEifZNS9M8C/NW7YbHMFB
-        hyUrU+BXQ==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hsVX1-0006YE-Pq; Tue, 30 Jul 2019 17:03:23 +0000
-Date:   Tue, 30 Jul 2019 10:03:23 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Anshuman Khandual <anshuman.khandual@arm.com>
-Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mark Brown <Mark.Brown@arm.com>,
-        Steven Price <Steven.Price@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Kees Cook <keescook@chromium.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Sri Krishna chowdary <schowdary@nvidia.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        linux-arm-kernel@lists.infradead.org, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC] mm/pgtable/debug: Add test validating architecture page
- table helpers
-Message-ID: <20190730170323.GA4700@bombadil.infradead.org>
-References: <1564037723-26676-1-git-send-email-anshuman.khandual@arm.com>
- <1564037723-26676-2-git-send-email-anshuman.khandual@arm.com>
- <20190725143920.GW363@bombadil.infradead.org>
- <c3bb0420-584c-de3b-2439-8702bc09595e@arm.com>
- <20190726195457.GI30641@bombadil.infradead.org>
- <10ed1022-a5c0-c80c-c0c9-025bb2307666@arm.com>
+        id S1728573AbfG3RGI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 13:06:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46580 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727233AbfG3RGI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 13:06:08 -0400
+Received: from localhost (lpr83-1-88-168-111-231.fbx.proxad.net [88.168.111.231])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 68A5A206E0;
+        Tue, 30 Jul 2019 17:06:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564506367;
+        bh=4s/EZAcoJfguA/Bo8YNhAMgb7OUN+R18I6hJrEQh8s0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=JQmt+mrcd2TJQZ+w8XTtlXwYzUssuVo6Oc3BVg6o2sZ1vWN4zAoG6szsJ0WV1GNv6
+         Y9iP2cFXoArzuIIJ/605I0/bYLv3Z0N91zBpNN80zL7jsEydZXjQQCQCCqR7h9VykF
+         2heZkCq7ytm56EHJ56aojmi0QsEXEJQuDSf9H0u0=
+Date:   Tue, 30 Jul 2019 19:06:01 +0200
+From:   Maxime Ripard <mripard@kernel.org>
+To:     Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        linux-sunxi@googlegroups.com, Chen-Yu Tsai <wens@csie.org>,
+        Jernej =?utf-8?Q?=C5=A0krabec?= <jernej.skrabec@siol.net>,
+        Mark Rutland <mark.rutland@arm.com>, linux-pwm@vger.kernel.org,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        kernel@pengutronix.de,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [linux-sunxi] Re: [PATCH 4/6] pwm: sun4i: Add support for H6 PWM
+Message-ID: <20190730170601.a7ei43wku6jsjanu@flea>
+References: <20190726184045.14669-1-jernej.skrabec@siol.net>
+ <173825848.1FZsmuHfpq@jernej-laptop>
+ <20190729185108.tpilwoooxvi2z72e@pengutronix.de>
+ <2452836.v7ux4bnEjb@jernej-laptop>
+ <20190730080900.hhxrqun7vk4nsj2h@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <10ed1022-a5c0-c80c-c0c9-025bb2307666@arm.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190730080900.hhxrqun7vk4nsj2h@pengutronix.de>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 29, 2019 at 02:02:52PM +0530, Anshuman Khandual wrote:
-> On 07/27/2019 01:24 AM, Matthew Wilcox wrote:
-> > On Fri, Jul 26, 2019 at 10:17:11AM +0530, Anshuman Khandual wrote:
-> >>> But 'page' isn't necessarily PMD-aligned.  I don't think we can rely on
-> >>> architectures doing the right thing if asked to make a PMD for a randomly
-> >>> aligned page.
-> >>>
-> >>> How about finding the physical address of something like kernel_init(),
-> >>
-> >> Physical address corresponding to the symbol in the kernel text segment ?
-> > 
-> > Yes.  We need the address of something that's definitely memory.
-> > The stack might be in vmalloc space.  We can't allocate memory from the
-> > allocator that's PUD-aligned.  This seems like a reasonable approximation
-> > to something that might work.
-> 
-> Okay sure. What is about vmalloc space being PUD aligned and how that is
-> problematic here ? Could you please give some details. Just being curious.
+On Tue, Jul 30, 2019 at 10:09:00AM +0200, Uwe Kleine-König wrote:
+> Hello Rob and Frank,
+>
+> Maxime and Jernej on one side and me on the other cannot agree about a
+> detail in the change to the bindings here. I'm trying to objectively
+> summarize the situation for you to help deciding what is the right thing
+> to do here.
+>
+> TLDR: The sun4i pwm driver is extended to support a new variant of that
+> device on the H6 SoC. Compared to the earlier supported variants
+> allwinner,sun50i-h6-pwm on H6 needs to handle a reset controller and an
+> additional clock.
+>
+> The two positions are:
+>
+>  - We need a new compatible because only then the driver and/or the dt
+>    schema checker can check that each "allwinner,sun50i-h6-pwm" device
+>    has a reset property and a "bus" clock; and the earlier variants
+>    don't.
 
-Those were two different sentences.
+There is two topics here, really. The binding itself really must have
+those properties as required.
 
-We can't use the address of something on the stack, because we don't
-know whether the stack is in vmalloc space or in the direct map.
+You had an analogy before that we shouldn't really do that, since it
+would be verification and that it would be similar to checking whether
+the register range was right. This analogy isn't correct, a better one
+would be checking that the register range exists in the first place.
 
-We can't use the address of something we've allocated from the page
-allocator, because the page allocator can't give us PUD-aligned memory.
+Indeed, if you don't have a register range, you have no register to
+write to, and that's a showstopper for any driver. I'm pretty sure we
+all agree on that. But on those SoCs, like Chen-Yu said, having no
+resets or clocks properties result in an equally bad result: either
+any write to that device is completely ignored (missing reset), or the
+system completely (and silently) locks up (missing bus clock).
 
-> > I think that's a mistake.  As Russell said, the ARM p*d manipulation
-> > functions expect to operate on tables, not on individual entries
-> > constructed on the stack.
-> 
-> Hmm. I assume that it will take care of dual 32 bit entry updates on arm
-> platform through various helper functions as Russel had mentioned earlier.
-> After we create page table with p?d_alloc() functions and pick an entry at
-> each page table level.
+We *have* to catch that somehow and not let anything like that happen.
 
-Right.
+That being said, we can't really validate that the clock pointed is
+the right one, just like we can't really check that the register range
+is the proper one. Or rather, we could, but it's completely
+impractical and we do agree on that as well.
 
-> > So I think the right thing to do here is allocate an mm, then do the
-> > pgd_alloc / p4d_alloc / pud_alloc / pmd_alloc / pte_alloc() steps giving
-> > you real page tables that you can manipulate.
-> > 
-> > Then destroy them, of course.  And don't access through them.
-> 
-> mm_alloc() seems like a comprehensive helper to allocate and initialize a
-> mm_struct. But could we use mm_init() with 'current' in the driver context or we
-> need to create a dummy task_struct for this purpose. Some initial tests show that
-> p?d_alloc() and p?d_free() at each level with a fixed virtual address gives p?d_t
-> entries required at various page table level to test upon.
+Having the bus clock and reset line being required however is only a
+few lines in the binding though, and is very practical.
 
-I think it's wise to start a new mm.  I'm not sure exactly what calls
-to make to get one going.
+>  - The driver can be simpler and the device specific knowledge is only
+>    in a single place (the dt) if the device tree is considered valid and
+>    a reset property and "bus" clock is used iff it's provided in the
+>    device tree without additional comparison for the compatible.
 
-> >>>> +#ifdef CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD
-> >>>> +static void pud_basic_tests(void)
-> >>>
-> >>> Is this the right ifdef?
-> >>
-> >> IIUC THP at PUD is where the pud_t entries are directly operated upon and the
-> >> corresponding accessors are present only when HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD
-> >> is enabled. Am I missing something here ?
-> > 
-> > Maybe I am.  I thought we could end up operating on PUDs for kernel mappings,
-> > even without transparent hugepages turned on.
-> 
-> In generic MM ? IIUC except ioremap mapping all other PUD handling for kernel virtual
-> range is platform specific. All the helpers used in the function pud_basic_tests() are
-> part of THP and used in mm/huge_memory.c
+And now we have the discussion on how it's implemented in a
+driver. Since it's pretty cheap to implement (only a couple of lines:
+two for the if block, one for the additional field in the structure,
+one for each SoC using that) and have huge benefits (not silently
+locking up the system at boot), then I'd say we should go for it.
 
-But what about hugetlbfs?  And vmalloc can also use larger pages these days.
-I don't think these tests should be conditional on transparent hugepages.
+Maxime
+
+--
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
