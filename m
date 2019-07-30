@@ -2,110 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D63D67A865
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 14:28:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 865827A895
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 14:34:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729720AbfG3M2K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 08:28:10 -0400
-Received: from mail-io1-f71.google.com ([209.85.166.71]:38937 "EHLO
-        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728448AbfG3M2I (ORCPT
+        id S1729899AbfG3Mep (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 08:34:45 -0400
+Received: from esa3.microchip.iphmx.com ([68.232.153.233]:9746 "EHLO
+        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726241AbfG3Meo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 08:28:08 -0400
-Received: by mail-io1-f71.google.com with SMTP id y13so71198069iol.6
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 05:28:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=UF+ZT7hkzsQOSIm9ZfReLBGT0sRMnBnJ9BkNk0fgMtk=;
-        b=gFiWiNdJevNA2lVbU+j7rARzqG6yBXBNa9aL5nSwa3mTd1cDW8rNAV3fy3ELwrUX16
-         WfCI3jGD1gGJT5OyJuPud7lMyLYKfZBxcZRzYXtEKurlSF0iaBo2gRos4i0iSJDWrYl5
-         y7NJ6ggEenUrnbS+a8e2ERaUjWXi7HmBgECl28eQais1JNqtAAX36YXD1piUg+39h8DW
-         izDLBhhL7FFQPXrh4SHf1Mv/cHnnExgqjwin/rJmvDcmDx+mNSlHMFP9Q9f5/azbJQBP
-         21ExArpda5qjZuZCDeyXviLS3LH2R+8+Olp7gWwepWiHXE7YL0Xj71JMy8gok4z603Wm
-         mASw==
-X-Gm-Message-State: APjAAAUbfQa9LYd9dH5+H3JKdeg91M0nOlDapzgBYV6IqCTuMC3oxHQc
-        9+tZ+I+Kct3lZqlORIXyiAKgFwBuA3fYagWmXQ0ntVqr0/6n
-X-Google-Smtp-Source: APXvYqwylNdmLYou55ilmwLxDi//dWkQA/2GdAbuEf8sWkR2fpjRhH0kg4zKEtf78oXPD6M0flpqNynFwWxuxZd0tmIROr31LSch
+        Tue, 30 Jul 2019 08:34:44 -0400
+Received-SPF: Pass (esa3.microchip.iphmx.com: domain of
+  Allan.Nielsen@microchip.com designates 198.175.253.82 as
+  permitted sender) identity=mailfrom;
+  client-ip=198.175.253.82; receiver=esa3.microchip.iphmx.com;
+  envelope-from="Allan.Nielsen@microchip.com";
+  x-sender="Allan.Nielsen@microchip.com";
+  x-conformance=spf_only; x-record-type="v=spf1";
+  x-record-text="v=spf1 mx a:ushub1.microchip.com
+  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
+  a:mx2.microchip.iphmx.com include:servers.mcsv.net
+  include:mktomail.com include:spf.protection.outlook.com ~all"
+Received-SPF: None (esa3.microchip.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@email.microchip.com) identity=helo;
+  client-ip=198.175.253.82; receiver=esa3.microchip.iphmx.com;
+  envelope-from="Allan.Nielsen@microchip.com";
+  x-sender="postmaster@email.microchip.com";
+  x-conformance=spf_only
+Authentication-Results: esa3.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Allan.Nielsen@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
+IronPort-SDR: TSh6xGslQ9l146S4CGMt2voFWYTBMZFjzfO0F+tyOSvlW8IqkZu39CbH8BeW2uVOwa8FqpNu2U
+ GOe+4WH1ohE0A3/Wo0vQNf0ORGdz/va7Ngy2+hN4JR6FKah3xwWFw2sR0Dz4OepiY78jqH0PLX
+ csxXCYV3So2uWZWAELCBc0g7zpdKKF/K8VVI7Kb+kTQLvXdBFG0JRVuA2k2HEY9SnV7evaW2B9
+ 53ygqY+n+2UhcHUL2wc6ItKg2n03Kgy5DSg1ebkjzhfHJ94PoBxXtFbew9FwgIHHNhnijEHLqG
+ emA=
+X-IronPort-AV: E=Sophos;i="5.64,326,1559545200"; 
+   d="scan'208";a="43277834"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 30 Jul 2019 05:34:43 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Tue, 30 Jul 2019 05:19:51 -0700
+Received: from localhost (10.10.85.251) by chn-vm-ex02.mchp-main.com
+ (10.10.85.144) with Microsoft SMTP Server id 15.1.1713.5 via Frontend
+ Transport; Tue, 30 Jul 2019 05:19:51 -0700
+Date:   Tue, 30 Jul 2019 14:19:51 +0200
+From:   "Allan W. Nielsen" <allan.nielsen@microchip.com>
+To:     Ido Schimmel <idosch@idosch.org>
+CC:     Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
+        Horatiu Vultur <horatiu.vultur@microchip.com>,
+        <roopa@cumulusnetworks.com>, <davem@davemloft.net>,
+        <bridge@lists.linux-foundation.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] net: bridge: Allow bridge to joing multicast groups
+Message-ID: <20190730121950.pyxtu5k4qphmshy4@lx-anielsen.microsemi.net>
+References: <20190729131420.tqukz55tz26jkg73@lx-anielsen.microsemi.net>
+ <3cc69103-d194-2eca-e7dd-e2fa6a730223@cumulusnetworks.com>
+ <20190729135205.oiuthcyesal4b4ct@lx-anielsen.microsemi.net>
+ <e4cd0db9-695a-82a7-7dc0-623ded66a4e5@cumulusnetworks.com>
+ <20190729143508.tcyebbvleppa242d@lx-anielsen.microsemi.net>
+ <20190729175136.GA28572@splinter>
+ <20190730062721.p4vrxo5sxbtulkrx@lx-anielsen.microsemi.net>
+ <20190730070626.GA508@splinter>
+ <20190730083027.biuzy7h5dbq7pik3@lx-anielsen.microsemi.net>
+ <20190730100416.GA13250@splinter>
 MIME-Version: 1.0
-X-Received: by 2002:a02:aa1d:: with SMTP id r29mr48117747jam.127.1564489687097;
- Tue, 30 Jul 2019 05:28:07 -0700 (PDT)
-Date:   Tue, 30 Jul 2019 05:28:07 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000000de921058ee524e1@google.com>
-Subject: KASAN: user-memory-access Read in hidraw_ioctl
-From:   syzbot <syzbot+5a8c44432a51154ff6d5@syzkaller.appspotmail.com>
-To:     andreyknvl@google.com, benjamin.tissoires@redhat.com,
-        jikos@kernel.org, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+In-Reply-To: <20190730100416.GA13250@splinter>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+The 07/30/2019 13:04, Ido Schimmel wrote:
+> On Tue, Jul 30, 2019 at 10:30:28AM +0200, Allan W. Nielsen wrote:
+> > The 07/30/2019 10:06, Ido Schimmel wrote:
+> > > As a bonus, existing drivers could benefit from it, as MDB entries are already
+> > > notified by MAC.
+> > Not sure I follow. When FDB entries are added, it also generates notification
+> > events.
+> 
+> I meant the switchdev notification sent to drivers:
+> 
+> /* SWITCHDEV_OBJ_ID_PORT_MDB */
+> struct switchdev_obj_port_mdb {
+> 	struct switchdev_obj obj;
+> 	unsigned char addr[ETH_ALEN];
+> 	u16 vid;
+> };
+> 
+> By extending MDB entries to also be keyed by MAC you basically get a lot
+> of things for free without duplicating the same code for multicast FDBs.
+Agree, this should be the same.
 
-syzbot found the following crash on:
+> AFAICS, then only change in the fast path is in br_mdb_get() where you
+> need to use DMAC as key in case Ethertype is not IPv4/IPv6.
+That would be nice.
 
-HEAD commit:    7f7867ff usb-fuzzer: main usb gadget fuzzer driver
-git tree:       https://github.com/google/kasan.git usb-fuzzer
-console output: https://syzkaller.appspot.com/x/log.txt?x=13c21ab4600000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=792eb47789f57810
-dashboard link: https://syzkaller.appspot.com/bug?extid=5a8c44432a51154ff6d5
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-
-Unfortunately, I don't have any reproducer for this crash yet.
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+5a8c44432a51154ff6d5@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KASAN: user-memory-access in _copy_to_user+0x124/0x150  
-lib/usercopy.c:27
-Read of size 148 at addr 0000100000000000 by task syz-executor.2/19576
-
-CPU: 1 PID: 19576 Comm: syz-executor.2 Not tainted 5.3.0-rc2+ #23
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0xca/0x13e lib/dump_stack.c:113
-  __kasan_report.cold+0x5/0x33 mm/kasan/report.c:486
-  kasan_report+0xe/0x12 mm/kasan/common.c:612
-  check_memory_region_inline mm/kasan/generic.c:185 [inline]
-  check_memory_region+0x128/0x190 mm/kasan/generic.c:192
-  _copy_to_user+0x124/0x150 lib/usercopy.c:27
-  copy_to_user include/linux/uaccess.h:152 [inline]
-  hidraw_ioctl+0x39c/0xae0 drivers/hid/hidraw.c:392
-  vfs_ioctl fs/ioctl.c:46 [inline]
-  file_ioctl fs/ioctl.c:509 [inline]
-  do_vfs_ioctl+0xd2d/0x1330 fs/ioctl.c:696
-  ksys_ioctl+0x9b/0xc0 fs/ioctl.c:713
-  __do_sys_ioctl fs/ioctl.c:720 [inline]
-  __se_sys_ioctl fs/ioctl.c:718 [inline]
-  __x64_sys_ioctl+0x6f/0xb0 fs/ioctl.c:718
-  do_syscall_64+0xb7/0x580 arch/x86/entry/common.c:296
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x459829
-Code: fd b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 cb b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f6587cfbc78 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000459829
-RDX: 0000000020005640 RSI: 0000000090044802 RDI: 0000000000000004
-RBP: 000000000075c070 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007f6587cfc6d4
-R13: 00000000004c21db R14: 00000000004d5540 R15: 00000000ffffffff
-==================================================================
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+-- 
+/Allan
