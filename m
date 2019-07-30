@@ -2,74 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2E527A8A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 14:36:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E9C427A89F
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 14:35:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729365AbfG3MgK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 08:36:10 -0400
-Received: from Chamillionaire.breakpoint.cc ([193.142.43.52]:42196 "EHLO
-        Chamillionaire.breakpoint.cc" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726190AbfG3MgJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 08:36:09 -0400
-Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.89)
-        (envelope-from <fw@strlen.de>)
-        id 1hsRLy-0003m8-Pk; Tue, 30 Jul 2019 14:35:42 +0200
-Date:   Tue, 30 Jul 2019 14:35:42 +0200
-From:   Florian Westphal <fw@strlen.de>
-To:     Rundong Ge <rdong.ge@gmail.com>
-Cc:     davem@davemloft.net, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
-        netdev@vger.kernel.org, pablo@netfilter.org, kadlec@netfilter.org,
-        fw@strlen.de, roopa@cumulusnetworks.com,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        bridge@lists.linux-foundation.org, nikolay@cumulusnetworks.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] bridge:fragmented packets dropped by bridge
-Message-ID: <20190730123542.zrsrfvcy7t2n3d4g@breakpoint.cc>
-References: <20190730122534.30687-1-rdong.ge@gmail.com>
+        id S1730164AbfG3Mfx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 08:35:53 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:3248 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726190AbfG3Mfw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 08:35:52 -0400
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 8BD895BB8DA0E72D615D;
+        Tue, 30 Jul 2019 20:35:49 +0800 (CST)
+Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 30 Jul
+ 2019 20:35:47 +0800
+Subject: Re: [f2fs-dev] [PATCH] f2fs: Fix indefinite loop in f2fs_gc()
+To:     Sahitya Tummala <stummala@codeaurora.org>,
+        Chao Yu <chao@kernel.org>
+CC:     Jaegeuk Kim <jaegeuk@kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>
+References: <1564377626-12898-1-git-send-email-stummala@codeaurora.org>
+ <a5acb5cb-2e77-902f-0a5e-063f7cbd0643@kernel.org>
+ <20190730043630.GG8289@codeaurora.org>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <609a502b-1e7f-c9b2-e864-421ffeda298b@huawei.com>
+Date:   Tue, 30 Jul 2019 20:35:46 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190730122534.30687-1-rdong.ge@gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20190730043630.GG8289@codeaurora.org>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rundong Ge <rdong.ge@gmail.com> wrote:
-> Given following setup:
-> -modprobe br_netfilter
-> -echo '1' > /proc/sys/net/bridge/bridge-nf-call-iptables
-> -brctl addbr br0
-> -brctl addif br0 enp2s0
-> -brctl addif br0 enp3s0
-> -brctl addif br0 enp6s0
-> -ifconfig enp2s0 mtu 1300
-> -ifconfig enp3s0 mtu 1500
-> -ifconfig enp6s0 mtu 1500
-> -ifconfig br0 up
+Hi Sahitya,
+
+On 2019/7/30 12:36, Sahitya Tummala wrote:
+> Hi Chao,
 > 
->                  multi-port
-> mtu1500 - mtu1500|bridge|1500 - mtu1500
->   A                  |            B
->                    mtu1300
+> On Tue, Jul 30, 2019 at 12:00:45AM +0800, Chao Yu wrote:
+>> Hi Sahitya,
+>>
+>> On 2019-7-29 13:20, Sahitya Tummala wrote:
+>>> Policy - foreground GC, LFS mode and greedy GC mode.
+>>>
+>>> Under this policy, f2fs_gc() loops forever to GC as it doesn't have
+>>> enough free segements to proceed and thus it keeps calling gc_more
+>>> for the same victim segment.  This can happen if the selected victim
+>>> segment could not be GC'd due to failed blkaddr validity check i.e.
+>>> is_alive() returns false for the blocks set in current validity map.
+>>>
+>>> Fix this by not resetting the sbi->cur_victim_sec to NULL_SEGNO, when
+>>> the segment selected could not be GC'd. This helps to select another
+>>> segment for GC and thus helps to proceed forward with GC.
+>>>
+>>> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+>>> ---
+>>>  fs/f2fs/gc.c | 2 +-
+>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+>>> index 8974672..7bbcc4a 100644
+>>> --- a/fs/f2fs/gc.c
+>>> +++ b/fs/f2fs/gc.c
+>>> @@ -1303,7 +1303,7 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
+>>>  		round++;
+>>>  	}
+>>>  
+>>> -	if (gc_type == FG_GC)
+>>> +	if (gc_type == FG_GC && seg_freed)
+>>>  		sbi->cur_victim_sec = NULL_SEGNO;
+>>
+>> In some cases, we may remain last victim in sbi->cur_victim_sec, and jump out of
+>> GC cycle, then SSR can skip the last victim due to sec_usage_check()...
+>>
+> 
+> I see. I have a few questions on how to fix this issue. Please share your
+> comments.
+> 
+> 1. Do you think the scenario described is valid? It happens rarely, not very
 
-How can a bridge forward a frame from A/B to mtu1300?
+IIRC, we suffered endless gc loop due to there is valid block belong to an
+opened atomic write file. (because we will skip directly once we hit atomic file)
 
-> With netfilter defragmentation/conntrack enabled, fragmented
-> packets from A will be defragmented in prerouting, and refragmented
-> at postrouting.
+For your case, I'm not sure that would happen, did you look into is_alive(), why
+will it fail? block address not match? If so, it looks like summary info and
+dnode block and nat entry are inconsistent.
 
-Yes, but I don't see how that relates to the problem at hand.
+> easy to reproduce.  From the dumps, I see that only block is set as valid in
+> the sentry->cur_valid_map for which I see that summary block check is_alive()
+> could return false. As only one block is set as valid, chances are there it
+> can be always selected as the victim by get_victim_by_default() under FG_GC.
+> 
+> 2. What are the possible scenarios where summary block check is_alive() could
+> fail for a segment?
 
-> But in this scenario the bridge found the frag_max_size(1500) is
-> larger than the dst mtu stored in the fake_rtable whitch is
-> always equal to the bridge's mtu 1300, then packets will be dopped.
+I guess, maybe after check_valid_map(), the block is been truncated before
+is_alive(). If so the victim should be prefree directly instead of being
+selected again...
 
-What happens without netfilter or non-fragmented packets?
+> 
+> 3. How does GC handle such segments?
 
-> This modifies ip_skb_dst_mtu to use the out dev's mtu instead
-> of bridge's mtu in bridge refragment.
+I think that's not a normal case, or I'm missing something.
 
-It seems quite a hack?  The above setup should use a router, not a bridge.
+Thanks,
+
+> 
+> Thanks,
+> 
+>> Thanks,
+>>
+>>>  
+>>>  	if (sync)
+>>>
+> 
