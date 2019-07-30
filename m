@@ -2,80 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA8AC7A804
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 14:17:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A8697A808
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 14:18:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730124AbfG3MRm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 08:17:42 -0400
-Received: from sonic307-1.consmr.mail.bf2.yahoo.com ([74.6.134.40]:34570 "EHLO
-        sonic307-1.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726363AbfG3MRl (ORCPT
+        id S1730230AbfG3MSG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 08:18:06 -0400
+Received: from mail-io1-f70.google.com ([209.85.166.70]:34783 "EHLO
+        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726363AbfG3MSG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 08:17:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1564489060; bh=VH+ayjkfgFOnVs6Itm99bu+e5MnqUcfnzJeZ6Cvpeko=; h=Date:From:Reply-To:Subject:From:Subject; b=lYwXtktUXQe6ygHwqPM9j7YroGPe9NmCT7drQNRdRt5OOztwRmuBW85OBpldhFd5e6liBUvpP/NDmvMQ9ih7cCOENGV0KSyZf026A06TBA2OWrWPv4oY0J4p3uXCjpCPY6Z4i3YY4zkQKf74LnB/MEC4V4R1YynCbbkGQvh91mwGr3GZyeg7RDhdDBpCdd5FI+98W6USnzb1sOvhNzkcaIuETr6JAjTzD6xE5/cHa1EnVIis+NPED2rBbWheyBDOylUvBshHDiuZmstVgOpJnhUcHXqzcVuKtXDvDU3tIdiIITwfyTfKRxaiP4nwPOndmA6N9MT4jFEPNpAK4Bspyg==
-X-YMail-OSG: G4MfpqsVM1kUYNdtMhOZsErLrSLEgq_0ny5AKZ9SYHI3OYvaiTGENn6MHmcYYCc
- OlfnlTQwTcNUebDRjbkT5U5pBkEkjzUlcOzffFVlcedyVGFzTsMpuPpJLKgZemj3l5ipkZjF5NEL
- MWJzYX71diIVdXzFbIn4dgx8gFqOoIYI5eGHemCfekNFQkRoVyOtKAG05I9HdPjn5lSSB8ccz_hG
- yLkaZGW3Ki6AY5d9e1tQa0gSgaapweIHLDgR8hPkZzYa36weM5vmrs0m7Hq9OaFNecHYLW2vnws1
- agq.VFWQ6ZWwNQm5MSgBzRd79jYoxDv1621CmQVKubPGfEnH1wtPtoGy0suRs.Aj_eJT5Do0h9.w
- MCkKIq.Wh1q_IcizN17kaIkI4tht0RmZK3vVkmkIheeaxa9k5PHEcBEsv_7yyhGt5QANxuq3rtop
- 0OCNVLQaHN7olsTZocY2vqNL.Db5R5Uwu31BLC7yDwNTVT40bRmWGImujIx3Mg7dHrIAy1_EpEKB
- bP_jV3gU9Lbax3xtymM91dWZR9DR2eQ5lquWUoChqe19HdxK.Ei7bYchs5_XvCwMkEhubV0fgilE
- N2F5z7tNsp.BQFEIKe2lXj93ce3FD6uY1BbRb4tQ6XETSsHptili5IAoPwUrPhmmTUX0UKopY3wd
- cCsy8olV_MhU7bfKBwFuwoIAmp88gp7j4XKeAZqvHNAZeONHatcWvCgERURLhDYxJXLvkrXmazYc
- FYYi1SALX26qzuhFMUaD8mXeBZlBZEcFNvwvJCuhAxiPX3exMoAqfj9snLYDCz4t.t.i0bqqcmef
- AOsIvVSxIVujrf16FzpqP71Ymrc4GHuaAzu2iVwObTLX35Wu5mdeX5cdSbnI4PXMW0LSZxpYIZnK
- 5xp8hOmuco7q1kP0b00VG4UXSEBvsNuJpw.nheWKAZUke6fFsAbHCQZAap43RIkJLjOI1iaY5hI1
- F4LLubSIyRojj7keH2DkRDQPPo8s5.tpX4UiHboUWo45WpmRq1G76z14.T7fl.sBi5jcLZ80IZys
- g3kUGOO.c0XYMhVJnPfMXElzrpRPr6Ksrl45zQPjKHwWtZY8TrgLrlNvUWX8_BDxARre7d5r3jvB
- tnFFePz4h20eN.1uoGZH.vO3R4aC5pfAxDBtYfuodQkujDn6wVUAjL3awdc1Hu1_6qxA_EXPIlcp
- CLhHi7Hws3E5m3o4ClkRMYNfQS72nc_iKB2H75wNLPPWYdvpdDKKEO3W_EkF2FM3SiBZH60cG5hC
- TVF5m
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic307.consmr.mail.bf2.yahoo.com with HTTP; Tue, 30 Jul 2019 12:17:40 +0000
-Date:   Tue, 30 Jul 2019 12:17:37 +0000 (UTC)
-From:   western union payment department <lukesanfo451@gmail.com>
-Reply-To: westerniunion09@gmail.com
-Message-ID: <2052179417.1523460.1564489057748@mail.yahoo.com>
-Subject: Attention: E-Mail Address Owner,
+        Tue, 30 Jul 2019 08:18:06 -0400
+Received: by mail-io1-f70.google.com with SMTP id u84so71349311iod.1
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 05:18:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=vOp35uav6zh6iUogGIdHDW0ZffcUAcQZbpm1cUh2gsk=;
+        b=pXOZU1c+98fhKMuIU2Uq1Gv51ioLUS2+Q3UPN1lPvl/21T/+JJI6V80PuJBx/K7bme
+         +za64cyYm5abzdxKNvG0HzzU+YUBHbrqhSWPXy0fRjVhXQAWvISRrIHcjrHldwbET2gq
+         noYf5rPRxCkZ9rmoEE+x7GvH4kE1XGv1AP7dzR0dPIaBucmNgtOxx0i4LckCw3kgsj9R
+         a5w+Yudh80tnl/kK9muGqAOCa+7rrTpnwSgCmGWYJfKRr11lK+WIRGtgLCGSDn3trgmc
+         gE660xR4H56s0+sLssc5MWIe8ZuymdGo6OnnjrLNL9PJFVz59AhZ78qE/mAMQ9jocDza
+         hlAQ==
+X-Gm-Message-State: APjAAAXiKnwkHVNN2r79UGgkW+VlxpdwaIzVFD78Tm7+ZoV2SXHwBE09
+        FBgniW/fQEr8s/48xZ6kRSmHuAWy71X/Y4xflZ12Z07NF9h9
+X-Google-Smtp-Source: APXvYqwAcFjNISUetpHLf3iUtsi5axYdZZuZ4PkEUlomcatXIk3ZfI8jdVD9HcxIZep6w20pZmstqMHjJ3uAbifdwvsr8aI2XQ5h
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-To:     unlisted-recipients:; (no To-header on input)
+X-Received: by 2002:a5e:8618:: with SMTP id z24mr5855572ioj.174.1564489085363;
+ Tue, 30 Jul 2019 05:18:05 -0700 (PDT)
+Date:   Tue, 30 Jul 2019 05:18:05 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000302d82058ee5002d@google.com>
+Subject: KMSAN: uninit-value in smsc95xx_wait_eeprom
+From:   syzbot <syzbot+136c17d735f025fc86a7@syzkaller.appspotmail.com>
+To:     UNGLinuxDriver@microchip.com, davem@davemloft.net,
+        glider@google.com, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org, netdev@vger.kernel.org,
+        steve.glendinning@shawell.net, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello,
+
+syzbot found the following crash on:
+
+HEAD commit:    beaab8a3 fix KASAN build
+git tree:       kmsan
+console output: https://syzkaller.appspot.com/x/log.txt?x=1685d8bfa00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4db781fe35a84ef5
+dashboard link: https://syzkaller.appspot.com/bug?extid=136c17d735f025fc86a7
+compiler:       clang version 9.0.0 (/home/glider/llvm/clang  
+80fee25776c2fb61e74c1ecb1a523375c2500b69)
+
+Unfortunately, I don't have any reproducer for this crash yet.
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+136c17d735f025fc86a7@syzkaller.appspotmail.com
+
+usb 1-1: New USB device found, idVendor=0424, idProduct=9908,  
+bcdDevice=6a.5e
+usb 1-1: New USB device strings: Mfr=0, Product=0, SerialNumber=0
+usb 1-1: config 0 descriptor??
+smsc95xx v1.0.6
+==================================================================
+BUG: KMSAN: uninit-value in smsc95xx_wait_eeprom+0x1fb/0x3d0  
+drivers/net/usb/smsc95xx.c:300
+CPU: 0 PID: 12 Comm: kworker/0:1 Not tainted 5.2.0+ #15
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: usb_hub_wq hub_event
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x191/0x1f0 lib/dump_stack.c:113
+  kmsan_report+0x162/0x2d0 mm/kmsan/kmsan_report.c:109
+  __msan_warning+0x75/0xe0 mm/kmsan/kmsan_instr.c:294
+  smsc95xx_wait_eeprom+0x1fb/0x3d0 drivers/net/usb/smsc95xx.c:300
+  smsc95xx_read_eeprom+0x3c2/0x920 drivers/net/usb/smsc95xx.c:357
+  smsc95xx_init_mac_address drivers/net/usb/smsc95xx.c:914 [inline]
+  smsc95xx_bind+0x467/0x1690 drivers/net/usb/smsc95xx.c:1286
+  usbnet_probe+0x10d3/0x3950 drivers/net/usb/usbnet.c:1722
+  usb_probe_interface+0xd19/0x1310 drivers/usb/core/driver.c:361
+  really_probe+0x1344/0x1d90 drivers/base/dd.c:513
+  driver_probe_device+0x1ba/0x510 drivers/base/dd.c:670
+  __device_attach_driver+0x5b8/0x790 drivers/base/dd.c:777
+  bus_for_each_drv+0x28e/0x3b0 drivers/base/bus.c:454
+  __device_attach+0x489/0x750 drivers/base/dd.c:843
+  device_initial_probe+0x4a/0x60 drivers/base/dd.c:890
+  bus_probe_device+0x131/0x390 drivers/base/bus.c:514
+  device_add+0x25b5/0x2df0 drivers/base/core.c:2111
+  usb_set_configuration+0x309f/0x3710 drivers/usb/core/message.c:2027
+  generic_probe+0xe7/0x280 drivers/usb/core/generic.c:210
+  usb_probe_device+0x146/0x200 drivers/usb/core/driver.c:266
+  really_probe+0x1344/0x1d90 drivers/base/dd.c:513
+  driver_probe_device+0x1ba/0x510 drivers/base/dd.c:670
+  __device_attach_driver+0x5b8/0x790 drivers/base/dd.c:777
+  bus_for_each_drv+0x28e/0x3b0 drivers/base/bus.c:454
+  __device_attach+0x489/0x750 drivers/base/dd.c:843
+  device_initial_probe+0x4a/0x60 drivers/base/dd.c:890
+  bus_probe_device+0x131/0x390 drivers/base/bus.c:514
+  device_add+0x25b5/0x2df0 drivers/base/core.c:2111
+  usb_new_device+0x23e5/0x2fb0 drivers/usb/core/hub.c:2534
+  hub_port_connect drivers/usb/core/hub.c:5089 [inline]
+  hub_port_connect_change drivers/usb/core/hub.c:5204 [inline]
+  port_event drivers/usb/core/hub.c:5350 [inline]
+  hub_event+0x5853/0x7320 drivers/usb/core/hub.c:5432
+  process_one_work+0x1572/0x1f00 kernel/workqueue.c:2269
+  worker_thread+0x111b/0x2460 kernel/workqueue.c:2415
+  kthread+0x4b5/0x4f0 kernel/kthread.c:256
+  ret_from_fork+0x35/0x40 arch/x86/entry/entry_64.S:355
+
+Local variable description: ----buf.i.i@smsc95xx_wait_eeprom
+Variable was created at:
+  __smsc95xx_read_reg drivers/net/usb/smsc95xx.c:80 [inline]
+  smsc95xx_read_reg drivers/net/usb/smsc95xx.c:144 [inline]
+  smsc95xx_wait_eeprom+0xb6/0x3d0 drivers/net/usb/smsc95xx.c:294
+  smsc95xx_read_eeprom+0x3c2/0x920 drivers/net/usb/smsc95xx.c:357
+==================================================================
 
 
-Website: www.westernunion.com
-Address: Plot 1261, Adela Hopewell Street CO / B / REP, Republic of Benin.
-Email: uwesternunion75@gmail.com
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Attention: E-Mail Address Owner,
-Sequel to the meeting held with the Federal Bureau of Investigation, The
-International Monetary Fund (IMF) is compensating all the victims and
-some email users who your name and email address was found on the list.
-However, we have agreed to effect your own payment through Western
-Union=C2=AE Money Transfer, $ 5,000 daily until the total amount of your
-compensation fund is transferred to you.
-
-BELOW IS THE MTCN AND TRACKING WEBSITE TO ENABLE YOU TRACK YOUR FIRST PROGR=
-AMMED APPROVED PAYMENT,
-
-https://www.westernunion.com/global-service/track-transfer
-This is your first payment information:
-
-MTCN #: 517 125 6760
-
-Amount Programmed: $ 5,000
-Track your first online payment now Money Transfer | Global Money
-
-You are advised to get back to the contact person through the email below
-for more information on how to receive your payment.
-Contact person :. . SIR. INNOCENT JOHNSON
-Email address :. . ( uwesternunion75@gmail.com )
-Thanks,
-SIR.INNOCENT JOHNSON
-Director of Western Union Money Transfer,
-Head Office of Benin Republic.
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
