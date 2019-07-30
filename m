@@ -2,85 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 53ED97A46E
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 11:36:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 674597A476
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 11:36:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731551AbfG3JgB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 05:36:01 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:35159 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731536AbfG3Jf6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 05:35:58 -0400
-Received: by mail-wr1-f67.google.com with SMTP id y4so64993833wrm.2
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 02:35:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=LfBe8BIZguRGaVcqxBIUd21ri7wgmIbA7EXh3G0N3Hw=;
-        b=n5PnWtJDftzfZKQfifvnWJZj9bq1w4qzITwF/RpkWVxxMhlDc4zTxJ5YrfQZ6iWlFD
-         MZ+t1HlAgJztRmj8JWUgqTCKMVLQFcuQeVijvaKiHvaLh1KbJPn3Poh5qSOQ+lNQ1bqN
-         uwWCnbXB/q1xRyxSx4nTCE9l7lRqFIL+aF60E47XVqVktSPn3LvrZicfiAYPR3R8+Lbk
-         Cq59m5sZHMd/HIE77b7fitw1QwG+8KUp1yOlrD3guTy6KFnluhXWgZpltPzNY3e1gOXg
-         kS63D4wy1dCSaSgwIywR98EUEiUf0qScpztJkKJlqsn11Q4RS7ZVFvywsgYfpeF1S9iQ
-         zVDw==
-X-Gm-Message-State: APjAAAXLh8Cvr5+s2ltxWkklKLlnsZcy5wyY+DORSrCQPFNA/1qVXv9t
-        lVAp73uiMYPtNmGkj6E/gLczSbWVGkc=
-X-Google-Smtp-Source: APXvYqwq3Hft9cpeFWfJQOdIrZK1BvEf6TQWeB6zhzE98jxFZtCFfEZfO6QPRJKZp8CB+tTOovDs0w==
-X-Received: by 2002:a5d:4f01:: with SMTP id c1mr45610035wru.43.1564479356485;
-        Tue, 30 Jul 2019 02:35:56 -0700 (PDT)
-Received: from [192.168.10.150] ([93.56.166.5])
-        by smtp.gmail.com with ESMTPSA id v204sm67712311wma.20.2019.07.30.02.35.55
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Jul 2019 02:35:55 -0700 (PDT)
-Subject: Re: [RFC PATCH 06/16] RISC-V: KVM: Implement
- KVM_GET_ONE_REG/KVM_SET_ONE_REG ioctls
-From:   Paolo Bonzini <pbonzini@redhat.com>
-To:     Anup Patel <Anup.Patel@wdc.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Radim K <rkrcmar@redhat.com>
-Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Atish Patra <Atish.Patra@wdc.com>,
-        Alistair Francis <Alistair.Francis@wdc.com>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Anup Patel <anup@brainfault.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20190729115544.17895-1-anup.patel@wdc.com>
- <20190729115544.17895-7-anup.patel@wdc.com>
- <3caa5b31-f5ed-98cd-2bdf-88d8cb837919@redhat.com>
-Message-ID: <536673cd-3b84-4e56-6042-de73a536653f@redhat.com>
-Date:   Tue, 30 Jul 2019 11:35:54 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1731622AbfG3JgL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 05:36:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35316 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730914AbfG3JgJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 05:36:09 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D8EC820665;
+        Tue, 30 Jul 2019 09:36:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564479368;
+        bh=LtK0QokkgoTJFQdUYjV/Zz1SbLz9j29LgAK8gpHpfwA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=yKBR09lRo6LmJGhQH2qUhOlfyCfidX+msWyCgzer5fjJe+3pEJNN9NJi3GpSBt7QA
+         uMXxUydOtqI56KdD1v9UjS9UBrs6hizJxU4qOdHy3yoLnJzW02CNEYb3YkPG2f+7l0
+         UiOCsKUprxlKMT0imfSNZdVCV4Jk6sWBhm3iB4bo=
+Date:   Tue, 30 Jul 2019 11:36:06 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Bharath Vedartham <linux.bhar@gmail.com>
+Cc:     Matt.Sickler@daktronics.com, devel@driverdev.osuosl.org,
+        John Hubbard <jhubbard@nvidia.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        linux-kernel-mentees@lists.linuxfoundation.org
+Subject: Re: [Linux-kernel-mentees][PATCH v4] staging: kpc2000: Convert
+ put_page to put_user_page*()
+Message-ID: <20190730093606.GA15402@kroah.com>
+References: <20190730092843.GA5150@bharath12345-Inspiron-5559>
 MIME-Version: 1.0
-In-Reply-To: <3caa5b31-f5ed-98cd-2bdf-88d8cb837919@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190730092843.GA5150@bharath12345-Inspiron-5559>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30/07/19 10:43, Paolo Bonzini wrote:
-> On 29/07/19 13:56, Anup Patel wrote:
->> The PC register represents program counter whereas the MODE
->> register represent VCPU privilege mode (i.e. S/U-mode).
->>
-> Is there any reason to include this pseudo-register instead of allowing
-> SSTATUS access directly in this patch (and perhaps also SEPC)?
+On Tue, Jul 30, 2019 at 02:58:44PM +0530, Bharath Vedartham wrote:
+> put_page() to put_user_page*()
 
-Nevermind, I was confused - the current MODE is indeed not accessible as
-a "real" CSR in RISC-V.
-
-Still, I would prefer all the VS CSRs to be accessible via the get/set
-reg ioctls.
-
-Paolo
+What does this mean?
