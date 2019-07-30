@@ -2,77 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A7227A89D
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 14:35:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E2E527A8A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 14:36:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730047AbfG3Mfj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 08:35:39 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:38845 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727993AbfG3Mfi (ORCPT
+        id S1729365AbfG3MgK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 08:36:10 -0400
+Received: from Chamillionaire.breakpoint.cc ([193.142.43.52]:42196 "EHLO
+        Chamillionaire.breakpoint.cc" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726190AbfG3MgJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 08:35:38 -0400
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1hsRLj-0005tb-FO; Tue, 30 Jul 2019 14:35:27 +0200
-Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1hsRLf-0001Vh-M1; Tue, 30 Jul 2019 14:35:23 +0200
-Date:   Tue, 30 Jul 2019 14:35:23 +0200
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     David Lechner <david@lechnology.com>
-Cc:     linux-iio@vger.kernel.org, linux-omap@vger.kernel.org,
-        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        =?iso-8859-1?Q?Beno=EEt?= Cousson <bcousson@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>,
-        William Breathitt Gray <vilhelm.gray@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org
-Subject: Re: [PATCH 2/4] counter: new TI eQEP driver
-Message-ID: <20190730123523.cjtmr3tpttn6r3pt@pengutronix.de>
-References: <20190722154538.5314-1-david@lechnology.com>
- <20190722154538.5314-3-david@lechnology.com>
+        Tue, 30 Jul 2019 08:36:09 -0400
+Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.89)
+        (envelope-from <fw@strlen.de>)
+        id 1hsRLy-0003m8-Pk; Tue, 30 Jul 2019 14:35:42 +0200
+Date:   Tue, 30 Jul 2019 14:35:42 +0200
+From:   Florian Westphal <fw@strlen.de>
+To:     Rundong Ge <rdong.ge@gmail.com>
+Cc:     davem@davemloft.net, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
+        netdev@vger.kernel.org, pablo@netfilter.org, kadlec@netfilter.org,
+        fw@strlen.de, roopa@cumulusnetworks.com,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        bridge@lists.linux-foundation.org, nikolay@cumulusnetworks.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] bridge:fragmented packets dropped by bridge
+Message-ID: <20190730123542.zrsrfvcy7t2n3d4g@breakpoint.cc>
+References: <20190730122534.30687-1-rdong.ge@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190722154538.5314-3-david@lechnology.com>
+In-Reply-To: <20190730122534.30687-1-rdong.ge@gmail.com>
 User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 22, 2019 at 10:45:36AM -0500, David Lechner wrote:
-> This adds a new counter driver for the Texas Instruments Enhanced
-> Quadrature Encoder Pulse (eQEP) module.
+Rundong Ge <rdong.ge@gmail.com> wrote:
+> Given following setup:
+> -modprobe br_netfilter
+> -echo '1' > /proc/sys/net/bridge/bridge-nf-call-iptables
+> -brctl addbr br0
+> -brctl addif br0 enp2s0
+> -brctl addif br0 enp3s0
+> -brctl addif br0 enp6s0
+> -ifconfig enp2s0 mtu 1300
+> -ifconfig enp3s0 mtu 1500
+> -ifconfig enp6s0 mtu 1500
+> -ifconfig br0 up
 > 
-> Only very basic functionality is currently implemented - only enough to
-> be able to read the position. The actual device has many more features
-> which can be added to the driver on an as-needed basis.
-> 
-> Signed-off-by: David Lechner <david@lechnology.com>
-> ---
->  MAINTAINERS               |   6 +
->  drivers/counter/Kconfig   |  12 ++
->  drivers/counter/Makefile  |   1 +
->  drivers/counter/ti-eqep.c | 381 ++++++++++++++++++++++++++++++++++++++
->  drivers/pwm/Kconfig       |   2 +-
+>                  multi-port
+> mtu1500 - mtu1500|bridge|1500 - mtu1500
+>   A                  |            B
+>                    mtu1300
 
-It's not obvious why the change to drivers/pwm/Kconfig is needed. Can
-you please motivate that in the change log?
+How can a bridge forward a frame from A/B to mtu1300?
 
-Best regards
-Uwe
+> With netfilter defragmentation/conntrack enabled, fragmented
+> packets from A will be defragmented in prerouting, and refragmented
+> at postrouting.
 
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Yes, but I don't see how that relates to the problem at hand.
+
+> But in this scenario the bridge found the frag_max_size(1500) is
+> larger than the dst mtu stored in the fake_rtable whitch is
+> always equal to the bridge's mtu 1300, then packets will be dopped.
+
+What happens without netfilter or non-fragmented packets?
+
+> This modifies ip_skb_dst_mtu to use the out dev's mtu instead
+> of bridge's mtu in bridge refragment.
+
+It seems quite a hack?  The above setup should use a router, not a bridge.
