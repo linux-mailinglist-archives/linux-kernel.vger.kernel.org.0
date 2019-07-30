@@ -2,78 +2,194 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B47647AA1F
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 15:50:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A41E7AA1B
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 15:49:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727492AbfG3Ntp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 09:49:45 -0400
-Received: from gate.crashing.org ([63.228.1.57]:41407 "EHLO gate.crashing.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725871AbfG3Nto (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 09:49:44 -0400
-Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
-        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id x6UDmwB5006744;
-        Tue, 30 Jul 2019 08:48:58 -0500
-Received: (from segher@localhost)
-        by gate.crashing.org (8.14.1/8.14.1/Submit) id x6UDmu7O006742;
-        Tue, 30 Jul 2019 08:48:56 -0500
-X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
-Date:   Tue, 30 Jul 2019 08:48:56 -0500
-From:   Segher Boessenkool <segher@kernel.crashing.org>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        christophe leroy <christophe.leroy@c-s.fr>,
-        kbuild test robot <lkp@intel.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>
-Subject: Re: [PATCH] powerpc: workaround clang codegen bug in dcbz
-Message-ID: <20190730134856.GO31406@gate.crashing.org>
-References: <20190729202542.205309-1-ndesaulniers@google.com> <20190729203246.GA117371@archlinux-threadripper> <20190729215200.GN31406@gate.crashing.org> <CAK8P3a1GQSyCj1L8fFG4Pah8dr5Lanw=1yuimX1o+53ARzOX+Q@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a1GQSyCj1L8fFG4Pah8dr5Lanw=1yuimX1o+53ARzOX+Q@mail.gmail.com>
-User-Agent: Mutt/1.4.2.3i
+        id S1727204AbfG3NtO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 09:49:14 -0400
+Received: from iolanthe.rowland.org ([192.131.102.54]:37768 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1725871AbfG3NtN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 09:49:13 -0400
+Received: (qmail 1700 invoked by uid 2102); 30 Jul 2019 09:49:12 -0400
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 30 Jul 2019 09:49:12 -0400
+Date:   Tue, 30 Jul 2019 09:49:12 -0400 (EDT)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To:     Andrey Konovalov <andreyknvl@google.com>
+cc:     Hillf Danton <hdanton@sina.com>, Takashi Iwai <tiwai@suse.de>,
+        syzbot <syzbot+d952e5e28f5fb7718d23@syzkaller.appspotmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Subject: Re: WARNING in snd_usb_motu_microbookii_communicate/usb_submit_urb
+In-Reply-To: <CAAeHK+zT+VhrxPDNFxCoVDrgBhmTiAuRjQv_A6SC91x8w0HmoQ@mail.gmail.com>
+Message-ID: <Pine.LNX.4.44L0.1907300941150.1507-100000@iolanthe.rowland.org>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 30, 2019 at 09:34:28AM +0200, Arnd Bergmann wrote:
-> Upon a second look, I think the issue is that the "Z" is an input argument
-> when it should be an output. clang decides that it can make a copy of the
-> input and pass that into the inline asm. This is not the most efficient
-> way, but it seems entirely correct according to the constraints.
+On Tue, 23 Jul 2019, Andrey Konovalov wrote:
 
-Most dcb* (and all icb*) do not change the memory pointed to.  The
-memory is an input here, logically as well, and that is obvious.
+> On Sat, Jul 20, 2019 at 4:14 PM Hillf Danton <hdanton@sina.com> wrote:
 
-> Changing it to an output "=Z" constraint seems to make it work:
-> 
-> https://godbolt.org/z/FwEqHf
-> 
-> Clang still doesn't use the optimum form, but it passes the correct pointer.
+> > Wow it finally comes up at the third time with sound/usb/quirks.c:999
+> > tippointing to commit 801ebf1043ae ("ALSA: usb-audio: Sanity checks
+> > for each pipe and EP types").
+> >
+> > That commit not only proves this warning is bogus but casts light
+> > on fixing it.
+> >
+> > 1, Make the helper created in the commit available outside sound/usb
+> > with a new name. No functionality change intended.
+> >
+> > --- a/include/linux/usb.h
+> > +++ b/include/linux/usb.h
+> > @@ -1748,7 +1748,20 @@ static inline int usb_urb_dir_out(struct urb *urb)
+> >         return (urb->transfer_flags & URB_DIR_MASK) == URB_DIR_OUT;
+> >  }
+> >
+> > -int usb_urb_ep_type_check(const struct urb *urb);
+> > +int usb_pipe_ep_type_check(struct usb_device *dev, unsigned int pipe);
+> > +
+> > +/**
+> > + * usb_urb_ep_type_check - sanity check of endpoint in the given urb
+> > + * @urb: urb to be checked
+> > + *
+> > + * This performs a light-weight sanity check for the endpoint in the
+> > + * given urb.  It returns 0 if the urb contains a valid endpoint, otherwise
+> > + * a negative error code.
+> > + */
+> > +static inline int usb_urb_ep_type_check(const struct urb *urb)
+> > +{
+> > +       return usb_pipe_ep_type_check(urb->dev, urb->pipe);
+> > +}
 
-As I said many times already, LLVM does not seem to treat all asm
-operands as lvalues.  That is a bug.  And it is critical for memory
-operands for example, as should be obvious if you look at at for a few
-seconds (you pass *that* memory, not a copy of it).  The thing you pass
-has an identity.  It's an lvalue.  This is true for *all* inline asm
-operands, not just output operands and memory operands, but it is most
-obvious there.
+Okay, fine.
 
-Or, LLVM might have a bug elsewhere.
+> >
+> >  void *usb_alloc_coherent(struct usb_device *dev, size_t size,
+> >         gfp_t mem_flags, dma_addr_t *dma);
+> > --- a/drivers/usb/core/urb.c
+> > +++ b/drivers/usb/core/urb.c
+> > @@ -191,25 +191,24 @@ static const int pipetypes[4] = {
+> >  };
+> >
+> >  /**
+> > - * usb_urb_ep_type_check - sanity check of endpoint in the given urb
+> > - * @urb: urb to be checked
+> > + * usb_pipe_ep_type_check - sanity type check of endpoint against the given pipe
+> > + * @dev: usb device whose endpoint to be checked
+> > + * @pipe: the pipe type to match
+> >   *
+> > - * This performs a light-weight sanity check for the endpoint in the
+> > - * given urb.  It returns 0 if the urb contains a valid endpoint, otherwise
+> > - * a negative error code.
+> > + * Return 0 if endpoint matches pipe, otherwise error code.
+> >   */
+> > -int usb_urb_ep_type_check(const struct urb *urb)
+> > +int usb_pipe_ep_type_check(struct usb_device *dev, unsigned int pipe)
+> >  {
+> >         const struct usb_host_endpoint *ep;
+> >
+> > -       ep = usb_pipe_endpoint(urb->dev, urb->pipe);
+> > +       ep = usb_pipe_endpoint(dev, pipe);
+> >         if (!ep)
+> >                 return -EINVAL;
+> > -       if (usb_pipetype(urb->pipe) != pipetypes[usb_endpoint_type(&ep->desc)])
+> > +       if (usb_pipetype(pipe) != pipetypes[usb_endpoint_type(&ep->desc)])
+> >                 return -EINVAL;
+> >         return 0;
+> >  }
+> > -EXPORT_SYMBOL_GPL(usb_urb_ep_type_check);
+> > +EXPORT_SYMBOL_GPL(usb_pipe_ep_type_check);
 
-Either way, the asm is fine, and it has worked fine in GCC since
-forever.  Changing this constraint to be an output constraint would
-just be obfuscation (we could change *all* operands to *everything* to
-be inout ("+") constraints, and it won't affect correctness, just the
-reader's sanity).
+Again, fine.
 
+> >
+> >  /**
+> >   * usb_submit_urb - issue an asynchronous transfer request for an endpoint
+> > --
+> >
+> > 2, With helper in place, make the warning not bogus any more.
+> >
+> >
+> > --- a/drivers/usb/core/message.c
+> > +++ b/drivers/usb/core/message.c
+> > @@ -242,7 +242,12 @@ int usb_bulk_msg(struct usb_device *usb_dev, unsigned int pipe,
+> >
+> >         if ((ep->desc.bmAttributes & USB_ENDPOINT_XFERTYPE_MASK) ==
+> >                         USB_ENDPOINT_XFER_INT) {
+> > -               pipe = (pipe & ~(3 << 30)) | (PIPE_INTERRUPT << 30);
+> > +               /*
+> > +                * change pipe unless we mess things up
+> > +                */
+> > +               if (usb_pipe_ep_type_check(usb_dev, pipe))
+> > +                       pipe = (pipe & ~(3 << 30)) | (PIPE_INTERRUPT << 30);
+> > +
+> >                 usb_fill_int_urb(urb, usb_dev, pipe, data, len,
+> >                                 usb_api_blocking_completion, NULL,
+> >                                 ep->desc.bInterval);
 
-Segher
+What reason is there for adding this extra test?  It probably takes
+longer to do the test than it does to just perform the bitmask and
+store.
+
+> > --
+> >
+> > 3, Do some cleanup in sound/usb.
+> >
+> >
+> > --- a/sound/usb/helper.h
+> > +++ b/sound/usb/helper.h
+> > @@ -7,7 +7,6 @@ unsigned int snd_usb_combine_bytes(unsigned char *bytes, int size);
+> >  void *snd_usb_find_desc(void *descstart, int desclen, void *after, u8 dtype);
+> >  void *snd_usb_find_csint_desc(void *descstart, int desclen, void *after, u8 dsubtype);
+> >
+> > -int snd_usb_pipe_sanity_check(struct usb_device *dev, unsigned int pipe);
+> >  int snd_usb_ctl_msg(struct usb_device *dev, unsigned int pipe,
+> >                     __u8 request, __u8 requesttype, __u16 value, __u16 index,
+> >                     void *data, __u16 size);
+> > --- a/sound/usb/helper.c
+> > +++ b/sound/usb/helper.c
+> > @@ -63,20 +63,6 @@ void *snd_usb_find_csint_desc(void *buffer, int buflen, void *after, u8 dsubtype
+> >         return NULL;
+> >  }
+> >
+> > -/* check the validity of pipe and EP types */
+> > -int snd_usb_pipe_sanity_check(struct usb_device *dev, unsigned int pipe)
+> > -{
+> > -       static const int pipetypes[4] = {
+> > -               PIPE_CONTROL, PIPE_ISOCHRONOUS, PIPE_BULK, PIPE_INTERRUPT
+> > -       };
+> > -       struct usb_host_endpoint *ep;
+> > -
+> > -       ep = usb_pipe_endpoint(dev, pipe);
+> > -       if (usb_pipetype(pipe) != pipetypes[usb_endpoint_type(&ep->desc)])
+> > -               return -EINVAL;
+> > -       return 0;
+> > -}
+> > -
+> >  /*
+> >   * Wrapper for usb_control_msg().
+> >   * Allocates a temp buffer to prevent dmaing from/to the stack.
+> > @@ -89,7 +75,7 @@ int snd_usb_ctl_msg(struct usb_device *dev, unsigned int pipe, __u8 request,
+> >         void *buf = NULL;
+> >         int timeout;
+> >
+> > -       if (snd_usb_pipe_sanity_check(dev, pipe))
+> > +       if (usb_pipe_ep_type_check(dev, pipe))
+> >                 return -EINVAL;
+
+This looks sane.  I'll leave to it Takashi to comment on the rest of 
+the sound driver changes.
+
+Alan Stern
+
