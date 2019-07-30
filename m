@@ -2,135 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 190CB7A7A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 14:08:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 588D27A7BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 14:09:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729705AbfG3MIA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 08:08:00 -0400
-Received: from mga03.intel.com ([134.134.136.65]:51252 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729579AbfG3MH4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 08:07:56 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jul 2019 05:07:50 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,326,1559545200"; 
-   d="scan'208";a="190849520"
-Received: from kuha.fi.intel.com ([10.237.72.189])
-  by fmsmga001.fm.intel.com with SMTP; 30 Jul 2019 05:07:48 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Tue, 30 Jul 2019 15:07:47 +0300
-Date:   Tue, 30 Jul 2019 15:07:47 +0300
-From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Douglas Gilbert <dgilbert@interlog.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] usb: typec: tcpm: Ignore unsupported/unknown
- alternate mode requests
-Message-ID: <20190730120747.GL28600@kuha.fi.intel.com>
-References: <1564029037-22929-1-git-send-email-linux@roeck-us.net>
- <20190729140457.GC28600@kuha.fi.intel.com>
- <20190729173104.GA32556@roeck-us.net>
+        id S1731006AbfG3MJG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 08:09:06 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:35862 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729877AbfG3MJF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 08:09:05 -0400
+Received: by mail-wr1-f66.google.com with SMTP id n4so65574348wrs.3
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 05:09:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=NEXRKVgiAewSzMHKuc4kYp85srZxayAyjwnb+cltz/A=;
+        b=hk/KqKIGVmzsttbZR/gwF2OK0U4nrpMkMwgRfr4Suo1MJW2IsOPukKgv1lmqoSVUg0
+         NBSR/3ku96WkmFUeRHx/6fqdNY7BtJP9EegEJVfs9eQkmvAITRarqhgmAJhPrrrTFwtK
+         /NYeHp4JADVMdK6Z5mZH+maD5ERJmoTMxpKWubgggtX482hx5c1a8qUXN4ztkebaAXg5
+         5CnI4ELBh+DDI08aHsI6B3hNBiuGKudfjO10f7xXoGTtPSHG3Hvq87Qao7/eUZESPJ9k
+         UcWs5FBuqtax0X+W+DgUz2Xdw9l11bk1qBXgPXxW+q0MIdDYe4uoZ9W2FPiCToTeK7v1
+         yeIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=NEXRKVgiAewSzMHKuc4kYp85srZxayAyjwnb+cltz/A=;
+        b=BXqslbWz6dlLyDG9a4O60Xp11XlsIhJu32WiGLw5qn0tgAWMVj/t/AJFl1CBcfywka
+         yrUIS0QGejTDX1ay66DiXYF+0XjGm4RBAIBi9pZgMfHHx2UzTVsuMUG+yop6VRffz2Mj
+         MAAWnr5SRQEu9hK2S+OVD4n6X4pTyxLAB8GQ87MhmcP6BDA/xZTR6Jm/nzQq9Y5WHAWG
+         rkgRDltsaxFnKr9sM8fyzlNsjZSwh0sRBnQZRNi8mDlcGE4essaWzr9v+m0HahxvghrE
+         0Yb6YS4Q5t1GYGUtYlQSI9SDcY/+DSczeJ24t7ozCGKSagfCIMz+Y/QLP32lvRwwnlZ5
+         6x6g==
+X-Gm-Message-State: APjAAAWk1n9QK9BZetU4aO+rEqEKFirlgGdvFbEJB6DuTmICiFU9wD0i
+        FRbO8vm/tkyHqzm0fPZMjstDatT6wMfNDoROgBI=
+X-Google-Smtp-Source: APXvYqy9j4zSHu4dp1+U/CdhnB7i3Hnbv00SVhZJbG6jzJT/h0YFIWOh4Y833SEXLrNLULQLDFdnZOtStWSu9W/tgKA=
+X-Received: by 2002:a5d:6b11:: with SMTP id v17mr50422046wrw.323.1564488543296;
+ Tue, 30 Jul 2019 05:09:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190729173104.GA32556@roeck-us.net>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+References: <20190729115544.17895-1-anup.patel@wdc.com> <20190729115544.17895-7-anup.patel@wdc.com>
+ <3caa5b31-f5ed-98cd-2bdf-88d8cb837919@redhat.com> <536673cd-3b84-4e56-6042-de73a536653f@redhat.com>
+In-Reply-To: <536673cd-3b84-4e56-6042-de73a536653f@redhat.com>
+From:   Anup Patel <anup@brainfault.org>
+Date:   Tue, 30 Jul 2019 17:38:51 +0530
+Message-ID: <CAAhSdy2jo6N4c9-_-hj=81mXjHjP8mvZy_8jOdRZELCyU9Y8Aw@mail.gmail.com>
+Subject: Re: [RFC PATCH 06/16] RISC-V: KVM: Implement KVM_GET_ONE_REG/KVM_SET_ONE_REG
+ ioctls
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Anup Patel <Anup.Patel@wdc.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Radim K <rkrcmar@redhat.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Atish Patra <Atish.Patra@wdc.com>,
+        Alistair Francis <Alistair.Francis@wdc.com>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 29, 2019 at 10:31:04AM -0700, Guenter Roeck wrote:
-> On Mon, Jul 29, 2019 at 05:04:57PM +0300, Heikki Krogerus wrote:
-> > Hi,
-> > 
-> > On Wed, Jul 24, 2019 at 09:30:37PM -0700, Guenter Roeck wrote:
-> > > TCPM may receive PD messages associated with unknown or unsupported
-> > > alternate modes. If that happens, calls to typec_match_altmode()
-> > > will return NULL. The tcpm code does not currently take this into
-> > > account. This results in crashes.
-> > > 
-> > > Unable to handle kernel NULL pointer dereference at virtual address 000001f0
-> > > pgd = 41dad9a1
-> > > [000001f0] *pgd=00000000
-> > > Internal error: Oops: 5 [#1] THUMB2
-> > > Modules linked in: tcpci tcpm
-> > > CPU: 0 PID: 2338 Comm: kworker/u2:0 Not tainted 5.1.18-sama5-armv7-r2 #6
-> > > Hardware name: Atmel SAMA5
-> > > Workqueue: 2-0050 tcpm_pd_rx_handler [tcpm]
-> > > PC is at typec_altmode_attention+0x0/0x14
-> > > LR is at tcpm_pd_rx_handler+0xa3b/0xda0 [tcpm]
-> > > ...
-> > > [<c03fbee8>] (typec_altmode_attention) from [<bf8030fb>]
-> > > 				(tcpm_pd_rx_handler+0xa3b/0xda0 [tcpm])
-> > > [<bf8030fb>] (tcpm_pd_rx_handler [tcpm]) from [<c012082b>]
-> > > 				(process_one_work+0x123/0x2a8)
-> > > [<c012082b>] (process_one_work) from [<c0120a6d>]
-> > > 				(worker_thread+0xbd/0x3b0)
-> > > [<c0120a6d>] (worker_thread) from [<c012431f>] (kthread+0xcf/0xf4)
-> > > [<c012431f>] (kthread) from [<c01010f9>] (ret_from_fork+0x11/0x38)
-> > > 
-> > > Ignore PD messages if the asociated alternate mode is not supported.
-> > > 
-> > > Reported-by: Douglas Gilbert <dgilbert@interlog.com>
-> > > Cc: Douglas Gilbert <dgilbert@interlog.com>
-> > > Fixes: e9576fe8e605c ("usb: typec: tcpm: Support for Alternate Modes")
-> > > Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-> > > ---
-> > > Taking a stab at the problem. I don't really know if this is the correct
-> > > fix, or even if my understanding of the problem is correct, thus marking
-> > > the patch as RFC.
-> > 
-> > My guess is that typec_match_altmode() is the real culprit. We can't
-> > rely on the partner mode index number when identifying the port alt
-> > mode.
-> > 
-> > Douglas, can you test the attached hack instead of this patch?
-> > 
-> > 
-> > thanks,
-> > 
-> > -- 
-> > heikki
-> 
-> > diff --git a/drivers/usb/typec/tcpm/tcpm.c b/drivers/usb/typec/tcpm/tcpm.c
-> > index ec525811a9eb..033dc097ba83 100644
-> > --- a/drivers/usb/typec/tcpm/tcpm.c
-> > +++ b/drivers/usb/typec/tcpm/tcpm.c
-> > @@ -1067,12 +1067,11 @@ static int tcpm_pd_svdm(struct tcpm_port *port, const __le32 *payload, int cnt,
-> >  
-> >  	modep = &port->mode_data;
-> >  
-> > -	adev = typec_match_altmode(port->port_altmode, ALTMODE_DISCOVERY_MAX,
-> > -				   PD_VDO_VID(p[0]), PD_VDO_OPOS(p[0]));
-> > -
-> >  	pdev = typec_match_altmode(port->partner_altmode, ALTMODE_DISCOVERY_MAX,
-> >  				   PD_VDO_VID(p[0]), PD_VDO_OPOS(p[0]));
-> >  
-> > +	adev = (void *)typec_altmode_get_partner(pdev);
-> > +
-> 
-> I understand that typec_altmode_get_partner() returns a const *;
-> maybe adev should be declared as const struct typec_altmode *
-> instead of using a typecast.
+On Tue, Jul 30, 2019 at 3:05 PM Paolo Bonzini <pbonzini@redhat.com> wrote:
+>
+> On 30/07/19 10:43, Paolo Bonzini wrote:
+> > On 29/07/19 13:56, Anup Patel wrote:
+> >> The PC register represents program counter whereas the MODE
+> >> register represent VCPU privilege mode (i.e. S/U-mode).
+> >>
+> > Is there any reason to include this pseudo-register instead of allowing
+> > SSTATUS access directly in this patch (and perhaps also SEPC)?
+>
+> Nevermind, I was confused - the current MODE is indeed not accessible as
+> a "real" CSR in RISC-V.
 
-Yes...
+Yes, you got it right.
 
-> Also, typec_altmode_get_partner() can return NULL as well if pdev is NULL.
-> Is it guaranteed that typec_match_altmode() never returns NULL for pdev ?
+>
+> Still, I would prefer all the VS CSRs to be accessible via the get/set
+> reg ioctls.
 
-...and probable no. But I don't think we can receive Attention to a
-mode that hasn't been entered.
+We had implemented VS CSRs access to user-space but then we
+removed it to keep this series simple and easy to review. We thought
+of adding it later when we deal with Guest/VM migration.
 
-I'm not proposing that as a patch. It's just a hunch. That's why I'm
-calling it a "hack". Before we prepare anything finalized, I would
-like to here from Douglas if he's able to test that or not?
+Do you want it to be added as part of this series ?
 
-
-thanks,
-
--- 
-heikki
+Regards,
+Anup
