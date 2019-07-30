@@ -2,115 +2,182 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 036FD7A7B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 14:09:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F1FCC7A7BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 14:09:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729862AbfG3MJA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 08:09:00 -0400
-Received: from mail-eopbgr10080.outbound.protection.outlook.com ([40.107.1.80]:38454
-        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727561AbfG3MI7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 08:08:59 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=kaHlEDWbv4/Sl1QKOI6VFleandBG+0Op/11+278tTWQdh8EKFWH9hMprmoXvEI27qkgQYea+PEOhZaS+wcbcy/q9W+gVWo+zj7989CWkZ77Do7jxp5yUXFEt1iFZ/ZXWYKALDgJ27TUc6GsQBrKUON2wqtid2+sbOz+Tqk73OPRzqita/GyLfZCM4z2VSYX5h0h9fCS1gFRbP/yRCs377+PTFbGqVeqJ0Fos2B5t6vGnPWp3/z2xceYa0+kpN54ONAp2ahTBXvFeqMPJeHum2u0vyUYkl9JhC474TPfpRVjkRC6TjvFWiIimSqQXJJOneX49yDBOzPbvpDsfUq5XBQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vnA17Rl/Si7Qzb5GcC1LQm/ImxXKefEXEML+rwxUEig=;
- b=gVc4+yRSY/xusiq4KXVBIX6+D/uxSJRko1px59cIqgSyDq8qJnsQVLL/hj2nnim9yPBv9z8rT5sudxnGEuLRdLzCrW+XAyrWVzyeTBk6xBYBTQF2ONnRqwdgHtfVAWSQQblcMwj1hNrmt+9fS3P8if5o0WB0zMnrolwHZYbOZClomCCgl01M+F9vaV99hOLAVgV3M7ZevLoV60mEnCvkKVc2+Db9cVcgUl7sMOdeCGEPFcjnSQVeECI+8F1w9m1pJBvF8j93DAJpL1uQHT+rD4+FSeHw9ngyejEgOI9XjpI4OXKNECstvFO2JkaVgY2wvxrN+E9eIJ3bK8GH/Us6gw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
- smtp.mailfrom=nxp.com;dmarc=pass action=none header.from=nxp.com;dkim=pass
- header.d=nxp.com;arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vnA17Rl/Si7Qzb5GcC1LQm/ImxXKefEXEML+rwxUEig=;
- b=IEQTu8ucenfaSs2OnlWgjC919sPoi7qp+NsaJYuhcf72csSq5y7Z/JtmrNDx8AZ/mUZoE4hkrHMG1HtKBCAl8FDOkx8i2/9Q/EfFySpanEt7WWFdDhx/SkZyqiETmnxTr6MCcSQLofg/ZPw1FCsewN5GhRm4LXgK4lK5lYYzpOc=
-Received: from VI1PR04MB4445.eurprd04.prod.outlook.com (20.177.55.161) by
- VI1PR04MB5166.eurprd04.prod.outlook.com (20.177.50.207) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2115.15; Tue, 30 Jul 2019 12:08:55 +0000
-Received: from VI1PR04MB4445.eurprd04.prod.outlook.com
- ([fe80::8d42:8283:ede8:9abf]) by VI1PR04MB4445.eurprd04.prod.outlook.com
- ([fe80::8d42:8283:ede8:9abf%7]) with mapi id 15.20.2115.005; Tue, 30 Jul 2019
- 12:08:55 +0000
-From:   Iuliana Prodan <iuliana.prodan@nxp.com>
-To:     Herbert Xu <herbert@gondor.apana.org.au>,
-        Horia Geanta <horia.geanta@nxp.com>,
-        Aymen Sghaier <aymen.sghaier@nxp.com>
-CC:     "David S. Miller" <davem@davemloft.net>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH v4 01/14] crypto: caam/qi - fix error handling in ERN
- handler
-Thread-Topic: [PATCH v4 01/14] crypto: caam/qi - fix error handling in ERN
- handler
-Thread-Index: AQHVRsbjjJcTdui1rUy/A3tkeP7Ozg==
-Date:   Tue, 30 Jul 2019 12:08:55 +0000
-Message-ID: <VI1PR04MB4445B5459C40E99E386005F88CDC0@VI1PR04MB4445.eurprd04.prod.outlook.com>
-References: <1564484805-28735-1-git-send-email-iuliana.prodan@nxp.com>
- <1564484805-28735-2-git-send-email-iuliana.prodan@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=iuliana.prodan@nxp.com; 
-x-originating-ip: [212.146.100.6]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: a759a979-7122-4ae2-5754-08d714e6b1c0
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR04MB5166;
-x-ms-traffictypediagnostic: VI1PR04MB5166:
-x-microsoft-antispam-prvs: <VI1PR04MB51669E2530720A1AB2B982918CDC0@VI1PR04MB5166.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:5236;
-x-forefront-prvs: 0114FF88F6
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(396003)(346002)(39860400002)(136003)(376002)(199004)(189003)(86362001)(110136005)(4744005)(66066001)(6636002)(476003)(53546011)(14444005)(7696005)(8676002)(44832011)(81156014)(76176011)(14454004)(186003)(229853002)(81166006)(102836004)(478600001)(26005)(7736002)(8936002)(6436002)(68736007)(33656002)(486006)(54906003)(6506007)(2906002)(316002)(66446008)(66476007)(66556008)(64756008)(66946007)(91956017)(6246003)(25786009)(4326008)(53936002)(3846002)(256004)(6116002)(74316002)(9686003)(52536014)(305945005)(5660300002)(55016002)(99286004)(446003)(71200400001)(76116006)(71190400001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB5166;H:VI1PR04MB4445.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: pO+HxbA9zRoRN19KPq90Ax7yyUogQU1oCYJmuRDH5KPKgxyoB7kB6pRjx50aClVEdfi7NKXs7mqB5wKFEi/nJ4n7uvhRK0oHN4kutK+nTOEF6G7LvQcLjQqoeNubS0IQ2SrIrmRHOs3bSDG5KGe8YozeGIW9v+AQgYk6GQWru0XOkwFHrWJdOGeC2THPUWS0OpTuZ8q0KH00HxqU6b9esxWVxch24Z0odlh8kTZliZ6kM86rf8muWtrACKS9Itcd9rKOu1kjQXRRJrq2z0WG5VO74l1KjfSit5egbdBC4U6Lsuyf4awtV8+bfOP4EXFSCkJh67kWuaGz5ONGeUX7sELrEt9nuAhLRYJvLTRxqW+u9Vbd4BZ8JBgGGidfOlYMRHXFwjUXS7M3hi9tXt8RnkzogdDQQGfWQAxHc8tHPq0=
-Content-Type: text/plain; charset="iso-8859-2"
-Content-Transfer-Encoding: quoted-printable
+        id S1729215AbfG3MJS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 08:09:18 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:46651 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726784AbfG3MJR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 08:09:17 -0400
+Received: by mail-qt1-f196.google.com with SMTP id h21so62670693qtn.13
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 05:09:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=z/l9N0lK6h2dWYTT28OwjwFL20DGOX4dTdSSx/lNdfU=;
+        b=GQBpcLTJbsbg+clrDMvytgKgq3Gbnl9E8TpmYtTySaxwmNmF5pk4GOYM451E68y0YH
+         JL3huTMwFXHJRR7xjhbqAsv2S8zpxJj7AzdC0wEV8lrfaIb6UftWpzKbYNP4e2QcSgM5
+         6+Iw2CqfV3110py7tzgvSgZi0azMZ0NdquJYzUhF3VYtw720w81uamVF3H+/lo96TLdi
+         6K4Qb8E/i3XlknyZbIEHSh3m4KRUiYEE8bvljvJtE/aGCzOdRYH9pbSqButYflV6uJCx
+         ViDIfx8o2Jzu+vk8z2/P+N8ooicMHH8inan61VTrZ8cObgNB2GipSAdFNPND5RtQlBvm
+         VT2w==
+X-Gm-Message-State: APjAAAXWs+QGuDWIFBcGWS3Q3OnVxupR3VpqHPNAfWekhuW54NwrwL8z
+        UrhwUpaCvlDarXHJqmO1JOQ15dxz9i5d7uMqn4g=
+X-Google-Smtp-Source: APXvYqwGxkCImJKJnSNAPxg2yUkGb7dQTAX5Tv+Y5XUQZvZm9e4dD3TuFPtCR49k9p+6XghVS6dxOUybKL70KbG4GHU=
+X-Received: by 2002:ac8:f99:: with SMTP id b25mr73537583qtk.142.1564488556465;
+ Tue, 30 Jul 2019 05:09:16 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a759a979-7122-4ae2-5754-08d714e6b1c0
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Jul 2019 12:08:55.1671
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: iuliana.prodan@nxp.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5166
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 30 Jul 2019 14:09:00 +0200
+Message-ID: <CAK8P3a3jjDh6aEVf0bBFYc=8GtB38kL6sWVZGJiUe427A7m2ng@mail.gmail.com>
+Subject: RFC: remove Nuvoton w90x900/nuc900 platform?
+To:     Wan ZongShun <mcuos.com@gmail.com>
+Cc:     Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/30/2019 2:06 PM, Iuliana Prodan wrote:=0A=
-> From: Horia Geant=E3 <horia.geanta@nxp.com>=0A=
-> =0A=
-> ERN handler calls the caam/qi frontend "done" callback with a status=0A=
-> of -EIO. This is incorrect, since the callback expects a status value=0A=
-> meaningful for the crypto engine - hence the cryptic messages=0A=
-> like the one below:=0A=
-> platform caam_qi: 15: unknown error source=0A=
-> =0A=
-> Fix this by providing the callback with:=0A=
-> -the status returned by the crypto engine (fd[status]) in case=0A=
-> it contains an error, OR=0A=
-> -a QI "No error" code otherwise; this will trigger the message:=0A=
-> platform caam_qi: 50000000: Queue Manager Interface: No error=0A=
-> which is fine, since QMan driver provides details about the cause of=0A=
-> failure=0A=
-> =0A=
-> Cc: <stable@vger.kernel.org> # v5.1+=0A=
-> Fixes: 67c2315def06 ("crypto: caam - add Queue Interface (QI) backend sup=
-port")=0A=
-> Signed-off-by: Horia Geant=E3 <horia.geanta@nxp.com>=0A=
-> ---=0A=
-Reviewed-by: Iuliana Prodan <iuliana.prodan@nxp.com>=0A=
-=0A=
-Thanks,=0A=
-Iulia=0A=
+As the mach-netx and mach-8695 platforms are being removed now,
+I wonder whether we should do the same with w90x00: Here is what
+I found after looking at the git history and external material for it.
+
+    - The supported chips (nuc910/950/960) are no longer marketed
+      by the manufacturer
+
+    - Newer chips from the same family (nuc97x, nuc980, n329x)
+      that are still marketed have Linux BSPs but those were never
+      submitted for upstream inclusion.
+
+    - Wan ZongShun is listed as maintainer, but the last patch he wrote
+      was in 2011.
+
+    - All patches to w90x900 platform specific files afterwards
+      are cleanups that were apparently done without access to
+      test hardware.
+
+    - The http://www.mcuos.com/ website listed in the MAINTAINERS
+       file is no longer reachable.
+
+We do support the newer NPCM platform from Nuvoton. I don't think
+there are any shared drivers between the two, but I've added its
+maintainers to Cc anyway, in case they still (plan to) use one of
+those drivers.
+
+If we decide that it's time to let go, I'll would the patches below.
+
+      watchdog: remove w90x900 driver
+      spi: remove w90x900 driver
+      ASoC: remove w90x900/nuc900 platform drivers
+      fbdev: remove w90x900/nuc900 platform drivers
+      Input: remove w90x900 keyboard driver
+      Input: remove w90x900 touchscreen driver
+      mtd: rawnand: remove w90x900 driver
+      net: remove w90p910-ether driver
+      rtc: remove w90x900/nuc900 driver
+      usb: remove ehci-w90x900 driver
+      ARM: remove w90x900 platform
+
+ Documentation/watchdog/watchdog-parameters.rst   |   10 -
+ MAINTAINERS                                      |   16 -
+ arch/arm/Kconfig                                 |   21 +-
+ arch/arm/Makefile                                |    1 -
+ arch/arm/configs/nuc910_defconfig                |   51 -
+ arch/arm/configs/nuc950_defconfig                |   67 --
+ arch/arm/configs/nuc960_defconfig                |   57 --
+ arch/arm/mach-w90x900/Kconfig                    |   54 --
+ arch/arm/mach-w90x900/Makefile                   |   20 -
+ arch/arm/mach-w90x900/Makefile.boot              |    4 -
+ arch/arm/mach-w90x900/clksel.c                   |   88 --
+ arch/arm/mach-w90x900/clock.c                    |  121 ---
+ arch/arm/mach-w90x900/clock.h                    |   40 -
+ arch/arm/mach-w90x900/cpu.c                      |  238 -----
+ arch/arm/mach-w90x900/cpu.h                      |   56 --
+ arch/arm/mach-w90x900/dev.c                      |  537 -----------
+ arch/arm/mach-w90x900/gpio.c                     |  150 ---
+ arch/arm/mach-w90x900/include/mach/entry-macro.S |   26 -
+ arch/arm/mach-w90x900/include/mach/hardware.h    |   19 -
+ arch/arm/mach-w90x900/include/mach/irqs.h        |   82 --
+ arch/arm/mach-w90x900/include/mach/map.h         |  153 ---
+ arch/arm/mach-w90x900/include/mach/mfp.h         |   21 -
+ arch/arm/mach-w90x900/include/mach/regs-clock.h  |   49 -
+ arch/arm/mach-w90x900/include/mach/regs-irq.h    |   46 -
+ arch/arm/mach-w90x900/include/mach/regs-ldm.h    |  248 -----
+ arch/arm/mach-w90x900/include/mach/regs-serial.h |   54 --
+ arch/arm/mach-w90x900/include/mach/uncompress.h  |   43 -
+ arch/arm/mach-w90x900/irq.c                      |  212 -----
+ arch/arm/mach-w90x900/mach-nuc910evb.c           |   38 -
+ arch/arm/mach-w90x900/mach-nuc950evb.c           |   42 -
+ arch/arm/mach-w90x900/mach-nuc960evb.c           |   38 -
+ arch/arm/mach-w90x900/mfp.c                      |  197 ----
+ arch/arm/mach-w90x900/nuc910.c                   |   58 --
+ arch/arm/mach-w90x900/nuc910.h                   |   17 -
+ arch/arm/mach-w90x900/nuc950.c                   |   52 --
+ arch/arm/mach-w90x900/nuc950.h                   |   17 -
+ arch/arm/mach-w90x900/nuc960.c                   |   50 -
+ arch/arm/mach-w90x900/nuc960.h                   |   17 -
+ arch/arm/mach-w90x900/nuc9xx.h                   |   22 -
+ arch/arm/mach-w90x900/regs-ebi.h                 |   29 -
+ arch/arm/mach-w90x900/regs-gcr.h                 |   34 -
+ arch/arm/mach-w90x900/regs-timer.h               |   37 -
+ arch/arm/mach-w90x900/regs-usb.h                 |   31 -
+ arch/arm/mach-w90x900/time.c                     |  168 ----
+ drivers/input/keyboard/Kconfig                   |   11 -
+ drivers/input/keyboard/Makefile                  |    1 -
+ drivers/input/keyboard/w90p910_keypad.c          |  264 ------
+ drivers/input/touchscreen/Kconfig                |    9 -
+ drivers/input/touchscreen/Makefile               |    1 -
+ drivers/input/touchscreen/w90p910_ts.c           |  331 -------
+ drivers/mtd/nand/raw/Kconfig                     |    8 -
+ drivers/mtd/nand/raw/Makefile                    |    1 -
+ drivers/mtd/nand/raw/nuc900_nand.c               |  304 ------
+ drivers/net/ethernet/Kconfig                     |    1 -
+ drivers/net/ethernet/Makefile                    |    1 -
+ drivers/net/ethernet/nuvoton/Kconfig             |   29 -
+ drivers/net/ethernet/nuvoton/Makefile            |    6 -
+ drivers/net/ethernet/nuvoton/w90p910_ether.c     | 1082 ----------------------
+ drivers/rtc/Kconfig                              |    7 -
+ drivers/rtc/Makefile                             |    1 -
+ drivers/rtc/rtc-nuc900.c                         |  271 ------
+ drivers/spi/Kconfig                              |    7 -
+ drivers/spi/Makefile                             |    1 -
+ drivers/spi/spi-nuc900.c                         |  429 ---------
+ drivers/usb/host/Kconfig                         |    6 -
+ drivers/usb/host/Makefile                        |    1 -
+ drivers/usb/host/ehci-w90x900.c                  |  130 ---
+ drivers/video/fbdev/Kconfig                      |   14 -
+ drivers/video/fbdev/Makefile                     |    1 -
+ drivers/video/fbdev/nuc900fb.c                   |  760 ---------------
+ drivers/video/fbdev/nuc900fb.h                   |   51 -
+ drivers/watchdog/Kconfig                         |    9 -
+ drivers/watchdog/Makefile                        |    1 -
+ drivers/watchdog/nuc900_wdt.c                    |  303 ------
+ include/Kbuild                                   |    2 -
+ include/linux/platform_data/keypad-w90p910.h     |   16 -
+ include/linux/platform_data/spi-nuc900.h         |   29 -
+ include/linux/platform_data/video-nuc900fb.h     |   79 --
+ sound/soc/Kconfig                                |    1 -
+ sound/soc/Makefile                               |    1 -
+ sound/soc/nuc900/Kconfig                         |   29 -
+ sound/soc/nuc900/Makefile                        |   12 -
+ sound/soc/nuc900/nuc900-ac97.c                   |  391 --------
+ sound/soc/nuc900/nuc900-audio.c                  |   73 --
+ sound/soc/nuc900/nuc900-audio.h                  |  108 ---
+ sound/soc/nuc900/nuc900-pcm.c                    |  321 -------
+ 86 files changed, 1 insertion(+), 8433 deletions(-)
+
+          Arnd
