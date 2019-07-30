@@ -2,64 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ECAE07B4D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 23:12:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 136A07B4DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 23:16:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387610AbfG3VMw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 17:12:52 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:56302 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387589AbfG3VMv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 17:12:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=AGT1mgQtN5O2bIid/hu8bvBZ4cnh5dILbEAlwsJ2UQI=; b=Y32wwVnvQptTDs1tFyneR3G+v
-        mM09R9HulyVgjPBUUvr8xYdw0iAywC8XTUoto27LWdETdu6cMXiIEYMe6HAQN/M6gAQ/g2Cbg0yQn
-        3fpFyyN23da2X4h3s6VHWClcpcdb//FHKWbceFK9m2xYm3qMoZrWqsXMCr49TGeDnr4W4PLH9dTan
-        SaLXDygYI/LTJprMuzBRgf1b65Jdq6py0lYFyIqDC5qTvndXNd6MonX3+Ce0RwLXGoEx7Lptycoph
-        L+ayjFvfARUkUtE9FuBke2CMMTzM19vXEJoEO2SWaqSEcu7Lk5tIISOeM9i3F1mZVFuhvjUD/rKCw
-        86w0BqZoQ==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hsZQQ-00076B-UB; Tue, 30 Jul 2019 21:12:50 +0000
-Date:   Tue, 30 Jul 2019 14:12:50 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     linux-kernel@vger.kernel.org, Greg KH <gregkh@linuxfoundation.org>,
-        Tri Vo <trong@android.com>, linux-doc@vger.kernel.org,
-        Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [PATCH] idr: Document calling context for IDA APIs mustn't use
- locks
-Message-ID: <20190730211250.GD4700@bombadil.infradead.org>
-References: <20190730210752.157700-1-swboyd@chromium.org>
+        id S2387626AbfG3VP6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 17:15:58 -0400
+Received: from mga04.intel.com ([192.55.52.120]:19804 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387612AbfG3VP5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 17:15:57 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jul 2019 14:15:58 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,327,1559545200"; 
+   d="scan'208";a="196059110"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga004.fm.intel.com with ESMTP; 30 Jul 2019 14:15:57 -0700
+Received: from [10.54.74.33] (skuppusw-desk.jf.intel.com [10.54.74.33])
+        by linux.intel.com (Postfix) with ESMTP id DA4F65803A5;
+        Tue, 30 Jul 2019 14:15:56 -0700 (PDT)
+Reply-To: sathyanarayanan.kuppuswamy@linux.intel.com
+Subject: Re: [PATCH v1 1/1] mm/vmalloc.c: Fix percpu free VM area search
+ criteria
+To:     Dave Hansen <dave.hansen@intel.com>,
+        Uladzislau Rezki <urezki@gmail.com>
+Cc:     akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <20190729232139.91131-1-sathyanarayanan.kuppuswamy@linux.intel.com>
+ <20190730204643.tsxgc3n4adb63rlc@pc636>
+ <d121eb22-01fd-c549-a6e8-9459c54d7ead@intel.com>
+From:   sathyanarayanan kuppuswamy 
+        <sathyanarayanan.kuppuswamy@linux.intel.com>
+Organization: Intel
+Message-ID: <9fdd44c2-a10e-23f0-a71c-bf8f3e6fc384@linux.intel.com>
+Date:   Tue, 30 Jul 2019 14:13:25 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190730210752.157700-1-swboyd@chromium.org>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <d121eb22-01fd-c549-a6e8-9459c54d7ead@intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 30, 2019 at 02:07:52PM -0700, Stephen Boyd wrote:
-> The documentation for these functions indicates that callers don't need
-> to hold a lock while calling them, but that documentation is only in one
-> place under "IDA Usage". Let's state the same information on each IDA
-> function so that it's clear what the calling context requires.
-> Furthermore, let's document ida_simple_get() with the same information
-> so that callers know how this API works.
 
-I don't want people to use ida_simple_get() any more.  Use ida_alloc()
-instead.
+On 7/30/19 1:54 PM, Dave Hansen wrote:
+> On 7/30/19 1:46 PM, Uladzislau Rezki wrote:
+>>> +		/*
+>>> +		 * If required width exeeds current VA block, move
+>>> +		 * base downwards and then recheck.
+>>> +		 */
+>>> +		if (base + end > va->va_end) {
+>>> +			base = pvm_determine_end_from_reverse(&va, align) - end;
+>>> +			term_area = area;
+>>> +			continue;
+>>> +		}
+>>> +
+>>>   		/*
+>>>   		 * If this VA does not fit, move base downwards and recheck.
+>>>   		 */
+>>> -		if (base + start < va->va_start || base + end > va->va_end) {
+>>> +		if (base + start < va->va_start) {
+>>>   			va = node_to_va(rb_prev(&va->rb_node));
+>>>   			base = pvm_determine_end_from_reverse(&va, align) - end;
+>>>   			term_area = area;
+>>> -- 
+>>> 2.21.0
+>>>
+>> I guess it is NUMA related issue, i mean when we have several
+>> areas/sizes/offsets. Is that correct?
+> I don't think NUMA has anything to do with it.  The vmalloc() area
+> itself doesn't have any NUMA properties I can think of.  We don't, for
+> instance, partition it into per-node areas that I know of.
+>
+> I did encounter this issue on a system with ~100 logical CPUs, which is
+> a moderate amount these days.
 
-> - * Context: Any context.
-> + * Context: Any context. It is safe to call this function without
-> + * synchronisation in your code.
+I agree with Dave. I don't think this issue is related to NUMA. The 
+problem here is about the logic we use to find appropriate vm_area that 
+satisfies the offset and size requirements of pcpu memory allocator.
 
-I prefer "without locking" to "without synchronisation" ...
+In my test case, I can reproduce this issue if we make request with 
+offset (ffff000000) and size (600000).
+
+>
+-- 
+Sathyanarayanan Kuppuswamy
+Linux kernel developer
 
