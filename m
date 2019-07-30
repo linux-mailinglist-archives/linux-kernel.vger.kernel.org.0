@@ -2,74 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3319B79FCB
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 06:13:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 21DC579FCF
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 06:20:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726345AbfG3ENq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 00:13:46 -0400
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:39879 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726250AbfG3ENq (ORCPT
+        id S1726428AbfG3ETt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 00:19:49 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:38443 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726362AbfG3ETt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 00:13:46 -0400
-Received: by mail-qk1-f194.google.com with SMTP id w190so45621559qkc.6
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 21:13:45 -0700 (PDT)
+        Tue, 30 Jul 2019 00:19:49 -0400
+Received: by mail-lf1-f68.google.com with SMTP id h28so43618587lfj.5
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 21:19:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=y8xDY9Ww45cWE0v5ND0tzOicOWZ1SmT2fxqjajEP/c4=;
-        b=L73ITKAHyFsGn5AdLfkN2aBmZfPk6Vs56TJli1z9tHdR93QUKjtAmdoVH4QqTbHvxV
-         t2uijhIoLL+1XbxlBktDkPHvtcM5MWTfAUq5xcu6GCulgZ41VZJbdsVRauzhT2ftdDrt
-         4DEYxEoOuhkOzbpDyx62+VcGqLkWPT+O7zTYUuboWtKjKbLv7qEHmPGnWRRdmiMCQZzJ
-         O+DieqqJ9mX6AW6Ger6gHmEAuqLdKj2D/5qxGiE+bBVmmMk4iHCyVWsEAaXXFmYWDhEP
-         gDBTFxzB9bhfRjczSqGcawwnD5ZX/NNw/ZC0Jw2rcwQIjor9UqgNpMsANfYAm6ZF+ZFn
-         Nk1A==
+        d=joelfernandes.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=nQ683IxaS2cCdEC0NtzNiRTRgopPEXo2ky8LcnAwTHI=;
+        b=YXd7kBZwL28XEpjz/Z3rtR2dIB0OAidqsAOvHtlQRogEYM6NC2ckM1jSIgsGWoCMGZ
+         X4kEVhO2JN9T8BnkvbQGc0ZIxFAWD/Nx5DfQ/vkzYSAz1D/KaNnTbs6puGB0gjop/fW4
+         d2bo9BqeIyQDhBhh030hPqWlNYWaRdg2iUgXQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=y8xDY9Ww45cWE0v5ND0tzOicOWZ1SmT2fxqjajEP/c4=;
-        b=ouIgVPg7IH7Y99YvyEumpBCOnC9h6Yvr4kZ19OeKxUp23qwRHrdLrAUvuCp4PLBDb0
-         +hgpvUMwRMvCMY5GX5psbr5aj1rNszaAo+BWNa/+5Ux2ncF7yEB//r+efOMuHiqVf3cP
-         m8Hjw6EBIvPB2vKNfXyX8rwo8/Dpvi/daZQLiMv5ETUNOy6dW/9OK8a3NcS11M6Nzp01
-         ErHcB9ItPjQEWGXt1JEwvlTjHSsyZojdCZUmuQTWOU4nupjj8qEiLlrVvJDRUdSClBaB
-         yQvSZP4KWfTPLN5hh69kBaStUPd1Sp6YaqLiz18uwr3JDYwpDdIHdjv+vDf8IbymvFRV
-         sdQg==
-X-Gm-Message-State: APjAAAVfqsd+fQ6j0B6KtR1jIONwJ6OqS2jCQIoH/mLtqxdLY1Vwa5N5
-        QzwgxMyKPQd93H7N9kAXlal0Rzxt7nTJn19SrQc=
-X-Google-Smtp-Source: APXvYqz64hIwtHlkyhpvwlUGlikNjLIG2E+TdzTTQKsFrKjr/mVPq1svqge5eLewQZSAvQy3sV7N3eUqUf5txnev7x8=
-X-Received: by 2002:a37:72c5:: with SMTP id n188mr67659008qkc.181.1564460025297;
- Mon, 29 Jul 2019 21:13:45 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=nQ683IxaS2cCdEC0NtzNiRTRgopPEXo2ky8LcnAwTHI=;
+        b=qQGhoJj14lARMHmLBeJbWdXAl8fWi9ibhp36i9isgy+tFsQHuqhjhOS3YHjCtnhajj
+         yDIphJisMBBauWgQp2o2SDkKsXNLJ/uugSvqNjSJH3S5ORYvCb7ltX9WmJOkwioTYM2/
+         hi0hZHuU5Kf4LHh+2OfvptLxTcETgblpI79tvcPV3GvomMSgZ1OKQVuujwih0qA2ugwH
+         TWj5HgwU6Fny5yVu+qGYhTajKAvhsQhbbwFJgi0q3r1uwTC7SL/GRTgphHypVyLhx/Na
+         +JLlbB2Ccy/qoDFgT9pjabPrF23keA05IfwVN2Wd41IsouzLUtdB/cLGn7KVUV//docE
+         GJfg==
+X-Gm-Message-State: APjAAAW67Ti+GqGvw/rixF82t8ojpV6IPB1cijfpt/gotJ5oKady8VzY
+        3OPRAl8k6xrB93MZdsWRGBJ+UXPT0rxgGn9TOPTFDw==
+X-Google-Smtp-Source: APXvYqyUBssSkjnT2gtitHVrncu9TYw17XAlBxT/191uCUb+ZIoGAc3Hg6SlZoNfJX9WbRCy4CNt44rlrHF1KrhAnJM=
+X-Received: by 2002:a19:8c06:: with SMTP id o6mr53293760lfd.176.1564460387288;
+ Mon, 29 Jul 2019 21:19:47 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:ac8:895:0:0:0:0:0 with HTTP; Mon, 29 Jul 2019 21:13:44 -0700 (PDT)
-Reply-To: dr.jameskabore@yandex.com
-From:   "Dr.James Kabore" <mrwillsonadama33@gmail.com>
-Date:   Mon, 29 Jul 2019 21:13:44 -0700
-Message-ID: <CAPoEJYr6+bnfKmjXsssv+aT-a5JwowJ-rwrcszgB+39g=4S60A@mail.gmail.com>
-Subject: REPLY URGENT PLS.
-To:     undisclosed-recipients:;
+References: <20190729010734.3352-1-devel@etsukata.com> <20190729112126.6554b141@gandalf.local.home>
+ <2ceec933-503e-5d58-60b4-85b491b017d4@etsukata.com> <20190729221506.1aed7dfc@oasis.local.home>
+In-Reply-To: <20190729221506.1aed7dfc@oasis.local.home>
+From:   Joel Fernandes <joel@joelfernandes.org>
+Date:   Tue, 30 Jul 2019 00:19:36 -0400
+Message-ID: <CAEXW_YT_vh1iGOwXdymzPO4-k59=+tqQCWHHokv+Kfif5GHypw@mail.gmail.com>
+Subject: Re: [PATCH] tracing: Prevent RCU EQS breakage in preemptirq events
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Eiichi Tsukata <devel@etsukata.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Thomas Glexiner <tglx@linutronix.de>,
+        Peter Zilstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Luto <luto@amacapital.net>, LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear friend,
+On Mon, Jul 29, 2019 at 10:15 PM Steven Rostedt <rostedt@goodmis.org> wrote:
+[snip]
+> > If the problem was only with userstacktrace, it will be reasonable to
+> > surround only the userstack unwinder. But the situation is similar to
+> > the previous "tracing vs CR2" case. As Peter taught me in
+> > https://lore.kernel.org/lkml/20190708074823.GV3402@hirez.programming.kicks-ass.net/
+> > there are some other codes likely to to user access.
+> > So I surround preemptirq events earlier.
+>
+> I disagree. The issue is with the attached callbacks that call
+> something (a stack unwinder) that can fault.
+>
+> This is called whenever irqs are disabled. I say we surround the
+> culprit (the stack unwinder or stack trace) and not punish the irq
+> enable/disable events.
 
-Greetings to you, I got your contact through International business
-directory, my names are Hon.Dr. James Kabore from Burkina Faso, West
-Africa. I am a politician with government position. am pleased to
-contact you for your assistance to help me invest in real estate or
-any provitable sector in your country through you as my partner and as
-a citizen of your country.
+I agree with everything Steve said.
 
-I am eager to visit in person with you and of course provide more
-details, once you reply and promise to assist. Because I am aware that
-most of well connected people very rarely use this means of approach
-via inter-net, for a huge business of this size due to scam syndicates
-out there.
+thanks,
 
-Waiting for your urgent respond.
-
-Best regards,
-Dr.James Kabore.
+ - Joel
