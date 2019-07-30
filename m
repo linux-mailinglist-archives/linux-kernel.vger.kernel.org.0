@@ -2,88 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59CE17A842
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 14:25:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 47B0B7A859
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 14:26:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730171AbfG3MZD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 08:25:03 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:33510 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729973AbfG3MZB (ORCPT
+        id S1730434AbfG3M0C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 08:26:02 -0400
+Received: from orion.archlinux.org ([88.198.91.70]:52584 "EHLO
+        orion.archlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727617AbfG3M0B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 08:25:01 -0400
-Received: by mail-qt1-f195.google.com with SMTP id r6so58534480qtt.0
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 05:25:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Vg24wzBIc+D+Hmv+R1GPqhgrmLOPVkmrpAuvjDtlIDU=;
-        b=HTYpVHgcKfw3qjT7bgNIzF/J064+hCL62azBCtPvqrMGTRWJRTfa6OmXjl5UGTjfUB
-         TAYx0n8THuIxaZ2BHWbEem7UeZRBj7KdlVi5MX5ukq0sXke3CfqEKyKL7LeRA3aj7clv
-         kzSjyme9g1lpQfunxAWBWySJihV45rpoRFczqTwhzUKluKi3Y1YE6MUDUnxc1fHepAuw
-         ycH4PXHjWBkG1fu5qYxoEgtcq+YC0PYytoJsB1YFkCq4hiG3mOuYa2FSrk8mJgm2oWYt
-         VmLYEc59uDmG57w43gtvWdWmQFUt+HVPPAzV0+Tc94eZExyo4bWpje0VAxfmmj8Is1Gy
-         lM6w==
-X-Gm-Message-State: APjAAAVbxBNyGD9pfU9i8c6L6kjo4yuTSUEJq+U9KuzJpPF3UljuaLYa
-        UIndKqTnVJVOTzDeAiJ+9pHxPOCou8LRJlo9RyM=
-X-Google-Smtp-Source: APXvYqzfoZoBuiAjwAqXgbVNXXKwoEiH6dY5V72EFZ3ka6brjjn9cMP5XNNFWJ1mx1f3K5mwNQb5H6XBvPEoDQjUWN0=
-X-Received: by 2002:a0c:ba2c:: with SMTP id w44mr81948752qvf.62.1564489499864;
- Tue, 30 Jul 2019 05:24:59 -0700 (PDT)
+        Tue, 30 Jul 2019 08:26:01 -0400
+Received: from orion.archlinux.org (localhost [127.0.0.1])
+        by orion.archlinux.org (Postfix) with ESMTP id 6D46E141B492A8;
+        Tue, 30 Jul 2019 12:25:58 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on orion
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.7 required=5.0 tests=ALL_TRUSTED=-1,BAYES_00=-1,
+        DMARC_FAIL_NONE=0.25,T_DMARC_POLICY_NONE=0.01,T_DMARC_TESTS_FAIL=0.01
+        autolearn=no autolearn_force=no version=3.4.2
+X-Spam-BL-Results: 
+Received: from saetre.corp.logitech.com?044 (unknown [154.53.1.40])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: ffy00)
+        by orion.archlinux.org (Postfix) with ESMTPSA;
+        Tue, 30 Jul 2019 12:25:58 +0000 (UTC)
+From:   =?UTF-8?q?Filipe=20La=C3=ADns?= <lains@archlinux.org>
+Cc:     nlopezcasad@logitech.com,
+        =?UTF-8?q?Filipe=20La=C3=ADns?= <lains@archlinux.org>,
+        Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] hid-logitech-dj: add the new Lightspeed receiver
+Date:   Tue, 30 Jul 2019 13:24:57 +0100
+Message-Id: <20190730122458.5275-1-lains@archlinux.org>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-References: <CAK8P3a3jjDh6aEVf0bBFYc=8GtB38kL6sWVZGJiUe427A7m2ng@mail.gmail.com>
-In-Reply-To: <CAK8P3a3jjDh6aEVf0bBFYc=8GtB38kL6sWVZGJiUe427A7m2ng@mail.gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 30 Jul 2019 14:24:43 +0200
-Message-ID: <CAK8P3a1i3fV_qzx_q6nucqh4aNLi0a+iwvcis9BpYfMOkoew8Q@mail.gmail.com>
-Subject: Re: RFC: remove Nuvoton w90x900/nuc900 platform?
-To:     Wan ZongShun <mcuos.com@gmail.com>
-Cc:     Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 30, 2019 at 2:09 PM Mail Delivery Subsystem
-<mailer-daemon@googlemail.com> wrote:
-> On Tue, Jul 30, 2019 at 2:09 PM Arnd Bergmann <arnd@arndb.de> wrote:
-> >
-> > As the mach-netx and mach-8695 platforms are being removed now,
-> > I wonder whether we should do the same with w90x00: Here is what
-> > I found after looking at the git history and external material for it.
-> >
-> >     - The supported chips (nuc910/950/960) are no longer marketed
-> >       by the manufacturer
-> >
-> >     - Newer chips from the same family (nuc97x, nuc980, n329x)
-> >       that are still marketed have Linux BSPs but those were never
-> >       submitted for upstream inclusion.
-> >
-> >     - Wan ZongShun is listed as maintainer, but the last patch he wrote
-> >       was in 2011.
-> >
-> >     - All patches to w90x900 platform specific files afterwards
-> >       are cleanups that were apparently done without access to
-> >       test hardware.
-> >
-> >     - The http://www.mcuos.com/ website listed in the MAINTAINERS
-> >        file is no longer reachable.
->
-> Recipient inbox full
->
-> Your message couldn't be delivered to mcuos.com@gmail.com. Their inbox is full, or it's getting too much mail right now.
+This patchs adds the new Lightspeed receiver. Currently it seems to only
+be used in the G305.
 
-Yes, that too.
+Signed-off-by: Filipe Laíns <lains@archlinux.org>
+---
+ drivers/hid/hid-ids.h         |  3 ++-
+ drivers/hid/hid-logitech-dj.c | 13 +++++++++++--
+ 2 files changed, 13 insertions(+), 3 deletions(-)
 
-        Arnd
+diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
+index fb19eefbc0b3..61b954fcfc2e 100644
+--- a/drivers/hid/hid-ids.h
++++ b/drivers/hid/hid-ids.h
+@@ -768,7 +768,8 @@
+ #define USB_DEVICE_ID_LOGITECH_NANO_RECEIVER		0xc52f
+ #define USB_DEVICE_ID_LOGITECH_UNIFYING_RECEIVER_2	0xc532
+ #define USB_DEVICE_ID_LOGITECH_NANO_RECEIVER_2		0xc534
+-#define USB_DEVICE_ID_LOGITECH_NANO_RECEIVER_LIGHTSPEED	0xc539
++#define USB_DEVICE_ID_LOGITECH_NANO_RECEIVER_LIGHTSPEED_1	0xc539
++#define USB_DEVICE_ID_LOGITECH_NANO_RECEIVER_LIGHTSPEED_1_1	0xc53f
+ #define USB_DEVICE_ID_LOGITECH_NANO_RECEIVER_POWERPLAY	0xc53a
+ #define USB_DEVICE_ID_SPACETRAVELLER	0xc623
+ #define USB_DEVICE_ID_SPACENAVIGATOR	0xc626
+diff --git a/drivers/hid/hid-logitech-dj.c b/drivers/hid/hid-logitech-dj.c
+index 4a68960b131f..d718f01f56d3 100644
+--- a/drivers/hid/hid-logitech-dj.c
++++ b/drivers/hid/hid-logitech-dj.c
+@@ -968,7 +968,12 @@ static void logi_hidpp_recv_queue_notif(struct hid_device *hdev,
+ 		logi_hidpp_dev_conn_notif_equad(hdev, hidpp_report, &workitem);
+ 		break;
+ 	case 0x0c:
+-		device_type = "eQUAD Lightspeed";
++		device_type = "eQUAD Lightspeed 1";
++		logi_hidpp_dev_conn_notif_equad(hdev, hidpp_report, &workitem);
++		workitem.reports_supported |= STD_KEYBOARD;
++		break;
++	case 0x0d:
++		device_type = "eQUAD Lightspeed 1_1";
+ 		logi_hidpp_dev_conn_notif_equad(hdev, hidpp_report, &workitem);
+ 		workitem.reports_supported |= STD_KEYBOARD;
+ 		break;
+@@ -1832,7 +1837,11 @@ static const struct hid_device_id logi_dj_receivers[] = {
+ 	 .driver_data = recvr_type_hidpp},
+ 	{ /* Logitech lightspeed receiver (0xc539) */
+ 	  HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH,
+-		USB_DEVICE_ID_LOGITECH_NANO_RECEIVER_LIGHTSPEED),
++		USB_DEVICE_ID_LOGITECH_NANO_RECEIVER_LIGHTSPEED_1),
++	 .driver_data = recvr_type_gaming_hidpp},
++	{ /* Logitech lightspeed receiver (0xc53f) */
++	  HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH,
++		USB_DEVICE_ID_LOGITECH_NANO_RECEIVER_LIGHTSPEED_1_1),
+ 	 .driver_data = recvr_type_gaming_hidpp},
+ 	{ /* Logitech 27 MHz HID++ 1.0 receiver (0xc513) */
+ 	  HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH, USB_DEVICE_ID_MX3000_RECEIVER),
+-- 
+2.22.0
