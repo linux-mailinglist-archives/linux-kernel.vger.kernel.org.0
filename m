@@ -2,84 +2,248 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC1CB7AD90
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 18:32:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B29217ADD3
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 18:34:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732654AbfG3QcM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 12:32:12 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:36566 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726703AbfG3QcM (ORCPT
+        id S1729102AbfG3Qdx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 12:33:53 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:40532 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733060AbfG3Qdu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 12:32:12 -0400
-Received: by mail-lj1-f195.google.com with SMTP id i21so62718083ljj.3;
-        Tue, 30 Jul 2019 09:32:10 -0700 (PDT)
+        Tue, 30 Jul 2019 12:33:50 -0400
+Received: by mail-io1-f65.google.com with SMTP id h6so4371913iom.7
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 09:33:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=xx3vIoXX8Mxn7Xfw2L25UDOZ1rfyh83SbXwIfDYTy98=;
-        b=Jr/qg1bcxy7MjeWhxfQDSfgI4H19sw3Jz78Pye41vfpqN+qGQyZ5gO32yCnGAwrCwV
-         IDJb7U1TOxEAb6pIpWroZIuT7EH8L5n+TenAghKXZ3DFNlsOZ4lD+Vcm71PyTVQcdU8n
-         nz9o7mFEcxcOwswCwYoJO2VtzDaYHKf3Z4RAnWrAIp48DYXqZFKMqhiwEj8Hhwr1N8me
-         ruOzUTSHHKXkzoToPBzodjKX6V1oOfQetH5lvFZqATFZ8IK321BWFLek4FQyCWqLIG35
-         az6aUKKZjPWBpZbPuW9142x9uyef+DFsNPlRQBOkSv+vxQHYAL+YcoELTlO6LXvDWRVC
-         /eiw==
+        d=linuxfoundation.org; s=google;
+        h=to:cc:from:subject:message-id:date:user-agent:mime-version
+         :content-language;
+        bh=KDoydqM/4PNQk1C3wiilLCzdxfZ2P2ofICXyjT/BiWg=;
+        b=AFlQcULevo63D36h/Zb6unEW2gvSjI9MHiceRZdIS88Q+ngp+E+CsCyiMJ9KX0ZbRp
+         N4NcU4yHLlwj0uB9BZGJ7QMHWzwdC+PLuku5yV+r11DDAwhkizHHLj3QdwLbf5A3iIO3
+         a6xO0MFHtRmXWO9RJ43RrLtmqyT3ByBAokmBw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xx3vIoXX8Mxn7Xfw2L25UDOZ1rfyh83SbXwIfDYTy98=;
-        b=sfDP/UWGIqQ1+qQRFvSDR84heCpDKuNC8hM9aPTe4NpActF3XrWZpU5BCptPmPWcJj
-         RvRHqIH49tkTYJwLGe+Mrz6UO0TYj+Dwmx0pPXFfeft/e3OsHh2D8kqtU0ZWeh8lbYMU
-         E1bycnEFzSb63asynmC9RD/fLNODnyulSTJNMFynFUNBDlQ3WnJRNfghEW4nkrZDWfOh
-         WXO76jU/52vY/8kcFXsLuS9shtbReGpYtWU2MeEDkqOT3/A9wf1+sHe/lN1fQu2JadXu
-         3ArqLyTllU2iC8a/RFlqxbBxKQKRB40ncaglBJGlLJkaHkPSNRPPaZrCanbC1KMj7Mqj
-         uQCA==
-X-Gm-Message-State: APjAAAVDCGQiVccb87ZKBITQsPS4MPyCsni6rHPZaetN8Z2joJWXDpmv
-        t2qNexgE6QZS8z9rMxibHHnTT04SS++yS6qER4Y=
-X-Google-Smtp-Source: APXvYqycFcTFoT9V2kVAqMs+UnnH6bzjYSJTSertHTYTAJI+RtGajdJMivgIKh9SwCSMNIC3PdQzfGaeyRqcszz+JWM=
-X-Received: by 2002:a2e:2c07:: with SMTP id s7mr24607447ljs.44.1564504329883;
- Tue, 30 Jul 2019 09:32:09 -0700 (PDT)
+        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
+         :mime-version:content-language;
+        bh=KDoydqM/4PNQk1C3wiilLCzdxfZ2P2ofICXyjT/BiWg=;
+        b=NmeSURrcrRuiUNaAdUpx0TFq5jkHuszGx0a/HV5wDlQDMbZN0AR7L8tVDSOSB8Hn60
+         VtGylk56ms8YZefLVltl7I4wDd9ACBvs4vksNKOynH6CPHpjc7+EFrRKrFgdWqAdz9Yn
+         OxSxbGsVsjAZ/qRwKpLAGwO8mmvluUDHOaX9F6QhQKufDGzZT1sZmKgbt5hsHwAibufh
+         bftQ3Tj9F1QfPpekYEk++Fs2GIKsZ9kAEohFf+u84emeZF/wFllGPua/UuVTz+GXhSZ7
+         wawlIReHDqQ3//Z+1B1v43kjc1ORODvPlqiuLEJjD65u1Ax5u0Mm2XlqS4CuJGg88HX0
+         zEVA==
+X-Gm-Message-State: APjAAAXdX+06u3DbHMFoSkC71LuVQJYUVf/7GX6ZCGGbyddlfWfwae6P
+        dAemgX/7Y8TRpzpJN9BbvczlTmZBLhM=
+X-Google-Smtp-Source: APXvYqySJCCDz9k+CCH4hXgB2ZZY0msNGZoC4JCZ2dYyOQnEbdov7u9e4hWkSnO3/U7n568ZJuzfjQ==
+X-Received: by 2002:a02:6616:: with SMTP id k22mr80748842jac.100.1564504429163;
+        Tue, 30 Jul 2019 09:33:49 -0700 (PDT)
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net. [24.9.64.241])
+        by smtp.gmail.com with ESMTPSA id u17sm59733545iob.57.2019.07.30.09.33.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Jul 2019 09:33:48 -0700 (PDT)
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Shuah Khan <skhan@linuxfoundation.org>, joe.lawrence@redhat.com,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+From:   Shuah Khan <skhan@linuxfoundation.org>
+Subject: [GIT PULL] Kselftest update for Linux 5.3-rc3
+Message-ID: <9b7fa63d-7c3f-bb3a-663b-e5279a0a0086@linuxfoundation.org>
+Date:   Tue, 30 Jul 2019 10:33:47 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <20190729172007.3275-1-krzk@kernel.org> <20190729172007.3275-2-krzk@kernel.org>
-In-Reply-To: <20190729172007.3275-2-krzk@kernel.org>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Tue, 30 Jul 2019 13:33:30 -0300
-Message-ID: <CAOMZO5BzA7JfNhJtZjUCewGicWFy1Qemx3jV1=+27MjUnsq4kQ@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] ARM: dts: imx6ul-kontron-n6310: Add Kontron
- i.MX6UL N6310 SoM and boards
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Schrempf Frieder <frieder.schrempf@kontron.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/mixed;
+ boundary="------------24AF2ECE419D14C7D78A028E"
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Krzysztof,
+This is a multi-part message in MIME format.
+--------------24AF2ECE419D14C7D78A028E
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jul 29, 2019 at 2:20 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+Hi Linus,
 
-> --- a/Documentation/devicetree/bindings/eeprom/at25.txt
-> +++ b/Documentation/devicetree/bindings/eeprom/at25.txt
-> @@ -3,6 +3,7 @@ EEPROMs (SPI) compatible with Atmel at25.
->  Required properties:
->  - compatible : Should be "<vendor>,<type>", and generic value "atmel,at25".
->    Example "<vendor>,<type>" values:
-> +    "anvo,anv32e61w"
+Please pull the following Kselftest fixes update for Linux 5.3-rc3.
 
-This usually comes as a separate patch, but anyway:
+This Kselftest update for Linux 5.3-rc3 consists of minor fixes to
+tests and one major fix to livepatch test to add skip handling to
+avoid false fail reports when livepatch is disabled.
 
-Reviewed-by: Fabio Estevam <festevam@gmail.com>
+diff is attached.
+
+thanks,
+-- Shuah
+
+
+----------------------------------------------------------------
+The following changes since commit 5f9e832c137075045d15cd6899ab0505cfb2ca4b:
+
+   Linus 5.3-rc1 (2019-07-21 14:05:38 -0700)
+
+are available in the Git repository at:
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest 
+tags/linux-kselftest-5.3-rc3
+
+for you to fetch changes up to 527d37e9e575bc0e9024de9b499385e7bb31f1ad:
+
+   selftests/livepatch: add test skip handling (2019-07-24 14:17:46 -0600)
+
+----------------------------------------------------------------
+linux-kselftest-5.3-rc3
+
+This Kselftest update for Linux 5.3-rc3 consists of minor fixes to
+tests and one major fix to livepatch test to add skip handling to
+avoid false fail reports when livepatch is disabled.
+
+----------------------------------------------------------------
+Colin Ian King (1):
+       selftests/x86: fix spelling mistake "FAILT" -> "FAIL"
+
+Joe Lawrence (1):
+       selftests/livepatch: add test skip handling
+
+Masanari Iida (2):
+       selftests: kmod: Fix typo in kmod.sh
+       selftests: mlxsw: Fix typo in qos_mc_aware.sh
+
+  .../selftests/drivers/net/mlxsw/qos_mc_aware.sh      |  4 ++--
+  tools/testing/selftests/kmod/kmod.sh                 |  6 +++---
+  tools/testing/selftests/livepatch/functions.sh       | 20 
+++++++++++++++++++++
+  tools/testing/selftests/x86/test_vsyscall.c          |  2 +-
+  4 files changed, 26 insertions(+), 6 deletions(-)
+
+----------------------------------------------------------------
+
+--------------24AF2ECE419D14C7D78A028E
+Content-Type: text/x-patch;
+ name="linux-kselftest-5.3-rc3.diff"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+ filename="linux-kselftest-5.3-rc3.diff"
+
+diff --git a/tools/testing/selftests/drivers/net/mlxsw/qos_mc_aware.sh b/tools/testing/selftests/drivers/net/mlxsw/qos_mc_aware.sh
+index 71231ad2dbfb..47315fe48d5a 100755
+--- a/tools/testing/selftests/drivers/net/mlxsw/qos_mc_aware.sh
++++ b/tools/testing/selftests/drivers/net/mlxsw/qos_mc_aware.sh
+@@ -262,7 +262,7 @@ test_mc_aware()
+ 
+ 	stop_traffic
+ 
+-	log_test "UC performace under MC overload"
++	log_test "UC performance under MC overload"
+ 
+ 	echo "UC-only throughput  $(humanize $ucth1)"
+ 	echo "UC+MC throughput    $(humanize $ucth2)"
+@@ -316,7 +316,7 @@ test_uc_aware()
+ 
+ 	stop_traffic
+ 
+-	log_test "MC performace under UC overload"
++	log_test "MC performance under UC overload"
+ 	echo "    ingress UC throughput $(humanize ${uc_ir})"
+ 	echo "    egress UC throughput  $(humanize ${uc_er})"
+ 	echo "    sent $attempts BC ARPs, got $passes responses"
+diff --git a/tools/testing/selftests/kmod/kmod.sh b/tools/testing/selftests/kmod/kmod.sh
+index 0a76314b4414..8b944cf042f6 100755
+--- a/tools/testing/selftests/kmod/kmod.sh
++++ b/tools/testing/selftests/kmod/kmod.sh
+@@ -28,7 +28,7 @@
+ # override by exporting to your environment prior running this script.
+ # For instance this script assumes you do not have xfs loaded upon boot.
+ # If this is false, export DEFAULT_KMOD_FS="ext4" prior to running this
+-# script if the filesyste module you don't have loaded upon bootup
++# script if the filesystem module you don't have loaded upon bootup
+ # is ext4 instead. Refer to allow_user_defaults() for a list of user
+ # override variables possible.
+ #
+@@ -263,7 +263,7 @@ config_get_test_result()
+ config_reset()
+ {
+ 	if ! echo -n "1" >"$DIR"/reset; then
+-		echo "$0: reset shuld have worked" >&2
++		echo "$0: reset should have worked" >&2
+ 		exit 1
+ 	fi
+ }
+@@ -488,7 +488,7 @@ usage()
+ 	echo Example uses:
+ 	echo
+ 	echo "${TEST_NAME}.sh		-- executes all tests"
+-	echo "${TEST_NAME}.sh -t 0008	-- Executes test ID 0008 number of times is recomended"
++	echo "${TEST_NAME}.sh -t 0008	-- Executes test ID 0008 number of times is recommended"
+ 	echo "${TEST_NAME}.sh -w 0008	-- Watch test ID 0008 run until an error occurs"
+ 	echo "${TEST_NAME}.sh -s 0008	-- Run test ID 0008 once"
+ 	echo "${TEST_NAME}.sh -c 0008 3	-- Run test ID 0008 three times"
+diff --git a/tools/testing/selftests/livepatch/functions.sh b/tools/testing/selftests/livepatch/functions.sh
+index 30195449c63c..edcfeace4655 100644
+--- a/tools/testing/selftests/livepatch/functions.sh
++++ b/tools/testing/selftests/livepatch/functions.sh
+@@ -13,6 +13,14 @@ function log() {
+ 	echo "$1" > /dev/kmsg
+ }
+ 
++# skip(msg) - testing can't proceed
++#	msg - explanation
++function skip() {
++	log "SKIP: $1"
++	echo "SKIP: $1" >&2
++	exit 4
++}
++
+ # die(msg) - game over, man
+ #	msg - dying words
+ function die() {
+@@ -43,6 +51,12 @@ function loop_until() {
+ 	done
+ }
+ 
++function assert_mod() {
++	local mod="$1"
++
++	modprobe --dry-run "$mod" &>/dev/null
++}
++
+ function is_livepatch_mod() {
+ 	local mod="$1"
+ 
+@@ -75,6 +89,9 @@ function __load_mod() {
+ function load_mod() {
+ 	local mod="$1"; shift
+ 
++	assert_mod "$mod" ||
++		skip "unable to load module ${mod}, verify CONFIG_TEST_LIVEPATCH=m and run self-tests as root"
++
+ 	is_livepatch_mod "$mod" &&
+ 		die "use load_lp() to load the livepatch module $mod"
+ 
+@@ -88,6 +105,9 @@ function load_mod() {
+ function load_lp_nowait() {
+ 	local mod="$1"; shift
+ 
++	assert_mod "$mod" ||
++		skip "unable to load module ${mod}, verify CONFIG_TEST_LIVEPATCH=m and run self-tests as root"
++
+ 	is_livepatch_mod "$mod" ||
+ 		die "module $mod is not a livepatch"
+ 
+diff --git a/tools/testing/selftests/x86/test_vsyscall.c b/tools/testing/selftests/x86/test_vsyscall.c
+index 4602326b8f5b..a4f4d4cf22c3 100644
+--- a/tools/testing/selftests/x86/test_vsyscall.c
++++ b/tools/testing/selftests/x86/test_vsyscall.c
+@@ -451,7 +451,7 @@ static int test_vsys_x(void)
+ 		printf("[OK]\tExecuting the vsyscall page failed: #PF(0x%lx)\n",
+ 		       segv_err);
+ 	} else {
+-		printf("[FAILT]\tExecution failed with the wrong error: #PF(0x%lx)\n",
++		printf("[FAIL]\tExecution failed with the wrong error: #PF(0x%lx)\n",
+ 		       segv_err);
+ 		return 1;
+ 	}
+
+--------------24AF2ECE419D14C7D78A028E--
