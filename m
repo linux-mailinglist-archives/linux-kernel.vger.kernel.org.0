@@ -2,162 +2,206 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 496287B2EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 21:08:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 10C177B31D
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 21:16:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387979AbfG3TIt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 15:08:49 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:37429 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387403AbfG3TIs (ORCPT
+        id S2387957AbfG3TQK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 15:16:10 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:42809 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725935AbfG3TQK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 15:08:48 -0400
-Received: by mail-pf1-f193.google.com with SMTP id 19so30325757pfa.4;
-        Tue, 30 Jul 2019 12:08:48 -0700 (PDT)
+        Tue, 30 Jul 2019 15:16:10 -0400
+Received: by mail-ed1-f67.google.com with SMTP id v15so63548570eds.9
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 12:16:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=RwScSV2tOJrhTcKuLdNlPuzxyeuThbTOgSuSjKvnN1g=;
-        b=XQWasVmxIMhThkuU7Gh1OJvZv2+json5GP9QnFWuixG9f7fDcct19H9If6CEMnD7eW
-         9nzRzPiKC+QQOAPtxX3Mw1tKt8mOaqjco4tHGn0Ht/L1zN5l8U3Fbd4F2xBWS7xBH/4t
-         eGvo6uTJ0MxSkEPEd550gteKyHxCGIqYZ84d6Au6Oyu61Hp0hCH5FHQmUVCgnVPKNWlD
-         nf7FXr2idHirHJvP4WNMCf61pOB2ddar7LA40NHi5nvEQUZuNhRrFmESYCI3lSfQ0kgG
-         tkhmVEAWnDIAsICM14mn0wKTkIylFYZR8pw8Yfi8Ps2il0H8c6VqRyTcaJ1BR8ZawE20
-         lq2A==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=dsk8ZydsUhALc559Eoh2HiqlRDNFYGUSysH9tXyKuOA=;
+        b=aJiRP98zViobaSTaZiXjGOvOTKc8CYMZWMp41PMBiw4wA+jXZVKuk+B2yflzE6trDY
+         7hSQYvjfGvZPNIZd1w9dCfUAgpkBhEM/4PfkSuyQJe9LQ/11js0JTCryijJrqk/55a4O
+         lrYi0meSGVBbHfSSibcbAgyQhhtSJl1zt1TBA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=RwScSV2tOJrhTcKuLdNlPuzxyeuThbTOgSuSjKvnN1g=;
-        b=iZZcFaM2oX7R1uPJ4CpaO6FFUwcbjYwlf9GcFuyqr8BlN7KxhJVdhEvO8xq98TKcnX
-         p8CPq2R3T1EppIJCoHVR82bWnof7PkWNTJYY2VC0RHl7CmoPO51eLDsm3hyHQN97aWiV
-         xlIUQh9p9Be8gtDvJP1n4lOJtnQ424J9FQpr1hOWkCADzVA8V/TcVzG14sBahcSuni/4
-         kVRC1LP5UrwJRvsW0WwVKXhj+7bwDX4wr/GqLDrxRgHT74lynwRETIzVmUzKB4GY7nTF
-         a0XsW8Jk1dbaBo+dEFLRJhhvvn6f5JfNCOlXPguDyS94XUhfPowIvLHu7j6wSP/tQGUf
-         cq7A==
-X-Gm-Message-State: APjAAAUtmBK/pN+v5gHNSzDhAOrHbEbLkOeLFuV2redbOV+eq0sUc0AK
-        sEx2cFFvbFtucmun7kglnjIvGVsL
-X-Google-Smtp-Source: APXvYqxZziQLkWNns8ll7Je6JLU0I//8d41DN01Gya+68dE0jvgoh8GXeFrG3iABxQMHIz6CCgFpEQ==
-X-Received: by 2002:a17:90a:2506:: with SMTP id j6mr84913057pje.129.1564513727854;
-        Tue, 30 Jul 2019 12:08:47 -0700 (PDT)
-Received: from jordon-HP-15-Notebook-PC.domain.name ([106.51.16.0])
-        by smtp.gmail.com with ESMTPSA id c12sm53416324pgb.83.2019.07.30.12.08.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 30 Jul 2019 12:08:47 -0700 (PDT)
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-To:     paulus@samba.org, b.zolnierkie@samsung.com, davem@davemloft.net,
-        mpatocka@redhat.com, syrjala@sci.fi, sam@ravnborg.org,
-        daniel.vetter@ffwll.ch
-Cc:     linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org,
-        Souptick Joarder <jrdr.linux@gmail.com>
-Subject: [PATCH] video/fbdev/aty128fb: Remove dead code
-Date:   Wed, 31 Jul 2019 00:44:13 +0530
-Message-Id: <1564514053-4571-1-git-send-email-jrdr.linux@gmail.com>
-X-Mailer: git-send-email 1.9.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=dsk8ZydsUhALc559Eoh2HiqlRDNFYGUSysH9tXyKuOA=;
+        b=GBTvqjrXuwKaDXM5b1pEw7PE+sCvg4xeGzRBFttarHxjpEGcV1FiTEhzoF7ZIepGnr
+         qqHx7jp0ABAFIiUVXabaLpoYBEVh9FqkYp+XlPNAkYFD5E5ZCHL8dPd6cHAAVlzWa6gk
+         URLCCVZ9EWp3UUN2j0Fx7+WDdZ+420vCsPrmyIXr678c52lr4aF3rCq7WsUxonXwlAtw
+         ePCLPKzni8FJeHHtKsnn3Rk2ZPqZW4ldGllistp2froGSID1uIiwMGLvsn246YkrrOK5
+         oVi6yz2Rn5/W7h2XdF3FV8mDx1XRQ6JDjpkLEc64FPqKFH0VP4MqvtkhgQHLdoZDhAQr
+         ODfg==
+X-Gm-Message-State: APjAAAUg/Cn9blUreXhVLuwyXK39LSuoVaPXhFhh7hKCYv0bt6p9w0xk
+        VI2/ZgsDWOCk94EJBnOE+zxi/2kBc70=
+X-Google-Smtp-Source: APXvYqx6CfbNMdbEqeuAPUMtl8y2irfLCcBMjmcmSAiZESvaH8I/4TuwMABDEVYlfeCO+aFoMTzeUw==
+X-Received: by 2002:a17:906:4bcb:: with SMTP id x11mr92033398ejv.1.1564514168393;
+        Tue, 30 Jul 2019 12:16:08 -0700 (PDT)
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com. [209.85.221.48])
+        by smtp.gmail.com with ESMTPSA id f26sm8540269ejo.25.2019.07.30.12.16.08
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Jul 2019 12:16:08 -0700 (PDT)
+Received: by mail-wr1-f48.google.com with SMTP id p17so66938957wrf.11
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 12:16:08 -0700 (PDT)
+X-Received: by 2002:a5d:528d:: with SMTP id c13mr45696619wrv.247.1564513794356;
+ Tue, 30 Jul 2019 12:09:54 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190708174913.123308-1-thgarnie@chromium.org> <201907301100.90BB865078@keescook>
+In-Reply-To: <201907301100.90BB865078@keescook>
+From:   Thomas Garnier <thgarnie@chromium.org>
+Date:   Tue, 30 Jul 2019 12:09:42 -0700
+X-Gmail-Original-Message-ID: <CAJcbSZEZNk-YoE-dH=N1QpAeUdzm9wGpEqU644bO30WmYcnCtQ@mail.gmail.com>
+Message-ID: <CAJcbSZEZNk-YoE-dH=N1QpAeUdzm9wGpEqU644bO30WmYcnCtQ@mail.gmail.com>
+Subject: Re: [PATCH v8 00/11] x86: PIE support to extend KASLR randomization
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Kristen Carlson Accardi <kristen@linux.intel.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Juergen Gross <jgross@suse.com>,
+        Alok Kataria <akataria@vmware.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Nadav Amit <namit@vmware.com>, Jann Horn <jannh@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Feng Tang <feng.tang@intel.com>,
+        Maran Wilson <maran.wilson@oracle.com>,
+        Enrico Weigelt <info@metux.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alexios Zavras <alexios.zavras@intel.com>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        virtualization@lists.linux-foundation.org,
+        Linux PM list <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is dead code since 3.15. If there is no plan to use it
-further, this can be removed forever.
+On Tue, Jul 30, 2019 at 11:01 AM Kees Cook <keescook@chromium.org> wrote:
+>
+> On Mon, Jul 08, 2019 at 10:48:53AM -0700, Thomas Garnier wrote:
+> > Splitting the previous series in two. This part contains assembly code
+> > changes required for PIE but without any direct dependencies with the
+> > rest of the patchset.
+> >
+> > Changes:
+> >  - patch v8 (assembly):
+> >    - Fix issues in crypto changes (thanks to Eric Biggers).
+> >    - Remove unnecessary jump table change.
+> >    - Change author and signoff to chromium email address.
+>
+> With -rc2 done, is this a good time for this to land in -tip? Are there
+> more steps needed for review?
 
-Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
----
- drivers/video/fbdev/aty/aty128fb.c   | 18 ------------------
- drivers/video/fbdev/aty/atyfb_base.c | 29 -----------------------------
- 2 files changed, 47 deletions(-)
+I have a minor feedback and rebase that I am about to send (v9). It
+seems like a good one to send to tip if there is no major feedback.
 
-diff --git a/drivers/video/fbdev/aty/aty128fb.c b/drivers/video/fbdev/aty/aty128fb.c
-index 8504e19..fc1e45d 100644
---- a/drivers/video/fbdev/aty/aty128fb.c
-+++ b/drivers/video/fbdev/aty/aty128fb.c
-@@ -487,11 +487,6 @@ static int aty128_encode_var(struct fb_var_screeninfo *var,
-                              const struct aty128fb_par *par);
- static int aty128_decode_var(struct fb_var_screeninfo *var,
-                              struct aty128fb_par *par);
--#if 0
--static void aty128_get_pllinfo(struct aty128fb_par *par, void __iomem *bios);
--static void __iomem *aty128_map_ROM(struct pci_dev *pdev,
--				    const struct aty128fb_par *par);
--#endif
- static void aty128_timings(struct aty128fb_par *par);
- static void aty128_init_engine(struct aty128fb_par *par);
- static void aty128_reset_engine(const struct aty128fb_par *par);
-@@ -1665,19 +1660,6 @@ static void aty128_st_pal(u_int regno, u_int red, u_int green, u_int blue,
- 			  struct aty128fb_par *par)
- {
- 	if (par->chip_gen == rage_M3) {
--#if 0
--		/* Note: For now, on M3, we set palette on both heads, which may
--		 * be useless. Can someone with a M3 check this ?
--		 * 
--		 * This code would still be useful if using the second CRTC to 
--		 * do mirroring
--		 */
--
--		aty_st_le32(DAC_CNTL, aty_ld_le32(DAC_CNTL) |
--			    DAC_PALETTE_ACCESS_CNTL);
--		aty_st_8(PALETTE_INDEX, regno);
--		aty_st_le32(PALETTE_DATA, (red<<16)|(green<<8)|blue);
--#endif
- 		aty_st_le32(DAC_CNTL, aty_ld_le32(DAC_CNTL) &
- 			    ~DAC_PALETTE_ACCESS_CNTL);
- 	}
-diff --git a/drivers/video/fbdev/aty/atyfb_base.c b/drivers/video/fbdev/aty/atyfb_base.c
-index 72bcfbe..6dda5d8 100644
---- a/drivers/video/fbdev/aty/atyfb_base.c
-+++ b/drivers/video/fbdev/aty/atyfb_base.c
-@@ -1188,19 +1188,6 @@ static int aty_crtc_to_var(const struct crtc *crtc,
- 		(c_sync ? FB_SYNC_COMP_HIGH_ACT : 0);
- 
- 	switch (pix_width) {
--#if 0
--	case CRTC_PIX_WIDTH_4BPP:
--		bpp = 4;
--		var->red.offset = 0;
--		var->red.length = 8;
--		var->green.offset = 0;
--		var->green.length = 8;
--		var->blue.offset = 0;
--		var->blue.length = 8;
--		var->transp.offset = 0;
--		var->transp.length = 0;
--		break;
--#endif
- 	case CRTC_PIX_WIDTH_8BPP:
- 		bpp = 8;
- 		var->red.offset = 0;
-@@ -1466,11 +1453,6 @@ static int atyfb_set_par(struct fb_info *info)
- 		var->bits_per_pixel,
- 		par->crtc.vxres * var->bits_per_pixel / 8);
- #endif /* CONFIG_BOOTX_TEXT */
--#if 0
--	/* switch to accelerator mode */
--	if (!(par->crtc.gen_cntl & CRTC_EXT_DISP_EN))
--		aty_st_le32(CRTC_GEN_CNTL, par->crtc.gen_cntl | CRTC_EXT_DISP_EN, par);
--#endif
- #ifdef DEBUG
- {
- 	/* dump non shadow CRTC, pll, LCD registers */
-@@ -2396,17 +2378,6 @@ static int aty_init(struct fb_info *info)
- 			par->pll_ops = &aty_pll_ibm514;
- 			break;
- #endif
--#if 0 /* dead code */
--		case CLK_STG1703:
--			par->pll_ops = &aty_pll_stg1703;
--			break;
--		case CLK_CH8398:
--			par->pll_ops = &aty_pll_ch8398;
--			break;
--		case CLK_ATT20C408:
--			par->pll_ops = &aty_pll_att20c408;
--			break;
--#endif
- 		default:
- 			PRINTKI("aty_init: CLK type not implemented yet!");
- 			par->pll_ops = &aty_pll_unsupported;
--- 
-1.9.1
-
+>
+> Thanks!
+>
+> -Kees
+>
+> >  - patch v7 (assembly):
+> >    - Split patchset and reorder changes.
+> >  - patch v6:
+> >    - Rebase on latest changes in jump tables and crypto.
+> >    - Fix wording on couple commits.
+> >    - Revisit checkpatch warnings.
+> >    - Moving to @chromium.org.
+> >  - patch v5:
+> >    - Adapt new crypto modules for PIE.
+> >    - Improve per-cpu commit message.
+> >    - Fix xen 32-bit build error with .quad.
+> >    - Remove extra code for ftrace.
+> >  - patch v4:
+> >    - Simplify early boot by removing global variables.
+> >    - Modify the mcount location script for __mcount_loc intead of the address
+> >      read in the ftrace implementation.
+> >    - Edit commit description to explain better where the kernel can be located.
+> >    - Streamlined the testing done on each patch proposal. Always testing
+> >      hibernation, suspend, ftrace and kprobe to ensure no regressions.
+> >  - patch v3:
+> >    - Update on message to describe longer term PIE goal.
+> >    - Minor change on ftrace if condition.
+> >    - Changed code using xchgq.
+> >  - patch v2:
+> >    - Adapt patch to work post KPTI and compiler changes
+> >    - Redo all performance testing with latest configs and compilers
+> >    - Simplify mov macro on PIE (MOVABS now)
+> >    - Reduce GOT footprint
+> >  - patch v1:
+> >    - Simplify ftrace implementation.
+> >    - Use gcc mstack-protector-guard-reg=%gs with PIE when possible.
+> >  - rfc v3:
+> >    - Use --emit-relocs instead of -pie to reduce dynamic relocation space on
+> >      mapped memory. It also simplifies the relocation process.
+> >    - Move the start the module section next to the kernel. Remove the need for
+> >      -mcmodel=large on modules. Extends module space from 1 to 2G maximum.
+> >    - Support for XEN PVH as 32-bit relocations can be ignored with
+> >      --emit-relocs.
+> >    - Support for GOT relocations previously done automatically with -pie.
+> >    - Remove need for dynamic PLT in modules.
+> >    - Support dymamic GOT for modules.
+> >  - rfc v2:
+> >    - Add support for global stack cookie while compiler default to fs without
+> >      mcmodel=kernel
+> >    - Change patch 7 to correctly jump out of the identity mapping on kexec load
+> >      preserve.
+> >
+> > These patches make some of the changes necessary to build the kernel as
+> > Position Independent Executable (PIE) on x86_64. Another patchset will
+> > add the PIE option and larger architecture changes.
+> >
+> > The patches:
+> >  - 1, 3-11: Change in assembly code to be PIE compliant.
+> >  - 2: Add a new _ASM_MOVABS macro to fetch a symbol address generically.
+> >
+> > diffstat:
+> >  crypto/aegis128-aesni-asm.S         |    6 +-
+> >  crypto/aegis128l-aesni-asm.S        |    8 +--
+> >  crypto/aegis256-aesni-asm.S         |    6 +-
+> >  crypto/aes-x86_64-asm_64.S          |   45 ++++++++++------
+> >  crypto/aesni-intel_asm.S            |    8 +--
+> >  crypto/aesni-intel_avx-x86_64.S     |    3 -
+> >  crypto/camellia-aesni-avx-asm_64.S  |   42 +++++++--------
+> >  crypto/camellia-aesni-avx2-asm_64.S |   44 ++++++++--------
+> >  crypto/camellia-x86_64-asm_64.S     |    8 +--
+> >  crypto/cast5-avx-x86_64-asm_64.S    |   50 ++++++++++--------
+> >  crypto/cast6-avx-x86_64-asm_64.S    |   44 +++++++++-------
+> >  crypto/des3_ede-asm_64.S            |   96 ++++++++++++++++++++++++------------
+> >  crypto/ghash-clmulni-intel_asm.S    |    4 -
+> >  crypto/glue_helper-asm-avx.S        |    4 -
+> >  crypto/glue_helper-asm-avx2.S       |    6 +-
+> >  crypto/morus1280-avx2-asm.S         |    4 -
+> >  crypto/morus1280-sse2-asm.S         |    8 +--
+> >  crypto/morus640-sse2-asm.S          |    6 +-
+> >  crypto/sha256-avx2-asm.S            |   18 ++++--
+> >  entry/entry_64.S                    |   16 ++++--
+> >  include/asm/alternative.h           |    6 +-
+> >  include/asm/asm.h                   |    1
+> >  include/asm/paravirt_types.h        |   25 +++++++--
+> >  include/asm/pm-trace.h              |    2
+> >  include/asm/processor.h             |    6 +-
+> >  kernel/acpi/wakeup_64.S             |   31 ++++++-----
+> >  kernel/head_64.S                    |   16 +++---
+> >  kernel/relocate_kernel_64.S         |    2
+> >  power/hibernate_asm_64.S            |    4 -
+> >  29 files changed, 306 insertions(+), 213 deletions(-)
+> >
+> > Patchset is based on next-20190708.
+> >
+> >
+>
+> --
+> Kees Cook
