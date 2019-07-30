@@ -2,112 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA43F7AAFA
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 16:29:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C4B047AAF2
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 16:28:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731353AbfG3O3K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 10:29:10 -0400
-Received: from conssluserg-04.nifty.com ([210.131.2.83]:61647 "EHLO
-        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727865AbfG3O3J (ORCPT
+        id S1731303AbfG3O2r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 10:28:47 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:51646 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727865AbfG3O2q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 10:29:09 -0400
-Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com [209.85.217.53]) (authenticated)
-        by conssluserg-04.nifty.com with ESMTP id x6UESv7a009658;
-        Tue, 30 Jul 2019 23:28:58 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com x6UESv7a009658
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1564496938;
-        bh=v84lwITMwCbRgHyGZMYws7mMj8il4DSwjrW7UNUSg5s=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=RtdPT8ltnUvK47R3j68P8C1ZgZzYqVWotPMaw0LJAVvePrrX+Fl2GRu1+yayV2Nej
-         nNfIbaRCYKuyhQoJFWYR0M4UPhPlwTqm9WBgqtUfKh5MoapJ2kDfKMQniqIpqFmPZk
-         JsehKH42e+hVl8+kgz864YFu0qtgBVkyxQ0T4ijQQEB0TpJUwPNY4iGb1Amipx2ySq
-         BWtjM1G9j+kHvie/qINAqOViDgXoVyrWIiM8nKMB9FJ9EtbBWACYdZhH5y0lXX9zS7
-         uXOrnxe0cJFUBF56IrkgG54aFmpx4ToY+GCfdbRFYLK5wwjULseJm8pOIWP2pZM+cu
-         RHydlHo73dWOg==
-X-Nifty-SrcIP: [209.85.217.53]
-Received: by mail-vs1-f53.google.com with SMTP id a186so42001316vsd.7;
-        Tue, 30 Jul 2019 07:28:57 -0700 (PDT)
-X-Gm-Message-State: APjAAAURssm5Fpnj99TI7Pv9RTKZuYk/rVnzynKjsXouHRQaMzTAS7vf
-        ltKVfsiQF2Fibfet4+FToA2OOzAZko0cYmrtSXw=
-X-Google-Smtp-Source: APXvYqw4h6Qez6BRRK5N+FsF/UXKydbLOoQOr33HDGNPcw0K68jyVimtbBSfZetRbfL80Q7Iojj0TJk60p/dT3uJL08=
-X-Received: by 2002:a67:cd1a:: with SMTP id u26mr72503702vsl.155.1564496936927;
- Tue, 30 Jul 2019 07:28:56 -0700 (PDT)
+        Tue, 30 Jul 2019 10:28:46 -0400
+Received: by mail-wm1-f65.google.com with SMTP id 207so57392704wma.1
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 07:28:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=drd2LNgj2u9n38kicYZLHSfSh0oWvDUVZyGUG2VJqr0=;
+        b=I0wh7sV7Cx3IpITr4GHeKMa23hytZP0JMl1EgCUzYsdsJD0aU7BqagmuSep7vB3QwQ
+         FmCb1oxMnT2mJ4h8pWSBnGmuI6Yqso21kPc9Uvp1yEKPka2JkdYxBN2gKyVLqeUpzRd+
+         0juG+wDLUllnR3Hu8srp10tIvP03sjQiADQTzEC89VwZa5FakbdkTqOGHCT1swRZazEB
+         7bmcrDeN14qzlvjuYLLVpNr6T2w2wLHHPuna6zuh6Oza7PTBJqh9Acm7wzG0bEREWoCX
+         Uv/xWlkOIku5P896JXFnq4ggbQBwwMT3Vv9d0StWjmX1zxsFFvV6anKviwNDgI6C1DP8
+         h9Kg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=drd2LNgj2u9n38kicYZLHSfSh0oWvDUVZyGUG2VJqr0=;
+        b=ZGliaotDSftZaqamX4oODOH6G2SBbgy+PhZgeDQkW40X2ukyFT0aP7xwsv0T9xQ7+z
+         nIEdzXj90DXBYM02ZVX36SaKKYCfGnqeGXAhBRCyTQUICtSdtt1pOKmGBR+eRVNoRfbG
+         s9Ii7LSBWiMi+QCNZ+gHYzIHWzYI1a+8fRBjNIk7ii18NN/IeinN2ANfwk47SiZRrkTi
+         tv49ugmM/tnRM9KaUv5IwOeY4B8+IigP/oMkY7SMyA5sxFUaJUWsfnTejMqlDgO3rPLc
+         2M/VnwgU8Go20G0aQVlL1uE7n9wV5zc5cj4YxIIdqp4/0dVfUwOkdwsZrmaV3cfIC5M/
+         t74g==
+X-Gm-Message-State: APjAAAUWPlmvVnrXdNCEoO9u7PP/HVo1TvIm+6M2e2LEnso3lYjeox79
+        sE2I28eb4a38yfCiLYd3W/OC3QSB/g4X2gBg54iGcg==
+X-Google-Smtp-Source: APXvYqwNQph3+WP4wHWEnFcQvKMAPHapuue2F4bVj/8qJxiAU7k1P9fbW9Mp30FpN8ondlpPukDfXy0jbCMN4Vg8Ng8=
+X-Received: by 2002:a1c:7f93:: with SMTP id a141mr105995463wmd.131.1564496924133;
+ Tue, 30 Jul 2019 07:28:44 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190725154730.80169-1-swboyd@chromium.org> <CAK7LNAQZJgkx-yEwgHcTapKFayExgUCb3=zLBpJmVMJMeEA_WA@mail.gmail.com>
- <5d3f016c.1c69fb81.b4775.c7d0@mx.google.com>
-In-Reply-To: <5d3f016c.1c69fb81.b4775.c7d0@mx.google.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Tue, 30 Jul 2019 23:28:20 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASoNRsMHHBW=d_Lkjo7eLpq5=gkU_g+k8NwEB0BwV37ZQ@mail.gmail.com>
-Message-ID: <CAK7LNASoNRsMHHBW=d_Lkjo7eLpq5=gkU_g+k8NwEB0BwV37ZQ@mail.gmail.com>
-Subject: Re: [PATCH v2] kbuild: Check for unknown options with cc-option usage
- in Kconfig and clang
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     Michal Marek <michal.lkml@markovi.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Peter Smith <peter.smith@linaro.org>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Douglas Anderson <dianders@chromium.org>
+References: <00000000000014c877058ee2c4a6@google.com> <Pine.LNX.4.44L0.1907301011100.1507-100000@iolanthe.rowland.org>
+ <CAAeHK+wnhfMvoMbuv3Oco1eH35BL5tdR9-X5erEJmKLS1finAg@mail.gmail.com> <CAAeHK+z50rsvQypF5AivYJh0wQ04XAueC=Ms2cPt3+QuN1+KGg@mail.gmail.com>
+In-Reply-To: <CAAeHK+z50rsvQypF5AivYJh0wQ04XAueC=Ms2cPt3+QuN1+KGg@mail.gmail.com>
+From:   Alexander Potapenko <glider@google.com>
+Date:   Tue, 30 Jul 2019 16:28:31 +0200
+Message-ID: <CAG_fn=XOZVRkG+RLRsfn2Y4JNz+ovyjkA=Jf9TK5ttunmuNvmA@mail.gmail.com>
+Subject: Re: KMSAN: kernel-usb-infoleak in pcan_usb_pro_send_req
+To:     Andrey Konovalov <andreyknvl@google.com>
+Cc:     Alan Stern <stern@rowland.harvard.edu>,
+        syzbot <syzbot+513e4d0985298538bf9b@syzkaller.appspotmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Kernel development list <linux-kernel@vger.kernel.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 29, 2019 at 11:23 PM Stephen Boyd <swboyd@chromium.org> wrote:
+On Tue, Jul 30, 2019 at 4:22 PM 'Andrey Konovalov' via syzkaller-bugs
+<syzkaller-bugs@googlegroups.com> wrote:
 >
-> Quoting Masahiro Yamada (2019-07-29 03:02:40)
+> On Tue, Jul 30, 2019 at 4:20 PM Andrey Konovalov <andreyknvl@google.com> =
+wrote:
 > >
-> > Thanks for catching this.
+> > On Tue, Jul 30, 2019 at 4:17 PM Alan Stern <stern@rowland.harvard.edu> =
+wrote:
+> > >
+> > > On Tue, 30 Jul 2019, syzbot wrote:
+> > >
+> > > > Hello,
+> > > >
+> > > > syzbot found the following crash on:
+> > > >
+> > > > HEAD commit:    41550654 [UPSTREAM] KVM: x86: degrade WARN to pr_wa=
+rn_rate..
+> > > > git tree:       kmsan
+> > > > console output: https://syzkaller.appspot.com/x/log.txt?x=3D13e9518=
+3a00000
+> > > > kernel config:  https://syzkaller.appspot.com/x/.config?x=3D40511ad=
+0c5945201
+> > > > dashboard link: https://syzkaller.appspot.com/bug?extid=3D513e4d098=
+5298538bf9b
+> > > > compiler:       clang version 9.0.0 (/home/glider/llvm/clang
+> > > > 80fee25776c2fb61e74c1ecb1a523375c2500b69)
+> > > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D17eaf=
+a1ba00000
+> > > > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D17b8798=
+3a00000
+> > > >
+> > > > IMPORTANT: if you fix the bug, please add the following tag to the =
+commit:
+> > > > Reported-by: syzbot+513e4d0985298538bf9b@syzkaller.appspotmail.com
+> > > >
+> > > > usb 1-1: config 0 has no interface number 0
+> > > > usb 1-1: New USB device found, idVendor=3D0c72, idProduct=3D0014,
+> > > > bcdDevice=3D8b.53
+> > > > usb 1-1: New USB device strings: Mfr=3D0, Product=3D0, SerialNumber=
+=3D0
+> > > > usb 1-1: config 0 descriptor??
+> > > > peak_usb 1-1:0.146: PEAK-System PCAN-USB X6 v0 fw v0.0.0 (2 channel=
+s)
+> > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > > > BUG: KMSAN: kernel-usb-infoleak in usb_submit_urb+0x7ef/0x1f50
+> > > > drivers/usb/core/urb.c:405
+> > >
+> > > What does "kernel-usb-infoleak" mean?
 > >
-> > I wonder if we could fix this issue
-> > by one-liner, like this:
-> >
-> >
-> > diff --git a/scripts/Kconfig.include b/scripts/Kconfig.include
-> > index 8a5c4d645eb1..4bbf4fc163a2 100644
-> > --- a/scripts/Kconfig.include
-> > +++ b/scripts/Kconfig.include
-> > @@ -25,7 +25,7 @@ failure = $(if-success,$(1),n,y)
-> >
-> >  # $(cc-option,<flag>)
-> >  # Return y if the compiler supports <flag>, n otherwise
-> > -cc-option = $(success,$(CC) -Werror $(1) -E -x c /dev/null -o /dev/null)
-> > +cc-option = $(success,$(CC) -Werror $(CLANG_FLAGS) $(1) -E -x c
-> > /dev/null -o /dev/null)
-> >
-> >  # $(ld-option,<flag>)
-> >  # Return y if the linker supports <flag>, n otherwise
-> >
-> >
-> >
-> > This propagates not only -Werror=unknown-warning-option
-> > but also other clang flags to Kconfig.
-> >
-> >
-> > Currently, we do not pass the target triplet to Kconfig.
-> > This means, cc-option in Kconfig evaluates the given flags
-> > against host-arch instead of target-arch.
-> > The compiler flags are mostly independent of the architecture,
-> > and this is not a big deal, I think.
-> > But, maybe, would it make more sense to pass the other
-> > basic clang flags as well?
-> >
+> > That means that the kernel put some uninitialized data into a request
+> > that was sent to a USB device.
 >
-> Yes that also works and I had that earlier. I wanted to mirror what was
-> done in scripts/Kbuild.include where there's a CC_OPTION_CFLAGS
-> variable. I'm happy either way, so it's up to you.
+> Here's a better report for this bug:
+Yes, for some reason syzkaller lost half of the original report when
+reproducing the bug.
+> https://syzkaller.appspot.com/text?tag=3DCrashReport&x=3D11dae8ec600000
 >
+> This is a real bug, I was able to reproduce it with a hardware
+> reproducer and leak some kernel pointers AFAIR.
 
-Can you post v3 with $(CLANG_FLAGS) ?
+> >
+> > >
+> > > Alan Stern
+> > >
+>
+> --
+> You received this message because you are subscribed to the Google Groups=
+ "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an=
+ email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgi=
+d/syzkaller-bugs/CAAeHK%2Bz50rsvQypF5AivYJh0wQ04XAueC%3DMs2cPt3%2BQuN1%2BKG=
+g%40mail.gmail.com.
 
-Thanks.
 
--- 
-Best Regards
-Masahiro Yamada
+
+--=20
+Alexander Potapenko
+Software Engineer
+
+Google Germany GmbH
+Erika-Mann-Stra=C3=9Fe, 33
+80636 M=C3=BCnchen
+
+Gesch=C3=A4ftsf=C3=BChrer: Paul Manicle, Halimah DeLaine Prado
+Registergericht und -nummer: Hamburg, HRB 86891
+Sitz der Gesellschaft: Hamburg
