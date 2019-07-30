@@ -2,61 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C9E07ADD4
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 18:34:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CC1CB7AD90
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 18:32:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729523AbfG3QeA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 12:34:00 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:45300 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732849AbfG3Qcd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 12:32:33 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E8C0181F0E;
-        Tue, 30 Jul 2019 16:32:32 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.136])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 547B960922;
-        Tue, 30 Jul 2019 16:32:31 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Tue, 30 Jul 2019 18:32:32 +0200 (CEST)
-Date:   Tue, 30 Jul 2019 18:32:30 +0200
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Christian Brauner <christian@brauner.io>
-Cc:     linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-        tj@kernel.org, tglx@linutronix.de, prsood@codeaurora.org,
-        avagin@gmail.com, Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH] exit: make setting exit_state consistent
-Message-ID: <20190730163229.GD18501@redhat.com>
-References: <20190729162757.22694-1-christian@brauner.io>
+        id S1732654AbfG3QcM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 12:32:12 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:36566 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726703AbfG3QcM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 12:32:12 -0400
+Received: by mail-lj1-f195.google.com with SMTP id i21so62718083ljj.3;
+        Tue, 30 Jul 2019 09:32:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xx3vIoXX8Mxn7Xfw2L25UDOZ1rfyh83SbXwIfDYTy98=;
+        b=Jr/qg1bcxy7MjeWhxfQDSfgI4H19sw3Jz78Pye41vfpqN+qGQyZ5gO32yCnGAwrCwV
+         IDJb7U1TOxEAb6pIpWroZIuT7EH8L5n+TenAghKXZ3DFNlsOZ4lD+Vcm71PyTVQcdU8n
+         nz9o7mFEcxcOwswCwYoJO2VtzDaYHKf3Z4RAnWrAIp48DYXqZFKMqhiwEj8Hhwr1N8me
+         ruOzUTSHHKXkzoToPBzodjKX6V1oOfQetH5lvFZqATFZ8IK321BWFLek4FQyCWqLIG35
+         az6aUKKZjPWBpZbPuW9142x9uyef+DFsNPlRQBOkSv+vxQHYAL+YcoELTlO6LXvDWRVC
+         /eiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xx3vIoXX8Mxn7Xfw2L25UDOZ1rfyh83SbXwIfDYTy98=;
+        b=sfDP/UWGIqQ1+qQRFvSDR84heCpDKuNC8hM9aPTe4NpActF3XrWZpU5BCptPmPWcJj
+         RvRHqIH49tkTYJwLGe+Mrz6UO0TYj+Dwmx0pPXFfeft/e3OsHh2D8kqtU0ZWeh8lbYMU
+         E1bycnEFzSb63asynmC9RD/fLNODnyulSTJNMFynFUNBDlQ3WnJRNfghEW4nkrZDWfOh
+         WXO76jU/52vY/8kcFXsLuS9shtbReGpYtWU2MeEDkqOT3/A9wf1+sHe/lN1fQu2JadXu
+         3ArqLyTllU2iC8a/RFlqxbBxKQKRB40ncaglBJGlLJkaHkPSNRPPaZrCanbC1KMj7Mqj
+         uQCA==
+X-Gm-Message-State: APjAAAVDCGQiVccb87ZKBITQsPS4MPyCsni6rHPZaetN8Z2joJWXDpmv
+        t2qNexgE6QZS8z9rMxibHHnTT04SS++yS6qER4Y=
+X-Google-Smtp-Source: APXvYqycFcTFoT9V2kVAqMs+UnnH6bzjYSJTSertHTYTAJI+RtGajdJMivgIKh9SwCSMNIC3PdQzfGaeyRqcszz+JWM=
+X-Received: by 2002:a2e:2c07:: with SMTP id s7mr24607447ljs.44.1564504329883;
+ Tue, 30 Jul 2019 09:32:09 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190729162757.22694-1-christian@brauner.io>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Tue, 30 Jul 2019 16:32:33 +0000 (UTC)
+References: <20190729172007.3275-1-krzk@kernel.org> <20190729172007.3275-2-krzk@kernel.org>
+In-Reply-To: <20190729172007.3275-2-krzk@kernel.org>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Tue, 30 Jul 2019 13:33:30 -0300
+Message-ID: <CAOMZO5BzA7JfNhJtZjUCewGicWFy1Qemx3jV1=+27MjUnsq4kQ@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] ARM: dts: imx6ul-kontron-n6310: Add Kontron
+ i.MX6UL N6310 SoM and boards
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Schrempf Frieder <frieder.schrempf@kontron.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/29, Christian Brauner wrote:
->
-> --- a/kernel/exit.c
-> +++ b/kernel/exit.c
-> @@ -734,9 +734,10 @@ static void exit_notify(struct task_struct *tsk, int group_dead)
->  		autoreap = true;
->  	}
->  
-> -	tsk->exit_state = autoreap ? EXIT_DEAD : EXIT_ZOMBIE;
-> -	if (tsk->exit_state == EXIT_DEAD)
-> +	if (autoreap) {
-> +		tsk->exit_state = EXIT_DEAD;
->  		list_add(&tsk->ptrace_entry, &dead);
-> +	}
->  
+Hi Krzysztof,
 
-Acked-by: Oleg Nesterov <oleg@redhat.com>
+On Mon, Jul 29, 2019 at 2:20 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
 
+> --- a/Documentation/devicetree/bindings/eeprom/at25.txt
+> +++ b/Documentation/devicetree/bindings/eeprom/at25.txt
+> @@ -3,6 +3,7 @@ EEPROMs (SPI) compatible with Atmel at25.
+>  Required properties:
+>  - compatible : Should be "<vendor>,<type>", and generic value "atmel,at25".
+>    Example "<vendor>,<type>" values:
+> +    "anvo,anv32e61w"
+
+This usually comes as a separate patch, but anyway:
+
+Reviewed-by: Fabio Estevam <festevam@gmail.com>
