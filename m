@@ -2,60 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C4B77B306
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 21:13:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 418097B310
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 21:14:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388277AbfG3TNY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 15:13:24 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:34585 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388075AbfG3TNU (ORCPT
+        id S1728865AbfG3TNt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 15:13:49 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:33653 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388142AbfG3TNV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 15:13:20 -0400
-Received: by mail-pg1-f195.google.com with SMTP id n9so24330517pgc.1
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 12:13:19 -0700 (PDT)
+        Tue, 30 Jul 2019 15:13:21 -0400
+Received: by mail-pg1-f194.google.com with SMTP id f20so21322436pgj.0
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 12:13:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Qa0vdqU/e4QPHFVnoNOrEozPMumAGtkoZQ9IP0jYnkg=;
-        b=m0iQTXUNy9Ivxk8S8rx6UuqUrCNk/lmb9ABT6tX720KuMWsD28POJqIHBW6/ecVDNQ
-         1wbWq2OFtsCV/gCMaCWhi/N9ivwFCLXmf8NoCB80kLVtvh5oGNjC8TdkekyoWfngXYpv
-         g4yOAr38UwABJuJh4u7l9MRi4cavnGZbRi9Oc=
+        bh=9kWf22Rclzq8G5FoRJbzmMz7xyL94toIUGR9urAcRyA=;
+        b=F2smkGoK8KcptIdvV2SjQfrL6PlXipy7JjEVMHgzprpHrwcKNVKa93zl9Fymh8BUlh
+         fpA3d71j1qBWHNgMomuekNiCQ8MlumiE/acWNOlnavR9gnndo7YWMyqkKvctTUhMJcWm
+         5nm1cizH8+WJfF2ZVgUHYpKcxa3wRzq+Z8spk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Qa0vdqU/e4QPHFVnoNOrEozPMumAGtkoZQ9IP0jYnkg=;
-        b=AODDATy8YZtpA1twKk7mjCsZ8N01GF3Jwct1ihRKgkBZBjIYRJHaaE/G30Uv1GmzlV
-         3pzHe6qYiC+fjV0vRoLcXgaZdWtUKz2jbDfrnywrbYzmJUnqkSE/xbdz7EQ8a3tXHqYP
-         hnJ2lmK2j+klXG6kFxFaPz1M3Al9wYOsl5obGoydhIO4a8qiWdgJzSjTXCEicUJbr+89
-         Y8SLrzHcU36ogepllx8YS5q7ZSgNJacZSLIinG4N0ZXXTz8Z7NUgEQhqA/J5PHXvm/fU
-         QuNf3hbEqkN5L40Rz69Kdid8QdL39PUOLJ00cgpKd0yKqdq9O/AFPkIbXGYT210G1as6
-         Ldvg==
-X-Gm-Message-State: APjAAAWEGAaiBVNDRmVnwELgpjCaEk+nXYZ48/VKS6PjmqH8iUmKLKXD
-        XB7GuykKgOX4CF8i9Wlwm1Vb1Q==
-X-Google-Smtp-Source: APXvYqw4FhQAyLlzTXXeXnWi4AdlBXSr5qODFDIUZbZ8fdBVPq/Zyh+2sg3WQmjXFcNGWYaH8U26QA==
-X-Received: by 2002:a17:90a:b115:: with SMTP id z21mr56057575pjq.64.1564513999646;
-        Tue, 30 Jul 2019 12:13:19 -0700 (PDT)
+        bh=9kWf22Rclzq8G5FoRJbzmMz7xyL94toIUGR9urAcRyA=;
+        b=rojlHaFljxslbGrv2bh3rSzzE1Y6hh+nZZSatWPQGTsAeyYX7N1nmdKsK5ouN0dpAz
+         VdwGrFoYqrfKL7b86aIJV+xDK8wUUVpJnBmzBmmW21A3a8Gc/VW6I1guPK2qkFy2iVhg
+         CZWf9UocXOoO/n3FDWhlQ06jo+q/feFlGMnG8TnQCR7yMHbnlIRGD4NgEykjjjYMJu1+
+         fqMSIFWcH5eeET9b64LRZF6ncZoZr/7JZjNaAaByKbtsHusUom+Uan1ZdkGcWRwki66O
+         zYsKIlmAL+phVutJPUH4l6ceHgVbassxP+g8VfrW8N0QTxZVo2G4G5WCxfP9kXxVbBZh
+         YK9g==
+X-Gm-Message-State: APjAAAXVeExfyh4mqgVfvxlChgFMW/7q28Og0zQT/R+28sgw9NbD9/T2
+        qCRemOiffLQwMg+zFsPzV7qVng==
+X-Google-Smtp-Source: APXvYqzr6BK0Xn2ozWdzr0KbSdWi9wDSK/YZN9WyQ63sDSm1hYENlMW/XPd2uWlP9oB/IStB2Eg/AA==
+X-Received: by 2002:a63:784c:: with SMTP id t73mr113500712pgc.268.1564514000500;
+        Tue, 30 Jul 2019 12:13:20 -0700 (PDT)
 Received: from skynet.sea.corp.google.com ([2620:0:1008:1100:c4b5:ec23:d87b:d6d3])
-        by smtp.gmail.com with ESMTPSA id n89sm84649540pjc.0.2019.07.30.12.13.18
+        by smtp.gmail.com with ESMTPSA id n89sm84649540pjc.0.2019.07.30.12.13.19
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 30 Jul 2019 12:13:19 -0700 (PDT)
+        Tue, 30 Jul 2019 12:13:20 -0700 (PDT)
 From:   Thomas Garnier <thgarnie@chromium.org>
 To:     kernel-hardening@lists.openwall.com
 Cc:     kristen@linux.intel.com, keescook@chromium.org,
         Thomas Garnier <thgarnie@chromium.org>,
+        Pavel Machek <pavel@ucw.cz>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <len.brown@intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Len Brown <len.brown@intel.com>,
-        Andy Lutomirski <luto@kernel.org>, linux-kernel@vger.kernel.org
-Subject: [PATCH v9 06/11] x86/CPU: Adapt assembly for PIE support
-Date:   Tue, 30 Jul 2019 12:12:50 -0700
-Message-Id: <20190730191303.206365-7-thgarnie@chromium.org>
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v9 07/11] x86/acpi: Adapt assembly for PIE support
+Date:   Tue, 30 Jul 2019 12:12:51 -0700
+Message-Id: <20190730191303.206365-8-thgarnie@chromium.org>
 X-Mailer: git-send-email 2.22.0.770.g0f2c4a37fd-goog
 In-Reply-To: <20190730191303.206365-1-thgarnie@chromium.org>
 References: <20190730191303.206365-1-thgarnie@chromium.org>
@@ -73,30 +74,86 @@ Position Independent Executable (PIE) support will allow to extend the
 KASLR randomization range below 0xffffffff80000000.
 
 Signed-off-by: Thomas Garnier <thgarnie@chromium.org>
+Acked-by: Pavel Machek <pavel@ucw.cz>
+Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Reviewed-by: Kees Cook <keescook@chromium.org>
 ---
- arch/x86/include/asm/processor.h | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ arch/x86/kernel/acpi/wakeup_64.S | 31 ++++++++++++++++---------------
+ 1 file changed, 16 insertions(+), 15 deletions(-)
 
-diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
-index 6e0a3b43d027..bf333d62889e 100644
---- a/arch/x86/include/asm/processor.h
-+++ b/arch/x86/include/asm/processor.h
-@@ -713,11 +713,13 @@ static inline void sync_core(void)
- 		"pushfq\n\t"
- 		"mov %%cs, %0\n\t"
- 		"pushq %q0\n\t"
--		"pushq $1f\n\t"
-+		"leaq 1f(%%rip), %q0\n\t"
-+		"pushq %q0\n\t"
- 		"iretq\n\t"
- 		UNWIND_HINT_RESTORE
- 		"1:"
--		: "=&r" (tmp), ASM_CALL_CONSTRAINT : : "cc", "memory");
-+		: "=&r" (tmp), ASM_CALL_CONSTRAINT
-+		: : "cc", "memory");
- #endif
- }
+diff --git a/arch/x86/kernel/acpi/wakeup_64.S b/arch/x86/kernel/acpi/wakeup_64.S
+index b0715c3ac18d..3ec6c1b74ad4 100644
+--- a/arch/x86/kernel/acpi/wakeup_64.S
++++ b/arch/x86/kernel/acpi/wakeup_64.S
+@@ -15,7 +15,7 @@
+ 	 * Hooray, we are in Long 64-bit mode (but still running in low memory)
+ 	 */
+ ENTRY(wakeup_long64)
+-	movq	saved_magic, %rax
++	movq	saved_magic(%rip), %rax
+ 	movq	$0x123456789abcdef0, %rdx
+ 	cmpq	%rdx, %rax
+ 	jne	bogus_64_magic
+@@ -26,14 +26,14 @@ ENTRY(wakeup_long64)
+ 	movw	%ax, %es
+ 	movw	%ax, %fs
+ 	movw	%ax, %gs
+-	movq	saved_rsp, %rsp
++	movq	saved_rsp(%rip), %rsp
  
+-	movq	saved_rbx, %rbx
+-	movq	saved_rdi, %rdi
+-	movq	saved_rsi, %rsi
+-	movq	saved_rbp, %rbp
++	movq	saved_rbx(%rip), %rbx
++	movq	saved_rdi(%rip), %rdi
++	movq	saved_rsi(%rip), %rsi
++	movq	saved_rbp(%rip), %rbp
+ 
+-	movq	saved_rip, %rax
++	movq	saved_rip(%rip), %rax
+ 	jmp	*%rax
+ ENDPROC(wakeup_long64)
+ 
+@@ -46,7 +46,7 @@ ENTRY(do_suspend_lowlevel)
+ 	xorl	%eax, %eax
+ 	call	save_processor_state
+ 
+-	movq	$saved_context, %rax
++	leaq	saved_context(%rip), %rax
+ 	movq	%rsp, pt_regs_sp(%rax)
+ 	movq	%rbp, pt_regs_bp(%rax)
+ 	movq	%rsi, pt_regs_si(%rax)
+@@ -65,13 +65,14 @@ ENTRY(do_suspend_lowlevel)
+ 	pushfq
+ 	popq	pt_regs_flags(%rax)
+ 
+-	movq	$.Lresume_point, saved_rip(%rip)
++	leaq	.Lresume_point(%rip), %rax
++	movq	%rax, saved_rip(%rip)
+ 
+-	movq	%rsp, saved_rsp
+-	movq	%rbp, saved_rbp
+-	movq	%rbx, saved_rbx
+-	movq	%rdi, saved_rdi
+-	movq	%rsi, saved_rsi
++	movq	%rsp, saved_rsp(%rip)
++	movq	%rbp, saved_rbp(%rip)
++	movq	%rbx, saved_rbx(%rip)
++	movq	%rdi, saved_rdi(%rip)
++	movq	%rsi, saved_rsi(%rip)
+ 
+ 	addq	$8, %rsp
+ 	movl	$3, %edi
+@@ -83,7 +84,7 @@ ENTRY(do_suspend_lowlevel)
+ 	.align 4
+ .Lresume_point:
+ 	/* We don't restore %rax, it must be 0 anyway */
+-	movq	$saved_context, %rax
++	leaq	saved_context(%rip), %rax
+ 	movq	saved_context_cr4(%rax), %rbx
+ 	movq	%rbx, %cr4
+ 	movq	saved_context_cr3(%rax), %rbx
 -- 
 2.22.0.770.g0f2c4a37fd-goog
 
