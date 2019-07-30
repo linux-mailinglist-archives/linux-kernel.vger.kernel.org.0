@@ -2,76 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 543E97AE52
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 18:47:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 12EAE7AE56
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 18:47:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727951AbfG3Qp5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 12:45:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57320 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725908AbfG3Qp5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 12:45:57 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9CA1E20693;
-        Tue, 30 Jul 2019 16:45:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564505156;
-        bh=J7zFUGayczWhSdYHnVQP9PCQACEDMyHwGZZixxltD5U=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=cL4Y44LixVM0yhj1GztcsDtVHs0o1y3IckRBUOkQV0San/TdM22cxPf890Kvw/zuI
-         5fQzhJsY28ulbQUpCGdJrPb9zNAz77sEgs1goNVO9ufBpfS8yoFoXDLPzO3tno57ZO
-         ooVhxQ4FC7Ubm4nY6H0mJgcWgp72mCkqXU3PA9Bc=
-Date:   Tue, 30 Jul 2019 18:45:53 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Johannes Berg <johannes@sipsolutions.net>
-Cc:     Akinobu Mita <akinobu.mita@gmail.com>, akpm@linux-foundation.org,
-        linux-kernel@vger.kernel.org, Keith Busch <keith.busch@intel.com>,
-        Jens Axboe <axboe@fb.com>, Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Minwoo Im <minwoo.im.dev@gmail.com>,
-        Kenneth Heitke <kenneth.heitke@intel.com>,
-        Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>
-Subject: Re: [PATCH 2/2] devcoredump: fix typo in comment
-Message-ID: <20190730164553.GA14088@kroah.com>
-References: <1564243146-5681-1-git-send-email-akinobu.mita@gmail.com>
- <1564243146-5681-3-git-send-email-akinobu.mita@gmail.com>
- <41a47bd3f48ea0ecd25e6ffefff9f100edf53a0c.camel@sipsolutions.net>
- <20190730162320.GA28134@kroah.com>
- <27feb840cba115e4ff8c96d47dfbab08fda30bef.camel@sipsolutions.net>
+        id S1729410AbfG3Qql (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 12:46:41 -0400
+Received: from conssluserg-04.nifty.com ([210.131.2.83]:35658 "EHLO
+        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725934AbfG3Qqk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 12:46:40 -0400
+Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com [209.85.221.179]) (authenticated)
+        by conssluserg-04.nifty.com with ESMTP id x6UGkX0I027799;
+        Wed, 31 Jul 2019 01:46:33 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com x6UGkX0I027799
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1564505194;
+        bh=Ok/KGDQSrCYrPibwFAYS5ZsFlsGiUOUaXlIYe533dXI=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=jJkn+qz4pPyDFnecgUThOrH38LSRxJAyFa+PfoMyz6ByxmXp3cX4XE3z7AQbXHYR5
+         iNvGBBSkGrGZNMY7HRfjMNwcUb+tugk2HDBvl7YEW9+weHXCZd1OdOPWaos4wndodV
+         MeBkHwzsaAL92L1orFCrWmne9dVUp/f5W8DpUoa7copqyQaPMF0OL/TDlZ4PXD9yGT
+         NnBKBGGRopv4c6LZkI1fTr+C2lWzLhzPsKKiA30YAu8aYf5ifVbxBVeC9Evtrr8DPd
+         OwCxMzRRRLl5ntC0YEU6+AHVxivTOC3AxVif5e5/Jl1QeCK9FYetR1xnMl9RSh/0q1
+         Kra+EgA3A+vyA==
+X-Nifty-SrcIP: [209.85.221.179]
+Received: by mail-vk1-f179.google.com with SMTP id w186so4499411vkd.11;
+        Tue, 30 Jul 2019 09:46:33 -0700 (PDT)
+X-Gm-Message-State: APjAAAWCyw+z+NHIXubVk8WNNH3g18R0R500Fd2hZ6vFzzaqw7NNcvtK
+        62sLLfqiX2e0c8GaXYSB8N+CLUOPLkyB/OAD2Rk=
+X-Google-Smtp-Source: APXvYqx8RzQy+2qahU1wwN55Nyx7msaGiaMPpcxVcU0QKaVemQtEEfS1n0Ok3MAL0+lRwW3X8r+CSvHOSJwia82VNjM=
+X-Received: by 2002:a1f:ac1:: with SMTP id 184mr45919137vkk.0.1564505192554;
+ Tue, 30 Jul 2019 09:46:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <27feb840cba115e4ff8c96d47dfbab08fda30bef.camel@sipsolutions.net>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+References: <20190729091517.5334-1-yamada.masahiro@socionext.com>
+In-Reply-To: <20190729091517.5334-1-yamada.masahiro@socionext.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Wed, 31 Jul 2019 01:45:56 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASyjUbM1ij8E1tO3uD3Rpi_qC6-X4=LKR+ZKh5g6vvBnQ@mail.gmail.com>
+Message-ID: <CAK7LNASyjUbM1ij8E1tO3uD3Rpi_qC6-X4=LKR+ZKh5g6vvBnQ@mail.gmail.com>
+Subject: Re: [PATCH] kbuild: initialize CLANG_FLAGS correctly in the top Makefile
+To:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Cc:     Stephen Boyd <swboyd@chromium.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        stable <stable@vger.kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 30, 2019 at 06:37:56PM +0200, Johannes Berg wrote:
-> On Tue, 2019-07-30 at 18:23 +0200, Greg KH wrote:
-> > On Sat, Jul 27, 2019 at 08:43:21PM +0200, Johannes Berg wrote:
-> > > On Sun, 2019-07-28 at 00:59 +0900, Akinobu Mita wrote:
-> > > > s/dev_coredumpmsg/dev_coredumpsg/
-> > > 
-> > > Oops, thanks
-> > > 
-> > > Reviewed-by: Johannes Berg <johannes@sipsolutions.net>
-> > > 
-> > > Greg, I think before you took these patches?
-> > 
-> > Took what patches?  I don't see anything here :(
-> 
-> I mean, you take patches to devcoredump in general?
+On Mon, Jul 29, 2019 at 6:16 PM Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+>
+> CLANG_FLAGS is initialized by the following line:
+>
+>   CLANG_FLAGS     := --target=$(notdir $(CROSS_COMPILE:%-=%))
+>
+> ..., which is run only when CROSS_COMPILE is set.
+>
+> Some build targets (bindeb-pkg etc.) recurse to the top Makefile.
+>
+> When you build the kernel with Clang but without CROSS_COMPILE,
+> the same compiler flags such as -no-integrated-as are accumulated
+> into CLANG_FLAGS.
+>
+> If you run 'make CC=clang' and then 'make CC=clang bindeb-pkg',
+> Kbuild will recompile everything needlessly due to the build command
+> change.
+>
+> Fix this by correctly initializing CLANG_FLAGS.
+>
+> Fixes: 238bcbc4e07f ("kbuild: consolidate Clang compiler flags")
+> Cc: <stable@vger.kernel.org> # v4.20+
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
 
-I have no idea, run 'scripts/get_maintainer.pl' to be sure :)
+Applied to linux-kbuild.
 
-> So need to resend with you included, I guess.
 
-Please do so.
 
-thanks,
+>
+>  Makefile | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/Makefile b/Makefile
+> index fa0fbe7851ea..5ee6f6889869 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -472,6 +472,7 @@ KBUILD_CFLAGS_MODULE  := -DMODULE
+>  KBUILD_LDFLAGS_MODULE := -T $(srctree)/scripts/module-common.lds
+>  KBUILD_LDFLAGS :=
+>  GCC_PLUGINS_CFLAGS :=
+> +CLANG_FLAGS :=
+>
+>  export ARCH SRCARCH CONFIG_SHELL HOSTCC KBUILD_HOSTCFLAGS CROSS_COMPILE AS LD CC
+>  export CPP AR NM STRIP OBJCOPY OBJDUMP PAHOLE KBUILD_HOSTLDFLAGS KBUILD_HOSTLDLIBS
+> @@ -519,7 +520,7 @@ endif
+>
+>  ifneq ($(shell $(CC) --version 2>&1 | head -n 1 | grep clang),)
+>  ifneq ($(CROSS_COMPILE),)
+> -CLANG_FLAGS    := --target=$(notdir $(CROSS_COMPILE:%-=%))
+> +CLANG_FLAGS    += --target=$(notdir $(CROSS_COMPILE:%-=%))
+>  GCC_TOOLCHAIN_DIR := $(dir $(shell which $(CROSS_COMPILE)elfedit))
+>  CLANG_FLAGS    += --prefix=$(GCC_TOOLCHAIN_DIR)
+>  GCC_TOOLCHAIN  := $(realpath $(GCC_TOOLCHAIN_DIR)/..)
+> --
+> 2.17.1
+>
 
-greg k-h
+
+-- 
+Best Regards
+Masahiro Yamada
