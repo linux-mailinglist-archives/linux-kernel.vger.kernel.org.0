@@ -2,143 +2,195 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 543917A7B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 14:08:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 879A67A764
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 14:00:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729768AbfG3MIs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 08:08:48 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:56565 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727561AbfG3MIr (ORCPT
+        id S1729508AbfG3MAZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 08:00:25 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:43007 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727156AbfG3MAZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 08:08:47 -0400
-Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtp (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1hsQuN-0006QO-69; Tue, 30 Jul 2019 14:07:11 +0200
-Message-Id: <20190730120321.489374435@linutronix.de>
-User-Agent: quilt/0.65
-Date:   Tue, 30 Jul 2019 13:24:56 +0200
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Sebastian Siewior <bigeasy@linutronix.de>,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Julia Cartwright <julia@ni.com>, linux-ext4@vger.kernel.org,
-        "Theodore Tso" <tytso@mit.edu>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org
-Subject: [patch 4/4] fs: jbd/jbd2: Substitute BH locks for RT and lock
- debugging
-References: <20190730112452.871257694@linutronix.de>
+        Tue, 30 Jul 2019 08:00:25 -0400
+Received: by mail-wr1-f68.google.com with SMTP id x1so15560672wrr.9
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 05:00:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=n/JJxoSHKvaru38fIGlmwaHlnuxMxh6jpy0Kuq5lmmE=;
+        b=Sl72/4E2kqtDZ2CQIMMfomIbhFZDZDSCqUCB+R4H7uJSODB8IQnLn5GgZEZ5fShul4
+         b8zn3xuhCVjR16uUHRlBKI+jKBAUgRYXeMtoFwC8z+gIlDJZVWCP3jM504guxcVTvzLP
+         fYQwNm74kcCX4M7eMly/p7M+P9RiJW9QBkMOutLsLrApJDeWgjwJ/iDNbb/gZufDTAGU
+         rNoKlvBwDliEOVi3jOqIklKVRYOQVQTzoGeOwWLK6zKLI7UKqD991GvjbFAD09/D1HXg
+         ONKN2qH0FVKuNIRfa8SpTV62TzfkoXcJhFg6zQjdpI/jBmCaPoInWqiPyYf+LGwBSfyW
+         ug6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=n/JJxoSHKvaru38fIGlmwaHlnuxMxh6jpy0Kuq5lmmE=;
+        b=BkGIEGa/UkRtmQgVT9IKXra/cys3eeGar82C07dhE6t9l+9w4CCqRHeK2hyBLRA6xv
+         XPHq5cklL++jazg6Wqx75QntezcaDQCdy4a6nF68xAQiv5t1Q+yLt1JK31rSpVS96Eur
+         /EytBVMDwh7U7IwFPHXfOq290AochPOSIGaSp0QNmnA6M1Ay0UOwhwjj8w73mtXdOQTf
+         l+0XUh8NvKs2fQJB824Slsh1Lq8VwyrOF/VHTUFv5FwU7FxtdV+PtC0IEUvwexZFxNFF
+         YFC5xn73wEJkW0Q2f8fxDmw0mYMRxpblpMF6oMy9EM7xqyaxv+Ioch4AOazz07nmeILV
+         OgUg==
+X-Gm-Message-State: APjAAAWhucwUiNt+Axg9YAVEXgx2id3ms2pvvcmXa3/w/mvKe87mvFFi
+        sRRquUYL79rcSJxS563CGsPxLeVw06rdBXs/L+s=
+X-Google-Smtp-Source: APXvYqwdGj8tn+Lc+jdWqVTEGuaT6OEVtpsGQreyIcF1DxNxjXt75IZwoWbIPt3vCU8A0lK4eiedRhBfqabA/jYv85k=
+X-Received: by 2002:a5d:6b11:: with SMTP id v17mr50383530wrw.323.1564488022522;
+ Tue, 30 Jul 2019 05:00:22 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+References: <20190729115544.17895-1-anup.patel@wdc.com> <20190729115544.17895-6-anup.patel@wdc.com>
+ <9f9d09e5-49bc-f8e3-cfe1-bd5221e3b683@redhat.com>
+In-Reply-To: <9f9d09e5-49bc-f8e3-cfe1-bd5221e3b683@redhat.com>
+From:   Anup Patel <anup@brainfault.org>
+Date:   Tue, 30 Jul 2019 17:30:10 +0530
+Message-ID: <CAAhSdy3JZVEEnPnssALaxvCsyznF=rt=7-d5J_OgQEJv6cPhxQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 05/16] RISC-V: KVM: Implement VCPU interrupts and
+ requests handling
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Anup Patel <Anup.Patel@wdc.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Radim K <rkrcmar@redhat.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Atish Patra <Atish.Patra@wdc.com>,
+        Alistair Francis <Alistair.Francis@wdc.com>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Bit spinlocks are problematic if PREEMPT_RT is enabled. They disable
-preemption, which is undesired for latency reasons and breaks when regular
-spinlocks are taken within the bit_spinlock locked region because regular
-spinlocks are converted to 'sleeping spinlocks' on RT.
+On Tue, Jul 30, 2019 at 4:47 PM Paolo Bonzini <pbonzini@redhat.com> wrote:
+>
+> First, something that is not clear to me: how do you deal with a guest
+> writing 1 to VSIP.SSIP?  I think that could lead to lost interrupts if
+> you have the following sequence
+>
+> 1) guest writes 1 to VSIP.SSIP
+>
+> 2) guest leaves VS-mode
+>
+> 3) host syncs VSIP
+>
+> 4) user mode triggers interrupt
+>
+> 5) host reenters guest
+>
+> 6) host moves irqs_pending to VSIP and clears VSIP.SSIP in the process
 
-Substitute the BH_State and BH_JournalHead bit spinlocks with regular
-spinlock for PREEMPT_RT enabled kernels.
+This reasoning also apply to M-mode firmware (OpenSBI) providing timer
+and IPI services to HS-mode software. We had some discussion around
+it in a different context.
+(Refer, https://github.com/riscv/opensbi/issues/128)
 
-Bit spinlocks are also not covered by lock debugging, e.g. lockdep. With
-the spinlock substitution in place, they can be exposed via
-CONFIG_DEBUG_BIT_SPINLOCKS.
+The thing is SIP CSR is supposed to be read-only for any S-mode SW. This
+means HS-mode/VS-mode SW modifications to SIP CSR should have no
+effect.
 
-Originally-by: Steven Rostedt <rostedt@goodmis.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-ext4@vger.kernel.org
-Cc: "Theodore Ts'o" <tytso@mit.edu>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Jan Kara <jack@suse.com>
---
- include/linux/buffer_head.h |    8 ++++++++
- include/linux/jbd2.h        |   36 ++++++++++++++++++++++++++++++++++++
- 2 files changed, 44 insertions(+)
+For HS-mode, only certain bits are writable from M-mode such as SSIP
+and in-future even this will go away when we have specialized HW to
+trigger S-mode IPIs without going through M-mode firmware.
 
---- a/include/linux/buffer_head.h
-+++ b/include/linux/buffer_head.h
-@@ -79,6 +79,10 @@ struct buffer_head {
- 
- #if defined(CONFIG_PREEMPT_RT) || defined(CONFIG_DEBUG_BIT_SPINLOCKS)
- 	spinlock_t b_uptodate_lock;
-+# if IS_ENABLED(CONFIG_JBD2)
-+	spinlock_t b_state_lock;
-+	spinlock_t b_journal_head_lock;
-+# endif
- #endif
- };
- 
-@@ -101,6 +105,10 @@ bh_uptodate_unlock_irqrestore(struct buf
- static inline void buffer_head_init_locks(struct buffer_head *bh)
- {
- 	spin_lock_init(&bh->b_uptodate_lock);
-+#if IS_ENABLED(CONFIG_JBD2)
-+	spin_lock_init(&bh->b_state_lock);
-+	spin_lock_init(&bh->b_journal_head_lock);
-+#endif
- }
- 
- #else /* PREEMPT_RT || DEBUG_BIT_SPINLOCKS */
---- a/include/linux/jbd2.h
-+++ b/include/linux/jbd2.h
-@@ -342,6 +342,40 @@ static inline struct journal_head *bh2jh
- 	return bh->b_private;
- }
- 
-+#if defined(CONFIG_PREEMPT_RT) || defined(CONFIG_DEBUG_BIT_SPINLOCKS)
-+
-+static inline void jbd_lock_bh_state(struct buffer_head *bh)
-+{
-+	spin_lock(&bh->b_state_lock);
-+}
-+
-+static inline int jbd_trylock_bh_state(struct buffer_head *bh)
-+{
-+	return spin_trylock(&bh->b_state_lock);
-+}
-+
-+static inline int jbd_is_locked_bh_state(struct buffer_head *bh)
-+{
-+	return spin_is_locked(&bh->b_state_lock);
-+}
-+
-+static inline void jbd_unlock_bh_state(struct buffer_head *bh)
-+{
-+	spin_unlock(&bh->b_state_lock);
-+}
-+
-+static inline void jbd_lock_bh_journal_head(struct buffer_head *bh)
-+{
-+	spin_lock(&bh->b_journal_head_lock);
-+}
-+
-+static inline void jbd_unlock_bh_journal_head(struct buffer_head *bh)
-+{
-+	spin_unlock(&bh->b_journal_head_lock);
-+}
-+
-+#else /* PREEMPT_RT || DEBUG_BIT_SPINLOCKS */
-+
- static inline void jbd_lock_bh_state(struct buffer_head *bh)
- {
- 	bit_spin_lock(BH_State, &bh->b_state);
-@@ -372,6 +406,8 @@ static inline void jbd_unlock_bh_journal
- 	bit_spin_unlock(BH_JournalHead, &bh->b_state);
- }
- 
-+#endif /* !PREEMPT_RT && !DEBUG_BIT_SPINLOCKS */
-+
- #define J_ASSERT(assert)	BUG_ON(!(assert))
- 
- #define J_ASSERT_BH(bh, expr)	J_ASSERT(expr)
+For VS-mode, only HS-mode controls the pending bits writes to VSIP CSR.
 
+If above is honored correctly by HW then the use-case you mentioned above
+is not possible because Guest writing 1 to SIP.SSIP will be ignored.
 
+It is possible that we have buggy HW which does allow Guest write to SIP
+CSR bits then our current approach is to just overwrite VSIP whenver it
+is different from irq_pending bits before entering Guest.
+
+Do you still an issue here?
+
+Regards,
+Anup
+
+>
+> Perhaps irqs_pending needs to be split in two fields, irqs_pending and
+> irqs_pending_mask, and then you can do this:
+>
+> /*
+>  * irqs_pending and irqs_pending_mask have multiple-producer/single-
+>  * consumer semantics; therefore bits can be set in the mask without
+>  * a lock, but clearing the bits requires vcpu_lock.  Furthermore,
+>  * consumers should never write to irqs_pending, and should not
+>  * use bits of irqs_pending that weren't 1 in the mask.
+>  */
+>
+> int kvm_riscv_vcpu_set_interrupt(struct kvm_vcpu *vcpu, unsigned int irq)
+> {
+>         ...
+>         set_bit(irq, &vcpu->arch.irqs_pending);
+>         smp_mb__before_atomic();
+>         set_bit(irq, &vcpu->arch.irqs_pending_mask);
+>         kvm_vcpu_kick(vcpu);
+> }
+>
+> int kvm_riscv_vcpu_unset_interrupt(struct kvm_vcpu *vcpu, unsigned int irq)
+> {
+>         ...
+>         clear_bit(irq, &vcpu->arch.irqs_pending);
+>         smp_mb__before_atomic();
+>         set_bit(irq, &vcpu->arch.irqs_pending_mask);
+> }
+>
+> static void kvm_riscv_reset_vcpu(struct kvm_vcpu *vcpu)
+> {
+>         ...
+>         WRITE_ONCE(vcpu->arch.irqs_pending_mask, 0);
+> }
+>
+> and kvm_riscv_vcpu_flush_interrupts can leave aside VSIP bits that
+> aren't in vcpu->arch.irqs_pending_mask:
+>
+>         if (atomic_read(&vcpu->arch.irqs_pending_mask)) {
+>                 u32 mask, val;
+>
+>                 mask = xchg_acquire(&vcpu->arch.irqs_pending_mask, 0);
+>                 val = READ_ONCE(vcpu->arch.irqs_pending) & mask;
+>
+>                 vcpu->arch.guest_csr.vsip &= ~mask;
+>                 vcpu->arch.guest_csr.vsip |= val;
+>                 csr_write(CSR_VSIP, vsip);
+>         }
+>
+> Also, the getter of CSR_VSIP should call
+> kvm_riscv_vcpu_flush_interrupts, while the setter should clear
+> irqs_pending_mask.
+>
+> On 29/07/19 13:56, Anup Patel wrote:
+> > +     kvm_make_request(KVM_REQ_IRQ_PENDING, vcpu);
+> > +     kvm_vcpu_kick(vcpu);
+>
+> The request is not needed as long as kvm_riscv_vcpu_flush_interrupts is
+> called *after* smp_store_mb(vcpu->mode, IN_GUEST_MODE) in
+> kvm_arch_vcpu_ioctl_run.  This is the "request-less vCPU kick" pattern
+> in Documentation/virtual/kvm/vcpu-requests.rst.  The smp_store_mb then
+> orders the write of IN_GUEST_MODE before the read of irqs_pending (or
+> irqs_pending_mask in my proposal above); in the producers, there is a
+> dual memory barrier in kvm_vcpu_exiting_guest_mode(), ordering the write
+> of irqs_pending(_mask) before the read of vcpu->mode.
+>
+> Similar to other VS* CSRs, I'd rather have a ONE_REG interface for VSIE
+> and VSIP from the beginning as well.  Note that the VSIP setter would
+> clear irqs_pending_mask, while the getter would call
+> kvm_riscv_vcpu_flush_interrupts before reading.  It's up to userspace to
+> ensure that no interrupt injections happen between the calls to the
+> getter and the setter.
+>
+> Paolo
+>
+> > +             csr_write(CSR_VSIP, vcpu->arch.irqs_pending);
+> > +             vcpu->arch.guest_csr.vsip = vcpu->arch.irqs_pending;
+> > +     }
+>
