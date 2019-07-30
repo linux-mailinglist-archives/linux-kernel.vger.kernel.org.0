@@ -2,136 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0EB437B418
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 22:15:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DCDDD7B42A
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 22:15:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728006AbfG3UPG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 16:15:06 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:44942 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727962AbfG3UPF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 16:15:05 -0400
-Received: by mail-ot1-f68.google.com with SMTP id b7so17508431otl.11
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 13:15:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=5RzApq6XFoztBnIqNk8vSnTrtbUfODyGJJfunMohfoM=;
-        b=Zwx0RQpMg/Mqj/9z5S89A3ZEJVMpYC9h+xxOXAaZcuU5PCAM8m9Gqaz//RnKDBGDqW
-         9liyDLB1BwWzU+ZNcxIkUlAhEM4dwaxEWMetA5zngGXxvLUm9KzmX8yqMCHjIc+8qA1I
-         4Kz3jT1Z/FAcCfiuMTNuiLT9z2kiwc9S0x8YZz6OVlR8h69bqZIY4y5U2CziwyfAHt6S
-         8CcPZTmDK53Mwk0qwS3iX6X/MjsfAEfTAQNYo9qJOCNeLP9BFCn9fMgZ4bp/B5yi3zOB
-         uh6pK4X9QLjcA5W2PzdnflMG8qYA3C40MW87vpeyNAEv23qLtzsWi1Ofnp3dkIf+XH59
-         Buzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5RzApq6XFoztBnIqNk8vSnTrtbUfODyGJJfunMohfoM=;
-        b=XfFMKASWDwbS1tfH6/aGzAkgYma3mT7QzZ+k8Vk0HL6JvUrV2z2rirPYHwMGbDOliw
-         D6atRhiu1qGnIPYzOPhwM4Z8uf+ukrGbYmdO4gC57jVpdbZbt/n5Hpp0vxA7R88dFVbH
-         dqyA6WUgHhfY4mbaP7f57OvR0oTvGitZHAI2FjRo+IEPJUiKYq08Eg6Woz3SVdn6GWIg
-         hc0Ak1n1piL9Iz1aUy3uPkZvJA5ilTznm8lbLHleJ2TiWVuWMVhlc2+EPpJ2bB2JSE2r
-         dQM5MHOB71W0sYu92oWH6uh036M+jlSNANkvB8fqVx/4cIA3bnqpuKXZDhePDk+j8D01
-         6VSw==
-X-Gm-Message-State: APjAAAVJrIxnTQGesEfIUOqapeLOstGnSt3iWaJY0hf2ixBb8A5pqa3C
-        41RgyWDawwYO7OiavMDUax1zMXtMSQ6LTPWn69HJUQ==
-X-Google-Smtp-Source: APXvYqw9ObVuL9+XuGR4o0J2QBLrDkVcN3aYitNJvsGPbv5ZPcYvxRI6eCPCNx+pUD4yOvd0Fq+ICTQ9s+BKXhNpUpI=
-X-Received: by 2002:a9d:7248:: with SMTP id a8mr23671169otk.363.1564517704838;
- Tue, 30 Jul 2019 13:15:04 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190730192552.4014288-1-arnd@arndb.de> <20190730195819.901457-1-arnd@arndb.de>
-In-Reply-To: <20190730195819.901457-1-arnd@arndb.de>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Tue, 30 Jul 2019 13:14:52 -0700
-Message-ID: <CAPcyv4i_nHzV155RcgnAQ189aq2Lfd2g8pA1D5NbZqo9E_u+Dw@mail.gmail.com>
-Subject: Re: [PATCH v5 13/29] compat_ioctl: move more drivers to compat_ptr_ioctl
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-iio@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>,
-        linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        sparclinux@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        linux-scsi <linux-scsi@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>, qat-linux@intel.com,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        linux-input@vger.kernel.org, Darren Hart <dvhart@infradead.org>,
-        "Linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        linux-remoteproc@vger.kernel.org,
-        "moderated list:DMA BUFFER SHARING FRAMEWORK" 
-        <linaro-mm-sig@lists.linaro.org>,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        David Sterba <dsterba@suse.com>,
-        platform-driver-x86@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        USB list <linux-usb@vger.kernel.org>,
-        Linux Wireless List <linux-wireless@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        tee-dev@lists.linaro.org,
-        linux-crypto <linux-crypto@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-btrfs@vger.kernel.org
+        id S1728089AbfG3UPZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 16:15:25 -0400
+Received: from gate.crashing.org ([63.228.1.57]:33444 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727947AbfG3UPT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 16:15:19 -0400
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id x6UKF3aG026675;
+        Tue, 30 Jul 2019 15:15:04 -0500
+Message-ID: <fc55769bcacd45f8283f504b7d4332271da1436b.camel@kernel.crashing.org>
+Subject: Re: [PATCH v3] nvme-pci: Support shared tags across queues for
+ Apple 2018 controllers
+From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To:     Keith Busch <kbusch@kernel.org>
+Cc:     linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Paul Pawlowski <paul@mrarm.io>, Jens Axboe <axboe@fb.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Minwoo Im <minwoo.im.dev@gmail.com>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>
+Date:   Tue, 30 Jul 2019 13:15:03 -0700
+In-Reply-To: <20190730153044.GA13948@localhost.localdomain>
+References: <b1f9bdf0294b8d87d292de3c7462c8e99551b02d.camel@kernel.crashing.org>
+         <20190730153044.GA13948@localhost.localdomain>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 30, 2019 at 12:59 PM Arnd Bergmann <arnd@arndb.de> wrote:
->
-> The .ioctl and .compat_ioctl file operations have the same prototype so
-> they can both point to the same function, which works great almost all
-> the time when all the commands are compatible.
->
-> One exception is the s390 architecture, where a compat pointer is only
-> 31 bit wide, and converting it into a 64-bit pointer requires calling
-> compat_ptr(). Most drivers here will never run in s390, but since we now
-> have a generic helper for it, it's easy enough to use it consistently.
->
-> I double-checked all these drivers to ensure that all ioctl arguments
-> are used as pointers or are ignored, but are not interpreted as integer
-> values.
->
-> Acked-by: Jason Gunthorpe <jgg@mellanox.com>
-> Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-> Acked-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Acked-by: David Sterba <dsterba@suse.com>
-> Acked-by: Darren Hart (VMware) <dvhart@infradead.org>
-> Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/nvdimm/bus.c                        | 4 ++--
-[..]
-> diff --git a/drivers/nvdimm/bus.c b/drivers/nvdimm/bus.c
-> index 798c5c4aea9c..6ca142d833ab 100644
-> --- a/drivers/nvdimm/bus.c
-> +++ b/drivers/nvdimm/bus.c
-> @@ -1229,7 +1229,7 @@ static const struct file_operations nvdimm_bus_fops = {
->         .owner = THIS_MODULE,
->         .open = nd_open,
->         .unlocked_ioctl = bus_ioctl,
-> -       .compat_ioctl = bus_ioctl,
-> +       .compat_ioctl = compat_ptr_ioctl,
->         .llseek = noop_llseek,
->  };
->
-> @@ -1237,7 +1237,7 @@ static const struct file_operations nvdimm_fops = {
->         .owner = THIS_MODULE,
->         .open = nd_open,
->         .unlocked_ioctl = dimm_ioctl,
-> -       .compat_ioctl = dimm_ioctl,
-> +       .compat_ioctl = compat_ptr_ioctl,
->         .llseek = noop_llseek,
->  };
+On Tue, 2019-07-30 at 09:30 -0600, Keith Busch wrote:
+> On Fri, Jul 19, 2019 at 03:31:02PM +1000, Benjamin Herrenschmidt wrote:
+> > From 8dcba2ef5b1466b023b88b4eca463b30de78d9eb Mon Sep 17 00:00:00 2001
+> > From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> > Date: Fri, 19 Jul 2019 15:03:06 +1000
+> > Subject: 
+> > 
+> > Another issue with the Apple T2 based 2018 controllers seem to be
+> > that they blow up (and shut the machine down) if there's a tag
+> > collision between the IO queue and the Admin queue.
+> > 
+> > My suspicion is that they use our tags for their internal tracking
+> > and don't mix them with the queue id. They also seem to not like
+> > when tags go beyond the IO queue depth, ie 128 tags.
+> > 
+> > This adds a quirk that marks tags 0..31 of the IO queue reserved
+> > 
+> > Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> > ---
+> 
+> One problem is that we've an nvme parameter, io_queue_depth, that a user
+> could set to something less than 32, and then you won't be able to do
+> any IO. I'd recommend enforce the admin queue to QD1 for this device so
+> that you have more potential IO tags.
 
-Acked-by: Dan Williams <dan.j.williams@intel.com>
+Makes sense, I don't think we care much about the number of admin tags 
+on these devices.
+
+I'm travelling, not sure I'll be able to respin & test before next
+week.
+
+Thanks.
+
+Cheers,
+Ben.
+
