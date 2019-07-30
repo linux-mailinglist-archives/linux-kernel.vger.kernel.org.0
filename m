@@ -2,102 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF3097B30A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 21:13:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DE247B320
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 21:18:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728534AbfG3TNh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 15:13:37 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:37698 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388320AbfG3TN1 (ORCPT
+        id S1728504AbfG3TSJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 15:18:09 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:43324 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725935AbfG3TSJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 15:13:27 -0400
-Received: by mail-pl1-f194.google.com with SMTP id b3so29294621plr.4
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 12:13:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=djb+K5YV06tE6CuanEg0CCbjMrpDNzEbnLAfye7ZkSY=;
-        b=NEHgj6CUyhuGNXZT844G24GmkoVlxjwnp/ZZK+KeYPZYfnl+y2UvSztPruWijQ4cSI
-         kBY38ehlnCl9JH9OOX/JsC03zQgxQlLzWzBZnYs6E5MkdIvE+bVThcfwBcwDd1fydiyS
-         XhhW1KJvnX2Qrszc09rMS6Fb8iqbbIIl1pYec=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=djb+K5YV06tE6CuanEg0CCbjMrpDNzEbnLAfye7ZkSY=;
-        b=l1npUPsvYeCBncVcWS3uV5I7OBLKyp2VMwTOoar3nw4pD1k5fNNiD9Sp9ExDnDQfxb
-         apXkpleqmfccJdXTjMSC01EGm5KUkh9QHGsZRHSJZUOM8PbXtiJi6GO1iRSwwSQPvw4r
-         oScLc6gigNAAZpjHkhepdy5Jn95OGmIbbzExre/f6YlEtU09D8OrHydT2ncD4JJ2gLH6
-         EPZEGP1MsN/MjKS8mRLg5jFlnvANOgvldWeTsGgn1vRzVII6LdqJ5moHspfeyGQwDy7f
-         Y6+jJsgAmgCHb7n9MtTrTnaog4VUT7GKArFMXooTJxef3yEVADReGTWsRXM4aKfRSCbW
-         S+ig==
-X-Gm-Message-State: APjAAAVR8bNRzxbdv8Cuwd1unydt44J2DUS06UN130jOR41YtppiVHO7
-        7zlcMbDNKUWB6rFJhBzHgV0k9w==
-X-Google-Smtp-Source: APXvYqx7PDw4+udfJ0/X/aulEp6speZuvn3qPpw/ORb5g1xlvlm+szU4lbJM3sBZ+Qyz/KRfApdJug==
-X-Received: by 2002:a17:902:42a5:: with SMTP id h34mr120262792pld.16.1564514006452;
-        Tue, 30 Jul 2019 12:13:26 -0700 (PDT)
-Received: from skynet.sea.corp.google.com ([2620:0:1008:1100:c4b5:ec23:d87b:d6d3])
-        by smtp.gmail.com with ESMTPSA id n89sm84649540pjc.0.2019.07.30.12.13.25
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 30 Jul 2019 12:13:26 -0700 (PDT)
-From:   Thomas Garnier <thgarnie@chromium.org>
-To:     kernel-hardening@lists.openwall.com
-Cc:     kristen@linux.intel.com, keescook@chromium.org,
-        Thomas Garnier <thgarnie@chromium.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Tue, 30 Jul 2019 15:18:09 -0400
+Received: from X1 (unknown [76.191.170.112])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C324932A5;
+        Tue, 30 Jul 2019 19:18:03 +0000 (UTC)
+Date:   Tue, 30 Jul 2019 12:17:59 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Song Liu <songliubraving@fb.com>
+Cc:     Oleg Nesterov <oleg@redhat.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Matthew Wilcox <matthew.wilcox@oracle.com>,
         Peter Zijlstra <peterz@infradead.org>,
-        Nadav Amit <namit@vmware.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH v9 11/11] x86/alternatives: Adapt assembly for PIE support
-Date:   Tue, 30 Jul 2019 12:12:55 -0700
-Message-Id: <20190730191303.206365-12-thgarnie@chromium.org>
-X-Mailer: git-send-email 2.22.0.770.g0f2c4a37fd-goog
-In-Reply-To: <20190730191303.206365-1-thgarnie@chromium.org>
-References: <20190730191303.206365-1-thgarnie@chromium.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        "Steven Rostedt" <rostedt@goodmis.org>,
+        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        William Kucharski <william.kucharski@oracle.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: + uprobe-use-original-page-when-all-uprobes-are-removed.patch
+ added to -mm tree
+Message-Id: <20190730121759.41b4ddf25eb887fafa27fb28@linux-foundation.org>
+In-Reply-To: <40C3ABEE-B1D1-445B-9637-A2BD5ED9C316@fb.com>
+References: <20190726230333.drvM6x-wz%akpm@linux-foundation.org>
+        <20190729150539.GB11349@redhat.com>
+        <40C3ABEE-B1D1-445B-9637-A2BD5ED9C316@fb.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Change the assembly options to work with pointers instead of integers.
+On Mon, 29 Jul 2019 17:04:05 +0000 Song Liu <songliubraving@fb.com> wrote:
 
-Position Independent Executable (PIE) support will allow to extend the
-KASLR randomization range below 0xffffffff80000000.
+> > this assumes that __replace_page() can't fail, but it can. I think you
+> > should move this into into __replace_page().
+> 
+> Good catch! Let me fix it. 
+> 
+> Hi Andrew,
+> 
+> Do you prefer a whole v10 (1/4 to 4/4) or just newer version of this 
+> one (2/4)?
 
-Signed-off-by: Thomas Garnier <thgarnie@chromium.org>
----
- arch/x86/include/asm/alternative.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/arch/x86/include/asm/alternative.h b/arch/x86/include/asm/alternative.h
-index 094fbc9c0b1c..28a838106e5f 100644
---- a/arch/x86/include/asm/alternative.h
-+++ b/arch/x86/include/asm/alternative.h
-@@ -243,7 +243,7 @@ static inline int alternatives_text_reserved(void *start, void *end)
- /* Like alternative_io, but for replacing a direct call with another one. */
- #define alternative_call(oldfunc, newfunc, feature, output, input...)	\
- 	asm volatile (ALTERNATIVE("call %P[old]", "call %P[new]", feature) \
--		: output : [old] "i" (oldfunc), [new] "i" (newfunc), ## input)
-+		: output : [old] "X" (oldfunc), [new] "X" (newfunc), ## input)
- 
- /*
-  * Like alternative_call, but there are two features and respective functions.
-@@ -256,8 +256,8 @@ static inline int alternatives_text_reserved(void *start, void *end)
- 	asm volatile (ALTERNATIVE_2("call %P[old]", "call %P[new1]", feature1,\
- 		"call %P[new2]", feature2)				      \
- 		: output, ASM_CALL_CONSTRAINT				      \
--		: [old] "i" (oldfunc), [new1] "i" (newfunc1),		      \
--		  [new2] "i" (newfunc2), ## input)
-+		: [old] "X" (oldfunc), [new1] "X" (newfunc1),		      \
-+		  [new2] "X" (newfunc2), ## input)
- 
- /*
-  * use this macro(s) if you need more than one output parameter
--- 
-2.22.0.770.g0f2c4a37fd-goog
+Either is OK.  I guess just a new 2/4 is sufficient, if the difference
+is minor.
 
