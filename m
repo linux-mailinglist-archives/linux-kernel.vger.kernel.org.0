@@ -2,181 +2,276 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 501BC7AEAD
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 18:59:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 46FF57AEB4
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 19:00:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730342AbfG3Q7G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 12:59:06 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:33144 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730291AbfG3Q7F (ORCPT
+        id S1729670AbfG3Q6N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 12:58:13 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:44507 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729534AbfG3Q6K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 12:59:05 -0400
-Received: by mail-pf1-f195.google.com with SMTP id g2so30158679pfq.0
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 09:59:04 -0700 (PDT)
+        Tue, 30 Jul 2019 12:58:10 -0400
+Received: by mail-wr1-f67.google.com with SMTP id p17so66545299wrf.11;
+        Tue, 30 Jul 2019 09:58:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=bK/1HycOLv3l9GCBdqh/WjUXYJexoV9pk+GHZt0C6Ac=;
-        b=LryUJ6aR7Ls6umLU2c0xaqBjg/o/MzlTj4417kiyq2roWEma7geN5mJxbuY/Jf00J9
-         ktrdn0veTtvRLSkVpejjZUu/t5eUplpSPRh1QDfv9AutCkxbFMK72eZNn3kz68DJjXW1
-         Gt4mGQFiQJb6WpCh9bTjCWVu+/2JSOQkJxIvY=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=pe4ec5pV2/b2/7JNDbkQKJQUgbbpMxpp1q9fFRXxlfQ=;
+        b=g7phrpEs7w53BKnjWJiCPbEXKW5SDseHRxlS2KAHp63a9C/947Zk8KB9t1u16dPEt3
+         Q98DKWk/7uFCEHWU+k5zHCq6lnvw7xVH7hOlVAF+GXI37Cd7s5YJQuwKId15MA5YlxI3
+         l2UoJBdePJ0RqmdbU2WbWF2foNMeulIKMI2znn9EOs/2I0MBTXEODZSr4p+Hj61eew9z
+         imS/CPeQ8rERThJeuiUKCtuOGkNq8WrdsT3VIJYnE5lxpvL2jKhx8iBtW3WhPrkTcy1I
+         folMDPkcNY+W6FIH+Gb1TqnvLnErJWo3s1TDyBEyli0xhweSgvdWzr1ghIaeR09UnYYg
+         SQYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=bK/1HycOLv3l9GCBdqh/WjUXYJexoV9pk+GHZt0C6Ac=;
-        b=MGRxeGlMmWxwX4qM5sfzTOQPg7HP6sDh2p6+PZOvTujGiqsIC2NQuHIN6VeYgT/P/k
-         A1UPePnu81nPodUfZht+duFCKK9V1FrZeoN5LXn80u6ZN/OyKxdQGJr8lLT+nhuKwgDS
-         +wRLUYOm1UzzPUilR6yA19l9oOVOEGhkuycluyF2FdQWCzg2zRSn1lNgV7N3FLvGDKOC
-         fdBBCbCtOhxHDFlShzXBOF0GxYhDhjoqUBxSFLSqLez9yeSuhUUh5u0uXdXlB4BuaYAf
-         OrOHC0E8b7BtXMehz5QedE+ShDVqzTtKrN/SC063UcaftSYOGRQlCtOrvrXQTPkO+aW3
-         hvdA==
-X-Gm-Message-State: APjAAAUt6Jre51l3rnegeymaqJbzx18Ycg25d3BO3OoKv2+gIk5OEhxs
-        /9q0BBewWupFJE+vM/vu8s9BKg==
-X-Google-Smtp-Source: APXvYqxNp3jr+v7rzXATnUZUI4gIf9Q+cHqz9XXDLwNPmn4kf37JvaS/4SqJ2FDMXdo0AkhOW8TXhQ==
-X-Received: by 2002:a62:e901:: with SMTP id j1mr43659303pfh.189.1564505944415;
-        Tue, 30 Jul 2019 09:59:04 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id y194sm38405468pfg.116.2019.07.30.09.59.03
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 30 Jul 2019 09:59:03 -0700 (PDT)
-Date:   Tue, 30 Jul 2019 09:59:02 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Julian Wiedmann <jwi@linux.ibm.com>,
-        Ursula Braun <ubraun@linux.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] s390/net: Mark expected switch fall-throughs
-Message-ID: <201907300959.12D21B6F09@keescook>
-References: <20190730001715.GA20706@embeddedor>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=pe4ec5pV2/b2/7JNDbkQKJQUgbbpMxpp1q9fFRXxlfQ=;
+        b=Q9lkMJVcDk5d11mqRBLz9ilDH/2E2sAcU5tdpHlELSrvkJcxVk6/L5Oc+q1DLH7eBl
+         aLMnkiFTxD76B15hBPBjZ7ga+jRG8P5hbURgxUHhheOIFhjNPxJL60vs3O9QDNcDM/O/
+         L0QObl+Gb1sjLTerbCiwAVWX9Qr6AVb6QQH+7aVenm0dx3D6wQKCHInNBCh35/iq6HHf
+         45V1P7k1XxKDWALkWe7ncrLjkRDqq4gw3WGPpH40YeBS41iwgplg5ABG+wlT/Ka1gTCe
+         vzIiYOPVlkSMG9o35A3oPHd2klx28zOHsynyac9NiEG3xon8qBCY2OPqBJTuVufSb5Se
+         623w==
+X-Gm-Message-State: APjAAAX5zta6A1dSawOo4Kc3cHt/PZEqzWmX98Mh+nTCdb9F8gWC/ueb
+        pxKtpJWeup3Xhm5qjoXp2gA=
+X-Google-Smtp-Source: APXvYqxlpwBOOMhrRXpGocplLegHrlc83BpiIUuWi/XrGpdq8cx9SKpL+OcuRepHz/k3GIHTJVXAKA==
+X-Received: by 2002:adf:e841:: with SMTP id d1mr16256586wrn.204.1564505887813;
+        Tue, 30 Jul 2019 09:58:07 -0700 (PDT)
+Received: from localhost.localdomain (ppp91-78-220-99.pppoe.mtu-net.ru. [91.78.220.99])
+        by smtp.gmail.com with ESMTPSA id r5sm70845040wmh.35.2019.07.30.09.58.06
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Jul 2019 09:58:07 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Joseph Lo <josephl@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v9 00/15] memory: tegra: Introduce Tegra30 EMC driver
+Date:   Tue, 30 Jul 2019 19:56:03 +0300
+Message-Id: <20190730165618.10122-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190730001715.GA20706@embeddedor>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 29, 2019 at 07:17:15PM -0500, Gustavo A. R. Silva wrote:
-> Mark switch cases where we are expecting to fall through.
-> 
-> This patch fixes the following warnings (Building: s390):
-> 
-> drivers/s390/net/ctcm_fsms.c: In function ‘ctcmpc_chx_attnbusy’:
-> drivers/s390/net/ctcm_fsms.c:1703:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
->    if (grp->changed_side == 1) {
->       ^
-> drivers/s390/net/ctcm_fsms.c:1707:2: note: here
->   case MPCG_STATE_XID0IOWAIX:
->   ^~~~
-> 
-> drivers/s390/net/ctcm_mpc.c: In function ‘ctc_mpc_alloc_channel’:
-> drivers/s390/net/ctcm_mpc.c:358:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
->    if (callback)
->       ^
-> drivers/s390/net/ctcm_mpc.c:360:2: note: here
->   case MPCG_STATE_XID0IOWAIT:
->   ^~~~
-> 
-> drivers/s390/net/ctcm_mpc.c: In function ‘mpc_action_timeout’:
-> drivers/s390/net/ctcm_mpc.c:1469:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
->    if ((fsm_getstate(rch->fsm) == CH_XID0_PENDING) &&
->       ^
-> drivers/s390/net/ctcm_mpc.c:1472:2: note: here
->   default:
->   ^~~~~~~
-> drivers/s390/net/ctcm_mpc.c: In function ‘mpc_send_qllc_discontact’:
-> drivers/s390/net/ctcm_mpc.c:2087:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
->    if (grp->estconnfunc) {
->       ^
-> drivers/s390/net/ctcm_mpc.c:2092:2: note: here
->   case MPCG_STATE_FLOWC:
->   ^~~~
-> 
-> drivers/s390/net/qeth_l2_main.c: In function ‘qeth_l2_process_inbound_buffer’:
-> drivers/s390/net/qeth_l2_main.c:328:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
->     if (IS_OSN(card)) {
->        ^
-> drivers/s390/net/qeth_l2_main.c:337:3: note: here
->    default:
->    ^~~~~~~
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Hello,
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
+This series introduces driver for the External Memory Controller (EMC)
+found on Tegra30 chips, it controls the external DRAM on the board. The
+purpose of this driver is to program memory timing for external memory on
+the EMC clock rate change. The driver was tested using the ACTMON devfreq
+driver that performs memory frequency scaling based on memory-usage load.
 
--Kees
+Changelog:
 
-> ---
->  drivers/s390/net/ctcm_fsms.c    | 1 +
->  drivers/s390/net/ctcm_mpc.c     | 3 +++
->  drivers/s390/net/qeth_l2_main.c | 2 +-
->  3 files changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/s390/net/ctcm_fsms.c b/drivers/s390/net/ctcm_fsms.c
-> index 1b4ee570b712..4a8a5373cb35 100644
-> --- a/drivers/s390/net/ctcm_fsms.c
-> +++ b/drivers/s390/net/ctcm_fsms.c
-> @@ -1704,6 +1704,7 @@ static void ctcmpc_chx_attnbusy(fsm_instance *fsm, int event, void *arg)
->  			grp->changed_side = 2;
->  			break;
->  		}
-> +		/* Else, fall through */
->  	case MPCG_STATE_XID0IOWAIX:
->  	case MPCG_STATE_XID7INITW:
->  	case MPCG_STATE_XID7INITX:
-> diff --git a/drivers/s390/net/ctcm_mpc.c b/drivers/s390/net/ctcm_mpc.c
-> index e02f295d38a9..1534420a0243 100644
-> --- a/drivers/s390/net/ctcm_mpc.c
-> +++ b/drivers/s390/net/ctcm_mpc.c
-> @@ -357,6 +357,7 @@ int ctc_mpc_alloc_channel(int port_num, void (*callback)(int, int))
->  		/*fsm_newstate(grp->fsm, MPCG_STATE_XID2INITW);*/
->  		if (callback)
->  			grp->send_qllc_disc = 1;
-> +		/* Else, fall through */
->  	case MPCG_STATE_XID0IOWAIT:
->  		fsm_deltimer(&grp->timer);
->  		grp->outstanding_xid2 = 0;
-> @@ -1469,6 +1470,7 @@ static void mpc_action_timeout(fsm_instance *fi, int event, void *arg)
->  		if ((fsm_getstate(rch->fsm) == CH_XID0_PENDING) &&
->  		   (fsm_getstate(wch->fsm) == CH_XID0_PENDING))
->  			break;
-> +		/* Else, fall through */
->  	default:
->  		fsm_event(grp->fsm, MPCG_EVENT_INOP, dev);
->  	}
-> @@ -2089,6 +2091,7 @@ static int mpc_send_qllc_discontact(struct net_device *dev)
->  			grp->estconnfunc = NULL;
->  			break;
->  		}
-> +		/* Else, fall through */
->  	case MPCG_STATE_FLOWC:
->  	case MPCG_STATE_READY:
->  		grp->send_qllc_disc = 2;
-> diff --git a/drivers/s390/net/qeth_l2_main.c b/drivers/s390/net/qeth_l2_main.c
-> index fd64bc3f4062..cbead3d1b2fd 100644
-> --- a/drivers/s390/net/qeth_l2_main.c
-> +++ b/drivers/s390/net/qeth_l2_main.c
-> @@ -333,7 +333,7 @@ static int qeth_l2_process_inbound_buffer(struct qeth_card *card,
->  				card->osn_info.data_cb(skb);
->  				break;
->  			}
-> -			/* else unknown */
-> +			/* Else, fall through */
->  		default:
->  			dev_kfree_skb_any(skb);
->  			QETH_CARD_TEXT(card, 3, "inbunkno");
-> -- 
-> 2.22.0
-> 
+v9: - Fixed memory corruption bug that was uncovered after introducing
+      some extra optimizations to the devfreq driver that allows CPU
+      to stay longer in the LP2 cpuidle state. The corruption is caused by
+      a very late AUTO-REFRESH re-enabling due to a possible schedule on
+      waiting for clk-change completion, the re-enabling is now a part of
+      "EMC exec-after-clkchange" hardware sequence.
+
+    - Added "type: object" to T124 MC YAML, that was missed in v8 by accident.
+
+v8: - Added two new patches:
+
+        memory: tegra20-emc: Increase handshake timeout
+        memory: tegra20-emc: wait_for_completion_timeout() doesn't return error
+
+      Turned out that memory-clk handshake may take much more time under
+      some circumstances. The second patch is a minor cleanup. The same
+      changes are also applied to the Terga30 EMC driver addition-patch.
+
+      The pattern-properties of YAML bindings gained "type: object", for
+      consistency.
+
+v7: - Addressed review comments that were made by Rob Herring to v6 by
+      removing old Terga30 Memory Controller binding once it's converted
+      to YAML, by using explicit patterns for the sub-nodes and specifying
+      min/max clock rates in the YAML.
+
+    - Two patches that were added in v6 are removed from the series:
+
+        clk: tegra20: emc: Add tegra20_clk_emc_on_pllp()
+        ARM: tegra30: cpuidle: Don't enter LP2 on CPU0 when EMC runs off PLLP
+
+      Because the problem with the PLLP is resolved now, turned out it was
+      a bug in the CPU-suspend code.
+
+    - The "Introduce Tegra30 EMC driver" patch got a fix for the "Same Freq"
+      bit typo, it's a bit 27 and not 16.
+
+v6: - Tegra124 Memory Controller binding factored out into standalone
+      binding because it requires to specify MC_EMEM_ARB_MISC1 for EMEM
+      programming, which is not required for Tegra30. This makes the
+      upstream MC registers specification to match downstream exactly,
+      easing porting of boards memory timings configuration to upstream.
+
+    - Tegra30/124 Memory Controller binding converted to YAML.
+
+    - Tegra30 External Memory Controller binding now is in YAML format.
+
+    - Added workaround for hanging during LP2 when EMC runs off PLLP on
+      Tegra30 in this new patches:
+
+        clk: tegra20: emc: Add tegra20_clk_emc_on_pllp()
+        ARM: tegra30: cpuidle: Don't enter LP2 on CPU0 when EMC runs off PLLP
+
+    - Added info message to the Tegra20/30 EMC drivers, telling about
+      RAM code and a number of available timings:
+
+        memory: tegra20-emc: Print a brief info message about the timings
+
+v5: - Addressed review comments that were made by Thierry Reding to v4 by
+      adding appropriate copyrights to the source code headers and making
+      Tegra30 EMC driver to use common Tegra20 CLK API directly instead
+      of having a dummy-proxy functions specifically for Tegra30.
+
+    - Addressed review comments that were made by Stephen Boyd to v4 by
+      rewording commit message of the "Add custom EMC clock implementation"
+      patch and adding clarifying comment (to that patch as well) which
+      tells why EMC is a critical clock.
+
+    - Added suspend-resume to Tegra30 EMC driver to error out if EMC driver
+      is in a "bad state" as it will likely cause a hang on entering suspend.
+
+    - Dropped patch "tegra20-emc: Replace clk_get_sys with devm_clk_get"
+      because the replaced clocks are actually should be removed altogether
+      in the "Drop setting EMC rate to max on probe" patch and that was
+      missed by an accident.
+
+    - Added "tegra20-emc: Pre-configure debug register" patch which ensures
+      that inappropriate HW debug features are disabled at a probe time.
+      The same change is also made in the "Introduce Tegra30 EMC driver"
+      patch.
+
+    - Added ACKs to the patches from Peter De Schrijver that he gave to v4
+      since all of the v5 changes are actually very minor.
+
+v4: - Addressed review comments that were made by Peter De Schrijver to v3
+      by adding fence_udelay() after writes in the "Add custom EMC clock
+      implementation" patch.
+
+    - Added two new minor patches:
+
+        memory: tegra: Ensure timing control debug features are disabled
+        memory: tegra: Consolidate registers definition into one place
+
+      The first one is needed to ensure that EMC driver will work
+      properly regardless of hardware configuration left after boot.
+      The second patch is just a minor code cleanup.
+
+    - The "Introduce Tegra30 EMC driver" got also few very minor changes.
+      Now every possible error case is handled, nothing is ignored.
+      The EMC_DBG register is explicitly initialized during probe to be
+      on the safe side.
+
+v3: - Addressed review comments that were made by Stephen Boyd to v2 by
+      adding explicit typing for the callback variable, by including
+      "clk-provider.h" directly in the code and by dropping __clk_lookup
+      usage where possible.
+
+    - Added more patches into this series:
+
+        memory: tegra20-emc: Drop setting EMC rate to max on probe
+        memory: tegra20-emc: Adapt for clock driver changes
+        memory: tegra20-emc: Include io.h instead of iopoll.h
+        memory: tegra20-emc: Replace clk_get_sys with devm_clk_get
+
+      Initially I was going to include these patches into other patchset,
+      but changed my mind after rearranging things a tad. The "Adapt for
+      clock driver changes" patch is directly related to the clock changes
+      done in the first patch of this series, the rest are minor cleanups
+      that are fine to include here as well.
+
+    - Added some more words to the commit message of "Add binding for NVIDIA
+      Tegra30 External Memory Controller" patch, clarifying why common DDR
+      timing device-tree form isn't suitable for Tegra30.
+
+    - The Tegra30 EMC driver now explicitly selects the registers access
+      mode (EMC_DBG mux), not relying on the setting left from bootloader.
+
+v2: - Added support for changing MC clock diver configuration based on
+      Memory Controller (MC) configuration which is part of the memory
+      timing.
+
+    - Merged the "Add custom EMC clock implementation" patch into this
+      series because the "Introduce Tegra30 EMC driver" patch directly
+      depends on it. Please note that Tegra20 EMC driver will need to be
+      adapted for the clock changes as well, I'll send out the Tegra20
+      patches after this series will be applied because of some other
+      dependencies (devfreq) and because the temporary breakage won't
+      be critical (driver will just error out on probe).
+
+    - EMC driver now performs MC configuration validation by checking
+      that the number of MC / EMC timings matches and that the timings
+      rate is the same.
+
+    - EMC driver now supports timings that want to change the MC clock
+      configuration.
+
+    - Other minor prettifying changes of the code.
+
+Dmitry Osipenko (15):
+  clk: tegra20/30: Add custom EMC clock implementation
+  memory: tegra20-emc: Drop setting EMC rate to max on probe
+  memory: tegra20-emc: Adapt for clock driver changes
+  memory: tegra20-emc: Include io.h instead of iopoll.h
+  memory: tegra20-emc: Pre-configure debug register
+  memory: tegra20-emc: Print a brief info message about the timings
+  memory: tegra20-emc: Increase handshake timeout
+  memory: tegra20-emc: wait_for_completion_timeout() doesn't return
+    error
+  dt-bindings: memory: tegra30: Convert to Tegra124 YAML
+  dt-bindings: memory: Add binding for NVIDIA Tegra30 Memory Controller
+  dt-bindings: memory: Add binding for NVIDIA Tegra30 External Memory
+    Controller
+  memory: tegra: Introduce Tegra30 EMC driver
+  memory: tegra: Ensure timing control debug features are disabled
+  memory: tegra: Consolidate registers definition into common header
+  ARM: dts: tegra30: Add External Memory Controller node
+
+ .../nvidia,tegra124-mc.yaml                   |  158 +++
+ .../nvidia,tegra30-emc.yaml                   |  341 +++++
+ .../memory-controllers/nvidia,tegra30-mc.txt  |  123 --
+ .../memory-controllers/nvidia,tegra30-mc.yaml |  173 +++
+ arch/arm/boot/dts/tegra30.dtsi                |    9 +
+ drivers/clk/tegra/Makefile                    |    2 +
+ drivers/clk/tegra/clk-tegra20-emc.c           |  293 ++++
+ drivers/clk/tegra/clk-tegra20.c               |   55 +-
+ drivers/clk/tegra/clk-tegra30.c               |   38 +-
+ drivers/clk/tegra/clk.h                       |    3 +
+ drivers/memory/tegra/Kconfig                  |   10 +
+ drivers/memory/tegra/Makefile                 |    1 +
+ drivers/memory/tegra/mc.c                     |   42 +-
+ drivers/memory/tegra/mc.h                     |   74 +-
+ drivers/memory/tegra/tegra124.c               |   20 -
+ drivers/memory/tegra/tegra20-emc.c            |  134 +-
+ drivers/memory/tegra/tegra30-emc.c            | 1229 +++++++++++++++++
+ drivers/memory/tegra/tegra30.c                |   23 +
+ include/linux/clk/tegra.h                     |   11 +
+ include/soc/tegra/mc.h                        |    2 +-
+ 20 files changed, 2428 insertions(+), 313 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra124-mc.yaml
+ create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra30-emc.yaml
+ delete mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra30-mc.txt
+ create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra30-mc.yaml
+ create mode 100644 drivers/clk/tegra/clk-tegra20-emc.c
+ create mode 100644 drivers/memory/tegra/tegra30-emc.c
 
 -- 
-Kees Cook
+2.22.0
+
