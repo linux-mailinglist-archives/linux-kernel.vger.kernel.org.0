@@ -2,25 +2,25 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90E067AC02
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 17:10:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C2B8A7AC05
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 17:11:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732185AbfG3PKd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 11:10:33 -0400
-Received: from mxout014.mail.hostpoint.ch ([217.26.49.174]:40785 "EHLO
+        id S1732216AbfG3PLi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 11:11:38 -0400
+Received: from mxout014.mail.hostpoint.ch ([217.26.49.174]:40999 "EHLO
         mxout014.mail.hostpoint.ch" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726602AbfG3PKd (ORCPT
+        by vger.kernel.org with ESMTP id S1726602AbfG3PLi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 11:10:33 -0400
+        Tue, 30 Jul 2019 11:11:38 -0400
 Received: from [10.0.2.46] (helo=asmtp013.mail.hostpoint.ch)
         by mxout014.mail.hostpoint.ch with esmtp (Exim 4.92 (FreeBSD))
         (envelope-from <dev@pschenker.ch>)
-        id 1hsTP1-0005M1-Rp; Tue, 30 Jul 2019 16:46:59 +0200
+        id 1hsTP2-0005MD-Fw; Tue, 30 Jul 2019 16:47:00 +0200
 Received: from [46.140.72.82] (helo=philippe-pc.toradex.int)
         by asmtp013.mail.hostpoint.ch with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
         (Exim 4.91 (FreeBSD))
         (envelope-from <dev@pschenker.ch>)
-        id 1hsTP1-000Mva-Me; Tue, 30 Jul 2019 16:46:59 +0200
+        id 1hsTP2-000Mva-92; Tue, 30 Jul 2019 16:47:00 +0200
 X-Authenticated-Sender-Id: dev@pschenker.ch
 From:   Philippe Schenker <dev@pschenker.ch>
 To:     marcel.ziswiler@toradex.com, max.krummenacher@toradex.com,
@@ -28,16 +28,15 @@ To:     marcel.ziswiler@toradex.com, max.krummenacher@toradex.com,
         Rob Herring <robh+dt@kernel.org>,
         Shawn Guo <shawnguo@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
-Cc:     Stefan Agner <stefan.agner@toradex.com>,
-        Philippe Schenker <philippe.schenker@toradex.com>,
+Cc:     Philippe Schenker <philippe.schenker@toradex.com>,
         Fabio Estevam <festevam@gmail.com>,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Pengutronix Kernel Team <kernel@pengutronix.de>,
         NXP Linux Team <linux-imx@nxp.com>,
         Sascha Hauer <s.hauer@pengutronix.de>
-Subject: [PATCH 07/22] ARM: dts: imx7-colibri: fix 1.8V/UHS support
-Date:   Tue, 30 Jul 2019 16:46:34 +0200
-Message-Id: <20190730144649.19022-8-dev@pschenker.ch>
+Subject: [PATCH 08/22] ARM: dts: imx7-colibri: Add touch controllers
+Date:   Tue, 30 Jul 2019 16:46:35 +0200
+Message-Id: <20190730144649.19022-9-dev@pschenker.ch>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190730144649.19022-1-dev@pschenker.ch>
 References: <20190730144649.19022-1-dev@pschenker.ch>
@@ -48,59 +47,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stefan Agner <stefan.agner@toradex.com>
+From: Philippe Schenker <philippe.schenker@toradex.com>
 
-Add pinmuxing and do not specify voltage restrictions in the
-module level device tree.
+Add atmel mxt multitouch controller and TouchRevolution multitouch
+controller which are connected over an I2C bus.
 
-Signed-off-by: Stefan Agner <stefan.agner@toradex.com>
 Signed-off-by: Philippe Schenker <philippe.schenker@toradex.com>
 ---
 
- arch/arm/boot/dts/imx7-colibri.dtsi | 23 ++++++++++++++++++++++-
- 1 file changed, 22 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/imx7-colibri-eval-v3.dtsi | 37 +++++++++++++++++++++
+ 1 file changed, 37 insertions(+)
 
-diff --git a/arch/arm/boot/dts/imx7-colibri.dtsi b/arch/arm/boot/dts/imx7-colibri.dtsi
-index 16d1a1ed1aff..67f5e0c87fdc 100644
---- a/arch/arm/boot/dts/imx7-colibri.dtsi
-+++ b/arch/arm/boot/dts/imx7-colibri.dtsi
-@@ -326,7 +326,6 @@
- &usdhc1 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_usdhc1 &pinctrl_cd_usdhc1>;
--	no-1-8-v;
- 	cd-gpios = <&gpio1 0 GPIO_ACTIVE_LOW>;
- 	disable-wp;
- 	vqmmc-supply = <&reg_LDO2>;
-@@ -671,6 +670,28 @@
- 		>;
- 	};
+diff --git a/arch/arm/boot/dts/imx7-colibri-eval-v3.dtsi b/arch/arm/boot/dts/imx7-colibri-eval-v3.dtsi
+index d4dbc4fc1adf..f6cbbe876532 100644
+--- a/arch/arm/boot/dts/imx7-colibri-eval-v3.dtsi
++++ b/arch/arm/boot/dts/imx7-colibri-eval-v3.dtsi
+@@ -145,6 +145,34 @@
+ &i2c4 {
+ 	status = "okay";
  
-+	pinctrl_usdhc1_100mhz: usdhc1grp_100mhz {
-+		fsl,pins = <
-+			MX7D_PAD_SD1_CMD__SD1_CMD	0x5a
-+			MX7D_PAD_SD1_CLK__SD1_CLK	0x1a
-+			MX7D_PAD_SD1_DATA0__SD1_DATA0	0x5a
-+			MX7D_PAD_SD1_DATA1__SD1_DATA1	0x5a
-+			MX7D_PAD_SD1_DATA2__SD1_DATA2	0x5a
-+			MX7D_PAD_SD1_DATA3__SD1_DATA3	0x5a
-+		>;
++	/*
++	 * the PCAPs use SODIMM 28/30, also used for PWM<B>, PWM<C>, aka pwm2,
++	 * pwm3. so if you enable one of the PCAP controllers disable the pwms
++	 */
++	atmel_mxt_ts: atmel_mxt_ts@4a {
++		compatible = "atmel,maxtouch";
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinctrl_gpiotouch>;
++		reg = <0x4a>;
++		interrupt-parent = <&gpio1>;
++		interrupts = <9 IRQ_TYPE_EDGE_FALLING>; /* SODIMM 28 */
++		reset-gpios = <&gpio1 10 GPIO_ACTIVE_HIGH>; /* SODIMM 30 */
++		status = "disabled";
 +	};
 +
-+	pinctrl_usdhc1_200mhz: usdhc1grp_200mhz {
-+		fsl,pins = <
-+			MX7D_PAD_SD1_CMD__SD1_CMD	0x5b
-+			MX7D_PAD_SD1_CLK__SD1_CLK	0x1b
-+			MX7D_PAD_SD1_DATA0__SD1_DATA0	0x5b
-+			MX7D_PAD_SD1_DATA1__SD1_DATA1	0x5b
-+			MX7D_PAD_SD1_DATA2__SD1_DATA2	0x5b
-+			MX7D_PAD_SD1_DATA3__SD1_DATA3	0x5b
-+		>;
++	touch: touchrevf0710a@10 {
++		compatible = "touchrevolution,fusion-f0710a";
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinctrl_gpiotouch>;
++		reg = <0x10>;
++			/* SODIMM 28, Pen down interrupt */
++		gpios = <&gpio1 9 GPIO_ACTIVE_HIGH
++			/* SODIMM 30, Reset interrupt */
++			 &gpio1 10 GPIO_ACTIVE_LOW
++			>;
++		status = "disabled";
 +	};
 +
- 	pinctrl_usdhc3: usdhc3grp {
- 		fsl,pins = <
- 			MX7D_PAD_SD3_CMD__SD3_CMD		0x59
+ 	/* M41T0M6 real time clock on carrier board */
+ 	rtc: m41t0m6@68 {
+ 		compatible = "st,m41t0";
+@@ -200,3 +228,12 @@
+ 	vmmc-supply = <&reg_3v3>;
+ 	status = "okay";
+ };
++
++&iomuxc {
++	pinctrl_gpiotouch: touchgpios {
++		fsl,pins = <
++			MX7D_PAD_GPIO1_IO09__GPIO1_IO9		0x74
++			MX7D_PAD_GPIO1_IO10__GPIO1_IO10		0x14
++		>;
++	};
++};
 -- 
 2.22.0
 
