@@ -2,59 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7EC27B302
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 21:13:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 572357B30E
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 21:14:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388029AbfG3TNS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 15:13:18 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:39809 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727582AbfG3TNP (ORCPT
+        id S2388101AbfG3TNU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 15:13:20 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:42202 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728185AbfG3TNQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 15:13:15 -0400
-Received: by mail-pl1-f195.google.com with SMTP id b7so29310752pls.6
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 12:13:14 -0700 (PDT)
+        Tue, 30 Jul 2019 15:13:16 -0400
+Received: by mail-pf1-f194.google.com with SMTP id q10so30321356pff.9
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 12:13:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=W0NzhAJDW6f6zv48MhA58X21t6ZEAVN81pjWGMonLUQ=;
-        b=OjB3x2X1IjXnZyRT0y4ci0Z+ZmocMVw3jXB+231CIxuQ+Vi+vnoHGPII6xu43tIQCC
-         izbGp42+Tr1lJM8CDyrUkPzRGeM0gleYKorJYw2ygKdUkeHux+isppWd00bdLc2rwBsV
-         7BjDP8/gm1rSJVMA09kWAibgoOJb+bvzAzmtA=
+        bh=g8F81aPRcXP2Hl/h5880SBWLCYrdCb9mGhwAq1nau08=;
+        b=dUh629CxLDWe2ICkvFeC4qXjIQGvvsjijYV4+IzjvPROpIi+iYdIzNRfF6AXW9yD7j
+         6av49IFog/hErgPxDo8LO6KszfGUsQuRVtAukrJN89JRjJOTeTiYRi4ZcCu0cfmC3eUo
+         7R5M5POv61QFetY8gle4w1aDZ1RV9FSIBJtlE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=W0NzhAJDW6f6zv48MhA58X21t6ZEAVN81pjWGMonLUQ=;
-        b=OmqVMDgAbg1+cq+Z7R8RIFjLIP/NmuPjchL6GZhSnjJ58t+z0NPfrSN+c50a4dwHwW
-         2sFGP/6nH4likls3VBWaSe5zdW3GvVMUKklUoLDN3NsgjzAqy4emv/GLpPfsfFJeJMAN
-         p6CCVD4huUsi/Bh3tb01rIAlJ0v87wHIUO0bHyn0Lk9G/YtiBMns+HnNlOyULZi5jKZK
-         EstmX+zRGQXynwNaw3tduYWwYCMtGvQmeAi9DkjIFn78T7cYdvRDaqxgdax7hwPpH2xc
-         wWKoDLuVVjr6NBlD0svutK866KaLbgtuq0YarUmPl3fPqiOlC3gZNFg5nL94DC3VIEPf
-         Mosw==
-X-Gm-Message-State: APjAAAVLklakqBchj3neZbEzsThDKxn0Ga16YIwb4YhyF3lIjlVC+7YV
-        M5U3Z+ZkguBnnu4Cg13Q03zhvQ==
-X-Google-Smtp-Source: APXvYqwsIu5EjDisGZPc1G7mJNiIJ7XnbgYepkvqZhs11fZLulhf+xJkltnPFGWfc108tM55QvLPhQ==
-X-Received: by 2002:a17:902:2ae7:: with SMTP id j94mr116539349plb.270.1564513994552;
-        Tue, 30 Jul 2019 12:13:14 -0700 (PDT)
+        bh=g8F81aPRcXP2Hl/h5880SBWLCYrdCb9mGhwAq1nau08=;
+        b=sIJuqaBNthkfHIFzFqjkfUa15s4ip/Pc1chUCV/CnzXGmeYCZ24BswyoMXjU3lXu5J
+         JIz9FhpWY0wCKMolhV+9C40NEnjG9LrVjjp0vF9dGWvecEAMbq0nzm0pFBCBD3xVmgwV
+         HGlDbc3+Y32/zUPACfidyZTr6cI+oLfddj8VaENxx3kYZCvOBtQjmT00huB9qOw4RjPO
+         BrcZTVxSkgJ+KBacqkkuR8I/6kPLShEFMZuOJO350k6rFduceogjba3JGLl32nbZSghY
+         XFScVthx/Ry6Dvxq4LU5N2WFDm+28GmMrOLTo3pJY+y3iynwll17YISMPasO7Gjrdg1H
+         qZ1g==
+X-Gm-Message-State: APjAAAUODclboLXIyEIbxHKPdQyycEs7+rsSeD16eyFCsy3XO8lx1HFT
+        2cTzzxWY086y1VGJL3Lg1CKpwA==
+X-Google-Smtp-Source: APXvYqwGmbprmSHopN+BDz1XZeLfq9alpJ09UTr1PphowM1pkkwfMHHOEjFK6E/ulqm8Y3g/IHWAbQ==
+X-Received: by 2002:a65:6108:: with SMTP id z8mr78911177pgu.289.1564513995418;
+        Tue, 30 Jul 2019 12:13:15 -0700 (PDT)
 Received: from skynet.sea.corp.google.com ([2620:0:1008:1100:c4b5:ec23:d87b:d6d3])
-        by smtp.gmail.com with ESMTPSA id n89sm84649540pjc.0.2019.07.30.12.13.13
+        by smtp.gmail.com with ESMTPSA id n89sm84649540pjc.0.2019.07.30.12.13.14
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 30 Jul 2019 12:13:14 -0700 (PDT)
+        Tue, 30 Jul 2019 12:13:15 -0700 (PDT)
 From:   Thomas Garnier <thgarnie@chromium.org>
 To:     kernel-hardening@lists.openwall.com
 Cc:     kristen@linux.intel.com, keescook@chromium.org,
         Thomas Garnier <thgarnie@chromium.org>,
+        Andy Lutomirski <luto@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Allison Randal <allison@lohutok.net>,
-        Alexios Zavras <alexios.zavras@intel.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v9 03/11] x86: relocate_kernel - Adapt assembly for PIE support
-Date:   Tue, 30 Jul 2019 12:12:47 -0700
-Message-Id: <20190730191303.206365-4-thgarnie@chromium.org>
+Subject: [PATCH v9 04/11] x86/entry/64: Adapt assembly for PIE support
+Date:   Tue, 30 Jul 2019 12:12:48 -0700
+Message-Id: <20190730191303.206365-5-thgarnie@chromium.org>
 X-Mailer: git-send-email 2.22.0.770.g0f2c4a37fd-goog
 In-Reply-To: <20190730191303.206365-1-thgarnie@chromium.org>
 References: <20190730191303.206365-1-thgarnie@chromium.org>
@@ -65,7 +64,7 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Change the assembly code to use only absolute references of symbols for the
+Change the assembly code to use only relative references of symbols for the
 kernel to be PIE compatible.
 
 Position Independent Executable (PIE) support will allow to extend the
@@ -74,22 +73,59 @@ KASLR randomization range below 0xffffffff80000000.
 Signed-off-by: Thomas Garnier <thgarnie@chromium.org>
 Reviewed-by: Kees Cook <keescook@chromium.org>
 ---
- arch/x86/kernel/relocate_kernel_64.S | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/entry/entry_64.S | 16 +++++++++++-----
+ 1 file changed, 11 insertions(+), 5 deletions(-)
 
-diff --git a/arch/x86/kernel/relocate_kernel_64.S b/arch/x86/kernel/relocate_kernel_64.S
-index c51ccff5cd01..c72889b09840 100644
---- a/arch/x86/kernel/relocate_kernel_64.S
-+++ b/arch/x86/kernel/relocate_kernel_64.S
-@@ -206,7 +206,7 @@ identity_mapped:
- 	movq	%rax, %cr3
- 	lea	PAGE_SIZE(%r8), %rsp
- 	call	swap_pages
--	movq	$virtual_mapped, %rax
-+	movabsq	$virtual_mapped, %rax
- 	pushq	%rax
- 	ret
+diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
+index 3f5a978a02a7..4b588a902009 100644
+--- a/arch/x86/entry/entry_64.S
++++ b/arch/x86/entry/entry_64.S
+@@ -1317,7 +1317,8 @@ ENTRY(error_entry)
+ 	movl	%ecx, %eax			/* zero extend */
+ 	cmpq	%rax, RIP+8(%rsp)
+ 	je	.Lbstep_iret
+-	cmpq	$.Lgs_change, RIP+8(%rsp)
++	leaq	.Lgs_change(%rip), %rcx
++	cmpq	%rcx, RIP+8(%rsp)
+ 	jne	.Lerror_entry_done
  
+ 	/*
+@@ -1514,10 +1515,10 @@ ENTRY(nmi)
+ 	 * resume the outer NMI.
+ 	 */
+ 
+-	movq	$repeat_nmi, %rdx
++	leaq	repeat_nmi(%rip), %rdx
+ 	cmpq	8(%rsp), %rdx
+ 	ja	1f
+-	movq	$end_repeat_nmi, %rdx
++	leaq	end_repeat_nmi(%rip), %rdx
+ 	cmpq	8(%rsp), %rdx
+ 	ja	nested_nmi_out
+ 1:
+@@ -1571,7 +1572,8 @@ nested_nmi:
+ 	pushq	%rdx
+ 	pushfq
+ 	pushq	$__KERNEL_CS
+-	pushq	$repeat_nmi
++	leaq	repeat_nmi(%rip), %rdx
++	pushq	%rdx
+ 
+ 	/* Put stack back */
+ 	addq	$(6*8), %rsp
+@@ -1610,7 +1612,11 @@ first_nmi:
+ 	addq	$8, (%rsp)	/* Fix up RSP */
+ 	pushfq			/* RFLAGS */
+ 	pushq	$__KERNEL_CS	/* CS */
+-	pushq	$1f		/* RIP */
++	pushq	$0		/* Future return address */
++	pushq	%rax		/* Save RAX */
++	leaq	1f(%rip), %rax	/* RIP */
++	movq    %rax, 8(%rsp)   /* Put 1f on return address */
++	popq	%rax		/* Restore RAX */
+ 	iretq			/* continues at repeat_nmi below */
+ 	UNWIND_HINT_IRET_REGS
+ 1:
 -- 
 2.22.0.770.g0f2c4a37fd-goog
 
