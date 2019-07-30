@@ -2,87 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D2D27A5A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 12:10:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 628037A5AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 12:10:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732450AbfG3KKN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 06:10:13 -0400
-Received: from icp-osb-irony-out1.external.iinet.net.au ([203.59.1.210]:44702
-        "EHLO icp-osb-irony-out1.external.iinet.net.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729648AbfG3KKK (ORCPT
+        id S1732464AbfG3KKX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 06:10:23 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:44221 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726078AbfG3KKX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 06:10:10 -0400
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2AIBgDsFkBd/1/rO8tmghmDVSESFxO?=
- =?us-ascii?q?NGogdAYJDAYkskRsJAQEBAQEBAQEBGxwBAYQ6BAICgmQ3Bg4BAwEBAQQBAQE?=
- =?us-ascii?q?BBQFthGVFhUsGJy8zPxJXBxKDIoF3E61XM4QGAYRygUiBNIcJhG6BQD+DdWy?=
- =?us-ascii?q?EAwobhX8ElTqVQwmBJXeUGBmYEYtkgVmZaCKBWE0fGYMngnmNVkQ1MIt0glI?=
- =?us-ascii?q?BAQ?=
-X-IPAS-Result: =?us-ascii?q?A2AIBgDsFkBd/1/rO8tmghmDVSESFxONGogdAYJDAYksk?=
- =?us-ascii?q?RsJAQEBAQEBAQEBGxwBAYQ6BAICgmQ3Bg4BAwEBAQQBAQEBBQFthGVFhUsGJ?=
- =?us-ascii?q?y8zPxJXBxKDIoF3E61XM4QGAYRygUiBNIcJhG6BQD+DdWyEAwobhX8ElTqVQ?=
- =?us-ascii?q?wmBJXeUGBmYEYtkgVmZaCKBWE0fGYMngnmNVkQ1MIt0glIBAQ?=
-X-IronPort-AV: E=Sophos;i="5.64,326,1559491200"; 
-   d="scan'208";a="229598851"
-Received: from 203-59-235-95.perm.iinet.net.au (HELO rtcentos7.electromag.com.au) ([203.59.235.95])
-  by icp-osb-irony-out1.iinet.net.au with ESMTP; 30 Jul 2019 18:10:07 +0800
-From:   Richard Tresidder <rtresidd@electromag.com.au>
-To:     sre@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        rtresidd@electromag.com.au, kstewart@linuxfoundation.org,
-        gregkh@linuxfoundation.org, tglx@linutronix.de,
-        rfontana@redhat.com, allison@lohutok.net, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [RESEND v2 2/2] power/supply/sbs-battery: Add ability to force load a battery via the devicetree
-Date:   Tue, 30 Jul 2019 18:10:04 +0800
-Message-Id: <1564481404-39505-3-git-send-email-rtresidd@electromag.com.au>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1564481404-39505-1-git-send-email-rtresidd@electromag.com.au>
-References: <1564481404-39505-1-git-send-email-rtresidd@electromag.com.au>
+        Tue, 30 Jul 2019 06:10:23 -0400
+Received: by mail-wr1-f68.google.com with SMTP id p17so65083441wrf.11;
+        Tue, 30 Jul 2019 03:10:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=M6bqb+lWrb/E2mkcX84w3humgmw2uZSZn3Vj/9n2zYU=;
+        b=QSvTYAuFIUhIwAXJ70hsr7X8I6ildM6Tnm6Br7Uc6Bp3eJJyf9gcoW9EZd/MBcDLFc
+         mkJxF2BhWKGCRmJgMw7SFfryNoin18VjUlMgxXF2RiVzC8Hee5nuN+jLhwY2MHRy9g8p
+         b9VpF38H26y0Jdsg4lqkiLWYaVsyZfEeMpg3fG9qn0AsThOa4LVd9TanogZbRZ1liGDA
+         bJ+srI0Ah1uR1PYHb7sdhPNXkNUdqaKonwWHOP5xPjgUC6I1lyTnzrNeFH6Rc1lF/rim
+         jMCnFS1x5qVGua4h8f56T05Lymm+fDBzo4cHu2u0YdKnqQZ960B3bYsReLZxwUoKHsvG
+         f2Rw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=M6bqb+lWrb/E2mkcX84w3humgmw2uZSZn3Vj/9n2zYU=;
+        b=eVB499JLY3lk2dw3Oqv/JhcwY2hHyWVQOnIvNYLD1gYxjS6heLEcyayRVd0wWI3TJw
+         h6rTOwAWQ+dWBwQNTMZmYgJYYD7rufVyCDVbOUKE2gVwovuLi+LAAkMOlKi7vKy6CLwD
+         xKBq2W8wT7TdeVzVt6TATNXQECKjGGa6+b80qvbiVtU4ObPUnqGdl4sVpXJ3CxFMUg9e
+         FQlqCBkWEtBiJ1ifzt+zkpPFdTIXnlGy7wwAgHEdx3JcsZ2ScjMrnoyP/jQgYbxqLspc
+         O+kJgh5bfh/iTmM6Wdn2Lqk/3JywOwuP+DpJmoJLX0LJO4eHsQO35Ll6kabNQlA5dHI+
+         CI5A==
+X-Gm-Message-State: APjAAAWPOSx6eUVC558HCAe5rMGZHOE3OMBHO3YrtS/WvmkS94cKv9i9
+        7+rdb+EZRCpKDS9N+nSpwj5bOep9
+X-Google-Smtp-Source: APXvYqySczK9ebtVgbcnbN7oerzvLPLtKYJlQx0kZCinuEwbgzkuk8ZNCsinu59oTKo6DTkIw4WrcQ==
+X-Received: by 2002:adf:c613:: with SMTP id n19mr70043516wrg.109.1564481421014;
+        Tue, 30 Jul 2019 03:10:21 -0700 (PDT)
+Received: from vd-lxpc-hfe.ad.vahle.at ([80.110.31.209])
+        by smtp.gmail.com with ESMTPSA id 17sm55090119wmx.47.2019.07.30.03.10.19
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 30 Jul 2019 03:10:20 -0700 (PDT)
+From:   Hubert Feurstein <h.feurstein@gmail.com>
+To:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Hubert Feurstein <h.feurstein@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH] net: dsa: mv88e6xxx: extend PTP gettime function to read system clock
+Date:   Tue, 30 Jul 2019 12:10:07 +0200
+Message-Id: <20190730101007.344-1-h.feurstein@gmail.com>
+X-Mailer: git-send-email 2.22.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the ability to force load a hot pluggable battery during boot where
-there is no gpio detect method available and the module is statically
-built. Normal polling will then occur on that battery when it is inserted.
+This adds support for the PTP_SYS_OFFSET_EXTENDED ioctl.
 
-Signed-off-by: Richard Tresidder <rtresidd@electromag.com.au>
+Signed-off-by: Hubert Feurstein <h.feurstein@gmail.com>
 ---
- drivers/power/supply/sbs-battery.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/net/dsa/mv88e6xxx/ptp.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/power/supply/sbs-battery.c b/drivers/power/supply/sbs-battery.c
-index 048d205..b55721d 100644
---- a/drivers/power/supply/sbs-battery.c
-+++ b/drivers/power/supply/sbs-battery.c
-@@ -816,6 +816,7 @@ static int sbs_probe(struct i2c_client *client,
- 	struct power_supply_config psy_cfg = {};
- 	int rc;
- 	int irq;
-+	bool dt_force_load;
+diff --git a/drivers/net/dsa/mv88e6xxx/ptp.c b/drivers/net/dsa/mv88e6xxx/ptp.c
+index 51cdf4712517..1ff983376f95 100644
+--- a/drivers/net/dsa/mv88e6xxx/ptp.c
++++ b/drivers/net/dsa/mv88e6xxx/ptp.c
+@@ -230,14 +230,17 @@ static int mv88e6xxx_ptp_adjtime(struct ptp_clock_info *ptp, s64 delta)
+ 	return 0;
+ }
  
- 	sbs_desc = devm_kmemdup(&client->dev, &sbs_default_desc,
- 			sizeof(*sbs_desc), GFP_KERNEL);
-@@ -852,6 +853,9 @@ static int sbs_probe(struct i2c_client *client,
- 	if (rc)
- 		chip->poll_retry_count = 0;
+-static int mv88e6xxx_ptp_gettime(struct ptp_clock_info *ptp,
+-				 struct timespec64 *ts)
++static int mv88e6xxx_ptp_gettimex(struct ptp_clock_info *ptp,
++				  struct timespec64 *ts,
++				  struct ptp_system_timestamp *sts)
+ {
+ 	struct mv88e6xxx_chip *chip = ptp_to_chip(ptp);
+ 	u64 ns;
  
-+	dt_force_load = of_property_read_bool(client->dev.of_node,
-+						"sbs,force-load");
-+
- 	if (pdata) {
- 		chip->poll_retry_count = pdata->poll_retry_count;
- 		chip->i2c_retry_count  = pdata->i2c_retry_count;
-@@ -890,7 +894,7 @@ static int sbs_probe(struct i2c_client *client,
- 	 * Before we register, we might need to make sure we can actually talk
- 	 * to the battery.
- 	 */
--	if (!(force_load || chip->gpio_detect)) {
-+	if (!(force_load || chip->gpio_detect || dt_force_load)) {
- 		rc = sbs_read_word_data(client, sbs_data[REG_STATUS].addr);
+ 	mv88e6xxx_reg_lock(chip);
++	ptp_read_system_prets(sts);
+ 	ns = timecounter_read(&chip->tstamp_tc);
++	ptp_read_system_postts(sts);
+ 	mv88e6xxx_reg_unlock(chip);
  
- 		if (rc < 0) {
+ 	*ts = ns_to_timespec64(ns);
+@@ -386,7 +389,7 @@ static void mv88e6xxx_ptp_overflow_check(struct work_struct *work)
+ 	struct mv88e6xxx_chip *chip = dw_overflow_to_chip(dw);
+ 	struct timespec64 ts;
+ 
+-	mv88e6xxx_ptp_gettime(&chip->ptp_clock_info, &ts);
++	mv88e6xxx_ptp_gettimex(&chip->ptp_clock_info, &ts, NULL);
+ 
+ 	schedule_delayed_work(&chip->overflow_work,
+ 			      MV88E6XXX_TAI_OVERFLOW_PERIOD);
+@@ -444,7 +447,7 @@ int mv88e6xxx_ptp_setup(struct mv88e6xxx_chip *chip)
+ 	chip->ptp_clock_info.max_adj    = MV88E6XXX_MAX_ADJ_PPB;
+ 	chip->ptp_clock_info.adjfine	= mv88e6xxx_ptp_adjfine;
+ 	chip->ptp_clock_info.adjtime	= mv88e6xxx_ptp_adjtime;
+-	chip->ptp_clock_info.gettime64	= mv88e6xxx_ptp_gettime;
++	chip->ptp_clock_info.gettimex64	= mv88e6xxx_ptp_gettimex;
+ 	chip->ptp_clock_info.settime64	= mv88e6xxx_ptp_settime;
+ 	chip->ptp_clock_info.enable	= ptp_ops->ptp_enable;
+ 	chip->ptp_clock_info.verify	= ptp_ops->ptp_verify;
 -- 
-1.8.3.1
+2.22.0
 
