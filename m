@@ -2,401 +2,312 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA6A17B172
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:16:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD12A7B160
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:16:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388185AbfG3SQt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 14:16:49 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:34461 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387527AbfG3SQf (ORCPT
+        id S1728522AbfG3SP7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 14:15:59 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:50063 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725935AbfG3SP6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 14:16:35 -0400
-Received: by mail-pg1-f196.google.com with SMTP id n9so24256650pgc.1
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 11:16:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=9X8hLkpiNTOcIMGNmROyV+w/FtAgznL0afZf+kaW+1c=;
-        b=f3jwSZ3EQ9GvK4fVs1HrYT6eWXNJzLuiBDiXgH+a9XTQUwb1eOy93OUYR3vkqieVSE
-         tC4YOGiz0tPLhXddU9RH/QlGNaPEFCtPk0EG2IwVgSsDCHjFJ0922PL1Cvun02i1xlzc
-         Ur2mbzEv7HSZDz12ksiL9gIopzeB/87yCns5o=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=9X8hLkpiNTOcIMGNmROyV+w/FtAgznL0afZf+kaW+1c=;
-        b=hAxdrFTOD2YGdh9nQ7PMr9j7QpWtYx87jbnvffXBx52N/C5xVc2QEh1YhXGt/3waUx
-         6RHU5xAwVGu9CMEcymFT4uSDjHVwfkmnmrQT1j6rW9moFrz70VDmyehNp1s3Tk0uzhgx
-         UGS+XJixioCHbzsuBxg7M+0+8nHe1JVo8sChr2Z7c6NThyP2iqGsO2+4k2Wx8QPpsMD7
-         dqIGL5DLcFsvNxRp/K6uR2OfKX8atjI711m0Ln9XF0gyL2X8gSrajxplWyETABCdtD3v
-         itgnfLT92QREPtLAHYO3WkghguyKO0qwXUnB4YbtT15HrsfnTeYQ0IIurr4+MQyY7TvN
-         tLnQ==
-X-Gm-Message-State: APjAAAXGdo8KhqOa+cmpLWYt7OFFg1WUYYUlc6KzOxVTAPjHl/B7QYMZ
-        pKT5HuUf/2TBa21NxlKSjwWJDG410kjtow==
-X-Google-Smtp-Source: APXvYqxxoz2inFV06sgWI8/GJPaap+cnYFKP3l0gEbP2XOuYCnhK/v3QWrXBbYo5msllu20SzT+1OQ==
-X-Received: by 2002:aa7:989a:: with SMTP id r26mr30667497pfl.232.1564510594816;
-        Tue, 30 Jul 2019 11:16:34 -0700 (PDT)
-Received: from smtp.gmail.com ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id g1sm106744083pgg.27.2019.07.30.11.16.34
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 30 Jul 2019 11:16:34 -0700 (PDT)
-From:   Stephen Boyd <swboyd@chromium.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>
-Subject: [PATCH v6 44/57] tty: Remove dev_err() usage after platform_get_irq()
-Date:   Tue, 30 Jul 2019 11:15:44 -0700
-Message-Id: <20190730181557.90391-45-swboyd@chromium.org>
-X-Mailer: git-send-email 2.22.0.709.g102302147b-goog
-In-Reply-To: <20190730181557.90391-1-swboyd@chromium.org>
-References: <20190730181557.90391-1-swboyd@chromium.org>
+        Tue, 30 Jul 2019 14:15:58 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6UIFkVv3326129
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Tue, 30 Jul 2019 11:15:46 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6UIFkVv3326129
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019071901; t=1564510547;
+        bh=rWWuZWd+gCCf/y+2pz4EwVs65ydrzSEpjWQkKKSo/JY=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=DUKZmHoiGf7J3+au+6s663ZGn++1UH4MtIDvEzt4masCO1WxgdcBfDMhJttAcBBLv
+         fqqLq0x8mgS1sZykqeI+HbbMtfge9nJAE0dY2fvldA+8P/nKp0oePCmHlScWM1OnUj
+         sAYfiyVn6FkVenAXz7LN7fKS+3ViEoUcdYJKcUvHgvdGVRTR11n4F42ltl6YCy8Exr
+         43kjENBHAOashLZFmPznXniXi0ASx5fkcKXHRZ9RMXeoT/1ibWroFeCeRukNZaGTh5
+         T6XcuCjeBGRcVYJTMSThFfdcKYTXZDN8MEbIrscqtC5bg9Eiwg7fg2qZ6Cx72LR0aV
+         gnLKDRijfIC0g==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6UIFjJ53326126;
+        Tue, 30 Jul 2019 11:15:45 -0700
+Date:   Tue, 30 Jul 2019 11:15:45 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
+Message-ID: <tip-a1cf3a75d3317ed893d453c222d220ca4d5f4c4e@git.kernel.org>
+Cc:     peterz@infradead.org, acme@redhat.com,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        alexey.budankov@linux.intel.com, mpetlan@redhat.com,
+        ak@linux.intel.com, hpa@zytor.com, jolsa@kernel.org,
+        mingo@kernel.org, alexander.shishkin@linux.intel.com,
+        namhyung@kernel.org
+Reply-To: alexey.budankov@linux.intel.com, mpetlan@redhat.com,
+          linux-kernel@vger.kernel.org, peterz@infradead.org,
+          acme@redhat.com, tglx@linutronix.de,
+          alexander.shishkin@linux.intel.com, namhyung@kernel.org,
+          hpa@zytor.com, ak@linux.intel.com, mingo@kernel.org,
+          jolsa@kernel.org
+In-Reply-To: <20190721112506.12306-13-jolsa@kernel.org>
+References: <20190721112506.12306-13-jolsa@kernel.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf evlist: Rename perf_evlist__add() to
+ evlist__add()
+Git-Commit-ID: a1cf3a75d3317ed893d453c222d220ca4d5f4c4e
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-0.2 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
+        autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We don't need dev_err() messages when platform_get_irq() fails now that
-platform_get_irq() prints an error message itself when something goes
-wrong. Let's remove these prints with a simple semantic patch.
+Commit-ID:  a1cf3a75d3317ed893d453c222d220ca4d5f4c4e
+Gitweb:     https://git.kernel.org/tip/a1cf3a75d3317ed893d453c222d220ca4d5f4c4e
+Author:     Jiri Olsa <jolsa@kernel.org>
+AuthorDate: Sun, 21 Jul 2019 13:23:59 +0200
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Mon, 29 Jul 2019 18:34:43 -0300
 
-// <smpl>
-@@
-expression ret;
-struct platform_device *E;
-@@
+perf evlist: Rename perf_evlist__add() to evlist__add()
 
-ret =
-(
-platform_get_irq(E, ...)
-|
-platform_get_irq_byname(E, ...)
-);
+Rename perf_evlist__add() to evlist__add(), so we don't have a name
+clash when we add perf_evlist__add() in libperf.
 
-if ( \( ret < 0 \| ret <= 0 \) )
-{
-(
--if (ret != -EPROBE_DEFER)
--{ ...
--dev_err(...);
--... }
-|
-...
--dev_err(...);
-)
-...
-}
-// </smpl>
-
-While we're here, remove braces on if statements that only have one
-statement (manually).
-
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Jiri Slaby <jslaby@suse.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Michael Petlan <mpetlan@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/20190721112506.12306-13-jolsa@kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
+ tools/perf/builtin-trace.c                  | 12 ++++++------
+ tools/perf/tests/mmap-basic.c               |  2 +-
+ tools/perf/tests/openat-syscall-tp-fields.c |  2 +-
+ tools/perf/tests/sw-clock.c                 |  2 +-
+ tools/perf/util/evlist.c                    | 16 ++++++++--------
+ tools/perf/util/evlist.h                    |  2 +-
+ tools/perf/util/header.c                    |  4 ++--
+ tools/perf/util/python.c                    |  2 +-
+ 8 files changed, 21 insertions(+), 21 deletions(-)
 
-Please apply directly to subsystem trees
-
- drivers/tty/serial/8250/8250_bcm2835aux.c |  4 +---
- drivers/tty/serial/8250/8250_lpc18xx.c    |  4 +---
- drivers/tty/serial/8250/8250_uniphier.c   |  4 +---
- drivers/tty/serial/amba-pl011.c           |  5 +----
- drivers/tty/serial/fsl_lpuart.c           |  4 +---
- drivers/tty/serial/lpc32xx_hs.c           |  5 +----
- drivers/tty/serial/mvebu-uart.c           | 12 +++---------
- drivers/tty/serial/owl-uart.c             |  4 +---
- drivers/tty/serial/qcom_geni_serial.c     |  4 +---
- drivers/tty/serial/rda-uart.c             |  4 +---
- drivers/tty/serial/sccnxp.c               |  1 -
- drivers/tty/serial/serial-tegra.c         |  4 +---
- drivers/tty/serial/sifive.c               |  4 +---
- drivers/tty/serial/sprd_serial.c          |  4 +---
- drivers/tty/serial/stm32-usart.c          | 17 ++++-------------
- 15 files changed, 19 insertions(+), 61 deletions(-)
-
-diff --git a/drivers/tty/serial/8250/8250_bcm2835aux.c b/drivers/tty/serial/8250/8250_bcm2835aux.c
-index bd53661103eb..8ce700c1a7fc 100644
---- a/drivers/tty/serial/8250/8250_bcm2835aux.c
-+++ b/drivers/tty/serial/8250/8250_bcm2835aux.c
-@@ -56,10 +56,8 @@ static int bcm2835aux_serial_probe(struct platform_device *pdev)
+diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+index c5eb47f4e42e..89ae4737ef74 100644
+--- a/tools/perf/builtin-trace.c
++++ b/tools/perf/builtin-trace.c
+@@ -2616,7 +2616,7 @@ static int trace__record(struct trace *trace, int argc, const char **argv)
  
- 	/* get the interrupt */
- 	ret = platform_get_irq(pdev, 0);
--	if (ret < 0) {
--		dev_err(&pdev->dev, "irq not found - %i", ret);
-+	if (ret < 0)
- 		return ret;
--	}
- 	data->uart.port.irq = ret;
+ static size_t trace__fprintf_thread_summary(struct trace *trace, FILE *fp);
  
- 	/* map the main registers */
-diff --git a/drivers/tty/serial/8250/8250_lpc18xx.c b/drivers/tty/serial/8250/8250_lpc18xx.c
-index eddf119374e1..570e25d6f37e 100644
---- a/drivers/tty/serial/8250/8250_lpc18xx.c
-+++ b/drivers/tty/serial/8250/8250_lpc18xx.c
-@@ -106,10 +106,8 @@ static int lpc18xx_serial_probe(struct platform_device *pdev)
- 	int irq, ret;
+-static bool perf_evlist__add_vfs_getname(struct evlist *evlist)
++static bool evlist__add_vfs_getname(struct evlist *evlist)
+ {
+ 	bool found = false;
+ 	struct evsel *evsel, *tmp;
+@@ -2719,8 +2719,8 @@ static int trace__add_syscall_newtp(struct trace *trace)
+ 	perf_evsel__config_callchain(sys_enter, &trace->opts, &callchain_param);
+ 	perf_evsel__config_callchain(sys_exit, &trace->opts, &callchain_param);
  
- 	irq = platform_get_irq(pdev, 0);
--	if (irq < 0) {
--		dev_err(&pdev->dev, "irq not found");
-+	if (irq < 0)
- 		return irq;
--	}
+-	perf_evlist__add(evlist, sys_enter);
+-	perf_evlist__add(evlist, sys_exit);
++	evlist__add(evlist, sys_enter);
++	evlist__add(evlist, sys_exit);
  
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	if (!res) {
-diff --git a/drivers/tty/serial/8250/8250_uniphier.c b/drivers/tty/serial/8250/8250_uniphier.c
-index 164ba133437a..e0b73a5402db 100644
---- a/drivers/tty/serial/8250/8250_uniphier.c
-+++ b/drivers/tty/serial/8250/8250_uniphier.c
-@@ -176,10 +176,8 @@ static int uniphier_uart_probe(struct platform_device *pdev)
+ 	if (callchain_param.enabled && !trace->kernel_syscallchains) {
+ 		/*
+@@ -3264,7 +3264,7 @@ static int trace__run(struct trace *trace, int argc, const char **argv)
+ 			goto out_error_raw_syscalls;
+ 
+ 		if (trace->trace_syscalls)
+-			trace->vfs_getname = perf_evlist__add_vfs_getname(evlist);
++			trace->vfs_getname = evlist__add_vfs_getname(evlist);
+ 	}
+ 
+ 	if ((trace->trace_pgfaults & TRACE_PFMAJ)) {
+@@ -3272,7 +3272,7 @@ static int trace__run(struct trace *trace, int argc, const char **argv)
+ 		if (pgfault_maj == NULL)
+ 			goto out_error_mem;
+ 		perf_evsel__config_callchain(pgfault_maj, &trace->opts, &callchain_param);
+-		perf_evlist__add(evlist, pgfault_maj);
++		evlist__add(evlist, pgfault_maj);
+ 	}
+ 
+ 	if ((trace->trace_pgfaults & TRACE_PFMIN)) {
+@@ -3280,7 +3280,7 @@ static int trace__run(struct trace *trace, int argc, const char **argv)
+ 		if (pgfault_min == NULL)
+ 			goto out_error_mem;
+ 		perf_evsel__config_callchain(pgfault_min, &trace->opts, &callchain_param);
+-		perf_evlist__add(evlist, pgfault_min);
++		evlist__add(evlist, pgfault_min);
+ 	}
+ 
+ 	if (trace->sched &&
+diff --git a/tools/perf/tests/mmap-basic.c b/tools/perf/tests/mmap-basic.c
+index 7f96bb72f7e5..16b8a4e5de8f 100644
+--- a/tools/perf/tests/mmap-basic.c
++++ b/tools/perf/tests/mmap-basic.c
+@@ -82,7 +82,7 @@ int test__basic_mmap(struct test *test __maybe_unused, int subtest __maybe_unuse
+ 		evsels[i]->attr.wakeup_events = 1;
+ 		perf_evsel__set_sample_id(evsels[i], false);
+ 
+-		perf_evlist__add(evlist, evsels[i]);
++		evlist__add(evlist, evsels[i]);
+ 
+ 		if (perf_evsel__open(evsels[i], cpus, threads) < 0) {
+ 			pr_debug("failed to open counter: %s, "
+diff --git a/tools/perf/tests/openat-syscall-tp-fields.c b/tools/perf/tests/openat-syscall-tp-fields.c
+index 0263420f4495..f822c3c181f3 100644
+--- a/tools/perf/tests/openat-syscall-tp-fields.c
++++ b/tools/perf/tests/openat-syscall-tp-fields.c
+@@ -48,7 +48,7 @@ int test__syscall_openat_tp_fields(struct test *test __maybe_unused, int subtest
+ 		goto out_delete_evlist;
+ 	}
+ 
+-	perf_evlist__add(evlist, evsel);
++	evlist__add(evlist, evsel);
+ 
+ 	err = perf_evlist__create_maps(evlist, &opts.target);
+ 	if (err < 0) {
+diff --git a/tools/perf/tests/sw-clock.c b/tools/perf/tests/sw-clock.c
+index 247d3734686e..3ab11291174c 100644
+--- a/tools/perf/tests/sw-clock.c
++++ b/tools/perf/tests/sw-clock.c
+@@ -54,7 +54,7 @@ static int __test__sw_clock_freq(enum perf_sw_ids clock_id)
+ 		pr_debug("perf_evsel__new\n");
+ 		goto out_delete_evlist;
+ 	}
+-	perf_evlist__add(evlist, evsel);
++	evlist__add(evlist, evsel);
+ 
+ 	cpus = cpu_map__dummy_new();
+ 	threads = thread_map__new_by_tid(getpid());
+diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
+index 986d20c15778..7741e12bdcb0 100644
+--- a/tools/perf/util/evlist.c
++++ b/tools/perf/util/evlist.c
+@@ -177,7 +177,7 @@ static void perf_evlist__propagate_maps(struct evlist *evlist)
+ 		__perf_evlist__propagate_maps(evlist, evsel);
+ }
+ 
+-void perf_evlist__add(struct evlist *evlist, struct evsel *entry)
++void evlist__add(struct evlist *evlist, struct evsel *entry)
+ {
+ 	entry->evlist = evlist;
+ 	list_add_tail(&entry->node, &evlist->entries);
+@@ -204,7 +204,7 @@ void perf_evlist__splice_list_tail(struct evlist *evlist,
+ 
+ 	__evlist__for_each_entry_safe(list, temp, evsel) {
+ 		list_del_init(&evsel->node);
+-		perf_evlist__add(evlist, evsel);
++		evlist__add(evlist, evsel);
+ 	}
+ }
+ 
+@@ -237,7 +237,7 @@ int __perf_evlist__add_default(struct evlist *evlist, bool precise)
+ 	if (evsel == NULL)
  		return -ENOMEM;
  
- 	irq = platform_get_irq(pdev, 0);
--	if (irq < 0) {
--		dev_err(dev, "failed to get IRQ number\n");
-+	if (irq < 0)
- 		return irq;
--	}
+-	perf_evlist__add(evlist, evsel);
++	evlist__add(evlist, evsel);
+ 	return 0;
+ }
  
- 	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
- 	if (!priv)
-diff --git a/drivers/tty/serial/amba-pl011.c b/drivers/tty/serial/amba-pl011.c
-index 5921a33b2a07..3a7d1a66f79c 100644
---- a/drivers/tty/serial/amba-pl011.c
-+++ b/drivers/tty/serial/amba-pl011.c
-@@ -2718,11 +2718,8 @@ static int sbsa_uart_probe(struct platform_device *pdev)
+@@ -253,11 +253,11 @@ int perf_evlist__add_dummy(struct evlist *evlist)
+ 	if (evsel == NULL)
  		return -ENOMEM;
  
- 	ret = platform_get_irq(pdev, 0);
--	if (ret < 0) {
--		if (ret != -EPROBE_DEFER)
--			dev_err(&pdev->dev, "cannot obtain irq\n");
-+	if (ret < 0)
- 		return ret;
--	}
- 	uap->port.irq	= ret;
+-	perf_evlist__add(evlist, evsel);
++	evlist__add(evlist, evsel);
+ 	return 0;
+ }
  
- #ifdef CONFIG_ACPI_SPCR_TABLE
-diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c
-index 92dad2b4ec36..1b790cc1c0cf 100644
---- a/drivers/tty/serial/fsl_lpuart.c
-+++ b/drivers/tty/serial/fsl_lpuart.c
-@@ -2346,10 +2346,8 @@ static int lpuart_probe(struct platform_device *pdev)
- 	sport->port.type = PORT_LPUART;
- 	sport->devtype = sdata->devtype;
- 	ret = platform_get_irq(pdev, 0);
--	if (ret < 0) {
--		dev_err(&pdev->dev, "cannot obtain irq\n");
-+	if (ret < 0)
- 		return ret;
--	}
- 	sport->port.irq = ret;
- 	sport->port.iotype = sdata->iotype;
- 	if (lpuart_is_32(sport))
-diff --git a/drivers/tty/serial/lpc32xx_hs.c b/drivers/tty/serial/lpc32xx_hs.c
-index f4e27d0ad947..7c67e3afbac7 100644
---- a/drivers/tty/serial/lpc32xx_hs.c
-+++ b/drivers/tty/serial/lpc32xx_hs.c
-@@ -687,11 +687,8 @@ static int serial_hs_lpc32xx_probe(struct platform_device *pdev)
- 	p->port.membase = NULL;
+-static int perf_evlist__add_attrs(struct evlist *evlist,
++static int evlist__add_attrs(struct evlist *evlist,
+ 				  struct perf_event_attr *attrs, size_t nr_attrs)
+ {
+ 	struct evsel *evsel, *n;
+@@ -289,7 +289,7 @@ int __perf_evlist__add_default_attrs(struct evlist *evlist,
+ 	for (i = 0; i < nr_attrs; i++)
+ 		event_attr_init(attrs + i);
  
- 	ret = platform_get_irq(pdev, 0);
--	if (ret < 0) {
--		dev_err(&pdev->dev, "Error getting irq for HS UART port %d\n",
--			uarts_registered);
-+	if (ret < 0)
- 		return ret;
--	}
- 	p->port.irq = ret;
+-	return perf_evlist__add_attrs(evlist, attrs, nr_attrs);
++	return evlist__add_attrs(evlist, attrs, nr_attrs);
+ }
  
- 	p->port.iotype = UPIO_MEM32;
-diff --git a/drivers/tty/serial/mvebu-uart.c b/drivers/tty/serial/mvebu-uart.c
-index 7e7b1559fa36..c12a12556339 100644
---- a/drivers/tty/serial/mvebu-uart.c
-+++ b/drivers/tty/serial/mvebu-uart.c
-@@ -884,10 +884,8 @@ static int mvebu_uart_probe(struct platform_device *pdev)
- 	if (platform_irq_count(pdev) == 1) {
- 		/* Old bindings: no name on the single unamed UART0 IRQ */
- 		irq = platform_get_irq(pdev, 0);
--		if (irq < 0) {
--			dev_err(&pdev->dev, "unable to get UART IRQ\n");
-+		if (irq < 0)
- 			return irq;
--		}
+ struct evsel *
+@@ -330,7 +330,7 @@ int perf_evlist__add_newtp(struct evlist *evlist,
+ 		return -1;
  
- 		mvuart->irq[UART_IRQ_SUM] = irq;
- 	} else {
-@@ -897,18 +895,14 @@ static int mvebu_uart_probe(struct platform_device *pdev)
- 		 * uart-sum of UART0 port.
+ 	evsel->handler = handler;
+-	perf_evlist__add(evlist, evsel);
++	evlist__add(evlist, evsel);
+ 	return 0;
+ }
+ 
+@@ -1854,7 +1854,7 @@ int perf_evlist__add_sb_event(struct evlist **evlist,
+ 
+ 	evsel->side_band.cb = cb;
+ 	evsel->side_band.data = data;
+-	perf_evlist__add(*evlist, evsel);
++	evlist__add(*evlist, evsel);
+ 	return 0;
+ 
+ out_err:
+diff --git a/tools/perf/util/evlist.h b/tools/perf/util/evlist.h
+index 12a5fd6972df..d52b29a1d852 100644
+--- a/tools/perf/util/evlist.h
++++ b/tools/perf/util/evlist.h
+@@ -73,7 +73,7 @@ void evlist__init(struct evlist *evlist, struct perf_cpu_map *cpus,
+ void perf_evlist__exit(struct evlist *evlist);
+ void evlist__delete(struct evlist *evlist);
+ 
+-void perf_evlist__add(struct evlist *evlist, struct evsel *entry);
++void evlist__add(struct evlist *evlist, struct evsel *entry);
+ void perf_evlist__remove(struct evlist *evlist, struct evsel *evsel);
+ 
+ int __perf_evlist__add_default(struct evlist *evlist, bool precise);
+diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
+index 7760ddc4bc18..5e0093251f26 100644
+--- a/tools/perf/util/header.c
++++ b/tools/perf/util/header.c
+@@ -3593,7 +3593,7 @@ int perf_session__read_header(struct perf_session *session)
+ 		 * Do it before so that if perf_evsel__alloc_id fails, this
+ 		 * entry gets purged too at evlist__delete().
  		 */
- 		irq = platform_get_irq_byname(pdev, "uart-rx");
--		if (irq < 0) {
--			dev_err(&pdev->dev, "unable to get 'uart-rx' IRQ\n");
-+		if (irq < 0)
- 			return irq;
--		}
+-		perf_evlist__add(session->evlist, evsel);
++		evlist__add(session->evlist, evsel);
  
- 		mvuart->irq[UART_RX_IRQ] = irq;
+ 		nr_ids = f_attr.ids.size / sizeof(u64);
+ 		/*
+@@ -4025,7 +4025,7 @@ int perf_event__process_attr(struct perf_tool *tool __maybe_unused,
+ 	if (evsel == NULL)
+ 		return -ENOMEM;
  
- 		irq = platform_get_irq_byname(pdev, "uart-tx");
--		if (irq < 0) {
--			dev_err(&pdev->dev, "unable to get 'uart-tx' IRQ\n");
-+		if (irq < 0)
- 			return irq;
--		}
+-	perf_evlist__add(evlist, evsel);
++	evlist__add(evlist, evsel);
  
- 		mvuart->irq[UART_TX_IRQ] = irq;
- 	}
-diff --git a/drivers/tty/serial/owl-uart.c b/drivers/tty/serial/owl-uart.c
-index 29a6dc6a8d23..03963af77b15 100644
---- a/drivers/tty/serial/owl-uart.c
-+++ b/drivers/tty/serial/owl-uart.c
-@@ -662,10 +662,8 @@ static int owl_uart_probe(struct platform_device *pdev)
- 	}
+ 	ids = event->header.size;
+ 	ids -= (void *)&event->attr.id - (void *)event;
+diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
+index ade4e85c6d81..48c951a4a76b 100644
+--- a/tools/perf/util/python.c
++++ b/tools/perf/util/python.c
+@@ -974,7 +974,7 @@ static PyObject *pyrf_evlist__add(struct pyrf_evlist *pevlist,
+ 	Py_INCREF(pevsel);
+ 	evsel = &((struct pyrf_evsel *)pevsel)->evsel;
+ 	evsel->idx = evlist->nr_entries;
+-	perf_evlist__add(evlist, evsel);
++	evlist__add(evlist, evsel);
  
- 	irq = platform_get_irq(pdev, 0);
--	if (irq < 0) {
--		dev_err(&pdev->dev, "could not get irq\n");
-+	if (irq < 0)
- 		return irq;
--	}
- 
- 	if (owl_uart_ports[pdev->id]) {
- 		dev_err(&pdev->dev, "port %d already allocated\n", pdev->id);
-diff --git a/drivers/tty/serial/qcom_geni_serial.c b/drivers/tty/serial/qcom_geni_serial.c
-index 35e5f9c5d5be..f879710e23f1 100644
---- a/drivers/tty/serial/qcom_geni_serial.c
-+++ b/drivers/tty/serial/qcom_geni_serial.c
-@@ -1291,10 +1291,8 @@ static int qcom_geni_serial_probe(struct platform_device *pdev)
- 	port->tx_fifo_width = DEF_FIFO_WIDTH_BITS;
- 
- 	irq = platform_get_irq(pdev, 0);
--	if (irq < 0) {
--		dev_err(&pdev->dev, "Failed to get IRQ %d\n", irq);
-+	if (irq < 0)
- 		return irq;
--	}
- 	uport->irq = irq;
- 
- 	uport->private_data = drv;
-diff --git a/drivers/tty/serial/rda-uart.c b/drivers/tty/serial/rda-uart.c
-index 284623eefaeb..c1b0d7662ef9 100644
---- a/drivers/tty/serial/rda-uart.c
-+++ b/drivers/tty/serial/rda-uart.c
-@@ -735,10 +735,8 @@ static int rda_uart_probe(struct platform_device *pdev)
- 	}
- 
- 	irq = platform_get_irq(pdev, 0);
--	if (irq < 0) {
--		dev_err(&pdev->dev, "could not get irq\n");
-+	if (irq < 0)
- 		return irq;
--	}
- 
- 	if (rda_uart_ports[pdev->id]) {
- 		dev_err(&pdev->dev, "port %d already allocated\n", pdev->id);
-diff --git a/drivers/tty/serial/sccnxp.c b/drivers/tty/serial/sccnxp.c
-index 68a24a14f6b7..d2b77aae42ae 100644
---- a/drivers/tty/serial/sccnxp.c
-+++ b/drivers/tty/serial/sccnxp.c
-@@ -961,7 +961,6 @@ static int sccnxp_probe(struct platform_device *pdev)
- 	if (!s->poll) {
- 		s->irq = platform_get_irq(pdev, 0);
- 		if (s->irq < 0) {
--			dev_err(&pdev->dev, "Missing irq resource data\n");
- 			ret = -ENXIO;
- 			goto err_out;
- 		}
-diff --git a/drivers/tty/serial/serial-tegra.c b/drivers/tty/serial/serial-tegra.c
-index d5269aaaf9b2..76ffbc7826ae 100644
---- a/drivers/tty/serial/serial-tegra.c
-+++ b/drivers/tty/serial/serial-tegra.c
-@@ -1307,10 +1307,8 @@ static int tegra_uart_probe(struct platform_device *pdev)
- 
- 	u->iotype = UPIO_MEM32;
- 	ret = platform_get_irq(pdev, 0);
--	if (ret < 0) {
--		dev_err(&pdev->dev, "Couldn't get IRQ\n");
-+	if (ret < 0)
- 		return ret;
--	}
- 	u->irq = ret;
- 	u->regshift = 2;
- 	ret = uart_add_one_port(&tegra_uart_driver, u);
-diff --git a/drivers/tty/serial/sifive.c b/drivers/tty/serial/sifive.c
-index be4687814353..d5f81b98e4d7 100644
---- a/drivers/tty/serial/sifive.c
-+++ b/drivers/tty/serial/sifive.c
-@@ -896,10 +896,8 @@ static int sifive_serial_probe(struct platform_device *pdev)
- 	int irq, id, r;
- 
- 	irq = platform_get_irq(pdev, 0);
--	if (irq < 0) {
--		dev_err(&pdev->dev, "could not acquire interrupt\n");
-+	if (irq < 0)
- 		return -EPROBE_DEFER;
--	}
- 
- 	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	base = devm_ioremap_resource(&pdev->dev, mem);
-diff --git a/drivers/tty/serial/sprd_serial.c b/drivers/tty/serial/sprd_serial.c
-index 73d71a4e6c0c..284709f61831 100644
---- a/drivers/tty/serial/sprd_serial.c
-+++ b/drivers/tty/serial/sprd_serial.c
-@@ -1173,10 +1173,8 @@ static int sprd_probe(struct platform_device *pdev)
- 	up->mapbase = res->start;
- 
- 	irq = platform_get_irq(pdev, 0);
--	if (irq < 0) {
--		dev_err(&pdev->dev, "not provide irq resource: %d\n", irq);
-+	if (irq < 0)
- 		return irq;
--	}
- 	up->irq = irq;
- 
- 	/*
-diff --git a/drivers/tty/serial/stm32-usart.c b/drivers/tty/serial/stm32-usart.c
-index 24a2261f879a..222694352a17 100644
---- a/drivers/tty/serial/stm32-usart.c
-+++ b/drivers/tty/serial/stm32-usart.c
-@@ -927,11 +927,8 @@ static int stm32_init_port(struct stm32_port *stm32port,
- 	port->fifosize	= stm32port->info->cfg.fifosize;
- 
- 	ret = platform_get_irq(pdev, 0);
--	if (ret <= 0) {
--		if (ret != -EPROBE_DEFER)
--			dev_err(&pdev->dev, "Can't get event IRQ: %d\n", ret);
--		return ret ? ret : -ENODEV;
--	}
-+	if (ret <= 0)
-+		return ret ? : -ENODEV;
- 	port->irq = ret;
- 
- 	port->rs485_config = stm32_config_rs485;
-@@ -940,14 +937,8 @@ static int stm32_init_port(struct stm32_port *stm32port,
- 
- 	if (stm32port->info->cfg.has_wakeup) {
- 		stm32port->wakeirq = platform_get_irq(pdev, 1);
--		if (stm32port->wakeirq <= 0 && stm32port->wakeirq != -ENXIO) {
--			if (stm32port->wakeirq != -EPROBE_DEFER)
--				dev_err(&pdev->dev,
--					"Can't get event wake IRQ: %d\n",
--					stm32port->wakeirq);
--			return stm32port->wakeirq ? stm32port->wakeirq :
--				-ENODEV;
--		}
-+		if (stm32port->wakeirq <= 0 && stm32port->wakeirq != -ENXIO)
-+			return stm32port->wakeirq ? : -ENODEV;
- 	}
- 
- 	stm32port->fifoen = stm32port->info->cfg.has_fifo;
--- 
-Sent by a computer through tubes
-
+ 	return Py_BuildValue("i", evlist->nr_entries);
+ }
