@@ -2,191 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B4B437B112
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:01:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 47E2E7B11C
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:02:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729281AbfG3SBy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 14:01:54 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:40917 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728827AbfG3SBx (ORCPT
+        id S1729741AbfG3SCb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 14:02:31 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:46165 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728234AbfG3SCb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 14:01:53 -0400
-Received: by mail-pg1-f195.google.com with SMTP id w10so30464936pgj.7
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 11:01:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=e4oBhvl2JGL/g7znlpJb17wcZ4f4c/GlFLmGamjl13c=;
-        b=fbKhNQxzz82g4sdnAhZ57A0hb0uBcdzsGtvJIewH6J8HFiWd4v1DbjhZme3+FPpHN+
-         CgVrRWW5s0YuozJII/YB+2NZ5r573QGkU38HNUz7maBvW4CAJRPZpo9gRRMOu66NfgT1
-         4s1JAmGCs8uLjMqep+2ShT7MpdeLsB0l8QKaU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=e4oBhvl2JGL/g7znlpJb17wcZ4f4c/GlFLmGamjl13c=;
-        b=QykzHbl3hNzA4o004D1vlbd8zIUIsU4mMK/QaJpdBm6CuP+ThaRBfce26lq0VM5ebd
-         uvozLAxDIXSN937m+SIKV1TusnGuzWpOQ3aWG4G/AgoWkKlXVv1LzzkcwlORBt+8QM/H
-         etqcBlxYi7WUQcvE/0iXX15nsPf11ABELQpuFqpV1pdbV/8R4lBOvMXknCyiTAjvxl2d
-         2MP3zi5PorRhOsC3Te7ohkCG9aQMFG+toc89GzdgxV/SPAxzBzAtkrW95OL0kRCvnrbJ
-         2/g2enAdYoCa1spDMEL96XWP0SJjnt8fawk1ivvRQflmFgL+qPKBggcAUC02UDdbThhy
-         kxpQ==
-X-Gm-Message-State: APjAAAVHUJHM3OeQyy8k9XX6OQU5F+rG1kRO4kFsxwe3+lxOWY8G8I+B
-        HPQdyFUHF2YD4cB1tToaETBvOw==
-X-Google-Smtp-Source: APXvYqxjt+I4v/sdEnywIDMFxpX9dhohJ2h/xcn+2r0A6Nitb41VcNHFgzjYokT3yWbk7qgmF27dvQ==
-X-Received: by 2002:a17:90a:cb12:: with SMTP id z18mr112668727pjt.82.1564509712356;
-        Tue, 30 Jul 2019 11:01:52 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id c7sm7783391pgq.31.2019.07.30.11.01.51
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 30 Jul 2019 11:01:51 -0700 (PDT)
-Date:   Tue, 30 Jul 2019 11:01:50 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Thomas Garnier <thgarnie@chromium.org>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        kernel-hardening@lists.openwall.com, kristen@linux.intel.com,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Andy Lutomirski <luto@kernel.org>,
-        Juergen Gross <jgross@suse.com>,
-        Alok Kataria <akataria@vmware.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Nadav Amit <namit@vmware.com>, Jann Horn <jannh@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Feng Tang <feng.tang@intel.com>,
-        Maran Wilson <maran.wilson@oracle.com>,
-        Enrico Weigelt <info@metux.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alexios Zavras <alexios.zavras@intel.com>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v8 00/11] x86: PIE support to extend KASLR randomization
-Message-ID: <201907301100.90BB865078@keescook>
-References: <20190708174913.123308-1-thgarnie@chromium.org>
+        Tue, 30 Jul 2019 14:02:31 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6UI2Nod3322121
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Tue, 30 Jul 2019 11:02:23 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6UI2Nod3322121
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019071901; t=1564509743;
+        bh=EsW3dmKtxM4mDO+IQ+ywUB3l0OsSKsaeqrOrc2g90FU=;
+        h=Date:From:Cc:Reply-To:To:Subject:From;
+        b=F/9ZL10JGvnKR8Fy1PBNF71psnbCIfa8qslfh28TcLrq4C677xrrr6M2x/90YRdZo
+         9tXtADHNVqSgTGcB2ecWsm8Bilt/QKq84EnbVXcYN4/WC86gOxzKPFA6IttdGVyjtY
+         QwqJbfeA0rNX4p7FHpEmxGpGeWdD6yV7y58SIOhNG5iMSOxvurCxmNcULfFXajeZPY
+         ncezkpCigxoSgVfitmzWnOg16XBHAl+n/IAA+H1UCjCMuHc6JPT29waLma6bbMjpkZ
+         VsGYKy+U3vEWtApoQ0UuUGzfYVLnIbEYY+4CK9yzGufL753J4qyQ284QTiUxDt9sDA
+         uSgmBykkAjScg==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6UI2MTc3322118;
+        Tue, 30 Jul 2019 11:02:22 -0700
+Date:   Tue, 30 Jul 2019 11:02:22 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-m2hmxqrckxxw2ciki0tu889u@git.kernel.org>
+Cc:     mingo@kernel.org, acme@redhat.com, hpa@zytor.com, jolsa@kernel.org,
+        tglx@linutronix.de, adrian.hunter@intel.com, lclaudio@redhat.com,
+        linux-kernel@vger.kernel.org, namhyung@kernel.org
+Reply-To: tglx@linutronix.de, jolsa@kernel.org, mingo@kernel.org,
+          hpa@zytor.com, acme@redhat.com, linux-kernel@vger.kernel.org,
+          namhyung@kernel.org, lclaudio@redhat.com, adrian.hunter@intel.com
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf trace beauty: Beautify bind's sockaddr arg
+Git-Commit-ID: 247dd65b909f1cd62a178febe3f6f8d5efdd7dd2
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20190708174913.123308-1-thgarnie@chromium.org>
+X-Spam-Status: No, score=-0.2 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
+        autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 08, 2019 at 10:48:53AM -0700, Thomas Garnier wrote:
-> Splitting the previous series in two. This part contains assembly code
-> changes required for PIE but without any direct dependencies with the
-> rest of the patchset.
-> 
-> Changes:
->  - patch v8 (assembly):
->    - Fix issues in crypto changes (thanks to Eric Biggers).
->    - Remove unnecessary jump table change.
->    - Change author and signoff to chromium email address.
+Commit-ID:  247dd65b909f1cd62a178febe3f6f8d5efdd7dd2
+Gitweb:     https://git.kernel.org/tip/247dd65b909f1cd62a178febe3f6f8d5efdd7dd2
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Tue, 16 Jul 2019 17:38:26 -0300
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Mon, 29 Jul 2019 18:34:42 -0300
 
-With -rc2 done, is this a good time for this to land in -tip? Are there
-more steps needed for review?
+perf trace beauty: Beautify bind's sockaddr arg
 
-Thanks!
+By reusing the "connect" BPF collector.
 
--Kees
+Testing it system wide and stopping/starting sshd:
 
->  - patch v7 (assembly):
->    - Split patchset and reorder changes.
->  - patch v6:
->    - Rebase on latest changes in jump tables and crypto.
->    - Fix wording on couple commits.
->    - Revisit checkpatch warnings.
->    - Moving to @chromium.org.
->  - patch v5:
->    - Adapt new crypto modules for PIE.
->    - Improve per-cpu commit message.
->    - Fix xen 32-bit build error with .quad.
->    - Remove extra code for ftrace.
->  - patch v4:
->    - Simplify early boot by removing global variables.
->    - Modify the mcount location script for __mcount_loc intead of the address
->      read in the ftrace implementation.
->    - Edit commit description to explain better where the kernel can be located.
->    - Streamlined the testing done on each patch proposal. Always testing
->      hibernation, suspend, ftrace and kprobe to ensure no regressions.
->  - patch v3:
->    - Update on message to describe longer term PIE goal.
->    - Minor change on ftrace if condition.
->    - Changed code using xchgq.
->  - patch v2:
->    - Adapt patch to work post KPTI and compiler changes
->    - Redo all performance testing with latest configs and compilers
->    - Simplify mov macro on PIE (MOVABS now)
->    - Reduce GOT footprint
->  - patch v1:
->    - Simplify ftrace implementation.
->    - Use gcc mstack-protector-guard-reg=%gs with PIE when possible.
->  - rfc v3:
->    - Use --emit-relocs instead of -pie to reduce dynamic relocation space on
->      mapped memory. It also simplifies the relocation process.
->    - Move the start the module section next to the kernel. Remove the need for
->      -mcmodel=large on modules. Extends module space from 1 to 2G maximum.
->    - Support for XEN PVH as 32-bit relocations can be ignored with
->      --emit-relocs.
->    - Support for GOT relocations previously done automatically with -pie.
->    - Remove need for dynamic PLT in modules.
->    - Support dymamic GOT for modules.
->  - rfc v2:
->    - Add support for global stack cookie while compiler default to fs without
->      mcmodel=kernel
->    - Change patch 7 to correctly jump out of the identity mapping on kexec load
->      preserve.
-> 
-> These patches make some of the changes necessary to build the kernel as
-> Position Independent Executable (PIE) on x86_64. Another patchset will
-> add the PIE option and larger architecture changes.
-> 
-> The patches:
->  - 1, 3-11: Change in assembly code to be PIE compliant.
->  - 2: Add a new _ASM_MOVABS macro to fetch a symbol address generically.
-> 
-> diffstat:
->  crypto/aegis128-aesni-asm.S         |    6 +-
->  crypto/aegis128l-aesni-asm.S        |    8 +--
->  crypto/aegis256-aesni-asm.S         |    6 +-
->  crypto/aes-x86_64-asm_64.S          |   45 ++++++++++------
->  crypto/aesni-intel_asm.S            |    8 +--
->  crypto/aesni-intel_avx-x86_64.S     |    3 -
->  crypto/camellia-aesni-avx-asm_64.S  |   42 +++++++--------
->  crypto/camellia-aesni-avx2-asm_64.S |   44 ++++++++--------
->  crypto/camellia-x86_64-asm_64.S     |    8 +--
->  crypto/cast5-avx-x86_64-asm_64.S    |   50 ++++++++++--------
->  crypto/cast6-avx-x86_64-asm_64.S    |   44 +++++++++-------
->  crypto/des3_ede-asm_64.S            |   96 ++++++++++++++++++++++++------------
->  crypto/ghash-clmulni-intel_asm.S    |    4 -
->  crypto/glue_helper-asm-avx.S        |    4 -
->  crypto/glue_helper-asm-avx2.S       |    6 +-
->  crypto/morus1280-avx2-asm.S         |    4 -
->  crypto/morus1280-sse2-asm.S         |    8 +--
->  crypto/morus640-sse2-asm.S          |    6 +-
->  crypto/sha256-avx2-asm.S            |   18 ++++--
->  entry/entry_64.S                    |   16 ++++--
->  include/asm/alternative.h           |    6 +-
->  include/asm/asm.h                   |    1 
->  include/asm/paravirt_types.h        |   25 +++++++--
->  include/asm/pm-trace.h              |    2 
->  include/asm/processor.h             |    6 +-
->  kernel/acpi/wakeup_64.S             |   31 ++++++-----
->  kernel/head_64.S                    |   16 +++---
->  kernel/relocate_kernel_64.S         |    2 
->  power/hibernate_asm_64.S            |    4 -
->  29 files changed, 306 insertions(+), 213 deletions(-)
-> 
-> Patchset is based on next-20190708.
-> 
-> 
+  # perf trace -e bind
+  LLVM: dumping /home/acme/git/perf/tools/perf/examples/bpf/augmented_raw_syscalls.o
+  DNS Res~er #18/15132 bind(243, { .family: PF_NETLINK }, 12)  = 0
+  DNS Res~er #19/4833 bind(247, { .family: PF_NETLINK }, 12)  = 0
+  DNS Res~er #19/4833 bind(238, { .family: PF_NETLINK }, 12)  = 0
+  DNS Res~er #18/15132 bind(243, { .family: PF_NETLINK }, 12)  = 0
+  DNS Res~er #18/10327 bind(258, { .family: PF_NETLINK }, 12)  = 0
+  :6507/6507 bind(24, { .family: PF_NETLINK }, 12)   = 0
+  DNS Res~er #19/4833 bind(238, { .family: PF_NETLINK }, 12)  = 0
+  DNS Res~er #18/15132 bind(242, { .family: PF_NETLINK }, 12)  = 0
+  sshd/6514 bind(3, { .family: PF_NETLINK }, 12)    = 0
+  sshd/6514 bind(5, { .family: PF_INET, port: 22, addr: 0.0.0.0 }, 16) = 0
+  sshd/6514 bind(7, { .family: PF_INET6, port: 22, addr: :: }, 28) = 0
+  DNS Res~er #18/10327 bind(229, { .family: PF_NETLINK }, 12)  = 0
+  DNS Res~er #18/15132 bind(231, { .family: PF_NETLINK }, 12)  = 0
+  DNS Res~er #19/4833 bind(229, { .family: PF_NETLINK }, 12)  = 0
+  ^C#
 
--- 
-Kees Cook
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Luis Cláudio Gonçalves <lclaudio@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Link: https://lkml.kernel.org/n/tip-m2hmxqrckxxw2ciki0tu889u@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/builtin-trace.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+index 010aa9e9a561..d403b09812d1 100644
+--- a/tools/perf/builtin-trace.c
++++ b/tools/perf/builtin-trace.c
+@@ -710,8 +710,10 @@ static struct syscall_fmt {
+ 	  .arg = { [0] = { .scnprintf = SCA_X86_ARCH_PRCTL_CODE, /* code */ },
+ 		   [1] = { .scnprintf = SCA_PTR, /* arg2 */ }, }, },
+ 	{ .name	    = "bind",
++	  .bpf_prog_name = { .sys_enter = "!syscalls:sys_enter_connect", },
+ 	  .arg = { [0] = { .scnprintf = SCA_INT, /* fd */ },
+-		   [1] = { .scnprintf = SCA_SOCKADDR, /* umyaddr */ }, }, },
++		   [1] = { .scnprintf = SCA_SOCKADDR, /* umyaddr */ },
++		   [2] = { .scnprintf = SCA_INT, /* addrlen */ }, }, },
+ 	{ .name	    = "bpf",
+ 	  .arg = { [0] = STRARRAY(cmd, bpf_cmd), }, },
+ 	{ .name	    = "brk",	    .hexret = true,
