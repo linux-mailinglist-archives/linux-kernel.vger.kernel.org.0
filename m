@@ -2,161 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B14D17B045
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 19:40:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E472F7B049
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 19:40:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731348AbfG3Rj6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 13:39:58 -0400
-Received: from mail-eopbgr140072.outbound.protection.outlook.com ([40.107.14.72]:31712
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731314AbfG3Rjy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 13:39:54 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=EX/kHSzV8Jul4w625nrsWxaBJXFG4ubDhlLJBlpiyxwew7BbgzkdzIGquWYHYqKj/jpmXO5DoB/kH/fjtRE+6ne9Hx4wls22pW9a3b5VwV/Clb/CSfPlwgL+KOLqFiIJuRMJGpSFmKJnHzcSv2WlQUvLTBY215UbyDABuJvVrFY6Q0jNgF4ccTtQomKr3fJxXM8D+BMdQKcP23U1FLOx+OTV+kSkiVrlNTksNZwV4bkt8hKwOgqOPoko+LyKiV1C0xPHMnveFSA5Y8g4E/WkMBRGtjj2GpBmeD/oQ+zncU1Hjo41qGKGLaAM2LhYutAH/lUE1RIUW11pHrpnC8Ug1Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FIXXrDH3RIIAh6Q/221asRxfL/RJZciP4vnd+I0w0ls=;
- b=lwLCvVcBdUIlOfGDrd3keOkNwaSDF5Jc2wGF14w9qo4KRSO+ombw7FLRMMURcKzeXgLG8B73NMNQPL/zq9kZPldmLIlsq7W+TQwf8OlNtlq0ly/Ghgytk8yaARECbuqVdtTo34/q4IzOLIX44OeNcYL4pCLQrHDNyMjH/54QGKpOodspc4+Pc3biiy0gvZCIq5WIwQzzWgY7qWg76MS0AjymfQRUS+C20FLvJE5qubIXr4LcGlQBjpSD11UUA2UHCuGVkm4v6liSFhFR6qrez7tmQaqX5Fdk5f91BsAk3SVdFZz/q5n4QOBJM4YYPBXiNEIqbB42x17X0BXKQKJ+wA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
- smtp.mailfrom=mellanox.com;dmarc=pass action=none
- header.from=mellanox.com;dkim=pass header.d=mellanox.com;arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FIXXrDH3RIIAh6Q/221asRxfL/RJZciP4vnd+I0w0ls=;
- b=aDrcpjUxOPdDC3JtKWodmUkQHpjT9TxN87EXf5vvRfbCbIP3VPxKitvNCQTKkRuz4annmWjiMymaiQ/FmY2RTxTgODhvUClXOjAt9q9xSezaKu7vNlDvB8nkpdnOVRr7CC/Il46/YvgVvIk+j6AE40jrO9ZpikW6an9Fij5kBCg=
-Received: from VI1PR05MB4141.eurprd05.prod.outlook.com (10.171.182.144) by
- VI1PR05MB6829.eurprd05.prod.outlook.com (10.186.160.86) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2115.15; Tue, 30 Jul 2019 17:39:50 +0000
-Received: from VI1PR05MB4141.eurprd05.prod.outlook.com
- ([fe80::5c6f:6120:45cd:2880]) by VI1PR05MB4141.eurprd05.prod.outlook.com
- ([fe80::5c6f:6120:45cd:2880%4]) with mapi id 15.20.2115.005; Tue, 30 Jul 2019
- 17:39:50 +0000
-From:   Jason Gunthorpe <jgg@mellanox.com>
-To:     Christoph Hellwig <hch@lst.de>
-CC:     =?iso-8859-1?Q?J=E9r=F4me_Glisse?= <jglisse@redhat.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 08/13] mm: remove the mask variable in
- hmm_vma_walk_hugetlb_entry
-Thread-Topic: [PATCH 08/13] mm: remove the mask variable in
- hmm_vma_walk_hugetlb_entry
-Thread-Index: AQHVRpsBxp87/2vfUUuxY9sZD/Qj2KbjblgA
-Date:   Tue, 30 Jul 2019 17:39:50 +0000
-Message-ID: <20190730173946.GK24038@mellanox.com>
-References: <20190730055203.28467-1-hch@lst.de>
- <20190730055203.28467-9-hch@lst.de>
-In-Reply-To: <20190730055203.28467-9-hch@lst.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: YT1PR01CA0018.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01::31)
- To VI1PR05MB4141.eurprd05.prod.outlook.com (2603:10a6:803:4d::16)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=jgg@mellanox.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [156.34.55.100]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: a618e036-983c-4381-ded6-08d71514ec54
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR05MB6829;
-x-ms-traffictypediagnostic: VI1PR05MB6829:
-x-microsoft-antispam-prvs: <VI1PR05MB6829E83CA49F6B5B1C893E89CFDC0@VI1PR05MB6829.eurprd05.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:962;
-x-forefront-prvs: 0114FF88F6
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(346002)(396003)(366004)(39860400002)(136003)(376002)(189003)(199004)(7736002)(86362001)(71200400001)(53936002)(2616005)(6486002)(256004)(6436002)(71190400001)(478600001)(8936002)(6512007)(102836004)(6916009)(52116002)(11346002)(36756003)(14444005)(99286004)(476003)(26005)(14454004)(25786009)(81156014)(7416002)(305945005)(3846002)(81166006)(1076003)(486006)(446003)(316002)(4326008)(33656002)(6116002)(64756008)(66446008)(5660300002)(66946007)(6506007)(54906003)(66476007)(76176011)(229853002)(66556008)(386003)(8676002)(68736007)(2906002)(6246003)(66066001)(186003);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR05MB6829;H:VI1PR05MB4141.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: mellanox.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: xrKcYjxImGp5ANkno0SF7XbwaEl1a2Sx59Jxb3fuxL2Ez23xcyxr5pE7Y3cszYtaFenI4emzitTF/fwwTOXYNfSB7oY2fhDCe81QbgRzb0gBWiS8e9TwMd55bnuWYrNvnMjO2fnYbHwhaQgHeC9f0PW2muzlao6GI0YHNRaHpwqJ+Zm1o7xTulYAbFWony+Ku0hZK4RZIpEygPBIYTTGZihg0zunfTpbPgheZVz+qTZVbGkEZC64prBfqHxxG0OIelI94+MN84YG1A/YfliJEgyvq27Gzf0aM+sIV7GIKlS0a9DEK7feOwT+9GHxFxC2sS/SyhxlcPt55H1twIWEcEolrzKABbXfKBLpKlC188z0kK0NNKSbctUg/k06DBWJnfKeDy3BFPO9aODv3K7736kn96DJa/JsirhSVt1BPTY=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-ID: <DF80A643D5A9864FAC08223380C661B3@eurprd05.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a618e036-983c-4381-ded6-08d71514ec54
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Jul 2019 17:39:50.6817
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: jgg@mellanox.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR05MB6829
+        id S1731389AbfG3Rkq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 13:40:46 -0400
+Received: from sender4-pp-o95.zoho.com ([136.143.188.95]:25586 "EHLO
+        sender4-pp-o95.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731376AbfG3Rkn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 13:40:43 -0400
+ARC-Seal: i=1; a=rsa-sha256; t=1564508416; cv=none; 
+        d=zoho.com; s=zohoarc; 
+        b=g4LGaIvQNpMGUs/jZXDatNFKtnS4/nFZP4x4f7vMpcNI59QKnfbJitpRT2cRZ3Tw+O78KOxjFa8s7EAdatS86K0AdiUsbsO0+zXqTZ4PhEMbm1avK4zoij+P34wNvYkliqtv3Vdk6jEi5W98VSKXtwztisSfh+5eNLLMFaAs3So=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
+        t=1564508416; h=Cc:Date:From:Message-ID:Subject:To:ARC-Authentication-Results; 
+        bh=IRMit1Bx9LNproZk4USQ9Jc73ih13ah/rrgGBBqPMJw=; 
+        b=mU0g4zZZ8ZwE+I2HCiOEMmJ9aKL+hlHQWjIzxYVX3tuQPBf2b8Lb9MRZGnPwhtjgbRNxcyGUZ0XwputZ6ow6XVcBadDw4rwNihqPg243L+z3sIr8d1zo1ynD4A6n/zAbdZeCJLnhdZ5mFLFCIIMIAdwwsK2AZ2qxpARNZvnBRRU=
+ARC-Authentication-Results: i=1; mx.zoho.com;
+        dkim=pass  header.i=zoho.com;
+        spf=pass  smtp.mailfrom=zhouyanjie@zoho.com;
+        dmarc=pass header.from=<zhouyanjie@zoho.com> header.from=<zhouyanjie@zoho.com>
+DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws; 
+  s=zapps768; d=zoho.com; 
+  h=from:to:cc:subject:date:message-id; 
+  b=ubdkKWzmtxtTHzdx4Qzog2eZ3ark31rEbPYPwZwWwM45Ubu7qYswEqeikgT8RKTi30NvVoX0WBhG
+    37k92uXkTepH5h8qFYohmd8I+Rd69CKHFotln3B4pcCfFAuc+xn3  
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1564508416;
+        s=zm2019; d=zoho.com; i=zhouyanjie@zoho.com;
+        h=From:To:Cc:Subject:Date:Message-Id; l=153;
+        bh=IRMit1Bx9LNproZk4USQ9Jc73ih13ah/rrgGBBqPMJw=;
+        b=G18Xy2VCFtws+KMyYYaiUx/aIrKRgEaf20dgO3KkyzGNcsLpMwc/GRymQCYC1dJ7
+        yUlAz+LktH6aGSm8DuFKOcAgFNSBfnu3kIp4v723i4lZabQX+tWKJjidZLCEUMyhbDc
+        gfHXj2T/xop1uN7Uvg4f2QL0MLA4vg7OkBy8PFl8=
+Received: from localhost.localdomain (171.221.113.137 [171.221.113.137]) by mx.zohomail.com
+        with SMTPS id 1564508415899610.9807695501638; Tue, 30 Jul 2019 10:40:15 -0700 (PDT)
+From:   Zhou Yanjie <zhouyanjie@zoho.com>
+To:     linux-mips@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, ralf@linux-mips.org,
+        paul@crapouillou.net, paul.burton@mips.com, jhogan@kernel.org,
+        malat@debian.org, chenhc@lemote.com, tglx@linutronix.de,
+        allison@lohutok.net, syq@debian.org, jiaxun.yang@flygoat.com
+Subject: MIPS: Ingenic: Fix bugs when detecting X1000's parameters.
+Date:   Tue, 30 Jul 2019 22:55:09 +0800
+Message-Id: <1564498510-3751-1-git-send-email-zhouyanjie@zoho.com>
+X-Mailer: git-send-email 2.7.4
+X-ZohoMailClient: External
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 30, 2019 at 08:51:58AM +0300, Christoph Hellwig wrote:
-> The pagewalk code already passes the value as the hmask parameter.
->=20
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
->  mm/hmm.c | 7 ++-----
->  1 file changed, 2 insertions(+), 5 deletions(-)
->=20
-> diff --git a/mm/hmm.c b/mm/hmm.c
-> index f26d6abc4ed2..88b77a4a6a1e 100644
-> +++ b/mm/hmm.c
-> @@ -771,19 +771,16 @@ static int hmm_vma_walk_hugetlb_entry(pte_t *pte, u=
-nsigned long hmask,
->  				      struct mm_walk *walk)
->  {
->  #ifdef CONFIG_HUGETLB_PAGE
-> -	unsigned long addr =3D start, i, pfn, mask;
-> +	unsigned long addr =3D start, i, pfn;
->  	struct hmm_vma_walk *hmm_vma_walk =3D walk->private;
->  	struct hmm_range *range =3D hmm_vma_walk->range;
->  	struct vm_area_struct *vma =3D walk->vma;
-> -	struct hstate *h =3D hstate_vma(vma);
->  	uint64_t orig_pfn, cpu_flags;
->  	bool fault, write_fault;
->  	spinlock_t *ptl;
->  	pte_t entry;
->  	int ret =3D 0;
-> =20
-> -	mask =3D huge_page_size(h) - 1;
-> -
->  	ptl =3D huge_pte_lock(hstate_vma(vma), walk->mm, pte);
->  	entry =3D huge_ptep_get(pte);
-> =20
-> @@ -799,7 +796,7 @@ static int hmm_vma_walk_hugetlb_entry(pte_t *pte, uns=
-igned long hmask,
->  		goto unlock;
->  	}
-> =20
-> -	pfn =3D pte_pfn(entry) + ((start & mask) >> PAGE_SHIFT);
-> +	pfn =3D pte_pfn(entry) + ((start & hmask) >> PAGE_SHIFT);
+1.fix bugs when detecting L2 cache sets value.
+2.fix bugs when detecting L2 cache ways value.
+3.fix bugs when calculate bogoMips and loops_per_jiffy.
 
-I don't know this hstate stuff, but this doesn't look the same?
 
-static int walk_hugetlb_range(unsigned long addr, unsigned long end, {
-        struct hstate *h =3D hstate_vma(vma);
-        unsigned long hmask =3D huge_page_mask(h); // aka h->mask
-
-                        err =3D walk->hugetlb_entry(pte, hmask, addr, next,=
- walk);
-
-And the first place I found setting h->mask is:
-
-void __init hugetlb_add_hstate(unsigned int order) {
-	h->mask =3D ~((1ULL << (order + PAGE_SHIFT)) - 1);
-
-Compared with
-    mask =3D huge_page_size(h) - 1;
-         =3D ((unsigned long)PAGE_SIZE << h->order) - 1
-
-Looks like hmask =3D=3D ~mask
-
-?
-
-Jason
