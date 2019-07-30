@@ -2,106 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97C157ACD2
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 17:52:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E3DB7ACC6
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 17:51:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732665AbfG3Pvz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 11:51:55 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:58752 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725974AbfG3Pvz (ORCPT
+        id S1732637AbfG3Puq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 11:50:46 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:41869 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725974AbfG3Puq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 11:51:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Satq2eEMXIbB0aB+E4vC0WoAtw8SMBMHI0WXpWtRuYs=; b=J1ZC52QIsMjMi5k2i2Fvr0+nV
-        AuizVSMIB5ohxsLuqMXvxPDnGN3s7Ru76VojFpPcd5fQqygq3HMaOXKDD0VEBrs7Btv2YSwqH73rL
-        2gC9VPKgK6bIMpJY5oFm8wW8bzuPYLpVtZ+MBg74aqkS+Q2G++Vy42i1p1GAoxDhc9XAc=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hsUOT-0007rr-3R; Tue, 30 Jul 2019 15:50:29 +0000
-Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id E52FC2742CB5; Tue, 30 Jul 2019 16:50:27 +0100 (BST)
-Date:   Tue, 30 Jul 2019 16:50:27 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Thomas Preston <thomas.preston@codethink.co.uk>
-Cc:     Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
-        alsa-devel@alsa-project.org,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Kirill Marinushkin <kmarinushkin@birdec.tech>,
-        Cheng-Yi Chiang <cychiang@chromium.org>,
-        Marco Felsch <m.felsch@pengutronix.de>,
-        Takashi Iwai <tiwai@suse.com>,
-        Annaliese McDermond <nh6z@nh6z.net>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Vinod Koul <vkoul@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        linux-kernel@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>
-Subject: Re: [alsa-devel] [PATCH v2 3/3] ASoC: TDA7802: Add turn-on
- diagnostic routine
-Message-ID: <20190730155027.GJ4264@sirena.org.uk>
-References: <20190730120937.16271-1-thomas.preston@codethink.co.uk>
- <20190730120937.16271-4-thomas.preston@codethink.co.uk>
- <20190730141935.GF4264@sirena.org.uk>
- <45156592-a90f-b4f8-4d30-9631c03f1280@codethink.co.uk>
+        Tue, 30 Jul 2019 11:50:46 -0400
+Received: by mail-lj1-f195.google.com with SMTP id d24so62561191ljg.8;
+        Tue, 30 Jul 2019 08:50:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qjZf+MF90g13zAX26LAEhRqKIVvf2OUOjoC3kV1A4hg=;
+        b=VCiOqmTYTGpW6+TzwBMHfJxMPqrUu8XF30lk6st37bbgYF0Nf7k/Ayzd0LJg8IBLBq
+         B3nvq4nVJBAQxNrRqb7+W+Jm6ixv8nCgbaSG6aa4rLbAnY8luPpY6ID6P5a5Nw3+J5Vp
+         NPKJjRJpfwWiwxG33PpNADm57+cWKpUJallVPjO8oxqWC6rZo1F2IHOuJzfN9gSUdbaR
+         mopvFTWRS4ljV2AxObuvoOxuWM1rbjnoJlMoPhjnW+WsmxmmDHPoF/4hSDABmRprWtLP
+         GU1NqSCyGEgJG4UB3Coad+OcB9LKekzx4b08QHehDl5s4aH/oDP1GZExKz5AD2EL1i91
+         tJAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qjZf+MF90g13zAX26LAEhRqKIVvf2OUOjoC3kV1A4hg=;
+        b=LtwYJzksIIj4VKXFb76yw3iblmhH6AFpQOKmkatUVSuDEMTQ/EUA56QpIL4ySiZdeG
+         Rbts1YEwIuwUUhLWVJQurpr2DxHZ6TqWcFsrM/vA2U/9nT7qoptr0aMhQgX4esPiiAGw
+         +/Fp8RqSJJVk/OaJt04pmW4sABTDMxx0WXLLpta6HX7TijoBWhXfCmD1iJUMubGtPVVt
+         Oh/bTGmwBTYGXxo+dNBNuw6z2+Kv5O07+neAseFsm2/Xtk6WjdGlYNZzq5uth7GhbgSX
+         2jMg/3+F00iMOdHX9DM0NIfaN8cR15mJU2vRRgf31qxuubvJd/QnGMZ0nChRbd0qCrdb
+         0azg==
+X-Gm-Message-State: APjAAAXYDNQNx9mUO8grho5+Aht7hsvWVEbPq0mcIxEUm7Bf9grkBN+V
+        KgotI923XCi6DtHjy2p8LaV31nUv9BAQ2l2aF9w=
+X-Google-Smtp-Source: APXvYqwkPXJqhZBbFxl4c3kyyps9obbir8sQKSKYcOVSdu+a9rKp3mkmY8WgYDRqTdAoVGsUk7BE8h3GnFHlnbo87c0=
+X-Received: by 2002:a2e:8155:: with SMTP id t21mr4643059ljg.80.1564501844026;
+ Tue, 30 Jul 2019 08:50:44 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="DesjdUuHQDwS2t4N"
-Content-Disposition: inline
-In-Reply-To: <45156592-a90f-b4f8-4d30-9631c03f1280@codethink.co.uk>
-X-Cookie: Times approximate.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190730101451.845-1-h.feurstein@gmail.com> <20190730140930.GM28552@lunn.ch>
+In-Reply-To: <20190730140930.GM28552@lunn.ch>
+From:   Hubert Feurstein <h.feurstein@gmail.com>
+Date:   Tue, 30 Jul 2019 17:50:32 +0200
+Message-ID: <CAFfN3gXxC+t7nStOfTd=iCodg6S0ZwdtV309_qpYrrJ0eweVzw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] net: dsa: mv88e6xxx: add support to setup led-control
+ register through device-tree
+To:     Andrew Lunn <andrew@lunn.ch>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Am Di., 30. Juli 2019 um 16:09 Uhr schrieb Andrew Lunn <andrew@lunn.ch>:
+[...]
+> Sorry, but this is not going to be accepted. There is an ongoing
+> discussion about PHY LEDs and how they should be configured. Switch
+> LEDs are no different from PHY LEDs. So they should use the same basic
+> concept.
+>
+> Please take a look at the discussion around:
+>
+> [RFC] dt-bindings: net: phy: Add subnode for LED configuration
+>
+> Marvell designers have made this more difficult than it should be by
+> moving the registers out of the PHY address space and into the switch
+> address space. So we are going to have to implement this code twice
+> :-(
+Ok, good to know. I'll wait for the first implementation and take it
+as a reference.
 
---DesjdUuHQDwS2t4N
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Jul 30, 2019 at 04:25:56PM +0100, Thomas Preston wrote:
-> On 30/07/2019 15:19, Mark Brown wrote:
-
-> > It is unclear what this mutex usefully protects, it only gets taken when
-> > writing to the debugfs file to trigger this diagnostic mode but doesn't
-> > do anything to control interactions with any other code path in the
-> > driver.
-
-> If another process reads the debugfs node "diagnostic" while the turn-on=
-=20
-> diagnostic mode is running, this mutex prevents the second process
-> restarting the diagnostics.
-
-> This is redundant if debugfs reads are atomic, but I don't think they are.
-
-Like I say it's not just debugfs though, there's the standard driver
-interface too.
-
---DesjdUuHQDwS2t4N
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl1AZ0MACgkQJNaLcl1U
-h9A+KQgAgi4HkmsbIandzuTrFA6N2E9Zrc7WMisuFB9GE/OnLiU559yFfrABha81
-2AJ4vwv4WOwP6Cl48kFT7W90WgsJljB6F0d/SaiwvhNmwf2ifUVANo+tkNv8L2kn
-W/7p0/OQ1tuFhU9OI98e1YbqSI/TEcgQx3CEp0diUdcmv1C55X6cn1tjj5Mn0+hz
-Mf2IV9Q1KMJQBeHqm6PvdWjzxbnQ7iUEPQ6SoP6PwTjEvpWN/+Cv7q/wo1FCs1hb
-1nYLoWrVYhOaQyzAxxJ/S2bRl5TybnmgSJOpj1ZNMRcHdED93sk3GMNSqqAOD68L
-nQQV16tM/EvyPsbQE+AMJFrAKfZLdg==
-=H0id
------END PGP SIGNATURE-----
-
---DesjdUuHQDwS2t4N--
+Hubert
