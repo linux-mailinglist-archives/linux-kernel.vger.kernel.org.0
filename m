@@ -2,165 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF0B07A336
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 10:41:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2038D7A33F
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 10:41:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730930AbfG3Iix (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 04:38:53 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:43670 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728354AbfG3Iix (ORCPT
+        id S1731007AbfG3IlS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 04:41:18 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:21960 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726255AbfG3IlR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 04:38:53 -0400
-Received: by mail-pg1-f195.google.com with SMTP id r22so2080456pgk.10
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 01:38:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=axtens.net; s=google;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=xAWml8zHr+RR4WtcfJXF5qLyW4vcoY8hdC2IB6AOcOc=;
-        b=fBVA+CF5JEE+effJV4K3mQ0bjdRf0WrTxicmyOKsFjrrZqG78elCDi+wOBnBnXbWx4
-         ym1k2k4QFEQUs+2gBa3CJ8E3EZlJB6wKi6b2qJAHGQoVrmG3TXgEof609/nKFxHb+7dJ
-         eMDWK3XSTFbb8nqVxKtVIsKD6qfgbXSrkfehk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=xAWml8zHr+RR4WtcfJXF5qLyW4vcoY8hdC2IB6AOcOc=;
-        b=C1gVHHCWCN0d36HgA+8aGPPbWP2yHMGhulwH4nkP7GjwdS1IMndqycg/6y78NcJHsp
-         YsSg3fE8JR8bqqFV6zIvcT7oKm2XyVoKTGBlgjH3KHZgCo5NFg8U7DmaVIhQY0sIjRTU
-         Q18Q5fIMJ+83TOhRzwRbZ2+HWrKsZGVpIphgm5BXZmzteBAIbVHP3pOgkNkZVOOusNOi
-         6k5ZW9Akj0JMlrkzhZFj1V0ov+qhyH/pxRFaL02MgOmTnaBhNBGG6suxOpFTbywWnHod
-         K/wTZLhWyHJpRFdtHFb9i+7qzdwD5Z9M7409S3TeQe2GEfIxfEm0U8A4Re69k8hvrSC3
-         KGQQ==
-X-Gm-Message-State: APjAAAXs072cdaHWiiULGLA5a3oi1sATDpOF0ueecmBVA2Fa3MK1QqSz
-        zHYK0Hckt1oOs6+K2a+1Cct67+pw
-X-Google-Smtp-Source: APXvYqwSLszFoXT/40dnLzTLf7YGDHfpuGGatDiw5WyLEl3Fheu3QtT1c4tQCU0jbRE9fZcIOn3FmQ==
-X-Received: by 2002:a17:90a:17c4:: with SMTP id q62mr117904140pja.104.1564475932272;
-        Tue, 30 Jul 2019 01:38:52 -0700 (PDT)
-Received: from localhost (ppp167-251-205.static.internode.on.net. [59.167.251.205])
-        by smtp.gmail.com with ESMTPSA id q126sm70680998pfq.123.2019.07.30.01.38.50
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 30 Jul 2019 01:38:51 -0700 (PDT)
-From:   Daniel Axtens <dja@axtens.net>
-To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     kasan-dev@googlegroups.com, linux-mm@kvack.org, x86@kernel.org,
-        aryabinin@virtuozzo.com, glider@google.com, luto@kernel.org,
-        linux-kernel@vger.kernel.org, dvyukov@google.com
-Subject: Re: [PATCH v2 1/3] kasan: support backing vmalloc space with real shadow memory
-In-Reply-To: <20190729154426.GA51922@lakrids.cambridge.arm.com>
-References: <20190729142108.23343-1-dja@axtens.net> <20190729142108.23343-2-dja@axtens.net> <20190729154426.GA51922@lakrids.cambridge.arm.com>
-Date:   Tue, 30 Jul 2019 18:38:47 +1000
-Message-ID: <877e7zhq7c.fsf@dja-thinkpad.axtens.net>
+        Tue, 30 Jul 2019 04:41:17 -0400
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6U8atZj025754;
+        Tue, 30 Jul 2019 10:39:38 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=STMicroelectronics;
+ bh=kkYVmzU2G79MWlienOnwLFNq3rDtebO7lrkP/5ufdRE=;
+ b=A8j/4p7vPntTeJcf5GkehS8rNDbwm4/v1lx8QLR/TU59xoHRZlUYbGz7in196He7aS2A
+ OB1UrOC18FxZhlfimyFg3cT8Has8ahHDs/SZSQIebZcdYSTxblEE6ETwIJ4ZhVp2qnGy
+ GDWQ/6rb/fVS+Fj/2OJ4TZwFxoCu7KdvA2iECdIr7Sm8ZvQ3A8iz6DCC522fHIDl3RO8
+ Ejhc9S8zzBiKosdjmf9foGY4IHIMnS0vyP8GkxftYztWXiAns5rNBvI6CyCS2FhkL+un
+ W8dl9mQREuerUfn72GrxHywifo1Q0iUB1JHt7aQwXL0WlwFPOJqvJJP03s6hRddp07eM nw== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2u0c2y9949-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Tue, 30 Jul 2019 10:39:38 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 5E47438;
+        Tue, 30 Jul 2019 08:39:36 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag3node1.st.com [10.75.127.7])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 09FBB16A1;
+        Tue, 30 Jul 2019 08:39:36 +0000 (GMT)
+Received: from SFHDAG3NODE3.st.com (10.75.127.9) by SFHDAG3NODE1.st.com
+ (10.75.127.7) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 30 Jul
+ 2019 10:39:35 +0200
+Received: from SFHDAG3NODE3.st.com ([fe80::3507:b372:7648:476]) by
+ SFHDAG3NODE3.st.com ([fe80::3507:b372:7648:476%20]) with mapi id
+ 15.00.1347.000; Tue, 30 Jul 2019 10:39:35 +0200
+From:   Benoit HOUYERE <benoit.houyere@st.com>
+To:     Alexander Steffen <Alexander.Steffen@infineon.com>,
+        "Eyal.Cohen@nuvoton.com" <Eyal.Cohen@nuvoton.com>,
+        "jarkko.sakkinen@linux.intel.com" <jarkko.sakkinen@linux.intel.com>,
+        "tmaimon77@gmail.com" <tmaimon77@gmail.com>
+CC:     "oshrialkoby85@gmail.com" <oshrialkoby85@gmail.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "peterhuewe@gmx.de" <peterhuewe@gmx.de>,
+        "jgg@ziepe.ca" <jgg@ziepe.ca>, "arnd@arndb.de" <arnd@arndb.de>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "oshri.alkoby@nuvoton.com" <oshri.alkoby@nuvoton.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "gcwilson@us.ibm.com" <gcwilson@us.ibm.com>,
+        "kgoldman@us.ibm.com" <kgoldman@us.ibm.com>,
+        "nayna@linux.vnet.ibm.com" <nayna@linux.vnet.ibm.com>,
+        "Dan.Morav@nuvoton.com" <Dan.Morav@nuvoton.com>,
+        "oren.tanami@nuvoton.com" <oren.tanami@nuvoton.com>,
+        "Christophe Ricard (christophe.ricard@gmail.com)" 
+        <christophe.ricard@gmail.com>, Elena WILLIS <elena.willis@st.com>,
+        "Olivier COLLART" <olivier.collart@st.com>
+Subject: RE: [PATCH v2 0/2] char: tpm: add new driver for tpm i2c ptp
+Thread-Topic: [PATCH v2 0/2] char: tpm: add new driver for tpm i2c ptp
+Thread-Index: AQHVPYumSgWE27nyTEaW8YGKFQsC/6bi0PyQ
+Date:   Tue, 30 Jul 2019 08:39:35 +0000
+Message-ID: <2e86f1b6a3c04c9889d0f12f4eb079d4@SFHDAG3NODE3.st.com>
+References: <20190628151327.206818-1-oshrialkoby85@gmail.com>
+ <8e6ca8796f229c5dc94355437351d7af323f0c56.camel@linux.intel.com>
+ <79e8bfd2-2ed1-cf48-499c-5122229beb2e@infineon.com>
+ <CAM9mBwJC2QD5-gV1eJUDzC2Fnnugr-oCZCoaH2sT_7ktFDkS-Q@mail.gmail.com>
+ <45603af2fc8374a90ef9e81a67083395cc9c7190.camel@linux.intel.com>
+ <6e7ff1b958d84f6e8e585fd3273ef295@NTILML02.nuvoton.com>
+ <CAP6Zq1hPo9dG71YFyr7z9rjmi-DvoUZJOme4+2uqsfO+7nH+HQ@mail.gmail.com>
+ <20190715094541.zjqxainggjuvjxd2@linux.intel.com>
+ <9c8e216dbc4f43dbaa1701dc166b05e0@NTILML02.nuvoton.com>
+ <548d3727-4a8f-38d4-2193-8a09cbae1e64@infineon.com>
+In-Reply-To: <548d3727-4a8f-38d4-2193-8a09cbae1e64@infineon.com>
+Accept-Language: fr-FR, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.47]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-30_04:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mark,
-
-Thanks for your email - I'm very new to mm stuff and the feedback is
-very helpful.
-
->> +#ifndef CONFIG_KASAN_VMALLOC
->>  int kasan_module_alloc(void *addr, size_t size)
->>  {
->>  	void *ret;
->> @@ -603,6 +604,7 @@ void kasan_free_shadow(const struct vm_struct *vm)
->>  	if (vm->flags & VM_KASAN)
->>  		vfree(kasan_mem_to_shadow(vm->addr));
->>  }
->> +#endif
->
-> IIUC we can drop MODULE_ALIGN back to PAGE_SIZE in this case, too.
-
-Yes, done.
-
->>  core_initcall(kasan_memhotplug_init);
->>  #endif
->> +
->> +#ifdef CONFIG_KASAN_VMALLOC
->> +void kasan_cover_vmalloc(unsigned long requested_size, struct vm_struct *area)
->
-> Nit: I think it would be more consistent to call this
-> kasan_populate_vmalloc().
->
-
-Absolutely. I didn't love the name but just didn't 'click' that populate
-would be a better verb.
-
->> +{
->> +	unsigned long shadow_alloc_start, shadow_alloc_end;
->> +	unsigned long addr;
->> +	unsigned long backing;
->> +	pgd_t *pgdp;
->> +	p4d_t *p4dp;
->> +	pud_t *pudp;
->> +	pmd_t *pmdp;
->> +	pte_t *ptep;
->> +	pte_t backing_pte;
->
-> Nit: I think it would be preferable to use 'page' rather than 'backing',
-> and 'pte' rather than 'backing_pte', since there's no otehr namespace to
-> collide with here. Otherwise, using 'shadow' rather than 'backing' would
-> be consistent with the existing kasan code.
-
-Not a problem, done.
-
->> +	addr = shadow_alloc_start;
->> +	do {
->> +		pgdp = pgd_offset_k(addr);
->> +		p4dp = p4d_alloc(&init_mm, pgdp, addr);
->> +		pudp = pud_alloc(&init_mm, p4dp, addr);
->> +		pmdp = pmd_alloc(&init_mm, pudp, addr);
->> +		ptep = pte_alloc_kernel(pmdp, addr);
->> +
->> +		/*
->> +		 * we can validly get here if pte is not none: it means we
->> +		 * allocated this page earlier to use part of it for another
->> +		 * allocation
->> +		 */
->> +		if (pte_none(*ptep)) {
->> +			backing = __get_free_page(GFP_KERNEL);
->> +			backing_pte = pfn_pte(PFN_DOWN(__pa(backing)),
->> +					      PAGE_KERNEL);
->> +			set_pte_at(&init_mm, addr, ptep, backing_pte);
->> +		}
->
-> Does anything prevent two threads from racing to allocate the same
-> shadow page?
->
-> AFAICT it's possible for two threads to get down to the ptep, then both
-> see pte_none(*ptep)), then both try to allocate the same page.
->
-> I suspect we have to take init_mm::page_table_lock when plumbing this
-> in, similarly to __pte_alloc().
-
-Good catch. I think you're right, I'll add the lock.
-
->> +	} while (addr += PAGE_SIZE, addr != shadow_alloc_end);
->> +
->> +	kasan_unpoison_shadow(area->addr, requested_size);
->> +	requested_size = round_up(requested_size, KASAN_SHADOW_SCALE_SIZE);
->> +	kasan_poison_shadow(area->addr + requested_size,
->> +			    area->size - requested_size,
->> +			    KASAN_VMALLOC_INVALID);
->
-> IIUC, this could leave the final portion of an allocated page
-> unpoisoned.
->
-> I think it might make more sense to poison each page when it's
-> allocated, then plumb it into the page tables, then unpoison the object.
->
-> That way, we can rely on any shadow allocated by another thread having
-> been initialized to KASAN_VMALLOC_INVALID, and only need mutual
-> exclusion when allocating the shadow, rather than when poisoning
-> objects.
-
-Yes, that makes sense, will do.
-
-Thanks again,
-Daniel
-
+SGkgQWxleGFuZGVyLCBKYXJra28gYW5kIEV5YWwsDQoNCkEgZmlyc3QgSTJDIFRDRyBwYXRjaCAo
+dHBtX3Rpc19pMmMuYykgaGFzIGJlZW4gcHJvcG9zZWQgaW4gdGhlIHNhbWUgdGltZSBhcyB0cG1f
+dGlzX3NwaS5jIGJ5IENocmlzdG9waGUgMyB5ZWFycyBhZ28uDQoNCmh0dHBzOi8vcGF0Y2h3b3Jr
+Lmtlcm5lbC5vcmcvcGF0Y2gvODYyODY4MS8NCg0KQXQgdGhlIHRpbWUsIHdlIGhhdmUgaGFkIHR3
+byBjb25jZXJucyA6DQoJMSkgSTJDIFRQTSBjb21wb25lbnQgbnVtYmVyLCBpbiB0aGUgbWFya2V0
+LCBjb21wbGlhbnQgd2l0aCBuZXcgSTJDIFRDRyBzcGVjaWZpY2F0aW9uIHRvIHZhbGlkYXRlIG5l
+dyBJMkMgZHJpdmVyLg0KCTIpIExvdHMgY2hhbmdpbmcgIHdhcyBhbHJlYWR5IHByb3ZpZGVkIGJ5
+IHRwbV90aXNfc3BpLmMgb24gNC44Lg0KDQpUaGF0J3Mgd2h5IFRwbV90aXNfaTJjLmMgaGFzIGJl
+ZW4gcG9zdHBvbmVkLg0KDQpUcG1fdGlzX3NwaSBMaW51eCBkcml2ZXIgaXMgbm93IHJvYnVzdCwg
+aWYgd2UgaGF2ZSBzZXZlcmFsIGRpZmZlcmVudCBJMkMgVFBNIHNvbHV0aW9ucyB0b2RheSB0byB2
+YWxpZGF0ZSBhIHRwbV90aXNfaTJjIGRyaXZlciwgSSAnbSByZWFkeSB0byBjb250cmlidXRlIHRv
+IGl0IGZvciB2YWxpZGF0aW9uIChTVG1pY3JvIFRQTSkgb3IgcHJvcG9zZSBhIHNvbHV0aW9uIGNv
+bXBhdGlibGUgb24gNS4xIGxpbnV4IGRyaXZlciBpZiBuZWVkZWQgdW5kZXIgdGltZWZyYW1lIHBy
+b3Bvc2VkIChzZWNvbmQgaGFsZiBvZiBhdWd1c3QpLg0KDQpCZXN0IFJlZ2FyZHMsDQoNCkJlbm9p
+dA0KDQoNCg0KLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCkZyb206IGxpbnV4LWludGVncml0
+eS1vd25lckB2Z2VyLmtlcm5lbC5vcmcgPGxpbnV4LWludGVncml0eS1vd25lckB2Z2VyLmtlcm5l
+bC5vcmc+IE9uIEJlaGFsZiBPZiBBbGV4YW5kZXIgU3RlZmZlbg0KU2VudDogamV1ZGkgMTgganVp
+bGxldCAyMDE5IDE5OjEwDQpUbzogRXlhbC5Db2hlbkBudXZvdG9uLmNvbTsgamFya2tvLnNha2tp
+bmVuQGxpbnV4LmludGVsLmNvbTsgdG1haW1vbjc3QGdtYWlsLmNvbQ0KQ2M6IG9zaHJpYWxrb2J5
+ODVAZ21haWwuY29tOyByb2JoK2R0QGtlcm5lbC5vcmc7IG1hcmsucnV0bGFuZEBhcm0uY29tOyBw
+ZXRlcmh1ZXdlQGdteC5kZTsgamdnQHppZXBlLmNhOyBhcm5kQGFybmRiLmRlOyBncmVna2hAbGlu
+dXhmb3VuZGF0aW9uLm9yZzsgb3NocmkuYWxrb2J5QG51dm90b24uY29tOyBkZXZpY2V0cmVlQHZn
+ZXIua2VybmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsgbGludXgtaW50ZWdy
+aXR5QHZnZXIua2VybmVsLm9yZzsgZ2N3aWxzb25AdXMuaWJtLmNvbTsga2dvbGRtYW5AdXMuaWJt
+LmNvbTsgbmF5bmFAbGludXgudm5ldC5pYm0uY29tOyBEYW4uTW9yYXZAbnV2b3Rvbi5jb207IG9y
+ZW4udGFuYW1pQG51dm90b24uY29tDQpTdWJqZWN0OiBSZTogW1BBVENIIHYyIDAvMl0gY2hhcjog
+dHBtOiBhZGQgbmV3IGRyaXZlciBmb3IgdHBtIGkyYyBwdHANCg0KT24gMTguMDcuMjAxOSAxNDo1
+MSwgRXlhbC5Db2hlbkBudXZvdG9uLmNvbSB3cm90ZToNCj4gSGkgSmFya2tvIGFuZCBBbGV4YW5k
+ZXIsDQo+IA0KPiBXZSBoYXZlIG1hZGUgYW4gYWRkaXRpb25hbCBjb2RlIHJldmlldyBvbiB0aGUg
+VFBNIFRJUyBjb3JlIGRyaXZlciwgaXQgbG9va3MgcXVpdGUgZ29vZCBhbmQgd2UgY2FuIGNvbm5l
+Y3Qgb3VyIG5ldyBJMkMgZHJpdmVyIHRvIHRoaXMgbGF5ZXIuDQoNCkdyZWF0IDopIEluIHRoZSBt
+ZWFudGltZSwgSSd2ZSBkb25lIHNvbWUgZXhwZXJpbWVudHMgY3JlYXRpbmcgYW4gSTJDIGRyaXZl
+ciBiYXNlZCBvbiB0cG1fdGlzX2NvcmUsIHNlZSBodHRwczovL3BhdGNod29yay5rZXJuZWwub3Jn
+L3BhdGNoLzExMDQ5MzYzLyBQbGVhc2UgaGF2ZSBhIGxvb2sgYXQgdGhhdCBhbmQgcHJvdmlkZSB5
+b3VyIGZlZWRiYWNrIChhbmQvb3IgdXNlIGl0IGFzIGEgYmFzaXMgZm9yIGZ1cnRoZXIgaW1wbGVt
+ZW50YXRpb25zKS4NCg0KPiBIb3dldmVyLCB0aGVyZSBhcmUgc2V2ZXJhbCBkaWZmZXJlbmNlcyBi
+ZXR3ZWVuIHRoZSBTUEkgaW50ZXJmYWNlIGFuZCB0aGUgSTJDIGludGVyZmFjZSB0aGF0IHdpbGwg
+cmVxdWlyZSBjaGFuZ2VzIHRvIHRoZSBUSVMgY29yZS4NCj4gQXQgYSBtaW5pbXVtIHdlIHRob3Vn
+aHQgb2Y6DQo+IDEuIEhhbmRsaW5nIFRQTSBMb2NhbGl0aWVzIGluIEkyQyBpcyBkaWZmZXJlbnQN
+Cg0KSXQgdHVybmVkIG91dCBub3QgdG8gYmUgdGhhdCBkaWZmZXJlbnQgaW4gdGhlIGVuZCwgc2Vl
+IHRoZSBjb2RlIG1lbnRpb25lZCBhYm92ZSBhbmQgbXkgY29tbWVudCBoZXJlOiANCmh0dHBzOi8v
+cGF0Y2h3b3JrLmtlcm5lbC5vcmcvY292ZXIvMTEwNDkzNjUvDQoNCj4gMi4gSGFuZGxpbmcgSTJD
+IENSQyAtIHJlbGV2YW50IG9ubHkgdG8gSTJDIGJ1cyBoZW5jZSBub3Qgc3VwcG9ydGVkIA0KPiB0
+b2RheSBieSBUSVMgY29yZQ0KDQpUaGF0IGlzIGNvbXBsZXRlbHkgb3B0aW9uYWwsIHNvIHRoZXJl
+IGlzIG5vIG5lZWQgdG8gaW1wbGVtZW50IGl0IGluIHRoZSBiZWdpbm5pbmcuIEFsc28sIGRvIHlv
+dSBleHBlY3QgYSBodWdlIGJlbmVmaXQgZnJvbSB0aGF0IGZ1bmN0aW9uYWxpdHk/IA0KQXJlIGJp
+dCBmbGlwcyB0aGF0IG11Y2ggbW9yZSBsaWtlbHkgb24gSTJDIGNvbXBhcmVkIHRvIFNQSSwgd2hp
+Y2ggaGFzIG5vIENSQyBhdCBhbGwsIGJ1dCBzdGlsbCB3b3JrcyBmaW5lPw0KDQo+IDMuIEhhbmRs
+aW5nIENoaXAgc3BlY2lmaWMgaXNzdWVzLCBzaW5jZSBJMkMgaW1wbGVtZW50YXRpb24gbWlnaHQg
+YmUgDQo+IHNsaWdodGx5IGRpZmZlcmVudCBhY3Jvc3MgdGhlIHZhcmlvdXMgVFBNIHZlbmRvcnMN
+Cg0KUmlnaHQsIHRoYXQgc2VlbXMgc2ltaWxhciB0byB0aGUgY3I1MCBpc3N1ZXMgKGh0dHBzOi8v
+bGttbC5vcmcvbGttbC8yMDE5LzcvMTcvNjc3KSwgc28gdGhlcmUgc2hvdWxkIHByb2JhYmx5IGJl
+IGEgc2ltaWxhciB3YXkgdG8gZG8gaXQuDQoNCj4gNC4gTW9kaWZ5IHRwbV90aXNfc2VuZF9kYXRh
+IGFuZCB0cG1fdGlzX3JlY3ZfZGF0YSB0byB3b3JrIGFjY29yZGluZyANCj4gdGhlIFRDRyBEZXZp
+Y2UgRHJpdmVyIEd1aWRlIChvcHRpbWl6YXRpb24gb24gVFBNX1NUUyBhY2Nlc3MgYW5kIA0KPiBz
+ZW5kL3JlY3YgcmV0cnkpDQoNCk9wdGltaXphdGlvbnMgYXJlIGFsd2F5cyB3ZWxjb21lLCBidXQg
+SSdkIGV4cGVjdCBiYXNpYyBjb21tdW5pY2F0aW9uIHRvIHdvcmsgYWxyZWFkeSB3aXRoIHRoZSBj
+dXJyZW50IGNvZGUgKHRob3VnaCBtYXliZSBub3QgYXMgZWZmaWNpZW50bHkgYXMgcG9zc2libGUp
+Lg0KDQo+IEJlc2lkZXMgdGhpcywgZHVyaW5nIGRldmVsb3BtZW50IHdlIG1pZ2h0IGVuY291bnRl
+ciBhZGRpdGlvbmFsIGRpZmZlcmVuY2VzIGJldHdlZW4gU1BJIGFuZCBJMkMuDQo+IA0KPiBXZSBj
+dXJyZW50bHkgdGFyZ2V0IHRvIGFsbG9jYXRlIGFuIGVuZy4gdG8gd29yayBvbiB0aGlzIG9uIHRo
+ZSBzZWNvbmQgaGFsZiBvZiBBdWd1c3Qgd2l0aCBhIGdvYWwgdG8gaGF2ZSB0aGUgZHJpdmVyIHJl
+YWR5IGZvciB0aGUgbmV4dCBrZXJuZWwgbWVyZ2Ugd2luZG93Lg0KPiANCj4gUmVnYXJkcywNCj4g
+RXlhbC4NCg==
