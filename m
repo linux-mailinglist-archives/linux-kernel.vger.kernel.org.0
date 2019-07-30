@@ -2,133 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D364F7B1A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:19:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB9A87B1B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:19:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388262AbfG3STW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 14:19:22 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:34909 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387845AbfG3STT (ORCPT
+        id S2388295AbfG3STo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 14:19:44 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:42733 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388010AbfG3STj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 14:19:19 -0400
-Received: by mail-pf1-f195.google.com with SMTP id u14so30286874pfn.2
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 11:19:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=WYV3lJkZz1M8QFLTNcbisKstq4q45qxIoF6vMekR4Ik=;
-        b=mZqGk/cUp6ZNJEsrEHgluVspbQqD/bx8uYW6vGDU/FpCW5W4GoxK+4/b1HjJ4bSDCq
-         xyW3ZS0uf0DfYXzWcHQIeKMfCqgFrRDayoLgDTv4QOWbhe8Raxi6hVsR1bQ6j1+njf6I
-         kMOQ/nc0tCcPOfurVrxe/F1hJnYiinkBApcH4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=WYV3lJkZz1M8QFLTNcbisKstq4q45qxIoF6vMekR4Ik=;
-        b=LUn5vnIrWKYxfxpg+DQdV2hdhbcPS52kBHQQ1cPczd+sRoUm61wUMkUWfcRCpMDFSa
-         nGKMKigDTAdpT46jndITriPMG9argZryU+9OKRkvfwY+D59y4RmkksbcAp7mxK1PkBue
-         RLPARFlN8+IjxluXvriSQjSDMfyTXa1YevZeswBTuJzgmn+VqmYrDYh7iRHXKS6iLlC5
-         U02cWyhXPO68MqlBot3F9ICun5o05a6ruDxymfqefimMIe6DZTZfnY4bnA71iVYCaFCJ
-         klZnV8CGVokc3yo/qaFM9uKRHTu1TmnywLPFUKk14UX8vFPb3Lxt/XqTXkDb10uBXynL
-         bjGQ==
-X-Gm-Message-State: APjAAAVu8TlrbTl6wnsAG0sAQWRGm7z/gKmRiIlSB+XYaF1Ffl+WvJbf
-        beKIkKI0p9QPcgnFKvN6ei7jQg==
-X-Google-Smtp-Source: APXvYqw4/yqmb0Rlt+53Fv5Ar1d4LMo3nzvzPjOQ1bEXUP20GHFA0n4fefD4ezGXYZ/+3e25mhoUqg==
-X-Received: by 2002:a17:90a:360c:: with SMTP id s12mr120028251pjb.30.1564510759254;
-        Tue, 30 Jul 2019 11:19:19 -0700 (PDT)
-Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
-        by smtp.gmail.com with ESMTPSA id h12sm79833057pje.12.2019.07.30.11.19.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Jul 2019 11:19:18 -0700 (PDT)
-Date:   Tue, 30 Jul 2019 11:19:16 -0700
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Doug Anderson <dianders@chromium.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Heiko Stuebner <heiko@sntech.de>, devicetree@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ARM: dts: rockchip: A few fixes for veyron-{fievel,tiger}
-Message-ID: <20190730181916.GJ250418@google.com>
-References: <20190730173444.56741-1-mka@chromium.org>
- <CAD=FV=Wub9Wkc5t4iQRjBK8R_d_oh4PoHPwLHb4T5+Meij7sSg@mail.gmail.com>
+        Tue, 30 Jul 2019 14:19:39 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6UIJQ2f3326935
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Tue, 30 Jul 2019 11:19:27 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6UIJQ2f3326935
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019071901; t=1564510767;
+        bh=VPrKE2Yp6oop93/YFTtaKPWE1BHVl2rneqEANP5wpcQ=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=KW3zzfXR2TplH843zz4BfK+T7tfwT1jMgxzt9Q6SAwDmktANPny5Hra9O1APQJuCL
+         mA3VT+frMjUupCSX9LePlfU2dJKd3Bcw762oDikAonr1k6EU3u/wgNBNVNd2MUj6oL
+         qQxQ/DkGLFdH40BIyUG1VFXzojf1Y68/ZH7ZY9GIHhcf5QV4aco4av8kDv4txfllhv
+         /DZCBCU5vfgKr2aYFLjym6kdLgVdnErkA8ijgBEV+rxjlfIXEgqbAgPZfgxlGYsTRt
+         HHygUU6qBx+lz9AQx+wh/LkaIk+LlfRYAs2RO1eHzidL2qYDzsmBB8F5Hq52CIMwKG
+         QKPf9PS/J7weA==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6UIJQFd3326932;
+        Tue, 30 Jul 2019 11:19:26 -0700
+Date:   Tue, 30 Jul 2019 11:19:26 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
+Message-ID: <tip-24e376b24582648d363df4e0a6bcc2ffcecd211e@git.kernel.org>
+Cc:     ak@linux.intel.com, jolsa@kernel.org, hpa@zytor.com,
+        alexey.budankov@linux.intel.com, tglx@linutronix.de,
+        mingo@kernel.org, linux-kernel@vger.kernel.org, acme@redhat.com,
+        alexander.shishkin@linux.intel.com, mpetlan@redhat.com,
+        namhyung@kernel.org, peterz@infradead.org
+Reply-To: mingo@kernel.org, linux-kernel@vger.kernel.org, acme@redhat.com,
+          alexander.shishkin@linux.intel.com,
+          alexey.budankov@linux.intel.com, tglx@linutronix.de,
+          namhyung@kernel.org, peterz@infradead.org, mpetlan@redhat.com,
+          ak@linux.intel.com, hpa@zytor.com, jolsa@kernel.org
+In-Reply-To: <20190721112506.12306-18-jolsa@kernel.org>
+References: <20190721112506.12306-18-jolsa@kernel.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf evsel: Rename perf_evsel__apply_filter() to
+ evsel__apply_filter()
+Git-Commit-ID: 24e376b24582648d363df4e0a6bcc2ffcecd211e
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <CAD=FV=Wub9Wkc5t4iQRjBK8R_d_oh4PoHPwLHb4T5+Meij7sSg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Spam-Status: No, score=-0.2 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
+        autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 30, 2019 at 11:01:42AM -0700, Doug Anderson wrote:
-> Hi,
-> 
-> On Tue, Jul 30, 2019 at 10:34 AM Matthias Kaehlcke <mka@chromium.org> wrote:
-> >
-> > @@ -130,12 +138,13 @@
-> >                         regulator-max-microvolt = <1800000>;
-> >                         regulator-name = "vdd18_lcdt";
-> >                         regulator-state-mem {
-> > -                               regulator-on-in-suspend;
-> > +                               regulator-off-in-suspend;
-> >                                 regulator-suspend-microvolt = <1800000>;
-> 
-> Please remove "regulator-suspend-microvolt = <1800000>;" which doesn't
-> make sense once you have "regulator-off-in-suspend".
+Commit-ID:  24e376b24582648d363df4e0a6bcc2ffcecd211e
+Gitweb:     https://git.kernel.org/tip/24e376b24582648d363df4e0a6bcc2ffcecd211e
+Author:     Jiri Olsa <jolsa@kernel.org>
+AuthorDate: Sun, 21 Jul 2019 13:24:04 +0200
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Mon, 29 Jul 2019 18:34:43 -0300
 
-will remove all instances
+perf evsel: Rename perf_evsel__apply_filter() to evsel__apply_filter()
 
-> >                         };
-> >                 };
-> >
-> > -               /* This is not a pwren anymore, but the real power supply,
-> > +               /*
-> > +                * This is not a pwren anymore, but the real power supply,
-> >                  * vdd10_lcd for HDMI_AVDD_1V0
-> >                  */
-> >                 vdd10_lcd: LDO_REG7 {
-> > @@ -145,7 +154,7 @@
-> >                         regulator-max-microvolt = <1000000>;
-> >                         regulator-name = "vdd10_lcd";
-> >                         regulator-state-mem {
-> > -                               regulator-on-in-suspend;
-> > +                               regulator-off-in-suspend;
-> >                                 regulator-suspend-microvolt = <1000000>;
-> 
-> Please remove "regulator-suspend-microvolt = <1000000>;" which doesn't
-> make sense once you have "regulator-off-in-suspend".
-> 
-> 
-> >                         };
-> >
-> > @@ -159,7 +168,7 @@
-> >                         regulator-max-microvolt = <3300000>;
-> >                         regulator-name = "vcc33_ccd";
-> >                         regulator-state-mem {
-> > -                               regulator-on-in-suspend;
-> > +                               regulator-off-in-suspend;
-> >                                 regulator-suspend-microvolt = <3300000>;
-> 
-> Please remove "regulator-suspend-microvolt = <3300000>;" which doesn't
-> make sense once you have "regulator-off-in-suspend".
-> 
-> 
-> Other than those things, this patch looks good to me and feel free to
-> add my Reviewed-by.
+Rename perf_evsel__apply_filter() to evsel__apply_filter(), so we don't
+have a name clash when we add perf_evsel__apply_filter() in libperf.
 
-Thanks for your review!
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Michael Petlan <mpetlan@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/20190721112506.12306-18-jolsa@kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/util/evlist.c | 2 +-
+ tools/perf/util/evsel.c  | 2 +-
+ tools/perf/util/evsel.h  | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-> NOTE: when I tried applying this to my tree git
-> complained and I had to apply manually.  Could you try sending this
-> patch atop Heiko's for-next tree?  The yell I got:
-> 
-> error: sha1 information is lacking or useless
-> (arch/arm/boot/dts/rk3288-veyron-fievel.dts).
-> error: could not build fake ancestor
-
-Ok, I'll rebase v2 on Heiko's for-next
+diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
+index 9461583c53d9..e71c3cc93924 100644
+--- a/tools/perf/util/evlist.c
++++ b/tools/perf/util/evlist.c
+@@ -1158,7 +1158,7 @@ int perf_evlist__apply_filters(struct evlist *evlist, struct evsel **err_evsel)
+ 		 * filters only work for tracepoint event, which doesn't have cpu limit.
+ 		 * So evlist and evsel should always be same.
+ 		 */
+-		err = perf_evsel__apply_filter(evsel, evsel->filter);
++		err = evsel__apply_filter(evsel, evsel->filter);
+ 		if (err) {
+ 			*err_evsel = evsel;
+ 			break;
+diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+index 855d286298eb..5aeb7260c8e1 100644
+--- a/tools/perf/util/evsel.c
++++ b/tools/perf/util/evsel.c
+@@ -1187,7 +1187,7 @@ static int perf_evsel__run_ioctl(struct evsel *evsel,
+ 	return 0;
+ }
+ 
+-int perf_evsel__apply_filter(struct evsel *evsel, const char *filter)
++int evsel__apply_filter(struct evsel *evsel, const char *filter)
+ {
+ 	return perf_evsel__run_ioctl(evsel,
+ 				     PERF_EVENT_IOC_SET_FILTER,
+diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
+index c338ce14e8aa..35f7e7ff3c5e 100644
+--- a/tools/perf/util/evsel.h
++++ b/tools/perf/util/evsel.h
+@@ -294,7 +294,7 @@ int perf_evsel__set_filter(struct evsel *evsel, const char *filter);
+ int perf_evsel__append_tp_filter(struct evsel *evsel, const char *filter);
+ int perf_evsel__append_addr_filter(struct evsel *evsel,
+ 				   const char *filter);
+-int perf_evsel__apply_filter(struct evsel *evsel, const char *filter);
++int evsel__apply_filter(struct evsel *evsel, const char *filter);
+ int evsel__enable(struct evsel *evsel);
+ int evsel__disable(struct evsel *evsel);
+ 
