@@ -2,157 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BEB667AE53
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 18:47:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A941B7AE5D
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 18:48:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728655AbfG3Qqf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 12:46:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57998 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725934AbfG3Qqf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 12:46:35 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F400520693;
-        Tue, 30 Jul 2019 16:46:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564505194;
-        bh=Jv3sZV+amDx4LXh0EqyZi1UJfocfNlAOBczaY3hh4+I=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=DvcMpS/tjf/d16GEeV1oqPaKk5i6GjYjrOCE5pjHrEeAAvXauPSobhCoVdXKM+7TK
-         ZqQDdEQGMawOGnLEKlknWApv8DlL9oznPgYPhUgFo4FR9LTzvk2sMDtli9u2oDaSN/
-         SD9ZhxDKMEUuWFac8Ol58ZuF+3NH9cilG1gQzTfY=
-Date:   Tue, 30 Jul 2019 18:46:31 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Muchun Song <smuchun@gmail.com>
-Cc:     rafael@kernel.org, mojha@codeaurora.org, benh@kernel.crashing.org,
-        prsood@codeaurora.org, gkohli@codeaurora.org,
-        songmuchun@bytedance.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7] driver core: Fix use-after-free and double free on
- glue directory
-Message-ID: <20190730164631.GA17604@kroah.com>
-References: <20190727032122.24639-1-smuchun@gmail.com>
+        id S1727795AbfG3QsF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 12:48:05 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:39908 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725889AbfG3QsF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 12:48:05 -0400
+Received: by mail-pg1-f193.google.com with SMTP id u17so30356586pgi.6
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 09:48:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=LJPOL/2PE+PC/AElqmQU6HOXbiWhS4dMp+5yI3ZLajU=;
+        b=EZBWItEEoXKEQxGBP+RK0+UeSWzIGSTx0p7rXjGNYM2C+AB43wp4Uz+pN3NJceXO4k
+         rJjgv15UfzY9YF95KcwqA79IfrpPAeIXCs7PyoBlmFS0zYTP4tqElECZdMbt2ebEtiN1
+         qPgE3B6ToDx+Ltr6v6XHl8ZFwFCzdKhASHdTU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=LJPOL/2PE+PC/AElqmQU6HOXbiWhS4dMp+5yI3ZLajU=;
+        b=UsAv7ZvK/4uAyK/OVVB69//jQ9MAk15KkvnYxPRm8QdqKh9x/Fle7w8YckeKkrUx6c
+         uLSoTmay6xUR4flLV5CViHthNo9M6Sm6bfEGitQ3NuLl+CqWRBvessfmG4TqYLdZBz9g
+         LANxecYoEQV50LfcQfdhc0a1Li4S+oLAJS+kwk5nnhg6CS66dMe8iBjXhNpEtez8G1dT
+         PDZ3Zwn4sTO8Sa0E/Qk5gdyTgcXP8DJF8XCfvbk1x79NhrIASrZpT/jcRm3h1fg5S2x1
+         R/qNkDeXsPw5IuajrkmTDT0g5rj620Ow5MIRgtFBsvPokBKP1GWjY+ogJWzTaa6UxAhZ
+         EQ5Q==
+X-Gm-Message-State: APjAAAW6sD/GxAu6PnN0mhqnCvK5aDpW9HXIXRQmcUYIMbOFXBPtX3GV
+        QQMN6kUnWMa2aMCEfL4rbWXEWw==
+X-Google-Smtp-Source: APXvYqyVxZMwwRiLaOrPjYPFNQxQPXb3c3T4255whvDiLkraPUj7mSUKSmEkTde8p4zmXMglsdT6BA==
+X-Received: by 2002:a17:90a:ca11:: with SMTP id x17mr118881270pjt.107.1564505284405;
+        Tue, 30 Jul 2019 09:48:04 -0700 (PDT)
+Received: from smtp.gmail.com ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id 30sm154516103pjk.17.2019.07.30.09.48.03
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 30 Jul 2019 09:48:03 -0700 (PDT)
+From:   Stephen Boyd <swboyd@chromium.org>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>
+Cc:     linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        clang-built-linux@googlegroups.com,
+        Peter Smith <peter.smith@linaro.org>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Douglas Anderson <dianders@chromium.org>
+Subject: [PATCH v3] kbuild: Check for unknown options with cc-option usage in Kconfig and clang
+Date:   Tue, 30 Jul 2019 09:48:03 -0700
+Message-Id: <20190730164803.45080-1-swboyd@chromium.org>
+X-Mailer: git-send-email 2.22.0.709.g102302147b-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190727032122.24639-1-smuchun@gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jul 27, 2019 at 11:21:22AM +0800, Muchun Song wrote:
-> There is a race condition between removing glue directory and adding a new
-> device under the glue dir. It can be reproduced in following test:
-> 
-> CPU1:                                         CPU2:
-> 
-> device_add()
->   get_device_parent()
->     class_dir_create_and_add()
->       kobject_add_internal()
->         create_dir()    // create glue_dir
-> 
->                                               device_add()
->                                                 get_device_parent()
->                                                   kobject_get() // get glue_dir
-> 
-> device_del()
->   cleanup_glue_dir()
->     kobject_del(glue_dir)
-> 
->                                                 kobject_add()
->                                                   kobject_add_internal()
->                                                     create_dir() // in glue_dir
->                                                       sysfs_create_dir_ns()
->                                                         kernfs_create_dir_ns(sd)
-> 
->       sysfs_remove_dir() // glue_dir->sd=NULL
->       sysfs_put()        // free glue_dir->sd
-> 
->                                                           // sd is freed
->                                                           kernfs_new_node(sd)
->                                                             kernfs_get(glue_dir)
->                                                             kernfs_add_one()
->                                                             kernfs_put()
-> 
-> Before CPU1 remove last child device under glue dir, if CPU2 add a new
-> device under glue dir, the glue_dir kobject reference count will be
-> increase to 2 via kobject_get() in get_device_parent(). And CPU2 has
-> been called kernfs_create_dir_ns(), but not call kernfs_new_node().
-> Meanwhile, CPU1 call sysfs_remove_dir() and sysfs_put(). This result in
-> glue_dir->sd is freed and it's reference count will be 0. Then CPU2 call
-> kernfs_get(glue_dir) will trigger a warning in kernfs_get() and increase
-> it's reference count to 1. Because glue_dir->sd is freed by CPU1, the next
-> call kernfs_add_one() by CPU2 will fail(This is also use-after-free)
-> and call kernfs_put() to decrease reference count. Because the reference
-> count is decremented to 0, it will also call kmem_cache_free() to free
-> the glue_dir->sd again. This will result in double free.
-> 
-> In order to avoid this happening, we also should make sure that kernfs_node
-> for glue_dir is released in CPU1 only when refcount for glue_dir kobj is
-> 1 to fix this race.
-> 
-> The following calltrace is captured in kernel 4.14 with the following patch
-> applied:
-> 
-> commit 726e41097920 ("drivers: core: Remove glue dirs from sysfs earlier")
-> 
-> --------------------------------------------------------------------------
-> [    3.633703] WARNING: CPU: 4 PID: 513 at .../fs/kernfs/dir.c:494
->                 Here is WARN_ON(!atomic_read(&kn->count) in kernfs_get().
-> ....
-> [    3.633986] Call trace:
-> [    3.633991]  kernfs_create_dir_ns+0xa8/0xb0
-> [    3.633994]  sysfs_create_dir_ns+0x54/0xe8
-> [    3.634001]  kobject_add_internal+0x22c/0x3f0
-> [    3.634005]  kobject_add+0xe4/0x118
-> [    3.634011]  device_add+0x200/0x870
-> [    3.634017]  _request_firmware+0x958/0xc38
-> [    3.634020]  request_firmware_into_buf+0x4c/0x70
-> ....
-> [    3.634064] kernel BUG at .../mm/slub.c:294!
->                 Here is BUG_ON(object == fp) in set_freepointer().
-> ....
-> [    3.634346] Call trace:
-> [    3.634351]  kmem_cache_free+0x504/0x6b8
-> [    3.634355]  kernfs_put+0x14c/0x1d8
-> [    3.634359]  kernfs_create_dir_ns+0x88/0xb0
-> [    3.634362]  sysfs_create_dir_ns+0x54/0xe8
-> [    3.634366]  kobject_add_internal+0x22c/0x3f0
-> [    3.634370]  kobject_add+0xe4/0x118
-> [    3.634374]  device_add+0x200/0x870
-> [    3.634378]  _request_firmware+0x958/0xc38
-> [    3.634381]  request_firmware_into_buf+0x4c/0x70
-> --------------------------------------------------------------------------
-> 
-> Fixes: 726e41097920 ("drivers: core: Remove glue dirs from sysfs earlier")
-> Signed-off-by: Muchun Song <smuchun@gmail.com>
-> Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
-> Signed-off-by: Prateek Sood <prsood@codeaurora.org>
-> ---
-> 
-> Change in v7:
->        1. Update commit message.
-> Change in v6:
->        1. Remove hardcoding "1 "
-> Change in v5:
->        1. Revert to the v1 fix.
->        2. Add some comment to explain why we need do this in
->           cleanup_glue_dir().
-> Change in v4:
->        1. Add some kerneldoc comment.
->        2. Remove unlock_if_glue_dir().
->        3. Rename get_device_parent_locked_if_glue_dir() to
->           get_device_parent_locked.
->        4. Update commit message.
-> Change in v3:
->        Add change log.
-> Change in v2:
->        Fix device_move() also.
+If the particular version of clang a user has doesn't enable
+-Werror=unknown-warning-option by default, even though it is the
+default[1], then make sure to pass the option to the Kconfig cc-option
+command so that testing options from Kconfig files works properly.
+Otherwise, depending on the default values setup in the clang toolchain
+we will silently assume options such as -Wmaybe-uninitialized are
+supported by clang, when they really aren't.
 
-Now queued up, thanks for sticking with this.
+A compilation issue only started happening for me once commit
+589834b3a009 ("kbuild: Add -Werror=unknown-warning-option to
+CLANG_FLAGS") was applied on top of commit b303c6df80c9 ("kbuild:
+compute false-positive -Wmaybe-uninitialized cases in Kconfig"). This
+leads kbuild to try and test for the existence of the
+-Wmaybe-uninitialized flag with the cc-option command in
+scripts/Kconfig.include, and it doesn't see an error returned from the
+option test so it sets the config value to Y. Then the Makefile tries to
+pass the unknown option on the command line and
+-Werror=unknown-warning-option catches the invalid option and breaks the
+build. Before commit 589834b3a009 ("kbuild: Add
+-Werror=unknown-warning-option to CLANG_FLAGS") the build works fine,
+but any cc-option test of a warning option in Kconfig files silently
+evaluates to true, even if the warning option flag isn't supported on
+clang.
 
-greg k-h
+Note: This doesn't change cc-option usages in Makefiles because those
+use a different rule that includes KBUILD_CFLAGS by default (see the
+__cc-option command in scripts/Kbuild.incluide). The KBUILD_CFLAGS
+variable already has the -Werror=unknown-warning-option flag set. Thanks
+to Doug for pointing out the different rule.
+
+[1] https://clang.llvm.org/docs/DiagnosticsReference.html#wunknown-warning-option
+Cc: Peter Smith <peter.smith@linaro.org>
+Cc: Nathan Chancellor <natechancellor@gmail.com>
+Cc: Nick Desaulniers <ndesaulniers@google.com>
+Cc: Douglas Anderson <dianders@chromium.org>
+Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+---
+ Makefile                | 1 +
+ scripts/Kconfig.include | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index 9be5834073f8..517d0a3f6539 100644
+--- a/Makefile
++++ b/Makefile
+@@ -536,6 +536,7 @@ KBUILD_AFLAGS	+= $(CLANG_FLAGS)
+ export CLANG_FLAGS
+ endif
+ 
++
+ # The expansion should be delayed until arch/$(SRCARCH)/Makefile is included.
+ # Some architectures define CROSS_COMPILE in arch/$(SRCARCH)/Makefile.
+ # CC_VERSION_TEXT is referenced from Kconfig (so it needs export),
+diff --git a/scripts/Kconfig.include b/scripts/Kconfig.include
+index 8a5c4d645eb1..4bbf4fc163a2 100644
+--- a/scripts/Kconfig.include
++++ b/scripts/Kconfig.include
+@@ -25,7 +25,7 @@ failure = $(if-success,$(1),n,y)
+ 
+ # $(cc-option,<flag>)
+ # Return y if the compiler supports <flag>, n otherwise
+-cc-option = $(success,$(CC) -Werror $(1) -E -x c /dev/null -o /dev/null)
++cc-option = $(success,$(CC) -Werror $(CLANG_FLAGS) $(1) -E -x c /dev/null -o /dev/null)
+ 
+ # $(ld-option,<flag>)
+ # Return y if the linker supports <flag>, n otherwise
+-- 
+Sent by a computer through tubes
+
