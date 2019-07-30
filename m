@@ -2,92 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60AF17AC39
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 17:24:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 801637AC4A
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 17:25:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732303AbfG3PYu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 11:24:50 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:40231 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732277AbfG3PYs (ORCPT
+        id S1731347AbfG3PZi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 11:25:38 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:35960 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732332AbfG3PZi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 11:24:48 -0400
-Received: by mail-qt1-f196.google.com with SMTP id a15so63402289qtn.7
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 08:24:48 -0700 (PDT)
+        Tue, 30 Jul 2019 11:25:38 -0400
+Received: by mail-lf1-f66.google.com with SMTP id q26so45052544lfc.3
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 08:25:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=a/t4nyA1Q5Ire67bzt1cmZdzjlm5dY9UznxFZlUXgxs=;
-        b=Oy/OpaLgFDIl3Ho9McyAVLGL+eOwG/Nb5xH4IwHyDPX2I0P3C74EQUIty8j0aZM2qo
-         QhVKHBa3BNey7q6HFjovwuHmrYTAHL6wXvX1vFs6T2tbiep4xqaaFCX0wIrrgVlpQ09R
-         ZIwX7eFrvkds0vdWy9VV87a3STHK+RwqtBxubT19kppdZCk7e4sgfV2ekW4LZja6Dcj6
-         AtRAHG2BRPQahofXl9ztc7tIFqXkVxY0xS9NRQ6vO3VL834ArmywoTV5u7f/8uUwm1xL
-         p9MevdZpy/3K0TWQg+1prqlCdNlR6iHgiKOhu9DbXGhp5a6TNlbFEYx+96Mn4PzMtbr3
-         RUjA==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=a8k87dhuTxTzS+n3u2Ou7NXh77Uav3wOrh0j/WlwUGo=;
+        b=p5bsKDg7tMBnd5qo4asPd25ewkYLyTBvTiDchpZUVrlXTDmyMEYZ5sLLXxeZE+FEJu
+         fFFNjoTLkv5d2pa5xGLx9vkfp2kN2vnddjucaeZvUkFXRynv1VNzJ1pUcqmxb2Txe3do
+         JzVko3L/nJk6RDWynthGjwo+jRTerO6ZGya1/kDLuC6bMX9B/IbVW/JZHrLMlgpcKLym
+         sItTVYZ8Z+4m2Qww3kRTK+O9+PXHRF8M/C9S5nnxW1x3N3BsbW8oNQ7YaNaUDMO60oA1
+         XF9/tnA4qlzGsdu85SFUrd6yfss+zvC3BltZJqm8Q5sMSfDSix3SZ+AP1EjUxazCFJ4I
+         wdPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=a/t4nyA1Q5Ire67bzt1cmZdzjlm5dY9UznxFZlUXgxs=;
-        b=dFiqDnmx9FCZ3OQuyEcSYdm3sqxnuHeqr4IcSYjK4NI6voGJ/W2k+tdsEX8hIWA1Ec
-         lo+2jGJK5vXbQ7gEQxf3mzD0TIPIvhgVMgbEKXnU9djmk2lSKYUTL+SUrykgIaUuCrRt
-         aQzppgyjd2MmHrUiS15Snmz4Pw5XT6fSQh3OXK8Z/zDBC7lvsP3xfoINDCzFtuV2b5+L
-         Gogm9oEdHLLOCNEe6rkm0vwdqClYrjn7kgvaQsYZ+BjdIEA3NGOLwDVN8BFO26AJk+9f
-         zPbr7lpTIEqAfx6Qm+1g04kTAH+uM9ekyk2+mcuh6g0QNxohqMFO6NyGRPjVNjSN16Qj
-         ayng==
-X-Gm-Message-State: APjAAAXMJRgh6i4mycKxJD7s8BuFwl+sDlFBXL2TO5yWoHppOMB4DMSg
-        pd/rN0GgHrmyNU4anHQ6Z/5pLA==
-X-Google-Smtp-Source: APXvYqx94Ov7Y1nbCbkAGqV/v3t1tnEO2PycbrrXn68BGCtCdHxwCjJWcu+t1wo1xR/RxzXC20qszg==
-X-Received: by 2002:ac8:72d7:: with SMTP id o23mr74071688qtp.98.1564500287809;
-        Tue, 30 Jul 2019 08:24:47 -0700 (PDT)
-Received: from Thara-Work-Ubuntu.fios-router.home (pool-71-255-245-97.washdc.fios.verizon.net. [71.255.245.97])
-        by smtp.googlemail.com with ESMTPSA id r14sm27251082qkm.100.2019.07.30.08.24.46
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 30 Jul 2019 08:24:47 -0700 (PDT)
-From:   Thara Gopinath <thara.gopinath@linaro.org>
-To:     linux-arm-msm@vger.kernel.org, agross@kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        bjorn.andersson@linaro.org, amit.kucheria@linaro.org,
-        vinod.koul@linaro.org
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [Patch v2 2/2] arm64: dts: qcom: Extend AOSS QMP node
-Date:   Tue, 30 Jul 2019 11:24:43 -0400
-Message-Id: <1564500283-16038-3-git-send-email-thara.gopinath@linaro.org>
-X-Mailer: git-send-email 2.1.4
-In-Reply-To: <1564500283-16038-1-git-send-email-thara.gopinath@linaro.org>
-References: <1564500283-16038-1-git-send-email-thara.gopinath@linaro.org>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=a8k87dhuTxTzS+n3u2Ou7NXh77Uav3wOrh0j/WlwUGo=;
+        b=ZsG7b8B6D/GWYLet3L2wGbGMo1V0yGSuaRS33LX6kg/QZ20+IcLL5tiTObze9gNXuF
+         7WLTR1eFLX8VuaTHx4xS//Gcz0Wiwms8Vk1xDUnUKroC3CTwHCU/zLYOxhVXXPWQmg/1
+         rFuqS2EbMfVRpzr1t09giW8T/U1WlDA7YE90c7aC4HXFHfBpiewLCt2bcD0a/WI4Ecg2
+         0n7GjjjNUDUlHWRMeb+4KD17MU5xjki6xmll8aKdXIsFfa6/oi3xqSMA/CpeBnw7XzAz
+         98Nh9Jva50MR3BVXmJKIQwUhvMJ45OW3GxyJn88OAgYd81CdlYlWTvrsw3R68OzkzbCm
+         kiVA==
+X-Gm-Message-State: APjAAAUVxy/rZzjBQCrNydsqv/k4H9dmrXyaIH8Jr8XJ189dI+LJrehg
+        i2yIjQjdJ05s6ZaBBwJU90MNL8Wu8UykWg==
+X-Google-Smtp-Source: APXvYqzrh7p3FQO75/hpL7dUe20p/p24BxIUA3XsEMf3aeLRuCyAOWaX12fBPsDhGMCzfbDEd2eHKQ==
+X-Received: by 2002:a19:41cc:: with SMTP id o195mr10890679lfa.166.1564500336500;
+        Tue, 30 Jul 2019 08:25:36 -0700 (PDT)
+Received: from localhost (c-243c70d5.07-21-73746f28.bbcust.telenor.se. [213.112.60.36])
+        by smtp.gmail.com with ESMTPSA id t5sm13280728ljj.10.2019.07.30.08.25.35
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 30 Jul 2019 08:25:35 -0700 (PDT)
+From:   Anders Roxell <anders.roxell@linaro.org>
+To:     b.zolnierkie@samsung.com
+Cc:     dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, gustavo@embeddedor.com,
+        Anders Roxell <anders.roxell@linaro.org>
+Subject: [PATCH v2] video: fbdev: Mark expected switch fall-through
+Date:   Tue, 30 Jul 2019 17:25:30 +0200
+Message-Id: <20190730152530.3055-1-anders.roxell@linaro.org>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-AOSS hosts resources that can be used to warm up the SoC.
-Add nodes for these resources.
+Now that -Wimplicit-fallthrough is passed to GCC by default, the
+following warnings shows up:
 
-Signed-off-by: Thara Gopinath <thara.gopinath@linaro.org>
+../drivers/video/fbdev/sh_mobile_lcdcfb.c: In function ‘sh_mobile_lcdc_channel_fb_init’:
+../drivers/video/fbdev/sh_mobile_lcdcfb.c:2086:22: warning: this statement may fall
+ through [-Wimplicit-fallthrough=]
+   info->fix.ypanstep = 2;
+   ~~~~~~~~~~~~~~~~~~~^~~
+../drivers/video/fbdev/sh_mobile_lcdcfb.c:2087:2: note: here
+  case V4L2_PIX_FMT_NV16:
+  ^~~~
+../drivers/video/fbdev/sh_mobile_lcdcfb.c: In function ‘sh_mobile_lcdc_overlay_fb_init’:
+../drivers/video/fbdev/sh_mobile_lcdcfb.c:1596:22: warning: this statement may fall
+ through [-Wimplicit-fallthrough=]
+   info->fix.ypanstep = 2;
+   ~~~~~~~~~~~~~~~~~~~^~~
+../drivers/video/fbdev/sh_mobile_lcdcfb.c:1597:2: note: here
+  case V4L2_PIX_FMT_NV16:
+  ^~~~
+
+Rework to address a warnings due to the enablement of
+-Wimplicit-fallthrough.
+
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
 ---
- arch/arm64/boot/dts/qcom/sdm845.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/video/fbdev/sh_mobile_lcdcfb.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-index 4babff5..d0c0d4f 100644
---- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-@@ -2411,6 +2411,14 @@
- 
- 			#clock-cells = <0>;
- 			#power-domain-cells = <1>;
-+
-+			cx_cdev: cx {
-+				#cooling-cells = <2>;
-+			};
-+
-+			ebi_cdev: ebi {
-+				#cooling-cells = <2>;
-+			};
- 		};
- 
- 		spmi_bus: spmi@c440000 {
+diff --git a/drivers/video/fbdev/sh_mobile_lcdcfb.c b/drivers/video/fbdev/sh_mobile_lcdcfb.c
+index ac0bcac9a865..c249763dbf0b 100644
+--- a/drivers/video/fbdev/sh_mobile_lcdcfb.c
++++ b/drivers/video/fbdev/sh_mobile_lcdcfb.c
+@@ -1594,6 +1594,7 @@ sh_mobile_lcdc_overlay_fb_init(struct sh_mobile_lcdc_overlay *ovl)
+ 	case V4L2_PIX_FMT_NV12:
+ 	case V4L2_PIX_FMT_NV21:
+ 		info->fix.ypanstep = 2;
++		/* Fall through */
+ 	case V4L2_PIX_FMT_NV16:
+ 	case V4L2_PIX_FMT_NV61:
+ 		info->fix.xpanstep = 2;
+@@ -2084,6 +2085,7 @@ sh_mobile_lcdc_channel_fb_init(struct sh_mobile_lcdc_chan *ch,
+ 	case V4L2_PIX_FMT_NV12:
+ 	case V4L2_PIX_FMT_NV21:
+ 		info->fix.ypanstep = 2;
++		/* Fall through */
+ 	case V4L2_PIX_FMT_NV16:
+ 	case V4L2_PIX_FMT_NV61:
+ 		info->fix.xpanstep = 2;
 -- 
-2.1.4
+2.20.1
 
