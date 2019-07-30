@@ -2,44 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC9077A49D
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 11:38:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D31D57A4A8
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 11:38:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731741AbfG3JiI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 05:38:08 -0400
-Received: from mail-io1-f71.google.com ([209.85.166.71]:48354 "EHLO
-        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731717AbfG3JiH (ORCPT
+        id S1731774AbfG3JiU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 05:38:20 -0400
+Received: from mail-io1-f70.google.com ([209.85.166.70]:55001 "EHLO
+        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731722AbfG3JiH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 30 Jul 2019 05:38:07 -0400
-Received: by mail-io1-f71.google.com with SMTP id z19so70874150ioi.15
+Received: by mail-io1-f70.google.com with SMTP id n8so70724427ioo.21
         for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 02:38:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=2OxJdfFz7EXPUFxZSAkGeqLhpVqopEfytgC58RNP5Gc=;
-        b=lob3d9oPX3WZVXYXE167nnHpeWmy+ewpIzvbsxW6snEFI7m4wWhGjcdPYQwpsHcJ9j
-         f9QNmntqkd3H7Ja8r9wgt96IHALrmrho6vH2zOlweMq1RloTHh9d/cUYgDGURfdUSJLX
-         3lWhUKEUT/xJwlyuHWNlN6Jre9O2As3WBpJ2A2f0hWIRtRfmOLqTwSJnOcXhITnLkTC8
-         XUiB3uXufQvymRcR2KlTlnJp/4+QJHNW2BSVXQLayVaD34YEjI/UMQED76tC7oxNikOF
-         vyMcX327rFfZrNFYSp1Dqfq3sAWPQwEyVe80DbntPF6Yrrc7A37V79SMrTnN6q7qZaco
-         CfUg==
-X-Gm-Message-State: APjAAAXNtwQ1pc5dl7nNxZC7n3q6Rwj2zmDL2SsoOKLBByqNrVG+DLbD
-        5Letrq5hNkBJLQGaozreqQurn0+v+6C2zQbOxvz0nP4MwWqX
-X-Google-Smtp-Source: APXvYqw5hgWauHtzaXEFR1NpdBVBL9tsFEOEgmMAiftBVH8cSyfGBBbn6hV47aB3GYF1zBU2F9cUNyLG8jyNxk2ysFfHtl80CPG6
+        bh=qC0fsXMfMK53cx7YDAcq54+W59oVrprCrvBMxYygca4=;
+        b=YG77jZfozIq7ThWHw6oI1yZxivPUnD/N4yvnMkfBGGzhHzGAQZ3ff8ykvCZN79LidQ
+         He8VdwBXRcpUiLjpHDmvH+iENzjG1ejQVswNmjuOEy5VcDx5oBL2T9bJ81hWkO/JFm/f
+         mOJRj92mEdCDFPengyQuR7w+dDwVuqU2Lxtki+ARH7X97HmK9jTRhXvd6TtjE/YgvSgQ
+         sGS8fKhs3z2VbO/MWJkd1x5gnfsvry2PU6Cu+XqXVlvxj8k3xsaEKNFpp3w9ZpEJ84PS
+         LXTjA5iYjC6tRXiMGfkNHJIz9rEbXZmUYTs4E5ez5RP7S5L/8ljSalwUQffYZHG/VHsI
+         lzOQ==
+X-Gm-Message-State: APjAAAWPcHrIfzECxOEnlqCG3NZFAyq0odWObusIA94T1WgUaNIFTO75
+        YYfNf38Jx1BES+JxNNERHb/jnqSiuTWebf2ttq4BZNXF9ILW
+X-Google-Smtp-Source: APXvYqyo3rkj27TdtlaK6oaBRgH2PsyoSXAuRfFg1fLBcyAHxQrF8W1UQ5JGC7mZ4ggPnZE95T2p7fbVHS8sPd1Wr+rVxudl7GZQ
 MIME-Version: 1.0
-X-Received: by 2002:a6b:f203:: with SMTP id q3mr57765986ioh.208.1564479486675;
- Tue, 30 Jul 2019 02:38:06 -0700 (PDT)
+X-Received: by 2002:a02:ac03:: with SMTP id a3mr121670663jao.132.1564479487000;
+ Tue, 30 Jul 2019 02:38:07 -0700 (PDT)
 Date:   Tue, 30 Jul 2019 02:38:06 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000000fd432058ee2c46c@google.com>
-Subject: KMSAN: uninit-value in read_eprom_word
-From:   syzbot <syzbot+3499a83b2d062ae409d4@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, glider@google.com,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        netdev@vger.kernel.org, petkan@nucleusys.com,
-        syzkaller-bugs@googlegroups.com
+Message-ID: <00000000000014c877058ee2c4a6@google.com>
+Subject: KMSAN: kernel-usb-infoleak in pcan_usb_pro_send_req
+From:   syzbot <syzbot+513e4d0985298538bf9b@syzkaller.appspotmail.com>
+To:     glider@google.com, gregkh@linuxfoundation.org,
+        gustavo@embeddedor.com, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -50,30 +49,29 @@ Hello,
 
 syzbot found the following crash on:
 
-HEAD commit:    3351e2b9 usb-fuzzer: main usb gadget fuzzer driver
+HEAD commit:    41550654 [UPSTREAM] KVM: x86: degrade WARN to pr_warn_rate..
 git tree:       kmsan
-console output: https://syzkaller.appspot.com/x/log.txt?x=13105d85a00000
+console output: https://syzkaller.appspot.com/x/log.txt?x=13e95183a00000
 kernel config:  https://syzkaller.appspot.com/x/.config?x=40511ad0c5945201
-dashboard link: https://syzkaller.appspot.com/bug?extid=3499a83b2d062ae409d4
+dashboard link: https://syzkaller.appspot.com/bug?extid=513e4d0985298538bf9b
 compiler:       clang version 9.0.0 (/home/glider/llvm/clang  
 80fee25776c2fb61e74c1ecb1a523375c2500b69)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1257755ea00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1327e5a5a00000
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17eafa1ba00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17b87983a00000
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+3499a83b2d062ae409d4@syzkaller.appspotmail.com
+Reported-by: syzbot+513e4d0985298538bf9b@syzkaller.appspotmail.com
 
-usb 1-1: Using ep0 maxpacket: 8
-usb 1-1: config 0 has an invalid interface number: 150 but max is 0
 usb 1-1: config 0 has no interface number 0
-usb 1-1: New USB device found, idVendor=050d, idProduct=0122,  
-bcdDevice=c1.69
+usb 1-1: New USB device found, idVendor=0c72, idProduct=0014,  
+bcdDevice=8b.53
 usb 1-1: New USB device strings: Mfr=0, Product=0, SerialNumber=0
 usb 1-1: config 0 descriptor??
+peak_usb 1-1:0.146: PEAK-System PCAN-USB X6 v0 fw v0.0.0 (2 channels)
 ==================================================================
-BUG: KMSAN: uninit-value in read_eprom_word+0x947/0xdd0  
-drivers/net/usb/pegasus.c:298
-CPU: 0 PID: 12 Comm: kworker/0:1 Not tainted 5.2.0-rc4+ #5
+BUG: KMSAN: kernel-usb-infoleak in usb_submit_urb+0x7ef/0x1f50  
+drivers/usb/core/urb.c:405
+CPU: 0 PID: 3359 Comm: kworker/0:2 Not tainted 5.2.0-rc4+ #7
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
 Workqueue: usb_hub_wq hub_event
@@ -81,10 +79,22 @@ Call Trace:
   __dump_stack lib/dump_stack.c:77 [inline]
   dump_stack+0x191/0x1f0 lib/dump_stack.c:113
   kmsan_report+0x162/0x2d0 mm/kmsan/kmsan.c:611
-  __msan_warning+0x75/0xe0 mm/kmsan/kmsan_instr.c:304
-  read_eprom_word+0x947/0xdd0 drivers/net/usb/pegasus.c:298
-  get_interrupt_interval drivers/net/usb/pegasus.c:758 [inline]
-  pegasus_probe+0xf2b/0x4be0 drivers/net/usb/pegasus.c:1192
+  kmsan_internal_check_memory+0x974/0xa80 mm/kmsan/kmsan.c:705
+  kmsan_handle_urb+0x28/0x40 mm/kmsan/kmsan_hooks.c:617
+  usb_submit_urb+0x7ef/0x1f50 drivers/usb/core/urb.c:405
+  usb_start_wait_urb+0x143/0x410 drivers/usb/core/message.c:58
+  usb_internal_control_msg drivers/usb/core/message.c:102 [inline]
+  usb_control_msg+0x49f/0x7f0 drivers/usb/core/message.c:156
+  pcan_usb_pro_send_req+0x26b/0x3e0  
+drivers/net/can/usb/peak_usb/pcan_usb_pro.c:336
+  pcan_usb_fd_drv_loaded drivers/net/can/usb/peak_usb/pcan_usb_fd.c:460  
+[inline]
+  pcan_usb_fd_init+0x16ee/0x1900  
+drivers/net/can/usb/peak_usb/pcan_usb_fd.c:885
+  peak_usb_create_dev drivers/net/can/usb/peak_usb/pcan_usb_core.c:809  
+[inline]
+  peak_usb_probe+0x1416/0x1b20  
+drivers/net/can/usb/peak_usb/pcan_usb_core.c:907
   usb_probe_interface+0xd19/0x1310 drivers/usb/core/driver.c:361
   really_probe+0x1344/0x1d90 drivers/base/dd.c:513
   driver_probe_device+0x1ba/0x510 drivers/base/dd.c:670
@@ -92,36 +102,6 @@ Call Trace:
   bus_for_each_drv+0x28e/0x3b0 drivers/base/bus.c:454
   __device_attach+0x489/0x750 drivers/base/dd.c:843
   device_initial_probe+0x4a/0x60 drivers/base/dd.c:890
-  bus_probe_device+0x131/0x390 drivers/base/bus.c:514
-  device_add+0x25b5/0x2df0 drivers/base/core.c:2111
-  usb_set_configuration+0x309f/0x3710 drivers/usb/core/message.c:2027
-  generic_probe+0xe7/0x280 drivers/usb/core/generic.c:210
-  usb_probe_device+0x146/0x200 drivers/usb/core/driver.c:266
-  really_probe+0x1344/0x1d90 drivers/base/dd.c:513
-  driver_probe_device+0x1ba/0x510 drivers/base/dd.c:670
-  __device_attach_driver+0x5b8/0x790 drivers/base/dd.c:777
-  bus_for_each_drv+0x28e/0x3b0 drivers/base/bus.c:454
-  __device_attach+0x489/0x750 drivers/base/dd.c:843
-  device_initial_probe+0x4a/0x60 drivers/base/dd.c:890
-  bus_probe_device+0x131/0x390 drivers/base/bus.c:514
-  device_add+0x25b5/0x2df0 drivers/base/core.c:2111
-  usb_new_device+0x23e5/0x2fb0 drivers/usb/core/hub.c:2534
-  hub_port_connect drivers/usb/core/hub.c:5089 [inline]
-  hub_port_connect_change drivers/usb/core/hub.c:5204 [inline]
-  port_event drivers/usb/core/hub.c:5350 [inline]
-  hub_event+0x5853/0x7320 drivers/usb/core/hub.c:5432
-  process_one_work+0x1572/0x1f00 kernel/workqueue.c:2269
-  worker_thread+0x111b/0x2460 kernel/workqueue.c:2415
-  kthread+0x4b5/0x4f0 kernel/kthread.c:256
-  ret_from_fork+0x35/0x40 arch/x86/entry/entry_64.S:355
-
-Local variable description: ----data.addr.i13@read_eprom_word
-Variable was created at:
-  set_register drivers/net/usb/pegasus.c:174 [inline]
-  read_eprom_word+0x498/0xdd0 drivers/net/usb/pegasus.c:294
-  get_interrupt_interval drivers/net/usb/pegasus.c:758 [inline]
-  pegasus_probe+0xf2b/0x4be0 drivers/net/usb/pegasus.c:1192
-==================================================================
 
 
 ---
