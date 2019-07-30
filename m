@@ -2,124 +2,168 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2019F7AA82
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 16:04:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 04DF27AA88
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 16:07:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729447AbfG3OEb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 10:04:31 -0400
-Received: from imap1.codethink.co.uk ([176.9.8.82]:48049 "EHLO
-        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728255AbfG3OEa (ORCPT
+        id S1729836AbfG3OHr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 10:07:47 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:46308 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729222AbfG3OHr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 10:04:30 -0400
-Received: from [167.98.27.226] (helo=[10.35.6.253])
-        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
-        id 1hsSjk-0006nP-P6; Tue, 30 Jul 2019 15:04:20 +0100
-Subject: Re: [alsa-devel] [PATCH v2 3/3] ASoC: TDA7802: Add turn-on diagnostic
- routine
-To:     Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
-        alsa-devel@alsa-project.org,
-        Marco Felsch <m.felsch@pengutronix.de>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Kirill Marinushkin <kmarinushkin@birdec.tech>,
-        Cheng-Yi Chiang <cychiang@chromium.org>,
-        linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Vinod Koul <vkoul@kernel.org>, Mark Brown <broonie@kernel.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Annaliese McDermond <nh6z@nh6z.net>,
-        Jerome Brunet <jbrunet@baylibre.com>
-References: <20190730120937.16271-1-thomas.preston@codethink.co.uk>
- <20190730120937.16271-4-thomas.preston@codethink.co.uk>
- <20190730124158.GH54126@ediswmail.ad.cirrus.com>
-From:   Thomas Preston <thomas.preston@codethink.co.uk>
-Message-ID: <e7a879d3-36c2-2df8-97c0-3c4bbd2e7ea2@codethink.co.uk>
-Date:   Tue, 30 Jul 2019 15:04:19 +0100
+        Tue, 30 Jul 2019 10:07:47 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6UDxCk7155283;
+        Tue, 30 Jul 2019 14:06:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=Ce5xL37tcuEyMK1++l5PbIdXt1oAvxgj/4b7X50ueGQ=;
+ b=a2laasGIQ9wUJlsQNTqZQq+U22np4QmwoE7caUUti16u4m/6ymp3Ka4V3CPa7qllTMw4
+ bir31g27j/KpH2GPrcXH38RoIhTOk0HDrlgsBvU7TeWMcBTMoyASi/bBclgryavrMDyz
+ Xuf95p8Nj0CZAMp4VjVVS+ISl1okDp0ch/Eav5kmrRaYBKADhpT2YbdqNpPb1YwH+miS
+ ijm9ayYrezYiYdORudk3D2hw0BtDouPZzv8BaBlnQ4MsGPtGtczNJ/g+9DBP5YtNk/4g
+ wwsqo2owbWkX2icI4BotFbeD0DkRvnD1skr1tLBiK/Em7EJ98VaIiEX1hUFdVKRyckyx Ow== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2120.oracle.com with ESMTP id 2u0ejpeq2j-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 30 Jul 2019 14:06:01 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6UDwCtO131102;
+        Tue, 30 Jul 2019 14:06:01 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3030.oracle.com with ESMTP id 2u0xv876un-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 30 Jul 2019 14:06:01 +0000
+Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x6UE5sXI002501;
+        Tue, 30 Jul 2019 14:05:54 GMT
+Received: from bostrovs-us.us.oracle.com (/10.152.32.65)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 30 Jul 2019 07:05:54 -0700
+Subject: Re: [Xen-devel] [PATCH v4 8/9] xen/gntdev.c: Convert to use
+ vm_map_pages()
+To:     Souptick Joarder <jrdr.linux@gmail.com>,
+        =?UTF-8?Q?Marek_Marczykowski-G=c3=b3recki?= 
+        <marmarek@invisiblethingslab.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Juergen Gross <jgross@suse.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        robin.murphy@arm.com, xen-devel@lists.xenproject.org,
+        linux-kernel@vger.kernel.org, Linux-MM <linux-mm@kvack.org>
+References: <20190215024830.GA26477@jordon-HP-15-Notebook-PC>
+ <20190728180611.GA20589@mail-itl>
+ <CAFqt6zaMDnpB-RuapQAyYAub1t7oSdHH_pTD=f5k-s327ZvqMA@mail.gmail.com>
+ <CAFqt6zY+07JBxAVfMqb+X78mXwFOj2VBh0nbR2tGnQOP9RrNkQ@mail.gmail.com>
+ <20190729133642.GQ1250@mail-itl>
+ <CAFqt6zZN+6r6wYJY+f15JAjj8dY+o30w_+EWH9Vy2kUXCKSBog@mail.gmail.com>
+From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
+ 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
+ Jg6OxFYd01z+a+oL
+Message-ID: <bf02becc-9db0-bb78-8efc-9e25cc115237@oracle.com>
+Date:   Tue, 30 Jul 2019 10:05:42 -0400
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-In-Reply-To: <20190730124158.GH54126@ediswmail.ad.cirrus.com>
+In-Reply-To: <CAFqt6zZN+6r6wYJY+f15JAjj8dY+o30w_+EWH9Vy2kUXCKSBog@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9334 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1907300146
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9334 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1907300146
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-Thanks for getting back to me so quickly.
-
-On 30/07/2019 13:41, Charles Keepax wrote:
-> On Tue, Jul 30, 2019 at 01:09:37PM +0100, Thomas Preston wrote:
->> Add a debugfs device node which initiates the turn-on diagnostic routine
->> feature of the TDA7802 amplifier. The four status registers (one per
->> channel) are returned.
+On 7/30/19 2:03 AM, Souptick Joarder wrote:
+> On Mon, Jul 29, 2019 at 7:06 PM Marek Marczykowski-Górecki
+> <marmarek@invisiblethingslab.com> wrote:
+>> On Mon, Jul 29, 2019 at 02:02:54PM +0530, Souptick Joarder wrote:
+>>> On Mon, Jul 29, 2019 at 1:35 PM Souptick Joarder <jrdr.linux@gmail.com> wrote:
+>>>> On Sun, Jul 28, 2019 at 11:36 PM Marek Marczykowski-Górecki
+>>>> <marmarek@invisiblethingslab.com> wrote:
+>>>>> On Fri, Feb 15, 2019 at 08:18:31AM +0530, Souptick Joarder wrote:
+>>>>>> Convert to use vm_map_pages() to map range of kernel
+>>>>>> memory to user vma.
+>>>>>>
+>>>>>> map->count is passed to vm_map_pages() and internal API
+>>>>>> verify map->count against count ( count = vma_pages(vma))
+>>>>>> for page array boundary overrun condition.
+>>>>> This commit breaks gntdev driver. If vma->vm_pgoff > 0, vm_map_pages
+>>>>> will:
+>>>>>  - use map->pages starting at vma->vm_pgoff instead of 0
+>>>> The actual code ignores vma->vm_pgoff > 0 scenario and mapped
+>>>> the entire map->pages[i]. Why the entire map->pages[i] needs to be mapped
+>>>> if vma->vm_pgoff > 0 (in original code) ?
+>> vma->vm_pgoff is used as index passed to gntdev_find_map_index. It's
+>> basically (ab)using this parameter for "which grant reference to map".
 >>
->> Signed-off-by: Thomas Preston <thomas.preston@codethink.co.uk>
->> ---
->> Changes since v1:
->> - Rename speaker-test to (turn-on) diagnostics
->> - Move turn-on diagnostic to debugfs as there is no standard ALSA
->>   interface for this kind of routine.
->>
->>  sound/soc/codecs/tda7802.c | 186 ++++++++++++++++++++++++++++++++++++-
->>  1 file changed, 185 insertions(+), 1 deletion(-)
->>
->> +static int tda7802_bulk_update(struct regmap *map, struct reg_update *update,
->> +		size_t update_count)
->> +{
->> +	int i, err;
->> +
->> +	for (i = 0; i < update_count; i++) {
->> +		err = regmap_update_bits(map, update[i].reg, update[i].mask,
->> +				update[i].val);
->> +		if (err < 0)
->> +			return err;
->> +	}
->> +
->> +	return i;
->> +}
-> 
-> This could probably be removed using regmap_multi_reg_write.
-> 
+>>>> are you referring to set vma->vm_pgoff = 0 irrespective of value passed
+>>>> from user space ? If yes, using vm_map_pages_zero() is an alternate
+>>>> option.
+>> Yes, that should work.
+> I prefer to use vm_map_pages_zero() to resolve both the issues. Alternatively
+> the patch can be reverted as you suggested. Let me know you opinion and wait
+> for feedback from others.
+>
+> Boris, would you like to give any feedback ?
 
-The problem is that I want to retain the state of the other bits in those
-registers. Maybe I should make a copy of the backed up state, set the bits
-I want to off-device, then either:
+vm_map_pages_zero() looks good to me. Marek, does it work for you?
 
-1. Write the changes with regmap_multi_reg_write
-2. Write all six regs again (if my device doesn't support the multi_reg)
+-boris
 
->> +static int tda7802_probe(struct snd_soc_component *component)
->> +{
->> +	struct tda7802_priv *tda7802 = snd_soc_component_get_drvdata(component);
->> +	struct device *dev = &tda7802->i2c->dev;
->> +	int err;
->> +
->> +	tda7802->debugfs = debugfs_create_dir(dev_name(dev), NULL);
->> +	if (IS_ERR_OR_NULL(tda7802->debugfs)) {
->> +		dev_info(dev,
->> +			"Failed to create debugfs node, err %ld\n",
->> +			PTR_ERR(tda7802->debugfs));
->> +		return 0;
->> +	}
->> +
->> +	mutex_init(&tda7802->diagnostic_mutex);
->> +	err = debugfs_create_file("diagnostic", 0444, tda7802->debugfs, tda7802,
->> +			&tda7802_diagnostic_fops);
->> +	if (err < 0) {
->> +		dev_err(dev,
->> +			"debugfs: Failed to create diagnostic node, err %d\n",
->> +			err);
->> +		goto cleanup_diagnostic;
->> +	}
-> 
-> You shouldn't be failing the driver probe if debugfs fails, it
-> should be purely optional.
-> 
 
-Got it, thanks.
