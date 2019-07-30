@@ -2,108 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0804A7B506
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 23:32:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 92C147B512
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 23:36:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387799AbfG3Vcy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 17:32:54 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:41011 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726809AbfG3Vcy (ORCPT
+        id S1728774AbfG3VgK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 17:36:10 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:39710 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728756AbfG3VgK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 17:32:54 -0400
-Received: by mail-oi1-f196.google.com with SMTP id g7so49017731oia.8
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 14:32:54 -0700 (PDT)
+        Tue, 30 Jul 2019 17:36:10 -0400
+Received: by mail-pf1-f193.google.com with SMTP id f17so26517621pfn.6
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 14:36:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=l81RXxL6m1M+gQi+SuAd5R2wSnsgJIHKcsPpxRaT+zY=;
-        b=kSraaR/B69E6goTJThqCvMC1ZhsMD0N0w5q1jMLfSN0GHoz9vXAU3m3AHpz+4wmTv9
-         tZVIuOs+jj6t6MKaNVnGTZ2VTUi8L/JxKeE0owWWiPnLaW80y1l+DnNHx0apvNfSQYcn
-         WmWRi1t5Fnl1S/v5DtX5uqZhbC1jM6F6MFn4Hylizm80YJWY73wGSkEw4N9/Sta7mnMq
-         AZZChJkjeOlN5igrm3Ge5gAZg4nniJlq4pAJGB+P2nDXgZ4gduMWAX9ePkqXE2l3g9ry
-         OdB63Wq+ER+sZeLgyUEkg7LddjpE89nFO+sdaVyCnc3IDz/7Y67x+Ketii1q7IPt3qHD
-         7rAA==
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=DUZPlbYVoulEBodKFy8iaUhaLKC523HNHPbS+STT7Mc=;
+        b=NDatIQwzAhbsIPPbZ+NwYM9x/T5r4EH+yZVj9XqWB0o/mw2t7wYfsQ4O2P0lkJgQYp
+         pzK3u7WiZ9/eDE8xR5H+8pwRseGJzzLEnU6PQada61bj8uEbwtoosO0e3ka+l1gKuTFp
+         nEJZ8vrzdr6h435j2nPVD/R8R2trKRWU3GR3s=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=l81RXxL6m1M+gQi+SuAd5R2wSnsgJIHKcsPpxRaT+zY=;
-        b=CvSLk73yb1BhoZ8QQ+8sqIdP+YghFm60uH+D3YFacOBD4xkS/mVqDUPWNP64GLUdjy
-         40U975MEWu0UtCW8hB9hhw1HL1Uwb9Gvdu+WzuPduYkDt5lEKLeyNGwooj/wItZBnu6/
-         sUq7br6I2kZvUfdZPfx00WHUvwHq+5llbfLlg9v/D1tY8bI9CzgWRlajgfvGUTH3XikG
-         f4rVAjgznyILrGg4OumbJhJWgs7IkszwDsur+lVsN3jyYhBx64C/sNEQRXEpUm3mhBPL
-         EdfYgkLwP4QB5oZBbS0VKo0GlhyYu/Bg3T/d6nbZpM+IlrJvPiFinAZwhd47fhuUn5y6
-         7qYQ==
-X-Gm-Message-State: APjAAAUKufIBtMgHPxS0vhIZuRhEyfa2mInAbxod/kWENBdMp1EYUjwr
-        coDdTmiAPiOeCGkAqGg4IVeK/eOMe/1kjji8HohaPQoWt5s=
-X-Google-Smtp-Source: APXvYqxegpyFwvFejPXoYEYiHMinVR1/8uYTEPVTdMw6CR76L0x5Au3WV2IYjBoYTv7Ebh0VDCCNGBi0AhckDvlWDPg=
-X-Received: by 2002:aca:ba02:: with SMTP id k2mr1920323oif.70.1564522373532;
- Tue, 30 Jul 2019 14:32:53 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=DUZPlbYVoulEBodKFy8iaUhaLKC523HNHPbS+STT7Mc=;
+        b=RjWn3gIkJgS4aZj5sbrChvfu0nmJqsQ6OXGKFMGEUR/Qugbx4ZYUwn50Ly6Gw4woFJ
+         9EkVhwmLfix+WmJabLw9jo9lWgnDO1Q4YxpZ6qodWzyRHq4SD0jZH2ucKjg+RBvm7nAc
+         K/F5lnnuRnYGTWS7RcaEX5aA3mNoPqGdxgD4/5mxRROZt7gbvblSWdOvRkwoCLZHgTS5
+         KWaeHJSfUq+NIzd3+sTs0OzicJEjIkVhX48zV/LHHJtUZzIHm7n3X3SVCgqXSRL/DcNs
+         oYcG7LYV5Urvuno7jSUeCkJ1haccnu87EqsKppv2IlpOMKCYvo/sSaEcKWGyKn7pDiPS
+         Y1Ug==
+X-Gm-Message-State: APjAAAViUbs8X19WOzkNa2ESaykSFgyQ8XLF/SFeDEfidMt0D9sdMcEe
+        GJnIv+Jx+0CRRQCojKwk5COd3xVBv+SR0w==
+X-Google-Smtp-Source: APXvYqywN/LMd0BIVi4A4sLVzB9NTdG4jbAYa+WXDgPmu1q0fk2kZNlBu/omvQitaQt0oJFecZsLfA==
+X-Received: by 2002:a65:65c5:: with SMTP id y5mr109634193pgv.342.1564522569382;
+        Tue, 30 Jul 2019 14:36:09 -0700 (PDT)
+Received: from smtp.gmail.com ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id p26sm14046937pgl.64.2019.07.30.14.36.08
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 30 Jul 2019 14:36:08 -0700 (PDT)
+From:   Stephen Boyd <swboyd@chromium.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Thierry Reding <treding@nvidia.com>, Li Yang <leoyang.li@nxp.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH v7 1/2] soc: fsl: qbman: Remove dev_err() usage after platform_get_irq()
+Date:   Tue, 30 Jul 2019 14:36:06 -0700
+Message-Id: <20190730213607.171156-1-swboyd@chromium.org>
+X-Mailer: git-send-email 2.22.0.709.g102302147b-goog
+In-Reply-To: <20190730183503.GX7234@tuxbook-pro>
+References: <20190730183503.GX7234@tuxbook-pro>
 MIME-Version: 1.0
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Tue, 30 Jul 2019 14:32:42 -0700
-Message-ID: <CAPcyv4hJcRY3aop4jgH8NLsz1A8HH7sH6gnGs02Wy8A=p5o=jg@mail.gmail.com>
-Subject: [GIT PULL] dax fix for v5.3-rc3
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus, please pull from:
+We don't need dev_err() messages when platform_get_irq() fails now that
+platform_get_irq() prints an error message itself when something goes
+wrong. Let's remove these prints with a simple semantic patch.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/nvdimm/nvdimm dax-fix-5.3-rc3
+// <smpl>
+@@
+expression ret;
+struct platform_device *E;
+@@
 
-...to receive a manual fixup I happened to drop. I re-fetched the
-patch from the mailing list after integrating the git message-id
-support to generate a "Link:" tag [1], but then did not re-apply the
-fixup. This now matches what I tested and went into yesterday's -next.
+ret =
+(
+platform_get_irq(E, ...)
+|
+platform_get_irq_byname(E, ...)
+);
 
-[1]: https://lists.linuxfoundation.org/pipermail/ksummit-discuss/2019-July/006608.html
+if ( \( ret < 0 \| ret <= 0 \) )
+{
+(
+-if (ret != -EPROBE_DEFER)
+-{ ...
+-dev_err(...);
+-... }
+|
+...
+-dev_err(...);
+)
+...
+}
+// </smpl>
 
+While we're here, remove braces on if statements that only have one
+statement (manually).
+
+Cc: Thierry Reding <treding@nvidia.com>
+Cc: Li Yang <leoyang.li@nxp.com>
+Cc: Simon Horman <horms+renesas@verge.net.au>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Stephen Boyd <swboyd@chromium.org>
 ---
+ drivers/soc/fsl/qbman/bman_portal.c | 4 +---
+ drivers/soc/fsl/qbman/qman_portal.c | 4 +---
+ 2 files changed, 2 insertions(+), 6 deletions(-)
 
-The following changes since commit 609488bc979f99f805f34e9a32c1e3b71179d10b:
+diff --git a/drivers/soc/fsl/qbman/bman_portal.c b/drivers/soc/fsl/qbman/bman_portal.c
+index cf4f10d6f590..e4ef35abb508 100644
+--- a/drivers/soc/fsl/qbman/bman_portal.c
++++ b/drivers/soc/fsl/qbman/bman_portal.c
+@@ -135,10 +135,8 @@ static int bman_portal_probe(struct platform_device *pdev)
+ 	pcfg->cpu = -1;
+ 
+ 	irq = platform_get_irq(pdev, 0);
+-	if (irq <= 0) {
+-		dev_err(dev, "Can't get %pOF IRQ'\n", node);
++	if (irq <= 0)
+ 		goto err_ioremap1;
+-	}
+ 	pcfg->irq = irq;
+ 
+ 	pcfg->addr_virt_ce = memremap(addr_phys[0]->start,
+diff --git a/drivers/soc/fsl/qbman/qman_portal.c b/drivers/soc/fsl/qbman/qman_portal.c
+index e2186b681d87..991c35a72e00 100644
+--- a/drivers/soc/fsl/qbman/qman_portal.c
++++ b/drivers/soc/fsl/qbman/qman_portal.c
+@@ -275,10 +275,8 @@ static int qman_portal_probe(struct platform_device *pdev)
+ 	pcfg->channel = val;
+ 	pcfg->cpu = -1;
+ 	irq = platform_get_irq(pdev, 0);
+-	if (irq <= 0) {
+-		dev_err(dev, "Can't get %pOF IRQ\n", node);
++	if (irq <= 0)
+ 		goto err_ioremap1;
+-	}
+ 	pcfg->irq = irq;
+ 
+ 	pcfg->addr_virt_ce = memremap(addr_phys[0]->start,
+-- 
+Sent by a computer through tubes
 
-  Linux 5.3-rc2 (2019-07-28 12:47:02 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/nvdimm/nvdimm dax-fix-5.3-rc3
-
-for you to fetch changes up to 61c30c98ef17e5a330d7bb8494b78b3d6dffe9b8:
-
-  dax: Fix missed wakeup in put_unlocked_entry() (2019-07-29 09:24:22 -0700)
-
-----------------------------------------------------------------
-dax fix 5.3-rc3
-
-- Fix a botched manual patch update that got dropped between testing and
-  application.
-
-----------------------------------------------------------------
-Jan Kara (1):
-      dax: Fix missed wakeup in put_unlocked_entry()
-
- fs/dax.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
----
-
-diff --git a/fs/dax.c b/fs/dax.c
-index a237141d8787..b64964ef44f6 100644
---- a/fs/dax.c
-+++ b/fs/dax.c
-@@ -266,7 +266,7 @@ static void wait_entry_unlocked(struct xa_state
-*xas, void *entry)
- static void put_unlocked_entry(struct xa_state *xas, void *entry)
- {
-        /* If we were the only waiter woken, wake the next one */
--       if (entry && dax_is_conflict(entry))
-+       if (entry && !dax_is_conflict(entry))
-                dax_wake_entry(xas, entry, false);
- }
