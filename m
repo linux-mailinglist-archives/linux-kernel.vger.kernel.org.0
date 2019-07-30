@@ -2,76 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B38477B26F
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:46:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B211B7B237
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:43:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388485AbfG3SqC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 14:46:02 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:42946 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387744AbfG3Sp7 (ORCPT
+        id S2387691AbfG3SnI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 14:43:08 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:36177 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726165AbfG3SnI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 14:45:59 -0400
-Received: from floko.floko.floko (unknown [IPv6:2804:431:c7f1:ce2f:ec1:e6e6:2e9f:e76e])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: koike)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id A508728B911;
-        Tue, 30 Jul 2019 19:45:53 +0100 (BST)
-From:   Helen Koike <helen.koike@collabora.com>
-To:     linux-rockchip@lists.infradead.org
-Cc:     devicetree@vger.kernel.org, eddie.cai.linux@gmail.com,
-        mchehab@kernel.org, heiko@sntech.de, jacob2.chen@rock-chips.com,
-        jeffy.chen@rock-chips.com, zyc@rock-chips.com,
-        linux-kernel@vger.kernel.org, tfiga@chromium.org,
-        hans.verkuil@cisco.com, laurent.pinchart@ideasonboard.com,
-        sakari.ailus@linux.intel.com, kernel@collabora.com,
-        ezequiel@collabora.com, linux-media@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, zhengsq@rock-chips.com,
-        Helen Koike <helen.koike@collabora.com>
-Subject: [PATCH v8 14/14] MAINTAINERS: add entry for Rockchip ISP1 driver
-Date:   Tue, 30 Jul 2019 15:42:56 -0300
-Message-Id: <20190730184256.30338-15-helen.koike@collabora.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190730184256.30338-1-helen.koike@collabora.com>
-References: <20190730184256.30338-1-helen.koike@collabora.com>
+        Tue, 30 Jul 2019 14:43:08 -0400
+Received: by mail-pf1-f194.google.com with SMTP id r7so30300838pfl.3;
+        Tue, 30 Jul 2019 11:43:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=XQ1HEShJ5s73d/yzmaGNdklZsr1H4GUBmJKRPpDPWac=;
+        b=pGmY/e7mYn6/fhUsdIx/RoglIfB/4X9OYqdQsHGhi82reiyeOfK9FHszatzzMzp8Lk
+         KNeIX9Ly0NpN6VwGaTD3N+RuRjlr5UCft0cwvhatUWbShDdFUO27XeE7zTwJXZgIq+sd
+         Vm7xlJy2DLWrQ0bREA1OZqqQwshO2T5IWnvFqS0H2ZtZeMsVATpEU/PtZCwPilWI0spX
+         TQQ1dU23LhXJX3Oy0E7/XPG6VjfGokLJQt7Dg6HfKLbZl8GUUVy6AU601PyXQwhUzvQH
+         BzvKNM5W6lAmcVVneI9lpL2J0uKkY5gXGYuTfmrcMNtdzmWiiO0SRjcsfgkPqNe24grP
+         EW6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=XQ1HEShJ5s73d/yzmaGNdklZsr1H4GUBmJKRPpDPWac=;
+        b=Xl7uUuoZ8q+9L+H1C9h10Hyd+Mk5TFrpUzNu4gIsl0yV4CRDztc8vpo7/CtMtlTStv
+         y546V/51oGcVaXxTHQhQ7f3EbnbjUruoFsNvLlFb8e56PUTZpBpM6P1vs2eNHbVEcn6A
+         tLwHUW17KrU5LUaJx+kc88xIyR5hv/7NPs/IYjvfNliZVy0SX30uCdu5Qt2lPStT6ua/
+         U6AqOSBDkK6pyq1rm4o7OlLEXZXR2SXH4etfQd9+72/uAuMIWJ4lzGPchSGo0Hczc21X
+         v/ctsD4aNGgH43z0lunoDTfNRutpUV2j3wPhVITw4yEmgJL78JDoEGGaLN8IZqoOcJ+T
+         7wmw==
+X-Gm-Message-State: APjAAAWGncmngnjdD3++e0DQJQeLitB4IcbC5eRBGEGdR30/sh9+EM5J
+        WzjAojWqrNqDMNg6NN0qVdfAGmAn
+X-Google-Smtp-Source: APXvYqwfjsNS8DEHByj9xWPHciC5KhmAfnuAb5KgUSFcj2zvbHeQnoxqiLY7hLOW5eaHFqfJD1Dgmw==
+X-Received: by 2002:a63:484a:: with SMTP id x10mr51948768pgk.430.1564512187173;
+        Tue, 30 Jul 2019 11:43:07 -0700 (PDT)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id f7sm64284652pfd.43.2019.07.30.11.43.06
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Jul 2019 11:43:06 -0700 (PDT)
+Date:   Tue, 30 Jul 2019 11:43:05 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 5.2 000/215] 5.2.5-stable review
+Message-ID: <20190730184305.GD32293@roeck-us.net>
+References: <20190729190739.971253303@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190729190739.971253303@linuxfoundation.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add MAINTAINERS entry for the rockchip isp1 driver.
+On Mon, Jul 29, 2019 at 09:19:56PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.2.5 release.
+> There are 215 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed 31 Jul 2019 07:05:01 PM UTC.
+> Anything received after that time might be too late.
+> 
 
-Signed-off-by: Helen Koike <helen.koike@collabora.com>
----
+Build results:
+	total: 159 pass: 159 fail: 0
+Qemu test results:
+	total: 364 pass: 364 fail: 0
 
-Changes in v8: None
-Changes in v7: None
-
- MAINTAINERS | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 6426db5198f0..7f38abcb4114 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -13743,6 +13743,14 @@ F:	drivers/hid/hid-roccat*
- F:	include/linux/hid-roccat*
- F:	Documentation/ABI/*/sysfs-driver-hid-roccat*
- 
-+ROCKCHIP ISP V1 DRIVER
-+M:	Helen Koike <helen.koike@collabora.com>
-+L:	linux-media@vger.kernel.org
-+S:	Maintained
-+F:	drivers/media/platform/rockchip/isp1/
-+F:	Documentation/devicetree/bindings/media/rockchip-isp1.txt
-+F:	Documentation/devicetree/bindings/media/rockchip-mipi-dphy.txt
-+
- ROCKCHIP RASTER 2D GRAPHIC ACCELERATION UNIT DRIVER
- M:	Jacob chen <jacob2.chen@rock-chips.com>
- L:	linux-media@vger.kernel.org
--- 
-2.22.0
-
+Guenter
