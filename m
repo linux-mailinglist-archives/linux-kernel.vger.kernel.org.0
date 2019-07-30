@@ -2,97 +2,162 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DBE9E79F6B
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 05:04:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5012679F75
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 05:09:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730164AbfG3DEV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 23:04:21 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:41546 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726386AbfG3DES (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 23:04:18 -0400
-Received: by mail-pg1-f193.google.com with SMTP id x15so18903723pgg.8
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 20:04:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=gD5mfEMWuXarGCctKEueAm1TQYwfzvdTbbmFFyNOtWo=;
-        b=UVBvxgZ6r/zLyKNUUmC7qzvDk5EBxkpH1aC3y+kIo97u1sg42yewB7FkZdIpZMqvpS
-         QIB4TpEnF3SyEtGHbXb/AB4jlJ9mRLrxHLY5bz5G9UFc70g+I+IJA+g1/ySrcOw/pfWt
-         tzD7FDrpyDosPIvxQacedkrga26Bv7MfrsThJiWoy5ymskilTpMy8SO2zzUd7beqKfsl
-         u4Bbb9PSRp/zymco+TgOhWf3RH0SNTve4sqmjJQ8YX7KeQehRXgKMlEsLB5DVtQL2FOR
-         sfTCYP4R/1c2eDlXt/0WCDtWBVhW7r29c2S1WcHEstdLYrR/syUqDu72U6O9LfaWd3Qt
-         0WkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=gD5mfEMWuXarGCctKEueAm1TQYwfzvdTbbmFFyNOtWo=;
-        b=jr2YxxwkZB144QFs+EM7HhCpaGkjj2wW9umSfAv7QGoMM6MfirOQcodRh0agiJTKJj
-         EliL/kx5uJ1TNFu6LxkSjJf3ELh8xy4Umh6Rn2fqYoKFoZp/3DzrHTkTiaKmNEBsVjNI
-         2HrnPi6OTx+ZgF2VgSZa43VDG6EbyHsnM9c4amBDKpZw8UTLyQ4ydVhd7riRvUpY33jp
-         SuFRPhNa1y4grVCMf+cJg//cRMYWUOLewVmsaFcSzDugseWGfG+m2rkz4/Ek7hMmJaeE
-         VC5tL7zPVID9B0Qj3N0h9Nq1PntR138mnSlWc1e+MXezn2J97z7xDIyJzqfov51ry6z/
-         04eQ==
-X-Gm-Message-State: APjAAAXnyrmAYaFkycbmNgiA3687iBEKXplkwbgEaut1kLCdzPgRNaTZ
-        P8U1VozEsNTxV/bV2yPqTJ8=
-X-Google-Smtp-Source: APXvYqzdWv0EJeJ8yPP/yNdZlsxyvWTQ6kqL8q4wcSPSHXHBf6Lp1lQKBVsPsqDq/ZrNU2RgtE/OJA==
-X-Received: by 2002:a17:90a:1aa4:: with SMTP id p33mr116749314pjp.27.1564455858074;
-        Mon, 29 Jul 2019 20:04:18 -0700 (PDT)
-Received: from hari-Inspiron-1545 ([183.83.86.126])
-        by smtp.gmail.com with ESMTPSA id n185sm45771965pga.16.2019.07.29.20.04.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 29 Jul 2019 20:04:17 -0700 (PDT)
-Date:   Tue, 30 Jul 2019 08:34:11 +0530
-From:   Hariprasad Kelam <hariprasad.kelam@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jeeeun Evans <jeeeunevans@gmail.com>,
-        Hardik Singh Rathore <hardiksingh.k@gmail.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Mukesh Ojha <mojha@codeaurora.org>,
-        Hariprasad Kelam <hariprasad.kelam@gmail.com>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        hdegoede@redhat.com, Larry.Finger@lwfinger.net
-Subject: [PATCH] staging: rtl8723bs: core: Remove Macro
- "IS_MAC_ADDRESS_BROADCAST"
-Message-ID: <20190730030411.GA6140@hari-Inspiron-1545>
+        id S1727775AbfG3DI4 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 29 Jul 2019 23:08:56 -0400
+Received: from mga18.intel.com ([134.134.136.126]:16036 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726281AbfG3DIx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 23:08:53 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Jul 2019 20:08:52 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,325,1559545200"; 
+   d="scan'208";a="346861983"
+Received: from fmsmsx104.amr.corp.intel.com ([10.18.124.202])
+  by orsmga005.jf.intel.com with ESMTP; 29 Jul 2019 20:08:52 -0700
+Received: from fmsmsx153.amr.corp.intel.com (10.18.125.6) by
+ fmsmsx104.amr.corp.intel.com (10.18.124.202) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Mon, 29 Jul 2019 20:08:52 -0700
+Received: from shsmsx102.ccr.corp.intel.com (10.239.4.154) by
+ FMSMSX153.amr.corp.intel.com (10.18.125.6) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Mon, 29 Jul 2019 20:08:51 -0700
+Received: from shsmsx105.ccr.corp.intel.com ([169.254.11.15]) by
+ shsmsx102.ccr.corp.intel.com ([169.254.2.19]) with mapi id 14.03.0439.000;
+ Tue, 30 Jul 2019 11:08:49 +0800
+From:   "Zhao, Yan Y" <yan.y.zhao@intel.com>
+To:     Zhenyu Wang <zhenyuw@linux.intel.com>,
+        Hariprasad Kelam <hariprasad.kelam@gmail.com>
+CC:     David Airlie <airlied@linux.ie>,
+        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "Daniel Vetter" <daniel@ffwll.ch>,
+        "Vivi, Rodrigo" <rodrigo.vivi@intel.com>,
+        "intel-gvt-dev@lists.freedesktop.org" 
+        <intel-gvt-dev@lists.freedesktop.org>,
+        "Wang, Zhi A" <zhi.a.wang@intel.com>
+Subject: RE: [PATCH] drm/i915/gvt: remove duplicate entry of trace
+Thread-Topic: [PATCH] drm/i915/gvt: remove duplicate entry of trace
+Thread-Index: AQHVIM5kvexPfpkDmUCNSg2o5koBYqbixmwQ
+Date:   Tue, 30 Jul 2019 03:08:49 +0000
+Message-ID: <F22B14EC3CFBB843AD3E03B6B78F2C6A4B8CB34E@SHSMSX105.ccr.corp.intel.com>
+References: <20190526075633.GA9245@hari-Inspiron-1545>
+ <20190612032236.GH9684@zhen-hp.sh.intel.com>
+In-Reply-To: <20190612032236.GH9684@zhen-hp.sh.intel.com>
+Accept-Language: en-US, zh-CN
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiM2Q5NmYwODMtYmQ2NS00NDVjLWJkNGQtNGRjYzFlMWY4ZjZiIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiVVFxRnF6Tjd0TkFUXC9PRk0wMUlRVHkxc0VSUEIyTUxEZzVFMk9OM09QUjlzMDloZERFQmJLak9RREROQmhydVcifQ==
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.600.7
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove unused macro IS_MAC_ADDRESS_BROADCAST. In future if one wants use
-it ,use generic API "is_broadcast_ether_addr"
+Reviewed-by: Yan Zhao <yan.y.zhao@intel.com>
 
-Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
----
- drivers/staging/rtl8723bs/core/rtw_ioctl_set.c | 7 -------
- 1 file changed, 7 deletions(-)
-
-diff --git a/drivers/staging/rtl8723bs/core/rtw_ioctl_set.c b/drivers/staging/rtl8723bs/core/rtw_ioctl_set.c
-index 8eb0ff5..eb08569 100644
---- a/drivers/staging/rtl8723bs/core/rtw_ioctl_set.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_ioctl_set.c
-@@ -9,13 +9,6 @@
- #include <drv_types.h>
- #include <rtw_debug.h>
- 
--#define IS_MAC_ADDRESS_BROADCAST(addr) \
--(\
--	((addr[0] == 0xff) && (addr[1] == 0xff) && \
--		(addr[2] == 0xff) && (addr[3] == 0xff) && \
--		(addr[4] == 0xff) && (addr[5] == 0xff))  ? true : false \
--)
--
- u8 rtw_validate_bssid(u8 *bssid)
- {
- 	u8 ret = true;
--- 
-2.7.4
-
+> -----Original Message-----
+> From: intel-gvt-dev [mailto:intel-gvt-dev-bounces@lists.freedesktop.org] On
+> Behalf Of Zhenyu Wang
+> Sent: Wednesday, June 12, 2019 11:23 AM
+> To: Hariprasad Kelam <hariprasad.kelam@gmail.com>
+> Cc: David Airlie <airlied@linux.ie>; intel-gfx@lists.freedesktop.org; Joonas
+> Lahtinen <joonas.lahtinen@linux.intel.com>; linux-kernel@vger.kernel.org; Jani
+> Nikula <jani.nikula@linux.intel.com>; dri-devel@lists.freedesktop.org; Daniel
+> Vetter <daniel@ffwll.ch>; Vivi, Rodrigo <rodrigo.vivi@intel.com>; intel-gvt-
+> dev@lists.freedesktop.org; Wang, Zhi A <zhi.a.wang@intel.com>
+> Subject: Re: [PATCH] drm/i915/gvt: remove duplicate entry of trace
+> 
+> On 2019.05.26 13:26:33 +0530, Hariprasad Kelam wrote:
+> > Remove duplicate include of trace.h
+> >
+> > Issue identified by includecheck
+> >
+> > Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
+> > ---
+> >  drivers/gpu/drm/i915/gvt/trace_points.c | 1 -
+> >  1 file changed, 1 deletion(-)
+> >
+> > diff --git a/drivers/gpu/drm/i915/gvt/trace_points.c
+> > b/drivers/gpu/drm/i915/gvt/trace_points.c
+> > index a3deed69..569f5e3 100644
+> > --- a/drivers/gpu/drm/i915/gvt/trace_points.c
+> > +++ b/drivers/gpu/drm/i915/gvt/trace_points.c
+> > @@ -32,5 +32,4 @@
+> >
+> >  #ifndef __CHECKER__
+> >  #define CREATE_TRACE_POINTS
+> > -#include "trace.h"
+> >  #endif
+> > --
+> 
+> This actually caused build issue like
+> ERROR: "__tracepoint_gma_index" [drivers/gpu/drm/i915/i915.ko] undefined!
+> ERROR: "__tracepoint_render_mmio" [drivers/gpu/drm/i915/i915.ko] undefined!
+> ERROR: "__tracepoint_gvt_command" [drivers/gpu/drm/i915/i915.ko]
+> undefined!
+> ERROR: "__tracepoint_spt_guest_change" [drivers/gpu/drm/i915/i915.ko]
+> undefined!
+> ERROR: "__tracepoint_gma_translate" [drivers/gpu/drm/i915/i915.ko]
+> undefined!
+> ERROR: "__tracepoint_spt_alloc" [drivers/gpu/drm/i915/i915.ko] undefined!
+> ERROR: "__tracepoint_spt_change" [drivers/gpu/drm/i915/i915.ko] undefined!
+> ERROR: "__tracepoint_oos_sync" [drivers/gpu/drm/i915/i915.ko] undefined!
+> ERROR: "__tracepoint_write_ir" [drivers/gpu/drm/i915/i915.ko] undefined!
+> ERROR: "__tracepoint_propagate_event" [drivers/gpu/drm/i915/i915.ko]
+> undefined!
+> ERROR: "__tracepoint_inject_msi" [drivers/gpu/drm/i915/i915.ko] undefined!
+> ERROR: "__tracepoint_spt_refcount" [drivers/gpu/drm/i915/i915.ko] undefined!
+> ERROR: "__tracepoint_spt_free" [drivers/gpu/drm/i915/i915.ko] undefined!
+> ERROR: "__tracepoint_oos_change" [drivers/gpu/drm/i915/i915.ko] undefined!
+> scripts/Makefile.modpost:91: recipe for target '__modpost' failed
+> 
+> Looks we need fix like below.
+> 
+> Subject: [PATCH] drm/i915/gvt: remove duplicate include of trace.h
+> 
+> This removes duplicate include of trace.h. Found by Hariprasad Kelam with
+> includecheck.
+> 
+> Reported-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
+> Signed-off-by: Zhenyu Wang <zhenyuw@linux.intel.com>
+> ---
+>  drivers/gpu/drm/i915/gvt/trace_points.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/i915/gvt/trace_points.c
+> b/drivers/gpu/drm/i915/gvt/trace_points.c
+> index a3deed692b9c..fe552e877e09 100644
+> --- a/drivers/gpu/drm/i915/gvt/trace_points.c
+> +++ b/drivers/gpu/drm/i915/gvt/trace_points.c
+> @@ -28,8 +28,6 @@
+>   *
+>   */
+> 
+> -#include "trace.h"
+> -
+>  #ifndef __CHECKER__
+>  #define CREATE_TRACE_POINTS
+>  #include "trace.h"
+> --
+> 2.20.1
+> 
+> --
+> Open Source Technology Center, Intel ltd.
+> 
+> $gpg --keyserver wwwkeys.pgp.net --recv-keys 4D781827
