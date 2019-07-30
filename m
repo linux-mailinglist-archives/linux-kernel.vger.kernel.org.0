@@ -2,133 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1278A7AACF
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 16:20:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3385F7AAC9
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 16:20:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731120AbfG3OUi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 10:20:38 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:46448 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726225AbfG3OUg (ORCPT
+        id S1730971AbfG3OUP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 10:20:15 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:42116 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726225AbfG3OUP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 10:20:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=UlNNdsBx6Baw2fuddPCcOCkY2XtucT+E1ZdJLnPYjRk=; b=GX29Id9GIy648eX4mkkvrZCNR
-        +K+KQOYmAhU03++KERmWLtllkU8sxhtlPCsUVzpmy049izlwm+6drN6ph7qMOO4fX8scf48WEmyn2
-        Hh3wcxcIEjS+rlotusZoUCGNzfSxtQHnkRzJN5itUrCtKXV4KGf1Hj1gv7UQ85TaO6ir4=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hsSyW-0007is-5f; Tue, 30 Jul 2019 14:19:36 +0000
-Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 607C42742CB5; Tue, 30 Jul 2019 15:19:35 +0100 (BST)
-Date:   Tue, 30 Jul 2019 15:19:35 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Thomas Preston <thomas.preston@codethink.co.uk>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Marco Felsch <m.felsch@pengutronix.de>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Kirill Marinushkin <kmarinushkin@birdec.tech>,
-        Cheng-Yi Chiang <cychiang@chromium.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Annaliese McDermond <nh6z@nh6z.net>,
-        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] ASoC: TDA7802: Add turn-on diagnostic routine
-Message-ID: <20190730141935.GF4264@sirena.org.uk>
-References: <20190730120937.16271-1-thomas.preston@codethink.co.uk>
- <20190730120937.16271-4-thomas.preston@codethink.co.uk>
+        Tue, 30 Jul 2019 10:20:15 -0400
+Received: by mail-pf1-f194.google.com with SMTP id q10so29910324pff.9
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 07:20:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=VxDw0/AhSqBc+UFZUyCqEn82uv1wGE11yVcaX4Q0n6o=;
+        b=dyrBL+wPYhegsmZBAGBP2FqAXypY3hXlWpWfsF+mgCyBUA0/oMiPQvycFXN3A1WD6J
+         +p+u3fsrMWUaxUiUcxPnAs5SCfDBt+ULGVIV6tyT2heZPE/D/ZSTK7yWZ1liHqzaBCeI
+         GqOCLj9pi0x6QeBwfFWNB98qCgd+OKBwTzrNBkt4M4H7/CKhRQN0o2AAMiBz01SL2OgA
+         JggS6g7grF/FxS9rPQmJSJdGrkcVDLjHDHfgRkq3gUZGpR8l9ZQIsECyJBV9LVbSQyQs
+         dljp8qX7VRXub5gq5qdPbxIxvuvHMDhuSsQZUy0ci+TpaaLJ+55tcy03sueidlVCczJi
+         Iv7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=VxDw0/AhSqBc+UFZUyCqEn82uv1wGE11yVcaX4Q0n6o=;
+        b=VDPeKy47xcWwHstzN2vgtuXSGOtEUHDFG2SKTJFMCmeet1o4iI39nwDKdWZ4he0Hk5
+         7oBQ+qfmFhTX7qMpHtdzVY/knXoeRN22Z+g5GbN3iyjFg/r2TIl+p7aszOVP8SNcULuK
+         qPm2uNssHvX6RHSZ2NlnEGtZik6zT3RwSstVz6umuOlyzjUCVb4th0ed0f61b6j8vkpG
+         hWxlJrng5eiZJbKuamBdZNZXD5eZMlSNqEA78GXGaThCsMA836iVdc1I2+tslq+pyW0d
+         eYZ4L2+BACe2bsORUd4XNOdoTM8TMA2E4zCbrBIEOiYguIdyRw74BZfmwVWnwjYbv9Dr
+         ydpw==
+X-Gm-Message-State: APjAAAVTSVs5vFu4PA/hoW2GWwrfsW0DEx3JbwbBFePMxSL444kNm7XR
+        gX7hHpfRQi8HlFOr+KrcAWcMZBYOgLISeJDQeTy/MA==
+X-Google-Smtp-Source: APXvYqyvBs8WO4qGUlFCXZ9vDpUjAUxiMdKSUdDNg2hJRew4ETs8qJMLqcasMg/Komef7BsJUXiDvqfz3domfp3/OGQ=
+X-Received: by 2002:a17:90a:a116:: with SMTP id s22mr116488183pjp.47.1564496413927;
+ Tue, 30 Jul 2019 07:20:13 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="8JPrznbw0YAQ/KXy"
-Content-Disposition: inline
-In-Reply-To: <20190730120937.16271-4-thomas.preston@codethink.co.uk>
-X-Cookie: Times approximate.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <00000000000014c877058ee2c4a6@google.com> <Pine.LNX.4.44L0.1907301011100.1507-100000@iolanthe.rowland.org>
+In-Reply-To: <Pine.LNX.4.44L0.1907301011100.1507-100000@iolanthe.rowland.org>
+From:   Andrey Konovalov <andreyknvl@google.com>
+Date:   Tue, 30 Jul 2019 16:20:02 +0200
+Message-ID: <CAAeHK+wnhfMvoMbuv3Oco1eH35BL5tdR9-X5erEJmKLS1finAg@mail.gmail.com>
+Subject: Re: KMSAN: kernel-usb-infoleak in pcan_usb_pro_send_req
+To:     Alan Stern <stern@rowland.harvard.edu>
+Cc:     syzbot <syzbot+513e4d0985298538bf9b@syzkaller.appspotmail.com>,
+        Alexander Potapenko <glider@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Kernel development list <linux-kernel@vger.kernel.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Jul 30, 2019 at 4:17 PM Alan Stern <stern@rowland.harvard.edu> wrote:
+>
+> On Tue, 30 Jul 2019, syzbot wrote:
+>
+> > Hello,
+> >
+> > syzbot found the following crash on:
+> >
+> > HEAD commit:    41550654 [UPSTREAM] KVM: x86: degrade WARN to pr_warn_rate..
+> > git tree:       kmsan
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=13e95183a00000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=40511ad0c5945201
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=513e4d0985298538bf9b
+> > compiler:       clang version 9.0.0 (/home/glider/llvm/clang
+> > 80fee25776c2fb61e74c1ecb1a523375c2500b69)
+> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17eafa1ba00000
+> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17b87983a00000
+> >
+> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> > Reported-by: syzbot+513e4d0985298538bf9b@syzkaller.appspotmail.com
+> >
+> > usb 1-1: config 0 has no interface number 0
+> > usb 1-1: New USB device found, idVendor=0c72, idProduct=0014,
+> > bcdDevice=8b.53
+> > usb 1-1: New USB device strings: Mfr=0, Product=0, SerialNumber=0
+> > usb 1-1: config 0 descriptor??
+> > peak_usb 1-1:0.146: PEAK-System PCAN-USB X6 v0 fw v0.0.0 (2 channels)
+> > ==================================================================
+> > BUG: KMSAN: kernel-usb-infoleak in usb_submit_urb+0x7ef/0x1f50
+> > drivers/usb/core/urb.c:405
+>
+> What does "kernel-usb-infoleak" mean?
 
---8JPrznbw0YAQ/KXy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+That means that the kernel put some uninitialized data into a request
+that was sent to a USB device.
 
-On Tue, Jul 30, 2019 at 01:09:37PM +0100, Thomas Preston wrote:
-
-> +	struct dentry *debugfs;
-> +	struct mutex diagnostic_mutex;
-> +};
-
-It is unclear what this mutex usefully protects, it only gets taken when
-writing to the debugfs file to trigger this diagnostic mode but doesn't
-do anything to control interactions with any other code path in the
-driver.
-
-> +static int run_turn_on_diagnostic(struct tda7802_priv *tda7802, u8 *status)
-> +{
-> +	struct device *dev = &tda7802->i2c->dev;
-> +	int err_status, err;
-> +	unsigned int val;
-> +	u8 state[NUM_IB];
-
-> +	/* We must wait 20ms for device to settle, otherwise diagnostics will
-> +	 * not start and regmap poll will timeout.
-> +	 */
-> +	msleep(DIAGNOSTIC_SETTLE_MS);
-
-The comment and define might go out of sync...
-
-> +	err = regmap_bulk_read(tda7802->regmap, TDA7802_DB1, status, 4);
-> +	if (err < 0) {
-> +		dev_err(dev, "Could not read channel status, %d\n", err);
-> +		goto diagnostic_restore;
-> +	}
-
-...but here we use a magic number for the array size :(
-
-> +static int tda7802_diagnostic_show(struct seq_file *f, void *p)
-> +{
-> +	char *buf = kmalloc(PAGE_SIZE, GFP_KERNEL);
-
-We neither use nor free buf?
-
-> +static int tda7802_probe(struct snd_soc_component *component)
-> +{
-> +	struct tda7802_priv *tda7802 = snd_soc_component_get_drvdata(component);
-> +	struct device *dev = &tda7802->i2c->dev;
-> +	int err;
-
-Why is this done at the component level?
-
---8JPrznbw0YAQ/KXy
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl1AUfYACgkQJNaLcl1U
-h9BW0wf+PaVQnb5XffJ21Ypo9xRgaGWwcL6bpKaVDfNRL94hrZz1wDnFe0ZbKzEY
-hIOheUHZJdsf65s/VqhPR6hprJoLCHtcEcnGVcT0ghx2rkyYEM0DrTZIZ/BzzD8I
-dCbzuqE3Zh3JjiBrLup0wTyeeEFwP9/z9mmVZCfy5jOcErgm+TObJYq/kPsu1bXv
-txX1/W1cPk3+FuPxa2DZC9AFW2Lxv0VnQ0PgBeUwaOI/5ykbFyN51boKVLXFKh6H
-FsEA0Y8qQ2OhufKK4pZnqip4RAgzPa+8DkV1cWaABjlgI+ECI0/sEcXD63MOx3cS
-oovWVqTESFF8RhUnU/HXI7WswbziRg==
-=GUqM
------END PGP SIGNATURE-----
-
---8JPrznbw0YAQ/KXy--
+>
+> Alan Stern
+>
