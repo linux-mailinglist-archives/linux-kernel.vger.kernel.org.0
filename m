@@ -2,76 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9C187A569
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 12:03:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C96F7A58A
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 12:05:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732195AbfG3KDe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 06:03:34 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:58122 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725975AbfG3KDd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 06:03:33 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6F9598112E;
-        Tue, 30 Jul 2019 10:03:33 +0000 (UTC)
-Received: from [10.72.12.185] (ovpn-12-185.pek2.redhat.com [10.72.12.185])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C603C19C6A;
-        Tue, 30 Jul 2019 10:03:25 +0000 (UTC)
-Subject: Re: [PATCH v4 0/5] vsock/virtio: optimizations to increase the
- throughput
-To:     Stefano Garzarella <sgarzare@redhat.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org
-References: <20190717113030.163499-1-sgarzare@redhat.com>
- <20190729095743-mutt-send-email-mst@kernel.org>
- <20190730094013.ruqjllqrjmkdnh5y@steredhat>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <fc568e3d-7af5-5895-89e8-32e35b0f9af4@redhat.com>
-Date:   Tue, 30 Jul 2019 18:03:24 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1732374AbfG3KFx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 06:05:53 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:63029 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728647AbfG3KFO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 06:05:14 -0400
+Received: from 79.184.255.110.ipv4.supernova.orange.pl (79.184.255.110) (HELO kreacher.localnet)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.275)
+ id efe23e57fc714eb3; Tue, 30 Jul 2019 12:05:11 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Linux ACPI <linux-acpi@vger.kernel.org>
+Cc:     Linux PM <linux-pm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2 7/8] ACPI: EC: PM: Consolidate some code depending on PM_SLEEP
+Date:   Tue, 30 Jul 2019 12:03:26 +0200
+Message-ID: <2742454.g7L1spr0te@kreacher>
+In-Reply-To: <7528887.mqcfy9PZua@kreacher>
+References: <7528887.mqcfy9PZua@kreacher>
 MIME-Version: 1.0
-In-Reply-To: <20190730094013.ruqjllqrjmkdnh5y@steredhat>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Tue, 30 Jul 2019 10:03:33 +0000 (UTC)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-On 2019/7/30 下午5:40, Stefano Garzarella wrote:
-> On Mon, Jul 29, 2019 at 09:59:23AM -0400, Michael S. Tsirkin wrote:
->> On Wed, Jul 17, 2019 at 01:30:25PM +0200, Stefano Garzarella wrote:
->>> This series tries to increase the throughput of virtio-vsock with slight
->>> changes.
->>> While I was testing the v2 of this series I discovered an huge use of memory,
->>> so I added patch 1 to mitigate this issue. I put it in this series in order
->>> to better track the performance trends.
->> Series:
->>
->> Acked-by: Michael S. Tsirkin <mst@redhat.com>
->>
->> Can this go into net-next?
->>
-> I think so.
-> Michael, Stefan thanks to ack the series!
->
-> Should I resend it with net-next tag?
->
-> Thanks,
-> Stefano
+Move some routines, including acpi_ec_dispatch_gpe(), that are only
+used if CONFIG_PM_SLEEP is set to the #ifdef block containing the EC
+suspend and resume callbacks, to make the "full EC PM picture" easier
+to follow.
+
+While at it, move the header of acpi_ec_dispatch_gpe() in the
+header file to a CONFIG_PM_SLEEP #ifdef block.
+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+
+New in v2.
+
+---
+ drivers/acpi/ec.c       |   54 +++++++++++++++++++++++-------------------------
+ drivers/acpi/internal.h |    2 -
+ 2 files changed, 27 insertions(+), 29 deletions(-)
+
+Index: linux-pm/drivers/acpi/internal.h
+===================================================================
+--- linux-pm.orig/drivers/acpi/internal.h
++++ linux-pm/drivers/acpi/internal.h
+@@ -194,7 +194,6 @@ void acpi_ec_ecdt_probe(void);
+ void acpi_ec_dsdt_probe(void);
+ void acpi_ec_block_transactions(void);
+ void acpi_ec_unblock_transactions(void);
+-bool acpi_ec_dispatch_gpe(void);
+ int acpi_ec_add_query_handler(struct acpi_ec *ec, u8 query_bit,
+ 			      acpi_handle handle, acpi_ec_query_func func,
+ 			      void *data);
+@@ -202,6 +201,7 @@ void acpi_ec_remove_query_handler(struct
+ 
+ #ifdef CONFIG_PM_SLEEP
+ void acpi_ec_flush_work(void);
++bool acpi_ec_dispatch_gpe(void);
+ #endif
+ 
+ 
+Index: linux-pm/drivers/acpi/ec.c
+===================================================================
+--- linux-pm.orig/drivers/acpi/ec.c
++++ linux-pm/drivers/acpi/ec.c
+@@ -1049,33 +1049,6 @@ void acpi_ec_unblock_transactions(void)
+ 		acpi_ec_start(first_ec, true);
+ }
+ 
+-#ifdef CONFIG_PM_SLEEP
+-void acpi_ec_mark_gpe_for_wake(void)
+-{
+-	if (first_ec && !ec_no_wakeup)
+-		acpi_mark_gpe_for_wake(NULL, first_ec->gpe);
+-}
+-EXPORT_SYMBOL_GPL(acpi_ec_mark_gpe_for_wake);
+-
+-void acpi_ec_set_gpe_wake_mask(u8 action)
+-{
+-	if (pm_suspend_no_platform() && first_ec && !ec_no_wakeup)
+-		acpi_set_gpe_wake_mask(NULL, first_ec->gpe, action);
+-}
+-EXPORT_SYMBOL_GPL(acpi_ec_set_gpe_wake_mask);
+-#endif
+-
+-bool acpi_ec_dispatch_gpe(void)
+-{
+-	u32 ret;
+-
+-	if (!first_ec)
+-		return false;
+-
+-	ret = acpi_dispatch_gpe(NULL, first_ec->gpe);
+-	return ret == ACPI_INTERRUPT_HANDLED;
+-}
+-
+ /* --------------------------------------------------------------------------
+                                 Event Management
+    -------------------------------------------------------------------------- */
+@@ -1984,7 +1957,32 @@ static int acpi_ec_resume(struct device
+ 	acpi_ec_enable_event(ec);
+ 	return 0;
+ }
+-#endif
++
++void acpi_ec_mark_gpe_for_wake(void)
++{
++	if (first_ec && !ec_no_wakeup)
++		acpi_mark_gpe_for_wake(NULL, first_ec->gpe);
++}
++EXPORT_SYMBOL_GPL(acpi_ec_mark_gpe_for_wake);
++
++void acpi_ec_set_gpe_wake_mask(u8 action)
++{
++	if (pm_suspend_no_platform() && first_ec && !ec_no_wakeup)
++		acpi_set_gpe_wake_mask(NULL, first_ec->gpe, action);
++}
++EXPORT_SYMBOL_GPL(acpi_ec_set_gpe_wake_mask);
++
++bool acpi_ec_dispatch_gpe(void)
++{
++	u32 ret;
++
++	if (!first_ec)
++		return false;
++
++	ret = acpi_dispatch_gpe(NULL, first_ec->gpe);
++	return ret == ACPI_INTERRUPT_HANDLED;
++}
++#endif /* CONFIG_PM_SLEEP */
+ 
+ static const struct dev_pm_ops acpi_ec_pm = {
+ 	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(acpi_ec_suspend_noirq, acpi_ec_resume_noirq)
 
 
-I think so.
-
-Thanks
 
