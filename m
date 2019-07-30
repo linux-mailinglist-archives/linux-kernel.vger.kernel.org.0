@@ -2,109 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C84367A854
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 14:25:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EF05A7A875
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 14:29:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730378AbfG3MZj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 08:25:39 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:36026 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728534AbfG3MZj (ORCPT
+        id S1729418AbfG3M3f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 08:29:35 -0400
+Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:49830 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728186AbfG3M3f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 08:25:39 -0400
-Received: by mail-io1-f67.google.com with SMTP id o9so23964147iom.3;
-        Tue, 30 Jul 2019 05:25:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=s5yWI2xfBi7yZUvh5vbuUYKfiAIOr2+n9/J+pTBAvvA=;
-        b=oNRi4RrqZcCHcv3ihpvxRh05FVUCJujtgcfihPqzEIhibrVSyvLxH6ou+KPX3QcJW1
-         8odyqmb9Xy6OZW3Akl4mhb8QXyeta1TByczNxiawqeZqlsAEQgeNH4zWnRQNZjNaanng
-         0uyuZIy+8zTVFFxa0Ya/KrP2BWiVnBI9uP6oyFln1SImZYqFXKVsPFuT21tgQZ7JxlFX
-         Fs+CbA/+uEvCQ0ZUgz9IPY356ERlad9t/WiFeJ2j53Gucbi1JlQ9yIBQgH0c0Te24k7b
-         EffDwc1jhPKoAalhRJA+XcovRIjMe2TsRZptfp0V8HA2/1B5SE8WZ8hszhzXBdu/7690
-         DokQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=s5yWI2xfBi7yZUvh5vbuUYKfiAIOr2+n9/J+pTBAvvA=;
-        b=TMGbfHz7XYUaf0EEpYhojlH2AUFA8fqyYprqvHQp0O+q0TjwUdFbpgltjDLL9ujHyn
-         yeZ00voKnicZ84UCrXg6I8nSL+xZ6tvdaiYd7Bmn8Qryw+8NhG9WlsgxcuJZIvcuZB+J
-         JtHrkSSxBc4X5FV6x4qQWAoqzunbiYNj5mljYW6JnzNVi0/P5CXxlI9/t1MFRI8ANQdZ
-         wpMIEapsrfEYW7cXrkcrPqEjBI/YuhlWqPKb0mN3LTXLmLSrReCPiC5fBoQ8cYxHhb3D
-         cD5/6dvCJz7NfXVcBa7CtjQdMoxreac96H5y8a7dwievlDsY09rEbbmMquO8YCFjhHpG
-         oQIg==
-X-Gm-Message-State: APjAAAUbOB4VI52yGSCxBg4E9Ux5lxqkkngGvDEH5YFAJF1wOlefoLnN
-        wj4Dl2K7JSpkv3oJyPTAiA==
-X-Google-Smtp-Source: APXvYqyQH9tqYauuovKG4HR22AWdKr93hT9a4O67gZNyhFbLW2ujv+hKs4GCYjdavvE1y4Ujue7gVA==
-X-Received: by 2002:a6b:cd86:: with SMTP id d128mr106118586iog.234.1564489538291;
-        Tue, 30 Jul 2019 05:25:38 -0700 (PDT)
-Received: from ip-172-31-35-247.us-east-2.compute.internal (ec2-52-15-165-154.us-east-2.compute.amazonaws.com. [52.15.165.154])
-        by smtp.gmail.com with ESMTPSA id j23sm52454755ioo.6.2019.07.30.05.25.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Jul 2019 05:25:37 -0700 (PDT)
-From:   Rundong Ge <rdong.ge@gmail.com>
-To:     davem@davemloft.net
-Cc:     kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
-        netdev@vger.kernel.org, pablo@netfilter.org, kadlec@netfilter.org,
-        fw@strlen.de, roopa@cumulusnetworks.com,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        bridge@lists.linux-foundation.org, nikolay@cumulusnetworks.com,
-        linux-kernel@vger.kernel.org, rdong.ge@gmail.com
-Subject: [PATCH] bridge:fragmented packets dropped by bridge
-Date:   Tue, 30 Jul 2019 12:25:34 +0000
-Message-Id: <20190730122534.30687-1-rdong.ge@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Tue, 30 Jul 2019 08:29:35 -0400
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+        by mx0b-001ae601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x6UCPbL5001281;
+        Tue, 30 Jul 2019 07:27:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=PODMain02222019;
+ bh=pY3zCtDyo2UN0OhyrBjrLt7xNrI8TidRHw7Z/SoxObk=;
+ b=WW27iPvGmca6/6RHRPK/lJRXcfi9WBFDVrdgvCdTiffzT8wuSG8QbF93YWX6sM7gm1aq
+ rvpkB0RxNVL+b7GpnujcaK32Kteg6fClR0Ik/f9eCLdM8kPxXgw2hzyVcC1jKb1QAPSw
+ kN8JUdfsG8nvjCfb0x1JXjoCzLx1NfLRD2zNacySmbjzuri1mf5R38vl3D567POpqX1K
+ 899bLpgZsM+k90VVHSeCO1ciXdm7oeeLyYkW7sgkDMVV3Ei3hd86ZgJpokbq2UhkLfVH
+ gOfzSnkdTom8LBMlCkgYRTj/WkgS9dCubfnBs+MRjQwSPumnfduWbI6PvbtymZzPFSZy ag== 
+Authentication-Results: ppops.net;
+        spf=fail smtp.mailfrom=ckeepax@opensource.cirrus.com
+Received: from ediex02.ad.cirrus.com ([87.246.76.36])
+        by mx0b-001ae601.pphosted.com with ESMTP id 2u0k1qvkeb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Tue, 30 Jul 2019 07:27:50 -0500
+Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX02.ad.cirrus.com
+ (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Tue, 30 Jul
+ 2019 13:27:48 +0100
+Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server id 15.1.1591.10 via Frontend
+ Transport; Tue, 30 Jul 2019 13:27:48 +0100
+Received: from ediswmail.ad.cirrus.com (ediswmail.ad.cirrus.com [198.61.86.93])
+        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id B7C512A1;
+        Tue, 30 Jul 2019 13:27:48 +0100 (BST)
+Date:   Tue, 30 Jul 2019 13:27:48 +0100
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     Thomas Preston <thomas.preston@codethink.co.uk>
+CC:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Marco Felsch <m.felsch@pengutronix.de>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Kirill Marinushkin <kmarinushkin@birdec.tech>,
+        Cheng-Yi Chiang <cychiang@chromium.org>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Annaliese McDermond <nh6z@nh6z.net>,
+        <alsa-devel@alsa-project.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Patrick Glaser <pglaser@tesla.com>,
+        Rob Duncan <rduncan@tesla.com>, Nate Case <ncase@tesla.com>
+Subject: Re: [PATCH v2 1/3] dt-bindings: ASoC: Add TDA7802 amplifier
+Message-ID: <20190730122748.GF54126@ediswmail.ad.cirrus.com>
+References: <20190730120937.16271-1-thomas.preston@codethink.co.uk>
+ <20190730120937.16271-2-thomas.preston@codethink.co.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20190730120937.16271-2-thomas.preston@codethink.co.uk>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Proofpoint-SPF-Result: fail
+X-Proofpoint-SPF-Record: v=spf1 include:spf-001ae601.pphosted.com include:spf.protection.outlook.com
+ -all
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 suspectscore=0
+ mlxlogscore=999 lowpriorityscore=0 priorityscore=1501 impostorscore=0
+ clxscore=1011 phishscore=0 adultscore=0 mlxscore=0 spamscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-1906280000
+ definitions=main-1907300130
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Given following setup:
--modprobe br_netfilter
--echo '1' > /proc/sys/net/bridge/bridge-nf-call-iptables
--brctl addbr br0
--brctl addif br0 enp2s0
--brctl addif br0 enp3s0
--brctl addif br0 enp6s0
--ifconfig enp2s0 mtu 1300
--ifconfig enp3s0 mtu 1500
--ifconfig enp6s0 mtu 1500
--ifconfig br0 up
+On Tue, Jul 30, 2019 at 01:09:35PM +0100, Thomas Preston wrote:
+> Signed-off-by: Thomas Preston <thomas.preston@codethink.co.uk>
+> Cc: Patrick Glaser <pglaser@tesla.com>
+> Cc: Rob Duncan <rduncan@tesla.com>
+> Cc: Nate Case <ncase@tesla.com>
+> ---
+>  .../devicetree/bindings/sound/tda7802.txt     | 26 +++++++++++++++++++
+>  1 file changed, 26 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/sound/tda7802.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/sound/tda7802.txt b/Documentation/devicetree/bindings/sound/tda7802.txt
+> new file mode 100644
+> index 000000000000..f80aaf4f1ba0
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/sound/tda7802.txt
+> @@ -0,0 +1,26 @@
+> +ST TDA7802 audio processor
+> +
+> +This device supports I2C only.
+> +
+> +Required properties:
+> +
+> +- compatible : "st,tda7802"
+> +- reg : the I2C address of the device
+> +- enable-supply : a regulator spec for the PLLen pin
+> +
+> +Optional properties:
+> +
+> +- st,gain-ch13 : gain for channels 1 and 3 (range: 1-4)
+> +- st,gain-ch24 : gain for channels 2 and 3 (range: 1-4)
 
-                 multi-port
-mtu1500 - mtu1500|bridge|1500 - mtu1500
-  A                  |            B
-                   mtu1300
+I wouldn't have expected the gains to be available as a device
+tree setting.
 
-With netfilter defragmentation/conntrack enabled, fragmented
-packets from A will be defragmented in prerouting, and refragmented
-at postrouting.
-But in this scenario the bridge found the frag_max_size(1500) is
-larger than the dst mtu stored in the fake_rtable whitch is
-always equal to the bridge's mtu 1300, then packets will be dopped.
+> +- st,diagnostic-mode-ch13 : diagnotic mode for channels 1 and 3
+> +                            values: "Speaker" (default), "Booster"
+> +- st,diagnostic-mode-ch24 : diagnotic mode for channels 2 and 4
+> +                            values: "Speaker" (default), "Booster"
+> +
+> +Example:
+> +
+> +amp: tda7802@6c {
+> +	compatible = "st,tda7802";
+> +	reg = <0x6c>;
+> +	enable-supply = <&amp_enable_reg>;
+> +};
+> -- 
+> 2.21.0
+> 
 
-This modifies ip_skb_dst_mtu to use the out dev's mtu instead
-of bridge's mtu in bridge refragment.
-
-Signed-off-by: Rundong Ge <rdong.ge@gmail.com>
----
- include/net/ip.h | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/include/net/ip.h b/include/net/ip.h
-index 29d89de..0512de3 100644
---- a/include/net/ip.h
-+++ b/include/net/ip.h
-@@ -450,6 +450,8 @@ static inline unsigned int ip_dst_mtu_maybe_forward(const struct dst_entry *dst,
- static inline unsigned int ip_skb_dst_mtu(struct sock *sk,
- 					  const struct sk_buff *skb)
- {
-+	if ((skb_dst(skb)->flags & DST_FAKE_RTABLE) && skb->dev)
-+		return min(skb->dev->mtu, IP_MAX_MTU);
- 	if (!sk || !sk_fullsock(sk) || ip_sk_use_pmtu(sk)) {
- 		bool forwarding = IPCB(skb)->flags & IPSKB_FORWARDED;
- 
--- 
-1.8.3.1
-
+Thanks,
+Charles
