@@ -2,210 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E16D7A066
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 07:38:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D3F2E7A06C
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 07:43:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729397AbfG3Fiz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 01:38:55 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:32921 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729383AbfG3Fiv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 01:38:51 -0400
-Received: by mail-pl1-f193.google.com with SMTP id c14so28355545plo.0
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 22:38:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Pne7qN8OQcDPBPEgu6IMUIvh4yQYOYprmqwJEV4YkPU=;
-        b=ZOU0EuLk9k5y2mlcqwoNPv6X9BD7fmwO6xvwpR5qL7uuP558exRXf/8On7dFBaEhWX
-         BcpUXMb2x+5GLSz2AUQwVfkWk6j3owSCERfHwRKue1TgRn/fN00ncWiPoIityuhXi5x8
-         p2Zgh/kbUCPbN6Cu/TNKfjsQ6xIN45prMdekA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Pne7qN8OQcDPBPEgu6IMUIvh4yQYOYprmqwJEV4YkPU=;
-        b=P3qAlk1+4fdJcghawRK0Toka8GU81hdzLirruxxW8W7MKu+fiLqwg48TFkMD4A6mog
-         pKlWLmUc4SMO1y2sQLdufkBicPPYWOiEb7vXcrDAaDpe2diVjCn+dPUns+HlCprAa1/Z
-         bXKxBkLnVgPgJg6/+iyzXP6qLLW/oMSqL9l75okP8iHuitP/vL/crj7iibzgebuB1u+h
-         onQYjzpr3nCAb25W1ed5AkI38f1ApVfztWQpoLMfElphPkViPk0t701UdlgSUJuTIxCV
-         o5wv4HHL+oJ/i505ZHK8iSg6gt1qjLHHs+4hwjUgpd6NkSxWjcfMRpX25tXYxUJ52zuK
-         XeEw==
-X-Gm-Message-State: APjAAAVtg+rAU6cXYhraQPfHa0+hUE62xGd/prNYWzGJ8D6FdC09J923
-        afMXiouJMbmJkrUvHhkiWEeJIw==
-X-Google-Smtp-Source: APXvYqw2q+vi9PITZEeG7c6nqF5yZPddg3BMcleKfYNYcT6OOK1M55SCxr1F/kz3wtoMW/1VMb/LDA==
-X-Received: by 2002:a17:902:758d:: with SMTP id j13mr111782528pll.197.1564465130964;
-        Mon, 29 Jul 2019 22:38:50 -0700 (PDT)
-Received: from smtp.gmail.com ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id r1sm59306805pgv.70.2019.07.29.22.38.50
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 29 Jul 2019 22:38:50 -0700 (PDT)
-From:   Stephen Boyd <swboyd@chromium.org>
-To:     Julia Lawall <Julia.Lawall@lip6.fr>,
-        Gilles Muller <Gilles.Muller@lip6.fr>,
-        Nicolas Palix <nicolas.palix@imag.fr>,
-        Michal Marek <michal.lkml@markovi.net>
-Cc:     linux-kernel@vger.kernel.org, cocci@systeme.lip6.fr,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Javier Martinez Canillas <javierm@redhat.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Mark Brown <broonie@kernel.org>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH v5 3/3] coccinelle: Add script to check for platform_get_irq() excessive prints
-Date:   Mon, 29 Jul 2019 22:38:45 -0700
-Message-Id: <20190730053845.126834-4-swboyd@chromium.org>
-X-Mailer: git-send-email 2.22.0.709.g102302147b-goog
-In-Reply-To: <20190730053845.126834-1-swboyd@chromium.org>
-References: <20190730053845.126834-1-swboyd@chromium.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1729247AbfG3Fnn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 01:43:43 -0400
+Received: from mx.socionext.com ([202.248.49.38]:57329 "EHLO mx.socionext.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725209AbfG3Fnn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 01:43:43 -0400
+Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
+  by mx.socionext.com with ESMTP; 30 Jul 2019 14:43:41 +0900
+Received: from mail.mfilter.local (m-filter-1 [10.213.24.61])
+        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id 8CA3A60629;
+        Tue, 30 Jul 2019 14:43:41 +0900 (JST)
+Received: from 172.31.9.51 (172.31.9.51) by m-FILTER with ESMTP; Tue, 30 Jul 2019 14:43:41 +0900
+Received: from plum.e01.socionext.com (unknown [10.213.132.32])
+        by kinkan.css.socionext.com (Postfix) with ESMTP id 21B5C1A04FC;
+        Tue, 30 Jul 2019 14:43:41 +0900 (JST)
+From:   Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-gpio@vger.kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+Subject: [PATCH v2 0/5] pinctrl: uniphier: Add some improvements and new settings
+Date:   Tue, 30 Jul 2019 14:43:25 +0900
+Message-Id: <1564465410-9165-1-git-send-email-hayashi.kunihiko@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a coccinelle script to check for the usage of dev_err() after a call
-to platform_get_irq{,_byname}() as it's redundant now that the function
-already prints an error when it fails.
+This series adds some improvements and new settings for pin-mux.
 
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Rob Herring <robh@kernel.org>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Javier Martinez Canillas <javierm@redhat.com>
-Cc: Andrzej Hajda <a.hajda@samsung.com>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Russell King - ARM Linux <linux@armlinux.org.uk>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Markus Elfring <Markus.Elfring@web.de>
-Signed-off-by: Stephen Boyd <swboyd@chromium.org>
----
+Changes since v1:
+- sort arrays in alphabetical order
+- sort pin numbers in ascending order
+- merge "aout1b" pin-mux to aout1_group
+- change "4th" in the subject to "5th"
+- add Acked-by: lines
 
-I'm not sure this will be accepted or not given that Markus indicates a
-similar patch was made for other error messages that this may be able
-to be merged into. Just sending again anyway to keep things together.
+Kunihiko Hayashi (5):
+  pinctrl: uniphier: Separate modem group from UART ctsrts group
+  pinctrl: uniphier: Add another audio I/O pin-mux settings for LD20
+  pinctrl: uniphier: Add 5th LD20 MPEG2-TS input pin-mux setting
+  pinctrl: uniphier: Add Pro5 PCIe pin-mux settings
+  pinctrl: uniphier: Fix Pro5 SD pin-mux setting
 
- scripts/coccinelle/api/platform_get_irq.cocci | 102 ++++++++++++++++++
- 1 file changed, 102 insertions(+)
- create mode 100644 scripts/coccinelle/api/platform_get_irq.cocci
+ drivers/pinctrl/uniphier/pinctrl-uniphier-ld11.c | 10 +++++++---
+ drivers/pinctrl/uniphier/pinctrl-uniphier-ld20.c | 20 ++++++++++++++++----
+ drivers/pinctrl/uniphier/pinctrl-uniphier-ld4.c  | 10 +++++++---
+ drivers/pinctrl/uniphier/pinctrl-uniphier-ld6b.c | 10 +++++++---
+ drivers/pinctrl/uniphier/pinctrl-uniphier-pro4.c | 10 +++++++---
+ drivers/pinctrl/uniphier/pinctrl-uniphier-pro5.c | 17 +++++++++++++----
+ drivers/pinctrl/uniphier/pinctrl-uniphier-pxs2.c | 10 +++++++---
+ drivers/pinctrl/uniphier/pinctrl-uniphier-pxs3.c | 10 +++++++---
+ drivers/pinctrl/uniphier/pinctrl-uniphier-sld8.c | 10 +++++++---
+ 9 files changed, 78 insertions(+), 29 deletions(-)
 
-diff --git a/scripts/coccinelle/api/platform_get_irq.cocci b/scripts/coccinelle/api/platform_get_irq.cocci
-new file mode 100644
-index 000000000000..543ae11400e7
---- /dev/null
-+++ b/scripts/coccinelle/api/platform_get_irq.cocci
-@@ -0,0 +1,102 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/// Remove dev_err() messages after platform_get_irq*() failures
-+//
-+// Confidence: Medium
-+// Options: --include-headers
-+
-+virtual patch
-+virtual context
-+virtual org
-+virtual report
-+
-+@depends on context@
-+expression ret;
-+struct platform_device *E;
-+@@
-+
-+ret =
-+(
-+platform_get_irq
-+|
-+platform_get_irq_byname
-+)(E, ...);
-+
-+if ( ret \( < \| <= \) 0 )
-+{
-+(
-+if (ret != -EPROBE_DEFER)
-+{ ...
-+*dev_err(...);
-+... }
-+|
-+...
-+*dev_err(...);
-+)
-+...
-+}
-+
-+@depends on patch@
-+expression ret;
-+struct platform_device *E;
-+@@
-+
-+ret =
-+(
-+platform_get_irq
-+|
-+platform_get_irq_byname
-+)(E, ...);
-+
-+if ( ret \( < \| <= \) 0 )
-+{
-+(
-+-if (ret != -EPROBE_DEFER)
-+-{ ...
-+-dev_err(...);
-+-... }
-+|
-+...
-+-dev_err(...);
-+)
-+...
-+}
-+
-+@r depends on org || report@
-+position p1;
-+expression ret;
-+struct platform_device *E;
-+@@
-+
-+ret =
-+(
-+platform_get_irq
-+|
-+platform_get_irq_byname
-+)(E, ...);
-+
-+if ( ret \( < \| <= \) 0 )
-+{
-+(
-+if (ret != -EPROBE_DEFER)
-+{ ...
-+dev_err@p1(...);
-+... }
-+|
-+...
-+dev_err@p1(...);
-+)
-+...
-+}
-+
-+@script:python depends on org@
-+p1 << r.p1;
-+@@
-+
-+cocci.print_main(p1)
-+
-+@script:python depends on report@
-+p1 << r.p1;
-+@@
-+
-+msg = "line %s is redundant because platform_get_irq() already prints an error" % (p1[0].line)
-+coccilib.report.print_report(p1[0],msg)
 -- 
-Sent by a computer through tubes
+2.7.4
 
