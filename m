@@ -2,120 +2,188 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 969A27A4AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 11:38:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FBB17A4E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 11:42:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731791AbfG3Ji2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 05:38:28 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:34696 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728830AbfG3Ji1 (ORCPT
+        id S1731872AbfG3Jmq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 05:42:46 -0400
+Received: from sender4-pp-o95.zoho.com ([136.143.188.95]:25573 "EHLO
+        sender4-pp-o95.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725913AbfG3Jmq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 05:38:27 -0400
-Received: by mail-io1-f68.google.com with SMTP id k8so126642137iot.1;
-        Tue, 30 Jul 2019 02:38:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Ou13JSb7APrBhtuQv/5kmhMM+zV7koQaR2bgg5AZQlY=;
-        b=j0EFIzRfAw0lRTK+yYPE5ulbxWukeaSAp3cdW3OtkvwySlKqShPEX+esUskyEmaz91
-         smWqM1KuHFepV/SlIWOSjqsSdg8Rx2XmuuZpOHigBAW4QSrFVXmG7MdUVnC6R9ajU2hm
-         xm15gw005bdAhMxcfib8hbYxQCjB7VN7JpsJ94/H0hBwuKq/94Av/hGYlmwDR0GJvrEI
-         Zl60nLCHPxaRhKZmHADpAje0zxwvLZx/J8L99Ybb886lm1oPeQxkk9KtTFwsj/jRh7zE
-         tWatY/3twGR0P+54g2zzWwAK/Iz5zfAqGrFuLR2sUEL4/fHqysGsmSGKYK1dOCJ3nW0G
-         TeUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Ou13JSb7APrBhtuQv/5kmhMM+zV7koQaR2bgg5AZQlY=;
-        b=Y7lKTsJDyBa1QlcMkslkasyaY5LhfA1oDvCsNxCnSLxkyV3AgEoZl2jkg7MP5QDMEp
-         UXuOxk5Vd7T6ZNVdvpMyEgoCa81OrACqqwGob3tyYtj0N5GE5vo1tIhJoW2aWjNQvITH
-         grGmFTIAVErnezdS0fgHF9bOfSGM0d8I+6pnUH14IL+P6Atd7FXhD4OpIOWoWZxY7pVa
-         M2Vkypyvrg0AA8kQ+0pn8WbswoEXyVxSKafKjLJdyEZFkNjZGfKvgvULStwaGsvp1jsb
-         Mf0p0KEJ1POZcSKcVXhs+P5DYsbV/7WYXvBnvO6k//dNCeElbxHAB+5BYxAMkzeHdwdN
-         2YZA==
-X-Gm-Message-State: APjAAAUKlUmRl25Uy5oiaeDvscNmdfmEBDvdu39dpTnrazFU08TgNYSM
-        ptr+OFtgSnC7mGuviRSKtzSpaLRuXrvGJbWq7Ss=
-X-Google-Smtp-Source: APXvYqwl+CcolgEuiHDJ5d3iGImkrYA0AzcC+jBZlbomvM4WeZ0E72xKKPGki6Miq7I+qMQaYqL0tAiTMKCmbUnR/FY=
-X-Received: by 2002:a5e:d817:: with SMTP id l23mr6112819iok.282.1564479506244;
- Tue, 30 Jul 2019 02:38:26 -0700 (PDT)
+        Tue, 30 Jul 2019 05:42:46 -0400
+ARC-Seal: i=1; a=rsa-sha256; t=1564479744; cv=none; 
+        d=zoho.com; s=zohoarc; 
+        b=m6bddyU1sSWB8wiikFmRJv9gxJDDOTpeAsqU3oM3ZOtxfUmBvgApLZW11T6TlePwWPVPqFIz2N7Nf7QtL249/f33A9J9gr+kTQ9YtsZett3YJmBoCUxaivrjya/XRK+w2/o965AMLiceknVqJWuYqob32j/Kp65xZ16h7h1xRf8=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
+        t=1564479744; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To:ARC-Authentication-Results; 
+        bh=HLmCrP4ULrKbvvk4a8AJfmX5vMCyk3Zk5GM0GHXF3GM=; 
+        b=Bc5DFElQr0eoEeE0bdSRUe7Q4gZF1u0EcB03aVOwiyDBC82YR2+9KqkVVP4antb9tSQZrXExVt2MIMH+hmmanjwLtb/E2lIoqNFLjYVE2IMuuZ/WR6tIO3/KL/ib/51QMJsADAUN8dtPKQg6txJY1h8T7xfCS4gVRqTK10wF3ZQ=
+ARC-Authentication-Results: i=1; mx.zoho.com;
+        dkim=pass  header.i=zoho.com;
+        spf=pass  smtp.mailfrom=zhouyanjie@zoho.com;
+        dmarc=pass header.from=<zhouyanjie@zoho.com> header.from=<zhouyanjie@zoho.com>
+DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws; 
+  s=zapps768; d=zoho.com; 
+  h=subject:to:references:cc:from:message-id:date:user-agent:mime-version:in-reply-to:content-type; 
+  b=TkiwR87RIZ65Yp7lUfivayEM4YpeX8luJWFAXzL8F1+LtW0VOFDoJpoFjbI5ixRuJbVauzgZV267
+    t6ggdHaf5/+54lt1fKgXZbPE0LAyBu6sP70pGlzn34aEC2QRSlfx  
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1564479744;
+        s=zm2019; d=zoho.com; i=zhouyanjie@zoho.com;
+        h=Subject:To:References:Cc:From:Message-ID:Date:MIME-Version:In-Reply-To:Content-Type:Content-Transfer-Encoding;
+        l=3647; bh=HLmCrP4ULrKbvvk4a8AJfmX5vMCyk3Zk5GM0GHXF3GM=;
+        b=hHG6ryHSlhfdFpuWW/dDGM8Vd/AOaUXe8/RTYXFGXxG2ygJMWUAgIn7J+iPfbVk8
+        oozI/w27zhe8J34oA7HPEpjUttUz5jWNKBng+OA5nR84z+FQWX6N7e9ZrY+wPyfdiFe
+        iL9LNRp68BlmWtidTLvSFroF8Ny/OAr8Mx3Vkexw=
+Received: from [192.168.88.139] (171.221.113.137 [171.221.113.137]) by mx.zohomail.com
+        with SMTPS id 1564479742761900.7600390367637; Tue, 30 Jul 2019 02:42:22 -0700 (PDT)
+Subject: Re: [PATCH 1/4 v4] irqchip: Ingenic: Change interrupt handling form
+ cascade to chained_irq.
+To:     Paul Cercueil <paul@crapouillou.net>
+References: <1548517123-60058-1-git-send-email-zhouyanjie@zoho.com>
+ <1564335273-22931-1-git-send-email-zhouyanjie@zoho.com>
+ <1564335273-22931-2-git-send-email-zhouyanjie@zoho.com>
+ <1564420754.6633.0@crapouillou.net>
+Cc:     linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, robh+dt@kernel.org,
+        paul.burton@mips.com, tglx@linutronix.de, mark.rutland@arm.com,
+        jason@lakedaemon.net, marc.zyngier@arm.com
+From:   Zhou Yanjie <zhouyanjie@zoho.com>
+Message-ID: <5D3FE6B4.6040602@zoho.com>
+Date:   Tue, 30 Jul 2019 14:41:56 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.8.0
 MIME-Version: 1.0
-References: <20190724094306.1866-1-baijiaju1990@gmail.com>
-In-Reply-To: <20190724094306.1866-1-baijiaju1990@gmail.com>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Tue, 30 Jul 2019 11:41:20 +0200
-Message-ID: <CAOi1vP8Q=fYZWv9qFZcyBdKV1VYq_yr3qWyAb44W=jHZ6zfYrA@mail.gmail.com>
-Subject: Re: [PATCH] net: ceph: Fix a possible null-pointer dereference in ceph_crypto_key_destroy()
-To:     Jia-Ju Bai <baijiaju1990@gmail.com>
-Cc:     Jeff Layton <jlayton@kernel.org>, Sage Weil <sage@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Ceph Development <ceph-devel@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1564420754.6633.0@crapouillou.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-ZohoMailClient: External
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 24, 2019 at 11:43 AM Jia-Ju Bai <baijiaju1990@gmail.com> wrote:
+Hi Paul,
+Thanks for your suggestion, and after receiving Marc's comments,
+if this patch can be continued, I'll use for_each_set_bit() to simplify
+code in v5.
+
+On 2019=E5=B9=B407=E6=9C=8830=E6=97=A5 01:19, Paul Cercueil wrote:
+> Hi Zhou,
 >
-> In set_secret(), key->tfm is assigned to NULL on line 55, and then
-> ceph_crypto_key_destroy(key) is executed.
 >
-> ceph_crypto_key_destroy(key)
->     crypto_free_sync_skcipher(key->tfm)
->         crypto_skcipher_tfm(tfm)
->             return &tfm->base;
 >
-> Thus, a possible null-pointer dereference may occur.
+> Le dim. 28 juil. 2019 =C3=A0 13:34, Zhou Yanjie <zhouyanjie@zoho.com> a=
+=20
+> =C3=A9crit :
+>> The interrupt handling method is changed from old-style cascade to
+>> chained_irq which is more appropriate. Also, it can process the
+>> corner situation that more than one irq is coming to a single
+>> chip at the same time.
+>>
+>> Signed-off-by: Zhou Yanjie <zhouyanjie@zoho.com>
+>> ---
+>>  drivers/irqchip/irq-ingenic.c | 37=20
+>> +++++++++++++++++++++++--------------
+>>  1 file changed, 23 insertions(+), 14 deletions(-)
+>>
+>> diff --git a/drivers/irqchip/irq-ingenic.c=20
+>> b/drivers/irqchip/irq-ingenic.c
+>> index f126255..49f7685 100644
+>> --- a/drivers/irqchip/irq-ingenic.c
+>> +++ b/drivers/irqchip/irq-ingenic.c
+>> @@ -1,7 +1,7 @@
+>>  // SPDX-License-Identifier: GPL-2.0-or-later
+>>  /*
+>>   *  Copyright (C) 2009-2010, Lars-Peter Clausen <lars@metafoo.de>
+>> - *  JZ4740 platform IRQ support
+>> + *  Ingenic XBurst platform IRQ support
+>>   */
+>>
+>>  #include <linux/errno.h>
+>> @@ -10,6 +10,7 @@
+>>  #include <linux/interrupt.h>
+>>  #include <linux/ioport.h>
+>>  #include <linux/irqchip.h>
+>> +#include <linux/irqchip/chained_irq.h>
+>>  #include <linux/irqchip/ingenic.h>
+>>  #include <linux/of_address.h>
+>>  #include <linux/of_irq.h>
+>> @@ -32,22 +33,34 @@ struct ingenic_intc_data {
+>>  #define JZ_REG_INTC_PENDING    0x10
+>>  #define CHIP_SIZE        0x20
+>>
+>> -static irqreturn_t intc_cascade(int irq, void *data)
+>> +static void ingenic_chained_handle_irq(struct irq_desc *desc)
+>>  {
+>> -    struct ingenic_intc_data *intc =3D irq_get_handler_data(irq);
+>> -    uint32_t irq_reg;
+>> +    struct ingenic_intc_data *intc =3D irq_desc_get_handler_data(desc);
+>> +    struct irq_chip *chip =3D irq_desc_get_chip(desc);
+>> +    bool have_irq =3D false;
+>> +    uint32_t pending;
+>>      unsigned i;
+>>
+>> +    chained_irq_enter(chip, desc);
+>>      for (i =3D 0; i < intc->num_chips; i++) {
+>> -        irq_reg =3D readl(intc->base + (i * CHIP_SIZE) +
+>> +        pending =3D readl(intc->base + (i * CHIP_SIZE) +
+>>                  JZ_REG_INTC_PENDING);
+>> -        if (!irq_reg)
+>> +        if (!pending)
+>>              continue;
+>>
+>> -        generic_handle_irq(__fls(irq_reg) + (i * 32) +=20
+>> JZ4740_IRQ_BASE);
+>> +        have_irq =3D true;
+>> +        while (pending) {
+>> +            int bit =3D __fls(pending);
 >
-> To fix this bug, key->tfm is checked before calling
-> crypto_free_sync_skcipher().
+> Use the for_each_set_bit() macro here, that will be simpler.
 >
-> This bug is found by a static analysis tool STCheck written by us.
 >
-> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-> ---
->  net/ceph/crypto.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+>> +
+>> +            generic_handle_irq(bit + (i * 32) + JZ4740_IRQ_BASE);
+>> +            pending &=3D ~BIT(bit);
+>> +        }
+>>      }
+>>
+>> -    return IRQ_HANDLED;
+>> +    if (!have_irq)
+>> +        spurious_interrupt();
+>> +
+>> +    chained_irq_exit(chip, desc);
+>>  }
+>>
+>>  static void intc_irq_set_mask(struct irq_chip_generic *gc, uint32_t=20
+>> mask)
+>> @@ -70,11 +83,6 @@ void ingenic_intc_irq_resume(struct irq_data *data)
+>>      intc_irq_set_mask(gc, gc->mask_cache);
+>>  }
+>>
+>> -static struct irqaction intc_cascade_action =3D {
+>> -    .handler =3D intc_cascade,
+>> -    .name =3D "SoC intc cascade interrupt",
+>> -};
+>> -
+>>  static int __init ingenic_intc_of_init(struct device_node *node,
+>>                         unsigned num_chips)
+>>  {
+>> @@ -139,7 +147,8 @@ static int __init ingenic_intc_of_init(struct=20
+>> device_node *node,
+>>      if (!domain)
+>>          pr_warn("unable to register IRQ domain\n");
+>>
+>> -    setup_irq(parent_irq, &intc_cascade_action);
+>> +    irq_set_chained_handler_and_data(parent_irq,
+>> +                    ingenic_chained_handle_irq, intc);
+>>      return 0;
+>>
+>>  out_unmap_irq:
+>> --=20
+>> 2.7.4
 >
-> diff --git a/net/ceph/crypto.c b/net/ceph/crypto.c
-> index 5d6724cee38f..ac28463bcfd8 100644
-> --- a/net/ceph/crypto.c
-> +++ b/net/ceph/crypto.c
-> @@ -136,7 +136,8 @@ void ceph_crypto_key_destroy(struct ceph_crypto_key *key)
->         if (key) {
->                 kfree(key->key);
->                 key->key = NULL;
-> -               crypto_free_sync_skcipher(key->tfm);
-> +               if (key->tfm)
-> +                       crypto_free_sync_skcipher(key->tfm);
->                 key->tfm = NULL;
->         }
->  }
+>
 
-Hi Jia-Ju,
 
-Yeah, looks like the only reason this continued to work after
-69d6302b65a8 ("libceph: Remove VLA usage of skcipher") is because
-crypto_sync_skcipher is a trivial wrapper around crypto_skcipher
-added just for type checking AFAICT.
 
-struct crypto_sync_skcipher {
-    struct crypto_skcipher base;
-};
-
-Before that ceph_crypto_key_destroy() used crypto_free_skcipher(),
-which is safe to call on a NULL tfm.
-
-Applied with a slight modification -- I moved key->tfm = NULL under
-the new if and amended the changelog.
-
-https://github.com/ceph/ceph-client/commit/b3d79916ff99074d289d66f1643b423ae0008c50
-
-Thanks,
-
-                Ilya
