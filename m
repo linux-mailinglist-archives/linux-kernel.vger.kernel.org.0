@@ -2,59 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86C1F7B1B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:20:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E34507B1CA
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:20:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728840AbfG3SQI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 14:16:08 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:33196 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728743AbfG3SQG (ORCPT
+        id S1729503AbfG3SUe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 14:20:34 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:35877 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728796AbfG3SQH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 14:16:06 -0400
-Received: by mail-pf1-f194.google.com with SMTP id g2so30264694pfq.0
+        Tue, 30 Jul 2019 14:16:07 -0400
+Received: by mail-pg1-f194.google.com with SMTP id l21so30473948pgm.3
         for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 11:16:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=50VWY4DOvJCsLbogXvcfIy87Phisvb7R/qkulHRQtQE=;
-        b=b3mg+KDmpIO81yQrcZUSpzOusHXsPRu2YTZBtorn1AEo3N6GiptcooL6U8tMTo+gTG
-         lIYB8l6l6OrtiBRTPCwwVeU7F0QlclDCDwnUbiuFLyyK+81JVEa7Lq5TKHvVQ610YkBF
-         neATcqsL6f5giH+IoqxpKjFEtws9P29MaAOJY=
+        bh=AnIbmF0DkTbEo16MtEelTJ0IlXSRPL3zBEaTrVKwVpc=;
+        b=Bc/+oZMvGC17mgUvCSzMoq7W1yBPnUA9duyYAZIEfa/5CpTcVk4zUfykTeRg56aUen
+         KaZxGdoJtCJJ+sxGX+krfVhcc9oYp/pTwn3Wq4kIIO4C4ySXwBrN6XMM8mlxislT+xFk
+         wsxrriBgOG0NE0wIsMPu54IBmBiCL9wmvRxXE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=50VWY4DOvJCsLbogXvcfIy87Phisvb7R/qkulHRQtQE=;
-        b=Ne0omnCWVcG5E5rvd4rFGCEuKIdfR7k3WnjTXMTQoWbUDmXUJvG3L8xnufOoKlyEDI
-         iYtz5UaynnUHWNhbIT8zQ3Q1AQdfDBG/dofIcoxsKKj2rx6bJJiZlRI1SZtcjitz6CJm
-         w1nRVpRIfBq2LJmrVvht4OyUGiPIwLt1CGsFbrLlalJFFsXmI+y4fXSMih7j66nuL8To
-         DhHj/b7zMIJIz2o5452Q0aaCxehce+lsNrFIATSHQuHPvTO4Di1MWqmAmzO2Py6D2647
-         l+8hJPfv/bVXnZZ4AbCM0A1xbuPwoZbUKKbxVMJnMSV4/7iaYyZKlkQZidgWOIV5WPnO
-         cUUg==
-X-Gm-Message-State: APjAAAV2NRxXpZWsSl0XglqPoDK9H4K42g0+tg5LL7LCS9dOPZD2C7Ik
-        IVG6Q+XNJKecUv3A53GlJAmCxnFRzzM=
-X-Google-Smtp-Source: APXvYqwur07swqKyif5Dp1u0EIDJAkQU8t63hD8i7gGz9LNFXf5yqejN6CfyDWSarneFR2nt+qIVAA==
-X-Received: by 2002:a65:64c6:: with SMTP id t6mr112287304pgv.323.1564510565436;
-        Tue, 30 Jul 2019 11:16:05 -0700 (PDT)
+        bh=AnIbmF0DkTbEo16MtEelTJ0IlXSRPL3zBEaTrVKwVpc=;
+        b=mqRRXDdMuCU0PuWF7YGALAxbxGBS5PDb7TuI50ozsikOQJ6YJ37vv4FfgIz14vBxNU
+         AjjTzxW5KBqoD1a4MOVZQATRVz3GQ2qhsXTek3xwibRJIjiFZSQBvGuxIJ1I3lGCA7Dr
+         PWFsqyFlxYqxKZtALk4CvKcDCgOOasszUfgDd9HwIDKZ9hwm7A0Xy7KrWzzBwMxfjW7U
+         Nl0cd94kNIjQDxkDdtPNMU/x19ptJGfJwXFgqjpY5uiUeFPtwVvkt/i6fEmW9xxt7BE8
+         ItvdvE9SG9ogk5gnxIIlTw+fomezeMeopcGM9RVXBnOJdxQv8IVnT/fGkhLQoa/9mBrn
+         yedg==
+X-Gm-Message-State: APjAAAV+quHpqwcqdodQeFwpP1kxuRUTKSJbrf2UC6dDsCa/Mm+nKRdP
+        yVbn9sGEIFj5QYBJ9XO5VDfjjbRHjVA=
+X-Google-Smtp-Source: APXvYqwrfkKZHf0lYgTSeGboE6lSa2KEHmp7pBUfC7k8Zgh0gfBfg7UhYbBO4fXcdBc9UP/r9DtKfQ==
+X-Received: by 2002:a63:3148:: with SMTP id x69mr23475727pgx.300.1564510566154;
+        Tue, 30 Jul 2019 11:16:06 -0700 (PDT)
 Received: from smtp.gmail.com ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id g1sm106744083pgg.27.2019.07.30.11.16.04
+        by smtp.gmail.com with ESMTPSA id g1sm106744083pgg.27.2019.07.30.11.16.05
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
         Tue, 30 Jul 2019 11:16:05 -0700 (PDT)
 From:   Stephen Boyd <swboyd@chromium.org>
 To:     linux-kernel@vger.kernel.org
-Cc:     Russell King <linux@armlinux.org.uk>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Chen-Yu Tsai <wens@csie.org>,
-        linux-arm-kernel@lists.infradead.org,
+Cc:     Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>, linux-mips@vger.kernel.org,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH v6 07/57] ARM: Remove dev_err() usage after platform_get_irq()
-Date:   Tue, 30 Jul 2019 11:15:07 -0700
-Message-Id: <20190730181557.90391-8-swboyd@chromium.org>
+Subject: [PATCH v6 08/57] MIPS: Remove dev_err() usage after platform_get_irq()
+Date:   Tue, 30 Jul 2019 11:15:08 -0700
+Message-Id: <20190730181557.90391-9-swboyd@chromium.org>
 X-Mailer: git-send-email 2.22.0.709.g102302147b-goog
 In-Reply-To: <20190730181557.90391-1-swboyd@chromium.org>
 References: <20190730181557.90391-1-swboyd@chromium.org>
@@ -100,69 +96,35 @@ if ( \( ret < 0 \| ret <= 0 \) )
 While we're here, remove braces on if statements that only have one
 statement (manually).
 
-Cc: Russell King <linux@armlinux.org.uk>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: Tony Lindgren <tony@atomide.com>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: Simon Horman <horms+renesas@verge.net.au>
-Cc: Chen-Yu Tsai <wens@csie.org>
-Cc: linux-arm-kernel@lists.infradead.org
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: Paul Burton <paul.burton@mips.com>
+Cc: James Hogan <jhogan@kernel.org>
+Cc: linux-mips@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Stephen Boyd <swboyd@chromium.org>
 ---
 
 Please apply directly to subsystem trees
 
- arch/arm/plat-omap/dma.c    | 1 -
- arch/arm/plat-pxa/ssp.c     | 5 ++---
- arch/arm/plat-samsung/adc.c | 4 +---
- 3 files changed, 3 insertions(+), 7 deletions(-)
+ arch/mips/ralink/timer.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/arch/arm/plat-omap/dma.c b/arch/arm/plat-omap/dma.c
-index 79f43acf9acb..9386b2e9b332 100644
---- a/arch/arm/plat-omap/dma.c
-+++ b/arch/arm/plat-omap/dma.c
-@@ -1371,7 +1371,6 @@ static int omap_system_dma_probe(struct platform_device *pdev)
- 		strcpy(irq_name, "0");
- 		dma_irq = platform_get_irq_byname(pdev, irq_name);
- 		if (dma_irq < 0) {
--			dev_err(&pdev->dev, "failed: request IRQ %d", dma_irq);
- 			ret = dma_irq;
- 			goto exit_dma_lch_fail;
- 		}
-diff --git a/arch/arm/plat-pxa/ssp.c b/arch/arm/plat-pxa/ssp.c
-index 9a6e4923bd69..88b5dd99f6bc 100644
---- a/arch/arm/plat-pxa/ssp.c
-+++ b/arch/arm/plat-pxa/ssp.c
-@@ -146,10 +146,9 @@ static int pxa_ssp_probe(struct platform_device *pdev)
+diff --git a/arch/mips/ralink/timer.c b/arch/mips/ralink/timer.c
+index 0ad8ff2e4f6e..652424d8ed51 100644
+--- a/arch/mips/ralink/timer.c
++++ b/arch/mips/ralink/timer.c
+@@ -106,10 +106,8 @@ static int rt_timer_probe(struct platform_device *pdev)
  	}
  
- 	ssp->irq = platform_get_irq(pdev, 0);
--	if (ssp->irq < 0) {
--		dev_err(dev, "no IRQ resource defined\n");
-+	if (ssp->irq < 0)
- 		return -ENODEV;
--	}
-+
- 
- 	if (dev->of_node) {
- 		const struct of_device_id *id =
-diff --git a/arch/arm/plat-samsung/adc.c b/arch/arm/plat-samsung/adc.c
-index ee3d5c989a76..4bbeca3cbd9e 100644
---- a/arch/arm/plat-samsung/adc.c
-+++ b/arch/arm/plat-samsung/adc.c
-@@ -354,10 +354,8 @@ static int s3c_adc_probe(struct platform_device *pdev)
- 	}
- 
- 	adc->irq = platform_get_irq(pdev, 1);
--	if (adc->irq <= 0) {
--		dev_err(dev, "failed to get adc irq\n");
-+	if (adc->irq <= 0)
- 		return -ENOENT;
+ 	rt->irq = platform_get_irq(pdev, 0);
+-	if (rt->irq < 0) {
+-		dev_err(&pdev->dev, "failed to load irq\n");
++	if (rt->irq < 0)
+ 		return rt->irq;
 -	}
  
- 	ret = devm_request_irq(dev, adc->irq, s3c_adc_irq, 0, dev_name(dev),
- 				adc);
+ 	rt->membase = devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(rt->membase))
 -- 
 Sent by a computer through tubes
 
