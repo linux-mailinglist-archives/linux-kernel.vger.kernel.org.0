@@ -2,115 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 04FCA79D2F
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 02:03:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1359179D42
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 02:16:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730186AbfG3AD1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 20:03:27 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:36928 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730154AbfG3ADX (ORCPT
+        id S1729180AbfG3AQk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 20:16:40 -0400
+Received: from smtprelay0237.hostedemail.com ([216.40.44.237]:51011 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728195AbfG3AQk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 20:03:23 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6TNx0bD162470;
-        Tue, 30 Jul 2019 00:02:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references; s=corp-2018-07-02;
- bh=QV3mkbvDqVOuRyxrBxvxIwvW8RbxilJ7TWeQkboRwPw=;
- b=YV5Dtbg3JaqFI8k7yfiuTDuc4CdZGDjWE8t2gVtHRk7CgTbqPZUP5TkCrMDI4tDpRQCW
- Tv1pMiiNKojHrMh9e5/dHWk10PlrCOyBEg6jRZ/Pb/D2OlnazqEw0Hj8tPBJldqwWMIT
- xryKNvfU4DhuAgjQvWl+0JZCPxwyPYsd+0ZzLjxWXGjdLO1vRD+LjhR6DdaNOasI2mvt
- aF8fQAsAF8Kgd6eFxX5sQq6Oz6gf9Zz5N+RZ5gPWbErAb6Skztr7YYa17Cik1nvt9sNA
- QNuJ8kbNaciQvMH8hRMSsY/dmbIvAzBgrbwpTPI8NY0Bu18vihcYJ11wUHblgmTLb5sG MA== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2120.oracle.com with ESMTP id 2u0f8qtph3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 30 Jul 2019 00:02:54 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6TNvhx8039139;
-        Tue, 30 Jul 2019 00:02:53 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3030.oracle.com with ESMTP id 2u0xv7tha8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 30 Jul 2019 00:02:53 +0000
-Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x6U02ql4012440;
-        Tue, 30 Jul 2019 00:02:52 GMT
-Received: from ca-common-hq.us.oracle.com (/10.211.9.209)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 29 Jul 2019 17:02:52 -0700
-From:   Divya Indi <divya.indi@oracle.com>
-To:     linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>
-Cc:     Divya Indi <divya.indi@oracle.com>, Joe Jin <joe.jin@oracle.com>,
-        Aruna Ramakrishna <aruna.ramakrishna@oracle.com>,
-        Srinivas Eeda <srinivas.eeda@oracle.com>
-Subject: [PATCH 7/7] tracing: Un-export ftrace_set_clr_event
-Date:   Mon, 29 Jul 2019 17:02:34 -0700
-Message-Id: <1564444954-28685-8-git-send-email-divya.indi@oracle.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1564444954-28685-1-git-send-email-divya.indi@oracle.com>
-References: <1564444954-28685-1-git-send-email-divya.indi@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9333 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1906280000 definitions=main-1907290261
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9333 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
- definitions=main-1907290261
+        Mon, 29 Jul 2019 20:16:40 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay01.hostedemail.com (Postfix) with ESMTP id 25656100E86C2;
+        Tue, 30 Jul 2019 00:16:39 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::,RULES_HIT:41:355:379:599:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3353:3622:3865:3866:3867:3868:3871:3872:3874:4321:5007:6119:7903:10004:10400:10848:11026:11232:11473:11658:11914:12297:12438:12740:12760:12895:13069:13311:13357:13439:14659:14721:21080:21627:30054:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.14.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:23,LUA_SUMMARY:none
+X-HE-Tag: duck20_742442808ff0f
+X-Filterd-Recvd-Size: 2479
+Received: from XPS-9350 (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
+        (Authenticated sender: joe@perches.com)
+        by omf06.hostedemail.com (Postfix) with ESMTPA;
+        Tue, 30 Jul 2019 00:16:37 +0000 (UTC)
+Message-ID: <5dee05d6cb8498b3e636f5e8a62da673334cb5a9.camel@perches.com>
+Subject: Re: [PATCH 08/12] printk: Replace strncmp with str_has_prefix
+From:   Joe Perches <joe@perches.com>
+To:     Chuhong Yuan <hslester96@gmail.com>
+Cc:     Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        linux-kernel@vger.kernel.org
+Date:   Mon, 29 Jul 2019 17:16:35 -0700
+In-Reply-To: <20190729151505.9660-1-hslester96@gmail.com>
+References: <20190729151505.9660-1-hslester96@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use "trace_array_set_clr_event" to enable/disable events to a trace
-array from other kernel modules/components.
-Hence, we no longer need to have ftrace_set_clr_event as an exported API.
+On Mon, 2019-07-29 at 23:15 +0800, Chuhong Yuan wrote:
+> strncmp(str, const, len) is error-prone.
+> We had better use newly introduced
+> str_has_prefix() instead of it.
+[]
+> diff --git a/kernel/printk/braille.c b/kernel/printk/braille.c
+[]
+> @@ -11,10 +11,10 @@
+>  
+>  int _braille_console_setup(char **str, char **brl_options)
+>  {
+> -	if (!strncmp(*str, "brl,", 4)) {
+> +	if (str_has_prefix(*str, "brl,")) {
+>  		*brl_options = "";
+>  		*str += 4;
+> -	} else if (!strncmp(*str, "brl=", 4)) {
+> +	} else if (str_has_prefix(*str, "brl=")) {
+>  		*brl_options = *str + 4;
 
-Signed-off-by: Divya Indi <divya.indi@oracle.com>
-Reviewed-By: Aruna Ramakrishna <aruna.ramakrishna@oracle.com>
----
- include/linux/trace_events.h | 1 -
- kernel/trace/trace_events.c  | 3 +--
- 2 files changed, 1 insertion(+), 3 deletions(-)
+Better to get rid of the += 4 uses too by storing the result
+of str_has_prefix and using that as the addend.
 
-diff --git a/include/linux/trace_events.h b/include/linux/trace_events.h
-index 6da3600..025ae2b 100644
---- a/include/linux/trace_events.h
-+++ b/include/linux/trace_events.h
-@@ -542,7 +542,6 @@ extern int trace_define_field(struct trace_event_call *call, const char *type,
- int trace_set_clr_event(const char *system, const char *event, int set);
- int trace_array_set_clr_event(struct trace_array *tr, const char *system,
- 		const char *event, int set);
--int ftrace_set_clr_event(struct trace_array *tr, char *buf, int set);
- 
- /*
-  * The double __builtin_constant_p is because gcc will give us an error
-diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
-index 9ee6b52..96dd997 100644
---- a/kernel/trace/trace_events.c
-+++ b/kernel/trace/trace_events.c
-@@ -795,7 +795,7 @@ static int __ftrace_set_clr_event(struct trace_array *tr, const char *match,
- 	return ret;
- }
- 
--int ftrace_set_clr_event(struct trace_array *tr, char *buf, int set)
-+static int ftrace_set_clr_event(struct trace_array *tr, char *buf, int set)
- {
- 	char *event = NULL, *sub = NULL, *match;
- 	int ret;
-@@ -834,7 +834,6 @@ int ftrace_set_clr_event(struct trace_array *tr, char *buf, int set)
- 
- 	return ret;
- }
--EXPORT_SYMBOL_GPL(ftrace_set_clr_event);
- 
- /**
-  * trace_set_clr_event - enable or disable an event
--- 
-1.8.3.1
+Perhaps
+	size_t len;
+
+	if ((len = str_has_prefix(*str, "brl,"))) {
+		*brl_options = "";
+		*str += len;
+	} else if ((len = str_has_prefix(*str, "brl="))) {
+		etc...
+
+>  		*str = strchr(*brl_options, ',');
+>  		if (!*str) {
+> diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+[]
+> @@ -121,13 +121,13 @@ static int __control_devkmsg(char *str)
+>  	if (!str)
+>  		return -EINVAL;
+>  
+> -	if (!strncmp(str, "on", 2)) {
+> +	if (str_has_prefix(str, "on")) {
+>  		devkmsg_log = DEVKMSG_LOG_MASK_ON;
+>  		return 2;
+> -	} else if (!strncmp(str, "off", 3)) {
+> +	} else if (str_has_prefix(str, "off")) {
+>  		devkmsg_log = DEVKMSG_LOG_MASK_OFF;
+>  		return 3;
+> -	} else if (!strncmp(str, "ratelimit", 9)) {
+> +	} else if (str_has_prefix(str, "ratelimit")) {
+>  		devkmsg_log = DEVKMSG_LOG_MASK_DEFAULT;
+>  		return 9;
+>  	}
+
+here too.
+
 
