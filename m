@@ -2,113 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DBF0B7ABEB
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 17:05:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 154E17ABC4
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 17:01:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732138AbfG3PEy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 11:04:54 -0400
-Received: from mxout013.mail.hostpoint.ch ([217.26.49.173]:37563 "EHLO
-        mxout013.mail.hostpoint.ch" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725913AbfG3PEy (ORCPT
+        id S1730956AbfG3PAy convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 30 Jul 2019 11:00:54 -0400
+Received: from mail.cloudbasesolutions.com ([91.232.152.5]:56946 "EHLO
+        mail.cloudbasesolutions.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729745AbfG3PAx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 11:04:54 -0400
-Received: from [10.0.2.46] (helo=asmtp013.mail.hostpoint.ch)
-        by mxout013.mail.hostpoint.ch with esmtp (Exim 4.92 (FreeBSD))
-        (envelope-from <dev@pschenker.ch>)
-        id 1hsTP1-000DY6-6W; Tue, 30 Jul 2019 16:46:59 +0200
-Received: from [46.140.72.82] (helo=philippe-pc.toradex.int)
-        by asmtp013.mail.hostpoint.ch with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.91 (FreeBSD))
-        (envelope-from <dev@pschenker.ch>)
-        id 1hsTP1-000Mva-0R; Tue, 30 Jul 2019 16:46:59 +0200
-X-Authenticated-Sender-Id: dev@pschenker.ch
-From:   Philippe Schenker <dev@pschenker.ch>
-To:     marcel.ziswiler@toradex.com, max.krummenacher@toradex.com,
-        stefan@agner.ch, devicetree@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     Stefan Agner <stefan.agner@toradex.com>,
-        Philippe Schenker <philippe.schenker@toradex.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>
-Subject: [PATCH 06/22] ARM: dts: imx7-colibri: add GPIO wakeup key
-Date:   Tue, 30 Jul 2019 16:46:33 +0200
-Message-Id: <20190730144649.19022-7-dev@pschenker.ch>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190730144649.19022-1-dev@pschenker.ch>
-References: <20190730144649.19022-1-dev@pschenker.ch>
+        Tue, 30 Jul 2019 11:00:53 -0400
+X-Greylist: delayed 432 seconds by postgrey-1.27 at vger.kernel.org; Tue, 30 Jul 2019 11:00:51 EDT
+Received: from localhost (localhost [127.0.0.1])
+        by mail.cloudbasesolutions.com (Postfix) with ESMTP id 9FC34401AC;
+        Tue, 30 Jul 2019 17:53:37 +0300 (EEST)
+X-Virus-Scanned: amavisd-new at cloudbasesolutions.com
+Received: from mail.cloudbasesolutions.com ([127.0.0.1])
+        by localhost (mail.cloudbasesolutions.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id c3lqKTaK6aff; Tue, 30 Jul 2019 17:53:37 +0300 (EEST)
+Received: from mail.cloudbasesolutions.com (unknown [10.77.78.3])
+        by mail.cloudbasesolutions.com (Postfix) with ESMTP id 16E333FB5C;
+        Tue, 30 Jul 2019 17:53:36 +0300 (EEST)
+Received: from CBSEX1.cloudbase.local ([10.77.78.3]) by CBSEX1.cloudbase.local
+ ([10.77.78.3]) with mapi id 14.03.0468.000; Tue, 30 Jul 2019 17:53:36 +0300
+From:   Adrian Vladu <avladu@cloudbasesolutions.com>
+To:     Sasha Levin <sashal@kernel.org>, Dexuan Cui <decui@microsoft.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "KY Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Alessandro Pilotti <apilotti@cloudbasesolutions.com>
+Subject: RE: [PATCH v2] hv: tools: fixed Python pep8/flake8 warnings for
+ lsvmbus
+Thread-Topic: [PATCH v2] hv: tools: fixed Python pep8/flake8 warnings for
+ lsvmbus
+Thread-Index: AQHVBDHgWNITe/5yDUiixarWB+egkaZe6YqAgALjioCAgfdowA==
+Date:   Tue, 30 Jul 2019 14:53:35 +0000
+Message-ID: <F5008595B06C564AB347C30B4FDE4BC559697F85@CBSEX1.cloudbase.local>
+References: <20190506172737.18122-1-avladu@cloudbasesolutions.com>
+ <20190506173331.18906-1-avladu@cloudbasesolutions.com>
+ <PU1P153MB016957AD2B1C356FA1BFB1A8BF310@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
+ <20190509010941.GT1747@sasha-vm>
+In-Reply-To: <20190509010941.GT1747@sasha-vm>
+Accept-Language: en-GB, ro-RO, it-IT, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.77.78.1]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stefan Agner <stefan.agner@toradex.com>
+Hello,
 
-Add wakeup GPIO key which is able to wake the system from sleep
-modes (e.g. Suspend-to-Memory).
+There were two patches you have queued for hyperv-fixes a while ago, but I don't see them anymore in the hyperv-fixes tree:
+https://lore.kernel.org/patchwork/patch/1070848/
+https://lore.kernel.org/patchwork/patch/1070806/
 
-Signed-off-by: Stefan Agner <stefan.agner@toradex.com>
-Signed-off-by: Philippe Schenker <philippe.schenker@toradex.com>
----
+I have checked them and they can still be applied successfully on the latest master tree.
+Please let me know if I need to make some amends to get them merged.
 
- arch/arm/boot/dts/imx7-colibri-eval-v3.dtsi | 14 ++++++++++++++
- arch/arm/boot/dts/imx7-colibri.dtsi         |  7 ++++++-
- 2 files changed, 20 insertions(+), 1 deletion(-)
+Much appreciated,
+Adrian Vladu
 
-diff --git a/arch/arm/boot/dts/imx7-colibri-eval-v3.dtsi b/arch/arm/boot/dts/imx7-colibri-eval-v3.dtsi
-index 3f2746169181..d4dbc4fc1adf 100644
---- a/arch/arm/boot/dts/imx7-colibri-eval-v3.dtsi
-+++ b/arch/arm/boot/dts/imx7-colibri-eval-v3.dtsi
-@@ -52,6 +52,20 @@
- 		clock-frequency = <16000000>;
- 	};
- 
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_gpiokeys>;
-+
-+		power {
-+			label = "Wake-Up";
-+			gpios = <&gpio1 1 GPIO_ACTIVE_HIGH>;
-+			linux,code = <KEY_WAKEUP>;
-+			debounce-interval = <10>;
-+			gpio-key,wakeup;
-+		};
-+	};
-+
- 	panel: panel {
- 		compatible = "edt,et057090dhu";
- 		backlight = <&bl>;
-diff --git a/arch/arm/boot/dts/imx7-colibri.dtsi b/arch/arm/boot/dts/imx7-colibri.dtsi
-index 2480623c92ff..16d1a1ed1aff 100644
---- a/arch/arm/boot/dts/imx7-colibri.dtsi
-+++ b/arch/arm/boot/dts/imx7-colibri.dtsi
-@@ -741,12 +741,17 @@
- 
- 	pinctrl_gpio_lpsr: gpio1-grp {
- 		fsl,pins = <
--			MX7D_PAD_LPSR_GPIO1_IO01__GPIO1_IO1	0x59
- 			MX7D_PAD_LPSR_GPIO1_IO02__GPIO1_IO2	0x59
- 			MX7D_PAD_LPSR_GPIO1_IO03__GPIO1_IO3	0x59
- 		>;
- 	};
- 
-+	pinctrl_gpiokeys: gpiokeysgrp {
-+		fsl,pins = <
-+			MX7D_PAD_LPSR_GPIO1_IO01__GPIO1_IO1	0x19
-+		>;
-+	};
-+
- 	pinctrl_i2c1: i2c1-grp {
- 		fsl,pins = <
- 			MX7D_PAD_LPSR_GPIO1_IO05__I2C1_SDA	0x4000007f
--- 
-2.22.0
-
+> -----Original Message-----
+> From: Sasha Levin <sashal@kernel.org>
+> Sent: Thursday, May 9, 2019 4:10 AM
+> To: Dexuan Cui <decui@microsoft.com>
+> Cc: Adrian Vladu <avladu@cloudbasesolutions.com>; linux-
+> kernel@vger.kernel.org; KY Srinivasan <kys@microsoft.com>; Haiyang Zhang
+> <haiyangz@microsoft.com>; Stephen Hemminger <sthemmin@microsoft.com>;
+> Alessandro Pilotti <apilotti@cloudbasesolutions.com>
+> Subject: Re: [PATCH v2] hv: tools: fixed Python pep8/flake8 warnings for
+> lsvmbus
+> 
+> On Tue, May 07, 2019 at 05:02:47AM +0000, Dexuan Cui wrote:
+> >> From: Adrian Vladu <avladu@cloudbasesolutions.com>
+> >> Sent: Monday, May 6, 2019 10:34 AM
+> >> To: linux-kernel@vger.kernel.org
+> >> Cc: Adrian Vladu <avladu@cloudbasesolutions.com>; KY Srinivasan
+> >> <kys@microsoft.com>; Haiyang Zhang <haiyangz@microsoft.com>; Stephen
+> >> Hemminger <sthemmin@microsoft.com>; Sasha Levin <sashal@kernel.org>;
+> >> Dexuan Cui <decui@microsoft.com>; Alessandro Pilotti
+> >> <apilotti@cloudbasesolutions.com>
+> >> Subject: [PATCH v2] hv: tools: fixed Python pep8/flake8 warnings for lsvmbus
+> >>
+> >> Fixed pep8/flake8 python style code for lsvmbus tool.
+> >>
+> >> The TAB indentation was on purpose ignored (pep8 rule W191) to make
+> >> sure the code is complying with the Linux code guideline.
+> >> The following command do not show any warnings now:
+> >> pep8 --ignore=W191 lsvmbus
+> >> flake8 --ignore=W191 lsvmbus
+> >>
+> >> Signed-off-by: Adrian Vladu <avladu@cloudbasesolutions.com>
+> >>
+> >> Cc: "K. Y. Srinivasan" <kys@microsoft.com>
+> >> Cc: Haiyang Zhang <haiyangz@microsoft.com>
+> >> Cc: Stephen Hemminger <sthemmin@microsoft.com>
+> >> Cc: Sasha Levin <sashal@kernel.org>
+> >> Cc: Dexuan Cui <decui@microsoft.com>
+> >> Cc: Alessandro Pilotti <apilotti@cloudbasesolutions.com>
+> [...]
+> >Looks good to me. Thanks, Adrian!
+> >
+> >Reviewed-by: Dexuan Cui <decui@microsoft.com>
+> 
+> Queued for hyperv-fixes, thanks!
+> 
+> --
+> Thanks,
+> Sasha
