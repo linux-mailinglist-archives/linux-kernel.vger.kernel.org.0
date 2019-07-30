@@ -2,110 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B3E17B120
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:03:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E3817B125
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:03:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387717AbfG3SC4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 14:02:56 -0400
-Received: from mail-eopbgr20087.outbound.protection.outlook.com ([40.107.2.87]:35204
-        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728234AbfG3SC4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 14:02:56 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=KrutM+iHJB9jHdnnSd0r70zPglkgLyoBYC90vZccbpJkHArsK7yYBLqLr/c4rz/9lri1+61A2T0SWIru3RjmqYWCoFjGncmr5Z52d4GUT5vfFy8cvHBuL8qJheD4x/Wq/1gVUwkJ/4jFvraB00MUXH6d5i9g5CBVOm1zUt1JDEcc9WGl9GqQNJJbxI4VecEQQFQoNSQnuHxITDnqytXYvsRSJUPtDdmvhIPr+q7C8fNDQRlFMLjvU/UvXz3Nc+nM4M63y4ZgzHjCr2gcxiGe+MM4e7pOronR6NejLkVvOpZR/+6/3xFlSByUlT4BMLFVWbMhOnIWerh8RhneHKNsDg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WU7QXpoWkU/mAmBMVHE04HkSslwitrq0gukekU5gI5A=;
- b=ZHCypFovxDjlgwCI+qKzpekTZNhNQWMXg136WdTB5TF2eHSSCJFMqEtn9DoX1joSxTi4m2wUVgDsgTa+o/qSsoxSH6h7oJ2Seno5nFIuoJdnhxWOKjf7V66ao+qde8yVAfi7Ru3hr4y4dSZZ4KfLeaStLN+qeYuehJlvdibBT7EzDNwqxNCnkqRVllu8JiMxFnaX2zRgetmzQ3xLEFlzb4zevrBF1D/K/SJrOr0nFsBAvy88kY3D11vEnQE8Wirv3NvuiqkDOnsbAfCU+BNeGCqFwTMzCG9Gc+OYoSBsk11ank2KNCnnHToK9FNX+VsJ8kwZLwcCux77k+jVwH1h1w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
- smtp.mailfrom=mellanox.com;dmarc=pass action=none
- header.from=mellanox.com;dkim=pass header.d=mellanox.com;arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WU7QXpoWkU/mAmBMVHE04HkSslwitrq0gukekU5gI5A=;
- b=YCOylojYtDyxNhNVrJk8NW1AqeRL/+Nuq2oFq9nDtYR7RTB2D2BQl8SCicOLJeeZlUjm8Hzoc1fC+rF5lWdxWT0s4lYDITBymNSPj06JVHOFP4O5zDge5SoYchcj/P2dRqLGOqUN3a8q22y+RWz8m+bz9GN0SXgRJbB+46PJwkg=
-Received: from VI1PR05MB4141.eurprd05.prod.outlook.com (10.171.182.144) by
- VI1PR05MB5728.eurprd05.prod.outlook.com (20.178.121.154) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2115.14; Tue, 30 Jul 2019 18:02:53 +0000
-Received: from VI1PR05MB4141.eurprd05.prod.outlook.com
- ([fe80::5c6f:6120:45cd:2880]) by VI1PR05MB4141.eurprd05.prod.outlook.com
- ([fe80::5c6f:6120:45cd:2880%4]) with mapi id 15.20.2115.005; Tue, 30 Jul 2019
- 18:02:53 +0000
-From:   Jason Gunthorpe <jgg@mellanox.com>
-To:     Christoph Hellwig <hch@lst.de>
-CC:     =?iso-8859-1?Q?J=E9r=F4me_Glisse?= <jglisse@redhat.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 12/13] mm: cleanup the hmm_vma_walk_hugetlb_entry stub
-Thread-Topic: [PATCH 12/13] mm: cleanup the hmm_vma_walk_hugetlb_entry stub
-Thread-Index: AQHVRpsH3arHPNDuEUqTx9EEJPBdwKbjdMcA
-Date:   Tue, 30 Jul 2019 18:02:52 +0000
-Message-ID: <20190730180247.GQ24038@mellanox.com>
-References: <20190730055203.28467-1-hch@lst.de>
- <20190730055203.28467-13-hch@lst.de>
-In-Reply-To: <20190730055203.28467-13-hch@lst.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: YQBPR0101CA0033.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:c00::46) To VI1PR05MB4141.eurprd05.prod.outlook.com
- (2603:10a6:803:4d::16)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=jgg@mellanox.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [156.34.55.100]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 6539de2c-fded-4047-877e-08d715182442
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR05MB5728;
-x-ms-traffictypediagnostic: VI1PR05MB5728:
-x-microsoft-antispam-prvs: <VI1PR05MB5728B65C2DA5BA7A5472F8DACFDC0@VI1PR05MB5728.eurprd05.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:4303;
-x-forefront-prvs: 0114FF88F6
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(366004)(39860400002)(376002)(346002)(396003)(199004)(189003)(6116002)(3846002)(68736007)(2616005)(71200400001)(71190400001)(2906002)(11346002)(14454004)(386003)(102836004)(26005)(446003)(486006)(256004)(305945005)(6506007)(5660300002)(476003)(52116002)(186003)(76176011)(7736002)(66066001)(86362001)(81156014)(6916009)(6486002)(6512007)(6436002)(25786009)(4326008)(36756003)(7416002)(4744005)(99286004)(66946007)(478600001)(1076003)(8676002)(81166006)(8936002)(316002)(54906003)(66476007)(33656002)(66446008)(66556008)(64756008)(6246003)(53936002)(229853002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR05MB5728;H:VI1PR05MB4141.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: mellanox.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: C/ks47PRQnThPeuchvfvHLJvxrN1CNZZ1k8z7mZJ3afqvlrSMLtWwSaVNoKNQkqCT8rkHKrcV9lDre4DgLQXxeBjlmx+uxpveQTy9l9bnPGx9EqUqlt8ik+M1XNO/Q7CDGbak/BhJNMYceY10pCJefD6lJQm9FLP3q2+sInXVpVj5ndmyOduMjm7IHSyzrCZcLdT5VfPENi7Riwevj9WgajLt9nOfnnLIr51cVU4D3wST/XIGe8ouz30g0pbSQ70TzIJf75/7aPQdCbSSrJbh+JAc9GKL4MqoufOFsNUIdBn/qhrjJMxnTdbGH9s0LSp7zMSWefgCkaRbM5F+gwR8yDXNaUsuXM+rzECslcUWSSPEDTl5Iy/213WCiy7DyLI2UJmrpDqWCczRZrFoRv/SlgdldNHsg0XZjwQvGtDtUo=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-ID: <981A0DE32A12614DB8B2019E51F413F2@eurprd05.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        id S2387756AbfG3SDS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 14:03:18 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:50885 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387722AbfG3SDR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 14:03:17 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6UI38iM3322443
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Tue, 30 Jul 2019 11:03:08 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6UI38iM3322443
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019071901; t=1564509789;
+        bh=sNIiMsVBy5wdV6wrM2imJtCcq+XLNAhmQRImeAQBIUs=;
+        h=Date:From:Cc:Reply-To:To:Subject:From;
+        b=yUwRjwptEKaoitJk12aj5Ym32yyNWVbaq8fpf7Ia0EtRXzoVRloLAze/kIrvE9XaH
+         IY4CT/15pCiOF1zYaawXvkP35vAv3oQgpAXSV2sZYMPG2srVffQqoMsu13jMDp5bHR
+         5g5XJZIu1sJensJdc/LP+NEhWw2EUVNN8XCIteQsNry7XE+ApwJ41gZ4G5qVT9i2TQ
+         cf+4nDKKArnaqAjgjxddWEVmDTH52MhwT1yALPQJMz4BbVoFNIeqRdIyVhGt96x2mQ
+         PUExiuOnYq6m4aWARKAvbSPG6LDo4U9qlRLWKBX18Onntoliwxy3lsNGTDpTvgn261
+         XQw/yuwE4iVEQ==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6UI37ZY3322438;
+        Tue, 30 Jul 2019 11:03:07 -0700
+Date:   Tue, 30 Jul 2019 11:03:07 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-6hh2rl27uri6gsxhmk6q3hx5@git.kernel.org>
+Cc:     acme@redhat.com, linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        mingo@kernel.org, lclaudio@redhat.com, jolsa@kernel.org,
+        adrian.hunter@intel.com, namhyung@kernel.org, hpa@zytor.com
+Reply-To: namhyung@kernel.org, hpa@zytor.com, tglx@linutronix.de,
+          mingo@kernel.org, linux-kernel@vger.kernel.org, acme@redhat.com,
+          adrian.hunter@intel.com, jolsa@kernel.org, lclaudio@redhat.com
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf trace beauty: Add BPF augmenter for the
+ 'rename' syscall
+Git-Commit-ID: cfa9ac73d6f9790f569959a729cbc9d52bff4270
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6539de2c-fded-4047-877e-08d715182442
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Jul 2019 18:02:52.9621
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: jgg@mellanox.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR05MB5728
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-0.2 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
+        autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 30, 2019 at 08:52:02AM +0300, Christoph Hellwig wrote:
-> Stub out the whole function and assign NULL to the .hugetlb_entry method
-> if CONFIG_HUGETLB_PAGE is not set, as the method won't ever be called in
-> that case.
->=20
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  mm/hmm.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
+Commit-ID:  cfa9ac73d6f9790f569959a729cbc9d52bff4270
+Gitweb:     https://git.kernel.org/tip/cfa9ac73d6f9790f569959a729cbc9d52bff4270
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Wed, 17 Jul 2019 11:47:37 -0300
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Mon, 29 Jul 2019 18:34:42 -0300
 
-Reviewed-by: Jason Gunthorpe <jgg@mellanox.com>
+perf trace beauty: Add BPF augmenter for the 'rename' syscall
 
-Jason
+I.e. two strings:
+
+  # perf trace -e rename
+  systemd/1 rename("/run/systemd/units/.#invocation:dnf-makecache.service970761b7f2840dcc", "/run/systemd/units/invocation:dnf-makecache.service") = 0
+  systemd-journa/715 rename("/run/systemd/journal/streams/.#9:17539785BJDblc", "/run/systemd/journal/streams/9:17539785") = 0
+  mv/1936 rename("/tmp/build/perf/fd/.array.o.tmp", "/tmp/build/perf/fd/.array.o.cmd") = 0
+  sh/1949 rename("/tmp/build/perf/.cpu.o.tmp", "/tmp/build/perf/.cpu.o.cmd") = 0
+  mv/1954 rename("/tmp/build/perf/fs/.tracing_path.o.tmp", "/tmp/build/perf/fs/.tracing_path.o.cmd") = 0
+  mv/1963 rename("/tmp/build/perf/common-cmds.h+", "/tmp/build/perf/common-cmds.h") = 0
+  :1975/1975 rename("/tmp/build/perf/.exec-cmd.o.tmp", "/tmp/build/perf/.exec-cmd.o.cmd") = 0
+  mv/1979 rename("/tmp/build/perf/fs/.fs.o.tmp", "/tmp/build/perf/fs/.fs.o.cmd") = 0
+  mv/2005 rename("/tmp/build/perf/.debug.o.tmp", "/tmp/build/perf/.debug.o.cmd") = 0
+  mv/2012 rename("/tmp/build/perf/.str_error_r.o.tmp", "/tmp/build/perf/.str_error_r.o.cmd") = 0
+  mv/2019 rename("/tmp/build/perf/.help.o.tmp", "/tmp/build/perf/.help.o.cmd") = 0
+  mv/2031 rename("/tmp/build/perf/.trace-seq.o.tmp", "/tmp/build/perf/.trace-seq.o.cmd") = 0
+  make/2038  ... [continued]: rename())             = 0
+  :2038/2038 rename("/tmp/build/perf/.event-plugin.o.tmp", "/tmp/build/perf/.event-plugin.o.cmd") ...
+  ar/2035 rename("/tmp/build/perf/stzwBX3a", "/tmp/build/perf/libapi.a") = 0
+  mv/2051 rename("/tmp/build/perf/.parse-utils.o.tmp", "/tmp/build/perf/.parse-utils.o.cmd") = 0
+  mv/2069 rename("/tmp/build/perf/.subcmd-config.o.tmp", "/tmp/build/perf/.subcmd-config.o.cmd") = 0
+  make/2080 rename("/tmp/build/perf/.parse-filter.o.tmp", "/tmp/build/perf/.parse-filter.o.cmd") = 0
+  mv/2099 rename("/tmp/build/perf/.pager.o.tmp", "/tmp/build/perf/.pager.o.cmd") = 0
+  :2124/2124 rename("/tmp/build/perf/.sigchain.o.tmp", "/tmp/build/perf/.sigchain.o.cmd") = 0
+  make/2140 rename("/tmp/build/perf/.event-parse.o.tmp", "/tmp/build/perf/.event-parse.o.cmd") = 0
+  mv/2164 rename("/tmp/build/perf/.kbuffer-parse.o.tmp", "/tmp/build/perf/.kbuffer-parse.o.cmd") = 0
+  sh/2174 rename("/tmp/build/perf/.run-command.o.tmp", "/tmp/build/perf/.run-command.o.cmd") = 0
+  mv/2190 rename("/tmp/build/perf/.tep_strerror.o.tmp", "/tmp/build/perf/.tep_strerror.o.cmd") = 0
+  :2261/2261 rename("/tmp/build/perf/.event-parse-api.o.tmp", "/tmp/build/perf/.event-parse-api.o.cmd") = 0
+  :2480/2480 rename("/tmp/build/perf/stLv3kG2", "/tmp/build/perf/libtraceevent.a") = 0
+  ^C#
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Luis Cláudio Gonçalves <lclaudio@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Link: https://lkml.kernel.org/n/tip-6hh2rl27uri6gsxhmk6q3hx5@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/examples/bpf/augmented_raw_syscalls.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
+
+diff --git a/tools/perf/examples/bpf/augmented_raw_syscalls.c b/tools/perf/examples/bpf/augmented_raw_syscalls.c
+index 9c2228b01ee6..79787cf4fce9 100644
+--- a/tools/perf/examples/bpf/augmented_raw_syscalls.c
++++ b/tools/perf/examples/bpf/augmented_raw_syscalls.c
+@@ -197,6 +197,25 @@ int sys_enter_openat(struct syscall_enter_args *args)
+ 	return perf_event_output(args, &__augmented_syscalls__, BPF_F_CURRENT_CPU, augmented_args, len);
+ }
+ 
++SEC("!syscalls:sys_enter_rename")
++int sys_enter_rename(struct syscall_enter_args *args)
++{
++	int key = 0;
++	struct augmented_args_payload *augmented_args = bpf_map_lookup_elem(&augmented_args_tmp, &key);
++	const void *oldpath_arg = (const void *)args->args[0],
++		   *newpath_arg = (const void *)args->args[1];
++	unsigned int len = sizeof(augmented_args->args), oldpath_len;
++
++        if (augmented_args == NULL)
++                return 1; /* Failure: don't filter */
++
++	oldpath_len = augmented_filename__read(&augmented_args->filename, oldpath_arg, sizeof(augmented_args->filename.value));
++	len += oldpath_len + augmented_filename__read((void *)(&augmented_args->filename) + oldpath_len, newpath_arg, sizeof(augmented_args->filename.value));
++
++	/* If perf_event_output fails, return non-zero so that it gets recorded unaugmented */
++	return perf_event_output(args, &__augmented_syscalls__, BPF_F_CURRENT_CPU, augmented_args, len);
++}
++
+ SEC("!syscalls:sys_enter_renameat")
+ int sys_enter_renameat(struct syscall_enter_args *args)
+ {
