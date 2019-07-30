@@ -2,319 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF7C37B2BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:56:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B0B17B2B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:55:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388509AbfG3S4A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 14:56:00 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:50325 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388140AbfG3Sz7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 14:55:59 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6UIskE83336559
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Tue, 30 Jul 2019 11:54:46 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6UIskE83336559
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019071901; t=1564512887;
-        bh=fSCLIe3j6EZzsggIqaE+OspmHe1D5RK1XJCtsAnzztc=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=X0CmS1eaNKWiO8XV/LC7ZYKOuwf24LiDKhi2gn3pAsD1Ub3PxYhcIF11QHLiFr0LF
-         Oha/0IrjNnMce7jFt0aJ/Xn63leC3z25MtypyTndS5SRyZ09Q5pDFjWn5tzREIiuAm
-         ShYgZz+ybkgLOnKSlScjZnQxauVX7+SsmtQzMVvNv+KW28pbAo2pVMvfBTQLvhK5qD
-         fCo6CkYnsUpxASZb44IZPyIu9NZu2/1ZK6ZD/8b16osLfDVccs6avkL036aRkINcTX
-         Z4RY3XHu4snaE/I40OCF5t6eigdrlCjqsk2IFrZBcbHrb6sPOl/4SX4pPLgleX6i5R
-         U/wThe7io61Og==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6UIskY63336555;
-        Tue, 30 Jul 2019 11:54:46 -0700
-Date:   Tue, 30 Jul 2019 11:54:46 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
-Message-ID: <tip-88761fa1f1e3fb2df86727ac99f88abf2ac7e00b@git.kernel.org>
-Cc:     alexey.budankov@linux.intel.com, namhyung@kernel.org,
-        mpetlan@redhat.com, mingo@kernel.org, peterz@infradead.org,
-        jolsa@kernel.org, linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        alexander.shishkin@linux.intel.com, ak@linux.intel.com,
-        hpa@zytor.com, acme@redhat.com
-Reply-To: acme@redhat.com, ak@linux.intel.com, hpa@zytor.com,
-          namhyung@kernel.org, tglx@linutronix.de, mpetlan@redhat.com,
-          mingo@kernel.org, alexander.shishkin@linux.intel.com,
-          peterz@infradead.org, jolsa@kernel.org,
-          linux-kernel@vger.kernel.org, alexey.budankov@linux.intel.com
-In-Reply-To: <20190721112506.12306-64-jolsa@kernel.org>
-References: <20190721112506.12306-64-jolsa@kernel.org>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] libperf: Adopt simplified perf_evsel__close()
- function from tools/perf
-Git-Commit-ID: 88761fa1f1e3fb2df86727ac99f88abf2ac7e00b
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        id S2388354AbfG3SzM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 14:55:12 -0400
+Received: from mail-eopbgr00047.outbound.protection.outlook.com ([40.107.0.47]:62491
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726133AbfG3SzM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 14:55:12 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=CkLa0cG9ElvLdpbaaAmxjeTRKPmKobI8AJUqcE53rjOXW9UxLzGveL8KisrWYiggy6Qmg9joUTlVpuh3YtBS820KXZd6QTbRnGFD29W9iMFn8Buf/XqF91f9OzIDeH8Age63kjWJscGZ1/fBrfd9eFV5/fzcsFFL0GZYJcRFckQ90TJtyEQYXWSKg5q3T6RmIyvULQYPhdGCzgsv+la1clVJGRtH/2NVPqt1M5e7VSq0Bnxs4vgMIWYnVcJXiwuPXHX5THGY1duBMNF6HaKqMC4D2f1pAWBCMINNP17XsiEU0ondFkSyngKxSG5/s8z2OJcgTEaKURzfAqp/3OZfgw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jrZQOD7Y80mYhDWkVjsH8bSKEeQ/oql6Gb7mViOVj10=;
+ b=FzWJvW4F51j4CXUg2herWTC4b35tRT9elY8MGw5XD+xtUn1XQP+oT60cADPitWTkG0wvM17ZyZ1x3ZBX651tIeB8U9+k66xYnoUQ4sHciicsiTemlR6LMYNLjk9v3m2jdF5eNPSLWAX5TJj09K3pQ1tZp+e2CId7Zrf9t7MHDGCG36fS5gDfBBWwpbVSILxAk87kDfHVx+AcZrYlXjdCsO1hcI801DNmmcI6RyPty9TopSfY1V32WiBSynffevAPvoHLsM71wn0PcsoEYeI32kXTh7ch81AtZU2okEk9mPCZd0RSRgooBrjq5TjgLyZTLCYDM48s1wzRwh4zutcsbA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
+ smtp.mailfrom=nxp.com;dmarc=pass action=none header.from=nxp.com;dkim=pass
+ header.d=nxp.com;arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jrZQOD7Y80mYhDWkVjsH8bSKEeQ/oql6Gb7mViOVj10=;
+ b=miEPWFHbTU8pasZZs8xkdty0a3vUpe9nILpTwheexlGGZqxFKdwoJfTNVE/m6OHl6PgkfJxWFDuFcUiYNqm5zckJS0QJfkTdyP93mZcwnJDowegK3WzG5NtahIjSsDNl2PsC9Wey8XSGMxAeDEn29i6NmK2rY+VNMxLLCe6k7ag=
+Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com (52.134.3.153) by
+ VI1PR0402MB3342.eurprd04.prod.outlook.com (52.134.8.142) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2115.14; Tue, 30 Jul 2019 18:55:08 +0000
+Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com
+ ([fe80::7c64:5296:4607:e10]) by VI1PR0402MB3485.eurprd04.prod.outlook.com
+ ([fe80::7c64:5296:4607:e10%5]) with mapi id 15.20.2094.017; Tue, 30 Jul 2019
+ 18:55:08 +0000
+From:   Horia Geanta <horia.geanta@nxp.com>
+To:     Iuliana Prodan <iuliana.prodan@nxp.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>
+CC:     "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH v2 1/2] crypto: gcm - helper functions for
+ assoclen/authsize check
+Thread-Topic: [PATCH v2 1/2] crypto: gcm - helper functions for
+ assoclen/authsize check
+Thread-Index: AQHVRwhObpCPFvDSeUqop2wwpsyVwA==
+Date:   Tue, 30 Jul 2019 18:55:08 +0000
+Message-ID: <VI1PR0402MB34854261466D187547AEB5CA98DC0@VI1PR0402MB3485.eurprd04.prod.outlook.com>
+References: <1564482824-26581-1-git-send-email-iuliana.prodan@nxp.com>
+ <1564482824-26581-2-git-send-email-iuliana.prodan@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=horia.geanta@nxp.com; 
+x-originating-ip: [78.96.98.22]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 317b8ff0-0f1a-4705-c30f-08d7151f712f
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR0402MB3342;
+x-ms-traffictypediagnostic: VI1PR0402MB3342:
+x-microsoft-antispam-prvs: <VI1PR0402MB334284054946A0C3E9BC767598DC0@VI1PR0402MB3342.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:2887;
+x-forefront-prvs: 0114FF88F6
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(136003)(396003)(366004)(346002)(376002)(189003)(199004)(81166006)(81156014)(54906003)(110136005)(33656002)(8676002)(6436002)(76116006)(66066001)(86362001)(478600001)(66946007)(91956017)(558084003)(66446008)(66556008)(66476007)(186003)(8936002)(2906002)(229853002)(305945005)(5660300002)(7736002)(74316002)(316002)(9686003)(25786009)(6116002)(3846002)(71190400001)(64756008)(256004)(26005)(71200400001)(446003)(486006)(52536014)(44832011)(76176011)(476003)(55016002)(102836004)(7696005)(6506007)(53546011)(99286004)(14454004)(4326008)(68736007)(6246003)(53936002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB3342;H:VI1PR0402MB3485.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: q8wJGKergj1wStEezFtAlSdGBpL6DxQw9XKPmgEEgKfVIfL3YApfJ6/fTJBDhOBEsDukARy1QdHmR8z07VFgGlMiz03cGa//68hhrpxnd9RzPRm1pGI8PQfkqQna4sD26c6ZOUGi9zCgBj8gS/Xv+lWduyMGUvEfFn6UV+etbsF6mSp5p6i47v//1ii62dW6CLrdgR0DZbZEmWwFVNQGfz4OCf2aKcP3A6wuxOz4GOAcj98KhZ0SwozJb7kJ+QNMsSFeSJ437ZSB0D0qGK+JKUQ96bAyvMKdEpBZrUGtdF00AwBhp8s1MUo2nKm97k0wwxbPKvIy2dMCTNEE4kZvYmh1EOkp1iLfY2S+Ii18KoQHSdJSRlfDCZNvzw2ZXdP1NMGkLwYu7s1SdAQEIb/4OxjwmFspTBZKJeIhrQwEjOo=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-X-Spam-Status: No, score=-0.2 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
-        autolearn=no autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 317b8ff0-0f1a-4705-c30f-08d7151f712f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Jul 2019 18:55:08.2889
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: horia.geanta@nxp.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB3342
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  88761fa1f1e3fb2df86727ac99f88abf2ac7e00b
-Gitweb:     https://git.kernel.org/tip/88761fa1f1e3fb2df86727ac99f88abf2ac7e00b
-Author:     Jiri Olsa <jolsa@kernel.org>
-AuthorDate: Sun, 21 Jul 2019 13:24:50 +0200
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Mon, 29 Jul 2019 18:34:46 -0300
-
-libperf: Adopt simplified perf_evsel__close() function from tools/perf
-
-Add perf_evsel__close() function to libperf while keeping a tools/perf
-specific evsel__close() to free ids.
-
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Michael Petlan <mpetlan@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20190721112506.12306-64-jolsa@kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/builtin-trace.c                 |  2 +-
- tools/perf/lib/evsel.c                     | 26 ++++++++++++++++++++++++++
- tools/perf/lib/include/internal/evsel.h    |  2 ++
- tools/perf/lib/include/perf/evsel.h        |  1 +
- tools/perf/lib/libperf.map                 |  1 +
- tools/perf/tests/openat-syscall-all-cpus.c |  2 +-
- tools/perf/tests/openat-syscall.c          |  2 +-
- tools/perf/util/evlist.c                   |  5 +++--
- tools/perf/util/evsel.c                    | 27 +++------------------------
- tools/perf/util/evsel.h                    |  3 +--
- 10 files changed, 40 insertions(+), 31 deletions(-)
-
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index 35f3684f5327..75eb3811e942 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -2401,7 +2401,7 @@ static int trace__event_handler(struct trace *trace, struct evsel *evsel,
- 
- 			if (evsel->max_events != ULONG_MAX && ++evsel->nr_events_printed == evsel->max_events) {
- 				evsel__disable(evsel);
--				perf_evsel__close(evsel);
-+				evsel__close(evsel);
- 			}
- 		}
- 	}
-diff --git a/tools/perf/lib/evsel.c b/tools/perf/lib/evsel.c
-index 7027dacb50f6..50f09e939229 100644
---- a/tools/perf/lib/evsel.c
-+++ b/tools/perf/lib/evsel.c
-@@ -111,3 +111,29 @@ int perf_evsel__open(struct perf_evsel *evsel, struct perf_cpu_map *cpus,
- 
- 	return err;
- }
-+
-+void perf_evsel__close_fd(struct perf_evsel *evsel)
-+{
-+	int cpu, thread;
-+
-+	for (cpu = 0; cpu < xyarray__max_x(evsel->fd); cpu++)
-+		for (thread = 0; thread < xyarray__max_y(evsel->fd); ++thread) {
-+			close(FD(evsel, cpu, thread));
-+			FD(evsel, cpu, thread) = -1;
-+		}
-+}
-+
-+void perf_evsel__free_fd(struct perf_evsel *evsel)
-+{
-+	xyarray__delete(evsel->fd);
-+	evsel->fd = NULL;
-+}
-+
-+void perf_evsel__close(struct perf_evsel *evsel)
-+{
-+	if (evsel->fd == NULL)
-+		return;
-+
-+	perf_evsel__close_fd(evsel);
-+	perf_evsel__free_fd(evsel);
-+}
-diff --git a/tools/perf/lib/include/internal/evsel.h b/tools/perf/lib/include/internal/evsel.h
-index 3cb9a0f5f32e..878e2cf41ffc 100644
---- a/tools/perf/lib/include/internal/evsel.h
-+++ b/tools/perf/lib/include/internal/evsel.h
-@@ -21,5 +21,7 @@ struct perf_evsel {
- };
- 
- int perf_evsel__alloc_fd(struct perf_evsel *evsel, int ncpus, int nthreads);
-+void perf_evsel__close_fd(struct perf_evsel *evsel);
-+void perf_evsel__free_fd(struct perf_evsel *evsel);
- 
- #endif /* __LIBPERF_INTERNAL_EVSEL_H */
-diff --git a/tools/perf/lib/include/perf/evsel.h b/tools/perf/lib/include/perf/evsel.h
-index e9fbaa8fb51a..aa5c48f822d2 100644
---- a/tools/perf/lib/include/perf/evsel.h
-+++ b/tools/perf/lib/include/perf/evsel.h
-@@ -15,5 +15,6 @@ LIBPERF_API struct perf_evsel *perf_evsel__new(struct perf_event_attr *attr);
- LIBPERF_API void perf_evsel__delete(struct perf_evsel *evsel);
- LIBPERF_API int perf_evsel__open(struct perf_evsel *evsel, struct perf_cpu_map *cpus,
- 				 struct perf_thread_map *threads);
-+LIBPERF_API void perf_evsel__close(struct perf_evsel *evsel);
- 
- #endif /* __LIBPERF_EVSEL_H */
-diff --git a/tools/perf/lib/libperf.map b/tools/perf/lib/libperf.map
-index 7594d3d89c5f..0b90999dcdcb 100644
---- a/tools/perf/lib/libperf.map
-+++ b/tools/perf/lib/libperf.map
-@@ -15,6 +15,7 @@ LIBPERF_0.0.1 {
- 		perf_evsel__delete;
- 		perf_evsel__init;
- 		perf_evsel__open;
-+		perf_evsel__close;
- 		perf_evlist__new;
- 		perf_evlist__delete;
- 		perf_evlist__init;
-diff --git a/tools/perf/tests/openat-syscall-all-cpus.c b/tools/perf/tests/openat-syscall-all-cpus.c
-index d161b1a78703..8322b6aa4047 100644
---- a/tools/perf/tests/openat-syscall-all-cpus.c
-+++ b/tools/perf/tests/openat-syscall-all-cpus.c
-@@ -116,7 +116,7 @@ int test__openat_syscall_event_on_all_cpus(struct test *test __maybe_unused, int
- 
- 	perf_evsel__free_counts(evsel);
- out_close_fd:
--	perf_evsel__close_fd(evsel);
-+	perf_evsel__close_fd(&evsel->core);
- out_evsel_delete:
- 	evsel__delete(evsel);
- out_cpu_map_delete:
-diff --git a/tools/perf/tests/openat-syscall.c b/tools/perf/tests/openat-syscall.c
-index 87c212545767..f217972977e0 100644
---- a/tools/perf/tests/openat-syscall.c
-+++ b/tools/perf/tests/openat-syscall.c
-@@ -57,7 +57,7 @@ int test__openat_syscall_event(struct test *test __maybe_unused, int subtest __m
- 
- 	err = 0;
- out_close_fd:
--	perf_evsel__close_fd(evsel);
-+	perf_evsel__close_fd(&evsel->core);
- out_evsel_delete:
- 	evsel__delete(evsel);
- out_thread_map_delete:
-diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
-index eac4d634b9c7..c6b4883b2d49 100644
---- a/tools/perf/util/evlist.c
-+++ b/tools/perf/util/evlist.c
-@@ -34,6 +34,7 @@
- #include <linux/err.h>
- #include <linux/zalloc.h>
- #include <perf/evlist.h>
-+#include <perf/evsel.h>
- #include <perf/cpumap.h>
- 
- #ifdef LACKS_SIGQUEUE_PROTOTYPE
-@@ -1303,7 +1304,7 @@ void evlist__close(struct evlist *evlist)
- 	struct evsel *evsel;
- 
- 	evlist__for_each_entry_reverse(evlist, evsel)
--		perf_evsel__close(evsel);
-+		evsel__close(evsel);
- }
- 
- static int perf_evlist__create_syswide_maps(struct evlist *evlist)
-@@ -1772,7 +1773,7 @@ struct evsel *perf_evlist__reset_weak_group(struct evlist *evsel_list,
- 			is_open = false;
- 		if (c2->leader == leader) {
- 			if (is_open)
--				perf_evsel__close(c2);
-+				evsel__close(c2);
- 			c2->leader = c2;
- 			c2->core.nr_members = 0;
- 		}
-diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index d3c8488f7069..8d8ed36377f5 100644
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -1265,12 +1265,6 @@ int perf_evsel__alloc_id(struct evsel *evsel, int ncpus, int nthreads)
- 	return 0;
- }
- 
--static void perf_evsel__free_fd(struct evsel *evsel)
--{
--	xyarray__delete(evsel->core.fd);
--	evsel->core.fd = NULL;
--}
--
- static void perf_evsel__free_id(struct evsel *evsel)
- {
- 	xyarray__delete(evsel->sample_id);
-@@ -1289,23 +1283,12 @@ static void perf_evsel__free_config_terms(struct evsel *evsel)
- 	}
- }
- 
--void perf_evsel__close_fd(struct evsel *evsel)
--{
--	int cpu, thread;
--
--	for (cpu = 0; cpu < xyarray__max_x(evsel->core.fd); cpu++)
--		for (thread = 0; thread < xyarray__max_y(evsel->core.fd); ++thread) {
--			close(FD(evsel, cpu, thread));
--			FD(evsel, cpu, thread) = -1;
--		}
--}
--
- void perf_evsel__exit(struct evsel *evsel)
- {
- 	assert(list_empty(&evsel->core.node));
- 	assert(evsel->evlist == NULL);
- 	perf_evsel__free_counts(evsel);
--	perf_evsel__free_fd(evsel);
-+	perf_evsel__free_fd(&evsel->core);
- 	perf_evsel__free_id(evsel);
- 	perf_evsel__free_config_terms(evsel);
- 	cgroup__put(evsel->cgrp);
-@@ -2057,13 +2040,9 @@ out_close:
- 	return err;
- }
- 
--void perf_evsel__close(struct evsel *evsel)
-+void evsel__close(struct evsel *evsel)
- {
--	if (evsel->core.fd == NULL)
--		return;
--
--	perf_evsel__close_fd(evsel);
--	perf_evsel__free_fd(evsel);
-+	perf_evsel__close(&evsel->core);
- 	perf_evsel__free_id(evsel);
- }
- 
-diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
-index afd3a5b7bcc3..03fc8edad492 100644
---- a/tools/perf/util/evsel.h
-+++ b/tools/perf/util/evsel.h
-@@ -268,7 +268,6 @@ const char *perf_evsel__group_name(struct evsel *evsel);
- int perf_evsel__group_desc(struct evsel *evsel, char *buf, size_t size);
- 
- int perf_evsel__alloc_id(struct evsel *evsel, int ncpus, int nthreads);
--void perf_evsel__close_fd(struct evsel *evsel);
- 
- void __perf_evsel__set_sample_bit(struct evsel *evsel,
- 				  enum perf_event_sample_format bit);
-@@ -298,7 +297,7 @@ int perf_evsel__open_per_thread(struct evsel *evsel,
- 				struct perf_thread_map *threads);
- int evsel__open(struct evsel *evsel, struct perf_cpu_map *cpus,
- 		struct perf_thread_map *threads);
--void perf_evsel__close(struct evsel *evsel);
-+void evsel__close(struct evsel *evsel);
- 
- struct perf_sample;
- 
+On 7/30/2019 1:33 PM, Iuliana Prodan wrote:=0A=
+> --- a/include/crypto/gcm.h=0A=
+> +++ b/include/crypto/gcm.h=0A=
+> @@ -1,8 +1,63 @@=0A=
+>  #ifndef _CRYPTO_GCM_H=0A=
+>  #define _CRYPTO_GCM_H=0A=
+>  =0A=
+> +#include <uapi/asm-generic/errno-base.h>=0A=
+> +=0A=
+This is new in v2 and I missed it initially.=0A=
+=0A=
+If needed, <linux/errno.h> should be used instead.=0A=
+=0A=
+Horia=0A=
