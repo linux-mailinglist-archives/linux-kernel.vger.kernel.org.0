@@ -2,112 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B0517B048
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 19:40:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED9957B04D
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 19:41:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731357AbfG3Rkm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 13:40:42 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:41220 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728121AbfG3Rkm (ORCPT
+        id S1731401AbfG3RlB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 13:41:01 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:43950 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729459AbfG3RlB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 13:40:42 -0400
-Received: by mail-io1-f66.google.com with SMTP id j5so125931733ioj.8
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 10:40:42 -0700 (PDT)
+        Tue, 30 Jul 2019 13:41:01 -0400
+Received: by mail-lj1-f193.google.com with SMTP id y17so38325218ljk.10;
+        Tue, 30 Jul 2019 10:40:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=BFeR4tAU5ONwRxrZH74vD9rAw7q+rir0LAtgn600pQo=;
-        b=QYqMqliMOGNxlsIuyMiYTDi/8qLlryHF904OuiWIPby5+f+Zti2FYyn7bGij7xfWSc
-         sZxvxYZjN1IgFmeo0Nr8e2FItipeC18I9dpXvWk2QV9e7Y4IEEn88pYVeKFt/J9VYEK8
-         60bvc1Ljcp06AS/1bY3KfN39DgfYkIKnHr7zzhAH/Vvid9WNpeXdwIqXxM6SuFZo+wbg
-         EvP+R2/sf76vXi55+Ib/CNpKNW4SCqDJg9yk2Dqa/tjnZF/BAl10c//pUbwi7/+TlfgR
-         BriluIdEHMp17zMb8ChyGrvo/r2DT7ss5a877gh6nOb3Ht7IpjxiCbdZo3dmVL8FY0tR
-         U6Og==
+        d=gmail.com; s=20161025;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=3mo4Ga+8mpxjTSU2D+A1EeShdvnCMvljYCgf2KvE04w=;
+        b=EoMORwzuhk3NRLEjQ2uTtxduvaJjWKYuIUUwhSmV0VI3cXX7P8OQbs99XOiaw7wd+V
+         Pm3rw1F8fbosIAFNidbpVErSmAtfCOAAXBUz7/4upmGwvF8KgauioZZ+3KYbRTkbyw5s
+         qj90L0zeh/RN+CesUvFBuu7RunzF2eAlZ3EoGycAEOOPUVkeadYKW5BMSFtKEiE12HIs
+         jzQAaeUIDOrwS3NIoPa4sXJH+AdfBzslZjTqcdIxs4oG9f1EWH56ssiaeXssIrvub71y
+         KPom5xaRaoMuIaaR9J7FqaxwpOunahvONCBJUePmkuaHVolUAjKhGKu1TGruEg5iV6J+
+         ioMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=BFeR4tAU5ONwRxrZH74vD9rAw7q+rir0LAtgn600pQo=;
-        b=HNbQVxmM7b9sdbpcrMMrst1ZC6GvbEe2ORtG1Pf5SqHpVGQXr75ACLudwMIy4/R9GF
-         1HncoYpjD3ZfCKZd1BnGfNugcSlrWs8hg6RPGfBRT52ndC4HjkRjkVRXJ4Dr7gyE6Mhx
-         ffDr96xYyXscR0V4J1vyXsWaNh7XdD3NRO2YOZi+1oN9dhpRfI8pQTXGQDtMw24NbXE5
-         g3LCj1VgAVyrh7PPolTRGNA7o9F8K18XWT8KFfRHvcqxfb3lcGmmkZDMGZGR+xS8ohnl
-         nq63BBgLSy+ILQPHg2hGtcm41Ywo6sDX+WQyBeXZYXEtiRHgykrEmjezqnS1N1a7yvn9
-         H1Cg==
-X-Gm-Message-State: APjAAAXHHJHbGCJtXqBe5hYCgdN7W7mP7WMtXK/mcsZPaq5Dmz8fxRs6
-        mD7OoyYKQPXGOrzBBacCApq15UPeYMwAKBMnEipMwQ==
-X-Google-Smtp-Source: APXvYqyFyzeZEgjdnOHpTCFYjQXdvTAFGxut6M5XUcyeytb3kogaKxVjONsRirs4U6naOSG1mOZAA9EZ8Zq62eP1is4=
-X-Received: by 2002:a5e:c241:: with SMTP id w1mr101182344iop.58.1564508441663;
- Tue, 30 Jul 2019 10:40:41 -0700 (PDT)
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=3mo4Ga+8mpxjTSU2D+A1EeShdvnCMvljYCgf2KvE04w=;
+        b=S6m1vXVep9RevrHXITCSypHoF+RoAsVStHp38LrYFO+mhEtxYiZgD5pCkU0SVr/Hd3
+         pUNk0xQeybPaWpBFj5sCc+7M/uEjcLbYqjxl+EmoQQ8iG35WdJ9d8qbp7zznSrFhCskA
+         0zF/+rT1Z1eYtt1eIvlevqhSGxBCHVqr8043mGZeePjIw+JYyECDfkEoxf3moDpOXjSs
+         IGwrQUGUvMEGbc09Y02vrBJ+U666zKPgpO0Eu1lWAJs2G7Iv0ATBoX8ZaUUBTMUZ1Ak8
+         okGnwgX6C8886T7KWrhUmL5YVdDqnz0y2LZpiGnXE9zHxtcOThLwmGh1/vl5zWsyNjaK
+         OpDg==
+X-Gm-Message-State: APjAAAVSy2tykIxPHInwMpGDVTRMT9nDlqRebB7SzUqYlPvxVN1TNm40
+        cUEFUekEHGwNCJpR2oDz2s4pdLAl
+X-Google-Smtp-Source: APXvYqzS5ppW/dTvIDr7a/OZHu40bdimurRO2Vnj4fqDdOJPiigMEZTM+7Zv6n4JaTpXgRxJ43H6QQ==
+X-Received: by 2002:a2e:3602:: with SMTP id d2mr3253681lja.112.1564508458168;
+        Tue, 30 Jul 2019 10:40:58 -0700 (PDT)
+Received: from [192.168.2.145] (ppp91-78-220-99.pppoe.mtu-net.ru. [91.78.220.99])
+        by smtp.googlemail.com with ESMTPSA id 24sm15424438ljs.63.2019.07.30.10.40.57
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Jul 2019 10:40:57 -0700 (PDT)
+Subject: Re: [PATCH v2 1/2] soc/tegra: pmc: Query PCLK clock rate at probe
+ time
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190723023511.24542-1-digetx@gmail.com>
+ <20190725093644.GJ12715@pdeschrijver-desktop.Nvidia.com>
+ <f7879942-0875-1f27-5870-3f8414c2148d@gmail.com>
+ <7e76b679-1a65-fa14-2cc6-2b27ece8131c@gmail.com>
+Message-ID: <0a24e723-ca4e-7b51-33a2-74eff141e1ce@gmail.com>
+Date:   Tue, 30 Jul 2019 20:40:56 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-References: <20190726160839.12478-1-suzuki.poulose@arm.com>
-In-Reply-To: <20190726160839.12478-1-suzuki.poulose@arm.com>
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-Date:   Tue, 30 Jul 2019 11:40:30 -0600
-Message-ID: <CANLsYkzFY_N=JfgJ2fOcA3SDKHXL1+cGvPN_-3r4hD-_G=49Ow@mail.gmail.com>
-Subject: Re: [PATCH] coresight: acpi: Static funnel support
-To:     Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Coresight ML <coresight@lists.linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <7e76b679-1a65-fa14-2cc6-2b27ece8131c@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 26 Jul 2019 at 10:08, Suzuki K Poulose <suzuki.poulose@arm.com> wrote:
->
-> The ACPI bindings for CoreSight has been updated to add the device
-> id for non-programmable CoreSight funnels (aka static funnels) as of
-> v1.1 [0]. Add the ACPI id for static funnels in the driver.
->
-> [0] https://static.docs.arm.com/den0067/a/DEN0067_CoreSight_ACPI_1.1.pdf
->
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> ---
->  drivers/hwtracing/coresight/coresight-funnel.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
->
-> diff --git a/drivers/hwtracing/coresight/coresight-funnel.c b/drivers/hwtracing/coresight/coresight-funnel.c
-> index fa97cb9ab4f9..0c99848a5d69 100644
-> --- a/drivers/hwtracing/coresight/coresight-funnel.c
-> +++ b/drivers/hwtracing/coresight/coresight-funnel.c
-> @@ -5,6 +5,7 @@
->   * Description: CoreSight Funnel driver
->   */
->
-> +#include <linux/acpi.h>
->  #include <linux/kernel.h>
->  #include <linux/init.h>
->  #include <linux/types.h>
-> @@ -302,11 +303,19 @@ static const struct of_device_id static_funnel_match[] = {
->         {}
->  };
->
-> +#ifdef CONFIG_ACPI
-> +static const struct acpi_device_id static_funnel_ids[] = {
-> +       {"ARMHC9FE", 0},
-> +       {},
-> +};
-> +#endif
-> +
->  static struct platform_driver static_funnel_driver = {
->         .probe          = static_funnel_probe,
->         .driver         = {
->                 .name   = "coresight-static-funnel",
->                 .of_match_table = static_funnel_match,
-> +               .acpi_match_table = ACPI_PTR(static_funnel_ids),
->                 .pm     = &funnel_dev_pm_ops,
->                 .suppress_bind_attrs = true,
->         },
+29.07.2019 16:07, Dmitry Osipenko пишет:
+> 25.07.2019 14:15, Dmitry Osipenko пишет:
+>> 25.07.2019 12:36, Peter De Schrijver пишет:
+>>> On Tue, Jul 23, 2019 at 05:35:10AM +0300, Dmitry Osipenko wrote:
+>>>> The PCLK clock is running off SCLK, which is a critical clock that is
+>>>> very unlikely to randomly change its rate. It's also a bit clumsy (and
+>>>> apparently incorrect) to query the clock's rate with interrupts being
+>>>> disabled because clk_get_rate() takes a mutex and that's the case during
+>>>> suspend/cpuidle entering.
+>>>>
+>>>
+>>> SCLK and PCLK certainly can change rate at runtime, although the code to
+>>> handle this hasn't reached upstream yet.
+>>
+>> Okay, maybe this patch is indeed not very worthwhile then. I'm leaving
+>> it up to you, guys, to decide.
+>>
+> 
+> I now recalled what was the initial reason for this patch because
+> happened to bump into the problem once again.. it's really problematic
+> to call clk_get_rate() with the disabled preemption because some clk
+> notifier handler may block (EMC) and cause reschedule, hence the CCF
+> 'prepare' mutex is kept locked during of CPUIDLE driver entering LP2
+> state and thus causing system lockup, since scheduling with the disabled
+> interrupts obviously won't work well.
+> 
+> So this patch actually is needed to be applied or some other solution
+> have to be provided. Since PCLK rate currently isn't altering anywhere
+> in the kernel, I'd suggest to imply apply this series. Please let me
+> know if you have any objections. I may re-iterate this patch with an
+> extended commit message, describing the resolved problem in a more
+> details, if necessary.
+> 
 
-I haved also applied this patch.
-
-Mathieu
-
-> --
-> 2.21.0
->
+I'll send v3 with a changed commit's message, please take a look at it.
