@@ -2,100 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14D987ADAA
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 18:33:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E62157AD8B
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 18:30:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733016AbfG3QdG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 12:33:06 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:35823 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732924AbfG3Qcq (ORCPT
+        id S1731246AbfG3QaV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 12:30:21 -0400
+Received: from conssluserg-05.nifty.com ([210.131.2.90]:39695 "EHLO
+        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725889AbfG3QaV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 12:32:46 -0400
-Received: by mail-wm1-f65.google.com with SMTP id l2so57214847wmg.0;
-        Tue, 30 Jul 2019 09:32:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=hKvLl5MtLqHMnv3zCjcaW8MF73v11AH4bgm8S8ldXCE=;
-        b=GlqFb134XfxnMkEh6uLn1kRhDbMEnXJfanH+X3B32Z4zKb0sE8jm/rxkuSYxWHisOi
-         OU3o1DyNgJk7/7GgUrWw5IhJtxiwz0Y2iiK/0eY7zdagnniETk2BjXEGHS/yR1kMuaWv
-         4ULJmslxpRwhmDfifIuTY7KyhK9ByrMfKd9Shhor0iFBaiYVotkTN//Ns7JYzgvhvj6y
-         VitepvML8Gwaj5g9DLkZd4hfgCV0JQ6TnThaJ0wB9sADjyqQLmHgmd226tt4ZNqtflnS
-         8jzr1iOqhxicgKU5SD8/Rwt3B3CVao2lNUUr0NUSamKRp8o0dApg04ulG7OZzkjSHj8q
-         /2OQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=hKvLl5MtLqHMnv3zCjcaW8MF73v11AH4bgm8S8ldXCE=;
-        b=qfkRlbqDaNpF83miNLFcOGuviPmFmAuT15ClTPwhi3afJ/i/U91R9hNblKs7f5OkPI
-         N+sHTByAQQUzO7LeHzloZIk33DwLMU+r5oiyyycRutjDmKfYSlU8yrGMHMip05pCLAkf
-         kRMOrqRZEqNDHd8+Pno01SJszwZi+6n0DL7V7O2OG6b+7qWy3wkbwjObEbUqMclhDsc4
-         ZFu97k84drx0Nsy8AanuC5LESDYUtIqEV2YPyXSc//icvQs5+OMFH0pikB6BNNiwagfE
-         ZSU5JkytdejTIC4SumMHfSDXxaryvYvP8WZCb4gYYDiFC+JSoGXfe4z15CZtPJF0XBMG
-         DyKQ==
-X-Gm-Message-State: APjAAAVsitiXWJ/gforVcxJIYPU/Fd5IGzHDWV8bvnf7XmM8phoj+U5k
-        pvPm+JE+qJza9060qpDS3YK3B8EN
-X-Google-Smtp-Source: APXvYqy7ZambOH2FqJffPbsZIhK05NktYW91mK2UAxhPST/+7yvKY9FJpMgpADfq2QZ6C86Eb63VQQ==
-X-Received: by 2002:a1c:6a11:: with SMTP id f17mr98670207wmc.110.1564504364538;
-        Tue, 30 Jul 2019 09:32:44 -0700 (PDT)
-Received: from localhost.localdomain (ppp91-78-220-99.pppoe.mtu-net.ru. [91.78.220.99])
-        by smtp.gmail.com with ESMTPSA id c65sm64835175wma.44.2019.07.30.09.32.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Jul 2019 09:32:44 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc:     linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v5 20/20] PM / devfreq: tegra20/30: Add Dmitry as a maintainer
-Date:   Tue, 30 Jul 2019 19:22:36 +0300
-Message-Id: <20190730162236.6063-21-digetx@gmail.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190730162236.6063-1-digetx@gmail.com>
-References: <20190730162236.6063-1-digetx@gmail.com>
+        Tue, 30 Jul 2019 12:30:21 -0400
+Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com [209.85.217.45]) (authenticated)
+        by conssluserg-05.nifty.com with ESMTP id x6UGU4IO020919;
+        Wed, 31 Jul 2019 01:30:04 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com x6UGU4IO020919
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1564504205;
+        bh=deEeiknpVEJHhu6POdmodbTCpbJqhNZXh+u7IBm1me8=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=CMJOvTwdI+WZmQ0j1Lr8co4V99LWTLSfKq10KH0QvsrQdeEmyYlcguVLC96J3hwJG
+         fWSCpFYQtlsAWVSfWa2bPFe8y2D45b0iqpT5IThac5R96/ymjyO2lgAmuh8mU8OTOz
+         +Evp/SC2jl39Ob50nLQN28Fg+bjh7zQH3tv5OBskxFar9od6kUj5RC8KlCAqXHq/gM
+         VA+yP8ia/01lROlxxqFFejrHRwrCzHJLjL3IMpqtRF3NyUsGWkn/atgouyKpXn5usF
+         sKAP2oLfiE7iIRcjgA52wSqUDQuYq5Tj3tHOUT3CtqIRYYqQQtaw3+YQN42j/UP/Ad
+         Cx47djzPy6PKA==
+X-Nifty-SrcIP: [209.85.217.45]
+Received: by mail-vs1-f45.google.com with SMTP id m8so43989493vsj.0;
+        Tue, 30 Jul 2019 09:30:04 -0700 (PDT)
+X-Gm-Message-State: APjAAAXgAenOGGCtzWXZBXBr6s5SHTg2xHXtuGKOnbtF12YJB2VCyj5Z
+        9U+Ihe3hR97pxwSlCauSmVuS7q6G8LZ+ja0Qs+U=
+X-Google-Smtp-Source: APXvYqzsLAzQi8QjYxsC9kzAbo65xczrjMlJAwBpr3yC2oxpGh3Zay09658qMGYvyb6AXEAG0peXUQasA+Rkj+7zfrk=
+X-Received: by 2002:a67:8e0a:: with SMTP id q10mr49990008vsd.215.1564504203698;
+ Tue, 30 Jul 2019 09:30:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190714152817.24693-1-efremov@linux.com> <20190729141801.31333-1-efremov@linux.com>
+ <20190730082618.5bb5edf3@canb.auug.org.au> <1b6f749c-2a25-219a-3eb3-0f2c7a542426@linux.com>
+In-Reply-To: <1b6f749c-2a25-219a-3eb3-0f2c7a542426@linux.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Wed, 31 Jul 2019 01:29:27 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATnC6eVmahn=44F-j3Uf-x+cUWuP0q7QuP800biL9QJiA@mail.gmail.com>
+Message-ID: <CAK7LNATnC6eVmahn=44F-j3Uf-x+cUWuP0q7QuP800biL9QJiA@mail.gmail.com>
+Subject: Re: [PATCH v3] modpost: check for static EXPORT_SYMBOL* functions
+To:     Denis Efremov <efremov@linux.com>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Emil Velikov <emil.l.velikov@gmail.com>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I was contributing to the NVIDIA Tegra20+ devfreq drivers recently and
-want to help keep them working and evolving in the future.
+On Tue, Jul 30, 2019 at 4:00 PM Denis Efremov <efremov@linux.com> wrote:
+>
+> On 30.07.2019 01:26, Stephen Rothwell wrote:
+> > Hi Denis,
+> >
+> > On Mon, 29 Jul 2019 17:18:01 +0300 Denis Efremov <efremov@linux.com> wrote:
+> >>
+> >> This patch adds a check to warn about static EXPORT_SYMBOL* functions
+> >> during the modpost. In most of the cases, a static symbol marked for
+> >> exporting is an odd combination that should be fixed either by deleting
+> >> the exporting mark or by removing the static attribute and adding the
+> >> appropriate declaration to headers.
+> >
+> > OK, this is now in linux-next and I am getting what look like false
+> > positives :-(
+> >
+> > My powerpc builds produce these:
+> >
+> > WARNING: "ahci_em_messages" [vmlinux] is the static EXPORT_SYMBOL_GPL
+> > WARNING: "ftrace_set_clr_event" [vmlinux] is the static EXPORT_SYMBOL_GPL
+> > WARNING: "empty_zero_page" [vmlinux] is the static EXPORT_SYMBOL
+> > WARNING: "jiffies" [vmlinux] is the static EXPORT_SYMBOL
+> >
+> > empty_zero_page (at least) is not static.  It is defined in assembler ...
+>
+> This could be fixed either by adding the type, for example:
+> --- a/arch/x86/kernel/head_64.S
+> +++ b/arch/x86/kernel/head_64.S
+> @@ -478,6 +478,7 @@ EXPORT_SYMBOL(phys_base)
+>
+>          __PAGE_ALIGNED_BSS
+>   NEXT_PAGE(empty_zero_page)
+> +.type empty_zero_page, STT_OBJECT
+>          .skip PAGE_SIZE
+>   EXPORT_SYMBOL(empty_zero_page)
 
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- MAINTAINERS | 9 +++++++++
- 1 file changed, 9 insertions(+)
+This would require us to fix-up
+all assembly files, wouldn't it?
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index cf2225b161f0..49010404fdea 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -10420,6 +10420,15 @@ F:	include/linux/memblock.h
- F:	mm/memblock.c
- F:	Documentation/core-api/boot-time-mm.rst
- 
-+MEMORY FREQUENCY SCALING DRIVERS FOR NVIDIA TEGRA
-+M:	Dmitry Osipenko <digetx@gmail.com>
-+L:	linux-pm@vger.kernel.org
-+L:	linux-tegra@vger.kernel.org
-+T:	git git://git.kernel.org/pub/scm/linux/kernel/git/mzx/devfreq.git
-+S:	Maintained
-+F:	drivers/devfreq/tegra20-devfreq.c
-+F:	drivers/devfreq/tegra30-devfreq.c
-+
- MEMORY MANAGEMENT
- L:	linux-mm@kvack.org
- W:	http://www.linux-mm.org
+
+> Or by updating the check in the patch:
+> --- a/scripts/mod/modpost.c
+> +++ b/scripts/mod/modpost.c
+> @@ -1988,7 +1988,9 @@ static void read_symbols(const char *modname)
+>                  unsigned char bind = ELF_ST_BIND(sym->st_info);
+>                  unsigned char type = ELF_ST_TYPE(sym->st_info);
+>
+> -               if (type == STT_OBJECT || type == STT_FUNC) {
+> +               if (type == STT_OBJECT ||
+> +                   type == STT_FUNC ||
+> +                   type == STT_NOTYPE) {
+>
+> Do I need to resend the whole patch or create new "patch-on-patch"?
+
+I prefer this, but why do you need to check type?
+
+Doesn't this work?
+
+for (sym = info.symtab_start; sym < info.symtab_stop; sym++) {
+        unsigned char bind = ELF_ST_BIND(sym->st_info);
+
+        struct symbol *s = find_symbol(remove_dot(info.strtab +
+                                                  sym->st_name));
+
+        if (s && (bind == STB_GLOBAL || bind == STB_WEAK))
+                s->is_static = 0;
+}
+
+
+
+
 -- 
-2.22.0
-
+Best Regards
+Masahiro Yamada
