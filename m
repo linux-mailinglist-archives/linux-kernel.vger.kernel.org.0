@@ -2,74 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DCDDD7B42A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 22:15:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DFB17B41F
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 22:15:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728089AbfG3UPZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 16:15:25 -0400
-Received: from gate.crashing.org ([63.228.1.57]:33444 "EHLO gate.crashing.org"
+        id S1728034AbfG3UPN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 16:15:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33726 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727947AbfG3UPT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 16:15:19 -0400
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id x6UKF3aG026675;
-        Tue, 30 Jul 2019 15:15:04 -0500
-Message-ID: <fc55769bcacd45f8283f504b7d4332271da1436b.camel@kernel.crashing.org>
-Subject: Re: [PATCH v3] nvme-pci: Support shared tags across queues for
- Apple 2018 controllers
-From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
-To:     Keith Busch <kbusch@kernel.org>
-Cc:     linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Paul Pawlowski <paul@mrarm.io>, Jens Axboe <axboe@fb.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Minwoo Im <minwoo.im.dev@gmail.com>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>
-Date:   Tue, 30 Jul 2019 13:15:03 -0700
-In-Reply-To: <20190730153044.GA13948@localhost.localdomain>
-References: <b1f9bdf0294b8d87d292de3c7462c8e99551b02d.camel@kernel.crashing.org>
-         <20190730153044.GA13948@localhost.localdomain>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1727931AbfG3UPL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 16:15:11 -0400
+Received: from earth.universe (unknown [185.62.205.103])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 209D8208E3;
+        Tue, 30 Jul 2019 20:15:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564517710;
+        bh=2DeioQljBl/BZ/jhEzrVarLl6wiGsnZWbH39DDDmTOo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ZFu58bGBlKK44NLLQM02UuP3JakqHRxL6Np1HRFBUshugmLj4N0VIYhocimbjGQc6
+         +QM1FGMPsaFV1nVRWhAVYm2R5hTQTUfODu1Ahmzu65oQdY4lOi+S5eOLkxNRujoZbv
+         JwCi263N+ix+C8SM1actbJqnVwwSt8m4gMXgk/0A=
+Received: by earth.universe (Postfix, from userid 1000)
+        id 8BE6A3C0943; Tue, 30 Jul 2019 22:15:07 +0200 (CEST)
+Date:   Tue, 30 Jul 2019 22:15:07 +0200
+From:   Sebastian Reichel <sre@kernel.org>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH] HSI: ssi_protocol: Mark expected switch fall-throughs
+Message-ID: <20190730201507.wvxy7bit7y2l5tsn@earth.universe>
+References: <20190729224519.GA23078@embeddedor>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="taiuty7vd5dvkqvq"
+Content-Disposition: inline
+In-Reply-To: <20190729224519.GA23078@embeddedor>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-07-30 at 09:30 -0600, Keith Busch wrote:
-> On Fri, Jul 19, 2019 at 03:31:02PM +1000, Benjamin Herrenschmidt wrote:
-> > From 8dcba2ef5b1466b023b88b4eca463b30de78d9eb Mon Sep 17 00:00:00 2001
-> > From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-> > Date: Fri, 19 Jul 2019 15:03:06 +1000
-> > Subject: 
-> > 
-> > Another issue with the Apple T2 based 2018 controllers seem to be
-> > that they blow up (and shut the machine down) if there's a tag
-> > collision between the IO queue and the Admin queue.
-> > 
-> > My suspicion is that they use our tags for their internal tracking
-> > and don't mix them with the queue id. They also seem to not like
-> > when tags go beyond the IO queue depth, ie 128 tags.
-> > 
-> > This adds a quirk that marks tags 0..31 of the IO queue reserved
-> > 
-> > Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-> > ---
-> 
-> One problem is that we've an nvme parameter, io_queue_depth, that a user
-> could set to something less than 32, and then you won't be able to do
-> any IO. I'd recommend enforce the admin queue to QD1 for this device so
-> that you have more potential IO tags.
 
-Makes sense, I don't think we care much about the number of admin tags 
-on these devices.
+--taiuty7vd5dvkqvq
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I'm travelling, not sure I'll be able to respin & test before next
-week.
+Hi,
 
-Thanks.
+On Mon, Jul 29, 2019 at 05:45:19PM -0500, Gustavo A. R. Silva wrote:
+> Mark switch cases where we are expecting to fall through.
+>=20
+> This patch fixes the following warning (Building: arm):
+>=20
+> drivers/hsi/clients/ssi_protocol.c: In function =E2=80=98ssip_set_rxstate=
+=E2=80=99:
+> drivers/hsi/clients/ssi_protocol.c:291:6: warning: this statement may fal=
+l through [-Wimplicit-fallthrough=3D]
+>    if (atomic_read(&ssi->tx_usecnt))
+>       ^
+> drivers/hsi/clients/ssi_protocol.c:294:2: note: here
+>   case RECEIVING:
+>   ^~~~
+>=20
+> drivers/hsi/clients/ssi_protocol.c: In function =E2=80=98ssip_keep_alive=
+=E2=80=99:
+> drivers/hsi/clients/ssi_protocol.c:466:7: warning: this statement may fal=
+l through [-Wimplicit-fallthrough=3D]
+>     if (atomic_read(&ssi->tx_usecnt) =3D=3D 0)
+>        ^
+> drivers/hsi/clients/ssi_protocol.c:472:3: note: here
+>    case SEND_IDLE:
+>    ^~~~
+>=20
+> Notice that, in this particular case, the code comment is
+> modified in accordance with what GCC is expecting to find.
+>=20
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> ---
 
-Cheers,
-Ben.
+Thanks, queued to hsi-next.
 
+-- Sebastian
+
+>  drivers/hsi/clients/ssi_protocol.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/drivers/hsi/clients/ssi_protocol.c b/drivers/hsi/clients/ssi=
+_protocol.c
+> index 9aeed98b87a1..504d00ec1ea7 100644
+> --- a/drivers/hsi/clients/ssi_protocol.c
+> +++ b/drivers/hsi/clients/ssi_protocol.c
+> @@ -290,7 +290,7 @@ static void ssip_set_rxstate(struct ssi_protocol *ssi=
+, unsigned int state)
+>  		/* CMT speech workaround */
+>  		if (atomic_read(&ssi->tx_usecnt))
+>  			break;
+> -		/* Otherwise fall through */
+> +		/* Else, fall through */
+>  	case RECEIVING:
+>  		mod_timer(&ssi->keep_alive, jiffies +
+>  						msecs_to_jiffies(SSIP_KATOUT));
+> @@ -465,9 +465,10 @@ static void ssip_keep_alive(struct timer_list *t)
+>  		case SEND_READY:
+>  			if (atomic_read(&ssi->tx_usecnt) =3D=3D 0)
+>  				break;
+> +			/* Fall through */
+>  			/*
+> -			 * Fall through. Workaround for cmt-speech
+> -			 * in that case we relay on audio timers.
+> +			 * Workaround for cmt-speech in that case
+> +			 * we relay on audio timers.
+>  			 */
+>  		case SEND_IDLE:
+>  			spin_unlock(&ssi->lock);
+> --=20
+> 2.22.0
+>=20
+
+--taiuty7vd5dvkqvq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAl1ApUcACgkQ2O7X88g7
++po30RAAnTpQP30nHUBPDb5bMaH+xIpDedxkJfYqxatFNGAHYJrFkE1XPsicpDOL
+rjhcs/QIUabdJxDqcbGmB7sKv/RpGPYtV1h7n091zbRyfTtrJ7F5/cyYY7xjkdPr
+8XtyFgiK7o8Nc45UrZ0Zod0vcxG4E6sjFU489M3h1hVHhnnJdGE0gW5bU4JARcSe
+6rkzquxz+aNC1rPIDfOOXWRw9DwI9/YRuNl2y3rakeJSXDB6TfPl7Nk/Z+3ZgKg/
+rZucVptRaoGjHB26YBOlHxAxNvhYnl/iOpVy9giOIPs39JjWTbsfpxGTvbIEshge
+95XyLlMI3iOvkU5esviVBjzSsm+vN9t/2GyzIhPeqRvOgcspej9NYkZd1nQpMyO6
+tSzWK1wTQ/JzPow0WhCp52SlkdfzA9KD6W5KYf1/GPXtHsUiA+2e4PGFTCJDW9I3
+gmPAymQZ8dO5/f0M7RjueIO33ig/qUTC1YB/ziplLMlE0WxGxuWaVG3rbOR4lMcL
+BZG9DHdclldyrkuDFbnyZgEkVK406oX1rShYiVIUdKpy+mxiuyM7f45p+2043gWo
+QxjwWRmsZ1T++jXDwckHnUGUoXxm4U+OJSpAde/I5XtazivvwOPxdnT4jMLYmxEp
+sDdGtBGi/ErTDpWZkgpJwA0oswVdiqsxXBhdYBc1WHtCKihlsMg=
+=vsr6
+-----END PGP SIGNATURE-----
+
+--taiuty7vd5dvkqvq--
