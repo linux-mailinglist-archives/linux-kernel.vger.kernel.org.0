@@ -2,144 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 133117A800
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 14:17:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA8AC7A804
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 14:17:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730070AbfG3MRH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 08:17:07 -0400
-Received: from smtp.infotech.no ([82.134.31.41]:39395 "EHLO smtp.infotech.no"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729205AbfG3MRG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 08:17:06 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by smtp.infotech.no (Postfix) with ESMTP id 0F0CD204165;
-        Tue, 30 Jul 2019 14:17:04 +0200 (CEST)
-X-Virus-Scanned: by amavisd-new-2.6.6 (20110518) (Debian) at infotech.no
-Received: from smtp.infotech.no ([127.0.0.1])
-        by localhost (smtp.infotech.no [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id J3twQyiY8KbP; Tue, 30 Jul 2019 14:17:03 +0200 (CEST)
-Received: from [82.134.31.183] (unknown [82.134.31.183])
-        by smtp.infotech.no (Postfix) with ESMTPA id DA3CF20414E;
-        Tue, 30 Jul 2019 14:17:03 +0200 (CEST)
-Reply-To: dgilbert@interlog.com
-Subject: Re: [RFC PATCH] usb: typec: tcpm: Ignore unsupported/unknown
- alternate mode requests
-To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Guenter Roeck <linux@roeck-us.net>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1564029037-22929-1-git-send-email-linux@roeck-us.net>
- <20190729140457.GC28600@kuha.fi.intel.com>
- <20190729173104.GA32556@roeck-us.net>
- <20190730120747.GL28600@kuha.fi.intel.com>
-From:   Douglas Gilbert <dgilbert@interlog.com>
-Message-ID: <f0bf0afd-af51-09d4-c552-5d19d0d5a829@interlog.com>
-Date:   Tue, 30 Jul 2019 14:17:03 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1730124AbfG3MRm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 08:17:42 -0400
+Received: from sonic307-1.consmr.mail.bf2.yahoo.com ([74.6.134.40]:34570 "EHLO
+        sonic307-1.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726363AbfG3MRl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 08:17:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1564489060; bh=VH+ayjkfgFOnVs6Itm99bu+e5MnqUcfnzJeZ6Cvpeko=; h=Date:From:Reply-To:Subject:From:Subject; b=lYwXtktUXQe6ygHwqPM9j7YroGPe9NmCT7drQNRdRt5OOztwRmuBW85OBpldhFd5e6liBUvpP/NDmvMQ9ih7cCOENGV0KSyZf026A06TBA2OWrWPv4oY0J4p3uXCjpCPY6Z4i3YY4zkQKf74LnB/MEC4V4R1YynCbbkGQvh91mwGr3GZyeg7RDhdDBpCdd5FI+98W6USnzb1sOvhNzkcaIuETr6JAjTzD6xE5/cHa1EnVIis+NPED2rBbWheyBDOylUvBshHDiuZmstVgOpJnhUcHXqzcVuKtXDvDU3tIdiIITwfyTfKRxaiP4nwPOndmA6N9MT4jFEPNpAK4Bspyg==
+X-YMail-OSG: G4MfpqsVM1kUYNdtMhOZsErLrSLEgq_0ny5AKZ9SYHI3OYvaiTGENn6MHmcYYCc
+ OlfnlTQwTcNUebDRjbkT5U5pBkEkjzUlcOzffFVlcedyVGFzTsMpuPpJLKgZemj3l5ipkZjF5NEL
+ MWJzYX71diIVdXzFbIn4dgx8gFqOoIYI5eGHemCfekNFQkRoVyOtKAG05I9HdPjn5lSSB8ccz_hG
+ yLkaZGW3Ki6AY5d9e1tQa0gSgaapweIHLDgR8hPkZzYa36weM5vmrs0m7Hq9OaFNecHYLW2vnws1
+ agq.VFWQ6ZWwNQm5MSgBzRd79jYoxDv1621CmQVKubPGfEnH1wtPtoGy0suRs.Aj_eJT5Do0h9.w
+ MCkKIq.Wh1q_IcizN17kaIkI4tht0RmZK3vVkmkIheeaxa9k5PHEcBEsv_7yyhGt5QANxuq3rtop
+ 0OCNVLQaHN7olsTZocY2vqNL.Db5R5Uwu31BLC7yDwNTVT40bRmWGImujIx3Mg7dHrIAy1_EpEKB
+ bP_jV3gU9Lbax3xtymM91dWZR9DR2eQ5lquWUoChqe19HdxK.Ei7bYchs5_XvCwMkEhubV0fgilE
+ N2F5z7tNsp.BQFEIKe2lXj93ce3FD6uY1BbRb4tQ6XETSsHptili5IAoPwUrPhmmTUX0UKopY3wd
+ cCsy8olV_MhU7bfKBwFuwoIAmp88gp7j4XKeAZqvHNAZeONHatcWvCgERURLhDYxJXLvkrXmazYc
+ FYYi1SALX26qzuhFMUaD8mXeBZlBZEcFNvwvJCuhAxiPX3exMoAqfj9snLYDCz4t.t.i0bqqcmef
+ AOsIvVSxIVujrf16FzpqP71Ymrc4GHuaAzu2iVwObTLX35Wu5mdeX5cdSbnI4PXMW0LSZxpYIZnK
+ 5xp8hOmuco7q1kP0b00VG4UXSEBvsNuJpw.nheWKAZUke6fFsAbHCQZAap43RIkJLjOI1iaY5hI1
+ F4LLubSIyRojj7keH2DkRDQPPo8s5.tpX4UiHboUWo45WpmRq1G76z14.T7fl.sBi5jcLZ80IZys
+ g3kUGOO.c0XYMhVJnPfMXElzrpRPr6Ksrl45zQPjKHwWtZY8TrgLrlNvUWX8_BDxARre7d5r3jvB
+ tnFFePz4h20eN.1uoGZH.vO3R4aC5pfAxDBtYfuodQkujDn6wVUAjL3awdc1Hu1_6qxA_EXPIlcp
+ CLhHi7Hws3E5m3o4ClkRMYNfQS72nc_iKB2H75wNLPPWYdvpdDKKEO3W_EkF2FM3SiBZH60cG5hC
+ TVF5m
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic307.consmr.mail.bf2.yahoo.com with HTTP; Tue, 30 Jul 2019 12:17:40 +0000
+Date:   Tue, 30 Jul 2019 12:17:37 +0000 (UTC)
+From:   western union payment department <lukesanfo451@gmail.com>
+Reply-To: westerniunion09@gmail.com
+Message-ID: <2052179417.1523460.1564489057748@mail.yahoo.com>
+Subject: Attention: E-Mail Address Owner,
 MIME-Version: 1.0
-In-Reply-To: <20190730120747.GL28600@kuha.fi.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-CA
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-07-30 2:07 p.m., Heikki Krogerus wrote:
-> On Mon, Jul 29, 2019 at 10:31:04AM -0700, Guenter Roeck wrote:
->> On Mon, Jul 29, 2019 at 05:04:57PM +0300, Heikki Krogerus wrote:
->>> Hi,
->>>
->>> On Wed, Jul 24, 2019 at 09:30:37PM -0700, Guenter Roeck wrote:
->>>> TCPM may receive PD messages associated with unknown or unsupported
->>>> alternate modes. If that happens, calls to typec_match_altmode()
->>>> will return NULL. The tcpm code does not currently take this into
->>>> account. This results in crashes.
->>>>
->>>> Unable to handle kernel NULL pointer dereference at virtual address 000001f0
->>>> pgd = 41dad9a1
->>>> [000001f0] *pgd=00000000
->>>> Internal error: Oops: 5 [#1] THUMB2
->>>> Modules linked in: tcpci tcpm
->>>> CPU: 0 PID: 2338 Comm: kworker/u2:0 Not tainted 5.1.18-sama5-armv7-r2 #6
->>>> Hardware name: Atmel SAMA5
->>>> Workqueue: 2-0050 tcpm_pd_rx_handler [tcpm]
->>>> PC is at typec_altmode_attention+0x0/0x14
->>>> LR is at tcpm_pd_rx_handler+0xa3b/0xda0 [tcpm]
->>>> ...
->>>> [<c03fbee8>] (typec_altmode_attention) from [<bf8030fb>]
->>>> 				(tcpm_pd_rx_handler+0xa3b/0xda0 [tcpm])
->>>> [<bf8030fb>] (tcpm_pd_rx_handler [tcpm]) from [<c012082b>]
->>>> 				(process_one_work+0x123/0x2a8)
->>>> [<c012082b>] (process_one_work) from [<c0120a6d>]
->>>> 				(worker_thread+0xbd/0x3b0)
->>>> [<c0120a6d>] (worker_thread) from [<c012431f>] (kthread+0xcf/0xf4)
->>>> [<c012431f>] (kthread) from [<c01010f9>] (ret_from_fork+0x11/0x38)
->>>>
->>>> Ignore PD messages if the asociated alternate mode is not supported.
->>>>
->>>> Reported-by: Douglas Gilbert <dgilbert@interlog.com>
->>>> Cc: Douglas Gilbert <dgilbert@interlog.com>
->>>> Fixes: e9576fe8e605c ("usb: typec: tcpm: Support for Alternate Modes")
->>>> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
->>>> ---
->>>> Taking a stab at the problem. I don't really know if this is the correct
->>>> fix, or even if my understanding of the problem is correct, thus marking
->>>> the patch as RFC.
->>>
->>> My guess is that typec_match_altmode() is the real culprit. We can't
->>> rely on the partner mode index number when identifying the port alt
->>> mode.
->>>
->>> Douglas, can you test the attached hack instead of this patch?
->>>
->>>
->>> thanks,
->>>
->>> -- 
->>> heikki
->>
->>> diff --git a/drivers/usb/typec/tcpm/tcpm.c b/drivers/usb/typec/tcpm/tcpm.c
->>> index ec525811a9eb..033dc097ba83 100644
->>> --- a/drivers/usb/typec/tcpm/tcpm.c
->>> +++ b/drivers/usb/typec/tcpm/tcpm.c
->>> @@ -1067,12 +1067,11 @@ static int tcpm_pd_svdm(struct tcpm_port *port, const __le32 *payload, int cnt,
->>>   
->>>   	modep = &port->mode_data;
->>>   
->>> -	adev = typec_match_altmode(port->port_altmode, ALTMODE_DISCOVERY_MAX,
->>> -				   PD_VDO_VID(p[0]), PD_VDO_OPOS(p[0]));
->>> -
->>>   	pdev = typec_match_altmode(port->partner_altmode, ALTMODE_DISCOVERY_MAX,
->>>   				   PD_VDO_VID(p[0]), PD_VDO_OPOS(p[0]));
->>>   
->>> +	adev = (void *)typec_altmode_get_partner(pdev);
->>> +
->>
->> I understand that typec_altmode_get_partner() returns a const *;
->> maybe adev should be declared as const struct typec_altmode *
->> instead of using a typecast.
-> 
-> Yes...
-> 
->> Also, typec_altmode_get_partner() can return NULL as well if pdev is NULL.
->> Is it guaranteed that typec_match_altmode() never returns NULL for pdev ?
-> 
-> ...and probable no. But I don't think we can receive Attention to a
-> mode that hasn't been entered.
-> 
-> I'm not proposing that as a patch. It's just a hunch. That's why I'm
-> calling it a "hack". Before we prepare anything finalized, I would
-> like to here from Douglas if he's able to test that or not?
 
-Hi,
-I'm an ocean away from my test rig at the moment, won't be back home till
-after August 10. Maybe I can set up something here as I have one OM13588.
-Will try later today. Also, switching from an sama5d2_xplained to an Acme
-Systems Arietta which is at91sam9g25 based to run Linux. So it won't be
-exactly the same hardware.
 
-Doug Gilbert
+Website: www.westernunion.com
+Address: Plot 1261, Adela Hopewell Street CO / B / REP, Republic of Benin.
+Email: uwesternunion75@gmail.com
 
+Attention: E-Mail Address Owner,
+Sequel to the meeting held with the Federal Bureau of Investigation, The
+International Monetary Fund (IMF) is compensating all the victims and
+some email users who your name and email address was found on the list.
+However, we have agreed to effect your own payment through Western
+Union=C2=AE Money Transfer, $ 5,000 daily until the total amount of your
+compensation fund is transferred to you.
+
+BELOW IS THE MTCN AND TRACKING WEBSITE TO ENABLE YOU TRACK YOUR FIRST PROGR=
+AMMED APPROVED PAYMENT,
+
+https://www.westernunion.com/global-service/track-transfer
+This is your first payment information:
+
+MTCN #: 517 125 6760
+
+Amount Programmed: $ 5,000
+Track your first online payment now Money Transfer | Global Money
+
+You are advised to get back to the contact person through the email below
+for more information on how to receive your payment.
+Contact person :. . SIR. INNOCENT JOHNSON
+Email address :. . ( uwesternunion75@gmail.com )
+Thanks,
+SIR.INNOCENT JOHNSON
+Director of Western Union Money Transfer,
+Head Office of Benin Republic.
