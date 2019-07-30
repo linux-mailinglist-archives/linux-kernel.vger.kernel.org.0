@@ -2,164 +2,289 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D38F67B220
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:39:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 923E77B227
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:41:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730093AbfG3Sjq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 14:39:46 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:36180 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729994AbfG3Sjq (ORCPT
+        id S1730179AbfG3SlK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 14:41:10 -0400
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:19152 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727599AbfG3SlK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 14:39:46 -0400
-Received: by mail-oi1-f195.google.com with SMTP id q4so19483817oij.3
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 11:39:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=android.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Hn8rVqsLu57CTsIv+4AEu3lgPz7dzu5u0LtZwakTzpQ=;
-        b=aZq4W3sYpLbfDXk5mPkDRrGoJ9ERrPYOH1zTUawx2IBk9XlL1qSZOl4yzfvfL6lp4M
-         mW8BUurVMViiftyaCdfttaIrynR3pQLSfUsP0pYx2Xa+rrmVgxB4/ajPx5Ia37i8SKKB
-         JVbwfSMPoPgxuthtY56dIC9aQLYBODZDnwAlFGbDq6lG7ZhY2DSg7W8XyOvx6Opbn2Pq
-         Qxae5KbdBEwPr1o8HPt5Can+Qah0B7u2dsFtxAtFMQEepS3fEsVCRjgRCJY4Mu29f+q6
-         YMQ8ayP2AL+nzAdJPXhcxlxwzyBLScI2Rp1M+5mLTjZgSUrj45+O4e1F8SPftegc70+c
-         hPDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Hn8rVqsLu57CTsIv+4AEu3lgPz7dzu5u0LtZwakTzpQ=;
-        b=hT8PR/aiKjgn5Du9y5NHqo7vTgyAPQwCCYduq9cviE+pDjYbcOCmL5/ZpdLizz0rin
-         YTW/+zNSZ14nfVl2Ka59KoMxb7ypy38/t7apMN7Fev4KOh1aZYk8lFYwRoC9CxFoKcDN
-         Mtot3kdFchlIHvZ3Odig24bpo6muoZtfIbJlWHF1C5q7FsKiLwBjJssoqk/T7ReBba5l
-         30AG3qnKfLyMnwa1brNJJ0Pa4mfEF2MuAmrttSReeBCMDyqtN7TecjzKZu0OG/VhB9C8
-         rZ6pgQu3JeeR3BZDnD65a+1F2ZMm7mqqDriE5wjX2OJ6pt9krwB7Rbbjqxe91Z9pH6He
-         WsxQ==
-X-Gm-Message-State: APjAAAUNB0/kiX3n0NowcII27sjMpxoOOKiHo8VZ58fDeYrOEf88QhF3
-        ++torHzaacXPbHKAwp7aRvNhOg43X3kpFBgvGdw=
-X-Google-Smtp-Source: APXvYqzcHIs1IocmYpbfRWUSjCZAhhUgwcXSaYsCUrLX2GJ9L0TTQB47knLCvvOTNP4HMJqHvGbL3aG3dPnIio241hw=
-X-Received: by 2002:aca:3509:: with SMTP id c9mr60354165oia.179.1564511985221;
- Tue, 30 Jul 2019 11:39:45 -0700 (PDT)
+        Tue, 30 Jul 2019 14:41:10 -0400
+Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
+        by m0089730.ppops.net (8.16.0.27/8.16.0.27) with SMTP id x6UINe7F018323;
+        Tue, 30 Jul 2019 11:39:57 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=AUwSPm4smgaC06dcO2BrmAUXjLSZek9Pxdr2qqWzQb8=;
+ b=RLGTbz1ottombFFiW1QrJ8odFtboKg60gAiDI1HkU2dvdeAp86dzNAjjD8pDrkKW/tZG
+ TidiA8hVOULw1h0L10wTtZlEXguH5VRfR0zGnKvOw2xN9vX6BOer2sLO9EZBwVba9kdp
+ OeJ4QN0Nz2R5ldsgsta9grgxJ5BLy0NCHto= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by m0089730.ppops.net with ESMTP id 2u2p4b1ape-4
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Tue, 30 Jul 2019 11:39:57 -0700
+Received: from ash-exhub103.TheFacebook.com (2620:10d:c0a8:82::c) by
+ ash-exhub204.TheFacebook.com (2620:10d:c0a8:83::4) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Tue, 30 Jul 2019 11:39:55 -0700
+Received: from NAM02-CY1-obe.outbound.protection.outlook.com (100.104.31.183)
+ by o365-in.thefacebook.com (100.104.35.174) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1713.5
+ via Frontend Transport; Tue, 30 Jul 2019 11:39:55 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Ju8VsZs+Iw+j0/UmYIvv4JUldv6GPJoHMfMFf7tqbhonJMd0kSVNry3HCHWyMTEGsQPFdhGJ9le1UEbJ8zx70gMCcOjXreq7DhJAts3e6w+1fgf/DK6IjENvIJj/ze1aZTXnHK702T+b5hxkIa+aKPmL7OyhJWhUp7zhCrcaCnIVIsMWHIe06ov8dn6u3Af5eZa+6kF6jbhi/fvb53wcVoAEs06rUaHdt8fBP1/fs/nKiFP7cPjRfAvDN70YJN0iOXP06v4giHY38SHIHkf7kKE7JavpRPOqwH5lvp2u6gYM+pLopC5kCzL0fEHbFnuYvB1lPLFtWpFhQs3A5DHlqA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=AUwSPm4smgaC06dcO2BrmAUXjLSZek9Pxdr2qqWzQb8=;
+ b=JqFJe/KZJsqpFae2za80+gCVZBV1jazX1m/2PKJWdKjAYG/N0RBFr6xxj5QymzCcB4NTDO615gud+fY+P3vQ0nD9DvpHMlfVSJlgO5H95CdV6KPw7Ock87+FBkcxJvrwHna5hO6UNf0m7Irppx/FMJtIDEmIt9Y7HweyzMlfhK/U+k0GjNXEIr6SuKT8UxG9NhE71RhzYD4yJo/UmxtW0NSqsgZknHQ4CdV32mltHWkzRoRZa/uN7QV/+LfIv9I6Z8QQd7orjLE1ulfz3yeQYfP5z92EsA5L8ktcGk5IFWRs3eCxTnOoE/cUrQM2ZMiPuOuSFjjVE+ZpZRklo/xQHQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
+ smtp.mailfrom=fb.com;dmarc=pass action=none header.from=fb.com;dkim=pass
+ header.d=fb.com;arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector2-fb-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=AUwSPm4smgaC06dcO2BrmAUXjLSZek9Pxdr2qqWzQb8=;
+ b=Ep3U/KS30jSXOTfYySxc7RUKFtytwfNi2VA+0fgrYYGazNfGJNmGZSHREwaNSdWTk4654YR4QTT2+rNeVhoF4kf2gGrAlHFVo5oyZQTPbMM8+tS0Q+NLT5MfKh0nfXFPffgCHQN3cXONWZ9rdWiOfB72KxSXtvOIGEkzRFQprUs=
+Received: from MWHPR15MB1165.namprd15.prod.outlook.com (10.175.3.22) by
+ MWHPR15MB1167.namprd15.prod.outlook.com (10.175.3.147) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2115.15; Tue, 30 Jul 2019 18:39:54 +0000
+Received: from MWHPR15MB1165.namprd15.prod.outlook.com
+ ([fe80::d4fc:70c0:79a5:f41b]) by MWHPR15MB1165.namprd15.prod.outlook.com
+ ([fe80::d4fc:70c0:79a5:f41b%2]) with mapi id 15.20.2115.005; Tue, 30 Jul 2019
+ 18:39:54 +0000
+From:   Song Liu <songliubraving@fb.com>
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+CC:     lkml <linux-kernel@vger.kernel.org>, Linux-MM <linux-mm@kvack.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "matthew.wilcox@oracle.com" <matthew.wilcox@oracle.com>,
+        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+        "oleg@redhat.com" <oleg@redhat.com>,
+        Kernel Team <Kernel-team@fb.com>,
+        "william.kucharski@oracle.com" <william.kucharski@oracle.com>,
+        "srikar@linux.vnet.ibm.com" <srikar@linux.vnet.ibm.com>
+Subject: Re: [PATCH 1/2] khugepaged: enable collapse pmd for pte-mapped THP
+Thread-Topic: [PATCH 1/2] khugepaged: enable collapse pmd for pte-mapped THP
+Thread-Index: AQHVRdCXaB8qUzCo40K8bOFQNuNjzqbjQxwAgAAplQCAABQIgA==
+Date:   Tue, 30 Jul 2019 18:39:54 +0000
+Message-ID: <48DAF4DE-AB27-487A-B9B2-E733FA30A7B1@fb.com>
+References: <20190729054335.3241150-1-songliubraving@fb.com>
+ <20190729054335.3241150-2-songliubraving@fb.com>
+ <20190730145922.m5omqqf7rmilp6yy@box>
+ <452746EE-186C-43D8-B15C-9921E587BA3A@fb.com>
+In-Reply-To: <452746EE-186C-43D8-B15C-9921E587BA3A@fb.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Apple Mail (2.3445.104.11)
+x-originating-ip: [2620:10d:c090:200::3:5cb8]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: d08c1f08-cca6-4bdc-eec7-08d7151d5063
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:MWHPR15MB1167;
+x-ms-traffictypediagnostic: MWHPR15MB1167:
+x-microsoft-antispam-prvs: <MWHPR15MB1167F0C17DE588DA0652E1DAB3DC0@MWHPR15MB1167.namprd15.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6108;
+x-forefront-prvs: 0114FF88F6
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(366004)(376002)(396003)(346002)(136003)(199004)(189003)(102836004)(476003)(33656002)(6916009)(76116006)(2616005)(66446008)(486006)(229853002)(86362001)(11346002)(50226002)(66556008)(64756008)(446003)(66476007)(256004)(71200400001)(4326008)(6246003)(25786009)(81156014)(66946007)(8676002)(68736007)(8936002)(71190400001)(46003)(81166006)(7736002)(5660300002)(99286004)(2906002)(6506007)(186003)(478600001)(14444005)(316002)(76176011)(6436002)(14454004)(36756003)(57306001)(53936002)(6486002)(53546011)(6116002)(305945005)(54906003)(6512007);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR15MB1167;H:MWHPR15MB1165.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: hHsOqAID5UGAS+4qcrjJEN8IOBtIZYLa1GD3lrZI0Wn5zMbX+HcOrr9Ve6z57Eq9vO/0v57nOeSRWTqy86fkAjeGHnlyAC9fZgGxxluXBJZW+mRQVRWUrLbA2j/9qe7Ndc6rBPrwlpoJeiiMJiwP/LnNI9CwGmPlcQu2rGMFs1AlViIbmurQtEYu7TixjnL+9sO0I8D8kKExINpo7pds0byT193CB2fi2Jr+/B+BAoGQj5ZcBiUrK3Pr3/cfy7c4F8Xy+dHlD7RgcFPxLtfyjGM/ta86INWmjde8fDr5gmIpGIAQQWbRRT5XeaN0H9SN8ibCmbpTp0dEwXpvJqA/zboRg+Dyv4m+DtNnlPZ8DTcD+5FbQWDt+yuGh8u7LPvJ9TY83Qmo3n5vyS4cFWwz/EmioYK7F9ZzLPmnVbmYTJQ=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <48545CF677458D478E69088DFEE8881D@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <20190730024309.233728-1-trong@android.com> <CAJZ5v0jJn=vHdYExbzwRAMsk=Ad5bhvOAvHEXe-FHOj2R4Gwig@mail.gmail.com>
-In-Reply-To: <CAJZ5v0jJn=vHdYExbzwRAMsk=Ad5bhvOAvHEXe-FHOj2R4Gwig@mail.gmail.com>
-From:   Tri Vo <trong@android.com>
-Date:   Tue, 30 Jul 2019 11:39:34 -0700
-Message-ID: <CANA+-vBKg_W88Oy_wJs1NNYaZ2ciJKO=Mrs47etYTDNXUKW9Uw@mail.gmail.com>
-Subject: Re: [PATCH v5] PM / wakeup: show wakeup sources stats in sysfs
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Hridya Valsaraju <hridya@google.com>,
-        Sandeep Patil <sspatil@google.com>,
-        Kalesh Singh <kaleshsingh@google.com>,
-        Ravi Chandra Sadineni <ravisadineni@chromium.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        "Cc: Android Kernel" <kernel-team@android.com>,
-        kbuild test robot <lkp@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-Exchange-CrossTenant-Network-Message-Id: d08c1f08-cca6-4bdc-eec7-08d7151d5063
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Jul 2019 18:39:54.1584
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: songliubraving@fb.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR15MB1167
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-30_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=943 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1907300191
+X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 29, 2019 at 10:46 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
->
-> On Tue, Jul 30, 2019 at 4:45 AM Tri Vo <trong@android.com> wrote:
-> >
-> > Userspace can use wakeup_sources debugfs node to plot history of suspend
-> > blocking wakeup sources over device's boot cycle. This information can
-> > then be used (1) for power-specific bug reporting and (2) towards
-> > attributing battery consumption to specific processes over a period of
-> > time.
-> >
-> > However, debugfs doesn't have stable ABI. For this reason, create a
-> > 'struct device' to expose wakeup sources statistics in sysfs under
-> > /sys/class/wakeup/wakeup<ID>/*.
-> >
-> > Co-developed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > Co-developed-by: Stephen Boyd <swboyd@chromium.org>
-> > Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-> > Signed-off-by: Tri Vo <trong@android.com>
-> > Tested-by: Tri Vo <trong@android.com>
-> > Tested-by: Kalesh Singh <kaleshsingh@google.com>
-> > Reported-by: kbuild test robot <lkp@intel.com>
-> > ---
-> >  Documentation/ABI/testing/sysfs-class-wakeup |  76 +++++++++
-> >  drivers/acpi/device_pm.c                     |   3 +-
-> >  drivers/base/power/Makefile                  |   2 +-
-> >  drivers/base/power/wakeup.c                  |  21 ++-
-> >  drivers/base/power/wakeup_stats.c            | 171 +++++++++++++++++++
-> >  fs/eventpoll.c                               |   4 +-
-> >  include/linux/pm_wakeup.h                    |  15 +-
-> >  kernel/power/autosleep.c                     |   2 +-
-> >  kernel/power/wakelock.c                      |  10 ++
-> >  kernel/time/alarmtimer.c                     |   2 +-
-> >  10 files changed, 294 insertions(+), 12 deletions(-)
-> >  create mode 100644 Documentation/ABI/testing/sysfs-class-wakeup
-> >  create mode 100644 drivers/base/power/wakeup_stats.c
-> >
-> > v2:
-> > - Updated Documentation/ABI/, as per Greg.
-> > - Removed locks in attribute functions, as per Greg.
-> > - Lifetimes of struct wakelock and struck wakeup_source are now different due to
-> >   the latter embedding a refcounted kobject. Changed it so that struct wakelock
-> >   only has a pointer to struct wakeup_source, instead of embedding it.
-> > - Added CONFIG_PM_SLEEP_STATS that enables/disables wakeup source statistics in
-> >   sysfs.
-> >
-> > v3:
-> > Changes by Greg:
-> > - Reworked code to use 'struct device' instead of raw kobjects.
-> > - Updated documentation file.
-> > - Only link wakeup_stats.o when CONFIG_PM_SLEEP_STATS is enabled.
-> > Changes by Tri:
-> > - Reverted changes to kernel/power/wakelock.c. 'struct device' hides kobject
-> >   operations. So no need to handle lifetimes in wakelock.c
-> >
-> > v4:
-> > - Added 'Co-developed-by:' and 'Tested-by:' fields to commit message.
-> > - Moved new documentation to a separate file
-> >   Documentation/ABI/testing/sysfs-class-wakeup, as per Greg.
-> > - Fixed copyright header in drivers/base/power/wakeup_stats.c, as per Greg.
-> >
-> > v5:
-> > - Removed CONFIG_PM_SLEEP_STATS
-> > - Used PTR_ERR_OR_ZERO instead of if(IS_ERR(...)) + PTR_ERR, reported by
-> >   kbuild test robot <lkp@intel.com>
-> > - Stephen reported that a call to device_init_wakeup() and writing 'enabled' to
-> >   that device's power/wakeup file results in multiple wakeup source being
-> >   allocated for that device.  Changed device_wakeup_enable() to check if device
-> >   wakeup was previously enabled.
-> > Changes by Stephen:
-> > - Changed stats location from /sys/class/wakeup/<name>/* to
-> >   /sys/class/wakeup/wakeup<ID>/*, where ID is an IDA-allocated integer. This
-> >   avoids name collisions in /sys/class/wakeup/ directory.
-> > - Added a "name" attribute to wakeup sources, and updated documentation.
-> > - Device registering the wakeup source is now the parent of the wakeup source.
-> >   Updated wakeup_source_register()'s signature and its callers accordingly.
->
-> And I really don't like these changes.  Especially having "wakeup"
-> twice in the path.
 
-I can trim it down to /sys/class/wakeup/<ID>/. Does that sound good?
 
-About the other change, I think making the registering device the
-parent of the wakeup source is a worthwhile change, since that way one
-can associate a wakeup source sysfs entry with the device that created
-it.
->
-> Couldn't you find a simpler way to avoid the name collisions?
+> On Jul 30, 2019, at 10:28 AM, Song Liu <songliubraving@fb.com> wrote:
+>=20
+>=20
+>=20
+>> On Jul 30, 2019, at 7:59 AM, Kirill A. Shutemov <kirill@shutemov.name> w=
+rote:
+>>=20
+>> On Sun, Jul 28, 2019 at 10:43:34PM -0700, Song Liu wrote:
+>>> khugepaged needs exclusive mmap_sem to access page table. When it fails
+>>> to lock mmap_sem, the page will fault in as pte-mapped THP. As the page
+>>> is already a THP, khugepaged will not handle this pmd again.
+>>>=20
+>>> This patch enables the khugepaged to retry collapse the page table.
+>>>=20
+>>> struct mm_slot (in khugepaged.c) is extended with an array, containing
+>>> addresses of pte-mapped THPs. We use array here for simplicity. We can
+>>> easily replace it with more advanced data structures when needed. This
+>>> array is protected by khugepaged_mm_lock.
+>>>=20
+>>> In khugepaged_scan_mm_slot(), if the mm contains pte-mapped THP, we try
+>>> to collapse the page table.
+>>>=20
+>>> Since collapse may happen at an later time, some pages may already faul=
+t
+>>> in. collapse_pte_mapped_thp() is added to properly handle these pages.
+>>> collapse_pte_mapped_thp() also double checks whether all ptes in this p=
+md
+>>> are mapping to the same THP. This is necessary because some subpage of
+>>> the THP may be replaced, for example by uprobe. In such cases, it is no=
+t
+>>> possible to collapse the pmd.
+>>>=20
+>>> Signed-off-by: Song Liu <songliubraving@fb.com>
+>>> ---
+>>> include/linux/khugepaged.h |  15 ++++
+>>> mm/khugepaged.c            | 136 +++++++++++++++++++++++++++++++++++++
+>>> 2 files changed, 151 insertions(+)
+>>>=20
+>>> diff --git a/include/linux/khugepaged.h b/include/linux/khugepaged.h
+>>> index 082d1d2a5216..2d700830fe0e 100644
+>>> --- a/include/linux/khugepaged.h
+>>> +++ b/include/linux/khugepaged.h
+>>> @@ -15,6 +15,16 @@ extern int __khugepaged_enter(struct mm_struct *mm);
+>>> extern void __khugepaged_exit(struct mm_struct *mm);
+>>> extern int khugepaged_enter_vma_merge(struct vm_area_struct *vma,
+>>> 				      unsigned long vm_flags);
+>>> +#ifdef CONFIG_SHMEM
+>>> +extern int khugepaged_add_pte_mapped_thp(struct mm_struct *mm,
+>>> +					 unsigned long addr);
+>>> +#else
+>>> +static inline int khugepaged_add_pte_mapped_thp(struct mm_struct *mm,
+>>> +						unsigned long addr)
+>>> +{
+>>> +	return 0;
+>>> +}
+>>> +#endif
+>>>=20
+>>> #define khugepaged_enabled()					       \
+>>> 	(transparent_hugepage_flags &				       \
+>>> @@ -73,6 +83,11 @@ static inline int khugepaged_enter_vma_merge(struct =
+vm_area_struct *vma,
+>>> {
+>>> 	return 0;
+>>> }
+>>> +static inline int khugepaged_add_pte_mapped_thp(struct mm_struct *mm,
+>>> +						unsigned long addr)
+>>> +{
+>>> +	return 0;
+>>> +}
+>>> #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
+>>>=20
+>>> #endif /* _LINUX_KHUGEPAGED_H */
+>>> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+>>> index eaaa21b23215..247c25aeb096 100644
+>>> --- a/mm/khugepaged.c
+>>> +++ b/mm/khugepaged.c
+>>> @@ -76,6 +76,7 @@ static __read_mostly DEFINE_HASHTABLE(mm_slots_hash, =
+MM_SLOTS_HASH_BITS);
+>>>=20
+>>> static struct kmem_cache *mm_slot_cache __read_mostly;
+>>>=20
+>>> +#define MAX_PTE_MAPPED_THP 8
+>>=20
+>> Is MAX_PTE_MAPPED_THP value random or do you have any justification for
+>> it?
+>=20
+> In our use cases, we only have small number (< 10) of huge pages for the
+> text section, so 8 should be enough to cover the worse case.=20
+>=20
+> If this is not sufficient, we can make it a list.=20
+>=20
+>>=20
+>> Please add empty line after it.
+>>=20
+>>> /**
+>>> * struct mm_slot - hash lookup from mm to mm_slot
+>>> * @hash: hash collision list
+>>> @@ -86,6 +87,10 @@ struct mm_slot {
+>>> 	struct hlist_node hash;
+>>> 	struct list_head mm_node;
+>>> 	struct mm_struct *mm;
+>>> +
+>>> +	/* pte-mapped THP in this mm */
+>>> +	int nr_pte_mapped_thp;
+>>> +	unsigned long pte_mapped_thp[MAX_PTE_MAPPED_THP];
+>>> };
+>>>=20
+>>> /**
+>>> @@ -1281,11 +1286,141 @@ static void retract_page_tables(struct address=
+_space *mapping, pgoff_t pgoff)
+>>> 			up_write(&vma->vm_mm->mmap_sem);
+>>> 			mm_dec_nr_ptes(vma->vm_mm);
+>>> 			pte_free(vma->vm_mm, pmd_pgtable(_pmd));
+>>> +		} else if (down_read_trylock(&vma->vm_mm->mmap_sem)) {
+>>> +			/* need down_read for khugepaged_test_exit() */
+>>> +			khugepaged_add_pte_mapped_thp(vma->vm_mm, addr);
+>>> +			up_read(&vma->vm_mm->mmap_sem);
+>>> 		}
+>>> 	}
+>>> 	i_mmap_unlock_write(mapping);
+>>> }
+>>>=20
+>>> +/*
+>>> + * Notify khugepaged that given addr of the mm is pte-mapped THP. Then
+>>> + * khugepaged should try to collapse the page table.
+>>> + */
+>>> +int khugepaged_add_pte_mapped_thp(struct mm_struct *mm, unsigned long =
+addr)
+>>=20
+>> What is contract about addr alignment? Do we expect it PAGE_SIZE aligned
+>> or PMD_SIZE aligned? Do we want to enforce it?
+>=20
+> It is PMD_SIZE aligned. Let me add VM_BUG_ON() for it.=20
+>=20
+>>=20
+>>> +{
+>>> +	struct mm_slot *mm_slot;
+>>> +	int ret =3D 0;
+>>> +
+>>> +	/* hold mmap_sem for khugepaged_test_exit() */
+>>> +	VM_BUG_ON_MM(!rwsem_is_locked(&mm->mmap_sem), mm);
+>>> +
+>>> +	if (unlikely(khugepaged_test_exit(mm)))
+>>> +		return 0;
+>>> +
+>>> +	if (!test_bit(MMF_VM_HUGEPAGE, &mm->flags) &&
+>>> +	    !test_bit(MMF_DISABLE_THP, &mm->flags)) {
+>>> +		ret =3D __khugepaged_enter(mm);
+>>> +		if (ret)
+>>> +			return ret;
+>>> +	}
+>>=20
+>> Any reason not to call khugepaged_enter() here?
+>=20
+> No specific reasons... Let me try it.=20
 
-I could also simply log an error in case of a name collision instead
-of failing hard. That way I can keep the old path with the wakeup
-source name in it. Other than that, I can't think of a way to resolve
-the directory name collisions without making that directory name
-unique, i.e. generating IDs is probably the simplest way. I'm still
-learning about the kernel, and I might be wrong though. What do you
-think?
+Actually, khugepaged_enter() takes vma and vm_flags; while here we only =20
+have the mm. I guess we should just use __khugepaged_enter(). Once we=20
+remove all checks on vm_flags, khugepaged_enter() is about the same as=20
+the logic above.=20
+
+Thanks,
+Song
+
+[...]=
