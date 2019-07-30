@@ -2,68 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 292497B3AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 21:57:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B07F7B3C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 21:59:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726826AbfG3T5r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 15:57:47 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47278 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726136AbfG3T5q (ORCPT
+        id S1727043AbfG3T7t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 15:59:49 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:46504 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726145AbfG3T7q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 15:57:46 -0400
-Received: from X1 (unknown [76.191.170.112])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9EACF3197;
-        Tue, 30 Jul 2019 19:57:45 +0000 (UTC)
-Date:   Tue, 30 Jul 2019 12:57:43 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Catalin Marinas <catalin.marinas@arm.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Michal Hocko <mhocko@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>, Qian Cai <cai@lca.pw>
-Subject: Re: [PATCH v2] mm: kmemleak: Use mempool allocations for kmemleak
- objects
-Message-Id: <20190730125743.113e59a9c449847d7f6ae7c3@linux-foundation.org>
-In-Reply-To: <20190727132334.9184-1-catalin.marinas@arm.com>
-References: <20190727132334.9184-1-catalin.marinas@arm.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Tue, 30 Jul 2019 15:59:46 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6UJwhHZ008617;
+        Tue, 30 Jul 2019 19:59:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2018-07-02;
+ bh=STyxh+o6YMX4HVb6VfelNNNW9pbmr+o8Ml4PPh0YrMs=;
+ b=fHXt/nDK0exB276CalsF+xzhOcBp/K0VxmRKvnKTPTR0IjdowTo3CiXRm9FczDxsICsu
+ 8XbAMPHQso5/pm2T8fXBq99baT83NJ4m+t5mcCwAiYcBsTCIq2I//sIL7h3C7pkkZvBI
+ zhw/G9U2hd8g1+p3f8DT2tE6iRkGw6Jk7NkA2UybHVVwQckK3GXqjTh8BtjmpaipnX0A
+ iFPO40Xf/ng3zAzvBQTNzxrKJQ+tzRAWNs+C0klCL7ggh+5jtH+kM1IO9lXGb9lBDLiw
+ cotY0O9GqSViIwgsek5yZ9JKZjF9GBd4TRVaGCoHfAgsHGP+3Xx1OX6BwBKsq3HMhaVG RA== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2120.oracle.com with ESMTP id 2u0f8r0nqd-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 30 Jul 2019 19:59:26 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6UJwSPK148755;
+        Tue, 30 Jul 2019 19:59:26 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3030.oracle.com with ESMTP id 2u0bquca6v-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 30 Jul 2019 19:59:26 +0000
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x6UJxN1o028299;
+        Tue, 30 Jul 2019 19:59:23 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 30 Jul 2019 19:59:23 +0000
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     "Manoj N. Kumar" <manoj@linux.ibm.com>,
+        "Matthew R. Ochs" <mrochs@linux.ibm.com>,
+        Uma Krishnan <ukrishn@linux.ibm.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH] scsi: cxlflash: Mark expected switch fall-throughs
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <20190729002119.GA25068@embeddedor>
+Date:   Tue, 30 Jul 2019 15:59:20 -0400
+In-Reply-To: <20190729002119.GA25068@embeddedor> (Gustavo A. R. Silva's
+        message of "Sun, 28 Jul 2019 19:21:19 -0500")
+Message-ID: <yq11ry7mgyv.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9334 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=770
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1907300203
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9334 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=838 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1907300203
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 27 Jul 2019 14:23:33 +0100 Catalin Marinas <catalin.marinas@arm.com> wrote:
 
-> Add mempool allocations for struct kmemleak_object and
-> kmemleak_scan_area as slightly more resilient than kmem_cache_alloc()
-> under memory pressure. Additionally, mask out all the gfp flags passed
-> to kmemleak other than GFP_KERNEL|GFP_ATOMIC.
-> 
-> A boot-time tuning parameter (kmemleak.mempool) is added to allow a
-> different minimum pool size (defaulting to NR_CPUS * 4).
+Gustavo A.,
 
-Why would anyone ever want to alter this?  Is there some particular
-misbehaviour which this will improve?  If so, what is it?
+> Mark switch cases where we are expecting to fall through.
 
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -2011,6 +2011,12 @@
->  			Built with CONFIG_DEBUG_KMEMLEAK_DEFAULT_OFF=y,
->  			the default is off.
->  
-> +	kmemleak.mempool=
-> +			[KNL] Boot-time tuning of the minimum kmemleak
-> +			metadata pool size.
-> +			Format: <int>
-> +			Default: NR_CPUS * 4
-> +
+Applied to 5.4/scsi-queue, thanks!
 
-This is the only documentation we provide people and it doesn't really
-explain anything at all.  IOW, can we do a better job of explaining all this
-to the target audience?
-
-Why does the min size need to be tunable anyway?
-
+-- 
+Martin K. Petersen	Oracle Linux Engineering
