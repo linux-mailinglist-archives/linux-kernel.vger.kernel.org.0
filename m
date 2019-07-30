@@ -2,80 +2,29 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1457B7C86B
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 18:19:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 28DDE7C890
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 18:25:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728410AbfGaQS5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 12:18:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57582 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726421AbfGaQS4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 12:18:56 -0400
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AF7DE206A3;
-        Wed, 31 Jul 2019 16:18:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564589935;
-        bh=m7LJ3cDXN8hWsMVQHOFhXh2IAaCcNSFO7AdnTzfmink=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=xHTQjj7PSrLQWiXVVgdu/bqDtHo9wdnu/reCcbSA4Ojc/21Ec3AP2DK9NlMM/UdMB
-         aDywlRLRPeWFiu1Il/2qBhpBmsteNuQmh7C1wnSHzmFkxBOJ8kRifhCGya1xWPfH/X
-         hrKYsr1KcoXaLFH50ccWaTzmv943SK2SjFdRMYno=
-Date:   Wed, 31 Jul 2019 17:18:52 +0100
-From:   Will Deacon <will@kernel.org>
-To:     Qian Cai <cai@lca.pw>
-Cc:     ard.biesheuvel@linaro.org, catalin.marinas@arm.com,
-        linux-efi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64/efi: fix variable 'si' set but not used
-Message-ID: <20190731161851.raecunlcm4zpd3pb@willie-the-truck>
-References: <1564521828-4528-1-git-send-email-cai@lca.pw>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1564521828-4528-1-git-send-email-cai@lca.pw>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        id S1729188AbfGaQZF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 12:25:05 -0400
+Received: from [42.245.203.140] ([42.245.203.140]:46220 "EHLO
+        mirrors.aliyun.com" rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726421AbfGaQZF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jul 2019 12:25:05 -0400
+X-Greylist: delayed 4476 seconds by postgrey-1.27 at vger.kernel.org; Wed, 31 Jul 2019 12:25:04 EDT
+Received: from localhost (localhost [IPv6:::1])
+        by mirrors.aliyun.com (Postfix) with SMTP id 8494A1DCBF7
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 09:13:40 -0400 (EDT)
+From:   linux-kernel@vger.kernel.org
+Reply-To: prodawez@armyspy.com
+To:     xNsNG5linux-kernel@vger.kernel.org
+Subject: Zdravstvujte! Vas interesuyut klientskie bazy dannyh?
+Message-Id: <20190730131341.8494A1DCBF7@mirrors.aliyun.com>
+Date:   Tue, 30 Jul 2019 09:13:40 -0400 (EDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 30, 2019 at 05:23:48PM -0400, Qian Cai wrote:
-> GCC throws out this warning on arm64.
-> 
-> drivers/firmware/efi/libstub/arm-stub.c: In function 'efi_entry':
-> drivers/firmware/efi/libstub/arm-stub.c:132:22: warning: variable 'si'
-> set but not used [-Wunused-but-set-variable]
-> 
-> Fix it by making free_screen_info() a static inline function.
-> 
-> Signed-off-by: Qian Cai <cai@lca.pw>
-> ---
->  arch/arm64/include/asm/efi.h | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/include/asm/efi.h b/arch/arm64/include/asm/efi.h
-> index 8e79ce9c3f5c..76a144702586 100644
-> --- a/arch/arm64/include/asm/efi.h
-> +++ b/arch/arm64/include/asm/efi.h
-> @@ -105,7 +105,11 @@ static inline unsigned long efi_get_max_initrd_addr(unsigned long dram_base,
->  	((protocol##_t *)instance)->f(instance, ##__VA_ARGS__)
->  
->  #define alloc_screen_info(x...)		&screen_info
-> -#define free_screen_info(x...)
-> +
-> +static inline void free_screen_info(efi_system_table_t *sys_table_arg,
-> +				    struct screen_info *si)
-> +{
-> +}
->  
->  /* redeclare as 'hidden' so the compiler will generate relative references */
->  extern struct screen_info screen_info __attribute__((__visibility__("hidden")));
-> -- 
-> 1.8.3.1
-
-Acked-by: Will Deacon <will@kernel.org>
-
-Will
+Zdravstvujte! Vas interesuyut klientskie bazy dannyh?
