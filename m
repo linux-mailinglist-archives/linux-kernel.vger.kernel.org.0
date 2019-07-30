@@ -2,54 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13A967B224
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:40:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BCBD57B229
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:41:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730157AbfG3Sk1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 14:40:27 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:48829 "EHLO
+        id S1730211AbfG3SlP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 14:41:15 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:41909 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727599AbfG3Sk1 (ORCPT
+        with ESMTP id S1726964AbfG3SlP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 14:40:27 -0400
+        Tue, 30 Jul 2019 14:41:15 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6UIeFR93332237
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6UIf4mv3332337
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Tue, 30 Jul 2019 11:40:15 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6UIeFR93332237
+        Tue, 30 Jul 2019 11:41:04 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6UIf4mv3332337
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019071901; t=1564512016;
-        bh=aNj8LBRLVy6o+TvdiqsVMBtoCnmVmmPuApNYdp+U8kA=;
+        s=2019071901; t=1564512064;
+        bh=M7WcuYWozD9cqn2CnsBTqK07EjQNpz71ZURjCKEA+D8=;
         h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=osHYWiJLar8jGXxA3qcxj68WgUFMM1oVKbggoxrLXuH6HENhFInpaOy8zaEMgS7B7
-         R6kk0+HCb6iRO97wbjJk7SnQydpj5axQ4we/33+CU0Ck86uuNbSBT14dgnhzLI2KRL
-         g5vF5byNuaKTMmpBlKcvzsVwJttBf2i7RW96C3ocGqZyjyIhmsvDdtPsQlrhbr2UPz
-         tw411UV4ElJuCGXCAbkjO73y4Th+pOBor0lAZly/PkA+3q4jZ9I2kQvZe4DgQUca4T
-         BELZ1shOd8Lb7410EY99FluDE0Aq2e5wJ1vTHXuQDf3GSaOYsLxtdZ5Niab4jI1Z0a
-         3uDFLAGLhZmrg==
+        b=2lR27eD2GxwbNmig6E7pvJPfDnrlUlBK8YvzrdaGO7nd9dl5vxMNjf/HqBvGDuK++
+         iPcJtNYum9IP+zuRIk/Q7Ho8e9Kzf8Yw1gbPNv7WgeuG1vnxGzkDqi+ixi+p7suLOV
+         l/oJn3QaJF25yVURH/zPpOi/9HHX3C2Tz/8ar/5n6tHYxSKKNkehJTk/uUPm2wDrDb
+         PHYaxOdCm3BmKZbIoiBi9CGIhfBQ03T/u3eYwxxFr8Armus5uBCgp4zb4gRvsRGbaQ
+         /2iP6sxMnuumgAMsqqlrfGzxIKsjz6WB89Dmg9XmLaC853PKLRzi23q1dr9c+RJOv4
+         kzVm4v9k5qVvQ==
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6UIeFsx3332233;
-        Tue, 30 Jul 2019 11:40:15 -0700
-Date:   Tue, 30 Jul 2019 11:40:15 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6UIf3D93332334;
+        Tue, 30 Jul 2019 11:41:03 -0700
+Date:   Tue, 30 Jul 2019 11:41:03 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
-Message-ID: <tip-93bce7e5bfcd570e9250c974b5c2c91d6b8332ef@git.kernel.org>
-Cc:     alexey.budankov@linux.intel.com, tglx@linutronix.de,
-        ak@linux.intel.com, peterz@infradead.org, hpa@zytor.com,
-        linux-kernel@vger.kernel.org, mpetlan@redhat.com, jolsa@kernel.org,
-        alexander.shishkin@linux.intel.com, acme@redhat.com,
-        mingo@kernel.org, namhyung@kernel.org
-Reply-To: ak@linux.intel.com, hpa@zytor.com, peterz@infradead.org,
-          tglx@linutronix.de, alexey.budankov@linux.intel.com,
-          acme@redhat.com, alexander.shishkin@linux.intel.com,
-          jolsa@kernel.org, mpetlan@redhat.com,
-          linux-kernel@vger.kernel.org, namhyung@kernel.org,
-          mingo@kernel.org
-In-Reply-To: <20190721112506.12306-45-jolsa@kernel.org>
-References: <20190721112506.12306-45-jolsa@kernel.org>
+Message-ID: <tip-634912d61ccc6bfeebb87716c276fbea20f63bdc@git.kernel.org>
+Cc:     mpetlan@redhat.com, acme@redhat.com, peterz@infradead.org,
+        ak@linux.intel.com, namhyung@kernel.org, mingo@kernel.org,
+        alexey.budankov@linux.intel.com,
+        alexander.shishkin@linux.intel.com, hpa@zytor.com,
+        linux-kernel@vger.kernel.org, jolsa@kernel.org, tglx@linutronix.de
+Reply-To: acme@redhat.com, mpetlan@redhat.com, peterz@infradead.org,
+          hpa@zytor.com, alexander.shishkin@linux.intel.com,
+          alexey.budankov@linux.intel.com, ak@linux.intel.com,
+          namhyung@kernel.org, mingo@kernel.org,
+          linux-kernel@vger.kernel.org, jolsa@kernel.org,
+          tglx@linutronix.de
+In-Reply-To: <20190721112506.12306-46-jolsa@kernel.org>
+References: <20190721112506.12306-46-jolsa@kernel.org>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] libperf: Move zalloc.o into libperf
-Git-Commit-ID: 93bce7e5bfcd570e9250c974b5c2c91d6b8332ef
+Subject: [tip:perf/core] libperf: Add perf_evlist__new() function
+Git-Commit-ID: 634912d61ccc6bfeebb87716c276fbea20f63bdc
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -67,16 +67,17 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  93bce7e5bfcd570e9250c974b5c2c91d6b8332ef
-Gitweb:     https://git.kernel.org/tip/93bce7e5bfcd570e9250c974b5c2c91d6b8332ef
+Commit-ID:  634912d61ccc6bfeebb87716c276fbea20f63bdc
+Gitweb:     https://git.kernel.org/tip/634912d61ccc6bfeebb87716c276fbea20f63bdc
 Author:     Jiri Olsa <jolsa@kernel.org>
-AuthorDate: Sun, 21 Jul 2019 13:24:31 +0200
+AuthorDate: Sun, 21 Jul 2019 13:24:32 +0200
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Mon, 29 Jul 2019 18:34:45 -0300
 
-libperf: Move zalloc.o into libperf
+libperf: Add perf_evlist__new() function
 
-We need it in both perf and libperf, thus moving it to libperf.
+Add perf_evlist__new() function to create and init a perf_evlist struct
+dynamicaly.
 
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
@@ -85,56 +86,60 @@ Cc: Andi Kleen <ak@linux.intel.com>
 Cc: Michael Petlan <mpetlan@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20190721112506.12306-45-jolsa@kernel.org
+Link: http://lkml.kernel.org/r/20190721112506.12306-46-jolsa@kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/lib/Build               | 5 +++++
- tools/perf/util/Build              | 5 -----
- tools/perf/util/python-ext-sources | 1 -
- 3 files changed, 5 insertions(+), 6 deletions(-)
+ tools/perf/lib/evlist.c              | 11 +++++++++++
+ tools/perf/lib/include/perf/evlist.h |  1 +
+ tools/perf/lib/libperf.map           |  1 +
+ 3 files changed, 13 insertions(+)
 
-diff --git a/tools/perf/lib/Build b/tools/perf/lib/Build
-index b27c1543b046..faf64db13e37 100644
---- a/tools/perf/lib/Build
-+++ b/tools/perf/lib/Build
-@@ -3,3 +3,8 @@ libperf-y += cpumap.o
- libperf-y += threadmap.o
- libperf-y += evsel.o
- libperf-y += evlist.o
-+libperf-y += zalloc.o
+diff --git a/tools/perf/lib/evlist.c b/tools/perf/lib/evlist.c
+index 1b27fd2de9b9..0517deb4cb1c 100644
+--- a/tools/perf/lib/evlist.c
++++ b/tools/perf/lib/evlist.c
+@@ -3,6 +3,7 @@
+ #include <linux/list.h>
+ #include <internal/evlist.h>
+ #include <internal/evsel.h>
++#include <linux/zalloc.h>
+ 
+ void perf_evlist__init(struct perf_evlist *evlist)
+ {
+@@ -23,3 +24,13 @@ void perf_evlist__remove(struct perf_evlist *evlist,
+ 	list_del_init(&evsel->node);
+ 	evlist->nr_entries -= 1;
+ }
 +
-+$(OUTPUT)zalloc.o: ../../lib/zalloc.c FORCE
-+	$(call rule_mkdir)
-+	$(call if_changed_dep,cc_o_c)
-diff --git a/tools/perf/util/Build b/tools/perf/util/Build
-index 14f812bb07a7..08f670d21615 100644
---- a/tools/perf/util/Build
-+++ b/tools/perf/util/Build
-@@ -26,7 +26,6 @@ perf-y += rbtree.o
- perf-y += libstring.o
- perf-y += bitmap.o
- perf-y += hweight.o
--perf-y += zalloc.o
- perf-y += smt.o
- perf-y += strbuf.o
- perf-y += string.o
-@@ -243,7 +242,3 @@ $(OUTPUT)util/hweight.o: ../lib/hweight.c FORCE
- $(OUTPUT)util/vsprintf.o: ../lib/vsprintf.c FORCE
- 	$(call rule_mkdir)
- 	$(call if_changed_dep,cc_o_c)
--
--$(OUTPUT)util/zalloc.o: ../lib/zalloc.c FORCE
--	$(call rule_mkdir)
--	$(call if_changed_dep,cc_o_c)
-diff --git a/tools/perf/util/python-ext-sources b/tools/perf/util/python-ext-sources
-index ceb8afdf9a89..2237bac9fadb 100644
---- a/tools/perf/util/python-ext-sources
-+++ b/tools/perf/util/python-ext-sources
-@@ -18,7 +18,6 @@ util/namespaces.c
- ../lib/hweight.c
- ../lib/string.c
- ../lib/vsprintf.c
--../lib/zalloc.c
- util/thread_map.c
- util/util.c
- util/xyarray.c
++struct perf_evlist *perf_evlist__new(void)
++{
++	struct perf_evlist *evlist = zalloc(sizeof(*evlist));
++
++	if (evlist != NULL)
++		perf_evlist__init(evlist);
++
++	return evlist;
++}
+diff --git a/tools/perf/lib/include/perf/evlist.h b/tools/perf/lib/include/perf/evlist.h
+index e0c87995c6ff..7255a60869a1 100644
+--- a/tools/perf/lib/include/perf/evlist.h
++++ b/tools/perf/lib/include/perf/evlist.h
+@@ -12,5 +12,6 @@ LIBPERF_API void perf_evlist__add(struct perf_evlist *evlist,
+ 				  struct perf_evsel *evsel);
+ LIBPERF_API void perf_evlist__remove(struct perf_evlist *evlist,
+ 				     struct perf_evsel *evsel);
++LIBPERF_API struct perf_evlist *perf_evlist__new(void);
+ 
+ #endif /* __LIBPERF_EVLIST_H */
+diff --git a/tools/perf/lib/libperf.map b/tools/perf/lib/libperf.map
+index e38473a8f32f..5e685d6c7a95 100644
+--- a/tools/perf/lib/libperf.map
++++ b/tools/perf/lib/libperf.map
+@@ -12,6 +12,7 @@ LIBPERF_0.0.1 {
+ 		perf_thread_map__get;
+ 		perf_thread_map__put;
+ 		perf_evsel__init;
++		perf_evlist__new;
+ 		perf_evlist__init;
+ 		perf_evlist__add;
+ 		perf_evlist__remove;
