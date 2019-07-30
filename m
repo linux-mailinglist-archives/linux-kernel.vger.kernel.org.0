@@ -2,25 +2,25 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D4B6E7ABA1
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 16:59:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5919B7ABA4
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 16:59:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731807AbfG3O6I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 10:58:08 -0400
-Received: from mxout014.mail.hostpoint.ch ([217.26.49.174]:37660 "EHLO
-        mxout014.mail.hostpoint.ch" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726953AbfG3O6H (ORCPT
+        id S1731833AbfG3O6J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 10:58:09 -0400
+Received: from mxout017.mail.hostpoint.ch ([217.26.49.177]:30563 "EHLO
+        mxout017.mail.hostpoint.ch" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728908AbfG3O6I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 10:58:07 -0400
+        Tue, 30 Jul 2019 10:58:08 -0400
 Received: from [10.0.2.46] (helo=asmtp013.mail.hostpoint.ch)
-        by mxout014.mail.hostpoint.ch with esmtp (Exim 4.92 (FreeBSD))
+        by mxout017.mail.hostpoint.ch with esmtp (Exim 4.92 (FreeBSD))
         (envelope-from <dev@pschenker.ch>)
-        id 1hsTZk-0007cX-ID; Tue, 30 Jul 2019 16:58:04 +0200
+        id 1hsTZk-000Ezp-LF; Tue, 30 Jul 2019 16:58:04 +0200
 Received: from [46.140.72.82] (helo=philippe-pc.toradex.int)
         by asmtp013.mail.hostpoint.ch with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
         (Exim 4.91 (FreeBSD))
         (envelope-from <dev@pschenker.ch>)
-        id 1hsTP7-000Mva-8x; Tue, 30 Jul 2019 16:47:05 +0200
+        id 1hsTP7-000Mva-Rs; Tue, 30 Jul 2019 16:47:05 +0200
 X-Authenticated-Sender-Id: dev@pschenker.ch
 From:   Philippe Schenker <dev@pschenker.ch>
 To:     marcel.ziswiler@toradex.com, max.krummenacher@toradex.com,
@@ -34,9 +34,9 @@ Cc:     Philippe Schenker <philippe.schenker@toradex.com>,
         Pengutronix Kernel Team <kernel@pengutronix.de>,
         NXP Linux Team <linux-imx@nxp.com>,
         Sascha Hauer <s.hauer@pengutronix.de>
-Subject: [PATCH 16/22] ARM: dts: imx6ull-colibri: Add sleep mode to fec
-Date:   Tue, 30 Jul 2019 16:46:43 +0200
-Message-Id: <20190730144649.19022-17-dev@pschenker.ch>
+Subject: [PATCH 17/22] ARM: dts: imx6ull-colibri: reduce v_batt current in power off
+Date:   Tue, 30 Jul 2019 16:46:44 +0200
+Message-Id: <20190730144649.19022-18-dev@pschenker.ch>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190730144649.19022-1-dev@pschenker.ch>
 References: <20190730144649.19022-1-dev@pschenker.ch>
@@ -47,54 +47,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Philippe Schenker <philippe.schenker@toradex.com>
+From: Max Krummenacher <max.krummenacher@toradex.com>
 
-Do not change the clock as the power for this phy is switched
-with that clock.
+Reduce the current drawn from VCC_BATT when the main power on the 3V3
+pins to the module are switched off.
 
+This switches off SoC internal pull resistors which are provided on the
+module for TAMPER7 and TAMPER9 SoC pin and switches on a pull down
+instead of a pullup for the USBC_DET module pin (TAMPER2).
+
+Signed-off-by: Max Krummenacher <max.krummenacher@toradex.com>
 Signed-off-by: Philippe Schenker <philippe.schenker@toradex.com>
 ---
 
- arch/arm/boot/dts/imx6ull-colibri.dtsi | 18 +++++++++++++++++-
- 1 file changed, 17 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/imx6ull-colibri.dtsi | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/arch/arm/boot/dts/imx6ull-colibri.dtsi b/arch/arm/boot/dts/imx6ull-colibri.dtsi
-index d56728f03c35..1019ce69a242 100644
+index 1019ce69a242..1f112ec55e5c 100644
 --- a/arch/arm/boot/dts/imx6ull-colibri.dtsi
 +++ b/arch/arm/boot/dts/imx6ull-colibri.dtsi
-@@ -62,8 +62,9 @@
- };
+@@ -533,19 +533,19 @@
  
- &fec2 {
--	pinctrl-names = "default";
-+	pinctrl-names = "default", "sleep";
- 	pinctrl-0 = <&pinctrl_enet2>;
-+	pinctrl-1 = <&pinctrl_enet2_sleep>;
- 	phy-mode = "rmii";
- 	phy-handle = <&ethphy1>;
- 	status = "okay";
-@@ -220,6 +221,21 @@
+ 	pinctrl_snvs_ad7879_int: snvs-ad7879-int-grp { /* TOUCH Interrupt */
+ 		fsl,pins = <
+-			MX6ULL_PAD_SNVS_TAMPER7__GPIO5_IO07	0x1b0b0
++			MX6ULL_PAD_SNVS_TAMPER7__GPIO5_IO07	0x100b0
  		>;
  	};
  
-+	pinctrl_enet2_sleep: enet2sleepgrp {
-+		fsl,pins = <
-+			MX6UL_PAD_GPIO1_IO06__GPIO1_IO06	0x0
-+			MX6UL_PAD_GPIO1_IO07__GPIO1_IO07	0x0
-+			MX6UL_PAD_ENET2_RX_DATA0__GPIO2_IO08	0x0
-+			MX6UL_PAD_ENET2_RX_DATA1__GPIO2_IO09	0x0
-+			MX6UL_PAD_ENET2_RX_EN__GPIO2_IO10	0x0
-+			MX6UL_PAD_ENET2_RX_ER__GPIO2_IO15	0x0
-+			MX6UL_PAD_ENET2_TX_CLK__ENET2_REF_CLK2	0x4001b031
-+			MX6UL_PAD_ENET2_TX_DATA0__GPIO2_IO11	0x0
-+			MX6UL_PAD_ENET2_TX_DATA1__GPIO2_IO12	0x0
-+			MX6UL_PAD_ENET2_TX_EN__GPIO2_IO13	0x0
-+		>;
-+	};
-+
- 	pinctrl_ecspi1_cs: ecspi1-cs-grp {
+ 	pinctrl_snvs_reg_sd: snvs-reg-sd-grp {
  		fsl,pins = <
- 			MX6UL_PAD_LCD_DATA21__GPIO3_IO26	0x000a0
+-			MX6ULL_PAD_SNVS_TAMPER9__GPIO5_IO09	0x4001b8b0
++			MX6ULL_PAD_SNVS_TAMPER9__GPIO5_IO09	0x400100b0
+ 		>;
+ 	};
+ 
+ 	pinctrl_snvs_usbc_det: snvs-usbc-det-grp {
+ 		fsl,pins = <
+-			MX6ULL_PAD_SNVS_TAMPER2__GPIO5_IO02	0x1b0b0
++			MX6ULL_PAD_SNVS_TAMPER2__GPIO5_IO02	0x130b0
+ 		>;
+ 	};
+ 
 -- 
 2.22.0
 
