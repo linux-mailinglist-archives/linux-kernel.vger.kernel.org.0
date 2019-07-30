@@ -2,120 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C3797A256
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 09:34:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 900917A253
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 09:34:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730573AbfG3Hew (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 03:34:52 -0400
-Received: from mailgw02.mediatek.com ([1.203.163.81]:9778 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1730505AbfG3Her (ORCPT
+        id S1730531AbfG3Heq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 03:34:46 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:39390 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730509AbfG3Hep (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 03:34:47 -0400
-X-UUID: 6b1d64c0bf184c6ea38655de0b27de8f-20190730
-X-UUID: 6b1d64c0bf184c6ea38655de0b27de8f-20190730
-Received: from mtkcas34.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
-        (envelope-from <chunfeng.yun@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 627788076; Tue, 30 Jul 2019 15:34:37 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- MTKMBS31N1.mediatek.inc (172.27.4.69) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Tue, 30 Jul 2019 15:34:35 +0800
-Received: from localhost.localdomain (10.17.3.153) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 30 Jul 2019 15:34:34 +0800
-From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
-To:     Mathias Nyman <mathias.nyman@intel.com>
-CC:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-usb@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-        Daniel Kurtz <djkurtz@chromium.org>
-Subject: [PATCH v2 2/2] usb: xhci-mtk: add an optional xhci_ck clock
-Date:   Tue, 30 Jul 2019 15:34:16 +0800
-Message-ID: <1564472056-27875-2-git-send-email-chunfeng.yun@mediatek.com>
-X-Mailer: git-send-email 1.8.1.1.dirty
-In-Reply-To: <1564472056-27875-1-git-send-email-chunfeng.yun@mediatek.com>
-References: <1564472056-27875-1-git-send-email-chunfeng.yun@mediatek.com>
+        Tue, 30 Jul 2019 03:34:45 -0400
+Received: by mail-qk1-f196.google.com with SMTP id w190so45875972qkc.6
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 00:34:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Zr+6M31Gi9RIhd6WGjh1Vbf2RuBt7+NJdVFSHL2O2pg=;
+        b=TaryWMMIw1asCdXr3irLnmKCisZfKs2JnwOX+AU+LBQY7fPxHjBGquXZ5VUbY8z6uF
+         5SWh1YeuPiG9my9J9OvEiHQqSa/nZ2bzqIsoydKeTtEqULZH68Fl9xRs6ri1H4y4G3oV
+         IGf+sQcSR24ajyj2+CmpAIs83qhyyOhf1UVGjUuTTARleCmXIIvFTVkAKgUaiFv0ewlS
+         0JvNneuONzluJbjYAFeHu0NsrQa2dFE0AKiVqmaOw8742Ve0MDJuY6XlQ/l6/DvjSG7d
+         7QTwIKe1SV8eDwsw/nGPP9ErdGSi7KQXRwbYYM4JJICPR6O2DfnplFxt9ghKQl/IOHIe
+         FKOw==
+X-Gm-Message-State: APjAAAUHmOolOfkWMBMovuNy8qwwXYhIPjmBCv4WRSbsw1WgXmFiiFdE
+        nt5E3o8iRWTZYd0EV5oH7pX27JAUzjicy+sjdIM=
+X-Google-Smtp-Source: APXvYqybWuHcjdBPufsxlBAq5PrDmFRv9hpZANXgyII0B0Cjj/Yb3Q0KornkEI4utqv4T45sDGzfGDmznwSLfL3qQig=
+X-Received: by 2002:a37:76c5:: with SMTP id r188mr74856027qkc.394.1564472084625;
+ Tue, 30 Jul 2019 00:34:44 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-SNTS-SMTP: 998F519EA2138EAC381088B851B099251395E0C2BF0920608CE3B7EF1E8F2F682000:8
-X-MTK:  N
+References: <20190729202542.205309-1-ndesaulniers@google.com>
+ <20190729203246.GA117371@archlinux-threadripper> <20190729215200.GN31406@gate.crashing.org>
+In-Reply-To: <20190729215200.GN31406@gate.crashing.org>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 30 Jul 2019 09:34:28 +0200
+Message-ID: <CAK8P3a1GQSyCj1L8fFG4Pah8dr5Lanw=1yuimX1o+53ARzOX+Q@mail.gmail.com>
+Subject: Re: [PATCH] powerpc: workaround clang codegen bug in dcbz
+To:     Segher Boessenkool <segher@kernel.crashing.org>
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        christophe leroy <christophe.leroy@c-s.fr>,
+        kbuild test robot <lkp@intel.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some SoCs may have an optional clock xhci_ck (125M or 200M), it
-usually uses the same PLL as sys_ck, so support it.
+On Mon, Jul 29, 2019 at 11:52 PM Segher Boessenkool
+<segher@kernel.crashing.org> wrote:
+>
+> On Mon, Jul 29, 2019 at 01:32:46PM -0700, Nathan Chancellor wrote:
+> > For the record:
+> >
+> > https://godbolt.org/z/z57VU7
+> >
+> > This seems consistent with what Michael found so I don't think a revert
+> > is entirely unreasonable.
+>
+> Try this:
+>
+>   https://godbolt.org/z/6_ZfVi
+>
+> This matters in non-trivial loops, for example.  But all current cases
+> where such non-trivial loops are done with cache block instructions are
+> actually written in real assembler already, using two registers.
+> Because performance matters.  Not that I recommend writing code as
+> critical as memset in C with inline asm :-)
 
-Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
----
-v2 no changes
----
- drivers/usb/host/xhci-mtk.c | 13 +++++++++++++
- drivers/usb/host/xhci-mtk.h |  1 +
- 2 files changed, 14 insertions(+)
+Upon a second look, I think the issue is that the "Z" is an input argument
+when it should be an output. clang decides that it can make a copy of the
+input and pass that into the inline asm. This is not the most efficient
+way, but it seems entirely correct according to the constraints.
 
-diff --git a/drivers/usb/host/xhci-mtk.c b/drivers/usb/host/xhci-mtk.c
-index 026fe18972d3..b18a6baef204 100644
---- a/drivers/usb/host/xhci-mtk.c
-+++ b/drivers/usb/host/xhci-mtk.c
-@@ -216,6 +216,10 @@ static int xhci_mtk_clks_get(struct xhci_hcd_mtk *mtk)
- 		return PTR_ERR(mtk->sys_clk);
- 	}
- 
-+	mtk->xhci_clk = devm_clk_get_optional(dev, "xhci_ck");
-+	if (IS_ERR(mtk->xhci_clk))
-+		return PTR_ERR(mtk->xhci_clk);
-+
- 	mtk->ref_clk = devm_clk_get_optional(dev, "ref_ck");
- 	if (IS_ERR(mtk->ref_clk))
- 		return PTR_ERR(mtk->ref_clk);
-@@ -244,6 +248,12 @@ static int xhci_mtk_clks_enable(struct xhci_hcd_mtk *mtk)
- 		goto sys_clk_err;
- 	}
- 
-+	ret = clk_prepare_enable(mtk->xhci_clk);
-+	if (ret) {
-+		dev_err(mtk->dev, "failed to enable xhci_clk\n");
-+		goto xhci_clk_err;
-+	}
-+
- 	ret = clk_prepare_enable(mtk->mcu_clk);
- 	if (ret) {
- 		dev_err(mtk->dev, "failed to enable mcu_clk\n");
-@@ -261,6 +271,8 @@ static int xhci_mtk_clks_enable(struct xhci_hcd_mtk *mtk)
- dma_clk_err:
- 	clk_disable_unprepare(mtk->mcu_clk);
- mcu_clk_err:
-+	clk_disable_unprepare(mtk->xhci_clk);
-+xhci_clk_err:
- 	clk_disable_unprepare(mtk->sys_clk);
- sys_clk_err:
- 	clk_disable_unprepare(mtk->ref_clk);
-@@ -272,6 +284,7 @@ static void xhci_mtk_clks_disable(struct xhci_hcd_mtk *mtk)
- {
- 	clk_disable_unprepare(mtk->dma_clk);
- 	clk_disable_unprepare(mtk->mcu_clk);
-+	clk_disable_unprepare(mtk->xhci_clk);
- 	clk_disable_unprepare(mtk->sys_clk);
- 	clk_disable_unprepare(mtk->ref_clk);
- }
-diff --git a/drivers/usb/host/xhci-mtk.h b/drivers/usb/host/xhci-mtk.h
-index 8be8c5f7ff62..5ac458b7d2e0 100644
---- a/drivers/usb/host/xhci-mtk.h
-+++ b/drivers/usb/host/xhci-mtk.h
-@@ -139,6 +139,7 @@ struct xhci_hcd_mtk {
- 	struct regulator *vusb33;
- 	struct regulator *vbus;
- 	struct clk *sys_clk;	/* sys and mac clock */
-+	struct clk *xhci_clk;
- 	struct clk *ref_clk;
- 	struct clk *mcu_clk;
- 	struct clk *dma_clk;
--- 
-2.21.0
+Changing it to an output "=Z" constraint seems to make it work:
 
+https://godbolt.org/z/FwEqHf
+
+Clang still doesn't use the optimum form, but it passes the correct pointer.
+
+       Arnd
