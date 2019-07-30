@@ -2,137 +2,219 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3CBB7AA5D
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 15:58:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DC737AA63
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 15:59:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728968AbfG3N6l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 09:58:41 -0400
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:36676 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728769AbfG3N6l (ORCPT
+        id S1729064AbfG3N7h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 09:59:37 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:41847 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727924AbfG3N7h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 09:58:41 -0400
-Received: by mail-vs1-f67.google.com with SMTP id y16so43489586vsc.3;
-        Tue, 30 Jul 2019 06:58:40 -0700 (PDT)
+        Tue, 30 Jul 2019 09:59:37 -0400
+Received: by mail-io1-f66.google.com with SMTP id j5so124127354ioj.8
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 06:59:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=2wlNZmUcgZRDidSciC7cz76BeVYG+FEQ83Cs9K4SOBA=;
-        b=FVeBtdDES/SHbdFJWLmUniCv+rCwtOZUL4YRXj7VyvmKOq//WfcJeyfInMj9zBCDoD
-         WMzpWqLNXzZgQsK4ns4FtLPl3HrWc+aoiDWa+gcN+Zw/rYsK6NZQm459qg+OPOagPjRv
-         7oCvZAoRAGsxJ0YOP+VGZHhL3G3ERgjvzy4GAqIqpYnJpnugu78kXSURDYUgRC7olx7o
-         nIv4HtmDcioFY16WmuHQXFmxswX2HFfh0WNWoI6x7nqosv74bfuGGY9ktCuXI7Hy5AaU
-         rt8gzdpem/y9jtpgeH1T2Zv0zpwsTMhj5itHFjUJsIEW9c+DNuJFo6RpupZufSJK2S34
-         +dwg==
+         :cc;
+        bh=9wb5fCPLRkHIuopagtxyMmMpXLrl0Rl6PybjU+HPqQI=;
+        b=XiAE8fVgxaehenU+6hOzDym1qp9KOc38kQrFKPFusw0TNdTWtcpXfm0HHOEOuX2EZA
+         owtofDoewjXypreHkadKme6OaeM/0jjHxnAExAs6aVvNVtVhZDpAlArb0jAaoTycKXtZ
+         150pDtKr3oDAnfY3sLdcTe2xNY+9iR/bZdm8uwAHV7v7fXf0B8vad1j0VGm6IaQOOxSO
+         meW/+YTQprYOpoHKACzS71pfANzEgmS1rZ3d8wxt3oBDv5hvy1cI4PUpYz2yoj6NgGsJ
+         P17QxdLGR+z8WEmgdqa1LkUz1n9DYueRAgrwf7rWkLCKm1aHe7WhIMoSqeDo5Oa22BHz
+         NsPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=2wlNZmUcgZRDidSciC7cz76BeVYG+FEQ83Cs9K4SOBA=;
-        b=DuQyO0HW9UlY+9VTyQWPXdngdnVlH/Cz3SD1/eMRE5plg3qNIIwWRFGagKpvlTyxm5
-         t4mADUI/S+KVnOr6NdGYv5Epj3OIsy8sR7pIcOPbAkYQKFZ4w3ezgYnhigUOoGBgyvqz
-         +waP5CiN0BigofxZ32JNtOoMiTbd0/kdHRrXWDjjF5ceIhXKeaaIcH0o1c90xVSC17U4
-         Ur1lnkvQWezaZWGAIkpSfS/CuTS7Cw5lvXuAmtWImlgulPb3uS+Tt1PpzGvEakO65jFQ
-         7P24+g93EfCrtNzkxLUMcj5HhkDSIbu7LQmX7j6tmIMqFklV3Rr1SuEMKoHBA4P3d+sj
-         i39A==
-X-Gm-Message-State: APjAAAV8ojG4KgFpb+t5zTweX03+DY1KrAo8rU0hyjdIaWr5wGF82LWI
-        BsOINsFeRTx+lreNT1B6fq37d7f8YR7Wgtz+YA==
-X-Google-Smtp-Source: APXvYqyNweaqA9rqsZHNK6P/0G3KMoy4dWlSLU5p9XweSbuxi6+WsvoXQx+dz7RZqnixJysAG0iZf1LohCdH4A9+6ts=
-X-Received: by 2002:a67:eb19:: with SMTP id a25mr71625097vso.109.1564495120210;
- Tue, 30 Jul 2019 06:58:40 -0700 (PDT)
+         :message-id:subject:to:cc;
+        bh=9wb5fCPLRkHIuopagtxyMmMpXLrl0Rl6PybjU+HPqQI=;
+        b=b5NJwuEAntFRzbvBns3rCGIt3HwgEgPBUHLt9VNT9WzIwVc1qk+fd2D5GC0KOhyCjb
+         uwtyybWRIwOQUbulXtgWMq90cnB/xbpeF2zNbrLh4qYFy5y6EDTnSvJBWFa60IusPy2p
+         rjPf6FycNagWqJkI0lKai2F/opwoTQe87/2bGBT/xGZC7wfBNEzJcBwXVcq5Ngzq1bb4
+         +eZ9cNNy12HAeqcXUKe1/eFkBH7m/YgNNTivTvgonjmZbkHWGYi7RpJA4VKix/VfN9fw
+         HgiHZnWkoxTelk/vXRQNFy6hVlKqBBZO0sxjMcpqAUkYl91mA+5er5lrwxxaVinfqUQM
+         NcPg==
+X-Gm-Message-State: APjAAAU/RGng1XZOz+ddoeFJ+XPfCxOjLTHU9Dfk91YbX8kCjcY0+LAq
+        lR6h4BuZxppeoCIkYrXZs1l1oX0AZhCPqmSUkQ==
+X-Google-Smtp-Source: APXvYqz3fRWTIjRIVoDNAUnG5ad5abKplfbPOuu/Fy8rrJopOs18LOdhYdYfpZV5dUsfdmC9kxUz91NzmtR6jHx1GnA=
+X-Received: by 2002:a6b:f80e:: with SMTP id o14mr37504332ioh.1.1564495176204;
+ Tue, 30 Jul 2019 06:59:36 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190730122534.30687-1-rdong.ge@gmail.com> <1dc87e69-628b-fd04-619a-8dbe5bdfa108@cumulusnetworks.com>
-In-Reply-To: <1dc87e69-628b-fd04-619a-8dbe5bdfa108@cumulusnetworks.com>
-From:   Rundong Ge <rdong.ge@gmail.com>
-Date:   Tue, 30 Jul 2019 21:58:29 +0800
-Message-ID: <CAN1Lvyr5UcBrNJ8RLMgjT77sDjic7aXNeRmRex=BvzB02He9aQ@mail.gmail.com>
-Subject: Re: [PATCH] bridge:fragmented packets dropped by bridge
-To:     Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
-Cc:     davem@davemloft.net, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
-        netdev@vger.kernel.org, Pablo Neira Ayuso <pablo@netfilter.org>,
-        kadlec@netfilter.org, Florian Westphal <fw@strlen.de>,
-        Roopa Prabhu <roopa@cumulusnetworks.com>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        bridge@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+References: <CAK8P3a3jjDh6aEVf0bBFYc=8GtB38kL6sWVZGJiUe427A7m2ng@mail.gmail.com>
+ <CAK8P3a1ss9-G_mr48-UMOenrA0XDGWUFik4TC=m0WFfimoFdnQ@mail.gmail.com> <CAK8P3a3VsArSUgMwoPVxm8JcTPAQDoztg22MGqX4Vj5cjtADZg@mail.gmail.com>
+In-Reply-To: <CAK8P3a3VsArSUgMwoPVxm8JcTPAQDoztg22MGqX4Vj5cjtADZg@mail.gmail.com>
+From:   Avi Fishman <avifishman70@gmail.com>
+Date:   Tue, 30 Jul 2019 16:58:47 +0300
+Message-ID: <CAKKbWA6aUBec8tTQNCJow8c6=SyS-y4HUC=3sMJp6_Oz51iF=A@mail.gmail.com>
+Subject: Re: RFC: remove Nuvoton w90x900/nuc900 platform?
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     "Wanzongshun (Vincent)" <wanzongshun@huawei.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Yes it is about the frag_size check in br_nf_ip_fragment(). As i said
-without br_netfilter the packets forwarding is fine.
-And I feel it is weird that br_nf_dev_queue_xmit() use out dev's mtu
-to decide whether to do the fragmentation, but
-then br_nf_ip_fragment() use bridge's mtu to do the actual fragmentation.
+Note that we we are going to add soon drivers/net/ethernet/nuvoton/npcm7xx_emc.c
+so maybe don't remove drivers/net/ethernet/nuvoton
 
-And in this case fragmented packets fit the out dev mtu but were
-dropped, I think it is not right.
+On Tue, Jul 30, 2019 at 4:01 PM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> That wasn't it either, sorry for spamming the rest. I found one more
+> address for Zongshun at Huawei.
+>
+> On Tue, Jul 30, 2019 at 2:34 PM Arnd Bergmann <arnd@arndb.de> wrote:
+> >
+> > Trying Wan Zongshun <Vincent.Wan@amd.com> instead of
+> > the bouncing Wan ZongShun <mcuos.com@gmail.com>.
+> > (I assume you are the same person, sorry if not).
+> >
+> > On Tue, Jul 30, 2019 at 2:09 PM Arnd Bergmann <arnd@arndb.de> wrote:
+> > >
+> > > As the mach-netx and mach-8695 platforms are being removed now,
+> > > I wonder whether we should do the same with w90x00: Here is what
+> > > I found after looking at the git history and external material for it.
+> > >
+> > >     - The supported chips (nuc910/950/960) are no longer marketed
+> > >       by the manufacturer
+> > >
+> > >     - Newer chips from the same family (nuc97x, nuc980, n329x)
+> > >       that are still marketed have Linux BSPs but those were never
+> > >       submitted for upstream inclusion.
+> > >
+> > >     - Wan ZongShun is listed as maintainer, but the last patch he wrote
+> > >       was in 2011.
+> > >
+> > >     - All patches to w90x900 platform specific files afterwards
+> > >       are cleanups that were apparently done without access to
+> > >       test hardware.
+> > >
+> > >     - The http://www.mcuos.com/ website listed in the MAINTAINERS
+> > >        file is no longer reachable.
+> > >
+> > > We do support the newer NPCM platform from Nuvoton. I don't think
+> > > there are any shared drivers between the two, but I've added its
+> > > maintainers to Cc anyway, in case they still (plan to) use one of
+> > > those drivers.
+> > >
+> > > If we decide that it's time to let go, I'll would the patches below.
+> > >
+> > >       watchdog: remove w90x900 driver
+> > >       spi: remove w90x900 driver
+> > >       ASoC: remove w90x900/nuc900 platform drivers
+> > >       fbdev: remove w90x900/nuc900 platform drivers
+> > >       Input: remove w90x900 keyboard driver
+> > >       Input: remove w90x900 touchscreen driver
+> > >       mtd: rawnand: remove w90x900 driver
+> > >       net: remove w90p910-ether driver
+> > >       rtc: remove w90x900/nuc900 driver
+> > >       usb: remove ehci-w90x900 driver
+> > >       ARM: remove w90x900 platform
+> > >
+> > >  Documentation/watchdog/watchdog-parameters.rst   |   10 -
+> > >  MAINTAINERS                                      |   16 -
+> > >  arch/arm/Kconfig                                 |   21 +-
+> > >  arch/arm/Makefile                                |    1 -
+> > >  arch/arm/configs/nuc910_defconfig                |   51 -
+> > >  arch/arm/configs/nuc950_defconfig                |   67 --
+> > >  arch/arm/configs/nuc960_defconfig                |   57 --
+> > >  arch/arm/mach-w90x900/Kconfig                    |   54 --
+> > >  arch/arm/mach-w90x900/Makefile                   |   20 -
+> > >  arch/arm/mach-w90x900/Makefile.boot              |    4 -
+> > >  arch/arm/mach-w90x900/clksel.c                   |   88 --
+> > >  arch/arm/mach-w90x900/clock.c                    |  121 ---
+> > >  arch/arm/mach-w90x900/clock.h                    |   40 -
+> > >  arch/arm/mach-w90x900/cpu.c                      |  238 -----
+> > >  arch/arm/mach-w90x900/cpu.h                      |   56 --
+> > >  arch/arm/mach-w90x900/dev.c                      |  537 -----------
+> > >  arch/arm/mach-w90x900/gpio.c                     |  150 ---
+> > >  arch/arm/mach-w90x900/include/mach/entry-macro.S |   26 -
+> > >  arch/arm/mach-w90x900/include/mach/hardware.h    |   19 -
+> > >  arch/arm/mach-w90x900/include/mach/irqs.h        |   82 --
+> > >  arch/arm/mach-w90x900/include/mach/map.h         |  153 ---
+> > >  arch/arm/mach-w90x900/include/mach/mfp.h         |   21 -
+> > >  arch/arm/mach-w90x900/include/mach/regs-clock.h  |   49 -
+> > >  arch/arm/mach-w90x900/include/mach/regs-irq.h    |   46 -
+> > >  arch/arm/mach-w90x900/include/mach/regs-ldm.h    |  248 -----
+> > >  arch/arm/mach-w90x900/include/mach/regs-serial.h |   54 --
+> > >  arch/arm/mach-w90x900/include/mach/uncompress.h  |   43 -
+> > >  arch/arm/mach-w90x900/irq.c                      |  212 -----
+> > >  arch/arm/mach-w90x900/mach-nuc910evb.c           |   38 -
+> > >  arch/arm/mach-w90x900/mach-nuc950evb.c           |   42 -
+> > >  arch/arm/mach-w90x900/mach-nuc960evb.c           |   38 -
+> > >  arch/arm/mach-w90x900/mfp.c                      |  197 ----
+> > >  arch/arm/mach-w90x900/nuc910.c                   |   58 --
+> > >  arch/arm/mach-w90x900/nuc910.h                   |   17 -
+> > >  arch/arm/mach-w90x900/nuc950.c                   |   52 --
+> > >  arch/arm/mach-w90x900/nuc950.h                   |   17 -
+> > >  arch/arm/mach-w90x900/nuc960.c                   |   50 -
+> > >  arch/arm/mach-w90x900/nuc960.h                   |   17 -
+> > >  arch/arm/mach-w90x900/nuc9xx.h                   |   22 -
+> > >  arch/arm/mach-w90x900/regs-ebi.h                 |   29 -
+> > >  arch/arm/mach-w90x900/regs-gcr.h                 |   34 -
+> > >  arch/arm/mach-w90x900/regs-timer.h               |   37 -
+> > >  arch/arm/mach-w90x900/regs-usb.h                 |   31 -
+> > >  arch/arm/mach-w90x900/time.c                     |  168 ----
+> > >  drivers/input/keyboard/Kconfig                   |   11 -
+> > >  drivers/input/keyboard/Makefile                  |    1 -
+> > >  drivers/input/keyboard/w90p910_keypad.c          |  264 ------
+> > >  drivers/input/touchscreen/Kconfig                |    9 -
+> > >  drivers/input/touchscreen/Makefile               |    1 -
+> > >  drivers/input/touchscreen/w90p910_ts.c           |  331 -------
+> > >  drivers/mtd/nand/raw/Kconfig                     |    8 -
+> > >  drivers/mtd/nand/raw/Makefile                    |    1 -
+> > >  drivers/mtd/nand/raw/nuc900_nand.c               |  304 ------
+> > >  drivers/net/ethernet/Kconfig                     |    1 -
+> > >  drivers/net/ethernet/Makefile                    |    1 -
+> > >  drivers/net/ethernet/nuvoton/Kconfig             |   29 -
+> > >  drivers/net/ethernet/nuvoton/Makefile            |    6 -
+> > >  drivers/net/ethernet/nuvoton/w90p910_ether.c     | 1082 ----------------------
+> > >  drivers/rtc/Kconfig                              |    7 -
+> > >  drivers/rtc/Makefile                             |    1 -
+> > >  drivers/rtc/rtc-nuc900.c                         |  271 ------
+> > >  drivers/spi/Kconfig                              |    7 -
+> > >  drivers/spi/Makefile                             |    1 -
+> > >  drivers/spi/spi-nuc900.c                         |  429 ---------
+> > >  drivers/usb/host/Kconfig                         |    6 -
+> > >  drivers/usb/host/Makefile                        |    1 -
+> > >  drivers/usb/host/ehci-w90x900.c                  |  130 ---
+> > >  drivers/video/fbdev/Kconfig                      |   14 -
+> > >  drivers/video/fbdev/Makefile                     |    1 -
+> > >  drivers/video/fbdev/nuc900fb.c                   |  760 ---------------
+> > >  drivers/video/fbdev/nuc900fb.h                   |   51 -
+> > >  drivers/watchdog/Kconfig                         |    9 -
+> > >  drivers/watchdog/Makefile                        |    1 -
+> > >  drivers/watchdog/nuc900_wdt.c                    |  303 ------
+> > >  include/Kbuild                                   |    2 -
+> > >  include/linux/platform_data/keypad-w90p910.h     |   16 -
+> > >  include/linux/platform_data/spi-nuc900.h         |   29 -
+> > >  include/linux/platform_data/video-nuc900fb.h     |   79 --
+> > >  sound/soc/Kconfig                                |    1 -
+> > >  sound/soc/Makefile                               |    1 -
+> > >  sound/soc/nuc900/Kconfig                         |   29 -
+> > >  sound/soc/nuc900/Makefile                        |   12 -
+> > >  sound/soc/nuc900/nuc900-ac97.c                   |  391 --------
+> > >  sound/soc/nuc900/nuc900-audio.c                  |   73 --
+> > >  sound/soc/nuc900/nuc900-audio.h                  |  108 ---
+> > >  sound/soc/nuc900/nuc900-pcm.c                    |  321 -------
+> > >  86 files changed, 1 insertion(+), 8433 deletions(-)
+> > >
+> > >           Arnd
 
-Nikolay Aleksandrov <nikolay@cumulusnetworks.com> =E4=BA=8E2019=E5=B9=B47=
-=E6=9C=8830=E6=97=A5=E5=91=A8=E4=BA=8C =E4=B8=8B=E5=8D=888:41=E5=86=99=E9=
-=81=93=EF=BC=9A
->
-> On 30/07/2019 15:25, Rundong Ge wrote:
-> > Given following setup:
-> > -modprobe br_netfilter
-> > -echo '1' > /proc/sys/net/bridge/bridge-nf-call-iptables
-> > -brctl addbr br0
-> > -brctl addif br0 enp2s0
-> > -brctl addif br0 enp3s0
-> > -brctl addif br0 enp6s0
-> > -ifconfig enp2s0 mtu 1300
-> > -ifconfig enp3s0 mtu 1500
-> > -ifconfig enp6s0 mtu 1500
-> > -ifconfig br0 up
-> >
-> >                  multi-port
-> > mtu1500 - mtu1500|bridge|1500 - mtu1500
-> >   A                  |            B
-> >                    mtu1300
-> >
-> > With netfilter defragmentation/conntrack enabled, fragmented
-> > packets from A will be defragmented in prerouting, and refragmented
-> > at postrouting.
-> > But in this scenario the bridge found the frag_max_size(1500) is
-> > larger than the dst mtu stored in the fake_rtable whitch is
-> > always equal to the bridge's mtu 1300, then packets will be dopped.
-> >
-> > This modifies ip_skb_dst_mtu to use the out dev's mtu instead
-> > of bridge's mtu in bridge refragment.
-> >
-> > Signed-off-by: Rundong Ge <rdong.ge@gmail.com>
-> > ---
-> >  include/net/ip.h | 2 ++
-> >  1 file changed, 2 insertions(+)
-> >
-> > diff --git a/include/net/ip.h b/include/net/ip.h
-> > index 29d89de..0512de3 100644
-> > --- a/include/net/ip.h
-> > +++ b/include/net/ip.h
-> > @@ -450,6 +450,8 @@ static inline unsigned int ip_dst_mtu_maybe_forward=
-(const struct dst_entry *dst,
-> >  static inline unsigned int ip_skb_dst_mtu(struct sock *sk,
-> >                                         const struct sk_buff *skb)
-> >  {
-> > +     if ((skb_dst(skb)->flags & DST_FAKE_RTABLE) && skb->dev)
-> > +             return min(skb->dev->mtu, IP_MAX_MTU);
-> >       if (!sk || !sk_fullsock(sk) || ip_sk_use_pmtu(sk)) {
-> >               bool forwarding =3D IPCB(skb)->flags & IPSKB_FORWARDED;
-> >
-> >
->
-> I don't think this is correct, there's a reason why the bridge chooses th=
-e smallest
-> possible MTU out of its members and this is simply a hack to circumvent i=
-t.
-> If you really like to do so just set the bridge MTU manually, we've added=
- support
-> so it won't change automatically to the smallest, but then how do you pas=
-s packets
-> 1500 -> 1300 in this setup ?
->
-> You're talking about the frag_size check in br_nf_ip_fragment(), right ?
->
+
+
+-- 
+Regards,
+Avi
