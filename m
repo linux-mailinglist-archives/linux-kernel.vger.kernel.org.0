@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F7F379EF9
+	by mail.lfdr.de (Postfix) with ESMTP id 8899679EFA
 	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 04:57:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731440AbfG3C5H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 22:57:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46574 "EHLO mail.kernel.org"
+        id S1731714AbfG3C5L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 22:57:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46672 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731655AbfG3C5C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 22:57:02 -0400
+        id S1731459AbfG3C5I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 22:57:08 -0400
 Received: from quaco.ghostprotocols.net (unknown [179.97.35.50])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 43E62206DD;
-        Tue, 30 Jul 2019 02:56:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 13D6720578;
+        Tue, 30 Jul 2019 02:57:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564455421;
-        bh=iqntjTMM3MBLznOhI3BXDGyS9WB4aYP76B8QqXkMqWI=;
+        s=default; t=1564455427;
+        bh=6sFnxyB/QBz0w34YwHV+jid1lKjjURWsnBJV4eIHLZU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RIY/bMKBNLjbTwVCWvGmdri7mM0kgNVHaDGTFBnONc3nssLEwmxkJnQpiLEEycvt5
-         i6ebbo+7Jr4zcEFVKBx0tkh6Ck7CVYgc7ID5Iip2dRJDyXukSLWGlqmkslJoRH33mY
-         SrP8N3/flLANZi9RhTw2H0bY3GbVdhA+goI7Nf7k=
+        b=qss0yYU7mh/PRikOVs5RAR8DmlsFoTXx+wToMUPKK4f1FyDm6kpxHdHntuybSHr7W
+         FVFwhf0wSkIDZaym26f93uPWoEfEJovEcF1rptFUtdvn2V2g8ZDrH3DN+Y3Uf/dM3n
+         B3Gj0Y4y8A2RZZZYBEt7vbi6e9+wCdsDJmCy9DfE=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
@@ -33,9 +33,9 @@ Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         Adrian Hunter <adrian.hunter@intel.com>,
         =?UTF-8?q?Luis=20Cl=C3=A1udio=20Gon=C3=A7alves?= 
         <lclaudio@redhat.com>
-Subject: [PATCH 014/107] perf trace: Look for default name for entries in the syscalls prog array
-Date:   Mon, 29 Jul 2019 23:54:37 -0300
-Message-Id: <20190730025610.22603-15-acme@kernel.org>
+Subject: [PATCH 016/107] perf augmented_raw_syscalls: Augment sockaddr arg in 'connect'
+Date:   Mon, 29 Jul 2019 23:54:39 -0300
+Message-Id: <20190730025610.22603-17-acme@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190730025610.22603-1-acme@kernel.org>
 References: <20190730025610.22603-1-acme@kernel.org>
@@ -49,91 +49,99 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-I.e. just look for "!syscalls:sys_enter_" or "exit_" plus the syscall
-name, that way we need just to add entries to the
-augmented_raw_syscalls.c BPF source to add handlers.
+We already had a beautifier for an augmented sockaddr payload, but that
+was when we were hooking on each syscalls:sys_enter_foo tracepoints,
+since now we're almost doing that by doing a tail call from
+raw_syscalls:sys_enter, its almost the same, we can reuse it straight
+away.
+
+  # perf trace -e connec* ssh www.bla.com
+  connect(3</var/lib/sss/mc/passwd>, { .family: PF_LOCAL, path: /var/run/nscd/socket }, 0x6e) = -1 ENOENT (No such file or directory)
+  connect(3</var/lib/sss/mc/passwd>, { .family: PF_LOCAL, path: /var/run/nscd/socket }, 0x6e) = -1 ENOENT (No such file or directory)
+  connect(4<socket:[16604782]>, { .family: PF_LOCAL, path: /var/lib/sss/pipes/nss }, 0x6e) = 0
+  connect(7, { .family: PF_LOCAL, path: /var/run/nscd/socket }, 0x6e) = -1 ENOENT (No such file or directory)
+  connect(7, { .family: PF_LOCAL, path: /var/run/nscd/socket }, 0x6e) = -1 ENOENT (No such file or directory)
+  connect(5</etc/hosts>, { .family: PF_LOCAL, path: /var/run/nscd/socket }, 0x6e) = -1 ENOENT (No such file or directory)
+  connect(5</etc/hosts>, { .family: PF_LOCAL, path: /var/run/nscd/socket }, 0x6e) = -1 ENOENT (No such file or directory)
+  connect(5</etc/hosts>, { .family: PF_INET, port: 53, addr: 192.168.44.1 }, 0x10) = 0
+  connect(5</etc/hosts>, { .family: PF_INET, port: 22, addr: 146.112.61.108 }, 0x10) = 0
+  connect(5</etc/hosts>, { .family: PF_INET6, port: 22, addr: ::ffff:146.112.61.108 }, 0x1c) = 0
+  ^C#
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Luis Cláudio Gonçalves <lclaudio@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-6xavwddruokp6ohs7tf4qilb@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-5xkrbcpjsgnr3zt1aqdd7nvc@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-trace.c | 30 +++++++++++++++++++-----------
- 1 file changed, 19 insertions(+), 11 deletions(-)
+ .../examples/bpf/augmented_raw_syscalls.c     | 35 ++++++++++++++++---
+ 1 file changed, 30 insertions(+), 5 deletions(-)
 
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index c64f7c99db15..5258399a1c94 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -830,13 +830,11 @@ static struct syscall_fmt {
- 	{ .name	    = "newfstatat",
- 	  .arg = { [0] = { .scnprintf = SCA_FDAT, /* dfd */ }, }, },
- 	{ .name	    = "open",
--	  .bpf_prog_name = { .sys_enter = "!syscalls:sys_enter_open", },
- 	  .arg = { [1] = { .scnprintf = SCA_OPEN_FLAGS, /* flags */ }, }, },
- 	{ .name	    = "open_by_handle_at",
- 	  .arg = { [0] = { .scnprintf = SCA_FDAT,	/* dfd */ },
- 		   [2] = { .scnprintf = SCA_OPEN_FLAGS, /* flags */ }, }, },
- 	{ .name	    = "openat",
--	  .bpf_prog_name = { .sys_enter = "!syscalls:sys_enter_openat", },
- 	  .arg = { [0] = { .scnprintf = SCA_FDAT,	/* dfd */ },
- 		   [2] = { .scnprintf = SCA_OPEN_FLAGS, /* flags */ }, }, },
- 	{ .name	    = "perf_event_open",
-@@ -873,7 +871,6 @@ static struct syscall_fmt {
- 	{ .name	    = "recvmsg",
- 	  .arg = { [2] = { .scnprintf = SCA_MSG_FLAGS, /* flags */ }, }, },
- 	{ .name	    = "renameat",
--	  .bpf_prog_name = { .sys_enter = "!syscalls:sys_enter_renameat", },
- 	  .arg = { [0] = { .scnprintf = SCA_FDAT, /* olddirfd */ },
- 		   [2] = { .scnprintf = SCA_FDAT, /* newdirfd */ }, }, },
- 	{ .name	    = "renameat2",
-@@ -2778,12 +2775,27 @@ static struct bpf_program *trace__find_syscall_bpf_prog(struct trace *trace, str
- {
- 	struct bpf_program *prog;
+diff --git a/tools/perf/examples/bpf/augmented_raw_syscalls.c b/tools/perf/examples/bpf/augmented_raw_syscalls.c
+index 77bb6a0edce3..d7a292d7ee2f 100644
+--- a/tools/perf/examples/bpf/augmented_raw_syscalls.c
++++ b/tools/perf/examples/bpf/augmented_raw_syscalls.c
+@@ -16,6 +16,7 @@
  
--	if (prog_name == NULL)
-+	if (prog_name == NULL) {
-+		char default_prog_name[256];
-+		scnprintf(default_prog_name, sizeof(default_prog_name), "!syscalls:sys_%s_%s", type, sc->name);
-+		prog = trace__find_bpf_program_by_title(trace, default_prog_name);
-+		if (prog != NULL)
-+			goto out_found;
-+		if (sc->fmt && sc->fmt->alias) {
-+			scnprintf(default_prog_name, sizeof(default_prog_name), "!syscalls:sys_%s_%s", type, sc->fmt->alias);
-+			prog = trace__find_bpf_program_by_title(trace, default_prog_name);
-+			if (prog != NULL)
-+				goto out_found;
-+		}
- 		goto out_unaugmented;
-+	}
+ #include <unistd.h>
+ #include <linux/limits.h>
++#include <linux/socket.h>
+ #include <pid_filter.h>
  
- 	prog = trace__find_bpf_program_by_title(trace, prog_name);
--	if (prog != NULL)
-+
-+	if (prog != NULL) {
-+out_found:
- 		return prog;
-+	}
+ /* bpf-output associated map */
+@@ -69,10 +70,13 @@ pid_filter(pids_filtered);
  
- 	pr_debug("Couldn't find BPF prog \"%s\" to associate with syscalls:sys_%s_%s, not augmenting it\n",
- 		 prog_name, type, sc->name);
-@@ -2798,12 +2810,8 @@ static void trace__init_syscall_bpf_progs(struct trace *trace, int id)
- 	if (sc == NULL)
- 		return;
+ struct augmented_args_payload {
+        struct syscall_enter_args args;
+-       struct {
+-	       struct augmented_filename filename;
+-	       struct augmented_filename filename2;
+-       };
++       union {
++		struct {
++			struct augmented_filename filename,
++						  filename2;
++		};
++		struct sockaddr_storage saddr;
++	};
+ };
  
--	if (sc->fmt != NULL) {
--		sc->bpf_prog.sys_enter = trace__find_syscall_bpf_prog(trace, sc, sc->fmt->bpf_prog_name.sys_enter, "enter");
--		sc->bpf_prog.sys_exit  = trace__find_syscall_bpf_prog(trace, sc, sc->fmt->bpf_prog_name.sys_exit,  "exit");
--	} else {
--		sc->bpf_prog.sys_enter = sc->bpf_prog.sys_exit = trace->syscalls.unaugmented_prog;
--	}
-+	sc->bpf_prog.sys_enter = trace__find_syscall_bpf_prog(trace, sc, sc->fmt ? sc->fmt->bpf_prog_name.sys_enter : NULL, "enter");
-+	sc->bpf_prog.sys_exit  = trace__find_syscall_bpf_prog(trace, sc, sc->fmt ? sc->fmt->bpf_prog_name.sys_exit  : NULL,  "exit");
+ bpf_map(augmented_args_tmp, PERCPU_ARRAY, int, struct augmented_args_payload, 1);
+@@ -112,11 +116,32 @@ int syscall_unaugmented(struct syscall_enter_args *args)
  }
  
- static int trace__bpf_prog_sys_enter_fd(struct trace *trace, int id)
+ /*
+- * This will be tail_called from SEC("raw_syscalls:sys_enter"), so will find in
++ * These will be tail_called from SEC("raw_syscalls:sys_enter"), so will find in
+  * augmented_args_tmp what was read by that raw_syscalls:sys_enter and go
+  * on from there, reading the first syscall arg as a string, i.e. open's
+  * filename.
+  */
++SEC("!syscalls:sys_enter_connect")
++int sys_enter_connect(struct syscall_enter_args *args)
++{
++	int key = 0;
++	struct augmented_args_payload *augmented_args = bpf_map_lookup_elem(&augmented_args_tmp, &key);
++	const void *sockaddr_arg = (const void *)args->args[1];
++	unsigned int socklen = args->args[2];
++	unsigned int len = sizeof(augmented_args->args);
++
++        if (augmented_args == NULL)
++                return 1; /* Failure: don't filter */
++
++	if (socklen > sizeof(augmented_args->saddr))
++		socklen = sizeof(augmented_args->saddr);
++
++	probe_read(&augmented_args->saddr, socklen, sockaddr_arg);
++
++	/* If perf_event_output fails, return non-zero so that it gets recorded unaugmented */
++	return perf_event_output(args, &__augmented_syscalls__, BPF_F_CURRENT_CPU, augmented_args, len + socklen);
++}
++
+ SEC("!syscalls:sys_enter_open")
+ int sys_enter_open(struct syscall_enter_args *args)
+ {
 -- 
 2.21.0
 
