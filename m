@@ -2,121 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE5197AA06
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 15:47:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DDF87AA05
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 15:47:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731270AbfG3Nrr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 09:47:47 -0400
-Received: from mail-yw1-f74.google.com ([209.85.161.74]:55021 "EHLO
-        mail-yw1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727464AbfG3Nrr (ORCPT
+        id S1731262AbfG3Nrk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 09:47:40 -0400
+Received: from out2-smtp.messagingengine.com ([66.111.4.26]:33543 "EHLO
+        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728195AbfG3Nrj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 09:47:47 -0400
-Received: by mail-yw1-f74.google.com with SMTP id v3so47314985ywe.21
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 06:47:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=6y8Zx9TfLiZrL5lPVE8UPHZWX8fiWMpaaIJpa8RuQ8s=;
-        b=njxaDbW6OkR0+qoulTNG0hQgYmD2uhbqvXbWrkTwP/q37rH3ODxN0ECvo3BDJdN/D+
-         8LAcx61EzO66gkqmFiskho7lp081UIeU6ft6rpmDpP02KYPePXjUEKU7RNKjwsDpvfbt
-         /lv0nIiy/V0Omi/KTvQHFZ0ReECwlWs7az+wEUZI0fVcF/EWSCk7uPt7ha4OYBVbe5xF
-         +3TnGQiKfSRm5QpSi3iPjCQoXpoFuKl0i2vLZPiNpoj2qi0Pw5E++fQyF6Ci5R1w/qxR
-         BZwT6e7JG3u0B+ayZDvvHcuL8Xyy0gkKvW26ILBCwDM7sJ2jOkG3g0jpnNtFjfcpk49l
-         4Y5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=6y8Zx9TfLiZrL5lPVE8UPHZWX8fiWMpaaIJpa8RuQ8s=;
-        b=HYVkhvhTZDoaJFBXZHKN6J16m+voKAcxGqWFGqCUJ2Jq0kXOw6IDyYdhJt0glZqv89
-         JiPsUZpkbyAiaBnSo+fFyPVL1il4a3o0FoRkVybjVcA4f3S3ixuwkOvdtKRWfukZAFg8
-         9Z+Py0KL6Pzo1TX4x0Iujki9VF5evkTsEZdYte/R6HPtNwt4o3tx+ryzjCd8wqyEGAKg
-         45RVRzfGJxJFZHqqrffaQtAnvYU/JGhgQ5h1wdTO2iOHjsJKw/Nw1Rl+O0tfnO/UJwhF
-         CM7nT/aCCeKGYKDv3/pkZC4BN5lsPmFyPE1bsYwNXJPtIBa5ZEyNc/M65tyECvgwIwuo
-         eOzA==
-X-Gm-Message-State: APjAAAXhQuTJ5Eek0/3rPSaTXTOi5sydDfImvDB1IzOyuIMs75Pa1vzH
-        TSs7v5Od9pz69pEjy6pp3L0MJoarZhHR
-X-Google-Smtp-Source: APXvYqyELFr9EqSpnvYZHxDCxa04SqdPpisD8klKD+ZjsEzO5Pgt9OlKXhBz/o/zQYpsKxVaCHPKPK3k99ig
-X-Received: by 2002:a81:5e8a:: with SMTP id s132mr63397428ywb.262.1564494465939;
- Tue, 30 Jul 2019 06:47:45 -0700 (PDT)
-Date:   Tue, 30 Jul 2019 21:47:04 +0800
-Message-Id: <20190730134704.44515-1-tzungbi@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.22.0.709.g102302147b-goog
-Subject: [PATCH v4] platform/chrome: cros_ec_trace: update generating script
-From:   Tzung-Bi Shih <tzungbi@google.com>
-To:     bleung@chromium.org, enric.balletbo@collabora.com,
-        groeck@chromium.org, rrangel@chromium.org
-Cc:     linux-kernel@vger.kernel.org, cychiang@google.com,
-        dgreid@google.com, tzungbi@google.com
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 30 Jul 2019 09:47:39 -0400
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailout.nyi.internal (Postfix) with ESMTP id 26A5021B74;
+        Tue, 30 Jul 2019 09:47:39 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute3.internal (MEProxy); Tue, 30 Jul 2019 09:47:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jaseg.net; h=
+        from:subject:to:cc:in-reply-to:message-id:date:mime-version
+        :content-type:content-transfer-encoding; s=fm3; bh=uCERNq3R8GWVB
+        iCt+rRgY2nM3IgsJiZuVTvKUacRcs4=; b=Wjq77XUvuTNsV8WNY9Sw+08BdXTYC
+        nvLLfnwncUSjNNLSO8UhdHAnhLLgOCqO/5pX38RuLPSyWzvBive6qXESszBF+Cqb
+        CWm+uaXRZ4lFEDdz2SL7aRGnXnfjfDCOwrOBPMFJMXkQ9bX7uqYgSu6zMPC69KAH
+        WaA3qwBUhvlidbKb1gbdKoMGiSWpj06jSzcsmoMX2P3JrIOmd2xqjdZ04NBVIiC3
+        emglnnHi1o6kaMzALOMNUX1PvSGJAfuS6sNDpYxjn3gzf6Y79qj9SqB2pKAB22Jd
+        Pa/NdBmOvByIa5s/6vD5sGteS3SksXq62ISJoQIw+k0A7VgKwgBkDe4iQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:subject:to
+        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+        fm3; bh=uCERNq3R8GWVBiCt+rRgY2nM3IgsJiZuVTvKUacRcs4=; b=JZ99dsGF
+        qMNfUSnOy7MLFVkn1k5k7pl3RtAom/7wUagEstu2ctxUnacuJ7qyhxCeLtek2yzf
+        ddeEOL9MI7t4GjQ0TCjVVyVadKoqsB90RRSmJP6QsqgAXIbyxjRO8FoLNDH0oEoJ
+        lyeuxGcpHFUv4ToHtz/Qn2u/CP8fl1iVNEZ0OTxfud9BRswq4eXr1S4dvbAyk5Uy
+        C77C1qPb2mwfGnYs+lnyBubJ7Jv3uPtmjVk6PsOShKsCGvQh91/Fngze92L/ydeA
+        r6qOe4L5Cw63c7XfYCROpiHVzmYGy6ErQpdoTgQ574l1evwJ8wVnjI6QRBQYSx4h
+        5b+vNxfpA9yhAQ==
+X-ME-Sender: <xms:eUpAXYuc_C2b661sgAmt2hNHqq4trdfXQtFqHRlE5VoxnD3GHOHfAQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrleefgdeijecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefhuffvjgfkffgfgggtgfesthekredttdefjeenucfhrhhomheplfgrnhgpufgv
+    sggrshhtihgrnhgpifpnthhtvgcuoehlihhnuhigsehjrghsvghgrdhnvghtqeenucfkph
+    epiedtrdejuddrieefrdejheenucfrrghrrghmpehmrghilhhfrhhomheplhhinhhugies
+    jhgrshgvghdrnhgvthenucevlhhushhtvghrufhiiigvpedt
+X-ME-Proxy: <xmx:eUpAXa-o9q3SBouyW__OkTaIUhfbEG7Sa32D9Yomvl_MIFz3YBadIg>
+    <xmx:eUpAXcGjAVNkbCJ20Yru4iN1bd-mi-eglpiEnvCahetnywZD2HC8Pw>
+    <xmx:eUpAXZTedMDQu-vGsIuCPkix2no6hhrE2rSmr9kzIBhp1gocDOOgMQ>
+    <xmx:e0pAXSIkTxK-kahb7LL8IFgImFCB7jDl-ivGz2-BMlaJnHto9MTcxA>
+Received: from [10.137.0.16] (softbank060071063075.bbtec.net [60.71.63.75])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 9508180065;
+        Tue, 30 Jul 2019 09:47:36 -0400 (EDT)
+From:   =?UTF-8?Q?Jan_Sebastian_G=c3=b6tte?= <linux@jaseg.net>
+Subject: [PATCH 1/6] drm: tiny: gdepaper: add TINYDRM_GDEPAPER config option
+To:     dri-devel@lists.freedesktop.org
+Cc:     =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, linux-kernel@vger.kernel.org
+In-Reply-To: <3c8fccc9-63f7-18bb-dcb5-dcd0b9e151d2@jaseg.net>
+Message-ID: <c802bc16-260a-d3d0-5f6a-a384ec4f47ed@jaseg.net>
+Date:   Tue, 30 Jul 2019 22:47:34 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The original script generates unneeded ", \" on the last line which
-results in compile error if one would forget to remove them.  Update the
-script to not generate ", \" on the last line.  Also add a define guard
-for EC_CMDS.
-
-Signed-off-by: Tzung-Bi Shih <tzungbi@google.com>
+Signed-off-by: Jan Sebastian Götte <linux@jaseg.net>
 ---
-Changes from v1:
-- simpler awk code
-Changes from v2:
-- use c style comments instead of c++ style
-- use '@' delimiter in sed instead of '/' to avoid unintentional end of
-  comment "*/"
-Changes from v3:
-- more detail commit message
-- add define guard for EC_CMDS
+ drivers/gpu/drm/tinydrm/Kconfig  | 10 ++++++++++
+ drivers/gpu/drm/tinydrm/Makefile |  1 +
+ 2 files changed, 11 insertions(+)
 
- drivers/platform/chrome/cros_ec_trace.c | 24 ++++++++++++++++++++++--
- 1 file changed, 22 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/platform/chrome/cros_ec_trace.c b/drivers/platform/chrome/cros_ec_trace.c
-index 0a76412095a9..1412ae024435 100644
---- a/drivers/platform/chrome/cros_ec_trace.c
-+++ b/drivers/platform/chrome/cros_ec_trace.c
-@@ -5,8 +5,27 @@
+diff --git a/drivers/gpu/drm/tinydrm/Kconfig b/drivers/gpu/drm/tinydrm/Kconfig
+index 87819c82bcce..427d1e62e63d 100644
+--- a/drivers/gpu/drm/tinydrm/Kconfig
++++ b/drivers/gpu/drm/tinydrm/Kconfig
+@@ -65,6 +65,16 @@ config TINYDRM_REPAPER
  
- #define TRACE_SYMBOL(a) {a, #a}
+ 	  If M is selected the module will be called repaper.
  
--// Generate the list using the following script:
--// sed -n 's/^#define \(EC_CMD_[[:alnum:]_]*\)\s.*/\tTRACE_SYMBOL(\1), \\/p' include/linux/mfd/cros_ec_commands.h
-+/*
-+ * Generate the list using the following script:
-+ * sed -n 's@^#define \(EC_CMD_[[:alnum:]_]*\)\s.*@\tTRACE_SYMBOL(\1), \\@p' \
-+ * include/linux/mfd/cros_ec_commands.h | awk '
-+ * BEGIN {
-+ *   print "#ifndef EC_CMDS";
-+ *   print "#define EC_CMDS \\";
-+ * }
-+ * {
-+ *   if (NR != 1)
-+ *     print buf;
-+ *   buf = $0;
-+ * }
-+ * END {
-+ *   gsub(/, \\/, "", buf);
-+ *   print buf;
-+ *   print "#endif";
-+ * }
-+ * '
-+ */
-+#ifndef EC_CMDS
- #define EC_CMDS \
- 	TRACE_SYMBOL(EC_CMD_PROTO_VERSION), \
- 	TRACE_SYMBOL(EC_CMD_HELLO), \
-@@ -119,6 +138,7 @@
- 	TRACE_SYMBOL(EC_CMD_PD_CHARGE_PORT_OVERRIDE), \
- 	TRACE_SYMBOL(EC_CMD_PD_GET_LOG_ENTRY), \
- 	TRACE_SYMBOL(EC_CMD_USB_PD_MUX_INFO)
-+#endif
- 
- #define CREATE_TRACE_POINTS
- #include "cros_ec_trace.h"
++config TINYDRM_GDEPAPER
++	tristate "DRM support for Good Display E-Paper Display"
++	depends on DRM_TINYDRM && SPI
++	select TINYDRM_MIPI_DBI
++	help
++	  DRM driver for the following Good Display E-Papar displays:
++	  * GDEW027C44 display (2.7 inch)
++
++	  If M is selected the module will be called gdepaper.
++
+ config TINYDRM_ST7586
+ 	tristate "DRM support for Sitronix ST7586 display panels"
+ 	depends on DRM_TINYDRM && SPI
+diff --git a/drivers/gpu/drm/tinydrm/Makefile b/drivers/gpu/drm/tinydrm/Makefile
+index 48ec8ed9dc16..70f78c8ab26e 100644
+--- a/drivers/gpu/drm/tinydrm/Makefile
++++ b/drivers/gpu/drm/tinydrm/Makefile
+@@ -10,5 +10,6 @@ obj-$(CONFIG_TINYDRM_ILI9225)		+= ili9225.o
+ obj-$(CONFIG_TINYDRM_ILI9341)		+= ili9341.o
+ obj-$(CONFIG_TINYDRM_MI0283QT)		+= mi0283qt.o
+ obj-$(CONFIG_TINYDRM_REPAPER)		+= repaper.o
++obj-$(CONFIG_TINYDRM_GDEPAPER)		+= gdepaper.o
+ obj-$(CONFIG_TINYDRM_ST7586)		+= st7586.o
+ obj-$(CONFIG_TINYDRM_ST7735R)		+= st7735r.o
 -- 
-2.22.0.709.g102302147b-goog
+2.21.0
 
