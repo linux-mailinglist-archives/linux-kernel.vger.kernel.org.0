@@ -2,56 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D0DC7B191
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:18:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CA6A17B172
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:16:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387734AbfG3SSY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 14:18:24 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:42089 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388070AbfG3SQf (ORCPT
+        id S2388185AbfG3SQt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 14:16:49 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:34461 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387527AbfG3SQf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 30 Jul 2019 14:16:35 -0400
-Received: by mail-pf1-f195.google.com with SMTP id q10so30248439pff.9
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 11:16:34 -0700 (PDT)
+Received: by mail-pg1-f196.google.com with SMTP id n9so24256650pgc.1
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 11:16:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=eK4LqccbexBbFwqN6Jv75UZiA5HD108HkeIAaMcaoSk=;
-        b=EeipzuZUgBBHDP2m+SB0YDxqn3NNwmT9E+BBw37WtV1keN0d+FirRsAehrjHIIdrRu
-         sTo+j3ADlw6xCRXXqiUe7x+YdqidUOQTLwQdf//CvX7cvcvu+MigUapFC3Fb+GikoW9V
-         7xpLH4IkurfaDjtVNMPl0YG4lXWTXlMLMsN0E=
+        bh=9X8hLkpiNTOcIMGNmROyV+w/FtAgznL0afZf+kaW+1c=;
+        b=f3jwSZ3EQ9GvK4fVs1HrYT6eWXNJzLuiBDiXgH+a9XTQUwb1eOy93OUYR3vkqieVSE
+         tC4YOGiz0tPLhXddU9RH/QlGNaPEFCtPk0EG2IwVgSsDCHjFJ0922PL1Cvun02i1xlzc
+         Ur2mbzEv7HSZDz12ksiL9gIopzeB/87yCns5o=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=eK4LqccbexBbFwqN6Jv75UZiA5HD108HkeIAaMcaoSk=;
-        b=h9IgqGVQF1Cy3T+BBKzlhq0lohV7ZCBQuPAt1xSKkbNA45iBIdKTWWgn1zbOTShIAz
-         ApC5ZF1Q7S2U3BIYOyW0MK6tbuwlEonToMHEDR0s7qCAqbmR5chWiZK6AC3z+MUc9Bcf
-         U/7vnJqnAZ9MtM1J7zUvSH7lifiQakcCpGG02fSybH04C0gBxx3uKTQ2iAQgvL49150h
-         6JlZPRayVez8N39c3lnmfw8KlnBbywqhevP5dwicWyNY8N/A1bWM2L2ieUkPuMXG6AI5
-         LMqv4Rv1GFNLI+bvAowB3YX0UKa5aIT3u6Pv2pxvm3bp9rWO38KlWXpNvE8G5Q5fvvzr
-         26ZQ==
-X-Gm-Message-State: APjAAAUwYopsJ5DrgDiOuExx1bPre1qhiiGCoyGzfkAWxUf95io9faVz
-        z9D3vlLttHF87VfGzSwwmFp4bNjs6h9tHA==
-X-Google-Smtp-Source: APXvYqxkh5jvsKtB7zLA6qKpix95JeAIwIFrX0WRqlAuCLmFQpKrKljFdeMBb/DMKUIjAIXMzawtlQ==
-X-Received: by 2002:a63:7c0d:: with SMTP id x13mr70206332pgc.360.1564510594054;
+        bh=9X8hLkpiNTOcIMGNmROyV+w/FtAgznL0afZf+kaW+1c=;
+        b=hAxdrFTOD2YGdh9nQ7PMr9j7QpWtYx87jbnvffXBx52N/C5xVc2QEh1YhXGt/3waUx
+         6RHU5xAwVGu9CMEcymFT4uSDjHVwfkmnmrQT1j6rW9moFrz70VDmyehNp1s3Tk0uzhgx
+         UGS+XJixioCHbzsuBxg7M+0+8nHe1JVo8sChr2Z7c6NThyP2iqGsO2+4k2Wx8QPpsMD7
+         dqIGL5DLcFsvNxRp/K6uR2OfKX8atjI711m0Ln9XF0gyL2X8gSrajxplWyETABCdtD3v
+         itgnfLT92QREPtLAHYO3WkghguyKO0qwXUnB4YbtT15HrsfnTeYQ0IIurr4+MQyY7TvN
+         tLnQ==
+X-Gm-Message-State: APjAAAXGdo8KhqOa+cmpLWYt7OFFg1WUYYUlc6KzOxVTAPjHl/B7QYMZ
+        pKT5HuUf/2TBa21NxlKSjwWJDG410kjtow==
+X-Google-Smtp-Source: APXvYqxxoz2inFV06sgWI8/GJPaap+cnYFKP3l0gEbP2XOuYCnhK/v3QWrXBbYo5msllu20SzT+1OQ==
+X-Received: by 2002:aa7:989a:: with SMTP id r26mr30667497pfl.232.1564510594816;
         Tue, 30 Jul 2019 11:16:34 -0700 (PDT)
 Received: from smtp.gmail.com ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id g1sm106744083pgg.27.2019.07.30.11.16.33
+        by smtp.gmail.com with ESMTPSA id g1sm106744083pgg.27.2019.07.30.11.16.34
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 30 Jul 2019 11:16:33 -0700 (PDT)
+        Tue, 30 Jul 2019 11:16:34 -0700 (PDT)
 From:   Stephen Boyd <swboyd@chromium.org>
 To:     linux-kernel@vger.kernel.org
-Cc:     Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-pm@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH v6 43/57] thermal: Remove dev_err() usage after platform_get_irq()
-Date:   Tue, 30 Jul 2019 11:15:43 -0700
-Message-Id: <20190730181557.90391-44-swboyd@chromium.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>
+Subject: [PATCH v6 44/57] tty: Remove dev_err() usage after platform_get_irq()
+Date:   Tue, 30 Jul 2019 11:15:44 -0700
+Message-Id: <20190730181557.90391-45-swboyd@chromium.org>
 X-Mailer: git-send-email 2.22.0.709.g102302147b-goog
 In-Reply-To: <20190730181557.90391-1-swboyd@chromium.org>
 References: <20190730181557.90391-1-swboyd@chromium.org>
@@ -97,141 +94,309 @@ if ( \( ret < 0 \| ret <= 0 \) )
 While we're here, remove braces on if statements that only have one
 statement (manually).
 
-Cc: Zhang Rui <rui.zhang@intel.com>
-Cc: Eduardo Valentin <edubezval@gmail.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: linux-pm@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jiri Slaby <jslaby@suse.com>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Stephen Boyd <swboyd@chromium.org>
 ---
 
 Please apply directly to subsystem trees
 
- drivers/thermal/broadcom/brcmstb_thermal.c  | 4 +---
- drivers/thermal/da9062-thermal.c            | 4 +---
- drivers/thermal/db8500_thermal.c            | 2 --
- drivers/thermal/rockchip_thermal.c          | 4 +---
- drivers/thermal/st/st_thermal_memmap.c      | 4 +---
- drivers/thermal/st/stm_thermal.c            | 4 +---
- drivers/thermal/ti-soc-thermal/ti-bandgap.c | 4 +---
- 7 files changed, 6 insertions(+), 20 deletions(-)
+ drivers/tty/serial/8250/8250_bcm2835aux.c |  4 +---
+ drivers/tty/serial/8250/8250_lpc18xx.c    |  4 +---
+ drivers/tty/serial/8250/8250_uniphier.c   |  4 +---
+ drivers/tty/serial/amba-pl011.c           |  5 +----
+ drivers/tty/serial/fsl_lpuart.c           |  4 +---
+ drivers/tty/serial/lpc32xx_hs.c           |  5 +----
+ drivers/tty/serial/mvebu-uart.c           | 12 +++---------
+ drivers/tty/serial/owl-uart.c             |  4 +---
+ drivers/tty/serial/qcom_geni_serial.c     |  4 +---
+ drivers/tty/serial/rda-uart.c             |  4 +---
+ drivers/tty/serial/sccnxp.c               |  1 -
+ drivers/tty/serial/serial-tegra.c         |  4 +---
+ drivers/tty/serial/sifive.c               |  4 +---
+ drivers/tty/serial/sprd_serial.c          |  4 +---
+ drivers/tty/serial/stm32-usart.c          | 17 ++++-------------
+ 15 files changed, 19 insertions(+), 61 deletions(-)
 
-diff --git a/drivers/thermal/broadcom/brcmstb_thermal.c b/drivers/thermal/broadcom/brcmstb_thermal.c
-index 5825ac581f56..619ad86dbdbc 100644
---- a/drivers/thermal/broadcom/brcmstb_thermal.c
-+++ b/drivers/thermal/broadcom/brcmstb_thermal.c
-@@ -331,10 +331,8 @@ static int brcmstb_thermal_probe(struct platform_device *pdev)
- 	priv->thermal = thermal;
+diff --git a/drivers/tty/serial/8250/8250_bcm2835aux.c b/drivers/tty/serial/8250/8250_bcm2835aux.c
+index bd53661103eb..8ce700c1a7fc 100644
+--- a/drivers/tty/serial/8250/8250_bcm2835aux.c
++++ b/drivers/tty/serial/8250/8250_bcm2835aux.c
+@@ -56,10 +56,8 @@ static int bcm2835aux_serial_probe(struct platform_device *pdev)
+ 
+ 	/* get the interrupt */
+ 	ret = platform_get_irq(pdev, 0);
+-	if (ret < 0) {
+-		dev_err(&pdev->dev, "irq not found - %i", ret);
++	if (ret < 0)
+ 		return ret;
+-	}
+ 	data->uart.port.irq = ret;
+ 
+ 	/* map the main registers */
+diff --git a/drivers/tty/serial/8250/8250_lpc18xx.c b/drivers/tty/serial/8250/8250_lpc18xx.c
+index eddf119374e1..570e25d6f37e 100644
+--- a/drivers/tty/serial/8250/8250_lpc18xx.c
++++ b/drivers/tty/serial/8250/8250_lpc18xx.c
+@@ -106,10 +106,8 @@ static int lpc18xx_serial_probe(struct platform_device *pdev)
+ 	int irq, ret;
  
  	irq = platform_get_irq(pdev, 0);
 -	if (irq < 0) {
--		dev_err(&pdev->dev, "could not get IRQ\n");
+-		dev_err(&pdev->dev, "irq not found");
 +	if (irq < 0)
  		return irq;
 -	}
- 	ret = devm_request_threaded_irq(&pdev->dev, irq, NULL,
- 					brcmstb_tmon_irq_thread, IRQF_ONESHOT,
- 					DRV_NAME, priv);
-diff --git a/drivers/thermal/da9062-thermal.c b/drivers/thermal/da9062-thermal.c
-index c32709badeda..2917b1cee1e9 100644
---- a/drivers/thermal/da9062-thermal.c
-+++ b/drivers/thermal/da9062-thermal.c
-@@ -254,10 +254,8 @@ static int da9062_thermal_probe(struct platform_device *pdev)
- 		thermal->zone->passive_delay);
  
- 	ret = platform_get_irq_byname(pdev, "THERMAL");
--	if (ret < 0) {
--		dev_err(&pdev->dev, "Failed to get platform IRQ.\n");
-+	if (ret < 0)
- 		goto err_zone;
--	}
- 	thermal->irq = ret;
- 
- 	ret = request_threaded_irq(thermal->irq, NULL,
-diff --git a/drivers/thermal/db8500_thermal.c b/drivers/thermal/db8500_thermal.c
-index b71a999d17d6..e391b5687147 100644
---- a/drivers/thermal/db8500_thermal.c
-+++ b/drivers/thermal/db8500_thermal.c
-@@ -408,7 +408,6 @@ static int db8500_thermal_probe(struct platform_device *pdev)
- 
- 	low_irq = platform_get_irq_byname(pdev, "IRQ_HOTMON_LOW");
- 	if (low_irq < 0) {
--		dev_err(&pdev->dev, "Get IRQ_HOTMON_LOW failed.\n");
- 		ret = low_irq;
- 		goto out_unlock;
- 	}
-@@ -423,7 +422,6 @@ static int db8500_thermal_probe(struct platform_device *pdev)
- 
- 	high_irq = platform_get_irq_byname(pdev, "IRQ_HOTMON_HIGH");
- 	if (high_irq < 0) {
--		dev_err(&pdev->dev, "Get IRQ_HOTMON_HIGH failed.\n");
- 		ret = high_irq;
- 		goto out_unlock;
- 	}
-diff --git a/drivers/thermal/rockchip_thermal.c b/drivers/thermal/rockchip_thermal.c
-index 343c2f5c5a25..00169e5a719a 100644
---- a/drivers/thermal/rockchip_thermal.c
-+++ b/drivers/thermal/rockchip_thermal.c
-@@ -1229,10 +1229,8 @@ static int rockchip_thermal_probe(struct platform_device *pdev)
- 		return -ENXIO;
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	if (!res) {
+diff --git a/drivers/tty/serial/8250/8250_uniphier.c b/drivers/tty/serial/8250/8250_uniphier.c
+index 164ba133437a..e0b73a5402db 100644
+--- a/drivers/tty/serial/8250/8250_uniphier.c
++++ b/drivers/tty/serial/8250/8250_uniphier.c
+@@ -176,10 +176,8 @@ static int uniphier_uart_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
  
  	irq = platform_get_irq(pdev, 0);
 -	if (irq < 0) {
--		dev_err(&pdev->dev, "no irq resource?\n");
+-		dev_err(dev, "failed to get IRQ number\n");
 +	if (irq < 0)
- 		return -EINVAL;
+ 		return irq;
 -	}
  
- 	thermal = devm_kzalloc(&pdev->dev, sizeof(struct rockchip_thermal_data),
- 			       GFP_KERNEL);
-diff --git a/drivers/thermal/st/st_thermal_memmap.c b/drivers/thermal/st/st_thermal_memmap.c
-index a824b78dabf8..a0114452d11f 100644
---- a/drivers/thermal/st/st_thermal_memmap.c
-+++ b/drivers/thermal/st/st_thermal_memmap.c
-@@ -94,10 +94,8 @@ static int st_mmap_register_enable_irq(struct st_thermal_sensor *sensor)
- 	int ret;
+ 	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+ 	if (!priv)
+diff --git a/drivers/tty/serial/amba-pl011.c b/drivers/tty/serial/amba-pl011.c
+index 5921a33b2a07..3a7d1a66f79c 100644
+--- a/drivers/tty/serial/amba-pl011.c
++++ b/drivers/tty/serial/amba-pl011.c
+@@ -2718,11 +2718,8 @@ static int sbsa_uart_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
  
- 	sensor->irq = platform_get_irq(pdev, 0);
--	if (sensor->irq < 0) {
--		dev_err(dev, "failed to register IRQ\n");
-+	if (sensor->irq < 0)
- 		return sensor->irq;
+ 	ret = platform_get_irq(pdev, 0);
+-	if (ret < 0) {
+-		if (ret != -EPROBE_DEFER)
+-			dev_err(&pdev->dev, "cannot obtain irq\n");
++	if (ret < 0)
+ 		return ret;
+-	}
+ 	uap->port.irq	= ret;
+ 
+ #ifdef CONFIG_ACPI_SPCR_TABLE
+diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c
+index 92dad2b4ec36..1b790cc1c0cf 100644
+--- a/drivers/tty/serial/fsl_lpuart.c
++++ b/drivers/tty/serial/fsl_lpuart.c
+@@ -2346,10 +2346,8 @@ static int lpuart_probe(struct platform_device *pdev)
+ 	sport->port.type = PORT_LPUART;
+ 	sport->devtype = sdata->devtype;
+ 	ret = platform_get_irq(pdev, 0);
+-	if (ret < 0) {
+-		dev_err(&pdev->dev, "cannot obtain irq\n");
++	if (ret < 0)
+ 		return ret;
+-	}
+ 	sport->port.irq = ret;
+ 	sport->port.iotype = sdata->iotype;
+ 	if (lpuart_is_32(sport))
+diff --git a/drivers/tty/serial/lpc32xx_hs.c b/drivers/tty/serial/lpc32xx_hs.c
+index f4e27d0ad947..7c67e3afbac7 100644
+--- a/drivers/tty/serial/lpc32xx_hs.c
++++ b/drivers/tty/serial/lpc32xx_hs.c
+@@ -687,11 +687,8 @@ static int serial_hs_lpc32xx_probe(struct platform_device *pdev)
+ 	p->port.membase = NULL;
+ 
+ 	ret = platform_get_irq(pdev, 0);
+-	if (ret < 0) {
+-		dev_err(&pdev->dev, "Error getting irq for HS UART port %d\n",
+-			uarts_registered);
++	if (ret < 0)
+ 		return ret;
+-	}
+ 	p->port.irq = ret;
+ 
+ 	p->port.iotype = UPIO_MEM32;
+diff --git a/drivers/tty/serial/mvebu-uart.c b/drivers/tty/serial/mvebu-uart.c
+index 7e7b1559fa36..c12a12556339 100644
+--- a/drivers/tty/serial/mvebu-uart.c
++++ b/drivers/tty/serial/mvebu-uart.c
+@@ -884,10 +884,8 @@ static int mvebu_uart_probe(struct platform_device *pdev)
+ 	if (platform_irq_count(pdev) == 1) {
+ 		/* Old bindings: no name on the single unamed UART0 IRQ */
+ 		irq = platform_get_irq(pdev, 0);
+-		if (irq < 0) {
+-			dev_err(&pdev->dev, "unable to get UART IRQ\n");
++		if (irq < 0)
+ 			return irq;
+-		}
+ 
+ 		mvuart->irq[UART_IRQ_SUM] = irq;
+ 	} else {
+@@ -897,18 +895,14 @@ static int mvebu_uart_probe(struct platform_device *pdev)
+ 		 * uart-sum of UART0 port.
+ 		 */
+ 		irq = platform_get_irq_byname(pdev, "uart-rx");
+-		if (irq < 0) {
+-			dev_err(&pdev->dev, "unable to get 'uart-rx' IRQ\n");
++		if (irq < 0)
+ 			return irq;
+-		}
+ 
+ 		mvuart->irq[UART_RX_IRQ] = irq;
+ 
+ 		irq = platform_get_irq_byname(pdev, "uart-tx");
+-		if (irq < 0) {
+-			dev_err(&pdev->dev, "unable to get 'uart-tx' IRQ\n");
++		if (irq < 0)
+ 			return irq;
+-		}
+ 
+ 		mvuart->irq[UART_TX_IRQ] = irq;
+ 	}
+diff --git a/drivers/tty/serial/owl-uart.c b/drivers/tty/serial/owl-uart.c
+index 29a6dc6a8d23..03963af77b15 100644
+--- a/drivers/tty/serial/owl-uart.c
++++ b/drivers/tty/serial/owl-uart.c
+@@ -662,10 +662,8 @@ static int owl_uart_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	irq = platform_get_irq(pdev, 0);
+-	if (irq < 0) {
+-		dev_err(&pdev->dev, "could not get irq\n");
++	if (irq < 0)
+ 		return irq;
 -	}
  
- 	ret = devm_request_threaded_irq(dev, sensor->irq,
- 					NULL, st_mmap_thermal_trip_handler,
-diff --git a/drivers/thermal/st/stm_thermal.c b/drivers/thermal/st/stm_thermal.c
-index cf9ddc52f30e..4697849de1ca 100644
---- a/drivers/thermal/st/stm_thermal.c
-+++ b/drivers/thermal/st/stm_thermal.c
-@@ -487,10 +487,8 @@ static int stm_register_irq(struct stm_thermal_sensor *sensor)
- 	int ret;
+ 	if (owl_uart_ports[pdev->id]) {
+ 		dev_err(&pdev->dev, "port %d already allocated\n", pdev->id);
+diff --git a/drivers/tty/serial/qcom_geni_serial.c b/drivers/tty/serial/qcom_geni_serial.c
+index 35e5f9c5d5be..f879710e23f1 100644
+--- a/drivers/tty/serial/qcom_geni_serial.c
++++ b/drivers/tty/serial/qcom_geni_serial.c
+@@ -1291,10 +1291,8 @@ static int qcom_geni_serial_probe(struct platform_device *pdev)
+ 	port->tx_fifo_width = DEF_FIFO_WIDTH_BITS;
  
- 	sensor->irq = platform_get_irq(pdev, 0);
--	if (sensor->irq < 0) {
--		dev_err(dev, "%s: Unable to find IRQ\n", __func__);
-+	if (sensor->irq < 0)
- 		return sensor->irq;
+ 	irq = platform_get_irq(pdev, 0);
+-	if (irq < 0) {
+-		dev_err(&pdev->dev, "Failed to get IRQ %d\n", irq);
++	if (irq < 0)
+ 		return irq;
+-	}
+ 	uport->irq = irq;
+ 
+ 	uport->private_data = drv;
+diff --git a/drivers/tty/serial/rda-uart.c b/drivers/tty/serial/rda-uart.c
+index 284623eefaeb..c1b0d7662ef9 100644
+--- a/drivers/tty/serial/rda-uart.c
++++ b/drivers/tty/serial/rda-uart.c
+@@ -735,10 +735,8 @@ static int rda_uart_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	irq = platform_get_irq(pdev, 0);
+-	if (irq < 0) {
+-		dev_err(&pdev->dev, "could not get irq\n");
++	if (irq < 0)
+ 		return irq;
 -	}
  
- 	ret = devm_request_threaded_irq(dev, sensor->irq,
- 					stm_thermal_alarm_irq,
-diff --git a/drivers/thermal/ti-soc-thermal/ti-bandgap.c b/drivers/thermal/ti-soc-thermal/ti-bandgap.c
-index 2fa78f738568..1747dcaba365 100644
---- a/drivers/thermal/ti-soc-thermal/ti-bandgap.c
-+++ b/drivers/thermal/ti-soc-thermal/ti-bandgap.c
-@@ -787,10 +787,8 @@ static int ti_bandgap_talert_init(struct ti_bandgap *bgp,
- 	int ret;
+ 	if (rda_uart_ports[pdev->id]) {
+ 		dev_err(&pdev->dev, "port %d already allocated\n", pdev->id);
+diff --git a/drivers/tty/serial/sccnxp.c b/drivers/tty/serial/sccnxp.c
+index 68a24a14f6b7..d2b77aae42ae 100644
+--- a/drivers/tty/serial/sccnxp.c
++++ b/drivers/tty/serial/sccnxp.c
+@@ -961,7 +961,6 @@ static int sccnxp_probe(struct platform_device *pdev)
+ 	if (!s->poll) {
+ 		s->irq = platform_get_irq(pdev, 0);
+ 		if (s->irq < 0) {
+-			dev_err(&pdev->dev, "Missing irq resource data\n");
+ 			ret = -ENXIO;
+ 			goto err_out;
+ 		}
+diff --git a/drivers/tty/serial/serial-tegra.c b/drivers/tty/serial/serial-tegra.c
+index d5269aaaf9b2..76ffbc7826ae 100644
+--- a/drivers/tty/serial/serial-tegra.c
++++ b/drivers/tty/serial/serial-tegra.c
+@@ -1307,10 +1307,8 @@ static int tegra_uart_probe(struct platform_device *pdev)
  
- 	bgp->irq = platform_get_irq(pdev, 0);
--	if (bgp->irq < 0) {
--		dev_err(&pdev->dev, "get_irq failed\n");
-+	if (bgp->irq < 0)
- 		return bgp->irq;
+ 	u->iotype = UPIO_MEM32;
+ 	ret = platform_get_irq(pdev, 0);
+-	if (ret < 0) {
+-		dev_err(&pdev->dev, "Couldn't get IRQ\n");
++	if (ret < 0)
+ 		return ret;
 -	}
- 	ret = request_threaded_irq(bgp->irq, NULL,
- 				   ti_bandgap_talert_irq_handler,
- 				   IRQF_TRIGGER_HIGH | IRQF_ONESHOT,
+ 	u->irq = ret;
+ 	u->regshift = 2;
+ 	ret = uart_add_one_port(&tegra_uart_driver, u);
+diff --git a/drivers/tty/serial/sifive.c b/drivers/tty/serial/sifive.c
+index be4687814353..d5f81b98e4d7 100644
+--- a/drivers/tty/serial/sifive.c
++++ b/drivers/tty/serial/sifive.c
+@@ -896,10 +896,8 @@ static int sifive_serial_probe(struct platform_device *pdev)
+ 	int irq, id, r;
+ 
+ 	irq = platform_get_irq(pdev, 0);
+-	if (irq < 0) {
+-		dev_err(&pdev->dev, "could not acquire interrupt\n");
++	if (irq < 0)
+ 		return -EPROBE_DEFER;
+-	}
+ 
+ 	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	base = devm_ioremap_resource(&pdev->dev, mem);
+diff --git a/drivers/tty/serial/sprd_serial.c b/drivers/tty/serial/sprd_serial.c
+index 73d71a4e6c0c..284709f61831 100644
+--- a/drivers/tty/serial/sprd_serial.c
++++ b/drivers/tty/serial/sprd_serial.c
+@@ -1173,10 +1173,8 @@ static int sprd_probe(struct platform_device *pdev)
+ 	up->mapbase = res->start;
+ 
+ 	irq = platform_get_irq(pdev, 0);
+-	if (irq < 0) {
+-		dev_err(&pdev->dev, "not provide irq resource: %d\n", irq);
++	if (irq < 0)
+ 		return irq;
+-	}
+ 	up->irq = irq;
+ 
+ 	/*
+diff --git a/drivers/tty/serial/stm32-usart.c b/drivers/tty/serial/stm32-usart.c
+index 24a2261f879a..222694352a17 100644
+--- a/drivers/tty/serial/stm32-usart.c
++++ b/drivers/tty/serial/stm32-usart.c
+@@ -927,11 +927,8 @@ static int stm32_init_port(struct stm32_port *stm32port,
+ 	port->fifosize	= stm32port->info->cfg.fifosize;
+ 
+ 	ret = platform_get_irq(pdev, 0);
+-	if (ret <= 0) {
+-		if (ret != -EPROBE_DEFER)
+-			dev_err(&pdev->dev, "Can't get event IRQ: %d\n", ret);
+-		return ret ? ret : -ENODEV;
+-	}
++	if (ret <= 0)
++		return ret ? : -ENODEV;
+ 	port->irq = ret;
+ 
+ 	port->rs485_config = stm32_config_rs485;
+@@ -940,14 +937,8 @@ static int stm32_init_port(struct stm32_port *stm32port,
+ 
+ 	if (stm32port->info->cfg.has_wakeup) {
+ 		stm32port->wakeirq = platform_get_irq(pdev, 1);
+-		if (stm32port->wakeirq <= 0 && stm32port->wakeirq != -ENXIO) {
+-			if (stm32port->wakeirq != -EPROBE_DEFER)
+-				dev_err(&pdev->dev,
+-					"Can't get event wake IRQ: %d\n",
+-					stm32port->wakeirq);
+-			return stm32port->wakeirq ? stm32port->wakeirq :
+-				-ENODEV;
+-		}
++		if (stm32port->wakeirq <= 0 && stm32port->wakeirq != -ENXIO)
++			return stm32port->wakeirq ? : -ENODEV;
+ 	}
+ 
+ 	stm32port->fifoen = stm32port->info->cfg.has_fifo;
 -- 
 Sent by a computer through tubes
 
