@@ -2,315 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 590967AA50
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 15:58:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 07BDC7AA5C
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 15:58:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728516AbfG3N6A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 09:58:00 -0400
-Received: from foss.arm.com ([217.140.110.172]:33118 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725871AbfG3N57 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 09:57:59 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 41F4528;
-        Tue, 30 Jul 2019 06:57:58 -0700 (PDT)
-Received: from [10.1.194.48] (e123572-lin.cambridge.arm.com [10.1.194.48])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2BB393F694;
-        Tue, 30 Jul 2019 06:57:56 -0700 (PDT)
-Subject: Re: [PATCH v6 1/2] arm64: Define
- Documentation/arm64/tagged-address-abi.rst
-To:     Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-        linux-mm@kvack.org, linux-arch@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Szabolcs Nagy <szabolcs.nagy@arm.com>,
+        id S1728844AbfG3N6c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 09:58:32 -0400
+Received: from dc8-smtprelay2.synopsys.com ([198.182.47.102]:52382 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725871AbfG3N62 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 09:58:28 -0400
+Received: from mailhost.synopsys.com (badc-mailhost2.synopsys.com [10.192.0.18])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id DBA25C01EC;
+        Tue, 30 Jul 2019 13:58:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1564495108; bh=dsRxsIMMA7Re2X5jzrM5BT6whgSxGRni25VGvpOmnpc=;
+        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
+        b=WVKafgDCUDtcxZ92sztqdz5jcNSERrbmwYXkMtEYzKK9S+jqITSVmSBLzbwiRH8mB
+         YOLLfykPbJV2sGAD5J++68mvV8xXD158OwAVRCfTNzvP4CH0qaRi53yEj1mO+ORW4y
+         lseDX8bzbLegxyLIF+G5+OGzzcFtjqv4ZjpHmVELCbBa9xW4CgAT6tRXIV5Oqyt01j
+         5JcT1rFwLmS5ywuDzMUozuQDlPX0b6SMytBKjs+teq8LiZTdCgOYvNSTrkYHbl5Vev
+         w61eln0Gdqez0lbPzRs8MleRgMrGH3afocpzZj+pk5ZpNXeCnAjeKBmLJYMTdm/sJa
+         gh5cJv2sK0iYw==
+Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mailhost.synopsys.com (Postfix) with ESMTPS id F1442A0069;
+        Tue, 30 Jul 2019 13:58:20 +0000 (UTC)
+Received: from US01HYBRID2.internal.synopsys.com (10.15.246.24) by
+ US01WEHTC3.internal.synopsys.com (10.15.84.232) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Tue, 30 Jul 2019 06:58:20 -0700
+Received: from NAM04-CO1-obe.outbound.protection.outlook.com (10.13.134.195)
+ by mrs.synopsys.com (10.15.246.24) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Tue, 30 Jul 2019 06:58:20 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=RbnUeURGn8laCLbCesOGPQlQDuwW1OtI/DOG9EmogemAJ/SB2nC0A8O9XWld5nnKULwJbIGdTM+LRrkB4RyHzhOI1hu9tV28UhrUz9dKg9EFTi8Ch8XGASUZV0XE/HaUAT5FJsED9B8JRRKhYEAOROIyZMItnH33h9XwsSfYPuHxl0gzzVep9JValWU/7rfu3wWtDxgNn7wZ3Z3P30P1raciNreBY3HuZTQQfC2S3L6DUsazk9hbOcDaSYJjyvRFkTpYQy7zXZsQhiWVGQuqQ4y5BraNdzpwsJmieAHesDxMrQIg8qJtAU5uo6DW9ndZjvHNCEQYLTdBkIoe90hseQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dsRxsIMMA7Re2X5jzrM5BT6whgSxGRni25VGvpOmnpc=;
+ b=UC8Hmyxm+gAibQ6KphZnmG45GWe7ZDVyVYqZd+twcj+wkqE61MswYphODc64zSRGyLxLi7T1AbldpnPeQgcFdrc3YEH1wZmou1fdlrTfirYJo4x4vL7t9OsIQn+0/hunKMVnj4McmK8l9LDx1XTmgrl8sDc/naOewJwTuTXuWz47TurCgjEsq5C7+Mij6fIdmvGeblj2CLd8kDnVSbljYFDfD1klehn7QtgRG5pGW5JJFcXCj9u83bJccFfvitmE9As/TH7TbITB3eJ05/M8SlHtcwVHMyfw99Q/rNMv2kGSHD5Iu1MezJmybVbI1u07kh43ZCwEYS8TT8/qHjf6Zg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
+ smtp.mailfrom=synopsys.com;dmarc=pass action=none
+ header.from=synopsys.com;dkim=pass header.d=synopsys.com;arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=synopsys.onmicrosoft.com; s=selector1-synopsys-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dsRxsIMMA7Re2X5jzrM5BT6whgSxGRni25VGvpOmnpc=;
+ b=Shuw1cY2YS1Y7RDLxL41YCeVTdHDqj1F6Y0RdO3rkL9Tep9K5BtMKnUEbCdupcfHR7bA5Osx3/Aa+CHcewpd0eD54kx6Akhq52j1edlw63Zqij+SPZOjCxeOSISK9naN1miICOnWgZoRzMNC7Hcu4UhsErLI+spCwg8aUZoVAPE=
+Received: from BN8PR12MB3266.namprd12.prod.outlook.com (20.179.66.159) by
+ BN8PR12MB3202.namprd12.prod.outlook.com (20.179.65.29) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2115.15; Tue, 30 Jul 2019 13:58:19 +0000
+Received: from BN8PR12MB3266.namprd12.prod.outlook.com
+ ([fe80::6016:66cc:e24f:986c]) by BN8PR12MB3266.namprd12.prod.outlook.com
+ ([fe80::6016:66cc:e24f:986c%5]) with mapi id 15.20.2115.005; Tue, 30 Jul 2019
+ 13:58:19 +0000
+From:   Jose Abreu <Jose.Abreu@synopsys.com>
+To:     Jon Hunter <jonathanh@nvidia.com>,
+        Jose Abreu <Jose.Abreu@synopsys.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-stm32@st-md-mailman.stormreply.com" 
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
         Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Andrey Konovalov <andreyknvl@google.com>
-References: <cover.1563904656.git.andreyknvl@google.com>
- <20190725135044.24381-1-vincenzo.frascino@arm.com>
- <20190725135044.24381-2-vincenzo.frascino@arm.com>
- <52fa2cfc-f7a6-af6f-0dc2-f9ea0e41ac3c@arm.com>
- <c45df19e-8f48-7f4e-3eae-ada54cb6f707@arm.com>
-From:   Kevin Brodsky <kevin.brodsky@arm.com>
-Message-ID: <6eba1250-c0a2-0a51-c8c2-0e77e6241f29@arm.com>
-Date:   Tue, 30 Jul 2019 14:57:50 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Will Deacon <will@kernel.org>
+CC:     Joao Pinto <Joao.Pinto@synopsys.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        "David S . Miller" <davem@davemloft.net>
+Subject: RE: [PATCH net-next 3/3] net: stmmac: Introducing support for Page
+ Pool
+Thread-Topic: [PATCH net-next 3/3] net: stmmac: Introducing support for Page
+ Pool
+Thread-Index: AQHVMYtq2Zx4WVoG/U2kL8GCK0bP/abbdEOAgAAAgcCAABHmgIAADDMggAGB8wCAAa8dIIACpFiggAAs3ACAAAdb0IAACH4AgAACfECAAJ/bAIAAyh8ggABDGoCAAAXYoA==
+Date:   Tue, 30 Jul 2019 13:58:18 +0000
+Message-ID: <BN8PR12MB32664C177C9356CE8C15FC65D3DC0@BN8PR12MB3266.namprd12.prod.outlook.com>
+References: <cover.1562149883.git.joabreu@synopsys.com>
+ <1b254bb7fc6044c5e6e2fdd9e00088d1d13a808b.1562149883.git.joabreu@synopsys.com>
+ <7a79be5d-7ba2-c457-36d3-1ccef6572181@nvidia.com>
+ <BYAPR12MB3269927AB1F67D46E150ED6BD3C10@BYAPR12MB3269.namprd12.prod.outlook.com>
+ <9e695f33-fd9f-a910-0891-2b63bd75e082@nvidia.com>
+ <BYAPR12MB3269B4A401E4DA10A07515C7D3C10@BYAPR12MB3269.namprd12.prod.outlook.com>
+ <1e2ea942-28fe-15b9-f675-8d6585f9a33f@nvidia.com>
+ <BYAPR12MB326922CDCB1D4B3D4A780CFDD3C30@BYAPR12MB3269.namprd12.prod.outlook.com>
+ <MN2PR12MB327907D4A6FB378AC989571AD3DD0@MN2PR12MB3279.namprd12.prod.outlook.com>
+ <b99b1e49-0cbc-2c66-6325-50fa6f263d91@nvidia.com>
+ <MN2PR12MB327997BDF2EA5CEE00F45AC3D3DD0@MN2PR12MB3279.namprd12.prod.outlook.com>
+ <fcf648d2-70cc-d734-871a-ca7f745791b7@arm.com>
+ <MN2PR12MB3279ABF628C52883021123C5D3DD0@MN2PR12MB3279.namprd12.prod.outlook.com>
+ <8a60361f-b914-93ef-0d80-92ae4ad8b808@nvidia.com>
+ <BN8PR12MB32664E23137805984F6FB2DAD3DC0@BN8PR12MB3266.namprd12.prod.outlook.com>
+ <8cb2ac13-3009-2117-d55f-6f1126b690e4@nvidia.com>
+In-Reply-To: <8cb2ac13-3009-2117-d55f-6f1126b690e4@nvidia.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=joabreu@synopsys.com; 
+x-originating-ip: [83.174.63.141]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 4e792b53-b959-438f-8dad-08d714f5fa08
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:BN8PR12MB3202;
+x-ms-traffictypediagnostic: BN8PR12MB3202:|BN8PR12MB3202:
+x-microsoft-antispam-prvs: <BN8PR12MB320204B8D99EB76DA2E6720AD3DC0@BN8PR12MB3202.namprd12.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:10000;
+x-forefront-prvs: 0114FF88F6
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(39860400002)(346002)(396003)(366004)(136003)(52284002)(189003)(199004)(86362001)(68736007)(71200400001)(71190400001)(74316002)(4744005)(6506007)(6436002)(99286004)(66476007)(66556008)(26005)(102836004)(66446008)(110136005)(53546011)(76116006)(316002)(9686003)(305945005)(64756008)(5024004)(476003)(229853002)(76176011)(52536014)(7696005)(486006)(54906003)(55016002)(11346002)(66946007)(5660300002)(186003)(7416002)(53936002)(446003)(256004)(81156014)(33656002)(8936002)(81166006)(2906002)(8676002)(6116002)(3846002)(4326008)(6246003)(7736002)(14454004)(2201001)(66066001)(478600001)(25786009)(2501003)(49934004);DIR:OUT;SFP:1102;SCL:1;SRVR:BN8PR12MB3202;H:BN8PR12MB3266.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: synopsys.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: pzgpz9N7o5wfOFhHVs5Pa5mklnt/YMu2ajihCdfSUVZ5I6waubJ0FNCe8/xLusFHhHy5eqD3+nXT/BOyMddZStIjrncFVlXa4pGjFGqLzVIwlA78iBQPBU7nVxV1zXErwBX2+BDJwug4tCVTNhi64uDPKagoHx83sjwGiIcayt8oMX9D9hgqt8XEGxnipoYmAV8RuceL/vkMR251NI843KRumncTjIgMDq9jIIRBqyC8zNrZyvdqGpdeBPOiv4vu9De5a8d/cDzKI6xGkX2LN+yOBJey5fXGOu5vSb8mtcoAZKKQp5q/GVwynRuWI8dWIu2oe6E/mubskgsIcPhDOPv43lm3ALND8zysZqwWPPKRlHl7BtabnqDRZu/VXtGLiyi0wbqgHu3QhyxjdPA51WGnKJVvWvfli4mNTvsUqMY=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-In-Reply-To: <c45df19e-8f48-7f4e-3eae-ada54cb6f707@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-GB
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4e792b53-b959-438f-8dad-08d714f5fa08
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Jul 2019 13:58:18.8933
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: c33c9f88-1eb7-4099-9700-16013fd9e8aa
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: joabreu@synopsys.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN8PR12MB3202
+X-OriginatorOrg: synopsys.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30/07/2019 14:25, Vincenzo Frascino wrote:
-> Hi Kevin,
->
-> On 7/30/19 11:32 AM, Kevin Brodsky wrote:
->> Some more comments. Mostly minor wording issues, except the prctl() exclusion at
->> the end.
->>
->> On 25/07/2019 14:50, Vincenzo Frascino wrote:
->>> On arm64 the TCR_EL1.TBI0 bit has been always enabled hence
->>> the userspace (EL0) is allowed to set a non-zero value in the
->>> top byte but the resulting pointers are not allowed at the
->>> user-kernel syscall ABI boundary.
->>>
->>> With the relaxed ABI proposed through this document, it is now possible
->>> to pass tagged pointers to the syscalls, when these pointers are in
->>> memory ranges obtained by an anonymous (MAP_ANONYMOUS) mmap().
->>>
->>> This change in the ABI requires a mechanism to requires the userspace
->>> to opt-in to such an option.
->>>
->>> Specify and document the way in which sysctl and prctl() can be used
->>> in combination to allow the userspace to opt-in this feature.
->>>
->>> Cc: Catalin Marinas <catalin.marinas@arm.com>
->>> Cc: Will Deacon <will.deacon@arm.com>
->>> CC: Andrey Konovalov <andreyknvl@google.com>
->>> Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
->>> Acked-by: Szabolcs Nagy <szabolcs.nagy@arm.com>
->>> ---
->>>    Documentation/arm64/tagged-address-abi.rst | 148 +++++++++++++++++++++
->>>    1 file changed, 148 insertions(+)
->>>    create mode 100644 Documentation/arm64/tagged-address-abi.rst
->>>
->>> diff --git a/Documentation/arm64/tagged-address-abi.rst
->>> b/Documentation/arm64/tagged-address-abi.rst
->>> new file mode 100644
->>> index 000000000000..a8ecb991de82
->>> --- /dev/null
->>> +++ b/Documentation/arm64/tagged-address-abi.rst
->>> @@ -0,0 +1,148 @@
->>> +========================
->>> +ARM64 TAGGED ADDRESS ABI
->>> +========================
->>> +
->>> +Author: Vincenzo Frascino <vincenzo.frascino@arm.com>
->>> +
->>> +Date: 25 July 2019
->>> +
->>> +This document describes the usage and semantics of the Tagged Address
->>> +ABI on arm64.
->>> +
->>> +1. Introduction
->>> +---------------
->>> +
->>> +On arm64 the TCR_EL1.TBI0 bit has always been enabled on the kernel, hence
->>> +the userspace (EL0) is entitled to perform a user memory access through a
->>> +64-bit pointer with a non-zero top byte but the resulting pointers are not
->>> +allowed at the user-kernel syscall ABI boundary.
->>> +
->>> +This document describes a relaxation of the ABI that makes it possible to
->>> +to pass tagged pointers to the syscalls, when these pointers are in memory
->> One too many "to" (at the end the previous line).
->>
-> Yep will fix in v7.
->
->>> +ranges obtained as described in section 2.
->>> +
->>> +Since it is not desirable to relax the ABI to allow tagged user addresses
->>> +into the kernel indiscriminately, arm64 provides a new sysctl interface
->>> +(/proc/sys/abi/tagged_addr) that is used to prevent the applications from
->>> +enabling the relaxed ABI and a new prctl() interface that can be used to
->>> +enable or disable the relaxed ABI.
->>> +A detailed description of the newly introduced mechanisms will be provided
->>> +in section 2.
->>> +
->>> +2. ARM64 Tagged Address ABI
->>> +---------------------------
->>> +
->>> +From the kernel syscall interface perspective, we define, for the purposes
->>> +of this document, a "valid tagged pointer" as a pointer that either has a
->>> +zero value set in the top byte or has a non-zero value, is in memory ranges
->>> +privately owned by a userspace process and is obtained in one of the
->>> +following ways:
->>> +- mmap() done by the process itself, where either:
->>> +
->>> +  - flags have **MAP_PRIVATE** and **MAP_ANONYMOUS**
->>> +  - flags have **MAP_PRIVATE** and the file descriptor refers to a regular
->>> +    file or **/dev/zero**
->>> +
->>> +- brk() system call done by the process itself (i.e. the heap area between
->>> +  the initial location of the program break at process creation and its
->>> +  current location).
->>> +- any memory mapped by the kernel in the process's address space during
->>> +  creation and with the same restrictions as for mmap() (e.g. data, bss,
->>> +  stack).
->>> +
->>> +The ARM64 Tagged Address ABI is an opt-in feature, and an application can
->>> +control it using the following:
->>> +
->>> +- **/proc/sys/abi/tagged_addr**: a new sysctl interface that can be used to
->>> +  prevent the applications from enabling the access to the relaxed ABI.
->>> +  The sysctl supports the following configuration options:
->>> +
->>> +  - **0**: Disable the access to the ARM64 Tagged Address ABI for all
->>> +    the applications.
->>> +  - **1** (Default): Enable the access to the ARM64 Tagged Address ABI for
->>> +    all the applications.
->>> +
->>> +   If the access to the ARM64 Tagged Address ABI is disabled at a certain
->>> +   point in time, all the applications that were using tagging before this
->>> +   event occurs, will continue to use tagging.
->> "tagging" may be misinterpreted here. I would be more explicit by saying that
->> the tagged address ABI remains enabled in processes that opted in before the
->> access got disabled.
->>
-> Assuming that ARM64 Tagged Address ABI gives access to "tagging" and since it is
-> what this document is talking about, I do not see how it can be misinterpreted ;)
-
-"tagging" is a confusing term ("using tagging" even more so), it could be interpreted 
-as memory tagging (especially in the presence of MTE). This document does not use 
-"tagging" anywhere else, which is good. Let's stick to the same name for the ABI 
-throughout the document, repetition is less problematic than vague wording.
-
->
->>> +- **prctl()s**:
->>> +
->>> +  - **PR_SET_TAGGED_ADDR_CTRL**: Invoked by a process, can be used to enable or
->>> +    disable its access to the ARM64 Tagged Address ABI.
->> I still find the wording confusing, because "access to the ABI" is not used
->> consistently. The "tagged_addr" sysctl enables *access to the ABI*, that's fine.
->> However, PR_SET_TAGGED_ADDR_CTRL enables *the ABI itself* (which is only
->> possible if access to the ABI is enabled).
->>
-> As it stands, it enables or disables the ABI itself when used with
-> PR_TAGGED_ADDR_ENABLE, or can enable other things in future. IMHO the only thing
-> that these features have in common is the access to the ABI which is granted by
-> this prctl().
-
-I see your point, you could have other bits controlling other aspects. However, I 
-would really avoid saying that this prctl is used to enable or disable access to the 
-new ABI, because it isn't (either you have access to the new ABI and this prctl can 
-be used, or you don't and this prctl will fail).
-
->
->>> +
->>> +    The (unsigned int) arg2 argument is a bit mask describing the control mode
->>> +    used:
->>> +
->>> +    - **PR_TAGGED_ADDR_ENABLE**: Enable ARM64 Tagged Address ABI.
->>> +
->>> +    The prctl(PR_SET_TAGGED_ADDR_CTRL, ...) will return -EINVAL if the ARM64
->>> +    Tagged Address ABI is not available.
->> For clarity, it would be good to mention that one possible reason for the ABI
->> not to be available is tagged_addr == 0.
->>
-> The logical implication is already quite clear tagged_addr == 0 (Disabled) =>
-> Tagged Address ABI not available => return -EINVAL. I do not see the need to
-> repeat the concept twice.
->
->>> +
->>> +    The arguments arg3, arg4, and arg5 are ignored.
->>> +  - **PR_GET_TAGGED_ADDR_CTRL**: can be used to check the status of the Tagged
->>> +    Address ABI.
->>> +
->>> +    The arguments arg2, arg3, arg4, and arg5 are ignored.
->>> +
->>> +The ABI properties set by the mechanisms described above are inherited by
->>> threads
->>> +of the same application and fork()'ed children but cleared by execve().
->>> +
->>> +When a process has successfully opted into the new ABI by invoking
->>> +PR_SET_TAGGED_ADDR_CTRL prctl(), this guarantees the following behaviours:
->>> +
->>> + - Every currently available syscall, except the cases mentioned in section
->>> 3, can
->>> +   accept any valid tagged pointer. The same rule is applicable to any syscall
->>> +   introduced in the future.
->> I thought Catalin wanted to drop this guarantee?
->>
-> The guarantee is changed and explicitly includes the syscalls that can be added
-> in the future. IMHO since we are defining an ABI, we cannot leave that topic in
-> an uncharted territory, we need to address it.
-
-It makes sense to me, just wanted to be sure that Catalin is on the same page.
-
->
->>> + - If a non valid tagged pointer is passed to a syscall then the behaviour
->>> +   is undefined.
->>> + - Every valid tagged pointer is expected to work as an untagged one.
->>> + - The kernel preserves any valid tagged pointer and returns it to the
->>> +   userspace unchanged (i.e. on syscall return) in all the cases except the
->>> +   ones documented in the "Preserving tags" section of tagged-pointers.txt.
->>> +
->>> +A definition of the meaning of tagged pointers on arm64 can be found in:
->>> +Documentation/arm64/tagged-pointers.txt.
->>> +
->>> +3. ARM64 Tagged Address ABI Exceptions
->>> +--------------------------------------
->>> +
->>> +The behaviours described in section 2, with particular reference to the
->>> +acceptance by the syscalls of any valid tagged pointer are not applicable
->>> +to the following cases:
->>> +
->>> + - mmap() addr parameter.
->>> + - mremap() new_address parameter.
->>> + - prctl(PR_SET_MM, PR_SET_MM_MAP, ...) struct prctl_mm_map fields.
->>> + - prctl(PR_SET_MM, PR_SET_MM_MAP_SIZE, ...) struct prctl_mm_map fields.
->> All the PR_SET_MM options that specify pointers (PR_SET_MM_START_CODE,
->> PR_SET_MM_END_CODE, ...) should be excluded as well. AFAICT (but don't take my
->> word for it), that's all of them except PR_SET_MM_EXE_FILE. Conversely,
->> PR_SET_MM_MAP_SIZE should not be excluded (it does not pass a prctl_mm_map
->> struct, and the pointer to unsigned int can be tagged).
->>
-> Agreed, I clearly misread the prctl() man page here. Fill fix in v7.
-> PR_SET_MM_MAP_SIZE _returns_  struct prctl_mm_map, does not take it as a parameter.
-
-OK. About PR_SET_MM_MAP_SIZE, it neither takes nor returns struct prctl_mm_map. It 
-writes the size of prctl_map to the int pointed to by arg3, and does nothing else. 
-Therefore, there's no need to exclude it.
-
-BTW I've just realised that the man page is wrong about PR_SET_MM_MAP_SIZE, the 
-pointer to int is passed in arg3, not arg4. Anyone knows where to report that?
-
-Thanks,
-Kevin
-
-> Vincenzo
->
->> Kevin
->>
->>> +
->>> +Any attempt to use non-zero tagged pointers will lead to undefined behaviour.
->>> +
->>> +4. Example of correct usage
->>> +---------------------------
->>> +.. code-block:: c
->>> +
->>> +   void main(void)
->>> +   {
->>> +           static int tbi_enabled = 0;
->>> +           unsigned long tag = 0;
->>> +
->>> +           char *ptr = mmap(NULL, PAGE_SIZE, PROT_READ | PROT_WRITE,
->>> +                            MAP_ANONYMOUS, -1, 0);
->>> +
->>> +           if (prctl(PR_SET_TAGGED_ADDR_CTRL, PR_TAGGED_ADDR_ENABLE,
->>> +                     0, 0, 0) == 0)
->>> +                   tbi_enabled = 1;
->>> +
->>> +           if (ptr == (void *)-1) /* MAP_FAILED */
->>> +                   return -1;
->>> +
->>> +           if (tbi_enabled)
->>> +                   tag = rand() & 0xff;
->>> +
->>> +           ptr = (char *)((unsigned long)ptr | (tag << TAG_SHIFT));
->>> +
->>> +           *ptr = 'a';
->>> +
->>> +           ...
->>> +   }
->>> +
->> _______________________________________________
->> linux-arm-kernel mailing list
->> linux-arm-kernel@lists.infradead.org
->> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
+RnJvbTogSm9uIEh1bnRlciA8am9uYXRoYW5oQG52aWRpYS5jb20+DQpEYXRlOiBKdWwvMzAvMjAx
+OSwgMTQ6MzY6MzkgKFVUQyswMDowMCkNCg0KPiANCj4gT24gMzAvMDcvMjAxOSAxMDozOSwgSm9z
+ZSBBYnJldSB3cm90ZToNCj4gDQo+IC4uLg0KPiANCj4gPiBJIGxvb2tlZCBhdCBuZXRzZWMgaW1w
+bGVtZW50YXRpb24gYW5kIEkgbm90aWNlZCB0aGF0IHdlIGFyZSBzeW5jaW5nIHRoZSANCj4gPiBv
+bGQgYnVmZmVyIGZvciBkZXZpY2UgaW5zdGVhZCBvZiB0aGUgbmV3IG9uZS4gbmV0c2VjIHN5bmNz
+IHRoZSBidWZmZXIgDQo+ID4gZm9yIGRldmljZSBpbW1lZGlhdGVseSBhZnRlciB0aGUgYWxsb2Nh
+dGlvbiB3aGljaCBtYXkgYmUgd2hhdCB3ZSBoYXZlIHRvIA0KPiA+IGRvLiBNYXliZSB0aGUgYXR0
+YWNoZWQgcGF0Y2ggY2FuIG1ha2UgdGhpbmdzIHdvcmsgZm9yIHlvdSA/DQo+IA0KPiBHcmVhdCEg
+VGhpcyBvbmUgd29ya3MuIEkgaGF2ZSBib290ZWQgdGhpcyBzZXZlcmFsIHRpbWVzIGFuZCBJIGFt
+IG5vDQo+IGxvbmdlciBzZWVpbmcgYW55IGlzc3Vlcy4gVGhhbmtzIGZvciBmaWd1cmluZyB0aGlz
+IG91dCENCj4gDQo+IEZlZWwgZnJlZSB0byBhZGQgbXkgLi4uDQo+IA0KPiBUZXN0ZWQtYnk6IEpv
+biBIdW50ZXIgPGpvbmF0aGFuaEBudmlkaWEuY29tPg0KDQpUaGlzIG9uZSB3YXMgaGFyZCB0byBm
+aW5kIDopIFRoYW5rIHlvdSBmb3IgeW91ciBwYXRpZW5jZSBpbiB0ZXN0aW5nIA0KdGhpcyENCg0K
+LS0tDQpUaGFua3MsDQpKb3NlIE1pZ3VlbCBBYnJldQ0K
