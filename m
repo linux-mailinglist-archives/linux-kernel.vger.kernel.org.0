@@ -2,82 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B21F7A493
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 11:37:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 765527A498
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 11:37:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731684AbfG3JhT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 05:37:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36372 "EHLO mail.kernel.org"
+        id S1731704AbfG3Jho (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 05:37:44 -0400
+Received: from foss.arm.com ([217.140.110.172]:58224 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730463AbfG3JhS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 05:37:18 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EE32520665;
-        Tue, 30 Jul 2019 09:37:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564479437;
-        bh=ACBlNakQ/oKIl6NGWB/sfYV8/tSIhvEY9neGq9na4Hw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=nfJ9o/vNLPQu4yWfxwA5aRJpEucP8Z27NRBVVTKEKgFe8mmTudurerR/wlHABg+Cl
-         8v4iVBgFwHZWdpEJ7r0VGR53jODTLlbeAA+T07mAPLrVF3nCnEZoWecOBApOVLwdds
-         zWwHEgcy6RLOqjNnM9caXI1+iKSZ7evs/rmW/hQo=
-Date:   Tue, 30 Jul 2019 11:37:13 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Will Deacon <will@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, Will Deacon <will.deacon@arm.com>,
-        "# 4 . 9+" <stable@vger.kernel.org>,
-        Aurelien Jarno <aurelien@aurel32.net>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Subject: Re: [PATCH] arm64: compat: Provide definition for COMPAT_SIGMINSTKSZ
-Message-ID: <20190730093713.GB15402@kroah.com>
-References: <20190730092547.1284-1-will@kernel.org>
+        id S1728525AbfG3Jho (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 05:37:44 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DC528344;
+        Tue, 30 Jul 2019 02:37:42 -0700 (PDT)
+Received: from dawn-kernel.cambridge.arm.com (unknown [10.1.197.116])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 35E163F575;
+        Tue, 30 Jul 2019 02:37:42 -0700 (PDT)
+From:   Suzuki K Poulose <suzuki.poulose@arm.com>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org,
+        Suzuki K Poulose <suzuki.poulose@arm.com>
+Subject: [PATCH 2/5] [UPDATED] coresight: Convert pr_warn to dev_warn for obsolete bindings
+Date:   Tue, 30 Jul 2019 10:37:33 +0100
+Message-Id: <20190730093733.31861-1-suzuki.poulose@arm.com>
+X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20190729170035.GB26214@xps15>
+References: <20190729170035.GB26214@xps15>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190730092547.1284-1-will@kernel.org>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 30, 2019 at 10:25:47AM +0100, Will Deacon wrote:
-> From: Will Deacon <will.deacon@arm.com>
-> 
-> [ Upstream commit 24951465cbd279f60b1fdc2421b3694405bcff42 ]
-> 
-> arch/arm/ defines a SIGMINSTKSZ of 2k, so we should use the same value
-> for compat tasks.
-> 
-> Cc: <stable@vger.kernel.org> # 4.9+
-> Cc: Aurelien Jarno <aurelien@aurel32.net>
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: Dominik Brodowski <linux@dominikbrodowski.net>
-> Cc: "Eric W. Biederman" <ebiederm@xmission.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Al Viro <viro@zeniv.linux.org.uk>
-> Cc: Oleg Nesterov <oleg@redhat.com>
-> Reviewed-by: Dave Martin <Dave.Martin@arm.com>
-> Reported-by: Steve McIntyre <steve.mcintyre@arm.com>
-> Tested-by: Steve McIntyre <93sam@debian.org>
-> Signed-off-by: Will Deacon <will.deacon@arm.com>
-> Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
-> ---
-> 
-> Aurelien points out that this didn't get selected for -stable despite its
-> counterpart (22839869f21a ("signal: Introduce COMPAT_SIGMINSTKSZ for use
-> in compat_sys_sigaltstack")) being backported to 4.9. Oops.
+We warn the users of obsolete bindings in the DT for coresight replicator
+and funnel drivers. However we use pr_warn_once() which doesn't give a clue
+about which device it is bound to. Let us use dev_warn_once() to give the
+context.
 
-So this needs to go into 4.9.y, 4.14.y, and 4.19.y?
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+---
 
-thanks,
+Changes since previous version:
+ - Update replicator driver too.
+---
+ drivers/hwtracing/coresight/coresight-funnel.c     | 2 +-
+ drivers/hwtracing/coresight/coresight-replicator.c | 3 ++-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
-greg k-h
+diff --git a/drivers/hwtracing/coresight/coresight-funnel.c b/drivers/hwtracing/coresight/coresight-funnel.c
+index fa97cb9ab4f9..84ca30f4e5ec 100644
+--- a/drivers/hwtracing/coresight/coresight-funnel.c
++++ b/drivers/hwtracing/coresight/coresight-funnel.c
+@@ -192,7 +192,7 @@ static int funnel_probe(struct device *dev, struct resource *res)
+ 
+ 	if (is_of_node(dev_fwnode(dev)) &&
+ 	    of_device_is_compatible(dev->of_node, "arm,coresight-funnel"))
+-		pr_warn_once("Uses OBSOLETE CoreSight funnel binding\n");
++		dev_warn_once(dev, "Uses OBSOLETE CoreSight funnel binding\n");
+ 
+ 	desc.name = coresight_alloc_device_name(&funnel_devs, dev);
+ 	if (!desc.name)
+diff --git a/drivers/hwtracing/coresight/coresight-replicator.c b/drivers/hwtracing/coresight/coresight-replicator.c
+index b7d6d59d56db..b29ba640eb25 100644
+--- a/drivers/hwtracing/coresight/coresight-replicator.c
++++ b/drivers/hwtracing/coresight/coresight-replicator.c
+@@ -184,7 +184,8 @@ static int replicator_probe(struct device *dev, struct resource *res)
+ 
+ 	if (is_of_node(dev_fwnode(dev)) &&
+ 	    of_device_is_compatible(dev->of_node, "arm,coresight-replicator"))
+-		pr_warn_once("Uses OBSOLETE CoreSight replicator binding\n");
++		dev_warn_once(dev,
++			      "Uses OBSOLETE CoreSight replicator binding\n");
+ 
+ 	desc.name = coresight_alloc_device_name(&replicator_devs, dev);
+ 	if (!desc.name)
+-- 
+2.21.0
+
