@@ -2,31 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE3057A0A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 07:52:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B67327A0A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 07:52:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728319AbfG3Fwb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 01:52:31 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:46162 "EHLO
+        id S1729575AbfG3Fwh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 01:52:37 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:46180 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728204AbfG3Fw3 (ORCPT
+        with ESMTP id S1728204AbfG3Fwd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 01:52:29 -0400
+        Tue, 30 Jul 2019 01:52:33 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
         :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=SLYhAoIvzDqEf4YX6gjEiCAIywOZyrNyWp5yd9O/FEc=; b=WKq782IFsF2U8eCPkvbUWuvcnc
-        dGVtnstjVvRw2rYquMXhiZpabUdUodjkHu9e7OfwK5arL0H5z+H39dxtShbtn8hqykGKG03/CEL0F
-        NUObuP68VCe2bBewDj64dRY+eMtBG27qhmhh5JOz8nTU3t5Sh/ssdaHtdPal7/Ql9XMNVhT5vTpqd
-        tGdz/1eEoUVBDmSFmFqaT5L12zImSvXSXehxchm9l9I6kt/e/hGAQmgn4I+XTxnAGXdmF2OJJSk2R
-        xl6eJ0RkTyxEgWzxTAyofzqSRzUa8oFtXKF2RnLpeyeF4NvIBHBO+0N+OyQQ2gti5w0FwunCO7uiv
-        aR5KVByA==;
+        bh=eS5S4KohR3irhWgtUfLvLexYfgHi/N0ae1QbGrg+MN8=; b=nv/Uk3iAICQEpzysmQOiV3ryQv
+        Gat/o6BVc3xRRsdrPwHSTMM2PMHHx6bU9QSukJm2PAurh78FQ6xcvWGwTwVe/vCRF8XF1u9iIfpFg
+        3J91GH7pyOv19vBJ2W847BvEtuCSYnPFVfS6gjHMgFai+iGhE5jKeaX7ZjA2gHRqthFtkAG2vCK0m
+        CmT9xHVXxhVaJu95LQDIP1xwx4JE6wMjVjSt4XgFBd1vs92KnozwLz39ze5LkRqyV0DWWRbdvUfKt
+        37xLUeobKeP/aKEoCv2ZbxpUJT8lqkPzdAow/RTLlaRdVTvcnqTOqUpRZMSLcOSGa7xHRlobRix/L
+        VaoUlOfQ==;
 Received: from [195.167.85.94] (helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hsL3i-00016F-Io; Tue, 30 Jul 2019 05:52:26 +0000
+        id 1hsL3l-0001D4-C6; Tue, 30 Jul 2019 05:52:29 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
         Jason Gunthorpe <jgg@mellanox.com>,
@@ -35,9 +35,9 @@ To:     =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
 Cc:     Ralph Campbell <rcampbell@nvidia.com>, linux-mm@kvack.org,
         nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
         amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 04/13] mm: remove the pgmap field from struct hmm_vma_walk
-Date:   Tue, 30 Jul 2019 08:51:54 +0300
-Message-Id: <20190730055203.28467-5-hch@lst.de>
+Subject: [PATCH 05/13] mm: remove the unused vma argument to hmm_range_dma_unmap
+Date:   Tue, 30 Jul 2019 08:51:55 +0300
+Message-Id: <20190730055203.28467-6-hch@lst.de>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190730055203.28467-1-hch@lst.de>
 References: <20190730055203.28467-1-hch@lst.de>
@@ -49,172 +49,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is only a single place where the pgmap is passed over a function
-call, so replace it with local variables in the places where we deal
-with the pgmap.
-
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- mm/hmm.c | 62 ++++++++++++++++++++++++--------------------------------
- 1 file changed, 27 insertions(+), 35 deletions(-)
+ include/linux/hmm.h | 1 -
+ mm/hmm.c            | 2 --
+ 2 files changed, 3 deletions(-)
 
+diff --git a/include/linux/hmm.h b/include/linux/hmm.h
+index 82265118d94a..59be0aa2476d 100644
+--- a/include/linux/hmm.h
++++ b/include/linux/hmm.h
+@@ -422,7 +422,6 @@ long hmm_range_dma_map(struct hmm_range *range,
+ 		       dma_addr_t *daddrs,
+ 		       unsigned int flags);
+ long hmm_range_dma_unmap(struct hmm_range *range,
+-			 struct vm_area_struct *vma,
+ 			 struct device *device,
+ 			 dma_addr_t *daddrs,
+ 			 bool dirty);
 diff --git a/mm/hmm.c b/mm/hmm.c
-index 9a908902e4cc..d66fa29b42e0 100644
+index d66fa29b42e0..3a3852660757 100644
 --- a/mm/hmm.c
 +++ b/mm/hmm.c
-@@ -278,7 +278,6 @@ EXPORT_SYMBOL(hmm_mirror_unregister);
- 
- struct hmm_vma_walk {
- 	struct hmm_range	*range;
--	struct dev_pagemap	*pgmap;
- 	unsigned long		last;
- 	unsigned int		flags;
- };
-@@ -475,6 +474,7 @@ static int hmm_vma_handle_pmd(struct mm_walk *walk,
- #ifdef CONFIG_TRANSPARENT_HUGEPAGE
- 	struct hmm_vma_walk *hmm_vma_walk = walk->private;
- 	struct hmm_range *range = hmm_vma_walk->range;
-+	struct dev_pagemap *pgmap = NULL;
- 	unsigned long pfn, npages, i;
- 	bool fault, write_fault;
- 	uint64_t cpu_flags;
-@@ -490,17 +490,14 @@ static int hmm_vma_handle_pmd(struct mm_walk *walk,
- 	pfn = pmd_pfn(pmd) + pte_index(addr);
- 	for (i = 0; addr < end; addr += PAGE_SIZE, i++, pfn++) {
- 		if (pmd_devmap(pmd)) {
--			hmm_vma_walk->pgmap = get_dev_pagemap(pfn,
--					      hmm_vma_walk->pgmap);
--			if (unlikely(!hmm_vma_walk->pgmap))
-+			pgmap = get_dev_pagemap(pfn, pgmap);
-+			if (unlikely(!pgmap))
- 				return -EBUSY;
- 		}
- 		pfns[i] = hmm_device_entry_from_pfn(range, pfn) | cpu_flags;
- 	}
--	if (hmm_vma_walk->pgmap) {
--		put_dev_pagemap(hmm_vma_walk->pgmap);
--		hmm_vma_walk->pgmap = NULL;
--	}
-+	if (pgmap)
-+		put_dev_pagemap(pgmap);
- 	hmm_vma_walk->last = end;
- 	return 0;
- #else
-@@ -520,7 +517,7 @@ static inline uint64_t pte_to_hmm_pfn_flags(struct hmm_range *range, pte_t pte)
- 
- static int hmm_vma_handle_pte(struct mm_walk *walk, unsigned long addr,
- 			      unsigned long end, pmd_t *pmdp, pte_t *ptep,
--			      uint64_t *pfn)
-+			      uint64_t *pfn, struct dev_pagemap **pgmap)
- {
- 	struct hmm_vma_walk *hmm_vma_walk = walk->private;
- 	struct hmm_range *range = hmm_vma_walk->range;
-@@ -591,9 +588,8 @@ static int hmm_vma_handle_pte(struct mm_walk *walk, unsigned long addr,
- 		goto fault;
- 
- 	if (pte_devmap(pte)) {
--		hmm_vma_walk->pgmap = get_dev_pagemap(pte_pfn(pte),
--					      hmm_vma_walk->pgmap);
--		if (unlikely(!hmm_vma_walk->pgmap))
-+		*pgmap = get_dev_pagemap(pte_pfn(pte), *pgmap);
-+		if (unlikely(!*pgmap))
- 			return -EBUSY;
- 	} else if (IS_ENABLED(CONFIG_ARCH_HAS_PTE_SPECIAL) && pte_special(pte)) {
- 		*pfn = range->values[HMM_PFN_SPECIAL];
-@@ -604,10 +600,10 @@ static int hmm_vma_handle_pte(struct mm_walk *walk, unsigned long addr,
- 	return 0;
- 
- fault:
--	if (hmm_vma_walk->pgmap) {
--		put_dev_pagemap(hmm_vma_walk->pgmap);
--		hmm_vma_walk->pgmap = NULL;
--	}
-+	if (*pgmap)
-+		put_dev_pagemap(*pgmap);
-+	*pgmap = NULL;
-+
- 	pte_unmap(ptep);
- 	/* Fault any virtual address we were asked to fault */
- 	return hmm_vma_walk_hole_(addr, end, fault, write_fault, walk);
-@@ -620,6 +616,7 @@ static int hmm_vma_walk_pmd(pmd_t *pmdp,
- {
- 	struct hmm_vma_walk *hmm_vma_walk = walk->private;
- 	struct hmm_range *range = hmm_vma_walk->range;
-+	struct dev_pagemap *pgmap = NULL;
- 	uint64_t *pfns = range->pfns;
- 	unsigned long addr = start, i;
- 	pte_t *ptep;
-@@ -683,23 +680,21 @@ static int hmm_vma_walk_pmd(pmd_t *pmdp,
- 	for (; addr < end; addr += PAGE_SIZE, ptep++, i++) {
- 		int r;
- 
--		r = hmm_vma_handle_pte(walk, addr, end, pmdp, ptep, &pfns[i]);
-+		r = hmm_vma_handle_pte(walk, addr, end, pmdp, ptep, &pfns[i],
-+				&pgmap);
- 		if (r) {
- 			/* hmm_vma_handle_pte() did unmap pte directory */
- 			hmm_vma_walk->last = addr;
- 			return r;
- 		}
- 	}
--	if (hmm_vma_walk->pgmap) {
--		/*
--		 * We do put_dev_pagemap() here and not in hmm_vma_handle_pte()
--		 * so that we can leverage get_dev_pagemap() optimization which
--		 * will not re-take a reference on a pgmap if we already have
--		 * one.
--		 */
--		put_dev_pagemap(hmm_vma_walk->pgmap);
--		hmm_vma_walk->pgmap = NULL;
--	}
-+	/*
-+	 * We do put_dev_pagemap() here and not in hmm_vma_handle_pte() so that
-+	 * we can leverage the get_dev_pagemap() optimization which will not
-+	 * re-take a reference on a pgmap if we already have one.
-+	 */
-+	if (pgmap)
-+		put_dev_pagemap(pgmap);
- 	pte_unmap(ptep - 1);
- 
- 	hmm_vma_walk->last = addr;
-@@ -714,6 +709,7 @@ static int hmm_vma_walk_pud(pud_t *pudp,
- 	struct hmm_vma_walk *hmm_vma_walk = walk->private;
- 	struct hmm_range *range = hmm_vma_walk->range;
- 	unsigned long addr = start, next;
-+	struct dev_pagemap *pgmap = NULL;
- 	pmd_t *pmdp;
- 	pud_t pud;
- 	int ret;
-@@ -744,17 +740,14 @@ static int hmm_vma_walk_pud(pud_t *pudp,
- 
- 		pfn = pud_pfn(pud) + ((addr & ~PUD_MASK) >> PAGE_SHIFT);
- 		for (i = 0; i < npages; ++i, ++pfn) {
--			hmm_vma_walk->pgmap = get_dev_pagemap(pfn,
--					      hmm_vma_walk->pgmap);
--			if (unlikely(!hmm_vma_walk->pgmap))
-+			pgmap = get_dev_pagemap(pfn, pgmap);
-+			if (unlikely(!pgmap))
- 				return -EBUSY;
- 			pfns[i] = hmm_device_entry_from_pfn(range, pfn) |
- 				  cpu_flags;
- 		}
--		if (hmm_vma_walk->pgmap) {
--			put_dev_pagemap(hmm_vma_walk->pgmap);
--			hmm_vma_walk->pgmap = NULL;
--		}
-+		if (pgmap)
-+			put_dev_pagemap(pgmap);
- 		hmm_vma_walk->last = end;
- 		return 0;
- 	}
-@@ -1002,7 +995,6 @@ long hmm_range_fault(struct hmm_range *range, unsigned int flags)
- 			return -EPERM;
- 		}
- 
--		hmm_vma_walk.pgmap = NULL;
- 		hmm_vma_walk.last = start;
- 		hmm_vma_walk.flags = flags;
- 		hmm_vma_walk.range = range;
+@@ -1121,7 +1121,6 @@ EXPORT_SYMBOL(hmm_range_dma_map);
+ /**
+  * hmm_range_dma_unmap() - unmap range of that was map with hmm_range_dma_map()
+  * @range: range being unmapped
+- * @vma: the vma against which the range (optional)
+  * @device: device against which dma map was done
+  * @daddrs: dma address of mapped pages
+  * @dirty: dirty page if it had the write flag set
+@@ -1133,7 +1132,6 @@ EXPORT_SYMBOL(hmm_range_dma_map);
+  * concurrent mmu notifier or sync_cpu_device_pagetables() to make progress.
+  */
+ long hmm_range_dma_unmap(struct hmm_range *range,
+-			 struct vm_area_struct *vma,
+ 			 struct device *device,
+ 			 dma_addr_t *daddrs,
+ 			 bool dirty)
 -- 
 2.20.1
 
