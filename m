@@ -2,53 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F50D7B18D
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:18:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D02947B177
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:17:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387591AbfG3SSN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 14:18:13 -0400
-Received: from mail-pf1-f180.google.com ([209.85.210.180]:42748 "EHLO
-        mail-pf1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388086AbfG3SQh (ORCPT
+        id S2388195AbfG3SQv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 14:16:51 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:36300 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387944AbfG3SQi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 14:16:37 -0400
-Received: by mail-pf1-f180.google.com with SMTP id q10so30248484pff.9
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 11:16:37 -0700 (PDT)
+        Tue, 30 Jul 2019 14:16:38 -0400
+Received: by mail-pf1-f196.google.com with SMTP id r7so30266012pfl.3
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 11:16:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=TFBugelIB7I8z4cy5abhXFxwmRdCQ/NaAVq/fljfFQg=;
-        b=DUBllZ0mAggJZuUUb7vFEYrOKYBQMcqLmkGKBUHKGhnRthEmpb4V4B176dkyokIrbm
-         U1Tyv/H1EiTYe23PTlUDcH5kiuwOxXclK+OM56Wb6pgqou7J1Ko55TFANP26kYVLns0s
-         4DxFRz+aGt7uJUNG+Ff+7IpiHXTvJc8m+j40A=
+        bh=nPhDfjxW/VqkltTfokj9fJ6/qREHMvH5O4AA+8mxaUw=;
+        b=NMzARui867kGdB9A1UYs4zbCXT3RjzMlWWT7kvvFXXaz5/vfwU02qjop8UMwz8/TnX
+         NnKda0EyH8SlHsr+/6bNxInRvbF8MYuf+Pa6qiUJkO1Yj6zE2Uvw6c3jCjjBtMr5n8nJ
+         xy0P8QaPvniobYF5/gIKwaFnSpgFElmSTiA6E=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=TFBugelIB7I8z4cy5abhXFxwmRdCQ/NaAVq/fljfFQg=;
-        b=DNrlb01UV7VHbljfjENghl5AG1GO+k2/6TXB+cjeR8C8a1EReqjkiUowDLWNW7ixH7
-         uvDRb1PVDJXLy7JK4/+C1l32M5O6j8lD2lAvs7mHd51cauc3VRvpoKorHZ1qnUW7LNul
-         JUsJhlZ7Wj5jRefSnarCCTHj38O5rXS/VWgiuI1E5NC4fPxyhgW4R1kK/2+e3bbrEQ3+
-         /H7J1HUofag6FS25H86VTcr9z0GTz9k+Xi5rZDQHtlBuZVJHgIBK/uOTjXPNiHXd3VmH
-         Y2Vhq4YH6fVtb9VAgfN2zvZiaGB23dDEl+E3kLpg2J903P8ibLmAChdZevncMjzPxgDM
-         Ixeg==
-X-Gm-Message-State: APjAAAVtylIVKP8biB/dXkKQb8tDyKrojZj8iyoDveVQWNFRriD/U+x5
-        Yj/8AX2WJojg39HUtif1RZ0Lg6BXSuGFsQ==
-X-Google-Smtp-Source: APXvYqw++e//LBUtxeiPk00rIVavVGA5jBcaXyIS6FCEyUEhDADg16eyDnpjK4oGv7OuBMwHYRSEFg==
-X-Received: by 2002:aa7:8383:: with SMTP id u3mr43267517pfm.175.1564510596341;
-        Tue, 30 Jul 2019 11:16:36 -0700 (PDT)
+        bh=nPhDfjxW/VqkltTfokj9fJ6/qREHMvH5O4AA+8mxaUw=;
+        b=gTEE0zf20x5/ovBZnoaiB0lidDRmgQPf0xFw06nIYWgm7cqXSNH19lhvjgz3KDyOcP
+         XNHBGGW4xk9oBEPX0fdDDgB3HrE3NRyxUQCKzz7FLmfF46J72S4g9WfHXPC86g3zDlLB
+         wFDOldPkuNSeJPKv4HW2SHSOe/qPjkl+Sh09RAw8rOQePRGVigxRNl9QcetKmN+ui80q
+         1V+v1WN+VDRDPHqTd55OhkNYwwOrbccFFO8uDieJ7t0VP3L1QS6OGeXVTNZ7Uk7tyIKw
+         rtEyglERH/C0/sFUJ5xwl0bcFTZdQlmtyrIqkFB5pplAe3hFA391DbSUj1q+6VZK6e2z
+         OnJw==
+X-Gm-Message-State: APjAAAXF7SHqHuSiEZTSl+7qBAvZsdZqjKIPnAem5dDKCfomTOfKVf8S
+        vfE8qL9NnPEBO1OveCUOn0mSQsY9SDhvFQ==
+X-Google-Smtp-Source: APXvYqw19MihHg/lZICk2Z6Mer8w0uXAamqYkW9qwe9AgnCF26fFuoRNzw9fB3+j11R0Q+UGDxqeLA==
+X-Received: by 2002:a17:90a:1785:: with SMTP id q5mr117320027pja.106.1564510597533;
+        Tue, 30 Jul 2019 11:16:37 -0700 (PDT)
 Received: from smtp.gmail.com ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id g1sm106744083pgg.27.2019.07.30.11.16.35
+        by smtp.gmail.com with ESMTPSA id g1sm106744083pgg.27.2019.07.30.11.16.36
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 30 Jul 2019 11:16:35 -0700 (PDT)
+        Tue, 30 Jul 2019 11:16:37 -0700 (PDT)
 From:   Stephen Boyd <swboyd@chromium.org>
 To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org
-Subject: [PATCH v6 46/57] usb: Remove dev_err() usage after platform_get_irq()
-Date:   Tue, 30 Jul 2019 11:15:46 -0700
-Message-Id: <20190730181557.90391-47-swboyd@chromium.org>
+Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH v6 47/57] video: Remove dev_err() usage after platform_get_irq()
+Date:   Tue, 30 Jul 2019 11:15:47 -0700
+Message-Id: <20190730181557.90391-48-swboyd@chromium.org>
 X-Mailer: git-send-email 2.22.0.709.g102302147b-goog
 In-Reply-To: <20190730181557.90391-1-swboyd@chromium.org>
 References: <20190730181557.90391-1-swboyd@chromium.org>
@@ -94,453 +95,137 @@ if ( \( ret < 0 \| ret <= 0 \) )
 While we're here, remove braces on if statements that only have one
 statement (manually).
 
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-usb@vger.kernel.org
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: dri-devel@lists.freedesktop.org
+Cc: linux-fbdev@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Stephen Boyd <swboyd@chromium.org>
 ---
 
 Please apply directly to subsystem trees
 
- drivers/usb/chipidea/core.c               |  1 -
- drivers/usb/dwc2/platform.c               |  4 +---
- drivers/usb/dwc3/dwc3-keystone.c          |  1 -
- drivers/usb/dwc3/dwc3-omap.c              |  4 +---
- drivers/usb/gadget/udc/aspeed-vhub/core.c |  1 -
- drivers/usb/gadget/udc/bcm63xx_udc.c      |  8 ++------
- drivers/usb/gadget/udc/bdc/bdc_core.c     |  4 +---
- drivers/usb/gadget/udc/gr_udc.c           |  8 ++------
- drivers/usb/gadget/udc/lpc32xx_udc.c      |  5 +----
- drivers/usb/gadget/udc/renesas_usb3.c     |  4 +---
- drivers/usb/gadget/udc/s3c-hsudc.c        |  4 +---
- drivers/usb/gadget/udc/udc-xilinx.c       |  4 +---
- drivers/usb/host/ehci-atmel.c             |  3 ---
- drivers/usb/host/ehci-omap.c              |  4 +---
- drivers/usb/host/ehci-orion.c             |  3 ---
- drivers/usb/host/ehci-platform.c          |  4 +---
- drivers/usb/host/ehci-sh.c                |  3 ---
- drivers/usb/host/ehci-st.c                |  4 +---
- drivers/usb/host/imx21-hcd.c              |  4 +---
- drivers/usb/host/ohci-platform.c          |  4 +---
- drivers/usb/host/ohci-st.c                |  4 +---
- drivers/usb/mtu3/mtu3_core.c              |  4 +---
- drivers/usb/phy/phy-ab8500-usb.c          | 12 +++---------
- drivers/usb/typec/tcpm/wcove.c            |  4 +---
- 24 files changed, 22 insertions(+), 79 deletions(-)
+ drivers/video/fbdev/atmel_lcdfb.c     | 1 -
+ drivers/video/fbdev/mmp/hw/mmp_ctrl.c | 1 -
+ drivers/video/fbdev/nuc900fb.c        | 4 +---
+ drivers/video/fbdev/pxa168fb.c        | 4 +---
+ drivers/video/fbdev/pxa3xx-gcu.c      | 4 +---
+ drivers/video/fbdev/pxafb.c           | 1 -
+ drivers/video/fbdev/s3c2410fb.c       | 4 +---
+ drivers/video/fbdev/vt8500lcdfb.c     | 1 -
+ 8 files changed, 4 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/usb/chipidea/core.c b/drivers/usb/chipidea/core.c
-index 26062d610c20..36c964cd40a3 100644
---- a/drivers/usb/chipidea/core.c
-+++ b/drivers/usb/chipidea/core.c
-@@ -1008,7 +1008,6 @@ static int ci_hdrc_probe(struct platform_device *pdev)
+diff --git a/drivers/video/fbdev/atmel_lcdfb.c b/drivers/video/fbdev/atmel_lcdfb.c
+index 5ff8e0320d95..4a16354d65c8 100644
+--- a/drivers/video/fbdev/atmel_lcdfb.c
++++ b/drivers/video/fbdev/atmel_lcdfb.c
+@@ -1114,7 +1114,6 @@ static int __init atmel_lcdfb_probe(struct platform_device *pdev)
  
- 	ci->irq = platform_get_irq(pdev, 0);
- 	if (ci->irq < 0) {
--		dev_err(dev, "missing IRQ\n");
- 		ret = ci->irq;
- 		goto deinit_phy;
+ 	sinfo->irq_base = platform_get_irq(pdev, 0);
+ 	if (sinfo->irq_base < 0) {
+-		dev_err(dev, "unable to get irq\n");
+ 		ret = sinfo->irq_base;
+ 		goto stop_clk;
  	}
-diff --git a/drivers/usb/dwc2/platform.c b/drivers/usb/dwc2/platform.c
-index 80fd3c6dcd1c..3c6ce09a6db5 100644
---- a/drivers/usb/dwc2/platform.c
-+++ b/drivers/usb/dwc2/platform.c
-@@ -407,10 +407,8 @@ static int dwc2_driver_probe(struct platform_device *dev)
- 	spin_lock_init(&hsotg->lock);
- 
- 	hsotg->irq = platform_get_irq(dev, 0);
--	if (hsotg->irq < 0) {
--		dev_err(&dev->dev, "missing IRQ resource\n");
-+	if (hsotg->irq < 0)
- 		return hsotg->irq;
--	}
- 
- 	dev_dbg(hsotg->dev, "registering common handler for irq%d\n",
- 		hsotg->irq);
-diff --git a/drivers/usb/dwc3/dwc3-keystone.c b/drivers/usb/dwc3/dwc3-keystone.c
-index cbee5fb9b9fb..a69eb4a7b832 100644
---- a/drivers/usb/dwc3/dwc3-keystone.c
-+++ b/drivers/usb/dwc3/dwc3-keystone.c
-@@ -112,7 +112,6 @@ static int kdwc3_probe(struct platform_device *pdev)
+diff --git a/drivers/video/fbdev/mmp/hw/mmp_ctrl.c b/drivers/video/fbdev/mmp/hw/mmp_ctrl.c
+index 17174cd7a5bb..d6124976139b 100644
+--- a/drivers/video/fbdev/mmp/hw/mmp_ctrl.c
++++ b/drivers/video/fbdev/mmp/hw/mmp_ctrl.c
+@@ -447,7 +447,6 @@ static int mmphw_probe(struct platform_device *pdev)
  
  	irq = platform_get_irq(pdev, 0);
  	if (irq < 0) {
--		dev_err(&pdev->dev, "missing irq\n");
- 		error = irq;
- 		goto err_irq;
+-		dev_err(&pdev->dev, "%s: no IRQ defined\n", __func__);
+ 		ret = -ENOENT;
+ 		goto failed;
  	}
-diff --git a/drivers/usb/dwc3/dwc3-omap.c b/drivers/usb/dwc3/dwc3-omap.c
-index ed8b86517675..6f711d58d82f 100644
---- a/drivers/usb/dwc3/dwc3-omap.c
-+++ b/drivers/usb/dwc3/dwc3-omap.c
-@@ -469,10 +469,8 @@ static int dwc3_omap_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, omap);
+diff --git a/drivers/video/fbdev/nuc900fb.c b/drivers/video/fbdev/nuc900fb.c
+index 4fd851598584..c4606c734f44 100644
+--- a/drivers/video/fbdev/nuc900fb.c
++++ b/drivers/video/fbdev/nuc900fb.c
+@@ -526,10 +526,8 @@ static int nuc900fb_probe(struct platform_device *pdev)
+ 	display = mach_info->displays + mach_info->default_display;
  
  	irq = platform_get_irq(pdev, 0);
 -	if (irq < 0) {
--		dev_err(dev, "missing IRQ resource: %d\n", irq);
+-		dev_err(&pdev->dev, "no irq for device\n");
++	if (irq < 0)
+ 		return -ENOENT;
+-	}
+ 
+ 	fbinfo = framebuffer_alloc(sizeof(struct nuc900fb_info), &pdev->dev);
+ 	if (!fbinfo)
+diff --git a/drivers/video/fbdev/pxa168fb.c b/drivers/video/fbdev/pxa168fb.c
+index 1410f476e135..d9e5258503f0 100644
+--- a/drivers/video/fbdev/pxa168fb.c
++++ b/drivers/video/fbdev/pxa168fb.c
+@@ -625,10 +625,8 @@ static int pxa168fb_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	irq = platform_get_irq(pdev, 0);
+-	if (irq < 0) {
+-		dev_err(&pdev->dev, "no IRQ defined\n");
++	if (irq < 0)
+ 		return -ENOENT;
+-	}
+ 
+ 	info = framebuffer_alloc(sizeof(struct pxa168fb_info), &pdev->dev);
+ 	if (info == NULL) {
+diff --git a/drivers/video/fbdev/pxa3xx-gcu.c b/drivers/video/fbdev/pxa3xx-gcu.c
+index 74ffb446e00c..07414d43cb3f 100644
+--- a/drivers/video/fbdev/pxa3xx-gcu.c
++++ b/drivers/video/fbdev/pxa3xx-gcu.c
+@@ -614,10 +614,8 @@ static int pxa3xx_gcu_probe(struct platform_device *pdev)
+ 
+ 	/* request the IRQ */
+ 	irq = platform_get_irq(pdev, 0);
+-	if (irq < 0) {
+-		dev_err(dev, "no IRQ defined: %d\n", irq);
 +	if (irq < 0)
  		return irq;
 -	}
  
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	base = devm_ioremap_resource(dev, res);
-diff --git a/drivers/usb/gadget/udc/aspeed-vhub/core.c b/drivers/usb/gadget/udc/aspeed-vhub/core.c
-index db3628be38c0..c08d385e2723 100644
---- a/drivers/usb/gadget/udc/aspeed-vhub/core.c
-+++ b/drivers/usb/gadget/udc/aspeed-vhub/core.c
-@@ -348,7 +348,6 @@ static int ast_vhub_probe(struct platform_device *pdev)
- 	/* Find interrupt and install handler */
- 	vhub->irq = platform_get_irq(pdev, 0);
- 	if (vhub->irq < 0) {
--		dev_err(&pdev->dev, "Failed to get interrupt\n");
- 		rc = vhub->irq;
- 		goto err;
- 	}
-diff --git a/drivers/usb/gadget/udc/bcm63xx_udc.c b/drivers/usb/gadget/udc/bcm63xx_udc.c
-index c1fcc77403ea..97b16463f3ef 100644
---- a/drivers/usb/gadget/udc/bcm63xx_udc.c
-+++ b/drivers/usb/gadget/udc/bcm63xx_udc.c
-@@ -2328,10 +2328,8 @@ static int bcm63xx_udc_probe(struct platform_device *pdev)
- 
- 	/* IRQ resource #0: control interrupt (VBUS, speed, etc.) */
- 	irq = platform_get_irq(pdev, 0);
--	if (irq < 0) {
--		dev_err(dev, "missing IRQ resource #0\n");
-+	if (irq < 0)
- 		goto out_uninit;
--	}
- 	if (devm_request_irq(dev, irq, &bcm63xx_udc_ctrl_isr, 0,
- 			     dev_name(dev), udc) < 0)
- 		goto report_request_failure;
-@@ -2339,10 +2337,8 @@ static int bcm63xx_udc_probe(struct platform_device *pdev)
- 	/* IRQ resources #1-6: data interrupts for IUDMA channels 0-5 */
- 	for (i = 0; i < BCM63XX_NUM_IUDMA; i++) {
- 		irq = platform_get_irq(pdev, i + 1);
--		if (irq < 0) {
--			dev_err(dev, "missing IRQ resource #%d\n", i + 1);
-+		if (irq < 0)
- 			goto out_uninit;
--		}
- 		if (devm_request_irq(dev, irq, &bcm63xx_udc_data_isr, 0,
- 				     dev_name(dev), &udc->iudma[i]) < 0)
- 			goto report_request_failure;
-diff --git a/drivers/usb/gadget/udc/bdc/bdc_core.c b/drivers/usb/gadget/udc/bdc/bdc_core.c
-index ccbd1d34eb2a..cc4a16e253ac 100644
---- a/drivers/usb/gadget/udc/bdc/bdc_core.c
-+++ b/drivers/usb/gadget/udc/bdc/bdc_core.c
-@@ -515,10 +515,8 @@ static int bdc_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 	}
- 	irq = platform_get_irq(pdev, 0);
--	if (irq < 0) {
--		dev_err(dev, "platform_get_irq failed:%d\n", irq);
-+	if (irq < 0)
- 		return irq;
--	}
- 	spin_lock_init(&bdc->lock);
- 	platform_set_drvdata(pdev, bdc);
- 	bdc->irq = irq;
-diff --git a/drivers/usb/gadget/udc/gr_udc.c b/drivers/usb/gadget/udc/gr_udc.c
-index 729e60e49564..7a0e9a58c2d8 100644
---- a/drivers/usb/gadget/udc/gr_udc.c
-+++ b/drivers/usb/gadget/udc/gr_udc.c
-@@ -2134,19 +2134,15 @@ static int gr_probe(struct platform_device *pdev)
- 		return PTR_ERR(regs);
- 
- 	dev->irq = platform_get_irq(pdev, 0);
--	if (dev->irq <= 0) {
--		dev_err(dev->dev, "No irq found\n");
-+	if (dev->irq <= 0)
- 		return -ENODEV;
--	}
- 
- 	/* Some core configurations has separate irqs for IN and OUT events */
- 	dev->irqi = platform_get_irq(pdev, 1);
- 	if (dev->irqi > 0) {
- 		dev->irqo = platform_get_irq(pdev, 2);
--		if (dev->irqo <= 0) {
--			dev_err(dev->dev, "Found irqi but not irqo\n");
-+		if (dev->irqo <= 0)
- 			return -ENODEV;
--		}
- 	} else {
- 		dev->irqi = 0;
- 	}
-diff --git a/drivers/usb/gadget/udc/lpc32xx_udc.c b/drivers/usb/gadget/udc/lpc32xx_udc.c
-index 5f1b14f3e5a0..e9cf20979bf6 100644
---- a/drivers/usb/gadget/udc/lpc32xx_udc.c
-+++ b/drivers/usb/gadget/udc/lpc32xx_udc.c
-@@ -3061,11 +3061,8 @@ static int lpc32xx_udc_probe(struct platform_device *pdev)
- 	/* Get IRQs */
- 	for (i = 0; i < 4; i++) {
- 		udc->udp_irq[i] = platform_get_irq(pdev, i);
--		if (udc->udp_irq[i] < 0) {
--			dev_err(udc->dev,
--				"irq resource %d not available!\n", i);
-+		if (udc->udp_irq[i] < 0)
- 			return udc->udp_irq[i];
--		}
- 	}
- 
- 	udc->udp_baseaddr = devm_ioremap_resource(dev, res);
-diff --git a/drivers/usb/gadget/udc/renesas_usb3.c b/drivers/usb/gadget/udc/renesas_usb3.c
-index 87062d22134d..027a25694a68 100644
---- a/drivers/usb/gadget/udc/renesas_usb3.c
-+++ b/drivers/usb/gadget/udc/renesas_usb3.c
-@@ -2743,10 +2743,8 @@ static int renesas_usb3_probe(struct platform_device *pdev)
- 		priv = of_device_get_match_data(&pdev->dev);
- 
- 	irq = platform_get_irq(pdev, 0);
--	if (irq < 0) {
--		dev_err(&pdev->dev, "Failed to get IRQ: %d\n", irq);
-+	if (irq < 0)
- 		return irq;
--	}
- 
- 	usb3 = devm_kzalloc(&pdev->dev, sizeof(*usb3), GFP_KERNEL);
- 	if (!usb3)
-diff --git a/drivers/usb/gadget/udc/s3c-hsudc.c b/drivers/usb/gadget/udc/s3c-hsudc.c
-index 31c7c5587cf9..858993c73442 100644
---- a/drivers/usb/gadget/udc/s3c-hsudc.c
-+++ b/drivers/usb/gadget/udc/s3c-hsudc.c
-@@ -1311,10 +1311,8 @@ static int s3c_hsudc_probe(struct platform_device *pdev)
- 	s3c_hsudc_setup_ep(hsudc);
- 
- 	ret = platform_get_irq(pdev, 0);
--	if (ret < 0) {
--		dev_err(dev, "unable to obtain IRQ number\n");
-+	if (ret < 0)
- 		goto err_res;
--	}
- 	hsudc->irq = ret;
- 
- 	ret = devm_request_irq(&pdev->dev, hsudc->irq, s3c_hsudc_irq, 0,
-diff --git a/drivers/usb/gadget/udc/udc-xilinx.c b/drivers/usb/gadget/udc/udc-xilinx.c
-index b1f4104d1283..29d8e5f8bb58 100644
---- a/drivers/usb/gadget/udc/udc-xilinx.c
-+++ b/drivers/usb/gadget/udc/udc-xilinx.c
-@@ -2074,10 +2074,8 @@ static int xudc_probe(struct platform_device *pdev)
- 		return PTR_ERR(udc->addr);
- 
- 	irq = platform_get_irq(pdev, 0);
--	if (irq < 0) {
--		dev_err(&pdev->dev, "unable to get irq\n");
-+	if (irq < 0)
- 		return irq;
--	}
- 	ret = devm_request_irq(&pdev->dev, irq, xudc_irq, 0,
- 			       dev_name(&pdev->dev), udc);
- 	if (ret < 0) {
-diff --git a/drivers/usb/host/ehci-atmel.c b/drivers/usb/host/ehci-atmel.c
-index 3ba140ceaf52..e893467d659c 100644
---- a/drivers/usb/host/ehci-atmel.c
-+++ b/drivers/usb/host/ehci-atmel.c
-@@ -100,9 +100,6 @@ static int ehci_atmel_drv_probe(struct platform_device *pdev)
- 
- 	irq = platform_get_irq(pdev, 0);
- 	if (irq <= 0) {
--		dev_err(&pdev->dev,
--			"Found HC with no IRQ. Check %s setup!\n",
--			dev_name(&pdev->dev));
- 		retval = -ENODEV;
- 		goto fail_create_hcd;
- 	}
-diff --git a/drivers/usb/host/ehci-omap.c b/drivers/usb/host/ehci-omap.c
-index 7d20296cbe9f..fc125b3d06e7 100644
---- a/drivers/usb/host/ehci-omap.c
-+++ b/drivers/usb/host/ehci-omap.c
-@@ -115,10 +115,8 @@ static int ehci_hcd_omap_probe(struct platform_device *pdev)
- 	}
- 
- 	irq = platform_get_irq(pdev, 0);
--	if (irq < 0) {
--		dev_err(dev, "EHCI irq failed: %d\n", irq);
-+	if (irq < 0)
- 		return irq;
--	}
- 
- 	res =  platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	regs = devm_ioremap_resource(dev, res);
-diff --git a/drivers/usb/host/ehci-orion.c b/drivers/usb/host/ehci-orion.c
-index 790acf3633e8..a319b1df3011 100644
---- a/drivers/usb/host/ehci-orion.c
-+++ b/drivers/usb/host/ehci-orion.c
-@@ -223,9 +223,6 @@ static int ehci_orion_drv_probe(struct platform_device *pdev)
- 
- 	irq = platform_get_irq(pdev, 0);
- 	if (irq <= 0) {
--		dev_err(&pdev->dev,
--			"Found HC with no IRQ. Check %s setup!\n",
--			dev_name(&pdev->dev));
- 		err = -ENODEV;
- 		goto err;
- 	}
-diff --git a/drivers/usb/host/ehci-platform.c b/drivers/usb/host/ehci-platform.c
-index 4c306fb6b069..769749ca5961 100644
---- a/drivers/usb/host/ehci-platform.c
-+++ b/drivers/usb/host/ehci-platform.c
-@@ -145,10 +145,8 @@ static int ehci_platform_probe(struct platform_device *dev)
- 	}
+ 	ret = devm_request_irq(dev, irq, pxa3xx_gcu_handle_irq,
+ 			       0, DRV_NAME, priv);
+diff --git a/drivers/video/fbdev/pxafb.c b/drivers/video/fbdev/pxafb.c
+index 4282cb117b92..b44f402ce552 100644
+--- a/drivers/video/fbdev/pxafb.c
++++ b/drivers/video/fbdev/pxafb.c
+@@ -2353,7 +2353,6 @@ static int pxafb_probe(struct platform_device *dev)
  
  	irq = platform_get_irq(dev, 0);
--	if (irq < 0) {
--		dev_err(&dev->dev, "no irq provided");
-+	if (irq < 0)
- 		return irq;
--	}
- 
- 	hcd = usb_create_hcd(&ehci_platform_hc_driver, &dev->dev,
- 			     dev_name(&dev->dev));
-diff --git a/drivers/usb/host/ehci-sh.c b/drivers/usb/host/ehci-sh.c
-index a9ee767952c1..ef75b9d70eb4 100644
---- a/drivers/usb/host/ehci-sh.c
-+++ b/drivers/usb/host/ehci-sh.c
-@@ -85,9 +85,6 @@ static int ehci_hcd_sh_probe(struct platform_device *pdev)
- 
- 	irq = platform_get_irq(pdev, 0);
- 	if (irq <= 0) {
--		dev_err(&pdev->dev,
--			"Found HC with no IRQ. Check %s setup!\n",
--			dev_name(&pdev->dev));
+ 	if (irq < 0) {
+-		dev_err(&dev->dev, "no IRQ defined\n");
  		ret = -ENODEV;
- 		goto fail_create_hcd;
+ 		goto failed_free_mem;
  	}
-diff --git a/drivers/usb/host/ehci-st.c b/drivers/usb/host/ehci-st.c
-index ccb4e611001d..f74433aac948 100644
---- a/drivers/usb/host/ehci-st.c
-+++ b/drivers/usb/host/ehci-st.c
-@@ -158,10 +158,8 @@ static int st_ehci_platform_probe(struct platform_device *dev)
- 		return -ENODEV;
- 
- 	irq = platform_get_irq(dev, 0);
--	if (irq < 0) {
--		dev_err(&dev->dev, "no irq provided");
-+	if (irq < 0)
- 		return irq;
--	}
- 	res_mem = platform_get_resource(dev, IORESOURCE_MEM, 0);
- 	if (!res_mem) {
- 		dev_err(&dev->dev, "no memory resource provided");
-diff --git a/drivers/usb/host/imx21-hcd.c b/drivers/usb/host/imx21-hcd.c
-index 6e3dad19d369..e406c5459a97 100644
---- a/drivers/usb/host/imx21-hcd.c
-+++ b/drivers/usb/host/imx21-hcd.c
-@@ -1836,10 +1836,8 @@ static int imx21_probe(struct platform_device *pdev)
- 	if (!res)
- 		return -ENODEV;
- 	irq = platform_get_irq(pdev, 0);
--	if (irq < 0) {
--		dev_err(&pdev->dev, "Failed to get IRQ: %d\n", irq);
-+	if (irq < 0)
- 		return irq;
--	}
- 
- 	hcd = usb_create_hcd(&imx21_hc_driver,
- 		&pdev->dev, dev_name(&pdev->dev));
-diff --git a/drivers/usb/host/ohci-platform.c b/drivers/usb/host/ohci-platform.c
-index 65a1c3fdc88c..7addfc2cbadc 100644
---- a/drivers/usb/host/ohci-platform.c
-+++ b/drivers/usb/host/ohci-platform.c
-@@ -111,10 +111,8 @@ static int ohci_platform_probe(struct platform_device *dev)
- 		return err;
- 
- 	irq = platform_get_irq(dev, 0);
--	if (irq < 0) {
--		dev_err(&dev->dev, "no irq provided");
-+	if (irq < 0)
- 		return irq;
--	}
- 
- 	hcd = usb_create_hcd(&ohci_platform_hc_driver, &dev->dev,
- 			dev_name(&dev->dev));
-diff --git a/drivers/usb/host/ohci-st.c b/drivers/usb/host/ohci-st.c
-index 638a92bd2cdc..ac796ccd93ef 100644
---- a/drivers/usb/host/ohci-st.c
-+++ b/drivers/usb/host/ohci-st.c
-@@ -138,10 +138,8 @@ static int st_ohci_platform_probe(struct platform_device *dev)
- 		return -ENODEV;
- 
- 	irq = platform_get_irq(dev, 0);
--	if (irq < 0) {
--		dev_err(&dev->dev, "no irq provided");
-+	if (irq < 0)
- 		return irq;
--	}
- 
- 	res_mem = platform_get_resource(dev, IORESOURCE_MEM, 0);
- 	if (!res_mem) {
-diff --git a/drivers/usb/mtu3/mtu3_core.c b/drivers/usb/mtu3/mtu3_core.c
-index f8bd1d57e795..c3d5c1206eec 100644
---- a/drivers/usb/mtu3/mtu3_core.c
-+++ b/drivers/usb/mtu3/mtu3_core.c
-@@ -835,10 +835,8 @@ int ssusb_gadget_init(struct ssusb_mtk *ssusb)
- 		return -ENOMEM;
- 
- 	mtu->irq = platform_get_irq(pdev, 0);
--	if (mtu->irq < 0) {
--		dev_err(dev, "fail to get irq number\n");
-+	if (mtu->irq < 0)
- 		return mtu->irq;
--	}
- 	dev_info(dev, "irq %d\n", mtu->irq);
- 
- 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "mac");
-diff --git a/drivers/usb/phy/phy-ab8500-usb.c b/drivers/usb/phy/phy-ab8500-usb.c
-index aaf363f19714..bda3ac2a321e 100644
---- a/drivers/usb/phy/phy-ab8500-usb.c
-+++ b/drivers/usb/phy/phy-ab8500-usb.c
-@@ -712,10 +712,8 @@ static int ab8500_usb_irq_setup(struct platform_device *pdev,
- 
- 	if (ab->flags & AB8500_USB_FLAG_USE_LINK_STATUS_IRQ) {
- 		irq = platform_get_irq_byname(pdev, "USB_LINK_STATUS");
--		if (irq < 0) {
--			dev_err(&pdev->dev, "Link status irq not found\n");
-+		if (irq < 0)
- 			return irq;
--		}
- 		err = devm_request_threaded_irq(&pdev->dev, irq, NULL,
- 				ab8500_usb_link_status_irq,
- 				IRQF_NO_SUSPEND | IRQF_SHARED | IRQF_ONESHOT,
-@@ -728,10 +726,8 @@ static int ab8500_usb_irq_setup(struct platform_device *pdev,
- 
- 	if (ab->flags & AB8500_USB_FLAG_USE_ID_WAKEUP_IRQ) {
- 		irq = platform_get_irq_byname(pdev, "ID_WAKEUP_F");
--		if (irq < 0) {
--			dev_err(&pdev->dev, "ID fall irq not found\n");
-+		if (irq < 0)
- 			return irq;
--		}
- 		err = devm_request_threaded_irq(&pdev->dev, irq, NULL,
- 				ab8500_usb_disconnect_irq,
- 				IRQF_NO_SUSPEND | IRQF_SHARED | IRQF_ONESHOT,
-@@ -744,10 +740,8 @@ static int ab8500_usb_irq_setup(struct platform_device *pdev,
- 
- 	if (ab->flags & AB8500_USB_FLAG_USE_VBUS_DET_IRQ) {
- 		irq = platform_get_irq_byname(pdev, "VBUS_DET_F");
--		if (irq < 0) {
--			dev_err(&pdev->dev, "VBUS fall irq not found\n");
-+		if (irq < 0)
- 			return irq;
--		}
- 		err = devm_request_threaded_irq(&pdev->dev, irq, NULL,
- 				ab8500_usb_disconnect_irq,
- 				IRQF_NO_SUSPEND | IRQF_SHARED | IRQF_ONESHOT,
-diff --git a/drivers/usb/typec/tcpm/wcove.c b/drivers/usb/typec/tcpm/wcove.c
-index 6b317c150bdd..edc271da14f4 100644
---- a/drivers/usb/typec/tcpm/wcove.c
-+++ b/drivers/usb/typec/tcpm/wcove.c
-@@ -617,10 +617,8 @@ static int wcove_typec_probe(struct platform_device *pdev)
- 	wcove->regmap = pmic->regmap;
+diff --git a/drivers/video/fbdev/s3c2410fb.c b/drivers/video/fbdev/s3c2410fb.c
+index a702da89910b..2a846fd5da2a 100644
+--- a/drivers/video/fbdev/s3c2410fb.c
++++ b/drivers/video/fbdev/s3c2410fb.c
+@@ -849,10 +849,8 @@ static int s3c24xxfb_probe(struct platform_device *pdev,
+ 	display = mach_info->displays + mach_info->default_display;
  
  	irq = platform_get_irq(pdev, 0);
 -	if (irq < 0) {
--		dev_err(&pdev->dev, "Failed to get IRQ: %d\n", irq);
+-		dev_err(&pdev->dev, "no irq for device\n");
 +	if (irq < 0)
- 		return irq;
+ 		return -ENOENT;
 -	}
  
- 	irq = regmap_irq_get_virq(pmic->irq_chip_data_chgr, irq);
- 	if (irq < 0)
+ 	fbinfo = framebuffer_alloc(sizeof(struct s3c2410fb_info), &pdev->dev);
+ 	if (!fbinfo)
+diff --git a/drivers/video/fbdev/vt8500lcdfb.c b/drivers/video/fbdev/vt8500lcdfb.c
+index be8d9702cbb2..a10088e1cdb0 100644
+--- a/drivers/video/fbdev/vt8500lcdfb.c
++++ b/drivers/video/fbdev/vt8500lcdfb.c
+@@ -372,7 +372,6 @@ static int vt8500lcd_probe(struct platform_device *pdev)
+ 
+ 	irq = platform_get_irq(pdev, 0);
+ 	if (irq < 0) {
+-		dev_err(&pdev->dev, "no IRQ defined\n");
+ 		ret = -ENODEV;
+ 		goto failed_free_palette;
+ 	}
 -- 
 Sent by a computer through tubes
 
