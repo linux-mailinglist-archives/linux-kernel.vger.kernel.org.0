@@ -2,105 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B6BC7A513
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 11:47:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E2BB97A51D
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 11:48:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731949AbfG3Jrd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 05:47:33 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:44542 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730746AbfG3Jra (ORCPT
+        id S1732078AbfG3JsD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 05:48:03 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:39153 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730150AbfG3Jrb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 05:47:30 -0400
-Received: by mail-wr1-f66.google.com with SMTP id p17so65004510wrf.11
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 02:47:28 -0700 (PDT)
+        Tue, 30 Jul 2019 05:47:31 -0400
+Received: by mail-wm1-f65.google.com with SMTP id u25so45656353wmc.4
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 02:47:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id;
-        bh=6PuYspoDybeXNpQFC+ln8IGotsrBBPnPAvGZte3Try4=;
-        b=Z551vjfbELmdnMj2C0YudUQ71rmPynbSof1ghgeEX0Ld2rFfzQ2UfQ3tEIcUbR1pSG
-         xX8LmcfclH/bRyEIC554c9Gn2qeJhLzPD53jR+fArMPcgbQJ9UOzE7RaOhm2+7Thi65+
-         cIwwkiP6im93P/SevpMtkdDBRyKgStArk794uWMs+MD13OSPnaulyY/wbCv39DQChYf2
-         q6duAe1OS3f1qUXA3vFD18QHrMdlChG2L94BW4F++lKE0UBFORjRB8hBRZCU7cIka/zj
-         gIh4uThQEauKe5kv1cykNJxFcv6dt26THJrnrmopTXvLYEi0zRIR5lfdSJrW8ZQ2i5QQ
-         KyEQ==
+        h=from:to:subject:date:message-id:in-reply-to:references;
+        bh=AOFhIckhQmYMamZEnniJSByOBHPTNuKeX0q317r/B6o=;
+        b=cDap9tzqXKnWMFaPGlKoO46EBeCxR5sHYphIYa0XgZ2HX1sDcG9f2RfVkVp9wKk5lt
+         3oNv/eeT3EJxAJzJF3495LZI/M8qqXzXEnx6Klx2nxI+HEL32Y3njVDdaUraYFOUw4Ox
+         c+YfMrDml5m9uFjfa8bcRpR2DtWnwJMCMsGY0ymWTHDJ1L8v2XZETsIDzRY3olivX5WV
+         BVlHW+39TxxyuqLjzt6hlVVTw2SFo3edNiRluF3ju2wkI7av51Tkt++GZotKiRqAktO/
+         qmzoCMwv+sjIcHNn7/MvUGW6RWwPvxuWvpb1671bcn5dlxr3CRoLcZA8NOQ5RZoIsbt3
+         GTQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id;
-        bh=6PuYspoDybeXNpQFC+ln8IGotsrBBPnPAvGZte3Try4=;
-        b=FqkxqTVGmkaAxN/HIKZNzETcOnV3tYjLcSVCtoKeZMlU0kbPFIiUCp0uGV+OIjwMQ6
-         mSircCqmbxAqZdYfzpjqEJBycPUoP7jdqyKrMUS3PJtOfFve5R4Dkq/jm1fVePeYdMCc
-         lKcfzvmUxPSPLsyYRfKFnvGVWnjUASpJNheVcEYnkBIAo67XcqN2TE0y3we+ZG88s75B
-         W66ovaR3EaWIvdSivMhVXuCp7gXfs8sgkj8rx6WhHmWQJGcmyuUqHz4kXulRxY43FJdi
-         oJlF8Gy0JlFLfTb2q4gaPmR2x5uCyLZ5CtCV8fs0Y8y0BAQ/Vthz3adto31SuPk2zmyC
-         zbDw==
-X-Gm-Message-State: APjAAAX7NU7EGmuAHYFNCoUs874xwwpZciZoxqroAGZnNCRXe+QwMmmP
-        GaQUDCqxfWZSvR4K+FyFYrpCnvespJU=
-X-Google-Smtp-Source: APXvYqz7BmyPYspxERlHKFvofozU5XWk6igkKNtLG3fVMQID3x5JLKFBySgU96IXfWErI/PwmuChQw==
-X-Received: by 2002:a5d:67cd:: with SMTP id n13mr5409514wrw.138.1564480047345;
-        Tue, 30 Jul 2019 02:47:27 -0700 (PDT)
+        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
+         :references;
+        bh=AOFhIckhQmYMamZEnniJSByOBHPTNuKeX0q317r/B6o=;
+        b=X+8M46oIsVB6WCliE7Azuhd0qrjGPRHkrRfmPNujhqYJc976WSRWjpZozHyhpKKADf
+         oYTYVrTiLVeie5EWIIzhYPuIpmoNIks6pCp7G3Al46BiTCVz3C1S0qx+MIWtfmwjFmr1
+         hbQS/i1w7bJdmIxLaGEQ9pOHrofoFir9dIbKUI9Rzu4ITZfiSYXLkZipDLWOIZtMiZEQ
+         Q6JBM6TlEjmhdEwiFbCRZ0/g5cNreZXoAD1EyHHtmLEIlw38EaCWqCPPu/dSOc0LJoZT
+         cotjBPdEayOM86LktVA6InVAHk9owRpCOdK4oaZVA57OFn80WhCINILLqBRNv25eupDy
+         +D2g==
+X-Gm-Message-State: APjAAAX/4/n13FkOlHP7oc9NPEdCES6lTBx5/O2Jfgg3e4+hamE30QnU
+        uC+WbHRTzKr96p+F5+UKZtASZzVamoc=
+X-Google-Smtp-Source: APXvYqxxqR4CoL3MLTyK1xkvNBl0KgyJ96lOKuKCjVm1BaZRuUlfjaPQo60Sx3bNRBcXQKm92SltHA==
+X-Received: by 2002:a1c:e90d:: with SMTP id q13mr103501900wmc.89.1564480049162;
+        Tue, 30 Jul 2019 02:47:29 -0700 (PDT)
 Received: from ogabbay-VM.habana-labs.com ([31.154.190.6])
-        by smtp.gmail.com with ESMTPSA id k124sm105967360wmk.47.2019.07.30.02.47.26
+        by smtp.gmail.com with ESMTPSA id k124sm105967360wmk.47.2019.07.30.02.47.27
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 30 Jul 2019 02:47:26 -0700 (PDT)
+        Tue, 30 Jul 2019 02:47:28 -0700 (PDT)
 From:   Oded Gabbay <oded.gabbay@gmail.com>
 To:     linux-kernel@vger.kernel.org, oshpigelman@habana.ai,
         ttayar@habana.ai, gregkh@linuxfoundation.org
-Subject: [PATCH v2 0/7] habanalabs: support info queries by multiple processes
-Date:   Tue, 30 Jul 2019 12:47:17 +0300
-Message-Id: <20190730094724.18691-1-oded.gabbay@gmail.com>
+Subject: [PATCH v2 1/7] habanalabs: add handle field to context structure
+Date:   Tue, 30 Jul 2019 12:47:18 +0300
+Message-Id: <20190730094724.18691-2-oded.gabbay@gmail.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190730094724.18691-1-oded.gabbay@gmail.com>
+References: <20190730094724.18691-1-oded.gabbay@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Today, the driver allows only a single user application (the deep-learning
-application) to perform queries of the device's stats, information, idle
-state and more.
+This patch adds a field to the context's structure that will hold a unique
+handle for the context.
 
-This is a serious limitation in data centers, where there are
-multiple system/monitorining applications that want to continuously
-retrieve that information, while allowing the deep-learning application to
-perform work on the device.
+This will be needed when the user will create the context.
 
-This patch-set allows unlimited number of user applications to perform
-the above queries (by calling the INFO IOCTL), while the deep-learning
-application is running.
+Signed-off-by: Oded Gabbay <oded.gabbay@gmail.com>
+---
+ drivers/misc/habanalabs/context.c    | 27 ++++++++++++++++-----------
+ drivers/misc/habanalabs/habanalabs.h |  2 ++
+ 2 files changed, 18 insertions(+), 11 deletions(-)
 
-This is done by creating an additional char device per ASIC, that is
-dedicated to information retrieval only (allows only to call the INFO
-IOCTL). This method will maintain backward compatibility with existing
-userspace applications.
-
-- Patches 1-4 makes small improvements to existing code.
-- Patch 5 removes the accounting of the number of open file-descriptors
-  and replace it with tracking of the driver's internal file private data
-  strcuture.
-- Patch 6 is a pre-requisite to creating the two char devices
-- Patch 7 introduce the additional char device
-
-Thanks,
-Oded
-
-Oded Gabbay (7):
-  habanalabs: add handle field to context structure
-  habanalabs: kill user process after CS rollback
-  habanalabs: show the process context dram usage
-  habanalabs: rename user_ctx as compute_ctx
-  habanalabs: maintain a list of file private data objects
-  habanalabs: change device_setup_cdev() to be more generic
-  habanalabs: create two char devices per ASIC
-
- drivers/misc/habanalabs/context.c          |  38 +--
- drivers/misc/habanalabs/debugfs.c          |   4 +-
- drivers/misc/habanalabs/device.c           | 256 ++++++++++++---------
- drivers/misc/habanalabs/goya/goya_hwmgr.c  |  11 +-
- drivers/misc/habanalabs/habanalabs.h       |  53 +++--
- drivers/misc/habanalabs/habanalabs_drv.c   | 125 ++++++----
- drivers/misc/habanalabs/habanalabs_ioctl.c | 104 ++++++---
- 7 files changed, 374 insertions(+), 217 deletions(-)
-
+diff --git a/drivers/misc/habanalabs/context.c b/drivers/misc/habanalabs/context.c
+index 8682590e3f6e..1d8390418234 100644
+--- a/drivers/misc/habanalabs/context.c
++++ b/drivers/misc/habanalabs/context.c
+@@ -67,9 +67,20 @@ int hl_ctx_create(struct hl_device *hdev, struct hl_fpriv *hpriv)
+ 		goto out_err;
+ 	}
+ 
++	mutex_lock(&mgr->ctx_lock);
++	rc = idr_alloc(&mgr->ctx_handles, ctx, 1, 0, GFP_KERNEL);
++	mutex_unlock(&mgr->ctx_lock);
++
++	if (rc < 0) {
++		dev_err(hdev->dev, "Failed to allocate IDR for a new CTX\n");
++		goto free_ctx;
++	}
++
++	ctx->handle = rc;
++
+ 	rc = hl_ctx_init(hdev, ctx, false);
+ 	if (rc)
+-		goto free_ctx;
++		goto remove_from_idr;
+ 
+ 	hl_hpriv_get(hpriv);
+ 	ctx->hpriv = hpriv;
+@@ -78,18 +89,12 @@ int hl_ctx_create(struct hl_device *hdev, struct hl_fpriv *hpriv)
+ 	hpriv->ctx = ctx;
+ 	hdev->user_ctx = ctx;
+ 
+-	mutex_lock(&mgr->ctx_lock);
+-	rc = idr_alloc(&mgr->ctx_handles, ctx, 1, 0, GFP_KERNEL);
+-	mutex_unlock(&mgr->ctx_lock);
+-
+-	if (rc < 0) {
+-		dev_err(hdev->dev, "Failed to allocate IDR for a new CTX\n");
+-		hl_ctx_free(hdev, ctx);
+-		goto out_err;
+-	}
+-
+ 	return 0;
+ 
++remove_from_idr:
++	mutex_lock(&mgr->ctx_lock);
++	idr_remove(&mgr->ctx_handles, ctx->handle);
++	mutex_unlock(&mgr->ctx_lock);
+ free_ctx:
+ 	kfree(ctx);
+ out_err:
+diff --git a/drivers/misc/habanalabs/habanalabs.h b/drivers/misc/habanalabs/habanalabs.h
+index 57183ae9b95d..e41800e68578 100644
+--- a/drivers/misc/habanalabs/habanalabs.h
++++ b/drivers/misc/habanalabs/habanalabs.h
+@@ -631,6 +631,7 @@ struct hl_va_range {
+  *				execution phase before the context switch phase
+  *				has finished.
+  * @asid: context's unique address space ID in the device's MMU.
++ * @handle: context's opaque handle for user
+  */
+ struct hl_ctx {
+ 	DECLARE_HASHTABLE(mem_hash, MEM_HASH_TABLE_BITS);
+@@ -652,6 +653,7 @@ struct hl_ctx {
+ 	atomic_t		thread_ctx_switch_token;
+ 	u32			thread_ctx_switch_wait_token;
+ 	u32			asid;
++	u32			handle;
+ };
+ 
+ /**
 -- 
 2.17.1
 
