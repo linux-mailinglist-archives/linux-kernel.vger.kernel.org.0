@@ -2,104 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DE097B149
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:10:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A5E57B14F
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:11:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727708AbfG3SKm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 14:10:42 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:37840 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726658AbfG3SKl (ORCPT
+        id S1727823AbfG3SLc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 14:11:32 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:58209 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726165AbfG3SLc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 14:10:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=QqTYr7rDpWTKZ0tgJj879jROstvjPJUY9DWnD1mPY10=; b=CnyPiQ7Y8JvUubxqT3e7xR2Go
-        AgLF6yzH+9ceTmWrW+sDVDY0EjCs1y6l1uLXj2EEroesVOQ/6k1/wsdxypLSmYVdNUcopy2xvIn6P
-        qqxLQVqFB49x+230B6A2Ge6mQXeCYeT5VZuvicD1fQvvdk/mhoCbcnE34/wq7urwf4x6I=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hsWa7-0008DM-Cl; Tue, 30 Jul 2019 18:10:39 +0000
-Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 822262742D42; Tue, 30 Jul 2019 19:10:38 +0100 (BST)
-Date:   Tue, 30 Jul 2019 19:10:38 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Philippe Schenker <dev@pschenker.ch>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org,
-        Philippe Schenker <philippe.schenker@toradex.com>
-Subject: Re: [RFC PATCH 1/2] Regulator: Core: Add clock-enable to
- fixed-regulator
-Message-ID: <20190730181038.GK4264@sirena.org.uk>
-References: <20190730173006.15823-1-dev@pschenker.ch>
- <20190730173006.15823-2-dev@pschenker.ch>
+        Tue, 30 Jul 2019 14:11:32 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6UIBKll3325304
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Tue, 30 Jul 2019 11:11:20 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6UIBKll3325304
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019071901; t=1564510281;
+        bh=tfk6NxHdKb2Big0TlwsrgGKV555HRIFH3DpMa/M042E=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=MSGDSldppWUc66o3Xii7uKknm0VzOLSqUeMp4MatNPTO2Rs0L5hJq1tDv1xQVO5ej
+         zxWwDgMkcFe2vRYRC1hS5eiPNbJN3lWTUNQF3n4hKMYIfwUZce/e7E9db+qLuGlNQC
+         sHo4QjblFu55LzwBLhOm8KX0XIQGCGaIiaWl/OGZ1UobpKM6exRPzZY9hbCuT3FwkQ
+         5lj31BM13B7d4IimiB/Z12//oHMbJGzRLhMEaNviVOr09EKkVsi/T5j7wFunCFBu25
+         LPNQLgP3cXIhQs6DhO93xKtByR67agCSNpD0QZSsIYrIBlpKQ4hhb53qBuzN0XTNz9
+         aSpLqoypZRrHA==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6UIBJlW3325293;
+        Tue, 30 Jul 2019 11:11:19 -0700
+Date:   Tue, 30 Jul 2019 11:11:19 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
+Message-ID: <tip-b4b62ee688eb39151c9d8182c3e2f12c9d34602d@git.kernel.org>
+Cc:     alexey.budankov@linux.intel.com, mpetlan@redhat.com, hpa@zytor.com,
+        acme@redhat.com, linux-kernel@vger.kernel.org, namhyung@kernel.org,
+        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+        ak@linux.intel.com, tglx@linutronix.de, peterz@infradead.org,
+        mingo@kernel.org
+Reply-To: tglx@linutronix.de, mingo@kernel.org, peterz@infradead.org,
+          ak@linux.intel.com, namhyung@kernel.org, jolsa@kernel.org,
+          alexander.shishkin@linux.intel.com, linux-kernel@vger.kernel.org,
+          hpa@zytor.com, acme@redhat.com, alexey.budankov@linux.intel.com,
+          mpetlan@redhat.com
+In-Reply-To: <20190721112506.12306-7-jolsa@kernel.org>
+References: <20190721112506.12306-7-jolsa@kernel.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf evsel: Rename perf_evsel__init() to
+ evsel__init()
+Git-Commit-ID: b4b62ee688eb39151c9d8182c3e2f12c9d34602d
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="zYjDATHXTWnytHRU"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20190730173006.15823-2-dev@pschenker.ch>
-X-Cookie: Times approximate.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Spam-Status: No, score=-0.2 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
+        autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Commit-ID:  b4b62ee688eb39151c9d8182c3e2f12c9d34602d
+Gitweb:     https://git.kernel.org/tip/b4b62ee688eb39151c9d8182c3e2f12c9d34602d
+Author:     Jiri Olsa <jolsa@kernel.org>
+AuthorDate: Sun, 21 Jul 2019 13:23:53 +0200
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Mon, 29 Jul 2019 18:34:42 -0300
 
---zYjDATHXTWnytHRU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+perf evsel: Rename perf_evsel__init() to evsel__init()
 
-On Tue, Jul 30, 2019 at 07:30:04PM +0200, Philippe Schenker wrote:
-> From: Philippe Schenker <philippe.schenker@toradex.com>
->=20
-> This adds the possibility to enable a fixed-regulator with a clock.
+Rename perf_evsel__init() to evsel__init(), so we don't have a name
+clash when we add perf_evsel__init() in libperf.
 
-Why?  What does the hardware which makes this make sense look like?
-Your cover letter didn't explain at all clearly, it just said that
-there's a circuit that is connected to a clock which somehow switches
-something but it's not clear.  It's certainly not clear that this should
-be in the core, the circuit doesn't sound like a good idea at all.
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Michael Petlan <mpetlan@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/20190721112506.12306-7-jolsa@kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/util/evsel.c  | 8 ++++----
+ tools/perf/util/evsel.h  | 3 +--
+ tools/perf/util/python.c | 2 +-
+ 3 files changed, 6 insertions(+), 7 deletions(-)
 
-> Signed-off-by: <philippe.schenker@toradex.com>
-> Signed-off-by: Philippe Schenker <philippe.schenker@toradex.com>
-
-This needs a cleanup.
-
-> =20
->  	/* cares about last_off_jiffy only if off_on_delay is required by
-> @@ -2796,6 +2805,9 @@ static int _regulator_is_enabled(struct regulator_d=
-ev *rdev)
->  	if (rdev->ena_pin)
->  		return rdev->ena_gpio_state;
-> =20
-> +	if (rdev->ena_clk)
-> +		return (rdev->ena_clk_state > 0) ? 1 : 0;
-> +
-
-Please write normal conditional statements, this isn't helping
-legibility.  Though in this case the ternery operator is totally
-redundant anyway...
-
---zYjDATHXTWnytHRU
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl1AiB0ACgkQJNaLcl1U
-h9AnVQf/bmxm9da7buxiCOzPFvSNO2buPNUm9sCLCjwKvN6BY0kxCM5uILlj2v/s
-WvsCpcpoSMhvBKX+gZmnasln8eIRdKnKwDfTN1Joo1qEk0JQAKR8xjWH7ZWF0T38
-PQNfTahnq0vCiCFd6ItNqntqBtGN8r9BjraBTgwyB46ASzPPwOimQOkUd73d6E6g
-C/ySgZjbJtoKwULdf9u6MqPo9dBrHq69lAA7n106zaSBAVXqX8Pdv7bEYhN+fkle
-RqXlZ0vpvhwKnh67xT9lIIzVezEKzSyjfOJ/dwb4fdWeBU7L0AUeh9Zem6Q+hl3b
-1fNieVb6RKUOdoAO7cWX/OfG+vIK+w==
-=bKfQ
------END PGP SIGNATURE-----
-
---zYjDATHXTWnytHRU--
+diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+index f7f97ca6e96d..97bee83f0f98 100644
+--- a/tools/perf/util/evsel.c
++++ b/tools/perf/util/evsel.c
+@@ -223,8 +223,8 @@ bool perf_evsel__is_function_event(struct evsel *evsel)
+ #undef FUNCTION_EVENT
+ }
+ 
+-void perf_evsel__init(struct evsel *evsel,
+-		      struct perf_event_attr *attr, int idx)
++void evsel__init(struct evsel *evsel,
++		 struct perf_event_attr *attr, int idx)
+ {
+ 	evsel->idx	   = idx;
+ 	evsel->tracking	   = !idx;
+@@ -255,7 +255,7 @@ struct evsel *perf_evsel__new_idx(struct perf_event_attr *attr, int idx)
+ 
+ 	if (!evsel)
+ 		return NULL;
+-	perf_evsel__init(evsel, attr, idx);
++	evsel__init(evsel, attr, idx);
+ 
+ 	if (perf_evsel__is_bpf_output(evsel)) {
+ 		evsel->attr.sample_type |= (PERF_SAMPLE_RAW | PERF_SAMPLE_TIME |
+@@ -350,7 +350,7 @@ struct evsel *perf_evsel__newtp_idx(const char *sys, const char *name, int idx)
+ 		event_attr_init(&attr);
+ 		attr.config = evsel->tp_format->id;
+ 		attr.sample_period = 1;
+-		perf_evsel__init(evsel, &attr, idx);
++		evsel__init(evsel, &attr, idx);
+ 	}
+ 
+ 	return evsel;
+diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
+index 3caabd8a4aa6..af230d92fbef 100644
+--- a/tools/perf/util/evsel.h
++++ b/tools/perf/util/evsel.h
+@@ -238,8 +238,7 @@ struct evsel *perf_evsel__new_cycles(bool precise);
+ 
+ struct tep_event *event_format__new(const char *sys, const char *name);
+ 
+-void perf_evsel__init(struct evsel *evsel,
+-		      struct perf_event_attr *attr, int idx);
++void evsel__init(struct evsel *evsel, struct perf_event_attr *attr, int idx);
+ void perf_evsel__exit(struct evsel *evsel);
+ void perf_evsel__delete(struct evsel *evsel);
+ 
+diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
+index ed57b6b5ed91..f6fe3c90828f 100644
+--- a/tools/perf/util/python.c
++++ b/tools/perf/util/python.c
+@@ -782,7 +782,7 @@ static int pyrf_evsel__init(struct pyrf_evsel *pevsel,
+ 	attr.sample_id_all  = sample_id_all;
+ 	attr.size	    = sizeof(attr);
+ 
+-	perf_evsel__init(&pevsel->evsel, &attr, idx);
++	evsel__init(&pevsel->evsel, &attr, idx);
+ 	return 0;
+ }
+ 
