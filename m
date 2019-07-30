@@ -2,96 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 064CE7A84A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 14:25:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 59CE17A842
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 14:25:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730351AbfG3MZQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 08:25:16 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:33490 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730316AbfG3MZP (ORCPT
+        id S1730171AbfG3MZD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 08:25:03 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:33510 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729973AbfG3MZB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 08:25:15 -0400
-Received: by mail-pf1-f193.google.com with SMTP id g2so29768014pfq.0
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 05:25:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=UdO7TiN1GZWaQttAvLZ44/neyJcGu5j8j3RhNT+Sui8=;
-        b=oeNn2Nb/KW67tK/SQYA3SwA0z1uQndtVJSRu+PDEjP72OlO8KmCMDtWBV5wq5bXjh9
-         hS9nOcAhh0rZcgj0RAfW0XRibChG2g3/3zWkiH4hkx8VgHfmHWA4aM6qvQRMCbMGDSOp
-         Bo53QaBP5OkWQzpZYWoNrCGtD3zIF2iH9bYNCt0o/ZLVt1XE+gTFteVw0X0p801KmcMi
-         mIumz0AGK/+0LiHxAWX/nfQoS8Y1yP7gHMEixVeHFMyQ1tqGa9Tnh5U41MsKDVNf5llv
-         RVYHfmDG2keihY0FTtTRGgzTF4IdgXDe5G/ve9Nji1Pbk27WKRIn6biY+aN2+F66OH/R
-         oz6w==
+        Tue, 30 Jul 2019 08:25:01 -0400
+Received: by mail-qt1-f195.google.com with SMTP id r6so58534480qtt.0
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 05:25:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=UdO7TiN1GZWaQttAvLZ44/neyJcGu5j8j3RhNT+Sui8=;
-        b=WnRcT40OIL3ce8gQsDW0n3Pm+ltFyVl0pE4FG4SjjmlOZBlhJBvpIWF+Shc/KaYWz+
-         FXgzQELp6aph0Ze6+3cenew0AggKq1VNwsKq25PkrxrTC8XrbNStIet66CaO4lGHF+ge
-         fhaFCklYB+KE95dIT9MYJgH24y2WhK/3ba5KnqzSrD3t6DzsGdp5Zx6p7XW+zyitDxtd
-         7FY0Vb/2RNNDryisoPT6BMXxd0e7RjUAJH1QaZ/GrqlD7ldPkntuULFYmlbAenUCKzhC
-         LXpyL++mBMpAyfMkNE0dVwqOhgHWoAd+QjG9M7NE3L6Dl0YFKQ9q9fZpnud7Sv5arFdF
-         RF6A==
-X-Gm-Message-State: APjAAAUZpn3X/FW8rfSUScksNdfaQyJO2vSW0SSXpS/D9G57EWkWicoO
-        eETMEvehYjyKF4tauORzd1VboA==
-X-Google-Smtp-Source: APXvYqwiIFZ1Lpnf1zrtvEq7BSLgYRy9SXqV38k99nAfJbSJqZuysqZ14yG/NTWJNUvb4F6Bw3cxBw==
-X-Received: by 2002:a63:5c7:: with SMTP id 190mr106671104pgf.67.1564489515198;
-        Tue, 30 Jul 2019 05:25:15 -0700 (PDT)
-Received: from localhost.localdomain ([45.114.72.197])
-        by smtp.gmail.com with ESMTPSA id v8sm54895462pgs.82.2019.07.30.05.25.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 30 Jul 2019 05:25:14 -0700 (PDT)
-From:   Sumit Garg <sumit.garg@linaro.org>
-To:     keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Cc:     jens.wiklander@linaro.org, corbet@lwn.net, dhowells@redhat.com,
-        jejb@linux.ibm.com, jarkko.sakkinen@linux.intel.com,
-        zohar@linux.ibm.com, jmorris@namei.org, serge@hallyn.com,
-        casey@schaufler-ca.com, ard.biesheuvel@linaro.org,
-        daniel.thompson@linaro.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        tee-dev@lists.linaro.org, Sumit Garg <sumit.garg@linaro.org>
-Subject: [RFC v2 6/6] MAINTAINERS: Add entry for TEE based Trusted Keys
-Date:   Tue, 30 Jul 2019 17:53:40 +0530
-Message-Id: <1564489420-677-7-git-send-email-sumit.garg@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1564489420-677-1-git-send-email-sumit.garg@linaro.org>
-References: <1564489420-677-1-git-send-email-sumit.garg@linaro.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Vg24wzBIc+D+Hmv+R1GPqhgrmLOPVkmrpAuvjDtlIDU=;
+        b=HTYpVHgcKfw3qjT7bgNIzF/J064+hCL62azBCtPvqrMGTRWJRTfa6OmXjl5UGTjfUB
+         TAYx0n8THuIxaZ2BHWbEem7UeZRBj7KdlVi5MX5ukq0sXke3CfqEKyKL7LeRA3aj7clv
+         kzSjyme9g1lpQfunxAWBWySJihV45rpoRFczqTwhzUKluKi3Y1YE6MUDUnxc1fHepAuw
+         ycH4PXHjWBkG1fu5qYxoEgtcq+YC0PYytoJsB1YFkCq4hiG3mOuYa2FSrk8mJgm2oWYt
+         VmLYEc59uDmG57w43gtvWdWmQFUt+HVPPAzV0+Tc94eZExyo4bWpje0VAxfmmj8Is1Gy
+         lM6w==
+X-Gm-Message-State: APjAAAVbxBNyGD9pfU9i8c6L6kjo4yuTSUEJq+U9KuzJpPF3UljuaLYa
+        UIndKqTnVJVOTzDeAiJ+9pHxPOCou8LRJlo9RyM=
+X-Google-Smtp-Source: APXvYqzfoZoBuiAjwAqXgbVNXXKwoEiH6dY5V72EFZ3ka6brjjn9cMP5XNNFWJ1mx1f3K5mwNQb5H6XBvPEoDQjUWN0=
+X-Received: by 2002:a0c:ba2c:: with SMTP id w44mr81948752qvf.62.1564489499864;
+ Tue, 30 Jul 2019 05:24:59 -0700 (PDT)
+MIME-Version: 1.0
+References: <CAK8P3a3jjDh6aEVf0bBFYc=8GtB38kL6sWVZGJiUe427A7m2ng@mail.gmail.com>
+In-Reply-To: <CAK8P3a3jjDh6aEVf0bBFYc=8GtB38kL6sWVZGJiUe427A7m2ng@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 30 Jul 2019 14:24:43 +0200
+Message-ID: <CAK8P3a1i3fV_qzx_q6nucqh4aNLi0a+iwvcis9BpYfMOkoew8Q@mail.gmail.com>
+Subject: Re: RFC: remove Nuvoton w90x900/nuc900 platform?
+To:     Wan ZongShun <mcuos.com@gmail.com>
+Cc:     Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add MAINTAINERS entry for TEE based Trusted Keys framework.
+On Tue, Jul 30, 2019 at 2:09 PM Mail Delivery Subsystem
+<mailer-daemon@googlemail.com> wrote:
+> On Tue, Jul 30, 2019 at 2:09 PM Arnd Bergmann <arnd@arndb.de> wrote:
+> >
+> > As the mach-netx and mach-8695 platforms are being removed now,
+> > I wonder whether we should do the same with w90x00: Here is what
+> > I found after looking at the git history and external material for it.
+> >
+> >     - The supported chips (nuc910/950/960) are no longer marketed
+> >       by the manufacturer
+> >
+> >     - Newer chips from the same family (nuc97x, nuc980, n329x)
+> >       that are still marketed have Linux BSPs but those were never
+> >       submitted for upstream inclusion.
+> >
+> >     - Wan ZongShun is listed as maintainer, but the last patch he wrote
+> >       was in 2011.
+> >
+> >     - All patches to w90x900 platform specific files afterwards
+> >       are cleanups that were apparently done without access to
+> >       test hardware.
+> >
+> >     - The http://www.mcuos.com/ website listed in the MAINTAINERS
+> >        file is no longer reachable.
+>
+> Recipient inbox full
+>
+> Your message couldn't be delivered to mcuos.com@gmail.com. Their inbox is full, or it's getting too much mail right now.
 
-Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
----
- MAINTAINERS | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Yes, that too.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index ce06877..0b61ecf 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -8930,6 +8930,15 @@ F:	include/keys/trusted-type.h
- F:	security/keys/trusted.c
- F:	security/keys/trusted.h
- 
-+KEYS-TEE-TRUSTED
-+M:	Sumit Garg <sumit.garg@linaro.org>
-+L:	linux-integrity@vger.kernel.org
-+L:	keyrings@vger.kernel.org
-+S:	Supported
-+F:	Documentation/security/keys/tee-trusted.rst
-+F:	include/keys/trusted_tee.h
-+F:	security/keys/trusted-keys/trusted-tee.c
-+
- KEYS/KEYRINGS:
- M:	David Howells <dhowells@redhat.com>
- L:	keyrings@vger.kernel.org
--- 
-2.7.4
-
+        Arnd
