@@ -2,100 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84C3F7B5B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 00:26:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 54F037B5B4
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 00:29:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388192AbfG3W0k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 18:26:40 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:35360 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388170AbfG3W0k (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 18:26:40 -0400
-Received: by mail-pf1-f196.google.com with SMTP id u14so30589934pfn.2
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 15:26:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=message-id:mime-version:content-transfer-encoding:in-reply-to
-         :references:cc:from:to:subject:user-agent:date;
-        bh=wtE8Qs6WxdqfhKDtqY7NOxwIx8qnuciqL0xbnCEtDy8=;
-        b=lf0JpW9ckD66UO7/vIhzs7MO0L2BH0pJ2Z5wVAUptbQ4zwlT/dfgE/gLqdt+cmnojs
-         eUO2YzcXwrTXe7Qq62KIBCw8xgJP4qmKQ199TOALlhH/RuZTJhJEcw2tjBIj33yD74kd
-         jREJt4lJCLk8a3jx4NXibqd00INprbu8qPUhg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:mime-version
-         :content-transfer-encoding:in-reply-to:references:cc:from:to:subject
-         :user-agent:date;
-        bh=wtE8Qs6WxdqfhKDtqY7NOxwIx8qnuciqL0xbnCEtDy8=;
-        b=SMJVR1CNF4RdZh8PE2C6t0S8luJFdCG+VOHDPGqigjgEc5KZU5DScUtCbYvv/OCTyQ
-         UN588ttpaVnc24bzlXGdAIpxOTNXznyvHJtkMk8rxvF3LBNsuHKMyspg07FwiIiQuTPd
-         IzfTVfxYypCXUKyvvcWsCV+DaDS/Q/sjhPpwSo8tPRIkAejnDtmD6n5ifS3PvHiHtN8N
-         G5g5a10fY3WmzwM0Faz+nDLz/HPr7frcSb6oh3ZG6EWxLbSYUOeCsxRRdh4DRSc4jT5k
-         WVy1KD/HakybZIzJjrL/Ox/p7jf+hTYs9wALsfnT60ViZO2gLT9kl8tFAZz7F1LGBt9B
-         a6zw==
-X-Gm-Message-State: APjAAAXEHd/OMV8J0lj2Ge7mmH30oUZQVWhguaYC/uFK+ba8pHzoIqnO
-        MpnE3aBT1v1TtgmASyxbafQ0zbb+sGjsnQ==
-X-Google-Smtp-Source: APXvYqzmCGgbSxYYdExQZf0zV20cq2S0wbI4IzmWdNg3JbAP1ExccOW0hF6cMcASAqTVi42DsD6p4Q==
-X-Received: by 2002:a63:8a49:: with SMTP id y70mr16015123pgd.271.1564525599777;
-        Tue, 30 Jul 2019 15:26:39 -0700 (PDT)
-Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id g1sm107068280pgg.27.2019.07.30.15.26.39
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 30 Jul 2019 15:26:39 -0700 (PDT)
-Message-ID: <5d40c41f.1c69fb81.ac63f.947f@mx.google.com>
-Content-Type: text/plain; charset="utf-8"
+        id S1729182AbfG3W3F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 18:29:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57004 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726640AbfG3W3F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 18:29:05 -0400
+Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0BC4C206E0;
+        Tue, 30 Jul 2019 22:29:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564525744;
+        bh=hCV6A1QlQIa8QFs1unT8GCtIpnQp3cCsPj2K1gcEVoc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=knVmsNh4/LiSiscdgOWy3TIQFqhmgn5/7ssE28fpXD2PyzYmbseVM7BTOnXnn0eoa
+         7/F4lwKP634JvLO8fB/6fi6IzyTLJuvwrUf4VolwlUh4NvXo7cjani3GHy96iK5EfF
+         9YHBc2ljlyOwtWYtYUOfihxTKep6c9nSdYQLwzg8=
+Date:   Tue, 30 Jul 2019 18:29:03 -0400
+From:   Sasha Levin <sashal@kernel.org>
+To:     Matthias Kaehlcke <mka@chromium.org>
+Cc:     Toralf =?iso-8859-1?Q?F=F6rster?= <toralf.foerster@gmx.de>,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        Nathan Huckleberry <nhuck@google.com>
+Subject: Re: Kernel patch commit message and content do differ
+Message-ID: <20190730222903.GI29162@sasha-vm>
+References: <ca2abaa5-c478-0b9f-cd51-c60aa032835f@gmx.de>
+ <20190729204242.GG250418@google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <2085893.cJkfNvi94x@kreacher>
-References: <20190730024309.233728-1-trong@android.com> <CANA+-vBKg_W88Oy_wJs1NNYaZ2ciJKO=Mrs47etYTDNXUKW9Uw@mail.gmail.com> <5d4090ea.1c69fb81.d5cab.4dcd@mx.google.com> <2085893.cJkfNvi94x@kreacher>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Tri Vo <trong@android.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Hridya Valsaraju <hridya@google.com>,
-        Sandeep Patil <sspatil@google.com>,
-        Kalesh Singh <kaleshsingh@google.com>,
-        Ravi Chandra Sadineni <ravisadineni@chromium.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        "Cc: Android Kernel" <kernel-team@android.com>,
-        kbuild test robot <lkp@intel.com>
-From:   Stephen Boyd <swboyd@chromium.org>
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH v5] PM / wakeup: show wakeup sources stats in sysfs
-User-Agent: alot/0.8.1
-Date:   Tue, 30 Jul 2019 15:26:38 -0700
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190729204242.GG250418@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Rafael J. Wysocki (2019-07-30 15:17:55)
-> On Tuesday, July 30, 2019 8:48:09 PM CEST Stephen Boyd wrote:
-> > Quoting Tri Vo (2019-07-30 11:39:34)
-> > > On Mon, Jul 29, 2019 at 10:46 PM Rafael J. Wysocki <rafael@kernel.org=
-> wrote:
-> > > >
-> > > > On Tue, Jul 30, 2019 at 4:45 AM Tri Vo <trong@android.com> wrote:
-> > > > > - Device registering the wakeup source is now the parent of the w=
-akeup source.
-> > > > >   Updated wakeup_source_register()'s signature and its callers ac=
-cordingly.
-> > > >
-> > > > And I really don't like these changes.  Especially having "wakeup"
-> > > > twice in the path.
-> > >=20
-> > > I can trim it down to /sys/class/wakeup/<ID>/. Does that sound good?
-> >=20
-> > Using the same prefix for the class and the device name is quite common.
-> > For example, see the input, regulator, tty, tpm, remoteproc, hwmon,
-> > extcon classes. I'd prefer it was left as /sys/class/wakeup/wakeupN. The
-> > class name could be changed to wakeup_source perhaps (i.e.
-> > /sys/class/wakeup_source/wakeupN)?
->=20
-> Alternatively /sys/class/wakeup/wsN
->=20
+On Mon, Jul 29, 2019 at 01:42:42PM -0700, Matthias Kaehlcke wrote:
+>Hi,
+>
+>On Mon, Jul 29, 2019 at 10:20:25PM +0200, Toralf Förster wrote:
+>> May I ask you to clarify why
+>> https://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git/diff/queue-5.2/net-ipv4-fib_trie-avoid-cryptic-ternary-expressions.patch?id=e1b76013997246a0d14b7443acbb393577d2a1e8
+>> speaks about a ternary operator, whereas the diff shows a changed
+>> #define?
+>
+>This is a good question, apparently the content of the queued patch is:
+>
+>commit 4df607cc6fe8e46b258ff2a53d0a60ca3008ffc7
+>Author: Nathan Huckleberry <nhuck@google.com>
+>Date:   Mon Jun 17 10:28:29 2019 -0700
+>
+>    kbuild: Remove unnecessary -Wno-unused-value
+>
+>
+>however the commit message is from:
+>
+>commit 25cec756891e8733433efea63b2254ddc93aa5cc
+>Author: Matthias Kaehlcke <mka@chromium.org>
+>Date:   Tue Jun 18 14:14:40 2019 -0700
+>
+>    net/ipv4: fib_trie: Avoid cryptic ternary expressions
+>
+>
+>Other than that the stable port also is missing a Signed-off-by tag
+>from Nathan.
+>
+>Looks like the patch didn't actually make it into -stable yet? If that
+>is correct we should be in time to fix it up before it becomes part of
+>the git history.
 
-Or /sys/class/wakeup/eventN? It's your bikeshed to paint.
+Right, it was an issue with my script which is now fixed. I've also
+fixed up the stable tree. Thanks for pointing it out.
 
+--
+Thanks,
+Sasha
