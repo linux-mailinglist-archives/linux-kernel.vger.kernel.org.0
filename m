@@ -2,130 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E87079F53
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 05:02:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 68B6B79F4C
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 05:02:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732832AbfG3DCe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 23:02:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51790 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732810AbfG3DC2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 23:02:28 -0400
-Received: from quaco.ghostprotocols.net (unknown [179.97.35.50])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D12D0216C8;
-        Tue, 30 Jul 2019 03:02:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564455747;
-        bh=PSjU/J96qYUTgZJWl8A6gS6FjJ45nEybaQnrKlCX67c=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rmdn8grVj1phifwIbh16XgDIzUW3+r80oAhC4eT8EKQOjIOkzi7bveZkBLINxL7oA
-         cE1HBygCe2kJjp2azFWkYXid9BwFEPMDKhvr+q2wHixPqItpX6F+n6yxh6sElweC93
-         I2N3OdvpPMQHB1B10GSpUecX6qsSAk1hzqzUw47Q=
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-        Clark Williams <williams@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Michael Petlan <mpetlan@redhat.com>,
-        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
-        Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
-        Carl Love <cel@us.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        "Naveen N . Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Paul Clarke <pc@us.ibm.com>,
-        Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>,
-        linuxppc-dev@ozlabs.org, Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 107/107] perf vendor events power9: Added missing event descriptions
-Date:   Mon, 29 Jul 2019 23:56:10 -0300
-Message-Id: <20190730025610.22603-108-acme@kernel.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190730025610.22603-1-acme@kernel.org>
-References: <20190730025610.22603-1-acme@kernel.org>
+        id S1732743AbfG3DCE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 23:02:04 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:39160 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732723AbfG3DCB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 23:02:01 -0400
+Received: by mail-pf1-f193.google.com with SMTP id f17so25038044pfn.6
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Jul 2019 20:02:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=+E8omEH906TCMOUVaEXWKpNgn+JOLXcUorYQ/vWPPf0=;
+        b=Jc/YC9lel3yNzxidJjL/B8/vFfeBsxFRicp39Oey3HLLBmzOKFl/TkdXqJsgaO1ojq
+         U2JDseu5QkwHIr9DHg0Zy0zyY6F38DCkSBbHVg66ejwCQhUvk8ZNDHIfTgLKiL4wcxnX
+         kp3K5zAmDoNjx9JdClWVxBf6JClsj1i/bpDJvJd/D2JYl0wPfjFznJl6Dx/c/a+kWsZy
+         0JCiBkHDo1hgK5btmADMHNmvEiuAHyWZnndkFa5ojybqyyPu7YS0X5qky1c/fzbAFGkL
+         k34hKPYhDnIFWjNHjar8YM+WjTadzFWy1D8/2FLDNSc7iZtKUFacgaiGgqk2bpFYZNGh
+         XuVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=+E8omEH906TCMOUVaEXWKpNgn+JOLXcUorYQ/vWPPf0=;
+        b=HjgnrWxS/kZOc4JGWCqwXqFRxNlrGBGZgHorbQgXuShdO/2YBALJAZzz9YgrKRhwOp
+         dBHip4iX5Tn7Pd9bUmikXxYHbzWV7+/aQrWHL6tG3QM+dz9wn/zc9xO/n+2KbzJG1po/
+         TDLyS9DDATYChr3i4ZVBFVcn72LxLAaWqJNNN5zx7ouGVFAWk3j+R48I8mlVAd9ki2sH
+         36A6aMdL5mZrZHqY1MGInn3O7znOnXHwkL2J8xgzTcWy1KV5BAlBNHPYCMk0lwM3bKPj
+         J5qJ1ItHqnC4UHWLDzuMpzdo6Sxx4azy3nMLGPYnDcRNGo9ehXu6c4c5cnz/a0w0+bzV
+         nyCQ==
+X-Gm-Message-State: APjAAAXLTaXMuIG54n8Ie4Lkws1DoR6GZVBP/zbdXeVvS6kHwVDBGaoA
+        lbt6lygCvK+GlAbg0+LaY5+OBQ==
+X-Google-Smtp-Source: APXvYqzE6E6bwEiPVPhC8MPvNKfvs+L5X43/lx99CsVqkOn2lJdGMjp42IO+nI7wkwvsesO+oQP+bA==
+X-Received: by 2002:a63:101b:: with SMTP id f27mr103042864pgl.291.1564455720224;
+        Mon, 29 Jul 2019 20:02:00 -0700 (PDT)
+Received: from localhost ([122.172.28.117])
+        by smtp.gmail.com with ESMTPSA id i126sm75052149pfb.32.2019.07.29.20.01.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 29 Jul 2019 20:01:59 -0700 (PDT)
+Date:   Tue, 30 Jul 2019 08:31:57 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Saravana Kannan <saravanak@google.com>
+Cc:     Georgi Djakov <georgi.djakov@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        "Sweeney, Sean" <seansw@qti.qualcomm.com>,
+        David Dai <daidavid1@codeaurora.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Sibi Sankar <sibis@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Evan Green <evgreen@chromium.org>,
+        Android Kernel Team <kernel-team@android.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 0/6] Introduce Bandwidth OPPs for interconnect paths
+Message-ID: <20190730030157.aml7z6vfsiqgyief@vireshk-i7>
+References: <20190703011020.151615-1-saravanak@google.com>
+ <20190717103220.f7cys267hq23fbsb@vireshk-i7>
+ <CAGETcx-tbjVzRKW8D-564zgNOhrA_z-NC1q5U70bhoUDBhp6VA@mail.gmail.com>
+ <20190718053746.64drmonk72vwnt4s@vireshk-i7>
+ <CAGETcx_-=b3An9YdxLUnZap=0iaeczvWTEnw65FMLU8BwA3HfQ@mail.gmail.com>
+ <20190729092454.6lfqzmhkvrhpimsp@vireshk-i7>
+ <CAGETcx_7fK20VZ6Zn07Z+Ran1_O7gSPohck_tg-aEr5oONQ5iA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGETcx_7fK20VZ6Zn07Z+Ran1_O7gSPohck_tg-aEr5oONQ5iA@mail.gmail.com>
+User-Agent: NeoMutt/20180716-391-311a52
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michael Petlan <mpetlan@redhat.com>
+On 29-07-19, 13:12, Saravana Kannan wrote:
+> On Mon, Jul 29, 2019 at 2:24 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> >
+> > On 18-07-19, 21:12, Saravana Kannan wrote:
+> > > On Wed, Jul 17, 2019 at 10:37 PM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> > > > I would like
+> > > > to put this data in the GPU OPP table only. What about putting a
+> > > > range in the GPU OPP table for the Bandwidth if it can change so much
+> > > > for the same frequency.
+> > >
+> > > I don't think the range is going to work.
+> >
+> > Any specific reason for that ?
+> 
+> The next sentence was literally explaining this :) Fine to debate
+> that, but ignoring that and asking this question is kinda funny.
 
-Documentation source:
+Okay, but ...
+ 
+> > > If a GPU is doing purely
+> > > computational work, it's not unreasonable for it to vote for the
+> > > lowest bandwidth for any GPU frequency.
 
-https://wiki.raptorcs.com/w/images/6/6b/POWER9_PMU_UG_v12_28NOV2018_pub.pdf
+... it wasn't clear to me even after reading this sentence again now
+:)
 
-Signed-off-by: Michael Petlan <mpetlan@redhat.com>
-Reviewed-by: Madhavan Srinivasan <maddy@linux.vnet.ibm.com>
-Cc: Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>
-Cc: Carl Love <cel@us.ibm.com>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
-Cc: Paul Clarke <pc@us.ibm.com>
-Cc: Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>
-Cc: linuxppc-dev@ozlabs.org
-LPU-Reference: 20190719100837.7503-1-mpetlan@redhat.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/pmu-events/arch/powerpc/power9/memory.json | 2 +-
- tools/perf/pmu-events/arch/powerpc/power9/other.json  | 8 ++++----
- 2 files changed, 5 insertions(+), 5 deletions(-)
+I understand that you may have to vote for the lowest bandwidth but
+that doesn't explain why a range can't work (sorry if it was just me
+who doesn't understood it :)).
 
-diff --git a/tools/perf/pmu-events/arch/powerpc/power9/memory.json b/tools/perf/pmu-events/arch/powerpc/power9/memory.json
-index 2e2ebc700c74..c3bb283e37e9 100644
---- a/tools/perf/pmu-events/arch/powerpc/power9/memory.json
-+++ b/tools/perf/pmu-events/arch/powerpc/power9/memory.json
-@@ -52,7 +52,7 @@
-   {,
-     "EventCode": "0x4D02C",
-     "EventName": "PM_PMC1_REWIND",
--    "BriefDescription": ""
-+    "BriefDescription": "PMC1 rewind event"
-   },
-   {,
-     "EventCode": "0x15158",
-diff --git a/tools/perf/pmu-events/arch/powerpc/power9/other.json b/tools/perf/pmu-events/arch/powerpc/power9/other.json
-index 48cf4f920b3f..62b864269623 100644
---- a/tools/perf/pmu-events/arch/powerpc/power9/other.json
-+++ b/tools/perf/pmu-events/arch/powerpc/power9/other.json
-@@ -237,7 +237,7 @@
-   {,
-     "EventCode": "0xD0B0",
-     "EventName": "PM_HWSYNC",
--    "BriefDescription": ""
-+    "BriefDescription": "A hwsync instruction was decoded and transferred"
-   },
-   {,
-     "EventCode": "0x168B0",
-@@ -1232,7 +1232,7 @@
-   {,
-     "EventCode": "0xD8AC",
-     "EventName": "PM_LWSYNC",
--    "BriefDescription": ""
-+    "BriefDescription": "An lwsync instruction was decoded and transferred"
-   },
-   {,
-     "EventCode": "0x2094",
-@@ -1747,7 +1747,7 @@
-   {,
-     "EventCode": "0xD8B0",
-     "EventName": "PM_PTESYNC",
--    "BriefDescription": ""
-+    "BriefDescription": "A ptesync instruction was counted when the instruction is decoded and transmitted"
-   },
-   {,
-     "EventCode": "0x26086",
-@@ -2107,7 +2107,7 @@
-   {,
-     "EventCode": "0xF080",
-     "EventName": "PM_LSU_STCX_FAIL",
--    "BriefDescription": ""
-+    "BriefDescription": "The LSU detects the condition that a stcx instruction failed. No requirement to wait for a response from the nest"
-   },
-   {,
-     "EventCode": "0x30038",
+> > I think that is fine, but if the GPU is able to find how much
+> > bandwidth it needs why can't it just pass that value without needing
+> > to have another OPP table for the path ?
+> 
+> You were asking this question in the context of "can the GPU OPP just
+> list all the range of bandwidth it might use per GPU frequency". My point
+> is that the range would be useless because it would the entire
+> available bandwidth range (because purely compute work might not need
+> any bandwidth).
+
+If it is useless to have entire range here, then why bother providing
+one ? Why can't the GPU request what it needs in exact terms, based on
+its calculations ? And then based on these requests, let the
+interconnect find what's the best/stable values it really wants to
+program the path for (and for that the interconnect can use its own
+OPP table, which would be fine).
+
+> Whereas, what the GPU's algorithm actually needs might be the list of
+> "useful" bandwidth levels to use.
+
+Hmm, I am not sure GPU's algorithm needs this table AFAIU based on all
+the conversations we had until now. It is very capable of finding how
+much bandwidth it needs, you just want the GPU driver to finally align
+that with a stable bandwidth for the platform later on. And what I am
+asking is that it is not required for the end driver to look for
+stable values, it just requests what it wants and let the interconnect
+core/driver decide the stable values.
+
+Very much like the clock framework, most of the user drivers just ask
+for a clk value to be programmed and it is the clock driver which
+keeps a table of the stable values and then aligns the requested value
+to one of those.
+
+> Also, as we add more ICC request properties, this range idea will not scale.
+
+I am not sure about what kind of properties there can be and where
+should they land. My feedback is completely based on what you have
+presented in this patchset.
+
 -- 
-2.21.0
-
+viresh
