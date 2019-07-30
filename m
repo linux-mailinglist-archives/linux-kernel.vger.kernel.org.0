@@ -2,71 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BF357AA85
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 16:06:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 168347AA89
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 16:07:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729792AbfG3OGI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 10:06:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36334 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727787AbfG3OGH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 10:06:07 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3E2B8206E0;
-        Tue, 30 Jul 2019 14:06:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564495566;
-        bh=J/b9I4zIh2nQcgEEakEPwUMi7XWdBncrC8zNpR2DFB8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=orTGWnHldZG2G5eYOwsbArf7bMpZaVrT+3MseSKR9qCYCsD73t+lhDg0JKzp+sewc
-         RMfdDpn/bxEmawQ1qpuUlvZ735pADXcnKjN3DzIQVGjrJ8AruonwKZX8rdIlFFGuo6
-         Gpwl+IEjQ8JNK6w7ROXZUHvoE+xFrqlffWBAWToY=
-Date:   Tue, 30 Jul 2019 16:06:04 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     shuah <shuah@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org
-Subject: Re: [PATCH 5.2 000/215] 5.2.5-stable review
-Message-ID: <20190730140604.GA31513@kroah.com>
-References: <20190729190739.971253303@linuxfoundation.org>
- <23f2bcb1-aa1a-e4f2-0d18-e0c16de511de@kernel.org>
+        id S1729910AbfG3OHt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 10:07:49 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:33807 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729447AbfG3OHs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 10:07:48 -0400
+Received: by mail-ot1-f68.google.com with SMTP id n5so66478032otk.1
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 07:07:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=FSKaKWFWYYOSjkODyshCHU2usgMmzqA1Mgn9YuEoYxw=;
+        b=NFuT0AL92rmq6nREyp2Avi5PAix+503qw2gjZvCs7/NGR6AcADaEXihWHG0gpaWt6r
+         KYH5vRp2EQkcfzJUr1Xb1Hu0GL7AtZTlpxigp8wO+p2q/+KLOvXu0BPnxPWxkHFCmZht
+         MFFxkSsC2lD9hfrF7bcEyclun4BZ7yZ+Z0RNyYKi2I8BA+E6b2HAh5tE7c58mHebH+/a
+         MQT8sNxSlfVL0rOmt2xUlzb7y+2gOUOfx/+Ew3zDNmmgPMostPXkrht1vKXNDwI4e58H
+         ixtTi8+KRPby2hDkmTfJO4hULYk9Ud6PcLo8MkuyuADqQRlZIFkxuLcTmWTMAwlEwwJm
+         VaZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=FSKaKWFWYYOSjkODyshCHU2usgMmzqA1Mgn9YuEoYxw=;
+        b=c5/UbN+QHODqTABZSZ53V75hI5ohhTk3PAWRGDoCMCdT+RoNghBhKGWqAU2lqXaN7P
+         i5igNKvOlqexERnhUborbwCrME5xmUSvtlHQAUfJKOl6r0ow8reFKisCN9L8NugmLyeY
+         gpTbvbXiLNox1RqUNPeFPgmjdkOA1q/ygIT2zU9gAQYO0ooNE41wJGrqCNhV6qAwK9By
+         865o3y8WKhJmBiVoutxm4oKjHWwis0mgU/jYiNcM7vLxL24Q1xiLoNht+SiJ7oqmnlg+
+         2OAvVnFO5ZV1eNeagF2E9Cg1hXapM6hN8VpXCLDeZgAZ7socYWSn8eAGGn9HAm/2tiBH
+         thZQ==
+X-Gm-Message-State: APjAAAWqJCmmfYBzergkiy39xglSnry6iyefNXuI0bZbzfXFOUt23qP0
+        2SDFvdMS/D1Tp/dQG4Zfd+yKb1LsK0wq/RNKyQ0nJg==
+X-Google-Smtp-Source: APXvYqyXIeUesTSJse/daTN45051YruafbavRxRDoWLl6h6sBrHIV5q78YvsRg7b7Qq8J212sVTnN+gCcEjtrpDX8aU=
+X-Received: by 2002:a9d:4f02:: with SMTP id d2mr6107256otl.328.1564495666698;
+ Tue, 30 Jul 2019 07:07:46 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <23f2bcb1-aa1a-e4f2-0d18-e0c16de511de@kernel.org>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+References: <20190730134704.44515-1-tzungbi@google.com>
+In-Reply-To: <20190730134704.44515-1-tzungbi@google.com>
+From:   Tzung-Bi Shih <tzungbi@google.com>
+Date:   Tue, 30 Jul 2019 22:07:35 +0800
+Message-ID: <CA+Px+wXetT1mQZW+3zc2vNDP4Jf3zKqGNz=Hq0yHn0Fvf=y-FQ@mail.gmail.com>
+Subject: Re: [PATCH v4] platform/chrome: cros_ec_trace: update generating script
+To:     bleung@chromium.org, enric.balletbo@collabora.com,
+        groeck@chromium.org, rrangel@chromium.org
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jimmy Cheng-Yi Chiang <cychiang@google.com>,
+        Dylan Reid <dgreid@google.com>,
+        Tzung-Bi Shih <tzungbi@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 30, 2019 at 08:01:42AM -0600, shuah wrote:
-> On 7/29/19 1:19 PM, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 5.2.5 release.
-> > There are 215 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Wed 31 Jul 2019 07:05:01 PM UTC.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.2.5-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.2.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> > 
-> 
-> Compiled and booted on my test system. No dmesg regressions.
+Hi Enric,
 
-Thanks for testing all of these and letting me know.
+I found it is error-prone to replace the EC_CMDS after updated.
+Perhaps, we should introduce an intermediate file "cros_ec_trace.inc".
+The generating script replaces whole ".inc" file every time and the
+cros_ec_trace.c includes the "cros_ec_trace.inc".
 
-greg k-h
+If this proposal makes sense to you, I can send the patch after this
+change landed for*-next.
