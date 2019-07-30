@@ -2,119 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2ACD07AC72
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 17:31:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F18677AC79
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 17:36:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731843AbfG3PbO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 11:31:14 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:39822 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731347AbfG3PbN (ORCPT
+        id S1732374AbfG3PgC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 11:36:02 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:36500 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730746AbfG3PgB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 11:31:13 -0400
-Received: by mail-lj1-f194.google.com with SMTP id v18so62456731ljh.6
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 08:31:12 -0700 (PDT)
+        Tue, 30 Jul 2019 11:36:01 -0400
+Received: by mail-pg1-f195.google.com with SMTP id l21so30251251pgm.3
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 08:36:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ijf+IXMFVOGyvl/6lR3Dl4FHOPijwIT8zlA3D+mB5Zg=;
-        b=ky12He8Kf8tUIMDwGJbIw/FAZCNoOYc2+0deJeoUMUYn71ibisQOQBx3k6VOLHsTuo
-         B1dzMxoZdynUB6zjeAwIMLthlkJ+ZjykQ1XLvWnpUkORJ49J2i7rTLTrcxe5S5wVazgY
-         sN4tUbFcMmf6azm9wd2Vt0HGmw8R3gjYK7q4u7dP3xcI6T0V84NL7ri6cxhfjiIWcTk8
-         szRtTwondYA84H0RtHLJ59dTa0a8GMLmHcwNszu7oJaWMsbBkpH80NIHAuBR3faQ+lBp
-         jC5V/LgKlFNaEWIBprf+MaSxhio7gITyAIw64IdCi+q4VVkTkoEPpDHFuEv0fQQHIDiz
-         22OA==
+        d=chromium.org; s=google;
+        h=message-id:mime-version:content-transfer-encoding:in-reply-to
+         :references:cc:from:to:subject:user-agent:date;
+        bh=RsDSvj0XBd9M9JvA+8Ajc4I4kcw4F4tZOAQ1/F5AMyE=;
+        b=Qte2AXEU7YiOINjmyRfa5IdVOEkz9PiH+5rZyPAyajCthtckGYDS7ptqMCWgsgsvLG
+         5reTtHRCUT02LCdEOlW0EWfPphXwpdxy0Ed0k3671RCUnlTNJjAJOJiBfHg1BrusDyWV
+         CGEFCn7PZp2V9dwXoMFM7ZJ1eeQyN3Oqh1yk4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ijf+IXMFVOGyvl/6lR3Dl4FHOPijwIT8zlA3D+mB5Zg=;
-        b=bEmaDRJMBb0cJXW5REWmUP9xgkdsbScogLjcaJ3RG5k2efsLe6d2Eib6H/Gm/7ztTp
-         mdSI43zVsJ4TRewHPyW4g8bVeoN58kr1chtFs1Bhiff4IN2TCjve57zWc7z6encccoio
-         U0ykRdHkpqYrAfbh1bpKAY2hzlcL8SamFhuIYc6eYKeBVArBDPJnxveivmKoqBQIwSrx
-         Zz9pfIbnqLGMisamoum/EEGut6/50yizOv/UHkE6X+9xh00MOtA0SlyYfm6oGVeFDpyR
-         ilQGYoYoJTG2jqTKrw5m4YY6UtMiko5lNaJeg31EtAGhfVrzdLK0rH+z/XSJ6/d0JaSa
-         hZdw==
-X-Gm-Message-State: APjAAAVrpGqFeGQblaIn3oewhIQlP7yjZufFf7xhA6QU2fdtxDZoe8Hq
-        cgtG1ipwLLydO63A771tmAd4PkOGAxTfug==
-X-Google-Smtp-Source: APXvYqwn5yHeNh2SggjrocFklpCW7DMwZmxMpOfufxOmSHRUb0st7KBTDbw62b+nH+RnCHOuX2bDgg==
-X-Received: by 2002:a05:651c:1b8:: with SMTP id c24mr63473072ljn.2.1564500671320;
-        Tue, 30 Jul 2019 08:31:11 -0700 (PDT)
-Received: from localhost (c-243c70d5.07-21-73746f28.bbcust.telenor.se. [213.112.60.36])
-        by smtp.gmail.com with ESMTPSA id l22sm13409494ljc.4.2019.07.30.08.31.09
+        h=x-gm-message-state:message-id:mime-version
+         :content-transfer-encoding:in-reply-to:references:cc:from:to:subject
+         :user-agent:date;
+        bh=RsDSvj0XBd9M9JvA+8Ajc4I4kcw4F4tZOAQ1/F5AMyE=;
+        b=Xm4NXOa/xenbLPxGFsQV7VusRfQFU2JLqYPbNIxtaCbkBV6LDanFpbnTkWiED8lRMF
+         BHAU9ELhW4+d3INftKcvw4URKLtnCLGSYuIY3RYUQLe2E/VaVmkej49MqTfIkJorRO27
+         S0XC3alnRfc9sEI9zX6DQ9WkXFUPU7zI+KH5xlRIqFT9/SzYIbYtNEoibsBdc9OqGIc3
+         OLk10whWQqRAhd5ycCP12rj53lZPZBIXd4Stb9Fsz5B9nMnxyT8tojDD8f9Qmus2qoQs
+         wH7S2Bl0HvezNWXpNdgG4O5HZLestVXOB9QM50w8yOl9wleho2MhMgsVtNFSMFsJUHVZ
+         e+xw==
+X-Gm-Message-State: APjAAAUd7GtBw1MnKIfUA9jGzs1+BwmsHB9YmKxOExGa7V2jqI8igfBR
+        dLx28BupD96HqFRqXSX98i8Giap949w=
+X-Google-Smtp-Source: APXvYqzO0GSirfw7WDJNi/jcxwVL3Bb8RoFr1kgOalH1sd2bjfLLIGbTJyBpNQ1fe29rlNh5vpH+Ww==
+X-Received: by 2002:a63:1918:: with SMTP id z24mr104902465pgl.94.1564500960627;
+        Tue, 30 Jul 2019 08:36:00 -0700 (PDT)
+Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id cx22sm54730541pjb.25.2019.07.30.08.35.59
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 30 Jul 2019 08:31:10 -0700 (PDT)
-From:   Anders Roxell <anders.roxell@linaro.org>
-To:     malidp@foss.arm.com, airlied@linux.ie, daniel@ffwll.ch
-Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        gustavo@embeddedor.com, liviu.dudau@arm.com,
-        Anders Roxell <anders.roxell@linaro.org>,
-        stable@vger.kernel.org
-Subject: [PATCH v2] drm: mali-dp: Mark expected switch fall-through
-Date:   Tue, 30 Jul 2019 17:30:56 +0200
-Message-Id: <20190730153056.3606-1-anders.roxell@linaro.org>
-X-Mailer: git-send-email 2.20.1
+        Tue, 30 Jul 2019 08:36:00 -0700 (PDT)
+Message-ID: <5d4063e0.1c69fb81.fb7c2.9528@mx.google.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190730064917.GB1213@kroah.com>
+References: <20190730053845.126834-1-swboyd@chromium.org> <20190730053845.126834-3-swboyd@chromium.org> <20190730064917.GB1213@kroah.com>
+Cc:     linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Javier Martinez Canillas <javierm@redhat.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Mark Brown <broonie@kernel.org>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Markus Elfring <Markus.Elfring@web.de>
+From:   Stephen Boyd <swboyd@chromium.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH v5 2/3] treewide: Remove dev_err() usage after platform_get_irq()
+User-Agent: alot/0.8.1
+Date:   Tue, 30 Jul 2019 08:35:59 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that -Wimplicit-fallthrough is passed to GCC by default, the
-following warnings shows up:
+Quoting Greg Kroah-Hartman (2019-07-29 23:49:17)
+> On Mon, Jul 29, 2019 at 10:38:44PM -0700, Stephen Boyd wrote:
+> > We don't need dev_err() messages when platform_get_irq() fails now that
+> > platform_get_irq() prints an error message itself when something goes
+> > wrong. Let's remove these prints with a simple semantic patch.
+> >=20
+> > // <smpl>
+> > @@
+> > expression ret;
+> > struct platform_device *E;
+> > @@
+> >=20
+> > ret =3D
+> > (
+> > platform_get_irq(E, ...)
+> > |
+> > platform_get_irq_byname(E, ...)
+> > );
+> >=20
+> > if ( \( ret < 0 \| ret <=3D 0 \) )
+> > {
+> > (
+> > -if (ret !=3D -EPROBE_DEFER)
+> > -{ ...
+> > -dev_err(...);
+> > -... }
+> > |
+> > ...
+> > -dev_err(...);
+> > )
+> > ...
+> > }
+> > // </smpl>
+> >=20
+> > While we're here, remove braces on if statements that only have one
+> > statement (manually).
+>=20
+> I like this, and I like patch 1/3, but this is going to conflict like
+> crazy all over the tree with who ever ends up taking it in their tree.
+>=20
+> Can you just break this up into per-subsystem pieces and send it through
+> those trees, and any remaining ones I can take, but at least give
+> maintainers a chance to take it.
 
-../drivers/gpu/drm/arm/malidp_hw.c: In function ‘malidp_format_get_bpp’:
-../drivers/gpu/drm/arm/malidp_hw.c:387:8: warning: this statement may fall
- through [-Wimplicit-fallthrough=]
-    bpp = 30;
-    ~~~~^~~~
-../drivers/gpu/drm/arm/malidp_hw.c:388:3: note: here
-   case DRM_FORMAT_YUV420_10BIT:
-   ^~~~
-../drivers/gpu/drm/arm/malidp_hw.c: In function ‘malidp_se_irq’:
-../drivers/gpu/drm/arm/malidp_hw.c:1311:4: warning: this statement may fall
- through [-Wimplicit-fallthrough=]
-    drm_writeback_signal_completion(&malidp->mw_connector, 0);
-    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-../drivers/gpu/drm/arm/malidp_hw.c:1313:3: note: here
-   case MW_START:
-   ^~~~
+Ok. Let me resend just this patch broken up into many pieces.
 
-Rework to add a 'break;' in a case that didn't have it so that
-the compiler doesn't warn about fall-through.
+>=20
+> You are also going to have to do a sweep every other release or so to
+> catch the stragglers.
 
-Cc: stable@vger.kernel.org # v5.2+
-Fixes: b8207562abdd ("drm/arm/malidp: Specified the rotation memory requirements for AFBC YUV formats")
-Acked-by: Liviu Dudau <liviu.dudau@arm.com>
-Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
----
- drivers/gpu/drm/arm/malidp_hw.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/arm/malidp_hw.c b/drivers/gpu/drm/arm/malidp_hw.c
-index 50af399d7f6f..380be66d4c6e 100644
---- a/drivers/gpu/drm/arm/malidp_hw.c
-+++ b/drivers/gpu/drm/arm/malidp_hw.c
-@@ -385,6 +385,7 @@ int malidp_format_get_bpp(u32 fmt)
- 		switch (fmt) {
- 		case DRM_FORMAT_VUY101010:
- 			bpp = 30;
-+			break;
- 		case DRM_FORMAT_YUV420_10BIT:
- 			bpp = 15;
- 			break;
-@@ -1309,7 +1310,7 @@ static irqreturn_t malidp_se_irq(int irq, void *arg)
- 			break;
- 		case MW_RESTART:
- 			drm_writeback_signal_completion(&malidp->mw_connector, 0);
--			/* fall through to a new start */
-+			/* fall through - to a new start */
- 		case MW_START:
- 			/* writeback started, need to emulate one-shot mode */
- 			hw->disable_memwrite(hwdev);
--- 
-2.20.1
+I was going to let the janitors do that.
 
