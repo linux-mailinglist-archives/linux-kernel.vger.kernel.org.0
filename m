@@ -2,106 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F7A87A736
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 13:46:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 19AEF7A73D
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 13:46:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730882AbfG3LqB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 07:46:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39920 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728590AbfG3LqA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 07:46:00 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D767D206E0;
-        Tue, 30 Jul 2019 11:45:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564487159;
-        bh=MdCmTq2/62GOla3xYdR1q+U30DvmMzx9ilbakjTfbuY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hNRILnIGpwN0IQ17UgUT9sNy5oW3a2JqVMfOgkS1x5zDIp+bnrnOA5gUA3vFMnckT
-         ImalFhGvGWcRgYOH4oWtJGoEErv0Hg16NWumKADitrYbYxaF5WUPl3I9wt65hcy2D5
-         UpEcc6XDJDwSe5h8nvuSvpKdK1R8vJAO2KCAu+Nk=
-Date:   Tue, 30 Jul 2019 13:45:56 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Brian Norris <briannorris@chromium.org>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        linux-kernel@vger.kernel.org, andriy.shevchenko@linux.intel.com,
-        Salvatore Bellizzi <salvatore.bellizzi@linux.seppia.net>,
-        andy.shevchenko@gmail.com,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        egranata@chromium.org, egranata@google.com,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Gwendal Grignou <gwendal@chromium.org>,
-        linux-acpi@vger.kernel.org, Benson Leung <bleung@chromium.org>,
-        stable@vger.kernel.org
-Subject: Re: [PATCH] driver core: platform: return -ENXIO for missing GpioInt
-Message-ID: <20190730114556.GA10673@kroah.com>
-References: <20190729204954.25510-1-briannorris@chromium.org>
+        id S1730934AbfG3Lqq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 07:46:46 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:44913 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726169AbfG3Lqq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 07:46:46 -0400
+Received: by mail-wr1-f68.google.com with SMTP id p17so65401815wrf.11
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 04:46:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=jUFjo7Q5G3zhSSdduVy1O7SlK8IlcyeyKFuG+AGKxmo=;
+        b=lwMi+gvmlZUMJAafbBRplLQvwD2dMyH+MtEv8fumulbpbcdPcEKUJ1ZXi5CfLJac/L
+         vWSxE83G8d/Da0qWuFCrE9ZsSYYU3Qjy9Enzqz3yyrfkzS3uQ80aOFRkYoyxpkyjKT59
+         3i+6yKgvNZZ2M82CR4Wmr3XIS0iclqMIhHvcrjzVd8SLPER96C2hZHO9scCFu2oYAQQO
+         rajI91GfzQ1geeTfwyn70Hj09l8SL8xxlJsXIxRsEqzyWTkktqhLjbzDTInATpEoAIR+
+         pj0/QamHZ2GaxVDZP5hQ9oxwaTzvLe9qQBFCynSj7rfWeInjCZG3OX+fym891PwqQiuJ
+         uy2Q==
+X-Gm-Message-State: APjAAAV8tQ7GeN1f9ARp9Nup6QkWzLgNhPTGK0jG0CHo/SvsG6YRR5dQ
+        +fEK164DfkCAJ6EGr6iqp7t10w==
+X-Google-Smtp-Source: APXvYqyHKBNli8Rf99QJlDKCJPKF1DuxYyuY1jWeCqKjKdYHMM+R6nhlKvVAjYLLRTTFFL/2pUVi3A==
+X-Received: by 2002:adf:d4cc:: with SMTP id w12mr130140913wrk.121.1564487204000;
+        Tue, 30 Jul 2019 04:46:44 -0700 (PDT)
+Received: from [192.168.10.150] ([93.56.166.5])
+        by smtp.gmail.com with ESMTPSA id a84sm80775887wmf.29.2019.07.30.04.46.43
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Jul 2019 04:46:43 -0700 (PDT)
+Subject: Re: [PATCH] KVM: Disable wake-affine vCPU process to mitigate lock
+ holder preemption
+To:     Wanpeng Li <kernellwp@gmail.com>, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc:     =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+References: <1564479235-25074-1-git-send-email-wanpengli@tencent.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Message-ID: <19e0beb6-a732-ea1f-79a5-41be92569338@redhat.com>
+Date:   Tue, 30 Jul 2019 13:46:42 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190729204954.25510-1-briannorris@chromium.org>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <1564479235-25074-1-git-send-email-wanpengli@tencent.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 29, 2019 at 01:49:54PM -0700, Brian Norris wrote:
-> Commit daaef255dc96 ("driver: platform: Support parsing GpioInt 0 in
-> platform_get_irq()") broke the Embedded Controller driver on most LPC
-> Chromebooks (i.e., most x86 Chromebooks), because cros_ec_lpc expects
-> platform_get_irq() to return -ENXIO for non-existent IRQs.
-> Unfortunately, acpi_dev_gpio_irq_get() doesn't follow this convention
-> and returns -ENOENT instead. So we get this error from cros_ec_lpc:
-> 
->    couldn't retrieve IRQ number (-2)
-> 
-> I see a variety of drivers that treat -ENXIO specially, so rather than
-> fix all of them, let's fix up the API to restore its previous behavior.
-> 
-> I reported this on v2 of this patch:
-> 
-> https://lore.kernel.org/lkml/20190220180538.GA42642@google.com/
-> 
-> but apparently the patch had already been merged before v3 got sent out:
-> 
-> https://lore.kernel.org/lkml/20190221193429.161300-1-egranata@chromium.org/
-> 
-> and the result is that the bug landed and remains unfixed.
-> 
-> I differ from the v3 patch by:
->  * allowing for ret==0, even though acpi_dev_gpio_irq_get() specifically
->    documents (and enforces) that 0 is not a valid return value (noted on
->    the v3 review)
->  * adding a small comment
-> 
-> Reported-by: Brian Norris <briannorris@chromium.org>
-> Reported-by: Salvatore Bellizzi <salvatore.bellizzi@linux.seppia.net>
-> Cc: Enrico Granata <egranata@chromium.org>
-> Cc: <stable@vger.kernel.org>
-> Fixes: daaef255dc96 ("driver: platform: Support parsing GpioInt 0 in platform_get_irq()")
-> Signed-off-by: Brian Norris <briannorris@chromium.org>
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Acked-by: Enrico Granata <egranata@google.com>
+On 30/07/19 11:33, Wanpeng Li wrote:
+> When qemu/other vCPU inject virtual interrupt to guest through waking up one 
+> sleeping vCPU, it increases the probability to stack vCPUs/qemu by scheduler
+> wake-affine. vCPU stacking issue can greately inceases the lock synchronization 
+> latency in a virtualized environment. This patch disables wake-affine vCPU 
+> process to mitigtate lock holder preemption.
+
+There is no guarantee that the vCPU remains on the thread where it's
+created, so the patch is not enough.
+
+If many vCPUs are stacked on the same pCPU, why doesn't the wake_cap
+kick in sooner or later?
+
+Paolo
+
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Paolo Bonzini <pbonzini@redhat.com>
+> Cc: Radim Krčmář <rkrcmar@redhat.com>
+> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
 > ---
-> Side note: it might have helped alleviate some of this pain if there
-> were email notifications to the mailing list when a patch gets applied.
-> I didn't realize (and I'm not sure if Enrico did) that v2 was already
-> merged by the time I noted its mistakes. If I had known, I would have
-> suggested a follow-up patch, not a v3.
+>  include/linux/sched.h | 1 +
+>  kernel/sched/fair.c   | 3 +++
+>  virt/kvm/kvm_main.c   | 1 +
+>  3 files changed, 5 insertions(+)
 > 
-> I know some maintainers' "tip bots" do this, but not all apparently.
-
-We can't drown out mailing list traffic with a ton of "this patch was
-applied" emails.  We send them directly to the people involved in it.
-
-Note, you can always set up your own "watch" for stuff like this by
-pulling linux-next every day and sending yourself any new patches that
-get applied for any specific files/directories you are concerned about.
-
-thanks,
-
-greg k-h
+> diff --git a/include/linux/sched.h b/include/linux/sched.h
+> index 8dc1811..3dd33d8 100644
+> --- a/include/linux/sched.h
+> +++ b/include/linux/sched.h
+> @@ -1468,6 +1468,7 @@ extern struct pid *cad_pid;
+>  #define PF_NO_SETAFFINITY	0x04000000	/* Userland is not allowed to meddle with cpus_mask */
+>  #define PF_MCE_EARLY		0x08000000      /* Early kill for mce process policy */
+>  #define PF_MEMALLOC_NOCMA	0x10000000	/* All allocation request will have _GFP_MOVABLE cleared */
+> +#define PF_NO_WAKE_AFFINE	0x20000000	/* This thread should not be wake affine */
+>  #define PF_FREEZER_SKIP		0x40000000	/* Freezer should not count it as freezable */
+>  #define PF_SUSPEND_TASK		0x80000000      /* This thread called freeze_processes() and should not be frozen */
+>  
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 036be95..18eb1fa 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -5428,6 +5428,9 @@ static int wake_wide(struct task_struct *p)
+>  	unsigned int slave = p->wakee_flips;
+>  	int factor = this_cpu_read(sd_llc_size);
+>  
+> +	if (unlikely(p->flags & PF_NO_WAKE_AFFINE))
+> +		return 1;
+> +
+>  	if (master < slave)
+>  		swap(master, slave);
+>  	if (slave < factor || master < slave * factor)
+> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> index 887f3b0..b9f75c3 100644
+> --- a/virt/kvm/kvm_main.c
+> +++ b/virt/kvm/kvm_main.c
+> @@ -2680,6 +2680,7 @@ static int kvm_vm_ioctl_create_vcpu(struct kvm *kvm, u32 id)
+>  
+>  	mutex_unlock(&kvm->lock);
+>  	kvm_arch_vcpu_postcreate(vcpu);
+> +	current->flags |= PF_NO_WAKE_AFFINE;
+>  	return r;
