@@ -2,162 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D1DEF7B20C
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:35:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 73DE37B204
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:32:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728943AbfG3SfI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 14:35:08 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:52091 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726050AbfG3SfG (ORCPT
+        id S2387527AbfG3Scu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 14:32:50 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:34656 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726050AbfG3Sct (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 14:35:06 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6UIYrYp3331187
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Tue, 30 Jul 2019 11:34:54 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6UIYrYp3331187
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019071901; t=1564511694;
-        bh=71BJRIeDOD8zMMqkymlqadd5jaWx+y1t5a2f9WJfDHc=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=Fd6/N3+euIJsIxUFQ49HmzAlseA+P0mAY39SOCSnAEJHcifppNBw67j/7AGGTaRxB
-         pe/N/Ib0f4RABjWHvngsBzJEJJi9PAvgd2PSklE+u8CN4AabT5YUnjzCuUdXf/DOjx
-         o1HZipn8MPBuLT/omAH56xuLIQY4Cnl5eRqyU06Cqo+BE55uzVzP6G3V4lGjIYjoDk
-         lieqMlkk/BtnmRTOE95qw0/hb6Ji97V7nLEHCVZrAkAix58xzf0eGO+eQ1n/mOSzCx
-         d8YFt4P+w8pjbMjqbrPTfNiby/qVdR+tcUV4r716BXwtB0AJ7PQ6axa4qrKWAea/ld
-         NvXMtSsDHsZTg==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6UIYr0s3331184;
-        Tue, 30 Jul 2019 11:34:53 -0700
-Date:   Tue, 30 Jul 2019 11:34:53 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
-Message-ID: <tip-b04c597af761ccfd32f40ee3629843b6f3674fce@git.kernel.org>
-Cc:     mingo@kernel.org, mpetlan@redhat.com,
-        alexey.budankov@linux.intel.com, tglx@linutronix.de,
-        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-        hpa@zytor.com, ak@linux.intel.com, linux-kernel@vger.kernel.org,
-        acme@redhat.com, peterz@infradead.org, namhyung@kernel.org
-Reply-To: mingo@kernel.org, alexey.budankov@linux.intel.com,
-          mpetlan@redhat.com, tglx@linutronix.de,
-          alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-          hpa@zytor.com, ak@linux.intel.com, linux-kernel@vger.kernel.org,
-          acme@redhat.com, peterz@infradead.org, namhyung@kernel.org
-In-Reply-To: <20190721112506.12306-38-jolsa@kernel.org>
-References: <20190721112506.12306-38-jolsa@kernel.org>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] libperf: Add perf_evsel__init function
-Git-Commit-ID: b04c597af761ccfd32f40ee3629843b6f3674fce
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 30 Jul 2019 14:32:49 -0400
+Received: by mail-pg1-f194.google.com with SMTP id n9so24278098pgc.1;
+        Tue, 30 Jul 2019 11:32:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=6fCIBt83Qg0xm9/csFeyeLFWARKqAMvTELcBmphTpo0=;
+        b=JUA9FbUPr0F6xNgBd5J9MHwHtCHrMpBJuNDTvZBzKBZeCmNsbohHado2HBbGTi0It9
+         yThD+OL5Bkf6Da9wJnEKF7n1ZuYfE+RCaAChBqmkI/jmB2QhloDai+ucTPidoKT2u6UQ
+         29UC6QoAyrEf4tN2GNQniwXjZkr83rJH4ak6SFrbJFSb15jmyMBIWZiHh1EgvVH6j48q
+         cZKmuIlqPfwxsnRzt4ye0SXQ2NpyGAmqO03R0RsRzNRYkzGXP/3U1W6hIGXqsFMnjHXR
+         g7Xo3I2gA+uPgrVqyPZw3rp948eNJFIjP60aR0GcG/CsRV9BR7dafhIdCpB5PUi2sogn
+         ixHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=6fCIBt83Qg0xm9/csFeyeLFWARKqAMvTELcBmphTpo0=;
+        b=H2MThA67qYPZW3whWUWmv1wpTsz4n7hsBi7YYWQkbmeHxkouQeztlHvj9RcEP2YNn/
+         0bwbajJxRfrMD44wa89uP7Dyb0ZLNl8GeNHGMFpcsl+zjMR2/0U2MZM7xR2AfVVAOyyP
+         ySAOjbAHq5an67cbAQy7/+z2qKgkxbKTBwA6mn+mjgOTCUEguZDzwTUJwLq1EQdqMeQA
+         C68ov5HTq0IrrpgaJDl9nhbjTLPsm8vADBrGZVfxGaH97Spo4SRiaTOWjWOodtKarK/O
+         HpxR9l51rzNZLJRkfV+VG+LPgCbl9Fu6klAwlX6yNdvW+rmj+2hV2SzigMnRpfOF5Rev
+         DBiw==
+X-Gm-Message-State: APjAAAVXcbBUhpFx6is2mQzzo94H1HRSnUYaALZaIcjlLU45TIMTGjCW
+        3G0iro+5s8tdu7cTBDFZ+6E=
+X-Google-Smtp-Source: APXvYqz3TKO5CR8bm9L/zAhw0K/5mmOOXYnkeug29AHRYcKaRz4UPuCN4Qa7WYzWXEa+PlUkZGXEBw==
+X-Received: by 2002:a62:754d:: with SMTP id q74mr42050335pfc.211.1564511568653;
+        Tue, 30 Jul 2019 11:32:48 -0700 (PDT)
+Received: from jordon-HP-15-Notebook-PC.domain.name ([106.51.16.0])
+        by smtp.gmail.com with ESMTPSA id j5sm57328671pgp.59.2019.07.30.11.32.43
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 30 Jul 2019 11:32:47 -0700 (PDT)
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+To:     boris.ostrovsky@oracle.com, jgross@suse.com,
+        sstabellini@kernel.org, marmarek@invisiblethingslab.com
+Cc:     willy@infradead.org, akpm@linux-foundation.org,
+        linux@armlinux.org.uk, linux-mm@kvack.org,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org, gregkh@linuxfoundation.org,
+        Souptick Joarder <jrdr.linux@gmail.com>
+Subject: [PATCH] xen/gntdev.c: Replace vm_map_pages() with vm_map_pages_zero()
+Date:   Wed, 31 Jul 2019 00:04:56 +0530
+Message-Id: <1564511696-4044-1-git-send-email-jrdr.linux@gmail.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-X-Spam-Status: No, score=-0.2 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
-        autolearn=no autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  b04c597af761ccfd32f40ee3629843b6f3674fce
-Gitweb:     https://git.kernel.org/tip/b04c597af761ccfd32f40ee3629843b6f3674fce
-Author:     Jiri Olsa <jolsa@kernel.org>
-AuthorDate: Sun, 21 Jul 2019 13:24:24 +0200
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Mon, 29 Jul 2019 18:34:44 -0300
+'commit df9bde015a72 ("xen/gntdev.c: convert to use vm_map_pages()")'
+breaks gntdev driver. If vma->vm_pgoff > 0, vm_map_pages()
+will:
+ - use map->pages starting at vma->vm_pgoff instead of 0
+ - verify map->count against vma_pages()+vma->vm_pgoff instead of just
+   vma_pages().
 
-libperf: Add perf_evsel__init function
+In practice, this breaks using a single gntdev FD for mapping multiple
+grants.
 
-Add the perf_evsel__init() function to initialize perf_evsel struct.
+relevant strace output:
+[pid   857] ioctl(7, IOCTL_GNTDEV_MAP_GRANT_REF, 0x7ffd3407b6d0) = 0
+[pid   857] mmap(NULL, 4096, PROT_READ|PROT_WRITE, MAP_SHARED, 7, 0) =
+0x777f1211b000
+[pid   857] ioctl(7, IOCTL_GNTDEV_SET_UNMAP_NOTIFY, 0x7ffd3407b710) = 0
+[pid   857] ioctl(7, IOCTL_GNTDEV_MAP_GRANT_REF, 0x7ffd3407b6d0) = 0
+[pid   857] mmap(NULL, 4096, PROT_READ|PROT_WRITE, MAP_SHARED, 7,
+0x1000) = -1 ENXIO (No such device or address)
 
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Michael Petlan <mpetlan@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20190721112506.12306-38-jolsa@kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+details here:
+https://github.com/QubesOS/qubes-issues/issues/5199
+
+The reason is -> ( copying Marek's word from discussion)
+
+vma->vm_pgoff is used as index passed to gntdev_find_map_index. It's
+basically using this parameter for "which grant reference to map".
+map struct returned by gntdev_find_map_index() describes just the pages
+to be mapped. Specifically map->pages[0] should be mapped at
+vma->vm_start, not vma->vm_start+vma->vm_pgoff*PAGE_SIZE.
+
+When trying to map grant with index (aka vma->vm_pgoff) > 1,
+__vm_map_pages() will refuse to map it because it will expect map->count
+to be at least vma_pages(vma)+vma->vm_pgoff, while it is exactly
+vma_pages(vma).
+
+Converting vm_map_pages() to use vm_map_pages_zero() will fix the
+problem.
+
+Marek has tested and confirmed the same.
+
+Reported-by: Marek Marczykowski-Górecki <marmarek@invisiblethingslab.com>
+Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+Tested-by: Marek Marczykowski-Górecki <marmarek@invisiblethingslab.com>
 ---
- tools/perf/lib/evsel.c              | 5 +++++
- tools/perf/lib/include/perf/evsel.h | 4 ++++
- tools/perf/lib/libperf.map          | 1 +
- tools/perf/util/evsel.c             | 3 ++-
- 4 files changed, 12 insertions(+), 1 deletion(-)
+ drivers/xen/gntdev.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/lib/evsel.c b/tools/perf/lib/evsel.c
-index 12e86de1994b..9a87e867a7ec 100644
---- a/tools/perf/lib/evsel.c
-+++ b/tools/perf/lib/evsel.c
-@@ -2,3 +2,8 @@
- #include <perf/evsel.h>
- #include <linux/list.h>
- #include <internal/evsel.h>
-+
-+void perf_evsel__init(struct perf_evsel *evsel)
-+{
-+	INIT_LIST_HEAD(&evsel->node);
-+}
-diff --git a/tools/perf/lib/include/perf/evsel.h b/tools/perf/lib/include/perf/evsel.h
-index 162bffd43409..b4d074a3684b 100644
---- a/tools/perf/lib/include/perf/evsel.h
-+++ b/tools/perf/lib/include/perf/evsel.h
-@@ -2,6 +2,10 @@
- #ifndef __LIBPERF_EVSEL_H
- #define __LIBPERF_EVSEL_H
+diff --git a/drivers/xen/gntdev.c b/drivers/xen/gntdev.c
+index 4c339c7..a446a72 100644
+--- a/drivers/xen/gntdev.c
++++ b/drivers/xen/gntdev.c
+@@ -1143,7 +1143,7 @@ static int gntdev_mmap(struct file *flip, struct vm_area_struct *vma)
+ 		goto out_put_map;
  
-+#include <perf/core.h>
-+
- struct perf_evsel;
- 
-+LIBPERF_API void perf_evsel__init(struct perf_evsel *evsel);
-+
- #endif /* __LIBPERF_EVSEL_H */
-diff --git a/tools/perf/lib/libperf.map b/tools/perf/lib/libperf.map
-index c4f611010ccc..54f8503c6d82 100644
---- a/tools/perf/lib/libperf.map
-+++ b/tools/perf/lib/libperf.map
-@@ -9,6 +9,7 @@ LIBPERF_0.0.1 {
- 		perf_thread_map__comm;
- 		perf_thread_map__get;
- 		perf_thread_map__put;
-+		perf_evsel__init;
- 	local:
- 		*;
- };
-diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index 8fed22d889a4..172bcc2e198f 100644
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -22,6 +22,7 @@
- #include <sys/resource.h>
- #include <sys/types.h>
- #include <dirent.h>
-+#include <perf/evsel.h>
- #include "asm/bug.h"
- #include "callchain.h"
- #include "cgroup.h"
-@@ -226,6 +227,7 @@ bool perf_evsel__is_function_event(struct evsel *evsel)
- void evsel__init(struct evsel *evsel,
- 		 struct perf_event_attr *attr, int idx)
- {
-+	perf_evsel__init(&evsel->core);
- 	evsel->idx	   = idx;
- 	evsel->tracking	   = !idx;
- 	evsel->attr	   = *attr;
-@@ -236,7 +238,6 @@ void evsel__init(struct evsel *evsel,
- 	evsel->evlist	   = NULL;
- 	evsel->bpf_obj	   = NULL;
- 	evsel->bpf_fd	   = -1;
--	INIT_LIST_HEAD(&evsel->core.node);
- 	INIT_LIST_HEAD(&evsel->config_terms);
- 	perf_evsel__object.init(evsel);
- 	evsel->sample_size = __perf_evsel__sample_size(attr->sample_type);
+ 	if (!use_ptemod) {
+-		err = vm_map_pages(vma, map->pages, map->count);
++		err = vm_map_pages_zero(vma, map->pages, map->count);
+ 		if (err)
+ 			goto out_put_map;
+ 	} else {
+-- 
+1.9.1
+
