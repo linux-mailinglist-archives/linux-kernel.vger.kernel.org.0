@@ -2,162 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B9CC7A6F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 13:30:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 821297A705
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 13:33:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730142AbfG3Lai (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 07:30:38 -0400
-Received: from mga02.intel.com ([134.134.136.20]:20371 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730101AbfG3Lai (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 07:30:38 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jul 2019 04:30:37 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,326,1559545200"; 
-   d="scan'208";a="190841166"
-Received: from kuha.fi.intel.com ([10.237.72.189])
-  by fmsmga001.fm.intel.com with SMTP; 30 Jul 2019 04:30:33 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Tue, 30 Jul 2019 14:30:33 +0300
-Date:   Tue, 30 Jul 2019 14:30:33 +0300
-From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        "Enrico Weigelt, metux IT consult" <info@metux.net>,
-        linux-input@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH 2/2] gpiolib: add support for fetching descriptors from
- static properties
-Message-ID: <20190730113033.GJ28600@kuha.fi.intel.com>
-References: <20190713075259.243565-1-dmitry.torokhov@gmail.com>
- <20190713075259.243565-3-dmitry.torokhov@gmail.com>
+        id S1730357AbfG3LdN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 07:33:13 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:52837 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728554AbfG3LdM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 07:33:12 -0400
+Received: by mail-wm1-f65.google.com with SMTP id s3so56786593wms.2
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 04:33:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=UPB+O1cCb7Wq2RKCoVQnzfZBI5pS9MKq+7qoNAVhJ6s=;
+        b=XXw31HwvFxLcndX+7JYIMQI+uz7y09cdGSiVfB01dMZbq4OCF90Mz8Q6/6CQM9bXeS
+         ImUGGHQCSc8dQe84BWT1gQ/V8rg35IxGKgacjWwzWBFvKSzLO7iEYtsZRRds9heiUxTJ
+         ecSPyxrRQsbv15/+iEZsbsGuahA7OcPIq+71+me+4kMmru/8jX/sWbHl2dX3PLjJ+iqV
+         kh+Cx5gLFSm8gy9g4t4yc7ZDqJV9b3KIDsnUENnQaAmD8BmuGdGBN7eF//6QKQ1NWqWv
+         Ti576G6tsTETaiUBuAcWGvaspskaxnPo5W+bK+OEzylEAxuBgn+uxrC5r/+K2UJe9hs3
+         vFwA==
+X-Gm-Message-State: APjAAAXaE3gnoyB/maV3vKw/dUAaCO7xhEpCPlMyYtzdTupfUUtCjXbG
+        PDNkyhlscNjbUdGKu2e5RAGt4hzPyjM=
+X-Google-Smtp-Source: APXvYqwZbQfaWi8ZX3vZiY1Jont5uSIg4Z3fLMXkr7rwafZ4q9S6fJyyXi6HPOxn4HmB3Yz8Zlp4bw==
+X-Received: by 2002:a7b:c144:: with SMTP id z4mr109313020wmi.50.1564486390353;
+        Tue, 30 Jul 2019 04:33:10 -0700 (PDT)
+Received: from [192.168.10.150] ([93.56.166.5])
+        by smtp.gmail.com with ESMTPSA id j10sm111237085wrd.26.2019.07.30.04.33.08
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Jul 2019 04:33:09 -0700 (PDT)
+Subject: Re: [RFC PATCH 00/16] KVM RISC-V Support
+To:     Anup Patel <anup@brainfault.org>
+Cc:     Anup Patel <Anup.Patel@wdc.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Radim K <rkrcmar@redhat.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Atish Patra <Atish.Patra@wdc.com>,
+        Alistair Francis <Alistair.Francis@wdc.com>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20190729115544.17895-1-anup.patel@wdc.com>
+ <72e9f668-f496-3fca-a1a8-a3c3122a3fd9@redhat.com>
+ <CAAhSdy3Z6d2phRGo20eNWfa4onFwFtsOUPM+OCD465y0tvQ5wg@mail.gmail.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <965cffdb-86e2-b422-9c23-345c7100fd88@redhat.com>
+Date:   Tue, 30 Jul 2019 13:33:08 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190713075259.243565-3-dmitry.torokhov@gmail.com>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+In-Reply-To: <CAAhSdy3Z6d2phRGo20eNWfa4onFwFtsOUPM+OCD465y0tvQ5wg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dmitry,
-
-On Sat, Jul 13, 2019 at 12:52:59AM -0700, Dmitry Torokhov wrote:
-> Now that static device properties understand notion of child nodes, let's
-> teach gpiolib to tie such children and machine GPIO descriptor tables.
-> We will continue using a single table for entire device, but instead of
-> using connection ID as a lookup key in the GPIO descriptor table directly,
-> we will perform additional translation: fwnode_get_named_gpiod() when
-> dealing with property_set-backed fwnodes will try parsing string property
-> with name matching connection ID and use result of the lookup as the key in
-> the table:
+On 30/07/19 07:26, Anup Patel wrote:
+> Here's a brief TODO list which we want to immediately work upon after this
+> series:
+> 1. Handle trap from unpriv access in SBI v0.1 emulation
+> 2. In-kernel PLIC emulation
+> 3. SBI v0.2 emulation in-kernel
+> 4. SBI v0.2 hart hotplug emulation in-kernel
+> 5. ..... and so on .....
 > 
-> static const struct property_entry dev_child1_props[] __initconst = {
-> 	...
-> 	PROPERTY_ENTRY_STRING("gpios",		"child-1-gpios"),
-> 	{ }
-> };
-> 
-> static struct gpiod_lookup_table dev_gpiod_table = {
-> 	.dev_id = "some-device",
-> 	.table = {
-> 		...
-> 		GPIO_LOOKUP_IDX("B", 1, "child-1-gpios", 1, GPIO_ACTIVE_LOW),
-> 		...
-> 	},
-> };
+> We will include above TODO list in v2 series cover letter as well.
 
-We don't need struct gpiod_lookup_table anymore. We can mimic DT with
-the software nodes now that we have those "reference properties". A
-gpio reference with the software nodes would look something like this:
+I guess I gave you a bunch of extra items in today's more thorough
+review. :)
 
-        enum {
-                GPIO_CONTROLLER,
-                MY_DEVICE
-        };
+BTW, since IPIs are handled in the SBI I wouldn't bother with in-kernel
+PLIC emulation unless you can demonstrate performance improvements (for
+example due to irqfd).  In fact, it may be more interesting to add
+plumbing for userspace handling of selected SBI calls (in addition to
+get/putchar, sbi_system_reset and sbi_hart_down look like good
+candidates in SBI v0.2).
 
-        static const struct software_node nodes[];
+> We were thinking to keep KVM RISC-V disabled by default (i.e. keep it
+> experimental) until we have validated it on some FPGA or real HW. For now,
+> users can explicitly enable it and play-around on QEMU emulation. I hope
+> this is fine with most people ?
 
-        static const struct software_node_ref_args reset_gpio_ref = {
-                .node = &nodes[GPIO_CONTROLLER],
-                .nargs = 2,
-                .args = {
-                        14,                     /* line number */
-                        GPIO_ACTIVE_HIGH        /* flags */
-                }
-        };
+That's certainly okay with me.
 
-        static const struct software_node_reference my_refs[] = {
-                { "reset-gpios", 1, &reset_gpio_ref }
-        };
-
-        /* Optionally, we could support gpiochip finding by name... */
-        static const struct property_entry my_props[] = {
-                PROPERTY_ENTRY_STRING("gpio-controller", "name_of_the_controller")
-        };
-
-        static const struct software_node nodes[] = {
-                [GPIO_CONTROLLER]       = { "gpio_controller" },
-                [MY_DEVICE]             = { "my_device", NULL, my_props, my_refs }
-        };
-
-        void my_init(void)
-        {
-                ...
-                ret = software_node_register_nodes(nodes);
-                ...
-        }
-
-In gpiolib we should now be able to access that reference with
-fwnode_property_get_references_args():
-
-        static int gpiochip_match_fwnode(struct gpio_chip *chip, void *fwnode)
-        {
-                /* The fwnode member needs to be added to struct gpio_chip */
-                return chip->fwnode == fwnode;
-        }
-
-        static struct gpio_desc *gpiod_find(struct device *dev,
-                                            const char *con_id,
-                                            unsigned int idx,
-                                            unsigned long flags)
-        {
-                struct fwnode_reference_args args;
-                struct gpio_chip *chip;
-                struct gpio_desc *desc;
-                const char *name;
-                int ret;
-
-                ret = fwnode_property_get_refernce_args(dev_fwnode(dev), con_id,
-                                                        NULL, idx, &args);
-                ...
-
-                /* Let's find the gpiochip */
-                chip = gpiochip_find(args.fwnode, gpiochip_match_fwnode);
-                ...
-
-                /* Or optionally with find_chip_by_name() */
-                //ret = device_property_read_string(dev, "gpio-controller", &name);
-                ...
-                //chip = find_chip_by_name(name);
-                ...
-
-                /* I'm assuming hwnum is the same as line number? */
-                desc = gpiochip_get_desc(chip, args.args[0]);
-                *flags = args.args[1];
-
-                return desc;
-        }
-
-The above is just an example, but I'm pretty sure that something like
-it (with a little bit of tuning) is all that we need.
-
-thanks,
-
--- 
-heikki
+Paolo
