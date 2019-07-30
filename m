@@ -2,166 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CB617AC6E
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 17:31:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D08F17AC75
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 17:33:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731730AbfG3PbH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 11:31:07 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:35687 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725877AbfG3PbH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 11:31:07 -0400
-Received: by mail-qt1-f195.google.com with SMTP id d23so63485233qto.2
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 08:31:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=icQ+mmUwHlGo5WrRaYExQwbod/Jz68i28SEVBs5MWe0=;
-        b=TQAcMC8JLFSx1a3GX3PlPg86q7cbX6i8+ue1vGOYJkg/B7hCQb/49FmaadO8+aGcSn
-         Brz9eeXm2C7YvtHtDee/XOQWV2gf2fi6RAn6CYVULtbVCzbBX6bmeT2plzcv6hfriDQR
-         Vwqg9HSubXdL+SlkhQALukz6KLaaYpuzPB4Y/PxcFQ3OCus7vk169BqPcBMg2VCa//HN
-         yh12pjChhhSdW7mgjIWXaVM1UCLbbRwqtC5HLX4lHzU4uEenTkXSy+im0m+pA6m54OW3
-         1CSZwl9XVSavEOxFcff2NEymzqiM5IkkdfJ/yPaXf00QfHOmjVOU68U1C5l+TmyHYRQt
-         7GSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=icQ+mmUwHlGo5WrRaYExQwbod/Jz68i28SEVBs5MWe0=;
-        b=QjzAX4yqRfWR2oELXmT22opLxt3hEu8Ji3C8UCZBqHUEVcmmpSOmWDzHcvbB9ySIWM
-         Zby78kvXpNRjXGrydQ2UebCrGcibjtgZ1+7iibQiDH1MUNv2P2F1JiswcCOH/fUEpnHS
-         gbpZ0Z/yxu1TLv7A8MqB+VJ2qfizzyW/VlEzWCpTDKr1y3pAeqNZBKFLFbpnTJR9wRVA
-         7gU8XO2Upx05hOk8u/T9AjR+4HxxoBfTC2QiqfoGTTKTDgDpXkFJ15RzLh76sbU9RJ4S
-         PTosihF7W2wN70QxjbfOnfB4rIZ5B5WGwHfV1Sjqrfsp5j4mzXkeCbyI8QHBZCsOWQqO
-         +ObA==
-X-Gm-Message-State: APjAAAXjLTYpWM7RjN2Us8Wzxd03ilUQfFj8Q50LWcLJL961I4MoMyDZ
-        p5KcWVcnVcnrwmdeuaKpzeuOwQ4bOUglCw==
-X-Google-Smtp-Source: APXvYqxWizCQ2lrtrTlT130eyj++JM/rzivWzH05iPty1SPyO9/8wH9PnKozyoEe5P7CKlh+ezMbhA==
-X-Received: by 2002:a0c:8602:: with SMTP id p2mr84787456qva.111.1564500665583;
-        Tue, 30 Jul 2019 08:31:05 -0700 (PDT)
-Received: from qcai.nay.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id c5sm30023404qkb.41.2019.07.30.08.31.03
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Jul 2019 08:31:04 -0700 (PDT)
-From:   Qian Cai <cai@lca.pw>
-To:     davem@davemloft.net
-Cc:     vyasevich@gmail.com, nhorman@tuxdriver.com,
-        marcelo.leitner@gmail.com, David.Laight@ACULAB.COM,
-        linux-sctp@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Qian Cai <cai@lca.pw>
-Subject: [PATCH v3] net/socket: fix GCC8+ Wpacked-not-aligned warnings
-Date:   Tue, 30 Jul 2019 11:30:33 -0400
-Message-Id: <1564500633-7419-1-git-send-email-cai@lca.pw>
-X-Mailer: git-send-email 1.8.3.1
+        id S1732290AbfG3Pd3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 11:33:29 -0400
+Received: from mga04.intel.com ([192.55.52.120]:58257 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731791AbfG3Pd3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 11:33:29 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jul 2019 08:33:28 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,327,1559545200"; 
+   d="scan'208";a="255640802"
+Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
+  by orsmga001.jf.intel.com with ESMTP; 30 Jul 2019 08:33:27 -0700
+Date:   Tue, 30 Jul 2019 09:30:44 -0600
+From:   Keith Busch <kbusch@kernel.org>
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc:     linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Paul Pawlowski <paul@mrarm.io>, Jens Axboe <axboe@fb.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Minwoo Im <minwoo.im.dev@gmail.com>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>
+Subject: Re: [PATCH v3] nvme-pci: Support shared tags across queues for Apple
+ 2018 controllers
+Message-ID: <20190730153044.GA13948@localhost.localdomain>
+References: <b1f9bdf0294b8d87d292de3c7462c8e99551b02d.camel@kernel.crashing.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b1f9bdf0294b8d87d292de3c7462c8e99551b02d.camel@kernel.crashing.org>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are a lot of those warnings with GCC8+ 64-bit,
+On Fri, Jul 19, 2019 at 03:31:02PM +1000, Benjamin Herrenschmidt wrote:
+> From 8dcba2ef5b1466b023b88b4eca463b30de78d9eb Mon Sep 17 00:00:00 2001
+> From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> Date: Fri, 19 Jul 2019 15:03:06 +1000
+> Subject: 
+> 
+> Another issue with the Apple T2 based 2018 controllers seem to be
+> that they blow up (and shut the machine down) if there's a tag
+> collision between the IO queue and the Admin queue.
+> 
+> My suspicion is that they use our tags for their internal tracking
+> and don't mix them with the queue id. They also seem to not like
+> when tags go beyond the IO queue depth, ie 128 tags.
+> 
+> This adds a quirk that marks tags 0..31 of the IO queue reserved
+> 
+> Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> ---
 
-In file included from ./include/linux/sctp.h:42,
-                 from net/core/skbuff.c:47:
-./include/uapi/linux/sctp.h:395:1: warning: alignment 4 of 'struct
-sctp_paddr_change' is less than 8 [-Wpacked-not-aligned]
- } __attribute__((packed, aligned(4)));
- ^
-./include/uapi/linux/sctp.h:728:1: warning: alignment 4 of 'struct
-sctp_setpeerprim' is less than 8 [-Wpacked-not-aligned]
- } __attribute__((packed, aligned(4)));
- ^
-./include/uapi/linux/sctp.h:727:26: warning: 'sspp_addr' offset 4 in
-'struct sctp_setpeerprim' isn't aligned to 8 [-Wpacked-not-aligned]
-  struct sockaddr_storage sspp_addr;
-                          ^~~~~~~~~
-./include/uapi/linux/sctp.h:741:1: warning: alignment 4 of 'struct
-sctp_prim' is less than 8 [-Wpacked-not-aligned]
- } __attribute__((packed, aligned(4)));
- ^
-./include/uapi/linux/sctp.h:740:26: warning: 'ssp_addr' offset 4 in
-'struct sctp_prim' isn't aligned to 8 [-Wpacked-not-aligned]
-  struct sockaddr_storage ssp_addr;
-                          ^~~~~~~~
-./include/uapi/linux/sctp.h:792:1: warning: alignment 4 of 'struct
-sctp_paddrparams' is less than 8 [-Wpacked-not-aligned]
- } __attribute__((packed, aligned(4)));
- ^
-./include/uapi/linux/sctp.h:784:26: warning: 'spp_address' offset 4 in
-'struct sctp_paddrparams' isn't aligned to 8 [-Wpacked-not-aligned]
-  struct sockaddr_storage spp_address;
-                          ^~~~~~~~~~~
-./include/uapi/linux/sctp.h:905:1: warning: alignment 4 of 'struct
-sctp_paddrinfo' is less than 8 [-Wpacked-not-aligned]
- } __attribute__((packed, aligned(4)));
- ^
-./include/uapi/linux/sctp.h:899:26: warning: 'spinfo_address' offset 4
-in 'struct sctp_paddrinfo' isn't aligned to 8 [-Wpacked-not-aligned]
-  struct sockaddr_storage spinfo_address;
-                          ^~~~~~~~~~~~~~
+One problem is that we've an nvme parameter, io_queue_depth, that a user
+could set to something less than 32, and then you won't be able to do
+any IO. I'd recommend enforce the admin queue to QD1 for this device so
+that you have more potential IO tags.
 
-This is because the commit 20c9c825b12f ("[SCTP] Fix SCTP socket options
-to work with 32-bit apps on 64-bit kernels.") added "packed, aligned(4)"
-GCC attributes to some structures but one of the members, i.e, "struct
-sockaddr_storage" in those structures has the attribute,
-"aligned(__alignof__ (struct sockaddr *)" which is 8-byte on 64-bit
-systems, so the commit overwrites the designed alignments for
-"sockaddr_storage".
-
-To fix this, "struct sockaddr_storage" needs to be aligned to 4-byte as
-it is only used in those packed sctp structure which is part of UAPI,
-and "struct __kernel_sockaddr_storage" is used in some other
-places of UAPI that need not to change alignments in order to not
-breaking userspace.
-
-Use an implicit alignment for "struct __kernel_sockaddr_storage" so it
-can keep the same alignments as a member in both packed and un-packed
-structures without breaking UAPI.
-
-Suggested-by: David Laight <David.Laight@ACULAB.COM>
-Signed-off-by: Qian Cai <cai@lca.pw>
----
-
-v3: Add some comments and rearrange the public member first per David.
-v2: Use an implicit alignment for "struct __kernel_sockaddr_storage".
-
- include/uapi/linux/socket.h | 19 +++++++++++++------
- 1 file changed, 13 insertions(+), 6 deletions(-)
-
-diff --git a/include/uapi/linux/socket.h b/include/uapi/linux/socket.h
-index 8eb96021709c..c3409c8ec0dd 100644
---- a/include/uapi/linux/socket.h
-+++ b/include/uapi/linux/socket.h
-@@ -6,17 +6,24 @@
-  * Desired design of maximum size and alignment (see RFC2553)
-  */
- #define _K_SS_MAXSIZE	128	/* Implementation specific max size */
--#define _K_SS_ALIGNSIZE	(__alignof__ (struct sockaddr *))
--				/* Implementation specific desired alignment */
  
- typedef unsigned short __kernel_sa_family_t;
- 
-+/*
-+ * The definition uses anonymous union and struct in order to control the
-+ * default alignment.
-+ */
- struct __kernel_sockaddr_storage {
--	__kernel_sa_family_t	ss_family;		/* address family */
--	/* Following field(s) are implementation specific */
--	char		__data[_K_SS_MAXSIZE - sizeof(unsigned short)];
-+	union {
-+		struct {
-+			__kernel_sa_family_t	ss_family; /* address family */
-+			/* Following field(s) are implementation specific */
-+			char __data[_K_SS_MAXSIZE - sizeof(unsigned short)];
- 				/* space to achieve desired size, */
- 				/* _SS_MAXSIZE value minus size of ss_family */
--} __attribute__ ((aligned(_K_SS_ALIGNSIZE)));	/* force desired alignment */
-+		};
-+		void *__align; /* implementation specific desired alignment */
-+	};
-+};
- 
- #endif /* _UAPI_LINUX_SOCKET_H */
--- 
-1.8.3.1
-
+> Thanks Damien, reserved tags work and make this a lot simpler !
+> 
+>  drivers/nvme/host/nvme.h |  5 +++++
+>  drivers/nvme/host/pci.c  | 19 ++++++++++++++++++-
+>  2 files changed, 23 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
+> index ced0e0a7e039..8732da6df555 100644
+> --- a/drivers/nvme/host/nvme.h
+> +++ b/drivers/nvme/host/nvme.h
+> @@ -102,6 +102,11 @@ enum nvme_quirks {
+>  	 * Use non-standard 128 bytes SQEs.
+>  	 */
+>  	NVME_QUIRK_128_BYTES_SQES		= (1 << 11),
+> +
+> +	/*
+> +	 * Prevent tag overlap between queues
+> +	 */
+> +	NVME_QUIRK_SHARED_TAGS                  = (1 << 12),
+>  };
+>  
+>  /*
+> diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+> index 7088971d4c42..fc74395a028b 100644
+> --- a/drivers/nvme/host/pci.c
+> +++ b/drivers/nvme/host/pci.c
+> @@ -2106,6 +2106,14 @@ static int nvme_setup_io_queues(struct nvme_dev *dev)
+>  	unsigned long size;
+>  
+>  	nr_io_queues = max_io_queues();
+> +
+> +	/*
+> +	 * If tags are shared with admin queue (Apple bug), then
+> +	 * make sure we only use one IO queue.
+> +	 */
+> +	if (dev->ctrl.quirks & NVME_QUIRK_SHARED_TAGS)
+> +		nr_io_queues = 1;
+> +
+>  	result = nvme_set_queue_count(&dev->ctrl, &nr_io_queues);
+>  	if (result < 0)
+>  		return result;
+> @@ -2278,6 +2286,14 @@ static int nvme_dev_add(struct nvme_dev *dev)
+>  		dev->tagset.flags = BLK_MQ_F_SHOULD_MERGE;
+>  		dev->tagset.driver_data = dev;
+>  
+> +		/*
+> +		 * Some Apple controllers requires tags to be unique
+> +		 * across admin and IO queue, so reserve the first 32
+> +		 * tags of the IO queue.
+> +		 */
+> +		if (dev->ctrl.quirks & NVME_QUIRK_SHARED_TAGS)
+> +			dev->tagset.reserved_tags = NVME_AQ_DEPTH;
+> +
+>  		ret = blk_mq_alloc_tag_set(&dev->tagset);
+>  		if (ret) {
+>  			dev_warn(dev->ctrl.device,
+> @@ -3057,7 +3073,8 @@ static const struct pci_device_id nvme_id_table[] = {
+>  	{ PCI_DEVICE(PCI_VENDOR_ID_APPLE, 0x2003) },
+>  	{ PCI_DEVICE(PCI_VENDOR_ID_APPLE, 0x2005),
+>  		.driver_data = NVME_QUIRK_SINGLE_VECTOR |
+> -				NVME_QUIRK_128_BYTES_SQES },
+> +				NVME_QUIRK_128_BYTES_SQES |
+> +				NVME_QUIRK_SHARED_TAGS },
+>  	{ 0, }
+>  };
+>  MODULE_DEVICE_TABLE(pci, nvme_id_table);
+> 
+> 
