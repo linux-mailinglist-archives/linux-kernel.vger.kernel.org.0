@@ -2,174 +2,170 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E711A7B1BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:20:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 06FB57B1C8
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 20:20:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388279AbfG3STt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 14:19:49 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:37863 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387553AbfG3SQT (ORCPT
+        id S1729477AbfG3SU3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 14:20:29 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:54025 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729415AbfG3SU0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 14:16:19 -0400
-Received: by mail-pg1-f196.google.com with SMTP id i70so19737018pgd.4
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 11:16:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=1vWUmpmVNnICz7TB6lvEdzPoKbI3ZZ7sRmOecFANbCU=;
-        b=NK10/uJHFuNKun4KjPHLULC6X4ualJpqBM9mz8GSXrdEW9Cgf/lNAvKR0d1OQJnyhP
-         OXpojQEShlYHOYhMb9JmeIIjih2TamlZoJ57uvUkjitw9VB8vK2wUa0063KOJ0Cki+OA
-         7QTI4jLIVeuwwzkk1NyVi4bB72/kvTdVJzDEM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=1vWUmpmVNnICz7TB6lvEdzPoKbI3ZZ7sRmOecFANbCU=;
-        b=cQ+huJbYkLBLb43qgnSLbHt/7J+M/KsZ0/WciDDoZKiXdJcuao5gFiZdz5hVsJzxHF
-         WugPXQlULzvCqWnNiuikJpq5NRhIEX2XyAoOwzLuN4eVYLn7N+3CDhn1giGo7ws07aNx
-         qRPadlKbn7reyFygb81y7QI4UFtvHy3Ua60aL3kRcNJ2GVAxmkeDjQZ+FbEZ9Qfq/7gn
-         UkXWlpFnbVjcjv7n65r4GZtfKjhttNNuD6ZfKWzz47xhqRfiDqcxJFyOD59bBS/yhhKS
-         SZZ+M6lSLBiGOwdRwCKtfQnQB9VKen5F7crk82uw0WbodWJMw1niqsmq4v15OlQF0i6I
-         lvcg==
-X-Gm-Message-State: APjAAAUsY2IkwVva3IW9MC6fsTuwtVWX6xBgdXoCIJSITSJeNLQ4L5jf
-        CZpMv1DRGzri9jCXqCWq8oJepq6Ct2k=
-X-Google-Smtp-Source: APXvYqw4JRt6DjkgPPL4ADGLOngkuxFcm49Yqtodpx4qAk6+AZL5RD+TGGuAtPdzkd51R9TAMCRyNw==
-X-Received: by 2002:a17:90a:5288:: with SMTP id w8mr119352919pjh.61.1564510578193;
-        Tue, 30 Jul 2019 11:16:18 -0700 (PDT)
-Received: from smtp.gmail.com ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id g1sm106744083pgg.27.2019.07.30.11.16.17
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 30 Jul 2019 11:16:17 -0700 (PDT)
-From:   Stephen Boyd <swboyd@chromium.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH v6 23/57] irqchip: Remove dev_err() usage after platform_get_irq()
-Date:   Tue, 30 Jul 2019 11:15:23 -0700
-Message-Id: <20190730181557.90391-24-swboyd@chromium.org>
-X-Mailer: git-send-email 2.22.0.709.g102302147b-goog
-In-Reply-To: <20190730181557.90391-1-swboyd@chromium.org>
-References: <20190730181557.90391-1-swboyd@chromium.org>
+        Tue, 30 Jul 2019 14:20:26 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6UIKE7D3327091
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Tue, 30 Jul 2019 11:20:14 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6UIKE7D3327091
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019071901; t=1564510815;
+        bh=IyGSCTQjOMP0dyD72UQSVjRFtqr3vZse+I55qYaueJc=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=Fh2jPihT3WVRvNE67E24/9daF9CYIpwlcrS7cOr5a45KoKjo23qJFj++Nk8xy9zow
+         DpOdCKy80JX7gJy/9OikLSfEEK0aBfg4VwgvOLjLl6DNp4oTMLRRdDRZOGgK7mfXwn
+         02EDlfQKV4Nh9lnLZFf2bx1SiKaaL1NWqmIukWBqkxBIsTVmaIZD6Gfv893LWVX/hg
+         UPb1OmS2ZF54tbB33hZn5SoOSwTE2V1b8snGK0D1t1uJkoJlmKtxUXrvZejSEhMOL7
+         M9rJkL9/Ty5aDobhCK1SgRaYgdLnczNc8QM5amrOpuSXXWOgBTDv7dKQXzuaH6xtwt
+         e43Ssxc0UnLCw==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6UIKEmq3327088;
+        Tue, 30 Jul 2019 11:20:14 -0700
+Date:   Tue, 30 Jul 2019 11:20:14 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
+Message-ID: <tip-b49aca3e9ce60d00e5bf0694b2ff4c2cd40809e5@git.kernel.org>
+Cc:     mpetlan@redhat.com, ak@linux.intel.com, namhyung@kernel.org,
+        peterz@infradead.org, acme@redhat.com, tglx@linutronix.de,
+        mingo@kernel.org, alexey.budankov@linux.intel.com, hpa@zytor.com,
+        alexander.shishkin@linux.intel.com, linux-kernel@vger.kernel.org,
+        jolsa@kernel.org
+Reply-To: alexey.budankov@linux.intel.com, mpetlan@redhat.com,
+          mingo@kernel.org, tglx@linutronix.de,
+          linux-kernel@vger.kernel.org, jolsa@kernel.org,
+          namhyung@kernel.org, ak@linux.intel.com, hpa@zytor.com,
+          acme@redhat.com, alexander.shishkin@linux.intel.com,
+          peterz@infradead.org
+In-Reply-To: <20190721112506.12306-19-jolsa@kernel.org>
+References: <20190721112506.12306-19-jolsa@kernel.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf evsel: Rename perf_evsel__cpus() to
+ evsel__cpus()
+Git-Commit-ID: b49aca3e9ce60d00e5bf0694b2ff4c2cd40809e5
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-0.2 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
+        autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We don't need dev_err() messages when platform_get_irq() fails now that
-platform_get_irq() prints an error message itself when something goes
-wrong. Let's remove these prints with a simple semantic patch.
+Commit-ID:  b49aca3e9ce60d00e5bf0694b2ff4c2cd40809e5
+Gitweb:     https://git.kernel.org/tip/b49aca3e9ce60d00e5bf0694b2ff4c2cd40809e5
+Author:     Jiri Olsa <jolsa@kernel.org>
+AuthorDate: Sun, 21 Jul 2019 13:24:05 +0200
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Mon, 29 Jul 2019 18:34:43 -0300
 
-// <smpl>
-@@
-expression ret;
-struct platform_device *E;
-@@
+perf evsel: Rename perf_evsel__cpus() to evsel__cpus()
 
-ret =
-(
-platform_get_irq(E, ...)
-|
-platform_get_irq_byname(E, ...)
-);
+Rename perf_evsel__cpus() to evsel__cpus(), so we don't have a name
+clash when we add perf_evsel__cpus() in libperf.
 
-if ( \( ret < 0 \| ret <= 0 \) )
-{
-(
--if (ret != -EPROBE_DEFER)
--{ ...
--dev_err(...);
--... }
-|
-...
--dev_err(...);
-)
-...
-}
-// </smpl>
-
-While we're here, remove braces on if statements that only have one
-statement (manually).
-
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Jason Cooper <jason@lakedaemon.net>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Michael Petlan <mpetlan@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/20190721112506.12306-19-jolsa@kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
+ tools/perf/util/evsel.h        | 4 ++--
+ tools/perf/util/stat-display.c | 6 +++---
+ tools/perf/util/stat.c         | 4 ++--
+ 3 files changed, 7 insertions(+), 7 deletions(-)
 
-Please apply directly to subsystem trees
-
- drivers/irqchip/irq-imgpdc.c        | 8 ++------
- drivers/irqchip/irq-keystone.c      | 4 +---
- drivers/irqchip/qcom-irq-combiner.c | 4 +---
- 3 files changed, 4 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/irqchip/irq-imgpdc.c b/drivers/irqchip/irq-imgpdc.c
-index d00489a4b54f..698d07f48fed 100644
---- a/drivers/irqchip/irq-imgpdc.c
-+++ b/drivers/irqchip/irq-imgpdc.c
-@@ -362,10 +362,8 @@ static int pdc_intc_probe(struct platform_device *pdev)
+diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
+index 35f7e7ff3c5e..5fec1ca64f58 100644
+--- a/tools/perf/util/evsel.h
++++ b/tools/perf/util/evsel.h
+@@ -197,14 +197,14 @@ struct target;
+ struct thread_map;
+ struct record_opts;
+ 
+-static inline struct perf_cpu_map *perf_evsel__cpus(struct evsel *evsel)
++static inline struct perf_cpu_map *evsel__cpus(struct evsel *evsel)
+ {
+ 	return evsel->cpus;
+ }
+ 
+ static inline int perf_evsel__nr_cpus(struct evsel *evsel)
+ {
+-	return perf_evsel__cpus(evsel)->nr;
++	return evsel__cpus(evsel)->nr;
+ }
+ 
+ void perf_counts_values__scale(struct perf_counts_values *count,
+diff --git a/tools/perf/util/stat-display.c b/tools/perf/util/stat-display.c
+index cdfceb5b4d72..f7666d2e6e0c 100644
+--- a/tools/perf/util/stat-display.c
++++ b/tools/perf/util/stat-display.c
+@@ -109,7 +109,7 @@ static void aggr_printout(struct perf_stat_config *config,
+ 		} else {
+ 			fprintf(config->output, "CPU%*d%s ",
+ 				config->csv_output ? 0 : -5,
+-				perf_evsel__cpus(evsel)->map[id],
++				evsel__cpus(evsel)->map[id],
+ 				config->csv_sep);
+ 		}
+ 		break;
+@@ -325,7 +325,7 @@ static int first_shadow_cpu(struct perf_stat_config *config,
+ 		return 0;
+ 
+ 	for (i = 0; i < perf_evsel__nr_cpus(evsel); i++) {
+-		int cpu2 = perf_evsel__cpus(evsel)->map[i];
++		int cpu2 = evsel__cpus(evsel)->map[i];
+ 
+ 		if (config->aggr_get_id(config, evlist->cpus, cpu2) == id)
+ 			return cpu2;
+@@ -593,7 +593,7 @@ static void aggr_cb(struct perf_stat_config *config,
+ 	for (cpu = 0; cpu < perf_evsel__nr_cpus(counter); cpu++) {
+ 		struct perf_counts_values *counts;
+ 
+-		s2 = config->aggr_get_id(config, perf_evsel__cpus(counter), cpu);
++		s2 = config->aggr_get_id(config, evsel__cpus(counter), cpu);
+ 		if (s2 != ad->id)
+ 			continue;
+ 		if (first)
+diff --git a/tools/perf/util/stat.c b/tools/perf/util/stat.c
+index efd934ec02c3..63f7815ceb4f 100644
+--- a/tools/perf/util/stat.c
++++ b/tools/perf/util/stat.c
+@@ -215,7 +215,7 @@ static int check_per_pkg(struct evsel *counter,
+ 			 struct perf_counts_values *vals, int cpu, bool *skip)
+ {
+ 	unsigned long *mask = counter->per_pkg_mask;
+-	struct perf_cpu_map *cpus = perf_evsel__cpus(counter);
++	struct perf_cpu_map *cpus = evsel__cpus(counter);
+ 	int s;
+ 
+ 	*skip = false;
+@@ -483,7 +483,7 @@ int create_perf_stat_counter(struct evsel *evsel,
  	}
- 	for (i = 0; i < priv->nr_perips; ++i) {
- 		irq = platform_get_irq(pdev, 1 + i);
--		if (irq < 0) {
--			dev_err(&pdev->dev, "cannot find perip IRQ #%u\n", i);
-+		if (irq < 0)
- 			return irq;
--		}
- 		priv->perip_irqs[i] = irq;
- 	}
- 	/* check if too many were provided */
-@@ -376,10 +374,8 @@ static int pdc_intc_probe(struct platform_device *pdev)
  
- 	/* Get syswake IRQ number */
- 	irq = platform_get_irq(pdev, 0);
--	if (irq < 0) {
--		dev_err(&pdev->dev, "cannot find syswake IRQ\n");
-+	if (irq < 0)
- 		return irq;
--	}
- 	priv->syswake_irq = irq;
+ 	if (target__has_cpu(target) && !target__has_per_thread(target))
+-		return perf_evsel__open_per_cpu(evsel, perf_evsel__cpus(evsel));
++		return perf_evsel__open_per_cpu(evsel, evsel__cpus(evsel));
  
- 	/* Set up an IRQ domain */
-diff --git a/drivers/irqchip/irq-keystone.c b/drivers/irqchip/irq-keystone.c
-index efbcf8435185..8118ebe80b09 100644
---- a/drivers/irqchip/irq-keystone.c
-+++ b/drivers/irqchip/irq-keystone.c
-@@ -164,10 +164,8 @@ static int keystone_irq_probe(struct platform_device *pdev)
- 	}
- 
- 	kirq->irq = platform_get_irq(pdev, 0);
--	if (kirq->irq < 0) {
--		dev_err(dev, "no irq resource %d\n", kirq->irq);
-+	if (kirq->irq < 0)
- 		return kirq->irq;
--	}
- 
- 	kirq->dev = dev;
- 	kirq->mask = ~0x0;
-diff --git a/drivers/irqchip/qcom-irq-combiner.c b/drivers/irqchip/qcom-irq-combiner.c
-index d88e993aa66d..abfe59284ff2 100644
---- a/drivers/irqchip/qcom-irq-combiner.c
-+++ b/drivers/irqchip/qcom-irq-combiner.c
-@@ -248,10 +248,8 @@ static int __init combiner_probe(struct platform_device *pdev)
- 		return err;
- 
- 	combiner->parent_irq = platform_get_irq(pdev, 0);
--	if (combiner->parent_irq <= 0) {
--		dev_err(&pdev->dev, "Error getting IRQ resource\n");
-+	if (combiner->parent_irq <= 0)
- 		return -EPROBE_DEFER;
--	}
- 
- 	combiner->domain = irq_domain_create_linear(pdev->dev.fwnode, combiner->nirqs,
- 						    &domain_ops, combiner);
--- 
-Sent by a computer through tubes
-
+ 	return perf_evsel__open_per_thread(evsel, evsel->threads);
+ }
