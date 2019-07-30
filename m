@@ -2,30 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 09AA67A94F
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 15:20:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D0C77A951
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 15:20:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730780AbfG3NTk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 09:19:40 -0400
-Received: from mx0b-00128a01.pphosted.com ([148.163.139.77]:53744 "EHLO
-        mx0b-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730677AbfG3NTk (ORCPT
+        id S1727841AbfG3NTr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 09:19:47 -0400
+Received: from mx0a-00128a01.pphosted.com ([148.163.135.77]:58004 "EHLO
+        mx0a-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730717AbfG3NTp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 09:19:40 -0400
-Received: from pps.filterd (m0167090.ppops.net [127.0.0.1])
-        by mx0b-00128a01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6UDHdG9009744;
-        Tue, 30 Jul 2019 09:18:17 -0400
-Received: from nam05-dm3-obe.outbound.protection.outlook.com (mail-dm3nam05lp2054.outbound.protection.outlook.com [104.47.49.54])
-        by mx0b-00128a01.pphosted.com with ESMTP id 2u2hg2s452-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 30 Jul 2019 09:18:17 -0400
+        Tue, 30 Jul 2019 09:19:45 -0400
+Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
+        by mx0a-00128a01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6UDHhbi016649;
+        Tue, 30 Jul 2019 09:18:19 -0400
+Received: from nam02-cy1-obe.outbound.protection.outlook.com (mail-cys01nam02lp2050.outbound.protection.outlook.com [104.47.37.50])
+        by mx0a-00128a01.pphosted.com with ESMTP id 2u1nh6wjaw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Tue, 30 Jul 2019 09:18:19 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ZDQ9W+ChQoSeB6QPdI7mQ8xwNdCH4A+RnmHaqdjU95CzYECq7ov8eCGxOGmdcYfFlXdlh8YGgh9V1A0ORHQvhO1+cSS8Dj9tt4Jvw0iUqCwTSvV3WDo8Nal6Q/fOb0tauGggiXymOepCRiaOLnqfCpOmlnsWPfe06rrBFOBjfXC74LcNAlMXi4iReKpmyQFAMh9tIU5EV6C363TmCDHGf33duIm31SL7AXjkyTJiMmY12Yjiv3OGZHynStxDB/W38uqVNJ4zMHoh+CIMnCpCPyqLiBVXCPXNi32lvtuUjXw6Ate4yZS47UrX7PDwC+FodnbFrZUlYqVW1nwcpds2QA==
+ b=kVs7w70WrD+xVECEpqRjqUPySL+PABYmSLSwxucVBEjUt5kQRnN+rCpxjs7NdFs+vUrfXFOaKXLFI1BsgMjIzZZumbJqpKDdrufl4yc+Lc7SiE1vLK8vqIMuIGouXDjY2kb7PqnS+A0UjtBVryl0VrEWZVc4MhEXAXjQlk5Kw5CdKapurjaWCXd6b0yFjQkiQo6Werq7MgCeSlXFzQ1gp0VFj2hHqqyO+/3nzt8D5cHFCjXlr87cyYVuy8buP9D7/4y/3tNEXWvokOJrInFf7UFUniTEN+ICtvVXyEQKHossPDYqoDbNLtp0Ii9Zk5ba7xOemampnlrnTXCqDm9UYg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3vhIBzF7o9s9IV+oDAH/51sb9qmmAMyW8WmkcvxdtTQ=;
- b=JebIo0AorH5paxdGA9AcVrfouZfGBdTWoBEUWTUeEl2RUUb1GrfkJf/N216F0wVCp8pEr/ys3xYr7/SeBrfkmE68mBRy4I2r5SJsXPeZhQ5FvLiDqVA49D0c71YfR6zISewr1QCpS2A5uG9NNHt9inYjLSToPF+1fMT7UZr8KRCZ+WNzmBo+vIaw0QSP27Rd6MNNQPQQeQeyOb69n35/DTba8mR3hLlUDW2slrsphydOnnzqQtdkloTher9peO2a39gc0Oo8oerblMBY0CR5xXxQGZJ+g85alOSIEo/hegHPbrlHwEC9aDU27MB8QdlL8KNtvK20WgoARqsofhZXZw==
+ bh=Hk5MOBPzXtAPzDjxEajfGt+rT/TxLRzdbikgJ1pAAr0=;
+ b=BPjECdaT9VoDZA9Mob3Ul1hBFma2uOLkUMI7IkQUOHSg+4jqJnCoPAv0fWM0X8qGKxHjVy8TkYQS080cSThur3nfihPxLO/rfTkc9Q6V9W/ixQ6GlOKCsMH36cBmJuWq+LLRN/qbjSxaJpXpiNaDPntYYRUNfKVlm+Xw7ob19oI03v8qSZ9JYl0zDlfRmI5AfA6pyso1LPuf0t1iDyqJb24ZBgiKLjl4XAXkXp/zjk0NBcyB1ehTWHKxRfL6yRTucW3c4ft4ukoV2zhTmf0wPcAfkLFC4PsVS2ELVUcPVrGAAm6R7nB9R0Kvc/Z1h586bCUig6lf99WsqO+onKA8hA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass (sender ip is
  137.71.25.57) smtp.rcpttodomain=kernel.org
  smtp.mailfrom=analog.com;dmarc=bestguesspass action=none
@@ -33,32 +33,32 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=analog.onmicrosoft.com; s=selector2-analog-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3vhIBzF7o9s9IV+oDAH/51sb9qmmAMyW8WmkcvxdtTQ=;
- b=2UBxR4XUDBV/T9SW1m7cqzphHZ3rIvI4GYegAbNYMjpEPgdthTPJLRW1tLRghdB+/+RG16o8lkDrEOBBhEsRx2zPOgk6ef060MOP/4p6OpzIjBnjlHqa2ntQ0B32pmNRNu6sgv9BisXAnk+b7XAXUdAafUcGWXdUTJC6SCJRVRg=
-Received: from CY4PR03CA0004.namprd03.prod.outlook.com (2603:10b6:903:33::14)
- by CY4PR03MB3141.namprd03.prod.outlook.com (2603:10b6:910:53::30) with
+ bh=Hk5MOBPzXtAPzDjxEajfGt+rT/TxLRzdbikgJ1pAAr0=;
+ b=OxTozV6ZViBWD/c3Y2mCPTr8xVnZhySdncnKqUPsmj2bMQP5O1R+zCzPvdtgqLiMHKig9B3QqVprOk4ltXJ0+z3horZkDgzRbI6NvDQVTKGtmsFwouYyAKcz2wdyZKq99Ok5qYpMvWdJLvT4GikaVMhtSK3WrrmwMtNqmWY6Agk=
+Received: from CY4PR03CA0077.namprd03.prod.outlook.com (2603:10b6:910:4d::18)
+ by DM5PR03MB2795.namprd03.prod.outlook.com (2603:10b6:3:44::12) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2115.15; Tue, 30 Jul
- 2019 13:18:14 +0000
-Received: from SN1NAM02FT031.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e44::209) by CY4PR03CA0004.outlook.office365.com
- (2603:10b6:903:33::14) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.2136.12 via Frontend
- Transport; Tue, 30 Jul 2019 13:18:13 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2115.13; Tue, 30 Jul
+ 2019 13:18:17 +0000
+Received: from BL2NAM02FT041.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e46::205) by CY4PR03CA0077.outlook.office365.com
+ (2603:10b6:910:4d::18) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.2115.10 via Frontend
+ Transport; Tue, 30 Jul 2019 13:18:17 +0000
 Received-SPF: Pass (protection.outlook.com: domain of analog.com designates
  137.71.25.57 as permitted sender) receiver=protection.outlook.com;
  client-ip=137.71.25.57; helo=nwd2mta2.analog.com;
 Received: from nwd2mta2.analog.com (137.71.25.57) by
- SN1NAM02FT031.mail.protection.outlook.com (10.152.72.116) with Microsoft SMTP
+ BL2NAM02FT041.mail.protection.outlook.com (10.152.77.122) with Microsoft SMTP
  Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.2115.10
- via Frontend Transport; Tue, 30 Jul 2019 13:18:12 +0000
+ via Frontend Transport; Tue, 30 Jul 2019 13:18:17 +0000
 Received: from NWD2HUBCAS7.ad.analog.com (nwd2hubcas7.ad.analog.com [10.64.69.107])
-        by nwd2mta2.analog.com (8.13.8/8.13.8) with ESMTP id x6UDIA6b025852
+        by nwd2mta2.analog.com (8.13.8/8.13.8) with ESMTP id x6UDIH75025903
         (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
-        Tue, 30 Jul 2019 06:18:10 -0700
+        Tue, 30 Jul 2019 06:18:17 -0700
 Received: from btogorean-pc.ad.analog.com (10.48.65.146) by
  NWD2HUBCAS7.ad.analog.com (10.64.69.107) with Microsoft SMTP Server id
- 14.3.408.0; Tue, 30 Jul 2019 09:18:09 -0400
+ 14.3.408.0; Tue, 30 Jul 2019 09:18:16 -0400
 From:   Bogdan Togorean <bogdan.togorean@analog.com>
 To:     <dri-devel@lists.freedesktop.org>
 CC:     <airlied@linux.ie>, <daniel@ffwll.ch>, <robh+dt@kernel.org>,
@@ -67,60 +67,123 @@ CC:     <airlied@linux.ie>, <daniel@ffwll.ch>, <robh+dt@kernel.org>,
         <allison@lohutok.net>, <tglx@linutronix.de>,
         <matt.redfearn@thinci.com>, <linux-kernel@vger.kernel.org>,
         Bogdan Togorean <bogdan.togorean@analog.com>
-Subject: [PATCH 0/2] drm: bridge: adv7511: Add support For ADV7535
-Date:   Tue, 30 Jul 2019 16:17:34 +0300
-Message-ID: <20190730131736.30187-1-bogdan.togorean@analog.com>
+Subject: [PATCH 1/2] dt-bindings: drm: bridge: adv7511: Add ADV7535 support
+Date:   Tue, 30 Jul 2019 16:17:35 +0300
+Message-ID: <20190730131736.30187-2-bogdan.togorean@analog.com>
 X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20190730131736.30187-1-bogdan.togorean@analog.com>
+References: <20190730131736.30187-1-bogdan.togorean@analog.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-ADIRoutedOnPrem: True
 X-EOPAttributedMessage: 0
 X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:137.71.25.57;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(2980300002)(189003)(199004)(6916009)(48376002)(7416002)(36756003)(54906003)(336012)(305945005)(50466002)(356004)(6666004)(86362001)(44832011)(486006)(126002)(2616005)(476003)(2906002)(47776003)(426003)(106002)(8936002)(246002)(8676002)(26005)(498600001)(2351001)(51416003)(1076003)(186003)(4744005)(4326008)(107886003)(50226002)(70206006)(2870700001)(70586007)(7696005)(5660300002)(7636002)(16060500001);DIR:OUT;SFP:1101;SCL:1;SRVR:CY4PR03MB3141;H:nwd2mta2.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail11.analog.com;MX:1;A:1;
+X-Forefront-Antispam-Report: CIP:137.71.25.57;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(346002)(396003)(39860400002)(376002)(136003)(2980300002)(199004)(189003)(6916009)(36756003)(426003)(126002)(5660300002)(6666004)(51416003)(356004)(76176011)(11346002)(2616005)(86362001)(486006)(44832011)(7696005)(1076003)(7636002)(106002)(54906003)(476003)(26005)(186003)(316002)(305945005)(478600001)(70206006)(336012)(70586007)(8676002)(47776003)(8936002)(50226002)(246002)(2351001)(446003)(7416002)(107886003)(2870700001)(2906002)(50466002)(4326008)(48376002)(16060500001);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR03MB2795;H:nwd2mta2.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail11.analog.com;A:1;MX:1;
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 19383bb7-71dd-46e5-7553-08d714f05fe4
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(4709080)(1401327)(2017052603328);SRVR:CY4PR03MB3141;
-X-MS-TrafficTypeDiagnostic: CY4PR03MB3141:
-X-Microsoft-Antispam-PRVS: <CY4PR03MB314179B8932E47F7E1ECCD089BDC0@CY4PR03MB3141.namprd03.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:2803;
+X-MS-Office365-Filtering-Correlation-Id: 16e48b2e-a3c5-4ff6-abef-08d714f06283
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(4709080)(1401327)(2017052603328);SRVR:DM5PR03MB2795;
+X-MS-TrafficTypeDiagnostic: DM5PR03MB2795:
+X-Microsoft-Antispam-PRVS: <DM5PR03MB279511AFCA9C3BA977EC71D19BDC0@DM5PR03MB2795.namprd03.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:6430;
 X-Forefront-PRVS: 0114FF88F6
 X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Message-Info: zNNra4X1jUJ1sEpOCwNGytJ60YjErlxVDDa5tYd0VGEyb1tcRPWP9U4ODzFh0Ejqjy5vDl966oNxndKJXNejtgv1Bxnuj5w1cN7pAIPWSQ4FZXK9GbvSjpdO7lwzj6ZfySAICbeB80h+aAb99ZA6NSeLohZ8bEesIgrF+KctxmQSWjG6EtpDOAJZYhxf1pqFDX7sFp8v+JvTu16kC5jei/jngQIvjYjfJ5r3000GSKLyP79dsuhS81qjq7fOp4slzo7kAYT663JsFZbChowGg30y+hNmFYpinmhk/10fHdnaWUVPvXy5n3WxXPcvipZsJ1jP2xsdolrKd5/rf+Rx9v/g/bU8M4EgxFV/xEsnNa0PvASz3+Oet9sZRFoVkGCQFRFlCjbZt29EG3yGleSuBLY1Gy76Ct9CIXwOOyQveJc=
+X-Microsoft-Antispam-Message-Info: ELm4YxijhGpdeYXtcAzH/EnMR6ivbMtXIsuM9f0JOUCITHSCWpjZmtvRXDqXzVpkpzDyc93n6Tzvm+AwifQLA6j1ZRd9SSQ8OzCd+Z/u9rQukdDIdCWiHAXFwOCxRb3Fp8K52edr/Uvf+ixnXqje/zllKJhCrUAaYKx9wfGEVG63OawAWQWMtzW5O1rBs+xJeFVeD+yizA7lxZjbmAGYU74Vsr3cnbqBwaYdJR+NiLICK2TlYcQqnekouBbjNDlOnfGpot5eYwci/zZSRkAx59LkzQ3bXpMIUmEY5B32YRnkdQeRm89g5vVJEgjQEn3IUKdvRDXd296Z069ermVWFccJlJYpokhH2T5+O71P3h9g0GjN6Z3Nk33mxcAgVdVlyt59dMdafEjExaAitXqBlsIa03U+wOhl6lThTWHDuTY=
 X-OriginatorOrg: analog.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jul 2019 13:18:12.4384
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jul 2019 13:18:17.2716
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 19383bb7-71dd-46e5-7553-08d714f05fe4
+X-MS-Exchange-CrossTenant-Network-Message-Id: 16e48b2e-a3c5-4ff6-abef-08d714f06283
 X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.57];Helo=[nwd2mta2.analog.com]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR03MB3141
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR03MB2795
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-30_06:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=833 adultscore=0 classifier=spam adjust=0 reason=mlx
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1906280000 definitions=main-1907300141
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch-set add support for ADV7535 part in ADV7511 driver.
+ADV7535 is a part compatible with ADV7533 but it supports 1080p@60hz and
+v1p2 supply is fixed to 1.8V
 
-ADV7535 and ADV7533 are pin to pin compatible parts but ADV7535
-support TMDS clock upto 148.5Mhz and resolutions up to 1080p@60Hz.
+Signed-off-by: Bogdan Togorean <bogdan.togorean@analog.com>
+---
+ .../bindings/display/bridge/adi,adv7511.txt   | 23 ++++++++++---------
+ 1 file changed, 12 insertions(+), 11 deletions(-)
 
-Bogdan Togorean (2):
-  dt-bindings: drm: bridge: adv7511: Add ADV7535 support
-  drm: bridge: adv7511: Add support for ADV7535
-
- .../bindings/display/bridge/adi,adv7511.txt   | 23 +++++++-------
- drivers/gpu/drm/bridge/adv7511/adv7511.h      |  2 ++
- drivers/gpu/drm/bridge/adv7511/adv7511_drv.c  | 31 ++++++++++++++-----
- 3 files changed, 37 insertions(+), 19 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt b/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt
+index 2c887536258c..e8ddec5d9d91 100644
+--- a/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt
++++ b/Documentation/devicetree/bindings/display/bridge/adi,adv7511.txt
+@@ -1,10 +1,10 @@
+-Analog Device ADV7511(W)/13/33 HDMI Encoders
++Analog Device ADV7511(W)/13/33/35 HDMI Encoders
+ -----------------------------------------
+ 
+-The ADV7511, ADV7511W, ADV7513 and ADV7533 are HDMI audio and video transmitters
+-compatible with HDMI 1.4 and DVI 1.0. They support color space conversion,
+-S/PDIF, CEC and HDCP. ADV7533 supports the DSI interface for input pixels, while
+-the others support RGB interface.
++The ADV7511, ADV7511W, ADV7513, ADV7533 and ADV7535 are HDMI audio and video
++transmitters compatible with HDMI 1.4 and DVI 1.0. They support color space
++conversion, S/PDIF, CEC and HDCP. ADV7533/5 supports the DSI interface for input
++pixels, while the others support RGB interface.
+ 
+ Required properties:
+ 
+@@ -13,6 +13,7 @@ Required properties:
+ 		"adi,adv7511w"
+ 		"adi,adv7513"
+ 		"adi,adv7533"
++		"adi,adv7535"
+ 
+ - reg: I2C slave addresses
+   The ADV7511 internal registers are split into four pages exposed through
+@@ -52,14 +53,14 @@ The following input format properties are required except in "rgb 1x" and
+ - bgvdd-supply: A 1.8V supply that powers up the BGVDD pin. This is
+   needed only for ADV7511.
+ 
+-The following properties are required for ADV7533:
++The following properties are required for ADV7533 and ADV7535:
+ 
+ - adi,dsi-lanes: Number of DSI data lanes connected to the DSI host. It should
+   be one of 1, 2, 3 or 4.
+ - a2vdd-supply: 1.8V supply that powers up the A2VDD pin on the chip.
+ - v3p3-supply: A 3.3V supply that powers up the V3P3 pin on the chip.
+ - v1p2-supply: A supply that powers up the V1P2 pin on the chip. It can be
+-  either 1.2V or 1.8V.
++  either 1.2V or 1.8V for ADV7533 but only 1.8V for ADV7535.
+ 
+ Optional properties:
+ 
+@@ -71,9 +72,9 @@ Optional properties:
+ - adi,embedded-sync: The input uses synchronization signals embedded in the
+   data stream (similar to BT.656). Defaults to separate H/V synchronization
+   signals.
+-- adi,disable-timing-generator: Only for ADV7533. Disables the internal timing
+-  generator. The chip will rely on the sync signals in the DSI data lanes,
+-  rather than generate its own timings for HDMI output.
++- adi,disable-timing-generator: Only for ADV7533 and ADV7535. Disables the
++  internal timing generator. The chip will rely on the sync signals in the
++  DSI data lanes, rather than generate its own timings for HDMI output.
+ - clocks: from common clock binding: reference to the CEC clock.
+ - clock-names: from common clock binding: must be "cec".
+ - reg-names : Names of maps with programmable addresses.
+@@ -85,7 +86,7 @@ Required nodes:
+ The ADV7511 has two video ports. Their connections are modelled using the OF
+ graph bindings specified in Documentation/devicetree/bindings/graph.txt.
+ 
+-- Video port 0 for the RGB, YUV or DSI input. In the case of ADV7533, the
++- Video port 0 for the RGB, YUV or DSI input. In the case of ADV7533/5, the
+   remote endpoint phandle should be a reference to a valid mipi_dsi_host device
+   node.
+ - Video port 1 for the HDMI output
 -- 
 2.22.0
 
