@@ -2,105 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F12179EC8
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 04:35:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 48DC079ECD
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 04:39:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731361AbfG3CfH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 22:35:07 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:39618 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731245AbfG3CfG (ORCPT
+        id S1731389AbfG3CjY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 22:39:24 -0400
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:39411 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1730921AbfG3CjX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 22:35:06 -0400
-Received: by mail-pf1-f193.google.com with SMTP id f17so25006685pfn.6;
-        Mon, 29 Jul 2019 19:35:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=mlwh30crVBnLbNh9X+zbIdeqfnMPnV8dXnmoYY7kniE=;
-        b=J3Mj2u6m0LEC+pdyGJevYoc21SE2fTXsazpKYSQ1TmLqWkxSv0K+wZm3WdzXDD5BOG
-         SrUWxtM6Pu4ReuTaEBJ97mYedREPqMWPwJftdfePrAJdzyaUMQ9nJbAzBDkhhlG6zZrP
-         Olzn5ngbGoR8+H1ynH2ws/RHf4nirUoBdq2GGAAs4y7TZpEgnMXJR2qiqBQQwlvLOnBY
-         5+TchRw/wVWrPU9T279yf5pL9vVOLVd5ggXQNiCroGoAhIaleUj7zSj85bCIEa4x4j0i
-         jOjHZSk8HxaaWAbD/VeF6YUFhC5ew6EtbDmRQDASKs3BYdftwPppVbOTg4TSSe2D34wl
-         X9UQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=mlwh30crVBnLbNh9X+zbIdeqfnMPnV8dXnmoYY7kniE=;
-        b=kM68nhoMFYmcN+SHUi0gLF1SsVte8rQeszU+7g9iKZHN6L5yLzk/e6B+k710wk6E1d
-         ScvcLZyM8ZOUrs8kpeO1qg1g6JoCbrs5V454cD9Be2F29a3V5nn7FTnEXrmJRMvIYcwf
-         +Ppnwipbx0ySnEvOSSG3LlTuVn+vw68wkoB0ugwGLMZX3B8bP8HgJehBx5ToCfEochjr
-         SuNsrB3JEx0pujyn0CxKDS45B/SuoBqIVP4kgtn3dUd9zpHSBXlw0pZzq0dTk7s7Tjgt
-         3CZU3/yGlZjJKKUKrhRkJlmKHKdBw1XAXs0mfcKhUPvS/bmrRIPBiGGc5RQdVCGuqBBK
-         fbrw==
-X-Gm-Message-State: APjAAAXCOBy1VLNSxzAUtjwSz9ZxhquAg/SNDxKOUoe8WZoHV7Jqph2R
-        9q7qs1EGpmHlA7CGc7OMcmw=
-X-Google-Smtp-Source: APXvYqzI3ZDoT4RrJbLun3wK7qvHZFDsP+mrUHgYSW6oQFrU1uCCaLRV4vvDVpFZWeqUvG/i7YyYiA==
-X-Received: by 2002:a65:6216:: with SMTP id d22mr98999795pgv.404.1564454106123;
-        Mon, 29 Jul 2019 19:35:06 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id i9sm51642699pjj.2.2019.07.29.19.35.05
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 29 Jul 2019 19:35:05 -0700 (PDT)
-Subject: Re: [PATCH 3/4] watchdog device drivers:pc87413_wdt: Tidying up
- conversion of pc87413_wdt driver to common watchdog interface, removal of
- some stray nowayout parameters
-To:     Mark Balantzyan <mbalant3@gmail.com>
-Cc:     wim@linux-watchdog.org, linux-kernel@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, andrianov@ispras.ru
-References: <20190730021540.66579-1-mbalant3@gmail.com>
- <20190730021540.66579-3-mbalant3@gmail.com>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <8cfb0a01-e51b-53f4-1311-f2e17d0e4049@roeck-us.net>
-Date:   Mon, 29 Jul 2019 19:35:04 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Mon, 29 Jul 2019 22:39:23 -0400
+X-IronPort-AV: E=Sophos;i="5.64,325,1559491200"; 
+   d="scan'208";a="72493080"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 30 Jul 2019 10:37:03 +0800
+Received: from G08CNEXCHPEKD03.g08.fujitsu.local (unknown [10.167.33.85])
+        by cn.fujitsu.com (Postfix) with ESMTP id 816394CDDAE4;
+        Tue, 30 Jul 2019 10:37:00 +0800 (CST)
+Received: from localhost.localdomain (10.167.226.33) by
+ G08CNEXCHPEKD03.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
+ (TLS) id 14.3.439.0; Tue, 30 Jul 2019 10:36:59 +0800
+From:   Su Yanjun <suyj.fnst@cn.fujitsu.com>
+To:     <davem@davemloft.net>, <kuznet@ms2.inr.ac.ru>,
+        <yoshfuji@linux-ipv6.org>
+CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <suyj.fnst@cn.fujitsu.com>
+Subject: [PATCH net v2] net: ipv6: Fix a bug in ndisc_send_ns when netdev only has a global address
+Date:   Tue, 30 Jul 2019 10:35:15 +0800
+Message-ID: <1564454115-66184-1-git-send-email-suyj.fnst@cn.fujitsu.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <20190730021540.66579-3-mbalant3@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.167.226.33]
+X-yoursite-MailScanner-ID: 816394CDDAE4.AE319
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: suyj.fnst@cn.fujitsu.com
+X-Spam-Status: No
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/29/19 7:15 PM, Mark Balantzyan wrote:
-> There is a potential for the variable swc_base_addr in the call chain of the
-> driver initialization function (init) to be used before initialization. This
-> brought up the need for, by rewriting the driver to use the common watchdog
-> interface, ensuring to have all resources in place. This patch addresses this
-> need by rewriting into common watchdog interface utilization for the driver.
-> 
-> Signed-off-by: Mark Balantzyan <mbalant3@gmail.com>
-> 
-> ---
->   drivers/watchdog/pc87413_wdt.c | 6 ------
->   1 file changed, 6 deletions(-)
-> 
-> diff --git a/drivers/watchdog/pc87413_wdt.c b/drivers/watchdog/pc87413_wdt.c
-> index a9070a22..bc6c4e19 100644
-> --- a/drivers/watchdog/pc87413_wdt.c
-> +++ b/drivers/watchdog/pc87413_wdt.c
-> @@ -392,9 +392,3 @@ module_param(timeout, int, 0);
->   MODULE_PARM_DESC(timeout,
->   		"Watchdog timeout in minutes (default="
->   				__MODULE_STRING(DEFAULT_TIMEOUT) ").");
-> -
-> -module_param(nowayout, bool, 0);
-> -MODULE_PARM_DESC(nowayout,watchdog_set_nowayout
-> -		"Watchdog cannot be stopped once started (default="
-> -				__MODULE_STRING(WATCHDOG_NOWAYOUT) ")");
-> -
-> 
-Why would you no longer want this module parameter ?
+When the egress interface does not have a link local address, it can
+not communicate with other hosts.
 
-You should keep it and call watchdog_set_nowayout(wdev, nowayout);
-in the probe function.
+In RFC4861, 7.2.2 says
+"If the source address of the packet prompting the solicitation is the
+same as one of the addresses assigned to the outgoing interface, that
+address SHOULD be placed in the IP Source Address of the outgoing
+solicitation.  Otherwise, any one of the addresses assigned to the
+interface should be used."
 
-Guenter
+In this patch we try get a global address if we get ll address failed.
+
+Signed-off-by: Su Yanjun <suyj.fnst@cn.fujitsu.com>
+---
+Changes since V1:
+	- Change patch description and code optimization at 
+          David Ahern's suggestion
+---
+ include/net/addrconf.h |  2 ++
+ net/ipv6/addrconf.c    | 34 ++++++++++++++++++++++++++++++++++
+ net/ipv6/ndisc.c       |  9 ++++++---
+ 3 files changed, 42 insertions(+), 3 deletions(-)
+
+diff --git a/include/net/addrconf.h b/include/net/addrconf.h
+index becdad5..ce1561e 100644
+--- a/include/net/addrconf.h
++++ b/include/net/addrconf.h
+@@ -107,6 +107,8 @@ int __ipv6_get_lladdr(struct inet6_dev *idev, struct in6_addr *addr,
+ 		      u32 banned_flags);
+ int ipv6_get_lladdr(struct net_device *dev, struct in6_addr *addr,
+ 		    u32 banned_flags);
++int ipv6_get_addr(struct net_device *dev, struct in6_addr *addr,
++		    u32 banned_flags);
+ bool inet_rcv_saddr_equal(const struct sock *sk, const struct sock *sk2,
+ 			  bool match_wildcard);
+ bool inet_rcv_saddr_any(const struct sock *sk);
+diff --git a/net/ipv6/addrconf.c b/net/ipv6/addrconf.c
+index 521e320..9467457 100644
+--- a/net/ipv6/addrconf.c
++++ b/net/ipv6/addrconf.c
+@@ -1870,6 +1870,40 @@ int ipv6_get_lladdr(struct net_device *dev, struct in6_addr *addr,
+ 	return err;
+ }
+ 
++int __ipv6_get_addr(struct inet6_dev *idev, struct in6_addr *addr,
++		    u32 banned_flags)
++{
++	struct inet6_ifaddr *ifp;
++	int err = -EADDRNOTAVAIL;
++
++	list_for_each_entry(ifp, &idev->addr_list, if_list) {
++		if (ifp->scope == 0 &&
++		    !(ifp->flags & banned_flags)) {
++			*addr = ifp->addr;
++			err = 0;
++			break;
++		}
++	}
++	return err;
++}
++
++int ipv6_get_addr(struct net_device *dev, struct in6_addr *addr,
++		  u32 banned_flags)
++{
++	struct inet6_dev *idev;
++	int err = -EADDRNOTAVAIL;
++
++	rcu_read_lock();
++	idev = __in6_dev_get(dev);
++	if (idev) {
++		read_lock_bh(&idev->lock);
++		err = __ipv6_get_addr(idev, addr, banned_flags);
++		read_unlock_bh(&idev->lock);
++	}
++	rcu_read_unlock();
++	return err;
++}
++
+ static int ipv6_count_addresses(const struct inet6_dev *idev)
+ {
+ 	const struct inet6_ifaddr *ifp;
+diff --git a/net/ipv6/ndisc.c b/net/ipv6/ndisc.c
+index 083cc1c..156c027 100644
+--- a/net/ipv6/ndisc.c
++++ b/net/ipv6/ndisc.c
+@@ -603,11 +603,14 @@ void ndisc_send_ns(struct net_device *dev, const struct in6_addr *solicit,
+ 	int inc_opt = dev->addr_len;
+ 	int optlen = 0;
+ 	struct nd_msg *msg;
++	u32 banned_flags = IFA_F_TENTATIVE | IFA_F_OPTIMISTIC;
+ 
+ 	if (!saddr) {
+-		if (ipv6_get_lladdr(dev, &addr_buf,
+-				   (IFA_F_TENTATIVE|IFA_F_OPTIMISTIC)))
+-			return;
++		if (ipv6_get_lladdr(dev, &addr_buf, banned_flags)) {
++			/* try global address */
++			if (ipv6_get_addr(dev, &addr_buf, banned_flags))
++				return;
++		}
+ 		saddr = &addr_buf;
+ 	}
+ 
+-- 
+2.7.4
+
+
 
