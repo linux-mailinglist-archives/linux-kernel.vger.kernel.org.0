@@ -2,43 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33CA87A869
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 14:28:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FF747A86B
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 14:28:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729518AbfG3M2I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S1729265AbfG3M2I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Tue, 30 Jul 2019 08:28:08 -0400
-Received: from mail-io1-f70.google.com ([209.85.166.70]:37867 "EHLO
+Received: from mail-io1-f70.google.com ([209.85.166.70]:49667 "EHLO
         mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728346AbfG3M2H (ORCPT
+        with ESMTP id S1726167AbfG3M2H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 30 Jul 2019 08:28:07 -0400
-Received: by mail-io1-f70.google.com with SMTP id v3so71274423ios.4
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 05:28:07 -0700 (PDT)
+Received: by mail-io1-f70.google.com with SMTP id x24so71223784ioh.16
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 05:28:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=hZMo4mC2RIyBYAfOxySX5UABZRRMH2Q/dZ4zcgNImT8=;
-        b=TM7kMBsa2Al+Iabfpy4yMNq0Om099ldQuHM8ubSLBUFPyLlFVd+R+WvnvWo36BDbfh
-         T26o5J22dCMR2J6AIr/WCQeL/dzyJCw52fzka7GMa1W6r0yKWp/mj6GJmrOs3x9cQ7hf
-         HZtcg2QmqzabcXFplCP2uNq/nkyGW53C6VqndzxZx9k5K8L9ukCQp6/uFoavOvH8aiuS
-         WNdcLcQhOF4Vmz1ZxTsmtpz9PalwVjkDbbKu+qxL53Epjz1hc1jrdfALoFXnYxKjUugS
-         q2Qp+J1+U8dbW5WbOvQqeHdFrVqG6unnDxuri6kJVJ7m0tRirRReytMzLMcCklAIQDFK
-         LfSA==
-X-Gm-Message-State: APjAAAUhkcHXHBsD2bnU1fE3m3Fwy4G2wKOpfl2yf5Mw93waJugeB/YS
-        V15FS2GTMYKjnslPAv/3A8EJOZ4Iubld/VDcVRN2KibJcOZ+
-X-Google-Smtp-Source: APXvYqz9DN92bNusuAriRi22SyjDQxEx6rnZguhdzOOVXYpum2QebL80O/zC1jM1YPGv5w4HsMU3xQqZxOd+TwmYrgIkwg9N2DQI
+        bh=L9VDO7k+iRFcfA0LsLudhEzOy80xKWBjmcwwT9POA1k=;
+        b=Ja+ASPEyWSgMfBbblFFJEoeEdDPwNTHZLDNP/3ZED8gBYSOyNPA+5ZrTWsh/sIH2zP
+         WS2bjH6O++z/xNyZjX/MyTcscHCPfHrrb/JtmLrPpHR62bd31Y0rFzeKzaWbfm94EtUd
+         edodYOboVl1SzRxhNkGyE/VmDz6JGfAPHCx0RpZdI+zmsmzfWg4Gra4CwoeJQLp/04f6
+         Nph6RX7EHTRYENzeFoqmMIv0OR/tnUSglFavuNDOsMDwJg9+bkjhn576JVR2DhuoWt8f
+         /pHyN9kj/yOZH1JUQ8oy5JnZUlbrsCTOLrFXwYKG/kHyzCn+vQgfR/+G39hi7pdqoVnU
+         cWmQ==
+X-Gm-Message-State: APjAAAUc29fWo1KVlxnQVSJnmwhvHeCduQggNbVFIvpZA23oYGGVKLCF
+        ws+wZ+ykao4uk3/AFo6wYJKsA6C61Tb+uZgFdZG0SjolB6IR
+X-Google-Smtp-Source: APXvYqymlyyGjismM+I+jA3PAHPvP5wzUb7rQzYTiPSyzpdY6PrkW80JZitI24HsII5qgiqUf/asr81QibXFTKR1iIJypo7eG6V3
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:114:: with SMTP id s20mr62738414iot.122.1564489686756;
+X-Received: by 2002:a02:300b:: with SMTP id q11mr121392732jaq.54.1564489686557;
  Tue, 30 Jul 2019 05:28:06 -0700 (PDT)
 Date:   Tue, 30 Jul 2019 05:28:06 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000008b8c6058ee52407@google.com>
-Subject: KASAN: slab-out-of-bounds Read in hidraw_ioctl
-From:   syzbot <syzbot+5a6c4ec678a0c6ee84ba@syzkaller.appspotmail.com>
-To:     andreyknvl@google.com, benjamin.tissoires@redhat.com,
-        jikos@kernel.org, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+Message-ID: <00000000000005ae9c058ee5245c@google.com>
+Subject: WARNING in mxl111sf_ctrl_msg
+From:   syzbot <syzbot+48eb85867b8a4c16adf0@syzkaller.appspotmail.com>
+To:     andreyknvl@google.com, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-usb@vger.kernel.org,
+        mchehab@kernel.org, mkrufky@linuxtv.org,
         syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -52,108 +52,100 @@ syzbot found the following crash on:
 
 HEAD commit:    7f7867ff usb-fuzzer: main usb gadget fuzzer driver
 git tree:       https://github.com/google/kasan.git usb-fuzzer
-console output: https://syzkaller.appspot.com/x/log.txt?x=15e293c8600000
+console output: https://syzkaller.appspot.com/x/log.txt?x=11a7957c600000
 kernel config:  https://syzkaller.appspot.com/x/.config?x=792eb47789f57810
-dashboard link: https://syzkaller.appspot.com/bug?extid=5a6c4ec678a0c6ee84ba
+dashboard link: https://syzkaller.appspot.com/bug?extid=48eb85867b8a4c16adf0
 compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-
-Unfortunately, I don't have any reproducer for this crash yet.
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11ac50f8600000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1718c75c600000
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+5a6c4ec678a0c6ee84ba@syzkaller.appspotmail.com
+Reported-by: syzbot+48eb85867b8a4c16adf0@syzkaller.appspotmail.com
 
-==================================================================
-BUG: KASAN: slab-out-of-bounds in strlen+0x79/0x90 lib/string.c:525
-Read of size 1 at addr ffff8881ca981f10 by task syz-executor.4/7644
-
-CPU: 1 PID: 7644 Comm: syz-executor.4 Not tainted 5.3.0-rc2+ #23
+usb 1-1: dvb_usb_v2: will pass the complete MPEG2 transport stream to the  
+software demuxer
+dvbdev: DVB: registering new adapter (Hauppauge 126xxx ATSC+)
+usb 1-1: media controller created
+dvbdev: dvb_create_media_entity: media entity 'dvb-demux' registered.
+usb 1-1: selecting invalid altsetting 1
+set interface failed
+------------[ cut here ]------------
+DEBUG_LOCKS_WARN_ON(lock->magic != lock)
+WARNING: CPU: 0 PID: 12 at kernel/locking/mutex.c:912 __mutex_lock_common  
+kernel/locking/mutex.c:912 [inline]
+WARNING: CPU: 0 PID: 12 at kernel/locking/mutex.c:912  
+__mutex_lock+0xd31/0x1360 kernel/locking/mutex.c:1077
+Kernel panic - not syncing: panic_on_warn set ...
+CPU: 0 PID: 12 Comm: kworker/0:1 Not tainted 5.3.0-rc2+ #23
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
+Workqueue: usb_hub_wq hub_event
 Call Trace:
   __dump_stack lib/dump_stack.c:77 [inline]
   dump_stack+0xca/0x13e lib/dump_stack.c:113
-  print_address_description+0x6a/0x32c mm/kasan/report.c:351
-  __kasan_report.cold+0x1a/0x33 mm/kasan/report.c:482
-  kasan_report+0xe/0x12 mm/kasan/common.c:612
-  strlen+0x79/0x90 lib/string.c:525
-  strlen include/linux/string.h:281 [inline]
-  hidraw_ioctl+0x245/0xae0 drivers/hid/hidraw.c:446
-  vfs_ioctl fs/ioctl.c:46 [inline]
-  file_ioctl fs/ioctl.c:509 [inline]
-  do_vfs_ioctl+0xd2d/0x1330 fs/ioctl.c:696
-  ksys_ioctl+0x9b/0xc0 fs/ioctl.c:713
-  __do_sys_ioctl fs/ioctl.c:720 [inline]
-  __se_sys_ioctl fs/ioctl.c:718 [inline]
-  __x64_sys_ioctl+0x6f/0xb0 fs/ioctl.c:718
-  do_syscall_64+0xb7/0x580 arch/x86/entry/common.c:296
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x459829
-Code: fd b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 cb b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fed5bb22c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000459829
-RDX: 0000000020000180 RSI: 0000000080404805 RDI: 0000000000000003
-RBP: 000000000075bfc8 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007fed5bb236d4
-R13: 00000000004c21c6 R14: 00000000004d5528 R15: 00000000ffffffff
-
-Allocated by task 1607:
-  save_stack+0x1b/0x80 mm/kasan/common.c:69
-  set_track mm/kasan/common.c:77 [inline]
-  __kasan_kmalloc mm/kasan/common.c:487 [inline]
-  __kasan_kmalloc.constprop.0+0xbf/0xd0 mm/kasan/common.c:460
-  kmalloc include/linux/slab.h:552 [inline]
-  syslog_print kernel/printk/printk.c:1346 [inline]
-  do_syslog kernel/printk/printk.c:1519 [inline]
-  do_syslog+0x540/0x1380 kernel/printk/printk.c:1493
-  kmsg_read+0x8a/0xb0 fs/proc/kmsg.c:40
-  proc_reg_read+0x1c1/0x280 fs/proc/inode.c:223
-  __vfs_read+0x76/0x100 fs/read_write.c:425
-  vfs_read+0x1ea/0x430 fs/read_write.c:461
-  ksys_read+0x127/0x250 fs/read_write.c:587
-  do_syscall_64+0xb7/0x580 arch/x86/entry/common.c:296
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Freed by task 1607:
-  save_stack+0x1b/0x80 mm/kasan/common.c:69
-  set_track mm/kasan/common.c:77 [inline]
-  __kasan_slab_free+0x130/0x180 mm/kasan/common.c:449
-  slab_free_hook mm/slub.c:1423 [inline]
-  slab_free_freelist_hook mm/slub.c:1470 [inline]
-  slab_free mm/slub.c:3012 [inline]
-  kfree+0xe4/0x2f0 mm/slub.c:3953
-  syslog_print kernel/printk/printk.c:1405 [inline]
-  do_syslog kernel/printk/printk.c:1519 [inline]
-  do_syslog+0x1098/0x1380 kernel/printk/printk.c:1493
-  kmsg_read+0x8a/0xb0 fs/proc/kmsg.c:40
-  proc_reg_read+0x1c1/0x280 fs/proc/inode.c:223
-  __vfs_read+0x76/0x100 fs/read_write.c:425
-  vfs_read+0x1ea/0x430 fs/read_write.c:461
-  ksys_read+0x127/0x250 fs/read_write.c:587
-  do_syscall_64+0xb7/0x580 arch/x86/entry/common.c:296
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-The buggy address belongs to the object at ffff8881ca981b00
-  which belongs to the cache kmalloc-1k of size 1024
-The buggy address is located 16 bytes to the right of
-  1024-byte region [ffff8881ca981b00, ffff8881ca981f00)
-The buggy address belongs to the page:
-page:ffffea00072a6000 refcount:1 mapcount:0 mapping:ffff8881da002280  
-index:0x0 compound_mapcount: 0
-flags: 0x200000000010200(slab|head)
-raw: 0200000000010200 dead000000000100 dead000000000122 ffff8881da002280
-raw: 0000000000000000 00000000000e000e 00000001ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff8881ca981e00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff8881ca981e80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> ffff8881ca981f00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-                          ^
-  ffff8881ca981f80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff8881ca982000: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
+  panic+0x2a3/0x6da kernel/panic.c:219
+  __warn.cold+0x20/0x4a kernel/panic.c:576
+  report_bug+0x262/0x2a0 lib/bug.c:186
+  fixup_bug arch/x86/kernel/traps.c:179 [inline]
+  fixup_bug arch/x86/kernel/traps.c:174 [inline]
+  do_error_trap+0x12b/0x1e0 arch/x86/kernel/traps.c:272
+  do_invalid_op+0x32/0x40 arch/x86/kernel/traps.c:291
+  invalid_op+0x23/0x30 arch/x86/entry/entry_64.S:1026
+RIP: 0010:__mutex_lock_common kernel/locking/mutex.c:912 [inline]
+RIP: 0010:__mutex_lock+0xd31/0x1360 kernel/locking/mutex.c:1077
+Code: d2 0f 85 f6 05 00 00 44 8b 05 bb 99 0a 02 45 85 c0 0f 85 0a f4 ff ff  
+48 c7 c6 00 87 a6 85 48 c7 c7 a0 84 a6 85 e8 f4 24 b8 fb <0f> 0b e9 f0 f3  
+ff ff 65 48 8b 1c 25 00 ef 01 00 be 08 00 00 00 48
+RSP: 0018:ffff8881da206f40 EFLAGS: 00010282
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: ffffffff812830fd RDI: ffffed103b440dda
+RBP: ffff8881da2070b0 R08: ffff8881da1f1800 R09: fffffbfff0d5eb25
+R10: fffffbfff0d5eb24 R11: ffffffff86af5923 R12: 0000000000000000
+R13: dffffc0000000000 R14: ffff8881d2ee6ec8 R15: ffff8881d2ee6ec8
+  mxl111sf_ctrl_msg+0xb8/0x210 drivers/media/usb/dvb-usb-v2/mxl111sf.c:66
+  mxl111sf_write_reg+0x8b/0x120 drivers/media/usb/dvb-usb-v2/mxl111sf.c:123
+  mxl1x1sf_soft_reset+0x6b/0x190  
+drivers/media/usb/dvb-usb-v2/mxl111sf-phy.c:47
+  mxl111sf_lgdt3305_frontend_attach.constprop.0+0x23e/0x790  
+drivers/media/usb/dvb-usb-v2/mxl111sf.c:447
+  mxl111sf_frontend_attach_atsc_mh+0x13/0x70  
+drivers/media/usb/dvb-usb-v2/mxl111sf.c:984
+  dvb_usbv2_adapter_frontend_init  
+drivers/media/usb/dvb-usb-v2/dvb_usb_core.c:641 [inline]
+  dvb_usbv2_adapter_init drivers/media/usb/dvb-usb-v2/dvb_usb_core.c:804  
+[inline]
+  dvb_usbv2_init drivers/media/usb/dvb-usb-v2/dvb_usb_core.c:865 [inline]
+  dvb_usbv2_probe.cold+0x1e04/0x2567  
+drivers/media/usb/dvb-usb-v2/dvb_usb_core.c:980
+  usb_probe_interface+0x305/0x7a0 drivers/usb/core/driver.c:361
+  really_probe+0x281/0x650 drivers/base/dd.c:548
+  driver_probe_device+0x101/0x1b0 drivers/base/dd.c:709
+  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:816
+  bus_for_each_drv+0x15c/0x1e0 drivers/base/bus.c:454
+  __device_attach+0x217/0x360 drivers/base/dd.c:882
+  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
+  device_add+0xae6/0x16f0 drivers/base/core.c:2114
+  usb_set_configuration+0xdf6/0x1670 drivers/usb/core/message.c:2023
+  generic_probe+0x9d/0xd5 drivers/usb/core/generic.c:210
+  usb_probe_device+0x99/0x100 drivers/usb/core/driver.c:266
+  really_probe+0x281/0x650 drivers/base/dd.c:548
+  driver_probe_device+0x101/0x1b0 drivers/base/dd.c:709
+  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:816
+  bus_for_each_drv+0x15c/0x1e0 drivers/base/bus.c:454
+  __device_attach+0x217/0x360 drivers/base/dd.c:882
+  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
+  device_add+0xae6/0x16f0 drivers/base/core.c:2114
+  usb_new_device.cold+0x6a4/0xe79 drivers/usb/core/hub.c:2536
+  hub_port_connect drivers/usb/core/hub.c:5098 [inline]
+  hub_port_connect_change drivers/usb/core/hub.c:5213 [inline]
+  port_event drivers/usb/core/hub.c:5359 [inline]
+  hub_event+0x1b5c/0x3640 drivers/usb/core/hub.c:5441
+  process_one_work+0x92b/0x1530 kernel/workqueue.c:2269
+  worker_thread+0x96/0xe20 kernel/workqueue.c:2415
+  kthread+0x318/0x420 kernel/kthread.c:255
+  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
 
 ---
@@ -163,3 +155,5 @@ syzbot engineers can be reached at syzkaller@googlegroups.com.
 
 syzbot will keep track of this bug report. See:
 https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
