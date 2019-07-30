@@ -2,50 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 674597A476
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 11:36:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D5F77A484
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 11:36:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731622AbfG3JgL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 05:36:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35316 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730914AbfG3JgJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 05:36:09 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D8EC820665;
-        Tue, 30 Jul 2019 09:36:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564479368;
-        bh=LtK0QokkgoTJFQdUYjV/Zz1SbLz9j29LgAK8gpHpfwA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=yKBR09lRo6LmJGhQH2qUhOlfyCfidX+msWyCgzer5fjJe+3pEJNN9NJi3GpSBt7QA
-         uMXxUydOtqI56KdD1v9UjS9UBrs6hizJxU4qOdHy3yoLnJzW02CNEYb3YkPG2f+7l0
-         UiOCsKUprxlKMT0imfSNZdVCV4Jk6sWBhm3iB4bo=
-Date:   Tue, 30 Jul 2019 11:36:06 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Bharath Vedartham <linux.bhar@gmail.com>
-Cc:     Matt.Sickler@daktronics.com, devel@driverdev.osuosl.org,
-        John Hubbard <jhubbard@nvidia.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        linux-kernel-mentees@lists.linuxfoundation.org
-Subject: Re: [Linux-kernel-mentees][PATCH v4] staging: kpc2000: Convert
- put_page to put_user_page*()
-Message-ID: <20190730093606.GA15402@kroah.com>
-References: <20190730092843.GA5150@bharath12345-Inspiron-5559>
+        id S1731665AbfG3Jge (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 05:36:34 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:56488 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731650AbfG3Jgc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 05:36:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=BjOHjVPfh/LIDc/7yA8zCGr8rEtbAuSVPSXO0TtCsmw=; b=Yda1/XJjb3FN+q2ECDJ6KEagM
+        ssrhRStV83jWbvjnRgBm4fIf0BySi2pU8EmlG1CVG6llnlNT2ROpmZ1k/0wdr1T4il5KRcgzOXRY1
+        pZSxaC8CuYkwo49Ou5K5mcpbjII5VAtWsT9fFZdryg4TaTGb/ZSCX5wxcswS9EeK+iE2fYJ+7jTPB
+        aw6JDXO3ptJ93jRGtmec0PMMwCP8uikcIYbDAc7lmSogV4ml8q8l41vyAspIIiT4rOnxwSP435Ckw
+        poCOgxq6WRUm4Z9aBoOQuYOWo7w9PiShNmnlh0ZuCZnBYK66uhmBmyUmpdhfal6aMhH/sG5odmrt6
+        GmZJFR6rw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hsOYO-00062W-Kf; Tue, 30 Jul 2019 09:36:20 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 7558520AFFE9E; Tue, 30 Jul 2019 11:36:17 +0200 (CEST)
+Date:   Tue, 30 Jul 2019 11:36:17 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Rik van Riel <riel@surriel.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
+        dietmar.eggemann@arm.com, mingo@redhat.com,
+        morten.rasmussen@arm.com, tglx@linutronix.de,
+        mgorman@techsingularity.net, vincent.guittot@linaro.org
+Subject: Re: [PATCH 09/14] sched,fair: refactor enqueue/dequeue_entity
+Message-ID: <20190730093617.GV31398@hirez.programming.kicks-ass.net>
+References: <20190722173348.9241-1-riel@surriel.com>
+ <20190722173348.9241-10-riel@surriel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190730092843.GA5150@bharath12345-Inspiron-5559>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20190722173348.9241-10-riel@surriel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 30, 2019 at 02:58:44PM +0530, Bharath Vedartham wrote:
-> put_page() to put_user_page*()
+On Mon, Jul 22, 2019 at 01:33:43PM -0400, Rik van Riel wrote:
+> Refactor enqueue_entity, dequeue_entity, and update_load_avg, in order
+> to split out the things we still want to happen at every level in the
+> cgroup hierarchy with a flat runqueue from the things we only need to
+> happen once.
+> 
+> No functional changes.
 
-What does this mean?
+> @@ -3500,7 +3500,7 @@ static void detach_entity_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *s
+>  #define DO_ATTACH	0x4
+>  
+>  /* Update task and its cfs_rq load average */
+> -static inline void update_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
+> +static inline bool update_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
+>  {
+>  	u64 now = cfs_rq_clock_pelt(cfs_rq);
+>  	int decayed;
+> @@ -3529,6 +3529,8 @@ static inline void update_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *s
+>  
+>  	} else if (decayed && (flags & UPDATE_TG))
+>  		update_tg_load_avg(cfs_rq, 0);
+> +
+> +	return decayed;
+>  }
+>  
+>  #ifndef CONFIG_64BIT
+> @@ -3745,9 +3747,10 @@ static inline void update_misfit_status(struct task_struct *p, struct rq *rq)
+>  #define SKIP_AGE_LOAD	0x0
+>  #define DO_ATTACH	0x0
+>  
+> -static inline void update_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *se, int not_used1)
+> +static inline bool update_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *se, int not_used1)
+>  {
+>  	cfs_rq_util_change(cfs_rq, 0);
+> +	return false;
+>  }
+>  
+>  static inline void remove_entity_load_avg(struct sched_entity *se) {}
+> @@ -3870,6 +3873,24 @@ static inline void check_schedstat_required(void)
+>   * CPU and an up-to-date min_vruntime on the destination CPU.
+>   */
+>  
+> +static bool
+> +enqueue_entity_groups(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
+> +{
+> +	/*
+> +	 * When enqueuing a sched_entity, we must:
+> +	 *   - Update loads to have both entity and cfs_rq synced with now.
+> +	 *   - Add its load to cfs_rq->runnable_avg
+> +	 *   - For group_entity, update its weight to reflect the new share of
+> +	 *     its group cfs_rq
+> +	 *   - Add its new weight to cfs_rq->load.weight
+> +	 */
+> +	if (!update_load_avg(cfs_rq, se, UPDATE_TG | DO_ATTACH))
+> +		return false;
+> +
+> +	update_cfs_group(se);
+> +	return true;
+> +}
+> +
+>  static void
+>  enqueue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
+>  {
+> @@ -3894,16 +3915,6 @@ enqueue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
+>  	if (renorm && !curr)
+>  		se->vruntime += cfs_rq->min_vruntime;
+>  
+> -	/*
+> -	 * When enqueuing a sched_entity, we must:
+> -	 *   - Update loads to have both entity and cfs_rq synced with now.
+> -	 *   - Add its load to cfs_rq->runnable_avg
+> -	 *   - For group_entity, update its weight to reflect the new share of
+> -	 *     its group cfs_rq
+> -	 *   - Add its new weight to cfs_rq->load.weight
+> -	 */
+> -	update_load_avg(cfs_rq, se, UPDATE_TG | DO_ATTACH);
+> -	update_cfs_group(se);
+>  	enqueue_runnable_load_avg(cfs_rq, se);
+>  	account_entity_enqueue(cfs_rq, se);
+>  
+
+No functional, but you did make update_cfs_group() conditional. Now that
+looks OK, but maybe you can do that part in a separate patch with a
+little justification of its own.
