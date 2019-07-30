@@ -2,108 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE0E37AC83
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 17:38:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 60EA97AC86
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 17:40:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732486AbfG3Pie (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 11:38:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57246 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727564AbfG3Pie (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 11:38:34 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8A57B208E3;
-        Tue, 30 Jul 2019 15:38:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564501113;
-        bh=txmJL6s3v03NEKfA+X4nRfhF7hv+uk1wX6p9lkvBLUM=;
-        h=In-Reply-To:References:Cc:From:To:Subject:Date:From;
-        b=h71JNQL1OEWUdOljEUYXaQrc+YCcqT/J1ifeJvGsnmVkaAU4GTBmh+N2iwjH1Qlu0
-         5Kl8Fu+EOEtOT9/JZvMwnC0Izn6R+guitma8ysNxmYJP/gQpGlnX3vnOg8lqcVnsQ9
-         5jhoafGZn629Q5eChlEMIUAzCVvQY5iInG48gnig=
-Content-Type: text/plain; charset="utf-8"
+        id S1730466AbfG3PkB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 11:40:01 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:39745 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726941AbfG3PkB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 11:40:01 -0400
+Received: by mail-pg1-f194.google.com with SMTP id u17so30259977pgi.6
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 08:40:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Vne3d3TA+jWKXpZqNUGuJSIWUSkOrA0rq1xIX/cTwsA=;
+        b=bE9C7hLQeEeAAUDM9brsj+v0BgqdDlJPXOYFfQA7UDpv0VvD6Y/2S6ZhkRIIv8T8rm
+         cYWT7A4X3TCY2CBLDcVhBdroKpeZX41WVhh9pQs712L6JAkZ0anqmNse11vvfVLKO9H+
+         gGpskm2MFw1lBkTjETkNw0/kMirfacfyYcHAEYs9iZ9qZmSeBk4MbyvV+6QGa4KFhjva
+         eYNdgMH6IRAVJ+iA3fFlrC7+gBzqn4n+3Qo5XGj3+u/0SK8QQ6DGloJosb3XnYtqMnVk
+         QwmhLsMCc4b+NtQXC5oZp/DzXRN1pP2f4egg6OayFiWdQzVcONmDUnBpZCx46fSa4QkU
+         yRSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Vne3d3TA+jWKXpZqNUGuJSIWUSkOrA0rq1xIX/cTwsA=;
+        b=P1Feu50fHvr9V0/ZqvDQT7/cZmTct5Eic9P1gulEnHluY4hQUZoMYiDZVqWVt8Wk/a
+         BKdcy/9KK2TXHdSazgn4EhKPpTUaC1tu7qbnPS405mgseDMvTOTH+0gLR4X+IqM1v2oR
+         kFPgrGu5SyOkQLJ8lpR3ztl7yjtludaB+PKx48nTcycIDzPbAnKahZHEKx6dS9iSo3nO
+         4hKVlqTxC7O5SrP09l3HjvO6wcyuO+fqf6iJP+XG6+w4rUpq3PloyP47KP7NSRTF5+6G
+         kG5GDFWMIX83mlnUzBQHil87e5lEG3tVJZwLNSiuV84VEdcNADbHxNWcfME/CP+9CYWn
+         JFnQ==
+X-Gm-Message-State: APjAAAWuzpdCH5OLM2JOOlFnAARWmblIsrRei635cvNd++HRMNy+CadK
+        9oIni6QsSYuBP0VbXQcMzEI=
+X-Google-Smtp-Source: APXvYqxiu60GFSJUeLiGhpCpiZDxJDDoQkgaNaRHTO3YbWFhXNhaHvi/EHcY5z1AkeZb2VKnQlMA7w==
+X-Received: by 2002:a63:cb4b:: with SMTP id m11mr35668140pgi.49.1564501200236;
+        Tue, 30 Jul 2019 08:40:00 -0700 (PDT)
+Received: from bharath12345-Inspiron-5559 ([103.110.42.33])
+        by smtp.gmail.com with ESMTPSA id 195sm108148638pfu.75.2019.07.30.08.39.58
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 30 Jul 2019 08:39:59 -0700 (PDT)
+From:   Bharath Vedartham <linux.bhar@gmail.com>
+To:     sivanich@sgi.com, arnd@arndb.de
+Cc:     ira.weiny@intel.com, jhubbard@nvidia.com, jglisse@redhat.com,
+        gregkh@linuxfoundation.org, william.kucharski@oracle.com,
+        hch@lst.de, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        Bharath Vedartham <linux.bhar@gmail.com>
+Subject: [Linux-kernel-mentees][PATCH v4 0/1] get_user_pages changes 
+Date:   Tue, 30 Jul 2019 21:09:29 +0530
+Message-Id: <1564501170-6830-1-git-send-email-linux.bhar@gmail.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <2bb31636-e7de-50e6-b4fb-826b6e7e7c04@codeaurora.org>
-References: <1557339895-21952-1-git-send-email-tdas@codeaurora.org> <1557339895-21952-3-git-send-email-tdas@codeaurora.org> <20190715225219.B684820665@mail.kernel.org> <916e2fb3-98b9-c4e3-50e0-3581a41609d6@codeaurora.org> <20190716231845.832F82064B@mail.kernel.org> <2bb31636-e7de-50e6-b4fb-826b6e7e7c04@codeaurora.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <tdas@codeaurora.org>
-Subject: Re: [PATCH v1 2/3] clk: qcom: rcg2: Add support for hardware control mode
-User-Agent: alot/0.8.1
-Date:   Tue, 30 Jul 2019 08:38:32 -0700
-Message-Id: <20190730153833.8A57B208E3@mail.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Taniya Das (2019-07-30 03:50:08)
-> Hello Stephen,
->=20
-> On 7/17/2019 4:48 AM, Stephen Boyd wrote:
-> > Quoting Taniya Das (2019-07-15 21:19:02)
-> >> Hello Stephen,
-> >>
-> >> Thanks for your review.
-> >>
-> >> On 7/16/2019 4:22 AM, Stephen Boyd wrote:
-> >>> Quoting Taniya Das (2019-05-08 11:24:54)
-> >>>> diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2=
-.c
-> >>>> index 57dbac9..5bb6d45 100644
-> >>>> --- a/drivers/clk/qcom/clk-rcg2.c
-> >>>> +++ b/drivers/clk/qcom/clk-rcg2.c
-> >>>> @@ -289,6 +289,9 @@ static int __clk_rcg2_configure(struct clk_rcg2 =
-*rcg, const struct freq_tbl *f)
-> >>>>           cfg |=3D rcg->parent_map[index].cfg << CFG_SRC_SEL_SHIFT;
-> >>>>           if (rcg->mnd_width && f->n && (f->m !=3D f->n))
-> >>>>                   cfg |=3D CFG_MODE_DUAL_EDGE;
-> >>>> +       if (rcg->flags & HW_CLK_CTRL_MODE)
-> >>>> +               cfg |=3D CFG_HW_CLK_CTRL_MASK;
-> >>>> +
-> >>>
-> >>> Above this we have commit bdc3bbdd40ba ("clk: qcom: Clear hardware cl=
-ock
-> >>> control bit of RCG") that clears this bit. Is it possible to always s=
-et
-> >>> this bit and then have an override flag used in sdm845 that says to
-> >>> _not_ set this bit? Presumably on earlier platforms writing the bit i=
-s a
-> >>> no-op so it's safe to write the bit on those platforms.
-> >>>
-> >>> This way, if it's going to be the default we can avoid setting the fl=
-ag
-> >>> and only set the flag on older platforms where it shouldn't be done f=
-or
-> >>> some reason.
-> >>>
-> >>
-> >> Not all the subsystem clock controllers might have this hardware contr=
-ol
-> >> bit set from design. Thus we want to set them based on the flag.
-> >=20
-> > Yes but what's the percentage of clks that are going to set this flag
-> > vs. not set this flag? If that is low right now then it's fine but if it
-> > eventually becomes the standard mechanism it will be easier to opt-out
-> > of the feature if necessary instead of opt-in.
-> >=20
->=20
-> Currently all the RCGs in GCC need to clear the bit and few RCGs from
-> the other CCs(DISPCC/VIDEOCC) where the bit is not set from HW requires=20
-> this bit to be set. Thus we want to use this flag mechanism to have the=20
-> flexibility to set.
->=20
-> Once it is a standard we could cleanup to remove this.
->=20
+In this 4th version of the patch series, I have compressed the patches
+of the v2 patch series into one patch. This was suggested by Christoph Hellwig.
+The suggestion was to remove the pte_lookup functions and use the 
+get_user_pages* functions directly instead of the pte_lookup functions.
 
-OK. Please send this patch along with whatever code/driver needs the new
-flag.
+There is nothing different in this series compared to the previous
+series, It essentially compresses the 3 patches of the original series
+into one patch.
+
+Bharath Vedartham (1):
+  sgi-gru: Remove *pte_lookup functions
+
+ drivers/misc/sgi-gru/grufault.c | 112 +++++++++-------------------------------
+ 1 file changed, 24 insertions(+), 88 deletions(-)
+
+-- 
+2.7.4
 
