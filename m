@@ -2,133 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DEAA7B2F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 21:09:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 87F2F7B2CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 21:00:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388077AbfG3TI5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 15:08:57 -0400
-Received: from esa2.microchip.iphmx.com ([68.232.149.84]:47123 "EHLO
-        esa2.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387996AbfG3TI5 (ORCPT
+        id S2388503AbfG3TAR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 15:00:17 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:45431 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388059AbfG3TAQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 15:08:57 -0400
-Received-SPF: Pass (esa2.microchip.iphmx.com: domain of
-  Allan.Nielsen@microchip.com designates 198.175.253.82 as
-  permitted sender) identity=mailfrom;
-  client-ip=198.175.253.82; receiver=esa2.microchip.iphmx.com;
-  envelope-from="Allan.Nielsen@microchip.com";
-  x-sender="Allan.Nielsen@microchip.com";
-  x-conformance=spf_only; x-record-type="v=spf1";
-  x-record-text="v=spf1 mx a:ushub1.microchip.com
-  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
-  a:mx2.microchip.iphmx.com include:servers.mcsv.net
-  include:mktomail.com include:spf.protection.outlook.com ~all"
-Received-SPF: None (esa2.microchip.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@email.microchip.com) identity=helo;
-  client-ip=198.175.253.82; receiver=esa2.microchip.iphmx.com;
-  envelope-from="Allan.Nielsen@microchip.com";
-  x-sender="postmaster@email.microchip.com";
-  x-conformance=spf_only
-Authentication-Results: esa2.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Allan.Nielsen@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
-IronPort-SDR: FVWau1FL+BdSstz+rb4YYnQzfGgcu8B+5qDHSBUHkR8H3UFjmMy9b1sfZ1xqa29K5FyhXngNr3
- yUZvr9NnInPpgqSkv8/rgGPf1B1IDF791s4Du0A+rgrGXKxmuUGrCVLqMx0nJTZ40BOVmZxFXN
- K9SkEmScVW6zXTE+CBxQVc5L4Z1hD4xXowKx4Y1jWPyldFfZFMa9ffX2ePQgVruqcwSrnXEN7H
- F33pDVKcEMheDEj5DuIX9xMa6Gd8M7geoykd9c0sduulfy1wywJLrnWpydqIkM6BOXVFevud4x
- OIA=
-X-IronPort-AV: E=Sophos;i="5.64,327,1559545200"; 
-   d="scan'208";a="43283969"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 30 Jul 2019 12:08:56 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Tue, 30 Jul 2019 12:00:00 -0700
-Received: from localhost (10.10.85.251) by chn-vm-ex01.mchp-main.com
- (10.10.85.143) with Microsoft SMTP Server id 15.1.1713.5 via Frontend
- Transport; Tue, 30 Jul 2019 12:00:00 -0700
-Date:   Tue, 30 Jul 2019 21:00:01 +0200
-From:   "Allan W. Nielsen" <allan.nielsen@microchip.com>
-To:     Andrew Lunn <andrew@lunn.ch>
-CC:     Ido Schimmel <idosch@idosch.org>,
-        Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
-        Horatiu Vultur <horatiu.vultur@microchip.com>,
-        <roopa@cumulusnetworks.com>, <davem@davemloft.net>,
-        <bridge@lists.linux-foundation.org>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] net: bridge: Allow bridge to joing multicast groups
-Message-ID: <20190730190000.diacyjw6owqkf7uf@lx-anielsen.microsemi.net>
-References: <20190729121409.wa47uelw5f6l4vs4@lx-anielsen.microsemi.net>
- <95315f9e-0d31-2d34-ba50-11e1bbc1465c@cumulusnetworks.com>
- <20190729131420.tqukz55tz26jkg73@lx-anielsen.microsemi.net>
- <3cc69103-d194-2eca-e7dd-e2fa6a730223@cumulusnetworks.com>
- <20190729135205.oiuthcyesal4b4ct@lx-anielsen.microsemi.net>
- <e4cd0db9-695a-82a7-7dc0-623ded66a4e5@cumulusnetworks.com>
- <20190729143508.tcyebbvleppa242d@lx-anielsen.microsemi.net>
- <20190729175136.GA28572@splinter>
- <20190730062721.p4vrxo5sxbtulkrx@lx-anielsen.microsemi.net>
- <20190730143400.GO28552@lunn.ch>
+        Tue, 30 Jul 2019 15:00:16 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6UJ05Ya3337437
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Tue, 30 Jul 2019 12:00:05 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6UJ05Ya3337437
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019071901; t=1564513206;
+        bh=2rUDSYIIBiJ0PM97+S+pkNehnoJe9/BPB3d86sVW1os=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=eIwwbCLJU1qquaxfhqotIf5HZN1rXsXWrpIP27f2vGJZywBDOVAJY4E4MyaZ7ohF6
+         UTNFHTmRemTbh8bSzPP+Ux2yp9rOGw09juE0pA+lHiYEvXrxMHpg7GGCyImmqFt19K
+         +UC0pzFCm7BKySFXi/kgZvJSznYnS2g0qhcfUEBjVFqf3YyxG9c1suO9GJTWcg7x6X
+         0ZL3QHBIVmhI8qfZz1/Ce1QVR5kYsWVbq4M9zmbFDd0peymjFOgeSCr/MlSZc4/XI+
+         onIip1s9NCIhgzMeNbm8vTwUsl8hofRSGcwWj0Jesnk/cS6qZQkZRQm0psItcjEg8n
+         P6rk9e9QP+Yyw==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6UJ03573337432;
+        Tue, 30 Jul 2019 12:00:03 -0700
+Date:   Tue, 30 Jul 2019 12:00:03 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
+Message-ID: <tip-384c4ad192a01fe235c7ac9e9fd8605d12a807e8@git.kernel.org>
+Cc:     mingo@kernel.org, hpa@zytor.com, namhyung@kernel.org,
+        peterz@infradead.org, acme@redhat.com, mpetlan@redhat.com,
+        alexey.budankov@linux.intel.com, jolsa@kernel.org,
+        ak@linux.intel.com, alexander.shishkin@linux.intel.com,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de
+Reply-To: ak@linux.intel.com, alexander.shishkin@linux.intel.com,
+          linux-kernel@vger.kernel.org, tglx@linutronix.de,
+          mingo@kernel.org, hpa@zytor.com, namhyung@kernel.org,
+          peterz@infradead.org, acme@redhat.com,
+          alexey.budankov@linux.intel.com, mpetlan@redhat.com,
+          jolsa@kernel.org
+In-Reply-To: <20190721112506.12306-71-jolsa@kernel.org>
+References: <20190721112506.12306-71-jolsa@kernel.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] libperf: Add perf_evsel__attr() function
+Git-Commit-ID: 384c4ad192a01fe235c7ac9e9fd8605d12a807e8
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20190730143400.GO28552@lunn.ch>
-User-Agent: NeoMutt/20180716
+X-Spam-Status: No, score=-0.2 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
+        autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The 07/30/2019 16:34, Andrew Lunn wrote:
-> The whole offloading story has been you use the hardware to accelerate
-> what the Linux stack can already do.
-It is true, I have been quite keen on finding a way to control the forwarding of
-L2-multicast which will work in the same way with and without HW acceleration
-(and which we can HW offlaod with the HW I'm working on).
+Commit-ID:  384c4ad192a01fe235c7ac9e9fd8605d12a807e8
+Gitweb:     https://git.kernel.org/tip/384c4ad192a01fe235c7ac9e9fd8605d12a807e8
+Author:     Jiri Olsa <jolsa@kernel.org>
+AuthorDate: Sun, 21 Jul 2019 13:24:57 +0200
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Mon, 29 Jul 2019 18:34:46 -0300
 
-> In this case, you want to accelerate Device Level Ring, DLR.
-It is actually not only for DLR, there are other ring protocols which has the
-same needs the same MRP (media redundancy protocol) is an other example.
+libperf: Add perf_evsel__attr() function
 
-I just used DLR as an example because this is the one we expect to implement the
-protocol for first. There are other just as important use-cases.
+Add a perf_evsel__attr() function to get attr pointer from a perf_evsel
+instance.
 
-> But i've not yet seen a software implementation of DLR. Should we really be
-> considering first adding DLR to the SW bridge?
-We have actually (slowly) stared to work on a DLR SW implementation. We want to
-do this as a Linux driver instead of a user-space implementation, because there
-are other HW facilities we would like to offload (the HW has a automatic frame
-generator, which can generate the beacon frames, and a unit which can terminate
-the beacon frames, and generate an interrupt if the beacon frames are not
-received).
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Michael Petlan <mpetlan@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/20190721112506.12306-71-jolsa@kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/lib/evsel.c              | 5 +++++
+ tools/perf/lib/include/perf/evsel.h | 1 +
+ tools/perf/lib/libperf.map          | 1 +
+ 3 files changed, 7 insertions(+)
 
-Our plan was to implement this in pure SW, and then look at how to HW offload
-it.
-
-But this will take some time before we have anything meaning full to show.
-
-> Make it an alternative to the STP code?
-I'm still working on learning the details of DLR, but I actually believe that it
-in some situations may co-exists with STP ;-)
-
-DLR only works on ring topologies, but it is possible to connect a ring to a
-classic STP network. If doing so, then you are suppose to run DLR on the two
-ring ports, and (M)STP on the ports connecting to the remaining part of the
-network.
-
-As far as I recall, this is called a gateway node. But supporting this is
-optional, and will properly not be supported in the first implementation.
-
-> Once we have a generic implementation we can then look at how it can
-> be accelerated using switchdev.
-I agree with you that we need a SW implementation of DLR because we can offload
-the DLR protocol to HW.
-
-But what we are looking at here, is to offload a
-non-aware-(DLR|MRP)-switch which happens to be placed in a network with
-these protocols running.
-
-It is not really DLR specific, which is why it seems reasonable to implement
-this without a DLR SW implementation up front.
-
--- 
-/Allan
+diff --git a/tools/perf/lib/evsel.c b/tools/perf/lib/evsel.c
+index 8dbe0e841b8f..24abc80dd767 100644
+--- a/tools/perf/lib/evsel.c
++++ b/tools/perf/lib/evsel.c
+@@ -225,3 +225,8 @@ struct perf_thread_map *perf_evsel__threads(struct perf_evsel *evsel)
+ {
+ 	return evsel->threads;
+ }
++
++struct perf_event_attr *perf_evsel__attr(struct perf_evsel *evsel)
++{
++	return &evsel->attr;
++}
+diff --git a/tools/perf/lib/include/perf/evsel.h b/tools/perf/lib/include/perf/evsel.h
+index ae9f7eeb53a2..4388667f265c 100644
+--- a/tools/perf/lib/include/perf/evsel.h
++++ b/tools/perf/lib/include/perf/evsel.h
+@@ -34,5 +34,6 @@ LIBPERF_API int perf_evsel__enable(struct perf_evsel *evsel);
+ LIBPERF_API int perf_evsel__disable(struct perf_evsel *evsel);
+ LIBPERF_API struct perf_cpu_map *perf_evsel__cpus(struct perf_evsel *evsel);
+ LIBPERF_API struct perf_thread_map *perf_evsel__threads(struct perf_evsel *evsel);
++LIBPERF_API struct perf_event_attr *perf_evsel__attr(struct perf_evsel *evsel);
+ 
+ #endif /* __LIBPERF_EVSEL_H */
+diff --git a/tools/perf/lib/libperf.map b/tools/perf/lib/libperf.map
+index 2068e3d52227..e24d3cec01c1 100644
+--- a/tools/perf/lib/libperf.map
++++ b/tools/perf/lib/libperf.map
+@@ -23,6 +23,7 @@ LIBPERF_0.0.1 {
+ 		perf_evsel__read;
+ 		perf_evsel__cpus;
+ 		perf_evsel__threads;
++		perf_evsel__attr;
+ 		perf_evlist__new;
+ 		perf_evlist__delete;
+ 		perf_evlist__open;
