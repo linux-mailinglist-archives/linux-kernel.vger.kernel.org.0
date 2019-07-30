@@ -2,117 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D3697AD2F
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 18:05:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41DB87AD49
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 18:09:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727988AbfG3QFB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 12:05:01 -0400
-Received: from mail-out.m-online.net ([212.18.0.10]:43852 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725908AbfG3QFB (ORCPT
+        id S1730489AbfG3QJC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 12:09:02 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:43194 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727698AbfG3QJC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 12:05:01 -0400
-Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-        by mail-out.m-online.net (Postfix) with ESMTP id 45yhGL5v2qz1rfcq;
-        Tue, 30 Jul 2019 18:04:58 +0200 (CEST)
-Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
-        by mail.m-online.net (Postfix) with ESMTP id 45yhGL51J8z1qqkM;
-        Tue, 30 Jul 2019 18:04:58 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at mnet-online.de
-Received: from mail.mnet-online.de ([192.168.8.182])
-        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
-        with ESMTP id sEBAZfL2s-uz; Tue, 30 Jul 2019 18:04:56 +0200 (CEST)
-X-Auth-Info: NMGXziR/PhuMc/va7X2TT6X0tYpuv4qbHHDlc7BiilA=
-Received: from jawa (85-222-111-42.dynamic.chello.pl [85.222.111.42])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.mnet-online.de (Postfix) with ESMTPSA;
-        Tue, 30 Jul 2019 18:04:56 +0200 (CEST)
-Date:   Tue, 30 Jul 2019 18:04:51 +0200
-From:   Lukasz Majewski <lukma@denx.de>
-To:     Fabio Estevam <festevam@gmail.com>
-Cc:     Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Stefan Agner <stefan@agner.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ARM: DTS: vybrid: Update qspi node description for
- VF610 BK4 board
-Message-ID: <20190730180451.38cad018@jawa>
-In-Reply-To: <CAOMZO5AoSCDCMRKpkWQ=0PwiFG-O9doGaA31FRhDCGmNr7Xefg@mail.gmail.com>
-References: <20190730150552.24927-1-lukma@denx.de>
-        <CAOMZO5AxPHHobQQhq30fjLVeSroLdvdT0+GqCWi8it1ejhDONA@mail.gmail.com>
-        <20190730175336.382d833c@jawa>
-        <CAOMZO5AoSCDCMRKpkWQ=0PwiFG-O9doGaA31FRhDCGmNr7Xefg@mail.gmail.com>
-Organization: denx.de
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Tue, 30 Jul 2019 12:09:02 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6UG3hdu000753;
+        Tue, 30 Jul 2019 16:08:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2018-07-02;
+ bh=oLw5J2eruM1dv+opvKWd2QA5hlfKsVrUXpjMXfm7MdU=;
+ b=KHlH7ioNf4bHxA7+xhxahq5TF4s7gAhC2tACNkDMFeINlOamRF1LFtl281kI7vXkX72d
+ D468cfTGEk5deOeoCiGKKXbRl/63vz963O9L6tdxc90Ua5kXhOkO9wmGIG1OXp8fQHsa
+ AYqLAailqmXyYsCaYUMQ31OSaC0HFfbricxE6PZjWYgz9EjQ13hibpmLOjlItutju9qp
+ g80AaX2zglsaLxIbadb0AR1fbiZQpMlhQMPWztTSZbE82BpyCvQUuvefqHO5xx0JR9XY
+ +q/TVr/1MRBdt+MVfyZpOZrHoLD3XND9FcL/ea8/Ptk+9qfC4eOAmiDQGuA3RfgT+oZB lg== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2130.oracle.com with ESMTP id 2u0e1tqqw9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 30 Jul 2019 16:08:41 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6UG7aLU097161;
+        Tue, 30 Jul 2019 16:08:40 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3030.oracle.com with ESMTP id 2u0bqu8u58-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 30 Jul 2019 16:08:40 +0000
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x6UG8cQL003029;
+        Tue, 30 Jul 2019 16:08:38 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 30 Jul 2019 09:08:37 -0700
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     <qla2xxx-upstream@qlogic.com>, <jejb@linux.ibm.com>,
+        <martin.petersen@oracle.com>, <linux-kernel@vger.kernel.org>,
+        <linux-scsi@vger.kernel.org>
+Subject: Re: [PATCH v2 -next] scsi: qla2xxx: Remove unnecessary null check
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <20190711140908.26896-1-yuehaibing@huawei.com>
+        <20190711141317.52192-1-yuehaibing@huawei.com>
+Date:   Tue, 30 Jul 2019 12:08:35 -0400
+In-Reply-To: <20190711141317.52192-1-yuehaibing@huawei.com>
+        (yuehaibing@huawei.com's message of "Thu, 11 Jul 2019 22:13:17 +0800")
+Message-ID: <yq1d0hro67w.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/FFYaC=52dh2nz5Y2tmjEFGz"; protocol="application/pgp-signature"
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9334 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=963
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1907300167
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9334 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1907300166
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/FFYaC=52dh2nz5Y2tmjEFGz
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi Fabio,
+YueHaibing,
 
-> Hi Lukasz,
->=20
-> On Tue, Jul 30, 2019 at 12:53 PM Lukasz Majewski <lukma@denx.de>
-> wrote:
->=20
-> > Shall I refer to the original commit (which added this DTS)? Or the
-> > original issue posted to linux-mtd [1] ? =20
->=20
-> You can add a Fixes tag like this:
->=20
-> Fixes: a67d2c52a82f ("ARM: dts: Add support for Liebherr's BK4 device
-> (vf610 based)")
+> A null check before dma_pool_destroy is redundant,
+> so remove it. This is detected by coccinelle.
 
-Yes, the above is correct (as indicated [1]), but I was not sure if I
-should also refer to the original post to linux-mtd ML.
+Applied to 5.4/scsi-queue. Thanks!
 
-Now it is clear - thanks :-)
-
-Note:
-
-[1] -
-https://www.kernel.org/doc/html/v4.12/process/submitting-patches.html#revie=
-wer-s-statement-of-oversight
-
-Best regards,
-
-Lukasz Majewski
-
---
-
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-Phone: (+49)-8142-66989-59 Fax: (+49)-8142-66989-80 Email: lukma@denx.de
-
---Sig_/FFYaC=52dh2nz5Y2tmjEFGz
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAl1AaqMACgkQAR8vZIA0
-zr1ITwf+P4+TW29l+wXSF2r4SKuAIoARSdCU3NSfGUpLW7gBQbK3x4RXlNnYW2y5
-pLsjYgE4yPWa6xv+Eo0oZz23EgmQdXCEmflVB85+CxRJpOPTfL0f1oRNmYXm0Nfq
-uQBko26IzNP+LMzSHDqJnaViHdWqP8URYGpMKHxL4lEUbZRfMzpieYt1IgHbCcB0
-/H0cx/EFFO3P+txZw7OQwaZSvYhSrwqO9hc645rXXIqqzO+nJ/RtWw5FAgVZHK6g
-tGTZ8rMYvWfhh/RuZwZzM7QktcV5NPxlVBagXFLujay/OSs/ENNO7MyWSTjL4g9B
-F0ZoHf+Mp8liTvpd9aet/8v1UMB3BQ==
-=LT7H
------END PGP SIGNATURE-----
-
---Sig_/FFYaC=52dh2nz5Y2tmjEFGz--
+-- 
+Martin K. Petersen	Oracle Linux Engineering
