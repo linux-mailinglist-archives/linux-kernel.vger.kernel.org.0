@@ -2,136 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF05A7A875
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 14:29:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 43D2B7A863
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 14:28:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729418AbfG3M3f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 08:29:35 -0400
-Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:49830 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728186AbfG3M3f (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 08:29:35 -0400
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-        by mx0b-001ae601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x6UCPbL5001281;
-        Tue, 30 Jul 2019 07:27:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=PODMain02222019;
- bh=pY3zCtDyo2UN0OhyrBjrLt7xNrI8TidRHw7Z/SoxObk=;
- b=WW27iPvGmca6/6RHRPK/lJRXcfi9WBFDVrdgvCdTiffzT8wuSG8QbF93YWX6sM7gm1aq
- rvpkB0RxNVL+b7GpnujcaK32Kteg6fClR0Ik/f9eCLdM8kPxXgw2hzyVcC1jKb1QAPSw
- kN8JUdfsG8nvjCfb0x1JXjoCzLx1NfLRD2zNacySmbjzuri1mf5R38vl3D567POpqX1K
- 899bLpgZsM+k90VVHSeCO1ciXdm7oeeLyYkW7sgkDMVV3Ei3hd86ZgJpokbq2UhkLfVH
- gOfzSnkdTom8LBMlCkgYRTj/WkgS9dCubfnBs+MRjQwSPumnfduWbI6PvbtymZzPFSZy ag== 
-Authentication-Results: ppops.net;
-        spf=fail smtp.mailfrom=ckeepax@opensource.cirrus.com
-Received: from ediex02.ad.cirrus.com ([87.246.76.36])
-        by mx0b-001ae601.pphosted.com with ESMTP id 2u0k1qvkeb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Tue, 30 Jul 2019 07:27:50 -0500
-Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX02.ad.cirrus.com
- (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Tue, 30 Jul
- 2019 13:27:48 +0100
-Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server id 15.1.1591.10 via Frontend
- Transport; Tue, 30 Jul 2019 13:27:48 +0100
-Received: from ediswmail.ad.cirrus.com (ediswmail.ad.cirrus.com [198.61.86.93])
-        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id B7C512A1;
-        Tue, 30 Jul 2019 13:27:48 +0100 (BST)
-Date:   Tue, 30 Jul 2019 13:27:48 +0100
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     Thomas Preston <thomas.preston@codethink.co.uk>
-CC:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Marco Felsch <m.felsch@pengutronix.de>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Kirill Marinushkin <kmarinushkin@birdec.tech>,
-        Cheng-Yi Chiang <cychiang@chromium.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Annaliese McDermond <nh6z@nh6z.net>,
-        <alsa-devel@alsa-project.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Patrick Glaser <pglaser@tesla.com>,
-        Rob Duncan <rduncan@tesla.com>, Nate Case <ncase@tesla.com>
-Subject: Re: [PATCH v2 1/3] dt-bindings: ASoC: Add TDA7802 amplifier
-Message-ID: <20190730122748.GF54126@ediswmail.ad.cirrus.com>
-References: <20190730120937.16271-1-thomas.preston@codethink.co.uk>
- <20190730120937.16271-2-thomas.preston@codethink.co.uk>
+        id S1728089AbfG3M2B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 08:28:01 -0400
+Received: from mail-eopbgr10064.outbound.protection.outlook.com ([40.107.1.64]:62511
+        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726167AbfG3M2B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 08:28:01 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=j4CDS7NQuNYaC50HyQfSGEZZfxoSTRTcWVO8yoWPfr1Mdl/UFBcAsUgQybYmW5G7SihllJykFhwRmv/48bqDcXh9AqMpBE8UWfdBzUkqd+aK1QojPwneT/ug1XiblMjtfdNJ9VH/RZl+wfHuZRthiOqg48zqMhTRS+OdIFme+im7g1IfMKHQJ6hefk+TNpjX6m+PRIwGh2q+X6EGTZOQ6cDMixqSm+NMtAdcrene9VK10SSXIW3GqEbScA7Spgv8Ke/nuShNoWU8UhDC+mVer0s3lztZoNIxH7YJuHw2Tq2GVQZMkq2Wh+8Bwu2Bz3Ad4CakAVV8Q9CneR/QJ4PszA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XwoxgYJDfCkn2n8/y2mCQ+M7ba+48jQyrxholrGcctU=;
+ b=KQJD5ul+QC1wNQYchKzxF1U/qMqH9xVoJCu5Xn08vK05sYUJicTMkCMs/5xVtb2++YMMHDfnpAUVqBFsgRW37Z1h2+VlzZzxv/JqxhQQ/75m7nqEdyDxFe7btyyBW1ajIxLXqW2KbFgcVieMtvlmYYpzS5kDdA/vXNtFP3tX9fDewwZoU1F6eGgddgGa6O+iTbHMgX1QXeHaz0AbF5f+Ez71A2TTQJ3OEbW+37toOUa5HUzMtecxAN0cTOWjlpZCPju7tmoK7dLE7IsHxtkEpRQVog5kfKFJfIjW2vX7fXKAi2VjWjSBqBze3T6eWrxN2RnOtjcTZbD1EHmu01hlpw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
+ smtp.mailfrom=nxp.com;dmarc=pass action=none header.from=nxp.com;dkim=pass
+ header.d=nxp.com;arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XwoxgYJDfCkn2n8/y2mCQ+M7ba+48jQyrxholrGcctU=;
+ b=rd3g0H7rTgmdBA/+yL2dDDBwURzJmESdL66JU8CC63VlftvNZD/VUWjXlRl2y6fp+MQipo2EsPvHSy7qdsvhujglK5E8fPBkB3iYsShtHJo3dqr9U7umewjq6VCYNnUk4iaPLeFeM1qhfXm+/u6tomvJxhFh5RaAcxNvsIwVKmY=
+Received: from VI1PR04MB4445.eurprd04.prod.outlook.com (20.177.55.161) by
+ VI1PR04MB4112.eurprd04.prod.outlook.com (52.133.14.153) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2115.10; Tue, 30 Jul 2019 12:27:56 +0000
+Received: from VI1PR04MB4445.eurprd04.prod.outlook.com
+ ([fe80::8d42:8283:ede8:9abf]) by VI1PR04MB4445.eurprd04.prod.outlook.com
+ ([fe80::8d42:8283:ede8:9abf%7]) with mapi id 15.20.2115.005; Tue, 30 Jul 2019
+ 12:27:56 +0000
+From:   Iuliana Prodan <iuliana.prodan@nxp.com>
+To:     Herbert Xu <herbert@gondor.apana.org.au>,
+        Horia Geanta <horia.geanta@nxp.com>,
+        Aymen Sghaier <aymen.sghaier@nxp.com>
+CC:     "David S. Miller" <davem@davemloft.net>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH v4 10/14] crypto: caam - fix MDHA key derivation for
+ certain user key lengths
+Thread-Topic: [PATCH v4 10/14] crypto: caam - fix MDHA key derivation for
+ certain user key lengths
+Thread-Index: AQHVRsbnGt/UawgfPUat+h6bvvIJAw==
+Date:   Tue, 30 Jul 2019 12:27:56 +0000
+Message-ID: <VI1PR04MB4445047FD7ABADD93F3D70338CDC0@VI1PR04MB4445.eurprd04.prod.outlook.com>
+References: <1564484805-28735-1-git-send-email-iuliana.prodan@nxp.com>
+ <1564484805-28735-11-git-send-email-iuliana.prodan@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=iuliana.prodan@nxp.com; 
+x-originating-ip: [212.146.100.6]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 0a43c3b2-a8d2-48e7-b857-08d714e95a11
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR04MB4112;
+x-ms-traffictypediagnostic: VI1PR04MB4112:
+x-microsoft-antispam-prvs: <VI1PR04MB4112D27F3B78C43C81A5DD3C8CDC0@VI1PR04MB4112.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8882;
+x-forefront-prvs: 0114FF88F6
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(376002)(346002)(366004)(39860400002)(396003)(189003)(199004)(6506007)(64756008)(4326008)(446003)(52536014)(71200400001)(71190400001)(256004)(486006)(66476007)(86362001)(7736002)(229853002)(66946007)(53546011)(478600001)(76116006)(305945005)(91956017)(68736007)(66446008)(66556008)(6246003)(74316002)(6436002)(5660300002)(3846002)(4744005)(6116002)(2906002)(76176011)(53936002)(66066001)(7696005)(55016002)(14454004)(8676002)(8936002)(110136005)(9686003)(25786009)(44832011)(54906003)(81166006)(81156014)(102836004)(186003)(316002)(476003)(33656002)(26005)(99286004)(6636002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB4112;H:VI1PR04MB4445.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: Uo9ZZkubFo3LrqPUi60Af05Nji716AHwFaQocKQOL3OgDebrlIRxhwXi7oZKMy3X9AGmc9mtY5ZLuupBJyyR+qgoruTs2TgMHUHD9SoNKxYRG0aLK21Qs+AKFoKDEIV88oyYgT7yoi+lWsBZgnzP2ncqRsAXBSUSYAnOSlLB4MxNggtiZW2adB/wDhJOeglRUvFsMjiAjhCcYu2LPN7yvFsZrcbVCE9QxJA6IwlFudfHy1BS/j6zKZ9diiXg7T+/QIgMlTeWTOSihNZlIVX7M8fKEF51LlEdHv1s7KMP8fLPk8qWEFqk2NketH1vvZvSPQ9LK+BiIJLmh8aEOrB1zmwPfNqYYkE4cMW8lz7qMbhv4akD+CBadfiKUFxfQwp+L+LK4qTiIWOUAzBKqeQGJJQO+cG5Wlh7q2Wqtu3zxaU=
+Content-Type: text/plain; charset="iso-8859-2"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20190730120937.16271-2-thomas.preston@codethink.co.uk>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Proofpoint-SPF-Result: fail
-X-Proofpoint-SPF-Record: v=spf1 include:spf-001ae601.pphosted.com include:spf.protection.outlook.com
- -all
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 suspectscore=0
- mlxlogscore=999 lowpriorityscore=0 priorityscore=1501 impostorscore=0
- clxscore=1011 phishscore=0 adultscore=0 mlxscore=0 spamscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-1906280000
- definitions=main-1907300130
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0a43c3b2-a8d2-48e7-b857-08d714e95a11
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Jul 2019 12:27:56.5431
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: iuliana.prodan@nxp.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB4112
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 30, 2019 at 01:09:35PM +0100, Thomas Preston wrote:
-> Signed-off-by: Thomas Preston <thomas.preston@codethink.co.uk>
-> Cc: Patrick Glaser <pglaser@tesla.com>
-> Cc: Rob Duncan <rduncan@tesla.com>
-> Cc: Nate Case <ncase@tesla.com>
-> ---
->  .../devicetree/bindings/sound/tda7802.txt     | 26 +++++++++++++++++++
->  1 file changed, 26 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/sound/tda7802.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/sound/tda7802.txt b/Documentation/devicetree/bindings/sound/tda7802.txt
-> new file mode 100644
-> index 000000000000..f80aaf4f1ba0
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/sound/tda7802.txt
-> @@ -0,0 +1,26 @@
-> +ST TDA7802 audio processor
-> +
-> +This device supports I2C only.
-> +
-> +Required properties:
-> +
-> +- compatible : "st,tda7802"
-> +- reg : the I2C address of the device
-> +- enable-supply : a regulator spec for the PLLen pin
-> +
-> +Optional properties:
-> +
-> +- st,gain-ch13 : gain for channels 1 and 3 (range: 1-4)
-> +- st,gain-ch24 : gain for channels 2 and 3 (range: 1-4)
-
-I wouldn't have expected the gains to be available as a device
-tree setting.
-
-> +- st,diagnostic-mode-ch13 : diagnotic mode for channels 1 and 3
-> +                            values: "Speaker" (default), "Booster"
-> +- st,diagnostic-mode-ch24 : diagnotic mode for channels 2 and 4
-> +                            values: "Speaker" (default), "Booster"
-> +
-> +Example:
-> +
-> +amp: tda7802@6c {
-> +	compatible = "st,tda7802";
-> +	reg = <0x6c>;
-> +	enable-supply = <&amp_enable_reg>;
-> +};
-> -- 
-> 2.21.0
-> 
-
-Thanks,
-Charles
+On 7/30/2019 2:06 PM, Iuliana Prodan wrote:=0A=
+> From: Horia Geant=E3 <horia.geanta@nxp.com>=0A=
+> =0A=
+> Fuzz testing uncovered an issue when |user key| > |derived key|.=0A=
+> Derived key generation has to be fixed in two cases:=0A=
+> =0A=
+> 1. Era >=3D 6 (DKP is available)=0A=
+> DKP cannot be used with immediate input key if |user key| > |derived key|=
+,=0A=
+> since the resulting descriptor (after DKP execution) would be invalid -=
+=0A=
+> having a few bytes from user key left in descriptor buffer=0A=
+> as incorrect opcodes.=0A=
+> =0A=
+> Fix DKP usage both in standalone hmac and in authenc algorithms.=0A=
+> For authenc the logic is simplified, by always storing both virtual=0A=
+> and dma key addresses.=0A=
+> =0A=
+> 2. Era < 6=0A=
+> The same case (|user key| > |derived key|) fails when DKP=0A=
+> is not available.=0A=
+> Make sure gen_split_key() dma maps max(|user key|, |derived key|),=0A=
+> since this is an in-place (bidirectional) operation.=0A=
+> =0A=
+> Signed-off-by: Horia Geant=E3 <horia.geanta@nxp.com>=0A=
+> ---=0A=
+Reviewed-by: Iuliana Prodan <iuliana.prodan@nxp.com>=0A=
+=0A=
+Thanks,=0A=
+Iulia=0A=
