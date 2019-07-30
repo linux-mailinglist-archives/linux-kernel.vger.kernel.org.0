@@ -2,81 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F07A7AD8E
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 18:30:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C9E07ADD4
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 18:34:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731533AbfG3Qal (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 12:30:41 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:39082 "EHLO inva020.nxp.com"
+        id S1729523AbfG3QeA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 12:34:00 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:45300 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725889AbfG3Qak (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 12:30:40 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id E0DA81A0724;
-        Tue, 30 Jul 2019 18:30:38 +0200 (CEST)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id D50651A071D;
-        Tue, 30 Jul 2019 18:30:38 +0200 (CEST)
-Received: from lorenz.ea.freescale.net (lorenz.ea.freescale.net [10.171.71.5])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 8BF89204D6;
-        Tue, 30 Jul 2019 18:30:38 +0200 (CEST)
-From:   Iuliana Prodan <iuliana.prodan@nxp.com>
-To:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-imx <linux-imx@nxp.com>
-Subject: [PATCH v4] crypto: gcm - restrict assoclen for rfc4543
-Date:   Tue, 30 Jul 2019 19:30:33 +0300
-Message-Id: <1564504233-26186-1-git-send-email-iuliana.prodan@nxp.com>
-X-Mailer: git-send-email 2.1.0
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1732849AbfG3Qcd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 12:32:33 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E8C0181F0E;
+        Tue, 30 Jul 2019 16:32:32 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.136])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 547B960922;
+        Tue, 30 Jul 2019 16:32:31 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Tue, 30 Jul 2019 18:32:32 +0200 (CEST)
+Date:   Tue, 30 Jul 2019 18:32:30 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Christian Brauner <christian@brauner.io>
+Cc:     linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+        tj@kernel.org, tglx@linutronix.de, prsood@codeaurora.org,
+        avagin@gmail.com, Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH] exit: make setting exit_state consistent
+Message-ID: <20190730163229.GD18501@redhat.com>
+References: <20190729162757.22694-1-christian@brauner.io>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190729162757.22694-1-christian@brauner.io>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Tue, 30 Jul 2019 16:32:33 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Based on seqiv, IPsec ESP and rfc4543/rfc4106 the assoclen can be 16 or
-20 bytes.
+On 07/29, Christian Brauner wrote:
+>
+> --- a/kernel/exit.c
+> +++ b/kernel/exit.c
+> @@ -734,9 +734,10 @@ static void exit_notify(struct task_struct *tsk, int group_dead)
+>  		autoreap = true;
+>  	}
+>  
+> -	tsk->exit_state = autoreap ? EXIT_DEAD : EXIT_ZOMBIE;
+> -	if (tsk->exit_state == EXIT_DEAD)
+> +	if (autoreap) {
+> +		tsk->exit_state = EXIT_DEAD;
+>  		list_add(&tsk->ptrace_entry, &dead);
+> +	}
+>  
 
-From esp4/esp6, assoclen is sizeof IP Header. This includes spi, seq_no
-and extended seq_no, that is 8 or 12 bytes.
-In seqiv, to asscolen is added the IV size (8 bytes).
-Therefore, the assoclen, for rfc4543, should be restricted to 16 or 20
-bytes, as for rfc4106.
-
-Signed-off-by: Iuliana Prodan <iuliana.prodan@nxp.com>
-Reviewed-by: Horia Geanta <horia.geanta@nxp.com>
----
-Changes since v3:
-- use ternary operator for return.
-
-Patch depends on series:
-https://patchwork.kernel.org/project/linux-crypto/list/?series=152649
----
- crypto/gcm.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/crypto/gcm.c b/crypto/gcm.c
-index 2f3b50f..8adf64f 100644
---- a/crypto/gcm.c
-+++ b/crypto/gcm.c
-@@ -1034,12 +1034,14 @@ static int crypto_rfc4543_copy_src_to_dst(struct aead_request *req, bool enc)
- 
- static int crypto_rfc4543_encrypt(struct aead_request *req)
- {
--	return crypto_rfc4543_crypt(req, true);
-+	return crypto_ipsec_check_assoclen(req->assoclen) ?:
-+			crypto_rfc4543_crypt(req, true);
- }
- 
- static int crypto_rfc4543_decrypt(struct aead_request *req)
- {
--	return crypto_rfc4543_crypt(req, false);
-+	return crypto_ipsec_check_assoclen(req->assoclen) ?:
-+			crypto_rfc4543_crypt(req, false);
- }
- 
- static int crypto_rfc4543_init_tfm(struct crypto_aead *tfm)
--- 
-2.1.0
+Acked-by: Oleg Nesterov <oleg@redhat.com>
 
