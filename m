@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D5AE79EFB
+	by mail.lfdr.de (Postfix) with ESMTP id 87E1279EFC
 	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 04:57:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731740AbfG3C5R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 29 Jul 2019 22:57:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46786 "EHLO mail.kernel.org"
+        id S1731752AbfG3C5S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 29 Jul 2019 22:57:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46846 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731459AbfG3C5O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Jul 2019 22:57:14 -0400
+        id S1731736AbfG3C5Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Jul 2019 22:57:16 -0400
 Received: from quaco.ghostprotocols.net (unknown [179.97.35.50])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D95AC21726;
-        Tue, 30 Jul 2019 02:57:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C3A57216C8;
+        Tue, 30 Jul 2019 02:57:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564455433;
-        bh=MDNSvMDSKWeF6aQiQVcOuTHdoGP+VEqV8myc8KGxdOI=;
+        s=default; t=1564455436;
+        bh=gGs15WMTHsgUPcMGOUU9aQw8Ax29+/dXYlwVm9OtoVw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rPviL+zyx98EY983I1ACRZv1bRQ7XkUpheQ+DOKo2Dbwo2wvV+dBcJWxtU7XDJFAE
-         m7uigQTfxPG6oecoSALIyddQfWm22neXpH8gjVQ0mEItwlWrZeiGPfuVRcaHjOxjHW
-         y7c0FF93bpieZwweeTk9GlbI1BOmeON3iIR+xr4g=
+        b=2SFhfE2kXByo/NaTjxEvRli+xMwHSu4rvfAZGWeF/SMlaJqLfMYboT/ez1iU/O+gx
+         dDeXsNbwlYxToaJyk1i+z7GuoLYkVXKU4xTQtYUCR5FwBIcBWCJVfxGgKQ4KUl4dco
+         iwsMAoDJywcS4U3QWv9lX7Z+To1WtKUXkHiC3xao=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
@@ -33,9 +33,9 @@ Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         Adrian Hunter <adrian.hunter@intel.com>,
         =?UTF-8?q?Luis=20Cl=C3=A1udio=20Gon=C3=A7alves?= 
         <lclaudio@redhat.com>
-Subject: [PATCH 018/107] perf trace beauty: Disable fd->pathname when close() not enabled
-Date:   Mon, 29 Jul 2019 23:54:41 -0300
-Message-Id: <20190730025610.22603-19-acme@kernel.org>
+Subject: [PATCH 019/107] perf trace beauty: Do not try to use the fd->pathname beautifier for bind/connect fd arg
+Date:   Mon, 29 Jul 2019 23:54:42 -0300
+Message-Id: <20190730025610.22603-20-acme@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190730025610.22603-1-acme@kernel.org>
 References: <20190730025610.22603-1-acme@kernel.org>
@@ -49,84 +49,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-As we invalidate the fd->pathname table in the SCA_CLOSE_FD beautifier,
-if we don't have it we may end up keeping an fd->pathname association
-that then gets misprinted.
+Doesn't make sense and also we now beautify the sockaddr, which provides
+enough info:
 
-The previous behaviour continues when the close() syscall is enabled,
-which may still be a a problem if we lose records (i.e. we may lose a
-'close' record and then get that fd reused by socket()) but then the
-tool will notify that records are being lost and the user will be warned
-that some of the heuristics will fall apart.
+  # trace -e close,socket,connec* ssh www.bla.com
+  <SNIP>
+  close(5)                                = 0
+  socket(PF_INET, SOCK_DGRAM|CLOEXEC|NONBLOCK, IPPROTO_IP) = 5
+  connect(5, { .family: PF_INET, port: 53, addr: 192.168.44.1 }, 16) = 0
+  close(5)                                = 0
+  socket(PF_INET, SOCK_STREAM, IPPROTO_TCP) = 5
+  ^C#
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Luis Cláudio Gonçalves <lclaudio@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-b7t6h8sq9lebemvfy2zh3qq1@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-h9drpb7ail808d2mh4n7tla4@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-trace.c | 19 ++++++++++++++++---
- 1 file changed, 16 insertions(+), 3 deletions(-)
+ tools/perf/builtin-trace.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
 diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index 123d7efc12e8..94c33bb573c1 100644
+index 94c33bb573c1..010aa9e9a561 100644
 --- a/tools/perf/builtin-trace.c
 +++ b/tools/perf/builtin-trace.c
-@@ -127,6 +127,7 @@ struct trace {
- 	unsigned int		min_stack;
- 	int			raw_augmented_syscalls_args_size;
- 	bool			raw_augmented_syscalls;
-+	bool			fd_path_disabled;
- 	bool			sort_events;
- 	bool			not_ev_qualifier;
- 	bool			live;
-@@ -1178,7 +1179,7 @@ static const char *thread__fd_path(struct thread *thread, int fd,
- {
- 	struct thread_trace *ttrace = thread__priv(thread);
- 
--	if (ttrace == NULL)
-+	if (ttrace == NULL || trace->fd_path_disabled)
- 		return NULL;
- 
- 	if (fd < 0)
-@@ -2097,7 +2098,7 @@ static int trace__sys_exit(struct trace *trace, struct perf_evsel *evsel,
- 
- 	ret = perf_evsel__sc_tp_uint(evsel, ret, sample);
- 
--	if (sc->is_open && ret >= 0 && ttrace->filename.pending_open) {
-+	if (!trace->fd_path_disabled && sc->is_open && ret >= 0 && ttrace->filename.pending_open) {
- 		trace__set_fd_pathname(thread, ret, ttrace->filename.name);
- 		ttrace->filename.pending_open = false;
- 		++trace->stats.vfs_getname;
-@@ -3206,7 +3207,6 @@ static int trace__run(struct trace *trace, int argc, const char **argv)
- 	if (trace->syscalls.prog_array.sys_enter)
- 		trace__init_syscalls_bpf_prog_array_maps(trace);
- 
--
- 	if (trace->ev_qualifier_ids.nr > 0) {
- 		err = trace__set_ev_qualifier_filter(trace);
- 		if (err < 0)
-@@ -3218,6 +3218,19 @@ static int trace__run(struct trace *trace, int argc, const char **argv)
- 		}
- 	}
- 
-+	/*
-+	 * If the "close" syscall is not traced, then we will not have the
-+	 * opportunity to, in syscall_arg__scnprintf_close_fd() invalidate the
-+	 * fd->pathname table and were ending up showing the last value set by
-+	 * syscalls opening a pathname and associating it with a descriptor or
-+	 * reading it from /proc/pid/fd/ in cases where that doesn't make
-+	 * sense.
-+	 *
-+	 *  So just disable this beautifier (SCA_FD, SCA_FDAT) when 'close' is
-+	 *  not in use.
-+	 */
-+	trace->fd_path_disabled = !trace__syscall_enabled(trace, syscalltbl__id(trace->sctbl, "close"));
-+
- 	err = perf_evlist__apply_filters(evlist, &evsel);
- 	if (err < 0)
- 		goto out_error_apply_filters;
+@@ -710,7 +710,8 @@ static struct syscall_fmt {
+ 	  .arg = { [0] = { .scnprintf = SCA_X86_ARCH_PRCTL_CODE, /* code */ },
+ 		   [1] = { .scnprintf = SCA_PTR, /* arg2 */ }, }, },
+ 	{ .name	    = "bind",
+-	  .arg = { [1] = { .scnprintf = SCA_SOCKADDR, /* umyaddr */ }, }, },
++	  .arg = { [0] = { .scnprintf = SCA_INT, /* fd */ },
++		   [1] = { .scnprintf = SCA_SOCKADDR, /* umyaddr */ }, }, },
+ 	{ .name	    = "bpf",
+ 	  .arg = { [0] = STRARRAY(cmd, bpf_cmd), }, },
+ 	{ .name	    = "brk",	    .hexret = true,
+@@ -726,7 +727,8 @@ static struct syscall_fmt {
+ 	{ .name	    = "close",
+ 	  .arg = { [0] = { .scnprintf = SCA_CLOSE_FD, /* fd */ }, }, },
+ 	{ .name	    = "connect",
+-	  .arg = { [1] = { .scnprintf = SCA_SOCKADDR, /* servaddr */ },
++	  .arg = { [0] = { .scnprintf = SCA_INT, /* fd */ },
++		   [1] = { .scnprintf = SCA_SOCKADDR, /* servaddr */ },
+ 		   [2] = { .scnprintf = SCA_INT, /* addrlen */ }, }, },
+ 	{ .name	    = "epoll_ctl",
+ 	  .arg = { [1] = STRARRAY(op, epoll_ctl_ops), }, },
 -- 
 2.21.0
 
