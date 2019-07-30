@@ -2,132 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC8CC7A6A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 13:07:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CBDA7A6A8
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Jul 2019 13:08:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730718AbfG3LHo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 07:07:44 -0400
-Received: from mga11.intel.com ([192.55.52.93]:57603 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730639AbfG3LHg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 07:07:36 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jul 2019 04:07:35 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,326,1559545200"; 
-   d="scan'208";a="371502145"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.145])
-  by fmsmga006.fm.intel.com with ESMTP; 30 Jul 2019 04:07:32 -0700
-Received: from andy by smile with local (Exim 4.92)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1hsPyc-000293-LK; Tue, 30 Jul 2019 14:07:30 +0300
-Date:   Tue, 30 Jul 2019 14:07:30 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Brian Norris <briannorris@chromium.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Salvatore Bellizzi <salvatore.bellizzi@linux.seppia.net>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        egranata@chromium.org, egranata@google.com,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Gwendal Grignou <gwendal@chromium.org>,
-        linux-acpi@vger.kernel.org, Benson Leung <bleung@chromium.org>,
-        stable@vger.kernel.org
-Subject: Re: [PATCH] driver core: platform: return -ENXIO for missing GpioInt
-Message-ID: <20190730110730.GK23480@smile.fi.intel.com>
-References: <20190729204954.25510-1-briannorris@chromium.org>
+        id S1730165AbfG3LIK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 07:08:10 -0400
+Received: from orion.archlinux.org ([88.198.91.70]:45038 "EHLO
+        orion.archlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727111AbfG3LIJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 07:08:09 -0400
+Received: from orion.archlinux.org (localhost [127.0.0.1])
+        by orion.archlinux.org (Postfix) with ESMTP id 4B3A8141AE94CC;
+        Tue, 30 Jul 2019 11:08:06 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on orion
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.7 required=5.0 tests=ALL_TRUSTED=-1,BAYES_00=-1,
+        DMARC_FAIL_NONE=0.25,T_DMARC_POLICY_NONE=0.01,T_DMARC_TESTS_FAIL=0.01
+        autolearn=no autolearn_force=no version=3.4.2
+X-Spam-BL-Results: 
+Received: from saetre (unknown [154.53.1.40])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: ffy00)
+        by orion.archlinux.org (Postfix) with ESMTPSA;
+        Tue, 30 Jul 2019 11:08:05 +0000 (UTC)
+Message-ID: <1ffa6265ec30bc0e2d720def221dc046cc17520b.camel@archlinux.org>
+Subject: Re: [PATCH] hid-logitech-dj: add other Lightspeed receiver
+From:   Filipe =?ISO-8859-1?Q?La=EDns?= <lains@archlinux.org>
+To:     Filipe =?ISO-8859-1?Q?La=EDns?= <lains@archlinux.org>
+Cc:     nlopezcasad@logitech.com, Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20190718140358.9058-1-lains@archlinux.org>
+References: <20190718140358.9058-1-lains@archlinux.org>
+Organization: Archlinux
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-dRUS50kxUdxY1qNpVTUb"
+Date:   Tue, 30 Jul 2019 12:08:04 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190729204954.25510-1-briannorris@chromium.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Evolution 3.32.4 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 29, 2019 at 01:49:54PM -0700, Brian Norris wrote:
-> Commit daaef255dc96 ("driver: platform: Support parsing GpioInt 0 in
-> platform_get_irq()") broke the Embedded Controller driver on most LPC
-> Chromebooks (i.e., most x86 Chromebooks), because cros_ec_lpc expects
-> platform_get_irq() to return -ENXIO for non-existent IRQs.
-> Unfortunately, acpi_dev_gpio_irq_get() doesn't follow this convention
-> and returns -ENOENT instead. So we get this error from cros_ec_lpc:
-> 
->    couldn't retrieve IRQ number (-2)
-> 
-> I see a variety of drivers that treat -ENXIO specially, so rather than
-> fix all of them, let's fix up the API to restore its previous behavior.
-> 
-> I reported this on v2 of this patch:
-> 
-> https://lore.kernel.org/lkml/20190220180538.GA42642@google.com/
-> 
-> but apparently the patch had already been merged before v3 got sent out:
-> 
-> https://lore.kernel.org/lkml/20190221193429.161300-1-egranata@chromium.org/
-> 
-> and the result is that the bug landed and remains unfixed.
-> 
-> I differ from the v3 patch by:
->  * allowing for ret==0, even though acpi_dev_gpio_irq_get() specifically
->    documents (and enforces) that 0 is not a valid return value (noted on
->    the v3 review)
->  * adding a small comment
 
-Thank you for fixing this.
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+--=-dRUS50kxUdxY1qNpVTUb
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> 
-> Reported-by: Brian Norris <briannorris@chromium.org>
-> Reported-by: Salvatore Bellizzi <salvatore.bellizzi@linux.seppia.net>
-> Cc: Enrico Granata <egranata@chromium.org>
-> Cc: <stable@vger.kernel.org>
-> Fixes: daaef255dc96 ("driver: platform: Support parsing GpioInt 0 in platform_get_irq()")
-> Signed-off-by: Brian Norris <briannorris@chromium.org>
+On Thu, 2019-07-18 at 15:03 +0100, Filipe La=C3=ADns wrote:
+> This receiver seems to only be used in the G305.
+>=20
+> Signed-off-by: Filipe La=C3=ADns <lains@archlinux.org>
 > ---
-> Side note: it might have helped alleviate some of this pain if there
-> were email notifications to the mailing list when a patch gets applied.
-> I didn't realize (and I'm not sure if Enrico did) that v2 was already
-> merged by the time I noted its mistakes. If I had known, I would have
-> suggested a follow-up patch, not a v3.
-> 
-> I know some maintainers' "tip bots" do this, but not all apparently.
-> 
->  drivers/base/platform.c | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/base/platform.c b/drivers/base/platform.c
-> index 506a0175a5a7..ec974ba9c0c4 100644
-> --- a/drivers/base/platform.c
-> +++ b/drivers/base/platform.c
-> @@ -157,8 +157,13 @@ int platform_get_irq(struct platform_device *dev, unsigned int num)
->  	 * the device will only expose one IRQ, and this fallback
->  	 * allows a common code path across either kind of resource.
->  	 */
-> -	if (num == 0 && has_acpi_companion(&dev->dev))
-> -		return acpi_dev_gpio_irq_get(ACPI_COMPANION(&dev->dev), num);
-> +	if (num == 0 && has_acpi_companion(&dev->dev)) {
-> +		int ret = acpi_dev_gpio_irq_get(ACPI_COMPANION(&dev->dev), num);
-> +
-> +		/* Our callers expect -ENXIO for missing IRQs. */
-> +		if (ret >= 0 || ret == -EPROBE_DEFER)
-> +			return ret;
-> +	}
->  
->  	return -ENXIO;
->  #endif
-> -- 
-> 2.22.0.709.g102302147b-goog
-> 
+>  drivers/hid/hid-ids.h         | 1 +
+>  drivers/hid/hid-logitech-dj.c | 4 ++++
+>  2 files changed, 5 insertions(+)
+>=20
+> diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
+> index 884356feb016..e5d0fd85e61d 100644
+> --- a/drivers/hid/hid-ids.h
+> +++ b/drivers/hid/hid-ids.h
+> @@ -770,6 +770,7 @@
+>  #define USB_DEVICE_ID_LOGITECH_NANO_RECEIVER_2		0xc534
+>  #define USB_DEVICE_ID_LOGITECH_NANO_RECEIVER_LIGHTSPEED	0xc539
+>  #define USB_DEVICE_ID_LOGITECH_NANO_RECEIVER_POWERPLAY	0xc53a
+> +#define USB_DEVICE_ID_LOGITECH_NANO_RECEIVER_LIGHTSPEED_2	0xc53f
+>  #define USB_DEVICE_ID_SPACETRAVELLER	0xc623
+>  #define USB_DEVICE_ID_SPACENAVIGATOR	0xc626
+>  #define USB_DEVICE_ID_DINOVO_DESKTOP	0xc704
+> diff --git a/drivers/hid/hid-logitech-dj.c b/drivers/hid/hid-
+> logitech-dj.c
+> index d5b47ec1510c..0139912c3f69 100644
+> --- a/drivers/hid/hid-logitech-dj.c
+> +++ b/drivers/hid/hid-logitech-dj.c
+> @@ -1836,6 +1836,10 @@ static const struct hid_device_id
+> logi_dj_receivers[] =3D {
+>  	  HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH,
+>  		USB_DEVICE_ID_LOGITECH_NANO_RECEIVER_LIGHTSPEED),
+>  	 .driver_data =3D recvr_type_gaming_hidpp},
+> +	{ /* Logitech lightspeed receiver (0xc53f) */
+> +	  HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH,
+> +		USB_DEVICE_ID_LOGITECH_NANO_RECEIVER_LIGHTSPEED_2),
+> +	 .driver_data =3D recvr_type_gaming_hidpp},
+>  	{ /* Logitech 27 MHz HID++ 1.0 receiver (0xc513) */
+>  	  HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH,
+> USB_DEVICE_ID_MX3000_RECEIVER),
+>  	 .driver_data =3D recvr_type_27mhz},
 
--- 
-With Best Regards,
-Andy Shevchenko
+Please don't merge this as it introduces a regression. I will send a new re=
+vision.
 
+Filipe La=C3=ADns
+3DCE 51D6 0930 EBA4 7858 BA41 46F6 33CB B0EB 4BF2
 
+--=-dRUS50kxUdxY1qNpVTUb
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0jW0leqs33gyftiw+JPGdIFqqV0FAl1AJQoACgkQ+JPGdIFq
+qV3x8Q//ekkTDb7koCBceey+dLahDlF6CWC7CGKzt2wbhp55PkmpX+9E/PXnY5eD
+R8wh07Dwdmxk0rqG3t33Q/nZAt1HJRQ5UBP/cb0alWiVj3gWIteLsA4R0+tcMAko
+NQJ90SMMOYpco823IwH2zwAGLtRaJUQB7scefAxMjZidYyCa8PBkaYi80QsY5Swc
+V+0J4t9nknieMlKIZc70yzU34+r7I901Poi/GefnEHhAEGLQw93pGmq9EK64JcEV
+pKISOpS7z2UgBOTkKl6Fq6dri+0adKAgSBPWj65cmx39iBhuBkaKekbRF7jVxq4l
+SgzF/3oqkVAba7IQ4eONrUyXBnBzHkHXJDP6MkVhb0bQz+ar1/6iSIwaBLbi9SIO
+arDIc1iTg0y9Wo/C1xRHfMzGpTbVAXWVVA/qJEAhVb87Q0gfpxcK8I3J6iVZ6ys4
+qA6YaPp8oi/5XADDP7k3OsXn3rAKHj48XhGiU0vOO7bWzW0NpcgmjVRvFxLIWy1f
+p8W5kxZAGjIatI3AkobmGN3BNqcMIoUx44jKcIZd6xfxC79weGYBuBHIOYLR9nnd
+oMpoWulrDryL2g3I72ZliupieQcZ+mSY7qLH3TV842w6CTvuev5lFV90UiBvDS4X
+zuymPsXHnV/QZI3ueKqPbEjsR7mSL5TNSH0AfjxpnnLpqYagPdY=
+=dDRO
+-----END PGP SIGNATURE-----
+
+--=-dRUS50kxUdxY1qNpVTUb--
