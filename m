@@ -2,285 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93F4D7BB91
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 10:26:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 909737BB9D
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 10:26:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728108AbfGaI0B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 04:26:01 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:55575 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727946AbfGaIZx (ORCPT
+        id S1727622AbfGaIZl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 04:25:41 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:59498 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726526AbfGaIZi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 04:25:53 -0400
-Received: by mail-wm1-f65.google.com with SMTP id a15so59786993wmj.5;
-        Wed, 31 Jul 2019 01:25:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=ivGcJv42u9xsKXcWxc1pwTe15jdiFq07eZU/Ce/ZJDg=;
-        b=TTVQalGPI/gXVk9TBMwBE7O7E07KJdxhVNfqiZUNQvkVAJrEua5Dk0oadr3RlwiqOg
-         Nm6OMlbF9cV7HJhjSDwFt++12poRJEjTgOgBSiVkrH78sdE082zopKmnAMAEAnxJBzr6
-         48PboFTVeQAJsgl8pYpKMiuYY/FGIkMu3Vqaqhdi8oC3vR6ZLIfLW/uWId9XNAvFVQ6c
-         fYzOQ42jmO3i1uhpB1niVJFJvJa0xlk9ZbJ3bWwrk8xC4ZJfOXEwpc2/gMYAr/0N/Fau
-         zmiZ/x6uzz8WJH1UvwwiocCvrwPGC+mNwDdaX5WcBGQfN5fsJpK5d2oVf5Gv+8MZH6+f
-         BXKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=ivGcJv42u9xsKXcWxc1pwTe15jdiFq07eZU/Ce/ZJDg=;
-        b=dhPkiPdevULyPQ7uswQjr8hMjzoJklXJ0AxDET1hiyDU4gqINWJSebRtIdRjUyycZo
-         7/MWMMrXiFiou/MVtxi1RmcHdkc5WTEvTPS/T25qMXyDma4/2vdjy3jIf2BnSAgUyC2x
-         hQFmgtyVzZh7JFC2bQ6QYDRaibjLsetNaDFm/rsumKT2tcoTkVfcRd8EBbjv7lmFq5H3
-         SHmck6jNRPY8DeVXFImuZnNdraxZ3iEciwrh0jnN8iRfGgHCndNva8O6IQBWjlxXxWsp
-         OB9phagjaoc6UKjqCDItAODvsEPNcgJGu6REkLTjWmy3ujnsK9Plnn3WqFkROoo215C7
-         kZ5A==
-X-Gm-Message-State: APjAAAV6OKCxP9mN4JTEtfnqiJzgBDKv8AOAB3BsMmENvhF9c+ZUbWDR
-        Ff52l/TuuffaKvt32X1VXlA9hEnpJoU=
-X-Google-Smtp-Source: APXvYqwz+yc8zkVNN/feyEHRqL/AEMz13uLWrgyHp+IJT1Xc7OxDf7XKEhueMoWf61mpNG6w9dIfAA==
-X-Received: by 2002:a05:600c:214c:: with SMTP id v12mr109623683wml.28.1564561550263;
-        Wed, 31 Jul 2019 01:25:50 -0700 (PDT)
-Received: from vd-lxpc-hfe.ad.vahle.at ([80.110.31.209])
-        by smtp.gmail.com with ESMTPSA id c78sm93223959wmd.16.2019.07.31.01.25.49
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 31 Jul 2019 01:25:49 -0700 (PDT)
-From:   Hubert Feurstein <h.feurstein@gmail.com>
-To:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Hubert Feurstein <h.feurstein@gmail.com>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Rasmus Villemoes <rasmus.villemoes@prevas.dk>
-Subject: [PATCH net-next v2 6/6] net: dsa: mv88e6xxx: add PTP support for MV88E6250 family
-Date:   Wed, 31 Jul 2019 10:23:51 +0200
-Message-Id: <20190731082351.3157-7-h.feurstein@gmail.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190731082351.3157-1-h.feurstein@gmail.com>
-References: <20190731082351.3157-1-h.feurstein@gmail.com>
+        Wed, 31 Jul 2019 04:25:38 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6V8O2rn081021;
+        Wed, 31 Jul 2019 08:25:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding;
+ s=corp-2018-07-02; bh=VzY9DtvcuYA0baJP6t/Benjg0AjHRQ2iCGpw97K47d4=;
+ b=rVzjxOKLZYfncMJWM6YjSqp66vZz7Im9L9AWAq0M/1J1TSTOCQjdkPZzvqksQg3BDtbc
+ nJsPa1E/SBHFmxcYmm+DS/oSaFMoyfQkqq1klkdzSBL5QD1IVniDBMrK86fNeeXZo+I1
+ MitK1+U2rUnN19Eov28HOCs3UZlSsOhNkOqlY3KuHdLOTWWbkka9MGyly9Vq5PU9dtYQ
+ p26QpaXYxH5xVxroX5K584wyuVmBcUCjaRQNIgaiNxa98T+sflxQUcwIuMYOjE1cUvLQ
+ ZmWqK0OmFnRW9b+xFwvmN2euQ+jfySlnKzjDA5SjCE4REh0uQD83bVEuxTvwL4/w3UYt zw== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2120.oracle.com with ESMTP id 2u0ejpkkuc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 31 Jul 2019 08:25:23 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6V8Mu9M055712;
+        Wed, 31 Jul 2019 08:25:22 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3020.oracle.com with ESMTP id 2u2exbbmha-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 31 Jul 2019 08:25:22 +0000
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x6V8PJ4X004270;
+        Wed, 31 Jul 2019 08:25:19 GMT
+Received: from localhost.localdomain (/73.243.10.6)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 31 Jul 2019 01:25:19 -0700
+From:   William Kucharski <william.kucharski@oracle.com>
+To:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org
+Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
+        Song Liu <songliubraving@fb.com>,
+        Bob Kasten <robert.a.kasten@intel.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        William Kucharski <william.kucharski@oracle.com>,
+        Chad Mynhier <chad.mynhier@oracle.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Johannes Weiner <jweiner@fb.com>,
+        Matthew Wilcox <willy@infradead.org>
+Subject: [PATCH v3 0/2] mm,thp: Add filemap_huge_fault() for THP
+Date:   Wed, 31 Jul 2019 02:25:11 -0600
+Message-Id: <20190731082513.16957-1-william.kucharski@oracle.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9334 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=820
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1907310090
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9334 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=874 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1907310090
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds PTP support for the MV88E6250 family.
+This set of patches is the first step towards a mechanism for automatically
+mapping read-only text areas of appropriate size and alignment to THPs
+whenever possible.
 
-Signed-off-by: Hubert Feurstein <h.feurstein@gmail.com>
----
- drivers/net/dsa/mv88e6xxx/chip.c |  4 ++
- drivers/net/dsa/mv88e6xxx/chip.h |  4 ++
- drivers/net/dsa/mv88e6xxx/ptp.c  | 79 +++++++++++++++++++++++++++-----
- drivers/net/dsa/mv88e6xxx/ptp.h  |  2 +
- 4 files changed, 78 insertions(+), 11 deletions(-)
+For now, the central routine, filemap_huge_fault(), amd various support
+routines are only included if the experimental kernel configuration option
 
-diff --git a/drivers/net/dsa/mv88e6xxx/chip.c b/drivers/net/dsa/mv88e6xxx/chip.c
-index 75cfa1f2060b..4a79e389eb8b 100644
---- a/drivers/net/dsa/mv88e6xxx/chip.c
-+++ b/drivers/net/dsa/mv88e6xxx/chip.c
-@@ -3522,6 +3522,8 @@ static const struct mv88e6xxx_ops mv88e6250_ops = {
- 	.reset = mv88e6250_g1_reset,
- 	.vtu_getnext = mv88e6250_g1_vtu_getnext,
- 	.vtu_loadpurge = mv88e6250_g1_vtu_loadpurge,
-+	.avb_ops = &mv88e6352_avb_ops,
-+	.ptp_ops = &mv88e6250_ptp_ops,
- 	.phylink_validate = mv88e6065_phylink_validate,
- };
- 
-@@ -4318,6 +4320,7 @@ static const struct mv88e6xxx_info mv88e6xxx_table[] = {
- 		.atu_move_port_mask = 0xf,
- 		.dual_chip = true,
- 		.tag_protocol = DSA_TAG_PROTO_DSA,
-+		.ptp_support = true,
- 		.ops = &mv88e6250_ops,
- 	},
- 
-@@ -4363,6 +4366,7 @@ static const struct mv88e6xxx_info mv88e6xxx_table[] = {
- 		.atu_move_port_mask = 0xf,
- 		.dual_chip = true,
- 		.tag_protocol = DSA_TAG_PROTO_DSA,
-+		.ptp_support = true,
- 		.ops = &mv88e6250_ops,
- 	},
- 
-diff --git a/drivers/net/dsa/mv88e6xxx/chip.h b/drivers/net/dsa/mv88e6xxx/chip.h
-index e7b88e9643b9..8c6d3c906197 100644
---- a/drivers/net/dsa/mv88e6xxx/chip.h
-+++ b/drivers/net/dsa/mv88e6xxx/chip.h
-@@ -539,6 +539,10 @@ struct mv88e6xxx_ptp_ops {
- 	int arr1_sts_reg;
- 	int dep_sts_reg;
- 	u32 rx_filters;
-+	u32 cc_shift;
-+	u32 cc_mult;
-+	u32 cc_mult_num;
-+	u32 cc_mult_dem;
- };
- 
- #define STATS_TYPE_PORT		BIT(0)
-diff --git a/drivers/net/dsa/mv88e6xxx/ptp.c b/drivers/net/dsa/mv88e6xxx/ptp.c
-index a1ff182c8737..073cbd0bb91b 100644
---- a/drivers/net/dsa/mv88e6xxx/ptp.c
-+++ b/drivers/net/dsa/mv88e6xxx/ptp.c
-@@ -15,11 +15,31 @@
- #include "hwtstamp.h"
- #include "ptp.h"
- 
--/* Raw timestamps are in units of 8-ns clock periods. */
--#define CC_SHIFT	28
--#define CC_MULT		(8 << CC_SHIFT)
--#define CC_MULT_NUM	(1 << 9)
--#define CC_MULT_DEM	15625ULL
-+#define MV88E6XXX_MAX_ADJ_PPB	1000000
-+
-+/* Family MV88E6250:
-+ * Raw timestamps are in units of 10-ns clock periods.
-+ *
-+ * clkadj = scaled_ppm * 10*2^28 / (10^6 * 2^16)
-+ * simplifies to
-+ * clkadj = scaled_ppm * 2^7 / 5^5
-+ */
-+#define MV88E6250_CC_SHIFT	28
-+#define MV88E6250_CC_MULT	(10 << MV88E6250_CC_SHIFT)
-+#define MV88E6250_CC_MULT_NUM	(1 << 7)
-+#define MV88E6250_CC_MULT_DEM	3125ULL
-+
-+/* Other families:
-+ * Raw timestamps are in units of 8-ns clock periods.
-+ *
-+ * clkadj = scaled_ppm * 8*2^28 / (10^6 * 2^16)
-+ * simplifies to
-+ * clkadj = scaled_ppm * 2^9 / 5^6
-+ */
-+#define MV88E6XXX_CC_SHIFT	28
-+#define MV88E6XXX_CC_MULT	(8 << MV88E6XXX_CC_SHIFT)
-+#define MV88E6XXX_CC_MULT_NUM	(1 << 9)
-+#define MV88E6XXX_CC_MULT_DEM	15625ULL
- 
- #define TAI_EVENT_WORK_INTERVAL msecs_to_jiffies(100)
- 
-@@ -179,6 +199,7 @@ static void mv88e6352_tai_event_work(struct work_struct *ugly)
- static int mv88e6xxx_ptp_adjfine(struct ptp_clock_info *ptp, long scaled_ppm)
- {
- 	struct mv88e6xxx_chip *chip = ptp_to_chip(ptp);
-+	const struct mv88e6xxx_ptp_ops *ptp_ops = chip->info->ops->ptp_ops;
- 	int neg_adj = 0;
- 	u32 diff, mult;
- 	u64 adj;
-@@ -187,10 +208,11 @@ static int mv88e6xxx_ptp_adjfine(struct ptp_clock_info *ptp, long scaled_ppm)
- 		neg_adj = 1;
- 		scaled_ppm = -scaled_ppm;
- 	}
--	mult = CC_MULT;
--	adj = CC_MULT_NUM;
-+
-+	mult = ptp_ops->cc_mult;
-+	adj = ptp_ops->cc_mult_num;
- 	adj *= scaled_ppm;
--	diff = div_u64(adj, CC_MULT_DEM);
-+	diff = div_u64(adj, ptp_ops->cc_mult_dem);
- 
- 	mv88e6xxx_reg_lock(chip);
- 
-@@ -324,6 +346,37 @@ const struct mv88e6xxx_ptp_ops mv88e6165_ptp_ops = {
- 		(1 << HWTSTAMP_FILTER_PTP_V2_EVENT) |
- 		(1 << HWTSTAMP_FILTER_PTP_V2_SYNC) |
- 		(1 << HWTSTAMP_FILTER_PTP_V2_DELAY_REQ),
-+	.cc_shift = MV88E6XXX_CC_SHIFT,
-+	.cc_mult = MV88E6XXX_CC_MULT,
-+	.cc_mult_num = MV88E6XXX_CC_MULT_NUM,
-+	.cc_mult_dem = MV88E6XXX_CC_MULT_DEM,
-+};
-+
-+const struct mv88e6xxx_ptp_ops mv88e6250_ptp_ops = {
-+	.clock_read = mv88e6352_ptp_clock_read,
-+	.ptp_enable = mv88e6352_ptp_enable,
-+	.ptp_verify = mv88e6352_ptp_verify,
-+	.event_work = mv88e6352_tai_event_work,
-+	.port_enable = mv88e6352_hwtstamp_port_enable,
-+	.port_disable = mv88e6352_hwtstamp_port_disable,
-+	.n_ext_ts = 1,
-+	.arr0_sts_reg = MV88E6XXX_PORT_PTP_ARR0_STS,
-+	.arr1_sts_reg = MV88E6XXX_PORT_PTP_ARR1_STS,
-+	.dep_sts_reg = MV88E6XXX_PORT_PTP_DEP_STS,
-+	.rx_filters = (1 << HWTSTAMP_FILTER_NONE) |
-+		(1 << HWTSTAMP_FILTER_PTP_V2_L4_EVENT) |
-+		(1 << HWTSTAMP_FILTER_PTP_V2_L4_SYNC) |
-+		(1 << HWTSTAMP_FILTER_PTP_V2_L4_DELAY_REQ) |
-+		(1 << HWTSTAMP_FILTER_PTP_V2_L2_EVENT) |
-+		(1 << HWTSTAMP_FILTER_PTP_V2_L2_SYNC) |
-+		(1 << HWTSTAMP_FILTER_PTP_V2_L2_DELAY_REQ) |
-+		(1 << HWTSTAMP_FILTER_PTP_V2_EVENT) |
-+		(1 << HWTSTAMP_FILTER_PTP_V2_SYNC) |
-+		(1 << HWTSTAMP_FILTER_PTP_V2_DELAY_REQ),
-+	.cc_shift = MV88E6250_CC_SHIFT,
-+	.cc_mult = MV88E6250_CC_MULT,
-+	.cc_mult_num = MV88E6250_CC_MULT_NUM,
-+	.cc_mult_dem = MV88E6250_CC_MULT_DEM,
- };
- 
- const struct mv88e6xxx_ptp_ops mv88e6352_ptp_ops = {
-@@ -347,6 +400,10 @@ const struct mv88e6xxx_ptp_ops mv88e6352_ptp_ops = {
- 		(1 << HWTSTAMP_FILTER_PTP_V2_EVENT) |
- 		(1 << HWTSTAMP_FILTER_PTP_V2_SYNC) |
- 		(1 << HWTSTAMP_FILTER_PTP_V2_DELAY_REQ),
-+	.cc_shift = MV88E6XXX_CC_SHIFT,
-+	.cc_mult = MV88E6XXX_CC_MULT,
-+	.cc_mult_num = MV88E6XXX_CC_MULT_NUM,
-+	.cc_mult_dem = MV88E6XXX_CC_MULT_DEM,
- };
- 
- static u64 mv88e6xxx_ptp_clock_read(const struct cyclecounter *cc)
-@@ -384,8 +441,8 @@ int mv88e6xxx_ptp_setup(struct mv88e6xxx_chip *chip)
- 	memset(&chip->tstamp_cc, 0, sizeof(chip->tstamp_cc));
- 	chip->tstamp_cc.read	= mv88e6xxx_ptp_clock_read;
- 	chip->tstamp_cc.mask	= CYCLECOUNTER_MASK(32);
--	chip->tstamp_cc.mult	= CC_MULT;
--	chip->tstamp_cc.shift	= CC_SHIFT;
-+	chip->tstamp_cc.mult	= ptp_ops->cc_mult;
-+	chip->tstamp_cc.shift	= ptp_ops->cc_shift;
- 
- 	timecounter_init(&chip->tstamp_tc, &chip->tstamp_cc,
- 			 ktime_to_ns(ktime_get_real()));
-@@ -397,7 +454,6 @@ int mv88e6xxx_ptp_setup(struct mv88e6xxx_chip *chip)
- 	chip->ptp_clock_info.owner = THIS_MODULE;
- 	snprintf(chip->ptp_clock_info.name, sizeof(chip->ptp_clock_info.name),
- 		 "%s", dev_name(chip->dev));
--	chip->ptp_clock_info.max_adj	= 1000000;
- 
- 	chip->ptp_clock_info.n_ext_ts	= ptp_ops->n_ext_ts;
- 	chip->ptp_clock_info.n_per_out	= 0;
-@@ -413,6 +469,7 @@ int mv88e6xxx_ptp_setup(struct mv88e6xxx_chip *chip)
- 	}
- 	chip->ptp_clock_info.pin_config = chip->pin_config;
- 
-+	chip->ptp_clock_info.max_adj    = MV88E6XXX_MAX_ADJ_PPB;
- 	chip->ptp_clock_info.adjfine	= mv88e6xxx_ptp_adjfine;
- 	chip->ptp_clock_info.adjtime	= mv88e6xxx_ptp_adjtime;
- 	chip->ptp_clock_info.gettime64	= mv88e6xxx_ptp_gettime;
-diff --git a/drivers/net/dsa/mv88e6xxx/ptp.h b/drivers/net/dsa/mv88e6xxx/ptp.h
-index 58cbd21d58f6..269d5d16a466 100644
---- a/drivers/net/dsa/mv88e6xxx/ptp.h
-+++ b/drivers/net/dsa/mv88e6xxx/ptp.h
-@@ -149,6 +149,7 @@ void mv88e6xxx_ptp_free(struct mv88e6xxx_chip *chip);
- 				      ptp_clock_info)
- 
- extern const struct mv88e6xxx_ptp_ops mv88e6165_ptp_ops;
-+extern const struct mv88e6xxx_ptp_ops mv88e6250_ptp_ops;
- extern const struct mv88e6xxx_ptp_ops mv88e6352_ptp_ops;
- 
- #else /* !CONFIG_NET_DSA_MV88E6XXX_PTP */
-@@ -168,6 +169,7 @@ static inline void mv88e6xxx_ptp_free(struct mv88e6xxx_chip *chip)
- }
- 
- static const struct mv88e6xxx_ptp_ops mv88e6165_ptp_ops = {};
-+static const struct mv88e6xxx_ptp_ops mv88e6250_ptp_ops = {};
- static const struct mv88e6xxx_ptp_ops mv88e6352_ptp_ops = {};
- 
- #endif /* CONFIG_NET_DSA_MV88E6XXX_PTP */
+	RO_EXEC_FILEMAP_HUGE_FAULT_THP
+
+is enabled.
+
+This is because filemap_huge_fault() is dependent upon the
+address_space_operations vector readpage() pointing to a routine that will
+read and fill an entire large page at a time without poulluting the page
+cache with PAGESIZE entries for the large page being mapped or performing
+readahead that would pollute the page cache entries for succeeding large
+pages. Unfortunately, there is no good way to determine how many bytes
+were read by readpage(). At present, if filemap_huge_fault() were to call
+a conventional readpage() routine, it would only fill the first PAGESIZE
+bytes of the large page, which is definitely NOT the desired behavior.
+
+However, by making the code available now it is hoped that filesystem
+maintainers who have pledged to provide such a mechanism will do so more
+rapidly.
+
+The first part of the patch adds an order field to __page_cache_alloc(),
+allowing callers to directly request page cache pages of various sizes.
+This code was provided by Matthew Wilcox.
+
+The second part of the patch implements the filemap_huge_fault() mechanism
+as described above.
+
+Changes since v2:
+1. FGP changes were pulled out to enable submission as an independent
+   patch
+2. Inadvertent tab spacing and comment changes were reverted
+
+Changes since v1:
+1. Fix improperly generated patch for v1 PATCH 1/2
+
+Matthew Wilcox (1):
+  mm: Allow the page cache to allocate large pages
+
+William Kucharski (1):
+  Add filemap_huge_fault() to attempt to satisfy page faults on
+    memory-mapped read-only text pages using THP when possible.
+
+ fs/afs/dir.c            |   2 +-
+ fs/btrfs/compression.c  |   2 +-
+ fs/cachefiles/rdwr.c    |   4 +-
+ fs/ceph/addr.c          |   2 +-
+ fs/ceph/file.c          |   2 +-
+ include/linux/huge_mm.h |  16 +-
+ include/linux/mm.h      |   6 +
+ include/linux/pagemap.h |  10 +-
+ mm/Kconfig              |  15 ++
+ mm/filemap.c            | 320 ++++++++++++++++++++++++++++++++++++++--
+ mm/huge_memory.c        |   3 +
+ mm/mmap.c               |  36 ++++-
+ mm/readahead.c          |   2 +-
+ mm/rmap.c               |   8 +
+ net/ceph/pagelist.c     |   4 +-
+ net/ceph/pagevec.c      |   2 +-
+ 16 files changed, 401 insertions(+), 33 deletions(-)
+
 -- 
-2.22.0
+2.21.0
 
