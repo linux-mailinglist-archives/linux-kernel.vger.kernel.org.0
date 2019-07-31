@@ -2,102 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F20707BBEB
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 10:40:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D9E917BBF4
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 10:41:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728232AbfGaIka (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 04:40:30 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:45237 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728210AbfGaIk1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 04:40:27 -0400
-Received: by mail-wr1-f67.google.com with SMTP id f9so68667528wre.12
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 01:40:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=75XNmhFNb9+dcVa4YPmR0y+UGapfOVB2uryDAdPU4o4=;
-        b=mQ/GItiV/jIekXUfQF4MaKyeF2xxU5ZvV65tC6WZtOplsowpKXAcaU2ed76arFJ2HF
-         FRrWiFna/EnHvHxzgRZqv/+XpaJ27aSEQLNVHv0fTRsStQlfzxlUE31f7kYDoDoGEM2+
-         LR1I6fEfN+WigiRr1yzP2X2YunGiuAh4/Ya265Ada7lN82hSuP0n9z8pIs/wPGx3F5AV
-         AcivDHZutEmkStVMWqMtfAEqbMTZG0dN9LyQ7aoN3T4h3BlZSMLDbguHvRT3ydv2nQSU
-         Uaf4bN0q+oQm12t0bypww0qe//veBeJZ9glvWslrbP1JBZQIW7BrI4CZULyhUkGiY0xF
-         EiwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=75XNmhFNb9+dcVa4YPmR0y+UGapfOVB2uryDAdPU4o4=;
-        b=OD7ETIvsh79OMxUWZVwPcpwSmi8w8giw6VHRDLACMFWDaX+ifJWVWM7fyZ4n2HLWs9
-         5J55CCrFF8Sw/+I0XF6w1Qr/3zkwKu8TgpF57fkC57GRUxLbrWhVbA37haLcTxLPO2rn
-         OrJ27Kfsdxf9HrWwrihmHtlpEnajdz+0HTVHW4mLH/qCmiN9ktvw3ow6KaeHa/N03tyh
-         oatnxVb/9C12J/lEgHXDE2PjaDZUUJ4PK0cfkJTtKq4JQK9MmFCmooy12g/cBRhdIJ9p
-         rYB6bNduxqUvr9Uz5Qo8sCgC2kqEyz+oJh+ZEAG5bwb0yDajJUcplE9VniodigkOjITY
-         6Ptw==
-X-Gm-Message-State: APjAAAU1wbqyLPxxoDM7ZWDoc2NpD1n1QM8YoLguQdY/mu1nVAj5WxoL
-        H4bvYoVIw6HQBUkIQHMIBFOqnw==
-X-Google-Smtp-Source: APXvYqyi4k1XS4obufEQe9GPrtTQh4Ldosu/Cj3LUEjIEn/ydGYaGOvK4niO7KpZnRyZkkeRGMiirg==
-X-Received: by 2002:adf:f04d:: with SMTP id t13mr17572698wro.133.1564562426143;
-        Wed, 31 Jul 2019 01:40:26 -0700 (PDT)
-Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id 18sm56049308wmg.43.2019.07.31.01.40.25
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 31 Jul 2019 01:40:25 -0700 (PDT)
-From:   Neil Armstrong <narmstrong@baylibre.com>
-To:     jbrunet@baylibre.com
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
+        id S1728286AbfGaIlC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 04:41:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46782 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726467AbfGaIlC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jul 2019 04:41:02 -0400
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7EE10206A3;
+        Wed, 31 Jul 2019 08:41:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564562461;
+        bh=2AMJKQAIYqySJFCOFXeanD8LAYVz2PapeYUAn5OrGkI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=NDE0y2eOIYjWbDWePVfwitFojS9MPeBsJm25h/c3+zwl0eA1qD9r6COZ051ELCiVY
+         zyx36m+6yoaFMLQWdHYxsyt8ggEIGfSjsd7nXVvNbTBgOOoubxg/SysOp5ppQ5pBtt
+         dy7bffEyvEb8Ir2h05tMbUiE70X2y7jd8Ii58IsA=
+Date:   Wed, 31 Jul 2019 09:40:57 +0100
+From:   Will Deacon <will@kernel.org>
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
         linux-arm-kernel@lists.infradead.org,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH v2 4/4] clk: meson: g12a: expose CPUB clock ID for G12B
-Date:   Wed, 31 Jul 2019 10:40:19 +0200
-Message-Id: <20190731084019.8451-5-narmstrong@baylibre.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190731084019.8451-1-narmstrong@baylibre.com>
-References: <20190731084019.8451-1-narmstrong@baylibre.com>
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH v6 32/57] perf: Remove dev_err() usage after
+ platform_get_irq()
+Message-ID: <20190731084056.jd7p5lrvyun6ynlf@willie-the-truck>
+References: <20190730181557.90391-1-swboyd@chromium.org>
+ <20190730181557.90391-33-swboyd@chromium.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190730181557.90391-33-swboyd@chromium.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Expose the CPUB clock id to add DVFS to the second CPU cluster of
-the Amlogic G12B SoC.
+On Tue, Jul 30, 2019 at 11:15:32AM -0700, Stephen Boyd wrote:
+> We don't need dev_err() messages when platform_get_irq() fails now that
+> platform_get_irq() prints an error message itself when something goes
+> wrong. Let's remove these prints with a simple semantic patch.
+> 
+> // <smpl>
+> @@
+> expression ret;
+> struct platform_device *E;
+> @@
+> 
+> ret =
+> (
+> platform_get_irq(E, ...)
+> |
+> platform_get_irq_byname(E, ...)
+> );
+> 
+> if ( \( ret < 0 \| ret <= 0 \) )
+> {
+> (
+> -if (ret != -EPROBE_DEFER)
+> -{ ...
+> -dev_err(...);
+> -... }
+> |
+> ...
+> -dev_err(...);
+> )
+> ...
+> }
+> // </smpl>
+> 
+> While we're here, remove braces on if statements that only have one
+> statement (manually).
+> 
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
 
-Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- drivers/clk/meson/g12a.h              | 1 -
- include/dt-bindings/clock/g12a-clkc.h | 1 +
- 2 files changed, 1 insertion(+), 1 deletion(-)
+Acked-by: Will Deacon <will@kernel.org>
 
-diff --git a/drivers/clk/meson/g12a.h b/drivers/clk/meson/g12a.h
-index c8aed31fbe17..559a34cfdfeb 100644
---- a/drivers/clk/meson/g12a.h
-+++ b/drivers/clk/meson/g12a.h
-@@ -216,7 +216,6 @@
- #define CLKID_CPUB_CLK_DYN1_DIV			221
- #define CLKID_CPUB_CLK_DYN1			222
- #define CLKID_CPUB_CLK_DYN			223
--#define CLKID_CPUB_CLK				224
- #define CLKID_CPUB_CLK_DIV16_EN			225
- #define CLKID_CPUB_CLK_DIV16			226
- #define CLKID_CPUB_CLK_DIV2			227
-diff --git a/include/dt-bindings/clock/g12a-clkc.h b/include/dt-bindings/clock/g12a-clkc.h
-index b6b127e45634..8ccc29ac7a72 100644
---- a/include/dt-bindings/clock/g12a-clkc.h
-+++ b/include/dt-bindings/clock/g12a-clkc.h
-@@ -137,5 +137,6 @@
- #define CLKID_VDEC_HEVC				207
- #define CLKID_VDEC_HEVCF			210
- #define CLKID_TS				212
-+#define CLKID_CPUB_CLK				224
- 
- #endif /* __G12A_CLKC_H */
--- 
-2.22.0
+Please let me know if you'd rather I route this via the arm-perf tree.
 
+Will
