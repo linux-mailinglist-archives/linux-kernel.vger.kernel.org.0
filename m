@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D2327C6F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 17:39:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 338AB7C700
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 17:39:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729553AbfGaPjF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 11:39:05 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:45377 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729439AbfGaPjD (ORCPT
+        id S1729707AbfGaPja (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 11:39:30 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:40075 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729510AbfGaPjF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 11:39:03 -0400
-Received: by mail-qt1-f195.google.com with SMTP id x22so62086708qtp.12
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 08:39:02 -0700 (PDT)
+        Wed, 31 Jul 2019 11:39:05 -0400
+Received: by mail-qt1-f194.google.com with SMTP id a15so66991889qtn.7
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 08:39:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=soleen.com; s=google;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=mSPaXkOF4y4c7qEpVZR0NQfcUuKxNUUmh4BAqy8Ck5c=;
-        b=D2Tu5yPz6ThRiLKACYJE0UxapK38kpyJlO332z7cxCc1YZn2NoRKoz21V31F6uDgZ/
-         SWZxsCEX0j5++knXwsUdKPVXCG5Ne5ONR+GSZxIWsOV2jUozTSWOAwyvMRlunWgbv3fR
-         +P4okaxNEsy+aIW4IGGne9xBVBFiP1Th/SylTO2SLnKASLc7Er+n5/g1hEw0mZaGTQtH
-         HgsCCXq2vgm4k2bgNxO76FnHs3GFnR7uQLbQXylkg9YM4rlIR50pJf12hVDIjkW/aXGj
-         ru9eSaEGXoqKnW9Xcn3D1hx2TggdwnP124NT8IKtKyzC1qTJx9qFkpCzZP1TNmVwLUec
-         baHg==
+        bh=HM9ffM3Ct5ZgrBhxNWuGZauxxnBjbr17mWM+iliA67E=;
+        b=jtW03mPTNpMTc670V7njVtxY3k9/5re7CPdcDVcjT8bs93LHBR/EwAoPKSM5CO66+g
+         hTBBAMk+lFoO1JPuUr6B+jUdyWPMVaL0zSsMzPkWRADDsQOYmuH4TCC+wxAXpjLFKD4w
+         KGJrc5XS1hZQ3yzE5VgSldS4frMGJhch9ftzdFTDTY//0Z0prz68KOF1kf17GnObnsBu
+         4rAXeRV/85tm0sMjdFmdQL956iLpCT7InnhzG94VJg1cFFlHbBUDU9I6CKN6tqiLxiYO
+         emrZCUupb67hUf2bQ9Va80hRqLAoxfkruZCoyBWZaUtifur9fVAe5BR4zf3V2oTEM6WR
+         Bw7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=mSPaXkOF4y4c7qEpVZR0NQfcUuKxNUUmh4BAqy8Ck5c=;
-        b=DRt0EmYfaJgZxWw8ZKKDzKiDv6q4bUqAcNzTj5sqgu9Z8F64W8MROi14bN3v6kxhNp
-         Ib09fizbA3hurwbYDCZQxdn21BVD6UGWCHOVmnatzJx+9H7wVp28D2H5/AlshyRiWOq5
-         vxOZAvOarEoIU+ztNKAsamvSay+OFziiff1cHuLebZH3IygX61YRuBp3/lO3k5Gyynp5
-         XGduI5o5wBeuVU4u/W6/fKOFbNEnJvSGjQci0FaMS5oPs+mS+CFhebJ5nnb8XV9n+spX
-         wY/G8jOTUokjrGOW1AmIzZ5crT12s44WbWHa2sBeGmw58MjXMLfR8ImffEAaupiw/7iU
-         Vtvw==
-X-Gm-Message-State: APjAAAVlZQScp0RoR3ochhZg+nN6WVmMF4P3kNGArChpa2kvbY3mGQ2G
-        ZE6raZEtQfcwBZOYX0FZhzs=
-X-Google-Smtp-Source: APXvYqwnV5hzOxvHii3LH6ElNCKpudgjmJbmwaAb14VIS52ac266RM0J/Dc7QhnTq28gMec0v5rn6w==
-X-Received: by 2002:a0c:d7cc:: with SMTP id g12mr54325194qvj.220.1564587542099;
-        Wed, 31 Jul 2019 08:39:02 -0700 (PDT)
+        bh=HM9ffM3Ct5ZgrBhxNWuGZauxxnBjbr17mWM+iliA67E=;
+        b=duxbYEwT/nyvYKggj7kFc0HGbRGWP0SbUYZNgAoa2gzSk3KOocK5yHEZQCz/5QA6y2
+         iJBI6KdgDMnR1h4dpRzE+mJhxMa77q7KQ0stf2vsztC+ND7/q1P6s2l4l4m7Xunpw4yZ
+         AAD95/C4dqzb6+KRp83Z/WpT+jMPOTeNH0HKEw9iikBF2c7ayWca4N+DIgpzAe3Y9Tb3
+         F8i7/inw5vPJHNVWEVFY//2sXCeSH8NdCOkiZvICigEYadUZyNyNhIyr7uojqtfiCfcl
+         xSTSjw+jGRPOFxEja1lH0aJCoaG4/5IAPajvKIMr8jQuTANhKT5BVjM3q2HNkTd+zdui
+         iGyg==
+X-Gm-Message-State: APjAAAVeDLyNPcCNim/MxGOnc2FsUsfhsrNByH8dzsBA7vNBj90ZIdSE
+        TlgToD+lRJVqndul4pN7nha24jaW
+X-Google-Smtp-Source: APXvYqyfqk/oPFVHamoZx5msXhvQjnnSt2fmBBceeU/q9amOUBgwudcPBaoce1lVzuJHnUhWj0XvRA==
+X-Received: by 2002:a0c:a8d2:: with SMTP id h18mr88972679qvc.16.1564587543515;
+        Wed, 31 Jul 2019 08:39:03 -0700 (PDT)
 Received: from localhost.localdomain (c-73-69-118-222.hsd1.nh.comcast.net. [73.69.118.222])
-        by smtp.gmail.com with ESMTPSA id f25sm35116803qta.81.2019.07.31.08.39.00
+        by smtp.gmail.com with ESMTPSA id f25sm35116803qta.81.2019.07.31.08.39.02
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 31 Jul 2019 08:39:01 -0700 (PDT)
+        Wed, 31 Jul 2019 08:39:02 -0700 (PDT)
 From:   Pavel Tatashin <pasha.tatashin@soleen.com>
 To:     pasha.tatashin@soleen.com, jmorris@namei.org, sashal@kernel.org,
         ebiederm@xmission.com, kexec@lists.infradead.org,
@@ -53,9 +53,9 @@ To:     pasha.tatashin@soleen.com, jmorris@namei.org, sashal@kernel.org,
         linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         marc.zyngier@arm.com, james.morse@arm.com, vladimir.murzin@arm.com,
         matthias.bgg@gmail.com, bhsharma@redhat.com
-Subject: [RFC v2 2/8] arm64, mm: transitional tables
-Date:   Wed, 31 Jul 2019 11:38:51 -0400
-Message-Id: <20190731153857.4045-3-pasha.tatashin@soleen.com>
+Subject: [RFC v2 3/8] arm64: hibernate: switch to transtional page tables.
+Date:   Wed, 31 Jul 2019 11:38:52 -0400
+Message-Id: <20190731153857.4045-4-pasha.tatashin@soleen.com>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190731153857.4045-1-pasha.tatashin@soleen.com>
 References: <20190731153857.4045-1-pasha.tatashin@soleen.com>
@@ -66,416 +66,355 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are cases where normal kernel pages tables, i.e. idmap_pg_dir
-and swapper_pg_dir are not sufficient because they may be overwritten.
-
-This happens when we transition from one world to another: for example
-during kexec kernel relocation transition, and also during hibernate
-kernel restore transition.
-
-In these cases, if MMU is needed, the page table memory must be allocated
-from a safe place. Transitional tables is intended to allow just that.
+Transitional page tables  provide the needed functionality to setup
+temporary page tables needed for hibernate resume.
 
 Signed-off-by: Pavel Tatashin <pasha.tatashin@soleen.com>
 ---
- arch/arm64/Kconfig                     |   4 +
- arch/arm64/include/asm/pgtable-hwdef.h |   1 +
- arch/arm64/include/asm/trans_table.h   |  66 ++++++
- arch/arm64/mm/Makefile                 |   1 +
- arch/arm64/mm/trans_table.c            | 272 +++++++++++++++++++++++++
- 5 files changed, 344 insertions(+)
- create mode 100644 arch/arm64/include/asm/trans_table.h
- create mode 100644 arch/arm64/mm/trans_table.c
+ arch/arm64/kernel/hibernate.c | 261 ++++++++--------------------------
+ 1 file changed, 60 insertions(+), 201 deletions(-)
 
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 3adcec05b1f6..91a7416ffe4e 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -999,6 +999,10 @@ config CRASH_DUMP
- 
- 	  For more details see Documentation/admin-guide/kdump/kdump.rst
- 
-+config TRANS_TABLE
-+	def_bool y
-+	depends on HIBERNATION || KEXEC_CORE
-+
- config XEN_DOM0
- 	def_bool y
- 	depends on XEN
-diff --git a/arch/arm64/include/asm/pgtable-hwdef.h b/arch/arm64/include/asm/pgtable-hwdef.h
-index db92950bb1a0..dcb4f13c7888 100644
---- a/arch/arm64/include/asm/pgtable-hwdef.h
-+++ b/arch/arm64/include/asm/pgtable-hwdef.h
-@@ -110,6 +110,7 @@
- #define PUD_TABLE_BIT		(_AT(pudval_t, 1) << 1)
- #define PUD_TYPE_MASK		(_AT(pudval_t, 3) << 0)
- #define PUD_TYPE_SECT		(_AT(pudval_t, 1) << 0)
-+#define PUD_SECT_RDONLY		(_AT(pudval_t, 1) << 7)		/* AP[2] */
+diff --git a/arch/arm64/kernel/hibernate.c b/arch/arm64/kernel/hibernate.c
+index 9341fcc6e809..4120b03a02fd 100644
+--- a/arch/arm64/kernel/hibernate.c
++++ b/arch/arm64/kernel/hibernate.c
+@@ -16,7 +16,6 @@
+ #define pr_fmt(x) "hibernate: " x
+ #include <linux/cpu.h>
+ #include <linux/kvm_host.h>
+-#include <linux/mm.h>
+ #include <linux/pm.h>
+ #include <linux/sched.h>
+ #include <linux/suspend.h>
+@@ -31,14 +30,12 @@
+ #include <asm/kexec.h>
+ #include <asm/memory.h>
+ #include <asm/mmu_context.h>
+-#include <asm/pgalloc.h>
+-#include <asm/pgtable.h>
+-#include <asm/pgtable-hwdef.h>
+ #include <asm/sections.h>
+ #include <asm/smp.h>
+ #include <asm/smp_plat.h>
+ #include <asm/suspend.h>
+ #include <asm/sysreg.h>
++#include <asm/trans_table.h>
+ #include <asm/virt.h>
  
  /*
-  * Level 2 descriptor (PMD).
-diff --git a/arch/arm64/include/asm/trans_table.h b/arch/arm64/include/asm/trans_table.h
-new file mode 100644
-index 000000000000..4d7bd0bf36c0
---- /dev/null
-+++ b/arch/arm64/include/asm/trans_table.h
-@@ -0,0 +1,66 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (c) 2019, Microsoft Corporation.
-+ * Pavel Tatashin <patatash@linux.microsoft.com>
-+ */
-+
-+#ifndef _ASM_TRANS_TABLE_H
-+#define _ASM_TRANS_TABLE_H
-+
-+#include <asm/pgtable-types.h>
-+
-+/*
-+ * trans_alloc_page
-+ *	- Allocator that should return exactly one uninitilaized page, if this
-+ *	 allocator fails, trans_table returns -ENOMEM error.
-+ *
-+ * trans_alloc_arg
-+ *	- Passed to trans_alloc_page as an argument
-+ *
-+ * trans_flags
-+ *	- bitmap with flags that control how page table is filled.
-+ *	  TRANS_MKWRITE: during page table copy make PTE, PME, and PUD page
-+ *			 writeable by removing RDONLY flag from PTE.
-+ *	  TRANS_MKVALID: during page table copy, if PTE present, but not valid,
-+ *			 make it valid.
-+ *	  TRANS_CHECKPFN: During page table copy, for every PTE entry check that
-+ *			  PFN that this PTE points to is valid. Otherwise return
-+ *			  -ENXIO
-+ *	  TRANS_FORCEMAP: During page map, if translation exists, force
-+ *			  overwrite it. Otherwise -ENXIO may be returned by
-+ *			  trans_table_map_* functions if conflict is detected.
-+ */
-+
-+#define	TRANS_MKWRITE	(1 << 0)
-+#define	TRANS_MKVALID	(1 << 1)
-+#define	TRANS_CHECKPFN	(1 << 2)
-+#define	TRANS_FORCEMAP	(1 << 3)
-+
-+struct trans_table_info {
-+	void * (*trans_alloc_page)(void *);
-+	void *trans_alloc_arg;
-+	unsigned long trans_flags;
-+};
-+
-+/* Create and empty trans table. */
-+int trans_table_create_empty(struct trans_table_info *info,
-+			     pgd_t **trans_table);
-+
-+/*
-+ * Create trans table and copy entries from from_table to trans_table in range
-+ * [start, end)
-+ */
-+int trans_table_create_copy(struct trans_table_info *info, pgd_t **trans_table,
-+			    pgd_t *from_table, unsigned long start,
-+			    unsigned long end);
-+
-+/*
-+ * Add map entry to trans_table for a base-size page at PTE level.
-+ * page:	page to be mapped.
-+ * dst_addr:	new VA address for the pages
-+ * pgprot:	protection for the page.
-+ */
-+int trans_table_map_page(struct trans_table_info *info, pgd_t *trans_table,
-+			 void *page, unsigned long dst_addr, pgprot_t pgprot);
-+
-+#endif /* _ASM_TRANS_TABLE_H */
-diff --git a/arch/arm64/mm/Makefile b/arch/arm64/mm/Makefile
-index 849c1df3d214..3794fff18659 100644
---- a/arch/arm64/mm/Makefile
-+++ b/arch/arm64/mm/Makefile
-@@ -6,6 +6,7 @@ obj-y				:= dma-mapping.o extable.o fault.o init.o \
- obj-$(CONFIG_HUGETLB_PAGE)	+= hugetlbpage.o
- obj-$(CONFIG_ARM64_PTDUMP_CORE)	+= dump.o
- obj-$(CONFIG_ARM64_PTDUMP_DEBUGFS)	+= ptdump_debugfs.o
-+obj-$(CONFIG_TRANS_TABLE)	+= trans_table.o
- obj-$(CONFIG_NUMA)		+= numa.o
- obj-$(CONFIG_DEBUG_VIRTUAL)	+= physaddr.o
- KASAN_SANITIZE_physaddr.o	+= n
-diff --git a/arch/arm64/mm/trans_table.c b/arch/arm64/mm/trans_table.c
-new file mode 100644
-index 000000000000..d5729eb318b7
---- /dev/null
-+++ b/arch/arm64/mm/trans_table.c
-@@ -0,0 +1,272 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (c) 2019, Microsoft Corporation.
-+ * Pavel Tatashin <patatash@linux.microsoft.com>
-+ */
-+
-+/*
-+ * Transitional tables are used during system transferring from one world to
-+ * another: such as during hibernate restore, and kexec reboots. During these
-+ * phases one cannot rely on page table not being overwritten.
-+ *
-+ */
-+
-+#include <asm/trans_table.h>
-+#include <asm/pgalloc.h>
-+#include <asm/pgtable.h>
-+
-+static void *trans_alloc(struct trans_table_info *info)
+@@ -182,6 +179,12 @@ int arch_hibernation_header_restore(void *addr)
+ }
+ EXPORT_SYMBOL(arch_hibernation_header_restore);
+ 
++static void *
++hibernate_page_alloc(void *arg)
 +{
-+	void *page = info->trans_alloc_page(info->trans_alloc_arg);
-+
-+	if (page)
-+		clear_page(page);
-+
-+	return page;
++	return (void *)get_safe_page((gfp_t)(unsigned long)arg);
 +}
 +
-+static int trans_table_copy_pte(struct trans_table_info *info, pte_t *dst_ptep,
-+				pte_t *src_ptep, unsigned long start,
-+				unsigned long end)
-+{
-+	unsigned long addr = start;
-+	int i = pgd_index(addr);
-+
-+	do {
-+		pte_t src_pte = READ_ONCE(src_ptep[i]);
-+
-+		if (pte_none(src_pte))
-+			continue;
-+		if (info->trans_flags & TRANS_MKWRITE)
-+			src_pte = pte_mkwrite(src_pte);
-+		if (info->trans_flags & TRANS_MKVALID)
-+			src_pte = pte_mkpresent(src_pte);
-+		if (info->trans_flags & TRANS_CHECKPFN) {
-+			if (!pfn_valid(pte_pfn(src_pte)))
-+				return -ENXIO;
-+		}
-+		set_pte(&dst_ptep[i], src_pte);
-+	} while (addr += PAGE_SIZE, i++, addr != end && i < PTRS_PER_PTE);
-+
-+	return 0;
-+}
-+
-+static int trans_table_copy_pmd(struct trans_table_info *info, pmd_t *dst_pmdp,
-+				pmd_t *src_pmdp, unsigned long start,
-+				unsigned long end)
-+{
-+	unsigned long next;
-+	unsigned long addr = start;
-+	int i = pgd_index(addr);
+ /*
+  * Copies length bytes, starting at src_start into an new page,
+  * perform cache maintentance, then maps it at the specified address low
+@@ -196,57 +199,31 @@ EXPORT_SYMBOL(arch_hibernation_header_restore);
+  */
+ static int create_safe_exec_page(void *src_start, size_t length,
+ 				 unsigned long dst_addr,
+-				 phys_addr_t *phys_dst_addr,
+-				 void *(*allocator)(gfp_t mask),
+-				 gfp_t mask)
++				 phys_addr_t *phys_dst_addr)
+ {
+-	int rc = 0;
+-	pgd_t *pgdp;
+-	pud_t *pudp;
+-	pmd_t *pmdp;
+-	pte_t *ptep;
+-	unsigned long dst = (unsigned long)allocator(mask);
+-
+-	if (!dst) {
+-		rc = -ENOMEM;
+-		goto out;
+-	}
+-
+-	memcpy((void *)dst, src_start, length);
+-	__flush_icache_range(dst, dst + length);
++	struct trans_table_info trans_info = {
++		.trans_alloc_page	= hibernate_page_alloc,
++		.trans_alloc_arg	= (void *)GFP_ATOMIC,
++		.trans_flags		= 0,
++	};
++	void *page = (void *)get_safe_page(GFP_ATOMIC);
++	pgd_t *trans_table;
 +	int rc;
 +
-+	do {
-+		pmd_t src_pmd = READ_ONCE(src_pmdp[i]);
-+		pmd_t dst_pmd = READ_ONCE(dst_pmdp[i]);
-+		pte_t *dst_ptep, *src_ptep;
-+
-+		next = pmd_addr_end(addr, end);
-+		if (pmd_none(src_pmd))
-+			continue;
-+
-+		if (!pmd_table(src_pmd)) {
-+			if (info->trans_flags & TRANS_MKWRITE)
-+				pmd_val(src_pmd) &= ~PMD_SECT_RDONLY;
-+			set_pmd(&dst_pmdp[i], src_pmd);
-+			continue;
-+		}
-+
-+		if (pmd_none(dst_pmd)) {
-+			pte_t *t = trans_alloc(info);
-+
-+			if (!t)
-+				return -ENOMEM;
-+
-+			__pmd_populate(&dst_pmdp[i], __pa(t), PTE_TYPE_PAGE);
-+			dst_pmd = READ_ONCE(dst_pmdp[i]);
-+		}
-+
-+		src_ptep = __va(pmd_page_paddr(src_pmd));
-+		dst_ptep = __va(pmd_page_paddr(dst_pmd));
-+
-+		rc = trans_table_copy_pte(info, dst_ptep, src_ptep, addr, next);
-+		if (rc)
-+			return rc;
-+	} while (addr = next, i++, addr != end && i < PTRS_PER_PMD);
-+
-+	return 0;
-+}
-+
-+static int trans_table_copy_pud(struct trans_table_info *info, pud_t *dst_pudp,
-+				pud_t *src_pudp, unsigned long start,
-+				unsigned long end)
-+{
-+	unsigned long next;
-+	unsigned long addr = start;
-+	int i = pgd_index(addr);
-+	int rc;
-+
-+	do {
-+		pud_t src_pud = READ_ONCE(src_pudp[i]);
-+		pud_t dst_pud = READ_ONCE(dst_pudp[i]);
-+		pmd_t *dst_pmdp, *src_pmdp;
-+
-+		next = pud_addr_end(addr, end);
-+		if (pud_none(src_pud))
-+			continue;
-+
-+		if (!pud_table(src_pud)) {
-+			if (info->trans_flags & TRANS_MKWRITE)
-+				pud_val(src_pud) &= ~PUD_SECT_RDONLY;
-+			set_pud(&dst_pudp[i], src_pud);
-+			continue;
-+		}
-+
-+		if (pud_none(dst_pud)) {
-+			pmd_t *t = trans_alloc(info);
-+
-+			if (!t)
-+				return -ENOMEM;
-+
-+			__pud_populate(&dst_pudp[i], __pa(t), PMD_TYPE_TABLE);
-+			dst_pud = READ_ONCE(dst_pudp[i]);
-+		}
-+
-+		src_pmdp = __va(pud_page_paddr(src_pud));
-+		dst_pmdp = __va(pud_page_paddr(dst_pud));
-+
-+		rc = trans_table_copy_pmd(info, dst_pmdp, src_pmdp, addr, next);
-+		if (rc)
-+			return rc;
-+	} while (addr = next, i++, addr != end && i < PTRS_PER_PUD);
-+
-+	return 0;
-+}
-+
-+static int trans_table_copy_pgd(struct trans_table_info *info, pgd_t *dst_pgdp,
-+				pgd_t *src_pgdp, unsigned long start,
-+				unsigned long end)
-+{
-+	unsigned long next;
-+	unsigned long addr = start;
-+	int i = pgd_index(addr);
-+	int rc;
-+
-+	do {
-+		pgd_t src_pgd;
-+		pgd_t dst_pgd;
-+		pud_t *dst_pudp, *src_pudp;
-+
-+		src_pgd = READ_ONCE(src_pgdp[i]);
-+		dst_pgd = READ_ONCE(dst_pgdp[i]);
-+		next = pgd_addr_end(addr, end);
-+		if (pgd_none(src_pgd))
-+			continue;
-+
-+		if (pgd_none(dst_pgd)) {
-+			pud_t *t = trans_alloc(info);
-+
-+			if (!t)
-+				return -ENOMEM;
-+
-+			__pgd_populate(&dst_pgdp[i], __pa(t), PUD_TYPE_TABLE);
-+			dst_pgd = READ_ONCE(dst_pgdp[i]);
-+		}
-+
-+		src_pudp = __va(pgd_page_paddr(src_pgd));
-+		dst_pudp = __va(pgd_page_paddr(dst_pgd));
-+
-+		rc = trans_table_copy_pud(info, dst_pudp, src_pudp, addr, next);
-+		if (rc)
-+			return rc;
-+	} while (addr = next, i++, addr != end && i < PTRS_PER_PGD);
-+
-+	return 0;
-+}
-+
-+int trans_table_create_empty(struct trans_table_info *info, pgd_t **trans_table)
-+{
-+	pgd_t *dst_pgdp = trans_alloc(info);
-+
-+	if (!dst_pgdp)
++	if (!page)
 +		return -ENOMEM;
-+
-+	*trans_table = dst_pgdp;
-+
-+	return 0;
-+}
-+
-+int trans_table_create_copy(struct trans_table_info *info, pgd_t **trans_table,
-+			    pgd_t *from_table, unsigned long start,
-+			    unsigned long end)
-+{
-+	int rc;
-+
-+	rc = trans_table_create_empty(info, trans_table);
+ 
+-	pgdp = pgd_offset_raw(allocator(mask), dst_addr);
+-	if (pgd_none(READ_ONCE(*pgdp))) {
+-		pudp = allocator(mask);
+-		if (!pudp) {
+-			rc = -ENOMEM;
+-			goto out;
+-		}
+-		pgd_populate(&init_mm, pgdp, pudp);
+-	}
++	memcpy(page, src_start, length);
++	__flush_icache_range((unsigned long)page, (unsigned long)page + length);
+ 
+-	pudp = pud_offset(pgdp, dst_addr);
+-	if (pud_none(READ_ONCE(*pudp))) {
+-		pmdp = allocator(mask);
+-		if (!pmdp) {
+-			rc = -ENOMEM;
+-			goto out;
+-		}
+-		pud_populate(&init_mm, pudp, pmdp);
+-	}
+-
+-	pmdp = pmd_offset(pudp, dst_addr);
+-	if (pmd_none(READ_ONCE(*pmdp))) {
+-		ptep = allocator(mask);
+-		if (!ptep) {
+-			rc = -ENOMEM;
+-			goto out;
+-		}
+-		pmd_populate_kernel(&init_mm, pmdp, ptep);
+-	}
++	rc = trans_table_create_empty(&trans_info, &trans_table);
 +	if (rc)
 +		return rc;
-+
-+	return trans_table_copy_pgd(info, *trans_table, from_table, start, end);
-+}
-+
-+int trans_table_map_page(struct trans_table_info *info, pgd_t *trans_table,
-+			 void *page, unsigned long dst_addr, pgprot_t pgprot)
-+{
-+	int pgd_idx = pgd_index(dst_addr);
-+	int pud_idx = pud_index(dst_addr);
-+	int pmd_idx = pmd_index(dst_addr);
-+	int pte_idx = pte_index(dst_addr);
-+	pgd_t *pgdp = trans_table;
-+	pgd_t pgd = READ_ONCE(pgdp[pgd_idx]);
-+	pud_t *pudp, pud;
-+	pmd_t *pmdp, pmd;
-+	pte_t *ptep, pte;
-+
-+	if (pgd_none(pgd)) {
-+		pud_t *t = trans_alloc(info);
-+
-+		if (!t)
-+			return -ENOMEM;
-+
-+		__pgd_populate(&pgdp[pgd_idx], __pa(t), PUD_TYPE_TABLE);
-+		pgd = READ_ONCE(pgdp[pgd_idx]);
-+	}
-+
-+	pudp = __va(pgd_page_paddr(pgd));
-+	pud = READ_ONCE(pudp[pud_idx]);
-+	if (pud_sect(pud) && !(info->trans_flags & TRANS_FORCEMAP)) {
-+		return -ENXIO;
-+	} else if (pud_none(pud) || pud_sect(pud)) {
-+		pmd_t *t = trans_alloc(info);
-+
-+		if (!t)
-+			return -ENOMEM;
-+
-+		__pud_populate(&pudp[pud_idx], __pa(t), PMD_TYPE_TABLE);
-+		pud = READ_ONCE(pudp[pud_idx]);
-+	}
-+
-+	pmdp = __va(pud_page_paddr(pud));
-+	pmd = READ_ONCE(pmdp[pmd_idx]);
-+	if (pmd_sect(pmd) && !(info->trans_flags & TRANS_FORCEMAP)) {
-+		return -ENXIO;
-+	} else if (pmd_none(pmd) || pmd_sect(pmd)) {
-+		pte_t *t = trans_alloc(info);
-+
-+		if (!t)
-+			return -ENOMEM;
-+
-+		__pmd_populate(&pmdp[pmd_idx], __pa(t), PTE_TYPE_PAGE);
-+		pmd = READ_ONCE(pmdp[pmd_idx]);
-+	}
-+
-+	ptep = __va(pmd_page_paddr(pmd));
-+	pte = READ_ONCE(ptep[pte_idx]);
-+
-+	if (!pte_none(pte) && !(info->trans_flags & TRANS_FORCEMAP))
-+		return -ENXIO;
-+
-+	set_pte(&ptep[pte_idx], pfn_pte(virt_to_pfn(page), pgprot));
-+
+ 
+-	ptep = pte_offset_kernel(pmdp, dst_addr);
+-	set_pte(ptep, pfn_pte(virt_to_pfn(dst), PAGE_KERNEL_EXEC));
++	rc = trans_table_map_page(&trans_info, trans_table, page, dst_addr,
++				  PAGE_KERNEL_EXEC);
++	if (rc)
++		return rc;
+ 
+ 	/*
+ 	 * Load our new page tables. A strict BBM approach requires that we
+@@ -262,13 +239,12 @@ static int create_safe_exec_page(void *src_start, size_t length,
+ 	 */
+ 	cpu_set_reserved_ttbr0();
+ 	local_flush_tlb_all();
+-	write_sysreg(phys_to_ttbr(virt_to_phys(pgdp)), ttbr0_el1);
++	write_sysreg(phys_to_ttbr(virt_to_phys(trans_table)), ttbr0_el1);
+ 	isb();
+ 
+-	*phys_dst_addr = virt_to_phys((void *)dst);
++	*phys_dst_addr = virt_to_phys(page);
+ 
+-out:
+-	return rc;
 +	return 0;
-+}
+ }
+ 
+ #define dcache_clean_range(start, end)	__flush_dcache_area(start, (end - start))
+@@ -332,143 +308,6 @@ int swsusp_arch_suspend(void)
+ 	return ret;
+ }
+ 
+-static void _copy_pte(pte_t *dst_ptep, pte_t *src_ptep, unsigned long addr)
+-{
+-	pte_t pte = READ_ONCE(*src_ptep);
+-
+-	if (pte_valid(pte)) {
+-		/*
+-		 * Resume will overwrite areas that may be marked
+-		 * read only (code, rodata). Clear the RDONLY bit from
+-		 * the temporary mappings we use during restore.
+-		 */
+-		set_pte(dst_ptep, pte_mkwrite(pte));
+-	} else if (debug_pagealloc_enabled() && !pte_none(pte)) {
+-		/*
+-		 * debug_pagealloc will removed the PTE_VALID bit if
+-		 * the page isn't in use by the resume kernel. It may have
+-		 * been in use by the original kernel, in which case we need
+-		 * to put it back in our copy to do the restore.
+-		 *
+-		 * Before marking this entry valid, check the pfn should
+-		 * be mapped.
+-		 */
+-		BUG_ON(!pfn_valid(pte_pfn(pte)));
+-
+-		set_pte(dst_ptep, pte_mkpresent(pte_mkwrite(pte)));
+-	}
+-}
+-
+-static int copy_pte(pmd_t *dst_pmdp, pmd_t *src_pmdp, unsigned long start,
+-		    unsigned long end)
+-{
+-	pte_t *src_ptep;
+-	pte_t *dst_ptep;
+-	unsigned long addr = start;
+-
+-	dst_ptep = (pte_t *)get_safe_page(GFP_ATOMIC);
+-	if (!dst_ptep)
+-		return -ENOMEM;
+-	pmd_populate_kernel(&init_mm, dst_pmdp, dst_ptep);
+-	dst_ptep = pte_offset_kernel(dst_pmdp, start);
+-
+-	src_ptep = pte_offset_kernel(src_pmdp, start);
+-	do {
+-		_copy_pte(dst_ptep, src_ptep, addr);
+-	} while (dst_ptep++, src_ptep++, addr += PAGE_SIZE, addr != end);
+-
+-	return 0;
+-}
+-
+-static int copy_pmd(pud_t *dst_pudp, pud_t *src_pudp, unsigned long start,
+-		    unsigned long end)
+-{
+-	pmd_t *src_pmdp;
+-	pmd_t *dst_pmdp;
+-	unsigned long next;
+-	unsigned long addr = start;
+-
+-	if (pud_none(READ_ONCE(*dst_pudp))) {
+-		dst_pmdp = (pmd_t *)get_safe_page(GFP_ATOMIC);
+-		if (!dst_pmdp)
+-			return -ENOMEM;
+-		pud_populate(&init_mm, dst_pudp, dst_pmdp);
+-	}
+-	dst_pmdp = pmd_offset(dst_pudp, start);
+-
+-	src_pmdp = pmd_offset(src_pudp, start);
+-	do {
+-		pmd_t pmd = READ_ONCE(*src_pmdp);
+-
+-		next = pmd_addr_end(addr, end);
+-		if (pmd_none(pmd))
+-			continue;
+-		if (pmd_table(pmd)) {
+-			if (copy_pte(dst_pmdp, src_pmdp, addr, next))
+-				return -ENOMEM;
+-		} else {
+-			set_pmd(dst_pmdp,
+-				__pmd(pmd_val(pmd) & ~PMD_SECT_RDONLY));
+-		}
+-	} while (dst_pmdp++, src_pmdp++, addr = next, addr != end);
+-
+-	return 0;
+-}
+-
+-static int copy_pud(pgd_t *dst_pgdp, pgd_t *src_pgdp, unsigned long start,
+-		    unsigned long end)
+-{
+-	pud_t *dst_pudp;
+-	pud_t *src_pudp;
+-	unsigned long next;
+-	unsigned long addr = start;
+-
+-	if (pgd_none(READ_ONCE(*dst_pgdp))) {
+-		dst_pudp = (pud_t *)get_safe_page(GFP_ATOMIC);
+-		if (!dst_pudp)
+-			return -ENOMEM;
+-		pgd_populate(&init_mm, dst_pgdp, dst_pudp);
+-	}
+-	dst_pudp = pud_offset(dst_pgdp, start);
+-
+-	src_pudp = pud_offset(src_pgdp, start);
+-	do {
+-		pud_t pud = READ_ONCE(*src_pudp);
+-
+-		next = pud_addr_end(addr, end);
+-		if (pud_none(pud))
+-			continue;
+-		if (pud_table(pud)) {
+-			if (copy_pmd(dst_pudp, src_pudp, addr, next))
+-				return -ENOMEM;
+-		} else {
+-			set_pud(dst_pudp,
+-				__pud(pud_val(pud) & ~PMD_SECT_RDONLY));
+-		}
+-	} while (dst_pudp++, src_pudp++, addr = next, addr != end);
+-
+-	return 0;
+-}
+-
+-static int copy_page_tables(pgd_t *dst_pgdp, unsigned long start,
+-			    unsigned long end)
+-{
+-	unsigned long next;
+-	unsigned long addr = start;
+-	pgd_t *src_pgdp = pgd_offset_k(start);
+-
+-	dst_pgdp = pgd_offset_raw(dst_pgdp, start);
+-	do {
+-		next = pgd_addr_end(addr, end);
+-		if (pgd_none(READ_ONCE(*src_pgdp)))
+-			continue;
+-		if (copy_pud(dst_pgdp, src_pgdp, addr, next))
+-			return -ENOMEM;
+-	} while (dst_pgdp++, src_pgdp++, addr = next, addr != end);
+-
+-	return 0;
+-}
+-
+ /*
+  * Setup then Resume from the hibernate image using swsusp_arch_suspend_exit().
+  *
+@@ -484,21 +323,42 @@ int swsusp_arch_resume(void)
+ 	phys_addr_t phys_hibernate_exit;
+ 	void __noreturn (*hibernate_exit)(phys_addr_t, phys_addr_t, void *,
+ 					  void *, phys_addr_t, phys_addr_t);
++	struct trans_table_info trans_info = {
++		.trans_alloc_page	= hibernate_page_alloc,
++		.trans_alloc_arg	= (void *)GFP_ATOMIC,
++		/*
++		 * Resume will overwrite areas that may be marked read only
++		 * (code, rodata). Clear the RDONLY bit from the temporary
++		 * mappings we use during restore.
++		 */
++		.trans_flags		= TRANS_MKWRITE,
++	};
++
++	/*
++	 * debug_pagealloc will removed the PTE_VALID bit if the page isn't in
++	 * use by the resume kernel. It may have been in use by the original
++	 * kernel, in which case we need to put it back in our copy to do the
++	 * restore.
++	 *
++	 * Before marking this entry valid, check the pfn should be mapped.
++	 */
++	if (debug_pagealloc_enabled())
++		trans_info.trans_flags |= (TRANS_MKVALID | TRANS_CHECKPFN);
+ 
+ 	/*
+ 	 * Restoring the memory image will overwrite the ttbr1 page tables.
+ 	 * Create a second copy of just the linear map, and use this when
+ 	 * restoring.
+ 	 */
+-	tmp_pg_dir = (pgd_t *)get_safe_page(GFP_ATOMIC);
+-	if (!tmp_pg_dir) {
+-		pr_err("Failed to allocate memory for temporary page tables.\n");
+-		rc = -ENOMEM;
++	rc = trans_table_create_copy(&trans_info, &tmp_pg_dir,
++				     pgd_offset_k(PAGE_OFFSET), PAGE_OFFSET, 0);
++	if (rc) {
++		if (rc == -ENOMEM)
++			pr_err("Failed to allocate memory for temporary page tables.\n");
++		else if (rc == -ENXIO)
++			pr_err("Tried to set PTE for PFN that does not exist\n");
+ 		goto out;
+ 	}
+-	rc = copy_page_tables(tmp_pg_dir, PAGE_OFFSET, 0);
+-	if (rc)
+-		goto out;
+ 
+ 	/*
+ 	 * We need a zero page that is zero before & after resume in order to
+@@ -523,8 +383,7 @@ int swsusp_arch_resume(void)
+ 	 */
+ 	rc = create_safe_exec_page(__hibernate_exit_text_start, exit_size,
+ 				   (unsigned long)hibernate_exit,
+-				   &phys_hibernate_exit,
+-				   (void *)get_safe_page, GFP_ATOMIC);
++				   &phys_hibernate_exit);
+ 	if (rc) {
+ 		pr_err("Failed to create safe executable page for hibernate_exit code.\n");
+ 		goto out;
 -- 
 2.22.0
 
