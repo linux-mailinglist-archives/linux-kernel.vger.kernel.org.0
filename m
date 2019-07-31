@@ -2,140 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29C7E7B876
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 06:21:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BFAD27B8B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 06:30:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727879AbfGaEVV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 00:21:21 -0400
-Received: from mga18.intel.com ([134.134.136.126]:41294 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726421AbfGaEVV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 00:21:21 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jul 2019 21:21:20 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,328,1559545200"; 
-   d="scan'208";a="347395045"
-Received: from chenyu-office.sh.intel.com ([10.239.158.163])
-  by orsmga005.jf.intel.com with ESMTP; 30 Jul 2019 21:21:18 -0700
-From:   Chen Yu <yu.c.chen@intel.com>
-To:     linux-pm@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, yu.c.chen@intel.com,
-        Len Brown <len.brown@intel.com>,
-        "Wysocki, Rafael J" <rafael.j.wysocki@intel.com>,
-        Rui Zhang <rui.zhang@intel.com>,
-        David Box <david.e.box@intel.com>,
-        "Tan, Raymond" <raymond.tan@intel.com>
-Subject: [PATCH] Introducing the mask_cstate to disable specific c-states during bootup
-Date:   Wed, 31 Jul 2019 12:31:44 +0800
-Message-Id: <20190731043144.30863-1-yu.c.chen@intel.com>
-X-Mailer: git-send-email 2.17.1
+        id S1728708AbfGaEaJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 00:30:09 -0400
+Received: from lb1-smtp-cloud7.xs4all.net ([194.109.24.24]:53259 "EHLO
+        lb1-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726601AbfGaEaI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jul 2019 00:30:08 -0400
+Received: from [IPv6:2001:983:e9a7:1:a003:9a19:9f18:5372] ([IPv6:2001:983:e9a7:1:a003:9a19:9f18:5372])
+        by smtp-cloud7.xs4all.net with ESMTPA
+        id sgFTh2U6zur8TsgFUhB7Xs; Wed, 31 Jul 2019 06:30:06 +0200
+Subject: Re: [PATCH v8 00/14] Rockchip ISP1 Driver
+To:     Helen Koike <helen.koike@collabora.com>,
+        linux-rockchip@lists.infradead.org
+Cc:     devicetree@vger.kernel.org, eddie.cai.linux@gmail.com,
+        mchehab@kernel.org, heiko@sntech.de, jeffy.chen@rock-chips.com,
+        zyc@rock-chips.com, linux-kernel@vger.kernel.org,
+        tfiga@chromium.org, hans.verkuil@cisco.com,
+        laurent.pinchart@ideasonboard.com, sakari.ailus@linux.intel.com,
+        kernel@collabora.com, ezequiel@collabora.com,
+        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        zhengsq@rock-chips.com
+References: <20190730184256.30338-1-helen.koike@collabora.com>
+ <dbdfed3e-7bb6-bf1f-64b9-ab7298193e2d@xs4all.nl>
+ <41e7e574-2708-eb4c-ea30-e6a1ac9c073e@collabora.com>
+ <8ce532de-6c26-f8db-8754-c8dd1eb0764b@collabora.com>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <74bb0ba1-2859-39ff-d946-129a440ba150@xs4all.nl>
+Date:   Wed, 31 Jul 2019 06:29:59 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <8ce532de-6c26-f8db-8754-c8dd1eb0764b@collabora.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfGzGe2A7zD3Qrqunsp8MLlEAQbAkyPphsu4wr29b/OTwg0ooPoJd7bndOwd3J9ejKOkxJ0cbjD/OJg+O16w41BuIWIlG3qWHhNj4eIzypt9VClWiUenQ
+ 4x7WMzM3EDH3+8ogHw2UwVEBfa1MyMYbAnDNey6xByiD5Wv9r4W4gy7c0JqdRYslaPc5CXk8ImfWn1WmyK1UxzxdABmfyRE9wRSGN6LUnRMNLnz2h3Uu3Zmj
+ GcuBNqz1HMIzXzU+K1FbkUOirZ8hl1gN5Ssxqc+CsDC7DV+GxuL4etCx//b1LD5Hlqetzi3oAgR3sb9xwyO5/2TmIw8FFif2dAanEKIld2rvhd8QMb1Ard9X
+ PDWv82mvvKdmyhnVELfgFBaZRw3s2XdoSSbeQW8AkPIs1RaoLZXROpEzXjU9+o1F4A1nHRoTawPL2PCZdzCienvTs8zOw83mL8a44xdnTsavmL1afCD6f4o9
+ sBvzFt3sWvguoyiCdxA0UqHmC4GqQt3xY34Xfk3dad0NU1wBTzlPGHEb8Wt6epA6/mthSbkYjmX9HKU1HgVA+0VqgcWfBXyk22gylbCvUdM3XAyeuw1gwNkY
+ cJwgsZ2DQesP0gsq8wwmYH8LmF0MFVMfpyb02nlrYe/As0/mdsNQ80mV1DrsBW9dsmz3HyGuLRcfBcBGzjvEnfd2VyM90uoGX9xXzBnWiFVtMgDdtrxaqiY9
+ UzEjBxyl9QMWoDHPyXkQ40ghRZD9rCmYenDzIA0wqYdwF9Se2KK6HdVv7nW98Dy9rMitePuYayEtMq0Lz2A7I1aT4D13sBVPeJfIkMiq0V3nUEvzq06roAep
+ A9RYAfeRK/G6AAJlh5HBySCFH+2nIX3sqTXDEFlh61RvW+cgEfjWE9Y7PIfEbPh2tpvmAthNdusM/7GBkEA/nTyxHG+5jTfVc1ds3Cx/
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is request to disable specific c-states during bootup for
-debug purpose. For example, deeper c-states except C1,C1E,C10
-are disabled during bootup otherwise it might not boot up well
-due to incorrect setting in FW.
+On 7/31/19 2:08 AM, Helen Koike wrote:
+> 
+> 
+> On 7/30/19 5:50 PM, Helen Koike wrote:
+>>
+>>
+>> On 7/30/19 5:15 PM, Hans Verkuil wrote:
+>>> On 7/30/19 8:42 PM, Helen Koike wrote:
+>>>> Hello,
+>>>>
+>>>> I'm re-sending a new version of ISP(Camera) v4l2 driver for rockchip
+>>>> rk3399 SoC.
+>>>>
+>>>> I didn't change much from the last version, just applying the
+>>>> suggestions made in the previous one.
+>>>>
+>>>> This patchset is also available at:
+>>>> https://gitlab.collabora.com/koike/linux/tree/rockchip/isp/v8
+>>>>
+>>>> Libcamera patched to work with this version:
+>>>> https://gitlab.collabora.com/koike/libcamera
+>>>> (also sent to the mailing list)
+>>>>
+>>>> I tested on the rockpi 4 with a rpi v1.3 sensor and also with the
+>>>> Scarlet Chromebook.
+>>>>
+>>>> Known issues (same as in v7):
+>>>> -------------
+>>>> - Reloading the module doesn't work (there is some missing cleanup when
+>>>> unloading)
+>>>> - When capturing in bayer format, changing the size doesn't seem to
+>>>> affect the image.
+>>>> - crop needs more tests
+>>>> - v4l2-compliance error:
+>>>>         fail: v4l2-test-controls.cpp(824): subscribe event for control 'Image Processing Controls' failed
+>>>> test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: FAIL
+>>>
+>>> Can you mail me the full v4l2-compliance output?
+>>
+>> Sure, please check here: http://ix.io/1Q5u
+>> I updated v4l-utils with the latest version and I re-ran bootstrap/configure/make,
+>> but for some reason the hash from the link above is not the latest commit, probably some
+>> old configuration somewhere. I'll resend this log as soon as I get v4l2-compliance
+>> properly updated.
+> 
+> Please see the output of v4l2-compliance here with an updated v4l-utils: http://ix.io/1Q6A
 
-For example, intel_idle.mask_cstate=0x3c, would disable cstate
-2,3,4,5 in the table
-(1<<2) | (1<<3) | (1<<4) | (1<<5)
-which is C6,C7s,C8,C9 on Broxton.
-This could have it come up as present, but with c-states disabled,
-so user can enable those c-states later to test.
+So this FAIL is for /dev/v4l-subdev0 (rkisp1-isp-subdev).
 
-Cc: Len Brown <len.brown@intel.com>
-Cc: "Wysocki, Rafael J" <rafael.j.wysocki@intel.com>
-Cc: Rui Zhang <rui.zhang@intel.com>
-Cc: David Box <david.e.box@intel.com>
-Cc: "Tan, Raymond" <raymond.tan@intel.com>
-Signed-off-by: Chen Yu <yu.c.chen@intel.com>
----
- .../admin-guide/kernel-parameters.txt         |  7 ++++
- drivers/idle/intel_idle.c                     | 36 +++++++++++++++++++
- 2 files changed, 43 insertions(+)
+What is weird that this subdev does not appear to have controls at all.
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 7ccd158b3894..93a326c42877 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -1733,6 +1733,13 @@
- 			provided by tboot because it makes the system
- 			vulnerable to DMA attacks.
- 
-+	intel_idle.mask_cstate=	[HW,X86]
-+			Mask of C-states to be disabled during bootup. For
-+			example, mask_cstate=0x3c, would disable cstate 2,3,4,5
-+			in the table
-+			(1<<2) | (1<<3) | (1<<4) | (1<<5)
-+			which is C6,C7s,C8,C9 on Broxton.
-+
- 	intel_idle.max_cstate=	[KNL,HW,ACPI,X86]
- 			0	disables intel_idle and fall back on acpi_idle.
- 			1 to 9	specify maximum depth of C-state.
-diff --git a/drivers/idle/intel_idle.c b/drivers/idle/intel_idle.c
-index fa5ff77b8fe4..ed3233864b69 100644
---- a/drivers/idle/intel_idle.c
-+++ b/drivers/idle/intel_idle.c
-@@ -63,6 +63,8 @@ static struct cpuidle_driver intel_idle_driver = {
- /* intel_idle.max_cstate=0 disables driver */
- static int max_cstate = CPUIDLE_STATE_MAX - 1;
- 
-+static unsigned int mask_cstate;
-+
- static unsigned int mwait_substates;
- 
- #define LAPIC_TIMER_ALWAYS_RELIABLE 0xFFFFFFFF
-@@ -1354,6 +1356,12 @@ static void __init intel_idle_cpuidle_driver_init(void)
- 		if (num_substates == 0)
- 			continue;
- 
-+		if ((1UL<<cstate) & mask_cstate) {
-+			pr_info("Disable #%d[%s] by user\n",
-+					cstate,
-+					cpuidle_state_table[cstate].name);
-+			cpuidle_state_table[cstate].disabled = 1;
-+		}
- 		/* if state marked as disabled, skip it */
- 		if (cpuidle_state_table[cstate].disabled != 0) {
- 			pr_debug("state %s is disabled\n",
-@@ -1480,3 +1488,31 @@ device_initcall(intel_idle_init);
-  * is the easiest way (currently) to continue doing that.
-  */
- module_param(max_cstate, int, 0444);
-+
-+static int mask_cstate_set(const char *arg, const struct kernel_param *kp)
-+{
-+	int ret = 0;
-+	unsigned long new_mask_cstate, max_bit;
-+
-+	ret = kstrtoul(arg, 0, &new_mask_cstate);
-+	if (ret)
-+		goto exit_mask;
-+
-+	max_bit = find_last_bit(&new_mask_cstate, BITS_PER_LONG);
-+	if (max_bit >= CPUIDLE_STATE_MAX) {
-+		ret = -EINVAL;
-+		goto exit_mask;
-+	}
-+
-+	mask_cstate = new_mask_cstate;
-+	smp_mb();
-+
-+exit_mask:
-+	return ret;
-+}
-+
-+static const struct kernel_param_ops mask_cstate_ops = {
-+	.set = mask_cstate_set,
-+	.get = param_get_int,
-+};
-+module_param_cb(mask_cstate, &mask_cstate_ops, &mask_cstate, 0644);
--- 
-2.17.1
+What is the output of 'v4l2-ctl -d /dev/v4l-subdev0 -l'? And if it lists
+controls, then why?
 
+If you run 'v4l2-compliance -u /dev/v4l-subdev0', do you get a fail as
+well?
+
+BTW, note that struct rkisp1_isp_subdev has a ctrl_handler field that
+isn't used at all.
+
+Regards,
+
+	Hans
