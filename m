@@ -2,91 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A2A0E7D161
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 00:42:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BD14E7D17F
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 00:47:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729847AbfGaWm2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 18:42:28 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:47294 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728482AbfGaWm2 (ORCPT
+        id S1729885AbfGaWrH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 18:47:07 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:39462 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726755AbfGaWrG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 18:42:28 -0400
-Received: from 79.184.255.110.ipv4.supernova.orange.pl (79.184.255.110) (HELO kreacher.localnet)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.275)
- id 08c6e24a98894a9b; Thu, 1 Aug 2019 00:42:26 +0200
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Tri Vo <trong@android.com>
-Cc:     Stephen Boyd <swboyd@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Hridya Valsaraju <hridya@google.com>,
-        Sandeep Patil <sspatil@google.com>,
-        Kalesh Singh <kaleshsingh@google.com>,
-        Ravi Chandra Sadineni <ravisadineni@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        "Cc: Android Kernel" <kernel-team@android.com>
-Subject: Re: [PATCH v6] PM / wakeup: show wakeup sources stats in sysfs
-Date:   Thu, 01 Aug 2019 00:42:25 +0200
-Message-ID: <6987393.M0uybTKmdI@kreacher>
-In-Reply-To: <CANA+-vDTDq__LnLBpM5u_VHHvpFA--K5Du63vPB7HfaKzBsPtg@mail.gmail.com>
-References: <20190731215514.212215-1-trong@android.com> <32598586.Mjd66ZhNnG@kreacher> <CANA+-vDTDq__LnLBpM5u_VHHvpFA--K5Du63vPB7HfaKzBsPtg@mail.gmail.com>
+        Wed, 31 Jul 2019 18:47:06 -0400
+Received: by mail-qt1-f193.google.com with SMTP id l9so68173065qtu.6
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 15:47:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=netronome-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :organization:mime-version:content-transfer-encoding;
+        bh=mvHjIX1uETmKrf65GxFOMFRsSWX5lIF6LRU3P8/k6+A=;
+        b=Anx9+7HbDTku25fwvipty5007KkvXfUfQ99I/9ymi8/C+5tgq0+fqH+ESHDJa5LQQn
+         Nhb+HRDiuzm2jlaQUbug3kbBnW9oIiEy+Tdh8Xo5p93buxuOqTJpQBRTiS6NW7NBed4e
+         7uEm/qD6l15bMXpx+3emqeF2MIEDiCDCIKIb1jLOwU521e6QthwKGaQym1C9uSI2aYkc
+         QIjLgDhmvm2g0T1BQpEcdKlGbyUmoD0Kv9arJfgiYt8RAUvnYP4E1oq805xDVJ65h7ow
+         /WY0AqlB0L+dcY4QewRIJhBf0aDlTm6gDdM00CbZyeGURz+EIlY2oYQlzznig4HOlRAO
+         J6ag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:organization:mime-version:content-transfer-encoding;
+        bh=mvHjIX1uETmKrf65GxFOMFRsSWX5lIF6LRU3P8/k6+A=;
+        b=Pf4cUnOAjDFfM0nceDolZ/7YNjRPkt2RVphLawA4M+0jBjNmcJKwxem/IKcZR8hjor
+         tF75L4x59ysCcXwi5GQqUXSk8uvzSEEa/dWe5d3Y9ooulTxZpPcp/PzNjtbf9qY3nR3I
+         T7IEWpBn1XQDWbJYAhUe0SAwbWHTEErQLV5DwyLC9eijKiuzjG0OMHKvRU98qQmeCuuu
+         9mVt6O0QRqAYIkt7Xd/TtOTy88WczOgQJOJBuT54cTBjwao+dc6O1Kp7PtKSK8q4Hpf+
+         OoUDouWebxN4ALfl5zX9KERdCvbHT29CpMNK38BXnOpSj6q/HVFOK31yESQdtBJsTKTi
+         q/1w==
+X-Gm-Message-State: APjAAAX52eiVhdPvKEHbqRrgYs5t52N/KQvEV3DqtUnKDdgkIbY4QkVG
+        KoJnO89bexCAx36xnEGEseHTGg==
+X-Google-Smtp-Source: APXvYqwv6haSpTRkt0688fF5HFjqhLzpi63KUyext499GmsFPsTqU/DaoI5/SvZ2OI6nb8Y+Z/XmDg==
+X-Received: by 2002:ac8:6b50:: with SMTP id x16mr89322591qts.246.1564613225939;
+        Wed, 31 Jul 2019 15:47:05 -0700 (PDT)
+Received: from cakuba.netronome.com ([66.60.152.14])
+        by smtp.gmail.com with ESMTPSA id n93sm32201850qte.1.2019.07.31.15.47.04
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 31 Jul 2019 15:47:05 -0700 (PDT)
+Date:   Wed, 31 Jul 2019 15:46:50 -0700
+From:   Jakub Kicinski <jakub.kicinski@netronome.com>
+To:     syzbot <syzbot+f5731e2256eb5130dbd6@syzkaller.appspotmail.com>
+Cc:     aviadye@mellanox.com, borisp@mellanox.com, daniel@iogearbox.net,
+        davejwatson@fb.com, davem@davemloft.net, john.fastabend@gmail.com,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Subject: Re: KASAN: invalid-free in tls_sk_proto_cleanup
+Message-ID: <20190731154650.3766622f@cakuba.netronome.com>
+In-Reply-To: <00000000000010fb45058ef5eb52@google.com>
+References: <00000000000010fb45058ef5eb52@google.com>
+Organization: Netronome Systems, Ltd.
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thursday, August 1, 2019 12:31:16 AM CEST Tri Vo wrote:
-> On Wed, Jul 31, 2019 at 3:17 PM Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
-> >
-> > On Wednesday, July 31, 2019 11:59:32 PM CEST Stephen Boyd wrote:
-> > > Quoting Tri Vo (2019-07-31 14:55:14)
-> > > > +/**
-> > > > + * wakeup_source_sysfs_add - Add wakeup_source attributes to sysfs.
-> > > > + * @parent: Device given wakeup source is associated with (or NULL if virtual).
-> > > > + * @ws: Wakeup source to be added in sysfs.
-> > > > + */
-> > > > +int wakeup_source_sysfs_add(struct device *parent, struct wakeup_source *ws)
-> > > > +{
-> > > > +       struct device *dev;
-> > > > +       int id;
-> > > > +
-> > > > +       id = ida_alloc(&wakeup_ida, GFP_KERNEL);
-> >
-> > So can anyone remind me why the IDA thing is needed here at all?
+On Wed, 31 Jul 2019 01:29:05 -0700, syzbot wrote:
+> Hello,
 > 
-> IDA is used to generate the directory name ("ws%d", ID) that is unique
-> among wakeup_sources. That is what ends up in
-> /sys/class/wakeup/ws<ID>/* path.
-
-That's not my point (see below).
-
-> > > > +       if (id < 0)
-> > > > +               return id;
-> > > > +       ws->id = id;
-> > > > +
-> > > > +       dev = device_create_with_groups(wakeup_class, parent, MKDEV(0, 0), ws,
-> > > > +                                       wakeup_source_groups, "ws%d",
-> > >
-> > > I thought the name was going to still be 'wakeupN'?
-> >
-> > So can't we prefix the wakeup source name with something like "wakeup:" or similar here?
+> syzbot found the following crash on:
 > 
-> "ws%d" here is the name in the sysfs path rather than the name of the
-> wakeup source. Wakeup source name is not altered in this patch.
+> HEAD commit:    fde50b96 Add linux-next specific files for 20190726
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=15ea7f3fa00000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=4b58274564b354c1
+> dashboard link: https://syzkaller.appspot.com/bug?extid=f5731e2256eb5130dbd6
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
 > 
+> Unfortunately, I don't have any reproducer for this crash yet.
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+f5731e2256eb5130dbd6@syzkaller.appspotmail.com
+> 
+> ==================================================================
+> BUG: KASAN: double-free or invalid-free in tls_sk_proto_cleanup+0x216/0x3e0  
+> net/tls/tls_main.c:300
 
-So why wouldn't something like this suffice:
-
-dev = device_create_with_groups(wakeup_class, parent, MKDEV(0, 0), ws,
-                                wakeup_source_groups, "wakeup:%s", ws->name);
-
-?
-
-
-
+FWIW there is a fix in the works for this and all new TLS issues.
+I think John and Eric didn't have time yet to look at my theories,
+so I'd like to keep it in QA for one extra day before posting.
