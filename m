@@ -2,61 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D9EF7BD71
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 11:41:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F1087BD7A
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 11:42:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387594AbfGaJlA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 05:41:00 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:58702 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387569AbfGaJk7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 05:40:59 -0400
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 09E3D1B56FCC195BA4B0;
-        Wed, 31 Jul 2019 17:40:47 +0800 (CST)
-Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
- (10.3.19.208) with Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 31 Jul
- 2019 17:40:40 +0800
-Subject: Re: [PATCH 21/22] staging: erofs: update super.c
-To:     Gao Xiang <gaoxiang25@huawei.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <devel@driverdev.osuosl.org>
-CC:     <linux-erofs@lists.ozlabs.org>,
-        LKML <linux-kernel@vger.kernel.org>, <weidu.du@huawei.com>,
-        Miao Xie <miaoxie@huawei.com>
-References: <20190729065159.62378-1-gaoxiang25@huawei.com>
- <20190729065159.62378-22-gaoxiang25@huawei.com>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <0b9588c1-1d8d-62d6-7ad1-f8d39fe33076@huawei.com>
-Date:   Wed, 31 Jul 2019 17:40:40 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20190729065159.62378-22-gaoxiang25@huawei.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+        id S1726920AbfGaJmQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 05:42:16 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:37234 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725921AbfGaJmP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jul 2019 05:42:15 -0400
+Received: by mail-lf1-f68.google.com with SMTP id c9so46923029lfh.4
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 02:42:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=owltronix-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=rqG+cIJiTcKTl4jj+UyKsbLA405xn5hnEZuM+vQ9m2s=;
+        b=0gCycQ1IpbD4/DIdgmoTf//wxXx6+VbiEOx9PBs7wipdDuyJLOje2wWajDg7uLGj2L
+         P3pnhFhpvZsQKL1bAOTTEeyEB26aidRybFixoH8AQ61n3qHTq5aTCppDV5vVnC96wyth
+         fjTf0u1l0BlYNU1YX6aA5v/jsBeznHmUz/PVQAtq9R11+BoTDD1mDw/o2/iL64GkgC1C
+         Weixn0ora792RiXSORUxmHYJbtdkhy3vRx8vdtQgrkkBm8dlcKQzdgIoC0kidLJ8vJJM
+         A1FOIRQb1ic5Uu+BAP77II6khgO7FH8qqgKX8i89VvPXBhyKWhAjSjiUrosS64sAX++i
+         omvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=rqG+cIJiTcKTl4jj+UyKsbLA405xn5hnEZuM+vQ9m2s=;
+        b=cNunFcNktXGkSBhkKQ7X9gMmvGgQlqEZLyAj96XiwhlIvwuYgx7c5j8YVOWy7NveU7
+         dZVbQT8atyuLTskfsvrxnLOvB84o8iW8zIXF0vBHtnv/+pIhQOY8nxqsxGwektOs6WwD
+         FEuMEKv/1sqcTL+shEhjdNwFQJduKJ/EciJL8HY1x1slLNFO1hgLsGDurOyxmBnv7btK
+         ccT/8L4U3t8WVmTfMxbBWj/vlJjK8nAFA+6ueZV3NgYywcZxDJd4RpWLyYBrNSUsuHP1
+         tUj9ITfPSDu53qKqzaAqjyOt2OmlNPBbOKWVUU/nqGSVBW3YJHpeRSzkYV/k7k9HxOuI
+         TDZA==
+X-Gm-Message-State: APjAAAXXt5KzVWdyjmtkTfDu2I7Wg939ZPgmCXNdaG5GHBmhPAk37T0p
+        IdiFA5FZ+LV6sM0jRAYaCP4=
+X-Google-Smtp-Source: APXvYqwgjLjCynceI0reBeEaL7wIlQZc3sok3R7oUvc1CqgSMjQm5/sluf7+n7dLWAOLW5dZ8sZ3KA==
+X-Received: by 2002:ac2:4466:: with SMTP id y6mr13167058lfl.0.1564566133483;
+        Wed, 31 Jul 2019 02:42:13 -0700 (PDT)
+Received: from titan.lan (90-230-197-193-no86.tbcn.telia.com. [90.230.197.193])
+        by smtp.gmail.com with ESMTPSA id t4sm15408200ljh.9.2019.07.31.02.42.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 31 Jul 2019 02:42:12 -0700 (PDT)
+From:   Hans Holmberg <hans@owltronix.com>
+To:     Matias Bjorling <mb@lightnvm.io>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@javigon.com>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Hans Holmberg <hans@owltronix.com>
+Subject: [PATCH 0/4] lnvm/pblk mapping cleanups
+Date:   Wed, 31 Jul 2019 11:41:32 +0200
+Message-Id: <1564566096-28756-1-git-send-email-hans@owltronix.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/7/29 14:51, Gao Xiang wrote:
-> Keep in line with erofs-outofstaging patchset:
-> - "Chao Yu" is most commonly used in Linux community;
+This series cleans up the metadata allocation/mapping in lnvm/pblk
+by moving over to kvmalloc for metadata and moving metadata mapping
+down to the lower lever driver where blk_rq_map_kern can be used.
 
-Either is okay to me, anyway, thanks for the correction. :)
+Hans Holmberg (4):
+  lightnvm: remove nvm_submit_io_sync_fn
+  lightnvm: move metadata mapping to lower level driver
+  lightnvm: pblk: use kvmalloc for metadata
+  block: stop exporting bio_map_kern
 
-BTW, I notice that .mailmap can map different email or name to single one on
-git-shortlog or git-blame, so developer and user can find the correct people to
-blame... I think we can change ours later.
+ block/bio.c                      |   1 -
+ drivers/lightnvm/core.c          |  43 ++++++++++++---
+ drivers/lightnvm/pblk-core.c     | 116 +++++----------------------------------
+ drivers/lightnvm/pblk-gc.c       |  19 +++----
+ drivers/lightnvm/pblk-init.c     |  38 ++++---------
+ drivers/lightnvm/pblk-read.c     |  22 +-------
+ drivers/lightnvm/pblk-recovery.c |  39 ++-----------
+ drivers/lightnvm/pblk-write.c    |  20 +------
+ drivers/lightnvm/pblk.h          |  31 +----------
+ drivers/nvme/host/lightnvm.c     |  45 +++++----------
+ include/linux/lightnvm.h         |   8 +--
+ 11 files changed, 96 insertions(+), 286 deletions(-)
 
-> - quoted string split across lines.
-> 
-> Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+-- 
+2.7.4
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-
-Thanks,
