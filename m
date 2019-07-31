@@ -2,33 +2,33 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52DDD7BF9E
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 13:31:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E076D7BF91
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 13:31:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387874AbfGaLaf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 07:30:35 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:36010 "EHLO
+        id S2387789AbfGaLaV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 07:30:21 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:35450 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387778AbfGaLaW (ORCPT
+        with ESMTP id S2387687AbfGaLaP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 07:30:22 -0400
+        Wed, 31 Jul 2019 07:30:15 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=rRPz+PWWHOG3+Z69Sa198TqzitnXS8SfELUICqTQMgE=; b=MC3kMyK9KPVL
-        xh62WxhHGry3uYbLLNEwrY8hSb2Oh0BYEPEr7KQhYpnNYhl7mVPz3mFuECKljaDS+Uh5Jd6QvZO1B
-        dgD+0Ym95Ww6DObAecmO+AdqH5NOD6jvIrSwXD8htVcdZZhoHlzKP4dXHwIDXJAfHuJc6aLIbWFdQ
-        g/zwc=;
+        List-Archive; bh=D27PgUzlkeJT1hRDQAIWF2kJbtKxhYxVBpbQCxryxOg=; b=j2EOOVV2gVCv
+        IwofE9JOuzwJZVPv5AaFEhn0PEGycQZW3HOh6JT5ZaDYCAA5gH9/QTi/DsF+hdOlzJSvi1AQ1hCqY
+        WztfJFk2HqD0Ewio4F2IePC419Da3YEYElcdOb74J03NFYrpCdZIzkCANZy54zkks2dz8BbPx52Z0
+        MT6UI=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1hsmni-0001mW-2t; Wed, 31 Jul 2019 11:29:46 +0000
+        id 1hsmnh-0001lx-KJ; Wed, 31 Jul 2019 11:29:45 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 6EECC2742C99; Wed, 31 Jul 2019 12:29:45 +0100 (BST)
+        id 1946E2742CC3; Wed, 31 Jul 2019 12:29:45 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
 To:     YueHaibing <yuehaibing@huawei.com>
 Cc:     alexandre.torgue@st.com, alsa-devel@alsa-project.org,
@@ -55,10 +55,10 @@ Cc:     alexandre.torgue@st.com, alsa-devel@alsa-project.org,
         thierry.reding@gmail.com, timur@kernel.org, tiwai@suse.com,
         wahrenst@gmx.net, wens@csie.org, Xiubo.Lee@gmail.com,
         yamada.masahiro@socionext.com
-Subject: Applied "ASoC: meson: axg-pdm: use devm_platform_ioremap_resource() to simplify code" to the asoc tree
-In-Reply-To: <20190727150738.54764-28-yuehaibing@huawei.com>
+Subject: Applied "ASoC: meson: axg-spdifin: use devm_platform_ioremap_resource() to simplify code" to the asoc tree
+In-Reply-To: <20190727150738.54764-29-yuehaibing@huawei.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190731112945.6EECC2742C99@ypsilon.sirena.org.uk>
+Message-Id: <20190731112945.1946E2742CC3@ypsilon.sirena.org.uk>
 Date:   Wed, 31 Jul 2019 12:29:45 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -67,7 +67,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: meson: axg-pdm: use devm_platform_ioremap_resource() to simplify code
+   ASoC: meson: axg-spdifin: use devm_platform_ioremap_resource() to simplify code
 
 has been applied to the asoc tree at
 
@@ -92,36 +92,36 @@ to this mail.
 Thanks,
 Mark
 
-From 2e73d98f2ecf61008926bb8a425c3281a89959c0 Mon Sep 17 00:00:00 2001
+From d61feec0f60c250c786a9e0069ce909979491c7b Mon Sep 17 00:00:00 2001
 From: YueHaibing <yuehaibing@huawei.com>
-Date: Sat, 27 Jul 2019 23:07:31 +0800
-Subject: [PATCH] ASoC: meson: axg-pdm: use devm_platform_ioremap_resource() to
- simplify code
+Date: Sat, 27 Jul 2019 23:07:32 +0800
+Subject: [PATCH] ASoC: meson: axg-spdifin: use
+ devm_platform_ioremap_resource() to simplify code
 
 Use devm_platform_ioremap_resource() to simplify the code a bit.
 This is detected by coccinelle.
 
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Link: https://lore.kernel.org/r/20190727150738.54764-28-yuehaibing@huawei.com
+Link: https://lore.kernel.org/r/20190727150738.54764-29-yuehaibing@huawei.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/meson/axg-pdm.c | 4 +---
+ sound/soc/meson/axg-spdifin.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/sound/soc/meson/axg-pdm.c b/sound/soc/meson/axg-pdm.c
-index 9d5684493ffc..bfd37d49a73e 100644
---- a/sound/soc/meson/axg-pdm.c
-+++ b/sound/soc/meson/axg-pdm.c
-@@ -585,7 +585,6 @@ static int axg_pdm_probe(struct platform_device *pdev)
- {
+diff --git a/sound/soc/meson/axg-spdifin.c b/sound/soc/meson/axg-spdifin.c
+index 01b2035fa841..d0d09f945b48 100644
+--- a/sound/soc/meson/axg-spdifin.c
++++ b/sound/soc/meson/axg-spdifin.c
+@@ -453,7 +453,6 @@ static int axg_spdifin_probe(struct platform_device *pdev)
  	struct device *dev = &pdev->dev;
- 	struct axg_pdm *priv;
+ 	struct axg_spdifin *priv;
+ 	struct snd_soc_dai_driver *dai_drv;
 -	struct resource *res;
  	void __iomem *regs;
  	int ret;
  
-@@ -600,8 +599,7 @@ static int axg_pdm_probe(struct platform_device *pdev)
+@@ -468,8 +467,7 @@ static int axg_spdifin_probe(struct platform_device *pdev)
  		return -ENODEV;
  	}
  
