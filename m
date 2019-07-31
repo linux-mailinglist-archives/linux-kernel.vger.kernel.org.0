@@ -2,111 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 935A47BDE6
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 12:02:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DB667BDF2
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 12:02:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387640AbfGaKAx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 06:00:53 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:3268 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387612AbfGaKAv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 06:00:51 -0400
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id EA85F9BBF657C09B2632;
-        Wed, 31 Jul 2019 18:00:48 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS402-HUB.china.huawei.com
- (10.3.19.202) with Microsoft SMTP Server id 14.3.439.0; Wed, 31 Jul 2019
- 18:00:39 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <linus.walleij@linaro.org>, <bgolaszewski@baylibre.com>,
-        <yamada.masahiro@socionext.com>
-CC:     <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH] gpio: remove duplicated function definition
+        id S1729102AbfGaKBM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 06:01:12 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:37793 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387723AbfGaKBG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jul 2019 06:01:06 -0400
+Received: by mail-pl1-f195.google.com with SMTP id b3so30290771plr.4
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 03:01:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :in-reply-to:references;
+        bh=XF5mZ6TSVo4eSNdQwLP31itinD3L/9CCtkqFjn0djlU=;
+        b=UHCfglolFc+DiKNqu28PP7eW3FZEIuVvD/ZAL0ARBydSmw5J1AvOi7RqECGvzy6OyG
+         JjznumgXnMlrgA+kEdFEsntSef0+YnGvMTLpX+q4IecNPm57QuzzIsAAWnE3sBhklwoQ
+         aYzQ3bw8+p+ZPNrOrSDamq+nkI+kJfTvuVAL4kdLH6lmo3FnsURjQaFVeGvWtuV/dx7M
+         Oesx0zR11jotI5yl8mxyz374bO4ddYQKkHky0Sx447WMBTRl/sKaHqp16dEOPi1Tzgev
+         2vBnBHlc0ZsG6mTdF49WwAunGzn3pS9UeqSoQFADQK3GU6s/SIfyzE1ni8WGsDTjD2ek
+         FFBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:in-reply-to:references;
+        bh=XF5mZ6TSVo4eSNdQwLP31itinD3L/9CCtkqFjn0djlU=;
+        b=SqgLMFaVoEKXq8CGcvdq9Qqvs05KeWz/ye3Bs4anGpy583Zh0oWieaaSoeDv7oyLSa
+         XYFMoaAYSBRDme6mAduO6RPEP1en0y8lhqMXrKGD53c2dLDrwdzpWWCEf67cW2LYfJgB
+         NU3X2MDJTvuozZlSHx+H11CNrjb+u5GJH5ry5AbR1jtRW174hRxdMesL7JVSy9eE925i
+         sWmknuUVrkm/Bk5XXOpRnxujwm6MbbphtrpSBrPEPh3uLL8Yjx9WnO8J+etY25Ptq1s9
+         B93GZm5xFRU/vPLSGd/qccdtJYio4eFwzYlwwkg9uboyHU6STU/0YVuCIAiAIT4AGuWQ
+         F0Ww==
+X-Gm-Message-State: APjAAAVDfkK/l4DUPtA1yrz1SxNRb+ksAo6Dx+HstGIH09HUmlLcwAJx
+        5M2Nyn9k6Ig0FcRp+OAzlCCcgA==
+X-Google-Smtp-Source: APXvYqwNQvRYJbmUxrXwPc+d2Y+WlvIn2qkESp52+VZCGPtoCkNpZLLC2P1EOSKz+HvgKnVzuGG4XA==
+X-Received: by 2002:a17:902:a514:: with SMTP id s20mr113281631plq.162.1564567265611;
+        Wed, 31 Jul 2019 03:01:05 -0700 (PDT)
+Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.82])
+        by smtp.gmail.com with ESMTPSA id m6sm68611352pfb.151.2019.07.31.03.01.03
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 31 Jul 2019 03:01:05 -0700 (PDT)
+From:   Baolin Wang <baolin.wang@linaro.org>
+To:     sre@kernel.org
+Cc:     orsonzhai@gmail.com, zhang.lyra@gmail.com, yuanjiang.yu@unisoc.com,
+        baolin.wang@linaro.org, vincent.guittot@linaro.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 6/6] power: supply: sc27xx: Add POWER_SUPPLY_PROP_CALIBRATE attribute
 Date:   Wed, 31 Jul 2019 18:00:28 +0800
-Message-ID: <20190731100028.48884-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+Message-Id: <554dd7e2ef4f3c5247322d8b185607748144b1e6.1564566425.git.baolin.wang@linaro.org>
+X-Mailer: git-send-email 1.7.9.5
+In-Reply-To: <cover.1564566425.git.baolin.wang@linaro.org>
+References: <cover.1564566425.git.baolin.wang@linaro.org>
+In-Reply-To: <cover.1564566425.git.baolin.wang@linaro.org>
+References: <cover.1564566425.git.baolin.wang@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-when building without CONFIG_PINCTRL:
+From: Yuanjiang Yu <yuanjiang.yu@unisoc.com>
 
-In file included from drivers/hwmon/pmbus/ucd9000.c:19:0:
-./include/linux/gpio/driver.h:576:1: error: redefinition of gpiochip_add_pin_range
- gpiochip_add_pin_range(struct gpio_chip *chip, const char *pinctl_name,
- ^~~~~~~~~~~~~~~~~~~~~~
-In file included from drivers/hwmon/pmbus/ucd9000.c:18:0:
-./include/linux/gpio.h:245:1: note: previous definition of gpiochip_add_pin_range was here
- gpiochip_add_pin_range(struct gpio_chip *chip, const char *pinctl_name,
- ^~~~~~~~~~~~~~~~~~~~~~
+Add the 'POWER_SUPPLY_PROP_CALIBRATE' attribute to allow chareger manager
+to calibrate the battery capacity.
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Fixes: 964cb341882f ("gpio: move pincontrol calls to <linux/gpio/driver.h>")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Yuanjiang Yu <yuanjiang.yu@unisoc.com>
+Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 ---
- include/linux/gpio/driver.h | 35 +----------------------------------
- 1 file changed, 1 insertion(+), 34 deletions(-)
+ drivers/power/supply/sc27xx_fuel_gauge.c |   27 +++++++++++++++++++--------
+ 1 file changed, 19 insertions(+), 8 deletions(-)
 
-diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-index f28f534..09f96ec 100644
---- a/include/linux/gpio/driver.h
-+++ b/include/linux/gpio/driver.h
-@@ -10,6 +10,7 @@
- #include <linux/lockdep.h>
- #include <linux/pinctrl/pinctrl.h>
- #include <linux/pinctrl/pinconf-generic.h>
-+#include <linux/gpio.h>
+diff --git a/drivers/power/supply/sc27xx_fuel_gauge.c b/drivers/power/supply/sc27xx_fuel_gauge.c
+index fa85f40..6363c48 100644
+--- a/drivers/power/supply/sc27xx_fuel_gauge.c
++++ b/drivers/power/supply/sc27xx_fuel_gauge.c
+@@ -111,6 +111,7 @@ struct sc27xx_fgu_data {
+ static int sc27xx_fgu_cap_to_clbcnt(struct sc27xx_fgu_data *data, int capacity);
+ static void sc27xx_fgu_capacity_calibration(struct sc27xx_fgu_data *data,
+ 					    int cap, int int_mode);
++static void sc27xx_fgu_adjust_cap(struct sc27xx_fgu_data *data, int cap);
  
- struct gpio_desc;
- struct of_phandle_args;
-@@ -560,40 +561,6 @@ struct gpio_pin_range {
- 	struct pinctrl_gpio_range range;
+ static const char * const sc27xx_charger_supply_name[] = {
+ 	"sc2731_charger",
+@@ -610,17 +611,25 @@ static int sc27xx_fgu_set_property(struct power_supply *psy,
+ 	struct sc27xx_fgu_data *data = power_supply_get_drvdata(psy);
+ 	int ret;
+ 
+-	if (psp != POWER_SUPPLY_PROP_CAPACITY)
+-		return -EINVAL;
+-
+ 	mutex_lock(&data->lock);
+ 
+-	ret = sc27xx_fgu_save_last_cap(data, val->intval);
++	switch (psp) {
++	case POWER_SUPPLY_PROP_CAPACITY:
++		ret = sc27xx_fgu_save_last_cap(data, val->intval);
++		if (ret < 0)
++			dev_err(data->dev, "failed to save battery capacity\n");
++		break;
+ 
+-	mutex_unlock(&data->lock);
++	case POWER_SUPPLY_PROP_CALIBRATE:
++		sc27xx_fgu_adjust_cap(data, val->intval);
++		ret = 0;
++		break;
+ 
+-	if (ret < 0)
+-		dev_err(data->dev, "failed to save battery capacity\n");
++	default:
++		ret = -EINVAL;
++	}
++
++	mutex_unlock(&data->lock);
+ 
+ 	return ret;
+ }
+@@ -635,7 +644,8 @@ static void sc27xx_fgu_external_power_changed(struct power_supply *psy)
+ static int sc27xx_fgu_property_is_writeable(struct power_supply *psy,
+ 					    enum power_supply_property psp)
+ {
+-	return psp == POWER_SUPPLY_PROP_CAPACITY;
++	return psp == POWER_SUPPLY_PROP_CAPACITY ||
++		psp == POWER_SUPPLY_PROP_CALIBRATE;
+ }
+ 
+ static enum power_supply_property sc27xx_fgu_props[] = {
+@@ -651,6 +661,7 @@ static int sc27xx_fgu_property_is_writeable(struct power_supply *psy,
+ 	POWER_SUPPLY_PROP_CURRENT_AVG,
+ 	POWER_SUPPLY_PROP_CONSTANT_CHARGE_VOLTAGE,
+ 	POWER_SUPPLY_PROP_ENERGY_FULL_DESIGN,
++	POWER_SUPPLY_PROP_CALIBRATE,
  };
  
--#ifdef CONFIG_PINCTRL
--
--int gpiochip_add_pin_range(struct gpio_chip *chip, const char *pinctl_name,
--			   unsigned int gpio_offset, unsigned int pin_offset,
--			   unsigned int npins);
--int gpiochip_add_pingroup_range(struct gpio_chip *chip,
--			struct pinctrl_dev *pctldev,
--			unsigned int gpio_offset, const char *pin_group);
--void gpiochip_remove_pin_ranges(struct gpio_chip *chip);
--
--#else /* ! CONFIG_PINCTRL */
--
--static inline int
--gpiochip_add_pin_range(struct gpio_chip *chip, const char *pinctl_name,
--		       unsigned int gpio_offset, unsigned int pin_offset,
--		       unsigned int npins)
--{
--	return 0;
--}
--static inline int
--gpiochip_add_pingroup_range(struct gpio_chip *chip,
--			struct pinctrl_dev *pctldev,
--			unsigned int gpio_offset, const char *pin_group)
--{
--	return 0;
--}
--
--static inline void
--gpiochip_remove_pin_ranges(struct gpio_chip *chip)
--{
--}
--
--#endif /* CONFIG_PINCTRL */
--
- struct gpio_desc *gpiochip_request_own_desc(struct gpio_chip *chip, u16 hwnum,
- 					    const char *label,
- 					    enum gpio_lookup_flags lflags,
+ static const struct power_supply_desc sc27xx_fgu_desc = {
 -- 
-2.7.4
-
+1.7.9.5
 
