@@ -2,206 +2,165 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EEAC77C4BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 16:21:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 490D87C4C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 16:22:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728276AbfGaOVs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 10:21:48 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:34694 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726582AbfGaOVs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 10:21:48 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6VEEV9K039550
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 10:21:46 -0400
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2u3byvtjh7-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 10:21:46 -0400
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Wed, 31 Jul 2019 15:21:44 +0100
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 31 Jul 2019 15:21:37 +0100
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x6VELZYv35258606
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 31 Jul 2019 14:21:35 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 32CF3A4066;
-        Wed, 31 Jul 2019 14:21:34 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 958CCA406D;
-        Wed, 31 Jul 2019 14:21:31 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.206.240])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Wed, 31 Jul 2019 14:21:31 +0000 (GMT)
-Date:   Wed, 31 Jul 2019 17:21:29 +0300
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Hoan Tran OS <hoan@os.amperecomputing.com>,
-        Will Deacon <will@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
-        Paul Mackerras <paulus@samba.org>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
-        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        "x86@kernel.org" <x86@kernel.org>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Open Source Submission <patches@amperecomputing.com>,
-        Pavel Tatashin <pavel.tatashin@microsoft.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        "willy@infradead.org" <willy@infradead.org>
-Subject: Re: microblaze HAVE_MEMBLOCK_NODE_MAP dependency (was Re: [PATCH v2
- 0/5] mm: Enable CONFIG_NODES_SPAN_OTHER_NODES by default for NUMA)
-References: <20190712143730.au3662g4ua2tjudu@willie-the-truck>
- <20190712150007.GU29483@dhcp22.suse.cz>
- <730368c5-1711-89ae-e3ef-65418b17ddc9@os.amperecomputing.com>
- <20190730081415.GN9330@dhcp22.suse.cz>
- <20190731062420.GC21422@rapoport-lnx>
- <20190731080309.GZ9330@dhcp22.suse.cz>
- <20190731111422.GA14538@rapoport-lnx>
- <20190731114016.GI9330@dhcp22.suse.cz>
- <20190731122631.GB14538@rapoport-lnx>
- <20190731130037.GN9330@dhcp22.suse.cz>
+        id S1728511AbfGaOV7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 10:21:59 -0400
+Received: from mail-eopbgr810055.outbound.protection.outlook.com ([40.107.81.55]:55760
+        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726762AbfGaOV4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jul 2019 10:21:56 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=P9w0DR6kbQZw7o6vhQCCkezcXTByJkyvzmpzNb00InnMrPtOV/3pjhj6p0qkreMDTXtoB1a+n6Fj2CVLDAjfN4C42bOvDJEgvaZ7auW6JhZBMLvsMU8KQFpO+PZFM+/4sudNOBydwt+vJ82+qGdGzdoy6jM6JbxTk1+Ci//faedDfAlAB13bU0zMp5mSGILaYw8PzdXPpSTxmTaC7fOw+wFYaUUDHVzc1isWnAq7barBE/4+DJIDj3AAyEjc5aOTOkKUxgIjaQ17l4z+cDUyT/lviMY7fIDG/rdibLsDAD5BZu+a54Vjn/bnuBnpH/a3y3z4KlgeglYepYroVTcTlA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xuc7nMtsOHKN1fSsmKu6JYkIM6fxecETTtn6dneZuT4=;
+ b=fwXOBfeMwW1/fN7BPd3/p2wKNsdFDdzVrvOdIygBVm3T7ssTFhX7kIXoci1hw9gnWBGeTKHiIYiFvSj9mTan53jFTkPtlQj+ynJb0TTW2psmc4xfHj0nbFB81no+/S4h/8EaBHirZ/j1wCXNBHyUX/dtLqQw0w0YLdZKn7uj9blPv9aN07OqLf0vwElJAUpgBrB+Ql3y4vlnlAGVYab8DXoo1rDnQB+Nwc9zyD7PL1v+M8vx1JUpU1XB0FxPLTEQiJUbSPUzxjmDqBo3uJN4lMTswbTql0CAjeKDEw6a/3P1195nBQqPrSEPRzgMgBn2gc+W4y2DA3OAw1NAohzhNA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass (sender ip is
+ 149.199.60.83) smtp.rcpttodomain=gmail.com
+ smtp.mailfrom=xilinx.com;dmarc=bestguesspass action=none
+ header.from=xilinx.com;dkim=none (message not signed);arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xuc7nMtsOHKN1fSsmKu6JYkIM6fxecETTtn6dneZuT4=;
+ b=oL1OUoYbJEbTSNwGQbkOmCTPk8GQrV86T3ALDZeLoi0GfEosnfxxS5mwdlVVuGDIwMfpAQvZVJplDgJFuXXqnvIR6AssCMgDEm2G6Jz2jBgwlVX3vLLblRAn3AHopDi683AW3EX/nm216YnGf4i6eVuA9lRhTeNv3qd+sxtxXN4=
+Received: from DM6PR02CA0020.namprd02.prod.outlook.com (2603:10b6:5:1c::33) by
+ SN6PR02MB4768.namprd02.prod.outlook.com (2603:10b6:805:90::13) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2115.15; Wed, 31 Jul 2019 14:21:54 +0000
+Received: from BL2NAM02FT008.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e46::202) by DM6PR02CA0020.outlook.office365.com
+ (2603:10b6:5:1c::33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.2136.16 via Frontend
+ Transport; Wed, 31 Jul 2019 14:21:54 +0000
+Authentication-Results: spf=pass (sender IP is 149.199.60.83)
+ smtp.mailfrom=xilinx.com; gmail.com; dkim=none (message not signed)
+ header.d=none;gmail.com; dmarc=bestguesspass action=none
+ header.from=xilinx.com;
+Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
+ 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
+Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
+ BL2NAM02FT008.mail.protection.outlook.com (10.152.76.162) with Microsoft SMTP
+ Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.2115.10
+ via Frontend Transport; Wed, 31 Jul 2019 14:21:53 +0000
+Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
+        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
+        (envelope-from <michal.simek@xilinx.com>)
+        id 1hspUF-00007h-QE; Wed, 31 Jul 2019 07:21:51 -0700
+Received: from [127.0.0.1] (helo=localhost)
+        by xsj-pvapsmtp01 with smtp (Exim 4.63)
+        (envelope-from <michal.simek@xilinx.com>)
+        id 1hspUA-0001nF-O8; Wed, 31 Jul 2019 07:21:46 -0700
+Received: from xsj-pvapsmtp01 (xsj-pvapsmtp01.xilinx.com [149.199.38.66])
+        by xsj-smtp-dlp1.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id x6VELatv030283;
+        Wed, 31 Jul 2019 07:21:36 -0700
+Received: from [172.30.17.116]
+        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
+        (envelope-from <michals@xilinx.com>)
+        id 1hspTz-0001mf-US; Wed, 31 Jul 2019 07:21:36 -0700
+Subject: Re: [PATCH] mailbox: zynqmp-ipi-mailbox: Add of_node_put() before
+ goto
+To:     Nishka Dasgupta <nishkadg.linux@gmail.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        jassisinghbrar@gmail.com, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20190709172841.13769-1-nishkadg.linux@gmail.com>
+ <eaf1fcbe-615e-0fec-d330-ae94e8f3c102@xilinx.com>
+ <6a5306bd-946d-383f-0b42-f17675c24218@gmail.com>
+From:   Michal Simek <michal.simek@xilinx.com>
+Message-ID: <c0be80c9-16ef-fe03-ae3b-a7d3d1a2ede8@xilinx.com>
+Date:   Wed, 31 Jul 2019 16:21:34 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190731130037.GN9330@dhcp22.suse.cz>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 19073114-0028-0000-0000-00000389AADE
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19073114-0029-0000-0000-00002449FC15
-Message-Id: <20190731142129.GA24998@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-31_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1907310144
+In-Reply-To: <6a5306bd-946d-383f-0b42-f17675c24218@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-RCIS-Action: ALLOW
+X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
+X-TM-AS-User-Approved-Sender: Yes;Yes
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(346002)(376002)(136003)(39860400002)(396003)(2980300002)(189003)(199004)(8936002)(70586007)(31696002)(36756003)(229853002)(446003)(14444005)(426003)(65826007)(11346002)(478600001)(47776003)(336012)(305945005)(50466002)(44832011)(126002)(476003)(486006)(2616005)(58126008)(110136005)(65806001)(316002)(65956001)(356004)(36386004)(106002)(81166006)(5660300002)(26005)(63266004)(53546011)(64126003)(52146003)(8676002)(186003)(81156014)(23676004)(2486003)(6246003)(2870700001)(9786002)(70206006)(15650500001)(31686004)(76176011)(2906002);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR02MB4768;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;MX:1;A:1;
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: ac43783c-3db8-4527-2639-08d715c26f57
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(4709080)(1401327)(2017052603328);SRVR:SN6PR02MB4768;
+X-MS-TrafficTypeDiagnostic: SN6PR02MB4768:
+X-Microsoft-Antispam-PRVS: <SN6PR02MB47686428574BF7EABCB9D935C6DF0@SN6PR02MB4768.namprd02.prod.outlook.com>
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-Oob-TLC-OOBClassifiers: OLM:10000;
+X-Forefront-PRVS: 011579F31F
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam-Message-Info: 4gjmQrn0k49pBxD/QGYhwjP9BlEc0nrK9lx3N/rmSgrqCue81ml9lDCCm2Oiy1BPkZQaYACUaoZz56cxLuwgcTihxrURZgYHrK9Dh79JBMWYtBCwB1iKzquH9V5hs21XTko9qm/Tc+NFweL7jEfEhHR/X3oETghvNlUdfUHiedl0oGw3sjAOeR0RuNj4jy8HDuzcF7ACVBI3LdSmVAHUK6oFeDZNUpGg7Hj7d+zwHLWqB+sC7HdLltq4Smvi2JfcgImAYRx3kfloU6i6XLs6okFMLnNVJNl0C1exAyJFX2tVaWZFgas1z7No2k2eve/9ppsZPQ0r9xIo1Yis3F+HtAe/oHArY92RhLXyG2TU3O0KaPj5uFfIq8Avof3ZxkUKgOyK6DB16B9mnDoYwj/owpwsdEkeK7NyfPMqKp4wkKs=
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Jul 2019 14:21:53.0224
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ac43783c-3db8-4527-2639-08d715c26f57
+X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR02MB4768
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 31, 2019 at 03:00:37PM +0200, Michal Hocko wrote:
-> On Wed 31-07-19 15:26:32, Mike Rapoport wrote:
-> > On Wed, Jul 31, 2019 at 01:40:16PM +0200, Michal Hocko wrote:
-> > > On Wed 31-07-19 14:14:22, Mike Rapoport wrote:
-> > > > On Wed, Jul 31, 2019 at 10:03:09AM +0200, Michal Hocko wrote:
-> > > > > On Wed 31-07-19 09:24:21, Mike Rapoport wrote:
-> > > > > > [ sorry for a late reply too, somehow I missed this thread before ]
-> > > > > > 
-> > > > > > On Tue, Jul 30, 2019 at 10:14:15AM +0200, Michal Hocko wrote:
-> > > > > > > [Sorry for a late reply]
-> > > > > > > 
-> > > > > > > On Mon 15-07-19 17:55:07, Hoan Tran OS wrote:
-> > > > > > > > Hi,
-> > > > > > > > 
-> > > > > > > > On 7/12/19 10:00 PM, Michal Hocko wrote:
-> > > > > > > [...]
-> > > > > > > > > Hmm, I thought this was selectable. But I am obviously wrong here.
-> > > > > > > > > Looking more closely, it seems that this is indeed only about
-> > > > > > > > > __early_pfn_to_nid and as such not something that should add a config
-> > > > > > > > > symbol. This should have been called out in the changelog though.
-> > > > > > > > 
-> > > > > > > > Yes, do you have any other comments about my patch?
-> > > > > > > 
-> > > > > > > Not really. Just make sure to explicitly state that
-> > > > > > > CONFIG_NODES_SPAN_OTHER_NODES is only about __early_pfn_to_nid and that
-> > > > > > > doesn't really deserve it's own config and can be pulled under NUMA.
-> > > > > > > 
-> > > > > > > > > Also while at it, does HAVE_MEMBLOCK_NODE_MAP fall into a similar
-> > > > > > > > > bucket? Do we have any NUMA architecture that doesn't enable it?
-> > > > > > > > > 
-> > > > > > 
-> > > > > > HAVE_MEMBLOCK_NODE_MAP makes huge difference in node/zone initialization
-> > > > > > sequence so it's not only about a singe function.
-> > > > > 
-> > > > > The question is whether we want to have this a config option or enable
-> > > > > it unconditionally for each NUMA system.
-> > > > 
-> > > > We can make it 'default NUMA', but we can't drop it completely because
-> > > > microblaze uses sparse_memory_present_with_active_regions() which is
-> > > > unavailable when HAVE_MEMBLOCK_NODE_MAP=n.
-> > > 
-> > > I suppose you mean that microblaze is using
-> > > sparse_memory_present_with_active_regions even without CONFIG_NUMA,
-> > > right?
-> > 
-> > Yes.
-> > 
-> > > I have to confess I do not understand that code. What is the deal
-> > > with setting node id there?
-> > 
-> > The sparse_memory_present_with_active_regions() iterates over
-> > memblock.memory regions and uses the node id of each region as the
-> > parameter to memory_present(). The assumption here is that sometime before
-> > each region was assigned a proper non-negative node id. 
-> > 
-> > microblaze uses device tree for memory enumeration and the current FDT code
-> > does memblock_add() that implicitly sets nid in memblock.memory regions to -1.
-> > 
-> > So in order to have proper node id passed to memory_present() microblaze
-> > has to call memblock_set_node() before it can use
-> > sparse_memory_present_with_active_regions().
+On 31. 07. 19 15:06, Nishka Dasgupta wrote:
+> On 31/07/19 2:01 PM, Michal Simek wrote:
+>> On 09. 07. 19 19:28, Nishka Dasgupta wrote:
+>>> Each iteration of for_each_available_child_of_node puts the previous
+>>> node, but in the case of a goto from the middle of the loop, there is
+>>> no put, thus causing a memory leak. Hence add an of_node_put before the
+>>> goto.
+>>> Issue found with Coccinelle.
+>>>
+>>> Signed-off-by: Nishka Dasgupta <nishkadg.linux@gmail.com>
+>>> ---
+>>>   drivers/mailbox/zynqmp-ipi-mailbox.c | 1 +
+>>>   1 file changed, 1 insertion(+)
+>>>
+>>> diff --git a/drivers/mailbox/zynqmp-ipi-mailbox.c
+>>> b/drivers/mailbox/zynqmp-ipi-mailbox.c
+>>> index 86887c9a349a..bd80d4c10ec2 100644
+>>> --- a/drivers/mailbox/zynqmp-ipi-mailbox.c
+>>> +++ b/drivers/mailbox/zynqmp-ipi-mailbox.c
+>>> @@ -661,6 +661,7 @@ static int zynqmp_ipi_probe(struct
+>>> platform_device *pdev)
+>>>           if (ret) {
+>>>               dev_err(dev, "failed to probe subdev.\n");
+>>>               ret = -EINVAL;
+>>> +            of_node_put(nc);
+>>>               goto free_mbox_dev;
+>>>           }
+>>>           mbox++;
+>>>
+>>
+>> Patch is good but when you are saying that this was found by Coccinelle
+>> then it should be added as script to kernel to detect it.
 > 
-> I am sorry, but I still do not follow. Who is consuming that node id
-> information when NUMA=n. In other words why cannot we simply do
- 
-We can, I think nobody cared to change it.
+> This particular patch was suggested by a script I did not write myself;
+> someone else wrote it and sent it to me. How should I proceed in this case?
 
-> diff --git a/arch/microblaze/mm/init.c b/arch/microblaze/mm/init.c
-> index a015a951c8b7..3a47e8db8d1c 100644
-> --- a/arch/microblaze/mm/init.c
-> +++ b/arch/microblaze/mm/init.c
-> @@ -175,14 +175,9 @@ void __init setup_memory(void)
->  
->  		start_pfn = memblock_region_memory_base_pfn(reg);
->  		end_pfn = memblock_region_memory_end_pfn(reg);
-> -		memblock_set_node(start_pfn << PAGE_SHIFT,
-> -				  (end_pfn - start_pfn) << PAGE_SHIFT,
-> -				  &memblock.memory, 0);
-> +		memory_present(0, start_pfn << PAGE_SHIFT, end_pfn << PAGE_SHIFT);
+You can ask him to submit it to kernel.
+Or you can take it, keep his authorship and send it to:
 
-memory_present() expects pfns, the shift is not needed.
+./scripts/get_maintainer.pl -f scripts/coccinelle/
+Julia Lawall <Julia.Lawall@lip6.fr> (supporter:COCCINELLE/Semantic
+Patches (SmPL))
+Gilles Muller <Gilles.Muller@lip6.fr> (supporter:COCCINELLE/Semantic
+Patches (SmPL))
+Nicolas Palix <nicolas.palix@imag.fr> (supporter:COCCINELLE/Semantic
+Patches (SmPL))
+Michal Marek <michal.lkml@markovi.net> (supporter:COCCINELLE/Semantic
+Patches (SmPL))
+cocci@systeme.lip6.fr (moderated list:COCCINELLE/Semantic Patches (SmPL))
+linux-kernel@vger.kernel.org (open list)
 
->  	}
->  
-> -	/* XXX need to clip this if using highmem? */
-> -	sparse_memory_present_with_active_regions(0);
-> -
->  	paging_init();
->  }
->  
-> -- 
-> Michal Hocko
-> SUSE Labs
-
--- 
-Sincerely yours,
-Mike.
-
+Thanks,
+Michal
