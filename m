@@ -2,91 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B58067C571
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 17:00:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 18DDF7C575
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 17:01:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388272AbfGaPAu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 11:00:50 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:45538 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387639AbfGaPAt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 11:00:49 -0400
-Received: by mail-ot1-f66.google.com with SMTP id x21so5004868otq.12
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 08:00:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:reply-to:mime-version
-         :content-disposition:user-agent;
-        bh=Ps9PpaSBIXq7Ne9E/d4KaHrc8XM/iSj4meBqG2KoY1I=;
-        b=pC9hx7AHwKxWSDeiwxkq4gwqFcrs1NirWZa0eTpXuOngP+6AhmJ+xX6tzgJ2ujDo40
-         8RU6/zZA/xhpEE6KJ8PuKci/KlfYs4yQrK8Mf3ycmM4mHP17fT67y6jCFDYUC31iXTwD
-         YbkP2Fa0i9YY379Ot5ZUPwR7iMJReIQ+eK/HQ7X0HjMWV5WSqRFP2YiIo37WfM6vTbU6
-         h95msVloAP3Nt/VYZHASJsVIMpd5SBtvq3NTTqaKwuf5kVFlTfYrANyDUjEvFRxocZeO
-         1N4uWec5q8nODJTwNuoHnzIhy1QcM70UZM9kauci6W0hYXq4U3sfzsCoo1w28mIUIfB6
-         f9aQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :reply-to:mime-version:content-disposition:user-agent;
-        bh=Ps9PpaSBIXq7Ne9E/d4KaHrc8XM/iSj4meBqG2KoY1I=;
-        b=hFRe4TmURGD/ZdidoK/KGFAuGHgXTbD89GMC+id+xXKlJ7NI8LlmP3kdRSnx0IFXRx
-         4mN1/GNGVo4Os3cVrDFFBbWEPBTnWkkqeohx7en5FfO8Z1FBkzjMeVt+5tcUumDF3IgX
-         UwKq9enJGpQdaoN50IHv2lZBd38hP0cediZqIttTrpvZwDr4cMn0WQkSvJvZZDLN4wFc
-         ayfIW5psaJ4kTZygFF1Pc2VxU2XuOlJ2NP4+bhTqj1/7DUNlZxU9/e6Uz8tsawBEgxlM
-         0YUB+SAZv+B9/F2piwpnKi1z5fm0hQlONkjZRSEDur05RM9kQEGCGCsOyKA/WCqFF7/v
-         y2CA==
-X-Gm-Message-State: APjAAAXNpAQUs/1ImZS/IRmZZrYKatMdihgysvd8FBR3U9XK4bbhUPLH
-        IjTr9tuCJn4r3ZRFRsMH5RLswQg=
-X-Google-Smtp-Source: APXvYqw/Jh5IF7kfPSNLapJLn1m2Wst4sJnrhOAENuq/iPtlYO3+8t9V35oUUVXbIRFrJM4Khtyl5w==
-X-Received: by 2002:a9d:618a:: with SMTP id g10mr21452912otk.217.1564585248491;
-        Wed, 31 Jul 2019 08:00:48 -0700 (PDT)
-Received: from serve.minyard.net ([47.184.134.43])
-        by smtp.gmail.com with ESMTPSA id b2sm23363929otf.48.2019.07.31.08.00.47
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 31 Jul 2019 08:00:47 -0700 (PDT)
-Received: from minyard.net (unknown [IPv6:2001:470:b8f6:1b:e83a:d1d4:543d:69b])
-        by serve.minyard.net (Postfix) with ESMTPSA id 67711180039;
-        Wed, 31 Jul 2019 15:00:47 +0000 (UTC)
-Date:   Wed, 31 Jul 2019 10:00:46 -0500
-From:   Corey Minyard <minyard@acm.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        openipmi-developer@lists.sourceforge.net
-Subject: [GIT PULL] More IPMI bug fixes for 5.3
-Message-ID: <20190731150046.GB5001@minyard.net>
-Reply-To: minyard@acm.org
+        id S2388370AbfGaPBm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 11:01:42 -0400
+Received: from foss.arm.com ([217.140.110.172]:48530 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387946AbfGaPBm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jul 2019 11:01:42 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 496FD344;
+        Wed, 31 Jul 2019 08:01:41 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2BC443F694;
+        Wed, 31 Jul 2019 08:01:40 -0700 (PDT)
+Date:   Wed, 31 Jul 2019 16:01:38 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Will Drewry <wad@chromium.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: Move TIF_* documentation to individual definitions
+Message-ID: <20190731150137.GE39768@lakrids.cambridge.arm.com>
+References: <20190731133520.17939-1-geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190731133520.17939-1-geert+renesas@glider.be>
+User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Keep Geert from nagging me :-)
+On Wed, Jul 31, 2019 at 03:35:20PM +0200, Geert Uytterhoeven wrote:
+> Some TIF_* flags are documented in the comment block at the top, some
+> next to their definitions, some in both places.
+> 
+> Move all documentation to the individual definitions for consistency,
+> and for easy lookup.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> The alternative is to move all of them to the comment block, and using
+> linuxdoc style.
+> 
+>  arch/arm64/include/asm/thread_info.h | 24 ++++++++----------------
+>  1 file changed, 8 insertions(+), 16 deletions(-)
+> 
+> diff --git a/arch/arm64/include/asm/thread_info.h b/arch/arm64/include/asm/thread_info.h
+> index 180b34ec59650a9b..cb3eb1ccccc4116b 100644
+> --- a/arch/arm64/include/asm/thread_info.h
+> +++ b/arch/arm64/include/asm/thread_info.h
+> @@ -60,28 +60,20 @@ void arch_release_task_struct(struct task_struct *tsk);
+>  #endif
+>  
+>  /*
+> - * thread information flags:
+> - *  TIF_SYSCALL_TRACE	- syscall trace active
+> - *  TIF_SYSCALL_TRACEPOINT - syscall tracepoint for ftrace
+> - *  TIF_SYSCALL_AUDIT	- syscall auditing
+> - *  TIF_SECCOMP		- syscall secure computing
+> - *  TIF_SYSCALL_EMU     - syscall emulation active
+> - *  TIF_SIGPENDING	- signal pending
+> - *  TIF_NEED_RESCHED	- rescheduling necessary
+> - *  TIF_NOTIFY_RESUME	- callback before returning to user
+> + * thread information flags
+>   */
 
-The following changes since commit fec88ab0af9706b2201e5daf377c5031c62d11f7:
+We can probably just get rid of the this comment block at this point. :)
 
-  Merge tag 'for-linus-hmm' of git://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma (2019-07-14 19:42:11 -0700)
+> -#define TIF_SIGPENDING		0
+> -#define TIF_NEED_RESCHED	1
+> +#define TIF_SIGPENDING		0	/* signal pending */
+> +#define TIF_NEED_RESCHED	1	/* rescheduling necessary */
+>  #define TIF_NOTIFY_RESUME	2	/* callback before returning to user */
+>  #define TIF_FOREIGN_FPSTATE	3	/* CPU's FP state is not current's */
+>  #define TIF_UPROBE		4	/* uprobe breakpoint or singlestep */
+>  #define TIF_FSCHECK		5	/* Check FS is USER_DS on return */
+>  #define TIF_NOHZ		7
+> -#define TIF_SYSCALL_TRACE	8
+> -#define TIF_SYSCALL_AUDIT	9
+> -#define TIF_SYSCALL_TRACEPOINT	10
+> -#define TIF_SECCOMP		11
+> -#define TIF_SYSCALL_EMU		12
+> +#define TIF_SYSCALL_TRACE	8	/* syscall trace active */
+> +#define TIF_SYSCALL_AUDIT	9	/* syscall auditing */
+> +#define TIF_SYSCALL_TRACEPOINT	10	/* syscall tracepoint for ftrace */
+> +#define TIF_SECCOMP		11	/* syscall secure computing */
+> +#define TIF_SYSCALL_EMU		12	/* syscall emulation active */
+>  #define TIF_MEMDIE		18	/* is terminating due to OOM killer */
+>  #define TIF_FREEZE		19
+>  #define TIF_RESTORE_SIGMASK	20
 
-are available in the Git repository at:
+FWIW this looks sane to me, so:
 
-  https://github.com/cminyard/linux-ipmi.git tags/for-linus-5.3-2
+Acked-by: Mark Rutland <mark.rutland@arm.com>
 
-for you to fetch changes up to 71be7b0e7d4069822c89146daed800686db8f147:
+Mark.
 
-  Fix uninitialized variable in ipmb_dev_int.c (2019-07-24 15:53:21 -0500)
-
-----------------------------------------------------------------
-One necessary fix for an uninitialized variable in the new IPMB driver.
-Nothing else has come in besides things that need to wait until later.
-
-----------------------------------------------------------------
-Asmaa Mnebhi (1):
-      Fix uninitialized variable in ipmb_dev_int.c
-
- drivers/char/ipmi/ipmb_dev_int.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
+> -- 
+> 2.17.1
+> 
