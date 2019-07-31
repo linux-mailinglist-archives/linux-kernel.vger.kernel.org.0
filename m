@@ -2,53 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB4377C5D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 17:10:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3763F7C5D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 17:10:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729408AbfGaPKn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 11:10:43 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:35712 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388453AbfGaPIV (ORCPT
+        id S1729572AbfGaPKe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 11:10:34 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:41211 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388470AbfGaPIW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 11:08:21 -0400
-Received: by mail-ed1-f65.google.com with SMTP id w20so65995150edd.2
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 08:08:20 -0700 (PDT)
+        Wed, 31 Jul 2019 11:08:22 -0400
+Received: by mail-ed1-f67.google.com with SMTP id p15so65977310eds.8
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 08:08:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=shutemov-name.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=AJU4EYtP5Ndll/OqHeAitrNwzvbF49Nst5sv0orja/w=;
-        b=kKXhGbR2JDGE9bSyvxgjKsfR1EooQVCxUWsDBiB/ov2JhR22a80ZVWH6hsoT5t60hW
-         ReQlX2VuPnyHZm+ht43QCRrwOTR4FXEx8N9KLDx8PA4ydWKsR2BIUMxIijk5qFFyJWJR
-         2f083LoqCGdskXIuleu/ah0wA10Rm17n5y2ig4+kPBzijtTL3lkIw8/27JLPaHybuORM
-         pzMd9bI4PnPnmBKajAUKL8D2paFeEh9jjqZZbZStBfag1gDyfG8bBCKhuARqXP5nW2Pq
-         L1ZhDiLr0HWi2NeMxbyWk+wgHvu/5r9izvPURcblDhh/5L3ApkkaOd6gdu9AGvFSIsuM
-         bwfA==
+        bh=mtVfWkAA6f5+WVvylDNJC/YjX6VpSH295mUWXLakGJs=;
+        b=F6Gayf2vpoXGYJV1uYsSi1oz9m/Dzpd5ss3IOuggi2htSc6htYXpy88IVTNHrSo5Kq
+         hWpzEyAGHC2mXZ2wjIjArOS3WPtQuYHcn8nT+/O5W6T39U8KBhjxYitFwEIaU42F/UUZ
+         MNDJaDmYDJ2rhvFYveEcpSA76sB3cuT4BXBPtSCQ2kN740Cc3sAloiWNwrNa1DM5fuLc
+         QNavgnJR+irD1X17yEJ886mr2816CG2BFT/M05u0Cg9IRy9uHdqMz7DhseDkDzn7Vz3t
+         VhUu8iRxDz4AskPYJARFdivUJOn42HuHlC1NNjkGej7JPSPdAEioY0xwz3pfTdTU9bkn
+         rRzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=AJU4EYtP5Ndll/OqHeAitrNwzvbF49Nst5sv0orja/w=;
-        b=tncZ7NQY0EJnonHKzJ8kDJ+tFGp30L3BnMleGafj6hAvRyjgDjh8beUmtTVZWyWaRM
-         WrJPPyja2w9XjFZS5RiKv0E9knXjYTEIfO1PBlLxyLevQfZzgEccuz68xUxcTuF2C8dl
-         w6s9tz990Vtg8qc9dvJSFFu90jrpEZUjfUjYEk5+MYcLvrhNZe731FJLCFHpSd93nFYR
-         y8fFEygTzAEExekc1n7MxjcDr8vhtNJqtMr82KqAq5DC1cLpPivLbDLkSjtwa2POvPJD
-         JUW/o/iIPEYweOWisOtcJ0PWrGy3mWXrU90ue5rsgRD2AZ7+nrU3KQZH6GwpkzIKTwHz
-         FXlg==
-X-Gm-Message-State: APjAAAUp1AWAB6C39zn7jp/NUc1cUtSbhMgP/qhBYdXrIGK10kXert1W
-        CNMfKi4jPN0gYmaDsRyTDSY=
-X-Google-Smtp-Source: APXvYqwybSsBXdcn4hH+cdquBQ7naCJOKUH1HBc36wrC3gr3IAtOhb7lLrFtZj0CqBrWNvtjPSNrNw==
-X-Received: by 2002:aa7:da14:: with SMTP id r20mr107154184eds.65.1564585699886;
-        Wed, 31 Jul 2019 08:08:19 -0700 (PDT)
+        bh=mtVfWkAA6f5+WVvylDNJC/YjX6VpSH295mUWXLakGJs=;
+        b=YWA4cM8wvNFfdqfvJQE4Ylb2XMYmQ84v9g9QbGJ7cReQWsdXXKm3e9PUGNSK2Ydhtn
+         cAOIqEhSN4nJQTWlQ1og+f3meL2NcEyadn8/V6B3jupXU2KLEmm0GuHLokSCT4HgIXsn
+         pVjcQy7Qw/HqmevjhkYjUhd40CvlMx0AsMIQojiiJhXFBbLztTNHGUhPelhyIM5WNU/W
+         Nvoh9ZbYZCyqkyLMilPD7K8K1UzFBOzeNA+iQowniNwf1AzgO3OS0nPC4LWVtyGD55xG
+         H6UjA3uWe7tkDLUa8a1O5YTLDtKbjACehFS9ohIxhXu7LSKUHegfcCnTiqg0nado8/Vx
+         36ZQ==
+X-Gm-Message-State: APjAAAWNeh94bgk6RO6JkZunkJ0CIivhDM2wodjNUujPaWhOSVIOsiKo
+        3tJEHaCZJPruD2wKjjbuhUc=
+X-Google-Smtp-Source: APXvYqxpbVO0IZEgbCImRCWNwH0wevZHXyUPfYVpywOy9u0W0e5mFEX3kiMgbftkDicJ8087eYkuCA==
+X-Received: by 2002:a17:906:7f16:: with SMTP id d22mr95105774ejr.17.1564585700959;
+        Wed, 31 Jul 2019 08:08:20 -0700 (PDT)
 Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id o22sm17282787edc.37.2019.07.31.08.08.17
+        by smtp.gmail.com with ESMTPSA id d7sm16505352edr.39.2019.07.31.08.08.18
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
         Wed, 31 Jul 2019 08:08:19 -0700 (PDT)
 From:   "Kirill A. Shutemov" <kirill@shutemov.name>
 X-Google-Original-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
 Received: by box.localdomain (Postfix, from userid 1000)
-        id 17B6310131D; Wed, 31 Jul 2019 18:08:16 +0300 (+03)
+        id 1E8B210131E; Wed, 31 Jul 2019 18:08:16 +0300 (+03)
 To:     Andrew Morton <akpm@linux-foundation.org>, x86@kernel.org,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>,
@@ -64,9 +64,9 @@ Cc:     Kees Cook <keescook@chromium.org>,
         linux-mm@kvack.org, kvm@vger.kernel.org, keyrings@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: [PATCHv2 06/59] mm/khugepaged: Handle encrypted pages
-Date:   Wed, 31 Jul 2019 18:07:20 +0300
-Message-Id: <20190731150813.26289-7-kirill.shutemov@linux.intel.com>
+Subject: [PATCHv2 07/59] x86/mm: Mask out KeyID bits from page table entry pfn
+Date:   Wed, 31 Jul 2019 18:07:21 +0300
+Message-Id: <20190731150813.26289-8-kirill.shutemov@linux.intel.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190731150813.26289-1-kirill.shutemov@linux.intel.com>
 References: <20190731150813.26289-1-kirill.shutemov@linux.intel.com>
@@ -77,39 +77,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For !NUMA khugepaged allocates page in advance, before we found a VMA
-for collapse. We don't yet know which KeyID to use for the allocation.
+MKTME claims several upper bits of the physical address in a page table
+entry to encode KeyID. It effectively shrinks number of bits for
+physical address. We should exclude KeyID bits from physical addresses.
 
-The page is allocated with KeyID-0. Once we know that the VMA is
-suitable for collapsing, we prepare the page for KeyID we need, based on
-vma_keyid().
+For instance, if CPU enumerates 52 physical address bits and number of
+bits claimed for KeyID is 6, bits 51:46 must not be threated as part
+physical address.
+
+This patch adjusts __PHYSICAL_MASK during MKTME enumeration.
 
 Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 ---
- mm/khugepaged.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ arch/x86/kernel/cpu/intel.c | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
-diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-index eaaa21b23215..ae9bd3b18aa1 100644
---- a/mm/khugepaged.c
-+++ b/mm/khugepaged.c
-@@ -1059,6 +1059,16 @@ static void collapse_huge_page(struct mm_struct *mm,
- 	 */
- 	anon_vma_unlock_write(vma->anon_vma);
+diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
+index 8d6d92ebeb54..f03eee666761 100644
+--- a/arch/x86/kernel/cpu/intel.c
++++ b/arch/x86/kernel/cpu/intel.c
+@@ -616,6 +616,29 @@ static void detect_tme(struct cpuinfo_x86 *c)
+ 		mktme_status = MKTME_ENABLED;
+ 	}
  
-+	/*
-+	 * At this point new_page is allocated as non-encrypted.
-+	 * If VMA's KeyID is non-zero, we need to prepare it to be encrypted
-+	 * before coping data.
-+	 */
-+	if (vma_keyid(vma)) {
-+		prep_encrypted_page(new_page, HPAGE_PMD_ORDER,
-+				vma_keyid(vma), false);
-+	}
++#ifdef CONFIG_X86_INTEL_MKTME
++	if (mktme_status == MKTME_ENABLED && nr_keyids) {
++		/*
++		 * Mask out bits claimed from KeyID from physical address mask.
++		 *
++		 * For instance, if a CPU enumerates 52 physical address bits
++		 * and number of bits claimed for KeyID is 6, bits 51:46 of
++		 * physical address is unusable.
++		 */
++		phys_addr_t keyid_mask;
 +
- 	__collapse_huge_page_copy(pte, new_page, vma, address, pte_ptl);
- 	pte_unmap(pte);
- 	__SetPageUptodate(new_page);
++		keyid_mask = GENMASK_ULL(c->x86_phys_bits - 1, c->x86_phys_bits - keyid_bits);
++		physical_mask &= ~keyid_mask;
++	} else {
++		/*
++		 * Reset __PHYSICAL_MASK.
++		 * Maybe needed if there's inconsistent configuation
++		 * between CPUs.
++		 */
++		physical_mask = (1ULL << __PHYSICAL_MASK_SHIFT) - 1;
++	}
++#endif
++
+ 	/*
+ 	 * KeyID bits effectively lower the number of physical address
+ 	 * bits.  Update cpuinfo_x86::x86_phys_bits accordingly.
 -- 
 2.21.0
 
