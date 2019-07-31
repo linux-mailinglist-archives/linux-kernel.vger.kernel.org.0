@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 730287C182
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 14:38:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 03A897C18A
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 14:38:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727981AbfGaMiZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 08:38:25 -0400
+        id S2387834AbfGaMii (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 08:38:38 -0400
 Received: from mail-eopbgr140114.outbound.protection.outlook.com ([40.107.14.114]:6722
         "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387718AbfGaMiR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 08:38:17 -0400
+        id S2387729AbfGaMid (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jul 2019 08:38:33 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=JskwM7RVDjSHugjyO2rS5PunYWVblqZjDCWZpN3O4DlS2FSbj7jB4SAXIXBEURth+nhvYj6aosO1MX71+4SrJe2SloU4FjEFomjYxg8dKTsUPYeORnjMhVwLQ+S+Nqb5uPECy+pdhfP2JFYtfMbVqNIZXCWrchDYj6L35/TV1S/Jic5QBdPOzkOH2NRTScUPgD06r0pxRN9tNB26PnfBkSbFMFYc7EbufxN2E5CMb42WQCKfMD5ANGj2c+YZlT2YQeHSZEGKd1FWnXY4Gjev3+tFe+cFPKg310DN13e3aOZXImvKlDnJiT+ZFoDMD9XbEmMxenALyXT9HQMem6j4fQ==
+ b=JQ8Ptn9+/80iv6GhJWsZ8PrvCU95UTa/0OMk02NmJ+z1YuUKHJM9lyKCTsZXIaJmImRIgQEOxEIYK0v0Gncs5/3E9XGxap3NtexdJU1lBvITgz14/QWuUl8yrPG4qa8XOhISDKJO6P85j8AwWtTbe31ubYekLIPznAdS0z67paUxyIK/AR8VfbZq/WhYw2KVRDAZpoZqwtnKWB3SU7zmG1+TTwlkLBCv+0Ep9pkXkxvwiO8hlur9IKpjUuFAX5sneSYMQego92RnrzxtZAi5AxR4e1sWmkjgXEZMAb8rNvFhMwu5SeY+A5y0meSdYXzyzrQVQY3aem0r9LnfX+aAew==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Ynj49jq0JWfo/7/PgIzXzyfU7mQKz36lCHCyByvSHEg=;
- b=Or2x+/FrbYD/76vTLB0kdp7NUrHcDCLw25+JZwMa9ZB7WuH3R1V7UKX4iebFWJQGfe4Ck1SLbsnzEdS2FZFiFWqusYd8Z5znqGJMUAyP2oBFadu1fRjnJxc1Gjp8593sbRETAHPiZJ1NxEmpIABboZRtSCHUMLFDKWbbQXQmpGYF5zMHJ6YRlBA7vE/Q1E+8hr0xrL2Qttv69xWSxPSWYr6+DKb7cjYbhWFiuy3y0Pcw3YSl2C+bWLqHjFvFeZyFDQXnakUG/DlSpuw//+IvpryaBagpJ1+Aw+ziRFKEET+RSRMwqUtqRKa6gslM0Ne0GKSlT+9jCbIVthVpbn1I5Q==
+ bh=QrpoQyN+/UzCR5JErHOHajjddYJ6uZ5edlzG727cu50=;
+ b=ATFTbXaU6ZKCGXkLY4bIpepnxp7e/whnrzQ1oobfAVEQorBTiS0DTJq2slE96P0wjcHKMuxCzh4NaFurnrchhoSsetSXXX1QtTPmKUW0/N1OFI2mskZR+aeRLRQAwGwCMORuyWsS+BMgrpW+ICtDXYLyfxyyrPJdaWLIMbqIjoqQG0qMXsBLUt/Zspu7KY7pbzjp78FaBFuyQD+b4WgukFrDfT6zo0rqJ7q1hXaDjaVXEm4/7y/7ZblF7b7FndTMRklLAM77nkYmNfZ5bfWVlVVxnbz0DUpZUDZJW6uaT2mtiG0FbK7ilDvw5PexB2UvRg9zumAyInxjSEa3JH38Xw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
  smtp.mailfrom=toradex.com;dmarc=pass action=none
  header.from=toradex.com;dkim=pass header.d=toradex.com;arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=toradex.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Ynj49jq0JWfo/7/PgIzXzyfU7mQKz36lCHCyByvSHEg=;
- b=o1hVn0ITtGOExY1Mq0ffG3CArP4t/Y5ZSkQ7h6Qazh2806auaq+sZojSEEAPu7gAXc9ftDNZx/lLurGHMz+9zvuFJoQ8KRoRgNzRCaZ2dODolJE/432Q+T34daVopKDHyyPCltRdRjDue/ASZuJ12QenW1qhSjrcV5mMs7xuDqg=
+ bh=QrpoQyN+/UzCR5JErHOHajjddYJ6uZ5edlzG727cu50=;
+ b=qVz1VI6951TtDxsfPpoIHlH8bElVSfsksQpROIz36GTrbwz/7VwFXcQr8R1Ug918xqtDUFMdjr0bpfX+VQd9VBujfNDYuNwOZUnxhJlZ0tKo5ap5nzDmFk49BZLmhytp3Qn/wtI0/QM3MG7gS6+sMIulqe/HHSQKXBhE8XMgII8=
 Received: from VI1PR0502MB3965.eurprd05.prod.outlook.com (52.134.17.157) by
  VI1PR0502MB3648.eurprd05.prod.outlook.com (52.134.7.143) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2136.14; Wed, 31 Jul 2019 12:38:12 +0000
+ 15.20.2136.14; Wed, 31 Jul 2019 12:38:14 +0000
 Received: from VI1PR0502MB3965.eurprd05.prod.outlook.com
  ([fe80::8405:5b51:b25d:39a2]) by VI1PR0502MB3965.eurprd05.prod.outlook.com
  ([fe80::8405:5b51:b25d:39a2%6]) with mapi id 15.20.2115.005; Wed, 31 Jul 2019
- 12:38:12 +0000
+ 12:38:14 +0000
 From:   Philippe Schenker <philippe.schenker@toradex.com>
 To:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
         Max Krummenacher <max.krummenacher@toradex.com>,
@@ -45,19 +45,18 @@ To:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
         Mark Rutland <mark.rutland@arm.com>,
         =?iso-8859-2?Q?Michal_Vok=E1=E8?= <michal.vokac@ysoft.com>,
         Fabio Estevam <festevam@gmail.com>
-CC:     Stefan Agner <stefan.agner@toradex.com>,
-        Philippe Schenker <philippe.schenker@toradex.com>,
+CC:     Philippe Schenker <philippe.schenker@toradex.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "linux-arm-kernel@lists.infradead.org" 
         <linux-arm-kernel@lists.infradead.org>,
         Pengutronix Kernel Team <kernel@pengutronix.de>,
         NXP Linux Team <linux-imx@nxp.com>,
         Sascha Hauer <s.hauer@pengutronix.de>
-Subject: [PATCH v2 07/20] ARM: dts: imx7-colibri: fix 1.8V/UHS support
-Thread-Topic: [PATCH v2 07/20] ARM: dts: imx7-colibri: fix 1.8V/UHS support
-Thread-Index: AQHVR5zQtB0dzN8FYEudcspMVKQYmQ==
-Date:   Wed, 31 Jul 2019 12:38:12 +0000
-Message-ID: <20190731123750.25670-8-philippe.schenker@toradex.com>
+Subject: [PATCH v2 08/20] ARM: dts: imx7-colibri: Add touch controllers
+Thread-Topic: [PATCH v2 08/20] ARM: dts: imx7-colibri: Add touch controllers
+Thread-Index: AQHVR5zSfqDLO7YI3kGn89/J0dQlQg==
+Date:   Wed, 31 Jul 2019 12:38:14 +0000
+Message-ID: <20190731123750.25670-9-philippe.schenker@toradex.com>
 References: <20190731123750.25670-1-philippe.schenker@toradex.com>
 In-Reply-To: <20190731123750.25670-1-philippe.schenker@toradex.com>
 Accept-Language: en-GB, en-US
@@ -73,23 +72,23 @@ x-ms-exchange-messagesentrepresentingtype: 1
 x-mailer: git-send-email 2.22.0
 x-originating-ip: [46.140.72.82]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 7f5c2145-6234-4378-2011-08d715b3f352
+x-ms-office365-filtering-correlation-id: 923b3748-5c42-4f11-5ac2-08d715b3f469
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600148)(711020)(4605104)(1401327)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:VI1PR0502MB3648;
 x-ms-traffictypediagnostic: VI1PR0502MB3648:
-x-microsoft-antispam-prvs: <VI1PR0502MB3648861B9CEF00DDF10CEBAFF4DF0@VI1PR0502MB3648.eurprd05.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:3173;
+x-microsoft-antispam-prvs: <VI1PR0502MB3648E34F7C190AF360FB94D7F4DF0@VI1PR0502MB3648.eurprd05.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:901;
 x-forefront-prvs: 011579F31F
 x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(376002)(366004)(136003)(346002)(396003)(39850400004)(189003)(199004)(64756008)(66446008)(66476007)(66946007)(6512007)(476003)(66556008)(8676002)(86362001)(36756003)(44832011)(478600001)(5660300002)(71190400001)(71200400001)(1076003)(53936002)(6486002)(486006)(6436002)(2201001)(446003)(52116002)(50226002)(11346002)(316002)(99286004)(66066001)(2616005)(305945005)(256004)(26005)(14444005)(14454004)(102836004)(7736002)(3846002)(25786009)(6116002)(76176011)(2906002)(81156014)(81166006)(68736007)(386003)(6506007)(2501003)(4326008)(8936002)(110136005)(54906003)(186003)(7416002);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR0502MB3648;H:VI1PR0502MB3965.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: toradex.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: /nXeR9y+k5ibf1RPYy2txQ+YwYBMygwZI/rt2OQRSnC9Qq6DBN8dbjDpgewJjGTgeRXBMFR+0DeZAZcuHw49SwbUlenjfEB32mc+SbSlcmyiA6PzwMMuIlJa9b2zra3bZoJPrrbmcAnsCrI2/02bycjE2M9d76IO0tTLfJYPBLsC/z1xMfdRnIbPEj+UOWYpf0bGXTPI8ah2O5IaIMtweCWpR6cAYjK7vP/JpwDPZZGLIBRZnoU8CyG6MEake110afj3Bsws52Y7NvU89Sl/0TbxDHOdzvpMLa8UM1R3Qe/vM7JFyVTSsUyIZ/T7rH2gD7RSyLBQ44MCP2KN41tKhTv8q9wlMoYfhivSvp5/4N2k/yKRhtnSpEbTPvbbRVy8EFJZKN1xWwIla4+GL/woQPPkWEAV6So7Vme/kLX1R3o=
+x-microsoft-antispam-message-info: myYUaVJd7vhbw14NkCC30cX9Y/FHmq2hHObdlnS8bOUTRfWJkdy+ORuUXwLmfSiBFAjvg00KSlpYQi3kJrxVr1dTdxnJhxl/BY4nwiS4eQPsJNknpuoUuydGZMbqlbu0pRlvyaW2zZgIhXZZD6WzRVh4CLUB4VNUcGa8ic0ZlHWoAQtZ7MypqgE8D3MLDXuYPxdCR+kpB3ESkvV2dfEazpZHI9bhkNK0aNrPE3vusNKl+cQiix3+tB5xaStD1S3UuK4sByIENdMsRH/9zQW5J3vf3qVioSIQik0gLicFybgg8qGLPICZ+3tIqN5K4+Ex5JRC+aMKO2cqGUn0YqJO7ZYi5Lzat0zaMnG7kun5HLZbjr2TNc+9hZ1WFoSHy8fmf36Up6RYcG9P+cMbft/c47McZVP8EL+hgm6z9QhU3zA=
 Content-Type: text/plain; charset="iso-8859-2"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: toradex.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7f5c2145-6234-4378-2011-08d715b3f352
-X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Jul 2019 12:38:12.3718
+X-MS-Exchange-CrossTenant-Network-Message-Id: 923b3748-5c42-4f11-5ac2-08d715b3f469
+X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Jul 2019 12:38:14.2387
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: d9995866-0d9b-4251-8315-093f062abab4
@@ -101,62 +100,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stefan Agner <stefan.agner@toradex.com>
+Add atmel mxt multitouch controller and TouchRevolution multitouch
+controller which are connected over an I2C bus.
 
-Add pinmuxing and do not specify voltage restrictions in the
-module level device tree.
-
-Signed-off-by: Stefan Agner <stefan.agner@toradex.com>
 Signed-off-by: Philippe Schenker <philippe.schenker@toradex.com>
+
 ---
 
-Changes in v2: None
+Changes in v2:
+- Deleted touchrevolution downstream stuff
+- Use generic node name
+- Better comment
 
- arch/arm/boot/dts/imx7-colibri.dtsi | 23 ++++++++++++++++++++++-
- 1 file changed, 22 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/imx7-colibri-eval-v3.dtsi | 24 +++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-diff --git a/arch/arm/boot/dts/imx7-colibri.dtsi b/arch/arm/boot/dts/imx7-c=
-olibri.dtsi
-index 16d1a1ed1aff..67f5e0c87fdc 100644
---- a/arch/arm/boot/dts/imx7-colibri.dtsi
-+++ b/arch/arm/boot/dts/imx7-colibri.dtsi
-@@ -326,7 +326,6 @@
- &usdhc1 {
- 	pinctrl-names =3D "default";
- 	pinctrl-0 =3D <&pinctrl_usdhc1 &pinctrl_cd_usdhc1>;
--	no-1-8-v;
- 	cd-gpios =3D <&gpio1 0 GPIO_ACTIVE_LOW>;
- 	disable-wp;
- 	vqmmc-supply =3D <&reg_LDO2>;
-@@ -671,6 +670,28 @@
- 		>;
- 	};
+diff --git a/arch/arm/boot/dts/imx7-colibri-eval-v3.dtsi b/arch/arm/boot/dt=
+s/imx7-colibri-eval-v3.dtsi
+index d4dbc4fc1adf..576dec9ff81c 100644
+--- a/arch/arm/boot/dts/imx7-colibri-eval-v3.dtsi
++++ b/arch/arm/boot/dts/imx7-colibri-eval-v3.dtsi
+@@ -145,6 +145,21 @@
+ &i2c4 {
+ 	status =3D "okay";
 =20
-+	pinctrl_usdhc1_100mhz: usdhc1grp_100mhz {
-+		fsl,pins =3D <
-+			MX7D_PAD_SD1_CMD__SD1_CMD	0x5a
-+			MX7D_PAD_SD1_CLK__SD1_CLK	0x1a
-+			MX7D_PAD_SD1_DATA0__SD1_DATA0	0x5a
-+			MX7D_PAD_SD1_DATA1__SD1_DATA1	0x5a
-+			MX7D_PAD_SD1_DATA2__SD1_DATA2	0x5a
-+			MX7D_PAD_SD1_DATA3__SD1_DATA3	0x5a
-+		>;
++	/*
++	 * Touchscreen is using SODIMM 28/30, also used for PWM<B>, PWM<C>,
++	 * aka pwm2, pwm3. so if you enable touchscreen, disable the pwms
++	 */
++	touchscreen@4a {
++		compatible =3D "atmel,maxtouch";
++		pinctrl-names =3D "default";
++		pinctrl-0 =3D <&pinctrl_gpiotouch>;
++		reg =3D <0x4a>;
++		interrupt-parent =3D <&gpio1>;
++		interrupts =3D <9 IRQ_TYPE_EDGE_FALLING>;		/* SODIMM 28 */
++		reset-gpios =3D <&gpio1 10 GPIO_ACTIVE_HIGH>;	/* SODIMM 30 */
++		status =3D "disabled";
 +	};
 +
-+	pinctrl_usdhc1_200mhz: usdhc1grp_200mhz {
+ 	/* M41T0M6 real time clock on carrier board */
+ 	rtc: m41t0m6@68 {
+ 		compatible =3D "st,m41t0";
+@@ -200,3 +215,12 @@
+ 	vmmc-supply =3D <&reg_3v3>;
+ 	status =3D "okay";
+ };
++
++&iomuxc {
++	pinctrl_gpiotouch: touchgpios {
 +		fsl,pins =3D <
-+			MX7D_PAD_SD1_CMD__SD1_CMD	0x5b
-+			MX7D_PAD_SD1_CLK__SD1_CLK	0x1b
-+			MX7D_PAD_SD1_DATA0__SD1_DATA0	0x5b
-+			MX7D_PAD_SD1_DATA1__SD1_DATA1	0x5b
-+			MX7D_PAD_SD1_DATA2__SD1_DATA2	0x5b
-+			MX7D_PAD_SD1_DATA3__SD1_DATA3	0x5b
++			MX7D_PAD_GPIO1_IO09__GPIO1_IO9		0x74
++			MX7D_PAD_GPIO1_IO10__GPIO1_IO10		0x14
 +		>;
 +	};
-+
- 	pinctrl_usdhc3: usdhc3grp {
- 		fsl,pins =3D <
- 			MX7D_PAD_SD3_CMD__SD3_CMD		0x59
++};
 --=20
 2.22.0
 
