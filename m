@@ -2,150 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C2F0D7BEA6
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 12:50:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F9877BEB7
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 12:56:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387848AbfGaKuv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 06:50:51 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:10686 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728077AbfGaKuu (ORCPT
+        id S1728698AbfGaK4V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 06:56:21 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:44078 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726751AbfGaK4V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 06:50:50 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6VAl2Zj050780
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 06:50:49 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2u37n55e9m-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 06:50:49 -0400
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <heiko.carstens@de.ibm.com>;
-        Wed, 31 Jul 2019 11:50:47 +0100
-Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 31 Jul 2019 11:50:42 +0100
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x6VAoO2a36831616
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 31 Jul 2019 10:50:24 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 35FC8A4059;
-        Wed, 31 Jul 2019 10:50:41 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CC671A4055;
-        Wed, 31 Jul 2019 10:50:40 +0000 (GMT)
-Received: from osiris (unknown [9.152.212.134])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Wed, 31 Jul 2019 10:50:40 +0000 (GMT)
-Date:   Wed, 31 Jul 2019 12:50:39 +0200
-From:   Heiko Carstens <heiko.carstens@de.ibm.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Kai =?iso-8859-1?Q?M=E4kisara?= <Kai.Makisara@kolumbus.fi>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-ide@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-scsi@vger.kernel.org
-Subject: Re: [PATCH v5 15/29] compat_ioctl: move tape handling into drivers
-References: <20190730192552.4014288-1-arnd@arndb.de>
- <20190730195819.901457-1-arnd@arndb.de>
- <20190730195819.901457-3-arnd@arndb.de>
+        Wed, 31 Jul 2019 06:56:21 -0400
+Received: by mail-lj1-f196.google.com with SMTP id k18so65107852ljc.11;
+        Wed, 31 Jul 2019 03:56:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=8ruV96eR8x0/hUsLVlDy8Q+NkUQzpxpxvSxroyPzqzk=;
+        b=GOtNIbIF+FwSdoSSuqOdCRwipjuBAkt61ISft9SuLdF/xve2q68EEQIwfK3wzwRnrm
+         5msw0ky7aRIFGdGG4LAzlEO8Cg1ptWrW4WaThsPDhDS3gXEEziSU4FbslxwFS9srU4iI
+         e6+SeP6PfFELBL43QMoabxOvZymfYo7FbCY/XHJE84+sSvjJJfI4EbjLMQP44HpB29mV
+         8sE7DBb4AdsCXJlvlXfVSDgxwTHsIUAvISuoY/bPDk1PQa2dzYsS2lpJ0Rygk+GQpD2q
+         5Lqt7xoW8oZ+ks1o4sEpFlOXtBD/bumkcw3OH+7ROp7dQ2J/VsBj+Il1SaxnmRoyjoEH
+         PYAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=8ruV96eR8x0/hUsLVlDy8Q+NkUQzpxpxvSxroyPzqzk=;
+        b=pE/py7v58zQQCj2BB9rJBuohwipnY8FHMjpOV0I0mKovUHGy9qI7y3fI8p5LFceyLQ
+         4EGEmqlMpzLZtLDxRvmoZiSFBYH39CL/8vsQ48qijy1nlpwowpX3FF3nE2EWKrX7Usbe
+         sV2M1D0jPd5YsrWEoinV6qBCM5ql/QL7fUVcY20CRvuYpV37jBw9CBt7wyGBhByyQr6r
+         yl9fBG5cc319pinjteZbmYSqzzf+MojBpQtIN3+67l8nOwDKdHDvC73rviX6TIW3ldP2
+         VUfA8sw8iO+eDRUcwZmWk4BrqHT/+5gPcqAkVVR7DbsbmPQiV54shzUsS/pLuPkog4W8
+         brOg==
+X-Gm-Message-State: APjAAAWIgu3CHAvi1KlULrO4yrX8xH21Niq83pebTfH3uIWHu7huKJv0
+        Whz7HmMS95GpVhXdURuE2rI+I0gE
+X-Google-Smtp-Source: APXvYqztGOoSbQR9A0xUiUIAyr0EBR8VhfVjH4uIj9PMb0cZ21qTlLVNsqEx7+YL2IiAPD4R1nsaKg==
+X-Received: by 2002:a2e:968f:: with SMTP id q15mr21909669lji.30.1564570578578;
+        Wed, 31 Jul 2019 03:56:18 -0700 (PDT)
+Received: from [192.168.2.145] (ppp91-78-220-99.pppoe.mtu-net.ru. [91.78.220.99])
+        by smtp.googlemail.com with ESMTPSA id e87sm15987690ljf.54.2019.07.31.03.56.17
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 31 Jul 2019 03:56:18 -0700 (PDT)
+Subject: Re: [PATCH v5 18/20] PM / devfreq: tegra30: Define
+ ACTMON_DEV_CTRL_STOP
+To:     Chanwoo Choi <cw00.choi@samsung.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Cc:     linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190730162236.6063-1-digetx@gmail.com>
+ <CGME20190730163331epcas4p2fabd7ccf1b24c0cb95bf3994a289e13b@epcas4p2.samsung.com>
+ <20190730162236.6063-19-digetx@gmail.com>
+ <033a342c-ffd6-fa51-a9a2-daac36b195f9@samsung.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <682c7b5d-eace-8c6a-6117-4b9b6d4e82f8@gmail.com>
+Date:   Wed, 31 Jul 2019 13:55:21 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190730195819.901457-3-arnd@arndb.de>
-X-TM-AS-GCONF: 00
-x-cbid: 19073110-0008-0000-0000-000003028EAC
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19073110-0009-0000-0000-0000227033BB
-Message-Id: <20190731105039.GB3488@osiris>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-31_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=664 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1907310112
+In-Reply-To: <033a342c-ffd6-fa51-a9a2-daac36b195f9@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 30, 2019 at 09:55:31PM +0200, Arnd Bergmann wrote:
-> MTIOCPOS and MTIOCGET are incompatible between 32-bit and 64-bit user
-> space, and traditionally have been translated in fs/compat_ioctl.c.
+31.07.2019 3:37, Chanwoo Choi пишет:
+> On 19. 7. 31. 오전 1:22, Dmitry Osipenko wrote:
+>> Add verbose definition for the client's device control register value that
+>> makes ACTMON to stop monitoring of the device.
+>>
+>> Suggested-by: Chanwoo Choi <cw00.choi@samsung.com>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>  drivers/devfreq/tegra30-devfreq.c | 4 +++-
+>>  1 file changed, 3 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
+>> index 3543fba74b52..8adc0ff48b45 100644
+>> --- a/drivers/devfreq/tegra30-devfreq.c
+>> +++ b/drivers/devfreq/tegra30-devfreq.c
+>> @@ -35,6 +35,8 @@
+>>  #define ACTMON_DEV_CTRL_CONSECUTIVE_ABOVE_WMARK_EN		BIT(30)
+>>  #define ACTMON_DEV_CTRL_ENB					BIT(31)
+>>  
+>> +#define ACTMON_DEV_CTRL_STOP					0x00000000
+>> +
+>>  #define ACTMON_DEV_UPPER_WMARK					0x4
+>>  #define ACTMON_DEV_LOWER_WMARK					0x8
+>>  #define ACTMON_DEV_INIT_AVG					0xc
+>> @@ -714,7 +716,7 @@ static void tegra_actmon_configure_device(struct tegra_devfreq *tegra,
+>>  
+>>  static void tegra_actmon_stop_device(struct tegra_devfreq_device *dev)
+>>  {
+>> -	device_writel(dev, 0x00000000, ACTMON_DEV_CTRL);
+>> +	device_writel(dev, ACTMON_DEV_CTRL_STOP, ACTMON_DEV_CTRL);
+>>  	device_writel(dev, ACTMON_INTR_STATUS_CLEAR, ACTMON_DEV_INTR_STATUS);
+>>  }
+>>  
+>>
 > 
-> To get rid of that translation handler, move a corresponding
-> implementation into each of the four drivers implementing those commands.
+> I think that you can combine it to patch11.
+> When combining it to patch11, don't need to add the suggested-by tag.
+> Thanks.
 > 
-> The interesting part of that is now in a new linux/mtio.h header that
-> wraps the existing uapi/linux/mtio.h header and provides an abstraction
-> to let drivers handle both cases easily. Using an in_compat_syscall()
-> check, the caller does not have to keep track of whether this was
-> called through .unlocked_ioctl() or .compat_ioctl().
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Besides the two minor things below
-
-Acked-by: Heiko Carstens <heiko.carstens@de.ibm.com>
-
-> diff --git a/include/linux/mtio.h b/include/linux/mtio.h
-> new file mode 100644
-> index 000000000000..fa2783fd37d1
-> --- /dev/null
-> +++ b/include/linux/mtio.h
-> @@ -0,0 +1,59 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef _LINUX_MTIO_COMPAT_H
-> +#define _LINUX_MTIO_COMPAT_H
-> +
-> +#include <linux/compat.h>
-> +#include <uapi/linux/mtio.h>
-> +#include <linux/uaccess.h>
-> +
-> +/*
-> + * helper functions for implementing compat ioctls on the four tape
-> + * drivers: we define the 32-bit layout of each incompatible strucucture,
-
-typo: structure
-
-> + * plus a wrapper function to copy it to user space in either format.
-> + */
-> +
-> +struct	mtget32 {
-> +	s32	mt_type;
-> +	s32	mt_resid;
-> +	s32	mt_dsreg;
-> +	s32	mt_gstat;
-> +	s32	mt_erreg;
-> +	s32	mt_fileno;
-> +	s32	mt_blkno;
-> +};
-> +#define	MTIOCGET32	_IOR('m', 2, struct mtget32)
-> +
-> +struct	mtpos32 {
-> +	s32 	mt_blkno;
-> +};
-> +#define	MTIOCPOS32	_IOR('m', 3, struct mtpos32)
-> +
-> +static inline int put_user_mtget(void __user *u, struct mtget *k)
-> +{
-> +	struct mtget32 k32 = {
-> +		.mt_type   = k->mt_type,
-> +		.mt_resid  = k->mt_resid,
-> +		.mt_dsreg  = k->mt_dsreg,
-> +		.mt_gstat  = k->mt_gstat,
-> +		.mt_fileno = k->mt_fileno,
-> +		.mt_blkno  = k->mt_blkno,
-> +	};
-
-mt_erreg is missing here.
-
+Alright, will combine them in the next revision which I'll make once the
+rest of the patches will be reviewed.
