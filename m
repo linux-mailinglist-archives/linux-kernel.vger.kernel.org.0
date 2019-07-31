@@ -2,439 +2,236 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA8047C913
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 18:45:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F4A07C8FD
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 18:42:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729488AbfGaQpN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 12:45:13 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:58346 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726960AbfGaQpN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 12:45:13 -0400
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 111E15D6377D3E19FF47;
-        Wed, 31 Jul 2019 23:58:26 +0800 (CST)
-Received: from architecture4.huawei.com (10.140.130.215) by smtp.huawei.com
- (10.3.19.210) with Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 31 Jul
- 2019 23:58:16 +0800
-From:   Gao Xiang <gaoxiang25@huawei.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Chao Yu <yuchao0@huawei.com>, <devel@driverdev.osuosl.org>
-CC:     LKML <linux-kernel@vger.kernel.org>,
-        <linux-erofs@lists.ozlabs.org>, "Chao Yu" <chao@kernel.org>,
-        Miao Xie <miaoxie@huawei.com>, <weidu.du@huawei.com>,
-        Fang Wei <fangwei1@huawei.com>,
-        Gao Xiang <gaoxiang25@huawei.com>
-Subject: [PATCH v2 06/22] staging: erofs: clean up internal.h
-Date:   Wed, 31 Jul 2019 23:57:36 +0800
-Message-ID: <20190731155752.210602-7-gaoxiang25@huawei.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190731155752.210602-1-gaoxiang25@huawei.com>
-References: <20190731155752.210602-1-gaoxiang25@huawei.com>
+        id S1730283AbfGaQmI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 12:42:08 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:35038 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729199AbfGaQmI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jul 2019 12:42:08 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 56AFB3092666;
+        Wed, 31 Jul 2019 16:42:07 +0000 (UTC)
+Received: from dcbz.redhat.com (ovpn-116-74.ams2.redhat.com [10.36.116.74])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A36E910016EB;
+        Wed, 31 Jul 2019 16:42:02 +0000 (UTC)
+From:   Adrian Reber <areber@redhat.com>
+To:     Christian Brauner <christian@brauner.io>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Pavel Emelianov <xemul@virtuozzo.com>,
+        Jann Horn <jannh@google.com>, Oleg Nesterov <oleg@redhat.com>,
+        Dmitry Safonov <0x7f454c46@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, Andrei Vagin <avagin@gmail.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Radostin Stoyanov <rstoyanov1@gmail.com>,
+        Adrian Reber <areber@redhat.com>
+Subject: [PATCH v2 1/2] fork: extend clone3() to support CLONE_SET_TID
+Date:   Wed, 31 Jul 2019 18:12:22 +0200
+Message-Id: <20190731161223.2928-1-areber@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.140.130.215]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Wed, 31 Jul 2019 16:42:07 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tidy up relative order of variables / declarations in internal.h,
-move some local static functions out into other files and
-add tags at the end of #endif acrossing several lines.
+The main motivation to add CLONE_SET_TID to clone3() is CRIU.
 
-No logic change.
+To restore a process with the same PID/TID CRIU currently uses
+/proc/sys/kernel/ns_last_pid. It writes the desired (PID - 1) to
+ns_last_pid and then (quickly) does a clone(). This works most of the
+time, but it is racy. It is also slow as it requires multiple syscalls.
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+Extending clone3() to support CLONE_SET_TID makes it possible restore a
+process using CRIU without accessing /proc/sys/kernel/ns_last_pid and
+race free (as long as the desired PID/TID is available).
+
+This clone3() extension places the same restrictions (CAP_SYS_ADMIN)
+on clone3() with set_tid as they are currently in place for ns_last_pid.
+
+v2:
+ - Removed (size < sizeof(struct clone_args)) as discussed with
+   Christian and Dmitry
+ - Added comment to ((set_tid != 1) && idr_get_cursor() <= 1) (Oleg)
+ - Use idr_alloc() instead of idr_alloc_cyclic() (Oleg)
+
+Signed-off-by: Adrian Reber <areber@redhat.com>
 ---
- drivers/staging/erofs/decompressor.c |  27 +++++
- drivers/staging/erofs/internal.h     | 157 ++++++++-------------------
- drivers/staging/erofs/super.c        |   2 +-
- drivers/staging/erofs/zdata.c        |   8 +-
- drivers/staging/erofs/zdata.h        |  13 +++
- 5 files changed, 92 insertions(+), 115 deletions(-)
+ include/linux/pid.h        |  2 +-
+ include/linux/sched/task.h |  1 +
+ include/uapi/linux/sched.h |  2 ++
+ kernel/fork.c              | 25 ++++++++++++++++---------
+ kernel/pid.c               | 30 +++++++++++++++++++++++-------
+ 5 files changed, 43 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/staging/erofs/decompressor.c b/drivers/staging/erofs/decompressor.c
-index b75524d0b322..ee5762351f80 100644
---- a/drivers/staging/erofs/decompressor.c
-+++ b/drivers/staging/erofs/decompressor.c
-@@ -223,6 +223,33 @@ static void copy_from_pcpubuf(struct page **out, const char *dst,
- 	}
- }
+diff --git a/include/linux/pid.h b/include/linux/pid.h
+index 2a83e434db9d..052000db0ced 100644
+--- a/include/linux/pid.h
++++ b/include/linux/pid.h
+@@ -116,7 +116,7 @@ extern struct pid *find_vpid(int nr);
+ extern struct pid *find_get_pid(int nr);
+ extern struct pid *find_ge_pid(int nr, struct pid_namespace *);
  
-+static void *erofs_vmap(struct page **pages, unsigned int count)
-+{
-+#ifdef CONFIG_EROFS_FS_USE_VM_MAP_RAM
-+	int i = 0;
-+
-+	while (1) {
-+		void *addr = vm_map_ram(pages, count, -1, PAGE_KERNEL);
-+		/* retry two more times (totally 3 times) */
-+		if (addr || ++i >= 3)
-+			return addr;
-+		vm_unmap_aliases();
-+	}
-+	return NULL;
-+#else
-+	return vmap(pages, count, VM_MAP, PAGE_KERNEL);
-+#endif
-+}
-+
-+static void erofs_vunmap(const void *mem, unsigned int count)
-+{
-+#ifdef CONFIG_EROFS_FS_USE_VM_MAP_RAM
-+	vm_unmap_ram(mem, count);
-+#else
-+	vunmap(mem);
-+#endif
-+}
-+
- static int decompress_generic(struct z_erofs_decompress_req *rq,
- 			      struct list_head *pagepool)
- {
-diff --git a/drivers/staging/erofs/internal.h b/drivers/staging/erofs/internal.h
-index ed487ee56f74..959bd0ae9d74 100644
---- a/drivers/staging/erofs/internal.h
-+++ b/drivers/staging/erofs/internal.h
-@@ -6,8 +6,8 @@
-  *             http://www.huawei.com/
-  * Created by Gao Xiang <gaoxiang25@huawei.com>
-  */
--#ifndef __INTERNAL_H
--#define __INTERNAL_H
-+#ifndef __EROFS_INTERNAL_H
-+#define __EROFS_INTERNAL_H
+-extern struct pid *alloc_pid(struct pid_namespace *ns);
++extern struct pid *alloc_pid(struct pid_namespace *ns, pid_t set_tid);
+ extern void free_pid(struct pid *pid);
+ extern void disable_pid_allocation(struct pid_namespace *ns);
  
- #include <linux/fs.h>
- #include <linux/dcache.h>
-@@ -28,15 +28,11 @@
- #define infoln(x, ...)  pr_info(x "\n", ##__VA_ARGS__)
- #ifdef CONFIG_EROFS_FS_DEBUG
- #define debugln(x, ...) pr_debug(x "\n", ##__VA_ARGS__)
--
--#define dbg_might_sleep         might_sleep
- #define DBG_BUGON               BUG_ON
- #else
- #define debugln(x, ...)         ((void)0)
--
--#define dbg_might_sleep()       ((void)0)
- #define DBG_BUGON(x)            ((void)(x))
--#endif
-+#endif	/* !CONFIG_EROFS_FS_DEBUG */
- 
- enum {
- 	FAULT_KMALLOC,
-@@ -53,7 +49,7 @@ struct erofs_fault_info {
- 	unsigned int inject_rate;
- 	unsigned int inject_type;
- };
--#endif
-+#endif	/* CONFIG_EROFS_FAULT_INJECTION */
- 
- #ifdef CONFIG_EROFS_FS_ZIP_CACHE_BIPOLAR
- #define EROFS_FS_ZIP_CACHE_LVL	(2)
-@@ -71,6 +67,9 @@ struct erofs_fault_info {
- #define EROFS_SUPER_MAGIC   EROFS_SUPER_MAGIC_V1
- 
- typedef u64 erofs_nid_t;
-+typedef u64 erofs_off_t;
-+/* data type for filesystem-wide blocks number */
-+typedef u32 erofs_blk_t;
- 
- struct erofs_sb_info {
- 	/* list for all registered superblocks, mainly for shrinker */
-@@ -154,7 +153,7 @@ static inline bool time_to_inject(struct erofs_sb_info *sbi, int type)
- static inline void erofs_show_injection_info(int type)
- {
- }
--#endif
-+#endif	/* !CONFIG_EROFS_FAULT_INJECTION */
- 
- static inline void *erofs_kmalloc(struct erofs_sb_info *sbi,
- 					size_t size, gfp_t flags)
-@@ -179,6 +178,8 @@ static inline void *erofs_kmalloc(struct erofs_sb_info *sbi,
- #define test_opt(sbi, option)	((sbi)->mount_opt & EROFS_MOUNT_##option)
- 
- #ifdef CONFIG_EROFS_FS_ZIP
-+#define EROFS_LOCKED_MAGIC     (INT_MIN | 0xE0F510CCL)
-+
- /* basic unit of the workstation of a super_block */
- struct erofs_workgroup {
- 	/* the workgroup index in the workstation */
-@@ -188,8 +189,6 @@ struct erofs_workgroup {
- 	atomic_t refcount;
+diff --git a/include/linux/sched/task.h b/include/linux/sched/task.h
+index 0497091e40c1..4f2a80564332 100644
+--- a/include/linux/sched/task.h
++++ b/include/linux/sched/task.h
+@@ -26,6 +26,7 @@ struct kernel_clone_args {
+ 	unsigned long stack;
+ 	unsigned long stack_size;
+ 	unsigned long tls;
++	pid_t set_tid;
  };
  
--#define EROFS_LOCKED_MAGIC     (INT_MIN | 0xE0F510CCL)
--
- #if defined(CONFIG_SMP)
- static inline bool erofs_workgroup_try_to_freeze(struct erofs_workgroup *grp,
- 						 int val)
-@@ -246,50 +245,24 @@ static inline int erofs_wait_on_workgroup_freezed(struct erofs_workgroup *grp)
- 	DBG_BUGON(v == EROFS_LOCKED_MAGIC);
- 	return v;
- }
--#endif
--
--int erofs_workgroup_put(struct erofs_workgroup *grp);
--struct erofs_workgroup *erofs_find_workgroup(struct super_block *sb,
--					     pgoff_t index, bool *tag);
--int erofs_register_workgroup(struct super_block *sb,
--			     struct erofs_workgroup *grp, bool tag);
--unsigned long erofs_shrink_workstation(struct erofs_sb_info *sbi,
--				       unsigned long nr_shrink, bool cleanup);
--void erofs_workgroup_free_rcu(struct erofs_workgroup *grp);
--
--#ifdef EROFS_FS_HAS_MANAGED_CACHE
--int erofs_try_to_free_all_cached_pages(struct erofs_sb_info *sbi,
--				       struct erofs_workgroup *egrp);
--int erofs_try_to_free_cached_page(struct address_space *mapping,
--				  struct page *page);
--
--#define MNGD_MAPPING(sbi)	((sbi)->managed_cache->i_mapping)
--static inline bool erofs_page_is_managed(const struct erofs_sb_info *sbi,
--					 struct page *page)
--{
--	return page->mapping == MNGD_MAPPING(sbi);
--}
--#else
--#define MNGD_MAPPING(sbi)	(NULL)
--static inline bool erofs_page_is_managed(const struct erofs_sb_info *sbi,
--					 struct page *page) { return false; }
--#endif
-+#endif	/* !CONFIG_SMP */
+ /*
+diff --git a/include/uapi/linux/sched.h b/include/uapi/linux/sched.h
+index b3105ac1381a..8c4e803e8147 100644
+--- a/include/uapi/linux/sched.h
++++ b/include/uapi/linux/sched.h
+@@ -32,6 +32,7 @@
+ #define CLONE_NEWPID		0x20000000	/* New pid namespace */
+ #define CLONE_NEWNET		0x40000000	/* New network namespace */
+ #define CLONE_IO		0x80000000	/* Clone io context */
++#define CLONE_SET_TID		0x100000000ULL	/* set if the desired TID is set in set_tid */
  
--#define DEFAULT_MAX_SYNC_DECOMPRESS_PAGES	3
-+/* hard limit of pages per compressed cluster */
-+#define Z_EROFS_CLUSTER_MAX_PAGES       (CONFIG_EROFS_FS_CLUSTER_PAGE_LIMIT)
-+#define EROFS_PCPUBUF_NR_PAGES          Z_EROFS_CLUSTER_MAX_PAGES
+ /*
+  * Arguments for the clone3 syscall
+@@ -45,6 +46,7 @@ struct clone_args {
+ 	__aligned_u64 stack;
+ 	__aligned_u64 stack_size;
+ 	__aligned_u64 tls;
++	__aligned_u64 set_tid;
+ };
  
--static inline bool __should_decompress_synchronously(struct erofs_sb_info *sbi,
--						     unsigned int nr)
--{
--	return nr <= sbi->max_sync_decompress_pages;
--}
-+/* page count of a compressed cluster */
-+#define erofs_clusterpages(sbi)         ((1 << (sbi)->clusterbits) / PAGE_SIZE)
+ /*
+diff --git a/kernel/fork.c b/kernel/fork.c
+index 2852d0e76ea3..405f98ce4c83 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -2031,7 +2031,7 @@ static __latent_entropy struct task_struct *copy_process(
+ 	stackleak_task_init(p);
  
- int __init z_erofs_init_zip_subsystem(void);
- void z_erofs_exit_zip_subsystem(void);
- #else
-+#define EROFS_PCPUBUF_NR_PAGES          0
+ 	if (pid != &init_struct_pid) {
+-		pid = alloc_pid(p->nsproxy->pid_ns_for_children);
++		pid = alloc_pid(p->nsproxy->pid_ns_for_children, args->set_tid);
+ 		if (IS_ERR(pid)) {
+ 			retval = PTR_ERR(pid);
+ 			goto bad_fork_cleanup_thread;
+@@ -2530,14 +2530,12 @@ noinline static int copy_clone_args_from_user(struct kernel_clone_args *kargs,
+ 					      struct clone_args __user *uargs,
+ 					      size_t size)
+ {
++	struct pid_namespace *pid_ns = task_active_pid_ns(current);
+ 	struct clone_args args;
+ 
+ 	if (unlikely(size > PAGE_SIZE))
+ 		return -E2BIG;
+ 
+-	if (unlikely(size < sizeof(struct clone_args)))
+-		return -EINVAL;
+-
+ 	if (unlikely(!access_ok(uargs, size)))
+ 		return -EFAULT;
+ 
+@@ -2562,6 +2560,9 @@ noinline static int copy_clone_args_from_user(struct kernel_clone_args *kargs,
+ 	if (copy_from_user(&args, uargs, size))
+ 		return -EFAULT;
+ 
++	if ((args.flags & CLONE_SET_TID) && !ns_capable(pid_ns->user_ns, CAP_SYS_ADMIN))
++		return -EPERM;
 +
- /* dummy initializer/finalizer for the decompression subsystem */
- static inline int z_erofs_init_zip_subsystem(void) { return 0; }
- static inline void z_erofs_exit_zip_subsystem(void) {}
--#endif
-+#endif	/* !CONFIG_EROFS_FS_ZIP */
- 
- /* we strictly follow PAGE_SIZE and no buffer head yet */
- #define LOG_BLOCK_SIZE		PAGE_SHIFT
-@@ -308,23 +281,6 @@ static inline void z_erofs_exit_zip_subsystem(void) {}
- 
- #define ROOT_NID(sb)		((sb)->root_nid)
- 
--#ifdef CONFIG_EROFS_FS_ZIP
--/* hard limit of pages per compressed cluster */
--#define Z_EROFS_CLUSTER_MAX_PAGES       (CONFIG_EROFS_FS_CLUSTER_PAGE_LIMIT)
--
--/* page count of a compressed cluster */
--#define erofs_clusterpages(sbi)         ((1 << (sbi)->clusterbits) / PAGE_SIZE)
--
--#define EROFS_PCPUBUF_NR_PAGES          Z_EROFS_CLUSTER_MAX_PAGES
--#else
--#define EROFS_PCPUBUF_NR_PAGES          0
--#endif
--
--typedef u64 erofs_off_t;
--
--/* data type for filesystem-wide blocks number */
--typedef u32 erofs_blk_t;
--
- #define erofs_blknr(addr)       ((addr) / EROFS_BLKSIZ)
- #define erofs_blkoff(addr)      ((addr) % EROFS_BLKSIZ)
- #define blknr_to_addr(nr)       ((erofs_off_t)(nr) * EROFS_BLKSIZ)
-@@ -364,7 +320,7 @@ struct erofs_vnode {
- 			unsigned char  z_logical_clusterbits;
- 			unsigned char  z_physical_clusterbits[2];
- 		};
--#endif
-+#endif	/* CONFIG_EROFS_FS_ZIP */
+ 	*kargs = (struct kernel_clone_args){
+ 		.flags		= args.flags,
+ 		.pidfd		= u64_to_user_ptr(args.pidfd),
+@@ -2571,6 +2572,7 @@ noinline static int copy_clone_args_from_user(struct kernel_clone_args *kargs,
+ 		.stack		= args.stack,
+ 		.stack_size	= args.stack_size,
+ 		.tls		= args.tls,
++		.set_tid	= args.set_tid,
  	};
- 	/* the corresponding vfs inode */
- 	struct inode vfs_inode;
-@@ -472,13 +428,14 @@ static inline int z_erofs_map_blocks_iter(struct inode *inode,
- {
- 	return -ENOTSUPP;
- }
--#endif
-+#endif	/* !CONFIG_EROFS_FS_ZIP */
  
- /* data.c */
--static inline struct bio *
--erofs_grab_bio(struct super_block *sb,
--	       erofs_blk_t blkaddr, unsigned int nr_pages, void *bi_private,
--	       bio_end_io_t endio, bool nofail)
-+static inline struct bio *erofs_grab_bio(struct super_block *sb,
-+					 erofs_blk_t blkaddr,
-+					 unsigned int nr_pages,
-+					 void *bi_private, bio_end_io_t endio,
-+					 bool nofail)
- {
- 	const gfp_t gfp = GFP_NOIO;
- 	struct bio *bio;
-@@ -525,20 +482,13 @@ static inline struct page *erofs_get_meta_page(struct super_block *sb,
- 	return __erofs_get_meta_page(sb, blkaddr, prio, false);
- }
- 
--static inline struct page *erofs_get_meta_page_nofail(struct super_block *sb,
--	erofs_blk_t blkaddr, bool prio)
--{
--	return __erofs_get_meta_page(sb, blkaddr, prio, true);
--}
--
- int erofs_map_blocks(struct inode *, struct erofs_map_blocks *, int);
- 
--static inline struct page *
--erofs_get_inline_page(struct inode *inode,
--		      erofs_blk_t blkaddr)
-+static inline struct page *erofs_get_inline_page(struct inode *inode,
-+						 erofs_blk_t blkaddr)
- {
--	return erofs_get_meta_page(inode->i_sb,
--		blkaddr, S_ISDIR(inode->i_mode));
-+	return erofs_get_meta_page(inode->i_sb, blkaddr,
-+				   S_ISDIR(inode->i_mode));
- }
- 
- /* inode.c */
-@@ -578,34 +528,7 @@ int erofs_namei(struct inode *dir, struct qstr *name,
- /* dir.c */
- extern const struct file_operations erofs_dir_fops;
- 
--static inline void *erofs_vmap(struct page **pages, unsigned int count)
--{
--#ifdef CONFIG_EROFS_FS_USE_VM_MAP_RAM
--	int i = 0;
--
--	while (1) {
--		void *addr = vm_map_ram(pages, count, -1, PAGE_KERNEL);
--		/* retry two more times (totally 3 times) */
--		if (addr || ++i >= 3)
--			return addr;
--		vm_unmap_aliases();
--	}
--	return NULL;
--#else
--	return vmap(pages, count, VM_MAP, PAGE_KERNEL);
--#endif
--}
--
--static inline void erofs_vunmap(const void *mem, unsigned int count)
--{
--#ifdef CONFIG_EROFS_FS_USE_VM_MAP_RAM
--	vm_unmap_ram(mem, count);
--#else
--	vunmap(mem);
--#endif
--}
--
--/* utils.c */
-+/* utils.c / zdata.c */
- extern struct shrinker erofs_shrinker_info;
- 
- struct page *erofs_allocpage(struct list_head *pool, gfp_t gfp);
-@@ -625,12 +548,20 @@ static inline void *erofs_get_pcpubuf(unsigned int pagenr)
- #define erofs_put_pcpubuf(buf) do {} while (0)
- #endif
- 
-+int erofs_workgroup_put(struct erofs_workgroup *grp);
-+struct erofs_workgroup *erofs_find_workgroup(struct super_block *sb,
-+					     pgoff_t index, bool *tag);
-+int erofs_register_workgroup(struct super_block *sb,
-+			     struct erofs_workgroup *grp, bool tag);
-+unsigned long erofs_shrink_workstation(struct erofs_sb_info *sbi,
-+				       unsigned long nr_shrink, bool cleanup);
-+void erofs_workgroup_free_rcu(struct erofs_workgroup *grp);
-+int erofs_try_to_free_all_cached_pages(struct erofs_sb_info *sbi,
-+				       struct erofs_workgroup *egrp);
-+int erofs_try_to_free_cached_page(struct address_space *mapping,
-+				  struct page *page);
- void erofs_register_super(struct super_block *sb);
- void erofs_unregister_super(struct super_block *sb);
- 
--#ifndef lru_to_page
--#define lru_to_page(head) (list_entry((head)->prev, struct page, lru))
--#endif
--
--#endif
-+#endif	/* __EROFS_INTERNAL_H */
- 
-diff --git a/drivers/staging/erofs/super.c b/drivers/staging/erofs/super.c
-index 38cd7a59750a..55f51d2b3930 100644
---- a/drivers/staging/erofs/super.c
-+++ b/drivers/staging/erofs/super.c
-@@ -211,7 +211,7 @@ static void default_options(struct erofs_sb_info *sbi)
- {
- 	/* set up some FS parameters */
- #ifdef CONFIG_EROFS_FS_ZIP
--	sbi->max_sync_decompress_pages = DEFAULT_MAX_SYNC_DECOMPRESS_PAGES;
-+	sbi->max_sync_decompress_pages = 3;
- #endif
- 
- #ifdef CONFIG_EROFS_FS_XATTR
-diff --git a/drivers/staging/erofs/zdata.c b/drivers/staging/erofs/zdata.c
-index f7667628bbf1..bc478eebf509 100644
---- a/drivers/staging/erofs/zdata.c
-+++ b/drivers/staging/erofs/zdata.c
-@@ -1509,6 +1509,12 @@ static int z_erofs_vle_normalaccess_readpage(struct file *file,
  	return 0;
+@@ -2578,11 +2580,16 @@ noinline static int copy_clone_args_from_user(struct kernel_clone_args *kargs,
+ 
+ static bool clone3_args_valid(const struct kernel_clone_args *kargs)
+ {
+-	/*
+-	 * All lower bits of the flag word are taken.
+-	 * Verify that no other unknown flags are passed along.
+-	 */
+-	if (kargs->flags & ~CLONE_LEGACY_FLAGS)
++	/* Verify that no other unknown flags are passed along. */
++	if (kargs->flags & ~(CLONE_LEGACY_FLAGS | CLONE_SET_TID))
++		return false;
++
++	/* Fail if set_tid is set without CLONE_SET_TID */
++	if (kargs->set_tid && !(kargs->flags & CLONE_SET_TID))
++		return false;
++
++	/* Also fail if set_tid is invalid */
++	if ((kargs->set_tid <= 0) && (kargs->flags & CLONE_SET_TID))
+ 		return false;
+ 
+ 	/*
+diff --git a/kernel/pid.c b/kernel/pid.c
+index 0a9f2e437217..977f3ac39d7f 100644
+--- a/kernel/pid.c
++++ b/kernel/pid.c
+@@ -157,7 +157,7 @@ void free_pid(struct pid *pid)
+ 	call_rcu(&pid->rcu, delayed_put_pid);
  }
  
-+static bool should_decompress_synchronously(struct erofs_sb_info *sbi,
-+					    unsigned int nr)
-+{
-+	return nr <= sbi->max_sync_decompress_pages;
-+}
-+
- static int z_erofs_vle_normalaccess_readpages(struct file *filp,
- 					      struct address_space *mapping,
- 					      struct list_head *pages,
-@@ -1517,7 +1523,7 @@ static int z_erofs_vle_normalaccess_readpages(struct file *filp,
- 	struct inode *const inode = mapping->host;
- 	struct erofs_sb_info *const sbi = EROFS_I_SB(inode);
+-struct pid *alloc_pid(struct pid_namespace *ns)
++struct pid *alloc_pid(struct pid_namespace *ns, int set_tid)
+ {
+ 	struct pid *pid;
+ 	enum pid_type type;
+@@ -186,12 +186,28 @@ struct pid *alloc_pid(struct pid_namespace *ns)
+ 		if (idr_get_cursor(&tmp->idr) > RESERVED_PIDS)
+ 			pid_min = RESERVED_PIDS;
  
--	bool sync = __should_decompress_synchronously(sbi, nr_pages);
-+	bool sync = should_decompress_synchronously(sbi, nr_pages);
- 	struct z_erofs_vle_frontend f = VLE_FRONTEND_INIT(inode);
- 	gfp_t gfp = mapping_gfp_constraint(mapping, GFP_KERNEL);
- 	struct page *head = NULL;
-diff --git a/drivers/staging/erofs/zdata.h b/drivers/staging/erofs/zdata.h
-index 8d0119d697da..6574d43ba877 100644
---- a/drivers/staging/erofs/zdata.h
-+++ b/drivers/staging/erofs/zdata.h
-@@ -104,6 +104,19 @@ struct z_erofs_vle_unzip_io_sb {
- 	struct super_block *sb;
- };
+-		/*
+-		 * Store a null pointer so find_pid_ns does not find
+-		 * a partially initialized PID (see below).
+-		 */
+-		nr = idr_alloc_cyclic(&tmp->idr, NULL, pid_min,
+-				      pid_max, GFP_ATOMIC);
++		if (set_tid) {
++			/*
++			 * Also fail if a PID != 1 is requested
++			 * and no PID 1 exists.
++			 */
++			if ((set_tid >= pid_max) || ((set_tid != 1) &&
++				(idr_get_cursor(&tmp->idr) <= 1))) {
++				spin_unlock_irq(&pidmap_lock);
++				retval = -EINVAL;
++				goto out_free;
++			}
++			nr = idr_alloc(&tmp->idr, NULL, set_tid,
++				       set_tid + 1, GFP_ATOMIC);
++			set_tid = 0;
++		} else {
++			/*
++			 * Store a null pointer so find_pid_ns does not find
++			 * a partially initialized PID (see below).
++			 */
++			nr = idr_alloc_cyclic(&tmp->idr, NULL, pid_min,
++					      pid_max, GFP_ATOMIC);
++		}
+ 		spin_unlock_irq(&pidmap_lock);
+ 		idr_preload_end();
  
-+#ifdef EROFS_FS_HAS_MANAGED_CACHE
-+#define MNGD_MAPPING(sbi)	((sbi)->managed_cache->i_mapping)
-+static inline bool erofs_page_is_managed(const struct erofs_sb_info *sbi,
-+					 struct page *page)
-+{
-+	return page->mapping == MNGD_MAPPING(sbi);
-+}
-+#else
-+#define MNGD_MAPPING(sbi)	(NULL)
-+static inline bool erofs_page_is_managed(const struct erofs_sb_info *sbi,
-+					 struct page *page) { return false; }
-+#endif	/* !EROFS_FS_HAS_MANAGED_CACHE */
-+
- #define Z_EROFS_ONLINEPAGE_COUNT_BITS 2
- #define Z_EROFS_ONLINEPAGE_COUNT_MASK ((1 << Z_EROFS_ONLINEPAGE_COUNT_BITS) - 1)
- #define Z_EROFS_ONLINEPAGE_INDEX_SHIFT  (Z_EROFS_ONLINEPAGE_COUNT_BITS)
 -- 
-2.17.1
+2.21.0
 
