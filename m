@@ -2,155 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 280C07B999
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 08:24:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 699877B99E
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 08:26:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727346AbfGaGYh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 02:24:37 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:32748 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727300AbfGaGYh (ORCPT
+        id S1727411AbfGaG0T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 02:26:19 -0400
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:33355 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726652AbfGaG0T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 02:24:37 -0400
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6V6NdVa055096
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 02:24:36 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2u3430kntj-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 02:24:35 -0400
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Wed, 31 Jul 2019 07:24:33 +0100
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 31 Jul 2019 07:24:26 +0100
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x6V6OOGr54919308
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 31 Jul 2019 06:24:24 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B099C11C058;
-        Wed, 31 Jul 2019 06:24:24 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id AA3CE11C04C;
-        Wed, 31 Jul 2019 06:24:22 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.8.168])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Wed, 31 Jul 2019 06:24:22 +0000 (GMT)
-Date:   Wed, 31 Jul 2019 09:24:21 +0300
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Hoan Tran OS <hoan@os.amperecomputing.com>,
-        Will Deacon <will@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
-        Paul Mackerras <paulus@samba.org>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
-        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        "x86@kernel.org" <x86@kernel.org>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Open Source Submission <patches@amperecomputing.com>,
-        Pavel Tatashin <pavel.tatashin@microsoft.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        "willy@infradead.org" <willy@infradead.org>
-Subject: Re: [PATCH v2 0/5] mm: Enable CONFIG_NODES_SPAN_OTHER_NODES by
- default for NUMA
-References: <1562887528-5896-1-git-send-email-Hoan@os.amperecomputing.com>
- <20190712070247.GM29483@dhcp22.suse.cz>
- <586ae736-a429-cf94-1520-1a94ffadad88@os.amperecomputing.com>
- <20190712121223.GR29483@dhcp22.suse.cz>
- <20190712143730.au3662g4ua2tjudu@willie-the-truck>
- <20190712150007.GU29483@dhcp22.suse.cz>
- <730368c5-1711-89ae-e3ef-65418b17ddc9@os.amperecomputing.com>
- <20190730081415.GN9330@dhcp22.suse.cz>
+        Wed, 31 Jul 2019 02:26:19 -0400
+Received: by mail-yb1-f196.google.com with SMTP id c202so22718390ybf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 23:26:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=xzym8/dUuXuGiOMMezN5bW3u98W2F4vTa3EFglwr9Xk=;
+        b=RlfDdsWwTMhs4L47y3YvK1IPZw4kW+5WVucupuREnMgiVDQyq+AyL3EVp7fWh23/wG
+         qABS5+Ebz42PHuy3fYI4w2XUSESBZJIykM24cdwR25y1KLutNJ8Zo72oaMmiB9RUhHkX
+         B4L+kxotm1UTrBAuWrKKV/xSFhQVD+Sy5XaD50zRbR3fqgAiSb6pXERpm/Pfk1K4CH6Z
+         zUh2+YiKza+gZE075cQjGveh6Iq1ud9e9wzHGkHkF5IpZyHOfQRld5tV0JxqPHI8X8TT
+         2UsrEud3np2irIlQkjf1UD+qGxCiSINhcqJmspatsmCjrKglau8M5UdxGaRDnrQyIto6
+         rU+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=xzym8/dUuXuGiOMMezN5bW3u98W2F4vTa3EFglwr9Xk=;
+        b=MToa0mCx+MbUYiDCWaJQaurir82No02XQTLxq37mLSwzeQShan1M/h0QdbI1umCWj+
+         GjureK1ifB/GhwSDKfPVqx67StSaHrdaQREuaL4hAHfIc8NeAvO7n5gMBz+SABm9pPmd
+         KlUfMGqgpzPjKB+SzvwJOa78ahycU1CQa2WSpDKG0h6O4I3LuppJQrXeXx3iPPXkWRyS
+         s333mhCbTjxwl6XxrlLPrWDESZB8KWDIBr9+rzeEWdwn/qqzM0WEIErTu+8TJrjNqr3z
+         JpIlJfC+7b9IHe+FaU5eIiKlOkqlagJ8SzB/3PZdveik9PwsG78rDktsWgXrfdOrg+Ck
+         aOgw==
+X-Gm-Message-State: APjAAAWzJTRO1Vy71RSPikyTN5DnnRz9kW4NaXCbkxUokvUq6bWQQnNz
+        G2/vT5spDkKzOpO0e77WwByOehmB+VUGEEJAe1k=
+X-Google-Smtp-Source: APXvYqznqG7aFgKm5YjjvnDVVr8TB+M8SM5D/aHXde0NAfY/K2gnyHYZcnpShx7xnGA1X0yvO1v57Q8hnjSJc9s9BNQ=
+X-Received: by 2002:a25:830e:: with SMTP id s14mr74917205ybk.500.1564554378800;
+ Tue, 30 Jul 2019 23:26:18 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190730081415.GN9330@dhcp22.suse.cz>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 19073106-0008-0000-0000-000003027A16
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19073106-0009-0000-0000-000022701E30
-Message-Id: <20190731062420.GC21422@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-31_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=761 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1907310066
+References: <20190731024533.22264-1-huangfq.daxian@gmail.com> <520bd0f7367e77ffd2e0150187f6ffb64b0e8b71.camel@perches.com>
+In-Reply-To: <520bd0f7367e77ffd2e0150187f6ffb64b0e8b71.camel@perches.com>
+From:   Fuqian Huang <huangfq.daxian@gmail.com>
+Date:   Wed, 31 Jul 2019 14:26:07 +0800
+Message-ID: <CABXRUiSYbyb8+bsvCb_+n1kLEA_ZSFxR5D7c+qatrW9KPGmeqw@mail.gmail.com>
+Subject: Re: [PATCH] drm: use trace_printk rather than printk in drm_dbg.
+To:     Joe Perches <joe@perches.com>
+Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ sorry for a late reply too, somehow I missed this thread before ]
+Joe Perches <joe@perches.com> =E6=96=BC 2019=E5=B9=B47=E6=9C=8831=E6=97=A5=
+=E9=80=B1=E4=B8=89 =E4=B8=8B=E5=8D=882:06=E5=AF=AB=E9=81=93=EF=BC=9A
+>
+> On Wed, 2019-07-31 at 10:45 +0800, Fuqian Huang wrote:
+> > In drivers/gpu/drm/amd/amdgpu/amdgpu_ih.c,
+> > amdgpu_ih_process calls DRM_DEBUG which calls drm_dbg and
+> > finally calls printk.
+> > As amdgpu_ih_process is called from an interrupt handler,
+> > and interrupt handler should be short as possible.
+> >
+> > As printk may lead to bogging down the system or can even
+> > create a live lock. printk should not be used in IRQ context.
+> > Instead, trace_printk is recommended.
+> > Link: https://lwn.net/Articles/365835
+> []
+> > diff --git a/drivers/gpu/drm/drm_print.c b/drivers/gpu/drm/drm_print.c
+> []
+> > @@ -236,7 +236,7 @@ void drm_dbg(unsigned int category, const char *for=
+mat, ...)
+> >       vaf.fmt =3D format;
+> >       vaf.va =3D &args;
+> >
+> > -     printk(KERN_DEBUG "[" DRM_NAME ":%ps] %pV",
+> > +     trace_printk(KERN_DEBUG "[" DRM_NAME ":%ps] %pV",
+> >              __builtin_return_address(0), &vaf);
+> >
+> >       va_end(args);
+>
+> This makes all 4000+ drm_dbg/DRM_DEBUG uses emit
+> a trace_printk.
+>
+> I suggest instead you make only the interrupt uses
+> use a different function and not drm_dbg.
+>
+> Or maybe add an in_interrupt() check like
+>
+>         if (in_interrupt())
+>                 printk(KERN_DEBUG etc...)
+>         else
+>                 trace_printk(etc...)
 
-On Tue, Jul 30, 2019 at 10:14:15AM +0200, Michal Hocko wrote:
-> [Sorry for a late reply]
-> 
-> On Mon 15-07-19 17:55:07, Hoan Tran OS wrote:
-> > Hi,
-> > 
-> > On 7/12/19 10:00 PM, Michal Hocko wrote:
-> [...]
-> > > Hmm, I thought this was selectable. But I am obviously wrong here.
-> > > Looking more closely, it seems that this is indeed only about
-> > > __early_pfn_to_nid and as such not something that should add a config
-> > > symbol. This should have been called out in the changelog though.
-> > 
-> > Yes, do you have any other comments about my patch?
-> 
-> Not really. Just make sure to explicitly state that
-> CONFIG_NODES_SPAN_OTHER_NODES is only about __early_pfn_to_nid and that
-> doesn't really deserve it's own config and can be pulled under NUMA.
-> 
-> > > Also while at it, does HAVE_MEMBLOCK_NODE_MAP fall into a similar
-> > > bucket? Do we have any NUMA architecture that doesn't enable it?
-> > > 
-
-HAVE_MEMBLOCK_NODE_MAP makes huge difference in node/zone initialization
-sequence so it's not only about a singe function.
-
-> > As I checked with arch Kconfig files, there are 2 architectures, riscv 
-> > and microblaze, do not support NUMA but enable this config.
-
-My take would be that riscv will support NUMA some day.
- 
-> > And 1 architecture, alpha, supports NUMA but does not enable this config.
-
-alpha's NUMA support is BROKEN for more than a decade now, I doubt it'll
-ever get fixed.
- 
-> Care to have a look and clean this up please?
-> 
-> -- 
-> Michal Hocko
-> SUSE Labs
-> 
-
--- 
-Sincerely yours,
-Mike.
-
+I will send a v2 patch to fix this.
