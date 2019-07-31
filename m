@@ -2,122 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D2CA17D0C9
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 00:19:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D404C7D0A2
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 00:17:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731470AbfGaWSC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 18:18:02 -0400
-Received: from mail-vs1-f73.google.com ([209.85.217.73]:52555 "EHLO
-        mail-vs1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731441AbfGaWRl (ORCPT
+        id S1730046AbfGaWRN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 18:17:13 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:44866 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731311AbfGaWRJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 18:17:41 -0400
-Received: by mail-vs1-f73.google.com with SMTP id g189so18238749vsc.19
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 15:17:41 -0700 (PDT)
+        Wed, 31 Jul 2019 18:17:09 -0400
+Received: by mail-ot1-f67.google.com with SMTP id b7so21721741otl.11
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 15:17:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+        d=android.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=QAOtO6nDHkYJ9N49TmHslQT3rCi9zyycpSkmU2B1+ww=;
-        b=vsBNHav/9gjDzuC/p4k/ehf5+i2a6WpWSYUinwPcIuMUWwom487dxrSyQaeEFjlILD
-         GuWeQYzRIr7AcvrVQ6N9OjJnHtUFW82QbCHblLe/DE5ZDgEbMkl9yz0XaBQlkK3hIrhE
-         CRaE81+xyV8pKZV+03bT3FOuVQrkl25+woHlOuMHJqrrquF/lkqyUH+uVl4t0zaG1fPI
-         pRfyY6anyqwruTQIYELP/0HE2XyrhE4MuNhGIKY4Yp9/6ptTxjVu3BL6dZdyvYJLtW+2
-         iV2zl7xFM87zPbJFwuFGcMhESUot7F/OBzXyBtK/6fgmn8xSe1xZhY/BGloJWxbrUgS/
-         jeyA==
+        bh=a10evfwAD+Hsk/+rS/a81Pg1X9pPEg2+w8iwbXmndgQ=;
+        b=AvBrsDTtKVpWZKlZbwnKzPkf5f+TVBYWFzf95aUmvH4n1Y3VKfDf4QBLp497o5oNQa
+         YtDnI0+1LbWrRUtm5jKc0nHT39Bt5sSRWT6KDy3dDgednsrf7PwJIfNhsaFdB2SpMIuF
+         MFrRtn3UtjIsRdnPQOtECJcu8vefrAjVfVfvmwTClIOKyyjA3NWKATjgtq5kzbF21EVQ
+         R9J/qCIo6Vjrf2ICh3xxxXS5u/gYrD+fqwxddeBeNFLlrWnEV6GD6azfEUdlnO6YBVJj
+         VjjbGt8WGMq2iEk+OieRyUAX9ivRDxQuiuU6HrRxE1mSvOKtgcLkRD7jM9LvzX+eJ3zv
+         TS6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=QAOtO6nDHkYJ9N49TmHslQT3rCi9zyycpSkmU2B1+ww=;
-        b=Vdv/OF1w21zucpUZcEXcc4syPqHcPDsaj3Soy58j9gF+k2aVKNoqekfEPSsdBTL+og
-         MxBp+wZF40+4pbFXdEu31eMNR2/0dlu5pMBDcxcThUaP1jmjs82GFSzzsgyEf5Tz3zbr
-         s3+sNQIvYLJ1QmddpqPYA5L/r2PXUKgkYSCO8tBNvltALAHRi+Ij99kMvh/e+SdZF9+/
-         h6xy7BeI02zhzthEHHkACIObn3LpAyc6Gad+TrDeNsTP4A1ptp4aL1Pc3dwrDCQjVTQH
-         pgNtqahzdz89Y1jovwVSSwcwiItO+oLUwjciLOfsF6Tb/EjDg8pZX1XmPK4RkDaS0VPs
-         hqLw==
-X-Gm-Message-State: APjAAAW1zthox033wQ0gVbIEmuIwjJSm4Q1oOoUTYL8Ul8vSo3jdgC86
-        vQeYnWmYG8cu+M9mxwEch80ThzBBQ6dk2gfWAY0ZjQ==
-X-Google-Smtp-Source: APXvYqxUkdmcNxJs0oiJsLLUnAtxrUaESFBqxq+3RtL2nKYerZv5EnzIdcZz6oLV9x/tGowxt8hi1N3I0JS7+k+vkc4ihw==
-X-Received: by 2002:ac5:c4cc:: with SMTP id a12mr27573495vkl.28.1564611460638;
- Wed, 31 Jul 2019 15:17:40 -0700 (PDT)
-Date:   Wed, 31 Jul 2019 15:16:17 -0700
-In-Reply-To: <20190731221617.234725-1-matthewgarrett@google.com>
-Message-Id: <20190731221617.234725-30-matthewgarrett@google.com>
-Mime-Version: 1.0
-References: <20190731221617.234725-1-matthewgarrett@google.com>
-X-Mailer: git-send-email 2.22.0.770.g0f2c4a37fd-goog
-Subject: [PATCH V37 29/29] lockdown: Print current->comm in restriction messages
-From:   Matthew Garrett <matthewgarrett@google.com>
-To:     jmorris@namei.org
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        Matthew Garrett <matthewgarrett@google.com>,
-        David Howells <dhowells@redhat.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Kees Cook <keescook@chromium.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=a10evfwAD+Hsk/+rS/a81Pg1X9pPEg2+w8iwbXmndgQ=;
+        b=OfH3itdAQ6phawYqnV4TG9sUExwPPC87Lko8sxsd0TG6YvAAZYG0GovkMkQb5r+hLy
+         4okDvXdWynb7axtdFbLRfKQzSOK9E7ww3w5eOrlUDgKNWXb7gvNpNREtx0Y/SWgri7mN
+         zWFDgSRjeiGn4Et43HxBfKUSGMeinYK+1LD670mdZ4sdc8VbM0ogQo3E1GVx7KEnSElZ
+         yMzbuPUuBvxaHLf8xK8uGH7eJGMc5+Tvve9h6GPScgipomp7rTMTrxp8ufSnSWG7bW9X
+         VAZHhUKtnZDrVcUJujzi9GOTeEsIUme8PzOO+eiVXgGwJt4OFw6+AnuvxTWQ1YQSdL3O
+         ELDA==
+X-Gm-Message-State: APjAAAVFErGUZr3VNz0Xj8OQFtzYlptJr5Lt2wCdS96ydL8MrqlvxJ5s
+        Viak79mzgz5hoB4E7lCO90XcbH4XWBA0oaz66Rc=
+X-Google-Smtp-Source: APXvYqzODCYvYkPdL40yypyBxqTSTIOqIIV2J+FHMU4bE3UEZzFjarJMqO/VRYPQackmC8oGV2/kOue+qXp4H+2D058=
+X-Received: by 2002:a9d:4b02:: with SMTP id q2mr56683404otf.312.1564611428275;
+ Wed, 31 Jul 2019 15:17:08 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190731215514.212215-1-trong@android.com> <5d420f45.1c69fb81.35877.3d86@mx.google.com>
+In-Reply-To: <5d420f45.1c69fb81.35877.3d86@mx.google.com>
+From:   Tri Vo <trong@android.com>
+Date:   Wed, 31 Jul 2019 15:16:57 -0700
+Message-ID: <CANA+-vAEnH7JpC1RLQW6jfe=+azyksoLBLQQ1vWVdszJy1xeqA@mail.gmail.com>
+Subject: Re: [PATCH v6] PM / wakeup: show wakeup sources stats in sysfs
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Hridya Valsaraju <hridya@google.com>,
+        Sandeep Patil <sspatil@google.com>,
+        Kalesh Singh <kaleshsingh@google.com>,
+        Ravi Chandra Sadineni <ravisadineni@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        "Cc: Android Kernel" <kernel-team@android.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Print the content of current->comm in messages generated by lockdown to
-indicate a restriction that was hit.  This makes it a bit easier to find
-out what caused the message.
+On Wed, Jul 31, 2019 at 2:59 PM Stephen Boyd <swboyd@chromium.org> wrote:
+>
+> Quoting Tri Vo (2019-07-31 14:55:14)
+> > +/**
+> > + * wakeup_source_sysfs_add - Add wakeup_source attributes to sysfs.
+> > + * @parent: Device given wakeup source is associated with (or NULL if virtual).
+> > + * @ws: Wakeup source to be added in sysfs.
+> > + */
+> > +int wakeup_source_sysfs_add(struct device *parent, struct wakeup_source *ws)
+> > +{
+> > +       struct device *dev;
+> > +       int id;
+> > +
+> > +       id = ida_alloc(&wakeup_ida, GFP_KERNEL);
+> > +       if (id < 0)
+> > +               return id;
+> > +       ws->id = id;
+> > +
+> > +       dev = device_create_with_groups(wakeup_class, parent, MKDEV(0, 0), ws,
+> > +                                       wakeup_source_groups, "ws%d",
+>
+> I thought the name was going to still be 'wakeupN'?
 
-The message now patterned something like:
+I don't really have an opinion on this. Rafael seems to prefer "ws",
+and he's the maintainer :)
+>
+> > +                                       ws->id);
+> > +       if (IS_ERR(dev)) {
+> > +               ida_free(&wakeup_ida, ws->id);
+> > +               return PTR_ERR(dev);
+> > +       }
+> > +
+> > +       ws->dev = dev;
+> > +       return 0;
+> > +}
+> > +EXPORT_SYMBOL_GPL(wakeup_source_sysfs_add);
+> > +
+> > +/**
+> > + * wakeup_source_sysfs_remove - Remove wakeup_source attributes from sysfs.
+> > + * @ws: Wakeup source to be removed from sysfs.
+> > + */
+> > +void wakeup_source_sysfs_remove(struct wakeup_source *ws)
+> > +{
+> > +       device_unregister(ws->dev);
+> > +       ida_simple_remove(&wakeup_ida, ws->id);
+>
+> Should be ida_free()?
 
-        Lockdown: <comm>: <what> is restricted; see man kernel_lockdown.7
+oops
+>
+> > +}
+> > +EXPORT_SYMBOL_GPL(wakeup_source_sysfs_remove);
+> > +
+> > +static int __init wakeup_sources_sysfs_init(void)
+> > +{
+> > +       wakeup_class = class_create(THIS_MODULE, "wakeup");
+> > +
+> > +       return PTR_ERR_OR_ZERO(wakeup_class);
+> > +}
+> > +
+> > +postcore_initcall(wakeup_sources_sysfs_init);
+>
+> Style nitpick: Stick the initcall to the function it calls by dropping
+> the extra newline between them.
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-Signed-off-by: Matthew Garrett <mjg59@google.com>
-Reviewed-by: Kees Cook <keescook@chromium.org>
----
- fs/proc/kcore.c              | 5 +++--
- security/lockdown/lockdown.c | 8 ++++++--
- 2 files changed, 9 insertions(+), 4 deletions(-)
-
-diff --git a/fs/proc/kcore.c b/fs/proc/kcore.c
-index ee2c576cc94e..e2ed8e08cc7a 100644
---- a/fs/proc/kcore.c
-+++ b/fs/proc/kcore.c
-@@ -548,11 +548,12 @@ static int open_kcore(struct inode *inode, struct file *filp)
- {
- 	int ret = security_locked_down(LOCKDOWN_KCORE);
- 
--	if (ret)
--		return ret;
- 	if (!capable(CAP_SYS_RAWIO))
- 		return -EPERM;
- 
-+	if (ret)
-+		return ret;
-+
- 	filp->private_data = kmalloc(PAGE_SIZE, GFP_KERNEL);
- 	if (!filp->private_data)
- 		return -ENOMEM;
-diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
-index 173191562047..f6c74cf6a798 100644
---- a/security/lockdown/lockdown.c
-+++ b/security/lockdown/lockdown.c
-@@ -81,10 +81,14 @@ early_param("lockdown", lockdown_param);
-  */
- static int lockdown_is_locked_down(enum lockdown_reason what)
- {
-+	if (WARN(what >= LOCKDOWN_CONFIDENTIALITY_MAX,
-+		 "Invalid lockdown reason"))
-+		return -EPERM;
-+
- 	if (kernel_locked_down >= what) {
- 		if (lockdown_reasons[what])
--			pr_notice("Lockdown: %s is restricted; see man kernel_lockdown.7\n",
--				  lockdown_reasons[what]);
-+			pr_notice("Lockdown: %s: %s is restricted; see man kernel_lockdown.7\n",
-+				  current->comm, lockdown_reasons[what]);
- 		return -EPERM;
- 	}
- 
--- 
-2.22.0.770.g0f2c4a37fd-goog
-
+will do
