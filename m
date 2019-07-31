@@ -2,118 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5788F7BFDC
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 13:33:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 248267BFA2
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 13:31:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387625AbfGaLaJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 07:30:09 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:34756 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387591AbfGaLaG (ORCPT
+        id S2387918AbfGaLaq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 07:30:46 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:43230 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728507AbfGaLaf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 07:30:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=EuMvAIGvSkhxULaHrIEoiNbtfGrsx8DySGa7iFH7bOg=; b=Sqo0C8Xc5ocS
-        /7GLENBLdPeEqcBb1A5xfC3JtU1fBoNS6/7W0x/uKp0VJdMkfS793SxyDH2W/yMko45ysDTpcQdy5
-        kjG2LaCfX4BreOLL9+/aX4h+qeIoCjoLxK8rKzYnPsKzq8KGYSFo6hzKlxPDImBcxQALDyJ1ycFq8
-        YFsbs=;
-Received: from ypsilon.sirena.org.uk ([2001:470:1f1d:6b5::7])
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1hsmnq-0001qM-2z; Wed, 31 Jul 2019 11:29:54 +0000
-Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 7BAE72742D57; Wed, 31 Jul 2019 12:29:52 +0100 (BST)
-From:   Mark Brown <broonie@kernel.org>
-To:     Colin Ian King <colin.king@canonical.com>
-Cc:     alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>,
-        kernel-janitors@vger.kernel.org,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        Takashi Iwai <tiwai@suse.com>
-Subject: Applied "ASoC: codec2codec: fix missing return of error return code" to the asoc tree
-In-Reply-To: <20190726123327.10467-1-colin.king@canonical.com>
-X-Patchwork-Hint: ignore
-Message-Id: <20190731112952.7BAE72742D57@ypsilon.sirena.org.uk>
-Date:   Wed, 31 Jul 2019 12:29:52 +0100 (BST)
+        Wed, 31 Jul 2019 07:30:35 -0400
+Received: by mail-wr1-f65.google.com with SMTP id p13so69246773wru.10
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 04:30:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=zTEnAMJpLFl2O5ZKL+mviLfZdYls9BPxKl0HMK9PJaA=;
+        b=vyvdoXfZro1GvjQ7G8+Gdzy3J4ViTCfqOpp2WML+hNrCG4ygR/klF3NjM98BAija3v
+         ywlgWMjLThNgmsSu+bJjRsqbxnsMBMhsOAKGx/qXmTqSRyN2uKPiB3AxapmfIa5c8rCx
+         ViZKTmkpq/BFsEoTrGCI6G3wkG217PlsaBbMgggiLjohBr98fYszo3IZN4+kwcxqx6sR
+         Kh5jaI71D7t0bKIF0XHvtJI+UPOSwcu06buTj1AuKrnpORpxzlxh75NyalHhbwHRZqQx
+         hAjauJ98AAy6kNyTvuZKoNncnJJnRI5rCtrZnieY1uBk7ctKZ//Ql35RvFOdsm9KNco7
+         GpbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=zTEnAMJpLFl2O5ZKL+mviLfZdYls9BPxKl0HMK9PJaA=;
+        b=Pz/J+5xRA299FVXGANnBtDQY48jyyvLWyeIqGa6qDA5TuNVAbBMASoNmXScGwFPmhW
+         bmErkaCmHsB30MHNBLcKt3V+LhuKknToOT2jBYw2jceuqh2E9oa2lY2nPLwrNIQcBiyj
+         NAuVx00Hu8BhyTQOcWOUP5fAMD5tzG3hK1Ea9TsfB1WIprKOft/N5ilY1NbIOBybuMNk
+         Ulck0mIBZjYjttUq9qhqfvBwlIgrv3KMOn3bphM/wwcebC4VOySGrGy+rU5vzXyimTAo
+         D3ls+TGTIsBrykq8tB6YrdoOWBMpCu83aPgv2t3rB8BE8NhOg+37jbgGgLs3zMzRi4s7
+         SkaA==
+X-Gm-Message-State: APjAAAW+RZ/DJ0Xa+5SMRw6nd46tvG0q/3ChjBwhtRxIdaDc8PCrrOry
+        34+iiBU7dljHh5pNf1XHayqdb9f3iAeOzhRY1OinQ3Tjy8thqg==
+X-Google-Smtp-Source: APXvYqwo5syeoeR/KKrT2X/7tPZszHD8GhWdS52Z5eK87mSBcBGSxOC18O3IfHxxqGfy59jLrfdzNSjb92ERkN3w69I=
+X-Received: by 2002:a5d:528d:: with SMTP id c13mr50812855wrv.247.1564572631497;
+ Wed, 31 Jul 2019 04:30:31 -0700 (PDT)
+MIME-Version: 1.0
+References: <201907281218.F6D2C2DD@keescook> <CAHk-=wj+1vDh2=eZExibYF9Lo0GsGxaAjxCSwpUFVURrN44cUQ@mail.gmail.com>
+ <201907281507.B3F11DD54@keescook> <CAG_fn=Us9wREo+9PG-jPCTXsNv-rencgYHowtwXahuYBgdDs4A@mail.gmail.com>
+ <CAHk-=wgTM+cN7zyUZacGQDv3DuuoA4LORNPWgb1Y_Z1p4iedNQ@mail.gmail.com>
+In-Reply-To: <CAHk-=wgTM+cN7zyUZacGQDv3DuuoA4LORNPWgb1Y_Z1p4iedNQ@mail.gmail.com>
+From:   Alexander Potapenko <glider@google.com>
+Date:   Wed, 31 Jul 2019 13:30:19 +0200
+Message-ID: <CAG_fn=WzcGvS7=SpigawnPDQgY13nFiqhmjFPaOH8LeuoU7Fhw@mail.gmail.com>
+Subject: Re: [GIT PULL] meminit fix for v5.3-rc2
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On Tue, Jul 30, 2019 at 9:54 PM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> On Tue, Jul 30, 2019 at 6:53 AM Alexander Potapenko <glider@google.com> w=
+rote:
+> >
+> > I wonder how hard it should be to make a zero-filling GCC plugin?
+> > I'm not a big fan of hacking GCC, but it shouldn't differ much from
+> > the existing GCC plugins that initialize locals.
+>
+> The thing is, as long as it's a plugin, I don't think we can rely on
+> it. The gcc people will rightly just laugh at us if we were to report
+> a bug with some kernel plugin.
+>
+> So I'd like the zeroing of local variables to be a native compiler
+> option, so that we can (_eventually_ - these things take a long time)
+> just start saying "ok, we simply consider stack variables to be always
+> initialized".
+>
+> > I've some stale data collected on an x86 QEMU instance.
+> > For 0x00 stack initialization:
+> >  - hackbench, netperf and parallel Linux build were virtually free
+> > (slowdown within stdev)
+> >  - for af_inet_loopback the slowdown was ~4%
+> > For 0xAA stack initialization:
+> >  - netperf and parallel Linux build were free
+> >  - for hackbench the slowdown was ~1.5%
+> >  - for af_inet_loopback the slowdown was ~7%
+>
+> So I would expect that we have some special cases where we end up
+> having arrays (or big structures) on the stack that end up being
+> critical, and where initializing them is clearly  abad idea.
+>
+> Then we can verify manually are very much initialized, and that we
+> could then mark and say "this is uninitialized".
+>
+> So when a compiler has an option to initialize stack variables, it
+> would probably _also_ be a very good idea for that compiler to then
+> support a variable attribute that says "don't initialize _this_
+> variable, I will do that manually".
+FWIW Clang has __attribute((uninitialized)) already:
+https://reviews.llvm.org/rL349442
+I agree that making it in GCC is easier if initialization itself is
+implemented as part of GCC.
 
-   ASoC: codec2codec: fix missing return of error return code
+> But if we in ten years had a kernel model where only allocations and
+> variables that were _explicitly_ uninitialized, that would be lovely.
+>
+> Then you can grep for those and verify that "yes, this is safe".
+>
+> We've historically had the reverse model - things are uninitialized by
+> default, and you have to explicitly initialize them. Turning that on
+> its head is what I would like to do long-term.
+>
+> (For normal allocations that wouldn't be too bad: get rid of
+> __GFP_ZERO and friends, and instead do __GFP_UNINITIALIZED).
+There've been concerns about such flags easily going out of control
+(my original proposal for heap initialization contained such a flag).
+To some extent their spread can be prevented by build-time checks, but
+a simple grep can be insufficient, as people will start creating
+helper functions to allocate with __GFP_UNINITIALIZED.
 
-has been applied to the asoc tree at
+> Again - I don't think we want a world where everything is
+> force-initialized. There _are_ going to be situations where that just
+> hurts too much. But if we get to a place where we are zero-initialized
+> by default, and have to explicitly mark the unsafe things (and we'll
+> have comments not just about how they get initialized, but also about
+> why that particular thing is so performance-critical), that would be a
+> good place to be.
+>
+> This, btw, is why I also think that the "initialize with poison" is
+> pointless and wrong. Yes, it can find bugs, but it doesn't really help
+> improve the general situation, and people see it as a debugging tool,
+> not a "improve code quality and improve the life of kernel developers"
+> tool.
+This sure makes sense. If this policy is adopted kernel-wide, we won't
+need any debugging tools for uninit variables, so it's natural to
+initialize them to zero.
+>                 Linus
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.4
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+--=20
+Alexander Potapenko
+Software Engineer
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+Google Germany GmbH
+Erika-Mann-Stra=C3=9Fe, 33
+80636 M=C3=BCnchen
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From c8415833ec242b9ddf73bf9e1057e12f9b0fcd16 Mon Sep 17 00:00:00 2001
-From: Colin Ian King <colin.king@canonical.com>
-Date: Fri, 26 Jul 2019 13:33:27 +0100
-Subject: [PATCH] ASoC: codec2codec: fix missing return of error return code
-
-Currently in function snd_soc_dai_link_event_pre_pmu the error return
-code in variable err is being set but this is not actually being returned,
-the function just returns zero even when there are failures. Fix this by
-returning the error return code.
-
-Addresses-Coverity: ("Unused value")
-Fixes: 3dcfb397dad2 ("ASoC: codec2codec: deal with params when necessary")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Link: https://lore.kernel.org/r/20190726123327.10467-1-colin.king@canonical.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/soc-dapm.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/sound/soc/soc-dapm.c b/sound/soc/soc-dapm.c
-index be9bb05b0165..2d183e2d23de 100644
---- a/sound/soc/soc-dapm.c
-+++ b/sound/soc/soc-dapm.c
-@@ -3776,7 +3776,7 @@ snd_soc_dai_link_event_pre_pmu(struct snd_soc_dapm_widget *w,
- 	struct snd_pcm_hw_params *params = NULL;
- 	const struct snd_soc_pcm_stream *config = NULL;
- 	unsigned int fmt;
--	int ret;
-+	int ret = 0;
- 
- 	params = kzalloc(sizeof(*params), GFP_KERNEL);
- 	if (!params)
-@@ -3865,7 +3865,7 @@ snd_soc_dai_link_event_pre_pmu(struct snd_soc_dapm_widget *w,
- 
- out:
- 	kfree(params);
--	return 0;
-+	return ret;
- }
- 
- static int snd_soc_dai_link_event(struct snd_soc_dapm_widget *w,
--- 
-2.20.1
-
+Gesch=C3=A4ftsf=C3=BChrer: Paul Manicle, Halimah DeLaine Prado
+Registergericht und -nummer: Hamburg, HRB 86891
+Sitz der Gesellschaft: Hamburg
