@@ -2,170 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 457D57BD27
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 11:28:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE9DB7BD0E
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 11:26:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728573AbfGaJ25 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 05:28:57 -0400
-Received: from onstation.org ([52.200.56.107]:45234 "EHLO onstation.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727209AbfGaJ24 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 05:28:56 -0400
-Received: from localhost (c-98-239-145-235.hsd1.wv.comcast.net [98.239.145.235])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: masneyb)
-        by onstation.org (Postfix) with ESMTPSA id 608933E910;
-        Wed, 31 Jul 2019 09:28:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=onstation.org;
-        s=default; t=1564565335;
-        bh=u/qIdrUUjq1FaYIdEEDKhkEXHmOBKALGw9ffBDa0lkM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=RA4VY+hyr3qzD6yMvR7wssWRi28SHeHBC7t26nv2NbPOD7GH5QCyHx6h4se+vYRKO
-         w/TU5JH7IGc2PWeIlZ2QsSnq57tKmEbFpvHjQtMNntRMW0iSGB9AzhW6Q5dwiJ1Om/
-         sMmA4tiuqWG7T3AtLMpOZUdKWpvADzYZb6wkLuqY=
-Date:   Wed, 31 Jul 2019 05:28:54 -0400
-From:   Brian Masney <masneyb@onstation.org>
-To:     Chuhong Yuan <hslester96@gmail.com>
-Cc:     Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] iio: tsl2772: Use device-managed API
-Message-ID: <20190731092854.GA19501@onstation.org>
-References: <20190731030415.8062-1-hslester96@gmail.com>
+        id S1728704AbfGaJ0V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 05:26:21 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:3266 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725209AbfGaJ0U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jul 2019 05:26:20 -0400
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 781061536A38834C328B;
+        Wed, 31 Jul 2019 17:26:18 +0800 (CST)
+Received: from huawei.com (10.175.124.28) by DGGEMS405-HUB.china.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server id 14.3.439.0; Wed, 31 Jul 2019
+ 17:26:08 +0800
+From:   Jason Yan <yanaijie@huawei.com>
+To:     <mpe@ellerman.id.au>, <linuxppc-dev@lists.ozlabs.org>,
+        <diana.craciun@nxp.com>, <christophe.leroy@c-s.fr>,
+        <benh@kernel.crashing.org>, <paulus@samba.org>,
+        <npiggin@gmail.com>, <keescook@chromium.org>,
+        <kernel-hardening@lists.openwall.com>
+CC:     <linux-kernel@vger.kernel.org>, <wangkefeng.wang@huawei.com>,
+        <yebin10@huawei.com>, <thunder.leizhen@huawei.com>,
+        <jingxiangfeng@huawei.com>, <fanchengyang@huawei.com>,
+        <zhaohongjiang@huawei.com>, Jason Yan <yanaijie@huawei.com>
+Subject: [PATCH v3 00/10] implement KASLR for powerpc/fsl_booke/32
+Date:   Wed, 31 Jul 2019 17:43:08 +0800
+Message-ID: <20190731094318.26538-1-yanaijie@huawei.com>
+X-Mailer: git-send-email 2.17.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190731030415.8062-1-hslester96@gmail.com>
+Content-Type: text/plain
+X-Originating-IP: [10.175.124.28]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Chuhong,
+This series implements KASLR for powerpc/fsl_booke/32, as a security
+feature that deters exploit attempts relying on knowledge of the location
+of kernel internals.
 
-On Wed, Jul 31, 2019 at 11:04:15AM +0800, Chuhong Yuan wrote:
-> Use devm_() APIs to simplify the code.
-> 
-> Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+Since CONFIG_RELOCATABLE has already supported, what we need to do is
+map or copy kernel to a proper place and relocate. Freescale Book-E
+parts expect lowmem to be mapped by fixed TLB entries(TLB1). The TLB1
+entries are not suitable to map the kernel directly in a randomized
+region, so we chose to copy the kernel to a proper place and restart to
+relocate.
 
-There needs to be more of a changelog associated with this patch since
-this doesn't describe what all is done below. I see the following
-distinct three things that are done with this patch:
+Entropy is derived from the banner and timer base, which will change every
+build and boot. This not so much safe so additionally the bootloader may
+pass entropy via the /chosen/kaslr-seed node in device tree.
 
-- Use devm_add_action_or_reset to remove the call to
-  tsl2772_disable_regulators_action to simplify the error path.
+We will use the first 512M of the low memory to randomize the kernel
+image. The memory will be split in 64M zones. We will use the lower 8
+bit of the entropy to decide the index of the 64M zone. Then we chose a
+16K aligned offset inside the 64M zone to put the kernel in.
 
-- Use devm_add_action_or_reset to call tsl2772_chip_off
-  when the device is removed. The changelog should also mention that
-  this fixes an issue where the chip is turned off before the device is
-  unregistered from the IIO subsystem. There should also be a Fixes tag
-  and you can reference my patch that moved the driver out of staging as
-  the commit that was fixed to make it easier for the folks that
-  maintain the stable kernels. This issue most likely has been present
-  since the driver was first introduced into mainline in 2012, however
-  there were a large number commits that were needed in order to get this
-  out of staging.
+    KERNELBASE
 
-- Use devm_iio_device_register, which removes the tsl2772_remove
-  function.
+        |-->   64M   <--|
+        |               |
+        +---------------+    +----------------+---------------+
+        |               |....|    |kernel|    |               |
+        +---------------+    +----------------+---------------+
+        |                         |
+        |----->   offset    <-----|
 
-I would break this up further into three patches that are described
-above. The patches will be small but it makes it much easier on the
-maintainers who see a large number of patches come through. It helps
-to keep the git history in the kernel clean, which is very helpful to
-other developers.
+                              kimage_vaddr
 
-Brian
+We also check if we will overlap with some areas like the dtb area, the
+initrd area or the crashkernel area. If we cannot find a proper area,
+kaslr will be disabled and boot from the original kernel.
 
+Changes since v2:
+ - Remove unnecessary #ifdef
+ - Use SZ_64M instead of0x4000000
+ - Call early_init_dt_scan_chosen() to init boot_command_line
+ - Rename kaslr_second_init() to kaslr_late_init()
 
-> ---
-> Changes in v3:
->   - Split v2 into two patches.
-> 
->  drivers/iio/light/tsl2772.c | 36 +++++++++++++++---------------------
->  1 file changed, 15 insertions(+), 21 deletions(-)
-> 
-> diff --git a/drivers/iio/light/tsl2772.c b/drivers/iio/light/tsl2772.c
-> index 83cece921843..f1134f183be7 100644
-> --- a/drivers/iio/light/tsl2772.c
-> +++ b/drivers/iio/light/tsl2772.c
-> @@ -860,6 +860,13 @@ static int tsl2772_chip_off(struct iio_dev *indio_dev)
->  	return tsl2772_write_control_reg(chip, 0x00);
->  }
->  
-> +static void tsl2772_chip_off_action(void *data)
-> +{
-> +	struct iio_dev *indio_dev = data;
-> +
-> +	tsl2772_chip_off(indio_dev);
-> +}
-> +
->  /**
->   * tsl2772_invoke_change - power cycle the device to implement the user
->   *                         parameters
-> @@ -1807,10 +1814,10 @@ static int tsl2772_probe(struct i2c_client *clientp,
->  		return PTR_ERR(chip->vdd_supply);
->  	}
->  
-> -	ret = devm_add_action(&clientp->dev, tsl2772_disable_regulators_action,
-> +	ret = devm_add_action_or_reset(&clientp->dev,
-> +				tsl2772_disable_regulators_action,
->  			      chip);
->  	if (ret < 0) {
-> -		tsl2772_disable_regulators_action(chip);
->  		dev_err(&clientp->dev, "Failed to setup regulator cleanup action %d\n",
->  			ret);
->  		return ret;
-> @@ -1877,15 +1884,14 @@ static int tsl2772_probe(struct i2c_client *clientp,
->  	if (ret < 0)
->  		return ret;
->  
-> -	ret = iio_device_register(indio_dev);
-> -	if (ret) {
-> -		tsl2772_chip_off(indio_dev);
-> -		dev_err(&clientp->dev,
-> -			"%s: iio registration failed\n", __func__);
-> +	ret = devm_add_action_or_reset(&clientp->dev,
-> +					tsl2772_chip_off_action,
-> +					indio_dev);
-> +
-> +	if (ret < 0)
->  		return ret;
-> -	}
->  
-> -	return 0;
-> +	return devm_iio_device_register(&clientp->dev, indio_dev);
->  }
->  
->  static int tsl2772_suspend(struct device *dev)
-> @@ -1922,17 +1928,6 @@ static int tsl2772_resume(struct device *dev)
->  	return tsl2772_chip_on(indio_dev);
->  }
->  
-> -static int tsl2772_remove(struct i2c_client *client)
-> -{
-> -	struct iio_dev *indio_dev = i2c_get_clientdata(client);
-> -
-> -	tsl2772_chip_off(indio_dev);
-> -
-> -	iio_device_unregister(indio_dev);
-> -
-> -	return 0;
-> -}
-> -
->  static const struct i2c_device_id tsl2772_idtable[] = {
->  	{ "tsl2571", tsl2571 },
->  	{ "tsl2671", tsl2671 },
-> @@ -1979,7 +1974,6 @@ static struct i2c_driver tsl2772_driver = {
->  	},
->  	.id_table = tsl2772_idtable,
->  	.probe = tsl2772_probe,
-> -	.remove = tsl2772_remove,
->  };
->  
->  module_i2c_driver(tsl2772_driver);
-> -- 
-> 2.20.1
+Changes since v1:
+ - Remove some useless 'extern' keyword.
+ - Replace EXPORT_SYMBOL with EXPORT_SYMBOL_GPL
+ - Improve some assembly code
+ - Use memzero_explicit instead of memset
+ - Use boot_command_line and remove early_command_line
+ - Do not print kaslr offset if kaslr is disabled
+
+Jason Yan (10):
+  powerpc: unify definition of M_IF_NEEDED
+  powerpc: move memstart_addr and kernstart_addr to init-common.c
+  powerpc: introduce kimage_vaddr to store the kernel base
+  powerpc/fsl_booke/32: introduce create_tlb_entry() helper
+  powerpc/fsl_booke/32: introduce reloc_kernel_entry() helper
+  powerpc/fsl_booke/32: implement KASLR infrastructure
+  powerpc/fsl_booke/32: randomize the kernel image offset
+  powerpc/fsl_booke/kaslr: clear the original kernel if randomized
+  powerpc/fsl_booke/kaslr: support nokaslr cmdline parameter
+  powerpc/fsl_booke/kaslr: dump out kernel offset information on panic
+
+ arch/powerpc/Kconfig                          |  11 +
+ arch/powerpc/include/asm/nohash/mmu-book3e.h  |  10 +
+ arch/powerpc/include/asm/page.h               |   7 +
+ arch/powerpc/kernel/Makefile                  |   1 +
+ arch/powerpc/kernel/early_32.c                |   2 +-
+ arch/powerpc/kernel/exceptions-64e.S          |  10 -
+ arch/powerpc/kernel/fsl_booke_entry_mapping.S |  23 +-
+ arch/powerpc/kernel/head_fsl_booke.S          |  55 ++-
+ arch/powerpc/kernel/kaslr_booke.c             | 427 ++++++++++++++++++
+ arch/powerpc/kernel/machine_kexec.c           |   1 +
+ arch/powerpc/kernel/misc_64.S                 |   5 -
+ arch/powerpc/kernel/setup-common.c            |  19 +
+ arch/powerpc/mm/init-common.c                 |   7 +
+ arch/powerpc/mm/init_32.c                     |   5 -
+ arch/powerpc/mm/init_64.c                     |   5 -
+ arch/powerpc/mm/mmu_decl.h                    |  10 +
+ arch/powerpc/mm/nohash/fsl_booke.c            |   8 +-
+ 17 files changed, 558 insertions(+), 48 deletions(-)
+ create mode 100644 arch/powerpc/kernel/kaslr_booke.c
+
+-- 
+2.17.2
+
