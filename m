@@ -2,196 +2,179 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DE357CAF3
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 19:52:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 913BD7CAFA
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 19:52:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729777AbfGaRwP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 13:52:15 -0400
-Received: from mail-eopbgr810135.outbound.protection.outlook.com ([40.107.81.135]:36140
-        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729677AbfGaRwJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 13:52:09 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=fLpUHkUvadtckW7fQ7ZdD8BKc77Ys8gYgNiMNyXqmMgAvWFrXK4sY9bqOR0WELTJY1SAR2x7RjY2TwjCLjcwb507fnH+9EehZ3SwxhknokYAECpi4PpTapF/i+YlL6IgYGMWgtHmtmFMwDFF45FtGvV5zENEZg/VfSJSCVUgViSO8dOpnYpxxEJCyhea+RwFduOZJeQ4pi1ASdztaWLsNit5k0x64OulXJvqgJe79V9EZ6MDvmTs3AEQaEZfsSzzA0CInRsY9dRhguyJUqFOKZvmv++hEHfzV3/aH3lAfDXwUWEhi2LkZtdwstadNYCla6DBjhjglAvSPZJ3JQchJw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jrmgrUw3LKxyVpxPgS377oXQDpxf8EHtIYKQrZvEUZ4=;
- b=KisM9eqXMa8M1X7jEWMmYRuij7XpYVnRsIuOvX2maCJRQO4+OBSx2XGx0MK2yU8S9HJcoWGcSFE2CLdRcAgGVKPkEGubhKpTGoK0qgIj8d3sXO1f/6o1OjmZgaRr1fqZmStPw0IwOCRU5q7dKKptYysupViTEGEi9b8gz+JM/QfmoJWCZAk7a+QtNFGoK2Vmi2dN1+/r2ibJKh8bTit2zpFC5+bYYDJKC1vKMJ3IRtDegUCNZ0nG+5gDkZzIG3SxXexoHOY0PoQXIrmjnsG7y29m3IcICcw/OTiv4Hr0rHeKxPe7Q+KtF0zUB85KT+bfDgNfgb45hKGftOaRmFgWXw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microsoft.com; dmarc=pass action=none
- header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jrmgrUw3LKxyVpxPgS377oXQDpxf8EHtIYKQrZvEUZ4=;
- b=dryg3ubCiNN1/44PGhhFpJnIScIvunK1vCwsOkDh3mGKl5snzv/w4Udu9G6IGYCF+R7n51EFuIyy5OwYzCs0VhLFJERVRpIFG7TnZVsQZDdlQiCLkJGF7iIRgtvm08agb8s3kxwCduaR8v/8V6jO8xcobsKZKHeKHe0UTwYgzyk=
-Received: from SN6PR2101MB0942.namprd21.prod.outlook.com (52.132.114.19) by
- SN6PR2101MB1085.namprd21.prod.outlook.com (52.132.115.22) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2157.2; Wed, 31 Jul 2019 17:52:07 +0000
-Received: from SN6PR2101MB0942.namprd21.prod.outlook.com
- ([fe80::d0c3:ba8d:dfe7:12f9]) by SN6PR2101MB0942.namprd21.prod.outlook.com
- ([fe80::d0c3:ba8d:dfe7:12f9%7]) with mapi id 15.20.2157.001; Wed, 31 Jul 2019
- 17:52:07 +0000
-From:   Dexuan Cui <decui@microsoft.com>
-To:     "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        "sashal@kernel.org" <sashal@kernel.org>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        KY Srinivasan <kys@microsoft.com>,
-        Michael Kelley <mikelley@microsoft.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Dexuan Cui <decui@microsoft.com>
-Subject: [PATCH v2 7/7] Drivers: hv: vmbus: Implement suspend/resume for VSC
- drivers for hibernation
-Thread-Topic: [PATCH v2 7/7] Drivers: hv: vmbus: Implement suspend/resume for
- VSC drivers for hibernation
-Thread-Index: AQHVR8irVHxoPGRIEkOkK4NNsUPg/Q==
-Date:   Wed, 31 Jul 2019 17:52:07 +0000
-Message-ID: <1564595464-56520-8-git-send-email-decui@microsoft.com>
-References: <1564595464-56520-1-git-send-email-decui@microsoft.com>
-In-Reply-To: <1564595464-56520-1-git-send-email-decui@microsoft.com>
-Reply-To: Dexuan Cui <decui@microsoft.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: MWHPR1301CA0011.namprd13.prod.outlook.com
- (2603:10b6:301:29::24) To SN6PR2101MB0942.namprd21.prod.outlook.com
- (2603:10b6:805:4::19)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=decui@microsoft.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-mailer: git-send-email 1.8.3.1
-x-originating-ip: [13.77.154.182]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 8bd7953c-4f09-4984-081c-08d715dfcdf5
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:SN6PR2101MB1085;
-x-ms-traffictypediagnostic: SN6PR2101MB1085:|SN6PR2101MB1085:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <SN6PR2101MB1085B4588541925E9581F9E9BFDF0@SN6PR2101MB1085.namprd21.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:873;
-x-forefront-prvs: 011579F31F
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(136003)(346002)(376002)(366004)(396003)(39860400002)(189003)(199004)(8676002)(5660300002)(4326008)(305945005)(10090500001)(8936002)(15650500001)(107886003)(53936002)(81156014)(81166006)(7736002)(14444005)(5024004)(50226002)(66946007)(256004)(478600001)(10290500003)(66066001)(66556008)(64756008)(66476007)(66446008)(68736007)(86362001)(11346002)(2616005)(476003)(486006)(446003)(1511001)(4720700003)(71190400001)(71200400001)(6512007)(2906002)(3846002)(110136005)(99286004)(2501003)(386003)(52116002)(6506007)(54906003)(102836004)(26005)(43066004)(76176011)(6116002)(14454004)(186003)(316002)(6436002)(25786009)(3450700001)(36756003)(22452003)(6486002);DIR:OUT;SFP:1102;SCL:1;SRVR:SN6PR2101MB1085;H:SN6PR2101MB0942.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 1pOXJUSAlfu/WmDCZCWpJ89CBY7Aw1rf91LAXszNPlGTseU/yyWHJxyRH9A39huItgGRI40LJCIUn+O22f02xDWVV6HFiuaqBsL3Z5XosUTBUhbB9YPd6Ek+s0S5CnVxuWBsfPz2wwjE44yDppMluEqNd4aJ1qYI7HGW9XaQHYJInZ8NS4khi49R/RsMLf4L1Ls16Uz5+bHFl3VdYx9K0+qHjVVxenoaHMqHMBJ+yIVZM1n88V0C3vMokauRhD31SmJ7PATyiUkIsBefDBR7OeQ1jnQN4xQ/QKBau5W4NKn/J7Mdq7CzWC/nK1qnrRjfpTG4I3dK3LKsn81Q/3Tx9WcQAgtTu9AdEqYlON8bfUHHI/ZQI/f6G34cU2Wpitm3hCAxBoivTDmtgtHiRetXpUYSXh6ckHdgCKo2OlKrmQM=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        id S1729881AbfGaRwh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 13:52:37 -0400
+Received: from gateway21.websitewelcome.com ([192.185.45.210]:12635 "EHLO
+        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729823AbfGaRwg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jul 2019 13:52:36 -0400
+Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
+        by gateway21.websitewelcome.com (Postfix) with ESMTP id 18AB4400D596B
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 12:52:35 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id ssmBhDPfx3Qi0ssmBhxr7O; Wed, 31 Jul 2019 12:52:35 -0500
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:Subject:From:References:Cc:To:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=hFchKMiyDhYootubyiqttytIhZ2Edx773yhaOnhyt4Y=; b=egTdSfJyPTDGZP+Na86VroAVCR
+        2Lsuae0nFeN9LH1fgfBiG+b1aDdqyCVCmtNDmHpq9w26oE4Qmgf2Wwo9XIqGgxqQ2Jc058+oB8BSq
+        rBljmDkkbw4xGhpZ+cQxVChE9RYn4srsWFo5tVaAMRvAgHLOLR6P8l6s3H26FCx0yCy5MHgmvKSD5
+        iopQAQXGBtCiF7fNjA/kpKFq9Cxqy1V4TA10NIYHpTGCDHLu+xlIN3dXjWfnzm30JyaF3Xc27/Sla
+        L4rvt9iIvq4cRNwFqvpMrK2tF2gGflf2CDFrdRJKxJYt8IkT1fQy+bMlom0c7zMhdK5a0nbP0odt9
+        x1NYiRQA==;
+Received: from [187.192.11.120] (port=42806 helo=[192.168.43.131])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1hssmA-003PXu-Kq; Wed, 31 Jul 2019 12:52:34 -0500
+To:     Doug Ledford <dledford@redhat.com>,
+        "Luck, Tony" <tony.luck@intel.com>, Ira Weiny <ira.weiny@intel.com>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
+        Parav Pandit <parav@mellanox.com>, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190730202407.31046-1-tony.luck@intel.com>
+ <95f5cf70-1a1d-f48c-efac-f389360f585e@embeddedor.com>
+ <20190731042801.GA2179@iweiny-DESK2.sc.intel.com>
+ <20190731043957.GA1600@agluck-desk2.amr.corp.intel.com>
+ <09a994054e43c8bd6ee49b7d1087c9c4e793058f.camel@redhat.com>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Subject: Re: [PATCH V2] IB/core: Add mitigation for Spectre V1
+Message-ID: <1fc90610-7189-c99b-2af1-ae516faa20b4@embeddedor.com>
+Date:   Wed, 31 Jul 2019 12:52:27 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8bd7953c-4f09-4984-081c-08d715dfcdf5
-X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Jul 2019 17:52:07.5211
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 0NldUL/i0cFXIVk7ydSZwMAPu35f4Z9GBVdQkJ2EWqQlqb5eDc/SmvwMGDgt57I5KY2FZcs4bpjAaapCG/eYAg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR2101MB1085
+In-Reply-To: <09a994054e43c8bd6ee49b7d1087c9c4e793058f.camel@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 187.192.11.120
+X-Source-L: No
+X-Exim-ID: 1hssmA-003PXu-Kq
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.43.131]) [187.192.11.120]:42806
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 9
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The high-level VSC drivers will implement device-specific callbacks.
 
-Signed-off-by: Dexuan Cui <decui@microsoft.com>
-Reviewed-by: Michael Kelley <mikelley@microsoft.com>
----
- drivers/hv/vmbus_drv.c | 42 ++++++++++++++++++++++++++++++++++++++++++
- include/linux/hyperv.h |  3 +++
- 2 files changed, 45 insertions(+)
 
-diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
-index ca6f4c8..337ecce 100644
---- a/drivers/hv/vmbus_drv.c
-+++ b/drivers/hv/vmbus_drv.c
-@@ -911,6 +911,43 @@ static void vmbus_shutdown(struct device *child_device=
-)
- 		drv->shutdown(dev);
- }
-=20
-+/*
-+ * vmbus_suspend - Suspend a vmbus device
-+ */
-+static int vmbus_suspend(struct device *child_device)
-+{
-+	struct hv_driver *drv;
-+	struct hv_device *dev =3D device_to_hv_device(child_device);
-+
-+	/* The device may not be attached yet */
-+	if (!child_device->driver)
-+		return 0;
-+
-+	drv =3D drv_to_hv_drv(child_device->driver);
-+	if (!drv->suspend)
-+		return -EOPNOTSUPP;
-+
-+	return drv->suspend(dev);
-+}
-+
-+/*
-+ * vmbus_resume - Resume a vmbus device
-+ */
-+static int vmbus_resume(struct device *child_device)
-+{
-+	struct hv_driver *drv;
-+	struct hv_device *dev =3D device_to_hv_device(child_device);
-+
-+	/* The device may not be attached yet */
-+	if (!child_device->driver)
-+		return 0;
-+
-+	drv =3D drv_to_hv_drv(child_device->driver);
-+	if (!drv->resume)
-+		return -EOPNOTSUPP;
-+
-+	return drv->resume(dev);
-+}
-=20
- /*
-  * vmbus_device_release - Final callback release of the vmbus child device
-@@ -926,6 +963,10 @@ static void vmbus_device_release(struct device *device=
-)
- 	kfree(hv_dev);
- }
-=20
-+static const struct dev_pm_ops vmbus_pm =3D {
-+	SET_SYSTEM_SLEEP_PM_OPS(vmbus_suspend, vmbus_resume)
-+};
-+
- /* The one and only one */
- static struct bus_type  hv_bus =3D {
- 	.name =3D		"vmbus",
-@@ -936,6 +977,7 @@ static void vmbus_device_release(struct device *device)
- 	.uevent =3D		vmbus_uevent,
- 	.dev_groups =3D		vmbus_dev_groups,
- 	.drv_groups =3D		vmbus_drv_groups,
-+	.pm =3D			&vmbus_pm,
- };
-=20
- struct onmessage_work_context {
-diff --git a/include/linux/hyperv.h b/include/linux/hyperv.h
-index 6256cc3..94443c4 100644
---- a/include/linux/hyperv.h
-+++ b/include/linux/hyperv.h
-@@ -1149,6 +1149,9 @@ struct hv_driver {
- 	int (*remove)(struct hv_device *);
- 	void (*shutdown)(struct hv_device *);
-=20
-+	int (*suspend)(struct hv_device *);
-+	int (*resume)(struct hv_device *);
-+
- };
-=20
- /* Base device object */
---=20
-1.8.3.1
+On 7/31/19 9:52 AM, Doug Ledford wrote:
 
+> 
+> I'm not sure this is the best fix for this.  However, here is where I
+> get to admit that I largely ignored the whole Spectre V1 thing, so I'm
+> not sure I completely understand the vulnerability and the limits to
+> that.  But, looking at the function, it seems we can do an early return
+> without ever taking any of the mutexes in the function in the case of id
+>> = IB_UMAD_MAX_AGENTS, so if we did that, would that separate the
+> checking of id far enough from the usage of it as an array index that we
+> wouldn't need the clamp to prevent speculative prefetch?  About how far,
+> in code terms, does this speculative prefetch occur?
+> 
+> This is the patch I was thinking of:
+> 
+
+>  
+> @@ -884,11 +885,18 @@ static int ib_umad_unreg_agent(struct ib_umad_file *file, u32 __user *arg)
+>  
+>         if (get_user(id, arg))
+>                 return -EFAULT;
+> +       if (id >= IB_UMAD_MAX_AGENTS)
+> +               return -EINVAL;
+>  
+>         mutex_lock(&file->port->file_mutex);
+>         mutex_lock(&file->mutex);
+>  
+> -       if (id >= IB_UMAD_MAX_AGENTS || !__get_agent(file, id)) {
+> +       /*
+> +        * Is our check of id far enough away, code wise, to prevent
+> +        * speculative prefetch?
+> +        */
+> +       id = array_index_nospec(id, IB_UMAD_MAX_AGENTS);
+> +       if (!__get_agent(file, id)) {
+>                 ret = -EINVAL;
+>                 goto out;
+>         }
+> 
+
+This is insufficient. The speculation windows are large:
+
+"Speculative  execution  on  modern  CPUs  can  run  several
+hundred  instructions  ahead." [1]
+
+[1] https://spectreattack.com/spectre.pdf
+
+--
+Gustavo
+
+
+
+--
+Gustavo
