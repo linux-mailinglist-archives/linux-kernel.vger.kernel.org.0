@@ -2,161 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1D127CE4B
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 22:27:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 71E507CE3E
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 22:26:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730529AbfGaU1Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 16:27:16 -0400
-Received: from atlmailgw2.ami.com ([63.147.10.42]:60257 "EHLO
-        atlmailgw2.ami.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728136AbfGaU1Q (ORCPT
+        id S1730491AbfGaU00 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 16:26:26 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:58118 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728232AbfGaU00 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 16:27:16 -0400
-X-AuditID: ac10606f-d11ff70000003324-75-5d41f9a38aec
-Received: from atlms1.us.megatrends.com (atlms1.us.megatrends.com [172.16.96.144])
-        (using TLS with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by atlmailgw2.ami.com (Symantec Messaging Gateway) with SMTP id AC.A0.13092.3A9F14D5; Wed, 31 Jul 2019 16:27:15 -0400 (EDT)
-Received: from hongweiz-Ubuntu-AMI.us.megatrends.com (172.16.98.93) by
- atlms1.us.megatrends.com (172.16.96.144) with Microsoft SMTP Server (TLS) id
- 14.3.408.0; Wed, 31 Jul 2019 16:27:14 -0400
-From:   Hongwei Zhang <hongweiz@ami.com>
-To:     Andrew Jeffery <andrew@aj.id.au>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio <linux-gpio@vger.kernel.org>,
-        Joel Stanley <joel@jms.id.au>
-CC:     linux-aspeed <linux-aspeed@lists.ozlabs.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Hongwei Zhang <hongweiz@ami.com>
-Subject: [v6 2/2] gpio: aspeed: Add SGPIO driver
-Date:   Wed, 31 Jul 2019 16:25:45 -0400
-Message-ID: <1564604745-1639-1-git-send-email-hongweiz@ami.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1564500268-2627-3-git-send-email-hongweiz@ami.com>
-References: <1564500268-2627-3-git-send-email-hongweiz@ami.com>
+        Wed, 31 Jul 2019 16:26:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
+        From:Date:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=+a5BC2SMQTZyNnosj2+NVoaE/cuHtdCJLsTbfMI7CM8=; b=cd0EZcQkx68qz1mV7MZC2uM8w
+        P5cYOfzRqT4jAj1XeIa5cZwCKRpuEARrsXGCDxCq8sgpCmoEJ8VyMoB1ZGWIv3KkGkC8AIFMmG3zu
+        rlsmWUq3FLoiDUPohjPULvC4w5BLIzEmbwgXzpFT+L80k80QNHwktIQFstvBvlBiAagdTYKLP7kd6
+        mgvL4iD+sHmcbJxX4pbsqTYJFd9WsDq0iZww0LtIbpC3Rwlt6XCZ+VcKY2odTaplLXORSAqBC7jw+
+        ktYQ73C/T59Q53D5UHvn8GEbIRSj5leo+helE+/aJGkkXgpqWFvenf2ZTIwIz7KLtjIJb7x/x8Xk3
+        8x9hawtXg==;
+Received: from [191.33.152.89] (helo=coco.lan)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hsvB0-0001Q8-KC; Wed, 31 Jul 2019 20:26:22 +0000
+Date:   Wed, 31 Jul 2019 17:26:13 -0300
+From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        samba-technical@lists.samba.org, devicetree@vger.kernel.org,
+        Liam Girdwood <lgirdwood@gmail.com>, linux-iio@vger.kernel.org,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Evgeniy Dushistov <dushistov@mail.ru>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Steve French <sfrench@samba.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        linux-cifs@vger.kernel.org, Dave Kleikamp <shaggy@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Evgeniy Polyakov <zbr@ioremap.net>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        jfs-discussion@lists.sourceforge.net,
+        linux-arm-kernel@lists.infradead.org,
+        Hartmut Knaack <knaack.h@gmx.de>, linux-spi@vger.kernel.org
+Subject: Re: [PATCH 0/6] ReST conversion patches not applied yet
+Message-ID: <20190731172613.32d65ad8@coco.lan>
+In-Reply-To: <20190731202007.GI4369@sirena.org.uk>
+References: <cover.1564603513.git.mchehab+samsung@kernel.org>
+        <20190731141734.1fa9ce64@lwn.net>
+        <20190731202007.GI4369@sirena.org.uk>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [172.16.98.93]
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrDLMWRmVeSWpSXmKPExsWyRiBhgu7in46xBqv3KVjsusxh8WXuKRaL
-        3+f/MltM+bOcyWLT42usFs2rzzFbbJ7/h9Hi8q45bA4cHlfbd7F7vL/Ryu5x8eMxZo871/aw
-        eWxeUu9xfsZCRo/Pm+QC2KO4bFJSczLLUov07RK4Mto+/GYruCtRcfn/ctYGxgvCXYycHBIC
-        JhKtS84wdTFycQgJ7GKSeLtsCQuEc5hRYue3u4wgVWwCahJ7N88BqxIRmMUocevJLDaQBLPA
-        HUaJDd3ZILawgIHEz8VP2bsYOThYBFQltj2SAgnzCthLXOg8wASxTU7i5rlOZhCbU8BBYv6V
-        frC4EEjNi3UsEPWCEidnPmGBGC8hcfDFC2aIGlmJW4ceQ81RkHje95hlAiPQMQgts5C0LGBk
-        WsUolFiSk5uYmZNebqSXmJupl5yfu4kREuL5Oxg/fjQ/xMjEwXiIUYKDWUmEd7G4fawQb0pi
-        ZVVqUX58UWlOavEhRmkOFiVx3lVrvsUICaQnlqRmp6YWpBbBZJk4OKUaGNk0O9+mbH/U0dLm
-        9kJg8hLdiVrTQ+senJu/PCgv4FhQ+xbZf7Yin2esuST96fnD15oz7MwXzPzsu7h5d3i69pV9
-        9Tybvx7KYBVzSfdeJCr9xEq4YWbwHssw/6cpnZ/SI03YJlzQmaQ2/ap37OPVxwOUOX7O32OT
-        k514jvf3ti9R6l/3Xb+Y2qzEUpyRaKjFXFScCAD4HFqxXwIAAA==
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Andrew,
-Thanks so much for your help.
+Em Wed, 31 Jul 2019 21:20:07 +0100
+Mark Brown <broonie@kernel.org> escreveu:
 
-> From:	Andrew Jeffery <andrew@aj.id.au>
-> Sent:	Tuesday, July 30, 2019 8:19 PM
-> To:	Hongwei Zhang; Linus Walleij; linux-gpio@vger.kernel.org
-> Cc:	Joel Stanley; linux-aspeed@lists.ozlabs.org; Bartosz Golaszewski; linux-kernel@vger.kernel.org; 
-> linux-arm-kernel@lists.infradead.org
-> Subject:	Re: [v6 2/2] gpio: aspeed: Add SGPIO driver
+> On Wed, Jul 31, 2019 at 02:17:34PM -0600, Jonathan Corbet wrote:
+> > Mauro Carvalho Chehab <mchehab+samsung@kernel.org> wrote:  
 > 
+> > > As promised, this is the rebased version of the patches that were not applied
+> > > from the /26 patch series because you had merge conflicts.
+> > > 
+> > > They're all based on your docs-next branch, so should apply fine.
+> > > 
+> > > The first one fixes all but one error with a broken reference.
+> > > 
+> > > The only broken reference right now is due to a DT patch with was not
+> > > accepted (no idea why), but whose driver is upstream.  
 > 
+> > All but 5/6 applied, thanks.  
 > 
-> On Wed, 31 Jul 2019, at 00:55, Hongwei Zhang wrote:
-> > Add SGPIO driver support for Aspeed AST2500 SoC.
-> > 
-> > Signed-off-by: Hongwei Zhang <hongweiz@ami.com>
-> > ---
-> >  drivers/gpio/sgpio-aspeed.c | 521 
-> > ++++++++++++++++++++++++++++++++++++++++++++
-> >  1 file changed, 521 insertions(+)
-> >  create mode 100644 drivers/gpio/sgpio-aspeed.c
-> > 
-> > diff --git a/drivers/gpio/sgpio-aspeed.c b/drivers/gpio/sgpio-aspeed.c 
-> > new file mode 100644 index 0000000..9a17b1a
-> > --- /dev/null
-> > +++ b/drivers/gpio/sgpio-aspeed.c
-> > @@ -0,0 +1,521 @@
-> > +// SPDX-License-Identifier: GPL-2.0-or-later
-> > +/*
-> > + * Copyright 2019 American Megatrends International LLC.
-> > + *
-> > + * Author: Karthikeyan Mani <karthikeyanm@amiindia.co.in>  */
-> > +
-> > +#include <linux/bitfield.h>
-> > +#include <linux/clk.h>
-> > +#include <linux/gpio/driver.h>
-> > +#include <linux/hashtable.h>
-> > +#include <linux/init.h>
-> > +
-> > +static void aspeed_sgpio_set(struct gpio_chip *gc, unsigned int
-> > offset, int val)
-> > +{
-> > +	struct aspeed_sgpio *gpio = gpiochip_get_data(gc);
-> > +	const struct aspeed_sgpio_bank *bank = to_bank(offset);
-> > +	unsigned long flags;
-> > +	void __iomem *addr;
-> > +	u32 reg = 0;
-> > +
-> > +	spin_lock_irqsave(&gpio->lock, flags);
-> > +
-> > +	addr = bank_reg(gpio, bank, reg_val);
-> > +
-> > +	if (val)
-> > +		reg |= GPIO_BIT(offset);
-> > +	else
-> > +		reg &= ~GPIO_BIT(offset);
-> 
-> reg is zero-initialised above and you haven't read from addr to assign to reg, so the else branch is 
-> redundant (reg is already zeroed). This path has a bug - you're clearing the state of all GPIOs associated 
-> with addr rather than just the GPIO associated with offset.
-> 
+> Oh, I still hadn't reviewed this version of the SPI stuff :(
 
-you're correct, this is fixed in v7.
+It is basically the one sent on that /26 patch series, just rebased
+on the top of docs-next.
 
-> > +
-> > +	iowrite32(reg, addr);
-> > +
-> > +	spin_unlock_irqrestore(&gpio->lock, flags); }
-> > +
-> > +
-> > +static int aspeed_sgpio_dir_out(struct gpio_chip *gc, unsigned int
-> > offset, int val)
-> > +{
-> > +	struct aspeed_sgpio *gpio = gpiochip_get_data(gc);
-> > +	unsigned long flags;
-> > +
-> > +	spin_lock_irqsave(&gpio->lock, flags);
-> > +	gpio->dir_in[GPIO_BANK(offset)] &= ~GPIO_BIT(offset);
-> > +	spin_unlock_irqrestore(&gpio->lock, flags);
-> > +
-> > +	aspeed_sgpio_set(gc, offset, val);
-> 
-> In this case you should probably have an unlocked variant of aspeed_sgpio_set() so you can call it inside 
-> the the critical section above instead of needing to acquire/release the lock twice (once above and again 
-> in aspeed_sgpio_set() as it stands).
-> 
+> There were outstanding questions about where it was going to get moved
+> to but if I read the diff correctly it looks like it didn't actually get
+> moved in the end?
 
-moved _sgpio_set() so only one pair of acquire/release lock used.
+Yeah, it doesn't have the move. My understanding from our discussions
+is that we didn't reach a conclusion.
 
-> Cheers,
-> 
-> Andrew
-> 
+In any case, I can send a separate patch with the move part once
+we reach an agreement about what's the best way to proceed (or you
+can do it directly, if you prefer so).
 
 Thanks,
---Hongwei
-
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > --
-> > 2.7.4
-> > 
-> >
+Mauro
