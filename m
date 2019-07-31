@@ -2,154 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A260F7C014
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 13:35:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE07F7C003
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 13:33:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726807AbfGaLfX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 07:35:23 -0400
-Received: from esa3.microchip.iphmx.com ([68.232.153.233]:62290 "EHLO
-        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387574AbfGaLdY (ORCPT
+        id S1728791AbfGaLcl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 07:32:41 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:48968 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726169AbfGaLcW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 07:33:24 -0400
-Received-SPF: Pass (esa3.microchip.iphmx.com: domain of
-  Ludovic.Desroches@microchip.com designates 198.175.253.82 as
-  permitted sender) identity=mailfrom;
-  client-ip=198.175.253.82; receiver=esa3.microchip.iphmx.com;
-  envelope-from="Ludovic.Desroches@microchip.com";
-  x-sender="Ludovic.Desroches@microchip.com";
-  x-conformance=spf_only; x-record-type="v=spf1";
-  x-record-text="v=spf1 mx a:ushub1.microchip.com
-  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
-  a:mx2.microchip.iphmx.com include:servers.mcsv.net
-  include:mktomail.com include:spf.protection.outlook.com ~all"
-Received-SPF: None (esa3.microchip.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@email.microchip.com) identity=helo;
-  client-ip=198.175.253.82; receiver=esa3.microchip.iphmx.com;
-  envelope-from="Ludovic.Desroches@microchip.com";
-  x-sender="postmaster@email.microchip.com";
-  x-conformance=spf_only
-Authentication-Results: esa3.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Ludovic.Desroches@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
-IronPort-SDR: R7AozpEsiUeC+4/7Dc7j4pVNUsX9pjR2XB3pzZMFDh6QAPI5tFCjtoBTPiH537hIRDBOjlpeS+
- fGQlqjOs6wKIM7hBji0uinb5XRla0cEiMJmS/d5ttVP6Q5oFkjWk4yecUbJjVaeCqrYSVxnK4u
- KTwfH+m1/OH9WDxZYSuXA7XFlAJatLiXphOEGTjhCCrEhVAf1YbKSJQq8geuFZ041aOkUDXHyd
- AMYU/8P/E+Vu33yYo1XKVHkutu560EEG+jBBn+YHq8oPA9dduSLqR5F5X2zgiI8f/KuGp3cpyA
- UUo=
-X-IronPort-AV: E=Sophos;i="5.64,330,1559545200"; 
-   d="scan'208";a="43442093"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 31 Jul 2019 04:33:23 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Wed, 31 Jul 2019 04:33:11 -0700
-Received: from localhost (10.10.85.251) by chn-vm-ex03.mchp-main.com
- (10.10.85.151) with Microsoft SMTP Server id 15.1.1713.5 via Frontend
- Transport; Wed, 31 Jul 2019 04:33:11 -0700
-Date:   Wed, 31 Jul 2019 13:32:16 +0200
-From:   Ludovic Desroches <ludovic.desroches@microchip.com>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-CC:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        <linux-mmc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH] mmc: atmel-mci: Mark expected switch fall-throughs
-Message-ID: <20190731113216.ztxckd54a74g2lw5@M43218.corp.atmel.com>
-Mail-Followup-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Kees Cook <keescook@chromium.org>
-References: <20190729000123.GA23902@embeddedor>
+        Wed, 31 Jul 2019 07:32:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=UBmJR5zweJmbyxzgPM4EX3clHHa7sH38d5P57nUcKTc=; b=YMOvsFC4AP/jXLYB3P4JjOlOq
+        wkafVCBzpXR/1dsglZwKBYrDvkk0nQCHFOsIEJwJt8ECIgcRv20gyK4w0yfv1zKR2MUnIXp/eiwAc
+        A578VmoZuy99oHmsTorQc5DxjM+GxHfElwrIOyV8KSETO1bc7Fu//KDuJyqWQpsgWtk0pusToFZl5
+        PCMIvccTiP+xc6WLSWwCTk1XlnzrlhjC7xxByj+65xatNSj5KLh8Gb3cCXlhpz4o3X3RfMK2GFp3U
+        4RlVbA53/IfbkZ0+HE8B8dH5VYcITL3YJRZzWhR0YbrHzYBjZjZosaAoaGCGqA8aJgwCJBOArUxP5
+        OGx+lYw9w==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hsmqD-0005hK-DX; Wed, 31 Jul 2019 11:32:21 +0000
+Date:   Wed, 31 Jul 2019 04:32:21 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     William Kucharski <william.kucharski@oracle.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Song Liu <songliubraving@fb.com>,
+        Bob Kasten <robert.a.kasten@intel.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Chad Mynhier <chad.mynhier@oracle.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Johannes Weiner <jweiner@fb.com>
+Subject: Re: [PATCH v3 0/2] mm,thp: Add filemap_huge_fault() for THP
+Message-ID: <20190731113221.GE4700@bombadil.infradead.org>
+References: <20190731082513.16957-1-william.kucharski@oracle.com>
+ <20190731102053.GZ7689@dread.disaster.area>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190729000123.GA23902@embeddedor>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190731102053.GZ7689@dread.disaster.area>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Wed, Jul 31, 2019 at 08:20:53PM +1000, Dave Chinner wrote:
+> On Wed, Jul 31, 2019 at 02:25:11AM -0600, William Kucharski wrote:
+> > This set of patches is the first step towards a mechanism for automatically
+> > mapping read-only text areas of appropriate size and alignment to THPs
+> > whenever possible.
+> > 
+> > For now, the central routine, filemap_huge_fault(), amd various support
+> > routines are only included if the experimental kernel configuration option
+> > 
+> > 	RO_EXEC_FILEMAP_HUGE_FAULT_THP
+> > 
+> > is enabled.
+> > 
+> > This is because filemap_huge_fault() is dependent upon the
+> > address_space_operations vector readpage() pointing to a routine that will
+> > read and fill an entire large page at a time without poulluting the page
+> > cache with PAGESIZE entries
+> 
+> How is the readpage code supposed to stuff a THP page into a bio?
+> 
+> i.e. Do bio's support huge pages, and if not, what is needed to
+> stuff a huge page in a bio chain?
 
-On Sun, Jul 28, 2019 at 07:01:23PM -0500, Gustavo A. R. Silva wrote:
-> 
-> Mark switch cases where we are expecting to fall through.
-> 
-> This patch fixes the following warnings:
-> 
-> drivers/mmc/host/atmel-mci.c: In function 'atmci_get_cap':
-> drivers/mmc/host/atmel-mci.c:2415:30: warning: this statement may fall through [-Wimplicit-fallthrough=]
->    host->caps.has_odd_clk_div = 1;
->    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~
-> drivers/mmc/host/atmel-mci.c:2416:2: note: here
->   case 0x400:
->   ^~~~
-> drivers/mmc/host/atmel-mci.c:2422:28: warning: this statement may fall through [-Wimplicit-fallthrough=]
->    host->caps.has_highspeed = 1;
->    ~~~~~~~~~~~~~~~~~~~~~~~~~^~~
-> drivers/mmc/host/atmel-mci.c:2423:2: note: here
->   case 0x200:
->   ^~~~
-> drivers/mmc/host/atmel-mci.c:2426:40: warning: this statement may fall through [-Wimplicit-fallthrough=]
->    host->caps.need_notbusy_for_read_ops = 1;
->    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~
-> drivers/mmc/host/atmel-mci.c:2427:2: note: here
->   case 0x100:
->   ^~~~
-> 
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+I believe that the current BIO code (after Ming Lei's multipage patches
+from late last year / earlier this year) is capable of handling a
+PMD-sized page.
 
-I don't know if there is a policy in the kernel about the expression to
-use. As this one does the job
-Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
+> Once you can answer that question, you should be able to easily
+> convert the iomap_readpage/iomap_readpage_actor code to support THP
+> pages without having to care about much else as iomap_readpage()
+> is already coded in a way that will iterate IO over the entire THP
+> for you....
 
-Thanks
+Christoph drafted a patch which illustrates the changes needed to the
+iomap code.  The biggest problem is:
 
-> ---
->  drivers/mmc/host/atmel-mci.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/mmc/host/atmel-mci.c b/drivers/mmc/host/atmel-mci.c
-> index 9ee0bc0ce6d0..c26fbe5f2222 100644
-> --- a/drivers/mmc/host/atmel-mci.c
-> +++ b/drivers/mmc/host/atmel-mci.c
-> @@ -2413,6 +2413,7 @@ static void atmci_get_cap(struct atmel_mci *host)
->  	case 0x600:
->  	case 0x500:
->  		host->caps.has_odd_clk_div = 1;
-> +		/* Fall through */
->  	case 0x400:
->  	case 0x300:
->  		host->caps.has_dma_conf_reg = 1;
-> @@ -2420,13 +2421,16 @@ static void atmci_get_cap(struct atmel_mci *host)
->  		host->caps.has_cfg_reg = 1;
->  		host->caps.has_cstor_reg = 1;
->  		host->caps.has_highspeed = 1;
-> +		/* Fall through */
->  	case 0x200:
->  		host->caps.has_rwproof = 1;
->  		host->caps.need_blksz_mul_4 = 0;
->  		host->caps.need_notbusy_for_read_ops = 1;
-> +		/* Fall through */
->  	case 0x100:
->  		host->caps.has_bad_data_ordering = 0;
->  		host->caps.need_reset_after_xfer = 0;
-> +		/* Fall through */
->  	case 0x0:
->  		break;
->  	default:
-> -- 
-> 2.22.0
-> 
-> 
+struct iomap_page {
+        atomic_t                read_count;
+        atomic_t                write_count;
+        DECLARE_BITMAP(uptodate, PAGE_SIZE / 512);
+};
+
+All of a sudden that needs to go from a single unsigned long bitmap (or
+two on 64kB page size machines) to 512 bytes on x86 and even larger on,
+eg, POWER.
+
+It's egregious because no sane filesystem is going to fragment a PMD
+sized page into that number of discontiguous blocks, so we never need
+to allocate the 520 byte data structure this suddenly becomes.  It'd be
+nice to have a more efficient data structure (maybe that tracks uptodate
+by extent instead of by individual sector?)  But I don't understand the
+iomap layer at all, and I never understood buggerheads, so I don't have
+a useful contribution here.
