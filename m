@@ -2,111 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C7F697CEAA
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 22:34:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BFEE67CEAE
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 22:34:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729613AbfGaUeS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 16:34:18 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:43600 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726679AbfGaUeR (ORCPT
+        id S1729930AbfGaUef (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 16:34:35 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:52851 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728268AbfGaUef (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 16:34:17 -0400
-Received: by mail-ot1-f65.google.com with SMTP id j11so14308693otp.10
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 13:34:17 -0700 (PDT)
+        Wed, 31 Jul 2019 16:34:35 -0400
+Received: by mail-wm1-f65.google.com with SMTP id s3so62158677wms.2
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 13:34:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=lhyyuWidO2twh71QoQ3IyDneg0h8HkC4FDMzjkF1Knc=;
-        b=oTcevW9uWVkAu1HV6ScFP/3BL3h8q7oqrox2GAXadT4n5q0fxkeVFbK61hBM1/FX72
-         amIN8l7y8mL4tsZTcwiOivgqwH2T8WKYhShkXthvqnDicbFspi0XhjDECDABx9LCrMuG
-         JZNA3dGkqlFWZMZt5XCzikl64GgO3fBtlV9EjDQFaMgVcW9Nk0in+KkuER5S8EVeGz4d
-         HQ6iUlv+QZ0oNb4ux5lopRditexf/QmMVvP2nC4i469dNzzRP4pbUlYzu7yHsA8dpv7b
-         XQ16lnHfRO/36EiCH/gjJDx9n986zIAHcLvzTIw7rL9X6ndZyk/KdYABIhkC90KHoqjR
-         cuJA==
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=sNjn75QqEsg85wGan3nB4LA0i3WJ6eGSKVuqcQX+srY=;
+        b=NI0Kuy1l3GxVI/wWvwre4CnktG43y+lpoUivejNC1UTcJJFyhpktxgJiHjuqzVRz38
+         NaBeEsN86YYoWWi6me6vBk+HhqGXrAfOb0Hs2K07lfqBgTyBv0eRTSm4YzrHVIFjfXXy
+         AY9wr3Kt6aSU2F/JBGXz+/rM0aMF58gliPvtMw+DUm57Za/r/MBBEvZ73TC9MiXCLR2h
+         wtji1O7RIykL9ibsi4GNY0TFEZAJJZ17hWlY2XU0vFFNXpJX7ASIn0DTFnTsGNlCSePE
+         CvY69OYaTepjbN63YBDsWmds7X9bTA7zT9qXVJhduW7si6CxczBi6jZXc7YEd9+jJYQo
+         i29Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lhyyuWidO2twh71QoQ3IyDneg0h8HkC4FDMzjkF1Knc=;
-        b=sKsDRL7QQo+VujdTjvAqen0+MzAHS2QPS+2x/UCkmvKVzdyNnCToHnYdUsOT5dYNEM
-         kEbTxDa7RWqGHKX4Wd/Ftttdvmy+TR3Wd/ZbTghjoJtRC3CmDq/RIm2TvnOAyahNS24H
-         rrwbfSNWsucE3h4ZcQ8lsxJUVYFSzyXtHeRbpp0Sfx0XNgxmTU5U7LYtCLo5RGHvK7Gh
-         1Q1a2IalRyLNDejyc2lYDI9cr+HMThTVRH9QlDCirMGYhFq4G5VSx0rsusD5P2e5oOa2
-         q4VJ/SgYgZHQeMY6xrZ3rpYzRqNngbBK1tkl89but891nsdSykSBJot4dLTS9/tZmR9h
-         ZA+Q==
-X-Gm-Message-State: APjAAAWGSd4QT/W5BP3GOInykIng6kOXMuChTeyDVpZyQomIkKHZpTCV
-        rR9CX+ejyTUOaT+08ldv9QL5H/YwG9MkRuf/kI8k4g==
-X-Google-Smtp-Source: APXvYqwXtu9HEqzwg6BxGW5PDsoBHhz2CdJ/FLp995gTLUpgkjXsVaauGGNSjFMwkoUiNFLz7F+W3M46Tx08cZEpBvY=
-X-Received: by 2002:a05:6830:160c:: with SMTP id g12mr37738641otr.231.1564605256524;
- Wed, 31 Jul 2019 13:34:16 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=sNjn75QqEsg85wGan3nB4LA0i3WJ6eGSKVuqcQX+srY=;
+        b=bM+Wqnvpb2EmPzHDuAStA4+VYBCQaRDgwaXa0zPHxLuffLwUgdVixsch7qZ8cORC+q
+         0QoQMVtN0pozCTmFfrZbVSyQOxmdLIafzqMaIddWH2nXIetf8oqMqVjBQNj1esjcPE3Y
+         bBCXbNHZpUuAUbwTOdfU9KMD9kv0FiPoJm2ChM2zxqOxwZvm5JnS9aMvy2ordFZ+zl0p
+         IpxAy+5TCNCWT+7wg4XNxcvN9vclILj8/13O5YiAZoc/TwFNVdXiOnQemoXEo7KvQZ6q
+         hS4jjtAxeWePLcmDGn+FL5HS25XDFfgmVCXZ3I3wB8NDfDtm9XLtf6FQiAn8PXaMwg6m
+         7vHQ==
+X-Gm-Message-State: APjAAAXUM1kIyTh+GZBUgzciUrZWcY3te7D7WwFaZTLBqhRcrVl6f2r4
+        jFqMf02rLYctrcXHQiaA1cs/QA==
+X-Google-Smtp-Source: APXvYqzoTj+hTMMfEeacvovM1n9w5WYnocIavsCYJzrS/je3sotLJvIsEqHodnDDiXBzwATG3Rl8Hg==
+X-Received: by 2002:a05:600c:c4:: with SMTP id u4mr12423223wmm.96.1564605272896;
+        Wed, 31 Jul 2019 13:34:32 -0700 (PDT)
+Received: from [192.168.1.6] (19.red-176-86-136.dynamicip.rima-tde.net. [176.86.136.19])
+        by smtp.gmail.com with ESMTPSA id c30sm132033252wrb.15.2019.07.31.13.34.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 31 Jul 2019 13:34:32 -0700 (PDT)
+Subject: Re: [PATCH 4.19 024/113] tty: serial: msm_serial: avoid system lockup
+ condition
+To:     Pavel Machek <pavel@denx.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Sasha Levin <sashal@kernel.org>
+References: <20190729190655.455345569@linuxfoundation.org>
+ <20190729190701.631193260@linuxfoundation.org> <20190731190533.GA4630@amd>
+From:   Jorge Ramirez <jorge.ramirez-ortiz@linaro.org>
+Message-ID: <ca8ee0ab-dac5-28db-cac2-20e188473da6@linaro.org>
+Date:   Wed, 31 Jul 2019 22:34:30 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <20190729221101.228240-4-saravanak@google.com> <20190731181733.60422-1-natechancellor@gmail.com>
-In-Reply-To: <20190731181733.60422-1-natechancellor@gmail.com>
-From:   Saravana Kannan <saravanak@google.com>
-Date:   Wed, 31 Jul 2019 13:33:40 -0700
-Message-ID: <CAGETcx9LXP9b_W_1XQFmjODPJVrbnU+vH1RKer2i=jU7Q7EADg@mail.gmail.com>
-Subject: Re: [PATCH] of/platform: Add missing const qualifier in of_link_property
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     David Collins <collinsd@codeaurora.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Android Kernel Team <kernel-team@android.com>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        kbuild test robot <lkp@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190731190533.GA4630@amd>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 31, 2019 at 11:19 AM Nathan Chancellor
-<natechancellor@gmail.com> wrote:
->
-> Clang errors:
->
-> drivers/of/platform.c:632:28: error: initializing 'struct
-> supplier_bindings *' with an expression of type 'const struct
-> supplier_bindings [4]' discards qualifiers
-> [-Werror,-Wincompatible-pointer-types-discards-qualifiers]
->         struct supplier_bindings *s = bindings;
->                                   ^   ~~~~~~~~
-> 1 error generated.
->
-> Fixes: 05f812549f53 ("of/platform: Add functional dependency link from DT bindings")
-> Reported-by: kbuild test robot <lkp@intel.com>
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> ---
->
-> Given this is still in the driver-core-testing branch, I am fine with
-> this being squashed in if desired.
->
->  drivers/of/platform.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/of/platform.c b/drivers/of/platform.c
-> index e2da90e53edb..21838226d68a 100644
-> --- a/drivers/of/platform.c
-> +++ b/drivers/of/platform.c
-> @@ -629,7 +629,7 @@ static bool of_link_property(struct device *dev, struct device_node *con_np,
->                              const char *prop)
->  {
->         struct device_node *phandle;
-> -       struct supplier_bindings *s = bindings;
-> +       const struct supplier_bindings *s = bindings;
->         unsigned int i = 0;
->         bool done = true, matched = false;
+On 7/31/19 21:05, Pavel Machek wrote:
+> Hi!
 
-Odd. I never got that email. Thanks for fixing this. I'll squash it
-into my patch series since I have a bunch of other kbuild errors about
-documentation.
+hi Pavel,
 
--Saravana
+> 
+>> [ Upstream commit ba3684f99f1b25d2a30b6956d02d339d7acb9799 ]
+>>
+>> The function msm_wait_for_xmitr can be taken with interrupts
+>> disabled. In order to avoid a potential system lockup - demonstrated
+>> under stress testing conditions on SoC QCS404/5 - make sure we wait
+>> for a bounded amount of time.
+>>
+>> Tested on SoC QCS404.
+> 
+> How long did it take to timeout?
+> 
+> Because... this is supposed to loop for 0.5 second with interrupts
+> disabled, but 500000*udelay(1) is probably going to wait for more than
+> that.
+> 
+> Is 500msec reasonable with interrupts disabled?
+
+considering the original unbounded definition, it is hard to determine
+what would be a good amount of time to wait (msm_serial can be used for
+BT comms and I am not sure how critical that link might be for different
+clients..and I didnt want to create a regression hence the half a second
+delay).
+
+yeah, I don't think disabling interrupts for half a second is a good
+idea on most systems hence why I chose it that big.
+
+> 
+> Should it use something like 5000*udelay(100), instead, as that has
+> chance to result in closer-to-500msec wait?
+
+the half a second timeout didnt mean to be accurate but a worst case
+scenario...I am not sure accuracy matters.
+
+> 
+>> +++ b/drivers/tty/serial/msm_serial.c
+>> @@ -383,10 +383,14 @@ static void msm_request_rx_dma(struct msm_port *msm_port, resource_size_t base)
+>>  
+>>  static inline void msm_wait_for_xmitr(struct uart_port *port)
+>>  {
+>> +	unsigned int timeout = 500000;
+>> +
+>>  	while (!(msm_read(port, UART_SR) & UART_SR_TX_EMPTY)) {
+>>  		if (msm_read(port, UART_ISR) & UART_ISR_TX_READY)
+>>  			break;
+>>  		udelay(1);
+>> +		if (!timeout--)
+>> +			break;
+>>  	}
+>>  	msm_write(port, UART_CR_CMD_RESET_TX_READY, UART_CR);
+>>  }
+> 
+> Plus, should it do some kind of dev_err() to let users know that
+> something went very wrong with their serial?
+
+I did consider this but then I thought that 1/2 second without
+interrupts on the core should not go unnoticed. But I might be wrong.
+
+> 
+> Thanks,
+> 								Pavel
+> 
+
