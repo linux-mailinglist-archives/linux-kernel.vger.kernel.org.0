@@ -2,133 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E48A87CBB6
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 20:16:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C14E37CBC1
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 20:19:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729056AbfGaSQ2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 14:16:28 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:36194 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726907AbfGaSQ1 (ORCPT
+        id S1729431AbfGaST0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 14:19:26 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:38866 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726118AbfGaST0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 14:16:27 -0400
-Received: by mail-pl1-f196.google.com with SMTP id k8so30858739plt.3
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 11:16:27 -0700 (PDT)
+        Wed, 31 Jul 2019 14:19:26 -0400
+Received: by mail-wm1-f68.google.com with SMTP id s15so39334620wmj.3;
+        Wed, 31 Jul 2019 11:19:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=1sAf77R4gzWxgPq//0aLYDWVurwEB8Tct+N6+vCkoJc=;
-        b=aZ5z8q9c46G8wcw6ld8aAEI1c+wkY1etCcS/Tbmn4AXFNj33c9L8ZADUA7eMWeL3Zw
-         SFHr7AwDd4SogjhF/pE+j74/n9LEUjDCx4q0d16aWsrK9qdqQ06fUwj8kS3wD7Vqh0Ph
-         I5H8pGITJWZnyhdQ9spWiM0XPpdQsMJ76W4uMSWcn8nAmSBBA7P9opI/wYTIoZon9HWU
-         9EECv/PwKYFP7gpP/oZJSJsldD7M8jhz+5konnUPg25dnA5fWy+4xRAF6djP9ayvUsyX
-         xBpn1WdzfGv+cnuOkyHxtIfftCCtTFPBGAi2N+6Kpd86e3wPDKFpMfSeoe/P5NWJXm7x
-         e4Nw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=gIhR1rFWYPyrLTsaj4himG3yGapZVhC0thy8Gdfepg8=;
+        b=DORqV2TwG88my+ccXBU+Hnzftcjv03/kwCkah17l13sB3nibFPHKVNwkXvPdUtpHrM
+         joJtludO2I1oYBDEVkkS0Wf4jjJumoXjKNJPHCu4NDfICwaXddTtixhqmu7IOrYsT7LA
+         SsBzqG6DVJ/NjIg6DkUdMlLkfKoimFFgchsrz1pRObfxDUkV1FtgsasqBCWQzIcVP8L0
+         CXtZqsXGhWYUUSsSn1puICNRV4QNNbXFpJ657gm/UiTD0yK3+5FMKOtgo08jpyiG6XCd
+         cGXz0o5D59dm2lDGUqTsNCXZOkCm31Ez56wvRszsDECqx1M00t9AT7tpCre6BH43I7JB
+         cUlw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=1sAf77R4gzWxgPq//0aLYDWVurwEB8Tct+N6+vCkoJc=;
-        b=bgihUNct+VJyZuXSADuRzX5JnEtI+7LRvnb4Eu9g9bP0mbi7tPE7aOhWSEpHDe7zkN
-         FcTtaTlIafUIheqdlwEtDqBkDxuC52PWSpR7zA/xwhYS0FeEvHKbZkCx8RdCAFHNZoEq
-         Errdfp1wnFbl92kao4u6iTGa2yDvy3pnPAjl8J2H7SyNwk8MiDA5On4G8OioY1Y+kFra
-         gTtWY+T8KU6DoKbijgL1WBRJbSgENBl98SI/LBRrkvW5a+WYlboocXbMQ0ow1J34NNa5
-         pdH78BAQS0LnFUNSmlCyahOf4bieJev5k9usDo1aU74itucQ4RduO7GX9DAxLSLBu8TJ
-         j50A==
-X-Gm-Message-State: APjAAAUf3Sxgn3MZvjifki/ehkXqwkIlBGdC2+f3gOnw8lP+XVXH+pIb
-        jSTxvTvrUM7YdK3JyJJpF4X+/PQy
-X-Google-Smtp-Source: APXvYqywWgXVVa5HAchsaX6hhd9H/38bF3HhZwHjO20BOhCrJBxjBrpY0iPQjqb34gwf22YhlpGbPA==
-X-Received: by 2002:a17:902:28e9:: with SMTP id f96mr116875790plb.114.1564596987105;
-        Wed, 31 Jul 2019 11:16:27 -0700 (PDT)
-Received: from hari-Inspiron-1545 ([183.83.86.126])
-        by smtp.gmail.com with ESMTPSA id l1sm89746867pfl.9.2019.07.31.11.16.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 31 Jul 2019 11:16:26 -0700 (PDT)
-Date:   Wed, 31 Jul 2019 23:46:21 +0530
-From:   Hariprasad Kelam <hariprasad.kelam@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Hariprasad Kelam <hariprasad.kelam@gmail.com>,
-        Josenivaldo Benito Jr <jrbenito@benito.qsl.br>,
-        Larry Finger <Larry.Finger@lwfinger.net>,
-        Himadri Pandya <himadri18.07@gmail.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Nishka Dasgupta <nishkadg.linux@gmail.com>,
-        Shobhit Kukreti <shobhitkukreti@gmail.com>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        hdegoede@redhat.com
-Subject: [Patch v2 04/10] staging: rtl8723bs: hal: Remove function argument
- padapter
-Message-ID: <20190731181621.GA9349@hari-Inspiron-1545>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=gIhR1rFWYPyrLTsaj4himG3yGapZVhC0thy8Gdfepg8=;
+        b=ZMM0tmGTOqgUiodJ+cQcVfwFP2IkdHJVEuGIupWs1EmubutfRq3nJPWZlgBqWtitW8
+         uG75P5RWhZKU8w2y+101uq0L6Dzbok24Z5bT02P7jgHP2+PDc05oXTFI8naQp6lmbXIi
+         O1u13IC4M+vfN909acBqbPiTbfNLrMm04aEOZgsRf52BUd8756n+FEgNtgb7qXZjkVIp
+         ghtW0dM6uaTDt7hBnVge+qlBCOoiV15940RBJbWQ8G9FqtTcS1GVAfvB7aXsNzBSkXrA
+         3EhPl4Xl5F61dBaR3odtDxSws60MEb7OW8W2eT+AA/P171TnaeDdfOCI3n0Q4nUQ5Hkj
+         SIpA==
+X-Gm-Message-State: APjAAAUFoMpnzGJn/4SNfRqI5ynEQ6R+V98LyJ09RLQanByIzoEl09nS
+        laD69QdM0RI08x99Gzq5pE8=
+X-Google-Smtp-Source: APXvYqwrgMUC5y/0PalEibAJGNjglLfiIcusQrOyF+huLD7r0zhD6uZeGnFiXHUBTgo73QD+T/HG7g==
+X-Received: by 2002:a1c:f914:: with SMTP id x20mr34597086wmh.142.1564597164070;
+        Wed, 31 Jul 2019 11:19:24 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:4f8:222:2f1b::2])
+        by smtp.gmail.com with ESMTPSA id n2sm46680908wmi.38.2019.07.31.11.19.23
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 31 Jul 2019 11:19:23 -0700 (PDT)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     saravanak@google.com
+Cc:     collinsd@codeaurora.org, corbet@lwn.net,
+        devicetree@vger.kernel.org, frowand.list@gmail.com,
+        gregkh@linuxfoundation.org, kernel-team@android.com,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mark.rutland@arm.com, rafael@kernel.org, robh+dt@kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        kbuild test robot <lkp@intel.com>
+Subject: [PATCH] of/platform: Add missing const qualifier in of_link_property
+Date:   Wed, 31 Jul 2019 11:17:34 -0700
+Message-Id: <20190731181733.60422-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20190729221101.228240-4-saravanak@google.com>
+References: <20190729221101.228240-4-saravanak@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Patchwork-Bot: notify
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove function argument "padapter" in rtl8723bs_init_recv_priv function
-as its not being used
+Clang errors:
 
-Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
+drivers/of/platform.c:632:28: error: initializing 'struct
+supplier_bindings *' with an expression of type 'const struct
+supplier_bindings [4]' discards qualifiers
+[-Werror,-Wincompatible-pointer-types-discards-qualifiers]
+        struct supplier_bindings *s = bindings;
+                                  ^   ~~~~~~~~
+1 error generated.
+
+Fixes: 05f812549f53 ("of/platform: Add functional dependency link from DT bindings")
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 ---
-v4 - Add patch number
 
- drivers/staging/rtl8723bs/hal/rtl8723bs_recv.c | 4 ++--
- drivers/staging/rtl8723bs/include/recv_osdep.h | 2 +-
- drivers/staging/rtl8723bs/os_dep/recv_linux.c  | 2 +-
- 3 files changed, 4 insertions(+), 4 deletions(-)
+Given this is still in the driver-core-testing branch, I am fine with
+this being squashed in if desired.
 
-diff --git a/drivers/staging/rtl8723bs/hal/rtl8723bs_recv.c b/drivers/staging/rtl8723bs/hal/rtl8723bs_recv.c
-index 032d018..7fbe6c6 100644
---- a/drivers/staging/rtl8723bs/hal/rtl8723bs_recv.c
-+++ b/drivers/staging/rtl8723bs/hal/rtl8723bs_recv.c
-@@ -479,7 +479,7 @@ s32 rtl8723bs_init_recv_priv(struct adapter *padapter)
- 		precvpriv->free_recv_buf_queue_cnt = 0;
- 		for (i = 0; i < n ; i++) {
- 			list_del_init(&precvbuf->list);
--			rtw_os_recvbuf_resource_free(padapter, precvbuf);
-+			rtw_os_recvbuf_resource_free(precvbuf);
- 			precvbuf++;
- 		}
- 		precvpriv->precv_buf = NULL;
-@@ -518,7 +518,7 @@ void rtl8723bs_free_recv_priv(struct adapter *padapter)
- 		precvpriv->free_recv_buf_queue_cnt = 0;
- 		for (i = 0; i < n ; i++) {
- 			list_del_init(&precvbuf->list);
--			rtw_os_recvbuf_resource_free(padapter, precvbuf);
-+			rtw_os_recvbuf_resource_free(precvbuf);
- 			precvbuf++;
- 		}
- 		precvpriv->precv_buf = NULL;
-diff --git a/drivers/staging/rtl8723bs/include/recv_osdep.h b/drivers/staging/rtl8723bs/include/recv_osdep.h
-index 1056f61..47689f6 100644
---- a/drivers/staging/rtl8723bs/include/recv_osdep.h
-+++ b/drivers/staging/rtl8723bs/include/recv_osdep.h
-@@ -29,7 +29,7 @@ void rtw_os_recv_resource_free(struct recv_priv *precvpriv);
- void rtw_os_free_recvframe(union recv_frame *precvframe);
- 
- 
--void rtw_os_recvbuf_resource_free(struct adapter *padapter, struct recv_buf *precvbuf);
-+void rtw_os_recvbuf_resource_free(struct recv_buf *precvbuf);
- 
- _pkt *rtw_os_alloc_msdu_pkt(union recv_frame *prframe, u16 nSubframe_Length, u8 *pdata);
- void rtw_os_recv_indicate_pkt(struct adapter *padapter, _pkt *pkt, struct rx_pkt_attrib *pattrib);
-diff --git a/drivers/staging/rtl8723bs/os_dep/recv_linux.c b/drivers/staging/rtl8723bs/os_dep/recv_linux.c
-index 643cacc..a5070fb 100644
---- a/drivers/staging/rtl8723bs/os_dep/recv_linux.c
-+++ b/drivers/staging/rtl8723bs/os_dep/recv_linux.c
-@@ -43,7 +43,7 @@ void rtw_os_recv_resource_free(struct recv_priv *precvpriv)
- }
- 
- /* free os related resource in struct recv_buf */
--void rtw_os_recvbuf_resource_free(struct adapter *padapter, struct recv_buf *precvbuf)
-+void rtw_os_recvbuf_resource_free(struct recv_buf *precvbuf)
+ drivers/of/platform.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/of/platform.c b/drivers/of/platform.c
+index e2da90e53edb..21838226d68a 100644
+--- a/drivers/of/platform.c
++++ b/drivers/of/platform.c
+@@ -629,7 +629,7 @@ static bool of_link_property(struct device *dev, struct device_node *con_np,
+ 			     const char *prop)
  {
- 	if (precvbuf->pskb) {
- 		dev_kfree_skb_any(precvbuf->pskb);
+ 	struct device_node *phandle;
+-	struct supplier_bindings *s = bindings;
++	const struct supplier_bindings *s = bindings;
+ 	unsigned int i = 0;
+ 	bool done = true, matched = false;
+ 
 -- 
-2.7.4
+2.22.0
 
