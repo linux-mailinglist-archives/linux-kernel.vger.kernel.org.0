@@ -2,98 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F1EB7CB69
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 20:02:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7509B7CB7B
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 20:07:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728436AbfGaSCA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 14:02:00 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:35660 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726079AbfGaSCA (ORCPT
+        id S1727084AbfGaSG6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 14:06:58 -0400
+Received: from mail-yw1-f45.google.com ([209.85.161.45]:46336 "EHLO
+        mail-yw1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726224AbfGaSG6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 14:02:00 -0400
-Received: by mail-pl1-f196.google.com with SMTP id w24so30822089plp.2;
-        Wed, 31 Jul 2019 11:02:00 -0700 (PDT)
+        Wed, 31 Jul 2019 14:06:58 -0400
+Received: by mail-yw1-f45.google.com with SMTP id z197so25266994ywd.13;
+        Wed, 31 Jul 2019 11:06:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=oaDZjxG3hf3XfIhJ0wNeSSq3sNs3Jdwm87Y90Lg53os=;
-        b=SKwm/tKUjPhh7Ots6DumW+369InP9Y2lmV1wmGybkCv0R6omOv37Uq47RXnIirIKia
-         opq8eRugeFtK7GjZou9O9XXyWH6xG8wQKJrm8VSBkDjeAeZd7tVNOdiN2FRBMB5v8ZAl
-         wu+t+Jw9he5Id6CUsfAZo1ka5O7jl3A6JQT+Cxb9MRWbSOLDiBIzDKtZEeWLOiMrxS7H
-         J/HZ7dbfGeZZCbYKu/XA+KgO8X9yyU23bzKjgizRsFw9qoY5zELut/2+3baGCSgZjZ+i
-         XkoMqMGJ23aGab01Aws21ufDI6ctzimNBp0sOHAoQfhn71lZvFH6QPjrREDYhCjgE16y
-         jsQg==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=df8HZ1GC9xOAmz5J1hSYCy+taJAv5J2Wpa+VxaLhh1Y=;
+        b=RcbdxqgrG3y+GDCzQOvIQ2f0PpzXyiUA4YWz6EhGtPVJhAGwrLjg9i1yza5fKgkkfN
+         Hfm3Hr2nA28+1PrGms493NV13/FF7icOG96uqLUg9/QjWMBQiyaZxRxq6fotEg85Vrns
+         dIIRhE46xRxor3Wbjk/v7UrZko82uJ0/u2DS2NbX5/yi8R2uv+ZSZH1J5ldKhlKnrJhk
+         V879z8qB9i7ika0xSmJ+50776YGZC8BCHXSGyACSGclch8PFPXygnMEH0okR6ObHJRQC
+         5Wo6by+9U1ogSFBD84bXtKmemuV9oBfAmfcNxzr0Q3fd5P8zjQZOEo72ygdP6frqc8Z7
+         CkeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=oaDZjxG3hf3XfIhJ0wNeSSq3sNs3Jdwm87Y90Lg53os=;
-        b=YtviM132S+9I6fy8YeCPnhmDrv0y68hwTwYuZSMVFjb5D/WRSw2DSHNL6GB5HVMAbX
-         NUkFM3I270G3UXuo/RYVcDBLS9FavjyGAIrHlzOHB94BQaOy+K8w18JbLd8cyzW5+OeH
-         nfZxg80ujuEtnMZblygsLn3ZlXl2HeW2b41ZuJCtJHJjcErSwqAbQgAHD5JrWpu03YhV
-         7Yn1MWnsf9l7Dpfrsakqf4x06fvpay4xtVxLvWr6blCei5mPgsv+JGF0EZoVhJcZRiKq
-         JepFTdU5vh8W1hwjBCs/WfvyrvKZGZ57GSqVmEP52cP4wujBa3w0h9MnPiXlLEVlh2sU
-         B03w==
-X-Gm-Message-State: APjAAAUG0LV2R58psdKv4TAkJSKITLQs5XZNAqHLrBaX0OQrnsp1y61w
-        S4Sagvs0KX8u4AreTgwNzMc=
-X-Google-Smtp-Source: APXvYqzzGoe74Mz7GNUOaB6q/Km/WB4j0N1VMsCqKCyLVSFJnrP7Bn9v2TTLduZOyynn180hJB4tgA==
-X-Received: by 2002:a17:902:b497:: with SMTP id y23mr122219821plr.68.1564596119868;
-        Wed, 31 Jul 2019 11:01:59 -0700 (PDT)
-Received: from host ([183.101.165.200])
-        by smtp.gmail.com with ESMTPSA id a1sm19789624pgh.61.2019.07.31.11.01.57
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 31 Jul 2019 11:01:59 -0700 (PDT)
-Date:   Thu, 1 Aug 2019 03:01:49 +0900
-From:   Joonwon Kang <kjw1627@gmail.com>
-To:     keescook@chromium.org
-Cc:     re.emese@gmail.com, kernel-hardening@lists.openwall.com,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        jinb.park7@gmail.com
-Subject: [PATCH 2/2] randstruct: remove dead code in is_pure_ops_struct()
-Message-ID: <281a65cc361512e3dc6c5deffa324f800eb907be.1564595346.git.kjw1627@gmail.com>
-References: <cover.1564595346.git.kjw1627@gmail.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=df8HZ1GC9xOAmz5J1hSYCy+taJAv5J2Wpa+VxaLhh1Y=;
+        b=JKV1wr547ApVkdhJvVye79Qvglu0moQE22H9mqKrbWJMdGIfTRifH5M6SG4+zp9V+b
+         6Uwe4Ykw0cQK5GN122AjnFTrATb9xO4j+F0c8SayAsv0g27tTEbJXeHyhKnDDa2C0eiR
+         NlL4eMv43a/EjeAtpSg+MD2pEOs0dkWAka25NdI0Su/7JVjQfzVv0RfqNVEzJ23wNDFI
+         4a9viQAxOFHre8hB2YvbzSmg/q29yxSpO7Yw3i/helLSjQLJIq26q6wAIm0n7UPCuwJ0
+         mKiPwL+no/jn1eAZqmE4ncySNr2OqRK/e1OegwQOP4GJ9AC9vNXq2S1XC96ZATdZIMTd
+         6CAA==
+X-Gm-Message-State: APjAAAWFMS8zbzRq5yzlGmDsmhjD6+Uuov+G2rgUSuZxjljjOb9OCsZj
+        A+SWPfsNlzGbciTAc9AjNEwO7IE=
+X-Google-Smtp-Source: APXvYqxGAvGmxT/Xvwx8ft7lfG43YgFrxFXLXKUFG1vnBgPqstbweBPflRhHUg2sXHrsPjONu7UtMA==
+X-Received: by 2002:a81:3313:: with SMTP id z19mr75142313ywz.188.1564596417093;
+        Wed, 31 Jul 2019 11:06:57 -0700 (PDT)
+Received: from localhost.localdomain ([12.156.111.130])
+        by smtp.gmail.com with ESMTPSA id v68sm16426317ywe.23.2019.07.31.11.06.56
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 31 Jul 2019 11:06:56 -0700 (PDT)
+From:   Ayman Bagabas <ayman.bagabas@gmail.com>
+To:     Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Ayman Bagabas <ayman.bagabas@gmail.com>
+Subject: [RFC 1/9] platform/x86: huawei-wmi: Rename guid and driver name
+Date:   Wed, 31 Jul 2019 14:06:41 -0400
+Message-Id: <20190731180641.30121-1-ayman.bagabas@gmail.com>
+X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20190731175255.25676-2-ayman.bagabas@gmail.com>
+References: <20190731175255.25676-2-ayman.bagabas@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1564595346.git.kjw1627@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Mailer: git-send-email 2.20.1
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Recursive declaration for struct which has member of the same struct
-type, for example,
+Use WMI device UID, AMW0 has a UID of HWMI. WMI0 is the device name
+and doesn't have a UID so keep it as it is.
 
-struct foo {
-    struct foo f;
-    ...
-};
+Change module description to reflect the upcoming changes.
 
-is not allowed. So, it is unnecessary to check if a struct has this
-kind of member.
-
-Signed-off-by: Joonwon Kang <kjw1627@gmail.com>
+Signed-off-by: Ayman Bagabas <ayman.bagabas@gmail.com>
 ---
- scripts/gcc-plugins/randomize_layout_plugin.c | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/platform/x86/huawei-wmi.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/scripts/gcc-plugins/randomize_layout_plugin.c b/scripts/gcc-plugins/randomize_layout_plugin.c
-index bd29e4e7a524..e14efe23e645 100644
---- a/scripts/gcc-plugins/randomize_layout_plugin.c
-+++ b/scripts/gcc-plugins/randomize_layout_plugin.c
-@@ -440,9 +440,6 @@ static int is_pure_ops_struct(const_tree node)
- 		const_tree fieldtype = get_field_type(field);
- 		enum tree_code code = TREE_CODE(fieldtype);
+diff --git a/drivers/platform/x86/huawei-wmi.c b/drivers/platform/x86/huawei-wmi.c
+index 52fcac5b393a..a1159850a16c 100644
+--- a/drivers/platform/x86/huawei-wmi.c
++++ b/drivers/platform/x86/huawei-wmi.c
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /*
+- *  Huawei WMI hotkeys
++ *  Huawei WMI laptop extras driver
+  *
+  *  Copyright (C) 2018	      Ayman Bagabas <ayman.bagabas@gmail.com>
+  */
+@@ -15,10 +15,12 @@
+ /*
+  * Huawei WMI GUIDs
+  */
+-#define WMI0_EVENT_GUID "59142400-C6A3-40fa-BADB-8A2652834100"
+-#define AMW0_EVENT_GUID "ABBC0F5C-8EA1-11D1-A000-C90629100000"
++#define HWMI_EVENT_GUID "ABBC0F5C-8EA1-11D1-A000-C90629100000"
  
--		if (node == fieldtype)
--			continue;
--
- 		if (code == RECORD_TYPE || code == UNION_TYPE) {
- 			if (!is_pure_ops_struct(fieldtype))
- 				return 0;
++/* Legacy GUIDs */
+ #define WMI0_EXPENSIVE_GUID "39142400-C6A3-40fa-BADB-8A2652834100"
++#define WMI0_EVENT_GUID "59142400-C6A3-40fa-BADB-8A2652834100"
++
+ 
+ struct huawei_wmi_priv {
+ 	struct input_dev *idev;
+@@ -37,7 +39,7 @@ static const struct key_entry huawei_wmi_keymap[] = {
+ 	{ KE_KEY,    0x289, { KEY_WLAN } },
+ 	// Huawei |M| key
+ 	{ KE_KEY,    0x28a, { KEY_CONFIG } },
+-	// Keyboard backlight
++	// Keyboard backlit
+ 	{ KE_IGNORE, 0x293, { KEY_KBDILLUMTOGGLE } },
+ 	{ KE_IGNORE, 0x294, { KEY_KBDILLUMUP } },
+ 	{ KE_IGNORE, 0x295, { KEY_KBDILLUMUP } },
+@@ -186,7 +188,7 @@ static int huawei_wmi_probe(struct wmi_device *wdev)
+ 
+ static const struct wmi_device_id huawei_wmi_id_table[] = {
+ 	{ .guid_string = WMI0_EVENT_GUID },
+-	{ .guid_string = AMW0_EVENT_GUID },
++	{ .guid_string = HWMI_EVENT_GUID },
+ 	{  }
+ };
+ 
+@@ -203,5 +205,5 @@ module_wmi_driver(huawei_wmi_driver);
+ 
+ MODULE_DEVICE_TABLE(wmi, huawei_wmi_id_table);
+ MODULE_AUTHOR("Ayman Bagabas <ayman.bagabas@gmail.com>");
+-MODULE_DESCRIPTION("Huawei WMI hotkeys");
++MODULE_DESCRIPTION("Huawei WMI laptop extras driver");
+ MODULE_LICENSE("GPL v2");
 -- 
-2.17.1
+2.20.1
+
 
