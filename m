@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B5C647CB04
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 19:54:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B8C77CB0E
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 19:54:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730101AbfGaRxb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 13:53:31 -0400
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:44679 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729997AbfGaRx3 (ORCPT
+        id S1730157AbfGaRxy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 13:53:54 -0400
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:40535 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730042AbfGaRxa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 13:53:29 -0400
-Received: by mail-yw1-f67.google.com with SMTP id l79so25249070ywe.11;
-        Wed, 31 Jul 2019 10:53:28 -0700 (PDT)
+        Wed, 31 Jul 2019 13:53:30 -0400
+Received: by mail-yw1-f68.google.com with SMTP id b143so25249430ywb.7;
+        Wed, 31 Jul 2019 10:53:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=qZ9bQ4qlIvn0nmi3/fOq2/nuJUUiXRlbGalFjI3uA7I=;
-        b=i6QxSZfkIyq5TKFGaTNeNkQ4cJFz60M1HM+Mz6TdHb57MaE4cAaMuRLApZoOusKCJ1
-         bfoM1I970P3hEqUe/jhd7iXTZj7hAMJIPEq0EfLXE9CZF+FiRl9wBlSe5v1IObP53muG
-         FU36aHFS9gxYFbiXE/EjZ1X/1lJ7GwGU6b2Z0bnWQZBc+2WUJb41WDqVQjFnww5clYGr
-         7dVFN7vfidGiH6KdtP3gmdb+n6eR/cje+o1idClYP5Vhwna+oWXxXg7SUKUTWyv1CFS8
-         MW9Mhpz4n9wmf3e6JWWpn1qtH+7QHkZxLvZLkYHgKGMuDza4zERal0srjHczo2iMAY9i
-         o1Dg==
+        bh=4B7kxSwn+Y6/oG1SY2GzSzP2SB2pWwxeXqv90tBjdMY=;
+        b=WPdCfARiuE/+FieBaeEbT9g9k7rBNDO1TEU1Cy2KOqt+f/g/HD+V3Errd+85gJBSBi
+         UKERBgBCWu9KRovzNAuYwBayKOe8Zs4Sf+gza/QxgNuylDnl0gLfLufuEdqA6F5q1zII
+         lHLsxHxKP+/PtcGTTAkwWiTUCalSm8H9yjjFjN9DOwZyvehEEFgHTocaXBc2BC/PWSmP
+         hyHqmuoT6YcpHZ5Z/Pr+5GSIkNJP8rEMSrIp81yZgMXmij26ab+gzIoCiXotMzQIPdFh
+         gf9CrDxECfMn6/xwYKo163IZQjADURPnqkwatET3bpxvT03PppdPCUITp01YU2KsLsK7
+         U4pQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=qZ9bQ4qlIvn0nmi3/fOq2/nuJUUiXRlbGalFjI3uA7I=;
-        b=jkUO0f8ZysP8sITDcmKR7LGf+nlBdcWeWBnbuj52ev2fuQycrgkIeVY757LWoalDZV
-         RLC0eeuEXw4y/vvdCqWtrCH+JiDjD5L2srfJLBSEwsxmbV9nox/TBEuWU0avSDo51lJ+
-         k3Cy45e3mbxwKfrhenOhtN62sJ5t655tKh9eXFDRND7uQTyA/6KKP96kXuW2gUr43mDY
-         RIRY+Vt94n63+ie1ba01mSF1eXtAb0UyPmjbrskrc7xcuJnYjTftmQNvJA7ilSQ+iVN4
-         VMbzXGN8ZBCU+Bmbi3fJVVrttn7ILMy5VbG0OIt+Sd5XG1gSULWqNSJOE2TKYN6nSxNn
-         AHYQ==
-X-Gm-Message-State: APjAAAXkLDFgeFRkkaUvyMgNN5qIeOZafvNBix1W7fMpvoud310PBTo3
-        SQuNNN7lvhXG5t8TC2fFQg==
-X-Google-Smtp-Source: APXvYqxZahjTwEiFR8+YnzaToBYJqEk10aFO7u84onDnGBYXIB4RuD4c52wOK3rEV324N7h+8+EmhQ==
-X-Received: by 2002:a0d:df47:: with SMTP id i68mr78055398ywe.151.1564595607426;
-        Wed, 31 Jul 2019 10:53:27 -0700 (PDT)
+        bh=4B7kxSwn+Y6/oG1SY2GzSzP2SB2pWwxeXqv90tBjdMY=;
+        b=C0ScOOjhDFvZsKFqNyqrb9Lz9W80WxyGsedEGZcEwlYq5RRmkcQJRBVWZgCTs+z3Ga
+         WvTp8DFk6MBQpJqHHmrK8zkoA0UleLEzrjlWkdBdTOUSXyg1zNTnDXRfwtKOqnj+3AzX
+         sNb640of1I7iPQj/wDNOzWDsue6tldpfFLXR7rxxXtdoRiMUwRe6X4ekHxmm+UaK4Nvg
+         X3Db/5hsOISWM5krf1ILWKcyuwuiS3wGuSkpMg+/qLRO5mTWq0fAVPq+ZbI+YLhIqojp
+         Y31ITQsOj0orntWVj12JKGFvvEUKmr7K3xyoDaqx/pGv/yWK6oYADSwdTmJgb4ucQ6fW
+         KUAQ==
+X-Gm-Message-State: APjAAAVwwalhT+BTkAbnjfPYHRg+vs+O3n5jAYS8GkZNRb4wtVLuFqok
+        Ilo3PJwg74f/7nS8yDHymw==
+X-Google-Smtp-Source: APXvYqxQWi9XR3MxBQ8RjOAMiby7njxIJdp2+VJ/SxtuAxUx0hoOPljgoBq9QMoYKiiuk1bWJVcd+w==
+X-Received: by 2002:a81:7b89:: with SMTP id w131mr76298619ywc.462.1564595609261;
+        Wed, 31 Jul 2019 10:53:29 -0700 (PDT)
 Received: from localhost.localdomain ([12.156.111.130])
-        by smtp.gmail.com with ESMTPSA id w193sm10517294ywa.72.2019.07.31.10.53.26
+        by smtp.gmail.com with ESMTPSA id w193sm10517294ywa.72.2019.07.31.10.53.28
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 31 Jul 2019 10:53:26 -0700 (PDT)
+        Wed, 31 Jul 2019 10:53:28 -0700 (PDT)
 From:   Ayman Bagabas <ayman.bagabas@gmail.com>
 To:     Darren Hart <dvhart@infradead.org>,
         Andy Shevchenko <andy@infradead.org>,
         platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Ayman Bagabas <ayman.bagabas@gmail.com>
-Subject: [RFC 5/9] platform/x86: huawei-wmi: Control micmute led through wmi interface
-Date:   Wed, 31 Jul 2019 13:52:51 -0400
-Message-Id: <20190731175255.25676-6-ayman.bagabas@gmail.com>
+Subject: [RFC 6/9] platform/x86: huawei-wmi: Add battery charging thresholds
+Date:   Wed, 31 Jul 2019 13:52:52 -0400
+Message-Id: <20190731175255.25676-7-ayman.bagabas@gmail.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190731175255.25676-1-ayman.bagabas@gmail.com>
 References: <20190731175255.25676-1-ayman.bagabas@gmail.com>
@@ -64,139 +64,116 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that huawei WMI management interface is implemented, micmute LED can
-be controlled easily through this interface. Exception is the Matebook X
-(2017) which continue to uses ACPI EC method to control the LED. This
-model can control the LED through the legacy WMI interface which is not
-implemented ATM.
+Implement battery charging thresholds functionality to be used with
+sysfs interface support that is implemented in this series.
+
+Setting battery charging thresholds can introduce a race condition where
+two are trying to read/write values from/to EC memory. Even though a
+mutex is used, this doesn't guarantee that these values will make it to
+EC so a blocking sleep is necessary.
+
+This sleep is enforced on the MACH-WX9 model since turning off battery
+protection using (0,100) doesn't change the values in the EC memory,
+instead it only disables the protection. So a workaround is to set the
+thresholds to (0,0) before setting it to (0,100). This will ensure
+that we update these values in EC memory and then turning it off with
+(0,100). Thus, the msleep(1000).
 
 Signed-off-by: Ayman Bagabas <ayman.bagabas@gmail.com>
 ---
- drivers/platform/x86/huawei-wmi.c | 86 ++++++++++++++++++-------------
- 1 file changed, 49 insertions(+), 37 deletions(-)
+In huawei_wmi_battery_get and later in huawei_wmi_fn_lock_get, 256 bytes
+buffer is allocated dynamically on the stack. Now I know this is
+discouraged, should it be changed to use kmalloc?
+
+ drivers/platform/x86/huawei-wmi.c | 54 +++++++++++++++++++++++++++++++
+ 1 file changed, 54 insertions(+)
 
 diff --git a/drivers/platform/x86/huawei-wmi.c b/drivers/platform/x86/huawei-wmi.c
-index 8f918138053a..9013a05d2832 100644
+index 9013a05d2832..da3986cd0428 100644
 --- a/drivers/platform/x86/huawei-wmi.c
 +++ b/drivers/platform/x86/huawei-wmi.c
-@@ -46,8 +46,6 @@ static struct quirk_entry *quirks;
+@@ -6,6 +6,7 @@
+  */
+ 
+ #include <linux/acpi.h>
++#include <linux/delay.h>
+ #include <linux/dmi.h>
+ #include <linux/input.h>
+ #include <linux/input/sparse-keymap.h>
+@@ -46,6 +47,7 @@ static struct quirk_entry *quirks;
  struct huawei_wmi_priv {
  	struct input_dev *idev[2];
  	struct led_classdev cdev;
--	acpi_handle handle;
--	char *acpi_method;
++	struct mutex battery_lock;
  	struct mutex wmi_lock;
  	struct platform_device *pdev;
  };
-@@ -238,49 +236,57 @@ static int huawei_wmi_cmd(struct device *dev, u64 arg, u8 *buf, size_t buflen)
- static int huawei_wmi_micmute_led_set(struct led_classdev *led_cdev,
- 		enum led_brightness brightness)
- {
--	struct huawei_wmi_priv *priv = dev_get_drvdata(led_cdev->dev->parent);
--	acpi_status status;
--	union acpi_object args[3];
--	struct acpi_object_list arg_list = {
--		.pointer = args,
--		.count = ARRAY_SIZE(args),
--	};
--
--	args[0].type = args[1].type = args[2].type = ACPI_TYPE_INTEGER;
--	args[1].integer.value = 0x04;
--
--	if (strcmp(priv->acpi_method, "SPIN") == 0) {
--		args[0].integer.value = 0;
--		args[2].integer.value = brightness ? 1 : 0;
--	} else if (strcmp(priv->acpi_method, "WPIN") == 0) {
--		args[0].integer.value = 1;
--		args[2].integer.value = brightness ? 0 : 1;
-+	/* This is a workaround until the "legacy" interface is implemented. */
-+	if (quirks && quirks->ec_micmute) {
-+		char *acpi_method;
-+		acpi_handle handle;
-+		acpi_status status;
-+		union acpi_object args[3];
-+		struct acpi_object_list arg_list = {
-+			.pointer = args,
-+			.count = ARRAY_SIZE(args),
-+		};
-+
-+		handle = ec_get_handle();
-+		if (!handle) {
-+			dev_err(led_cdev->dev->parent, "Failed to get EC handle\n");
-+			return -ENODEV;
-+		}
-+
-+		args[0].type = args[1].type = args[2].type = ACPI_TYPE_INTEGER;
-+		args[1].integer.value = 0x04;
-+
-+		if (acpi_has_method(handle, "SPIN")) {
-+			acpi_method = "SPIN";
-+			args[0].integer.value = 0;
-+			args[2].integer.value = brightness ? 1 : 0;
-+		} else if (acpi_has_method(handle, "WPIN")) {
-+			acpi_method = "WPIN";
-+			args[0].integer.value = 1;
-+			args[2].integer.value = brightness ? 0 : 1;
-+		} else {
-+			return -ENODEV;
-+		}
-+
-+		status = acpi_evaluate_object(handle, acpi_method, &arg_list, NULL);
-+		if (ACPI_FAILURE(status))
-+			return -ENODEV;
-+
-+		return 0;
- 	} else {
--		return -EINVAL;
--	}
-+		u8 arg[8];
- 
--	status = acpi_evaluate_object(priv->handle, priv->acpi_method, &arg_list, NULL);
--	if (ACPI_FAILURE(status))
--		return -ENXIO;
-+		*(u64 *)arg = MICMUTE_LED_SET;
-+		arg[2] = brightness;
- 
--	return 0;
-+		return huawei_wmi_cmd(led_cdev->dev->parent, *(u64 *)arg, NULL, NULL);
-+	}
+@@ -298,6 +300,57 @@ static int huawei_wmi_leds_setup(struct device *dev)
+ 	return devm_led_classdev_register(dev, &priv->cdev);
  }
  
- static int huawei_wmi_leds_setup(struct device *dev)
- {
- 	struct huawei_wmi_priv *priv = dev_get_drvdata(dev);
++/* Battery protection */
++
++static int huawei_wmi_battery_get(struct device *dev, int *low, int *high)
++{
++	struct huawei_wmi_priv *priv = dev_get_drvdata(dev);
++	u8 ret[0x100];
++	int err, i;
++
++	mutex_lock(&priv->battery_lock);
++	err = huawei_wmi_cmd(dev, BATTERY_THRESH_GET, ret, 0x100);
++	mutex_unlock(&priv->battery_lock);
++	if (err)
++		return err;
++
++	/* Find the last two non-zero values. Return status is ignored. */
++	i = 0x100;
++	do {
++		*low = ret[i-1];
++		*high = ret[i];
++	} while (i > 2 && !ret[i--]);
++
++	return 0;
++}
++
++static int huawei_wmi_battery_set(struct device *dev, int low, int high)
++{
++	struct huawei_wmi_priv *priv = dev_get_drvdata(dev);
++	u8 arg[8];
++	int err;
++
++	*(u64 *)arg = BATTERY_THRESH_SET;
++	arg[2] = low;
++	arg[3] = high;
++
++	/* This is an edge case were some models turn battery protection
++	 * off without changing their thresholds values. We clear the
++	 * values before turning off protection. Sometimes we need a sleep delay to
++	 * make sure these values make their way to EC memory.
++	 */
++	if (low == 0 && high == 100)
++		huawei_wmi_battery_set(dev, 0, 0);
++
++	mutex_lock(&priv->battery_lock);
++	err = huawei_wmi_cmd(dev, *(u64 *)arg, NULL, NULL);
++	if (quirks && quirks->battery_sleep)
++		msleep(1000);
++	mutex_unlock(&priv->battery_lock);
++
++	return err;
++}
++
+ /* Input */
  
--	priv->handle = ec_get_handle();
--	if (!priv->handle)
--		return 0;
--
--	if (acpi_has_method(priv->handle, "SPIN"))
--		priv->acpi_method = "SPIN";
--	else if (acpi_has_method(priv->handle, "WPIN"))
--		priv->acpi_method = "WPIN";
--	else
--		return 0;
--
- 	priv->cdev.name = "platform::micmute";
- 	priv->cdev.max_brightness = 1;
- 	priv->cdev.brightness_set_blocking = huawei_wmi_micmute_led_set;
-@@ -412,9 +418,15 @@ static int huawei_wmi_probe(struct platform_device *pdev)
+ static void huawei_wmi_process_key(struct input_dev *idev, int code)
+@@ -418,6 +471,7 @@ static int huawei_wmi_probe(struct platform_device *pdev)
  
  	if (wmi_has_guid(HWMI_METHOD_GUID)) {
  		mutex_init(&priv->wmi_lock);
-+
-+		err = huawei_wmi_leds_setup(&pdev->dev);
-+		if (err) {
-+			dev_err(&pdev->dev, "Failed to setup leds\n");
-+			return err;
-+		}
- 	}
++		mutex_init(&priv->battery_lock);
  
--	return huawei_wmi_leds_setup(&pdev->dev);
-+	return 0;
- }
- 
- static int huawei_wmi_remove(struct platform_device *pdev)
+ 		err = huawei_wmi_leds_setup(&pdev->dev);
+ 		if (err) {
 -- 
 2.20.1
 
