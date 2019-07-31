@@ -2,104 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 413AD7C744
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 17:47:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C06057C743
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 17:47:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730218AbfGaPrR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 11:47:17 -0400
-Received: from foss.arm.com ([217.140.110.172]:50172 "EHLO foss.arm.com"
+        id S1730203AbfGaPrQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 11:47:16 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:8701 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730202AbfGaPrP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 11:47:15 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 789A81576;
-        Wed, 31 Jul 2019 08:47:15 -0700 (PDT)
-Received: from e112269-lin.arm.com (e112269-lin.cambridge.arm.com [10.1.196.133])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E394B3F694;
-        Wed, 31 Jul 2019 08:47:12 -0700 (PDT)
-From:   Steven Price <steven.price@arm.com>
-To:     linux-mm@kvack.org
-Cc:     Steven Price <steven.price@arm.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        James Morse <james.morse@arm.com>,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will@kernel.org>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Mark Rutland <Mark.Rutland@arm.com>,
-        "Liang, Kan" <kan.liang@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH v10 22/22] arm64: mm: Display non-present entries in ptdump
-Date:   Wed, 31 Jul 2019 16:46:03 +0100
-Message-Id: <20190731154603.41797-23-steven.price@arm.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190731154603.41797-1-steven.price@arm.com>
-References: <20190731154603.41797-1-steven.price@arm.com>
+        id S1730177AbfGaPrM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jul 2019 11:47:12 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 318DE2D1CE;
+        Wed, 31 Jul 2019 15:47:12 +0000 (UTC)
+Received: from gondolin (dhcp-192-232.str.redhat.com [10.33.192.232])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 8F6E55C1B5;
+        Wed, 31 Jul 2019 15:47:11 +0000 (UTC)
+Date:   Wed, 31 Jul 2019 17:47:09 +0200
+From:   Cornelia Huck <cohuck@redhat.com>
+To:     Alex Williamson <alex.williamson@redhat.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] vfio: re-arrange vfio region definitions
+Message-ID: <20190731174709.471126e6.cohuck@redhat.com>
+In-Reply-To: <20190717114956.16263-1-cohuck@redhat.com>
+References: <20190717114956.16263-1-cohuck@redhat.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Wed, 31 Jul 2019 15:47:12 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Previously the /sys/kernel/debug/kernel_page_tables file would only show
-lines for entries present in the page tables. However it is useful to
-also show non-present entries as this makes the size and level of the
-holes more visible. This aligns the behaviour with x86 which also shows
-holes.
+On Wed, 17 Jul 2019 13:49:56 +0200
+Cornelia Huck <cohuck@redhat.com> wrote:
 
-Signed-off-by: Steven Price <steven.price@arm.com>
----
- arch/arm64/mm/dump.c | 27 ++++++++++++++-------------
- 1 file changed, 14 insertions(+), 13 deletions(-)
+> It is easy to miss already defined region types. Let's re-arrange
+> the definitions a bit and add more comments to make it hopefully
+> a bit clearer.
+> 
+> No functional change.
+> 
+> Signed-off-by: Cornelia Huck <cohuck@redhat.com>
+> ---
+>  include/uapi/linux/vfio.h | 19 ++++++++++++-------
+>  1 file changed, 12 insertions(+), 7 deletions(-)
 
-diff --git a/arch/arm64/mm/dump.c b/arch/arm64/mm/dump.c
-index 5cc71ad567b4..765e8fc5640a 100644
---- a/arch/arm64/mm/dump.c
-+++ b/arch/arm64/mm/dump.c
-@@ -259,21 +259,22 @@ static void note_page(struct ptdump_state *pt_st, unsigned long addr, int level,
- 		if (st->current_prot) {
- 			note_prot_uxn(st, addr);
- 			note_prot_wx(st, addr);
--			pt_dump_seq_printf(st->seq, "0x%016lx-0x%016lx   ",
--				   st->start_address, addr);
-+		}
- 
--			delta = (addr - st->start_address) >> 10;
--			while (!(delta & 1023) && unit[1]) {
--				delta >>= 10;
--				unit++;
--			}
--			pt_dump_seq_printf(st->seq, "%9lu%c %s", delta, *unit,
--				   pg_level[st->level].name);
--			if (pg_level[st->level].bits)
--				dump_prot(st, pg_level[st->level].bits,
--					  pg_level[st->level].num);
--			pt_dump_seq_puts(st->seq, "\n");
-+		pt_dump_seq_printf(st->seq, "0x%016lx-0x%016lx   ",
-+			   st->start_address, addr);
-+
-+		delta = (addr - st->start_address) >> 10;
-+		while (!(delta & 1023) && unit[1]) {
-+			delta >>= 10;
-+			unit++;
- 		}
-+		pt_dump_seq_printf(st->seq, "%9lu%c %s", delta, *unit,
-+			   pg_level[st->level].name);
-+		if (st->current_prot && pg_level[st->level].bits)
-+			dump_prot(st, pg_level[st->level].bits,
-+				  pg_level[st->level].num);
-+		pt_dump_seq_puts(st->seq, "\n");
- 
- 		if (addr >= st->marker[1].start_address) {
- 			st->marker++;
--- 
-2.20.1
+Friendly ping :)
+
+> 
+> diff --git a/include/uapi/linux/vfio.h b/include/uapi/linux/vfio.h
+> index 8f10748dac79..d9bcf40240be 100644
+> --- a/include/uapi/linux/vfio.h
+> +++ b/include/uapi/linux/vfio.h
+> @@ -295,15 +295,23 @@ struct vfio_region_info_cap_type {
+>  	__u32 subtype;	/* type specific */
+>  };
+>  
+> +/*
+> + * List of region types, global per bus driver.
+> + * If you introduce a new type, please add it here.
+> + */
+> +
+> +/* PCI region type containing a PCI vendor part */
+>  #define VFIO_REGION_TYPE_PCI_VENDOR_TYPE	(1 << 31)
+>  #define VFIO_REGION_TYPE_PCI_VENDOR_MASK	(0xffff)
+> +#define VFIO_REGION_TYPE_GFX                    (1)
+> +#define VFIO_REGION_TYPE_CCW			(2)
+>  
+> -/* 8086 Vendor sub-types */
+> +/* 8086 vendor PCI sub-types */
+>  #define VFIO_REGION_SUBTYPE_INTEL_IGD_OPREGION	(1)
+>  #define VFIO_REGION_SUBTYPE_INTEL_IGD_HOST_CFG	(2)
+>  #define VFIO_REGION_SUBTYPE_INTEL_IGD_LPC_CFG	(3)
+>  
+> -#define VFIO_REGION_TYPE_GFX                    (1)
+> +/* GFX sub-types */
+>  #define VFIO_REGION_SUBTYPE_GFX_EDID            (1)
+>  
+>  /**
+> @@ -353,20 +361,17 @@ struct vfio_region_gfx_edid {
+>  #define VFIO_DEVICE_GFX_LINK_STATE_DOWN  2
+>  };
+>  
+> -#define VFIO_REGION_TYPE_CCW			(2)
+>  /* ccw sub-types */
+>  #define VFIO_REGION_SUBTYPE_CCW_ASYNC_CMD	(1)
+>  
+> +/* 10de vendor PCI sub-types */
+>  /*
+> - * 10de vendor sub-type
+> - *
+>   * NVIDIA GPU NVlink2 RAM is coherent RAM mapped onto the host address space.
+>   */
+>  #define VFIO_REGION_SUBTYPE_NVIDIA_NVLINK2_RAM	(1)
+>  
+> +/* 1014 vendor PCI sub-types*/
+>  /*
+> - * 1014 vendor sub-type
+> - *
+>   * IBM NPU NVlink2 ATSD (Address Translation Shootdown) register of NPU
+>   * to do TLB invalidation on a GPU.
+>   */
 
