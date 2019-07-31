@@ -2,140 +2,228 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3F8B7C57F
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 17:07:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B46D7C590
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 17:09:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388257AbfGaPH2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 11:07:28 -0400
-Received: from shelob.surriel.com ([96.67.55.147]:45634 "EHLO
-        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387662AbfGaPH2 (ORCPT
+        id S2388617AbfGaPIe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 11:08:34 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:43836 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388560AbfGaPI2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 11:07:28 -0400
-Received: from imladris.surriel.com ([96.67.55.152])
-        by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.92)
-        (envelope-from <riel@shelob.surriel.com>)
-        id 1hsqCM-0001Qa-NS; Wed, 31 Jul 2019 11:07:26 -0400
-Message-ID: <76dbc397e21d64da75cd07d90b3ca15ca50d6fbb.camel@surriel.com>
-Subject: Re: [PATCH v3] sched/core: Don't use dying mm as active_mm of
- kthreads
-From:   Rik van Riel <riel@surriel.com>
-To:     Waiman Long <longman@redhat.com>,
+        Wed, 31 Jul 2019 11:08:28 -0400
+Received: by mail-ed1-f66.google.com with SMTP id e3so66031035edr.10
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 08:08:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=BL5Bv5lW/jYayEJoRe2+9QezMkCC+60ESskc5jI43rc=;
+        b=Z+QZrz8RxaQVkEmqQR+P3He1RAcsz276GYydPQCrBvVFzTQKhJYu7NE41afsSGcW6+
+         PEkJHs8N+UZO3AYfKlsxwVJLTOvBwiOb7PnAjByNuwdd5U2faK6XX8qM7PxvuCxO/mbu
+         tGAo18iJgYPJ1Ot5DSRbXJIlTHuucTq2ZxCKM1dP5WZHTSE1FnneQRwt/g0J7LAxwo9y
+         1kEtDf3Gtz6f8i1Dcl7z5jwv2Di5k2T62pCpUzzd1Hc8x6HKFWlkGzFRwJd9NLtmsaB8
+         eZcrNUzOtJQwWsRlLRsolI/HegBB7F8KhoBR5T1awdNiOE/MGBOV2CCucAo20gDECZFx
+         G0pA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=BL5Bv5lW/jYayEJoRe2+9QezMkCC+60ESskc5jI43rc=;
+        b=jgPUjp+eVet0dKYhHMeyCuEMCkvXHqiQ7VKVz4vAeXfiEybxTWHKUsly9AelzAaDVW
+         R9TFT/h4FmlKdLe3Pt4S1rcveHIPzHh7ezGCe9VOz0jcjtylSFiwMG9evbwRtO9kJo5d
+         uObtShnVXbUMl1uo3B8rUmqTifhxjz3qkEx3eu3xHYx7RUOaDFxtAScxK42y1zigym2J
+         3x11MkAc660k0GMFv4x6R6TPrCbB2ZWwv9SNLLwmMwc2tcKp9SC8XOywfNxAvsgfiKyP
+         Nf9Nn7taYx7HzMDsOswPZ4CkrdHpJAjNrXjIEcfuKPZ9vqu78Y+FAjiyi2mrTTdzBk7u
+         UbZg==
+X-Gm-Message-State: APjAAAX+apOcvlk0O1HuziVaaxdVCz8tGEApNaAFICWUFDms2Pzyxiom
+        RsMyd6yrCB1BqutYFujLLBs=
+X-Google-Smtp-Source: APXvYqznZSrsxmfkB4pexMYFvT9i/MDUnejlA2skN/Nit1TPuevFqcmrEwStP937D+YpXbOTCbclHw==
+X-Received: by 2002:a17:906:604c:: with SMTP id p12mr94494193ejj.26.1564585706687;
+        Wed, 31 Jul 2019 08:08:26 -0700 (PDT)
+Received: from box.localdomain ([86.57.175.117])
+        by smtp.gmail.com with ESMTPSA id t16sm8546953ejr.83.2019.07.31.08.08.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 31 Jul 2019 08:08:22 -0700 (PDT)
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+X-Google-Original-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Received: by box.localdomain (Postfix, from userid 1000)
+        id 5011C101C44; Wed, 31 Jul 2019 18:08:16 +0300 (+03)
+To:     Andrew Morton <akpm@linux-foundation.org>, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Borislav Petkov <bp@alien8.de>,
         Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Phil Auld <pauld@redhat.com>, Michal Hocko <mhocko@kernel.org>
-Date:   Wed, 31 Jul 2019 11:07:26 -0400
-In-Reply-To: <01125822-c883-18ce-42e4-942a4f28c128@redhat.com>
-References: <20190729210728.21634-1-longman@redhat.com>
-         <ec9effc07a94b28ecf364de40dee183bcfb146fc.camel@surriel.com>
-         <3e2ff4c9-c51f-8512-5051-5841131f4acb@redhat.com>
-         <8021be4426fdafdce83517194112f43009fb9f6d.camel@surriel.com>
-         <b5a462b8-8ef6-6d2c-89aa-b5009c194000@redhat.com>
-         <c91e6104acaef118ae09e4b4b0c70232c4583293.camel@surriel.com>
-         <01125822-c883-18ce-42e4-942a4f28c128@redhat.com>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-LA3XQyUFN0DfKhuFWUzC"
-User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
+        Andy Lutomirski <luto@amacapital.net>,
+        David Howells <dhowells@redhat.com>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Kai Huang <kai.huang@linux.intel.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        Alison Schofield <alison.schofield@intel.com>,
+        linux-mm@kvack.org, kvm@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: [PATCHv2 14/59] x86/mm: Add hooks to allocate and free encrypted pages
+Date:   Wed, 31 Jul 2019 18:07:28 +0300
+Message-Id: <20190731150813.26289-15-kirill.shutemov@linux.intel.com>
+X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20190731150813.26289-1-kirill.shutemov@linux.intel.com>
+References: <20190731150813.26289-1-kirill.shutemov@linux.intel.com>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hook up into page allocator to allocate and free encrypted page
+properly.
 
---=-LA3XQyUFN0DfKhuFWUzC
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+The hardware/CPU does not enforce coherency between mappings of the same
+physical page with different KeyIDs or encryption keys.
+We are responsible for cache management.
 
-On Wed, 2019-07-31 at 10:15 -0400, Waiman Long wrote:
-> On 7/31/19 9:48 AM, Rik van Riel wrote:
-> > On Tue, 2019-07-30 at 17:01 -0400, Waiman Long wrote:
-> > > On 7/29/19 8:26 PM, Rik van Riel wrote:
-> > > > On Mon, 2019-07-29 at 17:42 -0400, Waiman Long wrote:
-> > > >=20
-> > > > > What I have found is that a long running process on a mostly
-> > > > > idle
-> > > > > system
-> > > > > with many CPUs is likely to cycle through a lot of the CPUs
-> > > > > during
-> > > > > its
-> > > > > lifetime and leave behind its mm in the active_mm of those
-> > > > > CPUs.  My
-> > > > > 2-socket test system have 96 logical CPUs. After running the
-> > > > > test
-> > > > > program for a minute or so, it leaves behind its mm in about
-> > > > > half
-> > > > > of
-> > > > > the
-> > > > > CPUs with a mm_count of 45 after exit. So the dying mm will
-> > > > > stay
-> > > > > until
-> > > > > all those 45 CPUs get new user tasks to run.
-> > > > OK. On what kernel are you seeing this?
-> > > >=20
-> > > > On current upstream, the code in native_flush_tlb_others()
-> > > > will send a TLB flush to every CPU in mm_cpumask() if page
-> > > > table pages have been freed.
-> > > >=20
-> > > > That should cause the lazy TLB CPUs to switch to init_mm
-> > > > when the exit->zap_page_range path gets to the point where
-> > > > it frees page tables.
-> > > >=20
-> > > I was using the latest upstream 5.3-rc2 kernel. It may be the
-> > > case
-> > > that
-> > > the mm has been switched, but the mm_count field of the active_mm
-> > > of
-> > > the
-> > > kthread is not being decremented until a user task runs on a CPU.
-> > Is that something we could fix from the TLB flushing
-> > code?
-> >=20
-> > When switching to init_mm, drop the refcount on the
-> > lazy mm?
-> >=20
-> > That way that overhead is not added to the context
-> > switching code.
->=20
-> I have thought about that. That will require changing the active_mm
-> of
-> the current task to point to init_mm, for example. Since TLB flush is
-> done in interrupt context, proper coordination between interrupt and
-> process context will require some atomic instruction which will
-> defect
-> the purpose.
+Flush cache on allocating encrypted page and on returning the page to
+the free pool.
 
-Would it be possible to work around that by scheduling
-a work item that drops the active_mm?
+prep_encrypted_page() also takes care about zeroing the page. We have to
+do this after KeyID is set for the page.
 
-After all, a work item runs in a kernel thread, so by
-the time the work item is run, either the kernel will
-still be running the mm you want to get rid of as
-active_mm, or it will have already gotten rid of it
-earlier.
+The patch relies on page_address() to return virtual address of the page
+mapping with the current KeyID. It will be implemented later in the
+patchset.
 
---=20
-All Rights Reversed.
+Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+---
+ arch/x86/include/asm/mktme.h | 17 ++++++++
+ arch/x86/mm/mktme.c          | 83 ++++++++++++++++++++++++++++++++++++
+ 2 files changed, 100 insertions(+)
 
---=-LA3XQyUFN0DfKhuFWUzC
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAl1Brq4ACgkQznnekoTE
-3oO3eQf5AccmrRMXxWm78tqusxi+4qeoJTYk0e55qTe9ICxJJM1GjyKCEok1mcRz
-MKCKG1Gf6OMsZSp76dqQ3/WhbveHGMM7q+TBRqS3uKi2T+1kn3iPju0X66OYJ3jV
-GCxf3mhuBwgbMAlJ/orHvbX0TUwE7yHnVWQOLU0PdivEvfA9FBU7LsnnDHhm8EzL
-BSPJ1Qugfn7o9PrrFTGAARfEYQ2/ZHIhL3c1SZOfF6psCDIJaNJJbzCrUG12OVZU
-eWZgt8mtpmozWRxZ+7s1UkYSXfIDOJQkRtHNcRtikonqBO3Tt/e8RFJBP5Rp0ond
-HvpD66RQSO4zrn91S5EaUfnGmos7Zg==
-=yJHK
------END PGP SIGNATURE-----
-
---=-LA3XQyUFN0DfKhuFWUzC--
+diff --git a/arch/x86/include/asm/mktme.h b/arch/x86/include/asm/mktme.h
+index 52b115b30a42..a61b45fca4b1 100644
+--- a/arch/x86/include/asm/mktme.h
++++ b/arch/x86/include/asm/mktme.h
+@@ -43,6 +43,23 @@ static inline int vma_keyid(struct vm_area_struct *vma)
+ 	return __vma_keyid(vma);
+ }
+ 
++#define prep_encrypted_page prep_encrypted_page
++void __prep_encrypted_page(struct page *page, int order, int keyid, bool zero);
++static inline void prep_encrypted_page(struct page *page, int order,
++		int keyid, bool zero)
++{
++	if (keyid)
++		__prep_encrypted_page(page, order, keyid, zero);
++}
++
++#define HAVE_ARCH_FREE_PAGE
++void free_encrypted_page(struct page *page, int order);
++static inline void arch_free_page(struct page *page, int order)
++{
++	if (page_keyid(page))
++		free_encrypted_page(page, order);
++}
++
+ #else
+ #define mktme_keyid_mask()	((phys_addr_t)0)
+ #define mktme_nr_keyids()	0
+diff --git a/arch/x86/mm/mktme.c b/arch/x86/mm/mktme.c
+index d02867212e33..8015e7822c9b 100644
+--- a/arch/x86/mm/mktme.c
++++ b/arch/x86/mm/mktme.c
+@@ -1,4 +1,5 @@
+ #include <linux/mm.h>
++#include <linux/highmem.h>
+ #include <asm/mktme.h>
+ 
+ /* Mask to extract KeyID from physical address. */
+@@ -55,3 +56,85 @@ int __vma_keyid(struct vm_area_struct *vma)
+ 	pgprotval_t prot = pgprot_val(vma->vm_page_prot);
+ 	return (prot & mktme_keyid_mask()) >> mktme_keyid_shift();
+ }
++
++/* Prepare page to be used for encryption. Called from page allocator. */
++void __prep_encrypted_page(struct page *page, int order, int keyid, bool zero)
++{
++	int i;
++
++	/*
++	 * The hardware/CPU does not enforce coherency between mappings
++	 * of the same physical page with different KeyIDs or
++	 * encryption keys. We are responsible for cache management.
++	 *
++	 * Flush cache lines with KeyID-0. page_address() returns virtual
++	 * address of the page mapping with the current (zero) KeyID.
++	 */
++	clflush_cache_range(page_address(page), PAGE_SIZE * (1UL << order));
++
++	for (i = 0; i < (1 << order); i++) {
++		/* All pages coming out of the allocator should have KeyID 0 */
++		WARN_ON_ONCE(lookup_page_ext(page)->keyid);
++
++		/*
++		 * Change KeyID. From now on page_address() will return address
++		 * of the page mapping with the new KeyID.
++		 *
++		 * We don't need barrier() before the KeyID change because
++		 * clflush_cache_range() above stops compiler from reordring
++		 * past the point with mb().
++		 *
++		 * And we don't need a barrier() after the assignment because
++		 * any future reference of KeyID (i.e. from page_address())
++		 * will create address dependency and compiler is not allow to
++		 * mess with this.
++		 */
++		lookup_page_ext(page)->keyid = keyid;
++
++		/* Clear the page after the KeyID is set. */
++		if (zero)
++			clear_highpage(page);
++
++		page++;
++	}
++}
++
++/*
++ * Handles freeing of encrypted page.
++ * Called from page allocator on freeing encrypted page.
++ */
++void free_encrypted_page(struct page *page, int order)
++{
++	int i;
++
++	/*
++	 * The hardware/CPU does not enforce coherency between mappings
++	 * of the same physical page with different KeyIDs or
++	 * encryption keys. We are responsible for cache management.
++	 *
++	 * Flush cache lines with non-0 KeyID. page_address() returns virtual
++	 * address of the page mapping with the current (non-zero) KeyID.
++	 */
++	clflush_cache_range(page_address(page), PAGE_SIZE * (1UL << order));
++
++	for (i = 0; i < (1 << order); i++) {
++		/* Check if the page has reasonable KeyID */
++		WARN_ON_ONCE(!lookup_page_ext(page)->keyid);
++		WARN_ON_ONCE(lookup_page_ext(page)->keyid > mktme_nr_keyids());
++
++		/*
++		 * Switch the page back to zero KeyID.
++		 *
++		 * We don't need barrier() before the KeyID change because
++		 * clflush_cache_range() above stops compiler from reordring
++		 * past the point with mb().
++		 *
++		 * And we don't need a barrier() after the assignment because
++		 * any future reference of KeyID (i.e. from page_address())
++		 * will create address dependency and compiler is not allow to
++		 * mess with this.
++		 */
++		lookup_page_ext(page)->keyid = 0;
++		page++;
++	}
++}
+-- 
+2.21.0
 
