@@ -2,65 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 04B8F7BD9F
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 11:47:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1ED7D7BDAA
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 11:49:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728321AbfGaJrm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 05:47:42 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:36495 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726605AbfGaJrl (ORCPT
+        id S1728872AbfGaJsS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 05:48:18 -0400
+Received: from cmccmta2.chinamobile.com ([221.176.66.80]:2142 "EHLO
+        cmccmta2.chinamobile.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726605AbfGaJsS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 05:47:41 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1hslCr-0006P6-2g; Wed, 31 Jul 2019 09:47:37 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Larry Finger <Larry.Finger@lwfinger.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Michael Straube <straube.linux@gmail.com>,
-        devel@driverdev.osuosl.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: rtl8188eu: remove redundant assignment to variable rtstatus
-Date:   Wed, 31 Jul 2019 10:47:36 +0100
-Message-Id: <20190731094736.28637-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.20.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        Wed, 31 Jul 2019 05:48:18 -0400
+Received: from spf.mail.chinamobile.com (unknown[172.16.121.11]) by rmmx-syy-dmz-app08-12008 (RichMail) with SMTP id 2ee85d4163cf051-9f86a; Wed, 31 Jul 2019 17:47:59 +0800 (CST)
+X-RM-TRANSID: 2ee85d4163cf051-9f86a
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG: 00000000
+Received: from localhost.localdomain (unknown[223.105.0.243])
+        by rmsmtp-syy-appsvr06-12006 (RichMail) with SMTP id 2ee65d4163cdc33-15425;
+        Wed, 31 Jul 2019 17:47:59 +0800 (CST)
+X-RM-TRANSID: 2ee65d4163cdc33-15425
+From:   Ding Xiang <dingxiang@cmss.chinamobile.com>
+To:     linus.walleij@linaro.org, bgolaszewski@baylibre.com
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] gpio: ixp4xx: remove redundant dev_err message
+Date:   Wed, 31 Jul 2019 17:47:54 +0800
+Message-Id: <1564566474-18294-1-git-send-email-dingxiang@cmss.chinamobile.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+devm_ioremap_resource already contains error message, so remove
+the redundant dev_err message
 
-Variable rtstatus is being initialized with a value that is never read
-and rtstatus is being re-assigned a little later on. The assignment is
-redundant and hence can be removed.  Also, make rtstatus a bool to
-match the function return type.
-
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Ding Xiang <dingxiang@cmss.chinamobile.com>
 ---
- drivers/staging/rtl8188eu/hal/bb_cfg.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpio/gpio-ixp4xx.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/staging/rtl8188eu/hal/bb_cfg.c b/drivers/staging/rtl8188eu/hal/bb_cfg.c
-index 11e0bb9c67d7..51882858fcf0 100644
---- a/drivers/staging/rtl8188eu/hal/bb_cfg.c
-+++ b/drivers/staging/rtl8188eu/hal/bb_cfg.c
-@@ -653,7 +653,7 @@ static bool config_parafile(struct adapter *adapt)
+diff --git a/drivers/gpio/gpio-ixp4xx.c b/drivers/gpio/gpio-ixp4xx.c
+index 670c2a8..2b2b89b 100644
+--- a/drivers/gpio/gpio-ixp4xx.c
++++ b/drivers/gpio/gpio-ixp4xx.c
+@@ -321,10 +321,8 @@ static int ixp4xx_gpio_probe(struct platform_device *pdev)
  
- bool rtl88eu_phy_bb_config(struct adapter *adapt)
- {
--	int rtstatus = true;
-+	bool rtstatus;
- 	u32 regval;
- 	u8 crystal_cap;
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	g->base = devm_ioremap_resource(dev, res);
+-	if (IS_ERR(g->base)) {
+-		dev_err(dev, "ioremap error\n");
++	if (IS_ERR(g->base))
+ 		return PTR_ERR(g->base);
+-	}
  
+ 	/*
+ 	 * Make sure GPIO 14 and 15 are NOT used as clocks but GPIO on
 -- 
-2.20.1
+1.9.1
+
+
 
