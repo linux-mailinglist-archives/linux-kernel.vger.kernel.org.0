@@ -2,167 +2,291 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FF827C602
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 17:19:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6FAEC7C5EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 17:18:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729711AbfGaPTq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 11:19:46 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:38276 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729675AbfGaPTo (ORCPT
+        id S1727850AbfGaPSW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 11:18:22 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:63362 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726859AbfGaPSV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 11:19:44 -0400
-Received: by mail-ed1-f66.google.com with SMTP id r12so31255799edo.5
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 08:19:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=WTAAjTsK3+3w7eSPHsyJf/zyVQM+N+66EXtK8GvqGh0=;
-        b=vHCm2eeuCUQs2yHSeXWs6297E3LD/DJ3yKHjxnQ3uS38oTOhZMWNOL2t2b8qyqezCd
-         TSyHJ2nZIkIp+xozfa1fMkbPHgLyD07pzVHXY1r0RJbOqJQjIa59zY+kzkFpFK+i6bAm
-         u2IRsUZJ7qr8muyrOi/vvs1sPIHYD5F+Sz93KlJmSVBGUVMoNkaJnWL0flwcUWdk1Rd+
-         pJLhMUZ1mXkr512XbgaOmHVFaepWq9DNGGdxUvxD97xw+4EXINwjigBZSkDbyOrFGk9v
-         coI9yYfL7DOZadkWb+EyLWXGslgUVJIufSy67o3yRyMY9W/s+uFsbxg0YK6+eu5onsz9
-         Qs2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=WTAAjTsK3+3w7eSPHsyJf/zyVQM+N+66EXtK8GvqGh0=;
-        b=gcfHMi5JCL0wTC3ImRN6CVyLIGLGhAsOI9n+JNkUdwuutG9PftTy3bynzX4ReSqxq+
-         vGRr5awz+wgS2ks0y22VuFgKf+TWCR83BKBe1YNrDZBY4ZhhFQiZadV4R2kE1yz6VJXA
-         K8BXIzxUZN3GcI3bL4ZkqiAxtwcR88i/QMPJw8LQgojI4dtD9eXOwTAL5THX3NHxU1M7
-         VqetmoOIgxJRdOvpu1v/k823odslUR01twD9gI/Lkadh4h+e0AtFMel+SIt0ZoYYlw7r
-         Js9zjObq6nLnXaL9ASVasHCpLEn2Sy3/WgX5eoL5Z8iKigYGsurdI+XIG2rOKm11/rSX
-         cCKg==
-X-Gm-Message-State: APjAAAWdEJdQLfSRLclaZt0NhM1psGxtZzMqJqgn54ATfTH7rV26rrvl
-        YHM1JPfjzEWeQx47EmL2PuY=
-X-Google-Smtp-Source: APXvYqyDF7Ax4wPwm75VtJQs6n6Sw+upz55I60UXt6jJNg1T+Xcry5rWrrwsNPjn0mCM+yzapDyh9Q==
-X-Received: by 2002:a50:9153:: with SMTP id f19mr109455097eda.70.1564586035945;
-        Wed, 31 Jul 2019 08:13:55 -0700 (PDT)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id q56sm17022134eda.28.2019.07.31.08.13.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 31 Jul 2019 08:13:53 -0700 (PDT)
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-X-Google-Original-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Received: by box.localdomain (Postfix, from userid 1000)
-        id 87A6F1048A9; Wed, 31 Jul 2019 18:08:17 +0300 (+03)
-To:     Andrew Morton <akpm@linux-foundation.org>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Borislav Petkov <bp@alien8.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        David Howells <dhowells@redhat.com>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Kai Huang <kai.huang@linux.intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        Alison Schofield <alison.schofield@intel.com>,
-        linux-mm@kvack.org, kvm@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: [PATCHv2 57/59] x86/mktme: Document the MKTME Key Service API
-Date:   Wed, 31 Jul 2019 18:08:11 +0300
-Message-Id: <20190731150813.26289-58-kirill.shutemov@linux.intel.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190731150813.26289-1-kirill.shutemov@linux.intel.com>
-References: <20190731150813.26289-1-kirill.shutemov@linux.intel.com>
+        Wed, 31 Jul 2019 11:18:21 -0400
+X-UUID: fec258378a214b9681d644dcc4839ef7-20190731
+X-UUID: fec258378a214b9681d644dcc4839ef7-20190731
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw02.mediatek.com
+        (envelope-from <miles.chen@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0707 with TLS)
+        with ESMTP id 11032262; Wed, 31 Jul 2019 23:13:11 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 31 Jul 2019 23:13:10 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Wed, 31 Jul 2019 23:13:10 +0800
+From:   Miles Chen <miles.chen@mediatek.com>
+To:     Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>
+CC:     <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <wsd_upstream@mediatek.com>,
+        Miles Chen <miles.chen@mediatek.com>,
+        Yingjoe Chen <yingjoe.chen@mediatek.com>
+Subject: [PATCH v3] checkpatch: add several Kconfig default value tests
+Date:   Wed, 31 Jul 2019 23:13:09 +0800
+Message-ID: <20190731151309.1167-1-miles.chen@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alison Schofield <alison.schofield@intel.com>
+This change adds 3 Kconfig default value tests.
+Repost patch v3 (Follow Joe's suggestion in v2)
 
-Signed-off-by: Alison Schofield <alison.schofield@intel.com>
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+1. discourage default n cases:
+e.g.,
+default n
+
+2. discourage default "[ynm]" cases:
+e.g.,
+arch/powerpc/Kconfig:   default "y" if PPC_POWERNV
+arch/powerpc/Kconfig:   default "y" if PPC_POWERNV
+arch/powerpc/Kconfig:   default "n"
+drivers/auxdisplay/Kconfig:     default "n"
+drivers/crypto/Kconfig: default "m"
+drivers/rapidio/devices/Kconfig:        default "n"
+
+3. discourage default EXPERT or default !EXPERT cases:
+e.g.,
+drivers/hid/Kconfig:    default !EXPERT
+
+tested cases:
+default m
+default n if ALPHA_EV5 || ALPHA_EV56 || (ALPHA_EV4 && !ALPHA_LCA)
+default y if ALPHA_QEMU
+default n if PPC_POWERNV
+default n
+default EXPERT
+default !EXPERT
+default "m"
+default "n"
+default "y" if EXPERT
+default "y" if PPC_POWERNV
+
+test result:
+WARNING: 'default n' is the default value, no need to write it explicitly
++       default n
+
+WARNING: Avoid using default EXPERT
++       default EXPERT
+
+WARNING: Avoid using default EXPERT
++       default !EXPERT
+
+WARNING: Use 'default m' not 'default "m"'
++       default "m"
+
+WARNING: Use 'default n' not 'default "n"'
++       default "n"
+
+WARNING: Use 'default y' not 'default "y"'
++       default "y" if EXPERT
+
+WARNING: Use 'default y' not 'default "y"'
++       default "y" if PPC_POWERNV
+
+test --fix capability:
+default n => delete line
+default "m" => default m
+default "n" => default n
+default "y" if EXPERT => default y if EXPERT
+default "y" if PPC_POWERNV => default y if PPC_POWERNV
+default !EXPERT => no change
+default EXPERT => no change
+
+Change since v1:
+discourage default n$
+discourage default "[ynm]"
+discourage default \!?EXPERT
+
+Change since v2:
+test Kconfig in a single block
+print precise message such as 'default "m"', not 'default "[ynm]"'
+provide --fix capability
+
+Cc: Joe Perches <joe@perches.com>
+Cc: Yingjoe Chen <yingjoe.chen@mediatek.com>
+Signed-off-by: Miles Chen <miles.chen@mediatek.com>
 ---
- Documentation/x86/mktme/index.rst      |  1 +
- Documentation/x86/mktme/mktme_keys.rst | 61 ++++++++++++++++++++++++++
- 2 files changed, 62 insertions(+)
- create mode 100644 Documentation/x86/mktme/mktme_keys.rst
+ scripts/checkpatch.pl | 139 ++++++++++++++++++++++++++----------------
+ 1 file changed, 85 insertions(+), 54 deletions(-)
 
-diff --git a/Documentation/x86/mktme/index.rst b/Documentation/x86/mktme/index.rst
-index 0f021cc4a2db..8cf2b7d62091 100644
---- a/Documentation/x86/mktme/index.rst
-+++ b/Documentation/x86/mktme/index.rst
-@@ -8,3 +8,4 @@ Multi-Key Total Memory Encryption (MKTME)
-    mktme_overview
-    mktme_mitigations
-    mktme_configuration
-+   mktme_keys
-diff --git a/Documentation/x86/mktme/mktme_keys.rst b/Documentation/x86/mktme/mktme_keys.rst
-new file mode 100644
-index 000000000000..5d9125eb7950
---- /dev/null
-+++ b/Documentation/x86/mktme/mktme_keys.rst
-@@ -0,0 +1,61 @@
-+MKTME Key Service API
-+=====================
-+MKTME is a new key service type added to the Linux Kernel Key Service.
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index 93a7edfe0f05..b080eea68cf6 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -2932,60 +2932,98 @@ sub process {
+ 				      "Do not include the paragraph about writing to the Free Software Foundation's mailing address from the sample GPL notice. The FSF has changed addresses in the past, and may do so again. Linux already includes a copy of the GPL.\n" . $herevet)
+ 		}
+ 
+-# check for Kconfig help text having a real description
+-# Only applies when adding the entry originally, after that we do not have
+-# sufficient context to determine whether it is indeed long enough.
+-		if ($realfile =~ /Kconfig/ &&
+-		    # 'choice' is usually the last thing on the line (though
+-		    # Kconfig supports named choices), so use a word boundary
+-		    # (\b) rather than a whitespace character (\s)
+-		    $line =~ /^\+\s*(?:config|menuconfig|choice)\b/) {
+-			my $length = 0;
+-			my $cnt = $realcnt;
+-			my $ln = $linenr + 1;
+-			my $f;
+-			my $is_start = 0;
+-			my $is_end = 0;
+-			for (; $cnt > 0 && defined $lines[$ln - 1]; $ln++) {
+-				$f = $lines[$ln - 1];
+-				$cnt-- if ($lines[$ln - 1] !~ /^-/);
+-				$is_end = $lines[$ln - 1] =~ /^\+/;
+-
+-				next if ($f =~ /^-/);
+-				last if (!$file && $f =~ /^\@\@/);
+-
+-				if ($lines[$ln - 1] =~ /^\+\s*(?:bool|tristate|prompt)\s*["']/) {
+-					$is_start = 1;
+-				} elsif ($lines[$ln - 1] =~ /^\+\s*(?:help|---help---)\s*$/) {
+-					if ($lines[$ln - 1] =~ "---help---") {
+-						WARN("CONFIG_DESCRIPTION",
+-						     "prefer 'help' over '---help---' for new help texts\n" . $herecurr);
++# Kconfig tests
++		if ($realfile =~ /Kconfig/) {
++			# check for Kconfig help text having a real description
++			# Only applies when adding the entry originally, after
++			# that we do not have sufficient context to determine
++			# whether it is indeed long enough.
++			# 'choice' is usually the last thing on the line (though
++			# Kconfig supports named choices), so use a word
++			# boundary (\b) rather than a whitespace character (\s)
++			if ($line =~ /^\+\s*(?:config|menuconfig|choice)\b/) {
++				my $length = 0;
++				my $cnt = $realcnt;
++				my $ln = $linenr + 1;
++				my $f;
++				my $is_start = 0;
++				my $is_end = 0;
++				for (; $cnt > 0 && defined $lines[$ln - 1]; $ln++) {
++					$f = $lines[$ln - 1];
++					$cnt-- if ($lines[$ln - 1] !~ /^-/);
++					$is_end = $lines[$ln - 1] =~ /^\+/;
 +
-+The MKTME Key Service type is available when CONFIG_X86_INTEL_MKTME is
-+turned on in Intel platforms that support the MKTME feature.
++					next if ($f =~ /^-/);
++					last if (!$file && $f =~ /^\@\@/);
 +
-+The MKTME Key Service type manages the allocation of hardware encryption
-+keys. Users can request an MKTME type key and then use that key to
-+encrypt memory with the encrypt_mprotect() system call.
++					if ($lines[$ln - 1] =~ /^\+\s*(?:bool|tristate|prompt)\s*["']/) {
++						$is_start = 1;
++					} elsif ($lines[$ln - 1] =~ /^\+\s*(?:help|---help---)\s*$/) {
++						if ($lines[$ln - 1] =~ "---help---") {
++							WARN("CONFIG_DESCRIPTION",
++							     "prefer 'help' over '---help---' for new help texts\n" . $herecurr);
++						}
++						$length = -1;
++					}
 +
-+Usage
-+-----
-+    When using the Kernel Key Service to request an *mktme* key,
-+    specify the *payload* as follows:
++					$f =~ s/^.//;
++					$f =~ s/#.*//;
++					$f =~ s/^\s+//;
++					next if ($f =~ /^$/);
 +
-+    type=
-+        *cpu*	User requests a CPU generated encryption key.
-+                The CPU generates and assigns an ephemeral key.
++					# This only checks context lines in the patch
++					# and so hopefully shouldn't trigger false
++					# positives, even though some of these are
++					# common words in help texts
++					if ($f =~ /^\s*(?:config|menuconfig|choice|endchoice|
++							   if|endif|menu|endmenu|source)\b/x) {
++						$is_end = 1;
++						last;
+ 					}
+-					$length = -1;
++					$length++;
++				}
++				if ($is_start && $is_end && $length < $min_conf_desc_length) {
++					WARN("CONFIG_DESCRIPTION",
++					     "please write a paragraph that describes the config symbol fully\n" . $herecurr);
+ 				}
++				#print "is_start<$is_start> is_end<$is_end> length<$length>\n";
++			}
+ 
+-				$f =~ s/^.//;
+-				$f =~ s/#.*//;
+-				$f =~ s/^\s+//;
+-				next if ($f =~ /^$/);
+-
+-				# This only checks context lines in the patch
+-				# and so hopefully shouldn't trigger false
+-				# positives, even though some of these are
+-				# common words in help texts
+-				if ($f =~ /^\s*(?:config|menuconfig|choice|endchoice|
+-						  if|endif|menu|endmenu|source)\b/x) {
+-					$is_end = 1;
+-					last;
++# discourage the use of boolean for type definition attributes
++			if ($line =~ /^\+\s*\bboolean\b/) {
++				if (WARN("CONFIG_TYPE_BOOLEAN",
++					 "Use of boolean is deprecated, please use bool instead\n" . $herecurr) &&
++				    $fix) {
++					$fixed[$fixlinenr] =~ s/\bboolean\b/bool/;
++				}
++			}
 +
-+        *no-encrypt*
-+                 User requests that hardware does not encrypt
-+                 memory when this key is in use.
++# Kconfig: discourage redundant 'default n'
++			if ($line =~ /^\+\s*default\s+n$/) {
++				if (WARN("CONFIG_DEFAULT_VALUE_STYLE",
++					 "'default n' is the default value, no need to write it explicitly\n" . $herecurr) &&
++				    $fix) {
++					fix_delete_line($fixlinenr, $rawline);
+ 				}
+-				$length++;
+ 			}
+-			if ($is_start && $is_end && $length < $min_conf_desc_length) {
+-				WARN("CONFIG_DESCRIPTION",
+-				     "please write a paragraph that describes the config symbol fully\n" . $herecurr);
 +
-+    algorithm=
-+        When type=cpu the algorithm field must be *aes-xts-128*
-+        *aes-xts-128* is the only supported encryption algorithm
++# Kconfig: discourage quoted defaults: use default [ynm], not default "[ynm]"
++			if ($rawline =~ /^\+\s*default\s+"([ynm])"/) {
++				if (WARN("CONFIG_DEFAULT_VALUE_STYLE",
++					 "Use 'default $1' not 'default \"$1\"'\n" . $herecurr) &&
++				    $fix) {
++					$fixed[$fixlinenr] =~ s/\b(default\s+)"(.)"/$1$2/;
++				}
++			}
 +
-+        When type=no-encrypt the algorithm field must not be
-+        present in the payload.
++# Kconfig: discourage using default EXPERT or !EXPERT
++			if ($line =~ /^\+\s*default\s+\!?\s*EXPERT\b/) {
++				WARN("CONFIG_DEFAULT_VALUE_STYLE",
++				     "Avoid using default EXPERT\n" . $herecurr);
+ 			}
+-			#print "is_start<$is_start> is_end<$is_end> length<$length>\n";
+ 		}
++# End of Kconfig tests
 +
-+ERRORS
-+------
-+    In addition to the Errors returned from the Kernel Key Service,
-+    add_key(2) or keyctl(1) commands, the MKTME Key Service type may
-+    return the following errors:
-+
-+    EINVAL for any payload specification that does not match the
-+           MKTME type payload as defined above.
-+
-+    EACCES for access denied. The MKTME key type uses capabilities
-+           to restrict the allocation of keys to privileged users.
-+           CAP_SYS_RESOURCE is required, but it will accept the
-+           broader capability of CAP_SYS_ADMIN. See capabilities(7).
-+
-+    ENOKEY if a hardware key cannot be allocated. Additional error
-+           messages will describe the hardware programming errors.
-+
-+EXAMPLES
-+--------
-+    Add a 'cpu' type key::
-+
-+        char \*options_CPU = "type=cpu algorithm=aes-xts-128";
-+
-+        key = add_key("mktme", "name", options_CPU, strlen(options_CPU),
-+                      KEY_SPEC_THREAD_KEYRING);
-+
-+    Add a "no-encrypt' type key::
-+
-+	key = add_key("mktme", "name", "no-encrypt", strlen(options_CPU),
-+		      KEY_SPEC_THREAD_KEYRING);
+ 
+ # check for MAINTAINERS entries that don't have the right form
+ 		if ($realfile =~ /^MAINTAINERS$/ &&
+@@ -2998,13 +3036,6 @@ sub process {
+ 			}
+ 		}
+ 
+-# discourage the use of boolean for type definition attributes of Kconfig options
+-		if ($realfile =~ /Kconfig/ &&
+-		    $line =~ /^\+\s*\bboolean\b/) {
+-			WARN("CONFIG_TYPE_BOOLEAN",
+-			     "Use of boolean is deprecated, please use bool instead.\n" . $herecurr);
+-		}
+-
+ 		if (($realfile =~ /Makefile.*/ || $realfile =~ /Kbuild.*/) &&
+ 		    ($line =~ /\+(EXTRA_[A-Z]+FLAGS).*/)) {
+ 			my $flag = $1;
 -- 
-2.21.0
+2.18.0
 
