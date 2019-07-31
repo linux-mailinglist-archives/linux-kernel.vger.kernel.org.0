@@ -2,53 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 53D7C7C5F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 17:19:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 438017C5BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 17:10:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729427AbfGaPTK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 11:19:10 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:33038 "EHLO
+        id S1729379AbfGaPJY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 11:09:24 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:33637 "EHLO
         mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729160AbfGaPTE (ORCPT
+        with ESMTP id S2388574AbfGaPIa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 11:19:04 -0400
-Received: by mail-ed1-f68.google.com with SMTP id i11so2556934edq.0
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 08:19:03 -0700 (PDT)
+        Wed, 31 Jul 2019 11:08:30 -0400
+Received: by mail-ed1-f68.google.com with SMTP id i11so2524898edq.0
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 08:08:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=shutemov-name.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=EvEqqoCYvSiaJViGsfZgvE8wYjGeg4BQWYRIZAIdYOQ=;
-        b=bZcGmOHwm0gi6j5t/BbUGsKtOCIZr4doGxyXBg+bAsntyv91YXoAwS8iK8gYH/2Rhd
-         EZoLChmRluivD3XLirlmMT5W1vFicn0Th6yRJbjlvSCthP29u5r3kvQbgKOL0NnWdm5O
-         z6WKnsGxsng9YOVJ6s+hk1x3ysUEVhPOmeDyo07xX324wqjHjFQ9yfcsBJPs6sEkZfG/
-         j1P95OYBR2KAtJYWJH/9fdcbulUD7i7ZdBv1U7AlRZ5qi7KMU65oMM+umaihE2hREq1N
-         HFgl1iVKn4xa5Uwqe5PFQO1apPGzMbp3tx+aOQoTXOpVFI0CqNnOhoaQyl+Z3LmysdM7
-         SIkg==
+        bh=2C449KSjT4bbSwYYn5oh0t+GvJgUUHqBrjpFSTJaVMM=;
+        b=BRLtr4tgYn50QM+JIDHN/iYJHDA/eYrOUmJYvQptXTzwrBNdmFzt8zjJULLektK/VA
+         AL/NZPGusMjazLlBev7xe67PdKIfQ1ifpZNsX3n6tVVOa4ud/9OwxtjEEiXleT0dww34
+         btnUPhOQ9ej+n+IZzfuH/c2u7wLSynBdGbkIYgwm/zx9aTR7AirSR8kauZtQI1eG36ut
+         GrY5WSOyefYNkH38KCUyy7rpU+qfA4Tow+UQHZI/00wFfW7zf53dLyFQhYvsbF2QDkKz
+         HwKhJkV1eHDK+DsnsDoJNeFWLsnZIxfo/PjZHwoQIcsO8/FwvmZXcMuwGCHQNeY7A0V3
+         GE2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=EvEqqoCYvSiaJViGsfZgvE8wYjGeg4BQWYRIZAIdYOQ=;
-        b=UkCg8d7ZijlSYT667GRMK0qD+bBn3GKhAIzoPmcsd3hm5GlWP/h1aCjPam0NH+2i1S
-         9Pv4Q0FJLINVTKEYQC1heWv05mtxwTAtTpiuW7MEMMUuCsKrRU34h2+fjmWH40stHm4w
-         WmOWBd9TgODNR49s+McV8w6CiD+VtKHJJ0V9Iov+yqBc40ExooMAKdeAXGtfM8KinV+Z
-         5TmXj8gDYw+MvVfF490fvd0GNj1USyTXhuOX/Z7W9GwqInOchHrHWffht7qOMQVkS7Kp
-         mbrlnWxgowQuJXzu7g/Rfx20b8Dffwra86ByQ/32a7iw16PHfR9Ghyfn0XTgeXm/6WaI
-         1fRQ==
-X-Gm-Message-State: APjAAAVLa8YvMLj7JWEOld3Rjo4wa+7qQCYKUOG2Mbgppglx6cUcAwZi
-        xQDu4CH+93NZsDm7fs1Qlzo=
-X-Google-Smtp-Source: APXvYqze/zmPMD1Bsfoldl9kgWqcWF2ltGwH8c0r7lo9vR1AXcu6XddkT5YuYdRgsgxlZcifb+OJkw==
-X-Received: by 2002:a17:906:4d19:: with SMTP id r25mr94272907eju.125.1564586035045;
-        Wed, 31 Jul 2019 08:13:55 -0700 (PDT)
+        bh=2C449KSjT4bbSwYYn5oh0t+GvJgUUHqBrjpFSTJaVMM=;
+        b=tb2C/XYurje6a0weaA4Ph8IXcuMhwQofr8oNtsTc4ZV+eL5N9QwjhDwmyOidMNaceX
+         hBVvl15bZkMqWdYuXFMS+01DPi3ehlBWVZD6JCJx/lUY9VxpZdEZ19Bxlm9N+cXTGou3
+         S2aMpx6sf5JmS/tUedJbqp3KEtmzVwGn5lrq78arQqqhIWBc+0nQnvgQ5A69xEG6OLCP
+         BHVUl+xjcRnMCT9tNOivZttLWTPZtOuGI/+K53nIvfFNSU47ksYgYNNeYRm7zOKEFZAr
+         1a/VeXVS0j6Z+s0mwj871MpGgcf7LGSk62ruaXDfOZcER9fsZDNOPYiP6cKgeBBK6jwW
+         PANQ==
+X-Gm-Message-State: APjAAAVmJTGsaprngpiXAQ200qGD56cApk814/4dni2P29pOPreYA/E4
+        ck1LdruIW1Pmy/2OzRgz+js=
+X-Google-Smtp-Source: APXvYqxMBwDpewyfIfpy++jLBpP8UloTaXPGrZ8I/eqCpEpkmrEfDx2SZR3u/YrZv24UsUCPRBrhkw==
+X-Received: by 2002:a05:6402:28e:: with SMTP id l14mr42072938edv.11.1564585709289;
+        Wed, 31 Jul 2019 08:08:29 -0700 (PDT)
 Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id g7sm16945101eda.52.2019.07.31.08.13.51
+        by smtp.gmail.com with ESMTPSA id jt17sm12600191ejb.90.2019.07.31.08.08.22
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 31 Jul 2019 08:13:53 -0700 (PDT)
+        Wed, 31 Jul 2019 08:08:28 -0700 (PDT)
 From:   "Kirill A. Shutemov" <kirill@shutemov.name>
 X-Google-Original-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
 Received: by box.localdomain (Postfix, from userid 1000)
-        id 874211030BD; Wed, 31 Jul 2019 18:08:16 +0300 (+03)
+        id 8E3561030BE; Wed, 31 Jul 2019 18:08:16 +0300 (+03)
 To:     Andrew Morton <akpm@linux-foundation.org>, x86@kernel.org,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>,
@@ -63,10 +63,10 @@ Cc:     Kees Cook <keescook@chromium.org>,
         Alison Schofield <alison.schofield@intel.com>,
         linux-mm@kvack.org, kvm@vger.kernel.org, keyrings@vger.kernel.org,
         linux-kernel@vger.kernel.org,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: [PATCHv2 22/59] mm/rmap: Clear vma->anon_vma on unlink_anon_vmas()
-Date:   Wed, 31 Jul 2019 18:07:36 +0300
-Message-Id: <20190731150813.26289-23-kirill.shutemov@linux.intel.com>
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: [PATCHv2 23/59] x86/pconfig: Set an activated algorithm in all MKTME commands
+Date:   Wed, 31 Jul 2019 18:07:37 +0300
+Message-Id: <20190731150813.26289-24-kirill.shutemov@linux.intel.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190731150813.26289-1-kirill.shutemov@linux.intel.com>
 References: <20190731150813.26289-1-kirill.shutemov@linux.intel.com>
@@ -77,34 +77,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If all pages in the VMA got unmapped there's no reason to link it into
-original anon VMA hierarchy: it cannot possibly share any pages with
-other VMA.
+From: Alison Schofield <alison.schofield@intel.com>
 
-Set vma->anon_vma to NULL on unlink_anon_vmas(). With the change VMA
-can be reused. The new anon VMA will be allocated on the first fault.
+The Intel MKTME architecture specification requires an activated
+encryption algorithm for all command types.
 
+For commands that actually perform encryption, SET_KEY_DIRECT and
+SET_KEY_RANDOM, the user specifies the algorithm when requesting the
+key through the MKTME Key Service.
+
+For CLEAR_KEY and NO_ENCRYPT commands, do not require the user to
+specify an algorithm. Define a default algorithm, that is 'any
+activated algorithm' to cover those two special cases.
+
+Signed-off-by: Alison Schofield <alison.schofield@intel.com>
 Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 ---
- mm/rmap.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ arch/x86/include/asm/intel_pconfig.h | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
-diff --git a/mm/rmap.c b/mm/rmap.c
-index e5dfe2ae6b0d..911367b5fb40 100644
---- a/mm/rmap.c
-+++ b/mm/rmap.c
-@@ -400,8 +400,10 @@ void unlink_anon_vmas(struct vm_area_struct *vma)
- 		list_del(&avc->same_vma);
- 		anon_vma_chain_free(avc);
- 	}
--	if (vma->anon_vma)
-+	if (vma->anon_vma) {
- 		vma->anon_vma->degree--;
-+		vma->anon_vma = NULL;
-+	}
- 	unlock_anon_vma_root(root);
+diff --git a/arch/x86/include/asm/intel_pconfig.h b/arch/x86/include/asm/intel_pconfig.h
+index 3cb002b1d0f9..4f27b0c532ee 100644
+--- a/arch/x86/include/asm/intel_pconfig.h
++++ b/arch/x86/include/asm/intel_pconfig.h
+@@ -21,14 +21,20 @@ enum pconfig_leaf {
  
- 	/*
+ /* Defines and structure for MKTME_KEY_PROGRAM of PCONFIG instruction */
+ 
++/* mktme_key_program::keyid_ctrl ENC_ALG, bits [23:8] */
++#define MKTME_AES_XTS_128	(1 << 8)
++#define MKTME_ANY_ACTIVATED_ALG	(1 << __ffs(mktme_algs) << 8)
++
+ /* mktme_key_program::keyid_ctrl COMMAND, bits [7:0] */
+ #define MKTME_KEYID_SET_KEY_DIRECT	0
+ #define MKTME_KEYID_SET_KEY_RANDOM	1
+-#define MKTME_KEYID_CLEAR_KEY		2
+-#define MKTME_KEYID_NO_ENCRYPT		3
+ 
+-/* mktme_key_program::keyid_ctrl ENC_ALG, bits [23:8] */
+-#define MKTME_AES_XTS_128	(1 << 8)
++/*
++ * CLEAR_KEY and NO_ENCRYPT require the COMMAND in bits [7:0]
++ * and any activated encryption algorithm, ENC_ALG, in bits [23:8]
++ */
++#define MKTME_KEYID_CLEAR_KEY  (2 | MKTME_ANY_ACTIVATED_ALG)
++#define MKTME_KEYID_NO_ENCRYPT (3 | MKTME_ANY_ACTIVATED_ALG)
+ 
+ /* Return codes from the PCONFIG MKTME_KEY_PROGRAM */
+ #define MKTME_PROG_SUCCESS	0
 -- 
 2.21.0
 
