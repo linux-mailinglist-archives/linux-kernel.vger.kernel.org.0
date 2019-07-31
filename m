@@ -2,114 +2,217 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3947B7B789
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 03:24:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CA867B796
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 03:26:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727789AbfGaBYk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 21:24:40 -0400
-Received: from esa5.hgst.iphmx.com ([216.71.153.144]:64333 "EHLO
-        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727567AbfGaBYj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 21:24:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1564536279; x=1596072279;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=vmXuHR7SC+aN09FeHOdioG1YLL/XU2JJ+5WuI+zCHk8=;
-  b=aNxlkGWgPB8950NptULFs+WnfJCe5H/bmrSwPHb188VlKR3uDYZeGMiK
-   MZHWh9YcO6GheyGgneBbhVniPxXSChxHlXL5E+jn+/2PduaiuY6gWLHEM
-   u+Qk30siRbxBTIx4JFX5VRPQZ4ER7I9H+u1uRBlLgMJAtTwCIzhOxq0G8
-   0RCL42a3nxeywnfps6mcKzYDoc5mzgtnHFbhw2cSOZUuKdVdZlp9QNVjQ
-   fPhXKUz9zhpHhtMaySTxFRVUVYGLptFCp4iK9b+DypB8b92IwwAwGP5mq
-   mxkmgXNGsLXwP9dYd5rGhW4xPRQ1Fijy1N2mmj4xP/n3317hL0721UxWd
-   A==;
-IronPort-SDR: KQ4Us2XGzECFelMTW8awu4siqN+LcNy41GzNWEnOXqpChGNJNaqM9wSgWWvszVSC3vOtH0u3Tc
- /zPhoB7r1Lhw6XB8WGTZekd+lyI2pdH9SQcOLcKCeefEupagcVGnr5JetGXQtEqLDlLMFMyxzs
- 1+cz2iHD+QzvgCPDsHRhZZfr+Qnc7JTApEyjiqbrteI7+xUxUUXcTYgWTrT5J8GF5wk6rigEKR
- s3C29BgG4VlzZP5N7/Iw5JmVf3G/1uNopFB+q7FKGQmacO1lsumjmqjAapnDavZ0ZgD0Tzy54J
- 4Xs=
-X-IronPort-AV: E=Sophos;i="5.64,328,1559491200"; 
-   d="scan'208";a="115555813"
-Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 31 Jul 2019 09:24:38 +0800
-IronPort-SDR: 3e2u3DSqQSOJ64Asq4RaOOC4SklS2c005bEeibpmTQoSvMLNmVx8cON4uu2U1Ob42NYb1a+d/T
- wwlDQpnYzAflJvWvX4A+sUjTmu4yd0U2kA45P4+wKCWDXOIAop49GS/GVDR3UCUz/8J7NZDIQW
- vz8ybAobFZEHtVqqQkaRflzjbCt97gS2EZNW7w9Wc9b7BltBY8ekPvSAKPRv5Oag8DVskT32CG
- u1Aw8g3hWc2P6g4YvI2OFGKsnj5H9dnyxWWXYBsdekGgvAjNd2rqf88uWz543zjwwjddNY2pqA
- 4iPQ+GI8UXeS8AT2TtKiUETn
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP; 30 Jul 2019 18:22:39 -0700
-IronPort-SDR: 54+vnEozrIPP/nGlxcV+NuLLZU4AoXI0bIuVPynL3QuKqnp94GO5rpklzJg4DTr8I6zGhqFLWA
- s1C7Da89ocDa2IAbOOQ3jgYUnykvwd3LzNd0V+BkgTZzUWpTEMqbUHLKpBUCxiib818L/vev0j
- wbVbx4ymaAW+A5LC0e/aj0ba/NOFHW84E9vjETkBd5411ZeP8Yiiw3CeeF8i29a9ZQVFwodlz/
- +K0/YuGGe4kngYCmTUa2VRURvS1FWjQoJ3ZcmhQl0Gq6bhwAh2v0ypiE6FOwm7P+ZdODR6Zyx3
- uAE=
-Received: from jedi-01.sdcorp.global.sandisk.com (HELO jedi-01.int.fusionio.com) ([10.11.143.218])
-  by uls-op-cesaip02.wdc.com with ESMTP; 30 Jul 2019 18:24:38 -0700
-From:   Atish Patra <atish.patra@wdc.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Atish Patra <atish.patra@wdc.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Alexios Zavras <alexios.zavras@intel.com>,
-        Allison Randal <allison@lohutok.net>,
-        Anup Patel <anup.patel@wdc.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        devicetree@vger.kernel.org, Enrico Weigelt <info@metux.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Johan Hovold <johan@kernel.org>,
-        linux-riscv@lists.infradead.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH v2 5/5] dt-bindings: Update the isa string description
-Date:   Tue, 30 Jul 2019 18:24:18 -0700
-Message-Id: <20190731012418.24565-6-atish.patra@wdc.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190731012418.24565-1-atish.patra@wdc.com>
-References: <20190731012418.24565-1-atish.patra@wdc.com>
+        id S1727875AbfGaBZ4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 21:25:56 -0400
+Received: from mail-eopbgr1320101.outbound.protection.outlook.com ([40.107.132.101]:35882
+        "EHLO APC01-PU1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725911AbfGaBZz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Jul 2019 21:25:55 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=bEH6c27w+PM3nfGYEpFiDEjzn9DUnEK7N6WZVBUP5F5/sD+Rcnzo5eFlDNm2kAQC7LzcltmUOnO1YtV3B/jGTuN02ewPPFYQ0JunWwwhd9HF2F617yVIfB0tAZ2fJJZ+UVhDGlhRaTBShgA9npgkBUNODWzvLpyDLA7s56oqj/228su8G5nqshcLSQcSsWnyMHg0j9mhcbMtgdSYaw46xmjRMbFDwFNhJHLqYiP5CVWlfIIkar2vUAdI8ghtTC0jrloGvUWiWVw7LCxFLtkKtFqIHmu3xwYybgvF9F/80YZeBNYa9HkeRMLpSOQIamtNMTU+ltd/88boTqy6qiEncg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=thm68vWJDTJqC+ZV40mX//nMUgdYsUcdxVCjvVDMtbc=;
+ b=nxJrgKhWQIU27ktpOPGKu2QM/NuyOZ63kdJto5b0kIxSU8tdNISRItvwcByJnQRxAxhaUcjNG1Z8UIGICBXiq+qO+A/2nwb3Mp57awybsw6LVUJu/XY4OorvzeksZJ5Tu+oMjhTFEblCVtgKhrZbktb2Ogki2Gfv/UGFM5wzGnhQTj6kpHhTZOY/ASu73/ivNnWjUOL997FA2iRFN7cG7SsqKUYSZ4TxBIzAkldbJkHHhok9nRd0V5/q/mDiWKN9Lwv/ynbZcxWn3+aZQeXnZ8dYdwf4QFlnlQL7zFJtB5cJYk9b/zFpRR1x6L2I+v+CMRgYpwnR9Uzn3sZrdJqMKA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microsoft.com; dmarc=pass action=none
+ header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=thm68vWJDTJqC+ZV40mX//nMUgdYsUcdxVCjvVDMtbc=;
+ b=NuBjPQ/K+EyRrVqp7BoHyqCVmVxRcpZd/fV8iGcBHlGZyPjPPs0TJxnVcqpW1V5/GetRg4BQufZeoX/HUvoAZz2lHexgZqJ4ekjH5GDWibQA5CPULwzPQQiIUmWbojfO7iTu+Xh65nUmHhlqpmf2jHsx5ERM47IKow5BRYCOJoc=
+Received: from PU1P153MB0169.APCP153.PROD.OUTLOOK.COM (10.170.189.13) by
+ PU1P153MB0139.APCP153.PROD.OUTLOOK.COM (10.170.188.141) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2157.3; Wed, 31 Jul 2019 01:25:46 +0000
+Received: from PU1P153MB0169.APCP153.PROD.OUTLOOK.COM
+ ([fe80::d44e:57b7:d8fc:e91c]) by PU1P153MB0169.APCP153.PROD.OUTLOOK.COM
+ ([fe80::d44e:57b7:d8fc:e91c%8]) with mapi id 15.20.2157.001; Wed, 31 Jul 2019
+ 01:25:46 +0000
+From:   Dexuan Cui <decui@microsoft.com>
+To:     Sunil Muthuswamy <sunilmut@microsoft.com>,
+        David Miller <davem@davemloft.net>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+CC:     KY Srinivasan <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "sashal@kernel.org" <sashal@kernel.org>,
+        Michael Kelley <mikelley@microsoft.com>,
+        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "olaf@aepfle.de" <olaf@aepfle.de>,
+        "apw@canonical.com" <apw@canonical.com>,
+        "jasowang@redhat.com" <jasowang@redhat.com>,
+        vkuznets <vkuznets@redhat.com>,
+        "marcelo.cerri@canonical.com" <marcelo.cerri@canonical.com>
+Subject: [PATCH v2 net] hv_sock: Fix hang when a connection is closed
+Thread-Topic: [PATCH v2 net] hv_sock: Fix hang when a connection is closed
+Thread-Index: AdVHPmu2nCw89Ds2Tx6HccJLUcFnXg==
+Date:   Wed, 31 Jul 2019 01:25:45 +0000
+Message-ID: <PU1P153MB01696DDD3A3F601370701DD2BFDF0@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=decui@microsoft.com;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2019-07-31T01:25:42.9249599Z;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
+ Information Protection;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=5fb33ce5-3f70-4230-92d8-446001a362ef;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=decui@microsoft.com; 
+x-originating-ip: [2001:4898:80e8:1:c0f7:3271:ccd8:4d01]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: f875bf19-0189-4eb7-6107-08d71556034c
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:PU1P153MB0139;
+x-ms-traffictypediagnostic: PU1P153MB0139:|PU1P153MB0139:
+x-ms-exchange-transport-forked: True
+x-ld-processed: 72f988bf-86f1-41af-91ab-2d7cd011db47,ExtAddr
+x-microsoft-antispam-prvs: <PU1P153MB01399350552811B6F45317E1BFDF0@PU1P153MB0139.APCP153.PROD.OUTLOOK.COM>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-forefront-prvs: 011579F31F
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(346002)(396003)(366004)(39860400002)(136003)(376002)(54534003)(51234002)(199004)(189003)(52536014)(316002)(486006)(7416002)(10090500001)(10290500003)(25786009)(81166006)(81156014)(305945005)(4326008)(5660300002)(110136005)(68736007)(186003)(8676002)(2906002)(66446008)(64756008)(66556008)(2501003)(74316002)(1511001)(6116002)(33656002)(66946007)(54906003)(6506007)(66476007)(22452003)(71200400001)(14444005)(71190400001)(76116006)(6436002)(478600001)(7736002)(53936002)(8990500004)(86362001)(256004)(14454004)(99286004)(476003)(7696005)(55016002)(9686003)(8936002)(102836004)(46003);DIR:OUT;SFP:1102;SCL:1;SRVR:PU1P153MB0139;H:PU1P153MB0169.APCP153.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: rO7CYCcEHk8JKSQf/pzsEjaHBDT4Rxf1IvOjsj0WZevs9Lz1yJ3+GVYI+Tu5W03bCpoh0zz+1zMD4lPYOlPNsAmrXzuBAoHNOiRNF3ljIMGzcZ1cy/MDbJt8EGk3Z3J/GSCDEskyJNPItPPCW2vbLFC024Xp0Cz+9UgY5+Wk++TP2sIzKOf+tZkI62KCSLuA2MhEqDByBcg3G3EaFu8m+swxbM+pO9NPOx8r2CH0r8g2n1DgmI/cHNLiVDpPcV9LSEBsLbbNmA74n0GiDicJRFPCDC4vg/59W4mvB4jHnqnYv6HnuoKOdNUjoLBgShMAAQsvSEjR8EnPP2S8Bm0rJD3QfCtd383glmEWbuIc0hO94WB006bAOc1LQqqrZqeZ6WQbh7R2IJlcYh0+TWw2rKBvs+oFCckTIXXV492PsUc=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f875bf19-0189-4eb7-6107-08d71556034c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Jul 2019 01:25:45.8275
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: E6dZU1lHIMdHnIGLvTcVfBDnvb22Pth1kbvGOcvZBs3K+6BbWfKZyk0h031jxQiTeCST3xLK2MQfXEBfzsKAVg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PU1P153MB0139
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The yaml documentation description of isa strings section doesn't
-specify anything about the case sensitiveness of the isa strings.
-The RISC-V specification clearly specifies it to be case insensitive.
-However, Linux kernel supports only lower case isa strings.
 
-Update the yaml documentation accordingly to avoid any confusion.
+There is a race condition for an established connection that is being close=
+d
+by the guest: the refcnt is 4 at the end of hvs_release() (Note: here the
+'remove_sock' is false):
 
-Signed-off-by: Atish Patra <atish.patra@wdc.com>
+1 for the initial value;
+1 for the sk being in the bound list;
+1 for the sk being in the connected list;
+1 for the delayed close_work.
+
+After hvs_release() finishes, __vsock_release() -> sock_put(sk) *may*
+decrease the refcnt to 3.
+
+Concurrently, hvs_close_connection() runs in another thread:
+  calls vsock_remove_sock() to decrease the refcnt by 2;
+  call sock_put() to decrease the refcnt to 0, and free the sk;
+  next, the "release_sock(sk)" may hang due to use-after-free.
+
+In the above, after hvs_release() finishes, if hvs_close_connection() runs
+faster than "__vsock_release() -> sock_put(sk)", then there is not any issu=
+e,
+because at the beginning of hvs_close_connection(), the refcnt is still 4.
+
+The issue can be resolved if an extra reference is taken when the
+connection is established.
+
+Fixes: a9eeb998c28d ("hv_sock: Add support for delayed close")
+Signed-off-by: Dexuan Cui <decui@microsoft.com>
+Cc: stable@vger.kernel.org
+
 ---
- Documentation/devicetree/bindings/riscv/cpus.yaml | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/riscv/cpus.yaml b/Documentation/devicetree/bindings/riscv/cpus.yaml
-index c899111aa5e3..e22a2b7ebafa 100644
---- a/Documentation/devicetree/bindings/riscv/cpus.yaml
-+++ b/Documentation/devicetree/bindings/riscv/cpus.yaml
-@@ -46,10 +46,14 @@ properties:
-           - rv64imafdc
-     description:
-       Identifies the specific RISC-V instruction set architecture
--      supported by the hart.  These are documented in the RISC-V
-+      supported by the hart. These are documented in the RISC-V
-       User-Level ISA document, available from
-       https://riscv.org/specifications/
- 
-+      Linux kernel only supports lower case isa strings. Thus,
-+      isa strings must be specified in lower case in device tree
-+      as well.
+Changes in v2:=20
+  Changed the location of the sock_hold() call.=20
+  Updated the changelog accordingly.
+ =20
+  Thanks Sunil for the suggestion!
+
+
+With the proper kernel debugging options enabled, first a warning can
+appear:
+
+kworker/1:0/4467 is freeing memory ..., with a lock still held there!
+stack backtrace:
+Workqueue: events vmbus_onmessage_work [hv_vmbus]
+Call Trace:
+ dump_stack+0x67/0x90
+ debug_check_no_locks_freed.cold.52+0x78/0x7d
+ slab_free_freelist_hook+0x85/0x140
+ kmem_cache_free+0xa5/0x380
+ __sk_destruct+0x150/0x260
+ hvs_close_connection+0x24/0x30 [hv_sock]
+ vmbus_onmessage_work+0x1d/0x30 [hv_vmbus]
+ process_one_work+0x241/0x600
+ worker_thread+0x3c/0x390
+ kthread+0x11b/0x140
+ ret_from_fork+0x24/0x30
+
+and then the following release_sock(sk) can hang:
+
+watchdog: BUG: soft lockup - CPU#1 stuck for 22s! [kworker/1:0:4467]
+...
+irq event stamp: 62890
+CPU: 1 PID: 4467 Comm: kworker/1:0 Tainted: G        W         5.2.0+ #39
+Workqueue: events vmbus_onmessage_work [hv_vmbus]
+RIP: 0010:queued_spin_lock_slowpath+0x2b/0x1e0
+...
+Call Trace:
+ do_raw_spin_lock+0xab/0xb0
+ release_sock+0x19/0xb0
+ vmbus_onmessage_work+0x1d/0x30 [hv_vmbus]
+ process_one_work+0x241/0x600
+ worker_thread+0x3c/0x390
+ kthread+0x11b/0x140
+ ret_from_fork+0x24/0x30
+
+ net/vmw_vsock/hyperv_transport.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/net/vmw_vsock/hyperv_transport.c b/net/vmw_vsock/hyperv_transp=
+ort.c
+index f2084e3f7aa4..9d864ebeb7b3 100644
+--- a/net/vmw_vsock/hyperv_transport.c
++++ b/net/vmw_vsock/hyperv_transport.c
+@@ -312,6 +312,11 @@ static void hvs_close_connection(struct vmbus_channel =
+*chan)
+ 	lock_sock(sk);
+ 	hvs_do_close_lock_held(vsock_sk(sk), true);
+ 	release_sock(sk);
 +
-   timebase-frequency:
-     type: integer
-     minimum: 1
--- 
-2.21.0
++	/* Release the refcnt for the channel that's opened in
++	 * hvs_open_connection().
++	 */
++	sock_put(sk);
+ }
+=20
+ static void hvs_open_connection(struct vmbus_channel *chan)
+@@ -407,6 +412,9 @@ static void hvs_open_connection(struct vmbus_channel *c=
+han)
+ 	}
+=20
+ 	set_per_channel_state(chan, conn_from_host ? new : sk);
++
++	/* This reference will be dropped by hvs_close_connection(). */
++	sock_hold(conn_from_host ? new : sk);
+ 	vmbus_set_chn_rescind_callback(chan, hvs_close_connection);
+=20
+ 	/* Set the pending send size to max packet size to always get
+--=20
+2.19.1
 
