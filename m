@@ -2,93 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A0E67D0B5
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 00:17:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BBBC27D0CB
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 00:19:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731463AbfGaWRw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 18:17:52 -0400
-Received: from mail-pg1-f202.google.com ([209.85.215.202]:46107 "EHLO
-        mail-pg1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730164AbfGaWRu (ORCPT
+        id S1731478AbfGaWSH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 18:18:07 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:51265 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727702AbfGaWR7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 18:17:50 -0400
-Received: by mail-pg1-f202.google.com with SMTP id u1so43742969pgr.13
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 15:17:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=Fle61vPJ2CgF1ZWEm2BgqpUqqKQrrfp1g/3hZXhBAk8=;
-        b=nqaTxhRofcFBWxS5KV3bTh0/mFTwJ6GGQRRbYUnLgbrgS2BvuZuu1R0kLCjqJIwl+V
-         opGYrKeXTGaIg4Um9sH2UJO0gWCV/TEuf6DMTJxXn3JtsRxNtMkQnYHwV94Fm+1RM3CS
-         BQlgsKPTdD21JVzX5zxSkKOX5bPQQN4M1rdBO1H2uXGXuqe1TU3wiqIAwYpjzdVdio0b
-         quWjsq8T85BYZJjirNpZNUDNLw88c02LJhb/6cGFnSecYnUy2nGQtVBqRQibDvdMBF4U
-         YFGzGsc5ibxxJOQ4TK5ChE9OKUSrM8vOHOHZ58ouC0NblMJixvRlLQi7b2Bdyp3skAev
-         +jZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=Fle61vPJ2CgF1ZWEm2BgqpUqqKQrrfp1g/3hZXhBAk8=;
-        b=JkddeQXBN/V//+9ffbQkBQqfMSV8ylrAiOLjX+OjabGEsTpScaqYQ9IpS3MeJpQn3g
-         J0zkKkgWQwM+DllmAliw5idlpG0MD3LB883yyFsN394muJ5u2lTvRM1nPaeslHyz+9fo
-         5Fh0Q58y0wDRa1OCXdGvXKmYw/U4PIuRyLL217+1cA0U0hT2tjz7vnktjakjXVre7khM
-         ePnaJf5nx0OrRayEmZQ+QTihBR4n3mzxT+z5KPmXxqurk6xmT9NpsSGxm5JxdswMV63c
-         VwfhJpNoRn4JeMfn5slRTN763AGPve6CiKgCpCuf+hqfnT4oFAzMvgLau+ur8TC6p1VP
-         2Hlw==
-X-Gm-Message-State: APjAAAXoK+9NnsjUE1Rpl6M5sjjX4cg8ZjsMk8YjRFI8gGdVEBTGLsm7
-        Y0ODS2w7tZ+nxgM4lUGE9W6DPzoTCY4yZuw=
-X-Google-Smtp-Source: APXvYqxNTYEUITyUwn6GDLByMZFsij2bVHdtvK1JPN4+FWR688CFRK3H0bgrIM/X0wWVsRmHxcak7Y1MsgFhBiI=
-X-Received: by 2002:a65:5a8c:: with SMTP id c12mr4729150pgt.73.1564611469231;
- Wed, 31 Jul 2019 15:17:49 -0700 (PDT)
-Date:   Wed, 31 Jul 2019 15:17:20 -0700
-In-Reply-To: <20190731221721.187713-1-saravanak@google.com>
-Message-Id: <20190731221721.187713-8-saravanak@google.com>
-Mime-Version: 1.0
-References: <20190731221721.187713-1-saravanak@google.com>
-X-Mailer: git-send-email 2.22.0.709.g102302147b-goog
-Subject: [PATCH v9 7/7] of/platform: Don't create device links for default busses
-From:   Saravana Kannan <saravanak@google.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>
-Cc:     Saravana Kannan <saravanak@google.com>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        David Collins <collinsd@codeaurora.org>,
+        Wed, 31 Jul 2019 18:17:59 -0400
+Received: from 79.184.255.110.ipv4.supernova.orange.pl (79.184.255.110) (HELO kreacher.localnet)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.275)
+ id 930e658ccde014c4; Thu, 1 Aug 2019 00:17:57 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Stephen Boyd <swboyd@chromium.org>, Tri Vo <trong@android.com>
+Cc:     gregkh@linuxfoundation.org, viresh.kumar@linaro.org,
+        rafael@kernel.org, hridya@google.com, sspatil@google.com,
+        kaleshsingh@google.com, ravisadineni@chromium.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
         kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH v6] PM / wakeup: show wakeup sources stats in sysfs
+Date:   Thu, 01 Aug 2019 00:17:57 +0200
+Message-ID: <32598586.Mjd66ZhNnG@kreacher>
+In-Reply-To: <5d420f45.1c69fb81.35877.3d86@mx.google.com>
+References: <20190731215514.212215-1-trong@android.com> <5d420f45.1c69fb81.35877.3d86@mx.google.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Default busses also have devices created for them. But there's no point
-in creating device links for them. It's especially wasteful as it'll
-cause the traversal of the entire device tree and also spend a lot of
-time checking and figuring out that creating those links isn't allowed.
-So check for default busses and skip trying to create device links for
-them.
+On Wednesday, July 31, 2019 11:59:32 PM CEST Stephen Boyd wrote:
+> Quoting Tri Vo (2019-07-31 14:55:14)
+> > +/**
+> > + * wakeup_source_sysfs_add - Add wakeup_source attributes to sysfs.
+> > + * @parent: Device given wakeup source is associated with (or NULL if virtual).
+> > + * @ws: Wakeup source to be added in sysfs.
+> > + */
+> > +int wakeup_source_sysfs_add(struct device *parent, struct wakeup_source *ws)
+> > +{
+> > +       struct device *dev;
+> > +       int id;
+> > +
+> > +       id = ida_alloc(&wakeup_ida, GFP_KERNEL);
 
-Signed-off-by: Saravana Kannan <saravanak@google.com>
----
- drivers/of/platform.c | 2 ++
- 1 file changed, 2 insertions(+)
+So can anyone remind me why the IDA thing is needed here at all?
 
-diff --git a/drivers/of/platform.c b/drivers/of/platform.c
-index 36e25136e807..33cac801e50b 100644
---- a/drivers/of/platform.c
-+++ b/drivers/of/platform.c
-@@ -682,6 +682,8 @@ static int of_link_to_suppliers(struct device *dev)
- 		return 0;
- 	if (unlikely(!dev->of_node))
- 		return 0;
-+	if (of_match_node(of_default_bus_match_table, dev->of_node))
-+		return 0;
- 
- 	return __of_link_to_suppliers(dev, dev->of_node);
- }
--- 
-2.22.0.709.g102302147b-goog
+> > +       if (id < 0)
+> > +               return id;
+> > +       ws->id = id;
+> > +
+> > +       dev = device_create_with_groups(wakeup_class, parent, MKDEV(0, 0), ws,
+> > +                                       wakeup_source_groups, "ws%d",
+> 
+> I thought the name was going to still be 'wakeupN'?
+
+So can't we prefix the wakeup source name with something like "wakeup:" or similar here?
+
+
 
