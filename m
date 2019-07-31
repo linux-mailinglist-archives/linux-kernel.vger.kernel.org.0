@@ -2,59 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 099BC7BBF0
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 10:40:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 089787BBED
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 10:40:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727492AbfGaIkn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 04:40:43 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:44006 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727733AbfGaIkZ (ORCPT
+        id S1728255AbfGaIkd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 04:40:33 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:42466 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728181AbfGaIk1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 04:40:25 -0400
-Received: by mail-wr1-f68.google.com with SMTP id p13so68664089wru.10
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 01:40:24 -0700 (PDT)
+        Wed, 31 Jul 2019 04:40:27 -0400
+Received: by mail-wr1-f67.google.com with SMTP id x1so18783029wrr.9
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 01:40:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=sLpjjKS1ce8bNQv8q/Qa2SJ22ctxx4jp20Vf7E5q7wU=;
-        b=MV63+/qRVHk4pEL2HzlA9UVoc85DydE09k+CdU0asPODTFDtlVpRZcRLzSaAP0rUVm
-         yi9qfx+pp21tlii4qTwgjeQVCMcugVuRyMpv+afoyKd4NMGKn42BJwxvqcBc7XYEgSUy
-         Y02feLyW5nr4y+pPzjYnWIuzJF7q9aCqkio42k105UNNp1Y3SHilEVpJcVSYh2JJUqd0
-         ZQfPsY/uuHth24yNpFCe0d1+UmcIZupfhlO+Sit5CsTagbQVc+wOcaFx9wlEC1r2q6YU
-         DFmP6Me6nEMfvIU2AupxORQCbyYdfJ9ro2OYQwK/U4gvqdzrcbtA5q4UjiPNwYkvBR4G
-         xqDA==
+        bh=UZEGkmIeWiT5hBpyp0ACkTcmSjWFn04wW/+HzMQyHDk=;
+        b=Zn9ACM7HfkJSQhAq/MdKwCmYbB4LvQnv3KVxTCqTN5sHdG2qRaW+STulLmmsCF5MIL
+         uhem8pAiAIuqz7ljFbcwEm57+V4FZC6ZKxWaTGBtUsyTevnGJgpi7ltHZK54ZVftaX+H
+         OLSMchk2atWUOmL7NmtBzJ7kINfD3AqmPB8C2n6FA+WGQNYGgYsbIbRIHzYOgXr5qfnF
+         X9OryCdUALlBgl3ehY/hb1OGxuUn7yKjxmHegYTqNsVdFwbzNcbagUch6K1hN+QQvMkq
+         +KONfOu0nm9tlaLYiyDAUIl1Yds+HLOzl3gbCrx+H6XVyOk158D1DPtsBQZr01XZiAsy
+         PbDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=sLpjjKS1ce8bNQv8q/Qa2SJ22ctxx4jp20Vf7E5q7wU=;
-        b=s4IYtPqW18zMCsQ9qRV8jeklciezDsgjK/1x+TcX2/qwbGKKKp+13nO+rr4NMIhRY2
-         4ptcnET/oZucof6dsaTxGnax0ErCpxxVfZXK23KS3fajdnZEVLqED6SZHch8VJCqHLgS
-         AInDXXEEXAqgEls2eezCwZX23E93QZQkgvzRiCkJPl1q51DXnKRZt4xp92USlyKU4ApM
-         XQXLOhGFeob7UjDPo5Rpn9DoOgSGn3jH/894wP3a/uzIiKtkO4ECRZD9HJw2qhW+MTs0
-         LgB4GIjC9e825lGV70Ev9q24iURQUCgeFpehPyhugXnY5oZiTxERnJMktE9RCGaQxa6M
-         7JZw==
-X-Gm-Message-State: APjAAAUUEyjwE7MyHRU9MQst9batNRpeljkM58qUPsz6wenWRkFOpCv8
-        vbQiuS1OzeokSmeeZRUt7R/+gQ==
-X-Google-Smtp-Source: APXvYqzqvEbqRWHT70qD1Gd6GbwhoKcTb1xDRKV5uUOaWJtUJ43Ikrt6tSU+oew0L9HjDkTlKmV47A==
-X-Received: by 2002:adf:f186:: with SMTP id h6mr5501169wro.274.1564562423669;
-        Wed, 31 Jul 2019 01:40:23 -0700 (PDT)
+        bh=UZEGkmIeWiT5hBpyp0ACkTcmSjWFn04wW/+HzMQyHDk=;
+        b=pP/gHyDDsQ6OL3OYgSK455+dnWGElZLMIQR0Ss8dosZU24UsuPy4o/jIKQcJx5em4m
+         UoPBd435c0zUS7wATw64Ai+j6K7KxoW1R2q630HQndYbGcVzX/FlDfdLebdqeu2KiRgo
+         V+I6wdV3VP3kxK/3+AxEkCpk1XFA6apgXYYLwI5dfh3bnKD49OkCKP39aMZpWMLfg9MT
+         /UnVKc8i5RH/VmovDAsMrt61B6+RCLUXlxSXe5KtgXanWhOU2Rn+p77QxsxIz/oHVACA
+         ePh7/Xc4DtsCoe/+1E0ZQ5PpiP9zqgeLvsqj3e2KARvJe54wVUirABCGPyO+0/A8f8hp
+         iJVg==
+X-Gm-Message-State: APjAAAW4KYdcPdfi6NQqcNYZuAudRR6DiAhG7vW/CRsQfeH0VikwSi0O
+        3eBLNKEp4PY+laytSU8jEGWFrw==
+X-Google-Smtp-Source: APXvYqxsBYOyVGb8BxpjIKvFabYmPG59X3eLGU9JynBZjIFkT+4mN5ikBb3M4GW5QsRsgHYs7L1tyQ==
+X-Received: by 2002:adf:ce88:: with SMTP id r8mr7706080wrn.42.1564562424599;
+        Wed, 31 Jul 2019 01:40:24 -0700 (PDT)
 Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id 18sm56049308wmg.43.2019.07.31.01.40.22
+        by smtp.gmail.com with ESMTPSA id 18sm56049308wmg.43.2019.07.31.01.40.23
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 31 Jul 2019 01:40:23 -0700 (PDT)
+        Wed, 31 Jul 2019 01:40:24 -0700 (PDT)
 From:   Neil Armstrong <narmstrong@baylibre.com>
-To:     sboyd@kernel.org, jbrunet@baylibre.com
+To:     jbrunet@baylibre.com
 Cc:     Neil Armstrong <narmstrong@baylibre.com>,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH v2 1/4] clk: core: introduce clk_hw_set_parent()
-Date:   Wed, 31 Jul 2019 10:40:16 +0200
-Message-Id: <20190731084019.8451-2-narmstrong@baylibre.com>
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 2/4] clk: meson: add g12a cpu dynamic divider driver
+Date:   Wed, 31 Jul 2019 10:40:17 +0200
+Message-Id: <20190731084019.8451-3-narmstrong@baylibre.com>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190731084019.8451-1-narmstrong@baylibre.com>
 References: <20190731084019.8451-1-narmstrong@baylibre.com>
@@ -65,49 +64,163 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Introduce the clk_hw_set_parent() provider call to change parent of
-a clock by using the clk_hw pointers.
+Add a clock driver for the cpu dynamic divider, this divider needs
+to have a flag set before setting the divider value then removed
+while writing the new value to the register.
 
-This eases the clock reparenting from clock rate notifiers and
-implementing DVFS with simpler code avoiding the boilerplates
-functions as __clk_lookup(clk_hw_get_name()) then clk_set_parent().
+This drivers implements this behavior and will be used essentially
+on the Amlogic G12A and G12B SoCs for cpu clock trees.
 
 Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-Acked-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 ---
- drivers/clk/clk.c            | 6 ++++++
- include/linux/clk-provider.h | 1 +
- 2 files changed, 7 insertions(+)
+ drivers/clk/meson/Kconfig          |  5 ++
+ drivers/clk/meson/Makefile         |  1 +
+ drivers/clk/meson/clk-cpu-dyndiv.c | 73 ++++++++++++++++++++++++++++++
+ drivers/clk/meson/clk-cpu-dyndiv.h | 20 ++++++++
+ 4 files changed, 99 insertions(+)
+ create mode 100644 drivers/clk/meson/clk-cpu-dyndiv.c
+ create mode 100644 drivers/clk/meson/clk-cpu-dyndiv.h
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index c0990703ce54..c11b1781d24a 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2487,6 +2487,12 @@ static int clk_core_set_parent_nolock(struct clk_core *core,
- 	return ret;
- }
+diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
+index 500be0b0d473..dabeb435d067 100644
+--- a/drivers/clk/meson/Kconfig
++++ b/drivers/clk/meson/Kconfig
+@@ -36,6 +36,10 @@ config COMMON_CLK_MESON_EE_CLKC
+ 	tristate
+ 	select COMMON_CLK_MESON_REGMAP
  
-+int clk_hw_set_parent(struct clk_hw *hw, struct clk_hw *parent)
-+{
-+	return clk_core_set_parent_nolock(hw->core, parent->core);
-+}
-+EXPORT_SYMBOL_GPL(clk_hw_set_parent);
++config COMMON_CLK_MESON_CPU_DYNDIV
++	tristate
++	select COMMON_CLK_MESON_REGMAP
 +
- /**
-  * clk_set_parent - switch the parent of a mux clk
-  * @clk: the mux clk whose input we are switching
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 2ae7604783dd..dce5521a9bf6 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -817,6 +817,7 @@ unsigned int clk_hw_get_num_parents(const struct clk_hw *hw);
- struct clk_hw *clk_hw_get_parent(const struct clk_hw *hw);
- struct clk_hw *clk_hw_get_parent_by_index(const struct clk_hw *hw,
- 					  unsigned int index);
-+int clk_hw_set_parent(struct clk_hw *hw, struct clk_hw *new_parent);
- unsigned int __clk_get_enable_count(struct clk *clk);
- unsigned long clk_hw_get_rate(const struct clk_hw *hw);
- unsigned long __clk_get_flags(struct clk *clk);
+ config COMMON_CLK_MESON8B
+ 	bool
+ 	depends on ARCH_MESON
+@@ -98,6 +102,7 @@ config COMMON_CLK_G12A
+ 	select COMMON_CLK_MESON_PLL
+ 	select COMMON_CLK_MESON_AO_CLKC
+ 	select COMMON_CLK_MESON_EE_CLKC
++	select COMMON_CLK_MESON_CPU_DYNDIV
+ 	select MFD_SYSCON
+ 	help
+ 	  Support for the clock controller on Amlogic S905D2, S905X2 and S905Y2
+diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
+index f09d83dc3d60..3939f218587a 100644
+--- a/drivers/clk/meson/Makefile
++++ b/drivers/clk/meson/Makefile
+@@ -2,6 +2,7 @@
+ # Amlogic clock drivers
+ 
+ obj-$(CONFIG_COMMON_CLK_MESON_AO_CLKC) += meson-aoclk.o
++obj-$(CONFIG_COMMON_CLK_MESON_CPU_DYNDIV) += clk-cpu-dyndiv.o
+ obj-$(CONFIG_COMMON_CLK_MESON_DUALDIV) += clk-dualdiv.o
+ obj-$(CONFIG_COMMON_CLK_MESON_EE_CLKC) += meson-eeclk.o
+ obj-$(CONFIG_COMMON_CLK_MESON_MPLL) += clk-mpll.o
+diff --git a/drivers/clk/meson/clk-cpu-dyndiv.c b/drivers/clk/meson/clk-cpu-dyndiv.c
+new file mode 100644
+index 000000000000..36976927fe82
+--- /dev/null
++++ b/drivers/clk/meson/clk-cpu-dyndiv.c
+@@ -0,0 +1,73 @@
++// SPDX-License-Identifier: (GPL-2.0 OR MIT)
++/*
++ * Copyright (c) 2019 BayLibre, SAS.
++ * Author: Neil Armstrong <narmstrong@baylibre.com>
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/module.h>
++
++#include "clk-regmap.h"
++#include "clk-cpu-dyndiv.h"
++
++static inline struct meson_clk_cpu_dyndiv_data *
++meson_clk_cpu_dyndiv_data(struct clk_regmap *clk)
++{
++	return (struct meson_clk_cpu_dyndiv_data *)clk->data;
++}
++
++static unsigned long meson_clk_cpu_dyndiv_recalc_rate(struct clk_hw *hw,
++						      unsigned long prate)
++{
++	struct clk_regmap *clk = to_clk_regmap(hw);
++	struct meson_clk_cpu_dyndiv_data *data = meson_clk_cpu_dyndiv_data(clk);
++
++	return divider_recalc_rate(hw, prate,
++				   meson_parm_read(clk->map, &data->div),
++				   NULL, 0, data->div.width);
++}
++
++static long meson_clk_cpu_dyndiv_round_rate(struct clk_hw *hw,
++					    unsigned long rate,
++					    unsigned long *prate)
++{
++	struct clk_regmap *clk = to_clk_regmap(hw);
++	struct meson_clk_cpu_dyndiv_data *data = meson_clk_cpu_dyndiv_data(clk);
++
++	return divider_round_rate(hw, rate, prate, NULL, data->div.width, 0);
++}
++
++static int meson_clk_cpu_dyndiv_set_rate(struct clk_hw *hw, unsigned long rate,
++					  unsigned long parent_rate)
++{
++	struct clk_regmap *clk = to_clk_regmap(hw);
++	struct meson_clk_cpu_dyndiv_data *data = meson_clk_cpu_dyndiv_data(clk);
++	unsigned int val;
++	int ret;
++
++	ret = divider_get_val(rate, parent_rate, NULL, data->div.width, 0);
++	if (ret < 0)
++		return ret;
++
++	val = (unsigned int)ret << data->div.shift;
++
++	/* Write the SYS_CPU_DYN_ENABLE bit before changing the divider */
++	meson_parm_write(clk->map, &data->dyn, 1);
++
++	/* Update the divider while removing the SYS_CPU_DYN_ENABLE bit */
++	return regmap_update_bits(clk->map, data->div.reg_off,
++				  SETPMASK(data->div.width, data->div.shift) |
++				  SETPMASK(data->dyn.width, data->dyn.shift),
++				  val);
++};
++
++const struct clk_ops meson_clk_cpu_dyndiv_ops = {
++	.recalc_rate = meson_clk_cpu_dyndiv_recalc_rate,
++	.round_rate = meson_clk_cpu_dyndiv_round_rate,
++	.set_rate = meson_clk_cpu_dyndiv_set_rate,
++};
++EXPORT_SYMBOL_GPL(meson_clk_cpu_dyndiv_ops);
++
++MODULE_DESCRIPTION("Amlogic CPU Dynamic Clock divider");
++MODULE_AUTHOR("Neil Armstrong <narmstrong@baylibre.com>");
++MODULE_LICENSE("GPL v2");
+diff --git a/drivers/clk/meson/clk-cpu-dyndiv.h b/drivers/clk/meson/clk-cpu-dyndiv.h
+new file mode 100644
+index 000000000000..f4908404792e
+--- /dev/null
++++ b/drivers/clk/meson/clk-cpu-dyndiv.h
+@@ -0,0 +1,20 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (c) 2019 BayLibre, SAS.
++ * Author: Neil Armstrong <narmstrong@baylibre.com>
++ */
++
++#ifndef __MESON_CLK_CPU_DYNDIV_H
++#define __MESON_CLK_CPU_DYNDIV_H
++
++#include <linux/clk-provider.h>
++#include "parm.h"
++
++struct meson_clk_cpu_dyndiv_data {
++	struct parm div;
++	struct parm dyn;
++};
++
++extern const struct clk_ops meson_clk_cpu_dyndiv_ops;
++
++#endif /* __MESON_CLK_CPU_DYNDIV_H */
 -- 
 2.22.0
 
