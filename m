@@ -2,53 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D54A7C5C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 17:10:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA0087C5B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 17:10:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388317AbfGaPKC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 11:10:02 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:37829 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388533AbfGaPI0 (ORCPT
+        id S2388622AbfGaPIb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 11:08:31 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:37840 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388575AbfGaPI3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 11:08:26 -0400
-Received: by mail-ed1-f65.google.com with SMTP id w13so66060906eds.4
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 08:08:25 -0700 (PDT)
+        Wed, 31 Jul 2019 11:08:29 -0400
+Received: by mail-ed1-f66.google.com with SMTP id w13so66061047eds.4
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 08:08:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=shutemov-name.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=JEZNWwFcWS55jw+6SIN48eCAvZTaxQLDv71jatzDjOE=;
-        b=BHAeXd7gVXgBxYu3UUq38JWfB9LxZIY8nRNcqLidTcyniNbN1kGL7m8gr0DYCgHyfo
-         bYCkEUg7twHqYl9//YYyF3oRucuIzp6d8krWu5AXZuwBtWBWqFWBt/UfnX3pxSNussqT
-         vPwPX9shBW0HElOKWXJF5lb9bZsc1LRrg5iG4cMsZyUylv9NMvgzxJC+ak2MqH41uDGx
-         kDLz4WiHVp5dMULHZ0AJck/7y17op+S1LY4RIr4iUP8aw3l+KaMe13SwSVOBLq30rQZD
-         RxmVZou3sCnH16cwB+iAELC3TlHF1bUMdJfNLvVlBfrQL9P/s9szyRTBQ5Oj+oYcjPpJ
-         mDPQ==
+        bh=3Khe0ucVPgmVgmnJxVPmTI2qFbR46a/XU3GbaeIl9uc=;
+        b=gQI/TJw+wOqQw6LekNivfnNF6fibSqE/4WRzpwQ/xFvdfdzWIOKXpHhUn1bQVL5jdd
+         s8R19Qps0QXcAPV0lO52UPBPITRDjAjDh/SdNDwu3XRjm5lsTT8qIamQcIZguTQYJIiB
+         yIDfiSG+yNKGj0VjCG1RwhE4MWsax7zVXdKlnNwaiqDH/+nGjkdysfv6DFMPxlgpyJ3M
+         o4jOiLhIl2Dn3zA6LPYDjCqNEtUQXPdGkN8q+07zTnoXPf13J7sXjetyVxHr4kSOq0fX
+         pfmdMsUgm3rA6XWvbZ6saiZTASDDzRaVlogKfpNeKQARtiXGKhBjMKlIiR+9TtiOMwHK
+         UhzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=JEZNWwFcWS55jw+6SIN48eCAvZTaxQLDv71jatzDjOE=;
-        b=t6pmul2ZJ6LwxU84e6sqwBHGu5wGShNbJoqv1eTj4Y5z2lpVMJxXchLK3Hm3XWhsVx
-         ByzH03S3li9o2d4ISQEpJnnkcen+kneL6Rx7Oesv0q9XqEoZq+0St9NFbZOoNpTetz9A
-         1/rxEpcc6ezVk5ePJVuViNNuLcdga8JZxWu7A3+XnNRGfbFVjY+gcjWVdI7Swbg5nOVl
-         KgmI3znO/LuIiWeU2LjkvYKr4GKNPU9qkDjzTQ/RecsocjE1oNwetcZG54q9V7n2qe5a
-         C0uJCHItxFQCuLKGtMkuyMqtkL1apIgSJ8VqDtr3iV6ZnuXbT3WPnkPgHzCALue6QcK0
-         lFvA==
-X-Gm-Message-State: APjAAAU9dlsA7PtFb8Az9xDAc4680ysL4U654NP7U+u0JXTg/fqPBc37
-        YyWJS7JekTsSOgGYZ5B7HBQ=
-X-Google-Smtp-Source: APXvYqwrlyk+jtOIzcQNAVf6976bJtJVVuXE4BPNEUU4FrC1EBQZ1KrsVfR+sDVvD7XGNJvKjIp/UA==
-X-Received: by 2002:a05:6402:1212:: with SMTP id c18mr108401816edw.7.1564585704701;
-        Wed, 31 Jul 2019 08:08:24 -0700 (PDT)
+        bh=3Khe0ucVPgmVgmnJxVPmTI2qFbR46a/XU3GbaeIl9uc=;
+        b=iRwxEokkNSwARBSBPVYsGbHxwaxFDxb7trjG7LFBG6bsc4Xc7GxntAaGC8CnuCjjmA
+         OFv9xsABtJR6fLGxzXPt+aVsnI/ZMYszPZLo9Nn991DEarkQnri79wCfImj/LrQGV/rq
+         mbUbxtEJ4707XMGWe8y3yC9bVS+M9Lfnsadau+cxpygKjOH0T1A4vN4tIaTiapn739bN
+         ifHjJ+ORVJ6NG0nEjtU2T+fP4Ycd8rswHv2kQLaZoDwhK6306vSD2TflTc/aX/VkjSDf
+         QOX9JUWoAVoJvkTIcqCOUzJabBn/eNFxi6wdCmHmp5mOlMOdm2uaMKi4JfEkIlTYUMOB
+         4ZOQ==
+X-Gm-Message-State: APjAAAUu6re6ocEXu3ietc5pVo0C0RXX4fTDjzyk9sA8uXqGDwkHnJHL
+        6xlllV64CllyEVZfURAAgkc=
+X-Google-Smtp-Source: APXvYqyYETJB0gBc/rsdzF8ujwDgg52+44KLAYVNOsjGpZelFLVDgZMEkF6ZatMWv69FcpZwOd/juw==
+X-Received: by 2002:a50:ad2c:: with SMTP id y41mr105394092edc.300.1564585707403;
+        Wed, 31 Jul 2019 08:08:27 -0700 (PDT)
 Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id w14sm17419509eda.69.2019.07.31.08.08.20
+        by smtp.gmail.com with ESMTPSA id b30sm17643661ede.88.2019.07.31.08.08.20
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
         Wed, 31 Jul 2019 08:08:22 -0700 (PDT)
 From:   "Kirill A. Shutemov" <kirill@shutemov.name>
 X-Google-Original-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
 Received: by box.localdomain (Postfix, from userid 1000)
-        id 48F28101324; Wed, 31 Jul 2019 18:08:16 +0300 (+03)
+        id 56F3C1023AA; Wed, 31 Jul 2019 18:08:16 +0300 (+03)
 To:     Andrew Morton <akpm@linux-foundation.org>, x86@kernel.org,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>,
@@ -64,9 +64,9 @@ Cc:     Kees Cook <keescook@chromium.org>,
         linux-mm@kvack.org, kvm@vger.kernel.org, keyrings@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: [PATCHv2 13/59] x86/mm: Add a helper to retrieve KeyID for a VMA
-Date:   Wed, 31 Jul 2019 18:07:27 +0300
-Message-Id: <20190731150813.26289-14-kirill.shutemov@linux.intel.com>
+Subject: [PATCHv2 15/59] x86/mm: Map zero pages into encrypted mappings correctly
+Date:   Wed, 31 Jul 2019 18:07:29 +0300
+Message-Id: <20190731150813.26289-16-kirill.shutemov@linux.intel.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190731150813.26289-1-kirill.shutemov@linux.intel.com>
 References: <20190731150813.26289-1-kirill.shutemov@linux.intel.com>
@@ -77,67 +77,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We store KeyID in upper bits for vm_page_prot that match position of
-KeyID in PTE. vma_keyid() extracts KeyID from vm_page_prot.
-
-With KeyID in vm_page_prot we don't need to modify any page table helper
-to propagate the KeyID to page table entires.
+Zero pages are never encrypted. Keep KeyID-0 for them.
 
 Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 ---
- arch/x86/include/asm/mktme.h | 12 ++++++++++++
- arch/x86/mm/mktme.c          |  7 +++++++
- 2 files changed, 19 insertions(+)
+ arch/x86/include/asm/pgtable.h | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-diff --git a/arch/x86/include/asm/mktme.h b/arch/x86/include/asm/mktme.h
-index 46041075f617..52b115b30a42 100644
---- a/arch/x86/include/asm/mktme.h
-+++ b/arch/x86/include/asm/mktme.h
-@@ -5,6 +5,8 @@
- #include <linux/page_ext.h>
- #include <linux/jump_label.h>
+diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
+index 0bc530c4eb13..f0dd80a920a9 100644
+--- a/arch/x86/include/asm/pgtable.h
++++ b/arch/x86/include/asm/pgtable.h
+@@ -820,6 +820,19 @@ static inline unsigned long pmd_index(unsigned long address)
+  */
+ #define mk_pte(page, pgprot)   pfn_pte(page_to_pfn(page), (pgprot))
  
-+struct vm_area_struct;
-+
- #ifdef CONFIG_X86_INTEL_MKTME
- extern phys_addr_t __mktme_keyid_mask;
- extern phys_addr_t mktme_keyid_mask(void);
-@@ -31,6 +33,16 @@ static inline int page_keyid(const struct page *page)
- 	return lookup_page_ext(page)->keyid;
- }
- 
-+#define vma_keyid vma_keyid
-+int __vma_keyid(struct vm_area_struct *vma);
-+static inline int vma_keyid(struct vm_area_struct *vma)
++#define mk_zero_pte mk_zero_pte
++static inline pte_t mk_zero_pte(unsigned long addr, pgprot_t prot)
 +{
-+	if (!mktme_enabled())
-+		return 0;
++	extern unsigned long zero_pfn;
++	pte_t entry;
 +
-+	return __vma_keyid(vma);
++	prot.pgprot &= ~mktme_keyid_mask();
++	entry = pfn_pte(zero_pfn, prot);
++	entry = pte_mkspecial(entry);
++
++	return entry;
 +}
 +
- #else
- #define mktme_keyid_mask()	((phys_addr_t)0)
- #define mktme_nr_keyids()	0
-diff --git a/arch/x86/mm/mktme.c b/arch/x86/mm/mktme.c
-index 48c2d4c97356..d02867212e33 100644
---- a/arch/x86/mm/mktme.c
-+++ b/arch/x86/mm/mktme.c
-@@ -1,3 +1,4 @@
-+#include <linux/mm.h>
- #include <asm/mktme.h>
+ /*
+  * the pte page can be thought of an array like this: pte_t[PTRS_PER_PTE]
+  *
+@@ -1153,6 +1166,12 @@ static inline void ptep_set_wrprotect(struct mm_struct *mm,
  
- /* Mask to extract KeyID from physical address. */
-@@ -48,3 +49,9 @@ struct page_ext_operations page_mktme_ops = {
- 	.need = need_page_mktme,
- 	.init = init_page_mktme,
- };
+ #define mk_pmd(page, pgprot)   pfn_pmd(page_to_pfn(page), (pgprot))
+ 
++#define mk_zero_pmd(zero_page, prot)					\
++({									\
++	prot.pgprot &= ~mktme_keyid_mask();				\
++	pmd_mkhuge(mk_pmd(zero_page, prot));				\
++})
 +
-+int __vma_keyid(struct vm_area_struct *vma)
-+{
-+	pgprotval_t prot = pgprot_val(vma->vm_page_prot);
-+	return (prot & mktme_keyid_mask()) >> mktme_keyid_shift();
-+}
+ #define  __HAVE_ARCH_PMDP_SET_ACCESS_FLAGS
+ extern int pmdp_set_access_flags(struct vm_area_struct *vma,
+ 				 unsigned long address, pmd_t *pmdp,
 -- 
 2.21.0
 
