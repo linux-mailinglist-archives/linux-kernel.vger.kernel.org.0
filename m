@@ -2,60 +2,161 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3CAC7C14D
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 14:28:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2061B7C157
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 14:30:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387604AbfGaM2q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 08:28:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58090 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387586AbfGaM2q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 08:28:46 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1214520693;
-        Wed, 31 Jul 2019 12:28:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564576125;
-        bh=WtyBFMdBR353vI3+5UJCR8oWiGoLewqTegg0gZO6II4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=W2aMgXFP0ZY1mOmQf7hJZaphxi/bpCIlRWLjK7TyPXfN188tjBSPAewFIV1Zp7qhG
-         8+mbZq0QfXLHBhFl+DZ3IZc9bdVaRNvyM9EO8p6V+C0wUcnyGr9/qaoq3BaZZgl2RI
-         izCUxP6+4FP2lwiZEAZGdMNVzp9T4C3smXHIQqCk=
-Date:   Wed, 31 Jul 2019 14:28:43 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Sudeep Holla <sudeep.holla@arm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 04/11] firmware: arm_scpi: convert platform driver to use
- dev_groups
-Message-ID: <20190731122843.GA27960@kroah.com>
-References: <20190704084617.3602-1-gregkh@linuxfoundation.org>
- <20190704084617.3602-5-gregkh@linuxfoundation.org>
- <20190704091025.GA10622@e107155-lin>
+        id S1727614AbfGaM35 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 31 Jul 2019 08:29:57 -0400
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:36433 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726259AbfGaM34 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jul 2019 08:29:56 -0400
+X-Originating-IP: 88.168.111.231
+Received: from localhost (lpr83-1-88-168-111-231.fbx.proxad.net [88.168.111.231])
+        (Authenticated sender: maxime.ripard@bootlin.com)
+        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id 364B860015;
+        Wed, 31 Jul 2019 12:29:54 +0000 (UTC)
+Date:   Wed, 31 Jul 2019 14:29:53 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Jernej =?utf-8?Q?=C5=A0krabec?= <jernej.skrabec@gmail.com>
+Cc:     linux-sunxi@googlegroups.com, codekipper@gmail.com,
+        Christopher Obbard <chris@64studio.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        "Andrea Venturi (pers)" <be17068@iperbole.bo.it>
+Subject: Re: [linux-sunxi] Re: [PATCH v4 6/9] ASoC: sun4i-i2s: Add multi-lane
+ functionality
+Message-ID: <20190731122953.2u3iabd6gkn7jv7k@flea>
+References: <20190603174735.21002-1-codekipper@gmail.com>
+ <CAP03XepJVPge5sz4WcmK8pp2jHAPJdGb6v6A3R0DzSf5O6qj-g@mail.gmail.com>
+ <CAEKpxBmxAQKgDhvjpczAWwNtNhYRs07wjMSnr8nqHk1XxMT=nw@mail.gmail.com>
+ <2092329.vleAuWJ0xl@jernej-laptop>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190704091025.GA10622@e107155-lin>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <2092329.vleAuWJ0xl@jernej-laptop>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 04, 2019 at 10:10:26AM +0100, Sudeep Holla wrote:
-> On Thu, Jul 04, 2019 at 10:46:10AM +0200, Greg Kroah-Hartman wrote:
-> > Platform drivers now have the option to have the platform core create
-> > and remove any needed sysfs attribute files.  So take advantage of that
-> > and do not register "by hand" a sysfs group of attributes.
-> > 
-> > Cc: Sudeep Holla <sudeep.holla@arm.com>
-> 
-> Assuming you plan to take this series as a whole,
-> 
-> Acked-by: Sudeep Holla <sudeep.holla@arm.com>
+On Tue, Jul 30, 2019 at 07:57:10PM +0200, Jernej Škrabec wrote:
+> Dne torek, 04. junij 2019 ob 11:38:44 CEST je Code Kipper napisal(a):
+> > On Tue, 4 Jun 2019 at 11:02, Christopher Obbard <chris@64studio.com> wrote:
+> > > On Tue, 4 Jun 2019 at 09:43, Code Kipper <codekipper@gmail.com> wrote:
+> > > > On Tue, 4 Jun 2019 at 09:58, Maxime Ripard <maxime.ripard@bootlin.com>
+> wrote:
+> > > > > On Mon, Jun 03, 2019 at 07:47:32PM +0200, codekipper@gmail.com wrote:
+> > > > > > From: Marcus Cooper <codekipper@gmail.com>
+> > > > > >
+> > > > > > The i2s block supports multi-lane i2s output however this
+> > > > > > functionality
+> > > > > > is only possible in earlier SoCs where the pins are exposed and for
+> > > > > > the i2s block used for HDMI audio on the later SoCs.
+> > > > > >
+> > > > > > To enable this functionality, an optional property has been added to
+> > > > > > the bindings.
+> > > > > >
+> > > > > > Signed-off-by: Marcus Cooper <codekipper@gmail.com>
+> > > > >
+> > > > > I'd like to have Mark's input on this, but I'm really worried about
+> > > > > the interaction with the proper TDM support.
+> > > > >
+> > > > > Our fundamental issue is that the controller can have up to 8
+> > > > > channels, but either on 4 lines (instead of 1), or 8 channels on 1
+> > > > > (like proper TDM) (or any combination between the two, but that should
+> > > > > be pretty rare).
+> > > >
+> > > > I understand...maybe the TDM needs to be extended to support this to
+> > > > consider channel mapping and multiple transfer lines. I was thinking
+> > > > about the later when someone was requesting support on IIRC a while
+> > > > ago, I thought masking might of been a solution. These can wait as the
+> > > > only consumer at the moment is LibreELEC and we can patch it there.
+> > >
+> > > Hi Marcus,
+> > >
+> > > FWIW, the TI McASP driver has support for TDM & (i think?) multiple
+> > > transfer lines which are called serializers.
+> > > Maybe this can help with inspiration?
+> > > see
+> > > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/s
+> > > ound/soc/ti/davinci-mcasp.c sample DTS:
+> > >
+> > > &mcasp0 {
+> > >
+> > >     #sound-dai-cells = <0>;
+> > >     status = "okay";
+> > >     pinctrl-names = "default";
+> > >     pinctrl-0 = <&mcasp0_pins>;
+> > >
+> > >     op-mode = <0>;
+> > >     tdm-slots = <8>;
+> > >     serial-dir = <
+> > >
+> > >         2 0 1 0
+> > >         0 0 0 0
+> > >         0 0 0 0
+> > >         0 0 0 0
+> > >     >
+> > >     >;
+> > >
+> > >     tx-num-evt = <1>;
+> > >     rx-num-evt = <1>;
+> > >
+> > > };
+> > >
+> > > Cheers!
+> >
+> > Thanks, this looks good.
+>
+> I would really like to see this issue resolved, because HDMI audio support in
+> mainline Linux for those SoCs is long overdue.
+>
+> However, there is a possibility to still add HDMI audio suport (stereo only)
+> even if this issue is not completely solved. If we agree that configuration of
+> channels would be solved with additional property as Christopher suggested,
+> support for >2 channels can be left for a later time when support for that
+> property would be implemented. Currently, stereo HDMI audio support can be
+> added with a few patches.
+>
+> I think all I2S cores are really the same, no matter if internally connected
+> to HDMI controller or routed to pins, so it would make sense to use same
+> compatible for all of them. It's just that those I2S cores which are routed to
+> pins can use only one lane and >2 channels can be used only in TDM mode of
+> operation, if I understand this correctly.
+>
+> New property would have to be optional, so it's omission would result in same
+> channel configuration as it is already present, to preserve compatibility with
+> old device trees. And this mode is already sufficient for stereo HDMI audio
+> support.
 
-Thanks, there will be one more series, but ideally we can take the whole
-thing as-is.
+Yeah, it looks like a good plan.
 
-greg k-h
+> Side note: HDMI audio with current sun4i-i2s driver has a delay (about a
+> second), supposedly because DW HDMI controller automatically generates CTS
+> value based on I2S clock (auto CTS value generation is enabled per DesignWare
+> recomendation for DW HDMI I2S interface).
+
+Is that a constant delay during the audio playback, or only at startup?
+
+> I2S driver from BSP Linux solves that by having I2S clock output
+> enabled all the time. Should this be flagged with some additional
+> property in DT?
+
+I'd say that if the codec has that requirement, then it should be
+between the codec and the DAI, the DT doesn't really have anything to
+do with this.
+
+Maxime
+
+--
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
