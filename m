@@ -2,125 +2,213 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A2F0E7BE0B
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 12:10:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EB8347BE12
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 12:11:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727600AbfGaKJ6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 06:09:58 -0400
-Received: from esa5.hgst.iphmx.com ([216.71.153.144]:9261 "EHLO
-        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725866AbfGaKJ6 (ORCPT
+        id S1727002AbfGaKLX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 06:11:23 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:36227 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726118AbfGaKLW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 06:09:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1564567798; x=1596103798;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=WAwuweJrEgd2UDtVBxTNqldHlRm6VqKiLQFazhsKvR8=;
-  b=Bpybt7toL+v7o58d+YKYr237FuhXjtPzbh4OrgYl1RyELayueu95i+Sy
-   zITHkGtkBCFw8/HWg1d3nmG0uV1/heugp1CHTxVS7xfUzShEVvtUmgpCS
-   xsoI932LJgFjLjTUEbO9CTrbuuuF/PnrbXTNn3cQNoWEnma5rqfw5XM6Q
-   JJmYyL4AQAoUWOQiPj0oooM0537y7Dei3+3lqXkBZV+UKZJr6/51fLvtS
-   FV3zjM9LZLa4jkovdnZDBp8dY1Ocj115Z6iRJ4g6U5TYtraTTz92Pmhp4
-   NklXHidjafexkDG0uL+GweobxizbMxIOCLoIR2BrxW/VaPfpnJ7sR7pFh
-   Q==;
-IronPort-SDR: 1JybFdu3HQw8yM+WuDRWqHYOeEKjD1B58hycptIE03A+PKoB0mIjHVe7674NmLVYLOloRy2vNu
- n1BMfIxO5QkXIQgqu2wjA3mB3hfSVj+v3kKi88kJX14EgB0R6wyYshHFr08dh9p78Z4QIccwyJ
- lGjfud7S5HBGtAOuy21zbDK0nSvb4ku2c0fdv9OA4VnPF5B9y7b5ofeYlAg04L+MNc26OEnEFu
- 8wN/mhXs18IqcbR2ZyIhBtWszca87iKHoz4YK4jAdGd3hfcM37R6o2qrEnYB7wTxRICXLwGIdX
- wCQ=
-X-IronPort-AV: E=Sophos;i="5.64,329,1559491200"; 
-   d="scan'208";a="115587183"
-Received: from mail-sn1nam02lp2059.outbound.protection.outlook.com (HELO NAM02-SN1-obe.outbound.protection.outlook.com) ([104.47.36.59])
-  by ob1.hgst.iphmx.com with ESMTP; 31 Jul 2019 18:09:57 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=KQy3H+17/fj+XZPM+1De9AFwm5mPsK9ru9WJt/ikUy4BdHhvK43KORredUb7zyAGEVR2eyGS5Hi0hePWDzBkQRXOpjLpvfEB0BZEp06zw5O3R+XL4XKvouV58QqcCwJOxj8ZgqcxxOn6v6Dj9MGwo7wRfAwOqexEWBlW8wslNCq7QyyaBxWCiMEQM7WrCymahP7xbPKEIwP9iOzAN/AKsaRd9Ytn48lET+mCScoUn/KaZsaDhbcx9T0A3qhK1M6Goz3QVBTPNGyqH/3IuXcnt4oqbp7xp8pevIDSS1SGBVF4XCqnjYP+ZV+wpWNfc+nAhOAEbIHihvzwumb4fkgLjg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WAwuweJrEgd2UDtVBxTNqldHlRm6VqKiLQFazhsKvR8=;
- b=n2/i6EbTNCarM+O2SN0w6IUpcgZViUyofRkxB7x/UfD2pl4ki0YonLoLXJ6f9APVHfN7bkvxo18967ogimIzmWMC2qeOXT+otcoLVz8k1wEtVpCBT3HS44xKpFu087HvmyUBxLz+Mq+VrmMFgFP22RTB8+Al+jmbUGWuWAxhpuL5CyFhCKpkCMVI0tN9Bv6W7f43TUMb+razw+3O2ZswTAOEQ6MazdYJdYYKEoRo3JT2Zn62j6MXi80+PlIFraUvFdqAuJh13Gsrs1+vUYZ0qE+6N0amtgrJacM6SGnszun6JQCcCo4+hbG2ML1hbi1nJueCtiRs1ud5Nhtli43fkw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
- smtp.mailfrom=wdc.com;dmarc=pass action=none header.from=wdc.com;dkim=pass
- header.d=wdc.com;arc=none
+        Wed, 31 Jul 2019 06:11:22 -0400
+Received: by mail-wr1-f66.google.com with SMTP id n4so69088906wrs.3
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 03:11:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WAwuweJrEgd2UDtVBxTNqldHlRm6VqKiLQFazhsKvR8=;
- b=b3hTfkyjYJKMeKRiTYso1cX1/Q3QGjHp32x/O29mVTqJ/vtpmHi1FTQ6PU5cZFeglgxgCbOeWsO3AIxIS6AxHOKjXF978+ZwPtP4ATXABSPmcGCJyW3B11PTPgGBWCZS/Eqk2hL8MHgMm25LzHbB+qtobyydQvJpMluRWs6wypg=
-Received: from MN2PR04MB6991.namprd04.prod.outlook.com (10.186.144.209) by
- MN2PR04MB6445.namprd04.prod.outlook.com (52.132.169.11) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2136.13; Wed, 31 Jul 2019 10:09:55 +0000
-Received: from MN2PR04MB6991.namprd04.prod.outlook.com
- ([fe80::5d3b:c35e:a95a:51e2]) by MN2PR04MB6991.namprd04.prod.outlook.com
- ([fe80::5d3b:c35e:a95a:51e2%3]) with mapi id 15.20.2115.005; Wed, 31 Jul 2019
- 10:09:55 +0000
-From:   Avri Altman <Avri.Altman@wdc.com>
-To:     Anil Varughese <aniljoy@cadence.com>,
-        "alim.akhtar@samsung.com" <alim.akhtar@samsung.com>,
-        "pedrom.sousa@synopsys.com" <pedrom.sousa@synopsys.com>
-CC:     "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
-        "hare@suse.de" <hare@suse.de>,
-        "rafalc@cadence.com" <rafalc@cadence.com>,
-        "mparab@cadence.com" <mparab@cadence.com>,
-        "jank@cadence.com" <jank@cadence.com>,
-        "vigneshr@ti.com" <vigneshr@ti.com>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] scsi: ufs: Additional clock initialization in Cadence UFS
-Thread-Topic: [PATCH] scsi: ufs: Additional clock initialization in Cadence
- UFS
-Thread-Index: AQHVR3tcf/mCdBEWqU6Uux3DMp7HZKbkgPKQ
-Date:   Wed, 31 Jul 2019 10:09:54 +0000
-Message-ID: <MN2PR04MB699133D84C627AE30C6A50CDFCDF0@MN2PR04MB6991.namprd04.prod.outlook.com>
-References: <20190731083614.25926-1-aniljoy@cadence.com>
-In-Reply-To: <20190731083614.25926-1-aniljoy@cadence.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Avri.Altman@wdc.com; 
-x-originating-ip: [212.25.79.133]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: e71d768c-825e-4757-1fe6-08d7159f3c34
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:MN2PR04MB6445;
-x-ms-traffictypediagnostic: MN2PR04MB6445:
-x-microsoft-antispam-prvs: <MN2PR04MB6445B8193A6DE8B0A9AE1BD8FCDF0@MN2PR04MB6445.namprd04.prod.outlook.com>
-wdcipoutbound: EOP-TRUE
-x-ms-oob-tlc-oobclassifiers: OLM:6790;
-x-forefront-prvs: 011579F31F
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(346002)(376002)(366004)(39860400002)(136003)(396003)(189003)(199004)(86362001)(316002)(8676002)(81166006)(8936002)(81156014)(5660300002)(486006)(52536014)(110136005)(54906003)(2501003)(478600001)(6246003)(25786009)(4326008)(9686003)(305945005)(6436002)(229853002)(55016002)(68736007)(7736002)(53936002)(76176011)(2201001)(26005)(102836004)(256004)(74316002)(7696005)(14454004)(7416002)(186003)(6506007)(99286004)(6116002)(64756008)(66556008)(66476007)(3846002)(66446008)(66946007)(11346002)(476003)(446003)(76116006)(71190400001)(71200400001)(66066001)(4744005)(2906002)(33656002);DIR:OUT;SFP:1102;SCL:1;SRVR:MN2PR04MB6445;H:MN2PR04MB6991.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: erBPUDobGILlZI0oIToSHV/lBdjP8kGBScoxefuv7QULoGCrfmS3NwfDgF+uL+9bBNk9UNnj7iOPC1W73mRn5ULLoeqVDEuQlnJc+yNcY63VJzzW3PB71bLw91ab+F3fv5YrN4iXNKq+C1XQG6ORn4FI/USe+xmdygJIRVQvH/OoWGtxKxy8Ap1uZlMBKNZSUVo0CHqEovqfuIed16whYne5PyTMsQ9a3aG2cWPtXoqcJ9Sq/Y0i69Yl1dk5ThNqYx1qbCiLvdf/ueMQaqBJRTVKGd0qhpxUo1TUvVNgRYiaKmqR57LsUfhT70GeFVdEw254Yr9KC8ooVo1jIu5RdxymKc0Hj/PiiCBnF2yTruzNaHesv1Myp5hQwEJIeFBYE4c2XFPQxlo0TMWISISp3vxnLk7SBKmxwBWej1zhyU4=
-Content-Type: text/plain; charset="us-ascii"
+        d=linaro.org; s=google;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=OkLpFW3muTNu0EBzFfltcBJdzbpj7Ripja8zgyGMop8=;
+        b=WnpKvvn7BxnNcYPdHk5rlNRVoK48qLNjkRF5xzBiIdj23FGF8TjRn685wlUr3Wa1Nx
+         XtTMN7Vm+NNYe9s/xWjUGnJHFeBaO/7jGfiB0X2s5s10iJGAzdGJ1CkSp/6zCugJ343M
+         8ucm8shTtQ0tlvHSXBgE7T5mxFJolvQHEvGCdyvIYRtoop7N3r1uF4WNSVe6eStgwSTQ
+         KZgaOBmxJyx+I98Y6gB2B3SPymcUK7NvY7+0PjB0UVHdxjhvGgu0xZSBhZ7MCFI42SX1
+         R+NrqMTxwaT1ySyALVEqVfXrXJBnyrKHujIH0SwTtHRVrVMG6R8ElH+VgjieaP8Kmwj5
+         mNBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=OkLpFW3muTNu0EBzFfltcBJdzbpj7Ripja8zgyGMop8=;
+        b=Q1Nh+kiM+rRAQODc5Fhm3QplJ0cturYb8SeDWarTExN3s6cvCj2+GoaYcZQFIkqzGP
+         XbaplXJzTjIyKnic01tIOc/HeC8xJX0ujunDc/3NMDoUQ9YbGuIiAMJIQQWqaYGObsMD
+         BU7K5ufl302Wtp/XWmcB/4+xvOquCiybjgiGq+VUpIisXPUXuJqod3M3sE/ySTpC6Hb1
+         HUnMP3NWFD4Hz1N4nC4AihtD293/oNqfmwh6DKak++breeMtr46ptumP4QKOT/gLzTeL
+         2dcPkQOFaXc0PRAbkpnI65svv3quPNDSvWz0Xpx0rRoH4RCE/GI/lnu3EHLFz9coETlp
+         h9wg==
+X-Gm-Message-State: APjAAAXPAnhpBRTccXHKvzHB1qhmXZi7kyoFt4lhipfQDH/YelHaitnD
+        hajnnNWwbR6A4L25lgzcP0NfWw==
+X-Google-Smtp-Source: APXvYqysgBG6cPtJElknFrwTIdYfNo3Xd1fba0pMgwDmQ+ln+puS5XlLek/zYQ+11IJ4b1XSy5P9VA==
+X-Received: by 2002:a5d:4b91:: with SMTP id b17mr13477615wrt.57.1564567879247;
+        Wed, 31 Jul 2019 03:11:19 -0700 (PDT)
+Received: from [192.168.0.100] (88-147-65-240.dyn.eolo.it. [88.147.65.240])
+        by smtp.gmail.com with ESMTPSA id p18sm66750384wrm.16.2019.07.31.03.11.18
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 31 Jul 2019 03:11:18 -0700 (PDT)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.8\))
+Subject: Re: [PATCH] bfq: Check if bfqq is NULL in bfq_insert_request
+From:   Paolo Valente <paolo.valente@linaro.org>
+In-Reply-To: <23890163-facd-3838-ddee-770b7c2f32ea@roeck-us.net>
+Date:   Wed, 31 Jul 2019 12:11:11 +0200
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        linux-block <linux-block@vger.kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Hsin-Yi Wang <hsinyi@google.com>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Doug Anderson <dianders@chromium.org>
 Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e71d768c-825e-4757-1fe6-08d7159f3c34
-X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Jul 2019 10:09:54.9276
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Avri.Altman@wdc.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR04MB6445
+Message-Id: <5162CB3B-39B1-4348-AEBD-2197330A3BA3@linaro.org>
+References: <1563816648-12057-1-git-send-email-linux@roeck-us.net>
+ <20190728151931.GA29181@roeck-us.net>
+ <0BCD5EDA-6D08-4023-9EEA-087F0AB99D47@linaro.org>
+ <23890163-facd-3838-ddee-770b7c2f32ea@roeck-us.net>
+To:     Guenter Roeck <linux@roeck-us.net>
+X-Mailer: Apple Mail (2.3445.104.8)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+
+
+> Il giorno 30 lug 2019, alle ore 15:35, Guenter Roeck =
+<linux@roeck-us.net> ha scritto:
 >=20
-> Configure CDNS_UFS_REG_HCLKDIV in .hce_enable_notify()
-> because if UFSHCD resets the controller ip because of
-> phy or device related errors then CDNS_UFS_REG_HCLKDIV
-> is reset to default value and .setup_clock() is not
-> called later in the sequence whereas hce_enable_notify
-> will be called everytime controller is reenabled.
+> On 7/30/19 1:55 AM, Paolo Valente wrote:
+>> Hi Guenter,
+>> sorry for the delay (Dolomiti's fault).
+>> I didn't consider that rq->elv-icq might have been NULL also
+>> because of OOM.  Thanks for spotting this issue.
+>> As for the other places where the return value of bfq_init_rq is =
+used,
+>> unfortunately I think they matter too.  Those other places are =
+related
+>> to request merging, which is the alternative destiny of requests
+>> (instead of being just inserted).  But, regardless of whether a
+>> request is to be merged or inserted, that request may be destined to =
+a
+>> bfq_queue (possibly merged with a request already in a bfq_queue), =
+and
+>> a NULL return value by bfq_init_rq leads to a crash.  I guess you can
+>> reproduce your failure also for the merge case, by generating
+>> sequential, direct I/O with queue depth > 1, and of course by =
+enabling
+>> failslab.
+> My assumption was that requests would only be merged if they are =
+associated
+> with the same io context. In that case, that IO context isn't =
+reallocated
+> with ioc_create_icq() but reused, and icq would thus never be NULL.
+> I guess that assumption was wrong.
+
+I don't remember such a filtering.  I had a look again, but didn't
+find anything relevant.  However, more competent people see these
+emails.  Maybe someone can give us better advice.  Otherwise, to stay
+on the safe side, I'd propose to handle any possible NULL return.
+
+And I'll manage it, as per your request.
+
+Thanks,
+Paolo
+
 >=20
-> Signed-off-by: Anil Varughese <aniljoy@cadence.com>
-Reviewed-by: Avri Altman <avri.altman@wdc.com>
+>> If my considerations above are correct, do you want to propose a
+>> complete fix yourself?
+>=20
+> Sure, I'll send an updated patch.
+>=20
+> Thanks,
+> Guenter
+>=20
+>> Thanks,
+>> Paolo
+>>> Il giorno 28 lug 2019, alle ore 17:19, Guenter Roeck =
+<linux@roeck-us.net> ha scritto:
+>>>=20
+>>> ping ... just in case this patch got lost in Paolo's queue.
+>>>=20
+>>> Guenter
+>>>=20
+>>> On Mon, Jul 22, 2019 at 10:30:48AM -0700, Guenter Roeck wrote:
+>>>> In bfq_insert_request(), bfqq is initialized with:
+>>>> 	bfqq =3D bfq_init_rq(rq);
+>>>> In bfq_init_rq(), we find:
+>>>> 	if (unlikely(!rq->elv.icq))
+>>>> 		return NULL;
+>>>> Indeed, rq->elv.icq can be NULL if the memory allocation in
+>>>> create_task_io_context() failed.
+>>>>=20
+>>>> A comment in bfq_insert_request() suggests that bfqq is supposed to =
+be
+>>>> non-NULL if 'at_head || blk_rq_is_passthrough(rq)' is false. Yet, =
+as
+>>>> debugging and practical experience shows, this is not the case in =
+the
+>>>> above situation.
+>>>>=20
+>>>> This results in the following crash.
+>>>>=20
+>>>> Unable to handle kernel NULL pointer dereference
+>>>> 	at virtual address 00000000000001b0
+>>>> ...
+>>>> Call trace:
+>>>> bfq_setup_cooperator+0x44/0x134
+>>>> bfq_insert_requests+0x10c/0x630
+>>>> blk_mq_sched_insert_requests+0x60/0xb4
+>>>> blk_mq_flush_plug_list+0x290/0x2d4
+>>>> blk_flush_plug_list+0xe0/0x230
+>>>> blk_finish_plug+0x30/0x40
+>>>> generic_writepages+0x60/0x94
+>>>> blkdev_writepages+0x24/0x30
+>>>> do_writepages+0x74/0xac
+>>>> __filemap_fdatawrite_range+0x94/0xc8
+>>>> file_write_and_wait_range+0x44/0xa0
+>>>> blkdev_fsync+0x38/0x68
+>>>> vfs_fsync_range+0x68/0x80
+>>>> do_fsync+0x44/0x80
+>>>>=20
+>>>> The problem is relatively easy to reproduce by running an image =
+with
+>>>> failslab enabled, such as with:
+>>>>=20
+>>>> cd /sys/kernel/debug/failslab
+>>>> echo 10 > probability
+>>>> echo 300 > times
+>>>>=20
+>>>> Avoid the problem by checking if bfqq is NULL before using it. With =
+the
+>>>> NULL check in place, requests with missing io context are queued
+>>>> immediately, and the crash is no longer seen.
+>>>>=20
+>>>> Fixes: 18e5a57d79878 ("block, bfq: postpone rq preparation to =
+insert or merge")
+>>>> Reported-by: Hsin-Yi Wang  <hsinyi@google.com>
+>>>> Cc: Hsin-Yi Wang <hsinyi@google.com>
+>>>> Cc: Nicolas Boichat <drinkcat@chromium.org>
+>>>> Cc: Doug Anderson <dianders@chromium.org>
+>>>> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+>>>> ---
+>>>> block/bfq-iosched.c | 2 +-
+>>>> 1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>=20
+>>>> diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
+>>>> index 72860325245a..56f3f4227010 100644
+>>>> --- a/block/bfq-iosched.c
+>>>> +++ b/block/bfq-iosched.c
+>>>> @@ -5417,7 +5417,7 @@ static void bfq_insert_request(struct =
+blk_mq_hw_ctx *hctx, struct request *rq,
+>>>>=20
+>>>> 	spin_lock_irq(&bfqd->lock);
+>>>> 	bfqq =3D bfq_init_rq(rq);
+>>>> -	if (at_head || blk_rq_is_passthrough(rq)) {
+>>>> +	if (!bfqq || at_head || blk_rq_is_passthrough(rq)) {
+>>>> 		if (at_head)
+>>>> 			list_add(&rq->queuelist, &bfqd->dispatch);
+>>>> 		else
+>>>> --=20
+>>>> 2.7.4
+>>>>=20
+>=20
+
