@@ -2,31 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F024A7CE02
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 22:17:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CA8B67CE05
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 22:17:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727041AbfGaURJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 16:17:09 -0400
-Received: from ms.lwn.net ([45.79.88.28]:56102 "EHLO ms.lwn.net"
+        id S1728582AbfGaURh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 16:17:37 -0400
+Received: from ms.lwn.net ([45.79.88.28]:56130 "EHLO ms.lwn.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725793AbfGaURI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 16:17:08 -0400
+        id S1725793AbfGaURh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jul 2019 16:17:37 -0400
 Received: from lwn.net (localhost [127.0.0.1])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id 11F1F7DA;
-        Wed, 31 Jul 2019 20:17:08 +0000 (UTC)
-Date:   Wed, 31 Jul 2019 14:17:07 -0600
+        by ms.lwn.net (Postfix) with ESMTPSA id 7F83A7DA;
+        Wed, 31 Jul 2019 20:17:35 +0000 (UTC)
+Date:   Wed, 31 Jul 2019 14:17:34 -0600
 From:   Jonathan Corbet <corbet@lwn.net>
 To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
         Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/6] docs: fs: convert porting to ReST
-Message-ID: <20190731141707.6f3d21d7@lwn.net>
-In-Reply-To: <a2303fe9fa2103e7d1f8589e1f91a7d65497e8b7.1564603513.git.mchehab+samsung@kernel.org>
+        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        samba-technical@lists.samba.org, Mark Brown <broonie@kernel.org>,
+        devicetree@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
+        linux-iio@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>,
+        Evgeniy Dushistov <dushistov@mail.ru>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Steve French <sfrench@samba.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        linux-cifs@vger.kernel.org, Dave Kleikamp <shaggy@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Evgeniy Polyakov <zbr@ioremap.net>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        jfs-discussion@lists.sourceforge.net,
+        linux-arm-kernel@lists.infradead.org,
+        Hartmut Knaack <knaack.h@gmx.de>, linux-spi@vger.kernel.org
+Subject: Re: [PATCH 0/6] ReST conversion patches not applied yet
+Message-ID: <20190731141734.1fa9ce64@lwn.net>
+In-Reply-To: <cover.1564603513.git.mchehab+samsung@kernel.org>
 References: <cover.1564603513.git.mchehab+samsung@kernel.org>
-        <a2303fe9fa2103e7d1f8589e1f91a7d65497e8b7.1564603513.git.mchehab+samsung@kernel.org>
 Organization: LWN.net
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -36,43 +54,19 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 31 Jul 2019 17:08:52 -0300
+On Wed, 31 Jul 2019 17:08:47 -0300
 Mauro Carvalho Chehab <mchehab+samsung@kernel.org> wrote:
 
-> This file has its own proper style, except that, after a while,
-> the coding style gets violated and whitespaces are placed on
-> different ways.
+> As promised, this is the rebased version of the patches that were not applied
+> from the /26 patch series because you had merge conflicts.
 > 
-> As Sphinx and ReST are very sentitive to whitespace differences,
-> I had to opt if each entry after required/mandatory/... fields
-> should start with zero spaces or with a tab. I opted to start them
-> all from the zero position, in order to avoid needing to break lines
-> with more than 80 columns, with would make harder for review.
+> They're all based on your docs-next branch, so should apply fine.
 > 
-> Most of the other changes at porting.rst were made to use an unified
-> notation with works nice as a text file while also produce a good html
-> output after being parsed.
+> The first one fixes all but one error with a broken reference.
 > 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-> ---
->  Documentation/filesystems/porting.rst | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/filesystems/porting.rst b/Documentation/filesystems/porting.rst
-> index 66aa521e6376..f18506083ced 100644
-> --- a/Documentation/filesystems/porting.rst
-> +++ b/Documentation/filesystems/porting.rst
-> @@ -158,7 +158,7 @@ Callers of notify_change() need ->i_mutex now.
->  New super_block field ``struct export_operations *s_export_op`` for
->  explicit support for exporting, e.g. via NFS.  The structure is fully
->  documented at its declaration in include/linux/fs.h, and in
-> -Documentation/filesystems/nfs/Exporting.
-> +Documentation/filesystems/nfs/exporting.rst.
->  
->  Briefly it allows for the definition of decode_fh and encode_fh operations
->  to encode and decode filehandles, and allows the filesystem to use
+> The only broken reference right now is due to a DT patch with was not
+> accepted (no idea why), but whose driver is upstream.
 
-This patch doesn't match the changelog at all.  I think it's one leftover
-fix after the previous version of the patch was applied...?
+All but 5/6 applied, thanks.
 
 jon
