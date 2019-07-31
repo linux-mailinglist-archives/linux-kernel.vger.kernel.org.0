@@ -2,104 +2,174 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C9C97C8F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 18:40:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D18F7C8F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 18:41:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730252AbfGaQkS convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 31 Jul 2019 12:40:18 -0400
-Received: from mailoutvs30.siol.net ([185.57.226.221]:34957 "EHLO
-        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729842AbfGaQkM (ORCPT
+        id S1730230AbfGaQlE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 12:41:04 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:37669 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729199AbfGaQlD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 12:40:12 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Zimbra) with ESMTP id 7B0A05209AE;
-        Wed, 31 Jul 2019 18:40:08 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at psrvmta12.zcs-production.pri
-Received: from mail.siol.net ([127.0.0.1])
-        by localhost (psrvmta12.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id fXh7Bj71aPKg; Wed, 31 Jul 2019 18:40:08 +0200 (CEST)
-Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Zimbra) with ESMTPS id 84F755233C1;
-        Wed, 31 Jul 2019 18:40:07 +0200 (CEST)
-Received: from jernej-laptop.localnet (cpe-194-152-11-237.cable.triera.net [194.152.11.237])
-        (Authenticated sender: jernej.skrabec@siol.net)
-        by mail.siol.net (Zimbra) with ESMTPA id 488405209AE;
-        Wed, 31 Jul 2019 18:40:04 +0200 (CEST)
-From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To:     Fabio Estevam <festevam@gmail.com>
-Cc:     Guido =?ISO-8859-1?Q?G=FCnther?= <agx@sigxcpu.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Lee Jones <lee.jones@linaro.org>,
-        DRI mailing list <dri-devel@lists.freedesktop.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Robert Chiras <robert.chiras@nxp.com>,
-        Chris Healy <cphealy@gmail.com>
-Subject: Re: [PATCH 3/3] drm/bridge: Add NWL MIPI DSI host controller support
-Date:   Wed, 31 Jul 2019 18:40:03 +0200
-Message-ID: <13373313.BzCyiC4ED7@jernej-laptop>
-In-Reply-To: <CAOMZO5Djoi7EuXapkg+dQ6HR2oZZHrw+vnjc837Gxee-Nh00Hw@mail.gmail.com>
-References: <cover.1563983037.git.agx@sigxcpu.org> <20190731143532.GA1935@bogon.m.sigxcpu.org> <CAOMZO5Djoi7EuXapkg+dQ6HR2oZZHrw+vnjc837Gxee-Nh00Hw@mail.gmail.com>
+        Wed, 31 Jul 2019 12:41:03 -0400
+Received: by mail-ed1-f68.google.com with SMTP id w13so66322642eds.4
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 09:41:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9n08u3GJ3TkoLk8dAtSDxOBDU0rwKbPL2XSn71rR3Sw=;
+        b=gyHso0psXZxIRwfoQB7/1x9EDd4ieIp7DfCBq0vQDlRLPKc83Ith5HUc27tIj39PbC
+         Gx4ky8SttACB4JG6B7TQjhow6V22FEUz5uSXJP1/qvA6H3w4pmgNHe++Ase6vjR4ymUq
+         d5TuYCkbYbkOjqQGaMvUxuarmKyyt1BNfIgWn7f3wMQEew7+sYqDbPlO3VZ4/v6QLcE8
+         Rx5YvjwzS4nmQjfs+mg7tHD2+7INbG9VJnKRDWfnM/TGSHEKhpF1DW91yWc+2THEDai+
+         2ocwzsL+0lxh3ZUjZKVTeeAw/Xqw5jHT6j2N3eZkRTvUtFbcxMeucRezrF/sa/pHfxUe
+         gIGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9n08u3GJ3TkoLk8dAtSDxOBDU0rwKbPL2XSn71rR3Sw=;
+        b=bg8SXwShdSbrCpyOeM/xx39542pLPdq1OsqijX41jhnKHLs/gao6AHwxxFlHlWcHww
+         iHhlPfGSFFhspqEIy1V1nmwiopY30uXXGNYL2vxnpCR8PM+KZL7N86WYWTwP53olfeKP
+         oj9uBC9ePmQmHHUMB8/KQqDenuZQnA2IFnCjWkCqW7gjzIGSObga0iTetjX7b0RByiXv
+         /WNOhiWQxsgA+aUQ0g5arX+yKwJVdInr4rtwxyfj0x0b3atGKMk9rPidavEw7YzwY71y
+         cK+4O/XPBFPI1qou9cs8AEJUnQpHehUzJYAzCZPKUbo4UJ8s5U9IOPs7TdopSjchu5FJ
+         CEtQ==
+X-Gm-Message-State: APjAAAUEEa04OpxqFXRAEDBHio1951PCua+NiB8Nc8LJXdpiQDwitMGf
+        R83Ks2svzPo9wFdyiSyCwGISmtYT++gCc8Loa3w=
+X-Google-Smtp-Source: APXvYqxF+hy+jYmVua6SeP9iGGLWPE7SNYmJPpSCp47g0V8pOMefhRmMSdxqadCgF+tst3HOjgiapc7sIfKcI7O/FwM=
+X-Received: by 2002:a17:906:b203:: with SMTP id p3mr94874464ejz.223.1564591261970;
+ Wed, 31 Jul 2019 09:41:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="iso-8859-1"
+References: <20190731153857.4045-1-pasha.tatashin@soleen.com> <20190731163258.GH39768@lakrids.cambridge.arm.com>
+In-Reply-To: <20190731163258.GH39768@lakrids.cambridge.arm.com>
+From:   Pavel Tatashin <pasha.tatashin@soleen.com>
+Date:   Wed, 31 Jul 2019 12:40:51 -0400
+Message-ID: <CA+CK2bAYUFBBGo-LHBK4UWRK1tpx3AZ4Z9NkDxiDK0UYEDozaQ@mail.gmail.com>
+Subject: Re: [RFC v2 0/8] arm64: MMU enabled kexec relocation
+To:     Mark Rutland <mark.rutland@arm.com>
+Cc:     James Morris <jmorris@namei.org>, Sasha Levin <sashal@kernel.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        kexec mailing list <kexec@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Catalin Marinas <catalin.marinas@arm.com>, will@kernel.org,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        James Morse <james.morse@arm.com>,
+        Vladimir Murzin <vladimir.murzin@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Bhupesh Sharma <bhsharma@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi!
+On Wed, Jul 31, 2019 at 12:33 PM Mark Rutland <mark.rutland@arm.com> wrote:
+>
+> Hi Pavel,
+>
+> Generally, the cover letter should state up-front what the goal is (or
+> what problem you're trying to solve). It would be really helpful to have
+> that so that we understand what you're trying to achieve, and why.
+>
+> Messing with the MMU is often fraught with danger (and very painful to
+> debug, as you are now aware), and so far we've tried to minimize the
+> number of places where we have to do so.
 
-Dne sreda, 31. julij 2019 ob 16:43:47 CEST je Fabio Estevam napisal(a):
-> Hi Guido,
-> 
-> On Wed, Jul 31, 2019 at 11:35 AM Guido Günther <agx@sigxcpu.org> wrote:
-> > The idea is to have
-> > 
-> >     "%sabling platform clocks", enable ? "en" : "dis");
-> > 
-> > depending whether clocks are enabled/disabled.
-> 
-> Yes, I understood the idea, but this would print:
-> 
-> ensabling or dissabling :-)
+Hi Mark,
 
-No, it wouldn't. That extra "s" is part of "%s", e.g. part of format specifier.
+I understand, this is why I first went another route of solving this
+problem: pre-reserving contiguous memory, and avoid relocation
+entirely (the same as what happens during crash reboot). But, that
+solution was not accepted because it introduces a change to the common
+code to solve ARM specific problem. So, James Morse, and other
+suggested that I take a look at the root of the problem, and enable
+MMU during relocation by doing what is already done during hibernate
+restore.
 
-Best regards,
-Jernej
+>
+> On Wed, Jul 31, 2019 at 11:38:49AM -0400, Pavel Tatashin wrote:
+> > Changelog from previous RFC:
+> > - Added trans_table support for both hibernate and kexec.
+> > - Fixed performance issue, where enabling MMU did not yield the
+> >   actual performance improvement.
+> >
+> > Bug:
+> > With the current state, this patch series works on kernels booted with EL1
+> > mode, but for some reason, when elevated to EL2 mode reboot freezes in
+> > both QEMU and on real hardware.
+> >
+> > The freeze happens in:
+> >
+> > arch/arm64/kernel/relocate_kernel.S
+> >       turn_on_mmu()
+> >
+> > Right after sctlr_el2 is written (MMU on EL2 is enabled)
+> >
+> >       msr     sctlr_el2, \tmp1
+> >
+> > I've been studying all the relevant control registers for EL2, but do not
+> > see what might be causing this hang:
+> >
+> > MAIR_EL2 is set to be exactly the same as MAIR_EL1 0xbbff440c0400
+> >
+> > TCR_EL2        0x80843510
+> > Enabled bits:
+> > PS      Physical Address Size. (0b100   44 bits, 16TB.)
+> > SH0     Shareability    11 Inner Shareable
+> > ORGN0   Normal memory, Outer Write-Back Read-Allocate Write-Allocate Cach.
+> > IRGN0   Normal memory, Inner Write-Back Read-Allocate Write-Allocate Cach.
+> > T0SZ    01 0000
+> >
+> > SCTLR_EL2     0x30e5183f
+> > RES1    : Reserve ones
+> > M       : MMU enabled
+> > A       : Align check
+> > C       : Cacheability control
+> > SA      : SP Alignment check enable
+> > IESB    : Implicit Error Synchronization event
+> > I       : Instruction access Cacheability
+> >
+> > TTBR0_EL2      0x1b3069000 (address of trans_table)
+> >
+> > Any suggestion of what else might be missing that causes this freeze when
+> > MMU is enabled in EL2?
+> >
+> > =====
+>
+> > Here is the current data from the real hardware:
+> > (because of bug, I forced EL1 mode by setting el2_switch always to zero in
+> > cpu_soft_restart()):
+> >
+> > For this experiment, the size of kernel plus initramfs is 25M. If initramfs
+> > was larger, than the improvements would be even greater, as time spent in
+> > relocation is proportional to the size of relocation.
+> >
+> > Previously:
+> > kernel shutdown       0.022131328s
+> > relocation    0.440510736s
+> > kernel startup        0.294706768s
+>
+> In total this takes ~0.76s...
+>
+> >
+> > Relocation was taking: 58.2% of reboot time
+> >
+> > Now:
+> > kernel shutdown       0.032066576s
+> > relocation    0.022158152s
+> > kernel startup        0.296055880s
+>
+> ... and this takes ~0.35s
+>
+> So do we really need this complexity for a few blinks of an eye?
 
-> 
-> > > Same here. Please return 'int' instead.
-> > 
-> > This is from drm_bridge_funcs so the prototype is fixed. I'm not sure
-> > how what's the best way to bubble up fatal errors through the drm layer?
-> 
-> Ok, so let's not change this one.
-> 
-> > I went for DRM_DEV_ERROR() since that what i used in the rest of the
-> > driver and these ones were omission. Hope that's o.k.
-> 
-> No strong preferences here. I just think dev_err() easier to type and
-> shorter.
-> 
-> Thanks for this work!
+Yes, we have an extremely tight reboot budget, 0.35s is not an acceptable waste.
 
-
-
-
+>
+> Thanks,
+> Mark.
