@@ -2,54 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38F537CA54
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 19:31:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4550E7CA78
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 19:32:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730616AbfGaRbN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 13:31:13 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:43565 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729993AbfGaRbJ (ORCPT
+        id S1730604AbfGaRbM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 13:31:12 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:39294 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730593AbfGaRbL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 13:31:09 -0400
-Received: by mail-pf1-f196.google.com with SMTP id i189so32261363pfg.10;
-        Wed, 31 Jul 2019 10:31:09 -0700 (PDT)
+        Wed, 31 Jul 2019 13:31:11 -0400
+Received: by mail-pl1-f195.google.com with SMTP id b7so30832977pls.6;
+        Wed, 31 Jul 2019 10:31:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=JAkcSMkLtN3GAxedcViIaYgiH1QmaED404G34ozwxpg=;
-        b=Q+KFmR0UJ4XxWbpUqg/mm0L6pXxZ8awQCaP2aYllkKMvHaaqtuywYUbljTiQUdOpoV
-         lDbIW3WmlH5umuM5TfmKmymAHRMqYIVmq0J0m3J4nbblBa2KlY2EW3eL9cTkGIZEl5CJ
-         RC/P08D2zZ3A7BJwnaxciEhsl3mZ58Dbx7h2dH4Yz94eeqTZDVSmuyVmbUh36yM+l56L
-         l/3wnhbBEEcRyi9qh5b/pubFsANUjesyLT6BtZ9AOrvyYrF2WvyzWwGHtHgMsnNWCy0V
-         ZW87XnwFClkpp1/KM7tQONmThlfafSHtO69l5Z64tM7TrJ9gctmNbTT5/ZeQJsYKdl+V
-         q+4w==
+        bh=i4CAPfa7bKBiVOxNpzdai0coxa1oaSp0dwsEN7w5wwg=;
+        b=cT9azT16+c2zMSZ6czEvoUm6kcTiB4XmzsZzkuT4fX6nEL6tFjDSUXhCFR0uRRxlsY
+         PDmb3dz4rO0UKCQWmWkPeO6WPojg9uMpEKDpabfWRFhptevuV2M7EB8c1z10qNhryl5v
+         VMjUoEtEqS/UcdabVPUtc72di4y6R7QsI9UJHw0+BSCnJ0/Uk7HBil+XYRZnI+Zeuovf
+         97uAm9OpWmLLFyVGn+h+Bn71BxDag0lGa3X4r6ZKtBIMMC8svG063hdnn9Gg4LxZaWVl
+         KZBtI3fAwfTUEi5Kk7cMrWWmE5/FxMven/Un5pQpTxJb2ane6uDDNJsQvcxmW+LmAU3n
+         KrVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=JAkcSMkLtN3GAxedcViIaYgiH1QmaED404G34ozwxpg=;
-        b=Vyznk9TqXQVa11oIaO80a/nnanh05tTluOFsgU6rdsDXL0ca26wUOTtP57LZF17bO4
-         U41SukQPpbJlnX1Wc8gb/NcNH4i/L2+TGzS4K0pARU0iA+J5FKamyIMkcHheJrNCeaxM
-         fIbNXau2JdZxO+To1n+jyQwm8jeEVH/lt+MSad3OkzI9JSylLpUSx8wL9ro64GeQ6Gls
-         //eRI+che9ZHMF7gH5yy0dwkA4pWzcYIkbzjgr+XtoTYLDUqmWV6fXfqucT/cbBcEBEy
-         vTXBBPFv/5Z7Tw2zlsHdMJ1yJRkClDr0N7ky2ukspBe/PLKkl3irO9RZMCP7fV1D7ZNs
-         xfYg==
-X-Gm-Message-State: APjAAAUdYIXQE5No3YNsKeMqtPtu0NUAMP9+7k9WzM4F6C+++foCwd4a
-        t2RqvbUmsgHB0C9AuCLBqMp5xhJH
-X-Google-Smtp-Source: APXvYqyNcHRP02cbTDO3g5hEx+qA2tSrXME5wXx8IW6SHEZdO/6tWJfGrvu6Lz5BxDlOxyFHaLlHvA==
-X-Received: by 2002:a17:90a:9b8a:: with SMTP id g10mr3986429pjp.66.1564594268628;
-        Wed, 31 Jul 2019 10:31:08 -0700 (PDT)
+        bh=i4CAPfa7bKBiVOxNpzdai0coxa1oaSp0dwsEN7w5wwg=;
+        b=QkLkrJeUWiQSPfXaF/H1n7t+Q9BCJH0y1malVs4K4GPlknn882ofC6ibLCpp3z0+Nt
+         FYN+lcViX0IIs00scQXNc1osDhc5he/wSh1fktOwHDg5Kuz+/4vgQgkW3NKuMbKb0RNX
+         o/nQwxcc+cTmDhW1Zg9AVKvMsLDwc6bZZzFeTSkPVTnPJd2DTwV3W9kElR2Ve8bIvqDR
+         rCylkAJyw4kqW7Ynk8JNAAPZfJXOMpoiZacfSoDqGDJW8rb4lnIh2+fI73V9QOhZwH2C
+         FLTGOtajZRBIsovr+3XKxiq9AXIfFpq8tHXXLZttpGVygxMl8LEekvBBxB6evtW2V9CB
+         /4nQ==
+X-Gm-Message-State: APjAAAWXuov7yd0FJQjwiMrPKuVvDWLoBTtIynfWM0BHoYsTtrPn/CyL
+        KANYRMkQ4Vg6XRBCuGjRGuw/oiT4
+X-Google-Smtp-Source: APXvYqwqWeXtwVwGc6eX9wBirn3Qg0BuBNu6IUWzV6uXiSB9WmQLVJKaD1IR3Nfzk5EpsCEWYS1nPg==
+X-Received: by 2002:a17:902:fa2:: with SMTP id 31mr123618991plz.38.1564594270608;
+        Wed, 31 Jul 2019 10:31:10 -0700 (PDT)
 Received: from localhost.localdomain ([2607:fb90:4ad:5a0b:2aff:6e0f:8973:5a26])
-        by smtp.gmail.com with ESMTPSA id bo20sm2089617pjb.23.2019.07.31.10.31.06
+        by smtp.gmail.com with ESMTPSA id bo20sm2089617pjb.23.2019.07.31.10.31.08
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 31 Jul 2019 10:31:08 -0700 (PDT)
+        Wed, 31 Jul 2019 10:31:10 -0700 (PDT)
 From:   Andrey Smirnov <andrew.smirnov@gmail.com>
 To:     linux-serial@vger.kernel.org
 Cc:     Stefan Agner <stefan.agner@toradex.com>,
         Max Krummenacher <max.krummenacher@toradex.com>,
-        Andrey Smirnov <andrew.smirnov@gmail.com>,
         Stefan Agner <stefan@agner.ch>,
         Chris Healy <cphealy@gmail.com>,
         Cory Tusar <cory.tusar@zii.aero>,
@@ -57,9 +56,9 @@ Cc:     Stefan Agner <stefan.agner@toradex.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Jiri Slaby <jslaby@suse.com>, linux-imx@nxp.com,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 01/23] tty: serial: fsl_lpuart: fix framing error handling when using DMA
-Date:   Wed, 31 Jul 2019 10:30:23 -0700
-Message-Id: <20190731173045.11718-2-andrew.smirnov@gmail.com>
+Subject: [PATCH v2 02/23] tty: serial: fsl_lpuart: flush receive FIFO after overruns
+Date:   Wed, 31 Jul 2019 10:30:24 -0700
+Message-Id: <20190731173045.11718-3-andrew.smirnov@gmail.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190731173045.11718-1-andrew.smirnov@gmail.com>
 References: <20190731173045.11718-1-andrew.smirnov@gmail.com>
@@ -72,18 +71,24 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Stefan Agner <stefan.agner@toradex.com>
 
-When using DMA framing error get cleared properly. However, due
-to the additional read from the data register, an underflow in
-the receive FIFO buffer occurs (the FIFO pointer gets out of
-sync).
+After overruns the FIFO pointers become misaligned. This
+typically shows by characters still being stuck in the FIFO
+despite the empty flag being asserted. After the first
+assertion of the overrun flag the empty flag still seems to
+indicate FIFO state correctly and all data can be read.
+However, after another overrun assertion the FIFO seems to
+be off by one such that the last received character is still
+in the FIFO (despite the empty flag being asserted).
 
-Clear the FIFO in case an underflow has occurred. Also disable the
-receiver during this operation and when reading the data register to
-minimize potential interference.
+Flushing the receive FIFO reinitializes pointers. Hence it
+is recommended to flush the FIFO after overruns, see also:
+https://community.nxp.com/thread/321175
+
+Hence, on assertion of the overrun flag read the remaining
+data from the FIFO and flush buffers.
 
 Signed-off-by: Stefan Agner <stefan.agner@toradex.com>
 Acked-by: Max Krummenacher <max.krummenacher@toradex.com>
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 Cc: Stefan Agner <stefan@agner.ch>
 Cc: Chris Healy <cphealy@gmail.com>
 Cc: Cory Tusar <cory.tusar@zii.aero>
@@ -94,53 +99,49 @@ Cc: linux-imx@nxp.com
 Cc: linux-serial@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org
 ---
- drivers/tty/serial/fsl_lpuart.c | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+ drivers/tty/serial/fsl_lpuart.c | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c
-index d15e65f88214..0643fa368d35 100644
+index 0643fa368d35..317bbc1dd2b4 100644
 --- a/drivers/tty/serial/fsl_lpuart.c
 +++ b/drivers/tty/serial/fsl_lpuart.c
-@@ -983,6 +983,13 @@ static void lpuart_copy_rx_to_tty(struct lpuart_port *sport)
- 		unsigned char sr = readb(sport->port.membase + UARTSR1);
- 
- 		if (sr & (UARTSR1_PE | UARTSR1_FE)) {
-+			unsigned char cr2;
-+
-+			/* Disable receiver during this operation... */
-+			cr2 = readb(sport->port.membase + UARTCR2);
-+			cr2 &= ~UARTCR2_RE;
-+			writeb(cr2, sport->port.membase + UARTCR2);
-+
- 			/* Read DR to clear the error flags */
- 			readb(sport->port.membase + UARTDR);
- 
-@@ -990,6 +997,25 @@ static void lpuart_copy_rx_to_tty(struct lpuart_port *sport)
- 				sport->port.icount.parity++;
- 			else if (sr & UARTSR1_FE)
+@@ -799,7 +799,7 @@ static irqreturn_t lpuart_txint(int irq, void *dev_id)
+ static irqreturn_t lpuart_rxint(int irq, void *dev_id)
+ {
+ 	struct lpuart_port *sport = dev_id;
+-	unsigned int flg, ignored = 0;
++	unsigned int flg, ignored = 0, overrun = 0;
+ 	struct tty_port *port = &sport->port.state->port;
+ 	unsigned long flags;
+ 	unsigned char rx, sr;
+@@ -826,7 +826,7 @@ static irqreturn_t lpuart_rxint(int irq, void *dev_id)
  				sport->port.icount.frame++;
-+			/*
-+			 * At this point parity/framing error is
-+			 * cleared However, since the DMA already read
-+			 * the data register and we had to read it
-+			 * again after reading the status register to
-+			 * properly clear the flags, the FIFO actually
-+			 * underflowed... This requires a clearing of
-+			 * the FIFO...
-+			 */
-+			if (readb(sport->port.membase + UARTSFIFO) &
-+			    UARTSFIFO_RXUF) {
-+				writeb(UARTSFIFO_RXUF,
-+				       sport->port.membase + UARTSFIFO);
-+				writeb(UARTCFIFO_RXFLUSH,
-+				       sport->port.membase + UARTCFIFO);
-+			}
-+
-+			cr2 |= UARTCR2_RE;
-+			writeb(cr2, sport->port.membase + UARTCR2);
- 		}
+ 
+ 			if (sr & UARTSR1_OR)
+-				sport->port.icount.overrun++;
++				overrun++;
+ 
+ 			if (sr & sport->port.ignore_status_mask) {
+ 				if (++ignored > 100)
+@@ -853,6 +853,17 @@ static irqreturn_t lpuart_rxint(int irq, void *dev_id)
  	}
  
+ out:
++	if (overrun) {
++		sport->port.icount.overrun += overrun;
++
++		/*
++		 * Overruns cause FIFO pointers to become missaligned.
++		 * Flushing the receive FIFO reinitializes the pointers.
++		 */
++		writeb(UARTCFIFO_RXFLUSH, sport->port.membase + UARTCFIFO);
++		writeb(UARTSFIFO_RXOF, sport->port.membase + UARTSFIFO);
++	}
++
+ 	spin_unlock_irqrestore(&sport->port.lock, flags);
+ 
+ 	tty_flip_buffer_push(port);
 -- 
 2.21.0
 
