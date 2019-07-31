@@ -2,186 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 282BD7D1F8
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 01:35:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 839C87D1FF
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 01:37:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730894AbfGaXfw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 19:35:52 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:39878 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730835AbfGaXfp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 19:35:45 -0400
-Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
-        by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1hsy8B-0003W7-Ki; Wed, 31 Jul 2019 17:35:44 -0600
-Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1hsy89-0001H2-Uh; Wed, 31 Jul 2019 17:35:37 -0600
-From:   Logan Gunthorpe <logang@deltatee.com>
-To:     linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org
-Cc:     Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@kernel.org>,
-        Jens Axboe <axboe@fb.com>, Sagi Grimberg <sagi@grimberg.me>,
-        Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>,
-        Max Gurtovoy <maxg@mellanox.com>,
-        Logan Gunthorpe <logang@deltatee.com>
-Date:   Wed, 31 Jul 2019 17:35:34 -0600
-Message-Id: <20190731233534.4841-5-logang@deltatee.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190731233534.4841-1-logang@deltatee.com>
-References: <20190731233534.4841-1-logang@deltatee.com>
+        id S1730371AbfGaXhH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 19:37:07 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:35127 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726448AbfGaXhH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jul 2019 19:37:07 -0400
+Received: by mail-pf1-f194.google.com with SMTP id u14so32745403pfn.2;
+        Wed, 31 Jul 2019 16:37:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=HkJbMijve+37uAnT22qDE+Z0CK5Fv6mxxx9Tamb2xfY=;
+        b=lzIcHkSbX+PlBpxPfBNMHvVgD6toyym4cqqPUTR7YzdyqH4zbgv30GXBxCV29BLaUs
+         gfO7IWNMN1zfVgt3g9qMGJC86MFHEio2/9AZBKNKCNbNmHwk6QKnY/s+A+6HQcEvKg3o
+         Go6XKFK6uVSayITl/+Q6tKmfwK2oPhM2LoYzStg5hX7M3qbYHTP6qmryZpy433ul+gEC
+         22JrNP7nUE2B4B6Y5uVMciZWXPfnbJLG40vo5XZlUh5sMT7EcRezxE5u5XU7k/Qgdy3T
+         /nM/n0Id0y/NZT7WKp4OvO42Sh15ro9FY5Lze9Z71eYebYwtBE0XVWeVh2QTOA/T1Qoz
+         86Hg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=HkJbMijve+37uAnT22qDE+Z0CK5Fv6mxxx9Tamb2xfY=;
+        b=UcikxRXRwwMa8Y5NDMNa8UOlvOSDK/aWgTxrhndunJz0MpSSGoJNzNquQRXwuvcTg3
+         l8drS8qgEY9RaiowNbLgjYbC1bvcp1jIcGXaFfYXtcMQKs0U6ggj/M03zI6d+gzgWWPg
+         g+Y/0L5gPcN70okBQ3i8kJDpg85VYdUYY9eeEWTLOCNV86jC/KXU+zeID/9D9iY8EkzG
+         e31xJ2FLPPEDH+E+qWGQMVHNezF1cVTElyu+V4faXKmxo3rXJ4HMc7jlGdDlGFpw5I+Y
+         Oa0euTFoEICIp5WgcXvyviBTGR6WpaE9wIwLKCfGyAgP5QevI90r0lmaPoVMLlGRZHPU
+         /NKw==
+X-Gm-Message-State: APjAAAUCNsAAfrJxU3eRODpS4wbmgG4rDQjNIDZ9KHEIc29GEs/vsAug
+        nrAWGBo7zKrvgw2kDJlD1Q1xjsriRSc=
+X-Google-Smtp-Source: APXvYqwwaerEeV1TDEGtvr7CR7wMLtz0X532yMDm9O+OQlXmPRUFBa9WS8plLiKxG5iCAj+K+KXjvg==
+X-Received: by 2002:a17:90b:949:: with SMTP id dw9mr5320838pjb.49.1564616226781;
+        Wed, 31 Jul 2019 16:37:06 -0700 (PDT)
+Received: from mbalantz-desktop (d206-116-172-62.bchsia.telus.net. [206.116.172.62])
+        by smtp.gmail.com with ESMTPSA id b16sm112490514pfo.54.2019.07.31.16.37.05
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 31 Jul 2019 16:37:06 -0700 (PDT)
+From:   Mark Balantzyan <mbalant3@gmail.com>
+X-Google-Original-From: Mark Balantzyan <mbalantz@mbalantz-desktop>
+Date:   Wed, 31 Jul 2019 16:37:02 -0700 (PDT)
+To:     Guenter Roeck <linux@roeck-us.net>
+cc:     Mark Balantzyan <mbalant3@gmail.com>, wim@linux-watchdog.org,
+        linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Pavel Andrianov <andrianov@ispras.ru>
+Subject: Re: [PATCH] watchdog:alim1535_wdt: Fix data race in ali_settimer()
+ concerning ali_timeout_bits variable.
+In-Reply-To: <20190731192410.GA4935@roeck-us.net>
+Message-ID: <alpine.DEB.2.21.1907311620010.2747@mbalantz-desktop>
+References: <20190718155238.3066-1-mbalant3@gmail.com> <20190718163458.GA18125@roeck-us.net> <alpine.DEB.2.21.1907310911120.29703@mbalantz-desktop> <20190731164337.GA13646@roeck-us.net> <alpine.DEB.2.21.1907311118190.81695@mbalantz-desktop>
+ <20190731192410.GA4935@roeck-us.net>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org, hch@lst.de, kbusch@kernel.org, axboe@fb.com, sagi@grimberg.me, chaitanya.kulkarni@wdc.com, maxg@mellanox.com, logang@deltatee.com
-X-SA-Exim-Mail-From: gunthorp@deltatee.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        GREYLIST_ISWHITE,MYRULES_FREE,MYRULES_NO_TEXT autolearn=ham
-        autolearn_force=no version=3.4.2
-Subject: [PATCH v3 4/4] nvme-core: Fix extra device_put() call on error path
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Type: text/plain; format=flowed; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the error path for nvme_init_subsystem(), nvme_put_subsystem()
-will call device_put(), but it will get called again after the
-mutex_unlock().
+Hi Guenter, all,
 
-The device_put() only needs to be called if device_add() fails.
+ 	I don't really understand this focus on fixing theoretic/irrelevant
+ 	race conditions in drivers which no one uses anymore. Maybe someone
+ 	can enlighten me ?
 
-This bug caused a KASAN use-after-free error when adding and
-removing subsytems in a loop:
+In conjunction with linuxtesting.org and The Linux Foundation, I've been 
+enlisted to test and work on helping to test tools they use for 
+reliability testing of linux-based systems. In particular, two tools, 
+RaceHound (whose command is 'lines2insns' and which isolates race 
+conditions in kernel modules) and Klever, which is browser-based, are
+under continual development by the Center and I aim to help them improve
+their throughput by aiding in investigating where, in the automated nature
+particularly of Klever (requiring considerable configuration as well),
+there may areas to improve.
 
-  BUG: KASAN: use-after-free in device_del+0x8d9/0x9a0
-  Read of size 8 at addr ffff8883cdaf7120 by task multipathd/329
+Hence, yes, a large amount of our findings result in manifesting as 
+theoretical and possible only, but relevant to improving the tools 
+nonetheless.
 
-  CPU: 0 PID: 329 Comm: multipathd Not tainted 5.2.0-rc6-vmlocalyes-00019-g70a2b39005fd-dirty #314
-  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
-  Call Trace:
-   dump_stack+0x7b/0xb5
-   print_address_description+0x6f/0x280
-   ? device_del+0x8d9/0x9a0
-   __kasan_report+0x148/0x199
-   ? device_del+0x8d9/0x9a0
-   ? class_release+0x100/0x130
-   ? device_del+0x8d9/0x9a0
-   kasan_report+0x12/0x20
-   __asan_report_load8_noabort+0x14/0x20
-   device_del+0x8d9/0x9a0
-   ? device_platform_notify+0x70/0x70
-   nvme_destroy_subsystem+0xf9/0x150
-   nvme_free_ctrl+0x280/0x3a0
-   device_release+0x72/0x1d0
-   kobject_put+0x144/0x410
-   put_device+0x13/0x20
-   nvme_free_ns+0xc4/0x100
-   nvme_release+0xb3/0xe0
-   __blkdev_put+0x549/0x6e0
-   ? kasan_check_write+0x14/0x20
-   ? bd_set_size+0xb0/0xb0
-   ? kasan_check_write+0x14/0x20
-   ? mutex_lock+0x8f/0xe0
-   ? __mutex_lock_slowpath+0x20/0x20
-   ? locks_remove_file+0x239/0x370
-   blkdev_put+0x72/0x2c0
-   blkdev_close+0x8d/0xd0
-   __fput+0x256/0x770
-   ? _raw_read_lock_irq+0x40/0x40
-   ____fput+0xe/0x10
-   task_work_run+0x10c/0x180
-   ? filp_close+0xf7/0x140
-   exit_to_usermode_loop+0x151/0x170
-   do_syscall_64+0x240/0x2e0
-   ? prepare_exit_to_usermode+0xd5/0x190
-   entry_SYSCALL_64_after_hwframe+0x44/0xa9
-  RIP: 0033:0x7f5a79af05d7
-  Code: 00 00 0f 05 48 3d 00 f0 ff ff 77 3f c3 66 0f 1f 44 00 00 53 89 fb 48 83 ec 10 e8 c4 fb ff ff 89 df 89 c2 b8 03 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 2b 89 d7 89 44 24 0c e8 06 fc ff ff 8b 44 24
-  RSP: 002b:00007f5a7799c810 EFLAGS: 00000293 ORIG_RAX: 0000000000000003
-  RAX: 0000000000000000 RBX: 0000000000000008 RCX: 00007f5a79af05d7
-  RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000008
-  RBP: 00007f5a58000f98 R08: 0000000000000002 R09: 00007f5a7935ee80
-  R10: 0000000000000000 R11: 0000000000000293 R12: 000055e432447240
-  R13: 0000000000000000 R14: 0000000000000001 R15: 000055e4324a9cf0
-
-  Allocated by task 1236:
-   save_stack+0x21/0x80
-   __kasan_kmalloc.constprop.6+0xab/0xe0
-   kasan_kmalloc+0x9/0x10
-   kmem_cache_alloc_trace+0x102/0x210
-   nvme_init_identify+0x13c3/0x3820
-   nvme_loop_configure_admin_queue+0x4fa/0x5e0
-   nvme_loop_create_ctrl+0x469/0xf40
-   nvmf_dev_write+0x19a3/0x21ab
-   __vfs_write+0x66/0x120
-   vfs_write+0x154/0x490
-   ksys_write+0x104/0x240
-   __x64_sys_write+0x73/0xb0
-   do_syscall_64+0xa5/0x2e0
-   entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-  Freed by task 329:
-   save_stack+0x21/0x80
-   __kasan_slab_free+0x129/0x190
-   kasan_slab_free+0xe/0x10
-   kfree+0xa7/0x200
-   nvme_release_subsystem+0x49/0x60
-   device_release+0x72/0x1d0
-   kobject_put+0x144/0x410
-   put_device+0x13/0x20
-   klist_class_dev_put+0x31/0x40
-   klist_put+0x8f/0xf0
-   klist_del+0xe/0x10
-   device_del+0x3a7/0x9a0
-   nvme_destroy_subsystem+0xf9/0x150
-   nvme_free_ctrl+0x280/0x3a0
-   device_release+0x72/0x1d0
-   kobject_put+0x144/0x410
-   put_device+0x13/0x20
-   nvme_free_ns+0xc4/0x100
-   nvme_release+0xb3/0xe0
-   __blkdev_put+0x549/0x6e0
-   blkdev_put+0x72/0x2c0
-   blkdev_close+0x8d/0xd0
-   __fput+0x256/0x770
-   ____fput+0xe/0x10
-   task_work_run+0x10c/0x180
-   exit_to_usermode_loop+0x151/0x170
-   do_syscall_64+0x240/0x2e0
-   entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-Fixes: 32fd90c40768 ("nvme: change locking for the per-subsystem controller list")
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
----
- drivers/nvme/host/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index 80c7a7ee240b..e35f16b60fc9 100644
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -2488,6 +2488,7 @@ static int nvme_init_subsystem(struct nvme_ctrl *ctrl, struct nvme_id_ctrl *id)
- 		if (ret) {
- 			dev_err(ctrl->device,
- 				"failed to register subsystem device.\n");
-+			put_device(&subsys->dev);
- 			goto out_unlock;
- 		}
- 		ida_init(&subsys->ns_ida);
-@@ -2510,7 +2511,6 @@ static int nvme_init_subsystem(struct nvme_ctrl *ctrl, struct nvme_id_ctrl *id)
- 	nvme_put_subsystem(subsys);
- out_unlock:
- 	mutex_unlock(&nvme_subsystems_lock);
--	put_device(&subsys->dev);
- 	return ret;
- }
- 
--- 
-2.20.1
-
+Hope that helps with the 'enlightening' :), regards,
+Mark
