@@ -2,61 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC03D7D0A4
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 00:17:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4197F7D0E9
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 00:19:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731345AbfGaWRR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 18:17:17 -0400
-Received: from mail-pl1-f202.google.com ([209.85.214.202]:33107 "EHLO
-        mail-pl1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731329AbfGaWRM (ORCPT
+        id S1731337AbfGaWS5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 18:18:57 -0400
+Received: from mail-pf1-f202.google.com ([209.85.210.202]:55035 "EHLO
+        mail-pf1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731078AbfGaWRP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 18:17:12 -0400
-Received: by mail-pl1-f202.google.com with SMTP id f2so38311460plr.0
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 15:17:12 -0700 (PDT)
+        Wed, 31 Jul 2019 18:17:15 -0400
+Received: by mail-pf1-f202.google.com with SMTP id y66so44180371pfb.21
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 15:17:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=AYLtZ41z1RHlFpOZnl+JGLaHaK4EJ2Av6xB01tUKIjQ=;
-        b=vvpeXRKyc5OhHv4Gr/tukOYbwIwjOYYXtqIP/Io9iIGtPO3Kve6jw/W7bz2rF/pLv1
-         RlW5o4cGWbTXLPdROo8nSoKA3X7rpN7sDIwV1d/Fkm3vpj5fFKlODN732XeUwRiYz3Ke
-         TW9ChBbAGCWNTBdcbOZ73xw4f5kes2Emo/1AT/+3MfhQ8BoEcrnKZHlAFFwFtqt85uMv
-         Hrp+989qk4cKlnGSLSV1ao/ObzrMwaeocP0iHhwU4p9uXakErgQiaqLm3O0VzWsyNNyY
-         9CqLjrTvWM8AjYlNkYT/fe066FOTrmczakFGWc6cjFSFGLsLIYYWVoFByBrYFECbZTDO
-         MNew==
+        bh=ar9F1ezXL3PnxEqF0y9aMqfwFMY9y395H3iSelAOa90=;
+        b=KWryge+ybANXRbNwbUlERn6tPnwObLcAGOMqHbxqjgpCmsk/Mut4arFhCyIb2hfV9o
+         EB8iIwoveNQHMvvNvyxTyS/VzhNO7cqfI1jcH5rLsrEgZtM0txb1f5q8bGplFaDdTsci
+         Hs5qgHmgKnDAxCCreraAX4kWLdnl9aI+/ysG9zmGFWxnMHaI7YpHKqGUYXKrNByUNwLA
+         IYXzRZxeDx2m8D5owUvvR/boWpHMxnOTFIEe9l3Ogpxti1aHnVn8g4VRwrDHOBdXGeqH
+         q8NuCf8RuwoDuvwll7S3PdWmI2wr9oFVVsM7EWoWcwcvLfKfMVMHOmO20T0SXWJ7JDzD
+         mTOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=AYLtZ41z1RHlFpOZnl+JGLaHaK4EJ2Av6xB01tUKIjQ=;
-        b=AgRH1n59gKOqnkX+PAfkgZowwbiCGcZ/qSERu7RAan3H426QfPCoOM4u+hx+sh11UI
-         WH5pOTteYjHMBcH+pFAmn03LgmtT3aHv/+q/d9m5uuPXbym0ZM804P5ED4aK8FFZK+lb
-         6iwGJEfkpnf5SHUKI1ifmY49uBxaz85+6b4QnN12I/m6p8ocmKC4B8jrb9NRx0dQyaGo
-         VX84YTh6aGhJfiiUDqMQRPmRjM7CWD3pn1bcXcsm+gzY6F7jyhdQ/dkzUEi/Uhz0pOOn
-         vC5A42KhvVHDgOyEHwC69DPRyLM7ZBbFDhPwY9KFZBiYOq4vKSbD1uGLG69p0drib6dZ
-         zkPA==
-X-Gm-Message-State: APjAAAUBYZnCoFAwbGe3S8aDQ+AozdZCZMhDr5WUaXHdg6PPkRpAglO0
-        82mUjAgGO2LIk7gJWsnooS91oAosJ1+z10iQ6dizpA==
-X-Google-Smtp-Source: APXvYqzkiW7uEdQQUtaZ0YHcWPNEQQcr9wR/H4mTJIlJ8xEUbv8Q5RP5zNIsLLGkfkAO0eul945srgorH4QzlUVn11pgkg==
-X-Received: by 2002:a63:5402:: with SMTP id i2mr88751122pgb.414.1564611431661;
- Wed, 31 Jul 2019 15:17:11 -0700 (PDT)
-Date:   Wed, 31 Jul 2019 15:16:06 -0700
+        bh=ar9F1ezXL3PnxEqF0y9aMqfwFMY9y395H3iSelAOa90=;
+        b=oz5vzvnm+Q4zJEg5rd6LNQ2driFed5DejewFpI/UtgX4actYtp+UjAKYgA7/s520dX
+         awG1Kpb4ee7hPGG8v+D3sKoBI9yaNdU0YDCve/wF7hPyUNq+55TJbiKg5tx+a1V8EA+d
+         6sjW239T//ZRC2OsOs+tvpipQbc7p9I4+J0xGV4agDhisiJIKtcles1rHv4dPReKu4Tw
+         Pa4Q4/NQ2WT86SVBmD8ruOwPedqlybxKj7H3lGrqG6Z6nCvt1mAx+Zu0GhMmLxF4d+4K
+         9qdeHGcljWyRivGdUksl6TpP18KRympmh0mEjUpFJAbFh0l72EUhkM3LAxYGQyMM2A2r
+         dQKg==
+X-Gm-Message-State: APjAAAV+i2A/dS9IVOTbrv6c1u+KHuLd6VTBwT7GpTFsdXwic7fKmv1i
+        xz0VfYaaXzxFau2NHZdQdomS8I+6i4OwsKm7EsyS5A==
+X-Google-Smtp-Source: APXvYqwJSSTh2CmEEh9mZY1CZ3A0484iF1hyOxUMQ7arAImv2uOzpLvnEyasM52OJEs0/dbgDoUYiDnStbZtl54N/RNuwQ==
+X-Received: by 2002:a65:5342:: with SMTP id w2mr31174414pgr.261.1564611434315;
+ Wed, 31 Jul 2019 15:17:14 -0700 (PDT)
+Date:   Wed, 31 Jul 2019 15:16:07 -0700
 In-Reply-To: <20190731221617.234725-1-matthewgarrett@google.com>
-Message-Id: <20190731221617.234725-19-matthewgarrett@google.com>
+Message-Id: <20190731221617.234725-20-matthewgarrett@google.com>
 Mime-Version: 1.0
 References: <20190731221617.234725-1-matthewgarrett@google.com>
 X-Mailer: git-send-email 2.22.0.770.g0f2c4a37fd-goog
-Subject: [PATCH V37 18/29] Lock down TIOCSSERIAL
+Subject: [PATCH V37 19/29] Lock down module params that specify hardware
+ parameters (eg. ioport)
 From:   Matthew Garrett <matthewgarrett@google.com>
 To:     jmorris@namei.org
 Cc:     linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
         David Howells <dhowells@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
         Matthew Garrett <mjg59@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org
+        Kees Cook <keescook@chromium.org>, Jessica Yu <jeyu@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -65,67 +65,115 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: David Howells <dhowells@redhat.com>
 
-Lock down TIOCSSERIAL as that can be used to change the ioport and irq
-settings on a serial port.  This only appears to be an issue for the serial
-drivers that use the core serial code.  All other drivers seem to either
-ignore attempts to change port/irq or give an error.
+Provided an annotation for module parameters that specify hardware
+parameters (such as io ports, iomem addresses, irqs, dma channels, fixed
+dma buffers and other types).
 
-Reported-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Suggested-by: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
 Signed-off-by: David Howells <dhowells@redhat.com>
 Signed-off-by: Matthew Garrett <mjg59@google.com>
 Reviewed-by: Kees Cook <keescook@chromium.org>
-cc: Jiri Slaby <jslaby@suse.com>
-Cc: linux-serial@vger.kernel.org
+Cc: Jessica Yu <jeyu@kernel.org>
 ---
- drivers/tty/serial/serial_core.c | 5 +++++
- include/linux/security.h         | 1 +
- security/lockdown/lockdown.c     | 1 +
- 3 files changed, 7 insertions(+)
+ include/linux/security.h     |  1 +
+ kernel/params.c              | 28 +++++++++++++++++++++++-----
+ security/lockdown/lockdown.c |  1 +
+ 3 files changed, 25 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/tty/serial/serial_core.c b/drivers/tty/serial/serial_core.c
-index 4223cb496764..6e713be1d4e9 100644
---- a/drivers/tty/serial/serial_core.c
-+++ b/drivers/tty/serial/serial_core.c
-@@ -22,6 +22,7 @@
- #include <linux/serial_core.h>
- #include <linux/delay.h>
- #include <linux/mutex.h>
-+#include <linux/security.h>
- 
- #include <linux/irq.h>
- #include <linux/uaccess.h>
-@@ -862,6 +863,10 @@ static int uart_set_info(struct tty_struct *tty, struct tty_port *port,
- 		goto check_and_exit;
- 	}
- 
-+	retval = security_locked_down(LOCKDOWN_TIOCSSERIAL);
-+	if (retval && (change_irq || change_port))
-+		goto exit;
-+
- 	/*
- 	 * Ask the low level driver to verify the settings.
- 	 */
 diff --git a/include/linux/security.h b/include/linux/security.h
-index 3773ad09b831..8f7048395114 100644
+index 8f7048395114..43fa3486522b 100644
 --- a/include/linux/security.h
 +++ b/include/linux/security.h
-@@ -112,6 +112,7 @@ enum lockdown_reason {
- 	LOCKDOWN_MSR,
+@@ -113,6 +113,7 @@ enum lockdown_reason {
  	LOCKDOWN_ACPI_TABLES,
  	LOCKDOWN_PCMCIA_CIS,
-+	LOCKDOWN_TIOCSSERIAL,
+ 	LOCKDOWN_TIOCSSERIAL,
++	LOCKDOWN_MODULE_PARAMETERS,
  	LOCKDOWN_INTEGRITY_MAX,
  	LOCKDOWN_CONFIDENTIALITY_MAX,
  };
+diff --git a/kernel/params.c b/kernel/params.c
+index cf448785d058..f2779a76d39a 100644
+--- a/kernel/params.c
++++ b/kernel/params.c
+@@ -12,6 +12,7 @@
+ #include <linux/err.h>
+ #include <linux/slab.h>
+ #include <linux/ctype.h>
++#include <linux/security.h>
+ 
+ #ifdef CONFIG_SYSFS
+ /* Protects all built-in parameters, modules use their own param_lock */
+@@ -96,13 +97,20 @@ bool parameq(const char *a, const char *b)
+ 	return parameqn(a, b, strlen(a)+1);
+ }
+ 
+-static void param_check_unsafe(const struct kernel_param *kp)
++static bool param_check_unsafe(const struct kernel_param *kp,
++			       const char *doing)
+ {
++	if (kp->flags & KERNEL_PARAM_FL_HWPARAM &&
++	    security_locked_down(LOCKDOWN_MODULE_PARAMETERS))
++		return false;
++
+ 	if (kp->flags & KERNEL_PARAM_FL_UNSAFE) {
+ 		pr_notice("Setting dangerous option %s - tainting kernel\n",
+ 			  kp->name);
+ 		add_taint(TAINT_USER, LOCKDEP_STILL_OK);
+ 	}
++
++	return true;
+ }
+ 
+ static int parse_one(char *param,
+@@ -132,8 +140,10 @@ static int parse_one(char *param,
+ 			pr_debug("handling %s with %p\n", param,
+ 				params[i].ops->set);
+ 			kernel_param_lock(params[i].mod);
+-			param_check_unsafe(&params[i]);
+-			err = params[i].ops->set(val, &params[i]);
++			if (param_check_unsafe(&params[i], doing))
++				err = params[i].ops->set(val, &params[i]);
++			else
++				err = -EPERM;
+ 			kernel_param_unlock(params[i].mod);
+ 			return err;
+ 		}
+@@ -541,6 +551,12 @@ static ssize_t param_attr_show(struct module_attribute *mattr,
+ 	return count;
+ }
+ 
++#ifdef CONFIG_MODULES
++#define mod_name(mod) ((mod)->name)
++#else
++#define mod_name(mod) "unknown"
++#endif
++
+ /* sysfs always hands a nul-terminated string in buf.  We rely on that. */
+ static ssize_t param_attr_store(struct module_attribute *mattr,
+ 				struct module_kobject *mk,
+@@ -553,8 +569,10 @@ static ssize_t param_attr_store(struct module_attribute *mattr,
+ 		return -EPERM;
+ 
+ 	kernel_param_lock(mk->mod);
+-	param_check_unsafe(attribute->param);
+-	err = attribute->param->ops->set(buf, attribute->param);
++	if (param_check_unsafe(attribute->param, mod_name(mk->mod)))
++		err = attribute->param->ops->set(buf, attribute->param);
++	else
++		err = -EPERM;
+ 	kernel_param_unlock(mk->mod);
+ 	if (!err)
+ 		return len;
 diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
-index 22482e1b9a77..00a3a6438dd2 100644
+index 00a3a6438dd2..5177938cfa0d 100644
 --- a/security/lockdown/lockdown.c
 +++ b/security/lockdown/lockdown.c
-@@ -27,6 +27,7 @@ static char *lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1] = {
- 	[LOCKDOWN_MSR] = "raw MSR access",
+@@ -28,6 +28,7 @@ static char *lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1] = {
  	[LOCKDOWN_ACPI_TABLES] = "modifying ACPI tables",
  	[LOCKDOWN_PCMCIA_CIS] = "direct PCMCIA CIS storage",
-+	[LOCKDOWN_TIOCSSERIAL] = "reconfiguration of serial port IO",
+ 	[LOCKDOWN_TIOCSSERIAL] = "reconfiguration of serial port IO",
++	[LOCKDOWN_MODULE_PARAMETERS] = "unsafe module parameters",
  	[LOCKDOWN_INTEGRITY_MAX] = "integrity",
  	[LOCKDOWN_CONFIDENTIALITY_MAX] = "confidentiality",
  };
