@@ -2,214 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 35A267B81D
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 05:01:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 747A17B823
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 05:04:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728263AbfGaDBe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 23:01:34 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:47174 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726428AbfGaDBe (ORCPT
+        id S1728308AbfGaDEX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 23:04:23 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:35890 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725851AbfGaDEX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 23:01:34 -0400
-Received: from [IPv6:2804:431:c7f5:133:d711:794d:1c68:5ed3] (unknown [IPv6:2804:431:c7f5:133:d711:794d:1c68:5ed3])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: tonyk)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id E56CD28AA3C;
-        Wed, 31 Jul 2019 04:01:30 +0100 (BST)
-Subject: Re: [PATCH 0/7] media: vimc: Add a V4L2 output device
-To:     Hans Verkuil <hverkuil@xs4all.nl>,
-        Helen Koike <helen.koike@collabora.com>,
-        linux-media@vger.kernel.org
-Cc:     mchehab@kernel.org, kernel@collabora.com,
-        linux-kernel@vger.kernel.org
-References: <20190702154752.14939-1-andrealmeid@collabora.com>
- <00fb0dc3-0dd3-8d4c-9add-dba617f34d19@collabora.com>
- <7189e204-ba37-930b-1738-d192f45b0af5@xs4all.nl>
- <333e5df6-0e24-ff76-7e7f-bf338652f9ac@collabora.com>
- <c6fe9585-cd52-ea77-3c98-cb9e70424f84@xs4all.nl>
-From:   =?UTF-8?Q?Andr=c3=a9_Almeida?= <andrealmeid@collabora.com>
-Message-ID: <83383964-c382-fb04-6dd9-81908c407eb3@collabora.com>
-Date:   Wed, 31 Jul 2019 00:00:40 -0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Tue, 30 Jul 2019 23:04:23 -0400
+Received: by mail-pf1-f196.google.com with SMTP id r7so30965682pfl.3;
+        Tue, 30 Jul 2019 20:04:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=nLKtWBaUclJcLSqz62oSyWuxJqyS+0P5ZZaa8NbQc7U=;
+        b=mD7angjbJddZ1j4BHdjhB2jtUDu5Rz+DOMlgZ7q36CRlKC6d/jKgxcWDPkWs2N7p0j
+         yct+h7lmEZqZ9PYTGOZXMQ5Vl+49aIEvDcm4pine2z/hP90BJGMvN620Asl3Ua27tJ/9
+         +kiarBRAe/QI0tXIWtUX+BBoCfDp81WAG2U5OKGjMX10TeblSOC7YwsMvedjHFIBINub
+         fEj6Vp6+ax37QhoUepCfjV32YGld8minfWZV1wj6CGMmzwWtnSOO4GIwyxBe9dXC+dqs
+         18/euesbxu6WPILV9oqoZL/uk0AedaOg3VdwtMCzB0rh+kxN/p7jx5GZw1ey7ugkVuYw
+         0Mrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=nLKtWBaUclJcLSqz62oSyWuxJqyS+0P5ZZaa8NbQc7U=;
+        b=nwvHbkaOwQaHhS9PHb4ln9MAB+1qqLB8vatEe2xbKbOMFqxtJj2xIHBlGyA0QnHrkl
+         Ngfc9/fXRY0jazOzbBNykWSIlJK6zurk87pZ/660+3eifd1ZBDWLu0/PsAKFdFUaWrys
+         /jBsPQF4mUxfVaUkBoQ4wRvdD2UACBe0kAqYeUTKeLxygacOXPHMiW0foyVOeNtCx+i2
+         u/YxIEK/nU8cWSZuVs/zXd9vp4iR81mTO8Xr8ZARNEo4j54JZlHx277D4y9cQSKaXOpT
+         IIWzDuX9NAt5oen+G/Nc8iMKBZbxMlnKF6k8h1zV+pE+VHEqXWwn9yswX9tHU+l9Dn/P
+         jIiA==
+X-Gm-Message-State: APjAAAX1nUEZuNi6KSvQxYIh6Tt1EhGrayIIb6QfHgZItwf/ZT6FNInX
+        1IhMpLPRYuS42uu+kp+eJHI=
+X-Google-Smtp-Source: APXvYqy6HZ540jFPOqegcCeDr4kcKSF+JKz8R+pobxIf4BzqW2IXGHKkT3SCbitOioukD2PvNukfUQ==
+X-Received: by 2002:aa7:8383:: with SMTP id u3mr45104326pfm.175.1564542262254;
+        Tue, 30 Jul 2019 20:04:22 -0700 (PDT)
+Received: from suzukaze.ipads-lab.se.sjtu.edu.cn ([89.31.126.54])
+        by smtp.gmail.com with ESMTPSA id g1sm107429981pgg.27.2019.07.30.20.04.18
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 30 Jul 2019 20:04:21 -0700 (PDT)
+From:   Chuhong Yuan <hslester96@gmail.com>
+Cc:     Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Brian Masney <masneyb@onstation.org>,
+        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Chuhong Yuan <hslester96@gmail.com>
+Subject: [PATCH v3 1/2] iio: tsl2772: Use device-managed API
+Date:   Wed, 31 Jul 2019 11:04:15 +0800
+Message-Id: <20190731030415.8062-1-hslester96@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <c6fe9585-cd52-ea77-3c98-cb9e70424f84@xs4all.nl>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/13/19 7:03 AM, Hans Verkuil wrote:
-> On 7/12/19 5:38 PM, André Almeida wrote:
->> Hello,
->>
->> On 7/10/19 4:33 AM, Hans Verkuil wrote:
->>> On 7/10/19 12:19 AM, Helen Koike wrote:
->>>> Hi André,
->>>>
->>>> Thanks for the patches.
->>>>
->>>> On 7/2/19 12:47 PM, André Almeida wrote:
->>>>> Hello,
->>>>>
->>>>> This patch adds a V4L2 output device on vimc, that comply with V4L2 API
->>>>> for video output. If there is an output device and a capture device at the
->>>>> same pipeline, one can get a video loopback pipeline feeding frames at
->>>>> the output and then seeing them at the capture. It's possible to insert
->>>>> vimc submodules at the pipeline to modify the image (e.g. a scaler).
->>>>>
->>>>> If one starts a streaming at the capture, with the output off, the
->>>>> capture will display a noisy frame. If one starts a streaming at the
->>>>> output with the capture off, the output will just consume the buffers,
->>>>> without sending them to the pipeline. If both output and capture are
->>>>> streaming, the loopback will happen.
->>>> I understand why it is done like this in vivid, but I was wondering, if we
->>>> have a pipeline like:
->>>> output -> capture
->>>> Shouldn't streaming from the capture just stalls if there is no frame
->>>> available in the output (i.e. streaming in the output is off) ? But then I'm
->>>> not sure what the framerate in the capture would mean.
->>>>
->>>> Hans, what do you think?
->>> If you set up the pipeline like this:
->>>
->>> Video Output -> Scaler -> Video Capture
->>
->> If the capture will stall if there's no frame from the video output, how
->> can I add support for this kind of pipeline at test-media? It would be
->> required to send frames to the output device while running
->> `v4l2-compliance` at the capture device to make testing possible.
-> 
-> The compliance test doesn't support such devices at the moment.
+Use devm_() APIs to simplify the code.
 
-The implementation of the expected behavior can be found here:
-https://gitlab.collabora.com/tonyk/linux/tree/vimc/output-v2
+Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+---
+Changes in v3:
+  - Split v2 into two patches.
 
-> 
-> I think a new option (or options) are needed to tell the compliance test
-> that the capture and output video devices together constitute an m2m device.
+ drivers/iio/light/tsl2772.c | 36 +++++++++++++++---------------------
+ 1 file changed, 15 insertions(+), 21 deletions(-)
 
-I've reading the v4l-utils code base and I had a look at both m2m tests
-and capture/output tests, but I'm not sure how to implement this new
-option. How do you think it should be implemented? Should it resemble
-how v4l2-compliance tests vim2m? Something like this:
-
-	v4l2-compliance -m platform:vim2m -z platform:vivid-002 -e
-vivid-002-vid-cap -s10 -P -a
-
-Thanks,
-	André
-
-> 
-> Regards,
-> 
-> 	Hans
-> 
->>
->> Thanks,
->>     André
->>
->>> Then this is a mem2mem device (except with two separate video devices) and
->>> framerate doesn't apply anymore. And video capture will just stall if there
->>> is no video output frame provided.
->>>
->>> It's how e.g. omap3isp works.
->>>
->>> Regards,
->>>
->>> 	Hans
->>>
->>>> Thanks,
->>>> Helen
->>>>
->>>>> The patches 1 and 2 provide some ground to create the output
->>>>> device. The patch 3 creates the device and modify how the vimc-streamer
->>>>> was dealing with the s_stream callback on other vimc modules, to make
->>>>> simpler implementing this callback at vimc-output. Patch 4 change the
->>>>> behavior of the pipeline in order to be closer to a real life hardware.
->>>>> Patches 5-7 updates the default pipeline and the documentation to
->>>>> include the new output device.
->>>>>
->>>>> This is the result of v4l2-compliance after this patch series:
->>>>> $ v4l2-compliance -m0 -s50
->>>>> Grand Total for vimc device /dev/media0: 476, Succeeded: 476, Failed: 0,
->>>>> Warnings: 0
->>>>>
->>>>> A git tree up to date with media-master and with this changes can be found
->>>>> at: https://gitlab.collabora.com/tonyk/linux/tree/vimc/output
->>>>>
->>>>> In order to test it, one can follow these instructions:
->>>>>
->>>>> 1 - Configure the pipeline (requires v4l-utils):
->>>>>
->>>>> $ media-ctl -d platform:vimc -V '"Sensor A":0[fmt:SBGGR8_1X8/640x480]'
->>>>> $ media-ctl -d platform:vimc -V '"Debayer A":0[fmt:SBGGR8_1X8/640x480]'
->>>>> $ media-ctl -d platform:vimc -V '"Sensor B":0[fmt:SBGGR8_1X8/640x480]'
->>>>> $ media-ctl -d platform:vimc -V '"Debayer B":0[fmt:SBGGR8_1X8/640x480]'
->>>>> $ v4l2-ctl -z platform:vimc -d "RGB/YUV Capture" -v width=1920,height=1440
->>>>> $ v4l2-ctl -z platform:vimc -d "Raw Capture 0" -v pixelformat=BA81
->>>>> $ v4l2-ctl -z platform:vimc -d "Raw Capture 1" -v pixelformat=BA81
->>>>> $ v4l2-ctl -z platform:vimc -e "RGB/YUV Input" -v width=640,height=480
->>>>>
->>>>> 2 - Use a userspace application:
->>>>> 2.a gst-launch (requires gstreamer and gst-plugins-good):
->>>>>
->>>>> Feed frames into the output and grab from the capture (rescaled for
->>>>> convenience):
->>>>>
->>>>> $ gst-launch-1.0 videotestsrc pattern=ball ! \
->>>>> 	video/x-raw,width=640,height=480,format=RGB \
->>>>> 	! v4l2sink device=/dev/video2 v4l2src device=/dev/video3 ! \
->>>>> 	video/x-raw,width=1920,height=1440,format=RGB ! videoscale ! \
->>>>> 	video/x-raw,width=640,height=480 ! videoconvert ! ximagesink
->>>>>
->>>>> 2.b qv4l2 (requires v4l-utils):
->>>>>
->>>>> Open the output device:
->>>>>
->>>>> $ qv4l2 -d2
->>>>>
->>>>> Open the capture device:
->>>>>
->>>>> $ qv4l2 -d3
->>>>>
->>>>> Start the streaming at both, at any order. You can change the frame
->>>>> content at "Test Pattern Generator" -> "Test Pattern" on the output.
->>>>>
->>>>> Thanks,
->>>>> 	André
->>>>>
->>>>> André Almeida (7):
->>>>>   media: vimc: Create video module
->>>>>   media: vimc: video: Add write file operation
->>>>>   media: vimc: Create a V4L2 output device
->>>>>   media: vimc: Send null buffer through the pipeline
->>>>>   media: vimc: core: Add output device on the pipeline
->>>>>   media: vimc.dot: Update default topology diagram
->>>>>   media: vimc.rst: Add output device
->>>>>
->>>>>  Documentation/media/v4l-drivers/vimc.dot    |   4 +-
->>>>>  Documentation/media/v4l-drivers/vimc.rst    |  12 +-
->>>>>  drivers/media/platform/vimc/Makefile        |   4 +-
->>>>>  drivers/media/platform/vimc/vimc-capture.c  | 356 +++----------------
->>>>>  drivers/media/platform/vimc/vimc-common.h   |   5 +-
->>>>>  drivers/media/platform/vimc/vimc-core.c     |   7 +-
->>>>>  drivers/media/platform/vimc/vimc-debayer.c  |  14 +-
->>>>>  drivers/media/platform/vimc/vimc-output.c   | 362 ++++++++++++++++++++
->>>>>  drivers/media/platform/vimc/vimc-scaler.c   |  13 +-
->>>>>  drivers/media/platform/vimc/vimc-sensor.c   |  10 +-
->>>>>  drivers/media/platform/vimc/vimc-streamer.c |  24 +-
->>>>>  drivers/media/platform/vimc/vimc-video.c    | 273 +++++++++++++++
->>>>>  drivers/media/platform/vimc/vimc-video.h    | 130 +++++++
->>>>>  13 files changed, 849 insertions(+), 365 deletions(-)
->>>>>  create mode 100644 drivers/media/platform/vimc/vimc-output.c
->>>>>  create mode 100644 drivers/media/platform/vimc/vimc-video.c
->>>>>  create mode 100644 drivers/media/platform/vimc/vimc-video.h
->>>>>
-> 
+diff --git a/drivers/iio/light/tsl2772.c b/drivers/iio/light/tsl2772.c
+index 83cece921843..f1134f183be7 100644
+--- a/drivers/iio/light/tsl2772.c
++++ b/drivers/iio/light/tsl2772.c
+@@ -860,6 +860,13 @@ static int tsl2772_chip_off(struct iio_dev *indio_dev)
+ 	return tsl2772_write_control_reg(chip, 0x00);
+ }
+ 
++static void tsl2772_chip_off_action(void *data)
++{
++	struct iio_dev *indio_dev = data;
++
++	tsl2772_chip_off(indio_dev);
++}
++
+ /**
+  * tsl2772_invoke_change - power cycle the device to implement the user
+  *                         parameters
+@@ -1807,10 +1814,10 @@ static int tsl2772_probe(struct i2c_client *clientp,
+ 		return PTR_ERR(chip->vdd_supply);
+ 	}
+ 
+-	ret = devm_add_action(&clientp->dev, tsl2772_disable_regulators_action,
++	ret = devm_add_action_or_reset(&clientp->dev,
++				tsl2772_disable_regulators_action,
+ 			      chip);
+ 	if (ret < 0) {
+-		tsl2772_disable_regulators_action(chip);
+ 		dev_err(&clientp->dev, "Failed to setup regulator cleanup action %d\n",
+ 			ret);
+ 		return ret;
+@@ -1877,15 +1884,14 @@ static int tsl2772_probe(struct i2c_client *clientp,
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	ret = iio_device_register(indio_dev);
+-	if (ret) {
+-		tsl2772_chip_off(indio_dev);
+-		dev_err(&clientp->dev,
+-			"%s: iio registration failed\n", __func__);
++	ret = devm_add_action_or_reset(&clientp->dev,
++					tsl2772_chip_off_action,
++					indio_dev);
++
++	if (ret < 0)
+ 		return ret;
+-	}
+ 
+-	return 0;
++	return devm_iio_device_register(&clientp->dev, indio_dev);
+ }
+ 
+ static int tsl2772_suspend(struct device *dev)
+@@ -1922,17 +1928,6 @@ static int tsl2772_resume(struct device *dev)
+ 	return tsl2772_chip_on(indio_dev);
+ }
+ 
+-static int tsl2772_remove(struct i2c_client *client)
+-{
+-	struct iio_dev *indio_dev = i2c_get_clientdata(client);
+-
+-	tsl2772_chip_off(indio_dev);
+-
+-	iio_device_unregister(indio_dev);
+-
+-	return 0;
+-}
+-
+ static const struct i2c_device_id tsl2772_idtable[] = {
+ 	{ "tsl2571", tsl2571 },
+ 	{ "tsl2671", tsl2671 },
+@@ -1979,7 +1974,6 @@ static struct i2c_driver tsl2772_driver = {
+ 	},
+ 	.id_table = tsl2772_idtable,
+ 	.probe = tsl2772_probe,
+-	.remove = tsl2772_remove,
+ };
+ 
+ module_i2c_driver(tsl2772_driver);
+-- 
+2.20.1
 
