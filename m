@@ -2,286 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B2C57CBE9
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 20:25:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C205B7CBEC
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 20:25:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729792AbfGaSZG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 14:25:06 -0400
-Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:50223 "EHLO
-        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729721AbfGaSYn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 14:24:43 -0400
-Received: from sc9-mailhost2.vmware.com (10.113.161.72) by
- EX13-EDG-OU-001.vmware.com (10.113.208.155) with Microsoft SMTP Server id
- 15.0.1156.6; Wed, 31 Jul 2019 11:24:36 -0700
-Received: from rlwimi.localdomain (unknown [10.166.66.112])
-        by sc9-mailhost2.vmware.com (Postfix) with ESMTP id C5F42B2859;
-        Wed, 31 Jul 2019 14:24:39 -0400 (EDT)
-From:   Matt Helsley <mhelsley@vmware.com>
-To:     LKML <linux-kernel@vger.kernel.org>
-CC:     Ingo Molnar <mingo@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Matt Helsley <mhelsley@vmware.com>
-Subject: [PATCH v4 8/8] recordmcount: Clarify what cleanup() does
-Date:   Wed, 31 Jul 2019 11:24:16 -0700
-Message-ID: <2a387ac86d133d22c68f57b9933c32bab1d09a2d.1564596289.git.mhelsley@vmware.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <cover.1564596289.git.mhelsley@vmware.com>
-References: <cover.1564596289.git.mhelsley@vmware.com>
+        id S1729954AbfGaSZj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 14:25:39 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:40665 "EHLO
+        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726520AbfGaSZi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jul 2019 14:25:38 -0400
+Received: from [10.171.236.151] ([192.55.54.60])
+        (authenticated bits=0)
+        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id x6VIOeaT3787495
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
+        Wed, 31 Jul 2019 11:24:40 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com x6VIOeaT3787495
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019071901; t=1564597482;
+        bh=txRshuHUqdGB6iKaTei8z8eRN2RTKp9cz6Id4MSwGeU=;
+        h=Date:In-Reply-To:References:Subject:To:CC:From:From;
+        b=zlXYJ0r/PFIFBLEfb9vMBPc2VftRX7kfgBKiEgS27XUiJ7S08HzLMdX/qsyeLkAZe
+         IJDdG1OZfnbypfq9wXnSAxz0yikDPM5nUNOYVB/xkN1ywgGTtAh2Jsuof56M3JwmVH
+         6hswTxuObNkyHUVlfkxKJIywo1XGow4wS1JbMRe5yZWnx374rhXnZ3rkbvm5M4o1aU
+         AsBSec8oWalwnGNR0ob2d0JK8mmFVokYVF/cC9/tXkkmLyMP54vmZR4CvDyyGlrdUx
+         M+uF5MD14CMukJZvYxsCSh9LgjttCrGnXRE4lzClxQY4nzoGb5Dtol3rLsEeh5mN2I
+         /y5yJp3+Wq2mg==
+Date:   Wed, 31 Jul 2019 11:24:36 -0700
+User-Agent: K-9 Mail for Android
+In-Reply-To: <ccc7fa72d0f83ddd62067092b105bd801479004b.camel@perches.com>
+References: <e0dd3af448e38e342c1ac6e7c0c802696eb77fd6.1564549413.git.joe@perches.com> <1d2830aadbe9d8151728a7df5b88528fc72a0095.1564549413.git.joe@perches.com> <20190731171429.GA24222@amd> <ccc7fa72d0f83ddd62067092b105bd801479004b.camel@perches.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-Received-SPF: None (EX13-EDG-OU-001.vmware.com: mhelsley@vmware.com does not
- designate permitted sender hosts)
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [RFC PATCH] compiler_attributes.h: Add 'fallthrough' pseudo keyword for switch/case use
+To:     Joe Perches <joe@perches.com>, Pavel Machek <pavel@ucw.cz>
+CC:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "Gustavo A . R . Silva" <gustavo@embeddedor.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Shawn Landden <shawn@git.icu>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+From:   hpa@zytor.com
+Message-ID: <765E740C-4259-4835-A58D-432006628BAC@zytor.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-cleanup() mostly frees/unmaps the malloc'd/privately-mapped
-copy of the ELF file recordmcount is working on, which is
-set up in mmap_file(). It also deals with positioning within
-the pseduo prive-mapping of the file and appending to the ELF
-file.
+On July 31, 2019 10:51:37 AM PDT, Joe Perches <joe@perches=2Ecom> wrote:
+>On Wed, 2019-07-31 at 19:14 +0200, Pavel Machek wrote:
+>> On Tue 2019-07-30 22:35:18, Joe Perches wrote:
+>> > Reserve the pseudo keyword 'fallthrough' for the ability to convert
+>the
+>> > various case block /* fallthrough */ style comments to appear to be
+>an
+>> > actual reserved word with the same gcc case block missing
+>fallthrough
+>> > warning capability=2E
+>>=20
+>> Acked-by: Pavel Machek <pavel@ucw=2Ecz>
+>>=20
+>> > +/*
+>> > + * Add the pseudo keyword 'fallthrough' so case statement blocks
+>> > + * must end with any of these keywords:
+>> > + *   break;
+>> > + *   fallthrough;
+>> > + *   goto <label>;
+>> > + *   return [expression];
+>> > + *
+>> > + *  gcc:
+>https://gcc=2Egnu=2Eorg/onlinedocs/gcc/Statement-Attributes=2Ehtml#Statem=
+ent-Attributes
+>> > + */
+>> > +#if __has_attribute(__fallthrough__)
+>> > +# define fallthrough                  =20
+>__attribute__((__fallthrough__))
+>> > +#else
+>> > +# define fallthrough                    do {} while (0)  /*
+>fallthrough */
+>> > +#endif
+>> > +
+>>=20
+>> Will various checkers (and gcc) recognize, that comment in a macro,
+>> and disable the warning accordingly?
+>
+>Current non-gcc tools:  I doubt it=2E
+>
+>And that's unlikely as the comments are supposed to be stripped
+>before the macro expansion phase=2E
+>
+>gcc 7+, which by now probably most developers actually use, will
+>though
+>and likely that's sufficient=2E
+>
+>> Explanation that the comment is "magic" might not be a bad idea=2E
+>
+>The comment was more for the reader=2E
+>
+>cheers, Joe
 
-Split into two steps:
-	mmap_cleanup() for the mapping itself
-	file_append_cleanup() for allocations storing the
-		appended ELF data.
-
-Also, move the global variable initializations out of the main,
-per-object-file loop and nearer to the alloc/init (mmap_file())
-and two cleanup functions so we can more clearly see how they're
-related.
-
-Signed-off-by: Matt Helsley <mhelsley@vmware.com>
----
- scripts/recordmcount.c | 151 ++++++++++++++++++++++-------------------
- 1 file changed, 81 insertions(+), 70 deletions(-)
-
-diff --git a/scripts/recordmcount.c b/scripts/recordmcount.c
-index 5677fcc88a72..612268eabef4 100644
---- a/scripts/recordmcount.c
-+++ b/scripts/recordmcount.c
-@@ -48,21 +48,26 @@ static void *file_map;	/* pointer of the mapped file */
- static void *file_end;	/* pointer to the end of the mapped file */
- static int file_updated; /* flag to state file was changed */
- static void *file_ptr;	/* current file pointer location */
-+
- static void *file_append; /* added to the end of the file */
- static size_t file_append_size; /* how much is added to end of file */
- 
- /* Per-file resource cleanup when multiple files. */
--static void cleanup(void)
-+static void file_append_cleanup(void)
-+{
-+	free(file_append);
-+	file_append = NULL;
-+	file_append_size = 0;
-+	file_updated = 0;
-+}
-+
-+static void mmap_cleanup(void)
- {
- 	if (!mmap_failed)
- 		munmap(file_map, sb.st_size);
- 	else
- 		free(file_map);
- 	file_map = NULL;
--	free(file_append);
--	file_append = NULL;
--	file_append_size = 0;
--	file_updated = 0;
- }
- 
- /* ulseek, uwrite, ...:  Check return value for errors. */
-@@ -103,7 +108,8 @@ static ssize_t uwrite(void const *const buf, size_t const count)
- 		}
- 		if (!file_append) {
- 			perror("write");
--			cleanup();
-+			file_append_cleanup();
-+			mmap_cleanup();
- 			return -1;
- 		}
- 		if (file_ptr < file_end) {
-@@ -129,12 +135,76 @@ static void * umalloc(size_t size)
- 	void *const addr = malloc(size);
- 	if (addr == 0) {
- 		fprintf(stderr, "malloc failed: %zu bytes\n", size);
--		cleanup();
-+		file_append_cleanup();
-+		mmap_cleanup();
- 		return NULL;
- 	}
- 	return addr;
- }
- 
-+/*
-+ * Get the whole file as a programming convenience in order to avoid
-+ * malloc+lseek+read+free of many pieces.  If successful, then mmap
-+ * avoids copying unused pieces; else just read the whole file.
-+ * Open for both read and write; new info will be appended to the file.
-+ * Use MAP_PRIVATE so that a few changes to the in-memory ElfXX_Ehdr
-+ * do not propagate to the file until an explicit overwrite at the last.
-+ * This preserves most aspects of consistency (all except .st_size)
-+ * for simultaneous readers of the file while we are appending to it.
-+ * However, multiple writers still are bad.  We choose not to use
-+ * locking because it is expensive and the use case of kernel build
-+ * makes multiple writers unlikely.
-+ */
-+static void *mmap_file(char const *fname)
-+{
-+	/* Avoid problems if early cleanup() */
-+	fd_map = -1;
-+	mmap_failed = 1;
-+	file_map = NULL;
-+	file_ptr = NULL;
-+	file_updated = 0;
-+	sb.st_size = 0;
-+
-+	fd_map = open(fname, O_RDONLY);
-+	if (fd_map < 0) {
-+		perror(fname);
-+		return NULL;
-+	}
-+	if (fstat(fd_map, &sb) < 0) {
-+		perror(fname);
-+		goto out;
-+	}
-+	if (!S_ISREG(sb.st_mode)) {
-+		fprintf(stderr, "not a regular file: %s\n", fname);
-+		goto out;
-+	}
-+	file_map = mmap(0, sb.st_size, PROT_READ|PROT_WRITE, MAP_PRIVATE,
-+			fd_map, 0);
-+	if (file_map == MAP_FAILED) {
-+		mmap_failed = 1;
-+		file_map = umalloc(sb.st_size);
-+		if (!file_map) {
-+			perror(fname);
-+			goto out;
-+		}
-+		if (read(fd_map, file_map, sb.st_size) != sb.st_size) {
-+			perror(fname);
-+			free(file_map);
-+			file_map = NULL;
-+			goto out;
-+		}
-+	} else
-+		mmap_failed = 0;
-+out:
-+	close(fd_map);
-+	fd_map = -1;
-+
-+	file_end = file_map + sb.st_size;
-+
-+	return file_map;
-+}
-+
-+
- static unsigned char ideal_nop5_x86_64[5] = { 0x0f, 0x1f, 0x44, 0x00, 0x00 };
- static unsigned char ideal_nop5_x86_32[5] = { 0x3e, 0x8d, 0x74, 0x26, 0x00 };
- static unsigned char *ideal_nop;
-@@ -238,61 +308,6 @@ static int make_nop_arm64(void *map, size_t const offset)
- 	return 0;
- }
- 
--/*
-- * Get the whole file as a programming convenience in order to avoid
-- * malloc+lseek+read+free of many pieces.  If successful, then mmap
-- * avoids copying unused pieces; else just read the whole file.
-- * Open for both read and write; new info will be appended to the file.
-- * Use MAP_PRIVATE so that a few changes to the in-memory ElfXX_Ehdr
-- * do not propagate to the file until an explicit overwrite at the last.
-- * This preserves most aspects of consistency (all except .st_size)
-- * for simultaneous readers of the file while we are appending to it.
-- * However, multiple writers still are bad.  We choose not to use
-- * locking because it is expensive and the use case of kernel build
-- * makes multiple writers unlikely.
-- */
--static void *mmap_file(char const *fname)
--{
--	file_map = NULL;
--	sb.st_size = 0;
--	fd_map = open(fname, O_RDONLY);
--	if (fd_map < 0) {
--		perror(fname);
--		return NULL;
--	}
--	if (fstat(fd_map, &sb) < 0) {
--		perror(fname);
--		goto out;
--	}
--	if (!S_ISREG(sb.st_mode)) {
--		fprintf(stderr, "not a regular file: %s\n", fname);
--		goto out;
--	}
--	file_map = mmap(0, sb.st_size, PROT_READ|PROT_WRITE, MAP_PRIVATE,
--			fd_map, 0);
--	mmap_failed = 0;
--	if (file_map == MAP_FAILED) {
--		mmap_failed = 1;
--		file_map = umalloc(sb.st_size);
--		if (!file_map) {
--			perror(fname);
--			goto out;
--		}
--		if (read(fd_map, file_map, sb.st_size) != sb.st_size) {
--			perror(fname);
--			free(file_map);
--			file_map = NULL;
--			goto out;
--		}
--	}
--out:
--	close(fd_map);
--
--	file_end = file_map + sb.st_size;
--
--	return file_map;
--}
--
- static int write_file(const char *fname)
- {
- 	char tmp_file[strlen(fname) + 4];
-@@ -438,10 +453,11 @@ static void MIPS64_r_info(Elf64_Rel *const rp, unsigned sym, unsigned type)
- 
- static int do_file(char const *const fname)
- {
--	Elf32_Ehdr *const ehdr = mmap_file(fname);
- 	unsigned int reltype = 0;
-+	Elf32_Ehdr *ehdr;
- 	int rc = -1;
- 
-+	ehdr = mmap_file(fname);
- 	if (!ehdr)
- 		goto out;
- 
-@@ -577,7 +593,8 @@ static int do_file(char const *const fname)
- 
- 	rc = write_file(fname);
- out:
--	cleanup();
-+	file_append_cleanup();
-+	mmap_cleanup();
- 	return rc;
- }
- 
-@@ -620,12 +637,6 @@ int main(int argc, char *argv[])
- 		    strcmp(file + (len - ftrace_size), ftrace) == 0)
- 			continue;
- 
--		/* Avoid problems if early cleanup() */
--		fd_map = -1;
--		mmap_failed = 1;
--		file_map = NULL;
--		file_ptr = NULL;
--		file_updated = 0;
- 		if (do_file(file)) {
- 			fprintf(stderr, "%s: failed\n", file);
- 			++n_error;
--- 
-2.20.1
-
+If the comments are stripped, how would the compiler see them to be able t=
+o issue a warning? I would guess that it is retained or replaced with some =
+other magic token=2E
+--=20
+Sent from my Android device with K-9 Mail=2E Please excuse my brevity=2E
