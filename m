@@ -2,105 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 798717BECA
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 13:03:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 22B8E7BECE
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 13:03:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726920AbfGaLDI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 07:03:08 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:42557 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725921AbfGaLDH (ORCPT
+        id S1727028AbfGaLDd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 07:03:33 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:60030 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725921AbfGaLDd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 07:03:07 -0400
-Received: by mail-lj1-f194.google.com with SMTP id t28so65154235lje.9;
-        Wed, 31 Jul 2019 04:03:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=IFRGzyEL5FegIt7aRlMOhE1NrhMFglg5rQhwfiI4MTU=;
-        b=t3yZ6aH2FGBHy+wItFkigTDbGuodvFqDBP9LLZ1ezF/hRA9iBG+tI8Y6yqDtmaQ3yb
-         CgfYFWmgAsPe3H2r/B9xtkHmrbxuM6xu8di2tSUcH6nrX9f4tOD+q1v96H4WMDjn7WhF
-         IduAU2KNawBQKquPtTshfKt1InFmcmlcAl93N4w5Q+Anqdx//0pEDNk/tkrFdNKMi801
-         a6zWOJL9lKr8IvCERg5QZjBrccmirkTUK6jiLrQhn7earUZz4+yLbUekT7u0LbAEKCwi
-         FnP/5JpZDZgJ4RriT/3pt1GfJ41toYMcI++Y67bUJ7mUubYbdoWbliSjj5eaj/Yhacz6
-         FLuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=IFRGzyEL5FegIt7aRlMOhE1NrhMFglg5rQhwfiI4MTU=;
-        b=HhyCNZe2EVdO6n31yWN4FNWvz0cylxV9PZTZJRLBSxZRlHROc0yxYZ+uIyhAdxZp0h
-         Lwa8P1vxJ7ueBFV69/60kSzZKkTiHxgyUsX0zjcPUMqkcMGtdYAInhMYr0fuQacx62ky
-         ppIj4jxjZ8LeG/t33miCiSZJjBevkoFSkpZmqtdSjLcVbLS6dh13oJHjoW7t2hojVVtA
-         H77hFLqMtpk9UG/Qve4MTLvNxh9G7SYzR2hLZvqR1c7P5NuxEijakGnYky/4lGJ/tTHz
-         YAhY9wq5vLaR4SAShE1Vq0U7JMPtUrhEubBJh7IUbP5lDXKXThDB9AUAYSSA/Xi7xDks
-         Kz3Q==
-X-Gm-Message-State: APjAAAXbu+Myp9ZvM3wJtSwfAQaSprb159lPXsRq0yoGp8297JveVhLm
-        NcoYS1TxU3dwydxwqv7UlWH4W314L9lP77bYjP4=
-X-Google-Smtp-Source: APXvYqxN2K3v5gLjmpzGiaVvo7hS3EevA6OWULpgUCjzPqTrwdrg+mN+g/JP+riwWs36n/w7jJKvYH0piH3zz1jK4KQ=
-X-Received: by 2002:a2e:864d:: with SMTP id i13mr56738466ljj.92.1564570984704;
- Wed, 31 Jul 2019 04:03:04 -0700 (PDT)
+        Wed, 31 Jul 2019 07:03:33 -0400
+Received: from [5.158.153.52] (helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hsmOH-0003ZR-Af; Wed, 31 Jul 2019 13:03:29 +0200
+Date:   Wed, 31 Jul 2019 13:03:28 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Peter Zijlstra <peterz@infradead.org>
+cc:     LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Sebastian Siewior <bigeasy@linutronix.de>,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Julia Cartwright <julia@ni.com>
+Subject: Re: [patch 7/7] posix-timers: Prepare for PREEMPT_RT
+In-Reply-To: <20190731094917.GR31381@hirez.programming.kicks-ass.net>
+Message-ID: <alpine.DEB.2.21.1907311303130.1715@nanos.tec.linutronix.de>
+References: <20190730223348.409366334@linutronix.de> <20190730223829.058247862@linutronix.de> <20190731094917.GR31381@hirez.programming.kicks-ass.net>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-References: <1564489420-677-1-git-send-email-sumit.garg@linaro.org>
- <CAE=Ncrb63dQLe-nDQyO9OPv7XjwM_9mzL9SrcLiUi2Dr10cD4A@mail.gmail.com> <CAFA6WYPJAzbPdcpBqioxjY=T8RLw-73B_hpzX4cGnwVvm5zpJw@mail.gmail.com>
-In-Reply-To: <CAFA6WYPJAzbPdcpBqioxjY=T8RLw-73B_hpzX4cGnwVvm5zpJw@mail.gmail.com>
-From:   Janne Karhunen <janne.karhunen@gmail.com>
-Date:   Wed, 31 Jul 2019 14:02:53 +0300
-Message-ID: <CAE=Ncrb23q++z8R8UMbjDE2epEq4YVcNGzrRD31eH3JAooYejg@mail.gmail.com>
-Subject: Re: [RFC v2 0/6] Introduce TEE based Trusted Keys support
-To:     Sumit Garg <sumit.garg@linaro.org>
-Cc:     keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Jens Wiklander <jens.wiklander@linaro.org>,
-        Jonathan Corbet <corbet@lwn.net>, dhowells@redhat.com,
-        jejb@linux.ibm.com,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "tee-dev @ lists . linaro . org" <tee-dev@lists.linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 31, 2019 at 1:26 PM Sumit Garg <sumit.garg@linaro.org> wrote:
+On Wed, 31 Jul 2019, Peter Zijlstra wrote:
 
-> > Interesting, I wrote something similar and posted it to the lists a while back:
-> > https://github.com/jkrh/linux/commit/d77ea03afedcb5fd42234cd834da8f8a0809f6a6
-> >
-> > Since there are no generic 'TEEs' available,
->
-> There is already a generic TEE interface driver available in kernel.
-> Have a look here: "Documentation/tee.txt".
+> On Wed, Jul 31, 2019 at 12:33:55AM +0200, Thomas Gleixner wrote:
+> > +static struct k_itimer *timer_wait_running(struct k_itimer *timer,
+> > +					   unsigned long *flags)
+> > +{
+> > +	const struct k_clock *kc = READ_ONCE(timer->kclock);
+> > +	timer_t timer_id = READ_ONCE(timer->it_id);
+> > +
+> > +	/* Prevent kfree(timer) after dropping the lock */
+> > +	rcu_read_lock();
+> > +	unlock_timer(timer, *flags);
+> > +
+> > +	if (kc->timer_arm == common_hrtimer_arm)
+> > +		hrtimer_cancel_wait_running(&timer->it.real.timer);
+> > +	else if (kc == &alarm_clock)
+> > +		hrtimer_cancel_wait_running(&timer->it.alarm.alarmtimer.timer);
+> 
+> 	else WARN();
 
-I guess my wording was wrong, tried to say that physical TEEs in the
-wild vary massively hardware wise. Generalizing these things is rough.
-
-
-> > I implemented the same
-> > thing as a generic protocol translator. The shared memory binding for
-> > instance already assumes fair amount about the TEE and how that is
-> > physically present in the system. Besides, the help from usage of shm
-> > is pretty limited due to the size of the keydata.
-> >
->
-> If you look at patch #1 and #2, they add support to register kernel
-> memory buffer (keydata buffer in this case) with TEE to operate on. So
-> there isn't any limitation due to the size of the keydata.
-
-Ah, didn't mean that. Meant that the keydata is typically pretty small
-in size, so there is limited benefit from passing that in via shm if
-that complicates anything.
-
-
--- 
-Janne
+Yup. Working on it ...
