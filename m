@@ -2,46 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D3CF7BF8C
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 13:31:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5788F7BFDC
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 13:33:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387663AbfGaLaL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 07:30:11 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:34996 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387596AbfGaLaJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S2387625AbfGaLaJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Wed, 31 Jul 2019 07:30:09 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:34756 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387591AbfGaLaG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jul 2019 07:30:06 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=qdXfU6r5b5sdjGKJgeKuLM8z6fXd+57ECxKLYJefhRg=; b=h7mJvPV40UEw
-        3KaRh1RriPGRhUPlrjB5eVR9O93+MYafPgo89J2bUWnqc2+GsMxE990Eqn+E6iBDJssbzl59fsgb6
-        zB5KGcq4W2nywpYg857qEi0d6RNW65Waj0BGjY1rHdgeNloGTTXJxru0tC3ydVbakXreJAvTRhSDx
-        +zz5k=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
+        List-Archive; bh=EuMvAIGvSkhxULaHrIEoiNbtfGrsx8DySGa7iFH7bOg=; b=Sqo0C8Xc5ocS
+        /7GLENBLdPeEqcBb1A5xfC3JtU1fBoNS6/7W0x/uKp0VJdMkfS793SxyDH2W/yMko45ysDTpcQdy5
+        kjG2LaCfX4BreOLL9+/aX4h+qeIoCjoLxK8rKzYnPsKzq8KGYSFo6hzKlxPDImBcxQALDyJ1ycFq8
+        YFsbs=;
+Received: from ypsilon.sirena.org.uk ([2001:470:1f1d:6b5::7])
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1hsmno-0001pr-Br; Wed, 31 Jul 2019 11:29:52 +0000
+        id 1hsmnq-0001qM-2z; Wed, 31 Jul 2019 11:29:54 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 80FD42742CDE; Wed, 31 Jul 2019 12:29:51 +0100 (BST)
+        id 7BAE72742D57; Wed, 31 Jul 2019 12:29:52 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     fengchunguo <chunguo.feng@amlogic.com>
-Cc:     alsa-devel@alsa-project.org, bleung@chromium.org,
-        broonie@kernel.org, chunguo.feng@amlogic.com,
-        grundler@chromium.org, lgirdwood@gmail.com,
+To:     Colin Ian King <colin.king@canonical.com>
+Cc:     alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>,
+        kernel-janitors@vger.kernel.org,
+        Liam Girdwood <lgirdwood@gmail.com>,
         linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        perex@perex.cz, pierre-louis.bossart@linux.intel.com,
-        RyanS.Lee@maximintegrated.com, tiwai@suse.com
-Subject: Applied "ASoC: max98373: add 88200 and 96000 sampling rate support" to the asoc tree
-In-Reply-To: <20190731074156.5620-1-chunguo.feng@amlogic.com>
+        Takashi Iwai <tiwai@suse.com>
+Subject: Applied "ASoC: codec2codec: fix missing return of error return code" to the asoc tree
+In-Reply-To: <20190726123327.10467-1-colin.king@canonical.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190731112951.80FD42742CDE@ypsilon.sirena.org.uk>
-Date:   Wed, 31 Jul 2019 12:29:51 +0100 (BST)
+Message-Id: <20190731112952.7BAE72742D57@ypsilon.sirena.org.uk>
+Date:   Wed, 31 Jul 2019 12:29:52 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -49,11 +48,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: max98373: add 88200 and 96000 sampling rate support
+   ASoC: codec2codec: fix missing return of error return code
 
 has been applied to the asoc tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.3
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.4
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -74,64 +73,47 @@ to this mail.
 Thanks,
 Mark
 
-From b9da500bde81ad820b5d95c6bf52fc33e1f490ee Mon Sep 17 00:00:00 2001
-From: fengchunguo <chunguo.feng@amlogic.com>
-Date: Wed, 31 Jul 2019 15:41:56 +0800
-Subject: [PATCH] ASoC: max98373: add 88200 and 96000 sampling rate support
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From c8415833ec242b9ddf73bf9e1057e12f9b0fcd16 Mon Sep 17 00:00:00 2001
+From: Colin Ian King <colin.king@canonical.com>
+Date: Fri, 26 Jul 2019 13:33:27 +0100
+Subject: [PATCH] ASoC: codec2codec: fix missing return of error return code
 
-88200 and 96000 sampling rate was not enabled on driver, so can't be played.
+Currently in function snd_soc_dai_link_event_pre_pmu the error return
+code in variable err is being set but this is not actually being returned,
+the function just returns zero even when there are failures. Fix this by
+returning the error return code.
 
-The error information:
-max98373 3-0031：rate 96000 not supported
-max98373 3-0031：ASoC: can't set max98373-aif1 hw params: -22
-
-Signed-off-by: fengchunguo <chunguo.feng@amlogic.com>
-Link: https://lore.kernel.org/r/20190731074156.5620-1-chunguo.feng@amlogic.com
+Addresses-Coverity: ("Unused value")
+Fixes: 3dcfb397dad2 ("ASoC: codec2codec: deal with params when necessary")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Link: https://lore.kernel.org/r/20190726123327.10467-1-colin.king@canonical.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/max98373.c | 6 ++++++
- sound/soc/codecs/max98373.h | 2 ++
- 2 files changed, 8 insertions(+)
- mode change 100644 => 100755 sound/soc/codecs/max98373.c
- mode change 100644 => 100755 sound/soc/codecs/max98373.h
+ sound/soc/soc-dapm.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/codecs/max98373.c b/sound/soc/codecs/max98373.c
-old mode 100644
-new mode 100755
-index 528695cd6a1c..8c601a3ebc27
---- a/sound/soc/codecs/max98373.c
-+++ b/sound/soc/codecs/max98373.c
-@@ -267,6 +267,12 @@ static int max98373_dai_hw_params(struct snd_pcm_substream *substream,
- 	case 48000:
- 		sampling_rate = MAX98373_PCM_SR_SET1_SR_48000;
- 		break;
-+	case 88200:
-+		sampling_rate = MAX98373_PCM_SR_SET1_SR_88200;
-+		break;
-+	case 96000:
-+		sampling_rate = MAX98373_PCM_SR_SET1_SR_96000;
-+		break;
- 	default:
- 		dev_err(component->dev, "rate %d not supported\n",
- 			params_rate(params));
-diff --git a/sound/soc/codecs/max98373.h b/sound/soc/codecs/max98373.h
-old mode 100644
-new mode 100755
-index f6a37aa02f26..a59e51355a84
---- a/sound/soc/codecs/max98373.h
-+++ b/sound/soc/codecs/max98373.h
-@@ -130,6 +130,8 @@
- #define MAX98373_PCM_SR_SET1_SR_32000 (0x6 << 0)
- #define MAX98373_PCM_SR_SET1_SR_44100 (0x7 << 0)
- #define MAX98373_PCM_SR_SET1_SR_48000 (0x8 << 0)
-+#define MAX98373_PCM_SR_SET1_SR_88200 (0x9 << 0)
-+#define MAX98373_PCM_SR_SET1_SR_96000 (0xA << 0)
+diff --git a/sound/soc/soc-dapm.c b/sound/soc/soc-dapm.c
+index be9bb05b0165..2d183e2d23de 100644
+--- a/sound/soc/soc-dapm.c
++++ b/sound/soc/soc-dapm.c
+@@ -3776,7 +3776,7 @@ snd_soc_dai_link_event_pre_pmu(struct snd_soc_dapm_widget *w,
+ 	struct snd_pcm_hw_params *params = NULL;
+ 	const struct snd_soc_pcm_stream *config = NULL;
+ 	unsigned int fmt;
+-	int ret;
++	int ret = 0;
  
- /* MAX98373_R2028_PCM_SR_SETUP_2 */
- #define MAX98373_PCM_SR_SET2_SR_MASK (0xF << 4)
+ 	params = kzalloc(sizeof(*params), GFP_KERNEL);
+ 	if (!params)
+@@ -3865,7 +3865,7 @@ snd_soc_dai_link_event_pre_pmu(struct snd_soc_dapm_widget *w,
+ 
+ out:
+ 	kfree(params);
+-	return 0;
++	return ret;
+ }
+ 
+ static int snd_soc_dai_link_event(struct snd_soc_dapm_widget *w,
 -- 
 2.20.1
 
