@@ -2,53 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3B097C60B
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 17:20:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 862477C649
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 17:22:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729845AbfGaPUE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 11:20:04 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:35262 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729528AbfGaPUA (ORCPT
+        id S1727041AbfGaPWQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 11:22:16 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:40457 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729664AbfGaPTm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 11:20:00 -0400
-Received: by mail-ed1-f65.google.com with SMTP id w20so66030493edd.2
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 08:19:59 -0700 (PDT)
+        Wed, 31 Jul 2019 11:19:42 -0400
+Received: by mail-ed1-f67.google.com with SMTP id k8so66032408eds.7
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 08:19:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=shutemov-name.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=k+U6VIHmZ/fZHykv9hSZy3hTFPe14uQwWZPNGVQf9Wg=;
-        b=bRpitEYFAw0iw9F4lWLWOaj8uAivovFwyv4AWNZf1NY1sGLxSiCLjNDzw6evzISUMa
-         GHJXwwWF7WOifVXGeInd0STe8yx3ZYQIBXHrbJkyF+Rm71XJH0Uqn7KhiVn6RKSVi/NH
-         GnIdsyLQWF+U1/Hz7RYNsNvOWkWTR+mduMkRXQK/n0AYcfSL5nkUiUeRr88V6rdddNZa
-         NnYZWfhk4GFsXaFANiQNQQqJaMiCdDw2sC/yGDEkK8d34cXt5u306IrMfDI46uU39c0H
-         ulh3gI4vz6iIiS8U4HduYh7aIdHho4vvV2rbd58qJxpeTNRRIu4peFugSAhril4FyF28
-         DzHw==
+        bh=hC2uwgXxojO8zk/Rcrr6mceJUJW70ppjchwtq4ruRCg=;
+        b=0XV6P/gt+Sg4f27WCDZfMiz3yUD8gmqmXbpUkqw2qeKte/64P4ld/yFj9TtHQsxMva
+         Sbd6SFVGZn15wA2StFIL5OKo0viglmdPGCy3S9nsnoLjxmIaz4pZPHVNhzJMBFiEItzK
+         GGFxIZHfCywnX+w1VFB8az1H4FFBZ0dEp86xAnm0F7Jfw3TX8bJ2UwJ4MOp6xtqistdS
+         ci1LlbxLwNn2UPtS72pBvzNbUsUQSbVvUvjpSYYoWOORZ9uWxZOyAGcJabNrh3zrp7Ty
+         xsBZdp44F7iwElj0Db5RusDWd82dGLl/6L2fkZUDkulyOvXwh+aBdW95+eM1LPwVFqZZ
+         pCfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=k+U6VIHmZ/fZHykv9hSZy3hTFPe14uQwWZPNGVQf9Wg=;
-        b=ujEQJS87rTveHUdAZoC7CaKFWUBlAiBiIQswQZzqYF4O8UlzQLGkxkvN1+LP3kT5mH
-         FsCovaymBpLsPSJU6+u/X2p2ma23vE5rBkQAmZMZkDFDT31++z1CBjwx2zrSbI7rYcyq
-         ub/Krwr8qQNh5md8pheYXGn2gYhbE0mYFfBHGrrpNpw68bcI8m0yycPOlJMOgo28alhZ
-         M69O8cgeTb7kicRj1/UQ9omqpJWsGOYAglG3mU1+it3qsvCIYBCaLMWGNeGZPxqOwEXa
-         Flx38mgLC7HXVTP0alpgQU5NMs+usD5wewexQxKcA2PmOrZCGRA1llgtYjkSS6Jc15SC
-         vUHQ==
-X-Gm-Message-State: APjAAAUNBbZR9BVskN9GUR2wkKwY2G5T1Ak+qviA3uM3tZC9gs/NcBGp
-        fLP7MhU3zXTjI3kxk8ZWnXs=
-X-Google-Smtp-Source: APXvYqx+v4/Pbf2jShDF7c6rephC3qv4nn7vrbh6ErmrX7qhFi1sSZ2Ot8M2CUcvWdStTREYbHHJ+Q==
-X-Received: by 2002:a50:9468:: with SMTP id q37mr106511363eda.163.1564586038381;
-        Wed, 31 Jul 2019 08:13:58 -0700 (PDT)
+        bh=hC2uwgXxojO8zk/Rcrr6mceJUJW70ppjchwtq4ruRCg=;
+        b=NhiT1wW7jXoXzeZ0fs2F+94XI/GqaST0R07VxoBxglknnp8sSQF992A0SHZo8P4syX
+         U/wFokK60gcvf3YjVtIPJWfgkdtWXgD+NlmPMSv8ORSkPQeHRYNCa0NqpcBMi4E6xvcQ
+         y8D2D8gDuhJ/Whw0ZstTzRyx/kU60UYjCBTqpOJY7GLjtItIpKdqd416sTOnQ4CJ3lSn
+         1RXMNwbvzVO+TWieYmZYvI+ghYyZlE8tOAxZWieYTat5G9/H99L7E4b3Vl8Ilm7VP/5W
+         mngicJnl6oNHG6x5Kw3GnHjLruPfcXV1tFQLgrALdv9JHBYuHM6CDI33CjmVmfHf7ZKO
+         S2dA==
+X-Gm-Message-State: APjAAAUvRATnG7gWCuBKlWF6LcbQIGXGwOdizYjgM1MFelRVgjK0clLG
+        A/Nbwx+TU59YC2WLR7xxL88=
+X-Google-Smtp-Source: APXvYqz5v5Tv2OUvZrbCEWIRRAB8vEgVkF30Jl6xeuTpZr0HJyo73/wTXum206aQYtxXoB+6KiDpDg==
+X-Received: by 2002:a17:906:9447:: with SMTP id z7mr29540487ejx.165.1564586039736;
+        Wed, 31 Jul 2019 08:13:59 -0700 (PDT)
 Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id e43sm17445027ede.62.2019.07.31.08.13.53
+        by smtp.gmail.com with ESMTPSA id g11sm12443173ejm.86.2019.07.31.08.13.53
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
         Wed, 31 Jul 2019 08:13:57 -0700 (PDT)
 From:   "Kirill A. Shutemov" <kirill@shutemov.name>
 X-Google-Original-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
 Received: by box.localdomain (Postfix, from userid 1000)
-        id 41659104605; Wed, 31 Jul 2019 18:08:17 +0300 (+03)
+        id 488B9104606; Wed, 31 Jul 2019 18:08:17 +0300 (+03)
 To:     Andrew Morton <akpm@linux-foundation.org>, x86@kernel.org,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>,
@@ -64,9 +64,9 @@ Cc:     Kees Cook <keescook@chromium.org>,
         linux-mm@kvack.org, kvm@vger.kernel.org, keyrings@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: [PATCHv2 47/59] kvm, x86, mmu: setup MKTME keyID to spte for given PFN
-Date:   Wed, 31 Jul 2019 18:08:01 +0300
-Message-Id: <20190731150813.26289-48-kirill.shutemov@linux.intel.com>
+Subject: [PATCHv2 48/59] iommu/vt-d: Support MKTME in DMA remapping
+Date:   Wed, 31 Jul 2019 18:08:02 +0300
+Message-Id: <20190731150813.26289-49-kirill.shutemov@linux.intel.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190731150813.26289-1-kirill.shutemov@linux.intel.com>
 References: <20190731150813.26289-1-kirill.shutemov@linux.intel.com>
@@ -77,58 +77,111 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kai Huang <kai.huang@linux.intel.com>
+From: Jacob Pan <jacob.jun.pan@linux.intel.com>
 
-Setup keyID to SPTE, which will be eventually programmed to shadow MMU
-or EPT table, according to page's associated keyID, so that guest is
-able to use correct keyID to access guest memory.
+When MKTME is enabled, keyid is stored in the high order bits of physical
+address. For DMA transactions targeting encrypted physical memory, keyid
+must be included in the IOVA to physical address translation.
 
-Note current shadow_me_mask doesn't suit MKTME's needs, since for MKTME
-there's no fixed memory encryption mask, but can vary from keyID 1 to
-maximum keyID, therefore shadow_me_mask remains 0 for MKTME.
+This patch appends page keyid when setting up the IOMMU PTEs. On the
+reverse direction, keyid bits are cleared in the physical address lookup.
+Mapping functions of both DMA ops and IOMMU ops are covered.
 
-Signed-off-by: Kai Huang <kai.huang@linux.intel.com>
+Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
 Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 ---
- arch/x86/kvm/mmu.c | 18 +++++++++++++++++-
- 1 file changed, 17 insertions(+), 1 deletion(-)
+ drivers/iommu/intel-iommu.c | 29 +++++++++++++++++++++++++++--
+ include/linux/intel-iommu.h |  9 ++++++++-
+ 2 files changed, 35 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
-index 8f72526e2f68..b8742e6219f6 100644
---- a/arch/x86/kvm/mmu.c
-+++ b/arch/x86/kvm/mmu.c
-@@ -2936,6 +2936,22 @@ static bool kvm_is_mmio_pfn(kvm_pfn_t pfn)
- #define SET_SPTE_WRITE_PROTECTED_PT	BIT(0)
- #define SET_SPTE_NEED_REMOTE_TLB_FLUSH	BIT(1)
+diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+index ac4172c02244..32d22872656b 100644
+--- a/drivers/iommu/intel-iommu.c
++++ b/drivers/iommu/intel-iommu.c
+@@ -867,6 +867,28 @@ static void free_context_table(struct intel_iommu *iommu)
+ 	spin_unlock_irqrestore(&iommu->lock, flags);
+ }
  
-+static u64 get_phys_encryption_mask(kvm_pfn_t pfn)
++static inline void set_pte_mktme_keyid(unsigned long phys_pfn,
++		phys_addr_t *pteval)
 +{
++	unsigned long keyid;
++
++	if (!pfn_valid(phys_pfn))
++		return;
++
++	keyid = page_keyid(pfn_to_page(phys_pfn));
++
 +#ifdef CONFIG_X86_INTEL_MKTME
-+	struct page *page;
-+
-+	if (!pfn_valid(pfn))
-+		return 0;
-+
-+	page = pfn_to_page(pfn);
-+
-+	return ((u64)page_keyid(page)) << mktme_keyid_shift();
-+#else
-+	return shadow_me_mask;
++	/*
++	 * When MKTME is enabled, set keyid in PTE such that DMA
++	 * remapping will include keyid in the translation from IOVA
++	 * to physical address. This applies to both user and kernel
++	 * allocated DMA memory.
++	 */
++	*pteval &= ~mktme_keyid_mask();
++	*pteval |= keyid << mktme_keyid_shift();
 +#endif
 +}
 +
- static int set_spte(struct kvm_vcpu *vcpu, u64 *sptep,
- 		    unsigned pte_access, int level,
- 		    gfn_t gfn, kvm_pfn_t pfn, bool speculative,
-@@ -2982,7 +2998,7 @@ static int set_spte(struct kvm_vcpu *vcpu, u64 *sptep,
- 		pte_access &= ~ACC_WRITE_MASK;
+ static struct dma_pte *pfn_to_dma_pte(struct dmar_domain *domain,
+ 				      unsigned long pfn, int *target_level)
+ {
+@@ -893,7 +915,7 @@ static struct dma_pte *pfn_to_dma_pte(struct dmar_domain *domain,
+ 			break;
  
- 	if (!kvm_is_mmio_pfn(pfn))
--		spte |= shadow_me_mask;
-+		spte |= get_phys_encryption_mask(pfn);
+ 		if (!dma_pte_present(pte)) {
+-			uint64_t pteval;
++			phys_addr_t pteval;
  
- 	spte |= (u64)pfn << PAGE_SHIFT;
+ 			tmp_page = alloc_pgtable_page(domain->nid);
  
+@@ -901,7 +923,8 @@ static struct dma_pte *pfn_to_dma_pte(struct dmar_domain *domain,
+ 				return NULL;
+ 
+ 			domain_flush_cache(domain, tmp_page, VTD_PAGE_SIZE);
+-			pteval = ((uint64_t)virt_to_dma_pfn(tmp_page) << VTD_PAGE_SHIFT) | DMA_PTE_READ | DMA_PTE_WRITE;
++			pteval = (virt_to_dma_pfn(tmp_page) << VTD_PAGE_SHIFT) | DMA_PTE_READ | DMA_PTE_WRITE;
++			set_pte_mktme_keyid(virt_to_dma_pfn(tmp_page), &pteval);
+ 			if (cmpxchg64(&pte->val, 0ULL, pteval))
+ 				/* Someone else set it while we were thinking; use theirs. */
+ 				free_pgtable_page(tmp_page);
+@@ -2214,6 +2237,8 @@ static int __domain_mapping(struct dmar_domain *domain, unsigned long iov_pfn,
+ 			}
+ 
+ 		}
++		set_pte_mktme_keyid(phys_pfn, &pteval);
++
+ 		/* We don't need lock here, nobody else
+ 		 * touches the iova range
+ 		 */
+diff --git a/include/linux/intel-iommu.h b/include/linux/intel-iommu.h
+index f2ae8a006ff8..8fbb9353d5a6 100644
+--- a/include/linux/intel-iommu.h
++++ b/include/linux/intel-iommu.h
+@@ -22,6 +22,8 @@
+ 
+ #include <asm/cacheflush.h>
+ #include <asm/iommu.h>
++#include <asm/page.h>
++
+ 
+ /*
+  * VT-d hardware uses 4KiB page size regardless of host page size.
+@@ -608,7 +610,12 @@ static inline void dma_clear_pte(struct dma_pte *pte)
+ static inline u64 dma_pte_addr(struct dma_pte *pte)
+ {
+ #ifdef CONFIG_64BIT
+-	return pte->val & VTD_PAGE_MASK;
++	u64 addr = pte->val;
++	addr &= VTD_PAGE_MASK;
++#ifdef CONFIG_X86_INTEL_MKTME
++	addr &= ~mktme_keyid_mask();
++#endif
++	return addr;
+ #else
+ 	/* Must have a full atomic 64-bit read */
+ 	return  __cmpxchg64(&pte->val, 0ULL, 0ULL) & VTD_PAGE_MASK;
 -- 
 2.21.0
 
