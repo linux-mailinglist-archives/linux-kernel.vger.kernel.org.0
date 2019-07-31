@@ -2,53 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 986917C5AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 17:10:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B9C227C5A9
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 17:10:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388567AbfGaPI1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 11:08:27 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:35918 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388484AbfGaPIZ (ORCPT
+        id S2388540AbfGaPI0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 11:08:26 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:37825 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388451AbfGaPIY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 11:08:25 -0400
-Received: by mail-ed1-f67.google.com with SMTP id k21so66032896edq.3
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 08:08:23 -0700 (PDT)
+        Wed, 31 Jul 2019 11:08:24 -0400
+Received: by mail-ed1-f66.google.com with SMTP id w13so66060787eds.4
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 08:08:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=shutemov-name.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=2O79cZSevj0fRjj98yOOKrmJ0HJlarDgQ5rQqTlE+Vc=;
-        b=owT4iRH22mETHlgcegYuhOK9u2nliY5q2VeZyUqXWoHHX/n19x6syg9GnDrIywB6W7
-         APi/TtXQtb/nyf25clrFAdZFZGzagMUnv2Z+2cnjWF04cbPyOCM49Gksu1AvQeUUnvR7
-         XUl2UNWMozLrrjHv201FJREyJgY9narxPLb1H5CawrRm8y//HMtVsyE9d/mxsDfkAKPA
-         enOpyJ4Rl3qA1WMr8I6NZp5PsirfuPoIKC32e6w353HdSR4LEILwTFl4IFSdfBVVRSfh
-         STKHa9Io28Fnozh/5ryrT10P9Qc9Ssl4F2PLmi5mOWUpEijdd0/vEnnTb2ET+50iJgoQ
-         809g==
+        bh=L4ZEjLjovYwhlc3sfcyK0re0l8xj15Oya4gREJZsXus=;
+        b=V5rpp3X2+p+VVm7FssSRodlU6DS9SwQLhXjimNRTkFMkTWsFbd7HkizFtVyE1zIrzy
+         fPAuOPVVJeqlsLEhPRbCqOeRCbvW4JadhbicVgcow8yaygfiy6y17rqCfH03Rty6YhXj
+         6s+mjRzfpE3alGhAXjgL2hhfWjPdDRz/hcRhXF1/iJC59vgvEz7fzn3mLdZt0saq8R+2
+         YGro+1SRX76SodqfwZnA/6i9jWHWw9pBsAVy22+H2tRm7Z7bX/jkLZMKy9nrKbtBjbdn
+         RE6jWJDgv80mFQO3CN2q3IrNNli2rX+pB/Xw9tJK/WnQpL2UfFVX1jHzcoNvANMfNeEh
+         hhxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=2O79cZSevj0fRjj98yOOKrmJ0HJlarDgQ5rQqTlE+Vc=;
-        b=T5ADEs84YjZaW8b2RZzxQnHZbwr2IJgJEEluhCmCMixNRkz4FC/DKv3hv4NTjANaB/
-         1asDou0N9ndQIyILOJKj4uCmNl39b14vb+JnJCEHZ5DQyVepKQFfQcYt3rrloBpVePkP
-         eguY0UDd3FilAk0KqDcc2JzmsEJmzNNEG8Z7AV+9nQZWLl8bHp7sbEoFm/O0WXkwX72g
-         GZijqG8htZ/9limK1b+2ePJQR4WPMQRPzIn6blb7orMtH3KY/MJ1S2Gj/nWa/EXzMhav
-         sZQNY9DuxtLLXhYRArdiATyJPt6ogh80m7f3Xijoe97cWPOhAvh7OP87czZyYt0GzxKs
-         6lBA==
-X-Gm-Message-State: APjAAAXQ34l9ealNZrYnda2XKsNudhRWYpDwl/uGSMcTx9SV7fgmzzZI
-        LNBdETbjRSYUNBnqBDmUGSc=
-X-Google-Smtp-Source: APXvYqwVNuaD30wHzFTa+Rk9wdAadH3VZ+X69/JVMMK7ntSPJ0Jg/TWgZwrRyyNLslnPzeWxXrLqGw==
-X-Received: by 2002:a17:906:1105:: with SMTP id h5mr26111047eja.53.1564585702584;
+        bh=L4ZEjLjovYwhlc3sfcyK0re0l8xj15Oya4gREJZsXus=;
+        b=iK3+6rdLDWFcU4Y+9Ldgfx86dRbLn0Vu8MUoy84fWyBdxw023Y7mnUGUFlYXvhuYvM
+         zdAJdFMi7Ckn/2UymgiDMxCwoXWSoQ49GUDTv8/qkgXwbpN9InJsWOEgD0SJ99u6F8X2
+         ye3p4qqIsgHmlxJ9qnckj7n1LBzk0h5RNMtjYYTvz0tsDC5OVa0aaEdluxxJjGuAhB7K
+         mxVzvIGl1stQK1XhYoy9ObDa0VKB5WDffA4bJnfUqcbe2NTOpZdk+UiMtU0tW+epS41a
+         E1gbbGSNOVUYT3osCGe8rSaMo3C8+k8kWP863NmltPvWoNnwTdN6Bj/fie7oihvlhFtR
+         i/Cw==
+X-Gm-Message-State: APjAAAXAygn1CHm3966E+NNd5aHJT/Ngl4Nbuwx79sFv+EpLDqBBMTn/
+        9G3+w2ViGPgTrck8Vj6HBCU=
+X-Google-Smtp-Source: APXvYqxJ9S0tGP2IpyXLxIjktlIQlFGvLsty4aUseBEocKbxQZsdfbX5PxHe1B3ZlzdQoz5XJNRh9g==
+X-Received: by 2002:a17:906:4d88:: with SMTP id s8mr92464687eju.225.1564585702235;
         Wed, 31 Jul 2019 08:08:22 -0700 (PDT)
 Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id k11sm16516389edq.54.2019.07.31.08.08.18
+        by smtp.gmail.com with ESMTPSA id q11sm268380ejt.74.2019.07.31.08.08.18
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
         Wed, 31 Jul 2019 08:08:19 -0700 (PDT)
 From:   "Kirill A. Shutemov" <kirill@shutemov.name>
 X-Google-Original-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
 Received: by box.localdomain (Postfix, from userid 1000)
-        id 25CB810131F; Wed, 31 Jul 2019 18:08:16 +0300 (+03)
+        id 2CA2A101320; Wed, 31 Jul 2019 18:08:16 +0300 (+03)
 To:     Andrew Morton <akpm@linux-foundation.org>, x86@kernel.org,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>,
@@ -64,9 +64,9 @@ Cc:     Kees Cook <keescook@chromium.org>,
         linux-mm@kvack.org, kvm@vger.kernel.org, keyrings@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: [PATCHv2 08/59] x86/mm: Introduce helpers to read number, shift and mask of KeyIDs
-Date:   Wed, 31 Jul 2019 18:07:22 +0300
-Message-Id: <20190731150813.26289-9-kirill.shutemov@linux.intel.com>
+Subject: [PATCHv2 09/59] x86/mm: Store bitmask of the encryption algorithms supported by MKTME
+Date:   Wed, 31 Jul 2019 18:07:23 +0300
+Message-Id: <20190731150813.26289-10-kirill.shutemov@linux.intel.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190731150813.26289-1-kirill.shutemov@linux.intel.com>
 References: <20190731150813.26289-1-kirill.shutemov@linux.intel.com>
@@ -77,132 +77,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-mktme_nr_keyids() returns the number of KeyIDs available for MKTME,
-excluding KeyID zero which used by TME. MKTME KeyIDs start from 1.
-
-mktme_keyid_shift() returns the shift of KeyID within physical address.
-
-mktme_keyid_mask() returns the mask to extract KeyID from physical address.
+Store bitmask of the supported encryption algorithms in 'mktme_algs'.
+This will be used by key management service.
 
 Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 ---
- arch/x86/include/asm/mktme.h | 19 +++++++++++++++++++
- arch/x86/kernel/cpu/intel.c  | 15 ++++++++++++---
- arch/x86/mm/Makefile         |  2 ++
- arch/x86/mm/mktme.c          | 27 +++++++++++++++++++++++++++
- 4 files changed, 60 insertions(+), 3 deletions(-)
- create mode 100644 arch/x86/include/asm/mktme.h
- create mode 100644 arch/x86/mm/mktme.c
+ arch/x86/include/asm/mktme.h | 2 ++
+ arch/x86/kernel/cpu/intel.c  | 6 +++++-
+ arch/x86/mm/mktme.c          | 2 ++
+ 3 files changed, 9 insertions(+), 1 deletion(-)
 
 diff --git a/arch/x86/include/asm/mktme.h b/arch/x86/include/asm/mktme.h
-new file mode 100644
-index 000000000000..b9ba2ea5b600
---- /dev/null
+index b9ba2ea5b600..42a3b1b44669 100644
+--- a/arch/x86/include/asm/mktme.h
 +++ b/arch/x86/include/asm/mktme.h
-@@ -0,0 +1,19 @@
-+#ifndef	_ASM_X86_MKTME_H
-+#define	_ASM_X86_MKTME_H
+@@ -10,6 +10,8 @@ extern int __mktme_keyid_shift;
+ extern int mktme_keyid_shift(void);
+ extern int __mktme_nr_keyids;
+ extern int mktme_nr_keyids(void);
++extern unsigned int mktme_algs;
 +
-+#include <linux/types.h>
-+
-+#ifdef CONFIG_X86_INTEL_MKTME
-+extern phys_addr_t __mktme_keyid_mask;
-+extern phys_addr_t mktme_keyid_mask(void);
-+extern int __mktme_keyid_shift;
-+extern int mktme_keyid_shift(void);
-+extern int __mktme_nr_keyids;
-+extern int mktme_nr_keyids(void);
-+#else
-+#define mktme_keyid_mask()	((phys_addr_t)0)
-+#define mktme_nr_keyids()	0
-+#define mktme_keyid_shift()	0
-+#endif
-+
-+#endif
+ #else
+ #define mktme_keyid_mask()	((phys_addr_t)0)
+ #define mktme_nr_keyids()	0
 diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
-index f03eee666761..7ba44825be42 100644
+index 7ba44825be42..991bdcb2a55a 100644
 --- a/arch/x86/kernel/cpu/intel.c
 +++ b/arch/x86/kernel/cpu/intel.c
-@@ -618,6 +618,9 @@ static void detect_tme(struct cpuinfo_x86 *c)
+@@ -553,6 +553,8 @@ static void detect_vmx_virtcap(struct cpuinfo_x86 *c)
+ #define TME_ACTIVATE_CRYPTO_ALGS(x)	((x >> 48) & 0xffff)	/* Bits 63:48 */
+ #define TME_ACTIVATE_CRYPTO_AES_XTS_128	1
  
- #ifdef CONFIG_X86_INTEL_MKTME
- 	if (mktme_status == MKTME_ENABLED && nr_keyids) {
-+		__mktme_nr_keyids = nr_keyids;
-+		__mktme_keyid_shift = c->x86_phys_bits - keyid_bits;
++#define TME_ACTIVATE_CRYPTO_KNOWN_ALGS	TME_ACTIVATE_CRYPTO_AES_XTS_128
 +
- 		/*
- 		 * Mask out bits claimed from KeyID from physical address mask.
- 		 *
-@@ -625,17 +628,23 @@ static void detect_tme(struct cpuinfo_x86 *c)
- 		 * and number of bits claimed for KeyID is 6, bits 51:46 of
- 		 * physical address is unusable.
- 		 */
--		phys_addr_t keyid_mask;
-+		__mktme_keyid_mask = GENMASK_ULL(c->x86_phys_bits - 1, mktme_keyid_shift());
-+		physical_mask &= ~mktme_keyid_mask();
+ /* Values for mktme_status (SW only construct) */
+ #define MKTME_ENABLED			0
+ #define MKTME_DISABLED			1
+@@ -596,7 +598,7 @@ static void detect_tme(struct cpuinfo_x86 *c)
+ 		pr_warn("x86/tme: Unknown policy is active: %#llx\n", tme_policy);
  
--		keyid_mask = GENMASK_ULL(c->x86_phys_bits - 1, c->x86_phys_bits - keyid_bits);
--		physical_mask &= ~keyid_mask;
+ 	tme_crypto_algs = TME_ACTIVATE_CRYPTO_ALGS(tme_activate);
+-	if (!(tme_crypto_algs & TME_ACTIVATE_CRYPTO_AES_XTS_128)) {
++	if (!(tme_crypto_algs & TME_ACTIVATE_CRYPTO_KNOWN_ALGS)) {
+ 		pr_err("x86/mktme: No known encryption algorithm is supported: %#llx\n",
+ 				tme_crypto_algs);
+ 		mktme_status = MKTME_DISABLED;
+@@ -631,6 +633,8 @@ static void detect_tme(struct cpuinfo_x86 *c)
+ 		__mktme_keyid_mask = GENMASK_ULL(c->x86_phys_bits - 1, mktme_keyid_shift());
+ 		physical_mask &= ~mktme_keyid_mask();
+ 
++		tme_crypto_algs = TME_ACTIVATE_CRYPTO_ALGS(tme_activate);
++		mktme_algs = tme_crypto_algs & TME_ACTIVATE_CRYPTO_KNOWN_ALGS;
  	} else {
  		/*
  		 * Reset __PHYSICAL_MASK.
- 		 * Maybe needed if there's inconsistent configuation
- 		 * between CPUs.
-+		 *
-+		 * FIXME: broken for hotplug.
-+		 * We must not allow onlining secondary CPUs with non-matching
-+		 * configuration.
- 		 */
- 		physical_mask = (1ULL << __PHYSICAL_MASK_SHIFT) - 1;
-+		__mktme_keyid_mask = 0;
-+		__mktme_keyid_shift = 0;
-+		__mktme_nr_keyids = 0;
- 	}
- #endif
- 
-diff --git a/arch/x86/mm/Makefile b/arch/x86/mm/Makefile
-index 84373dc9b341..600d18691876 100644
---- a/arch/x86/mm/Makefile
-+++ b/arch/x86/mm/Makefile
-@@ -53,3 +53,5 @@ obj-$(CONFIG_PAGE_TABLE_ISOLATION)		+= pti.o
- obj-$(CONFIG_AMD_MEM_ENCRYPT)	+= mem_encrypt.o
- obj-$(CONFIG_AMD_MEM_ENCRYPT)	+= mem_encrypt_identity.o
- obj-$(CONFIG_AMD_MEM_ENCRYPT)	+= mem_encrypt_boot.o
-+
-+obj-$(CONFIG_X86_INTEL_MKTME)	+= mktme.o
 diff --git a/arch/x86/mm/mktme.c b/arch/x86/mm/mktme.c
-new file mode 100644
-index 000000000000..0f48ef2720cc
---- /dev/null
+index 0f48ef2720cc..755afc6935b5 100644
+--- a/arch/x86/mm/mktme.c
 +++ b/arch/x86/mm/mktme.c
-@@ -0,0 +1,27 @@
-+#include <asm/mktme.h>
+@@ -25,3 +25,5 @@ int mktme_nr_keyids(void)
+ {
+ 	return __mktme_nr_keyids;
+ }
 +
-+/* Mask to extract KeyID from physical address. */
-+phys_addr_t __mktme_keyid_mask;
-+phys_addr_t mktme_keyid_mask(void)
-+{
-+	return __mktme_keyid_mask;
-+}
-+EXPORT_SYMBOL_GPL(mktme_keyid_mask);
-+
-+/* Shift of KeyID within physical address. */
-+int __mktme_keyid_shift;
-+int mktme_keyid_shift(void)
-+{
-+	return __mktme_keyid_shift;
-+}
-+EXPORT_SYMBOL_GPL(mktme_keyid_shift);
-+
-+/*
-+ * Number of KeyIDs available for MKTME.
-+ * Excludes KeyID-0 which used by TME. MKTME KeyIDs start from 1.
-+ */
-+int __mktme_nr_keyids;
-+int mktme_nr_keyids(void)
-+{
-+	return __mktme_nr_keyids;
-+}
++unsigned int mktme_algs;
 -- 
 2.21.0
 
