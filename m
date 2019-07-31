@@ -2,122 +2,206 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 242667C5EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 17:19:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F2EB7C5E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 17:16:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728802AbfGaPSs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 11:18:48 -0400
-Received: from mail-io1-f41.google.com ([209.85.166.41]:33702 "EHLO
-        mail-io1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728226AbfGaPSp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 11:18:45 -0400
-Received: by mail-io1-f41.google.com with SMTP id z3so18215577iog.0;
-        Wed, 31 Jul 2019 08:18:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=xuzQG46X17DsEpMfhQGwH6+7cSvNDOWNUULAqRblVrE=;
-        b=G8cVLquixj9RJ5F5DWhx6mOs8B+caqB1IGByYL8abw/1gBpACEU5BpYF8+NgotXC0c
-         kKFV0rfirAAyP1gXl5HsIPjwuIAgD6W3pwYE37ceM86I+WBcmmGB6FALWXa2pbTFhsAI
-         j9dMpX123uZAoJktmdulPiM/Im15dZjEJR/gEkbqmrdlYkk/cNQXSuvH79gDb63wb7jC
-         DR10MLq6Q44IP34Qg1k00FENeVQ374/hDv78ASzDgvMq4m6w4lZL1yBwTpb4b0IS0pbT
-         AGIOY0ljrVqg9Wpfg2MptFcrVEB9coViK9KJnyEEB7gI5WHMvEzhmUNPCPqQnOxL+dVB
-         h/9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=xuzQG46X17DsEpMfhQGwH6+7cSvNDOWNUULAqRblVrE=;
-        b=YWerkMsG+rUekFLSvsTPMqcF7iX/uuG9UrH9Dgb3i2S2CYx8/5ujPxYyJUSZGWZ6PV
-         AuBoePJ8aPJ9MKiUofPKpuRHdOt0bl8KRClmeZdVPtm5jk9XuADbdjIRYew5xCyFR7kH
-         /Al+KffoqSVPrYxm3wXnQ00qVUoi5dLW753h1PB4Fmuy5TBkMU8XHO2GRMrPIVA/03/a
-         Gwy8xZFGPJZUGaIG362Jo/2fmK2+UmPkjHiUqdmRxjVJWjBIAzKpNP6NSpAwq8txLx0O
-         +wOoD1bFvn0e0Xol2O/hnXpQd+RebdZOlxgtBAMLxSDqoSmsnWBVN5lPuVNPR9exN771
-         mqTw==
-X-Gm-Message-State: APjAAAXPGnj5wXpfXiGBxXwLu4wQRS6I9nVE5KlRYwftqmsB4vf1Z48b
-        PvWqJzwMKE1G3GdG7UY49N0QrcDK
-X-Google-Smtp-Source: APXvYqxOFT93yS6bZ+rjOjuZjbsCKjPMDY24dDZN+q//o80Gi+2JowsiHkq+n8GrBvsuD0LMbsA7dg==
-X-Received: by 2002:a5d:8d12:: with SMTP id p18mr1923906ioj.251.1564585996161;
-        Wed, 31 Jul 2019 08:13:16 -0700 (PDT)
-Received: from ?IPv6:2601:284:8200:5cfb:d4eb:7c00:40f8:97e? ([2601:284:8200:5cfb:d4eb:7c00:40f8:97e])
-        by smtp.googlemail.com with ESMTPSA id t4sm51695019iop.0.2019.07.31.08.13.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 31 Jul 2019 08:13:15 -0700 (PDT)
-Subject: Re: Reminder: 99 open syzbot bugs in net subsystem
-To:     Eric Dumazet <eric.dumazet@gmail.com>,
-        David Miller <davem@davemloft.net>, dvyukov@google.com,
-        netdev@vger.kernel.org, fw@strlen.de, i.maximets@samsung.com,
-        edumazet@google.com, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-References: <20190724163014.GC673@sol.localdomain>
- <20190724.111225.2257475150626507655.davem@davemloft.net>
- <20190724183710.GF213255@gmail.com>
- <20190724.130928.1854327585456756387.davem@davemloft.net>
- <20190724210950.GH213255@gmail.com>
- <1e07462d-61e2-9885-edd0-97a82dd7883e@gmail.com>
- <20190731025722.GE687@sol.localdomain>
-From:   David Ahern <dsahern@gmail.com>
-Message-ID: <5b38eb74-43d0-c7d7-88e1-103a4f82333f@gmail.com>
-Date:   Wed, 31 Jul 2019 09:13:11 -0600
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
+        id S1727163AbfGaPQW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 11:16:22 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:53152 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726219AbfGaPQW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jul 2019 11:16:22 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D56CC30A7C66;
+        Wed, 31 Jul 2019 15:16:20 +0000 (UTC)
+Received: from thuth.com (dhcp-200-228.str.redhat.com [10.33.200.228])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id F030C19C78;
+        Wed, 31 Jul 2019 15:15:41 +0000 (UTC)
+From:   Thomas Huth <thuth@redhat.com>
+To:     kvm@vger.kernel.org, Christian Borntraeger <borntraeger@de.ibm.com>
+Cc:     Janosch Frank <frankja@linux.ibm.com>,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org, David Hildenbrand <david@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Peter Xu <peterx@redhat.com>, Andrew Jones <drjones@redhat.com>
+Subject: [PATCH v3 3/3] KVM: selftests: Enable dirty_log_test on s390x
+Date:   Wed, 31 Jul 2019 17:15:25 +0200
+Message-Id: <20190731151525.17156-4-thuth@redhat.com>
+In-Reply-To: <20190731151525.17156-1-thuth@redhat.com>
+References: <20190731151525.17156-1-thuth@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20190731025722.GE687@sol.localdomain>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Wed, 31 Jul 2019 15:16:21 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/30/19 8:57 PM, Eric Biggers wrote:
-> syzbot finds a lot of security bugs, and security bugs are important.  And the
-> bugs are still there regardless of whether they're reported by human or bot.
-> 
-> Also, there *are* bugs being fixed because of these reminders; some subsystem
-> maintainers have even fixed all the bugs in their subsystem.  But I can
-> understand that for subsystems with a lot of open bug reports it's overwhelming.
-> 
-> What I'll try doing next time (if there *is* a next time; it isn't actually my
-> job to do any of this, I just care about the security and reliability of
-> Linux...) is for subsystems with lots of open bug reports, only listing the ones
-> actually seen in the last week or so, and perhaps also spending some more time
-> manually checking those bugs.  That should cut down the noise a lot.
+To run the dirty_log_test on s390x, we have to make sure that we
+access the dirty log bitmap with little endian byte ordering and
+we have to properly align the memslot of the guest.
+Also all dirty bits of a segment are set once on s390x when one
+of the pages of a segment are written to for the first time, so
+we have to make sure that we touch all pages during the first
+iteration to keep the test in sync here.
+DEFAULT_GUEST_TEST_MEM needs an adjustment, too. On some s390x
+distributions, the ELF binary is linked to address 0x80000000,
+so we have to avoid that our test region overlaps into this area.
+0xc0000000 seems to be a good alternative that should work on x86
+and aarch64, too.
 
-I don't think anyone questions the overall value of syzbot. It's the
-maintenance of bug reports that needs refining.
+Acked-by: Paolo Bonzini <pbonzini@redhat.com>
+Reviewed-by: Andrew Jones <drjones@redhat.com>
+Signed-off-by: Thomas Huth <thuth@redhat.com>
+---
+ tools/testing/selftests/kvm/Makefile         |  1 +
+ tools/testing/selftests/kvm/dirty_log_test.c | 59 +++++++++++++++++---
+ 2 files changed, 53 insertions(+), 7 deletions(-)
 
-As an example, this one:
+diff --git a/tools/testing/selftests/kvm/Makefile b/tools/testing/selftests/kvm/Makefile
+index 75ea1ecbf85a..1b48a94b4350 100644
+--- a/tools/testing/selftests/kvm/Makefile
++++ b/tools/testing/selftests/kvm/Makefile
+@@ -33,6 +33,7 @@ TEST_GEN_PROGS_aarch64 += dirty_log_test
+ TEST_GEN_PROGS_aarch64 += kvm_create_max_vcpus
+ 
+ TEST_GEN_PROGS_s390x += s390x/sync_regs_test
++TEST_GEN_PROGS_s390x += dirty_log_test
+ TEST_GEN_PROGS_s390x += kvm_create_max_vcpus
+ 
+ TEST_GEN_PROGS += $(TEST_GEN_PROGS_$(UNAME_M))
+diff --git a/tools/testing/selftests/kvm/dirty_log_test.c b/tools/testing/selftests/kvm/dirty_log_test.c
+index 5d5ae1be4984..dc3346e090f5 100644
+--- a/tools/testing/selftests/kvm/dirty_log_test.c
++++ b/tools/testing/selftests/kvm/dirty_log_test.c
+@@ -26,8 +26,8 @@
+ /* The memory slot index to track dirty pages */
+ #define TEST_MEM_SLOT_INDEX		1
+ 
+-/* Default guest test memory offset, 1G */
+-#define DEFAULT_GUEST_TEST_MEM		0x40000000
++/* Default guest test virtual memory offset */
++#define DEFAULT_GUEST_TEST_MEM		0xc0000000
+ 
+ /* How many pages to dirty for each guest loop */
+ #define TEST_PAGES_PER_LOOP		1024
+@@ -38,6 +38,27 @@
+ /* Interval for each host loop (ms) */
+ #define TEST_HOST_LOOP_INTERVAL		10UL
+ 
++/* Dirty bitmaps are always little endian, so we need to swap on big endian */
++#if defined(__s390x__)
++# define BITOP_LE_SWIZZLE	((BITS_PER_LONG-1) & ~0x7)
++# define test_bit_le(nr, addr) \
++	test_bit((nr) ^ BITOP_LE_SWIZZLE, addr)
++# define set_bit_le(nr, addr) \
++	set_bit((nr) ^ BITOP_LE_SWIZZLE, addr)
++# define clear_bit_le(nr, addr) \
++	clear_bit((nr) ^ BITOP_LE_SWIZZLE, addr)
++# define test_and_set_bit_le(nr, addr) \
++	test_and_set_bit((nr) ^ BITOP_LE_SWIZZLE, addr)
++# define test_and_clear_bit_le(nr, addr) \
++	test_and_clear_bit((nr) ^ BITOP_LE_SWIZZLE, addr)
++#else
++# define test_bit_le		test_bit
++# define set_bit_le		set_bit
++# define clear_bit_le		clear_bit
++# define test_and_set_bit_le	test_and_set_bit
++# define test_and_clear_bit_le	test_and_clear_bit
++#endif
++
+ /*
+  * Guest/Host shared variables. Ensure addr_gva2hva() and/or
+  * sync_global_to/from_guest() are used when accessing from
+@@ -69,11 +90,23 @@ static uint64_t guest_test_virt_mem = DEFAULT_GUEST_TEST_MEM;
+  */
+ static void guest_code(void)
+ {
++	uint64_t addr;
+ 	int i;
+ 
++	/*
++	 * On s390x, all pages of a 1M segment are initially marked as dirty
++	 * when a page of the segment is written to for the very first time.
++	 * To compensate this specialty in this test, we need to touch all
++	 * pages during the first iteration.
++	 */
++	for (i = 0; i < guest_num_pages; i++) {
++		addr = guest_test_virt_mem + i * guest_page_size;
++		*(uint64_t *)addr = READ_ONCE(iteration);
++	}
++
+ 	while (true) {
+ 		for (i = 0; i < TEST_PAGES_PER_LOOP; i++) {
+-			uint64_t addr = guest_test_virt_mem;
++			addr = guest_test_virt_mem;
+ 			addr += (READ_ONCE(random_array[i]) % guest_num_pages)
+ 				* guest_page_size;
+ 			addr &= ~(host_page_size - 1);
+@@ -158,15 +191,15 @@ static void vm_dirty_log_verify(unsigned long *bmap)
+ 		value_ptr = host_test_mem + page * host_page_size;
+ 
+ 		/* If this is a special page that we were tracking... */
+-		if (test_and_clear_bit(page, host_bmap_track)) {
++		if (test_and_clear_bit_le(page, host_bmap_track)) {
+ 			host_track_next_count++;
+-			TEST_ASSERT(test_bit(page, bmap),
++			TEST_ASSERT(test_bit_le(page, bmap),
+ 				    "Page %"PRIu64" should have its dirty bit "
+ 				    "set in this iteration but it is missing",
+ 				    page);
+ 		}
+ 
+-		if (test_bit(page, bmap)) {
++		if (test_bit_le(page, bmap)) {
+ 			host_dirty_count++;
+ 			/*
+ 			 * If the bit is set, the value written onto
+@@ -209,7 +242,7 @@ static void vm_dirty_log_verify(unsigned long *bmap)
+ 				 * should report its dirtyness in the
+ 				 * next run
+ 				 */
+-				set_bit(page, host_bmap_track);
++				set_bit_le(page, host_bmap_track);
+ 			}
+ 		}
+ 	}
+@@ -293,6 +326,10 @@ static void run_test(enum vm_guest_mode mode, unsigned long iterations,
+ 	 * case where the size is not aligned to 64 pages.
+ 	 */
+ 	guest_num_pages = (1ul << (30 - guest_page_shift)) + 16;
++#ifdef __s390x__
++	/* Round up to multiple of 1M (segment size) */
++	guest_num_pages = (guest_num_pages + 0xff) & ~0xffUL;
++#endif
+ 	host_page_size = getpagesize();
+ 	host_num_pages = (guest_num_pages * guest_page_size) / host_page_size +
+ 			 !!((guest_num_pages * guest_page_size) % host_page_size);
+@@ -304,6 +341,11 @@ static void run_test(enum vm_guest_mode mode, unsigned long iterations,
+ 		guest_test_phys_mem = phys_offset;
+ 	}
+ 
++#ifdef __s390x__
++	/* Align to 1M (segment size) */
++	guest_test_phys_mem &= ~((1 << 20) - 1);
++#endif
++
+ 	DEBUG("guest physical test memory offset: 0x%lx\n", guest_test_phys_mem);
+ 
+ 	bmap = bitmap_alloc(host_num_pages);
+@@ -454,6 +496,9 @@ int main(int argc, char *argv[])
+ 		vm_guest_mode_params_init(VM_MODE_P48V48_64K, true, true);
+ 	}
+ #endif
++#ifdef __s390x__
++	vm_guest_mode_params_init(VM_MODE_P40V48_4K, true, true);
++#endif
+ 
+ 	while ((opt = getopt(argc, argv, "hi:I:p:m:")) != -1) {
+ 		switch (opt) {
+-- 
+2.21.0
 
-https://syzkaller.appspot.com/bug?id=079bd8408abd95b492f127edf0df44ddc09d9405
-
-was in reality a very short-lived bug in net-next but because bpf-next
-managed to merge net-next in the small time window, the bug life seems
-more extended that it apparently was (fuzzy words since we do not know
-which commit fixed it).
-
-Also, there is inconsistency with the report. It shows a bisected commit of:
-
-commit f40b6ae2b612446dc970d7b51eeec47bd1619f82
-Author: David Ahern <dsahern@gmail.com>
-Date: Thu May 23 03:27:55 2019 +0000
-
-  ipv6: Move pcpu cached routes to fib6_nh
-
-yet the report shows an entry in net tree on April 27. Even the net
-instance on June 14 is questionable given that the above commit is only
-in net-next on June 14.
-
-Taking all of those references out and there are 2 'real', unique
-reports - the linux-next on May 31 and the net-next on June 5.
-
-Given that nothing has appeared in the last 8 weeks it seems clear to me
-that this bug has been fixed we just don't know by which commit.
-
-If there is a way to reduce to some of that information or even to have
-a button on that console that says 'apparently fixed' and close it would
-be a help.
