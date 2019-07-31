@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD1707C7EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 17:59:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A6F487C7BC
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 17:58:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729761AbfGaP60 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 11:58:26 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:3276 "EHLO huawei.com"
+        id S1729997AbfGaP63 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 11:58:29 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:56180 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728028AbfGaP6X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 11:58:23 -0400
+        id S1729847AbfGaP61 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jul 2019 11:58:27 -0400
 Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id D9AAD64C1CEE478CAE58;
-        Wed, 31 Jul 2019 23:58:20 +0800 (CST)
+        by Forcepoint Email with ESMTP id DD1B386E5F4DE52E5264;
+        Wed, 31 Jul 2019 23:58:25 +0800 (CST)
 Received: from architecture4.huawei.com (10.140.130.215) by smtp.huawei.com
  (10.3.19.210) with Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 31 Jul
- 2019 23:58:14 +0800
+ 2019 23:58:15 +0800
 From:   Gao Xiang <gaoxiang25@huawei.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Chao Yu <yuchao0@huawei.com>, <devel@driverdev.osuosl.org>
@@ -25,9 +25,9 @@ CC:     LKML <linux-kernel@vger.kernel.org>,
         Miao Xie <miaoxie@huawei.com>, <weidu.du@huawei.com>,
         Fang Wei <fangwei1@huawei.com>,
         Gao Xiang <gaoxiang25@huawei.com>
-Subject: [PATCH v2 04/22] staging: erofs: keep up erofs_fs.h with erofs-outofstaging patchset
-Date:   Wed, 31 Jul 2019 23:57:34 +0800
-Message-ID: <20190731155752.210602-5-gaoxiang25@huawei.com>
+Subject: [PATCH v2 05/22] staging: erofs: sunset erofs_workstn_{lock,unlock}
+Date:   Wed, 31 Jul 2019 23:57:35 +0800
+Message-ID: <20190731155752.210602-6-gaoxiang25@huawei.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190731155752.210602-1-gaoxiang25@huawei.com>
 References: <20190731155752.210602-1-gaoxiang25@huawei.com>
@@ -40,90 +40,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The main change is to reserve all checksums except for superblock,
-since it's more useful to do block-based verity for read-only fs.
-
-Some comments change as well, which is minor.
+It was used for Linux backward compatibility, and
+no use for upstream kernel.
 
 Reviewed-by: Chao Yu <yuchao0@huawei.com>
 Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
 ---
- drivers/staging/erofs/erofs_fs.h | 39 ++++++++++++++++----------------
- 1 file changed, 19 insertions(+), 20 deletions(-)
+ drivers/staging/erofs/internal.h |  3 ---
+ drivers/staging/erofs/utils.c    | 10 +++++-----
+ 2 files changed, 5 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/staging/erofs/erofs_fs.h b/drivers/staging/erofs/erofs_fs.h
-index 9cd749d56920..e82e833985e4 100644
---- a/drivers/staging/erofs/erofs_fs.h
-+++ b/drivers/staging/erofs/erofs_fs.h
-@@ -96,7 +96,7 @@ struct erofs_inode_v1 {
- /* 20 */__le32 i_ino;           /* only used for 32-bit stat compatibility */
- /* 24 */__le16 i_uid;
- /* 26 */__le16 i_gid;
--/* 28 */__le32 i_checksum;
-+/* 28 */__le32 i_reserved2;
- } __packed;
+diff --git a/drivers/staging/erofs/internal.h b/drivers/staging/erofs/internal.h
+index 501429ec0f91..ed487ee56f74 100644
+--- a/drivers/staging/erofs/internal.h
++++ b/drivers/staging/erofs/internal.h
+@@ -179,9 +179,6 @@ static inline void *erofs_kmalloc(struct erofs_sb_info *sbi,
+ #define test_opt(sbi, option)	((sbi)->mount_opt & EROFS_MOUNT_##option)
  
- /* 32 bytes on-disk inode */
-@@ -105,14 +105,14 @@ struct erofs_inode_v1 {
- #define EROFS_INODE_LAYOUT_V2   1
- 
- struct erofs_inode_v2 {
--	__le16 i_advise;
-+/*  0 */__le16 i_advise;
- 
--	/* 1 header + n-1 * 4 bytes inline xattr to keep continuity */
--	__le16 i_xattr_icount;
--	__le16 i_mode;
--	__le16 i_reserved;      /* 8 bytes */
--	__le64 i_size;          /* 16 bytes */
--	union {
-+/* 1 header + n-1 * 4 bytes inline xattr to keep continuity */
-+/*  2 */__le16 i_xattr_icount;
-+/*  4 */__le16 i_mode;
-+/*  6 */__le16 i_reserved;
-+/*  8 */__le64 i_size;
-+/* 16 */union {
- 		/* file total compressed blocks for data mapping 1 */
- 		__le32 compressed_blocks;
- 		__le32 raw_blkaddr;
-@@ -122,16 +122,15 @@ struct erofs_inode_v2 {
- 	} i_u __packed;
- 
- 	/* only used for 32-bit stat compatibility */
--	__le32 i_ino;           /* 24 bytes */
+ #ifdef CONFIG_EROFS_FS_ZIP
+-#define erofs_workstn_lock(sbi)         xa_lock(&(sbi)->workstn_tree)
+-#define erofs_workstn_unlock(sbi)       xa_unlock(&(sbi)->workstn_tree)
 -
--	__le32 i_uid;
--	__le32 i_gid;
--	__le64 i_ctime;         /* 32 bytes */
--	__le32 i_ctime_nsec;
--	__le32 i_nlink;
--	__u8   i_reserved2[12];
--	__le32 i_checksum;      /* 64 bytes */
--} __packed;
-+/* 20 */__le32 i_ino;
-+
-+/* 24 */__le32 i_uid;
-+/* 28 */__le32 i_gid;
-+/* 32 */__le64 i_ctime;
-+/* 40 */__le32 i_ctime_nsec;
-+/* 44 */__le32 i_nlink;
-+/* 48 */__u8   i_reserved2[16];
-+} __packed;                     /* 64 bytes */
+ /* basic unit of the workstation of a super_block */
+ struct erofs_workgroup {
+ 	/* the workgroup index in the workstation */
+diff --git a/drivers/staging/erofs/utils.c b/drivers/staging/erofs/utils.c
+index a68dbe375fa0..024806003297 100644
+--- a/drivers/staging/erofs/utils.c
++++ b/drivers/staging/erofs/utils.c
+@@ -102,14 +102,14 @@ int erofs_register_workgroup(struct super_block *sb,
+ 		return err;
  
- #define EROFS_MAX_SHARED_XATTRS         (128)
- /* h_shared_count between 129 ... 255 are special # */
-@@ -149,9 +148,9 @@ struct erofs_inode_v2 {
-  * for read-only fs, no need to introduce h_refcount
-  */
- struct erofs_xattr_ibody_header {
--	__le32 h_checksum;
-+	__le32 h_reserved;
- 	__u8   h_shared_count;
--	__u8   h_reserved[7];
-+	__u8   h_reserved2[7];
- 	__le32 h_shared_xattrs[0];      /* shared xattr id array */
- } __packed;
+ 	sbi = EROFS_SB(sb);
+-	erofs_workstn_lock(sbi);
++	xa_lock(&sbi->workstn_tree);
  
+ 	grp = xa_tag_pointer(grp, tag);
+ 
+ 	/*
+ 	 * Bump up reference count before making this workgroup
+ 	 * visible to other users in order to avoid potential UAF
+-	 * without serialized by erofs_workstn_lock.
++	 * without serialized by workstn_lock.
+ 	 */
+ 	__erofs_workgroup_get(grp);
+ 
+@@ -122,7 +122,7 @@ int erofs_register_workgroup(struct super_block *sb,
+ 		 */
+ 		__erofs_workgroup_put(grp);
+ 
+-	erofs_workstn_unlock(sbi);
++	xa_unlock(&sbi->workstn_tree);
+ 	radix_tree_preload_end();
+ 	return err;
+ }
+@@ -225,7 +225,7 @@ unsigned long erofs_shrink_workstation(struct erofs_sb_info *sbi,
+ 
+ 	int i, found;
+ repeat:
+-	erofs_workstn_lock(sbi);
++	xa_lock(&sbi->workstn_tree);
+ 
+ 	found = radix_tree_gang_lookup(&sbi->workstn_tree,
+ 				       batch, first_index, PAGEVEC_SIZE);
+@@ -243,7 +243,7 @@ unsigned long erofs_shrink_workstation(struct erofs_sb_info *sbi,
+ 		if (unlikely(!--nr_shrink))
+ 			break;
+ 	}
+-	erofs_workstn_unlock(sbi);
++	xa_unlock(&sbi->workstn_tree);
+ 
+ 	if (i && nr_shrink)
+ 		goto repeat;
 -- 
 2.17.1
 
