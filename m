@@ -2,92 +2,176 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39DEC7B86C
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 06:13:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 14C817B879
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 06:23:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727706AbfGaEND (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 00:13:03 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:33071 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725970AbfGaENC (ORCPT
+        id S1727943AbfGaEXV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 00:23:21 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:38166 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726601AbfGaEXV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 00:13:02 -0400
-Received: by mail-qk1-f195.google.com with SMTP id r6so48273457qkc.0
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 21:13:02 -0700 (PDT)
+        Wed, 31 Jul 2019 00:23:21 -0400
+Received: by mail-ot1-f67.google.com with SMTP id d17so68803095oth.5
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 21:23:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=NFVesl0ZnOpQBqtMqV5lpfo1vwR6WRneLNekq2w+A+0=;
-        b=r1wIjjlaOUYXC9i0CtRzf8gVkGR6i7HDy0I7VVJKls8IoU+bJTFRBj1qe/DGeZNwS3
-         mgGjvWiGMKJ5bP8brcspcZO4X4V9eenYomQN3tD6rEkVc0vAb+6ZpUSxr5z+Ixu7M5LS
-         C+dQ4sCispoR+WPJbpeV4A3KmqkmKV8aNcP8bUq37kWCpCN8HmKmrmVc8vrmnmmS5a1z
-         pllvWFZjj4465RcciKSuD8r9iNFT9t0DU+fajvZmzT+qVTZnQCeDyTZZLsYvTPcta7Vy
-         4NaCttjGVF1oboy6iznh59NugAeylu++kg+f7wcyJVdYPc0G39Hhm3wTwrIOxZ+x8oOL
-         cRHA==
+        d=sifive.com; s=google;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=tm6ntfcYmNHUpIkveTc5p4r6569ul1qIUEH4oxRjwA4=;
+        b=glzUp8gAgo6Q9+gjT5xKBMG30uah/MGW3tgERppjauRxj/tmhas8EEff6tCjk6x9Oo
+         y4yyZpqHDXgaIfsG4COlY9nVCd1boATU3DBufsqEy40c28G9vJaAsDkpn0KK+No1GvNH
+         qTG5qAKnhCkwiGa6BBEERHNzSbb8ZEClpQLptBPI8pxEXmmih6Jd7qqCXTXelHmSSfV2
+         PngzgOomffODrlcUHKczYix6KxGwDAzWrQ7M739Hp0U6FwXuxSj2Nn1VdFfspfag6XCs
+         AcALx/y+P3AngYVbf2fVaNiAQbx4faQhsUnrcqe6vRdyXlKg9OCXPZM1AWyOudTLoarK
+         KXPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NFVesl0ZnOpQBqtMqV5lpfo1vwR6WRneLNekq2w+A+0=;
-        b=DCnTqnMdb8WX/NLn5qvdUkxc1RpiAUsVpMA/1C13IudOQnSlGgC9wXole3ZnzqUdl6
-         3jlD7/IwofugdPmzoc9dSOeVqnH5HGJUqp1H8mxfWBzT/4WknsLLgXzZA7AgkZsH6fAj
-         iIOjVI/DZWs0RO5kKUefvnCCSpQvKb2AnoWx1T4J1ykbHJ1+bwlb2k+zrle8zFwFlx7x
-         UmAzmJBpdw143ElLDo2AZlqLJ7SH1Gx6QrGRF1X2ssq7p64iX1hBJqT0NluLnutVsuZw
-         pTFKSeEti2JPXmaRUJDaMCt+RstVnRLv+mo6yVhqek4fXunsNYFQveguo3Q76wIrPHKE
-         pnHg==
-X-Gm-Message-State: APjAAAUMyXKVhT7la54ZK4CHDmbDsmV2i0jkCQbFe88y3OtnNIqZW6yr
-        UDiQ3jnI4KpUvN3/vADLhpMPbbZLmanqfy7XgyfToUN9
-X-Google-Smtp-Source: APXvYqy2sz2eWCGTJfeBDvYeHklxGvXDMSeWgw1gHMMJZXav5IjX+rI/W8oAUPJin0pn2pg2QXOlbRH7FD1Tuk2ix2k=
-X-Received: by 2002:a37:5942:: with SMTP id n63mr5572295qkb.69.1564546381707;
- Tue, 30 Jul 2019 21:13:01 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=tm6ntfcYmNHUpIkveTc5p4r6569ul1qIUEH4oxRjwA4=;
+        b=iyiA5U7OFlzluoTPPmNzVDi9lLXoaPF+lfRt3gbvmQRVujLvqHjp/Y5nt7mhDQYWe4
+         lfVw0OtWhY1lT2ajwWjRlJ3U+3+LrdeMPMaVPYkgm6TwFnJL3eO05uJzGRkj9FUUZLyB
+         1dpx5Wl1heegURj/Yx52b6g2P4Q/iHMwQiWOmiFK15htV5xsu0Io0Vf8m8V9JO/CxkA3
+         8jreFxv3qY2Xp5OfoOc/UK9owP2wY10eifh+u7VgZH6SiupdHc/q16lykYiDbAC0Hs2C
+         xDd1WXoxfQpAmBMRhf6EHrtVBQeviUdw4MgOoCFs1oL/H4CI+NdW/krD5EQqqVy+V49R
+         VRTg==
+X-Gm-Message-State: APjAAAUpswlXsAB8HR9xhT+9oE2FQXyWRJgLz1IsFs8gIv4oTAIKfW0t
+        prn3gIUTqbIhI2MQJPGy2xOl0w==
+X-Google-Smtp-Source: APXvYqyrmqRX0TMTUvKRI9kn2OfHhiN/A4ouvjYOKSZwB7DvlVq/p3PsehROt3mdsdg2QXOYNxFx/w==
+X-Received: by 2002:a05:6830:2119:: with SMTP id i25mr9479782otc.282.1564547000208;
+        Tue, 30 Jul 2019 21:23:20 -0700 (PDT)
+Received: from localhost ([2600:100e:b005:6ca0:a8bb:e820:e6d3:8809])
+        by smtp.gmail.com with ESMTPSA id v203sm25607331oie.5.2019.07.30.21.23.19
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 30 Jul 2019 21:23:19 -0700 (PDT)
+Date:   Tue, 30 Jul 2019 21:23:18 -0700 (PDT)
+From:   Paul Walmsley <paul.walmsley@sifive.com>
+X-X-Sender: paulw@viisi.sifive.com
+To:     Atish Patra <atish.patra@wdc.com>, Anup Patel <anup.patel@wdc.com>
+cc:     linux-kernel@vger.kernel.org, Albert Ou <aou@eecs.berkeley.edu>,
+        Alexios Zavras <alexios.zavras@intel.com>,
+        Allison Randal <allison@lohutok.net>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        devicetree@vger.kernel.org, Enrico Weigelt <info@metux.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Johan Hovold <johan@kernel.org>,
+        linux-riscv@lists.infradead.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v2 2/5] RISC-V: Add riscv_isa reprensenting ISA features
+ common across CPUs
+In-Reply-To: <20190731012418.24565-3-atish.patra@wdc.com>
+Message-ID: <alpine.DEB.2.21.9999.1907302117420.15340@viisi.sifive.com>
+References: <20190731012418.24565-1-atish.patra@wdc.com> <20190731012418.24565-3-atish.patra@wdc.com>
+User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
 MIME-Version: 1.0
-References: <20190730044326.1805-1-luaraneda@gmail.com> <20190730104746.GA1330@shell.armlinux.org.uk>
-In-Reply-To: <20190730104746.GA1330@shell.armlinux.org.uk>
-From:   Luis Araneda <luaraneda@gmail.com>
-Date:   Wed, 31 Jul 2019 00:12:11 -0400
-Message-ID: <CAHbBuxoMBiq23Rkt7-jm42O4ePY=23ZsgNEVf3UJKQ2Dg+3fbg@mail.gmail.com>
-Subject: Re: [RFC PATCH] ARM: zynq: Use memcpy_toio instead of memcpy on smp bring-up
-To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
-Cc:     Michal Simek <michal.simek@xilinx.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Russell,
+On Tue, 30 Jul 2019, Atish Patra wrote:
 
-Thanks for reviewing.
+> From: Anup Patel <anup.patel@wdc.com>
+> 
+> This patch adds riscv_isa integer to represent ISA features common
+> across all CPUs. The riscv_isa is not same as elf_hwcap because
+> elf_hwcap will only have ISA features relevant for user-space apps
+> whereas riscv_isa will have ISA features relevant to both kernel
+> and user-space apps.
+> 
+> One of the use case is KVM hypervisor where riscv_isa will be used
+> to do following operations:
+> 
+> 1. Check whether hypervisor extension is available
+> 2. Find ISA features that need to be virtualized (e.g. floating
+>    point support, vector extension, etc.)
+> 
+> Signed-off-by: Anup Patel <anup.patel@wdc.com>
+> Signed-off-by: Atish Patra <atish.patra@wdc.com>
+> ---
+>  arch/riscv/include/asm/hwcap.h | 25 +++++++++++++++++++++
+>  arch/riscv/kernel/cpufeature.c | 41 +++++++++++++++++++++++++++++++---
+>  2 files changed, 63 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/riscv/include/asm/hwcap.h b/arch/riscv/include/asm/hwcap.h
+> index 7ecb7c6a57b1..e069f60ad5d2 100644
+> --- a/arch/riscv/include/asm/hwcap.h
+> +++ b/arch/riscv/include/asm/hwcap.h
+> @@ -22,5 +22,30 @@ enum {
+>  };
+>  
+>  extern unsigned long elf_hwcap;
+> +
+> +#define RISCV_ISA_EXT_A		(1UL << ('A' - 'A'))
 
-On Tue, Jul 30, 2019 at 6:47 AM Russell King - ARM Linux admin
-<linux@armlinux.org.uk> wrote:
->
-> On Tue, Jul 30, 2019 at 12:43:26AM -0400, Luis Araneda wrote:
-> > This fixes a kernel panic (read overflow) on memcpy when
-> > FORTIFY_SOURCE is enabled.
-[...]
->
-> I'm not convinced that this is correct.  It looks like
-> zynq_secondary_trampoline could be either ARM or Thumb code - there is
-> no .arm directive before it.  If it's ARM code, then this is fine.  If
-> Thumb code, then zynq_secondary_trampoline will be offset by one, and
-> we will miss copying the first byte of code.
+Are these uppercase variants still needed if we define the ISA string to 
+be all lowercase, per our recent discussion?
 
-You're right, I tested what happens if the zynq_secondary_trampoline
-is ARM or Thumb by editing the file where it's defined, headsmp.S
+> +#define RISCV_ISA_EXT_a		RISCV_ISA_EXT_A
+> +#define RISCV_ISA_EXT_C		(1UL << ('C' - 'A'))
+> +#define RISCV_ISA_EXT_c		RISCV_ISA_EXT_C
+> +#define RISCV_ISA_EXT_D		(1UL << ('D' - 'A'))
+> +#define RISCV_ISA_EXT_d		RISCV_ISA_EXT_D
+> +#define RISCV_ISA_EXT_F		(1UL << ('F' - 'A'))
+> +#define RISCV_ISA_EXT_f		RISCV_ISA_EXT_F
+> +#define RISCV_ISA_EXT_H		(1UL << ('H' - 'A'))
+> +#define RISCV_ISA_EXT_h		RISCV_ISA_EXT_H
+> +#define RISCV_ISA_EXT_I		(1UL << ('I' - 'A'))
+> +#define RISCV_ISA_EXT_i		RISCV_ISA_EXT_I
+> +#define RISCV_ISA_EXT_M		(1UL << ('M' - 'A'))
+> +#define RISCV_ISA_EXT_m		RISCV_ISA_EXT_M
+> +#define RISCV_ISA_EXT_S		(1UL << ('S' - 'A'))
+> +#define RISCV_ISA_EXT_s		RISCV_ISA_EXT_S
+> +#define RISCV_ISA_EXT_U		(1UL << ('U' - 'A'))
+> +#define RISCV_ISA_EXT_u		RISCV_ISA_EXT_U
+> +
+> +extern unsigned long riscv_isa;
+> +
+> +#define riscv_isa_extension_available(ext_char)	\
+> +		(riscv_isa & RISCV_ISA_EXT_##ext_char)
+> +
+>  #endif
+>  #endif
+> diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeature.c
+> index b1ade9a49347..177529d48d87 100644
+> --- a/arch/riscv/kernel/cpufeature.c
+> +++ b/arch/riscv/kernel/cpufeature.c
 
-When the .arm directive is used, the CPU is brought-up correctly,
-but if I use .thumb, I get the following message (no panic):
-> CPU1: failed to come online
+[ ... ]
 
-This seems unrelated to solving the panic, as the message
-even appears with memcpy and FORTIFY_SOURCE disabled.
+> @@ -43,8 +49,22 @@ void riscv_fill_hwcap(void)
+>  			continue;
+>  		}
+>  
+> -		for (i = 0; i < strlen(isa); ++i)
+> +		i = 0;
+> +		isa_len = strlen(isa);
+> +#if defined(CONFIG_32BIT)
+> +		if (strncasecmp(isa, "rv32", 4) != 0)
 
-I could add the .arm directive to headsmp.S
-Is that your expected solution?
-Should that change be on a separate commit?
+strcmp()?
 
-I'd like to know Michal's opinion, as he wrote the code.
+> +			i += 4;
+> +#elif defined(CONFIG_64BIT)
+> +		if (strncasecmp(isa, "rv64", 4) != 0)
+
+And again here?
+
+> +			i += 4;
+> +#endif
+> +		for (; i < isa_len; ++i) {
+>  			this_hwcap |= isa2hwcap[(unsigned char)(isa[i])];
+> +			if ('a' <= isa[i] && isa[i] <= 'z')
+> +				this_isa |= (1UL << (isa[i] - 'a'));
+> +			if ('A' <= isa[i] && isa[i] <= 'Z')
+> +				this_isa |= (1UL << (isa[i] - 'A'));
+
+Are these uppercase variants still needed?
+
+
+- Paul
