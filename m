@@ -2,101 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 916977CF9B
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 23:12:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 982367CF6F
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 23:11:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730640AbfGaVME (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 17:12:04 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:17181 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730439AbfGaVLK (ORCPT
+        id S1730822AbfGaVL1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 17:11:27 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:53396 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730747AbfGaVLS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 17:11:10 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d4203ee0003>; Wed, 31 Jul 2019 14:11:11 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Wed, 31 Jul 2019 14:11:09 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Wed, 31 Jul 2019 14:11:09 -0700
-Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 31 Jul
- 2019 21:11:09 +0000
-Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Wed, 31 Jul 2019 21:11:09 +0000
-Received: from skomatineni-linux.nvidia.com (Not Verified[10.110.102.167]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5d4203ed0000>; Wed, 31 Jul 2019 14:11:09 -0700
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <tglx@linutronix.de>, <jason@lakedaemon.net>,
-        <marc.zyngier@arm.com>, <linus.walleij@linaro.org>,
-        <stefan@agner.ch>, <mark.rutland@arm.com>
-CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
-        <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <jckuo@nvidia.com>,
-        <josephl@nvidia.com>, <talho@nvidia.com>, <skomatineni@nvidia.com>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <mperttunen@nvidia.com>, <spatra@nvidia.com>, <robh+dt@kernel.org>,
-        <digetx@gmail.com>, <devicetree@vger.kernel.org>,
-        <rjw@rjwysocki.net>, <viresh.kumar@linaro.org>,
-        <linux-pm@vger.kernel.org>
-Subject: [PATCH v7 16/20] arm64: tegra: Enable wake from deep sleep on RTC alarm
-Date:   Wed, 31 Jul 2019 14:10:59 -0700
-Message-ID: <1564607463-28802-17-git-send-email-skomatineni@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1564607463-28802-1-git-send-email-skomatineni@nvidia.com>
-References: <1564607463-28802-1-git-send-email-skomatineni@nvidia.com>
-X-NVConfidentiality: public
+        Wed, 31 Jul 2019 17:11:18 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6VL8vL4165405;
+        Wed, 31 Jul 2019 21:11:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=rGOpE1K1seHogZ0v0vORCXGLdurKCucP7xDezduMaQg=;
+ b=iuT/ehJLyJhBOy1y/iDHREcUYlOM80E8e3wO2yHP2CAjoqR8TuG0bym9TdariihNbvCX
+ GTbIRNMRNzd/EEDQoKkYjz2ot09j3WUc+hmC+3VRvfzR44MuuBPxczIeLMYSpS423JKy
+ mOMy7rt2OB4wZ++gyjtQ+tEIi9tMHNTtrYdnxjfweFoI6iAqfkV6DS5vQ3BlWmgDoFqf
+ SbK4cJrdDRv267vO2WzikXriwA7oTdMxvjbkko4f9Aaw401TQL5wYydvSak9fGo1hMz/
+ unC3SW8WkJFW1d8YxafNQsWmLNPWUJ+4cxeUUf9gq3EYtIbJvMMAi/4Fqa7ZCzt9909S ww== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2120.oracle.com with ESMTP id 2u0ejpqrpd-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 31 Jul 2019 21:11:07 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6VL7nx2168911;
+        Wed, 31 Jul 2019 21:11:07 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3020.oracle.com with ESMTP id 2u2jp5gn3d-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 31 Jul 2019 21:11:07 +0000
+Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x6VLB2BH024191;
+        Wed, 31 Jul 2019 21:11:02 GMT
+Received: from [192.168.1.222] (/71.63.128.209)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 31 Jul 2019 14:11:02 -0700
+Subject: Re: [RFC PATCH 1/3] mm, reclaim: make should_continue_reclaim perform
+ dryrun detection
+To:     Vlastimil Babka <vbabka@suse.cz>, Hillf Danton <hdanton@sina.com>,
+        Mel Gorman <mgorman@suse.de>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Michal Hocko <mhocko@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+References: <20190724175014.9935-1-mike.kravetz@oracle.com>
+ <20190724175014.9935-2-mike.kravetz@oracle.com>
+ <20190725080551.GB2708@suse.de>
+ <295a37b1-8257-9b4a-b586-9a4990cc9d35@suse.cz>
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <f6e25e52-bb02-6d79-b9fd-3acc8358ec45@oracle.com>
+Date:   Wed, 31 Jul 2019 14:11:00 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1564607471; bh=r/7sch8XJz5tT01ckyUKnesfNR9nppNjP97KIR+puRI=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
-         Content-Type;
-        b=akFt6j7Px8Xd1imahOCfLHwfAbLC59sxa8SyUOhFp6ZCcPEaZXZf5ykfGzixb3QqG
-         2uxWWKKlB7hje3UaowIz6jTfj5sxdN9f7CuOVMktut2loRmd2+Rsgr0D0NQIlIc6U5
-         tokqd4pBnn3nAuJU8xQB4ReDwJo15QA4No9mdm5MYZsIDfYN0dpVBPrnn7pILit1IV
-         PWJqGjqL+fO/yxbANCCglrEJBZCttCkqd99qbdqJWLXjR/H/sxVouDBnvgRZup6drP
-         dEZp9S9PxbLzO4sAWKPGVmajPJv03P2GNYUuonxWFPhOcjpfr0mtRNPpVwQlnBjDiM
-         CkGyqMa8rVTaA==
+In-Reply-To: <295a37b1-8257-9b4a-b586-9a4990cc9d35@suse.cz>
+Content-Type: text/plain; charset=iso-8859-15
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9335 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1907310212
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9335 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1907310212
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch updates device tree for RTC and PMC to allow system wake
-from deep sleep on RTC alarm.
+On 7/31/19 4:08 AM, Vlastimil Babka wrote:
+> 
+> I agree this is an improvement overall, but perhaps the patch does too
+> many things at once. The reshuffle is one thing and makes sense. The
+> change of the last return condition could perhaps be separate. Also
+> AFAICS the ultimate result is that when nr_reclaimed == 0, the function
+> will now always return false. Which makes the initial test for
+> __GFP_RETRY_MAYFAIL and the comments there misleading. There will no
+> longer be a full LRU scan guaranteed - as long as the scanned LRU chunk
+> yields no reclaimed page, we abort.
 
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
----
- arch/arm64/boot/dts/nvidia/tegra210.dtsi | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+Can someone help me understand why nr_scanned == 0 guarantees a full
+LRU scan?  FWICS, nr_scanned used in this context is only incremented
+in shrink_page_list and potentially shrink_zones.  In the stall case I
+am looking at, there are MANY cases in which nr_scanned is only a few
+pages and none of those are reclaimed.
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-index 659753118e96..30a7c48385a2 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-@@ -768,7 +768,8 @@
- 	rtc@7000e000 {
- 		compatible = "nvidia,tegra210-rtc", "nvidia,tegra20-rtc";
- 		reg = <0x0 0x7000e000 0x0 0x100>;
--		interrupts = <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupts = <16 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-parent = <&pmc>;
- 		clocks = <&tegra_car TEGRA210_CLK_RTC>;
- 		clock-names = "rtc";
- 	};
-@@ -778,6 +779,8 @@
- 		reg = <0x0 0x7000e400 0x0 0x400>;
- 		clocks = <&tegra_car TEGRA210_CLK_PCLK>, <&clk32k_in>;
- 		clock-names = "pclk", "clk32k_in";
-+		#interrupt-cells = <2>;
-+		interrupt-controller;
- 
- 		powergates {
- 			pd_audio: aud {
+Can we not get nr_scanned == 0 on an arbitrary chunk of the LRU?
+
+I must be missing something, because I do not see how nr_scanned == 0
+guarantees a full scan.
 -- 
-2.7.4
-
+Mike Kravetz
