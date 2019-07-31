@@ -2,152 +2,239 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E252F7C297
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 15:01:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E9C47C2EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 15:10:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729312AbfGaNBC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 09:01:02 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:57852 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728032AbfGaNBB (ORCPT
+        id S2388206AbfGaNKA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 09:10:00 -0400
+Received: from datenwanderung.de ([194.59.205.165]:36904 "EHLO
+        mail.nekoboi.moe" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387811AbfGaNJ7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 09:01:01 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20190731130059euoutp01b9d5ff761a50989729b3016529442109~2f3St_GR20913409134euoutp01t
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 13:00:59 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20190731130059euoutp01b9d5ff761a50989729b3016529442109~2f3St_GR20913409134euoutp01t
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1564578059;
-        bh=sYKGsWtGJ4TQpv6om4+mpD+czgFv0SgtP4v8p2BxWRc=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=PPknhESAOOlCRF6Ro5Lt3dK5cCDfT4cs95UE68TgmIM7EsHxKd5MKl4YrzEqeaxnk
-         pLn2Xf0MLzsbYvowlQOL52vOMEu3CCXH+R2hjXqQuGKaeBBksOjBiWSFnRoQJ9eaaw
-         XVJ34F0IsMUVUIee++06eWLvsgkRMOjiDkuFfa+Y=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20190731130058eucas1p2d6d3566af0adf524aa00aef148404b80~2f3SAJLWI3272032720eucas1p2Y;
-        Wed, 31 Jul 2019 13:00:58 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 38.3B.04325.A01914D5; Wed, 31
-        Jul 2019 14:00:58 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20190731130057eucas1p1dbc0f96212e96ceac96daede85f71e9e~2f3RIjytP1120011200eucas1p13;
-        Wed, 31 Jul 2019 13:00:57 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20190731130057eusmtrp1ffe2e1501174ab8d64867c381f28eaf3~2f3Q6Q9RD2484424844eusmtrp1J;
-        Wed, 31 Jul 2019 13:00:57 +0000 (GMT)
-X-AuditID: cbfec7f5-b75ff700000010e5-96-5d41910a6337
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 3A.1A.04146.901914D5; Wed, 31
-        Jul 2019 14:00:57 +0100 (BST)
-Received: from AMDC3555 (unknown [106.120.51.67]) by eusmtip1.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20190731130057eusmtip194ae2facf90fd2df4e18896b0f9f9975~2f3QVouLZ2612526125eusmtip1m;
-        Wed, 31 Jul 2019 13:00:57 +0000 (GMT)
-Message-ID: <73b8c7078b2378921e841b5bd02bd617cc2143be.camel@partner.samsung.com>
-Subject: Re: [RFC PATCH 08/11] arm: dts: exynos: Add parents and
- #interconnect-cells to Exynos4412
-From:   Artur =?UTF-8?Q?=C5=9Awigo=C5=84?= <a.swigon@partner.samsung.com>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        cw00.choi@samsung.com, myungjoo.ham@samsung.com,
-        inki.dae@samsung.com, sw0312.kim@samsung.com,
-        georgi.djakov@linaro.org, m.szyprowski@samsung.com,
-        =?UTF-8?Q?Bart=C5=82omiej_?= =?UTF-8?Q?=C5=BBo=C5=82nierkiewicz?= 
-        <b.zolnierkie@samsung.com>
-Date:   Wed, 31 Jul 2019 15:00:56 +0200
-In-Reply-To: <20190724192426.GJ14346@kozik-lap>
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
-Mime-Version: 1.0
+        Wed, 31 Jul 2019 09:09:59 -0400
+X-Greylist: delayed 499 seconds by postgrey-1.27 at vger.kernel.org; Wed, 31 Jul 2019 09:09:56 EDT
+Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: kinky_nekoboi@nekoboi.moe)
+        by mail.nekoboi.moe (Postcow) with ESMTPSA id 6D4ECB40023
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 15:01:35 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nekoboi.moe; s=dkim;
+        t=1564578095; h=from:from:reply-to:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:openpgp:openpgp:autocrypt:autocrypt;
+        bh=aD6+HaZbhjKnWUmHNC8+JnQCp632DukB5hVYcCQ6z9E=;
+        b=UTFq3jdZuz3hD1ekFts2oW5w9NTLjB4HhROTJeo8o30AKb6XctBcIi7AHtnciVJjHFNVow
+        zW1cPtqSibR+G/YxpZSVrhpKFqTEkhyaebcg6m0g3a5gy2PqcPUUxiEee7T6M6KJBuQToS
+        wKNFhLmnIHea9AehTE/ZO0nt+UmRRHCEfAVaWidz9IAn/haU4BrK87osn7Wx5b39KHnWWv
+        YGUi04+bn9z0/LE6j+F4qOsQWIdUg0w5Cdr6KZlJtAdaOFHkcVy/oy3tubSRxlIUAtdq6Q
+        f9GXEeAMZzyEtM4kR/+f4XEe4RuZRjdLuPs3wCKmkYkMwiRjVNbAQcqSeMR0PQ==
+To:     linux-kernel@vger.kernel.org
+Reply-To: kinky_nekoboi@nekoboi.moe
+From:   Kinky Nekoboi <kinky_nekoboi@nekoboi.moe>
+Subject: XFS segementation fault with new linux 4.19.63
+Openpgp: preference=signencrypt
+Autocrypt: addr=kinky_nekoboi@nekoboi.moe; keydata=
+ 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
+ KlTseuU=
+Message-ID: <e0ca189e-2f96-6599-40ce-a4fc8866d8d1@nekoboi.moe>
+Date:   Wed, 31 Jul 2019 15:01:33 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Se0hTcRjtt/vYdTa9zsAPs6KhQlY+SuGCUmmvkRBmgZFarbxo5VR2fWRJ
-        aommlk/KJ6SoNSwfTQ2VfIvLNFdZWmlMMh8ZVjKlwpScd1L/ne+c3/nO+eBHYZIuwpq6EBbJ
-        KsPkoVJShD/p+T2wU5TtGehcUWDLPM6vIZjh+SmCudc9QDBvFr6TTF6LmmRydFk4o9XWChn1
-        +BDBDDYXk4z+djdi8rWtAqaq+6OQGUlUkUx+7hdyn5lMXZlKykaHnpIyXbpGIKsrj5dl1Fci
-        mV692Yc8JfIIYkMvRLNKpz1nRSELLemCiCXx5YLBUiwBlZumIRMKaFdo071FaUhESWgVguSi
-        TOMwj6A9NRvjBz0C/cuvgjVLj36O5IUHCMr6Mwl+mETQOpOxYqEoMe0D3/JWDZZ0EEy3vkAG
-        TNKHYXnqDWHAG+htMLz0c9WL0e0YdLTcERoEnLaDoskSzIBNaCdQJfVifPIOmH2egfP7LWCp
-        0dJAY/QWuNFQtNoU6A9CqB1rF/LvD4CmdhDnsSXMaOqNvA305d4y8hxMNOkI3pyAQH2/2xjm
-        Dl2aV4QhDFtpWtPsxNOeMN+XstoBaDN4N2vBdzCDnCd5GE+L4WayhIcOULLozxsBrj8cMu6W
-        Qd3EIzILbS38d0vhf7cU/kstQVglsmKjOEUwy+0OY2McObmCiwoLdjwfrlCjla/Vt6xZaESt
-        f851IppC0vXiZ6megRJCHs3FKjoRUJh0g7jMam+gRBwkj73CKsPPKKNCWa4TbaRwqZX46rox
-        fwkdLI9kL7FsBKtcUwWUiXUCanpg+fqHrdivr3/EpHrhUJ2o2O1uQ0D/8q7Pzrr320d7UUvp
-        4o4qd++jiQGqisFNx9ncgmr7+WsDChmy9/jc1XFMi/uWvboY5+vqEeo75zzm4hWTcBD396mI
-        O+JtU+nX45aynz6ZbTZ52iXefMbctLM8rkp74te4tt8r6ZOdedu0FOdC5C4OmJKT/wVKrNeP
-        VgMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrNIsWRmVeSWpSXmKPExsVy+t/xu7qcEx1jDfYu1rbYOGM9q8X1L89Z
-        LeYfOcdqceXrezaL6Xs3sVlMuj+BxeL8+Q3sFpseX2O1uLxrDpvF594jjBYzzu9jslh75C67
-        xe3GFWwWMya/ZHPg89i0qpPN4861PWwe97uPM3lsXlLv0bdlFaPH501yAWxRejZF+aUlqQoZ
-        +cUltkrRhhZGeoaWFnpGJpZ6hsbmsVZGpkr6djYpqTmZZalF+nYJehlf93YzFfzlrZh5eSFz
-        A+MS7i5GTg4JAROJY58/snUxcnEICSxllDi+ei8LREJC4uP6G6wQtrDEn2tdUEVPGCXe7HzF
-        1MXIwcErECDxbjoTSI2wQIrEi31nGUFsNgF3iX/Pr4D1ighoSlz/+50VpJdZ4BCzxLoD3WAJ
-        FgFVidnPFjCD2JwC+hIrWk4yQyz4CrRg0x2wK5iBulu3/2aHuEJH4u2pPhaIxYISf3cIQ5TI
-        SzRvnc08gVFwFpKOWQhVs5BULWBkXsUoklpanJueW2yoV5yYW1yal66XnJ+7iREYkduO/dy8
-        g/HSxuBDjAIcjEo8vCc6HWOFWBPLiitzDzFKcDArifAuFrePFeJNSaysSi3Kjy8qzUktPsRo
-        CvTPRGYp0eR8YLLIK4k3NDU0t7A0NDc2NzazUBLn7RA4GCMkkJ5YkpqdmlqQWgTTx8TBKdXA
-        2J9m+/Xsc6Fvq9dMvSPKycY8s5PvYMexZaH8SkX95jU9W9RLuBIslSbdvn+94FtJyQOFDvZM
-        kznzJqTHrk9d+vLkxopT/1rPWZamhTkuVPuxy6DSs7GjUlRm0pnJM0qfLLxW88tQ23OJ+Trt
-        Oetby1nuTXp15ZG7MNc7eZmQ0mPsZh5q+x51KrEUZyQaajEXFScCAC2JLOveAgAA
-X-CMS-MailID: 20190731130057eucas1p1dbc0f96212e96ceac96daede85f71e9e
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20190723122027eucas1p24b1d76e3139f7cc52614d7613ff9ba98
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20190723122027eucas1p24b1d76e3139f7cc52614d7613ff9ba98
-References: <20190723122016.30279-1-a.swigon@partner.samsung.com>
-        <CGME20190723122027eucas1p24b1d76e3139f7cc52614d7613ff9ba98@eucas1p2.samsung.com>
-        <20190723122016.30279-9-a.swigon@partner.samsung.com>
-        <20190724192426.GJ14346@kozik-lap>
+Content-Language: de-DE
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=nekoboi.moe;
+        s=dkim; t=1564578095; h=from:from:reply-to:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:openpgp:openpgp:autocrypt:autocrypt;
+        bh=aD6+HaZbhjKnWUmHNC8+JnQCp632DukB5hVYcCQ6z9E=;
+        b=gxSvBHe4NONNO6phmzE2XQYTxskyzHW5YE5zCJN9Qx9pqj9fSKVSDH9W/+ejXoECvvVYxV
+        9uQVd1jzBc3nPNz4oejrh7k9DwIM6olrjjRXBQ5TORYTcHeRZIQqEXzztFXy0vktQ0y43G
+        kFX1emxicVNE1XQiOnoLGe8BzoVpTTqLnwFR+pGCmHE8iF/nzi+/R9S1Jvj1oGYfhQ1Wut
+        KQzzRjW4xhGyB7DC3T5Z3smuVC1y9+Ohx+OMrFIE+BcPoHqn3jLIg2zQ4pb64yJp+QPrGP
+        4s/PhdvLsvoQ2pXvoM26kp34j4uMLzMq/4EHPoxXlFNELg97S0lustcnla4hvg==
+ARC-Seal: i=1; s=dkim; d=nekoboi.moe; t=1564578095; a=rsa-sha256; cv=none;
+        b=Q9y/3uCEz+O0v1ZBoUmLejhcax67L7bpHSxta7egJZzNTI2ppUI/Bxi7XvstZ0anAY1kfE
+        05Xeb5IEHa1ggBAh2fYkG39wUivLKmKRvael9RtBht3K3D74jTU7HBs5AhNgeKARnoFLPd
+        GUTj0zsWL923CqygFrLD+nd1NNP7vhY5jXd0XuiEtzb7JIIHZCnOuPseSZa0QoNdYJIPcM
+        QEWk7gLC+V18ZhkNk6Jgs6GO5lezmthgKyjM1On6MtqhqUJLFsGg2z1ah96YioP4Oh1HTO
+        RV4NCS1xCDGUKkNot7rLXCHh4tk6eegrfBeAlhDDVXy5IXTc/TMWaYFu9cYJCw==
+ARC-Authentication-Results: i=1;
+        mail.nekoboi.moe;
+        auth=pass smtp.mailfrom=kinky_nekoboi@nekoboi.moe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-07-24 at 21:24 +0200, Krzysztof Kozlowski wrote:
-> On Tue, Jul 23, 2019 at 02:20:13PM +0200, Artur Świgoń wrote:
-> > This patch adds two fields tp the Exynos4412 DTS:
-> 
-> tp->to
+I am not subscribed, so if you want to contact me do Direkt Email.
 
-Fixed. Thanks for catching the typo :)
+kern output:
 
-> >   - parent: to declare connections between nodes that are not in a
-> >     parent-child relation in devfreq;
-> 
-> Is it a standard property?
-> The explanation needs some improvement... why are you adding parent to a
-> devices which are not child-parent?
 
-This is not a standard property. I actually wanted to call it 'neighbor' at first. If you take a look at [1] and search for 'Exynos4x12', you will see that there are two power lines, and each has exactly one parent block (the rest are modelled in devfreq as its children). In [2], the parent of each child is indicated using the 'devfreq' property, e.g.,
-
-&bus_display {
-	devfreq = <&bus_leftbus>;
-	status = "okay";
-};
-
-The single piece missing to make this topology a connected graph (for
-interconnect QoS purposes) is the 'parent' property I proposed in this patch.
-bus_leftbus is dependent on bus_dmc, therefore using the term 'parent' is
-justified IMHO.
-
-The explanation could be improved by adding what Chanwoo Choi <
-cw00.choi@samsung.com> expressed in a parallel reply to this patch:
-> - If 'devfreq' property is used between buses,
->   it indicates that there are requirement of sharing of power line.
-> - If 'parent' property is used between buses,
->   it indicates that there are requirement of interconnect connection.
-
-[1] Documentation/devicetree/bindings/devfreq/exynos-bus.txt
-[2] arch/arm/boot/dts/exynos4412-odroid-common.dtsi (subject of this patch)
-
-Best regards,
--- 
-Artur Świgoń
-Samsung R&D Institute Poland
-Samsung Electronics
+ul 31 13:51:53 lain kernel: [   71.660736] XFS: Assertion failed:
+xfs_perag_resv(pag, XFS_AG_RESV_METADATA)->ar_reserved +
+xfs_perag_resv(pag, XFS_AG_RESV_RMAPBT)->ar_reserved <=
+pag->pagf_freeblks + pag->pagf_flcount, file:
+fs/xfs/libxfs/xfs_ag_resv.c, line: 319
+Jul 31 13:51:53 lain kernel: [   71.681711] ------------[ cut here
+]------------
+Jul 31 13:51:53 lain kernel: [   71.686416] kernel BUG at
+fs/xfs/xfs_message.c:102!
+Jul 31 13:51:53 lain kernel: [   71.691431] invalid opcode: 0000 [#1]
+SMP NOPTI
+Jul 31 13:51:53 lain kernel: [   71.696047] CPU: 2 PID: 1322 Comm: mount
+Not tainted 4.19.63-custom #1
+Jul 31 13:51:53 lain kernel: [   71.702730] Hardware name: ASUS
+KGPE-D16/KGPE-D16, BIOS 4.10-108-gc19161538c 07/29/2019
+Jul 31 13:51:53 lain kernel: [   71.711028] RIP: 0010:assfail+0x25/0x36
+[xfs]
+Jul 31 13:51:53 lain kernel: [   71.715475] Code: d4 e8 0f 0b c3 0f 1f
+44 00 00 48 89 f1 41 89 d0 48 c7 c6 80 62 fb c0 48 89 fa 31 ff e8 72 f9
+ff ff 80 3d 2e cb 08 00 00 74 02 <0f> 0b 48 c7 c7 b0 62 fb c0 e8 74 11
+d4 e8 0f 0b c3 48 8b b3 a8 01
+Jul 31 13:51:53 lain kernel: [   71.734532] RSP: 0018:ffffb3a584117cb8
+EFLAGS: 00010202
+Jul 31 13:51:53 lain kernel: [   71.739849] RAX: 0000000000000000 RBX:
+ffffa0259fc22a00 RCX: 0000000000000000
+Jul 31 13:51:53 lain kernel: [   71.747135] RDX: 00000000ffffffc0 RSI:
+000000000000000a RDI: ffffffffc0fa971b
+Jul 31 13:51:53 lain kernel: [   71.754407] RBP: 0000000000000000 R08:
+0000000000000000 R09: 0000000000000000
+Jul 31 13:51:53 lain kernel: [   71.761633] R10: 000000000000000a R11:
+f000000000000000 R12: ffffa0259c157000
+Jul 31 13:51:53 lain kernel: [   71.768861] R13: 0000000000000008 R14:
+ffffa0259c157000 R15: 0000000000000000
+Jul 31 13:51:53 lain kernel: [   71.776110] FS:  00007f169d61f100(0000)
+GS:ffffa025a7c80000(0000) knlGS:0000000000000000
+Jul 31 13:51:53 lain kernel: [   71.784330] CS:  0010 DS: 0000 ES: 0000
+CR0: 0000000080050033
+Jul 31 13:51:53 lain kernel: [   71.790198] CR2: 00007fa8c52fc441 CR3:
+000000042453c000 CR4: 00000000000406e0
+Jul 31 13:51:53 lain kernel: [   71.797446] Call Trace:
+Jul 31 13:51:53 lain kernel: [   71.800040] 
+xfs_ag_resv_init+0x1bd/0x1d0 [xfs]
+Jul 31 13:51:53 lain kernel: [   71.804717] 
+xfs_fs_reserve_ag_blocks+0x3e/0xb0 [xfs]
+Jul 31 13:51:53 lain kernel: [   71.809937]  xfs_mountfs+0x5b3/0x920 [xfs]
+Jul 31 13:51:53 lain kernel: [   71.814212] 
+xfs_fs_fill_super+0x44d/0x620 [xfs]
+Jul 31 13:51:53 lain kernel: [   71.818997]  ?
+xfs_test_remount_options+0x60/0x60 [xfs]
+Jul 31 13:51:53 lain kernel: [   71.824320]  mount_bdev+0x177/0x1b0
+Jul 31 13:51:53 lain kernel: [   71.827868]  mount_fs+0x3e/0x145
+Jul 31 13:51:53 lain kernel: [   71.831178] 
+vfs_kern_mount.part.35+0x54/0x120
+Jul 31 13:51:53 lain kernel: [   71.835728]  do_mount+0x20e/0xcc0
+Jul 31 13:51:53 lain kernel: [   71.839098]  ? _copy_from_user+0x37/0x60
+Jul 31 13:51:53 lain kernel: [   71.843097]  ? memdup_user+0x4b/0x70
+Jul 31 13:51:53 lain kernel: [   71.846751]  ksys_mount+0xb6/0xd0
+Jul 31 13:51:53 lain kernel: [   71.850137]  __x64_sys_mount+0x21/0x30
+Jul 31 13:51:53 lain kernel: [   71.853983]  do_syscall_64+0x55/0xf0
+Jul 31 13:51:53 lain kernel: [   71.857621] 
+entry_SYSCALL_64_after_hwframe+0x44/0xa9
+Jul 31 13:51:53 lain kernel: [   71.862727] RIP: 0033:0x7f169d2b1fea
+Jul 31 13:51:53 lain kernel: [   71.866362] Code: 48 8b 0d a9 0e 0c 00
+f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00
+00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d
+76 0e 0c 00 f7 d8 64 89 01 48
+Jul 31 13:51:53 lain kernel: [   71.885417] RSP: 002b:00007ffe6c4dd048
+EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+Jul 31 13:51:53 lain kernel: [   71.895075] RAX: ffffffffffffffda RBX:
+000055e2f3093a40 RCX: 00007f169d2b1fea
+Jul 31 13:51:53 lain kernel: [   71.904309] RDX: 000055e2f309b220 RSI:
+000055e2f3093c70 RDI: 000055e2f3093c50
+Jul 31 13:51:53 lain kernel: [   71.913532] RBP: 00007f169d6061c4 R08:
+0000000000000000 R09: 00007f169d2f3400
+Jul 31 13:51:53 lain kernel: [   71.922730] R10: 0000000000000000 R11:
+0000000000000246 R12: 0000000000000000
+Jul 31 13:51:53 lain kernel: [   71.931950] R13: 0000000000000000 R14:
+000055e2f3093c50 R15: 000055e2f309b220
+Jul 31 13:51:53 lain kernel: [   71.941107] Modules linked in: dm_crypt
+twofish_generic twofish_avx_x86_64 twofish_x86_64_3way twofish_x86_64
+twofish_common xts algif_skcipher af_alg dm_mod tun devlink
+cpufreq_userspace cpufreq_powersave cpufreq_conservative binfmt_misc xfs
+amd64_edac_mod edac_mce_amd kvm_amd ccp rng_core kvm irqbypass
+crct10dif_pclmul crc32_pclmul ghash_clmulni_intel pcbc snd_hda_intel ast
+snd_hda_codec ttm snd_hda_core evdev snd_pcsp snd_hwdep drm_kms_helper
+snd_pcm snd_timer aesni_intel aes_x86_64 drm crypto_simd snd cryptd
+serio_raw i2c_algo_bit fam15h_power k10temp glue_helper soundcore sg
+sp5100_tco pcc_cpufreq button acpi_cpufreq nft_counter nft_ct
+nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 nf_tables_set nf_tables
+nfnetlink ip_tables x_tables autofs4 ext4 crc16 mbcache jbd2 fscrypto
+raid10 raid1 raid0 multipath
+Jul 31 13:51:53 lain kernel: [   72.027825]  linear raid456
+async_raid6_recov async_memcpy async_pq async_xor async_tx xor raid6_pq
+libcrc32c crc32c_generic md_mod sd_mod ohci_pci ata_generic ahci
+firewire_ohci xhci_pci libahci ohci_hcd ehci_pci pata_atiixp xhci_hcd
+firewire_core ehci_hcd crc_itu_t libata psmouse crc32c_intel i2c_piix4
+usbcore scsi_mod e1000e
+Jul 31 13:51:53 lain kernel: [   72.064151] ---[ end trace
+a6475ff3d1350cc4 ]---
+Jul 31 13:51:53 lain kernel: [   72.071244] RIP: 0010:assfail+0x25/0x36
+[xfs]
+Jul 31 13:51:53 lain kernel: [   72.077951] Code: d4 e8 0f 0b c3 0f 1f
+44 00 00 48 89 f1 41 89 d0 48 c7 c6 80 62 fb c0 48 89 fa 31 ff e8 72 f9
+ff ff 80 3d 2e cb 08 00 00 74 02 <0f> 0b 48 c7 c7 b0 62 fb c0 e8 74 11
+d4 e8 0f 0b c3 48 8b b3 a8 01
+Jul 31 13:51:53 lain kernel: [   72.101469] RSP: 0018:ffffb3a584117cb8
+EFLAGS: 00010202
+Jul 31 13:51:53 lain kernel: [   72.109081] RAX: 0000000000000000 RBX:
+ffffa0259fc22a00 RCX: 0000000000000000
+Jul 31 13:51:53 lain kernel: [   72.118620] RDX: 00000000ffffffc0 RSI:
+000000000000000a RDI: ffffffffc0fa971b
+Jul 31 13:51:53 lain kernel: [   72.128206] RBP: 0000000000000000 R08:
+0000000000000000 R09: 0000000000000000
+Jul 31 13:51:53 lain kernel: [   72.137789] R10: 000000000000000a R11:
+f000000000000000 R12: ffffa0259c157000
+Jul 31 13:51:53 lain kernel: [   72.147332] R13: 0000000000000008 R14:
+ffffa0259c157000 R15: 0000000000000000
+Jul 31 13:51:53 lain kernel: [   72.156892] FS:  00007f169d61f100(0000)
+GS:ffffa025a7c80000(0000) knlGS:0000000000000000
+Jul 31 13:51:53 lain kernel: [   72.167382] CS:  0010 DS: 0000 ES: 0000
+CR0: 0000000080050033
+Jul 31 13:51:53 lain kernel: [   72.175498] CR2: 00007fa8c52fc441 CR3:
+000000042453c000 CR4: 00000000000406e0
 
