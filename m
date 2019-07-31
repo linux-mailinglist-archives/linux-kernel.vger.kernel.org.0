@@ -2,90 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A9E967BC61
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 10:57:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D17F7BC6B
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 10:58:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727300AbfGaI5b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 04:57:31 -0400
-Received: from imap1.codethink.co.uk ([176.9.8.82]:38038 "EHLO
-        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725857AbfGaI5b (ORCPT
+        id S1728187AbfGaI6a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 04:58:30 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:30222 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727736AbfGaI63 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 04:57:31 -0400
-Received: from [167.98.27.226] (helo=[10.35.6.253])
-        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
-        id 1hskQ5-0003o4-QJ; Wed, 31 Jul 2019 09:57:13 +0100
-Subject: Re: [alsa-devel] [PATCH v2 2/3] ASoC: Add codec driver for ST TDA7802
-To:     Marco Felsch <m.felsch@pengutronix.de>
-Cc:     Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
-        alsa-devel@alsa-project.org,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Kirill Marinushkin <kmarinushkin@birdec.tech>,
-        linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>,
-        Annaliese McDermond <nh6z@nh6z.net>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Vinod Koul <vkoul@kernel.org>, Mark Brown <broonie@kernel.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Patrick Glaser <pglaser@tesla.com>,
-        Rob Duncan <rduncan@tesla.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Nate Case <ncase@tesla.com>,
-        Cheng-Yi Chiang <cychiang@chromium.org>
-References: <20190730120937.16271-1-thomas.preston@codethink.co.uk>
- <20190730120937.16271-3-thomas.preston@codethink.co.uk>
- <20190730145844.GI4264@sirena.org.uk>
- <fe11c806-2285-558c-e35c-d8f61de00784@codethink.co.uk>
- <20190731060644.yrewu2kvrlootyyl@pengutronix.de>
-From:   Thomas Preston <thomas.preston@codethink.co.uk>
-Message-ID: <820e2ea9-14a2-795c-9b78-e8f2a30afdb1@codethink.co.uk>
-Date:   Wed, 31 Jul 2019 09:57:12 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Wed, 31 Jul 2019 04:58:29 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6V8l8xe056924
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 04:58:28 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2u379a2592-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 04:58:27 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <heiko.carstens@de.ibm.com>;
+        Wed, 31 Jul 2019 09:58:25 +0100
+Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 31 Jul 2019 09:58:23 +0100
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x6V8w5Jr19005810
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 31 Jul 2019 08:58:05 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9C6D0A405C;
+        Wed, 31 Jul 2019 08:58:21 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 573FEA4060;
+        Wed, 31 Jul 2019 08:58:21 +0000 (GMT)
+Received: from osiris (unknown [9.152.212.134])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Wed, 31 Jul 2019 08:58:21 +0000 (GMT)
+Date:   Wed, 31 Jul 2019 10:58:20 +0200
+From:   Heiko Carstens <heiko.carstens@de.ibm.com>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-s390@vger.kernel.org,
+        Harald Freudenberger <freude@linux.ibm.com>,
+        Patrick Steuer <steuer@linux.ibm.com>
+Subject: Re: linux-next: Tree for Jul 31 - s390 crypto build breakage
+References: <20190731163915.3fdfcb14@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <20190731060644.yrewu2kvrlootyyl@pengutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190731163915.3fdfcb14@canb.auug.org.au>
+X-TM-AS-GCONF: 00
+x-cbid: 19073108-0012-0000-0000-00000337EE06
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19073108-0013-0000-0000-000021719646
+Message-Id: <20190731085819.GA3488@osiris>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-31_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1907310095
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 31/07/2019 07:06, Marco Felsch wrote:
-> Hi Thomas,
+On Wed, Jul 31, 2019 at 04:39:15PM +1000, Stephen Rothwell wrote:
+> Hi all,
 > 
-> again sorry for jumping in..
-> 
+> Changes since 20190730:
 
-Np!
+Hello Ard,
 
-> On 19-07-30 18:26, Thomas Preston wrote:
->> On 30/07/2019 15:58, Mark Brown wrote:
->>> On Tue, Jul 30, 2019 at 01:09:36PM +0100, Thomas Preston wrote:
->>>> +	case SND_SOC_BIAS_STANDBY:
->>>> +		err = regulator_enable(tda7802->enable_reg);
->>>> +		if (err < 0) {
->>>> +			dev_err(component->dev, "Could not enable.\n");
->>>> +			return err;
->>>> +		}
->>>> +		dev_dbg(component->dev, "Regulator enabled\n");
->>>> +		msleep(ENABLE_DELAY_MS);
->>>
->>> Is this delay needed by the device or is it for the regulator to ramp?
->>> If it's for the regulator to ramp then the regulator should be doing it.
->>>
->>
->> According to the datasheet the device itself takes 10ms to rise from 0V
->> after PLLen is enabled. There are additional rise times but they are
->> negligible with default capacitor configuration (which we have).
->>
->> Good to know about the regulator rising configuration though. Thanks.
-> 
-> Isn't it the regulator we mentioned to not use that because it is a
-> GPIO?
-> 
+two of your patches in the crypto tree cause build breakage on s390:
 
-Yeah it is - I intend to switch PLLen to gpio API.
+The patch ("crypto: aes - create AES library based on the fixed time AES code")
+causes this:
+
+arch/s390/crypto/aes_s390.c:111:13: error: conflicting types for 'aes_encrypt'
+  111 | static void aes_encrypt(struct crypto_tfm *tfm, u8 *out, const u8 *in)
+      |             ^~~~~~~~~~~
+
+And the commit ("crypto: aegis128 - add support for SIMD acceleration") causes
+another build breakage:
+
+crypto/aegis128-core.c:19:10: fatal error: asm/simd.h: No such file or directory
+   19 | #include <asm/simd.h>
+      |          ^~~~~~~~~~~~
+
