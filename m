@@ -2,92 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AAFD57C410
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 15:52:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 799C67C415
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 15:53:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727418AbfGaNwJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 09:52:09 -0400
-Received: from iolanthe.rowland.org ([192.131.102.54]:48598 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1726592AbfGaNwJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 09:52:09 -0400
-Received: (qmail 1670 invoked by uid 2102); 31 Jul 2019 09:52:05 -0400
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 31 Jul 2019 09:52:05 -0400
-Date:   Wed, 31 Jul 2019 09:52:05 -0400 (EDT)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-cc:     Joel Fernandes <joel@joelfernandes.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        <linux-kernel@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Will Deacon <will@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Akira Yokosawa <akiyks@gmail.com>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        Ingo Molnar <mingo@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
-        SeongJae Park <sj38.park@gmail.com>,
-        <linux-arch@vger.kernel.org>
-Subject: Re: [PATCH] tools: memory-model: add it to the Documentation body
-In-Reply-To: <20190730195744.3aef478e@coco.lan>
-Message-ID: <Pine.LNX.4.44L0.1907310947340.1497-100000@iolanthe.rowland.org>
+        id S1729680AbfGaNxP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 09:53:15 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:3272 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726592AbfGaNxO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jul 2019 09:53:14 -0400
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 29BB07C62749BD52773B;
+        Wed, 31 Jul 2019 21:53:10 +0800 (CST)
+Received: from [10.151.23.176] (10.151.23.176) by smtp.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 31 Jul
+ 2019 21:52:59 +0800
+Subject: Re: [PATCH v5 12/24] erofs: introduce tagged pointer
+From:   Gao Xiang <gaoxiang25@huawei.com>
+To:     Jan Kara <jack@suse.cz>
+CC:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Theodore Ts'o <tytso@mit.edu>,
+        "David Sterba" <dsterba@suse.cz>,
+        Amir Goldstein <amir73il@gmail.com>,
+        "Christoph Hellwig" <hch@infradead.org>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        <linux-fsdevel@vger.kernel.org>, <devel@driverdev.osuosl.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        <linux-erofs@lists.ozlabs.org>, Chao Yu <yuchao0@huawei.com>,
+        Miao Xie <miaoxie@huawei.com>,
+        Li Guifu <bluce.liguifu@huawei.com>,
+        Fang Wei <fangwei1@huawei.com>
+References: <20190730071413.11871-1-gaoxiang25@huawei.com>
+ <20190730071413.11871-13-gaoxiang25@huawei.com>
+ <20190731130148.GE15806@quack2.suse.cz>
+ <204b7fcc-a54b-ebd6-ff4c-2d5e2e6d4a8c@huawei.com>
+Message-ID: <e2f2c550-8d1f-39f5-3bd9-b6de996da9ad@huawei.com>
+Date:   Wed, 31 Jul 2019 21:52:51 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+In-Reply-To: <204b7fcc-a54b-ebd6-ff4c-2d5e2e6d4a8c@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.151.23.176]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 30 Jul 2019, Mauro Carvalho Chehab wrote:
 
-> Em Tue, 30 Jul 2019 18:17:01 -0400
-> Joel Fernandes <joel@joelfernandes.org> escreveu:
 
-> > > > (4) I would argue that every occurence of
-> > > > A ->(some dependency) B should be replaced with fixed size font in the HTML
-> > > > results.  
-> > > 
-> > > Just place those with ``A -> (some dependency)``. This will make them use
-> > > a fixed size font.  
-> > 
-> > Ok, understood all these. I guess my point was all of these will need to be
-> > done to make this document useful from a ReST conversion standpoint. Until
-> > then it is probably just better off being plain text - since there are so
-> > many of those ``A -> (dep) B`` things.
+On 2019/7/31 21:20, Gao Xiang wrote:
+>    struct b *ptr = tagptr_unfold_tags(tptr);
+> vs
+>    struct b *ptr = (struct b *)((unsigned long)tptr & ~2);
 
-> On a very quick look, it seems that, if we replace:
-> 
-> 	(\S+\s->\S*\s\w+)
-> 
-> by:
-> 	``\1``
-> 
-> 
-> On an editor that would allow to manually replace the regex (like kate),
-> most of those can be get.
-> 
-> See patch enclosed.
+Sorry ... a too stupid typo issue, I mean....
 
-Some time ago I considered the problem of converting this file to ReST 
-format.  But I gave up on the idea, because the necessary changes were 
-so widespread and the resulting text file would not be easily readable.
+struct b *ptr = tagptr_unfold_ptr(tptr);
+vs
+struct b *ptr = (struct b *)((unsigned long)tptr & ~3);
 
-Replacing things of the form "A ->dep B" just scratches the surface.  
-That document teems with variable names, formulas, code extracts, and
-other things which would all need to be rendered in a different font
-style.  The density of the markup required to do this would be
-phenomenally high.
-
-In my opinion it simply was not worthwhile.
-
-Alan Stern
-
+Thanks,
+Gao Xiang
