@@ -2,110 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7FD8E7B8AC
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 06:29:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 29C7E7B876
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 06:21:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728053AbfGaE3z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 00:29:55 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:29038 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726601AbfGaE3y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 00:29:54 -0400
-X-UUID: 38377396d15048a38b8c9f2a230bc541-20190731
-X-UUID: 38377396d15048a38b8c9f2a230bc541-20190731
-Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
-        (envelope-from <gtk_ruiwang@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0707 with TLS)
-        with ESMTP id 534942347; Wed, 31 Jul 2019 12:29:48 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 31 Jul 2019 12:29:42 +0800
-Received: from localhost.localdomain (10.17.3.153) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 31 Jul 2019 12:29:41 +0800
-From:   <gtk_ruiwang@mediatek.com>
-To:     Hans Verkuil <hverkuil@xs4all.nl>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Tiffany Lin <tiffany.lin@mediatek.com>
-CC:     Longfei Wang <longfei.wang@mediatek.com>,
-        Yunfei Dong <yunfei.dong@mediatek.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        Rui Wang <gtk_ruiwang@mediatek.com>
-Subject: [v2] media: mtk-vcodec: Handle H264 error bitstreams
-Date:   Wed, 31 Jul 2019 12:29:39 +0800
-Message-ID: <20190731042939.5339-1-gtk_ruiwang@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+        id S1727879AbfGaEVV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 00:21:21 -0400
+Received: from mga18.intel.com ([134.134.136.126]:41294 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726421AbfGaEVV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jul 2019 00:21:21 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jul 2019 21:21:20 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,328,1559545200"; 
+   d="scan'208";a="347395045"
+Received: from chenyu-office.sh.intel.com ([10.239.158.163])
+  by orsmga005.jf.intel.com with ESMTP; 30 Jul 2019 21:21:18 -0700
+From:   Chen Yu <yu.c.chen@intel.com>
+To:     linux-pm@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, yu.c.chen@intel.com,
+        Len Brown <len.brown@intel.com>,
+        "Wysocki, Rafael J" <rafael.j.wysocki@intel.com>,
+        Rui Zhang <rui.zhang@intel.com>,
+        David Box <david.e.box@intel.com>,
+        "Tan, Raymond" <raymond.tan@intel.com>
+Subject: [PATCH] Introducing the mask_cstate to disable specific c-states during bootup
+Date:   Wed, 31 Jul 2019 12:31:44 +0800
+Message-Id: <20190731043144.30863-1-yu.c.chen@intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rui Wang <gtk_ruiwang@mediatek.com>
+There is request to disable specific c-states during bootup for
+debug purpose. For example, deeper c-states except C1,C1E,C10
+are disabled during bootup otherwise it might not boot up well
+due to incorrect setting in FW.
 
-Error h264 bitstreams which picture info are out range of
-decoder hardware specification, and no nal start code at the
-beginning of the buffer, stop decoding and exit.
+For example, intel_idle.mask_cstate=0x3c, would disable cstate
+2,3,4,5 in the table
+(1<<2) | (1<<3) | (1<<4) | (1<<5)
+which is C6,C7s,C8,C9 on Broxton.
+This could have it come up as present, but with c-states disabled,
+so user can enable those c-states later to test.
 
-Signed-off-by: Rui Wang <gtk_ruiwang@mediatek.com>
+Cc: Len Brown <len.brown@intel.com>
+Cc: "Wysocki, Rafael J" <rafael.j.wysocki@intel.com>
+Cc: Rui Zhang <rui.zhang@intel.com>
+Cc: David Box <david.e.box@intel.com>
+Cc: "Tan, Raymond" <raymond.tan@intel.com>
+Signed-off-by: Chen Yu <yu.c.chen@intel.com>
 ---
-Change note:
-Updata commint message with Mauro's comment: use real name on SOB and From.
----
- .../platform/mtk-vcodec/vdec/vdec_h264_if.c      | 16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
+ .../admin-guide/kernel-parameters.txt         |  7 ++++
+ drivers/idle/intel_idle.c                     | 36 +++++++++++++++++++
+ 2 files changed, 43 insertions(+)
 
-diff --git a/drivers/media/platform/mtk-vcodec/vdec/vdec_h264_if.c b/drivers/media/platform/mtk-vcodec/vdec/vdec_h264_if.c
-index c5f8f1fca44c..49aa85a9bb5a 100644
---- a/drivers/media/platform/mtk-vcodec/vdec/vdec_h264_if.c
-+++ b/drivers/media/platform/mtk-vcodec/vdec/vdec_h264_if.c
-@@ -29,6 +29,9 @@
- #define H264_MAX_FB_NUM				17
- #define HDR_PARSING_BUF_SZ			1024
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 7ccd158b3894..93a326c42877 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -1733,6 +1733,13 @@
+ 			provided by tboot because it makes the system
+ 			vulnerable to DMA attacks.
  
-+#define DEC_ERR_RET(ret)			((ret) >> 16)
-+#define H264_ERR_NOT_VALID			3
++	intel_idle.mask_cstate=	[HW,X86]
++			Mask of C-states to be disabled during bootup. For
++			example, mask_cstate=0x3c, would disable cstate 2,3,4,5
++			in the table
++			(1<<2) | (1<<3) | (1<<4) | (1<<5)
++			which is C6,C7s,C8,C9 on Broxton.
 +
- /**
-  * struct h264_fb - h264 decode frame buffer information
-  * @vdec_fb_va  : virtual address of struct vdec_fb
-@@ -357,8 +360,11 @@ static int vdec_h264_decode(void *h_vdec, struct mtk_vcodec_mem *bs,
- 	buf = (unsigned char *)bs->va;
- 	buf_sz = bs->size;
- 	nal_start_idx = find_start_code(buf, buf_sz);
--	if (nal_start_idx < 0)
-+	if (nal_start_idx < 0) {
-+		mtk_vcodec_err(inst, "invalid nal start code");
-+		err = -EIO;
- 		goto err_free_fb_out;
-+	}
+ 	intel_idle.max_cstate=	[KNL,HW,ACPI,X86]
+ 			0	disables intel_idle and fall back on acpi_idle.
+ 			1 to 9	specify maximum depth of C-state.
+diff --git a/drivers/idle/intel_idle.c b/drivers/idle/intel_idle.c
+index fa5ff77b8fe4..ed3233864b69 100644
+--- a/drivers/idle/intel_idle.c
++++ b/drivers/idle/intel_idle.c
+@@ -63,6 +63,8 @@ static struct cpuidle_driver intel_idle_driver = {
+ /* intel_idle.max_cstate=0 disables driver */
+ static int max_cstate = CPUIDLE_STATE_MAX - 1;
  
- 	nal_start = buf[nal_start_idx];
- 	nal_type = NAL_TYPE(buf[nal_start_idx]);
-@@ -382,8 +388,14 @@ static int vdec_h264_decode(void *h_vdec, struct mtk_vcodec_mem *bs,
- 	data[0] = buf_sz;
- 	data[1] = nal_start;
- 	err = vpu_dec_start(vpu, data, 2);
--	if (err)
-+	if (err) {
-+		if (err > 0 && (DEC_ERR_RET(err) == H264_ERR_NOT_VALID)) {
-+			mtk_vcodec_err(inst, "- error bitstream - err = %d -",
-+				       err);
-+			err = -EIO;
++static unsigned int mask_cstate;
++
+ static unsigned int mwait_substates;
+ 
+ #define LAPIC_TIMER_ALWAYS_RELIABLE 0xFFFFFFFF
+@@ -1354,6 +1356,12 @@ static void __init intel_idle_cpuidle_driver_init(void)
+ 		if (num_substates == 0)
+ 			continue;
+ 
++		if ((1UL<<cstate) & mask_cstate) {
++			pr_info("Disable #%d[%s] by user\n",
++					cstate,
++					cpuidle_state_table[cstate].name);
++			cpuidle_state_table[cstate].disabled = 1;
 +		}
- 		goto err_free_fb_out;
+ 		/* if state marked as disabled, skip it */
+ 		if (cpuidle_state_table[cstate].disabled != 0) {
+ 			pr_debug("state %s is disabled\n",
+@@ -1480,3 +1488,31 @@ device_initcall(intel_idle_init);
+  * is the easiest way (currently) to continue doing that.
+  */
+ module_param(max_cstate, int, 0444);
++
++static int mask_cstate_set(const char *arg, const struct kernel_param *kp)
++{
++	int ret = 0;
++	unsigned long new_mask_cstate, max_bit;
++
++	ret = kstrtoul(arg, 0, &new_mask_cstate);
++	if (ret)
++		goto exit_mask;
++
++	max_bit = find_last_bit(&new_mask_cstate, BITS_PER_LONG);
++	if (max_bit >= CPUIDLE_STATE_MAX) {
++		ret = -EINVAL;
++		goto exit_mask;
 +	}
- 
- 	*res_chg = inst->vsi->dec.resolution_changed;
- 	if (*res_chg) {
++
++	mask_cstate = new_mask_cstate;
++	smp_mb();
++
++exit_mask:
++	return ret;
++}
++
++static const struct kernel_param_ops mask_cstate_ops = {
++	.set = mask_cstate_set,
++	.get = param_get_int,
++};
++module_param_cb(mask_cstate, &mask_cstate_ops, &mask_cstate, 0644);
 -- 
-2.18.0
+2.17.1
 
