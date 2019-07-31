@@ -2,96 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31AEF7C34C
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 15:22:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 704187C360
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 15:23:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388271AbfGaNWb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 09:22:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50672 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388236AbfGaNWa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 09:22:30 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1808D2064A;
-        Wed, 31 Jul 2019 13:22:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564579349;
-        bh=W+aYKCz9gxgG7u43KzXszSqqe6R1n9t7d1fUb3QuD7c=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=KyQY5CBjylSO7ewCUAToDkmaAwmQjJO8QvWo9w/ul3hlz4NRL+Gjz7gxVd5980jtP
-         IGtcgcpPaQMoyDy1ZqpRsRWFSClc3ZThgNhemnSMgUB4JrS5m6yoU88+l6E0va7/KJ
-         GHePa31wbh7qJ6l/aUhzBXH+dHwFwpLbAqoeZ3VE=
-Date:   Wed, 31 Jul 2019 15:22:27 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Richard Gong <richard.gong@linux.intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Darren Hart <dvhart@infradead.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tony Prisk <linux@prisktech.co.nz>,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org, linux-fbdev@vger.kernel.org,
-        linux-input@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-        x86@kernel.org
-Subject: Re: [PATCH v2 00/10] drivers, provide a way to add sysfs groups
- easily
-Message-ID: <20190731132227.GC12603@kroah.com>
-References: <20190731124349.4474-1-gregkh@linuxfoundation.org>
- <20190731131045.GB147138@dtor-ws>
+        id S1729495AbfGaNXV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 09:23:21 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:51436 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729255AbfGaNXU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jul 2019 09:23:20 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x6VDNAlG080355;
+        Wed, 31 Jul 2019 08:23:10 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1564579390;
+        bh=0fUgRNTdr1H1z9bwTUX3/k1AsGS3eKBtv0BltL7AUXU=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=ZfCkNYHwDcVMQFgdZ6MOFeaj3KK7HpxBfPeP4ixWJ8+pnkRx8TtUIZvKtYM+Ijs+8
+         avV1JIDdTM52t8tytAKP8XzvbFGRA50+0RJQboZnPnCYcKUTHVejPZZ/698H0Arf77
+         8aYY/E8fs9IEUBn0lXpcuFkennebLTmbC3cDfBNU=
+Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x6VDNAhi048603
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 31 Jul 2019 08:23:10 -0500
+Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 31
+ Jul 2019 08:23:10 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Wed, 31 Jul 2019 08:23:10 -0500
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x6VDN720083249;
+        Wed, 31 Jul 2019 08:23:08 -0500
+Subject: Re: [PATCH v4 2/4] leds: Add managed API to get a LED from a device
+ driver
+To:     Jean-Jacques Hiblot <jjhiblot@ti.com>,
+        <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <lee.jones@linaro.org>,
+        <daniel.thompson@linaro.org>, <jingoohan1@gmail.com>
+CC:     <dmurphy@ti.com>, <linux-leds@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>
+References: <20190717141514.21171-1-jjhiblot@ti.com>
+ <20190717141514.21171-3-jjhiblot@ti.com>
+From:   Tomi Valkeinen <tomi.valkeinen@ti.com>
+Message-ID: <94bdabf4-0922-5016-ed96-9916ed6bda9d@ti.com>
+Date:   Wed, 31 Jul 2019 16:23:07 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190731131045.GB147138@dtor-ws>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20190717141514.21171-3-jjhiblot@ti.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 31, 2019 at 06:10:45AM -0700, Dmitry Torokhov wrote:
-> On Wed, Jul 31, 2019 at 02:43:39PM +0200, Greg Kroah-Hartman wrote:
-> > This patch originally started out just as a way for platform drivers to
-> > easily add a sysfs group in a race-free way, but thanks to Dmitry's
-> > patch, this series now is for all drivers in the kernel (hey, a unified
-> > driver model works!!!)
-> > 
-> > I've only converted a few platform drivers here in this series to show
-> > how it works, but other busses can be converted after the first patch
-> > goes into the tree.
-> > 
-> > Here's the original 00 message, for people to get an idea of what is
-> > going on here:
-> > 
-> > If a platform driver wants to add a sysfs group, it has to do so in a
-> > racy way, adding it after the driver is bound.  To resolve this issue,
-> > have the platform driver core do this for the driver, making the
-> > individual drivers logic smaller and simpler, and solving the race at
-> > the same time.
-> > 
-> > All of these patches depend on the first patch.  I'll take the first one
-> > through my driver-core tree, and any subsystem maintainer can either ack
-> > their individul patch and I will be glad to also merge it, or they can
-> > wait until after 5.4-rc1 when the core patch hits Linus's tree and then
-> > take it, it's up to them.
-> 
-> Maybe make an immutable branch off 5.2 with just patch 1/10 so that
-> subsystems (and the driver core tree itself) could pull it in at their
-> leisure into their "*-next" branches and did not have to wait till 5.4
-> or risk merge clashes?
+On 17/07/2019 17:15, Jean-Jacques Hiblot wrote:
 
-Good idea, I will do that when I apply it after a few days to give
-people a chance to review it.
+> +struct led_classdev *__must_check devm_led_get(struct device *dev,
+> +					       int index)
+> +{
+> +	struct led_classdev *led;
+> +	struct led_classdev **dr;
+> +
 
-thanks,
+Should you check here if dev->of_node == NULL? Or should of_led_get() 
+check it.
 
-greg k-h
+> +	led = of_led_get(dev->of_node, index);
+> +	if (IS_ERR(led))
+> +		return led;
+> +
+> +	dr = devres_alloc(devm_led_release, sizeof(struct led_classdev *),
+> +			  GFP_KERNEL);
+> +	if (!dr) {
+> +		led_put(led);
+> +		return ERR_PTR(-ENOMEM);
+> +	}
+> +
+> +	*dr = led;
+> +	devres_add(dev, dr);
+> +
+> +	return led;
+> +}
+
+  Tomi
+
+-- 
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
