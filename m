@@ -2,79 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C415D7C4ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 16:30:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3374E7C4F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 16:32:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729249AbfGaOaN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 10:30:13 -0400
-Received: from sauhun.de ([88.99.104.3]:42046 "EHLO pokefinder.org"
+        id S1729335AbfGaObY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 10:31:24 -0400
+Received: from mga05.intel.com ([192.55.52.43]:50163 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726079AbfGaOaN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 10:30:13 -0400
-Received: from localhost (p54B33080.dip0.t-ipconnect.de [84.179.48.128])
-        by pokefinder.org (Postfix) with ESMTPSA id 96AAC2C270A;
-        Wed, 31 Jul 2019 16:30:11 +0200 (CEST)
-Date:   Wed, 31 Jul 2019 16:30:11 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH v6 18/57] i2c: Remove dev_err() usage after
- platform_get_irq()
-Message-ID: <20190731143011.GB1680@kunai>
-References: <20190730181557.90391-1-swboyd@chromium.org>
- <20190730181557.90391-19-swboyd@chromium.org>
+        id S1726073AbfGaObY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jul 2019 10:31:24 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Jul 2019 07:31:23 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,330,1559545200"; 
+   d="scan'208";a="183704191"
+Received: from black.fi.intel.com (HELO black.fi.intel.com.) ([10.237.72.28])
+  by orsmga002.jf.intel.com with ESMTP; 31 Jul 2019 07:31:21 -0700
+From:   Alexander Shishkin <alexander.shishkin@linux.intel.com>
+To:     Peter Zijlstra <a.p.zijlstra@chello.nl>
+Cc:     Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        kan.liang@linux.intel.com,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Subject: [PATCH v3 0/7] perf, intel: Add support for PEBS output to Intel PT
+Date:   Wed, 31 Jul 2019 17:30:34 +0300
+Message-Id: <20190731143041.64678-1-alexander.shishkin@linux.intel.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="cvVnyQ+4j833TQvp"
-Content-Disposition: inline
-In-Reply-To: <20190730181557.90391-19-swboyd@chromium.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Peter,
 
---cvVnyQ+4j833TQvp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Fourth attempt at the PEBS-via-PT feature. The previous ones were [1], [2],
+[3]. This one addresses review comments in patches 1/7 and 2/7, the tooling
+patches are intact, but I'm including them anyway.
 
-> -dev_err(...);
+The PEBS feature: output to Intel PT stream instead of the DS area. It's
+theoretically useful in virtualized environments, where DS area can't be
+used. It's also good for those who are interested in instruction trace for
+context of the PEBS events. As PEBS goes, it can provide LBR context with
+all the branch-related information that PT doesn't provide at the moment.
 
-What about pr_err, ...?
+PEBS records are packetized in the PT stream, so instead of extracting
+them in the PMI, we leave it to the perf tool, because real time PT
+decoding is not practical.
 
-> While we're here, remove braces on if statements that only have one
-> statement (manually).
+[1] https://marc.info/?l=linux-kernel&m=155679423430002
+[2] https://marc.info/?l=linux-kernel&m=156225605132606
+[3] https://marc.info/?l=linux-kernel&m=156458152126310
 
-You can let cocci do this for you, too. From the top of my head:
+Adrian Hunter (5):
+  perf tools: Add aux_source attribute flag
+  perf tools: Add itrace option 'o' to synthesize aux-source events
+  perf intel-pt: Process options for PEBS event synthesis
+  perf tools: Add aux-source config term
+  perf intel-pt: Add brief documentation for PEBS via Intel PT
 
-if (...)
-- {
- S
-- }
+Alexander Shishkin (2):
+  perf: Allow normal events to be sources of AUX data
+  perf/x86/intel: Support PEBS output to PT
 
-with S being a statement and this rule depending on the matching rule.
+ arch/x86/events/core.c                   | 35 +++++++++
+ arch/x86/events/intel/core.c             | 18 +++++
+ arch/x86/events/intel/ds.c               | 51 ++++++++++++-
+ arch/x86/events/intel/pt.c               |  5 ++
+ arch/x86/events/perf_event.h             | 17 +++++
+ arch/x86/include/asm/intel_pt.h          |  2 +
+ arch/x86/include/asm/msr-index.h         |  4 ++
+ include/linux/perf_event.h               | 14 ++++
+ include/uapi/linux/perf_event.h          |  3 +-
+ kernel/events/core.c                     | 92 ++++++++++++++++++++++++
+ tools/include/uapi/linux/perf_event.h    |  3 +-
+ tools/perf/Documentation/intel-pt.txt    | 15 ++++
+ tools/perf/Documentation/itrace.txt      |  2 +
+ tools/perf/Documentation/perf-record.txt |  2 +
+ tools/perf/arch/x86/util/intel-pt.c      | 23 ++++++
+ tools/perf/util/auxtrace.c               |  4 ++
+ tools/perf/util/auxtrace.h               |  3 +
+ tools/perf/util/evsel.c                  |  4 ++
+ tools/perf/util/evsel.h                  |  2 +
+ tools/perf/util/intel-pt.c               | 18 +++++
+ tools/perf/util/parse-events.c           |  8 +++
+ tools/perf/util/parse-events.h           |  1 +
+ tools/perf/util/parse-events.l           |  1 +
+ 23 files changed, 324 insertions(+), 3 deletions(-)
 
+-- 
+2.20.1
 
---cvVnyQ+4j833TQvp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl1BpfMACgkQFA3kzBSg
-KbYd2xAAq3Fa3pEk4zsTqHw98EaB/Ko5iBApFcFnoiPINoT9hj6CiXIaRsRygAKY
-tVMDFDymLmplNlXU+lrc0NVQQ6irFzHeTTYt/BSkFjh30rhJOW1JnfJrRmfqrCpt
-N/+2dH+5j3qGZW22NCQUOmEZTZuGKqSwqeyyqJMfcAUokzHCWuFibmN6yXm9QoJY
-veOJuSqabB2H9dLHLwYFQ3Yiy+6S3s/puMnvZd4qMqsmjxVgO1E0Xg6CeLsqTKyc
-mu/Lo0Qm9FSRLeO+2YgaYt8JGJBS9Vm2eXoNYXYorrIJXZ/yglKixt0DeJbvbyvw
-bga7P09n9H0bmk4kYJbIQpM30MHFrAa63y6vpsteyC/zeEVLyPDOaokx6QVZxOuJ
-gLHZK/oUnvBS97S2xxJjX0cuejLPjNt1zhx1AJvB29jaPl1J2RLkKyV1hLB/um3S
-R1SjHBsqVREHaLGAlgd4fGHF6IiEfOIJWBXB8FXhQ5WcAkF8Rj4Vg9KV/FrQYpE0
-OeW8VW43BhPSmjphOJNAc7pg5Jcl+z2JiX0ABjUtEon4HjscaRpDQ99oYDz9dZJ5
-0EB0Xcni9EO7gO0nH400BfGwpszheOVpQxfsQj1BQxFFr6nogjEQYI1k5MmM/REt
-y2Wo3RiI6i3yRtCaeFjtzVAOYGTrVexGjgNzuMKwa61m9Ox32TU=
-=LV2u
------END PGP SIGNATURE-----
-
---cvVnyQ+4j833TQvp--
