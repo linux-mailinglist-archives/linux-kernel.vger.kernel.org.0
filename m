@@ -2,48 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8773F7BE05
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 12:09:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F3717BE0E
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 12:10:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727469AbfGaKJf convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 31 Jul 2019 06:09:35 -0400
-Received: from mx2.suse.de ([195.135.220.15]:57628 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725866AbfGaKJe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 06:09:34 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 9759CB08C;
-        Wed, 31 Jul 2019 10:09:33 +0000 (UTC)
-From:   =?utf-8?Q?Aur=C3=A9lien?= Aptel <aaptel@suse.com>
-To:     Colin King <colin.king@canonical.com>,
-        samba-technical@lists.samba.org, Steve French <sfrench@samba.org>,
-        linux-cifs@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] cifs: remove redundant assignment to variable rc
-In-Reply-To: <20190731090526.27245-1-colin.king@canonical.com>
-References: <20190731090526.27245-1-colin.king@canonical.com>
-Date:   Wed, 31 Jul 2019 12:09:31 +0200
-Message-ID: <87r266seg4.fsf@suse.com>
+        id S1727738AbfGaKKE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 06:10:04 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:36070 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725866AbfGaKKE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jul 2019 06:10:04 -0400
+Received: by mail-wr1-f67.google.com with SMTP id n4so69084001wrs.3;
+        Wed, 31 Jul 2019 03:10:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=LaPBamwe8LNxxhMMnlugrgaLMOo+ivzahalIgxNO9YM=;
+        b=bxRQm8RrZhN9Xc1mBZlynssfeaW+WRGEP49s2j9TdJXHIcYN/jJYvOaM4eBi2Z+mld
+         xshXjZQIBLWU8FbKRdCz3BRyJhTLtHxi9gN8YkXmLTKbdgUNBkElQoprqE4YxSSg9gSV
+         8f+a770AKt0wCxCQ2A4zN2G+/Uq+pNbzOxaUQ8XO4nDmyhmaD3dOYBPMsDyudvgdcmGa
+         5+gUqg8tYq0b0Zoc5q1NsGzf04uiZWH73fYTOEHTBquDEmQJpvJ8lxr0ua85bphk51XE
+         yomscBbywE0zB7hpyF22PeLyq3gRsal/BHCstMZwQuwcTfhG31jvatZiZQQGyb+yXy8C
+         GxQg==
+X-Gm-Message-State: APjAAAUFK5gWQDH/YFoIHfCbYXNzzbnJRAdIorppEJZptN3C2jT0e0Oi
+        Hx9QCL07q5I56SxMMyIQeMWTsNbdXWd1MR3IjHM=
+X-Google-Smtp-Source: APXvYqxnPqjf0pKDPP9iEC0wHGpvoacDZItJm4NNSvxzrLnaOqyc3Y99AHa0L6cIeVvp/HFF0mTSwr16a/6dnz8DtYg=
+X-Received: by 2002:adf:cd81:: with SMTP id q1mr132338071wrj.16.1564567801751;
+ Wed, 31 Jul 2019 03:10:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+References: <1564563689-25863-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <CAMuHMdWhA2xxKKEmmobZDDKGnWNfO4xDb6m6gM16CCFX-1UyTQ@mail.gmail.com> <TYAPR01MB4544CFAACC4C81316CF0760DD8DF0@TYAPR01MB4544.jpnprd01.prod.outlook.com>
+In-Reply-To: <TYAPR01MB4544CFAACC4C81316CF0760DD8DF0@TYAPR01MB4544.jpnprd01.prod.outlook.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 31 Jul 2019 12:09:48 +0200
+Message-ID: <CAMuHMdXyUEHAPYyBN=m6YwCS8129nD3q8Hi4Vh0fvpDwyHNWhw@mail.gmail.com>
+Subject: Re: [PATCH] phy: renesas: rcar-gen3-usb2: Fix sysfs interface of "role"
+To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Pavel Machek <pavel@denx.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Colin King <colin.king@canonical.com> writes:
-> Variable rc is being initialized with a value that is never read
-> and rc is being re-assigned a little later on. The assignment is
-> redundant and hence can be removed.
+Hi Shimoda-san,
 
-I think I would actually rather have rc set to an error by default than
-uninitialized. Just my personal opinion.
+On Wed, Jul 31, 2019 at 11:58 AM Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+> > From: Geert Uytterhoeven, Sent: Wednesday, July 31, 2019 6:27 PM
+> > On Wed, Jul 31, 2019 at 11:04 AM Yoshihiro Shimoda
+> > <yoshihiro.shimoda.uh@renesas.com> wrote:
+> > > Since the role_store() uses strncmp(), it's possible to refer
+> > > out-of-memory if the sysfs data size is smaller than strlen("host").
+> > > This patch fixes it by using sysfs_streq() instead of strncmp().
+> > >
+> > > Reported-by: Pavel Machek <pavel@denx.de>
+> > > Fixes: 9bb86777fb71 ("phy: rcar-gen3-usb2: add sysfs for usb role swap")
+> > > Cc: <stable@vger.kernel.org> # v4.10+
+> > > Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> >
+> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>
+> Thank you for your review!
+>
+> > > ---
+> > >  Just a record. The role_store() doesn't need to check the count because
+> > >  the sysfs_streq() checks the first argument is NULL or not.
+> >
+> > Is that wat you mean? sysfs_streq() doesn't seem to check for NULL pointers.
+>
+> Oops, sorry for unclear. I meant a NULL-terminated string, not NULL pointer.
 
-Cheers,
+OK.
+
+> > Isn't the real reason that sysfs (kernfs) guarantees that the passed buffer
+> > is NUL-terminated?
+>
+> I doesn't check in detail, but I assume so.
+
+I have checked that recently, so it is OK.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-Aurélien Aptel / SUSE Labs Samba Team
-GPG: 1839 CB5F 9F5B FB9B AA97  8C99 03C8 A49B 521B D5D3
-SUSE Linux GmbH, Maxfeldstraße 5, 90409 Nürnberg, Germany
-GF: Felix Imendörffer, Mary Higgins, Sri Rasiah HRB 21284 (AG Nürnberg)
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
