@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7ACDF7C1FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 14:44:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 883AD7C1E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 14:44:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387942AbfGaMoH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 08:44:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36274 "EHLO mail.kernel.org"
+        id S2388007AbfGaMoK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 08:44:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36410 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726467AbfGaMoD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 08:44:03 -0400
+        id S2387985AbfGaMoI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jul 2019 08:44:08 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4AD9C208E3;
-        Wed, 31 Jul 2019 12:44:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6C742206B8;
+        Wed, 31 Jul 2019 12:44:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564577042;
-        bh=7reqGB1oneZIvnBYyl+e01KzuP0iwc/xUA6OSeWmXBQ=;
+        s=default; t=1564577047;
+        bh=OpLDvIxJpuqw1Y07+slcLl/ar6SV0gGmWVthQGmxjtk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1uw509b3gXm5yAW7uuB6EetTqGB8HhRpSMLiG7Ppjay2X6HdPFbCqVbsExJkmR5cy
-         SlAEWEwBJhVHks+EvZdNNwwSNTheqZqcu/Icf1qd42ezG8Z2bh0MlIj3YrHzX2XqPl
-         kJ95oL8TKrHzSGo/l1xsd/hFpBh/5pCbywFgNusM=
+        b=tDKo50NGE77WI8eo25aSgbqjia32TVpK0C4drtWImg+lv0lYu8kouDCPwYoBZ+33x
+         TsM21lwfHU9khTHftDxdEPLcp/RrmiZlgI+vKVgy8xyHKSvZi7qEXmF0xlP/qKnzDH
+         Z+Wz83KvK4VrGhJ8CYiSZzZZyqwfRQk21DiKFWEE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org,
         Richard Gong <richard.gong@linux.intel.com>,
         Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH v2 01/10] driver core: add dev_groups to all drivers
-Date:   Wed, 31 Jul 2019 14:43:40 +0200
-Message-Id: <20190731124349.4474-2-gregkh@linuxfoundation.org>
+Subject: [PATCH v2 02/10] uio: uio_fsl_elbc_gpcm: convert platform driver to use dev_groups
+Date:   Wed, 31 Jul 2019 14:43:41 +0200
+Message-Id: <20190731124349.4474-3-gregkh@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190731124349.4474-1-gregkh@linuxfoundation.org>
 References: <20190731124349.4474-1-gregkh@linuxfoundation.org>
@@ -41,81 +41,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-
-Add the ability for the driver core to create and remove a list of
-attribute groups automatically when the device is bound/unbound from a
-specific driver.
+Platform drivers now have the option to have the platform core create
+and remove any needed sysfs attribute files.  So take advantage of that
+and do not register "by hand" a sysfs group of attributes.
 
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/base/dd.c      | 14 ++++++++++++++
- include/linux/device.h |  3 +++
- 2 files changed, 17 insertions(+)
+ drivers/uio/uio_fsl_elbc_gpcm.c | 23 ++++++++---------------
+ 1 file changed, 8 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/base/dd.c b/drivers/base/dd.c
-index 994a90747420..d811e60610d3 100644
---- a/drivers/base/dd.c
-+++ b/drivers/base/dd.c
-@@ -554,9 +554,16 @@ static int really_probe(struct device *dev, struct device_driver *drv)
- 			goto probe_failed;
- 	}
+diff --git a/drivers/uio/uio_fsl_elbc_gpcm.c b/drivers/uio/uio_fsl_elbc_gpcm.c
+index 450e2f5c9b43..be8a6905f507 100644
+--- a/drivers/uio/uio_fsl_elbc_gpcm.c
++++ b/drivers/uio/uio_fsl_elbc_gpcm.c
+@@ -71,6 +71,13 @@ static ssize_t reg_store(struct device *dev, struct device_attribute *attr,
+ static DEVICE_ATTR(reg_br, 0664, reg_show, reg_store);
+ static DEVICE_ATTR(reg_or, 0664, reg_show, reg_store);
  
-+	if (device_add_groups(dev, drv->dev_groups)) {
-+		dev_err(dev, "device_add_groups() failed\n");
-+		goto dev_groups_failed;
-+	}
++static struct attribute *uio_fsl_elbc_gpcm_attrs[] = {
++	&dev_attr_reg_br.attr,
++	&dev_attr_reg_or.attr,
++	NULL,
++};
++ATTRIBUTE_GROUPS(uio_fsl_elbc_gpcm);
 +
- 	if (test_remove) {
- 		test_remove = false;
+ static ssize_t reg_show(struct device *dev, struct device_attribute *attr,
+ 			char *buf)
+ {
+@@ -411,25 +418,12 @@ static int uio_fsl_elbc_gpcm_probe(struct platform_device *pdev)
+ 	/* store private data */
+ 	platform_set_drvdata(pdev, info);
  
-+		device_remove_groups(dev, drv->dev_groups);
-+
- 		if (dev->bus->remove)
- 			dev->bus->remove(dev);
- 		else if (drv->remove)
-@@ -584,6 +591,11 @@ static int really_probe(struct device *dev, struct device_driver *drv)
- 		 drv->bus->name, __func__, dev_name(dev), drv->name);
- 	goto done;
+-	/* create sysfs files */
+-	ret = device_create_file(priv->dev, &dev_attr_reg_br);
+-	if (ret)
+-		goto out_err3;
+-	ret = device_create_file(priv->dev, &dev_attr_reg_or);
+-	if (ret)
+-		goto out_err4;
+-
+ 	dev_info(priv->dev,
+ 		 "eLBC/GPCM device (%s) at 0x%llx, bank %d, irq=%d\n",
+ 		 priv->name, (unsigned long long)res.start, priv->bank,
+ 		 irq != NO_IRQ ? irq : -1);
  
-+dev_groups_failed:
-+	if (dev->bus->remove)
-+		dev->bus->remove(dev);
-+	else if (drv->remove)
-+		drv->remove(dev);
- probe_failed:
- 	if (dev->bus)
- 		blocking_notifier_call_chain(&dev->bus->p->bus_notifier,
-@@ -1114,6 +1126,8 @@ static void __device_release_driver(struct device *dev, struct device *parent)
+ 	return 0;
+-out_err4:
+-	device_remove_file(priv->dev, &dev_attr_reg_br);
+-out_err3:
+-	platform_set_drvdata(pdev, NULL);
+-	uio_unregister_device(info);
+ out_err2:
+ 	if (priv->shutdown)
+ 		priv->shutdown(info, true);
+@@ -448,8 +442,6 @@ static int uio_fsl_elbc_gpcm_remove(struct platform_device *pdev)
+ 	struct uio_info *info = platform_get_drvdata(pdev);
+ 	struct fsl_elbc_gpcm *priv = info->priv;
  
- 		pm_runtime_put_sync(dev);
- 
-+		device_remove_groups(dev, drv->dev_groups);
-+
- 		if (dev->bus && dev->bus->remove)
- 			dev->bus->remove(dev);
- 		else if (drv->remove)
-diff --git a/include/linux/device.h b/include/linux/device.h
-index c330b75c6c57..98c00b71b598 100644
---- a/include/linux/device.h
-+++ b/include/linux/device.h
-@@ -262,6 +262,8 @@ enum probe_type {
-  * @resume:	Called to bring a device from sleep mode.
-  * @groups:	Default attributes that get created by the driver core
-  *		automatically.
-+ * @dev_groups:	Additional attributes attached to device instance once the
-+ *		it is bound to the driver.
-  * @pm:		Power management operations of the device which matched
-  *		this driver.
-  * @coredump:	Called when sysfs entry is written to. The device driver
-@@ -296,6 +298,7 @@ struct device_driver {
- 	int (*suspend) (struct device *dev, pm_message_t state);
- 	int (*resume) (struct device *dev);
- 	const struct attribute_group **groups;
-+	const struct attribute_group **dev_groups;
- 
- 	const struct dev_pm_ops *pm;
- 	void (*coredump) (struct device *dev);
+-	device_remove_file(priv->dev, &dev_attr_reg_or);
+-	device_remove_file(priv->dev, &dev_attr_reg_br);
+ 	platform_set_drvdata(pdev, NULL);
+ 	uio_unregister_device(info);
+ 	if (priv->shutdown)
+@@ -474,6 +466,7 @@ static struct platform_driver uio_fsl_elbc_gpcm_driver = {
+ 	.driver = {
+ 		.name = "fsl,elbc-gpcm-uio",
+ 		.of_match_table = uio_fsl_elbc_gpcm_match,
++		.dev_groups = uio_fsl_elbc_gpcm_groups,
+ 	},
+ 	.probe = uio_fsl_elbc_gpcm_probe,
+ 	.remove = uio_fsl_elbc_gpcm_remove,
 -- 
 2.22.0
 
