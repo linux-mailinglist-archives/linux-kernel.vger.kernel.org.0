@@ -2,14 +2,14 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C39897C00A
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 13:33:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B62767BFFA
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 13:33:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728380AbfGaLc4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 07:32:56 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:35602 "EHLO
+        id S1728467AbfGaLcT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 07:32:19 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:35684 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387724AbfGaLaR (ORCPT
+        with ESMTP id S1728108AbfGaLaR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 31 Jul 2019 07:30:17 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -18,17 +18,17 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=UpwPyKYukdnAiCSwl3YLAGH0NJAF159o4Gkjx+CWI3E=; b=Q06wp5FAUIAm
-        Eo7uSaBczf16sqNstTNmOZry5fQgDQIct9FE/CUGUfk0iGb4iaz11S5e01EjOKDAtPyZKGEQLcgdN
-        cQXRfmtm2Omnvozqhous5QbhfY469uulg2K7eSyD17LmAeXgDBvUxQUgB7rnMyrX2X/cbrqFxh2mz
-        LlgV0=;
+        List-Archive; bh=7hJLG8//Tyf0+YxtxJyuLHs8MXWPYgyM07amw97SLrg=; b=i2BWEjRhpNHA
+        S1r9VB/U6dLlM1ZuubWWNziSURl6gTrcxx9GGoUYd4G+VcIn/2RNuPKJs6HbZNO9xeHSgJW2/hSMz
+        dWZu9dchxJnaWQTd3RIICNLF8eA661/DFLwyE3INaKB4XWHaZzu/ubb/M4gb95CsAI+4aE+A7fKsn
+        z3cB8=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1hsmng-0001lh-2I; Wed, 31 Jul 2019 11:29:44 +0000
+        id 1hsmnf-0001le-PJ; Wed, 31 Jul 2019 11:29:43 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 9CBAE2742CDE; Wed, 31 Jul 2019 12:29:43 +0100 (BST)
+        id 514542742C99; Wed, 31 Jul 2019 12:29:43 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
 To:     YueHaibing <yuehaibing@huawei.com>
 Cc:     alexandre.torgue@st.com, alsa-devel@alsa-project.org,
@@ -55,10 +55,10 @@ Cc:     alexandre.torgue@st.com, alsa-devel@alsa-project.org,
         thierry.reding@gmail.com, timur@kernel.org, tiwai@suse.com,
         wahrenst@gmx.net, wens@csie.org, Xiubo.Lee@gmail.com,
         yamada.masahiro@socionext.com
-Subject: Applied "ASoC: sun8i-codec-analog: use devm_platform_ioremap_resource() to simplify code" to the asoc tree
-In-Reply-To: <20190727150738.54764-33-yuehaibing@huawei.com>
+Subject: Applied "ASoC: sunxi: sun50i-codec-analog: use devm_platform_ioremap_resource() to simplify code" to the asoc tree
+In-Reply-To: <20190727150738.54764-34-yuehaibing@huawei.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190731112943.9CBAE2742CDE@ypsilon.sirena.org.uk>
+Message-Id: <20190731112943.514542742C99@ypsilon.sirena.org.uk>
 Date:   Wed, 31 Jul 2019 12:29:43 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -67,7 +67,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: sun8i-codec-analog: use devm_platform_ioremap_resource() to simplify code
+   ASoC: sunxi: sun50i-codec-analog: use devm_platform_ioremap_resource() to simplify code
 
 has been applied to the asoc tree at
 
@@ -92,10 +92,10 @@ to this mail.
 Thanks,
 Mark
 
-From e12fd61fd7c1bbbb758ede9fdf58ac2bd5de6b33 Mon Sep 17 00:00:00 2001
+From 54dd39e4aca8edb231e13349ac3a3a44ef28d3d4 Mon Sep 17 00:00:00 2001
 From: YueHaibing <yuehaibing@huawei.com>
-Date: Sat, 27 Jul 2019 23:07:36 +0800
-Subject: [PATCH] ASoC: sun8i-codec-analog: use
+Date: Sat, 27 Jul 2019 23:07:37 +0800
+Subject: [PATCH] ASoC: sunxi: sun50i-codec-analog: use
  devm_platform_ioremap_resource() to simplify code
 
 Use devm_platform_ioremap_resource() to simplify the code a bit.
@@ -103,19 +103,19 @@ This is detected by coccinelle.
 
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Link: https://lore.kernel.org/r/20190727150738.54764-33-yuehaibing@huawei.com
+Link: https://lore.kernel.org/r/20190727150738.54764-34-yuehaibing@huawei.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/sunxi/sun8i-codec-analog.c | 4 +---
+ sound/soc/sunxi/sun50i-codec-analog.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/sound/soc/sunxi/sun8i-codec-analog.c b/sound/soc/sunxi/sun8i-codec-analog.c
-index e92aeedd6feb..be872eefa61e 100644
---- a/sound/soc/sunxi/sun8i-codec-analog.c
-+++ b/sound/soc/sunxi/sun8i-codec-analog.c
-@@ -819,12 +819,10 @@ MODULE_DEVICE_TABLE(of, sun8i_codec_analog_of_match);
+diff --git a/sound/soc/sunxi/sun50i-codec-analog.c b/sound/soc/sunxi/sun50i-codec-analog.c
+index 6d1de565350e..f5b7069bcca2 100644
+--- a/sound/soc/sunxi/sun50i-codec-analog.c
++++ b/sound/soc/sunxi/sun50i-codec-analog.c
+@@ -459,12 +459,10 @@ MODULE_DEVICE_TABLE(of, sun50i_codec_analog_of_match);
  
- static int sun8i_codec_analog_probe(struct platform_device *pdev)
+ static int sun50i_codec_analog_probe(struct platform_device *pdev)
  {
 -	struct resource *res;
  	struct regmap *regmap;
