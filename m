@@ -2,131 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 403837CD39
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 21:53:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F50A7CD51
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 21:58:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730003AbfGaTxt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 15:53:49 -0400
-Received: from sauhun.de ([88.99.104.3]:44750 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726175AbfGaTxt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 15:53:49 -0400
-Received: from localhost (p54B33080.dip0.t-ipconnect.de [84.179.48.128])
-        by pokefinder.org (Postfix) with ESMTPSA id 6C4152C270A;
-        Wed, 31 Jul 2019 21:53:46 +0200 (CEST)
-Date:   Wed, 31 Jul 2019 21:53:46 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc:     linux-i2c@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Leon Luo <leonl@leopardimaging.com>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
-        "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
-        Steve Longerbeam <slongerbeam@gmail.com>,
-        Luis Oliveira <lolivei@synopsys.com>,
-        Jacopo Mondi <jacopo@jmondi.org>,
-        Wenyou Yang <wenyou.yang@microchip.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Mats Randgaard <matrandg@cisco.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Marco Felsch <m.felsch@pengutronix.de>,
-        Michael Grzeschik <m.grzeschik@pengutronix.de>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Enrico Scholz <enrico.scholz@sigma-chemnitz.de>,
-        Simon Horman <horms+renesas@verge.net.au>,
+        id S1729569AbfGaT62 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 15:58:28 -0400
+Received: from mout.kundenserver.de ([212.227.126.133]:48395 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728326AbfGaT62 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jul 2019 15:58:28 -0400
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue012 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1MREqy-1hgjWs14cO-00N7VN; Wed, 31 Jul 2019 21:57:50 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     soc@kernel.org, linux-arm-kernel@lists.infradead.org,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Sylvain Lemieux <slemieux.tyco@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Allison Randal <allison@lohutok.net>,
-        Richard Fontana <rfontana@redhat.com>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Julia Lawall <Julia.Lawall@lip6.fr>,
-        Alexey Khoroshilov <khoroshilov@ispras.ru>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 6/6] media: i2c: Convert to new i2c device probe()
-Message-ID: <20190731195346.GH4084@kunai>
-References: <20190710215149.9208-1-kieran.bingham+renesas@ideasonboard.com>
- <20190710215149.9208-7-kieran.bingham+renesas@ideasonboard.com>
+        Alan Stern <stern@rowland.harvard.edu>
+Cc:     Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Guenter Roeck <linux@roeck-us.net>, linux-gpio@vger.kernel.org,
+        netdev@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
+Subject: [PATCH 01/14] usb: ohci-nxp: enable compile-testing
+Date:   Wed, 31 Jul 2019 21:56:43 +0200
+Message-Id: <20190731195713.3150463-2-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
+In-Reply-To: <20190731195713.3150463-1-arnd@arndb.de>
+References: <20190731195713.3150463-1-arnd@arndb.de>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="pfTAc8Cvt8L6I27a"
-Content-Disposition: inline
-In-Reply-To: <20190710215149.9208-7-kieran.bingham+renesas@ideasonboard.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:Y9P2ZZ0tUv+u7UP+ySO48Qnisfdw/BPCHBVVrPVOhMR0se6XHtZ
+ /rVucQltL2fuAeI04etj2w+UKbl8qnEoBbumQEN4+999lkM3I2ap2LhDhPPYCU+sPUiSn9C
+ MHqmRZQQCJodcJVkIaRsJz/aHzlJ2qbDtR9NKGZoXdpYt9iNJyi2kjLzGDf3w4RZjG9+E0D
+ 3y12ssqwzFQKPPcwF8qWQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:Xo1stquwtQs=:bl7JhWbnrGGzdDgrJPO8Kj
+ DFy2wWP0ZHZ9IanjfpKj7idAUI1oh8dwC6+KdJvb4LHeY1JtZMKcx63mjHAi686NYHgQ8VVTE
+ qpvSBbWGUYS5+bYWsQ/4laOaF1bNS8KywD6IBggqWVu/qHZqfq9eI1VEV6NpVr5g5MyaMj1IH
+ P1wdZBUDAvXz+mDSgg7cQloD/0mVegg6up9JQIRaNzmyYHPSzsKpv8GSHgQBiMwAmeah7yIaO
+ cZfZOQzu/09Y4lqBFz/YeeiIARk7oD3Pa0WQbjRh+AZOmhCQaBCG4OrJn3aq3qPwJeOM0Hv1K
+ KKSuKJKjGXmywjGRQ29Orr90FifnUh8cq1ttCAtvmbagDR63yrU64szUpPnzWtecaWIRp6s5b
+ vTO1+amooJrMidahTJqQKSHM2fx4r9Sr5EmLoCZv+/c9BPTs+f02+pADSmTAUS22Fgv+0jaGt
+ 4HQm2+tHlytUCew5ukF92am1YnKG10BWAYbLXeG2MH8pUFBmgRRVR7ilL7WeTx2Gedk/V79ct
+ uGd8u0N8BHw/0ZucXrPbX+CiYkje/6ZXb3B2XMt6A0XjEX+fg0JP5yhXoUELaqnft5n+Wvivf
+ b1eeZZbdGV+ibHimys+Ct4FUkEzW13+8qoPTMA6tfQrU+zhiUJvNpnzkTBP7V31ZHaVtkPotD
+ 0n8Ep6f3eWAW9zElHMZFjMZoVXqmIZUOH9/ZHQqRINOgvWQfv5Zqa7S52aDmMcB7cQFIxgl+w
+ blDIwv7/7PJz7UoT+quSvgJ675iI9iAKHP+p6g==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The driver hardcodes a hardware I/O address the way one should
+generally not do, and this prevents both compile-testing, and
+moving the platform to CONFIG_ARCH_MULTIPLATFORM.
 
---pfTAc8Cvt8L6I27a
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Change the code to be independent of the machine headers
+to allow those two. Removing the hardcoded address would
+be hard and is not necessary, so leave that in place for now.
 
-On Wed, Jul 10, 2019 at 10:51:49PM +0100, Kieran Bingham wrote:
-> The I2C core framework provides a simplified probe framework from commit
-> b8a1a4cd5a98 ("i2c: Provide a temporary .probe_new() call-back type").
->=20
-> These drivers do not utilise the i2c_device_id table in the probe, so we
-> can easily convert them to utilise the simplfied i2c driver
-> registration.
->=20
-> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> ---
->  drivers/media/i2c/adv7343.c  | 5 ++---
->  drivers/media/i2c/imx274.c   | 5 ++---
->  drivers/media/i2c/max2175.c  | 5 ++---
->  drivers/media/i2c/mt9m001.c  | 5 ++---
->  drivers/media/i2c/mt9m111.c  | 5 ++---
->  drivers/media/i2c/ov2640.c   | 5 ++---
->  drivers/media/i2c/ov2659.c   | 5 ++---
->  drivers/media/i2c/ov5640.c   | 5 ++---
->  drivers/media/i2c/ov5645.c   | 5 ++---
->  drivers/media/i2c/ov5647.c   | 5 ++---
->  drivers/media/i2c/ov772x.c   | 5 ++---
->  drivers/media/i2c/ov7740.c   | 5 ++---
->  drivers/media/i2c/ov9650.c   | 5 ++---
->  drivers/media/i2c/s5k5baf.c  | 5 ++---
->  drivers/media/i2c/s5k6a3.c   | 5 ++---
->  drivers/media/i2c/tc358743.c | 5 ++---
->  drivers/media/i2c/ths8200.c  | 5 ++---
->  drivers/media/i2c/tvp5150.c  | 5 ++---
->  drivers/media/i2c/tvp7002.c  | 4 ++--
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/usb/host/Kconfig    |  3 ++-
+ drivers/usb/host/ohci-nxp.c | 25 ++++++++++++++++++-------
+ 2 files changed, 20 insertions(+), 8 deletions(-)
 
-These drivers, I did not review visually but build tested them and
-verified they didn't show any build warnings or failures. Glimpsed
-through the conversion pattern. Looks all good.
+diff --git a/drivers/usb/host/Kconfig b/drivers/usb/host/Kconfig
+index 40b5de597112..73d233d3bf4d 100644
+--- a/drivers/usb/host/Kconfig
++++ b/drivers/usb/host/Kconfig
+@@ -441,7 +441,8 @@ config USB_OHCI_HCD_S3C2410
+ 
+ config USB_OHCI_HCD_LPC32XX
+ 	tristate "Support for LPC on-chip OHCI USB controller"
+-	depends on USB_OHCI_HCD && ARCH_LPC32XX
++	depends on USB_OHCI_HCD
++	depends on ARCH_LPC32XX || COMPILE_TEST
+ 	depends on USB_ISP1301
+ 	default y
+ 	---help---
+diff --git a/drivers/usb/host/ohci-nxp.c b/drivers/usb/host/ohci-nxp.c
+index f5f532601092..c561881d0e79 100644
+--- a/drivers/usb/host/ohci-nxp.c
++++ b/drivers/usb/host/ohci-nxp.c
+@@ -29,10 +29,7 @@
+ 
+ #include "ohci.h"
+ 
+-#include <mach/hardware.h>
+-
+ #define USB_CONFIG_BASE		0x31020000
+-#define USB_OTG_STAT_CONTROL	IO_ADDRESS(USB_CONFIG_BASE + 0x110)
+ 
+ /* USB_OTG_STAT_CONTROL bit defines */
+ #define TRANSPARENT_I2C_EN	(1 << 7)
+@@ -122,19 +119,33 @@ static inline void isp1301_vbus_off(void)
+ 
+ static void ohci_nxp_start_hc(void)
+ {
+-	unsigned long tmp = __raw_readl(USB_OTG_STAT_CONTROL) | HOST_EN;
++	void __iomem *usb_otg_stat_control = ioremap(USB_CONFIG_BASE + 0x110, 4);
++	unsigned long tmp;
++
++	if (WARN_ON(!usb_otg_stat_control))
++		return;
++
++	tmp = __raw_readl(usb_otg_stat_control) | HOST_EN;
+ 
+-	__raw_writel(tmp, USB_OTG_STAT_CONTROL);
++	__raw_writel(tmp, usb_otg_stat_control);
+ 	isp1301_vbus_on();
++
++	iounmap(usb_otg_stat_control);
+ }
+ 
+ static void ohci_nxp_stop_hc(void)
+ {
++	void __iomem *usb_otg_stat_control = ioremap(USB_CONFIG_BASE + 0x110, 4);
+ 	unsigned long tmp;
+ 
++	if (WARN_ON(!usb_otg_stat_control))
++		return;
++
+ 	isp1301_vbus_off();
+-	tmp = __raw_readl(USB_OTG_STAT_CONTROL) & ~HOST_EN;
+-	__raw_writel(tmp, USB_OTG_STAT_CONTROL);
++	tmp = __raw_readl(usb_otg_stat_control) & ~HOST_EN;
++	__raw_writel(tmp, usb_otg_stat_control);
++
++	iounmap(usb_otg_stat_control);
+ }
+ 
+ static int ohci_hcd_nxp_probe(struct platform_device *pdev)
+-- 
+2.20.0
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-
---pfTAc8Cvt8L6I27a
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl1B8ckACgkQFA3kzBSg
-KbYEMRAAhmwhczAhbJim7z/RwnJLFoLsdVmxLuFphdE5tArR1CVlmSnLmePsb+SV
-oUHKtP20MJqd0JG5BQPthFD14pLhhgPSqEfx5wuEZ8D6JVHIVnj1Xghr+eg7B3/2
-+3o9zhbn57geSAmR56Mqm23SR9Je9WeggL8jtQll/JScKzyMo672s8U6sX5fJhy6
-tQ87t59yQ6QhMX1uu4yCPLwlbryhoFYwB8zeYtDsMJdgyg9AbMCLT7XePRmZdR6B
-BDmzajGEOrRYtW48Nl0xI7lyO79iLuD8JvqiqMPmM5sbz0GntdItUMgwbLFHgaAN
-tWLRMJlg/WffwWP7HEzPctBR1EMgfoCBDbPTdbckYuzhbtXnUn2bZe4yJalo73U2
-aoAnO4/LUqPkheQSrZklOhc6IdAuYCVvRs5DfryTubv7UcHpFVwTAZpVqWvU4mN+
-O351GpW8QdkBqCwu7M2J/dbCF2Xbz9kRuDdD1v+gS4eaMoVy68CB2IcYUgh52EnW
-aWqLKnIn1Vkz02N9sM35OvIYZKBaX5/EXjJSGkjltV65bSC20CqFBMFwRfuE+4vB
-SfkxTnwTI5beAn2ouZope7AanpO08QHCSb46JC86fMTt+3M9lzw0ehBw8cPv1A1j
-VPldElHq9IVpVRUyy4gZMJmvDzWtR8LCXFG3lsQ6rYTLa8dlI54=
-=FykV
------END PGP SIGNATURE-----
-
---pfTAc8Cvt8L6I27a--
