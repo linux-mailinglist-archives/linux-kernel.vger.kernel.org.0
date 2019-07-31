@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79E437CA5A
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 19:31:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 529797CA74
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 19:32:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730678AbfGaRbX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 13:31:23 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:38195 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730657AbfGaRbW (ORCPT
+        id S1730691AbfGaRb2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 13:31:28 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:35714 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730655AbfGaRbZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 13:31:22 -0400
-Received: by mail-pg1-f193.google.com with SMTP id f5so23567224pgu.5;
-        Wed, 31 Jul 2019 10:31:22 -0700 (PDT)
+        Wed, 31 Jul 2019 13:31:25 -0400
+Received: by mail-pf1-f193.google.com with SMTP id u14so32277087pfn.2;
+        Wed, 31 Jul 2019 10:31:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=3Rq4ixRwzTusnM+r4uVBay3rBSCCdr5LrRUS010+F0U=;
-        b=eWlCOg5Hdz1qSpJeRYwg3iuMlVPg4PoJxR7JZMVAfCHl+eNr9cdTsjj45SIIHZ/ef8
-         dKNctXKA053xAmYU9E5XFmzcAa7ZFH4wm+ySkqd/9me3XuPqgi2ZQNKnWqL+ij7ujx9C
-         5ntXpNwNMGgIIajoYi4fr0G1JCa9atthyNkADM5ikWp5Xi0vs0VmnKOUaaRw4A8w1IN7
-         OezZGKhalV5dBdH37KDLreWQGmx69LSVvV+TNjDBcYEMUNy2B+EoSQX18dvCHMDa20kP
-         8jRTp+7y351Sbc8YrUhX7EnIX2jJ1r+54qV7t71KVhqDKYzibA/4wG32OyqmokJ5zFGW
-         WxRA==
+        bh=DkEZ06b+2pjJY+GWngQZPpWgfZ7FTlmFypQFjS2AHew=;
+        b=K+Xf3lUZoinDumtRrh1bU50SQZOmMv880ajEJtPjI3u/WyG8dsNlquBb0zttdjAdEf
+         AaYb8gJ+eNvDcmUkBjTLGCLotTMt+f2SvKnYBKdrXIf+yrRSJsJeOO9M9tb8pLIvbB5K
+         lXqoas33Qcbz/KVTcSU7wrX+nrWrqJk3iLUSk/FqvVEZ8CGTeKN/XXelJ/CAAqheHJVW
+         hFZhMsTgN1yXZOXvTr24OyddZcPSXnwJjFmeGMUmebm3cXk7LAPPJgdd7wtXTs5G+N/3
+         8vP+vDoXPomFfYZPqO7R5FuFMvw07VtvJqD64XXUw35kk361CsU9lUBqRtGpTumGV/1F
+         9tjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=3Rq4ixRwzTusnM+r4uVBay3rBSCCdr5LrRUS010+F0U=;
-        b=XTN34cieG1t1W/6AwI5L0OANcjmHQ+QRNHIifFOwT0pCmqhZBxIl++WzH/ls9Sq7v1
-         hFYboanbAppYbyW+5VZQXszIB/65sUbeDYevu4Mnu+HV/4yMxv4qpFGPudG9LbKmyjwz
-         2wN9Y4iYvXlprlzyPGKgox9eC9I8T80yKxSSH4j0qN4UQ/flh66P3qsx2GJa1VDEvuM5
-         GQDTufJJIPl71zJWoVtBmpbuq0xAN99NVFWX4pYHU7lZgdaHdfpyI9CX9tLkJn/3NI/L
-         dYdmXc98BPRfa3urM+vBKhlVBxB0KvOexUZcr7I40VoI940xDpz/SddvvBMo9KZ7CpFu
-         htmA==
-X-Gm-Message-State: APjAAAWtMKi0h3tk0qKaY8m0tqXM6DvwZ7AQSOod4XA9H9R+qqp1fRCz
-        Alxzzx0NMfZ5eo6MzODTtLybi/nXQyo=
-X-Google-Smtp-Source: APXvYqy8Cbiv2LiwMeZqjKVYKvkZ6s2SqIcxIx7B0qEOeCS0WBYVcEyqvLcLcf2xU1m7ISbqnXm5FA==
-X-Received: by 2002:a63:724f:: with SMTP id c15mr117597354pgn.257.1564594281510;
-        Wed, 31 Jul 2019 10:31:21 -0700 (PDT)
+        bh=DkEZ06b+2pjJY+GWngQZPpWgfZ7FTlmFypQFjS2AHew=;
+        b=sQGImQ2tHRny4+OBB7g91ewJTfh9PpgSGw3xtHwnnnc679Fvi0MxQp4pnq5VQH1soI
+         OljdAqUPWpGxnV0qL8PpX3HeCpRi/MkeWnDl2AxWQnXtFTi5CNu3u7ziZCnlx52aUX5E
+         CXjeA5sRVocaWHOJ02arT7isRYKP570seKcwWpLWRbnNYxPXLS/EYuxUoiEpz53RCZ+6
+         RyWQP6H7pwFLNtMp4QGJNqdeaE/363Clh6SfQTf+V4Ql94Xn4NTl75xF0E/FKKw4vE+S
+         aU6O7R3KZz+LyBsDCwp0U/RsXIvkYoJKLpsQ89xfHZ1omX8GpEZHUc1myD5Kr24/hGoH
+         4YOQ==
+X-Gm-Message-State: APjAAAU4RDDY4RJ2t8G8GANg7ZC6m3LoGmenQjJA0oMcLhpbPEDHZng4
+        kQ8fTJD3W+kZ1sUSTOUPmx4bUHx+hkk=
+X-Google-Smtp-Source: APXvYqzGXYXYxxdsSzsA7byfoGsoqzuWJb9BJJSff+/cBI0g7jx8vneW1POd/QOZrm+kHiimYulpeQ==
+X-Received: by 2002:a62:2f06:: with SMTP id v6mr48908361pfv.195.1564594283695;
+        Wed, 31 Jul 2019 10:31:23 -0700 (PDT)
 Received: from localhost.localdomain ([2607:fb90:4ad:5a0b:2aff:6e0f:8973:5a26])
-        by smtp.gmail.com with ESMTPSA id bo20sm2089617pjb.23.2019.07.31.10.31.19
+        by smtp.gmail.com with ESMTPSA id bo20sm2089617pjb.23.2019.07.31.10.31.21
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 31 Jul 2019 10:31:20 -0700 (PDT)
+        Wed, 31 Jul 2019 10:31:23 -0700 (PDT)
 From:   Andrey Smirnov <andrew.smirnov@gmail.com>
 To:     linux-serial@vger.kernel.org
 Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
@@ -55,9 +55,9 @@ Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Jiri Slaby <jslaby@suse.com>, linux-imx@nxp.com,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 07/23] tty: serial: fsl_lpuart: Fix issue in software flow control
-Date:   Wed, 31 Jul 2019 10:30:29 -0700
-Message-Id: <20190731173045.11718-8-andrew.smirnov@gmail.com>
+Subject: [PATCH v2 08/23] tty: serial: fls_lpuart: Split shared TX IRQ handler into two
+Date:   Wed, 31 Jul 2019 10:30:30 -0700
+Message-Id: <20190731173045.11718-9-andrew.smirnov@gmail.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190731173045.11718-1-andrew.smirnov@gmail.com>
 References: <20190731173045.11718-1-andrew.smirnov@gmail.com>
@@ -68,23 +68,13 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Although I haven't observed this bug in practice, it seems that the
-code for handling x_char of LPUART is pretty much identical to that of
-i.MX. So the fix found in commit 7e2fb5aa8d81 ("serial: imx: Fix issue
-in software flow control"):
-
-    serial: imx: Fix issue in software flow control
-
-    After send out x_char in UART driver, x_char needs to be cleared
-    by UART driver itself, otherwise data in TXFIFO can no longer be
-    sent out.
-    Also tx counter needs to be increased to keep track of correct
-    number of transmitted data.
-
-    Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
-    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
-should apply here as well.
+While sharing code for Tx interrupt handler between 8 and 32 bit
+variant of the peripheral saves a bit of code duplication it also adds
+quite a number of lpuart_is_32() checks which makes it harder to
+understand. Move shared bits back into corresponding
+lpuart*_transmit_buffer functions, split lpuart_txint into
+lpuart_txint and lpuart32_txint so we can drop all extra
+lpuart_is_32() check and make the code flow more linear.
 
 Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 Cc: Stefan Agner <stefan@agner.ch>
@@ -97,22 +87,112 @@ Cc: linux-imx@nxp.com
 Cc: linux-serial@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org
 ---
- drivers/tty/serial/fsl_lpuart.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/tty/serial/fsl_lpuart.c | 61 +++++++++++++++++++--------------
+ 1 file changed, 35 insertions(+), 26 deletions(-)
 
 diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c
-index c35f81df0cff..8657addbfd1c 100644
+index 8657addbfd1c..ed6d3f836c93 100644
 --- a/drivers/tty/serial/fsl_lpuart.c
 +++ b/drivers/tty/serial/fsl_lpuart.c
-@@ -782,6 +782,8 @@ static void lpuart_txint(struct lpuart_port *sport)
- 			lpuart32_write(&sport->port, sport->port.x_char, UARTDATA);
- 		else
- 			writeb(sport->port.x_char, sport->port.membase + UARTDR);
+@@ -663,6 +663,18 @@ static inline void lpuart_transmit_buffer(struct lpuart_port *sport)
+ {
+ 	struct circ_buf *xmit = &sport->port.state->xmit;
+ 
++	if (sport->port.x_char) {
++		writeb(sport->port.x_char, sport->port.membase + UARTDR);
 +		sport->port.icount.tx++;
 +		sport->port.x_char = 0;
- 		goto out;
- 	}
++		return;
++	}
++
++	if (uart_circ_empty(xmit) || uart_tx_stopped(&sport->port)) {
++		lpuart_stop_tx(&sport->port);
++		return;
++	}
++
+ 	while (!uart_circ_empty(xmit) &&
+ 		(readb(sport->port.membase + UARTTCFIFO) < sport->txfifo_size)) {
+ 		writeb(xmit->buf[xmit->tail], sport->port.membase + UARTDR);
+@@ -682,6 +694,18 @@ static inline void lpuart32_transmit_buffer(struct lpuart_port *sport)
+ 	struct circ_buf *xmit = &sport->port.state->xmit;
+ 	unsigned long txcnt;
  
++	if (sport->port.x_char) {
++		lpuart32_write(&sport->port, sport->port.x_char, UARTDATA);
++		sport->port.icount.tx++;
++		sport->port.x_char = 0;
++		return;
++	}
++
++	if (uart_circ_empty(xmit) || uart_tx_stopped(&sport->port)) {
++		lpuart32_stop_tx(&sport->port);
++		return;
++	}
++
+ 	txcnt = lpuart32_read(&sport->port, UARTWATER);
+ 	txcnt = txcnt >> UARTWATER_TXCNT_OFF;
+ 	txcnt &= UARTWATER_COUNT_MASK;
+@@ -773,34 +797,10 @@ static unsigned int lpuart32_tx_empty(struct uart_port *port)
+ 
+ static void lpuart_txint(struct lpuart_port *sport)
+ {
+-	struct circ_buf *xmit = &sport->port.state->xmit;
+ 	unsigned long flags;
+ 
+ 	spin_lock_irqsave(&sport->port.lock, flags);
+-	if (sport->port.x_char) {
+-		if (lpuart_is_32(sport))
+-			lpuart32_write(&sport->port, sport->port.x_char, UARTDATA);
+-		else
+-			writeb(sport->port.x_char, sport->port.membase + UARTDR);
+-		sport->port.icount.tx++;
+-		sport->port.x_char = 0;
+-		goto out;
+-	}
+-
+-	if (uart_circ_empty(xmit) || uart_tx_stopped(&sport->port)) {
+-		if (lpuart_is_32(sport))
+-			lpuart32_stop_tx(&sport->port);
+-		else
+-			lpuart_stop_tx(&sport->port);
+-		goto out;
+-	}
+-
+-	if (lpuart_is_32(sport))
+-		lpuart32_transmit_buffer(sport);
+-	else
+-		lpuart_transmit_buffer(sport);
+-
+-out:
++	lpuart_transmit_buffer(sport);
+ 	spin_unlock_irqrestore(&sport->port.lock, flags);
+ }
+ 
+@@ -876,6 +876,15 @@ static void lpuart_rxint(struct lpuart_port *sport)
+ 	tty_flip_buffer_push(port);
+ }
+ 
++static void lpuart32_txint(struct lpuart_port *sport)
++{
++	unsigned long flags;
++
++	spin_lock_irqsave(&sport->port.lock, flags);
++	lpuart32_transmit_buffer(sport);
++	spin_unlock_irqrestore(&sport->port.lock, flags);
++}
++
+ static void lpuart32_rxint(struct lpuart_port *sport)
+ {
+ 	unsigned int flg, ignored = 0;
+@@ -967,7 +976,7 @@ static irqreturn_t lpuart32_int(int irq, void *dev_id)
+ 		lpuart32_rxint(sport);
+ 
+ 	if ((sts & UARTSTAT_TDRE) && !sport->lpuart_dma_tx_use)
+-		lpuart_txint(sport);
++		lpuart32_txint(sport);
+ 
+ 	lpuart32_write(&sport->port, sts, UARTSTAT);
+ 	return IRQ_HANDLED;
 -- 
 2.21.0
 
