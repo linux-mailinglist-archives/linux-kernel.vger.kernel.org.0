@@ -2,115 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E5DD7C0C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 14:09:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 906D07C0BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 14:08:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729039AbfGaMJe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 08:09:34 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:3671 "EHLO huawei.com"
+        id S1728997AbfGaMHq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 08:07:46 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:3670 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725793AbfGaMJd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 08:09:33 -0400
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id CD03E15202C67FF2B54E;
-        Wed, 31 Jul 2019 20:09:30 +0800 (CST)
-Received: from [127.0.0.1] (10.133.213.239) by DGGEMS410-HUB.china.huawei.com
- (10.3.19.210) with Microsoft SMTP Server id 14.3.439.0; Wed, 31 Jul 2019
- 20:09:26 +0800
-Subject: Re: [PATCH] gpio: remove duplicated function definition
-To:     <linus.walleij@linaro.org>, <bgolaszewski@baylibre.com>,
-        <yamada.masahiro@socionext.com>
-References: <20190731100028.48884-1-yuehaibing@huawei.com>
-CC:     <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>
-From:   Yuehaibing <yuehaibing@huawei.com>
-Message-ID: <1ce6b018-fca4-7b5e-7ddf-e55be9cdb221@huawei.com>
-Date:   Wed, 31 Jul 2019 20:09:25 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.2.0
+        id S1726185AbfGaMHq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jul 2019 08:07:46 -0400
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 26166B29F60F478F0E4D;
+        Wed, 31 Jul 2019 20:07:27 +0800 (CST)
+Received: from RH5885H-V3.huawei.com (10.90.53.225) by
+ DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
+ 14.3.439.0; Wed, 31 Jul 2019 20:07:18 +0800
+From:   SunKe <sunke32@huawei.com>
+To:     <sunke32@huawei.com>, <josef@toxicpanda.com>, <axboe@kernel.dk>,
+        <linux-block@vger.kernel.org>, <nbd@other.debian.org>,
+        <linux-kernel@vger.kernel.org>, <kamatam@amazon.com>,
+        <manoj.br@gmail.com>, <stable@vger.kernel.org>, <dwmw@amazon.com>
+Subject: [PATCH v2] nbd: replace kill_bdev() with __invalidate_device() again
+Date:   Wed, 31 Jul 2019 20:13:10 +0800
+Message-ID: <1564575190-132357-1-git-send-email-sunke32@huawei.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <20190731100028.48884-1-yuehaibing@huawei.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.133.213.239]
+Content-Type: text/plain
+X-Originating-IP: [10.90.53.225]
 X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Pls drop this
+From: Munehisa Kamata <kamatam@amazon.com>
 
-On 2019/7/31 18:00, YueHaibing wrote:
-> when building without CONFIG_PINCTRL:
-> 
-> In file included from drivers/hwmon/pmbus/ucd9000.c:19:0:
-> ./include/linux/gpio/driver.h:576:1: error: redefinition of gpiochip_add_pin_range
->  gpiochip_add_pin_range(struct gpio_chip *chip, const char *pinctl_name,
->  ^~~~~~~~~~~~~~~~~~~~~~
-> In file included from drivers/hwmon/pmbus/ucd9000.c:18:0:
-> ./include/linux/gpio.h:245:1: note: previous definition of gpiochip_add_pin_range was here
->  gpiochip_add_pin_range(struct gpio_chip *chip, const char *pinctl_name,
->  ^~~~~~~~~~~~~~~~~~~~~~
-> 
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Fixes: 964cb341882f ("gpio: move pincontrol calls to <linux/gpio/driver.h>")
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  include/linux/gpio/driver.h | 35 +----------------------------------
->  1 file changed, 1 insertion(+), 34 deletions(-)
-> 
-> diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-> index f28f534..09f96ec 100644
-> --- a/include/linux/gpio/driver.h
-> +++ b/include/linux/gpio/driver.h
-> @@ -10,6 +10,7 @@
->  #include <linux/lockdep.h>
->  #include <linux/pinctrl/pinctrl.h>
->  #include <linux/pinctrl/pinconf-generic.h>
-> +#include <linux/gpio.h>
->  
->  struct gpio_desc;
->  struct of_phandle_args;
-> @@ -560,40 +561,6 @@ struct gpio_pin_range {
->  	struct pinctrl_gpio_range range;
->  };
->  
-> -#ifdef CONFIG_PINCTRL
-> -
-> -int gpiochip_add_pin_range(struct gpio_chip *chip, const char *pinctl_name,
-> -			   unsigned int gpio_offset, unsigned int pin_offset,
-> -			   unsigned int npins);
-> -int gpiochip_add_pingroup_range(struct gpio_chip *chip,
-> -			struct pinctrl_dev *pctldev,
-> -			unsigned int gpio_offset, const char *pin_group);
-> -void gpiochip_remove_pin_ranges(struct gpio_chip *chip);
-> -
-> -#else /* ! CONFIG_PINCTRL */
-> -
-> -static inline int
-> -gpiochip_add_pin_range(struct gpio_chip *chip, const char *pinctl_name,
-> -		       unsigned int gpio_offset, unsigned int pin_offset,
-> -		       unsigned int npins)
-> -{
-> -	return 0;
-> -}
-> -static inline int
-> -gpiochip_add_pingroup_range(struct gpio_chip *chip,
-> -			struct pinctrl_dev *pctldev,
-> -			unsigned int gpio_offset, const char *pin_group)
-> -{
-> -	return 0;
-> -}
-> -
-> -static inline void
-> -gpiochip_remove_pin_ranges(struct gpio_chip *chip)
-> -{
-> -}
-> -
-> -#endif /* CONFIG_PINCTRL */
-> -
->  struct gpio_desc *gpiochip_request_own_desc(struct gpio_chip *chip, u16 hwnum,
->  					    const char *label,
->  					    enum gpio_lookup_flags lflags,
-> 
+Commit abbbdf12497d ("replace kill_bdev() with __invalidate_device()")
+once did this, but 29eaadc03649 ("nbd: stop using the bdev everywhere")
+resurrected kill_bdev() and it has been there since then. So buffer_head
+mappings still get killed on a server disconnection, and we can still
+hit the BUG_ON on a filesystem on the top of the nbd device.
+
+  EXT4-fs (nbd0): mounted filesystem with ordered data mode. Opts: (null)
+  block nbd0: Receive control failed (result -32)
+  block nbd0: shutting down sockets
+  print_req_error: I/O error, dev nbd0, sector 66264 flags 3000
+  EXT4-fs warning (device nbd0): htree_dirblock_to_tree:979: inode #2: lblock 0: comm ls: error -5 reading directory block
+  print_req_error: I/O error, dev nbd0, sector 2264 flags 3000
+  EXT4-fs error (device nbd0): __ext4_get_inode_loc:4690: inode #2: block 283: comm ls: unable to read itable block
+  EXT4-fs error (device nbd0) in ext4_reserve_inode_write:5894: IO failure
+  ------------[ cut here ]------------
+  kernel BUG at fs/buffer.c:3057!
+  invalid opcode: 0000 [#1] SMP PTI
+  CPU: 7 PID: 40045 Comm: jbd2/nbd0-8 Not tainted 5.1.0-rc3+ #4
+  Hardware name: Amazon EC2 m5.12xlarge/, BIOS 1.0 10/16/2017
+  RIP: 0010:submit_bh_wbc+0x18b/0x190
+  ...
+  Call Trace:
+   jbd2_write_superblock+0xf1/0x230 [jbd2]
+   ? account_entity_enqueue+0xc5/0xf0
+   jbd2_journal_update_sb_log_tail+0x94/0xe0 [jbd2]
+   jbd2_journal_commit_transaction+0x12f/0x1d20 [jbd2]
+   ? __switch_to_asm+0x40/0x70
+   ...
+   ? lock_timer_base+0x67/0x80
+   kjournald2+0x121/0x360 [jbd2]
+   ? remove_wait_queue+0x60/0x60
+   kthread+0xf8/0x130
+   ? commit_timeout+0x10/0x10 [jbd2]
+   ? kthread_bind+0x10/0x10
+   ret_from_fork+0x35/0x40
+
+With __invalidate_device(), I no longer hit the BUG_ON with sync or
+unmount on the disconnected device.
+
+Fixes: 29eaadc03649 ("nbd: stop using the bdev everywhere")
+Cc: linux-block@vger.kernel.org
+Cc: Ratna Manoj Bolla <manoj.br@gmail.com>
+Cc: nbd@other.debian.org
+Cc: stable@vger.kernel.org
+Cc: David Woodhouse <dwmw@amazon.com>
+Signed-off-by: Munehisa Kamata <kamatam@amazon.com>
+
+---
+I reproduced this phenomenon on the fat file system.
+reproduce steps :
+1.Establish a nbd connection.
+2.Run two threads:one do mount and umount,anther one do clear_sock ioctl
+3.Then hit the BUG_ON.
+
+v2: Delete a link.
+
+Signed-off-by: SunKe <sunke32@huawei.com>
+
+ drivers/block/nbd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
+index 9bcde23..e21d2de 100644
+--- a/drivers/block/nbd.c
++++ b/drivers/block/nbd.c
+@@ -1231,7 +1231,7 @@ static void nbd_clear_sock_ioctl(struct nbd_device *nbd,
+ 				 struct block_device *bdev)
+ {
+ 	sock_shutdown(nbd);
+-	kill_bdev(bdev);
++	__invalidate_device(bdev, true);
+ 	nbd_bdev_reset(bdev);
+ 	if (test_and_clear_bit(NBD_HAS_CONFIG_REF,
+ 			       &nbd->config->runtime_flags))
+-- 
+2.7.4
 
