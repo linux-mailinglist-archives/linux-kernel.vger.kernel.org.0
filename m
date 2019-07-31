@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 314EE7C1A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 14:40:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE8267C187
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 14:38:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728600AbfGaMjT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 08:39:19 -0400
-Received: from mail-eopbgr50127.outbound.protection.outlook.com ([40.107.5.127]:9865
-        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
+        id S1726339AbfGaMif (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 08:38:35 -0400
+Received: from mail-eopbgr00137.outbound.protection.outlook.com ([40.107.0.137]:9952
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387760AbfGaMiY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 08:38:24 -0400
+        id S1728082AbfGaMic (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jul 2019 08:38:32 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=MGk2njyUuYKVOz6sw2PuaN+TmGfIV9owQQ0YDBcX5xwPrPvAuiKug7pilfwuPiLgBG4b5lSCf5iCTWhysBE0al/DVzCJUKehzk9OVPFXeIHv1Y/4uOJKhCq6WpVObybFHzwnIQ4SHPS2h6wWsHbLc5foLJ3QH1/qBaF+JYWE3XSJYe1DrCkMlKUwW/BhXklDMjEx2WvRPXs3GaLFMFF73bak0Bdjj5h8r76NBBFq4rpL45zxK1wMDKetJbhnPN5koMC1ApUfJhWJpThkPy8MxWS8mqaHGikk27/dQn40oA1lpWsfqzYX2dgc3RUF9Rg2qXeuN2uE2iIx5xz6h5XW3g==
+ b=Ra+51s60x9+gTvh78wk8ZCrRm+HAOHQDOo8FA2UhBTMazi+OTeevJxyXSqHAhW1DFPmQuI0ijAHALT3Nppq9N3IfgTPt1+SMkCp7LkWggUYuqd1auIPg1BAHude9yn2Bxm+WvMU2e+E/fo6AwvCgqApUd2NlVZ6CMv/HfJUWxsAXsJYptwM+iZMC50EBjShnNqtvAJ86r4rMIMXzEdaU5qJQamQDQZfxwBC8zai8CWB6z7xJimxf3Yf7J6f1ymL4TDcL02B2DdAYjApdbp3B6ChNx4agQy6vX5d7DcZV04cpl+IN1tkRh89nncBIo12bdVqWyu709EYCde94RHsOEQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SDEeuRYvVXNVLTS06fbORFF5P9I0aNmxQURvScbNM4g=;
- b=F+oNqhhP1BA1TnkLtb6VGEnB1EXREt/JuZJHJb80hDpkVd6Wblk9ItC369FONMWQOltjpPAkl/N16jOFdpVVspDILaTfVsiJVBkaEHs/AQ7PsjoTKsisLbaFHMN3NLnSS3SjsXHUjp3VecGhljZtl2SKgzq2QIJ5JJEt+gJkbhHJg5riOvwziLieayqe7cw4kjpgK3/4gwYIHJzGsdiHFXOVvsVnUZGVfWuV/Ivph6N+RxtArjvzZ5onoKJ+5mVPafP3OHGGrw/7CPRsJnifQF1LOo5wAQUSolxcINsjeExvHYfZ0BAh1pIJy1wraVaJSXc7FycHm51mhL3HwaT4/Q==
+ bh=+bwSD+wY4a265VWU//ee3Zp4L/nCN6MCP5iXPU2twpA=;
+ b=g64u9JPWRiueNBlJ5UEJjz/41eNBo8S/jO+azGMR3EU/g5TmgZd9H/0pBhKovMW9sj5bUwjBO5R1lAjbEszLvQEkYDweRop8CBZPCeWXTtWntbfxwKJDqZ1P2+wH4OCYpyEwefESyORR8OxlyMtuywcodrscsl85BgjYcc/OIV20Q4SYAKRKXdO4ncY85h3KKdTtjOOaUrU1sQ5KEQ2Ll7ZbFJWtwlzHtNlBC9M/90jpwUuuTtOVmsN17chEjgHKLsf3Ltj2Z3CC22LCbdqm83I4pEQtU8Sxiibf/oxSS8QFWB/i+fMdziQ0l5yeBPvz/BzmL/TLp70JVgJ0R+8Acg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
  smtp.mailfrom=toradex.com;dmarc=pass action=none
  header.from=toradex.com;dkim=pass header.d=toradex.com;arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=toradex.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SDEeuRYvVXNVLTS06fbORFF5P9I0aNmxQURvScbNM4g=;
- b=BFh46z1cv0LMGZWj/rTgdjGOJSpYscctOKv/ng/MA1Ds5N1lfPrBYwHzdBcogk1YHuZjqtgRKjzBjnKK2BvP9lpuhmGpaFO+PtPaUpp062ocgLrCW9enNqWsmcbd0dDAFNCVjZpP+joTG4hN7KtdvLXVySnx/gExqTffocJsCpI=
+ bh=+bwSD+wY4a265VWU//ee3Zp4L/nCN6MCP5iXPU2twpA=;
+ b=uDEwUuguKBapAZflhycIy8SqRKS7jZnu6NUReHfjS4KWKOdw8j3pSKSPqnT3W/iSF64Lp7QcHydB4LRZkurIveV/LSUOkaYAq1xulj+NWoUbNVEr7SKjCv5s/seHfMC2pOCLRBuZdbA/DHuUG1C7hq3DPMhiz3HJ9y8LCVvzBek=
 Received: from VI1PR0502MB3965.eurprd05.prod.outlook.com (52.134.17.157) by
  VI1PR0502MB3615.eurprd05.prod.outlook.com (52.134.7.26) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2115.15; Wed, 31 Jul 2019 12:38:20 +0000
+ 15.20.2115.15; Wed, 31 Jul 2019 12:38:21 +0000
 Received: from VI1PR0502MB3965.eurprd05.prod.outlook.com
  ([fe80::8405:5b51:b25d:39a2]) by VI1PR0502MB3965.eurprd05.prod.outlook.com
  ([fe80::8405:5b51:b25d:39a2%6]) with mapi id 15.20.2115.005; Wed, 31 Jul 2019
- 12:38:20 +0000
+ 12:38:21 +0000
 From:   Philippe Schenker <philippe.schenker@toradex.com>
 To:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
         Max Krummenacher <max.krummenacher@toradex.com>,
@@ -52,13 +52,13 @@ CC:     Philippe Schenker <philippe.schenker@toradex.com>,
         Pengutronix Kernel Team <kernel@pengutronix.de>,
         NXP Linux Team <linux-imx@nxp.com>,
         Sascha Hauer <s.hauer@pengutronix.de>
-Subject: [PATCH v2 11/20] ARM: dts: imx6qdl-apalis: Add sleep state to can
- interfaces
-Thread-Topic: [PATCH v2 11/20] ARM: dts: imx6qdl-apalis: Add sleep state to
- can interfaces
-Thread-Index: AQHVR5zVGQZsOPv+o068E1JvmF98HA==
-Date:   Wed, 31 Jul 2019 12:38:20 +0000
-Message-ID: <20190731123750.25670-12-philippe.schenker@toradex.com>
+Subject: [PATCH v2 12/20] ARM: dts: imx6: Add touchscreens used on Toradex
+ eval boards
+Thread-Topic: [PATCH v2 12/20] ARM: dts: imx6: Add touchscreens used on
+ Toradex eval boards
+Thread-Index: AQHVR5zWHQexF8AVwkue7T0eNPpvww==
+Date:   Wed, 31 Jul 2019 12:38:21 +0000
+Message-ID: <20190731123750.25670-13-philippe.schenker@toradex.com>
 References: <20190731123750.25670-1-philippe.schenker@toradex.com>
 In-Reply-To: <20190731123750.25670-1-philippe.schenker@toradex.com>
 Accept-Language: en-GB, en-US
@@ -74,23 +74,23 @@ x-ms-exchange-messagesentrepresentingtype: 1
 x-mailer: git-send-email 2.22.0
 x-originating-ip: [46.140.72.82]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 0bc001bf-3565-4e3a-7846-08d715b3f7de
+x-ms-office365-filtering-correlation-id: 6cedddbd-49e1-454c-9dcd-08d715b3f8ed
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:VI1PR0502MB3615;
 x-ms-traffictypediagnostic: VI1PR0502MB3615:
-x-microsoft-antispam-prvs: <VI1PR0502MB3615FA3EE87C9109579501E3F4DF0@VI1PR0502MB3615.eurprd05.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:758;
+x-microsoft-antispam-prvs: <VI1PR0502MB3615205D4E7069C4D29599C4F4DF0@VI1PR0502MB3615.eurprd05.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:469;
 x-forefront-prvs: 011579F31F
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(39850400004)(376002)(136003)(396003)(366004)(346002)(199004)(189003)(66946007)(52116002)(66446008)(64756008)(66556008)(66476007)(76176011)(99286004)(53936002)(6512007)(6436002)(5660300002)(4326008)(7416002)(66066001)(6486002)(25786009)(478600001)(14454004)(7736002)(305945005)(71190400001)(71200400001)(3846002)(6116002)(36756003)(2501003)(68736007)(2906002)(2201001)(44832011)(486006)(476003)(86362001)(446003)(2616005)(14444005)(11346002)(256004)(186003)(81166006)(81156014)(26005)(102836004)(50226002)(8936002)(8676002)(6506007)(386003)(316002)(54906003)(110136005)(1076003)(32563001);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR0502MB3615;H:VI1PR0502MB3965.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(39850400004)(376002)(136003)(396003)(366004)(346002)(199004)(189003)(66946007)(52116002)(66446008)(64756008)(66556008)(66476007)(76176011)(99286004)(53936002)(6512007)(6436002)(5660300002)(4326008)(7416002)(66066001)(6486002)(25786009)(478600001)(14454004)(7736002)(305945005)(71190400001)(71200400001)(3846002)(6116002)(36756003)(2501003)(68736007)(2906002)(2201001)(44832011)(486006)(476003)(86362001)(446003)(2616005)(14444005)(11346002)(256004)(186003)(81166006)(81156014)(26005)(102836004)(50226002)(8936002)(8676002)(6506007)(386003)(316002)(54906003)(110136005)(1076003);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR0502MB3615;H:VI1PR0502MB3965.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: toradex.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: jM4H0qoPPSRSra6N17MTRqRWuiEVHS2m0KvhAGbcYxt03c+O1FJQ+bp76VONgbEeBgIX9MFgrGyQVDsCYaVb2Y7kWY6dnSEXh75o6OsohZ3dn7IEJI+LNj/izjguknvdpaaRgSq6dWJAEcdpsGbg88W2Vxx/5ykQy9R6+Q3QWMkIF46BzcMraCHkJFWuTw1ec6h8GHxB4jXJUKJV+WEDrwgILt/Re8Bs/lUz4TQlJ+nr7N/12WATUJNaOv8Yodwi72spI40om7n4CRTkTeR/Bp2PrX1cAAyhv4gxUiUL2pA8A7MF+nY9EPrv9efeuUYcUFLhJyh0wJDePXQEFiTVWRwCU16iaUus/7wzDoPtRVocpen6bBAJvsx8+6veNKt5a9GEnTw0KM74wL3LkClWBDEog8vKoyPiLsYSaym329U=
+x-microsoft-antispam-message-info: JLFe872mINd4VQbVag6DY92kNOdzMYtIYJpOpkNM7CwbIcL8z2TZb/QXxiifDpz24LAXL5Kh0C837N0UBicK5tWLATI7DsnlZo6XrPb2T+n+TePab/rIUZKflSA9FnHDEiHIXTjcDSp8tGI1D0fkX4lBRTL+LBVVUhgLEEzKXZfCi98knWpRZD4g6ZB6sIvWdLwsLyvTu3tZrWaGWXQpxJqpKBpBFvv97NoyurYlLpdKmjynYFjKU2AZaLkW1VBGQPZhVTc8/13E8vyYX9ofktAWp3Ep3U09K+a5kXey882dl1czgvOZB09jUJzYAgHR179T2rwfiTjWTIS80LBXdVy1JODVhPvJymzy561wx290npLZKzZwcI8W0uexGMDnVSBNFSImDLMSEg2sJO+fy/hrTpD2XrOkuQdeF52vA3o=
 Content-Type: text/plain; charset="iso-8859-2"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: toradex.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0bc001bf-3565-4e3a-7846-08d715b3f7de
-X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Jul 2019 12:38:20.0484
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6cedddbd-49e1-454c-9dcd-08d715b3f8ed
+X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Jul 2019 12:38:21.7824
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: d9995866-0d9b-4251-8315-093f062abab4
@@ -102,81 +102,148 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch prepares the devicetree for the new Ixora V1.2 where we are
-able to turn off the supply of the can transceiver. This implies to use
-a sleep state on transmission pins in order to prevent backfeeding.
+This commit adds the touchscreens from Toradex so one can enable it.
 
 Signed-off-by: Philippe Schenker <philippe.schenker@toradex.com>
 
 ---
 
 Changes in v2:
-- Changed commit title to '...imx6qdl-apalis:...'
+- Deleted touchrevolution downstream stuff
+- Use generic node name
+- Put a better comment in there
 
- arch/arm/boot/dts/imx6qdl-apalis.dtsi | 27 +++++++++++++++++++++------
- 1 file changed, 21 insertions(+), 6 deletions(-)
+ arch/arm/boot/dts/imx6dl-colibri-eval-v3.dts  | 31 +++++++++++++++++++
+ arch/arm/boot/dts/imx6q-apalis-eval.dts       | 13 ++++++++
+ arch/arm/boot/dts/imx6q-apalis-ixora-v1.1.dts | 13 ++++++++
+ arch/arm/boot/dts/imx6q-apalis-ixora.dts      | 13 ++++++++
+ 4 files changed, 70 insertions(+)
 
-diff --git a/arch/arm/boot/dts/imx6qdl-apalis.dtsi b/arch/arm/boot/dts/imx6=
-qdl-apalis.dtsi
-index 7c4ad541c3f5..59ed2e4a1fd1 100644
---- a/arch/arm/boot/dts/imx6qdl-apalis.dtsi
-+++ b/arch/arm/boot/dts/imx6qdl-apalis.dtsi
-@@ -148,14 +148,16 @@
- };
+diff --git a/arch/arm/boot/dts/imx6dl-colibri-eval-v3.dts b/arch/arm/boot/d=
+ts/imx6dl-colibri-eval-v3.dts
+index 9a5d6c94cca4..763fb5e90bd3 100644
+--- a/arch/arm/boot/dts/imx6dl-colibri-eval-v3.dts
++++ b/arch/arm/boot/dts/imx6dl-colibri-eval-v3.dts
+@@ -168,6 +168,21 @@
+ &i2c3 {
+ 	status =3D "okay";
 =20
- &can1 {
--	pinctrl-names =3D "default";
--	pinctrl-0 =3D <&pinctrl_flexcan1>;
-+	pinctrl-names =3D "default", "sleep";
-+	pinctrl-0 =3D <&pinctrl_flexcan1_default>;
-+	pinctrl-1 =3D <&pinctrl_flexcan1_sleep>;
- 	status =3D "disabled";
- };
-=20
- &can2 {
--	pinctrl-names =3D "default";
--	pinctrl-0 =3D <&pinctrl_flexcan2>;
-+	pinctrl-names =3D "default", "sleep";
-+	pinctrl-0 =3D <&pinctrl_flexcan2_default>;
-+	pinctrl-1 =3D <&pinctrl_flexcan2_sleep>;
- 	status =3D "disabled";
- };
-=20
-@@ -599,19 +601,32 @@
- 		>;
++	/*
++	 * Touchscreen is using SODIMM 28/30, also used for PWM<B>, PWM<C>,
++	 * aka pwm2, pwm3. so if you enable touchscreen, disable the pwms
++	 */
++	touchscreen@4a {
++		compatible =3D "atmel,maxtouch";
++		pinctrl-names =3D "default";
++		pinctrl-0 =3D <&pinctrl_pcap_1>;
++		reg =3D <0x4a>;
++		interrupt-parent =3D <&gpio1>;
++		interrupts =3D <9 IRQ_TYPE_EDGE_FALLING>;		/* SODIMM 28 */
++		reset-gpios =3D <&gpio2 10 GPIO_ACTIVE_HIGH>;	/* SODIMM 30 */
++		status =3D "disabled";
++	};
++
+ 	/* M41T0M6 real time clock on carrier board */
+ 	rtc_i2c: rtc@68 {
+ 		compatible =3D "st,m41t0";
+@@ -175,6 +190,22 @@
  	};
+ };
 =20
--	pinctrl_flexcan1: flexcan1grp {
-+	pinctrl_flexcan1_default: flexcan1defgrp {
- 		fsl,pins =3D <
- 			MX6QDL_PAD_GPIO_7__FLEXCAN1_TX 0x1b0b0
- 			MX6QDL_PAD_GPIO_8__FLEXCAN1_RX 0x1b0b0
- 		>;
- 	};
-=20
--	pinctrl_flexcan2: flexcan2grp {
-+	pinctrl_flexcan1_sleep: flexcan1slpgrp {
++&iomuxc {
++	pinctrl_pcap_1: pcap-1 {
 +		fsl,pins =3D <
-+			MX6QDL_PAD_GPIO_7__GPIO1_IO07 0x0
-+			MX6QDL_PAD_GPIO_8__GPIO1_IO08 0x0
++			MX6QDL_PAD_GPIO_9__GPIO1_IO09	0x1b0b0 /* SODIMM 28 */
++			MX6QDL_PAD_SD4_DAT2__GPIO2_IO10	0x1b0b0 /* SODIMM 30 */
 +		>;
 +	};
 +
-+	pinctrl_flexcan2_default: flexcan2defgrp {
- 		fsl,pins =3D <
- 			MX6QDL_PAD_KEY_COL4__FLEXCAN2_TX 0x1b0b0
- 			MX6QDL_PAD_KEY_ROW4__FLEXCAN2_RX 0x1b0b0
- 		>;
- 	};
-+	pinctrl_flexcan2_sleep: flexcan2slpgrp {
++	pinctrl_mxt_ts: mxt-ts {
 +		fsl,pins =3D <
-+			MX6QDL_PAD_KEY_COL4__GPIO4_IO14 0x0
-+			MX6QDL_PAD_KEY_ROW4__GPIO4_IO15 0x0
++			MX6QDL_PAD_EIM_CS1__GPIO2_IO24	0x130b0 /* SODIMM 107 */
++			MX6QDL_PAD_SD2_DAT1__GPIO1_IO14	0x130b0 /* SODIMM 106 */
 +		>;
 +	};
++};
++
+ &ipu1_di0_disp0 {
+ 	remote-endpoint =3D <&lcd_display_in>;
+ };
+diff --git a/arch/arm/boot/dts/imx6q-apalis-eval.dts b/arch/arm/boot/dts/im=
+x6q-apalis-eval.dts
+index 0edd3043d9c1..4665e15b196d 100644
+--- a/arch/arm/boot/dts/imx6q-apalis-eval.dts
++++ b/arch/arm/boot/dts/imx6q-apalis-eval.dts
+@@ -167,6 +167,19 @@
+ &i2c1 {
+ 	status =3D "okay";
 =20
- 	pinctrl_gpio_bl_on: gpioblon {
- 		fsl,pins =3D <
++	/*
++	 * Touchscreen is using SODIMM 28/30, also used for PWM<B>, PWM<C>,
++	 * aka pwm2, pwm3. so if you enable touchscreen, disable the pwms
++	 */
++	touchscreen@4a {
++		compatible =3D "atmel,maxtouch";
++		reg =3D <0x4a>;
++		interrupt-parent =3D <&gpio6>;
++		interrupts =3D <10 IRQ_TYPE_EDGE_FALLING>;
++		reset-gpios =3D <&gpio6 9 GPIO_ACTIVE_HIGH>; /* SODIMM 13 */
++		status =3D "disabled";
++	};
++
+ 	pcie-switch@58 {
+ 		compatible =3D "plx,pex8605";
+ 		reg =3D <0x58>;
+diff --git a/arch/arm/boot/dts/imx6q-apalis-ixora-v1.1.dts b/arch/arm/boot/=
+dts/imx6q-apalis-ixora-v1.1.dts
+index b94bb687be6b..a3fa04a97d81 100644
+--- a/arch/arm/boot/dts/imx6q-apalis-ixora-v1.1.dts
++++ b/arch/arm/boot/dts/imx6q-apalis-ixora-v1.1.dts
+@@ -172,6 +172,19 @@
+ &i2c1 {
+ 	status =3D "okay";
+=20
++	/*
++	 * Touchscreen is using SODIMM 28/30, also used for PWM<B>, PWM<C>,
++	 * aka pwm2, pwm3. so if you enable touchscreen, disable the pwms
++	 */
++	touchscreen@4a {
++		compatible =3D "atmel,maxtouch";
++		reg =3D <0x4a>;
++		interrupt-parent =3D <&gpio6>;
++		interrupts =3D <10 IRQ_TYPE_EDGE_FALLING>;
++		reset-gpios =3D <&gpio6 9 GPIO_ACTIVE_HIGH>; /* SODIMM 13 */
++		status =3D "disabled";
++	};
++
+ 	/* M41T0M6 real time clock on carrier board */
+ 	rtc_i2c: rtc@68 {
+ 		compatible =3D "st,m41t0";
+diff --git a/arch/arm/boot/dts/imx6q-apalis-ixora.dts b/arch/arm/boot/dts/i=
+mx6q-apalis-ixora.dts
+index 302fd6adc8a7..5ba49d0f4880 100644
+--- a/arch/arm/boot/dts/imx6q-apalis-ixora.dts
++++ b/arch/arm/boot/dts/imx6q-apalis-ixora.dts
+@@ -171,6 +171,19 @@
+ &i2c1 {
+ 	status =3D "okay";
+=20
++	/*
++	 * Touchscreen is using SODIMM 28/30, also used for PWM<B>, PWM<C>,
++	 * aka pwm2, pwm3. so if you enable touchscreen, disable the pwms
++	 */
++	touchscreen@4a {
++		compatible =3D "atmel,maxtouch";
++		reg =3D <0x4a>;
++		interrupt-parent =3D <&gpio6>;
++		interrupts =3D <10 IRQ_TYPE_EDGE_FALLING>;
++		reset-gpios =3D <&gpio6 9 GPIO_ACTIVE_HIGH>; /* SODIMM 13 */
++		status =3D "disabled";
++	};
++
+ 	eeprom@50 {
+ 		compatible =3D "atmel,24c02";
+ 		reg =3D <0x50>;
 --=20
 2.22.0
 
