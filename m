@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5364E7C7D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 17:59:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5935A7C7CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 17:58:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730284AbfGaP6z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 11:58:55 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:3678 "EHLO huawei.com"
+        id S1730210AbfGaP6q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 11:58:46 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:3679 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727201AbfGaP6o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 11:58:44 -0400
+        id S1730163AbfGaP6h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jul 2019 11:58:37 -0400
 Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 09FD32DD93561FA515BD;
+        by Forcepoint Email with ESMTP id 17C2ED3AC4F1369DB432;
         Wed, 31 Jul 2019 23:58:36 +0800 (CST)
 Received: from architecture4.huawei.com (10.140.130.215) by smtp.huawei.com
  (10.3.19.210) with Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 31 Jul
- 2019 23:58:26 +0800
+ 2019 23:58:27 +0800
 From:   Gao Xiang <gaoxiang25@huawei.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Chao Yu <yuchao0@huawei.com>, <devel@driverdev.osuosl.org>
@@ -25,9 +25,9 @@ CC:     LKML <linux-kernel@vger.kernel.org>,
         Miao Xie <miaoxie@huawei.com>, <weidu.du@huawei.com>,
         Fang Wei <fangwei1@huawei.com>,
         Gao Xiang <gaoxiang25@huawei.com>
-Subject: [PATCH v2 14/22] staging: erofs: kill CONFIG_EROFS_FS_USE_VM_MAP_RAM
-Date:   Wed, 31 Jul 2019 23:57:44 +0800
-Message-ID: <20190731155752.210602-15-gaoxiang25@huawei.com>
+Subject: [PATCH v2 15/22] staging: erofs: tidy up zpvec.h
+Date:   Wed, 31 Jul 2019 23:57:45 +0800
+Message-ID: <20190731155752.210602-16-gaoxiang25@huawei.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190731155752.210602-1-gaoxiang25@huawei.com>
 References: <20190731155752.210602-1-gaoxiang25@huawei.com>
@@ -40,113 +40,109 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Turn into a module parameter ("use_vmap") as it
-can be set at runtime.
+- use shorter function names:
+  z_erofs_pagevec_enqueue and z_erofs_pagevec_dequeue;
+- minor code cleanup.
 
-Suggested-by: David Sterba <dsterba@suse.cz>
+In order to keep in line with erofs-outofstaging patchset.
+
 Reviewed-by: Chao Yu <yuchao0@huawei.com>
 Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
 ---
- .../erofs/Documentation/filesystems/erofs.txt |  4 ++++
- drivers/staging/erofs/Kconfig                 |  8 -------
- drivers/staging/erofs/decompressor.c          | 22 +++++++++++--------
- 3 files changed, 17 insertions(+), 17 deletions(-)
+ drivers/staging/erofs/zdata.c |  6 +++---
+ drivers/staging/erofs/zpvec.h | 25 +++++++++----------------
+ 2 files changed, 12 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/staging/erofs/Documentation/filesystems/erofs.txt b/drivers/staging/erofs/Documentation/filesystems/erofs.txt
-index 74cf84ac48a3..04cf47865c50 100644
---- a/drivers/staging/erofs/Documentation/filesystems/erofs.txt
-+++ b/drivers/staging/erofs/Documentation/filesystems/erofs.txt
-@@ -66,6 +66,10 @@ fault_injection=%d     Enable fault injection in all supported types with
- (no)acl                Setup POSIX Access Control List. Note: acl is enabled
-                        by default if CONFIG_EROFS_FS_POSIX_ACL is selected.
+diff --git a/drivers/staging/erofs/zdata.c b/drivers/staging/erofs/zdata.c
+index 3078510e350d..88c8c4082498 100644
+--- a/drivers/staging/erofs/zdata.c
++++ b/drivers/staging/erofs/zdata.c
+@@ -314,8 +314,8 @@ static int z_erofs_vle_work_add_page(
+ 	    try_to_reuse_as_compressed_page(builder, page))
+ 		return 0;
  
-+Module parameters
-+=================
-+use_vmap=[0|1]         Use vmap() instead of vm_map_ram() (default 0).
-+
- On-disk details
- ===============
+-	ret = z_erofs_pagevec_ctor_enqueue(&builder->vector,
+-					   page, type, &occupied);
++	ret = z_erofs_pagevec_enqueue(&builder->vector,
++				      page, type, &occupied);
+ 	builder->work->vcnt += (unsigned int)ret;
  
-diff --git a/drivers/staging/erofs/Kconfig b/drivers/staging/erofs/Kconfig
-index 747e9eebfaa5..788beebf3f7d 100644
---- a/drivers/staging/erofs/Kconfig
-+++ b/drivers/staging/erofs/Kconfig
-@@ -63,14 +63,6 @@ config EROFS_FS_SECURITY
+ 	return ret ? 0 : -EAGAIN;
+@@ -938,7 +938,7 @@ static int z_erofs_vle_unzip(struct super_block *sb,
+ 	for (i = 0; i < work->vcnt; ++i) {
+ 		unsigned int pagenr;
  
- 	  If you are not using a security module, say N.
+-		page = z_erofs_pagevec_ctor_dequeue(&ctor, &page_type);
++		page = z_erofs_pagevec_dequeue(&ctor, &page_type);
  
--config EROFS_FS_USE_VM_MAP_RAM
--	bool "EROFS VM_MAP_RAM Support"
--	depends on EROFS_FS
--	help
--	  use vm_map_ram/vm_unmap_ram instead of vmap/vunmap.
--
--	  If you don't know what these are, say N.
--
- config EROFS_FAULT_INJECTION
- 	bool "EROFS fault injection facility"
- 	depends on EROFS_FS
-diff --git a/drivers/staging/erofs/decompressor.c b/drivers/staging/erofs/decompressor.c
-index 744c43a456e9..5361a2bbedb6 100644
---- a/drivers/staging/erofs/decompressor.c
-+++ b/drivers/staging/erofs/decompressor.c
-@@ -7,6 +7,7 @@
-  * Created by Gao Xiang <gaoxiang25@huawei.com>
-  */
- #include "compress.h"
-+#include <linux/module.h>
- #include <linux/lz4.h>
+ 		/* all pages in pagevec ought to be valid */
+ 		DBG_BUGON(!page);
+diff --git a/drivers/staging/erofs/zpvec.h b/drivers/staging/erofs/zpvec.h
+index 77bf6877bad8..9798f5627786 100644
+--- a/drivers/staging/erofs/zpvec.h
++++ b/drivers/staging/erofs/zpvec.h
+@@ -11,7 +11,7 @@
  
- #ifndef LZ4_DISTANCE_MAX	/* history window size */
-@@ -29,6 +30,10 @@ struct z_erofs_decompressor {
- 	char *name;
- };
+ #include "tagptr.h"
  
-+static bool use_vmap;
-+module_param(use_vmap, bool, 0444);
-+MODULE_PARM_DESC(use_vmap, "Use vmap() instead of vm_map_ram() (default 0)");
-+
- static int lz4_prepare_destpages(struct z_erofs_decompress_req *rq,
- 				 struct list_head *pagepool)
- {
-@@ -219,29 +224,28 @@ static void copy_from_pcpubuf(struct page **out, const char *dst,
- 
- static void *erofs_vmap(struct page **pages, unsigned int count)
- {
--#ifdef CONFIG_EROFS_FS_USE_VM_MAP_RAM
- 	int i = 0;
- 
-+	if (use_vmap)
-+		return vmap(pages, count, VM_MAP, PAGE_KERNEL);
-+
- 	while (1) {
- 		void *addr = vm_map_ram(pages, count, -1, PAGE_KERNEL);
-+
- 		/* retry two more times (totally 3 times) */
- 		if (addr || ++i >= 3)
- 			return addr;
- 		vm_unmap_aliases();
+-/* page type in pagevec for unzip subsystem */
++/* page type in pagevec for decompress subsystem */
+ enum z_erofs_page_type {
+ 	/* including Z_EROFS_VLE_PAGE_TAIL_EXCLUSIVE */
+ 	Z_EROFS_PAGE_TYPE_EXCLUSIVE,
+@@ -103,16 +103,14 @@ static inline void z_erofs_pagevec_ctor_init(struct z_erofs_pagevec_ctor *ctor,
+ 			z_erofs_pagevec_ctor_pagedown(ctor, false);
+ 		}
  	}
- 	return NULL;
--#else
--	return vmap(pages, count, VM_MAP, PAGE_KERNEL);
--#endif
+-
+ 	ctor->next = z_erofs_pagevec_ctor_next_page(ctor, i);
+ 	ctor->index = i;
  }
  
- static void erofs_vunmap(const void *mem, unsigned int count)
+-static inline bool
+-z_erofs_pagevec_ctor_enqueue(struct z_erofs_pagevec_ctor *ctor,
+-			     struct page *page,
+-			     enum z_erofs_page_type type,
+-			     bool *occupied)
++static inline bool z_erofs_pagevec_enqueue(struct z_erofs_pagevec_ctor *ctor,
++					   struct page *page,
++					   enum z_erofs_page_type type,
++					   bool *occupied)
  {
--#ifdef CONFIG_EROFS_FS_USE_VM_MAP_RAM
--	vm_unmap_ram(mem, count);
--#else
--	vunmap(mem);
--#endif
-+	if (!use_vmap)
-+		vm_unmap_ram(mem, count);
-+	else
-+		vunmap(mem);
+ 	*occupied = false;
+ 	if (unlikely(!ctor->next && type))
+@@ -131,15 +129,13 @@ z_erofs_pagevec_ctor_enqueue(struct z_erofs_pagevec_ctor *ctor,
+ 		ctor->next = page;
+ 		*occupied = true;
+ 	}
+-
+-	ctor->pages[ctor->index++] =
+-		tagptr_fold(erofs_vtptr_t, page, type);
++	ctor->pages[ctor->index++] = tagptr_fold(erofs_vtptr_t, page, type);
+ 	return true;
  }
  
- static int decompress_generic(struct z_erofs_decompress_req *rq,
+ static inline struct page *
+-z_erofs_pagevec_ctor_dequeue(struct z_erofs_pagevec_ctor *ctor,
+-			     enum z_erofs_page_type *type)
++z_erofs_pagevec_dequeue(struct z_erofs_pagevec_ctor *ctor,
++			enum z_erofs_page_type *type)
+ {
+ 	erofs_vtptr_t t;
+ 
+@@ -156,11 +152,8 @@ z_erofs_pagevec_ctor_dequeue(struct z_erofs_pagevec_ctor *ctor,
+ 	if (*type == (uintptr_t)ctor->next)
+ 		ctor->next = tagptr_unfold_ptr(t);
+ 
+-	ctor->pages[ctor->index++] =
+-		tagptr_fold(erofs_vtptr_t, NULL, 0);
+-
++	ctor->pages[ctor->index++] = tagptr_fold(erofs_vtptr_t, NULL, 0);
+ 	return tagptr_unfold_ptr(t);
+ }
+-
+ #endif
+ 
 -- 
 2.17.1
 
