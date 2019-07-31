@@ -2,31 +2,33 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B82EF7CBDE
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 20:24:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 327B77CBDF
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 20:24:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729665AbfGaSYj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 14:24:39 -0400
+        id S1729683AbfGaSYn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 14:24:43 -0400
 Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:7789 "EHLO
         EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726469AbfGaSYi (ORCPT
+        by vger.kernel.org with ESMTP id S1728189AbfGaSYj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 14:24:38 -0400
+        Wed, 31 Jul 2019 14:24:39 -0400
 Received: from sc9-mailhost2.vmware.com (10.113.161.72) by
  EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
- 15.0.1156.6; Wed, 31 Jul 2019 11:24:33 -0700
+ 15.0.1156.6; Wed, 31 Jul 2019 11:24:34 -0700
 Received: from rlwimi.localdomain (unknown [10.166.66.112])
-        by sc9-mailhost2.vmware.com (Postfix) with ESMTP id 064B4B2841;
-        Wed, 31 Jul 2019 14:24:36 -0400 (EDT)
+        by sc9-mailhost2.vmware.com (Postfix) with ESMTP id 5CD74B284F;
+        Wed, 31 Jul 2019 14:24:37 -0400 (EDT)
 From:   Matt Helsley <mhelsley@vmware.com>
 To:     LKML <linux-kernel@vger.kernel.org>
 CC:     Ingo Molnar <mingo@kernel.org>,
         Steven Rostedt <rostedt@goodmis.org>,
         Matt Helsley <mhelsley@vmware.com>
-Subject: [PATCH v4 0/8] recordmcount cleanups
-Date:   Wed, 31 Jul 2019 11:24:08 -0700
-Message-ID: <cover.1564596289.git.mhelsley@vmware.com>
+Subject: [PATCH v4 1/8] recordmcount: Remove redundant strcmp
+Date:   Wed, 31 Jul 2019 11:24:09 -0700
+Message-ID: <358e590b49adbe4185e161a8b364e323f3d52857.1564596289.git.mhelsley@vmware.com>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <cover.1564596289.git.mhelsley@vmware.com>
+References: <cover.1564596289.git.mhelsley@vmware.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7BIT
 Content-Type:   text/plain; charset=US-ASCII
@@ -37,58 +39,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-recordmcount presents unnecessary challenges to reviewers:
+The strcmp is unnecessary since .text is already accepted as a
+prefix in the strncmp().
 
-	It pretends to wrap access to the ELF file in
-	uread/uwrite/ulseek functions which aren't related
-	the way you might think (i.e. not the way read, write,
-	and lseek are releated to each other).
+Signed-off-by: Matt Helsley <mhelsley@vmware.com>
+---
+ scripts/recordmcount.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-	It uses setjmp/longjmp to handle errors (and success)
-	during processing of the object files. This makes it
-	hard to review what functions are doing, how globals
-	change over time, etc.
-
-	There are some kernel style nits.
-
-This series addresses all of those by removing un-helper functions,
-unused parameters, and rewriting the error/success handling to
-better resemble regular kernel C code.
-
---
-
-This series was formerly part of a v3 posted under the subject
-"Cleanup recordmcount and begin objtool conversion". I am
-reposting it split into two series: these cleanups of recordmcount
-and a second series that begins the conversion of the cleaned-up
-recordmcount into an objtool subcommand called mcount.
-
-v4:
-   Addressed feedback on v3 from Steven Rostedt:
-       Moved already_has_mcount into recordmcount.c to avoid
-                unnecessary multiple definitions.
-       Changed return semantics of find_secsym_ndx() to avoid
-                need for missing_sym (and multiple definitions)
-                and to separate the returned symbol info
-                (value, index) from success/failure indication.
-       Fixed up local variable declaration to follow inverted
-		christmas tree style.
-
-
-Matt Helsley (8):
-  recordmcount: Remove redundant strcmp
-  recordmcount: Remove uread()
-  recordmcount: Remove unused fd from uwrite() and ulseek()
-  recordmcount: Rewrite error/success handling
-  recordmcount: Kernel style function signature formatting
-  recordmcount: Kernel style formatting
-  recordmcount: Remove redundant cleanup() calls
-  recordmcount: Clarify what cleanup() does
-
- scripts/recordmcount.c | 321 ++++++++++++++++++++---------------------
- scripts/recordmcount.h | 150 +++++++++++++------
- 2 files changed, 259 insertions(+), 212 deletions(-)
-
+diff --git a/scripts/recordmcount.c b/scripts/recordmcount.c
+index 8387a9bc064a..ebe98c39f3cd 100644
+--- a/scripts/recordmcount.c
++++ b/scripts/recordmcount.c
+@@ -405,8 +405,7 @@ is_mcounted_section_name(char const *const txtname)
+ 		strcmp(".irqentry.text", txtname) == 0 ||
+ 		strcmp(".softirqentry.text", txtname) == 0 ||
+ 		strcmp(".kprobes.text", txtname) == 0 ||
+-		strcmp(".cpuidle.text", txtname) == 0 ||
+-		strcmp(".text.unlikely", txtname) == 0;
++		strcmp(".cpuidle.text", txtname) == 0;
+ }
+ 
+ /* 32 bit and 64 bit are very similar */
 -- 
 2.20.1
 
