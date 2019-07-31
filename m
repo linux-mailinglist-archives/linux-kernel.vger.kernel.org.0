@@ -2,147 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A64F7CB1C
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 19:57:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB4A67CB45
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 19:59:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727572AbfGaR5y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 13:57:54 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:36155 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726377AbfGaR5y (ORCPT
+        id S1728027AbfGaR6y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 13:58:54 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:47713 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726350AbfGaR6w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 13:57:54 -0400
-Received: by mail-wm1-f67.google.com with SMTP id g67so56530850wme.1;
-        Wed, 31 Jul 2019 10:57:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=T31WwXYsxgU8fO97C5XG4W+sh6cfy84Mun+fk+tA2/o=;
-        b=sX/iidQk0dUvgAG6y3YxYqtNQUGhiSU4kesR+IvEkmGd43zb5yH6iziI4AciHJLuB8
-         jq27iR560vhwkgZCmbqw2Je1yW+Glpfp0dKwf5KLywXz2ZSn8Li2tBGqOqePW+xGWTT9
-         9zRVLdAq1jm2GwIvZDS6GGhcZ4E66o84q9qvMCvAkS7epxWPvj9ObnL1irGDJ5nSAuSD
-         b/ugzxNL8zkMW5ROxvQLKq3Ijn6bhJJUPFv/M3qXMItq8ZqEPNdPSP05qYSRkm46NAXH
-         ZbgOwyH25TbHMsHaiGcmUGz54DBcaBKXGptYzB76c6vs524bh+5aO3gkpwluOh9QpN6/
-         b7qg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=T31WwXYsxgU8fO97C5XG4W+sh6cfy84Mun+fk+tA2/o=;
-        b=mJBidjI7Z7nO54tn1mF0Kg7WpBVcA6AKE08EliHXVHB6dRdF313sNTV3OKLbVSObXy
-         6Yc3v5f2X2rYwNqo4Cxb+FLdKDXg0AKDuBDOmpujdlsJZnsPMiqaW8OizX/rW9Oej0cT
-         pbfIRqAsG4OGcsm+4+MZoKOT/WAc4oJHOteaH2ngultyY97CaHYFB9KjcpdaaY5O1SAn
-         XL+F6Ac/4Ny8X0j3biEvauuchPpg60qbVVjDMphQWK36h8MpJjCP+AJNstnRVevnlcYR
-         mbA5k9my3XTLMTNjR+yy9xHIGsQRCfM1zvoIP6ooDIrLkS9BHgQ7rT6V7QnHH8/BM7Kt
-         bhRg==
-X-Gm-Message-State: APjAAAV/cGj0oPYBqcqb/ABv0L7Nqq21AQmrN6+a7a4WH4s4nHi9vLM3
-        6uFcqI/zJjb5GeebBodnr2A=
-X-Google-Smtp-Source: APXvYqws+uruLILu52nsmChy6L/7Y5vDVpAORnwVLHjBO84u5ZfNuvY1CLOr83vx9GkjBUtLI/QOlw==
-X-Received: by 2002:a7b:c081:: with SMTP id r1mr62622176wmh.76.1564595871090;
-        Wed, 31 Jul 2019 10:57:51 -0700 (PDT)
-Received: from archlinux-threadripper ([2a01:4f8:222:2f1b::2])
-        by smtp.gmail.com with ESMTPSA id c6sm70486993wma.25.2019.07.31.10.57.50
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 31 Jul 2019 10:57:50 -0700 (PDT)
-Date:   Wed, 31 Jul 2019 10:57:48 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Daniel Rosenberg <drosen@google.com>
-Cc:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        kernel-team@android.com
-Subject: Re: [PATCH v4 3/3] f2fs: Support case-insensitive file name lookups
-Message-ID: <20190731175748.GA48637@archlinux-threadripper>
-References: <20190723230529.251659-1-drosen@google.com>
- <20190723230529.251659-4-drosen@google.com>
+        Wed, 31 Jul 2019 13:58:52 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6VHwMvH3777797
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Wed, 31 Jul 2019 10:58:22 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6VHwMvH3777797
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019071901; t=1564595903;
+        bh=pko6qkLq6LDAsDWmAq5Xc3a/oMcEzITv7Y7TuzlWrUk=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=b8PLAT0TscL+o9lyJ85NLYmoHHplO4spZBUG/XNt3zZ0G+DSA2KQZC9KudK5+E+Zu
+         NmWSAd5gPUb+gc6lv9uwBSzZAjqzZfQDq4FrkoVCWFaO9QULUmN5l58O5DB2U+uDXh
+         eBCe+QxNX/6biuRY1Vg7eUL+PSFOwhNV5I67ogNxM3k/ntV6jg5waqr/aqYYNLrj7F
+         q6l2+kPyKHtoo9cjShSmqE1RK6qNcdxixepzZCse9L2oQQU/TaEGxAyhjko8PtR+PB
+         zgNDfZxhdl65GAIAaM8UI90QW4lpMd1xtcWIoQEfnMB21kwxeoI09d/fJKiV6VE+vp
+         hpUqtdgIZ+/DA==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6VHwMop3777794;
+        Wed, 31 Jul 2019 10:58:22 -0700
+Date:   Wed, 31 Jul 2019 10:58:22 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Thomas Gleixner <tipbot@zytor.com>
+Message-ID: <tip-92616606368ee01f1163fcfc986116c810cd48ba@git.kernel.org>
+Cc:     hpa@zytor.com, peterz@infradead.org, mhiramat@kernel.org,
+        pbonzini@redhat.com, tglx@linutronix.de,
+        torvalds@linux-foundation.org, paulmck@linux.ibm.com,
+        mingo@kernel.org, rostedt@goodmis.org, linux-kernel@vger.kernel.org
+Reply-To: torvalds@linux-foundation.org, paulmck@linux.ibm.com,
+          rostedt@goodmis.org, mingo@kernel.org,
+          linux-kernel@vger.kernel.org, peterz@infradead.org,
+          mhiramat@kernel.org, hpa@zytor.com, pbonzini@redhat.com,
+          tglx@linutronix.de
+In-Reply-To: <20190726212124.516286187@linutronix.de>
+References: <20190726212124.516286187@linutronix.de>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:sched/rt] kprobes: Use CONFIG_PREEMPTION
+Git-Commit-ID: 92616606368ee01f1163fcfc986116c810cd48ba
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20190723230529.251659-4-drosen@google.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Spam-Status: No, score=-0.2 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
+        autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
+Commit-ID:  92616606368ee01f1163fcfc986116c810cd48ba
+Gitweb:     https://git.kernel.org/tip/92616606368ee01f1163fcfc986116c810cd48ba
+Author:     Thomas Gleixner <tglx@linutronix.de>
+AuthorDate: Fri, 26 Jul 2019 23:19:41 +0200
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Wed, 31 Jul 2019 19:03:35 +0200
 
-<snip>
+kprobes: Use CONFIG_PREEMPTION
 
-> diff --git a/fs/f2fs/hash.c b/fs/f2fs/hash.c
-> index cc82f142f811f..99e79934f5088 100644
-> --- a/fs/f2fs/hash.c
-> +++ b/fs/f2fs/hash.c
-> @@ -14,6 +14,7 @@
->  #include <linux/f2fs_fs.h>
->  #include <linux/cryptohash.h>
->  #include <linux/pagemap.h>
-> +#include <linux/unicode.h>
->  
->  #include "f2fs.h"
->  
-> @@ -67,7 +68,7 @@ static void str2hashbuf(const unsigned char *msg, size_t len,
->  		*buf++ = pad;
->  }
->  
-> -f2fs_hash_t f2fs_dentry_hash(const struct qstr *name_info,
-> +static f2fs_hash_t __f2fs_dentry_hash(const struct qstr *name_info,
->  				struct fscrypt_name *fname)
->  {
->  	__u32 hash;
-> @@ -103,3 +104,35 @@ f2fs_hash_t f2fs_dentry_hash(const struct qstr *name_info,
->  	f2fs_hash = cpu_to_le32(hash & ~F2FS_HASH_COL_BIT);
->  	return f2fs_hash;
->  }
-> +
-> +f2fs_hash_t f2fs_dentry_hash(const struct inode *dir,
-> +		const struct qstr *name_info, struct fscrypt_name *fname)
-> +{
-> +#ifdef CONFIG_UNICODE
-> +	struct f2fs_sb_info *sbi = F2FS_SB(dir->i_sb);
-> +	const struct unicode_map *um = sbi->s_encoding;
-> +	int r, dlen;
-> +	unsigned char *buff;
-> +	struct qstr *folded;
-> +
-> +	if (name_info->len && IS_CASEFOLDED(dir)) {
-> +		buff = f2fs_kzalloc(sbi, sizeof(char) * PATH_MAX, GFP_KERNEL);
-> +		if (!buff)
-> +			return -ENOMEM;
-> +
-> +		dlen = utf8_casefold(um, name_info, buff, PATH_MAX);
-> +		if (dlen < 0) {
-> +			kvfree(buff);
-> +			goto opaque_seq;
-> +		}
-> +		folded->name = buff;
-> +		folded->len = dlen;
-> +		r = __f2fs_dentry_hash(folded, fname);
-> +
-> +		kvfree(buff);
-> +		return r;
-> +	}
-> +opaque_seq:
-> +#endif
-> +	return __f2fs_dentry_hash(name_info, fname);
-> +}
+CONFIG_PREEMPTION is selected by CONFIG_PREEMPT and by
+CONFIG_PREEMPT_RT. Both PREEMPT and PREEMPT_RT require the same
+functionality which today depends on CONFIG_PREEMPT.
 
-Clang now warns:
+Switch kprobes conditional over to CONFIG_PREEMPTION.
 
-fs/f2fs/hash.c:128:3: warning: variable 'folded' is uninitialized when used here [-Wuninitialized]
-                folded->name = buff;
-                ^~~~~~
-fs/f2fs/hash.c:116:21: note: initialize the variable 'folded' to silence this warning
-        struct qstr *folded;
-                           ^
-                            = NULL
-1 warning generated.
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Paul E. McKenney <paulmck@linux.ibm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Link: http://lkml.kernel.org/r/20190726212124.516286187@linutronix.de
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ kernel/kprobes.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I assume that it wants to be initialized with f2fs_kzalloc as well but
-I am not familiar with this code and what it expects to do.
-
-Please look into this when you get a chance!
-Nathan
+diff --git a/kernel/kprobes.c b/kernel/kprobes.c
+index 9873fc627d61..8bc5f1ffd68e 100644
+--- a/kernel/kprobes.c
++++ b/kernel/kprobes.c
+@@ -1906,7 +1906,7 @@ int register_kretprobe(struct kretprobe *rp)
+ 
+ 	/* Pre-allocate memory for max kretprobe instances */
+ 	if (rp->maxactive <= 0) {
+-#ifdef CONFIG_PREEMPT
++#ifdef CONFIG_PREEMPTION
+ 		rp->maxactive = max_t(unsigned int, 10, 2*num_possible_cpus());
+ #else
+ 		rp->maxactive = num_possible_cpus();
