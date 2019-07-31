@@ -2,123 +2,261 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BDF1F7CC16
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 20:37:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CDD9C7CC26
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 20:41:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729550AbfGaSht (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 14:37:49 -0400
-Received: from mail-eopbgr750099.outbound.protection.outlook.com ([40.107.75.99]:26831
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726944AbfGaSht (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 14:37:49 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=VeY/NBVCZPYFQRjW8SIEZuOK499Pn6Tn10L324BhlOZDgmPpAvP7k1l6zYPVBmqyRQ2zA3Fp3EAQ6soF3kYUmGixqeOvvr+vJOeGHxKNipt35UFTe8lrVZX6NBwoS52J2IR8cw+AhONNISqUK/mpNlhUZQ+vBQU2RGKBSW5DfoZN/CBziYFMV7LgfZ2ybZpvk9NkepH4+oDOquh0tZsYavtYSsNRAWkpn+ZqT3rqJGOdUKXNkA8L+douy9QVyHgTmne5J8LZynj9SJg2dKRkev1qhfSQBDTNVJ4ZWil78suPb4L7BEP3S772xr3I9cLF+4A2FukawkW9B0UY9gJwow==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TSvIk88Nk5x2PlZt83UkZwDGUxm5wUayb5vMrWgJxO4=;
- b=HlyBhSooApp/fO5RDMj3Y1E0Llc6Ax4Wzj/jIJvzaac2D8Fpjnw943aPkiTNHq+KSFqd+qn2pq2l0NjNKjz0zeU1W0KmBAJdYbEqfyI2/WVCheOiXmuK/Y3nx05eWMd6TnCzSeVswQ/MiIXtBMJcV/XqCxj53pM/Qr1NVNlwPbfeIOB39AkynSM2NF3ltcsuxBDyPnt7waT+foW4qyjFS8Ugjg851FIDmThzn8gVRCCoxUrms65Kb2tnZjOaN43t/6MqsNOqln9AXJ5XmZkXnAabVk5RoVHkSOoypYaGUwJSxq8xivqbiU+MAZB3c43DACWqHQzo50pZoujnZT1Hkg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
- smtp.mailfrom=wavecomp.com;dmarc=pass action=none
- header.from=mips.com;dkim=pass header.d=mips.com;arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wavecomp.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TSvIk88Nk5x2PlZt83UkZwDGUxm5wUayb5vMrWgJxO4=;
- b=cVrNnf7VinHDbsz9oksg3xAbr/amsZzKVX+KZJRi2ma+aFip3tfzqlIOlFPvxI0rP+3hBMzf5q9vHbYPLuImgIaYqIu5UrD05emFcdxSBBnT1O4z6IHRUCjy19p+ZMarm5Jc/mhD8puIFoV2SPlp9/DuDajtMYEMllzcy4BxxfA=
-Received: from CY4PR2201MB1272.namprd22.prod.outlook.com (10.171.214.23) by
- CY4PR2201MB1750.namprd22.prod.outlook.com (10.165.89.37) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2115.15; Wed, 31 Jul 2019 18:37:46 +0000
-Received: from CY4PR2201MB1272.namprd22.prod.outlook.com
- ([fe80::c99b:131e:aaf3:bd81]) by CY4PR2201MB1272.namprd22.prod.outlook.com
- ([fe80::c99b:131e:aaf3:bd81%4]) with mapi id 15.20.2115.005; Wed, 31 Jul 2019
- 18:37:46 +0000
-From:   Paul Burton <paul.burton@mips.com>
-To:     Firoz Khan <firoz.khan@linaro.org>
-CC:     Paul Burton <pburton@wavecomp.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        "y2038@lists.linaro.org" <y2038@lists.linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "deepa.kernel@gmail.com" <deepa.kernel@gmail.com>,
-        "marcin.juszkiewicz@linaro.org" <marcin.juszkiewicz@linaro.org>,
-        "firoz.khan@linaro.org" <firoz.khan@linaro.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>
-Subject: Re: [PATCH 1/2] mips: remove nargs from __SYSCALL
-Thread-Topic: [PATCH 1/2] mips: remove nargs from __SYSCALL
-Thread-Index: AQHUoqtkUF31nts6yU+Wl0WAgPekgKbmWL4A
-Date:   Wed, 31 Jul 2019 18:37:45 +0000
-Message-ID: <CY4PR2201MB12725431D0D757F50CBDC1EBC1DF0@CY4PR2201MB1272.namprd22.prod.outlook.com>
-References: <1546440978-19569-2-git-send-email-firoz.khan@linaro.org>
-In-Reply-To: <1546440978-19569-2-git-send-email-firoz.khan@linaro.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: BYAPR21CA0003.namprd21.prod.outlook.com
- (2603:10b6:a03:114::13) To CY4PR2201MB1272.namprd22.prod.outlook.com
- (2603:10b6:910:6e::23)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=pburton@wavecomp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [12.94.197.246]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 912ebe37-2159-4a69-e113-08d715e62e12
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:CY4PR2201MB1750;
-x-ms-traffictypediagnostic: CY4PR2201MB1750:
-x-microsoft-antispam-prvs: <CY4PR2201MB17501F68E92EA3300E273357C1DF0@CY4PR2201MB1750.namprd22.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:7691;
-x-forefront-prvs: 011579F31F
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(376002)(396003)(366004)(136003)(39850400004)(189003)(199004)(66066001)(4326008)(486006)(229853002)(446003)(476003)(44832011)(305945005)(11346002)(71200400001)(7416002)(71190400001)(102836004)(99286004)(52536014)(25786009)(6436002)(7736002)(6506007)(52116002)(7696005)(33656002)(76176011)(186003)(74316002)(2906002)(8676002)(26005)(386003)(6916009)(68736007)(42882007)(66446008)(66556008)(6246003)(64756008)(66476007)(66946007)(53936002)(9686003)(6116002)(4744005)(3846002)(14454004)(55016002)(54906003)(478600001)(256004)(316002)(5660300002)(81166006)(81156014)(8936002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR2201MB1750;H:CY4PR2201MB1272.namprd22.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: wavecomp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: sjOpyFHOrcsxrIw/Epq7zOOpW/PFiHbwGPNelwUg1aQixXoUWexRboQDCs4hLYOiZYRR3wTro3WqU8woBGtizV8X31B7c6ZYJFJZ4Ibt525rXQvhr15UHN+g5YA1Qx9YblaqiyJXegSLXRbYbYb6inVpKhKFS9SxQqg9AKMkuK2Zia4lLecXUEWZxHKxZYrk8D/3LCfI+mEsKwHS9hOYRtpNCjXTJQbFejvkOxk8yC7Gr/gPFzqQNJZU1dluYSJVCNGfM32m7H3L3XnEmYDSD9xHuv7V39eYaaB3xjIVDeO0Ylk8N7ugU2rWzf7oNSgoA1FWtOBg3J6oVU87rbwuu38UyABJeO8F8Je3QOhozvUwHvH+BLUcQRl3Y2TYr0nuYD/kWnWOFFDuJ9GgMhPqP6XarBAKF2G6JPDixvfwX5A=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        id S1730389AbfGaSlj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 14:41:39 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:36018 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727579AbfGaSlj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jul 2019 14:41:39 -0400
+Received: by mail-io1-f67.google.com with SMTP id o9so34922394iom.3
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 11:41:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3AsLIdRn1/s/ajhZAFGpfmDm8iyB8h5HN7OzbntAvwU=;
+        b=PxOfkjT7L+Hwdws3JZ6LI7RIiZnSFD26K9lcMVVxc7bdsCSr6UJeCFlxR2ViMJRVgZ
+         kKcCXB97d79J4mBEjnLyj18g9tQyLOnRgxTkJ1nN/qkHZ8DkRWoinzBu16Zow0FHmIpz
+         HVoScJTEr7/TuqQu0dTMDxJariUa7FqrVwyGs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3AsLIdRn1/s/ajhZAFGpfmDm8iyB8h5HN7OzbntAvwU=;
+        b=BNw6EOeZ4Gkzne2vKTH7h11jHBD7M6oGOrehkrBsgTPP9J9QCdMrejWu4h9paFPmVE
+         aiDJu4Pxt1TVUe6OzjDSJk69U+fOAt3tsf3gFmB63A+quEiz/eswd6U3i5jY7Q7Wr+TO
+         ePq3IaYB+40VPmklXR/49ReF/SP50r9x6BpPNrXUTzINrmFsgA4QZF4jqSKBRNss86mg
+         NGrI49AJOoaR8JdBefc7i0BWDIyfHfNWA8v58Kr6am0aiVq+zaI0yEh7hEWcdxd2kZlY
+         PNQo0GnPrXboOmR76SlGIjRaiKQ+nTkKDV/tNGtcQc8JewR4/hvdg6inp/KH0BwfKLMs
+         eung==
+X-Gm-Message-State: APjAAAVBOLIuhCLziF/IgRUQgH4GgF65GQTlyirc8S74SLzYlwiS9fFP
+        /TBKhi2fRsMgFPrJh2hPSam8B7v2/Aw=
+X-Google-Smtp-Source: APXvYqys2GnpWE8mEW9IgCuaPM00AlQgk7/rG5aiX1rdXNQWeAgSkNdHmJSbA/zqXcfRljAGrw0WsQ==
+X-Received: by 2002:a5d:9448:: with SMTP id x8mr57153615ior.102.1564598498102;
+        Wed, 31 Jul 2019 11:41:38 -0700 (PDT)
+Received: from mail-io1-f43.google.com (mail-io1-f43.google.com. [209.85.166.43])
+        by smtp.gmail.com with ESMTPSA id t4sm52164033iop.0.2019.07.31.11.41.37
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Wed, 31 Jul 2019 11:41:37 -0700 (PDT)
+Received: by mail-io1-f43.google.com with SMTP id f4so138553177ioh.6
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 11:41:37 -0700 (PDT)
+X-Received: by 2002:a02:a1c7:: with SMTP id o7mr131531038jah.26.1564598496739;
+ Wed, 31 Jul 2019 11:41:36 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: mips.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 912ebe37-2159-4a69-e113-08d715e62e12
-X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Jul 2019 18:37:45.8034
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 463607d3-1db3-40a0-8a29-970c56230104
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: pburton@wavecomp.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR2201MB1750
+References: <20190730221800.28326-1-dianders@chromium.org> <20190731125733.op3y5j5psuj6pet3@willie-the-truck>
+In-Reply-To: <20190731125733.op3y5j5psuj6pet3@willie-the-truck>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Wed, 31 Jul 2019 11:41:20 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=WYC4x7MCfkHbB=Mm-6NJywbXs4zAGfz0t+5OdXFOmE7g@mail.gmail.com>
+Message-ID: <CAD=FV=WYC4x7MCfkHbB=Mm-6NJywbXs4zAGfz0t+5OdXFOmE7g@mail.gmail.com>
+Subject: Re: [PATCH] arm64: debug: Make 'btc' and similar work in kdb
+To:     Will Deacon <will@kernel.org>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Jason Wessel <jason.wessel@windriver.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        kgdb-bugreport@lists.sourceforge.net,
+        LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Hi,
 
-Firoz Khan wrote:
-> The __SYSCALL macro's arguments are system call number,
-> system call entry name and number of arguments for the
-> system call.
->=20
-> Argument- nargs in __SYSCALL(nr, entry, nargs) is neither
-> calculated nor used anywhere. So it would be better to
-> keep the implementaion as  __SYSCALL(nr, entry). This will
-> unifies the implementation with some other architetures
-> too.
->=20
-> Signed-off-by: Firoz Khan <firoz.khan@linaro.org>
+On Wed, Jul 31, 2019 at 5:57 AM Will Deacon <will@kernel.org> wrote:
+>
+> Hi Doug,
+>
+> On Tue, Jul 30, 2019 at 03:18:00PM -0700, Douglas Anderson wrote:
+> > diff --git a/arch/arm64/kernel/kgdb.c b/arch/arm64/kernel/kgdb.c
+> > index 43119922341f..b666210fbc75 100644
+> > --- a/arch/arm64/kernel/kgdb.c
+> > +++ b/arch/arm64/kernel/kgdb.c
+> > @@ -148,6 +148,45 @@ sleeping_thread_to_gdb_regs(unsigned long *gdb_regs, struct task_struct *task)
+> >       gdb_regs[32] = cpu_context->pc;
+> >  }
+> >
+> > +void kgdb_call_nmi_hook(void *ignored)
+> > +{
+> > +     struct pt_regs *regs;
+> > +
+> > +     /*
+> > +      * NOTE: get_irq_regs() is supposed to get the registers from
+> > +      * before the IPI interrupt happened and so is supposed to
+> > +      * show where the processor was.  In some situations it's
+> > +      * possible we might be called without an IPI, so it might be
+> > +      * safer to figure out how to make kgdb_breakpoint() work
+> > +      * properly here.
+> > +      */
+> > +     regs = get_irq_regs();
+> > +
+> > +     /*
+> > +      * Some commands (like 'btc') assume that they can find info about
+> > +      * a task in the 'cpu_context'.  Unfortunately that's only valid
+> > +      * for sleeping tasks.  ...but let's make it work anyway by just
+> > +      * writing the registers to the right place.  This is safe because
+> > +      * nobody else is using the 'cpu_context' for a running task.
+> > +      */
+> > +     current->thread.cpu_context.x19 = regs->regs[19];
+> > +     current->thread.cpu_context.x20 = regs->regs[20];
+> > +     current->thread.cpu_context.x21 = regs->regs[21];
+> > +     current->thread.cpu_context.x22 = regs->regs[22];
+> > +     current->thread.cpu_context.x23 = regs->regs[23];
+> > +     current->thread.cpu_context.x24 = regs->regs[24];
+> > +     current->thread.cpu_context.x25 = regs->regs[25];
+> > +     current->thread.cpu_context.x26 = regs->regs[26];
+> > +     current->thread.cpu_context.x27 = regs->regs[27];
+> > +     current->thread.cpu_context.x28 = regs->regs[28];
+> > +     current->thread.cpu_context.fp = regs->regs[29];
+> > +
+> > +     current->thread.cpu_context.sp = regs->sp;
+> > +     current->thread.cpu_context.pc = regs->pc;
+> > +
+> > +     kgdb_nmicallback(raw_smp_processor_id(), regs);
+> > +}
+>
+> This is really gross... :/
 
-Applied to mips-next.
+Well, sort of.  At first I definitely thought of it as a hack.  ...but
+then I realized that it's actually not so terrible.  Although the
+other processors (the ones that are not the kgdb master) are
+technically "running" as far as Linux is concerned, you can also think
+of them as "stopped" in the debugger.  It's convenient to think of
+them the same way you'd think of sleeping tasks.
 
-Thanks,
-    Paul
+Said another way: normally for a "running" task you couldn't put
+anything in the "cpu_context" because it'd be wrong the moment you put
+it there.  ...but when a CPU is stopped in kgdb then there's actually
+something quite sane to put there.
 
-[ This message was auto-generated; if you believe anything is incorrect
-  then please email paul.burton@mips.com to report it. ]
+So with just a small shift in the concept of what "cpu_context" is for
+then it becomes not so gross.
+
+
+> Can you IPI the other CPUs instead and have them backtrace locally, like we
+> do for things like magic sysrq (sysrq_handle_showallcpus())?
+
+No, unfortunately.  All the other CPUs are in a tight loop (with
+interrupts off) waiting to be released by the kgdb master.  Amusingly,
+it's possible to simulate this.  You can run a sysrq from the kdb
+prompt.  When I do "sr l" from kdb:
+
+A) The CPU running the kgdb master provides a stack crawl but it's not
+really what you want.  Presumably this doesn't matter (we wouldn't
+want to send the IPI to the calling CPU), but it's interesting to look
+at.  We end up in the fallback workqueue case in
+sysrq_handle_showallcpus().  Then we will backtrace based on the regs
+returned by "get_irq_regs()".  Thus instead of:
+
+[0]kdb> bt
+Stack traceback for pid 0
+0xffffff801101a9c0        0        0  1    0   R  0xffffff801101b3b0 *swapper/0
+Call trace:
+ dump_backtrace+0x0/0x138
+ show_stack+0x20/0x2c
+ kdb_show_stack+0x60/0x84
+ kdb_bt1+0xb8/0x100
+ kdb_bt+0x24c/0x408
+ kdb_parse+0x53c/0x664
+ kdb_main_loop+0x7fc/0x888
+ kdb_stub+0x2b0/0x3d0
+ kgdb_cpu_enter+0x27c/0x5c4
+ kgdb_handle_exception+0x198/0x1f4
+ kgdb_compiled_brk_fn+0x34/0x44
+ brk_handler+0x88/0xd0
+ do_debug_exception+0xe0/0x128
+ el1_dbg+0x18/0x8c
+ kgdb_breakpoint+0x20/0x3c
+ sysrq_handle_dbg+0x34/0x5c
+ __handle_sysrq+0x14c/0x170
+ handle_sysrq+0x38/0x44
+ serial8250_handle_irq+0xe8/0xfc
+ dw8250_handle_irq+0x94/0xd0
+ serial8250_interrupt+0x48/0xa4
+ __handle_irq_event_percpu+0x134/0x25c
+ handle_irq_event_percpu+0x34/0x8c
+ handle_irq_event+0x48/0x78
+ handle_fasteoi_irq+0xd0/0x1a0
+ __handle_domain_irq+0x84/0xc4
+ gic_handle_irq+0x10c/0x180
+ el1_irq+0xb8/0x180
+ cpuidle_enter_state+0x284/0x428
+ cpuidle_enter+0x38/0x4c
+ do_idle+0x168/0x29c
+ cpu_startup_entry+0x24/0x28
+ rest_init+0xd4/0xe0
+ arch_call_rest_init+0x10/0x18
+ start_kernel+0x320/0x3a4
+
+I get:
+
+[0]kdb> sr l
+sysrq: Show backtrace of all active CPUs
+sysrq: CPU0:
+CPU: 0 PID: 0 Comm: swapper/0 Not tainted 5.3.0-rc2+ #28
+Hardware name: Google Kevin (DT)
+pstate: 20000005 (nzCv daif -PAN -UAO)
+pc : cpuidle_enter_state+0x284/0x428
+lr : cpuidle_enter_state+0x274/0x428
+sp : ffffff8011003e60
+x29: ffffff8011003eb0 x28: ffffff8010f366b8
+x27: ffffff8011010000 x26: 0000000000000001
+x25: ffffff80110eb000 x24: 0000000000000000
+x23: 00000024232e8f0a x22: 0000002420501a35
+x21: 0000000000000002 x20: ffffffc0ee86e080
+x19: ffffffc0f65426c0 x18: 0000000000000000
+x17: 000000000000003e x16: 000000000000003f
+x15: 0000000000000000 x14: ffffff801101a9c0
+x13: 0000000000013320 x12: 0000000000000020
+x11: 000000000624dd2f x10: 00000000ffffffff
+x9 : 0000000100000001 x8 : 00000000000000c0
+x7 : 00000032b5593519 x6 : 0000000000300000
+x5 : 0000000000000000 x4 : 0000000000000101
+x3 : 00000000ffffffff x2 : 0000000000000001
+x1 : ffffffc0f6548d80 x0 : 0000000000000000
+Call trace:
+ cpuidle_enter_state+0x284/0x428
+ cpuidle_enter+0x38/0x4c
+ do_idle+0x168/0x29c
+ cpu_startup_entry+0x24/0x28
+ rest_init+0xd4/0xe0
+ arch_call_rest_init+0x10/0x18
+ start_kernel+0x320/0x3a4
+
+
+B) All the other CPUs don't respond.  ...until you exit the debugger
+and then they all print their stacks, a little too late.
+
+---
+
+The weird crawl for the master CPU made me think that maybe I could
+use "show_regs()" to show the stacks of the other CPUs, but that
+didn't work.  The arm64 stack crawling code really only works for a
+sleeping task or for the current running task.
+
+...this again gets back to the fact that we can really think of those
+other CPUs stopped in the debugger as "sleeping".
+
+=====
+
+OK, so I think I managed to get something that maybe you're happy with:
+
+https://lkml.kernel.org/r/20190731183732.178134-1-dianders@chromium.org
+
+...I still think it's not such a hack to stash the state in the
+"cpu_context" and I could imagine it might have other benefits when
+debugging, but my new patch does have the advantage that it's more
+platform agnostic.  ;-)  Let me know what you think...
+
+-Doug
