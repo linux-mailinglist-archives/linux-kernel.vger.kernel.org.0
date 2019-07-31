@@ -2,102 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 396327BEB0
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 12:55:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E74857BEBA
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 12:56:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728423AbfGaKzt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 06:55:49 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:52221 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726751AbfGaKzt (ORCPT
+        id S1728802AbfGaK4x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 06:56:53 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:42912 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728398AbfGaK4w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 06:55:49 -0400
-Received: by mail-wm1-f65.google.com with SMTP id 207so60329118wma.1
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 03:55:47 -0700 (PDT)
+        Wed, 31 Jul 2019 06:56:52 -0400
+Received: by mail-lj1-f195.google.com with SMTP id t28so65136054lje.9
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 03:56:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=TDzD4mVy0JnW8wivYuq40NvZrehE5P3+AXFL+h905R8=;
-        b=WNMsbmyz6D6vL9V6DopwuW1s80Gg6oqYGLlA0GJ8RnDqXKSMBuyTYqRBqfhzj9Vffq
-         wl9a5rf74ruxe3IlxypYN4x9BVxL7mlQPHncZ0jmz8pBEGtUAlq88DV0+PNuEQokidbI
-         01jJzGXYdAnjNlSgmwuOLPLupEQt93/+w7eji2TzrzBQG4t/JWkd3GctA3MGZbpVADTA
-         6B1ItYcMYe+vJZQmPWGongPZrKj1kDGsrDGbxHDk0PuAb1ZzpGWQQimPQogwr2ESvDcR
-         JzQuXGQUq4oyde/xmWLagYhdQLfu2Nvi6w80bNdvcg/Dv+8UtAmQOMIILMuZdUy9HJdN
-         Um1A==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=lWUtb7zcpjriA4PXCl0a7ByZXS09QukiEbZhHIw2Fjk=;
+        b=jH3yCYNA8+Yew2LxOI67IHkIjKIsIvFHYzr03cz0THjJFGu0OSsiDwfWUan3chbQpm
+         mZEmEi3yMQkW1v4HReuKE3j4j9p/8Wx1FKkBKXDmoKkeeNOzFy1e48b9yGjieDjSvsLl
+         q6eJ0Q3q7/4RU5n4aXwx1Il4o8xewvLD3mclXDsKyWQwmw6bds/boYFyVWwpAL1NV7N6
+         P3d9H0F6jh2iWh6vDuzyv9gWB6jawLP/p5I8bS9gfxJ4IGJzLQUx1/wwy2IxRGylUo9x
+         Mqx/a4sZNY16xHx/NQ2Se9O54+kiXJrC7MQtmbgVdCRhev9A/ltJvrS1pJnXqlQhKfwl
+         xyXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=TDzD4mVy0JnW8wivYuq40NvZrehE5P3+AXFL+h905R8=;
-        b=E1c/KwIxeHwpiVX7mPtQ6MbBtaNyBr/0BUOa4fPdFMWNqURmQBtfp6AbZ6aynZnNTo
-         atpUuQy4WCllcry5sEvfxPVbBApS6vZnvTETktw0A/WDed+jWylLlB76cPoDPaXlMxOO
-         C3wHCpFBZEPjaZPDa41QmgpzZQVXRTviDLzOkfQ1SYcDOPbToR0sBWRixC7y06ST8DLh
-         I73rhiwsFsD2pcNkDAlJomYNiC55MYifTDXjA5uG/lXyFtC9SNB8ppyUe/vgRJKY8gE6
-         S4fXqTepDvn7ZO5rleBFrXqQr6DovVcsqROUsQLWCu59xyRsXpLxt/b3xkC+aVLhcgB9
-         pMUg==
-X-Gm-Message-State: APjAAAWs1yeThAG4cSweSjFb8GqGDd9I4u/RFYq0/H3JczE7LKWJhDR8
-        5ip2/iMUqGIuSrwkincbSPQPvA==
-X-Google-Smtp-Source: APXvYqzdekKZMBfdaKCjtzUencNZJvkLCqiIWA5u9hwHKpwmTeSFcpzTl4f4+JaBlbZ+1xTy2sL1sQ==
-X-Received: by 2002:a1c:7d08:: with SMTP id y8mr93262568wmc.50.1564570546683;
-        Wed, 31 Jul 2019 03:55:46 -0700 (PDT)
-Received: from hackbox2.linaro.org ([81.128.185.34])
-        by smtp.gmail.com with ESMTPSA id a84sm85426114wmf.29.2019.07.31.03.55.45
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=lWUtb7zcpjriA4PXCl0a7ByZXS09QukiEbZhHIw2Fjk=;
+        b=b5riUviBgBerzDlda2igkLpqwD/lQLddNBlya+dkiUl+xYCFMfLTkwLI6PYB0+BLb9
+         P9m3WPZ+qCLtzy5HmlqgDU0FFos+gt//fD7YYW9HoZtXeqQMhRciCbgMPojyU7D23oR2
+         XAcLazO71qNjQrIYvLg167zBTQIrtbIhNkUroxDIlsg4LHHz6UyTeCcRm7sXeWJoF+03
+         1ASs5I0f8XRW24NUlATUSlfHjIpQFxLQ5KVqjkvmREQ0vsutaazVnMegiXkOTb4Xd1JP
+         G5ETpMCRBVKhIIV4USxGo/7RBtYoIZDgCpc61V0zWdinJYpqu5MQXa55ZhnXqHydfNiF
+         dPtQ==
+X-Gm-Message-State: APjAAAVmLqiKG5LSovH1AbkHCpqDUMq4yw8pzKoHTGGQLQZOeREMZS74
+        zNHQckUTUQW1FoMAm3LywRDNww==
+X-Google-Smtp-Source: APXvYqxyeEQO8uE5Fdhzw9ds+s0/2GTAh6VgDFeXsuRN/l7VM3timHKnAv7SQw94o9XSRrHPLEphKA==
+X-Received: by 2002:a2e:b0e6:: with SMTP id h6mr12041708ljl.18.1564570610667;
+        Wed, 31 Jul 2019 03:56:50 -0700 (PDT)
+Received: from localhost (c-243c70d5.07-21-73746f28.bbcust.telenor.se. [213.112.60.36])
+        by smtp.gmail.com with ESMTPSA id l11sm13191843lfc.18.2019.07.31.03.56.49
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 31 Jul 2019 03:55:45 -0700 (PDT)
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-To:     linux-kselftest@vger.kernel.org, kvm@vger.kernel.org
-Cc:     pbonzini@redhat.com, linux-kernel@vger.kernel.org,
-        drjones@redhat.com, sean.j.christopherson@intel.com,
-        Naresh Kamboju <naresh.kamboju@linaro.org>
-Subject: [PATCH] selftests: kvm: Adding config fragments
-Date:   Wed, 31 Jul 2019 11:55:40 +0100
-Message-Id: <20190731105540.28962-1-naresh.kamboju@linaro.org>
-X-Mailer: git-send-email 2.17.1
+        Wed, 31 Jul 2019 03:56:50 -0700 (PDT)
+From:   Anders Roxell <anders.roxell@linaro.org>
+To:     mika.westerberg@linux.intel.com, wsa@the-dreams.de
+Cc:     linux-i2c@vger.kernel.org, linux-acpi@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Anders Roxell <anders.roxell@linaro.org>
+Subject: [PATCH] i2c: core: remove unused function
+Date:   Wed, 31 Jul 2019 12:56:42 +0200
+Message-Id: <20190731105642.29664-1-anders.roxell@linaro.org>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-selftests kvm test cases need pre-required kernel configs for the test
-to get pass.
+GCC warns taht function 'i2c_acpi_find_match_adapter()' is not used.
 
-Signed-off-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+../drivers/i2c/i2c-core-acpi.c:347:12: warning:
+  ‘i2c_acpi_find_match_adapter’ defined but not used [-Wunused-function]
+ static int i2c_acpi_find_match_adapter(struct device *dev, const void *data)
+            ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Rework to remove the function 'i2c_acpi_find_match_adapter()'.
+
+Fixes: 00500147cbd3 ("drivers: Introduce device lookup variants by ACPI_COMPANION device")
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
 ---
- tools/testing/selftests/kvm/config | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
- create mode 100644 tools/testing/selftests/kvm/config
+ drivers/i2c/i2c-core-acpi.c | 11 -----------
+ 1 file changed, 11 deletions(-)
 
-diff --git a/tools/testing/selftests/kvm/config b/tools/testing/selftests/kvm/config
-new file mode 100644
-index 000000000000..3b1cbd726af6
---- /dev/null
-+++ b/tools/testing/selftests/kvm/config
-@@ -0,0 +1,26 @@
-+CONFIG_ARCH_ENABLE_THP_MIGRATION=y
-+CONFIG_HAVE_KVM_IRQCHIP=y
-+CONFIG_HAVE_KVM_IRQFD=y
-+CONFIG_HAVE_KVM_IRQ_ROUTING=y
-+CONFIG_HAVE_KVM_EVENTFD=y
-+CONFIG_KVM_MMIO=y
-+CONFIG_KVM_ASYNC_PF=y
-+CONFIG_HAVE_KVM_MSI=y
-+CONFIG_HAVE_KVM_CPU_RELAX_INTERCEPT=y
-+CONFIG_KVM_VFIO=y
-+CONFIG_KVM_GENERIC_DIRTYLOG_READ_PROTECT=y
-+CONFIG_KVM_COMPAT=y
-+CONFIG_HAVE_KVM_IRQ_BYPASS=y
-+CONFIG_HAVE_KVM_NO_POLL=y
-+CONFIG_KVM=y
-+CONFIG_VHOST_NET=y
-+CONFIG_VHOST=y
-+CONFIG_VHOST_CROSS_ENDIAN_LEGACY=y
-+CONFIG_USER_RETURN_NOTIFIER=y
-+CONFIG_PREEMPT_NOTIFIERS=y
-+CONFIG_TRANSPARENT_HUGEPAGE=y
-+CONFIG_TRANSPARENT_HUGEPAGE_MADVISE=y
-+CONFIG_THP_SWAP=y
-+CONFIG_TRANSPARENT_HUGE_PAGECACHE=y
-+CONFIG_IRQ_BYPASS_MANAGER=y
-+CONFIG_XARRAY_MULTI=y
+diff --git a/drivers/i2c/i2c-core-acpi.c b/drivers/i2c/i2c-core-acpi.c
+index bc80aafb521f..bb6b39fe343a 100644
+--- a/drivers/i2c/i2c-core-acpi.c
++++ b/drivers/i2c/i2c-core-acpi.c
+@@ -344,17 +344,6 @@ u32 i2c_acpi_find_bus_speed(struct device *dev)
+ }
+ EXPORT_SYMBOL_GPL(i2c_acpi_find_bus_speed);
+ 
+-static int i2c_acpi_find_match_adapter(struct device *dev, const void *data)
+-{
+-	struct i2c_adapter *adapter = i2c_verify_adapter(dev);
+-
+-	if (!adapter)
+-		return 0;
+-
+-	return ACPI_HANDLE(dev) == (acpi_handle)data;
+-}
+-
+-
+ struct i2c_adapter *i2c_acpi_find_adapter_by_handle(acpi_handle handle)
+ {
+ 	struct device *dev = bus_find_device_by_acpi_dev(&i2c_bus_type, handle);
 -- 
-2.17.1
+2.20.1
 
