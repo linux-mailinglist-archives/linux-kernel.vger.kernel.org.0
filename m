@@ -2,50 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B7857B989
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 08:15:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DADA67B98B
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 08:15:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727218AbfGaGPI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 02:15:08 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54950 "EHLO mx1.suse.de"
+        id S1727243AbfGaGPj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 02:15:39 -0400
+Received: from mx2.suse.de ([195.135.220.15]:55044 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725935AbfGaGPI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 02:15:08 -0400
+        id S1725871AbfGaGPj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jul 2019 02:15:39 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 21BD5AD1E;
-        Wed, 31 Jul 2019 06:15:07 +0000 (UTC)
-Subject: Re: [PATCH] [v3] xen: avoid link error on ARM
-To:     Arnd Bergmann <arnd@arndb.de>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc:     Stefano Stabellini <sstabellini@kernel.org>,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
-References: <20190722074705.2082153-1-arnd@arndb.de>
+        by mx1.suse.de (Postfix) with ESMTP id 05D0CAD1E;
+        Wed, 31 Jul 2019 06:15:37 +0000 (UTC)
+Subject: Re: [PATCH] xen/gntdev.c: Replace vm_map_pages() with
+ vm_map_pages_zero()
+To:     Souptick Joarder <jrdr.linux@gmail.com>,
+        marmarek@invisiblethingslab.com, sstabellini@kernel.org,
+        boris.ostrovsky@oracle.com
+Cc:     linux@armlinux.org.uk, willy@infradead.org, linux-mm@kvack.org,
+        akpm@linux-foundation.org, gregkh@linuxfoundation.org,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+References: <1564511696-4044-1-git-send-email-jrdr.linux@gmail.com>
 From:   Juergen Gross <jgross@suse.com>
-Message-ID: <4c9fa545-1940-5bb8-ddbb-1024a8a23655@suse.com>
-Date:   Wed, 31 Jul 2019 08:15:06 +0200
+Message-ID: <436440f5-0031-5ad5-4a22-2acf218ad727@suse.com>
+Date:   Wed, 31 Jul 2019 08:15:37 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <20190722074705.2082153-1-arnd@arndb.de>
+In-Reply-To: <1564511696-4044-1-git-send-email-jrdr.linux@gmail.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: de-DE
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22.07.19 09:46, Arnd Bergmann wrote:
-> Building the privcmd code as a loadable module on ARM, we get
-> a link error due to the private cache management functions:
+On 30.07.19 20:34, Souptick Joarder wrote:
+> 'commit df9bde015a72 ("xen/gntdev.c: convert to use vm_map_pages()")'
+> breaks gntdev driver. If vma->vm_pgoff > 0, vm_map_pages()
+> will:
+>   - use map->pages starting at vma->vm_pgoff instead of 0
+>   - verify map->count against vma_pages()+vma->vm_pgoff instead of just
+>     vma_pages().
 > 
-> ERROR: "__sync_icache_dcache" [drivers/xen/xen-privcmd.ko] undefined!
+> In practice, this breaks using a single gntdev FD for mapping multiple
+> grants.
 > 
-> Move the code into a new that is always built in when Xen is enabled,
-> as suggested by Juergen Gross and Boris Ostrovsky.
+> relevant strace output:
+> [pid   857] ioctl(7, IOCTL_GNTDEV_MAP_GRANT_REF, 0x7ffd3407b6d0) = 0
+> [pid   857] mmap(NULL, 4096, PROT_READ|PROT_WRITE, MAP_SHARED, 7, 0) =
+> 0x777f1211b000
+> [pid   857] ioctl(7, IOCTL_GNTDEV_SET_UNMAP_NOTIFY, 0x7ffd3407b710) = 0
+> [pid   857] ioctl(7, IOCTL_GNTDEV_MAP_GRANT_REF, 0x7ffd3407b6d0) = 0
+> [pid   857] mmap(NULL, 4096, PROT_READ|PROT_WRITE, MAP_SHARED, 7,
+> 0x1000) = -1 ENXIO (No such device or address)
 > 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> details here:
+> https://github.com/QubesOS/qubes-issues/issues/5199
+> 
+> The reason is -> ( copying Marek's word from discussion)
+> 
+> vma->vm_pgoff is used as index passed to gntdev_find_map_index. It's
+> basically using this parameter for "which grant reference to map".
+> map struct returned by gntdev_find_map_index() describes just the pages
+> to be mapped. Specifically map->pages[0] should be mapped at
+> vma->vm_start, not vma->vm_start+vma->vm_pgoff*PAGE_SIZE.
+> 
+> When trying to map grant with index (aka vma->vm_pgoff) > 1,
+> __vm_map_pages() will refuse to map it because it will expect map->count
+> to be at least vma_pages(vma)+vma->vm_pgoff, while it is exactly
+> vma_pages(vma).
+> 
+> Converting vm_map_pages() to use vm_map_pages_zero() will fix the
+> problem.
+> 
+> Marek has tested and confirmed the same.
+> 
+> Reported-by: Marek Marczykowski-Górecki <marmarek@invisiblethingslab.com>
+> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+> Tested-by: Marek Marczykowski-Górecki <marmarek@invisiblethingslab.com>
 
 Pushed to xen/tip.git for-linus-5.3a
 
