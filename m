@@ -2,43 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6883D7CE4F
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 22:28:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 08CE67CE55
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 22:29:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730538AbfGaU17 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 16:27:59 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:34388 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727686AbfGaU17 (ORCPT
+        id S1730577AbfGaU3h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 16:29:37 -0400
+Received: from mail-wm1-f46.google.com ([209.85.128.46]:36586 "EHLO
+        mail-wm1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728697AbfGaU3h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 16:27:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
-        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Reply-To:Content-Type:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=IRFd+PlshrvLln782PL1UztPzCE0DOFBWjyl1WcrdMY=; b=CRV1fPLzPlmMc8T74PQLDEjIQ
-        iLp0Qk3Kn0HOl0ucLNFdVEU02l801EWYr4Nv+Y5R7P7XJjXPw1zlYHTR5sZIZFtVPlrIhXMMhcKKy
-        JPryHPJvtNszOnjNuCbHZEiXIqdkP1nAP7BxGBt/49YpyTAND27s3QG+0UNOUBcEjZgxSBhpxUjgI
-        llEqmspGu+z0ymdqf/kp/UXYRABbxryWwRzRPlXITa1y2otj5K+qcsPvDEzqsjn9akLlyVeV+uLHY
-        6sGGBWrggSkU1jj5+xM64Can2839jez0e0u9KsYj+RuasBoFU8V0AiUj7JV+A+nAjqXQqccF7HeJI
-        3TUjsVMLA==;
-Received: from [191.33.152.89] (helo=bombadil.infradead.org)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hsvCZ-0002PZ-2Z; Wed, 31 Jul 2019 20:27:59 +0000
-Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
-        (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1hsvCW-0008Be-UY; Wed, 31 Jul 2019 17:27:56 -0300
-From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
-Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH] docs: fs: porting.rst: fix a broken reference to another doc
-Date:   Wed, 31 Jul 2019 17:27:56 -0300
-Message-Id: <13a84a30d8d0b578987f6b3f214697c9a811c2b9.1564604869.git.mchehab+samsung@kernel.org>
-X-Mailer: git-send-email 2.21.0
+        Wed, 31 Jul 2019 16:29:37 -0400
+Received: by mail-wm1-f46.google.com with SMTP id g67so56890792wme.1
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 13:29:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=J6ze2YAQiFMQcX08HvMMVBLcUCeG0njel810asmfh74=;
+        b=A66eZ8wtZbNn3nsqtM7suQXkzBLl5zZ2enyjLbB1erWuNMARvWzGxmTkO0XuWMebS1
+         1rrgocfWUtim/FHLitbJqyMTvJ0vH53EyYZGOq5A9uOfBGnIdK+ns5iFkpdrIvzFE/QC
+         vxJa3zNO0ZGn3o+A4bMXPwxWZm0R+N6tX36UuDsxL8p3SP4d/HtT6X9glTrNCzjVG8ON
+         zvo5NCiPTKZckQcenmPz/xqmj0F14Oj4f9++YheC9PPG3vjIjfIgPCwNIYvSXbU4+ICV
+         iqtt2KtDC2yUoZpoaQ88sMaI5wbBYlCVgSG808PZBRXr8ba0mXzMpJg2PYtvjUbU1TbT
+         eyfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=J6ze2YAQiFMQcX08HvMMVBLcUCeG0njel810asmfh74=;
+        b=Rq8TDTw+KXcpYiCbwOK3kIgB8cWJGHQMVAxRrFOKEu3mly3cBGl0E/ts9KNZrgoyql
+         U8XE5011GgYG2vV1G0rtAjn++0PQ0PDGjopGIe+D940R9/ezZwo/UkNMBHr8aym6bZgq
+         TWmpV8Iwnix6wNIT2iw3wqmvUOHS1X8gXP1hBn0x/TrqksbYssbZYWGSHakV53OFebB6
+         d48dtY8g/ahhmdeyHd6HyEd6SQbH/CkDZPgee4bDmFzcelmSQnAwummtdW8Gnao9lSC2
+         d8Z6Bxr1GFUm6ptJqKm30Q61UrNobtBU/i+jxovS+rPX7ovnGoc3AmxmFhtf4W5HPMJx
+         WAjA==
+X-Gm-Message-State: APjAAAUN5uuoS9yKeueonPFh3uJzKirRjbmk/6FAoLYcy0X9UH9v3cb4
+        FOW+MJhR6Q/JH5w2+7L1aWnvrQ==
+X-Google-Smtp-Source: APXvYqwlUrEDjH//rXtg1eVUY1CgRd0ZuDM1zafwJtzOhlHIQBzrAFHo/nx6y2h1NSrLpNDjGpkieQ==
+X-Received: by 2002:a05:600c:204c:: with SMTP id p12mr111863989wmg.121.1564604974820;
+        Wed, 31 Jul 2019 13:29:34 -0700 (PDT)
+Received: from localhost.localdomain (19.red-176-86-136.dynamicip.rima-tde.net. [176.86.136.19])
+        by smtp.gmail.com with ESMTPSA id i18sm91905591wrp.91.2019.07.31.13.29.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 31 Jul 2019 13:29:34 -0700 (PDT)
+From:   Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+To:     jorge.ramirez-ortiz@linaro.org, bjorn.andersson@linaro.org,
+        sboyd@kernel.org, david.brown@linaro.org, jassisinghbrar@gmail.com,
+        mark.rutland@arm.com, mturquette@baylibre.com, robh+dt@kernel.org,
+        will.deacon@arm.com, arnd@arndb.de, horms+renesas@verge.net.au,
+        heiko@sntech.de, sibis@codeaurora.org,
+        enric.balletbo@collabora.com, jagan@amarulasolutions.com,
+        olof@lixom.net
+Cc:     vkoul@kernel.org, niklas.cassel@linaro.org,
+        georgi.djakov@linaro.org, amit.kucheria@linaro.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, khasim.mohammed@linaro.org
+Subject: [PATCH v4 00/13] Support CPU frequency scaling on QCS404
+Date:   Wed, 31 Jul 2019 22:29:16 +0200
+Message-Id: <20190731202929.16443-1-jorge.ramirez-ortiz@linaro.org>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -46,29 +69,94 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With all those document shifts, references to documents get
-broken.
+The following patchset enables CPU frequency scaling support on the
+QCS404 (with dynamic voltage scaling).
 
-Fix one such occurrence at porting.rst.
+It is important to notice that this functionality will be superseded
+by Core Power Reduction (CPR), a more accurate form of AVS found on
+certain Qualcomm SoCs.
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
----
- Documentation/filesystems/porting.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Some of the changes required to support CPR do conflict with the
+configuration required for CPUFreq.
 
-diff --git a/Documentation/filesystems/porting.rst b/Documentation/filesystems/porting.rst
-index 66aa521e6376..f18506083ced 100644
---- a/Documentation/filesystems/porting.rst
-+++ b/Documentation/filesystems/porting.rst
-@@ -158,7 +158,7 @@ Callers of notify_change() need ->i_mutex now.
- New super_block field ``struct export_operations *s_export_op`` for
- explicit support for exporting, e.g. via NFS.  The structure is fully
- documented at its declaration in include/linux/fs.h, and in
--Documentation/filesystems/nfs/Exporting.
-+Documentation/filesystems/nfs/exporting.rst.
- 
- Briefly it allows for the definition of decode_fh and encode_fh operations
- to encode and decode filehandles, and allows the filesystem to use
+In particular, the following commit for CPR - already merged - will
+need to be reverted in order to enable CPUFreq.
+
+   Author: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+   Date:   Thu Jul 25 12:41:36 2019 +0200
+       cpufreq: Add qcs404 to cpufreq-dt-platdev blacklist
+    
+Patch 8 "clk: qcom: hfpll: CLK_IGNORE_UNUSED" is a bit controversial;
+in this platform, this PLL provides the clock signal to a CPU
+core. But in others it might not.
+
+We opted for the minimal ammount of changes without affecting the
+default functionality: simply bypassing the COMMON_CLK_DISABLE_UNUSED
+framework and letting the firwmare chose whether to enable or disable
+the clock at boot. However maybe a DT property and marking the clock
+as critical would be more appropriate for this PLL. we'd appreciate the
+maintainer's input on this topic.
+
+v2:
+   - dts: ms8916: apcs mux/divider: new bindings
+     (the driver can still support the old bindings)
+
+   - qcs404.dtsi
+     fix apcs-hfpll definition
+     fix cpu_opp_table definition
+
+   - GPLL0_AO_OUT operating frequency
+     define new alpha_pll_fixed_ops to limit the operating frequency
+
+v3:
+  - qcom-apcs-ipc-mailbox
+    replace goto to ease readability
+
+  - apcs-msm8916.c
+    rework patch to use of_clk_parent_fill
+
+  - hfpll.c
+    add relevant comments to the code
+
+  - qcs404.dtsi
+    add voltage scaling support
+
+v4:
+ - squash OPP definition and DVFS enablement in dts
+   (patches 10 and 13 in previous version)
+   
+ - qcom-apcs-ipc-mailbox
+   replace return condition for readability
+   
+ - answer one question on CLK_IGNORE_UNUSED in mailing list
+
+Jorge Ramirez-Ortiz, Niklas Cassel (13):
+  clk: qcom: gcc: limit GPLL0_AO_OUT operating frequency
+  mbox: qcom: add APCS child device for QCS404
+  mbox: qcom: replace integer with valid macro
+  dt-bindings: mailbox: qcom: Add clock-name optional property
+  clk: qcom: apcs-msm8916: get parent clock names from DT
+  clk: qcom: hfpll: get parent clock names from DT
+  clk: qcom: hfpll: register as clock provider
+  clk: qcom: hfpll: CLK_IGNORE_UNUSED
+  arm64: dts: qcom: msm8916: Add the clocks for the APCS mux/divider
+  arm64: dts: qcom: qcs404: Add HFPLL node
+  arm64: dts: qcom: qcs404: Add the clocks for APCS mux/divider
+  arm64: dts: qcom: qcs404: Add DVFS support
+  arm64: defconfig: Enable HFPLL
+
+ .../mailbox/qcom,apcs-kpss-global.txt         | 24 +++++++++--
+ arch/arm64/boot/dts/qcom/msm8916.dtsi         |  3 +-
+ arch/arm64/boot/dts/qcom/qcs404.dtsi          | 43 +++++++++++++++++++
+ arch/arm64/configs/defconfig                  |  1 +
+ drivers/clk/qcom/apcs-msm8916.c               | 23 ++++++++--
+ drivers/clk/qcom/clk-alpha-pll.c              |  8 ++++
+ drivers/clk/qcom/clk-alpha-pll.h              |  1 +
+ drivers/clk/qcom/gcc-qcs404.c                 |  2 +-
+ drivers/clk/qcom/hfpll.c                      | 25 ++++++++++-
+ drivers/mailbox/qcom-apcs-ipc-mailbox.c       | 11 +++--
+ 10 files changed, 128 insertions(+), 13 deletions(-)
+
 -- 
-2.21.0
+2.22.0
 
