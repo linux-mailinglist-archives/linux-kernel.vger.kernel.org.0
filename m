@@ -2,99 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28F237CF6E
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 23:11:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE98A7CFE8
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 23:14:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726755AbfGaVLV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 17:11:21 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:17193 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730567AbfGaVLL (ORCPT
+        id S1730399AbfGaVN7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 17:13:59 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:40958 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726096AbfGaVN7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 17:11:11 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d4203f00000>; Wed, 31 Jul 2019 14:11:12 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 31 Jul 2019 14:11:11 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 31 Jul 2019 14:11:11 -0700
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL106.nvidia.com
- (172.18.146.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 31 Jul
- 2019 21:11:10 +0000
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 31 Jul
- 2019 21:11:10 +0000
-Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Wed, 31 Jul 2019 21:11:10 +0000
-Received: from skomatineni-linux.nvidia.com (Not Verified[10.110.102.167]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5d4203ee0000>; Wed, 31 Jul 2019 14:11:10 -0700
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <tglx@linutronix.de>, <jason@lakedaemon.net>,
-        <marc.zyngier@arm.com>, <linus.walleij@linaro.org>,
-        <stefan@agner.ch>, <mark.rutland@arm.com>
-CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
-        <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <jckuo@nvidia.com>,
-        <josephl@nvidia.com>, <talho@nvidia.com>, <skomatineni@nvidia.com>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <mperttunen@nvidia.com>, <spatra@nvidia.com>, <robh+dt@kernel.org>,
-        <digetx@gmail.com>, <devicetree@vger.kernel.org>,
-        <rjw@rjwysocki.net>, <viresh.kumar@linaro.org>,
-        <linux-pm@vger.kernel.org>
-Subject: [PATCH v7 20/20] arm64: dts: tegra210-p3450: Jetson Nano SC7 timings
-Date:   Wed, 31 Jul 2019 14:11:03 -0700
-Message-ID: <1564607463-28802-21-git-send-email-skomatineni@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1564607463-28802-1-git-send-email-skomatineni@nvidia.com>
-References: <1564607463-28802-1-git-send-email-skomatineni@nvidia.com>
-X-NVConfidentiality: public
+        Wed, 31 Jul 2019 17:13:59 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6VL8sxc083461;
+        Wed, 31 Jul 2019 21:13:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=nk338iTHcZ5glQ9pVoR5sv06o3zifCdSyoAmg7k51eg=;
+ b=sHCfQeB7h4NMrSRZMCLP9KAHtS+eHmtI4MJM8u5wZoQngdtDpD+YvlXHN8iFnHeT7rFk
+ Vu4cMWpJEMU4599m4FbPz93DAtZicMazt1OjMitmGAzPsx+tkZukXNixTTvkNA9FwchS
+ kJX++LEY36kdbXBR6islJEFvKmm/HffgqNuktNXYFLpB75JmBHBTGKuNgpFahJFXuvRS
+ RQA51To4x/0E9SIp4XTVd50E6iA7Lm+c6ilgidB/qBhxYizvIQF/H6qoLNLFm7HV6l3s
+ DNPecn9sF5cC860u7+PS9puCPmKLriCeIbbg6o85Zd0pvpPat5WV2flmrDzeFjqG7Muz ow== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2130.oracle.com with ESMTP id 2u0e1tyyed-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 31 Jul 2019 21:13:48 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6VL7ill000805;
+        Wed, 31 Jul 2019 21:13:47 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3020.oracle.com with ESMTP id 2u2exc4cfu-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 31 Jul 2019 21:13:47 +0000
+Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x6VLDkdg017301;
+        Wed, 31 Jul 2019 21:13:46 GMT
+Received: from [192.168.1.222] (/71.63.128.209)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 31 Jul 2019 14:13:45 -0700
+Subject: Re: [RFC PATCH 3/3] hugetlbfs: don't retry when pool page allocations
+ start to fail
+To:     Vlastimil Babka <vbabka@suse.cz>, Mel Gorman <mgorman@suse.de>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Hillf Danton <hdanton@sina.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+References: <20190724175014.9935-1-mike.kravetz@oracle.com>
+ <20190724175014.9935-4-mike.kravetz@oracle.com>
+ <20190725081350.GD2708@suse.de>
+ <6a7f3705-9550-e22f-efa1-5e3616351df6@oracle.com>
+ <d4099d77-418b-4d4b-715f-7b37347d5f8d@suse.cz>
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <b7eb72a6-65a4-4785-39ec-a995d415fae3@oracle.com>
+Date:   Wed, 31 Jul 2019 14:13:44 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1564607472; bh=IAZSdScPMp/Ip7Sf+sfNEWrp2xlTiRUarz1Aolfu/RA=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
-         Content-Type;
-        b=cF0vTPm91OYZIhKUXrVAAlDmo7PFU4MgrXyeF0eYj5gSZuFAFFqDd1ZHwFLJIXun4
-         CO/kQhyBb9yfQXDpNImeC69edPI2btVmrHWPflZz4ej6zwZP9H/pJVsUzs3mHA7STt
-         irIiPgQXJj9J9yhWO9og7Bc1gT399CbEUJNGCegkz98hjB3pFZamlTyYT5UtGy/ZFu
-         8z9CCvetE3flwrUGJP8yYRgaIGB8YgJdbIZUZtFzmwFRw8xLUzTLJuBuZSvEyEvm1g
-         RPBbejG8xR9tXShupaWLJWiiDf6eC+oc662SQbZZedO37DNJFMmMIr15Nj8gHL0XQc
-         1QpnD9jPUiVyA==
+In-Reply-To: <d4099d77-418b-4d4b-715f-7b37347d5f8d@suse.cz>
+Content-Type: text/plain; charset=iso-8859-15
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9335 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1907310212
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9335 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1907310212
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds Jetson Nano platform specific SC7 timing configuration
-in the device tree.
+On 7/31/19 6:23 AM, Vlastimil Babka wrote:
+> On 7/25/19 7:15 PM, Mike Kravetz wrote:
+>> On 7/25/19 1:13 AM, Mel Gorman wrote:
+>>> On Wed, Jul 24, 2019 at 10:50:14AM -0700, Mike Kravetz wrote:
+>>>
+>>> set_max_huge_pages can fail the NODEMASK_ALLOC() alloc which you handle
+>>> *but* in the event of an allocation failure this bug can silently recur.
+>>> An informational message might be justified in that case in case the
+>>> stall should recur with no hint as to why.
+>>
+>> Right.
+>> Perhaps a NODEMASK_ALLOC() failure should just result in a quick exit/error.
+>> If we can't allocate a node mask, it is unlikely we will be able to allocate
+>> a/any huge pages.  And, the system must be extremely low on memory and there
+>> are likely other bigger issues.
+> 
+> Agreed. But I would perhaps drop __GFP_NORETRY from the mask allocation
+> as that can fail for transient conditions.
 
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
----
- arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts | 7 +++++++
- 1 file changed, 7 insertions(+)
+Thanks, I was unsure if adding __GFP_NORETRY would be a good idea.
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts b/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
-index 9d17ec707bce..b525e69c172a 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
-@@ -382,6 +382,13 @@
- 
- 	pmc@7000e400 {
- 		nvidia,invert-interrupt;
-+		nvidia,suspend-mode = <0>;
-+		nvidia,cpu-pwr-good-time = <0>;
-+		nvidia,cpu-pwr-off-time = <0>;
-+		nvidia,core-pwr-good-time = <4587 3876>;
-+		nvidia,core-pwr-off-time = <39065>;
-+		nvidia,core-power-req-active-high;
-+		nvidia,sys-clock-req-active-high;
- 	};
- 
- 	hda@70030000 {
 -- 
-2.7.4
-
+Mike Kravetz
