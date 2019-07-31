@@ -2,33 +2,33 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B5337BFFD
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 13:33:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B1C9F7BFF3
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 13:33:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728961AbfGaLc1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 07:32:27 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:35592 "EHLO
+        id S1728869AbfGaLcB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 07:32:01 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:35678 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387723AbfGaLaR (ORCPT
+        with ESMTP id S1728055AbfGaLaS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 07:30:17 -0400
+        Wed, 31 Jul 2019 07:30:18 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=EqyAK/JNK2ARshSsWcKdC1rIHp0lvAvnPMamc2x2Z18=; b=aGtkSSze11Tk
-        RNv0zggKrfH3lr4GNOKToag2m1vAa+pyWnexSuF0wx2X/1xCX2dV1AUqZZ42hPs5TG5Q5yUpETI4u
-        2l+X6nMhC+dJZMZt7yarJSnsXvUIlFi7m/lc7kMPSwUqdq9Pk0wU93MgMIj4MKfPx6o2x2cnWujOB
-        uPtxg=;
+        List-Archive; bh=JDdIiMRNxz3nh4P58eL+dgzzdUBoAUTuWptHyMpnAPw=; b=AxqqpbRNKGZD
+        w7Hz+Ywyhl2Kr8lziN1RSWQFJDQzfSWLBm9w/6ibuQAD9OcT8Ttni2/CJdmYmT+ZoVFm35FVdAquM
+        Km4dy2OJ/K/R985/Xoc47p5GQaPquCn+N3FHCDrZfE50MFOQp+1vXpi7JxBrSOS0LhsRSh/4kDIFz
+        dMwqE=;
 Received: from ypsilon.sirena.org.uk ([2001:470:1f1d:6b5::7])
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1hsmnc-0001l5-K0; Wed, 31 Jul 2019 11:29:40 +0000
+        id 1hsmnc-0001kz-23; Wed, 31 Jul 2019 11:29:40 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 0A1CB2742CDE; Wed, 31 Jul 2019 12:29:39 +0100 (BST)
+        id 5B1722742C99; Wed, 31 Jul 2019 12:29:39 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
 To:     YueHaibing <yuehaibing@huawei.com>
 Cc:     alexandre.torgue@st.com, alsa-devel@alsa-project.org,
@@ -55,10 +55,10 @@ Cc:     alexandre.torgue@st.com, alsa-devel@alsa-project.org,
         thierry.reding@gmail.com, timur@kernel.org, tiwai@suse.com,
         wahrenst@gmx.net, wens@csie.org, Xiubo.Lee@gmail.com,
         yamada.masahiro@socionext.com
-Subject: Applied "ASoC: uniphier: aio-dma: use devm_platform_ioremap_resource() to simplify code" to the asoc tree
-In-Reply-To: <20190727150738.54764-23-yuehaibing@huawei.com>
+Subject: Applied "ASoC: au1x: psc-i2s: use devm_platform_ioremap_resource() to simplify code" to the asoc tree
+In-Reply-To: <20190727150738.54764-25-yuehaibing@huawei.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190731112940.0A1CB2742CDE@ypsilon.sirena.org.uk>
+Message-Id: <20190731112939.5B1722742C99@ypsilon.sirena.org.uk>
 Date:   Wed, 31 Jul 2019 12:29:39 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -67,7 +67,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: uniphier: aio-dma: use devm_platform_ioremap_resource() to simplify code
+   ASoC: au1x: psc-i2s: use devm_platform_ioremap_resource() to simplify code
 
 has been applied to the asoc tree at
 
@@ -92,40 +92,45 @@ to this mail.
 Thanks,
 Mark
 
-From b885c9fa363fa4604d78ea00adfed64db656fb78 Mon Sep 17 00:00:00 2001
+From 12a63c0fa03691328b948690601dc7dde8fc527b Mon Sep 17 00:00:00 2001
 From: YueHaibing <yuehaibing@huawei.com>
-Date: Sat, 27 Jul 2019 23:07:26 +0800
-Subject: [PATCH] ASoC: uniphier: aio-dma: use devm_platform_ioremap_resource()
- to simplify code
+Date: Sat, 27 Jul 2019 23:07:28 +0800
+Subject: [PATCH] ASoC: au1x: psc-i2s: use devm_platform_ioremap_resource() to
+ simplify code
 
 Use devm_platform_ioremap_resource() to simplify the code a bit.
 This is detected by coccinelle.
 
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Link: https://lore.kernel.org/r/20190727150738.54764-23-yuehaibing@huawei.com
+Link: https://lore.kernel.org/r/20190727150738.54764-25-yuehaibing@huawei.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/uniphier/aio-dma.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ sound/soc/au1x/psc-i2s.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/sound/soc/uniphier/aio-dma.c b/sound/soc/uniphier/aio-dma.c
-index fa001d3c1a88..862346d66774 100644
---- a/sound/soc/uniphier/aio-dma.c
-+++ b/sound/soc/uniphier/aio-dma.c
-@@ -276,12 +276,10 @@ int uniphier_aiodma_soc_register_platform(struct platform_device *pdev)
- {
- 	struct uniphier_aio_chip *chip = platform_get_drvdata(pdev);
- 	struct device *dev = &pdev->dev;
--	struct resource *res;
- 	void __iomem *preg;
- 	int irq, ret;
+diff --git a/sound/soc/au1x/psc-i2s.c b/sound/soc/au1x/psc-i2s.c
+index 076303f96b8c..767ce950d0da 100644
+--- a/sound/soc/au1x/psc-i2s.c
++++ b/sound/soc/au1x/psc-i2s.c
+@@ -291,7 +291,7 @@ static const struct snd_soc_component_driver au1xpsc_i2s_component = {
  
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	preg = devm_ioremap_resource(dev, res);
-+	preg = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(preg))
- 		return PTR_ERR(preg);
+ static int au1xpsc_i2s_drvprobe(struct platform_device *pdev)
+ {
+-	struct resource *iores, *dmares;
++	struct resource *dmares;
+ 	unsigned long sel;
+ 	struct au1xpsc_audio_data *wd;
+ 
+@@ -300,8 +300,7 @@ static int au1xpsc_i2s_drvprobe(struct platform_device *pdev)
+ 	if (!wd)
+ 		return -ENOMEM;
+ 
+-	iores = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	wd->mmio = devm_ioremap_resource(&pdev->dev, iores);
++	wd->mmio = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(wd->mmio))
+ 		return PTR_ERR(wd->mmio);
  
 -- 
 2.20.1
