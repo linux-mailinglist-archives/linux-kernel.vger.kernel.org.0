@@ -2,53 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D3637C5A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 17:10:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 60C267C5D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 17:10:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388508AbfGaPIX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 11:08:23 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:43815 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388314AbfGaPIT (ORCPT
+        id S1729620AbfGaPKt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 11:10:49 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:35710 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388443AbfGaPIU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 11:08:19 -0400
-Received: by mail-ed1-f68.google.com with SMTP id e3so66030483edr.10
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 08:08:17 -0700 (PDT)
+        Wed, 31 Jul 2019 11:08:20 -0400
+Received: by mail-ed1-f65.google.com with SMTP id w20so65995106edd.2
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 08:08:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=shutemov-name.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=wLPXwl8hvJobXFCl++g4aCvf+npUzZ0QqPbdONmdAQc=;
-        b=R36gYrhWPE65DAN624GOKj6Zcvo/ac/skfKDjJ3xcAQFiNmr7dX573jmLVCRaNG72Z
-         xcMGnyIs1LpXnhGK5JxEboIEAPxR/EeGcod/4MYW/A0bbBy9yBKnmU2CF6SqodBq1bbG
-         2et49Q8QeC0Gi2N/dOFWHDkpO2qo6+z6lshk3KNGVbQlqNYxKAMnCnpgag0jzwh5HEUj
-         dMc4Sem5sBJAfoYBQzfFvzczhmipMrh7ObYbRCqFmv9xdDuVsiGlTB/dwRP9co2iZadV
-         LxdeXO4uRP+DUWTuqbPXM46fxWLgXQuCInUrkr1thUYy5i2Mt2bnKrQGqLbEspEV6MTU
-         W2og==
+        bh=uRHR4JyNhqg33njeUSvVGNylXkFyo7B3QnIKSQpCDwk=;
+        b=Adcw5GPsJkn83YXVJKj7Wqwm6NwWDC1hAYaUolv28wXp+8oH0VtnaENGQuZ/0K5+Nb
+         4ttVuTcBuWW62tdKiOabj/bghgVhdlTVmNRPbQ83nxcV2pN29l6uGQo0wyZ/lAlhkLv5
+         uu88EBPXw3XRRpwEaUjPB0g7WmxNmdd7QzlE0G/0MbaOwDTTzRhC9WWYSRAeSeO7X5bx
+         QFUzmQ84OBFGl0JYzwuDQQLD8dx+iNms4LZ5CMlKmpkkFg5rsp7bDTsd+CepoXc38t5t
+         U6hOGTcOi/3klKmjqufRITIY89IhP2ybvsPkGFX/lxa/yb3zD0rrCBZO9eKTlKALJ6M+
+         k80A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=wLPXwl8hvJobXFCl++g4aCvf+npUzZ0QqPbdONmdAQc=;
-        b=LYRfoIPP8tEDR3cV+A+scSstJO8gryju9kRXTyOkJRTfWp/uIbC6WzMIivJY4PEICq
-         kVwV21D5B0saLADbemkL1z7LtqDt0uoZB6IYD+CuIEvW0651FRdYBO0WuVDO2rMzOpHB
-         vGz1oZ8We86ES4D030Pf9c/k3AXnb96ynpKzy0OJd4HlH9MuVjne2DtoKrDa/BQ6WLSI
-         Ynu6nFxDAB65LfQiJSFTdu+LbWc9ahcfXugeXfuJCWTA6EOL5gb8iyYdyxE7vN9TBbRh
-         OrIFQFpjQg+BU7+TR443BF9/wD2wbKS3cX7bjZ1qa1xQSjXmP0xRwHd4h+A9u/VFp6hJ
-         O12g==
-X-Gm-Message-State: APjAAAVZ3tVvi3Df+oHFeRQTEYdH48ynyi0NJ5zyOrWkuVI2bFK4WAoZ
-        OJ9mbYMy1/AZCWsqPGFrrW4=
-X-Google-Smtp-Source: APXvYqw0oWdSxi7D+H/1P5QUyRaVYREdYgbW7LIf4XE4H22UAM6yie49PO/SDUQu/e/ngKqwbq3xkA==
-X-Received: by 2002:a17:906:430a:: with SMTP id j10mr10514767ejm.92.1564585696918;
-        Wed, 31 Jul 2019 08:08:16 -0700 (PDT)
+        bh=uRHR4JyNhqg33njeUSvVGNylXkFyo7B3QnIKSQpCDwk=;
+        b=Fr7HoANqdxaTQeersB5lV1oiM5SVpWpc8UfxcTTYDgUTXDwoxQ47zNPP2X1WwbbkqX
+         QniKL0FJQYUE8fXQx0brJXIUwdUSbYlBIuNFe1NjnoaFTBmEV+6oXjFwIBp81g0wrFxA
+         isNd9NQFsyiX/ZKe9Xgvw+8nZYAJUBv/PlKmWvzKg03yiGRacR3kxmT6P3+Kt1qZH8Lw
+         WkhD4mbgBTEyzVQPyz7A5ZzkR+KJNMph/vwrygBDqv8BThcpBdXyQjq7Ctat7oJl6z6u
+         Wqtwr1VHCz17RXB59A9BPhHnGEhiR3A7iQmaWiP6anSdR/jtHxIyNkEhd8aO9lbPiQb6
+         KOxw==
+X-Gm-Message-State: APjAAAUwieQunA8fUFq0FugbyR8hG77Id1goCMWXJHOE6NT04zymHzEx
+        oqbSjqjTl3/5iQJhaoE04dk=
+X-Google-Smtp-Source: APXvYqwgh75LQw16lfxHmAAueOtxiQIAT7Hemys++oZtGs9IrW8hC3dJ4CKW+gKV4lDeffYtzg8cig==
+X-Received: by 2002:a17:906:6a87:: with SMTP id p7mr23487746ejr.277.1564585698812;
+        Wed, 31 Jul 2019 08:08:18 -0700 (PDT)
 Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id y11sm12444493ejb.54.2019.07.31.08.08.15
+        by smtp.gmail.com with ESMTPSA id o22sm17282769edc.37.2019.07.31.08.08.15
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
         Wed, 31 Jul 2019 08:08:15 -0700 (PDT)
 From:   "Kirill A. Shutemov" <kirill@shutemov.name>
 X-Google-Original-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
 Received: by box.localdomain (Postfix, from userid 1000)
-        id F174F101319; Wed, 31 Jul 2019 18:08:15 +0300 (+03)
+        id 03F8F10131A; Wed, 31 Jul 2019 18:08:16 +0300 (+03)
 To:     Andrew Morton <akpm@linux-foundation.org>, x86@kernel.org,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>,
@@ -64,9 +64,9 @@ Cc:     Kees Cook <keescook@chromium.org>,
         linux-mm@kvack.org, kvm@vger.kernel.org, keyrings@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: [PATCHv2 02/59] mm: Add helpers to setup zero page mappings
-Date:   Wed, 31 Jul 2019 18:07:16 +0300
-Message-Id: <20190731150813.26289-3-kirill.shutemov@linux.intel.com>
+Subject: [PATCHv2 03/59] mm/ksm: Do not merge pages with different KeyIDs
+Date:   Wed, 31 Jul 2019 18:07:17 +0300
+Message-Id: <20190731150813.26289-4-kirill.shutemov@linux.intel.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190731150813.26289-1-kirill.shutemov@linux.intel.com>
 References: <20190731150813.26289-1-kirill.shutemov@linux.intel.com>
@@ -77,114 +77,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When kernel sets up an encrypted page mapping, encryption KeyID is
-derived from a VMA. KeyID is going to be part of vma->vm_page_prot and
-it will be propagated transparently to page table entry on mk_pte().
+KSM compares plain text.  It might try to merge two pages that have the
+same plain text but different ciphertext and possibly different
+encryption keys.  When the kernel encrypted the page, it promised that
+it would keep it encrypted with _that_ key.  That makes it impossible to
+merge two pages encrypted with different keys.
 
-But there is an exception: zero page is never encrypted and its mapping
-must use KeyID-0, regardless VMA's KeyID.
-
-Introduce helpers that create a page table entry for zero page.
-
-The generic implementation will be overridden by architecture-specific
-code that takes care about using correct KeyID.
+Never merge encrypted pages with different KeyIDs.
 
 Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 ---
- fs/dax.c                      | 3 +--
- include/asm-generic/pgtable.h | 8 ++++++++
- mm/huge_memory.c              | 6 ++----
- mm/memory.c                   | 3 +--
- mm/userfaultfd.c              | 3 +--
- 5 files changed, 13 insertions(+), 10 deletions(-)
+ include/linux/mm.h |  7 +++++++
+ mm/ksm.c           | 17 +++++++++++++++++
+ 2 files changed, 24 insertions(+)
 
-diff --git a/fs/dax.c b/fs/dax.c
-index a237141d8787..6ecc9c560e62 100644
---- a/fs/dax.c
-+++ b/fs/dax.c
-@@ -1445,8 +1445,7 @@ static vm_fault_t dax_pmd_load_hole(struct xa_state *xas, struct vm_fault *vmf,
- 		pgtable_trans_huge_deposit(vma->vm_mm, vmf->pmd, pgtable);
- 		mm_inc_nr_ptes(vma->vm_mm);
- 	}
--	pmd_entry = mk_pmd(zero_page, vmf->vma->vm_page_prot);
--	pmd_entry = pmd_mkhuge(pmd_entry);
-+	pmd_entry = mk_zero_pmd(zero_page, vmf->vma->vm_page_prot);
- 	set_pmd_at(vmf->vma->vm_mm, pmd_addr, vmf->pmd, pmd_entry);
- 	spin_unlock(ptl);
- 	trace_dax_pmd_load_hole(inode, vmf, zero_page, *entry);
-diff --git a/include/asm-generic/pgtable.h b/include/asm-generic/pgtable.h
-index 75d9d68a6de7..afcfbb4af4b2 100644
---- a/include/asm-generic/pgtable.h
-+++ b/include/asm-generic/pgtable.h
-@@ -879,8 +879,16 @@ static inline unsigned long my_zero_pfn(unsigned long addr)
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 5bfd3dd121c1..af1a56ff6764 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -1644,6 +1644,13 @@ static inline int vma_keyid(struct vm_area_struct *vma)
  }
  #endif
  
-+#ifndef mk_zero_pte
-+#define mk_zero_pte(addr, prot) pte_mkspecial(pfn_pte(my_zero_pfn(addr), prot))
++#ifndef page_keyid
++static inline int page_keyid(struct page *page)
++{
++	return 0;
++}
 +#endif
 +
- #ifdef CONFIG_MMU
+ extern unsigned long move_page_tables(struct vm_area_struct *vma,
+ 		unsigned long old_addr, struct vm_area_struct *new_vma,
+ 		unsigned long new_addr, unsigned long len,
+diff --git a/mm/ksm.c b/mm/ksm.c
+index 3dc4346411e4..7d4ef634f38e 100644
+--- a/mm/ksm.c
++++ b/mm/ksm.c
+@@ -1228,6 +1228,23 @@ static int try_to_merge_one_page(struct vm_area_struct *vma,
+ 	if (!PageAnon(page))
+ 		goto out;
  
-+#ifndef mk_zero_pmd
-+#define mk_zero_pmd(zero_page, prot) pmd_mkhuge(mk_pmd(zero_page, prot))
-+#endif
++	/*
++	 * KeyID indicates what key to use to encrypt and decrypt page's
++	 * content.
++	 *
++	 * KSM compares plain text instead (transparently to KSM code).
++	 *
++	 * But we still need to make sure that pages with identical plain
++	 * text will not be merged together if they are encrypted with
++	 * different keys.
++	 *
++	 * To make it work kernel only allows merging pages with the same KeyID.
++	 * The approach guarantees that the merged page can be read by all
++	 * users.
++	 */
++	if (kpage && page_keyid(page) != page_keyid(kpage))
++		goto out;
 +
- #ifndef CONFIG_TRANSPARENT_HUGEPAGE
- static inline int pmd_trans_huge(pmd_t pmd)
- {
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 1334ede667a8..e9a791413730 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -678,8 +678,7 @@ static bool set_huge_zero_page(pgtable_t pgtable, struct mm_struct *mm,
- 	pmd_t entry;
- 	if (!pmd_none(*pmd))
- 		return false;
--	entry = mk_pmd(zero_page, vma->vm_page_prot);
--	entry = pmd_mkhuge(entry);
-+	entry = mk_zero_pmd(zero_page, vma->vm_page_prot);
- 	if (pgtable)
- 		pgtable_trans_huge_deposit(mm, pmd, pgtable);
- 	set_pmd_at(mm, haddr, pmd, entry);
-@@ -2109,8 +2108,7 @@ static void __split_huge_zero_page_pmd(struct vm_area_struct *vma,
- 
- 	for (i = 0; i < HPAGE_PMD_NR; i++, haddr += PAGE_SIZE) {
- 		pte_t *pte, entry;
--		entry = pfn_pte(my_zero_pfn(haddr), vma->vm_page_prot);
--		entry = pte_mkspecial(entry);
-+		entry = mk_zero_pte(haddr, vma->vm_page_prot);
- 		pte = pte_offset_map(&_pmd, haddr);
- 		VM_BUG_ON(!pte_none(*pte));
- 		set_pte_at(mm, haddr, pte, entry);
-diff --git a/mm/memory.c b/mm/memory.c
-index e2bb51b6242e..81ae8c39f75b 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -2970,8 +2970,7 @@ static vm_fault_t do_anonymous_page(struct vm_fault *vmf)
- 	/* Use the zero-page for reads */
- 	if (!(vmf->flags & FAULT_FLAG_WRITE) &&
- 			!mm_forbids_zeropage(vma->vm_mm)) {
--		entry = pte_mkspecial(pfn_pte(my_zero_pfn(vmf->address),
--						vma->vm_page_prot));
-+		entry = mk_zero_pte(vmf->address, vma->vm_page_prot);
- 		vmf->pte = pte_offset_map_lock(vma->vm_mm, vmf->pmd,
- 				vmf->address, &vmf->ptl);
- 		if (!pte_none(*vmf->pte))
-diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
-index c7ae74ce5ff3..06bf4ea3ee05 100644
---- a/mm/userfaultfd.c
-+++ b/mm/userfaultfd.c
-@@ -120,8 +120,7 @@ static int mfill_zeropage_pte(struct mm_struct *dst_mm,
- 	pgoff_t offset, max_off;
- 	struct inode *inode;
- 
--	_dst_pte = pte_mkspecial(pfn_pte(my_zero_pfn(dst_addr),
--					 dst_vma->vm_page_prot));
-+	_dst_pte = mk_zero_pte(dst_addr, dst_vma->vm_page_prot);
- 	dst_pte = pte_offset_map_lock(dst_mm, dst_pmd, dst_addr, &ptl);
- 	if (dst_vma->vm_file) {
- 		/* the shmem MAP_PRIVATE case requires checking the i_size */
+ 	/*
+ 	 * We need the page lock to read a stable PageSwapCache in
+ 	 * write_protect_page().  We use trylock_page() instead of
 -- 
 2.21.0
 
