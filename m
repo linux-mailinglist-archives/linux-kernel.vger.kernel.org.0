@@ -2,145 +2,188 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3555A7CCD1
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 21:35:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 67EE57CCE6
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 21:37:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731041AbfGaTff (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 15:35:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34950 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731000AbfGaTfW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 15:35:22 -0400
-Received: from mail.kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 63449214DA;
-        Wed, 31 Jul 2019 19:35:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564601721;
-        bh=kc72/E5XexhPlpGwGLpvTOqPNTR45fQ6H/K9mIVhkQg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bP64uCk5TDuTLBTED+NkynhYxzswLg9oxvXZflCv11C5ZUHVS8iq+4FiuzMbVwHYV
-         q9xUEFKKVrjrVqG2xI0pdMketUubPQFbNkcbKQfRkPAlVYdtIv3CqW5YX7YkcQmarf
-         VKKN5wlnPICZNA57Vs7NRgcwW1kj9UTMLTA+TCBQ=
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Doug Anderson <dianders@chromium.org>
-Subject: [PATCH 9/9] clk: Overwrite clk_hw::init with NULL during clk_register()
-Date:   Wed, 31 Jul 2019 12:35:17 -0700
-Message-Id: <20190731193517.237136-10-sboyd@kernel.org>
-X-Mailer: git-send-email 2.22.0.709.g102302147b-goog
-In-Reply-To: <20190731193517.237136-1-sboyd@kernel.org>
-References: <20190731193517.237136-1-sboyd@kernel.org>
+        id S1729033AbfGaTh3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 15:37:29 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:39015 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726232AbfGaTh3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jul 2019 15:37:29 -0400
+Received: by mail-io1-f68.google.com with SMTP id f4so138923556ioh.6
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 12:37:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=vZlexV9rypmA0TkuHP0oW+Ea8mrrAPr769hVW469b0k=;
+        b=gwXvG33aEw1oXZFEAK07SvmqUcc+0/Db3uMmvHIqW0DfGZ/HMEargKfv8xNSfMpkWc
+         iZpdZGTInx0YDunh3/0d3rxbB1ySNywvvKVchEShDHudGVRRB6DKANw/goNEq9gI1pK9
+         f4d8RfQR9a/kTTkM0SjoDNgSvYE/0qaJWqV3qgZVQcOXU6GjYTrLBqcJV6lsgY51h+9o
+         GMRY5uBXRpxDmN7TdtHb31CcOrUc0ju7ujZtuXuWKSUUS6rMkayTcqQENCh4Saf/bCum
+         Vbk2Pt2xSFaK0hDlZysSsbdGTBEElYMjWysK9D2rrfFMdqxOa9YXY2V+apeOflb1jCSD
+         lYXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=vZlexV9rypmA0TkuHP0oW+Ea8mrrAPr769hVW469b0k=;
+        b=scZ2ysNFuRzjIVRc6kwrnm3COWhHjwzZXEDeY6XwXEdK/vD7SA/ddp0b/K7SPcXEbj
+         SCdNNvzUXrtVQg3bYG2aZ4GhDQWikUX2cedl+0OQ+Aq602Mxs6pEqJwElsLqSksvEeff
+         vuhPKrL3y6HNV8f+x1Pd2CCcRnI1UCmZUK8mdLZ5Fp3F/8pWwktxZpoPWAIFbW29L23P
+         jIEHp+ta/TZck+hHO/SL5ZCF1puAOOZdgiil6KuEO+0BcIrP7HosRnObmZT3506xojZy
+         PERvE47q+T3QLP3oSXnOqIBRDulzHTCPhwB864QfNHemFHE8OwrhRbxQUZiYv0NDPaIi
+         0zVA==
+X-Gm-Message-State: APjAAAX4mb1yXnf51RsYe8WkaBuCPJTA0JN0GVZn5llm/QrtcOa/m7al
+        z2BhSkIrUufugXWWWc9bU4csJLPhUpI=
+X-Google-Smtp-Source: APXvYqxKDvIlwfFgKBVMUpGUKlkeLd1Ku6sAzYKyVOZa36E5yyykqifvS7kuCJDTczfKX4k3OxQBCQ==
+X-Received: by 2002:a05:6602:220a:: with SMTP id n10mr6861055ion.205.1564601848102;
+        Wed, 31 Jul 2019 12:37:28 -0700 (PDT)
+Received: from localhost ([170.10.65.222])
+        by smtp.gmail.com with ESMTPSA id t4sm52254723iop.0.2019.07.31.12.37.27
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 31 Jul 2019 12:37:27 -0700 (PDT)
+Date:   Wed, 31 Jul 2019 12:37:26 -0700 (PDT)
+From:   Paul Walmsley <paul.walmsley@sifive.com>
+X-X-Sender: paulw@viisi.sifive.com
+To:     Bin Meng <bmeng.cn@gmail.com>
+cc:     linux-riscv <linux-riscv@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Alexandre Ghiti <alex@ghiti.fr>
+Subject: Re: [PATCH] riscv: kbuild: add virtual memory system selection
+In-Reply-To: <CAEUhbmUh0rJzFUoA05En9osy+Vv9AP0yOr-bs1goqk7+6SCv2g@mail.gmail.com>
+Message-ID: <alpine.DEB.2.21.9999.1907301218560.3486@viisi.sifive.com>
+References: <alpine.DEB.2.21.9999.1907261259420.26670@viisi.sifive.com> <CAEUhbmUh0rJzFUoA05En9osy+Vv9AP0yOr-bs1goqk7+6SCv2g@mail.gmail.com>
+User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We don't want clk provider drivers to use the init structure after clk
-registration time, but we leave a dangling reference to it by means of
-clk_hw::init. Let's overwrite the member with NULL during clk_register()
-so that this can't be used anymore after registration time.
+On Sun, 28 Jul 2019, Bin Meng wrote:
 
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Doug Anderson <dianders@chromium.org>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+> The spec does not mention 40-bit physical addresses, but 56-bit.
+
+Thanks, agreed.  Updated patch below
+
+
+- Paul
+
+From: Paul Walmsley <paul.walmsley@sifive.com>
+Date: Fri, 26 Jul 2019 10:21:11 -0700
+Subject: [PATCH v2] riscv: kbuild: add virtual memory system selection
+
+The RISC-V specifications currently define three virtual memory
+translation systems: Sv32, Sv39, and Sv48.  Sv32 is currently specific
+to 32-bit systems; Sv39 and Sv48 are currently specific to 64-bit
+systems.  The current kernel only supports Sv32 and Sv39, but we'd
+like to start preparing for Sv48.  As an initial step, allow the
+virtual memory translation system to be selected via kbuild, and stop
+the build if an option is selected that the kernel doen't currently
+support.
+
+This second version of the patch fixes some errors in the Kconfig
+description text, found by Bin Meng <bmeng.cn@gmail.com>.
+
+This patch currently has no functional impact.
+
+Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
+Cc: Alexandre Ghiti <alex@ghiti.fr>
+Cc: Bin Meng <bmeng.cn@gmail.com>
 ---
+ arch/riscv/Kconfig                  | 43 +++++++++++++++++++++++++++++
+ arch/riscv/include/asm/pgtable-32.h |  4 +++
+ arch/riscv/include/asm/pgtable-64.h |  4 +++
+ 3 files changed, 51 insertions(+)
 
-Please ack so I can take this through clk tree
-
- drivers/clk/clk.c            | 24 ++++++++++++++++--------
- include/linux/clk-provider.h |  3 ++-
- 2 files changed, 18 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index c0990703ce54..efac620264a2 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -3484,9 +3484,9 @@ static int clk_cpy_name(const char **dst_p, const char *src, bool must_exist)
- 	return 0;
- }
+diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+index 59a4727ecd6c..f5e76e25a91e 100644
+--- a/arch/riscv/Kconfig
++++ b/arch/riscv/Kconfig
+@@ -155,6 +155,49 @@ config MODULE_SECTIONS
+ 	bool
+ 	select HAVE_MOD_ARCH_SPECIFIC
  
--static int clk_core_populate_parent_map(struct clk_core *core)
-+static int clk_core_populate_parent_map(struct clk_core *core,
-+					const struct clk_init_data *init)
- {
--	const struct clk_init_data *init = core->hw->init;
- 	u8 num_parents = init->num_parents;
- 	const char * const *parent_names = init->parent_names;
- 	const struct clk_hw **parent_hws = init->parent_hws;
-@@ -3566,6 +3566,14 @@ __clk_register(struct device *dev, struct device_node *np, struct clk_hw *hw)
- {
- 	int ret;
- 	struct clk_core *core;
-+	const struct clk_init_data *init = hw->init;
++choice
++	prompt "Virtual Memory System"
++	default RISCV_VM_SV32 if 32BIT
++	default RISCV_VM_SV39 if 64BIT
++	help
++	  The RISC-V Instruction Set Manual Volume II: Privileged
++	  Architecture defines several different "virtual memory
++	  systems" which specify virtual and physical address formats
++	  and the structure of page table entries.  This determines
++	  the amount of virtual address space present and how it is
++	  translated into physical addresses.
 +
-+	/*
-+	 * The init data is not supposed to be used outside of registration path.
-+	 * Set it to NULL so that provider drivers can't use it either and so that
-+	 * we catch use of hw->init early on in the core.
-+	 */
-+	hw->init = NULL;
++	config RISCV_VM_SV32
++	        depends on 32BIT
++		bool "RISC-V Sv32"
++		help
++		  The Sv32 virtual memory system is a page-based
++		  address and page table format for RV32 systems.
++		  It specifies a translation between 32-bit virtual
++		  addresses and 33-bit physical addresses, via a
++		  two-stage page table layout.
++	config RISCV_VM_SV39
++		depends on 64BIT
++		bool "RISC-V Sv39"
++		help
++		  The Sv39 virtual memory system is a page-based
++		  address and page table format for RV64 systems.
++		  It specifies a translation between 39-bit virtual
++		  addresses and 56-bit physical addresses, via a
++		  three-stage page table layout.
++	config RISCV_VM_SV48
++		depends on 64BIT
++		bool "RISC-V Sv48"
++		help
++		  The Sv48 virtual memory system is a page-based
++		  address and page table format for RV64 systems.
++		  It specifies a translation between 48-bit virtual
++		  addresses and 56-bit physical addresses, via a
++		  four-stage page table layout.
++
++endchoice
++
++
+ choice
+ 	prompt "Maximum Physical Memory"
+ 	default MAXPHYSMEM_2GB if 32BIT
+diff --git a/arch/riscv/include/asm/pgtable-32.h b/arch/riscv/include/asm/pgtable-32.h
+index b0ab66e5fdb1..86d41a04735b 100644
+--- a/arch/riscv/include/asm/pgtable-32.h
++++ b/arch/riscv/include/asm/pgtable-32.h
+@@ -6,6 +6,10 @@
+ #ifndef _ASM_RISCV_PGTABLE_32_H
+ #define _ASM_RISCV_PGTABLE_32_H
  
- 	core = kzalloc(sizeof(*core), GFP_KERNEL);
- 	if (!core) {
-@@ -3573,17 +3581,17 @@ __clk_register(struct device *dev, struct device_node *np, struct clk_hw *hw)
- 		goto fail_out;
- 	}
++#if !defined(CONFIG_RISCV_VM_SV32)
++#error Only Sv32 supported
++#endif
++
+ #include <asm-generic/pgtable-nopmd.h>
+ #include <linux/const.h>
  
--	core->name = kstrdup_const(hw->init->name, GFP_KERNEL);
-+	core->name = kstrdup_const(init->name, GFP_KERNEL);
- 	if (!core->name) {
- 		ret = -ENOMEM;
- 		goto fail_name;
- 	}
+diff --git a/arch/riscv/include/asm/pgtable-64.h b/arch/riscv/include/asm/pgtable-64.h
+index 74630989006d..86935595115d 100644
+--- a/arch/riscv/include/asm/pgtable-64.h
++++ b/arch/riscv/include/asm/pgtable-64.h
+@@ -6,6 +6,10 @@
+ #ifndef _ASM_RISCV_PGTABLE_64_H
+ #define _ASM_RISCV_PGTABLE_64_H
  
--	if (WARN_ON(!hw->init->ops)) {
-+	if (WARN_ON(!init->ops)) {
- 		ret = -EINVAL;
- 		goto fail_ops;
- 	}
--	core->ops = hw->init->ops;
-+	core->ops = init->ops;
++#if !defined(CONFIG_RISCV_VM_SV39)
++#error Only Sv39 supported for now
++#endif
++
+ #include <linux/const.h>
  
- 	if (dev && pm_runtime_enabled(dev))
- 		core->rpm_enabled = true;
-@@ -3592,13 +3600,13 @@ __clk_register(struct device *dev, struct device_node *np, struct clk_hw *hw)
- 	if (dev && dev->driver)
- 		core->owner = dev->driver->owner;
- 	core->hw = hw;
--	core->flags = hw->init->flags;
--	core->num_parents = hw->init->num_parents;
-+	core->flags = init->flags;
-+	core->num_parents = init->num_parents;
- 	core->min_rate = 0;
- 	core->max_rate = ULONG_MAX;
- 	hw->core = core;
- 
--	ret = clk_core_populate_parent_map(core);
-+	ret = clk_core_populate_parent_map(core, init);
- 	if (ret)
- 		goto fail_parents;
- 
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 2ae7604783dd..214c75ed62ae 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -299,7 +299,8 @@ struct clk_init_data {
-  * into the clk API
-  *
-  * @init: pointer to struct clk_init_data that contains the init data shared
-- * with the common clock framework.
-+ * with the common clock framework. This pointer will be set to NULL once
-+ * a clk_register() variant is called on this clk_hw pointer.
-  */
- struct clk_hw {
- 	struct clk_core *core;
+ #define PGDIR_SHIFT     30
 -- 
-Sent by a computer through tubes
+2.22.0
 
