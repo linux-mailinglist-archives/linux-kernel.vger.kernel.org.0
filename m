@@ -2,93 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A34F87C759
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 17:48:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E0B807C76F
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 17:49:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729741AbfGaPsV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 11:48:21 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50350 "EHLO mx1.suse.de"
+        id S1730128AbfGaPtF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 11:49:05 -0400
+Received: from mx2.suse.de ([195.135.220.15]:50746 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730264AbfGaPsM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 11:48:12 -0400
+        id S1726755AbfGaPtF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jul 2019 11:49:05 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 1CBAEB05E;
-        Wed, 31 Jul 2019 15:48:11 +0000 (UTC)
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     catalin.marinas@arm.com, hch@lst.de, wahrenst@gmx.net,
-        marc.zyngier@arm.com, Robin Murphy <robin.murphy@arm.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        iommu@lists.linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Cc:     phill@raspberryi.org, f.fainelli@gmail.com, will@kernel.org,
-        robh+dt@kernel.org, eric@anholt.net, mbrugger@suse.com,
-        nsaenzjulienne@suse.de, akpm@linux-foundation.org,
-        frowand.list@gmail.com, m.szyprowski@samsung.com,
-        linux-rpi-kernel@lists.infradead.org
-Subject: [PATCH 8/8] mm: comment arm64's usage of 'enum zone_type'
-Date:   Wed, 31 Jul 2019 17:47:51 +0200
-Message-Id: <20190731154752.16557-9-nsaenzjulienne@suse.de>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190731154752.16557-1-nsaenzjulienne@suse.de>
-References: <20190731154752.16557-1-nsaenzjulienne@suse.de>
+        by mx1.suse.de (Postfix) with ESMTP id C38D7AF95;
+        Wed, 31 Jul 2019 15:49:02 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 007DA1E3F4D; Wed, 31 Jul 2019 17:48:59 +0200 (CEST)
+Date:   Wed, 31 Jul 2019 17:48:59 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        Sebastian Siewior <bigeasy@linutronix.de>,
+        Theodore Tso <tytso@mit.edu>, Julia Cartwright <julia@ni.com>,
+        Jan Kara <jack@suse.com>, linux-ext4@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [patch 4/4] fs: jbd/jbd2: Substitute BH locks for RT and lock
+ debugging
+Message-ID: <20190731154859.GI15806@quack2.suse.cz>
+References: <20190730112452.871257694@linutronix.de>
+ <20190730120321.489374435@linutronix.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190730120321.489374435@linutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-arm64 uses both ZONE_DMA and ZONE_DMA32 for the same reasons x86_64
-does: peripherals with different DMA addressing limitations. This
-updates both ZONE_DMAs comments to inform about the usage.
+On Tue 30-07-19 13:24:56, Thomas Gleixner wrote:
+> Bit spinlocks are problematic if PREEMPT_RT is enabled. They disable
+> preemption, which is undesired for latency reasons and breaks when regular
+> spinlocks are taken within the bit_spinlock locked region because regular
+> spinlocks are converted to 'sleeping spinlocks' on RT.
+> 
+> Substitute the BH_State and BH_JournalHead bit spinlocks with regular
+> spinlock for PREEMPT_RT enabled kernels.
 
-Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Is there a real need for substitution for BH_JournalHead bit spinlock?  The
+critical sections are pretty tiny, all located within fs/jbd2/journal.c.
+Maybe only the one around __journal_remove_journal_head() would need a bit
+of refactoring so that journal_free_journal_head() doesn't get called
+under the bit-spinlock.
 
----
+BH_State lock is definitely worth it. In fact, if you placed the spinlock
+inside struct journal_head (which is the structure whose members are in
+fact protected by it), I'd be even fine with just using the spinlock always
+instead of the bit spinlock. journal_head is pretty big anyway (and there's
+even 4-byte hole in it for 64-bit archs) and these structures are pretty
+rare (only for actively changed metadata buffers).
 
- include/linux/mmzone.h | 21 +++++++++++----------
- 1 file changed, 11 insertions(+), 10 deletions(-)
+								Honza
 
-diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index d77d717c620c..8fa6bcf72e7c 100644
---- a/include/linux/mmzone.h
-+++ b/include/linux/mmzone.h
-@@ -365,23 +365,24 @@ enum zone_type {
- 	 *
- 	 * Some examples
- 	 *
--	 * Architecture		Limit
--	 * ---------------------------
--	 * parisc, ia64, sparc	<4G
--	 * s390, powerpc	<2G
--	 * arm			Various
--	 * alpha		Unlimited or 0-16MB.
-+	 * Architecture			Limit
-+	 * ----------------------------------
-+	 * parisc, ia64, sparc, arm64	<4G
-+	 * s390, powerpc		<2G
-+	 * arm				Various
-+	 * alpha			Unlimited or 0-16MB.
- 	 *
- 	 * i386, x86_64 and multiple other arches
--	 * 			<16M.
-+	 *				<16M.
- 	 */
- 	ZONE_DMA,
- #endif
- #ifdef CONFIG_ZONE_DMA32
- 	/*
--	 * x86_64 needs two ZONE_DMAs because it supports devices that are
--	 * only able to do DMA to the lower 16M but also 32 bit devices that
--	 * can only do DMA areas below 4G.
-+	 * x86_64 and arm64 need two ZONE_DMAs because they support devices
-+	 * that are only able to DMA a fraction of the 32 bit addressable
-+	 * memory area, but also devices that are limited to that whole 32 bit
-+	 * area.
- 	 */
- 	ZONE_DMA32,
- #endif
+> 
+> Bit spinlocks are also not covered by lock debugging, e.g. lockdep. With
+> the spinlock substitution in place, they can be exposed via
+> CONFIG_DEBUG_BIT_SPINLOCKS.
+> 
+> Originally-by: Steven Rostedt <rostedt@goodmis.org>
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> Cc: linux-ext4@vger.kernel.org
+> Cc: "Theodore Ts'o" <tytso@mit.edu>
+> Cc: Matthew Wilcox <willy@infradead.org>
+> Cc: Jan Kara <jack@suse.com>
+> --
+>  include/linux/buffer_head.h |    8 ++++++++
+>  include/linux/jbd2.h        |   36 ++++++++++++++++++++++++++++++++++++
+>  2 files changed, 44 insertions(+)
+> 
+> --- a/include/linux/buffer_head.h
+> +++ b/include/linux/buffer_head.h
+> @@ -79,6 +79,10 @@ struct buffer_head {
+>  
+>  #if defined(CONFIG_PREEMPT_RT) || defined(CONFIG_DEBUG_BIT_SPINLOCKS)
+>  	spinlock_t b_uptodate_lock;
+> +# if IS_ENABLED(CONFIG_JBD2)
+> +	spinlock_t b_state_lock;
+> +	spinlock_t b_journal_head_lock;
+> +# endif
+>  #endif
+>  };
+>  
+> @@ -101,6 +105,10 @@ bh_uptodate_unlock_irqrestore(struct buf
+>  static inline void buffer_head_init_locks(struct buffer_head *bh)
+>  {
+>  	spin_lock_init(&bh->b_uptodate_lock);
+> +#if IS_ENABLED(CONFIG_JBD2)
+> +	spin_lock_init(&bh->b_state_lock);
+> +	spin_lock_init(&bh->b_journal_head_lock);
+> +#endif
+>  }
+>  
+>  #else /* PREEMPT_RT || DEBUG_BIT_SPINLOCKS */
+> --- a/include/linux/jbd2.h
+> +++ b/include/linux/jbd2.h
+> @@ -342,6 +342,40 @@ static inline struct journal_head *bh2jh
+>  	return bh->b_private;
+>  }
+>  
+> +#if defined(CONFIG_PREEMPT_RT) || defined(CONFIG_DEBUG_BIT_SPINLOCKS)
+> +
+> +static inline void jbd_lock_bh_state(struct buffer_head *bh)
+> +{
+> +	spin_lock(&bh->b_state_lock);
+> +}
+> +
+> +static inline int jbd_trylock_bh_state(struct buffer_head *bh)
+> +{
+> +	return spin_trylock(&bh->b_state_lock);
+> +}
+> +
+> +static inline int jbd_is_locked_bh_state(struct buffer_head *bh)
+> +{
+> +	return spin_is_locked(&bh->b_state_lock);
+> +}
+> +
+> +static inline void jbd_unlock_bh_state(struct buffer_head *bh)
+> +{
+> +	spin_unlock(&bh->b_state_lock);
+> +}
+> +
+> +static inline void jbd_lock_bh_journal_head(struct buffer_head *bh)
+> +{
+> +	spin_lock(&bh->b_journal_head_lock);
+> +}
+> +
+> +static inline void jbd_unlock_bh_journal_head(struct buffer_head *bh)
+> +{
+> +	spin_unlock(&bh->b_journal_head_lock);
+> +}
+> +
+> +#else /* PREEMPT_RT || DEBUG_BIT_SPINLOCKS */
+> +
+>  static inline void jbd_lock_bh_state(struct buffer_head *bh)
+>  {
+>  	bit_spin_lock(BH_State, &bh->b_state);
+> @@ -372,6 +406,8 @@ static inline void jbd_unlock_bh_journal
+>  	bit_spin_unlock(BH_JournalHead, &bh->b_state);
+>  }
+>  
+> +#endif /* !PREEMPT_RT && !DEBUG_BIT_SPINLOCKS */
+> +
+>  #define J_ASSERT(assert)	BUG_ON(!(assert))
+>  
+>  #define J_ASSERT_BH(bh, expr)	J_ASSERT(expr)
+> 
+> 
+> 
 -- 
-2.22.0
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
