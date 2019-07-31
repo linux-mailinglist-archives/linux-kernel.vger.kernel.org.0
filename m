@@ -2,212 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7451C7C954
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 18:58:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A7F47C988
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 18:59:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729930AbfGaQ6h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 12:58:37 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:41916 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727487AbfGaQ6g (ORCPT
+        id S1730181AbfGaQ75 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 12:59:57 -0400
+Received: from mail-yb1-f193.google.com ([209.85.219.193]:33922 "EHLO
+        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727487AbfGaQ75 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 12:58:36 -0400
-Received: by mail-pf1-f194.google.com with SMTP id m30so32217023pff.8
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 09:58:36 -0700 (PDT)
+        Wed, 31 Jul 2019 12:59:57 -0400
+Received: by mail-yb1-f193.google.com with SMTP id q5so12530634ybp.1
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 09:59:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=BbYGW1om6PC71p94etYGN3/okI4rSt3mD1Fla+dsCZI=;
-        b=gcYhN/gR9O1Pe9ZLLVnRXrYNlqcViNsBD9U+GWnDzGiTqP8BVudlcK6mYTh5KrhO1w
-         aPil5ZmAZyWrMboSY/Y4EWCOKqTrOByXbdolL7wrTtQQigNu3FCKkYHuY/f8LOCXZn1u
-         ag8qe88aaYi4cK4Mfe8I/EeGUX2kgbjRo2JPexbLBAxz/4y8a14v3Vg1RNt/bIRzUwcG
-         vcvAbuxpYD56GqmAnN1CoBopaj00u0e2dPBhLKzQ8gki7fyFmQ9T2Gf65RoFjifXYT5N
-         ZJY+aIxyu6kEy2OB53kVekkt/E7IokVuCTGKJ1lXzFJ9A3wj7gq/JRJAFrWHV39z7cGm
-         xIiA==
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=+xgm8/K6/Q8gBSvQqIMU/L2PE1NnbZgf9rfoxvw6DdE=;
+        b=Kd2L2/1RpVqA7d1ZOqgBuMrs1lR07bg5SIRbhVUtC84qktsKY+VZV3wA6xeSZ9wG0P
+         f01ttYaWzta5TurY6Rcigm1lE/xFY4ANfuOq1b1PcyLgv2X+otxfHbrDF+UXJSGbWXlY
+         DxrzH2O6aJENoy64Uh2vsUbDZZ8XhpuG4S9F2zeyhmaqWiPFX0O89Ksn0oOrWJSaGsOE
+         0bfOawboamF6bjyevBUoFMKxtbFJUZ8P4dn3x8uquIMSRufK7sjS6fTPK2g5cCdkp+dx
+         17s5cs1BAKZ4FUTQmhOtlDvN+ffty7rPM22PoWUEiGnxTncTf7LF052M1j2Sk4SuYe3b
+         UncA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=BbYGW1om6PC71p94etYGN3/okI4rSt3mD1Fla+dsCZI=;
-        b=BTPGUOIOZuOxujJzcGvWfAfvvUG7566n/fnfdM7H/N7FUE8CRI2Ica/YgreIwk30mZ
-         L39uu43PjXUI5SfRWsekaLNOLbupvlGb7a3/23EHJnTAiyxezeRePF7O79zDxTcV5TSY
-         QVkkyPN5M1BNj4+r7t7Ku06dNX/jfJu9Gnd02phBG9sRCUKsO3P6Wnuce1E8WG7NXHOL
-         thz2N8YyMPmGBOfgA+Wx3te6Eoe1+ZcRrfEcNXQBKHhut95HUXbQmrAe6fYho5VWg0EI
-         1qd48URY0eAcNGULe2Ze1DgIUXdT4FjzNVhwj7nO7rfm/SxKsqfCZSRpMbe1lZjjVi+q
-         r1HQ==
-X-Gm-Message-State: APjAAAWLRtK73JMNZiSh1uJXvMOJMVzsTafMrCEa24jmnaF6T2yXnqyK
-        cf+G4g/xLnC9IzOxKkho0GoH1Q==
-X-Google-Smtp-Source: APXvYqyt4Vp+5qcTUWTv9ZC5LXoMgRwNq9/qEfHAcFZBWQDCFk9UuJV9yUPdKUQAFbAsce0aLp0V9Q==
-X-Received: by 2002:a65:464d:: with SMTP id k13mr103144274pgr.99.1564592315501;
-        Wed, 31 Jul 2019 09:58:35 -0700 (PDT)
-Received: from leoy-ThinkPad-X240s (li1433-81.members.linode.com. [45.33.106.81])
-        by smtp.gmail.com with ESMTPSA id i124sm128217887pfe.61.2019.07.31.09.58.30
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 31 Jul 2019 09:58:34 -0700 (PDT)
-Date:   Thu, 1 Aug 2019 00:58:26 +0800
-From:   Leo Yan <leo.yan@linaro.org>
-To:     Will Deacon <will@kernel.org>
-Cc:     Russell King <linux@armlinux.org.uk>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, bpf@vger.kernel.org,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Justin He <Justin.He@arm.com>
-Subject: Re: [PATCH 1/2] arm64: Add support for function error injection
-Message-ID: <20190731165826.GG16088@leoy-ThinkPad-X240s>
-References: <20190716111301.1855-1-leo.yan@linaro.org>
- <20190716111301.1855-2-leo.yan@linaro.org>
- <20190731160836.qmzlk3ndbahwhfmu@willie-the-truck>
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=+xgm8/K6/Q8gBSvQqIMU/L2PE1NnbZgf9rfoxvw6DdE=;
+        b=o+l/3hgTa8SiSWzDW9NEBktyaDkaLUGwTv1PoitsUwMkIgh4iKXx0iG1gL4kIspILv
+         zTYQkJC9BaWamb1Ra1QUmd85wRIFKgV+nl1TsPl+K012s8zpM0Wk0PnI4OO1rf9LxDlC
+         +Zg0onhQe6s55YAciDOKOn9dms4510EtuDX2crLf3OuqUuWBUt7FuNzLk08MC9Dx5Kzb
+         0+8B4CyLByNcCNLjgbYTj5VgrEwXwC61Yh2xvj94Db30VGTaeYkMaFOj9X1fQWUh+3rK
+         LB5+EaaVrmivTay+ZPseYiCmNCpmJOt2GaNV+A/gPTkcxg7yWF+WYC0XMLrDfNI09U0l
+         tb8Q==
+X-Gm-Message-State: APjAAAWij2CifA3ApXRFROaleXRqLIYIe5JRty1xdloVO6Oe/0N7kcmM
+        6DihguVSnMlJl5h714vNadwX5xQggVt5g5otxbNPly7q
+X-Google-Smtp-Source: APXvYqyD05vPzrXQUUsDuLzhvzz2iqR6aBKmNAyMbbLp38Kd5ZRQvzyQGuJl26dTCZ6XLOA632FREwzzmVjAshxGisc=
+X-Received: by 2002:a25:9cc4:: with SMTP id z4mr75797042ybo.90.1564592396408;
+ Wed, 31 Jul 2019 09:59:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190731160836.qmzlk3ndbahwhfmu@willie-the-truck>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Received: by 2002:a25:340d:0:0:0:0:0 with HTTP; Wed, 31 Jul 2019 09:59:56
+ -0700 (PDT)
+Reply-To: troxelljway@gmail.com
+From:   "troxelljway@gmail.com" <benruce777@gmail.com>
+Date:   Wed, 31 Jul 2019 09:59:56 -0700
+Message-ID: <CAEv4h3C99C=utnwU_HOcAAJWr7-r43LwTWvDnkrSyi6rDFWo4Q@mail.gmail.com>
+Subject: Reply me on my email OK
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Will,
-
-Thanks for reviewing.
-
-On Wed, Jul 31, 2019 at 05:08:37PM +0100, Will Deacon wrote:
-> On Tue, Jul 16, 2019 at 07:13:00PM +0800, Leo Yan wrote:
-> > This patch implement regs_set_return_value() and
-> > override_function_with_return() to support function error injection
-> > for arm64.
-> > 
-> > In the exception flow, arm64's general register x30 contains the value
-> > for the link register; so we can just update pt_regs::pc with it rather
-> > than redirecting execution to a dummy function that returns.
-> > 
-> > This patch is heavily inspired by the commit 7cd01b08d35f ("powerpc:
-> > Add support for function error injection").
-> > 
-> > Signed-off-by: Leo Yan <leo.yan@linaro.org>
-> > ---
-> >  arch/arm64/Kconfig                       |  1 +
-> >  arch/arm64/include/asm/error-injection.h | 13 +++++++++++++
-> >  arch/arm64/include/asm/ptrace.h          |  5 +++++
-> >  arch/arm64/lib/Makefile                  |  2 ++
-> >  arch/arm64/lib/error-inject.c            | 19 +++++++++++++++++++
-> >  5 files changed, 40 insertions(+)
-> >  create mode 100644 arch/arm64/include/asm/error-injection.h
-> >  create mode 100644 arch/arm64/lib/error-inject.c
-> > 
-> > diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-> > index 697ea0510729..a6d9e622977d 100644
-> > --- a/arch/arm64/Kconfig
-> > +++ b/arch/arm64/Kconfig
-> > @@ -142,6 +142,7 @@ config ARM64
-> >  	select HAVE_EFFICIENT_UNALIGNED_ACCESS
-> >  	select HAVE_FTRACE_MCOUNT_RECORD
-> >  	select HAVE_FUNCTION_TRACER
-> > +	select HAVE_FUNCTION_ERROR_INJECTION
-> >  	select HAVE_FUNCTION_GRAPH_TRACER
-> >  	select HAVE_GCC_PLUGINS
-> >  	select HAVE_HW_BREAKPOINT if PERF_EVENTS
-> > diff --git a/arch/arm64/include/asm/error-injection.h b/arch/arm64/include/asm/error-injection.h
-> > new file mode 100644
-> > index 000000000000..da057e8ed224
-> > --- /dev/null
-> > +++ b/arch/arm64/include/asm/error-injection.h
-> > @@ -0,0 +1,13 @@
-> > +/* SPDX-License-Identifier: GPL-2.0+ */
-> > +
-> > +#ifndef __ASM_ERROR_INJECTION_H_
-> > +#define __ASM_ERROR_INJECTION_H_
-> > +
-> > +#include <linux/compiler.h>
-> > +#include <linux/linkage.h>
-> > +#include <asm/ptrace.h>
-> > +#include <asm-generic/error-injection.h>
-> > +
-> > +void override_function_with_return(struct pt_regs *regs);
-> > +
-> > +#endif /* __ASM_ERROR_INJECTION_H_ */
-> 
-> Why isn't this prototype in the asm-generic header? Seems weird to have to
-> duplicate it for each architecture.
-
-Yeah.  When I spin for new version patches, will try to refactor in
-the asm-generic header.
-
-> > diff --git a/arch/arm64/include/asm/ptrace.h b/arch/arm64/include/asm/ptrace.h
-> > index dad858b6adc6..3aafbbe218a2 100644
-> > --- a/arch/arm64/include/asm/ptrace.h
-> > +++ b/arch/arm64/include/asm/ptrace.h
-> > @@ -294,6 +294,11 @@ static inline unsigned long regs_return_value(struct pt_regs *regs)
-> >  	return regs->regs[0];
-> >  }
-> >  
-> > +static inline void regs_set_return_value(struct pt_regs *regs, unsigned long rc)
-> > +{
-> > +	regs->regs[0] = rc;
-> > +}
-> > +
-> >  /**
-> >   * regs_get_kernel_argument() - get Nth function argument in kernel
-> >   * @regs:	pt_regs of that context
-> > diff --git a/arch/arm64/lib/Makefile b/arch/arm64/lib/Makefile
-> > index 33c2a4abda04..f182ccb0438e 100644
-> > --- a/arch/arm64/lib/Makefile
-> > +++ b/arch/arm64/lib/Makefile
-> > @@ -33,3 +33,5 @@ UBSAN_SANITIZE_atomic_ll_sc.o	:= n
-> >  lib-$(CONFIG_ARCH_HAS_UACCESS_FLUSHCACHE) += uaccess_flushcache.o
-> >  
-> >  obj-$(CONFIG_CRC32) += crc32.o
-> > +
-> > +obj-$(CONFIG_FUNCTION_ERROR_INJECTION) += error-inject.o
-> > diff --git a/arch/arm64/lib/error-inject.c b/arch/arm64/lib/error-inject.c
-> > new file mode 100644
-> > index 000000000000..35661c2de4b0
-> > --- /dev/null
-> > +++ b/arch/arm64/lib/error-inject.c
-> > @@ -0,0 +1,19 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +
-> > +#include <linux/error-injection.h>
-> > +#include <linux/kprobes.h>
-> > +
-> > +void override_function_with_return(struct pt_regs *regs)
-> > +{
-> > +	/*
-> > +	 * 'regs' represents the state on entry of a predefined function in
-> > +	 * the kernel/module and which is captured on a kprobe.
-> > +	 *
-> > +	 * 'regs->regs[30]' contains the the link register for the probed
-> 
-> extra "the"
-
-Will fix.
-
-> > +	 * function and assign it to 'regs->pc', so when kprobe returns
-> > +	 * back from exception it will override the end of probed function
-> > +	 * and drirectly return to the predefined function's caller.
-> 
-> directly
-
-Will fix.
-
-> > +	 */
-> > +	regs->pc = regs->regs[30];
-> 
-> I suppose we could be all fancy and do:
-> 
-> 	instruction_pointer_set(regs, procedure_link_pointer(regs));
-> 
-> How about that?
-
-Ah, good point.  Will change to use the common APIs.
-
-Thanks,
-Leo Yan
+-- 
+Hello dear Friend i am Major. John Wayne Troxell, Write to me back on
+the below email ( troxelljway@gmail.com )
