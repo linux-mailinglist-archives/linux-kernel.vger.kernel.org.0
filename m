@@ -2,33 +2,33 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C176E7BF9F
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 13:31:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B21647BF95
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 13:31:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387886AbfGaLak (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 07:30:40 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:36180 "EHLO
+        id S1728448AbfGaLa0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 07:30:26 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:35664 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728404AbfGaLa1 (ORCPT
+        with ESMTP id S1726811AbfGaLaR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 07:30:27 -0400
+        Wed, 31 Jul 2019 07:30:17 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=Y54RyTREtRXOjs9wT30PDE/P9KV+xW2iTJp/FeDyBuM=; b=JreyGOpJxSJs
-        5ION1fOi7bMVJvrQ5/fjzbjO0MVPSqTYJA4PHIrqBXZ2CX/RGez4s2dAX1RksVCX3CDKit1XJIHuJ
-        LGDchp/BcRPJfKmc2e5ykM31eCQUA9vZLb55lYfy/ufmgkeNiifJf02DZNRejfl+VHlefeboU50uH
-        SY3GQ=;
+        List-Archive; bh=/iI2KDXNSbKLSP43/4fN80qJwEliO30iM1rypsuy3es=; b=d233cayDAsA7
+        z7oP8iLZoLqH2gH2v6eOvEypdDsU2fCeQS3OG29WogoJlKO2ilg2gwaI2tZ+/KvVrSpSY2WR71iir
+        olNz6rIXnSHQRw0VmZcGop8BvblD3lzQhDUiPjGQO2amId/od2lFtmSujyR0Dv71vIXl0lryGsRaR
+        dA1O4=;
 Received: from ypsilon.sirena.org.uk ([2001:470:1f1d:6b5::7])
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1hsmnk-0001nN-PM; Wed, 31 Jul 2019 11:29:48 +0000
+        id 1hsmnj-0001n5-QA; Wed, 31 Jul 2019 11:29:47 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id D42142742CDE; Wed, 31 Jul 2019 12:29:47 +0100 (BST)
+        id 26D1C2742C99; Wed, 31 Jul 2019 12:29:47 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
 To:     YueHaibing <yuehaibing@huawei.com>
 Cc:     alexandre.torgue@st.com, alsa-devel@alsa-project.org,
@@ -55,10 +55,10 @@ Cc:     alexandre.torgue@st.com, alsa-devel@alsa-project.org,
         thierry.reding@gmail.com, timur@kernel.org, tiwai@suse.com,
         wahrenst@gmx.net, wens@csie.org, Xiubo.Lee@gmail.com,
         yamada.masahiro@socionext.com
-Subject: Applied "ASoC: sirf: use devm_platform_ioremap_resource() to simplify code" to the asoc tree
-In-Reply-To: <20190727150738.54764-11-yuehaibing@huawei.com>
+Subject: Applied "ASoC: spear: use devm_platform_ioremap_resource() to simplify code" to the asoc tree
+In-Reply-To: <20190727150738.54764-13-yuehaibing@huawei.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190731112947.D42142742CDE@ypsilon.sirena.org.uk>
+Message-Id: <20190731112947.26D1C2742C99@ypsilon.sirena.org.uk>
 Date:   Wed, 31 Jul 2019 12:29:47 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -67,7 +67,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: sirf: use devm_platform_ioremap_resource() to simplify code
+   ASoC: spear: use devm_platform_ioremap_resource() to simplify code
 
 has been applied to the asoc tree at
 
@@ -92,10 +92,10 @@ to this mail.
 Thanks,
 Mark
 
-From c9dbe688983b1d77a9a46cf6b7ac88348a1ca395 Mon Sep 17 00:00:00 2001
+From 0fb46f541bb3e6e5bbb155c08b9e75f92c21acb9 Mon Sep 17 00:00:00 2001
 From: YueHaibing <yuehaibing@huawei.com>
-Date: Sat, 27 Jul 2019 23:07:14 +0800
-Subject: [PATCH] ASoC: sirf: use devm_platform_ioremap_resource() to simplify
+Date: Sat, 27 Jul 2019 23:07:16 +0800
+Subject: [PATCH] ASoC: spear: use devm_platform_ioremap_resource() to simplify
  code
 
 Use devm_platform_ioremap_resource() to simplify the code a bit.
@@ -103,34 +103,31 @@ This is detected by coccinelle.
 
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Link: https://lore.kernel.org/r/20190727150738.54764-11-yuehaibing@huawei.com
+Link: https://lore.kernel.org/r/20190727150738.54764-13-yuehaibing@huawei.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/sirf/sirf-usp.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ sound/soc/spear/spdif_in.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/sound/soc/sirf/sirf-usp.c b/sound/soc/sirf/sirf-usp.c
-index 8bab119c753a..2af0c6f14ee6 100644
---- a/sound/soc/sirf/sirf-usp.c
-+++ b/sound/soc/sirf/sirf-usp.c
-@@ -359,7 +359,6 @@ static int sirf_usp_pcm_probe(struct platform_device *pdev)
+diff --git a/sound/soc/spear/spdif_in.c b/sound/soc/spear/spdif_in.c
+index 78a6a360b4a6..4b68d6ee75da 100644
+--- a/sound/soc/spear/spdif_in.c
++++ b/sound/soc/spear/spdif_in.c
+@@ -202,12 +202,11 @@ static int spdif_in_probe(struct platform_device *pdev)
+ {
+ 	struct spdif_in_dev *host;
+ 	struct spear_spdif_platform_data *pdata;
+-	struct resource *res, *res_fifo;
++	struct resource *res_fifo;
+ 	void __iomem *io_base;
  	int ret;
- 	struct sirf_usp *usp;
- 	void __iomem *base;
--	struct resource *mem_res;
  
- 	usp = devm_kzalloc(&pdev->dev, sizeof(struct sirf_usp),
- 			GFP_KERNEL);
-@@ -368,8 +367,7 @@ static int sirf_usp_pcm_probe(struct platform_device *pdev)
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	io_base = devm_ioremap_resource(&pdev->dev, res);
++	io_base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(io_base))
+ 		return PTR_ERR(io_base);
  
- 	platform_set_drvdata(pdev, usp);
- 
--	mem_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	base = devm_ioremap_resource(&pdev->dev, mem_res);
-+	base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(base))
- 		return PTR_ERR(base);
- 	usp->regmap = devm_regmap_init_mmio(&pdev->dev, base,
 -- 
 2.20.1
 
