@@ -2,95 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 604F97C635
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 17:21:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D6A27C631
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 17:21:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728891AbfGaPVg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 11:21:36 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:40597 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727264AbfGaPVe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 11:21:34 -0400
-Received: by mail-pf1-f196.google.com with SMTP id p184so32048733pfp.7
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 08:21:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=8Z0P5Wb3N6RNbSuxVxTxovjy+jlIt5UjpbTJFLTHGvg=;
-        b=Yl8AqYJNSj8Uxqi6ahv+iq+Yf5YGpSzIGgio2doxdbl+ZbJpe2L80fRRMpzBWrHjSo
-         JT2/+vjR5pjbF8HuSpNq+tjQns7I5KyAb6VSFhDyfI6IcRINOXrGX0Sx0+4152EVCKyi
-         QG9CnJOjxyeAkcfsxwU4HM2nM4XLhiz6V/k1TyDO8nIicoOnaPi1q9KOJRYgf5cXpCDD
-         SN0e7PyBSpRf/Xz+PSbwTQ5iYd/P/pK6KQ6Pv9XSpy9LgufVH4mgoSbdwRE89BK5kv7T
-         Ebk/BY7eRL3FwpeM5CHABrx73aJnw/blKmMVxCyhz6czHFJoR5e1ZbmwEgZo0KCTjCd5
-         2eYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=8Z0P5Wb3N6RNbSuxVxTxovjy+jlIt5UjpbTJFLTHGvg=;
-        b=OdTYlZqtfoSn3IVGF/ws+R2JUgnVRqHSvEXQ3D0YxqvCjStF8/6zORt2V3Xbxz3V/n
-         i6F4bTOVWJQ9xfYDazx28/5Bp9em1IOid1TUqTt722T3GNeXiIQoBoYXx4vX4vzi60AC
-         DNo7Op9xAXjnNlJI/ahJYakXSa8oqilem55r9skyLkqOh9sbuFZa9DFo1eAtmfaPQ6tl
-         AORw1zfDbHjoSgGNM/tToBEa5tyKLDQYRQ7zAkVTUQtqm4MZlZnS5YsqKMxP01VW6ps7
-         kCE+BQoQrrC4UTcA/FhC44Ey7f+LC0vp69qVjZClo1H2/hdj2WwqyXT9IkclzpuI9nNM
-         TCbQ==
-X-Gm-Message-State: APjAAAUQN45xNUsREZooFbDJNwGfdWUqsYCAmFjkIRI2EFH6o5+5QEKr
-        tiDxSQ2D0mXfks11Zb/6N6o=
-X-Google-Smtp-Source: APXvYqxk/3mnPslHedIH4JtnaBWENkwBQDDY+6Lyxq4miRBwLaykFQeTXEDI0WyNnUgIF/fxXL2bXg==
-X-Received: by 2002:a17:90a:25af:: with SMTP id k44mr3435781pje.122.1564586151955;
-        Wed, 31 Jul 2019 08:15:51 -0700 (PDT)
-Received: from [10.69.137.114] ([50.228.72.82])
-        by smtp.gmail.com with ESMTPSA id c70sm23254601pfb.36.2019.07.31.08.15.50
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 31 Jul 2019 08:15:51 -0700 (PDT)
-Subject: Re: [PATCH RFC 2/2] futex: Implement mechanism to wait on any of
- several futexes
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Gabriel Krisman Bertazi <krisman@collabora.com>
-Cc:     tglx@linutronix.de, mingo@redhat.com, dvhart@infradead.org,
-        linux-kernel@vger.kernel.org, kernel@collabora.com,
-        Steven Noonan <steven@valvesoftware.com>,
-        "Pierre-Loup A . Griffais" <pgriffais@valvesoftware.com>,
-        viro@zeniv.linux.org.uk, jannh@google.com
-References: <20190730220602.28781-1-krisman@collabora.com>
- <20190730220602.28781-2-krisman@collabora.com>
- <20190731120600.GT31381@hirez.programming.kicks-ass.net>
-From:   Zebediah Figura <z.figura12@gmail.com>
-Message-ID: <306b3332-0065-59dc-e6d6-ee3c8a67ef53@gmail.com>
-Date:   Wed, 31 Jul 2019 10:15:49 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1729643AbfGaPTi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 11:19:38 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:5399 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728244AbfGaPSq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jul 2019 11:18:46 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 02BE2300D20F;
+        Wed, 31 Jul 2019 15:18:46 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.136])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 275AF196EC;
+        Wed, 31 Jul 2019 15:18:43 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Wed, 31 Jul 2019 17:18:45 +0200 (CEST)
+Date:   Wed, 31 Jul 2019 17:18:43 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Song Liu <songliubraving@fb.com>
+Cc:     lkml <linux-kernel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "matthew.wilcox@oracle.com" <matthew.wilcox@oracle.com>,
+        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+        Kernel Team <Kernel-team@fb.com>,
+        "william.kucharski@oracle.com" <william.kucharski@oracle.com>,
+        "srikar@linux.vnet.ibm.com" <srikar@linux.vnet.ibm.com>
+Subject: Re: [PATCH v10 3/4] mm, thp: introduce FOLL_SPLIT_PMD
+Message-ID: <20190731151842.GB25078@redhat.com>
+References: <20190730052305.3672336-1-songliubraving@fb.com>
+ <20190730052305.3672336-4-songliubraving@fb.com>
+ <20190730161113.GC18501@redhat.com>
+ <1E2B5653-BA85-4A05-9B41-57CF9E48F14A@fb.com>
 MIME-Version: 1.0
-In-Reply-To: <20190731120600.GT31381@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1E2B5653-BA85-4A05-9B41-57CF9E48F14A@fb.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Wed, 31 Jul 2019 15:18:46 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/31/19 7:06 AM, Peter Zijlstra wrote:
-> On Tue, Jul 30, 2019 at 06:06:02PM -0400, Gabriel Krisman Bertazi wrote:
->> This is a new futex operation, called FUTEX_WAIT_MULTIPLE, which allows
->> a thread to wait on several futexes at the same time, and be awoken by
->> any of them.  In a sense, it implements one of the features that was
->> supported by pooling on the old FUTEX_FD interface.
->>
->> My use case for this operation lies in Wine, where we want to implement
->> a similar interface available in Windows, used mainly for event
->> handling.  The wine folks have an implementation that uses eventfd, but
->> it suffers from FD exhaustion (I was told they have application that go
->> to the order of multi-milion FDs), and higher CPU utilization.
-> 
-> So is multi-million the range we expect for @count ?
-> 
+On 07/30, Song Liu wrote:
+>
+>
+> > On Jul 30, 2019, at 9:11 AM, Oleg Nesterov <oleg@redhat.com> wrote:
+> >
+> > So after the next patch we have a single user of FOLL_SPLIT_PMD (uprobes)
+> > and a single user of FOLL_SPLIT: arch/s390/mm/gmap.c:thp_split_mm().
+> >
+> > Hmm.
+>
+> I think this is what we want. :)
 
-Not in Wine's case; in fact Wine has a hard limit of 64 synchronization 
-primitives that can be waited on at once (which, with the current 
-user-side code, translates into 65 futexes). The exhaustion just had to 
-do with the number of primitives created; some programs seem to leak 
-them badly.
+We? I don't ;)
+
+> FOLL_SPLIT is the fallback solution for users who cannot handle THP.
+
+and again, we have a single user: thp_split_mm(). I do not know if it
+can use FOLL_SPLIT_PMD or not, may be you can take a look...
+
+> With
+> more THP aware code, there will be fewer users of FOLL_SPLIT.
+
+Fewer than 1? Good ;)
+
+> >> @@ -399,7 +399,7 @@ static struct page *follow_pmd_mask(struct vm_area_struct *vma,
+> >> 		spin_unlock(ptl);
+> >> 		return follow_page_pte(vma, address, pmd, flags, &ctx->pgmap);
+> >> 	}
+> >> -	if (flags & FOLL_SPLIT) {
+> >> +	if (flags & (FOLL_SPLIT | FOLL_SPLIT_PMD)) {
+> >> 		int ret;
+> >> 		page = pmd_page(*pmd);
+> >> 		if (is_huge_zero_page(page)) {
+> >> @@ -408,7 +408,7 @@ static struct page *follow_pmd_mask(struct vm_area_struct *vma,
+> >> 			split_huge_pmd(vma, pmd, address);
+> >> 			if (pmd_trans_unstable(pmd))
+> >> 				ret = -EBUSY;
+> >> -		} else {
+> >> +		} else if (flags & FOLL_SPLIT) {
+> >> 			if (unlikely(!try_get_page(page))) {
+> >> 				spin_unlock(ptl);
+> >> 				return ERR_PTR(-ENOMEM);
+> >> @@ -420,6 +420,10 @@ static struct page *follow_pmd_mask(struct vm_area_struct *vma,
+> >> 			put_page(page);
+> >> 			if (pmd_none(*pmd))
+> >> 				return no_page_table(vma, flags);
+> >> +		} else {  /* flags & FOLL_SPLIT_PMD */
+> >> +			spin_unlock(ptl);
+> >> +			split_huge_pmd(vma, pmd, address);
+> >> +			ret = pte_alloc(mm, pmd);
+> >
+> > I fail to understand why this differs from the is_huge_zero_page() case above.
+>
+> split_huge_pmd() handles is_huge_zero_page() differently. In this case, we
+> cannot use the pmd_trans_unstable() check.
+
+Please correct me, but iiuc the problem is not that split_huge_pmd() handles
+is_huge_zero_page() differently, the problem is that __split_huge_pmd_locked()
+handles the !vma_is_anonymous(vma) differently and returns with pmd_none() = T
+after pmdp_huge_clear_flush_notify(). This means that pmd_trans_unstable() will
+fail.
+
+Now, I don't understand why do we need pmd_trans_unstable() after
+split_huge_pmd(huge-zero-pmd), but whatever reason we have, why can't we
+unify both cases?
+
+IOW, could you explain why the path below is wrong?
+
+Oleg.
+
+
+--- x/mm/gup.c
++++ x/mm/gup.c
+@@ -399,14 +399,16 @@ static struct page *follow_pmd_mask(struct vm_area_struct *vma,
+ 		spin_unlock(ptl);
+ 		return follow_page_pte(vma, address, pmd, flags, &ctx->pgmap);
+ 	}
+-	if (flags & FOLL_SPLIT) {
++	if (flags & (FOLL_SPLIT | FOLL_SPLIT_PMD)) {
+ 		int ret;
+ 		page = pmd_page(*pmd);
+-		if (is_huge_zero_page(page)) {
++		if ((flags & FOLL_SPLIT_PMD) || is_huge_zero_page(page)) {
+ 			spin_unlock(ptl);
+-			ret = 0;
+ 			split_huge_pmd(vma, pmd, address);
+-			if (pmd_trans_unstable(pmd))
++			ret = 0;
++			if (pte_alloc(mm, pmd))
++				ret = -ENOMEM;
++			else if (pmd_trans_unstable(pmd))
+ 				ret = -EBUSY;
+ 		} else {
+ 			if (unlikely(!try_get_page(page))) {
+
