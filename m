@@ -2,412 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CC9D7B7D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 03:53:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6984D7B7DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 03:56:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727714AbfGaBxZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 21:53:25 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:36908 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726559AbfGaBxY (ORCPT
+        id S2387400AbfGaB4C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 21:56:02 -0400
+Received: from esa3.hgst.iphmx.com ([216.71.153.141]:28543 "EHLO
+        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726559AbfGaB4C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Jul 2019 21:53:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=9dYgiyE7tY+jolyoIC290OJonbSBB0TWYhI9HfnD5UY=; b=07AejvtsDmpqcFSlag/B7fsgaC
-        RSXLyk+mjeF+M14wValD/wt2g5KYdasf/CgxkJOtTiG0CBK2T1F0TQ6SCjCf3jkhX3J7x6x9Wi3V9
-        d4fVBH+OGVyfHCP8rMkgg9M0mWESr4vGSs1uaf6K1UMDthsrKjIUXrIs7DTTGrtLzQL2+udx2yTVK
-        psULG4fDzJIhXvx+HQAlbxo6TB/QSj81z7N0jCa0rgBKn21nGU295Vpk9WayoV3rlja+gFrfFdhnB
-        8iXKpGyCXM+k/5Fai+nOPUaSfZdS0LCtfJkFF7Hk8+L88AiHRLGPRXlbvksdLe8swv9njAsforrWm
-        2ajrstbw==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=[192.168.1.17])
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hsdnf-00064Q-EU; Wed, 31 Jul 2019 01:53:07 +0000
-Subject: Re: [PATCH bpf-next v10 10/10] landlock: Add user and kernel
- documentation for Landlock
-To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
-        linux-kernel@vger.kernel.org
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        David Drysdale <drysdale@google.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        James Morris <jmorris@namei.org>, Jann Horn <jann@thejh.net>,
-        John Johansen <john.johansen@canonical.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>,
-        Paul Moore <paul@paul-moore.com>,
-        Sargun Dhillon <sargun@sargun.me>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>, Tejun Heo <tj@kernel.org>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Thomas Graf <tgraf@suug.ch>, Tycho Andersen <tycho@tycho.ws>,
-        Will Drewry <wad@chromium.org>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, netdev@vger.kernel.org
-References: <20190721213116.23476-1-mic@digikod.net>
- <20190721213116.23476-11-mic@digikod.net>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <88e90c22-1b78-c2f2-8823-fa776265361c@infradead.org>
-Date:   Tue, 30 Jul 2019 18:53:02 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
-MIME-Version: 1.0
-In-Reply-To: <20190721213116.23476-11-mic@digikod.net>
-Content-Type: text/plain; charset=utf-8
+        Tue, 30 Jul 2019 21:56:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1564538162; x=1596074162;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=EzIkLL33VfiaDDUjvmHCkM+3WyciIBxzfLE+FrI2JX4=;
+  b=RtWQBvR1+HnWanFvtxZpfnxAYXmvfZaRqPChGvbtkbnTAggdYSiIYWw2
+   9ES8Axy7M0dqhezNAoarmQuZdIh33FWMGDGh0IAXUbjSA9OEZEjO0qxmz
+   KK6axDxAAA/CErJ/K4ZO7l89lT9F8s33BwYsaJCoQaeN3fvcs82z1ufOG
+   573XR2SKffECDlwqkHD3e2nOi+XynDryc+LV4nwKNJlebwJacNGZVlmIK
+   0gudB4k5Srzi80UuiD1Nv40yIL/eV2FJ60LcTG43hAPe831ZGqii56sMJ
+   R+JUqJbreMZfweXG+T5bcstOUq3nDmXs1rG+aQwfMffffH2F5DUZwFIMl
+   Q==;
+IronPort-SDR: 5N9bK50D871o+QHmPZCmTRj5VRV4GjVXnn+LZdnbqtND7tliUEEfhSBdeXaXbUFYKnU+iUyOTd
+ fG9fBwOInGATVbFFVrXK6ot+ZNlN+Pu1ErQ8t6wo4wW/wqra/1hsr2HEmFo8b0fnvH/nUlSdtd
+ CbyM6bZPMvuInPLcB5iJK+GB/NmXeiUzvrmJs3VqFC2pq/lf5JXM459IzO9otEqQCDpkVHti+H
+ tAfZf28HDD/NE8DmOz2JQAVQz+EMuPEDwWr3y7zP/hR+RZhV7P2qFVhaG5ABhx294UO+lCFRED
+ Oow=
+X-IronPort-AV: E=Sophos;i="5.64,328,1559491200"; 
+   d="scan'208";a="119220292"
+Received: from mail-by2nam05lp2055.outbound.protection.outlook.com (HELO NAM05-BY2-obe.outbound.protection.outlook.com) ([104.47.50.55])
+  by ob1.hgst.iphmx.com with ESMTP; 31 Jul 2019 09:56:02 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Uio0qAt1waLd5VdTbxaaawoBZF06vXoRu3l5aXqQiLzKkNBaZGcW8+gS8Ci0FT87P12yi3GnR85cPeHW+HZtVgrTyTIqxQiRXr1by/tzv6MRcH8SQ9bG6/1Be/D0mLlENa7lEiDPtkvvvsQLAlU0ta3NnIEJIUpdGr1sFTUma86oVAJPZ1shisWSKJI5bIecGG7LrOJAlLc9+zdrOhVHbOoE9tKsERXUBOxeY0bjvMTELEfZ2iYeApZQBRucW2wT3pfn7/7p5GTy+PE5nw4RaFchxLP8IIhu6jSQZTQWPupeGMw1QYU4SkjLSnmijx/pPbe/ipzp3yMUgWDNWQOFbg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=EzIkLL33VfiaDDUjvmHCkM+3WyciIBxzfLE+FrI2JX4=;
+ b=iVxOWkAYWb62vRgnj03mYg3l0/fO2BPKY46A8jELo5sOk/DrXCT9i3D92DpR2JNezC5Ows+riyiGeIhVYt/5+37U70jcvM2coX6vDPp5cWv4TsWmuhNNIBb3T1TYCMmGj+SWzc5pYi/Fy7IBzAWSZR8OkzqyAhbBcqV7MlZsWnSEJhLguGrn5RZZ75nDjMhxv2qlw9qv+fuIRt+Hz2/fbwiqvOEvRfLy0EZ/Z7tMUVJEY0vLQugB733ZZwNrhZgsjRp5SEyQ9L9eXw1Z7gEd3VZEJUywSoHHaDomDbGQXJ/d59/3yEqqFf8mWKfMQ+d8+B2XubLx181liGWmwbdcYw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
+ smtp.mailfrom=wdc.com;dmarc=pass action=none header.from=wdc.com;dkim=pass
+ header.d=wdc.com;arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=EzIkLL33VfiaDDUjvmHCkM+3WyciIBxzfLE+FrI2JX4=;
+ b=k/LjvsRiKrWv4YVOvVckmsmyiRjzQiOd+yGWgNWxVtgX1UEruFEWiF9TL6t9Qz3TMnQXFk/t2cjybsHiAhZuMoKBvC5QEeXYbWG7zljKSJhB8dEYkVeYoIvzMrh4S8oqblNLbM50uT5FVlM7TdhGDk566GUPiWMgsNhG2OOQYiM=
+Received: from BYAPR04MB3782.namprd04.prod.outlook.com (52.135.214.142) by
+ BYAPR04MB4598.namprd04.prod.outlook.com (52.135.238.75) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2094.14; Wed, 31 Jul 2019 01:55:59 +0000
+Received: from BYAPR04MB3782.namprd04.prod.outlook.com
+ ([fe80::ac9a:967e:70a5:e926]) by BYAPR04MB3782.namprd04.prod.outlook.com
+ ([fe80::ac9a:967e:70a5:e926%7]) with mapi id 15.20.2115.005; Wed, 31 Jul 2019
+ 01:55:59 +0000
+From:   Atish Patra <Atish.Patra@wdc.com>
+To:     "paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
+        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "palmer@sifive.com" <palmer@sifive.com>,
+        Anup Patel <Anup.Patel@wdc.com>
+CC:     "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
+        Alistair Francis <Alistair.Francis@wdc.com>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "hch@infradead.org" <hch@infradead.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "anup@brainfault.org" <anup@brainfault.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>
+Subject: Re: [RFC PATCH 13/16] RISC-V: KVM: Add timer functionality
+Thread-Topic: [RFC PATCH 13/16] RISC-V: KVM: Add timer functionality
+Thread-Index: AQHVRgTUPAB7n90qAEyqoYXnGhI7+KbjB0QAgADy5IA=
+Date:   Wed, 31 Jul 2019 01:55:59 +0000
+Message-ID: <7fe9e845c33e49e4c215e12b1ee1b5ed86a95bc1.camel@wdc.com>
+References: <20190729115544.17895-1-anup.patel@wdc.com>
+         <20190729115544.17895-14-anup.patel@wdc.com>
+         <abedb067-b91f-8821-9bce-d27f6c4efdee@redhat.com>
+In-Reply-To: <abedb067-b91f-8821-9bce-d27f6c4efdee@redhat.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Atish.Patra@wdc.com; 
+x-originating-ip: [199.255.44.250]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 3f3e1aa5-aacd-4351-0986-08d7155a3c37
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:BYAPR04MB4598;
+x-ms-traffictypediagnostic: BYAPR04MB4598:
+x-ms-exchange-purlcount: 2
+x-microsoft-antispam-prvs: <BYAPR04MB45982766F9391E322B792EE7FADF0@BYAPR04MB4598.namprd04.prod.outlook.com>
+wdcipoutbound: EOP-TRUE
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-forefront-prvs: 011579F31F
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(346002)(396003)(136003)(366004)(376002)(39860400002)(189003)(199004)(446003)(229853002)(110136005)(76176011)(476003)(11346002)(54906003)(2201001)(2616005)(71200400001)(316002)(8676002)(81156014)(7416002)(256004)(8936002)(7736002)(966005)(486006)(81166006)(6506007)(14454004)(66066001)(305945005)(53546011)(68736007)(5660300002)(6246003)(26005)(478600001)(71190400001)(3846002)(6116002)(6636002)(25786009)(6306002)(66946007)(53936002)(6512007)(118296001)(102836004)(186003)(86362001)(66476007)(4326008)(2501003)(36756003)(6486002)(2906002)(66446008)(64756008)(99286004)(76116006)(6436002)(66556008);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR04MB4598;H:BYAPR04MB3782.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: KBPg7aI1bItGwl35cvKVqoMbhvKSUDM9bqd8SXYB8fKJ+RHQD78/XUBqDY6ZyOAO5CJOfemG888MXplGdWxJ2+uy8RuXRz9jDPeK2csKuAWSFmceE828Du/GdlQ4RwD9XPwBtR0LFFrRPJF1KVdowvXkyQB4SX3peouFXT6ftg/1rDhiSL3tCKwPn1BRCZAYoQXGjiuu/sWrXO22oEpsmPPckQUBF805s74vwAHhM3ulPAuIIRJ0tDpAwLmLTSRtABou3BxMN3jscrzXzUdpABz+zo2hVSxj57n+lijF5X19vhdbbieP0LJyGkg99udfFiRcpomRPNx1bp0jL6QGqiH3m60DB+pJwAG4OqRFnqFaVTP/DuZFJJgJIxCLE2mRt8oE/vD1D82qU6ChfxopGkI6JgoaizV3G2iLcB2smOQ=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <13B323065899E54CB3E7D3A54271A60D@namprd04.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3f3e1aa5-aacd-4351-0986-08d7155a3c37
+X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Jul 2019 01:55:59.6574
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Atish.Patra@wdc.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR04MB4598
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/21/19 2:31 PM, Mickaël Salaün wrote:
-> This documentation can be built with the Sphinx framework.
-> 
-> Signed-off-by: Mickaël Salaün <mic@digikod.net>
-> Cc: Alexei Starovoitov <ast@kernel.org>
-> Cc: Andy Lutomirski <luto@amacapital.net>
-> Cc: Daniel Borkmann <daniel@iogearbox.net>
-> Cc: David S. Miller <davem@davemloft.net>
-> Cc: James Morris <jmorris@namei.org>
-> Cc: Jonathan Corbet <corbet@lwn.net>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Serge E. Hallyn <serge@hallyn.com>
-> ---
-> 
-> Changes since v9:
-> * update with expected attach type and expected attach triggers
-> 
-> Changes since v8:
-> * remove documentation related to chaining and tagging according to this
->   patch series
-> 
-> Changes since v7:
-> * update documentation according to the Landlock revamp
-> 
-> Changes since v6:
-> * add a check for ctx->event
-> * rename BPF_PROG_TYPE_LANDLOCK to BPF_PROG_TYPE_LANDLOCK_RULE
-> * rename Landlock version to ABI to better reflect its purpose and add a
->   dedicated changelog section
-> * update tables
-> * relax no_new_privs recommendations
-> * remove ABILITY_WRITE related functions
-> * reword rule "appending" to "prepending" and explain it
-> * cosmetic fixes
-> 
-> Changes since v5:
-> * update the rule hierarchy inheritance explanation
-> * briefly explain ctx->arg2
-> * add ptrace restrictions
-> * explain EPERM
-> * update example (subtype)
-> * use ":manpage:"
-> ---
->  Documentation/security/index.rst           |   1 +
->  Documentation/security/landlock/index.rst  |  20 +++
->  Documentation/security/landlock/kernel.rst |  99 ++++++++++++++
->  Documentation/security/landlock/user.rst   | 147 +++++++++++++++++++++
->  4 files changed, 267 insertions(+)
->  create mode 100644 Documentation/security/landlock/index.rst
->  create mode 100644 Documentation/security/landlock/kernel.rst
->  create mode 100644 Documentation/security/landlock/user.rst
-
-
-> diff --git a/Documentation/security/landlock/kernel.rst b/Documentation/security/landlock/kernel.rst
-> new file mode 100644
-> index 000000000000..7d1e06d544bf
-> --- /dev/null
-> +++ b/Documentation/security/landlock/kernel.rst
-> @@ -0,0 +1,99 @@
-> +==============================
-> +Landlock: kernel documentation
-> +==============================
-> +
-> +eBPF properties
-> +===============
-> +
-> +To get an expressive language while still being safe and small, Landlock is
-> +based on eBPF. Landlock should be usable by untrusted processes and must
-> +therefore expose a minimal attack surface. The eBPF bytecode is minimal,
-> +powerful, widely used and designed to be used by untrusted applications. Thus,
-> +reusing the eBPF support in the kernel enables a generic approach while
-> +minimizing new code.
-> +
-> +An eBPF program has access to an eBPF context containing some fields used to
-> +inspect the current object. These arguments can be used directly (e.g. cookie)
-> +or passed to helper functions according to their types (e.g. inode pointer). It
-> +is then possible to do complex access checks without race conditions or
-> +inconsistent evaluation (i.e.  `incorrect mirroring of the OS code and state
-> +<https://www.ndss-symposium.org/ndss2003/traps-and-pitfalls-practical-problems-system-call-interposition-based-security-tools/>`_).
-> +
-> +A Landlock hook describes a particular access type.  For now, there is two
-
-                                                                 there are two
-
-> +hooks dedicated to filesystem related operations: LANDLOCK_HOOK_FS_PICK and
-> +LANDLOCK_HOOK_FS_WALK.  A Landlock program is tied to one hook.  This makes it
-> +possible to statically check context accesses, potentially performed by such
-> +program, and hence prevents kernel address leaks and ensure the right use of
-
-                                                        ensures
-
-> +hook arguments with eBPF functions.  Any user can add multiple Landlock
-> +programs per Landlock hook.  They are stacked and evaluated one after the
-> +other, starting from the most recent program, as seccomp-bpf does with its
-> +filters.  Underneath, a hook is an abstraction over a set of LSM hooks.
-> +
-> +
-> +Guiding principles
-> +==================
-> +
-> +Unprivileged use
-> +----------------
-> +
-> +* Landlock helpers and context should be usable by any unprivileged and
-> +  untrusted program while following the system security policy enforced by
-> +  other access control mechanisms (e.g. DAC, LSM).
-> +
-> +
-> +Landlock hook and context
-> +-------------------------
-> +
-> +* A Landlock hook shall be focused on access control on kernel objects instead
-> +  of syscall filtering (i.e. syscall arguments), which is the purpose of
-> +  seccomp-bpf.
-> +* A Landlock context provided by a hook shall express the minimal and more
-> +  generic interface to control an access for a kernel object.
-> +* A hook shall guaranty that all the BPF function calls from a program are> +  safe.  Thus, the related Landlock context arguments shall always be of the
-> +  same type for a particular hook.  For example, a network hook could share
-> +  helpers with a file hook because of UNIX socket.  However, the same helpers
-> +  may not be compatible for a file system handle and a net handle.
-> +* Multiple hooks may use the same context interface.
-> +
-> +
-> +Landlock helpers
-> +----------------
-> +
-> +* Landlock helpers shall be as generic as possible while at the same time being
-> +  as simple as possible and following the syscall creation principles (cf.
-> +  *Documentation/adding-syscalls.txt*).
-> +* The only behavior change allowed on a helper is to fix a (logical) bug to
-> +  match the initial semantic.
-> +* Helpers shall be reentrant, i.e. only take inputs from arguments (e.g. from
-> +  the BPF context), to enable a hook to use a cache.  Future program options
-> +  might change this cache behavior.
-> +* It is quite easy to add new helpers to extend Landlock.  The main concern
-> +  should be about the possibility to leak information from the kernel that may
-> +  not be accessible otherwise (i.e. side-channel attack).
-> +
-> +
-> +Questions and answers
-> +=====================
-> +
-> +Why not create a custom hook for each kind of action?
-> +-----------------------------------------------------
-> +
-> +Landlock programs can handle these checks.  Adding more exceptions to the
-> +kernel code would lead to more code complexity.  A decision to ignore a kind of
-> +action can and should be done at the beginning of a Landlock program.
-> +
-> +
-> +Why a program does not return an errno or a kill code?
-> +------------------------------------------------------
-> +
-> +seccomp filters can return multiple kind of code, including an errno value or a
-
-                                       kinds
-
-> +kill signal, which may be convenient for access control.  Those return codes
-> +are hardwired in the userland ABI.  Instead, Landlock's approach is to return a
-> +boolean to allow or deny an action, which is much simpler and more generic.
-> +Moreover, we do not really have a choice because, unlike to seccomp, Landlock
-> +programs are not enforced at the syscall entry point but may be executed at any
-> +point in the kernel (through LSM hooks) where an errno return code may not make
-> +sense.  However, with this simple ABI and with the ability to call helpers,
-> +Landlock may gain features similar to seccomp-bpf in the future while being
-> +compatible with previous programs.
-> diff --git a/Documentation/security/landlock/user.rst b/Documentation/security/landlock/user.rst
-> new file mode 100644
-> index 000000000000..14c4f3b377bd
-> --- /dev/null
-> +++ b/Documentation/security/landlock/user.rst
-> @@ -0,0 +1,147 @@
-> +================================
-> +Landlock: userland documentation
-> +================================
-> +
-> +Landlock programs
-> +=================
-> +
-> +eBPF programs are used to create security programs.  They are contained and can
-> +call only a whitelist of dedicated functions. Moreover, they can only loop
-> +under strict conditions, which protects from denial of service.  More
-> +information on BPF can be found in *Documentation/networking/filter.txt*.
-> +
-> +
-> +Writing a program
-> +-----------------
-> +
-> +To enforce a security policy, a thread first needs to create a Landlock program.
-> +The easiest way to write an eBPF program depicting a security program is to write
-> +it in the C language.  As described in *samples/bpf/README.rst*, LLVM can
-> +compile such programs.  Files *samples/bpf/landlock1_kern.c* and those in
-> +*tools/testing/selftests/landlock/* can be used as examples.
-> +
-> +Once the eBPF program is created, the next step is to create the metadata
-> +describing the Landlock program.  This metadata includes an expected attach type which
-> +contains the hook type to which the program is tied, and expected attach
-> +triggers which identify the actions for which the program should be run.
-> +
-> +A hook is a policy decision point which exposes the same context type for
-> +each program evaluation.
-> +
-> +A Landlock hook describes the kind of kernel object for which a program will be
-> +triggered to allow or deny an action.  For example, the hook
-> +BPF_LANDLOCK_FS_PICK can be triggered every time a landlocked thread performs a
-> +set of action related to the filesystem (e.g. open, read, write, mount...).
-
-          actions
-
-> +This actions are identified by the `triggers` bitfield.
-> +
-> +The next step is to fill a :c:type:`struct bpf_load_program_attr
-> +<bpf_load_program_attr>` with BPF_PROG_TYPE_LANDLOCK_HOOK, the expected attach
-> +type and other BPF program metadata.  This bpf_attr must then be passed to the
-> +:manpage:`bpf(2)` syscall alongside the BPF_PROG_LOAD command.  If everything
-> +is deemed correct by the kernel, the thread gets a file descriptor referring to
-> +this program.
-> +
-> +In the following code, the *insn* variable is an array of BPF instructions
-> +which can be extracted from an ELF file as is done in bpf_load_file() from
-> +*samples/bpf/bpf_load.c*.
-
-A little confusing.  Is there a mixup of <insn> and <insns>?
-
-> +
-> +.. code-block:: c
-> +
-> +    int prog_fd;
-> +    struct bpf_load_program_attr load_attr;
-> +
-> +    memset(&load_attr, 0, sizeof(struct bpf_load_program_attr));
-> +    load_attr.prog_type = BPF_PROG_TYPE_LANDLOCK_HOOK;
-> +    load_attr.expected_attach_type = BPF_LANDLOCK_FS_PICK;
-> +    load_attr.expected_attach_triggers = LANDLOCK_TRIGGER_FS_PICK_OPEN;
-> +    load_attr.insns = insns;
-> +    load_attr.insns_cnt = sizeof(insn) / sizeof(struct bpf_insn);
-> +    load_attr.license = "GPL";
-> +
-> +    prog_fd = bpf_load_program_xattr(&load_attr, log_buf, log_buf_sz);
-> +    if (prog_fd == -1)
-> +        exit(1);
-> +
-> +
-> +Enforcing a program
-> +-------------------
-> +
-> +Once the Landlock program has been created or received (e.g. through a UNIX
-> +socket), the thread willing to sandbox itself (and its future children) should
-> +perform the following two steps.
-> +
-> +The thread should first request to never be allowed to get new privileges with a
-> +call to :manpage:`prctl(2)` and the PR_SET_NO_NEW_PRIVS option.  More
-> +information can be found in *Documentation/prctl/no_new_privs.txt*.
-> +
-> +.. code-block:: c
-> +
-> +    if (prctl(PR_SET_NO_NEW_PRIVS, 1, NULL, 0, 0))
-> +        exit(1);
-> +
-> +A thread can apply a program to itself by using the :manpage:`seccomp(2)` syscall.
-> +The operation is SECCOMP_PREPEND_LANDLOCK_PROG, the flags must be empty and the
-> +*args* argument must point to a valid Landlock program file descriptor.
-> +
-> +.. code-block:: c
-> +
-> +    if (seccomp(SECCOMP_PREPEND_LANDLOCK_PROG, 0, &fd))
-> +        exit(1);
-> +
-> +If the syscall succeeds, the program is now enforced on the calling thread and
-> +will be enforced on all its subsequently created children of the thread as
-> +well.  Once a thread is landlocked, there is no way to remove this security
-> +policy, only stacking more restrictions is allowed.  The program evaluation is
-> +performed from the newest to the oldest.
-> +
-> +When a syscall ask for an action on a kernel object, if this action is denied,
-
-                  asks
-
-> +then an EACCES errno code is returned through the syscall.
-> +
-> +
-> +.. _inherited_programs:
-> +
-> +Inherited programs
-> +------------------
-> +
-> +Every new thread resulting from a :manpage:`clone(2)` inherits Landlock program
-> +restrictions from its parent.  This is similar to the seccomp inheritance as
-> +described in *Documentation/prctl/seccomp_filter.txt*.
-> +
-> +
-> +Ptrace restrictions
-> +-------------------
-> +
-> +A landlocked process has less privileges than a non-landlocked process and must
-> +then be subject to additional restrictions when manipulating another process.
-> +To be allowed to use :manpage:`ptrace(2)` and related syscalls on a target
-> +process, a landlocked process must have a subset of the target process programs.
-            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Maybe that last statement is correct, but it seems to me that it is missing something.
-
-> +
-> +
-> +Landlock structures and constants
-> +=================================
-> +
-> +Hook types
-> +----------
-> +
-> +.. kernel-doc:: include/uapi/linux/landlock.h
-> +    :functions: landlock_hook_type
-> +
-> +
-> +Contexts
-> +--------
-> +
-> +.. kernel-doc:: include/uapi/linux/landlock.h
-> +    :functions: landlock_ctx_fs_pick landlock_ctx_fs_walk landlock_ctx_fs_get
-> +
-> +
-> +Triggers for fs_pick
-> +--------------------
-> +
-> +.. kernel-doc:: include/uapi/linux/landlock.h
-> +    :functions: landlock_triggers
-> +
-> +
-> +Additional documentation
-> +========================
-> +
-> +See https://landlock.io
-> 
-
-
--- 
-~Randy
+T24gVHVlLCAyMDE5LTA3LTMwIGF0IDEzOjI2ICswMjAwLCBQYW9sbyBCb256aW5pIHdyb3RlOg0K
+PiBPbiAyOS8wNy8xOSAxMzo1NywgQW51cCBQYXRlbCB3cm90ZToNCj4gPiArCWlmIChkZWx0YV9u
+cyA+IFZDUFVfVElNRVJfUFJPR1JBTV9USFJFU0hPTERfTlMpIHsNCj4gPiArCQlocnRpbWVyX3N0
+YXJ0KCZ0LT5ocnQsIGt0aW1lX2FkZF9ucyhrdGltZV9nZXQoKSwNCj4gPiBkZWx0YV9ucyksDQo+
+IA0KPiBJIHRoaW5rIHRoZSBndWVzdCB3b3VsZCBwcmVmZXIgaWYgeW91IHNhdmVkIHRoZSB0aW1l
+IGJlZm9yZSBlbmFibGluZw0KPiBpbnRlcnJ1cHRzIG9uIHRoZSBob3N0LCBhbmQgdXNlIHRoYXQg
+aGVyZSBpbnN0ZWFkIG9mIGt0aW1lX2dldCgpLg0KPiBPdGhlcndpc2UgdGhlIHRpbWVyIGNvdWxk
+IGJlIGRlbGF5ZWQgYXJiaXRyYXJpbHkgYnkgaG9zdCBpbnRlcnJ1cHRzLg0KPiANCj4gKEJlY2F1
+c2UgdGhlIFJJU0MtViBTQkkgdGltZXIgaXMgcmVsYXRpdmUgb25seS0tLXdoaWNoIGlzDQo+IHVu
+Zm9ydHVuYXRlLS0tDQoNCkp1c3QgdG8gY2xhcmlmeTogUklTQy1WIFNCSSB0aW1lciBjYWxsIHBh
+c3NlcyBhYnNvbHV0ZSB0aW1lLg0KDQpodHRwczovL2VsaXhpci5ib290bGluLmNvbS9saW51eC92
+NS4zLXJjMi9zb3VyY2UvZHJpdmVycy9jbG9ja3NvdXJjZS90aW1lci1yaXNjdi5jI0wzMg0KDQpU
+aGF0J3Mgd2h5IHdlIGNvbXB1dGUgYSBkZWx0YSBiZXR3ZWVuIGFic29sdXRlIHRpbWUgcGFzc2Vk
+IHZpYSBTQkkgYW5kDQpjdXJyZW50IHRpbWUuIGhydGltZXIgaXMgcHJvZ3JhbW1lZCB0byB0cmln
+Z2VyIG9ubHkgYWZ0ZXIgdGhlIGRlbHRhDQp0aW1lIGZyb20gbm93Lg0KDQoNCj4gZ3Vlc3RzIHdp
+bGwgYWxyZWFkeSBwYXkgYSBsYXRlbmN5IHByaWNlIGR1ZSB0byB0aGUgZXh0cmENCj4gY29zdCBv
+ZiB0aGUgU0JJIGNhbGwgY29tcGFyZWQgdG8gYSBiYXJlIG1ldGFsIGltcGxlbWVudGF0aW9uLiAN
+Cg0KWWVzLiBUaGVyZSBhcmUgb25nb2luZyBkaXNjdXNzaW9ucyB0byByZW1vdmUgdGhpcyBTQkkg
+Y2FsbCBjb21wbGV0ZWx5LiANCkhvcGVmdWxseSwgdGhhdCB3aWxsIGhhcHBlbiBiZWZvcmUgYW55
+IHJlYWwgaGFyZHdhcmUgd2l0aA0KdmlydHVhbGl6YXRpb24gc3VwcG9ydCBzaG93cyB1cCA6KS4N
+Cg0KPiAgU29vbmVyIG9yDQo+IGxhdGVyIHlvdSBtYXkgd2FudCB0byBpbXBsZW1lbnQgc29tZXRo
+aW5nIGxpa2UgeDg2J3MgaGV1cmlzdGljIHRvDQo+IGFkdmFuY2UgdGhlIHRpbWVyIGRlYWRsaW5l
+IGJ5IGEgZmV3IGh1bmRyZWQgbmFub3NlY29uZHM7IHBlcmhhcHMgYWRkDQo+IGENCj4gVE9ETyBu
+b3cpLg0KPiANCg0KSSBhbSBub3QgYXdhcmUgb2YgdGhpcyBhcHByb2FjaC4gSSB3aWxsIHRha2Ug
+YSBsb29rLiBUaGFua3MuDQoNClJlZ2FyZHMsDQpBdGlzaA0KPiBQYW9sbw0KPiANCj4gPiArCQkJ
+CUhSVElNRVJfTU9ERV9BQlMpOw0KPiA+ICsJCXQtPmlzX3NldCA9IHRydWU7DQo+ID4gKwl9IGVs
+c2UNCj4gPiArCQlrdm1fcmlzY3ZfdmNwdV9zZXRfaW50ZXJydXB0KHZjcHUsIElSUV9TX1RJTUVS
+KTsNCj4gPiArDQo+IA0KPiBfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fXw0KPiBsaW51eC1yaXNjdiBtYWlsaW5nIGxpc3QNCj4gbGludXgtcmlzY3ZAbGlzdHMu
+aW5mcmFkZWFkLm9yZw0KPiBodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3Rp
+bmZvL2xpbnV4LXJpc2N2DQoNCg==
