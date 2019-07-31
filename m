@@ -2,108 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F3007CA8F
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 19:34:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0EED07CA7E
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 19:32:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729210AbfGaRdc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 13:33:32 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:33956 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726382AbfGaRdb (ORCPT
+        id S1730843AbfGaRcc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 13:32:32 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:45086 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728943AbfGaRc2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 13:33:31 -0400
-Received: by mail-pg1-f195.google.com with SMTP id n9so26165585pgc.1;
-        Wed, 31 Jul 2019 10:33:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Q/lI9Y+iuMqu0/88TVov6DxL4UL/ibIqCQWpqsUjgQE=;
-        b=c9qTtjApobnJnkUtjbZgrCEe6ORor1BWYjjLIf8kYPgyf+wi1mZOOA3SAge2YRRyvN
-         wFaY8eFQX600DnVGw4dgTqQjUtK/JwzzwyQqs2x565q/vWnhHwKtEXUK9vDEXpzfeGpU
-         XoXdIOkRam2Dzpz5I8vDf1YzMu1Ldq2cX3FCJRkBKoJ+TfSc5lx46jItuvmnuEPU8ZXJ
-         eclEKsjvJ36fbFp5/mAh4LHsYoCJ5opDbknF/V86258DRF7IPJB1DkNqhCuWlLW+w3OU
-         Kun8dDIOWIPTI3kmTE7Mr2YSPdzI5c6MPHa8IBJe4ccna0L/rydBPvHufgoJvDdVzKb7
-         YsJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Q/lI9Y+iuMqu0/88TVov6DxL4UL/ibIqCQWpqsUjgQE=;
-        b=gzc2/rTiSaTY4el/EdR8/921ihGXrbBDgNykISzMphiKjYcdjfG+MVlIl9vQH8Ir9q
-         bQ5BiHwneds2EP1wms1vAaTnoEOail20N5RiG7jREuVvzIAVaICU747f9xXMfyvE+NSD
-         QO1rr/NcOlu2t/WAFyhJb6gUJ9HCzWcUcBTYBwrdj9I6+9rNsORHoC85+d9clUvoZWBm
-         UVjHybTXyAfNrV2EaF4Zp6X/6zd/gu6c6zXGkP0aPF9q3O5Aqeyf/bNHuknfEcSxMVc6
-         qvmgTXYT1dGyyVshXaGel09n1npeJZC8Arg+cg8WNP7ivr08zKaNA9PE7eZVo+RFTBJj
-         sEkQ==
-X-Gm-Message-State: APjAAAUd65dkLnParsYCIvvcoU1K02ejbjkkzYsbTjGfZTS/tyB2Qugy
-        C9Kv/y1gQW+CW8c5HLAbrOWxia43
-X-Google-Smtp-Source: APXvYqx89nO0ID4KvdGJWas//BKX6lntSQr/4mYrYUB6MdCKX7JIiBzf3RxdLx1pxlXA5a7FqOeUqQ==
-X-Received: by 2002:a62:1616:: with SMTP id 22mr49470661pfw.120.1564594410026;
-        Wed, 31 Jul 2019 10:33:30 -0700 (PDT)
-Received: from localhost.localdomain ([2607:fb90:4ad:5a0b:2aff:6e0f:8973:5a26])
-        by smtp.gmail.com with ESMTPSA id bo20sm2089617pjb.23.2019.07.31.10.33.27
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 31 Jul 2019 10:33:29 -0700 (PDT)
-From:   Andrey Smirnov <andrew.smirnov@gmail.com>
-To:     linux-serial@vger.kernel.org
-Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Stefan Agner <stefan@agner.ch>,
-        Chris Healy <cphealy@gmail.com>,
-        Cory Tusar <cory.tusar@zii.aero>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, linux-imx@nxp.com,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 23/23] tty: serial: fsl_lpuart: Ignore TX/RX interrupts if DMA is enabled
-Date:   Wed, 31 Jul 2019 10:30:45 -0700
-Message-Id: <20190731173045.11718-24-andrew.smirnov@gmail.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190731173045.11718-1-andrew.smirnov@gmail.com>
-References: <20190731173045.11718-1-andrew.smirnov@gmail.com>
+        Wed, 31 Jul 2019 13:32:28 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id BCF558031F; Wed, 31 Jul 2019 19:32:14 +0200 (CEST)
+Date:   Wed, 31 Jul 2019 19:32:26 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Parth Shah <parth@linux.ibm.com>
+Cc:     peterz@infradead.org, mingo@redhat.com,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        patrick.bellasi@arm.com, dietmar.eggemann@arm.com,
+        daniel.lezcano@linaro.org, subhra.mazumdar@oracle.com
+Subject: Re: [RFC v4 0/8] TurboSched: A scheduler for sustaining Turbo
+ Frequencies for longer durations
+Message-ID: <20190731173225.GB24222@amd>
+References: <20190725070857.6639-1-parth@linux.ibm.com>
+ <20190728133102.GD8718@xo-6d-61-c0.localdomain>
+ <4fcd3488-6ba0-bc22-a08d-ceebbce1c120@linux.ibm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="IrhDeMKUP4DT/M7F"
+Content-Disposition: inline
+In-Reply-To: <4fcd3488-6ba0-bc22-a08d-ceebbce1c120@linux.ibm.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In a mixed DMA/IRQ use-case (e.g.: DMA for TX, IRQ for RX), interrupt
-handler might try to handle Rx/Tx condition it shouldn't. Change the
-code to only handle TX/RX event if corresponding path isn't being
-handled by DMA.
 
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc: Stefan Agner <stefan@agner.ch>
-Cc: Chris Healy <cphealy@gmail.com>
-Cc: Cory Tusar <cory.tusar@zii.aero>
-Cc: Lucas Stach <l.stach@pengutronix.de>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Jiri Slaby <jslaby@suse.com>
-Cc: linux-imx@nxp.com
-Cc: linux-serial@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
----
- drivers/tty/serial/fsl_lpuart.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+--IrhDeMKUP4DT/M7F
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c
-index 237690a6e80a..e758ca57113f 100644
---- a/drivers/tty/serial/fsl_lpuart.c
-+++ b/drivers/tty/serial/fsl_lpuart.c
-@@ -967,10 +967,10 @@ static irqreturn_t lpuart_int(int irq, void *dev_id)
- 
- 	sts = readb(sport->port.membase + UARTSR1);
- 
--	if (sts & UARTSR1_RDRF)
-+	if (sts & UARTSR1_RDRF && !sport->lpuart_dma_rx_use)
- 		lpuart_rxint(sport);
- 
--	if (sts & UARTSR1_TDRE)
-+	if (sts & UARTSR1_TDRE && !sport->lpuart_dma_tx_use)
- 		lpuart_txint(sport);
- 
- 	return IRQ_HANDLED;
--- 
-2.21.0
+Hi!
 
+> >> Abstract
+> >> =3D=3D=3D=3D=3D=3D=3D=3D
+> >>
+> >> The modern servers allows multiple cores to run at range of frequencies
+> >> higher than rated range of frequencies. But the power budget of the sy=
+stem
+> >> inhibits sustaining these higher frequencies for longer durations.
+> >=20
+> > Thermal budget?
+>=20
+> Right, it is a good point, and there can be possibility of Thermal thrott=
+ling
+> which is not covered here.
+> But the thermal throttling is less often seen in the servers than the thr=
+ottling
+> due to the Power budget constraints. Also one can change the power cap wh=
+ich leads
+> to increase in the throttling and task packing can handle in such
+> cases.
+
+Ok. I thought you are doing this due to thermals. If I understand
+things correctly, you can go over thermal limits for a few seconds
+before the silicon heats up. What is the timescale for power budget?
+
+> BTW, Task packing allows few more cores to remain idle for longer time, so
+> shouldn't this decrease thermal throttles upto certain extent?
+
+I guess so, yes.
+
+> > >> These numbers are w.r.t. `turbo_bench.c` multi-threaded test benchma=
+rk
+> >> which can create two kinds of tasks: CPU bound (High Utilization) and
+> >> Jitters (Low Utilization). N in X-axis represents N-CPU bound and N-Ji=
+tter
+> >> tasks spawned.
+> >=20
+> > Ok, so you have description how it causes 13% improvements. Do you also=
+ have metrics how
+> > it harms performance.. how much delay is added to unimportant tasks etc=
+=2E..?
+> >=20
+>=20
+> Yes, if we try to pack the tasks despite of no frequency throttling, we s=
+ee a regression
+> around 5%. For instance, in the synthetic benchmark I used to show perfor=
+mance benefit,
+> for lower count of CPU intensive threads (N=3D2) there is -5% performance=
+ drop.
+>=20
+> Talking about the delay added to an unimportant tasks, the result can be =
+lower throughput
+> or higher latency for such tasks.
+
+Thanks. I believe it would be good to mention disadvantages in the
+documentation, too.
+
+Best regards,
+							Pavel
+						=09
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--IrhDeMKUP4DT/M7F
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAl1B0KkACgkQMOfwapXb+vK/SQCdEakOOhPJoZSXw6d1ALOX3ZWx
+knYAn2U5kHCHmxOCvozd/2HU6N2RxX4Z
+=4uGg
+-----END PGP SIGNATURE-----
+
+--IrhDeMKUP4DT/M7F--
