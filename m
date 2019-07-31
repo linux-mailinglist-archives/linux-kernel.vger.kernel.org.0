@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB0447C906
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 18:43:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CB9A47C90B
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 18:44:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730344AbfGaQnj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 12:43:39 -0400
-Received: from honk.sigxcpu.org ([24.134.29.49]:55492 "EHLO honk.sigxcpu.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728938AbfGaQnh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1730322AbfGaQnh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Wed, 31 Jul 2019 12:43:37 -0400
+Received: from honk.sigxcpu.org ([24.134.29.49]:55476 "EHLO honk.sigxcpu.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728795AbfGaQng (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jul 2019 12:43:36 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by honk.sigxcpu.org (Postfix) with ESMTP id 44AEDFB02;
-        Wed, 31 Jul 2019 18:43:35 +0200 (CEST)
+        by honk.sigxcpu.org (Postfix) with ESMTP id 3E805FB05;
+        Wed, 31 Jul 2019 18:43:34 +0200 (CEST)
 X-Virus-Scanned: Debian amavisd-new at honk.sigxcpu.org
 Received: from honk.sigxcpu.org ([127.0.0.1])
         by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id nZ9ndQofYGCX; Wed, 31 Jul 2019 18:43:34 +0200 (CEST)
+        with ESMTP id DuVvq0P8aW1u; Wed, 31 Jul 2019 18:43:33 +0200 (CEST)
 Received: by bogon.sigxcpu.org (Postfix, from userid 1000)
-        id 68E2046BB5; Wed, 31 Jul 2019 18:43:31 +0200 (CEST)
+        id 6F50746D8B; Wed, 31 Jul 2019 18:43:31 +0200 (CEST)
 From:   =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>
 To:     Philipp Zabel <p.zabel@pengutronix.de>,
         Shawn Guo <shawnguo@kernel.org>,
@@ -31,9 +31,9 @@ To:     Philipp Zabel <p.zabel@pengutronix.de>,
         Mark Rutland <mark.rutland@arm.com>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org
-Subject: [PATCH 1/2] dt-bindings: reset: Fix typo in imx8mq resets
-Date:   Wed, 31 Jul 2019 18:43:30 +0200
-Message-Id: <f4c58a4a1c7a115cb9756630535031d6e9777247.1564591352.git.agx@sigxcpu.org>
+Subject: [PATCH 2/2] reset: imx7: Fix IMX8MQ_RESET_MIPI_DSI_ defines
+Date:   Wed, 31 Jul 2019 18:43:31 +0200
+Message-Id: <bd1504122f6797536a253a37f3604f5c46f02ab2.1564591352.git.agx@sigxcpu.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <cover.1564591352.git.agx@sigxcpu.org>
 References: <cover.1564591352.git.agx@sigxcpu.org>
@@ -47,36 +47,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Some of the mipi dsi resets were called
 
-  IMX8MQ_RESET_MIPI_DIS__
+  IMX8MQ_RESET_MIPI_DIS_
 
 instead of
 
-  IMX8MQ_RESET_MIPI_DSI__
+  IMX8MQ_RESET_MIPI_DSI_
 
 Since they're DSI related this looks like a typo.
 
+I wasn't sure if this should be a single patch since it otherwise breaks
+bisectability. I couldn't find any device trees using this yet.
+
 Signed-off-by: Guido Günther <agx@sigxcpu.org>
 ---
- include/dt-bindings/reset/imx8mq-reset.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/reset/reset-imx7.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/include/dt-bindings/reset/imx8mq-reset.h b/include/dt-bindings/reset/imx8mq-reset.h
-index 57c592498aa0..bfa41b0e24f6 100644
---- a/include/dt-bindings/reset/imx8mq-reset.h
-+++ b/include/dt-bindings/reset/imx8mq-reset.h
-@@ -31,9 +31,9 @@
- #define IMX8MQ_RESET_OTG2_PHY_RESET		20
- #define IMX8MQ_RESET_MIPI_DSI_RESET_BYTE_N	21
- #define IMX8MQ_RESET_MIPI_DSI_RESET_N		22
--#define IMX8MQ_RESET_MIPI_DIS_DPI_RESET_N	23
--#define IMX8MQ_RESET_MIPI_DIS_ESC_RESET_N	24
--#define IMX8MQ_RESET_MIPI_DIS_PCLK_RESET_N	25
-+#define IMX8MQ_RESET_MIPI_DSI_DPI_RESET_N	23
-+#define IMX8MQ_RESET_MIPI_DSI_ESC_RESET_N	24
-+#define IMX8MQ_RESET_MIPI_DSI_PCLK_RESET_N	25
- #define IMX8MQ_RESET_PCIEPHY			26
- #define IMX8MQ_RESET_PCIEPHY_PERST		27
- #define IMX8MQ_RESET_PCIE_CTRL_APPS_EN		28
+diff --git a/drivers/reset/reset-imx7.c b/drivers/reset/reset-imx7.c
+index 3ecd770f910b..1443a55a0c29 100644
+--- a/drivers/reset/reset-imx7.c
++++ b/drivers/reset/reset-imx7.c
+@@ -169,9 +169,9 @@ static const struct imx7_src_signal imx8mq_src_signals[IMX8MQ_RESET_NUM] = {
+ 	[IMX8MQ_RESET_OTG2_PHY_RESET]		= { SRC_USBOPHY2_RCR, BIT(0) },
+ 	[IMX8MQ_RESET_MIPI_DSI_RESET_BYTE_N]	= { SRC_MIPIPHY_RCR, BIT(1) },
+ 	[IMX8MQ_RESET_MIPI_DSI_RESET_N]		= { SRC_MIPIPHY_RCR, BIT(2) },
+-	[IMX8MQ_RESET_MIPI_DIS_DPI_RESET_N]	= { SRC_MIPIPHY_RCR, BIT(3) },
+-	[IMX8MQ_RESET_MIPI_DIS_ESC_RESET_N]	= { SRC_MIPIPHY_RCR, BIT(4) },
+-	[IMX8MQ_RESET_MIPI_DIS_PCLK_RESET_N]	= { SRC_MIPIPHY_RCR, BIT(5) },
++	[IMX8MQ_RESET_MIPI_DSI_DPI_RESET_N]	= { SRC_MIPIPHY_RCR, BIT(3) },
++	[IMX8MQ_RESET_MIPI_DSI_ESC_RESET_N]	= { SRC_MIPIPHY_RCR, BIT(4) },
++	[IMX8MQ_RESET_MIPI_DSI_PCLK_RESET_N]	= { SRC_MIPIPHY_RCR, BIT(5) },
+ 	[IMX8MQ_RESET_PCIEPHY]			= { SRC_PCIEPHY_RCR,
+ 						    BIT(2) | BIT(1) },
+ 	[IMX8MQ_RESET_PCIEPHY_PERST]		= { SRC_PCIEPHY_RCR, BIT(3) },
+@@ -220,9 +220,9 @@ static int imx8mq_reset_set(struct reset_controller_dev *rcdev,
+ 
+ 	case IMX8MQ_RESET_PCIE_CTRL_APPS_EN:
+ 	case IMX8MQ_RESET_PCIE2_CTRL_APPS_EN:	/* fallthrough */
+-	case IMX8MQ_RESET_MIPI_DIS_PCLK_RESET_N:	/* fallthrough */
+-	case IMX8MQ_RESET_MIPI_DIS_ESC_RESET_N:	/* fallthrough */
+-	case IMX8MQ_RESET_MIPI_DIS_DPI_RESET_N:	/* fallthrough */
++	case IMX8MQ_RESET_MIPI_DSI_PCLK_RESET_N:	/* fallthrough */
++	case IMX8MQ_RESET_MIPI_DSI_ESC_RESET_N:	/* fallthrough */
++	case IMX8MQ_RESET_MIPI_DSI_DPI_RESET_N:	/* fallthrough */
+ 	case IMX8MQ_RESET_MIPI_DSI_RESET_N:	/* fallthrough */
+ 	case IMX8MQ_RESET_MIPI_DSI_RESET_BYTE_N:	/* fallthrough */
+ 		value = assert ? 0 : bit;
 -- 
 2.20.1
 
