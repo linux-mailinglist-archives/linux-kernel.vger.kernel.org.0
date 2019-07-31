@@ -2,88 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D77A7CD5A
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 21:59:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 620447CD6A
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 21:59:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730165AbfGaT7D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 15:59:03 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:46195 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730095AbfGaT7A (ORCPT
+        id S1730293AbfGaT7f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 15:59:35 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:44533 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730225AbfGaT7c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 15:59:00 -0400
-Received: by mail-io1-f65.google.com with SMTP id i10so25701053iol.13
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 12:59:00 -0700 (PDT)
+        Wed, 31 Jul 2019 15:59:32 -0400
+Received: by mail-pg1-f194.google.com with SMTP id i18so32590660pgl.11
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 12:59:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=+bllI+uhX4ifvIS1PickYrW1huvdTbgr8Lv09pVb6FU=;
-        b=n2RK4hasNMQTyK5hWNecK/zYczKvf8cO6+lp6FKADSNgFe09GLIiDZjh/vZTMO+1wG
-         dChU45BSvmQFop57YKmh+ULSXcJXe30bNmtj3z8thKseec2KEI4+Q6YSFUP+ZnY73+y7
-         bkK2FrOgZtial3Stx+25sB5vXC+0uvPChJw76gbQ0eO7h1tGB/X4Ss/uiJSpjO7Q4t6/
-         6kN5SX7CCnq7FXqMlt/pahRuZuAUJvAQ4d0edMymno4TNRH9iVT6oRv4II2OBQ3goa8e
-         jZajGp5DyyxTUDLc9EKwIj2ZUWcZicfeDdulmCsdxq94C5eB0DCpvwwMu0CtJCKGVObX
-         5UUg==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=wj8UI6KcdGWx7+DqBC4UilgyG1YpNkyj7/yhX7S5938=;
+        b=lI/F+evGDUwaa/3jWG9s/L6Rki0XodRNIvovJ41k7O3gJBlhooGZWa8zk7zoZxPi3K
+         2TLyWEVqGdpi3hnVGLBr1Oc4gUGjDuX/e0ynTnQkvdvYvby6ThNgqwr5+OlxOfckAHXE
+         mdPb+Iuv8GNJU7luiqE0KFaafHR7acsFoLCvM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=+bllI+uhX4ifvIS1PickYrW1huvdTbgr8Lv09pVb6FU=;
-        b=dR6AIreRIpQlc1vXjwMLVz7/EnovaDgRVji5gFB35ApmZeiDt5JH7k48kTrRph1dJ1
-         ryrusykL+3Z9g0HPkTvunJif03uMcjc2bjKrCmwP+9bcSwLRy5dKho+eIJn7zHy6xmnR
-         75C2d4PgoSBDwNMq8dpunZRyy57l2ThdwosOJPt9a7eKNEv+W5US1kl+yvU7q/mmIwr7
-         6jXydrMCiNx24WmUvQXEsliYOvQ08w0d5mfufVsnmPEUQPqY6YVHTwIorUxtYB3Ksfmb
-         RRTzm9lYO2pEz18tAa3vxvhFWNtKj46avslxilGGwax5/9IETWy5SLio/Oxu094Y+CwH
-         TZsw==
-X-Gm-Message-State: APjAAAWuwt/dPhpd17NjeNKsIMZVZgmtTe67tuhXkBwsTiNDFRt/hLOG
-        hruTHlBj00nZpUE/XtNPPdEOJ6k5Jc6F8UYkMQ==
-X-Google-Smtp-Source: APXvYqwMq70T6YaUTtUi9GGwvK8dPqnpJJ1YcNmDHCZm10GmgYA7nUcCRfBKuRlJEjvebWXXlV0gRTyhU/hELlYorA8=
-X-Received: by 2002:a6b:d008:: with SMTP id x8mr109490163ioa.129.1564603140093;
- Wed, 31 Jul 2019 12:59:00 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=wj8UI6KcdGWx7+DqBC4UilgyG1YpNkyj7/yhX7S5938=;
+        b=tvpZsj5ELCB3uyQ+PpZ+blXLQ470tByqZLVYYtFbUOO8UMDty2WpGQtpFCiO5S8WHY
+         bf4bNk3mPFEPE8Xod6bfaRPWu7YLhynfcRYv6kZ9C3FM6s9nOfiM9EEcI3l1w8dFYD0v
+         u1r91ep8mTY3Jp6GCZdT6DgkgK372lSASD+0UjEwwZbj1yz7aAlEywFC5C1XaISU4wXW
+         TSC8Ho1uifol+OnKxQsLReAwtUNgBl6InvPCSramqnh1YK7DpWUDh7s+ItwuEvgTMgxN
+         ttsHABwd7WamN/OOOII4EMJNbeVeFPkbu1+SlzylmGhZE8rOT8EaQ//WA0xAj6LTI6Ot
+         z1zw==
+X-Gm-Message-State: APjAAAUMHFdThIX9i1M18jS6hB9YLmj5pTkotGFgLaEL1GihrnreITH/
+        Usj9cRi1kOrE5/9tSnieun4HDQ==
+X-Google-Smtp-Source: APXvYqyo7YtH0z/PjARx5H0oYP8eGymkvm90XLND0TLR+aFSRTYIsvGT3FPVBy4eGu5XU4G+pWeBtQ==
+X-Received: by 2002:a17:90a:fa07:: with SMTP id cm7mr4440377pjb.138.1564603172224;
+        Wed, 31 Jul 2019 12:59:32 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id j15sm99294412pfn.150.2019.07.31.12.59.31
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 31 Jul 2019 12:59:31 -0700 (PDT)
+Date:   Wed, 31 Jul 2019 12:59:30 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Joonwon Kang <kjw1627@gmail.com>
+Cc:     re.emese@gmail.com, kernel-hardening@lists.openwall.com,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        jinb.park7@gmail.com
+Subject: Re: [PATCH 2/2] randstruct: remove dead code in is_pure_ops_struct()
+Message-ID: <201907311259.D485EED2B7@keescook>
+References: <cover.1564595346.git.kjw1627@gmail.com>
+ <281a65cc361512e3dc6c5deffa324f800eb907be.1564595346.git.kjw1627@gmail.com>
 MIME-Version: 1.0
-Received: by 2002:a02:b08a:0:0:0:0:0 with HTTP; Wed, 31 Jul 2019 12:58:59
- -0700 (PDT)
-Reply-To: arnettdavid2030@gmail.com
-From:   "Sgt,Arnett David" <alasanahmad300@gmail.com>
-Date:   Thu, 1 Aug 2019 00:28:59 +0430
-Message-ID: <CAAhE2CqCVc12LR8vn03YV6sjp8_FMDOe7aNx8RPwjrVBupSK5w@mail.gmail.com>
-Subject: Assist Request From You
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <281a65cc361512e3dc6c5deffa324f800eb907be.1564595346.git.kjw1627@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Aug 01, 2019 at 03:01:49AM +0900, Joonwon Kang wrote:
+> Recursive declaration for struct which has member of the same struct
+> type, for example,
+> 
+> struct foo {
+>     struct foo f;
+>     ...
+> };
+> 
+> is not allowed. So, it is unnecessary to check if a struct has this
+> kind of member.
+
+Is that the only case where this loop could happen? Seems also safe to
+just leave it as-is...
+
+-Kees
+
+> 
+> Signed-off-by: Joonwon Kang <kjw1627@gmail.com>
+> ---
+>  scripts/gcc-plugins/randomize_layout_plugin.c | 3 ---
+>  1 file changed, 3 deletions(-)
+> 
+> diff --git a/scripts/gcc-plugins/randomize_layout_plugin.c b/scripts/gcc-plugins/randomize_layout_plugin.c
+> index bd29e4e7a524..e14efe23e645 100644
+> --- a/scripts/gcc-plugins/randomize_layout_plugin.c
+> +++ b/scripts/gcc-plugins/randomize_layout_plugin.c
+> @@ -440,9 +440,6 @@ static int is_pure_ops_struct(const_tree node)
+>  		const_tree fieldtype = get_field_type(field);
+>  		enum tree_code code = TREE_CODE(fieldtype);
+>  
+> -		if (node == fieldtype)
+> -			continue;
+> -
+>  		if (code == RECORD_TYPE || code == UNION_TYPE) {
+>  			if (!is_pure_ops_struct(fieldtype))
+>  				return 0;
+> -- 
+> 2.17.1
+> 
+
 -- 
-
-Accept my greetings to you
-
-Assist Request From You
-
-I am 28 years old single an orphan my parents died when I am five
-years old nobody to help me,I send you my business proposal with tears
-and sorrow,Please let this not be a surprised message to you because I
-decided to contact you on this magnitude and lucrative transaction for
-our present and future survival in life. Moreover, I have laid all the
-solemn trust in you before i decided to disclose this successful and
-confidential transaction to you.
-
-I am  Arnett David ,I hope all is well with you? I am female soldier
-working as United Nations peace keeping troop in Afghanistan on war
-against terrorism. I have in my possession the sum of $3.5million USD
-Which I made here in Afghanistan 2014,I deposited this money with a
-Red Cross agent. I want you to stand as my beneficiary and receive the
-fund And keep it safe so that as soon as am through with my mission
-here in Afghanistan.
-
-You will assist me to invest it in a good profitable Venture or you
-keep it for me until I arrive your country, I will give You 40% of the
-total money for your assistance after you have receive The money.
-Please reply back to me via my private email address
-(arnettdavid2030@gmail.com ) if you are willing to work with me so
-that I can send you the information where the money is been deposited,
-your urgent reply is needed  so i can send you more details.
-
-Thank Yours
-Sgt,Arnett David
+Kees Cook
