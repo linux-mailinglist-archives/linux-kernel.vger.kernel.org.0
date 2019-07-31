@@ -2,96 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F1BE47C2CB
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 15:08:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B4197C2CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 15:09:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729184AbfGaNIF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 09:08:05 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:34161 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727768AbfGaNIE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 09:08:04 -0400
-Received: by mail-pf1-f196.google.com with SMTP id b13so31850642pfo.1
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 06:08:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=TL4ILmZRNuWApLUyD7oozpBzIfadu1ztye/qAKfEyi0=;
-        b=o9IAc92njeRE7fMYm10keRWyiBayxHYufS5PRZxQt2XBoIkDRi6h2JhPjY+nYsDzrQ
-         QierZP8IlVMrnVHJ7ICiHwRt3cq/CUuLAiSWcVzpOCKR5Yll7YEk0tKt0ji/26VwRwos
-         tKl6+dtqaujF72tNFvN3GnOyzbeajXwPuvtVDmhBTi/bd2beTcpmCFs4zAuxI79/BP0W
-         v32ftsYFvO/p31Y2xqVDjh3mNyme+qaOtImrIF3IA+tdYLPip7BckedTkXfm5RIlrvvk
-         sCfP4T0N4MxS7lpS2qWJucdZGHokv3qiamLVoYNvjPOXGgNrbhN56bih1wEId2m13qRJ
-         INRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=TL4ILmZRNuWApLUyD7oozpBzIfadu1ztye/qAKfEyi0=;
-        b=t/sisQ77MPYucrZTU4sU0lY8AfrvSWmV0ZT2PxBhCww0BsX4SXUj0Wt9c3bmMqXIUi
-         yt75jYWY8r+QLclbUYE3qJfumXjhRP3jFuhjSQ/9KVjyL21VSEGGqWXS9Ff//8MdAzro
-         45/UE/raHFhmZ02F5O9XthQXbIRMpxHYv1BQjb1djzvfZyfshJjavda53Rn8DxOAy0My
-         d03bkFtC2W8cuWBhYUK7GMTt5j13gL35aAgpMd0BRsVCSRt6bSCgE3gcsaKy9LIhgEpx
-         oUrSGU/+GAH57jz6s42kFPM2LTr3wSxwNVMTxXV+STizuhp6dgNgyrfnDsqGMpqjzKm6
-         Da8w==
-X-Gm-Message-State: APjAAAXqfVIeUzj5mU1SK86hDmCuA2XaQNbnM9192Cnkjf/Y4sazCRyy
-        X8O1bExuCr/TSDiLtBnw7Hs=
-X-Google-Smtp-Source: APXvYqzz3sUkeLWgRarJc/fH+UNg3fDFQHHkDZqU062Dvg7MYNOWCYBFqo0xzt2PpEioibHX1uChIQ==
-X-Received: by 2002:aa7:8102:: with SMTP id b2mr6100364pfi.105.1564578483761;
-        Wed, 31 Jul 2019 06:08:03 -0700 (PDT)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id b136sm85270194pfb.73.2019.07.31.06.08.02
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 31 Jul 2019 06:08:03 -0700 (PDT)
-Date:   Wed, 31 Jul 2019 06:08:00 -0700
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Takashi Iwai <tiwai@suse.de>, linux-kernel@vger.kernel.org,
-        Richard Gong <richard.gong@linux.intel.com>
-Subject: Re: [PATCH v2 01/10] driver core: add dev_groups to all drivers
-Message-ID: <20190731130800.GA147138@dtor-ws>
-References: <20190731124349.4474-1-gregkh@linuxfoundation.org>
- <20190731124349.4474-2-gregkh@linuxfoundation.org>
- <s5h4l32s71l.wl-tiwai@suse.de>
- <20190731125104.GA6062@kroah.com>
+        id S2388060AbfGaNIX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 09:08:23 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:42690 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727768AbfGaNIW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jul 2019 09:08:22 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id DEDD02009FA;
+        Wed, 31 Jul 2019 15:08:20 +0200 (CEST)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id D1552200042;
+        Wed, 31 Jul 2019 15:08:20 +0200 (CEST)
+Received: from lorenz.ea.freescale.net (lorenz.ea.freescale.net [10.171.71.5])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 864DA205F3;
+        Wed, 31 Jul 2019 15:08:20 +0200 (CEST)
+From:   Iuliana Prodan <iuliana.prodan@nxp.com>
+To:     Herbert Xu <herbert@gondor.apana.org.au>,
+        Horia Geanta <horia.geanta@nxp.com>,
+        Aymen Sghaier <aymen.sghaier@nxp.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-imx <linux-imx@nxp.com>
+Subject: [PATCH v5 00/14] crypto: caam - fixes for kernel v5.3
+Date:   Wed, 31 Jul 2019 16:08:01 +0300
+Message-Id: <1564578495-9883-1-git-send-email-iuliana.prodan@nxp.com>
+X-Mailer: git-send-email 2.1.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190731125104.GA6062@kroah.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 31, 2019 at 02:51:04PM +0200, Greg Kroah-Hartman wrote:
-> On Wed, Jul 31, 2019 at 02:49:26PM +0200, Takashi Iwai wrote:
-> > On Wed, 31 Jul 2019 14:43:40 +0200,
-> > Greg Kroah-Hartman wrote:
-> > > 
-> > > From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> > > 
-> > > Add the ability for the driver core to create and remove a list of
-> > > attribute groups automatically when the device is bound/unbound from a
-> > > specific driver.
-> > > 
-> > > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > 
-> > Missing sign-off from Dmitry?
-> 
-> He never provided it :(
-> 
-> Dmitry, can you please do so?  I forgot to include that in the cover
-> leter...
+The series solves:
+- the failures found with fuzz testing;
+- resources clean-up on caampkc/caamrng exit path.
 
-Yeah, sorry, I thought what I sent was a draft to be used as you wish
-with it; I did not expect to be put down as an author. Anyway,
+The first 10 patches solve the issues found with
+CONFIG_CRYPTO_MANAGER_EXTRA_TESTS enabled.
+They modify the drivers to provide a valid error (and not the hardware
+error ID) to the user, via completion callbacks.
+They check key length, assoclen, authsize and input size to solve the
+fuzz tests that expect -EINVAL to be returned when these values are
+not valid.
 
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+The next 4 patches check the algorithm registration for caampkc
+module and unregister it only if the registration was successful.
+Also, on caampkc/caamrng, the exit point function is executed only if the
+registration was successful to avoid double freeing of resources in case
+the initialization function failed.
 
-Thanks.
+This patch depends on series:
+https://patchwork.kernel.org/project/linux-crypto/list/?series=153441
+
+Changes since v4:
+- use, newly renamed, helper aes function, to validate keylen.
+
+Horia Geantă (5):
+  crypto: caam/qi - fix error handling in ERN handler
+  crypto: caam - fix return code in completion callbacks
+  crypto: caam - update IV only when crypto operation succeeds
+  crypto: caam - keep both virtual and dma key addresses
+  crypto: caam - fix MDHA key derivation for certain user key lengths
+
+Iuliana Prodan (9):
+  crypto: caam - check key length
+  crypto: caam - check authsize
+  crypto: caam - check assoclen
+  crypto: caam - check zero-length input
+  crypto: caam - update rfc4106 sh desc to support zero length input
+  crypto: caam - free resources in case caam_rng registration failed
+  crypto: caam - execute module exit point only if necessary
+  crypto: caam - unregister algorithm only if the registration succeeded
+  crypto: caam - change return value in case CAAM has no MDHA
+
+ drivers/crypto/caam/Kconfig         |   2 +
+ drivers/crypto/caam/caamalg.c       | 227 +++++++++++++++----------
+ drivers/crypto/caam/caamalg_desc.c  |  47 ++++--
+ drivers/crypto/caam/caamalg_desc.h  |   2 +-
+ drivers/crypto/caam/caamalg_qi.c    | 225 +++++++++++++++----------
+ drivers/crypto/caam/caamalg_qi2.c   | 320 +++++++++++++++++++++++-------------
+ drivers/crypto/caam/caamhash.c      | 114 ++++++++-----
+ drivers/crypto/caam/caamhash_desc.c |   5 +-
+ drivers/crypto/caam/caamhash_desc.h |   2 +-
+ drivers/crypto/caam/caampkc.c       |  80 ++++++---
+ drivers/crypto/caam/caamrng.c       |  17 +-
+ drivers/crypto/caam/desc_constr.h   |  34 ++--
+ drivers/crypto/caam/error.c         |  61 ++++---
+ drivers/crypto/caam/error.h         |   2 +-
+ drivers/crypto/caam/key_gen.c       |  14 +-
+ drivers/crypto/caam/qi.c            |  10 +-
+ drivers/crypto/caam/regs.h          |   1 +
+ 17 files changed, 748 insertions(+), 415 deletions(-)
 
 -- 
-Dmitry
+2.1.0
+
