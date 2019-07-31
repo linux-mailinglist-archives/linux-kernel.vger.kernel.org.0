@@ -2,82 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D5BD7BDB7
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 11:50:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EC7B57BDC2
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 11:54:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728933AbfGaJu2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 05:50:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41058 "EHLO mail.kernel.org"
+        id S1728964AbfGaJyB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 05:54:01 -0400
+Received: from foss.arm.com ([217.140.110.172]:43700 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725793AbfGaJu1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 05:50:27 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5855E206A3;
-        Wed, 31 Jul 2019 09:50:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564566626;
-        bh=vrbRlMzlC4dHvznio07wq+yg6p9zQr7LuA+JFa0DvbM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=LWg7uq9jccRZy3xzJM6Gt5w7W/8UMEZLXZFYOZ+2pcZJQ7zJnIqqcMqnJdeXrKAPN
-         O3o1i6VPXVnivYY81tl+PK/bDZSrXWWiOwV6tRZOAqlNqNdPQbK4+Gx9eEtI1j9xHa
-         xERUB9A6AslFEbkM8tMDithWB/LIvKD/utheoOmk=
-Date:   Wed, 31 Jul 2019 11:50:24 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org,
-        linux-tegra <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 5.2 000/215] 5.2.5-stable review
-Message-ID: <20190731095024.GA15283@kroah.com>
-References: <20190729190739.971253303@linuxfoundation.org>
- <5247e345-d0b9-3b8e-9828-e45d0981a367@nvidia.com>
+        id S1725793AbfGaJyA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jul 2019 05:54:00 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D67D0337;
+        Wed, 31 Jul 2019 02:53:59 -0700 (PDT)
+Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.196.78])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E50EE3F71F;
+        Wed, 31 Jul 2019 02:53:58 -0700 (PDT)
+Date:   Wed, 31 Jul 2019 10:53:56 +0100
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Qian Cai <cai@lca.pw>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Michal Hocko <mhocko@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH v2] mm: kmemleak: Use mempool allocations for kmemleak
+ objects
+Message-ID: <20190731095355.GC63307@arrakis.emea.arm.com>
+References: <20190727132334.9184-1-catalin.marinas@arm.com>
+ <20190730125743.113e59a9c449847d7f6ae7c3@linux-foundation.org>
+ <1564518157.11067.34.camel@lca.pw>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <5247e345-d0b9-3b8e-9828-e45d0981a367@nvidia.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1564518157.11067.34.camel@lca.pw>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 31, 2019 at 10:36:58AM +0100, Jon Hunter wrote:
+On Tue, Jul 30, 2019 at 04:22:37PM -0400, Qian Cai wrote:
+> On Tue, 2019-07-30 at 12:57 -0700, Andrew Morton wrote:
+> > On Sat, 27 Jul 2019 14:23:33 +0100 Catalin Marinas <catalin.marinas@arm.com>
+> > > --- a/Documentation/admin-guide/kernel-parameters.txt
+> > > +++ b/Documentation/admin-guide/kernel-parameters.txt
+> > > @@ -2011,6 +2011,12 @@
+> > >  			Built with CONFIG_DEBUG_KMEMLEAK_DEFAULT_OFF=y,
+> > >  			the default is off.
+> > >  
+> > > +	kmemleak.mempool=
+> > > +			[KNL] Boot-time tuning of the minimum kmemleak
+> > > +			metadata pool size.
+> > > +			Format: <int>
+> > > +			Default: NR_CPUS * 4
+> > > +
 > 
-> On 29/07/2019 20:19, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 5.2.5 release.
-> > There are 215 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Wed 31 Jul 2019 07:05:01 PM UTC.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.2.5-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.2.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
+> Catalin, BTW, it is right now unable to handle a large size. I tried to reserve
+> 64M (kmemleak.mempool=67108864),
 > 
-> All tests passing for Tegra ...
-> 
-> Test results for stable-v5.2:
->     12 builds:	12 pass, 0 fail
->     22 boots:	22 pass, 0 fail
->     38 tests:	38 pass, 0 fail
-> 
-> Linux version:	5.2.5-rc1-g0c4d120e771a
-> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
->                 tegra194-p2972-0000, tegra20-ventana,
->                 tegra210-p2371-2180, tegra30-cardhu-a04
+> [    0.039254][    T0] WARNING: CPU: 0 PID: 0 at mm/page_alloc.c:4707 __alloc_pages_nodemask+0x3b8/0x1780
+[...]
+> [    0.039646][    T0] NIP [c000000000395038] __alloc_pages_nodemask+0x3b8/0x1780
+> [    0.039693][    T0] LR [c0000000003d9320] kmalloc_large_node+0x100/0x1a0
+> [    0.039727][    T0] Call Trace:
+> [    0.039795][    T0] [c00000000170fc80] [c0000000003e5080] __kmalloc_node+0x520/0x890
+> [    0.039816][    T0] [c00000000170fd20] [c0000000002e9544] mempool_init_node+0xb4/0x1e0
+> [    0.039836][    T0] [c00000000170fd80] [c0000000002e975c] mempool_create_node+0xcc/0x150
+> [    0.039857][    T0] [c00000000170fdf0] [c000000000b2a730] kmemleak_init+0x16c/0x54c
+> [    0.039878][    T0] [c00000000170fef0] [c000000000ae460c] start_kernel+0x69c/0x7cc
+> [    0.039908][    T0] [c00000000170ff90] [c00000000000a7d4] start_here_common+0x1c/0x434
+[...]
+> [    0.040100][    T0] kmemleak: Kernel memory leak detector disabled
 
-Thanks for testing all of these and letting me know.
+It looks like the mempool cannot be created. 64M objects means a
+kmalloc(512MB) for the pool array in mempool_init_node(), so that hits
+the MAX_ORDER warning in __alloc_pages_nodemask().
 
-greg k-h
+Maybe the mempool tunable won't help much for your case if you need so
+many objects. It's still worth having a mempool for kmemleak but we
+could look into changing the refill logic while keeping the original
+size constant (say 1024 objects).
+
+> [   16.192449][    T1] BUG: Unable to handle kernel data access at 0xffffffffffffb2aa
+
+This doesn't seem kmemleak related from the trace.
+
+-- 
+Catalin
