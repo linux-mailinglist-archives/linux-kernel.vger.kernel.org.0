@@ -2,53 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4550E7CA78
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 19:32:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 608E27CA57
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 19:31:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730604AbfGaRbM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 13:31:12 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:39294 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730593AbfGaRbL (ORCPT
+        id S1730632AbfGaRbR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 13:31:17 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:46538 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729993AbfGaRbO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 13:31:11 -0400
-Received: by mail-pl1-f195.google.com with SMTP id b7so30832977pls.6;
-        Wed, 31 Jul 2019 10:31:11 -0700 (PDT)
+        Wed, 31 Jul 2019 13:31:14 -0400
+Received: by mail-pl1-f194.google.com with SMTP id c2so30759828plz.13;
+        Wed, 31 Jul 2019 10:31:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=i4CAPfa7bKBiVOxNpzdai0coxa1oaSp0dwsEN7w5wwg=;
-        b=cT9azT16+c2zMSZ6czEvoUm6kcTiB4XmzsZzkuT4fX6nEL6tFjDSUXhCFR0uRRxlsY
-         PDmb3dz4rO0UKCQWmWkPeO6WPojg9uMpEKDpabfWRFhptevuV2M7EB8c1z10qNhryl5v
-         VMjUoEtEqS/UcdabVPUtc72di4y6R7QsI9UJHw0+BSCnJ0/Uk7HBil+XYRZnI+Zeuovf
-         97uAm9OpWmLLFyVGn+h+Bn71BxDag0lGa3X4r6ZKtBIMMC8svG063hdnn9Gg4LxZaWVl
-         KZBtI3fAwfTUEi5Kk7cMrWWmE5/FxMven/Un5pQpTxJb2ane6uDDNJsQvcxmW+LmAU3n
-         KrVA==
+        bh=ly9Fm+AvGdnsdGY/IVP3FuY35d1qoMGO4Csfajhx2ZI=;
+        b=jRHCnS/X/s4PVg+xtIIr+mH1MF+jEFMeUZXApzA/CZ3zi3tUI1UMb9Lhh6pX03Gi/A
+         FPSsjdkXbWQlR6Ij0G9SHNm9CKcX9KJt6g+utGGxfGSC+A9hKu+lcSst1+hogrq9/Xlc
+         zwV8jNwSJfEckP0OLcRpVysqOo4+Rt3D/d+CHYj/IzhERJjqnI14iVkfulIBSf4R04Pj
+         TMn2o3ZMNwf1icZ03987nY6HzQhPcVOIDDMTXYvUWnBUPE8Fo7Zb3ANYmQDbVkLcjrJ/
+         F+t0AS/8kyS582392EEl/TXPn+vFDYN+HMecTfwrTrzScuHUW8ligzZhl7wAQgGnBop5
+         9rpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=i4CAPfa7bKBiVOxNpzdai0coxa1oaSp0dwsEN7w5wwg=;
-        b=QkLkrJeUWiQSPfXaF/H1n7t+Q9BCJH0y1malVs4K4GPlknn882ofC6ibLCpp3z0+Nt
-         FYN+lcViX0IIs00scQXNc1osDhc5he/wSh1fktOwHDg5Kuz+/4vgQgkW3NKuMbKb0RNX
-         o/nQwxcc+cTmDhW1Zg9AVKvMsLDwc6bZZzFeTSkPVTnPJd2DTwV3W9kElR2Ve8bIvqDR
-         rCylkAJyw4kqW7Ynk8JNAAPZfJXOMpoiZacfSoDqGDJW8rb4lnIh2+fI73V9QOhZwH2C
-         FLTGOtajZRBIsovr+3XKxiq9AXIfFpq8tHXXLZttpGVygxMl8LEekvBBxB6evtW2V9CB
-         /4nQ==
-X-Gm-Message-State: APjAAAWXuov7yd0FJQjwiMrPKuVvDWLoBTtIynfWM0BHoYsTtrPn/CyL
-        KANYRMkQ4Vg6XRBCuGjRGuw/oiT4
-X-Google-Smtp-Source: APXvYqwqWeXtwVwGc6eX9wBirn3Qg0BuBNu6IUWzV6uXiSB9WmQLVJKaD1IR3Nfzk5EpsCEWYS1nPg==
-X-Received: by 2002:a17:902:fa2:: with SMTP id 31mr123618991plz.38.1564594270608;
-        Wed, 31 Jul 2019 10:31:10 -0700 (PDT)
+        bh=ly9Fm+AvGdnsdGY/IVP3FuY35d1qoMGO4Csfajhx2ZI=;
+        b=OQ482T/WoOYJr3BDs46h7Lx+JNYjS42LDXHBeemcbeOWxpzmJc9F/EJteyY6o/awRH
+         dLKP3R4/1mmOFVITampml+O6XlazcjWZAJ2afIMwKEzhY4QWug0QuqAD4he7cvOBENBx
+         Am1NTb4p4Jj7cIG9eWRQ1B5ZMv5ppFN6OMikHUTL/WQnNKDYaXKtEjHCilPrrSV0QYlr
+         CZecvD4dHgjVCET9l3zif5a+2LC4QRwoqIP+hpt1KlO8jIgppLF0jgN3zIqwl+zmUmo8
+         HOTjcmDh14nQHwnJC93VaHapoCDoQv5mL9ldre3tulSFF35u0VJL3AYH/8sUnPOYwrGm
+         +rvg==
+X-Gm-Message-State: APjAAAUny1CpQeUOspXpXYotTxTrBsZThpa7CQ2eOQZ4ZK/otE/jhnK8
+        Mv4NXH335Soj65loMyL6e9USXta6
+X-Google-Smtp-Source: APXvYqwwPGbYrx7i1wiZVqncHM+1E1h/G+aNWIJeg/y1FRpnfkO2FpMNN7+cdWQqoowOXF1CWNxB7g==
+X-Received: by 2002:a17:902:42a5:: with SMTP id h34mr125380490pld.16.1564594273095;
+        Wed, 31 Jul 2019 10:31:13 -0700 (PDT)
 Received: from localhost.localdomain ([2607:fb90:4ad:5a0b:2aff:6e0f:8973:5a26])
-        by smtp.gmail.com with ESMTPSA id bo20sm2089617pjb.23.2019.07.31.10.31.08
+        by smtp.gmail.com with ESMTPSA id bo20sm2089617pjb.23.2019.07.31.10.31.10
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 31 Jul 2019 10:31:10 -0700 (PDT)
+        Wed, 31 Jul 2019 10:31:12 -0700 (PDT)
 From:   Andrey Smirnov <andrew.smirnov@gmail.com>
 To:     linux-serial@vger.kernel.org
-Cc:     Stefan Agner <stefan.agner@toradex.com>,
-        Max Krummenacher <max.krummenacher@toradex.com>,
+Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Fugang Duan <fugang.duan@nxp.com>,
         Stefan Agner <stefan@agner.ch>,
         Chris Healy <cphealy@gmail.com>,
         Cory Tusar <cory.tusar@zii.aero>,
@@ -56,9 +56,9 @@ Cc:     Stefan Agner <stefan.agner@toradex.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Jiri Slaby <jslaby@suse.com>, linux-imx@nxp.com,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 02/23] tty: serial: fsl_lpuart: flush receive FIFO after overruns
-Date:   Wed, 31 Jul 2019 10:30:24 -0700
-Message-Id: <20190731173045.11718-3-andrew.smirnov@gmail.com>
+Subject: [PATCH v2 03/23] tty: serial: fsl_lpuart: Flush HW FIFOs in .flush_buffer
+Date:   Wed, 31 Jul 2019 10:30:25 -0700
+Message-Id: <20190731173045.11718-4-andrew.smirnov@gmail.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190731173045.11718-1-andrew.smirnov@gmail.com>
 References: <20190731173045.11718-1-andrew.smirnov@gmail.com>
@@ -69,26 +69,12 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stefan Agner <stefan.agner@toradex.com>
+Switching baud rate might cause bogus data to appear in HW
+FIFO. Add code to do a HW FIFO flush to .flush_buffer callback to
+avoid that.
 
-After overruns the FIFO pointers become misaligned. This
-typically shows by characters still being stuck in the FIFO
-despite the empty flag being asserted. After the first
-assertion of the overrun flag the empty flag still seems to
-indicate FIFO state correctly and all data can be read.
-However, after another overrun assertion the FIFO seems to
-be off by one such that the last received character is still
-in the FIFO (despite the empty flag being asserted).
-
-Flushing the receive FIFO reinitializes pointers. Hence it
-is recommended to flush the FIFO after overruns, see also:
-https://community.nxp.com/thread/321175
-
-Hence, on assertion of the overrun flag read the remaining
-data from the FIFO and flush buffers.
-
-Signed-off-by: Stefan Agner <stefan.agner@toradex.com>
-Acked-by: Max Krummenacher <max.krummenacher@toradex.com>
+Signed-off-by: Fugang Duan <fugang.duan@nxp.com>
+Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 Cc: Stefan Agner <stefan@agner.ch>
 Cc: Chris Healy <cphealy@gmail.com>
 Cc: Cory Tusar <cory.tusar@zii.aero>
@@ -99,49 +85,60 @@ Cc: linux-imx@nxp.com
 Cc: linux-serial@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org
 ---
- drivers/tty/serial/fsl_lpuart.c | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+ drivers/tty/serial/fsl_lpuart.c | 23 +++++++++++++++++------
+ 1 file changed, 17 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c
-index 0643fa368d35..317bbc1dd2b4 100644
+index 317bbc1dd2b4..12ddca608eba 100644
 --- a/drivers/tty/serial/fsl_lpuart.c
 +++ b/drivers/tty/serial/fsl_lpuart.c
-@@ -799,7 +799,7 @@ static irqreturn_t lpuart_txint(int irq, void *dev_id)
- static irqreturn_t lpuart_rxint(int irq, void *dev_id)
+@@ -518,9 +518,16 @@ static int lpuart_dma_tx_request(struct uart_port *port)
+ 	return 0;
+ }
+ 
++static bool lpuart_is_32(struct lpuart_port *sport)
++{
++	return sport->port.iotype == UPIO_MEM32 ||
++	       sport->port.iotype ==  UPIO_MEM32BE;
++}
++
+ static void lpuart_flush_buffer(struct uart_port *port)
+ {
+ 	struct lpuart_port *sport = container_of(port, struct lpuart_port, port);
++	u32 val;
+ 
+ 	if (sport->lpuart_dma_tx_use) {
+ 		if (sport->dma_tx_in_progress) {
+@@ -530,6 +537,16 @@ static void lpuart_flush_buffer(struct uart_port *port)
+ 		}
+ 		dmaengine_terminate_all(sport->dma_tx_chan);
+ 	}
++
++	if (lpuart_is_32(sport)) {
++		val = lpuart32_read(&sport->port, UARTFIFO);
++		val |= UARTFIFO_TXFLUSH | UARTFIFO_RXFLUSH;
++		lpuart32_write(&sport->port, val, UARTFIFO);
++	} else {
++		val = readb(sport->port.membase + UARTPFIFO);
++		val |= UARTCFIFO_TXFLUSH | UARTCFIFO_RXFLUSH;
++		writeb(val, sport->port.membase + UARTCFIFO);
++	}
+ }
+ 
+ #if defined(CONFIG_CONSOLE_POLL)
+@@ -754,12 +771,6 @@ static unsigned int lpuart32_tx_empty(struct uart_port *port)
+ 	return 0;
+ }
+ 
+-static bool lpuart_is_32(struct lpuart_port *sport)
+-{
+-	return sport->port.iotype == UPIO_MEM32 ||
+-	       sport->port.iotype ==  UPIO_MEM32BE;
+-}
+-
+ static irqreturn_t lpuart_txint(int irq, void *dev_id)
  {
  	struct lpuart_port *sport = dev_id;
--	unsigned int flg, ignored = 0;
-+	unsigned int flg, ignored = 0, overrun = 0;
- 	struct tty_port *port = &sport->port.state->port;
- 	unsigned long flags;
- 	unsigned char rx, sr;
-@@ -826,7 +826,7 @@ static irqreturn_t lpuart_rxint(int irq, void *dev_id)
- 				sport->port.icount.frame++;
- 
- 			if (sr & UARTSR1_OR)
--				sport->port.icount.overrun++;
-+				overrun++;
- 
- 			if (sr & sport->port.ignore_status_mask) {
- 				if (++ignored > 100)
-@@ -853,6 +853,17 @@ static irqreturn_t lpuart_rxint(int irq, void *dev_id)
- 	}
- 
- out:
-+	if (overrun) {
-+		sport->port.icount.overrun += overrun;
-+
-+		/*
-+		 * Overruns cause FIFO pointers to become missaligned.
-+		 * Flushing the receive FIFO reinitializes the pointers.
-+		 */
-+		writeb(UARTCFIFO_RXFLUSH, sport->port.membase + UARTCFIFO);
-+		writeb(UARTSFIFO_RXOF, sport->port.membase + UARTSFIFO);
-+	}
-+
- 	spin_unlock_irqrestore(&sport->port.lock, flags);
- 
- 	tty_flip_buffer_push(port);
 -- 
 2.21.0
 
