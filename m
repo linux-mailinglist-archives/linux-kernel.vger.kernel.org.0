@@ -2,53 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 187317C58C
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 17:09:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 94EDB7C59F
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 17:09:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388638AbfGaPIc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 11:08:32 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:39072 "EHLO
+        id S1729286AbfGaPJM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 11:09:12 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:44809 "EHLO
         mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388552AbfGaPI3 (ORCPT
+        with ESMTP id S2388609AbfGaPIc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 11:08:29 -0400
-Received: by mail-ed1-f65.google.com with SMTP id m10so66010998edv.6
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 08:08:27 -0700 (PDT)
+        Wed, 31 Jul 2019 11:08:32 -0400
+Received: by mail-ed1-f65.google.com with SMTP id k8so65978361edr.11
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 08:08:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=shutemov-name.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=lUZ5o3KyzJhrWdCGYLPb2yVyWjyFss5E3sxw1k1xFj4=;
-        b=f87cDXaJ8tGVJamu+eP2PyzCUG+ZqKOVZGcAGMCXDWHjkJRyvJrzvQl3kbA74mRwxX
-         OqfZG5qQ+bo+nU4FmQUQEfW8xtRk3mQqCOhXO4ONCK2ETh94d3kePxhHQni0xuu74lB4
-         Y20jFqWjk03QJHsbAjUW4+PFAHLmrv0r6qgsbOO6Jd3/C5xW3cbTj34qRDlJTmRtO5jx
-         RWRM2zh83FmKCv2tiLddj/gDtFIbBkm3P+F0EW4xaKzZM7lJSg8hSxUFcFFMufgrsNgt
-         eaUf+JW89LkyPwaNnhVGpOMNBErtkA5zeIGuiR/MLONHF6hagKmRxYvFL5eQn9P8H2G7
-         0/oQ==
+        bh=p3ZdWpQd4xgv1kA6jDtn8atrxpLedHc/tVwU2ev+R3g=;
+        b=UeQPYBDUV35JfXNrT+d/+kITJnfTYOBQ1jtvX2JvqFbwVh/IeIZ2iI0ZXO91FPn9Ce
+         GW/w3MO7sHLXXgtgE2TaPrzyGuhNw243bGm6o/iGuQwYW66FhRrCIaqTdHAHoNMlPwIJ
+         eWN5hgS1key/lsY2Gpyw1STp4427doI388pSYFCLVQEjOIiGXT+TkZloJYN6tjzrbOyJ
+         vcQMkjiEs7M6OXH8+Lpe0TAD2Ou/D+uu+KPrBcug6Q74tQXQEJs+TqHWk3omP9QV64d8
+         7zAhZGz4EvgStlF3Md21t/Dhxvi9IqnlZrJdrf/4i/NIcNvgXhFuAzIO3cs7qe9OAhQP
+         jyqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=lUZ5o3KyzJhrWdCGYLPb2yVyWjyFss5E3sxw1k1xFj4=;
-        b=mNRSMk2elGRPKGfhYAtlVYpIQSvGExf3D++sHHZqgt/oVdrLTVyMiX+m6QqBmZSMLP
-         qL5Pefs+pWPEBQJxnf/w9GQ1ptpJmnog/fyMPINq4GoljoekvOLq8hcqVqjp62LrY0iS
-         WIjjrlmRcXGgnJDUDNGvj7ShG1VXfWLlXBZWT0z70DiQDSz0MaP7f/tMZ/vHDtOTIJBZ
-         SwI5C5929dxg2YhkRZIErq2gaLZUv8xqk2eloRaMH/1zo97NuxOKvueVMY7fqE+d4gkY
-         n/bxkFAnixmf59UhgFLWwb3562A3GdKupXTBAnu5uI4R9FmPaWp83kj6+9p0ERHVHy7Z
-         dATw==
-X-Gm-Message-State: APjAAAU5zjqkpuivyB6Qp2YmpVAybUNlUkF/CgDlGPaAKhLUcRVpXofH
-        KeHNmCD1HN3des2SnsHRFpA=
-X-Google-Smtp-Source: APXvYqwFfmfqoKDjr35+pHqpLUwSHQdO/AlnABQJgMuN58XW0JuVzWoIJ2kNgFPcROx7eyZq64QKqA==
-X-Received: by 2002:a17:906:489a:: with SMTP id v26mr95592305ejq.234.1564585706213;
-        Wed, 31 Jul 2019 08:08:26 -0700 (PDT)
+        bh=p3ZdWpQd4xgv1kA6jDtn8atrxpLedHc/tVwU2ev+R3g=;
+        b=EpIOZEvgsWBTSJCgTo8OTnAX7WaYrj0S6vXrhWPu+LgNw3hoEuJHk+iGsyTjCoL26e
+         xZggXYjQk24ZuvAj8QUA8YU4mCrJGhzyhjHw/yTsaFEOQWuBuOZfVUoIx1jMcPkChGxw
+         KL9MJqmxI5sqD7LpYTLNo4EcZlpj/3wyD8dSsMc1Iz/+LH4F8PDQiMztJmIHK+lrqGuY
+         Ig+0OdYKqH16d23bF+D4/FBQLKYrJ7DYPtb2/OtFIBtTBuZkjVDwOMdppq6Kupj7seam
+         QfLnqnbbpP52f9Ri4KkGpB5GC2ogQYLWFVMX1pW4/MAmGCjRNMPpboP0UodGpM0R9O9p
+         A6oQ==
+X-Gm-Message-State: APjAAAUgIwPTa2vfiunLuNAbHMhcAxy3vxWKuYYBsNRyacMmfH/pquvi
+        He5NhymbcMXXkA5jz825jKg=
+X-Google-Smtp-Source: APXvYqwkQSn37lZ2YK2K4kR+zMFHwX+ELvbrlQTI82djGKjlx/y1EvYEwBEFV4qd/VWbyn8Xl7msnw==
+X-Received: by 2002:a50:a943:: with SMTP id m3mr105292611edc.190.1564585709728;
+        Wed, 31 Jul 2019 08:08:29 -0700 (PDT)
 Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id b53sm17306948edd.45.2019.07.31.08.08.21
+        by smtp.gmail.com with ESMTPSA id y11sm12444539ejb.54.2019.07.31.08.08.23
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 31 Jul 2019 08:08:22 -0700 (PDT)
+        Wed, 31 Jul 2019 08:08:28 -0700 (PDT)
 From:   "Kirill A. Shutemov" <kirill@shutemov.name>
 X-Google-Original-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
 Received: by box.localdomain (Postfix, from userid 1000)
-        id 6BDC6102993; Wed, 31 Jul 2019 18:08:16 +0300 (+03)
+        id 9EFEC1030C0; Wed, 31 Jul 2019 18:08:16 +0300 (+03)
 To:     Andrew Morton <akpm@linux-foundation.org>, x86@kernel.org,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>,
@@ -63,10 +63,10 @@ Cc:     Kees Cook <keescook@chromium.org>,
         Alison Schofield <alison.schofield@intel.com>,
         linux-mm@kvack.org, kvm@vger.kernel.org, keyrings@vger.kernel.org,
         linux-kernel@vger.kernel.org,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: [PATCHv2 18/59] x86/mm: Calculate direct mapping size
-Date:   Wed, 31 Jul 2019 18:07:32 +0300
-Message-Id: <20190731150813.26289-19-kirill.shutemov@linux.intel.com>
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: [PATCHv2 25/59] keys/mktme: Preparse the MKTME key payload
+Date:   Wed, 31 Jul 2019 18:07:39 +0300
+Message-Id: <20190731150813.26289-26-kirill.shutemov@linux.intel.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190731150813.26289-1-kirill.shutemov@linux.intel.com>
 References: <20190731150813.26289-1-kirill.shutemov@linux.intel.com>
@@ -77,242 +77,216 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The kernel needs to have a way to access encrypted memory. We have two
-option on how approach it:
+From: Alison Schofield <alison.schofield@intel.com>
 
- - Create temporary mappings every time kernel needs access to encrypted
-   memory. That's basically brings highmem and its overhead back.
+It is a requirement of the Kernel Keys subsystem to provide a
+preparse method that validates payloads before key instantiate
+methods are called.
 
- - Create multiple direct mappings, one per-KeyID. In this setup we
-   don't need to create temporary mappings on the fly -- encrypted
-   memory is permanently available in kernel address space.
+Verify that userspace provides valid MKTME options and prepare
+the payload for use at key instantiate time.
 
-We take the second approach as it has lower overhead.
+Create a method to free the preparsed payload. The Kernel Key
+subsystem will that to clean up after the key is instantiated.
 
-It's worth noting that with per-KeyID direct mappings compromised kernel
-would give access to decrypted data right away without additional tricks
-to get memory mapped with the correct KeyID.
-
-Per-KeyID mappings require a lot more virtual address space. On 4-level
-machine with 64 KeyIDs we max out 46-bit virtual address space dedicated
-for direct mapping with 1TiB of RAM. Given that we round up any
-calculation on direct mapping size to 1TiB, we effectively claim all
-46-bit address space for direct mapping on such machine regardless of
-RAM size.
-
-Increased usage of virtual address space has implications for KASLR:
-we have less space for randomization. With 64 TiB claimed for direct
-mapping with 4-level we left with 27 TiB of entropy to place
-page_offset_base, vmalloc_base and vmemmap_base.
-
-5-level paging provides much wider virtual address space and KASLR
-doesn't suffer significantly from per-KeyID direct mappings.
-
-It's preferred to run MKTME with 5-level paging.
-
-A direct mapping for each KeyID will be put next to each other in the
-virtual address space. We need to have a way to find boundaries of
-direct mapping for particular KeyID.
-
-The new variable direct_mapping_size specifies the size of direct
-mapping. With the value, it's trivial to find direct mapping for
-KeyID-N: PAGE_OFFSET + N * direct_mapping_size.
-
-Size of direct mapping is calculated during KASLR setup. If KALSR is
-disabled it happens during MKTME initialization.
-
-With MKTME size of direct mapping has to be power-of-2. It makes
-implementation of __pa() efficient.
-
+Signed-off-by: Alison Schofield <alison.schofield@intel.com>
 Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 ---
- Documentation/x86/x86_64/mm.rst |  4 +++
- arch/x86/include/asm/page_32.h  |  1 +
- arch/x86/include/asm/page_64.h  |  2 ++
- arch/x86/include/asm/setup.h    |  6 ++++
- arch/x86/kernel/head64.c        |  4 +++
- arch/x86/kernel/setup.c         |  3 ++
- arch/x86/mm/init_64.c           | 58 +++++++++++++++++++++++++++++++++
- arch/x86/mm/kaslr.c             | 11 +++++--
- 8 files changed, 86 insertions(+), 3 deletions(-)
+ include/keys/mktme-type.h  |  31 +++++++++
+ security/keys/mktme_keys.c | 134 +++++++++++++++++++++++++++++++++++++
+ 2 files changed, 165 insertions(+)
+ create mode 100644 include/keys/mktme-type.h
 
-diff --git a/Documentation/x86/x86_64/mm.rst b/Documentation/x86/x86_64/mm.rst
-index 267fc4808945..7978afe6c396 100644
---- a/Documentation/x86/x86_64/mm.rst
-+++ b/Documentation/x86/x86_64/mm.rst
-@@ -140,6 +140,10 @@ The direct mapping covers all memory in the system up to the highest
- memory address (this means in some cases it can also include PCI memory
- holes).
- 
-+With MKTME, we have multiple direct mappings. One per-KeyID. They are put
-+next to each other. PAGE_OFFSET + N * direct_mapping_size can be used to
-+find direct mapping for KeyID-N.
+diff --git a/include/keys/mktme-type.h b/include/keys/mktme-type.h
+new file mode 100644
+index 000000000000..9dad92f17179
+--- /dev/null
++++ b/include/keys/mktme-type.h
+@@ -0,0 +1,31 @@
++/* SPDX-License-Identifier: GPL-2.0 */
 +
- vmalloc space is lazily synchronized into the different PML4/PML5 pages of
- the processes using the page fault handler, with init_top_pgt as
- reference.
-diff --git a/arch/x86/include/asm/page_32.h b/arch/x86/include/asm/page_32.h
-index 94dbd51df58f..8bce788f9ca9 100644
---- a/arch/x86/include/asm/page_32.h
-+++ b/arch/x86/include/asm/page_32.h
-@@ -6,6 +6,7 @@
- 
- #ifndef __ASSEMBLY__
- 
-+#define direct_mapping_size 0
- #define __phys_addr_nodebug(x)	((x) - PAGE_OFFSET)
- #ifdef CONFIG_DEBUG_VIRTUAL
- extern unsigned long __phys_addr(unsigned long);
-diff --git a/arch/x86/include/asm/page_64.h b/arch/x86/include/asm/page_64.h
-index 939b1cff4a7b..f57fc3cc2246 100644
---- a/arch/x86/include/asm/page_64.h
-+++ b/arch/x86/include/asm/page_64.h
-@@ -14,6 +14,8 @@ extern unsigned long phys_base;
- extern unsigned long page_offset_base;
- extern unsigned long vmalloc_base;
- extern unsigned long vmemmap_base;
-+extern unsigned long direct_mapping_size;
-+extern unsigned long direct_mapping_mask;
- 
- static inline unsigned long __phys_addr_nodebug(unsigned long x)
- {
-diff --git a/arch/x86/include/asm/setup.h b/arch/x86/include/asm/setup.h
-index ed8ec011a9fd..d2861074cf83 100644
---- a/arch/x86/include/asm/setup.h
-+++ b/arch/x86/include/asm/setup.h
-@@ -62,6 +62,12 @@ extern void x86_ce4100_early_setup(void);
- static inline void x86_ce4100_early_setup(void) { }
- #endif
- 
-+#ifdef CONFIG_MEMORY_PHYSICAL_PADDING
-+void calculate_direct_mapping_size(void);
-+#else
-+static inline void calculate_direct_mapping_size(void) { }
-+#endif
++/* Key service for Multi-KEY Total Memory Encryption */
 +
- #ifndef _SETUP
- 
- #include <asm/espfix.h>
-diff --git a/arch/x86/kernel/head64.c b/arch/x86/kernel/head64.c
-index 29ffa495bd1c..006d3ff46afe 100644
---- a/arch/x86/kernel/head64.c
-+++ b/arch/x86/kernel/head64.c
-@@ -60,6 +60,10 @@ EXPORT_SYMBOL(vmalloc_base);
- unsigned long vmemmap_base __ro_after_init = __VMEMMAP_BASE_L4;
- EXPORT_SYMBOL(vmemmap_base);
- #endif
-+unsigned long direct_mapping_size __ro_after_init = -1UL;
-+EXPORT_SYMBOL(direct_mapping_size);
-+unsigned long direct_mapping_mask __ro_after_init = -1UL;
-+EXPORT_SYMBOL(direct_mapping_mask);
- 
- #define __head	__section(.head.text)
- 
-diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-index bbe35bf879f5..d12431e20876 100644
---- a/arch/x86/kernel/setup.c
-+++ b/arch/x86/kernel/setup.c
-@@ -1077,6 +1077,9 @@ void __init setup_arch(char **cmdline_p)
- 	 */
- 	init_cache_modes();
- 
-+	 /* direct_mapping_size has to be initialized before KASLR and MKTME */
-+	calculate_direct_mapping_size();
++#ifndef _KEYS_MKTME_TYPE_H
++#define _KEYS_MKTME_TYPE_H
 +
- 	/*
- 	 * Define random base addresses for memory sections after max_pfn is
- 	 * defined and before each memory section base is used.
-diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
-index a6b5c653727b..4c1f93df47a5 100644
---- a/arch/x86/mm/init_64.c
-+++ b/arch/x86/mm/init_64.c
-@@ -1440,6 +1440,64 @@ unsigned long memory_block_size_bytes(void)
- 	return memory_block_size_probed;
- }
++#include <linux/key.h>
++
++enum mktme_alg {
++	MKTME_ALG_AES_XTS_128,
++};
++
++const char *const mktme_alg_names[] = {
++	[MKTME_ALG_AES_XTS_128]	= "aes-xts-128",
++};
++
++enum mktme_type {
++	MKTME_TYPE_ERROR = -1,
++	MKTME_TYPE_CPU,
++	MKTME_TYPE_NO_ENCRYPT,
++};
++
++const char *const mktme_type_names[] = {
++	[MKTME_TYPE_CPU]	= "cpu",
++	[MKTME_TYPE_NO_ENCRYPT]	= "no-encrypt",
++};
++
++extern struct key_type key_type_mktme;
++
++#endif /* _KEYS_MKTME_TYPE_H */
+diff --git a/security/keys/mktme_keys.c b/security/keys/mktme_keys.c
+index d262e0f348e4..fe119a155235 100644
+--- a/security/keys/mktme_keys.c
++++ b/security/keys/mktme_keys.c
+@@ -6,6 +6,10 @@
+ #include <linux/key.h>
+ #include <linux/key-type.h>
+ #include <linux/mm.h>
++#include <linux/parser.h>
++#include <linux/string.h>
++#include <asm/intel_pconfig.h>
++#include <keys/mktme-type.h>
+ #include <keys/user-type.h>
  
-+#ifdef CONFIG_MEMORY_PHYSICAL_PADDING
-+void __init calculate_direct_mapping_size(void)
+ #include "internal.h"
+@@ -27,8 +31,138 @@ struct mktme_mapping {
+ 
+ static struct mktme_mapping *mktme_map;
+ 
++enum mktme_opt_id {
++	OPT_ERROR,
++	OPT_TYPE,
++	OPT_ALGORITHM,
++};
++
++static const match_table_t mktme_token = {
++	{OPT_TYPE, "type=%s"},
++	{OPT_ALGORITHM, "algorithm=%s"},
++	{OPT_ERROR, NULL}
++};
++
++/* Make sure arguments are correct for the TYPE of key requested */
++static int mktme_check_options(u32 *payload, unsigned long token_mask,
++			       enum mktme_type type, enum mktme_alg alg)
 +{
-+	unsigned long available_va;
++	if (!token_mask)
++		return -EINVAL;
 +
-+	/* 1/4 of virtual address space is didicated for direct mapping */
-+	available_va = 1UL << (__VIRTUAL_MASK_SHIFT - 1);
++	switch (type) {
++	case MKTME_TYPE_CPU:
++		if (test_bit(OPT_ALGORITHM, &token_mask))
++			*payload |= (1 << alg) << 8;
++		else
++			return -EINVAL;
 +
-+	/* How much memory the system has? */
-+	direct_mapping_size = max_pfn << PAGE_SHIFT;
-+	direct_mapping_size = round_up(direct_mapping_size, 1UL << 40);
++		*payload |= MKTME_KEYID_SET_KEY_RANDOM;
++		break;
 +
-+	if (!mktme_nr_keyids())
-+		goto out;
++	case MKTME_TYPE_NO_ENCRYPT:
++		*payload |= MKTME_KEYID_NO_ENCRYPT;
++		break;
 +
-+	/*
-+	 * For MKTME we need direct_mapping_size to be power-of-2.
-+	 * It makes __pa() implementation efficient.
-+	 */
-+	direct_mapping_size = roundup_pow_of_two(direct_mapping_size);
-+
-+	/*
-+	 * Not enough virtual address space to address all physical memory with
-+	 * MKTME enabled. Even without padding.
-+	 *
-+	 * Disable MKTME instead.
-+	 */
-+	if (direct_mapping_size > available_va / (mktme_nr_keyids() + 1)) {
-+		pr_err("x86/mktme: Disabled. Not enough virtual address space\n");
-+		pr_err("x86/mktme: Consider switching to 5-level paging\n");
-+		mktme_disable();
-+		goto out;
++	default:
++		return -EINVAL;
 +	}
-+
-+	/*
-+	 * Virtual address space is divided between per-KeyID direct mappings.
-+	 */
-+	available_va /= mktme_nr_keyids() + 1;
-+out:
-+	/* Add padding, if there's enough virtual address space */
-+	direct_mapping_size += (1UL << 40) * CONFIG_MEMORY_PHYSICAL_PADDING;
-+	if (mktme_nr_keyids())
-+		direct_mapping_size = roundup_pow_of_two(direct_mapping_size);
-+
-+	if (direct_mapping_size > available_va)
-+		direct_mapping_size = available_va;
-+
-+	/*
-+	 * For MKTME, make sure direct_mapping_size is still power-of-2
-+	 * after adding padding and calculate mask that is used in __pa().
-+	 */
-+	if (mktme_nr_keyids()) {
-+		direct_mapping_size = rounddown_pow_of_two(direct_mapping_size);
-+		direct_mapping_mask = direct_mapping_size - 1;
-+	}
++	return 0;
 +}
-+#endif
 +
- #ifdef CONFIG_SPARSEMEM_VMEMMAP
- /*
-  * Initialise the sparsemem vmemmap using huge-pages at the PMD level.
-diff --git a/arch/x86/mm/kaslr.c b/arch/x86/mm/kaslr.c
-index 580b82c2621b..83af41d289ed 100644
---- a/arch/x86/mm/kaslr.c
-+++ b/arch/x86/mm/kaslr.c
-@@ -103,10 +103,15 @@ void __init kernel_randomize_memory(void)
- 	 * add padding if needed (especially for memory hotplug support).
- 	 */
- 	BUG_ON(kaslr_regions[0].base != &page_offset_base);
--	memory_tb = DIV_ROUND_UP(max_pfn << PAGE_SHIFT, 1UL << TB_SHIFT) +
--		CONFIG_MEMORY_PHYSICAL_PADDING;
- 
--	/* Adapt phyiscal memory region size based on available memory */
-+	/*
-+	 * Calculate space required to map all physical memory.
-+	 * In case of MKTME, we map physical memory multiple times, one for
-+	 * each KeyID. If MKTME is disabled mktme_nr_keyids() is 0.
-+	 */
-+	memory_tb = (direct_mapping_size * (mktme_nr_keyids() + 1)) >> TB_SHIFT;
++/* Parse the options and store the key programming data in the payload. */
++static int mktme_get_options(char *options, u32 *payload)
++{
++	enum mktme_alg alg = MKTME_ALG_AES_XTS_128;
++	enum mktme_type type = MKTME_TYPE_ERROR;
++	substring_t args[MAX_OPT_ARGS];
++	unsigned long token_mask = 0;
++	char *p = options;
++	int token;
 +
-+	/* Adapt physical memory region size based on available memory */
- 	if (memory_tb < kaslr_regions[0].size_tb)
- 		kaslr_regions[0].size_tb = memory_tb;
++	while ((p = strsep(&options, " \t"))) {
++		if (*p == '\0' || *p == ' ' || *p == '\t')
++			continue;
++		token = match_token(p, mktme_token, args);
++		if (token == OPT_ERROR)
++			return -EINVAL;
++		if (test_and_set_bit(token, &token_mask))
++			return -EINVAL;
++
++		switch (token) {
++		case OPT_TYPE:
++			type = match_string(mktme_type_names,
++					    ARRAY_SIZE(mktme_type_names),
++					    args[0].from);
++			if (type < 0)
++				return -EINVAL;
++			break;
++
++		case OPT_ALGORITHM:
++			/* Algorithm must be generally supported */
++			alg = match_string(mktme_alg_names,
++					   ARRAY_SIZE(mktme_alg_names),
++					   args[0].from);
++			if (alg < 0)
++				return -EINVAL;
++
++			/* Algorithm must be activated on this platform */
++			if (!(mktme_algs & (1 << alg)))
++				return -EINVAL;
++			break;
++
++		default:
++			return -EINVAL;
++		}
++	}
++	return mktme_check_options(payload, token_mask, type, alg);
++}
++
++void mktme_free_preparsed_payload(struct key_preparsed_payload *prep)
++{
++	kzfree(prep->payload.data[0]);
++}
++
++/*
++ * Key Service Method to preparse a payload before a key is created.
++ * Check permissions and the options. Load the proposed key field
++ * data into the payload for use by the instantiate method.
++ */
++int mktme_preparse_payload(struct key_preparsed_payload *prep)
++{
++	size_t datalen = prep->datalen;
++	u32 *mktme_payload;
++	char *options;
++	int ret;
++
++	if (datalen <= 0 || datalen > 1024 || !prep->data)
++		return -EINVAL;
++
++	options = kmemdup_nul(prep->data, datalen, GFP_KERNEL);
++	if (!options)
++		return -ENOMEM;
++
++	mktme_payload = kzalloc(sizeof(*mktme_payload), GFP_KERNEL);
++	if (!mktme_payload) {
++		ret = -ENOMEM;
++		goto out;
++	}
++	ret = mktme_get_options(options, mktme_payload);
++	if (ret < 0) {
++		kzfree(mktme_payload);
++		goto out;
++	}
++	prep->quotalen = sizeof(mktme_payload);
++	prep->payload.data[0] = mktme_payload;
++out:
++	kzfree(options);
++	return ret;
++}
++
+ struct key_type key_type_mktme = {
+ 	.name		= "mktme",
++	.preparse	= mktme_preparse_payload,
++	.free_preparse	= mktme_free_preparsed_payload,
+ 	.describe	= user_describe,
+ };
  
 -- 
 2.21.0
