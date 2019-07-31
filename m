@@ -2,160 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 09B8B7C428
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 15:56:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B07F7C42D
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 15:58:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729753AbfGaN4k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 09:56:40 -0400
-Received: from foss.arm.com ([217.140.110.172]:47626 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726693AbfGaN4j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 09:56:39 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EA3BE344;
-        Wed, 31 Jul 2019 06:56:38 -0700 (PDT)
-Received: from [10.1.196.105] (eglon.cambridge.arm.com [10.1.196.105])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 20BCA3F694;
-        Wed, 31 Jul 2019 06:56:38 -0700 (PDT)
-Subject: Re: [PATCH] Function stack size and its name mismatch in arm64
-To:     Jiping Ma <jiping.ma2@windriver.com>
-Cc:     Steven Rostedt <rostedt@goodmis.org>, mingo@redhat.com,
-        linux-kernel@vger.kernel.org,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-References: <20190731090437.19867-1-jiping.ma2@windriver.com>
- <20190731065755.5f5bd8a0@gandalf.local.home>
-From:   James Morse <james.morse@arm.com>
-Message-ID: <9556feaa-cf38-c101-ed82-2112ea011a88@arm.com>
-Date:   Wed, 31 Jul 2019 14:56:36 +0100
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1729762AbfGaN6B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 09:58:01 -0400
+Received: from mail-io1-f72.google.com ([209.85.166.72]:51259 "EHLO
+        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728938AbfGaN6B (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jul 2019 09:58:01 -0400
+Received: by mail-io1-f72.google.com with SMTP id c5so74883818iom.18
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 06:58:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=FEF26j1D9ZvC1FOg/2C+u2C5uOIP0wZpzYnp05nqnRo=;
+        b=NU4uPfXf1gnj4nrA5uyQpqj2kdaDA6fg1hm/CJc8Fj9GvPHCsqJbaPcsYTI2QV9xhf
+         HUNq4cc9qL6j87BVGRKnnBHk3tjPMZzbRaDbow8vrVQQcteuKfStFMZ7We/K1zXF93B5
+         jQZ416llyysiRQE8uhy14/r4/m4T7N7zZXDnjQ6ZLgLbmVuuXxkMBkX3K+leNAW3zN9J
+         N4biUV57SlEmAklJ2qmgLpfZay8js6vsbI9rbvE+kjmfhznyFIBcbVkohsmjGt5H635K
+         J9/Uqh+vKQufe/udlol3ZuqAZTLdRBEOYpyniPCkRAKGo9LXPMolujzJL+T12H6uQIRp
+         7Ydw==
+X-Gm-Message-State: APjAAAVnlM/HtipS5VyOSZiJswEMwxLhDeA5Se/d2ZYzqLlisIlV9GRn
+        kfTZC7/rC2IRYCFnkwrGu+7oLgk9PQlMEAUYFfnxZf00KcUg
+X-Google-Smtp-Source: APXvYqx4v+2B+tDfNufu/8jabqDh174TMHU9YBPhF6J18gSgAFOcH5r9L9/kPu54zg3r+7UAdLNDk/GmtNOPv60wADHFIKWDIzGs
 MIME-Version: 1.0
-In-Reply-To: <20190731065755.5f5bd8a0@gandalf.local.home>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a02:230a:: with SMTP id u10mr43840113jau.117.1564581480591;
+ Wed, 31 Jul 2019 06:58:00 -0700 (PDT)
+Date:   Wed, 31 Jul 2019 06:58:00 -0700
+In-Reply-To: <000000000000de000a058e9025db@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000005f7805058efa8333@google.com>
+Subject: Re: KASAN: use-after-free Read in release_sock
+From:   syzbot <syzbot+107429d62fb1d293602f@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, linux-hams@vger.kernel.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        ralf@linux-mips.org, syzkaller-bugs@googlegroups.com,
+        xiyou.wangcong@gmail.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jiping,
+syzbot has bisected this bug to:
 
-(CC: +linux-arm-kernel)
+commit c8c8218ec5af5d2598381883acbefbf604e56b5e
+Author: Cong Wang <xiyou.wangcong@gmail.com>
+Date:   Thu Jun 27 21:30:58 2019 +0000
 
-On 31/07/2019 11:57, Steven Rostedt wrote:
-> On Wed, 31 Jul 2019 17:04:37 +0800
-> Jiping Ma <jiping.ma2@windriver.com> wrote:
+     netrom: fix a memory leak in nr_rx_frame()
 
-> Note, the subject is not properly written, as it is missing the
-> subsystem. In this case, it should start with "tracing: "
-> 
-> 
->> The PC of one the frame is matched to the next frame function, rather
->> than the function of his frame.
-> 
-> The above change log doesn't make sense. I have no idea what the actual
-> problem is here. Why is this different for arm64 and no one else? Seems
-> the bug is with the stack logic code in arm64 not here.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13b52242600000
+start commit:   629f8205 Merge tag 'for-linus-20190730' of git://git.kerne..
+git tree:       upstream
+final crash:    https://syzkaller.appspot.com/x/report.txt?x=10752242600000
+console output: https://syzkaller.appspot.com/x/log.txt?x=17b52242600000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4c7b914a2680c9c6
+dashboard link: https://syzkaller.appspot.com/bug?extid=107429d62fb1d293602f
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16a7c8dc600000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1498cfa2600000
 
-Please copy the mailing list for the arm64 arch code too.
+Reported-by: syzbot+107429d62fb1d293602f@syzkaller.appspotmail.com
+Fixes: c8c8218ec5af ("netrom: fix a memory leak in nr_rx_frame()")
 
-Is this thing a recent change? arm64's stacktrace code gained some better protection for
-loops at -rc2.
-
-
-Thanks,
-
-James
-
-
->> diff --git a/kernel/trace/trace_stack.c b/kernel/trace/trace_stack.c
->> index 5d16f73898db..ed80b95abf06 100644
->> --- a/kernel/trace/trace_stack.c
->> +++ b/kernel/trace/trace_stack.c
->> @@ -40,16 +40,28 @@ static void print_max_stack(void)
->>  
->>  	pr_emerg("        Depth    Size   Location    (%d entries)\n"
->>  			   "        -----    ----   --------\n",
->> +#ifdef CONFIG_ARM64
-> 
-> We do not allow arch specific defines in generic code. Otherwise this
-> would blow up and become unmaintainable. Not to mention it makes the
-> code ugly and hard to follow.
-> 
-> Please explain the problem better. I'm sure there's much better ways to
-> solve this than this patch.
-> 
-> Thanks,
-> 
-> -- Steve
-> 
-> 
-> 
->> +			   stack_trace_nr_entries - 1);
->> +#else
->>  			   stack_trace_nr_entries);
->> -
->> +#endif
->> +#ifdef CONFIG_ARM64
->> +	for (i = 1; i < stack_trace_nr_entries; i++) {
->> +#else
->>  	for (i = 0; i < stack_trace_nr_entries; i++) {
->> +#endif
->>  		if (i + 1 == stack_trace_nr_entries)
->>  			size = stack_trace_index[i];
->>  		else
->>  			size = stack_trace_index[i] - stack_trace_index[i+1];
->>  
->> +#ifdef CONFIG_ARM64
->> +		pr_emerg("%3ld) %8d   %5d   %pS\n", i-1, stack_trace_index[i],
->> +				size, (void *)stack_dump_trace[i-1]);
->> +#else
->>  		pr_emerg("%3ld) %8d   %5d   %pS\n", i, stack_trace_index[i],
->>  				size, (void *)stack_dump_trace[i]);
->> +#endif
->>  	}
->>  }
->>  
->> @@ -324,8 +336,11 @@ static int t_show(struct seq_file *m, void *v)
->>  		seq_printf(m, "        Depth    Size   Location"
->>  			   "    (%d entries)\n"
->>  			   "        -----    ----   --------\n",
->> +#ifdef CONFIG_ARM64
->> +			   stack_trace_nr_entries - 1);
->> +#else
->>  			   stack_trace_nr_entries);
->> -
->> +#endif
->>  		if (!stack_tracer_enabled && !stack_trace_max_size)
->>  			print_disabled(m);
->>  
->> @@ -334,6 +349,10 @@ static int t_show(struct seq_file *m, void *v)
->>  
->>  	i = *(long *)v;
->>  
->> +#ifdef CONFIG_ARM64
->> +	if (i == 0)
->> +		return 0;
->> +#endif
->>  	if (i >= stack_trace_nr_entries)
->>  		return 0;
->>  
->> @@ -342,9 +361,14 @@ static int t_show(struct seq_file *m, void *v)
->>  	else
->>  		size = stack_trace_index[i] - stack_trace_index[i+1];
->>  
->> +#ifdef CONFIG_ARM64
->> +	seq_printf(m, "%3ld) %8d   %5d   ", i-1, stack_trace_index[i], size);
->> +	trace_lookup_stack(m, i-1);
->> +#else
->>  	seq_printf(m, "%3ld) %8d   %5d   ", i, stack_trace_index[i], size);
->>  
->>  	trace_lookup_stack(m, i);
->> +#endif
->>  
->>  	return 0;
->>  }
-> 
-
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
