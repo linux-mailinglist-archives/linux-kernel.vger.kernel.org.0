@@ -2,115 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 906D07C0BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 14:08:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B4E87C0C9
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 14:11:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728997AbfGaMHq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 08:07:46 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:3670 "EHLO huawei.com"
+        id S1729078AbfGaMKy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 08:10:54 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:3672 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726185AbfGaMHq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 08:07:46 -0400
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 26166B29F60F478F0E4D;
-        Wed, 31 Jul 2019 20:07:27 +0800 (CST)
-Received: from RH5885H-V3.huawei.com (10.90.53.225) by
- DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
- 14.3.439.0; Wed, 31 Jul 2019 20:07:18 +0800
-From:   SunKe <sunke32@huawei.com>
-To:     <sunke32@huawei.com>, <josef@toxicpanda.com>, <axboe@kernel.dk>,
-        <linux-block@vger.kernel.org>, <nbd@other.debian.org>,
-        <linux-kernel@vger.kernel.org>, <kamatam@amazon.com>,
-        <manoj.br@gmail.com>, <stable@vger.kernel.org>, <dwmw@amazon.com>
-Subject: [PATCH v2] nbd: replace kill_bdev() with __invalidate_device() again
-Date:   Wed, 31 Jul 2019 20:13:10 +0800
-Message-ID: <1564575190-132357-1-git-send-email-sunke32@huawei.com>
-X-Mailer: git-send-email 2.7.4
+        id S1725793AbfGaMKy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jul 2019 08:10:54 -0400
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 1A25B41E2D691E92CF1D;
+        Wed, 31 Jul 2019 20:10:48 +0800 (CST)
+Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 31 Jul
+ 2019 20:10:40 +0800
+Subject: Re: [PATCH 08/22] staging: erofs: kill CONFIG_EROFS_FS_IO_MAX_RETRIES
+To:     Gao Xiang <gaoxiang25@huawei.com>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <devel@driverdev.osuosl.org>, <linux-erofs@lists.ozlabs.org>,
+        LKML <linux-kernel@vger.kernel.org>, <weidu.du@huawei.com>,
+        Miao Xie <miaoxie@huawei.com>
+References: <20190729065159.62378-1-gaoxiang25@huawei.com>
+ <20190729065159.62378-9-gaoxiang25@huawei.com>
+ <1c979e3f-54ec-cce8-650c-39e060e72169@huawei.com>
+ <2d7abbad-61d0-df2b-6a42-26f2606d775a@huawei.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <985b3ca7-afee-006e-a367-98a865995246@huawei.com>
+Date:   Wed, 31 Jul 2019 20:10:39 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.90.53.225]
+In-Reply-To: <2d7abbad-61d0-df2b-6a42-26f2606d775a@huawei.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
 X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Munehisa Kamata <kamatam@amazon.com>
+Hi Xiang,
 
-Commit abbbdf12497d ("replace kill_bdev() with __invalidate_device()")
-once did this, but 29eaadc03649 ("nbd: stop using the bdev everywhere")
-resurrected kill_bdev() and it has been there since then. So buffer_head
-mappings still get killed on a server disconnection, and we can still
-hit the BUG_ON on a filesystem on the top of the nbd device.
+On 2019/7/31 15:11, Gao Xiang wrote:
+> Hi Chao,
+> 
+> On 2019/7/31 15:05, Chao Yu wrote:
+>> On 2019/7/29 14:51, Gao Xiang wrote:
+>>> CONFIG_EROFS_FS_IO_MAX_RETRIES seems a runtime setting
+>>> and users have no idea about the change in behaviour.
+>>>
+>>> Let's remove the setting currently and fold it into code,
+>>> turn it into a module parameter if it's really needed.
+>>>
+>>> Suggested-by: David Sterba <dsterba@suse.cz>
+>>> Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+>>
+>> It's fine to me, but I'd like to suggest to add this as a sys entry which can be
+>> more flexible for user to change.
+> 
+> I think it can be added in the later version, the original view
+> from David is that he had question how users using this option.
+> 
+> Maybe we can use the default value and leave it to users who
+> really need to modify this value (real requirement).
 
-  EXT4-fs (nbd0): mounted filesystem with ordered data mode. Opts: (null)
-  block nbd0: Receive control failed (result -32)
-  block nbd0: shutting down sockets
-  print_req_error: I/O error, dev nbd0, sector 66264 flags 3000
-  EXT4-fs warning (device nbd0): htree_dirblock_to_tree:979: inode #2: lblock 0: comm ls: error -5 reading directory block
-  print_req_error: I/O error, dev nbd0, sector 2264 flags 3000
-  EXT4-fs error (device nbd0): __ext4_get_inode_loc:4690: inode #2: block 283: comm ls: unable to read itable block
-  EXT4-fs error (device nbd0) in ext4_reserve_inode_write:5894: IO failure
-  ------------[ cut here ]------------
-  kernel BUG at fs/buffer.c:3057!
-  invalid opcode: 0000 [#1] SMP PTI
-  CPU: 7 PID: 40045 Comm: jbd2/nbd0-8 Not tainted 5.1.0-rc3+ #4
-  Hardware name: Amazon EC2 m5.12xlarge/, BIOS 1.0 10/16/2017
-  RIP: 0010:submit_bh_wbc+0x18b/0x190
-  ...
-  Call Trace:
-   jbd2_write_superblock+0xf1/0x230 [jbd2]
-   ? account_entity_enqueue+0xc5/0xf0
-   jbd2_journal_update_sb_log_tail+0x94/0xe0 [jbd2]
-   jbd2_journal_commit_transaction+0x12f/0x1d20 [jbd2]
-   ? __switch_to_asm+0x40/0x70
-   ...
-   ? lock_timer_base+0x67/0x80
-   kjournald2+0x121/0x360 [jbd2]
-   ? remove_wait_queue+0x60/0x60
-   kthread+0xf8/0x130
-   ? commit_timeout+0x10/0x10 [jbd2]
-   ? kthread_bind+0x10/0x10
-   ret_from_fork+0x35/0x40
+I think we need to decide it in this version, otherwise it may face backward
+compatibility issue if we change module argument to sys entry later.
 
-With __invalidate_device(), I no longer hit the BUG_ON with sync or
-unmount on the disconnected device.
+Maybe just leave it as an fixed macro is fine, since there is actually no
+requirement on this.
 
-Fixes: 29eaadc03649 ("nbd: stop using the bdev everywhere")
-Cc: linux-block@vger.kernel.org
-Cc: Ratna Manoj Bolla <manoj.br@gmail.com>
-Cc: nbd@other.debian.org
-Cc: stable@vger.kernel.org
-Cc: David Woodhouse <dwmw@amazon.com>
-Signed-off-by: Munehisa Kamata <kamatam@amazon.com>
+Thanks,
 
----
-I reproduced this phenomenon on the fat file system.
-reproduce steps :
-1.Establish a nbd connection.
-2.Run two threads:one do mount and umount,anther one do clear_sock ioctl
-3.Then hit the BUG_ON.
-
-v2: Delete a link.
-
-Signed-off-by: SunKe <sunke32@huawei.com>
-
- drivers/block/nbd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
-index 9bcde23..e21d2de 100644
---- a/drivers/block/nbd.c
-+++ b/drivers/block/nbd.c
-@@ -1231,7 +1231,7 @@ static void nbd_clear_sock_ioctl(struct nbd_device *nbd,
- 				 struct block_device *bdev)
- {
- 	sock_shutdown(nbd);
--	kill_bdev(bdev);
-+	__invalidate_device(bdev, true);
- 	nbd_bdev_reset(bdev);
- 	if (test_and_clear_bit(NBD_HAS_CONFIG_REF,
- 			       &nbd->config->runtime_flags))
--- 
-2.7.4
-
+> 
+> Thanks,
+> Gao Xiang
+> 
+>>
+>> Thanks
+>>
+> .
+> 
