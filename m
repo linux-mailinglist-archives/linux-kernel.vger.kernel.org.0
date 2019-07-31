@@ -2,89 +2,171 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EACFB7B927
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 07:40:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C64417B938
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 07:44:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727171AbfGaFkS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 01:40:18 -0400
-Received: from mail-sz.amlogic.com ([211.162.65.117]:48516 "EHLO
-        mail-sz.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727049AbfGaFkP (ORCPT
+        id S1726463AbfGaFoy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 01:44:54 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:35031 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725209AbfGaFoy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 01:40:15 -0400
-Received: from localhost.localdomain (10.28.8.29) by mail-sz.amlogic.com
- (10.28.11.5) with Microsoft SMTP Server id 15.1.1591.10; Wed, 31 Jul 2019
- 13:40:48 +0800
-From:   chunguo feng <chunguo.feng@amlogic.com>
-To:     <lgirdwood@gmail.com>
-CC:     <broonie@kernel.org>, <perex@perex.cz>, <tiwai@suse.com>,
-        <RyanS.Lee@maximintegrated.com>, <bleung@chromium.org>,
-        <pierre-louis.bossart@linux.intel.com>, <grundler@chromium.org>,
-        <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
-        <chunguo.feng@amlogic.com>
-Subject: [PATCH] ASoC: max98383: add  88200 and 96000 sampling rate support
-Date:   Wed, 31 Jul 2019 13:40:03 +0800
-Message-ID: <20190731054003.16076-1-chunguo.feng@amlogic.com>
-X-Mailer: git-send-email 2.22.0
+        Wed, 31 Jul 2019 01:44:54 -0400
+Received: by mail-pl1-f196.google.com with SMTP id w24so29959642plp.2
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2019 22:44:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=dhefx6+bI5/lxdg6oXf3wodWpmayqnB7DDdokXpcjMg=;
+        b=sQjfjK3y/z/3d1JS6WvWhqo3J5FttXfKN2QWJlL8hmfsh08bqrfKSPzjH+q2i2VfxF
+         xCQ2z5zwl6OtquqRKi67ATkp1OfGjV+nBURLRH7z6cMVP9/Ky7KbQU8+zW7ugMs+KqBo
+         QEj06w4vrVT8k1fVsIUC5EfRbHUEJ2wDz6aYPMDeLSVQ94ZV7+UV7Z4dJHGsisMijpxT
+         fcWFYOMTGkQtcJFUc/aLLuFg6Ho13xn9gZpyIwvWNOgxyibFI8p/BvqXKZPrM2pCIP+N
+         33IoFcZ99cw8qXIB+c0G9p+sH6OvabS41kyP/1hHSzxYUh5fTH1UR/x9J0Buw02Bp9SL
+         0zaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=dhefx6+bI5/lxdg6oXf3wodWpmayqnB7DDdokXpcjMg=;
+        b=obPBUC3fefRM26yAEP/mLY5KKm+A8Z/gz2oNq2Fk4id9gH5MN4ay6+53EKzkQAVeZ9
+         QXqrrdO+RgbfD4bBUBfXGuif7KS9T2XbGpwN/JK2gIysnWrNOEYBtlgFK3UanOqvghS3
+         BY60TcOg+212dkUdevvaQKrY9GkQKmh03iNyv/Q3qJJQ1TYjJXx2N4yA0AVFPyxYTik8
+         bqtH/vhklVR9U3m5zj91r3XN4qYDeKp9Yz4ov+yOwcnB4t7qhM9X9qu1EkC0C9aFOzLt
+         lthELIIaP470RWhcoH61VyXw0VjQLzAe1dR/9QVtfmLuoAD86ESIPkLIPNlp+mIAUIrA
+         Sh/A==
+X-Gm-Message-State: APjAAAVXvPw3ZZQnzwBQttHj6nIfn19mWXTQBrtszFyPMy38KqCf62WH
+        cKBLkeIL2ggXi+5pTL4W1yQ=
+X-Google-Smtp-Source: APXvYqw+GsX0jKceDzctiXZbIk5pPQYlHAy301YmRVfmXsab/Hyl6L4qaNTVaKCKGnaLMO3DWpwiDQ==
+X-Received: by 2002:a17:902:bd94:: with SMTP id q20mr108502842pls.307.1564551893301;
+        Tue, 30 Jul 2019 22:44:53 -0700 (PDT)
+Received: from google.com ([2401:fa00:d:0:98f1:8b3d:1f37:3e8])
+        by smtp.gmail.com with ESMTPSA id w4sm86568867pfn.144.2019.07.30.22.44.50
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 30 Jul 2019 22:44:52 -0700 (PDT)
+Date:   Wed, 31 Jul 2019 14:44:47 +0900
+From:   Minchan Kim <minchan@kernel.org>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        Miguel de Dios <migueldedios@google.com>,
+        Wei Wang <wvw@google.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Nicholas Piggin <npiggin@gmail.com>
+Subject: Re: [PATCH] mm: release the spinlock on zap_pte_range
+Message-ID: <20190731054447.GB155569@google.com>
+References: <20190729071037.241581-1-minchan@kernel.org>
+ <20190729074523.GC9330@dhcp22.suse.cz>
+ <20190729082052.GA258885@google.com>
+ <20190729083515.GD9330@dhcp22.suse.cz>
+ <20190730121110.GA184615@google.com>
+ <20190730123237.GR9330@dhcp22.suse.cz>
+ <20190730123935.GB184615@google.com>
+ <20190730125751.GS9330@dhcp22.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.28.8.29]
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190730125751.GS9330@dhcp22.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: fengchunguo <chunguo.feng@amlogic.com>
+On Tue, Jul 30, 2019 at 02:57:51PM +0200, Michal Hocko wrote:
+> [Cc Nick - the email thread starts http://lkml.kernel.org/r/20190729071037.241581-1-minchan@kernel.org
+>  A very brief summary is that mark_page_accessed seems to be quite
+>  expensive and the question is whether we still need it and why
+>  SetPageReferenced cannot be used instead. More below.]
+> 
+> On Tue 30-07-19 21:39:35, Minchan Kim wrote:
+> > On Tue, Jul 30, 2019 at 02:32:37PM +0200, Michal Hocko wrote:
+> > > On Tue 30-07-19 21:11:10, Minchan Kim wrote:
+> > > > On Mon, Jul 29, 2019 at 10:35:15AM +0200, Michal Hocko wrote:
+> > > > > On Mon 29-07-19 17:20:52, Minchan Kim wrote:
+> > > > > > On Mon, Jul 29, 2019 at 09:45:23AM +0200, Michal Hocko wrote:
+> > > > > > > On Mon 29-07-19 16:10:37, Minchan Kim wrote:
+> > > > > > > > In our testing(carmera recording), Miguel and Wei found unmap_page_range
+> > > > > > > > takes above 6ms with preemption disabled easily. When I see that, the
+> > > > > > > > reason is it holds page table spinlock during entire 512 page operation
+> > > > > > > > in a PMD. 6.2ms is never trivial for user experince if RT task couldn't
+> > > > > > > > run in the time because it could make frame drop or glitch audio problem.
+> > > > > > > 
+> > > > > > > Where is the time spent during the tear down? 512 pages doesn't sound
+> > > > > > > like a lot to tear down. Is it the TLB flushing?
+> > > > > > 
+> > > > > > Miguel confirmed there is no such big latency without mark_page_accessed
+> > > > > > in zap_pte_range so I guess it's the contention of LRU lock as well as
+> > > > > > heavy activate_page overhead which is not trivial, either.
+> > > > > 
+> > > > > Please give us more details ideally with some numbers.
+> > > > 
+> > > > I had a time to benchmark it via adding some trace_printk hooks between
+> > > > pte_offset_map_lock and pte_unmap_unlock in zap_pte_range. The testing
+> > > > device is 2018 premium mobile device.
+> > > > 
+> > > > I can get 2ms delay rather easily to release 2M(ie, 512 pages) when the
+> > > > task runs on little core even though it doesn't have any IPI and LRU
+> > > > lock contention. It's already too heavy.
+> > > > 
+> > > > If I remove activate_page, 35-40% overhead of zap_pte_range is gone
+> > > > so most of overhead(about 0.7ms) comes from activate_page via
+> > > > mark_page_accessed. Thus, if there are LRU contention, that 0.7ms could
+> > > > accumulate up to several ms.
+> > > 
+> > > Thanks for this information. This is something that should be a part of
+> > > the changelog. I am sorry to still poke into this because I still do not
+> > 
+> > I will include it.
+> > 
+> > > have a full understanding of what is going on and while I do not object
+> > > to drop the spinlock I still suspect this is papering over a deeper
+> > > problem.
+> > 
+> > I couldn't come up with better solution. Feel free to suggest it.
+> > 
+> > > 
+> > > If mark_page_accessed is really expensive then why do we even bother to
+> > > do it in the tear down path in the first place? Why don't we simply set
+> > > a referenced bit on the page to reflect the young pte bit? I might be
+> > > missing something here of course.
+> > 
+> > commit bf3f3bc5e73
+> > Author: Nick Piggin <npiggin@suse.de>
+> > Date:   Tue Jan 6 14:38:55 2009 -0800
+> > 
+> >     mm: don't mark_page_accessed in fault path
+> > 
+> >     Doing a mark_page_accessed at fault-time, then doing SetPageReferenced at
+> >     unmap-time if the pte is young has a number of problems.
+> > 
+> >     mark_page_accessed is supposed to be roughly the equivalent of a young pte
+> >     for unmapped references. Unfortunately it doesn't come with any context:
+> >     after being called, reclaim doesn't know who or why the page was touched.
+> > 
+> >     So calling mark_page_accessed not only adds extra lru or PG_referenced
+> >     manipulations for pages that are already going to have pte_young ptes anyway,
+> >     but it also adds these references which are difficult to work with from the
+> >     context of vma specific references (eg. MADV_SEQUENTIAL pte_young may not
+> >     wish to contribute to the page being referenced).
+> > 
+> >     Then, simply doing SetPageReferenced when zapping a pte and finding it is
+> >     young, is not a really good solution either. SetPageReferenced does not
+> >     correctly promote the page to the active list for example. So after removing
+> >     mark_page_accessed from the fault path, several mmap()+touch+munmap() would
+> >     have a very different result from several read(2) calls for example, which
+> >     is not really desirable.
+> 
+> Well, I have to say that this is rather vague to me. Nick, could you be
+> more specific about which workloads do benefit from this change? Let's
+> say that the zapped pte is the only referenced one and then reclaim
+> finds the page on inactive list. We would go and reclaim it. But does
+> that matter so much? Hot pages would be referenced from multiple ptes
+> very likely, no?
 
-88200 and 96000 sampling rate was not enabled on driver, so can't be played.
-
-The error information:
-max98373 3-0031：rate 96000 not supported
-max98373 3-0031：ASoC: can't set max98373-aif1 hw params: -22
-
-Signed-off-by: fengchunguo <chunguo.feng@amlogic.com>
----
- sound/soc/codecs/max98373.c | 6 ++++++
- sound/soc/codecs/max98373.h | 2 ++
- 2 files changed, 8 insertions(+)
- mode change 100644 => 100755 sound/soc/codecs/max98373.c
- mode change 100644 => 100755 sound/soc/codecs/max98373.h
-
-diff --git a/sound/soc/codecs/max98373.c b/sound/soc/codecs/max98373.c
-old mode 100644
-new mode 100755
-index 528695cd6a1c..8c601a3ebc27
---- a/sound/soc/codecs/max98373.c
-+++ b/sound/soc/codecs/max98373.c
-@@ -267,6 +267,12 @@ static int max98373_dai_hw_params(struct snd_pcm_substream *substream,
- 	case 48000:
- 		sampling_rate = MAX98373_PCM_SR_SET1_SR_48000;
- 		break;
-+	case 88200:
-+		sampling_rate = MAX98373_PCM_SR_SET1_SR_88200;
-+		break;
-+	case 96000:
-+		sampling_rate = MAX98373_PCM_SR_SET1_SR_96000;
-+		break;
- 	default:
- 		dev_err(component->dev, "rate %d not supported\n",
- 			params_rate(params));
-diff --git a/sound/soc/codecs/max98373.h b/sound/soc/codecs/max98373.h
-old mode 100644
-new mode 100755
-index f6a37aa02f26..a59e51355a84
---- a/sound/soc/codecs/max98373.h
-+++ b/sound/soc/codecs/max98373.h
-@@ -130,6 +130,8 @@
- #define MAX98373_PCM_SR_SET1_SR_32000 (0x6 << 0)
- #define MAX98373_PCM_SR_SET1_SR_44100 (0x7 << 0)
- #define MAX98373_PCM_SR_SET1_SR_48000 (0x8 << 0)
-+#define MAX98373_PCM_SR_SET1_SR_88200 (0x9 << 0)
-+#define MAX98373_PCM_SR_SET1_SR_96000 (0xA << 0)
- 
- /* MAX98373_R2028_PCM_SR_SETUP_2 */
- #define MAX98373_PCM_SR_SET2_SR_MASK (0xF << 4)
--- 
-2.22.0
-
+As Nick mentioned in the description, without mark_page_accessed in
+zapping part, repeated mmap + touch + munmap never acticated the page
+while several read(2) calls easily promote it.
