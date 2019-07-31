@@ -2,124 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0EED07CA7E
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 19:32:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D695A7CA82
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 19:32:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730843AbfGaRcc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 13:32:32 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:45086 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728943AbfGaRc2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 13:32:28 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id BCF558031F; Wed, 31 Jul 2019 19:32:14 +0200 (CEST)
-Date:   Wed, 31 Jul 2019 19:32:26 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Parth Shah <parth@linux.ibm.com>
-Cc:     peterz@infradead.org, mingo@redhat.com,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        patrick.bellasi@arm.com, dietmar.eggemann@arm.com,
-        daniel.lezcano@linaro.org, subhra.mazumdar@oracle.com
-Subject: Re: [RFC v4 0/8] TurboSched: A scheduler for sustaining Turbo
- Frequencies for longer durations
-Message-ID: <20190731173225.GB24222@amd>
-References: <20190725070857.6639-1-parth@linux.ibm.com>
- <20190728133102.GD8718@xo-6d-61-c0.localdomain>
- <4fcd3488-6ba0-bc22-a08d-ceebbce1c120@linux.ibm.com>
+        id S1729528AbfGaRcv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 13:32:51 -0400
+Received: from foss.arm.com ([217.140.110.172]:52384 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726853AbfGaRcv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jul 2019 13:32:51 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6CEAB337;
+        Wed, 31 Jul 2019 10:32:50 -0700 (PDT)
+Received: from [10.1.31.37] (unknown [10.1.31.37])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F04513F71F;
+        Wed, 31 Jul 2019 10:32:48 -0700 (PDT)
+Subject: Re: [PATCH 4/5] sched/deadline: Cleanup on_dl_rq() handling
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        Luca Abeni <luca.abeni@santannapisa.it>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Valentin Schneider <Valentin.Schneider@arm.com>,
+        Qais Yousef <Qais.Yousef@arm.com>, linux-kernel@vger.kernel.org
+References: <20190726082756.5525-1-dietmar.eggemann@arm.com>
+ <20190726082756.5525-5-dietmar.eggemann@arm.com>
+ <20190729164932.GN31398@hirez.programming.kicks-ass.net>
+ <20190730064115.GC8927@localhost.localdomain>
+ <20190730082108.GJ31381@hirez.programming.kicks-ass.net>
+From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
+Message-ID: <c93f6c12-b804-99da-7e38-bbaf55fe7a1b@arm.com>
+Date:   Wed, 31 Jul 2019 18:32:47 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="IrhDeMKUP4DT/M7F"
-Content-Disposition: inline
-In-Reply-To: <4fcd3488-6ba0-bc22-a08d-ceebbce1c120@linux.ibm.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20190730082108.GJ31381@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 7/30/19 9:21 AM, Peter Zijlstra wrote:
+> On Tue, Jul 30, 2019 at 08:41:15AM +0200, Juri Lelli wrote:
+>> On 29/07/19 18:49, Peter Zijlstra wrote:
+>>> On Fri, Jul 26, 2019 at 09:27:55AM +0100, Dietmar Eggemann wrote:
+>>>> Remove BUG_ON() in __enqueue_dl_entity() since there is already one in
+>>>> enqueue_dl_entity().
+>>>>
+>>>> Move the check that the dl_se is not on the dl_rq from
+>>>> __dequeue_dl_entity() to dequeue_dl_entity() to align with the enqueue
+>>>> side and use the on_dl_rq() helper function.
+>>>>
+>>>> Signed-off-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
+>>>> ---
+>>>>  kernel/sched/deadline.c | 8 +++-----
+>>>>  1 file changed, 3 insertions(+), 5 deletions(-)
+>>>>
+>>>> diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+>>>> index 1fa005f79307..a9cb52ceb761 100644
+>>>> --- a/kernel/sched/deadline.c
+>>>> +++ b/kernel/sched/deadline.c
+>>>> @@ -1407,8 +1407,6 @@ static void __enqueue_dl_entity(struct sched_dl_entity *dl_se)
+>>>>  	struct sched_dl_entity *entry;
+>>>>  	int leftmost = 1;
+>>>>  
+>>>> -	BUG_ON(!RB_EMPTY_NODE(&dl_se->rb_node));
+>>>> -
+>>>>  	while (*link) {
+>>>>  		parent = *link;
+>>>>  		entry = rb_entry(parent, struct sched_dl_entity, rb_node);
+>>>> @@ -1430,9 +1428,6 @@ static void __dequeue_dl_entity(struct sched_dl_entity *dl_se)
+>>>>  {
+>>>>  	struct dl_rq *dl_rq = dl_rq_of_se(dl_se);
+>>>>  
+>>>> -	if (RB_EMPTY_NODE(&dl_se->rb_node))
+>>>> -		return;
+>>>> -
+>>>>  	rb_erase_cached(&dl_se->rb_node, &dl_rq->root);
+>>>>  	RB_CLEAR_NODE(&dl_se->rb_node);
+>>>>  
+>>>> @@ -1466,6 +1461,9 @@ enqueue_dl_entity(struct sched_dl_entity *dl_se,
+>>>>  
+>>>>  static void dequeue_dl_entity(struct sched_dl_entity *dl_se)
+>>>>  {
+>>>> +	if (!on_dl_rq(dl_se))
+>>>> +		return;
+>>>
+>>> Why allow double dequeue instead of WARN?
+>>
+>> As I was saying to Valentin, it can currently happen that a task could
+>> have already been dequeued by update_curr_dl()->throttle called by
+>> dequeue_task_dl() before calling __dequeue_task_dl(). Do you think we
+>> should check for this condition before calling into dequeue_dl_entity()?
+> 
+> Yes, that's what ->dl_throttled is for, right? And !->dl_throttled &&
+> !on_dl_rq() is a BUG.
 
---IrhDeMKUP4DT/M7F
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+OK, I will add the following snippet to the patch.
+Although it's easy to provoke a situation in which DL tasks are throttled,
+I haven't seen a throttling happening when the task is being dequeued.
 
-Hi!
+--->8---
 
-> >> Abstract
-> >> =3D=3D=3D=3D=3D=3D=3D=3D
-> >>
-> >> The modern servers allows multiple cores to run at range of frequencies
-> >> higher than rated range of frequencies. But the power budget of the sy=
-stem
-> >> inhibits sustaining these higher frequencies for longer durations.
-> >=20
-> > Thermal budget?
->=20
-> Right, it is a good point, and there can be possibility of Thermal thrott=
-ling
-> which is not covered here.
-> But the thermal throttling is less often seen in the servers than the thr=
-ottling
-> due to the Power budget constraints. Also one can change the power cap wh=
-ich leads
-> to increase in the throttling and task packing can handle in such
-> cases.
-
-Ok. I thought you are doing this due to thermals. If I understand
-things correctly, you can go over thermal limits for a few seconds
-before the silicon heats up. What is the timescale for power budget?
-
-> BTW, Task packing allows few more cores to remain idle for longer time, so
-> shouldn't this decrease thermal throttles upto certain extent?
-
-I guess so, yes.
-
-> > >> These numbers are w.r.t. `turbo_bench.c` multi-threaded test benchma=
-rk
-> >> which can create two kinds of tasks: CPU bound (High Utilization) and
-> >> Jitters (Low Utilization). N in X-axis represents N-CPU bound and N-Ji=
-tter
-> >> tasks spawned.
-> >=20
-> > Ok, so you have description how it causes 13% improvements. Do you also=
- have metrics how
-> > it harms performance.. how much delay is added to unimportant tasks etc=
-=2E..?
-> >=20
->=20
-> Yes, if we try to pack the tasks despite of no frequency throttling, we s=
-ee a regression
-> around 5%. For instance, in the synthetic benchmark I used to show perfor=
-mance benefit,
-> for lower count of CPU intensive threads (N=3D2) there is -5% performance=
- drop.
->=20
-> Talking about the delay added to an unimportant tasks, the result can be =
-lower throughput
-> or higher latency for such tasks.
-
-Thanks. I believe it would be good to mention disadvantages in the
-documentation, too.
-
-Best regards,
-							Pavel
-						=09
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---IrhDeMKUP4DT/M7F
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAl1B0KkACgkQMOfwapXb+vK/SQCdEakOOhPJoZSXw6d1ALOX3ZWx
-knYAn2U5kHCHmxOCvozd/2HU6N2RxX4Z
-=4uGg
------END PGP SIGNATURE-----
-
---IrhDeMKUP4DT/M7F--
+diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+index b6d2f263e0a4..a009762097fa 100644
+--- a/kernel/sched/deadline.c
++++ b/kernel/sched/deadline.c
+@@ -1507,8 +1507,7 @@ enqueue_dl_entity(struct sched_dl_entity *dl_se,
+ 
+ static void dequeue_dl_entity(struct sched_dl_entity *dl_se)
+ {
+-       if (!on_dl_rq(dl_se))
+-               return;
++       BUG_ON(!on_dl_rq(dl_se));
+ 
+        __dequeue_dl_entity(dl_se);
+ }
+@@ -1592,6 +1591,10 @@ static void __dequeue_task_dl(struct rq *rq, struct task_struct *p)
+ static void dequeue_task_dl(struct rq *rq, struct task_struct *p, int flags)
+ {
+        update_curr_dl(rq);
++
++       if (p->dl.dl_throttled)
++               return;
++
+        __dequeue_task_dl(rq, p);
