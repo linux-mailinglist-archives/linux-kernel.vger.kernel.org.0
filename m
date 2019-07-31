@@ -2,73 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B95E87BAD1
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 09:39:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3AD5C7BAD6
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 09:41:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727109AbfGaHjP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 03:39:15 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:45423 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726248AbfGaHjP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 03:39:15 -0400
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1hsjCb-0001qz-9h; Wed, 31 Jul 2019 09:39:13 +0200
-Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1hsjCa-00075J-GH; Wed, 31 Jul 2019 09:39:12 +0200
-Date:   Wed, 31 Jul 2019 09:39:12 +0200
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Stephen Boyd <swboyd@chromium.org>, linux-kernel@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-pwm@vger.kernel.org
-Subject: Re: [PATCH v6 36/57] pwm: Remove dev_err() usage after
- platform_get_irq()
-Message-ID: <20190731073912.7wb4tb42572g35c6@pengutronix.de>
-References: <20190730181557.90391-1-swboyd@chromium.org>
- <20190730181557.90391-37-swboyd@chromium.org>
- <20190731065853.3ohrhqtjtuhxfq5r@pengutronix.de>
- <20190731071301.GA23317@kroah.com>
+        id S1726817AbfGaHl3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 03:41:29 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:35522 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726248AbfGaHl3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jul 2019 03:41:29 -0400
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 7408DE2C8C3B3B880C43;
+        Wed, 31 Jul 2019 15:41:27 +0800 (CST)
+Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
+ (10.3.19.212) with Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 31 Jul
+ 2019 15:41:20 +0800
+Subject: Re: [PATCH 09/22] staging: erofs: clean up shrinker stuffs
+To:     Gao Xiang <gaoxiang25@huawei.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <devel@driverdev.osuosl.org>
+CC:     <linux-erofs@lists.ozlabs.org>,
+        LKML <linux-kernel@vger.kernel.org>, <weidu.du@huawei.com>,
+        Miao Xie <miaoxie@huawei.com>
+References: <20190729065159.62378-1-gaoxiang25@huawei.com>
+ <20190729065159.62378-10-gaoxiang25@huawei.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <633ea8ac-c502-68dd-e0b0-b618e9195a43@huawei.com>
+Date:   Wed, 31 Jul 2019 15:41:18 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190731071301.GA23317@kroah.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <20190729065159.62378-10-gaoxiang25@huawei.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 31, 2019 at 09:13:01AM +0200, Greg Kroah-Hartman wrote:
-> On Wed, Jul 31, 2019 at 08:58:53AM +0200, Uwe Kleine-König wrote:
-> > On Tue, Jul 30, 2019 at 11:15:36AM -0700, Stephen Boyd wrote:
-> > > We don't need dev_err() messages when platform_get_irq() fails now that
-> > > platform_get_irq() prints an error message itself when something goes
-> > > wrong. Let's remove these prints with a simple semantic patch.
-> > 
-> > Looking at v5.3-rc2 it's not obvious to me that all error paths of
-> > platform_get_irq issue an error message. Do I miss something?
+On 2019/7/29 14:51, Gao Xiang wrote:
+> - rename erofs_register_super / erofs_unregister_super
+>   to erofs_shrinker_register / erofs_shrinker_unregister;
+> - fold the only erofs_shrink_workstation external call
+>   to erofs_shrinker_unregister;
+> - localize erofs_shrink_workstation;
+> - localize erofs_shrinker_info by introducing
+>   erofs_init_shrinker and erofs_exit_shrinker.
 > 
-> The commit is in my driver-core tree at the moment, so this should wait
-> until 5.4-rc1.  I woudn't recommend merging it in 5.3-rc as it's not a
-> bugfix.
+> Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
 
-As this is a new change pointing out its id in the commit log of the
-follow up changes might be beneficial.
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
-Best regards
-Uwe
-
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Thanks,
