@@ -2,130 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD7FA7CEC1
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 22:37:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CA2037CED0
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 22:38:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729143AbfGaUhV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 16:37:21 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:51115 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726553AbfGaUhU (ORCPT
+        id S1729012AbfGaUim (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 16:38:42 -0400
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:34513 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726553AbfGaUil (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 16:37:20 -0400
-Received: by mail-wm1-f65.google.com with SMTP id v15so62215803wml.0;
-        Wed, 31 Jul 2019 13:37:17 -0700 (PDT)
+        Wed, 31 Jul 2019 16:38:41 -0400
+Received: by mail-vs1-f65.google.com with SMTP id m23so47260443vso.1
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 13:38:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=5Ad1NCToWXZTQRV4Ttp/KixfCZVZvJNhr1ng0+uFB0U=;
-        b=HUS7OTHI0nOhTR1EypLAwV3WGLFJzyNNDC5Fuu1OVzfIFaNsnEtVHFz3CHkQtYU8pq
-         x50WNqAh5N3XQwVG1LXxBzt+JRqEGkBWZpzoBbEwfsq+MDQi6473wQ5FAFrN5oloDm6I
-         6vzPpODaGECtCkr3Cp2qGKYqDQyO4m4GhGDTih+s9Ur4w/X8IHUDFfRkWXiM7oWa/lPU
-         1xOmN6K1DV34d5hw9ONjIBMSOmhQo2ipEKYq4kO5FTd4cz8qqWo57My3yPGTAm0q+OYU
-         jrJtUGGe3537qXzswQKksHiYltyHqNe497MQN94TDoqOazRswFnWBJUuf/FRlP7Yqiam
-         exgA==
+        d=lca.pw; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=L4Tl5485GNCbBNzPALyO9jFAKxSVUDo2VTt4y0HMbAc=;
+        b=ofZWWtS5ZWqQtpc9yer1nhq6viqjcYncIAGy4woJNgEe24OrmcTyAuaPYbJud1ZPxS
+         d8NxLYzD0QA/XYfFmCJ5vzqkytrW9aCNOZpa0YxpDMyG6HQvHi6W7s3tWQB3YgHd2ayz
+         TRa1ga5Ghsnm7qCRWcXY9mXYD3b/NnkpGhgoKIc8UTiTy6tHKNAcpUdepziwSrv7yZJa
+         EqAIbxsyZBOJhRkxvvRJI+OwkWzOYuvpQ9ZwRxE3WSuLxrHTSDZXDLu3TOeSFqbaGWYw
+         c2wkGNBWMOYw8WiiboqENEhtuNH4/4u1g9oDjnDnhBUKgJUbq3j48HWJLXHf5KebtJ3y
+         QL0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=5Ad1NCToWXZTQRV4Ttp/KixfCZVZvJNhr1ng0+uFB0U=;
-        b=lJ8DjaWilVb9oMTxrWOFndABNS0giPK1CJdkcbvHRccIGhotForXuLT4ka8v4/LRoD
-         r3+rw80zBNoZWKKi/uwiBz5tAkg9y1PZnuhgVC/8KXfyxtNQBTE+26DJdaHvBOj5cXI0
-         Sw4iAsiqjlGsHIzzqOPFF4j1A//tBg1VdD/LFGQWD1VFvXyHEqQ4Pe8JORu2P8uSzRQl
-         gILPUcpAC5Ps5IRuUrW2z2/nqibYl0aB4V3GF9bzEV/JNtcd2UnmEBBgN7Kw1lFfHUdf
-         qwEXUZIAIywY2pXxA97QFa2WNYSROUo++3VrzmgDaTvHs/k4ycNG+WtbfaZu9M1ySa5F
-         libg==
-X-Gm-Message-State: APjAAAWBgHMNudxP2wwGTpbqze476ChSOTn+h28nyyeROZru/mvVnPGM
-        o1Yy8qqAQWV2M0DlMCw8F9xYNCLkR5oLVg==
-X-Google-Smtp-Source: APXvYqx1/Q0uveVq5FV8+XH5STD3bgkAXXFg30KGFFyawCzxVmplf3ARBL/1G5Pc26DRP0+epGnCFQ==
-X-Received: by 2002:a1c:a584:: with SMTP id o126mr114587742wme.147.1564605436488;
-        Wed, 31 Jul 2019 13:37:16 -0700 (PDT)
-Received: from archlinux-threadripper ([2a01:4f8:222:2f1b::2])
-        by smtp.gmail.com with ESMTPSA id t13sm83919608wrr.0.2019.07.31.13.37.15
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 31 Jul 2019 13:37:15 -0700 (PDT)
-Date:   Wed, 31 Jul 2019 13:37:14 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Saravana Kannan <saravanak@google.com>
-Cc:     David Collins <collinsd@codeaurora.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Android Kernel Team <kernel-team@android.com>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        kbuild test robot <lkp@intel.com>
-Subject: Re: [PATCH] of/platform: Add missing const qualifier in
- of_link_property
-Message-ID: <20190731203714.GA41488@archlinux-threadripper>
-References: <20190729221101.228240-4-saravanak@google.com>
- <20190731181733.60422-1-natechancellor@gmail.com>
- <CAGETcx9LXP9b_W_1XQFmjODPJVrbnU+vH1RKer2i=jU7Q7EADg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGETcx9LXP9b_W_1XQFmjODPJVrbnU+vH1RKer2i=jU7Q7EADg@mail.gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=L4Tl5485GNCbBNzPALyO9jFAKxSVUDo2VTt4y0HMbAc=;
+        b=qoKjriee48SSIQ18kgo3o7jLDlU/ZNjfXZZi8a4c7mfy+e38JXEofUkGqfP7yOHMtV
+         S1zt9Xa8VylyfluJMvt7wprsnuf0hLXZrgxv2M0BhSzam3UoI0xQS0vvpdk55AYoHqEk
+         kfE484EbGTtlbVzat14l8oKleWsihU5Zz3V8q8QvmQRrCc3Lhw/uc6vqtkrIIpWlEXWH
+         D/9/cTJ6khlX7jpljso1tA+/7lcbuJyl+Th8yzXRxH0Kd8HJyaXSQMpc91DOZV+oeqL9
+         KKUttU6nPyIAz6VX8XbbV5ILbzxzJGGw4iwpk8s/KwhGo8AeZ8yVOI9qw3m1sjeFztrL
+         iCyA==
+X-Gm-Message-State: APjAAAX9MHxecU6kt3QylJ+v3HMIQMsQ5OF9Gjgdsnaw5JP9MmpjRP86
+        hwa9tsN5WFcFEWF2vLxOfgXcBw==
+X-Google-Smtp-Source: APXvYqwtVnkE/nTu9d2ervMPefdplu+skmjsj9M8Fn84HuBzn/RmQ72eprdarhaEmYf1cGiaCI4ygA==
+X-Received: by 2002:a67:1281:: with SMTP id 123mr69227162vss.10.1564605520701;
+        Wed, 31 Jul 2019 13:38:40 -0700 (PDT)
+Received: from qcai.nay.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id k7sm18697069vkk.48.2019.07.31.13.38.39
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 31 Jul 2019 13:38:40 -0700 (PDT)
+From:   Qian Cai <cai@lca.pw>
+To:     catalin.marinas@arm.com, will@kernel.org
+Cc:     andreyknvl@google.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Qian Cai <cai@lca.pw>
+Subject: [PATCH] arm64/mm: fix variable 'tag' set but not used
+Date:   Wed, 31 Jul 2019 16:38:18 -0400
+Message-Id: <1564605498-17629-1-git-send-email-cai@lca.pw>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 31, 2019 at 01:33:40PM -0700, Saravana Kannan wrote:
-> On Wed, Jul 31, 2019 at 11:19 AM Nathan Chancellor
-> <natechancellor@gmail.com> wrote:
-> >
-> > Clang errors:
-> >
-> > drivers/of/platform.c:632:28: error: initializing 'struct
-> > supplier_bindings *' with an expression of type 'const struct
-> > supplier_bindings [4]' discards qualifiers
-> > [-Werror,-Wincompatible-pointer-types-discards-qualifiers]
-> >         struct supplier_bindings *s = bindings;
-> >                                   ^   ~~~~~~~~
-> > 1 error generated.
-> >
-> > Fixes: 05f812549f53 ("of/platform: Add functional dependency link from DT bindings")
-> > Reported-by: kbuild test robot <lkp@intel.com>
-> > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> > ---
-> >
-> > Given this is still in the driver-core-testing branch, I am fine with
-> > this being squashed in if desired.
-> >
-> >  drivers/of/platform.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/of/platform.c b/drivers/of/platform.c
-> > index e2da90e53edb..21838226d68a 100644
-> > --- a/drivers/of/platform.c
-> > +++ b/drivers/of/platform.c
-> > @@ -629,7 +629,7 @@ static bool of_link_property(struct device *dev, struct device_node *con_np,
-> >                              const char *prop)
-> >  {
-> >         struct device_node *phandle;
-> > -       struct supplier_bindings *s = bindings;
-> > +       const struct supplier_bindings *s = bindings;
-> >         unsigned int i = 0;
-> >         bool done = true, matched = false;
-> 
-> Odd. I never got that email. Thanks for fixing this. I'll squash it
-> into my patch series since I have a bunch of other kbuild errors about
-> documentation.
-> 
-> -Saravana
+When CONFIG_KASAN_SW_TAGS=n, set_tag() is compiled away. GCC throws a
+warning,
 
-It was a clang only email (which currently just get sent to our
-clang-built-linux mailing list as there is a lot of overlap with GCC).
+mm/kasan/common.c: In function '__kasan_kmalloc':
+mm/kasan/common.c:464:5: warning: variable 'tag' set but not used
+[-Wunused-but-set-variable]
+  u8 tag = 0xff;
+     ^~~
 
-Not sure why there was no GCC email about this but oh well. Thanks for
-picking it up!
+Fix it by making __tag_set() a static inline function.
 
-Cheers,
-Nathan
+Signed-off-by: Qian Cai <cai@lca.pw>
+---
+ arch/arm64/include/asm/memory.h | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm64/include/asm/memory.h b/arch/arm64/include/asm/memory.h
+index b7ba75809751..9645b1340afe 100644
+--- a/arch/arm64/include/asm/memory.h
++++ b/arch/arm64/include/asm/memory.h
+@@ -210,7 +210,11 @@ static inline unsigned long kaslr_offset(void)
+ #define __tag_reset(addr)	untagged_addr(addr)
+ #define __tag_get(addr)		(__u8)((u64)(addr) >> 56)
+ #else
+-#define __tag_set(addr, tag)	(addr)
++static inline const void *__tag_set(const void *addr, u8 tag)
++{
++	return addr;
++}
++
+ #define __tag_reset(addr)	(addr)
+ #define __tag_get(addr)		0
+ #endif
+-- 
+1.8.3.1
+
