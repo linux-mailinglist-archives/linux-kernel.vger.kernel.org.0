@@ -2,128 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 887217C6EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 17:38:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DD597C717
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 17:43:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728469AbfGaPit (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 11:38:49 -0400
-Received: from mga17.intel.com ([192.55.52.151]:56811 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726125AbfGaPit (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 11:38:49 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Jul 2019 08:38:48 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,330,1559545200"; 
-   d="scan'208";a="256181994"
-Received: from marshy.an.intel.com (HELO [10.122.105.159]) ([10.122.105.159])
-  by orsmga001.jf.intel.com with ESMTP; 31 Jul 2019 08:38:47 -0700
-Subject: Re: [PATCH v2 01/10] driver core: add dev_groups to all drivers
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-References: <20190731124349.4474-1-gregkh@linuxfoundation.org>
- <20190731124349.4474-2-gregkh@linuxfoundation.org>
-From:   Richard Gong <richard.gong@linux.intel.com>
-Message-ID: <59887497-9d86-5c4d-40e3-1e5ac7c0a77a@linux.intel.com>
-Date:   Wed, 31 Jul 2019 10:51:17 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1727489AbfGaPnU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 11:43:20 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:56231 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725209AbfGaPnT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jul 2019 11:43:19 -0400
+Received: by mail-wm1-f66.google.com with SMTP id a15so61329510wmj.5;
+        Wed, 31 Jul 2019 08:43:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=EUajwmMRGVsVrWk0eieYypSiwY+eZYJiiSFARY9Eh0U=;
+        b=J5kH6xrcC0auX3oQGQvlTUsxd4krZZWFwF2U0ThyTr3bFJ+yoJUaVJm/l5KxDmv25H
+         zz+YhFWJJQqbPmpthnTFx2P0H9SHFhmyYrX6asTGnOgLn4h/3PcmyHubpnqGGepcgCFQ
+         5uC4gR7tZxA9U6QZkbGcQI5xLk2pX/HEJYBs0HzAdSs2t1F03oD0foYTqE5YJ4hO7nS4
+         w0+xqLQaOYqWfbaH0M5C9T/3igTh/GoLExaLbPUAR3jv+vaKd7EdnO6VR8CictDf6rP0
+         IHxUe2w75iDG3WRIcm7Fyse3S//D36xaFZHQ/WuJ2mjibBBNiVRPblwNrcoFAKr4QlyF
+         h0VA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=EUajwmMRGVsVrWk0eieYypSiwY+eZYJiiSFARY9Eh0U=;
+        b=Qd/2rcPcNKfuUDl2W5RfgecLsEtFkXXlpueXlxnucUk88wfJlG3vpxCLblgM2a1XzV
+         qm1zsQ/8V8hgCR5CWFDIhD4VLGuzTXJYhlUy4Ov3L9UoqHmxdFQMHyR71Tuqj9CZlFje
+         TZZMn9do89bLt4IFpdkvk9F/rvGRA66rTd6j8+0opQ9G8jdhdWYTFczVlqlKw7HFlNGV
+         Kf1hGBq43yI7It9vPd4T84DLMfl0Cpj6ObRM6/Lt1YUddTe89QLOaTZ/a1Bir7AwuT6Q
+         u8Q7veER50NClyd7Jz9H8Jpn7BOCFy54cxyJa/SfMcBfQBsN952K19XN74pvNj4Oh1ge
+         msVQ==
+X-Gm-Message-State: APjAAAVi1KIV5SC1z3/QhU677TTmB0tXRz5X/CgCIdUupktRLp8R2hck
+        98Ec0YjXFYNCPe2UWv3+e9S6Ez9v
+X-Google-Smtp-Source: APXvYqyMKfQd8cL8O1b5lX3gtIORrQMZrBXR7f7n6eIF2+qpf/sVd5kG49qLxWrL8b15IBud6DOFjw==
+X-Received: by 2002:a1c:a503:: with SMTP id o3mr106451221wme.37.1564587797144;
+        Wed, 31 Jul 2019 08:43:17 -0700 (PDT)
+Received: from vd-lxpc-hfe.ad.vahle.at ([80.110.31.209])
+        by smtp.gmail.com with ESMTPSA id b5sm58738042wru.69.2019.07.31.08.43.15
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 31 Jul 2019 08:43:16 -0700 (PDT)
+From:   Hubert Feurstein <h.feurstein@gmail.com>
+To:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Hubert Feurstein <h.feurstein@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH net] net: dsa: mv88e6xxx: drop adjust_link to enabled phylink
+Date:   Wed, 31 Jul 2019 17:42:39 +0200
+Message-Id: <20190731154239.19270-1-h.feurstein@gmail.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-In-Reply-To: <20190731124349.4474-2-gregkh@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+We have to drop the adjust_link callback in order to finally migrate to
+phylink.
 
-Hi Greg,
+Otherwise we get the following warning during startup:
+  "mv88e6xxx 2188000.ethernet-1:10: Using legacy PHYLIB callbacks. Please
+   migrate to PHYLINK!"
 
-On 7/31/19 7:43 AM, Greg Kroah-Hartman wrote:
-> From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> 
-> Add the ability for the driver core to create and remove a list of
-> attribute groups automatically when the device is bound/unbound from a
-> specific driver.
-> 
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+The warning is generated in the function dsa_port_link_register_of in
+dsa/port.c:
 
-Tested-by: Richard Gong <richard.gong@linux.intel.com>
+  int dsa_port_link_register_of(struct dsa_port *dp)
+  {
+  	struct dsa_switch *ds = dp->ds;
 
-> ---
->   drivers/base/dd.c      | 14 ++++++++++++++
->   include/linux/device.h |  3 +++
->   2 files changed, 17 insertions(+)
-> 
-> diff --git a/drivers/base/dd.c b/drivers/base/dd.c
-> index 994a90747420..d811e60610d3 100644
-> --- a/drivers/base/dd.c
-> +++ b/drivers/base/dd.c
-> @@ -554,9 +554,16 @@ static int really_probe(struct device *dev, struct device_driver *drv)
->   			goto probe_failed;
->   	}
->   
-> +	if (device_add_groups(dev, drv->dev_groups)) {
-> +		dev_err(dev, "device_add_groups() failed\n");
-> +		goto dev_groups_failed;
-> +	}
-> +
->   	if (test_remove) {
->   		test_remove = false;
->   
-> +		device_remove_groups(dev, drv->dev_groups);
-> +
->   		if (dev->bus->remove)
->   			dev->bus->remove(dev);
->   		else if (drv->remove)
-> @@ -584,6 +591,11 @@ static int really_probe(struct device *dev, struct device_driver *drv)
->   		 drv->bus->name, __func__, dev_name(dev), drv->name);
->   	goto done;
->   
-> +dev_groups_failed:
-> +	if (dev->bus->remove)
-> +		dev->bus->remove(dev);
-> +	else if (drv->remove)
-> +		drv->remove(dev);
->   probe_failed:
->   	if (dev->bus)
->   		blocking_notifier_call_chain(&dev->bus->p->bus_notifier,
-> @@ -1114,6 +1126,8 @@ static void __device_release_driver(struct device *dev, struct device *parent)
->   
->   		pm_runtime_put_sync(dev);
->   
-> +		device_remove_groups(dev, drv->dev_groups);
-> +
->   		if (dev->bus && dev->bus->remove)
->   			dev->bus->remove(dev);
->   		else if (drv->remove)
-> diff --git a/include/linux/device.h b/include/linux/device.h
-> index c330b75c6c57..98c00b71b598 100644
-> --- a/include/linux/device.h
-> +++ b/include/linux/device.h
-> @@ -262,6 +262,8 @@ enum probe_type {
->    * @resume:	Called to bring a device from sleep mode.
->    * @groups:	Default attributes that get created by the driver core
->    *		automatically.
-> + * @dev_groups:	Additional attributes attached to device instance once the
-> + *		it is bound to the driver.
->    * @pm:		Power management operations of the device which matched
->    *		this driver.
->    * @coredump:	Called when sysfs entry is written to. The device driver
-> @@ -296,6 +298,7 @@ struct device_driver {
->   	int (*suspend) (struct device *dev, pm_message_t state);
->   	int (*resume) (struct device *dev);
->   	const struct attribute_group **groups;
-> +	const struct attribute_group **dev_groups;
->   
->   	const struct dev_pm_ops *pm;
->   	void (*coredump) (struct device *dev);
-> 
+  	if (!ds->ops->adjust_link)
+  		return dsa_port_phylink_register(dp);
 
-Regards,
-Richard
+  	dev_warn(ds->dev,
+  		 "Using legacy PHYLIB callbacks. Please migrate to PHYLINK!\n");
+  	[...]
+  }
+
+Signed-off-by: Hubert Feurstein <h.feurstein@gmail.com>
+---
+ drivers/net/dsa/mv88e6xxx/chip.c | 26 --------------------------
+ 1 file changed, 26 deletions(-)
+
+diff --git a/drivers/net/dsa/mv88e6xxx/chip.c b/drivers/net/dsa/mv88e6xxx/chip.c
+index 366f70bfe055..37e8babd035f 100644
+--- a/drivers/net/dsa/mv88e6xxx/chip.c
++++ b/drivers/net/dsa/mv88e6xxx/chip.c
+@@ -27,7 +27,6 @@
+ #include <linux/platform_data/mv88e6xxx.h>
+ #include <linux/netdevice.h>
+ #include <linux/gpio/consumer.h>
+-#include <linux/phy.h>
+ #include <linux/phylink.h>
+ #include <net/dsa.h>
+ 
+@@ -482,30 +481,6 @@ static int mv88e6xxx_phy_is_internal(struct dsa_switch *ds, int port)
+ 	return port < chip->info->num_internal_phys;
+ }
+ 
+-/* We expect the switch to perform auto negotiation if there is a real
+- * phy. However, in the case of a fixed link phy, we force the port
+- * settings from the fixed link settings.
+- */
+-static void mv88e6xxx_adjust_link(struct dsa_switch *ds, int port,
+-				  struct phy_device *phydev)
+-{
+-	struct mv88e6xxx_chip *chip = ds->priv;
+-	int err;
+-
+-	if (!phy_is_pseudo_fixed_link(phydev) &&
+-	    mv88e6xxx_phy_is_internal(ds, port))
+-		return;
+-
+-	mv88e6xxx_reg_lock(chip);
+-	err = mv88e6xxx_port_setup_mac(chip, port, phydev->link, phydev->speed,
+-				       phydev->duplex, phydev->pause,
+-				       phydev->interface);
+-	mv88e6xxx_reg_unlock(chip);
+-
+-	if (err && err != -EOPNOTSUPP)
+-		dev_err(ds->dev, "p%d: failed to configure MAC\n", port);
+-}
+-
+ static void mv88e6065_phylink_validate(struct mv88e6xxx_chip *chip, int port,
+ 				       unsigned long *mask,
+ 				       struct phylink_link_state *state)
+@@ -4755,7 +4730,6 @@ static int mv88e6xxx_port_egress_floods(struct dsa_switch *ds, int port,
+ static const struct dsa_switch_ops mv88e6xxx_switch_ops = {
+ 	.get_tag_protocol	= mv88e6xxx_get_tag_protocol,
+ 	.setup			= mv88e6xxx_setup,
+-	.adjust_link		= mv88e6xxx_adjust_link,
+ 	.phylink_validate	= mv88e6xxx_validate,
+ 	.phylink_mac_link_state	= mv88e6xxx_link_state,
+ 	.phylink_mac_config	= mv88e6xxx_mac_config,
+-- 
+2.22.0
+
