@@ -2,118 +2,161 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C200E7CF33
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 22:59:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C223B7CF45
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 23:03:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730762AbfGaU7P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 16:59:15 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:39024 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726417AbfGaU7O (ORCPT
+        id S1728974AbfGaVDQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 17:03:16 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:43070 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726096AbfGaVDP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 16:59:14 -0400
-Received: by mail-lf1-f67.google.com with SMTP id v85so48415485lfa.6
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 13:59:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=cT2pwWCno8U0E9z595FUeml+E2FjE1G6WM/y1TMSDeY=;
-        b=gZeX5/P8VVl76PaeOu/zqWAJHYlar5uwTH6ZSuTtMeOHfMoggs2cR9PtHqjwO/0LcS
-         KR8sEFP1yrtuL1bNbZEyWkQVaKovN98Trdj5riPrkVTnneRjkanxjOcEgyC42OrB39Wg
-         3PZFNp/sQIAi6mwbnWj1HGYiXX9wxNjew6V3VI2ikkUhyGLXBtXa5TaxOQUcLbEPsOq1
-         W09VJ9OMxn9lZrxDrCr9WJHFPEgLpbLDCD1UGVNLXq1cKssVIHk6vfWfpj+mTSFaGEcO
-         9vqsYpG/re4449zo0g/Jr9waZwwOWFcCsrNkCAiYg5GML0UgOfN5MZ7yzX8S9Wl9jexJ
-         pGrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=cT2pwWCno8U0E9z595FUeml+E2FjE1G6WM/y1TMSDeY=;
-        b=qqUt5cqx43U2st7yAHNxlSwV6CuwMWCBePX0WfmOCtFpwV8QSF4XCUyt2fEo18FYcW
-         dwWYjfysGDfu4hU8B/K/ppiWQVD9qdGO4/faswLqpOOgIIhzNTBl6mQq17ag0sqri0cC
-         xe1O3x1chMAQMku2Yy+LHdAr/sWLBiWz0m1SxNlRcsEesl0ETdHxkg1WM2giC8CKAtNp
-         dJuveNRg9JB8OaNeqXBEJ+flwZjyPptOPFXqlY693DfG8etSTxhz7P+pHrCwiuQjT1iw
-         UMC5zuNCEQj/mczEmJcG0VfKToBf6NRmTxwQwRE0pJbc4QAH0ZpIFvPNto+zzSxpr3lC
-         zXAw==
-X-Gm-Message-State: APjAAAXjAXlLW0yirxxTSZbdMliov7lM2aUSmkcSSwm6pwuqgYASTQpG
-        Mi4XJgdTMBiu8fSqWsvbIqPRwiiKDuj3kvLH35PnxdQK
-X-Google-Smtp-Source: APXvYqz4jC/AaXCiF0F+j6GjeNnZYwk7zRg9/r/Ml/j5d8O3uBU8ic7CjPFoZqtog5Gy3uWN5GY0Y5xRGyAJM+Mnnq8=
-X-Received: by 2002:ac2:46d5:: with SMTP id p21mr26180782lfo.133.1564606752711;
- Wed, 31 Jul 2019 13:59:12 -0700 (PDT)
+        Wed, 31 Jul 2019 17:03:15 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6VF8aRM052343;
+        Wed, 31 Jul 2019 15:14:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=jPTHj5nlpLsKluMqdbevCd+OddfGtT5PcS8BjhKitxA=;
+ b=Q7pb1MenHgobHEYolnpA41Hm695nIn5z23xKGClgnYsueqa+3czNiM10IfkXiMORkqGk
+ xIpVtctk+nR7MBou0HV+tM5Ao876lq+KRR54zpeOZJiQrCt1DJU5ngh9syDTI58oz/bp
+ Q+KEB7wm6oq94FiBJNONRPzRFL7oVMywoh61OJJgGQA3/y+slFLDpGgXPmYV2eEwjCjM
+ sjOitpGMNdh26D7OmrPbzeBmZIR/NCzaZpZ2p3JErVaOT4q9rB/tE8T9eZ6hK61PLuXs
+ 9JymdwLmHuCB/WFwONSLZqEvTEBGnjX7VIig3SX5tsK6VCFhbOVlZupfLXSK/gEU1r9x Pw== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2120.oracle.com with ESMTP id 2u0ejpnwrf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 31 Jul 2019 15:14:57 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x6VFD17Y008814;
+        Wed, 31 Jul 2019 15:14:57 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3020.oracle.com with ESMTP id 2u2jp56vdu-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 31 Jul 2019 15:14:57 +0000
+Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x6VFErpV021960;
+        Wed, 31 Jul 2019 15:14:53 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 31 Jul 2019 08:14:53 -0700
+Date:   Wed, 31 Jul 2019 08:14:52 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Deepa Dinamani <deepa.kernel@gmail.com>
+Cc:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, arnd@arndb.de,
+        y2038@lists.linaro.org
+Subject: Re: [PATCH 05/20] utimes: Clamp the timestamps before update
+Message-ID: <20190731151452.GA7077@magnolia>
+References: <20190730014924.2193-1-deepa.kernel@gmail.com>
+ <20190730014924.2193-6-deepa.kernel@gmail.com>
 MIME-Version: 1.0
-References: <e0dd3af448e38e342c1ac6e7c0c802696eb77fd6.1564549413.git.joe@perches.com>
- <1d2830aadbe9d8151728a7df5b88528fc72a0095.1564549413.git.joe@perches.com>
- <20190731171429.GA24222@amd> <ccc7fa72d0f83ddd62067092b105bd801479004b.camel@perches.com>
- <765E740C-4259-4835-A58D-432006628BAC@zytor.com> <20190731184832.GZ31381@hirez.programming.kicks-ass.net>
- <201907311301.EC1D84F@keescook>
-In-Reply-To: <201907311301.EC1D84F@keescook>
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Wed, 31 Jul 2019 22:59:01 +0200
-Message-ID: <CANiq72kMpP_PSBb0e5wMVNiuYvwSWdR+x_H_tPrEnQ_j1y7X+Q@mail.gmail.com>
-Subject: Re: [RFC PATCH] compiler_attributes.h: Add 'fallthrough' pseudo
- keyword for switch/case use
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Joe Perches <joe@perches.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "Gustavo A . R . Silva" <gustavo@embeddedor.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Shawn Landden <shawn@git.icu>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190730014924.2193-6-deepa.kernel@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9335 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1907310156
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9335 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1907310156
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 31, 2019 at 10:02 PM Kees Cook <keescook@chromium.org> wrote:
->
-> On Wed, Jul 31, 2019 at 08:48:32PM +0200, Peter Zijlstra wrote:
-> > On Wed, Jul 31, 2019 at 11:24:36AM -0700, hpa@zytor.com wrote:
-> > > >> > +/*
-> > > >> > + * Add the pseudo keyword 'fallthrough' so case statement blocks
-> > > >> > + * must end with any of these keywords:
-> > > >> > + *   break;
-> > > >> > + *   fallthrough;
-> > > >> > + *   goto <label>;
-> > > >> > + *   return [expression];
-> > > >> > + *
-> > > >> > + *  gcc: >https://gcc.gnu.org/onlinedocs/gcc/Statement-Attributes.html#Statement-Attributes
-> > > >> > + */
-> > > >> > +#if __has_attribute(__fallthrough__)
-> > > >> > +# define fallthrough                   __attribute__((__fallthrough__))
-> > > >> > +#else
-> > > >> > +# define fallthrough                    do {} while (0)  /* fallthrough */
-> > > >> > +#endif
-> > > >> > +
-> >
-> > > If the comments are stripped, how would the compiler see them to be
-> > > able to issue a warning? I would guess that it is retained or replaced
-> > > with some other magic token.
-> >
-> > Everything that has the warning (GCC-7+/CLANG-9) has that attribute.
->
-> I'd like to make sure we don't regress Coverity most of all. If the
-> recent updates to the Coverity scanner include support for the attribute
-> now, then I'm all for it. :)
+On Mon, Jul 29, 2019 at 06:49:09PM -0700, Deepa Dinamani wrote:
+> POSIX is ambiguous on the behavior of timestamps for
+> futimens, utimensat and utimes. Whether to return an
+> error or silently clamp a timestamp beyond the range
+> supported by the underlying filesystems is not clear.
+> 
+> POSIX.1 section for futimens, utimensat and utimes says:
+> (http://pubs.opengroup.org/onlinepubs/9699919799/functions/futimens.html)
+> 
+> The file's relevant timestamp shall be set to the greatest
+> value supported by the file system that is not greater
+> than the specified time.
+> 
+> If the tv_nsec field of a timespec structure has the special
+> value UTIME_NOW, the file's relevant timestamp shall be set
+> to the greatest value supported by the file system that is
+> not greater than the current time.
+> 
+> [EINVAL]
+>     A new file timestamp would be a value whose tv_sec
+>     component is not a value supported by the file system.
+> 
+> The patch chooses to clamp the timestamps according to the
+> filesystem timestamp ranges and does not return an error.
+> This is in line with the behavior of utime syscall also
+> since the POSIX page(http://pubs.opengroup.org/onlinepubs/009695399/functions/utime.html)
+> for utime does not mention returning an error or clamping like above.
+> 
+> Same for utimes http://pubs.opengroup.org/onlinepubs/009695399/functions/utimes.html
+> 
+> Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
+> ---
+>  fs/utimes.c | 17 +++++++++++++----
+>  1 file changed, 13 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/utimes.c b/fs/utimes.c
+> index 350c9c16ace1..4c1a2ce90bbc 100644
+> --- a/fs/utimes.c
+> +++ b/fs/utimes.c
+> @@ -21,6 +21,7 @@ static int utimes_common(const struct path *path, struct timespec64 *times)
+>  	int error;
+>  	struct iattr newattrs;
+>  	struct inode *inode = path->dentry->d_inode;
+> +	struct super_block *sb = inode->i_sb;
+>  	struct inode *delegated_inode = NULL;
+>  
+>  	error = mnt_want_write(path->mnt);
+> @@ -36,16 +37,24 @@ static int utimes_common(const struct path *path, struct timespec64 *times)
+>  		if (times[0].tv_nsec == UTIME_OMIT)
+>  			newattrs.ia_valid &= ~ATTR_ATIME;
+>  		else if (times[0].tv_nsec != UTIME_NOW) {
+> -			newattrs.ia_atime.tv_sec = times[0].tv_sec;
+> -			newattrs.ia_atime.tv_nsec = times[0].tv_nsec;
+> +			newattrs.ia_atime.tv_sec =
+> +				clamp(times[0].tv_sec, sb->s_time_min, sb->s_time_max);
+> +			if (times[0].tv_sec == sb->s_time_max || times[0].tv_sec == sb->s_time_min)
+> +				newattrs.ia_atime.tv_nsec = 0;
+> +			else
+> +				newattrs.ia_atime.tv_nsec = times[0].tv_nsec;
+>  			newattrs.ia_valid |= ATTR_ATIME_SET;
+>  		}
+>  
+>  		if (times[1].tv_nsec == UTIME_OMIT)
+>  			newattrs.ia_valid &= ~ATTR_MTIME;
+>  		else if (times[1].tv_nsec != UTIME_NOW) {
+> -			newattrs.ia_mtime.tv_sec = times[1].tv_sec;
+> -			newattrs.ia_mtime.tv_nsec = times[1].tv_nsec;
+> +			newattrs.ia_mtime.tv_sec =
+> +				clamp(times[1].tv_sec, sb->s_time_min, sb->s_time_max);
+> +			if (times[1].tv_sec >= sb->s_time_max || times[1].tv_sec == sb->s_time_min)
 
-We had this discussion a while ago (October) and the consensus was
-that we would like to wait for a while until all tools were ready to
-use the attribute and everyone's would be happy:
+Line length.
 
-  https://lore.kernel.org/lkml/20181021171414.22674-1-miguel.ojeda.sandonis@gmail.com/
+Also, didn't you just introduce a function to clamp tv_sec and fix
+granularity?  Why not just use it here?  I think this is the third time
+I've seen this open-coded logic.
 
-Is everyone happy this time around? :-)
+--D
 
-Cheers,
-Miguel
+> +				newattrs.ia_mtime.tv_nsec = 0;
+> +			else
+> +				newattrs.ia_mtime.tv_nsec = times[1].tv_nsec;
+>  			newattrs.ia_valid |= ATTR_MTIME_SET;
+>  		}
+>  		/*
+> -- 
+> 2.17.1
+> 
