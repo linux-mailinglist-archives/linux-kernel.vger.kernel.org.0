@@ -2,128 +2,330 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 227E57C0AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 14:05:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B2447C0B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 14:06:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728723AbfGaMFC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 08:05:02 -0400
-Received: from mx2.suse.de ([195.135.220.15]:33462 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725935AbfGaMFB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 08:05:01 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id B5282AB9D;
-        Wed, 31 Jul 2019 12:04:59 +0000 (UTC)
-Subject: Re: [PATCH] nvme/multipath: revalidate nvme_ns_head gendisk in
- nvme_validate_ns
-To:     Anthony Iliopoulos <ailiopoulos@suse.com>,
-        Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@fb.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>
-Cc:     linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-        Johannes Thumshirn <jthumshirn@suse.de>
-References: <20190729124040.16581-1-ailiopoulos@suse.com>
-From:   Hannes Reinecke <hare@suse.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=hare@suse.de; prefer-encrypt=mutual; keydata=
- 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
- azzYF4VRJsdl+d0MCaSy8mUh
-Message-ID: <b85af4b7-bf17-709f-cf45-d1fbc7573131@suse.de>
-Date:   Wed, 31 Jul 2019 14:04:59 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1728858AbfGaMGN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 08:06:13 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:41262 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726894AbfGaMGN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jul 2019 08:06:13 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=0Z9ZbCHEVPCiOrZv0cTtLSmcON8MXzcglXRCnU88rwM=; b=Y6JjRtnQbB/u3GszpUa9LGC5M
+        Y65ha+dS9ae0HZeJ8X+KvGQDeByQrxXlCD6VLlp2KTI+3V65qT+8yEcrBcZrsFQJnoXL5nXjgODro
+        b/eMlS5Gbb/1rEp9lqWVx50gOf72biTlE+dzauh5f0EpXaWvNRZ0Em5Gos3dsY9p4u4b9LbHADtgN
+        ijDYO/haLKspKiu7a6M2SvFJOK4Kk2nOGjhz7TVhnoOiistRULad1BHaPxUre3DOARirzHk6FuKxQ
+        usIlDtxqqn570azVU0xWdIDiMnwLfPjLINPOyqdNgKashsDYtlPRx8XZ2vwcpcCdNmI+HqWT7CwVm
+        KOkIt7rmg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hsnMo-0002Ub-AO; Wed, 31 Jul 2019 12:06:02 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 190B62029F869; Wed, 31 Jul 2019 14:06:00 +0200 (CEST)
+Date:   Wed, 31 Jul 2019 14:06:00 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Gabriel Krisman Bertazi <krisman@collabora.com>
+Cc:     tglx@linutronix.de, mingo@redhat.com, dvhart@infradead.org,
+        linux-kernel@vger.kernel.org, kernel@collabora.com,
+        Zebediah Figura <z.figura12@gmail.com>,
+        Steven Noonan <steven@valvesoftware.com>,
+        "Pierre-Loup A . Griffais" <pgriffais@valvesoftware.com>,
+        viro@zeniv.linux.org.uk, jannh@google.com
+Subject: Re: [PATCH RFC 2/2] futex: Implement mechanism to wait on any of
+ several futexes
+Message-ID: <20190731120600.GT31381@hirez.programming.kicks-ass.net>
+References: <20190730220602.28781-1-krisman@collabora.com>
+ <20190730220602.28781-2-krisman@collabora.com>
 MIME-Version: 1.0
-In-Reply-To: <20190729124040.16581-1-ailiopoulos@suse.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190730220602.28781-2-krisman@collabora.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/29/19 2:40 PM, Anthony Iliopoulos wrote:
-> When CONFIG_NVME_MULTIPATH is set, only the hidden gendisk associated
-> with the per-controller ns is run through revalidate_disk when a
-> rescan is triggered, while the visible blockdev never gets its size
-> (bdev->bd_inode->i_size) updated to reflect any capacity changes that
-> may have occurred.
+On Tue, Jul 30, 2019 at 06:06:02PM -0400, Gabriel Krisman Bertazi wrote:
+> This is a new futex operation, called FUTEX_WAIT_MULTIPLE, which allows
+> a thread to wait on several futexes at the same time, and be awoken by
+> any of them.  In a sense, it implements one of the features that was
+> supported by pooling on the old FUTEX_FD interface.
 > 
-> This prevents online resizing of nvme block devices and in extension of
-> any filesystems atop that will are unable to expand while mounted, as
-> userspace relies on the blockdev size for obtaining the disk capacity
-> (via BLKGETSIZE/64 ioctls).
+> My use case for this operation lies in Wine, where we want to implement
+> a similar interface available in Windows, used mainly for event
+> handling.  The wine folks have an implementation that uses eventfd, but
+> it suffers from FD exhaustion (I was told they have application that go
+> to the order of multi-milion FDs), and higher CPU utilization.
+
+So is multi-million the range we expect for @count ?
+
+If so, we're having problems, see below.
+
+> In time, we are also proposing modifications to glibc and libpthread to
+> make this feature available for Linux native multithreaded applications
+> using libpthread, which can benefit from the behavior of waiting on any
+> of a group of futexes.
 > 
-> Fix this by explicitly revalidating the actual namespace gendisk in
-> addition to the per-controller gendisk, when multipath is enabled.
+> In particular, using futexes in our Wine use case reduced the CPU
+> utilization by 4% for the game Beat Saber and by 1.5% for the game
+> Shadow of Tomb Raider, both running over Proton (a wine based solution
+> for Windows emulation), when compared to the eventfd interface. This
+> implementation also doesn't rely of file descriptors, so it doesn't risk
+> overflowing the resource.
 > 
-> Signed-off-by: Anthony Iliopoulos <ailiopoulos@suse.com>
+> Technically, the existing FUTEX_WAIT implementation can be easily
+> reworked by using do_futex_wait_multiple with a count of one, and I
+> have a patch showing how it works.  I'm not proposing it, since
+> futex is such a tricky code, that I'd be more confortable to have
+> FUTEX_WAIT_MULTIPLE running upstream for a couple development cycles,
+> before considering modifying FUTEX_WAIT.
+> 
+> From an implementation perspective, the futex list is passed as an array
+> of (pointer,value,bitset) to the kernel, which will enqueue all of them
+> and sleep if none was already triggered. It returns a hint of which
+> futex caused the wake up event to userspace, but the hint doesn't
+> guarantee that is the only futex triggered.  Before calling the syscall
+> again, userspace should traverse the list, trying to re-acquire any of
+> the other futexes, to prevent an immediate -EWOULDBLOCK return code from
+> the kernel.
+
+> Signed-off-by: Zebediah Figura <z.figura12@gmail.com>
+> Signed-off-by: Steven Noonan <steven@valvesoftware.com>
+> Signed-off-by: Pierre-Loup A. Griffais <pgriffais@valvesoftware.com>
+> Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+
+That is not a valid SoB chain.
+
 > ---
->  drivers/nvme/host/core.c | 1 +
->  1 file changed, 1 insertion(+)
+>  include/uapi/linux/futex.h |   7 ++
+>  kernel/futex.c             | 161 ++++++++++++++++++++++++++++++++++++-
+>  2 files changed, 164 insertions(+), 4 deletions(-)
 > 
-> diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-> index 8f3fbe5ca937..80c7a7ee240b 100644
-> --- a/drivers/nvme/host/core.c
-> +++ b/drivers/nvme/host/core.c
-> @@ -1715,6 +1715,7 @@ static void __nvme_revalidate_disk(struct gendisk *disk, struct nvme_id_ns *id)
->  	if (ns->head->disk) {
->  		nvme_update_disk_info(ns->head->disk, ns, id);
->  		blk_queue_stack_limits(ns->head->disk->queue, ns->queue);
-> +		revalidate_disk(ns->head->disk);
->  	}
->  #endif
->  }
-> 
-Reviewed-by: Hannes Reinecke <hare@suse.com>
+> diff --git a/include/uapi/linux/futex.h b/include/uapi/linux/futex.h
+> index a89eb0accd5e..2401c4cf5095 100644
+> --- a/include/uapi/linux/futex.h
+> +++ b/include/uapi/linux/futex.h
 
-Cheers,
+> @@ -150,4 +151,10 @@ struct robust_list_head {
+>    (((op & 0xf) << 28) | ((cmp & 0xf) << 24)		\
+>     | ((oparg & 0xfff) << 12) | (cmparg & 0xfff))
+>  
+> +struct futex_wait_block {
+> +	__u32 __user *uaddr;
+> +	__u32 val;
+> +	__u32 bitset;
+> +};
 
-Hannes
--- 
-Dr. Hannes Reinecke		   Teamlead Storage & Networking
-hare@suse.de			               +49 911 74053 688
-SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
-GF: Felix Imendörffer, Mary Higgins, Sri Rasiah
-HRB 21284 (AG Nürnberg)
+That is not compat invariant and I see a distinct lack of compat code in
+this patch.
+
+> diff --git a/kernel/futex.c b/kernel/futex.c
+> index 91f3db335c57..2623e8f152cd 100644
+> --- a/kernel/futex.c
+> +++ b/kernel/futex.c
+
+no function comment in sight
+
+> +static int do_futex_wait_multiple(struct futex_wait_block *wb,
+> +				  u32 count, unsigned int flags,
+> +				  ktime_t *abs_time)
+> +{
+> +
+
+(spurious empty line)
+
+> +	struct hrtimer_sleeper timeout, *to;
+> +	struct futex_hash_bucket *hb;
+> +	struct futex_q *qs = NULL;
+> +	int ret;
+> +	int i;
+> +
+> +	qs = kcalloc(count, sizeof(struct futex_q), GFP_KERNEL);
+> +	if (!qs)
+> +		return -ENOMEM;
+
+This will not work for @count ~ 1e6, or rather, MAX_ORDER is 11, so we
+can, at most, allocate 4096 << 11 bytes, and since sizeof(futex_q) ==
+112, that gives: ~75k objects.
+
+Also; this is the only actual limit placed on @count.
+
+Jann, Al, this also allows a single task to increment i_count or
+mm_count by ~75k, which might be really awesome for refcount smashing
+attacks.
+
+> +
+> +	to = futex_setup_timer(abs_time, &timeout, flags,
+> +			       current->timer_slack_ns);
+> + retry:
+
+(wrongly indented label)
+
+> +	for (i = 0; i < count; i++) {
+> +		qs[i].key = FUTEX_KEY_INIT;
+> +		qs[i].bitset = wb[i].bitset;
+> +
+> +		ret = get_futex_key(wb[i].uaddr, flags & FLAGS_SHARED,
+> +				    &qs[i].key, FUTEX_READ);
+> +		if (unlikely(ret != 0)) {
+> +			for (--i; i >= 0; i--)
+> +				put_futex_key(&qs[i].key);
+> +			goto out;
+> +		}
+> +	}
+> +
+> +	set_current_state(TASK_INTERRUPTIBLE);
+> +
+> +	for (i = 0; i < count; i++) {
+> +		ret = __futex_wait_setup(wb[i].uaddr, wb[i].val,
+> +					 flags, &qs[i], &hb);
+> +		if (ret) {
+> +			/* Drop the failed key directly.  keys 0..(i-1)
+> +			 * will be put by unqueue_me.
+> +			 */
+
+(broken comment style)
+
+> +			put_futex_key(&qs[i].key);
+> +
+> +			/* Undo the partial work we did. */
+> +			for (--i; i >= 0; i--)
+> +				unqueue_me(&qs[i]);
+> +
+> +			__set_current_state(TASK_RUNNING);
+> +			if (ret > 0)
+> +				goto retry;
+> +			goto out;
+> +		}
+> +
+> +		/* We can't hold to the bucket lock when dealing with
+> +		 * the next futex. Queue ourselves now so we can unlock
+> +		 * it before moving on.
+> +		 */
+
+(broken comment style)
+
+> +		queue_me(&qs[i], hb);
+> +	}
+> +
+> +	if (to)
+> +		hrtimer_start_expires(&to->timer, HRTIMER_MODE_ABS);
+> +
+> +	/* There is no easy to way to check if we are wake already on
+> +	 * multiple futexes without waking through each one of them.  So
+> +	 * just sleep and let the scheduler handle it.
+> +	 */
+
+(broken comment style)
+
+> +	if (!to || to->task)
+> +		freezable_schedule();
+> +
+> +	__set_current_state(TASK_RUNNING);
+> +
+> +	ret = -ETIMEDOUT;
+> +	/* If we were woken (and unqueued), we succeeded. */
+> +	for (i = 0; i < count; i++)
+> +		if (!unqueue_me(&qs[i]))
+> +			ret = i;
+
+(missing {})
+
+> +
+> +	/* Succeed wakeup */
+> +	if (ret >= 0)
+> +		goto out;
+> +
+> +	/* Woken by triggered timeout */
+> +	if (to && !to->task)
+> +		goto out;
+> +
+> +	/*
+> +	 * We expect signal_pending(current), but we might be the
+> +	 * victim of a spurious wakeup as well.
+> +	 */
+
+(curiously correct comment style -- which makes the patch
+self-inconsistent)
+
+> +	if (!signal_pending(current))
+> +		goto retry;
+
+I think that if you invest in a few helper functions; the above can be
+reduced and written more like a normal wait loop.
+
+> +
+> +	ret = -ERESTARTSYS;
+> +	if (!abs_time)
+> +		goto out;
+> +
+> +	ret = -ERESTART_RESTARTBLOCK;
+> + out:
+
+(wrong label indent)
+
+> +	if (to) {
+> +		hrtimer_cancel(&to->timer);
+> +		destroy_hrtimer_on_stack(&to->timer);
+> +	}
+> +
+> +	kfree(qs);
+> +	return ret;
+> +}
+> +
+
+distinct lack of function comments
+
+> +static int futex_wait_multiple(u32 __user *uaddr, unsigned int flags,
+> +			       u32 count, ktime_t *abs_time)
+> +{
+> +	struct futex_wait_block *wb;
+> +	struct restart_block *restart;
+> +	int ret;
+> +
+> +	if (!count)
+> +		return -EINVAL;
+> +
+> +	wb = kcalloc(count, sizeof(struct futex_wait_block), GFP_KERNEL);
+> +	if (!wb)
+> +		return -ENOMEM;
+> +
+> +	if (copy_from_user(wb, uaddr,
+> +			   count * sizeof(struct futex_wait_block))) {
+> +		ret = -EFAULT;
+> +		goto out;
+> +	}
+
+I'm thinking we can do away with this giant copy and do it one at a time
+from the other function, just extend the storage allocated there to
+store whatever values are still required later.
+
+Do we want to impose alignment constraints on uaddr?
+
+> +	ret = do_futex_wait_multiple(wb, count, flags, abs_time);
+> +
+> +	if (ret == -ERESTART_RESTARTBLOCK) {
+> +		restart = &current->restart_block;
+> +		restart->fn = futex_wait_restart;
+> +		restart->futex.uaddr = uaddr;
+> +		restart->futex.val = count;
+> +		restart->futex.time = *abs_time;
+> +		restart->futex.flags = (flags | FLAGS_HAS_TIMEOUT |
+> +					FLAGS_WAKE_MULTIPLE);
+> +	}
+> +
+> +out:
+
+(inconsistent correctly indented label)
+
+> +	kfree(wb);
+> +	return ret;
+> +}
