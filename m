@@ -2,84 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 936227C4A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 16:17:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ACE8E7C4A8
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 16:17:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727629AbfGaORG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 10:17:06 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50484 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726308AbfGaORG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 10:17:06 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 23B6BAE5C;
-        Wed, 31 Jul 2019 14:17:05 +0000 (UTC)
-Date:   Wed, 31 Jul 2019 16:17:04 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-acpi@vger.kernel.org,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Oscar Salvador <osalvador@suse.de>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH v1] drivers/acpi/scan.c: Document why we don't need the
- device_hotplug_lock
-Message-ID: <20190731141704.GW9330@dhcp22.suse.cz>
-References: <20190731135306.31524-1-david@redhat.com>
+        id S1727903AbfGaORK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 10:17:10 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:36384 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726308AbfGaORH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jul 2019 10:17:07 -0400
+Received: by mail-pg1-f195.google.com with SMTP id l21so32082005pgm.3
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 07:17:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=message-id:mime-version:content-transfer-encoding:in-reply-to
+         :references:cc:from:to:subject:user-agent:date;
+        bh=XVFrKalXLRegBW45+spzUS0bWpMUOiP79SdvvKgnepk=;
+        b=iYMkFxzSu8BzSe7iyLl3BplH8dqGn8BPphddF/VAx+cUW9kZA2uSxyTTctnwXO6Qgu
+         xfqowa6cQFgp6OAzQNJAhr1aePeF+3u9xeQc+LQmNZndWZHTcwH4LHAwWumTYwVPv8hA
+         LmTAADFLPQw6F8CfcaiVIKfF14a7h2kpyYfd4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:mime-version
+         :content-transfer-encoding:in-reply-to:references:cc:from:to:subject
+         :user-agent:date;
+        bh=XVFrKalXLRegBW45+spzUS0bWpMUOiP79SdvvKgnepk=;
+        b=W2Nf9tX/eu6lTptVxd2tH1ZO2t56CJXjXYm590ZNOkyhu6vcrRTS2DWtR6aNhXthZI
+         U4mkA9B9svTSRV0SwfBSiybPfD2I74EMmHnfCaWp8Fmwlz4nd3tMjXmUcKrsR2rVXay9
+         jTIvjij6m/q1muMVkvlhJMuASO721PTIJTS4Ht6v6VRja4g3zO0ZLlVezOqv2VkQpgFM
+         TVygxXwPjcItaVCD1LjxEoLJpTj92ADpjOncaVK+yBAA3BUy/TNGneBqRNZ3yx0catny
+         sotXYDEIyegs2p1z7JZ4xNEavgOBN38DqOgVSSf6LUIExulJ31hOiSsT4jhOxKvUgIoC
+         pq6Q==
+X-Gm-Message-State: APjAAAUNwX3XMz8F4GwexWLPgvgCaQc8Dgqku54qfjr2/IAI3rsJFIEm
+        0gIhG3rk8gnxgAqgEtOxCdx5fQ==
+X-Google-Smtp-Source: APXvYqw2wiw/+RDnWb839aBeqYUakyy+ryIDb5GNRAP4xZ5xaqeatW6EHGUQXPb2eUVOlEHXP6EDaw==
+X-Received: by 2002:a63:c23:: with SMTP id b35mr80255223pgl.265.1564582626723;
+        Wed, 31 Jul 2019 07:17:06 -0700 (PDT)
+Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id q63sm89283386pfb.81.2019.07.31.07.17.06
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 31 Jul 2019 07:17:06 -0700 (PDT)
+Message-ID: <5d41a2e2.1c69fb81.192ec.ecd4@mx.google.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190731135306.31524-1-david@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190730234052.148744-1-dianders@chromium.org>
+References: <20190730234052.148744-1-dianders@chromium.org>
+Cc:     kgdb-bugreport@lists.sourceforge.net,
+        Jason Wessel <jason.wessel@windriver.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        linux-kernel@vger.kernel.org
+From:   Stephen Boyd <swboyd@chromium.org>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Jan Kiszka <jan.kiszka@siemens.com>,
+        Kieran Bingham <kbingham@kernel.org>
+Subject: Re: [PATCH] scripts/gdb: Handle split debug
+User-Agent: alot/0.8.1
+Date:   Wed, 31 Jul 2019 07:17:05 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 31-07-19 15:53:06, David Hildenbrand wrote:
-> Let's document why the lock is not needed in acpi_scan_init(), right now
-> this is not really obvious.
-> 
-> Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> Cc: Michal Hocko <mhocko@suse.com>
-> Cc: Oscar Salvador <osalvador@suse.de>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Signed-off-by: David Hildenbrand <david@redhat.com>
-
-Acked-by: Michal Hocko <mhocko@suse.com>
-
-Thanks!
-
+Quoting Douglas Anderson (2019-07-30 16:40:52)
+> Some systems (like Chrome OS) may use "split debug" for kernel
+> modules.  That means that the debug symbols are in a different file
+> than the main elf file.  Let's handle that by also searching for debug
+> symbols that end in ".ko.debug".
+>=20
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
 > ---
-> 
-> @Andrew, can you drop "drivers/acpi/scan.c: acquire device_hotplug_lock in
-> acpi_scan_init()" and add this patch instead? Thanks
-> 
-> ---
->  drivers/acpi/scan.c | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
-> index 0e28270b0fd8..8444af6cd514 100644
-> --- a/drivers/acpi/scan.c
-> +++ b/drivers/acpi/scan.c
-> @@ -2204,6 +2204,12 @@ int __init acpi_scan_init(void)
->  	acpi_gpe_apply_masked_gpes();
->  	acpi_update_all_gpes();
->  
-> +	/*
-> +	 * Although we call__add_memory() that is documented to require the
-> +	 * device_hotplug_lock, it is not necessary here because this is an
-> +	 * early code when userspace or any other code path cannot trigger
-> +	 * hotplug/hotunplug operations.
-> +	 */
->  	mutex_lock(&acpi_scan_lock);
->  	/*
->  	 * Enumerate devices in the ACPI namespace.
-> -- 
-> 2.21.0
 
--- 
-Michal Hocko
-SUSE Labs
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+
