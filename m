@@ -2,84 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC9BE7CE44
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 22:26:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 36EF87CE50
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 22:28:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730524AbfGaU0x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 16:26:53 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:37360 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728136AbfGaU0x (ORCPT
+        id S1730560AbfGaU2F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 16:28:05 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:45645 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729730AbfGaU2F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 16:26:53 -0400
-Received: by mail-qt1-f194.google.com with SMTP id y26so67873946qto.4;
-        Wed, 31 Jul 2019 13:26:52 -0700 (PDT)
+        Wed, 31 Jul 2019 16:28:05 -0400
+Received: by mail-io1-f67.google.com with SMTP id g20so139215987ioc.12
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 13:28:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=dBGsm49OysEg7bHxsXfAQevchwfTyjC8ZOrR2juUMrM=;
+        b=Q2Q5ZZvLyygWDWivclFZ/bbeT+uEMirhfkYAS8VsgPhwm33/Jc50fxvztwqBGotkl4
+         Z77nFFONeALg1wxjQFQEPl5UoFIbBWWFs4S9nWN1EOgNVML9wAHPIIZQibmOIIzwDJz3
+         if2AqAe6gOov1+C6pHUgExQbnR6eZzQ3t9F1GhfgnVBios2EmHYkB3loA3VHMkVMcBYK
+         db7fMEI7Srk5UcuHSJku7GmxCP4WnpXaqwUJfvXX2eOWE7En4qRQS569NYYC20Z5nscq
+         qV+0lUKrc8OxaEadG5SqiqKehkqy837x0fj+4KGHGek8q/RibYkZ32XYlvloXV18PUvY
+         6Rfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Nexwj/gyEdfGcFhtgJkuEvqAxLsbVQicvOBgvCJpGfM=;
-        b=D9jgJbYsefhU1bp4dHus8py68/b5IqFtti2ZA0IWtdNeTXXzgHoSvZgwyATaRbMo1I
-         Y2ZCvsQkNKiv3MfwEoO16AvmHiVqDynglfC0pMvczN8idqyL5Mue63+1gp7WH8Ey6Zl5
-         q4otDS5gwreCRXddS9examugoB0OmqicTmHXCzevjo/B0Z4WIaAQvRK0HHiWWSKDv73h
-         SJNPXEYWiUALSViuZZDV6klbePjHei9zkLbp/WMrrRTy1DJyXpb4s8CuT0xBMAgxVSWJ
-         I2H6gKlCtVeQZYR2tKUDWHpUvstIUcQNUuXHWepTCde40wxp4JGtVGFZ0yiepChrzfAm
-         y4ww==
-X-Gm-Message-State: APjAAAXxEtv4W0WR0m/laJUHCGRRHEsNz2JcwmRfQqSc+67bMUvLcr9w
-        YNYoizlbjZMkCq1Q4gfVD8Z0/nUP5Rd4r7OdTvQ=
-X-Google-Smtp-Source: APXvYqxrQwILyzcU6or5m1F0P2T2g+2d1hVZgeveWHo/LNI028WFf469HVX7i9p/CxTB96w3vHftaMn2P+OT3OV3MzY=
-X-Received: by 2002:aed:33a4:: with SMTP id v33mr84957899qtd.18.1564604812113;
- Wed, 31 Jul 2019 13:26:52 -0700 (PDT)
+        bh=dBGsm49OysEg7bHxsXfAQevchwfTyjC8ZOrR2juUMrM=;
+        b=iv8H36eDQdkii+9fZMHMiuaCxdAA8joE7ExxOMOHSlMBiF7KPfFMlOjIaqjiDru+Mk
+         rXG3CI5z1957TCFqpm9Hzaa88II0z71Oe/28l+yrM7xFbVXMyCc5Pb8lk41/1z7HVs/b
+         VsUnbP/TQ4WY2/lk21gXLmt/9MT/lTDhgg9Kk1iofnEgo7fhofqzWP8dlhbmslEj8plX
+         5s3Ncam5cnHChyZxWHw73MrXPAoOPIA2mIzcI1rIASiZtBuubChXS1Ph8QimLPErf1TS
+         ndO/WkEVaM0YuPyC8k/37/bNyAv4fzJ9cTl8k6W4+iudP3d1DyIuUG6i4ucPX8eWXGVk
+         RWqA==
+X-Gm-Message-State: APjAAAUKwWk/quQghznMElewQ6msEKWsNQv9643GGkspd1ScQpozZPWX
+        1KhUYAt5Kli5jq/kF9XRSPJ6Ka5x0oHJCyUMrxQV/w==
+X-Google-Smtp-Source: APXvYqyOzq7qMPN4kDm5eOtE9EWegyQb/wzIOUIkgNtV+zq8BKZKflp19YlrudQqhSU6vBVMkwR59UO5rIWIwtPEaWs=
+X-Received: by 2002:a6b:6310:: with SMTP id p16mr241134iog.118.1564604884032;
+ Wed, 31 Jul 2019 13:28:04 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190731195713.3150463-1-arnd@arndb.de> <20190731195713.3150463-4-arnd@arndb.de>
- <20190731202343.GA14817@roeck-us.net>
-In-Reply-To: <20190731202343.GA14817@roeck-us.net>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 31 Jul 2019 22:26:35 +0200
-Message-ID: <CAK8P3a2=gqeCMtdzdqg4d1n6v1-cdaHObeUoVXeB+=Okwd1rqA@mail.gmail.com>
-Subject: Re: [PATCH 03/14] watchdog: pnx4008_wdt: allow compile-testing
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     soc@kernel.org, Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Sylvain Lemieux <slemieux.tyco@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Networking <netdev@vger.kernel.org>,
-        linux-serial@vger.kernel.org, USB list <linux-usb@vger.kernel.org>,
-        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20190620110240.25799-1-vkuznets@redhat.com> <20190620110240.25799-4-vkuznets@redhat.com>
+ <CALMp9eQ85h58NMDh-yOYvHN6_2f2T-wu63f+yLnNbwuG+p3Uvw@mail.gmail.com>
+ <87ftmm71p3.fsf@vitty.brq.redhat.com> <36a9f411-f90c-3ffa-9ee3-6ebee13a763f@redhat.com>
+In-Reply-To: <36a9f411-f90c-3ffa-9ee3-6ebee13a763f@redhat.com>
+From:   Jim Mattson <jmattson@google.com>
+Date:   Wed, 31 Jul 2019 13:27:53 -0700
+Message-ID: <CALMp9eQLCEzfdNzdhPtCf3bD-5c6HrSvJqP7idyoo4Gf3i5O1w@mail.gmail.com>
+Subject: Re: [PATCH RFC 3/5] x86: KVM: svm: clear interrupt shadow on all
+ paths in skip_emulated_instruction()
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
+        kvm list <kvm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Joerg Roedel <joro@8bytes.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 31, 2019 at 10:23 PM Guenter Roeck <linux@roeck-us.net> wrote:
+On Wed, Jul 31, 2019 at 9:37 AM Paolo Bonzini <pbonzini@redhat.com> wrote:
 >
-> On Wed, Jul 31, 2019 at 09:56:45PM +0200, Arnd Bergmann wrote:
-> > The only thing that prevents building this driver on other
-> > platforms is the mach/hardware.h include, which is not actually
-> > used here at all, so remove the line and allow CONFIG_COMPILE_TEST.
+> On 31/07/19 15:50, Vitaly Kuznetsov wrote:
+> > Jim Mattson <jmattson@google.com> writes:
 > >
-> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->
-> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
->
-> What is the plan for this patch ? Push through watchdog
-> or through your branch ?
+> >> On Thu, Jun 20, 2019 at 4:02 AM Vitaly Kuznetsov <vkuznets@redhat.com> wrote:
+> >>>
+> >>> Regardless of the way how we skip instruction, interrupt shadow needs to be
+> >>> cleared.
+> >>
+> >> This change is definitely an improvement, but the existing code seems
+> >> to assume that we never call skip_emulated_instruction on a
+> >> POP-SS/MOV-to-SS/STI. Is that enforced anywhere?
+> >
+> > (before I send v1 of the series) I looked at the current code and I
+> > don't think it is enforced, however, VMX version does the same and
+> > honestly I can't think of a situation when we would be doing 'skip' for
+> > such an instruction.... and there's nothing we can easily enforce from
+> > skip_emulated_instruction() as we have no idea what the instruction
+> > is...
 
-I would prefer my branch so I can apply the final patch without waiting
-for another release. Not in a hurry though, so if some other maintainer
-wants to take the respective driver patch through their tree instead of the
-arm-soc one, I'll just wait anyway.
+Can't we still coerce kvm into emulating any instruction by leveraging
+a stale ITLB entry? The 'emulator' kvm-unit-test did this before the
+KVM forced emulation prefix was introduced, but I haven't checked to
+see if the original (admittedly fragile) approach still works. Also,
+for POP-SS, you could always force emulation by mapping the %rsp
+address beyond guest physical memory. The hypervisor would then have
+to emulate the instruction to provide bus-error semantics.
 
-        Arnd
+> I agree, I think a comment is worthwhile but we can live with the
+> limitation.
+
+I think we can live with the limitation, but I'd really prefer to see
+a KVM exit with KVM_INTERNAL_ERROR_EMULATION for an instruction that
+kvm doesn't emulate properly. That seems better than just a comment
+that the virtual CPU doesn't behave as architected. (I realize that I
+am probably in the minority here.)
