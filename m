@@ -2,105 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 620447CD6A
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 21:59:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E1457CDA4
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 22:03:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730293AbfGaT7f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 15:59:35 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:44533 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730225AbfGaT7c (ORCPT
+        id S1730600AbfGaUCa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 16:02:30 -0400
+Received: from latitanza.investici.org ([82.94.249.234]:42891 "EHLO
+        latitanza.investici.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729094AbfGaUC2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 15:59:32 -0400
-Received: by mail-pg1-f194.google.com with SMTP id i18so32590660pgl.11
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 12:59:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=wj8UI6KcdGWx7+DqBC4UilgyG1YpNkyj7/yhX7S5938=;
-        b=lI/F+evGDUwaa/3jWG9s/L6Rki0XodRNIvovJ41k7O3gJBlhooGZWa8zk7zoZxPi3K
-         2TLyWEVqGdpi3hnVGLBr1Oc4gUGjDuX/e0ynTnQkvdvYvby6ThNgqwr5+OlxOfckAHXE
-         mdPb+Iuv8GNJU7luiqE0KFaafHR7acsFoLCvM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=wj8UI6KcdGWx7+DqBC4UilgyG1YpNkyj7/yhX7S5938=;
-        b=tvpZsj5ELCB3uyQ+PpZ+blXLQ470tByqZLVYYtFbUOO8UMDty2WpGQtpFCiO5S8WHY
-         bf4bNk3mPFEPE8Xod6bfaRPWu7YLhynfcRYv6kZ9C3FM6s9nOfiM9EEcI3l1w8dFYD0v
-         u1r91ep8mTY3Jp6GCZdT6DgkgK372lSASD+0UjEwwZbj1yz7aAlEywFC5C1XaISU4wXW
-         TSC8Ho1uifol+OnKxQsLReAwtUNgBl6InvPCSramqnh1YK7DpWUDh7s+ItwuEvgTMgxN
-         ttsHABwd7WamN/OOOII4EMJNbeVeFPkbu1+SlzylmGhZE8rOT8EaQ//WA0xAj6LTI6Ot
-         z1zw==
-X-Gm-Message-State: APjAAAUMHFdThIX9i1M18jS6hB9YLmj5pTkotGFgLaEL1GihrnreITH/
-        Usj9cRi1kOrE5/9tSnieun4HDQ==
-X-Google-Smtp-Source: APXvYqyo7YtH0z/PjARx5H0oYP8eGymkvm90XLND0TLR+aFSRTYIsvGT3FPVBy4eGu5XU4G+pWeBtQ==
-X-Received: by 2002:a17:90a:fa07:: with SMTP id cm7mr4440377pjb.138.1564603172224;
-        Wed, 31 Jul 2019 12:59:32 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id j15sm99294412pfn.150.2019.07.31.12.59.31
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 31 Jul 2019 12:59:31 -0700 (PDT)
-Date:   Wed, 31 Jul 2019 12:59:30 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Joonwon Kang <kjw1627@gmail.com>
-Cc:     re.emese@gmail.com, kernel-hardening@lists.openwall.com,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        jinb.park7@gmail.com
-Subject: Re: [PATCH 2/2] randstruct: remove dead code in is_pure_ops_struct()
-Message-ID: <201907311259.D485EED2B7@keescook>
-References: <cover.1564595346.git.kjw1627@gmail.com>
- <281a65cc361512e3dc6c5deffa324f800eb907be.1564595346.git.kjw1627@gmail.com>
+        Wed, 31 Jul 2019 16:02:28 -0400
+X-Greylist: delayed 542 seconds by postgrey-1.27 at vger.kernel.org; Wed, 31 Jul 2019 16:02:27 EDT
+Received: from contumacia-webmail.investici.org (contumacia.vpn0.investici.org [10.0.0.11])
+        by latitanza.investici.org (Postfix) with ESMTP id 0D95E1204D3;
+        Wed, 31 Jul 2019 19:53:24 +0000 (UTC)
+Received: from 1.webmail.investici.org (localhost [127.0.0.1])
+        (Authenticated sender: gallefray@inventati.org)
+        by contumacia-webmail.investici.org (Postfix) with ESMTPA id DD8F6C06D3;
+        Wed, 31 Jul 2019 19:53:19 +0000 (UTC)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <281a65cc361512e3dc6c5deffa324f800eb907be.1564595346.git.kjw1627@gmail.com>
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Wed, 31 Jul 2019 19:53:19 +0000
+From:   Finn O'Leary <finnoleary@inventati.org>
+To:     mtk.manpages@gmail.com
+Cc:     linux-man@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [patch] setxattr.2: Add ERANGE to 'ERRORS' section
+Message-ID: <e7cde98960e380f638406b7ef359eb8c@inventati.org>
+X-Sender: finnoleary@inventati.org
+User-Agent: Roundcube Webmail
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 01, 2019 at 03:01:49AM +0900, Joonwon Kang wrote:
-> Recursive declaration for struct which has member of the same struct
-> type, for example,
-> 
-> struct foo {
->     struct foo f;
->     ...
-> };
-> 
-> is not allowed. So, it is unnecessary to check if a struct has this
-> kind of member.
+Hi,
 
-Is that the only case where this loop could happen? Seems also safe to
-just leave it as-is...
+Both the Ext2 filesystem handler and the Ext4 filesystem handler will
+return the ERANGE error code. Ext2 will return it if the name or value 
+is
+too long to be able to be stored, Ext4 will return it if the name is too
+long. For reference, the relevant files/lines (with excerpts) are:
 
--Kees
+fs/ext2/xattr.c: lines 394 to 396 in ext2_xattr_set
+>  394         name_len = strlen(name);
+>  395         if (name_len > 255 || value_len > sb->s_blocksize)
+>  396                 return -ERANGE;
 
-> 
-> Signed-off-by: Joonwon Kang <kjw1627@gmail.com>
-> ---
->  scripts/gcc-plugins/randomize_layout_plugin.c | 3 ---
->  1 file changed, 3 deletions(-)
-> 
-> diff --git a/scripts/gcc-plugins/randomize_layout_plugin.c b/scripts/gcc-plugins/randomize_layout_plugin.c
-> index bd29e4e7a524..e14efe23e645 100644
-> --- a/scripts/gcc-plugins/randomize_layout_plugin.c
-> +++ b/scripts/gcc-plugins/randomize_layout_plugin.c
-> @@ -440,9 +440,6 @@ static int is_pure_ops_struct(const_tree node)
->  		const_tree fieldtype = get_field_type(field);
->  		enum tree_code code = TREE_CODE(fieldtype);
->  
-> -		if (node == fieldtype)
-> -			continue;
-> -
->  		if (code == RECORD_TYPE || code == UNION_TYPE) {
->  			if (!is_pure_ops_struct(fieldtype))
->  				return 0;
-> -- 
-> 2.17.1
-> 
+fs/ext4/xattr.c: lines 2317 to 2318 in ext4_xattr_set_handle
+> 2317         if (strlen(name) > 255)
+> 2318                 return -ERANGE;
+
+Other filesystems also return this code:
+
+xfs/libxfs/xfs_attr.h: lines 53 to 55
+> * The maximum size (into the kernel or returned from the kernel) of an
+> * attribute value or the buffer used for an attr_list() call.  Larger
+> * sizes will result in an ERANGE return code.
+
+It's possible that more filesystem handlers do this, a cursory grep 
+shows
+that most of the filesystem xattr handler files mention ERANGE in some
+form. A suggested patch is below (I'm not 100% sure on the wording 
+through).
+
+Thanks
 
 -- 
-Kees Cook
+- Finn
+
+
+diff --git a/man2/setxattr.2 b/man2/setxattr.2
+index 66272ac..f8edad0 100644
+--- a/man2/setxattr.2
++++ b/man2/setxattr.2
+@@ -138,6 +138,13 @@ The namespace prefix of
+  .I name
+  is not valid.
+  .TP
++.B ERANGE
++The given
++.I name
++or
++.I value
++is too long for the filesystem to store.
++.TP
+  .B ENOTSUP
+  Extended attributes are not supported by the filesystem, or are 
+disabled,
+  .TP
