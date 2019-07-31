@@ -2,91 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BAD8F7BDEF
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 12:02:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 935A47BDE6
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 12:02:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726248AbfGaKBI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 06:01:08 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:44545 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387667AbfGaKBE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 06:01:04 -0400
-Received: by mail-pg1-f196.google.com with SMTP id i18so31716009pgl.11
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 03:01:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :in-reply-to:references;
-        bh=hT++od96JIv4ERj/5q43A9sdV6GV4nXuETH/GErjU/I=;
-        b=kIXAp4MzviR01IRWqe7+ak4T/tIj/IFNOIOhRvpjmPe4Iky3tFm/wfi5mHwn+pc5DK
-         BQr4/V2CGVXy3LsdNBMhg93+PTiKMQhTlHIm5KoA1US4OPQS9jfABuFeaTh5gnT+r2aX
-         nIoi4PywtlKhdVqSZOj3IKK1NvCelqy/7qMhasvUnDLoaz2EMKpUZIxxfyXFzAraP4Ox
-         iKncbdTOLXT99eGgIOaUMIJJzvIoi2zdT+fSBRWqENUmT/UezZtf8dIF2BK3IICY2HN+
-         D695VleypTnWA8Je1k4uXVgjgWZ8D8GJiwdlybFBgC7IWA4KSWK3FBUq7x1kMW9XG3xw
-         eB2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:in-reply-to:references;
-        bh=hT++od96JIv4ERj/5q43A9sdV6GV4nXuETH/GErjU/I=;
-        b=rpPxLIO1cUaaoCWS1GHhA9ISQGI2USoYIuY52GoUD57ombqHBgEHrBuEyutMeoYqwj
-         WR595MiSDW4QcPBF+ILVWzQyaTOY4/Or4YHvRmPl8O4khxGKRAW2lKUzWeOH86Ah800I
-         ba02eg3gzPY06iYz21kgv1ebgbF5sO4kNUAgfjiNvgA8iOLTVdC4eLJqK1Ocdm8sKemr
-         2Z4IP16KZd+n5zCKKFAjX4cPsOhwCJMBMbK9g/4lb9403khmUMFcB1tKUdkEVF14lj+U
-         1MOKEMGX0N8ggoo5loM0QUc5FQFq8F8zdK8T3nemFKSK6b7k2l8SCIQB4te9k4xikXUR
-         9yaw==
-X-Gm-Message-State: APjAAAUZcWhUKk5RBB/5I9TMPGw6NLNbdAyvsMz0PWeQAuruHj86Gb50
-        CrFRF0xH55V0RFSDNKJAnBnsyQ==
-X-Google-Smtp-Source: APXvYqzXNx5w1M0CUiKp7nGMuwNt7ZCkwdDTEa9GNGjgnC2N3BvUWTewMA7HX54pOwDNkuJOSYLSgw==
-X-Received: by 2002:aa7:8acb:: with SMTP id b11mr44975412pfd.109.1564567263283;
-        Wed, 31 Jul 2019 03:01:03 -0700 (PDT)
-Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.82])
-        by smtp.gmail.com with ESMTPSA id m6sm68611352pfb.151.2019.07.31.03.01.00
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 31 Jul 2019 03:01:02 -0700 (PDT)
-From:   Baolin Wang <baolin.wang@linaro.org>
-To:     sre@kernel.org
-Cc:     orsonzhai@gmail.com, zhang.lyra@gmail.com, yuanjiang.yu@unisoc.com,
-        baolin.wang@linaro.org, vincent.guittot@linaro.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 5/6] power: supply: sc27xx: Make sure the alarm capacity is larger than 0
-Date:   Wed, 31 Jul 2019 18:00:27 +0800
-Message-Id: <5c3bb516c6020410a932c12eb2481fd75c34b7fe.1564566425.git.baolin.wang@linaro.org>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <cover.1564566425.git.baolin.wang@linaro.org>
-References: <cover.1564566425.git.baolin.wang@linaro.org>
-In-Reply-To: <cover.1564566425.git.baolin.wang@linaro.org>
-References: <cover.1564566425.git.baolin.wang@linaro.org>
+        id S2387640AbfGaKAx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 06:00:53 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:3268 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2387612AbfGaKAv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jul 2019 06:00:51 -0400
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id EA85F9BBF657C09B2632;
+        Wed, 31 Jul 2019 18:00:48 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS402-HUB.china.huawei.com
+ (10.3.19.202) with Microsoft SMTP Server id 14.3.439.0; Wed, 31 Jul 2019
+ 18:00:39 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <linus.walleij@linaro.org>, <bgolaszewski@baylibre.com>,
+        <yamada.masahiro@socionext.com>
+CC:     <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH] gpio: remove duplicated function definition
+Date:   Wed, 31 Jul 2019 18:00:28 +0800
+Message-ID: <20190731100028.48884-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yuanjiang Yu <yuanjiang.yu@unisoc.com>
+when building without CONFIG_PINCTRL:
 
-We must make sure the alarm capacity is larger than 0, to help to
-calibrate the low battery capacity.
+In file included from drivers/hwmon/pmbus/ucd9000.c:19:0:
+./include/linux/gpio/driver.h:576:1: error: redefinition of gpiochip_add_pin_range
+ gpiochip_add_pin_range(struct gpio_chip *chip, const char *pinctl_name,
+ ^~~~~~~~~~~~~~~~~~~~~~
+In file included from drivers/hwmon/pmbus/ucd9000.c:18:0:
+./include/linux/gpio.h:245:1: note: previous definition of gpiochip_add_pin_range was here
+ gpiochip_add_pin_range(struct gpio_chip *chip, const char *pinctl_name,
+ ^~~~~~~~~~~~~~~~~~~~~~
 
-Signed-off-by: Yuanjiang Yu <yuanjiang.yu@unisoc.com>
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Fixes: 964cb341882f ("gpio: move pincontrol calls to <linux/gpio/driver.h>")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/power/supply/sc27xx_fuel_gauge.c |    2 ++
- 1 file changed, 2 insertions(+)
+ include/linux/gpio/driver.h | 35 +----------------------------------
+ 1 file changed, 1 insertion(+), 34 deletions(-)
 
-diff --git a/drivers/power/supply/sc27xx_fuel_gauge.c b/drivers/power/supply/sc27xx_fuel_gauge.c
-index f670131..fa85f40 100644
---- a/drivers/power/supply/sc27xx_fuel_gauge.c
-+++ b/drivers/power/supply/sc27xx_fuel_gauge.c
-@@ -915,6 +915,8 @@ static int sc27xx_fgu_hw_init(struct sc27xx_fgu_data *data)
- 	data->alarm_cap = power_supply_ocv2cap_simple(data->cap_table,
- 						      data->table_len,
- 						      data->min_volt);
-+	if (!data->alarm_cap)
-+		data->alarm_cap += 1;
+diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+index f28f534..09f96ec 100644
+--- a/include/linux/gpio/driver.h
++++ b/include/linux/gpio/driver.h
+@@ -10,6 +10,7 @@
+ #include <linux/lockdep.h>
+ #include <linux/pinctrl/pinctrl.h>
+ #include <linux/pinctrl/pinconf-generic.h>
++#include <linux/gpio.h>
  
- 	power_supply_put_battery_info(data->battery, &info);
+ struct gpio_desc;
+ struct of_phandle_args;
+@@ -560,40 +561,6 @@ struct gpio_pin_range {
+ 	struct pinctrl_gpio_range range;
+ };
  
+-#ifdef CONFIG_PINCTRL
+-
+-int gpiochip_add_pin_range(struct gpio_chip *chip, const char *pinctl_name,
+-			   unsigned int gpio_offset, unsigned int pin_offset,
+-			   unsigned int npins);
+-int gpiochip_add_pingroup_range(struct gpio_chip *chip,
+-			struct pinctrl_dev *pctldev,
+-			unsigned int gpio_offset, const char *pin_group);
+-void gpiochip_remove_pin_ranges(struct gpio_chip *chip);
+-
+-#else /* ! CONFIG_PINCTRL */
+-
+-static inline int
+-gpiochip_add_pin_range(struct gpio_chip *chip, const char *pinctl_name,
+-		       unsigned int gpio_offset, unsigned int pin_offset,
+-		       unsigned int npins)
+-{
+-	return 0;
+-}
+-static inline int
+-gpiochip_add_pingroup_range(struct gpio_chip *chip,
+-			struct pinctrl_dev *pctldev,
+-			unsigned int gpio_offset, const char *pin_group)
+-{
+-	return 0;
+-}
+-
+-static inline void
+-gpiochip_remove_pin_ranges(struct gpio_chip *chip)
+-{
+-}
+-
+-#endif /* CONFIG_PINCTRL */
+-
+ struct gpio_desc *gpiochip_request_own_desc(struct gpio_chip *chip, u16 hwnum,
+ 					    const char *label,
+ 					    enum gpio_lookup_flags lflags,
 -- 
-1.7.9.5
+2.7.4
+
 
