@@ -2,93 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CF777C252
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 14:55:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7130B7C228
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 14:50:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728712AbfGaMzI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 08:55:08 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:51670 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726300AbfGaMzI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 08:55:08 -0400
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id D5D83FBF895ADF134FA0;
-        Wed, 31 Jul 2019 20:39:35 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS408-HUB.china.huawei.com
- (10.3.19.208) with Microsoft SMTP Server id 14.3.439.0; Wed, 31 Jul 2019
- 20:39:27 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <linus.walleij@linaro.org>, <bgolaszewski@baylibre.com>,
-        <yamada.masahiro@socionext.com>
-CC:     <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH] gpio: Fix build error of function redefinition
-Date:   Wed, 31 Jul 2019 20:38:14 +0800
-Message-ID: <20190731123814.46624-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+        id S1729081AbfGaMu6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 08:50:58 -0400
+Received: from michel.telenet-ops.be ([195.130.137.88]:38514 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726248AbfGaMu5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jul 2019 08:50:57 -0400
+Received: from ramsan ([84.194.98.4])
+        by michel.telenet-ops.be with bizsmtp
+        id jQqv2000C05gfCL06Qqv77; Wed, 31 Jul 2019 14:50:55 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1hso4F-0000cX-Fr; Wed, 31 Jul 2019 14:50:55 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1hso4F-0003qe-Dl; Wed, 31 Jul 2019 14:50:55 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     Marek Vasut <marek.vasut+renesas@gmail.com>,
+        linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] thermal: rcar_gen3_thermal: Use devm_add_action_or_reset() helper
+Date:   Wed, 31 Jul 2019 14:50:53 +0200
+Message-Id: <20190731125053.14750-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-when do randbuilding, I got this error:
+Use the devm_add_action_or_reset() helper instead of open-coding the
+same operations.
 
-In file included from drivers/hwmon/pmbus/ucd9000.c:19:0:
-./include/linux/gpio/driver.h:576:1: error: redefinition of gpiochip_add_pin_range
- gpiochip_add_pin_range(struct gpio_chip *chip, const char *pinctl_name,
- ^~~~~~~~~~~~~~~~~~~~~~
-In file included from drivers/hwmon/pmbus/ucd9000.c:18:0:
-./include/linux/gpio.h:245:1: note: previous definition of gpiochip_add_pin_range was here
- gpiochip_add_pin_range(struct gpio_chip *chip, const char *pinctl_name,
- ^~~~~~~~~~~~~~~~~~~~~~
-
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Fixes: 964cb341882f ("gpio: move pincontrol calls to <linux/gpio/driver.h>")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- include/linux/gpio.h | 24 ------------------------
- 1 file changed, 24 deletions(-)
+ drivers/thermal/rcar_gen3_thermal.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/include/linux/gpio.h b/include/linux/gpio.h
-index 40915b4..f757a58 100644
---- a/include/linux/gpio.h
-+++ b/include/linux/gpio.h
-@@ -241,30 +241,6 @@ static inline int irq_to_gpio(unsigned irq)
- 	return -EINVAL;
- }
+diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
+index a56463308694e937..2db7e7f8baf939fd 100644
+--- a/drivers/thermal/rcar_gen3_thermal.c
++++ b/drivers/thermal/rcar_gen3_thermal.c
+@@ -443,11 +443,10 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
+ 		if (ret)
+ 			goto error_unregister;
  
--static inline int
--gpiochip_add_pin_range(struct gpio_chip *chip, const char *pinctl_name,
--		       unsigned int gpio_offset, unsigned int pin_offset,
--		       unsigned int npins)
--{
--	WARN_ON(1);
--	return -EINVAL;
--}
--
--static inline int
--gpiochip_add_pingroup_range(struct gpio_chip *chip,
--			struct pinctrl_dev *pctldev,
--			unsigned int gpio_offset, const char *pin_group)
--{
--	WARN_ON(1);
--	return -EINVAL;
--}
--
--static inline void
--gpiochip_remove_pin_ranges(struct gpio_chip *chip)
--{
--	WARN_ON(1);
--}
--
- static inline int devm_gpio_request(struct device *dev, unsigned gpio,
- 				    const char *label)
- {
+-		ret = devm_add_action(dev, rcar_gen3_hwmon_action, zone);
+-		if (ret) {
+-			rcar_gen3_hwmon_action(zone);
++		ret = devm_add_action_or_reset(dev, rcar_gen3_hwmon_action,
++					       zone);
++		if (ret)
+ 			goto error_unregister;
+-		}
+ 
+ 		ret = of_thermal_get_ntrips(tsc->zone);
+ 		if (ret < 0)
 -- 
-2.7.4
-
+2.17.1
 
