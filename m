@@ -2,141 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1DB667BDF2
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 12:02:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A32937BDE2
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 12:02:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729102AbfGaKBM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 06:01:12 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:37793 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387723AbfGaKBG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 06:01:06 -0400
-Received: by mail-pl1-f195.google.com with SMTP id b3so30290771plr.4
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 03:01:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :in-reply-to:references;
-        bh=XF5mZ6TSVo4eSNdQwLP31itinD3L/9CCtkqFjn0djlU=;
-        b=UHCfglolFc+DiKNqu28PP7eW3FZEIuVvD/ZAL0ARBydSmw5J1AvOi7RqECGvzy6OyG
-         JjznumgXnMlrgA+kEdFEsntSef0+YnGvMTLpX+q4IecNPm57QuzzIsAAWnE3sBhklwoQ
-         aYzQ3bw8+p+ZPNrOrSDamq+nkI+kJfTvuVAL4kdLH6lmo3FnsURjQaFVeGvWtuV/dx7M
-         Oesx0zR11jotI5yl8mxyz374bO4ddYQKkHky0Sx447WMBTRl/sKaHqp16dEOPi1Tzgev
-         2vBnBHlc0ZsG6mTdF49WwAunGzn3pS9UeqSoQFADQK3GU6s/SIfyzE1ni8WGsDTjD2ek
-         FFBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:in-reply-to:references;
-        bh=XF5mZ6TSVo4eSNdQwLP31itinD3L/9CCtkqFjn0djlU=;
-        b=SqgLMFaVoEKXq8CGcvdq9Qqvs05KeWz/ye3Bs4anGpy583Zh0oWieaaSoeDv7oyLSa
-         XYFMoaAYSBRDme6mAduO6RPEP1en0y8lhqMXrKGD53c2dLDrwdzpWWCEf67cW2LYfJgB
-         NU3X2MDJTvuozZlSHx+H11CNrjb+u5GJH5ry5AbR1jtRW174hRxdMesL7JVSy9eE925i
-         sWmknuUVrkm/Bk5XXOpRnxujwm6MbbphtrpSBrPEPh3uLL8Yjx9WnO8J+etY25Ptq1s9
-         B93GZm5xFRU/vPLSGd/qccdtJYio4eFwzYlwwkg9uboyHU6STU/0YVuCIAiAIT4AGuWQ
-         F0Ww==
-X-Gm-Message-State: APjAAAVDfkK/l4DUPtA1yrz1SxNRb+ksAo6Dx+HstGIH09HUmlLcwAJx
-        5M2Nyn9k6Ig0FcRp+OAzlCCcgA==
-X-Google-Smtp-Source: APXvYqwNQvRYJbmUxrXwPc+d2Y+WlvIn2qkESp52+VZCGPtoCkNpZLLC2P1EOSKz+HvgKnVzuGG4XA==
-X-Received: by 2002:a17:902:a514:: with SMTP id s20mr113281631plq.162.1564567265611;
-        Wed, 31 Jul 2019 03:01:05 -0700 (PDT)
-Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.82])
-        by smtp.gmail.com with ESMTPSA id m6sm68611352pfb.151.2019.07.31.03.01.03
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 31 Jul 2019 03:01:05 -0700 (PDT)
-From:   Baolin Wang <baolin.wang@linaro.org>
-To:     sre@kernel.org
-Cc:     orsonzhai@gmail.com, zhang.lyra@gmail.com, yuanjiang.yu@unisoc.com,
-        baolin.wang@linaro.org, vincent.guittot@linaro.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 6/6] power: supply: sc27xx: Add POWER_SUPPLY_PROP_CALIBRATE attribute
-Date:   Wed, 31 Jul 2019 18:00:28 +0800
-Message-Id: <554dd7e2ef4f3c5247322d8b185607748144b1e6.1564566425.git.baolin.wang@linaro.org>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <cover.1564566425.git.baolin.wang@linaro.org>
-References: <cover.1564566425.git.baolin.wang@linaro.org>
-In-Reply-To: <cover.1564566425.git.baolin.wang@linaro.org>
-References: <cover.1564566425.git.baolin.wang@linaro.org>
+        id S2387590AbfGaKAo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 06:00:44 -0400
+Received: from hall.aurel32.net ([195.154.113.88]:33674 "EHLO hall.aurel32.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387538AbfGaKAn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jul 2019 06:00:43 -0400
+Received: from aurel32 by hall.aurel32.net with local (Exim 4.89)
+        (envelope-from <aurelien@aurel32.net>)
+        id 1hslPT-0004OT-88; Wed, 31 Jul 2019 12:00:39 +0200
+Date:   Wed, 31 Jul 2019 12:00:39 +0200
+From:   Aurelien Jarno <aurelien@aurel32.net>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org,
+        Will Deacon <will.deacon@arm.com>,
+        "# 4 . 9+" <stable@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Catalin Marinas <catalin.marinas@arm.com>
+Subject: Re: [PATCH] arm64: compat: Provide definition for COMPAT_SIGMINSTKSZ
+Message-ID: <20190731100039.qh6eomvbr7sx6kn5@aurel32.net>
+Mail-Followup-To: Greg KH <gregkh@linuxfoundation.org>,
+        Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org,
+        Will Deacon <will.deacon@arm.com>,
+        "# 4 . 9+" <stable@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, Oleg Nesterov <oleg@redhat.com>,
+        Catalin Marinas <catalin.marinas@arm.com>
+References: <20190730092547.1284-1-will@kernel.org>
+ <20190730093713.GB15402@kroah.com>
+ <20190730093938.bimxbvhd3alo3u37@willie-the-truck>
+ <20190730094226.GA16071@kroah.com>
+ <20190731094717.GH18269@kroah.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190731094717.GH18269@kroah.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yuanjiang Yu <yuanjiang.yu@unisoc.com>
+On 2019-07-31 11:47, Greg KH wrote:
+> On Tue, Jul 30, 2019 at 11:42:26AM +0200, Greg KH wrote:
+> > On Tue, Jul 30, 2019 at 10:39:38AM +0100, Will Deacon wrote:
+> > > On Tue, Jul 30, 2019 at 11:37:13AM +0200, Greg KH wrote:
+> > > > On Tue, Jul 30, 2019 at 10:25:47AM +0100, Will Deacon wrote:
+> > > > > From: Will Deacon <will.deacon@arm.com>
+> > > > > 
+> > > > > [ Upstream commit 24951465cbd279f60b1fdc2421b3694405bcff42 ]
+> > > > > 
+> > > > > arch/arm/ defines a SIGMINSTKSZ of 2k, so we should use the same value
+> > > > > for compat tasks.
+> > > > > 
+> > > > > Cc: <stable@vger.kernel.org> # 4.9+
+> > > > > Cc: Aurelien Jarno <aurelien@aurel32.net>
+> > > > > Cc: Arnd Bergmann <arnd@arndb.de>
+> > > > > Cc: Dominik Brodowski <linux@dominikbrodowski.net>
+> > > > > Cc: "Eric W. Biederman" <ebiederm@xmission.com>
+> > > > > Cc: Andrew Morton <akpm@linux-foundation.org>
+> > > > > Cc: Al Viro <viro@zeniv.linux.org.uk>
+> > > > > Cc: Oleg Nesterov <oleg@redhat.com>
+> > > > > Reviewed-by: Dave Martin <Dave.Martin@arm.com>
+> > > > > Reported-by: Steve McIntyre <steve.mcintyre@arm.com>
+> > > > > Tested-by: Steve McIntyre <93sam@debian.org>
+> > > > > Signed-off-by: Will Deacon <will.deacon@arm.com>
+> > > > > Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+> > > > > ---
+> > > > > 
+> > > > > Aurelien points out that this didn't get selected for -stable despite its
+> > > > > counterpart (22839869f21a ("signal: Introduce COMPAT_SIGMINSTKSZ for use
+> > > > > in compat_sys_sigaltstack")) being backported to 4.9. Oops.
+> > > > 
+> > > > So this needs to go into 4.9.y, 4.14.y, and 4.19.y?
+> > > 
+> > > Yes, please.
+> > 
+> > Thanks, will do after this next round of kernels goes out.
+> 
+> Now queued up, thanks.
+> 
 
-Add the 'POWER_SUPPLY_PROP_CALIBRATE' attribute to allow chareger manager
-to calibrate the battery capacity.
+Thanks!
 
-Signed-off-by: Yuanjiang Yu <yuanjiang.yu@unisoc.com>
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
----
- drivers/power/supply/sc27xx_fuel_gauge.c |   27 +++++++++++++++++++--------
- 1 file changed, 19 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/power/supply/sc27xx_fuel_gauge.c b/drivers/power/supply/sc27xx_fuel_gauge.c
-index fa85f40..6363c48 100644
---- a/drivers/power/supply/sc27xx_fuel_gauge.c
-+++ b/drivers/power/supply/sc27xx_fuel_gauge.c
-@@ -111,6 +111,7 @@ struct sc27xx_fgu_data {
- static int sc27xx_fgu_cap_to_clbcnt(struct sc27xx_fgu_data *data, int capacity);
- static void sc27xx_fgu_capacity_calibration(struct sc27xx_fgu_data *data,
- 					    int cap, int int_mode);
-+static void sc27xx_fgu_adjust_cap(struct sc27xx_fgu_data *data, int cap);
- 
- static const char * const sc27xx_charger_supply_name[] = {
- 	"sc2731_charger",
-@@ -610,17 +611,25 @@ static int sc27xx_fgu_set_property(struct power_supply *psy,
- 	struct sc27xx_fgu_data *data = power_supply_get_drvdata(psy);
- 	int ret;
- 
--	if (psp != POWER_SUPPLY_PROP_CAPACITY)
--		return -EINVAL;
--
- 	mutex_lock(&data->lock);
- 
--	ret = sc27xx_fgu_save_last_cap(data, val->intval);
-+	switch (psp) {
-+	case POWER_SUPPLY_PROP_CAPACITY:
-+		ret = sc27xx_fgu_save_last_cap(data, val->intval);
-+		if (ret < 0)
-+			dev_err(data->dev, "failed to save battery capacity\n");
-+		break;
- 
--	mutex_unlock(&data->lock);
-+	case POWER_SUPPLY_PROP_CALIBRATE:
-+		sc27xx_fgu_adjust_cap(data, val->intval);
-+		ret = 0;
-+		break;
- 
--	if (ret < 0)
--		dev_err(data->dev, "failed to save battery capacity\n");
-+	default:
-+		ret = -EINVAL;
-+	}
-+
-+	mutex_unlock(&data->lock);
- 
- 	return ret;
- }
-@@ -635,7 +644,8 @@ static void sc27xx_fgu_external_power_changed(struct power_supply *psy)
- static int sc27xx_fgu_property_is_writeable(struct power_supply *psy,
- 					    enum power_supply_property psp)
- {
--	return psp == POWER_SUPPLY_PROP_CAPACITY;
-+	return psp == POWER_SUPPLY_PROP_CAPACITY ||
-+		psp == POWER_SUPPLY_PROP_CALIBRATE;
- }
- 
- static enum power_supply_property sc27xx_fgu_props[] = {
-@@ -651,6 +661,7 @@ static int sc27xx_fgu_property_is_writeable(struct power_supply *psy,
- 	POWER_SUPPLY_PROP_CURRENT_AVG,
- 	POWER_SUPPLY_PROP_CONSTANT_CHARGE_VOLTAGE,
- 	POWER_SUPPLY_PROP_ENERGY_FULL_DESIGN,
-+	POWER_SUPPLY_PROP_CALIBRATE,
- };
- 
- static const struct power_supply_desc sc27xx_fgu_desc = {
 -- 
-1.7.9.5
-
+Aurelien Jarno                          GPG: 4096R/1DDD8C9B
+aurelien@aurel32.net                 http://www.aurel32.net
