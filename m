@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5955A7C19F
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 14:40:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B4BC67C18E
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 14:38:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728245AbfGaMio (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 08:38:44 -0400
+        id S2387857AbfGaMis (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 08:38:48 -0400
 Received: from mail-eopbgr140114.outbound.protection.outlook.com ([40.107.14.114]:6722
         "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387717AbfGaMie (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 08:38:34 -0400
+        id S1728169AbfGaMig (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jul 2019 08:38:36 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=jq5/tOEyUQL8JIriTpniBRdBY7RJvs00XysJXf5vBmekV/tDFsV75q9XToj94bAW5QkSQ+ZWQky1r7DicmW0GlPjRTifMpXfU2DTZjO60Cw62CAG8nxrelM+yXPKjZa/DXPMlEo3G0XlT9zChjP0Rm57M4g2wRgSSdjxaEmoN2J3poeblx5pCBlx8dOfwQz6sTlj9cYkBTSiyM3eBRX956WKxaNwBDqJWf4+1sEJla7tR3kPwYiFHVwl8v1aA/NnwaEman1pPAoifH/SYpEW13r7Hp0UqRJWQLMKAv5wzLse5uqhKN6MCdschLVypsPgbH1RYQkNfk3n9WyyuT/WmQ==
+ b=BPJ5FvebPLAjXGMY4W7r4n1F52sxHJG/+poPkqKwhg+J01RS7aUFxzGdRD3vyZnN+GmAiEmXhHhJU00dSGe+PPD6eg/9cuwu8vqrR85t0URaKh9cdhF7f0Az/vWm050wyLkVg7/CycsVLnLhA82jIdQzX3JOYwyQKBhdcbfawtBC5boj0CAZoxwk6H6o7/Q1vILif22T09K44HasHgSbZDdbPqzxC5ZeWi7QeCjXBcyYkh7PDYXfgEXQ6Tjj0s/WIF4VkICK+EDzbICo3c0wCIDeUtYpDMsSO6m7typ7AkNvsSzlGQnjI7Pn6HBYWYxOBJV6OQY7ez0gRw54+gvfpg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7Ai4EOMbvz+SH1K4PXOJKwJbgE9Ntryi1jNmtP5LPZE=;
- b=LBbX9Dr8++mm6r7vip4G+CheYcE5JcKTDV/83fAQSZKB8ayxYo0quS5NMy6ZJzHSzAGnNUJ83BpUWFJJA6dm/fIFn/ElpLuGfbE+4g1w655ew7q3e3BDNk/tYzcXxJXVWsUeenOQmoskOYsbOPB998DXUwZCUJWGZrMld0Wu2dUvK1dpllU7uT3TneyoYR7ltmlETQWkR/ym7Jmt8wKRSx3u8n3WnSgpK+w9zJwAcNsenAfzDH9TFQR/TiXwldmgT5TvJF2WS4PMlnLzGxINrZCn2ps3aGoVbC9X7mozzFGuH1+vlTrwFkcTlz2sD/wXY6/IokYf0C4KkY5SYZQUIA==
+ bh=oKdVqV/SWA672uR0Bgwf3uHyZ+iYlbFbfC1zpSnbmaE=;
+ b=TEZvYjA19w18PQIB+icsGZujDkUyDJZiGENvnEdT8vxkyo95SEbEIdJHn8qrMmbcX+KO/NKrBi+qYZXgyIkQr3WQDCUvCIDJqjk1TtoHbwyqcs0tTPitFzI7yf+GJCsW3G21Mpj5lEZG/AFSGzk55WgfDq031m+jhuV41CBgJHHAYQXZKUq4KoHiVGRMzc/vJMXruxKZMFB4gD3NLwcBFPmwt51Kn05yH+lGV6IvFd547Pe77MWo7u33Qn1fTqkNRNl2stkaBbYfy8sYAZVDOoE0zVbSlGZENciyHynxys+4puCN1aX16Pqy3VWI6feb3ogBHmXIoe6mH1+L2Cd/Bg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
  smtp.mailfrom=toradex.com;dmarc=pass action=none
  header.from=toradex.com;dkim=pass header.d=toradex.com;arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=toradex.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7Ai4EOMbvz+SH1K4PXOJKwJbgE9Ntryi1jNmtP5LPZE=;
- b=JdL8fs7Kdpa/0jxIe1db0u1pL37LIxUEWB+E5A6NqmfO/TrnQx9WI/epp+41pu4pI//SCIpeMWqN2qySTtu/JA/NrbVC71nDzT32Y02GjdLp5Vp1hyalWwPl/EE3zJqT0ij+KDW8UHZhGswtA6v9OfatW+G84wTPxfYKif9Y2YI=
+ bh=oKdVqV/SWA672uR0Bgwf3uHyZ+iYlbFbfC1zpSnbmaE=;
+ b=Mjwnu5NtRAggk0GSDdYcFejt0wP6G5tId+OgK61xomPPmI+oQUFuIaV5RReoRD7zroh6rko2POJsDK6XLqAbyuj1IPMQ0/SSEIFZV/M1u8vu8NXi175MJ8wO/IptWxLai+TpHqquomGkK4Oe9R/WAg15BVdUTwLsibg9TWYu8p8=
 Received: from VI1PR0502MB3965.eurprd05.prod.outlook.com (52.134.17.157) by
  VI1PR0502MB3648.eurprd05.prod.outlook.com (52.134.7.143) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2136.14; Wed, 31 Jul 2019 12:38:30 +0000
+ 15.20.2136.14; Wed, 31 Jul 2019 12:38:31 +0000
 Received: from VI1PR0502MB3965.eurprd05.prod.outlook.com
  ([fe80::8405:5b51:b25d:39a2]) by VI1PR0502MB3965.eurprd05.prod.outlook.com
  ([fe80::8405:5b51:b25d:39a2%6]) with mapi id 15.20.2115.005; Wed, 31 Jul 2019
- 12:38:30 +0000
+ 12:38:31 +0000
 From:   Philippe Schenker <philippe.schenker@toradex.com>
 To:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
         Max Krummenacher <max.krummenacher@toradex.com>,
@@ -52,12 +52,13 @@ CC:     Philippe Schenker <philippe.schenker@toradex.com>,
         Pengutronix Kernel Team <kernel@pengutronix.de>,
         NXP Linux Team <linux-imx@nxp.com>,
         Sascha Hauer <s.hauer@pengutronix.de>
-Subject: [PATCH v2 14/20] ARM: dts: imx6ull-colibri: Add sleep mode to fec
-Thread-Topic: [PATCH v2 14/20] ARM: dts: imx6ull-colibri: Add sleep mode to
- fec
-Thread-Index: AQHVR5zYbKepQ6GNSUayJhQc0NNcoA==
-Date:   Wed, 31 Jul 2019 12:38:25 +0000
-Message-ID: <20190731123750.25670-15-philippe.schenker@toradex.com>
+Subject: [PATCH v2 15/20] ARM: dts: imx6ull-colibri: reduce v_batt current in
+ power off
+Thread-Topic: [PATCH v2 15/20] ARM: dts: imx6ull-colibri: reduce v_batt
+ current in power off
+Thread-Index: AQHVR5zZQocT+NOJxEesVaMyNOrJ1g==
+Date:   Wed, 31 Jul 2019 12:38:27 +0000
+Message-ID: <20190731123750.25670-16-philippe.schenker@toradex.com>
 References: <20190731123750.25670-1-philippe.schenker@toradex.com>
 In-Reply-To: <20190731123750.25670-1-philippe.schenker@toradex.com>
 Accept-Language: en-GB, en-US
@@ -73,23 +74,23 @@ x-ms-exchange-messagesentrepresentingtype: 1
 x-mailer: git-send-email 2.22.0
 x-originating-ip: [46.140.72.82]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 76d4d909-345f-4cf6-f1d8-08d715b3fb07
+x-ms-office365-filtering-correlation-id: 9ac0f7dc-fb15-4844-42e7-08d715b3fc15
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600148)(711020)(4605104)(1401327)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:VI1PR0502MB3648;
 x-ms-traffictypediagnostic: VI1PR0502MB3648:
-x-microsoft-antispam-prvs: <VI1PR0502MB36488303AADC82EB6AEB0E11F4DF0@VI1PR0502MB3648.eurprd05.prod.outlook.com>
+x-microsoft-antispam-prvs: <VI1PR0502MB3648F1D242BCC0BC9969B08BF4DF0@VI1PR0502MB3648.eurprd05.prod.outlook.com>
 x-ms-oob-tlc-oobclassifiers: OLM:4941;
 x-forefront-prvs: 011579F31F
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(376002)(366004)(136003)(346002)(396003)(39850400004)(189003)(199004)(64756008)(66446008)(66476007)(66946007)(6512007)(476003)(66556008)(8676002)(86362001)(36756003)(44832011)(478600001)(6666004)(5660300002)(71190400001)(71200400001)(1076003)(53936002)(6486002)(486006)(6436002)(2201001)(446003)(52116002)(50226002)(11346002)(316002)(99286004)(66066001)(2616005)(305945005)(256004)(26005)(14444005)(14454004)(102836004)(7736002)(3846002)(25786009)(6116002)(76176011)(2906002)(81156014)(81166006)(68736007)(386003)(6506007)(2501003)(4326008)(8936002)(110136005)(54906003)(186003)(7416002)(32563001);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR0502MB3648;H:VI1PR0502MB3965.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(376002)(366004)(136003)(346002)(396003)(39850400004)(189003)(199004)(64756008)(66446008)(66476007)(66946007)(6512007)(476003)(66556008)(8676002)(86362001)(36756003)(44832011)(478600001)(6666004)(5660300002)(71190400001)(71200400001)(1076003)(53936002)(6486002)(486006)(6436002)(2201001)(446003)(52116002)(50226002)(11346002)(316002)(99286004)(66066001)(2616005)(305945005)(256004)(26005)(14454004)(102836004)(7736002)(3846002)(25786009)(6116002)(76176011)(2906002)(81156014)(81166006)(68736007)(386003)(6506007)(2501003)(4326008)(8936002)(110136005)(54906003)(186003)(7416002)(32563001);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR0502MB3648;H:VI1PR0502MB3965.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: toradex.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 2zbcUgx/j8eq7odW5yZkW88N8IZWT6+Qol1gWhuKyz0Ead7q92gFVabYwAGFnzAmrpJ4GWDj6Ivf24/rJFhA4yOADGne2jK0JsSsbFyfLOm+CSsKi28a/dxnOviwF6LYWlwzo7tNEMUC4AhPNisB6t51WjtvxJR36Ql6q/EJuGxPetv46IyXdp/qw/sXNfiPk0UANkjBWi4qnc1+lOQ8wfN9w0R3syFNvwJBO+9NK1ReuQMB5i2GNqQ2rbZwxZKN00LrvKM6oq3L2sUcIQMltpvYBBY7nEMhrhhWIQRihcD7weKTa7ekTMMI8Bu521RebROzpkOl1PG/Rw4S3RgvGaVeyps29IMpFeQA2S+x5fOkKOdW83D2ti7zagc9ae2RAFT8pMshLVeA2NRYvqU6Kmz5de/iMTZtjb1H3yvnCdQ=
+x-microsoft-antispam-message-info: qUtRNuUlYV2PlbOegm7s38Nx+LL9cXyN8Isznmdtfv9wAtFzlVKKumtZ3z/hrxAQiWJNPoKX/eWVjJQPK9SeBOWUjdFtgkb+WQbXIemDJSYWwF2exL6B1CUrI9A4bWOVWcylpz5FM+PJUucKrZfjRK3I6EyO49JMaDa0vL1w4YlZkY4eHR0FeiffjiBoz6+anH6eyTDCM1KAdpMM1gkWuiETzLpgNU2HEilDpZCjP7qdH5Uw+Hepxz46n5+U36LqHiCRH1NNNCLQahhNuiX3NNIKrVqtTL7BuHLJi58mHyqRg7d50K/L9Ww0YaA1HAge1JbiA8Z18ekaEe7HBZFlf/csG3g5MsIxwFqX8D9y5b1Ft5vvHhizrTR+4jOkcGMpM55f18XmVl3r6j7xaM8EfLY8u5uOKSZE10jY2Zr8Egk=
 Content-Type: text/plain; charset="iso-8859-2"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: toradex.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 76d4d909-345f-4cf6-f1d8-08d715b3fb07
-X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Jul 2019 12:38:25.3274
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9ac0f7dc-fb15-4844-42e7-08d715b3fc15
+X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Jul 2019 12:38:27.0444
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: d9995866-0d9b-4251-8315-093f062abab4
@@ -101,55 +102,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Do not change the clock as the power for this phy is switched
-with that clock.
+From: Max Krummenacher <max.krummenacher@toradex.com>
 
+Reduce the current drawn from VCC_BATT when the main power on the 3V3
+pins to the module are switched off.
+
+This switches off SoC internal pull resistors which are provided on the
+module for TAMPER7 and TAMPER9 SoC pin and switches on a pull down
+instead of a pullup for the USBC_DET module pin (TAMPER2).
+
+Signed-off-by: Max Krummenacher <max.krummenacher@toradex.com>
 Signed-off-by: Philippe Schenker <philippe.schenker@toradex.com>
 ---
 
 Changes in v2: None
 
- arch/arm/boot/dts/imx6ull-colibri.dtsi | 18 +++++++++++++++++-
- 1 file changed, 17 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/imx6ull-colibri.dtsi | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/arch/arm/boot/dts/imx6ull-colibri.dtsi b/arch/arm/boot/dts/imx=
 6ull-colibri.dtsi
-index d56728f03c35..1019ce69a242 100644
+index 1019ce69a242..1f112ec55e5c 100644
 --- a/arch/arm/boot/dts/imx6ull-colibri.dtsi
 +++ b/arch/arm/boot/dts/imx6ull-colibri.dtsi
-@@ -62,8 +62,9 @@
- };
+@@ -533,19 +533,19 @@
 =20
- &fec2 {
--	pinctrl-names =3D "default";
-+	pinctrl-names =3D "default", "sleep";
- 	pinctrl-0 =3D <&pinctrl_enet2>;
-+	pinctrl-1 =3D <&pinctrl_enet2_sleep>;
- 	phy-mode =3D "rmii";
- 	phy-handle =3D <&ethphy1>;
- 	status =3D "okay";
-@@ -220,6 +221,21 @@
+ 	pinctrl_snvs_ad7879_int: snvs-ad7879-int-grp { /* TOUCH Interrupt */
+ 		fsl,pins =3D <
+-			MX6ULL_PAD_SNVS_TAMPER7__GPIO5_IO07	0x1b0b0
++			MX6ULL_PAD_SNVS_TAMPER7__GPIO5_IO07	0x100b0
  		>;
  	};
 =20
-+	pinctrl_enet2_sleep: enet2sleepgrp {
-+		fsl,pins =3D <
-+			MX6UL_PAD_GPIO1_IO06__GPIO1_IO06	0x0
-+			MX6UL_PAD_GPIO1_IO07__GPIO1_IO07	0x0
-+			MX6UL_PAD_ENET2_RX_DATA0__GPIO2_IO08	0x0
-+			MX6UL_PAD_ENET2_RX_DATA1__GPIO2_IO09	0x0
-+			MX6UL_PAD_ENET2_RX_EN__GPIO2_IO10	0x0
-+			MX6UL_PAD_ENET2_RX_ER__GPIO2_IO15	0x0
-+			MX6UL_PAD_ENET2_TX_CLK__ENET2_REF_CLK2	0x4001b031
-+			MX6UL_PAD_ENET2_TX_DATA0__GPIO2_IO11	0x0
-+			MX6UL_PAD_ENET2_TX_DATA1__GPIO2_IO12	0x0
-+			MX6UL_PAD_ENET2_TX_EN__GPIO2_IO13	0x0
-+		>;
-+	};
-+
- 	pinctrl_ecspi1_cs: ecspi1-cs-grp {
+ 	pinctrl_snvs_reg_sd: snvs-reg-sd-grp {
  		fsl,pins =3D <
- 			MX6UL_PAD_LCD_DATA21__GPIO3_IO26	0x000a0
+-			MX6ULL_PAD_SNVS_TAMPER9__GPIO5_IO09	0x4001b8b0
++			MX6ULL_PAD_SNVS_TAMPER9__GPIO5_IO09	0x400100b0
+ 		>;
+ 	};
+=20
+ 	pinctrl_snvs_usbc_det: snvs-usbc-det-grp {
+ 		fsl,pins =3D <
+-			MX6ULL_PAD_SNVS_TAMPER2__GPIO5_IO02	0x1b0b0
++			MX6ULL_PAD_SNVS_TAMPER2__GPIO5_IO02	0x130b0
+ 		>;
+ 	};
+=20
 --=20
 2.22.0
 
