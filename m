@@ -2,59 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8258C7B785
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 03:24:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD1BE7B794
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 03:25:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727660AbfGaBYi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 30 Jul 2019 21:24:38 -0400
-Received: from esa5.hgst.iphmx.com ([216.71.153.144]:64333 "EHLO
+        id S1727868AbfGaBYy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 30 Jul 2019 21:24:54 -0400
+Received: from esa5.hgst.iphmx.com ([216.71.153.144]:64336 "EHLO
         esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727567AbfGaBYh (ORCPT
+        with ESMTP id S1727546AbfGaBYh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 30 Jul 2019 21:24:37 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1564536277; x=1596072277;
+  t=1564536278; x=1596072278;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=w14oJ81u6w2W34wdULaaio4UuiCV/eOoDOsEOvwCQng=;
-  b=ShcohsB2O/v0hXn9yNGDSiYHxpoCxlK0iCraMSDfWNwqCj+sJC67Bg1n
-   zHv7Qhrr/yL+/yeNDcRzNQ7VM4KrnXOUt9YeO/9il8PqeFVSO+P/I2IQo
-   zSJLqg1lC4CIeJX/LOEDI4T8+mCZTHVQr3DcN2NadmRt9O6zJEfPqQkic
-   g/PQG9vj4B2zT6lbAttGqBfS+r68m1kFKtVT7tUfqu8bKqgFuSoGK+6wB
-   nqMJ/ICSisCD5y8zbcXeG0+rggRZ2Uh3tHy/9k0zkt3V7zJEf6DdQ/JGU
-   JjWY3k4TqHnP8YSbYXWtW2wGtwSDAVm5+WdqJBwkLcGtZHfEeJpNcwM96
-   A==;
-IronPort-SDR: iiNk5ZWkF2X36Cc0WXg39kw4jqskeSKNALsqIt8MTtmHB000IDfYdraj51UrQlMT34yKShZu2f
- h2jyrsaI+A4HDiUOKKsRefkAe3y0omRz2/SdIMhJctOafsKFgnneusfYipb4eCb2XSQ+Oh8R7c
- 1xjTdudYTJQzj5X3tS3G5FoKmjulB5qtqgw4cV6R97ro7pbLCIaHKbbdEl/lVrPo+5tVgYyqLE
- acA0SdYvF8b5+WfFCsN7V219izx4sQII704oASXShO2rKkgZV8yFEd0mzeooUCWDUlpjW2/VMk
- 0U8=
+  bh=Y6AGFaAE1PMVJZ6+rsgH3B7LWIELYj+tSokwx8q21Gg=;
+  b=l4jleZRsaJIbGEfj3mFadKVH5mMjg/N1ne21us47ctjojIxpWMnx4XFn
+   BblS7SO5YbUQ8oOhcF2ZpYiJrV6wvvR+CYsiXJkkMqDmhm9F+Dh5gEfVj
+   lQUinq79xK7McuDdDhcDVHaetxcUggYuSX1OAX6kXmRLr8tye/Uatl9db
+   X25B/hFuzwJ0ddTxe0FSEP4A6qzreNLvyMy9qJx7ZDUyj3VDD7K/iIblL
+   y8AeM+3UXf4jPkPXwg0bEdu/hVDZo3yanYyctSf/A4N4TgWgFMzbk24em
+   yRAs5D/xsWom61wqpvXnFR0a7u1/t9GoyvM3khfPlYAnGtIB814ojfXjE
+   Q==;
+IronPort-SDR: 25hWv9ODF9g8VJuyqK4JMsLyFaq5BrJNkz52uRiAql5obTfu3/NGBqyEUcehywuOd68juSQ0eB
+ MX0Gw+H+Vq3hS2gTo7HlYBsT5j0inrB2f1/tEOpDk1t8Hb0Vfor8oifii/6Wiyu/X3n+YIMT7c
+ NdLDWNaMBFPD0jyjspTkDpI1L9WWoJfFha+JGnE9tKEaxTEw1/CWhvqwTktMvKSQfLIc1BgCGF
+ MG6l1eXGMeTd0XMKIPtv+DeO36AiWf/7Hh963Nq5Seh9pOPQ3bLZ0PfiqJd0cAZVonBdxajdTp
+ rBM=
 X-IronPort-AV: E=Sophos;i="5.64,328,1559491200"; 
-   d="scan'208";a="115555800"
+   d="scan'208";a="115555804"
 Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
   by ob1.hgst.iphmx.com with ESMTP; 31 Jul 2019 09:24:37 +0800
-IronPort-SDR: G2X0N0sA35LKBVbTJZtDHtFS3ERRsCShVu7qsSW+uS16Gn1JIV2jb9aFpvvMzXVMibDrz1QFvl
- dOR2U8nqXRtfKxDxhw3E65SAMgmvbdcx+uArbAEVdrDy7zqaKlulS3CwynBi0xZJJDMLryDndU
- B5BKu+yJzoFRgd233kBXoswtahp3GG40d4AmdQTHbS7AZqRjFErIpQvymE9NBR/WOb1AViAP+j
- bCvgahsJkAJvfsI91w0ZCUsvpVBrdRf/WQqR3YBd8Ih22/dDTrI9/uFgkN5ea8GDHi9eAnmemw
- 9Ban0INj6rf64VYe/2hd+u5H
+IronPort-SDR: OnXp1I4YrGwbZzZrYhLfFdrrNt29tGwdpQq/pjlwyET40k+roOJ5P+Q1o0OKFLO9tvuCjTekt1
+ 2Le/KE/+IGzxoSXOadLWAW5jqgWXa6A3eJvsVESslh7tOu8oRLuI4uTRFMjU16MxNdcoiX+vWZ
+ zPKVRLV+M1JYSPmZKqmAfStNNOFeR6Qe092GhNmVAKWu7My641ZHKncEn0um454/Ek3uSUd2gg
+ FGHuovvTRhvy8dMi3gkDzzTwPzlUvYvF7I5zDzga4bWFoq1zb6qBFcFkiR/9j5ae4TP1Z1n2JH
+ Gz3wME/1y38v6yKo1/OJ9EwW
 Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
   by uls-op-cesaep02.wdc.com with ESMTP; 30 Jul 2019 18:22:38 -0700
-IronPort-SDR: 3sIcbQgxnvm/OmZX79OUSeBBjL/aRRiiJnuYpbIO4ukQp1vBudqAkfTquNuNNV1yxRpXr5VXYc
- BDPkC4kHvf9e6rAQFeGOlPL1/Juf8fqKjuEt69N/+Vc6qIsdKhLHD/jlPRvxT1byy7KeQNMHX+
- XiWV1JpOikc6JZwyARbD6vaXdBZSu/LjSzYW5wtXtjdG73uT2ql5rpdbuTqFScrr+LPWIdZY48
- AGJPh+uMNAqF0M2AzlsQO7XMNrLdhOQ8eFaOlI/+VxcraJ4IRcn5TB5M338/QYEzkYopcwugPf
- lPs=
+IronPort-SDR: xNRp1O/Qr49vPg3S7RUEcytEJKT39eWC7sCIQ7RAoaIdl7XdAMDHcJjQWkNq/0hzCNZ5Pxx5Ya
+ +Dei7WHbONIUPCU3+tcv2mPcLWV/ImofiPdDOCzmrnJogrIKQ0AuLV7t53N5WAZCo6aDHVU8Xz
+ Z2j42T5y75hWW3MbvHeD2pQ5m2D/SDpGts+NhkqcGUM6cegK/g/YhRdf6ZggHyrEpZOTbEgNM0
+ fo21GU7bpdxwwJz0tJIG/0cQ5j/6tzgbsSr+O3lgGjo7HYeKTP0Ju8lxAzjmD7UiXHE2cFfO3F
+ MEg=
 Received: from jedi-01.sdcorp.global.sandisk.com (HELO jedi-01.int.fusionio.com) ([10.11.143.218])
-  by uls-op-cesaip02.wdc.com with ESMTP; 30 Jul 2019 18:24:36 -0700
+  by uls-op-cesaip02.wdc.com with ESMTP; 30 Jul 2019 18:24:37 -0700
 From:   Atish Patra <atish.patra@wdc.com>
 To:     linux-kernel@vger.kernel.org
-Cc:     Atish Patra <atish.patra@wdc.com>,
+Cc:     Anup Patel <anup.patel@wdc.com>, Atish Patra <atish.patra@wdc.com>,
         Albert Ou <aou@eecs.berkeley.edu>,
         Alexios Zavras <alexios.zavras@intel.com>,
         Allison Randal <allison@lohutok.net>,
-        Anup Patel <anup.patel@wdc.com>,
         Daniel Lezcano <daniel.lezcano@linaro.org>,
         devicetree@vger.kernel.org, Enrico Weigelt <info@metux.net>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -65,9 +64,9 @@ Cc:     Atish Patra <atish.patra@wdc.com>,
         Paul Walmsley <paul.walmsley@sifive.com>,
         Rob Herring <robh+dt@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH v2 1/5] RISC-V: Remove per cpu clocksource
-Date:   Tue, 30 Jul 2019 18:24:14 -0700
-Message-Id: <20190731012418.24565-2-atish.patra@wdc.com>
+Subject: [PATCH v2 2/5] RISC-V: Add riscv_isa reprensenting ISA features common across CPUs
+Date:   Tue, 30 Jul 2019 18:24:15 -0700
+Message-Id: <20190731012418.24565-3-atish.patra@wdc.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190731012418.24565-1-atish.patra@wdc.com>
 References: <20190731012418.24565-1-atish.patra@wdc.com>
@@ -78,45 +77,154 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is only one clocksource in RISC-V. The boot cpu initializes
-that clocksource. No need to keep a percpu data structure.
+From: Anup Patel <anup.patel@wdc.com>
 
+This patch adds riscv_isa integer to represent ISA features common
+across all CPUs. The riscv_isa is not same as elf_hwcap because
+elf_hwcap will only have ISA features relevant for user-space apps
+whereas riscv_isa will have ISA features relevant to both kernel
+and user-space apps.
+
+One of the use case is KVM hypervisor where riscv_isa will be used
+to do following operations:
+
+1. Check whether hypervisor extension is available
+2. Find ISA features that need to be virtualized (e.g. floating
+   point support, vector extension, etc.)
+
+Signed-off-by: Anup Patel <anup.patel@wdc.com>
 Signed-off-by: Atish Patra <atish.patra@wdc.com>
 ---
- drivers/clocksource/timer-riscv.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ arch/riscv/include/asm/hwcap.h | 25 +++++++++++++++++++++
+ arch/riscv/kernel/cpufeature.c | 41 +++++++++++++++++++++++++++++++---
+ 2 files changed, 63 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clocksource/timer-riscv.c b/drivers/clocksource/timer-riscv.c
-index 5e6038fbf115..09e031176bc6 100644
---- a/drivers/clocksource/timer-riscv.c
-+++ b/drivers/clocksource/timer-riscv.c
-@@ -55,7 +55,7 @@ static u64 riscv_sched_clock(void)
- 	return get_cycles64();
- }
+diff --git a/arch/riscv/include/asm/hwcap.h b/arch/riscv/include/asm/hwcap.h
+index 7ecb7c6a57b1..e069f60ad5d2 100644
+--- a/arch/riscv/include/asm/hwcap.h
++++ b/arch/riscv/include/asm/hwcap.h
+@@ -22,5 +22,30 @@ enum {
+ };
  
--static DEFINE_PER_CPU(struct clocksource, riscv_clocksource) = {
-+static struct clocksource riscv_clocksource = {
- 	.name		= "riscv_clocksource",
- 	.rating		= 300,
- 	.mask		= CLOCKSOURCE_MASK(64),
-@@ -92,7 +92,6 @@ void riscv_timer_interrupt(void)
- static int __init riscv_timer_init_dt(struct device_node *n)
+ extern unsigned long elf_hwcap;
++
++#define RISCV_ISA_EXT_A		(1UL << ('A' - 'A'))
++#define RISCV_ISA_EXT_a		RISCV_ISA_EXT_A
++#define RISCV_ISA_EXT_C		(1UL << ('C' - 'A'))
++#define RISCV_ISA_EXT_c		RISCV_ISA_EXT_C
++#define RISCV_ISA_EXT_D		(1UL << ('D' - 'A'))
++#define RISCV_ISA_EXT_d		RISCV_ISA_EXT_D
++#define RISCV_ISA_EXT_F		(1UL << ('F' - 'A'))
++#define RISCV_ISA_EXT_f		RISCV_ISA_EXT_F
++#define RISCV_ISA_EXT_H		(1UL << ('H' - 'A'))
++#define RISCV_ISA_EXT_h		RISCV_ISA_EXT_H
++#define RISCV_ISA_EXT_I		(1UL << ('I' - 'A'))
++#define RISCV_ISA_EXT_i		RISCV_ISA_EXT_I
++#define RISCV_ISA_EXT_M		(1UL << ('M' - 'A'))
++#define RISCV_ISA_EXT_m		RISCV_ISA_EXT_M
++#define RISCV_ISA_EXT_S		(1UL << ('S' - 'A'))
++#define RISCV_ISA_EXT_s		RISCV_ISA_EXT_S
++#define RISCV_ISA_EXT_U		(1UL << ('U' - 'A'))
++#define RISCV_ISA_EXT_u		RISCV_ISA_EXT_U
++
++extern unsigned long riscv_isa;
++
++#define riscv_isa_extension_available(ext_char)	\
++		(riscv_isa & RISCV_ISA_EXT_##ext_char)
++
+ #endif
+ #endif
+diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeature.c
+index b1ade9a49347..177529d48d87 100644
+--- a/arch/riscv/kernel/cpufeature.c
++++ b/arch/riscv/kernel/cpufeature.c
+@@ -12,6 +12,9 @@
+ #include <asm/smp.h>
+ 
+ unsigned long elf_hwcap __read_mostly;
++unsigned long riscv_isa __read_mostly;
++EXPORT_SYMBOL_GPL(riscv_isa);
++
+ #ifdef CONFIG_FPU
+ bool has_fpu __read_mostly;
+ #endif
+@@ -20,7 +23,8 @@ void riscv_fill_hwcap(void)
  {
- 	int cpuid, hartid, error;
--	struct clocksource *cs;
+ 	struct device_node *node;
+ 	const char *isa;
+-	size_t i;
++	char print_str[BITS_PER_LONG+1];
++	size_t i, j, isa_len;
+ 	static unsigned long isa2hwcap[256] = {0};
  
- 	hartid = riscv_of_processor_hartid(n);
- 	if (hartid < 0) {
-@@ -112,8 +111,7 @@ static int __init riscv_timer_init_dt(struct device_node *n)
+ 	isa2hwcap['i'] = isa2hwcap['I'] = COMPAT_HWCAP_ISA_I;
+@@ -31,9 +35,11 @@ void riscv_fill_hwcap(void)
+ 	isa2hwcap['c'] = isa2hwcap['C'] = COMPAT_HWCAP_ISA_C;
  
- 	pr_info("%s: Registering clocksource cpuid [%d] hartid [%d]\n",
- 	       __func__, cpuid, hartid);
--	cs = per_cpu_ptr(&riscv_clocksource, cpuid);
--	error = clocksource_register_hz(cs, riscv_timebase);
-+	error = clocksource_register_hz(&riscv_clocksource, riscv_timebase);
- 	if (error) {
- 		pr_err("RISCV timer register failed [%d] for cpu = [%d]\n",
- 		       error, cpuid);
+ 	elf_hwcap = 0;
++	riscv_isa = 0;
+ 
+ 	for_each_of_cpu_node(node) {
+ 		unsigned long this_hwcap = 0;
++		unsigned long this_isa = 0;
+ 
+ 		if (riscv_of_processor_hartid(node) < 0)
+ 			continue;
+@@ -43,8 +49,22 @@ void riscv_fill_hwcap(void)
+ 			continue;
+ 		}
+ 
+-		for (i = 0; i < strlen(isa); ++i)
++		i = 0;
++		isa_len = strlen(isa);
++#if defined(CONFIG_32BIT)
++		if (strncasecmp(isa, "rv32", 4) != 0)
++			i += 4;
++#elif defined(CONFIG_64BIT)
++		if (strncasecmp(isa, "rv64", 4) != 0)
++			i += 4;
++#endif
++		for (; i < isa_len; ++i) {
+ 			this_hwcap |= isa2hwcap[(unsigned char)(isa[i])];
++			if ('a' <= isa[i] && isa[i] <= 'z')
++				this_isa |= (1UL << (isa[i] - 'a'));
++			if ('A' <= isa[i] && isa[i] <= 'Z')
++				this_isa |= (1UL << (isa[i] - 'A'));
++		}
+ 
+ 		/*
+ 		 * All "okay" hart should have same isa. Set HWCAP based on
+@@ -55,6 +75,11 @@ void riscv_fill_hwcap(void)
+ 			elf_hwcap &= this_hwcap;
+ 		else
+ 			elf_hwcap = this_hwcap;
++
++		if (riscv_isa)
++			riscv_isa &= this_isa;
++		else
++			riscv_isa = this_isa;
+ 	}
+ 
+ 	/* We don't support systems with F but without D, so mask those out
+@@ -64,7 +89,17 @@ void riscv_fill_hwcap(void)
+ 		elf_hwcap &= ~COMPAT_HWCAP_ISA_F;
+ 	}
+ 
+-	pr_info("elf_hwcap is 0x%lx\n", elf_hwcap);
++	memset(print_str, 0, sizeof(print_str));
++	for (i = 0, j = 0; i < BITS_PER_LONG; i++)
++		if (riscv_isa & (1UL << i))
++			print_str[j++] = (char)('A' + i);
++	pr_info("riscv: ISA extensions %s\n", print_str);
++
++	memset(print_str, 0, sizeof(print_str));
++	for (i = 0, j = 0; i < BITS_PER_LONG; i++)
++		if (elf_hwcap & (1UL << i))
++			print_str[j++] = (char)('A' + i);
++	pr_info("riscv: ELF capabilities %s\n", print_str);
+ 
+ #ifdef CONFIG_FPU
+ 	if (elf_hwcap & (COMPAT_HWCAP_ISA_F | COMPAT_HWCAP_ISA_D))
 -- 
 2.21.0
 
