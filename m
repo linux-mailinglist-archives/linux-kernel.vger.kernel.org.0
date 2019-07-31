@@ -2,53 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4551A7C642
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 17:22:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 322DF7C660
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 17:24:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730094AbfGaPWB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 11:22:01 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:46313 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729095AbfGaPWA (ORCPT
+        id S1727747AbfGaPXx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 11:23:53 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:46548 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727508AbfGaPXu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 11:22:00 -0400
-Received: by mail-ed1-f68.google.com with SMTP id d4so66101740edr.13
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 08:21:58 -0700 (PDT)
+        Wed, 31 Jul 2019 11:23:50 -0400
+Received: by mail-ed1-f67.google.com with SMTP id d4so66107220edr.13
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 08:23:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=shutemov-name.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=xZCrLs3XD8OGAT3ycWjyC35TQ10BuGZLp4dKCEJJsRg=;
-        b=ZzxPi2vB6H9up8THEqzUbCNwa2E1YZmLUp1GoionKsfBr1KQUEhgprj6heyI63fXrw
-         H+vh1QV4vFyU7pFE4ViKBgvENglga5fVeNfWMRPCrZCi98qsi+r5zk6N62pl/svz4DjD
-         WnRM8TC+Pj61sbunfqi5fGW98WW6DAYki4QW6kO4N7z8wCx7WTMte/S7jP4fuei7n7eq
-         Hftvw0iaa2a1kXT25K4D3+dXvLj2vwBC0o2P1NCeJjiYQsXP0Nqqds5A7BCA5ZOq7vv9
-         366A7NPLtjGoulNRAC6+0JGz6sJc40LnEY1OPEQYpV1Yi42ZVQe4Pz+slBHXGt07SvXV
-         N3yg==
+        bh=UJ4hP1jpsdk64Bv8Sf387CJe/yf6g4uoo14C+HjaYmc=;
+        b=1WGj7wJ1Xlp3fgcH7vRPMztYr6U5tkfbscC1DOrRMnOQVJ19MV2EFmQ3dnX/uhMZZn
+         +9L8x0NHV+iAuJ5WNvg45vfgpudSqJX8d/cH7WzdQ31ED8yVQqTnWs55ok0ywoT/cwgf
+         LRqfk29P9c2a6t2n4GX6Zecm1hTDG8T8yRuJTxwS4MxO8xCaa30nlcP9NO9vMwzhD2/o
+         jqb8W3AN4/5jM2qm735SpdYqlgeo8FHpUWhX0TEFnQDL0Nc2/fTIBdSXwohDdZnHEMKC
+         JwVVXHl6iKII+YD7dMq1HoHGHE4mMuXMCZtypv68y+qEBnZs7tcFjmgIVrRdiTc9lYx6
+         gpdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=xZCrLs3XD8OGAT3ycWjyC35TQ10BuGZLp4dKCEJJsRg=;
-        b=mMhK2ysK/n3ZyB6+ykiofUgOg+DNftztYzpWOb/tDZw6I6RxrVis4sFexcrA9VXw+R
-         znhxGhcP832a5q84c/UfPMUl65cB7zvgG0Q+/8qe4IzZybc/ozdgHv+lNSp18gW93cX1
-         shSrvo0v4uC/GYlFNmTJK/6uWso/0/WYJ6DoSrvXOfgs+GlrczEn3DJVFhb6aPoympvw
-         yLXDTboyNL9GCUC0g+T2UPN4ivSN1oNIFP+7awmVZ04woHTEe6JSxftarVg+Vrb4vVpP
-         DccTQQM/UhBCLbVxZXADF8j/mFa+SYBPzF9YdH2huBFBf8yHbivmOVASNjeOOPbf5L7P
-         iG+Q==
-X-Gm-Message-State: APjAAAU3vUnuGfGchah74nJiI37CrpmBIx6fTpWj+fxcCLM2xkXhSdj5
-        OvXKYlBqTHroz64s+Re9L5A=
-X-Google-Smtp-Source: APXvYqzi+h2CEkJox27TxBwILuSunR6853S6mGlis2VdUPScZU2xczXssICyuyck991q2MnJokM4kQ==
-X-Received: by 2002:a17:906:1dd5:: with SMTP id v21mr65219317ejh.112.1564586040695;
-        Wed, 31 Jul 2019 08:14:00 -0700 (PDT)
+        bh=UJ4hP1jpsdk64Bv8Sf387CJe/yf6g4uoo14C+HjaYmc=;
+        b=deZdC1x1csNoRnfUNoYmKlh2k+Hmft1vytoC25UxgjYLMYPGEOCSVUqgAFpwjAW8UC
+         Aqyd00LfgtAQD1zQIj5rOR9+D0usH+1TpY+wkVyjMe3AGCZZy60FpKBipuwA/iiy9eKq
+         qTIfUIyTci3XyWwLRGhneAR7ha8c1sfH2bs6BYTGjT+oUyXSOZktLTI7Q9vILP3tvmpk
+         nzkzTQa25rTw4kM5lgW8TmBookfGSoEjNkY3CR0FmtF/W6ZCpZVuX0ptdwksbFCTnKSM
+         efDuGn0evL4eveNMdvZ1FtlnrwiS3h0vCKeFlkfkf1X5VvbSjnAc1j18r28a4XJwYg7W
+         +/5Q==
+X-Gm-Message-State: APjAAAXx6HznOmHdpnx+xhWAJizDMYZjynvwvhQXBeThEJMmH4GbtqJv
+        +lIkOZ4xEjZUo7mBcjkBdY8=
+X-Google-Smtp-Source: APXvYqyzPuIoVNHRDVYCIgZPGv2mkwSHT27TYRbjUfR28hqJRIWgt4niZw9djMR/+XyBoAXfW/QEEA==
+X-Received: by 2002:a50:a5ec:: with SMTP id b41mr104531465edc.52.1564586628484;
+        Wed, 31 Jul 2019 08:23:48 -0700 (PDT)
 Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id h10sm16374181edn.86.2019.07.31.08.13.54
+        by smtp.gmail.com with ESMTPSA id k20sm17485239ede.66.2019.07.31.08.23.46
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 31 Jul 2019 08:13:57 -0700 (PDT)
+        Wed, 31 Jul 2019 08:23:47 -0700 (PDT)
 From:   "Kirill A. Shutemov" <kirill@shutemov.name>
 X-Google-Original-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
 Received: by box.localdomain (Postfix, from userid 1000)
-        id 4FE39104831; Wed, 31 Jul 2019 18:08:17 +0300 (+03)
+        id 6575C1048A4; Wed, 31 Jul 2019 18:08:17 +0300 (+03)
 To:     Andrew Morton <akpm@linux-foundation.org>, x86@kernel.org,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>,
@@ -63,10 +63,10 @@ Cc:     Kees Cook <keescook@chromium.org>,
         Alison Schofield <alison.schofield@intel.com>,
         linux-mm@kvack.org, kvm@vger.kernel.org, keyrings@vger.kernel.org,
         linux-kernel@vger.kernel.org,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: [PATCHv2 49/59] x86/mm: introduce common code for mem encryption
-Date:   Wed, 31 Jul 2019 18:08:03 +0300
-Message-Id: <20190731150813.26289-50-kirill.shutemov@linux.intel.com>
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: [PATCHv2 52/59] x86/mm: Disable MKTME if not all system memory supports encryption
+Date:   Wed, 31 Jul 2019 18:08:06 +0300
+Message-Id: <20190731150813.26289-53-kirill.shutemov@linux.intel.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190731150813.26289-1-kirill.shutemov@linux.intel.com>
 References: <20190731150813.26289-1-kirill.shutemov@linux.intel.com>
@@ -77,160 +77,135 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jacob Pan <jacob.jun.pan@linux.intel.com>
+UEFI memory attribute EFI_MEMORY_CPU_CRYPTO indicates whether the memory
+region supports encryption.
 
-Both Intel MKTME and AMD SME have needs to support DMA address
-translation with encryption related bits. Common functions are
-introduced in this patch to keep DMA generic code abstracted.
+Kernel doesn't handle situation when only part of the system memory
+supports encryption.
 
-Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+Disable MKTME if not all system memory supports encryption.
+
 Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 ---
- arch/x86/Kconfig                 |  8 +++--
- arch/x86/mm/Makefile             |  1 +
- arch/x86/mm/mem_encrypt.c        | 30 ------------------
- arch/x86/mm/mem_encrypt_common.c | 52 ++++++++++++++++++++++++++++++++
- 4 files changed, 59 insertions(+), 32 deletions(-)
- create mode 100644 arch/x86/mm/mem_encrypt_common.c
+ arch/x86/mm/mktme.c        | 35 +++++++++++++++++++++++++++++++++++
+ drivers/firmware/efi/efi.c | 25 +++++++++++++------------
+ include/linux/efi.h        |  1 +
+ 3 files changed, 49 insertions(+), 12 deletions(-)
 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 2eb2867db5fa..f2cc88fe8ada 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -1521,12 +1521,16 @@ config X86_CPA_STATISTICS
- config ARCH_HAS_MEM_ENCRYPT
- 	def_bool y
- 
-+config X86_MEM_ENCRYPT_COMMON
-+	select ARCH_HAS_FORCE_DMA_UNENCRYPTED
-+	select DYNAMIC_PHYSICAL_MASK
-+	def_bool n
-+
- config AMD_MEM_ENCRYPT
- 	bool "AMD Secure Memory Encryption (SME) support"
- 	depends on X86_64 && CPU_SUP_AMD
--	select DYNAMIC_PHYSICAL_MASK
- 	select ARCH_USE_MEMREMAP_PROT
--	select ARCH_HAS_FORCE_DMA_UNENCRYPTED
-+	select X86_MEM_ENCRYPT_COMMON
- 	---help---
- 	  Say yes to enable support for the encryption of system memory.
- 	  This requires an AMD processor that supports Secure Memory
-diff --git a/arch/x86/mm/Makefile b/arch/x86/mm/Makefile
-index 600d18691876..608e57cda784 100644
---- a/arch/x86/mm/Makefile
-+++ b/arch/x86/mm/Makefile
-@@ -55,3 +55,4 @@ obj-$(CONFIG_AMD_MEM_ENCRYPT)	+= mem_encrypt_identity.o
- obj-$(CONFIG_AMD_MEM_ENCRYPT)	+= mem_encrypt_boot.o
- 
- obj-$(CONFIG_X86_INTEL_MKTME)	+= mktme.o
-+obj-$(CONFIG_X86_MEM_ENCRYPT_COMMON)	+= mem_encrypt_common.o
-diff --git a/arch/x86/mm/mem_encrypt.c b/arch/x86/mm/mem_encrypt.c
-index fece30ca8b0c..e94e0a62ba92 100644
---- a/arch/x86/mm/mem_encrypt.c
-+++ b/arch/x86/mm/mem_encrypt.c
-@@ -15,10 +15,6 @@
- #include <linux/dma-direct.h>
- #include <linux/swiotlb.h>
- #include <linux/mem_encrypt.h>
--#include <linux/device.h>
--#include <linux/kernel.h>
--#include <linux/bitops.h>
--#include <linux/dma-mapping.h>
- 
+diff --git a/arch/x86/mm/mktme.c b/arch/x86/mm/mktme.c
+index 17366d81c21b..4e00c244478b 100644
+--- a/arch/x86/mm/mktme.c
++++ b/arch/x86/mm/mktme.c
+@@ -1,9 +1,11 @@
+ #include <linux/mm.h>
+ #include <linux/highmem.h>
+ #include <linux/rmap.h>
++#include <linux/efi.h>
+ #include <asm/mktme.h>
+ #include <asm/pgalloc.h>
  #include <asm/tlbflush.h>
- #include <asm/fixmap.h>
-@@ -352,32 +348,6 @@ bool sev_active(void)
- }
- EXPORT_SYMBOL(sev_active);
++#include <asm/e820/api.h>
  
--/* Override for DMA direct allocation check - ARCH_HAS_FORCE_DMA_UNENCRYPTED */
--bool force_dma_unencrypted(struct device *dev)
--{
--	/*
--	 * For SEV, all DMA must be to unencrypted addresses.
--	 */
--	if (sev_active())
--		return true;
--
--	/*
--	 * For SME, all DMA must be to unencrypted addresses if the
--	 * device does not support DMA to addresses that include the
--	 * encryption mask.
--	 */
--	if (sme_active()) {
--		u64 dma_enc_mask = DMA_BIT_MASK(__ffs64(sme_me_mask));
--		u64 dma_dev_mask = min_not_zero(dev->coherent_dma_mask,
--						dev->bus_dma_mask);
--
--		if (dma_dev_mask <= dma_enc_mask)
--			return true;
--	}
--
--	return false;
--}
--
- /* Architecture __weak replacement functions */
- void __init mem_encrypt_free_decrypted_mem(void)
+ /* Mask to extract KeyID from physical address. */
+ phys_addr_t __mktme_keyid_mask;
+@@ -48,9 +50,42 @@ void mktme_disable(void)
+ 
+ static bool need_page_mktme(void)
  {
-diff --git a/arch/x86/mm/mem_encrypt_common.c b/arch/x86/mm/mem_encrypt_common.c
-new file mode 100644
-index 000000000000..c11d70151735
---- /dev/null
-+++ b/arch/x86/mm/mem_encrypt_common.c
-@@ -0,0 +1,52 @@
-+#include <linux/mm.h>
-+#include <linux/mem_encrypt.h>
-+#include <linux/dma-mapping.h>
-+#include <asm/mktme.h>
++	int nid;
 +
-+/*
-+ * Encryption bits need to be set and cleared for both Intel MKTME and
-+ * AMD SME when converting between DMA address and physical address.
-+ */
-+dma_addr_t __mem_encrypt_dma_set(dma_addr_t daddr, phys_addr_t paddr)
-+{
-+	unsigned long keyid;
+ 	/* Make sure keyid doesn't collide with extended page flags */
+ 	BUILD_BUG_ON(__NR_PAGE_EXT_FLAGS > 16);
+ 
++	if (!mktme_nr_keyids())
++		return 0;
 +
-+	if (sme_active())
-+		return __sme_set(daddr);
-+	keyid = page_keyid(pfn_to_page(__phys_to_pfn(paddr)));
++	for_each_node_state(nid, N_MEMORY) {
++		const efi_memory_desc_t *md;
++		unsigned long node_start, node_end;
 +
-+	return (daddr & ~mktme_keyid_mask()) | (keyid << mktme_keyid_shift());
-+}
++		node_start = node_start_pfn(nid) << PAGE_SHIFT;
++		node_end = node_end_pfn(nid) << PAGE_SHIFT;
 +
-+phys_addr_t __mem_encrypt_dma_clear(phys_addr_t paddr)
-+{
-+	if (sme_active())
-+		return __sme_clr(paddr);
++		for_each_efi_memory_desc(md) {
++			u64 efi_start = md->phys_addr;
++			u64 efi_end = md->phys_addr + PAGE_SIZE * md->num_pages;
 +
-+	return paddr & ~mktme_keyid_mask();
-+}
++			if (md->attribute & EFI_MEMORY_CPU_CRYPTO)
++				continue;
++			if (efi_start > node_end)
++				continue;
++			if (efi_end  < node_start)
++				continue;
++			if (!e820__mapped_any(efi_start, efi_end, E820_TYPE_RAM))
++				continue;
 +
-+/* Override for DMA direct allocation check - ARCH_HAS_FORCE_DMA_UNENCRYPTED */
-+bool force_dma_unencrypted(struct device *dev)
-+{
-+	u64 dma_enc_mask, dma_dev_mask;
++			printk("Memory range %#llx-%#llx: doesn't support encryption\n",
++					efi_start, efi_end);
++			printk("Disable MKTME\n");
++			mktme_disable();
++			break;
++		}
++	}
 +
-+	/*
-+	 * For SEV, all DMA must be to unencrypted addresses.
-+	 */
-+	if (sev_active())
-+		return true;
-+
-+	/*
-+	 * For SME and MKTME, all DMA must be to unencrypted addresses if the
-+	 * device does not support DMA to addresses that include the encryption
-+	 * mask.
-+	 */
-+	if (!sme_active() && !mktme_enabled())
-+		return false;
-+
-+	dma_enc_mask = sme_me_mask | mktme_keyid_mask();
-+	dma_dev_mask = min_not_zero(dev->coherent_dma_mask, dev->bus_dma_mask);
-+
-+	return (dma_dev_mask & dma_enc_mask) != dma_enc_mask;
-+}
+ 	return !!mktme_nr_keyids();
+ }
+ 
+diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
+index ad3b1f4866b3..fc19da5da3e8 100644
+--- a/drivers/firmware/efi/efi.c
++++ b/drivers/firmware/efi/efi.c
+@@ -852,25 +852,26 @@ char * __init efi_md_typeattr_format(char *buf, size_t size,
+ 	if (attr & ~(EFI_MEMORY_UC | EFI_MEMORY_WC | EFI_MEMORY_WT |
+ 		     EFI_MEMORY_WB | EFI_MEMORY_UCE | EFI_MEMORY_RO |
+ 		     EFI_MEMORY_WP | EFI_MEMORY_RP | EFI_MEMORY_XP |
+-		     EFI_MEMORY_NV |
++		     EFI_MEMORY_NV | EFI_MEMORY_CPU_CRYPTO |
+ 		     EFI_MEMORY_RUNTIME | EFI_MEMORY_MORE_RELIABLE))
+ 		snprintf(pos, size, "|attr=0x%016llx]",
+ 			 (unsigned long long)attr);
+ 	else
+ 		snprintf(pos, size,
+-			 "|%3s|%2s|%2s|%2s|%2s|%2s|%2s|%3s|%2s|%2s|%2s|%2s]",
++			 "|%3s|%2s|%2s|%2s|%2s|%2s|%2s|%2s|%3s|%2s|%2s|%2s|%2s]",
+ 			 attr & EFI_MEMORY_RUNTIME ? "RUN" : "",
+ 			 attr & EFI_MEMORY_MORE_RELIABLE ? "MR" : "",
+-			 attr & EFI_MEMORY_NV      ? "NV"  : "",
+-			 attr & EFI_MEMORY_XP      ? "XP"  : "",
+-			 attr & EFI_MEMORY_RP      ? "RP"  : "",
+-			 attr & EFI_MEMORY_WP      ? "WP"  : "",
+-			 attr & EFI_MEMORY_RO      ? "RO"  : "",
+-			 attr & EFI_MEMORY_UCE     ? "UCE" : "",
+-			 attr & EFI_MEMORY_WB      ? "WB"  : "",
+-			 attr & EFI_MEMORY_WT      ? "WT"  : "",
+-			 attr & EFI_MEMORY_WC      ? "WC"  : "",
+-			 attr & EFI_MEMORY_UC      ? "UC"  : "");
++			 attr & EFI_MEMORY_NV         ? "NV"  : "",
++			 attr & EFI_MEMORY_CPU_CRYPTO ? "CR"  : "",
++			 attr & EFI_MEMORY_XP         ? "XP"  : "",
++			 attr & EFI_MEMORY_RP         ? "RP"  : "",
++			 attr & EFI_MEMORY_WP         ? "WP"  : "",
++			 attr & EFI_MEMORY_RO         ? "RO"  : "",
++			 attr & EFI_MEMORY_UCE        ? "UCE" : "",
++			 attr & EFI_MEMORY_WB         ? "WB"  : "",
++			 attr & EFI_MEMORY_WT         ? "WT"  : "",
++			 attr & EFI_MEMORY_WC         ? "WC"  : "",
++			 attr & EFI_MEMORY_UC         ? "UC"  : "");
+ 	return buf;
+ }
+ 
+diff --git a/include/linux/efi.h b/include/linux/efi.h
+index f87fabea4a85..4ac54a168ffe 100644
+--- a/include/linux/efi.h
++++ b/include/linux/efi.h
+@@ -112,6 +112,7 @@ typedef	struct {
+ #define EFI_MEMORY_MORE_RELIABLE \
+ 				((u64)0x0000000000010000ULL)	/* higher reliability */
+ #define EFI_MEMORY_RO		((u64)0x0000000000020000ULL)	/* read-only */
++#define EFI_MEMORY_CPU_CRYPTO 	((u64)0x0000000000080000ULL)	/* memory encryption supported */
+ #define EFI_MEMORY_RUNTIME	((u64)0x8000000000000000ULL)	/* range requires runtime mapping */
+ #define EFI_MEMORY_DESCRIPTOR_VERSION	1
+ 
 -- 
 2.21.0
 
