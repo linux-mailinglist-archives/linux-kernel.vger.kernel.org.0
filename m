@@ -2,198 +2,439 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87CC17C8DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 18:39:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA8047C913
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 18:45:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729807AbfGaQjg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 12:39:36 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:64162 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729730AbfGaQjf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 12:39:35 -0400
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6VGbGBv051251
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 12:39:35 -0400
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2u3e2n1nkh-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 12:39:34 -0400
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <parth@linux.ibm.com>;
-        Wed, 31 Jul 2019 17:39:32 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 31 Jul 2019 17:39:29 +0100
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x6VGdSqj47972570
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 31 Jul 2019 16:39:28 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B7AFE42049;
-        Wed, 31 Jul 2019 16:39:28 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D81B942047;
-        Wed, 31 Jul 2019 16:39:25 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.199.49.237])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 31 Jul 2019 16:39:25 +0000 (GMT)
-Subject: Re: [RFC v4 0/8] TurboSched: A scheduler for sustaining Turbo
- Frequencies for longer durations
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     peterz@infradead.org, mingo@redhat.com,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        patrick.bellasi@arm.com, dietmar.eggemann@arm.com,
-        daniel.lezcano@linaro.org, subhra.mazumdar@oracle.com
-References: <20190725070857.6639-1-parth@linux.ibm.com>
- <20190728133102.GD8718@xo-6d-61-c0.localdomain>
-From:   Parth Shah <parth@linux.ibm.com>
-Date:   Wed, 31 Jul 2019 22:09:24 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        id S1729488AbfGaQpN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 12:45:13 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:58346 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726960AbfGaQpN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jul 2019 12:45:13 -0400
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 111E15D6377D3E19FF47;
+        Wed, 31 Jul 2019 23:58:26 +0800 (CST)
+Received: from architecture4.huawei.com (10.140.130.215) by smtp.huawei.com
+ (10.3.19.210) with Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 31 Jul
+ 2019 23:58:16 +0800
+From:   Gao Xiang <gaoxiang25@huawei.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Chao Yu <yuchao0@huawei.com>, <devel@driverdev.osuosl.org>
+CC:     LKML <linux-kernel@vger.kernel.org>,
+        <linux-erofs@lists.ozlabs.org>, "Chao Yu" <chao@kernel.org>,
+        Miao Xie <miaoxie@huawei.com>, <weidu.du@huawei.com>,
+        Fang Wei <fangwei1@huawei.com>,
+        Gao Xiang <gaoxiang25@huawei.com>
+Subject: [PATCH v2 06/22] staging: erofs: clean up internal.h
+Date:   Wed, 31 Jul 2019 23:57:36 +0800
+Message-ID: <20190731155752.210602-7-gaoxiang25@huawei.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190731155752.210602-1-gaoxiang25@huawei.com>
+References: <20190731155752.210602-1-gaoxiang25@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <20190728133102.GD8718@xo-6d-61-c0.localdomain>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19073116-0028-0000-0000-00000389B4C2
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19073116-0029-0000-0000-0000244A0661
-Message-Id: <4fcd3488-6ba0-bc22-a08d-ceebbce1c120@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-31_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1907310166
+Content-Type: text/plain
+X-Originating-IP: [10.140.130.215]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Tidy up relative order of variables / declarations in internal.h,
+move some local static functions out into other files and
+add tags at the end of #endif acrossing several lines.
 
+No logic change.
 
-On 7/28/19 7:01 PM, Pavel Machek wrote:
-> Hi!
-> 
->> Abstract
->> ========
->>
->> The modern servers allows multiple cores to run at range of frequencies
->> higher than rated range of frequencies. But the power budget of the system
->> inhibits sustaining these higher frequencies for longer durations.
-> 
-> Thermal budget?
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+---
+ drivers/staging/erofs/decompressor.c |  27 +++++
+ drivers/staging/erofs/internal.h     | 157 ++++++++-------------------
+ drivers/staging/erofs/super.c        |   2 +-
+ drivers/staging/erofs/zdata.c        |   8 +-
+ drivers/staging/erofs/zdata.h        |  13 +++
+ 5 files changed, 92 insertions(+), 115 deletions(-)
 
-Right, it is a good point, and there can be possibility of Thermal throttling
-which is not covered here.
-But the thermal throttling is less often seen in the servers than the throttling
-due to the Power budget constraints. Also one can change the power cap which leads
-to increase in the throttling and task packing can handle in such cases.
-
-BTW, Task packing allows few more cores to remain idle for longer time, so
-shouldn't this decrease thermal throttles upto certain extent?
-
-> 
-> Should this go to documentation somewhere?
-> 
-
-Sure, I can add to the Documentation/scheduler or under selftest.
-
->> Current CFS algorithm in kernel scheduler is performance oriented and hence
->> tries to assign any idle CPU first for the waking up of new tasks. This
->> policy is perfect for major categories of the workload, but for jitter
->> tasks, one can save energy by packing them onto the active cores and allow
->> those cores to run at higher frequencies.
->>
->> These patch-set tunes the task wake up logic in scheduler to pack
->> exclusively classified jitter tasks onto busy cores. The work involves the
->> jitter tasks classifications by using syscall based mechanisms.
->>
->> In brief, if we can pack jitter tasks on busy cores then we can save power
->> by keeping other cores idle and allow busier cores to run at turbo
->> frequencies, patch-set tries to meet this solution in simplest manner.
->> Though, there are some challenges in implementing it(like smt_capacity,
-> 
-> Space before (.
-
-My bad, somehow missed it. Thanks for pointing out.
-
-> >> These numbers are w.r.t. `turbo_bench.c` multi-threaded test benchmark
->> which can create two kinds of tasks: CPU bound (High Utilization) and
->> Jitters (Low Utilization). N in X-axis represents N-CPU bound and N-Jitter
->> tasks spawned.
-> 
-> Ok, so you have description how it causes 13% improvements. Do you also have metrics how
-> it harms performance.. how much delay is added to unimportant tasks etc...?
-> 
-
-Yes, if we try to pack the tasks despite of no frequency throttling, we see a regression
-around 5%. For instance, in the synthetic benchmark I used to show performance benefit,
-for lower count of CPU intensive threads (N=2) there is -5% performance drop.
-
-Talking about the delay added to an unimportant tasks, the result can be lower throughput
-or higher latency for such tasks.
-
-1. Throughput
-For instance, when classifying 8 running tasks as jitters, we can have performance
-drop "based on the task characteristics".
-
-Below table shows the performance (total operations performed) drop observed when
-jitters have different utilization on a CPU set at max Frequency.
-+-------------------+-------------+
-| Utilization(in %) | Performance |
-+-------------------+-------------+
-| 10-20             | -0.32%      |
-| 30-40             | -0.003%     |
-+-------------------+-------------+
-
-Jitters here are frequency insensitive and does only X-operations in N-period time. Hence
-it doesn't show much drop in throughput.
-
-2.  Latency
-The wakeup latency of the jitter tasks gives below results
-Test-1:
-- 8 CPU intensive tasks, 40 jitter low utilization tasks
-+-------+-------------+--------------+
-| %ile  | w/o patches | with patches |
-+-------+-------------+--------------+
-| Min   |           3 | 5 (-66%)     |
-| 50    |          64 | 64 (0%)      |
-| 90    |          66 | 67 (-1.5%)   |
-| 99    |          67 | 68 (-1.4%)   |
-| 99.99 |          78 | 439 (-462%)  |
-| Max   |         159 | 1023 (-543%) |
-+-------+-------------+--------------+
-
-Test-2:
-- 8 CPU intensive tasks, 8 jitter tasks
-+-------+-------------+--------------+
-| %ile  | w/o patches | with patches |
-+-------+-------------+--------------+
-| Min   |           4 | 6 (-50%)     |
-| 50    |          65 | 55 (+15%)    |
-| 90    |          65 | 55 (+15%)    |
-| 99    |          66 | 56 (+15%)    |
-| 99.99 |          76 | 69 (+9%)     |
-| Max   |          78 | 672 (-761%)  |
-+-------+-------------+--------------+
-
-Note: I used the synthetic workload generator to compute wakeup latency for jitter tasks,
-the source code for the same can be found at
-https://github.com/parthsl/tools/blob/master/benchmarks/turbosched_delay.c
-
-
-Also, the jitter tasks would create regression on CPU intensive tasks when placed
-on the sibling thread, but the performance gain with sustained frequency is more
-enough here to overcome this regression. Hence, if there is no throttling, there
-will be performance penalty for both the type of tasks.
-
-
-Thanks,
-Parth
+diff --git a/drivers/staging/erofs/decompressor.c b/drivers/staging/erofs/decompressor.c
+index b75524d0b322..ee5762351f80 100644
+--- a/drivers/staging/erofs/decompressor.c
++++ b/drivers/staging/erofs/decompressor.c
+@@ -223,6 +223,33 @@ static void copy_from_pcpubuf(struct page **out, const char *dst,
+ 	}
+ }
+ 
++static void *erofs_vmap(struct page **pages, unsigned int count)
++{
++#ifdef CONFIG_EROFS_FS_USE_VM_MAP_RAM
++	int i = 0;
++
++	while (1) {
++		void *addr = vm_map_ram(pages, count, -1, PAGE_KERNEL);
++		/* retry two more times (totally 3 times) */
++		if (addr || ++i >= 3)
++			return addr;
++		vm_unmap_aliases();
++	}
++	return NULL;
++#else
++	return vmap(pages, count, VM_MAP, PAGE_KERNEL);
++#endif
++}
++
++static void erofs_vunmap(const void *mem, unsigned int count)
++{
++#ifdef CONFIG_EROFS_FS_USE_VM_MAP_RAM
++	vm_unmap_ram(mem, count);
++#else
++	vunmap(mem);
++#endif
++}
++
+ static int decompress_generic(struct z_erofs_decompress_req *rq,
+ 			      struct list_head *pagepool)
+ {
+diff --git a/drivers/staging/erofs/internal.h b/drivers/staging/erofs/internal.h
+index ed487ee56f74..959bd0ae9d74 100644
+--- a/drivers/staging/erofs/internal.h
++++ b/drivers/staging/erofs/internal.h
+@@ -6,8 +6,8 @@
+  *             http://www.huawei.com/
+  * Created by Gao Xiang <gaoxiang25@huawei.com>
+  */
+-#ifndef __INTERNAL_H
+-#define __INTERNAL_H
++#ifndef __EROFS_INTERNAL_H
++#define __EROFS_INTERNAL_H
+ 
+ #include <linux/fs.h>
+ #include <linux/dcache.h>
+@@ -28,15 +28,11 @@
+ #define infoln(x, ...)  pr_info(x "\n", ##__VA_ARGS__)
+ #ifdef CONFIG_EROFS_FS_DEBUG
+ #define debugln(x, ...) pr_debug(x "\n", ##__VA_ARGS__)
+-
+-#define dbg_might_sleep         might_sleep
+ #define DBG_BUGON               BUG_ON
+ #else
+ #define debugln(x, ...)         ((void)0)
+-
+-#define dbg_might_sleep()       ((void)0)
+ #define DBG_BUGON(x)            ((void)(x))
+-#endif
++#endif	/* !CONFIG_EROFS_FS_DEBUG */
+ 
+ enum {
+ 	FAULT_KMALLOC,
+@@ -53,7 +49,7 @@ struct erofs_fault_info {
+ 	unsigned int inject_rate;
+ 	unsigned int inject_type;
+ };
+-#endif
++#endif	/* CONFIG_EROFS_FAULT_INJECTION */
+ 
+ #ifdef CONFIG_EROFS_FS_ZIP_CACHE_BIPOLAR
+ #define EROFS_FS_ZIP_CACHE_LVL	(2)
+@@ -71,6 +67,9 @@ struct erofs_fault_info {
+ #define EROFS_SUPER_MAGIC   EROFS_SUPER_MAGIC_V1
+ 
+ typedef u64 erofs_nid_t;
++typedef u64 erofs_off_t;
++/* data type for filesystem-wide blocks number */
++typedef u32 erofs_blk_t;
+ 
+ struct erofs_sb_info {
+ 	/* list for all registered superblocks, mainly for shrinker */
+@@ -154,7 +153,7 @@ static inline bool time_to_inject(struct erofs_sb_info *sbi, int type)
+ static inline void erofs_show_injection_info(int type)
+ {
+ }
+-#endif
++#endif	/* !CONFIG_EROFS_FAULT_INJECTION */
+ 
+ static inline void *erofs_kmalloc(struct erofs_sb_info *sbi,
+ 					size_t size, gfp_t flags)
+@@ -179,6 +178,8 @@ static inline void *erofs_kmalloc(struct erofs_sb_info *sbi,
+ #define test_opt(sbi, option)	((sbi)->mount_opt & EROFS_MOUNT_##option)
+ 
+ #ifdef CONFIG_EROFS_FS_ZIP
++#define EROFS_LOCKED_MAGIC     (INT_MIN | 0xE0F510CCL)
++
+ /* basic unit of the workstation of a super_block */
+ struct erofs_workgroup {
+ 	/* the workgroup index in the workstation */
+@@ -188,8 +189,6 @@ struct erofs_workgroup {
+ 	atomic_t refcount;
+ };
+ 
+-#define EROFS_LOCKED_MAGIC     (INT_MIN | 0xE0F510CCL)
+-
+ #if defined(CONFIG_SMP)
+ static inline bool erofs_workgroup_try_to_freeze(struct erofs_workgroup *grp,
+ 						 int val)
+@@ -246,50 +245,24 @@ static inline int erofs_wait_on_workgroup_freezed(struct erofs_workgroup *grp)
+ 	DBG_BUGON(v == EROFS_LOCKED_MAGIC);
+ 	return v;
+ }
+-#endif
+-
+-int erofs_workgroup_put(struct erofs_workgroup *grp);
+-struct erofs_workgroup *erofs_find_workgroup(struct super_block *sb,
+-					     pgoff_t index, bool *tag);
+-int erofs_register_workgroup(struct super_block *sb,
+-			     struct erofs_workgroup *grp, bool tag);
+-unsigned long erofs_shrink_workstation(struct erofs_sb_info *sbi,
+-				       unsigned long nr_shrink, bool cleanup);
+-void erofs_workgroup_free_rcu(struct erofs_workgroup *grp);
+-
+-#ifdef EROFS_FS_HAS_MANAGED_CACHE
+-int erofs_try_to_free_all_cached_pages(struct erofs_sb_info *sbi,
+-				       struct erofs_workgroup *egrp);
+-int erofs_try_to_free_cached_page(struct address_space *mapping,
+-				  struct page *page);
+-
+-#define MNGD_MAPPING(sbi)	((sbi)->managed_cache->i_mapping)
+-static inline bool erofs_page_is_managed(const struct erofs_sb_info *sbi,
+-					 struct page *page)
+-{
+-	return page->mapping == MNGD_MAPPING(sbi);
+-}
+-#else
+-#define MNGD_MAPPING(sbi)	(NULL)
+-static inline bool erofs_page_is_managed(const struct erofs_sb_info *sbi,
+-					 struct page *page) { return false; }
+-#endif
++#endif	/* !CONFIG_SMP */
+ 
+-#define DEFAULT_MAX_SYNC_DECOMPRESS_PAGES	3
++/* hard limit of pages per compressed cluster */
++#define Z_EROFS_CLUSTER_MAX_PAGES       (CONFIG_EROFS_FS_CLUSTER_PAGE_LIMIT)
++#define EROFS_PCPUBUF_NR_PAGES          Z_EROFS_CLUSTER_MAX_PAGES
+ 
+-static inline bool __should_decompress_synchronously(struct erofs_sb_info *sbi,
+-						     unsigned int nr)
+-{
+-	return nr <= sbi->max_sync_decompress_pages;
+-}
++/* page count of a compressed cluster */
++#define erofs_clusterpages(sbi)         ((1 << (sbi)->clusterbits) / PAGE_SIZE)
+ 
+ int __init z_erofs_init_zip_subsystem(void);
+ void z_erofs_exit_zip_subsystem(void);
+ #else
++#define EROFS_PCPUBUF_NR_PAGES          0
++
+ /* dummy initializer/finalizer for the decompression subsystem */
+ static inline int z_erofs_init_zip_subsystem(void) { return 0; }
+ static inline void z_erofs_exit_zip_subsystem(void) {}
+-#endif
++#endif	/* !CONFIG_EROFS_FS_ZIP */
+ 
+ /* we strictly follow PAGE_SIZE and no buffer head yet */
+ #define LOG_BLOCK_SIZE		PAGE_SHIFT
+@@ -308,23 +281,6 @@ static inline void z_erofs_exit_zip_subsystem(void) {}
+ 
+ #define ROOT_NID(sb)		((sb)->root_nid)
+ 
+-#ifdef CONFIG_EROFS_FS_ZIP
+-/* hard limit of pages per compressed cluster */
+-#define Z_EROFS_CLUSTER_MAX_PAGES       (CONFIG_EROFS_FS_CLUSTER_PAGE_LIMIT)
+-
+-/* page count of a compressed cluster */
+-#define erofs_clusterpages(sbi)         ((1 << (sbi)->clusterbits) / PAGE_SIZE)
+-
+-#define EROFS_PCPUBUF_NR_PAGES          Z_EROFS_CLUSTER_MAX_PAGES
+-#else
+-#define EROFS_PCPUBUF_NR_PAGES          0
+-#endif
+-
+-typedef u64 erofs_off_t;
+-
+-/* data type for filesystem-wide blocks number */
+-typedef u32 erofs_blk_t;
+-
+ #define erofs_blknr(addr)       ((addr) / EROFS_BLKSIZ)
+ #define erofs_blkoff(addr)      ((addr) % EROFS_BLKSIZ)
+ #define blknr_to_addr(nr)       ((erofs_off_t)(nr) * EROFS_BLKSIZ)
+@@ -364,7 +320,7 @@ struct erofs_vnode {
+ 			unsigned char  z_logical_clusterbits;
+ 			unsigned char  z_physical_clusterbits[2];
+ 		};
+-#endif
++#endif	/* CONFIG_EROFS_FS_ZIP */
+ 	};
+ 	/* the corresponding vfs inode */
+ 	struct inode vfs_inode;
+@@ -472,13 +428,14 @@ static inline int z_erofs_map_blocks_iter(struct inode *inode,
+ {
+ 	return -ENOTSUPP;
+ }
+-#endif
++#endif	/* !CONFIG_EROFS_FS_ZIP */
+ 
+ /* data.c */
+-static inline struct bio *
+-erofs_grab_bio(struct super_block *sb,
+-	       erofs_blk_t blkaddr, unsigned int nr_pages, void *bi_private,
+-	       bio_end_io_t endio, bool nofail)
++static inline struct bio *erofs_grab_bio(struct super_block *sb,
++					 erofs_blk_t blkaddr,
++					 unsigned int nr_pages,
++					 void *bi_private, bio_end_io_t endio,
++					 bool nofail)
+ {
+ 	const gfp_t gfp = GFP_NOIO;
+ 	struct bio *bio;
+@@ -525,20 +482,13 @@ static inline struct page *erofs_get_meta_page(struct super_block *sb,
+ 	return __erofs_get_meta_page(sb, blkaddr, prio, false);
+ }
+ 
+-static inline struct page *erofs_get_meta_page_nofail(struct super_block *sb,
+-	erofs_blk_t blkaddr, bool prio)
+-{
+-	return __erofs_get_meta_page(sb, blkaddr, prio, true);
+-}
+-
+ int erofs_map_blocks(struct inode *, struct erofs_map_blocks *, int);
+ 
+-static inline struct page *
+-erofs_get_inline_page(struct inode *inode,
+-		      erofs_blk_t blkaddr)
++static inline struct page *erofs_get_inline_page(struct inode *inode,
++						 erofs_blk_t blkaddr)
+ {
+-	return erofs_get_meta_page(inode->i_sb,
+-		blkaddr, S_ISDIR(inode->i_mode));
++	return erofs_get_meta_page(inode->i_sb, blkaddr,
++				   S_ISDIR(inode->i_mode));
+ }
+ 
+ /* inode.c */
+@@ -578,34 +528,7 @@ int erofs_namei(struct inode *dir, struct qstr *name,
+ /* dir.c */
+ extern const struct file_operations erofs_dir_fops;
+ 
+-static inline void *erofs_vmap(struct page **pages, unsigned int count)
+-{
+-#ifdef CONFIG_EROFS_FS_USE_VM_MAP_RAM
+-	int i = 0;
+-
+-	while (1) {
+-		void *addr = vm_map_ram(pages, count, -1, PAGE_KERNEL);
+-		/* retry two more times (totally 3 times) */
+-		if (addr || ++i >= 3)
+-			return addr;
+-		vm_unmap_aliases();
+-	}
+-	return NULL;
+-#else
+-	return vmap(pages, count, VM_MAP, PAGE_KERNEL);
+-#endif
+-}
+-
+-static inline void erofs_vunmap(const void *mem, unsigned int count)
+-{
+-#ifdef CONFIG_EROFS_FS_USE_VM_MAP_RAM
+-	vm_unmap_ram(mem, count);
+-#else
+-	vunmap(mem);
+-#endif
+-}
+-
+-/* utils.c */
++/* utils.c / zdata.c */
+ extern struct shrinker erofs_shrinker_info;
+ 
+ struct page *erofs_allocpage(struct list_head *pool, gfp_t gfp);
+@@ -625,12 +548,20 @@ static inline void *erofs_get_pcpubuf(unsigned int pagenr)
+ #define erofs_put_pcpubuf(buf) do {} while (0)
+ #endif
+ 
++int erofs_workgroup_put(struct erofs_workgroup *grp);
++struct erofs_workgroup *erofs_find_workgroup(struct super_block *sb,
++					     pgoff_t index, bool *tag);
++int erofs_register_workgroup(struct super_block *sb,
++			     struct erofs_workgroup *grp, bool tag);
++unsigned long erofs_shrink_workstation(struct erofs_sb_info *sbi,
++				       unsigned long nr_shrink, bool cleanup);
++void erofs_workgroup_free_rcu(struct erofs_workgroup *grp);
++int erofs_try_to_free_all_cached_pages(struct erofs_sb_info *sbi,
++				       struct erofs_workgroup *egrp);
++int erofs_try_to_free_cached_page(struct address_space *mapping,
++				  struct page *page);
+ void erofs_register_super(struct super_block *sb);
+ void erofs_unregister_super(struct super_block *sb);
+ 
+-#ifndef lru_to_page
+-#define lru_to_page(head) (list_entry((head)->prev, struct page, lru))
+-#endif
+-
+-#endif
++#endif	/* __EROFS_INTERNAL_H */
+ 
+diff --git a/drivers/staging/erofs/super.c b/drivers/staging/erofs/super.c
+index 38cd7a59750a..55f51d2b3930 100644
+--- a/drivers/staging/erofs/super.c
++++ b/drivers/staging/erofs/super.c
+@@ -211,7 +211,7 @@ static void default_options(struct erofs_sb_info *sbi)
+ {
+ 	/* set up some FS parameters */
+ #ifdef CONFIG_EROFS_FS_ZIP
+-	sbi->max_sync_decompress_pages = DEFAULT_MAX_SYNC_DECOMPRESS_PAGES;
++	sbi->max_sync_decompress_pages = 3;
+ #endif
+ 
+ #ifdef CONFIG_EROFS_FS_XATTR
+diff --git a/drivers/staging/erofs/zdata.c b/drivers/staging/erofs/zdata.c
+index f7667628bbf1..bc478eebf509 100644
+--- a/drivers/staging/erofs/zdata.c
++++ b/drivers/staging/erofs/zdata.c
+@@ -1509,6 +1509,12 @@ static int z_erofs_vle_normalaccess_readpage(struct file *file,
+ 	return 0;
+ }
+ 
++static bool should_decompress_synchronously(struct erofs_sb_info *sbi,
++					    unsigned int nr)
++{
++	return nr <= sbi->max_sync_decompress_pages;
++}
++
+ static int z_erofs_vle_normalaccess_readpages(struct file *filp,
+ 					      struct address_space *mapping,
+ 					      struct list_head *pages,
+@@ -1517,7 +1523,7 @@ static int z_erofs_vle_normalaccess_readpages(struct file *filp,
+ 	struct inode *const inode = mapping->host;
+ 	struct erofs_sb_info *const sbi = EROFS_I_SB(inode);
+ 
+-	bool sync = __should_decompress_synchronously(sbi, nr_pages);
++	bool sync = should_decompress_synchronously(sbi, nr_pages);
+ 	struct z_erofs_vle_frontend f = VLE_FRONTEND_INIT(inode);
+ 	gfp_t gfp = mapping_gfp_constraint(mapping, GFP_KERNEL);
+ 	struct page *head = NULL;
+diff --git a/drivers/staging/erofs/zdata.h b/drivers/staging/erofs/zdata.h
+index 8d0119d697da..6574d43ba877 100644
+--- a/drivers/staging/erofs/zdata.h
++++ b/drivers/staging/erofs/zdata.h
+@@ -104,6 +104,19 @@ struct z_erofs_vle_unzip_io_sb {
+ 	struct super_block *sb;
+ };
+ 
++#ifdef EROFS_FS_HAS_MANAGED_CACHE
++#define MNGD_MAPPING(sbi)	((sbi)->managed_cache->i_mapping)
++static inline bool erofs_page_is_managed(const struct erofs_sb_info *sbi,
++					 struct page *page)
++{
++	return page->mapping == MNGD_MAPPING(sbi);
++}
++#else
++#define MNGD_MAPPING(sbi)	(NULL)
++static inline bool erofs_page_is_managed(const struct erofs_sb_info *sbi,
++					 struct page *page) { return false; }
++#endif	/* !EROFS_FS_HAS_MANAGED_CACHE */
++
+ #define Z_EROFS_ONLINEPAGE_COUNT_BITS 2
+ #define Z_EROFS_ONLINEPAGE_COUNT_MASK ((1 << Z_EROFS_ONLINEPAGE_COUNT_BITS) - 1)
+ #define Z_EROFS_ONLINEPAGE_INDEX_SHIFT  (Z_EROFS_ONLINEPAGE_COUNT_BITS)
+-- 
+2.17.1
 
