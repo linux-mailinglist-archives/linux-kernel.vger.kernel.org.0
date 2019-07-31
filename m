@@ -2,44 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B9637BF89
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 13:31:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D3CF7BF8C
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 13:31:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387588AbfGaLaD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 07:30:03 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:34446 "EHLO
+        id S2387663AbfGaLaL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 07:30:11 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:34996 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726169AbfGaLaC (ORCPT
+        with ESMTP id S2387596AbfGaLaJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 07:30:02 -0400
+        Wed, 31 Jul 2019 07:30:09 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=QcGmBVpDOdgqukjU+sGeVWU68WD55hAUZCPdArb9dVo=; b=it7QpXTqCKjT
-        EjZ4pPZAezG1Z4SYVc4k4tvPHDuAiPs5gTSOa9r3/JEL8KULqKbFMiXjHu/pQcMGivq9kOje2fdrw
-        JEDRLSsdNqcOWn2Td/uZT031g39gliOgRJv5TT3AH10z52mLuJiR9LQzg4r5yLkF4+xc0m9xDqy2u
-        5sdVQ=;
-Received: from ypsilon.sirena.org.uk ([2001:470:1f1d:6b5::7])
+        List-Archive; bh=qdXfU6r5b5sdjGKJgeKuLM8z6fXd+57ECxKLYJefhRg=; b=h7mJvPV40UEw
+        3KaRh1RriPGRhUPlrjB5eVR9O93+MYafPgo89J2bUWnqc2+GsMxE990Eqn+E6iBDJssbzl59fsgb6
+        zB5KGcq4W2nywpYg857qEi0d6RNW65Waj0BGjY1rHdgeNloGTTXJxru0tC3ydVbakXreJAvTRhSDx
+        +zz5k=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1hsmno-0001pQ-0o; Wed, 31 Jul 2019 11:29:52 +0000
+        id 1hsmno-0001pr-Br; Wed, 31 Jul 2019 11:29:52 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 41B9A2742CC3; Wed, 31 Jul 2019 12:29:51 +0100 (BST)
+        id 80FD42742CDE; Wed, 31 Jul 2019 12:29:51 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Jerome Brunet <jbrunet@baylibre.com>
-Cc:     alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-        Kevin Hilman <khilman@baylibre.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>
-Subject: Applied "ASoC: meson: g12a-tohdmitx: override codec2codec params" to the asoc tree
-In-Reply-To: <20190729080139.32068-1-jbrunet@baylibre.com>
+To:     fengchunguo <chunguo.feng@amlogic.com>
+Cc:     alsa-devel@alsa-project.org, bleung@chromium.org,
+        broonie@kernel.org, chunguo.feng@amlogic.com,
+        grundler@chromium.org, lgirdwood@gmail.com,
+        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        perex@perex.cz, pierre-louis.bossart@linux.intel.com,
+        RyanS.Lee@maximintegrated.com, tiwai@suse.com
+Subject: Applied "ASoC: max98373: add 88200 and 96000 sampling rate support" to the asoc tree
+In-Reply-To: <20190731074156.5620-1-chunguo.feng@amlogic.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190731112951.41B9A2742CC3@ypsilon.sirena.org.uk>
+Message-Id: <20190731112951.80FD42742CDE@ypsilon.sirena.org.uk>
 Date:   Wed, 31 Jul 2019 12:29:51 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -48,11 +49,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: meson: g12a-tohdmitx: override codec2codec params
+   ASoC: max98373: add 88200 and 96000 sampling rate support
 
 has been applied to the asoc tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.4
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.3
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -73,95 +74,64 @@ to this mail.
 Thanks,
 Mark
 
-From 2c4956bc1e9062e5e3c5ea7612294f24e6d4fbdd Mon Sep 17 00:00:00 2001
-From: Jerome Brunet <jbrunet@baylibre.com>
-Date: Mon, 29 Jul 2019 10:01:39 +0200
-Subject: [PATCH] ASoC: meson: g12a-tohdmitx: override codec2codec params
+From b9da500bde81ad820b5d95c6bf52fc33e1f490ee Mon Sep 17 00:00:00 2001
+From: fengchunguo <chunguo.feng@amlogic.com>
+Date: Wed, 31 Jul 2019 15:41:56 +0800
+Subject: [PATCH] ASoC: max98373: add 88200 and 96000 sampling rate support
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-So far, forwarding the hw_params of the input to output relied on the
-.hw_params() callback of the cpu side of the codec2codec link to be called
-first. This is a bit weak.
+88200 and 96000 sampling rate was not enabled on driver, so can't be played.
 
-Instead, override the stream params of the codec2codec to link to set it up
-correctly.
+The error information:
+max98373 3-0031：rate 96000 not supported
+max98373 3-0031：ASoC: can't set max98373-aif1 hw params: -22
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-Link: https://lore.kernel.org/r/20190729080139.32068-1-jbrunet@baylibre.com
+Signed-off-by: fengchunguo <chunguo.feng@amlogic.com>
+Link: https://lore.kernel.org/r/20190731074156.5620-1-chunguo.feng@amlogic.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/meson/g12a-tohdmitx.c | 34 ++++++++++++++++-----------------
- 1 file changed, 16 insertions(+), 18 deletions(-)
+ sound/soc/codecs/max98373.c | 6 ++++++
+ sound/soc/codecs/max98373.h | 2 ++
+ 2 files changed, 8 insertions(+)
+ mode change 100644 => 100755 sound/soc/codecs/max98373.c
+ mode change 100644 => 100755 sound/soc/codecs/max98373.h
 
-diff --git a/sound/soc/meson/g12a-tohdmitx.c b/sound/soc/meson/g12a-tohdmitx.c
-index 707ccb192e4c..9943c807ec5d 100644
---- a/sound/soc/meson/g12a-tohdmitx.c
-+++ b/sound/soc/meson/g12a-tohdmitx.c
-@@ -28,7 +28,7 @@
- #define  CTRL0_SPDIF_CLK_SEL		BIT(0)
+diff --git a/sound/soc/codecs/max98373.c b/sound/soc/codecs/max98373.c
+old mode 100644
+new mode 100755
+index 528695cd6a1c..8c601a3ebc27
+--- a/sound/soc/codecs/max98373.c
++++ b/sound/soc/codecs/max98373.c
+@@ -267,6 +267,12 @@ static int max98373_dai_hw_params(struct snd_pcm_substream *substream,
+ 	case 48000:
+ 		sampling_rate = MAX98373_PCM_SR_SET1_SR_48000;
+ 		break;
++	case 88200:
++		sampling_rate = MAX98373_PCM_SR_SET1_SR_88200;
++		break;
++	case 96000:
++		sampling_rate = MAX98373_PCM_SR_SET1_SR_96000;
++		break;
+ 	default:
+ 		dev_err(component->dev, "rate %d not supported\n",
+ 			params_rate(params));
+diff --git a/sound/soc/codecs/max98373.h b/sound/soc/codecs/max98373.h
+old mode 100644
+new mode 100755
+index f6a37aa02f26..a59e51355a84
+--- a/sound/soc/codecs/max98373.h
++++ b/sound/soc/codecs/max98373.h
+@@ -130,6 +130,8 @@
+ #define MAX98373_PCM_SR_SET1_SR_32000 (0x6 << 0)
+ #define MAX98373_PCM_SR_SET1_SR_44100 (0x7 << 0)
+ #define MAX98373_PCM_SR_SET1_SR_48000 (0x8 << 0)
++#define MAX98373_PCM_SR_SET1_SR_88200 (0x9 << 0)
++#define MAX98373_PCM_SR_SET1_SR_96000 (0xA << 0)
  
- struct g12a_tohdmitx_input {
--	struct snd_pcm_hw_params params;
-+	struct snd_soc_pcm_stream params;
- 	unsigned int fmt;
- };
- 
-@@ -225,26 +225,17 @@ static int g12a_tohdmitx_input_hw_params(struct snd_pcm_substream *substream,
- {
- 	struct g12a_tohdmitx_input *data = dai->playback_dma_data;
- 
--	/* Save the stream params for the downstream link */
--	memcpy(&data->params, params, sizeof(*params));
-+	data->params.rates = snd_pcm_rate_to_rate_bit(params_rate(params));
-+	data->params.rate_min = params_rate(params);
-+	data->params.rate_max = params_rate(params);
-+	data->params.formats = 1 << params_format(params);
-+	data->params.channels_min = params_channels(params);
-+	data->params.channels_max = params_channels(params);
-+	data->params.sig_bits = dai->driver->playback.sig_bits;
- 
- 	return 0;
- }
- 
--static int g12a_tohdmitx_output_hw_params(struct snd_pcm_substream *substream,
--					  struct snd_pcm_hw_params *params,
--					  struct snd_soc_dai *dai)
--{
--	struct g12a_tohdmitx_input *in_data =
--		g12a_tohdmitx_get_input_data(dai->capture_widget);
--
--	if (!in_data)
--		return -ENODEV;
--
--	memcpy(params, &in_data->params, sizeof(*params));
--
--	return 0;
--}
- 
- static int g12a_tohdmitx_input_set_fmt(struct snd_soc_dai *dai,
- 				       unsigned int fmt)
-@@ -266,6 +257,14 @@ static int g12a_tohdmitx_output_startup(struct snd_pcm_substream *substream,
- 	if (!in_data)
- 		return -ENODEV;
- 
-+	if (WARN_ON(!rtd->dai_link->params)) {
-+		dev_warn(dai->dev, "codec2codec link expected\n");
-+		return -EINVAL;
-+	}
-+
-+	/* Replace link params with the input params */
-+	rtd->dai_link->params = &in_data->params;
-+
- 	if (!in_data->fmt)
- 		return 0;
- 
-@@ -278,7 +277,6 @@ static const struct snd_soc_dai_ops g12a_tohdmitx_input_ops = {
- };
- 
- static const struct snd_soc_dai_ops g12a_tohdmitx_output_ops = {
--	.hw_params	= g12a_tohdmitx_output_hw_params,
- 	.startup	= g12a_tohdmitx_output_startup,
- };
- 
+ /* MAX98373_R2028_PCM_SR_SETUP_2 */
+ #define MAX98373_PCM_SR_SET2_SR_MASK (0xF << 4)
 -- 
 2.20.1
 
