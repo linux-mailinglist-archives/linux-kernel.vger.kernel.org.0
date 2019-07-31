@@ -2,106 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C14E37CBC1
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 20:19:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 567B57CBBA
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 20:17:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729431AbfGaST0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 14:19:26 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:38866 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726118AbfGaST0 (ORCPT
+        id S1729233AbfGaSRl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 14:17:41 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:44380 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726907AbfGaSRl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 14:19:26 -0400
-Received: by mail-wm1-f68.google.com with SMTP id s15so39334620wmj.3;
-        Wed, 31 Jul 2019 11:19:24 -0700 (PDT)
+        Wed, 31 Jul 2019 14:17:41 -0400
+Received: by mail-pf1-f194.google.com with SMTP id t16so32295218pfe.11
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 11:17:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=gIhR1rFWYPyrLTsaj4himG3yGapZVhC0thy8Gdfepg8=;
-        b=DORqV2TwG88my+ccXBU+Hnzftcjv03/kwCkah17l13sB3nibFPHKVNwkXvPdUtpHrM
-         joJtludO2I1oYBDEVkkS0Wf4jjJumoXjKNJPHCu4NDfICwaXddTtixhqmu7IOrYsT7LA
-         SsBzqG6DVJ/NjIg6DkUdMlLkfKoimFFgchsrz1pRObfxDUkV1FtgsasqBCWQzIcVP8L0
-         CXtZqsXGhWYUUSsSn1puICNRV4QNNbXFpJ657gm/UiTD0yK3+5FMKOtgo08jpyiG6XCd
-         cGXz0o5D59dm2lDGUqTsNCXZOkCm31Ez56wvRszsDECqx1M00t9AT7tpCre6BH43I7JB
-         cUlw==
+        h=date:from:to:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=C5LUoF9wt23TkOe1qlJjYDBJ8FM6oQedM0HGhfgeOjc=;
+        b=aJ/ez4+lxs7KkM0SRxZVVF6/pqzJevVAc1EBV0/DyYIvbiwmD87VGD+DeBVjPYplFv
+         lxzcNTz3nfFo2jkZQWSKjDpl3frMvGj4VzJV14CN3fhEXTt5hgMcc0GNT3pOxnpZ8GuA
+         oxtHkqXp2oc89c4sDsKRJnz/FVPXZpSNfiBZjJARBlawIuDR9gFY6apTHGkxx8dj5ENk
+         pVPCmwrftgzfb3Ip00rbpL+pDQyazIk4S7gPorocRl/Rlb+8CudlqUo76boF6WwhPcfg
+         6edqKwE0LOSZShqa2wdXAvvVpYsqEM1nf+9VUsl6n7FKcGY/4iWyuJM7e357GDUmr1iV
+         Z0Ig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=gIhR1rFWYPyrLTsaj4himG3yGapZVhC0thy8Gdfepg8=;
-        b=ZMM0tmGTOqgUiodJ+cQcVfwFP2IkdHJVEuGIupWs1EmubutfRq3nJPWZlgBqWtitW8
-         uG75P5RWhZKU8w2y+101uq0L6Dzbok24Z5bT02P7jgHP2+PDc05oXTFI8naQp6lmbXIi
-         O1u13IC4M+vfN909acBqbPiTbfNLrMm04aEOZgsRf52BUd8756n+FEgNtgb7qXZjkVIp
-         ghtW0dM6uaTDt7hBnVge+qlBCOoiV15940RBJbWQ8G9FqtTcS1GVAfvB7aXsNzBSkXrA
-         3EhPl4Xl5F61dBaR3odtDxSws60MEb7OW8W2eT+AA/P171TnaeDdfOCI3n0Q4nUQ5Hkj
-         SIpA==
-X-Gm-Message-State: APjAAAUFoMpnzGJn/4SNfRqI5ynEQ6R+V98LyJ09RLQanByIzoEl09nS
-        laD69QdM0RI08x99Gzq5pE8=
-X-Google-Smtp-Source: APXvYqwrgMUC5y/0PalEibAJGNjglLfiIcusQrOyF+huLD7r0zhD6uZeGnFiXHUBTgo73QD+T/HG7g==
-X-Received: by 2002:a1c:f914:: with SMTP id x20mr34597086wmh.142.1564597164070;
-        Wed, 31 Jul 2019 11:19:24 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:4f8:222:2f1b::2])
-        by smtp.gmail.com with ESMTPSA id n2sm46680908wmi.38.2019.07.31.11.19.23
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 31 Jul 2019 11:19:23 -0700 (PDT)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     saravanak@google.com
-Cc:     collinsd@codeaurora.org, corbet@lwn.net,
-        devicetree@vger.kernel.org, frowand.list@gmail.com,
-        gregkh@linuxfoundation.org, kernel-team@android.com,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mark.rutland@arm.com, rafael@kernel.org, robh+dt@kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        kbuild test robot <lkp@intel.com>
-Subject: [PATCH] of/platform: Add missing const qualifier in of_link_property
-Date:   Wed, 31 Jul 2019 11:17:34 -0700
-Message-Id: <20190731181733.60422-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190729221101.228240-4-saravanak@google.com>
-References: <20190729221101.228240-4-saravanak@google.com>
+        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=C5LUoF9wt23TkOe1qlJjYDBJ8FM6oQedM0HGhfgeOjc=;
+        b=TEIoW//e07dFcbLXVvjeDYxpWRHI1Xp/lZ8QaIxqcRTd2DCmlgO/cpt/HH0SkR56Zx
+         C+3720fCdav3ihHMe4T5ZkMrblF2USe2SNajbJiVsmx5LcvYrf2BDmMzItrbzHLm+PtR
+         Ef7CSPiSapgE685k7Q6xNRKjFIt/5RU9CdmQLpHTXmhpmscmCqD+f5Isz7LLijKp8kBj
+         zvpH7yVK+O6UVOfZejHSqv/d9BTHimP7+jGwWSkgTBEvEWW9PJyCPEOVghAPQoAwHZbM
+         +K+4rxrK3TSxvsKRZQ87eoonVI5CWaRFCbAAJBIQKxUylkJSXF3Skyl6meKl4x7gkyDa
+         bFqw==
+X-Gm-Message-State: APjAAAVX7jrfoyoDh/5G29IcLN0W+ZQk/7exo25y4p4K7PdXv3oXytYY
+        CsBkAFhdhKCLAcbEWLQWY50=
+X-Google-Smtp-Source: APXvYqxIfI11bfEXr6hEhdatJu6SWlztNlTKjBctw5c68rbYscHmra0EnAHZHWrnmz7T9ek4VXZ0Vw==
+X-Received: by 2002:a62:2b81:: with SMTP id r123mr47147570pfr.108.1564597060398;
+        Wed, 31 Jul 2019 11:17:40 -0700 (PDT)
+Received: from hari-Inspiron-1545 ([183.83.86.126])
+        by smtp.gmail.com with ESMTPSA id s12sm69137141pgr.79.2019.07.31.11.17.37
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 31 Jul 2019 11:17:39 -0700 (PDT)
+Date:   Wed, 31 Jul 2019 23:47:35 +0530
+From:   Hariprasad Kelam <hariprasad.kelam@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hariprasad Kelam <hariprasad.kelam@gmail.com>,
+        Larry Finger <Larry.Finger@lwfinger.net>,
+        Jeeeun Evans <jeeeunevans@gmail.com>,
+        Puranjay Mohan <puranjay12@gmail.com>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        hdegoede@redhat.com
+Subject: [Patch v2 05/10] staging: rtl8723bs: os_dep: Remove unused defines
+Message-ID: <20190731181735.GA9441@hari-Inspiron-1545>
 MIME-Version: 1.0
-X-Patchwork-Bot: notify
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clang errors:
+Remove below unused defines RTW_CH_MAX_2G_CHANNEL rtw_a_rates
+RTW_A_RATES_NUM RTW_5G_CHANNELS_NUM
 
-drivers/of/platform.c:632:28: error: initializing 'struct
-supplier_bindings *' with an expression of type 'const struct
-supplier_bindings [4]' discards qualifiers
-[-Werror,-Wincompatible-pointer-types-discards-qualifiers]
-        struct supplier_bindings *s = bindings;
-                                  ^   ~~~~~~~~
-1 error generated.
-
-Fixes: 05f812549f53 ("of/platform: Add functional dependency link from DT bindings")
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Hariprasad Kelam <hariprasad.kelam@gmail.com>
 ---
+v2 - Add patch number
 
-Given this is still in the driver-core-testing branch, I am fine with
-this being squashed in if desired.
+ drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
- drivers/of/platform.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/of/platform.c b/drivers/of/platform.c
-index e2da90e53edb..21838226d68a 100644
---- a/drivers/of/platform.c
-+++ b/drivers/of/platform.c
-@@ -629,7 +629,7 @@ static bool of_link_property(struct device *dev, struct device_node *con_np,
- 			     const char *prop)
- {
- 	struct device_node *phandle;
--	struct supplier_bindings *s = bindings;
-+	const struct supplier_bindings *s = bindings;
- 	unsigned int i = 0;
- 	bool done = true, matched = false;
+diff --git a/drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c b/drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c
+index 9bc6856..30165ca 100644
+--- a/drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c
++++ b/drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c
+@@ -19,8 +19,6 @@
+ #define RTW_MAX_REMAIN_ON_CHANNEL_DURATION 5000 /* ms */
+ #define RTW_MAX_NUM_PMKIDS 4
  
+-#define RTW_CH_MAX_2G_CHANNEL               14      /* Max channel in 2G band */
+-
+ static const u32 rtw_cipher_suites[] = {
+ 	WLAN_CIPHER_SUITE_WEP40,
+ 	WLAN_CIPHER_SUITE_WEP104,
+@@ -73,13 +71,10 @@ static struct ieee80211_rate rtw_rates[] = {
+ 	RATETAB_ENT(540, 0x800, 0),
+ };
+ 
+-#define rtw_a_rates		(rtw_rates + 4)
+-#define RTW_A_RATES_NUM	8
+ #define rtw_g_rates		(rtw_rates + 0)
+ #define RTW_G_RATES_NUM	12
+ 
+ #define RTW_2G_CHANNELS_NUM 14
+-#define RTW_5G_CHANNELS_NUM 37
+ 
+ static struct ieee80211_channel rtw_2ghz_channels[] = {
+ 	CHAN2G(1, 2412, 0),
 -- 
-2.22.0
+2.7.4
 
