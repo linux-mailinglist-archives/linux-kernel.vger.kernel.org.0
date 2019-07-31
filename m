@@ -2,118 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 46ED67BF3E
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 13:28:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9BEB57BF42
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 13:29:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387432AbfGaL13 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 07:27:29 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:45725 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728123AbfGaL11 (ORCPT
+        id S1727620AbfGaL3h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 07:29:37 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:36877 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725793AbfGaL3g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 07:27:27 -0400
-Received: by mail-pg1-f195.google.com with SMTP id o13so31819936pgp.12;
-        Wed, 31 Jul 2019 04:27:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=vQV5WkYi1RCaWV1rfzrmNeSid8EG2ORcB51l+rIc8nE=;
-        b=YAQafS7T3YJom2VXMOvDWitBFs54x+WqCi/+XukFa7EOfEC/iuP5xGekW2D1YbYRc1
-         1NcoIrd3zS4DPSHoYMzURGkQRdc6/i2zS3DuskzXg0alJOBimbt8/nVs4IAm3TqXAnmO
-         1kfGJ+wCyQPXeA+X8F9qq8Nsc0+lSkuVlBU/ME5xGKRHTXRNlDkrVstOPBo/psYk3POi
-         clKIoAWQFRqABDp7axVMg2G25NZS7YXBMVMJF5yXPyyql2L1Cj5vkBHPq+krSvznMVuA
-         rojQ7PaezEKTurEfI7x2ItVHYTCAtDrgi49rbwEuTSKOay6K6lKkJUgRHAjQvDHOIFi3
-         bhdg==
+        Wed, 31 Jul 2019 07:29:36 -0400
+Received: by mail-ed1-f68.google.com with SMTP id w13so65411485eds.4
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 04:29:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=vQV5WkYi1RCaWV1rfzrmNeSid8EG2ORcB51l+rIc8nE=;
-        b=C8ptdu2BRhlVPxqL7VecpzNjWx7SVc+2oyDURrLX5Kv9iNYi47M67Goug9z9e2WNFk
-         M5FmzuBt1txxNkcNKFDMsePTgt2lmuC6kve5j4Hvl6HaF9b3z2IeZlTIKKNo6p1IpH/h
-         poBmR9ReSuLybsY0Vked3mgwvPUU6tlKk8h/WITdUpc+xbndVePdmJdLbPJOXmqjJlE9
-         55aPJREMu9Z2DSnBPWQofJwqvDKfgtvWvlNxW2Jqa5OJ92JgrUgQxNcc+1Ckyj3DFQSt
-         1qe+5Ly6hSjQHiGOhCOenF1SsEW7CE20gST4F62tnwSgE6jbOFsD3elTAfCt4xcea8eU
-         9Geg==
-X-Gm-Message-State: APjAAAUAPI7OOf9Ad06MMTfq+RXLPxes8+3P5OPmpLAYKAVJ1WUPlIda
-        HDqeVVcl1476o8T7AHIw+DRPboIvZmU=
-X-Google-Smtp-Source: APXvYqyZyRrubMwWdKsJ5FhRtpzBvWs+SH6iatiD5Xa+UFGCV6WUXQmwGPq/GZVrzH6Cd6jqgVNNXQ==
-X-Received: by 2002:a63:f750:: with SMTP id f16mr84157002pgk.317.1564572446710;
-        Wed, 31 Jul 2019 04:27:26 -0700 (PDT)
-Received: from localhost.localdomain ([203.205.141.123])
-        by smtp.googlemail.com with ESMTPSA id e3sm1211441pgm.64.2019.07.31.04.27.24
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 31 Jul 2019 04:27:26 -0700 (PDT)
-From:   Wanpeng Li <kernellwp@gmail.com>
-X-Google-Original-From: Wanpeng Li <wanpengli@tencent.com>
-To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        stable@vger.kernel.org
-Subject: [PATCH 3/3] KVM: Fix leak vCPU's VMCS value into other pCPU
-Date:   Wed, 31 Jul 2019 19:27:18 +0800
-Message-Id: <1564572438-15518-3-git-send-email-wanpengli@tencent.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1564572438-15518-1-git-send-email-wanpengli@tencent.com>
-References: <1564572438-15518-1-git-send-email-wanpengli@tencent.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=jCrdi6iZTx1g9vmHzrs+JIRim7u1VeaT1iHowsMbIo4=;
+        b=rJukYSBONc8Fj+b3Wtsut9rWwPKuoTjQAL2wSXaJjQkwhxYdTPxfscWWfFY84CE4Y9
+         lxbdUk7H31p2YNfLuUzxfz3wBzxh4xBHNLtvuJwf2KcWZ9WUGsusCUwonq7uuUjU6R0F
+         NAFa2IqoikxLSJBnxT6IFK7lf+EjAss9j11ITLMz2qc7lAczGG5ChmarrPWiMxK3EkJb
+         NwxBKTjKMWNphD4+paJ2c83NRLBA2LqAJcKiop6wQQsHlciRGeeKx+FuuGn1cdelkraH
+         9zvj6NcnjIKGO9yLmBJ5IQJuOJ9E6gPruiQX9um7NwJaE+flux37xV9W0ZNcXUvtuedP
+         g1EQ==
+X-Gm-Message-State: APjAAAUeOQcq6IAYcXJk3nOtPot4L6voiaqSu9L05tWCOU4yGM2qYFQI
+        5D56KXWEyomUKR39cWuAt5Mkng==
+X-Google-Smtp-Source: APXvYqwOYCoIM0Y8Cm011SWOMkANiaWqTnW6O1Cb1YzR1A/upfKO6SxW+Kdwc9RPcZ48XkcHgVo05Q==
+X-Received: by 2002:a50:b343:: with SMTP id r3mr103636766edd.16.1564572575321;
+        Wed, 31 Jul 2019 04:29:35 -0700 (PDT)
+Received: from shalem.localdomain (84-106-84-65.cable.dynamic.v4.ziggo.nl. [84.106.84.65])
+        by smtp.gmail.com with ESMTPSA id t7sm4548498edw.87.2019.07.31.04.29.33
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Wed, 31 Jul 2019 04:29:34 -0700 (PDT)
+Subject: Re: [PATCH] HID: logitech-dj: Fix check of
+ logi_dj_recv_query_paired_devices()
+To:     Petr Vorel <pvorel@suse.cz>, YueHaibing <yuehaibing@huawei.com>
+Cc:     jikos@kernel.org, benjamin.tissoires@redhat.com,
+        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
+References: <20190725145719.8344-1-yuehaibing@huawei.com>
+ <20190731105927.GA5092@dell5510> <20190731110629.GB5092@dell5510>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <3e9bda5b-68dc-15b9-ca79-2e73567ea0a5@redhat.com>
+Date:   Wed, 31 Jul 2019 13:29:33 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190731110629.GB5092@dell5510>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wanpeng Li <wanpengli@tencent.com>
+Hi Petr,
 
-After commit d73eb57b80b (KVM: Boost vCPUs that are delivering interrupts), a 
-five years ago bug is exposed. Running ebizzy benchmark in three 80 vCPUs VMs 
-on one 80 pCPUs Skylake server, a lot of rcu_sched stall warning splatting 
-in the VMs after stress testing:
+On 31-07-19 13:06, Petr Vorel wrote:
+> Hi,
+> 
+>>> In delayedwork_callback(), logi_dj_recv_query_paired_devices
+>>> may return positive value while success now, so check it
+>>> correctly.
+> 
+>>> Fixes: dbcbabf7da92 ("HID: logitech-dj: fix return value of logi_dj_recv_query_hidpp_devices")
+>>> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+>> Reviewed-by: Petr Vorel <pvorel@suse.cz>
+> OK, not only it didn't fix problems with logitech mouse (see below),
+> but removing mouses USB dongle effectively crashes kernel, so this one probably
+> shouldn't be applied :).
+> 
+> [  330.721629] logitech-djreceiver: probe of 0003:046D:C52F.0013 failed with error 7
+> [  331.462335] hid 0003:046D:C52F.0013: delayedwork_callback: logi_dj_recv_query_paired_devices error: 7
 
- INFO: rcu_sched detected stalls on CPUs/tasks: { 4 41 57 62 77} (detected by 15, t=60004 jiffies, g=899, c=898, q=15073)
- Call Trace:
-   flush_tlb_mm_range+0x68/0x140
-   tlb_flush_mmu.part.75+0x37/0xe0
-   tlb_finish_mmu+0x55/0x60
-   zap_page_range+0x142/0x190
-   SyS_madvise+0x3cd/0x9c0
-   system_call_fastpath+0x1c/0x21
+Please test my patch titled: "HID: logitech-dj: Really fix return value of logi_dj_recv_query_hidpp_devices"
+which should fix this.
 
-swait_active() sustains to be true before finish_swait() is called in 
-kvm_vcpu_block(), voluntarily preempted vCPUs are taken into account 
-by kvm_vcpu_on_spin() loop greatly increases the probability condition 
-kvm_arch_vcpu_runnable(vcpu) is checked and can be true, when APICv 
-is enabled the yield-candidate vCPU's VMCS RVI field leaks(by 
-vmx_sync_pir_to_irr()) into spinning-on-a-taken-lock vCPU's current 
-VMCS.
+Regards,
 
-This patch fixes it by reverting the kvm_arch_vcpu_runnable() condition 
-in kvm_vcpu_on_spin() loop.
-
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Radim Krčmář <rkrcmar@redhat.com>
-Fixes: 98f4a1467 (KVM: add kvm_arch_vcpu_runnable() test to kvm_vcpu_on_spin() loop)
-Cc: stable@vger.kernel.org
-Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
----
- virt/kvm/kvm_main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index ed061d8..12f2c91 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -2506,7 +2506,7 @@ void kvm_vcpu_on_spin(struct kvm_vcpu *me, bool yield_to_kernel_mode)
- 				continue;
- 			if (vcpu == me)
- 				continue;
--			if (swait_active(&vcpu->wq) && !kvm_arch_vcpu_runnable(vcpu))
-+			if (swait_active(&vcpu->wq))
- 				continue;
- 			if (READ_ONCE(vcpu->preempted) && yield_to_kernel_mode &&
- 				!kvm_arch_vcpu_in_kernel(vcpu))
--- 
-2.7.4
-
+Hans
