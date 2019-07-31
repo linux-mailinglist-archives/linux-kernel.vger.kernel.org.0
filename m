@@ -2,93 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA2037CED0
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 22:38:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 244B47CEF6
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 22:44:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729012AbfGaUim (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 16:38:42 -0400
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:34513 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726553AbfGaUil (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 16:38:41 -0400
-Received: by mail-vs1-f65.google.com with SMTP id m23so47260443vso.1
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 13:38:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=L4Tl5485GNCbBNzPALyO9jFAKxSVUDo2VTt4y0HMbAc=;
-        b=ofZWWtS5ZWqQtpc9yer1nhq6viqjcYncIAGy4woJNgEe24OrmcTyAuaPYbJud1ZPxS
-         d8NxLYzD0QA/XYfFmCJ5vzqkytrW9aCNOZpa0YxpDMyG6HQvHi6W7s3tWQB3YgHd2ayz
-         TRa1ga5Ghsnm7qCRWcXY9mXYD3b/NnkpGhgoKIc8UTiTy6tHKNAcpUdepziwSrv7yZJa
-         EqAIbxsyZBOJhRkxvvRJI+OwkWzOYuvpQ9ZwRxE3WSuLxrHTSDZXDLu3TOeSFqbaGWYw
-         c2wkGNBWMOYw8WiiboqENEhtuNH4/4u1g9oDjnDnhBUKgJUbq3j48HWJLXHf5KebtJ3y
-         QL0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=L4Tl5485GNCbBNzPALyO9jFAKxSVUDo2VTt4y0HMbAc=;
-        b=qoKjriee48SSIQ18kgo3o7jLDlU/ZNjfXZZi8a4c7mfy+e38JXEofUkGqfP7yOHMtV
-         S1zt9Xa8VylyfluJMvt7wprsnuf0hLXZrgxv2M0BhSzam3UoI0xQS0vvpdk55AYoHqEk
-         kfE484EbGTtlbVzat14l8oKleWsihU5Zz3V8q8QvmQRrCc3Lhw/uc6vqtkrIIpWlEXWH
-         D/9/cTJ6khlX7jpljso1tA+/7lcbuJyl+Th8yzXRxH0Kd8HJyaXSQMpc91DOZV+oeqL9
-         KKUttU6nPyIAz6VX8XbbV5ILbzxzJGGw4iwpk8s/KwhGo8AeZ8yVOI9qw3m1sjeFztrL
-         iCyA==
-X-Gm-Message-State: APjAAAX9MHxecU6kt3QylJ+v3HMIQMsQ5OF9Gjgdsnaw5JP9MmpjRP86
-        hwa9tsN5WFcFEWF2vLxOfgXcBw==
-X-Google-Smtp-Source: APXvYqwtVnkE/nTu9d2ervMPefdplu+skmjsj9M8Fn84HuBzn/RmQ72eprdarhaEmYf1cGiaCI4ygA==
-X-Received: by 2002:a67:1281:: with SMTP id 123mr69227162vss.10.1564605520701;
-        Wed, 31 Jul 2019 13:38:40 -0700 (PDT)
-Received: from qcai.nay.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id k7sm18697069vkk.48.2019.07.31.13.38.39
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 31 Jul 2019 13:38:40 -0700 (PDT)
-From:   Qian Cai <cai@lca.pw>
-To:     catalin.marinas@arm.com, will@kernel.org
-Cc:     andreyknvl@google.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Qian Cai <cai@lca.pw>
-Subject: [PATCH] arm64/mm: fix variable 'tag' set but not used
-Date:   Wed, 31 Jul 2019 16:38:18 -0400
-Message-Id: <1564605498-17629-1-git-send-email-cai@lca.pw>
-X-Mailer: git-send-email 1.8.3.1
+        id S1730309AbfGaUn5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 16:43:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54366 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729114AbfGaUn4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jul 2019 16:43:56 -0400
+Received: from localhost (unknown [104.132.0.81])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BAA3E20659;
+        Wed, 31 Jul 2019 20:43:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564605835;
+        bh=gD9RpDnMmrZvN3MAeeKsnZtmfLwzp6SDLMO8X0spRww=;
+        h=From:To:Cc:Subject:Date:From;
+        b=ygEk5xZc0PN4SZE7yA22ZauWL7SJvnRQ4TD7y8IbtikMcsbXi0PSbbDhKFXf12TZ+
+         hEZFRzDKr3k8pMnYMrJ4i2t8AvVSzRM59DAIbYfVGciA2ASktUnMiiUekc1OtS/LSV
+         gPJ2b3H+r8P6t8VI1og/txOs7dPq60NFDRdqax8A=
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net
+Cc:     Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH] f2fs: fix livelock in swapfile writes
+Date:   Wed, 31 Jul 2019 13:43:53 -0700
+Message-Id: <20190731204353.62056-1-jaegeuk@kernel.org>
+X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When CONFIG_KASAN_SW_TAGS=n, set_tag() is compiled away. GCC throws a
-warning,
+This patch fixes livelock in the below call path when writing swap pages.
 
-mm/kasan/common.c: In function '__kasan_kmalloc':
-mm/kasan/common.c:464:5: warning: variable 'tag' set but not used
-[-Wunused-but-set-variable]
-  u8 tag = 0xff;
-     ^~~
+[46374.617256] c2    701  __switch_to+0xe4/0x100
+[46374.617265] c2    701  __schedule+0x80c/0xbc4
+[46374.617273] c2    701  schedule+0x74/0x98
+[46374.617281] c2    701  rwsem_down_read_failed+0x190/0x234
+[46374.617291] c2    701  down_read+0x58/0x5c
+[46374.617300] c2    701  f2fs_map_blocks+0x138/0x9a8
+[46374.617310] c2    701  get_data_block_dio_write+0x74/0x104
+[46374.617320] c2    701  __blockdev_direct_IO+0x1350/0x3930
+[46374.617331] c2    701  f2fs_direct_IO+0x55c/0x8bc
+[46374.617341] c2    701  __swap_writepage+0x1d0/0x3e8
+[46374.617351] c2    701  swap_writepage+0x44/0x54
+[46374.617360] c2    701  shrink_page_list+0x140/0xe80
+[46374.617371] c2    701  shrink_inactive_list+0x510/0x918
+[46374.617381] c2    701  shrink_node_memcg+0x2d4/0x804
+[46374.617391] c2    701  shrink_node+0x10c/0x2f8
+[46374.617400] c2    701  do_try_to_free_pages+0x178/0x38c
+[46374.617410] c2    701  try_to_free_pages+0x348/0x4b8
+[46374.617419] c2    701  __alloc_pages_nodemask+0x7f8/0x1014
+[46374.617429] c2    701  pagecache_get_page+0x184/0x2cc
+[46374.617438] c2    701  f2fs_new_node_page+0x60/0x41c
+[46374.617449] c2    701  f2fs_new_inode_page+0x50/0x7c
+[46374.617460] c2    701  f2fs_init_inode_metadata+0x128/0x530
+[46374.617472] c2    701  f2fs_add_inline_entry+0x138/0xd64
+[46374.617480] c2    701  f2fs_do_add_link+0xf4/0x178
+[46374.617488] c2    701  f2fs_create+0x1e4/0x3ac
+[46374.617497] c2    701  path_openat+0xdc0/0x1308
+[46374.617507] c2    701  do_filp_open+0x78/0x124
+[46374.617516] c2    701  do_sys_open+0x134/0x248
+[46374.617525] c2    701  SyS_openat+0x14/0x20
 
-Fix it by making __tag_set() a static inline function.
-
-Signed-off-by: Qian Cai <cai@lca.pw>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- arch/arm64/include/asm/memory.h | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ fs/f2fs/data.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/include/asm/memory.h b/arch/arm64/include/asm/memory.h
-index b7ba75809751..9645b1340afe 100644
---- a/arch/arm64/include/asm/memory.h
-+++ b/arch/arm64/include/asm/memory.h
-@@ -210,7 +210,11 @@ static inline unsigned long kaslr_offset(void)
- #define __tag_reset(addr)	untagged_addr(addr)
- #define __tag_get(addr)		(__u8)((u64)(addr) >> 56)
- #else
--#define __tag_set(addr, tag)	(addr)
-+static inline const void *__tag_set(const void *addr, u8 tag)
-+{
-+	return addr;
-+}
-+
- #define __tag_reset(addr)	(addr)
- #define __tag_get(addr)		0
- #endif
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index abbf14e9bd72..f49f243fd54f 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -1372,7 +1372,7 @@ static int get_data_block_dio_write(struct inode *inode, sector_t iblock,
+ 	return __get_data_block(inode, iblock, bh_result, create,
+ 				F2FS_GET_BLOCK_DIO, NULL,
+ 				f2fs_rw_hint_to_seg_type(inode->i_write_hint),
+-				true);
++				IS_SWAPFILE(inode) ? false : true);
+ }
+ 
+ static int get_data_block_dio(struct inode *inode, sector_t iblock,
 -- 
-1.8.3.1
+2.19.0.605.g01d371f741-goog
 
