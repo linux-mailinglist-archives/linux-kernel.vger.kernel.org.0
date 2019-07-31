@@ -2,23 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE1BF7D1F7
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 01:35:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 670A57D1F4
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 01:35:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730876AbfGaXft (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 19:35:49 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:39856 "EHLO ale.deltatee.com"
+        id S1730801AbfGaXfl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 19:35:41 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:39844 "EHLO ale.deltatee.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730826AbfGaXfo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 19:35:44 -0400
+        id S1728171AbfGaXfl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jul 2019 19:35:41 -0400
 Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
         by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <gunthorp@deltatee.com>)
-        id 1hsy8B-0003W4-Ki; Wed, 31 Jul 2019 17:35:42 -0600
+        id 1hsy8B-0003W5-Ki; Wed, 31 Jul 2019 17:35:40 -0600
 Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
         (envelope-from <gunthorp@deltatee.com>)
-        id 1hsy89-0001Gt-M3; Wed, 31 Jul 2019 17:35:37 -0600
+        id 1hsy89-0001Gw-Ok; Wed, 31 Jul 2019 17:35:37 -0600
 From:   Logan Gunthorpe <logang@deltatee.com>
 To:     linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org
 Cc:     Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@kernel.org>,
@@ -26,8 +26,8 @@ Cc:     Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@kernel.org>,
         Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>,
         Max Gurtovoy <maxg@mellanox.com>,
         Logan Gunthorpe <logang@deltatee.com>
-Date:   Wed, 31 Jul 2019 17:35:31 -0600
-Message-Id: <20190731233534.4841-2-logang@deltatee.com>
+Date:   Wed, 31 Jul 2019 17:35:32 -0600
+Message-Id: <20190731233534.4841-3-logang@deltatee.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190731233534.4841-1-logang@deltatee.com>
 References: <20190731233534.4841-1-logang@deltatee.com>
@@ -41,7 +41,7 @@ X-Spam-Level:
 X-Spam-Status: No, score=-8.5 required=5.0 tests=ALL_TRUSTED,BAYES_00,
         GREYLIST_ISWHITE,MYRULES_FREE,MYRULES_NO_TEXT autolearn=ham
         autolearn_force=no version=3.4.2
-Subject: [PATCH v3 1/4] nvmet: Fix use-after-free bug when a port is removed
+Subject: [PATCH v3 2/4] nvmet-loop: Flush nvme_delete_wq when removing the port
 X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
 X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -49,73 +49,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When a port is removed through configfs, any connected controllers
-are still active and can still send commands. This causes a
-use-after-free bug which is detected by KASAN for any admin command
-that dereferences req->port (like in nvmet_execute_identify_ctrl).
+After calling nvme_loop_delete_ctrl(), the controllers will not
+yet be deleted because nvme_delete_ctrl() only schedules work
+to do the delete.
 
-To fix this, disconnect all active controllers when a subsystem is
-removed from a port. This ensures there are no active controllers
-when the port is eventually removed.
+This means a race can occur if a port is removed but there
+are still active controllers trying to access that memory.
+
+To fix this, flush the nvme_delete_wq before returning from
+nvme_loop_remove_port() so that any controllers that might
+be in the process of being deleted won't access a freed port.
 
 Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
 Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
 Reviewed-by: Max Gurtovoy <maxg@mellanox.com>
 ---
- drivers/nvme/target/configfs.c |  1 +
- drivers/nvme/target/core.c     | 12 ++++++++++++
- drivers/nvme/target/nvmet.h    |  3 +++
- 3 files changed, 16 insertions(+)
+ drivers/nvme/target/loop.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/nvme/target/configfs.c b/drivers/nvme/target/configfs.c
-index cd52b9f15376..98613a45bd3b 100644
---- a/drivers/nvme/target/configfs.c
-+++ b/drivers/nvme/target/configfs.c
-@@ -675,6 +675,7 @@ static void nvmet_port_subsys_drop_link(struct config_item *parent,
- 
- found:
- 	list_del(&p->entry);
-+	nvmet_port_del_ctrls(port, subsys);
- 	nvmet_port_disc_changed(port, subsys);
- 
- 	if (list_empty(&port->subsystems))
-diff --git a/drivers/nvme/target/core.c b/drivers/nvme/target/core.c
-index dad0243c7c96..b86a23aa9020 100644
---- a/drivers/nvme/target/core.c
-+++ b/drivers/nvme/target/core.c
-@@ -280,6 +280,18 @@ void nvmet_unregister_transport(const struct nvmet_fabrics_ops *ops)
+diff --git a/drivers/nvme/target/loop.c b/drivers/nvme/target/loop.c
+index b16dc3981c69..0940c5024a34 100644
+--- a/drivers/nvme/target/loop.c
++++ b/drivers/nvme/target/loop.c
+@@ -654,6 +654,14 @@ static void nvme_loop_remove_port(struct nvmet_port *port)
+ 	mutex_lock(&nvme_loop_ports_mutex);
+ 	list_del_init(&port->entry);
+ 	mutex_unlock(&nvme_loop_ports_mutex);
++
++	/*
++	 * Ensure any ctrls that are in the process of being
++	 * deleted are in fact deleted before we return
++	 * and free the port. This is to prevent active
++	 * ctrls from using a port after it's freed.
++	 */
++	flush_workqueue(nvme_delete_wq);
  }
- EXPORT_SYMBOL_GPL(nvmet_unregister_transport);
  
-+void nvmet_port_del_ctrls(struct nvmet_port *port, struct nvmet_subsys *subsys)
-+{
-+	struct nvmet_ctrl *ctrl;
-+
-+	mutex_lock(&subsys->lock);
-+	list_for_each_entry(ctrl, &subsys->ctrls, subsys_entry) {
-+		if (ctrl->port == port)
-+			ctrl->ops->delete_ctrl(ctrl);
-+	}
-+	mutex_unlock(&subsys->lock);
-+}
-+
- int nvmet_enable_port(struct nvmet_port *port)
- {
- 	const struct nvmet_fabrics_ops *ops;
-diff --git a/drivers/nvme/target/nvmet.h b/drivers/nvme/target/nvmet.h
-index 6ee66c610739..c51f8dd01dc4 100644
---- a/drivers/nvme/target/nvmet.h
-+++ b/drivers/nvme/target/nvmet.h
-@@ -418,6 +418,9 @@ void nvmet_port_send_ana_event(struct nvmet_port *port);
- int nvmet_register_transport(const struct nvmet_fabrics_ops *ops);
- void nvmet_unregister_transport(const struct nvmet_fabrics_ops *ops);
- 
-+void nvmet_port_del_ctrls(struct nvmet_port *port,
-+			  struct nvmet_subsys *subsys);
-+
- int nvmet_enable_port(struct nvmet_port *port);
- void nvmet_disable_port(struct nvmet_port *port);
- 
+ static const struct nvmet_fabrics_ops nvme_loop_ops = {
 -- 
 2.20.1
 
