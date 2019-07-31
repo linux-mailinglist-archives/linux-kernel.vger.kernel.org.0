@@ -2,33 +2,33 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA4E77BFA7
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 13:31:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 694A97BFA8
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 13:31:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727531AbfGaLbG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 07:31:06 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:36284 "EHLO
+        id S2387813AbfGaLbM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 07:31:12 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:36216 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387831AbfGaLaa (ORCPT
+        with ESMTP id S1728419AbfGaLa2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 07:30:30 -0400
+        Wed, 31 Jul 2019 07:30:28 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=h+Xx9FiVpbRvfYOcI/smNIhXGYSuLtkKazWAN6uMezg=; b=cNrlwJfBF0Nr
-        5IihI8TGGii6ytfroK+ew1KnkXGoxpyVk055LyO1djzLRaxh/lhhBqcFAvtL59h36JDuKyWSmUgKL
-        5tSJpONvpHBetLFKMV0mqxCwUXCLAx3JrpurhI0vGKSOlAdLwg3FRxg3SfGD52510093ND8p/AJgz
-        w931A=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
+        List-Archive; bh=LPcMA1o77HKX43GsHKyVecF06+o1mUT9VBwNz+iFXMo=; b=HzFMQvEjsOVh
+        XLfYvHR/3qgBqQK0ZJzR+WOLriQDmxegipE/C6imXRGHa7CDbinVSkkj678e4/+t3O1hGpl29jcCQ
+        5BsOjLDFSFCiBXHceELzZ96ibSaYRDxwVwdPpCtWlnSPqE7ksYn+JzL2uWdQ1r6g2Ik9j0+TQjKcq
+        PtkWU=;
+Received: from ypsilon.sirena.org.uk ([2001:470:1f1d:6b5::7])
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1hsmnn-0001pB-AK; Wed, 31 Jul 2019 11:29:51 +0000
+        id 1hsmnn-0001pL-RE; Wed, 31 Jul 2019 11:29:51 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 5786F2742D4F; Wed, 31 Jul 2019 12:29:50 +0100 (BST)
+        id 10AC62742D57; Wed, 31 Jul 2019 12:29:51 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
 To:     YueHaibing <yuehaibing@huawei.com>
 Cc:     alexandre.torgue@st.com, alsa-devel@alsa-project.org,
@@ -55,11 +55,11 @@ Cc:     alexandre.torgue@st.com, alsa-devel@alsa-project.org,
         thierry.reding@gmail.com, timur@kernel.org, tiwai@suse.com,
         wahrenst@gmx.net, wens@csie.org, Xiubo.Lee@gmail.com,
         yamada.masahiro@socionext.com
-Subject: Applied "ASoC: rockchip: use devm_platform_ioremap_resource() to simplify code" to the asoc tree
-In-Reply-To: <20190727150738.54764-4-yuehaibing@huawei.com>
+Subject: Applied "ASoC: tegra20_das: use devm_platform_ioremap_resource() to simplify code" to the asoc tree
+In-Reply-To: <20190727150738.54764-2-yuehaibing@huawei.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190731112950.5786F2742D4F@ypsilon.sirena.org.uk>
-Date:   Wed, 31 Jul 2019 12:29:50 +0100 (BST)
+Message-Id: <20190731112951.10AC62742D57@ypsilon.sirena.org.uk>
+Date:   Wed, 31 Jul 2019 12:29:51 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -67,7 +67,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: rockchip: use devm_platform_ioremap_resource() to simplify code
+   ASoC: tegra20_das: use devm_platform_ioremap_resource() to simplify code
 
 has been applied to the asoc tree at
 
@@ -92,10 +92,10 @@ to this mail.
 Thanks,
 Mark
 
-From f052172a5bb474fef2d0c3911655c9e107a3c024 Mon Sep 17 00:00:00 2001
+From 21cc4ea85879c1b424fb01caa6e481c14286f7f0 Mon Sep 17 00:00:00 2001
 From: YueHaibing <yuehaibing@huawei.com>
-Date: Sat, 27 Jul 2019 23:07:07 +0800
-Subject: [PATCH] ASoC: rockchip: use devm_platform_ioremap_resource() to
+Date: Sat, 27 Jul 2019 23:07:05 +0800
+Subject: [PATCH] ASoC: tegra20_das: use devm_platform_ioremap_resource() to
  simplify code
 
 Use devm_platform_ioremap_resource() to simplify the code a bit.
@@ -103,34 +103,34 @@ This is detected by coccinelle.
 
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Link: https://lore.kernel.org/r/20190727150738.54764-4-yuehaibing@huawei.com
+Link: https://lore.kernel.org/r/20190727150738.54764-2-yuehaibing@huawei.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/rk3328_codec.c | 4 +---
+ sound/soc/tegra/tegra20_das.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/sound/soc/codecs/rk3328_codec.c b/sound/soc/codecs/rk3328_codec.c
-index 24f8f86d58e9..287c962ba00d 100644
---- a/sound/soc/codecs/rk3328_codec.c
-+++ b/sound/soc/codecs/rk3328_codec.c
-@@ -432,7 +432,6 @@ static int rk3328_platform_probe(struct platform_device *pdev)
+diff --git a/sound/soc/tegra/tegra20_das.c b/sound/soc/tegra/tegra20_das.c
+index 10f9c3b19c88..1070b2710d5e 100644
+--- a/sound/soc/tegra/tegra20_das.c
++++ b/sound/soc/tegra/tegra20_das.c
+@@ -120,7 +120,6 @@ static const struct regmap_config tegra20_das_regmap_config = {
+ 
+ static int tegra20_das_probe(struct platform_device *pdev)
  {
- 	struct device_node *rk3328_np = pdev->dev.of_node;
- 	struct rk3328_codec_priv *rk3328;
 -	struct resource *res;
- 	struct regmap *grf;
- 	void __iomem *base;
+ 	void __iomem *regs;
  	int ret = 0;
-@@ -482,8 +481,7 @@ static int rk3328_platform_probe(struct platform_device *pdev)
- 		return ret;
+ 
+@@ -134,8 +133,7 @@ static int tegra20_das_probe(struct platform_device *pdev)
  	}
+ 	das->dev = &pdev->dev;
  
 -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	base = devm_ioremap_resource(&pdev->dev, res);
-+	base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(base))
- 		return PTR_ERR(base);
- 
+-	regs = devm_ioremap_resource(&pdev->dev, res);
++	regs = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(regs)) {
+ 		ret = PTR_ERR(regs);
+ 		goto err;
 -- 
 2.20.1
 
