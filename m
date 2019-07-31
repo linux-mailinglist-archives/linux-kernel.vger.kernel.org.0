@@ -2,57 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 782AB7CEB3
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 22:35:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D87007CEB8
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 22:36:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730683AbfGaUfR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 16:35:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52186 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728050AbfGaUfQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 16:35:16 -0400
-Subject: Re: [GIT PULL] tracing: Minor fixes for v5.3-rc2
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564605315;
-        bh=Q/sIV9523h3i8lCTiYNbY5Y9xmNac/O1XoFaujU1Xn4=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=ixpEfEB08vouyxP/f3XxZyprYD3AUd1N0LEb0a77jDITrqwML3JtApRAVY/XSCNy/
-         QpnqYNrKo5eZ/6lv1G9VIZvHU08887k8+hgG9+3mh+K/zJkhKMlpAap2rf/REPacQN
-         R2en8uMjdsjl0lwUTKvV8EHoLzoM/fJGZZ2oFo14=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190731110517.4e065b29@gandalf.local.home>
-References: <20190731110517.4e065b29@gandalf.local.home>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190731110517.4e065b29@gandalf.local.home>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git
- trace-v5.3-rc2
-X-PR-Tracked-Commit-Id: 6c77221df96177da0520847ce91e33f539fb8b2d
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: d2eee9fca172d0d010ef3060cdc971e0b079b87f
-Message-Id: <156460531584.15680.4846519904319741266.pr-tracker-bot@kernel.org>
-Date:   Wed, 31 Jul 2019 20:35:15 +0000
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Changbin Du <changbin.du@gmail.com>
+        id S1730691AbfGaUgt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 16:36:49 -0400
+Received: from mail-lj1-f172.google.com ([209.85.208.172]:33352 "EHLO
+        mail-lj1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727508AbfGaUgs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jul 2019 16:36:48 -0400
+Received: by mail-lj1-f172.google.com with SMTP id h10so67008578ljg.0
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 13:36:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=W5sXEYqP0ujTX/3QnJh9aARc9TQKIr+quqWDCsTrp4U=;
+        b=nK35ux85iR+5iGNAAHcDjrGy41ccb9PKY2zg9w/t79t7Hr1vmfOt4jW+XEkBGUDY2E
+         AZSg/PRLc0Fe7sV4p+e3bY0P34b8u2tymwXw47PlQBz0FijPak7118X1KnTMMJwOQoad
+         oMtZimAoeb2b7tljD3lDN/ZQ/C/br/YGw70apikcs/HHl+SwSao/hey4dj6A3GcGm0W5
+         A43EowiIQgcb9U+reFFUxiZLwi43UCUyBfNNs1Tir7blDUaY7dHYe+XUvTxMj4VpJLQI
+         HqYjRf5zx9X32n39irmRECGNrqB4l/OCYpUaBeFUk0W2W6fqqvcMbPCvvzwrEJJRshZU
+         8Bxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=W5sXEYqP0ujTX/3QnJh9aARc9TQKIr+quqWDCsTrp4U=;
+        b=jAtAGuGPKgNrGsz9ewKV9FV/aODovrLEJ17sgbs8kHIKPzh07gyU1CNeLQYda2rV/F
+         vPY3pYOd9rbYHeQtJxj9NO8a8BWQyMrfXYFQ2/vAoQPre3adaPWQRkxX3Qas15+BuDar
+         wzqhiRqeHaz+zu308qkQYjfS2aHw54RmAAzELbi6E3LR6Lxsw0oGZhWZFEMIbec1e5/H
+         3uCyUMITNcYXWn5EJjlXOYqL3q1nsDvPEgd2kEc+4dPt5D5h42MGDRoDTfxZ35i5UY18
+         Q/J6XFLIR6Qj7xEwd7LTWxZD362R4pyD/7uV7BUcRqksxtOuiSQ+a0p5Ge+1kUrc3GSX
+         ZGbw==
+X-Gm-Message-State: APjAAAXicOmHc8RyK7E8YkhlJEuYgiY9pMIWJrRW8p4se4evMWDuw4gq
+        LrGv/6hj5KZVRrnNxvSJTN2TgGRUy4jO/jWT36oJzn9y
+X-Google-Smtp-Source: APXvYqxzvgiZyhdf/oxBzDg8ih4P5jyW7VSXiJL0vJJVaPVuVfm7Y5rGy7PPKdEQvacxwm2HyM0PekkgJgaTaTx/SmY=
+X-Received: by 2002:a2e:124b:: with SMTP id t72mr66296974lje.143.1564605406218;
+ Wed, 31 Jul 2019 13:36:46 -0700 (PDT)
+MIME-Version: 1.0
+From:   Alex Henrie <alexhenrie24@gmail.com>
+Date:   Wed, 31 Jul 2019 14:36:34 -0600
+Message-ID: <CAMMLpeQMPJjSx-hqZ75LCV0wC-kQBmqEe7wjb2oU5iq-pc5bfw@mail.gmail.com>
+Subject: Re: Merge branch 'floppy'
+To:     LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Denis Efremov <efremov@linux.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Wed, 31 Jul 2019 11:05:17 -0400:
+> Actual working physical floppy hardware is getting hard to find, and
+> while Willy was able to test this, I think the driver can be considered
+> pretty much dead from an actual hardware standpoint.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git trace-v5.3-rc2
+Just for the record: I have an Ubuntu machine, still in daily use,
+that has a floppy disk connector on the motherboard. The motherboard
+was made in 2006 if I remember correctly and has a quad-core Intel
+CPU. It has both a 3.5" and a 5.25" drive installed and they get used
+every time somebody finds another pile of floppy disks in Grandpa's
+garage.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/d2eee9fca172d0d010ef3060cdc971e0b079b87f
+I'd be happy to test floppy driver changes on this hardware if anyone
+needs me to.
 
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+-Alex
