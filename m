@@ -2,77 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9512F7C4FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 16:32:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A50B7C4F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 16:31:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729898AbfGaObo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 10:31:44 -0400
-Received: from mga05.intel.com ([192.55.52.43]:50163 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729888AbfGaObk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 10:31:40 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Jul 2019 07:31:39 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,330,1559545200"; 
-   d="scan'208";a="183704284"
-Received: from black.fi.intel.com (HELO black.fi.intel.com.) ([10.237.72.28])
-  by orsmga002.jf.intel.com with ESMTP; 31 Jul 2019 07:31:37 -0700
-From:   Alexander Shishkin <alexander.shishkin@linux.intel.com>
-To:     Peter Zijlstra <a.p.zijlstra@chello.nl>
-Cc:     Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        kan.liang@linux.intel.com, Adrian Hunter <adrian.hunter@intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Subject: [PATCH v3 7/7] perf intel-pt: Add brief documentation for PEBS via Intel PT
-Date:   Wed, 31 Jul 2019 17:30:41 +0300
-Message-Id: <20190731143041.64678-8-alexander.shishkin@linux.intel.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190731143041.64678-1-alexander.shishkin@linux.intel.com>
-References: <20190731143041.64678-1-alexander.shishkin@linux.intel.com>
+        id S1729316AbfGaOa7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 10:30:59 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:39735 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726073AbfGaOa6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jul 2019 10:30:58 -0400
+Received: by mail-wm1-f66.google.com with SMTP id u25so49693463wmc.4
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 07:30:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=MDnPbJodK/a6eTFi3yfzZVR2rm3ZSgLhYLWa+WneOcQ=;
+        b=LObSE0fFJUw55SB99a92enfrZZUq30eu9bG2F/nsfWNxuzV9x2HmIAvxj0KJ9w0KTU
+         qrIclXt78r1QBfee5k0HYdjVZ0gbj9fNSGTnKWLZ6ndr3dOMOX7Y3VDxa3DQq8RHuZm5
+         /48OTXttWhRqrIZkeXdW6N77lLaaOtC6y8buit2VDJx/IGQ2OpeOYR2S+G8mfirEjQ7g
+         NG0SSL/kykYLqhLsE7AUDUa3AqwG9sCxx+/LNHCTnGNh63e8AYQFw+tzeNt3Qzt+XsbL
+         JU1G4bO3AWErvXFZ4ADhul3FeEJLOAWayBNWrKY7rYuU1Uxboou2Yj/gCmQ/Ty+MX81g
+         igkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=MDnPbJodK/a6eTFi3yfzZVR2rm3ZSgLhYLWa+WneOcQ=;
+        b=YHBLRjZ1h6uFSyAbiQipRFQ6IIKoq5Ay1ayNbKaSiZa//FV5fo8HhCw90yr7yXWugf
+         KGD8oDdW3tcjCXr/NlJ3ZdRerHDlVn0i91AeDvSoRuC9RDpbnhtxjdT+9QtcrQx30+P0
+         K9Uayi1S7lPkQGjy7aZsOwbjqPo9lk7wPcIYBl8fhNWsWhEEKrdT2ImWFMU+w4X4JX07
+         ILGFsnK+lw8AA0AdC9KCyqjH775aYKnrjBOnqSixraMZ0NN/pDOw3I4/xLW4GOx6OnPm
+         Rsk+oaULQ/oAYk4a24PwrlH2VAzQYBn1/tSN3eckEq7deOuqcwmku6hQmrEB6TZruIgK
+         qf1g==
+X-Gm-Message-State: APjAAAU8uISFZtyXg+y6WnzMg+LRn7RKxIOtvVqgrwS5Aqu5CnVmd4Ql
+        VeC3F59RWucu0/MttBZ7yLzEtQ==
+X-Google-Smtp-Source: APXvYqx/TyzoXLdTkhlTg/t7F+eHNs+DVxViJq91/dI341xTx6DKJZgNxhl4ivgKkc2HMYfOY6jBEw==
+X-Received: by 2002:a1c:e90d:: with SMTP id q13mr110692820wmc.89.1564583455255;
+        Wed, 31 Jul 2019 07:30:55 -0700 (PDT)
+Received: from [192.168.1.6] (19.red-176-86-136.dynamicip.rima-tde.net. [176.86.136.19])
+        by smtp.gmail.com with ESMTPSA id z6sm61429920wrw.2.2019.07.31.07.30.52
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 31 Jul 2019 07:30:54 -0700 (PDT)
+Subject: Re: [PATCH v3 08/14] clk: qcom: hfpll: CLK_IGNORE_UNUSED
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     sboyd@kernel.org, david.brown@linaro.org, jassisinghbrar@gmail.com,
+        mark.rutland@arm.com, mturquette@baylibre.com, robh+dt@kernel.org,
+        will.deacon@arm.com, arnd@arndb.de, horms+renesas@verge.net.au,
+        heiko@sntech.de, sibis@codeaurora.org,
+        enric.balletbo@collabora.com, jagan@amarulasolutions.com,
+        olof@lixom.net, vkoul@kernel.org, niklas.cassel@linaro.org,
+        georgi.djakov@linaro.org, amit.kucheria@linaro.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, khasim.mohammed@linaro.org
+References: <20190625164733.11091-1-jorge.ramirez-ortiz@linaro.org>
+ <20190625164733.11091-9-jorge.ramirez-ortiz@linaro.org>
+ <20190711151631.GI7234@tuxbook-pro>
+From:   Jorge Ramirez <jorge.ramirez-ortiz@linaro.org>
+Message-ID: <cd91801a-1be3-86fd-6e15-da7e82fddb53@linaro.org>
+Date:   Wed, 31 Jul 2019 16:30:52 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190711151631.GI7234@tuxbook-pro>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Adrian Hunter <adrian.hunter@intel.com>
+On 7/11/19 17:16, Bjorn Andersson wrote:
+> On Tue 25 Jun 09:47 PDT 2019, Jorge Ramirez-Ortiz wrote:
+> 
+>> When COMMON_CLK_DISABLED_UNUSED is set, in an effort to save power and
+>> to keep the software model of the clock in line with reality, the
+>> framework transverses the clock tree and disables those clocks that
+>> were enabled by the firmware but have not been enabled by any device
+>> driver.
+>>
+>> If CPUFREQ is enabled, early during the system boot, it might attempt
+>> to change the CPU frequency ("set_rate"). If the HFPLL is selected as
+>> a provider, it will then change the rate for this clock.
+>>
+>> As boot continues, clk_disable_unused_subtree will run. Since it wont
+>> find a valid counter (enable_count) for a clock that is actually
+>> enabled it will attempt to disable it which will cause the CPU to
+>> stop.
+> 
+> But if CPUfreq has acquired the CPU clock and the hfpll is the currently
+> selected input, why does the clock framework not know about this clock
+> being used?
 
-Document how to select PEBS via Intel PT and how to display synthesized
-PEBS samples.
+right, see the comment right below - maybe I should have been more
+explicit at the time. sorry about it.
 
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
----
- tools/perf/Documentation/intel-pt.txt | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+> 
+>> Notice that in this driver, calls to check whether the clock is
+>> enabled are routed via the is_enabled callback which queries the
+>> hardware.
 
-diff --git a/tools/perf/Documentation/intel-pt.txt b/tools/perf/Documentation/intel-pt.txt
-index 50c5b60101bd..8c40f898685b 100644
---- a/tools/perf/Documentation/intel-pt.txt
-+++ b/tools/perf/Documentation/intel-pt.txt
-@@ -919,3 +919,18 @@ amended to take the number of elements as a parameter.
- 
- Note there is currently no advantage to using Intel PT instead of LBR, but
- that may change in the future if greater use is made of the data.
-+
-+
-+PEBS via Intel PT
-+=================
-+
-+Some hardware has the feature to redirect PEBS records to the Intel PT trace.
-+Recording is selected by using the aux-source config term e.g.
-+
-+	perf record  -c 10000 -e cycles/aux-source/ppp -e intel_pt/branch=0/ uname
-+
-+Note that currently, software only supports redirecting at most one PEBS event.
-+
-+To display PEBS events from the Intel PT trace, use the itrace 'o' option e.g.
-+
-+	perf script --itrace=oe
--- 
-2.20.1
+calls to check whether the clock is enabled dont use the usage counter
+but a hardware read. IIRC the clock framework will check some counter to
+know if the clock is being used.
+
+>>
+>> The following commit, rather than marking the clock critical and
+>> forcing the clock to be always enabled, addresses the above scenario
+>> making sure the clock is not disabled but it continues to rely on the
+>> firmware to enable the clock.
+>>
+>> Co-developed-by: Niklas Cassel <niklas.cassel@linaro.org>
+>> Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
+>> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+> 
+> 
+> I can see that we have a real issue in the case where CPUfreq is not
+> enabled and hence there are no clients, according to Linux. And that I
+> don't know another way to guard against.
+
+the issue is there when CPUfreq is enabled that is for sure (if we just
+remove this commit the system will not boot due to the situation I tried
+to describe above).
+
+> 
+> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> 
+> Regards,
+> Bjorn
+> 
+>> ---
+>>  drivers/clk/qcom/hfpll.c | 7 +++++++
+>>  1 file changed, 7 insertions(+)
+>>
+>> diff --git a/drivers/clk/qcom/hfpll.c b/drivers/clk/qcom/hfpll.c
+>> index 0ffed0d41c50..d5fd27938e7b 100644
+>> --- a/drivers/clk/qcom/hfpll.c
+>> +++ b/drivers/clk/qcom/hfpll.c
+>> @@ -58,6 +58,13 @@ static int qcom_hfpll_probe(struct platform_device *pdev)
+>>  		.parent_names = (const char *[]){ "xo" },
+>>  		.num_parents = 1,
+>>  		.ops = &clk_ops_hfpll,
+>> +		/*
+>> +		 * rather than marking the clock critical and forcing the clock
+>> +		 * to be always enabled, we make sure that the clock is not
+>> +		 * disabled: the firmware remains responsible of enabling this
+>> +		 * clock (for more info check the commit log)
+>> +		 */
+>> +		.flags = CLK_IGNORE_UNUSED,
+>>  	};
+>>  
+>>  	h = devm_kzalloc(dev, sizeof(*h), GFP_KERNEL);
+>> -- 
+>> 2.21.0
+>>
+> 
 
