@@ -2,51 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9A177CB19
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 19:57:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 418BF7CB21
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 19:58:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727342AbfGaR5X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 13:57:23 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:33623 "EHLO
+        id S1727970AbfGaR6I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 13:58:08 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:38079 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726224AbfGaR5W (ORCPT
+        with ESMTP id S1726350AbfGaR6H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 13:57:22 -0400
+        Wed, 31 Jul 2019 13:58:07 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6VHuqv33777392
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x6VHva7h3777692
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Wed, 31 Jul 2019 10:56:52 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6VHuqv33777392
+        Wed, 31 Jul 2019 10:57:36 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x6VHva7h3777692
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019071901; t=1564595813;
-        bh=qd/uZrI1scPtSVSL74aMjEYkwBO45H1Wk8cKH8KOun4=;
+        s=2019071901; t=1564595857;
+        bh=cR1BkJ0GbpUK+Xsakva9+nE2ErJTB2ZsdHvnGlx+lPU=;
         h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=QDMv6BCTMyFUGtDUInsOKNcuq2fnynt+eDxqnMXus9c3GQg5jYwXJGk9ZIhDpvRib
-         d7HRRVuVjeILBjK2xKW/KczVSJWiEPxpkaTc9OxA9tcU/royqHbICP0dv1yHFZclcf
-         0/zKyICs7A15C13Wc+1/o2R+tMEIYtsROnLsBFvB+AtQJtuk9uFSfZoXRuFenVsNon
-         MHkc7uzH9taDvcK2ni5ov/MKDol83UG2JvVy5DcHLxA7sxNcO7WkJJm2Y53KBtBvBT
-         rjQE5ZQ+dw1idOae7/uRoaGXvN3RqFmReFzlfJutJz3aVivLvHECyBytO6rny1cSwP
-         YB97yxQl7eGIQ==
+        b=K5bYlTKizR3B+0L1YsSKvdnnDc2nh43YdZSIqJTVVAbYmgB3quk9Fk1C/r2rtbZjx
+         Px4eCQ+ui95vZVozG1bh0RuKyHYQm2g7tlCfpU+IVW5XWBno2ioQDvFBnCg+Lwdp/5
+         eBHXi3Akh1K7phU5oQQJVDvCkj8UzYYqRD+KvCk+E6q4Iy/SLHZ3FMHT/Rc2a9Gmi+
+         hju+w1JrUEi6A+KyfN2jW9iBnZnGrsz49Vi+CgmlJtoXF0jv7tiq97pg5fkyU4InYI
+         C21S3btXfagtEQBWmBYmpdM/h/9cn0eHg0T5UfWi4Hmt8HOEpTYpupvNIJ5/DxmZeL
+         4SNR7+MlUuIGQ==
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6VHup6N3777389;
-        Wed, 31 Jul 2019 10:56:51 -0700
-Date:   Wed, 31 Jul 2019 10:56:51 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x6VHvZbL3777689;
+        Wed, 31 Jul 2019 10:57:35 -0700
+Date:   Wed, 31 Jul 2019 10:57:35 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Thomas Gleixner <tipbot@zytor.com>
-Message-ID: <tip-27972765bd0410fc2ef5e86a41de17c71440a2dd@git.kernel.org>
-Cc:     mingo@kernel.org, pbonzini@redhat.com,
-        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        peterz@infradead.org, hpa@zytor.com, tglx@linutronix.de,
-        mhiramat@kernel.org, rostedt@goodmis.org, paulmck@linux.ibm.com
-Reply-To: rostedt@goodmis.org, paulmck@linux.ibm.com, hpa@zytor.com,
-          linux-kernel@vger.kernel.org, peterz@infradead.org,
-          torvalds@linux-foundation.org, pbonzini@redhat.com,
-          mingo@kernel.org, mhiramat@kernel.org, tglx@linutronix.de
-In-Reply-To: <20190726212124.302995288@linutronix.de>
-References: <20190726212124.302995288@linutronix.de>
+Message-ID: <tip-30c937043b2db09ae3408f5534824f9ececdb581@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, paulmck@linux.ibm.com,
+        tglx@linutronix.de, mhiramat@kernel.org, mingo@kernel.org,
+        peterz@infradead.org, hpa@zytor.com, torvalds@linux-foundation.org,
+        rostedt@goodmis.org, pbonzini@redhat.com
+Reply-To: rostedt@goodmis.org, pbonzini@redhat.com, mingo@kernel.org,
+          peterz@infradead.org, hpa@zytor.com,
+          torvalds@linux-foundation.org, tglx@linutronix.de,
+          paulmck@linux.ibm.com, mhiramat@kernel.org,
+          linux-kernel@vger.kernel.org
+In-Reply-To: <20190726212124.409766323@linutronix.de>
+References: <20190726212124.409766323@linutronix.de>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:sched/rt] locking/spinlocks: Use CONFIG_PREEMPTION
-Git-Commit-ID: 27972765bd0410fc2ef5e86a41de17c71440a2dd
+Subject: [tip:sched/rt] tracing: Use CONFIG_PREEMPTION
+Git-Commit-ID: 30c937043b2db09ae3408f5534824f9ececdb581
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -64,20 +65,23 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  27972765bd0410fc2ef5e86a41de17c71440a2dd
-Gitweb:     https://git.kernel.org/tip/27972765bd0410fc2ef5e86a41de17c71440a2dd
+Commit-ID:  30c937043b2db09ae3408f5534824f9ececdb581
+Gitweb:     https://git.kernel.org/tip/30c937043b2db09ae3408f5534824f9ececdb581
 Author:     Thomas Gleixner <tglx@linutronix.de>
-AuthorDate: Fri, 26 Jul 2019 23:19:39 +0200
+AuthorDate: Fri, 26 Jul 2019 23:19:40 +0200
 Committer:  Ingo Molnar <mingo@kernel.org>
 CommitDate: Wed, 31 Jul 2019 19:03:35 +0200
 
-locking/spinlocks: Use CONFIG_PREEMPTION
+tracing: Use CONFIG_PREEMPTION
 
 CONFIG_PREEMPTION is selected by CONFIG_PREEMPT and by
 CONFIG_PREEMPT_RT. Both PREEMPT and PREEMPT_RT require the same
 functionality which today depends on CONFIG_PREEMPT.
 
-Adjust the comments in the locking code.
+Switch the conditionals in the tracer over to CONFIG_PREEMPTION.
+
+This is the first step to make the tracer work on RT. The other small
+tweaks are submitted separately.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
@@ -87,36 +91,79 @@ Cc: Paolo Bonzini <pbonzini@redhat.com>
 Cc: Paul E. McKenney <paulmck@linux.ibm.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Steven Rostedt <rostedt@goodmis.org>
-Link: http://lkml.kernel.org/r/20190726212124.302995288@linutronix.de
+Link: http://lkml.kernel.org/r/20190726212124.409766323@linutronix.de
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- include/linux/spinlock.h         | 2 +-
- include/linux/spinlock_api_smp.h | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ kernel/trace/Kconfig                 | 4 ++--
+ kernel/trace/ftrace.c                | 2 +-
+ kernel/trace/ring_buffer_benchmark.c | 2 +-
+ kernel/trace/trace_events.c          | 4 ++--
+ 4 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/include/linux/spinlock.h b/include/linux/spinlock.h
-index ed7c4d6b8235..031ce8617df8 100644
---- a/include/linux/spinlock.h
-+++ b/include/linux/spinlock.h
-@@ -214,7 +214,7 @@ static inline void do_raw_spin_unlock(raw_spinlock_t *lock) __releases(lock)
+diff --git a/kernel/trace/Kconfig b/kernel/trace/Kconfig
+index d2c1fe0b451d..6a64d7772870 100644
+--- a/kernel/trace/Kconfig
++++ b/kernel/trace/Kconfig
+@@ -179,7 +179,7 @@ config TRACE_PREEMPT_TOGGLE
+ config PREEMPTIRQ_EVENTS
+ 	bool "Enable trace events for preempt and irq disable/enable"
+ 	select TRACE_IRQFLAGS
+-	select TRACE_PREEMPT_TOGGLE if PREEMPT
++	select TRACE_PREEMPT_TOGGLE if PREEMPTION
+ 	select GENERIC_TRACER
+ 	default n
+ 	help
+@@ -214,7 +214,7 @@ config PREEMPT_TRACER
+ 	bool "Preemption-off Latency Tracer"
+ 	default n
+ 	depends on !ARCH_USES_GETTIMEOFFSET
+-	depends on PREEMPT
++	depends on PREEMPTION
+ 	select GENERIC_TRACER
+ 	select TRACER_MAX_TRACE
+ 	select RING_BUFFER_ALLOW_SWAP
+diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+index eca34503f178..a800e867c1a3 100644
+--- a/kernel/trace/ftrace.c
++++ b/kernel/trace/ftrace.c
+@@ -2814,7 +2814,7 @@ int ftrace_shutdown(struct ftrace_ops *ops, int command)
+ 		 * synchornize_rcu_tasks() will wait for those tasks to
+ 		 * execute and either schedule voluntarily or enter user space.
+ 		 */
+-		if (IS_ENABLED(CONFIG_PREEMPT))
++		if (IS_ENABLED(CONFIG_PREEMPTION))
+ 			synchronize_rcu_tasks();
  
- /*
-  * Define the various spin_lock methods.  Note we define these
-- * regardless of whether CONFIG_SMP or CONFIG_PREEMPT are set. The
-+ * regardless of whether CONFIG_SMP or CONFIG_PREEMPTION are set. The
-  * various methods are defined as nops in the case they are not
-  * required.
-  */
-diff --git a/include/linux/spinlock_api_smp.h b/include/linux/spinlock_api_smp.h
-index 42dfab89e740..b762eaba4cdf 100644
---- a/include/linux/spinlock_api_smp.h
-+++ b/include/linux/spinlock_api_smp.h
-@@ -96,7 +96,7 @@ static inline int __raw_spin_trylock(raw_spinlock_t *lock)
+  free_ops:
+diff --git a/kernel/trace/ring_buffer_benchmark.c b/kernel/trace/ring_buffer_benchmark.c
+index 0564f6db0561..09b0b49f346e 100644
+--- a/kernel/trace/ring_buffer_benchmark.c
++++ b/kernel/trace/ring_buffer_benchmark.c
+@@ -267,7 +267,7 @@ static void ring_buffer_producer(void)
+ 		if (consumer && !(cnt % wakeup_interval))
+ 			wake_up_process(consumer);
  
- /*
-  * If lockdep is enabled then we use the non-preemption spin-ops
-- * even on CONFIG_PREEMPT, because lockdep assumes that interrupts are
-+ * even on CONFIG_PREEMPTION, because lockdep assumes that interrupts are
-  * not re-enabled during lock-acquire (which the preempt-spin-ops do):
-  */
- #if !defined(CONFIG_GENERIC_LOCKBREAK) || defined(CONFIG_DEBUG_LOCK_ALLOC)
+-#ifndef CONFIG_PREEMPT
++#ifndef CONFIG_PREEMPTION
+ 		/*
+ 		 * If we are a non preempt kernel, the 10 second run will
+ 		 * stop everything while it runs. Instead, we will call
+diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
+index c7506bc81b75..5a189fb8ec23 100644
+--- a/kernel/trace/trace_events.c
++++ b/kernel/trace/trace_events.c
+@@ -255,12 +255,12 @@ void *trace_event_buffer_reserve(struct trace_event_buffer *fbuffer,
+ 	local_save_flags(fbuffer->flags);
+ 	fbuffer->pc = preempt_count();
+ 	/*
+-	 * If CONFIG_PREEMPT is enabled, then the tracepoint itself disables
++	 * If CONFIG_PREEMPTION is enabled, then the tracepoint itself disables
+ 	 * preemption (adding one to the preempt_count). Since we are
+ 	 * interested in the preempt_count at the time the tracepoint was
+ 	 * hit, we need to subtract one to offset the increment.
+ 	 */
+-	if (IS_ENABLED(CONFIG_PREEMPT))
++	if (IS_ENABLED(CONFIG_PREEMPTION))
+ 		fbuffer->pc--;
+ 	fbuffer->trace_file = trace_file;
+ 
