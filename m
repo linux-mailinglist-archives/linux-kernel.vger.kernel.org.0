@@ -2,147 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E26B7CAC3
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 19:43:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 28F117CACD
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 19:45:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729557AbfGaRnL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 13:43:11 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:38879 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729495AbfGaRnJ (ORCPT
+        id S1729461AbfGaRpp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 13:45:45 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:44310 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726382AbfGaRpp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 13:43:09 -0400
-Received: by mail-pf1-f196.google.com with SMTP id y15so32285014pfn.5;
-        Wed, 31 Jul 2019 10:43:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=qdP7zcW+fsPauZxZz+eQFRnAEj1f5IU9NKoZzh/om+g=;
-        b=eVcB1DArHZXjOZuYdvsD76Fy22cr4pxD2N0Ar6T4p/tAZMZDaUr431SUCDf16cN2g0
-         YAxqE4/ytqjfsqmgQSPTBz2RZ6yrntUJSLYahSBDS4ze4+iuRO5A+Ze+d1ZYilOcBNCA
-         6JOezh5ndagN9dKbXS4hTEmusmoNt+9tGt5UBG6bwUbqlmMckZ/ToPEy2J1SNXPRac9N
-         H8/s+2bBEbPTv9sQ/G+kW9vKrzSqtrBDc/6Rq7+ogQvVsRI7kI7DTG33X9/Q3VGkwmvP
-         ASZGqscxPJe83BKuBJgZFjYzEIKUuk6WbehoDGWTufXvEENw5qcvvyPyCRBkruA4nP0r
-         YcWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=qdP7zcW+fsPauZxZz+eQFRnAEj1f5IU9NKoZzh/om+g=;
-        b=rSnme//CmrkzNC9DuvqPH10GFd4fhsXr90cUlTRwxqPDswAxCVrrga/1GqPP3RVyyU
-         EOgWxhR5z+565yICzOGnpUMYbsSavfABLkDS4fePFl+I38162G3M2CxYn0nZKO7mLBSv
-         VfOzu+eHbYg/PaEZtdcyX7qw5EM6FwuJboTW8VtgO3nmI7weOTMxwhQEaTrtwA/ntaPu
-         IncMjYhCHbW4FvkzEAACKKQEff/xo4IyPXh30qHjHmg95Cb7AKIkuG8qN1RMApFM0BNl
-         BIMOXE8LveVB/gBJ5GqXlf2Kf6iKVDN+eoPUCmQ3ml6VtPfqJkyDVaxj0pNeB+RqUKfO
-         Yf0w==
-X-Gm-Message-State: APjAAAVrClJUWXd3LzQa3XfdA20onu/TuHudk5uJ6GSRqE1ckG1btGJc
-        EVKf3MEp17eRDGvce0zHBrtCTsqZ
-X-Google-Smtp-Source: APXvYqxC1zj4+nftzjZqEJJIxCEGbwiSzWdB5H+pOucxoZmOZPbLbAPK0BTvJ/p2il1olsoJE/yHhA==
-X-Received: by 2002:a17:90a:8d09:: with SMTP id c9mr4117269pjo.131.1564594988181;
-        Wed, 31 Jul 2019 10:43:08 -0700 (PDT)
-Received: from localhost.localdomain ([2607:fb90:4ad:5a0b:2aff:6e0f:8973:5a26])
-        by smtp.gmail.com with ESMTPSA id k8sm65941259pgm.14.2019.07.31.10.43.06
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 31 Jul 2019 10:43:07 -0700 (PDT)
-From:   Andrey Smirnov <andrew.smirnov@gmail.com>
-To:     linux-watchdog@vger.kernel.org
-Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Chris Healy <cphealy@gmail.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Rick Ramstetter <rick@anteaterllc.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 5/5] watchdog: ziirave_wdt: Log bootloader/firmware info during probe
-Date:   Wed, 31 Jul 2019 10:42:52 -0700
-Message-Id: <20190731174252.18041-6-andrew.smirnov@gmail.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190731174252.18041-1-andrew.smirnov@gmail.com>
-References: <20190731174252.18041-1-andrew.smirnov@gmail.com>
+        Wed, 31 Jul 2019 13:45:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=pEAfotcFLsFotBYT9u4zeRqv3NeeQAlDety7JPTf8Pk=; b=dw+SeYbkgl15ByYdw4RBRwGpI5
+        OQRbhMYNZQy3bzAx5TIQcL6nZ4sauiIJzRse8yongu5JqPY6aoJalrxRvlk01U/pCwDOw/2pmFJaD
+        P1gRHYsrEp+s+iq8YUjI4MGLu//erIQdXrho9cOTBXZKeLz8JFQpS+d+T6SVCRqsaBTceMtiBPAL9
+        K6qZqrz0yuqnuZ3oMdNwOb05wHSS4MloOj9+DKViGd5eR1DPhulBDXdM72Qf3YxGHWdhjFCH5PT3m
+        ioWvgp3GDSoi8julWf1KoQx7EnwTzV5jyNDyqyWBQzDDbz0lPbNq/vbmvDf5oWMOc7VHyKca5WKls
+        QitLDIVA==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=[192.168.1.17])
+        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hssfH-000639-C3; Wed, 31 Jul 2019 17:45:28 +0000
+Subject: Re: microblaze HAVE_MEMBLOCK_NODE_MAP dependency (was Re: [PATCH v2
+ 0/5] mm: Enable CONFIG_NODES_SPAN_OTHER_NODES by default for NUMA)
+To:     Mike Rapoport <rppt@linux.ibm.com>,
+        Michal Hocko <mhocko@kernel.org>
+Cc:     Hoan Tran OS <hoan@os.amperecomputing.com>,
+        Will Deacon <will@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
+        Paul Mackerras <paulus@samba.org>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
+        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        "x86@kernel.org" <x86@kernel.org>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Open Source Submission <patches@amperecomputing.com>,
+        Pavel Tatashin <pavel.tatashin@microsoft.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        "willy@infradead.org" <willy@infradead.org>,
+        Michal Simek <monstr@monstr.eu>
+References: <730368c5-1711-89ae-e3ef-65418b17ddc9@os.amperecomputing.com>
+ <20190730081415.GN9330@dhcp22.suse.cz> <20190731062420.GC21422@rapoport-lnx>
+ <20190731080309.GZ9330@dhcp22.suse.cz> <20190731111422.GA14538@rapoport-lnx>
+ <20190731114016.GI9330@dhcp22.suse.cz> <20190731122631.GB14538@rapoport-lnx>
+ <20190731130037.GN9330@dhcp22.suse.cz> <20190731142129.GA24998@rapoport-lnx>
+ <20190731144114.GY9330@dhcp22.suse.cz> <20190731171510.GB24998@rapoport-lnx>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <57b08afb-d07e-a24f-4cfe-5a633227ed6b@infradead.org>
+Date:   Wed, 31 Jul 2019 10:45:24 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190731171510.GB24998@rapoport-lnx>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Log bootloader/firmware info during probe. This information is
-available via sysfs already, but it's really helpful to have this in
-kernel log during startup as well.
+On 7/31/19 10:15 AM, Mike Rapoport wrote:
+> On Wed, Jul 31, 2019 at 04:41:14PM +0200, Michal Hocko wrote:
+>> On Wed 31-07-19 17:21:29, Mike Rapoport wrote:
+>>> On Wed, Jul 31, 2019 at 03:00:37PM +0200, Michal Hocko wrote:
+>>>>
+>>>> I am sorry, but I still do not follow. Who is consuming that node id
+>>>> information when NUMA=n. In other words why cannot we simply do
+>>>  
+>>> We can, I think nobody cared to change it.
+>>
+>> It would be great if somebody with the actual HW could try it out.
+>> I can throw a patch but I do not even have a cross compiler in my
+>> toolbox.
+> 
+> Well, it compiles :)
 
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc: Chris Healy <cphealy@gmail.com>
-Cc: Guenter Roeck <linux@roeck-us.net>
-Cc: Rick Ramstetter <rick@anteaterllc.com>
-Cc: linux-watchdog@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
----
- drivers/watchdog/ziirave_wdt.c | 18 +++++++++++++++---
- 1 file changed, 15 insertions(+), 3 deletions(-)
+Adding Michal Simek <monstr@monstr.eu>.
 
-diff --git a/drivers/watchdog/ziirave_wdt.c b/drivers/watchdog/ziirave_wdt.c
-index 33c8d2eadada..84ba8820ac86 100644
---- a/drivers/watchdog/ziirave_wdt.c
-+++ b/drivers/watchdog/ziirave_wdt.c
-@@ -68,6 +68,9 @@ static char *ziirave_reasons[] = {"power cycle", "hw watchdog", NULL, NULL,
- #define ZIIRAVE_CMD_JUMP_TO_BOOTLOADER		0x0c
- #define ZIIRAVE_CMD_DOWNLOAD_PACKET		0x0e
- 
-+#define ZIIRAVE_FW_VERSION_FMT	"02.%02u.%02u"
-+#define ZIIRAVE_BL_VERSION_FMT	"01.%02u.%02u"
-+
- struct ziirave_wdt_rev {
- 	unsigned char major;
- 	unsigned char minor;
-@@ -482,7 +485,7 @@ static ssize_t ziirave_wdt_sysfs_show_firm(struct device *dev,
- 	if (ret)
- 		return ret;
- 
--	ret = sprintf(buf, "02.%02u.%02u", w_priv->firmware_rev.major,
-+	ret = sprintf(buf, ZIIRAVE_FW_VERSION_FMT, w_priv->firmware_rev.major,
- 		      w_priv->firmware_rev.minor);
- 
- 	mutex_unlock(&w_priv->sysfs_mutex);
-@@ -505,7 +508,7 @@ static ssize_t ziirave_wdt_sysfs_show_boot(struct device *dev,
- 	if (ret)
- 		return ret;
- 
--	ret = sprintf(buf, "01.%02u.%02u", w_priv->bootloader_rev.major,
-+	ret = sprintf(buf, ZIIRAVE_BL_VERSION_FMT, w_priv->bootloader_rev.major,
- 		      w_priv->bootloader_rev.minor);
- 
- 	mutex_unlock(&w_priv->sysfs_mutex);
-@@ -572,7 +575,8 @@ static ssize_t ziirave_wdt_sysfs_store_firm(struct device *dev,
- 		goto unlock_mutex;
- 	}
- 
--	dev_info(&client->dev, "Firmware updated to version 02.%02u.%02u\n",
-+	dev_info(&client->dev,
-+		 "Firmware updated to version " ZIIRAVE_FW_VERSION_FMT "\n",
- 		 w_priv->firmware_rev.major, w_priv->firmware_rev.minor);
- 
- 	/* Restore the watchdog timeout */
-@@ -706,6 +710,10 @@ static int ziirave_wdt_probe(struct i2c_client *client,
- 		return ret;
- 	}
- 
-+	dev_info(&client->dev,
-+		 "Firmware version: " ZIIRAVE_FW_VERSION_FMT "\n",
-+		 w_priv->firmware_rev.major, w_priv->firmware_rev.minor);
-+
- 	ret = ziirave_wdt_revision(client, &w_priv->bootloader_rev,
- 				   ZIIRAVE_WDT_BOOT_VER_MAJOR);
- 	if (ret) {
-@@ -713,6 +721,10 @@ static int ziirave_wdt_probe(struct i2c_client *client,
- 		return ret;
- 	}
- 
-+	dev_info(&client->dev,
-+		 "Bootloader version: " ZIIRAVE_BL_VERSION_FMT "\n",
-+		 w_priv->bootloader_rev.major, w_priv->bootloader_rev.minor);
-+
- 	w_priv->reset_reason = i2c_smbus_read_byte_data(client,
- 						ZIIRAVE_WDT_RESET_REASON);
- 	if (w_priv->reset_reason < 0) {
+It's not clear that the MICROBLAZE maintainer is still supporting MICROBLAZE.
+
+>>>> diff --git a/arch/microblaze/mm/init.c b/arch/microblaze/mm/init.c
+>>>> index a015a951c8b7..3a47e8db8d1c 100644
+>>>> --- a/arch/microblaze/mm/init.c
+>>>> +++ b/arch/microblaze/mm/init.c
+>>>> @@ -175,14 +175,9 @@ void __init setup_memory(void)
+>>>>  
+>>>>  		start_pfn = memblock_region_memory_base_pfn(reg);
+>>>>  		end_pfn = memblock_region_memory_end_pfn(reg);
+>>>> -		memblock_set_node(start_pfn << PAGE_SHIFT,
+>>>> -				  (end_pfn - start_pfn) << PAGE_SHIFT,
+>>>> -				  &memblock.memory, 0);
+>>>> +		memory_present(0, start_pfn << PAGE_SHIFT, end_pfn << PAGE_SHIFT);
+>>>
+>>> memory_present() expects pfns, the shift is not needed.
+>>
+>> Right.
+>>
+>> -- 
+>> Michal Hocko
+>> SUSE Labs
+
+
 -- 
-2.21.0
-
+~Randy
