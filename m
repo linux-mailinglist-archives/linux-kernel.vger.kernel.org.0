@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5482A7CCCE
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 21:35:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A8DE17CCD2
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 21:35:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731026AbfGaTf0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 15:35:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34884 "EHLO mail.kernel.org"
+        id S1731064AbfGaTfn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 15:35:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34866 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726096AbfGaTfU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 15:35:20 -0400
+        id S1730978AbfGaTfV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jul 2019 15:35:21 -0400
 Received: from mail.kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0F461214DA;
+        by mail.kernel.org (Postfix) with ESMTPSA id 659C421773;
         Wed, 31 Jul 2019 19:35:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1564601720;
-        bh=qzMII9C4EWOSO7lbnevf4fOV8Y+qXeGKUcDdf3nXVQo=;
+        bh=KRT4iiK2EgNX4OEQ7ZhpMKAep0nZDdwNZwi5gNl3yaY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0tv9xfchJ0rXsxthJuJYEAz1/My4p/z5i1kIZcz5nOvWm6j1Xy8A3cEGA6bfKK6zH
-         XX6nztHNBJsISD67r0Np9FUO3fqLYYMTu5nNhE2Vt9i2anbK68/erNylNmXk1wTKC5
-         1Z8Hj3LCfatUkklXsng1UUkW5c7dPvKcZ6MxU4n4=
+        b=CaZU9ZFez26c0DKOS1sDUmYp3J5kASW43JqAwprDu1RGDTvRp482qWuau4Lio25lO
+         mO88uIFWtfJ1YLt+ApDuWS8Q/zWBQGL0baKPm6SKk36tIW/T4czmyfNLxzwvwGqL5/
+         JF9u5FHRj6iAH15Bja+LXHL1apfw5Pij9J1JW3ts=
 From:   Stephen Boyd <sboyd@kernel.org>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Guo Zeng <Guo.Zeng@csr.com>, Barry Song <Baohua.Song@csr.com>
-Subject: [PATCH 5/9] clk: sirf: Don't reference clk_init_data after registration
-Date:   Wed, 31 Jul 2019 12:35:13 -0700
-Message-Id: <20190731193517.237136-6-sboyd@kernel.org>
+        Dinh Nguyen <dinguyen@kernel.org>
+Subject: [PATCH 6/9] clk: socfpga: Don't reference clk_init_data after registration
+Date:   Wed, 31 Jul 2019 12:35:14 -0700
+Message-Id: <20190731193517.237136-7-sboyd@kernel.org>
 X-Mailer: git-send-email 2.22.0.709.g102302147b-goog
 In-Reply-To: <20190731193517.237136-1-sboyd@kernel.org>
 References: <20190731193517.237136-1-sboyd@kernel.org>
@@ -46,64 +46,97 @@ clk_hw::init is guaranteed to be NULL after a clk is registered. Avoid
 referencing this member here so that we don't run into NULL pointer
 exceptions.
 
-Cc: Guo Zeng <Guo.Zeng@csr.com>
-Cc: Barry Song <Baohua.Song@csr.com>
+Cc: Dinh Nguyen <dinguyen@kernel.org>
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 ---
 
 Please ack so I can take this through clk tree
 
- drivers/clk/sirf/clk-common.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ drivers/clk/socfpga/clk-gate.c       | 21 +++++++++++----------
+ drivers/clk/socfpga/clk-periph-a10.c |  7 ++++---
+ 2 files changed, 15 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/clk/sirf/clk-common.c b/drivers/clk/sirf/clk-common.c
-index ad7951b6b285..dcf4e25a0216 100644
---- a/drivers/clk/sirf/clk-common.c
-+++ b/drivers/clk/sirf/clk-common.c
-@@ -297,9 +297,10 @@ static u8 dmn_clk_get_parent(struct clk_hw *hw)
+diff --git a/drivers/clk/socfpga/clk-gate.c b/drivers/clk/socfpga/clk-gate.c
+index 3966cd43b552..b3c8143909dc 100644
+--- a/drivers/clk/socfpga/clk-gate.c
++++ b/drivers/clk/socfpga/clk-gate.c
+@@ -31,20 +31,20 @@ static u8 socfpga_clk_get_parent(struct clk_hw *hwclk)
+ 	u32 l4_src;
+ 	u32 perpll_src;
+ 
+-	if (streq(hwclk->init->name, SOCFPGA_L4_MP_CLK)) {
++	if (streq(name, SOCFPGA_L4_MP_CLK)) {
+ 		l4_src = readl(clk_mgr_base_addr + CLKMGR_L4SRC);
+ 		return l4_src &= 0x1;
+ 	}
+-	if (streq(hwclk->init->name, SOCFPGA_L4_SP_CLK)) {
++	if (streq(name, SOCFPGA_L4_SP_CLK)) {
+ 		l4_src = readl(clk_mgr_base_addr + CLKMGR_L4SRC);
+ 		return !!(l4_src & 2);
+ 	}
+ 
+ 	perpll_src = readl(clk_mgr_base_addr + CLKMGR_PERPLL_SRC);
+-	if (streq(hwclk->init->name, SOCFPGA_MMC_CLK))
++	if (streq(name, SOCFPGA_MMC_CLK))
+ 		return perpll_src &= 0x3;
+-	if (streq(hwclk->init->name, SOCFPGA_NAND_CLK) ||
+-			streq(hwclk->init->name, SOCFPGA_NAND_X_CLK))
++	if (streq(name, SOCFPGA_NAND_CLK) ||
++			streq(name, SOCFPGA_NAND_X_CLK))
+ 			return (perpll_src >> 2) & 3;
+ 
+ 	/* QSPI clock */
+@@ -55,24 +55,25 @@ static u8 socfpga_clk_get_parent(struct clk_hw *hwclk)
+ static int socfpga_clk_set_parent(struct clk_hw *hwclk, u8 parent)
  {
- 	struct clk_dmn *clk = to_dmnclk(hw);
- 	u32 cfg = clkc_readl(clk->regofs);
-+	const char *name = clk_hw_get_name(hw);
+ 	u32 src_reg;
++	const char *name = clk_hw_get_name(hwclk);
  
- 	/* parent of io domain can only be pll3 */
--	if (strcmp(hw->init->name, "io") == 0)
-+	if (strcmp(name, "io") == 0)
- 		return 4;
- 
- 	WARN_ON((cfg & (BIT(3) - 1)) > 4);
-@@ -311,9 +312,10 @@ static int dmn_clk_set_parent(struct clk_hw *hw, u8 parent)
+-	if (streq(hwclk->init->name, SOCFPGA_L4_MP_CLK)) {
++	if (streq(name, SOCFPGA_L4_MP_CLK)) {
+ 		src_reg = readl(clk_mgr_base_addr + CLKMGR_L4SRC);
+ 		src_reg &= ~0x1;
+ 		src_reg |= parent;
+ 		writel(src_reg, clk_mgr_base_addr + CLKMGR_L4SRC);
+-	} else if (streq(hwclk->init->name, SOCFPGA_L4_SP_CLK)) {
++	} else if (streq(name, SOCFPGA_L4_SP_CLK)) {
+ 		src_reg = readl(clk_mgr_base_addr + CLKMGR_L4SRC);
+ 		src_reg &= ~0x2;
+ 		src_reg |= (parent << 1);
+ 		writel(src_reg, clk_mgr_base_addr + CLKMGR_L4SRC);
+ 	} else {
+ 		src_reg = readl(clk_mgr_base_addr + CLKMGR_PERPLL_SRC);
+-		if (streq(hwclk->init->name, SOCFPGA_MMC_CLK)) {
++		if (streq(name, SOCFPGA_MMC_CLK)) {
+ 			src_reg &= ~0x3;
+ 			src_reg |= parent;
+-		} else if (streq(hwclk->init->name, SOCFPGA_NAND_CLK) ||
+-			streq(hwclk->init->name, SOCFPGA_NAND_X_CLK)) {
++		} else if (streq(name, SOCFPGA_NAND_CLK) ||
++			streq(name, SOCFPGA_NAND_X_CLK)) {
+ 			src_reg &= ~0xC;
+ 			src_reg |= (parent << 2);
+ 		} else {/* QSPI clock */
+diff --git a/drivers/clk/socfpga/clk-periph-a10.c b/drivers/clk/socfpga/clk-periph-a10.c
+index a8ff7229611d..3e0c55727b89 100644
+--- a/drivers/clk/socfpga/clk-periph-a10.c
++++ b/drivers/clk/socfpga/clk-periph-a10.c
+@@ -40,11 +40,12 @@ static u8 clk_periclk_get_parent(struct clk_hw *hwclk)
  {
- 	struct clk_dmn *clk = to_dmnclk(hw);
- 	u32 cfg = clkc_readl(clk->regofs);
-+	const char *name = clk_hw_get_name(hw);
+ 	struct socfpga_periph_clk *socfpgaclk = to_socfpga_periph_clk(hwclk);
+ 	u32 clk_src;
++	const char *name = clk_hw_get_name(hwclk);
  
- 	/* parent of io domain can only be pll3 */
--	if (strcmp(hw->init->name, "io") == 0)
-+	if (strcmp(name, "io") == 0)
- 		return -EINVAL;
- 
- 	cfg &= ~(BIT(3) - 1);
-@@ -353,7 +355,8 @@ static long dmn_clk_round_rate(struct clk_hw *hw, unsigned long rate,
- {
- 	unsigned long fin;
- 	unsigned ratio, wait, hold;
--	unsigned bits = (strcmp(hw->init->name, "mem") == 0) ? 3 : 4;
-+	const char *name = clk_hw_get_name(hw);
-+	unsigned bits = (strcmp(name, "mem") == 0) ? 3 : 4;
- 
- 	fin = *parent_rate;
- 	ratio = fin / rate;
-@@ -375,7 +378,8 @@ static int dmn_clk_set_rate(struct clk_hw *hw, unsigned long rate,
- 	struct clk_dmn *clk = to_dmnclk(hw);
- 	unsigned long fin;
- 	unsigned ratio, wait, hold, reg;
--	unsigned bits = (strcmp(hw->init->name, "mem") == 0) ? 3 : 4;
-+	const char *name = clk_hw_get_name(hw);
-+	unsigned bits = (strcmp(name, "mem") == 0) ? 3 : 4;
- 
- 	fin = parent_rate;
- 	ratio = fin / rate;
+ 	clk_src = readl(socfpgaclk->hw.reg);
+-	if (streq(hwclk->init->name, SOCFPGA_MPU_FREE_CLK) ||
+-	    streq(hwclk->init->name, SOCFPGA_NOC_FREE_CLK) ||
+-	    streq(hwclk->init->name, SOCFPGA_SDMMC_FREE_CLK))
++	if (streq(name, SOCFPGA_MPU_FREE_CLK) ||
++	    streq(name, SOCFPGA_NOC_FREE_CLK) ||
++	    streq(name, SOCFPGA_SDMMC_FREE_CLK))
+ 		return (clk_src >> CLK_MGR_FREE_SHIFT) &
+ 			CLK_MGR_FREE_MASK;
+ 	else
 -- 
 Sent by a computer through tubes
 
