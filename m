@@ -2,77 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A5EC7C412
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 15:53:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C12D57C417
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 15:54:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729364AbfGaNxJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 09:53:09 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:20003 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726592AbfGaNxI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 09:53:08 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id CCEAB3079B62;
-        Wed, 31 Jul 2019 13:53:08 +0000 (UTC)
-Received: from t460s.redhat.com (ovpn-117-240.ams2.redhat.com [10.36.117.240])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2C5081001959;
-        Wed, 31 Jul 2019 13:53:07 +0000 (UTC)
-From:   David Hildenbrand <david@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-mm@kvack.org, linux-acpi@vger.kernel.org,
-        David Hildenbrand <david@redhat.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Oscar Salvador <osalvador@suse.de>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH v1] drivers/acpi/scan.c: Document why we don't need the device_hotplug_lock
-Date:   Wed, 31 Jul 2019 15:53:06 +0200
-Message-Id: <20190731135306.31524-1-david@redhat.com>
+        id S1729690AbfGaNxy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 09:53:54 -0400
+Received: from mx2.suse.de ([195.135.220.15]:42774 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727540AbfGaNxx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jul 2019 09:53:53 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 5EA40AE22;
+        Wed, 31 Jul 2019 13:53:52 +0000 (UTC)
+Date:   Wed, 31 Jul 2019 15:53:51 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Qian Cai <cai@lca.pw>
+Cc:     akpm@linux-foundation.org, miles.chen@mediatek.com,
+        hannes@cmpxchg.org, vdavydov.dev@gmail.com,
+        cgroups@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next] mm/memcg: fix a -Wparentheses compilation warning
+Message-ID: <20190731135351.GT9330@dhcp22.suse.cz>
+References: <1564580753-17531-1-git-send-email-cai@lca.pw>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Wed, 31 Jul 2019 13:53:08 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1564580753-17531-1-git-send-email-cai@lca.pw>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Let's document why the lock is not needed in acpi_scan_init(), right now
-this is not really obvious.
+On Wed 31-07-19 09:45:53, Qian Cai wrote:
+> The linux-next commit ("mm/memcontrol.c: fix use after free in
+> mem_cgroup_iter()") [1] introduced a compilation warning,
+> 
+> mm/memcontrol.c:1160:17: warning: using the result of an assignment as a
+> condition without parentheses [-Wparentheses]
+>         } while (memcg = parent_mem_cgroup(memcg));
+>                  ~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~
+> mm/memcontrol.c:1160:17: note: place parentheses around the assignment
+> to silence this warning
+>         } while (memcg = parent_mem_cgroup(memcg));
+>                        ^
+>                  (                               )
+> mm/memcontrol.c:1160:17: note: use '==' to turn this assignment into an
+> equality comparison
+>         } while (memcg = parent_mem_cgroup(memcg));
+>                        ^
+>                        ==
+> 
+> Fix it by adding a pair of parentheses.
+> 
+> [1] https://lore.kernel.org/linux-mm/20190730015729.4406-1-miles.chen@mediatek.com/
+> 
+> Signed-off-by: Qian Cai <cai@lca.pw>
 
-Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Oscar Salvador <osalvador@suse.de>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: David Hildenbrand <david@redhat.com>
----
+Thanks for the fix. I assume Andrew is going to squash it into the
+original patch.
 
-@Andrew, can you drop "drivers/acpi/scan.c: acquire device_hotplug_lock in
-acpi_scan_init()" and add this patch instead? Thanks
+Acked-by: Michal Hocko <mhocko@suse.com>
 
----
- drivers/acpi/scan.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+> ---
+>  mm/memcontrol.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index 694b6f8776dc..4f66a8305ae0 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -1157,7 +1157,7 @@ static void invalidate_reclaim_iterators(struct mem_cgroup *dead_memcg)
+>  	do {
+>  		__invalidate_reclaim_iterators(memcg, dead_memcg);
+>  		last = memcg;
+> -	} while (memcg = parent_mem_cgroup(memcg));
+> +	} while ((memcg = parent_mem_cgroup(memcg)));
+>  
+>  	/*
+>  	 * When cgruop1 non-hierarchy mode is used,
+> -- 
+> 1.8.3.1
 
-diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
-index 0e28270b0fd8..8444af6cd514 100644
---- a/drivers/acpi/scan.c
-+++ b/drivers/acpi/scan.c
-@@ -2204,6 +2204,12 @@ int __init acpi_scan_init(void)
- 	acpi_gpe_apply_masked_gpes();
- 	acpi_update_all_gpes();
- 
-+	/*
-+	 * Although we call__add_memory() that is documented to require the
-+	 * device_hotplug_lock, it is not necessary here because this is an
-+	 * early code when userspace or any other code path cannot trigger
-+	 * hotplug/hotunplug operations.
-+	 */
- 	mutex_lock(&acpi_scan_lock);
- 	/*
- 	 * Enumerate devices in the ACPI namespace.
 -- 
-2.21.0
-
+Michal Hocko
+SUSE Labs
