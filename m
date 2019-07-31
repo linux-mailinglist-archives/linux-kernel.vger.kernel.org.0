@@ -2,90 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51EA57C0A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 14:04:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 10D167C0AE
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 14:05:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728284AbfGaMEY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 08:04:24 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:33643 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725935AbfGaMEY (ORCPT
+        id S1728847AbfGaMFR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 08:05:17 -0400
+Received: from esa5.microchip.iphmx.com ([216.71.150.166]:16607 "EHLO
+        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727370AbfGaMFR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 08:04:24 -0400
-Received: by mail-lj1-f193.google.com with SMTP id h10so65341287ljg.0
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 05:04:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=s4RPoNoetmDdSgwfGZ08wLtjU3Rl2zWouKkOWjbjMWg=;
-        b=EnzJ0F54oAi0OX+GtgM+IK9898w+b4lTzvMaBjNRZOpQlW9SkJivV9CBK1He263F6C
-         jVoK4t4SXObHIgZip1vxRSrvXk8iYH+MTUjZtp0yv8FnExJpGXN2FqaLWp+tay1BMfcR
-         8MK7A2NfHrWBGRef9o1PnSD60zsjds10zk9lHfq6JROdLYdV70ulaBShPF7yGSrFln8S
-         psto8j4HAmlFX6/aZe0qyt/GiphT0hnvT6dwGqRCKu4vh5GYuYrifqydVApYDnWBhDzu
-         3Pfcks4w7GZ8yIXqlHZY+wTUJMTRqp2P6ysueSLTjlTFu8UEzESnRaE/vvkJMtDQYCyu
-         fySQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=s4RPoNoetmDdSgwfGZ08wLtjU3Rl2zWouKkOWjbjMWg=;
-        b=pRHOq8Gg6CR1aus96uCsftHYVDk3HLu6CfezOdim9qfowpUzv+uUEoU8uWKNy7urTV
-         rWUxZz6NgezFLhMXRCxtm/QbEPizNaJl7DKngoUfZysuKB/6PYug2990bHZMpNNDlIkp
-         CItuM0j3pj7XVhjDBzRANVdJwkmL5aa5iYBLWDyqKYvukiTm7/i+GpPepQUxG8rSGW55
-         DzK875exMdZpRxUSwSQ7vdXRDJcRE3ksJUSME2faKQFVSyoOeG4UJEmfU0NCHO7Cy8A+
-         M4DQnJr+DwgCHBaG9zqQzShjLTFYEs9WHi5aRmzWbdANZ5yk4lI4gIg/N4ltYzSMxYDc
-         8LIA==
-X-Gm-Message-State: APjAAAUYwhfuzxgCvKyxNcUxqxNXaWG0s7DYz/oHLRMwZOodsB6GTTLn
-        eONi9sl9bPxzlavMNRyZu+8=
-X-Google-Smtp-Source: APXvYqzgMT2CPwJhuWzBpzLlg593pYgFccVPfTw85ro1+tK0oXAgWGp8XZ9qfVgWf8Lfeky8MTLVUA==
-X-Received: by 2002:a2e:9c19:: with SMTP id s25mr41423681lji.188.1564574661794;
-        Wed, 31 Jul 2019 05:04:21 -0700 (PDT)
-Received: from pc636 ([37.212.215.48])
-        by smtp.gmail.com with ESMTPSA id q2sm11607080lfj.25.2019.07.31.05.04.19
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 31 Jul 2019 05:04:19 -0700 (PDT)
-From:   Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date:   Wed, 31 Jul 2019 14:04:11 +0200
-To:     sathyanarayanan kuppuswamy 
-        <sathyanarayanan.kuppuswamy@linux.intel.com>
-Cc:     Uladzislau Rezki <urezki@gmail.com>,
-        Dave Hansen <dave.hansen@intel.com>, akpm@linux-foundation.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/1] mm/vmalloc.c: Fix percpu free VM area search
- criteria
-Message-ID: <20190731120411.42ij4che425a5x3w@pc636>
-References: <20190729232139.91131-1-sathyanarayanan.kuppuswamy@linux.intel.com>
- <20190730204643.tsxgc3n4adb63rlc@pc636>
- <d121eb22-01fd-c549-a6e8-9459c54d7ead@intel.com>
- <9fdd44c2-a10e-23f0-a71c-bf8f3e6fc384@linux.intel.com>
- <20190730223400.hzsyjrxng2s5gk4u@pc636>
- <63e48375-afa4-4ab6-240d-1633d7cc9ea4@linux.intel.com>
+        Wed, 31 Jul 2019 08:05:17 -0400
+Received-SPF: Pass (esa5.microchip.iphmx.com: domain of
+  Ludovic.Desroches@microchip.com designates 198.175.253.82 as
+  permitted sender) identity=mailfrom;
+  client-ip=198.175.253.82; receiver=esa5.microchip.iphmx.com;
+  envelope-from="Ludovic.Desroches@microchip.com";
+  x-sender="Ludovic.Desroches@microchip.com";
+  x-conformance=spf_only; x-record-type="v=spf1";
+  x-record-text="v=spf1 mx a:ushub1.microchip.com
+  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
+  a:mx2.microchip.iphmx.com include:servers.mcsv.net
+  include:mktomail.com include:spf.protection.outlook.com ~all"
+Received-SPF: None (esa5.microchip.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@email.microchip.com) identity=helo;
+  client-ip=198.175.253.82; receiver=esa5.microchip.iphmx.com;
+  envelope-from="Ludovic.Desroches@microchip.com";
+  x-sender="postmaster@email.microchip.com";
+  x-conformance=spf_only
+Authentication-Results: esa5.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Ludovic.Desroches@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
+IronPort-SDR: 1AVScHoOHG8smU+2JLHkpw75Dn9uq+ogTvKf34gG8Ztu/JmJ6tfStGOMNoiBH1vz5OqSajEDa1
+ BzygZno+/BHj10OFyzIgjXcvsDwpGCfq5jw2rhep9Q/u7YrxEwDWZfkBeO9ZtEu0cWKqLnewIl
+ OUE8OQW4p6ltTC2r8zF7GdLxg6qnZ4T3EwuBnt1+RZy6U14iwIam6KQ9bkQ0ymQvvM7KI10VZx
+ yH6S+rRlUYYW6UQbKkT1dHsl3QBG0GpTYrhc3Yf3HTDVjayYIgGeDXcsIXFynfbYPLHhnk0pxg
+ ntE=
+X-IronPort-AV: E=Sophos;i="5.64,330,1559545200"; 
+   d="scan'208";a="41849008"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 31 Jul 2019 05:05:16 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Wed, 31 Jul 2019 05:05:15 -0700
+Received: from localhost (10.10.85.251) by chn-vm-ex02.mchp-main.com
+ (10.10.85.144) with Microsoft SMTP Server id 15.1.1713.5 via Frontend
+ Transport; Wed, 31 Jul 2019 05:05:14 -0700
+Date:   Wed, 31 Jul 2019 14:04:20 +0200
+From:   Ludovic Desroches <ludovic.desroches@microchip.com>
+To:     Chuhong Yuan <hslester96@gmail.com>
+CC:     Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        "Alexandre Belloni" <alexandre.belloni@bootlin.com>,
+        <linux-crypto@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] crypto: atmel-sha204a: Use device-managed registration
+ API
+Message-ID: <20190731120420.4lqguk22ua5r2tqo@M43218.corp.atmel.com>
+Mail-Followup-To: Chuhong Yuan <hslester96@gmail.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+References: <20190723071934.12528-1-hslester96@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <63e48375-afa4-4ab6-240d-1633d7cc9ea4@linux.intel.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20190723071934.12528-1-hslester96@gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello, Sathyanarayanan.
+On Tue, Jul 23, 2019 at 03:19:36PM +0800, Chuhong Yuan wrote:
+> 
+> Use devm_hwrng_register to get rid of manual
+> unregistration.
+> 
+> Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
 
-> > Just to clarify, does it mean that on your setup you have only one area with the
-> > 600000 size and 0xffff000000 offset?
-> No, its 2 areas. with offset (0, ffff000000) and size (a00000, 600000).
-> > 
-Thank you for clarification, that makes sense to me. I also can reproduce
-that issue, so i agree with your patch. Basically we can skip free VA
-block(that can fit) examining previous one(my fault), instead of moving
-base downwards and recheck an area that did not fit.
+Thanks
 
-Reviewed-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
-
-Appreciate you for fixing it!
-
---
-Vlad Rezki
+> ---
+>  drivers/crypto/atmel-sha204a.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/crypto/atmel-sha204a.c b/drivers/crypto/atmel-sha204a.c
+> index ea0d2068ea4f..c96c14e7dab1 100644
+> --- a/drivers/crypto/atmel-sha204a.c
+> +++ b/drivers/crypto/atmel-sha204a.c
+> @@ -109,7 +109,7 @@ static int atmel_sha204a_probe(struct i2c_client *client,
+>  	i2c_priv->hwrng.read = atmel_sha204a_rng_read;
+>  	i2c_priv->hwrng.quality = 1024;
+>  
+> -	ret = hwrng_register(&i2c_priv->hwrng);
+> +	ret = devm_hwrng_register(&client->dev, &i2c_priv->hwrng);
+>  	if (ret)
+>  		dev_warn(&client->dev, "failed to register RNG (%d)\n", ret);
+>  
+> @@ -127,7 +127,6 @@ static int atmel_sha204a_remove(struct i2c_client *client)
+>  
+>  	if (i2c_priv->hwrng.priv)
+>  		kfree((void *)i2c_priv->hwrng.priv);
+> -	hwrng_unregister(&i2c_priv->hwrng);
+>  
+>  	return 0;
+>  }
+> -- 
+> 2.20.1
+> 
+> 
