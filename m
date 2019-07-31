@@ -2,180 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BDB117B9DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 08:44:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C33D7B9E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 08:45:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387565AbfGaGoT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 02:44:19 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:35382 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2387547AbfGaGoS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 02:44:18 -0400
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x6V6gTS5117843
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 02:44:17 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2u33v6cxhn-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 02:44:16 -0400
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Wed, 31 Jul 2019 07:44:14 +0100
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 31 Jul 2019 07:44:07 +0100
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x6V6i6kP42270910
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 31 Jul 2019 06:44:06 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 389A64C04E;
-        Wed, 31 Jul 2019 06:44:06 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5E4614C04A;
-        Wed, 31 Jul 2019 06:44:04 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.8.168])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Wed, 31 Jul 2019 06:44:04 +0000 (GMT)
-Date:   Wed, 31 Jul 2019 09:44:02 +0300
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     "Joel Fernandes (Google)" <joel@joelfernandes.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Brendan Gregg <bgregg@netflix.com>,
-        Christian Hansen <chansen3@cisco.com>, dancol@google.com,
-        fmayer@google.com, joaodias@google.com, joelaf@google.com,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>, kernel-team@android.com,
-        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        Michal Hocko <mhocko@suse.com>, minchan@kernel.org,
-        namhyung@google.com, Roman Gushchin <guro@fb.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>, surenb@google.com,
-        tkjos@google.com, Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Vlastimil Babka <vbabka@suse.cz>, wvw@google.com
-Subject: Re: [PATCH v3 2/2] doc: Update documentation for page_idle virtual
- address indexing
-References: <20190726152319.134152-1-joel@joelfernandes.org>
- <20190726152319.134152-2-joel@joelfernandes.org>
+        id S2387587AbfGaGp2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 02:45:28 -0400
+Received: from mout.web.de ([212.227.17.12]:34283 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726382AbfGaGp2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jul 2019 02:45:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1564555495;
+        bh=Kc2lJglxBeibyF9vhLafDnzZiAHverCXaTrJlWT2zg4=;
+        h=X-UI-Sender-Class:Subject:To:References:From:Cc:Date:In-Reply-To;
+        b=UMm5bFrHu1ORQExz3uo17Ww9BmCc4U8HHr6QIvXgaG+LHzR8buVSrjpne+ulNZl5/
+         ziky/0ehDl+Acz561pZLiD3wUwgYXjQPuGa9C1CmYHM152lt11OQvPbkD8z/V2VWjP
+         VxyMy2icuCIv9l3lzV7klKDBIy8bdNnsiaO4J7o0=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.2] ([93.135.180.205]) by smtp.web.de (mrweb101
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 0M5fsK-1iH5nq42jA-00xaP1; Wed, 31
+ Jul 2019 08:44:55 +0200
+Subject: Re: patch "coccinelle: Add script to check for platform_get_irq()
+ excessive" added to driver-core-next
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        kernel-janitors@vger.kernel.org, cocci@systeme.lip6.fr
+References: <156455237123959@kroah.com>
+From:   Markus Elfring <Markus.Elfring@web.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ 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 FEE=
+Cc:     Andrzej Hajda <a.hajda@samsung.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Mark Brown <broonie@kernel.org>,
+        Javier Martinez Canillas <javierm@redhat.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Rob Herring <robh@kernel.org>,
+        Gilles Muller <Gilles.Muller@lip6.fr>,
+        Julia Lawall <Julia.Lawall@lip6.fr>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Nicolas Palix <nicolas.palix@imag.fr>,
+        linux-kernel@vger.kernel.org
+Message-ID: <00bc6fea-f505-56d2-3803-1ac0882436b7@web.de>
+Date:   Wed, 31 Jul 2019 08:44:29 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190726152319.134152-2-joel@joelfernandes.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 19073106-0016-0000-0000-00000297D60A
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19073106-0017-0000-0000-000032F5E768
-Message-Id: <20190731064400.GD21422@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-07-31_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1907310070
+In-Reply-To: <156455237123959@kroah.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-GB
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:ui++1DX+81fq8mlmhBlGylfsX9LPs3RoUHUA2iHD+YfDzOBIxrq
+ 5tm9WX+ZOsMTGHlOd/KKbzcOkTAtPZ8K42WI/QPCCSOnfyJutzOSgUm97ZHYsMMwjVb+GXB
+ K/70N/AO3If/beWfO2ORAVA6gggXloxRKPiLmwAZiibliRefDC0KXrQntGQIe33fmxUJsnA
+ 1P+/YDJXjZyx232Kyd9RA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:iINreL36Bv0=:9FZ7KTYEBI0TAmPt89fUWl
+ P1EcC1cd6F43qNnx7gFtThai4sj2XRSLXc3LVNia/af/C2luNb/CuVzpdz8pH+bwcXpMAvDMv
+ n7Spjiz6RFypxplWyI7mew96uofSIaBJ04vPKrn/9VPHJQpEWTBSKkRl/juQnVecq+sUWDNFk
+ JSXaLxmvB1/6zAw1DDtBZIBWZdjPhm/qB8SxhWWt4pWWsVNq8hxuTQ8zB/G1mxgZ9KxsDi28Z
+ c6nAQs7VMaryRr0DG7FbI6zMEbaygxzW6/eiYFncN8hkHTZGSoFGTWpyAaoUEFMb2uL+w+lDF
+ DkdsbUy25rD5rWglniyb7p0vceI7KCghP12FIBmqEmcj1M38Kwckt+CjTnlvJVFBBoEnP4U+I
+ vSwG2J8/OrL1yRNET2wU5g4pgBOD86HcRMRaJLwR+bfYR6njPVUn83MZYWujj56h7wzXjp35f
+ 80imUOhpO7gmTsA7OMcZi7t2ptfK7deLxV60EBqXhd+zTZ45SJChlc06mijcEthaSxbWjw0vl
+ 5E0RpBAJp/jk8B7mNL00Z/vrOz5tN1g4nsWKMFf4zh22PlX+sbnY3CqNsNRlm3kkuqkHcAmog
+ 0fRWWNrRGozaTAGooqRuAhUKO6gXbMizGmShEMlBemcV+15iX7cyDFhnXGViSvKeOhmF3ak2y
+ C0K61c5TfEFmvEQzK+U1TIRDoD0uLMRbTaX7mL550tWmipUTftd52OXEdey5xFMdRD6wIkqRh
+ Cfo2jYMuEmnl0aUKfvv+37nx+ZmKDnWCWwGV08QdzUOQs1qYhkgp1+bsmS3RP672+ZqdXkORI
+ pESp/CW0DEd8mkmPGZ2bPPWQfaHELzq3ibMXDgqb5vkchL9adDYfEwFzA8RZ2m7HJA3IDHUph
+ EZid97Ph92GYkhm5JDyupWFzn05I0RFClKXub3s85LlnpTFA/vEsKp1NtAZ+zR81qgQobeA+G
+ idaVUgg7H55K5rE/omTZRwGO3Sn6QPgG4Uw7+4XFqztrPCRfCylC6dMVRzgaTLEPN/+oMKD2K
+ TDZvWJGzYXMi1je50VbKY4vFRIk+X22VDteOUxP+Qn03mTcE9ny9trKVeu7K0Atx/70/F6ipu
+ zm5KiekQV6+RAojvhKMc7rW2Bf8WKEOuU5e
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 26, 2019 at 11:23:19AM -0400, Joel Fernandes (Google) wrote:
-> This patch updates the documentation with the new page_idle tracking
-> feature which uses virtual address indexing.
-> 
-> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+> This is a note to let you know that I've just added the patch titled
+>
+>     coccinelle: Add script to check for platform_get_irq() excessive
+>
+> to my driver-core git tree which can be found at
+>     git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git
+> in the driver-core-next branch.
 
-One nit below, otherwise
+I find it interesting somehow that this version of a script for
+the semantic patch language can be integrated already in this
+development branch.
 
-Reviewed-by: Mike Rapoport <rppt@linux.ibm.com>
 
-> ---
->  .../admin-guide/mm/idle_page_tracking.rst     | 43 ++++++++++++++++---
->  1 file changed, 36 insertions(+), 7 deletions(-)
-> 
-> diff --git a/Documentation/admin-guide/mm/idle_page_tracking.rst b/Documentation/admin-guide/mm/idle_page_tracking.rst
-> index df9394fb39c2..1eeac78c94a7 100644
-> --- a/Documentation/admin-guide/mm/idle_page_tracking.rst
-> +++ b/Documentation/admin-guide/mm/idle_page_tracking.rst
-> @@ -19,10 +19,14 @@ It is enabled by CONFIG_IDLE_PAGE_TRACKING=y.
->  
->  User API
->  ========
-> +There are 2 ways to access the idle page tracking API. One uses physical
-> +address indexing, another uses a simpler virtual address indexing scheme.
->  
-> -The idle page tracking API is located at ``/sys/kernel/mm/page_idle``.
-> -Currently, it consists of the only read-write file,
-> -``/sys/kernel/mm/page_idle/bitmap``.
-> +Physical address indexing
-> +-------------------------
-> +The idle page tracking API for physical address indexing using page frame
-> +numbers (PFN) is located at ``/sys/kernel/mm/page_idle``.  Currently, it
-> +consists of the only read-write file, ``/sys/kernel/mm/page_idle/bitmap``.
->  
->  The file implements a bitmap where each bit corresponds to a memory page. The
->  bitmap is represented by an array of 8-byte integers, and the page at PFN #i is
-> @@ -74,6 +78,31 @@ See :ref:`Documentation/admin-guide/mm/pagemap.rst <pagemap>` for more
->  information about ``/proc/pid/pagemap``, ``/proc/kpageflags``, and
->  ``/proc/kpagecgroup``.
->  
-> +Virtual address indexing
-> +------------------------
-> +The idle page tracking API for virtual address indexing using virtual page
-> +frame numbers (VFN) is located at ``/proc/<pid>/page_idle``. It is a bitmap
-> +that follows the same semantics as ``/sys/kernel/mm/page_idle/bitmap``
-> +except that it uses virtual instead of physical frame numbers.
+> The patch will also be merged in the next major kernel release
+> during the merge window.
 
-Can you please make it more explicit that VFNs are in the <pid>'s address
-space?
+How much will questionable implementation details influence this process?
 
-> +
-> +This idle page tracking API does not need deal with PFN so it does not require
-> +prior lookups of ``pagemap`` in order to find if page is idle or not. This is
-> +an advantage on some systems where looking up PFN is considered a security
-> +issue.  Also in some cases, this interface could be slightly more reliable to
-> +use than physical address indexing, since in physical address indexing, address
-> +space changes can occur between reading the ``pagemap`` and reading the
-> +``bitmap``, while in virtual address indexing, the process's ``mmap_sem`` is
-> +held for the duration of the access.
-> +
-> +To estimate the amount of pages that are not used by a workload one should:
-> +
-> + 1. Mark all the workload's pages as idle by setting corresponding bits in
-> +    ``/proc/<pid>/page_idle``.
-> +
-> + 2. Wait until the workload accesses its working set.
-> +
-> + 3. Read ``/proc/<pid>/page_idle`` and count the number of bits set.
-> +
->  .. _impl_details:
->  
->  Implementation Details
-> @@ -99,10 +128,10 @@ When a dirty page is written to swap or disk as a result of memory reclaim or
->  exceeding the dirty memory limit, it is not marked referenced.
->  
->  The idle memory tracking feature adds a new page flag, the Idle flag. This flag
-> -is set manually, by writing to ``/sys/kernel/mm/page_idle/bitmap`` (see the
-> -:ref:`User API <user_api>`
-> -section), and cleared automatically whenever a page is referenced as defined
-> -above.
-> +is set manually, by writing to ``/sys/kernel/mm/page_idle/bitmap`` for physical
-> +addressing or by writing to ``/proc/<pid>/page_idle`` for virtual
-> +addressing (see the :ref:`User API <user_api>` section), and cleared
-> +automatically whenever a page is referenced as defined above.
->  
->  When a page is marked idle, the Accessed bit must be cleared in all PTEs it is
->  mapped to, otherwise we will not be able to detect accesses to the page coming
-> -- 
-> 2.22.0.709.g102302147b-goog
-> 
-
--- 
-Sincerely yours,
-Mike.
-
+Regards,
+Markus
