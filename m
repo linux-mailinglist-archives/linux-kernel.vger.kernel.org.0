@@ -2,161 +2,294 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BEE07BAA5
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 09:24:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A2F37BAB0
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 09:28:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728114AbfGaHYC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 03:24:02 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:32120 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725871AbfGaHYC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 03:24:02 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 45z4fl22C0z9vBn0;
-        Wed, 31 Jul 2019 09:23:59 +0200 (CEST)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=k51A5aGh; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id 5AzA9PZ3j7o8; Wed, 31 Jul 2019 09:23:59 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 45z4fl0rBJz9vBmn;
-        Wed, 31 Jul 2019 09:23:59 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1564557839; bh=oXpsIjPuauSTHCSYrQrHXzbzesMqB8EkBPa5wkugwLs=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=k51A5aGhf4vm+xacCtS1FzYUb49UyO7h2nSy5i/jcOnsoRy4whoNp+QLSI3SXl/uf
-         1Uj5RltGwuUL0Y6ViqaqBMV99HGIEoyRzH/SzSGgwfXAoao/gs5+k3HVxM5q3oBXPN
-         WPX/MoKRkhB09a26+7ZlDahPBptfhIAxBy9czl34=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 005888B829;
-        Wed, 31 Jul 2019 09:23:59 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id HJ1hGouAYP46; Wed, 31 Jul 2019 09:23:59 +0200 (CEST)
-Received: from [192.168.4.90] (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 099BA8B752;
-        Wed, 31 Jul 2019 09:23:58 +0200 (CEST)
-Subject: Re: [PATCH] powerpc: Support CMDLINE_EXTEND
-To:     Chris Packham <Chris.Packham@alliedtelesis.co.nz>,
-        "paulus@samba.org" <paulus@samba.org>,
-        "mpe@ellerman.id.au" <mpe@ellerman.id.au>,
-        "benh@kernel.crashing.org" <benh@kernel.crashing.org>
-Cc:     "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20190724053303.24317-1-chris.packham@alliedtelesis.co.nz>
- <59674457-eda5-fe3b-65e0-29c20102fe4d@c-s.fr>
- <1564521015.6123.11.camel@alliedtelesis.co.nz>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <32ae09e8-0d32-4266-aa37-d5a34cb4e707@c-s.fr>
-Date:   Wed, 31 Jul 2019 09:23:57 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1727300AbfGaH2z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 03:28:55 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:40630 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725793AbfGaH2y (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jul 2019 03:28:54 -0400
+Received: by mail-ot1-f67.google.com with SMTP id l15so11921431oth.7
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 00:28:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=TmYkszd4hw4EUMOJlisQyoGCI5lj99eO1lyXFc/HvcQ=;
+        b=1FSzN5/m+2ZZrpqyW9/he10E9ViMT2xLFVUnIVYVmP85JCy+nnGQYXFObI6VdG7Tty
+         LzE9lj3YiaA0P7dNENQmTZWunnDdx3gF571XI9yNqSlXkeBK8ETZdYs4hBZYKuKsOnNu
+         JbrdkiVaVpuyFo5k7UD9vGIqCdN6hF5lqMlkT0MozS2hosU3jPnv/3irVmt5k7Shb/GE
+         HkrbhaX0m6tEfJNYB6fZR41tdcazkWYXihVhnfaQcMgV3N6Du67XPTszejJ/sNqhqicp
+         QHAdbUYQm3J0LqkUzIxRXJ5UMUjFyN9qYwr1TWIi0rPIYvO1ovG+lyQIZhSqC1vx7Q1i
+         xcTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=TmYkszd4hw4EUMOJlisQyoGCI5lj99eO1lyXFc/HvcQ=;
+        b=DFLV/XOal+l4E3sybVj6/fnFopjJSbFTAsb7hn6e1YwVOyMloxmWJre6AjU/sN2OFg
+         xdA9UfA9l7fPlykL9PwAcg65lDCXV5OlLVRc5pQkwUMshXIAxVrKTOGBEnUf+TftVure
+         Xs9kLnNyQ06L9K877ScqNy+axMyDXljZKjKbKeHPee/FzZDiZc9nYhp3OZ3hsb3lPQnd
+         Vhg7yndmkiqZoujYoDeUnqYbpLIGSUmLqNg/r4Rs0eU8D5gZagtdtye1tNuTyg/7YTcl
+         A2ALjlN9qKfGzzkbKjRL16S9bSKU5Sl85edOwPVG5a9J18xVjRkLpxAxvTDJAOSOjB0O
+         aFGQ==
+X-Gm-Message-State: APjAAAWi+Iza15gpqsdjEfxHz2oMZ7qktu/7BDcV34OK8VLHyb8bAOfH
+        xDbDlKRmjeK8P2Uh+ime76AGABujec5z0tWzgS7ctg==
+X-Google-Smtp-Source: APXvYqxULIyQ0mxCElZagcHFTYO3mQulX+y5C1eb2SRJ1AuFJHGnA10tuT8TVOlBFiyFytouhpSp5TkaYMN7QKtwteU=
+X-Received: by 2002:a05:6830:1681:: with SMTP id k1mr7287623otr.256.1564558133564;
+ Wed, 31 Jul 2019 00:28:53 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1564521015.6123.11.camel@alliedtelesis.co.nz>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+References: <20190730181557.90391-1-swboyd@chromium.org> <20190730181557.90391-16-swboyd@chromium.org>
+In-Reply-To: <20190730181557.90391-16-swboyd@chromium.org>
+From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date:   Wed, 31 Jul 2019 09:28:41 +0200
+Message-ID: <CAMpxmJWEsuFcNqCJpM2Xc-n3Dz45u_O+V5jtXHHUJG5_cCZdbQ@mail.gmail.com>
+Subject: Re: [PATCH v6 15/57] gpio: Remove dev_err() usage after platform_get_irq()
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio <linux-gpio@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+wt., 30 lip 2019 o 20:16 Stephen Boyd <swboyd@chromium.org> napisa=C5=82(a)=
+:
+>
+> We don't need dev_err() messages when platform_get_irq() fails now that
+> platform_get_irq() prints an error message itself when something goes
+> wrong. Let's remove these prints with a simple semantic patch.
+>
+> // <smpl>
+> @@
+> expression ret;
+> struct platform_device *E;
+> @@
+>
+> ret =3D
+> (
+> platform_get_irq(E, ...)
+> |
+> platform_get_irq_byname(E, ...)
+> );
+>
+> if ( \( ret < 0 \| ret <=3D 0 \) )
+> {
+> (
+> -if (ret !=3D -EPROBE_DEFER)
+> -{ ...
+> -dev_err(...);
+> -... }
+> |
+> ...
+> -dev_err(...);
+> )
+> ...
+> }
+> // </smpl>
+>
+> While we're here, remove braces on if statements that only have one
+> statement (manually).
+>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> Cc: linux-gpio@vger.kernel.org
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+> ---
+>
+> Please apply directly to subsystem trees
+>
+>  drivers/gpio/gpio-brcmstb.c       | 4 +---
+>  drivers/gpio/gpio-eic-sprd.c      | 4 +---
+>  drivers/gpio/gpio-grgpio.c        | 2 --
+>  drivers/gpio/gpio-max77620.c      | 4 +---
+>  drivers/gpio/gpio-pmic-eic-sprd.c | 4 +---
+>  drivers/gpio/gpio-sprd.c          | 4 +---
+>  drivers/gpio/gpio-tb10x.c         | 4 +---
+>  drivers/gpio/gpio-tegra.c         | 4 +---
+>  drivers/gpio/gpio-zx.c            | 1 -
+>  drivers/gpio/gpio-zynq.c          | 4 +---
+>  10 files changed, 8 insertions(+), 27 deletions(-)
+>
+> diff --git a/drivers/gpio/gpio-brcmstb.c b/drivers/gpio/gpio-brcmstb.c
+> index af936dcca659..05e3f99ae59c 100644
+> --- a/drivers/gpio/gpio-brcmstb.c
+> +++ b/drivers/gpio/gpio-brcmstb.c
+> @@ -636,10 +636,8 @@ static int brcmstb_gpio_probe(struct platform_device=
+ *pdev)
+>
+>         if (of_property_read_bool(np, "interrupt-controller")) {
+>                 priv->parent_irq =3D platform_get_irq(pdev, 0);
+> -               if (priv->parent_irq <=3D 0) {
+> -                       dev_err(dev, "Couldn't get IRQ");
+> +               if (priv->parent_irq <=3D 0)
+>                         return -ENOENT;
+> -               }
+>         } else {
+>                 priv->parent_irq =3D -ENOENT;
+>         }
+> diff --git a/drivers/gpio/gpio-eic-sprd.c b/drivers/gpio/gpio-eic-sprd.c
+> index 7b9ac4a12c20..fe7a73f52329 100644
+> --- a/drivers/gpio/gpio-eic-sprd.c
+> +++ b/drivers/gpio/gpio-eic-sprd.c
+> @@ -584,10 +584,8 @@ static int sprd_eic_probe(struct platform_device *pd=
+ev)
+>         sprd_eic->type =3D pdata->type;
+>
+>         sprd_eic->irq =3D platform_get_irq(pdev, 0);
+> -       if (sprd_eic->irq < 0) {
+> -               dev_err(&pdev->dev, "Failed to get EIC interrupt.\n");
+> +       if (sprd_eic->irq < 0)
+>                 return sprd_eic->irq;
+> -       }
+>
+>         for (i =3D 0; i < SPRD_EIC_MAX_BANK; i++) {
+>                 /*
+> diff --git a/drivers/gpio/gpio-grgpio.c b/drivers/gpio/gpio-grgpio.c
+> index 0937b605e134..08234e64993a 100644
+> --- a/drivers/gpio/gpio-grgpio.c
+> +++ b/drivers/gpio/gpio-grgpio.c
+> @@ -408,8 +408,6 @@ static int grgpio_probe(struct platform_device *ofdev=
+)
+>                                  * Continue without irq functionality for=
+ that
+>                                  * gpio line
+>                                  */
+> -                               dev_err(priv->dev,
+> -                                       "Failed to get irq for offset %d\=
+n", i);
+>                                 continue;
+>                         }
+>                         priv->uirqs[lirq->index].uirq =3D ret;
+> diff --git a/drivers/gpio/gpio-max77620.c b/drivers/gpio/gpio-max77620.c
+> index b7d89e30131e..47d05e357e61 100644
+> --- a/drivers/gpio/gpio-max77620.c
+> +++ b/drivers/gpio/gpio-max77620.c
+> @@ -270,10 +270,8 @@ static int max77620_gpio_probe(struct platform_devic=
+e *pdev)
+>         int ret;
+>
+>         gpio_irq =3D platform_get_irq(pdev, 0);
+> -       if (gpio_irq <=3D 0) {
+> -               dev_err(&pdev->dev, "GPIO irq not available %d\n", gpio_i=
+rq);
+> +       if (gpio_irq <=3D 0)
+>                 return -ENODEV;
+> -       }
+>
+>         mgpio =3D devm_kzalloc(&pdev->dev, sizeof(*mgpio), GFP_KERNEL);
+>         if (!mgpio)
+> diff --git a/drivers/gpio/gpio-pmic-eic-sprd.c b/drivers/gpio/gpio-pmic-e=
+ic-sprd.c
+> index 24228cf79afc..05000cace9b2 100644
+> --- a/drivers/gpio/gpio-pmic-eic-sprd.c
+> +++ b/drivers/gpio/gpio-pmic-eic-sprd.c
+> @@ -305,10 +305,8 @@ static int sprd_pmic_eic_probe(struct platform_devic=
+e *pdev)
+>         mutex_init(&pmic_eic->buslock);
+>
+>         pmic_eic->irq =3D platform_get_irq(pdev, 0);
+> -       if (pmic_eic->irq < 0) {
+> -               dev_err(&pdev->dev, "Failed to get PMIC EIC interrupt.\n"=
+);
+> +       if (pmic_eic->irq < 0)
+>                 return pmic_eic->irq;
+> -       }
+>
+>         pmic_eic->map =3D dev_get_regmap(pdev->dev.parent, NULL);
+>         if (!pmic_eic->map)
+> diff --git a/drivers/gpio/gpio-sprd.c b/drivers/gpio/gpio-sprd.c
+> index f5c8b3a351d5..d7314d39ab65 100644
+> --- a/drivers/gpio/gpio-sprd.c
+> +++ b/drivers/gpio/gpio-sprd.c
+> @@ -226,10 +226,8 @@ static int sprd_gpio_probe(struct platform_device *p=
+dev)
+>                 return -ENOMEM;
+>
+>         sprd_gpio->irq =3D platform_get_irq(pdev, 0);
+> -       if (sprd_gpio->irq < 0) {
+> -               dev_err(&pdev->dev, "Failed to get GPIO interrupt.\n");
+> +       if (sprd_gpio->irq < 0)
+>                 return sprd_gpio->irq;
+> -       }
+>
+>         sprd_gpio->base =3D devm_platform_ioremap_resource(pdev, 0);
+>         if (IS_ERR(sprd_gpio->base))
+> diff --git a/drivers/gpio/gpio-tb10x.c b/drivers/gpio/gpio-tb10x.c
+> index bd1f3f775ce9..5e375186f90e 100644
+> --- a/drivers/gpio/gpio-tb10x.c
+> +++ b/drivers/gpio/gpio-tb10x.c
+> @@ -171,10 +171,8 @@ static int tb10x_gpio_probe(struct platform_device *=
+pdev)
+>                 struct irq_chip_generic *gc;
+>
+>                 ret =3D platform_get_irq(pdev, 0);
+> -               if (ret < 0) {
+> -                       dev_err(dev, "No interrupt specified.\n");
+> +               if (ret < 0)
+>                         return ret;
+> -               }
+>
+>                 tb10x_gpio->gc.to_irq   =3D tb10x_gpio_to_irq;
+>                 tb10x_gpio->irq         =3D ret;
+> diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
+> index 0f59161a4701..8a01d3694b28 100644
+> --- a/drivers/gpio/gpio-tegra.c
+> +++ b/drivers/gpio/gpio-tegra.c
+> @@ -624,10 +624,8 @@ static int tegra_gpio_probe(struct platform_device *=
+pdev)
+>
+>         for (i =3D 0; i < tgi->bank_count; i++) {
+>                 ret =3D platform_get_irq(pdev, i);
+> -               if (ret < 0) {
+> -                       dev_err(&pdev->dev, "Missing IRQ resource: %d\n",=
+ ret);
+> +               if (ret < 0)
+>                         return ret;
+> -               }
+>
+>                 bank =3D &tgi->bank_info[i];
+>                 bank->bank =3D i;
+> diff --git a/drivers/gpio/gpio-zx.c b/drivers/gpio/gpio-zx.c
+> index 8637adb6bc20..8d9b9bf8510a 100644
+> --- a/drivers/gpio/gpio-zx.c
+> +++ b/drivers/gpio/gpio-zx.c
+> @@ -253,7 +253,6 @@ static int zx_gpio_probe(struct platform_device *pdev=
+)
+>         writew_relaxed(0, chip->base + ZX_GPIO_IE);
+>         irq =3D platform_get_irq(pdev, 0);
+>         if (irq < 0) {
+> -               dev_err(dev, "invalid IRQ\n");
+>                 gpiochip_remove(&chip->gc);
+>                 return -ENODEV;
+>         }
+> diff --git a/drivers/gpio/gpio-zynq.c b/drivers/gpio/gpio-zynq.c
+> index f241b6c13dbe..86b0bd256c13 100644
+> --- a/drivers/gpio/gpio-zynq.c
+> +++ b/drivers/gpio/gpio-zynq.c
+> @@ -849,10 +849,8 @@ static int zynq_gpio_probe(struct platform_device *p=
+dev)
+>                 return PTR_ERR(gpio->base_addr);
+>
+>         gpio->irq =3D platform_get_irq(pdev, 0);
+> -       if (gpio->irq < 0) {
+> -               dev_err(&pdev->dev, "invalid IRQ\n");
+> +       if (gpio->irq < 0)
+>                 return gpio->irq;
+> -       }
+>
+>         /* configure the gpio chip */
+>         chip =3D &gpio->chip;
+> --
+> Sent by a computer through tubes
+>
 
-
-Le 30/07/2019 à 23:10, Chris Packham a écrit :
-> Hi Christophe,
-> 
-> On Tue, 2019-07-30 at 09:02 +0200, Christophe Leroy wrote:
->>
->> Le 24/07/2019 à 07:33, Chris Packham a écrit :
->>>
->>> Device tree aware platforms can make use of CMDLINE_EXTEND to
->>> extend the
->>> kernel command line provided by the bootloader. This is
->>> particularly
->>> useful to set parameters for built-in modules that would otherwise
->>> be
->>> done at module insertion. Add support for this in the powerpc
->>> architecture.
->>>
->>> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
->>> ---
->>>    arch/powerpc/Kconfig | 12 ++++++++++++
->> I think you also have to implement some stuff in
->> early_cmdline_parse()
->> in arch/powerpc/kernel/prom_init.c
-> 
-> I my case I didn't need to since the generic code in drivers/of/fdt.c
-> did what I need. For early options or platforms that don't use a device
-> tree then I can see why I'd need the update to update to prom_init.
-> 
->>
->> Maybe look at https://patchwork.ozlabs.org/patch/1074126/
->>
-> 
-> Do you mind if I take this and fold it into a v2 of my patch? Any
-> particular reason it didn't get picked up in April?
-
-Sure, take it, I don't mind.
-
-Two reasons it was not picked up in April I believe:
-- It was part of a larger series 
-(https://patchwork.ozlabs.org/project/linuxppc-dev/list/?series=100518) 
-and was intended to challenge the series proposed by Daniel 
-(https://patchwork.ozlabs.org/project/linuxppc-dev/list/?series=98106) 
-but nothing happened.
-- It was conflicting with the ongoing changes for implementing KASAN.
-
-What you will have to do is to define prom_strlcat() in the same spirit 
-as https://patchwork.ozlabs.org/patch/1091621/ by copying it from 
-lib/string.c and I think you'll be able to drop prom_strlcpy() as that 
-function what only used there.
-
-Christophe
-
-> 
->> Christophe
->>
->>>
->>>    1 file changed, 12 insertions(+)
->>>
->>> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
->>> index d8dcd8820369..cd9b3974aa36 100644
->>> --- a/arch/powerpc/Kconfig
->>> +++ b/arch/powerpc/Kconfig
->>> @@ -851,6 +851,11 @@ config CMDLINE
->>>    	  some command-line options at build time by entering
->>> them here.  In
->>>    	  most cases you will need to specify the root device
->>> here.
->>>    
->>> +choice
->>> +	prompt "Kernel command line type" if CMDLINE != ""
->>> +	default CMDLINE_FORCE
->>> +	depends on CMDLINE_BOOL
->>> +
->>>    config CMDLINE_FORCE
->>>    	bool "Always use the default kernel command string"
->>>    	depends on CMDLINE_BOOL
->>> @@ -860,6 +865,13 @@ config CMDLINE_FORCE
->>>    	  This is useful if you cannot or don't want to change
->>> the
->>>    	  command-line options your boot loader passes to the
->>> kernel.
->>>    
->>> +config CMDLINE_EXTEND
->>> +	bool "Extend bootloader kernel arguments"
->>> +	help
->>> +	  The command-line arguments provided by the boot loader
->>> will be
->>> +	  appended to the default kernel command string.
->>> +endchoice
->>> +
->>>    config EXTRA_TARGETS
->>>    	string "Additional default image types"
->>>    	help
+Acked-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
