@@ -2,56 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA16E7CDEC
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 22:09:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D30F7CDDE
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 22:09:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729915AbfGaUJG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 16:09:06 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:43370 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729528AbfGaUI6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1729531AbfGaUI6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Wed, 31 Jul 2019 16:08:58 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:43348 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726096AbfGaUI5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jul 2019 16:08:57 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Sender:Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=RGnIbstR67/d58/2VBeEsEJ/D0YYSvIZYvE9aUkOglI=; b=sXCTHXEsA7iDFFkPD1idGMZHXg
-        rljnX14PeB7vCozRMFWMAx92dwvrdMapCECbrpmzysy4xykG2nB25d/IAmmNTkv2qwr1obwhmSs24
-        PBT5iy7zEoisaKGVdcoUHBom22tylx57JldxYMsbU5fxVChyHfRycxRWfaK4gIyOToNX82M8QxRXU
-        T80P6hzjoV+MXn/JADYfhvA3wTaUxHTT9igt/zZS2BSRqmN3DgEevpWCLfREFWsnlAiiphCpkkSkX
-        G5zHBKJpgFnZvtb9sYeT9c2EN2GIv4yt6U6Hu/+0y41PGzAaGziR2djBMnRUNKVazBVAmQXraXxt9
-        Dq6GqtZQ==;
+        bh=gamq6AUmMalbad8F31u08v0bit0/kTnUp7DuymcQ5KE=; b=Hr7I75QWwCvjjfupoLoNJok3zw
+        jXAfbHz23YPFGK3YPKbO/HRhFYAO6ZsAOt41/9nSfzEN4IC7BIDcHudumyM75n89iS6MQb/S/XOAG
+        P8EsPTrpPPaXVP3Mdfw8yU+SRu2nJsejSa1XyPapR+WqykOWw9JI5i/6vBrOVBrYZeOl5wotnl+Jm
+        d2hYHw5YBLy54udhyZLk6DZhFSNoZ5qtRstw3Ngf+Y1al8MRwP080fKXCeBFIuqGecNE6En2y6Xbh
+        WOT7VmefLvsC9//My692dDxrl1WE95nenEs19v+do6hLBZsLrTgIwnAaahEkqAUrgUSRObjpkqceQ
+        YcIFRTdA==;
 Received: from [191.33.152.89] (helo=bombadil.infradead.org)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hsuu8-0007qC-HH; Wed, 31 Jul 2019 20:08:56 +0000
+        id 1hsuu8-0007qB-Dx; Wed, 31 Jul 2019 20:08:56 +0000
 Received: from mchehab by bombadil.infradead.org with local (Exim 4.92)
         (envelope-from <mchehab@bombadil.infradead.org>)
-        id 1hsuu6-00079g-72; Wed, 31 Jul 2019 17:08:54 -0300
+        id 1hsuu6-00079k-7p; Wed, 31 Jul 2019 17:08:54 -0300
 From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Mauro Carvalho Chehab <mchehab@infradead.org>,
         linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Dave Kleikamp <shaggy@kernel.org>,
-        Evgeniy Dushistov <dushistov@mail.ru>,
-        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        jfs-discussion@lists.sourceforge.net
-Subject: [PATCH 1/6] docs: fix a couple of new broken references
-Date:   Wed, 31 Jul 2019 17:08:48 -0300
-Message-Id: <5b4fae5978d309641fa8ba233a9efe2b48201cd6.1564603513.git.mchehab+samsung@kernel.org>
+        devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>
+Subject: [PATCH 2/6] docs: writing-schema.md: convert from markdown to ReST
+Date:   Wed, 31 Jul 2019 17:08:49 -0300
+Message-Id: <a239cd93ad86579ce7e02bc3032abd33b476e193.1564603513.git.mchehab+samsung@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <cover.1564603513.git.mchehab+samsung@kernel.org>
 References: <cover.1564603513.git.mchehab+samsung@kernel.org>
@@ -62,97 +51,312 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Those are due to recent changes. Most of the issues
-can be automatically fixed with:
-
-	$ ./scripts/documentation-file-ref-check --fix
-
-The only exception was the sound binding with required
-manual work.
+The documentation standard is ReST and not markdown.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
- Documentation/devicetree/bindings/sound/sun8i-a33-codec.txt | 2 +-
- MAINTAINERS                                                 | 4 ++--
- drivers/hwtracing/coresight/Kconfig                         | 2 +-
- fs/jfs/Kconfig                                              | 2 +-
- fs/ufs/Kconfig                                              | 2 +-
- 5 files changed, 6 insertions(+), 6 deletions(-)
+ Documentation/devicetree/writing-schema.md  | 130 -----------------
+ Documentation/devicetree/writing-schema.rst | 153 ++++++++++++++++++++
+ 2 files changed, 153 insertions(+), 130 deletions(-)
+ delete mode 100644 Documentation/devicetree/writing-schema.md
+ create mode 100644 Documentation/devicetree/writing-schema.rst
 
-diff --git a/Documentation/devicetree/bindings/sound/sun8i-a33-codec.txt b/Documentation/devicetree/bindings/sound/sun8i-a33-codec.txt
-index 2ca3d138528e..7ecf6bd60d27 100644
---- a/Documentation/devicetree/bindings/sound/sun8i-a33-codec.txt
-+++ b/Documentation/devicetree/bindings/sound/sun8i-a33-codec.txt
-@@ -4,7 +4,7 @@ Allwinner SUN8I audio codec
- On Sun8i-A33 SoCs, the audio is separated in different parts:
- 	  - A DAI driver. It uses the "sun4i-i2s" driver which is
- 	  documented here:
--	  Documentation/devicetree/bindings/sound/sun4i-i2s.txt
-+	  Documentation/devicetree/bindings/sound/allwinner,sun4i-a10-i2s.yaml
- 	  - An analog part of the codec which is handled as PRCM registers.
- 	  See Documentation/devicetree/bindings/sound/sun8i-codec-analog.txt
- 	  - An digital part of the codec which is documented in this current
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 6de82f019a52..f109a8bcffda 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -8659,7 +8659,7 @@ L:	jfs-discussion@lists.sourceforge.net
- W:	http://jfs.sourceforge.net/
- T:	git git://github.com/kleikamp/linux-shaggy.git
- S:	Maintained
--F:	Documentation/filesystems/jfs.txt
-+F:	Documentation/admin-guide/jfs.rst
- F:	fs/jfs/
- 
- JME NETWORK DRIVER
-@@ -16439,7 +16439,7 @@ F:	drivers/hid/hid-udraw-ps3.c
- UFS FILESYSTEM
- M:	Evgeniy Dushistov <dushistov@mail.ru>
- S:	Maintained
--F:	Documentation/filesystems/ufs.txt
-+F:	Documentation/admin-guide/ufs.rst
- F:	fs/ufs/
- 
- UHID USERSPACE HID IO DRIVER:
-diff --git a/drivers/hwtracing/coresight/Kconfig b/drivers/hwtracing/coresight/Kconfig
-index 14638db4991d..7a9f5fb08330 100644
---- a/drivers/hwtracing/coresight/Kconfig
-+++ b/drivers/hwtracing/coresight/Kconfig
-@@ -106,7 +106,7 @@ config CORESIGHT_CPU_DEBUG
- 	  can quickly get to know program counter (PC), secure state,
- 	  exception level, etc. Before use debugging functionality, platform
- 	  needs to ensure the clock domain and power domain are enabled
--	  properly, please refer Documentation/trace/coresight-cpu-debug.txt
-+	  properly, please refer Documentation/trace/coresight-cpu-debug.rst
- 	  for detailed description and the example for usage.
- 
- endif
-diff --git a/fs/jfs/Kconfig b/fs/jfs/Kconfig
-index 22a273bd4648..05cb0e8e4382 100644
---- a/fs/jfs/Kconfig
-+++ b/fs/jfs/Kconfig
-@@ -5,7 +5,7 @@ config JFS_FS
- 	select CRC32
- 	help
- 	  This is a port of IBM's Journaled Filesystem .  More information is
--	  available in the file <file:Documentation/filesystems/jfs.txt>.
-+	  available in the file <file:Documentation/admin-guide/jfs.rst>.
- 
- 	  If you do not intend to use the JFS filesystem, say N.
- 
-diff --git a/fs/ufs/Kconfig b/fs/ufs/Kconfig
-index fcb41516ea59..6d30adb6b890 100644
---- a/fs/ufs/Kconfig
-+++ b/fs/ufs/Kconfig
-@@ -9,7 +9,7 @@ config UFS_FS
- 	  this file system as well. Saying Y here will allow you to read from
- 	  these partitions; if you also want to write to them, say Y to the
- 	  experimental "UFS file system write support", below. Please read the
--	  file <file:Documentation/filesystems/ufs.txt> for more information.
-+	  file <file:Documentation/admin-guide/ufs.rst> for more information.
- 
-           The recently released UFS2 variant (used in FreeBSD 5.x) is
-           READ-ONLY supported.
+diff --git a/Documentation/devicetree/writing-schema.md b/Documentation/devicetree/writing-schema.md
+deleted file mode 100644
+index dc032db36262..000000000000
+--- a/Documentation/devicetree/writing-schema.md
++++ /dev/null
+@@ -1,130 +0,0 @@
+-# Writing DeviceTree Bindings in json-schema
+-
+-Devicetree bindings are written using json-schema vocabulary. Schema files are
+-written in a JSON compatible subset of YAML. YAML is used instead of JSON as it
+-considered more human readable and has some advantages such as allowing
+-comments (Prefixed with '#').
+-
+-## Schema Contents
+-
+-Each schema doc is a structured json-schema which is defined by a set of
+-top-level properties. Generally, there is one binding defined per file. The
+-top-level json-schema properties used are:
+-
+-- __$id__ - A json-schema unique identifier string. The string must be a valid
+-URI typically containing the binding's filename and path. For DT schema, it must
+-begin with "http://devicetree.org/schemas/". The URL is used in constructing
+-references to other files specified in schema "$ref" properties. A $ref values
+-with a leading '/' will have the hostname prepended. A $ref value a relative
+-path or filename only will be prepended with the hostname and path components
+-of the current schema file's '$id' value. A URL is used even for local files,
+-but there may not actually be files present at those locations.
+-
+-- __$schema__ - Indicates the meta-schema the schema file adheres to.
+-
+-- __title__ - A one line description on the contents of the binding schema.
+-
+-- __maintainers__ - A DT specific property. Contains a list of email address(es)
+-for maintainers of this binding.
+-
+-- __description__ - Optional. A multi-line text block containing any detailed
+-information about this binding. It should contain things such as what the block
+-or device does, standards the device conforms to, and links to datasheets for
+-more information.
+-
+-- __select__ - Optional. A json-schema used to match nodes for applying the
+-schema. By default without 'select', nodes are matched against their possible
+-compatible string values or node name. Most bindings should not need select.
+-
+-- __allOf__ - Optional. A list of other schemas to include. This is used to
+-include other schemas the binding conforms to. This may be schemas for a
+-particular class of devices such as I2C or SPI controllers.
+-
+-- __properties__ - A set of sub-schema defining all the DT properties for the
+-binding. The exact schema syntax depends on whether properties are known,
+-common properties (e.g. 'interrupts') or are binding/vendor specific properties.
+-
+-  A property can also define a child DT node with child properties defined
+-under it.
+-
+-  For more details on properties sections, see 'Property Schema' section.
+-
+-- __patternProperties__ - Optional. Similar to 'properties', but names are regex.
+-
+-- __required__ - A list of DT properties from the 'properties' section that
+-must always be present.
+-
+-- __examples__ - Optional. A list of one or more DTS hunks implementing the
+-binding. Note: YAML doesn't allow leading tabs, so spaces must be used instead.
+-
+-Unless noted otherwise, all properties are required.
+-
+-## Property Schema
+-
+-The 'properties' section of the schema contains all the DT properties for a
+-binding. Each property contains a set of constraints using json-schema
+-vocabulary for that property. The properties schemas are what is used for
+-validation of DT files.
+-
+-For common properties, only additional constraints not covered by the common
+-binding schema need to be defined such as how many values are valid or what
+-possible values are valid.
+-
+-Vendor specific properties will typically need more detailed schema. With the
+-exception of boolean properties, they should have a reference to a type in
+-schemas/types.yaml. A "description" property is always required.
+-
+-The Devicetree schemas don't exactly match the YAML encoded DT data produced by
+-dtc. They are simplified to make them more compact and avoid a bunch of
+-boilerplate. The tools process the schema files to produce the final schema for
+-validation. There are currently 2 transformations the tools perform.
+-
+-The default for arrays in json-schema is they are variable sized and allow more
+-entries than explicitly defined. This can be restricted by defining 'minItems',
+-'maxItems', and 'additionalItems'. However, for DeviceTree Schemas, a fixed
+-size is desired in most cases, so these properties are added based on the
+-number of entries in an 'items' list.
+-
+-The YAML Devicetree format also makes all string values an array and scalar
+-values a matrix (in order to define groupings) even when only a single value
+-is present. Single entries in schemas are fixed up to match this encoding.
+-
+-## Testing
+-
+-### Dependencies
+-
+-The DT schema project must be installed in order to validate the DT schema
+-binding documents and validate DTS files using the DT schema. The DT schema
+-project can be installed with pip:
+-
+-`pip3 install git+https://github.com/devicetree-org/dt-schema.git@master`
+-
+-dtc must also be built with YAML output support enabled. This requires that
+-libyaml and its headers be installed on the host system.
+-
+-### Running checks
+-
+-The DT schema binding documents must be validated using the meta-schema (the
+-schema for the schema) to ensure they are both valid json-schema and valid
+-binding schema. All of the DT binding documents can be validated using the
+-`dt_binding_check` target:
+-
+-`make dt_binding_check`
+-
+-In order to perform validation of DT source files, use the `dtbs_check` target:
+-
+-`make dtbs_check`
+-
+-This will first run the `dt_binding_check` which generates the processed schema.
+-
+-It is also possible to run checks with a single schema file by setting the
+-'DT_SCHEMA_FILES' variable to a specific schema file.
+-
+-`make dtbs_check DT_SCHEMA_FILES=Documentation/devicetree/bindings/trivial-devices.yaml`
+-
+-
+-## json-schema Resources
+-
+-[JSON-Schema Specifications](http://json-schema.org/)
+-
+-[Using JSON Schema Book](http://usingjsonschema.com/)
+diff --git a/Documentation/devicetree/writing-schema.rst b/Documentation/devicetree/writing-schema.rst
+new file mode 100644
+index 000000000000..8f71d1e2ac52
+--- /dev/null
++++ b/Documentation/devicetree/writing-schema.rst
+@@ -0,0 +1,153 @@
++:orphan:
++
++Writing DeviceTree Bindings in json-schema
++==========================================
++
++Devicetree bindings are written using json-schema vocabulary. Schema files are
++written in a JSON compatible subset of YAML. YAML is used instead of JSON as it
++considered more human readable and has some advantages such as allowing
++comments (Prefixed with '#').
++
++Schema Contents
++---------------
++
++Each schema doc is a structured json-schema which is defined by a set of
++top-level properties. Generally, there is one binding defined per file. The
++top-level json-schema properties used are:
++
++$id
++  A json-schema unique identifier string. The string must be a valid
++  URI typically containing the binding's filename and path. For DT schema, it must
++  begin with "http://devicetree.org/schemas/". The URL is used in constructing
++  references to other files specified in schema "$ref" properties. A $ref values
++  with a leading '/' will have the hostname prepended. A $ref value a relative
++  path or filename only will be prepended with the hostname and path components
++  of the current schema file's '$id' value. A URL is used even for local files,
++  but there may not actually be files present at those locations.
++
++$schema
++  Indicates the meta-schema the schema file adheres to.
++
++title
++  A one line description on the contents of the binding schema.
++
++maintainers
++  A DT specific property. Contains a list of email address(es)
++  for maintainers of this binding.
++
++description
++  Optional. A multi-line text block containing any detailed
++  information about this binding. It should contain things such as what the block
++  or device does, standards the device conforms to, and links to datasheets for
++  more information.
++
++select
++  Optional. A json-schema used to match nodes for applying the
++  schema. By default without 'select', nodes are matched against their possible
++  compatible string values or node name. Most bindings should not need select.
++
++ allOf
++  Optional. A list of other schemas to include. This is used to
++  include other schemas the binding conforms to. This may be schemas for a
++  particular class of devices such as I2C or SPI controllers.
++
++ properties
++  A set of sub-schema defining all the DT properties for the
++  binding. The exact schema syntax depends on whether properties are known,
++  common properties (e.g. 'interrupts') or are binding/vendor specific properties.
++
++A property can also define a child DT node with child properties defined
++under it.
++
++For more details on properties sections, see 'Property Schema' section.
++
++patternProperties
++  Optional. Similar to 'properties', but names are regex.
++
++required
++  A list of DT properties from the 'properties' section that
++  must always be present.
++
++examples
++  Optional. A list of one or more DTS hunks implementing the
++  binding. Note: YAML doesn't allow leading tabs, so spaces must be used instead.
++
++Unless noted otherwise, all properties are required.
++
++Property Schema
++---------------
++
++The 'properties' section of the schema contains all the DT properties for a
++binding. Each property contains a set of constraints using json-schema
++vocabulary for that property. The properties schemas are what is used for
++validation of DT files.
++
++For common properties, only additional constraints not covered by the common
++binding schema need to be defined such as how many values are valid or what
++possible values are valid.
++
++Vendor specific properties will typically need more detailed schema. With the
++exception of boolean properties, they should have a reference to a type in
++schemas/types.yaml. A "description" property is always required.
++
++The Devicetree schemas don't exactly match the YAML encoded DT data produced by
++dtc. They are simplified to make them more compact and avoid a bunch of
++boilerplate. The tools process the schema files to produce the final schema for
++validation. There are currently 2 transformations the tools perform.
++
++The default for arrays in json-schema is they are variable sized and allow more
++entries than explicitly defined. This can be restricted by defining 'minItems',
++'maxItems', and 'additionalItems'. However, for DeviceTree Schemas, a fixed
++size is desired in most cases, so these properties are added based on the
++number of entries in an 'items' list.
++
++The YAML Devicetree format also makes all string values an array and scalar
++values a matrix (in order to define groupings) even when only a single value
++is present. Single entries in schemas are fixed up to match this encoding.
++
++Testing
++-------
++
++Dependencies
++~~~~~~~~~~~~
++
++The DT schema project must be installed in order to validate the DT schema
++binding documents and validate DTS files using the DT schema. The DT schema
++project can be installed with pip::
++
++    pip3 install git+https://github.com/devicetree-org/dt-schema.git@master
++
++dtc must also be built with YAML output support enabled. This requires that
++libyaml and its headers be installed on the host system.
++
++Running checks
++~~~~~~~~~~~~~~
++
++The DT schema binding documents must be validated using the meta-schema (the
++schema for the schema) to ensure they are both valid json-schema and valid
++binding schema. All of the DT binding documents can be validated using the
++``dt_binding_check`` target::
++
++    make dt_binding_check
++
++In order to perform validation of DT source files, use the `dtbs_check` target::
++
++    make dtbs_check
++
++This will first run the `dt_binding_check` which generates the processed schema.
++
++It is also possible to run checks with a single schema file by setting the
++``DT_SCHEMA_FILES`` variable to a specific schema file.
++
++::
++
++    make dtbs_check DT_SCHEMA_FILES=Documentation/devicetree/bindings/trivial-devices.yaml
++
++
++json-schema Resources
++---------------------
++
++
++`JSON-Schema Specifications <http://json-schema.org/>`_
++
++`Using JSON Schema Book <http://usingjsonschema.com/>`_
 -- 
 2.21.0
 
