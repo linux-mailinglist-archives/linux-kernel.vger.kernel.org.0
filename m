@@ -2,107 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE07F7C003
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 13:33:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A6277C009
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 13:33:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728791AbfGaLcl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 07:32:41 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:48968 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726169AbfGaLcW (ORCPT
+        id S1729010AbfGaLcy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 07:32:54 -0400
+Received: from smtprelay0077.hostedemail.com ([216.40.44.77]:56467 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726378AbfGaLcs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 07:32:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=UBmJR5zweJmbyxzgPM4EX3clHHa7sH38d5P57nUcKTc=; b=YMOvsFC4AP/jXLYB3P4JjOlOq
-        wkafVCBzpXR/1dsglZwKBYrDvkk0nQCHFOsIEJwJt8ECIgcRv20gyK4w0yfv1zKR2MUnIXp/eiwAc
-        A578VmoZuy99oHmsTorQc5DxjM+GxHfElwrIOyV8KSETO1bc7Fu//KDuJyqWQpsgWtk0pusToFZl5
-        PCMIvccTiP+xc6WLSWwCTk1XlnzrlhjC7xxByj+65xatNSj5KLh8Gb3cCXlhpz4o3X3RfMK2GFp3U
-        4RlVbA53/IfbkZ0+HE8B8dH5VYcITL3YJRZzWhR0YbrHzYBjZjZosaAoaGCGqA8aJgwCJBOArUxP5
-        OGx+lYw9w==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hsmqD-0005hK-DX; Wed, 31 Jul 2019 11:32:21 +0000
-Date:   Wed, 31 Jul 2019 04:32:21 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     William Kucharski <william.kucharski@oracle.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Song Liu <songliubraving@fb.com>,
-        Bob Kasten <robert.a.kasten@intel.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Chad Mynhier <chad.mynhier@oracle.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Johannes Weiner <jweiner@fb.com>
-Subject: Re: [PATCH v3 0/2] mm,thp: Add filemap_huge_fault() for THP
-Message-ID: <20190731113221.GE4700@bombadil.infradead.org>
-References: <20190731082513.16957-1-william.kucharski@oracle.com>
- <20190731102053.GZ7689@dread.disaster.area>
+        Wed, 31 Jul 2019 07:32:48 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay02.hostedemail.com (Postfix) with ESMTP id 8462C1F17;
+        Wed, 31 Jul 2019 11:32:46 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::,RULES_HIT:41:355:379:599:800:960:967:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:1801:2393:2525:2553:2559:2563:2682:2685:2828:2859:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3868:3871:3872:3873:3874:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4321:4605:5007:6119:7903:9025:10004:10400:10848:11026:11232:11233:11473:11658:11914:12043:12296:12297:12438:12555:12740:12760:12895:13069:13071:13311:13357:13439:14180:14181:14581:14659:14721:21060:21080:21451:21627:21740:30054:30090:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:25,LUA_SUMMARY:none
+X-HE-Tag: train36_6f5bba09d615e
+X-Filterd-Recvd-Size: 2209
+Received: from XPS-9350 (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
+        (Authenticated sender: joe@perches.com)
+        by omf19.hostedemail.com (Postfix) with ESMTPA;
+        Wed, 31 Jul 2019 11:32:45 +0000 (UTC)
+Message-ID: <eac3fe457d553a2b366e1c1898d47ae8c048087c.camel@perches.com>
+Subject: Re: [PATCH] net: sctp: Rename fallthrough label to unhandled
+From:   Joe Perches <joe@perches.com>
+To:     Neil Horman <nhorman@tuxdriver.com>
+Cc:     Vlad Yasevich <vyasevich@gmail.com>,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-sctp@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Wed, 31 Jul 2019 04:32:43 -0700
+In-Reply-To: <20190731111932.GA9823@hmswarspite.think-freely.org>
+References: <e0dd3af448e38e342c1ac6e7c0c802696eb77fd6.1564549413.git.joe@perches.com>
+         <20190731111932.GA9823@hmswarspite.think-freely.org>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190731102053.GZ7689@dread.disaster.area>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 31, 2019 at 08:20:53PM +1000, Dave Chinner wrote:
-> On Wed, Jul 31, 2019 at 02:25:11AM -0600, William Kucharski wrote:
-> > This set of patches is the first step towards a mechanism for automatically
-> > mapping read-only text areas of appropriate size and alignment to THPs
-> > whenever possible.
+On Wed, 2019-07-31 at 07:19 -0400, Neil Horman wrote:
+> On Tue, Jul 30, 2019 at 10:04:37PM -0700, Joe Perches wrote:
+> > fallthrough may become a pseudo reserved keyword so this only use of
+> > fallthrough is better renamed to allow it.
 > > 
-> > For now, the central routine, filemap_huge_fault(), amd various support
-> > routines are only included if the experimental kernel configuration option
-> > 
-> > 	RO_EXEC_FILEMAP_HUGE_FAULT_THP
-> > 
-> > is enabled.
-> > 
-> > This is because filemap_huge_fault() is dependent upon the
-> > address_space_operations vector readpage() pointing to a routine that will
-> > read and fill an entire large page at a time without poulluting the page
-> > cache with PAGESIZE entries
-> 
-> How is the readpage code supposed to stuff a THP page into a bio?
-> 
-> i.e. Do bio's support huge pages, and if not, what is needed to
-> stuff a huge page in a bio chain?
+> > Signed-off-by: Joe Perches <joe@perches.com>
+> Are you referring to the __attribute__((fallthrough)) statement that gcc
+> supports?  If so the compiler should by all rights be able to differentiate
+> between a null statement attribute and a explicit goto and label without the
+> need for renaming here.  Or are you referring to something else?
 
-I believe that the current BIO code (after Ming Lei's multipage patches
-from late last year / earlier this year) is capable of handling a
-PMD-sized page.
+Hi.
 
-> Once you can answer that question, you should be able to easily
-> convert the iomap_readpage/iomap_readpage_actor code to support THP
-> pages without having to care about much else as iomap_readpage()
-> is already coded in a way that will iterate IO over the entire THP
-> for you....
+I sent after this a patch that adds
 
-Christoph drafted a patch which illustrates the changes needed to the
-iomap code.  The biggest problem is:
+# define fallthrough                    __attribute__((__fallthrough__))
 
-struct iomap_page {
-        atomic_t                read_count;
-        atomic_t                write_count;
-        DECLARE_BITMAP(uptodate, PAGE_SIZE / 512);
-};
+https://lore.kernel.org/patchwork/patch/1108577/
 
-All of a sudden that needs to go from a single unsigned long bitmap (or
-two on 64kB page size machines) to 512 bytes on x86 and even larger on,
-eg, POWER.
+So this rename is a prerequisite to adding this #define.
 
-It's egregious because no sane filesystem is going to fragment a PMD
-sized page into that number of discontiguous blocks, so we never need
-to allocate the 520 byte data structure this suddenly becomes.  It'd be
-nice to have a more efficient data structure (maybe that tracks uptodate
-by extent instead of by individual sector?)  But I don't understand the
-iomap layer at all, and I never understood buggerheads, so I don't have
-a useful contribution here.
+> > diff --git a/net/sctp/sm_make_chunk.c b/net/sctp/sm_make_chunk.c
+[]
+> > @@ -2152,7 +2152,7 @@ static enum sctp_ierror sctp_verify_param(struct net *net,
+> >  	case SCTP_PARAM_SET_PRIMARY:
+> >  		if (net->sctp.addip_enable)
+> >  			break;
+> > -		goto fallthrough;
+> > +		goto unhandled;
+
+etc...
+
+
