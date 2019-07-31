@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 124837BD07
+	by mail.lfdr.de (Postfix) with ESMTP id E51B47BD09
 	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2019 11:26:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728793AbfGaJ03 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 05:26:29 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:3669 "EHLO huawei.com"
+        id S1728834AbfGaJ0d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 05:26:33 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:42418 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387469AbfGaJ0Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 05:26:25 -0400
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id A827E9F6CE9843E65794;
+        id S2387463AbfGaJ0Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jul 2019 05:26:24 -0400
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 736E88F53039865D0D4F;
         Wed, 31 Jul 2019 17:26:23 +0800 (CST)
 Received: from huawei.com (10.175.124.28) by DGGEMS405-HUB.china.huawei.com
  (10.3.19.205) with Microsoft SMTP Server id 14.3.439.0; Wed, 31 Jul 2019
- 17:26:16 +0800
+ 17:26:17 +0800
 From:   Jason Yan <yanaijie@huawei.com>
 To:     <mpe@ellerman.id.au>, <linuxppc-dev@lists.ozlabs.org>,
         <diana.craciun@nxp.com>, <christophe.leroy@c-s.fr>,
@@ -27,9 +27,9 @@ CC:     <linux-kernel@vger.kernel.org>, <wangkefeng.wang@huawei.com>,
         <yebin10@huawei.com>, <thunder.leizhen@huawei.com>,
         <jingxiangfeng@huawei.com>, <fanchengyang@huawei.com>,
         <zhaohongjiang@huawei.com>, Jason Yan <yanaijie@huawei.com>
-Subject: [PATCH v3 08/10] powerpc/fsl_booke/kaslr: clear the original kernel if randomized
-Date:   Wed, 31 Jul 2019 17:43:16 +0800
-Message-ID: <20190731094318.26538-9-yanaijie@huawei.com>
+Subject: [PATCH v3 09/10] powerpc/fsl_booke/kaslr: support nokaslr cmdline parameter
+Date:   Wed, 31 Jul 2019 17:43:17 +0800
+Message-ID: <20190731094318.26538-10-yanaijie@huawei.com>
 X-Mailer: git-send-email 2.17.2
 In-Reply-To: <20190731094318.26538-1-yanaijie@huawei.com>
 References: <20190731094318.26538-1-yanaijie@huawei.com>
@@ -42,7 +42,8 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The original kernel still exists in the memory, clear it now.
+One may want to disable kaslr when boot, so provide a cmdline parameter
+'nokaslr' to support this.
 
 Signed-off-by: Jason Yan <yanaijie@huawei.com>
 Cc: Diana Craciun <diana.craciun@nxp.com>
@@ -52,58 +53,41 @@ Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
 Cc: Paul Mackerras <paulus@samba.org>
 Cc: Nicholas Piggin <npiggin@gmail.com>
 Cc: Kees Cook <keescook@chromium.org>
-Reviewed-by: Christophe Leroy <christophe.leroy@c-s.fr>
 ---
- arch/powerpc/kernel/kaslr_booke.c  | 11 +++++++++++
- arch/powerpc/mm/mmu_decl.h         |  2 ++
- arch/powerpc/mm/nohash/fsl_booke.c |  1 +
- 3 files changed, 14 insertions(+)
+ arch/powerpc/kernel/kaslr_booke.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
 diff --git a/arch/powerpc/kernel/kaslr_booke.c b/arch/powerpc/kernel/kaslr_booke.c
-index 97250cad71de..4b3f19a663fc 100644
+index 4b3f19a663fc..7c3cb41e7122 100644
 --- a/arch/powerpc/kernel/kaslr_booke.c
 +++ b/arch/powerpc/kernel/kaslr_booke.c
-@@ -400,3 +400,14 @@ notrace void __init kaslr_early_init(void *dt_ptr, phys_addr_t size)
- 
- 	reloc_kernel_entry(dt_ptr, kimage_vaddr);
+@@ -361,6 +361,18 @@ static unsigned long __init kaslr_choose_location(void *dt_ptr, phys_addr_t size
+ 	return kaslr_offset;
  }
-+
-+void __init kaslr_late_init(void)
+ 
++static inline __init bool kaslr_disabled(void)
 +{
-+	/* If randomized, clear the original kernel */
-+	if (kimage_vaddr != KERNELBASE) {
-+		unsigned long kernel_sz;
++	char *str;
 +
-+		kernel_sz = (unsigned long)_end - kimage_vaddr;
-+		memzero_explicit((void *)KERNELBASE, kernel_sz);
-+	}
++	str = strstr(boot_command_line, "nokaslr");
++	if ((str == boot_command_line) ||
++	    (str > boot_command_line && *(str - 1) == ' '))
++		return true;
++
++	return false;
 +}
-diff --git a/arch/powerpc/mm/mmu_decl.h b/arch/powerpc/mm/mmu_decl.h
-index 9332772c8a66..f0a461482dba 100644
---- a/arch/powerpc/mm/mmu_decl.h
-+++ b/arch/powerpc/mm/mmu_decl.h
-@@ -150,8 +150,10 @@ extern void loadcam_multi(int first_idx, int num, int tmp_idx);
++
+ /*
+  * To see if we need to relocate the kernel to a random offset
+  * void *dt_ptr - address of the device tree
+@@ -376,6 +388,8 @@ notrace void __init kaslr_early_init(void *dt_ptr, phys_addr_t size)
+ 	kernel_sz = (unsigned long)_end - KERNELBASE;
  
- #ifdef CONFIG_RANDOMIZE_BASE
- void kaslr_early_init(void *dt_ptr, phys_addr_t size);
-+void kaslr_late_init(void);
- #else
- static inline void kaslr_early_init(void *dt_ptr, phys_addr_t size) {}
-+static inline void kaslr_late_init(void) {}
- #endif
+ 	kaslr_get_cmdline(dt_ptr);
++	if (kaslr_disabled())
++		return;
  
- struct tlbcam {
-diff --git a/arch/powerpc/mm/nohash/fsl_booke.c b/arch/powerpc/mm/nohash/fsl_booke.c
-index 8d25a8dc965f..e88fcc367600 100644
---- a/arch/powerpc/mm/nohash/fsl_booke.c
-+++ b/arch/powerpc/mm/nohash/fsl_booke.c
-@@ -269,6 +269,7 @@ notrace void __init relocate_init(u64 dt_ptr, phys_addr_t start)
- 	kernstart_addr = start;
- 	if (is_second_reloc) {
- 		virt_phys_offset = PAGE_OFFSET - memstart_addr;
-+		kaslr_late_init();
- 		return;
- 	}
+ 	offset = kaslr_choose_location(dt_ptr, size, kernel_sz);
  
 -- 
 2.17.2
