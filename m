@@ -2,77 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 699677DA94
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 13:50:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 23F867DA99
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 13:52:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731050AbfHALuy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 07:50:54 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:33953 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729316AbfHALuy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 07:50:54 -0400
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1ht9bd-0002nU-0F; Thu, 01 Aug 2019 13:50:49 +0200
-Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1ht9ba-0001a0-I5; Thu, 01 Aug 2019 13:50:46 +0200
-Date:   Thu, 1 Aug 2019 13:50:46 +0200
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Schrempf Frieder <frieder.schrempf@kontron.de>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
-        Jiri Slaby <jslaby@suse.com>
-Subject: Re: [PATCH] serial: imx: Avoid probe failure in case of missing
- gpiolib
-Message-ID: <20190801115046.lf66umgfj2xk6eqv@pengutronix.de>
-References: <20190801081524.22577-1-frieder.schrempf@kontron.de>
- <20190801084827.m42ci3amo37hmesi@pengutronix.de>
- <0674d68b-99fa-3408-1dd1-22dc84144b43@kontron.de>
- <20190801095529.dm3pvgts6cy6mbiq@pengutronix.de>
- <0174be55-5e40-8cc7-82c7-54f9de46f711@kontron.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <0174be55-5e40-8cc7-82c7-54f9de46f711@kontron.de>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        id S1731111AbfHALw5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 07:52:57 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:53324 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730514AbfHALw5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Aug 2019 07:52:57 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 867A51A0105;
+        Thu,  1 Aug 2019 13:52:54 +0200 (CEST)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 7A0F51A0074;
+        Thu,  1 Aug 2019 13:52:54 +0200 (CEST)
+Received: from fsr-ub1664-016.ea.freescale.net (fsr-ub1664-016.ea.freescale.net [10.171.71.216])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 14B04205E3;
+        Thu,  1 Aug 2019 13:52:54 +0200 (CEST)
+From:   Claudiu Manoil <claudiu.manoil@nxp.com>
+To:     "David S . Miller" <davem@davemloft.net>
+Cc:     andrew@lunn.ch, Rob Herring <robh+dt@kernel.org>,
+        Li Yang <leoyang.li@nxp.com>, alexandru.marginean@nxp.com,
+        netdev@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH net-next v5 0/5] enetc: Add mdio bus driver for the PCIe MDIO endpoint
+Date:   Thu,  1 Aug 2019 14:52:48 +0300
+Message-Id: <1564660373-4607-1-git-send-email-claudiu.manoil@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+First patch fixes a sparse issue and cleans up accessors to avoid
+casting to __iomem.  The second one cleans up the Makefile, to make
+it easier to add new entries.
 
-On Thu, Aug 01, 2019 at 10:59:54AM +0000, Schrempf Frieder wrote:
-> So I would rather go with a variation of your second proposal and keep 
-> the dummy implementation, but let it return NULL instead of an error 
-> pointer, as all the mctrl_gpio_*() functions already seem to have a 
-> check for gpios == NULL.
-> 
-> What do you think?
+Third patch just registers the PCIe endpoint device containing
+the MDIO registers as a standalone MDIO bus driver, to provide
+an alternative way to control the MDIO bus.  The same code used
+by the ENETC ports (eth controllers) to manage MDIO via local
+registers applies and is reused.
 
-I'll gladly review a patch.
+Bindings are provided for the new MDIO node, similarly to ENETC
+port nodes bindings.
 
-Best regads
-Uwe
+Last patch enables the ENETC port 1 and its RGMII PHY on the
+LS1028A QDS board, where the MDIO muxing configuration relies
+on the MDIO support provided in the first patch.
+
+Changes since v0:
+v1 - fixed mdio bus allocation
+v2 - cleaned up accessors to avoid casting
+v3 - fixed spelling (mostly commit message)
+v4 - fixed err path check blunder
+v5 - fixed loadble module build, provided separate kbuild module
+     for the driver
+
+
+Claudiu Manoil (5):
+  enetc: Clean up local mdio bus allocation
+  enetc: Clean up makefile
+  enetc: Add mdio bus driver for the PCIe MDIO endpoint
+  dt-bindings: net: fsl: enetc: Add bindings for the central MDIO PCIe
+    endpoint
+  arm64: dts: fsl: ls1028a: Enable eth port1 on the ls1028a QDS board
+
+ .../devicetree/bindings/net/fsl-enetc.txt     |  42 +++++++-
+ .../boot/dts/freescale/fsl-ls1028a-qds.dts    |  40 +++++++
+ .../arm64/boot/dts/freescale/fsl-ls1028a.dtsi |   6 ++
+ drivers/net/ethernet/freescale/enetc/Kconfig  |   9 ++
+ drivers/net/ethernet/freescale/enetc/Makefile |  19 ++--
+ .../net/ethernet/freescale/enetc/enetc_mdio.c |  97 ++++++++---------
+ .../net/ethernet/freescale/enetc/enetc_mdio.h |  12 +++
+ .../ethernet/freescale/enetc/enetc_pci_mdio.c | 101 ++++++++++++++++++
+ .../net/ethernet/freescale/enetc/enetc_pf.c   |   5 +-
+ 9 files changed, 264 insertions(+), 67 deletions(-)
+ create mode 100644 drivers/net/ethernet/freescale/enetc/enetc_mdio.h
+ create mode 100644 drivers/net/ethernet/freescale/enetc/enetc_pci_mdio.c
 
 -- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+2.17.1
+
