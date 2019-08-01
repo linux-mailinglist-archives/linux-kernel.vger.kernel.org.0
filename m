@@ -2,103 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6DE37E45B
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 22:39:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C3A27E45E
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 22:39:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732843AbfHAUfc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 16:35:32 -0400
-Received: from mga05.intel.com ([192.55.52.43]:47474 "EHLO mga05.intel.com"
+        id S2387498AbfHAUgX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 16:36:23 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:51708 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725846AbfHAUf0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 16:35:26 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Aug 2019 13:35:25 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,335,1559545200"; 
-   d="scan'208";a="191701859"
-Received: from sjchrist-coffee.jf.intel.com ([10.54.74.41])
-  by fmsmga001.fm.intel.com with ESMTP; 01 Aug 2019 13:35:25 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] KVM: x86/mmu: Consolidate "is MMIO SPTE" code
-Date:   Thu,  1 Aug 2019 13:35:23 -0700
-Message-Id: <20190801203523.5536-4-sean.j.christopherson@intel.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190801203523.5536-1-sean.j.christopherson@intel.com>
-References: <20190801203523.5536-1-sean.j.christopherson@intel.com>
+        id S1725846AbfHAUgW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Aug 2019 16:36:22 -0400
+Received: from zn.tnic (p200300EC2F159F00604C6CF9032D9ED3.dip0.t-ipconnect.de [IPv6:2003:ec:2f15:9f00:604c:6cf9:32d:9ed3])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C1DBC1EC0586;
+        Thu,  1 Aug 2019 22:36:20 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1564691781;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=8WqPNaX/R+MXmdFukydmP/HNqTuX6Wi8vDecAZrApHg=;
+        b=osy9CqRrXKU9CR3+cYWy0XaDGNk99tLMQGwNJGwwCZrdIhdyj5ZnwC5tS8WauKzGy0JMEO
+        GEKjNumLpkqhYbL50FtrwyXUahSmfA56OCskVcqT+6gtWf2QOZ7gXn2MwsUMCzFq0sU2s3
+        GsSapU7AR+hjCnPTR9716prqpflk968=
+Date:   Thu, 1 Aug 2019 22:36:14 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc:     "Luck, Tony" <tony.luck@intel.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        kirill.shutemov@linux.intel.com, linux-kernel@vger.kernel.org,
+        jing.lin@intel.com, x86@kernel.org
+Subject: Re: [PATCH] x86/asm: Add support for MOVDIR64B instruction
+Message-ID: <20190801203614.GA16228@zn.tnic>
+References: <20190801194348.GA6059@avx2>
+ <20190801194947.GA12033@agluck-desk2.amr.corp.intel.com>
+ <20190801202808.e2cqlqetixie4gcu@box>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190801202808.e2cqlqetixie4gcu@box>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace the open-coded "is MMIO SPTE" checks in the MMU warnings
-related to software-based access/dirty tracking to make the code
-slightly more self-documenting.
+On Thu, Aug 01, 2019 at 11:28:08PM +0300, Kirill A. Shutemov wrote:
+> On Thu, Aug 01, 2019 at 12:49:48PM -0700, Luck, Tony wrote:
+> > On Thu, Aug 01, 2019 at 10:43:48PM +0300, Alexey Dobriyan wrote:
+> > > > +static inline void movdir64b(void *dst, const void *src)
+> > > > +{
+> > > > +	/* movdir64b [rdx], rax */
+> > > > +	asm volatile(".byte 0x66, 0x0f, 0x38, 0xf8, 0x02"
+> > > > +			: "=m" (*(char *)dst)
+> > >                                ^^^^^^^^^^
+> > > 
+> > > > +			: "d" (src), "a" (dst));
+> > > > +}
+> > > 
+> > > Probably needs fake 64-byte type, so that compiler knows what is dirty.
+> > 
+> > Would that be something like this?
+> > 
+> > static inline void movdir64b(void *dst, const void *src)
+> > {
+> > 	struct dstbytes {
+> > 		char pad[64];
+> > 	};
+> > 
+> > 	/* movdir64b [rdx], rax */
+> > 	asm volatile(".byte 0x66, 0x0f, 0x38, 0xf8, 0x02"
+> > 		     : "=m" (*(struct dstbytes *)dst)
+> > 		     : "d" (src), "a" (dst));
+> > }
+> > 
+> > Or did you have something else in mind?
+> 
+> Or should we add "memory" clobber instead, like we do for string
+> operations?
 
-No functional change intended.
+I think Tony's in the right direction. We already do dst "sizing" like
+that for the compiler in clwb().
 
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
----
- arch/x86/kvm/mmu.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
-
-diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
-index 9ab6ff9e491b..745cbf45b32a 100644
---- a/arch/x86/kvm/mmu.c
-+++ b/arch/x86/kvm/mmu.c
-@@ -310,6 +310,11 @@ void kvm_mmu_set_mmio_spte_mask(u64 mmio_mask, u64 mmio_value, u64 access_mask)
- }
- EXPORT_SYMBOL_GPL(kvm_mmu_set_mmio_spte_mask);
- 
-+static bool is_mmio_spte(u64 spte)
-+{
-+	return (spte & shadow_mmio_mask) == shadow_mmio_value;
-+}
-+
- static inline bool sp_ad_disabled(struct kvm_mmu_page *sp)
- {
- 	return sp->role.ad_disabled;
-@@ -317,19 +322,19 @@ static inline bool sp_ad_disabled(struct kvm_mmu_page *sp)
- 
- static inline bool spte_ad_enabled(u64 spte)
- {
--	MMU_WARN_ON((spte & shadow_mmio_mask) == shadow_mmio_value);
-+	MMU_WARN_ON(is_mmio_spte(spte));
- 	return !(spte & shadow_acc_track_value);
- }
- 
- static inline u64 spte_shadow_accessed_mask(u64 spte)
- {
--	MMU_WARN_ON((spte & shadow_mmio_mask) == shadow_mmio_value);
-+	MMU_WARN_ON(is_mmio_spte(spte));
- 	return spte_ad_enabled(spte) ? shadow_accessed_mask : 0;
- }
- 
- static inline u64 spte_shadow_dirty_mask(u64 spte)
- {
--	MMU_WARN_ON((spte & shadow_mmio_mask) == shadow_mmio_value);
-+	MMU_WARN_ON(is_mmio_spte(spte));
- 	return spte_ad_enabled(spte) ? shadow_dirty_mask : 0;
- }
- 
-@@ -404,11 +409,6 @@ static void mark_mmio_spte(struct kvm_vcpu *vcpu, u64 *sptep, u64 gfn,
- 	mmu_spte_set(sptep, mask);
- }
- 
--static bool is_mmio_spte(u64 spte)
--{
--	return (spte & shadow_mmio_mask) == shadow_mmio_value;
--}
--
- static gfn_t get_mmio_spte_gfn(u64 spte)
- {
- 	u64 gpa = spte & shadow_nonpresent_or_rsvd_lower_gfn_mask;
 -- 
-2.22.0
+Regards/Gruss,
+    Boris.
 
+Good mailing practices for 400: avoid top-posting and trim the reply.
