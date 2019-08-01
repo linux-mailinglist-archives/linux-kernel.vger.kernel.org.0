@@ -2,75 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C82A57D3AE
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 05:31:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EF5FD7D3C8
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 05:43:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729706AbfHADbK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 23:31:10 -0400
-Received: from twhmllg4.macronix.com ([122.147.135.202]:29265 "EHLO
-        TWHMLLG4.macronix.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729501AbfHADbJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 23:31:09 -0400
-Received: from localhost.localdomain ([172.17.195.96])
-        by TWHMLLG4.macronix.com with ESMTP id x713UuOW087114;
-        Thu, 1 Aug 2019 11:30:58 +0800 (GMT-8)
-        (envelope-from masonccyang@mxic.com.tw)
-From:   Mason Yang <masonccyang@mxic.com.tw>
-To:     miquel.raynal@bootlin.com, marek.vasut@gmail.com,
-        bbrezillon@kernel.org, dwmw2@infradead.org,
-        computersforpeace@gmail.com, vigneshr@ti.com, richard@nod.at,
-        robh+dt@kernel.org, stefan@agner.ch, mark.rutland@arm.com
-Cc:     linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
-        juliensu@mxic.com.tw, paul.burton@mips.com, liang.yang@amlogic.com,
-        lee.jones@linaro.org, masonccyang@mxic.com.tw,
-        anders.roxell@linaro.org, christophe.kerello@st.com,
-        paul@crapouillou.net, devicetree@vger.kernel.org
-Subject: [PATCH v6 2/2] dt-bindings: mtd: Document Macronix raw NAND controller bindings
-Date:   Thu,  1 Aug 2019 11:55:10 +0800
-Message-Id: <1564631710-30276-3-git-send-email-masonccyang@mxic.com.tw>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1564631710-30276-1-git-send-email-masonccyang@mxic.com.tw>
-References: <1564631710-30276-1-git-send-email-masonccyang@mxic.com.tw>
-X-MAIL: TWHMLLG4.macronix.com x713UuOW087114
+        id S1729199AbfHADnb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 23:43:31 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:52766 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725793AbfHADnb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jul 2019 23:43:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=b1ZPq4bTVMjHKfhV0Bt+OqxdWOApx20xd731kmQFo+0=; b=vWRRBlbdKb8D5u3c7PHFtD+2hY
+        LIrkuFFZB5+VDRfWR81vcvnKll/AaqpgOVYuWhaTApp1ljj6Qx7NN0K7jVYisrhb6YArV/8BlRPzh
+        FXNQKGxlPjlK5BZcjeg5Z7FwDY9PG7OTCcz541lstzm8S87dCaLBleudXaMYRhNg1SbI=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
+        (envelope-from <andrew@lunn.ch>)
+        id 1ht1zy-0001BX-Va; Thu, 01 Aug 2019 05:43:26 +0200
+Date:   Thu, 1 Aug 2019 05:43:26 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Hubert Feurstein <h.feurstein@gmail.com>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Rasmus Villemoes <rasmus.villemoes@prevas.dk>
+Subject: Re: [PATCH net-next v2 1/6] net: dsa: mv88e6xxx: add support for
+ MV88E6220
+Message-ID: <20190801034326.GC2713@lunn.ch>
+References: <20190731082351.3157-1-h.feurstein@gmail.com>
+ <20190731082351.3157-2-h.feurstein@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190731082351.3157-2-h.feurstein@gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Document the bindings used by the Macronix raw NAND controller.
+On Wed, Jul 31, 2019 at 10:23:46AM +0200, Hubert Feurstein wrote:
+> The MV88E6220 is almost the same as MV88E6250 except that the ports 2-4 are
+> not routed to pins. So the usable ports are 0, 1, 5 and 6.
+> 
+> Signed-off-by: Hubert Feurstein <h.feurstein@gmail.com>
 
-Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
----
- Documentation/devicetree/bindings/mtd/mxic-nand.txt | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mtd/mxic-nand.txt
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-diff --git a/Documentation/devicetree/bindings/mtd/mxic-nand.txt b/Documentation/devicetree/bindings/mtd/mxic-nand.txt
-new file mode 100644
-index 0000000..de37d60
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mtd/mxic-nand.txt
-@@ -0,0 +1,19 @@
-+Macronix Raw NAND Controller Device Tree Bindings
-+-------------------------------------------------
-+
-+Required properties:
-+- compatible: should be "mxicy,multi-itfc-v009-nand-morph"
-+- reg: should contain 1 entry for the registers
-+- interrupts: interrupt line connected to this raw NAND controller
-+- clock-names: should contain "ps", "send" and "send_dly"
-+- clocks: should contain 3 phandles for the "ps", "send" and
-+	 "send_dly" clocks
-+
-+Example:
-+
-+	nand: nand-controller@43c30000 {
-+		compatible = "mxicy,multi-itfc-v009-nand-morph";
-+		reg = <0x43c30000 0x10000>;
-+		clocks = <&clkwizard 0>, <&clkwizard 1>, <&clkc 15>;
-+		clock-names = "send", "send_dly", "ps";
-+	};
--- 
-1.9.1
-
+    Andrew
