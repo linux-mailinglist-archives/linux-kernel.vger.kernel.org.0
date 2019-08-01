@@ -2,85 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FD247D9E2
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 13:02:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 01DD87D9E6
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 13:02:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731392AbfHALBw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 07:01:52 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:12106 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1731330AbfHALBq (ORCPT
+        id S1731425AbfHALCI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 07:02:08 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:37691 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731332AbfHALBo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 07:01:46 -0400
-X-UUID: 891da93d988149bd8c9b89c86d615c76-20190801
-X-UUID: 891da93d988149bd8c9b89c86d615c76-20190801
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
-        (envelope-from <ran.bi@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0707 with TLS)
-        with ESMTP id 1869350164; Thu, 01 Aug 2019 19:01:39 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Thu, 1 Aug 2019 19:01:40 +0800
-Received: from localhost.localdomain (10.17.3.153) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 1 Aug 2019 19:01:39 +0800
-From:   Ran Bi <ran.bi@mediatek.com>
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-CC:     Alessandro Zummo <a.zummo@towertech.it>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        <linux-rtc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>, YT Shen <yt.shen@mediatek.com>,
-        Eddie Huang <eddie.huang@mediatek.com>,
-        Yingjoe Chen <yingjoe.chen@mediatek.com>,
-        Flora Fu <flora.fu@mediatek.com>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Ran Bi <ran.bi@mediatek.com>
-Subject: [PATCH v2 4/4] MAINTAINERS: add MT2712 RTC files
-Date:   Thu, 1 Aug 2019 19:01:22 +0800
-Message-ID: <20190801110122.26834-5-ran.bi@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20190801110122.26834-1-ran.bi@mediatek.com>
-References: <20190801110122.26834-1-ran.bi@mediatek.com>
+        Thu, 1 Aug 2019 07:01:44 -0400
+Received: by mail-io1-f68.google.com with SMTP id q22so23541231iog.4
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2019 04:01:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=8p1xBR1158xbW7UpM2v3UIS0V1XEtP9FuX+Bx4DuDTA=;
+        b=XhaK4Ig8AIGohl3p3pDHUFJnnjmN3mGWNxElHAJJHrj+sObqWM3V22wfWHtMjco5xS
+         RlchtA/bx9bS0VhiCy37hSP8zL1OaLlJgSxR/CzfRPygmJj6gKcum3BVCkoZvIC1NlVG
+         n3KUYn6fxuLO0dtS/kQ/Hx1lxjT2HyOToq5Ts=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8p1xBR1158xbW7UpM2v3UIS0V1XEtP9FuX+Bx4DuDTA=;
+        b=nSlnMZzZWrsT1tdA0+bEEL5WJBP1zH5fpS1oaT8bOPbzSl8Hk7JHBr7OETWJx/6LjC
+         Je3bjKiz380DA8ZgRxWzUMXTk5hji32ZurDRyWxyo180kviJo9WI+8G2/kUGVaMIVqWS
+         rRS3y9H8T1Blp5Rc7YYzGvu0p0jonytoGiRfoB/KIzFcW9wAiw5E7ZFV74+LZIdjZP9S
+         AP1PU6cA10SH+g6Jc4nKspQlifDxURpoaX6ABlQ54e2RlikUYk+wtEFaJ8GzrMOFyOnr
+         IO0BRHxmqWmCT/BpUDGerEH3JvetVcqakuyW45nVyhnT0Jm/BVcuA1tB9fIMByzmlybC
+         zHgA==
+X-Gm-Message-State: APjAAAX0rpy+DAg2/gryhpHP7AELgHa77ojtac5E5/0yNDY/PCQqyV2a
+        MgN7sV7O4Z0SLHWTjkw/6rY3Lk1GjVWjZp5D++OozQ==
+X-Google-Smtp-Source: APXvYqxEC4RZeeYHpD8M7AhOaln11d6KDIp7P8XEQUgwnKRLxvY0440LeYW04L8JGzzXUj9c9N+MTEzeESzFvoBdMzU=
+X-Received: by 2002:a5e:cb43:: with SMTP id h3mr20920741iok.252.1564657303963;
+ Thu, 01 Aug 2019 04:01:43 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+References: <d99f78a7-31c4-582e-17f5-93e1f0d0e4c2@virtuozzo.com>
+In-Reply-To: <d99f78a7-31c4-582e-17f5-93e1f0d0e4c2@virtuozzo.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Thu, 1 Aug 2019 13:01:33 +0200
+Message-ID: <CAJfpegv-EQhvJUB0AUhJ=Xx8moHHQvkDGe-yUXHENyWvboBU3A@mail.gmail.com>
+Subject: Re: [PATCH] fuse: BUG_ON's correction in fuse_dev_splice_write()
+To:     Vasily Averin <vvs@virtuozzo.com>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch add MT2712 RTC related files to MAINTAINERS.
+On Tue, Jul 23, 2019 at 8:33 AM Vasily Averin <vvs@virtuozzo.com> wrote:
+>
+> commit 963545357202 ("fuse: reduce allocation size for splice_write")
+> changed size of bufs array, so first BUG_ON should be corrected too.
+> Second BUG_ON become useless, first one also includes the second check:
+> any unsigned nbuf value cannot be less than 0.
 
-Signed-off-by: Ran Bi <ran.bi@mediatek.com>
----
- MAINTAINERS | 2 ++
- 1 file changed, 2 insertions(+)
+This patch seems broken: it assumes that pipe->nrbufs doesn't change.
+Have you actually tested it?
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 783569e3c4b4..11f73a4c75eb 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1892,7 +1892,9 @@ M:	Sean Wang <sean.wang@mediatek.com>
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
- L:	linux-mediatek@lists.infradead.org (moderated for non-subscribers)
- S:	Maintained
-+F:	Documentation/devicetree/bindings/rtc/rtc-mt2712.txt
- F:	Documentation/devicetree/bindings/rtc/rtc-mt7622.txt
-+F:	drivers/rtc/rtc-mt2712.c
- F:	drivers/rtc/rtc-mt6397.c
- F:	drivers/rtc/rtc-mt7622.c
- 
--- 
-2.21.0
-
+Thanks,
+Miklos
