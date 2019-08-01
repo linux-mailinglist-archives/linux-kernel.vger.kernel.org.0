@@ -2,77 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C1477DB2F
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 14:17:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BFB47DB44
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 14:21:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730788AbfHAMRW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 08:17:22 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:50324 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726014AbfHAMRW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 08:17:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=dee5olqt7XlPjLLePVsNMyNo/Zg/J+KeegX7G29ctJE=; b=WGHtRa0yUM09pDDHuuiKDR7pv
-        Pc3RFPJ1ikPHPGDtq379yWvLkjIGHBmehZWJjh1q2+0kKs/RxRzY+T0TOcGQRn8TXQ36H13My5gjU
-        CaPk/hQEQwfast7p/7GOiTo11kk9mbEb0xuNk6FCVMaf96BURliBjRWb6BqUuv2CA+4KOprotj4Q1
-        SCchH46ixelfj0caeUsXRSqGp/MwebEFEmqXRhaxoY8ugFwCTQ9DwLYH2R5X9L1JKE+xfk1GE7mQo
-        Reo+CvQJlxglqQP5ZtPVWT7j2pS2HVHOp6PqPm/FJ7p8Q3yTViiVKQJpXR/7851AamZGI0RFufw3W
-        5cpXbUERA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1htA1H-0007KB-VP; Thu, 01 Aug 2019 12:17:20 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 632452029F4C5; Thu,  1 Aug 2019 14:17:18 +0200 (CEST)
-Date:   Thu, 1 Aug 2019 14:17:18 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc:     mingo@kernel.org, linux-kernel@vger.kernel.org,
-        Benson Leung <bleung@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
-        Doug Anderson <dianders@google.com>
-Subject: Re: [PATCH 5/5] spi: Reduce kthread priority
-Message-ID: <20190801121718.GE31381@hirez.programming.kicks-ass.net>
-References: <20190801111348.530242235@infradead.org>
- <20190801111541.917256884@infradead.org>
- <640721f8-8a20-b161-473f-98a9dbc053cc@collabora.com>
+        id S1731049AbfHAMVn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 08:21:43 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:51546 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728791AbfHAMVn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Aug 2019 08:21:43 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 5C0348E4323954FF7DE6;
+        Thu,  1 Aug 2019 20:21:41 +0800 (CST)
+Received: from HGHY4L002753561.china.huawei.com (10.133.215.186) by
+ DGGEMS409-HUB.china.huawei.com (10.3.19.209) with Microsoft SMTP Server id
+ 14.3.439.0; Thu, 1 Aug 2019 20:21:31 +0800
+From:   Zhen Lei <thunder.leizhen@huawei.com>
+To:     Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        John Garry <john.garry@huawei.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Will Deacon <will@kernel.org>, Joerg Roedel <joro@8bytes.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        iommu <iommu@lists.linux-foundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+CC:     Zhen Lei <thunder.leizhen@huawei.com>
+Subject: [PATCH] iommu/arm-smmu-v3: add nr_ats_masters to avoid unnecessary operations
+Date:   Thu, 1 Aug 2019 20:20:40 +0800
+Message-ID: <20190801122040.26024-1-thunder.leizhen@huawei.com>
+X-Mailer: git-send-email 2.21.0.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <640721f8-8a20-b161-473f-98a9dbc053cc@collabora.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.133.215.186]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 01, 2019 at 01:27:04PM +0200, Enric Balletbo i Serra wrote:
-> 
-> cc'ing Doug as he might be really interested on this patch
-> 
-> On 1/8/19 13:13, Peter Zijlstra wrote:
-> > The SPI thingies request FIFO-99 by default, reduce this to FIFO-50.
-> > 
-> 
-> You say below that is not a suitable default but there is any other reason? Did
-> you observed problems with this?
+When (smmu_domain->smmu->features & ARM_SMMU_FEAT_ATS) is true, even if a
+smmu domain does not contain any ats master, the operations of
+arm_smmu_atc_inv_to_cmd() and lock protection in arm_smmu_atc_inv_domain()
+are always executed. This will impact performance, especially in
+multi-core and stress scenarios. For my FIO test scenario, about 8%
+performance reduced.
 
-I didn't observe any problems with it personally. But imagine your
-device is used to control something critical, like something leathal,
-say a bandsaw. And just as you stick your hand through the laser
-guarding it, your SPI device chirps and preempts the task that was about
-to pull the emergency break and save your hand.
+In fact, we can use a atomic member to record how many ats masters the
+smmu contains. And check that without traverse the list and check all
+masters one by one in the lock protection.
 
-FIFO-99 is the highest possible prio (for SCHED_FIFO) and by using it
-you say your task is the utmost imporant task on the system.
+Fixes: 9ce27afc0830 ("iommu/arm-smmu-v3: Add support for PCI ATS")
+Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
+---
+ drivers/iommu/arm-smmu-v3.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-I'm thinking that isn't true 99% of the time, except of course when that
-bandsaw emergency break is attached through SPI, but in that case the
-admin can very well chrt the prio of this thread.
+diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
+index a9a9fabd396804a..1b370d9aca95f94 100644
+--- a/drivers/iommu/arm-smmu-v3.c
++++ b/drivers/iommu/arm-smmu-v3.c
+@@ -631,6 +631,7 @@ struct arm_smmu_domain {
+ 
+ 	struct io_pgtable_ops		*pgtbl_ops;
+ 	bool				non_strict;
++	atomic_t			nr_ats_masters;
+ 
+ 	enum arm_smmu_domain_stage	stage;
+ 	union {
+@@ -1531,7 +1532,7 @@ static int arm_smmu_atc_inv_domain(struct arm_smmu_domain *smmu_domain,
+ 	struct arm_smmu_cmdq_ent cmd;
+ 	struct arm_smmu_master *master;
+ 
+-	if (!(smmu_domain->smmu->features & ARM_SMMU_FEAT_ATS))
++	if (!atomic_read(&smmu_domain->nr_ats_masters))
+ 		return 0;
+ 
+ 	arm_smmu_atc_inv_to_cmd(ssid, iova, size, &cmd);
+@@ -1869,6 +1870,7 @@ static int arm_smmu_enable_ats(struct arm_smmu_master *master)
+ 	size_t stu;
+ 	struct pci_dev *pdev;
+ 	struct arm_smmu_device *smmu = master->smmu;
++	struct arm_smmu_domain *smmu_domain = master->domain;
+ 	struct iommu_fwspec *fwspec = dev_iommu_fwspec_get(master->dev);
+ 
+ 	if (!(smmu->features & ARM_SMMU_FEAT_ATS) || !dev_is_pci(master->dev) ||
+@@ -1887,12 +1889,15 @@ static int arm_smmu_enable_ats(struct arm_smmu_master *master)
+ 		return ret;
+ 
+ 	master->ats_enabled = true;
++	atomic_inc(&smmu_domain->nr_ats_masters);
++
+ 	return 0;
+ }
+ 
+ static void arm_smmu_disable_ats(struct arm_smmu_master *master)
+ {
+ 	struct arm_smmu_cmdq_ent cmd;
++	struct arm_smmu_domain *smmu_domain = master->domain;
+ 
+ 	if (!master->ats_enabled || !dev_is_pci(master->dev))
+ 		return;
+@@ -1901,6 +1906,7 @@ static void arm_smmu_disable_ats(struct arm_smmu_master *master)
+ 	arm_smmu_atc_inv_master(master, &cmd);
+ 	pci_disable_ats(to_pci_dev(master->dev));
+ 	master->ats_enabled = false;
++	atomic_dec(&smmu_domain->nr_ats_masters);
+ }
+ 
+ static void arm_smmu_detach_dev(struct arm_smmu_master *master)
+@@ -1915,10 +1921,10 @@ static void arm_smmu_detach_dev(struct arm_smmu_master *master)
+ 	list_del(&master->domain_head);
+ 	spin_unlock_irqrestore(&smmu_domain->devices_lock, flags);
+ 
+-	master->domain = NULL;
+ 	arm_smmu_install_ste_for_dev(master);
+ 
+ 	arm_smmu_disable_ats(master);
++	master->domain = NULL;
+ }
+ 
+ static int arm_smmu_attach_dev(struct iommu_domain *domain, struct device *dev)
+-- 
+1.8.3
+
 
