@@ -2,74 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68FC87D802
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 10:48:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DEC0E7D813
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 10:54:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730328AbfHAIsd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 04:48:33 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:34847 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725946AbfHAIsd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 04:48:33 -0400
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1ht6lA-00033w-Vq; Thu, 01 Aug 2019 10:48:28 +0200
-Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1ht6l9-00042c-2F; Thu, 01 Aug 2019 10:48:27 +0200
-Date:   Thu, 1 Aug 2019 10:48:27 +0200
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Schrempf Frieder <frieder.schrempf@kontron.de>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
-        Jiri Slaby <jslaby@suse.com>
-Subject: Re: [PATCH] serial: imx: Avoid probe failure in case of missing
- gpiolib
-Message-ID: <20190801084827.m42ci3amo37hmesi@pengutronix.de>
-References: <20190801081524.22577-1-frieder.schrempf@kontron.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190801081524.22577-1-frieder.schrempf@kontron.de>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        id S1730739AbfHAIyM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 04:54:12 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:50582 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730482AbfHAIyM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Aug 2019 04:54:12 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 941681A02C1;
+        Thu,  1 Aug 2019 10:54:10 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 839C71A02D9;
+        Thu,  1 Aug 2019 10:54:07 +0200 (CEST)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 5D57E402D7;
+        Thu,  1 Aug 2019 16:54:03 +0800 (SGT)
+From:   Anson.Huang@nxp.com
+To:     linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH] gpio: mxc: Use devm_clk_get_optional instead of devm_clk_get
+Date:   Thu,  1 Aug 2019 16:44:39 +0800
+Message-Id: <20190801084439.36487-1-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.9.5
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 01, 2019 at 08:18:05AM +0000, Schrempf Frieder wrote:
-> From: Frieder Schrempf <frieder.schrempf@kontron.de>
-> 
-> If CONFIG_GPIOLIB is not enabled, mctrl_gpio_init() will return
-> -ENOSYS and cause the probing of the imx UART to fail. As the
-> GPIOs are optional, we should continue probing in this case.
+From: Anson Huang <Anson.Huang@nxp.com>
 
-Is this really still the case? On which version did you hit this
-problem?
+i.MX SoC's GPIO clock is optional, so it is better to use
+devm_clk_get_optional instead of devm_clk_get.
 
-I would expect that is gone with
-d99482673f950817b30caf3fcdfb31179b050ce1 if not earlier.
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+ drivers/gpio/gpio-mxc.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-Best regards
-Uwe
-
+diff --git a/drivers/gpio/gpio-mxc.c b/drivers/gpio/gpio-mxc.c
+index b281358..7907a87 100644
+--- a/drivers/gpio/gpio-mxc.c
++++ b/drivers/gpio/gpio-mxc.c
+@@ -435,12 +435,9 @@ static int mxc_gpio_probe(struct platform_device *pdev)
+ 		return port->irq;
+ 
+ 	/* the controller clock is optional */
+-	port->clk = devm_clk_get(&pdev->dev, NULL);
+-	if (IS_ERR(port->clk)) {
+-		if (PTR_ERR(port->clk) == -EPROBE_DEFER)
+-			return -EPROBE_DEFER;
+-		port->clk = NULL;
+-	}
++	port->clk = devm_clk_get_optional(&pdev->dev, NULL);
++	if (IS_ERR(port->clk))
++		return PTR_ERR(port->clk);
+ 
+ 	err = clk_prepare_enable(port->clk);
+ 	if (err) {
 -- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+2.7.4
+
