@@ -2,173 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 010947D9A9
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 12:52:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 701807D9AB
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 12:53:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731200AbfHAKwF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 06:52:05 -0400
-Received: from foss.arm.com ([217.140.110.172]:33898 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725930AbfHAKwF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 06:52:05 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3022C1570;
-        Thu,  1 Aug 2019 03:52:04 -0700 (PDT)
-Received: from dawn-kernel.cambridge.arm.com (unknown [10.1.197.116])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B4D793F575;
-        Thu,  1 Aug 2019 03:52:02 -0700 (PDT)
-Subject: Re: KASAN: use-after-free Read in usb_free_coherent
-To:     syzbot+d1fedb1c1fdb07fca507@syzkaller.appspotmail.com,
-        andreyknvl@google.com, dtor@chromium.org,
-        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org, mans@mansr.com,
-        mathias.payer@nebelwelt.net, robh@kernel.org,
-        srinivas.kandagatla@linaro.org, stern@rowland.harvard.edu,
-        syzkaller-bugs@googlegroups.com
-References: <0000000000003f86d8058f0bd671@google.com>
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-Message-ID: <8d2b9cb5-d32c-e24c-c973-a3a11a436dc6@arm.com>
-Date:   Thu, 1 Aug 2019 11:52:01 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1731157AbfHAKxi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 06:53:38 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:35857 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725930AbfHAKxi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Aug 2019 06:53:38 -0400
+Received: by mail-qk1-f196.google.com with SMTP id g18so51596430qkl.3
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2019 03:53:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=eiFTBmEgHIdfbQU48G/m99TXVreC2FF5sr7JaD1x1mA=;
+        b=KLsgD4RnyK+rVUkGOsqFroFBZDUwu3ciB+h6nAVcoKYOGGu951ttj25LkkCr/deuam
+         65H0NtG5M6V3t5WwTXUj5Oz2bs93syYh1+TgeDGjX4x3bP9hMVd4ICEyH76DbXhpNLEF
+         hlFluS1tQE5LlrritJlZlR3lTK53r+M275FPWoEchJJns/XRQCJp/om5na9YXhWx7cFR
+         qdGkvbD7ZWgV6ARm7uQCh87shoeKtMDJnHeCpqJje38ycPAuNkXs0FX2IEFUVW08UfAV
+         kizbi9rZXPA5lgvBfjXefuQXSCkqhjft73F0MZKAmEcLRbZfo8pJTBNpf8WRrfg0zB31
+         2Z5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=eiFTBmEgHIdfbQU48G/m99TXVreC2FF5sr7JaD1x1mA=;
+        b=UC3a3rJBaYboXL46aUZnyqS7yfYxqtDz69GDOaUm+OzV8A4AaqttXoEVVIWqgZQsGd
+         GSN1VSe9f1EF+mpqpAPzueACkGDSw+a0ZHACE+Qwx5h1ln/k47qWSTbt8+Pi61GUKaud
+         J6kgdthhrZYQkGol8OKorIn57f8IFAgx2zL8e4YHecvD8gzgS+VFwjRAhlO0kIO2+5HM
+         +mD6dTbqOdmEQqKbJHnGEKpxQokCkXvf7OY0qOJsL6arQNJExiBvHyHe4mWVdDjiH6h+
+         KKnBwakQ/m3EYhwk2Fs/J08BGXpFnzjUAtU/+4AVxaFCoisPcgBN2csrkCU0TU5H0p1j
+         14vg==
+X-Gm-Message-State: APjAAAW9qXp8w1BXk1uzbz3ARxtP4wc0/1J9Qk1Xd8MeK1prO0gnXVy0
+        wxH5aN6uQUMrFOAyLAsrqBKNrLyC2di+R6zreRM=
+X-Google-Smtp-Source: APXvYqwI5olzdxP1vFUzXWwEkjqRY/4CBqhn/w9mc+KQVPwY/ZlVa1keIIN8meGSxSa9l0xLPjxxEWvUEokiCkg23Gw=
+X-Received: by 2002:a37:dc1:: with SMTP id 184mr84799497qkn.10.1564656817050;
+ Thu, 01 Aug 2019 03:53:37 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <0000000000003f86d8058f0bd671@google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a05:6214:1231:0:0:0:0 with HTTP; Thu, 1 Aug 2019 03:53:36
+ -0700 (PDT)
+Reply-To: richardazizlawfirm@gmail.com
+From:   "Mr.Richard Aziz" <peterchukus19@gmail.com>
+Date:   Thu, 1 Aug 2019 11:53:36 +0100
+Message-ID: <CAGueC44yiKwH=e8ahpTfbxjNtcdRHrGk6r3i-0k8AKBGrXw_UQ@mail.gmail.com>
+Subject: 
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi
-
-On 01/08/2019 11:38, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following crash on:
-> 
-> HEAD commit:    7f7867ff usb-fuzzer: main usb gadget fuzzer driver
-> git tree:       https://github.com/google/kasan.git usb-fuzzer
-> console output: https://syzkaller.appspot.com/x/log.txt?x=13efa030600000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=792eb47789f57810
-> dashboard link: https://syzkaller.appspot.com/bug?extid=d1fedb1c1fdb07fca507
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> 
-> Unfortunately, I don't have any reproducer for this crash yet.
-> 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+d1fedb1c1fdb07fca507@syzkaller.appspotmail.com
-> 
-> ==================================================================
-> BUG: KASAN: use-after-free in usb_free_coherent+0x79/0x80
-> drivers/usb/core/usb.c:928
-> Read of size 8 at addr ffff8881b18599c8 by task syz-executor.4/16007
-> 
-> CPU: 0 PID: 16007 Comm: syz-executor.4 Not tainted 5.3.0-rc2+ #23
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Call Trace:
->    __dump_stack lib/dump_stack.c:77 [inline]
->    dump_stack+0xca/0x13e lib/dump_stack.c:113
->    print_address_description+0x6a/0x32c mm/kasan/report.c:351
->    __kasan_report.cold+0x1a/0x33 mm/kasan/report.c:482
->    kasan_report+0xe/0x12 mm/kasan/common.c:612
->    usb_free_coherent+0x79/0x80 drivers/usb/core/usb.c:928
->    yurex_delete+0x138/0x330 drivers/usb/misc/yurex.c:100
->    kref_put include/linux/kref.h:65 [inline]
->    yurex_release+0x66/0x90 drivers/usb/misc/yurex.c:392
->    __fput+0x2d7/0x840 fs/file_table.c:280
->    task_work_run+0x13f/0x1c0 kernel/task_work.c:113
->    tracehook_notify_resume include/linux/tracehook.h:188 [inline]
->    exit_to_usermode_loop+0x1d2/0x200 arch/x86/entry/common.c:163
->    prepare_exit_to_usermode arch/x86/entry/common.c:194 [inline]
->    syscall_return_slowpath arch/x86/entry/common.c:274 [inline]
->    do_syscall_64+0x45f/0x580 arch/x86/entry/common.c:299
->    entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x413511
-> Code: 75 14 b8 03 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 04 1b 00 00 c3 48
-> 83 ec 08 e8 0a fc ff ff 48 89 04 24 b8 03 00 00 00 0f 05 <48> 8b 3c 24 48
-> 89 c2 e8 53 fc ff ff 48 89 d0 48 83 c4 08 48 3d 01
-> RSP: 002b:00007ffc424ea2e0 EFLAGS: 00000293 ORIG_RAX: 0000000000000003
-> RAX: 0000000000000000 RBX: 0000000000000007 RCX: 0000000000413511
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000006
-> RBP: 0000000000000001 R08: 0000000029a2fc22 R09: 0000000029a2fc26
-> R10: 00007ffc424ea3c0 R11: 0000000000000293 R12: 000000000075c9a0
-> R13: 000000000075c9a0 R14: 0000000000761938 R15: ffffffffffffffff
-> 
-> Allocated by task 2776:
->    save_stack+0x1b/0x80 mm/kasan/common.c:69
->    set_track mm/kasan/common.c:77 [inline]
->    __kasan_kmalloc mm/kasan/common.c:487 [inline]
->    __kasan_kmalloc.constprop.0+0xbf/0xd0 mm/kasan/common.c:460
->    kmalloc include/linux/slab.h:552 [inline]
->    kzalloc include/linux/slab.h:748 [inline]
->    usb_alloc_dev+0x51/0xf95 drivers/usb/core/usb.c:583
->    hub_port_connect drivers/usb/core/hub.c:5004 [inline]
->    hub_port_connect_change drivers/usb/core/hub.c:5213 [inline]
->    port_event drivers/usb/core/hub.c:5359 [inline]
->    hub_event+0x15c0/0x3640 drivers/usb/core/hub.c:5441
->    process_one_work+0x92b/0x1530 kernel/workqueue.c:2269
->    worker_thread+0x96/0xe20 kernel/workqueue.c:2415
->    kthread+0x318/0x420 kernel/kthread.c:255
->    ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-> 
-> Freed by task 16007:
->    save_stack+0x1b/0x80 mm/kasan/common.c:69
->    set_track mm/kasan/common.c:77 [inline]
->    __kasan_slab_free+0x130/0x180 mm/kasan/common.c:449
->    slab_free_hook mm/slub.c:1423 [inline]
->    slab_free_freelist_hook mm/slub.c:1470 [inline]
->    slab_free mm/slub.c:3012 [inline]
->    kfree+0xe4/0x2f0 mm/slub.c:3953
->    device_release+0x71/0x200 drivers/base/core.c:1064
->    kobject_cleanup lib/kobject.c:693 [inline]
->    kobject_release lib/kobject.c:722 [inline]
->    kref_put include/linux/kref.h:65 [inline]
->    kobject_put+0x171/0x280 lib/kobject.c:739
->    put_device+0x1b/0x30 drivers/base/core.c:2213
->    usb_put_dev+0x1f/0x30 drivers/usb/core/usb.c:725
->    yurex_delete+0x40/0x330 drivers/usb/misc/yurex.c:95
->    kref_put include/linux/kref.h:65 [inline]
->    yurex_release+0x66/0x90 drivers/usb/misc/yurex.c:392
->    __fput+0x2d7/0x840 fs/file_table.c:280
->    task_work_run+0x13f/0x1c0 kernel/task_work.c:113
->    tracehook_notify_resume include/linux/tracehook.h:188 [inline]
->    exit_to_usermode_loop+0x1d2/0x200 arch/x86/entry/common.c:163
->    prepare_exit_to_usermode arch/x86/entry/common.c:194 [inline]
->    syscall_return_slowpath arch/x86/entry/common.c:274 [inline]
->    do_syscall_64+0x45f/0x580 arch/x86/entry/common.c:299
->    entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> 
-
-Looks like the yurex_delete() drops the ref count on the dev->udev
-way early in the function and then later tries to see if there
-are any other buffers associated with it worth releasing. So,
-I am guessing moving the usb_put_dev(), after we have finished
-all that might solve the issue ?
-
-----8>----
-
-diff --git a/drivers/usb/misc/yurex.c b/drivers/usb/misc/yurex.c
-index 7b306aa22d25..e38fe3a53c97 100644
---- a/drivers/usb/misc/yurex.c
-+++ b/drivers/usb/misc/yurex.c
-@@ -92,7 +92,6 @@ static void yurex_delete(struct kref *kref)
-
-  	dev_dbg(&dev->interface->dev, "%s\n", __func__);
-
--	usb_put_dev(dev->udev);
-  	if (dev->cntl_urb) {
-  		usb_kill_urb(dev->cntl_urb);
-  		kfree(dev->cntl_req);
-@@ -108,6 +107,8 @@ static void yurex_delete(struct kref *kref)
-  				dev->int_buffer, dev->urb->transfer_dma);
-  		usb_free_urb(dev->urb);
-  	}
-+
-+	usb_put_dev(dev->udev);
-  	kfree(dev);
-  }
-
-
+I have been expecting your responds  regarding the previous mail I sent to
+you, please acknowledge if your email is still valid
+(richardazizlawfirm@gmail.com)
