@@ -2,84 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A0CE87DDAE
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 16:21:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 73F887DDB2
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 16:21:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731045AbfHAOVH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 10:21:07 -0400
-Received: from banana.mfilter.dimenoc.com ([72.29.89.6]:58658 "EHLO
-        leaf103.mfilter.dimenoc.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726825AbfHAOVG (ORCPT
+        id S1731931AbfHAOVp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 10:21:45 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:47942 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726825AbfHAOVo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 10:21:06 -0400
-X-Greylist: delayed 493 seconds by postgrey-1.27 at vger.kernel.org; Thu, 01 Aug 2019 10:21:05 EDT
-Received: from localhost (localhost [127.0.0.1])
-        by leaf103.mfilter.dimenoc.com (Postfix) with ESMTP id 6CC801CD129
-        for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2019 10:12:51 -0400 (EDT)
-X-Virus-Scanned: amavisd-new at leaf.mfilter.dimenoc.com
-Received: from leaf103.mfilter.dimenoc.com ([127.0.0.1])
-        by localhost (leaf103.mfilter.dimenoc.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id bUZafJ5YV2YB for <linux-kernel@vger.kernel.org>;
-        Thu,  1 Aug 2019 10:12:50 -0400 (EDT)
-Received: from server2.webbdo.se (server2.webbdo.se [198.49.74.66])
-        by leaf103.mfilter.dimenoc.com (Postfix) with ESMTP
-        for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2019 10:12:50 -0400 (EDT)
+        Thu, 1 Aug 2019 10:21:44 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=grastorpsglasmasteri.se; s=default; h=MIME-Version:Content-Type:Reply-to:
-        Subject:To:From:Message-ID:Date:Sender:Cc:Content-Transfer-Encoding:
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
         Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
         Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=VDGmrLyXM7kzsG/6thws6TLLHOIu2+ccHyt+Wtl37rA=; b=PFZ7o0FqJKh1bV9+gWAKJfqkg
-        /H3yhy40SuXKkBsM7h9p4gSrTj/d9Pw/BbiICUXfs+k4eYj+ZWH+zAt8kUuzd/d6wArU6+a/5egE8
-        CHumBp47Kp14eKzY/AiBMmy1Y1OD59OwoN2E/RMTj+td1uBeX+yQYmtzmyEsIUyU7zwGkDGbgxxoH
-        Z5P/dgcOMC+f1J0ancnQMjW5rdtMIsLkaEEGlW4v8YkzhsNYHLs/HhOI6XVVwg2gC+KLkNpIwf1ie
-        +ZTp9DRO1ZwM3xur+18SXi4L+BnBUntQxr786ZXyB4ntzPyAcSNU6gmmfse5ylgkT6WIuBc7yLvOq
-        jqRP3Glpg==;
-Received: from [::1] (port=46330 helo=server2.webbdo.se)
-        by server2.webbdo.se with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.92)
-        (envelope-from <info@grastorpsglasmasteri.se>)
-        id 1htBp0-00CkNa-IE; Thu, 01 Aug 2019 16:12:46 +0200
-Received: from [102.136.110.61] ([102.136.110.61]) by
- grastorpsglasmasteri.se (Horde Framework) with HTTPS; Thu, 01 Aug 2019
- 16:12:46 +0200
-Date:   Thu, 01 Aug 2019 16:12:46 +0200
-Message-ID: <20190801161246.Horde.XcMEDIGI6OWE_cFdnRexsVn@grastorpsglasmasteri.se>
-From:   Caroline Tagro <info@grastorpsglasmasteri.se>
-Subject: Please your response!!
-Reply-to: caroline.tagro23@gmail.com
-User-Agent: Horde Application Framework 5
-Content-Type: text/plain; charset=utf-8; format=flowed; DelSp=Yes
+         bh=o3McWM/2bHyYOyL1mFZJ/4Q0USrtCE0kV4BVYCLDzEY=; b=Gs6eJLcnWsNhmKTj7X+mSbYPe
+        sWN22x7cdspZVuBOb/sWdUdPLhLBDtpvcboWjDhtNcMhLNRBsMfY6by3qN+lcy3LRZiUTk0N+2HWP
+        kOMZJFvxoPcRRNE0uvjE3622yufdZBOfEmuk+pAqJ8990LoLVBjJVTweC5ML2/fcSI/I5yQk9xkzC
+        DXo9lzPx4qs2+vDYwixYfvb2WsV3i/so3GWZx5jh//NyzYZwmzw2WyL3kD9ImGZ15MoGVv0+nXyc2
+        pqAha+cjJpUedSiG3zLHHfWNCMILWDl3fGMNdumhlKXZRRXsvXSn/qs7h+oJomhUXmSe+q3FHmFnl
+        YsYxtSn1Q==;
+Received: from [195.167.85.94] (helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1htBxQ-0006JC-Ow; Thu, 01 Aug 2019 14:21:29 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     iommu@lists.linux-foundation.org
+Cc:     Shawn Anastasio <shawn@anastas.io>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        linuxppc-dev@lists.ozlabs.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: fix default dma_mmap_* pgprot
+Date:   Thu,  1 Aug 2019 17:21:17 +0300
+Message-Id: <20190801142118.21225-1-hch@lst.de>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Disposition: inline
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - server2.webbdo.se
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - grastorpsglasmasteri.se
-X-Get-Message-Sender-Via: server2.webbdo.se: authenticated_id: info@grastorpsglasmasteri.se
-X-Authenticated-Sender: server2.webbdo.se: info@grastorpsglasmasteri.se
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-To:     unlisted-recipients:; (no To-header on input)
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi all,
 
-
--- 
-Hello Dear,
-
-I am Caroline Tagro, I am 22 yrs old an Ivorian national. I solicit  
-that you to assist me to a fund transfer for urgent project in your  
-country.
-Reply through my email below if you should be interested to help.
-
-Regards From
-Caroline
-Email: caroline.tagro75@gmail.com
-
+As Shawn pointed out we've had issues with the dma mmap pgprots ever
+since the dma_common_mmap helper was added beyong the initial
+architectures - we default to uncached mappings, but for devices that
+are DMA coherent, or if the DMA_ATTR_NON_CONSISTENT is set (and
+supported) this can lead to aliasing of cache attributes.  This patch
+fixes that.  My explanation of why this hasn't been much of an issue
+is that the dma_mmap_ helpers aren't used widely and mostly just in
+architecture specific drivers.
