@@ -2,70 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 516747DD51
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 16:05:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D47197DD1D
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 16:00:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731696AbfHAOFF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 10:05:05 -0400
-Received: from mail177-14.suw61.mandrillapp.com ([198.2.177.14]:7564 "EHLO
-        mail177-14.suw61.mandrillapp.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730581AbfHAOFE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 10:05:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; s=mandrill; d=nexedi.com;
- h=From:Subject:To:Cc:Message-Id:References:In-Reply-To:Date:MIME-Version:Content-Type:Content-Transfer-Encoding; i=kirr@nexedi.com;
- bh=AWunD0Mulf9LulwYiK8CA/275BoKsDBiDIBZMPtwNug=;
- b=I456wzre3VTJs6bhUQ9Ts2GRjPxKK/TFQPhvPP9TsU5godaVALSjbRv9pxTAQaelL9Vp44Jz2bA5
-   I3QPCG5vtmVZImF7o4sBK9XjV+iQfeaIaLtTNzAg++g7rW8MJiZRpg2p3iDqoyacyVcOh7NV+nAY
-   Oex01Ybf8SoO2SzHgaU=
-Received: from pmta06.mandrill.prod.suw01.rsglab.com (127.0.0.1) by mail177-14.suw61.mandrillapp.com id h8boou22rtku for <linux-kernel@vger.kernel.org>; Thu, 1 Aug 2019 13:50:02 +0000 (envelope-from <bounce-md_31050260.5d42ee0a.v1-e8c373daa0e24acabc426cc5836a07ea@mandrillapp.com>)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mandrillapp.com; 
- i=@mandrillapp.com; q=dns/txt; s=mandrill; t=1564667402; h=From : 
- Subject : To : Cc : Message-Id : References : In-Reply-To : Date : 
- MIME-Version : Content-Type : Content-Transfer-Encoding : From : 
- Subject : Date : X-Mandrill-User : List-Unsubscribe; 
- bh=AWunD0Mulf9LulwYiK8CA/275BoKsDBiDIBZMPtwNug=; 
- b=Ie57el/5bWyh4emLQtzCP28JWUHqPeYyBlVJwR0YsqvG/3zSW2/SGh1pSuEYSqi+CZfsIP
- 2GB9752T2LqpwpqmpXvbsUHN8e7rX8axXQIswQWDXXb9Hvn9iubW6rAIYR5VXpnPC3eDGnUp
- weIKdFSYl5A74YLTmjiLFrpULbh2o=
-From:   Kirill Smelkov <kirr@nexedi.com>
-Subject: Re: [PATCH, RESEND3] fuse: require /dev/fuse reads to have enough buffer capacity (take 2)
-Received: from [87.98.221.171] by mandrillapp.com id e8c373daa0e24acabc426cc5836a07ea; Thu, 01 Aug 2019 13:50:02 +0000
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Miklos Szeredi <mszeredi@redhat.com>, <gluster-devel@gluster.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Sander Eikelenboom <linux@eikelenboom.it>,
-        Han-Wen Nienhuys <hanwen@google.com>,
-        Jakob Unterwurzacher <jakobunt@gmail.com>
-Message-Id: <20190801134955.GA18544@deco.navytux.spb.ru>
-References: <20190724094556.GA19383@deco.navytux.spb.ru> <CAJfpegscn7B+TrD5hckXkpHEb_62m6O9-kFOOehWyC89CPFunw@mail.gmail.com>
-In-Reply-To: <CAJfpegscn7B+TrD5hckXkpHEb_62m6O9-kFOOehWyC89CPFunw@mail.gmail.com>
-X-Report-Abuse: Please forward a copy of this message, including all headers, to abuse@mandrill.com
-X-Report-Abuse: You can also report abuse here: http://mandrillapp.com/contact/abuse?id=31050260.e8c373daa0e24acabc426cc5836a07ea
-X-Mandrill-User: md_31050260
-Date:   Thu, 01 Aug 2019 13:50:02 +0000
+        id S1731314AbfHAOAK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 10:00:10 -0400
+Received: from ms.lwn.net ([45.79.88.28]:42540 "EHLO ms.lwn.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730581AbfHAOAK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Aug 2019 10:00:10 -0400
+Received: from lwn.net (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ms.lwn.net (Postfix) with ESMTPSA id 5F61E8B2;
+        Thu,  1 Aug 2019 14:00:09 +0000 (UTC)
+Date:   Thu, 1 Aug 2019 08:00:08 -0600
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     Federico Vaga <federico.vaga@cern.ch>
+Cc:     <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        "Alessia Mantegazza" <amantegazza@vaga.pv.it>
+Subject: Re: [PATCH] doc:it_IT: translations for documents in process/
+Message-ID: <20190801080008.44b3f8f4@lwn.net>
+In-Reply-To: <1695846.t893fQQLz3@pcbe13614>
+References: <20190728092054.1183-1-federico.vaga@vaga.pv.it>
+        <20190731125124.46e06ab6@lwn.net>
+        <20864529.Q1CKeA7GMu@pcbe13614>
+        <1695846.t893fQQLz3@pcbe13614>
+Organization: LWN.net
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 01, 2019 at 12:35:03PM +0200, Miklos Szeredi wrote:
-> On Wed, Jul 24, 2019 at 11:46 AM Kirill Smelkov <kirr@nexedi.com> wrote:
-> >
-> > Miklos,
-> >
-> > I was sending this patch for ~1.5 month without any feedback from you[1,2,3].
-> > The patch was tested by Sander Eikelenboom (original GlusterFS problem
-> > reporter)[4], and you said that it will be ok to retry for next
-> > cycle[5]. I was hoping for this patch to be picked up for 5.3 and queued
-> > to Linus's tree, but in despite several resends from me (the same patch;
-> > just reminders) nothing is happening. v5.3-rc1 came out on last Sunday,
-> > which, in my understanding, denotes the close of 5.3 merge window. What
-> > is going on? Could you please pick up the patch and handle it?
-> 
-> Applied.
+On Thu, 1 Aug 2019 11:53:06 +0200
+Federico Vaga <federico.vaga@cern.ch> wrote:
 
-Thanks...
+> Of course, I checked on the version available on my distribution. I did not 
+> look for translation changes on different version of the same email client @_@ 
+
+Hmm...normally we expect you to check all versions back to the 1991
+release of the 0.01 kernel...:)  I think that your diligence is more than
+sufficiently due, thanks.
+
+jon
