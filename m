@@ -2,142 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59D547E5A9
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 00:31:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 516AA7E5AC
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 00:32:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731747AbfHAWbk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 18:31:40 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:46578 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727498AbfHAWbk (ORCPT
+        id S1733209AbfHAWcO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 18:32:14 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:9326 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727498AbfHAWcO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 18:31:40 -0400
-Received: by mail-pl1-f195.google.com with SMTP id c2so32785398plz.13;
-        Thu, 01 Aug 2019 15:31:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:date:message-id:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=49QRQWf2FNsjOXVM5hrSB1/wT6sFBWj2i81LIQFGLg0=;
-        b=ji33itetIIDF6723/1Y8YKJGaXsZhwxdfFFZT45WUtDznubVlVgr6z8O6LM2Y0Bm8P
-         P43KwP1bs6fuGWQAelVx2jsf+HXc9hjzhGqb6BID3daGICPkxx/rJvFHx5nyJeTqaquo
-         J5birZo4hMpfVK6j0Z9nSIcOOGAxTZryiD/Bg7Ea0Sh4JYUZV5Q8A5i5BlFn+XlDUn2Y
-         xbtmEccIS9ctv1SzHpgWS+Gmvdsmo1e/yOMrR/P+7j5Dc6t3T1NV9Bf8oF0an0BTRzHE
-         zwVYl7CMWW7OMqTK+UidQdCn5nY8fJS9gYQXsiGqTJOK0Pc7c31igD37NF4ruL1MGqIV
-         abHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:date:message-id:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=49QRQWf2FNsjOXVM5hrSB1/wT6sFBWj2i81LIQFGLg0=;
-        b=n9jK1X8KYXR0qVYxL4mgYzoR7+hPt3qIlbfhNA9uCoj0U1Yur6Hzq9J422+PTJR/ys
-         YEevjDguYIYx3kVI4MP5lHP5F+hj19AIvkK4zONfMGtzJLVAbq8VOGoL3f/TH2yZrq5X
-         4Na0G4NhvEr7EbpdWY7wD6yIwCEvblY+L7Yhi6Q1VjxJ94o6jaIonGxRo9YuGEQ0gTjS
-         /lTfw9yEvfY3QiaBzpD4lLSgdm8b+aGcYZBbZsBGFW+IIrApnlJrB2ZWnLkrsk80Acez
-         0Ujie7tKrRDdQvKfxwIltpEVAuPv2/X+N7QCF3Wv1LXN6w42RqrJ8o9PGPHvZYUpb017
-         iEQA==
-X-Gm-Message-State: APjAAAUS+TC+hizhmTyPTw1DzUQfN4ueZHqOAHE8y09nwXXeoQay5hJr
-        jtrVQKiNrY/hdfGKNK3d/RzjWS0u
-X-Google-Smtp-Source: APXvYqx2jv1TK82igL61Day1gZd1T9JWolFuPhQSs0j3XhgePDf2nr7I5FyOs/W+WeBpIigsbk6TNg==
-X-Received: by 2002:a17:902:2be6:: with SMTP id l93mr129298797plb.0.1564698699193;
-        Thu, 01 Aug 2019 15:31:39 -0700 (PDT)
-Received: from localhost.localdomain (50-39-177-61.bvtn.or.frontiernet.net. [50.39.177.61])
-        by smtp.gmail.com with ESMTPSA id m20sm80514167pff.79.2019.08.01.15.31.38
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 01 Aug 2019 15:31:38 -0700 (PDT)
-Subject: [PATCH v3 2/6] mm: Move set/get_pcppage_migratetype to mmzone.h
-From:   Alexander Duyck <alexander.duyck@gmail.com>
-To:     nitesh@redhat.com, kvm@vger.kernel.org, david@redhat.com,
-        mst@redhat.com, dave.hansen@intel.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        akpm@linux-foundation.org
-Cc:     yang.zhang.wz@gmail.com, pagupta@redhat.com, riel@surriel.com,
-        konrad.wilk@oracle.com, willy@infradead.org,
-        lcapitulino@redhat.com, wei.w.wang@intel.com, aarcange@redhat.com,
-        pbonzini@redhat.com, dan.j.williams@intel.com,
-        alexander.h.duyck@linux.intel.com
-Date:   Thu, 01 Aug 2019 15:29:26 -0700
-Message-ID: <20190801222926.22190.81982.stgit@localhost.localdomain>
-In-Reply-To: <20190801222158.22190.96964.stgit@localhost.localdomain>
-References: <20190801222158.22190.96964.stgit@localhost.localdomain>
-User-Agent: StGit/0.17.1-dirty
+        Thu, 1 Aug 2019 18:32:14 -0400
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x71MQoa1063079;
+        Thu, 1 Aug 2019 18:31:33 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2u47v12613-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 01 Aug 2019 18:31:33 -0400
+Received: from m0098419.ppops.net (m0098419.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x71MSsxw066709;
+        Thu, 1 Aug 2019 18:31:33 -0400
+Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2u47v1260q-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 01 Aug 2019 18:31:33 -0400
+Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
+        by ppma04dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x71MUtdY016376;
+        Thu, 1 Aug 2019 22:31:32 GMT
+Received: from b01cxnp22033.gho.pok.ibm.com (b01cxnp22033.gho.pok.ibm.com [9.57.198.23])
+        by ppma04dal.us.ibm.com with ESMTP id 2u0e87971w-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 01 Aug 2019 22:31:32 +0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x71MVVpP53412256
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 1 Aug 2019 22:31:31 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AA37DB2066;
+        Thu,  1 Aug 2019 22:31:31 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8B9B0B205F;
+        Thu,  1 Aug 2019 22:31:31 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.154])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu,  1 Aug 2019 22:31:31 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id DED1916C9A39; Thu,  1 Aug 2019 15:31:32 -0700 (PDT)
+Date:   Thu, 1 Aug 2019 15:31:32 -0700
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     rcu@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
+        jiangshanlai@gmail.com, dipankar@in.ibm.com,
+        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
+        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
+        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
+        fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org
+Subject: [PATCH tip/core/rcu 0/3] Straggling consolidation cleanups for v5.4
+Message-ID: <20190801223132.GA14044@linux.ibm.com>
+Reply-To: paulmck@linux.ibm.com
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-01_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=13 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=863 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908010236
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+Hello!
 
-In order to support page aeration it will be necessary to store and
-retrieve the migratetype of a page. To enable that I am moving the set and
-get operations for pcppage_migratetype into the mm/internal.h header so
-that they can be used outside of the page_alloc.c file.
+This series contains a few more straggline RCU flavor consolidation
+cleanups:
 
-Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
----
- mm/internal.h   |   18 ++++++++++++++++++
- mm/page_alloc.c |   18 ------------------
- 2 files changed, 18 insertions(+), 18 deletions(-)
+1.	Simplify rcu_read_unlock_special() deferred wakeups.
 
-diff --git a/mm/internal.h b/mm/internal.h
-index 0d5f720c75ab..e4a1a57bbd40 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -549,6 +549,24 @@ static inline bool is_migrate_highatomic_page(struct page *page)
- 	return get_pageblock_migratetype(page) == MIGRATE_HIGHATOMIC;
- }
- 
-+/*
-+ * A cached value of the page's pageblock's migratetype, used when the page is
-+ * put on a pcplist. Used to avoid the pageblock migratetype lookup when
-+ * freeing from pcplists in most cases, at the cost of possibly becoming stale.
-+ * Also the migratetype set in the page does not necessarily match the pcplist
-+ * index, e.g. page might have MIGRATE_CMA set but be on a pcplist with any
-+ * other index - this ensures that it will be put on the correct CMA freelist.
-+ */
-+static inline int get_pcppage_migratetype(struct page *page)
-+{
-+	return page->index;
-+}
-+
-+static inline void set_pcppage_migratetype(struct page *page, int migratetype)
-+{
-+	page->index = migratetype;
-+}
-+
- void setup_zone_pageset(struct zone *zone);
- extern struct page *alloc_new_node_page(struct page *page, unsigned long node);
- #endif	/* __MM_INTERNAL_H */
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index dfed182f200d..7cedc73953fd 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -185,24 +185,6 @@ static int __init early_init_on_free(char *buf)
- }
- early_param("init_on_free", early_init_on_free);
- 
--/*
-- * A cached value of the page's pageblock's migratetype, used when the page is
-- * put on a pcplist. Used to avoid the pageblock migratetype lookup when
-- * freeing from pcplists in most cases, at the cost of possibly becoming stale.
-- * Also the migratetype set in the page does not necessarily match the pcplist
-- * index, e.g. page might have MIGRATE_CMA set but be on a pcplist with any
-- * other index - this ensures that it will be put on the correct CMA freelist.
-- */
--static inline int get_pcppage_migratetype(struct page *page)
--{
--	return page->index;
--}
--
--static inline void set_pcppage_migratetype(struct page *page, int migratetype)
--{
--	page->index = migratetype;
--}
--
- #ifdef CONFIG_PM_SLEEP
- /*
-  * The following functions are used by the suspend/hibernate code to temporarily
+2.	Make rcu_read_unlock_special() checks match raise_softirq_irqoff().
 
+3.	Simplify rcu_note_context_switch exit from critical section,
+	courtesy of Joel Fernandes.
+
+							Thanx, Paul
+
+------------------------------------------------------------------------
+
+ tree_plugin.h |   21 ++++-----------------
+ 1 file changed, 4 insertions(+), 17 deletions(-)
