@@ -2,111 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C32347DB39
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 14:19:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CC89A7DB2D
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 14:17:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730964AbfHAMS4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 08:18:56 -0400
-Received: from sender4-pp-o95.zoho.com ([136.143.188.95]:25518 "EHLO
-        sender4-pp-o95.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730918AbfHAMS4 (ORCPT
+        id S1730485AbfHAMRN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 08:17:13 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:56032 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726014AbfHAMRN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 08:18:56 -0400
-ARC-Seal: i=1; a=rsa-sha256; t=1564661879; cv=none; 
-        d=zoho.com; s=zohoarc; 
-        b=G29XdmNqjsJ4D0UPvZdmOLiI/XqItRXT7klctJalvfzJVQPU6RRyXBupxccRjza5hQt0RLMS0p/MfbqXxPYN40zM72TIfw+7+J9QTIDHmOC4pCif7UyYm0ZMrjP6Ld5oAPM/OYMI21CLm+VUg/u0tifLjQxeg532npAcNz7gVsY=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
-        t=1564661879; h=Cc:Date:From:In-Reply-To:Message-ID:References:Subject:To:ARC-Authentication-Results; 
-        bh=pnXglAPiqfqQmS39+JKh6ck+IIvkfDvKN7TtCs+d+E4=; 
-        b=e4ytnxPkyWJT8aK2aKHexmR/FF43DUG+xrNX4fc2gpPoWgFxwrXmc4B8asTSAHH/TQYBbMgknmcs2jMRt9q5vp4dyYQUIuMHpnh5sYjJsdZJ9noEagU+og+SSJu/5H0kRMSb2xDz9qQAhAUVipDwrk96DNjnUbjxCAf40Ua2z2I=
-ARC-Authentication-Results: i=1; mx.zoho.com;
-        dkim=pass  header.i=zoho.com;
-        spf=pass  smtp.mailfrom=zhouyanjie@zoho.com;
-        dmarc=pass header.from=<zhouyanjie@zoho.com> header.from=<zhouyanjie@zoho.com>
-DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws; 
-  s=zapps768; d=zoho.com; 
-  h=from:to:cc:subject:date:message-id:in-reply-to:references; 
-  b=h9FfRvLC48226fD9Vji0BAxlthjFOmxHl4RP37NjVI9/Oda7dHI0xRLaE8srxVkPTRK00+RzTeeS
-    pQbyX8MtSUuoolLzt3fnurGj4iDTjuceC1YgvnB0/bqKZlQxanVy  
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1564661879;
-        s=zm2019; d=zoho.com; i=zhouyanjie@zoho.com;
-        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References;
-        l=1754; bh=pnXglAPiqfqQmS39+JKh6ck+IIvkfDvKN7TtCs+d+E4=;
-        b=FVUF2I049LmMvYZtLCOAjxYP3GmYTY8TpblLJGb/OJcZHDWudjXDtavom2ZLOS/F
-        pgDh4OBeX8ECW9rlkly14EDQ6iCG99anjR04SQamOPiH8t68jwTuqhWQYJwXdVFmffR
-        VAYJGKCKhrIBfJTLvMy4RaWQo6mLTtqRNp38qbCc=
-Received: from localhost.localdomain (171.221.113.137 [171.221.113.137]) by mx.zohomail.com
-        with SMTPS id 1564661878427514.85343183529; Thu, 1 Aug 2019 05:17:58 -0700 (PDT)
-From:   Zhou Yanjie <zhouyanjie@zoho.com>
-To:     linux-mips@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, ralf@linux-mips.org,
-        paul@crapouillou.net, paul.burton@mips.com, jhogan@kernel.org,
-        malat@debian.org, gregkh@linuxfoundation.org, tglx@linutronix.de,
-        allison@lohutok.net, syq@debian.org, chenhc@lemote.com,
-        jiaxun.yang@flygoat.com
-Subject: [PATCH 2/2 v3] MIPS: Ingenic: Fix bugs when calculate bogomips/lpj.
-Date:   Thu,  1 Aug 2019 20:16:31 +0800
-Message-Id: <1564661791-47731-3-git-send-email-zhouyanjie@zoho.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1564661791-47731-1-git-send-email-zhouyanjie@zoho.com>
-References: <1564498510-3751-1-git-send-email-zhouyanjie@zoho.com>
- <1564661791-47731-1-git-send-email-zhouyanjie@zoho.com>
-X-ZohoMailClient: External
+        Thu, 1 Aug 2019 08:17:13 -0400
+Received: by mail-wm1-f67.google.com with SMTP id a15so64418633wmj.5;
+        Thu, 01 Aug 2019 05:17:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=RWLPyME/jAkVEQ5t9L+p96xi6wCaF4hZN+jKl5GuaSU=;
+        b=iaPKellIqry1urVGLGLZw4ECK83Qs7F4ud9GykT1F6hCB2YOFiiCtGqdLQReH4B6Bq
+         41i10VvgP/BxucTfj/LTuHz0Fd4or+VTgKGmsh3KSufmm6FFQJV9Ymz3GkdD3En+NQ8R
+         P5ULrf1pSyw336VUO5BHEr/t0GWlYJ0DDOAAQaCfsWnBvfKUgCF7yDdwZ84ARAr3YpK5
+         pk06I6HMEBiRjeTj1fCtOpdwjLcy95dxivucFFOVgVgXlXvrdNPq7zjdiIYPE4VSMJzm
+         OK8k4K21Nc9+VxPRZnNXlhbvxOF0q22avmBtOC16FU29HVV9K3tv1U4PbrGSaFOqKIJK
+         EbIg==
+X-Gm-Message-State: APjAAAVEkCon5HTXOW71NNtcYf/MMyf/1LjKQZMkVxTdW0DBbzYRBa60
+        /EmIPg9qQXQlFQDT0gvymmRuT25kFlHC0wtj92TLVCmv
+X-Google-Smtp-Source: APXvYqzpx/cJYpS36v0hwlYQJLzatqmdT+c3y247auU4r9Rk0kfrHFl0Ti8sUx1xFAeRY0I+yMm8s4oETnJTRSdV9/M=
+X-Received: by 2002:a7b:c310:: with SMTP id k16mr75092863wmj.133.1564661830932;
+ Thu, 01 Aug 2019 05:17:10 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190801111348.530242235@infradead.org> <20190801111541.917256884@infradead.org>
+ <CAMuHMdU3D22PAWepGP6rMvDwJKVTfbxxH9J=kuo59PB7CCVKOA@mail.gmail.com> <20190801121209.GD31381@hirez.programming.kicks-ass.net>
+In-Reply-To: <20190801121209.GD31381@hirez.programming.kicks-ass.net>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 1 Aug 2019 14:16:58 +0200
+Message-ID: <CAMuHMdXvq4ZDecpaiFHmQbETP=Z0Y2QVHsWpfDGU2bgaDDOA0A@mail.gmail.com>
+Subject: Re: [PATCH 5/5] spi: Reduce kthread priority
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Benson Leung <bleung@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Guenter Roeck <groeck@chromium.org>,
+        Mark Brown <broonie@kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable BTB lookups for short loops to fix bugs when calculate
-bogomips and loops_per_jiffy.
+Hi Peter,
 
-Signed-off-by: Zhou Yanjie <zhouyanjie@zoho.com>
----
- arch/mips/include/asm/mipsregs.h | 4 ++++
- arch/mips/kernel/cpu-probe.c     | 7 +++++++
- 2 files changed, 11 insertions(+)
+On Thu, Aug 1, 2019 at 2:12 PM Peter Zijlstra <peterz@infradead.org> wrote:
+> On Thu, Aug 01, 2019 at 01:27:03PM +0200, Geert Uytterhoeven wrote:
+> > On Thu, Aug 1, 2019 at 1:18 PM Peter Zijlstra <peterz@infradead.org> wrote:
+> > > The SPI thingies request FIFO-99 by default, reduce this to FIFO-50.
+> > >
+> > > FIFO-99 is the very highest priority available to SCHED_FIFO and
+> > > it not a suitable default; it would indicate the SPI work is the
+> > > most important work on the machine.
+> > >
+> > > Cc: Benson Leung <bleung@chromium.org>
+> > > Cc: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> > > Cc: Guenter Roeck <groeck@chromium.org>
+> > > Cc: Mark Brown <broonie@kernel.org>
+> > > Cc: linux-spi@vger.kernel.org
+> > > Cc: linux-kernel@vger.kernel.org
+> > > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> > > ---
+> > >  drivers/platform/chrome/cros_ec_spi.c |    2 +-
+> > >  drivers/spi/spi.c                     |    2 +-
+> > >  2 files changed, 2 insertions(+), 2 deletions(-)
+> > >
+> > > --- a/drivers/platform/chrome/cros_ec_spi.c
+> > > +++ b/drivers/platform/chrome/cros_ec_spi.c
+> > > @@ -706,7 +706,7 @@ static int cros_ec_spi_devm_high_pri_all
+> > >                                            struct cros_ec_spi *ec_spi)
+> > >  {
+> > >         struct sched_param sched_priority = {
+> > > -               .sched_priority = MAX_RT_PRIO - 1,
+> > > +               .sched_priority = MAX_RT_PRIO / 2,
+> >
+> > include/linux/sched/prio.h says:
+> >
+> >  * Priority of a process goes from 0..MAX_PRIO-1, valid RT
+> >  * priority is 0..MAX_RT_PRIO-1, and SCHED_NORMAL/SCHED_BATCH
+> >  * tasks are in the range MAX_RT_PRIO..MAX_PRIO-1. Priority
+> >  * values are inverted: lower p->prio value means higher priority.
+> >
+> > So the new 50 is actually a higher priority than the old 99?
+> >
+> > Given I'm far from an RT expert, I must be missing something?
+> > Thanks!
+>
+> Ah; you found the confusion ;-)
+>
+> https://lkml.kernel.org/20190617122448.GA3436@hirez.programming.kicks-ass.net
 
-diff --git a/arch/mips/include/asm/mipsregs.h b/arch/mips/include/asm/mipsregs.h
-index 1e6966e..bdbdc19 100644
---- a/arch/mips/include/asm/mipsregs.h
-+++ b/arch/mips/include/asm/mipsregs.h
-@@ -689,6 +689,9 @@
- #define MIPS_CONF7_IAR		(_ULCAST_(1) << 10)
- #define MIPS_CONF7_AR		(_ULCAST_(1) << 16)
- 
-+/* Ingenic Config7 bits */
-+#define MIPS_CONF7_BTB_LOOP_EN	(_ULCAST_(1) << 4)
-+
- /* Config7 Bits specific to MIPS Technologies. */
- 
- /* Performance counters implemented Per TC */
-@@ -2813,6 +2816,7 @@ __BUILD_SET_C0(status)
- __BUILD_SET_C0(cause)
- __BUILD_SET_C0(config)
- __BUILD_SET_C0(config5)
-+__BUILD_SET_C0(config7)
- __BUILD_SET_C0(intcontrol)
- __BUILD_SET_C0(intctl)
- __BUILD_SET_C0(srsmap)
-diff --git a/arch/mips/kernel/cpu-probe.c b/arch/mips/kernel/cpu-probe.c
-index eb527a1..2bdd3e1 100644
---- a/arch/mips/kernel/cpu-probe.c
-+++ b/arch/mips/kernel/cpu-probe.c
-@@ -1964,6 +1964,13 @@ static inline void cpu_probe_ingenic(struct cpuinfo_mips *c, unsigned int cpu)
- 		c->cputype = CPU_XBURST;
- 		c->writecombine = _CACHE_UNCACHED_ACCELERATED;
- 		__cpu_name[cpu] = "Ingenic XBurst";
-+		/*
-+		 * The XBurst core by default attempts to avoid branch target
-+		 * buffer lookups by detecting & special casing loops. This
-+		 * feature will cause BogoMIPS and lpj calculate in error.
-+		 * Set cp0 config7 bit 4 to disable this feature.
-+		 */
-+		set_c0_config7(MIPS_CONF7_BTB_LOOP_EN);
- 		break;
- 	default:
- 		panic("Unknown Ingenic Processor ID!");
+/me adds /r after org/
+Thanks!
+
+> But basically, user-space prio is [1-99], while in-kernel prio is
+> [0-98]. The above is user prio (it basically uses the
+> sched_setscheduler() syscall).
+>
+> So 50 really is lower than 99.
+
+IC.
+
+BTW, what about having a #define for MAX_RT_PRIO / 2?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.7.4
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
