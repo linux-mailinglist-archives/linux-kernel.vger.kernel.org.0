@@ -2,152 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63F417E530
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 00:05:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 670B97E515
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 00:01:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389335AbfHAWFP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 18:05:15 -0400
-Received: from hosting.gsystem.sk ([212.5.213.30]:59192 "EHLO
-        hosting.gsystem.sk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727987AbfHAWFP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 18:05:15 -0400
-X-Greylist: delayed 396 seconds by postgrey-1.27 at vger.kernel.org; Thu, 01 Aug 2019 18:05:14 EDT
-Received: from [192.168.0.2] (188-167-68-178.dynamic.chello.sk [188.167.68.178])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1732656AbfHAWBe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 18:01:34 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:39638 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726403AbfHAWBd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Aug 2019 18:01:33 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by hosting.gsystem.sk (Postfix) with ESMTPSA id 043817A0215;
-        Thu,  1 Aug 2019 23:58:37 +0200 (CEST)
-From:   Ondrej Zary <linux@zary.sk>
-To:     Guenter Roeck <linux@roeck-us.net>
-Subject: Re: Marking legacy watchdog drivers as deprecated / obsolete
-Date:   Thu, 1 Aug 2019 23:58:34 +0200
-User-Agent: KMail/1.9.10
-Cc:     Arnd Bergmann <arnd@arndb.de>, linux-watchdog@cger.kernel.org,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20190729220720.GB5712@roeck-us.net> <CAK8P3a16dON3g-BzUOrdHu3ryCD+FyJn29EwcT_aQAdj-jvFnA@mail.gmail.com> <20190730155737.GA22593@roeck-us.net>
-In-Reply-To: <20190730155737.GA22593@roeck-us.net>
-X-KMail-QuotePrefix: > 
+        by mx1.redhat.com (Postfix) with ESMTPS id 60F1930BE987;
+        Thu,  1 Aug 2019 22:01:33 +0000 (UTC)
+Received: from malachite.bss.redhat.com (dhcp-10-20-1-11.bss.redhat.com [10.20.1.11])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id F1C7F600C6;
+        Thu,  1 Aug 2019 22:01:28 +0000 (UTC)
+From:   Lyude Paul <lyude@redhat.com>
+To:     nouveau@lists.freedesktop.org, linux-pci@vger.kernel.org,
+        Lukas Wunner <lukas@wunner.de>
+Cc:     Daniel Drake <drake@endlessm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Aaron Plattner <aplattner@nvidia.com>,
+        Peter Wu <peter@lekensteyn.nl>,
+        Ilia Mirkin <imirkin@alum.mit.edu>,
+        Karol Herbst <kherbst@redhat.com>,
+        Maik Freudenberg <hhfeuer@gmx.de>, linux-kernel@vger.kernel.org
+Subject: [PATCH] PCI: Use pci_reset_bus() in quirk_reset_lenovo_thinkpad_50_nvgpu()
+Date:   Thu,  1 Aug 2019 18:01:17 -0400
+Message-Id: <20190801220117.14952-1-lyude@redhat.com>
 MIME-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-Message-Id: <201908012358.34991.linux@zary.sk>
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Thu, 01 Aug 2019 22:01:33 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tuesday 30 July 2019 17:57:37 Guenter Roeck wrote:
-> On Tue, Jul 30, 2019 at 10:00:36AM +0200, Arnd Bergmann wrote:
-> > On Tue, Jul 30, 2019 at 12:07 AM Guenter Roeck <linux@roeck-us.net> wrote:
-> > >
-> > > Hi,
-> > >
-> > > we have recently seen a number of changes to legacy watchdog drivers,
-> > > mostly surrounding the coding style used some 10+ years ago, but also
-> > > fixing minor formatting or coding problems found by static analyzers.
-> > > This slowly rises above the level of background noise.
-> > >
-> > > Would it be acceptable to mark all those drivers as deprecated/obsolete,
-> > > warn users that the driver should be converted to use the watchdog
-> > > subsystem, and that it will otherwise be removed in a later Linux kernel
-> > > version ? This would give us an idea which drivers are still in use,
-> > > and it would enable us to remove the remaining drivers maybe 5 or 6
-> > > releases for now.
-> > >
-> > > Thoughts ?
-> > 
-> > I don't think an automated approach across 61 drivers is likely to work
-> > well. About half of the drivers appear to be for specific SoCs, and
-> > removing the watchdog driver while keeping the rest of the SoC support
-> > would not be helpful, it  just means we break one of the drivers for the
-> > last remaining users of an old SoC the next time they try to upgrade to
-> > a new kernel.
-> > 
-> 
-> The primary goal would be to identify drivers still in use, and to trigger
-> efforts to convert those drivers to the new infrastructure. Removal of
-> obsolete / unused drivers would be a separate decision, to be made at some
-> point in the future, and individually for each driver. I specifically wasn't
-> trying to suggest auto-removal.
-> 
-> Guenter
-> 
-> > It would probably be helpful to go through the list and see if any of
-> > the drivers
-> > are for platforms that are already gone. FWIW, here is the list of drivers that
-> > have their own .ioctl() method, taken from a patch I'm sending soon
-> > to add a .compat_ioctl handler:
-> > 
-> > arch/powerpc/platforms/52xx/mpc52xx_gpt.c
-> > arch/um/drivers/harddog_kern.c
-> > drivers/char/ipmi/ipmi_watchdog.c
-> > drivers/hwmon/fschmd.c
-> > drivers/rtc/rtc-ds1374.c
-> > drivers/watchdog/acquirewdt.c
-> > drivers/watchdog/advantechwdt.c
-> > drivers/watchdog/alim1535_wdt.c
-> > drivers/watchdog/alim7101_wdt.c
-> > drivers/watchdog/ar7_wdt.c
-> > drivers/watchdog/at91rm9200_wdt.c
-> > drivers/watchdog/ath79_wdt.c
-> > drivers/watchdog/bcm63xx_wdt.c
-> > drivers/watchdog/cpu5wdt.c
-> > drivers/watchdog/eurotechwdt.c
-> > drivers/watchdog/f71808e_wdt.c
-> > drivers/watchdog/gef_wdt.c
-> > drivers/watchdog/geodewdt.c
-> > drivers/watchdog/ib700wdt.c
-> > drivers/watchdog/ibmasr.c
-> > drivers/watchdog/indydog.c
-> > drivers/watchdog/intel_scu_watchdog.c
-> > drivers/watchdog/iop_wdt.c
-> > drivers/watchdog/it8712f_wdt.c
-> > drivers/watchdog/ixp4xx_wdt.c
-> > drivers/watchdog/ks8695_wdt.c
-> > drivers/watchdog/m54xx_wdt.c
-> > drivers/watchdog/machzwd.c
-> > drivers/watchdog/mixcomwd.c
-> > drivers/watchdog/mtx-1_wdt.c
-> > drivers/watchdog/mv64x60_wdt.c
-> > drivers/watchdog/nuc900_wdt.c
-> > drivers/watchdog/nv_tco.c
-> > drivers/watchdog/pc87413_wdt.c
-> > drivers/watchdog/pcwd.c
-> > drivers/watchdog/pcwd_pci.c
-> > drivers/watchdog/pcwd_usb.c
-> > drivers/watchdog/pika_wdt.c
-> > drivers/watchdog/pnx833x_wdt.c
-> > drivers/watchdog/rc32434_wdt.c
-> > drivers/watchdog/rdc321x_wdt.c
-> > drivers/watchdog/riowd.c
-> > drivers/watchdog/sa1100_wdt.c
-> > drivers/watchdog/sb_wdog.c
-> > drivers/watchdog/sbc60xxwdt.c
-> > drivers/watchdog/sbc7240_wdt.c
-> > drivers/watchdog/sbc_epx_c3.c
-> > drivers/watchdog/sbc_fitpc2_wdt.c
-> > drivers/watchdog/sc1200wdt.c
-> > drivers/watchdog/sc520_wdt.c
-> > drivers/watchdog/sch311x_wdt.c
-> > drivers/watchdog/scx200_wdt.c
-> > drivers/watchdog/smsc37b787_wdt.c
-> > drivers/watchdog/w83877f_wdt.c
-> > drivers/watchdog/w83977f_wdt.c
-> > drivers/watchdog/wafer5823wdt.c
-> > drivers/watchdog/wdrtas.c
-> > drivers/watchdog/wdt.c
-> > drivers/watchdog/wdt285.c
-> > drivers/watchdog/wdt977.c
-> > drivers/watchdog/wdt_pci.c
-> > 
-> >       Arnd
-> 
+Since quirk_nvidia_hda() was added there's now two nvidia device
+functions on any laptops with nvidia GPUs: the HDA controller, and the
+GPU itself. Unfortunately this has the sideaffect of breaking
+quirk_reset_lenovo_thinkpad_50_nvgpu() since pci_reset_function() was
+using pci_parent_bus_reset() to reset the GPU's respective PCI bus, and
+pci_parent_bus_reset() does not work on busses which have more then a
+single device function present.
 
-I have some older x86 boards so I probably could test some of them. Likely ALi chipset (alim1535_wdt.c and/or alim7101_wdt.c) and some super I/Os (it8712f_wdt.c, w83877f_wdt.c, w83977f_wdt.c).
+So, fix this by simply calling pci_reset_bus() instead which properly
+resets the GPU bus and all device functions under it, including both the
+GPU and the HDA controller.
 
+Fixes: b516ea586d71 ("PCI: Enable NVIDIA HDA controllers")
+Cc: Lukas Wunner <lukas@wunner.de>
+Cc: Daniel Drake <drake@endlessm.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Aaron Plattner <aplattner@nvidia.com>
+Cc: Peter Wu <peter@lekensteyn.nl>
+Cc: Ilia Mirkin <imirkin@alum.mit.edu>
+Cc: Karol Herbst <kherbst@redhat.com>
+Cc: Maik Freudenberg <hhfeuer@gmx.de>
+Cc: linux-pci@vger.kernel.org
+Signed-off-by: Lyude Paul <lyude@redhat.com>
+---
+ drivers/pci/quirks.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+index 208aacf39329..44c4ae1abd00 100644
+--- a/drivers/pci/quirks.c
++++ b/drivers/pci/quirks.c
+@@ -5256,7 +5256,7 @@ static void quirk_reset_lenovo_thinkpad_p50_nvgpu(struct pci_dev *pdev)
+ 	 */
+ 	if (ioread32(map + 0x2240c) & 0x2) {
+ 		pci_info(pdev, FW_BUG "GPU left initialized by EFI, resetting\n");
+-		ret = pci_reset_function(pdev);
++		ret = pci_reset_bus(pdev);
+ 		if (ret < 0)
+ 			pci_err(pdev, "Failed to reset GPU: %d\n", ret);
+ 	}
 -- 
-Ondrej Zary
+2.21.0
+
