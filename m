@@ -2,46 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4DC977DC47
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 15:11:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A76837DC40
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 15:10:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731690AbfHANK7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 09:10:59 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:54710 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731644AbfHANKu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1731652AbfHANKu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Thu, 1 Aug 2019 09:10:50 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:54566 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727853AbfHANKr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Aug 2019 09:10:47 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=SIcw7oNKmi9/Oc/uKvmWuwiOyL3ZlEHWKaiCWsI5Vic=; b=CsMVNHLewrYU
-        GoAXdPWw6hVq4eBBZUcEtyfKsToI+qs6d2uDxXfgqtlMqtm5WaAjWpexFKyqaufpkPXFc2OaZfC+B
-        /krFVFC8QGkG2kvt8KB/Vhde1PD3h7Vc1OIDYu9Yf3hW2fmZC86Beupb1xQpFkX8OAC4uUv+j/KKv
-        jhqO8=;
-Received: from ypsilon.sirena.org.uk ([2001:470:1f1d:6b5::7])
+        List-Archive; bh=kZ2POKn0qn2LN7RXkQ6obBp4mrNriTeVZiQqjkwNIM8=; b=peAGhlj0SUKa
+        xQqDLR7xGRe9C86XgIthDd/Na2s46vP6u+fSU1qyczOIfdZ8BNQAOZNkcwqhQrRwVZ58yJ1q3TXtY
+        MwHuOInSQ7G6VKtJU3lthXny68wqhqHB0L8IaY2fXXLcYjDaGclY/ouB8gDOCZTrBJDNyD0CFApG7
+        CIduw=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1htAqu-0004ip-Jr; Thu, 01 Aug 2019 13:10:40 +0000
+        id 1htAqv-0004j0-3n; Thu, 01 Aug 2019 13:10:41 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id EAD042742D2C; Thu,  1 Aug 2019 14:10:39 +0100 (BST)
+        id A018F2742C48; Thu,  1 Aug 2019 14:10:40 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     alsa-devel@alsa-project.org, Jaroslav Kysela <perex@perex.cz>,
-        Jie Yang <yang.jie@linux.intel.com>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Takashi Iwai <tiwai@suse.com>
-Subject: Applied "ASoC: Intel: SoC: skylake: no need to check return value of debugfs_create functions" to the asoc tree
-In-Reply-To: <20190731131716.9764-1-gregkh@linuxfoundation.org>
+To:     Jerome Brunet <jbrunet@baylibre.com>
+Cc:     alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+        Kevin Hilman <khilman@baylibre.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>
+Subject: Applied "ASoC: create pcm for codec2codec links as well" to the asoc tree
+In-Reply-To: <20190725165949.29699-5-jbrunet@baylibre.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190801131039.EAD042742D2C@ypsilon.sirena.org.uk>
-Date:   Thu,  1 Aug 2019 14:10:39 +0100 (BST)
+Message-Id: <20190801131040.A018F2742C48@ypsilon.sirena.org.uk>
+Date:   Thu,  1 Aug 2019 14:10:40 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -49,7 +48,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: Intel: SoC: skylake: no need to check return value of debugfs_create functions
+   ASoC: create pcm for codec2codec links as well
 
 has been applied to the asoc tree at
 
@@ -74,88 +73,174 @@ to this mail.
 Thanks,
 Mark
 
-From d8701fae95c0e6cb587b293cb8e01acc96dd1095 Mon Sep 17 00:00:00 2001
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Wed, 31 Jul 2019 15:17:14 +0200
-Subject: [PATCH] ASoC: Intel: SoC: skylake: no need to check return value of
- debugfs_create functions
+From a342031cdd0818cb0fbcb44798211c7a02c7ca27 Mon Sep 17 00:00:00 2001
+From: Jerome Brunet <jbrunet@baylibre.com>
+Date: Thu, 25 Jul 2019 18:59:47 +0200
+Subject: [PATCH] ASoC: create pcm for codec2codec links as well
 
-When calling debugfs functions, there is no need to ever check the
-return value.  The function can work or not, but the code logic should
-never do something different based on this.
+At the moment, codec to codec links uses an ephemeral variable for
+the struct snd_pcm_substream. Also the struct snd_soc_pcm_runtime
+does not have real struct snd_pcm.
 
-Also, if a debugfs call fails, userspace is notified with an error in
-the log, so no need to log the error again.
+This might a problem if the functions used by a codec on codec to
+codec link expect these structures to exist, and keep on existing
+during the life of the codec.
 
-Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc: Liam Girdwood <liam.r.girdwood@linux.intel.com>
-Cc: Jie Yang <yang.jie@linux.intel.com>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Jaroslav Kysela <perex@perex.cz>
-Cc: Takashi Iwai <tiwai@suse.com>
-Cc: alsa-devel@alsa-project.org
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Link: https://lore.kernel.org/r/20190731131716.9764-1-gregkh@linuxfoundation.org
+For example, it is the case of the hdmi-codec, which uses
+snd_pcm_add_chmap_ctls(). For the controls to works, the pcm and
+substream must to exist.
+
+This change is first step, it create pcm (and substreams) for codec
+to codec links, in the same way as dpcm backend links.
+
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Link: https://lore.kernel.org/r/20190725165949.29699-5-jbrunet@baylibre.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/intel/skylake/skl-debug.c | 28 +++++-----------------------
- 1 file changed, 5 insertions(+), 23 deletions(-)
+ sound/soc/soc-core.c | 42 ++++++++++++------------------------------
+ sound/soc/soc-pcm.c  | 35 ++++++++++++++++++++++++++++++++---
+ 2 files changed, 44 insertions(+), 33 deletions(-)
 
-diff --git a/sound/soc/intel/skylake/skl-debug.c b/sound/soc/intel/skylake/skl-debug.c
-index fb232428109f..212370bf704c 100644
---- a/sound/soc/intel/skylake/skl-debug.c
-+++ b/sound/soc/intel/skylake/skl-debug.c
-@@ -164,10 +164,8 @@ void skl_debug_init_module(struct skl_debug *d,
- 			struct snd_soc_dapm_widget *w,
- 			struct skl_module_cfg *mconfig)
- {
--	if (!debugfs_create_file(w->name, 0444,
--				d->modules, mconfig,
--				&mcfg_fops))
--		dev_err(d->dev, "%s: module debugfs init failed\n", w->name);
-+	debugfs_create_file(w->name, 0444, d->modules, mconfig,
-+			    &mcfg_fops);
+diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
+index 06697b2d96b1..da11e44b01aa 100644
+--- a/sound/soc/soc-core.c
++++ b/sound/soc/soc-core.c
+@@ -447,16 +447,6 @@ static void snd_soc_flush_all_delayed_work(struct snd_soc_card *card)
+ 		flush_delayed_work(&rtd->delayed_work);
  }
  
- static ssize_t fw_softreg_read(struct file *file, char __user *user_buf,
-@@ -224,34 +222,18 @@ struct skl_debug *skl_debugfs_init(struct skl_dev *skl)
- 		return NULL;
- 
- 	/* create the debugfs dir with platform component's debugfs as parent */
--	d->fs = debugfs_create_dir("dsp",
--				   skl->component->debugfs_root);
--	if (IS_ERR(d->fs) || !d->fs) {
--		dev_err(&skl->pci->dev, "debugfs root creation failed\n");
--		return NULL;
--	}
-+	d->fs = debugfs_create_dir("dsp", skl->component->debugfs_root);
- 
- 	d->skl = skl;
- 	d->dev = &skl->pci->dev;
- 
- 	/* now create the module dir */
- 	d->modules = debugfs_create_dir("modules", d->fs);
--	if (IS_ERR(d->modules) || !d->modules) {
--		dev_err(&skl->pci->dev, "modules debugfs create failed\n");
--		goto err;
--	}
- 
--	if (!debugfs_create_file("fw_soft_regs_rd", 0444, d->fs, d,
--				 &soft_regs_ctrl_fops)) {
--		dev_err(d->dev, "fw soft regs control debugfs init failed\n");
--		goto err;
--	}
-+	debugfs_create_file("fw_soft_regs_rd", 0444, d->fs, d,
-+			    &soft_regs_ctrl_fops);
- 
- 	return d;
+-static void codec2codec_close_delayed_work(struct work_struct *work)
+-{
+-	/*
+-	 * Currently nothing to do for c2c links
+-	 * Since c2c links are internal nodes in the DAPM graph and
+-	 * don't interface with the outside world or application layer
+-	 * we don't have to do any special handling on close.
+-	 */
+-}
 -
--err:
--	debugfs_remove_recursive(d->fs);
--	return NULL;
+ #ifdef CONFIG_PM_SLEEP
+ /* powers down audio subsystem for suspend */
+ int snd_soc_suspend(struct device *dev)
+@@ -1555,27 +1545,19 @@ static int soc_probe_link_dais(struct snd_soc_card *card,
+ 		return ret;
+ 	}
+ 
+-	if (!dai_link->params) {
+-		/* create the pcm */
+-		ret = soc_new_pcm(rtd, num);
+-		if (ret < 0) {
+-			dev_err(card->dev, "ASoC: can't create pcm %s :%d\n",
+-				dai_link->stream_name, ret);
+-			return ret;
+-		}
+-		ret = soc_link_dai_pcm_new(&cpu_dai, 1, rtd);
+-		if (ret < 0)
+-			return ret;
+-		ret = soc_link_dai_pcm_new(rtd->codec_dais,
+-					   rtd->num_codecs, rtd);
+-		if (ret < 0)
+-			return ret;
+-	} else {
+-		INIT_DELAYED_WORK(&rtd->delayed_work,
+-				  codec2codec_close_delayed_work);
++	/* create the pcm */
++	ret = soc_new_pcm(rtd, num);
++	if (ret < 0) {
++		dev_err(card->dev, "ASoC: can't create pcm %s :%d\n",
++			dai_link->stream_name, ret);
++		return ret;
+ 	}
+-
+-	return 0;
++	ret = soc_link_dai_pcm_new(&cpu_dai, 1, rtd);
++	if (ret < 0)
++		return ret;
++	ret = soc_link_dai_pcm_new(rtd->codec_dais,
++				   rtd->num_codecs, rtd);
++	return ret;
  }
  
- void skl_debugfs_exit(struct skl_dev *skl)
+ static int soc_bind_aux_dev(struct snd_soc_card *card, int num)
+diff --git a/sound/soc/soc-pcm.c b/sound/soc/soc-pcm.c
+index fabeac164a6c..30264bc592f6 100644
+--- a/sound/soc/soc-pcm.c
++++ b/sound/soc/soc-pcm.c
+@@ -678,6 +678,16 @@ static void close_delayed_work(struct work_struct *work)
+ 	mutex_unlock(&rtd->pcm_mutex);
+ }
+ 
++static void codec2codec_close_delayed_work(struct work_struct *work)
++{
++	/*
++	 * Currently nothing to do for c2c links
++	 * Since c2c links are internal nodes in the DAPM graph and
++	 * don't interface with the outside world or application layer
++	 * we don't have to do any special handling on close.
++	 */
++}
++
+ /*
+  * Called by ALSA when a PCM substream is closed. Private data can be
+  * freed here. The cpu DAI, codec DAI, machine and components are also
+@@ -3011,6 +3021,12 @@ int soc_new_pcm(struct snd_soc_pcm_runtime *rtd, int num)
+ 		playback = rtd->dai_link->dpcm_playback;
+ 		capture = rtd->dai_link->dpcm_capture;
+ 	} else {
++		/* Adapt stream for codec2codec links */
++		struct snd_soc_pcm_stream *cpu_capture = rtd->dai_link->params ?
++			&cpu_dai->driver->playback : &cpu_dai->driver->capture;
++		struct snd_soc_pcm_stream *cpu_playback = rtd->dai_link->params ?
++			&cpu_dai->driver->capture : &cpu_dai->driver->playback;
++
+ 		for_each_rtd_codec_dai(rtd, i, codec_dai) {
+ 			if (snd_soc_dai_stream_valid(codec_dai, SNDRV_PCM_STREAM_PLAYBACK) &&
+ 			    snd_soc_dai_stream_valid(cpu_dai,   SNDRV_PCM_STREAM_PLAYBACK))
+@@ -3019,6 +3035,9 @@ int soc_new_pcm(struct snd_soc_pcm_runtime *rtd, int num)
+ 			    snd_soc_dai_stream_valid(cpu_dai,   SNDRV_PCM_STREAM_CAPTURE))
+ 				capture = 1;
+ 		}
++
++		capture = capture && cpu_capture->channels_min;
++		playback = playback && cpu_playback->channels_min;
+ 	}
+ 
+ 	if (rtd->dai_link->playback_only) {
+@@ -3032,7 +3051,13 @@ int soc_new_pcm(struct snd_soc_pcm_runtime *rtd, int num)
+ 	}
+ 
+ 	/* create the PCM */
+-	if (rtd->dai_link->no_pcm) {
++	if (rtd->dai_link->params) {
++		snprintf(new_name, sizeof(new_name), "codec2codec(%s)",
++			 rtd->dai_link->stream_name);
++
++		ret = snd_pcm_new_internal(rtd->card->snd_card, new_name, num,
++					   playback, capture, &pcm);
++	} else if (rtd->dai_link->no_pcm) {
+ 		snprintf(new_name, sizeof(new_name), "(%s)",
+ 			rtd->dai_link->stream_name);
+ 
+@@ -3059,13 +3084,17 @@ int soc_new_pcm(struct snd_soc_pcm_runtime *rtd, int num)
+ 	dev_dbg(rtd->card->dev, "ASoC: registered pcm #%d %s\n",num, new_name);
+ 
+ 	/* DAPM dai link stream work */
+-	INIT_DELAYED_WORK(&rtd->delayed_work, close_delayed_work);
++	if (rtd->dai_link->params)
++		INIT_DELAYED_WORK(&rtd->delayed_work,
++				  codec2codec_close_delayed_work);
++	else
++		INIT_DELAYED_WORK(&rtd->delayed_work, close_delayed_work);
+ 
+ 	pcm->nonatomic = rtd->dai_link->nonatomic;
+ 	rtd->pcm = pcm;
+ 	pcm->private_data = rtd;
+ 
+-	if (rtd->dai_link->no_pcm) {
++	if (rtd->dai_link->no_pcm || rtd->dai_link->params) {
+ 		if (playback)
+ 			pcm->streams[SNDRV_PCM_STREAM_PLAYBACK].substream->private_data = rtd;
+ 		if (capture)
 -- 
 2.20.1
 
