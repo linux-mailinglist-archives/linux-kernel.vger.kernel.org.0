@@ -2,321 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 57CC47D496
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 06:30:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EEEA97D49F
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 06:47:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728316AbfHAEav (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 00:30:51 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:42406 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725790AbfHAEau (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 00:30:50 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x714UZw1036547;
-        Wed, 31 Jul 2019 23:30:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1564633835;
-        bh=O118tJQY/v+iSAUJJ0NQIEVkdaDTiLEoE3p3wdtvCvQ=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=h2qYY1q0WSqPHnL68lFfJb5oDZLiMhitllxd32pD9jdXelPPU0pO2b+WjZNnljM2s
-         b9uaC++dbborDPu/2EK/yeBHBI8PBQMs38DBeb8og1qCB24JggR2zc/9QAfBJ5mzPJ
-         GKMwH1FalkMpxgZu0b6ZOdrygpla99ctXU/5KSh8=
-Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x714UZqq008588
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 31 Jul 2019 23:30:35 -0500
-Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 31
- Jul 2019 23:30:35 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Wed, 31 Jul 2019 23:30:35 -0500
-Received: from a0132425.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x714UObs010110;
-        Wed, 31 Jul 2019 23:30:33 -0500
-From:   Vignesh Raghavendra <vigneshr@ti.com>
-To:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Tudor Ambarus <tudor.ambarus@microchip.com>
-CC:     Marek Vasut <marek.vasut@gmail.com>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-mtd@lists.infradead.org>
-Subject: [PATCH v3 3/3] mtd: spi-nor: Rework hwcaps selection for the spi-mem case
-Date:   Thu, 1 Aug 2019 10:00:52 +0530
-Message-ID: <20190801043052.30192-4-vigneshr@ti.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190801043052.30192-1-vigneshr@ti.com>
-References: <20190801043052.30192-1-vigneshr@ti.com>
+        id S1728704AbfHAErT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 00:47:19 -0400
+Received: from mail-eopbgr780084.outbound.protection.outlook.com ([40.107.78.84]:15098
+        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726612AbfHAErT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Aug 2019 00:47:19 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=aMuRDy2hBLAo+ofi1/Uxzwj+2Y9ldpxZFPf+JPNRvN2lxHNqMOQFY7jJuLMYhcvLuIUT261TY7bZQEywNh1MXzX5Ag7rVt3FK8Gc2vVONBQJBgkob4+e7NCw4tnNI/TpPrSucyNxB06kBLAv8ThM6Qth0rTvgO2wxLy8zhr1yRgvWueGWCy47gBdEYQOiGYK+EaMyVACfIJhhg1IDYVFvGN4BQG6BHWnJEa8o8MRPaYq2Wa+VRWsfuCds9cWNCuVI3nMXOnzwCBn+wyeeu4Rlge7oWc7hOREQllJ85KWCjFduyRx/T8yeWXctQxKPAsp6yopF9eZ9KcbSU6mfxPgGA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MxKCiTbq4j+Vc1KBIMgWsXKYB0NIwhbDnocE3z+B2H8=;
+ b=NWq+GI0mKGB7Mzm9edn/CpmGFoNpTNb8iaQB3Xa2/S3WjtwKTh1Uu4hIFLuCe/9RD9CFgYhNyx3CGZAdoEnr/yPOek2HlqG4BgQhHAzyG6EBiPKOzZZJkJG54aNziVjar51c6KeS/yq4W1cZxv6Me55HILxZb4mbgTpMk4MqWSp4pGTUT7CB+Tu+N3yAqgRPkuv4ev++m4uhOZeeK33dU9LDVbuAklRqbW2KFlFnKxzdGMMLt6dAn00XJ8J0dpPv/L146vxF+NGctfqSomnMERj+EtrMhUwgKnaNgdEFbOE1iZqQys4N3GA7MbQ58bFGD4C7UXT6Z1hQwQdG/4KjJA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
+ smtp.mailfrom=xilinx.com;dmarc=pass action=none
+ header.from=xilinx.com;dkim=pass header.d=xilinx.com;arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MxKCiTbq4j+Vc1KBIMgWsXKYB0NIwhbDnocE3z+B2H8=;
+ b=rAOUxsw1Tip4jPQiLZ/Dw1li2KvNflfbqQ9fxxLyt3Gp7inJIWLlNExV7iEJZT0JT9SBHqEa5dY4ENrBGiRoAeAUbXJbFMZx/W8k04y/z/veOzX2OkVCmS/nG6bZY/MRRNAQ+oZfMUyM4RsTIHhg0ll3kIlhtcpWtzNvpRq3emo=
+Received: from MN2PR02MB5727.namprd02.prod.outlook.com (20.179.85.153) by
+ MN2PR02MB7102.namprd02.prod.outlook.com (20.180.27.85) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2136.15; Thu, 1 Aug 2019 04:47:13 +0000
+Received: from MN2PR02MB5727.namprd02.prod.outlook.com
+ ([fe80::3873:a3ea:1f66:fc89]) by MN2PR02MB5727.namprd02.prod.outlook.com
+ ([fe80::3873:a3ea:1f66:fc89%7]) with mapi id 15.20.2115.005; Thu, 1 Aug 2019
+ 04:47:13 +0000
+From:   Naga Sureshkumar Relli <nagasure@xilinx.com>
+To:     Boris Brezillon <boris.brezillon@collabora.com>
+CC:     "Tudor.Ambarus@microchip.com" <Tudor.Ambarus@microchip.com>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "vigneshr@ti.com" <vigneshr@ti.com>,
+        "richard@nod.at" <richard@nod.at>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>
+Subject: RE: [PATCH 5/6] mtd: spi-nor: Add s3an_post_sfdp_fixups()
+Thread-Topic: [PATCH 5/6] mtd: spi-nor: Add s3an_post_sfdp_fixups()
+Thread-Index: AQHVR4AuPtwOhxyzBUKoXu06OueqLabkpU9AgAAFXgCAAQ6NsA==
+Date:   Thu, 1 Aug 2019 04:47:12 +0000
+Message-ID: <MN2PR02MB5727F1EB06E3363E8978BEB6AFDE0@MN2PR02MB5727.namprd02.prod.outlook.com>
+References: <20190731091145.27374-1-tudor.ambarus@microchip.com>
+        <20190731091145.27374-6-tudor.ambarus@microchip.com>
+        <MN2PR02MB5727FF8617B1A2FC89739601AFDF0@MN2PR02MB5727.namprd02.prod.outlook.com>
+ <20190731143822.79fa7c82@collabora.com>
+In-Reply-To: <20190731143822.79fa7c82@collabora.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=nagasure@xilinx.com; 
+x-originating-ip: [149.199.50.133]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 256e44c3-e3e6-40b0-ef49-08d7163b5209
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600148)(711020)(4605104)(1401327)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:MN2PR02MB7102;
+x-ms-traffictypediagnostic: MN2PR02MB7102:
+x-microsoft-antispam-prvs: <MN2PR02MB71027DA95B4D488D3B2F97CCAFDE0@MN2PR02MB7102.namprd02.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8882;
+x-forefront-prvs: 01165471DB
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(136003)(366004)(396003)(346002)(39860400002)(13464003)(51914003)(189003)(199004)(26005)(33656002)(66066001)(6246003)(52536014)(54906003)(316002)(6436002)(229853002)(8676002)(71190400001)(71200400001)(186003)(53936002)(102836004)(81156014)(4744005)(6916009)(7696005)(305945005)(99286004)(256004)(8936002)(7736002)(81166006)(5660300002)(76176011)(6116002)(3846002)(476003)(66946007)(14444005)(2906002)(446003)(9686003)(55016002)(4326008)(74316002)(14454004)(11346002)(478600001)(7416002)(68736007)(53546011)(6506007)(486006)(25786009)(86362001)(64756008)(66556008)(76116006)(66476007)(66446008);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR02MB7102;H:MN2PR02MB5727.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: xilinx.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: b6RO5zC6C2ycFOoTydBNWmRgBuykmuEJ7copsyKaoB4QsqCVKr2L0dByL7CBMonChSaK4Zuo5PWl5YjxHlmLwid5lRCINw9qOML0VK9tYiXDg2wpY1N+RNVJosLvSdNtTond2N51tiNaC7e2mGnDGBd9CRtH0PTUIcKmQe5oYrLLz0geClXWTUA+/Scl4JaxRxAZgruYZ+fwOenRMGK0/ZPPbul33vxn3KxW1JdcDM1gxyNyHoDtvM+/YeFWeNO3iPu9LgORHNbOroqeBP653dd0sBQUlA9BGA4M0qjjaK/9o879+BbuOmHoHXfrlHkU+ukv6/Bgs+6Gl3gmoB9HZDCYnOdjJaBRzQRS65P58i8THRMWur0pA/U7Iav9isX3A8ZNGQ7WheZzf6SWsq1kCUU78V4sBaF700CzsAzxFAM=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 256e44c3-e3e6-40b0-ef49-08d7163b5209
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Aug 2019 04:47:13.0079
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: nagasure@xilinx.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR02MB7102
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Boris Brezillon <boris.brezillon@bootlin.com>
 
-The spi-mem layer provides a spi_mem_supports_op() function to check
-whether a specific operation is supported by the controller or not.
-This is much more accurate than the hwcaps selection logic based on
-SPI_{RX,TX}_ flags.
 
-Rework the hwcaps selection logic to use spi_mem_supports_op() when
-nor->spimem != NULL.
+> -----Original Message-----
+> From: Boris Brezillon <boris.brezillon@collabora.com>
+> Sent: Wednesday, July 31, 2019 6:08 PM
+> To: Naga Sureshkumar Relli <nagasure@xilinx.com>
+> Cc: Tudor.Ambarus@microchip.com; marek.vasut@gmail.com; vigneshr@ti.com;
+> richard@nod.at; linux-kernel@vger.kernel.org; linux-mtd@lists.infradead.o=
+rg;
+> miquel.raynal@bootlin.com; computersforpeace@gmail.com; dwmw2@infradead.o=
+rg
+> Subject: Re: [PATCH 5/6] mtd: spi-nor: Add s3an_post_sfdp_fixups()
+>=20
+> On Wed, 31 Jul 2019 12:31:19 +0000
+> Naga Sureshkumar Relli <nagasure@xilinx.com> wrote:
+>=20
+> > Hi Tudor,
+> >
+> > Thanks for the updates. With these kind of updates, we can add Vendor
+> > specific Code easily, like Xilinx Dual parallel and stacked modes.
+> > In these configurations we need to tweak the nor parameters like page_s=
+ize, sectors etc.
+> > So with the help of these patches. we can easily update these parameter=
+s.
+>=20
+> Absolutely not. This is just a solution to recover from broken SFDP table=
+s.
+Ok.
 
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
-Signed-off-by: Vignesh Raghavendra <vigneshr@ti.com>
----
- drivers/mtd/spi-nor/spi-nor.c | 183 +++++++++++++++++++++++++++-------
- include/linux/mtd/spi-nor.h   |  14 +++
- 2 files changed, 161 insertions(+), 36 deletions(-)
-
-diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
-index 4fae7f92715a..2590d82982e8 100644
---- a/drivers/mtd/spi-nor/spi-nor.c
-+++ b/drivers/mtd/spi-nor/spi-nor.c
-@@ -2952,6 +2952,129 @@ static int spi_nor_read_sfdp(struct spi_nor *nor, u32 addr,
- 	return ret;
- }
- 
-+/**
-+ * spi_nor_spimem_check_op - check if the operation is supported
-+ *                           by controller
-+ *@nor:        pointer to a 'struct spi_nor'
-+ *@op:         pointer to op template to be checked
-+ *
-+ * Returns 0 if operation is supported, -ENOTSUPP otherwise.
-+ */
-+static int spi_nor_spimem_check_op(struct spi_nor *nor,
-+				   struct spi_mem_op *op)
-+{
-+	/*
-+	 * First test with 4 address bytes. The opcode itself might
-+	 * be a 3B addressing opcode but we don't care, because
-+	 * SPI controller implementation should not check the opcode,
-+	 * but just the sequence.
-+	 */
-+	op->addr.nbytes = 4;
-+	if (!spi_mem_supports_op(nor->spimem, op)) {
-+		/* If flash size <16MB, 3 address bytes are sufficient */
-+		if (nor->mtd.size <= SZ_16M) {
-+			op->addr.nbytes = 3;
-+			if (!spi_mem_supports_op(nor->spimem, op))
-+				return -ENOTSUPP;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+/**
-+ * spi_nor_spimem_check_readop - check if the read op is supported
-+ *                               by controller
-+ *@nor:         pointer to a 'struct spi_nor'
-+ *@read:        pointer to op template to be checked
-+ *
-+ * Returns 0 if operation is supported, -ENOTSUPP otherwise.
-+ */
-+static int spi_nor_spimem_check_readop(struct spi_nor *nor,
-+				       const struct spi_nor_read_command *read)
-+{
-+	struct spi_mem_op op = SPI_MEM_OP(SPI_MEM_OP_CMD(read->opcode, 1),
-+					  SPI_MEM_OP_ADDR(3, 0, 1),
-+					  SPI_MEM_OP_DUMMY(0, 1),
-+					  SPI_MEM_OP_DATA_IN(0, NULL, 1));
-+
-+	op.cmd.buswidth = spi_nor_get_protocol_inst_nbits(read->proto);
-+	op.addr.buswidth = spi_nor_get_protocol_addr_nbits(read->proto);
-+	op.data.buswidth = spi_nor_get_protocol_data_nbits(read->proto);
-+	op.dummy.buswidth = op.addr.buswidth;
-+	op.dummy.nbytes = (read->num_mode_clocks + read->num_wait_states) *
-+			  op.dummy.buswidth / 8;
-+
-+	return spi_nor_spimem_check_op(nor, &op);
-+}
-+
-+/**
-+ * spi_nor_spimem_check_pp - check if the page program op is supported
-+ *                           by controller
-+ *@nor:         pointer to a 'struct spi_nor'
-+ *@pp:          pointer to op template to be checked
-+ *
-+ * Returns 0 if operation is supported, -ENOTSUPP otherwise.
-+ */
-+static int spi_nor_spimem_check_pp(struct spi_nor *nor,
-+				   const struct spi_nor_pp_command *pp)
-+{
-+	struct spi_mem_op op = SPI_MEM_OP(SPI_MEM_OP_CMD(pp->opcode, 1),
-+					  SPI_MEM_OP_ADDR(3, 0, 1),
-+					  SPI_MEM_OP_NO_DUMMY,
-+					  SPI_MEM_OP_DATA_OUT(0, NULL, 1));
-+
-+	op.cmd.buswidth = spi_nor_get_protocol_inst_nbits(pp->proto);
-+	op.addr.buswidth = spi_nor_get_protocol_addr_nbits(pp->proto);
-+	op.data.buswidth = spi_nor_get_protocol_data_nbits(pp->proto);
-+
-+	return spi_nor_spimem_check_op(nor, &op);
-+}
-+
-+/**
-+ * spi_nor_spimem_adjust_hwcaps - Find optimal Read/Write protocol
-+ *                                based on SPI controller capabilities
-+ * @nor:        pointer to a 'struct spi_nor'
-+ * @params:     pointer to the 'struct spi_nor_flash_parameter'
-+ *              representing SPI NOR flash capabilities
-+ * @hwcaps:     pointer to resulting capabilities after adjusting
-+ *              according to controller and flash's capability
-+ */
-+static void
-+spi_nor_spimem_adjust_hwcaps(struct spi_nor *nor,
-+			     const struct spi_nor_flash_parameter *params,
-+			     u32 *hwcaps)
-+{
-+	unsigned int cap;
-+
-+	/* DTR modes are not supported yet, mask them all. */
-+	*hwcaps &= ~SNOR_HWCAPS_DTR;
-+
-+	/* X-X-X modes are not supported yet, mask them all. */
-+	*hwcaps &= ~SNOR_HWCAPS_X_X_X;
-+
-+	/* Start with read commands. */
-+	for (cap = 0; cap < sizeof(*hwcaps) * BITS_PER_BYTE; cap++) {
-+		int rdidx, ppidx;
-+
-+		if (!(*hwcaps & BIT(cap)))
-+			continue;
-+
-+		rdidx = spi_nor_hwcaps_read2cmd(BIT(cap));
-+		if (rdidx >= 0 &&
-+		    spi_nor_spimem_check_readop(nor, &params->reads[rdidx]))
-+			*hwcaps &= ~BIT(cap);
-+
-+		ppidx = spi_nor_hwcaps_pp2cmd(BIT(cap));
-+		if (ppidx < 0)
-+			continue;
-+
-+		if (spi_nor_spimem_check_pp(nor,
-+					    &params->page_programs[ppidx]))
-+			*hwcaps &= ~BIT(cap);
-+	}
-+}
-+
- /**
-  * spi_nor_read_sfdp_dma_unsafe() - read Serial Flash Discoverable Parameters.
-  * @nor:	pointer to a 'struct spi_nor'
-@@ -4361,16 +4484,25 @@ static int spi_nor_setup(struct spi_nor *nor,
- 	 */
- 	shared_mask = hwcaps->mask & params->hwcaps.mask;
- 
--	/* SPI n-n-n protocols are not supported yet. */
--	ignored_mask = (SNOR_HWCAPS_READ_2_2_2 |
--			SNOR_HWCAPS_READ_4_4_4 |
--			SNOR_HWCAPS_READ_8_8_8 |
--			SNOR_HWCAPS_PP_4_4_4 |
--			SNOR_HWCAPS_PP_8_8_8);
--	if (shared_mask & ignored_mask) {
--		dev_dbg(nor->dev,
--			"SPI n-n-n protocols are not supported yet.\n");
--		shared_mask &= ~ignored_mask;
-+	if (nor->spimem) {
-+		/*
-+		 * When called from spi_nor_probe(), all caps are set and we
-+		 * need to discard some of them based on what the SPI
-+		 * controller actually supports (using spi_mem_supports_op()).
-+		 */
-+		spi_nor_spimem_adjust_hwcaps(nor, params, &shared_mask);
-+	} else {
-+		/*
-+		 * SPI n-n-n protocols are not supported when the SPI
-+		 * controller directly implements the spi_nor interface.
-+		 * Yet another reason to switch to spi-mem.
-+		 */
-+		ignored_mask = SNOR_HWCAPS_X_X_X;
-+		if (shared_mask & ignored_mask) {
-+			dev_dbg(nor->dev,
-+				"SPI n-n-n protocols are not supported.\n");
-+			shared_mask &= ~ignored_mask;
-+		}
- 	}
- 
- 	/* Select the (Fast) Read command. */
-@@ -4709,11 +4841,11 @@ static int spi_nor_probe(struct spi_mem *spimem)
- 	struct spi_device *spi = spimem->spi;
- 	struct flash_platform_data *data = dev_get_platdata(&spi->dev);
- 	struct spi_nor *nor;
--	struct spi_nor_hwcaps hwcaps = {
--		.mask = SNOR_HWCAPS_READ |
--			SNOR_HWCAPS_READ_FAST |
--			SNOR_HWCAPS_PP,
--	};
-+	/*
-+	 * Enable all caps by default. The core will mask them after
-+	 * checking what's really supported using spi_mem_supports_op().
-+	 */
-+	const struct spi_nor_hwcaps hwcaps = { .mask = SNOR_HWCAPS_ALL };
- 	char *flash_name;
- 	int ret;
- 
-@@ -4727,27 +4859,6 @@ static int spi_nor_probe(struct spi_mem *spimem)
- 
- 	spi_mem_set_drvdata(spimem, nor);
- 
--	if (spi->mode & SPI_RX_OCTAL) {
--		hwcaps.mask |= SNOR_HWCAPS_READ_1_1_8;
--
--		if (spi->mode & SPI_TX_OCTAL)
--			hwcaps.mask |= (SNOR_HWCAPS_READ_1_8_8 |
--					SNOR_HWCAPS_PP_1_1_8 |
--					SNOR_HWCAPS_PP_1_8_8);
--	} else if (spi->mode & SPI_RX_QUAD) {
--		hwcaps.mask |= SNOR_HWCAPS_READ_1_1_4;
--
--		if (spi->mode & SPI_TX_QUAD)
--			hwcaps.mask |= (SNOR_HWCAPS_READ_1_4_4 |
--					SNOR_HWCAPS_PP_1_1_4 |
--					SNOR_HWCAPS_PP_1_4_4);
--	} else if (spi->mode & SPI_RX_DUAL) {
--		hwcaps.mask |= SNOR_HWCAPS_READ_1_1_2;
--
--		if (spi->mode & SPI_TX_DUAL)
--			hwcaps.mask |= SNOR_HWCAPS_READ_1_2_2;
--	}
--
- 	if (data && data->name)
- 		nor->mtd.name = data->name;
- 
-diff --git a/include/linux/mtd/spi-nor.h b/include/linux/mtd/spi-nor.h
-index 4f35b1877889..5f1acb1867dd 100644
---- a/include/linux/mtd/spi-nor.h
-+++ b/include/linux/mtd/spi-nor.h
-@@ -524,6 +524,20 @@ struct spi_nor_hwcaps {
- #define SNOR_HWCAPS_PP_1_8_8	BIT(21)
- #define SNOR_HWCAPS_PP_8_8_8	BIT(22)
- 
-+#define SNOR_HWCAPS_X_X_X	(SNOR_HWCAPS_READ_2_2_2 |	\
-+				 SNOR_HWCAPS_READ_4_4_4 |	\
-+				 SNOR_HWCAPS_READ_8_8_8 |	\
-+				 SNOR_HWCAPS_PP_4_4_4 |		\
-+				 SNOR_HWCAPS_PP_8_8_8)
-+
-+#define SNOR_HWCAPS_DTR		(SNOR_HWCAPS_READ_1_1_1_DTR |	\
-+				 SNOR_HWCAPS_READ_1_2_2_DTR |	\
-+				 SNOR_HWCAPS_READ_1_4_4_DTR |	\
-+				 SNOR_HWCAPS_READ_1_8_8_DTR)
-+
-+#define SNOR_HWCAPS_ALL		(SNOR_HWCAPS_READ_MASK |	\
-+				 SNOR_HWCAPS_PP_MASK)
-+
- /**
-  * spi_nor_scan() - scan the SPI NOR
-  * @nor:	the spi_nor structure
--- 
-2.22.0
-
+Thanks,
+Naga Sureshkumar Relli
