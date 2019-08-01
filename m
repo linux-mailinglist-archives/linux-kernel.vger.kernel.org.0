@@ -2,105 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A34F47D991
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 12:43:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D48927D99E
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 12:48:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731074AbfHAKn2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 06:43:28 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:37015 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729140AbfHAKn1 (ORCPT
+        id S1731124AbfHAKsA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 06:48:00 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:42677 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727956AbfHAKr7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 06:43:27 -0400
-Received: by mail-lj1-f193.google.com with SMTP id z28so14645358ljn.4
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2019 03:43:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=xJ+XW7erGOKB1qLPzmBxeO8g/P30n/FrQ5rJ6pbczJM=;
-        b=Aom89KfQg4zR8rFKZ7WwksWEApb+WF09Q42ttz2qRwj/xSkGBGezOX+UtiYKI/hUml
-         Do5bTuWh0t94mXcdLlZXXflSRP+PEOuuypvp9qDJOB3khN6LTQcSlKhVgksalzc5gqCr
-         u8z9/fKrkR5wjGzeI6QvFIhVFK920BSw6fUS/vl4oQlni0DwQnCrtgqqiajBWorsj3vB
-         Wmw0NdA5mrbzo6hCIkcYI+y27N7FSap7EEb+jIeLPoUNJAfs7Sl4K21CQ7zAORLIEzXa
-         8Z+PkfpLf3kNT6j2Yx4U2lpuRgVxesgZXbqznFUFPp7oqm+5i6qSsCLqVJXZaT1w7wmG
-         HKVQ==
+        Thu, 1 Aug 2019 06:47:59 -0400
+Received: by mail-wr1-f68.google.com with SMTP id x1so23154023wrr.9
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2019 03:47:57 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=xJ+XW7erGOKB1qLPzmBxeO8g/P30n/FrQ5rJ6pbczJM=;
-        b=f8mjS9J7EjaLjUf8IBmGHtR2VtXk7i8cy44nOl0mB8bzE3LyypNhjmcS4uUqff/sMz
-         oq4kE1i7VRkEHc7qIv4FNkt7FQQCFEoN1xRLYb3NSwrypGSU9hmX7Ci1SIam8sM+AE10
-         m1zgbSJF0mBJJLijbSpVP0OgKFki5yx7vdEgmjsc8HAIWjLIyJh6DG9wcJ1B4t1sElXq
-         eRKnWooflBUytX/+R6PSC1UPfvN/WfR3KW85XyDVF/T26P6l6UtzcPdljR4BvtcMGM2v
-         J0f+/3ghNReW18BfFdwftVr0iVLPZ50MdqDbUU5XZNml3POZC9iT8mdjCxnrqA6dVBDC
-         KOlA==
-X-Gm-Message-State: APjAAAW6jmbTplS2gwgB9QWXezoDaLRptrDrtf+8T5YgwQJn/jnMLN0Q
-        YGR5zvA8vUh35tqWdSQ9KPWoSA==
-X-Google-Smtp-Source: APXvYqwr7N8nUcsTaa9qhK5CVPXKHkU82/bKtDqYW2xoBvPPjubmYiblEAF8FQu67NzuuouKXRNRGw==
-X-Received: by 2002:a2e:8ecb:: with SMTP id e11mr9432739ljl.218.1564656205540;
-        Thu, 01 Aug 2019 03:43:25 -0700 (PDT)
-Received: from localhost.localdomain (h-158-174-22-210.NA.cust.bahnhof.se. [158.174.22.210])
-        by smtp.gmail.com with ESMTPSA id u15sm14569573lje.89.2019.08.01.03.43.23
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Qw6j853wZUG0P4ng1fQNKfQUl03rC9IHR3/FL4fgPwk=;
+        b=oE3J/uzi3svl5i/pQjxL+2VX6F3MzFglL5VPeW8yuGkNmr+4zI1GEjGQUBDka9PbMP
+         T9J9iyrJODgWBTREQ382vDGjaMLuvQxTjtyuZVtUeJHuk35xMO1Q1NRHGuc4HeXZ6j7e
+         dKjiq57kkPD2qAITIDQ3iUNUPmw+Bu8pVBLWfl6w9u4wlAR1cY4gVmmE3ats81xE5lMM
+         GTl7gX2+L/TiHh7MBQQ5zcXJQ4k4oZlZlBL+yLg9NGaaqV93LUGWyGHc3ktKLQgRo4a9
+         uC8OipDigeztuKtG1jLvg49loRikTLNAJhzJbpmHrvC9hzS7RJdMuEKpNBw92+EWypC3
+         Khjg==
+X-Gm-Message-State: APjAAAXgMlUUPujBaZVtZzGOjshzb+Wf9u7+/xyztkvQOU9zdgdh+2zS
+        HJorsBRD9QGLjSC0xFNxCC+M0Q==
+X-Google-Smtp-Source: APXvYqxw85Z/h+/LijJBZKEF9X3Av4FcGm9GhgdFvPrI4Hc/B6vXckRANX/RaJawe7pCHRv8hHxJ0Q==
+X-Received: by 2002:adf:e8c8:: with SMTP id k8mr36986014wrn.285.1564656477234;
+        Thu, 01 Aug 2019 03:47:57 -0700 (PDT)
+Received: from steredhat (host122-201-dynamic.13-79-r.retail.telecomitalia.it. [79.13.201.122])
+        by smtp.gmail.com with ESMTPSA id h8sm75520711wmf.12.2019.08.01.03.47.55
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 01 Aug 2019 03:43:24 -0700 (PDT)
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-To:     Linus <torvalds@linux-foundation.org>, linux-mmc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [GIT PULL] MMC fixes for v5.3-rc3
-Date:   Thu,  1 Aug 2019 12:43:19 +0200
-Message-Id: <20190801104319.25247-1-ulf.hansson@linaro.org>
-X-Mailer: git-send-email 2.17.1
+        Thu, 01 Aug 2019 03:47:56 -0700 (PDT)
+Date:   Thu, 1 Aug 2019 12:47:54 +0200
+From:   Stefano Garzarella <sgarzare@redhat.com>
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        virtualization@lists.linux-foundation.org,
+        Jason Wang <jasowang@redhat.com>, kvm@vger.kernel.org
+Subject: Re: [PATCH v4 1/5] vsock/virtio: limit the memory used per-socket
+Message-ID: <20190801104754.lb3ju5xjfmnxioii@steredhat>
+References: <20190717113030.163499-1-sgarzare@redhat.com>
+ <20190717113030.163499-2-sgarzare@redhat.com>
+ <20190729095956-mutt-send-email-mst@kernel.org>
+ <20190729153656.zk4q4rob5oi6iq7l@steredhat>
+ <20190729114302-mutt-send-email-mst@kernel.org>
+ <20190729161903.yhaj5rfcvleexkhc@steredhat>
+ <20190729165056.r32uzj6om3o6vfvp@steredhat>
+ <20190729143622-mutt-send-email-mst@kernel.org>
+ <20190730093539.dcksure3vrykir3g@steredhat>
+ <20190730163807-mutt-send-email-mst@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190730163807-mutt-send-email-mst@kernel.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Tue, Jul 30, 2019 at 04:42:25PM -0400, Michael S. Tsirkin wrote:
+> On Tue, Jul 30, 2019 at 11:35:39AM +0200, Stefano Garzarella wrote:
 
-Here's a PR with a couple of MMC fixes intended for v5.3-rc3. Details about the
-highlights are as usual found in the signed tag.
+(...)
 
-Please pull this in!
+> > 
+> > The problem here is the compatibility. Before this series virtio-vsock
+> > and vhost-vsock modules had the RX buffer size hard-coded
+> > (VIRTIO_VSOCK_DEFAULT_RX_BUF_SIZE = 4K). So, if we send a buffer smaller
+> > of 4K, there might be issues.
+> 
+> Shouldn't be if they are following the spec. If not let's fix
+> the broken parts.
+> 
+> > 
+> > Maybe it is the time to add add 'features' to virtio-vsock device.
+> > 
+> > Thanks,
+> > Stefano
+> 
+> Why would a remote care about buffer sizes?
+> 
+> Let's first see what the issues are. If they exist
+> we can either fix the bugs, or code the bug as a feature in spec.
+> 
 
-Kind regards
-Ulf Hansson
+The vhost_transport '.stream_enqueue' callback
+[virtio_transport_stream_enqueue()] calls the virtio_transport_send_pkt_info(),
+passing the user message. This function allocates a new packet, copying
+the user message, but (before this series) it limits the packet size to
+the VIRTIO_VSOCK_DEFAULT_RX_BUF_SIZE (4K):
+
+static int virtio_transport_send_pkt_info(struct vsock_sock *vsk,
+					  struct virtio_vsock_pkt_info *info)
+{
+ ...
+	/* we can send less than pkt_len bytes */
+	if (pkt_len > VIRTIO_VSOCK_DEFAULT_RX_BUF_SIZE)
+		pkt_len = VIRTIO_VSOCK_DEFAULT_RX_BUF_SIZE;
+
+	/* virtio_transport_get_credit might return less than pkt_len credit */
+	pkt_len = virtio_transport_get_credit(vvs, pkt_len);
+
+	/* Do not send zero length OP_RW pkt */
+	if (pkt_len == 0 && info->op == VIRTIO_VSOCK_OP_RW)
+		return pkt_len;
+ ...
+}
+
+then it queues the packet for the TX worker calling .send_pkt()
+[vhost_transport_send_pkt() in the vhost_transport case]
+
+The main function executed by the TX worker is
+vhost_transport_do_send_pkt() that picks up a buffer from the virtqueue
+and it tries to copy the packet (up to 4K) on it.  If the buffer
+allocated from the guest will be smaller then 4K, I think here it will
+be discarded with an error:
+
+static void
+vhost_transport_do_send_pkt(struct vhost_vsock *vsock,
+				struct vhost_virtqueue *vq)
+{
+ ...
+		nbytes = copy_to_iter(pkt->buf, pkt->len, &iov_iter);
+		if (nbytes != pkt->len) {
+			virtio_transport_free_pkt(pkt);
+			vq_err(vq, "Faulted on copying pkt buf\n");
+			break;
+		}
+ ...
+}
 
 
-The following changes since commit 5f9e832c137075045d15cd6899ab0505cfb2ca4b:
+This series changes this behavior since now we will split the packet in
+vhost_transport_do_send_pkt() depending on the buffer found in the
+virtqueue.
 
-  Linus 5.3-rc1 (2019-07-21 14:05:38 -0700)
+We didn't change the buffer size in this series, so we still backward
+compatible, but if we will use buffers smaller than 4K, we should
+encounter the error described above.
 
-are available in the Git repository at:
+How do you suggest we proceed if we want to change the buffer size?
+Maybe adding a feature to "support any buffer size"?
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git tags/mmc-v5.3-rc1
-
-for you to fetch changes up to 3a6ffb3c8c3274a39dc8f2514526e645c5d21753:
-
-  mmc: mmc_spi: Enable stable writes (2019-07-22 15:31:00 +0200)
-
-----------------------------------------------------------------
-MMC host:
- - sdhci-sprd: Add a missing pm_runtime_put_noidle() to fix deferred probe
- - dw_mmc: Fix occasional hang after tuning on eMMC
- - meson-mx-sdio: Fix misuse of GENMASK macro
- - mmc_spi: Fix CRC problems for writes by using BDI_CAP_STABLE_WRITES
-
-----------------------------------------------------------------
-Andreas Koop (1):
-      mmc: mmc_spi: Enable stable writes
-
-Baolin Wang (1):
-      mmc: host: sdhci-sprd: Fix the missing pm_runtime_put_noidle()
-
-Douglas Anderson (1):
-      mmc: dw_mmc: Fix occasional hang after tuning on eMMC
-
-Joe Perches (1):
-      mmc: meson-mx-sdio: Fix misuse of GENMASK macro
-
- drivers/mmc/core/queue.c         | 5 +++++
- drivers/mmc/host/dw_mmc.c        | 3 +--
- drivers/mmc/host/meson-mx-sdio.c | 2 +-
- drivers/mmc/host/sdhci-sprd.c    | 1 +
- 4 files changed, 8 insertions(+), 3 deletions(-)
+Thanks,
+Stefano
