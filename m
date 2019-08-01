@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FBA67E310
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 21:08:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 124F87E309
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 21:08:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388470AbfHATIZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 15:08:25 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:36190 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388399AbfHATIG (ORCPT
+        id S2388434AbfHATIJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 15:08:09 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:35033 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388392AbfHATII (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 15:08:06 -0400
-Received: by mail-pf1-f196.google.com with SMTP id r7so34607088pfl.3
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2019 12:08:06 -0700 (PDT)
+        Thu, 1 Aug 2019 15:08:08 -0400
+Received: by mail-pg1-f195.google.com with SMTP id s1so28417417pgr.2
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2019 12:08:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=3OVjdcXCPwuFsvnheb2FVh3Xzrvqr6Atdn2Iwx7oV+0=;
-        b=Tg5UJX47uPAFj3X9l1nh1kTacYdQYspCbtB0tQ+L4p4sqSi1mcgIlqOMXWybeOWD8r
-         WBGI54twdOSlHNtgdKgT1k9x3hZhXHHtR1ixan505WuTw+8t1taQ/fAPr9pSEPBv9H47
-         AUQ8EYiEi7lbcdm/ZCCIv7ECf0bcU7CUko1dM=
+        bh=hx9o90A7y9Lqi0bsW+AYCfLx5zEgBR2s/MHaOJZ+Odg=;
+        b=B4uOlTCntU3Vd6DbT7HMq33aP15Z6dAhQKsPtvLjqymcjYhhYFIzxmLKJ0GxUFlps5
+         nSrfB6UE3ajVLcDoQjMzgJhgSJ+GrWpgdqH+FTHjP9TpDap99LhK22LbNrgAYbGJtL+K
+         bsnQDJ0jjmmgT8N6b9OkR8UYlV7MNWZbH6tFo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=3OVjdcXCPwuFsvnheb2FVh3Xzrvqr6Atdn2Iwx7oV+0=;
-        b=pb11g2U72++ttNbkYBSVI/1mw9QDokjMou+0dcHkeKWFh4JcTP0vQfFz27uDQSF2lS
-         MI+2EKYXyahmbANyK3RVop1GQfS5AqSN7ZB6Cppi0a3n1v10R5bBq8zNAV/jOXvth+Jt
-         CgwZmr51vXT7CSOCRglb/HNhGRaPLTyixCoL1tTc96esLIMdm7W/3rbZxqDXD4RZPYsF
-         qThamhEZ/LR8L5I6KyWC3+ShMiK9cxGxa/PlDvcLzvgMiUG0nP//1KHnXUi7XZ3UpGkN
-         o/bbn4liFO5Uh3TPazAEJCUCQ3bQ0BGDu1GhvHZnl6gXg8hv3leONT7yu/sSZ5aYK+zp
-         pguw==
-X-Gm-Message-State: APjAAAXaKLpPZgXY4hlAKuKMBygMvz2r7HgAB6uDNUkCRppzsIahhhBS
-        F0UlNI9Ghow4z86ZKjNpBGMHqg==
-X-Google-Smtp-Source: APXvYqySqv4UWFLApIVrgFow3MNR0qCXgidPdh04SBiV2KFLAPagBOPHeNSxD7x8jsrFtFme+4yWWg==
-X-Received: by 2002:a17:90a:350c:: with SMTP id q12mr334860pjb.46.1564686486184;
-        Thu, 01 Aug 2019 12:08:06 -0700 (PDT)
+        bh=hx9o90A7y9Lqi0bsW+AYCfLx5zEgBR2s/MHaOJZ+Odg=;
+        b=Pz9cB1uQZjqSpCVz2kyMJphHou4Ca1H06rOWFYwXOorZhvo/12ZHCY7pDBAz3Izk4z
+         inCuY+Fg28T3sQhxQKgoP4J1UM77Mvb5+DS02dVxmlwAPPKUCBgJ5SY3CxDQ2uOkWcoE
+         obodToQUl4kdHNJE5X1X6iLRojp8qQEO27lDfhjLGWJm/cDiOHzYRtIiIcrmNNBSYOIn
+         tN9r6ZgnMnzSj+rNMMS5gBXQzy1fLF+aAIcQ5yF+EkeyPvuLkwMUNxQXwXdYEGW20iV1
+         6BtJabTM4xx7FJnfgdl8+0GyQTv8JC03kYOuBsx+C+Fjor0EntFExNElGaomuhwUrkfY
+         o6pg==
+X-Gm-Message-State: APjAAAXyJEEwLQXZgw5Z30ZdaQ8iJwK3qby92Uk2rZy4OmTvPESeHeZ/
+        ZCRRaFX9TpF+5CVi8t2LZeEt0w==
+X-Google-Smtp-Source: APXvYqwRicFNmz4AgkUWxNKTeN7RdaR/ysKRKSpwCSZMzo2trQXy+pSb+B3RKJmiboxDVO/pWZO/3w==
+X-Received: by 2002:a17:90a:b883:: with SMTP id o3mr331219pjr.50.1564686487466;
+        Thu, 01 Aug 2019 12:08:07 -0700 (PDT)
 Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
-        by smtp.gmail.com with ESMTPSA id e13sm91452970pff.45.2019.08.01.12.08.05
+        by smtp.gmail.com with ESMTPSA id p27sm108790378pfq.136.2019.08.01.12.08.06
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 01 Aug 2019 12:08:05 -0700 (PDT)
+        Thu, 01 Aug 2019 12:08:07 -0700 (PDT)
 From:   Matthias Kaehlcke <mka@chromium.org>
 To:     "David S . Miller" <davem@davemloft.net>,
         Rob Herring <robh+dt@kernel.org>,
@@ -53,9 +53,9 @@ Cc:     netdev@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Douglas Anderson <dianders@chromium.org>,
         Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH v4 2/4] net: phy: Add function to retrieve LED configuration from the DT
-Date:   Thu,  1 Aug 2019 12:07:57 -0700
-Message-Id: <20190801190759.28201-3-mka@chromium.org>
+Subject: [PATCH v4 3/4] net: phy: realtek: Add helpers for accessing RTL8211E extension pages
+Date:   Thu,  1 Aug 2019 12:07:58 -0700
+Message-Id: <20190801190759.28201-4-mka@chromium.org>
 X-Mailer: git-send-email 2.22.0.770.g0f2c4a37fd-goog
 In-Reply-To: <20190801190759.28201-1-mka@chromium.org>
 References: <20190801190759.28201-1-mka@chromium.org>
@@ -66,107 +66,101 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a phylib function for retrieving PHY LED configuration that
-is specified in the device tree using the generic binding. LEDs
-can be configured to be 'on' for a certain link speed or to blink
-when there is TX/RX activity.
+The RTL8211E has extension pages, which can be accessed after
+selecting a page through a custom method. Add a function to
+modify bits in a register of an extension page and a helper for
+selecting an ext page. Use rtl8211e_modify_ext_paged() in
+rtl8211e_config_init() instead of doing things 'manually'.
 
 Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
 ---
 Changes in v4:
-- patch added to the series
+- don't add constant RTL8211E_EXT_PAGE, it's only used once,
+  use a literal instead
+- pass 'oldpage' to phy_restore_page() in rtl8211e_select_ext_page(),
+  not 'page'
+- return 'oldpage' in rtl8211e_select_ext_page()
+- use __phy_modify() in rtl8211e_modify_ext_paged() instead of
+  reimplementing __phy_modify_changed()
+- in rtl8211e_modify_ext_paged() return directly when
+  rtl8211e_select_ext_page() fails
 ---
- drivers/net/phy/phy_device.c | 50 ++++++++++++++++++++++++++++++++++++
- include/linux/phy.h          | 15 +++++++++++
- 2 files changed, 65 insertions(+)
+ drivers/net/phy/realtek.c | 48 +++++++++++++++++++++++++++------------
+ 1 file changed, 34 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
-index 6b5cb87f3866..b4b48de45712 100644
---- a/drivers/net/phy/phy_device.c
-+++ b/drivers/net/phy/phy_device.c
-@@ -2188,6 +2188,56 @@ static bool phy_drv_supports_irq(struct phy_driver *phydrv)
- 	return phydrv->config_intr && phydrv->ack_interrupt;
+diff --git a/drivers/net/phy/realtek.c b/drivers/net/phy/realtek.c
+index a669945eb829..e09d3b0da2c7 100644
+--- a/drivers/net/phy/realtek.c
++++ b/drivers/net/phy/realtek.c
+@@ -53,6 +53,36 @@ static int rtl821x_write_page(struct phy_device *phydev, int page)
+ 	return __phy_write(phydev, RTL821x_PAGE_SELECT, page);
  }
  
-+int of_get_phy_led_cfg(struct phy_device *phydev, int led,
-+		       struct phy_led_config *cfg)
++static int rtl8211e_select_ext_page(struct phy_device *phydev, int page)
 +{
-+	struct device_node *np, *child;
-+	const char *trigger;
-+	int ret;
++	int ret, oldpage;
 +
-+	if (!IS_ENABLED(CONFIG_OF_MDIO))
-+		return -ENOENT;
++	oldpage = phy_select_page(phydev, 7);
++	if (oldpage < 0)
++		return oldpage;
 +
-+	np = of_find_node_by_name(phydev->mdio.dev.of_node, "leds");
-+	if (!np)
-+		return -ENOENT;
-+
-+	for_each_child_of_node(np, child) {
-+		u32 val;
-+
-+		if (!of_property_read_u32(child, "reg", &val)) {
-+			if (val == (u32)led)
-+				break;
-+		}
-+	}
-+
-+	if (!child)
-+		return -ENOENT;
-+
-+	ret = of_property_read_string(child, "linux,default-trigger",
-+				      &trigger);
++	ret = __phy_write(phydev, RTL821x_EXT_PAGE_SELECT, page);
 +	if (ret)
-+		return ret;
++		return phy_restore_page(phydev, oldpage, ret);
 +
-+	if (!strcmp(trigger, "phy_link_10m_active")) {
-+		cfg->trigger = PHY_LED_LINK_10M;
-+	} else if (!strcmp(trigger, "phy_link_100m_active")) {
-+		cfg->trigger = PHY_LED_LINK_100M;
-+	} else if (!strcmp(trigger, "phy_link_1g_active")) {
-+		cfg->trigger = PHY_LED_LINK_1G;
-+	} else if (!strcmp(trigger, "phy_link_10g_active")) {
-+		cfg->trigger = PHY_LED_LINK_10G;
-+	}  else if (!strcmp(trigger, "phy_activity")) {
-+		cfg->trigger = PHY_LED_ACTIVITY;
-+	} else {
-+		phydev_warn(phydev, "trigger '%s' for LED%d is invalid\n",
-+			    trigger, led);
-+		return -EINVAL;
-+	}
-+
-+	return 0;
++	return oldpage;
 +}
 +
- /**
-  * phy_probe - probe and init a PHY device
-  * @dev: device to probe and init
-diff --git a/include/linux/phy.h b/include/linux/phy.h
-index 462b90b73f93..b4693415be31 100644
---- a/include/linux/phy.h
-+++ b/include/linux/phy.h
-@@ -1176,6 +1176,21 @@ int phy_ethtool_set_link_ksettings(struct net_device *ndev,
- 				   const struct ethtool_link_ksettings *cmd);
- int phy_ethtool_nway_reset(struct net_device *ndev);
++static int rtl8211e_modify_ext_paged(struct phy_device *phydev, int page,
++				     u32 regnum, u16 mask, u16 set)
++{
++	int ret = 0;
++	int oldpage;
++
++	oldpage = rtl8211e_select_ext_page(phydev, page);
++	if (oldpage < 0)
++		return oldpage;
++
++	ret = __phy_modify(phydev, regnum, mask, set);
++
++	return phy_restore_page(phydev, oldpage, ret);
++}
++
+ static int rtl8201_ack_interrupt(struct phy_device *phydev)
+ {
+ 	int err;
+@@ -184,7 +214,7 @@ static int rtl8211f_config_init(struct phy_device *phydev)
  
-+enum phy_led_trigger {
-+	PHY_LED_LINK_10M,
-+	PHY_LED_LINK_100M,
-+	PHY_LED_LINK_1G,
-+	PHY_LED_LINK_10G,
-+	PHY_LED_ACTIVITY,
-+};
-+
-+struct phy_led_config {
-+	enum phy_led_trigger trigger;
-+};
-+
-+int of_get_phy_led_cfg(struct phy_device *phydev, int led,
-+		       struct phy_led_config *cfg);
-+
- #if IS_ENABLED(CONFIG_PHYLIB)
- int __init mdio_bus_init(void);
- void mdio_bus_exit(void);
+ static int rtl8211e_config_init(struct phy_device *phydev)
+ {
+-	int ret = 0, oldpage;
++	int ret;
+ 	u16 val;
+ 
+ 	/* enable TX/RX delay for rgmii-* modes, and disable them for rgmii. */
+@@ -213,19 +243,9 @@ static int rtl8211e_config_init(struct phy_device *phydev)
+ 	 * 2 = RX Delay, 1 = TX Delay, 0 = SELRGV (see original PHY datasheet
+ 	 * for details).
+ 	 */
+-	oldpage = phy_select_page(phydev, 0x7);
+-	if (oldpage < 0)
+-		goto err_restore_page;
+-
+-	ret = __phy_write(phydev, RTL821x_EXT_PAGE_SELECT, 0xa4);
+-	if (ret)
+-		goto err_restore_page;
+-
+-	ret = __phy_modify(phydev, 0x1c, RTL8211E_TX_DELAY | RTL8211E_RX_DELAY,
+-			   val);
+-
+-err_restore_page:
+-	return phy_restore_page(phydev, oldpage, ret);
++	return rtl8211e_modify_ext_paged(phydev, 0xa4, 0x1c,
++					 RTL8211E_TX_DELAY | RTL8211E_RX_DELAY,
++					 val);
+ }
+ 
+ static int rtl8211b_suspend(struct phy_device *phydev)
 -- 
 2.22.0.770.g0f2c4a37fd-goog
 
