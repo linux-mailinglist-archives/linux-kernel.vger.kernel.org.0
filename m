@@ -2,53 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D1EC7D82A
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 11:03:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B4AD7D831
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 11:04:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730864AbfHAJDy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 05:03:54 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:60511 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730567AbfHAJDy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 05:03:54 -0400
-Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
-        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1ht702-0004Xq-9B; Thu, 01 Aug 2019 11:03:50 +0200
-Message-ID: <1564650230.7439.10.camel@pengutronix.de>
-Subject: Re: [PATCH 0/3] reset: meson: update with SPDX Licence identifier
-From:   Philipp Zabel <p.zabel@pengutronix.de>
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Date:   Thu, 01 Aug 2019 11:03:50 +0200
-In-Reply-To: <20190801075454.23547-1-narmstrong@baylibre.com>
-References: <20190801075454.23547-1-narmstrong@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        id S1731035AbfHAJE3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 05:04:29 -0400
+Received: from mx2.suse.de ([195.135.220.15]:33058 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729084AbfHAJE2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Aug 2019 05:04:28 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 1AEA5AC63;
+        Thu,  1 Aug 2019 09:04:27 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 4EC4E1E3F4D; Thu,  1 Aug 2019 11:04:26 +0200 (CEST)
+Date:   Thu, 1 Aug 2019 11:04:26 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Sebastian Siewior <bigeasy@linutronix.de>,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Julia Cartwright <julia@ni.com>, linux-ext4@vger.kernel.org,
+        Theodore Tso <tytso@mit.edu>, Jan Kara <jack@suse.com>,
+        Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, Mark Fasheh <mark@fasheh.com>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Joel Becker <jlbec@evilplan.org>
+Subject: Re: [patch V2 5/7] fs/jbd2: Simplify journal_unmap_buffer()
+Message-ID: <20190801090426.GF25064@quack2.suse.cz>
+References: <20190801010126.245731659@linutronix.de>
+ <20190801010944.364767635@linutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190801010944.364767635@linutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-08-01 at 09:54 +0200, Neil Armstrong wrote:
-> This serie updates the Amlogic Reset driver and bindings.
+On Thu 01-08-19 03:01:31, Thomas Gleixner wrote:
+> journal_unmap_buffer() checks first whether the buffer head is a journal.
+> If so it takes locks and then invokes jbd2_journal_grab_journal_head()
+> followed by another check whether this is journal head buffer.
 > 
-> Neil Armstrong (3):
->   reset: reset-meson: update with SPDX Licence identifier
->   dt-bindings: reset: amlogic,meson-gxbb-reset: update with SPDX Licence
->     identifier
->   dt-bindings: reset: amlogic,meson8b-reset: update with SPDX Licence
->     identifier
+> The double checking is pointless.
+> 
+> Replace the initial check with jbd2_journal_grab_journal_head() which
+> alredy checks whether the buffer head is actually a journal.
+> 
+> Allows also early access to the journal head pointer for the upcoming
+> conversion of state lock to a regular spinlock.
+> 
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> Cc: linux-ext4@vger.kernel.org
+> Cc: "Theodore Ts'o" <tytso@mit.edu>
+> Cc: Jan Kara <jack@suse.com>
 
-Thank you, all three applied to reset/next.
+Nice simplification. You can add:
 
-regards
-Philipp
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
+> ---
+> V2: New patch
+> ---
+>  fs/jbd2/transaction.c |    8 ++------
+>  1 file changed, 2 insertions(+), 6 deletions(-)
+> 
+> --- a/fs/jbd2/transaction.c
+> +++ b/fs/jbd2/transaction.c
+> @@ -2196,7 +2196,8 @@ static int journal_unmap_buffer(journal_
+>  	 * holding the page lock. --sct
+>  	 */
+>  
+> -	if (!buffer_jbd(bh))
+> +	jh = jbd2_journal_grab_journal_head(bh);
+> +	if (!jh)
+>  		goto zap_buffer_unlocked;
+>  
+>  	/* OK, we have data buffer in journaled mode */
+> @@ -2204,10 +2205,6 @@ static int journal_unmap_buffer(journal_
+>  	jbd_lock_bh_state(bh);
+>  	spin_lock(&journal->j_list_lock);
+>  
+> -	jh = jbd2_journal_grab_journal_head(bh);
+> -	if (!jh)
+> -		goto zap_buffer_no_jh;
+> -
+>  	/*
+>  	 * We cannot remove the buffer from checkpoint lists until the
+>  	 * transaction adding inode to orphan list (let's call it T)
+> @@ -2329,7 +2326,6 @@ static int journal_unmap_buffer(journal_
+>  	 */
+>  	jh->b_modified = 0;
+>  	jbd2_journal_put_journal_head(jh);
+> -zap_buffer_no_jh:
+>  	spin_unlock(&journal->j_list_lock);
+>  	jbd_unlock_bh_state(bh);
+>  	write_unlock(&journal->j_state_lock);
+> 
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
