@@ -2,56 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D3397E545
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 00:18:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CB13F7E557
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 00:21:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389394AbfHAWSz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 18:18:55 -0400
-Received: from foss.arm.com ([217.140.110.172]:41662 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728193AbfHAWSz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 18:18:55 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EBB5B337;
-        Thu,  1 Aug 2019 15:18:54 -0700 (PDT)
-Received: from [10.0.2.15] (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 333BD3F694;
-        Thu,  1 Aug 2019 15:18:54 -0700 (PDT)
-Subject: Re: [PATCH] sched/fair: Cleanup task->numa_work initialization
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>
-References: <alpine.DEB.2.21.1908012246530.1789@nanos.tec.linutronix.de>
-From:   Valentin Schneider <valentin.schneider@arm.com>
-Message-ID: <2bd050d5-0e03-a858-305f-46039261a422@arm.com>
-Date:   Thu, 1 Aug 2019 23:18:46 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1908012246530.1789@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S2389512AbfHAWVM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 18:21:12 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45734 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2389491AbfHAWVL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Aug 2019 18:21:11 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x71MGvO4016113;
+        Thu, 1 Aug 2019 18:20:59 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2u488k91uu-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 01 Aug 2019 18:20:59 -0400
+Received: from m0098420.ppops.net (m0098420.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x71MHl1I018325;
+        Thu, 1 Aug 2019 18:20:59 -0400
+Received: from ppma01dal.us.ibm.com (83.d6.3fa9.ip4.static.sl-reverse.com [169.63.214.131])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2u488k91u1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 01 Aug 2019 18:20:59 -0400
+Received: from pps.filterd (ppma01dal.us.ibm.com [127.0.0.1])
+        by ppma01dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x71MJlVc026752;
+        Thu, 1 Aug 2019 22:20:58 GMT
+Received: from b01cxnp23033.gho.pok.ibm.com (b01cxnp23033.gho.pok.ibm.com [9.57.198.28])
+        by ppma01dal.us.ibm.com with ESMTP id 2u0e87h3qh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 01 Aug 2019 22:20:58 +0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x71MKvT631785384
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 1 Aug 2019 22:20:57 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3FD50B2065;
+        Thu,  1 Aug 2019 22:20:57 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2BD01B2066;
+        Thu,  1 Aug 2019 22:20:57 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.154])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu,  1 Aug 2019 22:20:57 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 8245B16C9A4A; Thu,  1 Aug 2019 15:20:58 -0700 (PDT)
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        mingo@kernel.org
+Cc:     stern@rowland.harvard.edu, andrea.parri@amarulasolutions.com,
+        will@kernel.org, peterz@infradead.org, boqun.feng@gmail.com,
+        npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
+        luc.maranget@inria.fr, akiyks@gmail.com,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>
+Subject: [PATCH RFC memory-model 01/31] tools/memory-model: Make scripts be executable
+Date:   Thu,  1 Aug 2019 15:20:26 -0700
+Message-Id: <20190801222056.12144-1-paulmck@linux.ibm.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190801222026.GA11315@linux.ibm.com>
+References: <20190801222026.GA11315@linux.ibm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-01_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=831 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908010234
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+This commit simplifies life a bit by making all of the scripts in
+tools/memory-model/scripts be executable.
 
-On 01/08/2019 21:51, Thomas Gleixner wrote:
-> - Resolve the ancient TODO by setting the numa_work function in
->   init_numa_balancing() which is called on fork().
-> 
-> - Make task_numa_work() static as it's not used outside of the fair
->   scheduler and lacks a prototype as well.
-> 
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
+---
+ tools/memory-model/scripts/checkghlitmus.sh   | 0
+ tools/memory-model/scripts/checklitmushist.sh | 0
+ tools/memory-model/scripts/cmplitmushist.sh   | 0
+ tools/memory-model/scripts/initlitmushist.sh  | 0
+ tools/memory-model/scripts/judgelitmus.sh     | 0
+ tools/memory-model/scripts/newlitmushist.sh   | 0
+ tools/memory-model/scripts/parseargs.sh       | 0
+ tools/memory-model/scripts/runlitmushist.sh   | 0
+ 8 files changed, 0 insertions(+), 0 deletions(-)
+ mode change 100644 => 100755 tools/memory-model/scripts/checkghlitmus.sh
+ mode change 100644 => 100755 tools/memory-model/scripts/checklitmushist.sh
+ mode change 100644 => 100755 tools/memory-model/scripts/cmplitmushist.sh
+ mode change 100644 => 100755 tools/memory-model/scripts/initlitmushist.sh
+ mode change 100644 => 100755 tools/memory-model/scripts/judgelitmus.sh
+ mode change 100644 => 100755 tools/memory-model/scripts/newlitmushist.sh
+ mode change 100644 => 100755 tools/memory-model/scripts/parseargs.sh
+ mode change 100644 => 100755 tools/memory-model/scripts/runlitmushist.sh
 
-Looks like I beat you to it...
+diff --git a/tools/memory-model/scripts/checkghlitmus.sh b/tools/memory-model/scripts/checkghlitmus.sh
+old mode 100644
+new mode 100755
+diff --git a/tools/memory-model/scripts/checklitmushist.sh b/tools/memory-model/scripts/checklitmushist.sh
+old mode 100644
+new mode 100755
+diff --git a/tools/memory-model/scripts/cmplitmushist.sh b/tools/memory-model/scripts/cmplitmushist.sh
+old mode 100644
+new mode 100755
+diff --git a/tools/memory-model/scripts/initlitmushist.sh b/tools/memory-model/scripts/initlitmushist.sh
+old mode 100644
+new mode 100755
+diff --git a/tools/memory-model/scripts/judgelitmus.sh b/tools/memory-model/scripts/judgelitmus.sh
+old mode 100644
+new mode 100755
+diff --git a/tools/memory-model/scripts/newlitmushist.sh b/tools/memory-model/scripts/newlitmushist.sh
+old mode 100644
+new mode 100755
+diff --git a/tools/memory-model/scripts/parseargs.sh b/tools/memory-model/scripts/parseargs.sh
+old mode 100644
+new mode 100755
+diff --git a/tools/memory-model/scripts/runlitmushist.sh b/tools/memory-model/scripts/runlitmushist.sh
+old mode 100644
+new mode 100755
+-- 
+2.17.1
 
-https://lore.kernel.org/lkml/20190715102508.32434-1-valentin.schneider@arm.com/
-
-Do I win anything? :D
- 
