@@ -2,75 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 26E0A7D923
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 12:17:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 22DD17D917
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 12:14:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730394AbfHAKRo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 06:17:44 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:34517 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725379AbfHAKRo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 06:17:44 -0400
-Received: from [5.158.153.52] (helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1ht89O-0002mO-Bu; Thu, 01 Aug 2019 12:17:34 +0200
-Date:   Thu, 1 Aug 2019 12:17:33 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Daniel Drake <drake@endlessm.com>
-cc:     Aubrey Li <aubrey.intel@gmail.com>, x86@kernel.org,
-        "Li, Aubrey" <aubrey.li@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Endless Linux Upstreaming Team <linux@endlessm.com>
-Subject: Re: setup_boot_APIC_clock() NULL dereference during early boot on
- reduced hardware platforms
-In-Reply-To: <CAD8Lp452GdoL-Bt7rSP=u3RKEZ2H3qm3LvKfe=cCsjP0biG_sQ@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.1908011214150.1965@nanos.tec.linutronix.de>
-References: <CAD8Lp448i7jOk9C5NJtC2wHMaGuRLD4pxVqK17YqRCuMVXhsOA@mail.gmail.com> <CAERHkruxfBc8DqNUr=fbYuQWrXrHC7cK6HnVR3xp0iLA9QtxiQ@mail.gmail.com> <CAD8Lp452GdoL-Bt7rSP=u3RKEZ2H3qm3LvKfe=cCsjP0biG_sQ@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S1730273AbfHAKOG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 06:14:06 -0400
+Received: from mga11.intel.com ([192.55.52.93]:62752 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725379AbfHAKOG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Aug 2019 06:14:06 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Aug 2019 03:14:06 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,333,1559545200"; 
+   d="scan'208";a="191590542"
+Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.66.150])
+  by fmsmga001.fm.intel.com with ESMTP; 01 Aug 2019 03:14:02 -0700
+From:   Jani Nikula <jani.nikula@linux.intel.com>
+To:     Wei Yongjun <weiyongjun1@huawei.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, Sean Paul <sean@poorly.run>
+Cc:     Wei Yongjun <weiyongjun1@huawei.com>,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH -next] drm/i915: fix possible memory leak in intel_hdcp_auth_downstream()
+In-Reply-To: <20190704104534.12508-1-weiyongjun1@huawei.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20190704104534.12508-1-weiyongjun1@huawei.com>
+Date:   Thu, 01 Aug 2019 13:18:23 +0300
+Message-ID: <87k1bxmbo0.fsf@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 1 Aug 2019, Daniel Drake wrote:
-> On Thu, Aug 1, 2019 at 3:16 PM Aubrey Li <aubrey.intel@gmail.com> wrote:
-> However, the only way this can be called is from hpet_enable().
-> 
-> hpet_enable() is called from 2 places:
->  1. From hpet_time_init(). This is the default x86 timer_init that
-> acpi_generic_reduced_hw_init() took out of action here.
->  2. From hpet_late_init(). However that function is only called late,
-> after calibrate_APIC_clock() has already crashed the kernel. Also,
-> even if moved earlier it would also not call hpet_enable() here
-> because the ACPI HPET table parsing has already populated
-> hpet_address.
-> 
-> I tried slotting in a call to hpet_enable() at an earlier point
-> regardless, but I still end up with the kernel hanging later during
-> boot, probably because irq0 fails to be setup and this error is hit:
->     if (setup_irq(0, &irq0))
->         pr_info("Failed to register legacy timer interrupt\n");
+On Thu, 04 Jul 2019, Wei Yongjun <weiyongjun1@huawei.com> wrote:
+> 'ksv_fifo' is malloced in intel_hdcp_auth_downstream() and should be
+> freed before leaving from the error handling cases, otherwise it will
+> cause memory leak.
 
-Right. The thing also lacks PIT :)
 
-So there are two options:
+Thanks for the patch, sorry for the delay, pushed to
+drm-intel-next-queued.
 
-   1) Make sure the HPET is parsed somehow even with the reduced stuff
+BR,
+Jani.
 
-   2) Make the clock frequency detection work.
+>
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> ---
+>  drivers/gpu/drm/i915/display/intel_hdcp.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/i915/display/intel_hdcp.c b/drivers/gpu/drm/i915/display/intel_hdcp.c
+> index bc3a94d491c4..27bd7276a82d 100644
+> --- a/drivers/gpu/drm/i915/display/intel_hdcp.c
+> +++ b/drivers/gpu/drm/i915/display/intel_hdcp.c
+> @@ -536,7 +536,8 @@ int intel_hdcp_auth_downstream(struct intel_connector *connector)
+>  
+>  	if (drm_hdcp_check_ksvs_revoked(dev, ksv_fifo, num_downstream)) {
+>  		DRM_ERROR("Revoked Ksv(s) in ksv_fifo\n");
+> -		return -EPERM;
+> +		ret = -EPERM;
+> +		goto err;
+>  	}
+>  
+>  	/*
+>
+>
+>
 
-#1 is a trainwreck
-
-#2 is something we really want to have anyway. See the other reply. I cc'ed
-   Tom there, he should be able to give us the missing link.
-
-Thanks,
-
-	tglx
+-- 
+Jani Nikula, Intel Open Source Graphics Center
