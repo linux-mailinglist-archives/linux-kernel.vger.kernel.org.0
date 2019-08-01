@@ -2,206 +2,172 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE61E7E20B
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 20:15:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 577317E20F
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 20:15:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388281AbfHASOt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 14:14:49 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:44005 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388229AbfHASOg (ORCPT
+        id S1733109AbfHASPY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 14:15:24 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:34842 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731713AbfHASPY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 14:14:36 -0400
-Received: by mail-pg1-f193.google.com with SMTP id r22so7044127pgk.10
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2019 11:14:36 -0700 (PDT)
+        Thu, 1 Aug 2019 14:15:24 -0400
+Received: by mail-pf1-f194.google.com with SMTP id u14so34551609pfn.2
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2019 11:15:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=cEH3ua6NqMKEtm+KNl7f9AkmibNB7Fry2m+0HSWgt9Y=;
-        b=sECQjFMeP09OLvaWvyhHRrkJ/dwut97N5l52doLfqSYuG7DAnh11GOeTmjfJbFxFXK
-         lt7S+Al4/ewODGC1Tjd9BXphrL55LaP9Qa5FPWNC4NFvYgFpEk2yk+YO5DrieVBN6JYO
-         7s+HNjKbwbUVy6VGugob5oo8tec24HtqQDYx8=
+        d=broadcom.com; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=A/2U3sBSUHvfzL5QT64+0anCBzLTLTL1IfUmHYOzv8M=;
+        b=Q2Yn9bpZT7MTiS2Fuhc1CBYlxs3phQsozr5LA/k6MqS/FzmEF5/uvtngkdC0Z2cf8S
+         i6Qt/32fnNBpI5AKyVyX9TftvzDm1tJ82Db4g7d60SPTRnS4bZNCEt5m0QZ2Zlbp0Iez
+         WL0wC61c9DxrPRDpQVe+/uAJ51y4acrhIbDlw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=cEH3ua6NqMKEtm+KNl7f9AkmibNB7Fry2m+0HSWgt9Y=;
-        b=ReaHIBSrDGRsBIGLrmRu7x90FlvjeONt9GfzvzK8Tznp2AMFLoppCf087FeLKzDfh/
-         N+n59C96tN35oDWinIFLVjlFQoOxJxBRJSt6r3El6QLzxrNrHcJihWzamaBeipvI5UhA
-         rudRHYgwaD/f32BxwQ/sHp6/bRO7cMtuWzYJmwvq/63ZXJOAS4+5zPN/Vpr3yEYBJUwO
-         vrNjRZoP7g7cRPZgIgYBb+KGU/x4L/xUx350nZeLhEnzPXTOaT9GgUO/SJGMLHPcvjJe
-         U/+VqMkE25RJ1LKj/dx/JBMDMIR71tmIzL8gKqEiF6SikP4MfQM9VWo8LOKUlz4b5AUJ
-         H0mg==
-X-Gm-Message-State: APjAAAUUFeUYudMmNFYCgPXxFVmgU4hkVbJRZovAvVAXff4qzcb9lGPk
-        ZKsjMYrmQUWiPNUQ4OMre4qO0Uuuns0=
-X-Google-Smtp-Source: APXvYqzSQ1PJ1cHqmh/PjYRZ8130uTvMoUVxmoj7Km2jckPHANgKN0EHx3f/y+EXdTelcw4hgt0zmg==
-X-Received: by 2002:a17:90a:290b:: with SMTP id g11mr101679pjd.122.1564683275400;
-        Thu, 01 Aug 2019 11:14:35 -0700 (PDT)
-Received: from joelaf.cam.corp.google.com ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id g8sm82089165pgk.1.2019.08.01.11.14.33
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 01 Aug 2019 11:14:34 -0700 (PDT)
-From:   "Joel Fernandes (Google)" <joel@joelfernandes.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>, rcu@vger.kernel.org
-Subject: [PATCH 9/9] Revert "Revert "rcu: Restore barrier() to rcu_read_lock() and rcu_read_unlock()""
-Date:   Thu,  1 Aug 2019 14:14:11 -0400
-Message-Id: <20190801181411.96429-10-joel@joelfernandes.org>
-X-Mailer: git-send-email 2.22.0.770.g0f2c4a37fd-goog
-In-Reply-To: <20190801181411.96429-1-joel@joelfernandes.org>
-References: <20190801181411.96429-1-joel@joelfernandes.org>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=A/2U3sBSUHvfzL5QT64+0anCBzLTLTL1IfUmHYOzv8M=;
+        b=Y5y3QvZvTySAilSCSH1hUccHUm1Xe+KIJ/9E81sBd1dB3sjufgAo/bu8KIlSowwGa8
+         on2ILzb4ztUv7Nqqd3r6za9Xbfsq6Xh5ziwx4m6S0U4Gm7fmohrdMuWo2lNRSCfJkKZy
+         ANpodUJjlHP8l0kprxktbetjmI5Do7gvYbFmExYf0C9QPevAWtes1QeEsUeKuEdN52H5
+         sG7p6qS6+fBqQzScP9CWS8kH/UHUFS2vCNB1Vuf65jvjxr/hE8i2MceoP86Dz9LFZ7xQ
+         lf6DMCUg24N7rJqp+89KxttwOliPwgZXPvV4z1pNERBYJzdwEK7cqyUDB0vSx7FTW6gB
+         4w7Q==
+X-Gm-Message-State: APjAAAVxCkh2L58JlPglx9ahH5v0UrTzC+XJLceeQbj+DMOIHywKsb5O
+        uQLHaeQ/dwxpjLEW3LEM6KCWDA==
+X-Google-Smtp-Source: APXvYqy5YxYnI0i+UvSKVSvJD5W3X8Ct2hIIE5d7R1nII78ojNXg/Ndq9IbIMXECeg+nkbwLTBNsVQ==
+X-Received: by 2002:a17:90a:2562:: with SMTP id j89mr74708pje.123.1564683322929;
+        Thu, 01 Aug 2019 11:15:22 -0700 (PDT)
+Received: from [10.136.13.65] ([192.19.228.250])
+        by smtp.gmail.com with ESMTPSA id l26sm84023425pgb.90.2019.08.01.11.15.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 01 Aug 2019 11:15:21 -0700 (PDT)
+Subject: Re: [PATCH 2/3] firmware: add offset to request_firmware_into_buf
+To:     Luis Chamberlain <mcgrof@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     David Brown <david.brown@linaro.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        Olof Johansson <olof@lixom.net>
+References: <20190523025113.4605-1-scott.branden@broadcom.com>
+ <20190523025113.4605-3-scott.branden@broadcom.com>
+ <20190523055233.GB22946@kroah.com>
+ <15c47e4d-e70d-26bb-9747-0ad0aa81597b@broadcom.com>
+ <20190523165424.GA21048@kroah.com>
+ <44282070-ddaf-3afb-9bdc-4751e3f197ac@broadcom.com>
+ <20190524052258.GB28229@kroah.com>
+ <2f67db0a-27c3-d13c-bbe0-0af5edd4f0da@broadcom.com>
+ <20190801061801.GA4338@kroah.com>
+ <20190801174215.GB16384@42.do-not-panic.com>
+From:   Scott Branden <scott.branden@broadcom.com>
+Message-ID: <74be1aa7-0e10-51dc-bbbf-94bb5f4bf7c4@broadcom.com>
+Date:   Thu, 1 Aug 2019 11:15:19 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
+In-Reply-To: <20190801174215.GB16384@42.do-not-panic.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This reverts commit 43ddb98ebe7171ff1c6e11c1616fd03726d8e9bf while
-adding the documentation that the original commit added but in ReST
-format.
----
- .../RCU/Design/Requirements/Requirements.rst  | 54 +++++++++++++++++++
- kernel/rcu/tree_plugin.h                      | 11 ----
- 2 files changed, 54 insertions(+), 11 deletions(-)
+Hi Luis,
 
-diff --git a/Documentation/RCU/Design/Requirements/Requirements.rst b/Documentation/RCU/Design/Requirements/Requirements.rst
-index 0b222469d7ce..fd5e2cbc4935 100644
---- a/Documentation/RCU/Design/Requirements/Requirements.rst
-+++ b/Documentation/RCU/Design/Requirements/Requirements.rst
-@@ -1691,6 +1691,7 @@ follows:
- #. `Hotplug CPU`_
- #. `Scheduler and RCU`_
- #. `Tracing and RCU`_
-+#. `Accesses to User Memory and RCU`_
- #. `Energy Efficiency`_
- #. `Scheduling-Clock Interrupts and RCU`_
- #. `Memory Efficiency`_
-@@ -2004,6 +2005,59 @@ where RCU readers execute in environments in which tracing cannot be
- used. The tracing folks both located the requirement and provided the
- needed fix, so this surprise requirement was relatively painless.
- 
-+Accesses to User Memory and RCU
-+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+
-+The kernel needs to access user-space memory, for example, to access data
-+referenced by system-call parameters.  The ``get_user()`` macro does this job.
-+
-+However, user-space memory might well be paged out, which means that
-+``get_user()`` might well page-fault and thus block while waiting for the
-+resulting I/O to complete.  It would be a very bad thing for the compiler to
-+reorder a ``get_user()`` invocation into an RCU read-side critical section.
-+
-+For example, suppose that the source code looked like this:
-+
-+  ::
-+
-+       1 rcu_read_lock();
-+       2 p = rcu_dereference(gp);
-+       3 v = p->value;
-+       4 rcu_read_unlock();
-+       5 get_user(user_v, user_p);
-+       6 do_something_with(v, user_v);
-+
-+The compiler must not be permitted to transform this source code into
-+the following:
-+
-+  ::
-+
-+       1 rcu_read_lock();
-+       2 p = rcu_dereference(gp);
-+       3 get_user(user_v, user_p); // BUG: POSSIBLE PAGE FAULT!!!
-+       4 v = p->value;
-+       5 rcu_read_unlock();
-+       6 do_something_with(v, user_v);
-+
-+If the compiler did make this transformation in a ``CONFIG_PREEMPT=n`` kernel
-+build, and if ``get_user()`` did page fault, the result would be a quiescent
-+state in the middle of an RCU read-side critical section.  This misplaced
-+quiescent state could result in line 4 being a use-after-free access,
-+which could be bad for your kernel's actuarial statistics.  Similar examples
-+can be constructed with the call to ``get_user()`` preceding the
-+``rcu_read_lock()``.
-+
-+Unfortunately, ``get_user()`` doesn't have any particular ordering properties,
-+and in some architectures the underlying ``asm`` isn't even marked
-+``volatile``.  And even if it was marked ``volatile``, the above access to
-+``p->value`` is not volatile, so the compiler would not have any reason to keep
-+those two accesses in order.
-+
-+Therefore, the Linux-kernel definitions of ``rcu_read_lock()`` and
-+``rcu_read_unlock()`` must act as compiler barriers, at least for outermost
-+instances of ``rcu_read_lock()`` and ``rcu_read_unlock()`` within a nested set
-+of RCU read-side critical sections.
-+
- Energy Efficiency
- ~~~~~~~~~~~~~~~~~
- 
-diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
-index e1491d262892..379cb7e50a62 100644
---- a/kernel/rcu/tree_plugin.h
-+++ b/kernel/rcu/tree_plugin.h
-@@ -288,7 +288,6 @@ void rcu_note_context_switch(bool preempt)
- 	struct rcu_data *rdp = this_cpu_ptr(&rcu_data);
- 	struct rcu_node *rnp;
- 
--	barrier(); /* Avoid RCU read-side critical sections leaking down. */
- 	trace_rcu_utilization(TPS("Start context switch"));
- 	lockdep_assert_irqs_disabled();
- 	WARN_ON_ONCE(!preempt && t->rcu_read_lock_nesting > 0);
-@@ -331,7 +330,6 @@ void rcu_note_context_switch(bool preempt)
- 	if (rdp->exp_deferred_qs)
- 		rcu_report_exp_rdp(rdp);
- 	trace_rcu_utilization(TPS("End context switch"));
--	barrier(); /* Avoid RCU read-side critical sections leaking up. */
- }
- EXPORT_SYMBOL_GPL(rcu_note_context_switch);
- 
-@@ -815,11 +813,6 @@ static void rcu_qs(void)
-  * dyntick-idle quiescent state visible to other CPUs, which will in
-  * some cases serve for expedited as well as normal grace periods.
-  * Either way, register a lightweight quiescent state.
-- *
-- * The barrier() calls are redundant in the common case when this is
-- * called externally, but just in case this is called from within this
-- * file.
-- *
-  */
- void rcu_all_qs(void)
- {
-@@ -834,14 +827,12 @@ void rcu_all_qs(void)
- 		return;
- 	}
- 	this_cpu_write(rcu_data.rcu_urgent_qs, false);
--	barrier(); /* Avoid RCU read-side critical sections leaking down. */
- 	if (unlikely(raw_cpu_read(rcu_data.rcu_need_heavy_qs))) {
- 		local_irq_save(flags);
- 		rcu_momentary_dyntick_idle();
- 		local_irq_restore(flags);
- 	}
- 	rcu_qs();
--	barrier(); /* Avoid RCU read-side critical sections leaking up. */
- 	preempt_enable();
- }
- EXPORT_SYMBOL_GPL(rcu_all_qs);
-@@ -851,7 +842,6 @@ EXPORT_SYMBOL_GPL(rcu_all_qs);
-  */
- void rcu_note_context_switch(bool preempt)
- {
--	barrier(); /* Avoid RCU read-side critical sections leaking down. */
- 	trace_rcu_utilization(TPS("Start context switch"));
- 	rcu_qs();
- 	/* Load rcu_urgent_qs before other flags. */
-@@ -864,7 +854,6 @@ void rcu_note_context_switch(bool preempt)
- 		rcu_tasks_qs(current);
- out:
- 	trace_rcu_utilization(TPS("End context switch"));
--	barrier(); /* Avoid RCU read-side critical sections leaking up. */
- }
- EXPORT_SYMBOL_GPL(rcu_note_context_switch);
- 
--- 
-2.22.0.770.g0f2c4a37fd-goog
+On 2019-08-01 10:42 a.m., Luis Chamberlain wrote:
+> On Thu, Aug 01, 2019 at 08:18:01AM +0200, Greg Kroah-Hartman wrote:
+>> On Wed, Jul 31, 2019 at 05:18:32PM -0700, Scott Branden wrote:
+>>> Hi Greg,
+>>>
+>>> I am now back from leave to continue this patch.  Comment below.
+>>>
+>>> On 2019-05-23 10:22 p.m., Greg Kroah-Hartman wrote:
+>>>> On Thu, May 23, 2019 at 10:01:38PM -0700, Scott Branden wrote:
+>>>>> On 2019-05-23 9:54 a.m., Greg Kroah-Hartman wrote:
+>>>>>> On Thu, May 23, 2019 at 09:36:02AM -0700, Scott Branden wrote:
+>>>>>>> Hi Greg,
+>>>>>>>
+>>>>>>> On 2019-05-22 10:52 p.m., Greg Kroah-Hartman wrote:
+>>>>>>>> On Wed, May 22, 2019 at 07:51:12PM -0700, Scott Branden wrote:
+>>>>>>>>> Add offset to request_firmware_into_buf to allow for portions
+>>>>>>>>> of firmware file to be read into a buffer.  Necessary where firmware
+>>>>>>>>> needs to be loaded in portions from file in memory constrained systems.
+>>>>>>>>>
+>>>>>>>>> Signed-off-by: Scott Branden <scott.branden@broadcom.com>
+>>>>>>>>> ---
+>>>>>>>>>      drivers/base/firmware_loader/firmware.h |  5 +++
+>>>>>>>>>      drivers/base/firmware_loader/main.c     | 49 +++++++++++++++++--------
+>>>>>>>>>      include/linux/firmware.h                |  8 +++-
+>>>>>>>>>      3 files changed, 45 insertions(+), 17 deletions(-)
+>>>>>>>> No new firmware test for this new option?  How do we know it even works?
+>>>>>>> I was unaware there are existing firmware tests.  Please let me know where
+>>>>>>> these tests exists and I can add a test for this new option.
+>>>>>> tools/testing/selftests/firmware/
+>>>>> Unfortunately, there doesn't seem to be a test for the existing
+>>>>> request_firmware_into_buf api.
+>>>> Are you sure?  The test is for userspace functionality, there isn't
+>>>> kernel unit tests here.  You need to verify that you didn't break
+>>>> existing functionality as well as verify that your new functionality
+>>>> works.
+>>> I managed to figure out how to build and run
+>>> tools/testing/selftest/firmware/fw_run_tests.sh
+>>>
+>>> and my changes don't break existing functionality.
+> I'm soon going to release something that is going to let you do this
+> faster and easier, let me know if you had troubles in trying to figure
+> out how to not regress the kernel using this.
+
+Yes, I had troubles in trying to figure it out.  The kernel build should
+
+create an entire initrd with all the necessary components in it for 
+testing purposes.
+
+And the firmware test will now take me some time to figure out how it 
+all works.
+
+Could you please explain what you are going to release soon?  I don't 
+want to waste
+
+my time getting something working if everything is going to change on me 
+right away?
+
+>
+>>> But, I find no use of request_firmware_into_buf in lib/test_firmware.c
+>>> (triggered by fw_run_tests.sh).
+>>>
+>>> Is there another test for request_firmware_into_buf?
+>> I have no idea, sorry.
+> The folks who implemented request_firmware_into_buf() didn't add a
+> respective test, because, well, this API went upstream IMO without much
+> ACKs / review, and even no damn users. Now we have a user so we're stuck
+> with it.
+
+The request_firmware_into_buf is a necessity for me as well
+
+(along with the need for a partial request of the file which I'm adding).
+
+>
+> So new testing calls for it would be appreciated. If you have questions
+> I am happy to help.
+
+If you're an expert on the firmware test and can quickly add a simple 
+test of request_firmware_into_buf
+
+it would be appreciated.  If not, I'm going to have to dig further into 
+this and send early versions of
+
+a test out which would be great for you to comment on.
+
+>
+>    Luis
+
+Thanks,
+
+Scott
 
