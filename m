@@ -2,124 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E2667D998
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 12:44:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A34F47D991
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 12:43:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731116AbfHAKoP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 06:44:15 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:46703 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726514AbfHAKoP (ORCPT
+        id S1731074AbfHAKn2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 06:43:28 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:37015 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729140AbfHAKn1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 06:44:15 -0400
-Received: by mail-lf1-f67.google.com with SMTP id z15so45612504lfh.13;
-        Thu, 01 Aug 2019 03:44:13 -0700 (PDT)
+        Thu, 1 Aug 2019 06:43:27 -0400
+Received: by mail-lj1-f193.google.com with SMTP id z28so14645358ljn.4
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2019 03:43:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=A9cNcwd9IRgmvJyTlL5BGGVDEQhizQRLKM43NthiAE0=;
-        b=usboDGU6NGUK3qHYroj4RCdJOx+Sf10386/eHiQMaWkw9l/UnAHTCuDn1FQGSFcFkt
-         wUTR+IWoCevF1ZMWaD9o0nd66076Vx+sMiTpUczZR5eMTiTa/zwDnKfai13M31Troxp8
-         7rDzsJvvH0sVA2i4tIuL8IvwkB/5U5VQEMq1xJtFNSLF/mdxVOBzpaXBZj9w/q3nf2bL
-         LrhvBPaB1a4jX1FCuNV/4L/WiIoR1QsgqlnXIyFvMFG70s+sD/X7b8QBatsvKCIPcmjk
-         8a0AYuWuXlGypW7owZEV2eRZzAjWmtW3+UlHbW702h5ZQtJ3rWsokKpagTAY6vaBclUz
-         mKhw==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=xJ+XW7erGOKB1qLPzmBxeO8g/P30n/FrQ5rJ6pbczJM=;
+        b=Aom89KfQg4zR8rFKZ7WwksWEApb+WF09Q42ttz2qRwj/xSkGBGezOX+UtiYKI/hUml
+         Do5bTuWh0t94mXcdLlZXXflSRP+PEOuuypvp9qDJOB3khN6LTQcSlKhVgksalzc5gqCr
+         u8z9/fKrkR5wjGzeI6QvFIhVFK920BSw6fUS/vl4oQlni0DwQnCrtgqqiajBWorsj3vB
+         Wmw0NdA5mrbzo6hCIkcYI+y27N7FSap7EEb+jIeLPoUNJAfs7Sl4K21CQ7zAORLIEzXa
+         8Z+PkfpLf3kNT6j2Yx4U2lpuRgVxesgZXbqznFUFPp7oqm+5i6qSsCLqVJXZaT1w7wmG
+         HKVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=A9cNcwd9IRgmvJyTlL5BGGVDEQhizQRLKM43NthiAE0=;
-        b=uGiR4gKDy7Ksrwd44upBJVURO1IXTQdCFO9iptMZ3PbIrC/PoiTleD13Xe83clI88I
-         2RUQ0JyFEKSHRTE5Mhvg2HrOr+DQQVXr6ylz0r/2pG+YOqpuBgZPlPUXOKq6cDyTR82O
-         bLGzXn44xgU1Z1YZxi1q5Gt+G35JOcdvx5LbmMwXwe4Mn9POR4Sm+UFGFOgKE9jGbOj0
-         Hy9RplScVDDT28wWidYrWwvW1UBNKm1VFxOJGve60ZsrTwVWqHJAAdvOR+Na7Oe7Upcw
-         ByQC3JnTUtaO5zB1+NoEjdbtOz5ZW+VhOty4WY5BfiKZTR8twapnVBhNWolQ7ZNLHYiW
-         4GjQ==
-X-Gm-Message-State: APjAAAW4KcdBLl8eQ5zR3BmltN1UHkXZJ3VSAR6ouJOBpcsGKuAfWUNU
-        1ixL7vzOkLJflZx3k3litsJmEsIq
-X-Google-Smtp-Source: APXvYqz2Y9yO3DiF+D395+ZEnFkpJg59qBaSjGFWD2gYvgHURdqUCdJs91JgmbgjhhmlQ3qiOoz+2A==
-X-Received: by 2002:ac2:414d:: with SMTP id c13mr9975444lfi.47.1564656252635;
-        Thu, 01 Aug 2019 03:44:12 -0700 (PDT)
-Received: from [192.168.2.145] (ppp91-78-220-99.pppoe.mtu-net.ru. [91.78.220.99])
-        by smtp.googlemail.com with ESMTPSA id b6sm13533059lfa.54.2019.08.01.03.44.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 01 Aug 2019 03:44:12 -0700 (PDT)
-Subject: Re: [PATCH v7 16/20] arm64: tegra: Enable wake from deep sleep on RTC
- alarm
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de,
-        jason@lakedaemon.net, marc.zyngier@arm.com,
-        linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com
-Cc:     pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org,
-        devicetree@vger.kernel.org
-References: <1564532424-10449-1-git-send-email-skomatineni@nvidia.com>
- <1564532424-10449-17-git-send-email-skomatineni@nvidia.com>
- <1233ad49-22eb-a90a-d7cf-5fe133ded177@gmail.com>
- <d4709085-f705-2608-08a8-65b238ae8844@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <4f8b9ee7-5402-6463-d6d2-7b00e274a185@gmail.com>
-Date:   Thu, 1 Aug 2019 13:43:15 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
-MIME-Version: 1.0
-In-Reply-To: <d4709085-f705-2608-08a8-65b238ae8844@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=xJ+XW7erGOKB1qLPzmBxeO8g/P30n/FrQ5rJ6pbczJM=;
+        b=f8mjS9J7EjaLjUf8IBmGHtR2VtXk7i8cy44nOl0mB8bzE3LyypNhjmcS4uUqff/sMz
+         oq4kE1i7VRkEHc7qIv4FNkt7FQQCFEoN1xRLYb3NSwrypGSU9hmX7Ci1SIam8sM+AE10
+         m1zgbSJF0mBJJLijbSpVP0OgKFki5yx7vdEgmjsc8HAIWjLIyJh6DG9wcJ1B4t1sElXq
+         eRKnWooflBUytX/+R6PSC1UPfvN/WfR3KW85XyDVF/T26P6l6UtzcPdljR4BvtcMGM2v
+         J0f+/3ghNReW18BfFdwftVr0iVLPZ50MdqDbUU5XZNml3POZC9iT8mdjCxnrqA6dVBDC
+         KOlA==
+X-Gm-Message-State: APjAAAW6jmbTplS2gwgB9QWXezoDaLRptrDrtf+8T5YgwQJn/jnMLN0Q
+        YGR5zvA8vUh35tqWdSQ9KPWoSA==
+X-Google-Smtp-Source: APXvYqwr7N8nUcsTaa9qhK5CVPXKHkU82/bKtDqYW2xoBvPPjubmYiblEAF8FQu67NzuuouKXRNRGw==
+X-Received: by 2002:a2e:8ecb:: with SMTP id e11mr9432739ljl.218.1564656205540;
+        Thu, 01 Aug 2019 03:43:25 -0700 (PDT)
+Received: from localhost.localdomain (h-158-174-22-210.NA.cust.bahnhof.se. [158.174.22.210])
+        by smtp.gmail.com with ESMTPSA id u15sm14569573lje.89.2019.08.01.03.43.23
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 01 Aug 2019 03:43:24 -0700 (PDT)
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+To:     Linus <torvalds@linux-foundation.org>, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [GIT PULL] MMC fixes for v5.3-rc3
+Date:   Thu,  1 Aug 2019 12:43:19 +0200
+Message-Id: <20190801104319.25247-1-ulf.hansson@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-01.08.2019 0:08, Sowjanya Komatineni пишет:
-> 
-> On 7/31/19 4:04 AM, Dmitry Osipenko wrote:
->> 31.07.2019 3:20, Sowjanya Komatineni пишет:
->>> This patch updates device tree for RTC and PMC to allow system wake
->>> from deep sleep on RTC alarm.
->>>
->>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->>> ---
->>>   arch/arm64/boot/dts/nvidia/tegra210.dtsi | 5 ++++-
->>>   1 file changed, 4 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
->>> b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
->>> index 659753118e96..30a7c48385a2 100644
->>> --- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
->>> +++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
->>> @@ -768,7 +768,8 @@
->>>       rtc@7000e000 {
->>>           compatible = "nvidia,tegra210-rtc", "nvidia,tegra20-rtc";
->>>           reg = <0x0 0x7000e000 0x0 0x100>;
->>> -        interrupts = <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>;
->>> +        interrupts = <16 IRQ_TYPE_LEVEL_HIGH>;
->>> +        interrupt-parent = <&pmc>;
->>>           clocks = <&tegra_car TEGRA210_CLK_RTC>;
->>>           clock-names = "rtc";
->>>       };
->>> @@ -778,6 +779,8 @@
->>>           reg = <0x0 0x7000e400 0x0 0x400>;
->>>           clocks = <&tegra_car TEGRA210_CLK_PCLK>, <&clk32k_in>;
->>>           clock-names = "pclk", "clk32k_in";
->>> +        #interrupt-cells = <2>;
->>> +        interrupt-controller;
->>>             powergates {
->>>               pd_audio: aud {
->>>
->> Is this a backwards-compatible change? Or it's not really worth to care
->> about the compatibility with older kernel versions, I'm not sure about
->> overall state of T210 in the upstream kernel.
-> I don't think its required to be backwards-compatible as SC7 entry/exit
-> implementation for T210 is with this patch series onwards..
+Hi Linus,
 
-The new device tree binary should work with older kernel versions, AFAIK
-this is the upstream rule. But if kernel support isn't in a very good
-shape and not much people are using it, then obviously it is not very
-important.
+Here's a PR with a couple of MMC fixes intended for v5.3-rc3. Details about the
+highlights are as usual found in the signed tag.
+
+Please pull this in!
+
+Kind regards
+Ulf Hansson
+
+
+The following changes since commit 5f9e832c137075045d15cd6899ab0505cfb2ca4b:
+
+  Linus 5.3-rc1 (2019-07-21 14:05:38 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git tags/mmc-v5.3-rc1
+
+for you to fetch changes up to 3a6ffb3c8c3274a39dc8f2514526e645c5d21753:
+
+  mmc: mmc_spi: Enable stable writes (2019-07-22 15:31:00 +0200)
+
+----------------------------------------------------------------
+MMC host:
+ - sdhci-sprd: Add a missing pm_runtime_put_noidle() to fix deferred probe
+ - dw_mmc: Fix occasional hang after tuning on eMMC
+ - meson-mx-sdio: Fix misuse of GENMASK macro
+ - mmc_spi: Fix CRC problems for writes by using BDI_CAP_STABLE_WRITES
+
+----------------------------------------------------------------
+Andreas Koop (1):
+      mmc: mmc_spi: Enable stable writes
+
+Baolin Wang (1):
+      mmc: host: sdhci-sprd: Fix the missing pm_runtime_put_noidle()
+
+Douglas Anderson (1):
+      mmc: dw_mmc: Fix occasional hang after tuning on eMMC
+
+Joe Perches (1):
+      mmc: meson-mx-sdio: Fix misuse of GENMASK macro
+
+ drivers/mmc/core/queue.c         | 5 +++++
+ drivers/mmc/host/dw_mmc.c        | 3 +--
+ drivers/mmc/host/meson-mx-sdio.c | 2 +-
+ drivers/mmc/host/sdhci-sprd.c    | 1 +
+ 4 files changed, 8 insertions(+), 3 deletions(-)
