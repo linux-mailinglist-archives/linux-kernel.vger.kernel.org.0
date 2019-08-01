@@ -2,52 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AABD87E5E6
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 00:43:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 909117E5E0
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 00:43:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389959AbfHAWnj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 18:43:39 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:48938 "EHLO
+        id S2389900AbfHAWnI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 18:43:08 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:17546 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1732753AbfHAWni (ORCPT
+        by vger.kernel.org with ESMTP id S1732429AbfHAWnH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 18:43:38 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x71MfdNw109318;
-        Thu, 1 Aug 2019 18:43:00 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2u486f1qx6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 01 Aug 2019 18:43:00 -0400
-Received: from m0098421.ppops.net (m0098421.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x71MftMs110195;
-        Thu, 1 Aug 2019 18:43:00 -0400
-Received: from ppma02wdc.us.ibm.com (aa.5b.37a9.ip4.static.sl-reverse.com [169.55.91.170])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2u486f1qwu-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 01 Aug 2019 18:42:59 -0400
-Received: from pps.filterd (ppma02wdc.us.ibm.com [127.0.0.1])
-        by ppma02wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x71MeuVm030283;
-        Thu, 1 Aug 2019 22:42:59 GMT
-Received: from b01cxnp22036.gho.pok.ibm.com (b01cxnp22036.gho.pok.ibm.com [9.57.198.26])
-        by ppma02wdc.us.ibm.com with ESMTP id 2u0e85w6sq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 01 Aug 2019 22:42:59 +0000
+        Thu, 1 Aug 2019 18:43:07 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x71MfgpX030506
+        for <linux-kernel@vger.kernel.org>; Thu, 1 Aug 2019 18:43:06 -0400
+Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2u460eeev5-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2019 18:43:05 -0400
+Received: from localhost
+        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Thu, 1 Aug 2019 23:43:05 +0100
+Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
+        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 1 Aug 2019 23:42:59 +0100
 Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x71MgwoG11797102
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x71MgwmJ12845714
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
         Thu, 1 Aug 2019 22:42:58 GMT
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C8EDFB2079;
+        by IMSVA (Postfix) with ESMTP id C9BC2B207A;
         Thu,  1 Aug 2019 22:42:58 +0000 (GMT)
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A33B2B2070;
+        by IMSVA (Postfix) with ESMTP id AA450B2073;
         Thu,  1 Aug 2019 22:42:58 +0000 (GMT)
 Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.154])
         by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
         Thu,  1 Aug 2019 22:42:58 +0000 (GMT)
 Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 0878716C9A36; Thu,  1 Aug 2019 15:43:00 -0700 (PDT)
+        id 0BBFF16C9A29; Thu,  1 Aug 2019 15:43:00 -0700 (PDT)
 From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
 To:     rcu@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
@@ -57,13 +51,20 @@ Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
         "Paul E . McKenney" <paulmck@linux.ibm.com>
-Subject: [PATCH tip/core/rcu 1/8] treewide: Rename rcu_dereference_raw_notrace() to _check()
-Date:   Thu,  1 Aug 2019 15:42:51 -0700
-Message-Id: <20190801224258.16679-1-paulmck@linux.ibm.com>
+Subject: [PATCH tip/core/rcu 2/8] rcu: Remove redundant debug_locks check in rcu_read_lock_sched_held()
+Date:   Thu,  1 Aug 2019 15:42:52 -0700
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190801224240.GA16092@linux.ibm.com>
 References: <20190801224240.GA16092@linux.ibm.com>
 X-TM-AS-GCONF: 00
+x-cbid: 19080122-0064-0000-0000-0000040578CA
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00011535; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000287; SDB=6.01240735; UDB=6.00654295; IPR=6.01022160;
+ MB=3.00028000; MTD=3.00000008; XFM=3.00000015; UTC=2019-08-01 22:43:03
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19080122-0065-0000-0000-00003E81EC89
+Message-Id: <20190801224258.16679-2-paulmck@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-01_09:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -78,138 +79,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
 
-The rcu_dereference_raw_notrace() API name is confusing.  It is equivalent
-to rcu_dereference_raw() except that it also does sparse pointer checking.
-
-There are only a few users of rcu_dereference_raw_notrace(). This patches
-renames all of them to be rcu_dereference_raw_check() with the "_check()"
-indicating sparse checking.
+The debug_locks flag can never be true at the end of
+rcu_read_lock_sched_held() because it is already checked by the earlier
+call todebug_lockdep_rcu_enabled().   This commit therefore removes this
+redundant check.
 
 Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-[ paulmck: Fix checkpatch warnings about parentheses. ]
 Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
 ---
- Documentation/RCU/Design/Requirements/Requirements.html | 2 +-
- arch/powerpc/include/asm/kvm_book3s_64.h                | 2 +-
- include/linux/rculist.h                                 | 6 +++---
- include/linux/rcupdate.h                                | 2 +-
- kernel/trace/ftrace_internal.h                          | 8 ++++----
- kernel/trace/trace.c                                    | 4 ++--
- 6 files changed, 12 insertions(+), 12 deletions(-)
+ kernel/rcu/update.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-diff --git a/Documentation/RCU/Design/Requirements/Requirements.html b/Documentation/RCU/Design/Requirements/Requirements.html
-index 5a9238a2883c..bdbc84f1b949 100644
---- a/Documentation/RCU/Design/Requirements/Requirements.html
-+++ b/Documentation/RCU/Design/Requirements/Requirements.html
-@@ -2512,7 +2512,7 @@ disabled across the entire RCU read-side critical section.
- <p>
- It is possible to use tracing on RCU code, but tracing itself
- uses RCU.
--For this reason, <tt>rcu_dereference_raw_notrace()</tt>
-+For this reason, <tt>rcu_dereference_raw_check()</tt>
- is provided for use by tracing, which avoids the destructive
- recursion that could otherwise ensue.
- This API is also used by virtualization in some architectures,
-diff --git a/arch/powerpc/include/asm/kvm_book3s_64.h b/arch/powerpc/include/asm/kvm_book3s_64.h
-index bb7c8cc77f1a..04b2b927bb5a 100644
---- a/arch/powerpc/include/asm/kvm_book3s_64.h
-+++ b/arch/powerpc/include/asm/kvm_book3s_64.h
-@@ -535,7 +535,7 @@ static inline void note_hpte_modification(struct kvm *kvm,
+diff --git a/kernel/rcu/update.c b/kernel/rcu/update.c
+index 61df2bf08563..9dd5aeef6e70 100644
+--- a/kernel/rcu/update.c
++++ b/kernel/rcu/update.c
+@@ -93,17 +93,13 @@ module_param(rcu_normal_after_boot, int, 0);
   */
- static inline struct kvm_memslots *kvm_memslots_raw(struct kvm *kvm)
+ int rcu_read_lock_sched_held(void)
  {
--	return rcu_dereference_raw_notrace(kvm->memslots[0]);
-+	return rcu_dereference_raw_check(kvm->memslots[0]);
+-	int lockdep_opinion = 0;
+-
+ 	if (!debug_lockdep_rcu_enabled())
+ 		return 1;
+ 	if (!rcu_is_watching())
+ 		return 0;
+ 	if (!rcu_lockdep_current_cpu_online())
+ 		return 0;
+-	if (debug_locks)
+-		lockdep_opinion = lock_is_held(&rcu_sched_lock_map);
+-	return lockdep_opinion || !preemptible();
++	return lock_is_held(&rcu_sched_lock_map) || !preemptible();
  }
- 
- extern void kvmppc_mmu_debugfs_init(struct kvm *kvm);
-diff --git a/include/linux/rculist.h b/include/linux/rculist.h
-index e91ec9ddcd30..932296144131 100644
---- a/include/linux/rculist.h
-+++ b/include/linux/rculist.h
-@@ -622,7 +622,7 @@ static inline void hlist_add_behind_rcu(struct hlist_node *n,
-  * as long as the traversal is guarded by rcu_read_lock().
-  */
- #define hlist_for_each_entry_rcu(pos, head, member)			\
--	for (pos = hlist_entry_safe (rcu_dereference_raw(hlist_first_rcu(head)),\
-+	for (pos = hlist_entry_safe(rcu_dereference_raw(hlist_first_rcu(head)),\
- 			typeof(*(pos)), member);			\
- 		pos;							\
- 		pos = hlist_entry_safe(rcu_dereference_raw(hlist_next_rcu(\
-@@ -642,10 +642,10 @@ static inline void hlist_add_behind_rcu(struct hlist_node *n,
-  * not do any RCU debugging or tracing.
-  */
- #define hlist_for_each_entry_rcu_notrace(pos, head, member)			\
--	for (pos = hlist_entry_safe (rcu_dereference_raw_notrace(hlist_first_rcu(head)),\
-+	for (pos = hlist_entry_safe(rcu_dereference_raw_check(hlist_first_rcu(head)),\
- 			typeof(*(pos)), member);			\
- 		pos;							\
--		pos = hlist_entry_safe(rcu_dereference_raw_notrace(hlist_next_rcu(\
-+		pos = hlist_entry_safe(rcu_dereference_raw_check(hlist_next_rcu(\
- 			&(pos)->member)), typeof(*(pos)), member))
- 
- /**
-diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
-index 8f7167478c1d..bfcafbc1e301 100644
---- a/include/linux/rcupdate.h
-+++ b/include/linux/rcupdate.h
-@@ -476,7 +476,7 @@ do {									      \
-  * The no-tracing version of rcu_dereference_raw() must not call
-  * rcu_read_lock_held().
-  */
--#define rcu_dereference_raw_notrace(p) __rcu_dereference_check((p), 1, __rcu)
-+#define rcu_dereference_raw_check(p) __rcu_dereference_check((p), 1, __rcu)
- 
- /**
-  * rcu_dereference_protected() - fetch RCU pointer when updates prevented
-diff --git a/kernel/trace/ftrace_internal.h b/kernel/trace/ftrace_internal.h
-index 0515a2096f90..0456e0a3dab1 100644
---- a/kernel/trace/ftrace_internal.h
-+++ b/kernel/trace/ftrace_internal.h
-@@ -6,22 +6,22 @@
- 
- /*
-  * Traverse the ftrace_global_list, invoking all entries.  The reason that we
-- * can use rcu_dereference_raw_notrace() is that elements removed from this list
-+ * can use rcu_dereference_raw_check() is that elements removed from this list
-  * are simply leaked, so there is no need to interact with a grace-period
-- * mechanism.  The rcu_dereference_raw_notrace() calls are needed to handle
-+ * mechanism.  The rcu_dereference_raw_check() calls are needed to handle
-  * concurrent insertions into the ftrace_global_list.
-  *
-  * Silly Alpha and silly pointer-speculation compiler optimizations!
-  */
- #define do_for_each_ftrace_op(op, list)			\
--	op = rcu_dereference_raw_notrace(list);			\
-+	op = rcu_dereference_raw_check(list);			\
- 	do
- 
- /*
-  * Optimized for just a single item in the list (as that is the normal case).
-  */
- #define while_for_each_ftrace_op(op)				\
--	while (likely(op = rcu_dereference_raw_notrace((op)->next)) &&	\
-+	while (likely(op = rcu_dereference_raw_check((op)->next)) &&	\
- 	       unlikely((op) != &ftrace_list_end))
- 
- extern struct ftrace_ops __rcu *ftrace_ops_list;
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 525a97fbbc60..642474b26ba7 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -2642,10 +2642,10 @@ static void ftrace_exports(struct ring_buffer_event *event)
- 
- 	preempt_disable_notrace();
- 
--	export = rcu_dereference_raw_notrace(ftrace_exports_list);
-+	export = rcu_dereference_raw_check(ftrace_exports_list);
- 	while (export) {
- 		trace_process_export(export, event);
--		export = rcu_dereference_raw_notrace(export->next);
-+		export = rcu_dereference_raw_check(export->next);
- 	}
- 
- 	preempt_enable_notrace();
+ EXPORT_SYMBOL(rcu_read_lock_sched_held);
+ #endif
 -- 
 2.17.1
 
