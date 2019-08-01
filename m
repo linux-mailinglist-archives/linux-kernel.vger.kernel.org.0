@@ -2,109 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C62247DCD1
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 15:50:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 013C77DCD5
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 15:51:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728836AbfHANuv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 09:50:51 -0400
-Received: from wout2-smtp.messagingengine.com ([64.147.123.25]:49165 "EHLO
-        wout2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725930AbfHANuu (ORCPT
+        id S1729721AbfHANvO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 09:51:14 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:49604 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725930AbfHANvN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 09:50:50 -0400
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailout.west.internal (Postfix) with ESMTP id 47C8D43F;
-        Thu,  1 Aug 2019 09:50:49 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute6.internal (MEProxy); Thu, 01 Aug 2019 09:50:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=VD0+62PbXYEUtn3nWDeyLEdc1Uk
-        cObs+jXwJEZ9imi8=; b=XL5l8TWup11/3STFzR7FeSvbvt+oA0XRSm16xAqK+UI
-        +J1Np0f66xrbHY4zCea8Cx+bUs/d6DsB4/KR5v5uSOf6XtXoKW2FNBV6gLppNYX8
-        0OvQ1bltL8Z/Co6+exZx36hE/zrT/MvfM5gybzossmBhWKbWriyq3mW5CP+WEgGJ
-        bpZh5h0ZDY4bG+CQ2cVxt2qPw6DUUqNh64+pIwkGB/d0EzOOOBvLZR/9dOVY8CGF
-        zVrTizMk+ft48EAKGmT36pgPlkmMLfJtPmVtzeHhvYimKtUCXRRnvKdk0HyeKBVh
-        K9DsXFAKo2zS9AN10HDcSIJmJ1ZQP9CYGmXFKZe0J9w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=VD0+62
-        PbXYEUtn3nWDeyLEdc1UkcObs+jXwJEZ9imi8=; b=o5EN+DrqUd3XeC2qlsJKEw
-        THLsfg6/pjZU4AV6lOnDON7LxQPdmkmCLODaPXk4im4gYjSn7wfQnVZPjsRNuKUt
-        0MenDWGt+R/qaqlEe7wcJ4V6hxkSbhp9mDNMKqaop5pk4r7xdZmFP/bZ2kotrYGu
-        0sZUQcl2GY+UqsVg8bHxj83eCsVEze774dabczLiqI7b6r2ygW6p5RUdv1vZIGHC
-        16Sgs3I9l7fajimGfIy960P48jGJ1A6uJBQr7z0n9BU624DM8G1/YvrLvAIUqgok
-        eScDLxq26OHzuMMlPfz5k2wsCr57Qw05YBgohBN5bBgLAwkTR03CslqR0p/lbG5A
-        ==
-X-ME-Sender: <xms:OO5CXe58fVDB1Y-4wsdg5Ayynxd1j2VvdEjG-FjbZHlMyOJRhvAgZQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrleejgdeikecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvuffkfhggtggujggfsehttdertddtredvnecuhfhrohhmpefirhgvghcu
-    mffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucfkphepkeefrdekiedrkeelrddutd
-    ejnecurfgrrhgrmhepmhgrihhlfhhrohhmpehgrhgvgheskhhrohgrhhdrtghomhenucev
-    lhhushhtvghrufhiiigvpedt
-X-ME-Proxy: <xmx:OO5CXekqEv3fICIw9qvS_0Cr9VW5YjMICx1KXxm2CwVv3LHbcVPqjw>
-    <xmx:OO5CXXnDngUcH-x5bMdAp67_eq-rBCJHQPBlhG4H5lT4fwUO5MSFsA>
-    <xmx:OO5CXa7GqhyrEbuEOjrJOee6WJ9hbxA9-i5RRC2mGYzAxtLko5jRbw>
-    <xmx:OO5CXb6RaIXMZWT47YEkLtOuE3r3MSueMlY-gtHtdsDxd-CJiFov8A>
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 1328F380076;
-        Thu,  1 Aug 2019 09:50:47 -0400 (EDT)
-Date:   Thu, 1 Aug 2019 15:50:44 +0200
-From:   Greg KH <greg@kroah.com>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     Marcel Holtmann <marcel@holtmann.org>,
-        Vladis Dronov <vdronov@redhat.com>,
-        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-bluetooth@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v5.3-rc2] Bluetooth: hci_uart: check for missing tty
- operations
-Message-ID: <20190801135044.GB24791@kroah.com>
-References: <20190730093345.25573-1-marcel@holtmann.org>
- <20190801133132.6BF30206A3@mail.kernel.org>
+        Thu, 1 Aug 2019 09:51:13 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x71DcHYt071709;
+        Thu, 1 Aug 2019 09:51:05 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2u40xq9527-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 01 Aug 2019 09:51:05 -0400
+Received: from m0098399.ppops.net (m0098399.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x71DcXuW072724;
+        Thu, 1 Aug 2019 09:51:04 -0400
+Received: from ppma01wdc.us.ibm.com (fd.55.37a9.ip4.static.sl-reverse.com [169.55.85.253])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2u40xq9515-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 01 Aug 2019 09:51:04 -0400
+Received: from pps.filterd (ppma01wdc.us.ibm.com [127.0.0.1])
+        by ppma01wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x71DeMrq020157;
+        Thu, 1 Aug 2019 13:51:03 GMT
+Received: from b01cxnp22035.gho.pok.ibm.com ([9.57.198.25])
+        by ppma01wdc.us.ibm.com with ESMTP id 2u0e86vvxk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 01 Aug 2019 13:51:03 +0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x71Dp3eT43057458
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 1 Aug 2019 13:51:03 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AED3DB206A;
+        Thu,  1 Aug 2019 13:51:02 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 91097B2065;
+        Thu,  1 Aug 2019 13:51:02 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.154])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu,  1 Aug 2019 13:51:02 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id AF9B216C998B; Thu,  1 Aug 2019 06:51:03 -0700 (PDT)
+Date:   Thu, 1 Aug 2019 06:51:03 -0700
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     mingo@kernel.org, linux-kernel@vger.kernel.org,
+        Juri Lelli <juri.lelli@redhat.com>
+Subject: Re: [PATCH 2/5] rcu/tree: Fix SCHED_FIFO params
+Message-ID: <20190801135103.GI5913@linux.ibm.com>
+Reply-To: paulmck@linux.ibm.com
+References: <20190801111348.530242235@infradead.org>
+ <20190801111541.742613597@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190801133132.6BF30206A3@mail.kernel.org>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20190801111541.742613597@infradead.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-01_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908010145
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 01, 2019 at 01:31:31PM +0000, Sasha Levin wrote:
-> Hi,
+On Thu, Aug 01, 2019 at 01:13:50PM +0200, Peter Zijlstra wrote:
+> A rather embarrasing mistake had us call sched_setscheduler() before
+> initializing the parameters passed to it.
 > 
-> [This is an automated email]
-> 
-> This commit has been processed because it contains a "Fixes:" tag,
-> fixing commit: .
-> 
-> The bot has tested the following trees: v5.2.4, v5.1.21, v4.19.62, v4.14.134, v4.9.186, v4.4.186.
-> 
-> v5.2.4: Build OK!
-> v5.1.21: Build OK!
-> v4.19.62: Build OK!
-> v4.14.134: Failed to apply! Possible dependencies:
->     25a13e382de2 ("bluetooth: hci_qca: Replace GFP_ATOMIC with GFP_KERNEL")
-> 
-> v4.9.186: Failed to apply! Possible dependencies:
->     25a13e382de2 ("bluetooth: hci_qca: Replace GFP_ATOMIC with GFP_KERNEL")
-> 
-> v4.4.186: Failed to apply! Possible dependencies:
->     162f812f23ba ("Bluetooth: hci_uart: Add Marvell support")
->     25a13e382de2 ("bluetooth: hci_qca: Replace GFP_ATOMIC with GFP_KERNEL")
->     395174bb07c1 ("Bluetooth: hci_uart: Add Intel/AG6xx support")
->     9e69130c4efc ("Bluetooth: hci_uart: Add Nokia Protocol identifier")
-> 
-> 
-> NOTE: The patch will not be queued to stable trees until it is upstream.
-> 
-> How should we proceed with this patch?
+> Cc: Juri Lelli <juri.lelli@redhat.com>
+> Cc: "Paul E. McKenney" <paulmck@linux.ibm.com>
 
-Already fixed up by hand and queued up, your automated email is a bit
-slow :)
+Thank you for having CCed me this time.  ;-)
 
-greg k-h
+Reviewed-by: Paul E. McKenney <paulmck@linux.ibm.com>
+
+> Fixes: 1a763fd7c633 ("rcu/tree: Call setschedule() gp ktread to SCHED_FIFO outside of atomic region")
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> ---
+>  kernel/rcu/tree.c |    6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> --- a/kernel/rcu/tree.c
+> +++ b/kernel/rcu/tree.c
+> @@ -3234,13 +3234,13 @@ static int __init rcu_spawn_gp_kthread(v
+>  	t = kthread_create(rcu_gp_kthread, NULL, "%s", rcu_state.name);
+>  	if (WARN_ONCE(IS_ERR(t), "%s: Could not start grace-period kthread, OOM is now expected behavior\n", __func__))
+>  		return 0;
+> -	if (kthread_prio)
+> +	if (kthread_prio) {
+> +		sp.sched_priority = kthread_prio;
+>  		sched_setscheduler_nocheck(t, SCHED_FIFO, &sp);
+> +	}
+>  	rnp = rcu_get_root();
+>  	raw_spin_lock_irqsave_rcu_node(rnp, flags);
+>  	rcu_state.gp_kthread = t;
+> -	if (kthread_prio)
+> -		sp.sched_priority = kthread_prio;
+>  	raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
+>  	wake_up_process(t);
+>  	rcu_spawn_nocb_kthreads();
+> 
+> 
