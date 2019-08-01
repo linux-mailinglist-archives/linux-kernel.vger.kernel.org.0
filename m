@@ -2,92 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 836A07DBA0
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 14:38:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 419EE7DBA8
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 14:40:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731322AbfHAMiL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 08:38:11 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:51526 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726422AbfHAMiL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 08:38:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=bH3hTzzK8wCiqvY4xW3EPVXepMqBIOyt0Kx3x1aegwg=; b=miyXfEN8B3UsjIwBbezhY6o42
-        DjkGYekMBPmWShjXfySYo3uYdfUEMYwN+sz5CJCfx9L0jeYj8cH4Y1ZQB4PH0bqVs6j36reDKOpsm
-        tUjwVGryLDkjUGE7Boo85MkNWFATHmPP7ouvBdXSct1FOjH2AJWBk5GpfIXpLEViclbLL5rRm3mxw
-        ksCdR5GHGIQhQtirmBA+yuWd8IHaz2qE2/0H39QSYUhqkh2zwuE2iHwsAUa7OGH71icKI7j/go95E
-        VRkVfWUDg3p0sfUFENHxSIgskOKm3f5S5bMEHBeV6xs6vBQVOtttLEzIA6suh42b0lYbW/nkuta6U
-        Sr4mYamzQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1htALP-0006Zx-O3; Thu, 01 Aug 2019 12:38:07 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 227242029F4CD; Thu,  1 Aug 2019 14:38:06 +0200 (CEST)
-Date:   Thu, 1 Aug 2019 14:38:06 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Andy Walls <andy@silverblocksystems.net>
-Cc:     mingo@kernel.org, linux-kernel@vger.kernel.org,
-        Andy Walls <awalls@md.metrocast.net>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 4/5] media/ivtv: Reduce default FIFO priority
-Message-ID: <20190801123806.GA31398@hirez.programming.kicks-ass.net>
-References: <20190801111348.530242235@infradead.org>
- <20190801111541.858088180@infradead.org>
- <7970f0e30d1eb83e7067225d07b923863bf1ac50.camel@silverblocksystems.net>
+        id S1731363AbfHAMj4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 08:39:56 -0400
+Received: from mx2.suse.de ([195.135.220.15]:58096 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730881AbfHAMj4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Aug 2019 08:39:56 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D26CBB00E;
+        Thu,  1 Aug 2019 12:39:54 +0000 (UTC)
+Message-ID: <6d9e85ac5768e920805f121eeaff1360f3b257df.camel@suse.com>
+Subject: Re: [PATCH] KVM: Disable wake-affine vCPU process to mitigate lock
+ holder preemption
+From:   Dario Faggioli <dfaggioli@suse.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>,
+        Wanpeng Li <kernellwp@gmail.com>, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc:     Radim =?UTF-8?Q?Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Date:   Thu, 01 Aug 2019 14:39:34 +0200
+In-Reply-To: <19e0beb6-a732-ea1f-79a5-41be92569338@redhat.com>
+References: <1564479235-25074-1-git-send-email-wanpengli@tencent.com>
+         <19e0beb6-a732-ea1f-79a5-41be92569338@redhat.com>
+Organization: SUSE
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-OoP9rETHtqYOrghGbkKn"
+User-Agent: Evolution 3.32.3 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7970f0e30d1eb83e7067225d07b923863bf1ac50.camel@silverblocksystems.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 01, 2019 at 08:24:22AM -0400, Andy Walls wrote:
-> Hi Peter:
-> 
-> On Thu, 2019-08-01 at 13:13 +0200, Peter Zijlstra wrote:
-> > The ivtv driver creates a FIFO-99 thread by default, reduce this to
-> > FIFO-1.
-> > 
-> > FIFO-99 is the very highest priority available to SCHED_FIFO and
-> > it not a suitable default; it would indicate the ivtv work is the
-> > most important work on the machine.
-> 
-> ivtv based boards are legacy, convential PCI boards.  At this point,
-> these old boards are generally installed in boxes dedicated to video
-> capture (e.g. MythTV setups) or boxes dedicated to capturing VBI
-> information, like closed captioning, for business intelligence.
-> 
-> For boxes dedicated to video or VBI capture, the ivtv work may very
-> well be close to the most important work on the machine, to avoid
-> dropping video frames or VBI data.
-> 
-> 
-> > FIFO-1 gets it above all OTHER tasks, which seems high enough lacking
-> > better justification.
-> 
-> I agree that FIFO-99 is the wrong default level.
-> 
-> However, in my opinion, threads responsible for real time data
-> acquisition should have higher priority than the other kernel driver
-> threads normally running at FIFO-50.
-> 
-> How about FIFO-51 as the default?
 
-If the consumer of the data are RT tasks as well (I hadn't expected that
-from a TV capture device) then I'd propose to use FIFO-50 as default.
+--=-OoP9rETHtqYOrghGbkKn
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The thing is, the moment you're doing actual proper RT, the admin needs
-to configure things anyway, which then very much includes setting the
-priority of interrupt threads and the like.
+On Tue, 2019-07-30 at 13:46 +0200, Paolo Bonzini wrote:
+> On 30/07/19 11:33, Wanpeng Li wrote:
+> > When qemu/other vCPU inject virtual interrupt to guest through
+> > waking up one=20
+> > sleeping vCPU, it increases the probability to stack vCPUs/qemu by
+> > scheduler
+> > wake-affine. vCPU stacking issue can greately inceases the lock
+> > synchronization=20
+> > latency in a virtualized environment. This patch disables wake-
+> > affine vCPU=20
+> > process to mitigtate lock holder preemption.
+>=20
+> There is no guarantee that the vCPU remains on the thread where it's
+> created, so the patch is not enough.
+>=20
+> If many vCPUs are stacked on the same pCPU, why doesn't the wake_cap
+> kick in sooner or later?
+>=20
+Assuming it actually is the case that vcpus *do* get stacked *and* that
+wake_cap() *doesn't* kick in, maybe it could be because of this check?
 
-(that is exacty why pretty much everything defaults to FIFO-50)
+        /* Minimum capacity is close to max, no need to abort wake_affine *=
+/
+        if (max_cap - min_cap < max_cap >> 3)
+                return 0;
+
+Regards
+--=20
+Dario Faggioli, Ph.D
+http://about.me/dario.faggioli
+Virtualization Software Engineer
+SUSE Labs, SUSE https://www.suse.com/
+-------------------------------------------------------------------
+<<This happens because _I_ choose it to happen!>> (Raistlin Majere)
+
+
+--=-OoP9rETHtqYOrghGbkKn
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEES5ssOj3Vhr0WPnOLFkJ4iaW4c+4FAl1C3YYACgkQFkJ4iaW4
+c+7Y7w/9FDc59iIus5zhBIvPf3Lieg7DPJpO7lV5BX3b9Aom3UVTDfgniByN88hC
+hk4lyNnLozzX6zv8AiPtWCWdtvXnjLewY5Z0OSsmQyCL3TdX09h8FXiqfRkcrCQX
+MJj81jMD8AHXQ1tRY5p+k653LpzFRQS4uckBgSklWr2ZAdfwNQLaHA2jdUQ4oatV
+SLN07+3MQaKfea1rdhGCiD4ME+sdOBZO+gwVoosWIDMYKDevuVR54ghl6lBW98pR
+dj+ZSVtlqFfSUYpjtL/l3P3+hHB7292OC+uh9T9ESGR0xk/ggCl7X1H5ELUL+wDG
+M4CNTsr1Z5oihfFGpZk3hZk0qLfOOPDwxbT47tv/RsEqjMRcumkCaldweG6fS9oO
+DUTqauzyAlRo9Ipt29BGRj7mpzd4y4+bZpJJedoql0Yhc4VP3brJneJxWqeNylBQ
+EWtowwuc9hUnewZi2VHPCbAFPIwo2YLyqFApNDMjbtO/Ar6f04BrYwANKj96aOgI
+T1yvC0Q2NaeYJ27wdpRo13TI4FXLVSJhKFEL/80Iw98xyAf6ZShr/Z0RHJbBMoPm
+o2pVT27JwuVcsfM+79kRrN+AJCopRVEfZFpvZ7coLeyxwQKmgcRUTDjxlklJMvly
+TTR5/8tyIA4kUW9ngTGEi4i7LWrMiMP7+tDeQJyZcqkOJ+SFyig=
+=fjyt
+-----END PGP SIGNATURE-----
+
+--=-OoP9rETHtqYOrghGbkKn--
+
