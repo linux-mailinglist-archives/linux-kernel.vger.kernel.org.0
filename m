@@ -2,116 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB6987D8AE
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 11:37:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 650017D8B3
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 11:37:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731229AbfHAJgm convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 1 Aug 2019 05:36:42 -0400
-Received: from relay12.mail.gandi.net ([217.70.178.232]:38127 "EHLO
-        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725790AbfHAJgl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 05:36:41 -0400
-Received: from xps13 (lfbn-1-17395-211.w86-250.abo.wanadoo.fr [86.250.200.211])
-        (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay12.mail.gandi.net (Postfix) with ESMTPSA id A37A2200003;
-        Thu,  1 Aug 2019 09:36:32 +0000 (UTC)
-Date:   Thu, 1 Aug 2019 11:36:31 +0200
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     masonccyang@mxic.com.tw
-Cc:     anders.roxell@linaro.org, bbrezillon@kernel.org,
-        christophe.kerello@st.com, computersforpeace@gmail.com,
-        devicetree@vger.kernel.org, dwmw2@infradead.org,
-        juliensu@mxic.com.tw, lee.jones@linaro.org, liang.yang@amlogic.com,
-        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
-        marek.vasut@gmail.com, mark.rutland@arm.com, paul@crapouillou.net,
-        paul.burton@mips.com, richard@nod.at, robh+dt@kernel.org,
-        stefan@agner.ch, vigneshr@ti.com
-Subject: Re: [PATCH v6 2/2] dt-bindings: mtd: Document Macronix raw NAND
- controller bindings
-Message-ID: <20190801113631.0dcbbf2a@xps13>
-In-Reply-To: <OF6FA21ABA.C0DF9C78-ON48258449.00331EB3-48258449.0034600D@mxic.com.tw>
-References: <1564631710-30276-1-git-send-email-masonccyang@mxic.com.tw>
-        <1564631710-30276-3-git-send-email-masonccyang@mxic.com.tw>
-        <20190801091310.035bc824@xps13>
-        <OF6FA21ABA.C0DF9C78-ON48258449.00331EB3-48258449.0034600D@mxic.com.tw>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1731250AbfHAJhd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 05:37:33 -0400
+Received: from onstation.org ([52.200.56.107]:49252 "EHLO onstation.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725790AbfHAJhd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Aug 2019 05:37:33 -0400
+Received: from localhost (c-98-239-145-235.hsd1.wv.comcast.net [98.239.145.235])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: masneyb)
+        by onstation.org (Postfix) with ESMTPSA id AEA9D3E910;
+        Thu,  1 Aug 2019 09:37:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=onstation.org;
+        s=default; t=1564652252;
+        bh=bSREQHe0K6R3ACsHI8onhePS75HmOgPd/6TZve63MgA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Nj95LxDaFriwiQaSAsOJb7M1D+sCBezKlRMBw0ZBe3WQ1vgmtEF6M1lVy5yBF385X
+         NThk1/24wo/YdDGOnvl2OnZ67NcOi7SsYZcJqDrH3ZNUo0UofDMgAYJC0vq9YvIoA3
+         8ZZhEZ7KfNsuLfSx6EeRvavP5EE2Rlobb1uijBro=
+Date:   Thu, 1 Aug 2019 05:37:31 -0400
+From:   Brian Masney <masneyb@onstation.org>
+To:     Chuhong Yuan <hslester96@gmail.com>
+Cc:     Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/4] iio: tsl2772: Use devm_add_action_or_reset
+Message-ID: <20190801093731.GC27653@onstation.org>
+References: <20190801073557.9578-1-hslester96@gmail.com>
+ <20190801093347.GA27653@onstation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190801093347.GA27653@onstation.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mason,
-
-masonccyang@mxic.com.tw wrote on Thu, 1 Aug 2019 17:32:04 +0800:
-
-> Hi Miquel,
-> 
-> > > Document the bindings used by the Macronix raw NAND controller.
-> > > 
-> > > Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
-> > > ---
-> > >  Documentation/devicetree/bindings/mtd/mxic-nand.txt | 19   
-> +++++++++++++++++++
-> > >  1 file changed, 19 insertions(+)
-> > >  create mode 100644   
-> Documentation/devicetree/bindings/mtd/mxic-nand.txt
-> > > 
-> > > diff --git a/Documentation/devicetree/bindings/mtd/mxic-nand.txt b/  
-> > Documentation/devicetree/bindings/mtd/mxic-nand.txt  
-> > > new file mode 100644
-> > > index 0000000..de37d60
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/mtd/mxic-nand.txt
-> > > @@ -0,0 +1,19 @@
-> > > +Macronix Raw NAND Controller Device Tree Bindings
-> > > +-------------------------------------------------
-> > > +
-> > > +Required properties:
-> > > +- compatible: should be "mxicy,multi-itfc-v009-nand-morph"
-> > > +- reg: should contain 1 entry for the registers
-> > > +- interrupts: interrupt line connected to this raw NAND controller
-> > > +- clock-names: should contain "ps", "send" and "send_dly"
-> > > +- clocks: should contain 3 phandles for the "ps", "send" and
-> > > +    "send_dly" clocks
-> > > +
-> > > +Example:
-> > > +
-> > > +   nand: nand-controller@43c30000 {
-> > > +      compatible = "mxicy,multi-itfc-v009-nand-morph";  
+On Thu, Aug 01, 2019 at 05:33:47AM -0400, Brian Masney wrote:
+> On Thu, Aug 01, 2019 at 03:35:57PM +0800, Chuhong Yuan wrote:
+> > Use devm_add_action_or_reset to remove the call to
+> > tsl2772_disable_regulators_action to simplify the error path.
 > > 
-> > "mxicy" looks strange to me, I know it has been used in the past and
-> > cannot be removed, but I don't think it is wise to continue using it
-> > while your use "mxic" in all your other contributions. I would update
-> > the prefix to mxic here and fill-in the relevant doc.
+> > Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+> 
+> For the whole series:
+> 
+> Reviewed-by: Brian Masney <masneyb@onstation.org>
+
+Oops, I forgot to add this as well:
+
+Tested-by: Brian Masney <masneyb@onstation.org>
+
+I tested this on a Nexus 5 phone.
+
+Brian
+
+
+> 
+> I forgot to mention this before, but next time please use a cover letter
+> if you're sending more than one patch: git format-patch --cover-letter.
+> 
+> Brian
+> 
+> 
+> > ---
+> > Changes in v4:
+> >   - Split v3 into three patches.
+> >   - Revise description to make it more precise.
 > > 
-> > Also, what is nand-morph? I thought we were okay for
-> > the "-nand-controller" suffix.
-> >   
-> 
-> I thought there is a node name "nand-controller@43c30000" and the
-> "-nand-controller" suffix in compatible property seems repeated.
-
-It is repeated because it won't be used the same way. The node name
-will only be relevant in the DT itself (to reference a node for
-instance). I will also appear in the sysfs.
-
-The compatibles are listed in drivers and "given" to the kernel core so
-that the device-driver association can take place.
-
-> 
-> In addition, I would like to indicate it's a multi function controller.
-> 
-> nand-morph means this multi interface controller (multi-itfc) works in
-> raw NAND controller.
-
-I think this is clear as you already put "multi-itfc" in the name. If
-you want you can switch to "morph" in the prefix, but I want the suffix
-to be "-nand-controller".
-
-Thanks,
-Miquèl
+> >  drivers/iio/light/tsl2772.c | 6 +++---
+> >  1 file changed, 3 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/drivers/iio/light/tsl2772.c b/drivers/iio/light/tsl2772.c
+> > index 83cece921843..29cfd8ae2700 100644
+> > --- a/drivers/iio/light/tsl2772.c
+> > +++ b/drivers/iio/light/tsl2772.c
+> > @@ -1807,10 +1807,10 @@ static int tsl2772_probe(struct i2c_client *clientp,
+> >  		return PTR_ERR(chip->vdd_supply);
+> >  	}
+> >  
+> > -	ret = devm_add_action(&clientp->dev, tsl2772_disable_regulators_action,
+> > -			      chip);
+> > +	ret = devm_add_action_or_reset(&clientp->dev,
+> > +					tsl2772_disable_regulators_action,
+> > +					chip);
+> >  	if (ret < 0) {
+> > -		tsl2772_disable_regulators_action(chip);
+> >  		dev_err(&clientp->dev, "Failed to setup regulator cleanup action %d\n",
+> >  			ret);
+> >  		return ret;
+> > -- 
+> > 2.20.1
