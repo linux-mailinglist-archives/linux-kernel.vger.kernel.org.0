@@ -2,136 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C8BD7DBD9
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 14:48:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D1E367DBDD
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 14:48:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731525AbfHAMsL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 08:48:11 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:34226 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731399AbfHAMsK (ORCPT
+        id S1731538AbfHAMsu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 08:48:50 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:36816 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731373AbfHAMsu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 08:48:10 -0400
-Received: by mail-lf1-f67.google.com with SMTP id b29so42919022lfq.1
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2019 05:48:09 -0700 (PDT)
+        Thu, 1 Aug 2019 08:48:50 -0400
+Received: by mail-pg1-f193.google.com with SMTP id l21so34150373pgm.3
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2019 05:48:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=rl9gxlsQAmtdUucdCjHcN4IJXqqRSXnZiys3c1iAChM=;
-        b=BCqrZFER2qt2tRS4BERTa8OYTuAczZw6Vu3z7uTZGQYFaSHcfqcuV5SQV52phXuR2o
-         pc7vXSMcsbSyYQZoWwSHx+qcs5+KqXD1ix4QMDk1fiOe2f+Ey++TFVh4YlYS57d7nY/R
-         +PJ/gd2ZVxTYilPY2dcgN2+QJY+52AFbAoy3305qeyBUImzo0UJUG1ndwMGZnl91xgKz
-         NZSc6hvZbcgaGjMl71JYcOKdsjCyGbbYqmWeQxBn+au/dhacM3cMsu+jw8f7pJ2BZvPK
-         ixzTT/jc3086+42k3lk1OU5aCakMaxf9AgMmj6t3GYjy8+6qb4n0kmkj+3oN88PiNKlA
-         pQPQ==
+        bh=ATAFhJly7oayn4QwVxAmF/cKx18eZXYIEq5cLXvpdzg=;
+        b=mjC+j0aaEEkkMHnLNHs9TEJqIdScFWRlkAZG8TbiBl3AyUZ8l5nLaU29ZLHSb7WvwH
+         X3OlQDdgsBZjncfM3ONy8Dqcuih1q2WnbLztoEOKMtf5vefqmMIHHwchJuo+ue+DCVka
+         b9rui+0AvY5PeeX+qJY2jvBZQab/NzRkSsMupCgkTdlEDxE6K7Nu5zDKiMeGfnD3hicf
+         2VPYUTHD9bJKAQWesHnbiPWY9rwW/eF7WIHmcnvL9DkrJEokfA1mnjx39I+4RQdt1WLM
+         ieuyPRr8iw6XMHiEGmpinxm+wGAydMTsA6N4zI0Tg/WWtENcJ84NKdjINucR3C9EQWXN
+         EQGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=rl9gxlsQAmtdUucdCjHcN4IJXqqRSXnZiys3c1iAChM=;
-        b=oTir0aMvHFzbyA//fAW4iU7JU0D0fWe4fNxzQVD9e3CR9+Z1CgHriIui+GM3XuTXRe
-         UiQhs6+zhMwy0jj1FP+aemq6T+JV1OM/3V4wdRK4fSZru91gHb+7NMPUyH64y0QrB4sU
-         OeGfw0yYk8sJsLLicZ/QfR4MdqFvNOmuOsM+tA71FMEFizYGLqODpr/rZ8J+n8nZQ8Yy
-         GAVKQsZsVoyYd/U0EU2uTSoQF14X6tUxb30YwGcPJ2a/HSv9ZRgq7l9bZFzHMcAYeFll
-         tXAsxZyVz9zsjJAqfYOkcZWKqYRFMAgqAn8ut+qM0RfD1Q15fjPBO5EQdV5H4kDnNeAf
-         7Ifg==
-X-Gm-Message-State: APjAAAXJ5F5ozEt5Tds4FYiwrMTxgEh2AAgbvY32uZoKjl+aNl0AsALu
-        Jgz0sBf5/gevIOZ3H41zI1ZgwTa+bWL6GbyYCA==
-X-Google-Smtp-Source: APXvYqxgr8PQjSzAdp7+U+PsgA9phbRv670CHsf3naEv6EhZF5kRfW6dfEe+5cBDHIT5XJU7QNpkLNvRclzntJy1hqs=
-X-Received: by 2002:ac2:5559:: with SMTP id l25mr59946611lfk.175.1564663688296;
- Thu, 01 Aug 2019 05:48:08 -0700 (PDT)
+        bh=ATAFhJly7oayn4QwVxAmF/cKx18eZXYIEq5cLXvpdzg=;
+        b=XO38njydGvYm1e5sTtP5uSrMWyAxtsuV1ebZftK4AkHtPvbhemxLZaOXKyavR/yzPt
+         odPF90oPt81sLGomcx0fQMKxtQtHQZQlb8fM4Ctdzwci8yR5nlWxE83MkMObu6/Y3MqA
+         6V+JyGrioJ8Q3UG/+42vaXd0Q1k1kDB1DYyoltvOwOqz6sIhhAlBMk9Nz3wT8V/XH3pk
+         on6q9CCfdDwlzixS+XnglvlhI5ueWVsXxvV9sJxk8mXP2qGgtZ0eU5UM2bh0c8q7wImI
+         MKwviHvu1NcVHJI96ds1QsQAN1wBOS2sWdbDTlILfZWgYe4ntxo+fDa8Bb+ZAp9AIwiF
+         BQPQ==
+X-Gm-Message-State: APjAAAV6J45Wwc62ofIgJ/pD1LP66UT86tCLVNgQkI92xSRoHKBSL4lV
+        d+fcBEw6Y/Phyy7E6CvObpYO6hZdWSYHizofOYN8DA==
+X-Google-Smtp-Source: APXvYqyuYmWo+CP2FzNWYkHFT0ZLT3W5Y5OJQeMQdVh76HiNmdD4jPQ2fznL3kD7gDek9Cqsx8/zBcK9HOnHQgVpStE=
+X-Received: by 2002:a65:4b8b:: with SMTP id t11mr118476394pgq.130.1564663728917;
+ Thu, 01 Aug 2019 05:48:48 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190731153443.4984-1-acgoide@tycho.nsa.gov> <1c62c931-9441-4264-c119-d038b2d0c9b9@schaufler-ca.com>
- <CAHC9VhS6cfMw5ZUkOSov6hexh9QpnpKwipP7L7ZYGCVLCHGfFQ@mail.gmail.com> <66fbc35c-6cc8-bd08-9bf9-aa731dc3ff09@tycho.nsa.gov>
-In-Reply-To: <66fbc35c-6cc8-bd08-9bf9-aa731dc3ff09@tycho.nsa.gov>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 1 Aug 2019 08:47:56 -0400
-Message-ID: <CAHC9VhQg_UCDZpm=hWTn5YFAYQJt1K_fRxxq+LzORekJ8p9zNg@mail.gmail.com>
-Subject: Re: [PATCH] fanotify, inotify, dnotify, security: add security hook
- for fs notifications
-To:     Stephen Smalley <sds@tycho.nsa.gov>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        Aaron Goidel <acgoide@tycho.nsa.gov>, selinux@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, dhowells@redhat.com, jack@suse.cz,
-        amir73il@gmail.com, James Morris <jmorris@namei.org>,
-        linux-kernel@vger.kernel.org
+References: <cover.1563904656.git.andreyknvl@google.com> <8c618cc9-ae68-9769-c5bb-67f1295abc4e@intel.com>
+ <13b4cf53-3ecb-f7e7-b504-d77af15d77aa@arm.com>
+In-Reply-To: <13b4cf53-3ecb-f7e7-b504-d77af15d77aa@arm.com>
+From:   Andrey Konovalov <andreyknvl@google.com>
+Date:   Thu, 1 Aug 2019 14:48:37 +0200
+Message-ID: <CAAeHK+zTFqsLiB3Wf0bAi5A8ukQX5ZuvfUg4td-=r5UhBsUBOQ@mail.gmail.com>
+Subject: Re: [PATCH v19 00/15] arm64: untag user pointers passed to the kernel
+To:     Kevin Brodsky <kevin.brodsky@arm.com>
+Cc:     Dave Hansen <dave.hansen@intel.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-rdma@vger.kernel.org, linux-media@vger.kernel.org,
+        kvm@vger.kernel.org,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Yishai Hadas <yishaih@mellanox.com>,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        Alexander Deucher <Alexander.Deucher@amd.com>,
+        Christian Koenig <Christian.Koenig@amd.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Jens Wiklander <jens.wiklander@linaro.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Khalid Aziz <khalid.aziz@oracle.com>, enh <enh@google.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Kostya Serebryany <kcc@google.com>,
+        Evgeniy Stepanov <eugenis@google.com>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Szabolcs Nagy <Szabolcs.Nagy@arm.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 1, 2019 at 7:31 AM Stephen Smalley <sds@tycho.nsa.gov> wrote:
-> On 7/31/19 8:27 PM, Paul Moore wrote:
-> > On Wed, Jul 31, 2019 at 1:26 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> >> On 7/31/2019 8:34 AM, Aaron Goidel wrote:
-
-...
-
-> >>> +static int selinux_path_notify(const struct path *path, u64 mask,
-> >>> +                                             unsigned int obj_type)
-> >>> +{
-> >>> +     int ret;
-> >>> +     u32 perm;
-> >>> +
-> >>> +     struct common_audit_data ad;
-> >>> +
-> >>> +     ad.type = LSM_AUDIT_DATA_PATH;
-> >>> +     ad.u.path = *path;
-> >>> +
-> >>> +     /*
-> >>> +      * Set permission needed based on the type of mark being set.
-> >>> +      * Performs an additional check for sb watches.
-> >>> +      */
-> >>> +     switch (obj_type) {
-> >>> +     case FSNOTIFY_OBJ_TYPE_VFSMOUNT:
-> >>> +             perm = FILE__WATCH_MOUNT;
-> >>> +             break;
-> >>> +     case FSNOTIFY_OBJ_TYPE_SB:
-> >>> +             perm = FILE__WATCH_SB;
-> >>> +             ret = superblock_has_perm(current_cred(), path->dentry->d_sb,
-> >>> +                                             FILESYSTEM__WATCH, &ad);
-> >>> +             if (ret)
-> >>> +                     return ret;
-> >>> +             break;
-> >>> +     case FSNOTIFY_OBJ_TYPE_INODE:
-> >>> +             perm = FILE__WATCH;
-> >>> +             break;
-> >>> +     default:
-> >>> +             return -EINVAL;
-> >>> +     }
-> >>> +
-> >>> +     // check if the mask is requesting ability to set a blocking watch
-> >
-> > ... in the future please don't use "// XXX", use "/* XXX */" instead :)
-> >
-> > Don't respin the patch just for this, but if you have to do it for
-> > some other reason please fix the C++ style comments.  Thanks.
+On Thu, Aug 1, 2019 at 2:11 PM Kevin Brodsky <kevin.brodsky@arm.com> wrote:
 >
-> This was discussed during the earlier RFC series but ultimately someone
-> pointed to:
-> https://lkml.org/lkml/2016/7/8/625
-> where Linus blessed the use of C++/C99 style comments.  And checkpatch
-> accepts them these days.
+> On 31/07/2019 17:50, Dave Hansen wrote:
+> > On 7/23/19 10:58 AM, Andrey Konovalov wrote:
+> >> The mmap and mremap (only new_addr) syscalls do not currently accept
+> >> tagged addresses. Architectures may interpret the tag as a background
+> >> colour for the corresponding vma.
+> > What the heck is a "background colour"? :)
+>
+> Good point, this is some jargon that we started using for MTE, the idea being that
+> the kernel could set a tag value (specified during mmap()) as "background colour" for
+> anonymous pages allocated in that range.
+>
+> Anyway, this patch series is not about MTE. Andrey, for v20 (if any), I think it's
+> best to drop this last sentence to avoid any confusion.
 
-Yep, I'm aware of both, it is simply a personal preference of mine.
-I'm not going to reject patches with C++ style comments, but I would
-ask people to stick to the good ol' fashioned comments for patches
-they submit.
+Sure, thanks!
 
-> Obviously if you truly don't want them in the SELinux code, that's your
-> call.  But note that all files now have at least one such comment as a
-> result of the mass SPDX license headers that were added throughout the
-> tree using that style.
-
-FYI, the sky is blue.
-
-It isn't just the license headers either, Al dropped one into hooks.c
-:).  Just like I don't plan to reject patches due only to the comment
-style, you don't see me pushing patches to change the C++ comments.
-
--- 
-paul moore
-www.paul-moore.com
+>
+> Kevin
