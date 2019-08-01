@@ -2,124 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B3EEE7DF76
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 17:52:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F22D37DF7C
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 17:53:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731555AbfHAPwY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 11:52:24 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:39083 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728404AbfHAPwY (ORCPT
+        id S1732123AbfHAPxi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 11:53:38 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:38951 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732090AbfHAPxh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 11:52:24 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x71FqFqu005035
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Thu, 1 Aug 2019 08:52:15 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x71FqFqu005035
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019071901; t=1564674735;
-        bh=V81xyc1CKtZZ0EXikPqyhZhJimH7JUJHZlBrjH8C1qE=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=T+//7okFVJ6B/CZSScoFc+A9vYpe8ZeTl+zZPOpPH/5rc7+L5SqKKj6Qp6HO9JvK6
-         iz6thKXN2z1pJMuVgo0uCF3v92mcbBerB0TTraL9LboMjayoYimknrGU/99U8iuCPz
-         KXo36mw5IWHOWY/bOSR/o9bJlfmbDazKYcPVZ0F2onDv9b2htAT0tw9wqGX/czmBVV
-         jtI+8RuNzmkQzdPRAwGahnWXJYTW0m0yNcJSGev4dIOFAL1bdEqx3iqI5Lnp9LcJ5e
-         EQieK03b6OvHNFLljPdPAvsID8jVqBPBOPknRleTD3Ia8eMEN29Y1q33UlgsOvw0bj
-         LoFs5YMtEbR2A==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x71FqExN005032;
-        Thu, 1 Aug 2019 08:52:14 -0700
-Date:   Thu, 1 Aug 2019 08:52:14 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Sebastian Andrzej Siewior <tipbot@zytor.com>
-Message-ID: <tip-ae6683d815895c2be1e60e1942630fa99488055b@git.kernel.org>
-Cc:     linux-kernel@vger.kernel.org, peterz@infradead.org,
-        bigeasy@linutronix.de, tglx@linutronix.de, mingo@kernel.org,
-        hpa@zytor.com
-Reply-To: tglx@linutronix.de, mingo@kernel.org, peterz@infradead.org,
-          bigeasy@linutronix.de, hpa@zytor.com,
-          linux-kernel@vger.kernel.org
-In-Reply-To: <20190726185752.981398465@linutronix.de>
-References: <20190726185752.981398465@linutronix.de>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:timers/core] hrtimer: Introduce HARD expiry mode
-Git-Commit-ID: ae6683d815895c2be1e60e1942630fa99488055b
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Thu, 1 Aug 2019 11:53:37 -0400
+Received: by mail-lf1-f66.google.com with SMTP id v85so50586527lfa.6
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2019 08:53:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:organization:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=jOies/q8GNu6zMRJDNga96FSVWyO2X9XensDmj1AZZY=;
+        b=JCfUKgCbIl3b8Om0ozKmxK3ZkAX7v5HdGpeskesaFuP4NVGJl/awlJnYAPCtEVSloc
+         lzcOj6CeND6AuD80dr4q1nJBDmRFU2KqlXk9+ptF9UyEfTbMir9PajC+w3TevrMU1QoH
+         5DhGRwdIMNBej8DEM2/cRH4RJvSjQ8ijfcZ6NPBCDsO/9awA61b+xRtL/izy/7RChYgz
+         xTwQzNHzisQ2LYNZskcc+ZWMrodoblpe5iCPH3IT6NXa5X/R9AccGBJEJPnLdMVO54Am
+         kK8utE4/RrvLlDgPlD3Taj9+1QnLV4AmRZXmPVkCyhvXdMHhxVJppbxOVcR7A9M2e9A2
+         zOAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=jOies/q8GNu6zMRJDNga96FSVWyO2X9XensDmj1AZZY=;
+        b=M+dzx3CzXKm9IsSjtsBq87ka9qCbXoYkhnteGsW6WLsMzxnBXWtX55vLpK+RJ3UDZM
+         r4pTpya7IAiLoGSGpkeTIrZCOmtV/39vBq+ATJWsHexoJaHrLgu0r+ZsJY2zBKK+8C3O
+         n8bQ9kALrBa43IzkWWDdmEKGuHxjZZTl0QTHBfVk560aCoU6FVIuFm9NbETnRiaA0QYL
+         DVqZqw9IHq00cdlGKy05R/D2mBisDSOsIRaoZe8VWEWaFem0UmDfbnZB2zxLz0Y1Ou1M
+         yVt4My/8/fgH2iQF4ASc7G1zArouwCVhbPKWXVwz6F9OnO/7p8u/4rox81pTmVJyPyte
+         3Rlg==
+X-Gm-Message-State: APjAAAUO+E6GaMCiUN9VyFVZJO0L3m/g3Q454RejnFUatb3D/33XmiuY
+        zvyDB/+zBDd69iJmfeFvO3um0b9DWwU=
+X-Google-Smtp-Source: APXvYqzp9NIlaxkTBvMmj+xKyDzpb+n9dCj96Ve4HvOBx6VdwDWSrusU3JCFMHB8k+qhxDs91gSPrA==
+X-Received: by 2002:a19:5f46:: with SMTP id a6mr63906353lfj.142.1564674814647;
+        Thu, 01 Aug 2019 08:53:34 -0700 (PDT)
+Received: from wasted.cogentembedded.com ([2a00:1fa0:6ee:d28:6484:8b6b:cce6:b9f0])
+        by smtp.gmail.com with ESMTPSA id q4sm16666213lje.99.2019.08.01.08.53.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 01 Aug 2019 08:53:34 -0700 (PDT)
+Subject: Re: [PATCH v2 10/11] vsock_test: skip read() in test_stream*close
+ tests on a VMCI host
+To:     Stefano Garzarella <sgarzare@redhat.com>, netdev@vger.kernel.org
+Cc:     kvm@vger.kernel.org, Stefan Hajnoczi <stefanha@redhat.com>,
+        Dexuan Cui <decui@microsoft.com>,
+        virtualization@lists.linux-foundation.org,
+        "David S. Miller" <davem@davemloft.net>,
+        Jorgen Hansen <jhansen@vmware.com>,
+        linux-kernel@vger.kernel.org
+References: <20190801152541.245833-1-sgarzare@redhat.com>
+ <20190801152541.245833-11-sgarzare@redhat.com>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Organization: Cogent Embedded
+Message-ID: <79ffb2a6-8ed2-cce2-7704-ed872446c0fe@cogentembedded.com>
+Date:   Thu, 1 Aug 2019 18:53:32 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-X-Spam-Status: No, score=-0.2 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
-        autolearn=no autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+In-Reply-To: <20190801152541.245833-11-sgarzare@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  ae6683d815895c2be1e60e1942630fa99488055b
-Gitweb:     https://git.kernel.org/tip/ae6683d815895c2be1e60e1942630fa99488055b
-Author:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-AuthorDate: Fri, 26 Jul 2019 20:30:51 +0200
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Thu, 1 Aug 2019 17:43:16 +0200
+Hello!
 
-hrtimer: Introduce HARD expiry mode
+On 08/01/2019 06:25 PM, Stefano Garzarella wrote:
 
-On PREEMPT_RT not all hrtimers can be expired in hard interrupt context
-even if that is perfectly fine on a PREEMPT_RT=n kernel, e.g. because they
-take regular spinlocks. Also for latency reasons PREEMPT_RT tries to defer
-most hrtimers' expiry into soft interrupt context.
+> When VMCI transport is used, if the guest closes a connection,
+> all data is gone and EOF is returned, so we should skip the read
+> of data written by the peer before closing the connection.
+> 
+> Reported-by: Jorgen Hansen <jhansen@vmware.com>
+> Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
+> ---
+>  tools/testing/vsock/vsock_test.c | 26 ++++++++++++++++++++++++--
+>  1 file changed, 24 insertions(+), 2 deletions(-)
+> 
+> diff --git a/tools/testing/vsock/vsock_test.c b/tools/testing/vsock/vsock_test.c
+> index cb606091489f..64adf45501ca 100644
+> --- a/tools/testing/vsock/vsock_test.c
+> +++ b/tools/testing/vsock/vsock_test.c
+[...]
+> @@ -79,16 +80,27 @@ static void test_stream_client_close_server(const struct test_opts *opts)
+>  		exit(EXIT_FAILURE);
+>  	}
+>  
+> +	local_cid = vsock_get_local_cid(fd);
+> +
+>  	control_expectln("CLOSED");
+>  
+>  	send_byte(fd, -EPIPE);
+> -	recv_byte(fd, 1);
+> +
+> +	/* Skip the read of data wrote by the peer if we are on VMCI and
 
-But there are hrtimers which must be expired in hard interrupt context even
-when PREEMPT_RT is enabled:
+   s/wrote/written/?
 
-  - hrtimers which must expiry in hard interrupt context, e.g. scheduler,
-    perf, watchdog related hrtimers
+> +	 * we are on the host side, because when the guest closes a
+> +	 * connection, all data is gone and EOF is returned.
+> +	 */
+> +	if (!(opts->transport == TEST_TRANSPORT_VMCI &&
+> +	    local_cid == VMADDR_CID_HOST))
+> +		recv_byte(fd, 1);
+> +
+>  	recv_byte(fd, 0);
+>  	close(fd);
+>  }
+[...]
 
-  - latency critical hrtimers, e.g. nanosleep, ..., kvm lapic timer
-
-Add a new mode flag HRTIMER_MODE_HARD which allows to mark these timers so
-PREEMPT_RT will not move them into softirq expiry mode.
-
-[ tglx: Split out of a larger combo patch. Added changelog ]
-
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lkml.kernel.org/r/20190726185752.981398465@linutronix.de
-
-
----
- include/linux/hrtimer.h | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/include/linux/hrtimer.h b/include/linux/hrtimer.h
-index 24072a0942c0..15c2ba6b6316 100644
---- a/include/linux/hrtimer.h
-+++ b/include/linux/hrtimer.h
-@@ -38,6 +38,7 @@ enum hrtimer_mode {
- 	HRTIMER_MODE_REL	= 0x01,
- 	HRTIMER_MODE_PINNED	= 0x02,
- 	HRTIMER_MODE_SOFT	= 0x04,
-+	HRTIMER_MODE_HARD	= 0x08,
- 
- 	HRTIMER_MODE_ABS_PINNED = HRTIMER_MODE_ABS | HRTIMER_MODE_PINNED,
- 	HRTIMER_MODE_REL_PINNED = HRTIMER_MODE_REL | HRTIMER_MODE_PINNED,
-@@ -48,6 +49,11 @@ enum hrtimer_mode {
- 	HRTIMER_MODE_ABS_PINNED_SOFT = HRTIMER_MODE_ABS_PINNED | HRTIMER_MODE_SOFT,
- 	HRTIMER_MODE_REL_PINNED_SOFT = HRTIMER_MODE_REL_PINNED | HRTIMER_MODE_SOFT,
- 
-+	HRTIMER_MODE_ABS_HARD	= HRTIMER_MODE_ABS | HRTIMER_MODE_HARD,
-+	HRTIMER_MODE_REL_HARD	= HRTIMER_MODE_REL | HRTIMER_MODE_HARD,
-+
-+	HRTIMER_MODE_ABS_PINNED_HARD = HRTIMER_MODE_ABS_PINNED | HRTIMER_MODE_HARD,
-+	HRTIMER_MODE_REL_PINNED_HARD = HRTIMER_MODE_REL_PINNED | HRTIMER_MODE_HARD,
- };
- 
- /*
+MBR, Sergei
