@@ -2,47 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B67AD7D4C5
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 07:14:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B30C7D4CE
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 07:14:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729558AbfHAFO2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 01:14:28 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:43092 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729274AbfHAFOZ (ORCPT
+        id S1729762AbfHAFOr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 01:14:47 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:45602 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728774AbfHAFO0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 01:14:25 -0400
-Received: by mail-wr1-f66.google.com with SMTP id p13so72037617wru.10
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 22:14:24 -0700 (PDT)
+        Thu, 1 Aug 2019 01:14:26 -0400
+Received: by mail-wr1-f65.google.com with SMTP id f9so72044498wre.12
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 22:14:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=k0Ev3p94bFZcOBtAj2tXYSUGySXDoFmcSIvRC97mli0=;
-        b=V+8v3g8CDQSXqOUDRW+DNyckPLpV2Y0vQnszPUiU8s+PgN9UXOGaibVzLreF8HxBqb
-         pjoJEw/GpkSw+If/PyFcwz2unSnFiFJrpV1GFQutAfrj5by9lDhl4FmpF3oBpKU2MJMW
-         2VVWbjOJ1DgCoMNl+m7/0vXpCJnE0kdEKhdhaGGzBDUozSCx3UNyHtgkyRt0eEy8l+sw
-         +U1dCJ7pi2ohKoaNm/L2YHLsaKcxSe0beZmfY9NEU91vZ7U4gnICE3focITr3FPGEb+g
-         hW+CZRCbs5bTX4iMpqT4gepSmxZJWHw8QuiDcSCt1mEesrnDSz/OHwsTgsxX1FLTTxMx
-         LSng==
-X-Gm-Message-State: APjAAAUUQqy7kuiuSHVJ+3splDJw85/RowIWivJSLZAakjazBAbNfscY
-        c3/OUmJ3S1LSqLF4gjNmMtmMGQ==
-X-Google-Smtp-Source: APXvYqxFMKDgaHVtw5HXmLs+H9FxYBBsQIrfWfc/Wtqd3xYMD85MvLpK0srCqZOwviF6l316rS7CQg==
-X-Received: by 2002:a5d:5448:: with SMTP id w8mr137051859wrv.180.1564636463692;
-        Wed, 31 Jul 2019 22:14:23 -0700 (PDT)
+        bh=lW0RHrkUqApLquoqHBaQ5OfrV+rmiadrYX9W4LRi2U4=;
+        b=Ny9M15uLS2lZvPb6q7tHwvAOXLHZhKQvQVig1AhQEL4MEwgQm2dxM1SPVlIfOZ7W1B
+         Q3rOIEsBcYP2FqSinkg0dPu+n2T8i9LesW7bzVqPndFFwZE2CDkLmWSqUgDhqwAw1rk1
+         XYD7+hRUZsTH9kGtNtWjiusDAoulyRzJp0NIVcrWKZy0bj7O+hsfYvsrjNKLhuJGebqt
+         REsgwMbSqJFStPdyIA03foJ2DutFgF1RiLnIPN5XFMldF3BRMjTWAxlFQo3FEUqDkrmy
+         YTRAtHfxByrO9Putv3kvnwvCGMEejptGHMV/xaxLXpcwvUSXkt7C4sXXvkgMTaqdKTMb
+         BL/g==
+X-Gm-Message-State: APjAAAUzW/x1Uoe0sEZ71zGF1r+u4jxHWv8QbDdz01UggOsZEFUBSeP3
+        jxzuPJZXSIbxz9E21888t+sA6w==
+X-Google-Smtp-Source: APXvYqwzdq14++WQOuAsiG7JqsnQ4Ca3E3y8fhSOYWjN1aZAp8kI/MSMpScbD5ELoO6WQl4HHOe0/g==
+X-Received: by 2002:a5d:52c5:: with SMTP id r5mr117453218wrv.146.1564636464751;
+        Wed, 31 Jul 2019 22:14:24 -0700 (PDT)
 Received: from vitty.brq.redhat.com (ip-89-176-127-93.net.upcbroadband.cz. [89.176.127.93])
-        by smtp.gmail.com with ESMTPSA id a2sm73855351wmj.9.2019.07.31.22.14.22
+        by smtp.gmail.com with ESMTPSA id a2sm73855351wmj.9.2019.07.31.22.14.23
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 31 Jul 2019 22:14:23 -0700 (PDT)
+        Wed, 31 Jul 2019 22:14:24 -0700 (PDT)
 From:   Vitaly Kuznetsov <vkuznets@redhat.com>
 To:     kvm@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
         =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
         Joerg Roedel <joro@8bytes.org>,
         Jim Mattson <jmattson@google.com>
-Subject: [PATCH 2/5] x86: KVM: svm: avoid flooding logs when skip_emulated_instruction() fails
-Date:   Thu,  1 Aug 2019 07:14:15 +0200
-Message-Id: <20190801051418.15905-3-vkuznets@redhat.com>
+Subject: [PATCH 3/5] x86: KVM: svm: clear interrupt shadow on all paths in skip_emulated_instruction()
+Date:   Thu,  1 Aug 2019 07:14:16 +0200
+Message-Id: <20190801051418.15905-4-vkuznets@redhat.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190801051418.15905-1-vkuznets@redhat.com>
 References: <20190801051418.15905-1-vkuznets@redhat.com>
@@ -53,34 +53,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When we're unable to skip instruction with kvm_emulate_instruction() we
-will not advance RIP and most likely the guest will get stuck as
-consequitive attempts to execute the same instruction will likely result
-in the same behavior.
-
-As we're not supposed to see these messages under normal conditions, switch
-to pr_err_once().
+Regardless of the way how we skip instruction, interrupt shadow needs to be
+cleared.
 
 Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
 Reviewed-by: Jim Mattson <jmattson@google.com>
 ---
- arch/x86/kvm/svm.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/x86/kvm/svm.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
-index 7e843b340490..80f576e05112 100644
+index 80f576e05112..7c7dff3f461f 100644
 --- a/arch/x86/kvm/svm.c
 +++ b/arch/x86/kvm/svm.c
-@@ -782,7 +782,8 @@ static void skip_emulated_instruction(struct kvm_vcpu *vcpu)
- 	if (!svm->next_rip) {
- 		if (kvm_emulate_instruction(vcpu, EMULTYPE_SKIP) !=
+@@ -784,13 +784,15 @@ static void skip_emulated_instruction(struct kvm_vcpu *vcpu)
  				EMULATE_DONE)
--			printk(KERN_DEBUG "%s: NOP\n", __func__);
-+			pr_err_once("KVM: %s: unable to skip instruction\n",
-+				    __func__);
- 		return;
+ 			pr_err_once("KVM: %s: unable to skip instruction\n",
+ 				    __func__);
+-		return;
++		goto clear_int_shadow;
  	}
  	if (svm->next_rip - kvm_rip_read(vcpu) > MAX_INST_SIZE)
+ 		printk(KERN_ERR "%s: ip 0x%lx next 0x%llx\n",
+ 		       __func__, kvm_rip_read(vcpu), svm->next_rip);
+ 
+ 	kvm_rip_write(vcpu, svm->next_rip);
++
++clear_int_shadow:
+ 	svm_set_interrupt_shadow(vcpu, 0);
+ }
+ 
 -- 
 2.20.1
 
