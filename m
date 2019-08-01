@@ -2,112 +2,225 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DC057E25B
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 20:38:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DFE57E236
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 20:34:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733186AbfHASiv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 14:38:51 -0400
-Received: from mta03.svc.cra.dublin.eircom.net ([159.134.118.145]:40054 "HELO
-        mta03.svc.cra.dublin.eircom.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with SMTP id S1731549AbfHASit (ORCPT
+        id S1730216AbfHASef (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 14:34:35 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:37235 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727218AbfHASef (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 14:38:49 -0400
-Received: (qmail 2366 messnum 4722465 invoked from network[213.94.190.14/avas02.vendorsvc.cra.dublin.eircom.net]); 1 Aug 2019 18:32:06 -0000
-Received: from avas02.vendorsvc.cra.dublin.eircom.net (HELO avas02) (213.94.190.14)
-  by mta03.svc.cra.dublin.eircom.net (qp 2366) with SMTP; 1 Aug 2019 18:32:06 -0000
-Received: from vzmbx13.eircom.net ([86.43.60.93])
-        by Cloudmark Gateway with SMTP
-        id tFrxho2PCOQFYtFrxhxbAW; Thu, 01 Aug 2019 19:32:05 +0100
-X-Spam-Flag: NO
-X-CNFS-Analysis: v=2.2 cv=QNUYfkDL c=1 sm=1 tr=0
- a=z8CVTJROrBJ6HBjy10cYzA==:117 a=FKkrIqjQGGEA:10 a=QjiRxDvh7SEA:10
- a=IkcTkHD0fZMA:10 a=OJFfeB1LYYsA:10 a=KJtSWEEZ1vwA:10 a=ZZnuYtJkoWoA:10
- a=v_fGJjhChhQT5EziiewA:9 a=QEXdDO2ut3YA:10
-Date:   Thu, 1 Aug 2019 19:32:05 +0100 (IST)
-From:   "Investment, Firm" <catherinesurant@eircom.net>
-Reply-To: mikezapnos@cfl.rr.com
-To:     tpginvestmentfirm@suddenlink.net
-Message-ID: <1649279302.446890.1564684325480.JavaMail.zimbra@eircom.net>
-Subject: Investment Plan.
+        Thu, 1 Aug 2019 14:34:35 -0400
+Received: by mail-oi1-f195.google.com with SMTP id t76so54784950oih.4
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2019 11:34:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=WUCcMouh0WO52+e0adQwOKzErR3ljNy4cs3bF3C1u1k=;
+        b=izCAK6tbIWTL6XLXegvw14s6+xaXPO8v5Qdl7Tf1/WnGZ819VyecArGftwnoelv8lA
+         5HGC4Xg4T4BzYB1KwMNYQ5mMLMXD0TD+NpT8s7QD1lxMihjVPfS36nyccDcWAM3TTmyg
+         rdx7BsR+PqSEEEsa+tx0jCqrcEExhIRu4uBNg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=WUCcMouh0WO52+e0adQwOKzErR3ljNy4cs3bF3C1u1k=;
+        b=GS9CY/AkJCYb0gNT75nykdhn7zsw1y9qidt5xIcS+x1Yb6hix6eeLQiIwfq70dJbGX
+         4gKEHdusdbgojKXk8WvJAhsLgQaKvc4nrf8p0/bbCMsz/qDna3HfZbxFB10etoItkWkr
+         SoYN+zMUIg2pu15oOTueMoNFKxxvYVGsR0ZajtzMXrD+qW7+DKyD5nEu/hqztcQO3b84
+         F2DW79eyoU2U0+1DSXD3Xjep1P4gF0Ys3WfsJ27UpgHcVXhyFHutomLkgJjFiz7QqYm3
+         LRYs1ggc5cv93qMEpUWIkZ9Ot/vasr7xKMixExQ8jc+yoZ21O3ldhTML9uzsQsUznk7H
+         AXqg==
+X-Gm-Message-State: APjAAAXuvwB+OXL+ycfUeBAW+M0uogyh+rwyp04LrZHjjdLkZtXa8CQQ
+        h+28X/ekvUcKLRlRvnAvP/DBH1fduPM=
+X-Google-Smtp-Source: APXvYqzy71dt2HSH+Lvxi9QxXvo8o+eCBoO/4PNhlPNWjtgeQJcb65YR8QVfBBz0GIhDG745xt+d/Q==
+X-Received: by 2002:aca:ecc1:: with SMTP id k184mr138002oih.82.1564684473164;
+        Thu, 01 Aug 2019 11:34:33 -0700 (PDT)
+Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com. [209.85.167.179])
+        by smtp.gmail.com with ESMTPSA id o18sm27538092ote.63.2019.08.01.11.34.30
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Thu, 01 Aug 2019 11:34:31 -0700 (PDT)
+Received: by mail-oi1-f179.google.com with SMTP id w196so33417218oie.7
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2019 11:34:30 -0700 (PDT)
+X-Received: by 2002:aca:488e:: with SMTP id v136mr119143oia.49.1564684470454;
+ Thu, 01 Aug 2019 11:34:30 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [89.238.191.213]
-X-Mailer: Zimbra 8.6.0_GA_1242 (ZimbraWebClient - GC75 (Win)/8.6.0_GA_1242)
-Thread-Topic: Investment Plan.
-Thread-Index: 5hWm961b9llRVMEBLOgeuC9VXkInTg==
-X-CMAE-Envelope: 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
- xLJnERrgjnmlu5QhV9CYvg==
+References: <1564452025-12673-1-git-send-email-rtresidd@electromag.com.au>
+In-Reply-To: <1564452025-12673-1-git-send-email-rtresidd@electromag.com.au>
+From:   Nick Crews <ncrews@chromium.org>
+Date:   Thu, 1 Aug 2019 12:34:18 -0600
+X-Gmail-Original-Message-ID: <CAHX4x87gVfmKVmj2O_riwV57Qb8X-MtKCUp6e=3UYuii4TVg0Q@mail.gmail.com>
+Message-ID: <CAHX4x87gVfmKVmj2O_riwV57Qb8X-MtKCUp6e=3UYuii4TVg0Q@mail.gmail.com>
+Subject: Re: [PATCH v4 1/1] power/supply/sbs-battery: Fix confusing battery
+ status when idle or empty
+To:     Richard Tresidder <rtresidd@electromag.com.au>
+Cc:     Sebastian Reichel <sre@kernel.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        andrew.smirnov@gmail.com, Guenter Roeck <groeck@chromium.org>,
+        david@lechnology.com, Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        rfontana@redhat.com, allison@lohutok.net,
+        Baolin Wang <baolin.wang@linaro.org>, linux-pm@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Thanks Richard, I still would like some more opinions
+on this changing the userspace experience, but LGTM
+otherwise.
 
-I have an investment proposals that will be of good interest to you.
+Reviewed-by: Nick Crews <ncrews@chromium.org>
 
-If you have any viable business idea in your region/country/projects/opportunities/know anyone who has a viable projects that need funding, do get in touch with me, for further proceedings and funding.
-
-If not, please pardon my intrusion.
-
-Regards,
-Mike Zappi
-Business Consultant
+On Mon, Jul 29, 2019 at 8:00 PM Richard Tresidder
+<rtresidd@electromag.com.au> wrote:
+>
+> When a battery or batteries in a system are in parallel then one or more
+> may not be providing any current to the system.
+> This fixes an incorrect status indication of FULL for the battery simply
+> because it wasn't discharging at that point in time.
+> The battery will now be flagged as NOT CHARGING.
+> Have also added the additional check for the battery FULL DISCHARGED flag
+> which will now flag a status of EMPTY.
+>
+> Signed-off-by: Richard Tresidder <rtresidd@electromag.com.au>
+> ---
+>
+> Notes:
+>     power/supply/sbs-battery: Fix confusing battery status when idle or empty
+>
+>     When a battery or batteries in a system are in parallel then one or more
+>     may not be providing any current to the system.
+>     This fixes an incorrect status indication of FULL for the battery simply
+>     because it wasn't discharging at that point in time.
+>     The battery will now be flagged as NOT CHARGING.
+>     Have also added the additional check for the battery FULL DISCHARGED flag
+>     which will now flag a status of EMPTY.
+>
+>     v2: Missed a later merge that should have been included in original patch
+>     v3: Refactor the sbs_status_correct function to capture all the states for
+>         normal operation rather than being spread across multile functions.
+>     v4: Remove unnecessary brackets, rename sbs_status_correct to
+>         sbs_correct_battery_status
+>
+>  drivers/power/supply/power_supply_sysfs.c |  2 +-
+>  drivers/power/supply/sbs-battery.c        | 46 ++++++++++++-------------------
+>  include/linux/power_supply.h              |  1 +
+>  3 files changed, 19 insertions(+), 30 deletions(-)
+>
+> diff --git a/drivers/power/supply/power_supply_sysfs.c b/drivers/power/supply/power_supply_sysfs.c
+> index f37ad4e..305e833 100644
+> --- a/drivers/power/supply/power_supply_sysfs.c
+> +++ b/drivers/power/supply/power_supply_sysfs.c
+> @@ -51,7 +51,7 @@
+>  };
+>
+>  static const char * const power_supply_status_text[] = {
+> -       "Unknown", "Charging", "Discharging", "Not charging", "Full"
+> +       "Unknown", "Charging", "Discharging", "Not charging", "Full", "Empty"
+>  };
+>
+>  static const char * const power_supply_charge_type_text[] = {
+> diff --git a/drivers/power/supply/sbs-battery.c b/drivers/power/supply/sbs-battery.c
+> index 048d205..3ed70d4 100644
+> --- a/drivers/power/supply/sbs-battery.c
+> +++ b/drivers/power/supply/sbs-battery.c
+> @@ -283,7 +283,7 @@ static int sbs_write_word_data(struct i2c_client *client, u8 address,
+>         return 0;
+>  }
+>
+> -static int sbs_status_correct(struct i2c_client *client, int *intval)
+> +static int sbs_correct_battery_status(struct i2c_client *client, int *status)
+>  {
+>         int ret;
+>
+> @@ -293,16 +293,18 @@ static int sbs_status_correct(struct i2c_client *client, int *intval)
+>
+>         ret = (s16)ret;
+>
+> -       /* Not drawing current means full (cannot be not charging) */
+> -       if (ret == 0)
+> -               *intval = POWER_SUPPLY_STATUS_FULL;
+> -
+> -       if (*intval == POWER_SUPPLY_STATUS_FULL) {
+> -               /* Drawing or providing current when full */
+> -               if (ret > 0)
+> -                       *intval = POWER_SUPPLY_STATUS_CHARGING;
+> -               else if (ret < 0)
+> -                       *intval = POWER_SUPPLY_STATUS_DISCHARGING;
+> +       if (ret > 0)
+> +               *status = POWER_SUPPLY_STATUS_CHARGING;
+> +       else if (ret < 0)
+> +               *status = POWER_SUPPLY_STATUS_DISCHARGING;
+> +       else {
+> +               /* Current is 0, so how full is the battery? */
+> +               if (*status & BATTERY_FULL_CHARGED)
+> +                       *status = POWER_SUPPLY_STATUS_FULL;
+> +               else if (*status & BATTERY_FULL_DISCHARGED)
+> +                       *status = POWER_SUPPLY_STATUS_EMPTY;
+> +               else
+> +                       *status = POWER_SUPPLY_STATUS_NOT_CHARGING;
+>         }
+>
+>         return 0;
+> @@ -421,14 +423,9 @@ static int sbs_get_battery_property(struct i2c_client *client,
+>                         return 0;
+>                 }
+>
+> -               if (ret & BATTERY_FULL_CHARGED)
+> -                       val->intval = POWER_SUPPLY_STATUS_FULL;
+> -               else if (ret & BATTERY_DISCHARGING)
+> -                       val->intval = POWER_SUPPLY_STATUS_DISCHARGING;
+> -               else
+> -                       val->intval = POWER_SUPPLY_STATUS_CHARGING;
+> -
+> -               sbs_status_correct(client, &val->intval);
+> +               ret = sbs_correct_battery_status(client, &val->intval);
+> +               if (ret < 0)
+> +                       return ret;
+>
+>                 if (chip->poll_time == 0)
+>                         chip->last_state = val->intval;
+> @@ -773,20 +770,11 @@ static void sbs_delayed_work(struct work_struct *work)
+>
+>         ret = sbs_read_word_data(chip->client, sbs_data[REG_STATUS].addr);
+>         /* if the read failed, give up on this work */
+> -       if (ret < 0) {
+> +       if (ret < 0 || sbs_correct_battery_status(chip->client, &ret) < 0) {
+>                 chip->poll_time = 0;
+>                 return;
+>         }
+>
+> -       if (ret & BATTERY_FULL_CHARGED)
+> -               ret = POWER_SUPPLY_STATUS_FULL;
+> -       else if (ret & BATTERY_DISCHARGING)
+> -               ret = POWER_SUPPLY_STATUS_DISCHARGING;
+> -       else
+> -               ret = POWER_SUPPLY_STATUS_CHARGING;
+> -
+> -       sbs_status_correct(chip->client, &ret);
+> -
+>         if (chip->last_state != ret) {
+>                 chip->poll_time = 0;
+>                 power_supply_changed(chip->power_supply);
+> diff --git a/include/linux/power_supply.h b/include/linux/power_supply.h
+> index 28413f7..8fb10ec 100644
+> --- a/include/linux/power_supply.h
+> +++ b/include/linux/power_supply.h
+> @@ -37,6 +37,7 @@ enum {
+>         POWER_SUPPLY_STATUS_DISCHARGING,
+>         POWER_SUPPLY_STATUS_NOT_CHARGING,
+>         POWER_SUPPLY_STATUS_FULL,
+> +       POWER_SUPPLY_STATUS_EMPTY,
+>  };
+>
+>  /* What algorithm is the charger using? */
+> --
+> 1.8.3.1
+>
