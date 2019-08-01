@@ -2,89 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F403B7DC0D
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 15:01:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 935A47DC22
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 15:04:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731567AbfHANBo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 09:01:44 -0400
-Received: from sauhun.de ([88.99.104.3]:52822 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726422AbfHANBo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 09:01:44 -0400
-Received: from localhost (p54B333D2.dip0.t-ipconnect.de [84.179.51.210])
-        by pokefinder.org (Postfix) with ESMTPSA id 633B42C2817;
-        Thu,  1 Aug 2019 15:01:42 +0200 (CEST)
-Date:   Thu, 1 Aug 2019 15:01:42 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH] i2c: s3c2410: Mark expected switch fall-through
-Message-ID: <20190801130141.GO1659@ninjato>
-References: <20190728235138.GA23429@embeddedor>
+        id S1731596AbfHANER (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 09:04:17 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:45972 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726422AbfHANEQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Aug 2019 09:04:16 -0400
+Received: by mail-oi1-f194.google.com with SMTP id m206so53861766oib.12
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2019 06:04:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=lkb04Lb2hyfMmhLQJcqnn0KrBVCDnSac8GUeAgpzLd4=;
+        b=d2WwBkw92PyxgT9fg1I91hEa5tAsL/PTIZZPPsdeBwYJF0JDeWKjCh1wsZY6ThSYuA
+         yEzWruSIi40gOKTcWIqY5TaFnIx13XsSA7XtXo/7/CWdspYydZSz816drOKTQQI7jejl
+         /kLCvfF5VtkQXDHSWMtXyC336Hc4LclJPkQjfjwwCRUjCWhR8VCqpUU58PM60BGaem9E
+         y1V7lxfmB60CWj/0RtWWBnDMYIt+iBiY9iWVl4UUjgztrnhFEBz/i+MOUaPCCX9fIFo3
+         5s6DkyWd6CHgTnNV83Rq2UC5iDotkf0asK7NmIBbRlmXtFb/Yk+oanSLIh9iXV+P+L11
+         067g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lkb04Lb2hyfMmhLQJcqnn0KrBVCDnSac8GUeAgpzLd4=;
+        b=QeT7SjIgAVyJO8vGwOdMWRvLWa7xcLbCH8KH3sHjYxyrIebxZhKjsHFzWOKd8k3iCb
+         jAfdpBgZi5SlQgMbpk52+pDkBAwEAmlaXDbWUMvYAGcXLPSN0UWF0InDdTSnVJv3499+
+         +Javu7+rGKAkpM/V6UztbcHqAiP92t5UL7ZBYNZYZa8qLHjyfXt+5TU+Cym7bRbVpqRL
+         5nQ5oimuHMxYOTW3W3Lj+lW1IrBDxhMKMSFvn2QNCsXXLDSlGKRfyEMLf34JCXWxz5pW
+         FsALBlWHR2S2DAMUqeoR21Pe7RqCCp+Fl5/yVsf/GR766TyPKnFaaZNVtF0aFpcQqxwX
+         tMWw==
+X-Gm-Message-State: APjAAAVCI7M/fEZtrCk1jmdRxBUptVFyLqKdxA1V67LQuNdg6Fd3lgSJ
+        o0BJBaVutrnH3qEmGr/fbHLYIVwxyaEfqnwy9khWsw==
+X-Google-Smtp-Source: APXvYqxOTd21zph/tilvtULyDs7dU2EBUn9KjGqDlf5CjyutDwWiNsAsh5pHMXpgD2IndtSx/mckH6LFg7ML8tLvrRc=
+X-Received: by 2002:aca:3787:: with SMTP id e129mr66041950oia.145.1564664655442;
+ Thu, 01 Aug 2019 06:04:15 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="sGwo475CiIwWEjLI"
-Content-Disposition: inline
-In-Reply-To: <20190728235138.GA23429@embeddedor>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190730134704.44515-1-tzungbi@google.com> <CA+Px+wXetT1mQZW+3zc2vNDP4Jf3zKqGNz=Hq0yHn0Fvf=y-FQ@mail.gmail.com>
+ <106711f8-117a-d0df-9b66-dc6be6431d07@collabora.com>
+In-Reply-To: <106711f8-117a-d0df-9b66-dc6be6431d07@collabora.com>
+From:   Tzung-Bi Shih <tzungbi@google.com>
+Date:   Thu, 1 Aug 2019 21:04:04 +0800
+Message-ID: <CA+Px+wU=V0cGZeAxoqSJeVTLcO+v9=tPQKxKBTp-npsgqXo3yQ@mail.gmail.com>
+Subject: Re: [PATCH v4] platform/chrome: cros_ec_trace: update generating script
+To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc:     bleung@chromium.org, groeck@chromium.org, rrangel@chromium.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jimmy Cheng-Yi Chiang <cychiang@google.com>,
+        Dylan Reid <dgreid@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Aug 1, 2019 at 6:59 PM Enric Balletbo i Serra
+<enric.balletbo@collabora.com> wrote:
+>
+> Hi Tzung-Bi
+>
+> On 30/7/19 16:07, Tzung-Bi Shih wrote:
+> > Hi Enric,
+> >
+> > I found it is error-prone to replace the EC_CMDS after updated.
+> > Perhaps, we should introduce an intermediate file "cros_ec_trace.inc".
+>
+> I am not sure I get you here, a .inc? could you explain a bit more?
+>
+Manually generate .inc for all EC host commands:
+sed ... include/linux/mfd/cros_ec_commands.h | awk ...
+>drivers/platform/chrome/cros_ec_trace.inc
 
---sGwo475CiIwWEjLI
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In cros_ec_trace.c:
+#include "cros_ec_trace.inc"
 
-On Sun, Jul 28, 2019 at 06:51:38PM -0500, Gustavo A. R. Silva wrote:
-> Mark switch cases where we are expecting to fall through.
->=20
-> This patch fixes the following warning:
->=20
-> drivers/i2c/busses/i2c-s3c2410.c: In function 'i2c_s3c_irq_nextbyte':
-> drivers/i2c/busses/i2c-s3c2410.c:431:6: warning: this statement may fall =
-through [-Wimplicit-fallthrough=3D]
->    if (i2c->state =3D=3D STATE_READ)
->       ^
-> drivers/i2c/busses/i2c-s3c2410.c:439:2: note: here
->   case STATE_WRITE:
->   ^~~~
->=20
-> Notice that, in this particular case, the code comment is
-> modified in accordance with what GCC is expecting to find.
->=20
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+cros_ec_trace.inc:
+#ifndef EC_CMDS
+#define EC_CMDS \
+    ...
+#endif
 
-Applied to for-current, thanks!
-
-
---sGwo475CiIwWEjLI
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl1C4rUACgkQFA3kzBSg
-Kba28RAApiI7u/wDnAuTCpteayRX5I68w5cXuFTG+gDegwQ3YOswZdkoM9v4W9pd
-rfQ84jLH0clY/G4g7qapeZltQIF9QUrknnCPjHQ0x7sp3pwg1QHVnaq58x6BasaP
-cQC/UAWpxY9Q0FqWE8g0Q4rCwsCtxRqLR1k+3gqzHpt6elXnApvsm0gfX6wHVZps
-7hWXbs49+RR8FEmGJr6CMR8tbkObH9RjS5HnIFlgG+jsxhuIABRRK3b70elZFBXx
-rGC+J5uUN9OgJn8qxSJ+6JlxVPRm4oimxJtiH6IkYCMYgINOXQUClLvkXFv4/Dzs
-ErS/Kk1EQoZ5jS9T44iZBh1LfY/NrR8gclTIrpmqjiPnrmx7RziaKplg/26VjuDN
-rkrCF8HOqC+aD1e3dGhBzxSLxs2PNQQcojjthdmXTFipHhteg3d2iMEjBXHG45yw
-I6dyfQpT+n0tjyWoh+DWOIxqD3NlXyyunym/gSEjir0bgnC7TaUQiKQ+xg3pspGd
-EnCcXA0TRuNncT7HElrt6wXMi7bnHOh1Fwlkb8cOhR2fxfL6EuSfsNhud3eDgLzU
-ow2sNRMl0wpJTYk50ypFHo2l8Bei1/4hRJUH6NYmmJAKaZ1Bakp/cMsY3v2XAj91
-3VNl2U3/o5snGmU3Rzjh5x1DMdzL5G+7Xl5dDGfe4aPfvZW+Rhg=
-=WUQP
------END PGP SIGNATURE-----
-
---sGwo475CiIwWEjLI--
+Override the whole file instead of replacing part of file to prevent
+cut-and-paste error.
