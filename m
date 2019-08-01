@@ -2,78 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0B847DA17
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 13:15:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 83C0E7DA25
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 13:19:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729413AbfHALPq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 07:15:46 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:44571 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727960AbfHALPp (ORCPT
+        id S1730839AbfHALS7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 07:18:59 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:41091 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730593AbfHALS6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 07:15:45 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1ht93d-0007Ka-WF; Thu, 01 Aug 2019 11:15:42 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Kevin Wang <kevin1.wang@amd.com>, Rex Zhu <rex.zhu@amd.com>,
-        Evan Quan <evan.quan@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        David Zhou <David1.Zhou@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][drm-next] drm/amd/powerplay: fix off-by-one upper bounds limit checks
-Date:   Thu,  1 Aug 2019 12:15:41 +0100
-Message-Id: <20190801111541.13627-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.20.1
+        Thu, 1 Aug 2019 07:18:58 -0400
+Received: by mail-wr1-f66.google.com with SMTP id c2so69935496wrm.8
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2019 04:18:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=from:date:to:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=LeVi3M3rABqtJE3t2RPfqLsPOq3zZyV/m8kt+qnj1zQ=;
+        b=cMBE9seZV2rlWrwD2KSNK2iWozGJLstP/lvQ+YuIn90t6OWhU12fBOEveO6RbxX9aL
+         RMm9jrco/0XpmcQmpbqsEjqHIW7hrZYavnobjlr+r0u81MoRD7JcNL0o7RT40C4uCFr3
+         SpUhON10c6PLS13qVPaUoTIPpxcc/CrnNpASxtihabzo0fcrkp4FrISwWzBhlVLYJO6S
+         SDT9V5OeGeyKMNHBgviitf5enbpmM51k/73Rfbz8Rd734Uq8HnkMA/ZncJ29p4bXqhts
+         Xog6k+u/97wt5HmBnP1cmlRrsWLDbKCq3Oh3xcKOcssc0iK0VHZwHS0KW4HZb3IeMt33
+         TP1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=LeVi3M3rABqtJE3t2RPfqLsPOq3zZyV/m8kt+qnj1zQ=;
+        b=pTsLnLvyLpVLJDjDXpKfHVrFJZJQn5Rv6mOxNIwwsFT7fNkN3GJ50gCTPlN0akcnn5
+         3SxnKxN/U0eZ4IEgxos/2KzFOsVUKtO9G19U2RFcK2biEoFsQp5abyOVXBdcWOakVZH5
+         LXdDvsPNRNdv8qwN015Zx01l7qu7GsM+VVs6TAr7T2WrCwvZNtbZyZ66IfYdVtdDDRJ/
+         r40lv6Kij6fVM9gqwqoRKGezsblGbq6MNHGMsNZyu/4cVldRURrX7VPkACsKDWhZgAS/
+         gf9haPLdQio91YdlPX+hirXT7twmyE73sGdUnrd4qeLgKqlV03NNtEgO4BnK7c4WqDAX
+         oRfA==
+X-Gm-Message-State: APjAAAUJCQ0Nf/lAjovsNBk0B/MHBmLZHLO5wXs5M67PpULtJ8zXR8QY
+        O2vlE2Yzn9O1iA0wCyQJPPc=
+X-Google-Smtp-Source: APXvYqzkBr+Wu2cLABxcKSHKUUQ0ibXMKozvJEjKAQG4ccxFTxDQ1e/E7TFcA1iSTj9mjHfYdmRdag==
+X-Received: by 2002:adf:cd81:: with SMTP id q1mr138879876wrj.16.1564658336375;
+        Thu, 01 Aug 2019 04:18:56 -0700 (PDT)
+Received: from villeb-dev (mail.bytesnap.co.uk. [94.198.185.106])
+        by smtp.gmail.com with ESMTPSA id v29sm138629wrv.74.2019.08.01.04.18.55
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 01 Aug 2019 04:18:55 -0700 (PDT)
+From:   Ville Baillie <vmbaillie@googlemail.com>
+X-Google-Original-From: Ville Baillie <villeb@bytesnap.co.uk>
+Date:   Thu, 1 Aug 2019 11:18:53 +0000
+To:     marex@denx.de, stefan@agner.ch, airlied@linux.ie, daniel@ffwll.ch,
+        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, linux-imx@nxp.com,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] mxsfb: allow attachment of display bridges
+Message-ID: <20190801111853.GA24574@villeb-dev>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
-
-There are two occurrances of off-by-one upper bound checking of indexes
-causing potential out-of-bounds array reads. Fix these.
-
-Addresses-Coverity: ("Out-of-bounds read")
-Fixes: cb33363d0e85 ("drm/amd/powerplay: add smu feature name support")
-Fixes: 6b294793e384 ("drm/amd/powerplay: add smu message name support")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/gpu/drm/amd/powerplay/amdgpu_smu.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/mxsfb/mxsfb_drv.c | 20 ++++++++++++++++----
+ drivers/gpu/drm/mxsfb/mxsfb_drv.h |  1 +
+ drivers/gpu/drm/mxsfb/mxsfb_out.c | 14 +++++++++++---
+ 3 files changed, 28 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/powerplay/amdgpu_smu.c b/drivers/gpu/drm/amd/powerplay/amdgpu_smu.c
-index d029a99e600e..b64113740eb5 100644
---- a/drivers/gpu/drm/amd/powerplay/amdgpu_smu.c
-+++ b/drivers/gpu/drm/amd/powerplay/amdgpu_smu.c
-@@ -38,7 +38,7 @@ static const char* __smu_message_names[] = {
+diff --git a/drivers/gpu/drm/mxsfb/mxsfb_drv.c b/drivers/gpu/drm/mxsfb/mxsfb_drv.c
+index 6fafc90da4ec..c19a7b7aa3a6 100644
+--- a/drivers/gpu/drm/mxsfb/mxsfb_drv.c
++++ b/drivers/gpu/drm/mxsfb/mxsfb_drv.c
+@@ -229,10 +229,22 @@ static int mxsfb_load(struct drm_device *drm, unsigned long flags)
+ 		goto err_vblank;
+ 	}
  
- const char *smu_get_message_name(struct smu_context *smu, enum smu_message_type type)
- {
--	if (type < 0 || type > SMU_MSG_MAX_COUNT)
-+	if (type < 0 || type >= SMU_MSG_MAX_COUNT)
- 		return "unknown smu message";
- 	return __smu_message_names[type];
- }
-@@ -51,7 +51,7 @@ static const char* __smu_feature_names[] = {
+-	ret = drm_panel_attach(mxsfb->panel, &mxsfb->connector);
+-	if (ret) {
+-		dev_err(drm->dev, "Cannot connect panel\n");
+-		goto err_vblank;
++	if (mxsfb->panel) {
++		ret = drm_panel_attach(mxsfb->panel, &mxsfb->connector);
++		if (ret) {
++			dev_err(drm->dev, "Cannot connect panel\n");
++			goto err_vblank;
++		}
++	} else if (mxsfb->bridge) {
++		ret = drm_bridge_attach(&mxsfb->pipe.encoder, mxsfb->bridge,
++				NULL);
++		if (ret) {
++			dev_err(drm->dev, "Cannot connect bridge\n");
++			goto err_vblank;
++		}
++	} else {
++		dev_err(drm->dev, "No panel or bridge\n");
++		return -EINVAL;
+ 	}
  
- const char *smu_get_feature_name(struct smu_context *smu, enum smu_feature_mask feature)
+ 	drm->mode_config.min_width	= MXSFB_MIN_XRES;
+diff --git a/drivers/gpu/drm/mxsfb/mxsfb_drv.h b/drivers/gpu/drm/mxsfb/mxsfb_drv.h
+index d975300dca05..436fe4bbb47a 100644
+--- a/drivers/gpu/drm/mxsfb/mxsfb_drv.h
++++ b/drivers/gpu/drm/mxsfb/mxsfb_drv.h
+@@ -29,6 +29,7 @@ struct mxsfb_drm_private {
+ 	struct drm_simple_display_pipe	pipe;
+ 	struct drm_connector		connector;
+ 	struct drm_panel		*panel;
++	struct drm_bridge		*bridge;
+ };
+ 
+ int mxsfb_setup_crtc(struct drm_device *dev);
+diff --git a/drivers/gpu/drm/mxsfb/mxsfb_out.c b/drivers/gpu/drm/mxsfb/mxsfb_out.c
+index 91e76f9cead6..77e03eb0fca6 100644
+--- a/drivers/gpu/drm/mxsfb/mxsfb_out.c
++++ b/drivers/gpu/drm/mxsfb/mxsfb_out.c
+@@ -78,9 +78,11 @@ int mxsfb_create_output(struct drm_device *drm)
  {
--	if (feature < 0 || feature > SMU_FEATURE_COUNT)
-+	if (feature < 0 || feature >= SMU_FEATURE_COUNT)
- 		return "unknown smu feature";
- 	return __smu_feature_names[feature];
+ 	struct mxsfb_drm_private *mxsfb = drm->dev_private;
+ 	struct drm_panel *panel;
++	struct drm_bridge *bridge;
+ 	int ret;
+ 
+-	ret = drm_of_find_panel_or_bridge(drm->dev->of_node, 0, 0, &panel, NULL);
++	ret = drm_of_find_panel_or_bridge(drm->dev->of_node, 0, 0, &panel,
++			&bridge);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -91,8 +93,14 @@ int mxsfb_create_output(struct drm_device *drm)
+ 	ret = drm_connector_init(drm, &mxsfb->connector,
+ 				 &mxsfb_panel_connector_funcs,
+ 				 DRM_MODE_CONNECTOR_Unknown);
+-	if (!ret)
+-		mxsfb->panel = panel;
++	if (!ret) {
++		if (panel)
++			mxsfb->panel = panel;
++		else if (bridge)
++			mxsfb->bridge = bridge;
++		else
++			return -EINVAL;
++	}
+ 
+ 	return ret;
  }
 -- 
-2.20.1
+2.17.1
 
