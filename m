@@ -2,52 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CFAE57DCBE
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 15:45:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 354F77DCC1
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 15:45:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728973AbfHANpQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 09:45:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56184 "EHLO mail.kernel.org"
+        id S1729161AbfHANpR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 09:45:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56202 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728705AbfHANpP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 09:45:15 -0400
-Subject: Re: [GIT PULL] GPIO fixes for the v5.3 series
+        id S1728836AbfHANpQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Aug 2019 09:45:16 -0400
+Subject: Re: [GIT PULL] MMC fixes for v5.3-rc3
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564667114;
-        bh=zXf0IQ6jTAs0NgXbmvvcUnFGibfFGxX4Rqlt4aUNwWk=;
+        s=default; t=1564667115;
+        bh=irKBkTZOXA50lKhibKjnQGmncCQWkMm6qcsvotwYPEY=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=JfGuux3FWxlxnVYeHdLosQghP+UQ4NP0Ll7Sjw+EX29iz2b9DOwSON6Qq+O6EiFbD
-         G5bjqlQjiDLJ2YKlPxckq9TUG+qq9/jFHFIZ5iNFT/MayYpJ4/MnFeg7tLrH8ZzXsA
-         CoGD3t66Qi/NEgWeVYUuyiJqtW2P8/19JHK09vhE=
+        b=n5sUIyDfaDsFVZIMWm3S3HMidX1YApcCpcHh1whEKbUpG3goAfsfSkiWFlXBmuIht
+         FJeUP6xM3KRKTIsNZfSmy32G4o2pWhnuzG3AKAS1UoY0AY4BvNC2qS81r2ejaFD+f5
+         Q051fUj3sw7bF40fFgEipfp1dpccfGh7uquW5gSM=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <CACRpkdYN=GzAa6E+krY3+kMq2NgM=U26FQe1SJzGbbsnOO6V9g@mail.gmail.com>
-References: <CACRpkdYN=GzAa6E+krY3+kMq2NgM=U26FQe1SJzGbbsnOO6V9g@mail.gmail.com>
+In-Reply-To: <20190801104319.25247-1-ulf.hansson@linaro.org>
+References: <20190801104319.25247-1-ulf.hansson@linaro.org>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CACRpkdYN=GzAa6E+krY3+kMq2NgM=U26FQe1SJzGbbsnOO6V9g@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
- tags/gpio-v5.3-3
-X-PR-Tracked-Commit-Id: d95da993383c78f7efd25957ba3af23af4b1c613
+X-PR-Tracked-Message-Id: <20190801104319.25247-1-ulf.hansson@linaro.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git tags/mmc-v5.3-rc1
+X-PR-Tracked-Commit-Id: 3a6ffb3c8c3274a39dc8f2514526e645c5d21753
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 28f5ab1e12ba702389c41bc95d02733673020d85
-Message-Id: <156466711445.11650.12401800713923742253.pr-tracker-bot@kernel.org>
-Date:   Thu, 01 Aug 2019 13:45:14 +0000
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
+X-PR-Merge-Commit-Id: 1e78030e5e5b2d8b0cad7136caf9cfab986a6bff
+Message-Id: <156466711554.11650.9013736897239318826.pr-tracker-bot@kernel.org>
+Date:   Thu, 01 Aug 2019 13:45:15 +0000
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Linus <torvalds@linux-foundation.org>, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Thu, 1 Aug 2019 10:53:48 +0200:
+The pull request you sent on Thu,  1 Aug 2019 12:43:19 +0200:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git tags/gpio-v5.3-3
+> git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git tags/mmc-v5.3-rc1
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/28f5ab1e12ba702389c41bc95d02733673020d85
+https://git.kernel.org/torvalds/c/1e78030e5e5b2d8b0cad7136caf9cfab986a6bff
 
 Thank you!
 
