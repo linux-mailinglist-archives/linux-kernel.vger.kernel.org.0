@@ -2,93 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 231087DC80
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 15:25:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 758A67DC88
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 15:28:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731182AbfHANZz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 09:25:55 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:41624 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730344AbfHANZz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 09:25:55 -0400
-Received: by mail-lf1-f66.google.com with SMTP id 62so45377973lfa.8
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2019 06:25:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=iedXLBO81OU3hcXhff2G+cwDQH73BKJzI4/klgD8xJA=;
-        b=gDYeHq/ogPb75MyGO6PFbzPmjAEdLAChmOzpYR6uroQtyUCboqkM2/HMUiu+CaiXyA
-         Jp/Vss+HnXIkGQNgBuT3Ja2d4Y+/0xtq2/Syo4cVzXdHfgHvVXRf4qVVkCNi5iTFa2oY
-         3tRPr0FtC36H9KKtz9IsTelh6TKdBlg/KppPI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=iedXLBO81OU3hcXhff2G+cwDQH73BKJzI4/klgD8xJA=;
-        b=iGhQali8aaKrGjUoKjN57WMnmFAYHm5fcDQVb95t+L5EBG/cytqiIkcy1dvaYkMgK1
-         Ergk87dgLvkgMcz+qbsfwAvRDGVs0C5q+gGJR+hvs44iavZhXXGlwpQWG4/AxRGOMJAy
-         wFmjfBm7K4W2nhZArjEc1PH14CHtcgmAZ3tP8nC6QmcSuoE5237HLHkestuMLAl8GWRf
-         gMUdxZGFUk56/Y0GoltZDGpJzieTmUzcQj/i6qii69tReBuhIJrKDS9Z5dj9qpdEN53P
-         SFS7l2mWdatQVVSvJEd/yxseNWmMZyLWYop5B/+TfZOyDMHphrRrHDSO0lmLugVg2BDz
-         eZ4A==
-X-Gm-Message-State: APjAAAVXsHbBrdssqmdWFzWOMufOKqCNFAvkoopAl4RKOI9FGFaR51Hp
-        0EEcxf5YV3omy7u9HeuvQH5jEcDmwK8=
-X-Google-Smtp-Source: APXvYqxCPUZqw0XNfhNROtMFoyLaOiMrhDOoubevYCmzCkynliWvWy5fJINs6RxE0nnidyCWFY8QnA==
-X-Received: by 2002:a05:6512:484:: with SMTP id v4mr43080602lfq.66.1564665952714;
-        Thu, 01 Aug 2019 06:25:52 -0700 (PDT)
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com. [209.85.167.52])
-        by smtp.gmail.com with ESMTPSA id x137sm12215096lff.23.2019.08.01.06.25.51
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Thu, 01 Aug 2019 06:25:51 -0700 (PDT)
-Received: by mail-lf1-f52.google.com with SMTP id 62so45377895lfa.8
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2019 06:25:51 -0700 (PDT)
-X-Received: by 2002:ac2:5601:: with SMTP id v1mr20711108lfd.106.1564665951390;
- Thu, 01 Aug 2019 06:25:51 -0700 (PDT)
+        id S1731294AbfHAN2o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 09:28:44 -0400
+Received: from mga03.intel.com ([134.134.136.65]:57204 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728578AbfHAN2o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Aug 2019 09:28:44 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Aug 2019 06:28:44 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,334,1559545200"; 
+   d="scan'208";a="256646724"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga001.jf.intel.com with ESMTP; 01 Aug 2019 06:28:42 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id D249EFF; Thu,  1 Aug 2019 16:28:41 +0300 (EEST)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1] mfd: intel-lpss: Add Intel Tiger Lake PCI IDs
+Date:   Thu,  1 Aug 2019 16:28:41 +0300
+Message-Id: <20190801132841.71645-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <CAJ-EccMXEVktpuPS5BwkGqTo++dGcpHAuSUZo7WgJhAzFByz0g@mail.gmail.com>
-In-Reply-To: <CAJ-EccMXEVktpuPS5BwkGqTo++dGcpHAuSUZo7WgJhAzFByz0g@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 1 Aug 2019 06:25:35 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whZzJ8WxAeHcirUghcbeOYxmpCr+XxeS9ngH3df3+=p2Q@mail.gmail.com>
-Message-ID: <CAHk-=whZzJ8WxAeHcirUghcbeOYxmpCr+XxeS9ngH3df3+=p2Q@mail.gmail.com>
-Subject: Re: [GIT PULL] SafeSetID MAINTAINERS file update for v5.3
-To:     Micah Morton <mortonm@chromium.org>
-Cc:     linux-security-module <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 31, 2019 at 2:30 PM Micah Morton <mortonm@chromium.org> wrote:
->
-> You mentioned a couple weeks ago it would be good if I added myself to
-> the MAINTAINERS file for the SafeSetID LSM. Here's the pull request
-> for v5.3.
+Intel Tiger Lake has the same LPSS than Intel Broxton.
+Add the new IDs to the list of supported devices.
 
-There's a lot more than the maintainer ID in there. You've rebased old
-patches that I already had etc:
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/mfd/intel-lpss-pci.c | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
-  Jann Horn (10):
-      LSM: SafeSetID: fix pr_warn() to include newline
-      LSM: SafeSetID: fix check for setresuid(new1, new2, new3)
-      LSM: SafeSetID: refactor policy hash table
-      LSM: SafeSetID: refactor safesetid_security_capable()
-      LSM: SafeSetID: refactor policy parsing
-      LSM: SafeSetID: fix userns handling in securityfs
-      LSM: SafeSetID: rewrite userspace API to atomic updates
-      LSM: SafeSetID: add read handler
-      LSM: SafeSetID: verify transitive constrainedness
-      LSM: SafeSetID: fix use of literal -1 in capable hook
+diff --git a/drivers/mfd/intel-lpss-pci.c b/drivers/mfd/intel-lpss-pci.c
+index e3a04929aaa3..9355db29d2f9 100644
+--- a/drivers/mfd/intel-lpss-pci.c
++++ b/drivers/mfd/intel-lpss-pci.c
+@@ -258,6 +258,29 @@ static const struct pci_device_id intel_lpss_pci_ids[] = {
+ 	{ PCI_VDEVICE(INTEL, 0x9dea), (kernel_ulong_t)&cnl_i2c_info },
+ 	{ PCI_VDEVICE(INTEL, 0x9deb), (kernel_ulong_t)&cnl_i2c_info },
+ 	{ PCI_VDEVICE(INTEL, 0x9dfb), (kernel_ulong_t)&spt_info },
++	/* TGL-LP */
++	{ PCI_VDEVICE(INTEL, 0xa0a8), (kernel_ulong_t)&bxt_uart_info },
++	{ PCI_VDEVICE(INTEL, 0xa0a9), (kernel_ulong_t)&bxt_uart_info },
++	{ PCI_VDEVICE(INTEL, 0xa0aa), (kernel_ulong_t)&spt_info },
++	{ PCI_VDEVICE(INTEL, 0xa0ab), (kernel_ulong_t)&spt_info },
++	{ PCI_VDEVICE(INTEL, 0xa0c5), (kernel_ulong_t)&spt_i2c_info },
++	{ PCI_VDEVICE(INTEL, 0xa0c6), (kernel_ulong_t)&spt_i2c_info },
++	{ PCI_VDEVICE(INTEL, 0xa0c7), (kernel_ulong_t)&bxt_uart_info },
++	{ PCI_VDEVICE(INTEL, 0xa0d8), (kernel_ulong_t)&spt_i2c_info },
++	{ PCI_VDEVICE(INTEL, 0xa0d9), (kernel_ulong_t)&spt_i2c_info },
++	{ PCI_VDEVICE(INTEL, 0xa0da), (kernel_ulong_t)&bxt_uart_info },
++	{ PCI_VDEVICE(INTEL, 0xa0db), (kernel_ulong_t)&bxt_uart_info },
++	{ PCI_VDEVICE(INTEL, 0xa0dc), (kernel_ulong_t)&bxt_uart_info },
++	{ PCI_VDEVICE(INTEL, 0xa0dd), (kernel_ulong_t)&bxt_uart_info },
++	{ PCI_VDEVICE(INTEL, 0xa0de), (kernel_ulong_t)&spt_info },
++	{ PCI_VDEVICE(INTEL, 0xa0df), (kernel_ulong_t)&spt_info },
++	{ PCI_VDEVICE(INTEL, 0xa0e8), (kernel_ulong_t)&spt_i2c_info },
++	{ PCI_VDEVICE(INTEL, 0xa0e9), (kernel_ulong_t)&spt_i2c_info },
++	{ PCI_VDEVICE(INTEL, 0xa0ea), (kernel_ulong_t)&spt_i2c_info },
++	{ PCI_VDEVICE(INTEL, 0xa0eb), (kernel_ulong_t)&spt_i2c_info },
++	{ PCI_VDEVICE(INTEL, 0xa0fb), (kernel_ulong_t)&spt_info },
++	{ PCI_VDEVICE(INTEL, 0xa0fd), (kernel_ulong_t)&spt_info },
++	{ PCI_VDEVICE(INTEL, 0xa0fe), (kernel_ulong_t)&spt_info },
+ 	/* SPT-H */
+ 	{ PCI_VDEVICE(INTEL, 0xa127), (kernel_ulong_t)&spt_uart_info },
+ 	{ PCI_VDEVICE(INTEL, 0xa128), (kernel_ulong_t)&spt_uart_info },
+-- 
+2.20.1
 
-  Micah Morton (2):
-      Merge commit 'v5.3-rc2^0'
-      Add entry in MAINTAINERS file for SafeSetID LSM
-
-Not pulled.
-
-                  Linus
