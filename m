@@ -2,132 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED85E7E4E4
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 23:40:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B8F037E4E8
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 23:41:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389302AbfHAVkJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 17:40:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35582 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731723AbfHAVkH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 17:40:07 -0400
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6D554217D4
-        for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2019 21:40:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564695605;
-        bh=gHeVvR22yg/BEAVWLA5zkJGRlEoRdzJ5A+Yzt/2dnxc=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=WOvxb0/qC/fA+zskPassO/yOlfOY7EnXCS3QAMKfImgnKo2bvlppC1c7A3uIhqYY5
-         LSuTvWMIYfxSK1BC5+t+uQWTEJFqyN+fQU20ZdSAwSEcP2EAcy/0VSVf5yohlZAlv4
-         Oc7BCZSKhKussZZOEXYcPGJDf9mcKH3B/UyNuzNI=
-Received: by mail-wr1-f48.google.com with SMTP id x1so25181195wrr.9
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2019 14:40:05 -0700 (PDT)
-X-Gm-Message-State: APjAAAVVhK72ys2xVoymBaI0Dw2CB6cCT0WZG695kLiIT9h4Y6fND+DN
-        4H+wVqMdlttBvPhMJGOIvhnIAeu6ZtJBRJkPoqpRtg==
-X-Google-Smtp-Source: APXvYqzRdGfLbWWwLeGDFVSRIa19VFXJT9LM81VsTWCkFZlOUlj7YmlSRI4JMEXaM3T3twojRBcPU0Iog/L8Gh39gHU=
-X-Received: by 2002:adf:f2d0:: with SMTP id d16mr45723172wrp.221.1564695603860;
- Thu, 01 Aug 2019 14:40:03 -0700 (PDT)
+        id S1731442AbfHAVlu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 17:41:50 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:35922 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730273AbfHAVlt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Aug 2019 17:41:49 -0400
+Received: by mail-lf1-f67.google.com with SMTP id q26so51413025lfc.3
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2019 14:41:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=wy5NJcQ2NTEJIuX16bOQiS1WPonz/S5C/OXL6ClZM8E=;
+        b=NSZQCYCZlvdefAiOE6lkVFKH/0MfWEwsNqY1dvxclHpGH/1Ij8ZFhbDtHkbxPrbUJh
+         Vs0FMC9vuUdWZoosLb5rHh6Kzlee6CeTvVxfDidOhK/sQBA6iUDzereRrAsmpvemrV6d
+         2vwzsLgn5YE1nDj57dyRroFW1t4hh45IFXQho=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wy5NJcQ2NTEJIuX16bOQiS1WPonz/S5C/OXL6ClZM8E=;
+        b=sFFjMCiAGLIebc7VdwSWnvmIr5BBOHDePPmFLQEFQkPA1iw+RC+eURxgFDDkGFsoC/
+         QYJUXihgdys0us8LeM5SHumKSPiHztPb3EVTQPHsjqGnCgQBUDUx6UvMPSHA2sgWnFP5
+         lN+dYL1JGmtEq/lOSDXSUQWiHjOMa06epUVSlOdtxu5EYRm6E9DHmDZ39EqjX4uovjs1
+         8Ot8gyBiYNVVg9YaE3+dmkOfH8oWAJYAhOCm4ZVeENc/2Dx04A1oixQdUw3e6aJyVTZA
+         erGAXMHJ7o7Zg0q5NZxAQZxwH/rnzLDkpB5PRwUD5RRjrFLK+ZnRR86O5PId8GVBhP+g
+         VCbA==
+X-Gm-Message-State: APjAAAUApj7buhOLTyFJZD+4B5jA8JUSkDzUs7odsyxymNCeTrvypc8L
+        y7bqKgu/rFRyF6U9Z4pSpvAFs4q1OJYCoY1HcIqi18Bo
+X-Google-Smtp-Source: APXvYqz0uWsugdX3fasAhfKy/3p7tlWt0iLS1cZzwqJhKhd7WGC+IFaUB1uXnZBg/lNKzSSt3dH08bmMCbjfDTHiTeo=
+X-Received: by 2002:ac2:5a44:: with SMTP id r4mr27941899lfn.118.1564695706755;
+ Thu, 01 Aug 2019 14:41:46 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190729215758.28405-1-dima@arista.com> <20190729215758.28405-26-dima@arista.com>
- <CALCETrUpOhTCQkhB3S73LBFAiTp07PwXP32Q6Bn0m2LTqiw9hA@mail.gmail.com> <4D0E6734-066D-4A72-A119-2FD6482F857D@zytor.com>
-In-Reply-To: <4D0E6734-066D-4A72-A119-2FD6482F857D@zytor.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Thu, 1 Aug 2019 14:39:51 -0700
-X-Gmail-Original-Message-ID: <CALCETrUfGb8VcgdyCme=n755OB_qaGqS9QATpn8wqQ3XCqUgAA@mail.gmail.com>
-Message-ID: <CALCETrUfGb8VcgdyCme=n755OB_qaGqS9QATpn8wqQ3XCqUgAA@mail.gmail.com>
-Subject: Re: [PATCHv5 25/37] x86/vdso: Switch image on setns()/clone()
-To:     "H. Peter Anvin" <hpa@zytor.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Dmitry Safonov <dima@arista.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Adrian Reber <adrian@lisas.de>,
-        Andrei Vagin <avagin@openvz.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Cyrill Gorcunov <gorcunov@openvz.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
-        Jeff Dike <jdike@addtoit.com>, Oleg Nesterov <oleg@redhat.com>,
-        Pavel Emelyanov <xemul@virtuozzo.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        criu@openvz.org, Linux API <linux-api@vger.kernel.org>,
-        X86 ML <x86@kernel.org>, Andrei Vagin <avagin@gmail.com>
+References: <20190801213922.158860-1-joel@joelfernandes.org>
+In-Reply-To: <20190801213922.158860-1-joel@joelfernandes.org>
+From:   Joel Fernandes <joel@joelfernandes.org>
+Date:   Thu, 1 Aug 2019 17:41:35 -0400
+Message-ID: <CAEXW_YTp0UxtYGb5qZfVEpotfYvcYfjYj5Ob1M93Uidju6GxOw@mail.gmail.com>
+Subject: Re: [PATCH v2 0/7] Doc updates to /dev branch
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        rcu <rcu@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 31, 2019 at 11:09 PM <hpa@zytor.com> wrote:
+On Thu, Aug 1, 2019 at 5:39 PM Joel Fernandes (Google)
+<joel@joelfernandes.org> wrote:
 >
-> On July 31, 2019 10:34:26 PM PDT, Andy Lutomirski <luto@kernel.org> wrote=
-:
-> >On Mon, Jul 29, 2019 at 2:58 PM Dmitry Safonov <dima@arista.com> wrote:
-> >>
-> >> As it has been discussed on timens RFC, adding a new conditional
-> >branch
-> >> `if (inside_time_ns)` on VDSO for all processes is undesirable.
-> >> It will add a penalty for everybody as branch predictor may
-> >mispredict
-> >> the jump. Also there are instruction cache lines wasted on cmp/jmp.
-> >
-> >
-> >>
-> >> +#ifdef CONFIG_TIME_NS
-> >> +int vdso_join_timens(struct task_struct *task)
-> >> +{
-> >> +       struct mm_struct *mm =3D task->mm;
-> >> +       struct vm_area_struct *vma;
-> >> +
-> >> +       if (down_write_killable(&mm->mmap_sem))
-> >> +               return -EINTR;
-> >> +
-> >> +       for (vma =3D mm->mmap; vma; vma =3D vma->vm_next) {
-> >> +               unsigned long size =3D vma->vm_end - vma->vm_start;
-> >> +
-> >> +               if (vma_is_special_mapping(vma, &vvar_mapping) ||
-> >> +                   vma_is_special_mapping(vma, &vdso_mapping))
-> >> +                       zap_page_range(vma, vma->vm_start, size);
-> >> +       }
-> >
-> >This is, unfortunately, fundamentally buggy.  If any thread is in the
-> >vDSO or has the vDSO on the stack (due to a signal, for example), this
-> >will crash it.  I can think of three solutions:
-> >
-> >1. Say that you can't setns() if you have other mms and ignore the
-> >signal issue.  Anything with green threads will disapprove.  It's also
-> >rather gross.
-> >
-> >2. Make it so that you can flip the static branch safely.  As in my
-> >other email, you'll need to deal with CoW somehow,
-> >
-> >3. Make it so that you can't change timens, or at least that you can't
-> >turn timens on or off, without execve() or fork().
-> >
-> >BTW, that static branch probably needs to be aligned to a cache line
-> >or something similar to avoid all the nastiness with trying to poke
-> >text that might be concurrently executing.  This will be a mess.
+> This series fixes the rcu/dev branch with the new ReST conversion patches.
 >
-> Since we are talking about different physical addresses I believe we shou=
-ld be okay as long as they don't cross page boundaries, and even if they do=
- it can be managed with proper page invalidation sequencing =E2=80=93 it's =
-not like the problems of having to deal with XMC on live pages like in the =
-kernel.
->
-> Still, you really need each instruction sequence to be present, with the =
-only difference being specific patch sites.
->
-> Any fundamental reason this can't be strictly data driven? Seems odd to m=
-e if it couldn't, but I might be missing something obvious.
 
-I think it can be.  There are at least two places where vDSO slow
-paths could hook without affecting fast paths: vclock_mode and the low
-bit of the sequence number.
+And as always, the patch 3/7 made it only to patchwork ;-)
+https://lore.kernel.org/patchwork/patch/1109660/
