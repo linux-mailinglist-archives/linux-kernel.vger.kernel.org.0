@@ -2,119 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E4C797DE33
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 16:47:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 26BCB7DE2F
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 16:47:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732247AbfHAOrk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 10:47:40 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:46818 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726017AbfHAOrk (ORCPT
+        id S1730380AbfHAOrS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 10:47:18 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:36455 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726017AbfHAOrS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 10:47:40 -0400
-Received: by mail-qk1-f195.google.com with SMTP id r4so52131217qkm.13
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2019 07:47:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=230s3ChFPRc4aRDJM4ggG97b31ayoZtf71ejiTiSkjo=;
-        b=LejEUzoEVFEhSDCDH1H8Ri6NTYd+EQ93Bl/JO+hFoztUU8LZE/3ThN3ckZztuH/w1v
-         9ZBKE0O7YssDOoH1hgL0JQ0pwQ4Tviu5kZ5YskORAs0iZ0+ltBuEKKnhLwhVfoBLyPfz
-         d3Etk+ubEBLubY4IdfrS7mP66VUO9gIN8dQBHoQiV1U2dwuvTnBOWlcfbBMbBry5Emjx
-         BZLpm9BLNXjMfjYY2AXpHp2FMBW9IHG9JC/MUR6Ray/aqbZgZs+McxqDbeFLvx96PlRU
-         4vTWs2/AXl3PmmsA6wFbYZsVzZ/sHRBXrzLSDZRCzYvlG5U6RnMQCkeKXlij42mY/v7e
-         ORuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=230s3ChFPRc4aRDJM4ggG97b31ayoZtf71ejiTiSkjo=;
-        b=M3Ag7Y8Fqkfd+8NzExCvNare0SrGT8gzavhCGW3lJ0QGBlR/IIk8/8BR+ouIncXcsU
-         1mOlbpRJsZUo8s9KiTTj76ACXQ/+GjHGc/AimaiUyRzLJw8nnAJ8r4g942/C+TydhNkm
-         LqwQRtbWliSGo5Rvi3JEn/ptWI4ayReH07AlD83eI4dNGBiawWCtvWh+MdNZ4CSvpuUy
-         kFcb6NSdgHGcK+CEs5HxLDJcTyW9gho5P7zMrQhT5yay71pUtyxC60bFofjT82eZllXu
-         1nCj5iQvH+kn65mENvR02IG8WSahWEBj9vd9dVJ1LiDR22HUc273lnCDXmcp2qiWmTvf
-         0Tkg==
-X-Gm-Message-State: APjAAAWUWJwn0CZB5TRfxeRD3Jgvk2ZuDDQPkLwau1ysv/2T8vZle9LT
-        n9crlDKdsE5amKh3j2BFGd7i8A==
-X-Google-Smtp-Source: APXvYqwHfUt80l0BXUJpBGTFwk3Bd4gQ46/mlKzXrLecWYywA/07oGtfuHM8Qz7nWtC7/qhxbBwNVA==
-X-Received: by 2002:ae9:e30d:: with SMTP id v13mr83907407qkf.148.1564670859058;
-        Thu, 01 Aug 2019 07:47:39 -0700 (PDT)
-Received: from qcai.nay.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id s11sm29605818qkm.51.2019.08.01.07.47.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 01 Aug 2019 07:47:38 -0700 (PDT)
-From:   Qian Cai <cai@lca.pw>
-To:     catalin.marinas@arm.com, will@kernel.org
-Cc:     andreyknvl@google.com, aryabinin@virtuozzo.com, glider@google.com,
-        dvyukov@google.com, linux-arm-kernel@lists.infradead.org,
-        kasan-dev@googlegroups.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Qian Cai <cai@lca.pw>
-Subject: [PATCH v2] arm64/mm: fix variable 'tag' set but not used
-Date:   Thu,  1 Aug 2019 10:47:05 -0400
-Message-Id: <1564670825-4050-1-git-send-email-cai@lca.pw>
-X-Mailer: git-send-email 1.8.3.1
+        Thu, 1 Aug 2019 10:47:18 -0400
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1htCMH-0004AW-6g; Thu, 01 Aug 2019 16:47:09 +0200
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1htCMF-0007GR-9E; Thu, 01 Aug 2019 16:47:07 +0200
+Date:   Thu, 1 Aug 2019 16:47:07 +0200
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Schrempf Frieder <frieder.schrempf@kontron.de>
+Cc:     "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "linux-imx@nxp.com" <linux-imx@nxp.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] serial: mctrl_gpio: Avoid probe failures in case of
+ missing gpiolib
+Message-ID: <20190801144707.vprfi4yy2shxmtyw@pengutronix.de>
+References: <20190801124446.15703-1-frieder.schrempf@kontron.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190801124446.15703-1-frieder.schrempf@kontron.de>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When CONFIG_KASAN_SW_TAGS=n, set_tag() is compiled away. GCC throws a
-warning,
+On Thu, Aug 01, 2019 at 12:46:42PM +0000, Schrempf Frieder wrote:
+> From: Frieder Schrempf <frieder.schrempf@kontron.de>
+> 
+> If CONFIG_GPIOLIB is not enabled, mctrl_gpio_init() and
+> mctrl_gpio_init_noauto() will currently return an error pointer with
+> -ENOSYS. As the mctrl GPIOs are usually optional, drivers need to
+> check for this condition to allow continue probing.
+> 
+> To avoid the need for this check in each driver, we return NULL
+> instead, as all the mctrl_gpio_*() functions are skipped anyway.
+> We also adapt mctrl_gpio_to_gpiod() to be in line with this change.
+> 
+> Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
+> ---
+>  drivers/tty/serial/serial_mctrl_gpio.c | 3 +++
+>  drivers/tty/serial/serial_mctrl_gpio.h | 6 +++---
+>  drivers/tty/serial/sh-sci.c            | 2 +-
 
-mm/kasan/common.c: In function '__kasan_kmalloc':
-mm/kasan/common.c:464:5: warning: variable 'tag' set but not used
-[-Wunused-but-set-variable]
-  u8 tag = 0xff;
-     ^~~
+I'd split the sh-sci change in a separate patch. And there is another
+instance in drivers/tty/serial/8250/8250_core.c that should be dropped.
 
-Fix it by making __tag_set() a static inline function the same as
-arch_kasan_set_tag() in mm/kasan/kasan.h for consistency because there
-is a macro in arch/arm64/include/asm/kasan.h,
+Other than that looks good.
 
- #define arch_kasan_set_tag(addr, tag) __tag_set(addr, tag)
+Best regards
+Uwe
 
-However, when CONFIG_DEBUG_VIRTUAL=n and CONFIG_SPARSEMEM_VMEMMAP=y,
-page_to_virt() will call __tag_set() with incorrect type of a
-parameter, so fix that as well. Also, still let page_to_virt() return
-"void *" instead of "const void *", so will not need to add a similar
-cast in lowmem_page_address().
-
-Signed-off-by: Qian Cai <cai@lca.pw>
----
-
-v2: Fix compilation warnings of CONFIG_DEBUG_VIRTUAL=n spotted by Will.
-
- arch/arm64/include/asm/memory.h | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
-
-diff --git a/arch/arm64/include/asm/memory.h b/arch/arm64/include/asm/memory.h
-index b7ba75809751..fb04f10a78ab 100644
---- a/arch/arm64/include/asm/memory.h
-+++ b/arch/arm64/include/asm/memory.h
-@@ -210,7 +210,11 @@ static inline unsigned long kaslr_offset(void)
- #define __tag_reset(addr)	untagged_addr(addr)
- #define __tag_get(addr)		(__u8)((u64)(addr) >> 56)
- #else
--#define __tag_set(addr, tag)	(addr)
-+static inline const void *__tag_set(const void *addr, u8 tag)
-+{
-+	return addr;
-+}
-+
- #define __tag_reset(addr)	(addr)
- #define __tag_get(addr)		0
- #endif
-@@ -301,8 +305,8 @@ static inline void *phys_to_virt(phys_addr_t x)
- #define page_to_virt(page)	({					\
- 	unsigned long __addr =						\
- 		((__page_to_voff(page)) | PAGE_OFFSET);			\
--	unsigned long __addr_tag =					\
--		 __tag_set(__addr, page_kasan_tag(page));		\
-+	const void *__addr_tag =					\
-+		__tag_set((void *)__addr, page_kasan_tag(page));	\
- 	((void *)__addr_tag);						\
- })
- 
 -- 
-1.8.3.1
-
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
