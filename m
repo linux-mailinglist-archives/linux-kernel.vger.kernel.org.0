@@ -2,197 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A1837DE1D
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 16:41:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 27BC07DE25
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 16:43:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732236AbfHAOkt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 10:40:49 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:50994 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732207AbfHAOkk (ORCPT
+        id S1728879AbfHAOnK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 10:43:10 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:38548 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726583AbfHAOnJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 10:40:40 -0400
-Received: by mail-wm1-f68.google.com with SMTP id v15so64929719wml.0
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2019 07:40:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=JLjvU2ODIosSbAGgfcgnEGYGA9K2KD8U033BkbWqs6s=;
-        b=bStR7V2YeW1gpq+dA8PYooGb99XNuHu+zzQtd51dbKalI8jrPgAb2R9ba/V4CAdF/H
-         woSWGAhZ/iHRhtyFLJs9GdUWHXbv81mkCwgAWmWkHJM9sR33mqR+hVEIto13KjW61G9V
-         /9MqwZDC/t+QiZYeHOAH3iqU2AabjsjpHQFaeWn6DOZwvj3mh6FxGGXiS1qFIqTMTe0L
-         K/Mxa3+TABsk5BcInkHnOZEiiq5cThOwPqIfDSGg2zldedK6t8eZD1wu4GuWkwf/Zf+w
-         k6+9I07eJO2tzcy0/9sexqeBmcBYNm8N+ynpD6GIyR83nfZVg9+BSmldfV8Gmr9R4Nmt
-         3H3Q==
+        Thu, 1 Aug 2019 10:43:09 -0400
+Received: by mail-wm1-f67.google.com with SMTP id s15so42096323wmj.3
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2019 07:43:08 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=JLjvU2ODIosSbAGgfcgnEGYGA9K2KD8U033BkbWqs6s=;
-        b=BpaiuKhZW4iQEqclXxalXV1zveX7maETqjL63RdKnxHRzeIa7s9GfJp4/BkqGykeon
-         JD8UlYOpVvl5pL4LC7aN9UZRF4ZJw8bJUddHF0LaisYZBrAr4Z97OPDpa5nskaI8ahuZ
-         z4hL5aM/lJuNoHUA6+2VDmMA3qixOroA9u0LmJMaRLRdOjf24QtlZgdWy/ohbjYuJ5V2
-         2o1dOn70wZBi8DV69pXhadCCTq9elG11EIO6tC0+eq6XjflT4jl0TpOthRLdFSmJObBH
-         e95pFJZQ/IE8o7K4l+JsbWCcw7jeFAYqTkBHVVKhB5C/dcYQi8/UO4XXDN+wkYXDJBOp
-         WMRw==
-X-Gm-Message-State: APjAAAUt+ODNRLqilDtHxvT0+gNSlnYTudi6Tp/1Alkwt5wovOiiZorb
-        yMVfxx5jGgcqRMbtxDWUZdAHY+DxiGk=
-X-Google-Smtp-Source: APXvYqz+Zw9kld2nPblI1PI9MXZipUcsQWerybRNNF582amjjXF8q2t4NKJ69J9yl3mEf03Ikld5aQ==
-X-Received: by 2002:a1c:a686:: with SMTP id p128mr55764273wme.130.1564670438525;
-        Thu, 01 Aug 2019 07:40:38 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:e0a:f:6020:9865:5ad1:5ff3:80c])
-        by smtp.gmail.com with ESMTPSA id y10sm58768873wmj.2.2019.08.01.07.40.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 01 Aug 2019 07:40:38 -0700 (PDT)
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-To:     linux-kernel@vger.kernel.org, mingo@redhat.com,
-        peterz@infradead.org
-Cc:     pauld@redhat.com, valentin.schneider@arm.com,
-        srikar@linux.vnet.ibm.com, quentin.perret@arm.com,
-        dietmar.eggemann@arm.com, Morten.Rasmussen@arm.com,
-        Vincent Guittot <vincent.guittot@linaro.org>
-Subject: [PATCH v2 8/8] sched/fair: use utilization to select misfit task
-Date:   Thu,  1 Aug 2019 16:40:24 +0200
-Message-Id: <1564670424-26023-9-git-send-email-vincent.guittot@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1564670424-26023-1-git-send-email-vincent.guittot@linaro.org>
-References: <1564670424-26023-1-git-send-email-vincent.guittot@linaro.org>
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=AQVZzxviCSRzfupMACZrSRSzcwDwgjm3ki6dTQwgdSY=;
+        b=DIp1dtX6V/i6+j/4xRLbAJFimuOiPdH+j6SAQNJswosUb5aJNhPrMeGuG1Hr2hRNS/
+         Yo49Vq4DWh5MEPRLh1vKNLr2xCPB6uIRp9nkMjex7gXsacb75Nn0yHW54S3PPqiXXyWL
+         8CZevZnq/AcZCosuTrsZ0E8238QT1zaj1VOqUvsQjk18ss6rpw9kH0ktkNsYNyEM7eMk
+         bRedTX//kpfIyZvgt9JBFy8mDEjSchS2UZFwHP4liJkrtZPZZXy3p0feLVM1e7+uIP0A
+         l4HQsTIEcI+5uWQ/e1fVdLoFvUaO7JTO2ftEHevH/jDOZTzowkA9WBlolvgSodFcEVKq
+         FhnQ==
+X-Gm-Message-State: APjAAAVVE4Vb6Z+3kTdEJw0aTlpwuQUfrghObLC7OnwXr3ikO1RH9wwR
+        qOWfNPeRWcQ5jxQUZrqK5pLhxw==
+X-Google-Smtp-Source: APXvYqyvHJ4XFkD6+G+k8opm3OHCmgXq7DQbrlYYAWG0VPhgFif8OCAYnGiM6GkBJFvf5mNzeQpPPQ==
+X-Received: by 2002:a1c:5602:: with SMTP id k2mr109441102wmb.173.1564670587902;
+        Thu, 01 Aug 2019 07:43:07 -0700 (PDT)
+Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id f204sm111394043wme.18.2019.08.01.07.43.06
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 01 Aug 2019 07:43:06 -0700 (PDT)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Jim Mattson <jmattson@google.com>
+Subject: Re: [PATCH 3/5] x86: KVM: svm: clear interrupt shadow on all paths in skip_emulated_instruction()
+In-Reply-To: <20190801141802.GA6783@linux.intel.com>
+References: <20190801051418.15905-1-vkuznets@redhat.com> <20190801051418.15905-4-vkuznets@redhat.com> <20190801141802.GA6783@linux.intel.com>
+Date:   Thu, 01 Aug 2019 16:43:05 +0200
+Message-ID: <87ftml54li.fsf@vitty.brq.redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-utilization is used to detect a misfit task but the load is then used to
-select the task on the CPU which can lead to select a small task with
-high weight instead of the task that triggered the misfit migration.
+Sean Christopherson <sean.j.christopherson@intel.com> writes:
 
-Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
----
- kernel/sched/fair.c  | 28 ++++++++++++++--------------
- kernel/sched/sched.h |  2 +-
- 2 files changed, 15 insertions(+), 15 deletions(-)
+> On Thu, Aug 01, 2019 at 07:14:16AM +0200, Vitaly Kuznetsov wrote:
+>> Regardless of the way how we skip instruction, interrupt shadow needs to be
+>> cleared.
+>> 
+>> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+>> Reviewed-by: Jim Mattson <jmattson@google.com>
+>> ---
+>>  arch/x86/kvm/svm.c | 4 +++-
+>>  1 file changed, 3 insertions(+), 1 deletion(-)
+>> 
+>> diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
+>> index 80f576e05112..7c7dff3f461f 100644
+>> --- a/arch/x86/kvm/svm.c
+>> +++ b/arch/x86/kvm/svm.c
+>> @@ -784,13 +784,15 @@ static void skip_emulated_instruction(struct kvm_vcpu *vcpu)
+>>  				EMULATE_DONE)
+>>  			pr_err_once("KVM: %s: unable to skip instruction\n",
+>>  				    __func__);
+>> -		return;
+>> +		goto clear_int_shadow;
+>
+> A better fix would be to clear the interrupt shadow in x86_emulate_instruction()
+> after updating RIP for EMULTYPE_SKIP.  VMX has this same flaw when running
+> nested as handle_ept_misconfig() also expects the interrupt shadow to be
+> handled by kvm_emulate_instruction().  Clearing the shadow if and only if
+> the skipping is successful also means KVM isn't incorrectly zapping the
+> shadow when emulation fails.
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 53e64a7..d08cc12 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -3817,16 +3817,16 @@ static inline void update_misfit_status(struct task_struct *p, struct rq *rq)
- 		return;
- 
- 	if (!p) {
--		rq->misfit_task_load = 0;
-+		rq->misfit_task_util = 0;
- 		return;
- 	}
- 
- 	if (task_fits_capacity(p, capacity_of(cpu_of(rq)))) {
--		rq->misfit_task_load = 0;
-+		rq->misfit_task_util = 0;
- 		return;
- 	}
- 
--	rq->misfit_task_load = task_h_load(p);
-+	rq->misfit_task_util = task_util_est(p);
- }
- 
- #else /* CONFIG_SMP */
-@@ -7487,14 +7487,14 @@ static int detach_tasks(struct lb_env *env)
- 			break;
- 
- 		case migrate_misfit:
--			load = task_h_load(p);
-+			util = task_util_est(p);
- 
- 			/*
- 			 * utilization of misfit task might decrease a bit
- 			 * since it has been recorded. Be conservative in the
- 			 * condition.
- 			 */
--			if (load < env->imbalance)
-+			if (2*util < env->imbalance)
- 				goto next;
- 
- 			env->imbalance = 0;
-@@ -7785,7 +7785,7 @@ struct sg_lb_stats {
- 	unsigned int group_weight;
- 	enum group_type group_type;
- 	unsigned int group_asym_capacity; /* tasks should be move to preferred cpu */
--	unsigned long group_misfit_task_load; /* A CPU has a task too big for its capacity */
-+	unsigned long group_misfit_task_util; /* A CPU has a task too big for its capacity */
- #ifdef CONFIG_NUMA_BALANCING
- 	unsigned int nr_numa_running;
- 	unsigned int nr_preferred_running;
-@@ -7959,7 +7959,7 @@ check_cpu_capacity(struct rq *rq, struct sched_domain *sd)
-  */
- static inline int check_misfit_status(struct rq *rq, struct sched_domain *sd)
- {
--	return rq->misfit_task_load &&
-+	return rq->misfit_task_util &&
- 		(rq->cpu_capacity_orig < rq->rd->max_cpu_capacity ||
- 		 check_cpu_capacity(rq, sd));
- }
-@@ -8078,7 +8078,7 @@ group_type group_classify(struct lb_env *env,
- 	if (sgs->group_asym_capacity)
- 		return group_asym_capacity;
- 
--	if (sgs->group_misfit_task_load)
-+	if (sgs->group_misfit_task_util)
- 		return group_misfit_task;
- 
- 	if (!group_has_capacity(env, sgs))
-@@ -8164,8 +8164,8 @@ static inline void update_sg_lb_stats(struct lb_env *env,
- 
- 		/* Check for a misfit task on the cpu */
- 		if (env->sd->flags & SD_ASYM_CPUCAPACITY &&
--		    sgs->group_misfit_task_load < rq->misfit_task_load) {
--			sgs->group_misfit_task_load = rq->misfit_task_load;
-+		    sgs->group_misfit_task_util < rq->misfit_task_util) {
-+			sgs->group_misfit_task_util = rq->misfit_task_util;
- 			*sg_status |= SG_OVERLOAD;
- 		}
- 	}
-@@ -8261,7 +8261,7 @@ static bool update_sd_pick_busiest(struct lb_env *env,
- 		 * If we have more than one misfit sg go with the
- 		 * biggest misfit.
- 		 */
--		if (sgs->group_misfit_task_load < busiest->group_misfit_task_load)
-+		if (sgs->group_misfit_task_util < busiest->group_misfit_task_util)
- 			return false;
- 		break;
- 
-@@ -8458,7 +8458,7 @@ static inline void calculate_imbalance(struct lb_env *env, struct sd_lb_stats *s
- 	if (busiest->group_type == group_misfit_task) {
- 		/* Set imbalance to allow misfit task to be balanced. */
- 		env->balance_type = migrate_misfit;
--		env->imbalance = busiest->group_misfit_task_load;
-+		env->imbalance = busiest->group_misfit_task_util;
- 		return;
- 	}
- 
-@@ -8801,8 +8801,8 @@ static struct rq *find_busiest_queue(struct lb_env *env,
- 			 * For ASYM_CPUCAPACITY domains with misfit tasks we simply
- 			 * seek the "biggest" misfit task.
- 			 */
--			if (rq->misfit_task_load > busiest_load) {
--				busiest_load = rq->misfit_task_load;
-+			if (rq->misfit_task_util > busiest_util) {
-+				busiest_util = rq->misfit_task_util;
- 				busiest = rq;
- 			}
- 
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 7583fad..ef6e1b2 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -916,7 +916,7 @@ struct rq {
- 
- 	unsigned char		idle_balance;
- 
--	unsigned long		misfit_task_load;
-+	unsigned long		misfit_task_util;
- 
- 	/* For active balancing */
- 	int			active_balance;
+Oh, nice catch actually! Will do in v2.
+
 -- 
-2.7.4
-
+Vitaly
