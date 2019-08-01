@@ -2,82 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D5687D58C
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 08:37:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 538747D595
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 08:38:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729952AbfHAGg6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 02:36:58 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:34050 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725804AbfHAGg5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 02:36:57 -0400
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: bbrezillon)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id C699C28A446;
-        Thu,  1 Aug 2019 07:36:55 +0100 (BST)
-Date:   Thu, 1 Aug 2019 08:36:52 +0200
-From:   Boris Brezillon <boris.brezillon@collabora.com>
-To:     <Tudor.Ambarus@microchip.com>
-Cc:     <marek.vasut@gmail.com>, <vigneshr@ti.com>, <dwmw2@infradead.org>,
-        <computersforpeace@gmail.com>, <miquel.raynal@bootlin.com>,
-        <richard@nod.at>, <linux-mtd@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 4/6] mtd: spi_nor: Add nor->setup() method
-Message-ID: <20190801083652.52bffef5@collabora.com>
-In-Reply-To: <20190731091145.27374-5-tudor.ambarus@microchip.com>
-References: <20190731091145.27374-1-tudor.ambarus@microchip.com>
-        <20190731091145.27374-5-tudor.ambarus@microchip.com>
-Organization: Collabora
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        id S1730080AbfHAGiS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 02:38:18 -0400
+Received: from mx2.suse.de ([195.135.220.15]:43068 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725804AbfHAGiS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Aug 2019 02:38:18 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 531F4AD1E;
+        Thu,  1 Aug 2019 06:38:17 +0000 (UTC)
+Date:   Thu, 1 Aug 2019 08:38:14 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Miles Chen <miles.chen@mediatek.com>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Qian Cai <cai@lca.pw>
+Subject: Re: linux-next: build warning after merge of the akpm-current tree
+Message-ID: <20190801063814.GC11627@dhcp22.suse.cz>
+References: <20190731161151.26ef081e@canb.auug.org.au>
+ <1564554484.28000.3.camel@mtkswgap22>
+ <20190801155130.29a07b1b@canb.auug.org.au>
+ <20190801061527.GB11627@dhcp22.suse.cz>
+ <1564641003.25219.7.camel@mtkswgap22>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1564641003.25219.7.camel@mtkswgap22>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 31 Jul 2019 09:12:14 +0000
-<Tudor.Ambarus@microchip.com> wrote:
+On Thu 01-08-19 14:30:03, Miles Chen wrote:
+[...]
+> It's the first time that I receive a build warning after the patch has
+> been merged to -mm tree. The build warning had been fixed by Qian,
+> should I send another change for this?
+ 
+No need. Andrew has already picked up the fix for mmotm tree and it
+should show up in linux-next soon.
 
-
->  static inline bool spi_nor_protocol_is_dtr(enum spi_nor_protocol proto)
->  {
->  	return !!(proto & SNOR_PROTO_IS_DTR);
-> @@ -384,6 +522,7 @@ struct flash_info;
->   *                      useful when pagesize is not a power-of-2
->   * @disable_write_protection: [FLASH-SPECIFIC] disable write protection during
->   *                            power-up
-> + * @setup:		[FLASH-SPECIFIC] configure the spi-nor memory
-
-Might be worth giving a example of the type of configuration that can
-be done here.
-
-The patch looks good otherwise.
-
-Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
-
->   *			completely locked
-
-Looks like this 'completely locked' is a leftover from a previous move
-(lock functions were move to a separate _ops struct IIRC). Can you fix
-that?
-
->   * @priv:		the private data
->   */
-> @@ -427,6 +566,9 @@ struct spi_nor {
->  	int (*set_4byte)(struct spi_nor *nor, bool enable);
->  	u32 (*convert_addr)(struct spi_nor *nor, u32 addr);
->  	int (*disable_write_protection)(struct spi_nor *nor);
-> +	int (*setup)(struct spi_nor *nor,
-> +		     const struct spi_nor_flash_parameter *params,
-> +		     const struct spi_nor_hwcaps *hwcaps);
->  
->  	const struct spi_nor_locking_ops *locking_ops;
->  
-> @@ -486,81 +628,6 @@ static inline struct device_node *spi_nor_get_flash_node(struct spi_nor *nor)
->  }
->  
+Thanks!
+-- 
+Michal Hocko
+SUSE Labs
