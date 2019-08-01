@@ -2,120 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 237AF7D54B
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 08:11:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CBD067D550
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 08:12:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729588AbfHAGLI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 02:11:08 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:37888 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728763AbfHAGLI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 02:11:08 -0400
-Received: from mail-pl1-f197.google.com ([209.85.214.197])
-        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <kai.heng.feng@canonical.com>)
-        id 1ht4Is-0002Hb-Fl
-        for linux-kernel@vger.kernel.org; Thu, 01 Aug 2019 06:11:06 +0000
-Received: by mail-pl1-f197.google.com with SMTP id q11so38909755pll.22
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 23:11:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=QZGV7+BXR1toRoMcvP04+kAINcsNNoog0nbXTRBRUkI=;
-        b=WVAjQjAlnIlxeKt7aRRcB5FoEp4kUPF2k9s92ZclEIy3kyc8pYFGepym7CTQOK9kxo
-         d9BR8BptDaWl5fM4r1NuvxRmuC52/eN+//D5LeZfmfZG/CqttjRPm7awOcYwSHs0dK+o
-         0I89HyWMmq1dsJFutHr7NPorfOTEEp/+aBekc+HktL4GUu1q5YQhww+KdWBDlAhEFK0G
-         jFsB2oEq29WQFBhiVfeN5zmpBr6TO+zhtbht5Rz4Uq4H10Z5Rcz7m542V9iz/8bzY9ix
-         c9cuPCLaNHhu+2d6VKHkA4psy17yb7noxQJegWLS8udI6IxVLSBpo2+iRgnHMSVN4Rel
-         HxAQ==
-X-Gm-Message-State: APjAAAXC+RROgY29vxOx36fJ0GTU+eqFEhHF/1jvJYKkdL+jmx4EKJ6r
-        FWHOMEGvkqzogBzxF7tDtqDtXwnRUzrevoFujMEY6lH2J4HWtdpH1FDqCpN1i1z9ILRG+3gga0e
-        kxwWeCNjNU0oNKPjwmpOyHX1EuHSlOSI4rbyPYezFNg==
-X-Received: by 2002:a17:902:aa95:: with SMTP id d21mr10486359plr.185.1564639865078;
-        Wed, 31 Jul 2019 23:11:05 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqzzXh5jh0NLL++hnpmUdxpOQK3aTn8RT4M9XQoFlEZWbL6U+5kk0SoJW9sp8o1OsqZo1L05qA==
-X-Received: by 2002:a17:902:aa95:: with SMTP id d21mr10486342plr.185.1564639864814;
-        Wed, 31 Jul 2019 23:11:04 -0700 (PDT)
-Received: from 2001-b011-380f-37d3-f52e-c69b-5d89-c245.dynamic-ip6.hinet.net (2001-b011-380f-37d3-f52e-c69b-5d89-c245.dynamic-ip6.hinet.net. [2001:b011:380f:37d3:f52e:c69b:5d89:c245])
-        by smtp.gmail.com with ESMTPSA id 97sm4210103pjz.12.2019.07.31.23.11.02
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 31 Jul 2019 23:11:04 -0700 (PDT)
-Content-Type: text/plain;
-        charset=us-ascii;
-        delsp=yes;
-        format=flowed
-Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.11\))
-Subject: Re: [PATCH] ACPI: PM: Fix regression in acpi_device_set_power()
-From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
-In-Reply-To: <4199592.UtrPOv3ZmA@kreacher>
-Date:   Thu, 1 Aug 2019 14:11:00 +0800
-Cc:     Linux ACPI <linux-acpi@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux PCI <linux-pci@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        Mario Limonciello <mario.limonciello@dell.com>
-Content-Transfer-Encoding: 7bit
-Message-Id: <27715F95-E729-4EF5-B2BA-03BA3C87AE29@canonical.com>
-References: <4199592.UtrPOv3ZmA@kreacher>
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
-X-Mailer: Apple Mail (2.3445.104.11)
+        id S1729652AbfHAGMM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 02:12:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54768 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726783AbfHAGMM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Aug 2019 02:12:12 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 06C76206A3;
+        Thu,  1 Aug 2019 06:12:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564639931;
+        bh=Kf9F99HAMzGrPtF2pYR7HcFniqs9SPbi7rgKcKmPi8s=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=EbX1VgA2joEhHsuSuwUWJzYS8C/f59uUG/WWNEpploabAMCvrtToul+7mdf2d5uQr
+         7HRR1/a4nuuLam+T5WV4W0j1bCfp8XNmgeiDLdkfPtlr6wN8bEcdKXrRwvErEcL1ZT
+         JX0X/D+W6a6fK5mJF2kBuD4hE4CrJtPV4WE3XFeg=
+Date:   Thu, 1 Aug 2019 08:12:09 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Saravana Kannan <saravanak@google.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        David Collins <collinsd@codeaurora.org>,
+        kernel-team@android.com
+Subject: Re: [PATCH v9 0/7] Solve postboot supplier cleanup and optimize
+ probe ordering
+Message-ID: <20190801061209.GA3570@kroah.com>
+References: <20190731221721.187713-1-saravanak@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190731221721.187713-1-saravanak@google.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-at 07:31, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+On Wed, Jul 31, 2019 at 03:17:13PM -0700, Saravana Kannan wrote:
+> Add device-links to track functional dependencies between devices
+> after they are created (but before they are probed) by looking at
+> their common DT bindings like clocks, interconnects, etc.
+> 
+> Having functional dependencies automatically added before the devices
+> are probed, provides the following benefits:
+> 
+> - Optimizes device probe order and avoids the useless work of
+>   attempting probes of devices that will not probe successfully
+>   (because their suppliers aren't present or haven't probed yet).
+> 
+>   For example, in a commonly available mobile SoC, registering just
+>   one consumer device's driver at an initcall level earlier than the
+>   supplier device's driver causes 11 failed probe attempts before the
+>   consumer device probes successfully. This was with a kernel with all
+>   the drivers statically compiled in. This problem gets a lot worse if
+>   all the drivers are loaded as modules without direct symbol
+>   dependencies.
+> 
+> - Supplier devices like clock providers, interconnect providers, etc
+>   need to keep the resources they provide active and at a particular
+>   state(s) during boot up even if their current set of consumers don't
+>   request the resource to be active. This is because the rest of the
+>   consumers might not have probed yet and turning off the resource
+>   before all the consumers have probed could lead to a hang or
+>   undesired user experience.
+> 
+>   Some frameworks (Eg: regulator) handle this today by turning off
+>   "unused" resources at late_initcall_sync and hoping all the devices
+>   have probed by then. This is not a valid assumption for systems with
+>   loadable modules. Other frameworks (Eg: clock) just don't handle
+>   this due to the lack of a clear signal for when they can turn off
+>   resources. This leads to downstream hacks to handle cases like this
+>   that can easily be solved in the upstream kernel.
+> 
+>   By linking devices before they are probed, we give suppliers a clear
+>   count of the number of dependent consumers. Once all of the
+>   consumers are active, the suppliers can turn off the unused
+>   resources without making assumptions about the number of consumers.
+> 
+> By default we just add device-links to track "driver presence" (probe
+> succeeded) of the supplier device. If any other functionality provided
+> by device-links are needed, it is left to the consumer/supplier
+> devices to change the link when they probe.
 
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->
-> Commit f850a48a0799 ("ACPI: PM: Allow transitions to D0 to occur in
-> special cases") overlooked the fact that acpi_power_transition() may
-> change the power.state value for the target device and if that
-> happens, it may confuse acpi_device_set_power() and cause it to
-> omit the _PS0 evaluation which on some systems is necessary to
-> change power states of devices from low-power to D0.
->
-> Fix that by saving the current value of power.state for the
-> target device before passing it to acpi_power_transition() and
-> using the saved value in a subsequent check.
->
-> Fixes: f850a48a0799 ("ACPI: PM: Allow transitions to D0 to occur in  
-> special cases")
-> Reported-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-> Reported-by: Mario Limonciello <mario.limonciello@dell.com>
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+All now queued up in my driver-core-testing branch, and if 0-day is
+happy with this, will move it to my "real" driver-core-next branch in a
+day or so to get included in linux-next.
 
-Tested-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+thanks for sticking with this!
 
-> ---
->  drivers/acpi/device_pm.c |    4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->
-> Index: linux-pm/drivers/acpi/device_pm.c
-> ===================================================================
-> --- linux-pm.orig/drivers/acpi/device_pm.c
-> +++ linux-pm/drivers/acpi/device_pm.c
-> @@ -236,13 +236,15 @@ int acpi_device_set_power(struct acpi_de
->  		if (device->power.flags.power_resources)
->  			result = acpi_power_transition(device, target_state);
->  	} else {
-> +		int cur_state = device->power.state;
-> +
->  		if (device->power.flags.power_resources) {
->  			result = acpi_power_transition(device, ACPI_STATE_D0);
->  			if (result)
->  				goto end;
->  		}
->
-> -		if (device->power.state == ACPI_STATE_D0) {
-> +		if (cur_state == ACPI_STATE_D0) {
->  			int psc;
->
->  			/* Nothing to do here if _PSC is not present. */
-
-
+greg k-h
