@@ -2,42 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29C257DA1F
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 13:18:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B3D67DA23
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 13:18:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730736AbfHALS1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 07:18:27 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:50864 "EHLO
+        id S1730794AbfHALSe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 07:18:34 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:50880 "EHLO
         merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728060AbfHALSW (ORCPT
+        with ESMTP id S1730613AbfHALS0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 07:18:22 -0400
+        Thu, 1 Aug 2019 07:18:26 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=merlin.20170209; h=Content-Type:MIME-Version:References:
         Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
         Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
         Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=RShUMMtmLWW/JRpvXQyg8jZ/IGVNtUn4GyYteFYWmvo=; b=o3Y/TsISOb8ysis9GPxh/tcqM+
-        FHI/rH0evddZFY4BJtQhbwyqh3oo6LCDY7RjaJkVDAAdGpjCNufqG28L7iucmETyB2azGTfboLVD+
-        VJ8APT9PnGBy+aiIjG0rJWjzhKF9RTA2FY8mU7MNU/jQeZuhkeA7BsRW3+dWrI0kSfopzAtRJvn+R
-        tn7fYrcdcmov7RZeglA4dXEABU/XK3O8yd5EeFbcmX2OOic//NKH124kAqPRr8U34+INzYSguq5ZD
-        zQBe1SXB3LSLQw8qs0v6ZhxaoVwWvv1YLwbyhGKuM6FXmVXvUSATtAWDHgo0tyhQWv72iHCpqozev
-        bxjaVVeA==;
+        bh=VK3Hh07yOV3Yg1wZLHnP2R78PkXj5PY4cFA9iQ9nZOw=; b=B0AkX7V4h01FBmBVo2bJD4cvyP
+        qKTW2bt/BcFI725B5ENvjzRj7mbzfQaGXdUt2TMvUnPesvmCRYKxIb1Hve84GgjRKYd79cIJdkS46
+        EV/POKHHmb/Fz+xgQtlp33iQ7CizTEwKbqRd5b93NX3S3KIbnMkCgJu3hWNmwZBUvR27x1HWYTTa7
+        WdiMQYIRWyXxTd9c/vNqj9+JbyyJYcF5/10rto5Flb/lOyJvnDJjvw+/Uk9EMKheKFzVxQjIipJwU
+        XpCV98bnQsZuTfMfd/YqINhYooGw1jUZ8EJla3EA3laebU4aST6EZPGcHhEP7xzxoHDrKY0aXCEW3
+        NrzlHa7Q==;
 Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
         by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1ht968-0005fd-GX; Thu, 01 Aug 2019 11:18:16 +0000
+        id 1ht968-0005fb-G0; Thu, 01 Aug 2019 11:18:16 +0000
 Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 804FF20297646; Thu,  1 Aug 2019 13:18:12 +0200 (CEST)
-Message-Id: <20190801111541.742613597@infradead.org>
+        id 85916202975E1; Thu,  1 Aug 2019 13:18:12 +0200 (CEST)
+Message-Id: <20190801111541.800409062@infradead.org>
 User-Agent: quilt/0.65
-Date:   Thu, 01 Aug 2019 13:13:50 +0200
+Date:   Thu, 01 Aug 2019 13:13:51 +0200
 From:   Peter Zijlstra <peterz@infradead.org>
 To:     mingo@kernel.org
 Cc:     linux-kernel@vger.kernel.org, peterz@infradead.org,
-        Juri Lelli <juri.lelli@redhat.com>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>
-Subject: [PATCH 2/5] rcu/tree: Fix SCHED_FIFO params
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-crypto@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH 3/5] crypto: Reduce default RT priority
 References: <20190801111348.530242235@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,35 +47,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A rather embarrasing mistake had us call sched_setscheduler() before
-initializing the parameters passed to it.
+The crypto engine initializes its kworker thread to FIFO-99 (when
+requesting RT priority), reduce this to FIFO-50.
 
-Cc: Juri Lelli <juri.lelli@redhat.com>
-Cc: "Paul E. McKenney" <paulmck@linux.ibm.com>
-Fixes: 1a763fd7c633 ("rcu/tree: Call setschedule() gp ktread to SCHED_FIFO outside of atomic region")
+FIFO-99 is the very highest priority available to SCHED_FIFO and
+it not a suitable default; it would indicate the crypto work is the
+most important work on the machine.
+
+Cc: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: linux-crypto@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- kernel/rcu/tree.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ crypto/crypto_engine.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -3234,13 +3234,13 @@ static int __init rcu_spawn_gp_kthread(v
- 	t = kthread_create(rcu_gp_kthread, NULL, "%s", rcu_state.name);
- 	if (WARN_ONCE(IS_ERR(t), "%s: Could not start grace-period kthread, OOM is now expected behavior\n", __func__))
- 		return 0;
--	if (kthread_prio)
-+	if (kthread_prio) {
-+		sp.sched_priority = kthread_prio;
- 		sched_setscheduler_nocheck(t, SCHED_FIFO, &sp);
-+	}
- 	rnp = rcu_get_root();
- 	raw_spin_lock_irqsave_rcu_node(rnp, flags);
- 	rcu_state.gp_kthread = t;
--	if (kthread_prio)
--		sp.sched_priority = kthread_prio;
- 	raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
- 	wake_up_process(t);
- 	rcu_spawn_nocb_kthreads();
+--- a/crypto/crypto_engine.c
++++ b/crypto/crypto_engine.c
+@@ -425,7 +425,7 @@ EXPORT_SYMBOL_GPL(crypto_engine_stop);
+  */
+ struct crypto_engine *crypto_engine_alloc_init(struct device *dev, bool rt)
+ {
+-	struct sched_param param = { .sched_priority = MAX_RT_PRIO - 1 };
++	struct sched_param param = { .sched_priority = MAX_RT_PRIO / 2 };
+ 	struct crypto_engine *engine;
+ 
+ 	if (!dev)
 
 
