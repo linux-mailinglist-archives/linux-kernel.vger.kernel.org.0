@@ -2,100 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 70A427E27E
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 20:44:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 950B77E281
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 20:45:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732966AbfHASoc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 14:44:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48272 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726409AbfHASoc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 14:44:32 -0400
-Received: from localhost.localdomain (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
+        id S1730322AbfHASpZ convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 1 Aug 2019 14:45:25 -0400
+Received: from skedge04.snt-world.com ([91.208.41.69]:44556 "EHLO
+        skedge04.snt-world.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726017AbfHASpY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Aug 2019 14:45:24 -0400
+Received: from sntmail14r.snt-is.com (unknown [10.203.32.184])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4B6392084C;
-        Thu,  1 Aug 2019 18:44:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564685071;
-        bh=3y+RqDak0UkrCLxvk0BuKlXenYkKsg6JY6DZHMkLiA8=;
-        h=From:To:Cc:Subject:Date:From;
-        b=YAexMpfN0WJQniiBCxagjhF5dbmJMGAUQx2JqGVz9+1X3mHJcDG3IJ020o3weANxz
-         Ar9X7Qoksy6LHObkkDF70yWBkXlDwEwcDpDt7EMuOHyDU7HedKVOWKYsPOKZVlHi8o
-         B3jD5BKDPL96GC7cMGte3LtdYRo8tzYqI46Q86fA=
-From:   Dinh Nguyen <dinguyen@kernel.org>
-To:     devicetree@vger.kernel.org
-Cc:     dinguyen@kernel.org, linux-kernel@vger.kernel.org,
-        robh+dt@kernel.org, frowand.list@gmail.com, keescook@chromium.org,
-        anton@enomsg.org, ccross@android.com, tony.luck@intel.com,
-        Dinh Nguyen <dinh.nguyen@intel.com>
-Subject: [PATCH] drivers/amba: add reset control to primecell probe
-Date:   Thu,  1 Aug 2019 13:43:46 -0500
-Message-Id: <20190801184346.7015-1-dinguyen@kernel.org>
-X-Mailer: git-send-email 2.20.0
+        by skedge04.snt-world.com (Postfix) with ESMTPS id ED90367A7B0;
+        Thu,  1 Aug 2019 20:45:21 +0200 (CEST)
+Received: from sntmail12r.snt-is.com (10.203.32.182) by sntmail14r.snt-is.com
+ (10.203.32.184) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Thu, 1 Aug 2019
+ 20:45:21 +0200
+Received: from sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305]) by
+ sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305%3]) with mapi id
+ 15.01.1713.004; Thu, 1 Aug 2019 20:45:21 +0200
+From:   Schrempf Frieder <frieder.schrempf@kontron.de>
+To:     "u.kleine-koenig@pengutronix.de" <u.kleine-koenig@pengutronix.de>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "linux-imx@nxp.com" <linux-imx@nxp.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "geert+renesas@glider.be" <geert+renesas@glider.be>,
+        Schrempf Frieder <frieder.schrempf@kontron.de>,
+        Jiri Slaby <jslaby@suse.com>,
+        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2 1/3] serial: mctrl_gpio: Avoid probe failures in case of
+ missing gpiolib
+Thread-Topic: [PATCH v2 1/3] serial: mctrl_gpio: Avoid probe failures in case
+ of missing gpiolib
+Thread-Index: AQHVSJlF+cJCIhOOZEmFG6rcowK4DA==
+Date:   Thu, 1 Aug 2019 18:45:21 +0000
+Message-ID: <20190801184505.17239-1-frieder.schrempf@kontron.de>
+Accept-Language: de-DE, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: git-send-email 2.17.1
+x-originating-ip: [172.25.9.193]
+x-c2processedorg: 51b406b7-48a2-4d03-b652-521f56ac89f3
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-SnT-MailScanner-Information: Please contact the ISP for more information
+X-SnT-MailScanner-ID: ED90367A7B0.AF516
+X-SnT-MailScanner: Not scanned: please contact your Internet E-Mail Service Provider for details
+X-SnT-MailScanner-SpamCheck: 
+X-SnT-MailScanner-From: frieder.schrempf@kontron.de
+X-SnT-MailScanner-To: festevam@gmail.com, geert+renesas@glider.be,
+        gregkh@linuxfoundation.org, jslaby@suse.com, kernel@pengutronix.de,
+        linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com,
+        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+        s.hauer@pengutronix.de, shawnguo@kernel.org,
+        u.kleine-koenig@pengutronix.de
+X-Spam-Status: No
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dinh Nguyen <dinh.nguyen@intel.com>
+From: Frieder Schrempf <frieder.schrempf@kontron.de>
 
-The primecell controller on some SoCs, i.e. SoCFPGA, is held in reset by
-default. Until recently, the DMA controller was brought out of reset by the
-bootloader(i.e. U-Boot). But a recent change in U-Boot, the peripherals that
-are not used are held in reset and are left to Linux to bring them out of
-reset.
+If CONFIG_GPIOLIB is not enabled, mctrl_gpio_init() and
+mctrl_gpio_init_noauto() will currently return an error pointer with
+-ENOSYS. As the mctrl GPIOs are usually optional, drivers need to
+check for this condition to allow continue probing.
 
-Add a mechanism for getting the reset property and de-assert the primecell
-module from reset if found. This is a not a hard fail if the reset property
-is not present in the device tree node, so the driver will continue to probe.
+To avoid the need for this check in each driver, we return NULL
+instead, as all the mctrl_gpio_*() functions are skipped anyway.
+We also adapt mctrl_gpio_to_gpiod() to be in line with this change.
 
-Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
+Reviewed-by: Fabio Estevam <festevam@gmail.com>
 ---
- drivers/of/platform.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+Changes in v2
+=============
+* Move the sh_sci changes to a separate patch
+* Add a patch for the 8250 driver
+* Add Fabio's R-b tag
+---
+ drivers/tty/serial/serial_mctrl_gpio.c | 3 +++
+ drivers/tty/serial/serial_mctrl_gpio.h | 6 +++---
+ 2 files changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/of/platform.c b/drivers/of/platform.c
-index 7801e25e6895..d8945705313d 100644
---- a/drivers/of/platform.c
-+++ b/drivers/of/platform.c
-@@ -21,6 +21,7 @@
- #include <linux/of_irq.h>
- #include <linux/of_platform.h>
- #include <linux/platform_device.h>
-+#include <linux/reset.h>
- 
- const struct of_device_id of_default_bus_match_table[] = {
- 	{ .compatible = "simple-bus", },
-@@ -229,6 +230,7 @@ static struct amba_device *of_amba_device_create(struct device_node *node,
- 	struct amba_device *dev;
- 	const void *prop;
- 	int i, ret;
-+	struct reset_control *rstc;
- 
- 	pr_debug("Creating amba device %pOF\n", node);
- 
-@@ -270,6 +272,18 @@ static struct amba_device *of_amba_device_create(struct device_node *node,
- 		goto err_free;
- 	}
- 
-+	/*
-+	 * reset control of the primecell block is optional
-+	 * and will not fail if the reset property is not found.
-+	 */
-+	rstc = of_reset_control_get_exclusive(node, "dma");
-+	if (!IS_ERR(rstc)) {
-+		reset_control_deassert(rstc);
-+		reset_control_put(rstc);
-+	} else {
-+		pr_debug("amba: reset control not found\n");
-+	}
+diff --git a/drivers/tty/serial/serial_mctrl_gpio.c b/drivers/tty/serial/serial_mctrl_gpio.c
+index 2b400189be91..54c43e02e375 100644
+--- a/drivers/tty/serial/serial_mctrl_gpio.c
++++ b/drivers/tty/serial/serial_mctrl_gpio.c
+@@ -61,6 +61,9 @@ EXPORT_SYMBOL_GPL(mctrl_gpio_set);
+ struct gpio_desc *mctrl_gpio_to_gpiod(struct mctrl_gpios *gpios,
+ 				      enum mctrl_gpio_idx gidx)
+ {
++	if (gpios == NULL)
++		return NULL;
 +
- 	ret = amba_device_add(dev, &iomem_resource);
- 	if (ret) {
- 		pr_err("amba_device_add() failed (%d) for %pOF\n",
+ 	return gpios->gpio[gidx];
+ }
+ EXPORT_SYMBOL_GPL(mctrl_gpio_to_gpiod);
+diff --git a/drivers/tty/serial/serial_mctrl_gpio.h b/drivers/tty/serial/serial_mctrl_gpio.h
+index b7d3cca48ede..1b2ff503b2c2 100644
+--- a/drivers/tty/serial/serial_mctrl_gpio.h
++++ b/drivers/tty/serial/serial_mctrl_gpio.h
+@@ -114,19 +114,19 @@ static inline
+ struct gpio_desc *mctrl_gpio_to_gpiod(struct mctrl_gpios *gpios,
+ 				      enum mctrl_gpio_idx gidx)
+ {
+-	return ERR_PTR(-ENOSYS);
++	return NULL;
+ }
+ 
+ static inline
+ struct mctrl_gpios *mctrl_gpio_init(struct uart_port *port, unsigned int idx)
+ {
+-	return ERR_PTR(-ENOSYS);
++	return NULL;
+ }
+ 
+ static inline
+ struct mctrl_gpios *mctrl_gpio_init_noauto(struct device *dev, unsigned int idx)
+ {
+-	return ERR_PTR(-ENOSYS);
++	return NULL;
+ }
+ 
+ static inline
 -- 
-2.20.0
-
+2.17.1
