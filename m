@@ -2,92 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF2217E5CD
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 00:39:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F6327E5D2
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 00:39:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732906AbfHAWjH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 18:39:07 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:62402 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730344AbfHAWjH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 18:39:07 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x71Mb5Fg098587;
-        Thu, 1 Aug 2019 18:39:05 -0400
-Received: from ppma02wdc.us.ibm.com (aa.5b.37a9.ip4.static.sl-reverse.com [169.55.91.170])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2u45u86vx8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 01 Aug 2019 18:39:05 -0400
-Received: from pps.filterd (ppma02wdc.us.ibm.com [127.0.0.1])
-        by ppma02wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x71MZIQ8026850;
-        Thu, 1 Aug 2019 22:39:04 GMT
-Received: from b03cxnp08028.gho.boulder.ibm.com (b03cxnp08028.gho.boulder.ibm.com [9.17.130.20])
-        by ppma02wdc.us.ibm.com with ESMTP id 2u0e85w6nt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 01 Aug 2019 22:39:04 +0000
-Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
-        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x71Md3M359244856
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 1 Aug 2019 22:39:04 GMT
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CAF22787A1;
-        Thu,  1 Aug 2019 22:39:03 +0000 (GMT)
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D51C8787A2;
-        Thu,  1 Aug 2019 22:39:02 +0000 (GMT)
-Received: from LeoBras.aus.stglabs.ibm.com (unknown [9.18.235.147])
-        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Thu,  1 Aug 2019 22:39:02 +0000 (GMT)
-From:   Leonardo Bras <leonardo@linux.ibm.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Leonardo Bras <leonardo@linux.ibm.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH 1/1] fs/splice.c: Fix old documentation about moving pages
-Date:   Thu,  1 Aug 2019 19:38:52 -0300
-Message-Id: <20190801223852.16042-1-leonardo@linux.ibm.com>
-X-Mailer: git-send-email 2.20.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-01_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1908010238
+        id S1732968AbfHAWjw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 18:39:52 -0400
+Received: from mga18.intel.com ([134.134.136.126]:27028 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728719AbfHAWjv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Aug 2019 18:39:51 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Aug 2019 15:39:51 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,335,1559545200"; 
+   d="scan'208";a="324388078"
+Received: from spandruv-desk.jf.intel.com ([10.54.75.31])
+  by orsmga004.jf.intel.com with ESMTP; 01 Aug 2019 15:39:51 -0700
+From:   Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+To:     rui.zhang@intel.com, edubezval@gmail.com
+Cc:     daniel.lezcano@linaro.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Subject: [PATCH] thermal: int340x: processor_thermal: Add Ice Lake support
+Date:   Thu,  1 Aug 2019 15:39:37 -0700
+Message-Id: <20190801223937.33393-1-srinivas.pandruvada@linux.intel.com>
+X-Mailer: git-send-email 2.17.2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since commit 485ddb4b9741 ("1/2 splice: dont steal")' (2007),
-the SPLICE_F_MOVE support was removed (became a no-op according
-to man pages), and thus disabling steal operation that would make
-moving pages possible.
+Add new PCI id for Ice lake processor thermal device. Also enabled
+the RAPL mmio interface. The MMIO offsets match Skylake.
 
-This fixes the comment, making clear pages are not moved.
-
-Signed-off-by: Leonardo Bras <leonardo@linux.ibm.com>
+Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
 ---
- fs/splice.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ .../thermal/intel/int340x_thermal/processor_thermal_device.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/fs/splice.c b/fs/splice.c
-index 14cb602d9a2f..0ba151c40cef 100644
---- a/fs/splice.c
-+++ b/fs/splice.c
-@@ -671,8 +671,7 @@ ssize_t splice_from_pipe(struct pipe_inode_info *pipe, struct file *out,
-  * @flags:	splice modifier flags
-  *
-  * Description:
-- *    Will either move or copy pages (determined by @flags options) from
-- *    the given pipe inode to the given file.
-+ *    Will copy pages from the given pipe inode to the given file.
-  *    This one is ->write_iter-based.
-  *
-  */
+diff --git a/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c b/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c
+index d3446acf9bbd..958e81f82410 100644
+--- a/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c
++++ b/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c
+@@ -39,6 +39,9 @@
+ /* GeminiLake thermal reporting device */
+ #define PCI_DEVICE_ID_PROC_GLK_THERMAL	0x318C
+ 
++/* IceLake thermal reporting device */
++#define PCI_DEVICE_ID_PROC_ICL_THERMAL	0x8a03
++
+ #define DRV_NAME "proc_thermal"
+ 
+ struct power_config {
+@@ -636,6 +639,8 @@ static const struct pci_device_id proc_thermal_pci_ids[] = {
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_PROC_CNL_THERMAL)},
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_PROC_CFL_THERMAL)},
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_PROC_GLK_THERMAL)},
++	{ PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCI_DEVICE_ID_PROC_ICL_THERMAL),
++		.driver_data = (kernel_ulong_t)&rapl_mmio_hsw, },
+ 	{ 0, },
+ };
+ 
 -- 
-2.20.1
+2.17.2
 
