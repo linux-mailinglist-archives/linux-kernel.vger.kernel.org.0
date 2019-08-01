@@ -2,126 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D56CB7DFB2
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 18:03:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D1E027DFA9
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 18:02:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732612AbfHAQDZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 12:03:25 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:35041 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731613AbfHAQDY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 12:03:24 -0400
-Received: by mail-ed1-f67.google.com with SMTP id w20so69650298edd.2
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2019 09:03:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8bv7pMvKKkwIVkPngNqkQL32dHUrGECTsk1mbuiRZ6Y=;
-        b=cpQYBnfEwZGYGSuEI2Ta4BNuagzeeveyUz78G9FTN/tEe0rihxa0KsOcTqnGSxQNRf
-         dj4Cf9pzh7oWs8AYlaBz0ofguT7UGDU7TtKIT+WpbHaYXrC9s89pSKJ2WGlYdnQ7lOY/
-         KRAOd4GNhuLR+xbgjoWetjCgl//kZ55tckwtc0oHXCm8GCu7b+fG5t//mOtL5IrAb1bC
-         0LfUCA691M+CFnBBDYy48eNc4LflS+Oxz5WO4h4mO40KGl8daErq80zimXP8vyo65gox
-         FDvsLqNFNUo6YlMFC+Vke9U3nG6yVZBhdofiu2gdUP5cpecifP7ZOsqxar3TS2/rS9qK
-         Onlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8bv7pMvKKkwIVkPngNqkQL32dHUrGECTsk1mbuiRZ6Y=;
-        b=QXVUWzIAFQu7vnBfYymCHh4XpAAAkHQ832eF2t6sWMco2x2mxPB2OFrSuYCh9Moo6V
-         P/i6jSoZPa7XoDAUPTl/+s07pkf883cRaCAbvmnAuZoE0yRobBlxUHo6XKYcuKUyNiP2
-         JWq7hW7jkFUHkLebOOa5R+3UXCBm0n64MPc1ej7AJsPlR0k9qhGVSIuy/FdTbz+K/dwF
-         JvFau8OGKPPqooUOVA+O4nnRgJmePYuFoeFl/BlWIqYttAZieRgeFEdk8kvyjZYX+tNU
-         wP7BqNut6/cpmxwGr5te2eLDMS/GjaW2gGGRKOu/BF1o/I1iIA9KwAn9WVHRjZQTq42k
-         AMTA==
-X-Gm-Message-State: APjAAAX/hdqWOO8AMjjabir5CsY2/2UwFAtSqbCjRh5X4pCbdGjhlMeJ
-        1ISeubGxPCvJ4Sg4WDTXc0QoQGXg0YNm6NkDVBs=
-X-Google-Smtp-Source: APXvYqyGeWsq0Dm8RWkVsJdPxFY3QFmMuo8dBAKnYybjIiTjJZ5h1AzW8BLjHa9mjAuOwTiw16GRr4MzNTZoOO8pVdU=
-X-Received: by 2002:a17:906:6bc4:: with SMTP id t4mr103366912ejs.256.1564675074054;
- Thu, 01 Aug 2019 08:57:54 -0700 (PDT)
+        id S1732509AbfHAQAa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 12:00:30 -0400
+Received: from mx2.suse.de ([195.135.220.15]:46452 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729117AbfHAQAa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Aug 2019 12:00:30 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 7FF1DAC2E;
+        Thu,  1 Aug 2019 16:00:27 +0000 (UTC)
+Message-ID: <ed5388412df78ad0a9ed69cdf3ac716eac075141.camel@suse.de>
+Subject: Re: [PATCH 6/8] dma-direct: turn ARCH_ZONE_DMA_BITS into a variable
+From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     catalin.marinas@arm.com, wahrenst@gmx.net, marc.zyngier@arm.com,
+        Robin Murphy <robin.murphy@arm.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        iommu@lists.linux-foundation.org, linux-mm@kvack.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        phill@raspberryi.org, f.fainelli@gmail.com, will@kernel.org,
+        linux-kernel@vger.kernel.org, robh+dt@kernel.org, eric@anholt.net,
+        mbrugger@suse.com, akpm@linux-foundation.org,
+        frowand.list@gmail.com, linux-rpi-kernel@lists.infradead.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org
+Date:   Thu, 01 Aug 2019 17:59:34 +0200
+In-Reply-To: <20190801140452.GB23435@lst.de>
+References: <20190731154752.16557-1-nsaenzjulienne@suse.de>
+         <20190731154752.16557-7-nsaenzjulienne@suse.de>
+         <20190801140452.GB23435@lst.de>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-1xpVXG9aO5tI8LW1PkIr"
+User-Agent: Evolution 3.32.4 
 MIME-Version: 1.0
-References: <20190717211542.30482-1-robdclark@gmail.com> <20190719092153.GJ15868@phenom.ffwll.local>
- <20190731192331.GT104440@art_vandelay> <156466322613.6045.7313079853087889718@skylake-alporthouse-com>
- <CAF6AEGu8K+PwRyY738aFyv+fdZ_UZDhY3XcFY-w4uLMW+w6X9Q@mail.gmail.com> <156467364918.6045.9820603183181141608@skylake-alporthouse-com>
-In-Reply-To: <156467364918.6045.9820603183181141608@skylake-alporthouse-com>
-From:   Rob Clark <robdclark@gmail.com>
-Date:   Thu, 1 Aug 2019 08:57:42 -0700
-Message-ID: <CAF6AEGvZMxnvzBgzXTzgcJpuzGOE=YTt1-H09L2qSD==pBcPXQ@mail.gmail.com>
-Subject: Re: [PATCH] drm/vgem: fix cache synchronization on arm/arm64
-To:     Chris Wilson <chris@chris-wilson.co.uk>
-Cc:     David Airlie <airlied@linux.ie>,
-        Deepak Sharma <deepak.sharma@amd.com>,
-        Emil Velikov <emil.velikov@collabora.com>,
-        Eric Anholt <eric@anholt.net>,
-        Eric Biggers <ebiggers@google.com>,
-        Imre Deak <imre.deak@intel.com>,
-        Rob Clark <robdclark@chromium.org>,
-        Sean Paul <sean@poorly.run>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 1, 2019 at 8:34 AM Chris Wilson <chris@chris-wilson.co.uk> wrote:
->
-> Quoting Rob Clark (2019-08-01 16:18:45)
-> > On Thu, Aug 1, 2019 at 5:40 AM Chris Wilson <chris@chris-wilson.co.uk> wrote:
-> > >
-> > > Quoting Sean Paul (2019-07-31 20:23:31)
-> > > > On Fri, Jul 19, 2019 at 11:21:53AM +0200, Daniel Vetter wrote:
-> > > > > On Wed, Jul 17, 2019 at 02:15:37PM -0700, Rob Clark wrote:
-> > > > > > From: Rob Clark <robdclark@chromium.org>
-> > > > > >
-> > > > > > drm_cflush_pages() is no-op on arm/arm64.  But instead we can use
-> > > > > > dma_sync API.
-> > > > > >
-> > > > > > Fixes failures w/ vgem_test.
-> > > > > >
-> > > > > > Signed-off-by: Rob Clark <robdclark@chromium.org>
-> > > > > > ---
-> > > > > > An alternative approach to the series[1] I sent yesterday
-> > > > > >
-> > > > > > On the plus side, it keeps the WC buffers and avoids any drm core
-> > > > > > changes.  On the minus side, I don't think it will work (at least
-> > > > > > on arm64) prior to v5.0[2], so the fix can't be backported very
-> > > > > > far.
-> > > > >
-> > > > > Yeah seems a lot more reasonable.
-> > > > >
-> > > > > Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-> > > >
-> > > > Applied to drm-misc-fixes, thanks!
-> > >
-> > > But it didn't actually fix the failures in CI.
-> >
-> > Hmm, that is unfortunate, I'd assumed that silence meant latest
-> > version was working in CI..
->
-> Ah, takes a intel-gfx@ for CI to pick up patches atm.
->
-> > dma_sync_sg_* doesn't work on x86?  It would be kinda unfortunate to
-> > have vgem only work on x86 *or* arm..  maybe bringing back
-> > drm_cflush_pages() could make it work in both cases
->
-> I think it stems from the expectation that vgem provides "device
-> coherency" for CPU access. From the testing perspective, it's nice to
-> emulate HW interactions; but maybe that is just beyond the general
-> capabilities and we cannot simply use vgem as we do currently. That
-> would leave a hole for mocking prime in CI that needs filling :(
 
-yeah, being a "fake" device makes things a bit rough..  (I wonder if
-there is some way to do a VM w/ both virgl and i915/gvt to get some
-more "real" testing?)
+--=-1xpVXG9aO5tI8LW1PkIr
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-OTOH, I kinda want to make drm_cache work on arm64, since dma-mapping
-is already problematic, which would make this patch unnecessary.  (I'm
-still not entirely sure what to do about 32b arm..)
+Hi Christoph, thanks for the review.
 
-BR,
--R
+On Thu, 2019-08-01 at 16:04 +0200, Christoph Hellwig wrote:
+> A few nitpicks, otherwise this looks great:
+>=20
+> > @@ -201,7 +202,7 @@ static int __init mark_nonram_nosave(void)
+> >   * everything else. GFP_DMA32 page allocations automatically fall back=
+ to
+> >   * ZONE_DMA.
+> >   *
+> > - * By using 31-bit unconditionally, we can exploit ARCH_ZONE_DMA_BITS =
+to
+> > + * By using 31-bit unconditionally, we can exploit arch_zone_dma_bits =
+to
+> >   * inform the generic DMA mapping code.  32-bit only devices (if not
+> > handled
+> >   * by an IOMMU anyway) will take a first dip into ZONE_NORMAL and get
+> >   * otherwise served by ZONE_DMA.
+> > @@ -237,9 +238,18 @@ void __init paging_init(void)
+> >  	printk(KERN_DEBUG "Memory hole size: %ldMB\n",
+> >  	       (long int)((top_of_ram - total_ram) >> 20));
+> > =20
+> > +	/*
+> > +	 * Allow 30-bit DMA for very limited Broadcom wifi chips on many
+> > +	 * powerbooks.
+> > +	 */
+> > +	if (IS_ENABLED(CONFIG_PPC32))
+> > +		arch_zone_dma_bits =3D 30;
+> > +	else
+> > +		arch_zone_dma_bits =3D 31;
+> > +
+>=20
+> So the above unconditionally comment obviously isn't true any more, and
+> Ben also said for the recent ppc32 hack he'd prefer dynamic detection.
+>=20
+> Maybe Ben and or other ppc folks can chime in an add a patch to the serie=
+s
+> to sort this out now that we have a dynamic ZONE_DMA threshold?
+
+Noted, for now I'll remove the comment.
+
+> > diff --git a/kernel/dma/direct.c b/kernel/dma/direct.c
+> > index 59bdceea3737..40dfc9b4ee4c 100644
+> > --- a/kernel/dma/direct.c
+> > +++ b/kernel/dma/direct.c
+> > @@ -19,9 +19,7 @@
+> >   * Most architectures use ZONE_DMA for the first 16 Megabytes, but
+> >   * some use it for entirely different regions:
+> >   */
+> > -#ifndef ARCH_ZONE_DMA_BITS
+> > -#define ARCH_ZONE_DMA_BITS 24
+> > -#endif
+> > +unsigned int arch_zone_dma_bits __ro_after_init =3D 24;
+>=20
+> I'd prefer to drop the arch_ prefix and just calls this zone_dma_bits.
+> In the long run we really need to find a way to just automatically set
+> this from the meminit code, but that is out of scope for this series.
+> For now can you please just update the comment above to say something
+> like:
+>=20
+> /*
+>  * Most architectures use ZONE_DMA for the first 16 Megabytes, but some u=
+se it
+>  * it for entirely different regions.  In that case the arch code needs t=
+o
+>  * override the variable below for dma-direct to work properly.
+>  */
+
+Ok perfect.
+
+
+--=-1xpVXG9aO5tI8LW1PkIr
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl1DDGYACgkQlfZmHno8
+x/7w9wgAsuuhgVK1nlC7WgrB2sfSYqL6HTJlDfkLJ2RMgzu/WSw4RJsje86on5R9
+NmRSTVntXnCdpTNiKcSEKP7MnrVtMh2TtopfTOCvgho/uDJsc4DPAqZaLHO4quzo
+ZfimsWkcpC6n/E8ybEcew+6U7BIyqJPtqxgdkXz98gLQ1NK1wJU2x0Gt+KXT5a/0
+hR3hA3whz8yIe4hwQTEiAzX/LnSP8+Yp+g1LLFjYveqt2RUbfC/udykYkLS7LdoO
+SJ6j5S/1jRpvusBjENkY3PQiRGrhfRnT4qxVSdpkK/rMG6pLMW4l9YjfbQCLOFhn
+8qxZKNifDs1KxpZjExjd4Lisum4nhw==
+=nw8i
+-----END PGP SIGNATURE-----
+
+--=-1xpVXG9aO5tI8LW1PkIr--
+
