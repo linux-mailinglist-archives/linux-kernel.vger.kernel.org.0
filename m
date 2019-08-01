@@ -2,198 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 849527D8D7
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 11:52:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB4237D8C7
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 11:51:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731308AbfHAJwf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 05:52:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45842 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728654AbfHAJwb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 05:52:31 -0400
-Received: from localhost.localdomain (unknown [122.178.237.110])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B1D29216C8;
-        Thu,  1 Aug 2019 09:52:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564653150;
-        bh=vS3r7EDFHKKuCiOyahJwnQM8/yabrh5EDGpjuhjGZn4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Y6k1nJoMQzA04cpRA087bmkFWYVjdQ5yyNTx1JDY8kbSYhuNq52vbkUdpJ3MF5G9l
-         n/FDjWu8Nk0oFTxRdJoK2Oe+wNe3Ej8lrieg9asHWNplasU05TZlSR6qrlB/KXQNVa
-         J10FBjm/0dzGqerS6udX5zsZXrBbUMl3OG/kWk74=
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Andy Gross <agross@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Amit Kucheria <amit.kucheria@linaro.org>
-Subject: [PATCH v2 3/3] arm64: dts: qcom: qcs404: remove unit name for thermal trip points
-Date:   Thu,  1 Aug 2019 15:20:49 +0530
-Message-Id: <20190801095049.13855-4-vkoul@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190801095049.13855-1-vkoul@kernel.org>
-References: <20190801095049.13855-1-vkoul@kernel.org>
+        id S1728691AbfHAJvZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 05:51:25 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:59302 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725379AbfHAJvZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Aug 2019 05:51:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=/RCQXkoLdx1Dap2zHV/paZLxYVJHeWju5RP8ynoxTPI=; b=UluEH/75fC5+qgudhOiGsRDkg
+        Dmv3F33wa/UY2uDdoFibQqQZ/AqqbiXyF/wqMePOsemH4nmb1rKJpHHfYVfEv3f3ai4nBEp7Ug+sL
+        SWzd5y8YOKyQ/tSuRq0AiUJXLq4NeSuDbMiZURN9ycAr1WLCUOUT5OizKLOhC9xB/AVC02rjw3CtK
+        Wax8iH9jNoLz0U6pypJXmZ8HPc5NNfEIKf4EOPSG1OTeIXbzBGbcVP41xY+kvR+e+I/f8rggEFydN
+        eqt4MyjaUuiqqF6LW21UPHkR1sy64DUUDe4i1To53kp8ma1FLTaZT+7cLoi8LygcrYfmuoqz0PCAh
+        nXgvvDuHQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1ht7ju-0003e9-F5; Thu, 01 Aug 2019 09:51:14 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 149A52029F4CD; Thu,  1 Aug 2019 11:51:12 +0200 (CEST)
+Date:   Thu, 1 Aug 2019 11:51:12 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Suren Baghdasaryan <surenb@google.com>
+Cc:     Ingo Molnar <mingo@redhat.com>, lizefan@huawei.com,
+        Johannes Weiner <hannes@cmpxchg.org>, axboe@kernel.dk,
+        Dennis Zhou <dennis@kernel.org>,
+        Dennis Zhou <dennisszhou@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>, linux-doc@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        kernel-team <kernel-team@android.com>,
+        Nick Kralevich <nnk@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH 1/1] psi: do not require setsched permission from the
+ trigger creator
+Message-ID: <20190801095112.GA31381@hirez.programming.kicks-ass.net>
+References: <20190730013310.162367-1-surenb@google.com>
+ <20190730081122.GH31381@hirez.programming.kicks-ass.net>
+ <CAJuCfpH7NpuYKv-B9-27SpQSKhkzraw0LZzpik7_cyNMYcqB2Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJuCfpH7NpuYKv-B9-27SpQSKhkzraw0LZzpik7_cyNMYcqB2Q@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The thermal trip points have unit name but no reg property, so we can
-remove them
+On Tue, Jul 30, 2019 at 10:44:51AM -0700, Suren Baghdasaryan wrote:
+> On Tue, Jul 30, 2019 at 1:11 AM Peter Zijlstra <peterz@infradead.org> wrote:
+> >
+> > On Mon, Jul 29, 2019 at 06:33:10PM -0700, Suren Baghdasaryan wrote:
+> > > When a process creates a new trigger by writing into /proc/pressure/*
+> > > files, permissions to write such a file should be used to determine whether
+> > > the process is allowed to do so or not. Current implementation would also
+> > > require such a process to have setsched capability. Setting of psi trigger
+> > > thread's scheduling policy is an implementation detail and should not be
+> > > exposed to the user level. Remove the permission check by using _nocheck
+> > > version of the function.
+> > >
+> > > Suggested-by: Nick Kralevich <nnk@google.com>
+> > > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> > > ---
+> > >  kernel/sched/psi.c | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > >
+> > > diff --git a/kernel/sched/psi.c b/kernel/sched/psi.c
+> > > index 7acc632c3b82..ed9a1d573cb1 100644
+> > > --- a/kernel/sched/psi.c
+> > > +++ b/kernel/sched/psi.c
+> > > @@ -1061,7 +1061,7 @@ struct psi_trigger *psi_trigger_create(struct psi_group *group,
+> > >                       mutex_unlock(&group->trigger_lock);
+> > >                       return ERR_CAST(kworker);
+> > >               }
+> > > -             sched_setscheduler(kworker->task, SCHED_FIFO, &param);
+> > > +             sched_setscheduler_nocheck(kworker->task, SCHED_FIFO, &param);
+> >
+> > ARGGH, wtf is there a FIFO-99!! thread here at all !?
+> 
+> We need psi poll_kworker to be an rt-priority thread so that psi
 
-arch/arm64/boot/dts/qcom/qcs404.dtsi:1080.31-1084.7: Warning (unit_address_vs_reg): /thermal-zones/aoss-thermal/trips/trip-point@0: node has a unit name, but no reg property
-arch/arm64/boot/dts/qcom/qcs404.dtsi:1095.33-1099.7: Warning (unit_address_vs_reg): /thermal-zones/q6-hvx-thermal/trips/trip-point@0: node has a unit name, but no reg property
-arch/arm64/boot/dts/qcom/qcs404.dtsi:1110.32-1114.7: Warning (unit_address_vs_reg): /thermal-zones/lpass-thermal/trips/trip-point@0: node has a unit name, but no reg property
-arch/arm64/boot/dts/qcom/qcs404.dtsi:1125.31-1129.7: Warning (unit_address_vs_reg): /thermal-zones/wlan-thermal/trips/trip-point@0: node has a unit name, but no reg property
-arch/arm64/boot/dts/qcom/qcs404.dtsi:1140.34-1144.7: Warning (unit_address_vs_reg): /thermal-zones/cluster-thermal/trips/trip-point@0: node has a unit name, but no reg property
-arch/arm64/boot/dts/qcom/qcs404.dtsi:1145.34-1149.7: Warning (unit_address_vs_reg): /thermal-zones/cluster-thermal/trips/trip-point@1: node has a unit name, but no reg property
-arch/arm64/boot/dts/qcom/qcs404.dtsi:1174.31-1178.7: Warning (unit_address_vs_reg): /thermal-zones/cpu0-thermal/trips/trip-point@0: node has a unit name, but no reg property
-arch/arm64/boot/dts/qcom/qcs404.dtsi:1179.31-1183.7: Warning (unit_address_vs_reg): /thermal-zones/cpu0-thermal/trips/trip-point@1: node has a unit name, but no reg property
-arch/arm64/boot/dts/qcom/qcs404.dtsi:1208.31-1212.7: Warning (unit_address_vs_reg): /thermal-zones/cpu1-thermal/trips/trip-point@0: node has a unit name, but no reg property
-arch/arm64/boot/dts/qcom/qcs404.dtsi:1213.31-1217.7: Warning (unit_address_vs_reg): /thermal-zones/cpu1-thermal/trips/trip-point@1: node has a unit name, but no reg property
-arch/arm64/boot/dts/qcom/qcs404.dtsi:1242.31-1246.7: Warning (unit_address_vs_reg): /thermal-zones/cpu2-thermal/trips/trip-point@0: node has a unit name, but no reg property
-arch/arm64/boot/dts/qcom/qcs404.dtsi:1247.31-1251.7: Warning (unit_address_vs_reg): /thermal-zones/cpu2-thermal/trips/trip-point@1: node has a unit name, but no reg property
-arch/arm64/boot/dts/qcom/qcs404.dtsi:1276.31-1280.7: Warning (unit_address_vs_reg): /thermal-zones/cpu3-thermal/trips/trip-point@0: node has a unit name, but no reg property
-arch/arm64/boot/dts/qcom/qcs404.dtsi:1281.31-1285.7: Warning (unit_address_vs_reg): /thermal-zones/cpu3-thermal/trips/trip-point@1: node has a unit name, but no reg property
-arch/arm64/boot/dts/qcom/qcs404.dtsi:1310.30-1314.7: Warning (unit_address_vs_reg): /thermal-zones/gpu-thermal/trips/trip-point@0: node has a unit name, but no reg property
+There is a giant difference between 'needs to be higher than OTHER' and
+FIFO-99.
 
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
-Reviewed-by: Amit Kucheria <amit.kucheria@linaro.org>
----
- arch/arm64/boot/dts/qcom/qcs404.dtsi | 30 ++++++++++++++--------------
- 1 file changed, 15 insertions(+), 15 deletions(-)
+> notifications are delivered to the userspace without delay even when
+> the CPUs are very congested. Otherwise it's easy to delay psi
+> notifications by running a simple CPU hogger executing "chrt -f 50 dd
+> if=/dev/zero of=/dev/null". Because these notifications are
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs404.dtsi b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-index 3d0789775009..6d91dae5aee0 100644
---- a/arch/arm64/boot/dts/qcom/qcs404.dtsi
-+++ b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-@@ -1077,7 +1077,7 @@
- 			thermal-sensors = <&tsens 0>;
- 
- 			trips {
--				aoss_alert0: trip-point@0 {
-+				aoss_alert0: trip-point0 {
- 					temperature = <105000>;
- 					hysteresis = <2000>;
- 					type = "hot";
-@@ -1092,7 +1092,7 @@
- 			thermal-sensors = <&tsens 1>;
- 
- 			trips {
--				q6_hvx_alert0: trip-point@0 {
-+				q6_hvx_alert0: trip-point0 {
- 					temperature = <105000>;
- 					hysteresis = <2000>;
- 					type = "hot";
-@@ -1107,7 +1107,7 @@
- 			thermal-sensors = <&tsens 2>;
- 
- 			trips {
--				lpass_alert0: trip-point@0 {
-+				lpass_alert0: trip-point0 {
- 					temperature = <105000>;
- 					hysteresis = <2000>;
- 					type = "hot";
-@@ -1122,7 +1122,7 @@
- 			thermal-sensors = <&tsens 3>;
- 
- 			trips {
--				wlan_alert0: trip-point@0 {
-+				wlan_alert0: trip-point0 {
- 					temperature = <105000>;
- 					hysteresis = <2000>;
- 					type = "hot";
-@@ -1137,12 +1137,12 @@
- 			thermal-sensors = <&tsens 4>;
- 
- 			trips {
--				cluster_alert0: trip-point@0 {
-+				cluster_alert0: trip-point0 {
- 					temperature = <95000>;
- 					hysteresis = <2000>;
- 					type = "hot";
- 				};
--				cluster_alert1: trip-point@1 {
-+				cluster_alert1: trip-point1 {
- 					temperature = <105000>;
- 					hysteresis = <2000>;
- 					type = "passive";
-@@ -1171,12 +1171,12 @@
- 			thermal-sensors = <&tsens 5>;
- 
- 			trips {
--				cpu0_alert0: trip-point@0 {
-+				cpu0_alert0: trip-point0 {
- 					temperature = <95000>;
- 					hysteresis = <2000>;
- 					type = "hot";
- 				};
--				cpu0_alert1: trip-point@1 {
-+				cpu0_alert1: trip-point1 {
- 					temperature = <105000>;
- 					hysteresis = <2000>;
- 					type = "passive";
-@@ -1205,12 +1205,12 @@
- 			thermal-sensors = <&tsens 6>;
- 
- 			trips {
--				cpu1_alert0: trip-point@0 {
-+				cpu1_alert0: trip-point0 {
- 					temperature = <95000>;
- 					hysteresis = <2000>;
- 					type = "hot";
- 				};
--				cpu1_alert1: trip-point@1 {
-+				cpu1_alert1: trip-point1 {
- 					temperature = <105000>;
- 					hysteresis = <2000>;
- 					type = "passive";
-@@ -1239,12 +1239,12 @@
- 			thermal-sensors = <&tsens 7>;
- 
- 			trips {
--				cpu2_alert0: trip-point@0 {
-+				cpu2_alert0: trip-point0 {
- 					temperature = <95000>;
- 					hysteresis = <2000>;
- 					type = "hot";
- 				};
--				cpu2_alert1: trip-point@1 {
-+				cpu2_alert1: trip-point1 {
- 					temperature = <105000>;
- 					hysteresis = <2000>;
- 					type = "passive";
-@@ -1273,12 +1273,12 @@
- 			thermal-sensors = <&tsens 8>;
- 
- 			trips {
--				cpu3_alert0: trip-point@0 {
-+				cpu3_alert0: trip-point0 {
- 					temperature = <95000>;
- 					hysteresis = <2000>;
- 					type = "hot";
- 				};
--				cpu3_alert1: trip-point@1 {
-+				cpu3_alert1: trip-point1 {
- 					temperature = <105000>;
- 					hysteresis = <2000>;
- 					type = "passive";
-@@ -1307,7 +1307,7 @@
- 			thermal-sensors = <&tsens 9>;
- 
- 			trips {
--				gpu_alert0: trip-point@0 {
-+				gpu_alert0: trip-point0 {
- 					temperature = <95000>;
- 					hysteresis = <2000>;
- 					type = "hot";
--- 
-2.20.1
+So what; at that point that's exactly what you're asking for. Using RT
+is for those who know what they're doing.
+
+> time-critical for reacting to memory shortages we can't allow for such
+> delays.
+
+Furthermore, actual RT programs will have pre-allocated and locked any
+memory they rely on. They don't give a crap about your pressure
+nonsense.
+
+> Notice that this kworker is created only if userspace creates a psi
+> trigger. So unless you are using psi triggers you will never see this
+> kthread created.
+
+By marking it FIFO-99 you're in effect saying that your stupid
+statistics gathering is more important than your life. It will preempt
+the task that's in control of the band-saw emergency break, it will
+preempt the task that's adjusting the electromagnetic field containing
+this plasma flow.
+
+That's insane.
+
+I'm going to queue a patch to reduce this to FIFO-1, that will preempt
+regular OTHER tasks but will not perturb (much) actual RT bits.
 
