@@ -2,78 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40A517D992
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 12:43:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2EF527D984
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 12:40:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731093AbfHAKne (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 06:43:34 -0400
-Received: from 10.mo178.mail-out.ovh.net ([46.105.76.150]:55787 "EHLO
-        10.mo178.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729140AbfHAKne (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 06:43:34 -0400
-X-Greylist: delayed 3708 seconds by postgrey-1.27 at vger.kernel.org; Thu, 01 Aug 2019 06:43:33 EDT
-Received: from player778.ha.ovh.net (unknown [10.108.57.38])
-        by mo178.mail-out.ovh.net (Postfix) with ESMTP id 7388F70E71
-        for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2019 11:24:00 +0200 (CEST)
-Received: from kaod.org (lns-bzn-46-82-253-208-248.adsl.proxad.net [82.253.208.248])
-        (Authenticated sender: groug@kaod.org)
-        by player778.ha.ovh.net (Postfix) with ESMTPSA id 17FDD87377A1;
-        Thu,  1 Aug 2019 09:23:49 +0000 (UTC)
-Date:   Thu, 1 Aug 2019 11:23:48 +0200
-From:   Greg Kurz <groug@kaod.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au,
-        allison@lohutok.net, tglx@linutronix.de, clg@kaod.org,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 1/2] powerpc/xive: Use GFP_KERNEL instead of GFP_ATOMIC
- in 'xive_irq_bitmap_add()'
-Message-ID: <20190801112348.2d1760f3@bahia.lan>
-In-Reply-To: <85d5d247ce753befd6aa63c473f7823de6520ccd.1564647619.git.christophe.jaillet@wanadoo.fr>
-References: <cover.1564647619.git.christophe.jaillet@wanadoo.fr>
-        <85d5d247ce753befd6aa63c473f7823de6520ccd.1564647619.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        id S1731026AbfHAKkW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 06:40:22 -0400
+Received: from foss.arm.com ([217.140.110.172]:33770 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725930AbfHAKkW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Aug 2019 06:40:22 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A60AD1570;
+        Thu,  1 Aug 2019 03:40:21 -0700 (PDT)
+Received: from e110439-lin (e110439-lin.cambridge.arm.com [10.1.194.43])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 17FAC3F575;
+        Thu,  1 Aug 2019 03:40:18 -0700 (PDT)
+Date:   Thu, 1 Aug 2019 11:40:14 +0100
+From:   Patrick Bellasi <patrick.bellasi@arm.com>
+To:     Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
+Cc:     cgroups@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Alessio Balsini <balsini@android.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Paul Turner <pjt@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Todd Kjos <tkjos@google.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Tejun Heo <tj@kernel.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>
+Subject: Re: [PATCH v12 1/6] sched/core: uclamp: Extend CPU's cgroup
+ controller
+Message-ID: <20190801104014.amwvjdvabedsd5t7@e110439-lin>
+References: <20190718181748.28446-1-patrick.bellasi@arm.com>
+ <20190718181748.28446-2-patrick.bellasi@arm.com>
+ <20190725114104.GA32159@blackbody.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Ovh-Tracer-Id: 12659618553387784475
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeduvddrleejgddugecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190725114104.GA32159@blackbody.suse.cz>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu,  1 Aug 2019 10:32:31 +0200
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
+On 25-Jul 13:41, Michal Koutný wrote:
+> On Thu, Jul 18, 2019 at 07:17:43PM +0100, Patrick Bellasi <patrick.bellasi@arm.com> wrote:
+> > +static ssize_t cpu_uclamp_min_write(struct kernfs_open_file *of,
+> > +				    char *buf, size_t nbytes,
+> > +				    loff_t off)
+> > +{
+> > [...]
+> > +static ssize_t cpu_uclamp_max_write(struct kernfs_open_file *of,
+> > +				    char *buf, size_t nbytes,
+> > +				    loff_t off)
+> > +{
+> > [...]
+> These two functions are almost identical yet not trivial. I think it
+> wouldn be better to have the code at one place only and distinguish by
+> the passed clamp_id.
 
-> There is no need to use GFP_ATOMIC here. GFP_KERNEL should be enough.
-> GFP_KERNEL is also already used for another allocation just a few lines
-> below.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
+Good point, since the removal of the boundary checks on values we now
+have two identical methods. I'll factor our the common code in a
+single function.
 
-Good catch.
+Cheers,
+Patrick
 
-Reviewed-by: Greg Kurz <groug@kaod.org>
+-- 
+#include <best/regards.h>
 
->  arch/powerpc/sysdev/xive/spapr.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/powerpc/sysdev/xive/spapr.c b/arch/powerpc/sysdev/xive/spapr.c
-> index 8ef9cf4ebb1c..b4f5eb9e0f82 100644
-> --- a/arch/powerpc/sysdev/xive/spapr.c
-> +++ b/arch/powerpc/sysdev/xive/spapr.c
-> @@ -45,7 +45,7 @@ static int xive_irq_bitmap_add(int base, int count)
->  {
->  	struct xive_irq_bitmap *xibm;
->  
-> -	xibm = kzalloc(sizeof(*xibm), GFP_ATOMIC);
-> +	xibm = kzalloc(sizeof(*xibm), GFP_KERNEL);
->  	if (!xibm)
->  		return -ENOMEM;
->  
-
+Patrick Bellasi
