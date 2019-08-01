@@ -2,100 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 57DE27E06C
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 18:44:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 342027E07A
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 18:45:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732117AbfHAQoR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 12:44:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37988 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729082AbfHAQoR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 12:44:17 -0400
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A272C20838;
-        Thu,  1 Aug 2019 16:44:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564677856;
-        bh=luxeEe+sNcMiUEJZddOmw2LCtZnw/7cP+2BTlvtj75g=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=1vCYTqrWNpzwy70+mDDkDyYbXSINihdTQt827ZNZ38BqrocpuTP/5twuQPWb+gghN
-         +bl+z5TixFmhDdNjnDx+Eh8sSH8KshmaqVzUor7b7NSq1e0PiUUaxnmgdxPhdn1229
-         Armf1YNDTLI9lVu8j9VV+a1Qdb+UMV3aZU2PBKDY=
-Date:   Thu, 1 Aug 2019 17:44:12 +0100
-From:   Will Deacon <will@kernel.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     iommu@lists.linux-foundation.org,
-        Shawn Anastasio <shawn@anastas.io>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dma-mapping: fix page attributes for dma_mmap_*
-Message-ID: <20190801164411.kmsl4japtfkgvzxe@willie-the-truck>
-References: <20190801142118.21225-1-hch@lst.de>
- <20190801142118.21225-2-hch@lst.de>
- <20190801162305.3m32chycsdjmdejk@willie-the-truck>
- <20190801163457.GB26588@lst.de>
+        id S1733149AbfHAQp1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 12:45:27 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:57703 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733132AbfHAQpY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Aug 2019 12:45:24 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1htEBf-0006r1-G4; Thu, 01 Aug 2019 16:44:19 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Johannes Berg <johannes.berg@intel.com>,
+        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Intel Linux Wireless <linuxwifi@intel.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] iwlwifi: remove redundant assignment to variable bufsz
+Date:   Thu,  1 Aug 2019 17:44:19 +0100
+Message-Id: <20190801164419.3439-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190801163457.GB26588@lst.de>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 01, 2019 at 06:34:57PM +0200, Christoph Hellwig wrote:
-> On Thu, Aug 01, 2019 at 05:23:06PM +0100, Will Deacon wrote:
-> > > -	if (!dev_is_dma_coherent(dev) || (attrs & DMA_ATTR_WRITE_COMBINE))
-> > > -		return pgprot_writecombine(prot);
-> > > -	return prot;
-> > > +	return pgprot_writecombine(prot);
-> > >  }
-> > 
-> > Seems like a sensible cleanup to me:
-> > 
-> > Acked-by: Will Deacon <will@kernel.org>
-> > 
-> > Although arch_dma_mmap_pgprot() is a bit of a misnomer now that it only
-> > gets involved in the non-coherent case.
-> 
-> A better name is welcome.
+From: Colin Ian King <colin.king@canonical.com>
 
-How about arch_dma_noncoherent_mmap_pgprot() ? Too long?
+The variable bufsz is being initialized with a value that is never
+read and it is being updated later with a new value. The
+initialization is redundant and can be removed.
 
-> My other idea would be to just remove it entirely and do something like:
-> 
-> #ifndef pgprot_dmacoherent
-> #define pgprot_dmacoherent pgprot_noncached
-> #endif
-> 
-> pgprot_t dma_mmap_pgprot(struct device *dev, pgprot_t prot, unsigned long attrs)
-> {
-> 	if (dev_is_dma_coherent(dev) || (attrs & DMA_ATTR_NON_CONSISTENT))
-> 		return prot;
-> #ifdef pgprot_writecombine
-> 	if (attrs & DMA_ATTR_WRITE_COMBINE)
-> 		return pgprot_writecombine(prot);
-> #endif
-> 	return pgprot_dmacoherent(prot);
-> }
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/intel/iwlwifi/pcie/trans.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Oh, I prefer that!
+diff --git a/drivers/net/wireless/intel/iwlwifi/pcie/trans.c b/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
+index f5df5b370d78..addbbb78b1af 100644
+--- a/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
++++ b/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
+@@ -2542,7 +2542,7 @@ static ssize_t iwl_dbgfs_rx_queue_read(struct file *file,
+ 	struct iwl_trans_pcie *trans_pcie = IWL_TRANS_GET_PCIE_TRANS(trans);
+ 	char *buf;
+ 	int pos = 0, i, ret;
+-	size_t bufsz = sizeof(buf);
++	size_t bufsz;
+ 
+ 	bufsz = sizeof(char) * 121 * trans->num_rx_queues;
+ 
+-- 
+2.20.1
 
-> But my worry is how this interacts with architectures that have an
-> uncached segment (mips, nios2, microblaze, extensa) where we'd have
-> the kernel access DMA_ATTR_WRITE_COMBINE mappigns using the uncached
-> segment, and userspace mmaps using pgprot_writecombine, which could
-> lead to aliasing issues.  But then again mips already supports
-> DMA_ATTR_WRITE_COMBINE, so this must be ok somehow.  I guess I'll
-> need to field that question to the relevant parties.
-
-Or it's always been busted and happens to work out in practice...
-
-Will
