@@ -2,272 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9847A7E5A4
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 00:27:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 59D547E5A9
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 00:31:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733046AbfHAW1t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 18:27:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44558 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732928AbfHAW1s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 18:27:48 -0400
-Received: from localhost (unknown [104.132.0.81])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1D40B206B8;
-        Thu,  1 Aug 2019 22:27:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564698467;
-        bh=cqKGC0/Mmv+kicgsvExbiyIi13wzBUDWLZxBEbE2ZDg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=OTa3yXGDnFDQ7hXFPwssvSCPLBnnvP2X0LiBOP3VPYBc9DjFg5nkiOAr4OEgQ3EnF
-         GLC5f9kbRWoh6ZfGgRRvdq7vPB4834m7nX0TZW9h3XfNNvU4m8Vp+gtK5q/fqEbCpM
-         jPnx2DUnIHV/nkytTmrpqo48iG8HW/M7z1BUmyfQ=
-Date:   Thu, 1 Aug 2019 15:27:46 -0700
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     Chao Yu <yuchao0@huawei.com>
-Cc:     linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, chao@kernel.org
-Subject: Re: [PATCH v2] f2fs: separate NOCoW and pinfile semantics
-Message-ID: <20190801222746.GA27597@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20190719073903.9138-1-yuchao0@huawei.com>
- <20190723023640.GC60778@jaegeuk-macbookpro.roam.corp.google.com>
- <d4d064a2-2b3c-3536-6488-39e7cfdb1ea4@huawei.com>
- <20190729055738.GA95664@jaegeuk-macbookpro.roam.corp.google.com>
- <07cd3aba-3516-9ba5-286e-277abb98e244@huawei.com>
- <20190730180231.GB76478@jaegeuk-macbookpro.roam.corp.google.com>
- <00e70eb1-c4fa-a6c9-69d7-71ff995c7d6c@huawei.com>
- <20190801041435.GB84433@jaegeuk-macbookpro.roam.corp.google.com>
- <d35d5ad7-5622-fbf5-5853-e541f8c26670@huawei.com>
+        id S1731747AbfHAWbk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 18:31:40 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:46578 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727498AbfHAWbk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Aug 2019 18:31:40 -0400
+Received: by mail-pl1-f195.google.com with SMTP id c2so32785398plz.13;
+        Thu, 01 Aug 2019 15:31:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:from:to:cc:date:message-id:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=49QRQWf2FNsjOXVM5hrSB1/wT6sFBWj2i81LIQFGLg0=;
+        b=ji33itetIIDF6723/1Y8YKJGaXsZhwxdfFFZT45WUtDznubVlVgr6z8O6LM2Y0Bm8P
+         P43KwP1bs6fuGWQAelVx2jsf+HXc9hjzhGqb6BID3daGICPkxx/rJvFHx5nyJeTqaquo
+         J5birZo4hMpfVK6j0Z9nSIcOOGAxTZryiD/Bg7Ea0Sh4JYUZV5Q8A5i5BlFn+XlDUn2Y
+         xbtmEccIS9ctv1SzHpgWS+Gmvdsmo1e/yOMrR/P+7j5Dc6t3T1NV9Bf8oF0an0BTRzHE
+         zwVYl7CMWW7OMqTK+UidQdCn5nY8fJS9gYQXsiGqTJOK0Pc7c31igD37NF4ruL1MGqIV
+         abHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:date:message-id:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=49QRQWf2FNsjOXVM5hrSB1/wT6sFBWj2i81LIQFGLg0=;
+        b=n9jK1X8KYXR0qVYxL4mgYzoR7+hPt3qIlbfhNA9uCoj0U1Yur6Hzq9J422+PTJR/ys
+         YEevjDguYIYx3kVI4MP5lHP5F+hj19AIvkK4zONfMGtzJLVAbq8VOGoL3f/TH2yZrq5X
+         4Na0G4NhvEr7EbpdWY7wD6yIwCEvblY+L7Yhi6Q1VjxJ94o6jaIonGxRo9YuGEQ0gTjS
+         /lTfw9yEvfY3QiaBzpD4lLSgdm8b+aGcYZBbZsBGFW+IIrApnlJrB2ZWnLkrsk80Acez
+         0Ujie7tKrRDdQvKfxwIltpEVAuPv2/X+N7QCF3Wv1LXN6w42RqrJ8o9PGPHvZYUpb017
+         iEQA==
+X-Gm-Message-State: APjAAAUS+TC+hizhmTyPTw1DzUQfN4ueZHqOAHE8y09nwXXeoQay5hJr
+        jtrVQKiNrY/hdfGKNK3d/RzjWS0u
+X-Google-Smtp-Source: APXvYqx2jv1TK82igL61Day1gZd1T9JWolFuPhQSs0j3XhgePDf2nr7I5FyOs/W+WeBpIigsbk6TNg==
+X-Received: by 2002:a17:902:2be6:: with SMTP id l93mr129298797plb.0.1564698699193;
+        Thu, 01 Aug 2019 15:31:39 -0700 (PDT)
+Received: from localhost.localdomain (50-39-177-61.bvtn.or.frontiernet.net. [50.39.177.61])
+        by smtp.gmail.com with ESMTPSA id m20sm80514167pff.79.2019.08.01.15.31.38
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 01 Aug 2019 15:31:38 -0700 (PDT)
+Subject: [PATCH v3 2/6] mm: Move set/get_pcppage_migratetype to mmzone.h
+From:   Alexander Duyck <alexander.duyck@gmail.com>
+To:     nitesh@redhat.com, kvm@vger.kernel.org, david@redhat.com,
+        mst@redhat.com, dave.hansen@intel.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        akpm@linux-foundation.org
+Cc:     yang.zhang.wz@gmail.com, pagupta@redhat.com, riel@surriel.com,
+        konrad.wilk@oracle.com, willy@infradead.org,
+        lcapitulino@redhat.com, wei.w.wang@intel.com, aarcange@redhat.com,
+        pbonzini@redhat.com, dan.j.williams@intel.com,
+        alexander.h.duyck@linux.intel.com
+Date:   Thu, 01 Aug 2019 15:29:26 -0700
+Message-ID: <20190801222926.22190.81982.stgit@localhost.localdomain>
+In-Reply-To: <20190801222158.22190.96964.stgit@localhost.localdomain>
+References: <20190801222158.22190.96964.stgit@localhost.localdomain>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d35d5ad7-5622-fbf5-5853-e541f8c26670@huawei.com>
-User-Agent: Mutt/1.8.2 (2017-04-18)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/01, Chao Yu wrote:
-> On 2019/8/1 12:14, Jaegeuk Kim wrote:
-> > On 07/31, Chao Yu wrote:
-> >> On 2019/7/31 2:02, Jaegeuk Kim wrote:
-> >>> On 07/29, Chao Yu wrote:
-> >>>> On 2019/7/29 13:57, Jaegeuk Kim wrote:
-> >>>>> On 07/23, Chao Yu wrote:
-> >>>>>> On 2019/7/23 10:36, Jaegeuk Kim wrote:
-> >>>>>>> On 07/19, Chao Yu wrote:
-> >>>>>>>> Pinning a file is heavy, because skipping pinned files make GC
-> >>>>>>>> running with heavy load or no effect.
-> >>>>>>>
-> >>>>>>> Pinned file is a part of NOCOW files, so I don't think we can simply drop it
-> >>>>>>> for backward compatibility.
-> >>>>>>
-> >>>>>> Yes,
-> >>>>>>
-> >>>>>> But what I concerned is that pin file is too heavy, so in order to satisfy below
-> >>>>>> demand, how about introducing pin_file_2 flag to triggering IPU only during
-> >>>>>> flush/writeback.
-> >>>>>
-> >>>>> That can be done by cold files?
-> >>>>
-> >>>> Then it may inherit property of cold type file, e.g. a) goes into cold area; b)
-> >>>> update with very low frequency.
-> >>>>
-> >>>> Actually pin_file_2 could be used by db-wal/log file, which are updated
-> >>>> frequently, and should go to hot/warm area, it does not match above two property.
-> >>>
-> >>> How about considering another name like "IPU-only mode"?
-> >>>
-> >>>               fallocate         write    Flag         GC
-> >>> Pin_file:     preallocate       IPU      FS_NOCOW_FL  Not allowed
-> >>> IPU_file:     Not preallocate   IPU      N/A          Default by temperature
-> >>
-> >> One question, do we need preallocate physical block address for IPU_file as
-> >> Pin_file? since it can enhance db file's sequential read performance, not sure,
-> >> db can handle random data in preallocated blocks.
-> > 
-> > db file will do atomic writes, which can not be used with this. -wal may be able
-> 
-> Now WAL mode were set by default in Android, so most of db file are -wal type now.
+From: Alexander Duyck <alexander.h.duyck@linux.intel.com>
 
-Will be back again tho.
+In order to support page aeration it will be necessary to store and
+retrieve the migratetype of a page. To enable that I am moving the set and
+get operations for pcppage_migratetype into the mm/internal.h header so
+that they can be used outside of the page_alloc.c file.
 
-> 
-> > to preallocate blocks, but it can eat disk space unnecessarily.
-> 
-> I meant .db-wal file rather than .db.
-> 
-> Yes, that's ext4 style, that would bring better performance due to less holes in
-> block distribution.
-> 
-> I don't think we need to worry about space issue for db-wal file. I tracked
-> .db-wal file's update before:
-> - there are very frequently truncation and deletion, that means the preallocated
-> blocks won't exist for long time.
-> - and also there are very frequently append writes, I suspect there almost very
-> few preallocate block are not written.
-> - total db-wal file number is less.
+Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+---
+ mm/internal.h   |   18 ++++++++++++++++++
+ mm/page_alloc.c |   18 ------------------
+ 2 files changed, 18 insertions(+), 18 deletions(-)
 
-Sometimes it can be large enough for system. If it's from user apps and short
-lived, why do we need preallocation?
+diff --git a/mm/internal.h b/mm/internal.h
+index 0d5f720c75ab..e4a1a57bbd40 100644
+--- a/mm/internal.h
++++ b/mm/internal.h
+@@ -549,6 +549,24 @@ static inline bool is_migrate_highatomic_page(struct page *page)
+ 	return get_pageblock_migratetype(page) == MIGRATE_HIGHATOMIC;
+ }
+ 
++/*
++ * A cached value of the page's pageblock's migratetype, used when the page is
++ * put on a pcplist. Used to avoid the pageblock migratetype lookup when
++ * freeing from pcplists in most cases, at the cost of possibly becoming stale.
++ * Also the migratetype set in the page does not necessarily match the pcplist
++ * index, e.g. page might have MIGRATE_CMA set but be on a pcplist with any
++ * other index - this ensures that it will be put on the correct CMA freelist.
++ */
++static inline int get_pcppage_migratetype(struct page *page)
++{
++	return page->index;
++}
++
++static inline void set_pcppage_migratetype(struct page *page, int migratetype)
++{
++	page->index = migratetype;
++}
++
+ void setup_zone_pageset(struct zone *zone);
+ extern struct page *alloc_new_node_page(struct page *page, unsigned long node);
+ #endif	/* __MM_INTERNAL_H */
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index dfed182f200d..7cedc73953fd 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -185,24 +185,6 @@ static int __init early_init_on_free(char *buf)
+ }
+ early_param("init_on_free", early_init_on_free);
+ 
+-/*
+- * A cached value of the page's pageblock's migratetype, used when the page is
+- * put on a pcplist. Used to avoid the pageblock migratetype lookup when
+- * freeing from pcplists in most cases, at the cost of possibly becoming stale.
+- * Also the migratetype set in the page does not necessarily match the pcplist
+- * index, e.g. page might have MIGRATE_CMA set but be on a pcplist with any
+- * other index - this ensures that it will be put on the correct CMA freelist.
+- */
+-static inline int get_pcppage_migratetype(struct page *page)
+-{
+-	return page->index;
+-}
+-
+-static inline void set_pcppage_migratetype(struct page *page, int migratetype)
+-{
+-	page->index = migratetype;
+-}
+-
+ #ifdef CONFIG_PM_SLEEP
+ /*
+  * The following functions are used by the suspend/hibernate code to temporarily
 
-> 
-> > 
-> >>
-> >> Other behaviors looks good to me. :)
-> >>
-> >> I plan to use last bit in inode.i_inline to store this flag.
-> > 
-> > Why not using i_flag like FS_NOCOW_FL?
-> 
-> Oops, as you listed in last email, I can see you don't want to break
-> FS_NOCOW_FL's semantics for backward compatibility.
-> 
-> 			Flag
-> IPU_file		N/A			
-> 
-> If we plan to use FS_NOCOW_FL, that's what this patch has already did, you can
-> merge it directly... :P
-> 
-> > 
-> >>
-> >>> Cold_file:    Not preallocate   IPU      N/A          Move in cold area
-> >>> Hot_file:     Not preallocate   IPU/OPU  N/A          Move in hot area
-> >>
-> >> Should hot file be gced to hot area? That would mix new hot data with old 'hot'
-> >> data which actually become cold.
-> > 
-> > But, user explicitly specified this is hot.
-> 
-> With current implementation, GC will migrate data from hot/warm/cold area to
-> cold area.
-> 
-> Thanks,
-> 
-> > 
-> >>
-> >> Thanks,
-> >>
-> >>>
-> >>>>
-> >>>> Thank,
-> >>>>
-> >>>>>
-> >>>>>>
-> >>>>>>>
-> >>>>>>>>
-> >>>>>>>> So that this patch propose to separate nocow and pinfile semantics:
-> >>>>>>>> - NOCoW flag can only be set on regular file.
-> >>>>>>>> - NOCoW file will only trigger IPU at common writeback/flush.
-> >>>>>>>> - NOCow file will do OPU during GC.
-> >>>>>>>>
-> >>>>>>>> For the demand of 1) avoid fragment of file's physical block and
-> >>>>>>>> 2) userspace don't care about file's specific physical address,
-> >>>>>>>> tagging file as NOCoW will be cheaper than pinned one.
-> >>>>>>
-> >>>>>> ^^^
-> >>>>>>
-> >>>>>> Thanks,
-> >>>>>>
-> >>>>>>>>
-> >>>>>>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> >>>>>>>> ---
-> >>>>>>>> v2:
-> >>>>>>>> - rebase code to fix compile error.
-> >>>>>>>>  fs/f2fs/data.c |  3 ++-
-> >>>>>>>>  fs/f2fs/f2fs.h |  1 +
-> >>>>>>>>  fs/f2fs/file.c | 22 +++++++++++++++++++---
-> >>>>>>>>  3 files changed, 22 insertions(+), 4 deletions(-)
-> >>>>>>>>
-> >>>>>>>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> >>>>>>>> index a2a28bb269bf..15fb8954c363 100644
-> >>>>>>>> --- a/fs/f2fs/data.c
-> >>>>>>>> +++ b/fs/f2fs/data.c
-> >>>>>>>> @@ -1884,7 +1884,8 @@ static inline bool check_inplace_update_policy(struct inode *inode,
-> >>>>>>>>  
-> >>>>>>>>  bool f2fs_should_update_inplace(struct inode *inode, struct f2fs_io_info *fio)
-> >>>>>>>>  {
-> >>>>>>>> -	if (f2fs_is_pinned_file(inode))
-> >>>>>>>> +	if (f2fs_is_pinned_file(inode) ||
-> >>>>>>>> +			F2FS_I(inode)->i_flags & F2FS_NOCOW_FL)
-> >>>>>>>>  		return true;
-> >>>>>>>>  
-> >>>>>>>>  	/* if this is cold file, we should overwrite to avoid fragmentation */
-> >>>>>>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> >>>>>>>> index 596ab3e1dd7b..f6c5a3d2e659 100644
-> >>>>>>>> --- a/fs/f2fs/f2fs.h
-> >>>>>>>> +++ b/fs/f2fs/f2fs.h
-> >>>>>>>> @@ -2374,6 +2374,7 @@ static inline void f2fs_change_bit(unsigned int nr, char *addr)
-> >>>>>>>>  #define F2FS_NOATIME_FL			0x00000080 /* do not update atime */
-> >>>>>>>>  #define F2FS_INDEX_FL			0x00001000 /* hash-indexed directory */
-> >>>>>>>>  #define F2FS_DIRSYNC_FL			0x00010000 /* dirsync behaviour (directories only) */
-> >>>>>>>> +#define F2FS_NOCOW_FL			0x00800000 /* Do not cow file */
-> >>>>>>>>  #define F2FS_PROJINHERIT_FL		0x20000000 /* Create with parents projid */
-> >>>>>>>>  
-> >>>>>>>>  /* Flags that should be inherited by new inodes from their parent. */
-> >>>>>>>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> >>>>>>>> index 7ca545874060..ae0fec54cac6 100644
-> >>>>>>>> --- a/fs/f2fs/file.c
-> >>>>>>>> +++ b/fs/f2fs/file.c
-> >>>>>>>> @@ -1692,6 +1692,7 @@ static const struct {
-> >>>>>>>>  	{ F2FS_NOATIME_FL,	FS_NOATIME_FL },
-> >>>>>>>>  	{ F2FS_INDEX_FL,	FS_INDEX_FL },
-> >>>>>>>>  	{ F2FS_DIRSYNC_FL,	FS_DIRSYNC_FL },
-> >>>>>>>> +	{ F2FS_NOCOW_FL,	FS_NOCOW_FL },
-> >>>>>>>>  	{ F2FS_PROJINHERIT_FL,	FS_PROJINHERIT_FL },
-> >>>>>>>>  };
-> >>>>>>>>  
-> >>>>>>>> @@ -1715,7 +1716,8 @@ static const struct {
-> >>>>>>>>  		FS_NODUMP_FL |		\
-> >>>>>>>>  		FS_NOATIME_FL |		\
-> >>>>>>>>  		FS_DIRSYNC_FL |		\
-> >>>>>>>> -		FS_PROJINHERIT_FL)
-> >>>>>>>> +		FS_PROJINHERIT_FL |	\
-> >>>>>>>> +		FS_NOCOW_FL)
-> >>>>>>>>  
-> >>>>>>>>  /* Convert f2fs on-disk i_flags to FS_IOC_{GET,SET}FLAGS flags */
-> >>>>>>>>  static inline u32 f2fs_iflags_to_fsflags(u32 iflags)
-> >>>>>>>> @@ -1753,8 +1755,6 @@ static int f2fs_ioc_getflags(struct file *filp, unsigned long arg)
-> >>>>>>>>  		fsflags |= FS_ENCRYPT_FL;
-> >>>>>>>>  	if (f2fs_has_inline_data(inode) || f2fs_has_inline_dentry(inode))
-> >>>>>>>>  		fsflags |= FS_INLINE_DATA_FL;
-> >>>>>>>> -	if (is_inode_flag_set(inode, FI_PIN_FILE))
-> >>>>>>>> -		fsflags |= FS_NOCOW_FL;
-> >>>>>>>>  
-> >>>>>>>>  	fsflags &= F2FS_GETTABLE_FS_FL;
-> >>>>>>>>  
-> >>>>>>>> @@ -1794,6 +1794,22 @@ static int f2fs_ioc_setflags(struct file *filp, unsigned long arg)
-> >>>>>>>>  	if (ret)
-> >>>>>>>>  		goto out;
-> >>>>>>>>  
-> >>>>>>>> +	if ((fsflags ^ old_fsflags) & FS_NOCOW_FL) {
-> >>>>>>>> +		if (!S_ISREG(inode->i_mode)) {
-> >>>>>>>> +			ret = -EINVAL;
-> >>>>>>>> +			goto out;
-> >>>>>>>> +		}
-> >>>>>>>> +
-> >>>>>>>> +		if (f2fs_should_update_outplace(inode, NULL)) {
-> >>>>>>>> +			ret = -EINVAL;
-> >>>>>>>> +			goto out;
-> >>>>>>>> +		}
-> >>>>>>>> +
-> >>>>>>>> +		ret = f2fs_convert_inline_inode(inode);
-> >>>>>>>> +		if (ret)
-> >>>>>>>> +			goto out;
-> >>>>>>>> +	}
-> >>>>>>>> +
-> >>>>>>>>  	ret = f2fs_setflags_common(inode, iflags,
-> >>>>>>>>  			f2fs_fsflags_to_iflags(F2FS_SETTABLE_FS_FL));
-> >>>>>>>>  out:
-> >>>>>>>> -- 
-> >>>>>>>> 2.18.0.rc1
-> >>>>>>> .
-> >>>>>>>
-> >>>>> .
-> >>>>>
-> >>> .
-> >>>
-> > .
-> > 
