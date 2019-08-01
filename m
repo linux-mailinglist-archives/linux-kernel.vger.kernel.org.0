@@ -2,118 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F26287D6D6
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 10:00:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 325A17D6DF
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 10:04:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730790AbfHAIAG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 04:00:06 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:37351 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730514AbfHAIAF (ORCPT
+        id S1730490AbfHAIES (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 04:04:18 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:55078 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728582AbfHAIEQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 04:00:05 -0400
-Received: by mail-lj1-f195.google.com with SMTP id z28so14180137ljn.4;
-        Thu, 01 Aug 2019 01:00:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=VAiKQtrdWdpAymEw2Fi6xVY10VrsZzJSh6lsPenXn5c=;
-        b=KyWodxvzOSUl5vMHnbnrwzIAAyi2FLqjzsrJG4CDOo0xubx8uDbAyXqHvMjXb2EZKR
-         3OTkmSgzUW5s4OFzZOJtJzkxL2Vw9tpTOsPuHNmJL10tEdjzf6+u9Z5Dm7Ybjzo2Fsnq
-         upL41HGVkP0Apu7kDsQGa73HXRgsYJ4eGQN4LQaCrmmTCyKiMdEQRG2WVK4rAboEaFkL
-         GR3a+bW/b/pBTN2NDcQHelOqJxfXR1ACeiixyEc+ACqJNOoNIwLeHNt7Gkj296UvulJw
-         dWF9aAtR4dZnfFwdJPh3B21ex1Yyr1oWQ/ZqlU8QV6eNaXvHxEZcelG2uu1GWLoxBxgQ
-         663w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=VAiKQtrdWdpAymEw2Fi6xVY10VrsZzJSh6lsPenXn5c=;
-        b=GvMWCV/U9YOcLE4xcfMJjDR2SgtqeDGi7BJRHME7AqL7mr1ixuAmutOym0m4hpP9gI
-         9KJJiLh0a33oWkNvIlGJye3VJr7FaBpYMltsPF9ZuwiNyVThVc7NF9sCkmpaeL+VW8S6
-         JzHBjf3FlyEYnvmCpoytOs3XjGzzCn0mZtlv4yiOnhnRm9vts48kC8gObXYDu9acLLD6
-         pbfAi5YymPeSa+la3G9jxEYjwOe/rxKK2TfAp80/A1tUUKudy7iAtQiRqmlNFesL/EmR
-         ZOAG9VHLTE4JURgLRx0s0RPI0IYEwJ7AaY7xTuQbEpn6wiGR9N33TA0caDofY0MQk0Gu
-         psaA==
-X-Gm-Message-State: APjAAAV4H70kcD1p9bp7ucO1MXqQOHlQUUBk8sp+jH9za1IPL0ZpS3Zt
-        FL3iuRp9YJZkNG9rqQicEvdIFpDW58lVPftCJTA=
-X-Google-Smtp-Source: APXvYqx/gMgcGF2V7ylKamWcGjf6XGcn5JGjdm2r9vJ2Njp1NLJnu7wpmlveYBCUT/NrzJhe5JXapFqEUKI15zJ5ClQ=
-X-Received: by 2002:a2e:5d92:: with SMTP id v18mr67333062lje.9.1564646402586;
- Thu, 01 Aug 2019 01:00:02 -0700 (PDT)
+        Thu, 1 Aug 2019 04:04:16 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x717wwaS173578;
+        Thu, 1 Aug 2019 08:03:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ content-transfer-encoding : in-reply-to; s=corp-2018-07-02;
+ bh=uqjHMdgaF7LuDAF9oZsHnLrTeE15VIi9x0+twPBjRhg=;
+ b=hoOY+r66LbPdS7EdDSgz2aQO1m3ADA6xCt8ord1HLpK++3iX5/LwIjypy+f8KCoHL3RR
+ m4lRyOaCOq1XGMGDvgs3S6MPO0JbuL3Vyyhrw30VXWsliZQ1sarPvD1KqR+2TeX9wPiw
+ ZFcm/CJzNV/85TnFTm4KBpMzNkN3l8LiAeygwVQ2f6amFXc2fUrUrYNttqk2HEOzKYK9
+ knPVV/wV+Jxe66J3bC7ebeYFX/TPbV6I+7tIx3tkagPzBFHvpg/W22AYqJpTzylLGp2V
+ N2ajCzDN6rrN9dIH8Xh9JnGy4jcvp01v1v07DDpnScUayvZmHY6m01J3IqHsE1aWf0yy jg== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2130.oracle.com with ESMTP id 2u0e1u28de-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 01 Aug 2019 08:03:56 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x71831bA179061;
+        Thu, 1 Aug 2019 08:03:56 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3020.oracle.com with ESMTP id 2u3mbtw5ea-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 01 Aug 2019 08:03:56 +0000
+Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x7183qwu000621;
+        Thu, 1 Aug 2019 08:03:52 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 01 Aug 2019 01:03:51 -0700
+Date:   Thu, 1 Aug 2019 11:03:43 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     =?iso-8859-1?Q?Aur=E9lien?= Aptel <aaptel@suse.com>
+Cc:     Colin King <colin.king@canonical.com>,
+        samba-technical@lists.samba.org, Steve French <sfrench@samba.org>,
+        kernel-janitors@vger.kernel.org, linux-cifs@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] cifs: remove redundant assignment to variable rc
+Message-ID: <20190801080343.GA1935@kadam>
+References: <20190731090526.27245-1-colin.king@canonical.com>
+ <87r266seg4.fsf@suse.com>
+ <20190731122841.GA1974@kadam>
+ <87lfwerze8.fsf@suse.com>
 MIME-Version: 1.0
-References: <1564489420-677-1-git-send-email-sumit.garg@linaro.org>
- <CAE=Ncrb63dQLe-nDQyO9OPv7XjwM_9mzL9SrcLiUi2Dr10cD4A@mail.gmail.com>
- <CAE=NcrY7b8eTTovOszBhGhVbjfJAXoAYehiUJyPENGfwWoVcPw@mail.gmail.com>
- <CAFA6WYOEqe1a1DCyVYKA+oZaZ0n5hnjxdubstUnrwdUW1-4xHw@mail.gmail.com>
- <CAE=NcraDkm5cxE=ceq_9XkQz=NZ6KdVXkNUsdD4G2LrWz-bpDw@mail.gmail.com> <CAFA6WYMOXQbL5OeheFUFpTr8gte8XHHr-71-h8+qX0+R_sekDQ@mail.gmail.com>
-In-Reply-To: <CAFA6WYMOXQbL5OeheFUFpTr8gte8XHHr-71-h8+qX0+R_sekDQ@mail.gmail.com>
-From:   Janne Karhunen <janne.karhunen@gmail.com>
-Date:   Thu, 1 Aug 2019 10:59:51 +0300
-Message-ID: <CAE=Ncrae6pM+WBDu9eJ7Fw2Fkvf3_YqH5tj9Tt938D4RtWcdSQ@mail.gmail.com>
-Subject: Re: [RFC v2 0/6] Introduce TEE based Trusted Keys support
-To:     Sumit Garg <sumit.garg@linaro.org>
-Cc:     keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Jens Wiklander <jens.wiklander@linaro.org>,
-        Jonathan Corbet <corbet@lwn.net>, dhowells@redhat.com,
-        jejb@linux.ibm.com,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "tee-dev @ lists . linaro . org" <tee-dev@lists.linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <87lfwerze8.fsf@suse.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9335 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1908010082
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9335 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1908010081
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 1, 2019 at 10:40 AM Sumit Garg <sumit.garg@linaro.org> wrote:
+On Wed, Jul 31, 2019 at 05:34:39PM +0200, Aurélien Aptel wrote:
+> "Dan Carpenter" <dan.carpenter@oracle.com> writes:
+> > You're just turning off GCC's static analysis (and introducing false
+> > positives) when you do that.  We have seen bugs caused by this and never
+> > seen any bugs prevented by this style.
+> 
+> You've never seen bugs prevented by initializing uninitialized
+> variables? Code can change overtime and I don't think coverity is
+> checked as often as it could be, meaning the var could end up being used
+> while uninitialized in the future.
 
-> > I chose the userspace plugin due to this, you can use userspace aids
-> > to provide any type of service. Use the crypto library you desire to
-> > do the magic you want.
->
-> Here TEE isn't similar to a user-space crypto library. In our case TEE
-> is based on ARM TrustZone which only allows TEE communications to be
-> initiated from privileged mode. So why would you like to route
-> communications via user-mode (which is less secure) when we have
-> standardised TEE interface available in kernel?
+Of course, we wouldn't see bugs that were prevented so that wasn't
+entirely fair.
 
-The physical access guards for reading/writing the involved critical
-memory are identical as far as I know? Layered security is generally a
-good thing, and the userspace pass actually adds a layer, so not sure
-which is really safer?
+There is a several year old bug in GCC where it sometimes initializes
+these to zero and doesn't warn about the uninitialized variable so it
+is actually possible to prevent a bug by initializing it to an error
+code.
 
-In my case the rerouting was to done generalize it. Any type of trust
-source, anywhere.
+Smatch also warns about uninitialized variables.  I normally run Smatch
+on linux-next every day but I have been out of office for the past
+month and my config doesn't cover everything.
 
+We haven't been able to enable this "redundant assignment" warning
+because of all the false positives like this.  It mostly finds dead code
+but it also does find some bugs where we forget to check the error code
+or we use the wrong variable.
 
-> > > Isn't actual purpose to have trusted keys is to protect user-space
-> > > from access to kernel keys in plain format? Doesn't user mode helper
-> > > defeat that purpose in one way or another?
-> >
-> > Not really. CPU is in the user mode while running the code, but the
-> > code or the secure keydata being is not available to the 'normal'
-> > userspace. It's like microkernel service/driver this way. The usermode
-> > driver is part of the kernel image and it runs on top of a invisible
-> > rootfs.
->
-> Can you elaborate here with an example regarding how this user-mode
-> helper will securely communicate with a hardware based trust source
-> with other user-space processes denied access to that trust source?
+regards,
+dan carpenter
 
-The other user mode processes will never see the device node to open.
-There is none in existence for them; it only exists in the ramfs based
-root for the user mode helper.
-
-
---
-Janne
