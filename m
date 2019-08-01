@@ -2,299 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FB157E523
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 00:04:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 875ED7E531
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 00:06:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389324AbfHAWEB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 18:04:01 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:34261 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728559AbfHAWEA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 18:04:00 -0400
-Received: by mail-pl1-f195.google.com with SMTP id i2so32809622plt.1
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2019 15:04:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=O7hLnC+GOiCgk4z8TAevBK2YUS9V2gISweOdp52qemw=;
-        b=PS86srXDaP4fTTf+RUB3qrKPYKv5VVImbD5sr2kp3apOfNZ0eWIzFc0Mv0njZFxFih
-         kIDPoa29TcWLjeGb1zylTG9tEJhsGTACwRaj6SaDNKYuk/UKYaAaiJJjHkiQvrgHK+lH
-         RHGzZEyajD813os98uy8cLCgzhZFoWeYOIKZE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=O7hLnC+GOiCgk4z8TAevBK2YUS9V2gISweOdp52qemw=;
-        b=Wc/aP47D25Eiy7B0rp9lN16WaFVp99eSk61lUU4f28WB3YqztB4gyPKpvYbPwjJvtZ
-         jHhVZtSeYOfglZE2KBHjKcTsoObRC1R4tkHmhS1nTti9FdVE0jzIM9v5TNyI5Y9PReci
-         FrfEYflaQXp/E4+W8EckAwUCjOC3YYEasclOG5a0euaIgDFzuyBOTjIjHq0hUrWslNGw
-         iZyIFPctkmGhSHJNR7OPr6f6ugGYcpiGBu1damvuUzJ7x6BGXrrVFcDLw9YO1JzvDSZt
-         iZ4mfwFBC8UJ/aC5oxaZKn79r/44gnpxJOb643qQdE3mY4XTAVNtLF/kgkldjoP4ZBSM
-         uyOg==
-X-Gm-Message-State: APjAAAU0amkzuGnwiplj4AFwGVoz1AmKV9rwxfDCZUhmWZMBZy2/ulRt
-        1YLZGcxsFs84jIazSz2DUaGdGw==
-X-Google-Smtp-Source: APXvYqxQ7cTZ2SN8igestlUX5ILuYgeNHRyShGDtkVrlsOwVJu4l7U3wDMFfsEDwuJT3bLOSz/Aj3Q==
-X-Received: by 2002:a17:902:7288:: with SMTP id d8mr44455167pll.133.1564697039800;
-        Thu, 01 Aug 2019 15:03:59 -0700 (PDT)
-Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
-        by smtp.gmail.com with ESMTPSA id g2sm89824740pfb.95.2019.08.01.15.03.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 01 Aug 2019 15:03:59 -0700 (PDT)
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Heiko Stuebner <heiko@sntech.de>
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Douglas Anderson <dianders@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH] ARM: dts: rockchip: Add pin names for rk3288-veyron fievel
-Date:   Thu,  1 Aug 2019 15:03:54 -0700
-Message-Id: <20190801220354.142933-1-mka@chromium.org>
-X-Mailer: git-send-email 2.22.0.770.g0f2c4a37fd-goog
+        id S2389342AbfHAWG3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 18:06:29 -0400
+Received: from mga11.intel.com ([192.55.52.93]:49477 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727987AbfHAWG3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Aug 2019 18:06:29 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Aug 2019 15:06:29 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,335,1559545200"; 
+   d="scan'208";a="201443080"
+Received: from orsmsx101.amr.corp.intel.com ([10.22.225.128])
+  by fmsmga002.fm.intel.com with ESMTP; 01 Aug 2019 15:06:28 -0700
+Received: from orsmsx156.amr.corp.intel.com (10.22.240.22) by
+ ORSMSX101.amr.corp.intel.com (10.22.225.128) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Thu, 1 Aug 2019 15:06:28 -0700
+Received: from orsmsx104.amr.corp.intel.com ([169.254.4.30]) by
+ ORSMSX156.amr.corp.intel.com ([169.254.8.199]) with mapi id 14.03.0439.000;
+ Thu, 1 Aug 2019 15:06:28 -0700
+From:   "Luck, Tony" <tony.luck@intel.com>
+To:     Borislav Petkov <bp@alien8.de>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>
+CC:     Alexey Dobriyan <adobriyan@gmail.com>,
+        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Lin, Jing" <jing.lin@intel.com>, "x86@kernel.org" <x86@kernel.org>
+Subject: RE: [PATCH] x86/asm: Add support for MOVDIR64B instruction
+Thread-Topic: [PATCH] x86/asm: Add support for MOVDIR64B instruction
+Thread-Index: AQHVSKFvXgAMIWvJGESjDr+8j/kY7Kbms0iAgACAEACAAAJDAP//oxig
+Date:   Thu, 1 Aug 2019 22:06:27 +0000
+Message-ID: <3908561D78D1C84285E8C5FCA982C28F7EA0719C@ORSMSX104.amr.corp.intel.com>
+References: <20190801194348.GA6059@avx2>
+ <20190801194947.GA12033@agluck-desk2.amr.corp.intel.com>
+ <20190801202808.e2cqlqetixie4gcu@box> <20190801203614.GA16228@zn.tnic>
+In-Reply-To: <20190801203614.GA16228@zn.tnic>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMjgzOGIzZmEtMDVlMi00NWJiLTlkYmQtYjJjZDNmMThjYWNmIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoid0h6aFM2RjhVMEMwMzVHXC81bEZaeTUxWWJrUXRCRkVLQjFiWUF0aytRYXpIR2RIeWkyZmFwSGxKK3owVmtMRGQifQ==
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.2.0.6
+dlp-reaction: no-action
+x-originating-ip: [10.22.254.138]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is like commit 0ca87bd5baa6 ("ARM: dts: rockchip: Add pin names
-for rk3288-veyron-jerry") and other similar commits, but for the
-veyron fievel board (and tiger, which includes the fievel .dtsi).
-
-Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
----
- arch/arm/boot/dts/rk3288-veyron-fievel.dts | 214 +++++++++++++++++++++
- 1 file changed, 214 insertions(+)
-
-diff --git a/arch/arm/boot/dts/rk3288-veyron-fievel.dts b/arch/arm/boot/dts/rk3288-veyron-fievel.dts
-index 696566f72d30..5c14a8fa6574 100644
---- a/arch/arm/boot/dts/rk3288-veyron-fievel.dts
-+++ b/arch/arm/boot/dts/rk3288-veyron-fievel.dts
-@@ -198,6 +198,220 @@
- 	pinctrl-0 = <&drv_5v>;
- };
- 
-+&gpio0 {
-+	gpio-line-names = "PMIC_SLEEP_AP",
-+			  "DDRIO_PWROFF",
-+			  "DDRIO_RETEN",
-+			  "TS3A227E_INT_L",
-+			  "PMIC_INT_L",
-+			  "PWR_KEY_L",
-+			  "HUB_USB1_nFALUT",
-+			  "PHY_PMEB",
-+
-+			  "PHY_INT",
-+			  "REC_MODE_L",
-+			  "OTP_OUT",
-+			  "",
-+			  "USB_OTG_POWER_EN",
-+			  "AP_WARM_RESET_H",
-+			  "USB_OTG_nFALUT",
-+			  "I2C0_SDA_PMIC",
-+
-+			  "I2C0_SCL_PMIC",
-+			  "DEVMODE_L",
-+			  "USB_INT";
-+};
-+
-+&gpio2 {
-+	gpio-line-names = "CONFIG0",
-+			  "CONFIG1",
-+			  "CONFIG2",
-+			  "",
-+			  "",
-+			  "",
-+			  "",
-+			  "CONFIG3",
-+
-+			  "",
-+			  "EMMC_RST_L",
-+			  "",
-+			  "",
-+			  "BL_PWR_EN",
-+			  "",
-+			  "TOUCH_INT",
-+			  "TOUCH_RST",
-+
-+			  "I2C3_SCL_TP",
-+			  "I2C3_SDA_TP";
-+};
-+
-+&gpio3 {
-+	gpio-line-names = "FLASH0_D0",
-+			  "FLASH0_D1",
-+			  "FLASH0_D2",
-+			  "FLASH0_D3",
-+			  "FLASH0_D4",
-+			  "FLASH0_D5",
-+			  "FLASH0_D6",
-+			  "FLASH0_D7",
-+
-+			  "VCC5V_GOOD_H",
-+			  "",
-+			  "",
-+			  "",
-+			  "",
-+			  "",
-+			  "",
-+			  "",
-+
-+			  "FLASH0_CS2/EMMC_CMD",
-+			  "",
-+			  "FLASH0_DQS/EMMC_CLKO",
-+			  "",
-+			  "",
-+			  "",
-+			  "",
-+			  "",
-+
-+			  "PHY_TXD2",
-+			  "PHY_TXD3",
-+			  "MAC_RXD2",
-+			  "MAC_RXD3",
-+			  "PHY_TXD0",
-+			  "PHY_TXD1",
-+			  "MAC_RXD0",
-+			  "MAC_RXD1";
-+};
-+
-+&gpio4 {
-+	gpio-line-names = "MAC_MDC",
-+			  "MAC_RXDV",
-+			  "MAC_RXER",
-+			  "MAC_CLK",
-+			  "PHY_TXEN",
-+			  "MAC_MDIO",
-+			  "MAC_RXCLK",
-+			  "",
-+
-+			  "PHY_RST",
-+			  "PHY_TXCLK",
-+			  "",
-+			  "",
-+			  "",
-+			  "",
-+			  "",
-+			  "",
-+
-+			  "UART0_RXD",
-+			  "UART0_TXD",
-+			  "UART0_CTS_L",
-+			  "UART0_RTS_L",
-+			  "SDIO0_D0",
-+			  "SDIO0_D1",
-+			  "SDIO0_D2",
-+			  "SDIO0_D3",
-+
-+			  "SDIO0_CMD",
-+			  "SDIO0_CLK",
-+			  "BT_DEV_WAKE",
-+			  "",
-+			  "WIFI_ENABLE_H",
-+			  "BT_ENABLE_L",
-+			  "WIFI_HOST_WAKE",
-+			  "BT_HOST_WAKE";
-+};
-+
-+&gpio5 {
-+	gpio-line-names = "",
-+			  "",
-+			  "",
-+			  "",
-+			  "",
-+			  "",
-+			  "",
-+			  "",
-+
-+			  "",
-+			  "",
-+			  "",
-+			  "",
-+			  "USB_OTG_CTL1",
-+			  "HUB_USB2_CTL1",
-+			  "HUB_USB2_PWR_EN",
-+			  "HUB_USB_ILIM_SEL",
-+
-+			  "USB_OTG_STATUS_L",
-+			  "HUB_USB1_CTL1",
-+			  "HUB_USB1_PWR_EN",
-+			  "VCC50_HDMI_EN";
-+};
-+
-+&gpio6 {
-+	gpio-line-names = "I2S0_SCLK",
-+			  "I2S0_LRCK_RX",
-+			  "I2S0_LRCK_TX",
-+			  "I2S0_SDI",
-+			  "I2S0_SDO0",
-+			  "HP_DET_H",
-+			  "",
-+			  "INT_CODEC",
-+
-+			  "I2S0_CLK",
-+			  "I2C2_SDA",
-+			  "I2C2_SCL",
-+			  "MICDET",
-+			  "",
-+			  "",
-+			  "",
-+			  "",
-+
-+			  "HUB_USB2_nFALUT",
-+			  "USB_OTG_ILIM_SEL";
-+};
-+
-+&gpio7 {
-+	gpio-line-names = "LCD_BL_PWM",
-+			  "PWM_LOG",
-+			  "BL_EN",
-+			  "PWR_LED1",
-+			  "TPM_INT_H",
-+			  "SPK_ON",
-+			  "FW_WP_AP",
-+			  "",
-+
-+			  "CPU_NMI",
-+			  "DVSOK",
-+			  "",
-+			  "EDP_HPD",
-+			  "DVS1",
-+			  "",
-+			  "LCD_EN",
-+			  "DVS2",
-+
-+			  "HDMI_CEC",
-+			  "I2C4_SDA",
-+			  "I2C4_SCL",
-+			  "I2C5_SDA_HDMI",
-+			  "I2C5_SCL_HDMI",
-+			  "5V_DRV",
-+			  "UART2_RXD",
-+			  "UART2_TXD";
-+};
-+
-+&gpio8 {
-+	gpio-line-names = "RAM_ID0",
-+			  "RAM_ID1",
-+			  "RAM_ID2",
-+			  "RAM_ID3",
-+			  "I2C1_SDA_TPM",
-+			  "I2C1_SCL_TPM",
-+			  "SPI2_CLK",
-+			  "SPI2_CS0",
-+
-+			  "SPI2_RXD",
-+			  "SPI2_TXD";
-+};
-+
- &pinctrl {
- 	pinctrl-names = "default", "sleep";
- 	pinctrl-0 = <
--- 
-2.22.0.770.g0f2c4a37fd-goog
-
+PiBJIHRoaW5rIFRvbnkncyBpbiB0aGUgcmlnaHQgZGlyZWN0aW9uLiBXZSBhbHJlYWR5IGRvIGRz
+dCAic2l6aW5nIiBsaWtlDQo+IHRoYXQgZm9yIHRoZSBjb21waWxlciBpbiBjbHdiKCkuDQoNClRo
+ZSBjbHdiIGNhc2UgZG9lcyBsb29rIGxpa2Ugd2hhdCB3ZSB3YW50IGZvciBtb3ZkaXI2NGIoKS4N
+Cg0KQnV0IGlzIGl0IHJpZ2h0IGZvciBjbHdiKCkgLi4uIHRoYXQgZG9lc24ndCBtb2RpZnkgYW55
+dGhpbmcsIGp1c3QgcHVzaGVzDQp0aGluZ3MgZnJvbSBjYWNoZSB0byBtZW1vcnkuIFNvIHdoeSBp
+cyBpdCB1c2luZyAiK20iPw0KDQotVG9ueQ0K
