@@ -2,93 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CBB717D9BD
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 12:57:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BF35E7D9A6
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 12:51:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731281AbfHAK5W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 06:57:22 -0400
-Received: from 11.mo6.mail-out.ovh.net ([188.165.38.119]:54651 "EHLO
-        11.mo6.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726783AbfHAK5V (ORCPT
+        id S1731169AbfHAKvd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 06:51:33 -0400
+Received: from charlotte.tuxdriver.com ([70.61.120.58]:50262 "EHLO
+        smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727506AbfHAKvd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 06:57:21 -0400
-X-Greylist: delayed 3599 seconds by postgrey-1.27 at vger.kernel.org; Thu, 01 Aug 2019 06:57:21 EDT
-Received: from player778.ha.ovh.net (unknown [10.108.35.95])
-        by mo6.mail-out.ovh.net (Postfix) with ESMTP id 0CCC21D1F9D
-        for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2019 11:41:43 +0200 (CEST)
-Received: from kaod.org (lns-bzn-46-82-253-208-248.adsl.proxad.net [82.253.208.248])
-        (Authenticated sender: groug@kaod.org)
-        by player778.ha.ovh.net (Postfix) with ESMTPSA id 5D8AE873BBDD;
-        Thu,  1 Aug 2019 09:41:33 +0000 (UTC)
-Date:   Thu, 1 Aug 2019 11:41:32 +0200
-From:   Greg Kurz <groug@kaod.org>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au,
-        allison@lohutok.net, tglx@linutronix.de, clg@kaod.org,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 2/2] powerpc/xive: Add a check for memory allocation
- failure
-Message-ID: <20190801114132.4c1db5be@bahia.lan>
-In-Reply-To: <cc53462734dfeaf15b6bad0e626b483de18656b4.1564647619.git.christophe.jaillet@wanadoo.fr>
-References: <cover.1564647619.git.christophe.jaillet@wanadoo.fr>
-        <cc53462734dfeaf15b6bad0e626b483de18656b4.1564647619.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Thu, 1 Aug 2019 06:51:33 -0400
+Received: from cpe-2606-a000-111b-6140-0-0-0-162e.dyn6.twc.com ([2606:a000:111b:6140::162e] helo=localhost)
+        by smtp.tuxdriver.com with esmtpsa (TLSv1:AES256-SHA:256)
+        (Exim 4.63)
+        (envelope-from <nhorman@tuxdriver.com>)
+        id 1ht8g4-0004gS-IT; Thu, 01 Aug 2019 06:51:27 -0400
+Date:   Thu, 1 Aug 2019 06:50:51 -0400
+From:   Neil Horman <nhorman@tuxdriver.com>
+To:     Joe Perches <joe@perches.com>
+Cc:     Vlad Yasevich <vyasevich@gmail.com>,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-sctp@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: sctp: Rename fallthrough label to unhandled
+Message-ID: <20190801105051.GA11487@hmswarspite.think-freely.org>
+References: <e0dd3af448e38e342c1ac6e7c0c802696eb77fd6.1564549413.git.joe@perches.com>
+ <20190731111932.GA9823@hmswarspite.think-freely.org>
+ <eac3fe457d553a2b366e1c1898d47ae8c048087c.camel@perches.com>
+ <20190731121646.GD9823@hmswarspite.think-freely.org>
+ <b93bbb17b407e27bb1dc196af84e4f289d9dfd93.camel@perches.com>
+ <20190731205804.GE9823@hmswarspite.think-freely.org>
+ <d68403ce9f7e8a68fff09d6b17e5d1327eb1e12d.camel@perches.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Ovh-Tracer-Id: 12958826454390118683
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeduvddrleejgddujecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d68403ce9f7e8a68fff09d6b17e5d1327eb1e12d.camel@perches.com>
+User-Agent: Mutt/1.12.0 (2019-05-25)
+X-Spam-Score: -2.9 (--)
+X-Spam-Status: No
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu,  1 Aug 2019 10:32:42 +0200
-Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
-
-> The result of this kzalloc is not checked. Add a check and corresponding
-> error handling code.
+On Wed, Jul 31, 2019 at 03:23:46PM -0700, Joe Perches wrote:
+> On Wed, 2019-07-31 at 16:58 -0400, Neil Horman wrote:
+> > On Wed, Jul 31, 2019 at 09:35:31AM -0700, Joe Perches wrote:
+> > > On Wed, 2019-07-31 at 08:16 -0400, Neil Horman wrote:
+> > > > On Wed, Jul 31, 2019 at 04:32:43AM -0700, Joe Perches wrote:
+> > > > > On Wed, 2019-07-31 at 07:19 -0400, Neil Horman wrote:
+> > > > > > On Tue, Jul 30, 2019 at 10:04:37PM -0700, Joe Perches wrote:
+> > > > > > > fallthrough may become a pseudo reserved keyword so this only use of
+> > > > > > > fallthrough is better renamed to allow it.
+> > > > > > > 
+> > > > > > > Signed-off-by: Joe Perches <joe@perches.com>
+> > > > > > Are you referring to the __attribute__((fallthrough)) statement that gcc
+> > > > > > supports?  If so the compiler should by all rights be able to differentiate
+> > > > > > between a null statement attribute and a explicit goto and label without the
+> > > > > > need for renaming here.  Or are you referring to something else?
+> > > > > 
+> > > > > Hi.
+> > > > > 
+> > > > > I sent after this a patch that adds
+> > > > > 
+> > > > > # define fallthrough                    __attribute__((__fallthrough__))
+> > > > > 
+> > > > > https://lore.kernel.org/patchwork/patch/1108577/
+> > > > > 
+> > > > > So this rename is a prerequisite to adding this #define.
+> > > > > 
+> > > > why not just define __fallthrough instead, like we do for all the other
+> > > > attributes we alias (i.e. __read_mostly, __protected_by, __unused, __exception,
+> > > > etc)
+> > > 
+> > > Because it's not as intelligible when used as a statement.
+> > I think thats somewhat debatable.  __fallthrough to me looks like an internal
+> > macro, whereas fallthrough looks like a comment someone forgot to /* */
 > 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-
-Reviewed-by: Greg Kurz <groug@kaod.org>
-
-> Note that 'xive_irq_bitmap_add()' failures are not handled in
-> 'xive_spapr_init()'
-> I guess that it is not really an issue. This function is _init, so if a
-> memory allocation occures here, it is likely that the system will
-> already be in bad shape.
-
-Hmm not sure... The allocation could also fail if the "ibm,xive-lisn-ranges"
-property contains an insanely big range, eg. count == 1 << 31. The system isn't
-necessarily in bad shape in this case, but XIVE is definitely unusable and
-we should let a chance to the kernel to switch to XICS in this case.
-
-I guess it is worth adding proper error handling in xive_spapr_init() as well.
-
-> Anyway, the check added here would at least keep the data linked in
-> 'xive_irq_bitmaps' usable.
-> ---
->  arch/powerpc/sysdev/xive/spapr.c | 4 ++++
->  1 file changed, 4 insertions(+)
 > 
-> diff --git a/arch/powerpc/sysdev/xive/spapr.c b/arch/powerpc/sysdev/xive/spapr.c
-> index b4f5eb9e0f82..52198131c75e 100644
-> --- a/arch/powerpc/sysdev/xive/spapr.c
-> +++ b/arch/powerpc/sysdev/xive/spapr.c
-> @@ -53,6 +53,10 @@ static int xive_irq_bitmap_add(int base, int count)
->  	xibm->base = base;
->  	xibm->count = count;
->  	xibm->bitmap = kzalloc(xibm->count, GFP_KERNEL);
-> +	if (!xibm->bitmap) {
-> +		kfree(xibm);
-> +		return -ENOMEM;
-> +	}
->  	list_add(&xibm->list, &xive_irq_bitmaps);
->  
->  	pr_info("Using IRQ range [%x-%x]", xibm->base,
+> I'd rather see:
+> 
+> 	switch (foo) {
+> 	case FOO:
+> 		bar |= baz;
+> 		fallthrough;
+> 	case BAR:
+> 		bar |= qux;
+> 		break;
+> 	default:
+> 		error();
+> 	}
+> 
+> than
+> 
+> 	switch (foo) {
+> 	case FOO:
+> 		bar |= baz;
+> 		__fallthrough;
+> 	case BAR:
+> 		bar |= qux;
+> 		break;
+> 	default:
+> 		error();
+> 	}
+> 
+> or esoecially
+> 
+> 	switch (foo) {
+> 	case FOO:
+> 		bar |= baz;
+> 		/* fallthrough
+> */;
+> 	case BAR:
+> 		bar |= qux;
+> 		break;
+> 	default:
+> 		error();
+> 	}
+> 
+> but <shrug>, bikeshed ahoy!...
+You can say that if you want, but you made the point that your think the macro
+as you have written is more readable.  You example illustrates though that /*
+fallthrough */ is a pretty common comment, and not prefixing it makes it look
+like someone didn't add a comment that they meant to.  The __ prefix is standard
+practice for defining macros to attributes (212 instances of it by my count).  I
+don't mind rewriting the goto labels at all, but I think consistency is
+valuable.
 
+Neil
+
+> 
+> 
+> 
