@@ -2,87 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D4DFC7DAFE
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 14:12:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D45587DB06
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 14:12:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729682AbfHAMLt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 08:11:49 -0400
-Received: from foss.arm.com ([217.140.110.172]:34840 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728592AbfHAMLs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 08:11:48 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B3A191570;
-        Thu,  1 Aug 2019 05:11:47 -0700 (PDT)
-Received: from [10.1.194.48] (e123572-lin.cambridge.arm.com [10.1.194.48])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3A4393F575;
-        Thu,  1 Aug 2019 05:11:42 -0700 (PDT)
-Subject: Re: [PATCH v19 00/15] arm64: untag user pointers passed to the kernel
-To:     Dave Hansen <dave.hansen@intel.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, linux-rdma@vger.kernel.org,
-        linux-media@vger.kernel.org, kvm@vger.kernel.org,
-        linux-kselftest@vger.kernel.org
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Yishai Hadas <yishaih@mellanox.com>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        Alexander Deucher <Alexander.Deucher@amd.com>,
-        Christian Koenig <Christian.Koenig@amd.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Jens Wiklander <jens.wiklander@linaro.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Khalid Aziz <khalid.aziz@oracle.com>, enh <enh@google.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Evgeniy Stepanov <eugenis@google.com>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Szabolcs Nagy <Szabolcs.Nagy@arm.com>
-References: <cover.1563904656.git.andreyknvl@google.com>
- <8c618cc9-ae68-9769-c5bb-67f1295abc4e@intel.com>
-From:   Kevin Brodsky <kevin.brodsky@arm.com>
-Message-ID: <13b4cf53-3ecb-f7e7-b504-d77af15d77aa@arm.com>
-Date:   Thu, 1 Aug 2019 13:11:40 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <8c618cc9-ae68-9769-c5bb-67f1295abc4e@intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-GB
+        id S1729895AbfHAMMH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 08:12:07 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:37740 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728060AbfHAMMG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Aug 2019 08:12:06 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 0635B60E40; Thu,  1 Aug 2019 12:12:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1564661526;
+        bh=/Uh0/D+m6kv8+YXdEyt+v1OkXzm8Qmlq1aKxE0Tu1jM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=kJGfQtm2ju01E9JUxixAeNcBZaTChFZb0F+ZXb6OmSv6fSBYYCTyu6XhuPdtQfRd7
+         3TNe7iZwbY4in6sKzI0u9TPRks832x8Bo89M5yKucypNPZUerCknExileJUWzKFjKa
+         V/IDMn3jsiQ/CkM11/fzFLnVD4ETOAlKBtDhrLsM=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
+        version=3.4.0
+Received: from blr-ubuntu-41.ap.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 2AED860A97;
+        Thu,  1 Aug 2019 12:12:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1564661525;
+        bh=/Uh0/D+m6kv8+YXdEyt+v1OkXzm8Qmlq1aKxE0Tu1jM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=SaorWJN2VqM3pGx1QTKwRzujfhsCyHXwPgUokmyAfnGoUzf1mrXM+j8s+6TU+wcX+
+         qAqnFVma+W6I7wMzSzJOxwMCT5+Ttka8O3SzOzmxBwLIaBLxEIHCcpRc95IiPkhaXF
+         8FJIA+3M9y9KzfNrbGMNcqmVG1YZNi1pO/wsQgzE=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2AED860A97
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
+From:   Vivek Gautam <vivek.gautam@codeaurora.org>
+To:     agross@kernel.org, gregkh@linuxfoundation.org,
+        linux-arm-msm@vger.kernel.org, linux-serial@vger.kernel.org
+Cc:     jslaby@suse.com, linux-kernel@vger.kernel.org,
+        bjorn.andersson@linaro.org,
+        Vivek Gautam <vivek.gautam@codeaurora.org>
+Subject: [PATCH 1/1] tty: serial: qcom_geni_serial: Update the oversampling rate
+Date:   Thu,  1 Aug 2019 17:41:53 +0530
+Message-Id: <20190801121153.10613-1-vivek.gautam@codeaurora.org>
+X-Mailer: git-send-email 2.16.1.72.g5be1f00a9a70
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 31/07/2019 17:50, Dave Hansen wrote:
-> On 7/23/19 10:58 AM, Andrey Konovalov wrote:
->> The mmap and mremap (only new_addr) syscalls do not currently accept
->> tagged addresses. Architectures may interpret the tag as a background
->> colour for the corresponding vma.
-> What the heck is a "background colour"? :)
+For QUP IP versions 2.5 and above the oversampling rate is halved
+from 32 to 16. Update this rate after reading hardware version
+register, so that the clock divider value is correctly set to
+achieve required baud rate.
 
-Good point, this is some jargon that we started using for MTE, the idea being that 
-the kernel could set a tag value (specified during mmap()) as "background colour" for 
-anonymous pages allocated in that range.
+Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+---
+ drivers/tty/serial/qcom_geni_serial.c | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
-Anyway, this patch series is not about MTE. Andrey, for v20 (if any), I think it's 
-best to drop this last sentence to avoid any confusion.
+diff --git a/drivers/tty/serial/qcom_geni_serial.c b/drivers/tty/serial/qcom_geni_serial.c
+index 35e5f9c5d5be..318f811585cc 100644
+--- a/drivers/tty/serial/qcom_geni_serial.c
++++ b/drivers/tty/serial/qcom_geni_serial.c
+@@ -920,12 +920,13 @@ static unsigned long get_clk_cfg(unsigned long clk_freq)
+ 	return 0;
+ }
+ 
+-static unsigned long get_clk_div_rate(unsigned int baud, unsigned int *clk_div)
++static unsigned long get_clk_div_rate(unsigned int baud,
++			unsigned int sampling_rate, unsigned int *clk_div)
+ {
+ 	unsigned long ser_clk;
+ 	unsigned long desired_clk;
+ 
+-	desired_clk = baud * UART_OVERSAMPLING;
++	desired_clk = baud * sampling_rate;
+ 	ser_clk = get_clk_cfg(desired_clk);
+ 	if (!ser_clk) {
+ 		pr_err("%s: Can't find matching DFS entry for baud %d\n",
+@@ -951,12 +952,20 @@ static void qcom_geni_serial_set_termios(struct uart_port *uport,
+ 	u32 ser_clk_cfg;
+ 	struct qcom_geni_serial_port *port = to_dev_port(uport, uport);
+ 	unsigned long clk_rate;
++	u32 ver, sampling_rate;
+ 
+ 	qcom_geni_serial_stop_rx(uport);
+ 	/* baud rate */
+ 	baud = uart_get_baud_rate(uport, termios, old, 300, 4000000);
+ 	port->baud = baud;
+-	clk_rate = get_clk_div_rate(baud, &clk_div);
++
++	sampling_rate = UART_OVERSAMPLING;
++	/* Sampling rate is halved for IP versions >= 2.5 */
++	ver = geni_se_get_qup_hw_version(&port->se);
++	if (GENI_SE_VERSION_MAJOR(ver) >= 2 && GENI_SE_VERSION_MINOR(ver) >= 5)
++		sampling_rate /= 2;
++
++	clk_rate = get_clk_div_rate(baud, sampling_rate, &clk_div);
+ 	if (!clk_rate)
+ 		goto out_restart_rx;
+ 
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
 
-Kevin
