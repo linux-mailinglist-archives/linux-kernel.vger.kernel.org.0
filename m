@@ -2,154 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B05D7E6A6
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 01:46:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 936B87E6C4
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 01:46:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403836AbfHAXqG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 19:46:06 -0400
-Received: from mail-vk1-f193.google.com ([209.85.221.193]:43957 "EHLO
-        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390411AbfHAXqE (ORCPT
+        id S2390468AbfHAXqq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 19:46:46 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:39215 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732080AbfHAXqn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 19:46:04 -0400
-Received: by mail-vk1-f193.google.com with SMTP id b200so14985502vkf.10;
-        Thu, 01 Aug 2019 16:46:03 -0700 (PDT)
+        Thu, 1 Aug 2019 19:46:43 -0400
+Received: by mail-wr1-f65.google.com with SMTP id x4so22145690wrt.6;
+        Thu, 01 Aug 2019 16:46:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=PhuFM2pdRnW2kX108enkfIuXqe+2wuG+ARNOH5L+Sds=;
-        b=va1tKdssM+gKOUvvNunrZBekJn5ccALnpSDxSI76pAmLOUxB0xAuqPlAx8pHMrFYRn
-         AEXjxmVNbmQc86qbUbqlRbQAvSU2lupPHjr/iMKzTyU5QuE+zV5BV1zGRE5mXtWtXa9I
-         AK84q1HiHlBCExd9gbz/p/lhTOH5qLzbMG4s6JUjR/8xndXPuxdZ0Z9XNDaxO8e6tYfF
-         wYxF5ToKRSCB51NZjKea552bepCsYNBj8WlYGWuLzC3FeUjRogM5h5yz35xfnuGn8kzY
-         7kRLDObIkjHmVOykGk1qg8d7BHDHdflHFdRCydlJxiYIl9dyuvFs7/+rtRUjZ+P2sh5x
-         aMWw==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=QeFuBP9JKrZCeHFf1rpKgsYUuBTv3R+2TjgNB/pftBU=;
+        b=BsQiRLSFEzFxFkoLp6ctIPQIKe1NJLA6ZKb8oqi3jFnLK8ustlV+YGmw4+9Q2iibOG
+         6XZmONx2pX/bs7wwnxinAObrKqMQ4jtTERHbGL4bDjkvpM+gDc+Jp5j8hQtxh+GTf7yT
+         dDFDfpWlaIF095ENGwNtT7Pfzpy/278F/X63j0ylPyerHXxsTOJ97h+GavPDtAdIGNa7
+         Hsz/l4M4z/737Fnw4SecAXf5Ost/qc2wNNbcRxwYHa1MsQ0dc7XrXVXd8oMS1lLYLSIJ
+         BG0cPWp+sMGjnRVmlzSSbvBwb8oyCPFzCdTgYDFP4n/upnZH04IyjdIWtEB9o/fsWohl
+         zL0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PhuFM2pdRnW2kX108enkfIuXqe+2wuG+ARNOH5L+Sds=;
-        b=rAlYUpGu00tMr2u+qt7X7B7T8wTCw7fvOhZVZ8uwZr/t62W9STBABpzf8A3XqEESOo
-         UTCDGCA02ZLsxoFXh8kGUdgiAkBwGwYGgiGBXz4QMyJBEr9Z70k1X0T73ArDjWa5Thxz
-         ZeUZtqIYWTVDrztO39CczYsQ++3g0yazblNaLYeb3gDjg2jtm401DKZUpbDAjUw+O+mb
-         5Aru1jxfnOOLm5YnA1ZQAIt/LLQCFz4xE1ZGumQspBFNmKsiqKwDNP2e4oRH8p1ctwft
-         lsPuI0ggxzGHubDrWchjpbdKBhWjgFaOp3jVK9mH5MMSdwnK7ndpW7FN61UR6Hp8S0qe
-         Juwg==
-X-Gm-Message-State: APjAAAWAGId0+d5WN8cVE2EWLtF0A6Y5eXJuczUAWqbcaorJOt1y9BcU
-        kCzwbjab43UrRShE1Pn1/4FWvYBhGUPuygAJ9bc=
-X-Google-Smtp-Source: APXvYqz7HVl1IX60b6WZ5btm0hhToTNvYT8T77SPWWR/N2VB8mJecpIuoTni0zoAIqdXtxl+FsDlqejJHrdMLaN9vcg=
-X-Received: by 2002:a1f:4107:: with SMTP id o7mr52276511vka.34.1564703163073;
- Thu, 01 Aug 2019 16:46:03 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=QeFuBP9JKrZCeHFf1rpKgsYUuBTv3R+2TjgNB/pftBU=;
+        b=T4OZ/RXzvN133OPCZLu+hlOCjrlJFZK6MZdSBE7L7IHaajGDE5SPPTDQvTsuOBsYvy
+         c7rqCnIPRbV5zgeg7lDuBvPi7KKosLPPx6kuzE82uThYjEpAjqw+vEzkXXveO4d9SuQu
+         07VTtP76+3Bv1VnI5UUQx0yeAn+4KM8tdpH8sqnqA4vpWEcm0FQuah5Q7C9iaV0ICeYe
+         SNnxpL6cvipqkr5yk8UAW8ER6PC7ZWLg0KrEUrEGRqSl7hr0Fsp3zxMbZBY7V7U6u/ud
+         nuDGuRfTtBTYGJo7V1Ww0q+B7EBYqitWFYbHV8/F0A0BC89AE/P+oLX+Dw67ABrmqLM5
+         4rGg==
+X-Gm-Message-State: APjAAAWXvXh+qaHOn7sEEzhkKveefdaMMAvt8EfUORE77SyqiFnihUNI
+        yznaJpzc1R6B6qLtdzC+708=
+X-Google-Smtp-Source: APXvYqzJCtFYQPVbIz7G6pETEDSPiYeHoAs11jF1K3cM6cXdE9D49HduHslWE4zb3ftxaZI90sRQWQ==
+X-Received: by 2002:adf:e483:: with SMTP id i3mr13171471wrm.210.1564703201468;
+        Thu, 01 Aug 2019 16:46:41 -0700 (PDT)
+Received: from [10.83.36.153] ([217.173.96.166])
+        by smtp.gmail.com with ESMTPSA id o3sm60526711wrs.59.2019.08.01.16.46.40
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Thu, 01 Aug 2019 16:46:40 -0700 (PDT)
+Subject: Re: [PATCHv5 01/37] ns: Introduce Time Namespace
+To:     Andy Lutomirski <luto@kernel.org>, Dmitry Safonov <dima@arista.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Andrei Vagin <avagin@openvz.org>,
+        Adrian Reber <adrian@lisas.de>, Arnd Bergmann <arnd@arndb.de>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Jann Horn <jannh@google.com>, Jeff Dike <jdike@addtoit.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        criu@openvz.org, Linux API <linux-api@vger.kernel.org>,
+        X86 ML <x86@kernel.org>
+References: <20190729215758.28405-1-dima@arista.com>
+ <20190729215758.28405-2-dima@arista.com>
+ <CALCETrWHEcaG9gZe6ACt5H1H+P8D0RobrJ_bf4Wf9ts40NMM9w@mail.gmail.com>
+From:   Dmitry Safonov <0x7f454c46@gmail.com>
+Message-ID: <4d8d8489-28c8-259f-23a9-ed2b89699b73@gmail.com>
+Date:   Fri, 2 Aug 2019 00:46:39 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-References: <20190801220216.15323-1-lyude@redhat.com>
-In-Reply-To: <20190801220216.15323-1-lyude@redhat.com>
-From:   Ben Skeggs <skeggsb@gmail.com>
-Date:   Fri, 2 Aug 2019 09:45:52 +1000
-Message-ID: <CACAvsv7sBPrC-6yxqKCT=H8FhVYvUSoN2GEqWrcfkAtXZmXprw@mail.gmail.com>
-Subject: Re: [Nouveau] [PATCH] drm/nouveau: Only release VCPI slots on mode changes
-To:     Lyude Paul <lyude@redhat.com>
-Cc:     ML nouveau <nouveau@lists.freedesktop.org>,
-        David Airlie <airlied@linux.ie>,
-        ML dri-devel <dri-devel@lists.freedesktop.org>,
-        stable@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jerry Zuo <Jerry.Zuo@amd.com>, Ben Skeggs <bskeggs@redhat.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@redhat.com>,
-        Harry Wentland <harry.wentland@amd.com>,
-        Juston Li <juston.li@intel.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CALCETrWHEcaG9gZe6ACt5H1H+P8D0RobrJ_bf4Wf9ts40NMM9w@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2 Aug 2019 at 08:02, Lyude Paul <lyude@redhat.com> wrote:
->
-> Looks like a regression got introduced into nv50_mstc_atomic_check()
-> that somehow didn't get found until now. If userspace changes
-> crtc_state->active to false but leaves the CRTC enabled, we end up
-> calling drm_dp_atomic_find_vcpi_slots() using the PBN calculated in
-> asyh->dp.pbn. However, if the display is inactive we end up calculating
-> a PBN of 0, which inadvertently causes us to have an allocation of 0.
-> From there, if userspace then disables the CRTC afterwards we end up
-> accidentally attempting to free the VCPI twice:
->
-> WARNING: CPU: 0 PID: 1484 at drivers/gpu/drm/drm_dp_mst_topology.c:3336
-> drm_dp_atomic_release_vcpi_slots+0x87/0xb0 [drm_kms_helper]
-> RIP: 0010:drm_dp_atomic_release_vcpi_slots+0x87/0xb0 [drm_kms_helper]
-> Call Trace:
->  drm_atomic_helper_check_modeset+0x3f3/0xa60 [drm_kms_helper]
->  ? drm_atomic_check_only+0x43/0x780 [drm]
->  drm_atomic_helper_check+0x15/0x90 [drm_kms_helper]
->  nv50_disp_atomic_check+0x83/0x1d0 [nouveau]
->  drm_atomic_check_only+0x54d/0x780 [drm]
->  ? drm_atomic_set_crtc_for_connector+0xec/0x100 [drm]
->  drm_atomic_commit+0x13/0x50 [drm]
->  drm_atomic_helper_set_config+0x81/0x90 [drm_kms_helper]
->  drm_mode_setcrtc+0x194/0x6a0 [drm]
->  ? vprintk_emit+0x16a/0x230
->  ? drm_ioctl+0x163/0x390 [drm]
->  ? drm_mode_getcrtc+0x180/0x180 [drm]
->  drm_ioctl_kernel+0xaa/0xf0 [drm]
->  drm_ioctl+0x208/0x390 [drm]
->  ? drm_mode_getcrtc+0x180/0x180 [drm]
->  nouveau_drm_ioctl+0x63/0xb0 [nouveau]
->  do_vfs_ioctl+0x405/0x660
->  ? recalc_sigpending+0x17/0x50
->  ? _copy_from_user+0x37/0x60
->  ksys_ioctl+0x5e/0x90
->  ? exit_to_usermode_loop+0x92/0xe0
->  __x64_sys_ioctl+0x16/0x20
->  do_syscall_64+0x59/0x190
->  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> WARNING: CPU: 0 PID: 1484 at drivers/gpu/drm/drm_dp_mst_topology.c:3336
-> drm_dp_atomic_release_vcpi_slots+0x87/0xb0 [drm_kms_helper]
-> ---[ end trace 4c395c0c51b1f88d ]---
-> [drm:drm_dp_atomic_release_vcpi_slots [drm_kms_helper]] *ERROR* no VCPI for
-> [MST PORT:00000000e288eb7d] found in mst state 000000008e642070
->
-> So, fix this by doing what we probably should have done from the start: only
-> call drm_dp_atomic_find_vcpi_slots() when crtc_state->mode_changed is set, so
-> that VCPI allocations remain for as long as the CRTC is enabled.
->
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> Fixes: 232c9eec417a ("drm/nouveau: Use atomic VCPI helpers for MST")
-> Cc: Lyude Paul <lyude@redhat.com>
-> Cc: Ben Skeggs <bskeggs@redhat.com>
-> Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-> Cc: David Airlie <airlied@redhat.com>
-> Cc: Jerry Zuo <Jerry.Zuo@amd.com>
-> Cc: Harry Wentland <harry.wentland@amd.com>
-> Cc: Juston Li <juston.li@intel.com>
-> Cc: Karol Herbst <karolherbst@gmail.com>
-> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Cc: Ilia Mirkin <imirkin@alum.mit.edu>
-> Cc: <stable@vger.kernel.org> # v5.1+
-Acked-by: Ben Skeggs <bskeggs@redhat.com>
+Hi Andy,
 
-> ---
->  drivers/gpu/drm/nouveau/dispnv50/disp.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/nouveau/dispnv50/disp.c b/drivers/gpu/drm/nouveau/dispnv50/disp.c
-> index 8497768f1b41..126703816794 100644
-> --- a/drivers/gpu/drm/nouveau/dispnv50/disp.c
-> +++ b/drivers/gpu/drm/nouveau/dispnv50/disp.c
-> @@ -780,7 +780,7 @@ nv50_msto_atomic_check(struct drm_encoder *encoder,
->                         drm_dp_calc_pbn_mode(crtc_state->adjusted_mode.clock,
->                                              connector->display_info.bpc * 3);
->
-> -       if (drm_atomic_crtc_needs_modeset(crtc_state)) {
-> +       if (crtc_state->mode_changed) {
->                 slots = drm_dp_atomic_find_vcpi_slots(state, &mstm->mgr,
->                                                       mstc->port,
->                                                       asyh->dp.pbn);
-> --
-> 2.21.0
->
-> _______________________________________________
-> Nouveau mailing list
-> Nouveau@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/nouveau
+Thank you for the review,
+
+On 8/1/19 6:29 AM, Andy Lutomirski wrote:
+> On Mon, Jul 29, 2019 at 2:58 PM Dmitry Safonov <dima@arista.com> wrote:
+>>
+>> From: Andrei Vagin <avagin@openvz.org>
+>>
+>> Time Namespace isolates clock values.
+> 
+>> +static int timens_install(struct nsproxy *nsproxy, struct ns_common *new)
+>> +{
+>> +       struct time_namespace *ns = to_time_ns(new);
+>> +
+>> +       if (!thread_group_empty(current))
+>> +               return -EINVAL;
+> 
+> You also need to check for other users of the mm.
+
+Oops. It seems like, if the check was
+
+if (!current_is_single_threaded())
+    return -EUSERS;
+
+instead of thread_group_empty(current), it would address the concerns
+from 23/37 and 25/37 patches, too?
+
+> 
+>> +
+>> +       if (!ns_capable(ns->user_ns, CAP_SYS_ADMIN) ||
+>> +           !ns_capable(current_user_ns(), CAP_SYS_ADMIN))
+>> +               return -EPERM;
+>> +
+>> +       get_time_ns(ns);
+>> +       get_time_ns(ns);
+>> +       put_time_ns(nsproxy->time_ns);
+>> +       put_time_ns(nsproxy->time_ns_for_children);
+>> +       nsproxy->time_ns = ns;
+>> +       nsproxy->time_ns_for_children = ns;
+>> +       ns->initialized = true;
+> 
+> I really really wish that setns() took an explicit flag for "change
+> now" or "change for children", since the semantics are different.  Oh
+> well.
+> 
+
+Thanks,
+          Dmitry
