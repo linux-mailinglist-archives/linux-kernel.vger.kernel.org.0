@@ -2,136 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DA147DA05
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 13:10:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 896747DA0E
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 13:11:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729954AbfHALJ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 07:09:59 -0400
-Received: from smtp05.smtpout.orange.fr ([80.12.242.127]:23949 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726014AbfHALJ7 (ORCPT
+        id S1730399AbfHALLi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 07:11:38 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:41340 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726014AbfHALLi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 07:09:59 -0400
-Received: from localhost.localdomain ([176.167.121.156])
-        by mwinf5d09 with ME
-        id jn9q200093NZnML03n9qj6; Thu, 01 Aug 2019 13:09:56 +0200
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Thu, 01 Aug 2019 13:09:56 +0200
-X-ME-IP: 176.167.121.156
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au,
-        allison@lohutok.net, tglx@linutronix.de, clg@kaod.org,
-        groug@kaod.org
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] powerpc/xive: Add some error handling code to 'xive_spapr_init()'
-Date:   Thu,  1 Aug 2019 13:09:56 +0200
-Message-Id: <20190801110956.8517-1-christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.20.1
+        Thu, 1 Aug 2019 07:11:38 -0400
+Received: by mail-lj1-f195.google.com with SMTP id d24so68939362ljg.8;
+        Thu, 01 Aug 2019 04:11:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=K8e4hrDcsp4be0Ory1S+uKZbjey4PHhTQwgmYUnn3bQ=;
+        b=CJuAtUUyxHmGNcvqWCtDUZe66p46usUOJRNj1NMEyZzaJy1o5StfVJazYYI13FVMtW
+         MSt4uHOFmXbl7mp1p2I5BjFTdKoKAst0nCrWqXuUXCyk1olBcKyUIZTaBUTeNK6HIr+g
+         htwigO9x8s4cB5o79esjbE/MCuRp8svV2xX919qCjEa4hnde6M9ODfs1rdA2A8oLooqk
+         netQ/Olv9nCI+N/3oBpVBk+yCn+6YLiSyTfsEZIYbHj5I+W+xz9v9cDz00GXqpcZHOA0
+         U876fVhjeWW/PIixTRqfVjifAL7a4njO/d0n8IxeUsJNI1p11g8E/dO4UHUEpcDdyOuu
+         vMUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=K8e4hrDcsp4be0Ory1S+uKZbjey4PHhTQwgmYUnn3bQ=;
+        b=CmBsf8ov2NnTyN+8GwEpShUK/jwyZRICQjJBZ1kiXUwKiZZZHOW35UnnLdNr4HNhv/
+         KKceSgzVBUNlqeGvdRfLe8Gj8sX2IyKQUEeFhiVfEn2SACDg+8/Zudyj4VYCE0uX/BPV
+         HoNgjXJVpJS/xfNhl3KdRJ9EYMAn1j560eh8g83R1eycU+vEVQrb21K4oyxXzHLvhHx0
+         61eq9unhVvK2I2+TL3AVU7IkflpLEUq6mCbH2QPAsLDCvlNcOux/5kNGjVQ3tSpVfjGA
+         8DYwjsjaacUbMd5VcuN9HSLR3AiZlgTjlAC3MZROwWgP6BLRx42EBDvXmFFp3CqLG3nm
+         eRNg==
+X-Gm-Message-State: APjAAAVIkndf/ItsAzkkf2QMd40bDMGp7kd9t1BYqGPa3dqUnQVk9ggE
+        7ESWTW6zTpNQlJRhCKAMQynZ/4UO
+X-Google-Smtp-Source: APXvYqzkr+8EzGVav0VJvfDyIm0X2edu9GsTb/z7LUFnd/R5ZKRDADrd3k6/jDvjQlLNnNd9lQ8y1g==
+X-Received: by 2002:a2e:8802:: with SMTP id x2mr47065479ljh.200.1564657895466;
+        Thu, 01 Aug 2019 04:11:35 -0700 (PDT)
+Received: from [192.168.2.145] (ppp91-78-220-99.pppoe.mtu-net.ru. [91.78.220.99])
+        by smtp.googlemail.com with ESMTPSA id d21sm12194718lfc.73.2019.08.01.04.11.34
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 01 Aug 2019 04:11:34 -0700 (PDT)
+Subject: Re: [PATCH v9 01/15] clk: tegra20/30: Add custom EMC clock
+ implementation
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Joseph Lo <josephl@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190730165618.10122-1-digetx@gmail.com>
+ <20190730165618.10122-2-digetx@gmail.com>
+Message-ID: <ac9a29b2-d65e-9b20-ff47-c9e5eacae31b@gmail.com>
+Date:   Thu, 1 Aug 2019 14:10:38 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
+In-Reply-To: <20190730165618.10122-2-digetx@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-'xive_irq_bitmap_add()' can return -ENOMEM.
-In this case, we should free the memory already allocated and return
-'false' to the caller.
+30.07.2019 19:56, Dmitry Osipenko пишет:
+> A proper External Memory Controller clock rounding and parent selection
+> functionality is required by the EMC drivers, it is not available using
+> the generic clock implementation because only the Memory Controller driver
+> is aware of what clock rates are actually available for a particular
+> device. EMC drivers will have to register a Tegra-specific CLK-API
+> callback which will perform rounding of a requested rate. EMC clock users
+> won't be able to request EMC clock by getting -EPROBE_DEFER until EMC
+> driver is probed and the callback is set up.
+> 
+> The functionality is somewhat similar to the clk-emc.c which serves
+> Tegra124+ SoCs. The later HW generations support more parent clock sources
+> and the HW configuration / integration with the EMC drivers differs a tad
+> from the older gens, hence it's not really worth to try to squash
+> everything into a single source file.
+> 
+> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
 
-Also add an error path which undoes the 'tima = ioremap(...)'
+Hello Stephen and Michael,
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-NOT compile tested (I don't have a cross compiler and won't install one).
-So if some correction or improvement are needed, feel free to propose and
-commit it directly.
----
- arch/powerpc/sysdev/xive/spapr.c | 36 +++++++++++++++++++++++++-------
- 1 file changed, 28 insertions(+), 8 deletions(-)
-
-diff --git a/arch/powerpc/sysdev/xive/spapr.c b/arch/powerpc/sysdev/xive/spapr.c
-index 52198131c75e..b3ae0b76c433 100644
---- a/arch/powerpc/sysdev/xive/spapr.c
-+++ b/arch/powerpc/sysdev/xive/spapr.c
-@@ -64,6 +64,17 @@ static int xive_irq_bitmap_add(int base, int count)
- 	return 0;
- }
- 
-+static void xive_irq_bitmap_remove_all(void)
-+{
-+	struct xive_irq_bitmap *xibm, *tmp;
-+
-+	list_for_each_entry_safe(xibm, tmp, &xive_irq_bitmaps, list) {
-+		list_del(&xibm->list);
-+		kfree(xibm->bitmap);
-+		kfree(xibm);
-+	}
-+}
-+
- static int __xive_irq_bitmap_alloc(struct xive_irq_bitmap *xibm)
- {
- 	int irq;
-@@ -723,7 +734,7 @@ bool __init xive_spapr_init(void)
- 	u32 val;
- 	u32 len;
- 	const __be32 *reg;
--	int i;
-+	int i, err;
- 
- 	if (xive_spapr_disabled())
- 		return false;
-@@ -748,23 +759,26 @@ bool __init xive_spapr_init(void)
- 	}
- 
- 	if (!xive_get_max_prio(&max_prio))
--		return false;
-+		goto err_unmap;
- 
- 	/* Feed the IRQ number allocator with the ranges given in the DT */
- 	reg = of_get_property(np, "ibm,xive-lisn-ranges", &len);
- 	if (!reg) {
- 		pr_err("Failed to read 'ibm,xive-lisn-ranges' property\n");
--		return false;
-+		goto err_unmap;
- 	}
- 
- 	if (len % (2 * sizeof(u32)) != 0) {
- 		pr_err("invalid 'ibm,xive-lisn-ranges' property\n");
--		return false;
-+		goto err_unmap;
- 	}
- 
--	for (i = 0; i < len / (2 * sizeof(u32)); i++, reg += 2)
--		xive_irq_bitmap_add(be32_to_cpu(reg[0]),
--				    be32_to_cpu(reg[1]));
-+	for (i = 0; i < len / (2 * sizeof(u32)); i++, reg += 2) {
-+		err = xive_irq_bitmap_add(be32_to_cpu(reg[0]),
-+					  be32_to_cpu(reg[1]));
-+		if (err < 0)
-+			goto err_mem_free;
-+	}
- 
- 	/* Iterate the EQ sizes and pick one */
- 	of_property_for_each_u32(np, "ibm,xive-eq-sizes", prop, reg, val) {
-@@ -775,8 +789,14 @@ bool __init xive_spapr_init(void)
- 
- 	/* Initialize XIVE core with our backend */
- 	if (!xive_core_init(&xive_spapr_ops, tima, TM_QW1_OS, max_prio))
--		return false;
-+		goto err_mem_free;
- 
- 	pr_info("Using %dkB queues\n", 1 << (xive_queue_shift - 10));
- 	return true;
-+
-+err_mem_free:
-+	xive_irq_bitmap_remove_all();
-+err_unmap:
-+	iounmap(tima);
-+	return false;
- }
--- 
-2.20.1
-
+The clk-driver changes are quite solid now, could you please take a look
+at the relevant patches once again and give an ACK if everything is good
+to you?
