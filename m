@@ -2,65 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D3847DF8C
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 17:58:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E50B7DF93
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 17:59:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732357AbfHAP4f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 11:56:35 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:41040 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730216AbfHAP4f (ORCPT
+        id S1732452AbfHAP6x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 11:58:53 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:34981 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730581AbfHAP6w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 11:56:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=SE/8eGqfJXFHoRyVUxUskQ3HNtF1lZGN92qDzAmZU6k=; b=M+3MT2KhOqKNG0wszgkJTCK1C
-        FfiJ8Cov1zPjr5c4QOiivkOGHa3OB7l6npDxomp7gdTa/Qbhf70qm91Fqye9YOu/TxluvzBouD6VW
-        ujzPyT6idKjP6lkZMi7lvZ0+Hr3812qqDeBFpM+Hoy/sYsiwrNAQj2LqHuUf93sIEp3ivWC4y3eE3
-        2n+8xEc/08CPbq9Qpz166poJR8zczhTOHb6kDEZhy7Ie0JDwL3DhEgtsclrCXvn1MWvsKEMfArVcF
-        eXix41526drtK5FmM5akA3y41YuiW2ew3mGPl8vY+3JM030k6irxQcfsUtojeFwSsT1nCsiAdv8UB
-        U0Ae1ys4Q==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1htDRR-00008w-Kf; Thu, 01 Aug 2019 15:56:33 +0000
-Date:   Thu, 1 Aug 2019 08:56:33 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Atish Patra <atish.patra@wdc.com>
-Cc:     linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, Albert Ou <aou@eecs.berkeley.edu>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Yangtao Li <tiny.windzz@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Anup Patel <anup.patel@wdc.com>,
-        Johan Hovold <johan@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Gary Guo <gary@garyguo.net>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        linux-riscv@lists.infradead.org, Enrico Weigelt <info@metux.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Allison Randal <allison@lohutok.net>
-Subject: Re: [PATCH v3 4/5] RISC-V: Export few kernel symbols
-Message-ID: <20190801155633.GA366@infradead.org>
-References: <20190801005843.10343-1-atish.patra@wdc.com>
- <20190801005843.10343-5-atish.patra@wdc.com>
+        Thu, 1 Aug 2019 11:58:52 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x71FwBW3006205
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Thu, 1 Aug 2019 08:58:11 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x71FwBW3006205
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019071901; t=1564675092;
+        bh=Ds32z9DFn0egwHSquaeFfe86wEKuewaoNO6pP2d8jn8=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=nvF/OtFVDBcRXpwLBGCCp2D6cxrP3t7usN6d6LgwwQ9C9YDK936Um28+wqLaGXibn
+         3UG3pWboBf6fIo8uS6ITQy/OXsfml7pqdOf3imMVq/Jc4FtHSloxrGm63/pIsW0Aub
+         /f6hHK+VwCWkQzYKx4krMku1hJwI6d5042U2DyYt7JQeQ3N4Ut70Mt6SMWdkBmCfLo
+         9+bPEBIjFaaauOfbdKMvO898tKMMp71IVATI3WU2LqSAZnindQLyzBj6qdCQFJbIOc
+         RShWPSKrpmy541Z4zBPu4Tk9Eii3NSoy9jMnbLFVk+X9WWWFzjUa4JpwjCL61h8a+4
+         0GvLLstBwoBTg==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x71FwAjM006200;
+        Thu, 1 Aug 2019 08:58:10 -0700
+Date:   Thu, 1 Aug 2019 08:58:10 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Sebastian Andrzej Siewior <tipbot@zytor.com>
+Message-ID: <tip-876f28e7bdf152da7514a28c79f83e61e0c6d30e@git.kernel.org>
+Cc:     mingo@kernel.org, bigeasy@linutronix.de, peterz@infradead.org,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        rostedt@goodmis.org, hpa@zytor.com
+Reply-To: tglx@linutronix.de, bigeasy@linutronix.de,
+          linux-kernel@vger.kernel.org, hpa@zytor.com, rostedt@goodmis.org,
+          mingo@kernel.org, peterz@infradead.org
+In-Reply-To: <20190726185753.645792403@linutronix.de>
+References: <20190726185753.645792403@linutronix.de>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:timers/core] hrtimer: Determine hard/soft expiry mode for
+ hrtimer sleepers on RT
+Git-Commit-ID: 876f28e7bdf152da7514a28c79f83e61e0c6d30e
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20190801005843.10343-5-atish.patra@wdc.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Spam-Status: No, score=-0.2 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
+        autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 31, 2019 at 05:58:42PM -0700, Atish Patra wrote:
-> Export few symbols used by kvm module. Without this, kvm can not
-> be compiled as a module.
+Commit-ID:  876f28e7bdf152da7514a28c79f83e61e0c6d30e
+Gitweb:     https://git.kernel.org/tip/876f28e7bdf152da7514a28c79f83e61e0c6d30e
+Author:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+AuthorDate: Fri, 26 Jul 2019 20:30:58 +0200
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Thu, 1 Aug 2019 17:43:19 +0200
 
-Please add this to the kvm series instead as we don't merge exports
-without their users in the same series.
+hrtimer: Determine hard/soft expiry mode for hrtimer sleepers on RT
+
+On PREEMPT_RT enabled kernels hrtimers which are not explicitely marked for
+hard interrupt expiry mode are moved into soft interrupt context either for
+latency reasons or because the hrtimer callback takes regular spinlocks or
+invokes other functions which are not suitable for hard interrupt context
+on PREEMPT_RT.
+
+The hrtimer_sleeper callback is RT compatible in hard interrupt context,
+but there is a latency concern: Untrusted userspace can spawn many threads
+which arm timers for the same expiry time on the same CPU. On expiry that
+causes a latency spike due to the wakeup of a gazillion threads.
+
+OTOH, priviledged real-time user space applications rely on the low latency
+of hard interrupt wakeups. These syscall related wakeups are all based on
+hrtimer sleepers.
+
+If the current task is in a real-time scheduling class, mark the mode for
+hard interrupt expiry.
+
+[ tglx: Split out of a larger combo patch. Added changelog ]
+
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Link: https://lkml.kernel.org/r/20190726185753.645792403@linutronix.de
+
+
+---
+ kernel/time/hrtimer.c | 34 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
+
+diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
+index 90dcc4d95e91..c101f88ae8aa 100644
+--- a/kernel/time/hrtimer.c
++++ b/kernel/time/hrtimer.c
+@@ -1676,6 +1676,16 @@ static enum hrtimer_restart hrtimer_wakeup(struct hrtimer *timer)
+ void hrtimer_sleeper_start_expires(struct hrtimer_sleeper *sl,
+ 				   enum hrtimer_mode mode)
+ {
++	/*
++	 * Make the enqueue delivery mode check work on RT. If the sleeper
++	 * was initialized for hard interrupt delivery, force the mode bit.
++	 * This is a special case for hrtimer_sleepers because
++	 * hrtimer_init_sleeper() determines the delivery mode on RT so the
++	 * fiddling with this decision is avoided at the call sites.
++	 */
++	if (IS_ENABLED(CONFIG_PREEMPT_RT) && sl->timer.is_hard)
++		mode |= HRTIMER_MODE_HARD;
++
+ 	hrtimer_start_expires(&sl->timer, mode);
+ }
+ EXPORT_SYMBOL_GPL(hrtimer_sleeper_start_expires);
+@@ -1683,6 +1693,30 @@ EXPORT_SYMBOL_GPL(hrtimer_sleeper_start_expires);
+ static void __hrtimer_init_sleeper(struct hrtimer_sleeper *sl,
+ 				   clockid_t clock_id, enum hrtimer_mode mode)
+ {
++	/*
++	 * On PREEMPT_RT enabled kernels hrtimers which are not explicitely
++	 * marked for hard interrupt expiry mode are moved into soft
++	 * interrupt context either for latency reasons or because the
++	 * hrtimer callback takes regular spinlocks or invokes other
++	 * functions which are not suitable for hard interrupt context on
++	 * PREEMPT_RT.
++	 *
++	 * The hrtimer_sleeper callback is RT compatible in hard interrupt
++	 * context, but there is a latency concern: Untrusted userspace can
++	 * spawn many threads which arm timers for the same expiry time on
++	 * the same CPU. That causes a latency spike due to the wakeup of
++	 * a gazillion threads.
++	 *
++	 * OTOH, priviledged real-time user space applications rely on the
++	 * low latency of hard interrupt wakeups. If the current task is in
++	 * a real-time scheduling class, mark the mode for hard interrupt
++	 * expiry.
++	 */
++	if (IS_ENABLED(CONFIG_PREEMPT_RT)) {
++		if (task_is_realtime(current) && !(mode & HRTIMER_MODE_SOFT))
++			mode |= HRTIMER_MODE_HARD;
++	}
++
+ 	__hrtimer_init(&sl->timer, clock_id, mode);
+ 	sl->timer.function = hrtimer_wakeup;
+ 	sl->task = current;
