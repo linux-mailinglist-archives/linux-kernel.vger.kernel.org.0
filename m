@@ -2,104 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 18DC77E5C6
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 00:38:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CF2217E5CD
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 00:39:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389824AbfHAWid (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 18:38:33 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:53132 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2389811AbfHAWib (ORCPT
+        id S1732906AbfHAWjH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 18:39:07 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:62402 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730344AbfHAWjH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 18:38:31 -0400
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x71Mb37I013165;
-        Thu, 1 Aug 2019 18:37:50 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2u48mgrr07-1
+        Thu, 1 Aug 2019 18:39:07 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x71Mb5Fg098587;
+        Thu, 1 Aug 2019 18:39:05 -0400
+Received: from ppma02wdc.us.ibm.com (aa.5b.37a9.ip4.static.sl-reverse.com [169.55.91.170])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2u45u86vx8-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 01 Aug 2019 18:37:49 -0400
-Received: from m0098409.ppops.net (m0098409.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x71MbnCx014848;
-        Thu, 1 Aug 2019 18:37:49 -0400
-Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2u48mgrqyu-1
+        Thu, 01 Aug 2019 18:39:05 -0400
+Received: from pps.filterd (ppma02wdc.us.ibm.com [127.0.0.1])
+        by ppma02wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x71MZIQ8026850;
+        Thu, 1 Aug 2019 22:39:04 GMT
+Received: from b03cxnp08028.gho.boulder.ibm.com (b03cxnp08028.gho.boulder.ibm.com [9.17.130.20])
+        by ppma02wdc.us.ibm.com with ESMTP id 2u0e85w6nt-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 01 Aug 2019 18:37:49 -0400
-Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
-        by ppma03dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x71MZKMu021222;
-        Thu, 1 Aug 2019 22:37:48 GMT
-Received: from b01cxnp22035.gho.pok.ibm.com (b01cxnp22035.gho.pok.ibm.com [9.57.198.25])
-        by ppma03dal.us.ibm.com with ESMTP id 2u0e8794um-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 01 Aug 2019 22:37:48 +0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x71MblJr52429170
+        Thu, 01 Aug 2019 22:39:04 +0000
+Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
+        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x71Md3M359244856
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 1 Aug 2019 22:37:47 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 78307B2080;
-        Thu,  1 Aug 2019 22:37:47 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6206CB207A;
-        Thu,  1 Aug 2019 22:37:47 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.154])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu,  1 Aug 2019 22:37:47 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 7B48816C9A50; Thu,  1 Aug 2019 15:37:48 -0700 (PDT)
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     rcu@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
-        jiangshanlai@gmail.com, dipankar@in.ibm.com,
-        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
-        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
-        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
-        fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
-        Mukesh Ojha <mojha@codeaurora.org>,
-        "Paul E . McKenney" <paulmck@linux.ibm.com>
-Subject: [PATCH tip/core/rcu 12/12] rcu: Fix spelling mistake "greate"->"great"
-Date:   Thu,  1 Aug 2019 15:37:47 -0700
-Message-Id: <20190801223747.15560-12-paulmck@linux.ibm.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190801223708.GA14862@linux.ibm.com>
-References: <20190801223708.GA14862@linux.ibm.com>
+        Thu, 1 Aug 2019 22:39:04 GMT
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CAF22787A1;
+        Thu,  1 Aug 2019 22:39:03 +0000 (GMT)
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D51C8787A2;
+        Thu,  1 Aug 2019 22:39:02 +0000 (GMT)
+Received: from LeoBras.aus.stglabs.ibm.com (unknown [9.18.235.147])
+        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Thu,  1 Aug 2019 22:39:02 +0000 (GMT)
+From:   Leonardo Bras <leonardo@linux.ibm.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Leonardo Bras <leonardo@linux.ibm.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: [PATCH 1/1] fs/splice.c: Fix old documentation about moving pages
+Date:   Thu,  1 Aug 2019 19:38:52 -0300
+Message-Id: <20190801223852.16042-1-leonardo@linux.ibm.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-01_09:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=13 phishscore=0 bulkscore=0 spamscore=0
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=962 adultscore=0 classifier=spam adjust=0 reason=mlx
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1906280000 definitions=main-1908010238
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mukesh Ojha <mojha@codeaurora.org>
+Since commit 485ddb4b9741 ("1/2 splice: dont steal")' (2007),
+the SPLICE_F_MOVE support was removed (became a no-op according
+to man pages), and thus disabling steal operation that would make
+moving pages possible.
 
-This commit fixes a spelling mistake in file tree_exp.h.
+This fixes the comment, making clear pages are not moved.
 
-Signed-off-by: Mukesh Ojha <mojha@codeaurora.org>
-Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
+Signed-off-by: Leonardo Bras <leonardo@linux.ibm.com>
 ---
- kernel/rcu/tree_exp.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/splice.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/kernel/rcu/tree_exp.h b/kernel/rcu/tree_exp.h
-index 513b403b683b..d632cd019597 100644
---- a/kernel/rcu/tree_exp.h
-+++ b/kernel/rcu/tree_exp.h
-@@ -781,7 +781,7 @@ static int rcu_print_task_exp_stall(struct rcu_node *rnp)
-  * other hand, if the CPU is not in an RCU read-side critical section,
-  * the IPI handler reports the quiescent state immediately.
+diff --git a/fs/splice.c b/fs/splice.c
+index 14cb602d9a2f..0ba151c40cef 100644
+--- a/fs/splice.c
++++ b/fs/splice.c
+@@ -671,8 +671,7 @@ ssize_t splice_from_pipe(struct pipe_inode_info *pipe, struct file *out,
+  * @flags:	splice modifier flags
   *
-- * Although this is a greate improvement over previous expedited
-+ * Although this is a great improvement over previous expedited
-  * implementations, it is still unfriendly to real-time workloads, so is
-  * thus not recommended for any sort of common-case code.  In fact, if
-  * you are using synchronize_rcu_expedited() in a loop, please restructure
+  * Description:
+- *    Will either move or copy pages (determined by @flags options) from
+- *    the given pipe inode to the given file.
++ *    Will copy pages from the given pipe inode to the given file.
+  *    This one is ->write_iter-based.
+  *
+  */
 -- 
-2.17.1
+2.20.1
 
