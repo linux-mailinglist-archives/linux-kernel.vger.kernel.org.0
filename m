@@ -2,201 +2,176 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 370837E556
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 00:21:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 22C687E5A2
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 00:27:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389497AbfHAWVL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 18:21:11 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:3000 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2389467AbfHAWVH (ORCPT
+        id S1733018AbfHAW1E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 18:27:04 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:37077 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726521AbfHAW1D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 18:21:07 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x71MGuRk102317
-        for <linux-kernel@vger.kernel.org>; Thu, 1 Aug 2019 18:21:06 -0400
-Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2u48hagh1d-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2019 18:21:06 -0400
-Received: from localhost
-        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Thu, 1 Aug 2019 23:21:05 +0100
-Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
-        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 1 Aug 2019 23:20:59 +0100
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x71MKwes49545538
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 1 Aug 2019 22:20:58 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 49865B2076;
-        Thu,  1 Aug 2019 22:20:58 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 24F4BB207E;
-        Thu,  1 Aug 2019 22:20:58 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.154])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu,  1 Aug 2019 22:20:58 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 2834016C9A64; Thu,  1 Aug 2019 15:20:59 -0700 (PDT)
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        mingo@kernel.org
-Cc:     stern@rowland.harvard.edu, andrea.parri@amarulasolutions.com,
-        will@kernel.org, peterz@infradead.org, boqun.feng@gmail.com,
-        npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
-        luc.maranget@inria.fr, akiyks@gmail.com,
-        Will Deacon <will.deacon@arm.com>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Daniel Lustig <dlustig@nvidia.com>
-Subject: [PATCH RFC memory-model 31/31] tools/memory-model: Update the informal documentation
-Date:   Thu,  1 Aug 2019 15:20:56 -0700
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190801222026.GA11315@linux.ibm.com>
-References: <20190801222026.GA11315@linux.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 19080122-2213-0000-0000-000003B871F8
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00011535; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000287; SDB=6.01240728; UDB=6.00654291; IPR=6.01022153;
- MB=3.00028000; MTD=3.00000008; XFM=3.00000015; UTC=2019-08-01 22:21:03
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19080122-2214-0000-0000-00005F7B87D1
-Message-Id: <20190801222056.12144-31-paulmck@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-01_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=1 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1908010234
+        Thu, 1 Aug 2019 18:27:03 -0400
+Received: by mail-oi1-f195.google.com with SMTP id t76so55311932oih.4;
+        Thu, 01 Aug 2019 15:27:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:from:to:cc:date:message-id:user-agent:mime-version
+         :content-transfer-encoding;
+        bh=jjVaiL9PlJtpvUqKX80XgUrDQiaG4FJpJKI6tyDVArI=;
+        b=ZrRacyXdKI8lnbczd4//nr2xpTwQ3BkyvQbkNShzIE1E0SDVfeul5NXlmgkWqQfJTG
+         omf/6sfYJ95+PhEEsADPMGwTXt2GOvqIDxePdxXajthC8lzqpON1/ZHPp7/YI3F2HvtX
+         L/4pSxQvxeC40ffelKuabrC9d5+9G3Zca2k1WVIsj+pIK/8DrACq9tky0Ssc5t//qtZY
+         y27zx5mVNxtBnCOy3OpXcZ30VWvM8T6XyBiMJm853KEJlphOE6SDcZRM1STFMg1kQnUp
+         ej0iCu1ArOTU7GjQicbQAfy9u5GCQphYefiPdQ4vu406H8OIWTGJlpZTYn6TagPI927N
+         sXEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:date:message-id:user-agent
+         :mime-version:content-transfer-encoding;
+        bh=jjVaiL9PlJtpvUqKX80XgUrDQiaG4FJpJKI6tyDVArI=;
+        b=aE849JX6mgc8fu0QkkKQbO3p6zaXhHqvr0vr24Ffm+Ej3D2/mqHheUsrxrAijbvaeO
+         F/7ETAIzAfMY0qjWr2gtNbSf6YpFSRAZIZrkWFZW5vyZHizb13UBYbFuon2tySqU7W+Z
+         TEJyYESHR0cpM82jGAVs2Q8X4ayPJ9ItemlFHxrPaToOnvkrvwaVT8vZeu/6CtMdfa2w
+         +3ZhFdHDmRUR1wv/gNugIuR10l2MNVO2vK8kvokAwNPUgxXcRtlLyLPOK20XYN14Z0IE
+         wRtsL8K478h9ZoIztHlGJCcGlta7HJXqRtSmIUKiaEwnCck2f3tuptBBQa5E4AN3hAmP
+         tNmw==
+X-Gm-Message-State: APjAAAV82Ep3qDxL32ZzYyYdXIgtBzO3NKYprhPqWNUIoi8UInKRsv8N
+        6fEEiF0XrNQrzL0yU8U4UkE=
+X-Google-Smtp-Source: APXvYqwz7cn/2YMdeMQ0x9s9lVejvU6i/X+Wfx1SCCjJ0F2gKCgp6QocGTmCTwFXuNThq4TZh5DfzQ==
+X-Received: by 2002:aca:bf54:: with SMTP id p81mr718285oif.1.1564698422089;
+        Thu, 01 Aug 2019 15:27:02 -0700 (PDT)
+Received: from localhost.localdomain (50-39-177-61.bvtn.or.frontiernet.net. [50.39.177.61])
+        by smtp.gmail.com with ESMTPSA id i19sm24559702oib.12.2019.08.01.15.27.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 01 Aug 2019 15:27:01 -0700 (PDT)
+Subject: [PATCH v3 0/6] mm / virtio: Provide support for unused page
+ reporting
+From:   Alexander Duyck <alexander.duyck@gmail.com>
+To:     nitesh@redhat.com, kvm@vger.kernel.org, david@redhat.com,
+        mst@redhat.com, dave.hansen@intel.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        akpm@linux-foundation.org
+Cc:     yang.zhang.wz@gmail.com, pagupta@redhat.com, riel@surriel.com,
+        konrad.wilk@oracle.com, willy@infradead.org,
+        lcapitulino@redhat.com, wei.w.wang@intel.com, aarcange@redhat.com,
+        pbonzini@redhat.com, dan.j.williams@intel.com,
+        alexander.h.duyck@linux.intel.com
+Date:   Thu, 01 Aug 2019 15:24:49 -0700
+Message-ID: <20190801222158.22190.96964.stgit@localhost.localdomain>
+User-Agent: StGit/0.17.1-dirty
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrea Parri <andrea.parri@amarulasolutions.com>
+This series provides an asynchronous means of reporting to a hypervisor
+that a guest page is no longer in use and can have the data associated
+with it dropped. To do this I have implemented functionality that allows
+for what I am referring to as unused page reporting
 
-The formal memory consistency model has added support for plain accesses
-(and data races).  While updating the informal documentation to describe
-this addition to the model is highly desirable and important future work,
-update the informal documentation to at least acknowledge such addition.
+The functionality for this is fairly simple. When enabled it will allocate
+statistics to track the number of reported pages in a given free area.
+When the number of free pages exceeds this value plus a high water value,
+currently 32, it will begin performing page reporting which consists of
+pulling pages off of free list and placing them into a scatter list. The
+scatterlist is then given to the page reporting device and it will perform
+the required action to make the pages "reported", in the case of
+virtio-balloon this results in the pages being madvised as MADV_DONTNEED
+and as such they are forced out of the guest. After this they are placed
+back on the free list, and an additional bit is added if they are not
+merged indicating that they are a reported buddy page instead of a
+standard buddy page. The cycle then repeats with additional non-reported
+pages being pulled until the free areas all consist of reported pages.
 
-Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>
-Cc: Nicholas Piggin <npiggin@gmail.com>
-Cc: David Howells <dhowells@redhat.com>
-Cc: Jade Alglave <j.alglave@ucl.ac.uk>
-Cc: Luc Maranget <luc.maranget@inria.fr>
-Cc: "Paul E. McKenney" <paulmck@linux.ibm.com>
-Cc: Akira Yokosawa <akiyks@gmail.com>
-Cc: Daniel Lustig <dlustig@nvidia.com>
-Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
+I am leaving a number of things hard-coded such as limiting the lowest
+order processed to PAGEBLOCK_ORDER, and have left it up to the guest to
+determine what the limit is on how many pages it wants to allocate to
+process the hints. The upper limit for this is based on the size of the
+queue used to store the scatterlist.
+
+My primary testing has just been to verify the memory is being freed after
+allocation by running memhog 40g on a 40g guest and watching the total
+free memory via /proc/meminfo on the host. With this I have verified most
+of the memory is freed after each iteration. As far as performance I have
+been mainly focusing on the will-it-scale/page_fault1 test running with
+16 vcpus. With that I have seen up to a 2% difference between the base
+kernel without these patches and the patches with virtio-balloon enabled
+or disabled.
+
+One side effect of these patches is that the guest becomes much more
+resilient in terms of NUMA locality. With the pages being freed and then
+reallocated when used it allows for the pages to be much closer to the
+active thread, and as a result there can be situations where this patch
+set will out-perform the stock kernel when the guest memory is not local
+to the guest vCPUs.
+
+Patch 4 is a bit on the large side at about 600 lines of change, however
+I really didn't see a good way to break it up since each piece feeds into
+the next. So I couldn't add the statistics by themselves as it didn't
+really make sense to add them without something that will either read or
+increment/decrement them, or add the Hinted state without something that
+would set/unset it. As such I just ended up adding the entire thing as
+one patch. It makes it a bit bigger but avoids the issues in the previous
+set where I was referencing things that had not yet been added.
+
+Changes from the RFC:
+https://lore.kernel.org/lkml/20190530215223.13974.22445.stgit@localhost.localdomain/
+Moved aeration requested flag out of aerator and into zone->flags.
+Moved boundary out of free_area and into local variables for aeration.
+Moved aeration cycle out of interrupt and into workqueue.
+Left nr_free as total pages instead of splitting it between raw and aerated.
+Combined size and physical address values in virtio ring into one 64b value.
+
+Changes from v1:
+https://lore.kernel.org/lkml/20190619222922.1231.27432.stgit@localhost.localdomain/
+Dropped "waste page treatment" in favor of "page hinting"
+Renamed files and functions from "aeration" to "page_hinting"
+Moved from page->lru list to scatterlist
+Replaced wait on refcnt in shutdown with RCU and cancel_delayed_work_sync
+Virtio now uses scatterlist directly instead of intermediate array
+Moved stats out of free_area, now in separate area and pointed to from zone
+Merged patch 5 into patch 4 to improve review-ability
+Updated various code comments throughout
+
+Changes from v2:
+https://lore.kernel.org/lkml/20190724165158.6685.87228.stgit@localhost.localdomain/
+Dropped "page hinting" in favor of "page reporting"
+Renamed files from "hinting" to "reporting"
+Replaced "Hinted" page type with "Reported" page flag
+Added support for page poisoning while hinting is active
+Add QEMU patch that implements PAGE_POISON feature
+
 ---
- .../Documentation/explanation.txt             | 47 +++++++++----------
- tools/memory-model/README                     | 18 +++----
- 2 files changed, 30 insertions(+), 35 deletions(-)
 
-diff --git a/tools/memory-model/Documentation/explanation.txt b/tools/memory-model/Documentation/explanation.txt
-index 634dc6db26c4..488f11f6c588 100644
---- a/tools/memory-model/Documentation/explanation.txt
-+++ b/tools/memory-model/Documentation/explanation.txt
-@@ -42,7 +42,8 @@ linux-kernel.bell and linux-kernel.cat files that make up the formal
- version of the model; they are extremely terse and their meanings are
- far from clear.
- 
--This document describes the ideas underlying the LKMM.  It is meant
-+This document describes the ideas underlying the LKMM, but excluding
-+the modeling of bare C (or plain) shared memory accesses.  It is meant
- for people who want to understand how the model was designed.  It does
- not go into the details of the code in the .bell and .cat files;
- rather, it explains in English what the code expresses symbolically.
-@@ -354,31 +355,25 @@ be extremely complex.
- Optimizing compilers have great freedom in the way they translate
- source code to object code.  They are allowed to apply transformations
- that add memory accesses, eliminate accesses, combine them, split them
--into pieces, or move them around.  Faced with all these possibilities,
--the LKMM basically gives up.  It insists that the code it analyzes
--must contain no ordinary accesses to shared memory; all accesses must
--be performed using READ_ONCE(), WRITE_ONCE(), or one of the other
--atomic or synchronization primitives.  These primitives prevent a
--large number of compiler optimizations.  In particular, it is
--guaranteed that the compiler will not remove such accesses from the
--generated code (unless it can prove the accesses will never be
--executed), it will not change the order in which they occur in the
--code (within limits imposed by the C standard), and it will not
--introduce extraneous accesses.
--
--This explains why the MP and SB examples above used READ_ONCE() and
--WRITE_ONCE() rather than ordinary memory accesses.  Thanks to this
--usage, we can be certain that in the MP example, P0's write event to
--buf really is po-before its write event to flag, and similarly for the
--other shared memory accesses in the examples.
--
--Private variables are not subject to this restriction.  Since they are
--not shared between CPUs, they can be accessed normally without
--READ_ONCE() or WRITE_ONCE(), and there will be no ill effects.  In
--fact, they need not even be stored in normal memory at all -- in
--principle a private variable could be stored in a CPU register (hence
--the convention that these variables have names starting with the
--letter 'r').
-+into pieces, or move them around.  The use of READ_ONCE(), WRITE_ONCE(),
-+or one of the other atomic or synchronization primitives prevents a
-+large number of compiler optimizations.  In particular, it is guaranteed
-+that the compiler will not remove such accesses from the generated code
-+(unless it can prove the accesses will never be executed), it will not
-+change the order in which they occur in the code (within limits imposed
-+by the C standard), and it will not introduce extraneous accesses.
-+
-+The MP and SB examples above used READ_ONCE() and WRITE_ONCE() rather
-+than ordinary memory accesses.  Thanks to this usage, we can be certain
-+that in the MP example, the compiler won't reorder P0's write event to
-+buf and P0's write event to flag, and similarly for the other shared
-+memory accesses in the examples.
-+
-+Since private variables are not shared between CPUs, they can be
-+accessed normally without READ_ONCE() or WRITE_ONCE().  In fact, they
-+need not even be stored in normal memory at all -- in principle a
-+private variable could be stored in a CPU register (hence the convention
-+that these variables have names starting with the letter 'r').
- 
- 
- A WARNING
-diff --git a/tools/memory-model/README b/tools/memory-model/README
-index 2b87f3971548..fc07b52f2028 100644
---- a/tools/memory-model/README
-+++ b/tools/memory-model/README
-@@ -167,15 +167,15 @@ scripts	Various scripts, see scripts/README.
- LIMITATIONS
- ===========
- 
--The Linux-kernel memory model has the following limitations:
--
--1.	Compiler optimizations are not modeled.  Of course, the use
--	of READ_ONCE() and WRITE_ONCE() limits the compiler's ability
--	to optimize, but there is Linux-kernel code that uses bare C
--	memory accesses.  Handling this code is on the to-do list.
--	For more information, see Documentation/explanation.txt (in
--	particular, the "THE PROGRAM ORDER RELATION: po AND po-loc"
--	and "A WARNING" sections).
-+The Linux-kernel memory model (LKMM) has the following limitations:
-+
-+1.	Compiler optimizations are not accurately modeled.  Of course,
-+	the use of READ_ONCE() and WRITE_ONCE() limits the compiler's
-+	ability to optimize, but under some circumstances it is possible
-+	for the compiler to undermine the memory model.  For more
-+	information, see Documentation/explanation.txt (in particular,
-+	the "THE PROGRAM ORDER RELATION: po AND po-loc" and "A WARNING"
-+	sections).
- 
- 	Note that this limitation in turn limits LKMM's ability to
- 	accurately model address, control, and data dependencies.
--- 
-2.17.1
+Alexander Duyck (6):
+      mm: Adjust shuffle code to allow for future coalescing
+      mm: Move set/get_pcppage_migratetype to mmzone.h
+      mm: Use zone and order instead of free area in free_list manipulators
+      mm: Introduce Reported pages
+      virtio-balloon: Pull page poisoning config out of free page hinting
+      virtio-balloon: Add support for providing unused page reports to host
 
+
+ drivers/virtio/Kconfig              |    1 
+ drivers/virtio/virtio_balloon.c     |   75 ++++++++-
+ include/linux/mmzone.h              |  116 ++++++++------
+ include/linux/page-flags.h          |   11 +
+ include/linux/page_reporting.h      |  138 ++++++++++++++++
+ include/uapi/linux/virtio_balloon.h |    1 
+ mm/Kconfig                          |    5 +
+ mm/Makefile                         |    1 
+ mm/internal.h                       |   18 ++
+ mm/memory_hotplug.c                 |    1 
+ mm/page_alloc.c                     |  238 ++++++++++++++++++++--------
+ mm/page_reporting.c                 |  299 +++++++++++++++++++++++++++++++++++
+ mm/shuffle.c                        |   24 ---
+ mm/shuffle.h                        |   32 ++++
+ 14 files changed, 821 insertions(+), 139 deletions(-)
+ create mode 100644 include/linux/page_reporting.h
+ create mode 100644 mm/page_reporting.c
+
+--
