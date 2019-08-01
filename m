@@ -2,46 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A01957E5FA
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 00:50:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 114FD7E606
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 00:51:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390081AbfHAWum (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 18:50:42 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:25938 "EHLO
+        id S2390121AbfHAWvJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 18:51:09 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:16912 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2390050AbfHAWui (ORCPT
+        by vger.kernel.org with ESMTP id S1732102AbfHAWvI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 18:50:38 -0400
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x71MlN0t058189
-        for <linux-kernel@vger.kernel.org>; Thu, 1 Aug 2019 18:50:36 -0400
-Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2u46duwqcr-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2019 18:50:36 -0400
-Received: from localhost
-        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Thu, 1 Aug 2019 23:50:36 +0100
-Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
-        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 1 Aug 2019 23:50:29 +0100
+        Thu, 1 Aug 2019 18:51:08 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x71MlCje076850;
+        Thu, 1 Aug 2019 18:50:30 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2u488k9s69-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 01 Aug 2019 18:50:30 -0400
+Received: from m0098420.ppops.net (m0098420.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x71MmfOY079478;
+        Thu, 1 Aug 2019 18:50:30 -0400
+Received: from ppma01wdc.us.ibm.com (fd.55.37a9.ip4.static.sl-reverse.com [169.55.85.253])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2u488k9s5v-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 01 Aug 2019 18:50:30 -0400
+Received: from pps.filterd (ppma01wdc.us.ibm.com [127.0.0.1])
+        by ppma01wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x71MnYs3024993;
+        Thu, 1 Aug 2019 22:50:29 GMT
+Received: from b01cxnp23033.gho.pok.ibm.com (b01cxnp23033.gho.pok.ibm.com [9.57.198.28])
+        by ppma01wdc.us.ibm.com with ESMTP id 2u0e86yxr7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 01 Aug 2019 22:50:29 +0000
 Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x71MoSA549349080
+        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x71MoT6d44040524
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
         Thu, 1 Aug 2019 22:50:29 GMT
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E2E9FB207E;
+        by IMSVA (Postfix) with ESMTP id E3222B207F;
         Thu,  1 Aug 2019 22:50:28 +0000 (GMT)
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C596AB2073;
+        by IMSVA (Postfix) with ESMTP id C6833B2076;
         Thu,  1 Aug 2019 22:50:28 +0000 (GMT)
 Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.154])
         by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
         Thu,  1 Aug 2019 22:50:28 +0000 (GMT)
 Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id D699116C9A56; Thu,  1 Aug 2019 15:50:29 -0700 (PDT)
+        id DC6F216C9A57; Thu,  1 Aug 2019 15:50:29 -0700 (PDT)
 From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
 To:     rcu@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
@@ -51,24 +57,17 @@ Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
         "Paul E. McKenney" <paulmck@linux.ibm.com>
-Subject: [PATCH tip/core/rcu 08/11] rcu/nocb: Rename rcu_organize_nocb_kthreads() local variable
-Date:   Thu,  1 Aug 2019 15:50:25 -0700
+Subject: [PATCH tip/core/rcu 09/11] rcu/nocb: Rename and document no-CB CB kthread sleep trace event
+Date:   Thu,  1 Aug 2019 15:50:26 -0700
+Message-Id: <20190801225028.18225-9-paulmck@linux.ibm.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190801225009.GA17155@linux.ibm.com>
 References: <20190801225009.GA17155@linux.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 19080122-0052-0000-0000-000003E775D7
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00011535; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000287; SDB=6.01240736; UDB=6.00654296; IPR=6.01022160;
- MB=3.00028000; MTD=3.00000008; XFM=3.00000015; UTC=2019-08-01 22:50:34
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19080122-0053-0000-0000-000061EE7D59
-Message-Id: <20190801225028.18225-8-paulmck@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-01_09:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=13 phishscore=0 bulkscore=0 spamscore=0
+ malwarescore=0 suspectscore=15 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
  mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1906280000 definitions=main-1908010240
@@ -77,40 +76,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This commit renames rdp_leader to rdp_gp in order to account for the
-new distinction between callback and grace-period no-CBs kthreads.
+The nocb_cb_wait() function traces a "FollowerSleep" trace_rcu_nocb_wake()
+event, which never was documented and is now misleading.  This commit
+therefore changes "FollowerSleep" to "CBSleep", documents this, and
+updates the documentation for "Sleep" as well.
 
 Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
 ---
- kernel/rcu/tree_plugin.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ include/trace/events/rcu.h | 3 ++-
+ kernel/rcu/tree_plugin.h   | 2 +-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
+diff --git a/include/trace/events/rcu.h b/include/trace/events/rcu.h
+index 02a3f78f7cd8..313324d1b135 100644
+--- a/include/trace/events/rcu.h
++++ b/include/trace/events/rcu.h
+@@ -267,7 +267,8 @@ TRACE_EVENT_RCU(rcu_exp_funnel_lock,
+  *	"WakeNotPoll": Don't wake rcuo kthread because it is polling.
+  *	"DeferredWake": Carried out the "IsDeferred" wakeup.
+  *	"Poll": Start of new polling cycle for rcu_nocb_poll.
+- *	"Sleep": Sleep waiting for CBs for !rcu_nocb_poll.
++ *	"Sleep": Sleep waiting for GP for !rcu_nocb_poll.
++ *	"CBSleep": Sleep waiting for CBs for !rcu_nocb_poll.
+  *	"WokeEmpty": rcuo kthread woke to find empty list.
+  *	"WokeNonEmpty": rcuo kthread woke to find non-empty list.
+  *	"WaitQueue": Enqueue partially done, timed wait for it to complete.
 diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
-index e6581a51ff9a..0af36e98e70f 100644
+index 0af36e98e70f..be065aacd63b 100644
 --- a/kernel/rcu/tree_plugin.h
 +++ b/kernel/rcu/tree_plugin.h
-@@ -2138,7 +2138,7 @@ static void __init rcu_organize_nocb_kthreads(void)
- 	int ls = rcu_nocb_leader_stride;
- 	int nl = 0;  /* Next GP kthread. */
- 	struct rcu_data *rdp;
--	struct rcu_data *rdp_leader = NULL;  /* Suppress misguided gcc warn. */
-+	struct rcu_data *rdp_gp = NULL;  /* Suppress misguided gcc warn. */
- 	struct rcu_data *rdp_prev = NULL;
- 
- 	if (!cpumask_available(rcu_nocb_mask))
-@@ -2159,10 +2159,10 @@ static void __init rcu_organize_nocb_kthreads(void)
- 			/* New GP kthread, set up for CBs & next GP. */
- 			nl = DIV_ROUND_UP(rdp->cpu + 1, ls) * ls;
- 			rdp->nocb_gp_rdp = rdp;
--			rdp_leader = rdp;
-+			rdp_gp = rdp;
- 		} else {
- 			/* Another CB kthread, link to previous GP kthread. */
--			rdp->nocb_gp_rdp = rdp_leader;
-+			rdp->nocb_gp_rdp = rdp_gp;
- 			rdp_prev->nocb_next_cb_rdp = rdp;
- 		}
- 		rdp_prev = rdp;
+@@ -1891,7 +1891,7 @@ static int rcu_nocb_gp_kthread(void *arg)
+  */
+ static bool nocb_cb_wait(struct rcu_data *rdp)
+ {
+-	trace_rcu_nocb_wake(rcu_state.name, rdp->cpu, TPS("FollowerSleep"));
++	trace_rcu_nocb_wake(rcu_state.name, rdp->cpu, TPS("CBSleep"));
+ 	swait_event_interruptible_exclusive(rdp->nocb_cb_wq,
+ 				 READ_ONCE(rdp->nocb_cb_head));
+ 	if (smp_load_acquire(&rdp->nocb_cb_head)) { /* VVV */
 -- 
 2.17.1
 
