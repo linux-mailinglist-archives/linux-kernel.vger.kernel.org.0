@@ -2,235 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 415D17DF14
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 17:29:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3175E7DF26
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 17:31:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731871AbfHAP2M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 11:28:12 -0400
-Received: from mail-io1-f72.google.com ([209.85.166.72]:39849 "EHLO
-        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731774AbfHAP2K (ORCPT
+        id S1731467AbfHAPbp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 11:31:45 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:35278 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729110AbfHAPbp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 11:28:10 -0400
-Received: by mail-io1-f72.google.com with SMTP id y13so79499509iol.6
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2019 08:28:09 -0700 (PDT)
+        Thu, 1 Aug 2019 11:31:45 -0400
+Received: by mail-pf1-f193.google.com with SMTP id u14so34293390pfn.2
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2019 08:31:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=message-id:mime-version:content-transfer-encoding:in-reply-to
+         :references:cc:from:to:subject:user-agent:date;
+        bh=P4+QkcP5SWfnPke/f4WzJjlFeJ5WbmTA3DCQpoIEOwo=;
+        b=idub+EGEAbLZ4tR3sB6OGyyoDN4Dx3awXMt99vRAI6Vnr6fGz4v78jbzggQ/sTRIyj
+         +1/kvEecNC+K6qLeXU+Yq9sjjIijHXv5jFkc817cZ96zXdImJ11+vBArzqkAgBz84UIo
+         1a+cU/uZf4LZsTAFIlOoXUcGu+1C6rHccPRKQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=SN8T87OUs3JfLkroiQtPCKAZqhUcYibSyMg76tlh8Jo=;
-        b=a1SIIFhxW323XQtrVLkLUclf2cO6dGamgcUkWIiNMLIwP6ebP1Z/2fV+x+wm9V7PZP
-         gXkG7wpr5YxV4+NKYlIVyNtdbGsMxW8WqGxUZxo5ULPpPyjXZaBJhii8hM3DvYIrrEy5
-         fVS0LiNUt7f5RAAlS7ab+lgP3q/K58C4UIJPkZBOO0kbVGREI640++YqzTZCit0DRpMy
-         2FRgqwu6oIBDEv5D3HDE1YVg0+lrOGRZ4FEn479P0zenxD1q3NvtoxOqH78Grj542wOW
-         Ksr0tHD43BOxSc5wGpVfCRjEv5IWqTPHDE0IPcLm7dcshZsA78wWEKM4Jf9dhrHDv2b1
-         bqCQ==
-X-Gm-Message-State: APjAAAUSVjr0DGAB2M4UBjXpPVS6tn8Ohh1o3bwtNNmCVpNZ4CrbGNap
-        HqMl003LapdfZ2C1qCOKAlcf1nWNnd02AAbpFnrae8IdHQY4
-X-Google-Smtp-Source: APXvYqxTWAdtjHnC78V6PIT6iD6kRyTW7aejlMXpjiswwDLM8g0/gVOf/5Eg346oYutZpOxSMUP6GF72mlJp4RPburcRu/gw4gJ/
+        h=x-gm-message-state:message-id:mime-version
+         :content-transfer-encoding:in-reply-to:references:cc:from:to:subject
+         :user-agent:date;
+        bh=P4+QkcP5SWfnPke/f4WzJjlFeJ5WbmTA3DCQpoIEOwo=;
+        b=njK4MhwObuPAEsUAcB3yOK4Iv2WOKiFA5Jp0sPjZSqHQVaHZe+WHiNJGvu0hFqulQr
+         1c7Szgp3UDd0bGWdFjy4eOvBmAMWcoaMotCPRQ8dZudEo+CpeW92GqAdt7Cu++77Zha6
+         cptJ+40bSNAWubmZYEkbXgukhs3y1R9V9zcDna69U7G33UrN+R5ynDXETVxmkUZeNKMV
+         tswgF7kQkJRh3Nm639AG6jamGCkZVOliKF/2clC1r75BGgKctiIHjH9/RPMkJunt2ANM
+         lQKUKOqDpHrpczBVmfI5lVgCyOI4iJLVmgBrCEYKTXMxLQ/Y/wqUYOVISrGu36aKhZTC
+         jA1g==
+X-Gm-Message-State: APjAAAX1UbPvIOpmczam1vb7iNKol2Gx/CBgKg7xu79xSBv/LHzPALyt
+        ILoDnXSJ7x2Q/uiIg5yMeMaikw==
+X-Google-Smtp-Source: APXvYqyKhNXanLEqc3S/0be5CT8tQHKUMlAHzimJSNFlmKiEaKcKDacCqnXnNDuNpJ/KcwniiOFELg==
+X-Received: by 2002:a63:29c4:: with SMTP id p187mr68449509pgp.330.1564673504344;
+        Thu, 01 Aug 2019 08:31:44 -0700 (PDT)
+Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id d15sm16313360pjc.8.2019.08.01.08.31.43
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 01 Aug 2019 08:31:43 -0700 (PDT)
+Message-ID: <5d4305df.1c69fb81.c4013.1950@mx.google.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-X-Received: by 2002:a5d:9a04:: with SMTP id s4mr123042664iol.19.1564673288822;
- Thu, 01 Aug 2019 08:28:08 -0700 (PDT)
-Date:   Thu, 01 Aug 2019 08:28:08 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000091efa6058f0fe3d9@google.com>
-Subject: KASAN: use-after-free Read in hiddev_release
-From:   syzbot <syzbot+62a1e04fd3ec2abf099e@syzkaller.appspotmail.com>
-To:     andreyknvl@google.com, benjamin.tissoires@redhat.com,
-        jikos@kernel.org, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CAJZ5v0jkLXwqmXwyYtdZ9X2=W2KNKS4Ok_NrDew2yvvt1=4pgQ@mail.gmail.com>
+References: <20190731215514.212215-1-trong@android.com> <32598586.Mjd66ZhNnG@kreacher> <CANA+-vDTDq__LnLBpM5u_VHHvpFA--K5Du63vPB7HfaKzBsPtg@mail.gmail.com> <6987393.M0uybTKmdI@kreacher> <CANA+-vAPpXF1=z1=OjOhr8HWQ=Qn39qtQ3+8bUeXNTuFFTxoJQ@mail.gmail.com> <CAJZ5v0go-qOTyQV4D2Sj_xQxT831PxJZP0uay67rG73Q3K2pHQ@mail.gmail.com> <5d42281c.1c69fb81.bcda1.71f5@mx.google.com> <5d423637.1c69fb81.62114.ca6f@mx.google.com> <CAJZ5v0jkLXwqmXwyYtdZ9X2=W2KNKS4Ok_NrDew2yvvt1=4pgQ@mail.gmail.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Tri Vo <trong@android.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Hridya Valsaraju <hridya@google.com>,
+        Sandeep Patil <sspatil@google.com>,
+        Kalesh Singh <kaleshsingh@google.com>,
+        Ravi Chandra Sadineni <ravisadineni@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        "Cc: Android Kernel" <kernel-team@android.com>
+From:   Stephen Boyd <swboyd@chromium.org>
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Subject: Re: [PATCH v6] PM / wakeup: show wakeup sources stats in sysfs
+User-Agent: alot/0.8.1
+Date:   Thu, 01 Aug 2019 08:31:42 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Quoting Rafael J. Wysocki (2019-08-01 01:09:22)
+> On Thu, Aug 1, 2019 at 2:45 AM Stephen Boyd <swboyd@chromium.org> wrote:
+> >
+> > Quoting Stephen Boyd (2019-07-31 16:45:31)
+> > >
+> > > This approach also nicely detects duplicate wakeup source names in the
+> > > case that the string passed in to wakeup_source_register() is already
+> > > used on the virtual bus.
+> >
+> > This was clearly untested! Here's a better one. This is what I see on my
+> > device with this patch squashed in:
+> >
+> > localhost ~ # cat /sys/kernel/debug/wakeup_sources
+> > name            active_count    event_count     wakeup_count    expire_=
+count    active_since    total_time      max_time        last_change  preve=
+nt_suspend_time
+> > 1-1.2.4.1       0               0               0               0      =
+         0               0               0               0   0
+> > 1-1.1           0               0               0               0      =
+         0               0               0               0   0
+> > gpio-keys       0               0               0               0      =
+         0               0               0               0   0
+> > spi10.0         0               0               0               0      =
+         0               0               0               0   0
+> > a88000.spi:ec@0:keyboard-controller     0               0              =
+ 0               0               0               0           0
+> >                 0               0
+> > alarmtimer      0               0               0               0      =
+         0               0               0               0   0
+> > cros-ec-rtc.1.auto      0               0               0              =
+ 0               0               0               0           0
+> >                 0
+> > a8f8800.usb     0               0               0               0      =
+         0               0               0               0   0
+> > a6f8800.usb     0               0               0               0      =
+         0               0               0               0   0
+> > localhost ~ # ls -l /sys/class/wakeup/
+> > total 0
+> > lrwxrwxrwx. 1 root root 0 Jul 31 17:43 alarmtimer -> ../../devices/plat=
+form/soc/ac0000.geniqup/a88000.spi/spi_master/spi10/spi10.0/cros-ec-dev.0.a=
+uto/cros-ec-rtc.1.auto/rtc/rtc0/alarmtimer
+>=20
+> So why is this not "(...)rtc0/wakeup/alarmtimer" ?
+>=20
+> This particular bit looks kind of inconsistent.
 
-syzbot found the following crash on:
+I believe this is the code you're looking for in drivers/base/core.c
 
-HEAD commit:    e96407b4 usb-fuzzer: main usb gadget fuzzer driver
-git tree:       https://github.com/google/kasan.git usb-fuzzer
-console output: https://syzkaller.appspot.com/x/log.txt?x=147ac20c600000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=792eb47789f57810
-dashboard link: https://syzkaller.appspot.com/bug?extid=62a1e04fd3ec2abf099e
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-
-Unfortunately, I don't have any reproducer for this crash yet.
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+62a1e04fd3ec2abf099e@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KASAN: use-after-free in __lock_acquire+0x302a/0x3b50  
-kernel/locking/lockdep.c:3753
-Read of size 8 at addr ffff8881cf591a08 by task syz-executor.1/26260
-
-CPU: 1 PID: 26260 Comm: syz-executor.1 Not tainted 5.3.0-rc2+ #24
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0xca/0x13e lib/dump_stack.c:113
-  print_address_description+0x6a/0x32c mm/kasan/report.c:351
-  __kasan_report.cold+0x1a/0x33 mm/kasan/report.c:482
-  kasan_report+0xe/0x12 mm/kasan/common.c:612
-  __lock_acquire+0x302a/0x3b50 kernel/locking/lockdep.c:3753
-  lock_acquire+0x127/0x320 kernel/locking/lockdep.c:4412
-  __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-  _raw_spin_lock_irqsave+0x32/0x50 kernel/locking/spinlock.c:159
-  hiddev_release+0x82/0x520 drivers/hid/usbhid/hiddev.c:221
-  __fput+0x2d7/0x840 fs/file_table.c:280
-  task_work_run+0x13f/0x1c0 kernel/task_work.c:113
-  exit_task_work include/linux/task_work.h:22 [inline]
-  do_exit+0x8ef/0x2c50 kernel/exit.c:878
-  do_group_exit+0x125/0x340 kernel/exit.c:982
-  get_signal+0x466/0x23d0 kernel/signal.c:2728
-  do_signal+0x88/0x14e0 arch/x86/kernel/signal.c:815
-  exit_to_usermode_loop+0x1a2/0x200 arch/x86/entry/common.c:159
-  prepare_exit_to_usermode arch/x86/entry/common.c:194 [inline]
-  syscall_return_slowpath arch/x86/entry/common.c:274 [inline]
-  do_syscall_64+0x45f/0x580 arch/x86/entry/common.c:299
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x459829
-Code: fd b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 cb b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f75b2a6ccf8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
-RAX: fffffffffffffe00 RBX: 000000000075c078 RCX: 0000000000459829
-RDX: 0000000000000000 RSI: 0000000000000080 RDI: 000000000075c078
-RBP: 000000000075c070 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 000000000075c07c
-R13: 00007ffcdfe1023f R14: 00007f75b2a6d9c0 R15: 000000000075c07c
-
-Allocated by task 104:
-  save_stack+0x1b/0x80 mm/kasan/common.c:69
-  set_track mm/kasan/common.c:77 [inline]
-  __kasan_kmalloc mm/kasan/common.c:487 [inline]
-  __kasan_kmalloc.constprop.0+0xbf/0xd0 mm/kasan/common.c:460
-  kmalloc include/linux/slab.h:552 [inline]
-  kzalloc include/linux/slab.h:748 [inline]
-  hiddev_connect+0x242/0x5b0 drivers/hid/usbhid/hiddev.c:900
-  hid_connect+0x239/0xbb0 drivers/hid/hid-core.c:1882
-  hid_hw_start drivers/hid/hid-core.c:1981 [inline]
-  hid_hw_start+0xa2/0x130 drivers/hid/hid-core.c:1972
-  appleir_probe+0x13e/0x1a0 drivers/hid/hid-appleir.c:308
-  hid_device_probe+0x2be/0x3f0 drivers/hid/hid-core.c:2209
-  really_probe+0x281/0x650 drivers/base/dd.c:548
-  driver_probe_device+0x101/0x1b0 drivers/base/dd.c:709
-  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:816
-  bus_for_each_drv+0x15c/0x1e0 drivers/base/bus.c:454
-  __device_attach+0x217/0x360 drivers/base/dd.c:882
-  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
-  device_add+0xae6/0x16f0 drivers/base/core.c:2114
-  hid_add_device+0x33c/0x990 drivers/hid/hid-core.c:2365
-  usbhid_probe+0xa81/0xfa0 drivers/hid/usbhid/hid-core.c:1386
-  usb_probe_interface+0x305/0x7a0 drivers/usb/core/driver.c:361
-  really_probe+0x281/0x650 drivers/base/dd.c:548
-  driver_probe_device+0x101/0x1b0 drivers/base/dd.c:709
-  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:816
-  bus_for_each_drv+0x15c/0x1e0 drivers/base/bus.c:454
-  __device_attach+0x217/0x360 drivers/base/dd.c:882
-  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
-  device_add+0xae6/0x16f0 drivers/base/core.c:2114
-  usb_set_configuration+0xdf6/0x1670 drivers/usb/core/message.c:2023
-  generic_probe+0x9d/0xd5 drivers/usb/core/generic.c:210
-  usb_probe_device+0x99/0x100 drivers/usb/core/driver.c:266
-  really_probe+0x281/0x650 drivers/base/dd.c:548
-  driver_probe_device+0x101/0x1b0 drivers/base/dd.c:709
-  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:816
-  bus_for_each_drv+0x15c/0x1e0 drivers/base/bus.c:454
-  __device_attach+0x217/0x360 drivers/base/dd.c:882
-  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
-  device_add+0xae6/0x16f0 drivers/base/core.c:2114
-  usb_new_device.cold+0x6a4/0xe79 drivers/usb/core/hub.c:2536
-  hub_port_connect drivers/usb/core/hub.c:5098 [inline]
-  hub_port_connect_change drivers/usb/core/hub.c:5213 [inline]
-  port_event drivers/usb/core/hub.c:5359 [inline]
-  hub_event+0x1b5c/0x3640 drivers/usb/core/hub.c:5441
-  process_one_work+0x92b/0x1530 kernel/workqueue.c:2269
-  worker_thread+0x96/0xe20 kernel/workqueue.c:2415
-  kthread+0x318/0x420 kernel/kthread.c:255
-  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-
-Freed by task 104:
-  save_stack+0x1b/0x80 mm/kasan/common.c:69
-  set_track mm/kasan/common.c:77 [inline]
-  __kasan_slab_free+0x130/0x180 mm/kasan/common.c:449
-  slab_free_hook mm/slub.c:1423 [inline]
-  slab_free_freelist_hook mm/slub.c:1470 [inline]
-  slab_free mm/slub.c:3012 [inline]
-  kfree+0xe4/0x2f0 mm/slub.c:3953
-  hiddev_connect.cold+0x45/0x5c drivers/hid/usbhid/hiddev.c:914
-  hid_connect+0x239/0xbb0 drivers/hid/hid-core.c:1882
-  hid_hw_start drivers/hid/hid-core.c:1981 [inline]
-  hid_hw_start+0xa2/0x130 drivers/hid/hid-core.c:1972
-  appleir_probe+0x13e/0x1a0 drivers/hid/hid-appleir.c:308
-  hid_device_probe+0x2be/0x3f0 drivers/hid/hid-core.c:2209
-  really_probe+0x281/0x650 drivers/base/dd.c:548
-  driver_probe_device+0x101/0x1b0 drivers/base/dd.c:709
-  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:816
-  bus_for_each_drv+0x15c/0x1e0 drivers/base/bus.c:454
-  __device_attach+0x217/0x360 drivers/base/dd.c:882
-  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
-  device_add+0xae6/0x16f0 drivers/base/core.c:2114
-  hid_add_device+0x33c/0x990 drivers/hid/hid-core.c:2365
-  usbhid_probe+0xa81/0xfa0 drivers/hid/usbhid/hid-core.c:1386
-  usb_probe_interface+0x305/0x7a0 drivers/usb/core/driver.c:361
-  really_probe+0x281/0x650 drivers/base/dd.c:548
-  driver_probe_device+0x101/0x1b0 drivers/base/dd.c:709
-  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:816
-  bus_for_each_drv+0x15c/0x1e0 drivers/base/bus.c:454
-  __device_attach+0x217/0x360 drivers/base/dd.c:882
-  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
-  device_add+0xae6/0x16f0 drivers/base/core.c:2114
-  usb_set_configuration+0xdf6/0x1670 drivers/usb/core/message.c:2023
-  generic_probe+0x9d/0xd5 drivers/usb/core/generic.c:210
-  usb_probe_device+0x99/0x100 drivers/usb/core/driver.c:266
-  really_probe+0x281/0x650 drivers/base/dd.c:548
-  driver_probe_device+0x101/0x1b0 drivers/base/dd.c:709
-  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:816
-  bus_for_each_drv+0x15c/0x1e0 drivers/base/bus.c:454
-  __device_attach+0x217/0x360 drivers/base/dd.c:882
-  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
-  device_add+0xae6/0x16f0 drivers/base/core.c:2114
-  usb_new_device.cold+0x6a4/0xe79 drivers/usb/core/hub.c:2536
-  hub_port_connect drivers/usb/core/hub.c:5098 [inline]
-  hub_port_connect_change drivers/usb/core/hub.c:5213 [inline]
-  port_event drivers/usb/core/hub.c:5359 [inline]
-  hub_event+0x1b5c/0x3640 drivers/usb/core/hub.c:5441
-  process_one_work+0x92b/0x1530 kernel/workqueue.c:2269
-  worker_thread+0x96/0xe20 kernel/workqueue.c:2415
-  kthread+0x318/0x420 kernel/kthread.c:255
-  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-
-The buggy address belongs to the object at ffff8881cf591900
-  which belongs to the cache kmalloc-512 of size 512
-The buggy address is located 264 bytes inside of
-  512-byte region [ffff8881cf591900, ffff8881cf591b00)
-The buggy address belongs to the page:
-page:ffffea00073d6400 refcount:1 mapcount:0 mapping:ffff8881da002500  
-index:0x0 compound_mapcount: 0
-flags: 0x200000000010200(slab|head)
-raw: 0200000000010200 0000000000000000 0000000100000001 ffff8881da002500
-raw: 0000000000000000 00000000000c000c 00000001ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff8881cf591900: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff8881cf591980: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> ffff8881cf591a00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                       ^
-  ffff8881cf591a80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff8881cf591b00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-==================================================================
+                /*
+                 * If we have no parent, we live in "virtual".
+                 * Class-devices with a non class-device as parent, live
+                 * in a "glue" directory to prevent namespace collisions.
+                 */
+                if (parent =3D=3D NULL)
+                        parent_kobj =3D virtual_device_parent(dev);
+                else if (parent->class && !dev->class->ns_type)
+                        return &parent->kobj;
+                else
+                        parent_kobj =3D &parent->kobj;
 
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+>=20
+> I guess without your patch you'd see "(...)rtc0/wakeup/wakeup0" instead, =
+right?
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+No, it would be rtc0/wakeup0. That's because rtc is a class, and rtc0 is
+part of that class, so we don't try to make a glue directory named after
+the class to avoid collisions (see class_dir_create_and_add()
+implementation).
+
+BTW, paths in /sys/devices aren't supposed to matter too much. In this
+case, I'd expect to see userspace looking at the /sys/class/wakeup path
+to follow the symlink to figure out what device triggered a wakeup. It
+can look at the 'device' symlink inside the directory for the wakeup
+device to figure out which one it is.
+
+Final thought, might want to suppress the power directory from being
+created for the wakeup class. It looks odd to have
+/sys/class/wakeup/wakeup0/power when the presumably does nothing.
