@@ -2,322 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 919A07E00E
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 18:22:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E34827E013
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 18:23:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732888AbfHAQWX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 12:22:23 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:44950 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727024AbfHAQWW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 12:22:22 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x71GMBGD039195;
-        Thu, 1 Aug 2019 11:22:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1564676531;
-        bh=eI17SDdCXOLjG9HiLJcP/9t6fPsWVHSrpdyKsdsYp1o=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=OS5L7fsU0Cqq89DutlOuLPfYK+qTmRK/NScxIng13BWffO1Rt2NLZYoH0KrlWxhhT
-         Fevp0mH4HmJJfItrRtLdCseht5XzaCPV1zs8xPplr8rsvLRxUveCDY2x70FSw+U5eC
-         tJ8xm03ngNqrElFZBmD4rz1fnCwxKn4jEApvnJW8=
-Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x71GMB3q092951
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 1 Aug 2019 11:22:11 -0500
-Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Thu, 1 Aug
- 2019 11:22:11 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Thu, 1 Aug 2019 11:22:11 -0500
-Received: from a0132425.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x71GLxdD097075;
-        Thu, 1 Aug 2019 11:22:08 -0500
-From:   Vignesh Raghavendra <vigneshr@ti.com>
-To:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Tudor Ambarus <tudor.ambarus@microchip.com>
-CC:     Marek Vasut <marek.vasut@gmail.com>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-mtd@lists.infradead.org>,
-        Tomer Maimon <tmaimon77@gmail.com>
-Subject: [PATCH v4 3/3] mtd: spi-nor: Rework hwcaps selection for the spi-mem case
-Date:   Thu, 1 Aug 2019 21:52:29 +0530
-Message-ID: <20190801162229.28897-4-vigneshr@ti.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190801162229.28897-1-vigneshr@ti.com>
-References: <20190801162229.28897-1-vigneshr@ti.com>
+        id S1732917AbfHAQXN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 12:23:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33978 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727024AbfHAQXM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Aug 2019 12:23:12 -0400
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 33E2020657;
+        Thu,  1 Aug 2019 16:23:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564676591;
+        bh=7da4WGXGd4/Wm+MdwfjAwCtbHk3H9DFKOpK9DR+Fht0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=NlsTVycC6RXe/dgCwWd0yYSJfb8YeCiUu4zifaD8JdKhyXRQTW1pzp0LcMzGgmEBg
+         QZCwX8Em2Vs+vL9ck1KaRJh77jzgQPBim5716wcV2Y8/BFTUSSWnLL9IcDN97Reomr
+         hrleDNREQR24xnudRIyOq6iVo4vpwfSZhGR5aMfc=
+Date:   Thu, 1 Aug 2019 17:23:06 +0100
+From:   Will Deacon <will@kernel.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     iommu@lists.linux-foundation.org,
+        Shawn Anastasio <shawn@anastas.io>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        linuxppc-dev@lists.ozlabs.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dma-mapping: fix page attributes for dma_mmap_*
+Message-ID: <20190801162305.3m32chycsdjmdejk@willie-the-truck>
+References: <20190801142118.21225-1-hch@lst.de>
+ <20190801142118.21225-2-hch@lst.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190801142118.21225-2-hch@lst.de>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Boris Brezillon <boris.brezillon@bootlin.com>
+On Thu, Aug 01, 2019 at 05:21:18PM +0300, Christoph Hellwig wrote:
+> All the way back to introducing dma_common_mmap we've defaulyed to mark
+> the pages as uncached.  But this is wrong for DMA coherent devices or
+> if using DMA_ATTR_NON_CONSISTENT.  Later on DMA_ATTR_WRITE_COMBINE
+> also got incorrect treatment as that flag is only treated special on
+> the alloc side for non-coherent devices.
+> 
+> Introduce a new dma_mmap_pgprot helper that deals with the check
+> for coherent devices and DMA_ATTR_NON_CONSISTENT so that only the
+> remapping cases even reach arch_dma_mmap_pgprot and we thus ensure
+> no aliasing of page attributes happens.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  arch/arm/mm/dma-mapping.c        |  4 +---
+>  arch/arm64/mm/dma-mapping.c      |  4 +---
+>  arch/powerpc/kernel/Makefile     |  3 +--
+>  arch/powerpc/kernel/dma-common.c | 17 -----------------
+>  drivers/iommu/dma-iommu.c        |  6 +++---
+>  include/linux/dma-mapping.h      |  1 +
+>  include/linux/dma-noncoherent.h  |  5 -----
+>  kernel/dma/mapping.c             | 11 ++++++++++-
+>  kernel/dma/remap.c               |  2 +-
+>  9 files changed, 18 insertions(+), 35 deletions(-)
+>  delete mode 100644 arch/powerpc/kernel/dma-common.c
+> 
+> diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
+> index 9c9a23e5600d..cfe44df169c5 100644
+> --- a/arch/arm/mm/dma-mapping.c
+> +++ b/arch/arm/mm/dma-mapping.c
+> @@ -2397,9 +2397,7 @@ long arch_dma_coherent_to_pfn(struct device *dev, void *cpu_addr,
+>  pgprot_t arch_dma_mmap_pgprot(struct device *dev, pgprot_t prot,
+>  		unsigned long attrs)
+>  {
+> -	if (!dev_is_dma_coherent(dev))
+> -		return __get_dma_pgprot(attrs, prot);
+> -	return prot;
+> +	return __get_dma_pgprot(attrs, prot);
+>  }
+>  
+>  void *arch_dma_alloc(struct device *dev, size_t size, dma_addr_t *dma_handle,
+> diff --git a/arch/arm64/mm/dma-mapping.c b/arch/arm64/mm/dma-mapping.c
+> index 1d3f0b5a9940..bd2b039f43a6 100644
+> --- a/arch/arm64/mm/dma-mapping.c
+> +++ b/arch/arm64/mm/dma-mapping.c
+> @@ -14,9 +14,7 @@
+>  pgprot_t arch_dma_mmap_pgprot(struct device *dev, pgprot_t prot,
+>  		unsigned long attrs)
+>  {
+> -	if (!dev_is_dma_coherent(dev) || (attrs & DMA_ATTR_WRITE_COMBINE))
+> -		return pgprot_writecombine(prot);
+> -	return prot;
+> +	return pgprot_writecombine(prot);
+>  }
 
-The spi-mem layer provides a spi_mem_supports_op() function to check
-whether a specific operation is supported by the controller or not.
-This is much more accurate than the hwcaps selection logic based on
-SPI_{RX,TX}_ flags.
+Seems like a sensible cleanup to me:
 
-Rework the hwcaps selection logic to use spi_mem_supports_op() when
-nor->spimem != NULL.
+Acked-by: Will Deacon <will@kernel.org>
 
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
-Signed-off-by: Vignesh Raghavendra <vigneshr@ti.com>
----
- drivers/mtd/spi-nor/spi-nor.c | 183 +++++++++++++++++++++++++++-------
- include/linux/mtd/spi-nor.h   |  14 +++
- 2 files changed, 161 insertions(+), 36 deletions(-)
+Although arch_dma_mmap_pgprot() is a bit of a misnomer now that it only
+gets involved in the non-coherent case.
 
-diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
-index 866962c715b4..02b40f08ac36 100644
---- a/drivers/mtd/spi-nor/spi-nor.c
-+++ b/drivers/mtd/spi-nor/spi-nor.c
-@@ -2952,6 +2952,129 @@ static int spi_nor_read_sfdp(struct spi_nor *nor, u32 addr,
- 	return ret;
- }
- 
-+/**
-+ * spi_nor_spimem_check_op - check if the operation is supported
-+ *                           by controller
-+ *@nor:        pointer to a 'struct spi_nor'
-+ *@op:         pointer to op template to be checked
-+ *
-+ * Returns 0 if operation is supported, -ENOTSUPP otherwise.
-+ */
-+static int spi_nor_spimem_check_op(struct spi_nor *nor,
-+				   struct spi_mem_op *op)
-+{
-+	/*
-+	 * First test with 4 address bytes. The opcode itself might
-+	 * be a 3B addressing opcode but we don't care, because
-+	 * SPI controller implementation should not check the opcode,
-+	 * but just the sequence.
-+	 */
-+	op->addr.nbytes = 4;
-+	if (!spi_mem_supports_op(nor->spimem, op)) {
-+		/* If flash size <16MB, 3 address bytes are sufficient */
-+		if (nor->mtd.size <= SZ_16M) {
-+			op->addr.nbytes = 3;
-+			if (!spi_mem_supports_op(nor->spimem, op))
-+				return -ENOTSUPP;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+/**
-+ * spi_nor_spimem_check_readop - check if the read op is supported
-+ *                               by controller
-+ *@nor:         pointer to a 'struct spi_nor'
-+ *@read:        pointer to op template to be checked
-+ *
-+ * Returns 0 if operation is supported, -ENOTSUPP otherwise.
-+ */
-+static int spi_nor_spimem_check_readop(struct spi_nor *nor,
-+				       const struct spi_nor_read_command *read)
-+{
-+	struct spi_mem_op op = SPI_MEM_OP(SPI_MEM_OP_CMD(read->opcode, 1),
-+					  SPI_MEM_OP_ADDR(3, 0, 1),
-+					  SPI_MEM_OP_DUMMY(0, 1),
-+					  SPI_MEM_OP_DATA_IN(0, NULL, 1));
-+
-+	op.cmd.buswidth = spi_nor_get_protocol_inst_nbits(read->proto);
-+	op.addr.buswidth = spi_nor_get_protocol_addr_nbits(read->proto);
-+	op.data.buswidth = spi_nor_get_protocol_data_nbits(read->proto);
-+	op.dummy.buswidth = op.addr.buswidth;
-+	op.dummy.nbytes = (read->num_mode_clocks + read->num_wait_states) *
-+			  op.dummy.buswidth / 8;
-+
-+	return spi_nor_spimem_check_op(nor, &op);
-+}
-+
-+/**
-+ * spi_nor_spimem_check_pp - check if the page program op is supported
-+ *                           by controller
-+ *@nor:         pointer to a 'struct spi_nor'
-+ *@pp:          pointer to op template to be checked
-+ *
-+ * Returns 0 if operation is supported, -ENOTSUPP otherwise.
-+ */
-+static int spi_nor_spimem_check_pp(struct spi_nor *nor,
-+				   const struct spi_nor_pp_command *pp)
-+{
-+	struct spi_mem_op op = SPI_MEM_OP(SPI_MEM_OP_CMD(pp->opcode, 1),
-+					  SPI_MEM_OP_ADDR(3, 0, 1),
-+					  SPI_MEM_OP_NO_DUMMY,
-+					  SPI_MEM_OP_DATA_OUT(0, NULL, 1));
-+
-+	op.cmd.buswidth = spi_nor_get_protocol_inst_nbits(pp->proto);
-+	op.addr.buswidth = spi_nor_get_protocol_addr_nbits(pp->proto);
-+	op.data.buswidth = spi_nor_get_protocol_data_nbits(pp->proto);
-+
-+	return spi_nor_spimem_check_op(nor, &op);
-+}
-+
-+/**
-+ * spi_nor_spimem_adjust_hwcaps - Find optimal Read/Write protocol
-+ *                                based on SPI controller capabilities
-+ * @nor:        pointer to a 'struct spi_nor'
-+ * @params:     pointer to the 'struct spi_nor_flash_parameter'
-+ *              representing SPI NOR flash capabilities
-+ * @hwcaps:     pointer to resulting capabilities after adjusting
-+ *              according to controller and flash's capability
-+ */
-+static void
-+spi_nor_spimem_adjust_hwcaps(struct spi_nor *nor,
-+			     const struct spi_nor_flash_parameter *params,
-+			     u32 *hwcaps)
-+{
-+	unsigned int cap;
-+
-+	/* DTR modes are not supported yet, mask them all. */
-+	*hwcaps &= ~SNOR_HWCAPS_DTR;
-+
-+	/* X-X-X modes are not supported yet, mask them all. */
-+	*hwcaps &= ~SNOR_HWCAPS_X_X_X;
-+
-+	/* Start with read commands. */
-+	for (cap = 0; cap < sizeof(*hwcaps) * BITS_PER_BYTE; cap++) {
-+		int rdidx, ppidx;
-+
-+		if (!(*hwcaps & BIT(cap)))
-+			continue;
-+
-+		rdidx = spi_nor_hwcaps_read2cmd(BIT(cap));
-+		if (rdidx >= 0 &&
-+		    spi_nor_spimem_check_readop(nor, &params->reads[rdidx]))
-+			*hwcaps &= ~BIT(cap);
-+
-+		ppidx = spi_nor_hwcaps_pp2cmd(BIT(cap));
-+		if (ppidx < 0)
-+			continue;
-+
-+		if (spi_nor_spimem_check_pp(nor,
-+					    &params->page_programs[ppidx]))
-+			*hwcaps &= ~BIT(cap);
-+	}
-+}
-+
- /**
-  * spi_nor_read_sfdp_dma_unsafe() - read Serial Flash Discoverable Parameters.
-  * @nor:	pointer to a 'struct spi_nor'
-@@ -4361,16 +4484,25 @@ static int spi_nor_setup(struct spi_nor *nor,
- 	 */
- 	shared_mask = hwcaps->mask & params->hwcaps.mask;
- 
--	/* SPI n-n-n protocols are not supported yet. */
--	ignored_mask = (SNOR_HWCAPS_READ_2_2_2 |
--			SNOR_HWCAPS_READ_4_4_4 |
--			SNOR_HWCAPS_READ_8_8_8 |
--			SNOR_HWCAPS_PP_4_4_4 |
--			SNOR_HWCAPS_PP_8_8_8);
--	if (shared_mask & ignored_mask) {
--		dev_dbg(nor->dev,
--			"SPI n-n-n protocols are not supported yet.\n");
--		shared_mask &= ~ignored_mask;
-+	if (nor->spimem) {
-+		/*
-+		 * When called from spi_nor_probe(), all caps are set and we
-+		 * need to discard some of them based on what the SPI
-+		 * controller actually supports (using spi_mem_supports_op()).
-+		 */
-+		spi_nor_spimem_adjust_hwcaps(nor, params, &shared_mask);
-+	} else {
-+		/*
-+		 * SPI n-n-n protocols are not supported when the SPI
-+		 * controller directly implements the spi_nor interface.
-+		 * Yet another reason to switch to spi-mem.
-+		 */
-+		ignored_mask = SNOR_HWCAPS_X_X_X;
-+		if (shared_mask & ignored_mask) {
-+			dev_dbg(nor->dev,
-+				"SPI n-n-n protocols are not supported.\n");
-+			shared_mask &= ~ignored_mask;
-+		}
- 	}
- 
- 	/* Select the (Fast) Read command. */
-@@ -4713,11 +4845,11 @@ static int spi_nor_probe(struct spi_mem *spimem)
- 	struct spi_device *spi = spimem->spi;
- 	struct flash_platform_data *data = dev_get_platdata(&spi->dev);
- 	struct spi_nor *nor;
--	struct spi_nor_hwcaps hwcaps = {
--		.mask = SNOR_HWCAPS_READ |
--			SNOR_HWCAPS_READ_FAST |
--			SNOR_HWCAPS_PP,
--	};
-+	/*
-+	 * Enable all caps by default. The core will mask them after
-+	 * checking what's really supported using spi_mem_supports_op().
-+	 */
-+	const struct spi_nor_hwcaps hwcaps = { .mask = SNOR_HWCAPS_ALL };
- 	char *flash_name;
- 	int ret;
- 
-@@ -4731,27 +4863,6 @@ static int spi_nor_probe(struct spi_mem *spimem)
- 
- 	spi_mem_set_drvdata(spimem, nor);
- 
--	if (spi->mode & SPI_RX_OCTAL) {
--		hwcaps.mask |= SNOR_HWCAPS_READ_1_1_8;
--
--		if (spi->mode & SPI_TX_OCTAL)
--			hwcaps.mask |= (SNOR_HWCAPS_READ_1_8_8 |
--					SNOR_HWCAPS_PP_1_1_8 |
--					SNOR_HWCAPS_PP_1_8_8);
--	} else if (spi->mode & SPI_RX_QUAD) {
--		hwcaps.mask |= SNOR_HWCAPS_READ_1_1_4;
--
--		if (spi->mode & SPI_TX_QUAD)
--			hwcaps.mask |= (SNOR_HWCAPS_READ_1_4_4 |
--					SNOR_HWCAPS_PP_1_1_4 |
--					SNOR_HWCAPS_PP_1_4_4);
--	} else if (spi->mode & SPI_RX_DUAL) {
--		hwcaps.mask |= SNOR_HWCAPS_READ_1_1_2;
--
--		if (spi->mode & SPI_TX_DUAL)
--			hwcaps.mask |= SNOR_HWCAPS_READ_1_2_2;
--	}
--
- 	if (data && data->name)
- 		nor->mtd.name = data->name;
- 
-diff --git a/include/linux/mtd/spi-nor.h b/include/linux/mtd/spi-nor.h
-index 4f35b1877889..5f1acb1867dd 100644
---- a/include/linux/mtd/spi-nor.h
-+++ b/include/linux/mtd/spi-nor.h
-@@ -524,6 +524,20 @@ struct spi_nor_hwcaps {
- #define SNOR_HWCAPS_PP_1_8_8	BIT(21)
- #define SNOR_HWCAPS_PP_8_8_8	BIT(22)
- 
-+#define SNOR_HWCAPS_X_X_X	(SNOR_HWCAPS_READ_2_2_2 |	\
-+				 SNOR_HWCAPS_READ_4_4_4 |	\
-+				 SNOR_HWCAPS_READ_8_8_8 |	\
-+				 SNOR_HWCAPS_PP_4_4_4 |		\
-+				 SNOR_HWCAPS_PP_8_8_8)
-+
-+#define SNOR_HWCAPS_DTR		(SNOR_HWCAPS_READ_1_1_1_DTR |	\
-+				 SNOR_HWCAPS_READ_1_2_2_DTR |	\
-+				 SNOR_HWCAPS_READ_1_4_4_DTR |	\
-+				 SNOR_HWCAPS_READ_1_8_8_DTR)
-+
-+#define SNOR_HWCAPS_ALL		(SNOR_HWCAPS_READ_MASK |	\
-+				 SNOR_HWCAPS_PP_MASK)
-+
- /**
-  * spi_nor_scan() - scan the SPI NOR
-  * @nor:	the spi_nor structure
--- 
-2.22.0
-
+Will
