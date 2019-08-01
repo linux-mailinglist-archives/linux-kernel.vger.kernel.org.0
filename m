@@ -2,67 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E3A47D7ED
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 10:44:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A31747D7F3
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 10:44:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729953AbfHAIoP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 04:44:15 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54346 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726677AbfHAIoP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 04:44:15 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 5B652AE49;
-        Thu,  1 Aug 2019 08:44:13 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 1524C1E3F4D; Thu,  1 Aug 2019 10:44:12 +0200 (CEST)
-Date:   Thu, 1 Aug 2019 10:44:12 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Jan Kara <jack@suse.cz>, LKML <linux-kernel@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>,
-        Sebastian Siewior <bigeasy@linutronix.de>,
-        Theodore Tso <tytso@mit.edu>, Julia Cartwright <julia@ni.com>,
-        Jan Kara <jack@suse.com>, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [patch 4/4] fs: jbd/jbd2: Substitute BH locks for RT and lock
- debugging
-Message-ID: <20190801084412.GD25064@quack2.suse.cz>
-References: <20190730112452.871257694@linutronix.de>
- <20190730120321.489374435@linutronix.de>
- <20190731154859.GI15806@quack2.suse.cz>
- <alpine.DEB.2.21.1907312137500.1788@nanos.tec.linutronix.de>
+        id S1730458AbfHAIoh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 04:44:37 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:41655 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726368AbfHAIog (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Aug 2019 04:44:36 -0400
+Received: by mail-lf1-f67.google.com with SMTP id 62so44741732lfa.8
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2019 01:44:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ApaNlouSMx8uBbHDq5VJnFAAQcHTQjPYGjRXW3aemyY=;
+        b=vA2XXEIzAYm5CKmotczEq6u56vcPMSfU6SQ5r/RIFSOmWcaN1evlWsJWLH5SMntRQe
+         yowbGs+sPWuyH9wBiFmtYoKxRNLRd1xWHLV2pouaFBYyZdG/FazpVXMOcP53vTOsnuF/
+         I55H4RtKKCcXDXqPHHUEocLPVuGOmvmXazPUp0jJr99PLP29EBVHo+cNW8V+tB/eMRmF
+         oZKL3W6SbElPMWp2PyTqnfQXykWViJ11jtkvf8t7kFotqAFZR1ODt1pM6ykyZhXbKW2r
+         TsOTySbx6HXX5+TtL6vYpIw/jFZl8X/fTkdG4cJiGvYw+8ER+bbHaMNDX6TgFKyLGQsn
+         4rNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ApaNlouSMx8uBbHDq5VJnFAAQcHTQjPYGjRXW3aemyY=;
+        b=RRyayQBJJylSWFfPVPWIxM839KiVliLlZs+St0FEs4O0h4352KttKx6QvHM8SwCRrv
+         VuQSm3VZGXX3m9B9XGN2VBBCEHNcTj3uCvAH2Y7/V5IRHb2Zu7n+1/M2RflY8ZOEgGrH
+         n0bDt8SqCIoR3V1Y6Q2F1AYWzlU61qE6Fw/qeIKc6hir0B/Wq7GmyHeoEMYapRmnUWrF
+         t0wqUy+MtxxiTONkNlmQ02gbYJ7k5k4bqzs3kYPrYlJ6RzHpornbZtFA2NOtyZ1X9i34
+         uf4tjxSFHhmXzQ6g/7/9cD59xyL/To27i3Cy756dwmxgLL4zvLxs+29T0lYR/raeq+bs
+         XtCQ==
+X-Gm-Message-State: APjAAAXGFayQDk0xR6/ZQQYyvg9r9kKa3Mgz5rYa7ZW4zK4Y7DI5MN4z
+        caGMPL4e+wmPAJ2TiiexyN/gGU1YeOcifzQWadX0bA==
+X-Google-Smtp-Source: APXvYqwiPimAOKH35mc/iLJ4mkQBFGo7Fu8tx06pdbdue2EpML8TleV/2fqQ3x2CF8Rqg/xGPDEjUwi/0w3JXhg1D0w=
+X-Received: by 2002:a19:6a01:: with SMTP id u1mr60290264lfu.141.1564649074865;
+ Thu, 01 Aug 2019 01:44:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1907312137500.1788@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190712153722.3d1498be@endymion> <20190712155744.0771967c@endymion>
+In-Reply-To: <20190712155744.0771967c@endymion>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 1 Aug 2019 10:44:23 +0200
+Message-ID: <CACRpkdb_UAMc=KKgjvVXD1xGnQLusfc9JC-av0mUSTjC83GRmA@mail.gmail.com>
+Subject: Re: [PATCH 3/3] soc: ixp4xx: Hide auto-selected drivers
+To:     Jean Delvare <jdelvare@suse.de>
+Cc:     Krzysztof Halasa <khalasa@piap.pl>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 31-07-19 21:40:42, Thomas Gleixner wrote:
-> On Wed, 31 Jul 2019, Jan Kara wrote:
-> > BH_State lock is definitely worth it. In fact, if you placed the spinlock
-> > inside struct journal_head (which is the structure whose members are in
-> > fact protected by it), I'd be even fine with just using the spinlock always
-> > instead of the bit spinlock. journal_head is pretty big anyway (and there's
-> > even 4-byte hole in it for 64-bit archs) and these structures are pretty
-> > rare (only for actively changed metadata buffers).
-> 
-> Just need to figure out what to do with the ASSERT_JH(state_is_locked) case for
-> UP. Perhaps just return true for UP && !DEBUG_SPINLOCK?
+On Fri, Jul 12, 2019 at 3:57 PM Jean Delvare <jdelvare@suse.de> wrote:
 
-Yes, that makes sense.
+> The 2 IXP4xx SOC drivers qmgr and npe are selected automatically when
+> needed so they do not need to be presented to the user.
+>
+> Furthermore these helper drivers are specific to the IXP4xx arch so
+> hide them completely on other architectures so as to not clutter the
+> config file.
+>
+> Signed-off-by: Jean Delvare <jdelvare@suse.de>
+> Cc: Krzysztof Halasa <khalasa@piap.pl>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> Note: Ultimately all I want is that non-ixp4xx users are not asked
+> about IXP4XX_QMGR and IXP4XX_NPE. If there is another preferred option
+> to achieve the same, that would work with me too, just let me know.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+
+This is the right thing to do, sorry for not doing it like this to begin
+with. I'll queue it in my ixp4xx tree.
+
+Yours,
+Linus Walleij
