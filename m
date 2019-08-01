@@ -2,167 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B89DD7EF48
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 10:29:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 530627EF64
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 10:35:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404184AbfHBI3V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 04:29:21 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:46660 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727455AbfHBI3U (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 04:29:20 -0400
-Received: by mail-lj1-f195.google.com with SMTP id v24so72178297ljg.13
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2019 01:29:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=kdl2R0IBgfjJB4JZRxhZE0/T9CpAtSy8txxcK/4WOWY=;
-        b=R0+Hv9BP1gyMA34D02T3e8AtBzW0JtD9RzB2q43wKYUEP3bKsJazHF0UrcXlQ202mc
-         VYwvt0uAQAfweMCxq143kYfgnONAJMLO+RG33VrfgllSUaYFX8DOfxhw7Cz8EVMIHu50
-         5HlTJTzfBkpQqEopir2qfuJhDvNjTNzjhaQrpgDyJsEN+jvjQw79bFcF0wmJn+k3IGWY
-         BMYVzWHffvW5dtEA6TvY4fUHj0RQQ60VjxarRrC2CO7/q5akiWvQ24+3iK7xRKHonm0s
-         GMGYgYKWr8E5Jz1JLnkOoAUzbLfAznisfWLknafaUqDIU1VNUxUQyDTLc3GWLdv6uSF7
-         fgiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kdl2R0IBgfjJB4JZRxhZE0/T9CpAtSy8txxcK/4WOWY=;
-        b=SWVctuqCR6E+WFGGEcgLaVEyn27DN+4EJAoWceQNSdwkN6oiIQr6+DgWkpmB+8wpXu
-         2Zf5QDLlRuoBfvdnutvUkSIPqrB5D+cBO4sSsWdTfOhbQewlqHmpXrksmY9azb2lXMeA
-         aYqwkMIbZ4h1Z4PKAasPmmIyIzWTUlLJgtnpzSHENM51cFX3eQB1lIt5cZGZ+Dsqws9k
-         AoLcCT4oYbfmhdpTNiNZRVvjILLYleqxr+M4WE5miPpi2F8r3uZHdPbiHRWjqOxkaa1f
-         2l6ho4fri//gkCO5FnFYYGf3hiGrlKvppYE0B3d3lLVgdLtF9xwqJKCZgQ9JmdTJT5uc
-         KwEA==
-X-Gm-Message-State: APjAAAXjWlBRKapaFGXJn5nnn1cR63j7v4s/T4CK7B+fHUVxdKZuN9LV
-        komyqmHjIRgxK5f81SEFA7RgSuuR7pz/1Abc1SqaLg==
-X-Google-Smtp-Source: APXvYqwJwTHbJ0uwk+/AZGi4Vi/6dIysgXs+VXFlRpPMTwNulKwsAxuix0dgX1GFcTwKw2oVO2pgpAu7bJsdNj1ev0g=
-X-Received: by 2002:a2e:995a:: with SMTP id r26mr70660632ljj.107.1564734557634;
- Fri, 02 Aug 2019 01:29:17 -0700 (PDT)
-MIME-Version: 1.0
-References: <1564670424-26023-1-git-send-email-vincent.guittot@linaro.org>
- <1564670424-26023-9-git-send-email-vincent.guittot@linaro.org> <22ba6771-8bde-8c6e-65e0-4ab2ebc6e018@arm.com>
-In-Reply-To: <22ba6771-8bde-8c6e-65e0-4ab2ebc6e018@arm.com>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Fri, 2 Aug 2019 10:29:06 +0200
-Message-ID: <CAKfTPtApKzWZvD83QKwd4ZKhfsCyFMZffkyAOB5oYNgck5jbPw@mail.gmail.com>
-Subject: Re: [PATCH v2 8/8] sched/fair: use utilization to select misfit task
-To:     Valentin Schneider <valentin.schneider@arm.com>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
+        id S2404284AbfHBIfM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 04:35:12 -0400
+Received: from mx2.suse.de ([195.135.220.15]:42738 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729739AbfHBIfM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 04:35:12 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id B5825AD35;
+        Fri,  2 Aug 2019 08:35:10 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id EF9621E3F4D; Thu,  1 Aug 2019 19:57:03 +0200 (CEST)
+Date:   Thu, 1 Aug 2019 19:57:03 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
-        Phil Auld <pauld@redhat.com>,
-        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <Morten.Rasmussen@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+        Ingo Molnar <mingo@kernel.org>,
+        Sebastian Siewior <bigeasy@linutronix.de>,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Julia Cartwright <julia@ni.com>, Jan Kara <jack@suse.com>,
+        Theodore Tso <tytso@mit.edu>, Mark Fasheh <mark@fasheh.com>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Joel Becker <jlbec@evilplan.org>, linux-ext4@vger.kernel.org,
+        Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [patch V2 6/7] fs/jbd2: Make state lock a spinlock
+Message-ID: <20190801175703.GH25064@quack2.suse.cz>
+References: <20190801010126.245731659@linutronix.de>
+ <20190801010944.457499601@linutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190801010944.457499601@linutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 1 Aug 2019 at 18:27, Valentin Schneider
-<valentin.schneider@arm.com> wrote:
->
-> On 01/08/2019 15:40, Vincent Guittot wrote:
-> > @@ -8261,7 +8261,7 @@ static bool update_sd_pick_busiest(struct lb_env *env,
-> >                * If we have more than one misfit sg go with the
-> >                * biggest misfit.
-> >                */
-> > -             if (sgs->group_misfit_task_load < busiest->group_misfit_task_load)
-> > +             if (sgs->group_misfit_task_util < busiest->group_misfit_task_util)
-> >                       return false;
->
-> I previously said this change would render the maximization useless, but I
-> had forgotten one thing: with PELT time scaling, task utilization can go
-> above its CPU's capacity.
->
-> So if you have two LITTLE CPUs running a busy loop (misfit task) each, the
-> one that's been running the longest would have the highest utilization
-> (assuming they haven't reached 1024 yet). In other words "utilizations
-> above the capacity_margin can't be compared" doesn't really stand.
->
-> Still, maximizing load would lead us there. Furthermore, if we have to pick
-> between two rqs with misfit tasks, I still believe we should pick the one
-> with the highest load, not the highest utilization.
->
-> We could keep load and fix the issue of detaching the wrong task with
-> something like:
->
-> -----8<-----
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index 53e64a7b2ae0..bfc2b624ee98 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -7489,12 +7489,8 @@ static int detach_tasks(struct lb_env *env)
->                 case migrate_misfit:
->                         load = task_h_load(p);
->
-> -                       /*
-> -                        * utilization of misfit task might decrease a bit
-> -                        * since it has been recorded. Be conservative in the
-> -                        * condition.
-> -                        */
-> -                       if (load < env->imbalance)
-> +                       /* This is not a misfit task */
-> +                       if (task_fits_capacity(p, capacity_of(env->src_cpu)))
->                                 goto next;
+On Thu 01-08-19 03:01:32, Thomas Gleixner wrote:
+> Bit-spinlocks are problematic on PREEMPT_RT if functions which might sleep
+> on RT, e.g. spin_lock(), alloc/free(), are invoked inside the lock held
+> region because bit spinlocks disable preemption even on RT.
+> 
+> A first attempt was to replace state lock with a spinlock placed in struct
+> buffer_head and make the locking conditional on PREEMPT_RT and
+> DEBUG_BIT_SPINLOCKS.
+> 
+> Jan pointed out that there is a 4 byte hole in struct journal_head where a
+> regular spinlock fits in and he would not object to convert the state lock
+> to a spinlock unconditionally.
+> 
+> Aside of solving the RT problem, this also gains lockdep coverage for the
+> journal head state lock (bit-spinlocks are not covered by lockdep as it's
+> hard to fit a lockdep map into a single bit).
+> 
+> The trivial change would have been to convert the jbd_*lock_bh_state()
+> inlines, but that comes with the downside that these functions take a
+> buffer head pointer which needs to be converted to a journal head pointer
+> which adds another level of indirection.
+> 
+> As almost all functions which use this lock have a journal head pointer
+> readily available, it makes more sense to remove the lock helper inlines
+> and write out spin_*lock() at all call sites.
+> 
+> Fixup all locking comments as well.
+> 
+> Suggested-by: Jan Kara <jack@suse.com>
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> Cc: "Theodore Ts'o" <tytso@mit.edu>
+> Cc: Mark Fasheh <mark@fasheh.com>
+> Cc: Joseph Qi <joseph.qi@linux.alibaba.com>
+> Cc: Joel Becker <jlbec@evilplan.org>
+> Cc: Jan Kara <jack@suse.com>
+> Cc: linux-ext4@vger.kernel.org
 
-This could be a solution for make sure to pull only misfit task and
-keep using load
+Just a heads up that I didn't miss this patch. Just it has some bugs and I
+figured that rather than explaining to you subtleties of jh lifetime it is
+easier to fix up the problems myself since you're probably not keen on
+becoming jbd2 developer ;)... which was more complex than I thought so I'm
+not completely done yet. Hopefuly tomorrow.
 
->
->                         env->imbalance = 0;
-> ----->8-----
->
-> However what would be *even* better IMO would be:
->
-> -----8<-----
-> @@ -8853,6 +8853,7 @@ voluntary_active_balance(struct lb_env *env)
->                         return 1;
->         }
->
-> +       /* XXX: make sure current is still a misfit task? */
->         if (env->balance_type == migrate_misfit)
->                 return 1;
->
-> @@ -8966,6 +8967,20 @@ static int load_balance(int this_cpu, struct rq *this_rq,
->         env.src_rq = busiest;
->
->         ld_moved = 0;
-> +
-> +       /*
-> +        * Misfit tasks are only misfit if they are currently running, see
-> +        * update_misfit_status().
-> +        *
-> +        * - If they're not running, we'll get an opportunity at wakeup to
-> +        *   migrate them to a bigger CPU.
-> +        * - If they're running, we need to active balance them to a bigger CPU.
-> +        *
-> +        * Do the smart thing and go straight for active balance.
-> +        */
-> +       if (env->balance_type == migrate_misfit)
-> +               goto active_balance;
-> +
-
-This looks ugly and add a new bypass which this patchset tries to remove
-This doesn't work if your misfit task has been preempted by another
-one during the load balance and waiting for the runqueue
-
-
->         if (busiest->nr_running > 1) {
->                 /*
->                  * Attempt to move tasks. If find_busiest_group has found
-> @@ -9074,7 +9089,7 @@ static int load_balance(int this_cpu, struct rq *this_rq,
->                         goto out_all_pinned;
->                 }
->         }
-> -
-> +active_balance:
->         if (!ld_moved) {
->                 schedstat_inc(sd->lb_failed[idle]);
->                 /*
-> ----->8-----
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
