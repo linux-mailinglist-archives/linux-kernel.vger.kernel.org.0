@@ -2,254 +2,265 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B48B67DC08
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 15:00:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A40597DC11
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 15:02:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731543AbfHANAR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 09:00:17 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:40274 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726422AbfHANAQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 09:00:16 -0400
-Received: by mail-wr1-f67.google.com with SMTP id r1so73472402wrl.7
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2019 06:00:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=yMpiQpFWP0JEpjMoJk++KflIBeJTz7OVMNcADVho+R4=;
-        b=tQEPWaf+dZ44fnfNJxwvsG2mixMHkX/vyi1jSiPbobc/LJE39WeKWzQVqlZGq9Ir15
-         fBXgjk9onNi6OM+FBuKnrRSrNqwcQmA9B7klNceOZOm8qa8HXu022oiog07bbJpU+3kM
-         KXjpbRxkZnXUTsbH69ijQXC+V/FLziitF5nfpucubq31QmoLewCvkrFTvpQ07gv7gtQz
-         r38l9N40LxcNjyWE5S/crKcJTLprMelNTS+iNhS+JT38jGD9Jj6xMNgShyVOF+zRdDMn
-         H/S9cG1Q+PgbyMN+iYQr2ugXNYYWLwU/luV7B7Ynl3p8tH580ID9NHHyqEYkj5cSc8lZ
-         Drpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=yMpiQpFWP0JEpjMoJk++KflIBeJTz7OVMNcADVho+R4=;
-        b=GvAmLJ1CKqzxg8Hgh/Xn6KLhEkhDfAvUNqcjPRpI+uBXc4lJlTOevwXopNMjWGQgYJ
-         poNrAGCTQMecxOSjuLvA+etOyQU1U5Pc38hRRuC1KMQb6uxHnk+cYptO2f/RYHQLuOq+
-         zU9/cgCpVkm8BS0kz1z8WCjuhw0fL41A/0xpfoG5cZ+P750sHJzcWUsXcAJMcl7Q2Lhu
-         pmgqzF3VJMRI9KUpFLn+36tEsNNNJrtIny/Y5wn6fivDstEY5zSTZqHIWp8KKB+G2v1x
-         ZowCFYaXl0+IVSOXUNqondWYdtE6CoELE6MRCzRAXkSaCXOgPOtLKRHYmoysErbgtM+p
-         9SgA==
-X-Gm-Message-State: APjAAAWh5oSKXWDS2igYTQBltCwXaWNsSF//DYotx0oB+++3eeFogSnd
-        +ozTRCUW0MXXkQg7ae0cMex82g==
-X-Google-Smtp-Source: APXvYqxEyB8QNNBeX9+VrmqebpoFBOtkFuHRU1y3LXbLk1JajQtfO8EHU9UZxzMnWZij8Mp3R0L8YQ==
-X-Received: by 2002:adf:eb49:: with SMTP id u9mr21570883wrn.215.1564664412103;
-        Thu, 01 Aug 2019 06:00:12 -0700 (PDT)
-Received: from ?IPv6:2a01:e34:ed2f:f020:2166:4c76:28f8:762a? ([2a01:e34:ed2f:f020:2166:4c76:28f8:762a])
-        by smtp.googlemail.com with ESMTPSA id 4sm163635864wro.78.2019.08.01.06.00.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 01 Aug 2019 06:00:11 -0700 (PDT)
-Subject: Re: [PATCH v6 0/3] Make IPA use PM_EM
-To:     Quentin Perret <quentin.perret@arm.com>, edubezval@gmail.com,
-        rui.zhang@intel.com, javi.merino@kernel.org,
-        viresh.kumar@linaro.org, amit.kachhap@gmail.com, rjw@rjwysocki.net,
-        catalin.marinas@arm.com, will@kernel.org
-Cc:     dietmar.eggemann@arm.com, ionela.voinescu@arm.com,
-        mka@chromium.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20190801124643.17112-1-quentin.perret@arm.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+        id S1731584AbfHANBv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 09:01:51 -0400
+Received: from mx2.suse.de ([195.135.220.15]:40000 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726422AbfHANBu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Aug 2019 09:01:50 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 742EAB6AB;
+        Thu,  1 Aug 2019 13:01:47 +0000 (UTC)
+Subject: Re: [RFC PATCH 2/3] mm, compaction: use MIN_COMPACT_COSTLY_PRIORITY
+ everywhere for costly orders
+To:     Mike Kravetz <mike.kravetz@oracle.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Cc:     Hillf Danton <hdanton@sina.com>, Michal Hocko <mhocko@kernel.org>,
+        Mel Gorman <mgorman@suse.de>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+References: <20190724175014.9935-1-mike.kravetz@oracle.com>
+ <20190724175014.9935-3-mike.kravetz@oracle.com>
+ <278da9d8-6781-b2bc-8de6-6a71e879513c@suse.cz>
+ <0942e0c2-ac06-948e-4a70-a29829cbcd9c@oracle.com>
+From:   Vlastimil Babka <vbabka@suse.cz>
 Openpgp: preference=signencrypt
-Autocrypt: addr=daniel.lezcano@linaro.org; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <ba2cd83a-7c3b-9f75-2413-a0ef3ed463d3@linaro.org>
-Date:   Thu, 1 Aug 2019 15:00:10 +0200
+Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
+ mQINBFZdmxYBEADsw/SiUSjB0dM+vSh95UkgcHjzEVBlby/Fg+g42O7LAEkCYXi/vvq31JTB
+ KxRWDHX0R2tgpFDXHnzZcQywawu8eSq0LxzxFNYMvtB7sV1pxYwej2qx9B75qW2plBs+7+YB
+ 87tMFA+u+L4Z5xAzIimfLD5EKC56kJ1CsXlM8S/LHcmdD9Ctkn3trYDNnat0eoAcfPIP2OZ+
+ 9oe9IF/R28zmh0ifLXyJQQz5ofdj4bPf8ecEW0rhcqHfTD8k4yK0xxt3xW+6Exqp9n9bydiy
+ tcSAw/TahjW6yrA+6JhSBv1v2tIm+itQc073zjSX8OFL51qQVzRFr7H2UQG33lw2QrvHRXqD
+ Ot7ViKam7v0Ho9wEWiQOOZlHItOOXFphWb2yq3nzrKe45oWoSgkxKb97MVsQ+q2SYjJRBBH4
+ 8qKhphADYxkIP6yut/eaj9ImvRUZZRi0DTc8xfnvHGTjKbJzC2xpFcY0DQbZzuwsIZ8OPJCc
+ LM4S7mT25NE5kUTG/TKQCk922vRdGVMoLA7dIQrgXnRXtyT61sg8PG4wcfOnuWf8577aXP1x
+ 6mzw3/jh3F+oSBHb/GcLC7mvWreJifUL2gEdssGfXhGWBo6zLS3qhgtwjay0Jl+kza1lo+Cv
+ BB2T79D4WGdDuVa4eOrQ02TxqGN7G0Biz5ZLRSFzQSQwLn8fbwARAQABtCBWbGFzdGltaWwg
+ QmFia2EgPHZiYWJrYUBzdXNlLmN6PokCVAQTAQoAPgIbAwULCQgHAwUVCgkICwUWAgMBAAIe
+ AQIXgBYhBKlA1DSZLC6OmRA9UCJPp+fMgqZkBQJcbbyGBQkH8VTqAAoJECJPp+fMgqZkpGoP
+ /1jhVihakxw1d67kFhPgjWrbzaeAYOJu7Oi79D8BL8Vr5dmNPygbpGpJaCHACWp+10KXj9yz
+ fWABs01KMHnZsAIUytVsQv35DMMDzgwVmnoEIRBhisMYOQlH2bBn/dqBjtnhs7zTL4xtqEcF
+ 1hoUFEByMOey7gm79utTk09hQE/Zo2x0Ikk98sSIKBETDCl4mkRVRlxPFl4O/w8dSaE4eczH
+ LrKezaFiZOv6S1MUKVKzHInonrCqCNbXAHIeZa3JcXCYj1wWAjOt9R3NqcWsBGjFbkgoKMGD
+ usiGabetmQjXNlVzyOYdAdrbpVRNVnaL91sB2j8LRD74snKsV0Wzwt90YHxDQ5z3M75YoIdl
+ byTKu3BUuqZxkQ/emEuxZ7aRJ1Zw7cKo/IVqjWaQ1SSBDbZ8FAUPpHJxLdGxPRN8Pfw8blKY
+ 8mvLJKoF6i9T6+EmlyzxqzOFhcc4X5ig5uQoOjTIq6zhLO+nqVZvUDd2Kz9LMOCYb516cwS/
+ Enpi0TcZ5ZobtLqEaL4rupjcJG418HFQ1qxC95u5FfNki+YTmu6ZLXy+1/9BDsPuZBOKYpUm
+ 3HWSnCS8J5Ny4SSwfYPH/JrtberWTcCP/8BHmoSpS/3oL3RxrZRRVnPHFzQC6L1oKvIuyXYF
+ rkybPXYbmNHN+jTD3X8nRqo+4Qhmu6SHi3VquQENBFsZNQwBCACuowprHNSHhPBKxaBX7qOv
+ KAGCmAVhK0eleElKy0sCkFghTenu1sA9AV4okL84qZ9gzaEoVkgbIbDgRbKY2MGvgKxXm+kY
+ n8tmCejKoeyVcn9Xs0K5aUZiDz4Ll9VPTiXdf8YcjDgeP6/l4kHb4uSW4Aa9ds0xgt0gP1Xb
+ AMwBlK19YvTDZV5u3YVoGkZhspfQqLLtBKSt3FuxTCU7hxCInQd3FHGJT/IIrvm07oDO2Y8J
+ DXWHGJ9cK49bBGmK9B4ajsbe5GxtSKFccu8BciNluF+BqbrIiM0upJq5Xqj4y+Xjrpwqm4/M
+ ScBsV0Po7qdeqv0pEFIXKj7IgO/d4W2bABEBAAGJA3IEGAEKACYWIQSpQNQ0mSwujpkQPVAi
+ T6fnzIKmZAUCWxk1DAIbAgUJA8JnAAFACRAiT6fnzIKmZMB0IAQZAQoAHRYhBKZ2GgCcqNxn
+ k0Sx9r6Fd25170XjBQJbGTUMAAoJEL6Fd25170XjDBUH/2jQ7a8g+FC2qBYxU/aCAVAVY0NE
+ YuABL4LJ5+iWwmqUh0V9+lU88Cv4/G8fWwU+hBykSXhZXNQ5QJxyR7KWGy7LiPi7Cvovu+1c
+ 9Z9HIDNd4u7bxGKMpn19U12ATUBHAlvphzluVvXsJ23ES/F1c59d7IrgOnxqIcXxr9dcaJ2K
+ k9VP3TfrjP3g98OKtSsyH0xMu0MCeyewf1piXyukFRRMKIErfThhmNnLiDbaVy6biCLx408L
+ Mo4cCvEvqGKgRwyckVyo3JuhqreFeIKBOE1iHvf3x4LU8cIHdjhDP9Wf6ws1XNqIvve7oV+w
+ B56YWoalm1rq00yUbs2RoGcXmtX1JQ//aR/paSuLGLIb3ecPB88rvEXPsizrhYUzbe1TTkKc
+ 4a4XwW4wdc6pRPVFMdd5idQOKdeBk7NdCZXNzoieFntyPpAq+DveK01xcBoXQ2UktIFIsXey
+ uSNdLd5m5lf7/3f0BtaY//f9grm363NUb9KBsTSnv6Vx7Co0DWaxgC3MFSUhxzBzkJNty+2d
+ 10jvtwOWzUN+74uXGRYSq5WefQWqqQNnx+IDb4h81NmpIY/X0PqZrapNockj3WHvpbeVFAJ0
+ 9MRzYP3x8e5OuEuJfkNnAbwRGkDy98nXW6fKeemREjr8DWfXLKFWroJzkbAVmeIL0pjXATxr
+ +tj5JC0uvMrrXefUhXTo0SNoTsuO/OsAKOcVsV/RHHTwCDR2e3W8mOlA3QbYXsscgjghbuLh
+ J3oTRrOQa8tUXWqcd5A0+QPo5aaMHIK0UAthZsry5EmCY3BrbXUJlt+23E93hXQvfcsmfi0N
+ rNh81eknLLWRYvMOsrbIqEHdZBT4FHHiGjnck6EYx/8F5BAZSodRVEAgXyC8IQJ+UVa02QM5
+ D2VL8zRXZ6+wARKjgSrW+duohn535rG/ypd0ctLoXS6dDrFokwTQ2xrJiLbHp9G+noNTHSan
+ ExaRzyLbvmblh3AAznb68cWmM3WVkceWACUalsoTLKF1sGrrIBj5updkKkzbKOq5gcC5AQ0E
+ Wxk1NQEIAJ9B+lKxYlnKL5IehF1XJfknqsjuiRzj5vnvVrtFcPlSFL12VVFVUC2tT0A1Iuo9
+ NAoZXEeuoPf1dLDyHErrWnDyn3SmDgb83eK5YS/K363RLEMOQKWcawPJGGVTIRZgUSgGusKL
+ NuZqE5TCqQls0x/OPljufs4gk7E1GQEgE6M90Xbp0w/r0HB49BqjUzwByut7H2wAdiNAbJWZ
+ F5GNUS2/2IbgOhOychHdqYpWTqyLgRpf+atqkmpIJwFRVhQUfwztuybgJLGJ6vmh/LyNMRr8
+ J++SqkpOFMwJA81kpjuGR7moSrUIGTbDGFfjxmskQV/W/c25Xc6KaCwXah3OJ40AEQEAAYkC
+ PAQYAQoAJhYhBKlA1DSZLC6OmRA9UCJPp+fMgqZkBQJbGTU1AhsMBQkDwmcAAAoJECJPp+fM
+ gqZkPN4P/Ra4NbETHRj5/fM1fjtngt4dKeX/6McUPDIRuc58B6FuCQxtk7sX3ELs+1+w3eSV
+ rHI5cOFRSdgw/iKwwBix8D4Qq0cnympZ622KJL2wpTPRLlNaFLoe5PkoORAjVxLGplvQIlhg
+ miljQ3R63ty3+MZfkSVsYITlVkYlHaSwP2t8g7yTVa+q8ZAx0NT9uGWc/1Sg8j/uoPGrctml
+ hFNGBTYyPq6mGW9jqaQ8en3ZmmJyw3CHwxZ5FZQ5qc55xgshKiy8jEtxh+dgB9d8zE/S/UGI
+ E99N/q+kEKSgSMQMJ/CYPHQJVTi4YHh1yq/qTkHRX+ortrF5VEeDJDv+SljNStIxUdroPD29
+ 2ijoaMFTAU+uBtE14UP5F+LWdmRdEGS1Ah1NwooL27uAFllTDQxDhg/+LJ/TqB8ZuidOIy1B
+ xVKRSg3I2m+DUTVqBy7Lixo73hnW69kSjtqCeamY/NSu6LNP+b0wAOKhwz9hBEwEHLp05+mj
+ 5ZFJyfGsOiNUcMoO/17FO4EBxSDP3FDLllpuzlFD7SXkfJaMWYmXIlO0jLzdfwfcnDzBbPwO
+ hBM8hvtsyq8lq8vJOxv6XD6xcTtj5Az8t2JjdUX6SF9hxJpwhBU0wrCoGDkWp4Bbv6jnF7zP
+ Nzftr4l8RuJoywDIiJpdaNpSlXKpj/K6KrnyAI/joYc7
+Message-ID: <89ba8e07-b0f8-4334-070e-02fbdfc361e3@suse.cz>
+Date:   Thu, 1 Aug 2019 15:01:21 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <20190801124643.17112-1-quentin.perret@arm.com>
+In-Reply-To: <0942e0c2-ac06-948e-4a70-a29829cbcd9c@oracle.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 7/31/19 10:30 PM, Mike Kravetz wrote:
+> On 7/31/19 5:06 AM, Vlastimil Babka wrote:
+>> On 7/24/19 7:50 PM, Mike Kravetz wrote:
+>>> For PAGE_ALLOC_COSTLY_ORDER allocations,
+>>> MIN_COMPACT_COSTLY_PRIORITY is minimum (highest priority).  Other
+>>> places in the compaction code key off of MIN_COMPACT_PRIORITY.
+>>> Costly order allocations will never get to MIN_COMPACT_PRIORITY.
+>>> Therefore, some conditions will never be met for costly order
+>>> allocations.
+>>> 
+>>> This was observed when hugetlb allocations could stall for
+>>> minutes or hours when should_compact_retry() would return true
+>>> more often then it should.  Specifically, this was in the case
+>>> where compact_result was COMPACT_DEFERRED and
+>>> COMPACT_PARTIAL_SKIPPED and no progress was being made.
+>> 
+>> Hmm, the point of MIN_COMPACT_COSTLY_PRIORITY was that costly 
+>> allocations will not reach the priority where compaction becomes
+>> too expensive. With your patch, they still don't reach that
+>> priority value, but are allowed to be thorough anyway, even sooner.
+>> That just seems like a wrong way to fix the problem.
+> 
+> Thanks Vlastimil, here is why I took the approach I did.
 
-Hi Rui,
+Thanks for the explanation.
 
-is it possible to merge these patches? They are acked-by since May.
+> I instrumented some of the long stalls.  Here is one common example: 
+> should_compact_retry returned true 5000000 consecutive times.
+> However, the variable compaction_retries is zero.  We never get to
+> the code that increments the compaction_retries count because
+> compaction_made_progress is false and compaction_withdrawn is true.
+> As suggested earlier, I noted why compaction_withdrawn is true.  Of
+> the 5000000 calls, 4921875 were COMPACT_DEFERRED 78125 were
+> COMPACT_PARTIAL_SKIPPED Note that 5000000/64(1 <<
+> COMPACT_MAX_DEFER_SHIFT) == 78125
+> 
+> I then started looking into why COMPACT_DEFERRED and
+> COMPACT_PARTIAL_SKIPPED were being set/returned so often. 
+> COMPACT_DEFERRED is set/returned in try_to_compact_pages.
+> Specifically, if (prio > MIN_COMPACT_PRIORITY &&
+> compaction_deferred(zone, order)) {
 
-Thanks
+Ah, so I see it now, this is indeed why you get so many
+COMPACT_DEFERRED, as prio is always above MIN_COMPACT_PRIORITY.
 
-  -- Daniel
+> rc = max_t(enum compact_result, COMPACT_DEFERRED, rc); continue; } 
+> COMPACT_PARTIAL_SKIPPED is set/returned in __compact_finished.
+> Specifically, if (compact_scanners_met(cc)) { /* Let the next
+> compaction start anew. */ reset_cached_positions(cc->zone);
+> 
+> /* ... */
+> 
+> if (cc->direct_compaction) cc->zone->compact_blockskip_flush = true;
+> 
+> if (cc->whole_zone) return COMPACT_COMPLETE; else return
+> COMPACT_PARTIAL_SKIPPED; }
+> 
+> In both cases, compact_priority being MIN_COMPACT_COSTLY_PRIORITY and
+> not being able to go to MIN_COMPACT_PRIORITY caused the
+> 'compaction_withdrawn' result to be set/returned.
 
+Hmm, looks like compaction_withdrawn() is just too blunt a test. It
+mixes up results where the reaction should be more reclaim
+(COMPACT_SKIPPED), and the results that depend on compaction priority
+(the rest), and then we should either increase the priority, or fail.
 
-On 01/08/2019 14:46, Quentin Perret wrote:
-> Changes in v6
-> *************
->  - Added Daniel's and Viresh's Acked-by to all patches
-> 
-> Changes in v5:
-> **************
->  - Changed patch 02 to guard IPA-specific code in cpu_cooling.c with
->    appropriate ifdefery (Daniel)
->  - Rebased on 5.2-rc2
-> 
-> Changes in v4:
-> **************
->  - Added Viresh's Acked-by to all 3 patches
->  - Improved commit message of patch 3/3 to explain how it has no
->    functional impact on existing users (Eduardo)
-> 
-> Changes in v3:
-> **************
->  - Changed warning message for unordered tables to something more
->    explicit (Viresh)
->  - Changed WARN() into a pr_err() for consistency
-> 
-> Changes in v2:
-> **************
->  - Fixed patch 01/03 to actually enable CONFIG_ENERGY_MODEL
->  - Added "depends on ENERGY_MODEL" to IPA (Daniel)
->  - Added check to bail out if the freq table is unsorted (Viresh)
-> 
-> Cover letter:
-> *************
-> 
-> The Intelligent Power Allocator (IPA) thermal governor uses an Energy
-> Model (or EM) of the CPUs to re-distribute the power budget. To do so,
-> it builds a table of <frequency, power> tuples where the power values
-> are computed using the 'dynamic-power-coefficient' DT property. All of
-> this is done in and only for the thermal subsystem, and more
-> specifically for CPUs -- the power of other types of devices is obtained
-> differently.
-> 
-> Recently, the CPU scheduler has seen the introduction of Energy Aware
-> Scheduling (EAS) patches, which also rely on an EM of the CPUs. This EM,
-> however, is managed by an independent framework, called PM_EM, aimed to
-> be used by all kernel subsystems interested in the power consumed by
-> CPUs, and not only the scheduler.
-> 
-> This patch series follows this logic and removes the (now redundant)
-> thermal-specific EM computation code to migrate IPA to use PM_EM
-> instead.
-> 
-> Doing so should have no visible functional impact for existing users of
-> IPA since:
-> 
->  - during the 5.1 development cycle, a series of patches [1] introduced
->    in PM_OPP some infrastructure (dev_pm_opp_of_register_em()) enabling
->    the registration of EMs in PM_EM using the DT property used by IPA;
-> 
->  - the existing upstream cpufreq drivers marked with the
->    'CPUFREQ_IS_COOLING_DEV' flag all call dev_pm_opp_of_register_em(),
->    which means they all support PM_EM (the only two exceptions are
->    qoriq-cpufreq which doesn't in fact use an EM and scmi-cpufreq which
->    already supports PM_EM without using the PM_OPP infrastructurei
->    because it read power costs directly from firmware);
-> 
-> So, migrating IPA to using PM_EM should effectively be just plumbing
-> since for the existing IPA users the PM_EM tables will contain the
-> exact same power values that IPA used to compute on its own until now.
-> The only new dependency is to compile in CONFIG_ENERGY_MODEL.
-> 
-> Why is this migration still a good thing ? For three main reasons.
-> 
->  1. it removes redundant code;
-> 
->  2. it introduces an abstraction layer between IPA and the EM
->     computation. PM_EM offers to EAS and IPA (and potentially other
->     clients) standardized EM tables and hides 'how' these tables have
->     been obtained. PM_EM as of now supports power values either coming
->     from the 'dynamic-power-coefficient' DT property or obtained
->     directly from firmware using SCMI. The latter is a new feature for
->     IPA and that comes 'for free' with the migration. This will also be
->     true in the future every time PM_EM gets support for other ways of
->     loading the EM. Moreover, PM_EM is documented and has a debugfs
->     interface which should help adding support for new platforms.
-> 
->  3. it builds a consistent view of the EM of CPUs across kernel
->     subsystems, which is a pre-requisite for any kind of future work
->     aiming at a smarter power allocation using scheduler knowledge about
->     the system for example.
-> 
-> [1] https://lore.kernel.org/lkml/20190204110952.16025-1-quentin.perret@arm.com/
-> 
-> 
-> Quentin Perret (3):
->   arm64: defconfig: Enable CONFIG_ENERGY_MODEL
->   thermal: cpu_cooling: Make the power-related code depend on IPA
->   thermal: cpu_cooling: Migrate to using the EM framework
-> 
->  arch/arm64/configs/defconfig  |   1 +
->  drivers/thermal/Kconfig       |   1 +
->  drivers/thermal/cpu_cooling.c | 428 ++++++++++++++--------------------
->  3 files changed, 178 insertions(+), 252 deletions(-)
-> 
+> I do not know the subtleties of the compaction code, but it seems
+> like retrying in this manner does not make sense.
 
+I agree it doesn't, if we can't go for MIN_COMPACT_PRIORITY.
 
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+>> If should_compact_retry() returns misleading results for costly
+>> allocations, then that should be fixed instead?
+>> 
+>> Alternatively, you might want to say that hugetlb allocations are
+>> not like other random costly allocations, because the admin
+>> setting nr_hugepages is prepared to take the cost (I thought that
+>> was indicated by the __GFP_RETRY_MAYFAIL flag, but seeing all the
+>> other users of it, I'm not sure anymore).
+> 
+> The example above, resulted in a stall of a little over 5 minutes.
+> However, I have seen them last for hours.  Sure, the caller (admin
+> for hugetlbfs) knows there may be high costs.  But, I think
+> minutes/hours to try and allocate a single huge page is too much.  We
+> should fail sooner that that.
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Sure. We should eliminate the pointless retries in any case, the
+question is whether we allow the MIN_COMPACT_PRIORITY over
+MIN_COMPACT_COSTLY_PRIORITY.
 
+>> In that case should_compact_retry() could take __GFP_RETRY_MAYFAIL
+>> into account and allow MIN_COMPACT_PRIORITY even for costly
+>> allocations.
+> 
+> I'll put something like this together to test.
+
+Could you try testing the patch below instead? It should hopefully
+eliminate the stalls. If it makes hugepage allocation give up too early,
+we'll know we have to involve __GFP_RETRY_MAYFAIL in allowing the
+MIN_COMPACT_PRIORITY priority. Thanks!
+
+----8<----
+diff --git a/include/linux/compaction.h b/include/linux/compaction.h
+index 9569e7c786d3..b8bfe8d5d2e9 100644
+--- a/include/linux/compaction.h
++++ b/include/linux/compaction.h
+@@ -129,11 +129,7 @@ static inline bool compaction_failed(enum compact_result result)
+ 	return false;
+ }
+ 
+-/*
+- * Compaction  has backed off for some reason. It might be throttling or
+- * lock contention. Retrying is still worthwhile.
+- */
+-static inline bool compaction_withdrawn(enum compact_result result)
++static inline bool compaction_needs_reclaim(enum compact_result result)
+ {
+ 	/*
+ 	 * Compaction backed off due to watermark checks for order-0
+@@ -142,6 +138,15 @@ static inline bool compaction_withdrawn(enum compact_result result)
+ 	if (result == COMPACT_SKIPPED)
+ 		return true;
+ 
++	return false;
++}
++
++/*
++ * Compaction  has backed off for some reason. It might be throttling or
++ * lock contention. Retrying is still worthwhile.
++ */
++static inline bool compaction_withdrawn(enum compact_result result)
++{
+ 	/*
+ 	 * If compaction is deferred for high-order allocations, it is
+ 	 * because sync compaction recently failed. If this is the case
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 272c6de1bf4e..3dfce1f79112 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -3965,6 +3965,11 @@ should_compact_retry(struct alloc_context *ac, int order, int alloc_flags,
+ 	if (compaction_failed(compact_result))
+ 		goto check_priority;
+ 
++	if (compaction_needs_reclaim(compact_result)) {
++		ret = compaction_zonelist_suitable(ac, order, alloc_flags);
++		goto out;
++	}
++
+ 	/*
+ 	 * make sure the compaction wasn't deferred or didn't bail out early
+ 	 * due to locks contention before we declare that we should give up.
+@@ -3972,8 +3977,7 @@ should_compact_retry(struct alloc_context *ac, int order, int alloc_flags,
+ 	 * compaction.
+ 	 */
+ 	if (compaction_withdrawn(compact_result)) {
+-		ret = compaction_zonelist_suitable(ac, order, alloc_flags);
+-		goto out;
++		goto check_priority;
+ 	}
+ 
+ 	/*
