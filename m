@@ -2,53 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43A207E206
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 20:14:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 297007E20C
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 20:15:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388250AbfHASOj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 14:14:39 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:33052 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388197AbfHASOd (ORCPT
+        id S2388296AbfHASO4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 14:14:56 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:37811 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388211AbfHASOf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 14:14:33 -0400
-Received: by mail-pg1-f196.google.com with SMTP id n190so3208511pgn.0
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2019 11:14:33 -0700 (PDT)
+        Thu, 1 Aug 2019 14:14:35 -0400
+Received: by mail-pg1-f194.google.com with SMTP id d1so1830123pgp.4
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2019 11:14:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=joelfernandes.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=SMoKIvzU7SGDzv+dfWl+OsxgZj4/x/JQB4odRYODuPQ=;
-        b=VabVNgdyVNxtWaL1BNmduYnPkYBOmdH6UIdMCOApVFDpeMxer77abQ/nb6gonRHrZ/
-         oBqNnIcqL14P7nZsLeNsTpVTTKn1sy4r6iJl6/K9nmoZFHOGZfCNzyttKQ/uOuVoslAt
-         lkgLZUv0QNH1xlm0ty0avWd7kcud1XcjSoQOE=
+        bh=R5am/kvR4YdBRkExxjAP3dW6MnAlz9RnkWC4XFHMY/c=;
+        b=VbNY1mevOcCg/oXTPML6dmX4Dzkfx46dtH9/yxVjJXmTgfbDKImxA8iP9mT3lTsE9L
+         R2C7YsDFEqRskD+hY6yNvHsMcOffGuVY+gPgvoSGtxdJsFFAfIBWi2dU3rpM2OgGmZnz
+         rRUzlwDDiABz67GwlKu6CMUwZhA20tpxHl2Ks=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=SMoKIvzU7SGDzv+dfWl+OsxgZj4/x/JQB4odRYODuPQ=;
-        b=sxIPdSowew9yOnN3+HP1F7tph5ylwJ0VhO9Qwr35q8H1OxPZFyHkkJ6IoBdplR3Zxj
-         BNTEQxOnya4JXTWUfW7i+Zp+woA+gvarv7Tn0681ADu8ab/6YlbHu+UX7JIv0aCd/pLB
-         JPhsmZe8v0rBoxvEMnj363u2K7dtW6Lpii7NNk0XPy0CHvwrhq/5cbTxNmsStQxWK1nH
-         QugD+KIFf6u6PvoXs/EI6D1O6xff/tJdrmzBd51/QA62jNm8iwv6ikuGPolJy3pBiJ0V
-         jP3KHX0yNKv4gkH/7CV6taS2RT+C0zTevE4V+6eZGjdYfJp0P8Gz3h2nBK/AYeXX93bw
-         rudw==
-X-Gm-Message-State: APjAAAXv01Xc8tOChsqiZtTKiDShuYi1i0rhdrCzi87Y94NbNn0NFN77
-        39NdLAdI85YjQ848zjuTV8Y2RnpE
-X-Google-Smtp-Source: APXvYqyQQmkSwKJS1cVIb4raUBaBnCl5g1ZtptIjJ+VfBjYB1Y/Y5NsoLhSKZItM0+Bt9oKzIZnV3w==
-X-Received: by 2002:a17:90a:d593:: with SMTP id v19mr97223pju.1.1564683272233;
-        Thu, 01 Aug 2019 11:14:32 -0700 (PDT)
+        bh=R5am/kvR4YdBRkExxjAP3dW6MnAlz9RnkWC4XFHMY/c=;
+        b=J5keGDLwD5gEnO/Nd+AqbLC3ODH8VywIGpRa09P33hZqrRxzfFIwdXic2b7YA09x9p
+         93d1arFxi/6VXsC2A+qf/hoz4wDBvS8VuftHiHXBjBfyfQiodnKAyP//wwvZVNcux/wz
+         Mj6+I7kjai8nl2sl7Si/8VWQPqWsE9fc/UhZniKawriyjYWvTw+makmDRqKJt19K/mWZ
+         yDv9zc0bW40K+WkoCFSGgReuBZ7mtgx209go50wtVRKjfizr48GkTWFfgyU0+ieRyzby
+         chpKhnjrSM07dK4pC9mhY68noQz48cNx4Y7hGnSUCeZNGdXwLW5bRa+nmfsJyKnndO6r
+         kByA==
+X-Gm-Message-State: APjAAAWKm8MFs53L8bG+68iFL5tzz8zYGGQWhMIrRcghH10dgW0zU3PX
+        opxjYEI1+WGh1NdDv3+I4HcAw9U5
+X-Google-Smtp-Source: APXvYqzcXKvgfM5Y0XWSWBXaRMtvgCu3yrFrpDe6agYFS7yYkht544ax+T1YWGu/vfpjK5ScQfXSng==
+X-Received: by 2002:a17:90a:35e6:: with SMTP id r93mr135658pjb.20.1564683273779;
+        Thu, 01 Aug 2019 11:14:33 -0700 (PDT)
 Received: from joelaf.cam.corp.google.com ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id g8sm82089165pgk.1.2019.08.01.11.14.30
+        by smtp.gmail.com with ESMTPSA id g8sm82089165pgk.1.2019.08.01.11.14.32
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 01 Aug 2019 11:14:31 -0700 (PDT)
+        Thu, 01 Aug 2019 11:14:33 -0700 (PDT)
 From:   "Joel Fernandes (Google)" <joel@joelfernandes.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
         "Paul E. McKenney" <paulmck@linux.ibm.com>, rcu@vger.kernel.org
-Subject: [PATCH 7/9] Revert "Revert "treewide: Rename rcu_dereference_raw_notrace() to _check()""
-Date:   Thu,  1 Aug 2019 14:14:09 -0400
-Message-Id: <20190801181411.96429-8-joel@joelfernandes.org>
+Subject: [PATCH 8/9] Revert "Revert "rcu: Add support for consolidated-RCU reader checking""
+Date:   Thu,  1 Aug 2019 14:14:10 -0400
+Message-Id: <20190801181411.96429-9-joel@joelfernandes.org>
 X-Mailer: git-send-email 2.22.0.770.g0f2c4a37fd-goog
 In-Reply-To: <20190801181411.96429-1-joel@joelfernandes.org>
 References: <20190801181411.96429-1-joel@joelfernandes.org>
@@ -59,129 +59,225 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This reverts commit 61d814760f1d2dffdc8db636f70bbef07c30acd5.
+This reverts commit 24be1727c524b5874d5dc7828cd392cf86c3341e.
 ---
- Documentation/RCU/Design/Requirements/Requirements.rst | 2 +-
- arch/powerpc/include/asm/kvm_book3s_64.h               | 2 +-
- include/linux/rculist.h                                | 6 +++---
- include/linux/rcupdate.h                               | 2 +-
- kernel/trace/ftrace_internal.h                         | 8 ++++----
- kernel/trace/trace.c                                   | 4 ++--
- 6 files changed, 12 insertions(+), 12 deletions(-)
+ include/linux/rculist.h  | 32 ++++++++++++++++----
+ include/linux/rcupdate.h |  7 +++++
+ kernel/rcu/Kconfig.debug | 11 +++++++
+ kernel/rcu/update.c      | 65 ++++++++++++++++++++++++++--------------
+ 4 files changed, 88 insertions(+), 27 deletions(-)
 
-diff --git a/Documentation/RCU/Design/Requirements/Requirements.rst b/Documentation/RCU/Design/Requirements/Requirements.rst
-index a33b5fb331b4..0b222469d7ce 100644
---- a/Documentation/RCU/Design/Requirements/Requirements.rst
-+++ b/Documentation/RCU/Design/Requirements/Requirements.rst
-@@ -1997,7 +1997,7 @@ Tracing and RCU
- ~~~~~~~~~~~~~~~
- 
- It is possible to use tracing on RCU code, but tracing itself uses RCU.
--For this reason, ``rcu_dereference_raw_notrace()`` is provided for use
-+For this reason, ``rcu_dereference_raw_check()`` is provided for use
- by tracing, which avoids the destructive recursion that could otherwise
- ensue. This API is also used by virtualization in some architectures,
- where RCU readers execute in environments in which tracing cannot be
-diff --git a/arch/powerpc/include/asm/kvm_book3s_64.h b/arch/powerpc/include/asm/kvm_book3s_64.h
-index bb7c8cc77f1a..04b2b927bb5a 100644
---- a/arch/powerpc/include/asm/kvm_book3s_64.h
-+++ b/arch/powerpc/include/asm/kvm_book3s_64.h
-@@ -535,7 +535,7 @@ static inline void note_hpte_modification(struct kvm *kvm,
-  */
- static inline struct kvm_memslots *kvm_memslots_raw(struct kvm *kvm)
- {
--	return rcu_dereference_raw_notrace(kvm->memslots[0]);
-+	return rcu_dereference_raw_check(kvm->memslots[0]);
- }
- 
- extern void kvmppc_mmu_debugfs_init(struct kvm *kvm);
 diff --git a/include/linux/rculist.h b/include/linux/rculist.h
-index e91ec9ddcd30..932296144131 100644
+index 932296144131..4158b7212936 100644
 --- a/include/linux/rculist.h
 +++ b/include/linux/rculist.h
-@@ -622,7 +622,7 @@ static inline void hlist_add_behind_rcu(struct hlist_node *n,
+@@ -40,6 +40,24 @@ static inline void INIT_LIST_HEAD_RCU(struct list_head *list)
+  */
+ #define list_next_rcu(list)	(*((struct list_head __rcu **)(&(list)->next)))
+ 
++/*
++ * Check during list traversal that we are within an RCU reader
++ */
++
++#define check_arg_count_one(dummy)
++
++#ifdef CONFIG_PROVE_RCU_LIST
++#define __list_check_rcu(dummy, cond, extra...)				\
++	({								\
++	check_arg_count_one(extra);					\
++	RCU_LOCKDEP_WARN(!cond && !rcu_read_lock_any_held(),		\
++			 "RCU-list traversed in non-reader section!");	\
++	 })
++#else
++#define __list_check_rcu(dummy, cond, extra...)				\
++	({ check_arg_count_one(extra); })
++#endif
++
+ /*
+  * Insert a new entry between two known consecutive entries.
+  *
+@@ -343,14 +361,16 @@ static inline void list_splice_tail_init_rcu(struct list_head *list,
+  * @pos:	the type * to use as a loop cursor.
+  * @head:	the head for your list.
+  * @member:	the name of the list_head within the struct.
++ * @cond:	optional lockdep expression if called from non-RCU protection.
+  *
+  * This list-traversal primitive may safely run concurrently with
+  * the _rcu list-mutation primitives such as list_add_rcu()
   * as long as the traversal is guarded by rcu_read_lock().
   */
- #define hlist_for_each_entry_rcu(pos, head, member)			\
--	for (pos = hlist_entry_safe (rcu_dereference_raw(hlist_first_rcu(head)),\
-+	for (pos = hlist_entry_safe(rcu_dereference_raw(hlist_first_rcu(head)),\
+-#define list_for_each_entry_rcu(pos, head, member) \
+-	for (pos = list_entry_rcu((head)->next, typeof(*pos), member); \
+-		&pos->member != (head); \
++#define list_for_each_entry_rcu(pos, head, member, cond...)		\
++	for (__list_check_rcu(dummy, ## cond, 0),			\
++	     pos = list_entry_rcu((head)->next, typeof(*pos), member);	\
++		&pos->member != (head);					\
+ 		pos = list_entry_rcu(pos->member.next, typeof(*pos), member))
+ 
+ /**
+@@ -616,13 +636,15 @@ static inline void hlist_add_behind_rcu(struct hlist_node *n,
+  * @pos:	the type * to use as a loop cursor.
+  * @head:	the head for your list.
+  * @member:	the name of the hlist_node within the struct.
++ * @cond:	optional lockdep expression if called from non-RCU protection.
+  *
+  * This list-traversal primitive may safely run concurrently with
+  * the _rcu list-mutation primitives such as hlist_add_head_rcu()
+  * as long as the traversal is guarded by rcu_read_lock().
+  */
+-#define hlist_for_each_entry_rcu(pos, head, member)			\
+-	for (pos = hlist_entry_safe(rcu_dereference_raw(hlist_first_rcu(head)),\
++#define hlist_for_each_entry_rcu(pos, head, member, cond...)		\
++	for (__list_check_rcu(dummy, ## cond, 0),			\
++	     pos = hlist_entry_safe(rcu_dereference_raw(hlist_first_rcu(head)),\
  			typeof(*(pos)), member);			\
  		pos;							\
  		pos = hlist_entry_safe(rcu_dereference_raw(hlist_next_rcu(\
-@@ -642,10 +642,10 @@ static inline void hlist_add_behind_rcu(struct hlist_node *n,
-  * not do any RCU debugging or tracing.
-  */
- #define hlist_for_each_entry_rcu_notrace(pos, head, member)			\
--	for (pos = hlist_entry_safe (rcu_dereference_raw_notrace(hlist_first_rcu(head)),\
-+	for (pos = hlist_entry_safe(rcu_dereference_raw_check(hlist_first_rcu(head)),\
- 			typeof(*(pos)), member);			\
- 		pos;							\
--		pos = hlist_entry_safe(rcu_dereference_raw_notrace(hlist_next_rcu(\
-+		pos = hlist_entry_safe(rcu_dereference_raw_check(hlist_next_rcu(\
- 			&(pos)->member)), typeof(*(pos)), member))
- 
- /**
 diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
-index 8f7167478c1d..bfcafbc1e301 100644
+index bfcafbc1e301..80d6056f5855 100644
 --- a/include/linux/rcupdate.h
 +++ b/include/linux/rcupdate.h
-@@ -476,7 +476,7 @@ do {									      \
-  * The no-tracing version of rcu_dereference_raw() must not call
-  * rcu_read_lock_held().
+@@ -221,6 +221,7 @@ int debug_lockdep_rcu_enabled(void);
+ int rcu_read_lock_held(void);
+ int rcu_read_lock_bh_held(void);
+ int rcu_read_lock_sched_held(void);
++int rcu_read_lock_any_held(void);
+ 
+ #else /* #ifdef CONFIG_DEBUG_LOCK_ALLOC */
+ 
+@@ -241,6 +242,12 @@ static inline int rcu_read_lock_sched_held(void)
+ {
+ 	return !preemptible();
+ }
++
++static inline int rcu_read_lock_any_held(void)
++{
++	return !preemptible();
++}
++
+ #endif /* #else #ifdef CONFIG_DEBUG_LOCK_ALLOC */
+ 
+ #ifdef CONFIG_PROVE_RCU
+diff --git a/kernel/rcu/Kconfig.debug b/kernel/rcu/Kconfig.debug
+index 5ec3ea4028e2..4aa02eee8f6c 100644
+--- a/kernel/rcu/Kconfig.debug
++++ b/kernel/rcu/Kconfig.debug
+@@ -8,6 +8,17 @@ menu "RCU Debugging"
+ config PROVE_RCU
+ 	def_bool PROVE_LOCKING
+ 
++config PROVE_RCU_LIST
++	bool "RCU list lockdep debugging"
++	depends on PROVE_RCU && RCU_EXPERT
++	default n
++	help
++	  Enable RCU lockdep checking for list usages. By default it is
++	  turned off since there are several list RCU users that still
++	  need to be converted to pass a lockdep expression. To prevent
++	  false-positive splats, we keep it default disabled but once all
++	  users are converted, we can remove this config option.
++
+ config TORTURE_TEST
+ 	tristate
+ 	default n
+diff --git a/kernel/rcu/update.c b/kernel/rcu/update.c
+index 64e9cc8609e7..c768f1fd6804 100644
+--- a/kernel/rcu/update.c
++++ b/kernel/rcu/update.c
+@@ -91,19 +91,30 @@ module_param(rcu_normal_after_boot, int, 0);
+  * Similarly, we avoid claiming an SRCU read lock held if the current
+  * CPU is offline.
   */
--#define rcu_dereference_raw_notrace(p) __rcu_dereference_check((p), 1, __rcu)
-+#define rcu_dereference_raw_check(p) __rcu_dereference_check((p), 1, __rcu)
++static bool rcu_read_lock_held_common(bool *ret)
++{
++	if (!debug_lockdep_rcu_enabled()) {
++		*ret = 1;
++		return true;
++	}
++	if (!rcu_is_watching()) {
++		*ret = 0;
++		return true;
++	}
++	if (!rcu_lockdep_current_cpu_online()) {
++		*ret = 0;
++		return true;
++	}
++	return false;
++}
++
+ int rcu_read_lock_sched_held(void)
+ {
+-	int lockdep_opinion = 0;
++	bool ret;
+ 
+-	if (!debug_lockdep_rcu_enabled())
+-		return 1;
+-	if (!rcu_is_watching())
+-		return 0;
+-	if (!rcu_lockdep_current_cpu_online())
+-		return 0;
+-	if (debug_locks)
+-		lockdep_opinion = lock_is_held(&rcu_sched_lock_map);
+-	return lockdep_opinion || !preemptible();
++	if (rcu_read_lock_held_common(&ret))
++		return ret;
++	return lock_is_held(&rcu_sched_lock_map) || !preemptible();
+ }
+ EXPORT_SYMBOL(rcu_read_lock_sched_held);
+ #endif
+@@ -260,12 +271,10 @@ NOKPROBE_SYMBOL(debug_lockdep_rcu_enabled);
+  */
+ int rcu_read_lock_held(void)
+ {
+-	if (!debug_lockdep_rcu_enabled())
+-		return 1;
+-	if (!rcu_is_watching())
+-		return 0;
+-	if (!rcu_lockdep_current_cpu_online())
+-		return 0;
++	bool ret;
++
++	if (rcu_read_lock_held_common(&ret))
++		return ret;
+ 	return lock_is_held(&rcu_lock_map);
+ }
+ EXPORT_SYMBOL_GPL(rcu_read_lock_held);
+@@ -287,16 +296,28 @@ EXPORT_SYMBOL_GPL(rcu_read_lock_held);
+  */
+ int rcu_read_lock_bh_held(void)
+ {
+-	if (!debug_lockdep_rcu_enabled())
+-		return 1;
+-	if (!rcu_is_watching())
+-		return 0;
+-	if (!rcu_lockdep_current_cpu_online())
+-		return 0;
++	bool ret;
++
++	if (rcu_read_lock_held_common(&ret))
++		return ret;
+ 	return in_softirq() || irqs_disabled();
+ }
+ EXPORT_SYMBOL_GPL(rcu_read_lock_bh_held);
+ 
++int rcu_read_lock_any_held(void)
++{
++	bool ret;
++
++	if (rcu_read_lock_held_common(&ret))
++		return ret;
++	if (lock_is_held(&rcu_lock_map) ||
++	    lock_is_held(&rcu_bh_lock_map) ||
++	    lock_is_held(&rcu_sched_lock_map))
++		return 1;
++	return !preemptible();
++}
++EXPORT_SYMBOL_GPL(rcu_read_lock_any_held);
++
+ #endif /* #ifdef CONFIG_DEBUG_LOCK_ALLOC */
  
  /**
-  * rcu_dereference_protected() - fetch RCU pointer when updates prevented
-diff --git a/kernel/trace/ftrace_internal.h b/kernel/trace/ftrace_internal.h
-index 0515a2096f90..0456e0a3dab1 100644
---- a/kernel/trace/ftrace_internal.h
-+++ b/kernel/trace/ftrace_internal.h
-@@ -6,22 +6,22 @@
- 
- /*
-  * Traverse the ftrace_global_list, invoking all entries.  The reason that we
-- * can use rcu_dereference_raw_notrace() is that elements removed from this list
-+ * can use rcu_dereference_raw_check() is that elements removed from this list
-  * are simply leaked, so there is no need to interact with a grace-period
-- * mechanism.  The rcu_dereference_raw_notrace() calls are needed to handle
-+ * mechanism.  The rcu_dereference_raw_check() calls are needed to handle
-  * concurrent insertions into the ftrace_global_list.
-  *
-  * Silly Alpha and silly pointer-speculation compiler optimizations!
-  */
- #define do_for_each_ftrace_op(op, list)			\
--	op = rcu_dereference_raw_notrace(list);			\
-+	op = rcu_dereference_raw_check(list);			\
- 	do
- 
- /*
-  * Optimized for just a single item in the list (as that is the normal case).
-  */
- #define while_for_each_ftrace_op(op)				\
--	while (likely(op = rcu_dereference_raw_notrace((op)->next)) &&	\
-+	while (likely(op = rcu_dereference_raw_check((op)->next)) &&	\
- 	       unlikely((op) != &ftrace_list_end))
- 
- extern struct ftrace_ops __rcu *ftrace_ops_list;
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 525a97fbbc60..642474b26ba7 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -2642,10 +2642,10 @@ static void ftrace_exports(struct ring_buffer_event *event)
- 
- 	preempt_disable_notrace();
- 
--	export = rcu_dereference_raw_notrace(ftrace_exports_list);
-+	export = rcu_dereference_raw_check(ftrace_exports_list);
- 	while (export) {
- 		trace_process_export(export, event);
--		export = rcu_dereference_raw_notrace(export->next);
-+		export = rcu_dereference_raw_check(export->next);
- 	}
- 
- 	preempt_enable_notrace();
 -- 
 2.22.0.770.g0f2c4a37fd-goog
 
