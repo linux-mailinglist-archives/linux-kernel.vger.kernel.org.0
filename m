@@ -2,46 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A1BC7E5AB
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 00:32:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 770257E5AF
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 00:33:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732799AbfHAWcI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 18:32:08 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:5732 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727498AbfHAWcI (ORCPT
+        id S2387644AbfHAWdA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 18:33:00 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:7918 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727498AbfHAWc7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 18:32:08 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x71MW5jA087958
-        for <linux-kernel@vger.kernel.org>; Thu, 1 Aug 2019 18:32:07 -0400
-Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2u45u86pvf-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2019 18:32:05 -0400
-Received: from localhost
-        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Thu, 1 Aug 2019 23:32:04 +0100
-Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
-        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 1 Aug 2019 23:31:59 +0100
+        Thu, 1 Aug 2019 18:32:59 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x71MW9qk085775;
+        Thu, 1 Aug 2019 18:32:11 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2u457uqnkp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 01 Aug 2019 18:32:11 -0400
+Received: from m0098404.ppops.net (m0098404.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x71MWAeQ085816;
+        Thu, 1 Aug 2019 18:32:10 -0400
+Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2u457uqnfc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 01 Aug 2019 18:32:10 -0400
+Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
+        by ppma02dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x71MVMte017030;
+        Thu, 1 Aug 2019 22:31:59 GMT
+Received: from b01cxnp23034.gho.pok.ibm.com (b01cxnp23034.gho.pok.ibm.com [9.57.198.29])
+        by ppma02dal.us.ibm.com with ESMTP id 2u0e85xfpt-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 01 Aug 2019 22:31:59 +0000
 Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x71MVwDn47972688
+        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x71MVwIV50528542
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
         Thu, 1 Aug 2019 22:31:58 GMT
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7ECFEB206C;
+        by IMSVA (Postfix) with ESMTP id 7C2AEB2067;
         Thu,  1 Aug 2019 22:31:58 +0000 (GMT)
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4FE3AB206B;
+        by IMSVA (Postfix) with ESMTP id 563C2B206E;
         Thu,  1 Aug 2019 22:31:58 +0000 (GMT)
 Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.154])
         by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
         Thu,  1 Aug 2019 22:31:58 +0000 (GMT)
 Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id A644116C9A3A; Thu,  1 Aug 2019 15:31:59 -0700 (PDT)
+        id AD11816C9A4A; Thu,  1 Aug 2019 15:31:59 -0700 (PDT)
 From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
 To:     rcu@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
@@ -50,25 +56,19 @@ Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
         josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>
-Subject: [PATCH tip/core/rcu 2/3] rcu: Make rcu_read_unlock_special() checks match raise_softirq_irqoff()
-Date:   Thu,  1 Aug 2019 15:31:57 -0700
+        kernel-team@android.com,
+        "Paul E . McKenney" <paulmck@linux.ibm.com>
+Subject: [PATCH tip/core/rcu 3/3] rcu: Simplify rcu_note_context_switch exit from critical section
+Date:   Thu,  1 Aug 2019 15:31:58 -0700
+Message-Id: <20190801223158.14407-3-paulmck@linux.ibm.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190801223132.GA14044@linux.ibm.com>
 References: <20190801223132.GA14044@linux.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 19080122-0064-0000-0000-000004057838
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00011535; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000287; SDB=6.01240732; UDB=6.00654293; IPR=6.01022156;
- MB=3.00028000; MTD=3.00000008; XFM=3.00000015; UTC=2019-08-01 22:32:03
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19080122-0065-0000-0000-00003E81E6B3
-Message-Id: <20190801223158.14407-2-paulmck@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-01_09:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=15 phishscore=0 bulkscore=0 spamscore=0
+ malwarescore=0 suspectscore=13 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
  mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1906280000 definitions=main-1908010237
@@ -77,81 +77,88 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Threaded interrupts provide additional interesting interactions between
-RCU and raise_softirq() that can result in self-deadlocks in v5.0-2 of
-the Linux kernel.  These self-deadlocks can be provoked in susceptible
-kernels within a few minutes using the following rcutorture command on
-an 8-CPU system:
+From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
 
-tools/testing/selftests/rcutorture/bin/kvm.sh --duration 5 --configs "TREE03" --bootargs "threadirqs"
+Because __rcu_read_unlock() can be preempted just before the call to
+rcu_read_unlock_special(), it is possible for a task to be preempted just
+before it would have fully exited its RCU read-side critical section.
+This would result in a needless extension of that critical section until
+that task was resumed, which might in turn result in a needlessly
+long grace period, needless RCU priority boosting, and needless
+force-quiescent-state actions.  Therefore, rcu_note_context_switch()
+invokes __rcu_read_unlock() followed by rcu_preempt_deferred_qs() when
+it detects this situation.  This action by rcu_note_context_switch()
+ends the RCU read-side critical section immediately.
 
-Although post-v5.2 RCU commits have at least greatly reduced the
-probability of these self-deadlocks, this was entirely by accident.
-Although this sort of accident should be rowdily celebrated on those
-rare occasions when it does occur, such celebrations should be quickly
-followed by a principled patch, which is what this patch purports to be.
+Of course, once the task resumes, it will invoke rcu_read_unlock_special()
+redundantly.  This is harmless because the fact that a preemption
+happened means that interrupts, preemption, and softirqs cannot
+have been disabled, so there would be no deferred quiescent state.
+While ->rcu_read_lock_nesting remains less than zero, none of the
+->rcu_read_unlock_special.b bits can be set, and they were all zeroed by
+the call to rcu_note_context_switch() at task-preemption time.  Therefore,
+setting ->rcu_read_unlock_special.b.exp_hint to false has no effect.
 
-The key point behind this patch is that when in_interrupt() returns
-true, __raise_softirq_irqoff() will never attempt a wakeup.  Therefore,
-if in_interrupt(), calls to raise_softirq*() are both safe and
-extremely cheap.
+Therefore, the extra call to rcu_preempt_deferred_qs_irqrestore()
+would return immediately.  With one possible exception, which is
+if an expedited grace period started just as the task was being
+resumed, which could leave ->exp_deferred_qs set.  This will cause
+rcu_preempt_deferred_qs_irqrestore() to invoke rcu_report_exp_rdp(),
+reporting the quiescent state, just as it should.  (Such an expedited
+grace period won't affect the preemption code path due to interrupts
+having already been disabled.)
 
-This commit therefore replaces the in_irq() calls in the "if" statement
-in rcu_read_unlock_special() with in_interrupt() and simplifies the
-"if" condition to the following:
+But when rcu_note_context_switch() invokes __rcu_read_unlock(), it
+is doing so with preemption disabled, hence __rcu_read_unlock() will
+unconditionally defer the quiescent state, only to immediately invoke
+rcu_preempt_deferred_qs(), thus immediately reporting the deferred
+quiescent state.  It turns out to be safe (and faster) to instead
+just invoke rcu_preempt_deferred_qs() without the __rcu_read_unlock()
+middleman.
 
-	if (irqs_were_disabled && use_softirq &&
-	    (in_interrupt() ||
-	     (exp && !t->rcu_read_unlock_special.b.deferred_qs))) {
-		raise_softirq_irqoff(RCU_SOFTIRQ);
-	} else {
-		/* Appeal to the scheduler. */
-	}
+Because this is the invocation during the preemption (as opposed to
+the invocation just after the resume), at least one of the bits in
+->rcu_read_unlock_special.b must be set and ->rcu_read_lock_nesting
+must be negative.  This means that rcu_preempt_need_deferred_qs() must
+return true, avoiding the early exit from rcu_preempt_deferred_qs().
+Thus, rcu_preempt_deferred_qs_irqrestore() will be invoked immediately,
+as required.
 
-The rationale behind the "if" condition is as follows:
+This commit therefore simplifies the CONFIG_PREEMPT=y version of
+rcu_note_context_switch() by removing the "else if" branch of its
+"if" statement.  This change means that all callers that would have
+invoked rcu_read_unlock_special() followed by rcu_preempt_deferred_qs()
+will now simply invoke rcu_preempt_deferred_qs(), thus avoiding the
+rcu_read_unlock_special() middleman when __rcu_read_unlock() is preempted.
 
-1.	irqs_were_disabled:  If interrupts are enabled, we should
-	instead appeal to the scheduler so as to let the upcoming
-	irq_enable()/local_bh_enable() do the rescheduling for us.
-2.	use_softirq: If this kernel isn't using softirq, then
-	raise_softirq_irqoff() will be unhelpful.
-3.	a.	in_interrupt(): If this returns true, the subsequent
-		call to raise_softirq_irqoff() is guaranteed not to
-		do a wakeup, so that call will be both very cheap and
-		quite safe.
-	b.	Otherwise, if !in_interrupt() the raise_softirq_irqoff()
-		might do a wakeup, which is expensive and, in some
-		contexts, unsafe.
-		i.	The "exp" (an expedited RCU grace period is being
-			blocked) says that the wakeup is worthwhile, and:
-		ii.	The !.deferred_qs says that scheduler locks
-			cannot be held, so the wakeup will be safe.
-
-Backporting this requires considerable care, so no auto-backport, please!
-
-Fixes: 05f415715ce45 ("rcu: Speed up expedited GPs when interrupting RCU reader")
-Reported-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: rcu@vger.kernel.org
+Cc: kernel-team@android.com
+Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
 ---
- kernel/rcu/tree_plugin.h | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ kernel/rcu/tree_plugin.h | 9 ---------
+ 1 file changed, 9 deletions(-)
 
 diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
-index 3f0701e860e4..1fd3ca4ffc1d 100644
+index 1fd3ca4ffc1d..ce6ef345102b 100644
 --- a/kernel/rcu/tree_plugin.h
 +++ b/kernel/rcu/tree_plugin.h
-@@ -626,8 +626,9 @@ static void rcu_read_unlock_special(struct task_struct *t)
- 		      (rdp->grpmask & rnp->expmask) ||
- 		      tick_nohz_full_cpu(rdp->cpu);
- 		// Need to defer quiescent state until everything is enabled.
--		if ((exp || in_irq()) && irqs_were_disabled && use_softirq &&
--		    (in_irq() || !t->rcu_read_unlock_special.b.deferred_qs)) {
-+		if (irqs_were_disabled && use_softirq &&
-+		    (in_interrupt() ||
-+		     (exp && !t->rcu_read_unlock_special.b.deferred_qs))) {
- 			// Using softirq, safe to awaken, and we get
- 			// no help from enabling irqs, unlike bh/preempt.
- 			raise_softirq_irqoff(RCU_SOFTIRQ);
+@@ -314,15 +314,6 @@ void rcu_note_context_switch(bool preempt)
+ 				       ? rnp->gp_seq
+ 				       : rcu_seq_snap(&rnp->gp_seq));
+ 		rcu_preempt_ctxt_queue(rnp, rdp);
+-	} else if (t->rcu_read_lock_nesting < 0 &&
+-		   t->rcu_read_unlock_special.s) {
+-
+-		/*
+-		 * Complete exit from RCU read-side critical section on
+-		 * behalf of preempted instance of __rcu_read_unlock().
+-		 */
+-		rcu_read_unlock_special(t);
+-		rcu_preempt_deferred_qs(t);
+ 	} else {
+ 		rcu_preempt_deferred_qs(t);
+ 	}
 -- 
 2.17.1
 
