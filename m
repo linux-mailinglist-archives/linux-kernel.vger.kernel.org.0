@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B3D977E008
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 18:22:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F54C7E010
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 18:22:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732873AbfHAQWR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 12:22:17 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:47084 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727024AbfHAQWQ (ORCPT
+        id S1732911AbfHAQW3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 12:22:29 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:42510 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727024AbfHAQWY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 12:22:16 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x71GM2Jc123625;
-        Thu, 1 Aug 2019 11:22:02 -0500
+        Thu, 1 Aug 2019 12:22:24 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x71GM5Fr105827;
+        Thu, 1 Aug 2019 11:22:05 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1564676522;
-        bh=zWbkatx0IfHL4ytXCT+nuKdGHgjjpQH55L93XjCsfk4=;
-        h=From:To:CC:Subject:Date;
-        b=QiHLZW0+D6IMwfELJPu72lV78UohZ6u8vep5YSAYQgoa4mwANo07d5EuduYuQManh
-         OAhvXwqeT0U71RRB4VqWeSttu8I1W6wD1DCs+65PpMTVwt70nC3O9I/S41+u6EAD9S
-         m1oER7p6PsZy1OjLLbYpI1NDIQv2uQzUFvFORAUA=
-Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x71GM28W092699
+        s=ti-com-17Q1; t=1564676525;
+        bh=AMVuR4iXGx1aPpkMjmCtXi18bf1WqQfX1FutIf0KQXk=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References;
+        b=y8Civ5+H9gcBAoIUia3lpV5G6pOuGRxgnPeZJrCDgglu4dCxoDJXnXQi/+XdyKBf9
+         MrO78RxJKtoNOteS+UzgHiuTbdz8z/Rx1Pbv3yIswGSBqFIYw6/6i3QVtFOkwH9yco
+         0rXGffogjMzt0jXnN9ynoXEWmyi2fI8LeT+Ltkpg=
+Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x71GM5e7011459
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 1 Aug 2019 11:22:02 -0500
-Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+        Thu, 1 Aug 2019 11:22:05 -0500
+Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Thu, 1 Aug
- 2019 11:22:02 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ 2019 11:22:05 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Thu, 1 Aug 2019 11:22:02 -0500
+ Frontend Transport; Thu, 1 Aug 2019 11:22:05 -0500
 Received: from a0132425.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x71GLxdA097075;
-        Thu, 1 Aug 2019 11:22:00 -0500
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x71GLxdB097075;
+        Thu, 1 Aug 2019 11:22:02 -0500
 From:   Vignesh Raghavendra <vigneshr@ti.com>
 To:     Miquel Raynal <miquel.raynal@bootlin.com>,
         Richard Weinberger <richard@nod.at>,
@@ -46,10 +46,12 @@ CC:     Marek Vasut <marek.vasut@gmail.com>,
         Boris Brezillon <bbrezillon@kernel.org>,
         <linux-kernel@vger.kernel.org>, <linux-mtd@lists.infradead.org>,
         Tomer Maimon <tmaimon77@gmail.com>
-Subject: [PATCH v4 0/3] Merge m25p80 into spi-nor
-Date:   Thu, 1 Aug 2019 21:52:26 +0530
-Message-ID: <20190801162229.28897-1-vigneshr@ti.com>
+Subject: [PATCH v4 1/3] mtd: spi-nor: always use bounce buffer for register read/writes
+Date:   Thu, 1 Aug 2019 21:52:27 +0530
+Message-ID: <20190801162229.28897-2-vigneshr@ti.com>
 X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20190801162229.28897-1-vigneshr@ti.com>
+References: <20190801162229.28897-1-vigneshr@ti.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
@@ -59,46 +61,277 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is repost of patch 6 and 7 split from from Boris Brezillon's X-X-X
-mode support series[1]
+spi-mem layer expects all buffers passed to it to be DMA'able. But
+spi-nor layer mostly allocates buffers on stack for reading/writing to
+registers and therefore are not DMA'able. Introduce bounce buffer to be
+used to read/write to registers. This ensures that buffer passed to
+spi-mem layer during register read/writes is DMA'able. With this change
+nor->cmd-buf is no longer used, so drop it.
 
-Background from cover letter for RFC[1]:
-m25p80 is just a simple SPI NOR controller driver (a wrapper around the
-SPI mem API). Not only it shouldn't be named after a specific SPI NOR
-chip, but it also doesn't deserve a specific driver IMO, especially if
-the end goal is to get rid of SPI NOR controller drivers found in
-drivers/mtd/spi-nor/ and replace them by SPI mem drivers (which would
-be placed in drivers/spi/). With this solution, we declare the SPI NOR
-driver as a spi_mem_driver, just like the SPI NAND layer is declared as
-a spi_mem driver (patch 1/2).
-This solution also allows us to check at a fined-grain level (thanks to
-the spi_mem_supports_op() function) which operations are supported and
-which ones are not, while the original m25p80 logic was basing this
-decision on the SPI_{RX,TX}_{DUAL,QUAD,OCTO} flags only (patch 2/2).
+Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
+Signed-off-by: Vignesh Raghavendra <vigneshr@ti.com>
+---
 
-[1] https://patchwork.ozlabs.org/cover/982926/
+v4:
+Avoid memcpy during READID
 
-Tested on TI' DRA7xx EVM with TI QSPI controller (a spi-mem driver) with
-DMA (s25fl256) flash. I don't see any performance regression due to
-bounce buffer copy introduced by this series
-Also tested with cadence-quadspi (a spi-nor driver) driver
+v3: new patch
 
-Boris Brezillon (2):
-  mtd: spi-nor: Move m25p80 code in spi-nor.c
-  mtd: spi-nor: Rework hwcaps selection for the spi-mem case
+ drivers/mtd/spi-nor/spi-nor.c | 70 ++++++++++++++++++++---------------
+ include/linux/mtd/spi-nor.h   |  7 +++-
+ 2 files changed, 45 insertions(+), 32 deletions(-)
 
-Vignesh Raghavendra (1):
-  mtd: spi-nor: always use bounce buffer for register read/writes
-
- drivers/mtd/devices/Kconfig   |  18 -
- drivers/mtd/devices/Makefile  |   1 -
- drivers/mtd/devices/m25p80.c  | 347 ---------------
- drivers/mtd/spi-nor/Kconfig   |   2 +
- drivers/mtd/spi-nor/spi-nor.c | 806 +++++++++++++++++++++++++++++++---
- include/linux/mtd/spi-nor.h   |  24 +-
- 6 files changed, 773 insertions(+), 425 deletions(-)
- delete mode 100644 drivers/mtd/devices/m25p80.c
-
+diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
+index 03cc788511d5..e02376e1127b 100644
+--- a/drivers/mtd/spi-nor/spi-nor.c
++++ b/drivers/mtd/spi-nor/spi-nor.c
+@@ -296,15 +296,14 @@ struct flash_info {
+ static int read_sr(struct spi_nor *nor)
+ {
+ 	int ret;
+-	u8 val;
+ 
+-	ret = nor->read_reg(nor, SPINOR_OP_RDSR, &val, 1);
++	ret = nor->read_reg(nor, SPINOR_OP_RDSR, nor->bouncebuf, 1);
+ 	if (ret < 0) {
+ 		pr_err("error %d reading SR\n", (int) ret);
+ 		return ret;
+ 	}
+ 
+-	return val;
++	return nor->bouncebuf[0];
+ }
+ 
+ /*
+@@ -315,15 +314,14 @@ static int read_sr(struct spi_nor *nor)
+ static int read_fsr(struct spi_nor *nor)
+ {
+ 	int ret;
+-	u8 val;
+ 
+-	ret = nor->read_reg(nor, SPINOR_OP_RDFSR, &val, 1);
++	ret = nor->read_reg(nor, SPINOR_OP_RDFSR, nor->bouncebuf, 1);
+ 	if (ret < 0) {
+ 		pr_err("error %d reading FSR\n", ret);
+ 		return ret;
+ 	}
+ 
+-	return val;
++	return nor->bouncebuf[0];
+ }
+ 
+ /*
+@@ -334,15 +332,14 @@ static int read_fsr(struct spi_nor *nor)
+ static int read_cr(struct spi_nor *nor)
+ {
+ 	int ret;
+-	u8 val;
+ 
+-	ret = nor->read_reg(nor, SPINOR_OP_RDCR, &val, 1);
++	ret = nor->read_reg(nor, SPINOR_OP_RDCR, nor->bouncebuf, 1);
+ 	if (ret < 0) {
+ 		dev_err(nor->dev, "error %d reading CR\n", ret);
+ 		return ret;
+ 	}
+ 
+-	return val;
++	return nor->bouncebuf[0];
+ }
+ 
+ /*
+@@ -351,8 +348,8 @@ static int read_cr(struct spi_nor *nor)
+  */
+ static int write_sr(struct spi_nor *nor, u8 val)
+ {
+-	nor->cmd_buf[0] = val;
+-	return nor->write_reg(nor, SPINOR_OP_WRSR, nor->cmd_buf, 1);
++	nor->bouncebuf[0] = val;
++	return nor->write_reg(nor, SPINOR_OP_WRSR, nor->bouncebuf, 1);
+ }
+ 
+ /*
+@@ -500,31 +497,31 @@ static int set_4byte(struct spi_nor *nor, bool enable)
+ 			 * We must clear the register to enable normal behavior.
+ 			 */
+ 			write_enable(nor);
+-			nor->cmd_buf[0] = 0;
+-			nor->write_reg(nor, SPINOR_OP_WREAR, nor->cmd_buf, 1);
++			nor->bouncebuf[0] = 0;
++			nor->write_reg(nor, SPINOR_OP_WREAR,
++				       nor->bouncebuf, 1);
+ 			write_disable(nor);
+ 		}
+ 
+ 		return status;
+ 	default:
+ 		/* Spansion style */
+-		nor->cmd_buf[0] = enable << 7;
+-		return nor->write_reg(nor, SPINOR_OP_BRWR, nor->cmd_buf, 1);
++		nor->bouncebuf[0] = enable << 7;
++		return nor->write_reg(nor, SPINOR_OP_BRWR, nor->bouncebuf, 1);
+ 	}
+ }
+ 
+ static int s3an_sr_ready(struct spi_nor *nor)
+ {
+ 	int ret;
+-	u8 val;
+ 
+-	ret = nor->read_reg(nor, SPINOR_OP_XRDSR, &val, 1);
++	ret = nor->read_reg(nor, SPINOR_OP_XRDSR, nor->bouncebuf, 1);
+ 	if (ret < 0) {
+ 		dev_err(nor->dev, "error %d reading XRDSR\n", (int) ret);
+ 		return ret;
+ 	}
+ 
+-	return !!(val & XSR_RDY);
++	return !!(nor->bouncebuf[0] & XSR_RDY);
+ }
+ 
+ static int spi_nor_sr_ready(struct spi_nor *nor)
+@@ -683,7 +680,6 @@ static loff_t spi_nor_s3an_addr_convert(struct spi_nor *nor, unsigned int addr)
+  */
+ static int spi_nor_erase_sector(struct spi_nor *nor, u32 addr)
+ {
+-	u8 buf[SPI_NOR_MAX_ADDR_WIDTH];
+ 	int i;
+ 
+ 	if (nor->flags & SNOR_F_S3AN_ADDR_DEFAULT)
+@@ -697,11 +693,12 @@ static int spi_nor_erase_sector(struct spi_nor *nor, u32 addr)
+ 	 * control
+ 	 */
+ 	for (i = nor->addr_width - 1; i >= 0; i--) {
+-		buf[i] = addr & 0xff;
++		nor->bouncebuf[i] = addr & 0xff;
+ 		addr >>= 8;
+ 	}
+ 
+-	return nor->write_reg(nor, nor->erase_opcode, buf, nor->addr_width);
++	return nor->write_reg(nor, nor->erase_opcode, nor->bouncebuf,
++			      nor->addr_width);
+ }
+ 
+ /**
+@@ -1404,9 +1401,11 @@ static int write_sr_cr(struct spi_nor *nor, u8 *sr_cr)
+ {
+ 	int ret;
+ 
++	memcpy(nor->bouncebuf, sr_cr, 2);
++
+ 	write_enable(nor);
+ 
+-	ret = nor->write_reg(nor, SPINOR_OP_WRSR, sr_cr, 2);
++	ret = nor->write_reg(nor, SPINOR_OP_WRSR, nor->bouncebuf, 2);
+ 	if (ret < 0) {
+ 		dev_err(nor->dev,
+ 			"error while writing configuration register\n");
+@@ -1599,22 +1598,22 @@ static int spansion_read_cr_quad_enable(struct spi_nor *nor)
+  */
+ static int sr2_bit7_quad_enable(struct spi_nor *nor)
+ {
+-	u8 sr2;
++	u8 *sr2 = nor->bouncebuf;
+ 	int ret;
+ 
+ 	/* Check current Quad Enable bit value. */
+-	ret = nor->read_reg(nor, SPINOR_OP_RDSR2, &sr2, 1);
++	ret = nor->read_reg(nor, SPINOR_OP_RDSR2, sr2, 1);
+ 	if (ret)
+ 		return ret;
+-	if (sr2 & SR2_QUAD_EN_BIT7)
++	if (*sr2 & SR2_QUAD_EN_BIT7)
+ 		return 0;
+ 
+ 	/* Update the Quad Enable bit. */
+-	sr2 |= SR2_QUAD_EN_BIT7;
++	*sr2 |= SR2_QUAD_EN_BIT7;
+ 
+ 	write_enable(nor);
+ 
+-	ret = nor->write_reg(nor, SPINOR_OP_WRSR2, &sr2, 1);
++	ret = nor->write_reg(nor, SPINOR_OP_WRSR2, sr2, 1);
+ 	if (ret < 0) {
+ 		dev_err(nor->dev, "error while writing status register 2\n");
+ 		return -EINVAL;
+@@ -1627,8 +1626,8 @@ static int sr2_bit7_quad_enable(struct spi_nor *nor)
+ 	}
+ 
+ 	/* Read back and check it. */
+-	ret = nor->read_reg(nor, SPINOR_OP_RDSR2, &sr2, 1);
+-	if (!(ret > 0 && (sr2 & SR2_QUAD_EN_BIT7))) {
++	ret = nor->read_reg(nor, SPINOR_OP_RDSR2, sr2, 1);
++	if (!(ret > 0 && (*sr2 & SR2_QUAD_EN_BIT7))) {
+ 		dev_err(nor->dev, "SR2 Quad bit not set\n");
+ 		return -EINVAL;
+ 	}
+@@ -2177,9 +2176,10 @@ static const struct flash_info spi_nor_ids[] = {
+ static const struct flash_info *spi_nor_read_id(struct spi_nor *nor)
+ {
+ 	int			tmp;
+-	u8			id[SPI_NOR_MAX_ID_LEN];
++	u8			*id;
+ 	const struct flash_info	*info;
+ 
++	id = nor->bouncebuf;
+ 	tmp = nor->read_reg(nor, SPINOR_OP_RDID, id, SPI_NOR_MAX_ID_LEN);
+ 	if (tmp < 0) {
+ 		dev_err(nor->dev, "error %d reading JEDEC ID\n", tmp);
+@@ -4121,6 +4121,16 @@ int spi_nor_scan(struct spi_nor *nor, const char *name,
+ 	nor->read_proto = SNOR_PROTO_1_1_1;
+ 	nor->write_proto = SNOR_PROTO_1_1_1;
+ 
++	/*
++	 * We need the bounce buffer early to read/write registers when going
++	 * through the spi-mem layer (buffers have to be DMA-able).
++	 */
++	nor->bouncebuf_size = PAGE_SIZE;
++	nor->bouncebuf = devm_kmalloc(dev, nor->bouncebuf_size,
++				      GFP_KERNEL);
++	if (!nor->bouncebuf)
++		return -ENOMEM;
++
+ 	if (name)
+ 		info = spi_nor_match_id(name);
+ 	/* Try to auto-detect if chip name wasn't specified or not found */
+diff --git a/include/linux/mtd/spi-nor.h b/include/linux/mtd/spi-nor.h
+index 9f57cdfcc93d..6b5956a7a65a 100644
+--- a/include/linux/mtd/spi-nor.h
++++ b/include/linux/mtd/spi-nor.h
+@@ -344,6 +344,9 @@ struct flash_info;
+  * @mtd:		point to a mtd_info structure
+  * @lock:		the lock for the read/write/erase/lock/unlock operations
+  * @dev:		point to a spi device, or a spi nor controller device.
++ * @bouncebuf:		bounce buffer used when the buffer passed by the MTD
++ *                      layer is not DMA-able
++ * @bouncebuf_size:	size of the bounce buffer
+  * @info:		spi-nor part JDEC MFR id and other info
+  * @page_size:		the page size of the SPI NOR
+  * @addr_width:		number of address bytes
+@@ -356,7 +359,6 @@ struct flash_info;
+  * @read_proto:		the SPI protocol for read operations
+  * @write_proto:	the SPI protocol for write operations
+  * @reg_proto		the SPI protocol for read_reg/write_reg/erase operations
+- * @cmd_buf:		used by the write_reg
+  * @erase_map:		the erase map of the SPI NOR
+  * @prepare:		[OPTIONAL] do some preparations for the
+  *			read/write/erase/lock/unlock operations
+@@ -382,6 +384,8 @@ struct spi_nor {
+ 	struct mtd_info		mtd;
+ 	struct mutex		lock;
+ 	struct device		*dev;
++	u8			*bouncebuf;
++	size_t			bouncebuf_size;
+ 	const struct flash_info	*info;
+ 	u32			page_size;
+ 	u8			addr_width;
+@@ -394,7 +398,6 @@ struct spi_nor {
+ 	enum spi_nor_protocol	reg_proto;
+ 	bool			sst_write_second;
+ 	u32			flags;
+-	u8			cmd_buf[SPI_NOR_MAX_CMD_SIZE];
+ 	struct spi_nor_erase_map	erase_map;
+ 
+ 	int (*prepare)(struct spi_nor *nor, enum spi_nor_ops ops);
 -- 
 2.22.0
 
