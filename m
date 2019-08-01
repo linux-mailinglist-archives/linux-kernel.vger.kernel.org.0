@@ -2,33 +2,33 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A76837DC40
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 15:10:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E37DB7DC43
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 15:11:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731652AbfHANKu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 09:10:50 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:54566 "EHLO
+        id S1731678AbfHANKz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 09:10:55 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:54648 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727853AbfHANKr (ORCPT
+        with ESMTP id S1731636AbfHANKt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 09:10:47 -0400
+        Thu, 1 Aug 2019 09:10:49 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=kZ2POKn0qn2LN7RXkQ6obBp4mrNriTeVZiQqjkwNIM8=; b=peAGhlj0SUKa
-        xQqDLR7xGRe9C86XgIthDd/Na2s46vP6u+fSU1qyczOIfdZ8BNQAOZNkcwqhQrRwVZ58yJ1q3TXtY
-        MwHuOInSQ7G6VKtJU3lthXny68wqhqHB0L8IaY2fXXLcYjDaGclY/ouB8gDOCZTrBJDNyD0CFApG7
-        CIduw=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
+        List-Archive; bh=yt/S/eLXPax0RaHMCPV+686Z6HNMhsr3yQ9vBPcPgRo=; b=D0wRGNLxuXnX
+        n9HAo7KYFVQBuuRAVNuG4B98UAwKz7LqJGBZnf5oHCQtCSPER8xvB1dfpyiQV1yTz6U/LbAOed1hg
+        8nt8YQB7wix7Szfx6U7xaaX5nK2UqMbBJwcu9NsHBAZtLZi3lgzBVqHM6+peU559y0FVSwvfZNMVW
+        0eVDE=;
+Received: from ypsilon.sirena.org.uk ([2001:470:1f1d:6b5::7])
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1htAqv-0004j0-3n; Thu, 01 Aug 2019 13:10:41 +0000
+        id 1htAqv-0004iv-1Z; Thu, 01 Aug 2019 13:10:41 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id A018F2742C48; Thu,  1 Aug 2019 14:10:40 +0100 (BST)
+        id 6D0F12742D9A; Thu,  1 Aug 2019 14:10:40 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
 To:     Jerome Brunet <jbrunet@baylibre.com>
 Cc:     alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
@@ -36,10 +36,10 @@ Cc:     alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
         Liam Girdwood <lgirdwood@gmail.com>,
         linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
         Mark Brown <broonie@kernel.org>
-Subject: Applied "ASoC: create pcm for codec2codec links as well" to the asoc tree
-In-Reply-To: <20190725165949.29699-5-jbrunet@baylibre.com>
+Subject: Applied "ASoC: codec2codec: remove ephemeral variables" to the asoc tree
+In-Reply-To: <20190725165949.29699-6-jbrunet@baylibre.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190801131040.A018F2742C48@ypsilon.sirena.org.uk>
+Message-Id: <20190801131040.6D0F12742D9A@ypsilon.sirena.org.uk>
 Date:   Thu,  1 Aug 2019 14:10:40 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -48,7 +48,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: create pcm for codec2codec links as well
+   ASoC: codec2codec: remove ephemeral variables
 
 has been applied to the asoc tree at
 
@@ -73,174 +73,216 @@ to this mail.
 Thanks,
 Mark
 
-From a342031cdd0818cb0fbcb44798211c7a02c7ca27 Mon Sep 17 00:00:00 2001
+From a72706ed8208ac3f72d1c3ebbc6509e368b0dcb0 Mon Sep 17 00:00:00 2001
 From: Jerome Brunet <jbrunet@baylibre.com>
-Date: Thu, 25 Jul 2019 18:59:47 +0200
-Subject: [PATCH] ASoC: create pcm for codec2codec links as well
+Date: Thu, 25 Jul 2019 18:59:48 +0200
+Subject: [PATCH] ASoC: codec2codec: remove ephemeral variables
 
-At the moment, codec to codec links uses an ephemeral variable for
-the struct snd_pcm_substream. Also the struct snd_soc_pcm_runtime
-does not have real struct snd_pcm.
-
-This might a problem if the functions used by a codec on codec to
-codec link expect these structures to exist, and keep on existing
-during the life of the codec.
-
-For example, it is the case of the hdmi-codec, which uses
-snd_pcm_add_chmap_ctls(). For the controls to works, the pcm and
-substream must to exist.
-
-This change is first step, it create pcm (and substreams) for codec
-to codec links, in the same way as dpcm backend links.
+Now that codec to codec links struct snd_soc_pcm_runtime have lasting pcm
+and substreams, let's use them. Alsa allocate and keep the
+struct snd_pcm_runtime as long as the link is powered.
 
 Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-Link: https://lore.kernel.org/r/20190725165949.29699-5-jbrunet@baylibre.com
+Link: https://lore.kernel.org/r/20190725165949.29699-6-jbrunet@baylibre.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/soc-core.c | 42 ++++++++++++------------------------------
- sound/soc/soc-pcm.c  | 35 ++++++++++++++++++++++++++++++++---
- 2 files changed, 44 insertions(+), 33 deletions(-)
+ sound/soc/soc-dapm.c | 72 ++++++++++++++++++++++++++------------------
+ 1 file changed, 42 insertions(+), 30 deletions(-)
 
-diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
-index 06697b2d96b1..da11e44b01aa 100644
---- a/sound/soc/soc-core.c
-+++ b/sound/soc/soc-core.c
-@@ -447,16 +447,6 @@ static void snd_soc_flush_all_delayed_work(struct snd_soc_card *card)
- 		flush_delayed_work(&rtd->delayed_work);
- }
+diff --git a/sound/soc/soc-dapm.c b/sound/soc/soc-dapm.c
+index 2d183e2d23de..1c953a1b46ce 100644
+--- a/sound/soc/soc-dapm.c
++++ b/sound/soc/soc-dapm.c
+@@ -3775,6 +3775,7 @@ snd_soc_dai_link_event_pre_pmu(struct snd_soc_dapm_widget *w,
+ 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+ 	struct snd_pcm_hw_params *params = NULL;
+ 	const struct snd_soc_pcm_stream *config = NULL;
++	struct snd_pcm_runtime *runtime = NULL;
+ 	unsigned int fmt;
+ 	int ret = 0;
  
--static void codec2codec_close_delayed_work(struct work_struct *work)
--{
--	/*
--	 * Currently nothing to do for c2c links
--	 * Since c2c links are internal nodes in the DAPM graph and
--	 * don't interface with the outside world or application layer
--	 * we don't have to do any special handling on close.
--	 */
--}
--
- #ifdef CONFIG_PM_SLEEP
- /* powers down audio subsystem for suspend */
- int snd_soc_suspend(struct device *dev)
-@@ -1555,27 +1545,19 @@ static int soc_probe_link_dais(struct snd_soc_card *card,
- 		return ret;
+@@ -3782,6 +3783,14 @@ snd_soc_dai_link_event_pre_pmu(struct snd_soc_dapm_widget *w,
+ 	if (!params)
+ 		return -ENOMEM;
+ 
++	runtime = kzalloc(sizeof(*runtime), GFP_KERNEL);
++	if (!runtime) {
++		ret = -ENOMEM;
++		goto out;
++	}
++
++	substream->runtime = runtime;
++
+ 	substream->stream = SNDRV_PCM_STREAM_CAPTURE;
+ 	snd_soc_dapm_widget_for_each_source_path(w, path) {
+ 		source = path->source->priv;
+@@ -3808,6 +3817,8 @@ snd_soc_dai_link_event_pre_pmu(struct snd_soc_dapm_widget *w,
+ 		sink->active++;
  	}
  
--	if (!dai_link->params) {
--		/* create the pcm */
--		ret = soc_new_pcm(rtd, num);
--		if (ret < 0) {
--			dev_err(card->dev, "ASoC: can't create pcm %s :%d\n",
--				dai_link->stream_name, ret);
--			return ret;
--		}
--		ret = soc_link_dai_pcm_new(&cpu_dai, 1, rtd);
--		if (ret < 0)
--			return ret;
--		ret = soc_link_dai_pcm_new(rtd->codec_dais,
--					   rtd->num_codecs, rtd);
--		if (ret < 0)
--			return ret;
--	} else {
--		INIT_DELAYED_WORK(&rtd->delayed_work,
--				  codec2codec_close_delayed_work);
-+	/* create the pcm */
-+	ret = soc_new_pcm(rtd, num);
-+	if (ret < 0) {
-+		dev_err(card->dev, "ASoC: can't create pcm %s :%d\n",
-+			dai_link->stream_name, ret);
-+		return ret;
++	substream->hw_opened = 1;
++
+ 	/*
+ 	 * Note: getting the config after .startup() gives a chance to
+ 	 * either party on the link to alter the configuration if
+@@ -3864,6 +3875,9 @@ snd_soc_dai_link_event_pre_pmu(struct snd_soc_dapm_widget *w,
  	}
--
--	return 0;
-+	ret = soc_link_dai_pcm_new(&cpu_dai, 1, rtd);
+ 
+ out:
 +	if (ret < 0)
-+		return ret;
-+	ret = soc_link_dai_pcm_new(rtd->codec_dais,
-+				   rtd->num_codecs, rtd);
-+	return ret;
- }
- 
- static int soc_bind_aux_dev(struct snd_soc_card *card, int num)
-diff --git a/sound/soc/soc-pcm.c b/sound/soc/soc-pcm.c
-index fabeac164a6c..30264bc592f6 100644
---- a/sound/soc/soc-pcm.c
-+++ b/sound/soc/soc-pcm.c
-@@ -678,6 +678,16 @@ static void close_delayed_work(struct work_struct *work)
- 	mutex_unlock(&rtd->pcm_mutex);
- }
- 
-+static void codec2codec_close_delayed_work(struct work_struct *work)
-+{
-+	/*
-+	 * Currently nothing to do for c2c links
-+	 * Since c2c links are internal nodes in the DAPM graph and
-+	 * don't interface with the outside world or application layer
-+	 * we don't have to do any special handling on close.
-+	 */
-+}
++		kfree(runtime);
 +
- /*
-  * Called by ALSA when a PCM substream is closed. Private data can be
-  * freed here. The cpu DAI, codec DAI, machine and components are also
-@@ -3011,6 +3021,12 @@ int soc_new_pcm(struct snd_soc_pcm_runtime *rtd, int num)
- 		playback = rtd->dai_link->dpcm_playback;
- 		capture = rtd->dai_link->dpcm_capture;
- 	} else {
-+		/* Adapt stream for codec2codec links */
-+		struct snd_soc_pcm_stream *cpu_capture = rtd->dai_link->params ?
-+			&cpu_dai->driver->playback : &cpu_dai->driver->capture;
-+		struct snd_soc_pcm_stream *cpu_playback = rtd->dai_link->params ?
-+			&cpu_dai->driver->capture : &cpu_dai->driver->playback;
-+
- 		for_each_rtd_codec_dai(rtd, i, codec_dai) {
- 			if (snd_soc_dai_stream_valid(codec_dai, SNDRV_PCM_STREAM_PLAYBACK) &&
- 			    snd_soc_dai_stream_valid(cpu_dai,   SNDRV_PCM_STREAM_PLAYBACK))
-@@ -3019,6 +3035,9 @@ int soc_new_pcm(struct snd_soc_pcm_runtime *rtd, int num)
- 			    snd_soc_dai_stream_valid(cpu_dai,   SNDRV_PCM_STREAM_CAPTURE))
- 				capture = 1;
+ 	kfree(params);
+ 	return ret;
+ }
+@@ -3873,29 +3887,16 @@ static int snd_soc_dai_link_event(struct snd_soc_dapm_widget *w,
+ {
+ 	struct snd_soc_dapm_path *path;
+ 	struct snd_soc_dai *source, *sink;
+-	struct snd_soc_pcm_runtime *rtd = w->priv;
+-	struct snd_pcm_substream substream;
+-	struct snd_pcm_runtime *runtime = NULL;
+-	int ret = 0;
++	struct snd_pcm_substream *substream = w->priv;
++	int ret = 0, saved_stream = substream->stream;
+ 
+ 	if (WARN_ON(list_empty(&w->edges[SND_SOC_DAPM_DIR_OUT]) ||
+ 		    list_empty(&w->edges[SND_SOC_DAPM_DIR_IN])))
+ 		return -EINVAL;
+ 
+-	memset(&substream, 0, sizeof(substream));
+-
+-	/* Allocate a dummy snd_pcm_runtime for startup() and other ops() */
+-	runtime = kzalloc(sizeof(*runtime), GFP_KERNEL);
+-	if (!runtime) {
+-		ret = -ENOMEM;
+-		goto out;
+-	}
+-	substream.runtime = runtime;
+-	substream.private_data = rtd;
+-
+ 	switch (event) {
+ 	case SND_SOC_DAPM_PRE_PMU:
+-		ret = snd_soc_dai_link_event_pre_pmu(w, &substream);
++		ret = snd_soc_dai_link_event_pre_pmu(w, substream);
+ 		if (ret < 0)
+ 			goto out;
+ 
+@@ -3926,40 +3927,45 @@ static int snd_soc_dai_link_event(struct snd_soc_dapm_widget *w,
+ 			ret = 0;
  		}
+ 
+-		substream.stream = SNDRV_PCM_STREAM_CAPTURE;
++		substream->stream = SNDRV_PCM_STREAM_CAPTURE;
+ 		snd_soc_dapm_widget_for_each_source_path(w, path) {
+ 			source = path->source->priv;
+-			snd_soc_dai_hw_free(source, &substream);
++			snd_soc_dai_hw_free(source, substream);
+ 		}
+ 
+-		substream.stream = SNDRV_PCM_STREAM_PLAYBACK;
++		substream->stream = SNDRV_PCM_STREAM_PLAYBACK;
+ 		snd_soc_dapm_widget_for_each_sink_path(w, path) {
+ 			sink = path->sink->priv;
+-			snd_soc_dai_hw_free(sink, &substream);
++			snd_soc_dai_hw_free(sink, substream);
+ 		}
+ 
+-		substream.stream = SNDRV_PCM_STREAM_CAPTURE;
++		substream->stream = SNDRV_PCM_STREAM_CAPTURE;
+ 		snd_soc_dapm_widget_for_each_source_path(w, path) {
+ 			source = path->source->priv;
+ 			source->active--;
+-			snd_soc_dai_shutdown(source, &substream);
++			snd_soc_dai_shutdown(source, substream);
+ 		}
+ 
+-		substream.stream = SNDRV_PCM_STREAM_PLAYBACK;
++		substream->stream = SNDRV_PCM_STREAM_PLAYBACK;
+ 		snd_soc_dapm_widget_for_each_sink_path(w, path) {
+ 			sink = path->sink->priv;
+ 			sink->active--;
+-			snd_soc_dai_shutdown(sink, &substream);
++			snd_soc_dai_shutdown(sink, substream);
+ 		}
+ 		break;
+ 
++	case SND_SOC_DAPM_POST_PMD:
++		kfree(substream->runtime);
++		break;
 +
-+		capture = capture && cpu_capture->channels_min;
-+		playback = playback && cpu_playback->channels_min;
+ 	default:
+ 		WARN(1, "Unknown event %d\n", event);
+ 		ret = -EINVAL;
  	}
  
- 	if (rtd->dai_link->playback_only) {
-@@ -3032,7 +3051,13 @@ int soc_new_pcm(struct snd_soc_pcm_runtime *rtd, int num)
+ out:
+-	kfree(runtime);
++	/* Restore the substream direction */
++	substream->stream = saved_stream;
+ 	return ret;
+ }
+ 
+@@ -4082,9 +4088,11 @@ snd_soc_dapm_alloc_kcontrol(struct snd_soc_card *card,
+ }
+ 
+ static struct snd_soc_dapm_widget *
+-snd_soc_dapm_new_dai(struct snd_soc_card *card, struct snd_soc_pcm_runtime *rtd,
++snd_soc_dapm_new_dai(struct snd_soc_card *card,
++		     struct snd_pcm_substream *substream,
+ 		     char *id)
+ {
++	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+ 	struct snd_soc_dapm_widget template;
+ 	struct snd_soc_dapm_widget *w;
+ 	const char **w_param_text;
+@@ -4103,7 +4111,7 @@ snd_soc_dapm_new_dai(struct snd_soc_card *card, struct snd_soc_pcm_runtime *rtd,
+ 	template.name = link_name;
+ 	template.event = snd_soc_dai_link_event;
+ 	template.event_flags = SND_SOC_DAPM_PRE_PMU | SND_SOC_DAPM_POST_PMU |
+-		SND_SOC_DAPM_PRE_PMD;
++		SND_SOC_DAPM_PRE_PMD | SND_SOC_DAPM_POST_PMD;
+ 	template.kcontrol_news = NULL;
+ 
+ 	/* allocate memory for control, only in case of multiple configs */
+@@ -4138,7 +4146,7 @@ snd_soc_dapm_new_dai(struct snd_soc_card *card, struct snd_soc_pcm_runtime *rtd,
+ 		goto outfree_kcontrol_news;
  	}
  
- 	/* create the PCM */
--	if (rtd->dai_link->no_pcm) {
-+	if (rtd->dai_link->params) {
-+		snprintf(new_name, sizeof(new_name), "codec2codec(%s)",
-+			 rtd->dai_link->stream_name);
-+
-+		ret = snd_pcm_new_internal(rtd->card->snd_card, new_name, num,
-+					   playback, capture, &pcm);
-+	} else if (rtd->dai_link->no_pcm) {
- 		snprintf(new_name, sizeof(new_name), "(%s)",
- 			rtd->dai_link->stream_name);
+-	w->priv = rtd;
++	w->priv = substream;
  
-@@ -3059,13 +3084,17 @@ int soc_new_pcm(struct snd_soc_pcm_runtime *rtd, int num)
- 	dev_dbg(rtd->card->dev, "ASoC: registered pcm #%d %s\n",num, new_name);
+ 	return w;
  
- 	/* DAPM dai link stream work */
--	INIT_DELAYED_WORK(&rtd->delayed_work, close_delayed_work);
-+	if (rtd->dai_link->params)
-+		INIT_DELAYED_WORK(&rtd->delayed_work,
-+				  codec2codec_close_delayed_work);
-+	else
-+		INIT_DELAYED_WORK(&rtd->delayed_work, close_delayed_work);
+@@ -4260,6 +4268,8 @@ static void dapm_connect_dai_link_widgets(struct snd_soc_card *card,
+ 	struct snd_soc_dai *codec_dai;
+ 	struct snd_soc_dapm_widget *playback = NULL, *capture = NULL;
+ 	struct snd_soc_dapm_widget *codec, *playback_cpu, *capture_cpu;
++	struct snd_pcm_substream *substream;
++	struct snd_pcm_str *streams = rtd->pcm->streams;
+ 	int i;
  
- 	pcm->nonatomic = rtd->dai_link->nonatomic;
- 	rtd->pcm = pcm;
- 	pcm->private_data = rtd;
+ 	if (rtd->dai_link->params) {
+@@ -4278,7 +4288,8 @@ static void dapm_connect_dai_link_widgets(struct snd_soc_card *card,
  
--	if (rtd->dai_link->no_pcm) {
-+	if (rtd->dai_link->no_pcm || rtd->dai_link->params) {
- 		if (playback)
- 			pcm->streams[SNDRV_PCM_STREAM_PLAYBACK].substream->private_data = rtd;
- 		if (capture)
+ 		if (playback_cpu && codec) {
+ 			if (!playback) {
+-				playback = snd_soc_dapm_new_dai(card, rtd,
++				substream = streams[SNDRV_PCM_STREAM_PLAYBACK].substream;
++				playback = snd_soc_dapm_new_dai(card, substream,
+ 								"playback");
+ 				if (IS_ERR(playback)) {
+ 					dev_err(rtd->dev,
+@@ -4307,7 +4318,8 @@ static void dapm_connect_dai_link_widgets(struct snd_soc_card *card,
+ 
+ 		if (codec && capture_cpu) {
+ 			if (!capture) {
+-				capture = snd_soc_dapm_new_dai(card, rtd,
++				substream = streams[SNDRV_PCM_STREAM_CAPTURE].substream;
++				capture = snd_soc_dapm_new_dai(card, substream,
+ 							       "capture");
+ 				if (IS_ERR(capture)) {
+ 					dev_err(rtd->dev,
 -- 
 2.20.1
 
