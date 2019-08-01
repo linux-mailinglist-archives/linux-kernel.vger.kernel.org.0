@@ -2,462 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 373F77D3F4
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 05:45:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CDE5A7D3FF
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 05:46:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730378AbfHADpb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 23:45:31 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:37093 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730309AbfHADp1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 23:45:27 -0400
-Received: by mail-pf1-f195.google.com with SMTP id 19so33148949pfa.4
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 20:45:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=HhMIn30NGQPjpNlDhfy9DcnrYxhEXRl6eLNUApeeF2w=;
-        b=yaE2aHpJcLNGKXg1altIIh5GNPFlGtSSFrlmrvbBhzQSCv71asI2Y7odiccGrQkEZf
-         z3Xt5p1bLoXT/bSZCS9ov/O/cHQMBc3hjyi0bE0BpF5ItV3lbbQu+P7E7CUPUY6/CzLp
-         hNdi0LXvTqBc1h3GGHLINxCn9jQJVJt4hmrlGEPFoDv88itgmSp1jTwum1DenSGNLL03
-         PnHeOmOKuKsuhbn+USbugKVqkCRE+yh7jK9C33YFUhFyKB06bjye/TbE0hR2MCQlypxd
-         cXzXsTj8QUG2U8tq3ans4HrlceHfXzYM9GevndFNuP9b+JBo68VRLV9gLyQ0iMDqBS5Z
-         RJTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=HhMIn30NGQPjpNlDhfy9DcnrYxhEXRl6eLNUApeeF2w=;
-        b=TFZoM/1wun40iGC83tw4gZMjawO0O1dt/C5ur9TSMlo/6FF3fJngJ7A042fRaBDSLi
-         Ka6LA+x1bNwefrKBFJfoWXZuzQmamoHF1GxgPY5MwzbA3faXXE6NHkwI2VZ/cxUh8yS8
-         q6e7FqngMZqCT9F7MUF8HP1ltiD2OMiTjmEdSL9+sD8erwvtUPlN7lTvogr2EW/Nqpk/
-         6WgZ8ErLBaeXM9qwy9e119q8rYlPqV/UAMJZ09g3gBT7cHKCEA/5CqTjevtXmRmuyiCf
-         1SL31PB4DGm8ps2YOOxy6YWhzgtzlNMoFWu7ZARXTKmNdjK902ZTngtHIxdXCwXH3iRc
-         OzHA==
-X-Gm-Message-State: APjAAAWmzs/rOLUnnHKZpbMj13/u2/U7nM5GgrYU0YBpPX4fo9Y0+nEa
-        Kw+0xPPVVTQk/x6ur7YayPjZCmuo4wQ=
-X-Google-Smtp-Source: APXvYqzmDE3vrbXtgfpWu0Jf/Brz4wpDtd1VmuWSpxeAOSd9rkgS8DKORyoZVSUdxBfo777rZkNnHg==
-X-Received: by 2002:a65:654d:: with SMTP id a13mr100328602pgw.196.1564631125865;
-        Wed, 31 Jul 2019 20:45:25 -0700 (PDT)
-Received: from localhost.localdomain ([2601:1c2:680:1319:692:26ff:feda:3a81])
-        by smtp.gmail.com with ESMTPSA id h70sm64775674pgc.36.2019.07.31.20.45.24
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 31 Jul 2019 20:45:25 -0700 (PDT)
-From:   John Stultz <john.stultz@linaro.org>
-To:     lkml <linux-kernel@vger.kernel.org>
-Cc:     Xu YiPing <xuyiping@hisilicon.com>,
-        Rongrong Zou <zourongrong@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        John Stultz <john.stultz@linaro.org>
-Subject: [PATCH v3 26/26] drm: kirin: Move ade drm init to kirin drm drv
-Date:   Thu,  1 Aug 2019 03:44:39 +0000
-Message-Id: <20190801034439.98227-27-john.stultz@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190801034439.98227-1-john.stultz@linaro.org>
-References: <20190801034439.98227-1-john.stultz@linaro.org>
+        id S1730496AbfHADqG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 23:46:06 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:52784 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730413AbfHADp6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jul 2019 23:45:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=FTPM3csely9s2zFjlouoeuv0HtNJCvzMK22CfSdrkWk=; b=WGw5Zol78L39eiMcggNoSq52xq
+        ZCM69o62mAwiMmFqlWkIFlcWAoiYE2oeCfFit/7OS821z0Mz2Y9Ccp7Cd+2prQI7CEOYluus/kEBY
+        9QFJmmh1i+j0Q4cOk7MaH8Ef5ljXAld4nY0GBai1qVi+xa8r3u2mle2nSRu5VFJlhdPc=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
+        (envelope-from <andrew@lunn.ch>)
+        id 1ht22N-0001Eg-EG; Thu, 01 Aug 2019 05:45:55 +0200
+Date:   Thu, 1 Aug 2019 05:45:55 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Hubert Feurstein <h.feurstein@gmail.com>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Rasmus Villemoes <rasmus.villemoes@prevas.dk>
+Subject: Re: [PATCH net-next v2 3/6] net: dsa: mv88e6xxx: introduce
+ invalid_port_mask in mv88e6xxx_info
+Message-ID: <20190801034555.GD2713@lunn.ch>
+References: <20190731082351.3157-1-h.feurstein@gmail.com>
+ <20190731082351.3157-4-h.feurstein@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190731082351.3157-4-h.feurstein@gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xu YiPing <xuyiping@hisilicon.com>
+On Wed, Jul 31, 2019 at 10:23:48AM +0200, Hubert Feurstein wrote:
+> With this it is possible to mark certain chip ports as invalid. This is
+> required for example for the MV88E6220 (which is in general a MV88E6250
+> with 7 ports) but the ports 2-4 are not routed to pins.
+> 
+> If a user configures an invalid port, an error is returned.
+> 
+> Signed-off-by: Hubert Feurstein <h.feurstein@gmail.com>
 
-As part of refactoring the kirin driver to better support
-different hardware revisions, this patch renames ade_data to
-kirin_drm_private, and moves crtc_init and plane_init to
-kirin drm drv too. Now that they are generic the functions
-can be shared between the kirin620 and (to be added later)
-kirin960 specific support code.
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-Cc: Rongrong Zou <zourongrong@gmail.com>
-Cc: David Airlie <airlied@linux.ie>
-Cc: Daniel Vetter <daniel@ffwll.ch>
-Cc: dri-devel <dri-devel@lists.freedesktop.org>
-Cc: Sam Ravnborg <sam@ravnborg.org>
-Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
-Signed-off-by: Xu YiPing <xuyiping@hisilicon.com>
-[jstultz: Reworded commit message]
-Signed-off-by: John Stultz <john.stultz@linaro.org>
----
- .../gpu/drm/hisilicon/kirin/kirin_drm_ade.c   | 123 ---------------
- .../gpu/drm/hisilicon/kirin/kirin_drm_drv.c   | 141 ++++++++++++++++--
- .../gpu/drm/hisilicon/kirin/kirin_drm_drv.h   |   5 -
- 3 files changed, 129 insertions(+), 140 deletions(-)
-
-diff --git a/drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c b/drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c
-index ab0c5d03903d..428206eccfa0 100644
---- a/drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c
-+++ b/drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c
-@@ -53,13 +53,6 @@ struct ade_hw_ctx {
- 	struct drm_crtc *crtc;
- };
- 
--struct ade_data {
--	struct kirin_crtc crtc;
--	struct kirin_plane planes[ADE_CH_NUM];
--	struct ade_hw_ctx *hw_ctx;
--};
--
--/* ade-format info: */
- static const struct kirin_format ade_formats[] = {
- 	/* 16bpp RGB: */
- 	{ DRM_FORMAT_RGB565, ADE_RGB_565 },
-@@ -571,36 +564,6 @@ static const struct drm_crtc_funcs ade_crtc_funcs = {
- 	.disable_vblank	= ade_crtc_disable_vblank,
- };
- 
--static int kirin_drm_crtc_init(struct drm_device *dev, struct drm_crtc *crtc,
--			       struct drm_plane *plane,
--			       const struct kirin_drm_data *driver_data)
--{
--	struct device_node *port;
--	int ret;
--
--	/* set crtc port so that
--	 * drm_of_find_possible_crtcs call works
--	 */
--	port = of_get_child_by_name(dev->dev->of_node, "port");
--	if (!port) {
--		DRM_ERROR("no port node found in %pOF\n", dev->dev->of_node);
--		return -EINVAL;
--	}
--	of_node_put(port);
--	crtc->port = port;
--
--	ret = drm_crtc_init_with_planes(dev, crtc, plane, NULL,
--					driver_data->crtc_funcs, NULL);
--	if (ret) {
--		DRM_ERROR("failed to init crtc.\n");
--		return ret;
--	}
--
--	drm_crtc_helper_add(crtc, driver_data->crtc_helper_funcs);
--
--	return 0;
--}
--
- static void ade_rdma_set(void __iomem *base, struct drm_framebuffer *fb,
- 			 u32 ch, u32 y, u32 in_h, u32 fmt)
- {
-@@ -893,28 +856,6 @@ static struct drm_plane_funcs ade_plane_funcs = {
- 	.atomic_destroy_state = drm_atomic_helper_plane_destroy_state,
- };
- 
--static int kirin_drm_plane_init(struct drm_device *dev,
--				struct kirin_plane *kplane,
--				enum drm_plane_type type,
--				const struct kirin_drm_data *driver_data)
--{
--	int ret = 0;
--
--	ret = drm_universal_plane_init(dev, &kplane->base, 1,
--				       driver_data->plane_funcs,
--				       driver_data->channel_formats,
--				       driver_data->channel_formats_cnt,
--				       NULL, type, NULL);
--	if (ret) {
--		DRM_ERROR("fail to init plane, ch=%d\n", kplane->ch);
--		return ret;
--	}
--
--	drm_plane_helper_add(&kplane->base, driver_data->plane_helper_funcs);
--
--	return 0;
--}
--
- static void *ade_hw_ctx_alloc(struct platform_device *pdev,
- 							  struct drm_crtc *crtc)
- {
-@@ -984,71 +925,10 @@ static void *ade_hw_ctx_alloc(struct platform_device *pdev,
- 	return ctx;
- }
- 
--static int ade_drm_init(struct platform_device *pdev)
--{
--	struct drm_device *dev = platform_get_drvdata(pdev);
--	struct ade_data *ade;
--	struct ade_hw_ctx *ctx;
--	struct kirin_crtc *kcrtc;
--	struct kirin_plane *kplane;
--	enum drm_plane_type type;
--	int ret;
--	u32 ch;
--
--	ade = devm_kzalloc(dev->dev, sizeof(*ade), GFP_KERNEL);
--	if (!ade) {
--		DRM_ERROR("failed to alloc ade_data\n");
--		return -ENOMEM;
--	}
--
--	ctx = ade_driver_data.alloc_hw_ctx(pdev, &ade->crtc.base);
--	if (IS_ERR(ctx)) {
--		DRM_ERROR("failed to initialize kirin_priv hw ctx\n");
--		return -EINVAL;
--	}
--	ade->hw_ctx = ctx;
--
--	kcrtc = &ade->crtc;
--	kcrtc->hw_ctx = ctx;
--
--	/*
--	 * plane init
--	 * TODO: Now only support primary plane, overlay planes
--	 * need to do.
--	 */
--	for (ch = 0; ch < ade_driver_data.num_planes; ch++) {
--		kplane = &ade->planes[ch];
--		kplane->ch = ch;
--		kplane->hw_ctx = ctx;
--
--		if (ch == ade_driver_data.prim_plane)
--			type = DRM_PLANE_TYPE_PRIMARY;
--		else
--			type = DRM_PLANE_TYPE_OVERLAY;
--
--		ret = kirin_drm_plane_init(dev, kplane, type, &ade_driver_data);
--		if (ret)
--			return ret;
--	}
--
--	/* crtc init */
--	ret = kirin_drm_crtc_init(dev, &kcrtc->base,
--				&ade->planes[ade_driver_data.prim_plane].base,
--				&ade_driver_data);
--	if (ret)
--		return ret;
--
--	return 0;
--}
--
- static void ade_hw_ctx_cleanup(void *hw_ctx)
- {
- }
- 
--static void ade_drm_cleanup(struct platform_device *pdev)
--{
--}
--
- static const struct drm_mode_config_funcs ade_mode_config_funcs = {
- 	.fb_create = drm_gem_fb_create,
- 	.atomic_check = drm_atomic_helper_check,
-@@ -1099,7 +979,4 @@ struct kirin_drm_data ade_driver_data = {
- 
- 	.alloc_hw_ctx = ade_hw_ctx_alloc,
- 	.cleanup_hw_ctx = ade_hw_ctx_cleanup,
--
--	.init = ade_drm_init,
--	.cleanup = ade_drm_cleanup
- };
-diff --git a/drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.c b/drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.c
-index cc79bd4ecec2..69aa5e1821d6 100644
---- a/drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.c
-+++ b/drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.c
-@@ -28,6 +28,130 @@
- 
- #include "kirin_drm_drv.h"
- 
-+#define KIRIN_MAX_PLANE	2
-+
-+struct kirin_drm_private {
-+	struct kirin_crtc crtc;
-+	struct kirin_plane planes[KIRIN_MAX_PLANE];
-+	void *hw_ctx;
-+};
-+
-+static int kirin_drm_crtc_init(struct drm_device *dev, struct drm_crtc *crtc,
-+				struct drm_plane *plane,
-+				const struct kirin_drm_data *driver_data)
-+{
-+	struct device_node *port;
-+	int ret;
-+
-+	/* set crtc port so that
-+	 * drm_of_find_possible_crtcs call works
-+	 */
-+	port = of_get_child_by_name(dev->dev->of_node, "port");
-+	if (!port) {
-+		DRM_ERROR("no port node found in %pOF\n", dev->dev->of_node);
-+		return -EINVAL;
-+	}
-+	of_node_put(port);
-+	crtc->port = port;
-+
-+	ret = drm_crtc_init_with_planes(dev, crtc, plane, NULL,
-+					driver_data->crtc_funcs, NULL);
-+	if (ret) {
-+		DRM_ERROR("failed to init crtc.\n");
-+		return ret;
-+	}
-+
-+	drm_crtc_helper_add(crtc, driver_data->crtc_helper_funcs);
-+
-+	return 0;
-+}
-+
-+static int kirin_drm_plane_init(struct drm_device *dev, struct drm_plane *plane,
-+				enum drm_plane_type type,
-+				const struct kirin_drm_data *data)
-+{
-+	int ret = 0;
-+
-+	ret = drm_universal_plane_init(dev, plane, 1, data->plane_funcs,
-+				data->channel_formats,
-+				data->channel_formats_cnt,
-+				NULL, type, NULL);
-+	if (ret) {
-+		DRM_ERROR("fail to init plane, ch=%d\n", 0);
-+		return ret;
-+	}
-+
-+	drm_plane_helper_add(plane, data->plane_helper_funcs);
-+
-+	return 0;
-+}
-+
-+static void kirin_drm_private_cleanup(struct drm_device *dev)
-+{
-+	struct kirin_drm_private *kirin_priv = dev->dev_private;
-+	struct kirin_drm_data *data;
-+
-+	data = (struct kirin_drm_data *)of_device_get_match_data(dev->dev);
-+	if (data->cleanup_hw_ctx)
-+		data->cleanup_hw_ctx(kirin_priv->hw_ctx);
-+
-+	devm_kfree(dev->dev, kirin_priv);
-+	dev->dev_private = NULL;
-+}
-+
-+static int kirin_drm_private_init(struct drm_device *dev,
-+				const struct kirin_drm_data *driver_data)
-+{
-+	struct platform_device *pdev = to_platform_device(dev->dev);
-+	struct kirin_drm_private *kirin_priv;
-+	struct drm_plane *prim_plane;
-+	enum drm_plane_type type;
-+	void *ctx;
-+	int ret;
-+	u32 ch;
-+
-+	kirin_priv = devm_kzalloc(dev->dev, sizeof(*kirin_priv), GFP_KERNEL);
-+	if (!kirin_priv) {
-+		DRM_ERROR("failed to alloc kirin_drm_private\n");
-+		return -ENOMEM;
-+	}
-+
-+	ctx = driver_data->alloc_hw_ctx(pdev, &kirin_priv->crtc.base);
-+	if (IS_ERR(ctx)) {
-+		DRM_ERROR("failed to initialize kirin_priv hw ctx\n");
-+		return -EINVAL;
-+	}
-+	kirin_priv->hw_ctx = ctx;
-+
-+	/*
-+	 * plane init
-+	 * TODO: Now only support primary plane, overlay planes
-+	 * need to do.
-+	 */
-+	for (ch = 0; ch < driver_data->num_planes; ch++) {
-+		if (ch == driver_data->prim_plane)
-+			type = DRM_PLANE_TYPE_PRIMARY;
-+		else
-+			type = DRM_PLANE_TYPE_OVERLAY;
-+		ret = kirin_drm_plane_init(dev, &kirin_priv->planes[ch].base,
-+					   type, driver_data);
-+		if (ret)
-+			return ret;
-+		kirin_priv->planes[ch].ch = ch;
-+		kirin_priv->planes[ch].hw_ctx = ctx;
-+	}
-+
-+	/* crtc init */
-+	prim_plane = &kirin_priv->planes[driver_data->prim_plane].base;
-+	ret = kirin_drm_crtc_init(dev, &kirin_priv->crtc.base,
-+				  prim_plane, driver_data);
-+	if (ret)
-+		return ret;
-+	kirin_priv->crtc.hw_ctx = ctx;
-+	dev->dev_private = kirin_priv;
-+
-+	return 0;
-+}
- 
- static int kirin_drm_kms_init(struct drm_device *dev,
- 				const struct kirin_drm_data *driver_data)
-@@ -43,7 +167,7 @@ static int kirin_drm_kms_init(struct drm_device *dev,
- 	dev->mode_config.funcs = driver_data->mode_config_funcs;
- 
- 	/* display controller init */
--	ret = driver_data->init(to_platform_device(dev->dev));
-+	ret = kirin_drm_private_init(dev, driver_data);
- 	if (ret)
- 		goto err_mode_config_cleanup;
- 
-@@ -51,7 +175,7 @@ static int kirin_drm_kms_init(struct drm_device *dev,
- 	ret = component_bind_all(dev->dev, dev);
- 	if (ret) {
- 		DRM_ERROR("failed to bind all component.\n");
--		goto err_dc_cleanup;
-+		goto err_private_cleanup;
- 	}
- 
- 	/* vblank init */
-@@ -73,11 +197,10 @@ static int kirin_drm_kms_init(struct drm_device *dev,
- 
- err_unbind_all:
- 	component_unbind_all(dev->dev, dev);
--err_dc_cleanup:
--	driver_data->cleanup(to_platform_device(dev->dev));
-+err_private_cleanup:
-+	kirin_drm_private_cleanup(dev);
- err_mode_config_cleanup:
- 	drm_mode_config_cleanup(dev);
--
- 	return ret;
- }
- 
-@@ -88,14 +211,8 @@ static int compare_of(struct device *dev, void *data)
- 
- static int kirin_drm_kms_cleanup(struct drm_device *dev)
- {
--	const struct kirin_drm_data *driver_data;
--
- 	drm_kms_helper_poll_fini(dev);
--
--	driver_data = of_device_get_match_data(dev->dev);
--	if (driver_data->cleanup)
--		driver_data->cleanup(to_platform_device(dev->dev));
--
-+	kirin_drm_private_cleanup(dev);
- 	drm_mode_config_cleanup(dev);
- 
- 	return 0;
-diff --git a/drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.h b/drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.h
-index 1663610d2cd8..4d5c05a24065 100644
---- a/drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.h
-+++ b/drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.h
-@@ -7,8 +7,6 @@
- #ifndef __KIRIN_DRM_DRV_H__
- #define __KIRIN_DRM_DRV_H__
- 
--#define MAX_CRTC	2
--
- #define to_kirin_crtc(crtc) \
- 	container_of(crtc, struct kirin_crtc, base)
- 
-@@ -53,9 +51,6 @@ struct kirin_drm_data {
- 	void *(*alloc_hw_ctx)(struct platform_device *pdev,
- 			      struct drm_crtc *crtc);
- 	void (*cleanup_hw_ctx)(void *hw_ctx);
--
--	int (*init)(struct platform_device *pdev);
--	void (*cleanup)(struct platform_device *pdev);
- };
- 
- extern struct kirin_drm_data ade_driver_data;
--- 
-2.17.1
-
+    Andrew
