@@ -2,52 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D2C0A7E5C8
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 00:38:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C8387E5CB
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 00:38:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389836AbfHAWil (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 18:38:41 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:29204 "EHLO
+        id S2389786AbfHAWit (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 18:38:49 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36160 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2389795AbfHAWi3 (ORCPT
+        by vger.kernel.org with ESMTP id S1731718AbfHAWis (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 18:38:29 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x71MbGqN021142;
-        Thu, 1 Aug 2019 18:37:49 -0400
+        Thu, 1 Aug 2019 18:38:48 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x71Mb6du057650;
+        Thu, 1 Aug 2019 18:37:50 -0400
 Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2u460eeapu-1
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2u488k9fp4-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
         Thu, 01 Aug 2019 18:37:49 -0400
-Received: from m0098416.ppops.net (m0098416.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x71MbmWB022545;
-        Thu, 1 Aug 2019 18:37:48 -0400
-Received: from ppma03wdc.us.ibm.com (ba.79.3fa9.ip4.static.sl-reverse.com [169.63.121.186])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2u460eeaph-1
+Received: from m0098420.ppops.net (m0098420.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x71MbBR8057876;
+        Thu, 1 Aug 2019 18:37:49 -0400
+Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2u488k9fnr-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 01 Aug 2019 18:37:48 -0400
-Received: from pps.filterd (ppma03wdc.us.ibm.com [127.0.0.1])
-        by ppma03wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x71MZVla016206;
+        Thu, 01 Aug 2019 18:37:49 -0400
+Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
+        by ppma02dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x71MZO8G019583;
         Thu, 1 Aug 2019 22:37:48 GMT
 Received: from b01cxnp22035.gho.pok.ibm.com (b01cxnp22035.gho.pok.ibm.com [9.57.198.25])
-        by ppma03wdc.us.ibm.com with ESMTP id 2u0e85w60n-1
+        by ppma02dal.us.ibm.com with ESMTP id 2u0e85xfur-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
         Thu, 01 Aug 2019 22:37:48 +0000
 Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x71MblPp39453000
+        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x71MblB444564956
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
         Thu, 1 Aug 2019 22:37:47 GMT
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 73468B206C;
+        by IMSVA (Postfix) with ESMTP id 73ABDB207F;
         Thu,  1 Aug 2019 22:37:47 +0000 (GMT)
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5DA3DB2079;
+        by IMSVA (Postfix) with ESMTP id 5E92AB207B;
         Thu,  1 Aug 2019 22:37:47 +0000 (GMT)
 Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.154])
         by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
         Thu,  1 Aug 2019 22:37:47 +0000 (GMT)
 Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 7265616C9A52; Thu,  1 Aug 2019 15:37:48 -0700 (PDT)
+        id 7887B16C9A53; Thu,  1 Aug 2019 15:37:48 -0700 (PDT)
 From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
 To:     rcu@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
@@ -56,10 +56,14 @@ Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
         josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>
-Subject: [PATCH tip/core/rcu 10/12] rcu: Remove redundant "if" condition from rcu_gp_is_expedited()
-Date:   Thu,  1 Aug 2019 15:37:45 -0700
-Message-Id: <20190801223747.15560-10-paulmck@linux.ibm.com>
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Russell King <linux@arm.linux.org.uk>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>
+Subject: [PATCH tip/core/rcu 11/12] arm: Use common outgoing-CPU-notification code
+Date:   Thu,  1 Aug 2019 15:37:46 -0700
+Message-Id: <20190801223747.15560-11-paulmck@linux.ibm.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190801223708.GA14862@linux.ibm.com>
 References: <20190801223708.GA14862@linux.ibm.com>
@@ -68,7 +72,7 @@ X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=13 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
  mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1906280000 definitions=main-1908010238
 Sender: linux-kernel-owner@vger.kernel.org
@@ -76,31 +80,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Because rcu_expedited_nesting is initialized to 1 and not decremented
-until just before init is spawned, rcu_expedited_nesting is guaranteed
-to be non-zero whenever rcu_scheduler_active == RCU_SCHEDULER_INIT.
-This commit therefore removes this redundant "if" equality test.
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 
-Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
-Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+This commit removes the open-coded CPU-offline notification with new
+common code.  In particular, this change avoids calling scheduler code
+using RCU from an offline CPU that RCU is ignoring.  This is a minimal
+change.  A more intrusive change might invoke the cpu_check_up_prepare()
+and cpu_set_state_online() functions at CPU-online time, which would
+allow onlining throw an error if the CPU did not go offline properly.
+
+Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: Russell King <linux@arm.linux.org.uk>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
 ---
- kernel/rcu/update.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ arch/arm/kernel/smp.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/kernel/rcu/update.c b/kernel/rcu/update.c
-index 249517058b13..64e9cc8609e7 100644
---- a/kernel/rcu/update.c
-+++ b/kernel/rcu/update.c
-@@ -136,8 +136,7 @@ static atomic_t rcu_expedited_nesting = ATOMIC_INIT(1);
-  */
- bool rcu_gp_is_expedited(void)
- {
--	return rcu_expedited || atomic_read(&rcu_expedited_nesting) ||
--	       rcu_scheduler_active == RCU_SCHEDULER_INIT;
-+	return rcu_expedited || atomic_read(&rcu_expedited_nesting);
+diff --git a/arch/arm/kernel/smp.c b/arch/arm/kernel/smp.c
+index aab8ba40ce38..4b0bab2607e4 100644
+--- a/arch/arm/kernel/smp.c
++++ b/arch/arm/kernel/smp.c
+@@ -264,15 +264,13 @@ int __cpu_disable(void)
+ 	return 0;
  }
- EXPORT_SYMBOL_GPL(rcu_gp_is_expedited);
  
+-static DECLARE_COMPLETION(cpu_died);
+-
+ /*
+  * called on the thread which is asking for a CPU to be shutdown -
+  * waits until shutdown has completed, or it is timed out.
+  */
+ void __cpu_die(unsigned int cpu)
+ {
+-	if (!wait_for_completion_timeout(&cpu_died, msecs_to_jiffies(5000))) {
++	if (!cpu_wait_death(cpu, 5)) {
+ 		pr_err("CPU%u: cpu didn't die\n", cpu);
+ 		return;
+ 	}
+@@ -319,7 +317,7 @@ void arch_cpu_idle_dead(void)
+ 	 * this returns, power and/or clocks can be removed at any point
+ 	 * from this CPU and its cache by platform_cpu_kill().
+ 	 */
+-	complete(&cpu_died);
++	(void)cpu_report_death();
+ 
+ 	/*
+ 	 * Ensure that the cache lines associated with that completion are
 -- 
 2.17.1
 
