@@ -2,125 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB4237D8C7
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 11:51:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DD0CC7D8D9
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 11:53:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728691AbfHAJvZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 05:51:25 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:59302 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725379AbfHAJvZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 05:51:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=/RCQXkoLdx1Dap2zHV/paZLxYVJHeWju5RP8ynoxTPI=; b=UluEH/75fC5+qgudhOiGsRDkg
-        Dmv3F33wa/UY2uDdoFibQqQZ/AqqbiXyF/wqMePOsemH4nmb1rKJpHHfYVfEv3f3ai4nBEp7Ug+sL
-        SWzd5y8YOKyQ/tSuRq0AiUJXLq4NeSuDbMiZURN9ycAr1WLCUOUT5OizKLOhC9xB/AVC02rjw3CtK
-        Wax8iH9jNoLz0U6pypJXmZ8HPc5NNfEIKf4EOPSG1OTeIXbzBGbcVP41xY+kvR+e+I/f8rggEFydN
-        eqt4MyjaUuiqqF6LW21UPHkR1sy64DUUDe4i1To53kp8ma1FLTaZT+7cLoi8LygcrYfmuoqz0PCAh
-        nXgvvDuHQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1ht7ju-0003e9-F5; Thu, 01 Aug 2019 09:51:14 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 149A52029F4CD; Thu,  1 Aug 2019 11:51:12 +0200 (CEST)
-Date:   Thu, 1 Aug 2019 11:51:12 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Suren Baghdasaryan <surenb@google.com>
-Cc:     Ingo Molnar <mingo@redhat.com>, lizefan@huawei.com,
-        Johannes Weiner <hannes@cmpxchg.org>, axboe@kernel.dk,
-        Dennis Zhou <dennis@kernel.org>,
-        Dennis Zhou <dennisszhou@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-mm <linux-mm@kvack.org>, linux-doc@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        kernel-team <kernel-team@android.com>,
-        Nick Kralevich <nnk@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 1/1] psi: do not require setsched permission from the
- trigger creator
-Message-ID: <20190801095112.GA31381@hirez.programming.kicks-ass.net>
-References: <20190730013310.162367-1-surenb@google.com>
- <20190730081122.GH31381@hirez.programming.kicks-ass.net>
- <CAJuCfpH7NpuYKv-B9-27SpQSKhkzraw0LZzpik7_cyNMYcqB2Q@mail.gmail.com>
+        id S1730455AbfHAJxN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 05:53:13 -0400
+Received: from mail-eopbgr20066.outbound.protection.outlook.com ([40.107.2.66]:13837
+        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726407AbfHAJxM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Aug 2019 05:53:12 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=GwuKD+nOYoyNaahTa/LFv0syidf98Oo2Gh9Hk3YKxqmlbVkI7J/IDnTsTaAcyCZZDbHGUt25WlKsm0JUzAEttg7crKWSsjiUXnHh0AJOE1PvC2oDlo7R1ynpMRIOK9J6MLF2lK7/31HyQ8Y7SSRLqBK+u/Na2MKOG2rQSYaYbjUcbVQKqXsVa0x10X4cglrf1iQKQ301aluwkkO6XLbsn8ESpL43arIqG/+CoESTV/JR2CpxQoeZ0HH4vNGIa3gAUUbW8jja2ggPm/PAlbP8nTsFxlz7Lq4wMP0Dj15r5pOJZeTwwmChxflfrXTysrTt3n5tahFWwBHX6aNcweBLMQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+OZxqOGVrQj75rZP5NM5vawD6+osHFZdVF652tz/5ek=;
+ b=KaE9ety2UrvmK59O1z0qzjVvbMI/P88K8W1c2sKpt4hU87gRFEhDbEzKQqSMUgf87V0+7rnluZQwD98R9GjEmcBhv+clstHGTIFZ6OUHcpDFoeL/CLIb7lrKrOdsWQxciwD5WPiykDPKu6KLYnVq6dolpdoTK5xe6Inm+ujxNoIYdqXoxoVWEUO9sl69kJ0YuiY/x25AN7NZzGfx2O7xavOyO1Gppi9jATFy7Ipup028TujtXv81vuXNrprT9g0euDeLPmpuAGkBydzCcVdK1VpcZ6h9CoknshDkUFXb7d2xrJiKzTwqqh4HDdUHco/b1Bqp7dL5OjIiR58EmWwirA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass (sender ip is
+ 188.184.36.50) smtp.rcpttodomain=lwn.net
+ smtp.mailfrom=cern.ch;dmarc=bestguesspass action=none
+ header.from=cern.ch;dkim=none (message not signed);arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cern.onmicrosoft.com;
+ s=selector2-cern-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+OZxqOGVrQj75rZP5NM5vawD6+osHFZdVF652tz/5ek=;
+ b=XsAqJuu9L5yVdLL/TsvxcoeUwkJpc9+IWuMvWn4aaQD06q0fEvMJzrYN3XZcHv4TS6q4S69pLaP8L3deQ5zoTxfrDPQ8rGduH+ZG482G6OrTzWdggvGHn0VUEDDXmsGu8/o3ftLVH8yCfW3B6hrjml+xE5MLE7AyddoHYay8Juo=
+Received: from AM0PR06CA0050.eurprd06.prod.outlook.com (2603:10a6:208:aa::27)
+ by HE1PR0602MB3305.eurprd06.prod.outlook.com (2603:10a6:7:1b::33) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2136.12; Thu, 1 Aug
+ 2019 09:53:08 +0000
+Received: from VE1EUR02FT028.eop-EUR02.prod.protection.outlook.com
+ (2a01:111:f400:7e06::208) by AM0PR06CA0050.outlook.office365.com
+ (2603:10a6:208:aa::27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2136.15 via Frontend
+ Transport; Thu, 1 Aug 2019 09:53:08 +0000
+Authentication-Results: spf=pass (sender IP is 188.184.36.50)
+ smtp.mailfrom=cern.ch; lwn.net; dkim=none (message not signed)
+ header.d=none;lwn.net; dmarc=bestguesspass action=none header.from=cern.ch;
+Received-SPF: Pass (protection.outlook.com: domain of cern.ch designates
+ 188.184.36.50 as permitted sender) receiver=protection.outlook.com;
+ client-ip=188.184.36.50; helo=cernmxgwlb4.cern.ch;
+Received: from cernmxgwlb4.cern.ch (188.184.36.50) by
+ VE1EUR02FT028.mail.protection.outlook.com (10.152.12.81) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.2136.14 via Frontend Transport; Thu, 1 Aug 2019 09:53:07 +0000
+Received: from cernfe04.cern.ch (188.184.36.41) by cernmxgwlb4.cern.ch
+ (188.184.36.50) with Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 1 Aug
+ 2019 11:53:06 +0200
+Received: from pcbe13614.localnet (2001:1458:202:121::100:40) by smtp.cern.ch
+ (2001:1458:201:66::100:14) with Microsoft SMTP Server (TLS) id 14.3.468.0;
+ Thu, 1 Aug 2019 11:53:07 +0200
+From:   Federico Vaga <federico.vaga@cern.ch>
+To:     Jonathan Corbet <corbet@lwn.net>
+Reply-To: <federico.vaga@cern.ch>
+CC:     <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        "Alessia Mantegazza" <amantegazza@vaga.pv.it>
+Subject: Re: [PATCH] doc:it_IT: translations for documents in process/
+Date:   Thu, 1 Aug 2019 11:53:06 +0200
+Message-ID: <1695846.t893fQQLz3@pcbe13614>
+In-Reply-To: <20864529.Q1CKeA7GMu@pcbe13614>
+References: <20190728092054.1183-1-federico.vaga@vaga.pv.it> <20190731125124.46e06ab6@lwn.net> <20864529.Q1CKeA7GMu@pcbe13614>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJuCfpH7NpuYKv-B9-27SpQSKhkzraw0LZzpik7_cyNMYcqB2Q@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+X-Originating-IP: [2001:1458:202:121::100:40]
+X-EOPAttributedMessage: 0
+X-Forefront-Antispam-Report: CIP:188.184.36.50;IPV:NLI;CTRY:CH;EFV:NLI;SFV:NSPM;SFS:(10009020)(136003)(396003)(346002)(39860400002)(376002)(2980300002)(199004)(189003)(2906002)(478600001)(5660300002)(50466002)(23726003)(47776003)(6916009)(6246003)(70586007)(70206006)(6116002)(230700001)(126002)(9686003)(43066004)(86362001)(53546011)(97756001)(26005)(7636002)(316002)(46406003)(76176011)(446003)(8676002)(11346002)(9576002)(8936002)(356004)(305945005)(7736002)(33716001)(229853002)(4326008)(3450700001)(336012)(44832011)(106002)(246002)(476003)(426003)(186003)(486006)(16526019)(54906003);DIR:OUT;SFP:1101;SCL:1;SRVR:HE1PR0602MB3305;H:cernmxgwlb4.cern.ch;FPR:;SPF:Pass;LANG:en;PTR:cernmx11.cern.ch;A:1;MX:1;
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 9e7f692f-3b38-4d15-a54f-08d716660e71
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(4709080)(1401327)(2017052603328)(7193020);SRVR:HE1PR0602MB3305;
+X-MS-TrafficTypeDiagnostic: HE1PR0602MB3305:
+X-Microsoft-Antispam-PRVS: <HE1PR0602MB33051F3AA3447D827872EBE4EFDE0@HE1PR0602MB3305.eurprd06.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:6790;
+X-Forefront-PRVS: 01165471DB
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam-Message-Info: LeSGVg0uN7NVonfT+9TlP6hhWolpCKm/fm1J/NUFuBnsL4YKDr8mICSgacJXruf8B2AZoB+kHJRINddNYvmjjtMx2bHC43IAnJficoJDe7vx52jP/Uv8Wrk+Mzf5aH5OlTAGkMsOhHWCHgwvIJyFhxE2MpFap+i+16QLmpum5vUIQJPljpmW8GDXrBA9VfZHObSfWJeF1g/TYgamZIxV35+/xz6CXDqM6D3a+HgJmpN5+CUe3dWh6xnjAxPsKOsekCaahtgS/d/2mN6BBnw/l0lxRBKqCFaLX8lG4QXCGtM1FL0BvCFCaM89b41OeNld81/7wt8/Cop8j5IipBHf3/IxZTTDCWNNfKvOg61HvTtGyhHAAKLjs+RiiHtpEP99hMTqPEbFdlAvnpFoqBOVdUXxSR1RaXL4uBNY5w0eXq4=
+X-OriginatorOrg: cern.ch
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Aug 2019 09:53:07.8336
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9e7f692f-3b38-4d15-a54f-08d716660e71
+X-MS-Exchange-CrossTenant-Id: c80d3499-4a40-4a8c-986e-abce017d6b19
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=c80d3499-4a40-4a8c-986e-abce017d6b19;Ip=[188.184.36.50];Helo=[cernmxgwlb4.cern.ch]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR0602MB3305
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 30, 2019 at 10:44:51AM -0700, Suren Baghdasaryan wrote:
-> On Tue, Jul 30, 2019 at 1:11 AM Peter Zijlstra <peterz@infradead.org> wrote:
-> >
-> > On Mon, Jul 29, 2019 at 06:33:10PM -0700, Suren Baghdasaryan wrote:
-> > > When a process creates a new trigger by writing into /proc/pressure/*
-> > > files, permissions to write such a file should be used to determine whether
-> > > the process is allowed to do so or not. Current implementation would also
-> > > require such a process to have setsched capability. Setting of psi trigger
-> > > thread's scheduling policy is an implementation detail and should not be
-> > > exposed to the user level. Remove the permission check by using _nocheck
-> > > version of the function.
-> > >
-> > > Suggested-by: Nick Kralevich <nnk@google.com>
-> > > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> > > ---
-> > >  kernel/sched/psi.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > >
-> > > diff --git a/kernel/sched/psi.c b/kernel/sched/psi.c
-> > > index 7acc632c3b82..ed9a1d573cb1 100644
-> > > --- a/kernel/sched/psi.c
-> > > +++ b/kernel/sched/psi.c
-> > > @@ -1061,7 +1061,7 @@ struct psi_trigger *psi_trigger_create(struct psi_group *group,
-> > >                       mutex_unlock(&group->trigger_lock);
-> > >                       return ERR_CAST(kworker);
-> > >               }
-> > > -             sched_setscheduler(kworker->task, SCHED_FIFO, &param);
-> > > +             sched_setscheduler_nocheck(kworker->task, SCHED_FIFO, &param);
-> >
-> > ARGGH, wtf is there a FIFO-99!! thread here at all !?
+On Thursday, August 1, 2019 11:37:58 AM CEST Federico Vaga wrote:
+> On Wednesday, July 31, 2019 8:51:24 PM CEST Jonathan Corbet wrote:
+> > On Sun, 28 Jul 2019 11:20:54 +0200
+> > 
+> > Federico Vaga <federico.vaga@vaga.pv.it> wrote:
+> > > From: Alessia Mantegazza <amantegazza@vaga.pv.it>
+> > > 
+> > > Translations for the following documents in process/:
+> > >     - email-clients
+> > >     - management-style
+> > > 
+> > > Signed-off-by: Alessia Mantegazza <amantegazza@vaga.pv.it>
+> > > Signed-off-by: Federico Vaga <federico.vaga@vaga.pv.it>
+> > 
+> > This looks generally good, but I have to ask...
+> > 
+> > > +Se la patch che avete inserito dev'essere modificata usato la finestra
+> > > di
+> > > +scrittura di Claws, allora assicuratevi che l'"auto-interruzione" sia
+> > > +disabilitata
+> > > 
+> > > :menuselection:`Configurazione-->Preferenze-->Composizione-->Interruzion
+> > > :e
+> > > 
+> > > riga`.
+> > 
+> > Have you actually verified that the translations used in these mail
+> > clients matches what you have here?
 > 
-> We need psi poll_kworker to be an rt-priority thread so that psi
+> Yep, I've installed all of them and gone through all menus.
 
-There is a giant difference between 'needs to be higher than OTHER' and
-FIFO-99.
+P.S.
+Of course, I checked on the version available on my distribution. I did not 
+look for translation changes on different version of the same email client @_@ 
+But even if I do it, there is no "nice" solution to the problem
 
-> notifications are delivered to the userspace without delay even when
-> the CPUs are very congested. Otherwise it's easy to delay psi
-> notifications by running a simple CPU hogger executing "chrt -f 50 dd
-> if=/dev/zero of=/dev/null". Because these notifications are
+> But I just noticed a typo in the quoted statement, I will send a new patch:
+> 
+> "modificata usato" -> "modificata usando"
+> 
+> > Thanks,
+> > 
+> > jon
 
-So what; at that point that's exactly what you're asking for. Using RT
-is for those who know what they're doing.
 
-> time-critical for reacting to memory shortages we can't allow for such
-> delays.
 
-Furthermore, actual RT programs will have pre-allocated and locked any
-memory they rely on. They don't give a crap about your pressure
-nonsense.
-
-> Notice that this kworker is created only if userspace creates a psi
-> trigger. So unless you are using psi triggers you will never see this
-> kthread created.
-
-By marking it FIFO-99 you're in effect saying that your stupid
-statistics gathering is more important than your life. It will preempt
-the task that's in control of the band-saw emergency break, it will
-preempt the task that's adjusting the electromagnetic field containing
-this plasma flow.
-
-That's insane.
-
-I'm going to queue a patch to reduce this to FIFO-1, that will preempt
-regular OTHER tasks but will not perturb (much) actual RT bits.
 
