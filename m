@@ -2,346 +2,297 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C2DF07E2F2
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 21:03:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B6767E2F5
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 21:04:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387840AbfHATDj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 15:03:39 -0400
-Received: from mga17.intel.com ([192.55.52.151]:39048 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727899AbfHATDj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 15:03:39 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Aug 2019 12:03:39 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,335,1559545200"; 
-   d="scan'208";a="175347663"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga003.jf.intel.com with ESMTP; 01 Aug 2019 12:03:37 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id DE6EDF3; Thu,  1 Aug 2019 22:03:36 +0300 (EEST)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v4] mfd: Add support for Merrifield Basin Cove PMIC
-Date:   Thu,  1 Aug 2019 22:03:35 +0300
-Message-Id: <20190801190335.37726-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.20.1
+        id S2388161AbfHATEQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 15:04:16 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:35057 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727899AbfHATEQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Aug 2019 15:04:16 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x71J44f3069348
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Thu, 1 Aug 2019 12:04:04 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x71J44f3069348
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019071901; t=1564686244;
+        bh=zigYgK7CxPRe+mOKjEFeeL5FKDm9u+Bp0I2s6HXN7dY=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=CsuMOb5olQIB/lmWQsYY7tAiYZFPnzaxOp3SW962G0sO2iDugSCwYX3oy1U/8Dw3E
+         SdqiOT7l5fZUTkOdRA74Um4R9nXA05ONaLsSbTyfqfsuONOAr8eZEg7HdwfPuh7P18
+         LuBMfeBLeolI9N2DxV+lBC78n8dfLooK4Djs7Hclbsj1uxk0rm9I0hS1dUz8oGvadv
+         WaOFYtEjBj6BBKKK7ZRkpM+g76+T1C4oVibskMizmhq7tmsBgQTaxI5qOn13YcKW//
+         uBFSDYtjChdgpmOP+Wr3FsrEmCTcwOh6TyXqzqGYZ+oCcE8KZV4DubIJsvBXy1S6sd
+         ufm7LTdalc0tw==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x71J43Ou069309;
+        Thu, 1 Aug 2019 12:04:03 -0700
+Date:   Thu, 1 Aug 2019 12:04:03 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Anna-Maria Gleixner <tipbot@zytor.com>
+Message-ID: <tip-f61eff83cec9cfab31fd30a2ca8856be379cdcd5@git.kernel.org>
+Cc:     bigeasy@linutronix.de, peterz@infradead.org,
+        linux-kernel@vger.kernel.org, anna-maria@linutronix.de,
+        tglx@linutronix.de, hpa@zytor.com, mingo@kernel.org
+Reply-To: bigeasy@linutronix.de, peterz@infradead.org, mingo@kernel.org,
+          linux-kernel@vger.kernel.org, anna-maria@linutronix.de,
+          tglx@linutronix.de, hpa@zytor.com
+In-Reply-To: <20190726185753.737767218@linutronix.de>
+References: <20190726185753.737767218@linutronix.de>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:timers/core] hrtimer: Prepare support for PREEMPT_RT
+Git-Commit-ID: f61eff83cec9cfab31fd30a2ca8856be379cdcd5
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-0.2 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
+        autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add an MFD driver for Intel Merrifield Basin Cove PMIC.
+Commit-ID:  f61eff83cec9cfab31fd30a2ca8856be379cdcd5
+Gitweb:     https://git.kernel.org/tip/f61eff83cec9cfab31fd30a2ca8856be379cdcd5
+Author:     Anna-Maria Gleixner <anna-maria@linutronix.de>
+AuthorDate: Fri, 26 Jul 2019 20:30:59 +0200
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Thu, 1 Aug 2019 20:51:22 +0200
 
-Firmware on the platforms which are using Basin Cove PMIC is "smarter"
-than on the rest supported by vanilla kernel. It handles first level
-of interrupt itself, while others do it on OS level.
+hrtimer: Prepare support for PREEMPT_RT
 
-The driver is done in the same way as the rest of Intel PMIC MFD drivers
-in the kernel to support the initial design. The design allows to use
-one driver among few PMICs without knowing implementation details of
-the each hardware version or generation.
+When PREEMPT_RT is enabled, the soft interrupt thread can be preempted.  If
+the soft interrupt thread is preempted in the middle of a timer callback,
+then calling hrtimer_cancel() can lead to two issues:
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+  - If the caller is on a remote CPU then it has to spin wait for the timer
+    handler to complete. This can result in unbound priority inversion.
+
+  - If the caller originates from the task which preempted the timer
+    handler on the same CPU, then spin waiting for the timer handler to
+    complete is never going to end.
+
+To avoid these issues, add a new lock to the timer base which is held
+around the execution of the timer callbacks. If hrtimer_cancel() detects
+that the timer callback is currently running, it blocks on the expiry
+lock. When the callback is finished, the expiry lock is dropped by the
+softirq thread which wakes up the waiter and the system makes progress.
+
+This addresses both the priority inversion and the life lock issues.
+
+The same issue can happen in virtual machines when the vCPU which runs a
+timer callback is scheduled out. If a second vCPU of the same guest calls
+hrtimer_cancel() it will spin wait for the other vCPU to be scheduled back
+in. The expiry lock mechanism would avoid that. It'd be trivial to enable
+this when paravirt spinlocks are enabled in a guest, but it's not clear
+whether this is an actual problem in the wild, so for now it's an RT only
+mechanism.
+
+[ tglx: Refactored it for mainline ]
+
+Signed-off-by: Anna-Maria Gleixner <anna-maria@linutronix.de>
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Link: https://lkml.kernel.org/r/20190726185753.737767218@linutronix.de
+
+
+
 ---
-v4: elaborate in the commit message the design choice
- drivers/mfd/Kconfig                      |  11 ++
- drivers/mfd/Makefile                     |   1 +
- drivers/mfd/intel_soc_pmic_mrfld.c       | 157 +++++++++++++++++++++++
- include/linux/mfd/intel_soc_pmic_mrfld.h |  81 ++++++++++++
- 4 files changed, 250 insertions(+)
- create mode 100644 drivers/mfd/intel_soc_pmic_mrfld.c
- create mode 100644 include/linux/mfd/intel_soc_pmic_mrfld.h
+ include/linux/hrtimer.h | 16 +++++++++
+ kernel/time/hrtimer.c   | 95 +++++++++++++++++++++++++++++++++++++++++++++----
+ 2 files changed, 105 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-index f129f9678940..adf178ad5e7b 100644
---- a/drivers/mfd/Kconfig
-+++ b/drivers/mfd/Kconfig
-@@ -597,6 +597,17 @@ config INTEL_SOC_PMIC_CHTDC_TI
- 	  Select this option for supporting Dollar Cove (TI version) PMIC
- 	  device that is found on some Intel Cherry Trail systems.
+diff --git a/include/linux/hrtimer.h b/include/linux/hrtimer.h
+index 7d0d0a36a8f4..5df4bcff96d5 100644
+--- a/include/linux/hrtimer.h
++++ b/include/linux/hrtimer.h
+@@ -192,6 +192,10 @@ enum  hrtimer_base_type {
+  * @nr_retries:		Total number of hrtimer interrupt retries
+  * @nr_hangs:		Total number of hrtimer interrupt hangs
+  * @max_hang_time:	Maximum time spent in hrtimer_interrupt
++ * @softirq_expiry_lock: Lock which is taken while softirq based hrtimer are
++ *			 expired
++ * @timer_waiters:	A hrtimer_cancel() invocation waits for the timer
++ *			callback to finish.
+  * @expires_next:	absolute time of the next event, is required for remote
+  *			hrtimer enqueue; it is the total first expiry time (hard
+  *			and soft hrtimer are taken into account)
+@@ -218,6 +222,10 @@ struct hrtimer_cpu_base {
+ 	unsigned short			nr_retries;
+ 	unsigned short			nr_hangs;
+ 	unsigned int			max_hang_time;
++#endif
++#ifdef CONFIG_PREEMPT_RT
++	spinlock_t			softirq_expiry_lock;
++	atomic_t			timer_waiters;
+ #endif
+ 	ktime_t				expires_next;
+ 	struct hrtimer			*next_timer;
+@@ -350,6 +358,14 @@ extern void hrtimers_resume(void);
  
-+config INTEL_SOC_PMIC_MRFLD
-+	tristate "Support for Intel Merrifield Basin Cove PMIC"
-+	depends on GPIOLIB
-+	depends on ACPI
-+	depends on INTEL_SCU_IPC
-+	select MFD_CORE
-+	select REGMAP_IRQ
-+	help
-+	  Select this option for supporting Basin Cove PMIC device
-+	  that is found on Intel Merrifield systems.
-+
- config MFD_INTEL_LPSS
- 	tristate
- 	select COMMON_CLK
-diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-index f026ada68f6a..637ecf6b12de 100644
---- a/drivers/mfd/Makefile
-+++ b/drivers/mfd/Makefile
-@@ -241,6 +241,7 @@ obj-$(CONFIG_INTEL_SOC_PMIC)	+= intel-soc-pmic.o
- obj-$(CONFIG_INTEL_SOC_PMIC_BXTWC)	+= intel_soc_pmic_bxtwc.o
- obj-$(CONFIG_INTEL_SOC_PMIC_CHTWC)	+= intel_soc_pmic_chtwc.o
- obj-$(CONFIG_INTEL_SOC_PMIC_CHTDC_TI)	+= intel_soc_pmic_chtdc_ti.o
-+obj-$(CONFIG_INTEL_SOC_PMIC_MRFLD)	+= intel_soc_pmic_mrfld.o
- obj-$(CONFIG_MFD_MT6397)	+= mt6397-core.o
+ DECLARE_PER_CPU(struct tick_device, tick_cpu_device);
  
- obj-$(CONFIG_MFD_ALTERA_A10SR)	+= altera-a10sr.o
-diff --git a/drivers/mfd/intel_soc_pmic_mrfld.c b/drivers/mfd/intel_soc_pmic_mrfld.c
-new file mode 100644
-index 000000000000..26a1551c5faf
---- /dev/null
-+++ b/drivers/mfd/intel_soc_pmic_mrfld.c
-@@ -0,0 +1,157 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Device access for Basin Cove PMIC
-+ *
-+ * Copyright (c) 2019, Intel Corporation.
-+ * Author: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-+ */
-+
-+#include <linux/acpi.h>
-+#include <linux/interrupt.h>
-+#include <linux/mfd/core.h>
-+#include <linux/mfd/intel_soc_pmic.h>
-+#include <linux/mfd/intel_soc_pmic_mrfld.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+
-+#include <asm/intel_scu_ipc.h>
-+
-+/*
-+ * Level 2 IRQs
-+ *
-+ * Firmware on the systems with Basin Cove PMIC services Level 1 IRQs
-+ * without an assistance. Thus, each of the Level 1 IRQ is represented
-+ * as a separate RTE in IOAPIC.
-+ */
-+static struct resource irq_level2_resources[] = {
-+	DEFINE_RES_IRQ(0), /* power button */
-+	DEFINE_RES_IRQ(0), /* TMU */
-+	DEFINE_RES_IRQ(0), /* thermal */
-+	DEFINE_RES_IRQ(0), /* BCU */
-+	DEFINE_RES_IRQ(0), /* ADC */
-+	DEFINE_RES_IRQ(0), /* charger */
-+	DEFINE_RES_IRQ(0), /* GPIO */
-+};
-+
-+static const struct mfd_cell bcove_dev[] = {
-+	{
-+		.name = "mrfld_bcove_pwrbtn",
-+		.num_resources = 1,
-+		.resources = &irq_level2_resources[0],
-+	}, {
-+		.name = "mrfld_bcove_tmu",
-+		.num_resources = 1,
-+		.resources = &irq_level2_resources[1],
-+	}, {
-+		.name = "mrfld_bcove_thermal",
-+		.num_resources = 1,
-+		.resources = &irq_level2_resources[2],
-+	}, {
-+		.name = "mrfld_bcove_bcu",
-+		.num_resources = 1,
-+		.resources = &irq_level2_resources[3],
-+	}, {
-+		.name = "mrfld_bcove_adc",
-+		.num_resources = 1,
-+		.resources = &irq_level2_resources[4],
-+	}, {
-+		.name = "mrfld_bcove_charger",
-+		.num_resources = 1,
-+		.resources = &irq_level2_resources[5],
-+	}, {
-+		.name = "mrfld_bcove_pwrsrc",
-+		.num_resources = 1,
-+		.resources = &irq_level2_resources[5],
-+	}, {
-+		.name = "mrfld_bcove_gpio",
-+		.num_resources = 1,
-+		.resources = &irq_level2_resources[6],
-+	},
-+	{	.name = "mrfld_bcove_region", },
-+};
-+
-+static int bcove_ipc_byte_reg_read(void *context, unsigned int reg,
-+				    unsigned int *val)
++#ifdef CONFIG_PREEMPT_RT
++void hrtimer_cancel_wait_running(const struct hrtimer *timer);
++#else
++static inline void hrtimer_cancel_wait_running(struct hrtimer *timer)
 +{
-+	u8 ipc_out;
-+	int ret;
-+
-+	ret = intel_scu_ipc_ioread8(reg, &ipc_out);
-+	if (ret)
-+		return ret;
-+
-+	*val = ipc_out;
-+	return 0;
++	cpu_relax();
++}
++#endif
+ 
+ /* Exported timer functions: */
+ 
+diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
+index c101f88ae8aa..499122752649 100644
+--- a/kernel/time/hrtimer.c
++++ b/kernel/time/hrtimer.c
+@@ -1162,6 +1162,82 @@ int hrtimer_try_to_cancel(struct hrtimer *timer)
+ }
+ EXPORT_SYMBOL_GPL(hrtimer_try_to_cancel);
+ 
++#ifdef CONFIG_PREEMPT_RT
++static void hrtimer_cpu_base_init_expiry_lock(struct hrtimer_cpu_base *base)
++{
++	spin_lock_init(&base->softirq_expiry_lock);
 +}
 +
-+static int bcove_ipc_byte_reg_write(void *context, unsigned int reg,
-+				     unsigned int val)
++static void hrtimer_cpu_base_lock_expiry(struct hrtimer_cpu_base *base)
 +{
-+	u8 ipc_in = val;
-+	int ret;
-+
-+	ret = intel_scu_ipc_iowrite8(reg, ipc_in);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
++	spin_lock(&base->softirq_expiry_lock);
 +}
 +
-+static const struct regmap_config bcove_regmap_config = {
-+	.reg_bits = 16,
-+	.val_bits = 8,
-+	.max_register = 0xff,
-+	.reg_write = bcove_ipc_byte_reg_write,
-+	.reg_read = bcove_ipc_byte_reg_read,
-+};
-+
-+static int bcove_probe(struct platform_device *pdev)
++static void hrtimer_cpu_base_unlock_expiry(struct hrtimer_cpu_base *base)
 +{
-+	struct device *dev = &pdev->dev;
-+	struct intel_soc_pmic *pmic;
-+	unsigned int i;
-+	int ret;
++	spin_unlock(&base->softirq_expiry_lock);
++}
 +
-+	pmic = devm_kzalloc(dev, sizeof(*pmic), GFP_KERNEL);
-+	if (!pmic)
-+		return -ENOMEM;
++/*
++ * The counterpart to hrtimer_cancel_wait_running().
++ *
++ * If there is a waiter for cpu_base->expiry_lock, then it was waiting for
++ * the timer callback to finish. Drop expiry_lock and reaquire it. That
++ * allows the waiter to acquire the lock and make progress.
++ */
++static void hrtimer_sync_wait_running(struct hrtimer_cpu_base *cpu_base,
++				      unsigned long flags)
++{
++	if (atomic_read(&cpu_base->timer_waiters)) {
++		raw_spin_unlock_irqrestore(&cpu_base->lock, flags);
++		spin_unlock(&cpu_base->softirq_expiry_lock);
++		spin_lock(&cpu_base->softirq_expiry_lock);
++		raw_spin_lock_irq(&cpu_base->lock);
++	}
++}
 +
-+	platform_set_drvdata(pdev, pmic);
-+	pmic->dev = &pdev->dev;
++/*
++ * This function is called on PREEMPT_RT kernels when the fast path
++ * deletion of a timer failed because the timer callback function was
++ * running.
++ *
++ * This prevents priority inversion, if the softirq thread on a remote CPU
++ * got preempted, and it prevents a life lock when the task which tries to
++ * delete a timer preempted the softirq thread running the timer callback
++ * function.
++ */
++void hrtimer_cancel_wait_running(const struct hrtimer *timer)
++{
++	struct hrtimer_clock_base *base = timer->base;
 +
-+	pmic->regmap = devm_regmap_init(dev, NULL, pmic, &bcove_regmap_config);
-+	if (IS_ERR(pmic->regmap))
-+		return PTR_ERR(pmic->regmap);
-+
-+	for (i = 0; i < ARRAY_SIZE(irq_level2_resources); i++) {
-+		ret = platform_get_irq(pdev, i);
-+		if (ret < 0)
-+			return ret;
-+
-+		irq_level2_resources[i].start = ret;
-+		irq_level2_resources[i].end = ret;
++	if (!timer->is_soft || !base || !base->cpu_base) {
++		cpu_relax();
++		return;
 +	}
 +
-+	return devm_mfd_add_devices(dev, PLATFORM_DEVID_NONE,
-+				    bcove_dev, ARRAY_SIZE(bcove_dev),
-+				    NULL, 0, NULL);
++	/*
++	 * Mark the base as contended and grab the expiry lock, which is
++	 * held by the softirq across the timer callback. Drop the lock
++	 * immediately so the softirq can expire the next timer. In theory
++	 * the timer could already be running again, but that's more than
++	 * unlikely and just causes another wait loop.
++	 */
++	atomic_inc(&base->cpu_base->timer_waiters);
++	spin_lock_bh(&base->cpu_base->softirq_expiry_lock);
++	atomic_dec(&base->cpu_base->timer_waiters);
++	spin_unlock_bh(&base->cpu_base->softirq_expiry_lock);
 +}
++#else
++static inline void
++hrtimer_cpu_base_init_expiry_lock(struct hrtimer_cpu_base *base) { }
++static inline void
++hrtimer_cpu_base_lock_expiry(struct hrtimer_cpu_base *base) { }
++static inline void
++hrtimer_cpu_base_unlock_expiry(struct hrtimer_cpu_base *base) { }
++static inline void hrtimer_sync_wait_running(struct hrtimer_cpu_base *base,
++					     unsigned long flags) { }
++#endif
 +
-+static const struct acpi_device_id bcove_acpi_ids[] = {
-+	{ "INTC100E" },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(acpi, bcove_acpi_ids);
+ /**
+  * hrtimer_cancel - cancel a timer and wait for the handler to finish.
+  * @timer:	the timer to be cancelled
+@@ -1172,13 +1248,15 @@ EXPORT_SYMBOL_GPL(hrtimer_try_to_cancel);
+  */
+ int hrtimer_cancel(struct hrtimer *timer)
+ {
+-	for (;;) {
+-		int ret = hrtimer_try_to_cancel(timer);
++	int ret;
+ 
+-		if (ret >= 0)
+-			return ret;
+-		cpu_relax();
+-	}
++	do {
++		ret = hrtimer_try_to_cancel(timer);
 +
-+static struct platform_driver bcove_driver = {
-+	.driver = {
-+		.name = "intel_soc_pmic_mrfld",
-+		.acpi_match_table = bcove_acpi_ids,
-+	},
-+	.probe = bcove_probe,
-+};
-+module_platform_driver(bcove_driver);
-+
-+MODULE_DESCRIPTION("IPC driver for Intel SoC Basin Cove PMIC");
-+MODULE_LICENSE("GPL v2");
-diff --git a/include/linux/mfd/intel_soc_pmic_mrfld.h b/include/linux/mfd/intel_soc_pmic_mrfld.h
-new file mode 100644
-index 000000000000..4daecd682275
---- /dev/null
-+++ b/include/linux/mfd/intel_soc_pmic_mrfld.h
-@@ -0,0 +1,81 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Header file for Intel Merrifield Basin Cove PMIC
-+ *
-+ * Copyright (C) 2019 Intel Corporation. All rights reserved.
-+ */
-+
-+#ifndef __INTEL_SOC_PMIC_MRFLD_H__
-+#define __INTEL_SOC_PMIC_MRFLD_H__
-+
-+#include <linux/bits.h>
-+
-+#define BCOVE_ID		0x00
-+
-+#define BCOVE_ID_MINREV0	GENMASK(2, 0)
-+#define BCOVE_ID_MAJREV0	GENMASK(5, 3)
-+#define BCOVE_ID_VENDID0	GENMASK(7, 6)
-+
-+#define BCOVE_MINOR(x)		(unsigned int)(((x) & BCOVE_ID_MINREV0) >> 0)
-+#define BCOVE_MAJOR(x)		(unsigned int)(((x) & BCOVE_ID_MAJREV0) >> 3)
-+#define BCOVE_VENDOR(x)		(unsigned int)(((x) & BCOVE_ID_VENDID0) >> 6)
-+
-+#define BCOVE_IRQLVL1		0x01
-+
-+#define BCOVE_PBIRQ		0x02
-+#define BCOVE_TMUIRQ		0x03
-+#define BCOVE_THRMIRQ		0x04
-+#define BCOVE_BCUIRQ		0x05
-+#define BCOVE_ADCIRQ		0x06
-+#define BCOVE_CHGRIRQ0		0x07
-+#define BCOVE_CHGRIRQ1		0x08
-+#define BCOVE_GPIOIRQ		0x09
-+#define BCOVE_CRITIRQ		0x0B
-+
-+#define BCOVE_MIRQLVL1		0x0C
-+
-+#define BCOVE_MPBIRQ		0x0D
-+#define BCOVE_MTMUIRQ		0x0E
-+#define BCOVE_MTHRMIRQ		0x0F
-+#define BCOVE_MBCUIRQ		0x10
-+#define BCOVE_MADCIRQ		0x11
-+#define BCOVE_MCHGRIRQ0		0x12
-+#define BCOVE_MCHGRIRQ1		0x13
-+#define BCOVE_MGPIOIRQ		0x14
-+#define BCOVE_MCRITIRQ		0x16
-+
-+#define BCOVE_SCHGRIRQ0		0x4E
-+#define BCOVE_SCHGRIRQ1		0x4F
-+
-+/* Level 1 IRQs */
-+#define BCOVE_LVL1_PWRBTN	BIT(0)	/* power button */
-+#define BCOVE_LVL1_TMU		BIT(1)	/* time management unit */
-+#define BCOVE_LVL1_THRM		BIT(2)	/* thermal */
-+#define BCOVE_LVL1_BCU		BIT(3)	/* burst control unit */
-+#define BCOVE_LVL1_ADC		BIT(4)	/* ADC */
-+#define BCOVE_LVL1_CHGR		BIT(5)	/* charger */
-+#define BCOVE_LVL1_GPIO		BIT(6)	/* GPIO */
-+#define BCOVE_LVL1_CRIT		BIT(7)	/* critical event */
-+
-+/* Level 2 IRQs: power button */
-+#define BCOVE_PBIRQ_PBTN	BIT(0)
-+#define BCOVE_PBIRQ_UBTN	BIT(1)
-+
-+/* Level 2 IRQs: ADC */
-+#define BCOVE_ADCIRQ_BATTEMP	BIT(2)
-+#define BCOVE_ADCIRQ_SYSTEMP	BIT(3)
-+#define BCOVE_ADCIRQ_BATTID	BIT(4)
-+#define BCOVE_ADCIRQ_VIBATT	BIT(5)
-+#define BCOVE_ADCIRQ_CCTICK	BIT(7)
-+
-+/* Level 2 IRQs: charger */
-+#define BCOVE_CHGRIRQ_BAT0ALRT	BIT(4)
-+#define BCOVE_CHGRIRQ_BAT1ALRT	BIT(5)
-+#define BCOVE_CHGRIRQ_BATCRIT	BIT(6)
-+
-+#define BCOVE_CHGRIRQ_VBUSDET	BIT(0)
-+#define BCOVE_CHGRIRQ_DCDET	BIT(1)
-+#define BCOVE_CHGRIRQ_BATTDET	BIT(2)
-+#define BCOVE_CHGRIRQ_USBIDDET	BIT(3)
-+
-+#endif	/* __INTEL_SOC_PMIC_MRFLD_H__ */
--- 
-2.20.1
-
++		if (ret < 0)
++			hrtimer_cancel_wait_running(timer);
++	} while (ret < 0);
++	return ret;
+ }
+ EXPORT_SYMBOL_GPL(hrtimer_cancel);
+ 
+@@ -1475,6 +1553,8 @@ static void __hrtimer_run_queues(struct hrtimer_cpu_base *cpu_base, ktime_t now,
+ 				break;
+ 
+ 			__run_hrtimer(cpu_base, base, timer, &basenow, flags);
++			if (active_mask == HRTIMER_ACTIVE_SOFT)
++				hrtimer_sync_wait_running(cpu_base, flags);
+ 		}
+ 	}
+ }
+@@ -1485,6 +1565,7 @@ static __latent_entropy void hrtimer_run_softirq(struct softirq_action *h)
+ 	unsigned long flags;
+ 	ktime_t now;
+ 
++	hrtimer_cpu_base_lock_expiry(cpu_base);
+ 	raw_spin_lock_irqsave(&cpu_base->lock, flags);
+ 
+ 	now = hrtimer_update_base(cpu_base);
+@@ -1494,6 +1575,7 @@ static __latent_entropy void hrtimer_run_softirq(struct softirq_action *h)
+ 	hrtimer_update_softirq_timer(cpu_base, true);
+ 
+ 	raw_spin_unlock_irqrestore(&cpu_base->lock, flags);
++	hrtimer_cpu_base_unlock_expiry(cpu_base);
+ }
+ 
+ #ifdef CONFIG_HIGH_RES_TIMERS
+@@ -1897,6 +1979,7 @@ int hrtimers_prepare_cpu(unsigned int cpu)
+ 	cpu_base->softirq_next_timer = NULL;
+ 	cpu_base->expires_next = KTIME_MAX;
+ 	cpu_base->softirq_expires_next = KTIME_MAX;
++	hrtimer_cpu_base_init_expiry_lock(cpu_base);
+ 	return 0;
+ }
+ 
