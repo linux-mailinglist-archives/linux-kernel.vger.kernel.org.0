@@ -2,158 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F097D7DC69
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 15:19:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B8CD7DC7E
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 15:25:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729735AbfHANTf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 09:19:35 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:39913 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728592AbfHANTf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 09:19:35 -0400
-Received: by mail-lj1-f195.google.com with SMTP id v18so69309236ljh.6;
-        Thu, 01 Aug 2019 06:19:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=RC6wKO1Isy8ssplnFFBZCldnnaBxZKmxUbojPji9Nn8=;
-        b=KUu2NGVrF3CsroBiTb6xu1ZVx93LkXrT1peKf0dykpEFlk4TXLXA7TsWvS53RT4lTo
-         K4juM7BZMtb6SDbbYkdwqh1AgseBQOTuTLGUQqm1vROI5EC+TR9avlR+2A/5WE/Qx8Qb
-         XWc6+IL5OyWftImZreXB9VDAxlRk4GhtGSuE3eShxQ5CmYP7YV9SFJpsposFOODrqH/M
-         XMddEgfFPqbmw+rwydtEpbADNt+2pztRm/8V4eNqKyDwtpRXa1tsw0GhJtxeCoHvevVw
-         4YUexJXuE2KX2Dta84W+JPUzjl0DL9dlC4VnMLXsFy/fq4RrYFWAzwMLTM+5t4+IXl/5
-         9EYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=RC6wKO1Isy8ssplnFFBZCldnnaBxZKmxUbojPji9Nn8=;
-        b=CSKL8XS6jDHXd4EmHUCbRSaKztj9GgwGYsbcTpDUDE7Fmzr+gWCX0oDtItNyrEaJ7p
-         viZX0ZH0/5MwOHxmE8oZfTet0VSdHrV+DqKEzCSvlgvPqe2O1wYBFV1fwwd2d1lRKkWI
-         Tui2n8uWrh5O8j11irt9YnlNxwYBXPUDZWu6Nr/ZxOd3hOruZcZPdO73DB5zYB89rSN0
-         2DElOtIIBb8xz4ccwDAqB4k58qicqR54OkX7kKN7yzuhgv75JeDu/7HJMqP8xnmhvZmn
-         9qL4Mfxm+qIdN0pFteXhzlbxhY4r8Y/f09KhsoGwXDUWbeuEfYoX03NqpVgd45d3IItg
-         Ob7Q==
-X-Gm-Message-State: APjAAAW47cSuq3ZVqeG72r1XtsqXbo9upphDgey+1VXvARSat0gNSEnJ
-        7znu4ma4t/zaUSW/TaR8KsjBtwpjFSVhGpDBsjw=
-X-Google-Smtp-Source: APXvYqxUbh1cL9LgQJwJqmT3uKcr+dkk4jgpEBFMs3ohuwPYtfrWNXPxJw2IeNHF6fA+Gt5UlsJw2+1zolwkPA+X8KM=
-X-Received: by 2002:a2e:5d1:: with SMTP id 200mr68535653ljf.10.1564665573273;
- Thu, 01 Aug 2019 06:19:33 -0700 (PDT)
+        id S1731118AbfHANZm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 09:25:42 -0400
+Received: from mail5.windriver.com ([192.103.53.11]:38808 "EHLO mail5.wrs.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730706AbfHANZm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Aug 2019 09:25:42 -0400
+Received: from ALA-HCA.corp.ad.wrs.com (ala-hca.corp.ad.wrs.com [147.11.189.40])
+        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id x71DNfDm032295
+        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
+        Thu, 1 Aug 2019 06:24:18 -0700
+Received: from [128.224.155.90] (128.224.155.90) by ALA-HCA.corp.ad.wrs.com
+ (147.11.189.50) with Microsoft SMTP Server (TLS) id 14.3.468.0; Thu, 1 Aug
+ 2019 06:23:40 -0700
+Subject: Re: [PATCH] tipc: compat: allow tipc commands without arguments
+To:     Taras Kondratiuk <takondra@cisco.com>,
+        Jon Maloy <jon.maloy@ericsson.com>,
+        "David S. Miller" <davem@davemloft.net>
+CC:     <netdev@vger.kernel.org>, <tipc-discussion@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <xe-linux-external@cisco.com>,
+        <stable@vger.kernel.org>
+References: <20190729221507.48893-1-takondra@cisco.com>
+From:   Ying Xue <ying.xue@windriver.com>
+Message-ID: <605b6a6e-8bdd-c95f-ac00-9dd895fcc6a3@windriver.com>
+Date:   Thu, 1 Aug 2019 21:12:36 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.1
 MIME-Version: 1.0
-References: <20190801124446.15703-1-frieder.schrempf@kontron.de>
-In-Reply-To: <20190801124446.15703-1-frieder.schrempf@kontron.de>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Thu, 1 Aug 2019 10:19:45 -0300
-Message-ID: <CAOMZO5BPRNDQG_6PunUTxK7P=NF1DqjxvM+xEVMzX+rGd=h9hA@mail.gmail.com>
-Subject: Re: [PATCH] serial: mctrl_gpio: Avoid probe failures in case of
- missing gpiolib
-To:     Schrempf Frieder <frieder.schrempf@kontron.de>
-Cc:     "u.kleine-koenig@pengutronix.de" <u.kleine-koenig@pengutronix.de>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "linux-imx@nxp.com" <linux-imx@nxp.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190729221507.48893-1-takondra@cisco.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [128.224.155.90]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Schrempf,
+On 7/30/19 6:15 AM, Taras Kondratiuk wrote:
+> Commit 2753ca5d9009 ("tipc: fix uninit-value in tipc_nl_compat_doit")
+> broke older tipc tools that use compat interface (e.g. tipc-config from
+> tipcutils package):
+> 
+> % tipc-config -p
+> operation not supported
+> 
+> The commit started to reject TIPC netlink compat messages that do not
+> have attributes. It is too restrictive because some of such messages are
+> valid (they don't need any arguments):
+> 
+> % grep 'tx none' include/uapi/linux/tipc_config.h
+> #define  TIPC_CMD_NOOP              0x0000    /* tx none, rx none */
+> #define  TIPC_CMD_GET_MEDIA_NAMES   0x0002    /* tx none, rx media_name(s) */
+> #define  TIPC_CMD_GET_BEARER_NAMES  0x0003    /* tx none, rx bearer_name(s) */
+> #define  TIPC_CMD_SHOW_PORTS        0x0006    /* tx none, rx ultra_string */
+> #define  TIPC_CMD_GET_REMOTE_MNG    0x4003    /* tx none, rx unsigned */
+> #define  TIPC_CMD_GET_MAX_PORTS     0x4004    /* tx none, rx unsigned */
+> #define  TIPC_CMD_GET_NETID         0x400B    /* tx none, rx unsigned */
+> #define  TIPC_CMD_NOT_NET_ADMIN     0xC001    /* tx none, rx none */
+> 
+> This patch relaxes the original fix and rejects messages without
+> arguments only if such arguments are expected by a command (reg_type is
+> non zero).
+> 
+> Fixes: 2753ca5d9009 ("tipc: fix uninit-value in tipc_nl_compat_doit")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Taras Kondratiuk <takondra@cisco.com>
 
-On Thu, Aug 1, 2019 at 9:47 AM Schrempf Frieder
-<frieder.schrempf@kontron.de> wrote:
->
-> From: Frieder Schrempf <frieder.schrempf@kontron.de>
->
-> If CONFIG_GPIOLIB is not enabled, mctrl_gpio_init() and
-> mctrl_gpio_init_noauto() will currently return an error pointer with
-> -ENOSYS. As the mctrl GPIOs are usually optional, drivers need to
-> check for this condition to allow continue probing.
->
-> To avoid the need for this check in each driver, we return NULL
-> instead, as all the mctrl_gpio_*() functions are skipped anyway.
-> We also adapt mctrl_gpio_to_gpiod() to be in line with this change.
->
-> Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
-
-Looks good to me:
-
-Reviewed-by: Fabio Estevam <festevam@gmail.com>
-
-Also adding Geert on Cc as the patch touches sh-sci.
-
-Thanks
-
+Acked-by: Ying Xue <ying.xue@windriver.com>
 
 > ---
->  drivers/tty/serial/serial_mctrl_gpio.c | 3 +++
->  drivers/tty/serial/serial_mctrl_gpio.h | 6 +++---
->  drivers/tty/serial/sh-sci.c            | 2 +-
->  3 files changed, 7 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/tty/serial/serial_mctrl_gpio.c b/drivers/tty/serial/serial_mctrl_gpio.c
-> index 2b400189be91..54c43e02e375 100644
-> --- a/drivers/tty/serial/serial_mctrl_gpio.c
-> +++ b/drivers/tty/serial/serial_mctrl_gpio.c
-> @@ -61,6 +61,9 @@ EXPORT_SYMBOL_GPL(mctrl_gpio_set);
->  struct gpio_desc *mctrl_gpio_to_gpiod(struct mctrl_gpios *gpios,
->                                       enum mctrl_gpio_idx gidx)
+> The patch is based on v5.3-rc2.
+> 
+>  net/tipc/netlink_compat.c | 11 +++++++----
+>  1 file changed, 7 insertions(+), 4 deletions(-)
+> 
+> diff --git a/net/tipc/netlink_compat.c b/net/tipc/netlink_compat.c
+> index d86030ef1232..e135d4e11231 100644
+> --- a/net/tipc/netlink_compat.c
+> +++ b/net/tipc/netlink_compat.c
+> @@ -55,6 +55,7 @@ struct tipc_nl_compat_msg {
+>  	int rep_type;
+>  	int rep_size;
+>  	int req_type;
+> +	int req_size;
+>  	struct net *net;
+>  	struct sk_buff *rep;
+>  	struct tlv_desc *req;
+> @@ -257,7 +258,8 @@ static int tipc_nl_compat_dumpit(struct tipc_nl_compat_cmd_dump *cmd,
+>  	int err;
+>  	struct sk_buff *arg;
+>  
+> -	if (msg->req_type && !TLV_CHECK_TYPE(msg->req, msg->req_type))
+> +	if (msg->req_type && (!msg->req_size ||
+> +			      !TLV_CHECK_TYPE(msg->req, msg->req_type)))
+>  		return -EINVAL;
+>  
+>  	msg->rep = tipc_tlv_alloc(msg->rep_size);
+> @@ -354,7 +356,8 @@ static int tipc_nl_compat_doit(struct tipc_nl_compat_cmd_doit *cmd,
 >  {
-> +       if (gpios == NULL)
-> +               return NULL;
-> +
->         return gpios->gpio[gidx];
->  }
->  EXPORT_SYMBOL_GPL(mctrl_gpio_to_gpiod);
-> diff --git a/drivers/tty/serial/serial_mctrl_gpio.h b/drivers/tty/serial/serial_mctrl_gpio.h
-> index b7d3cca48ede..1b2ff503b2c2 100644
-> --- a/drivers/tty/serial/serial_mctrl_gpio.h
-> +++ b/drivers/tty/serial/serial_mctrl_gpio.h
-> @@ -114,19 +114,19 @@ static inline
->  struct gpio_desc *mctrl_gpio_to_gpiod(struct mctrl_gpios *gpios,
->                                       enum mctrl_gpio_idx gidx)
->  {
-> -       return ERR_PTR(-ENOSYS);
-> +       return NULL;
->  }
->
->  static inline
->  struct mctrl_gpios *mctrl_gpio_init(struct uart_port *port, unsigned int idx)
->  {
-> -       return ERR_PTR(-ENOSYS);
-> +       return NULL;
->  }
->
->  static inline
->  struct mctrl_gpios *mctrl_gpio_init_noauto(struct device *dev, unsigned int idx)
->  {
-> -       return ERR_PTR(-ENOSYS);
-> +       return NULL;
->  }
->
->  static inline
-> diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-> index d18c680aa64b..249325b65ee0 100644
-> --- a/drivers/tty/serial/sh-sci.c
-> +++ b/drivers/tty/serial/sh-sci.c
-> @@ -3287,7 +3287,7 @@ static int sci_probe_single(struct platform_device *dev,
->                 return ret;
->
->         sciport->gpios = mctrl_gpio_init(&sciport->port, 0);
-> -       if (IS_ERR(sciport->gpios) && PTR_ERR(sciport->gpios) != -ENOSYS)
-> +       if (IS_ERR(sciport->gpios))
->                 return PTR_ERR(sciport->gpios);
->
->         if (sciport->has_rtscts) {
-> --
-> 2.17.1
+>  	int err;
+>  
+> -	if (msg->req_type && !TLV_CHECK_TYPE(msg->req, msg->req_type))
+> +	if (msg->req_type && (!msg->req_size ||
+> +			      !TLV_CHECK_TYPE(msg->req, msg->req_type)))
+>  		return -EINVAL;
+>  
+>  	err = __tipc_nl_compat_doit(cmd, msg);
+> @@ -1278,8 +1281,8 @@ static int tipc_nl_compat_recv(struct sk_buff *skb, struct genl_info *info)
+>  		goto send;
+>  	}
+>  
+> -	len = nlmsg_attrlen(req_nlh, GENL_HDRLEN + TIPC_GENL_HDRLEN);
+> -	if (!len || !TLV_OK(msg.req, len)) {
+> +	msg.req_size = nlmsg_attrlen(req_nlh, GENL_HDRLEN + TIPC_GENL_HDRLEN);
+> +	if (msg.req_size && !TLV_OK(msg.req, msg.req_size)) {
+>  		msg.rep = tipc_get_err_tlv(TIPC_CFG_NOT_SUPPORTED);
+>  		err = -EOPNOTSUPP;
+>  		goto send;
+> 
