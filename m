@@ -2,112 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 321687D278
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 02:58:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 68EBD7D289
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 03:03:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729166AbfHAA6x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 20:58:53 -0400
-Received: from esa6.hgst.iphmx.com ([216.71.154.45]:61766 "EHLO
-        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728364AbfHAA6k (ORCPT
+        id S1728232AbfHABC5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 21:02:57 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:34234 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726594AbfHABC4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 20:58:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1564621121; x=1596157121;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=OremRQyuncth6RJmwcRirDjBWRulyVTwgRdrAhtDf+0=;
-  b=YVL8hvkicD80siH6Zjit5BY9kMgrKXBjxLePjERDB6eCEXpinCqpkDsf
-   agSgpbcRQN5wQ1lVUPEKR6IKYWU26yd3L/yZo78pYIQINCwP8j91UPC+R
-   IVrjAiiY/bhD20wc5zvqitOV2i7KutnJSszziJCv8K8SPUpLKPEwOPpUj
-   ah0A87esnjqnwf1zDFAgJ2KLPqNKRbNp+CYzUqjj/O1I/OVdpRwWkuTjO
-   xG/PGttlhGL5sL4m9sUR33nPvCqqxWrl2WigPOB3HmjpRDePpP/35TpRY
-   yN/SGtTusgwqEAM/DWfKFy+QAVp58caisu1eSoarcnwZ8vg3yvp9ues8h
-   g==;
-IronPort-SDR: 6wnYWqtZSU38gVjkgQxoDu6H5DygwCXBnFkdP+tQkEjVywPgosIzP3plPyB5ig9kTJa/m7aAX8
- QcvXEImx0OYwph4YfJ46AP5fxpJw1i/iBAAIbfN39GnPPEWZXiRzm03keZwShcUC929AvJnf1x
- yObh5AlipXLcpfjB7tv2AIwghTskBiZubz1JPg/I5WAg0KeBoWcFqX3A7gsWek2pIhC/1NonBL
- pvWPsEDPi95fDeTYTVaz8JcOGUOipx2S/Ph5wE78OmLiZ6jUGpM4Uq5DJGkCSvRiskF8O4NQsq
- sGE=
-X-IronPort-AV: E=Sophos;i="5.64,332,1559491200"; 
-   d="scan'208";a="116247220"
-Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 01 Aug 2019 08:58:40 +0800
-IronPort-SDR: P0jG0d87Vf+xI3jYLnOjh6+DOSBZHbtCPlXdAMLfz5GxhfyS7kASJGkdE3mI/z1VENwCFXI9Ln
- kFTjAfE0OJ6NfMlP8bsa2vH8Ae1u9fam9Qsr5GHT2VHRyEkoK+Ii/0cFe/7M9WxdLdvYxHMSSv
- Z/iJ5JuTfuRgd5KpyfgdCyDo1WEC1Ueb+jjYdwQaEIXiXwRwV6t93MOrTphgLXMNrc2Ytir6Mr
- yD6kx9V+YwrulVBjk1x8NCIX3WGk7ozoRChzEo/LI9rtfh5qhv18VQBtrEvEhW+J8B1pBV55dJ
- v7DAHDg4jTzxCEdlXGO7ruFo
-Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2019 17:56:40 -0700
-IronPort-SDR: buJklJ1NZhn+ariLbhCXotWJ0iZLK9+V0P+ilob/EJ3b7KF0rougKipOcdZ48jxK65bn8oEu2P
- Zjg8UtNyIcrRjfTB/NiXIejCMibCPCfF43qg+YcUA3ZHDXSquSyQhjE5kqsStoZGkDt1wIvG34
- 4LJOzaxTWTVbMCRx1NFstKqIE1JzMDnPqy9AZsrZuoaSVwsAFWBaza8hM5aL/FoZjm3uca2zDs
- CsZXi0pKH1FhccbBXWHCTzWRHvnWGzaNxQZDORnH54HFQlJYdactsLGl17bgjITsftlly8lqIP
- F3Y=
-Received: from jedi-01.sdcorp.global.sandisk.com (HELO jedi-01.int.fusionio.com) ([10.11.143.218])
-  by uls-op-cesaip01.wdc.com with ESMTP; 31 Jul 2019 17:58:39 -0700
-From:   Atish Patra <atish.patra@wdc.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Atish Patra <atish.patra@wdc.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Allison Randal <allison@lohutok.net>,
-        Anup Patel <anup.patel@wdc.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        devicetree@vger.kernel.org, Enrico Weigelt <info@metux.net>,
-        Gary Guo <gary@garyguo.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Johan Hovold <johan@kernel.org>,
-        linux-riscv@lists.infradead.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH v3 5/5] dt-bindings: Update the riscv,isa string description
-Date:   Wed, 31 Jul 2019 17:58:43 -0700
-Message-Id: <20190801005843.10343-6-atish.patra@wdc.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190801005843.10343-1-atish.patra@wdc.com>
-References: <20190801005843.10343-1-atish.patra@wdc.com>
+        Wed, 31 Jul 2019 21:02:56 -0400
+Received: by mail-pf1-f196.google.com with SMTP id b13so32853710pfo.1
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 18:02:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=GbYit1a5D8rEwLMyMArcrhnCQRGQCS4YYQcJAe/0Ln4=;
+        b=CXP/Q1/nzc10B0Aa660Q9xIkHkjRlgl+pFMLzIabxQdcAwnmY7ebOmQGAP0zHXlt8H
+         NEP08VqBTcv36RmrwssfScBma5tAIqUXuk5ahh8WhW89CoKRa5QpHc+zwxuyQWMX+mva
+         KekrPzOSo9DlitroF1YNFhCboKprxKAHBVJUBbk5PzUsH/HfbO/TMn9GOs1weI1rL4SA
+         ZDmuqAeWLyRw54p0lw5H3zqPMA2NGuWBE8P4HhMpLZqM47g/UAjtQtzeTZqreC5IMoil
+         ox3evAQ2v2vTE4mSrOrx47+JLaPlob/bV46C86kyniTB8xOUvAuAvPQuM7TFtC4e836/
+         cgnQ==
+X-Gm-Message-State: APjAAAXnzCWv4pDoMIEQ62DCJP1N/ZjtwyeE/c4+2hdqgOcAEYp+44rJ
+        LN+j+LdR01Fa9OlRKopwYzc=
+X-Google-Smtp-Source: APXvYqzgSwGraMxmkyeBlFGqAmY8qdlWkjCvi9suIm/XDMg4NNq2vYm+NG3ihoumu0Zh6a2ZEucHKA==
+X-Received: by 2002:a63:188:: with SMTP id 130mr114842632pgb.231.1564621376041;
+        Wed, 31 Jul 2019 18:02:56 -0700 (PDT)
+Received: from ?IPv6:2601:647:4800:973f:45eb:53c1:ba3f:2a0a? ([2601:647:4800:973f:45eb:53c1:ba3f:2a0a])
+        by smtp.gmail.com with ESMTPSA id z63sm43268250pfb.98.2019.07.31.18.02.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 31 Jul 2019 18:02:55 -0700 (PDT)
+Subject: Re: [PATCH v3 0/4] Varios NVMe Fixes
+To:     Logan Gunthorpe <logang@deltatee.com>,
+        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org
+Cc:     Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@kernel.org>,
+        Jens Axboe <axboe@fb.com>,
+        Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>,
+        Max Gurtovoy <maxg@mellanox.com>
+References: <20190731233534.4841-1-logang@deltatee.com>
+From:   Sagi Grimberg <sagi@grimberg.me>
+Message-ID: <3f9c1d7d-edb0-f4b5-dc48-fe0f061b1e17@grimberg.me>
+Date:   Wed, 31 Jul 2019 18:02:53 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190731233534.4841-1-logang@deltatee.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since the RISC-V specification states that ISA description strings are
-case-insensitive, there's no functional difference between mixed-case,
-upper-case, and lower-case ISA strings. Thus, to simplify parsing,
-specify that the letters present in "riscv,isa" must be all lowercase.
+Thanks,
 
-Suggested-by: Paul Walmsley <paul.walmsley@sifive.com>
-Signed-off-by: Atish Patra <atish.patra@wdc.com>
----
- Documentation/devicetree/bindings/riscv/cpus.yaml | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/riscv/cpus.yaml b/Documentation/devicetree/bindings/riscv/cpus.yaml
-index c899111aa5e3..4f0acb00185a 100644
---- a/Documentation/devicetree/bindings/riscv/cpus.yaml
-+++ b/Documentation/devicetree/bindings/riscv/cpus.yaml
-@@ -46,10 +46,12 @@ properties:
-           - rv64imafdc
-     description:
-       Identifies the specific RISC-V instruction set architecture
--      supported by the hart.  These are documented in the RISC-V
-+      supported by the hart. These are documented in the RISC-V
-       User-Level ISA document, available from
-       https://riscv.org/specifications/
- 
-+      Letters in the riscv,isa string must be all lowercase.
-+
-   timebase-frequency:
-     type: integer
-     minimum: 1
--- 
-2.21.0
-
+applied to nvme-5.3-rc
