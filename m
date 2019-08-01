@@ -2,59 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 701807D9AB
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 12:53:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 010DC7D9AF
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 12:54:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731157AbfHAKxi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 06:53:38 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:35857 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725930AbfHAKxi (ORCPT
+        id S1731222AbfHAKyz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 06:54:55 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:33528 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725930AbfHAKyy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 06:53:38 -0400
-Received: by mail-qk1-f196.google.com with SMTP id g18so51596430qkl.3
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2019 03:53:37 -0700 (PDT)
+        Thu, 1 Aug 2019 06:54:54 -0400
+Received: by mail-lj1-f194.google.com with SMTP id h10so68920175ljg.0;
+        Thu, 01 Aug 2019 03:54:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=eiFTBmEgHIdfbQU48G/m99TXVreC2FF5sr7JaD1x1mA=;
-        b=KLsgD4RnyK+rVUkGOsqFroFBZDUwu3ciB+h6nAVcoKYOGGu951ttj25LkkCr/deuam
-         65H0NtG5M6V3t5WwTXUj5Oz2bs93syYh1+TgeDGjX4x3bP9hMVd4ICEyH76DbXhpNLEF
-         hlFluS1tQE5LlrritJlZlR3lTK53r+M275FPWoEchJJns/XRQCJp/om5na9YXhWx7cFR
-         qdGkvbD7ZWgV6ARm7uQCh87shoeKtMDJnHeCpqJje38ycPAuNkXs0FX2IEFUVW08UfAV
-         kizbi9rZXPA5lgvBfjXefuQXSCkqhjft73F0MZKAmEcLRbZfo8pJTBNpf8WRrfg0zB31
-         2Z5Q==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=oFQKCykke/lf7rDu0GMqPJgCLMHDcVhMm3FNRrZdzNY=;
+        b=iTwd5sa8LtWHYdDIuBR2Oop7NofDS05cFB22pFMGOesSXQvhBHIjk0brLQ9uNaSugI
+         tdDdW4TktKBGKdIv8UDCaVa0L1ltG+cndFq/19lhsX/5PieMEkoaOBG/Ibmp/Td6gYP9
+         MfdN7zgol7bYD7Mc/LXpolws+miLfzk0GjHQo3wgLsLjWYv5lAi91MZFtjzBIV0Ds1qm
+         oZ5Z0uIedFdBPCjjFbE3lvSVmW5jC+NBruR4EN/bZkUQ5YeT0a4M1Nvi3EC6E6hjrnd4
+         zc9fIirmlVa0iJHbTQ6BKfeyCfJB2bqhf0rs6h6b4KTuePMbqzp3WVo+nzwpCqvYW7ES
+         p+Kw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=eiFTBmEgHIdfbQU48G/m99TXVreC2FF5sr7JaD1x1mA=;
-        b=UC3a3rJBaYboXL46aUZnyqS7yfYxqtDz69GDOaUm+OzV8A4AaqttXoEVVIWqgZQsGd
-         GSN1VSe9f1EF+mpqpAPzueACkGDSw+a0ZHACE+Qwx5h1ln/k47qWSTbt8+Pi61GUKaud
-         J6kgdthhrZYQkGol8OKorIn57f8IFAgx2zL8e4YHecvD8gzgS+VFwjRAhlO0kIO2+5HM
-         +mD6dTbqOdmEQqKbJHnGEKpxQokCkXvf7OY0qOJsL6arQNJExiBvHyHe4mWVdDjiH6h+
-         KKnBwakQ/m3EYhwk2Fs/J08BGXpFnzjUAtU/+4AVxaFCoisPcgBN2csrkCU0TU5H0p1j
-         14vg==
-X-Gm-Message-State: APjAAAW9qXp8w1BXk1uzbz3ARxtP4wc0/1J9Qk1Xd8MeK1prO0gnXVy0
-        wxH5aN6uQUMrFOAyLAsrqBKNrLyC2di+R6zreRM=
-X-Google-Smtp-Source: APXvYqwI5olzdxP1vFUzXWwEkjqRY/4CBqhn/w9mc+KQVPwY/ZlVa1keIIN8meGSxSa9l0xLPjxxEWvUEokiCkg23Gw=
-X-Received: by 2002:a37:dc1:: with SMTP id 184mr84799497qkn.10.1564656817050;
- Thu, 01 Aug 2019 03:53:37 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=oFQKCykke/lf7rDu0GMqPJgCLMHDcVhMm3FNRrZdzNY=;
+        b=HtiJBLgo0WK26YGpH6wyCXEJH1qMN/HpBBqtoT/yvmDaNEwa8Wb6FSPePV0KhwTT+h
+         YIU5s6PfUt0nxaLfDYxFmeOsJbUaQmgMqU34IU8+sSx16YFdbM89zPZVF6yr2M+fYay3
+         0113RtQUOVKEarhoyNxTa4PySGASon9acunsf2wWmS+7tJxx2DIcmiHUzOh2ZM2xOkSa
+         yd0cI9R3tfUjQ+FSc9UO5rTx5xHle2h/Dl62G8BdBerQ/PhuEjfwcQ3wAhP/uaX/MQbC
+         B+4F2cPZX4RrSRQcOUQy1HsCd3ikaMrPPkFvkrIT1ZsCSyjVfJekm/iTnIqcxO7K9JcJ
+         xFog==
+X-Gm-Message-State: APjAAAXMDnBeSrG675d5hazl7yJIfvvbrVjxAmB1t+aCryaANdH68H3I
+        MMYNxkQ7lUN9AxMdr2whII1Cfy6u
+X-Google-Smtp-Source: APXvYqwNnv/kfNFCfYM5K6oSw//k8zB9afVXkG/lPoRRnsasU+tMtFwESUqpIgBaNIkoN1yVXBbp0w==
+X-Received: by 2002:a2e:92c6:: with SMTP id k6mr67981309ljh.148.1564656891433;
+        Thu, 01 Aug 2019 03:54:51 -0700 (PDT)
+Received: from [192.168.2.145] (ppp91-78-220-99.pppoe.mtu-net.ru. [91.78.220.99])
+        by smtp.googlemail.com with ESMTPSA id l11sm13787058lfc.18.2019.08.01.03.54.50
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 01 Aug 2019 03:54:50 -0700 (PDT)
+Subject: Re: [PATCH v7 06/20] clk: tegra: Support for OSC context save and
+ restore
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de,
+        jason@lakedaemon.net, marc.zyngier@arm.com,
+        linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com
+Cc:     pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org,
+        devicetree@vger.kernel.org
+References: <1564532424-10449-1-git-send-email-skomatineni@nvidia.com>
+ <1564532424-10449-7-git-send-email-skomatineni@nvidia.com>
+ <16cca6aa-1034-f38a-49d1-d87b37fb6bbb@gmail.com>
+ <b5a58bfc-c777-886f-d902-f499ec38e2ae@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <3b55a112-42a6-212b-beea-10b64d5341d9@gmail.com>
+Date:   Thu, 1 Aug 2019 13:53:53 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Received: by 2002:a05:6214:1231:0:0:0:0 with HTTP; Thu, 1 Aug 2019 03:53:36
- -0700 (PDT)
-Reply-To: richardazizlawfirm@gmail.com
-From:   "Mr.Richard Aziz" <peterchukus19@gmail.com>
-Date:   Thu, 1 Aug 2019 11:53:36 +0100
-Message-ID: <CAGueC44yiKwH=e8ahpTfbxjNtcdRHrGk6r3i-0k8AKBGrXw_UQ@mail.gmail.com>
-Subject: 
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <b5a58bfc-c777-886f-d902-f499ec38e2ae@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I have been expecting your responds  regarding the previous mail I sent to
-you, please acknowledge if your email is still valid
-(richardazizlawfirm@gmail.com)
+01.08.2019 0:04, Sowjanya Komatineni пишет:
+> 
+> On 7/31/19 4:11 AM, Dmitry Osipenko wrote:
+>> 31.07.2019 3:20, Sowjanya Komatineni пишет:
+>>> This patch adds support for saving OSC clock frequency and the
+>>> drive-strength during OSC clock init and creates an API to restore
+>>> OSC control register value from the saved context.
+>>>
+>>> This API is invoked by Tegra210 clock driver during system resume
+>>> to restore the  OSC clock settings.
+>>>
+>>> Acked-by: Thierry Reding <treding@nvidia.com>
+>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>>> ---
+>>>   drivers/clk/tegra/clk-tegra-fixed.c | 15 +++++++++++++++
+>>>   drivers/clk/tegra/clk.h             |  1 +
+>>>   2 files changed, 16 insertions(+)
+>>>
+>>> diff --git a/drivers/clk/tegra/clk-tegra-fixed.c
+>>> b/drivers/clk/tegra/clk-tegra-fixed.c
+>>> index 8d91b2b191cf..7c6c8abfcde6 100644
+>>> --- a/drivers/clk/tegra/clk-tegra-fixed.c
+>>> +++ b/drivers/clk/tegra/clk-tegra-fixed.c
+>>> @@ -17,6 +17,10 @@
+>>>   #define OSC_CTRL            0x50
+>>>   #define OSC_CTRL_OSC_FREQ_SHIFT        28
+>>>   #define OSC_CTRL_PLL_REF_DIV_SHIFT    26
+>>> +#define OSC_CTRL_MASK            (0x3f2 |    \
+>>> +                    (0xf << OSC_CTRL_OSC_FREQ_SHIFT))
+>>> +
+>>> +static u32 osc_ctrl_ctx;
+>>>     int __init tegra_osc_clk_init(void __iomem *clk_base, struct
+>>> tegra_clk *clks,
+>>>                     unsigned long *input_freqs, unsigned int num,
+>>> @@ -29,6 +33,7 @@ int __init tegra_osc_clk_init(void __iomem
+>>> *clk_base, struct tegra_clk *clks,
+>>>       unsigned osc_idx;
+>>>         val = readl_relaxed(clk_base + OSC_CTRL);
+>>> +    osc_ctrl_ctx = val & OSC_CTRL_MASK;
+>>>       osc_idx = val >> OSC_CTRL_OSC_FREQ_SHIFT;
+>>>         if (osc_idx < num)
+>>> @@ -96,3 +101,13 @@ void __init tegra_fixed_clk_init(struct tegra_clk
+>>> *tegra_clks)
+>>>           *dt_clk = clk;
+>>>       }
+>>>   }
+>>> +
+>>> +void tegra_clk_osc_resume(void __iomem *clk_base)
+>>> +{
+>>> +    u32 val;
+>>> +
+>>> +    val = readl_relaxed(clk_base + OSC_CTRL) & ~OSC_CTRL_MASK;
+>>> +    val |= osc_ctrl_ctx;
+>>> +    writel_relaxed(val, clk_base + OSC_CTRL);
+>> Why a full raw u32 OSC_CTRL value couldn't be simply saved and restored?
+> 
+> Storing and restoring only required fields to avoid accidental
+> misconfiguration.
+> 
+> OSC_CTRL register has other bits (PLL_REF_DIV) which are configured by
+> BR depending on OSC_FREQ and also setting PLL_REF_DIV while PLLS are in
+> use is not safe.
+
+I'm looking at the clk-driver sources and see that none of the Tegra
+drivers ever change the OSC_CTRL configuration, T30/114 even have
+#defines for the OSC_CTRL that are unused.
+
+So, this leads to a question.. does any bootloader really ever change
+the OSC_CTRL such that it differs after resume from suspend in
+comparison to the value at the time of kernel's booting up?
