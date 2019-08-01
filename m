@@ -2,183 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EFE37E5B9
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 00:36:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 476287E5C9
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 00:38:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388137AbfHAWgP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 18:36:15 -0400
-Received: from mail-pl1-f201.google.com ([209.85.214.201]:45500 "EHLO
-        mail-pl1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729432AbfHAWgN (ORCPT
+        id S1732199AbfHAWi2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 18:38:28 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:38476 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389778AbfHAWiZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 18:36:13 -0400
-Received: by mail-pl1-f201.google.com with SMTP id y9so40449815plp.12
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2019 15:36:12 -0700 (PDT)
+        Thu, 1 Aug 2019 18:38:25 -0400
+Received: by mail-pf1-f196.google.com with SMTP id y15so34890311pfn.5;
+        Thu, 01 Aug 2019 15:38:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=Q8S6sBR/EDTcEWov03yTX8vEHgSrUzDM01pDpuH2jZ4=;
-        b=YZXPrbN9uObA2Jl9VVSGXgNRzykbiYE/fs3pbhidBME76TTmSarWpnZSQ7X39+F0ou
-         JQrTvb04xQ5Gm8Qi8/VnonZDdBHAcK18MS6OB1B1I2DDdpElnw/XadvEnYkhB3fP4fED
-         P1MayVzSWMK7kHsemKAJcqLiJcVX1tiOwUd0bH5JcJ+BuPKe9EScjjUfwqLlz9AGusBv
-         qUotVh40xOGoZ0cE3Mc5sAywuKAyxKW8IB86IRZ1q27lTgt3ZLlTlnVgcLmiuPoY1oy4
-         bArhkyIxr6RrYMdGPs/QqFS7QK+mrnqI49Lpu+vysV5/CacoHP4/qbk0Au7lU8ed4mdF
-         Y38g==
+        d=gmail.com; s=20161025;
+        h=subject:from:to:cc:date:message-id:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=N1FHoD6ZMNB/7wrUWG2IW6DScPoWU0//Swe9DNcA3ZM=;
+        b=XFfZZnwAZZwn1mNo4698+qwwq8EWUR8tD+MEvMVS1YxxOJ+XaCbvSDrhXzU0UpPFXt
+         RI/tHQXreDa0C0u5/FRzOf7Ug4Gp+Dfi0A/iJfMkpLXdYHW985Tq1ipt6OfuszPSmJrc
+         aMEZqE1BEwMU5oPUjvvBzFEX5vwAXakovlY1Jw7sLoIPPOa3ZYA5Gy2T0TfiutLvftMN
+         8pfMqm7nhNgrxb+HGgE41icZettMyX9/2/v5b4NXkh7jXBXDn/TvBwD2TX2cgIEOEkeu
+         hGXc/K0dQgRhXWUSlw/lE2KpV4Xfw33Jv1WT5XpLWQsyrWaXreinbBozR89Df1egnto3
+         yDQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=Q8S6sBR/EDTcEWov03yTX8vEHgSrUzDM01pDpuH2jZ4=;
-        b=Fqjq3QIcFcGbvBz0Za2DrT3H74AzszgeyzTJyEj+JyggQWxpPKJN/pcnP7y9oxQ9QL
-         7zQRMype+0jMq1al7xP9/7L+8kSUEa2lj9v9KB7+0w/gFYYrLnDTaoOCATgXs1i1wO1R
-         7FQt6rD4Ciu7+nfEuVloLWBnzs8G/MDtFhihTfMI51tC8A2Djs/I+9IsXgHFmsBOOS8C
-         sTT/O6kPQMneSmyZV5HryhNIzLbU9MJuBxZI3JhTHizr4xjueuEoXIX4ONnQFEtQuSei
-         rvfbxeEA9kNazNyE1MoNAHy3YDpTU4+sZEjZSnoQyrxvajFQvVteFhIlRlx8ENVGYRVB
-         gV3w==
-X-Gm-Message-State: APjAAAUc9E4nmIZUKne1E9mpGAomtH9L+TtwwgrGEg+JciV/QrkX4UaB
-        il7KRCedBpi4Cl88TCauT5Iqoip6PVQ=
-X-Google-Smtp-Source: APXvYqxoB79TCfX3OovycYkRN4gWxwtMQhOboagfCQrm1BcM75QPCFwXBpt41q4AHDtMjnKrmor0xtsHznw=
-X-Received: by 2002:a63:3147:: with SMTP id x68mr58481466pgx.212.1564698971325;
- Thu, 01 Aug 2019 15:36:11 -0700 (PDT)
-Date:   Thu,  1 Aug 2019 15:35:56 -0700
-Message-Id: <20190801223556.209184-1-hridya@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.22.0.770.g0f2c4a37fd-goog
-Subject: [PATCH] Add default binder devices through binderfs when configured
-From:   Hridya Valsaraju <hridya@google.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "=?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?=" <arve@android.com>,
-        Todd Kjos <tkjos@android.com>,
-        Martijn Coenen <maco@android.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Christian Brauner <christian@brauner.io>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Cc:     kernel-team@android.com, Hridya Valsaraju <hridya@google.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:subject:from:to:cc:date:message-id:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=N1FHoD6ZMNB/7wrUWG2IW6DScPoWU0//Swe9DNcA3ZM=;
+        b=gbicQls9gNXzePFloebMQ1rXOomf5L6+P/EuS4KAFTB6htzIBFdLudyBGjsv3XYE30
+         PS2nV4IlKRz3+N+tXeTP5O/h2G/F2I7J9EoNpKHOgqezQyw7p9ZPtEuXsi7B6UPlv/1U
+         9TGml02Nfrvi20HSUk7QJssZ9YCKuURCXf+x4KWIy+O8r5tMhKS2OWghBzcg4YR4Hvsf
+         t6AJPGZRnnxJKrwLsb6VQZkEJmjyeQ/Knme5XRZKBZyvpqo6itrDysMPTSHiJLTCEtKQ
+         1skmtSAzVmsg13FhtvTlqBdrW3eM9zJqEMXtqIrifq7dtXcK6beyw0WYDRqvZq+PXuN4
+         nJwQ==
+X-Gm-Message-State: APjAAAWzHhMpiHhWC9SdVZiGfH0CYpBB0prUR5pDa9Vegsfbc44hQ4Tr
+        Jzx1wcLyH7RR3LX22vVj3FpM1Wxr
+X-Google-Smtp-Source: APXvYqzw8ShusbndySzoosJElpXX2Y+WlAECKmosIb2kCuPU1zdsy0LGNncMH17fmwy0VtCJ4X3n/w==
+X-Received: by 2002:a65:6284:: with SMTP id f4mr64617613pgv.416.1564699104593;
+        Thu, 01 Aug 2019 15:38:24 -0700 (PDT)
+Received: from localhost.localdomain (50-39-177-61.bvtn.or.frontiernet.net. [50.39.177.61])
+        by smtp.gmail.com with ESMTPSA id a3sm72677006pfc.70.2019.08.01.15.38.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 01 Aug 2019 15:38:24 -0700 (PDT)
+Subject: [PATCH v3 5/6] virtio-balloon: Pull page poisoning config out of
+ free page hinting
+From:   Alexander Duyck <alexander.duyck@gmail.com>
+To:     nitesh@redhat.com, kvm@vger.kernel.org, david@redhat.com,
+        mst@redhat.com, dave.hansen@intel.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        akpm@linux-foundation.org
+Cc:     yang.zhang.wz@gmail.com, pagupta@redhat.com, riel@surriel.com,
+        konrad.wilk@oracle.com, willy@infradead.org,
+        lcapitulino@redhat.com, wei.w.wang@intel.com, aarcange@redhat.com,
+        pbonzini@redhat.com, dan.j.williams@intel.com,
+        alexander.h.duyck@linux.intel.com
+Date:   Thu, 01 Aug 2019 15:36:14 -0700
+Message-ID: <20190801223614.22190.40937.stgit@localhost.localdomain>
+In-Reply-To: <20190801222158.22190.96964.stgit@localhost.localdomain>
+References: <20190801222158.22190.96964.stgit@localhost.localdomain>
+User-Agent: StGit/0.17.1-dirty
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If CONFIG_ANDROID_BINDERFS is set, the default binder devices
-specified by CONFIG_ANDROID_BINDER_DEVICES are created in each
-binderfs instance instead of global devices being created by
-the binder driver.
+From: Alexander Duyck <alexander.h.duyck@linux.intel.com>
 
-Co-developed-by: Christian Brauner <christian.brauner@ubuntu.com>
-Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
-Signed-off-by: Hridya Valsaraju <hridya@google.com>
+Currently the page poisoning setting wasn't being enabled unless free page
+hinting was enabled. However we will need the page poisoning tracking logic
+as well for unused page reporting. As such pull it out and make it a
+separate bit of config in the probe function.
+
+In addition we can actually wrap the code in a check for NO_SANITY. If we
+don't care what is actually in the page we can just default to 0 and leave
+it there.
+
+Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
 ---
- drivers/android/binder.c   |  3 ++-
- drivers/android/binderfs.c | 46 ++++++++++++++++++++++++++++++++++----
- 2 files changed, 44 insertions(+), 5 deletions(-)
+ drivers/virtio/virtio_balloon.c |   19 +++++++++++++------
+ 1 file changed, 13 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/android/binder.c b/drivers/android/binder.c
-index 466b6a7f8ab7..65a99ac26711 100644
---- a/drivers/android/binder.c
-+++ b/drivers/android/binder.c
-@@ -6279,7 +6279,8 @@ static int __init binder_init(void)
- 				    &transaction_log_fops);
- 	}
- 
--	if (strcmp(binder_devices_param, "") != 0) {
-+	if (!IS_ENABLED(CONFIG_ANDROID_BINDERFS) &&
-+	    strcmp(binder_devices_param, "") != 0) {
- 		/*
- 		* Copy the module_parameter string, because we don't want to
- 		* tokenize it in-place.
-diff --git a/drivers/android/binderfs.c b/drivers/android/binderfs.c
-index e773f45d19d9..9f5ed50ffd70 100644
---- a/drivers/android/binderfs.c
-+++ b/drivers/android/binderfs.c
-@@ -48,6 +48,10 @@ static dev_t binderfs_dev;
- static DEFINE_MUTEX(binderfs_minors_mutex);
- static DEFINE_IDA(binderfs_minors);
- 
-+static char *binder_devices_param = CONFIG_ANDROID_BINDER_DEVICES;
-+module_param_named(devices, binder_devices_param, charp, 0444);
-+MODULE_PARM_DESC(devices, "Binder devices to be created by default");
-+
- /**
-  * binderfs_mount_opts - mount options for binderfs
-  * @max: maximum number of allocatable binderfs binder devices
-@@ -135,7 +139,6 @@ static int binderfs_binder_device_create(struct inode *ref_inode,
- #else
- 	bool use_reserve = true;
- #endif
--
- 	/* Reserve new minor number for the new device. */
- 	mutex_lock(&binderfs_minors_mutex);
- 	if (++info->device_count <= info->mount_opts.max)
-@@ -186,8 +189,7 @@ static int binderfs_binder_device_create(struct inode *ref_inode,
- 	req->major = MAJOR(binderfs_dev);
- 	req->minor = minor;
- 
--	ret = copy_to_user(userp, req, sizeof(*req));
--	if (ret) {
-+	if (userp && copy_to_user(userp, req, sizeof(*req))) {
- 		ret = -EFAULT;
- 		goto err;
- 	}
-@@ -467,6 +469,9 @@ static int binderfs_fill_super(struct super_block *sb, void *data, int silent)
- 	int ret;
- 	struct binderfs_info *info;
- 	struct inode *inode = NULL;
-+	struct binderfs_device device_info = { 0 };
-+	const char *name;
-+	size_t len;
- 
- 	sb->s_blocksize = PAGE_SIZE;
- 	sb->s_blocksize_bits = PAGE_SHIFT;
-@@ -521,7 +526,28 @@ static int binderfs_fill_super(struct super_block *sb, void *data, int silent)
- 	if (!sb->s_root)
- 		return -ENOMEM;
- 
--	return binderfs_binder_ctl_create(sb);
-+	ret = binderfs_binder_ctl_create(sb);
-+	if (ret)
-+		return ret;
-+
-+	name = binder_devices_param;
-+	for (len = strcspn(name, ","); len > 0; len = strcspn(name, ",")) {
-+		/*
-+		 * init_binderfs() has already checked that the length of
-+		 * device_name_entry->name is not greater than device_info.name.
-+		 */
-+		strscpy(device_info.name, name, len + 1);
-+		ret = binderfs_binder_device_create(inode, NULL, &device_info);
-+		if (ret)
-+			return ret;
-+		name += len;
-+		if (*name == ',')
-+			name++;
-+
-+	}
-+
-+	return 0;
-+
- }
- 
- static struct dentry *binderfs_mount(struct file_system_type *fs_type,
-@@ -553,6 +579,18 @@ static struct file_system_type binder_fs_type = {
- int __init init_binderfs(void)
+diff --git a/drivers/virtio/virtio_balloon.c b/drivers/virtio/virtio_balloon.c
+index 226fbb995fb0..2c19457ab573 100644
+--- a/drivers/virtio/virtio_balloon.c
++++ b/drivers/virtio/virtio_balloon.c
+@@ -842,7 +842,6 @@ static int virtio_balloon_register_shrinker(struct virtio_balloon *vb)
+ static int virtballoon_probe(struct virtio_device *vdev)
  {
- 	int ret;
-+	const char *name;
-+	size_t len;
-+
-+	/* Verify that the default binderfs device names are valid. */
-+	name = binder_devices_param;
-+	for (len = strcspn(name, ","); len > 0; len = strcspn(name, ",")) {
-+		if (len > BINDERFS_MAX_NAME)
-+			return -E2BIG;
-+		name += len;
-+		if (*name == ',')
-+			name++;
-+	}
+ 	struct virtio_balloon *vb;
+-	__u32 poison_val;
+ 	int err;
  
- 	/* Allocate new major number for binderfs. */
- 	ret = alloc_chrdev_region(&binderfs_dev, 0, BINDERFS_MAX_MINOR,
--- 
-2.22.0.770.g0f2c4a37fd-goog
+ 	if (!vdev->config->get) {
+@@ -909,11 +908,19 @@ static int virtballoon_probe(struct virtio_device *vdev)
+ 						  VIRTIO_BALLOON_CMD_ID_STOP);
+ 		spin_lock_init(&vb->free_page_list_lock);
+ 		INIT_LIST_HEAD(&vb->free_page_list);
+-		if (virtio_has_feature(vdev, VIRTIO_BALLOON_F_PAGE_POISON)) {
+-			memset(&poison_val, PAGE_POISON, sizeof(poison_val));
+-			virtio_cwrite(vb->vdev, struct virtio_balloon_config,
+-				      poison_val, &poison_val);
+-		}
++	}
++	if (virtio_has_feature(vdev, VIRTIO_BALLOON_F_PAGE_POISON)) {
++		__u32 poison_val = 0;
++
++#if !defined(CONFIG_PAGE_POISONING_NO_SANITY)
++		/*
++		 * Let hypervisor know that we are expecting a specific
++		 * value to be written back in unused pages.
++		 */
++		memset(&poison_val, PAGE_POISON, sizeof(poison_val));
++#endif
++		virtio_cwrite(vb->vdev, struct virtio_balloon_config,
++			      poison_val, &poison_val);
+ 	}
+ 	/*
+ 	 * We continue to use VIRTIO_BALLOON_F_DEFLATE_ON_OOM to decide if a
 
