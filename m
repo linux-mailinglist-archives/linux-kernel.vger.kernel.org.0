@@ -2,179 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B20A7E5F9
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 00:50:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E3FD7E5FB
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 00:50:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390041AbfHAWuO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 18:50:14 -0400
-Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:46341 "EHLO
-        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732058AbfHAWuO (ORCPT
+        id S2390092AbfHAWuq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 18:50:46 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:34870 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2390045AbfHAWui (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 18:50:14 -0400
-Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 93F9E886BF;
-        Fri,  2 Aug 2019 10:50:10 +1200 (NZST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-        s=mail181024; t=1564699810;
-        bh=A/JEprKOo3XQFYMzYvttJ9D89Rk+PL3gbi4n0kq+uZY=;
-        h=From:To:Cc:Subject:Date;
-        b=cbGOYfl38VKhW+sOjwodouRzMm10xVaFwlej6uzAqQiSiDFunF/khMVqybwYooplf
-         sMS/T6n9k5uO21DBeBZWPpz8O9g5JDOk1SGAmfQFXxQcvORKaeYt8/nZanAIp0PFlc
-         RIiYeZil627gx9p5LlDuzKHlhL+Y38z3vY6QBzzwtZP0tYtn5lMsQui2Tn5upyr4wh
-         tgNJXaXx4Y9dTfcT9ca6OOj7yG05LQ9XxCmbqzgWlOo4rYE53mk4lyyj12mL3svGaU
-         fZuJzMMePaJZo43UWeEroxjMQWRilKT7YHC3OsQW8LbcxBbIXtoNvBlhNByUxhvto8
-         CoNu30wwXXZqg==
-Received: from smtp (Not Verified[10.32.16.33]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
-        id <B5d436ca10000>; Fri, 02 Aug 2019 10:50:09 +1200
-Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
-        by smtp (Postfix) with ESMTP id 6DED913EC73;
-        Fri,  2 Aug 2019 10:50:12 +1200 (NZST)
-Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
-        id 3657C1E0504; Fri,  2 Aug 2019 10:50:10 +1200 (NZST)
-From:   Chris Packham <chris.packham@alliedtelesis.co.nz>
-To:     benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au,
-        christophe.leroy@c-s.fr, malat@debian.org
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        Chris Packham <chris.packham@alliedtelesis.co.nz>
-Subject: [PATCH v3] powerpc: Support CMDLINE_EXTEND
-Date:   Fri,  2 Aug 2019 10:50:06 +1200
-Message-Id: <20190801225006.21952-1-chris.packham@alliedtelesis.co.nz>
-X-Mailer: git-send-email 2.22.0
+        Thu, 1 Aug 2019 18:50:38 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x71MlAun120115;
+        Thu, 1 Aug 2019 18:50:10 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2u486f1wj6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 01 Aug 2019 18:50:10 -0400
+Received: from m0098421.ppops.net (m0098421.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x71MmO5N122990;
+        Thu, 1 Aug 2019 18:50:10 -0400
+Received: from ppma01dal.us.ibm.com (83.d6.3fa9.ip4.static.sl-reverse.com [169.63.214.131])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2u486f1wht-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 01 Aug 2019 18:50:10 -0400
+Received: from pps.filterd (ppma01dal.us.ibm.com [127.0.0.1])
+        by ppma01dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x71MnYQt021116;
+        Thu, 1 Aug 2019 22:50:09 GMT
+Received: from b01cxnp22034.gho.pok.ibm.com (b01cxnp22034.gho.pok.ibm.com [9.57.198.24])
+        by ppma01dal.us.ibm.com with ESMTP id 2u0e87h7ww-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 01 Aug 2019 22:50:09 +0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x71Mo8C038142226
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 1 Aug 2019 22:50:08 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 34F7AB2076;
+        Thu,  1 Aug 2019 22:50:08 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 16C2AB2070;
+        Thu,  1 Aug 2019 22:50:08 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.154])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu,  1 Aug 2019 22:50:08 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 6DC6E16C9A4E; Thu,  1 Aug 2019 15:50:09 -0700 (PDT)
+Date:   Thu, 1 Aug 2019 15:50:09 -0700
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     rcu@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
+        jiangshanlai@gmail.com, dipankar@in.ibm.com,
+        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
+        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
+        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
+        fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org
+Subject: [PATCH tip/core/rcu 0/11] No-CBs grace-period kthread updates for
+ v5.3-rc2
+Message-ID: <20190801225009.GA17155@linux.ibm.com>
+Reply-To: paulmck@linux.ibm.com
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-x-atlnz-ls: pat
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-01_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=13 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908010240
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Bring powerpc in line with other architectures that support extending or
-overriding the bootloader provided command line.
+Hello!
 
-The current behaviour is most like CMDLINE_FROM_BOOTLOADER where the
-bootloader command line is preferred but the kernel config can provide a
-fallback so CMDLINE_FROM_BOOTLOADER is the default. CMDLINE_EXTEND can
-be used to append the CMDLINE from the kernel config to the one provided
-by the bootloader.
+This series reduces memory footprint (RCU callbacks posted by no-CBs
+CPUs) by providing separate rcuog kthreads that wait for grace periods,
+thus avoiding the current situation in which callbacks are delayed while
+the leader rcuo kthreads invokes callbacks:
 
-Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
----
-Changes in v3:
-- don't use BUG_ON in prom_strlcat
-- rearrange things to eliminate prom_strlcpy
+1.	Rename rcu_data fields to prepare for forward-progress work.
 
-Changes in v2:
-- incorporate ideas from Christope's patch https://patchwork.ozlabs.org/p=
-atch/1074126/
-- support CMDLINE_FORCE
+2.	Update comments to prepare for forward-progress work.
 
- arch/powerpc/Kconfig            | 20 +++++++++++++++++-
- arch/powerpc/kernel/prom_init.c | 36 ++++++++++++++++++++++-----------
- 2 files changed, 43 insertions(+), 13 deletions(-)
+3.	Provide separate no-CBs grace-period kthreads.
 
-diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-index 77f6ebf97113..d413fe1b4058 100644
---- a/arch/powerpc/Kconfig
-+++ b/arch/powerpc/Kconfig
-@@ -852,15 +852,33 @@ config CMDLINE
- 	  some command-line options at build time by entering them here.  In
- 	  most cases you will need to specify the root device here.
-=20
-+choice
-+	prompt "Kernel command line type" if CMDLINE !=3D ""
-+	default CMDLINE_FROM_BOOTLOADER
-+
-+config CMDLINE_FROM_BOOTLOADER
-+	bool "Use bootloader kernel arguments if available"
-+	help
-+	  Uses the command-line options passed by the boot loader. If
-+	  the boot loader doesn't provide any, the default kernel command
-+	  string provided in CMDLINE will be used.
-+
-+config CMDLINE_EXTEND
-+	bool "Extend bootloader kernel arguments"
-+	help
-+	  The command-line arguments provided by the boot loader will be
-+	  appended to the default kernel command string.
-+
- config CMDLINE_FORCE
- 	bool "Always use the default kernel command string"
--	depends on CMDLINE_BOOL
- 	help
- 	  Always use the default kernel command string, even if the boot
- 	  loader passes other arguments to the kernel.
- 	  This is useful if you cannot or don't want to change the
- 	  command-line options your boot loader passes to the kernel.
-=20
-+endchoice
-+
- config EXTRA_TARGETS
- 	string "Additional default image types"
- 	help
-diff --git a/arch/powerpc/kernel/prom_init.c b/arch/powerpc/kernel/prom_i=
-nit.c
-index 514707ef6779..1c7010cc6ec9 100644
---- a/arch/powerpc/kernel/prom_init.c
-+++ b/arch/powerpc/kernel/prom_init.c
-@@ -298,16 +298,24 @@ static char __init *prom_strstr(const char *s1, con=
-st char *s2)
- 	return NULL;
- }
-=20
--static size_t __init prom_strlcpy(char *dest, const char *src, size_t si=
-ze)
--{
--	size_t ret =3D prom_strlen(src);
-+static size_t __init prom_strlcat(char *dest, const char *src, size_t co=
-unt)
-+{
-+	size_t dsize =3D prom_strlen(dest);
-+	size_t len =3D prom_strlen(src);
-+	size_t res =3D dsize + len;
-+
-+	/* This would be a bug */
-+	if (dsize >=3D count)
-+		return count;
-+
-+	dest +=3D dsize;
-+	count -=3D dsize;
-+	if (len >=3D count)
-+		len =3D count-1;
-+	memcpy(dest, src, len);
-+	dest[len] =3D 0;
-+	return res;
-=20
--	if (size) {
--		size_t len =3D (ret >=3D size) ? size - 1 : ret;
--		memcpy(dest, src, len);
--		dest[len] =3D '\0';
--	}
--	return ret;
- }
-=20
- #ifdef CONFIG_PPC_PSERIES
-@@ -759,10 +767,14 @@ static void __init early_cmdline_parse(void)
-=20
- 	prom_cmd_line[0] =3D 0;
- 	p =3D prom_cmd_line;
--	if ((long)prom.chosen > 0)
-+
-+	if (!IS_ENABLED(CONFIG_CMDLINE_FORCE) && (long)prom.chosen > 0)
- 		l =3D prom_getprop(prom.chosen, "bootargs", p, COMMAND_LINE_SIZE-1);
--	if (IS_ENABLED(CONFIG_CMDLINE_BOOL) && (l <=3D 0 || p[0] =3D=3D '\0')) =
-/* dbl check */
--		prom_strlcpy(prom_cmd_line, CONFIG_CMDLINE, sizeof(prom_cmd_line));
-+
-+	if (IS_ENABLED(CONFIG_CMDLINE_EXTEND) || l <=3D 0 || p[0] =3D=3D '\0')
-+		prom_strlcat(prom_cmd_line, " " CONFIG_CMDLINE,
-+			     sizeof(prom_cmd_line));
-+
- 	prom_printf("command line: %s\n", prom_cmd_line);
-=20
- #ifdef CONFIG_PPC64
---=20
-2.22.0
+4.	Rename nocb_follower_wait() to nocb_cb_wait().
 
+5.	Rename wake_nocb_leader() to wake_nocb_gp().
+
+6.	Rename __wake_nocb_leader() to __wake_nocb_gp().
+
+7.	Rename wake_nocb_leader_defer() to wake_nocb_gp_defer().
+
+8.	Rename rcu_organize_nocb_kthreads() local variable.
+
+9.	Rename and document no-CB CB kthread sleep trace event.
+
+10.	Rename rcu_nocb_leader_stride kernel boot parameter.
+
+11.	Print gp/cb kthread hierarchy if dump_tree.
+
+							Thanx, Paul
+
+------------------------------------------------------------------------
+
+ Documentation/admin-guide/kernel-parameters.txt |   13 -
+ include/trace/events/rcu.h                      |    3 
+ kernel/rcu/tree.h                               |   28 +-
+ kernel/rcu/tree_plugin.h                        |  312 ++++++++++++------------
+ 4 files changed, 183 insertions(+), 173 deletions(-)
