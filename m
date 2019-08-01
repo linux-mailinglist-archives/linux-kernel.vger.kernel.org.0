@@ -2,296 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A41A97DF94
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 17:59:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D56CB7DFB2
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 18:03:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732483AbfHAP7J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 11:59:09 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:53925 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732461AbfHAP7H (ORCPT
+        id S1732612AbfHAQDZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 12:03:25 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:35041 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731613AbfHAQDY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 11:59:07 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x71Fwux5006287
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Thu, 1 Aug 2019 08:58:57 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x71Fwux5006287
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019071901; t=1564675137;
-        bh=+JyeT6UJJzOKszrGuzbDInxE3ISsSsg+E2wgxk946ZA=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=U1I/Yi/u907HrUMjYEDFQJXgNQtbH5QW1JbI7HO4on5Qw9IMnr7bZHrt5u56g/K9+
-         9b8ZJA7FxYuxBZ/EGGNXjYASY6IlxOSd+dTjtY1F7Coxa9DaYHvk+LK7SrSREj70EI
-         iB5MRGp1NGFUrwYrUmxnwggyK7hAQ5tEhP2O5zhjNFCkqqSu0yo8ySOzonHY9Q+0t0
-         9lPfHNeF6k4tdRqi8kjih1iWTObSb/dJN+N1yFqXkIfkzV8S3PSplyA2R7Q8IcYfaO
-         R2mNF1bqImsNHThciAEfmL98xa2ShS/2JXG740T8QIUjJnRM63jIkMVYVJ55qIDBpT
-         n/O/pClCzrieg==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x71FwuCx006278;
-        Thu, 1 Aug 2019 08:58:56 -0700
-Date:   Thu, 1 Aug 2019 08:58:56 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Anna-Maria Gleixner <tipbot@zytor.com>
-Message-ID: <tip-37226a1807c5f41537190462362e3e2739e22f13@git.kernel.org>
-Cc:     peterz@infradead.org, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, anna-maria@linutronix.de,
-        mingo@kernel.org, hpa@zytor.com, bigeasy@linutronix.de
-Reply-To: bigeasy@linutronix.de, hpa@zytor.com,
-          linux-kernel@vger.kernel.org, tglx@linutronix.de,
-          peterz@infradead.org, mingo@kernel.org, anna-maria@linutronix.de
-In-Reply-To: <20190726185753.737767218@linutronix.de>
-References: <20190726185753.737767218@linutronix.de>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:timers/core] hrtimer: Prepare support for PREEMPT_RT
-Git-Commit-ID: 37226a1807c5f41537190462362e3e2739e22f13
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Thu, 1 Aug 2019 12:03:24 -0400
+Received: by mail-ed1-f67.google.com with SMTP id w20so69650298edd.2
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2019 09:03:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=8bv7pMvKKkwIVkPngNqkQL32dHUrGECTsk1mbuiRZ6Y=;
+        b=cpQYBnfEwZGYGSuEI2Ta4BNuagzeeveyUz78G9FTN/tEe0rihxa0KsOcTqnGSxQNRf
+         dj4Cf9pzh7oWs8AYlaBz0ofguT7UGDU7TtKIT+WpbHaYXrC9s89pSKJ2WGlYdnQ7lOY/
+         KRAOd4GNhuLR+xbgjoWetjCgl//kZ55tckwtc0oHXCm8GCu7b+fG5t//mOtL5IrAb1bC
+         0LfUCA691M+CFnBBDYy48eNc4LflS+Oxz5WO4h4mO40KGl8daErq80zimXP8vyo65gox
+         FDvsLqNFNUo6YlMFC+Vke9U3nG6yVZBhdofiu2gdUP5cpecifP7ZOsqxar3TS2/rS9qK
+         Onlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8bv7pMvKKkwIVkPngNqkQL32dHUrGECTsk1mbuiRZ6Y=;
+        b=QXVUWzIAFQu7vnBfYymCHh4XpAAAkHQ832eF2t6sWMco2x2mxPB2OFrSuYCh9Moo6V
+         P/i6jSoZPa7XoDAUPTl/+s07pkf883cRaCAbvmnAuZoE0yRobBlxUHo6XKYcuKUyNiP2
+         JWq7hW7jkFUHkLebOOa5R+3UXCBm0n64MPc1ej7AJsPlR0k9qhGVSIuy/FdTbz+K/dwF
+         JvFau8OGKPPqooUOVA+O4nnRgJmePYuFoeFl/BlWIqYttAZieRgeFEdk8kvyjZYX+tNU
+         wP7BqNut6/cpmxwGr5te2eLDMS/GjaW2gGGRKOu/BF1o/I1iIA9KwAn9WVHRjZQTq42k
+         AMTA==
+X-Gm-Message-State: APjAAAX/hdqWOO8AMjjabir5CsY2/2UwFAtSqbCjRh5X4pCbdGjhlMeJ
+        1ISeubGxPCvJ4Sg4WDTXc0QoQGXg0YNm6NkDVBs=
+X-Google-Smtp-Source: APXvYqyGeWsq0Dm8RWkVsJdPxFY3QFmMuo8dBAKnYybjIiTjJZ5h1AzW8BLjHa9mjAuOwTiw16GRr4MzNTZoOO8pVdU=
+X-Received: by 2002:a17:906:6bc4:: with SMTP id t4mr103366912ejs.256.1564675074054;
+ Thu, 01 Aug 2019 08:57:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-X-Spam-Status: No, score=-0.2 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
-        autolearn=no autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+References: <20190717211542.30482-1-robdclark@gmail.com> <20190719092153.GJ15868@phenom.ffwll.local>
+ <20190731192331.GT104440@art_vandelay> <156466322613.6045.7313079853087889718@skylake-alporthouse-com>
+ <CAF6AEGu8K+PwRyY738aFyv+fdZ_UZDhY3XcFY-w4uLMW+w6X9Q@mail.gmail.com> <156467364918.6045.9820603183181141608@skylake-alporthouse-com>
+In-Reply-To: <156467364918.6045.9820603183181141608@skylake-alporthouse-com>
+From:   Rob Clark <robdclark@gmail.com>
+Date:   Thu, 1 Aug 2019 08:57:42 -0700
+Message-ID: <CAF6AEGvZMxnvzBgzXTzgcJpuzGOE=YTt1-H09L2qSD==pBcPXQ@mail.gmail.com>
+Subject: Re: [PATCH] drm/vgem: fix cache synchronization on arm/arm64
+To:     Chris Wilson <chris@chris-wilson.co.uk>
+Cc:     David Airlie <airlied@linux.ie>,
+        Deepak Sharma <deepak.sharma@amd.com>,
+        Emil Velikov <emil.velikov@collabora.com>,
+        Eric Anholt <eric@anholt.net>,
+        Eric Biggers <ebiggers@google.com>,
+        Imre Deak <imre.deak@intel.com>,
+        Rob Clark <robdclark@chromium.org>,
+        Sean Paul <sean@poorly.run>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  37226a1807c5f41537190462362e3e2739e22f13
-Gitweb:     https://git.kernel.org/tip/37226a1807c5f41537190462362e3e2739e22f13
-Author:     Anna-Maria Gleixner <anna-maria@linutronix.de>
-AuthorDate: Fri, 26 Jul 2019 20:30:59 +0200
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Thu, 1 Aug 2019 17:43:19 +0200
+On Thu, Aug 1, 2019 at 8:34 AM Chris Wilson <chris@chris-wilson.co.uk> wrote:
+>
+> Quoting Rob Clark (2019-08-01 16:18:45)
+> > On Thu, Aug 1, 2019 at 5:40 AM Chris Wilson <chris@chris-wilson.co.uk> wrote:
+> > >
+> > > Quoting Sean Paul (2019-07-31 20:23:31)
+> > > > On Fri, Jul 19, 2019 at 11:21:53AM +0200, Daniel Vetter wrote:
+> > > > > On Wed, Jul 17, 2019 at 02:15:37PM -0700, Rob Clark wrote:
+> > > > > > From: Rob Clark <robdclark@chromium.org>
+> > > > > >
+> > > > > > drm_cflush_pages() is no-op on arm/arm64.  But instead we can use
+> > > > > > dma_sync API.
+> > > > > >
+> > > > > > Fixes failures w/ vgem_test.
+> > > > > >
+> > > > > > Signed-off-by: Rob Clark <robdclark@chromium.org>
+> > > > > > ---
+> > > > > > An alternative approach to the series[1] I sent yesterday
+> > > > > >
+> > > > > > On the plus side, it keeps the WC buffers and avoids any drm core
+> > > > > > changes.  On the minus side, I don't think it will work (at least
+> > > > > > on arm64) prior to v5.0[2], so the fix can't be backported very
+> > > > > > far.
+> > > > >
+> > > > > Yeah seems a lot more reasonable.
+> > > > >
+> > > > > Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+> > > >
+> > > > Applied to drm-misc-fixes, thanks!
+> > >
+> > > But it didn't actually fix the failures in CI.
+> >
+> > Hmm, that is unfortunate, I'd assumed that silence meant latest
+> > version was working in CI..
+>
+> Ah, takes a intel-gfx@ for CI to pick up patches atm.
+>
+> > dma_sync_sg_* doesn't work on x86?  It would be kinda unfortunate to
+> > have vgem only work on x86 *or* arm..  maybe bringing back
+> > drm_cflush_pages() could make it work in both cases
+>
+> I think it stems from the expectation that vgem provides "device
+> coherency" for CPU access. From the testing perspective, it's nice to
+> emulate HW interactions; but maybe that is just beyond the general
+> capabilities and we cannot simply use vgem as we do currently. That
+> would leave a hole for mocking prime in CI that needs filling :(
 
-hrtimer: Prepare support for PREEMPT_RT
+yeah, being a "fake" device makes things a bit rough..  (I wonder if
+there is some way to do a VM w/ both virgl and i915/gvt to get some
+more "real" testing?)
 
-When PREEMPT_RT is enabled, the soft interrupt thread can be preempted.  If
-the soft interrupt thread is preempted in the middle of a timer callback,
-then calling hrtimer_cancel() can lead to two issues:
+OTOH, I kinda want to make drm_cache work on arm64, since dma-mapping
+is already problematic, which would make this patch unnecessary.  (I'm
+still not entirely sure what to do about 32b arm..)
 
-  - If the caller is on a remote CPU then it has to spin wait for the timer
-    handler to complete. This can result in unbound priority inversion.
-
-  - If the caller originates from the task which preempted the timer
-    handler on the same CPU, then spin waiting for the timer handler to
-    complete is never going to end.
-
-To avoid these issues, add a new lock to the timer base which is held
-around the execution of the timer callbacks. If hrtimer_cancel() detects
-that the timer callback is currently running, it blocks on the expiry
-lock. When the callback is finished, the expiry lock is dropped by the
-softirq thread which wakes up the waiter and the system makes progress.
-
-This addresses both the priority inversion and the life lock issues.
-
-The same issue can happen in virtual machines when the vCPU which runs a
-timer callback is scheduled out. If a second vCPU of the same guest calls
-hrtimer_cancel() it will spin wait for the other vCPU to be scheduled back
-in. The expiry lock mechanism would avoid that. It'd be trivial to enable
-this when paravirt spinlocks are enabled in a guest, but it's not clear
-whether this is an actual problem in the wild, so for now it's an RT only
-mechanism.
-
-[ tglx: Refactored it for mainline ]
-
-Signed-off-by: Anna-Maria Gleixner <anna-maria@linutronix.de>
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lkml.kernel.org/r/20190726185753.737767218@linutronix.de
-
-
----
- include/linux/hrtimer.h | 16 +++++++++
- kernel/time/hrtimer.c   | 95 +++++++++++++++++++++++++++++++++++++++++++++----
- 2 files changed, 105 insertions(+), 6 deletions(-)
-
-diff --git a/include/linux/hrtimer.h b/include/linux/hrtimer.h
-index 7d0d0a36a8f4..5df4bcff96d5 100644
---- a/include/linux/hrtimer.h
-+++ b/include/linux/hrtimer.h
-@@ -192,6 +192,10 @@ enum  hrtimer_base_type {
-  * @nr_retries:		Total number of hrtimer interrupt retries
-  * @nr_hangs:		Total number of hrtimer interrupt hangs
-  * @max_hang_time:	Maximum time spent in hrtimer_interrupt
-+ * @softirq_expiry_lock: Lock which is taken while softirq based hrtimer are
-+ *			 expired
-+ * @timer_waiters:	A hrtimer_cancel() invocation waits for the timer
-+ *			callback to finish.
-  * @expires_next:	absolute time of the next event, is required for remote
-  *			hrtimer enqueue; it is the total first expiry time (hard
-  *			and soft hrtimer are taken into account)
-@@ -218,6 +222,10 @@ struct hrtimer_cpu_base {
- 	unsigned short			nr_retries;
- 	unsigned short			nr_hangs;
- 	unsigned int			max_hang_time;
-+#endif
-+#ifdef CONFIG_PREEMPT_RT
-+	spinlock_t			softirq_expiry_lock;
-+	atomic_t			timer_waiters;
- #endif
- 	ktime_t				expires_next;
- 	struct hrtimer			*next_timer;
-@@ -350,6 +358,14 @@ extern void hrtimers_resume(void);
- 
- DECLARE_PER_CPU(struct tick_device, tick_cpu_device);
- 
-+#ifdef CONFIG_PREEMPT_RT
-+void hrtimer_cancel_wait_running(const struct hrtimer *timer);
-+#else
-+static inline void hrtimer_cancel_wait_running(struct hrtimer *timer)
-+{
-+	cpu_relax();
-+}
-+#endif
- 
- /* Exported timer functions: */
- 
-diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
-index c101f88ae8aa..499122752649 100644
---- a/kernel/time/hrtimer.c
-+++ b/kernel/time/hrtimer.c
-@@ -1162,6 +1162,82 @@ int hrtimer_try_to_cancel(struct hrtimer *timer)
- }
- EXPORT_SYMBOL_GPL(hrtimer_try_to_cancel);
- 
-+#ifdef CONFIG_PREEMPT_RT
-+static void hrtimer_cpu_base_init_expiry_lock(struct hrtimer_cpu_base *base)
-+{
-+	spin_lock_init(&base->softirq_expiry_lock);
-+}
-+
-+static void hrtimer_cpu_base_lock_expiry(struct hrtimer_cpu_base *base)
-+{
-+	spin_lock(&base->softirq_expiry_lock);
-+}
-+
-+static void hrtimer_cpu_base_unlock_expiry(struct hrtimer_cpu_base *base)
-+{
-+	spin_unlock(&base->softirq_expiry_lock);
-+}
-+
-+/*
-+ * The counterpart to hrtimer_cancel_wait_running().
-+ *
-+ * If there is a waiter for cpu_base->expiry_lock, then it was waiting for
-+ * the timer callback to finish. Drop expiry_lock and reaquire it. That
-+ * allows the waiter to acquire the lock and make progress.
-+ */
-+static void hrtimer_sync_wait_running(struct hrtimer_cpu_base *cpu_base,
-+				      unsigned long flags)
-+{
-+	if (atomic_read(&cpu_base->timer_waiters)) {
-+		raw_spin_unlock_irqrestore(&cpu_base->lock, flags);
-+		spin_unlock(&cpu_base->softirq_expiry_lock);
-+		spin_lock(&cpu_base->softirq_expiry_lock);
-+		raw_spin_lock_irq(&cpu_base->lock);
-+	}
-+}
-+
-+/*
-+ * This function is called on PREEMPT_RT kernels when the fast path
-+ * deletion of a timer failed because the timer callback function was
-+ * running.
-+ *
-+ * This prevents priority inversion, if the softirq thread on a remote CPU
-+ * got preempted, and it prevents a life lock when the task which tries to
-+ * delete a timer preempted the softirq thread running the timer callback
-+ * function.
-+ */
-+void hrtimer_cancel_wait_running(const struct hrtimer *timer)
-+{
-+	struct hrtimer_clock_base *base = timer->base;
-+
-+	if (!timer->is_soft || !base || !base->cpu_base) {
-+		cpu_relax();
-+		return;
-+	}
-+
-+	/*
-+	 * Mark the base as contended and grab the expiry lock, which is
-+	 * held by the softirq across the timer callback. Drop the lock
-+	 * immediately so the softirq can expire the next timer. In theory
-+	 * the timer could already be running again, but that's more than
-+	 * unlikely and just causes another wait loop.
-+	 */
-+	atomic_inc(&base->cpu_base->timer_waiters);
-+	spin_lock_bh(&base->cpu_base->softirq_expiry_lock);
-+	atomic_dec(&base->cpu_base->timer_waiters);
-+	spin_unlock_bh(&base->cpu_base->softirq_expiry_lock);
-+}
-+#else
-+static inline void
-+hrtimer_cpu_base_init_expiry_lock(struct hrtimer_cpu_base *base) { }
-+static inline void
-+hrtimer_cpu_base_lock_expiry(struct hrtimer_cpu_base *base) { }
-+static inline void
-+hrtimer_cpu_base_unlock_expiry(struct hrtimer_cpu_base *base) { }
-+static inline void hrtimer_sync_wait_running(struct hrtimer_cpu_base *base,
-+					     unsigned long flags) { }
-+#endif
-+
- /**
-  * hrtimer_cancel - cancel a timer and wait for the handler to finish.
-  * @timer:	the timer to be cancelled
-@@ -1172,13 +1248,15 @@ EXPORT_SYMBOL_GPL(hrtimer_try_to_cancel);
-  */
- int hrtimer_cancel(struct hrtimer *timer)
- {
--	for (;;) {
--		int ret = hrtimer_try_to_cancel(timer);
-+	int ret;
- 
--		if (ret >= 0)
--			return ret;
--		cpu_relax();
--	}
-+	do {
-+		ret = hrtimer_try_to_cancel(timer);
-+
-+		if (ret < 0)
-+			hrtimer_cancel_wait_running(timer);
-+	} while (ret < 0);
-+	return ret;
- }
- EXPORT_SYMBOL_GPL(hrtimer_cancel);
- 
-@@ -1475,6 +1553,8 @@ static void __hrtimer_run_queues(struct hrtimer_cpu_base *cpu_base, ktime_t now,
- 				break;
- 
- 			__run_hrtimer(cpu_base, base, timer, &basenow, flags);
-+			if (active_mask == HRTIMER_ACTIVE_SOFT)
-+				hrtimer_sync_wait_running(cpu_base, flags);
- 		}
- 	}
- }
-@@ -1485,6 +1565,7 @@ static __latent_entropy void hrtimer_run_softirq(struct softirq_action *h)
- 	unsigned long flags;
- 	ktime_t now;
- 
-+	hrtimer_cpu_base_lock_expiry(cpu_base);
- 	raw_spin_lock_irqsave(&cpu_base->lock, flags);
- 
- 	now = hrtimer_update_base(cpu_base);
-@@ -1494,6 +1575,7 @@ static __latent_entropy void hrtimer_run_softirq(struct softirq_action *h)
- 	hrtimer_update_softirq_timer(cpu_base, true);
- 
- 	raw_spin_unlock_irqrestore(&cpu_base->lock, flags);
-+	hrtimer_cpu_base_unlock_expiry(cpu_base);
- }
- 
- #ifdef CONFIG_HIGH_RES_TIMERS
-@@ -1897,6 +1979,7 @@ int hrtimers_prepare_cpu(unsigned int cpu)
- 	cpu_base->softirq_next_timer = NULL;
- 	cpu_base->expires_next = KTIME_MAX;
- 	cpu_base->softirq_expires_next = KTIME_MAX;
-+	hrtimer_cpu_base_init_expiry_lock(cpu_base);
- 	return 0;
- }
- 
+BR,
+-R
