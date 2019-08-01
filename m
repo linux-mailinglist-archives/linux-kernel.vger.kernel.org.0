@@ -2,98 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C76857DB41
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 14:21:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F21D7DB53
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 14:22:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731012AbfHAMVM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 08:21:12 -0400
-Received: from mga09.intel.com ([134.134.136.24]:30848 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728791AbfHAMVM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 08:21:12 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Aug 2019 05:21:11 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,334,1559545200"; 
-   d="scan'208";a="172896234"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.145])
-  by fmsmga008.fm.intel.com with ESMTP; 01 Aug 2019 05:21:08 -0700
-Received: from andy by smile with local (Exim 4.92)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1htA4w-0003Cp-F3; Thu, 01 Aug 2019 15:21:06 +0300
-Date:   Thu, 1 Aug 2019 15:21:06 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Wolfram Sang <wsa@the-dreams.de>
-Cc:     Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
-        rafael@kernel.org, linux-arm-kernel@lists.infradead.org,
-        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org,
-        linux-spi@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        linux-i2c@vger.kernel.org
-Subject: Re: [PATCH v3 5/7] drivers: Introduce device lookup variants by
- ACPI_COMPANION device
-Message-ID: <20190801122106.GU23480@smile.fi.intel.com>
-References: <20190723221838.12024-1-suzuki.poulose@arm.com>
- <20190723221838.12024-6-suzuki.poulose@arm.com>
- <20190726202353.GA963@kunai>
- <20190801115856.GS23480@smile.fi.intel.com>
- <20190801120830.GA1659@ninjato>
+        id S1731224AbfHAMWe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 08:22:34 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:3692 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728217AbfHAMWc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Aug 2019 08:22:32 -0400
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 00C158748E0FA7FF6A83;
+        Thu,  1 Aug 2019 20:22:27 +0800 (CST)
+Received: from HGHY4L002753561.china.huawei.com (10.133.215.186) by
+ DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
+ 14.3.439.0; Thu, 1 Aug 2019 20:22:16 +0800
+From:   Zhen Lei <thunder.leizhen@huawei.com>
+To:     Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        John Garry <john.garry@huawei.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Will Deacon <will@kernel.org>, Joerg Roedel <joro@8bytes.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        iommu <iommu@lists.linux-foundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+CC:     Zhen Lei <thunder.leizhen@huawei.com>
+Subject: [PATCH 1/2] iommu/iova: introduce iova_magazine_compact_pfns()
+Date:   Thu, 1 Aug 2019 20:21:53 +0800
+Message-ID: <20190801122154.18820-1-thunder.leizhen@huawei.com>
+X-Mailer: git-send-email 2.21.0.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190801120830.GA1659@ninjato>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.133.215.186]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 01, 2019 at 02:08:30PM +0200, Wolfram Sang wrote:
-> On Thu, Aug 01, 2019 at 02:58:56PM +0300, Andy Shevchenko wrote:
-> > On Fri, Jul 26, 2019 at 10:23:54PM +0200, Wolfram Sang wrote:
-> > > On Tue, Jul 23, 2019 at 11:18:36PM +0100, Suzuki K Poulose wrote:
-> > > > Add a generic helper to match a device by the ACPI_COMPANION device
-> > > > and provide wrappers for the device lookup APIs.
-> > > > 
-> > > > Cc: Len Brown <lenb@kernel.org>
-> > > > Cc: linux-acpi@vger.kernel.org
-> > > > Cc: linux-spi@vger.kernel.org
-> > > > Cc: Mark Brown <broonie@kernel.org>
-> > > > Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
-> > > > Cc: Wolfram Sang <wsa@the-dreams.de>
-> > > > Cc: linux-i2c@vger.kernel.org
-> > > > Cc: Mark Brown <broonie@kernel.org>
-> > > > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > > > Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-> > > > Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> > > 
-> > > From my side, OK:
-> > > 
-> > > Acked-by: Wolfram Sang <wsa@the-dreams.de> # I2C parts
-> > > 
-> > > yet you missed to cc the I2C ACPI maintainers. Done so now.
-> > 
-> > Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > 
-> > Thanks, Wolfram, for notifying.
-> 
-> Sure. There seems to be a problem, though? Please check:
-> 
-> [PATCH 1/3] i2c: Revert incorrect conversion to use generic helper
-> 
-> which came in today.
+iova_magazine_free_pfns() can only free the whole magazine buffer, add
+iova_magazine_compact_pfns() to support free part of it.
 
-It's again not Cc'ed to all parties.
-But OK, looks good to me.
-Tough may be Jarkko can test all this.
+Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
+---
+ drivers/iommu/iova.c | 17 ++++++++++++-----
+ 1 file changed, 12 insertions(+), 5 deletions(-)
 
+diff --git a/drivers/iommu/iova.c b/drivers/iommu/iova.c
+index 3e1a8a6755723a9..4b7a9efa0ef40af 100644
+--- a/drivers/iommu/iova.c
++++ b/drivers/iommu/iova.c
+@@ -795,18 +795,19 @@ static void iova_magazine_free(struct iova_magazine *mag)
+ 	kfree(mag);
+ }
+ 
+-static void
+-iova_magazine_free_pfns(struct iova_magazine *mag, struct iova_domain *iovad)
++static void iova_magazine_compact_pfns(struct iova_magazine *mag,
++				       struct iova_domain *iovad,
++				       unsigned long newsize)
+ {
+ 	unsigned long flags;
+ 	int i;
+ 
+-	if (!mag)
++	if (!mag || mag->size <= newsize)
+ 		return;
+ 
+ 	spin_lock_irqsave(&iovad->iova_rbtree_lock, flags);
+ 
+-	for (i = 0 ; i < mag->size; ++i) {
++	for (i = newsize; i < mag->size; ++i) {
+ 		struct iova *iova = private_find_iova(iovad, mag->pfns[i]);
+ 
+ 		BUG_ON(!iova);
+@@ -815,7 +816,13 @@ static void iova_magazine_free(struct iova_magazine *mag)
+ 
+ 	spin_unlock_irqrestore(&iovad->iova_rbtree_lock, flags);
+ 
+-	mag->size = 0;
++	mag->size = newsize;
++}
++
++static void
++iova_magazine_free_pfns(struct iova_magazine *mag, struct iova_domain *iovad)
++{
++	iova_magazine_compact_pfns(mag, iovad, 0);
+ }
+ 
+ static bool iova_magazine_full(struct iova_magazine *mag)
 -- 
-With Best Regards,
-Andy Shevchenko
+1.8.3
 
 
