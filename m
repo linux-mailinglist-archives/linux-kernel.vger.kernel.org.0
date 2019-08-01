@@ -2,128 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D77A7E406
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 22:28:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 42FE07E413
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 22:28:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729736AbfHAUXB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 16:23:01 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:33350 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726505AbfHAUXA (ORCPT
+        id S1728676AbfHAU0n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 16:26:43 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:33680 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727856AbfHAU0n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 16:23:00 -0400
-Received: by mail-pf1-f195.google.com with SMTP id g2so34709785pfq.0
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2019 13:23:00 -0700 (PDT)
+        Thu, 1 Aug 2019 16:26:43 -0400
+Received: by mail-lj1-f193.google.com with SMTP id h10so70682616ljg.0
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2019 13:26:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=message-id:mime-version:content-transfer-encoding:in-reply-to
-         :references:cc:from:to:subject:user-agent:date;
-        bh=fTIZJQikQI8w/BKVVJZ33osEkUPhfPGMi+gSFP68ip4=;
-        b=lxWCa9qRPtHhH2oHKBdo2XyMWrk9vqfYVYeT6QPsAjlAmS0/cIk+KAOcG/75md+Br0
-         5dFST6qO2H9lshNgpnQ8B3ElPqmBbyqzytFI8DolFwaGRugcmEpie+aWP7RcXWEgEW+Q
-         hGHe//H9rh8Uive6cfcspibky09EEiirl8w+Y=
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=MEhdMDOICpqniTno2IyVeOoEnON+nzC0j1lyfNgpjMU=;
+        b=Eo9yKMEb9UjAi++MYVMK5w2JPzXXd2oaugL1PU1Z5AnH6kz3xnmZOs1K9xWNqfqtk3
+         VmwJmljVmwT/qXcmKhfh45Uh6ecLdK8ZrVn4nNFyX8yU9hL5eXTDrpSrOBf5oFGZO5nO
+         d44al570wf7BvRkIywn6UPcXl1x8ppXpPFhrG+cl+drU2V6jH9eqo4KVsx4kBxqAi4pC
+         OQEJLGLLscm10lm5rE5CkfdNXWaH+/dy7OoHKssJERrOJbJC2zFLbkrdsR7iBVQVdyiU
+         y12H66yN83drtr16Wi1D9dr9udO/dkJkJ5DU/xAqOcJZEQRUEG+o0EcVwYFipLJcXpg4
+         NJ3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:mime-version
-         :content-transfer-encoding:in-reply-to:references:cc:from:to:subject
-         :user-agent:date;
-        bh=fTIZJQikQI8w/BKVVJZ33osEkUPhfPGMi+gSFP68ip4=;
-        b=XvVN54ejUINUOrHIhSNncX8AWbWIXr29NDEp4XRRFVGjyWl3ytd5ttNuDhRzrAGtp5
-         HlnKBjm6+kxkPJJf+EYoT62Fu0NPs0Gq7BX4M12EvlgbmzFAzCbh7wcM556QOCM59o5R
-         VaPVUOHpi31kYkfUYu1coz5n19v/vR7c5l33RoL/S24hy3nuThvNVj5VFAok+85T3lno
-         OvIVt0Qhdz+qe2xS8daKnqld8zGd3yYLhKXwbr42tnY04mgnPTeyYJ/FhdQ9HnydAEK8
-         4Bmo7w2vxSxz2nV3ZvrQRYyu6TCZE2XGgMxpbyz4pzndIyBDOSt6ZjKbpGcU2gFCLI4o
-         I9JA==
-X-Gm-Message-State: APjAAAUfZbxkGEMyP+GjxyR55IiL6j3A5TXucD8f9l6qsLymP7Os+TUF
-        kQyO7ylVK6amQkhupDJUZSkQSQ==
-X-Google-Smtp-Source: APXvYqzOdAoaZaiqO2EChiR593oybTXQTEM78AmeRaPQ7zZ2jslmJrWVVU4RARZJaB1u8UqhhQ/+uw==
-X-Received: by 2002:a63:5b52:: with SMTP id l18mr121210400pgm.21.1564690979818;
-        Thu, 01 Aug 2019 13:22:59 -0700 (PDT)
-Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id l1sm94261462pfl.9.2019.08.01.13.22.59
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 01 Aug 2019 13:22:59 -0700 (PDT)
-Message-ID: <5d434a23.1c69fb81.c4201.c65b@mx.google.com>
-Content-Type: text/plain; charset="utf-8"
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MEhdMDOICpqniTno2IyVeOoEnON+nzC0j1lyfNgpjMU=;
+        b=Ki98qIWXiZEYUt7jPMM7DTH1bCG8U+9qgtscqEF7KK3AHfYHJKR4FLPx3OUwrADdtp
+         dEUhPIYlgCIWSKoXc9nF02blJJFxcmJ/dVa0f3Nd8UAlJ5fZZKXFzlmQckEtuc03eozp
+         wOcJkGj1kSsSQooSn/opvv8CEUSPQTxOvUHAyCGfrlQybBQQ2rsn1k0gFK7UdznrUFfG
+         GFr7CdgoO4/etNOamycg5e5Rl6UjfUQEsvPDykTsggJCD7tujFtoYcg+NEfOnwCYq/jx
+         6XKdSU3dzfvollUL/oHUXEfGigIoeM2fwn7Zrxmbq+7Whf71OHA6TOhhC0+RfeUs0xCr
+         nf5Q==
+X-Gm-Message-State: APjAAAXpFBndTdrr+gw7WCIx3HTQfXdQ+s8OHlRJI4GdGZq4HQh0Xsf6
+        t5WVQA8widLkunhB5W/uE73GQ6qE4FY07cd5uSA=
+X-Google-Smtp-Source: APXvYqybvON8/4Kkvp+5xsl2NJ655igJzUEumv3jvN/U3C/xV9NXsj0vjpoF7F6ksvGlWWbQL/gJvl1ZDgTXm+1shRs=
+X-Received: by 2002:a2e:3a13:: with SMTP id h19mr52288255lja.220.1564691200817;
+ Thu, 01 Aug 2019 13:26:40 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CANA+-vCoCuMtSKCfnav9NSwrzX7of9iLbppNX+pcymBp19kgQQ@mail.gmail.com>
-References: <20190731215514.212215-1-trong@android.com> <32598586.Mjd66ZhNnG@kreacher> <CANA+-vDTDq__LnLBpM5u_VHHvpFA--K5Du63vPB7HfaKzBsPtg@mail.gmail.com> <6987393.M0uybTKmdI@kreacher> <CANA+-vAPpXF1=z1=OjOhr8HWQ=Qn39qtQ3+8bUeXNTuFFTxoJQ@mail.gmail.com> <CAJZ5v0go-qOTyQV4D2Sj_xQxT831PxJZP0uay67rG73Q3K2pHQ@mail.gmail.com> <5d42281c.1c69fb81.bcda1.71f5@mx.google.com> <CANA+-vCoCuMtSKCfnav9NSwrzX7of9iLbppNX+pcymBp19kgQQ@mail.gmail.com>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Hridya Valsaraju <hridya@google.com>,
-        Sandeep Patil <sspatil@google.com>,
-        Kalesh Singh <kaleshsingh@google.com>,
-        Ravi Chandra Sadineni <ravisadineni@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        "Cc: Android Kernel" <kernel-team@android.com>
-From:   Stephen Boyd <swboyd@chromium.org>
-To:     Tri Vo <trong@android.com>
-Subject: Re: [PATCH v6] PM / wakeup: show wakeup sources stats in sysfs
-User-Agent: alot/0.8.1
-Date:   Thu, 01 Aug 2019 13:22:58 -0700
+References: <e0dd3af448e38e342c1ac6e7c0c802696eb77fd6.1564549413.git.joe@perches.com>
+ <1d2830aadbe9d8151728a7df5b88528fc72a0095.1564549413.git.joe@perches.com>
+ <20190731171429.GA24222@amd> <ccc7fa72d0f83ddd62067092b105bd801479004b.camel@perches.com>
+ <765E740C-4259-4835-A58D-432006628BAC@zytor.com> <20190731184832.GZ31381@hirez.programming.kicks-ass.net>
+ <F1AB2846-CA91-41ED-B8E7-3799895DCF06@zytor.com> <CANiq72=s1nu9=R9ypFwL+J4NGT_yUkwahpgOOOXzezvNfDrx5g@mail.gmail.com>
+ <F2529DE6-B500-44DC-AE72-45A304AD719B@zytor.com> <20190801122429.GY31398@hirez.programming.kicks-ass.net>
+ <0BCDEED9-0B72-4412-909F-76C20D54983E@zytor.com>
+In-Reply-To: <0BCDEED9-0B72-4412-909F-76C20D54983E@zytor.com>
+From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date:   Thu, 1 Aug 2019 22:26:29 +0200
+Message-ID: <CANiq72kg+duBe_srpcco-P17=3OC2c1ys=rGMVY8Z9FxZ69sdw@mail.gmail.com>
+Subject: Re: [RFC PATCH] compiler_attributes.h: Add 'fallthrough' pseudo
+ keyword for switch/case use
+To:     "H. Peter Anvin" <hpa@zytor.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Joe Perches <joe@perches.com>, Pavel Machek <pavel@ucw.cz>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "Gustavo A . R . Silva" <gustavo@embeddedor.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Shawn Landden <shawn@git.icu>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Tri Vo (2019-08-01 12:50:25)
-> On Wed, Jul 31, 2019 at 4:45 PM Stephen Boyd <swboyd@chromium.org> wrote:
-> >
-> > Quoting Rafael J. Wysocki (2019-07-31 16:10:38)
-> > > On Thu, Aug 1, 2019 at 12:59 AM Tri Vo <trong@android.com> wrote:
-> > > >
-> > > > >
-> > > > > So why wouldn't something like this suffice:
-> > > > >
-> > > > > dev =3D device_create_with_groups(wakeup_class, parent, MKDEV(0, =
-0), ws,
-> > > > >                                 wakeup_source_groups, "wakeup:%s"=
-, ws->name);
-> > > > >
-> > > > > ?
-> > > >
-> > > > ws->name is inherited from the device name. IIUC device names are n=
-ot
-> > > > guaranteed to be unique. So if different devices with the same name
-> > > > register wakeup sources, there is an error.
-> > >
-> > > OK
-> > >
-> > > So I guess the names are retained for backwards compatibility with
-> > > existing user space that may be using them?
-> > >
-> > > That's kind of fair enough, but having two different identification
-> > > schemes for wakeup sources will end up confusing.
-> >
-> > I understand your concern about the IDA now. Thanks for clarifying.
-> >
-> > How about we name the devices 'wakeupN' with the IDA when they're
-> > registered with a non-NULL device pointer and then name them whatever
-> > the name argument is when the device pointer is NULL. If we have this,
-> > we should be able to drop the name attribute in sysfs and figure out the
-> > name either by looking at the device name in /sys/class/wakeup/ if it
-> > isn't 'wakeupN', or follow the symlink to the device in /sys/devices/
-> > and look at the parent device name there.
->=20
-> This makes it difficult for userspace to query the name a wakeup
-> source, as it now has to first figure out if a wakeup source is
-> associated with a device or not. The criteria for that is also
-> awkward, userspase has to check if directory path contains "wakeupN",
-> then it's a virtual wakeup source.
+On Thu, Aug 1, 2019 at 10:10 PM <hpa@zytor.com> wrote:
+>
+> I'm not disagreeing... I think using a macro makes sense.
 
-I think you mean if it doesn't match wakeupN then it's a virtual wakeup
-source?
+It is either a macro or waiting for 5+ years (while we keep using the
+comment style) :-)
 
->=20
-> IMO it's cleaner to consistently have /sys/class/wakeup/wakeupN/name
-> for every wakeup source.
+In case it helps to make one's mind about whether to go for it or not,
+I summarized the advantages and a few other details in the patch I
+sent in October:
 
-I don't find it awkward or difficult. Just know what the name of the
-/sys/class/wakeup/ path is and then extract the name from there if it
-doesn't match wakeupN, otherwise read the 'device' symlink and run it
-through basename.
+  https://github.com/ojeda/linux/commit/668f011a2706ea555987e263f609a5deba9c7fc4
 
+It would be nice, however, to discuss whether we want __fallthrough or
+fallthrough. The former is consistent with the rest of compiler
+attributes and makes it clear it is not a keyword, the latter is
+consistent with "break", "goto" and "return", as Joe's patch explains.
+
+Cheers,
+Miguel
