@@ -2,105 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 419EE7DBA8
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 14:40:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E73E77DBDB
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 14:48:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731363AbfHAMj4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 08:39:56 -0400
-Received: from mx2.suse.de ([195.135.220.15]:58096 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730881AbfHAMj4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 08:39:56 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D26CBB00E;
-        Thu,  1 Aug 2019 12:39:54 +0000 (UTC)
-Message-ID: <6d9e85ac5768e920805f121eeaff1360f3b257df.camel@suse.com>
-Subject: Re: [PATCH] KVM: Disable wake-affine vCPU process to mitigate lock
- holder preemption
-From:   Dario Faggioli <dfaggioli@suse.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>,
-        Wanpeng Li <kernellwp@gmail.com>, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc:     Radim =?UTF-8?Q?Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Date:   Thu, 01 Aug 2019 14:39:34 +0200
-In-Reply-To: <19e0beb6-a732-ea1f-79a5-41be92569338@redhat.com>
-References: <1564479235-25074-1-git-send-email-wanpengli@tencent.com>
-         <19e0beb6-a732-ea1f-79a5-41be92569338@redhat.com>
-Organization: SUSE
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-OoP9rETHtqYOrghGbkKn"
-User-Agent: Evolution 3.32.3 
+        id S1731488AbfHAMsh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 08:48:37 -0400
+Received: from 17.mo4.mail-out.ovh.net ([46.105.41.16]:33638 "EHLO
+        17.mo4.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731399AbfHAMsg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Aug 2019 08:48:36 -0400
+X-Greylist: delayed 13777 seconds by postgrey-1.27 at vger.kernel.org; Thu, 01 Aug 2019 08:48:35 EDT
+Received: from player758.ha.ovh.net (unknown [10.108.35.103])
+        by mo4.mail-out.ovh.net (Postfix) with ESMTP id 7A02A1FE73A
+        for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2019 13:31:47 +0200 (CEST)
+Received: from kaod.org (lfbn-1-2240-157.w90-76.abo.wanadoo.fr [90.76.60.157])
+        (Authenticated sender: clg@kaod.org)
+        by player758.ha.ovh.net (Postfix) with ESMTPSA id 1E73F88D821D;
+        Thu,  1 Aug 2019 11:31:36 +0000 (UTC)
+Subject: Re: [PATCH] powerpc/xive: Add some error handling code to
+ 'xive_spapr_init()'
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au,
+        allison@lohutok.net, tglx@linutronix.de, groug@kaod.org
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <20190801110956.8517-1-christophe.jaillet@wanadoo.fr>
+From:   =?UTF-8?Q?C=c3=a9dric_Le_Goater?= <clg@kaod.org>
+Message-ID: <bb72af16-d775-de39-498b-5e64976d93de@kaod.org>
+Date:   Thu, 1 Aug 2019 13:31:35 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
+In-Reply-To: <20190801110956.8517-1-christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Ovh-Tracer-Id: 14817687201574521713
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeduvddrleejgdegtdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 01/08/2019 13:09, Christophe JAILLET wrote:
+> 'xive_irq_bitmap_add()' can return -ENOMEM.
+> In this case, we should free the memory already allocated and return
+> 'false' to the caller.
+> 
+> Also add an error path which undoes the 'tima = ioremap(...)'
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> NOT compile tested (I don't have a cross compiler and won't install one).
 
---=-OoP9rETHtqYOrghGbkKn
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+All distros have a packaged powerpc cross compiler. 
 
-On Tue, 2019-07-30 at 13:46 +0200, Paolo Bonzini wrote:
-> On 30/07/19 11:33, Wanpeng Li wrote:
-> > When qemu/other vCPU inject virtual interrupt to guest through
-> > waking up one=20
-> > sleeping vCPU, it increases the probability to stack vCPUs/qemu by
-> > scheduler
-> > wake-affine. vCPU stacking issue can greately inceases the lock
-> > synchronization=20
-> > latency in a virtualized environment. This patch disables wake-
-> > affine vCPU=20
-> > process to mitigtate lock holder preemption.
->=20
-> There is no guarantee that the vCPU remains on the thread where it's
-> created, so the patch is not enough.
->=20
-> If many vCPUs are stacked on the same pCPU, why doesn't the wake_cap
-> kick in sooner or later?
->=20
-Assuming it actually is the case that vcpus *do* get stacked *and* that
-wake_cap() *doesn't* kick in, maybe it could be because of this check?
+Then, you need to compile a kernel for a pseries machine and run a pseries
+machine with it under QEMU. You can use a simple ppc initrd, a net install 
+one for example.
 
-        /* Minimum capacity is close to max, no need to abort wake_affine *=
-/
-        if (max_cap - min_cap < max_cap >> 3)
-                return 0;
+You could also hack the device tree in QEMU to torture the XIVE sPAPR driver.
+Nothing too complex, all is here : 
 
-Regards
---=20
-Dario Faggioli, Ph.D
-http://about.me/dario.faggioli
-Virtualization Software Engineer
-SUSE Labs, SUSE https://www.suse.com/
--------------------------------------------------------------------
-<<This happens because _I_ choose it to happen!>> (Raistlin Majere)
+https://git.qemu.org/?p=qemu.git;a=blob;f=hw/intc/spapr_xive.c;h=097f88d4608d8ba160526756a3a224e5176b6e0f;hb=HEAD#l1427
 
 
---=-OoP9rETHtqYOrghGbkKn
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
+> So if some correction or improvement are needed, feel free to propose and
+> commit it directly.
 
------BEGIN PGP SIGNATURE-----
+Yes there is I think. I would move at the end all the code that needs a 
+rollback.
 
-iQIzBAABCAAdFiEES5ssOj3Vhr0WPnOLFkJ4iaW4c+4FAl1C3YYACgkQFkJ4iaW4
-c+7Y7w/9FDc59iIus5zhBIvPf3Lieg7DPJpO7lV5BX3b9Aom3UVTDfgniByN88hC
-hk4lyNnLozzX6zv8AiPtWCWdtvXnjLewY5Z0OSsmQyCL3TdX09h8FXiqfRkcrCQX
-MJj81jMD8AHXQ1tRY5p+k653LpzFRQS4uckBgSklWr2ZAdfwNQLaHA2jdUQ4oatV
-SLN07+3MQaKfea1rdhGCiD4ME+sdOBZO+gwVoosWIDMYKDevuVR54ghl6lBW98pR
-dj+ZSVtlqFfSUYpjtL/l3P3+hHB7292OC+uh9T9ESGR0xk/ggCl7X1H5ELUL+wDG
-M4CNTsr1Z5oihfFGpZk3hZk0qLfOOPDwxbT47tv/RsEqjMRcumkCaldweG6fS9oO
-DUTqauzyAlRo9Ipt29BGRj7mpzd4y4+bZpJJedoql0Yhc4VP3brJneJxWqeNylBQ
-EWtowwuc9hUnewZi2VHPCbAFPIwo2YLyqFApNDMjbtO/Ar6f04BrYwANKj96aOgI
-T1yvC0Q2NaeYJ27wdpRo13TI4FXLVSJhKFEL/80Iw98xyAf6ZShr/Z0RHJbBMoPm
-o2pVT27JwuVcsfM+79kRrN+AJCopRVEfZFpvZ7coLeyxwQKmgcRUTDjxlklJMvly
-TTR5/8tyIA4kUW9ngTGEi4i7LWrMiMP7+tDeQJyZcqkOJ+SFyig=
-=fjyt
------END PGP SIGNATURE-----
+Thanks for taking a look, I might do that one day.
 
---=-OoP9rETHtqYOrghGbkKn--
+Cheers,
+C.  
+
+
+> ---
+>  arch/powerpc/sysdev/xive/spapr.c | 36 +++++++++++++++++++++++++-------
+>  1 file changed, 28 insertions(+), 8 deletions(-)
+> 
+> diff --git a/arch/powerpc/sysdev/xive/spapr.c b/arch/powerpc/sysdev/xive/spapr.c
+> index 52198131c75e..b3ae0b76c433 100644
+> --- a/arch/powerpc/sysdev/xive/spapr.c
+> +++ b/arch/powerpc/sysdev/xive/spapr.c
+> @@ -64,6 +64,17 @@ static int xive_irq_bitmap_add(int base, int count)
+>  	return 0;
+>  }
+>  
+> +static void xive_irq_bitmap_remove_all(void)
+> +{
+> +	struct xive_irq_bitmap *xibm, *tmp;
+> +
+> +	list_for_each_entry_safe(xibm, tmp, &xive_irq_bitmaps, list) {
+> +		list_del(&xibm->list);
+> +		kfree(xibm->bitmap);
+> +		kfree(xibm);
+> +	}
+> +}
+> +
+>  static int __xive_irq_bitmap_alloc(struct xive_irq_bitmap *xibm)
+>  {
+>  	int irq;
+> @@ -723,7 +734,7 @@ bool __init xive_spapr_init(void)
+>  	u32 val;
+>  	u32 len;
+>  	const __be32 *reg;
+> -	int i;
+> +	int i, err;
+>  
+>  	if (xive_spapr_disabled())
+>  		return false;
+> @@ -748,23 +759,26 @@ bool __init xive_spapr_init(void)
+>  	}
+>  
+>  	if (!xive_get_max_prio(&max_prio))
+> -		return false;
+> +		goto err_unmap;
+>  
+>  	/* Feed the IRQ number allocator with the ranges given in the DT */
+>  	reg = of_get_property(np, "ibm,xive-lisn-ranges", &len);
+>  	if (!reg) {
+>  		pr_err("Failed to read 'ibm,xive-lisn-ranges' property\n");
+> -		return false;
+> +		goto err_unmap;
+>  	}
+>  
+>  	if (len % (2 * sizeof(u32)) != 0) {
+>  		pr_err("invalid 'ibm,xive-lisn-ranges' property\n");
+> -		return false;
+> +		goto err_unmap;
+>  	}
+>  
+> -	for (i = 0; i < len / (2 * sizeof(u32)); i++, reg += 2)
+> -		xive_irq_bitmap_add(be32_to_cpu(reg[0]),
+> -				    be32_to_cpu(reg[1]));
+> +	for (i = 0; i < len / (2 * sizeof(u32)); i++, reg += 2) {
+> +		err = xive_irq_bitmap_add(be32_to_cpu(reg[0]),
+> +					  be32_to_cpu(reg[1]));
+> +		if (err < 0)
+> +			goto err_mem_free;
+> +	}
+>  
+>  	/* Iterate the EQ sizes and pick one */
+>  	of_property_for_each_u32(np, "ibm,xive-eq-sizes", prop, reg, val) {
+> @@ -775,8 +789,14 @@ bool __init xive_spapr_init(void)
+>  
+>  	/* Initialize XIVE core with our backend */
+>  	if (!xive_core_init(&xive_spapr_ops, tima, TM_QW1_OS, max_prio))
+> -		return false;
+> +		goto err_mem_free;
+>  
+>  	pr_info("Using %dkB queues\n", 1 << (xive_queue_shift - 10));
+>  	return true;
+> +
+> +err_mem_free:
+> +	xive_irq_bitmap_remove_all();
+> +err_unmap:
+> +	iounmap(tima);
+> +	return false;
+>  }
+> 
 
