@@ -2,52 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 180057E63F
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 01:09:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CA257E63B
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 01:09:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390416AbfHAXJd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 19:09:33 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:16642 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2388033AbfHAXIy (ORCPT
+        id S2390361AbfHAXJB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 19:09:01 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:43934 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732942AbfHAXI6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 19:08:54 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x71N7Dgb084087;
+        Thu, 1 Aug 2019 19:08:58 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x71N7wWk041903;
         Thu, 1 Aug 2019 19:08:14 -0400
 Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2u460ef3hf-1
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2u477ymeec-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
         Thu, 01 Aug 2019 19:08:14 -0400
-Received: from m0098416.ppops.net (m0098416.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x71N7rOu085384;
+Received: from m0098399.ppops.net (m0098399.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x71N7vpF041855;
         Thu, 1 Aug 2019 19:08:13 -0400
-Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2u460ef3gs-1
+Received: from ppma04wdc.us.ibm.com (1a.90.2fa9.ip4.static.sl-reverse.com [169.47.144.26])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2u477ymedp-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
         Thu, 01 Aug 2019 19:08:13 -0400
-Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
-        by ppma03dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x71N4xGh021252;
+Received: from pps.filterd (ppma04wdc.us.ibm.com [127.0.0.1])
+        by ppma04wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x71N549o008469;
         Thu, 1 Aug 2019 23:08:12 GMT
 Received: from b01cxnp23032.gho.pok.ibm.com (b01cxnp23032.gho.pok.ibm.com [9.57.198.27])
-        by ppma03dal.us.ibm.com with ESMTP id 2u0e8799se-1
+        by ppma04wdc.us.ibm.com with ESMTP id 2u0e85w76p-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
         Thu, 01 Aug 2019 23:08:12 +0000
 Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x71N8BEr43909542
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x71N8Bpr42533144
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
         Thu, 1 Aug 2019 23:08:11 GMT
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8C827B206B;
+        by IMSVA (Postfix) with ESMTP id 77DD7B206C;
         Thu,  1 Aug 2019 23:08:11 +0000 (GMT)
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 78BEBB2072;
+        by IMSVA (Postfix) with ESMTP id 64F28B2068;
         Thu,  1 Aug 2019 23:08:11 +0000 (GMT)
 Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.154])
         by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
         Thu,  1 Aug 2019 23:08:11 +0000 (GMT)
 Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 73A1716C9A58; Thu,  1 Aug 2019 16:08:12 -0700 (PDT)
+        id 7ABA216C9A37; Thu,  1 Aug 2019 16:08:12 -0700 (PDT)
 From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
 To:     rcu@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
@@ -57,9 +57,9 @@ Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
         "Paul E. McKenney" <paulmck@linux.ibm.com>
-Subject: [PATCH tip/core/rcu 17/18] rcu/nocb: Use build-time no-CBs check in rcu_pending()
-Date:   Thu,  1 Aug 2019 16:08:09 -0700
-Message-Id: <20190801230810.21570-17-paulmck@linux.ibm.com>
+Subject: [PATCH tip/core/rcu 18/18] rcu/nocb: Suppress uninitialized false-positive in nocb_gp_wait()
+Date:   Thu,  1 Aug 2019 16:08:10 -0700
+Message-Id: <20190801230810.21570-18-paulmck@linux.ibm.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190801230744.GA19115@linux.ibm.com>
 References: <20190801230744.GA19115@linux.ibm.com>
@@ -76,31 +76,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, rcu_pending() invokes rcu_segcblist_is_offloaded() even
-in CONFIG_RCU_NOCB_CPU=n kernels, which cannot possibly be offloaded.
-Given that rcu_pending() is on a fastpath, it makes sense to check for
-CONFIG_RCU_NOCB_CPU=y before invoking rcu_segcblist_is_offloaded().
-This commit therefore makes this change.
+Some compilers complain that wait_gp_seq might be used uninitialized
+in nocb_gp_wait().  This cannot actually happen because when wait_gp_seq
+is uninitialized, needwait_gp must be false, which prevents wait_gp_seq
+from being used.  But this analysis is apparently beyond some compilers,
+so this commit adds a bogus initialization of wait_gp_seq for the sole
+purpose of suppressing the false-positive warning.
 
 Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
 ---
- kernel/rcu/tree.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ kernel/rcu/tree_plugin.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index 14939273d120..fb6b80aa34f6 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -2773,7 +2773,8 @@ static int rcu_pending(void)
- 	/* Has RCU gone idle with this CPU needing another grace period? */
- 	if (!rcu_gp_in_progress() &&
- 	    rcu_segcblist_is_enabled(&rdp->cblist) &&
--	    !rcu_segcblist_is_offloaded(&rdp->cblist) &&
-+	    (!IS_ENABLED(CONFIG_RCU_NOCB_CPU) ||
-+	     !rcu_segcblist_is_offloaded(&rdp->cblist)) &&
- 	    !rcu_segcblist_restempty(&rdp->cblist, RCU_NEXT_READY_TAIL))
- 		return 1;
+diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
+index 1847fffdfa0a..c1dfbac8cd39 100644
+--- a/kernel/rcu/tree_plugin.h
++++ b/kernel/rcu/tree_plugin.h
+@@ -1668,12 +1668,12 @@ static void nocb_gp_wait(struct rcu_data *my_rdp)
+ 	unsigned long cur_gp_seq;
+ 	unsigned long flags;
+ 	bool gotcbs;
+-	bool needwait_gp = false;
++	bool needwait_gp = false; // This prevents actual uninitialized use.
+ 	bool needwake;
+ 	bool needwake_gp;
+ 	struct rcu_data *rdp;
+ 	struct rcu_node *rnp;
+-	unsigned long wait_gp_seq;
++	unsigned long wait_gp_seq = 0; // Suppress "use uninitialized" warning.
  
+ 	/*
+ 	 * Each pass through the following loop checks for CBs and for the
 -- 
 2.17.1
 
