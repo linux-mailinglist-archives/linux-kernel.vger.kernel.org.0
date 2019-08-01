@@ -2,113 +2,188 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97F3E7D2F1
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 03:42:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 70D747D2FB
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 03:50:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729440AbfHABmO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 21:42:14 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:34677 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726622AbfHABmN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 21:42:13 -0400
-Received: by mail-ot1-f67.google.com with SMTP id n5so72458465otk.1
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2019 18:42:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ZfGrI2T8Io+ZaXdoiPh/ozSsrOYzabAUcKD9H+JB39Q=;
-        b=a0FAF83qeGlFS7k8/nxXJLJ5Kh6ewCif/DahOmBKgUQKDzBIvI56PZQsLKOY2vcKze
-         a9qsiuXl4hEadSEa/L602ZAVxNmYmIqKw8NqNQRiQScBJWysXWviioyb/tBtBPZt6Jg3
-         nNSeumFFwel+c+Cbmk2jWVq1zMrpW8MEt/dbfGHLN1eN9vZAzZdXJnaIy47mvA6NNmLz
-         n4+7dspozOAiPSj7nvleG8W6Iy7d2CfCkbIANp9eQTb/2sLB3ZkXHlWygwrJ1UAXEitb
-         tLixPPKoHnxFZcJ7MICrXLa6JMkjQ1X4Smp+ellrB1iVQz4GlNZdsfEaF2dZPGypLJGT
-         9VpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ZfGrI2T8Io+ZaXdoiPh/ozSsrOYzabAUcKD9H+JB39Q=;
-        b=Q6pMRRQ+RHRdUk4sQ85vQDpsNFZ2TZHhfazll7LroORiHaV0xBfe1NUSqH7CYUWloW
-         lYpT1wkaYAw32xfyxO4yYhbc/GPipSlbrdFKb/ud1IJELzsnKhkSsLeosqZdU6Wi0gWc
-         sI6dFQ7Ze9xRmhMuZDQIOplo/of9ETe7T6Fu+tLQ124Dj592skY3NZNW1EYIThjOUcat
-         azK8UYCIe2r3RydeaFIuXbojxkakyyc3bbPaTWaK7ti784IRrHIteyJXyggs1Cj8A6Zl
-         n3t3DvztuJc3C0LMO4ZcGy1AQnBV32c+8faVixP6UrR4ZH1iiDguNHu8JPD11gPYUmXr
-         vhDg==
-X-Gm-Message-State: APjAAAUm+5rKV5QwsFYmsDUUDiivjI670V/dnqzMfXGbwZwPIN7LiDou
-        +8JnwXrlpka5U1ePOL93MwtWY9XlV+UACBqvkVs=
-X-Google-Smtp-Source: APXvYqyB6SEjgS9U7kTGYQ9tev8wMhiX2CLosAjncHGHH+VNkxfm4lsbU25vSYUhLTgFLbs/tmVXBUp0qgH186vaps4=
-X-Received: by 2002:a9d:4b02:: with SMTP id q2mr57355971otf.312.1564623732869;
- Wed, 31 Jul 2019 18:42:12 -0700 (PDT)
+        id S1729231AbfHABt5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 21:49:57 -0400
+Received: from mga18.intel.com ([134.134.136.126]:3321 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726514AbfHABt5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jul 2019 21:49:57 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Jul 2019 18:49:56 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,332,1559545200"; 
+   d="scan'208";a="183988773"
+Received: from allen-box.sh.intel.com (HELO [10.239.159.136]) ([10.239.159.136])
+  by orsmga002.jf.intel.com with ESMTP; 31 Jul 2019 18:49:54 -0700
+Cc:     baolu.lu@linux.intel.com, Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <jroedel@suse.de>,
+        Ran Rozenstein <ranro@mellanox.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        Maor Gottlieb <maorg@mellanox.com>
+Subject: Re: Failure to recreate virtual functions
+To:     Vlad Buslov <vladbu@mellanox.com>
+References: <vbf8sskwyiv.fsf@mellanox.com>
+ <d4166595-ec4a-fc4a-3b5f-463b79c42936@linux.intel.com>
+ <vbfzhkx9n32.fsf@mellanox.com>
+ <838a00c4-d5bd-08db-e39c-5f00686858b5@linux.intel.com>
+ <6ece232e-3fe8-4bd9-cd4b-c8d90a106a30@arm.com>
+ <abba9e2b-4bd4-bca5-dd50-05ca9ad96d1f@linux.intel.com>
+ <vbf36imsb79.fsf@mellanox.com>
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+Message-ID: <6c75bf67-cbcd-bded-2a57-9f537fe108c0@linux.intel.com>
+Date:   Thu, 1 Aug 2019 09:49:12 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-References: <20190731071447.9019-1-stefan@olimex.com> <20190731071447.9019-2-stefan@olimex.com>
- <CAGb2v64tzMypnB5Ho2A-gWPk2yYsmH9tNn+OKfb51c+d6pK=kw@mail.gmail.com>
-In-Reply-To: <CAGb2v64tzMypnB5Ho2A-gWPk2yYsmH9tNn+OKfb51c+d6pK=kw@mail.gmail.com>
-From:   Vasily Khoruzhick <anarsoul@gmail.com>
-Date:   Wed, 31 Jul 2019 18:42:14 -0700
-Message-ID: <CA+E=qVcY2PE3zg3CRNGD4vLbLTdov6wgioUrbijp-W6km9SCaA@mail.gmail.com>
-Subject: Re: [linux-sunxi] Re: [PATCH 1/1] nvmem: sunxi_sid: fix A64 SID
- controller support
-To:     wens@kernel.org
-Cc:     Stefan Mavrodiev <stefan@olimex.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        "moderated list:ARM/Allwinner sunXi SoC support" 
-        <linux-arm-kernel@lists.infradead.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <vbf36imsb79.fsf@mellanox.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 31, 2019 at 1:43 AM Chen-Yu Tsai <wens@csie.org> wrote:
->
-> On Wed, Jul 31, 2019 at 3:15 PM Stefan Mavrodiev <stefan@olimex.com> wrote:
-> >
-> > Like in H3, A64 SID controller doesn't return correct data
-> > when using direct access. It appears that on A64, SID needs
-> > 8 bytes of word_size.
-> >
-> > Workaround is to enable read by registers.
+Hi,
 
-I came up with identical patch while adding A64 support into
-sun8i-thermal driver, so:
+On 7/31/19 7:19 PM, Vlad Buslov wrote:
+> 
+> On Wed 31 Jul 2019 at 10:29, Lu Baolu <baolu.lu@linux.intel.com> wrote:
+>> Hi,
+>>
+>> On 7/30/19 7:22 PM, Robin Murphy wrote:
+>>> On 30/07/2019 05:28, Lu Baolu wrote:
+>>>> Hi,
+>>>>
+>>>> On 7/29/19 6:05 PM, Vlad Buslov wrote:
+>>>>> On Sat 27 Jul 2019 at 05:15, Lu Baolu<baolu.lu@linux.intel.com>  wrote:
+>>>>>> Hi Vilad,
+>>>>>>
+>>>>>> On 7/27/19 12:30 AM, Vlad Buslov wrote:
+>>>>>>> Hi Lu Baolu,
+>>>>>>>
+>>>>>>> Our mlx5 driver fails to recreate VFs when cmdline includes
+>>>>>>> "intel_iommu=on iommu=pt" after recent merge of patch set "iommu/vt-d:
+>>>>>>> Delegate DMA domain to generic iommu". I've bisected the failure to
+>>>>>>> patch b7297783c2bb ("iommu/vt-d: Remove duplicated code for device
+>>>>>>> hotplug"). Here is the dmesg log for following case: enable switchdev
+>>>>>>> mode, set number of VFs to 0, then set it back to any value
+>>>>>>>> 0.
+>>>>>>> [  223.525282] mlx5_core 0000:81:00.0: E-Switch: E-Switch enable SRIOV:
+>>>>>>> nvfs(2) mode (1)
+>>>>>>> [  223.562027] mlx5_core 0000:81:00.0: E-Switch: SRIOV enabled: active
+>>>>>>> vports(3)
+>>>>>>> [  223.663766] pci 0000:81:00.2: [15b3:101a] type 00 class 0x020000
+>>>>>>> [  223.663864] pci 0000:81:00.2: enabling Extended Tags
+>>>>>>> [  223.665143] pci 0000:81:00.2: Adding to iommu group 52
+>>>>>>> [  223.665215] pci 0000:81:00.2: Using iommu direct mapping
+>>>>>>> [  223.665771] mlx5_core 0000:81:00.2: enabling device (0000 -> 0002)
+>>>>>>> [  223.665890] mlx5_core 0000:81:00.2: firmware version: 16.26.148
+>>>>>>> [  223.889908] mlx5_core 0000:81:00.2: Rate limit: 127 rates are
+>>>>>>> supported, range: 0Mbps to 97656Mbps
+>>>>>>> [  223.896438] mlx5_core 0000:81:00.2: MLX5E: StrdRq(1) RqSz(8)
+>>>>>>> StrdSz(2048) RxCqeCmprss(0)
+>>>>>>> [  223.896636] mlx5_core 0000:81:00.2: Assigned random MAC address
+>>>>>>> 56:1f:95:e0:51:d6
+>>>>>>> [  224.012905] mlx5_core 0000:81:00.2 ens1f0v0: renamed from eth0
+>>>>>>> [  224.041651] pci 0000:81:00.3: [15b3:101a] type 00 class 0x020000
+>>>>>>> [  224.041711] pci 0000:81:00.3: enabling Extended Tags
+>>>>>>> [  224.043660] pci 0000:81:00.3: Adding to iommu group 53
+>>>>>>> [  224.043738] pci 0000:81:00.3: Using iommu direct mapping
+>>>>>>> [  224.044196] mlx5_core 0000:81:00.3: enabling device (0000 -> 0002)
+>>>>>>> [  224.044298] mlx5_core 0000:81:00.3: firmware version: 16.26.148
+>>>>>>> [  224.268099] mlx5_core 0000:81:00.3: Rate limit: 127 rates are
+>>>>>>> supported, range: 0Mbps to 97656Mbps
+>>>>>>> [  224.274983] mlx5_core 0000:81:00.3: MLX5E: StrdRq(1) RqSz(8)
+>>>>>>> StrdSz(2048) RxCqeCmprss(0)
+>>>>>>> [  224.275195] mlx5_core 0000:81:00.3: Assigned random MAC address
+>>>>>>> a6:1e:56:0a:d9:f2
+>>>>>>> [  224.388359] mlx5_core 0000:81:00.3 ens1f0v1: renamed from eth0
+>>>>>>> [  236.325027] mlx5_core 0000:81:00.0: E-Switch: disable SRIOV: active
+>>>>>>> vports(3) mode(1)
+>>>>>>> [  236.362766] mlx5_core 0000:81:00.0: E-Switch: E-Switch enable SRIOV:
+>>>>>>> nvfs(2) mode (2)
+>>>>>>> [  237.290066] mlx5_core 0000:81:00.0: MLX5E: StrdRq(1) RqSz(8)
+>>>>>>> StrdSz(2048) RxCqeCmprss(0)
+>>>>>>> [  237.350215] mlx5_core 0000:81:00.0: MLX5E: StrdRq(1) RqSz(8)
+>>>>>>> StrdSz(2048) RxCqeCmprss(0)
+>>>>>>> [  237.373052] mlx5_core 0000:81:00.0 ens1f0: renamed from eth0
+>>>>>>> [  237.390768] mlx5_core 0000:81:00.0: MLX5E: StrdRq(1) RqSz(8)
+>>>>>>> StrdSz(2048) RxCqeCmprss(0)
+>>>>>>> [  237.447846] ens1f0_0: renamed from eth0
+>>>>>>> [  237.460399] mlx5_core 0000:81:00.0: E-Switch: SRIOV enabled: active
+>>>>>>> vports(3)
+>>>>>>> [  237.526880] ens1f0_1: renamed from eth1
+>>>>>>> [  248.953873] pci 0000:81:00.2: Removing from iommu group 52
+>>>>>>> [  248.954114] pci 0000:81:00.3: Removing from iommu group 53
+>>>>>>> [  249.960570] mlx5_core 0000:81:00.0: E-Switch: disable SRIOV: active
+>>>>>>> vports(3) mode(2)
+>>>>>>> [  250.319135] mlx5_core 0000:81:00.0: MLX5E: StrdRq(1) RqSz(8)
+>>>>>>> StrdSz(2048) RxCqeCmprss(0)
+>>>>>>> [  250.559431] mlx5_core 0000:81:00.0 ens1f0: renamed from eth0
+>>>>>>> [  258.819162] mlx5_core 0000:81:00.0: E-Switch: E-Switch enable SRIOV:
+>>>>>>> nvfs(2) mode (1)
+>>>>>>> [  258.831625] mlx5_core 0000:81:00.0: E-Switch: SRIOV enabled: active
+>>>>>>> vports(3)
+>>>>>>> [  258.936160] pci 0000:81:00.2: [15b3:101a] type 00 class 0x020000
+>>>>>>> [  258.936258] pci 0000:81:00.2: enabling Extended Tags
+>>>>>>> [  258.937438] pci 0000:81:00.2: Failed to add to iommu group 52: -16
+>>>>>> It seems that an EBUSY error returned from iommu_group_add_device(). Can
+>>>>>> you please hack some debug messages in iommu_group_add_device() so that
+>>>>>> we can know where the EBUSY returns?
+>>>>>>
+>>>>>> Best regards,
+>>>>>> Baolu
+>>>>> The error code is returned by __iommu_attach_device().
+>>>>>
+>>>>
+>>>> Thanks!
+>>>>
+>>>> It looks like the system has already a domain for specific pci bdf
+>>>> device. Does this VF share the bdf with other devices? Or has been
+>>>> previously created, and system failed to get chance to remove it?
+>>>
+>>> At a glance, it looks like it might be down to intel_iommu_remove_device() not
+>>> calling dmar_remove_one_dev_info() like the old notifier did. If the group is
+>>> getting torn down and recreated, but the driver still has a stale pointer to
+>>> the old default domain cached, which dmar_insert_one_dev_info() finds and
+>>> returns, that would seem to explain the observed behaviour.
+>>
+>> Yes agreed.
+>>
+>> Vlad,
+>>
+>> Can you please try below change?
+>>
+>> diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+>> index baf21001c339..abffc520fe05 100644
+>> --- a/drivers/iommu/intel-iommu.c
+>> +++ b/drivers/iommu/intel-iommu.c
+>> @@ -5575,6 +5575,8 @@ static void intel_iommu_remove_device(struct device *dev)
+>>          if (!iommu)
+>>                  return;
+>>
+>> +       dmar_remove_one_dev_info(dev);
+>> +
+>>          iommu_group_remove_device(dev);
+>>
+>>          iommu_device_unlink(&iommu->iommu, dev);
+>>
+>> Best regards,
+>> Baolu
+> 
+> Hi Baolu,
+> 
+> This patch fixes the issue for me.
+> 
 
-> >
-> > Signed-off-by: Stefan Mavrodiev <stefan@olimex.com>
->
-> Acked-by: Chen-Yu Tsai <wens@csie.org>
+Great! Thanks for testing. I will submit a fix soon.
 
-Tested-by: Vasily Khoruzhick <anarsoul@gmail.com>
-
->
-> And for single patches, you don't need to write a separate cover letter.
-> Just put whatever you need to add after the "---" separator.
->
-> > ---
-> >  drivers/nvmem/sunxi_sid.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/drivers/nvmem/sunxi_sid.c b/drivers/nvmem/sunxi_sid.c
-> > index a079a80ddf2c..e26ef1bbf198 100644
-> > --- a/drivers/nvmem/sunxi_sid.c
-> > +++ b/drivers/nvmem/sunxi_sid.c
-> > @@ -186,6 +186,7 @@ static const struct sunxi_sid_cfg sun8i_h3_cfg = {
-> >  static const struct sunxi_sid_cfg sun50i_a64_cfg = {
-> >         .value_offset = 0x200,
-> >         .size = 0x100,
-> > +       .need_register_readout = true,
-> >  };
-> >
-> >  static const struct sunxi_sid_cfg sun50i_h6_cfg = {
-> > --
-> > 2.17.1
-> >
->
-> --
-> You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
-> To view this discussion on the web, visit https://groups.google.com/d/msgid/linux-sunxi/CAGb2v64tzMypnB5Ho2A-gWPk2yYsmH9tNn%2BOKfb51c%2Bd6pK%3Dkw%40mail.gmail.com.
+Best regards,
+Baolu
