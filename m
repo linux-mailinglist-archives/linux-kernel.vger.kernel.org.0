@@ -2,45 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45FA87DC41
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 15:10:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9681D7DC4A
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 15:11:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731664AbfHANKx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 09:10:53 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:54638 "EHLO
+        id S1731705AbfHANLC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 09:11:02 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:54810 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731637AbfHANKs (ORCPT
+        with ESMTP id S1731661AbfHANKx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 09:10:48 -0400
+        Thu, 1 Aug 2019 09:10:53 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=4qLtngAUhWvMnevBCxBv/fEsOgw3HSy6g6y7VvFe9/M=; b=Q5jVLcLmFtbi
-        NOQtN8ynuRsOoNuVlWGVOvJjbk65tLp4obfBX9m/IH5XZF2L7A3Iz/LtnuPc4VWQa4Iixv96gPK/a
-        bD+HJaJ92pFR9zI3BcQ8c4gkrd3SKCeqwMhPRtU2B86t1j3/rUww1rOSKpaOOu60wJIdwd+J2qc3M
-        jENmY=;
+        List-Archive; bh=Ta6SVOPfBEUXAoK68k+AFFQ870iLGBNa1TpwByQ+Eno=; b=COM4R8O8UblY
+        lrUXmNhyDp2EkXu40KiUT7eZ/V89UGzoDIIp4mMbesfeWwl3wlMCAAXJsQynd4k8NgMTtSLv/pOGv
+        6VDCEGLslICkfQ923UFaHHBehYhj8T4fd/Xw7rprt8DFcZ5KAeXDdCqtKYWOO4B+eY7SPSC5ZpqG7
+        57lNI=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1htAqu-0004iq-Mg; Thu, 01 Aug 2019 13:10:40 +0000
+        id 1htAr4-0004k5-SQ; Thu, 01 Aug 2019 13:10:50 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 31DD02742D42; Thu,  1 Aug 2019 14:10:40 +0100 (BST)
+        id 64F9D2742C48; Thu,  1 Aug 2019 14:10:50 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Jerome Brunet <jbrunet@baylibre.com>
-Cc:     alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-        Kevin Hilman <khilman@baylibre.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>
-Subject: Applied "ASoC: codec2codec: fill some of the runtime stream parameters" to the asoc tree
-In-Reply-To: <20190725165949.29699-7-jbrunet@baylibre.com>
+To:     Nishka Dasgupta <nishkadg.linux@gmail.com>
+Cc:     broonie@kernel.org, lgirdwood@gmail.com,
+        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+Subject: Applied "regulator: of: Add of_node_put() before return in function" to the regulator tree
+In-Reply-To: <20190724083231.10276-1-nishkadg.linux@gmail.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190801131040.31DD02742D42@ypsilon.sirena.org.uk>
-Date:   Thu,  1 Aug 2019 14:10:40 +0100 (BST)
+Message-Id: <20190801131050.64F9D2742C48@ypsilon.sirena.org.uk>
+Date:   Thu,  1 Aug 2019 14:10:50 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -48,11 +45,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: codec2codec: fill some of the runtime stream parameters
+   regulator: of: Add of_node_put() before return in function
 
-has been applied to the asoc tree at
+has been applied to the regulator tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.4
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-5.3
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -73,37 +70,40 @@ to this mail.
 Thanks,
 Mark
 
-From 9de98628c895d15427138073986eab1e3ce39cb4 Mon Sep 17 00:00:00 2001
-From: Jerome Brunet <jbrunet@baylibre.com>
-Date: Thu, 25 Jul 2019 18:59:49 +0200
-Subject: [PATCH] ASoC: codec2codec: fill some of the runtime stream parameters
+From 811ba489fa524ec634933cdf83aaf6c007a4c004 Mon Sep 17 00:00:00 2001
+From: Nishka Dasgupta <nishkadg.linux@gmail.com>
+Date: Wed, 24 Jul 2019 14:02:31 +0530
+Subject: [PATCH] regulator: of: Add of_node_put() before return in function
 
-Set the information provided struct snd_soc_pcm_stream in the
-struct snd_pcm_runtime of the codec to codec link.
+The local variable search in regulator_of_get_init_node takes the value
+returned by either of_get_child_by_name or of_node_get, both of which
+get a node. If this node is not put before returning, it could cause a
+memory leak. Hence put search before a mid-loop return statement.
+Issue found with Coccinelle.
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-Link: https://lore.kernel.org/r/20190725165949.29699-7-jbrunet@baylibre.com
+Signed-off-by: Nishka Dasgupta <nishkadg.linux@gmail.com>
+Link: https://lore.kernel.org/r/20190724083231.10276-1-nishkadg.linux@gmail.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/soc-dapm.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/regulator/of_regulator.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/sound/soc/soc-dapm.c b/sound/soc/soc-dapm.c
-index 1c953a1b46ce..e16838e1bda2 100644
---- a/sound/soc/soc-dapm.c
-+++ b/sound/soc/soc-dapm.c
-@@ -3874,6 +3874,11 @@ snd_soc_dai_link_event_pre_pmu(struct snd_soc_dapm_widget *w,
- 		dapm_update_dai_unlocked(substream, params, sink);
+diff --git a/drivers/regulator/of_regulator.c b/drivers/regulator/of_regulator.c
+index 397918ebba55..9112faa6a9a0 100644
+--- a/drivers/regulator/of_regulator.c
++++ b/drivers/regulator/of_regulator.c
+@@ -416,8 +416,10 @@ device_node *regulator_of_get_init_node(struct device *dev,
+ 		if (!name)
+ 			name = child->name;
+ 
+-		if (!strcmp(desc->of_match, name))
++		if (!strcmp(desc->of_match, name)) {
++			of_node_put(search);
+ 			return of_node_get(child);
++		}
  	}
  
-+	runtime->format = params_format(params);
-+	runtime->subformat = params_subformat(params);
-+	runtime->channels = params_channels(params);
-+	runtime->rate = params_rate(params);
-+
- out:
- 	if (ret < 0)
- 		kfree(runtime);
+ 	of_node_put(search);
 -- 
 2.20.1
 
