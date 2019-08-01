@@ -2,157 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 713AD7D615
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 09:11:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4508A7D61B
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 09:12:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729226AbfHAHLW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 03:11:22 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:47434 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725790AbfHAHLW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 03:11:22 -0400
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id F3DE384F77E482D42356;
-        Thu,  1 Aug 2019 15:11:19 +0800 (CST)
-Received: from [10.151.23.176] (10.151.23.176) by smtp.huawei.com
- (10.3.19.214) with Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 1 Aug 2019
- 15:11:18 +0800
-Subject: Re: [BUG] lseek on /proc/meminfo is broken in 4.19.59
-To:     Sergei Turchanov <turchanov@farpost.com>
-CC:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <3bd775ab-9e31-c6b3-374e-7a9982a9a8cd@farpost.com>
-From:   Gao Xiang <gaoxiang25@huawei.com>
-Message-ID: <5c4c0648-2a96-4132-9d22-91c22e7c7d4d@huawei.com>
-Date:   Thu, 1 Aug 2019 15:11:02 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        id S1730119AbfHAHMi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 03:12:38 -0400
+Received: from esa4.microchip.iphmx.com ([68.232.154.123]:54705 "EHLO
+        esa4.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725790AbfHAHMh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Aug 2019 03:12:37 -0400
+Received-SPF: Pass (esa4.microchip.iphmx.com: domain of
+  Ludovic.Desroches@microchip.com designates 198.175.253.82 as
+  permitted sender) identity=mailfrom;
+  client-ip=198.175.253.82; receiver=esa4.microchip.iphmx.com;
+  envelope-from="Ludovic.Desroches@microchip.com";
+  x-sender="Ludovic.Desroches@microchip.com";
+  x-conformance=spf_only; x-record-type="v=spf1";
+  x-record-text="v=spf1 mx a:ushub1.microchip.com
+  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
+  a:mx2.microchip.iphmx.com include:servers.mcsv.net
+  include:mktomail.com include:spf.protection.outlook.com ~all"
+Received-SPF: None (esa4.microchip.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@email.microchip.com) identity=helo;
+  client-ip=198.175.253.82; receiver=esa4.microchip.iphmx.com;
+  envelope-from="Ludovic.Desroches@microchip.com";
+  x-sender="postmaster@email.microchip.com";
+  x-conformance=spf_only
+Authentication-Results: esa4.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Ludovic.Desroches@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
+IronPort-SDR: KOIO5aPBnyj78kcD+HN+oud5Hl32sOC01iATWdQpiINf+aunYA+T17ybBj6R6SPmU8+RWsXEDu
+ CTHM8/wdD9a6tdnC2nox7Exyes0RUqxzW1IlcFaZLcK9pWvHOnrAE6HUXty+yNVE2EJGnQms4V
+ vVXFrt7qiWoO3SbmWKY0PKRI2Jy08xwDCiCZs+C+h/VFTXd/e8sR7/6F/7po6fjE8AuOqF1vr7
+ WXT8LCzLeNeq750Uk4QtJcPkSQ89LMcBhpuBFZDnVo/ZEPt2n8Xu4UNozSThA54kKoY/rbbbiU
+ rSU=
+X-IronPort-AV: E=Sophos;i="5.64,333,1559545200"; 
+   d="scan'208";a="42778277"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 01 Aug 2019 00:12:36 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Thu, 1 Aug 2019 00:12:33 -0700
+Received: from localhost (10.10.85.251) by chn-vm-ex01.mchp-main.com
+ (10.10.85.143) with Microsoft SMTP Server id 15.1.1713.5 via Frontend
+ Transport; Thu, 1 Aug 2019 00:12:32 -0700
+Date:   Thu, 1 Aug 2019 09:11:36 +0200
+From:   Ludovic Desroches <ludovic.desroches@microchip.com>
+To:     Kees Cook <keescook@chromium.org>
+CC:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        <linux-mmc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [PATCH] mmc: atmel-mci: Mark expected switch fall-throughs
+Message-ID: <20190801071136.37yjjr3kmdhfyxna@M43218.corp.atmel.com>
+Mail-Followup-To: Kees Cook <keescook@chromium.org>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+References: <20190729000123.GA23902@embeddedor>
+ <20190731113216.ztxckd54a74g2lw5@M43218.corp.atmel.com>
+ <201907310905.B90C6E25@keescook>
 MIME-Version: 1.0
-In-Reply-To: <3bd775ab-9e31-c6b3-374e-7a9982a9a8cd@farpost.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.151.23.176]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <201907310905.B90C6E25@keescook>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Wed, Jul 31, 2019 at 09:06:07AM -0700, Kees Cook wrote:
+> On Wed, Jul 31, 2019 at 01:32:16PM +0200, Ludovic Desroches wrote:
+> > > drivers/mmc/host/atmel-mci.c:2426:40: warning: this statement may fall through [-Wimplicit-fallthrough=]
+> > >    host->caps.need_notbusy_for_read_ops = 1;
+> > >    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~
+> > > drivers/mmc/host/atmel-mci.c:2427:2: note: here
+> > >   case 0x100:
+> > >   ^~~~
+> > > 
+> > > Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> > > Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> > 
+> > I don't know if there is a policy in the kernel about the expression to
+> > use. As this one does the job
+> 
+> Yup, documented here:
+> https://www.kernel.org/doc/html/latest/process/deprecated.html#implicit-switch-case-fall-through
 
-I just took a glance, maybe due to
-commit 1f4aace60b0e ("fs/seq_file.c: simplify seq_file iteration code and interface")
+Thanks for the pointer.
 
-I simply reverted it just now and it seems fine... but I haven't digged into this commit.
+Regards
 
-Maybe you could Cc NeilBrown <neilb@suse.com> for some more advice and
-I have no idea whether it's an expected behavior or not...
+Ludovic
 
-Thanks,
-Gao Xiang
-
-On 2019/8/1 14:16, Sergei Turchanov wrote:
-> Hello!
 > 
-> (I sent this e-mail two weeks ago with no feedback. Does anyone care? Wrong mailing list? Anything....?)
+> > Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
 > 
-> Seeking (to an offset within file size) in /proc/meminfo is broken in 4.19.59. It does seek to a desired position, but reading from that position returns the remainder of file and then a whole copy of file. This doesn't happen with /proc/vmstat or /proc/self/maps for example.
+> Thanks!
 > 
-> Seeking did work correctly in kernel 4.14.47. So it seems something broke in the way.
-> 
-> Background: this kind of access pattern (seeking to /proc/meminfo) is used by libvirt-lxc fuse driver for virtualized view of /proc/meminfo. So that /proc/meminfo is broken in guests when running kernel 4.19.x.
-> 
-> $ ./test /proc/meminfo 0        # Works as expected
-> 
-> MemTotal:       394907728 kB
-> MemFree:        173738328 kB
-> ...
-> DirectMap2M:    13062144 kB
-> DirectMap1G:    390070272 kB
-> 
-> -----------------------------------------------------------------------
-> 
-> $ ./test 1024                   # returns a copy of file after the remainder
-> 
-> Will seek to 1024
-> 
-> 
-> Data read at offset 1024
-> gePages:         0 kB
-> ShmemHugePages:        0 kB
-> ShmemPmdMapped:        0 kB
-> HugePages_Total:       0
-> HugePages_Free:        0
-> HugePages_Rsvd:        0
-> HugePages_Surp:        0
-> Hugepagesize:       2048 kB
-> Hugetlb:               0 kB
-> DirectMap4k:      245204 kB
-> DirectMap2M:    13062144 kB
-> DirectMap1G:    390070272 kB
-> MemTotal:       394907728 kB
-> MemFree:        173738328 kB
-> MemAvailable:   379989680 kB
-> Buffers:          355812 kB
-> Cached:         207216224 kB
-> ...
-> DirectMap2M:    13062144 kB
-> DirectMap1G:    390070272 kB
-> 
-> As you see, after "DirectMap1G:" line, a whole copy of /proc/meminfo returned by "read".
-> 
-> Test program:
-> 
-> #include <sys/types.h>
-> #include <sys/stat.h>
-> #include <unistd.h>
-> #include <fcntl.h>
-> #include <stdio.h>
-> #include <stdlib.h>
-> 
-> #define SIZE 1024
-> char buf[SIZE + 1];
-> 
-> int main(int argc, char *argv[]) {
->     int     fd;
->     ssize_t rd;
->     off_t   ofs = 0;
-> 
->     if (argc < 2) {
->         printf("Usage: test <file> [<offset>]\n");
->         exit(1);
->     }
-> 
->     if (-1 == (fd = open(argv[1], O_RDONLY))) {
->         perror("open failed");
->         exit(1);
->     }
-> 
->     if (argc > 2) {
->         ofs = atol(argv[2]);
->     }
->     printf("Will seek to %ld\n", ofs);
-> 
->     if (-1 == (lseek(fd, ofs, SEEK_SET))) {
->         perror("lseek failed");
->         exit(1);
->     }
-> 
->     for (;; ofs += rd) {
->         printf("\n\nData read at offset %ld\n", ofs);
->         if (-1 == (rd = read(fd, buf, SIZE))) {
->             perror("read failed");
->             exit(1);
->         }
->         buf[rd] = '\0';
->         printf(buf);
->         if (rd < SIZE) {
->             break;
->         }
->     }
-> 
->     return 0;
-> }
-> 
-> 
-> 
+> -- 
+> Kees Cook
