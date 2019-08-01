@@ -2,105 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F28757E084
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 18:47:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 73AAF7E09B
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 18:55:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733174AbfHAQrT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 12:47:19 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:46486 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725804AbfHAQrT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 12:47:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=jRDKLsjk8HUCz3+oK1y5lg3vRrF1WHpghzvIdr5Ml58=; b=kcblAkhG6mt3yoCMfrfug7uY2G
-        v4QSh/1jdBTXFzZDTEaT8TMTNlorj84dGMHjHAUGg1+W99MsFL2rQLIufjOytL7JnIP1Zj9eXYer8
-        SLSJH6PsRtzGEte27601VXpUk9F4ZELCl8fEUZKQoUTWN2Bh4xBvLggFZYD4I8yM2bRarnvXrUH/M
-        CeGR+MgjY1VlygGooho0/aLmDRMEJr41ItyqCbq7tMrTmd5UOkE7NwCGi1lYRIDaz0LCufUqBzc9m
-        O8ceJWszS1Ym1xjhtaGVbceHblO6Kh/T5W8iIC9aRfGxP50iznhSiypav1GVv8Q6wRV27LQC1Sbe4
-        n6EFcfnw==;
-Received: from [195.167.85.94] (helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1htEER-00007z-TL; Thu, 01 Aug 2019 16:47:12 +0000
-Date:   Thu, 1 Aug 2019 19:47:02 +0300
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Russell King <linux@armlinux.org.uk>
-Cc:     Vignesh Raghavendra <vigneshr@ti.com>,
-        Roger Quadros <rogerq@ti.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        iommu@lists.linux-foundation.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] arm highmem block I/O regression fix for 5.3
-Message-ID: <20190801164702.GA26365@infradead.org>
+        id S1733222AbfHAQzM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 12:55:12 -0400
+Received: from mx2.suse.de ([195.135.220.15]:34102 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1733208AbfHAQzM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Aug 2019 12:55:12 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 6893DAECA;
+        Thu,  1 Aug 2019 16:55:10 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 6CC5D1E3F4D; Thu,  1 Aug 2019 11:22:23 +0200 (CEST)
+Date:   Thu, 1 Aug 2019 11:22:23 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Sebastian Siewior <bigeasy@linutronix.de>,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Julia Cartwright <julia@ni.com>, Jan Kara <jack@suse.com>,
+        linux-ext4@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
+        Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, Mark Fasheh <mark@fasheh.com>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Joel Becker <jlbec@evilplan.org>
+Subject: Re: [patch V2 7/7] fs/jbd2: Free journal head outside of locked
+ region
+Message-ID: <20190801092223.GG25064@quack2.suse.cz>
+References: <20190801010126.245731659@linutronix.de>
+ <20190801010944.549462805@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20190801010944.549462805@linutronix.de>
 User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-And here is another somewhat unusual pull request, mostly because it
-touches almost entirely arch/arm, but to fix a block regression.
+On Thu 01-08-19 03:01:33, Thomas Gleixner wrote:
+> On PREEMPT_RT bit-spinlocks have the same semantics as on PREEMPT_RT=n,
+> i.e. they disable preemption. That means functions which are not safe to be
+> called in preempt disabled context on RT trigger a might_sleep() assert.
+> 
+> The journal head bit spinlock is mostly held for short code sequences with
+> trivial RT safe functionality, except for one place:
+> 
+> jbd2_journal_put_journal_head() invokes __journal_remove_journal_head()
+> with the journal head bit spinlock held. __journal_remove_journal_head()
+> invokes kmem_cache_free() which must not be called with preemption disabled
+> on RT.
+> 
+> Jan suggested to rework the removal function so the actual free happens
+> outside the bit-spinlocked region.
+> 
+> Split it into two parts:
+> 
+>   - Do the sanity checks and the buffer head detach under the lock
+> 
+>   - Do the actual free after dropping the lock
+> 
+> There is error case handling in the free part which needs to dereference
+> the b_size field of the now detached buffer head. Due to paranoia (caused
+> by ignorance) the size is retrieved in the detach function and handed into
+> the free function. Might be over-engineered, but better safe than sorry.
+> 
+> This makes the journal head bit-spinlock usage RT compliant and also avoids
+> nested locking which is not covered by lockdep.
+> 
+> Suggested-by: Jan Kara <jack@suse.com>
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> Cc: linux-ext4@vger.kernel.org
+> Cc: "Theodore Ts'o" <tytso@mit.edu>
+> Cc: Jan Kara <jack@suse.com>
 
-I would have preferred to feed this through the arm tree, but after
-the original thread in reply to the bug report I haven't heard anything
-back from Russell.
+Looks mostly good. Just a small suggestion for simplification below:
 
+> @@ -2559,11 +2568,14 @@ void jbd2_journal_put_journal_head(struc
+>  	J_ASSERT_JH(jh, jh->b_jcount > 0);
+>  	--jh->b_jcount;
+>  	if (!jh->b_jcount) {
+> -		__journal_remove_journal_head(bh);
+> +		size_t b_size = __journal_remove_journal_head(bh);
+> +
+>  		jbd_unlock_bh_journal_head(bh);
+> +		journal_release_journal_head(jh, b_size);
+>  		__brelse(bh);
 
-The following changes since commit 06532750010e06dd4b6d69983773677df7fc5291:
+The bh is pinned until you call __brelse(bh) above and bh->b_size doesn't
+change during the lifetime of the buffer. So there's no need of
+fetching bh->b_size in __journal_remove_journal_head() and passing it back.
+You can just:
 
-  dma-mapping: use dma_get_mask in dma_addressing_limited (2019-07-23 17:43:58 +0200)
+		journal_release_journal_head(jh, bh->b_size);
 
-are available in the Git repository at:
+> -	} else
+> +	} else {
+>  		jbd_unlock_bh_journal_head(bh);
+> +	}
+>  }
+>  
 
-  git://git.infradead.org/users/hch/dma-mapping.git tags/arm-swiotlb-5.3
-
-for you to fetch changes up to ad3c7b18c5b362be5dbd0f2c0bcf1fd5fd659315:
-
-  arm: use swiotlb for bounce buffering on LPAE configs (2019-07-24 17:29:01 +0200)
-
-----------------------------------------------------------------
-add swiotlb support to arm
-
-This fixes a cascade of regressions that originally started with
-the addition of the ia64 port, but only got fatal once we removed
-most uses of block layer bounce buffering in Linux 4.18.
-
-The reason is that while the original i386/PAE code that was the first
-architecture that supported > 4GB of memory without an iommu decided to
-leave bounce buffering to the subsystems, which in those days just mean
-block and networking as no one else consumer arbitrary userspace memory.
-
-Later with ia64, x86_64 and other ports we assumed that either an iommu
-or something that fakes it up ("software IOTLB" in beautiful Intel
-speak) is present and that subsystems can rely on that for dealing with
-addressing limitations in devices.   Except that the ARM LPAE scheme
-that added larger physical address to 32-bit ARM did not follow that
-scheme and thus only worked by chance and only for block and networking
-I/O directly to highmem.
-
-Long story, short fix - add swiotlb support to arm when build for LPAE
-platforms, which actuallys turns out to be pretty trivial with the
-modern dma-direct / swiotlb code to fix the Linux 4.18-ish regression.
-
-----------------------------------------------------------------
-Christoph Hellwig (2):
-      dma-mapping: check pfn validity in dma_common_{mmap,get_sgtable}
-      arm: use swiotlb for bounce buffering on LPAE configs
-
- arch/arm/include/asm/dma-mapping.h |  4 ++-
- arch/arm/mm/Kconfig                |  5 ++++
- arch/arm/mm/dma-mapping.c          | 61 ++++++++++++++++++++++++++++++++++++++
- arch/arm/mm/init.c                 |  5 ++++
- kernel/dma/mapping.c               | 13 ++++++--
- 5 files changed, 85 insertions(+), 3 deletions(-)
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
