@@ -2,71 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B97A87E510
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 23:59:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 63F417E530
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 00:05:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389305AbfHAV7w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 17:59:52 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:37995 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726403AbfHAV7v (ORCPT
+        id S2389335AbfHAWFP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 18:05:15 -0400
+Received: from hosting.gsystem.sk ([212.5.213.30]:59192 "EHLO
+        hosting.gsystem.sk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727987AbfHAWFP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 17:59:51 -0400
-Received: from pd9ef1cb8.dip0.t-ipconnect.de ([217.239.28.184] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1htJ6w-0003CC-Kb; Thu, 01 Aug 2019 23:59:46 +0200
-Date:   Thu, 1 Aug 2019 23:59:45 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Peter Zijlstra <peterz@infradead.org>
-cc:     "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Jerry Hoemann <jerry.hoemann@hpe.com>
-Subject: Re: [PATCH] perf/x86/amd: Change NMI latency mitigation to use a
- timestamp
-In-Reply-To: <20190801214813.GB2332@hirez.programming.kicks-ass.net>
-Message-ID: <alpine.DEB.2.21.1908012352390.1789@nanos.tec.linutronix.de>
-References: <833ee307989ac6bfb45efe823c5eca4b2b80c7cf.1564685848.git.thomas.lendacky@amd.com> <20190801211613.GB3578@hirez.programming.kicks-ass.net> <b4597324-6eb8-31fa-e911-63f3b704c974@amd.com> <alpine.DEB.2.21.1908012331550.1789@nanos.tec.linutronix.de>
- <20190801214813.GB2332@hirez.programming.kicks-ass.net>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Thu, 1 Aug 2019 18:05:15 -0400
+X-Greylist: delayed 396 seconds by postgrey-1.27 at vger.kernel.org; Thu, 01 Aug 2019 18:05:14 EDT
+Received: from [192.168.0.2] (188-167-68-178.dynamic.chello.sk [188.167.68.178])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by hosting.gsystem.sk (Postfix) with ESMTPSA id 043817A0215;
+        Thu,  1 Aug 2019 23:58:37 +0200 (CEST)
+From:   Ondrej Zary <linux@zary.sk>
+To:     Guenter Roeck <linux@roeck-us.net>
+Subject: Re: Marking legacy watchdog drivers as deprecated / obsolete
+Date:   Thu, 1 Aug 2019 23:58:34 +0200
+User-Agent: KMail/1.9.10
+Cc:     Arnd Bergmann <arnd@arndb.de>, linux-watchdog@cger.kernel.org,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20190729220720.GB5712@roeck-us.net> <CAK8P3a16dON3g-BzUOrdHu3ryCD+FyJn29EwcT_aQAdj-jvFnA@mail.gmail.com> <20190730155737.GA22593@roeck-us.net>
+In-Reply-To: <20190730155737.GA22593@roeck-us.net>
+X-KMail-QuotePrefix: > 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+Message-Id: <201908012358.34991.linux@zary.sk>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 1 Aug 2019, Peter Zijlstra wrote:
-> On Thu, Aug 01, 2019 at 11:34:23PM +0200, Thomas Gleixner wrote:
-> > Avoid the whole NMI mess, make the PMC interrupt a proper vector in the
-> > highest prio bucket and instead of using CLI/STI use CR8. That would have
-> > the additional advantage that we could prevent perf "NMI" then occsionally :)
+On Tuesday 30 July 2019 17:57:37 Guenter Roeck wrote:
+> On Tue, Jul 30, 2019 at 10:00:36AM +0200, Arnd Bergmann wrote:
+> > On Tue, Jul 30, 2019 at 12:07 AM Guenter Roeck <linux@roeck-us.net> wrote:
+> > >
+> > > Hi,
+> > >
+> > > we have recently seen a number of changes to legacy watchdog drivers,
+> > > mostly surrounding the coding style used some 10+ years ago, but also
+> > > fixing minor formatting or coding problems found by static analyzers.
+> > > This slowly rises above the level of background noise.
+> > >
+> > > Would it be acceptable to mark all those drivers as deprecated/obsolete,
+> > > warn users that the driver should be converted to use the watchdog
+> > > subsystem, and that it will otherwise be removed in a later Linux kernel
+> > > version ? This would give us an idea which drivers are still in use,
+> > > and it would enable us to remove the remaining drivers maybe 5 or 6
+> > > releases for now.
+> > >
+> > > Thoughts ?
+> > 
+> > I don't think an automated approach across 61 drivers is likely to work
+> > well. About half of the drivers appear to be for specific SoCs, and
+> > removing the watchdog driver while keeping the rest of the SoC support
+> > would not be helpful, it  just means we break one of the drivers for the
+> > last remaining users of an old SoC the next time they try to upgrade to
+> > a new kernel.
+> > 
 > 
-> Exactly, and not only the PMC, we can basically start giving out actual
-> vectors on register_nmi_handler() and do away with all that shared line
-> crap.
+> The primary goal would be to identify drivers still in use, and to trigger
+> efforts to convert those drivers to the new infrastructure. Removal of
+> obsolete / unused drivers would be a separate decision, to be made at some
+> point in the future, and individually for each driver. I specifically wasn't
+> trying to suggest auto-removal.
 > 
-> And then the actual NMI line will be mostly empty again, and it can read
-> its stupid slow reason port again.
+> Guenter
 > 
-> One complication though; IRET et al only do EFLAGS, not CR8, so that's
-> going to be massive fun :-(
+> > It would probably be helpful to go through the list and see if any of
+> > the drivers
+> > are for platforms that are already gone. FWIW, here is the list of drivers that
+> > have their own .ioctl() method, taken from a patch I'm sending soon
+> > to add a .compat_ioctl handler:
+> > 
+> > arch/powerpc/platforms/52xx/mpc52xx_gpt.c
+> > arch/um/drivers/harddog_kern.c
+> > drivers/char/ipmi/ipmi_watchdog.c
+> > drivers/hwmon/fschmd.c
+> > drivers/rtc/rtc-ds1374.c
+> > drivers/watchdog/acquirewdt.c
+> > drivers/watchdog/advantechwdt.c
+> > drivers/watchdog/alim1535_wdt.c
+> > drivers/watchdog/alim7101_wdt.c
+> > drivers/watchdog/ar7_wdt.c
+> > drivers/watchdog/at91rm9200_wdt.c
+> > drivers/watchdog/ath79_wdt.c
+> > drivers/watchdog/bcm63xx_wdt.c
+> > drivers/watchdog/cpu5wdt.c
+> > drivers/watchdog/eurotechwdt.c
+> > drivers/watchdog/f71808e_wdt.c
+> > drivers/watchdog/gef_wdt.c
+> > drivers/watchdog/geodewdt.c
+> > drivers/watchdog/ib700wdt.c
+> > drivers/watchdog/ibmasr.c
+> > drivers/watchdog/indydog.c
+> > drivers/watchdog/intel_scu_watchdog.c
+> > drivers/watchdog/iop_wdt.c
+> > drivers/watchdog/it8712f_wdt.c
+> > drivers/watchdog/ixp4xx_wdt.c
+> > drivers/watchdog/ks8695_wdt.c
+> > drivers/watchdog/m54xx_wdt.c
+> > drivers/watchdog/machzwd.c
+> > drivers/watchdog/mixcomwd.c
+> > drivers/watchdog/mtx-1_wdt.c
+> > drivers/watchdog/mv64x60_wdt.c
+> > drivers/watchdog/nuc900_wdt.c
+> > drivers/watchdog/nv_tco.c
+> > drivers/watchdog/pc87413_wdt.c
+> > drivers/watchdog/pcwd.c
+> > drivers/watchdog/pcwd_pci.c
+> > drivers/watchdog/pcwd_usb.c
+> > drivers/watchdog/pika_wdt.c
+> > drivers/watchdog/pnx833x_wdt.c
+> > drivers/watchdog/rc32434_wdt.c
+> > drivers/watchdog/rdc321x_wdt.c
+> > drivers/watchdog/riowd.c
+> > drivers/watchdog/sa1100_wdt.c
+> > drivers/watchdog/sb_wdog.c
+> > drivers/watchdog/sbc60xxwdt.c
+> > drivers/watchdog/sbc7240_wdt.c
+> > drivers/watchdog/sbc_epx_c3.c
+> > drivers/watchdog/sbc_fitpc2_wdt.c
+> > drivers/watchdog/sc1200wdt.c
+> > drivers/watchdog/sc520_wdt.c
+> > drivers/watchdog/sch311x_wdt.c
+> > drivers/watchdog/scx200_wdt.c
+> > drivers/watchdog/smsc37b787_wdt.c
+> > drivers/watchdog/w83877f_wdt.c
+> > drivers/watchdog/w83977f_wdt.c
+> > drivers/watchdog/wafer5823wdt.c
+> > drivers/watchdog/wdrtas.c
+> > drivers/watchdog/wdt.c
+> > drivers/watchdog/wdt285.c
+> > drivers/watchdog/wdt977.c
+> > drivers/watchdog/wdt_pci.c
+> > 
+> >       Arnd
 > 
-> Did I say I hates the x86 interrupt scheme?
 
-You're not alone.
+I have some older x86 boards so I probably could test some of them. Likely ALi chipset (alim1535_wdt.c and/or alim7101_wdt.c) and some super I/Os (it8712f_wdt.c, w83877f_wdt.c, w83977f_wdt.c).
 
-That stuff definitely violates article 3 of the Convention for the
-Protection of Human Rights and Fundamental Freedoms.
-
-
+-- 
+Ondrej Zary
