@@ -2,94 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67FE27DBB3
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 14:41:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 706CE7DBB8
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 14:44:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731407AbfHAMls (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 08:41:48 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:3694 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730319AbfHAMlr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 08:41:47 -0400
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id BFE41B0E29E4A17A32B1;
-        Thu,  1 Aug 2019 20:41:35 +0800 (CST)
-Received: from localhost (10.202.226.61) by DGGEMS407-HUB.china.huawei.com
- (10.3.19.207) with Microsoft SMTP Server id 14.3.439.0; Thu, 1 Aug 2019
- 20:41:34 +0800
-Date:   Thu, 1 Aug 2019 13:41:21 +0100
-From:   Jonathan Cameron <jonathan.cameron@huawei.com>
-To:     Rob Herring <robh+dt@kernel.org>
-CC:     Jonathan Cameron <jic23@kernel.org>,
-        Alexandru Ardelean <alexandru.ardelean@analog.com>,
-        "open list:IIO SUBSYSTEM AND DRIVERS" <linux-iio@vger.kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "Mark Brown" <broonie@kernel.org>
-Subject: Re: [PATCH 3/3][V4] dt-bindings: iio: imu: add bindings for
- ADIS16460
-Message-ID: <20190801134121.00003097@huawei.com>
-In-Reply-To: <CAL_JsqLXTnrtCr4hVVc9HrOkkvwGWk02EibdutfUBm4JDnJO5Q@mail.gmail.com>
-References: <20190723073641.27801-1-alexandru.ardelean@analog.com>
-        <20190723073641.27801-4-alexandru.ardelean@analog.com>
-        <20190727195623.42c8b4f3@archlinux>
-        <CAL_JsqLXTnrtCr4hVVc9HrOkkvwGWk02EibdutfUBm4JDnJO5Q@mail.gmail.com>
-Organization: Huawei
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; i686-w64-mingw32)
+        id S1731389AbfHAMnz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 08:43:55 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:46714 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731187AbfHAMnz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Aug 2019 08:43:55 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id B4DDD308FF23;
+        Thu,  1 Aug 2019 12:43:54 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.136])
+        by smtp.corp.redhat.com (Postfix) with SMTP id DE9E960A9F;
+        Thu,  1 Aug 2019 12:43:52 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Thu,  1 Aug 2019 14:43:54 +0200 (CEST)
+Date:   Thu, 1 Aug 2019 14:43:52 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Song Liu <songliubraving@fb.com>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        akpm@linux-foundation.org, matthew.wilcox@oracle.com,
+        kirill.shutemov@linux.intel.com, kernel-team@fb.com,
+        william.kucharski@oracle.com, srikar@linux.vnet.ibm.com
+Subject: Re: [PATCH v2 1/2] khugepaged: enable collapse pmd for pte-mapped THP
+Message-ID: <20190801124351.GA31538@redhat.com>
+References: <20190731183331.2565608-1-songliubraving@fb.com>
+ <20190731183331.2565608-2-songliubraving@fb.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.61]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190731183331.2565608-2-songliubraving@fb.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Thu, 01 Aug 2019 12:43:54 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 29 Jul 2019 17:24:40 -0600
-Rob Herring <robh+dt@kernel.org> wrote:
+On 07/31, Song Liu wrote:
+>
+> +void collapse_pte_mapped_thp(struct mm_struct *mm, unsigned long haddr)
+> +{
+> +	struct vm_area_struct *vma = find_vma(mm, haddr);
+> +	pmd_t *pmd = mm_find_pmd(mm, haddr);
+> +	struct page *hpage = NULL;
+> +	unsigned long addr;
+> +	spinlock_t *ptl;
+> +	int count = 0;
+> +	pmd_t _pmd;
+> +	int i;
+> +
+> +	VM_BUG_ON(haddr & ~HPAGE_PMD_MASK);
+> +
+> +	if (!vma || !pmd || pmd_trans_huge(*pmd))
+                            ^^^^^^^^^^^^^^^^^^^^
 
-> On Sat, Jul 27, 2019 at 12:56 PM Jonathan Cameron <jic23@kernel.org> wrote:
-> >
-> > On Tue, 23 Jul 2019 10:36:40 +0300
-> > Alexandru Ardelean <alexandru.ardelean@analog.com> wrote:
-> >  
-> > > This change adds device-tree bindings for the ADIS16460.
-> > >
-> > > Reviewed-by: Rob Herring <robh@kernel.org>
-> > > Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>  
-> >
-> > Really trivial, but convention (as driven by what git am -s does if nothing
-> > else, is to add extra tags in chronological order.  So Rob would be after
-> > you.  I tweaked it which I don't always remember to do.  
-> 
-> I'd argue it is in chronological order as the submitter added my tag
-> and then sent it out. If you applied it and added my tag, then it
-> would be after (but before yours).
+mm_find_pmd() returns NULL if pmd_trans_huge()
 
-Bike shedding to follow...
+> +	/* step 1: check all mapped PTEs are to the right huge page */
+> +	for (i = 0, addr = haddr; i < HPAGE_PMD_NR; i++, addr += PAGE_SIZE) {
+> +		pte_t *pte = pte_offset_map(pmd, addr);
+> +		struct page *page;
+> +
+> +		if (pte_none(*pte))
+> +			continue;
+> +
+> +		page = vm_normal_page(vma, addr, *pte);
+> +
+> +		if (!PageCompound(page))
+> +			return;
+> +
+> +		if (!hpage) {
+> +			hpage = compound_head(page);
+> +			if (hpage->mapping != vma->vm_file->f_mapping)
 
-Possibly but given you gave the Reviewed-by for v2, and it hasn't changed
-is Alex's the same Signed-off-by as seen on V2, or a new one reflecting the
-addition of your Reviewed-by? 
+Hmm. But how can we know this is still the same vma ?
 
-:)
+If nothing else, why vma->vm_file can't be NULL?
 
+Say, a process unmaps this memory after khugepaged_add_pte_mapped_thp()
+was called, then it does mmap(haddr, MAP_PRIVATE|MAP_ANONYMOUS), then
+do_huge_pmd_anonymous_page() installs a huge page at the same address,
+then split_huge_pmd() is called by any reason.
 
-> 
-> > It's not consistent across the kernel but I'll fight for my little corner
-> > to be :)  
-> 
-> More consistency would be nice then there's less tribal knowledge
-> about maintainers for submitters to learn.
-
-Agreed.
-
-Jonathan
-
-> 
-> Rob
-
+No?
 
