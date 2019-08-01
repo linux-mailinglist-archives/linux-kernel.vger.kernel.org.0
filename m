@@ -2,100 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 328047E496
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 23:01:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A61D7E498
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 23:03:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388934AbfHAVBH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 17:01:07 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:38252 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725846AbfHAVBG (ORCPT
+        id S2389025AbfHAVCM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 17:02:12 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:37624 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725846AbfHAVCL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 17:01:06 -0400
-Received: by mail-qt1-f193.google.com with SMTP id n11so71745055qtl.5;
-        Thu, 01 Aug 2019 14:01:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=At1IZWoUrcjzoFBo6+pPU11vzH0qsCf+6x4oe65bvIg=;
-        b=uStsrgDNX3A3NRNPBmsfEftPfszUtOF9JqpdBbxcAseb2Cp1nI6QJ4BVFu5H/rIZ8v
-         rbzDuskZ1BvP68LPeL0zq8ZjO/V5OD40IDX9ZX4jz0s3j6TiVwylL6qxzXVjoGygHzq9
-         NmtbEwgot5NskVLQwlSiyq0FuDuFiySrUDL+272PF2AvoPl6l1u6DBsQ8OlznD+uFli4
-         4OHGxfrZaIQUIYT2PfKT1uatEHmlFCJQpUua+5gcsJt6g8M0BXkEO+QPsDrI1K3I16L/
-         aTcKdJV9yk1ZrIuhzinYwy3k623M0pkPpqHfW8HbwvMAGxoiGTdSRxSA1LN1rg9S3KDA
-         /nmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=At1IZWoUrcjzoFBo6+pPU11vzH0qsCf+6x4oe65bvIg=;
-        b=asO6aDk2EJl6o6j7nzIcbGXZsoLRDcw836K0s+GuGY6scCSEwGmDxGH0bLIo2PVm86
-         nSPIEQCsk6RwM5QdqbBT6Vub3OS8U09Qc/YLytKlYmx/jEI3kwEPs6EqijIIcH/wZQP1
-         i+RJ4mJPm6077rKDVnjujXSlAXo8OfSwhLzcZucfkKI7eYZhz/z1m2H69X+DxR6A8LkM
-         NRIhoVUNSRN+DSeFZoOJ4FTYnh/phKcTiYVSWPTe3wv63UJhEr8ezPholZ+uq9imjsEv
-         3YFxL0ZtvzJaZ4XvE/oyaTxsScjtak7Yh7sSsM7lueUuCM6hADCF/RAJocWhV/nzygwE
-         iTnw==
-X-Gm-Message-State: APjAAAVaPOCP/PN+42shtcnt9wWJbpgaPxOEtmVz9PjiDAO2iavuK76s
-        YkP+eQmWKj2XhYzkLxnDB7ftgmrZZA3ZTXXfO4g=
-X-Google-Smtp-Source: APXvYqx0U8hwjSfrfGv5PCv/q1e/Y06r9RaTrs0m4NDxmC1Gv/TW5z0Gt4fs9Rq2NhPg85DUKv7yZUyFkk37Ay5yXaQ=
-X-Received: by 2002:ac8:2646:: with SMTP id v6mr91139076qtv.205.1564693265783;
- Thu, 01 Aug 2019 14:01:05 -0700 (PDT)
+        Thu, 1 Aug 2019 17:02:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=KMsX1I067RvRNUYw9CJeoatbWY3fZE8/7XDE1PlmR2w=; b=iByqbewtRsPhUGqwkOEFRueyc
+        c/ljbQS9LNGQMnqHzuUVNSToD7VLmVQ+d8aI/jd6Z/TkMqgRdgqB6VGDOC/3+7KWBsukkQpWPH+IW
+        XqojjWdP9qCHbFJykGd7cJHLi/x9GyTITewzQZtW9c00zQHezQBs55D7moSmpG2dZKC4a1foT/AMw
+        iqf0oAyGnzMpUXIwha/L0o/6tjKVzZzc/ENN8h/JxhriPPtsO7cyBCaX74pBuZ6Sk2xkupXr28el9
+        gb4fukq8iIzY3ip5ObMzpX0IHAAc8UjJLlzZmY2ACy0F0MdeqaA7FA5WlNrXPeSUgbqx/aIIeF5fX
+        biVlyw5fA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1htID8-0007uY-2f; Thu, 01 Aug 2019 21:02:06 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id DE5BF2029F4C9; Thu,  1 Aug 2019 23:02:03 +0200 (CEST)
+Date:   Thu, 1 Aug 2019 23:02:03 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Johannes Weiner <hannes@cmpxchg.org>
+Cc:     mingo@kernel.org, linux-kernel@vger.kernel.org,
+        Suren Baghdasaryan <surenb@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH 1/5] sched/pci: Reduce psimon FIFO priority
+Message-ID: <20190801210203.GA3578@hirez.programming.kicks-ass.net>
+References: <20190801111348.530242235@infradead.org>
+ <20190801111541.685367413@infradead.org>
+ <20190801174907.GA16554@cmpxchg.org>
 MIME-Version: 1.0
-References: <156431697805.3170.6377599347542228221.stgit@buzz>
- <20190729091738.GF9330@dhcp22.suse.cz> <3d6fc779-2081-ba4b-22cf-be701d617bb4@yandex-team.ru>
- <20190729103307.GG9330@dhcp22.suse.cz> <CAHbLzkrdj-O2uXwM8ujm90OcgjyR4nAiEbFtRGe7SOoY_fs=BA@mail.gmail.com>
- <20190729184850.GH9330@dhcp22.suse.cz>
-In-Reply-To: <20190729184850.GH9330@dhcp22.suse.cz>
-From:   Yang Shi <shy828301@gmail.com>
-Date:   Thu, 1 Aug 2019 14:00:51 -0700
-Message-ID: <CAHbLzkp9xFV2sE0TdKfWNRVcAwaYNKwDugRiBBoEKx6A_Hr3Jw@mail.gmail.com>
-Subject: Re: [PATCH RFC] mm/memcontrol: reclaim severe usage over high limit
- in get_user_pages loop
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        cgroups@vger.kernel.org, Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Johannes Weiner <hannes@cmpxchg.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190801174907.GA16554@cmpxchg.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 29, 2019 at 11:48 AM Michal Hocko <mhocko@kernel.org> wrote:
->
-> On Mon 29-07-19 10:28:43, Yang Shi wrote:
-> [...]
-> > I don't worry too much about scale since the scale issue is not unique
-> > to background reclaim, direct reclaim may run into the same problem.
->
-> Just to clarify. By scaling problem I mean 1:1 kswapd thread to memcg.
-> You can have thousands of memcgs and I do not think we really do want
-> to create one kswapd for each. Once we have a kswapd thread pool then we
-> get into a tricky land where a determinism/fairness would be non trivial
-> to achieve. Direct reclaim, on the other hand is bound by the workload
-> itself.
+On Thu, Aug 01, 2019 at 01:49:07PM -0400, Johannes Weiner wrote:
+> On Thu, Aug 01, 2019 at 01:13:49PM +0200, Peter Zijlstra wrote:
+> > PSI defaults to a FIFO-99 thread, reduce this to FIFO-1.
+> > 
+> > FIFO-99 is the very highest priority available to SCHED_FIFO and
+> > it not a suitable default; it would indicate the psi work is the
+> > most important work on the machine.
+> > 
+> > Since Real-Time tasks will have pre-allocated memory and locked it in
+> > place, Real-Time tasks do not care about PSI. All it needs is to be
+> > above OTHER.
+> > 
+> > Cc: Suren Baghdasaryan <surenb@google.com>
+> > Cc: Johannes Weiner <hannes@cmpxchg.org>
+> > Cc: Thomas Gleixner <tglx@linutronix.de>
+> > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> 
+> Acked-by: Johannes Weiner <hannes@cmpxchg.org>
 
-Yes, I agree thread pool would introduce more latency than dedicated
-kswapd thread. But, it looks not that bad in our test. When memory
-allocation is fast, even though dedicated kswapd thread can't catch
-up. So, such background reclaim is best effort, not guaranteed.
+Thanks!
 
-I don't quite get what you mean about fairness. Do you mean they may
-spend excessive cpu time then cause other processes starvation? I
-think this could be mitigated by properly organizing and setting
-groups. But, I agree this is tricky.
+> Subject should be s/pci/psi/
 
-Typically, the processes are placed into different cgroups according
-to their importance and priority. For example, in our cluster, system
-processes would go to system group, then latency sensitive jobs and
-batch jobs (they are usually second class citizens) go to different
-groups. The memcg kswapd would be enabled for latency sensitive groups
-only. The memcg kswapd threads would have the same priority with
-global kswapd.
-
-> --
-> Michal Hocko
-> SUSE Labs
+Yeah, already fixed that.. obviously one sees such typoes only after
+sending ;-)
