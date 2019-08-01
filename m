@@ -2,125 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3936A7D844
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 11:12:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A7697D857
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 11:18:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729792AbfHAJME (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 05:12:04 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:3730 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726799AbfHAJME (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 05:12:04 -0400
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 6772E82FFE7FD0B29AB6;
-        Thu,  1 Aug 2019 17:12:01 +0800 (CST)
-Received: from huawei.com (10.90.53.225) by DGGEMS409-HUB.china.huawei.com
- (10.3.19.209) with Microsoft SMTP Server id 14.3.439.0; Thu, 1 Aug 2019
- 17:11:52 +0800
-From:   Zhihao Cheng <chengzhihao1@huawei.com>
-To:     <richard@nod.at>, <yi.zhang@huawei.com>
-CC:     <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <chengzhihao1@huawei.com>
-Subject: [PATCH RFC] ubi: ubi_wl_get_peb: Replace a limited number of attempts with polling while getting PEB
-Date:   Thu, 1 Aug 2019 17:17:45 +0800
-Message-ID: <1564651065-4585-1-git-send-email-chengzhihao1@huawei.com>
-X-Mailer: git-send-email 2.7.4
+        id S1730762AbfHAJSs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 05:18:48 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:29607 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729792AbfHAJSs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Aug 2019 05:18:48 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 2FF1BC049D62;
+        Thu,  1 Aug 2019 09:18:47 +0000 (UTC)
+Received: from [10.36.116.245] (ovpn-116-245.ams2.redhat.com [10.36.116.245])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D633319C70;
+        Thu,  1 Aug 2019 09:18:43 +0000 (UTC)
+Subject: Re: [PATCH v2 0/5] Allocate memmap from hotadded memory
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Rashmica Gupta <rashmica.g@gmail.com>,
+        Oscar Salvador <osalvador@suse.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        pasha.tatashin@soleen.com, Jonathan.Cameron@huawei.com,
+        anshuman.khandual@arm.com, Vlastimil Babka <vbabka@suse.cz>,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20190702074806.GA26836@linux>
+ <CAC6rBskRyh5Tj9L-6T4dTgA18H0Y8GsMdC-X5_0Jh1SVfLLYtg@mail.gmail.com>
+ <20190731120859.GJ9330@dhcp22.suse.cz>
+ <4ddee0dd719abd50350f997b8089fa26f6004c0c.camel@gmail.com>
+ <20190801071709.GE11627@dhcp22.suse.cz>
+ <9bcbd574-7e23-5cfe-f633-646a085f935a@redhat.com>
+ <20190801072430.GF11627@dhcp22.suse.cz>
+ <e654aa97-6ab1-4069-60e6-fc099539729e@redhat.com>
+ <5e6137c9-5269-5756-beaa-d116652be8b9@redhat.com>
+ <20190801073957.GH11627@dhcp22.suse.cz>
+ <20190801074836.GI11627@dhcp22.suse.cz>
+From:   David Hildenbrand <david@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <48340e96-7e6b-736f-9e23-d3111b915b6e@redhat.com>
+Date:   Thu, 1 Aug 2019 11:18:42 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.90.53.225]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20190801074836.GI11627@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Thu, 01 Aug 2019 09:18:47 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Running pressure test io_paral (A pressure ubi test in mtd-utils) on an
-UBI device with fewer PEBs (fastmap enabled) may cause ENOSPC errors and
-make UBI device read-only, but there are still free PEBs on the UBI
-device. This problem can be easily reproduced by performing the following
-steps on a 2-core machine:
-  $ modprobe nandsim first_id_byte=0x20 second_id_byte=0x33 parts=80
-  $ modprobe ubi mtd="0,0" fm_autoconvert
-  $ ./io_paral /dev/ubi0
+On 01.08.19 09:48, Michal Hocko wrote:
+> On Thu 01-08-19 09:39:57, Michal Hocko wrote:
+>> On Thu 01-08-19 09:31:09, David Hildenbrand wrote:
+>>> On 01.08.19 09:26, David Hildenbrand wrote:
+>> [...]
+>>>> I am not sure about the implications of having
+>>>> pfn_valid()/pfn_present()/pfn_online() return true but accessing it
+>>>> results in crashes. (suspend, kdump, whatever other technology touches
+>>>> online memory)
+>>>
+>>> (oneidea: we could of course go ahead and mark the pages PG_offline
+>>> before unmapping the pfn range to work around these issues)
+>>
+>> PG_reserved and an elevated reference count should be enough to drive
+>> any pfn walker out. Pfn walkers shouldn't touch any page unless they
+>> know and recognize their type.
+> 
+> Btw. this shouldn't be much different from DEBUG_PAGE_ALLOC in
+> principle. The memory is valid, but not mapped to the kernel virtual
+> space. Nobody should be really touching it anyway.
+> 
 
-We may see the following verbose:
-(output)
-  [io_paral] update_volume():105: function write() failed with error 30
-  (Read-only file system)
-  [io_paral] update_volume():108: failed to write 380 bytes at offset
-  95920 of volume 2
-  [io_paral] update_volume():109: update: 97088 bytes
-  [io_paral] write_thread():227: function pwrite() failed with error 28
-  (No space left on device)
-  [io_paral] write_thread():229: cannot write 15872 bytes to offs 31744,
-  wrote -1
-(dmesg)
-  ubi0 error: ubi_wl_get_peb [ubi]: Unable to get a free PEB from user WL
-  pool
-  ubi0 warning: ubi_eba_write_leb [ubi]: switch to read-only mode
-  ubi0 error: ubi_io_write [ubi]: read-only mode
-  CPU: 0 PID: 2027 Comm: io_paral Not tainted 5.3.0-rc2-00001-g5986cd0 #9
-  ubi0 warning: try_write_vid_and_data [ubi]: failed to write VID header
-  to LEB 2:5, PEB 18
-  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.12.0
-  -0-ga698c8995f-prebuilt.qemu.org 04/01/2014
-  Call Trace:
-   dump_stack+0x85/0xba
-   ubi_eba_write_leb+0xa1e/0xa40 [ubi]
-   vol_cdev_write+0x307/0x520 [ubi]
-  ubi0 error: vol_cdev_write [ubi]: cannot accept more 380 bytes of data,
-  error -30
-   vfs_write+0xfa/0x280
-   ksys_pwrite64+0xc5/0xe0
-   __x64_sys_pwrite64+0x22/0x30
-   do_syscall_64+0xbf/0x440
+I guess that could work (I am happy with anything that gets rid of
+offline_pages()/device_online() here :D ).
 
-In function ubi_wl_get_peb, the operation of filling the pool
-(ubi_update_fastmap) with free PEBs and fetching a free PEB from the pool
-is not atomic. After thread A filling the pool with free PEB, free PEB may
-be taken away by thread B. When thread A checks the expression again, the
-condition is still unsatisfactory. At this time, there may still be free
-PEBs on UBI that can be filled into the pool.
-So, ubi_wl_get_peb (in fastmap-wil.c) should be implemented to obtain a
-free PEB by polling method. The polling exit condition is that there is
-no free PEBs on UBI, no free PEBs in pool, and ubi->works_count is 0.
+So for each node, alloc_contig_range() (if I remember correctly, all
+pages in the range have to be in the same zone), set them PG_reserved (+
+maybe something else, we'll have to see). Then, unmap them.
 
-Signed-off-by: Zhihao Cheng <chengzhihao1@huawei.com>
----
- drivers/mtd/ubi/fastmap-wl.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+The reverse when freeing the memory. Guess this should leave the current
+user space interface unmodified.
 
-diff --git a/drivers/mtd/ubi/fastmap-wl.c b/drivers/mtd/ubi/fastmap-wl.c
-index d9e2e3a..c5512cf 100644
---- a/drivers/mtd/ubi/fastmap-wl.c
-+++ b/drivers/mtd/ubi/fastmap-wl.c
-@@ -196,7 +196,7 @@ static int produce_free_peb(struct ubi_device *ubi)
-  */
- int ubi_wl_get_peb(struct ubi_device *ubi)
- {
--	int ret, retried = 0;
-+	int ret;
- 	struct ubi_fm_pool *pool = &ubi->fm_pool;
- 	struct ubi_fm_pool *wl_pool = &ubi->fm_wl_pool;
- 
-@@ -220,13 +220,14 @@ int ubi_wl_get_peb(struct ubi_device *ubi)
- 	}
- 
- 	if (pool->used == pool->size) {
--		spin_unlock(&ubi->wl_lock);
--		if (retried) {
-+		if (!ubi->free.rb_node && ubi->works_count == 0) {
- 			ubi_err(ubi, "Unable to get a free PEB from user WL pool");
-+			ubi_assert(list_empty(&ubi->works));
-+			spin_unlock(&ubi->wl_lock);
- 			ret = -ENOSPC;
- 			goto out;
- 		}
--		retried = 1;
-+		spin_unlock(&ubi->wl_lock);
- 		up_read(&ubi->fm_eba_sem);
- 		ret = produce_free_peb(ubi);
- 		if (ret < 0) {
+I can see that guard pages use a special page type (PageGuard), not sure
+if something like that is really required. We'll have to see.
+
 -- 
-2.7.4
 
+Thanks,
+
+David / dhildenb
