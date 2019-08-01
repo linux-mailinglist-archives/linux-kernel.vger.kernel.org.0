@@ -2,52 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B87A7E661
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 01:17:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BF2CF7E65B
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 01:17:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388060AbfHAXRf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 19:17:35 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:65044 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2387739AbfHAXRS (ORCPT
+        id S2387612AbfHAXRO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 19:17:14 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:8076 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1733204AbfHAXRO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 19:17:18 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x71NDATN072139;
+        Thu, 1 Aug 2019 19:17:14 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x71NDBav026681;
         Thu, 1 Aug 2019 19:16:38 -0400
 Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2u48hahy5q-1
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2u486f2jxr-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
         Thu, 01 Aug 2019 19:16:38 -0400
-Received: from m0098393.ppops.net (m0098393.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x71NDPRH073359;
+Received: from m0098421.ppops.net (m0098421.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x71NDDde027001;
         Thu, 1 Aug 2019 19:16:38 -0400
-Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2u48hahy4u-1
+Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2u486f2jx9-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
         Thu, 01 Aug 2019 19:16:37 -0400
-Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
-        by ppma04dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x71NG23f024654;
+Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
+        by ppma02dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x71NG3kN012991;
         Thu, 1 Aug 2019 23:16:37 GMT
 Received: from b01cxnp23033.gho.pok.ibm.com (b01cxnp23033.gho.pok.ibm.com [9.57.198.28])
-        by ppma04dal.us.ibm.com with ESMTP id 2u0e879eee-1
+        by ppma02dal.us.ibm.com with ESMTP id 2u0e85xguv-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 01 Aug 2019 23:16:36 +0000
+        Thu, 01 Aug 2019 23:16:37 +0000
 Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x71NGaG449414460
+        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x71NGaBK31195634
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
         Thu, 1 Aug 2019 23:16:36 GMT
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 13A3CB2067;
+        by IMSVA (Postfix) with ESMTP id 1AC4BB206A;
         Thu,  1 Aug 2019 23:16:36 +0000 (GMT)
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EA765B2070;
+        by IMSVA (Postfix) with ESMTP id 00A46B206B;
         Thu,  1 Aug 2019 23:16:35 +0000 (GMT)
 Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.154])
         by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
         Thu,  1 Aug 2019 23:16:35 +0000 (GMT)
 Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 2024316C9A50; Thu,  1 Aug 2019 16:16:37 -0700 (PDT)
+        id 2516416C9A51; Thu,  1 Aug 2019 16:16:37 -0700 (PDT)
 From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
 To:     rcu@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
@@ -57,9 +57,9 @@ Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
         "Paul E. McKenney" <paulmck@linux.ibm.com>
-Subject: [PATCH tip/core/rcu 09/10] rcu/nocb: Reduce ->nocb_lock contention with separate ->nocb_gp_lock
-Date:   Thu,  1 Aug 2019 16:16:34 -0700
-Message-Id: <20190801231636.23115-9-paulmck@linux.ibm.com>
+Subject: [PATCH tip/core/rcu 10/10] rcu/nocb: Unconditionally advance and wake for excessive CBs
+Date:   Thu,  1 Aug 2019 16:16:35 -0700
+Message-Id: <20190801231636.23115-10-paulmck@linux.ibm.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190801231619.GA22610@linux.ibm.com>
 References: <20190801231619.GA22610@linux.ibm.com>
@@ -67,7 +67,7 @@ X-TM-AS-GCONF: 00
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-01_10:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=13 phishscore=0 bulkscore=0 spamscore=0
+ malwarescore=0 suspectscore=15 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
  mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1906280000 definitions=main-1908010245
@@ -76,67 +76,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The sleep/wakeup of the no-CBs grace-period kthreads is synchronized
-using the ->nocb_lock of the first CPU corresponding to that kthread.
-This commit provides a separate ->nocb_gp_lock for this purpose, thus
-reducing contention on ->nocb_lock.
+When there are excessive numbers of callbacks, and when either the
+corresponding no-CBs callback kthread is asleep or there is no more
+ready-to-invoke callbacks, and when least one callback is pending,
+__call_rcu_nocb_wake() will advance the callbacks, but refrain from
+awakening the corresponding no-CBs grace-period kthread.  However,
+because rcu_advance_cbs_nowake() is used, it is possible (if a bit
+unlikely) that the needed advancement could not happen due to a grace
+period not being in progress.  Plus there will always be at least one
+pending callback due to one having just now been enqueued.
+
+This commit therefore attempts to advance callbacks and awakens the
+no-CBs grace-period kthread when there are excessive numbers of callbacks
+posted and when the no-CBs callback kthread is not in a position to do
+anything helpful.
 
 Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
 ---
- kernel/rcu/tree.h        | 3 ++-
- kernel/rcu/tree_plugin.h | 9 +++++----
- 2 files changed, 7 insertions(+), 5 deletions(-)
+ kernel/rcu/tree_plugin.h | 16 +++++++++++-----
+ 1 file changed, 11 insertions(+), 5 deletions(-)
 
-diff --git a/kernel/rcu/tree.h b/kernel/rcu/tree.h
-index 7062f9d9c053..2c3e9068671c 100644
---- a/kernel/rcu/tree.h
-+++ b/kernel/rcu/tree.h
-@@ -202,7 +202,8 @@ struct rcu_data {
- 	struct timer_list nocb_timer;	/* Enforce finite deferral. */
- 
- 	/* The following fields are used by GP kthread, hence own cacheline. */
--	bool nocb_gp_sleep ____cacheline_internodealigned_in_smp;
-+	raw_spinlock_t nocb_gp_lock ____cacheline_internodealigned_in_smp;
-+	bool nocb_gp_sleep;
- 					/* Is the nocb GP thread asleep? */
- 	struct swait_queue_head nocb_gp_wq; /* For nocb kthreads to sleep on. */
- 	bool nocb_cb_sleep;		/* Is the nocb CB thread asleep? */
 diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
-index 7fbf2c4411a1..af9cbc7d4784 100644
+index af9cbc7d4784..e164d2c5fa93 100644
 --- a/kernel/rcu/tree_plugin.h
 +++ b/kernel/rcu/tree_plugin.h
-@@ -1602,9 +1602,9 @@ static void wake_nocb_gp(struct rcu_data *rdp, bool force,
- 		del_timer(&rdp->nocb_timer);
- 		rcu_nocb_unlock_irqrestore(rdp, flags);
- 		smp_mb(); /* enqueue before ->nocb_gp_sleep. */
--		rcu_nocb_lock_irqsave(rdp_gp, flags);
-+		raw_spin_lock_irqsave(&rdp_gp->nocb_gp_lock, flags);
- 		WRITE_ONCE(rdp_gp->nocb_gp_sleep, false);
--		rcu_nocb_unlock_irqrestore(rdp_gp, flags);
-+		raw_spin_unlock_irqrestore(&rdp_gp->nocb_gp_lock, flags);
- 		wake_up_process(rdp_gp->nocb_gp_kthread);
+@@ -1666,13 +1666,19 @@ static void __call_rcu_nocb_wake(struct rcu_data *rdp, bool was_alldone,
+ 		if (!rdp->nocb_cb_sleep &&
+ 		    rcu_segcblist_ready_cbs(&rdp->cblist)) {
+ 			// Already going full tilt, so don't try to rewake.
+-		} else if (rcu_segcblist_pend_cbs(&rdp->cblist)) {
+-			rcu_advance_cbs_nowake(rdp->mynode, rdp);
++			rcu_nocb_unlock_irqrestore(rdp, flags);
+ 		} else {
+-			wake_nocb_gp_defer(rdp, RCU_NOCB_WAKE_FORCE,
+-					   TPS("WakeOvfIsDeferred"));
++			rcu_advance_cbs_nowake(rdp->mynode, rdp);
++			if (!irqs_disabled_flags(flags)) {
++				wake_nocb_gp(rdp, false, flags);
++				trace_rcu_nocb_wake(rcu_state.name, rdp->cpu,
++						    TPS("WakeOvf"));
++			} else {
++				wake_nocb_gp_defer(rdp, RCU_NOCB_WAKE_FORCE,
++						   TPS("WakeOvfIsDeferred"));
++				rcu_nocb_unlock_irqrestore(rdp, flags);
++			}
+ 		}
+-		rcu_nocb_unlock_irqrestore(rdp, flags);
  	} else {
+ 		trace_rcu_nocb_wake(rcu_state.name, rdp->cpu, TPS("WakeNot"));
  		rcu_nocb_unlock_irqrestore(rdp, flags);
-@@ -1759,9 +1759,9 @@ static void nocb_gp_wait(struct rcu_data *my_rdp)
- 		trace_rcu_this_gp(rnp, my_rdp, wait_gp_seq, TPS("EndWait"));
- 	}
- 	if (!rcu_nocb_poll) {
--		rcu_nocb_lock_irqsave(my_rdp, flags);
-+		raw_spin_lock_irqsave(&my_rdp->nocb_gp_lock, flags);
- 		WRITE_ONCE(my_rdp->nocb_gp_sleep, true);
--		rcu_nocb_unlock_irqrestore(my_rdp, flags);
-+		raw_spin_unlock_irqrestore(&my_rdp->nocb_gp_lock, flags);
- 	}
- 	WARN_ON(signal_pending(current));
- }
-@@ -1941,6 +1941,7 @@ static void __init rcu_boot_init_nocb_percpu_data(struct rcu_data *rdp)
- 	init_swait_queue_head(&rdp->nocb_cb_wq);
- 	init_swait_queue_head(&rdp->nocb_gp_wq);
- 	raw_spin_lock_init(&rdp->nocb_lock);
-+	raw_spin_lock_init(&rdp->nocb_gp_lock);
- 	timer_setup(&rdp->nocb_timer, do_nocb_deferred_wakeup_timer, 0);
- }
- 
 -- 
 2.17.1
 
