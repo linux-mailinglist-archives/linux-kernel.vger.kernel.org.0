@@ -2,127 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B0757DA2B
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 13:20:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A4E8C7DA2A
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 13:20:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730799AbfHALUC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 07:20:02 -0400
-Received: from mxserver10-out4.masterweb.com ([103.25.223.113]:49719 "EHLO
-        mxserver10-out4.masterweb.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728754AbfHALUC (ORCPT
+        id S1730165AbfHALTt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 07:19:49 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:38684 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728065AbfHALTs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 07:20:02 -0400
-X-Greylist: delayed 1907 seconds by postgrey-1.27 at vger.kernel.org; Thu, 01 Aug 2019 07:20:00 EDT
-Received: from [103.229.72.90] (helo=cl450110x.maintenis.com)
-        by mxserver10.masterweb.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89)
-        (envelope-from <fadil@dss-shipping.co.id>)
-        id 1ht8Zl-0007JL-Bj; Thu, 01 Aug 2019 17:45:18 +0700
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=dss-shipping.co.id; s=default; h=Message-ID:Reply-To:Subject:To:From:Date:
-        Content-Transfer-Encoding:Content-Type:MIME-Version:Sender:Cc:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=pzHgJF3rUtdT9TR+nYNNAsjpO6LBjng0EyjCfnBe03c=; b=hzUOAjWGNoL7tjuro41FFJQl9V
-        rtLFccL37PCdMXa5UeVDBxa1WCH9TEUuqyId5qRHhjhESOgyXNCpva25RTYRlVTQajrsNM7yooKlj
-        G3lThaSHFoA6kAGIaFx9S+om1Aijc6KwNfojGAShliZgPt7gvuCCSk731OELDsAUGhkn9icd9RbA2
-        TkFzEmB7TR0RIZSw3LsQTkteW/6qXnMz0H5DNYk0KQNDfG5RYvy6HPsFKu0B0UtycA/ziP/0wiGbc
-        QU9hK6VAEx5cLzh0OBmQGmTO+KUBa/oGIXZ7EXfN3D8aygFOco6hKq8RIRbj69aH42a/bbWBJM97z
-        5CfjjtcQ==;
-Received: from [::1] (port=39234 helo=cl450110x.maintenis.com)
-        by cl450110x.maintenis.com with esmtpa (Exim 4.92)
-        (envelope-from <fadil@dss-shipping.co.id>)
-        id 1ht8PS-0001od-LG; Thu, 01 Aug 2019 06:34:10 -0400
+        Thu, 1 Aug 2019 07:19:48 -0400
+Received: by mail-ed1-f65.google.com with SMTP id r12so34013026edo.5
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2019 04:19:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=qkKpSTDuuwbIMR/7MbiNrB08VgfKwqP+sli4OTfz1gY=;
+        b=Yzt1J203i5UaLb2ByniXCHSrE3OhEgnQfeu54s8xJucGCdyxoKsLbHGRhZsFRJpNrV
+         F7zCOoVhdnnd+cfX0k0Bi0XvxD+Et5ZfpdlHyX/egg+VJ7fC6/tbb2Ewry0WiYu9rQ3L
+         wvgU+2TdbrfP3wwSbAVAtW0RUhVq4hOugmAZZrv8MT05kS4Eek87hzHHdcs8XxpBLYn0
+         7615oJ4D9zlLCIcJPyWyfvwwGm9vtX1ys+2UvvDqJQHTIcqwtjRDolSm3K57UNVyW7OO
+         BUDrc/ihfpfHmn05kCOru0irD6vVDgUhNNu3ncF+VJIGNavENV4OEmyrirRLZJuVEgf9
+         uiOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=qkKpSTDuuwbIMR/7MbiNrB08VgfKwqP+sli4OTfz1gY=;
+        b=K0min77fFsfcrqBKy9lEYM4Htar/H4RoS54F7pJtVJ22j87gcGYugYP3xM9qNwGOhJ
+         +dyNuzVdXg2MkLEVxIeJgdY1Pi7Y+FqwSUI1FA+2LfmKMuFeFXxxIJPJyKC4/+LjTP3l
+         382qDeTHpO6dDFCzg5OKObib6JXjEtVjXEOXhHBRG00VqvVfV6Mp/CPQRsd7Hfl2dE4q
+         VQ4lZeL4+13Wot6/eLPs6brOIobCBsT7D+0x6u2ObJDO2dmg7wSMF7oqBLSpTok/VZHE
+         T5nsr7x4ynLOeweylzI+VOxAxIYJvMDW2QEPKIj4wfaxe1BalxTOJrb415JEAJ232cSS
+         fmmw==
+X-Gm-Message-State: APjAAAVcZTd8TT9r/bJid+bxS6UXJnxcYv2Xrds481UKL8kfAQkDqXyd
+        glYnt4lTaSwHxUbXgNsad+Y=
+X-Google-Smtp-Source: APXvYqyF6SX0CWzPPaoMgH0374aYW1XGVWRamvSqB0icTKG4hTO5BH/o437WyHbZv3Vt63NUESQFzg==
+X-Received: by 2002:a50:89a6:: with SMTP id g35mr116231607edg.145.1564658386729;
+        Thu, 01 Aug 2019 04:19:46 -0700 (PDT)
+Received: from box.localdomain ([86.57.175.117])
+        by smtp.gmail.com with ESMTPSA id fk15sm13004072ejb.42.2019.08.01.04.19.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 01 Aug 2019 04:19:46 -0700 (PDT)
+Received: by box.localdomain (Postfix, from userid 1000)
+        id AF846101E94; Thu,  1 Aug 2019 14:19:45 +0300 (+03)
+Date:   Thu, 1 Aug 2019 14:19:45 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Song Liu <songliubraving@fb.com>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        akpm@linux-foundation.org, matthew.wilcox@oracle.com,
+        kirill.shutemov@linux.intel.com, oleg@redhat.com,
+        kernel-team@fb.com, william.kucharski@oracle.com,
+        srikar@linux.vnet.ibm.com
+Subject: Re: [PATCH v2 0/2] khugepaged: collapse pmd for pte-mapped THP
+Message-ID: <20190801111945.t5jw3vivvfun4n27@box>
+References: <20190731183331.2565608-1-songliubraving@fb.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Thu, 01 Aug 2019 06:34:01 -0400
-From:   ALBT <fadil@dss-shipping.co.id>
-To:     undisclosed-recipients:;
-Subject: Hallo
-Reply-To: info.attltz244@gmail.com
-Mail-Reply-To: info.attltz244@gmail.com
-Message-ID: <8f0d034415c9e8393ee9154674d13a25@dss-shipping.co.id>
-X-Sender: fadil@dss-shipping.co.id
-User-Agent: Roundcube Webmail/1.3.8
-X-Originating-IP: 103.229.72.90
-X-MasterWebNetwork-Domain: cl450110x.maintenis.com
-X-MasterWebNetwork-Username: 103.229.72.90
-Authentication-Results: masterweb.com; auth=pass smtp.auth=103.229.72.90@cl450110x.maintenis.com
-X-MasterWebNetwork-Outgoing-Class: unsure
-X-MasterWebNetwork-Outgoing-Evidence: Combined (0.63)
-X-Recommended-Action: accept
-X-Filter-ID: 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
-X-Report-Abuse-To: spam@mxserver1.masterweb.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190731183331.2565608-1-songliubraving@fb.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Jul 31, 2019 at 11:33:29AM -0700, Song Liu wrote:
+> Changes v1 => v2:
+> 1. Call collapse_pte_mapped_thp() directly from uprobe_write_opcode();
+> 2. Add VM_BUG_ON() for addr alignment in khugepaged_add_pte_mapped_thp()
+>    and collapse_pte_mapped_thp().
+> 
+> This set is the newer version of 5/6 and 6/6 of [1]. Newer version of
+> 1-4 of the work [2] was recently picked by Andrew.
+> 
+> Patch 1 enables khugepaged to handle pte-mapped THP. These THPs are left
+> in such state when khugepaged failed to get exclusive lock of mmap_sem.
+> 
+> Patch 2 leverages work in 1 for uprobe on THP. After [2], uprobe only
+> splits the PMD. When the uprobe is disabled, we get pte-mapped THP.
+> After this set, these pte-mapped THP will be collapsed as pmd-mapped.
+> 
+> [1] https://lkml.org/lkml/2019/6/23/23
+> [2] https://www.spinics.net/lists/linux-mm/msg185889.html
+> 
+> Song Liu (2):
+>   khugepaged: enable collapse pmd for pte-mapped THP
+>   uprobe: collapse THP pmd after removing all uprobes
 
-Hello,
+Looks good for the start.
 
-We have some grant on your familyname kindly Contact me here 
-"{info.attltz244(at)gmail.com}" for more.
+Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 
-Regards,
-Albrecht
+-- 
+ Kirill A. Shutemov
