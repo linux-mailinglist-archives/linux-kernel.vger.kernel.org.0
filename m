@@ -2,127 +2,196 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 70BDC7DDF9
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 16:35:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C041F7DDFE
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 16:36:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732096AbfHAOfW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 10:35:22 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:45989 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732065AbfHAOfV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 10:35:21 -0400
-Received: by mail-qt1-f195.google.com with SMTP id x22so65498168qtp.12
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2019 07:35:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=p45ES7b7NK+c/udqJP6oKfrqjRszRW+7OJRl6m1ohCs=;
-        b=SEohqPa5AGP4DnjdyYthjCULQLq5iN+YIanfrlKdV6i3f8NFWX0ZL0lODdukT1JhFa
-         oyTlBLnrpTfsPLVODoF9JRo0y3HF7+YszLNGL6DW9qKxWGipFntdghc8b4lhBCstKgFK
-         kbn3XWj4ORV/EvWWmR4g6XiMdpbBbfB0LXvP76U8rWtrEBhvvS5flbvUd8ZO6M2pWB6o
-         /lsllwtOid2SOG3egQ9+tZFmd9D2MQ7NVLBSKhmRjH2F9HDczIiPBgNYxywJR+Z+3IW7
-         ldvlSpPkainjUSKoA6bOev8S3w8Hul2huZONqb3F8qmVUMhc1UjmUsQ8JETRv44u3kP/
-         wQsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=p45ES7b7NK+c/udqJP6oKfrqjRszRW+7OJRl6m1ohCs=;
-        b=K0vuN7uW/vHbtqbHV352gZXD2O5rBS9drLz/XnOIr+KbhSomaV5F0jy4GgwBcCHvhE
-         yNNuL5lyzuuLdgJixHQWNGD9g/zTvxZ0lwvuo7JMhKfOjCJAbPi6yRh08i9oebUnGeXU
-         9e4xYVJxeoxeuM2nacUo94St1sSOnMDorfGaHPmWOtvvylJsRJtOOXKInGoJmvxycjLo
-         nok15h7C5i/zXGVsOPqfRzqhu+HrSO2hZvFMXreTXzzRVGS9ncUkAiEerRelQxoJ7+pO
-         1+u7uENgZf0nHExDd98kCYQO/hqnaTsv7bVtn6hsEdmw+/p1fSRfS00l101blsDrOnbj
-         rSuQ==
-X-Gm-Message-State: APjAAAVutoJ7qAp9Iat3UAVT7qInnXlx3YGWwEpGR0B8AUOSKr7ItTpu
-        mHSYvU2WGLKL+das5i7QnwM=
-X-Google-Smtp-Source: APXvYqzUjwMw3GDo+RfKG5TirOPfv3LplbWQMkxlOS/vwn1v7YhxfMOtg3orzfwAnkVeoQN7FGm6zA==
-X-Received: by 2002:a0c:ac98:: with SMTP id m24mr95586715qvc.9.1564670120245;
-        Thu, 01 Aug 2019 07:35:20 -0700 (PDT)
-Received: from quaco.ghostprotocols.net (189-94-128-63.3g.claro.net.br. [189.94.128.63])
-        by smtp.gmail.com with ESMTPSA id r36sm38146276qte.71.2019.08.01.07.35.18
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 01 Aug 2019 07:35:19 -0700 (PDT)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id DEE3140340; Thu,  1 Aug 2019 11:35:15 -0300 (-03)
-Date:   Thu, 1 Aug 2019 11:35:15 -0300
-To:     Jiri Olsa <jolsa@kernel.org>
-Cc:     Satheesh Rajendran <sathnaga@linux.vnet.ibm.com>,
-        Michael Petlan <mpetlan@redhat.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Andi Kleen <ak@linux.intel.com>
-Subject: Re: [PATCH] perf bench numa: Fix cpu0 binding
-Message-ID: <20190801143515.GB19710@kernel.org>
-References: <20190801142642.28004-1-jolsa@kernel.org>
+        id S1732119AbfHAOgW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 10:36:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56074 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731397AbfHAOgV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Aug 2019 10:36:21 -0400
+Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 38C68214DA;
+        Thu,  1 Aug 2019 14:36:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564670179;
+        bh=gNavx9bU2HfWoYxCWFKAghweKbumZo3LkXjbFk543Fs=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=j86hI4avSMlrEkB2xUPvszkv+w/kjcNG3MznkbXhgGqAl3nbzUtO7g9XaExXEWayk
+         uNlvALJ1Yx7/xWfdAfbLHJkh/+f1+qyknXC+qijbBpFrMqhUvGq8TcqQfNBgngARL3
+         6eOQYpcJoUoDWsUWqK/aJmWkqz/8SFP1W5ri8XKQ=
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Cc:     mhiramat@kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Dan Rue <dan.rue@linaro.org>,
+        Matt Hart <matthew.hart@linaro.org>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Daniel Diaz <daniel.diaz@linaro.org>,
+        "Paul E . McKenney" <paulmck@linux.ibm.com>
+Subject: [PATCH v4] arm64: Make debug exception handlers visible from RCU
+Date:   Thu,  1 Aug 2019 23:36:14 +0900
+Message-Id: <156467017472.19457.9270489483493488031.stgit@devnote2>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190801073737.wrhespf5xh3qudil@willie-the-truck>
+References: <20190801073737.wrhespf5xh3qudil@willie-the-truck>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190801142642.28004-1-jolsa@kernel.org>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.12.0 (2019-05-25)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu, Aug 01, 2019 at 04:26:42PM +0200, Jiri Olsa escreveu:
-> Michael reported an issue with perf bench numa failing with
-> binding to cpu0 with '-0' option.
-> 
->   # perf bench numa mem -p 3 -t 1 -P 512 -s 100 -zZcm0 --thp 1 -M 1 -ddd
->   # Running 'numa/mem' benchmark:
-> 
->    # Running main, "perf bench numa numa-mem -p 3 -t 1 -P 512 -s 100 -zZcm0 --thp 1 -M 1 -ddd"
->   binding to node 0, mask: 0000000000000001 => -1
->   perf: bench/numa.c:356: bind_to_memnode: Assertion `!(ret)' failed.
->   Aborted (core dumped)
-> 
-> This happens when the cpu0 is not part of node0,
-> which is the benchmark assumption and we can see
-> that's not the case for some powerpc servers.
-> 
-> Using correct node for cpu0 binding.
+Make debug exceptions visible from RCU so that synchronize_rcu()
+correctly track the debug exception handler.
 
-Thanks, applied to perf/urgent.
+This also introduces sanity checks for user-mode exceptions as same
+as x86's ist_enter()/ist_exit().
 
-- Arnaldo
+The debug exception can interrupt in idle task. For example, it warns
+if we put a kprobe on a function called from idle task as below.
+The warning message showed that the rcu_read_lock() caused this
+problem. But actually, this means the RCU is lost the context which
+is already in NMI/IRQ.
+
+  /sys/kernel/debug/tracing # echo p default_idle_call >> kprobe_events
+  /sys/kernel/debug/tracing # echo 1 > events/kprobes/enable
+  /sys/kernel/debug/tracing # [  135.122237]
+  [  135.125035] =============================
+  [  135.125310] WARNING: suspicious RCU usage
+  [  135.125581] 5.2.0-08445-g9187c508bdc7 #20 Not tainted
+  [  135.125904] -----------------------------
+  [  135.126205] include/linux/rcupdate.h:594 rcu_read_lock() used illegally while idle!
+  [  135.126839]
+  [  135.126839] other info that might help us debug this:
+  [  135.126839]
+  [  135.127410]
+  [  135.127410] RCU used illegally from idle CPU!
+  [  135.127410] rcu_scheduler_active = 2, debug_locks = 1
+  [  135.128114] RCU used illegally from extended quiescent state!
+  [  135.128555] 1 lock held by swapper/0/0:
+  [  135.128944]  #0: (____ptrval____) (rcu_read_lock){....}, at: call_break_hook+0x0/0x178
+  [  135.130499]
+  [  135.130499] stack backtrace:
+  [  135.131192] CPU: 0 PID: 0 Comm: swapper/0 Not tainted 5.2.0-08445-g9187c508bdc7 #20
+  [  135.131841] Hardware name: linux,dummy-virt (DT)
+  [  135.132224] Call trace:
+  [  135.132491]  dump_backtrace+0x0/0x140
+  [  135.132806]  show_stack+0x24/0x30
+  [  135.133133]  dump_stack+0xc4/0x10c
+  [  135.133726]  lockdep_rcu_suspicious+0xf8/0x108
+  [  135.134171]  call_break_hook+0x170/0x178
+  [  135.134486]  brk_handler+0x28/0x68
+  [  135.134792]  do_debug_exception+0x90/0x150
+  [  135.135051]  el1_dbg+0x18/0x8c
+  [  135.135260]  default_idle_call+0x0/0x44
+  [  135.135516]  cpu_startup_entry+0x2c/0x30
+  [  135.135815]  rest_init+0x1b0/0x280
+  [  135.136044]  arch_call_rest_init+0x14/0x1c
+  [  135.136305]  start_kernel+0x4d4/0x500
+  [  135.136597]
+
+So make debug exception visible to RCU can fix this warning.
+
+Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+Acked-by: Paul E. McKenney <paulmck@linux.ibm.com>
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+---
+ Changes in v4:
+  - Update comment of debug_exception_enter().
+  - Move trace_hardirqs_off/on() into debug_exception_enter/exit().
+ Changes in v3:
+  - Make a comment for debug_exception_enter() clearer.
+---
+ arch/arm64/mm/fault.c |   57 ++++++++++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 49 insertions(+), 8 deletions(-)
+
+diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
+index 9568c116ac7f..cfd65b63f36f 100644
+--- a/arch/arm64/mm/fault.c
++++ b/arch/arm64/mm/fault.c
+@@ -777,6 +777,53 @@ void __init hook_debug_fault_code(int nr,
+ 	debug_fault_info[nr].name	= name;
+ }
  
-> Cc: Satheesh Rajendran <sathnaga@linux.vnet.ibm.com>
-> Reported-by: Michael Petlan <mpetlan@redhat.com>
-> Link: http://lkml.kernel.org/n/tip-9m9j1xm3xjaa1sogvbva0o8i@git.kernel.org
-> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-> ---
->  tools/perf/bench/numa.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/tools/perf/bench/numa.c b/tools/perf/bench/numa.c
-> index a640ca7aaada..513cb2f2fa32 100644
-> --- a/tools/perf/bench/numa.c
-> +++ b/tools/perf/bench/numa.c
-> @@ -379,8 +379,10 @@ static u8 *alloc_data(ssize_t bytes0, int map_flags,
->  
->  	/* Allocate and initialize all memory on CPU#0: */
->  	if (init_cpu0) {
-> -		orig_mask = bind_to_node(0);
-> -		bind_to_memnode(0);
-> +		int node = numa_node_of_cpu(0);
-> +
-> +		orig_mask = bind_to_node(node);
-> +		bind_to_memnode(node);
->  	}
->  
->  	bytes = bytes0 + HPSIZE;
-> -- 
-> 2.21.0
++/*
++ * In debug exception context, we explicitly disable preemption despite
++ * having interrupts disabled.
++ * This serves two purposes: it makes it much less likely that we would
++ * accidentally schedule in exception context and it will force a warning
++ * if we somehow manage to schedule by accident.
++ */
++static void debug_exception_enter(struct pt_regs *regs)
++{
++	/*
++	 * Tell lockdep we disabled irqs in entry.S. Do nothing if they were
++	 * already disabled to preserve the last enabled/disabled addresses.
++	 */
++	if (interrupts_enabled(regs))
++		trace_hardirqs_off();
++
++	if (user_mode(regs)) {
++		RCU_LOCKDEP_WARN(!rcu_is_watching(), "entry code didn't wake RCU");
++	} else {
++		/*
++		 * We might have interrupted pretty much anything.  In
++		 * fact, if we're a debug exception, we can even interrupt
++		 * NMI processing. We don't want this code makes in_nmi()
++		 * to return true, but we need to notify RCU.
++		 */
++		rcu_nmi_enter();
++	}
++
++	preempt_disable();
++
++	/* This code is a bit fragile.  Test it. */
++	RCU_LOCKDEP_WARN(!rcu_is_watching(), "exception_enter didn't work");
++}
++NOKPROBE_SYMBOL(debug_exception_enter);
++
++static void debug_exception_exit(struct pt_regs *regs)
++{
++	preempt_enable_no_resched();
++
++	if (!user_mode(regs))
++		rcu_nmi_exit();
++
++	if (interrupts_enabled(regs))
++		trace_hardirqs_on();
++}
++NOKPROBE_SYMBOL(debug_exception_exit);
++
+ #ifdef CONFIG_ARM64_ERRATUM_1463225
+ DECLARE_PER_CPU(int, __in_cortex_a76_erratum_1463225_wa);
+ 
+@@ -817,12 +864,7 @@ asmlinkage void __exception do_debug_exception(unsigned long addr_if_watchpoint,
+ 	if (cortex_a76_erratum_1463225_debug_handler(regs))
+ 		return;
+ 
+-	/*
+-	 * Tell lockdep we disabled irqs in entry.S. Do nothing if they were
+-	 * already disabled to preserve the last enabled/disabled addresses.
+-	 */
+-	if (interrupts_enabled(regs))
+-		trace_hardirqs_off();
++	debug_exception_enter(regs);
+ 
+ 	if (user_mode(regs) && !is_ttbr0_addr(pc))
+ 		arm64_apply_bp_hardening();
+@@ -832,7 +874,6 @@ asmlinkage void __exception do_debug_exception(unsigned long addr_if_watchpoint,
+ 				 inf->sig, inf->code, (void __user *)pc, esr);
+ 	}
+ 
+-	if (interrupts_enabled(regs))
+-		trace_hardirqs_on();
++	debug_exception_exit(regs);
+ }
+ NOKPROBE_SYMBOL(do_debug_exception);
 
--- 
-
-- Arnaldo
