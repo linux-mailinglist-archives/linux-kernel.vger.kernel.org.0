@@ -2,125 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 884E47E027
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 18:27:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E4457DFFA
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 18:20:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732949AbfHAQ06 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 12:26:58 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:56535 "EHLO
-        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731751AbfHAQ06 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 12:26:58 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x71FvRNQ006132
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Thu, 1 Aug 2019 08:57:27 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x71FvRNQ006132
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019071901; t=1564675048;
-        bh=tqG6uf1LTHRhGWfpbJJjcy8tDR/Y6YbbAiLd3AAvQvg=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=Ag+oZXRfuKa/UiwKrSCHOCrzQhZwLYapW2eoTxp7Wz2ocdqHb+tSQTx/usGV3RJ0n
-         gM4Js0fBHzjPNKkmg776PDBPnWX5p9EFK+7/+twEeR7xfSuYW+eEcu5fENpm9a+2dO
-         SLrD8Wsn/LtQiWbKJL4QWSsm9YlOZdnLOXUvMIakBjEpB6e3XOBkfYqD8QpQs2+315
-         9ndpG7lPb89b8yjgh6sfR6hhAkgvCvyNrNEmJqJooMYYxhWD2NdEBXHiBrcKbMStkR
-         U8ayDK7ZoZJ6YIgivRlxhFi2j1LM53EHPURbgLvoZAMchiOL4exjE43EFCzK5zkJRa
-         UZUjZ1XFpuAlw==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x71FvRaY006128;
-        Thu, 1 Aug 2019 08:57:27 -0700
-Date:   Thu, 1 Aug 2019 08:57:27 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Sebastian Andrzej Siewior <tipbot@zytor.com>
-Message-ID: <tip-edd2f987491fb47949a9612743435d6d0f61f614@git.kernel.org>
-Cc:     peterz@infradead.org, hpa@zytor.com, mingo@kernel.org,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        bigeasy@linutronix.de
-Reply-To: linux-kernel@vger.kernel.org, tglx@linutronix.de,
-          bigeasy@linutronix.de, peterz@infradead.org, mingo@kernel.org,
-          hpa@zytor.com
-In-Reply-To: <20190726185753.551967692@linutronix.de>
-References: <20190726185753.551967692@linutronix.de>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:timers/core] hrtimer: Move unmarked hrtimers to soft interrupt
- expiry on RT
-Git-Commit-ID: edd2f987491fb47949a9612743435d6d0f61f614
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
+        id S1732863AbfHAQUi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 12:20:38 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:33120 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731915AbfHAQUi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Aug 2019 12:20:38 -0400
+Received: by mail-qt1-f196.google.com with SMTP id r6so66578976qtt.0
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2019 09:20:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=D5T2Uxf2pvzlQgNSYEF3ht0LNwLAYlgpi5hrr37GkRA=;
+        b=Mvpx3v8Tm65xrnLV1EEww37UC+PyVjoVk0+zWXwvZuOSfAQOvUYvAIomjd6kZXE1gm
+         fjhkNNRtdDpAu+RewXXHKx7mSV8JMWpKCGvIxwTvHgMK27WN/QZa/a7srPkJ/HxDu3V2
+         L4k8BVG8VOyNSVwuZTpgxORfTSMmIcshkYReCcSchZWN5KARvBqEfc8kdMGiQBXUjIUl
+         YFrLvqbdBF3FWqokJ5gbVYX2/kk6/jj28S7bgpAlFL6davzgmsWX2aYIDuj7lPw+9n2B
+         I/mVkvDLFFDWnvklQinWPZ4RpGz+2EhoWotw4JVe3y5rClcRe4FvA1kWYpnKfD5YbNt0
+         DS3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=D5T2Uxf2pvzlQgNSYEF3ht0LNwLAYlgpi5hrr37GkRA=;
+        b=EtUIUc27eZ3S3oJOwYi16yKMr13KaTSz58obO4WtyRjiOcNFBKrsIWFt73gb9zztjK
+         Xj1UD62AxboT03gDKAckGCxTMRpc3vTxjWOcSit5NQu2mlVQE/cRqkZyGt7AGLwAPpHI
+         7f/vBFKij9S5UvtkNkVyIWQ7ztVcVUKyLvJvOoOqjWT0MW59z8kq1C6OIj7ZuHWHnQes
+         3rmWb0WS9C8E72JUYDLca+XaG00WyzPNd3zWvjRTDIV2uJvTqG+EBQthBg2HQENSqhFC
+         QvG0ziP9H1y9Z3eqI+s4CeQCfq75yJfRfaKmgx3zde3xejPmiHoKx/N+lZo93wvj7z1i
+         soyA==
+X-Gm-Message-State: APjAAAXz2funazYfXkoSBuO5EMxXGZpq2QmloLjYNWJ5uzBujRpK1k4c
+        QB7SENuZSftuG4VfS6vD7ut69g==
+X-Google-Smtp-Source: APXvYqzM49uTepjuXeJZkp34ZRE7q5866HZ2LXXYjec4bp0ukiC80b9AapClXJ0hht1pT/TpSFVcmQ==
+X-Received: by 2002:ac8:2a99:: with SMTP id b25mr91869588qta.223.1564676437174;
+        Thu, 01 Aug 2019 09:20:37 -0700 (PDT)
+Received: from dhcp-41-57.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id 47sm41640083qtw.90.2019.08.01.09.20.35
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 01 Aug 2019 09:20:36 -0700 (PDT)
+Message-ID: <1564676434.11067.46.camel@lca.pw>
+Subject: Re: [PATCH v2] arm64/mm: fix variable 'tag' set but not used
+From:   Qian Cai <cai@lca.pw>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     catalin.marinas@arm.com, will@kernel.org, andreyknvl@google.com,
+        aryabinin@virtuozzo.com, glider@google.com, dvyukov@google.com,
+        linux-arm-kernel@lists.infradead.org, kasan-dev@googlegroups.com,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Date:   Thu, 01 Aug 2019 12:20:34 -0400
+In-Reply-To: <20190801160013.GK4700@bombadil.infradead.org>
+References: <1564670825-4050-1-git-send-email-cai@lca.pw>
+         <20190801160013.GK4700@bombadil.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-X-Spam-Status: No, score=-0.2 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
-        autolearn=no autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  edd2f987491fb47949a9612743435d6d0f61f614
-Gitweb:     https://git.kernel.org/tip/edd2f987491fb47949a9612743435d6d0f61f614
-Author:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-AuthorDate: Fri, 26 Jul 2019 20:30:57 +0200
-Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Thu, 1 Aug 2019 17:43:19 +0200
+On Thu, 2019-08-01 at 09:00 -0700, Matthew Wilcox wrote:
+> On Thu, Aug 01, 2019 at 10:47:05AM -0400, Qian Cai wrote:
+> 
+> Given this:
+> 
+> > -#define __tag_set(addr, tag)	(addr)
+> > +static inline const void *__tag_set(const void *addr, u8 tag)
+> > +{
+> > +	return addr;
+> > +}
+> > +
+> >  #define __tag_reset(addr)	(addr)
+> >  #define __tag_get(addr)		0
+> >  #endif
+> > @@ -301,8 +305,8 @@ static inline void *phys_to_virt(phys_addr_t x)
+> >  #define page_to_virt(page)	({					
+> > \
+> >  	unsigned long __addr =						
+> > \
+> >  		((__page_to_voff(page)) | PAGE_OFFSET);			
+> > \
+> > -	unsigned long __addr_tag =					\
+> > -		 __tag_set(__addr, page_kasan_tag(page));		\
+> > +	const void *__addr_tag =					\
+> > +		__tag_set((void *)__addr, page_kasan_tag(page));	\
+> >  	((void *)__addr_tag);						
+> > \
+> >  })
+> 
+> Can't you simplify that macro to:
+> 
+>  #define page_to_virt(page)	({					\
+>  	unsigned long __addr =						
+> \
+>  		((__page_to_voff(page)) | PAGE_OFFSET);			
+> \
+> -	unsigned long __addr_tag =					\
+> -		 __tag_set(__addr, page_kasan_tag(page));		\
+> -	((void *)__addr_tag);						
+> \
+> +	__tag_set((void *)__addr, page_kasan_tag(page));		\
+>  })
 
-hrtimer: Move unmarked hrtimers to soft interrupt expiry on RT
+It still need a cast or lowmem_page_address() will complain of a discarded
+"const". It might be a bit harder to read when adding a cast as in,
 
-On PREEMPT_RT not all hrtimers can be expired in hard interrupt context
-even if that is perfectly fine on a PREEMPT_RT=n kernel, e.g. because they
-take regular spinlocks. Also for latency reasons PREEMPT_RT tries to defer
-most hrtimers' expiry into softirq context.
+((void *)__tag_set((void *)__addr, page_kasan_tag(page)));
 
-hrtimers marked with HRTIMER_MODE_HARD must be kept in hard interrupt
-context expiry mode. Add the required logic.
-
-No functional change for PREEMPT_RT=n kernels.
-
-[ tglx: Split out of a larger combo patch. Added changelog ]
-
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lkml.kernel.org/r/20190726185753.551967692@linutronix.de
-
-
----
- kernel/time/hrtimer.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
-
-diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
-index 0ace301a56f4..90dcc4d95e91 100644
---- a/kernel/time/hrtimer.c
-+++ b/kernel/time/hrtimer.c
-@@ -1275,8 +1275,17 @@ static void __hrtimer_init(struct hrtimer *timer, clockid_t clock_id,
- 			   enum hrtimer_mode mode)
- {
- 	bool softtimer = !!(mode & HRTIMER_MODE_SOFT);
--	int base = softtimer ? HRTIMER_MAX_CLOCK_BASES / 2 : 0;
- 	struct hrtimer_cpu_base *cpu_base;
-+	int base;
-+
-+	/*
-+	 * On PREEMPT_RT enabled kernels hrtimers which are not explicitely
-+	 * marked for hard interrupt expiry mode are moved into soft
-+	 * interrupt context for latency reasons and because the callbacks
-+	 * can invoke functions which might sleep on RT, e.g. spin_lock().
-+	 */
-+	if (IS_ENABLED(CONFIG_PREEMPT_RT) && !(mode & HRTIMER_MODE_HARD))
-+		softtimer = true;
- 
- 	memset(timer, 0, sizeof(struct hrtimer));
- 
-@@ -1290,6 +1299,7 @@ static void __hrtimer_init(struct hrtimer *timer, clockid_t clock_id,
- 	if (clock_id == CLOCK_REALTIME && mode & HRTIMER_MODE_REL)
- 		clock_id = CLOCK_MONOTONIC;
- 
-+	base = softtimer ? HRTIMER_MAX_CLOCK_BASES / 2 : 0;
- 	base += hrtimer_clockid_to_base(clock_id);
- 	timer->is_soft = softtimer;
- 	timer->is_hard = !softtimer;
+But, that feel like more of a followup patch for me if ever needed.
