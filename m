@@ -2,122 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 024B97DCC7
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 15:47:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 046A97DCD4
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 15:51:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729655AbfHANro (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 09:47:44 -0400
-Received: from wout2-smtp.messagingengine.com ([64.147.123.25]:40981 "EHLO
-        wout2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725930AbfHANrn (ORCPT
+        id S1729275AbfHANvD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 09:51:03 -0400
+Received: from nikam.ms.mff.cuni.cz ([195.113.20.16]:34562 "EHLO
+        nikam.ms.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725930AbfHANvD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 09:47:43 -0400
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailout.west.internal (Postfix) with ESMTP id 95FA3405;
-        Thu,  1 Aug 2019 09:47:39 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute6.internal (MEProxy); Thu, 01 Aug 2019 09:47:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=HxNgJJg2nhiPwmgNt7+DyzeN6pL
-        3GbnAaqp3b9wUFk4=; b=AAy+jPnO/oVUFq4jUmE3x97NZJYdTPaqtNJUf7nwz4N
-        9AdlhiaxrugfOl9/aL2MZs7a5ojdwqNJBpQH0b0pODxu8assB4upmc3K/8Uaw/7a
-        EDWxkklm5A1xiZPR5HyyMFS6PRSDewL7cuYQk5IQTTKH6XQQJlKoW8uwT/Dm0wkK
-        EQ5Gv3GqAC+FEP+DsPTI/HLHEDcR1yUggE6N/8h2cqoX13iis1jumIbzsuwyVJPC
-        VLXLvL/H8KhCzg+LMPdFoj+QauZKEIoS+sUE5lPmMAkVS9iTgXBsZz7sXnUfSvpb
-        28kUzRNUZ9nYc0sSiLK1x2bugmb3PhtsfbAcZjywTEQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=HxNgJJ
-        g2nhiPwmgNt7+DyzeN6pL3GbnAaqp3b9wUFk4=; b=y/Aa/Y+NgfYU+fo/Tzn4oY
-        /wi9dVZE9Kq3W/nJ+pqxkJu5IfqS4B+Ss6bCd2P6n1rO68+3BU4ECB1Y1mOxeBGv
-        G1pgAwbDcWd3P//lrm+WoCFwdup3S0Olh4DlsR7+AAJkW7NceSFjgmNANP8B1KaM
-        3yigh/KDCmim0/8IrRDrz02gG2T2WOJiiIw3+mqu5VbFVsKeQ63SUY4sc3MPNScK
-        +X66uvIzYK8bMFLgwae6xxq+3hnkX/9uIh5MQJD5xgsmMpviTZsTn8yTwEqAoYLm
-        wa2yo2tdK0/hNU0yhDe+vT6qAZo9t6NA3C50vzohep3sRMjxu9pvFHCnJnxk+CEg
-        ==
-X-ME-Sender: <xms:eu1CXTJ3D6noxacELy3qEukfzFIgpgQrciOUfXwoezAVSAHRNp9I3w>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrleejgdeijecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvuffkfhggtggujggfsehttdertddtredvnecuhfhrohhmpefirhgvghcu
-    mffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucfkphepkeefrdekiedrkeelrddutd
-    ejnecurfgrrhgrmhepmhgrihhlfhhrohhmpehgrhgvgheskhhrohgrhhdrtghomhenucev
-    lhhushhtvghrufhiiigvpedt
-X-ME-Proxy: <xmx:eu1CXWtDbL5upCIHa0CnQAqT6PjLHVEBLWCwg2-B7xze5oT-yiVWvA>
-    <xmx:eu1CXSInz_iX1dsHVJz1vpEOr5jvLBIi1WVFzouU_xPVMxqfzrRuhA>
-    <xmx:eu1CXb8DgB6HtttgXY1UTrLzVoyZPCts3AnGf_oV2CBqBtUQco9edg>
-    <xmx:e-1CXfgEu_lo7EqH29CmOZdrWg_bpyYNjEOZrLF1dNJDHiZmpNhlyw>
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        by mail.messagingengine.com (Postfix) with ESMTPA id B456A380079;
-        Thu,  1 Aug 2019 09:47:37 -0400 (EDT)
-Date:   Thu, 1 Aug 2019 15:47:33 +0200
-From:   Greg KH <greg@kroah.com>
-To:     walter harms <wharms@bfs.de>
-Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        jikos@kernel.org, benjamin.tissoires@redhat.com,
-        linux-usb@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] HID: usbhid: Use GFP_KERNEL instead of GFP_ATOMIC when
- applicable
-Message-ID: <20190801134733.GA24791@kroah.com>
-References: <20190801074759.32738-1-christophe.jaillet@wanadoo.fr>
- <5D42B98B.40900@bfs.de>
+        Thu, 1 Aug 2019 09:51:03 -0400
+X-Greylist: delayed 489 seconds by postgrey-1.27 at vger.kernel.org; Thu, 01 Aug 2019 09:51:00 EDT
+Received: by nikam.ms.mff.cuni.cz (Postfix, from userid 3081)
+        id 2A775281EE0; Thu,  1 Aug 2019 15:42:50 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kam.mff.cuni.cz;
+        s=gen1; t=1564666970;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+        bh=Tgtx8AU1eDvtzwgrnSCNWwtGnoWIuLmdAOsYfNaJttw=;
+        b=pvLWO7li2agCXnOPRX+RP+FfBG/H4UjD1Z36HStX9QXgqzBne9yrQdkyv4dwY6R/M8kvw6
+        psKsU6cNwkhptR0NCmhwUdYXyXXJS+CHvs7YUWjnVbYdszIp/dolw8ejrWNBHYW1QRG9IB
+        AEi4mT+wDS4rybhu1FxQzlzI6dAPZYI=
+Date:   Thu, 1 Aug 2019 15:42:50 +0200
+From:   Jan Hadrava <had@kam.mff.cuni.cz>
+To:     linux-mm@kvack.org
+Cc:     linux-kernel@vger.kernel.org, wizards@kam.mff.cuni.cz
+Subject: [BUG]: mm/vmscan.c: shrink_slab does not work correctly with memcg
+ disabled via commandline
+Message-ID: <20190801134250.scbfnjewahbt5zui@kam.mff.cuni.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <5D42B98B.40900@bfs.de>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 01, 2019 at 12:06:03PM +0200, walter harms wrote:
-> 
-> 
-> Am 01.08.2019 09:47, schrieb Christophe JAILLET:
-> > There is no need to use GFP_ATOMIC when calling 'usb_alloc_coherent()'
-> > here. These calls are done from probe functions and using GFP_KERNEL should
-> > be safe.
-> > The memory itself is used within some interrupts, but it is not a
-> > problem, once it has been allocated.
-> > 
-> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> > ---
-> >  drivers/hid/usbhid/usbkbd.c   | 4 ++--
-> >  drivers/hid/usbhid/usbmouse.c | 2 +-
-> >  2 files changed, 3 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/drivers/hid/usbhid/usbkbd.c b/drivers/hid/usbhid/usbkbd.c
-> > index d5b7a696a68c..63e8ef8beb45 100644
-> > --- a/drivers/hid/usbhid/usbkbd.c
-> > +++ b/drivers/hid/usbhid/usbkbd.c
-> > @@ -239,11 +239,11 @@ static int usb_kbd_alloc_mem(struct usb_device *dev, struct usb_kbd *kbd)
-> >  		return -1;
-> >  	if (!(kbd->led = usb_alloc_urb(0, GFP_KERNEL)))
-> >  		return -1;
-> > -	if (!(kbd->new = usb_alloc_coherent(dev, 8, GFP_ATOMIC, &kbd->new_dma)))
-> > +	if (!(kbd->new = usb_alloc_coherent(dev, 8, GFP_KERNEL, &kbd->new_dma)))
-> >  		return -1;
-> >  	if (!(kbd->cr = kmalloc(sizeof(struct usb_ctrlrequest), GFP_KERNEL)))
-> >  		return -1;
-> > -	if (!(kbd->leds = usb_alloc_coherent(dev, 1, GFP_ATOMIC, &kbd->leds_dma)))
-> > +	if (!(kbd->leds = usb_alloc_coherent(dev, 1, GFP_KERNEL, &kbd->leds_dma)))
-> >  		return -1;
-> >  
-> 
-> the kernel style is usually:
->  kbd->new = usb_alloc_coherent(dev, 8, GFP_ATOMIC, &kbd->new_dma);
->  if (!kbd->new)
-> 	return -1;
-> 
-> 
-> in usbmouse.c this is done, any reason for the change here ?
+There seems to be a bug in mm/vmscan.c shrink_slab function when kernel is
+compilled with CONFIG_MEMCG=y and it is then disabled at boot with commandline
+parameter cgroup_disable=memory. SLABs are then not getting shrinked if the
+system memory is consumed by userspace.
 
-If you want to be extra-correct, don't return -1, return -ENOMEM.
+This issue is present in linux-stable 4.19 and all newer lines.
+    (tested on git tags v5.3-rc2 v5.2.5 v5.1.21 v4.19.63)
+And it is no not present in 4.14.135 (v4.14.135).
 
-thanks,
+Git bisect is pointing to commit:
+	b0dedc49a2daa0f44ddc51fbf686b2ef012fccbf
 
-greg k-h
+Particulary the last hunk seems to be causing it:
+
+@@ -585,13 +657,7 @@ static unsigned long shrink_slab(gfp_t gfp_mask, int nid,
+                        .memcg = memcg,
+                };
+
+-               /*
+-                * If kernel memory accounting is disabled, we ignore
+-                * SHRINKER_MEMCG_AWARE flag and call all shrinkers
+-                * passing NULL for memcg.
+-                */
+-               if (memcg_kmem_enabled() &&
+-                   !!memcg != !!(shrinker->flags & SHRINKER_MEMCG_AWARE))
++               if (!!memcg != !!(shrinker->flags & SHRINKER_MEMCG_AWARE))
+                        continue;
+
+                if (!(shrinker->flags & SHRINKER_NUMA_AWARE))
+
+Following commit aeed1d325d429ac9699c4bf62d17156d60905519
+deletes conditional continue (and so it fixes the problem). But it is creating
+similar issue few lines earlier:
+
+@@ -644,7 +642,7 @@ static unsigned long shrink_slab(gfp_t gfp_mask, int nid,
+        struct shrinker *shrinker;
+        unsigned long freed = 0;
+
+-       if (memcg && !mem_cgroup_is_root(memcg))
++       if (!mem_cgroup_is_root(memcg))
+                return shrink_slab_memcg(gfp_mask, nid, memcg, priority);
+
+        if (!down_read_trylock(&shrinker_rwsem))
+@@ -657,9 +655,6 @@ static unsigned long shrink_slab(gfp_t gfp_mask, int nid,
+                        .memcg = memcg,
+                };
+
+-               if (!!memcg != !!(shrinker->flags & SHRINKER_MEMCG_AWARE))
+-                       continue;
+-
+                if (!(shrinker->flags & SHRINKER_NUMA_AWARE))
+                        sc.nid = 0;
+
+
+How was the bisection done:
+
+ - Compile kernel with x86_64_defconfig + CONFIG_MEMCG=y
+ - Boot VM with cgroup_disable=memory and filesystem with 500k Inodes and run
+   simple script on it:
+   - Observe number of active objects of ext4_inode_cache
+     --> around 400, but anything under 1000 was accepted by the bisect script
+
+   - Call `find / > /dev/null`
+   - Again observe number of active objects of ext4_inode_cache
+     --> around 7000, but anything over 6000 was accepted by the script
+
+   - Consume whole memory by simple program `while(1){ malloc(1); }` until it
+     gets killed by oom-killer.
+   - Again observe number of active objects of ext4_inode_cache
+     --> around 7000, script threshold: >= 6000 --> bug is there
+     --> around 100, script threshold <= 1000 --> bug not present
+
+Real-world appearance:
+
+We encountered this issue after upgrading kernel from 4.9 to 4.19 on our backup
+server. (Debian Stretch userspace, upgrade to Debian Buster distribution kernel
+or custom build 4.19.60.) The server has around 12 M of used inodes and only
+4 GB of RAM. Whenever we run the backup, memory gets quickly consumed by kernel
+SLABs (mainly ext4_inode_cache). Userspace starts receiving a lot of hits by
+oom-killer after that so the server is completly unusable until reboot.
+
+We just removed the cgroup_disable=memory parameter on our server. Memory
+footprint of memcg is significantly smaller then it used to be in the time we
+started using this parameter. But i still think that mentioned behaviour is a
+bug and should be fixed.
+
+By the way, it seems like the raspberrypi kernel was fighting this issue as well:
+	https://github.com/raspberrypi/linux/issues/2829
+If I'm reading correctly: they disabled memcg via commandline due to some
+memory leaks. Month later: they hit this issue and reenabled memcg.
+
+
+Thanks,
+Jan
