@@ -2,125 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 34EF17E158
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 19:48:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B57917E15C
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 19:49:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387763AbfHARs5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 13:48:57 -0400
-Received: from wout3-smtp.messagingengine.com ([64.147.123.19]:47131 "EHLO
-        wout3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731061AbfHARs4 (ORCPT
+        id S2387813AbfHARt3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 13:49:29 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:53746 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727899AbfHARt3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 13:48:56 -0400
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailout.west.internal (Postfix) with ESMTP id E4FE6396;
-        Thu,  1 Aug 2019 13:48:52 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute6.internal (MEProxy); Thu, 01 Aug 2019 13:48:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=bX/6GL3MmE3TsjC8DdRXIIaWGw8
-        ZWwDpfqNZvIz+x50=; b=TLGPm6FpkwCkrXEnN681cRBxD8DR3f5HztHK941Hm3r
-        E9U8tj0cdDagkr5YtVKH6XGnZ2RW/SIyOWA+RwASMrUYKt4OUNuChZLb2xFcrqeI
-        YK/IeRzroBdwoKWgGMrSh72B4yseWbFgaRxscGkilfKeosG14yuLEPMH8DOzk4sX
-        78LHupKp93FaM4g5c6xMUaSF5JCTsU7YEpKLrDxCmMunVEs23QRocSnc+SCg6slC
-        M8+VAPGxPEPUXPzfCuSqIfKW+IvHSr+y9sFSLu6r2LRvByDpPEx2ftLDdf9ZMQEH
-        hlMslx33R7nvkGR5NvtOvSuTJiOMOlTOXQMNrXq75Jg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=bX/6GL
-        3MmE3TsjC8DdRXIIaWGw8ZWwDpfqNZvIz+x50=; b=hHM5nPFIKZmq4qZVxcGfms
-        XPLYsf6+/obWeyhSAvkVBI9727Y6RY0LOQJvdS67/9zMJaRKF3L3FjPv4vDaI26p
-        bEkVCovXdYlgX5MfGx/n85sY6r8A8ELd9NITXRypn7XToC8pne4o4Ya+DuXKKBno
-        nHh8KMnpglXpL2cEo9eKh48EY5N2u8jHi+fZ75OqbWiMWD5JVFd6t76S70yxYcU8
-        7EqbyLm96F85JDZoI7r/9Bqv863YvGDsvVsSDK0fKGp3RaWmygWzc7Ib2Hf0A2FY
-        WdV1VuLnUGmdpG8mUPwNL2xJFySgTi4XE5ufmbaMEtPBw6nKDX4ny5HePv1hu+bg
-        ==
-X-ME-Sender: <xms:AyZDXUQDjzU8sPlkQd-yVXHNJqyvOLmheWCD9bR4TQGyA5qjSuplZA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrleejgdduudehucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjfgesthdtredttdervdenucfhrhhomhepifhrvghg
-    ucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecuffhomhgrihhnpehkvghrnhgvlh
-    drohhrghenucfkphepkeefrdekiedrkeelrddutdejnecurfgrrhgrmhepmhgrihhlfhhr
-    ohhmpehgrhgvgheskhhrohgrhhdrtghomhenucevlhhushhtvghrufhiiigvpedt
-X-ME-Proxy: <xmx:AyZDXVe99Dz8clGzgoNYIUgtdBZBdBq06aW8M_pnVYe1Q2qMdIAsLQ>
-    <xmx:AyZDXboiSB299FPC4RaicydBJnq7m3D2XLTEkKFq2mFd-5zkyvBRyw>
-    <xmx:AyZDXe9UT3p3PDNwM7C3NaJ0qGG_zawz8mYPJe_u90nb675zVtoSaA>
-    <xmx:BCZDXdEP4nZOVGZsRznaGeWIHIpAcgk6bGIwyNbYayLOV8WbPkjW4Q>
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        by mail.messagingengine.com (Postfix) with ESMTPA id E01CB380084;
-        Thu,  1 Aug 2019 13:48:50 -0400 (EDT)
-Date:   Thu, 1 Aug 2019 19:48:49 +0200
-From:   Greg KH <greg@kroah.com>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     Marcel Holtmann <marcel@holtmann.org>,
-        Vladis Dronov <vdronov@redhat.com>,
-        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-bluetooth@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v5.3-rc2] Bluetooth: hci_uart: check for missing tty
- operations
-Message-ID: <20190801174849.GA5048@kroah.com>
-References: <20190730093345.25573-1-marcel@holtmann.org>
- <20190801133132.6BF30206A3@mail.kernel.org>
- <20190801135044.GB24791@kroah.com>
- <20190801171639.GC17697@sasha-vm>
+        Thu, 1 Aug 2019 13:49:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=/wQ1T27awT3hqgJbloxgvOfdBCqajpO4xm94w+4G9Do=; b=w0gH11WScMc6U6c0/193f4lVGY
+        pJ5Va3+tj/TSEWluBZbB3EsZdE+5fi40Hd7sR4n8NRx+T69RBSZmHZ/UoJHMHoQqhP0bN7L7xwpnd
+        PnyuEOEWkSHWMDK4bwLVQOrsAZuYdJkbpUohRpAB/vTiDgEeNENBjcpfppf159WsUPFbRzRBYdiS2
+        B4yBu2ZX/XwmYyMam1kq+dPc+qgHtzng5hOraEFbZeQWxzCZ5ytD4CBej0CrS8EFW10k3lit3r5ul
+        1VLKt68FO3Nz279TNa/NMYzQtnkvCu2SBByGuhcqnupvhyqUPFTBrEug8bQuR/lE/4Arfluds3QCk
+        VKAOrv0w==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=[192.168.1.17])
+        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1htFCR-0000Yn-NH; Thu, 01 Aug 2019 17:49:11 +0000
+Subject: Re: [PATCH bpf-next v10 10/10] landlock: Add user and kernel
+ documentation for Landlock
+To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
+        linux-kernel@vger.kernel.org
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        David Drysdale <drysdale@google.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        James Morris <jmorris@namei.org>, Jann Horn <jann@thejh.net>,
+        John Johansen <john.johansen@canonical.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Sargun Dhillon <sargun@sargun.me>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>, Tejun Heo <tj@kernel.org>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Thomas Graf <tgraf@suug.ch>, Tycho Andersen <tycho@tycho.ws>,
+        Will Drewry <wad@chromium.org>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org
+References: <20190721213116.23476-1-mic@digikod.net>
+ <20190721213116.23476-11-mic@digikod.net>
+ <88e90c22-1b78-c2f2-8823-fa776265361c@infradead.org>
+ <2ced8fc8-79a6-b0fb-70fe-6716fae92aa7@ssi.gouv.fr>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <08c94f99-68e0-4866-3eba-28fa71347fca@infradead.org>
+Date:   Thu, 1 Aug 2019 10:49:05 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190801171639.GC17697@sasha-vm>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <2ced8fc8-79a6-b0fb-70fe-6716fae92aa7@ssi.gouv.fr>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 01, 2019 at 01:16:39PM -0400, Sasha Levin wrote:
-> On Thu, Aug 01, 2019 at 03:50:44PM +0200, Greg KH wrote:
-> > On Thu, Aug 01, 2019 at 01:31:31PM +0000, Sasha Levin wrote:
-> > > Hi,
-> > > 
-> > > [This is an automated email]
-> > > 
-> > > This commit has been processed because it contains a "Fixes:" tag,
-> > > fixing commit: .
-> > > 
-> > > The bot has tested the following trees: v5.2.4, v5.1.21, v4.19.62, v4.14.134, v4.9.186, v4.4.186.
-> > > 
-> > > v5.2.4: Build OK!
-> > > v5.1.21: Build OK!
-> > > v4.19.62: Build OK!
-> > > v4.14.134: Failed to apply! Possible dependencies:
-> > >     25a13e382de2 ("bluetooth: hci_qca: Replace GFP_ATOMIC with GFP_KERNEL")
-> > > 
-> > > v4.9.186: Failed to apply! Possible dependencies:
-> > >     25a13e382de2 ("bluetooth: hci_qca: Replace GFP_ATOMIC with GFP_KERNEL")
-> > > 
-> > > v4.4.186: Failed to apply! Possible dependencies:
-> > >     162f812f23ba ("Bluetooth: hci_uart: Add Marvell support")
-> > >     25a13e382de2 ("bluetooth: hci_qca: Replace GFP_ATOMIC with GFP_KERNEL")
-> > >     395174bb07c1 ("Bluetooth: hci_uart: Add Intel/AG6xx support")
-> > >     9e69130c4efc ("Bluetooth: hci_uart: Add Nokia Protocol identifier")
-> > > 
-> > > 
-> > > NOTE: The patch will not be queued to stable trees until it is upstream.
-> > > 
-> > > How should we proceed with this patch?
-> > 
-> > Already fixed up by hand and queued up, your automated email is a bit
-> > slow :)
+On 8/1/19 10:03 AM, Mickaël Salaün wrote:
+>>> +Ptrace restrictions
+>>> +-------------------
+>>> +
+>>> +A landlocked process has less privileges than a non-landlocked process and must
+>>> +then be subject to additional restrictions when manipulating another process.
+>>> +To be allowed to use :manpage:`ptrace(2)` and related syscalls on a target
+>>> +process, a landlocked process must have a subset of the target process programs.
+>>             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>> Maybe that last statement is correct, but it seems to me that it is missing something.
+> What about this:
 > 
-> /me scratches head
-> 
-> The patch went out two days ago:
-> https://lore.kernel.org/lkml/20190730093345.25573-1-marcel@holtmann.org/
-> 
-> How did it make it upstream already?
+> To be allowed to trace a process (using :manpage:`ptrace(2)`), a
+> landlocked tracer process must only be constrained by a subset (possibly
+> empty) of the Landlock programs which are also applied to the tracee.
+> This ensure that the tracer has less or the same constraints than the
 
-It's in Linus's tree as b36a1552d731 ("Bluetooth: hci_uart: check for
-missing tty operations") now.
+       ensures
 
-thanks,
+> tracee, hence protecting against privilege escalation.
 
-greg k-h
+Yes, better.  Thanks.
+
+
+-- 
+~Randy
