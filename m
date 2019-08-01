@@ -2,103 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A8AF7D58A
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 08:35:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E5B3C7D593
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 08:37:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729795AbfHAGfw convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 1 Aug 2019 02:35:52 -0400
-Received: from mga05.intel.com ([192.55.52.43]:52715 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728884AbfHAGfw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 02:35:52 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Jul 2019 23:35:51 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,333,1559545200"; 
-   d="scan'208";a="371909439"
-Received: from irsmsx153.ger.corp.intel.com ([163.33.192.75])
-  by fmsmga005.fm.intel.com with ESMTP; 31 Jul 2019 23:35:48 -0700
-Received: from irsmsx102.ger.corp.intel.com ([169.254.2.59]) by
- IRSMSX153.ger.corp.intel.com ([169.254.9.166]) with mapi id 14.03.0439.000;
- Thu, 1 Aug 2019 07:35:47 +0100
-From:   "Reshetova, Elena" <elena.reshetova@intel.com>
-To:     'Kees Cook' <keescook@chromium.org>,
-        'Ingo Molnar' <mingo@kernel.org>,
-        'Andy Lutomirski' <luto@kernel.org>
-CC:     'Theodore Ts'o' <tytso@mit.edu>,
-        'David Laight' <David.Laight@aculab.com>,
-        'Eric Biggers' <ebiggers3@gmail.com>,
-        "'ebiggers@google.com'" <ebiggers@google.com>,
-        "'herbert@gondor.apana.org.au'" <herbert@gondor.apana.org.au>,
-        'Peter Zijlstra' <peterz@infradead.org>,
-        'Daniel Borkmann' <daniel@iogearbox.net>,
-        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
-        "'jpoimboe@redhat.com'" <jpoimboe@redhat.com>,
-        "'jannh@google.com'" <jannh@google.com>,
-        "Perla, Enrico" <enrico.perla@intel.com>,
-        "'mingo@redhat.com'" <mingo@redhat.com>,
-        "'bp@alien8.de'" <bp@alien8.de>,
-        "'tglx@linutronix.de'" <tglx@linutronix.de>,
-        "'gregkh@linuxfoundation.org'" <gregkh@linuxfoundation.org>,
-        "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
-        'Linus Torvalds' <torvalds@linux-foundation.org>,
-        'Peter Zijlstra' <a.p.zijlstra@chello.nl>
-Subject: RE: [PATCH] x86/entry/64: randomize kernel stack offset upon syscall
-Thread-Topic: [PATCH] x86/entry/64: randomize kernel stack offset upon
- syscall
-Thread-Index: AQHU81HQwzT9MH4dM0y/JZXnSwiYT6Y8wW2AgAAdM1CAAXexAIAANZ3ggAAW1gCAAApRgIAAMeKAgAAd+PCAAQuGgIAAYQuAgAAKhwCACsPi4IADJTwAgAAcagCAAExngIAEBbGAgACIbACAAbyQ8IAA626AgAGZfXCAAARpgIAAWpuAgAAF74CAABf/AIAAAvkAgAGZnrD///dzgIAHjbaA///31ICAAC4VAIABBxmAgAAfuaCAAA5FAIAED8OAgAAYaYCAAINWgIAAbRaAgBjvMfCAACWEgIABZK1ggACCc4CAX3oCYIAEYVlA
-Date:   Thu, 1 Aug 2019 06:35:47 +0000
-Message-ID: <2236FBA76BA1254E88B949DDB74E612BA4D530F0@IRSMSX102.ger.corp.intel.com>
-References: <20190509055915.GA58462@gmail.com>
- <2236FBA76BA1254E88B949DDB74E612BA4C7741F@IRSMSX102.ger.corp.intel.com>
- <20190509084352.GA96236@gmail.com>
- <CALCETrV1067Es=KEjkz=CtdoT79a2EJg4dJDae6oGDiTaubL1A@mail.gmail.com>
- <201905111703.5998DF5F@keescook> <20190512080245.GA7827@gmail.com>
- <201905120705.4F27DF3244@keescook>
- <2236FBA76BA1254E88B949DDB74E612BA4CA8DBF@IRSMSX102.ger.corp.intel.com>
- <20190528133347.GD19149@mit.edu>
- <2236FBA76BA1254E88B949DDB74E612BA4CABA56@IRSMSX102.ger.corp.intel.com>
- <201905291136.FD61FF42@keescook>
- <2236FBA76BA1254E88B949DDB74E612BA4D4BFCA@IRSMSX102.ger.corp.intel.com>
-In-Reply-To: <2236FBA76BA1254E88B949DDB74E612BA4D4BFCA@IRSMSX102.ger.corp.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-dlp-product: dlpe-windows
-dlp-version: 11.2.0.6
-dlp-reaction: no-action
-x-originating-ip: [163.33.239.181]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1730030AbfHAGhC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 02:37:02 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:35249 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728884AbfHAGg6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Aug 2019 02:36:58 -0400
+Received: by mail-lj1-f194.google.com with SMTP id x25so68265353ljh.2;
+        Wed, 31 Jul 2019 23:36:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=X9ZQbHrGzFtjEODVBGVi3gOgXCwBSDCk0xPlVmAv39c=;
+        b=Irrr23fMhTG6al2CUIKvRGL5QX0PhtRLcRnbsblPKgEqQOxD8SJoM0uIVm3vH8a07y
+         sps88K+hpaaGuRLYTRBAE727L6SCNxZHl98YcWCGE2nZBlrKZCFqhQYnFQa3O46eY8lL
+         /DxLFOpm2FTCNqNU9snTg9au+8PRn02r+vYkQ8uFHGAqYPis0WcrgzH4YS4+SDBfQEoV
+         7J4/uuOHdv42lZlMfAfkuWhF1r6IfctmUnPGE8QearmzNB3FBL+pVJ7DCBccFWYyYHn4
+         IiZQ1ElUjB3Z1LOP9E4MADCJzJeaPW8qtNE1bgA7zqga8L4CC95+lpKWT1r1gq4voAWE
+         6ZVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=X9ZQbHrGzFtjEODVBGVi3gOgXCwBSDCk0xPlVmAv39c=;
+        b=NpDDvPthk+qRlJgv2aSBvSwFoTO3c1qKXNcXYY2a/Rzt2TJ4I1jz6fmSE5Mjp8P0ka
+         SXHSo4Kpq9FnPNsGHlNN3TpCzamab0TwyV9YOAZM64/TLO0wJnS8vgVteBVjXAKYOb79
+         u+97/EVjZTXpY02Hg2nZLQ9QXuref1mzVVUqNpQlO2BUabyqH+5QKKiNVCKFQnN/fZOJ
+         m94CE75ahEa6bxUJ5IRPu9T+GXlvnF9rHxZjO3K8gqmXzNQny9GyA6VK3QQViPs0UmB7
+         PwKBTOQBRPiWPklaOq3V6GqKERTo4g/3zXer3Wd5873cuI/o+EaClUdKU6Weh5CPE4t8
+         MepQ==
+X-Gm-Message-State: APjAAAXPkYLGoxx6gr40BSrgGJqjVoBcEwth09DSpRZcfYol95v3h7PF
+        A/nCj3wpuLFFcssUuaDe0ocvHGh5zns7eSFKSvM=
+X-Google-Smtp-Source: APXvYqxL/s6TY+Lcm9PtMPnltGMxl9EapEj/9hC3l7HRYjwRx4X4cLUEHb7EUd4m82x93CeGKns2H6cCLt/hUSnHVmU=
+X-Received: by 2002:a2e:b1c1:: with SMTP id e1mr31450663lja.228.1564641416029;
+ Wed, 31 Jul 2019 23:36:56 -0700 (PDT)
 MIME-Version: 1.0
+References: <1564489420-677-1-git-send-email-sumit.garg@linaro.org>
+ <CAE=Ncrb63dQLe-nDQyO9OPv7XjwM_9mzL9SrcLiUi2Dr10cD4A@mail.gmail.com>
+ <CAFA6WYPJAzbPdcpBqioxjY=T8RLw-73B_hpzX4cGnwVvm5zpJw@mail.gmail.com>
+ <CAE=Ncrb23q++z8R8UMbjDE2epEq4YVcNGzrRD31eH3JAooYejg@mail.gmail.com> <CAFA6WYOKcOzSwakHhgshZcebD8ZBMSi7xQdjWYFS79=Xc+odOg@mail.gmail.com>
+In-Reply-To: <CAFA6WYOKcOzSwakHhgshZcebD8ZBMSi7xQdjWYFS79=Xc+odOg@mail.gmail.com>
+From:   Janne Karhunen <janne.karhunen@gmail.com>
+Date:   Thu, 1 Aug 2019 09:36:44 +0300
+Message-ID: <CAE=NcrYz8bT9zDhS_ZcvY84fpeTDxZ-KhJKeQGGyf=o4pG2J-Q@mail.gmail.com>
+Subject: Re: [RFC v2 0/6] Introduce TEE based Trusted Keys support
+To:     Sumit Garg <sumit.garg@linaro.org>
+Cc:     keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Jens Wiklander <jens.wiklander@linaro.org>,
+        Jonathan Corbet <corbet@lwn.net>, dhowells@redhat.com,
+        jejb@linux.ibm.com,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "tee-dev @ lists . linaro . org" <tee-dev@lists.linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->> The in-stack randomization is really a very small change both code wise and
->> logic wise.
->> It does not affect real workloads and does not require enablement of other
->> features (such as GCC plugins).
->> So, I think we should really reconsider its inclusion.
+On Wed, Jul 31, 2019 at 5:23 PM Sumit Garg <sumit.garg@linaro.org> wrote:
 
->I'd agree: the code is tiny and while the benefit can't point to a
->specific issue, it does point to the general weakness of the stack
->offset being predictable which has been a core observation for many
->stack-based attacks.
+> > I guess my wording was wrong, tried to say that physical TEEs in the
+> > wild vary massively hardware wise. Generalizing these things is rough.
+> >
+>
+> There are already well defined GlobalPlatform Standards to generalize
+> the TEE interface. One of them is GlobalPlatform TEE Client API [1]
+> which provides the basis for this TEE interface.
 
->If we're going to save state between syscalls (like the 4096 random
->bytes pool), how about instead we just use a single per-CPU long mixed
->with rdtsc saved at syscall exit. That should be a reasonable balance
->between all the considerations and make it trivial for the feature to
->be a boot flag without the extra page of storage, etc.
+I'm aware of it - I have implemented a large part of the GP TEE APIs
+earlier (primarily the crypto functions). Does the TEE you work with
+actually support GP properly? Can I take a look at the code?
 
-Sounds like a viable compromise for me. 
-Ingo, Andy? 
+Normally the TEE implementations are well-guarded secrets and the
+state of the implementation is quite random. In many cases keeping
+things secret is fine from my point of view, given that it is a RoT
+after all. The secrecy is the core business here. So, this is why I
+opted the userspace 'secret' route - no secrets in the kernel, but
+it's fine for the userspace. Umh was a logical fit to implement it.
 
-Best Regards,
-Elena.
 
+--
+Janne
