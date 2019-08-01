@@ -2,43 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF9E17DF11
+	by mail.lfdr.de (Postfix) with ESMTP id 86F697DF10
 	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 17:29:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731586AbfHAP2J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S1731840AbfHAP2J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Thu, 1 Aug 2019 11:28:09 -0400
-Received: from mail-io1-f70.google.com ([209.85.166.70]:33468 "EHLO
+Received: from mail-io1-f70.google.com ([209.85.166.70]:40196 "EHLO
         mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726014AbfHAP2I (ORCPT
+        with ESMTP id S1729400AbfHAP2I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 1 Aug 2019 11:28:08 -0400
-Received: by mail-io1-f70.google.com with SMTP id 132so79564558iou.0
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2019 08:28:07 -0700 (PDT)
+Received: by mail-io1-f70.google.com with SMTP id v11so79551312iop.7
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2019 08:28:08 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=gCTathP9+deOMTOkoLx5X6Fu8vQedW+V+zFsPJztVaA=;
-        b=Ad1pFhPe4HgijXUq5W00AXSKYRkAt3MYEFUUo4JvXasATK0Fzy5Hy7dfLwiSALJnkr
-         H6J7nVbbJ/tY/ypzgF8uG2ZeRKOR+pn4eu/kHo/OY3G8WUdkloyw0yAfIzKcCfeD6UQx
-         kTxEd5EeZn/rwu5x751EoK61OASYIXEbeO8I6B3r+xh2OkktUcnSWE0nDRMb1kT8j4Yw
-         +u5UTEelcPE2QTbkawMS4u64GsawMQM2UlnAnvl8Yw0rpUfvM+LHGSyOWOpvceDMVJiw
-         c+TXVRHg4ZYw/TKzngAdYszLkeEYD8MMMtZcbu7aOj3Qvi8Iys4B7wSoK5lkugJ3yCRF
-         BESg==
-X-Gm-Message-State: APjAAAUFjjDlO9L+MyS3Y1u5J4ILW9kapdowo1Wr7fW5KZjiFpfYXriI
-        8hgg3COP40Xnq8RMvLWTMGbvcmtrgAE1JoU8yZpw5+c66lGj
-X-Google-Smtp-Source: APXvYqywJxXSx2iBozgpyM03zIqWMN2l1OM3lh1SDKPHzzsQakmbjN/DVYMTJK1ABDjT6KPYQLiFJ3Y2OkyaZAZOxSIOeewZsPfa
+        bh=DW2lUrkKlpnFsiGjB760L3h2H47aCTvpqe/PfznUJX0=;
+        b=m7YXawZ8p/l0W6N/mLMWQE29gkZP9kZr0/lHAr90P5aaV/A1BiF34uBbcCgedLBz9+
+         ud4lnab8rqLKDEEVAL1TQG4etyd1kq9aDjvI2JM9h0uukDwCgr94m8x2qVj8oHHSOj21
+         Zuc5l+vl/Pn3LX3L3OtTdG1rgWXOeRZTS3d4BDwLqVkDfFyuMwbbSLp+IkTnSzd8Bv4l
+         cg7fYLefgK4U70wzbcnfjAnNzxJbUbwsAeJWS5niyIC1cwzTreldq6bEnUVOAnBXkU4S
+         RibysFfj2IfZ2ZY4jGSfAbvN50akWYWVAAc5luaPswpoP6MTqN14yGKWDTV24tJdXcKA
+         Je9w==
+X-Gm-Message-State: APjAAAX0WmrKuObVNv+ecVpVYTsl2nnHwfw2/3eeuWmVet/vjKSfZxTG
+        ktXPvYfJu+iFVTRRwB3Qo+vBW0vPccvFueP8jTRzBAjyS/nm
+X-Google-Smtp-Source: APXvYqwOz0QbvEjzbBVYvqNOayfMHpZFhb0KzWBzgq8/z5SYTT3OiLTFS/OleipYO3R+b8I8g2VNcobVLtbwXTlnJP+szQKbweRB
 MIME-Version: 1.0
-X-Received: by 2002:a02:9f07:: with SMTP id z7mr13121827jal.29.1564673287515;
+X-Received: by 2002:a6b:f80b:: with SMTP id o11mr4295061ioh.40.1564673287869;
  Thu, 01 Aug 2019 08:28:07 -0700 (PDT)
 Date:   Thu, 01 Aug 2019 08:28:07 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000007df502058f0fe3df@google.com>
-Subject: WARNING in sysfs_create_file_ns
-From:   syzbot <syzbot+5b9bba68c833c84a1135@syzkaller.appspotmail.com>
+Message-ID: <0000000000008360bb058f0fe39d@google.com>
+Subject: possible deadlock in iowarrior_open
+From:   syzbot <syzbot+ca52394faa436d8131df@syzkaller.appspotmail.com>
 To:     andreyknvl@google.com, gregkh@linuxfoundation.org,
+        gustavo@embeddedor.com, keescook@chromium.org,
         linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        rafael@kernel.org, syzkaller-bugs@googlegroups.com
+        syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -49,90 +50,146 @@ Hello,
 
 syzbot found the following crash on:
 
-HEAD commit:    7829a896 usb-fuzzer: main usb gadget fuzzer driver
+HEAD commit:    7f7867ff usb-fuzzer: main usb gadget fuzzer driver
 git tree:       https://github.com/google/kasan.git usb-fuzzer
-console output: https://syzkaller.appspot.com/x/log.txt?x=12119440600000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f6d4561982f71f63
-dashboard link: https://syzkaller.appspot.com/bug?extid=5b9bba68c833c84a1135
+console output: https://syzkaller.appspot.com/x/log.txt?x=17ab6aec600000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=792eb47789f57810
+dashboard link: https://syzkaller.appspot.com/bug?extid=ca52394faa436d8131df
 compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1486787fa00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11aa97d8600000
+
+Unfortunately, I don't have any reproducer for this crash yet.
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+5b9bba68c833c84a1135@syzkaller.appspotmail.com
+Reported-by: syzbot+ca52394faa436d8131df@syzkaller.appspotmail.com
 
-usbvision_audio_off: can't write reg
-usb 1-1: usbvision_write_reg: failed: error -2
-usb 1-1: usbvision_write_reg: failed: error -2
-usb 1-1: usbvision_write_reg: failed: error -2
-usb 1-1: usbvision_write_reg: failed: error -2
-usb 1-1: usbvision_write_reg: failed: error -2
-usbvision_i2c_register: can't write reg
-videodev: could not get a free minor
-usb 1-1: USBVision[129]: video_register_device() failed
-WARNING: CPU: 1 PID: 22 at fs/sysfs/file.c:327  
-sysfs_create_file_ns+0x13c/0x1c0 fs/sysfs/file.c:327
-Kernel panic - not syncing: panic_on_warn set ...
-CPU: 1 PID: 22 Comm: kworker/1:1 Not tainted 5.2.0-rc6+ #13
+======================================================
+WARNING: possible circular locking dependency detected
+5.3.0-rc2+ #23 Not tainted
+------------------------------------------------------
+syz-executor.0/10062 is trying to acquire lock:
+00000000527cb8c7 (iowarrior_open_disc_lock){+.+.}, at:  
+iowarrior_open+0x8a/0x2a0 drivers/usb/misc/iowarrior.c:600
+
+but task is already holding lock:
+0000000061445bc7 (iowarrior_mutex){+.+.}, at: iowarrior_open+0x23/0x2a0  
+drivers/usb/misc/iowarrior.c:589
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #2 (iowarrior_mutex){+.+.}:
+        __mutex_lock_common kernel/locking/mutex.c:930 [inline]
+        __mutex_lock+0x158/0x1360 kernel/locking/mutex.c:1077
+        iowarrior_open+0x23/0x2a0 drivers/usb/misc/iowarrior.c:589
+        usb_open+0x1df/0x270 drivers/usb/core/file.c:48
+        chrdev_open+0x219/0x5c0 fs/char_dev.c:414
+        do_dentry_open+0x494/0x1120 fs/open.c:797
+        do_last fs/namei.c:3416 [inline]
+        path_openat+0x1430/0x3f50 fs/namei.c:3533
+        do_filp_open+0x1a1/0x280 fs/namei.c:3563
+        do_sys_open+0x3c0/0x580 fs/open.c:1089
+        do_syscall_64+0xb7/0x580 arch/x86/entry/common.c:296
+        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+-> #1 (minor_rwsem#2){++++}:
+        down_write+0x92/0x150 kernel/locking/rwsem.c:1500
+        usb_deregister_dev drivers/usb/core/file.c:238 [inline]
+        usb_deregister_dev+0x61/0x270 drivers/usb/core/file.c:230
+        iowarrior_disconnect+0xa8/0x2c0 drivers/usb/misc/iowarrior.c:873
+        usb_unbind_interface+0x1bd/0x8a0 drivers/usb/core/driver.c:423
+        __device_release_driver drivers/base/dd.c:1120 [inline]
+        device_release_driver_internal+0x404/0x4c0 drivers/base/dd.c:1151
+        bus_remove_device+0x2dc/0x4a0 drivers/base/bus.c:556
+        device_del+0x420/0xb10 drivers/base/core.c:2288
+        usb_disable_device+0x211/0x690 drivers/usb/core/message.c:1237
+        usb_disconnect+0x284/0x8d0 drivers/usb/core/hub.c:2199
+        hub_port_connect drivers/usb/core/hub.c:4949 [inline]
+        hub_port_connect_change drivers/usb/core/hub.c:5213 [inline]
+        port_event drivers/usb/core/hub.c:5359 [inline]
+        hub_event+0x1454/0x3640 drivers/usb/core/hub.c:5441
+        process_one_work+0x92b/0x1530 kernel/workqueue.c:2269
+        worker_thread+0x96/0xe20 kernel/workqueue.c:2415
+        kthread+0x318/0x420 kernel/kthread.c:255
+        ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+
+-> #0 (iowarrior_open_disc_lock){+.+.}:
+        check_prev_add kernel/locking/lockdep.c:2405 [inline]
+        check_prevs_add kernel/locking/lockdep.c:2507 [inline]
+        validate_chain kernel/locking/lockdep.c:2897 [inline]
+        __lock_acquire+0x1f7c/0x3b50 kernel/locking/lockdep.c:3880
+        lock_acquire+0x127/0x320 kernel/locking/lockdep.c:4412
+        __mutex_lock_common kernel/locking/mutex.c:930 [inline]
+        __mutex_lock+0x158/0x1360 kernel/locking/mutex.c:1077
+        iowarrior_open+0x8a/0x2a0 drivers/usb/misc/iowarrior.c:600
+        usb_open+0x1df/0x270 drivers/usb/core/file.c:48
+        chrdev_open+0x219/0x5c0 fs/char_dev.c:414
+        do_dentry_open+0x494/0x1120 fs/open.c:797
+        do_last fs/namei.c:3416 [inline]
+        path_openat+0x1430/0x3f50 fs/namei.c:3533
+        do_filp_open+0x1a1/0x280 fs/namei.c:3563
+        do_sys_open+0x3c0/0x580 fs/open.c:1089
+        do_syscall_64+0xb7/0x580 arch/x86/entry/common.c:296
+        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+other info that might help us debug this:
+
+Chain exists of:
+   iowarrior_open_disc_lock --> minor_rwsem#2 --> iowarrior_mutex
+
+  Possible unsafe locking scenario:
+
+        CPU0                    CPU1
+        ----                    ----
+   lock(iowarrior_mutex);
+                                lock(minor_rwsem#2);
+                                lock(iowarrior_mutex);
+   lock(iowarrior_open_disc_lock);
+
+  *** DEADLOCK ***
+
+2 locks held by syz-executor.0/10062:
+  #0: 000000000fd8903d (minor_rwsem#2){++++}, at: usb_open+0x23/0x270  
+drivers/usb/core/file.c:39
+  #1: 0000000061445bc7 (iowarrior_mutex){+.+.}, at:  
+iowarrior_open+0x23/0x2a0 drivers/usb/misc/iowarrior.c:589
+
+stack backtrace:
+CPU: 0 PID: 10062 Comm: syz-executor.0 Not tainted 5.3.0-rc2+ #23
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
-Workqueue: usb_hub_wq hub_event
 Call Trace:
   __dump_stack lib/dump_stack.c:77 [inline]
   dump_stack+0xca/0x13e lib/dump_stack.c:113
-  panic+0x292/0x6c9 kernel/panic.c:219
-  __warn.cold+0x20/0x4b kernel/panic.c:576
-  report_bug+0x262/0x2a0 lib/bug.c:186
-  fixup_bug arch/x86/kernel/traps.c:179 [inline]
-  fixup_bug arch/x86/kernel/traps.c:174 [inline]
-  do_error_trap+0x12b/0x1e0 arch/x86/kernel/traps.c:272
-  do_invalid_op+0x32/0x40 arch/x86/kernel/traps.c:291
-  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:986
-RIP: 0010:sysfs_create_file_ns+0x13c/0x1c0 fs/sysfs/file.c:327
-Code: 85 82 00 00 00 41 55 48 8b 7b 30 31 d2 48 89 ee 44 8b 4c 24 50 44 8b  
-44 24 40 e8 af f9 ff ff 41 89 c5 58 eb 0d e8 54 85 b6 ff <0f> 0b 41 bd ea  
-ff ff ff e8 47 85 b6 ff 44 89 e8 48 ba 00 00 00 00
-RSP: 0018:ffff8881d9f97130 EFLAGS: 00010293
-RAX: ffff8881d9f88000 RBX: ffff8881cbb0a490 RCX: ffffffff8266f244
-RDX: 0000000000000000 RSI: ffffffff8186565c RDI: ffff8881cbb0a490
-RBP: ffffffff8779e1a0 R08: ffff8881d9f88000 R09: ffffed103b665d30
-R10: ffffed103b665d2f R11: ffff8881db32e97f R12: 1ffff1103b3f2e27
-R13: 0000000000000000 R14: dffffc0000000000 R15: ffff8881cbb0a4c0
-  sysfs_create_file include/linux/sysfs.h:513 [inline]
-  device_create_file+0xe6/0x1d0 drivers/base/core.c:1559
-  usbvision_create_sysfs drivers/media/usb/usbvision/usbvision-video.c:252  
-[inline]
-  usbvision_probe.cold+0x1a73/0x1d69  
-drivers/media/usb/usbvision/usbvision-video.c:1530
-  usb_probe_interface+0x305/0x7a0 drivers/usb/core/driver.c:361
-  really_probe+0x281/0x660 drivers/base/dd.c:509
-  driver_probe_device+0x104/0x210 drivers/base/dd.c:670
-  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:777
-  bus_for_each_drv+0x15c/0x1e0 drivers/base/bus.c:454
-  __device_attach+0x217/0x360 drivers/base/dd.c:843
-  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
-  device_add+0xae6/0x16f0 drivers/base/core.c:2111
-  usb_set_configuration+0xdf6/0x1670 drivers/usb/core/message.c:2023
-  generic_probe+0x9d/0xd5 drivers/usb/core/generic.c:210
-  usb_probe_device+0x99/0x100 drivers/usb/core/driver.c:266
-  really_probe+0x281/0x660 drivers/base/dd.c:509
-  driver_probe_device+0x104/0x210 drivers/base/dd.c:670
-  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:777
-  bus_for_each_drv+0x15c/0x1e0 drivers/base/bus.c:454
-  __device_attach+0x217/0x360 drivers/base/dd.c:843
-  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
-  device_add+0xae6/0x16f0 drivers/base/core.c:2111
-  usb_new_device.cold+0x8c1/0x1016 drivers/usb/core/hub.c:2534
-  hub_port_connect drivers/usb/core/hub.c:5089 [inline]
-  hub_port_connect_change drivers/usb/core/hub.c:5204 [inline]
-  port_event drivers/usb/core/hub.c:5350 [inline]
-  hub_event+0x1ada/0x3590 drivers/usb/core/hub.c:5432
-  process_one_work+0x905/0x1570 kernel/workqueue.c:2269
-  worker_thread+0x96/0xe20 kernel/workqueue.c:2415
-  kthread+0x30b/0x410 kernel/kthread.c:255
-  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
+  check_noncircular+0x345/0x3e0 kernel/locking/lockdep.c:1741
+  check_prev_add kernel/locking/lockdep.c:2405 [inline]
+  check_prevs_add kernel/locking/lockdep.c:2507 [inline]
+  validate_chain kernel/locking/lockdep.c:2897 [inline]
+  __lock_acquire+0x1f7c/0x3b50 kernel/locking/lockdep.c:3880
+  lock_acquire+0x127/0x320 kernel/locking/lockdep.c:4412
+  __mutex_lock_common kernel/locking/mutex.c:930 [inline]
+  __mutex_lock+0x158/0x1360 kernel/locking/mutex.c:1077
+  iowarrior_open+0x8a/0x2a0 drivers/usb/misc/iowarrior.c:600
+  usb_open+0x1df/0x270 drivers/usb/core/file.c:48
+  chrdev_open+0x219/0x5c0 fs/char_dev.c:414
+  do_dentry_open+0x494/0x1120 fs/open.c:797
+  do_last fs/namei.c:3416 [inline]
+  path_openat+0x1430/0x3f50 fs/namei.c:3533
+  do_filp_open+0x1a1/0x280 fs/namei.c:3563
+  do_sys_open+0x3c0/0x580 fs/open.c:1089
+  do_syscall_64+0xb7/0x580 arch/x86/entry/common.c:296
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x413711
+Code: 75 14 b8 02 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 04 19 00 00 c3 48  
+83 ec 08 e8 0a fa ff ff 48 89 04 24 b8 02 00 00 00 0f 05 <48> 8b 3c 24 48  
+89 c2 e8 53 fa ff ff 48 89 d0 48 83 c4 08 48 3d 01
+RSP: 002b:00007fbd98b927a0 EFLAGS: 00000293 ORIG_RAX: 0000000000000002
+RAX: ffffffffffffffda RBX: 6666666666666667 RCX: 0000000000413711
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00007fbd98b92850
+RBP: 000000000075bf20 R08: 000000000000000f R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000293 R12: 00007fbd98b936d4
+R13: 00000000004c8bee R14: 00000000004dfa68 R15: 00000000ffffffff
 
 
 ---
@@ -142,5 +199,3 @@ syzbot engineers can be reached at syzkaller@googlegroups.com.
 
 syzbot will keep track of this bug report. See:
 https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
