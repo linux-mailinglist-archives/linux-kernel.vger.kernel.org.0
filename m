@@ -2,170 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4738A7DFF5
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 18:19:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0459A7E028
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 18:27:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732858AbfHAQTl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 12:19:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32784 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727024AbfHAQTj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 12:19:39 -0400
-Received: from linux-8ccs (ip5f5adbcc.dynamic.kabel-deutschland.de [95.90.219.204])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DCB5D20838;
-        Thu,  1 Aug 2019 16:19:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564676378;
-        bh=fQ0l92+Ki1tGSH+LI6NQ4n0BXRy7dsmDoydI/zFviEg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=tJVn98ftRRmA0r6PFyM8iGovjbk4JlUwz/DuX+8G7nm5tS2mm3D+JDvyZNDbT1Pkb
-         jpaBbjQqyhsygYJUoBqWk1E2W3M03g9GdyZMyBe/WRH8Ypnr4zxYzVLf4k8jsLL+fM
-         MbUlq+sZ2yYb5gcOpEeBWfYfK6wFXVpjaY/uYB5o=
-Date:   Thu, 1 Aug 2019 18:19:33 +0200
-From:   Jessica Yu <jeyu@kernel.org>
-To:     Matthew Garrett <matthewgarrett@google.com>
-Cc:     jmorris@namei.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        David Howells <dhowells@redhat.com>,
-        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
-        Matthew Garrett <mjg59@google.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH V37 19/29] Lock down module params that specify hardware
- parameters (eg. ioport)
-Message-ID: <20190801161933.GB5834@linux-8ccs>
-References: <20190731221617.234725-1-matthewgarrett@google.com>
- <20190731221617.234725-20-matthewgarrett@google.com>
+        id S1732960AbfHAQ1B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 12:27:01 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:56535 "EHLO
+        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732943AbfHAQ07 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Aug 2019 12:26:59 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x71Fugid005824
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Thu, 1 Aug 2019 08:56:43 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x71Fugid005824
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019071901; t=1564675003;
+        bh=idIoVIY/hjrBTbn8KTBHUk3muR8F9nF4P8B0TndQlgE=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=gh8yhBGRqGhhPaCWNFCdy7uPE1J0Eiuzw8kh0vyK808xxKWDTPEidPK5SwpwzfGgz
+         29Kn4ufYAQIErypxydgRkBzDE3PdPx+Ao8oHyzM/u0qfyI5aFZYj/6Lc2Nm043CCX0
+         /cgy6TvDQPtZD0t+xqLU+aur38hCEAh4ZsyUaZ2Fg1Ku0yT+bZwBZENQSDFlCd02Nr
+         pAhebAyZYNLbtVQ4ZdmqzWnq9FXCblGl6BkHpnpKrjZ4od16AWXMKeBIrZQktvt1Ip
+         UjHsft8UCJN2B6XkKGhEkYQrIXZXbpOjyZ7xR42Gdwdu02JbHzwSVl/f3Ugi5SXzzd
+         oB1vZmVdHdc2Q==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x71Fug9q005821;
+        Thu, 1 Aug 2019 08:56:42 -0700
+Date:   Thu, 1 Aug 2019 08:56:42 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Sebastian Andrzej Siewior <tipbot@zytor.com>
+Message-ID: <tip-8dd1382c4f8562ee7395c030047a8cc2bc853042@git.kernel.org>
+Cc:     tglx@linutronix.de, peterz@infradead.org, bigeasy@linutronix.de,
+        hpa@zytor.com, mingo@kernel.org, linux-kernel@vger.kernel.org
+Reply-To: mingo@kernel.org, linux-kernel@vger.kernel.org,
+          tglx@linutronix.de, peterz@infradead.org, bigeasy@linutronix.de,
+          hpa@zytor.com
+In-Reply-To: <20190726185753.459144407@linutronix.de>
+References: <20190726185753.459144407@linutronix.de>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:timers/core] tick: Mark tick related hrtimers to expiry in
+ hard interrupt context
+Git-Commit-ID: 8dd1382c4f8562ee7395c030047a8cc2bc853042
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20190731221617.234725-20-matthewgarrett@google.com>
-X-OS:   Linux linux-8ccs 4.12.14-lp150.12.28-default x86_64
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Spam-Status: No, score=-0.2 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
+        autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+++ Matthew Garrett [31/07/19 15:16 -0700]:
->From: David Howells <dhowells@redhat.com>
->
->Provided an annotation for module parameters that specify hardware
->parameters (such as io ports, iomem addresses, irqs, dma channels, fixed
->dma buffers and other types).
->
->Suggested-by: Alan Cox <gnomes@lxorguk.ukuu.org.uk>
->Signed-off-by: David Howells <dhowells@redhat.com>
->Signed-off-by: Matthew Garrett <mjg59@google.com>
->Reviewed-by: Kees Cook <keescook@chromium.org>
->Cc: Jessica Yu <jeyu@kernel.org>
->---
-> include/linux/security.h     |  1 +
-> kernel/params.c              | 28 +++++++++++++++++++++++-----
-> security/lockdown/lockdown.c |  1 +
-> 3 files changed, 25 insertions(+), 5 deletions(-)
->
->diff --git a/include/linux/security.h b/include/linux/security.h
->index 8f7048395114..43fa3486522b 100644
->--- a/include/linux/security.h
->+++ b/include/linux/security.h
->@@ -113,6 +113,7 @@ enum lockdown_reason {
-> 	LOCKDOWN_ACPI_TABLES,
-> 	LOCKDOWN_PCMCIA_CIS,
-> 	LOCKDOWN_TIOCSSERIAL,
->+	LOCKDOWN_MODULE_PARAMETERS,
-> 	LOCKDOWN_INTEGRITY_MAX,
-> 	LOCKDOWN_CONFIDENTIALITY_MAX,
-> };
->diff --git a/kernel/params.c b/kernel/params.c
->index cf448785d058..f2779a76d39a 100644
->--- a/kernel/params.c
->+++ b/kernel/params.c
->@@ -12,6 +12,7 @@
-> #include <linux/err.h>
-> #include <linux/slab.h>
-> #include <linux/ctype.h>
->+#include <linux/security.h>
->
-> #ifdef CONFIG_SYSFS
-> /* Protects all built-in parameters, modules use their own param_lock */
->@@ -96,13 +97,20 @@ bool parameq(const char *a, const char *b)
-> 	return parameqn(a, b, strlen(a)+1);
-> }
->
->-static void param_check_unsafe(const struct kernel_param *kp)
->+static bool param_check_unsafe(const struct kernel_param *kp,
->+			       const char *doing)
+Commit-ID:  8dd1382c4f8562ee7395c030047a8cc2bc853042
+Gitweb:     https://git.kernel.org/tip/8dd1382c4f8562ee7395c030047a8cc2bc853042
+Author:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+AuthorDate: Fri, 26 Jul 2019 20:30:56 +0200
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Thu, 1 Aug 2019 17:43:18 +0200
 
-Hm, I don't think the doing parameter ended up being used in this function?
+tick: Mark tick related hrtimers to expiry in hard interrupt context
 
-> {
->+	if (kp->flags & KERNEL_PARAM_FL_HWPARAM &&
->+	    security_locked_down(LOCKDOWN_MODULE_PARAMETERS))
->+		return false;
->+
-> 	if (kp->flags & KERNEL_PARAM_FL_UNSAFE) {
-> 		pr_notice("Setting dangerous option %s - tainting kernel\n",
-> 			  kp->name);
-> 		add_taint(TAINT_USER, LOCKDEP_STILL_OK);
-> 	}
->+
->+	return true;
-> }
->
-> static int parse_one(char *param,
->@@ -132,8 +140,10 @@ static int parse_one(char *param,
-> 			pr_debug("handling %s with %p\n", param,
-> 				params[i].ops->set);
-> 			kernel_param_lock(params[i].mod);
->-			param_check_unsafe(&params[i]);
->-			err = params[i].ops->set(val, &params[i]);
->+			if (param_check_unsafe(&params[i], doing))
->+				err = params[i].ops->set(val, &params[i]);
->+			else
->+				err = -EPERM;
-> 			kernel_param_unlock(params[i].mod);
-> 			return err;
-> 		}
->@@ -541,6 +551,12 @@ static ssize_t param_attr_show(struct module_attribute *mattr,
-> 	return count;
-> }
->
->+#ifdef CONFIG_MODULES
->+#define mod_name(mod) ((mod)->name)
->+#else
->+#define mod_name(mod) "unknown"
->+#endif
->+
-> /* sysfs always hands a nul-terminated string in buf.  We rely on that. */
-> static ssize_t param_attr_store(struct module_attribute *mattr,
-> 				struct module_kobject *mk,
->@@ -553,8 +569,10 @@ static ssize_t param_attr_store(struct module_attribute *mattr,
-> 		return -EPERM;
->
-> 	kernel_param_lock(mk->mod);
->-	param_check_unsafe(attribute->param);
->-	err = attribute->param->ops->set(buf, attribute->param);
->+	if (param_check_unsafe(attribute->param, mod_name(mk->mod)))
->+		err = attribute->param->ops->set(buf, attribute->param);
->+	else
->+		err = -EPERM;
-> 	kernel_param_unlock(mk->mod);
-> 	if (!err)
-> 		return len;
->diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
->index 00a3a6438dd2..5177938cfa0d 100644
->--- a/security/lockdown/lockdown.c
->+++ b/security/lockdown/lockdown.c
->@@ -28,6 +28,7 @@ static char *lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1] = {
-> 	[LOCKDOWN_ACPI_TABLES] = "modifying ACPI tables",
-> 	[LOCKDOWN_PCMCIA_CIS] = "direct PCMCIA CIS storage",
-> 	[LOCKDOWN_TIOCSSERIAL] = "reconfiguration of serial port IO",
->+	[LOCKDOWN_MODULE_PARAMETERS] = "unsafe module parameters",
-> 	[LOCKDOWN_INTEGRITY_MAX] = "integrity",
-> 	[LOCKDOWN_CONFIDENTIALITY_MAX] = "confidentiality",
-> };
->-- 
->2.22.0.770.g0f2c4a37fd-goog
->
+The tick related hrtimers, which drive the scheduler tick and hrtimer based
+broadcasting are required to expire in hard interrupt context for obvious
+reasons.
+
+Mark them so PREEMPT_RT kernels wont move them to soft interrupt expiry.
+
+Make the horribly formatted RCU_NONIDLE bracket maze readable while at it.
+
+No functional change, 
+
+[ tglx: Split out from larger combo patch. Add changelog ]
+
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Link: https://lkml.kernel.org/r/20190726185753.459144407@linutronix.de
+
+
+---
+ kernel/time/tick-broadcast-hrtimer.c | 13 +++++++++----
+ kernel/time/tick-sched.c             | 15 +++++++++------
+ 2 files changed, 18 insertions(+), 10 deletions(-)
+
+diff --git a/kernel/time/tick-broadcast-hrtimer.c b/kernel/time/tick-broadcast-hrtimer.c
+index 5be6154e2fd2..c1f5bb590b5e 100644
+--- a/kernel/time/tick-broadcast-hrtimer.c
++++ b/kernel/time/tick-broadcast-hrtimer.c
+@@ -59,11 +59,16 @@ static int bc_set_next(ktime_t expires, struct clock_event_device *bc)
+ 	 * hrtimer_{start/cancel} functions call into tracing,
+ 	 * calls to these functions must be bound within RCU_NONIDLE.
+ 	 */
+-	RCU_NONIDLE({
++	RCU_NONIDLE(
++		{
+ 			bc_moved = hrtimer_try_to_cancel(&bctimer) >= 0;
+-			if (bc_moved)
++			if (bc_moved) {
+ 				hrtimer_start(&bctimer, expires,
+-					      HRTIMER_MODE_ABS_PINNED);});
++					      HRTIMER_MODE_ABS_PINNED_HARD);
++			}
++		}
++	);
++
+ 	if (bc_moved) {
+ 		/* Bind the "device" to the cpu */
+ 		bc->bound_on = smp_processor_id();
+@@ -104,7 +109,7 @@ static enum hrtimer_restart bc_handler(struct hrtimer *t)
+ 
+ void tick_setup_hrtimer_broadcast(void)
+ {
+-	hrtimer_init(&bctimer, CLOCK_MONOTONIC, HRTIMER_MODE_ABS);
++	hrtimer_init(&bctimer, CLOCK_MONOTONIC, HRTIMER_MODE_ABS_HARD);
+ 	bctimer.function = bc_handler;
+ 	clockevents_register_device(&ce_broadcast_hrtimer);
+ }
+diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
+index be9707f68024..01ff32a02af2 100644
+--- a/kernel/time/tick-sched.c
++++ b/kernel/time/tick-sched.c
+@@ -634,10 +634,12 @@ static void tick_nohz_restart(struct tick_sched *ts, ktime_t now)
+ 	/* Forward the time to expire in the future */
+ 	hrtimer_forward(&ts->sched_timer, now, tick_period);
+ 
+-	if (ts->nohz_mode == NOHZ_MODE_HIGHRES)
+-		hrtimer_start_expires(&ts->sched_timer, HRTIMER_MODE_ABS_PINNED);
+-	else
++	if (ts->nohz_mode == NOHZ_MODE_HIGHRES) {
++		hrtimer_start_expires(&ts->sched_timer,
++				      HRTIMER_MODE_ABS_PINNED_HARD);
++	} else {
+ 		tick_program_event(hrtimer_get_expires(&ts->sched_timer), 1);
++	}
+ 
+ 	/*
+ 	 * Reset to make sure next tick stop doesn't get fooled by past
+@@ -802,7 +804,8 @@ static void tick_nohz_stop_tick(struct tick_sched *ts, int cpu)
+ 	}
+ 
+ 	if (ts->nohz_mode == NOHZ_MODE_HIGHRES) {
+-		hrtimer_start(&ts->sched_timer, tick, HRTIMER_MODE_ABS_PINNED);
++		hrtimer_start(&ts->sched_timer, tick,
++			      HRTIMER_MODE_ABS_PINNED_HARD);
+ 	} else {
+ 		hrtimer_set_expires(&ts->sched_timer, tick);
+ 		tick_program_event(tick, 1);
+@@ -1327,7 +1330,7 @@ void tick_setup_sched_timer(void)
+ 	/*
+ 	 * Emulate tick processing via per-CPU hrtimers:
+ 	 */
+-	hrtimer_init(&ts->sched_timer, CLOCK_MONOTONIC, HRTIMER_MODE_ABS);
++	hrtimer_init(&ts->sched_timer, CLOCK_MONOTONIC, HRTIMER_MODE_ABS_HARD);
+ 	ts->sched_timer.function = tick_sched_timer;
+ 
+ 	/* Get the next period (per-CPU) */
+@@ -1342,7 +1345,7 @@ void tick_setup_sched_timer(void)
+ 	}
+ 
+ 	hrtimer_forward(&ts->sched_timer, now, tick_period);
+-	hrtimer_start_expires(&ts->sched_timer, HRTIMER_MODE_ABS_PINNED);
++	hrtimer_start_expires(&ts->sched_timer, HRTIMER_MODE_ABS_PINNED_HARD);
+ 	tick_nohz_activate(ts, NOHZ_MODE_HIGHRES);
+ }
+ #endif /* HIGH_RES_TIMERS */
