@@ -2,98 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DAB3D7D894
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 11:28:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 924F57D8B0
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 11:37:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731185AbfHAJ2m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 05:28:42 -0400
-Received: from skedge04.snt-world.com ([91.208.41.69]:44982 "EHLO
-        skedge04.snt-world.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730887AbfHAJ2m (ORCPT
+        id S1731246AbfHAJgr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 05:36:47 -0400
+Received: from 9.mo68.mail-out.ovh.net ([46.105.78.111]:43745 "EHLO
+        9.mo68.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725790AbfHAJgr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 05:28:42 -0400
-Received: from sntmail11s.snt-is.com (unknown [10.203.32.181])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by skedge04.snt-world.com (Postfix) with ESMTPS id 4533367A8D7;
-        Thu,  1 Aug 2019 11:28:34 +0200 (CEST)
-Received: from sntmail12r.snt-is.com (10.203.32.182) by sntmail11s.snt-is.com
- (10.203.32.181) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Thu, 1 Aug 2019
- 11:28:33 +0200
-Received: from sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305]) by
- sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305%3]) with mapi id
- 15.01.1713.004; Thu, 1 Aug 2019 11:28:33 +0200
-From:   Schrempf Frieder <frieder.schrempf@kontron.de>
-To:     =?utf-8?B?VXdlIEtsZWluZS1Lw7ZuaWc=?= 
-        <u.kleine-koenig@pengutronix.de>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        "Pengutronix Kernel Team" <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        "NXP Linux Team" <linux-imx@nxp.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
-        Jiri Slaby <jslaby@suse.com>
-Subject: Re: [PATCH] serial: imx: Avoid probe failure in case of missing
- gpiolib
-Thread-Topic: [PATCH] serial: imx: Avoid probe failure in case of missing
- gpiolib
-Thread-Index: AQHVSEGkENWr6+HjfEGe5le+et6Jcabl2bqAgAALMwA=
-Date:   Thu, 1 Aug 2019 09:28:33 +0000
-Message-ID: <0674d68b-99fa-3408-1dd1-22dc84144b43@kontron.de>
-References: <20190801081524.22577-1-frieder.schrempf@kontron.de>
- <20190801084827.m42ci3amo37hmesi@pengutronix.de>
-In-Reply-To: <20190801084827.m42ci3amo37hmesi@pengutronix.de>
-Accept-Language: de-DE, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.25.9.193]
-x-c2processedorg: 51b406b7-48a2-4d03-b652-521f56ac89f3
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <6902432E5480BF48B377D0BC2FB45B09@snt-world.com>
-Content-Transfer-Encoding: base64
+        Thu, 1 Aug 2019 05:36:47 -0400
+X-Greylist: delayed 1201 seconds by postgrey-1.27 at vger.kernel.org; Thu, 01 Aug 2019 05:36:46 EDT
+Received: from player791.ha.ovh.net (unknown [10.109.160.39])
+        by mo68.mail-out.ovh.net (Postfix) with ESMTP id 43E5913E980
+        for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2019 10:58:57 +0200 (CEST)
+Received: from kaod.org (lfbn-1-2240-157.w90-76.abo.wanadoo.fr [90.76.60.157])
+        (Authenticated sender: clg@kaod.org)
+        by player791.ha.ovh.net (Postfix) with ESMTPSA id EAA2686678C9;
+        Thu,  1 Aug 2019 08:58:45 +0000 (UTC)
+Subject: Re: [PATCH 1/2] powerpc/xive: Use GFP_KERNEL instead of GFP_ATOMIC in
+ 'xive_irq_bitmap_add()'
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au,
+        allison@lohutok.net, tglx@linutronix.de, groug@kaod.org
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <cover.1564647619.git.christophe.jaillet@wanadoo.fr>
+ <85d5d247ce753befd6aa63c473f7823de6520ccd.1564647619.git.christophe.jaillet@wanadoo.fr>
+From:   =?UTF-8?Q?C=c3=a9dric_Le_Goater?= <clg@kaod.org>
+Message-ID: <669a1566-4048-1d81-f719-45e4ac05758b@kaod.org>
+Date:   Thu, 1 Aug 2019 10:58:45 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-X-SnT-MailScanner-Information: Please contact the ISP for more information
-X-SnT-MailScanner-ID: 4533367A8D7.AE7BB
-X-SnT-MailScanner: Not scanned: please contact your Internet E-Mail Service Provider for details
-X-SnT-MailScanner-SpamCheck: 
-X-SnT-MailScanner-From: frieder.schrempf@kontron.de
-X-SnT-MailScanner-To: festevam@gmail.com, gregkh@linuxfoundation.org,
-        jslaby@suse.com, kernel@pengutronix.de,
-        linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com,
-        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-        s.hauer@pengutronix.de, shawnguo@kernel.org,
-        u.kleine-koenig@pengutronix.de
-X-Spam-Status: No
+In-Reply-To: <85d5d247ce753befd6aa63c473f7823de6520ccd.1564647619.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Ovh-Tracer-Id: 12236561665022528369
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeduvddrleejgddtlecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgVXdlLA0KDQpPbiAwMS4wOC4xOSAxMDo0OCwgVXdlIEtsZWluZS1Lw7ZuaWcgd3JvdGU6DQo+
-IE9uIFRodSwgQXVnIDAxLCAyMDE5IGF0IDA4OjE4OjA1QU0gKzAwMDAsIFNjaHJlbXBmIEZyaWVk
-ZXIgd3JvdGU6DQo+PiBGcm9tOiBGcmllZGVyIFNjaHJlbXBmIDxmcmllZGVyLnNjaHJlbXBmQGtv
-bnRyb24uZGU+DQo+Pg0KPj4gSWYgQ09ORklHX0dQSU9MSUIgaXMgbm90IGVuYWJsZWQsIG1jdHJs
-X2dwaW9faW5pdCgpIHdpbGwgcmV0dXJuDQo+PiAtRU5PU1lTIGFuZCBjYXVzZSB0aGUgcHJvYmlu
-ZyBvZiB0aGUgaW14IFVBUlQgdG8gZmFpbC4gQXMgdGhlDQo+PiBHUElPcyBhcmUgb3B0aW9uYWws
-IHdlIHNob3VsZCBjb250aW51ZSBwcm9iaW5nIGluIHRoaXMgY2FzZS4NCj4gDQo+IElzIHRoaXMg
-cmVhbGx5IHN0aWxsIHRoZSBjYXNlPyBPbiB3aGljaCB2ZXJzaW9uIGRpZCB5b3UgaGl0IHRoaXMN
-Cj4gcHJvYmxlbT8NCg0KWWVzLCBJIHRoaW5rIGl0IGlzLiBJIHVzZWQgdjUuMi41LCB0aGF0IGFs
-cmVhZHkgaGFzIGQ5OTQ4MjY3M2Y5NS4NCg0KPiANCj4gSSB3b3VsZCBleHBlY3QgdGhhdCBpcyBn
-b25lIHdpdGgNCj4gZDk5NDgyNjczZjk1MDgxN2IzMGNhZjNmY2RmYjMxMTc5YjA1MGNlMSBpZiBu
-b3QgZWFybGllci4NCg0KSSB0aGluayB0aGlzIGlzIGEgZGlmZmVyZW50IHByb2JsZW0uIElmIENP
-TkZJR19HUElPTElCIGlzIGRpc2FibGVkLCANCm1jdHJsX2dwaW9faW5pdCgpIHJldHVybnMgLUVO
-T1NZUyB1bmNvbmRpdGlvbmFsbHkgaGVyZTogWzFdLiBUaGUgDQpleGlzdGluZyBwYXRjaCAoZDk5
-NDgyNjczZjk1KSBzZWVtcyB0byBoYW5kbGUgdGhlIGNhc2Ugd2hlbiANCkNPTkZJR19HUElPTElC
-IGlzIGVuYWJsZWQsIGJ1dCBubyBvciBub3QgYWxsIEdQSU9zIGFyZSBnaXZlbiBpbiB0aGUgZHRi
-Lg0KDQpUaGUgc2gtc2NpLmMgZHJpdmVyIGhhcyBhIHNpbWlsYXIgY2hlY2sgdG8gc2tpcCB0aGlz
-IGNhc2U6IFsyXS4NCg0KUmVnYXJkcywNCkZyaWVkZXINCg0KWzFdIA0KaHR0cHM6Ly9naXQua2Vy
-bmVsLm9yZy9wdWIvc2NtL2xpbnV4L2tlcm5lbC9naXQvdG9ydmFsZHMvbGludXguZ2l0L3RyZWUv
-ZHJpdmVycy90dHkvc2VyaWFsL3NlcmlhbF9tY3RybF9ncGlvLmgjbjEyMQ0KWzJdIA0KaHR0cHM6
-Ly9naXQua2VybmVsLm9yZy9wdWIvc2NtL2xpbnV4L2tlcm5lbC9naXQvdG9ydmFsZHMvbGludXgu
-Z2l0L3RyZWUvZHJpdmVycy90dHkvc2VyaWFsL3NoLXNjaS5jI24zMjkw
+On 01/08/2019 10:32, Christophe JAILLET wrote:
+> There is no need to use GFP_ATOMIC here. GFP_KERNEL should be enough.
+> GFP_KERNEL is also already used for another allocation just a few lines
+> below.
+
+This is correct.
+ 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+
+
+Reviewed-by: Cédric Le Goater <clg@kaod.org>
+
+Thanks,
+
+C.
+
+> ---
+>  arch/powerpc/sysdev/xive/spapr.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/powerpc/sysdev/xive/spapr.c b/arch/powerpc/sysdev/xive/spapr.c
+> index 8ef9cf4ebb1c..b4f5eb9e0f82 100644
+> --- a/arch/powerpc/sysdev/xive/spapr.c
+> +++ b/arch/powerpc/sysdev/xive/spapr.c
+> @@ -45,7 +45,7 @@ static int xive_irq_bitmap_add(int base, int count)
+>  {
+>  	struct xive_irq_bitmap *xibm;
+>  
+> -	xibm = kzalloc(sizeof(*xibm), GFP_ATOMIC);
+> +	xibm = kzalloc(sizeof(*xibm), GFP_KERNEL);
+>  	if (!xibm)
+>  		return -ENOMEM;
+>  
+> 
+
