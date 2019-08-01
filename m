@@ -2,93 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1211F7D2E9
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 03:37:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 46F037D2E3
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 03:33:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729354AbfHABhN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 31 Jul 2019 21:37:13 -0400
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:43990 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728014AbfHABhN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Jul 2019 21:37:13 -0400
-X-IronPort-AV: E=Sophos;i="5.64,332,1559491200"; 
-   d="scan'208";a="72632467"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 01 Aug 2019 09:37:11 +0800
-Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
-        by cn.fujitsu.com (Postfix) with ESMTP id 330514CDD99E;
-        Thu,  1 Aug 2019 09:37:07 +0800 (CST)
-Received: from [10.167.225.140] (10.167.225.140) by
- G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
- (TLS) id 14.3.439.0; Thu, 1 Aug 2019 09:37:15 +0800
-Subject: Re: [RFC PATCH 0/7] xfs: add reflink & dedupe support for fsdax.
-To:     Goldwyn Rodrigues <rgoldwyn@suse.de>
-CC:     <linux-xfs@vger.kernel.org>, <linux-nvdimm@lists.01.org>,
-        <darrick.wong@oracle.com>, <linux-kernel@vger.kernel.org>,
-        <gujx@cn.fujitsu.com>, <david@fromorbit.com>,
-        <qi.fuli@fujitsu.com>, <caoj.fnst@cn.fujitsu.com>
-References: <20190731114935.11030-1-ruansy.fnst@cn.fujitsu.com>
- <20190731203324.7vjwlejmwpghpvqi@fiona>
-From:   Shiyang Ruan <ruansy.fnst@cn.fujitsu.com>
-Message-ID: <800ff77a-7cd1-5fa1-fcf7-e41264a3f189@cn.fujitsu.com>
-Date:   Thu, 1 Aug 2019 09:37:04 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        id S1729857AbfHABdj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 31 Jul 2019 21:33:39 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:51210 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726594AbfHABdj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Jul 2019 21:33:39 -0400
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id DBF2AD35E1504DA908C3;
+        Thu,  1 Aug 2019 09:33:36 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
+ 14.3.439.0; Thu, 1 Aug 2019 09:33:27 +0800
+From:   Wei Yongjun <weiyongjun1@huawei.com>
+To:     Alexander Shishkin <alexander.shishkin@linux.intel.com>
+CC:     Wei Yongjun <weiyongjun1@huawei.com>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+Subject: [PATCH -next] intel_th: msu: Fix possible memory leak in mode_store()
+Date:   Thu, 1 Aug 2019 01:38:25 +0000
+Message-ID: <20190801013825.182543-1-weiyongjun1@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20190731203324.7vjwlejmwpghpvqi@fiona>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.167.225.140]
-X-yoursite-MailScanner-ID: 330514CDD99E.AAB55
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: ruansy.fnst@cn.fujitsu.com
-X-Spam-Status: No
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+'mode' is malloced in mode_store() and should be freed before leaving
+from the error handling cases, otherwise it will cause memory leak.
 
+Fixes: 615c164da0eb ("intel_th: msu: Introduce buffer interface")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/hwtracing/intel_th/msu.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-On 8/1/19 4:33 AM, Goldwyn Rodrigues wrote:
-> On 19:49 31/07, Shiyang Ruan wrote:
->> This patchset aims to take care of this issue to make reflink and dedupe
->> work correctly in XFS.
->>
->> It is based on Goldwyn's patchsets: "v4 Btrfs dax support" and "Btrfs
->> iomap".  I picked up some patches related and made a few fix to make it
->> basically works fine.
->>
->> For dax framework:
->>    1. adapt to the latest change in iomap.
->>
->> For XFS:
->>    1. report the source address and set IOMAP_COW type for those write
->>       operations that need COW.
->>    2. update extent list at the end.
->>    3. add file contents comparison function based on dax framework.
->>    4. use xfs_break_layouts() to support dax.
-> 
-> Shiyang,
-> 
-> I think you used the older patches which does not contain the iomap changes
-> which would call iomap_begin() with two iomaps. I have it in the btrfs-iomap
+diff --git a/drivers/hwtracing/intel_th/msu.c b/drivers/hwtracing/intel_th/msu.c
+index fc9f15f36ad4..2e7a04f566d4 100644
+--- a/drivers/hwtracing/intel_th/msu.c
++++ b/drivers/hwtracing/intel_th/msu.c
+@@ -1849,8 +1849,10 @@ mode_store(struct device *dev, struct device_attribute *attr, const char *buf,
+ 
+ 	mode = kstrndup(buf, len, GFP_KERNEL);
+ 	i = match_string(msc_mode, ARRAY_SIZE(msc_mode), mode);
+-	if (i >= 0)
++	if (i >= 0) {
++		kfree(mode);
+ 		goto found;
++	}
+ 
+ 	/* Buffer sinks only work with a usable IRQ */
+ 	if (!msc->do_irq) {
 
-Oh, Sorry for my carelessness.  This patchset is built on your "Btrfs 
-iomap".  I didn't point it out in cover letter.
-
-> branch and plan to update it today. It is built on v5.3-rcX, so it should
-> contain the changes which moves the iomap code to the different directory.
-> I will build the dax patches on top of that.
-> However, we are making a big dependency chain here 
-Don't worry.  It's fine for me.  I'll follow your updates.
-
-> 
-
--- 
-Thanks,
-Shiyang Ruan.
 
 
