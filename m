@@ -2,89 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36C487D8A2
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 11:33:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 33EFD7D8A3
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 11:34:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731208AbfHAJdt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 05:33:49 -0400
-Received: from onstation.org ([52.200.56.107]:49214 "EHLO onstation.org"
+        id S1730967AbfHAJew (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 05:34:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43318 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725790AbfHAJds (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 05:33:48 -0400
-Received: from localhost (c-98-239-145-235.hsd1.wv.comcast.net [98.239.145.235])
+        id S1725790AbfHAJew (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Aug 2019 05:34:52 -0400
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: masneyb)
-        by onstation.org (Postfix) with ESMTPSA id 6556D3E910;
-        Thu,  1 Aug 2019 09:33:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=onstation.org;
-        s=default; t=1564652027;
-        bh=a7jk3oZqV6hjmmCfmpPubw/i3qx5j3DufQPR1lxReFQ=;
+        by mail.kernel.org (Postfix) with ESMTPSA id AD4F6206B8;
+        Thu,  1 Aug 2019 09:34:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564652091;
+        bh=SH6f21lmIyn+pd+VkvTBUkm1MkwdIZDLUdiyEmRNR+Q=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=r04tkst3UI4t72iV457sH2NZ0cIemxdGIfDLN5kyy2ScN1ZCr0u6nFV8/JwX6LxSO
-         u6COlXDOsxyTqHS7piMEfL2qoCvH/typtIqLpKq9Y3KlsdtgBMCukrn16QD2YZsVJV
-         eOlWR+K/Ch6LCyp9CNkGODgMWgcXaWH/KCAZGmmY=
-Date:   Thu, 1 Aug 2019 05:33:47 -0400
-From:   Brian Masney <masneyb@onstation.org>
-To:     Chuhong Yuan <hslester96@gmail.com>
-Cc:     Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/4] iio: tsl2772: Use devm_add_action_or_reset
-Message-ID: <20190801093347.GA27653@onstation.org>
-References: <20190801073557.9578-1-hslester96@gmail.com>
+        b=APCZAFFlcanmjLy4xSd1nHh5Ni/XshHjAKu46SH/sZy3tsn5F3WiPdQJNnaDQHxlw
+         QoxZ5r0DhvsYoN293Q5fmwjTiCNJ2GXZYpCigPypd0UkHNTLJ3F5yQtpoHgzzQFZw6
+         +I2aQwIlYyl5HGfv0bZ//1BgokAl2BsR13+3vmuA=
+Date:   Thu, 1 Aug 2019 10:34:47 +0100
+From:   Will Deacon <will@kernel.org>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Julien Thierry <julien.thierry.kdev@gmail.com>
+Subject: Re: linux-next: Fixes tag needs some work in the arm64-fixes tree
+Message-ID: <20190801093447.ktpnc757fdqn4mzs@willie-the-truck>
+References: <20190801080621.18868050@canb.auug.org.au>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190801073557.9578-1-hslester96@gmail.com>
+In-Reply-To: <20190801080621.18868050@canb.auug.org.au>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 01, 2019 at 03:35:57PM +0800, Chuhong Yuan wrote:
-> Use devm_add_action_or_reset to remove the call to
-> tsl2772_disable_regulators_action to simplify the error path.
+On Thu, Aug 01, 2019 at 08:06:21AM +1000, Stephen Rothwell wrote:
+> In commit
 > 
-> Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
-
-For the whole series:
-
-Reviewed-by: Brian Masney <masneyb@onstation.org>
-
-I forgot to mention this before, but next time please use a cover letter
-if you're sending more than one patch: git format-patch --cover-letter.
-
-Brian
-
-
-> ---
-> Changes in v4:
->   - Split v3 into three patches.
->   - Revise description to make it more precise.
+>   97d5db366224 ("arm64: Lower priority mask for GIC_PRIO_IRQON")
 > 
->  drivers/iio/light/tsl2772.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+> Fixes tag
 > 
-> diff --git a/drivers/iio/light/tsl2772.c b/drivers/iio/light/tsl2772.c
-> index 83cece921843..29cfd8ae2700 100644
-> --- a/drivers/iio/light/tsl2772.c
-> +++ b/drivers/iio/light/tsl2772.c
-> @@ -1807,10 +1807,10 @@ static int tsl2772_probe(struct i2c_client *clientp,
->  		return PTR_ERR(chip->vdd_supply);
->  	}
->  
-> -	ret = devm_add_action(&clientp->dev, tsl2772_disable_regulators_action,
-> -			      chip);
-> +	ret = devm_add_action_or_reset(&clientp->dev,
-> +					tsl2772_disable_regulators_action,
-> +					chip);
->  	if (ret < 0) {
-> -		tsl2772_disable_regulators_action(chip);
->  		dev_err(&clientp->dev, "Failed to setup regulator cleanup action %d\n",
->  			ret);
->  		return ret;
-> -- 
-> 2.20.1
+>   Fixes: bd82d4bd21880b7c ("arm64: Fix incorrect irqflag restore for
+> 
+> has these problem(s):
+> 
+>   - Subject has leading but no trailing parentheses
+>   - Subject has leading but no trailing quotes
+> 
+> Please do not split Fixes tags over more than one line.
+
+Thanks, will fix.
+
+Will
