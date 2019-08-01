@@ -2,81 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BA987E5DE
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 00:42:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 04DBD7E5E1
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 00:43:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732705AbfHAWmw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 18:42:52 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:34352 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728719AbfHAWmw (ORCPT
+        id S2389920AbfHAWnO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 18:43:14 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40438 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2389885AbfHAWnJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 18:42:52 -0400
-Received: by mail-pl1-f194.google.com with SMTP id i2so32843631plt.1;
-        Thu, 01 Aug 2019 15:42:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fomdWM13prZfQ7vSZjiuPyioG/SgkiDt0SZpZ1hksfA=;
-        b=Ee16V7TyWma9ZzO+MfYbY01TWD+PJYsqu/sciLstLnhHA0GZKS0yflmkj0vw3mciM+
-         oRzxwP/T9fdmCduKRBSdymmttk0eOso7x+vDnZ7nwplyFrjHk5Uxhid68nQOMREFtu4I
-         6QtnzS02SldThmbP4SySSEq9MDMC2raoyF2ChOKFd+ZvgBv+KEt7JnLqJI8esWwHpj6X
-         uCFSjPkkDK6DRFKdgmUMPJmDPjRhtpRcSFGqXR+rS1zejPksAXh29y/7X0UeU98krnhP
-         sdTynsvRO+pDSLqZAw7Z+f0nH4jdV6VDu99+lw7g0w8ZEMuuEQ/LMkEr6ZXZvxLyWSYh
-         jtnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fomdWM13prZfQ7vSZjiuPyioG/SgkiDt0SZpZ1hksfA=;
-        b=bkETA5A5OO1sabbdCiaQYTafIr5fww6W/IJ6CCp+jE1HPK/Pl56sm/DwSWMVajoRPr
-         l5iZGUEvj9KtNBfNMsj791kex5fqBgsyAnhXlvi/NP1rsWg/YJRK/dCRCp9TQ1BcFdpo
-         G1QcmMTEWu5jsXe0on1MpxKF4nvhDKX1bu59M47p/ZZF/GGYVxyp04qbtzzoVRf450An
-         F3WLTcBMH2CsVbGc8kevNecJ/SMnnPW/p0sUl9iAEuN0OaVPZ/dUoZ01x7xvwPDkIq7M
-         NZ7SMCWvpwZKr8nvT3qPvBWHgZuq2a3TNw+ZJKVObHUCYHrKvDgGx+oSSyyioPqiulpW
-         g/+A==
-X-Gm-Message-State: APjAAAVaEVWMCDFkdrTqCALVT3CrtLLur3wQ8ScFPyQ0AV62ASmoGvbt
-        Rate39H2hNHEfcIxacp4Kkr2cUNeA0zrxv3/TXecj3S1
-X-Google-Smtp-Source: APXvYqymyfyz8/HNnj11yxmLGdBA4kOlsce5EmA7gV+DlPXeUby884J8R66Q3PaDByYFW0yTPM5bHW8972cOoq9vkUg=
-X-Received: by 2002:a17:902:2a29:: with SMTP id i38mr129344380plb.46.1564699371026;
- Thu, 01 Aug 2019 15:42:51 -0700 (PDT)
+        Thu, 1 Aug 2019 18:43:09 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x71Mffjl030406;
+        Thu, 1 Aug 2019 18:42:41 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2u460eeejh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 01 Aug 2019 18:42:41 -0400
+Received: from m0098416.ppops.net (m0098416.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x71Mfg2E030571;
+        Thu, 1 Aug 2019 18:42:40 -0400
+Received: from ppma04wdc.us.ibm.com (1a.90.2fa9.ip4.static.sl-reverse.com [169.47.144.26])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2u460eeeja-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 01 Aug 2019 18:42:40 -0400
+Received: from pps.filterd (ppma04wdc.us.ibm.com [127.0.0.1])
+        by ppma04wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x71Melmp025611;
+        Thu, 1 Aug 2019 22:42:40 GMT
+Received: from b01cxnp23033.gho.pok.ibm.com (b01cxnp23033.gho.pok.ibm.com [9.57.198.28])
+        by ppma04wdc.us.ibm.com with ESMTP id 2u0e85w6n7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 01 Aug 2019 22:42:39 +0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x71Mgd4j20775178
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 1 Aug 2019 22:42:39 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7C4A9B206C;
+        Thu,  1 Aug 2019 22:42:39 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5CF1CB2070;
+        Thu,  1 Aug 2019 22:42:39 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.154])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu,  1 Aug 2019 22:42:39 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id B330A16C9A36; Thu,  1 Aug 2019 15:42:40 -0700 (PDT)
+Date:   Thu, 1 Aug 2019 15:42:40 -0700
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     rcu@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
+        jiangshanlai@gmail.com, dipankar@in.ibm.com,
+        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
+        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
+        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
+        fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org
+Subject: [PATCH tip/core/rcu 0/8] RCU list-traversal lockdep updates for v5.4
+Message-ID: <20190801224240.GA16092@linux.ibm.com>
+Reply-To: paulmck@linux.ibm.com
 MIME-Version: 1.0
-References: <20190802075453.06066be1@canb.auug.org.au>
-In-Reply-To: <20190802075453.06066be1@canb.auug.org.au>
-From:   Steve French <smfrench@gmail.com>
-Date:   Thu, 1 Aug 2019 17:42:36 -0500
-Message-ID: <CAH2r5muO8rYmSEDHogiDkoWbMMm4bd367U-jzbpk_gixk7hkhg@mail.gmail.com>
-Subject: Re: linux-next: Signed-off-by missing for commit in the cifs tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     CIFS <linux-cifs@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-01_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=13 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908010239
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixed
+Hello!
 
-On Thu, Aug 1, 2019 at 4:55 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi all,
->
-> Commit
->
->   c3ab166ec798 ("SMB3: Kernel oops mounting a encryptData share with CONFIG_DEBUG_VIRTUAL")
->
-> is missing a Signed-off-by from its committer.
->
-> --
-> Cheers,
-> Stephen Rothwell
+This series provides enhancements to RCU pointer and list macros, all
+courtesy of Joel Fernandes:
 
+1.	Rename rcu_dereference_raw_notrace() to _check().
 
+2.	Remove redundant debug_locks check in rcu_read_lock_sched_held().
 
--- 
-Thanks,
+3.	Add support for consolidated-RCU reader checking.
 
-Steve
+4.	Remove custom check for RCU readers.
+
+5.	Add lockdep condition to fix for_each_entry().
+
+6.	Convert to use built-in RCU list checking.
+
+7.	Pass lockdep condition to pcm_mmcfg_list iterator.
+
+8.	Use built-in RCU list checking for acpi_ioremaps list.
+
+							Thanx, Paul
+
+------------------------------------------------------------------------
+
+ Documentation/RCU/Design/Requirements/Requirements.html |    2 
+ arch/powerpc/include/asm/kvm_book3s_64.h                |    2 
+ arch/x86/pci/mmconfig-shared.c                          |    5 -
+ drivers/acpi/osl.c                                      |    6 -
+ drivers/base/base.h                                     |    1 
+ drivers/base/core.c                                     |   10 ++
+ drivers/base/power/runtime.c                            |   15 ++-
+ include/linux/rcu_sync.h                                |    4 
+ include/linux/rculist.h                                 |   38 +++++++--
+ include/linux/rcupdate.h                                |    9 +-
+ kernel/rcu/Kconfig.debug                                |   11 ++
+ kernel/rcu/update.c                                     |   67 ++++++++++------
+ kernel/trace/ftrace_internal.h                          |    8 -
+ kernel/trace/trace.c                                    |    4 
+ net/ipv4/fib_frontend.c                                 |    3 
+ 15 files changed, 132 insertions(+), 53 deletions(-)
