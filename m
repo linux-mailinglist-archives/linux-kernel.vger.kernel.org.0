@@ -2,76 +2,165 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F16B7D7B0
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 10:33:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 254517D7C6
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 10:37:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730553AbfHAIdK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 04:33:10 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:45166 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728987AbfHAIdK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 04:33:10 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x718X7fG098223;
-        Thu, 1 Aug 2019 03:33:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1564648387;
-        bh=UIyFD3CEBcyi2gh/ZMDnZhMVTHUDJPbYvzwmc7DbVZE=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=ylRXfApxu8i/CJx1bMr1A5CnSGsOFdrrgNDoT6bhWZLT5HNRFtptZ/LUeDF7/ttlY
-         Rzv8WoTzpf0ZTMVJUptMRKkxqUe5WwOn1MdZQ5ayVjhTDmbuQkfdrJcc+/qlR03Mrb
-         t+afRJur154ATv17b8Ma3oe48bcFp9+FhH7edERY=
-Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x718X7k6108535
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 1 Aug 2019 03:33:07 -0500
-Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Thu, 1 Aug
- 2019 03:33:07 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Thu, 1 Aug 2019 03:33:07 -0500
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x718X6hX038546;
-        Thu, 1 Aug 2019 03:33:06 -0500
-Subject: Re: [PATCH] drm/omap: Add 'alpha' and 'pixel blend mode' plane
- properties
-To:     Jean-Jacques Hiblot <jjhiblot@ti.com>
-CC:     <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-References: <20190711135219.23402-1-jjhiblot@ti.com>
-From:   Tomi Valkeinen <tomi.valkeinen@ti.com>
-Message-ID: <3c606028-4ed2-d97c-cbf3-ce7d1e698d21@ti.com>
-Date:   Thu, 1 Aug 2019 11:33:05 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1730399AbfHAIhO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 04:37:14 -0400
+Received: from mail5.windriver.com ([192.103.53.11]:36042 "EHLO mail5.wrs.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728259AbfHAIhO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Aug 2019 04:37:14 -0400
+Received: from ALA-HCB.corp.ad.wrs.com (ala-hcb.corp.ad.wrs.com [147.11.189.41])
+        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id x718Xnjx024994
+        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
+        Thu, 1 Aug 2019 01:34:24 -0700
+Received: from pek-lpggp2 (128.224.153.75) by ALA-HCB.corp.ad.wrs.com
+ (147.11.189.41) with Microsoft SMTP Server id 14.3.468.0; Thu, 1 Aug 2019
+ 01:33:44 -0700
+Received: by pek-lpggp2 (Postfix, from userid 20544)    id 8733C721616; Thu,  1
+ Aug 2019 16:33:40 +0800 (CST)
+From:   Jiping Ma <jiping.ma2@windriver.com>
+To:     <rostedt@goodmis.org>, <mingo@redhat.com>,
+        <catalin.marinas@arm.com>, <will.deacon@arm.com>,
+        <joel@joelfernandes.org>
+CC:     <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <jiping.ma2@windriver.com>
+Subject: [PATCH v2] tracing: Function stack size and its name mismatch in arm64
+Date:   Thu, 1 Aug 2019 16:33:40 +0800
+Message-ID: <20190801083340.57075-1-jiping.ma2@windriver.com>
+X-Mailer: git-send-email 2.18.1
 MIME-Version: 1.0
-In-Reply-To: <20190711135219.23402-1-jjhiblot@ti.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/07/2019 16:52, Jean-Jacques Hiblot wrote:
-> Add the following properties for planes:
-> * alpha
-> * pixel blend mode. Only "Pre-multiplied" and "Coverage" are supported
-> 
-> Signed-off-by: Jean-Jacques Hiblot <jjhiblot@ti.com>
-> ---
->   drivers/gpu/drm/omapdrm/omap_plane.c | 9 ++++++++-
->   1 file changed, 8 insertions(+), 1 deletion(-)
+In arm64, the PC of the frame is matched to the last frame function, 
+rather than the function of his frame. For the following example, the 
+stack size of occupy_stack_init function should be 3376, rather than 176.
 
-Works for me and looks good. I'll queue this. Thanks!
+Wrong info:
+Depth Size Location (16 entries)
+----- ---- --------
+0) 5400 16 __update_load_avg_se.isra.2+0x28/0x220
+1) 5384 96 put_prev_entity+0x250/0x338
+2) 5288 80 pick_next_task_fair+0x4c4/0x508
+3) 5208 72 __schedule+0x100/0x600
+4) 5136 184 preempt_schedule_common+0x28/0x48
+5) 4952 32 preempt_schedule+0x28/0x30
+6) 4920 16 vprintk_emit+0x170/0x1f8
+7) 4904 128 vprintk_default+0x48/0x58
+8) 4776 64 vprintk_func+0xf8/0x1c8
+9) 4712 112 printk+0x70/0x90
+10) 4600 176 occupy_stack_init+0x64/0xc0 [kernel_stack]
+11) 4424 3376 do_one_initcall+0x68/0x248
+12) 1048 144 do_init_module+0x60/0x1f0
+13) 904 48 load_module+0x1d50/0x2340
+14) 856 352 sys_finit_module+0xd0/0xe8
+15) 504 504 el0_svc_naked+0x30/0x34
 
-  Tomi
+Correct info:
+Depth Size Location (18 entries)
+----- ---- --------
+0) 5464 48 cgroup_rstat_updated+0x20/0x100
+1) 5416 32 cgroup_base_stat_cputime_account_end.isra.0+0x30/0x60
+2) 5384 32 __cgroup_account_cputime+0x3c/0x48
+3) 5352 64 update_curr+0xc4/0x1d0
+4) 5288 72 pick_next_task_fair+0x444/0x508
+5) 5216 184 __schedule+0x100/0x600
+6) 5032 32 preempt_schedule_common+0x28/0x48
+7) 5000 16 preempt_schedule+0x28/0x30
+8) 4984 128 vprintk_emit+0x170/0x1f8
+9) 4856 64 vprintk_default+0x48/0x58
+10) 4792 112 vprintk_func+0xf8/0x1c8
+11) 4680 176 printk+0x70/0x90
+12) 4504 80 func_test+0x7c/0xb8 [kernel_stack]
+13) 4424 3376 occupy_stack_init+0x7c/0xc0 [kernel_stack]
+14) 1048 144 do_one_initcall+0x68/0x248
+15) 904 48 do_init_module+0x60/0x1f0
+16) 856 352 load_module+0x1d50/0x2340
+17) 504 504 sys_finit_module+0xd0/0xe8
 
+Signed-off-by: Jiping Ma <jiping.ma2@windriver.com>
+---
+ kernel/trace/trace_stack.c | 28 ++++++++++++++++++++++++++--
+ 1 file changed, 26 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/trace/trace_stack.c b/kernel/trace/trace_stack.c
+index 5d16f73898db..ed80b95abf06 100644
+--- a/kernel/trace/trace_stack.c
++++ b/kernel/trace/trace_stack.c
+@@ -40,16 +40,28 @@ static void print_max_stack(void)
+ 
+ 	pr_emerg("        Depth    Size   Location    (%d entries)\n"
+ 			   "        -----    ----   --------\n",
++#ifdef CONFIG_ARM64
++			   stack_trace_nr_entries - 1);
++#else
+ 			   stack_trace_nr_entries);
+-
++#endif
++#ifdef CONFIG_ARM64
++	for (i = 1; i < stack_trace_nr_entries; i++) {
++#else
+ 	for (i = 0; i < stack_trace_nr_entries; i++) {
++#endif
+ 		if (i + 1 == stack_trace_nr_entries)
+ 			size = stack_trace_index[i];
+ 		else
+ 			size = stack_trace_index[i] - stack_trace_index[i+1];
+ 
++#ifdef CONFIG_ARM64
++		pr_emerg("%3ld) %8d   %5d   %pS\n", i-1, stack_trace_index[i],
++				size, (void *)stack_dump_trace[i-1]);
++#else
+ 		pr_emerg("%3ld) %8d   %5d   %pS\n", i, stack_trace_index[i],
+ 				size, (void *)stack_dump_trace[i]);
++#endif
+ 	}
+ }
+ 
+@@ -324,8 +336,11 @@ static int t_show(struct seq_file *m, void *v)
+ 		seq_printf(m, "        Depth    Size   Location"
+ 			   "    (%d entries)\n"
+ 			   "        -----    ----   --------\n",
++#ifdef CONFIG_ARM64
++			   stack_trace_nr_entries - 1);
++#else
+ 			   stack_trace_nr_entries);
+-
++#endif
+ 		if (!stack_tracer_enabled && !stack_trace_max_size)
+ 			print_disabled(m);
+ 
+@@ -334,6 +349,10 @@ static int t_show(struct seq_file *m, void *v)
+ 
+ 	i = *(long *)v;
+ 
++#ifdef CONFIG_ARM64
++	if (i == 0)
++		return 0;
++#endif
+ 	if (i >= stack_trace_nr_entries)
+ 		return 0;
+ 
+@@ -342,9 +361,14 @@ static int t_show(struct seq_file *m, void *v)
+ 	else
+ 		size = stack_trace_index[i] - stack_trace_index[i+1];
+ 
++#ifdef CONFIG_ARM64
++	seq_printf(m, "%3ld) %8d   %5d   ", i-1, stack_trace_index[i], size);
++	trace_lookup_stack(m, i-1);
++#else
+ 	seq_printf(m, "%3ld) %8d   %5d   ", i, stack_trace_index[i], size);
+ 
+ 	trace_lookup_stack(m, i);
++#endif
+ 
+ 	return 0;
+ }
 -- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+2.18.1
+
