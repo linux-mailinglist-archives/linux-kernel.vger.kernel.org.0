@@ -2,108 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 15B1E7DBB6
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 14:42:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8276C7DBBE
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 14:45:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731431AbfHAMmD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 08:42:03 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:39409 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730319AbfHAMmD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 08:42:03 -0400
-Received: by mail-ot1-f65.google.com with SMTP id r21so68039167otq.6
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2019 05:42:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=landley-net.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=8uskxS/gtrPQuiJ87KLLKVngRsb10iia7FAnQ4L/FP4=;
-        b=EAIcg+8zVmf3aiVkaSk+pQ7W32nML3AqDBA07rhI0mWPYK/3osobGOnAeAR2GlrG5m
-         GO67N6l3RvzR1eC9rcIQ/IFgb+zglv9oj8/wU4H08MKHLJJa85rXrV4FO+pKiinnosMb
-         mCgSmt1FKFQwTTDk+TptbMlLUZ8htN5s4VI7phJCqz3/9pWvmS+uRts6NzJLSukl5MrM
-         EPQfCYOa9Htm7r3gBWUwcksVmOWkRg6/O7wrrJ8ia/a/5YlLOc9KmQFsjW9Ituh5Zqag
-         wMzaWeA/jTiW3O6YYUVPnsN+5rZwJnoL7Qdd2VrvWcUzCbJis87TaKZCkTzBY+R8j1L2
-         TXSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=8uskxS/gtrPQuiJ87KLLKVngRsb10iia7FAnQ4L/FP4=;
-        b=eDBlLmycuYoVLK32Gv26c0tr5NcYXCAjkZSWDbC0NUOiAGiXkdtaCa3dEdMlnV5js1
-         RZMxCTX+Z2VgbuP02w/0l3ha0nwHKnu4ma2ZPlVuDCm8oyNJVxaUsaXu/WmKv6tfexR2
-         SrP6zeVOE1ttpLQBHDsutBNGU8BYnDr1HncNX8MBoJgkqfMpGCHnD/kGWp9QeCHKjPPz
-         JnWowLGbSKS6c5XddepSrQqcWrM/pVQAlHkR/+PRVxs4kDBcCYwZTC5HSU7+SHB14WcC
-         mMCL9vGIQXVp4YbCQn6+hYVOj6HYK44A7HvmqJpinAGOfSqgV/tvCs7cOpPHbPNtC9qN
-         Ht6Q==
-X-Gm-Message-State: APjAAAUAbZ/EjzzEOV1WO99HHoDD7AUuwtZpcrLdD5ohq1UzbrXrKw46
-        AOzVFJx20qHRXm/S5P6Fewk=
-X-Google-Smtp-Source: APXvYqyHzZulqNC8IOq14HrLA4yNgQS3ZptHYQMkICdV9xK4l15HxfWQ3z36+yWTTEw4+o1rfM2ftQ==
-X-Received: by 2002:a9d:7cd1:: with SMTP id r17mr11015019otn.356.1564663322159;
-        Thu, 01 Aug 2019 05:42:02 -0700 (PDT)
-Received: from [192.168.1.10] (072-182-052-210.res.spectrum.com. [72.182.52.210])
-        by smtp.googlemail.com with ESMTPSA id k135sm25007479oih.1.2019.08.01.05.42.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 01 Aug 2019 05:42:01 -0700 (PDT)
-Subject: Re: [PATCH v2 7/7] n_tty: Provide an informational line on VSTATUS
- receipt
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arseny Maslennikov <ar@cs.msu.ru>
-Cc:     Jiri Slaby <jslaby@suse.com>, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Vladimir D. Seleznev" <vseleznv@altlinux.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Pavel Machek <pavel@ucw.cz>
-References: <20190625161153.29811-1-ar@cs.msu.ru>
- <20190625161153.29811-8-ar@cs.msu.ru> <20190730161940.GA15798@kroah.com>
- <20190731222359.GA20574@cello> <20190801092020.GB19329@kroah.com>
-From:   Rob Landley <rob@landley.net>
-Message-ID: <f6b331e1-14ff-040b-be2c-8f1a696a721e@landley.net>
-Date:   Thu, 1 Aug 2019 07:44:30 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1731424AbfHAMpz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 08:45:55 -0400
+Received: from sauhun.de ([88.99.104.3]:52522 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730458AbfHAMpy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Aug 2019 08:45:54 -0400
+Received: from localhost (p54B333D2.dip0.t-ipconnect.de [84.179.51.210])
+        by pokefinder.org (Postfix) with ESMTPSA id A00772C2817;
+        Thu,  1 Aug 2019 14:45:52 +0200 (CEST)
+Date:   Thu, 1 Aug 2019 14:45:52 +0200
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] i2c: tegra: Compile PM functions unconditionally
+Message-ID: <20190801124552.GF1659@ninjato>
+References: <20190707231234.11679-1-digetx@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190801092020.GB19329@kroah.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="aZoGpuMECXJckB41"
+Content-Disposition: inline
+In-Reply-To: <20190707231234.11679-1-digetx@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/1/19 4:20 AM, Greg Kroah-Hartman wrote:
->> SysRq is system-wide, whereas this is per-terminal and only cares about
->> one tty which the status char is pressed at and its foreground pgrp
->> (most likely it's the foreground shell job).
->>
->> I hope this is clear enough.
-> 
-> It is, yes.  My big objection is the crazy code I point out above, as
-> well as the "create a totally new interface when we might be able to use
-> an existing one" that you need to convince me is really required :)
 
-It's not a new interface, it's a multiple decades old BSD interface our
-tcgetattr man page already mentions, which seems to be one of the big things BSD
-people miss when using Linux, and which I tried and failed to implement without
-kernel support months ago.
+--aZoGpuMECXJckB41
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I wasn't involved in this kernel patch effort, I got pointed at news coverage
-about it by the Android Bionic maintainer:
+On Mon, Jul 08, 2019 at 02:12:34AM +0300, Dmitry Osipenko wrote:
+> The I2C driver fails to probe if CONFIG_PM_SLEEP=3Dn because runtime PM
+> doesn't depend on the PM sleep and in this case the runtime PM ops are
+> not included in the driver, resulting in I2C clock not being enabled.
+> It's much cleaner to simply allow compiler to remove the dead code
+> instead of messing with the #ifdefs.
+>=20
+> This patch fixes such errors when CONFIG_PM_SLEEP=3Dn:
+>=20
+>   tegra-i2c 7000c400.i2c: timeout waiting for fifo flush
+>   tegra-i2c 7000c400.i2c: Failed to initialize i2c controller
+>=20
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 
-  http://lists.landley.net/pipermail/toybox-landley.net/2019-June/010536.html
+Applied to for-next, thanks!
 
-Which is how I wound up cc'd on this thread.
 
-I don't think Android specifically cares about SIGINFO, but they're trying to
-support building Android on MacOSX, which means trying to support building it on
-FreeBSD, which involves outreach to the BSD community, and they brought up the
-lack of ctrl-T and siginfo as a thing they really missed when having to deal
-with the Linux command line.
+--aZoGpuMECXJckB41
+Content-Type: application/pgp-signature; name="signature.asc"
 
-(The fact there _was_ news coverage of the patch for somebody to point me at may
-also be an indication of interest floating around out there...)
+-----BEGIN PGP SIGNATURE-----
 
-Rob
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl1C3vsACgkQFA3kzBSg
+KbYELg//d7ixrsPiRwLtaLHuba30xC1YeUezmk5+ixVYw/7+c14MZLNZga8JxydY
+AOkuAOmM9FifwuQpYFO6dHilZuF0zPngcwPKTUusPoFZacSJVfU4qfPjRNtpqPrJ
+aEy7kgRYpvAgtXhX/Yl/7l/19Gq8Jw3nzJ8XMG6QWVhAsE5c8FJr2fSUGJmVRE7I
+Aof/qD1QStABjSa42ClCvBn5DRnJRYYH/aAz4RlKI5N+Tqm6Jkh8MQOn6slg415K
+9vtZDG9OY9lO6fkSRhrDkNwIR/K7acJV9mjjCJ6xiOA0sFhyuB1xw5Z1uJSCzHlj
+3Oh7aiVYAxK23Z8XugdCheppSvauuNqV14x8i/wmLImjBoK+KFfJSq6m5uMgtjHz
+0qW4YQH69OPA83L2Ko1g63UKqL2wYMChGAGcLu/qZECP4Y2RYIAE/eL0Zx1h3ezv
+bR1pg7DGVxs6DPm7bcM69i8pinqrBnKtq8eRmVGsLrwjCgWXMyJT8rjUqzJOA4GC
+8+2Urg9mjGRFhUwFaawvffzqUzfLMIiOSTbZLw+C0FWjarFlc7bv5lY/ODefhQl2
+uy9oqBNlXHVcsm8O7FTa4t8qyL/zm1/92OREQiHE3fRogrhmJsOXNcN+TwgkBkaB
+3lZFAFQA3eqAK8W6bW/250JMsuAlac2LB/4dQm3vDLrLf9XMVWU=
+=1CO3
+-----END PGP SIGNATURE-----
+
+--aZoGpuMECXJckB41--
