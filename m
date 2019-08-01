@@ -2,118 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79FEB7DFAF
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 18:02:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 10C747DFB4
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 18:05:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732598AbfHAQCF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 12:02:05 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:43376 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731579AbfHAQCE (ORCPT
+        id S1732655AbfHAQET (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 12:04:19 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:51525 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732617AbfHAQES (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 12:02:04 -0400
-Received: by mail-pl1-f194.google.com with SMTP id 4so25414663pld.10
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2019 09:02:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=message-id:mime-version:content-transfer-encoding:in-reply-to
-         :references:cc:from:to:subject:user-agent:date;
-        bh=21DtoTC7v3Cr6EchpPn/gSwYheXn1PUX53YRruG65c8=;
-        b=aESn6w6rfB2I7Dtwsmf4DoqdwRCMVpJM+XOGXy9mRoNEs+qhbPdJUgV/hNnWQGLe9n
-         KfB/g5+tFjwQSr2fVsQU8UWB/quVDBz2o1rtbfRRfAIJUyEPg7mQTYufIE/haqulR4Hm
-         HRw/1RB8E8Hn2PsHYZzBPwa/PFZQ79uPgVqqA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:mime-version
-         :content-transfer-encoding:in-reply-to:references:cc:from:to:subject
-         :user-agent:date;
-        bh=21DtoTC7v3Cr6EchpPn/gSwYheXn1PUX53YRruG65c8=;
-        b=QF2j0jdzDoJEiBmvwTq2aN1OTLah0hjym8fx6GIt2k6+jtY2lN70WZK8+KrSptziig
-         yds6ljNzbtkpxz5cIKUSsXA72o+mC8kclIEYlrK6GEC56cxRyoLEYTi3vBL2TLhJt91l
-         qbQZ17uxGGVP5jZyEI59CmJAYuHSdzVI505k4kUMZF47SRZfC15Ne4ahbg2wIlSIyvVm
-         eCS5ALF3KcQNRUndU/fcKE3DCIwgcSwJM0aRw4wozfAj379xuwlPnRguCHiWbqZSK+ek
-         MiXZrny9/RhHbq32Bi1VjwShSMNNrsUOCqJJoePvRbkquGKjLKDZC4MWmMZybneO2jjt
-         XMYg==
-X-Gm-Message-State: APjAAAW1HtYx9/lHU8IAbSUnBfRATfNf74QVffVMTey7uDs4o5YsnCaS
-        K+uwBapBbwVKPdNaryUCqXUl1A==
-X-Google-Smtp-Source: APXvYqzI/7aUYrcyTgYWGod9QE+ZxKyfMUSIYB0Iyn0g4DkrWYSkoZcV1k4vtJ8y3v5GTqIP2r3gsQ==
-X-Received: by 2002:a17:902:2aa8:: with SMTP id j37mr120884127plb.316.1564675324209;
-        Thu, 01 Aug 2019 09:02:04 -0700 (PDT)
-Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id x9sm48446954pgp.75.2019.08.01.09.02.03
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 01 Aug 2019 09:02:03 -0700 (PDT)
-Message-ID: <5d430cfb.1c69fb81.9480d.0d81@mx.google.com>
-Content-Type: text/plain; charset="utf-8"
+        Thu, 1 Aug 2019 12:04:18 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x71G48xv009346
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Thu, 1 Aug 2019 09:04:08 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x71G48xv009346
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019071901; t=1564675449;
+        bh=5UF6CQYe7Aj+bpxxaPuL9ABy/M0hWDaQ+7GVKUDRbQk=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=iIcsdSOsl0y7B0uEJ6ziRx0zpFOMHh+ZAuTrQRLGeWQ3VKMTO3k4+OTMuifBC+I8C
+         x6fLT242CUT3u+aXsSVpVBkoAXEiQl5/Cuf73vrCQfN2K/ygckj7O9tT24DhHaLlAH
+         b9NY/KZFv6ylG8tDEdUsEJ6UE4jDN/ogkCPUgFI7qSwvztWK3h8RH1MId6AKd75Va1
+         O0ywV9/mA/PopszANWrZpseSAIp5xsnLcN2hLihF8mox/aw2ddHKgsTqC4XGYxgKDm
+         5Iz7ZjXGljFs63ncqFUnXZwGBqTmwDHNn8CurAQAyHC800gVj2ZMZybR1/0QcFS9Rz
+         q8vjI9JWPbdYw==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x71G48xf009343;
+        Thu, 1 Aug 2019 09:04:08 -0700
+Date:   Thu, 1 Aug 2019 09:04:08 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Anna-Maria Gleixner <tipbot@zytor.com>
+Message-ID: <tip-1f8e8bd8b74c8089a43bc5f1f24e4bf0f855d760@git.kernel.org>
+Cc:     bigeasy@linutronix.de, anna-maria@linutronix.de,
+        linux-kernel@vger.kernel.org, mingo@kernel.org, hpa@zytor.com,
+        peterz@infradead.org, tglx@linutronix.de
+Reply-To: linux-kernel@vger.kernel.org, bigeasy@linutronix.de,
+          anna-maria@linutronix.de, peterz@infradead.org,
+          tglx@linutronix.de, mingo@kernel.org, hpa@zytor.com
+In-Reply-To: <20190730223828.508744705@linutronix.de>
+References: <20190730223828.508744705@linutronix.de>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:timers/core] alarmtimer: Prepare for PREEMPT_RT
+Git-Commit-ID: 1f8e8bd8b74c8089a43bc5f1f24e4bf0f855d760
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1bb8d417-3199-7aff-ad60-b25464502cb3@infineon.com>
-References: <20190716224518.62556-1-swboyd@chromium.org> <20190716224518.62556-6-swboyd@chromium.org> <f824e3ab-ae2f-8c2f-549a-16569b10966e@infineon.com> <5d2f7daf.1c69fb81.c0b13.c3d4@mx.google.com> <5d2f955d.1c69fb81.35877.7018@mx.google.com> <b05904bf-00b9-bf30-0fc9-9f363e181d80@infineon.com> <5d30b649.1c69fb81.f440e.9a0a@mx.google.com> <1bb8d417-3199-7aff-ad60-b25464502cb3@infineon.com>
-Cc:     Andrey Pronin <apronin@chromium.org>, linux-kernel@vger.kernel.org,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-integrity@vger.kernel.org,
-        Duncan Laurie <dlaurie@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>
-From:   Stephen Boyd <swboyd@chromium.org>
-To:     Alexander Steffen <Alexander.Steffen@infineon.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Peter Huewe <peterhuewe@gmx.de>
-Subject: Re: [PATCH v2 5/6] tpm: add driver for cr50 on SPI
-User-Agent: alot/0.8.1
-Date:   Thu, 01 Aug 2019 09:02:02 -0700
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-0.2 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
+        autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Alexander Steffen (2019-07-19 00:53:00)
-> On 18.07.2019 20:11, Stephen Boyd wrote:
-> > Quoting Alexander Steffen (2019-07-18 09:47:22)
-> >> On 17.07.2019 23:38, Stephen Boyd wrote:
-> >>> Quoting Stephen Boyd (2019-07-17 12:57:34)
-> >>>> Quoting Alexander Steffen (2019-07-17 05:00:06)
-> >>>>>
-> >>>>> Can't the code be shared more explicitly, e.g. by cr50_spi wrapping
-> >>>>> tpm_tis_spi, so that it can intercept the calls, execute the additi=
-onal
-> >>>>> actions (like waking up the device), but then let tpm_tis_spi do the
-> >>>>> common work?
-> >>>>>
-> >>>>
-> >>>> I suppose the read{16,32} and write32 functions could be reused. I'm=
- not
-> >>>> sure how great it will be if we combine these two drivers, but I can
-> >>>> give it a try today and see how it looks.
-> >>>>
-> >>>
-> >>> Here's the patch. I haven't tested it besides compile testing.
-> >=20
-> > The code seems to work but I haven't done any extensive testing besides
-> > making sure that the TPM responds to pcr reads and some commands like
-> > reading random numbers.
-> >=20
-> >>
-> >> Thanks for providing this. Makes it much easier to see what the actual
-> >> differences between the devices are.
-> >>
-> >> Do we have a general policy on how to support devices that are very
-> >> similar but need special handling in some places? Not duplicating the
-> >> whole driver just to change a few things definitely seems like an
-> >> improvement (and has already been done in the past, as with
-> >> TPM_TIS_ITPM_WORKAROUND). But should all the code just be added to
-> >> tpm_tis_spi.c? Or is there some way to keep a clearer separation,
-> >> especially when (in the future) we have multiple devices that all have
-> >> their own set of deviations from the spec?
-> >>
-> >=20
-> > If you have any ideas on how to do it please let me know. At this point,
-> > I'd prefer if the maintainers could provide direction on what they want.
->=20
-> Sure, I'd expect Jarkko will say something once he's back from vacation.
->=20
+Commit-ID:  1f8e8bd8b74c8089a43bc5f1f24e4bf0f855d760
+Gitweb:     https://git.kernel.org/tip/1f8e8bd8b74c8089a43bc5f1f24e4bf0f855d760
+Author:     Anna-Maria Gleixner <anna-maria@linutronix.de>
+AuthorDate: Wed, 31 Jul 2019 00:33:49 +0200
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Thu, 1 Aug 2019 17:46:41 +0200
 
-Should I just resend this patch series? I haven't attempted to make the
-i2c driver changes, but at least the SPI driver changes seem good enough
-to resend.
+alarmtimer: Prepare for PREEMPT_RT
 
+Use the hrtimer_cancel_wait_running() synchronization mechanism to prevent
+priority inversion and live locks on PREEMPT_RT.
+
+[ tglx: Split out of combo patch ]
+
+Signed-off-by: Anna-Maria Gleixner <anna-maria@linutronix.de>
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Link: https://lkml.kernel.org/r/20190730223828.508744705@linutronix.de
+
+---
+ kernel/time/alarmtimer.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/time/alarmtimer.c b/kernel/time/alarmtimer.c
+index 57518efc3810..36947449dba2 100644
+--- a/kernel/time/alarmtimer.c
++++ b/kernel/time/alarmtimer.c
+@@ -432,7 +432,7 @@ int alarm_cancel(struct alarm *alarm)
+ 		int ret = alarm_try_to_cancel(alarm);
+ 		if (ret >= 0)
+ 			return ret;
+-		cpu_relax();
++		hrtimer_cancel_wait_running(&alarm->timer);
+ 	}
+ }
+ EXPORT_SYMBOL_GPL(alarm_cancel);
