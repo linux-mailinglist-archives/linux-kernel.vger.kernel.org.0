@@ -2,172 +2,179 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 789107E0C9
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 19:12:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B550E7E0D0
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 19:13:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733260AbfHARMC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 13:12:02 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:50174 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727498AbfHARMB (ORCPT
+        id S1733272AbfHARMt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 13:12:49 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:18244 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727498AbfHARMs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 13:12:01 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x71HApN7050476;
-        Thu, 1 Aug 2019 12:10:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1564679451;
-        bh=dD7/0WiXM2Fbz3i5RnKq7tf9bBDBOzFjHTRPalRBNpA=;
-        h=From:Subject:To:CC:References:Date:In-Reply-To;
-        b=oBd0jXTOv/5HQvQL5K495vveI1xDKf6GAIpKLZ4aaNqvmJoEo8n2ggyiUCIYn+dFB
-         4gKPpUscvp/7CGwsGnnMT0sielgkG/7uR/LJcp7YOA+7swNDLKykShjFXUaZwSd10k
-         8ed5eKO/42a6xa+nf0FBReMSm9mkomjzfbsXpPxw=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x71HApVF085880
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 1 Aug 2019 12:10:51 -0500
-Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Thu, 1 Aug
- 2019 12:10:50 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Thu, 1 Aug 2019 12:10:50 -0500
-Received: from [128.247.58.153] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x71HAowW070786;
-        Thu, 1 Aug 2019 12:10:50 -0500
-From:   Suman Anna <s-anna@ti.com>
-Subject: Re: [PATCH v2 4/6] irqchip/irq-pruss-intc: Add helper functions to
- configure internal mapping
-To:     Marc Zyngier <maz@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        David Lechner <david@lechnology.com>,
-        Tony Lindgren <tony@atomide.com>,
-        "Andrew F. Davis" <afd@ti.com>, Roger Quadros <rogerq@ti.com>,
-        Lokesh Vutla <lokeshvutla@ti.com>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Murali Karicheri <m-karicheri2@ti.com>,
-        <devicetree@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20190731224149.11153-1-s-anna@ti.com>
- <20190731224149.11153-5-s-anna@ti.com>
- <1a63eb50-7c5c-eb3d-3cbe-bd1cc59ce3fe@kernel.org>
-Message-ID: <89abc27f-5d02-a8ce-df0e-b185c2a647cd@ti.com>
-Date:   Thu, 1 Aug 2019 12:10:50 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <1a63eb50-7c5c-eb3d-3cbe-bd1cc59ce3fe@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+        Thu, 1 Aug 2019 13:12:48 -0400
+Received: from pps.filterd (m0109333.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x71H5Gk8018978;
+        Thu, 1 Aug 2019 10:11:31 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=QbOJI0wUojkW1x4XCnDc45yYOalVj21+9ESdamFUjgc=;
+ b=cB+7/PVp8kHsJn5fdGnY9cF3GezWIOSww1IQfPuG4a9ZOiz7clm/oCQFxd94TPiyY6aw
+ CTEp8yOswZlNGJpxsy5Nuv1O/6hhufSPgZAM5Zxxi7Y6+kmW1Cr6AY7yVzaCJSlu0bPr
+ lWpT8ZGsEqTyd6yBebYqPt0OkhgsDCVCYAs= 
+Received: from mail.thefacebook.com (mailout.thefacebook.com [199.201.64.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2u3xmt9pu9-3
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Thu, 01 Aug 2019 10:11:31 -0700
+Received: from prn-mbx03.TheFacebook.com (2620:10d:c081:6::17) by
+ prn-hub01.TheFacebook.com (2620:10d:c081:35::125) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1713.5; Thu, 1 Aug 2019 10:11:30 -0700
+Received: from prn-hub03.TheFacebook.com (2620:10d:c081:35::127) by
+ prn-mbx03.TheFacebook.com (2620:10d:c081:6::17) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1713.5; Thu, 1 Aug 2019 10:11:29 -0700
+Received: from NAM01-BY2-obe.outbound.protection.outlook.com (192.168.54.28)
+ by o365-in.thefacebook.com (192.168.16.27) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1713.5
+ via Frontend Transport; Thu, 1 Aug 2019 10:11:29 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=dUsRWEkoccoM//ON3qiP7iT8ujghuNUTYjHQvl68inKcXo36puYQAyD1EDyYYsikRUs0VUdW2l6X0Hl2ouXRM8mhsZjN6fWjg6aGQESsMltDmqD3g57J3pYQbL++1GyrlBd9yh1IdSZrcmU32EbQlVz8MXyJ9xfqEjsdgE5lAV9L0938fSKqvRak/jhe6sWWpmGWPzrch37XkNWtLDEGnrHHQNeVYCqKb+k6rwMeAyXafDVYIfkESB09AMgsSM6ZUxtEfin+dEfHBgdGPiuj+BrD/OBxqqKpIyVB+WpP2qjtFRbCk3k4N1Td8N/6io0MPb61NEnZmKl3JS9dYtd7wA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QbOJI0wUojkW1x4XCnDc45yYOalVj21+9ESdamFUjgc=;
+ b=YsXBUBdUv1FVEotQVbto4HmnXIVXCRwc6YrmGXKzxBluR36mBLYy86pNOz6RxKcjW39kmt+dlLqt1aS0JHxZNA4cpzCqgDvkrPlT8bAZKcy9NDzS6nR7j1ezQnhWRG7NCMoZ6fSt3E8ZqDjAM3FXXeFvKgNI0Rq/9c9oSKBSIGUGun9qoOC0Kj9a6IQyKDUQtQsfksrDu1P6+cgdtyi73O+3jAUW8G0SrzLLKrqkIprWIS1j/2pRJ0qTWgMeV3BwzboUhkFtiBtA91ycs7pCTR6q5cDPzSrZ/Sn0aT5erfDS7f7VY2tElaAyMngD7FZiipqcliSCpmRvk/nSk6+OEg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
+ smtp.mailfrom=fb.com;dmarc=pass action=none header.from=fb.com;dkim=pass
+ header.d=fb.com;arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector2-fb-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QbOJI0wUojkW1x4XCnDc45yYOalVj21+9ESdamFUjgc=;
+ b=HsL+Uni7C1p8zMqLi/vQ0vMfA4rPS5mTc/RxGLFqB3k1F/w2CH0RRK+iNGRD/wCjmrwUCNxFoX8e1/6rRWbSulNxDapiF7GMDquNz0RFhyIOjRx7p5qxqoF2kqiuWQu7CmO9EEjT8grIcPWMXpwxVcRFv6wNxXUQsAKg7OW1zRk=
+Received: from MWHPR15MB1165.namprd15.prod.outlook.com (10.175.3.22) by
+ MWHPR15MB1904.namprd15.prod.outlook.com (10.174.98.138) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2115.15; Thu, 1 Aug 2019 17:11:28 +0000
+Received: from MWHPR15MB1165.namprd15.prod.outlook.com
+ ([fe80::d4fc:70c0:79a5:f41b]) by MWHPR15MB1165.namprd15.prod.outlook.com
+ ([fe80::d4fc:70c0:79a5:f41b%2]) with mapi id 15.20.2115.005; Thu, 1 Aug 2019
+ 17:11:28 +0000
+From:   Song Liu <songliubraving@fb.com>
+To:     Oleg Nesterov <oleg@redhat.com>
+CC:     lkml <linux-kernel@vger.kernel.org>, Linux-MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <matthew.wilcox@oracle.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Kernel Team <Kernel-team@fb.com>,
+        "William Kucharski" <william.kucharski@oracle.com>,
+        "srikar@linux.vnet.ibm.com" <srikar@linux.vnet.ibm.com>
+Subject: Re: [PATCH v2 1/2] khugepaged: enable collapse pmd for pte-mapped THP
+Thread-Topic: [PATCH v2 1/2] khugepaged: enable collapse pmd for pte-mapped
+ THP
+Thread-Index: AQHVR86KvCEU4VHLnkGVG5f001755abmPe4AgABKxAA=
+Date:   Thu, 1 Aug 2019 17:11:28 +0000
+Message-ID: <619E9EC6-0B6A-4C30-8BA7-D2CA83FFC4E7@fb.com>
+References: <20190731183331.2565608-1-songliubraving@fb.com>
+ <20190731183331.2565608-2-songliubraving@fb.com>
+ <20190801124351.GA31538@redhat.com>
+In-Reply-To: <20190801124351.GA31538@redhat.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Apple Mail (2.3445.104.11)
+x-originating-ip: [2620:10d:c090:200::2:33d7]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 2655aed1-83bd-4f83-21be-08d716a34ad8
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:MWHPR15MB1904;
+x-ms-traffictypediagnostic: MWHPR15MB1904:
+x-microsoft-antispam-prvs: <MWHPR15MB1904AABF93FB0FCB10009D9BB3DE0@MWHPR15MB1904.namprd15.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:4125;
+x-forefront-prvs: 01165471DB
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(136003)(346002)(376002)(396003)(366004)(199004)(189003)(14454004)(7736002)(86362001)(76176011)(99286004)(6916009)(186003)(6436002)(71200400001)(6506007)(66476007)(68736007)(316002)(53936002)(66946007)(53546011)(76116006)(66556008)(6512007)(305945005)(14444005)(64756008)(486006)(256004)(102836004)(476003)(229853002)(5660300002)(11346002)(36756003)(446003)(2616005)(6486002)(54906003)(71190400001)(46003)(6246003)(8936002)(81166006)(8676002)(33656002)(66446008)(6116002)(4326008)(25786009)(2906002)(50226002)(57306001)(478600001)(81156014);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR15MB1904;H:MWHPR15MB1165.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: XNHVRJUxyTa4DAesDGRL/nYDMME3cJk0vLkmWPlK+Q3WskdobNHgq0/ThLcsc8Hs6f1YE7In75eeaYFYw6ZkIUBSJJ5xqrvbKQ5qF38wr4OkZAkIz0rn7OaSq4FDe1enHCaMfssRq8tSqPy47WaFCqovR3AYKYaEF7c6wzZme+fKjPDL+Efp2mrhr5N4xoD4eI3WA4SHiSBPp+RxvnYINMDRrAscJ7kQVaaHnRupGTV2z+vRNwx6/KFQ9tz12MuifjIJXbD16xRlnjkYKGom7q9O/Dt71EQZoFZpJniIEmVp0uHWn4+dtvTILbl4QmhwzSIZfewDcJh28o+f7bQhCSAJ5xnsK44j/SB/1ZzCDPEctBnbyjrcjy7DmI8utv7Dr/cp+sm1a4Mx9+hDT3+u0mn7c2VtpX2GRZrZFHyrOUM=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <EB954BAF84DA264B9D83A2A59D36276A@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2655aed1-83bd-4f83-21be-08d716a34ad8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Aug 2019 17:11:28.5541
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: songliubraving@fb.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR15MB1904
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-01_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=998 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908010179
+X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marc,
-
-On 8/1/19 3:45 AM, Marc Zyngier wrote:
-> On 31/07/2019 23:41, Suman Anna wrote:
->> The PRUSS INTC receives a number of system input interrupt source events
->> and supports individual control configuration and hardware prioritization.
->> These input events can be mapped to some output interrupt lines through 2
->> levels of many-to-one mapping i.e. events to channel mapping and channels
->> to output interrupts.
->>
->> This mapping information is provided through the PRU firmware that is
->> loaded onto a PRU core/s or through the device tree node of the PRU
->> application. The mapping is configured by the PRU remoteproc driver, and
->> is setup before the PRU core is started and cleaned up after the PRU core
->> is stopped. This event mapping configuration logic programs the Channel
->> Map Registers (CMRx) and Host-Interrupt Map Registers (HMRx) only when a
->> new program is being loaded/started and the same events and interrupt
->> channels are reset to zero when stopping a PRU.
->>
->> Add two helper functions: pruss_intc_configure() & pruss_intc_unconfigure()
->> that the PRU remoteproc driver can use to configure the PRUSS INTC.
-> 
-> So let me see if I correctly understand this: this adds yet another
-> firmware description parser, with a private interface to another
-> (undisclosed?) driver, bypassing the standard irqchip configuration
-> mechanism. It sounds great, doesn't it?
-> 
-> What I cannot really infer from this message (-ETOOMUCHJARGON) is what
-> interrupts this affects:
-> 
-> - Interrupts from random devices to the PRUSS?
-> - Interrupts from the PRUSS to the host?
-> - Something else?
-
-The interrupt sources (called system events) can be from internal PRUSS
-peripherals, SoC-level peripherals or just software triggering (limited
-to some events).
-
-So, the PRUSS INTC behaves as a funnel and is both an interrupt router
-and multiplexer. The INTC itself is part of the PRUSS, and all PRU
-application related interrupts/events that need to trigger an interrupt
-to either the PRU cores or other host processors (like DSP, ARM) have to
-go through this INTC, and routed out to a limited number of output
-interrupts that are then connected to different processors.
-
-The split of interrupt handling between a PRU and its peer host
-processor will be a application design choice (We can implement soft IPs
-like UARTs, ADCs, I2Cs etc using PRUs). Some of the input events
-themselves are multiplexed and controlled by a single MMR (outside of
-INTC) that feeds different sets of events into the INTC. The MMR
-configuration is outside of scope of this driver and will depend on the
-application/client driver being run.
-
-> 
-> When does this happen? Under control of what? It isn't even clear why
-> this is part of this irqchip driver.
-
-The mapping configuration is per PRU application and firmware, and is
-done in line with acquiring and release a PRU which is treated as an
-exclusive resource. We establish the mapping for all events through this
-driver including the events that are to be routed to PRUs. This is done
-to save the tiny/limited Instruction RAM space that PRUs have.
-
-We have designed this as an irqchip driver (instead of some custom SoC
-driver exporting custom functions) to use standard Linux semantics/irq
-API and better integrate with Linux DT, but we need some semantics for
-establishing the routing at runtime depending on the PRU client driver
-we are running. The exported functions will be called only by the PRU
-remoteproc driver during a pru_rproc_get()/pru_rproc_put(), and are
-transparent to PRU client drivers.
-
-Please also see the discussion from v1 [1] on why we can't use an
-extended number of interrupt-cells infrastructure for achieving this.
-
-[1] https://patchwork.kernel.org/patch/11034563/
 
 
-> Depending what this does, there may be ways to fit it into the standard
-> interrupt configuration framework. After all, we already have standard
-> interfaces to route interrupts to virtual CPUs, effectively passing full
-> control of an interrupt to another entity. If you squint hard enough,
-> your PRUSS can fit that description.
+> On Aug 1, 2019, at 5:43 AM, Oleg Nesterov <oleg@redhat.com> wrote:
+>=20
+> On 07/31, Song Liu wrote:
+>>=20
+>> +void collapse_pte_mapped_thp(struct mm_struct *mm, unsigned long haddr)
+>> +{
+>> +	struct vm_area_struct *vma =3D find_vma(mm, haddr);
+>> +	pmd_t *pmd =3D mm_find_pmd(mm, haddr);
+>> +	struct page *hpage =3D NULL;
+>> +	unsigned long addr;
+>> +	spinlock_t *ptl;
+>> +	int count =3D 0;
+>> +	pmd_t _pmd;
+>> +	int i;
+>> +
+>> +	VM_BUG_ON(haddr & ~HPAGE_PMD_MASK);
+>> +
+>> +	if (!vma || !pmd || pmd_trans_huge(*pmd))
+>                            ^^^^^^^^^^^^^^^^^^^^
+>=20
+> mm_find_pmd() returns NULL if pmd_trans_huge()
 
-Yeah, I am open to suggestions if there is a better way of doing this.
+Good catch! I will simplify this one in v3.=20
 
-regards
-Suman
+>=20
+>> +	/* step 1: check all mapped PTEs are to the right huge page */
+>> +	for (i =3D 0, addr =3D haddr; i < HPAGE_PMD_NR; i++, addr +=3D PAGE_SI=
+ZE) {
+>> +		pte_t *pte =3D pte_offset_map(pmd, addr);
+>> +		struct page *page;
+>> +
+>> +		if (pte_none(*pte))
+>> +			continue;
+>> +
+>> +		page =3D vm_normal_page(vma, addr, *pte);
+>> +
+>> +		if (!PageCompound(page))
+>> +			return;
+>> +
+>> +		if (!hpage) {
+>> +			hpage =3D compound_head(page);
+>> +			if (hpage->mapping !=3D vma->vm_file->f_mapping)
+>=20
+> Hmm. But how can we know this is still the same vma ?
+>=20
+> If nothing else, why vma->vm_file can't be NULL?
 
-> 
-> If that doesn't work, then we need to make the IRQ framework grok that
-> kind of requirement (hence my request for clarification). But I'm
-> strongly opposed to inventing a SoC-private way of configuring
-> interrupts behind the kernel's back.
-> 
-> Thanks,
-> 
-> 	M.
-> 
+Good point. We should confirm vma->vm_file is not NULL.=20
+
+Thanks,
+Song
 
