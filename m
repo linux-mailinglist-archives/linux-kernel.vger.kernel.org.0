@@ -2,63 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20EA77DD1A
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 16:00:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 516747DD51
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 16:05:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731166AbfHAOAF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 10:00:05 -0400
-Received: from foss.arm.com ([217.140.110.172]:36554 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730581AbfHAOAF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 10:00:05 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F1DFF337;
-        Thu,  1 Aug 2019 07:00:04 -0700 (PDT)
-Received: from [10.37.12.201] (unknown [10.37.12.201])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6B5B53F71F;
-        Thu,  1 Aug 2019 07:00:03 -0700 (PDT)
-Subject: Re: [PATCH 1/3] i2c: Revert incorrect conversion to use generic
- helper
-To:     gregkh@linuxfoundation.org
-Cc:     linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
-        sfr@canb.auug.org.au, lkp@intel.com,
-        mika.westerberg@linux.intel.com, wsa@the-dreams.de
-References: <20190801061042.GA1132@kroah.com>
- <20190801102026.27312-1-suzuki.poulose@arm.com>
- <20190801135451.GA26585@kroah.com>
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-Message-ID: <09633766-0156-ffb5-3821-3b57e1448599@arm.com>
-Date:   Thu, 1 Aug 2019 15:03:06 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1731696AbfHAOFF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 10:05:05 -0400
+Received: from mail177-14.suw61.mandrillapp.com ([198.2.177.14]:7564 "EHLO
+        mail177-14.suw61.mandrillapp.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730581AbfHAOFE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Aug 2019 10:05:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; s=mandrill; d=nexedi.com;
+ h=From:Subject:To:Cc:Message-Id:References:In-Reply-To:Date:MIME-Version:Content-Type:Content-Transfer-Encoding; i=kirr@nexedi.com;
+ bh=AWunD0Mulf9LulwYiK8CA/275BoKsDBiDIBZMPtwNug=;
+ b=I456wzre3VTJs6bhUQ9Ts2GRjPxKK/TFQPhvPP9TsU5godaVALSjbRv9pxTAQaelL9Vp44Jz2bA5
+   I3QPCG5vtmVZImF7o4sBK9XjV+iQfeaIaLtTNzAg++g7rW8MJiZRpg2p3iDqoyacyVcOh7NV+nAY
+   Oex01Ybf8SoO2SzHgaU=
+Received: from pmta06.mandrill.prod.suw01.rsglab.com (127.0.0.1) by mail177-14.suw61.mandrillapp.com id h8boou22rtku for <linux-kernel@vger.kernel.org>; Thu, 1 Aug 2019 13:50:02 +0000 (envelope-from <bounce-md_31050260.5d42ee0a.v1-e8c373daa0e24acabc426cc5836a07ea@mandrillapp.com>)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mandrillapp.com; 
+ i=@mandrillapp.com; q=dns/txt; s=mandrill; t=1564667402; h=From : 
+ Subject : To : Cc : Message-Id : References : In-Reply-To : Date : 
+ MIME-Version : Content-Type : Content-Transfer-Encoding : From : 
+ Subject : Date : X-Mandrill-User : List-Unsubscribe; 
+ bh=AWunD0Mulf9LulwYiK8CA/275BoKsDBiDIBZMPtwNug=; 
+ b=Ie57el/5bWyh4emLQtzCP28JWUHqPeYyBlVJwR0YsqvG/3zSW2/SGh1pSuEYSqi+CZfsIP
+ 2GB9752T2LqpwpqmpXvbsUHN8e7rX8axXQIswQWDXXb9Hvn9iubW6rAIYR5VXpnPC3eDGnUp
+ weIKdFSYl5A74YLTmjiLFrpULbh2o=
+From:   Kirill Smelkov <kirr@nexedi.com>
+Subject: Re: [PATCH, RESEND3] fuse: require /dev/fuse reads to have enough buffer capacity (take 2)
+Received: from [87.98.221.171] by mandrillapp.com id e8c373daa0e24acabc426cc5836a07ea; Thu, 01 Aug 2019 13:50:02 +0000
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Miklos Szeredi <mszeredi@redhat.com>, <gluster-devel@gluster.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Sander Eikelenboom <linux@eikelenboom.it>,
+        Han-Wen Nienhuys <hanwen@google.com>,
+        Jakob Unterwurzacher <jakobunt@gmail.com>
+Message-Id: <20190801134955.GA18544@deco.navytux.spb.ru>
+References: <20190724094556.GA19383@deco.navytux.spb.ru> <CAJfpegscn7B+TrD5hckXkpHEb_62m6O9-kFOOehWyC89CPFunw@mail.gmail.com>
+In-Reply-To: <CAJfpegscn7B+TrD5hckXkpHEb_62m6O9-kFOOehWyC89CPFunw@mail.gmail.com>
+X-Report-Abuse: Please forward a copy of this message, including all headers, to abuse@mandrill.com
+X-Report-Abuse: You can also report abuse here: http://mandrillapp.com/contact/abuse?id=31050260.e8c373daa0e24acabc426cc5836a07ea
+X-Mandrill-User: md_31050260
+Date:   Thu, 01 Aug 2019 13:50:02 +0000
 MIME-Version: 1.0
-In-Reply-To: <20190801135451.GA26585@kroah.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/01/2019 02:54 PM, Greg KH wrote:
-> On Thu, Aug 01, 2019 at 11:20:24AM +0100, Suzuki K Poulose wrote:
->> The patch "drivers: Introduce device lookup variants by ACPI_COMPANION device"
->> converted an incorrect instance in i2c driver to a new helper. Revert this
->> change.
->>
->> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
->> Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
->> Cc: Wolfram Sang <wsa@the-dreams.de>
->> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+On Thu, Aug 01, 2019 at 12:35:03PM +0200, Miklos Szeredi wrote:
+> On Wed, Jul 24, 2019 at 11:46 AM Kirill Smelkov <kirr@nexedi.com> wrote:
+> >
+> > Miklos,
+> >
+> > I was sending this patch for ~1.5 month without any feedback from you[1,2,3].
+> > The patch was tested by Sander Eikelenboom (original GlusterFS problem
+> > reporter)[4], and you said that it will be ok to retry for next
+> > cycle[5]. I was hoping for this patch to be picked up for 5.3 and queued
+> > to Linus's tree, but in despite several resends from me (the same patch;
+> > just reminders) nothing is happening. v5.3-rc1 came out on last Sunday,
+> > which, in my understanding, denotes the close of 5.3 merge window. What
+> > is going on? Could you please pick up the patch and handle it?
 > 
-> Fixes: 00500147cbd3 ("drivers: Introduce device lookup variants by ACPI_COMPANION device")
-> 
-> I'll go add this...
+> Applied.
 
-Thanks Greg ! Sorry, I thought the commit ids may change in linus's and
-thus I referred to the "commit subject"
-
-Cheers
-
-
+Thanks...
