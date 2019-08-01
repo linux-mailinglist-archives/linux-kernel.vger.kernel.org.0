@@ -2,92 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B28027DB99
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 14:35:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A8E947DB8B
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 14:33:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731332AbfHAMfK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 08:35:10 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:51136 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726422AbfHAMfJ (ORCPT
+        id S1731092AbfHAMdH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 08:33:07 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:37122 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728800AbfHAMdG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 08:35:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=jn+TAs+wP2cc9h9jrK3a2n7Js2n4wFFbww5v7SUsvYc=; b=K7gXYWuRuzu1ZyYPKhgOzFdru
-        SOUloJZGMoeo0cQCok3RcyjmDDBPVw4OZm/PQZM9vdRbAt8fu0Ozl7/rtJaTQHguXd+lDUWVot4Ii
-        bx/2KN50JjOk3NcOwbelhXY6O6AWGbEOvFVFIOX418QS0JVDiN+2gG+r/2J2hv/jBytaA=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1htAIS-0004dZ-Af; Thu, 01 Aug 2019 12:35:04 +0000
-Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 570B02742C48; Thu,  1 Aug 2019 13:35:03 +0100 (BST)
-Date:   Thu, 1 Aug 2019 13:35:03 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        mingo@kernel.org, linux-kernel@vger.kernel.org,
-        Benson Leung <bleung@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>, linux-spi@vger.kernel.org,
-        Doug Anderson <dianders@google.com>
-Subject: Re: [PATCH 5/5] spi: Reduce kthread priority
-Message-ID: <20190801123503.GC5488@sirena.org.uk>
-References: <20190801111348.530242235@infradead.org>
- <20190801111541.917256884@infradead.org>
- <640721f8-8a20-b161-473f-98a9dbc053cc@collabora.com>
- <20190801121718.GE31381@hirez.programming.kicks-ass.net>
+        Thu, 1 Aug 2019 08:33:06 -0400
+Received: by mail-io1-f65.google.com with SMTP id q22so24101705iog.4
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2019 05:33:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=landley-net.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=nSjf7Vc65CILCy7mU48VP6jwKV8+a2ONS+dOixTDAV8=;
+        b=edmqvP5V+EVTYlKP6vnI67S2BlmrDVQ0NeBnAp+i3ZXzUfRZ58pq7I8IoLyo1RMw2A
+         1EC7uvN3D45SSIAJCZpvaJL+SDjUfsgKOquh6gYu2tbkn9EQtEYIw80NZbMzP+E3iX3e
+         blxjUhtoL7t/0vcGRVfMoaSeCHsugSb216djtjYFj9uV7rODMALyKOM35VzrWRgZSLbL
+         8XF9s4txpGfkv5dCDjYJueIp4ukBePYvwYY8vPnjj+BYNjueBpcmQVbC51nAWBBOfvuA
+         chFIs/3wTCRifrEnZEabGMXD5oQa3krd5vPrQxGVrOswyxYbKsebayBsw5HjOcAySoGr
+         zIJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=nSjf7Vc65CILCy7mU48VP6jwKV8+a2ONS+dOixTDAV8=;
+        b=QL87vx7vebmiCDmugfbxJXS2WcMrCcsP52CmYyuXoloy+bpWH47WpgNL2xO45cnQ+y
+         flgJK54LsPGMuE8FHitV04q7aF2s3MfLCy47qU4vfF6oSqky4fgO1ROrj3sTKVFsRdax
+         EvQLW3y5mOy7miqHUYfCBUCPtvjmZrnSN2hQt99LSht+pZIQTlbgARQzcHEKRE2qqe/A
+         NaDNAut6xErNmRkjr+s4i6DQvb4x9BC1ICcM1lciL7sjBgiEuLRQgBUoILZOAf5LHte0
+         sv6qjDWvMfY/DWuJFlJhKiruSp15QmHMB2rLxyEduTX4ffVZJ7U9/XjzTQd1emjK2jrg
+         Fqwg==
+X-Gm-Message-State: APjAAAXvSuI5nrmBrWpiY4ktp8eSnTDcRyYZ02ZSTiDTN3smLxR4F/9y
+        lhbM5IgLX551LoLr/kULRu0=
+X-Google-Smtp-Source: APXvYqzyUz8wAkDi95tv5DYR8E7lqBwsyRSIPQdGPKpFANXrXx6N5XnD9lczxplfC7vKSE/qRPgYXA==
+X-Received: by 2002:a5d:9f4a:: with SMTP id u10mr1590817iot.243.1564662786029;
+        Thu, 01 Aug 2019 05:33:06 -0700 (PDT)
+Received: from [192.168.1.10] (072-182-052-210.res.spectrum.com. [72.182.52.210])
+        by smtp.googlemail.com with ESMTPSA id b8sm58783772ioj.16.2019.08.01.05.33.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 01 Aug 2019 05:33:05 -0700 (PDT)
+Subject: Re: [PATCH v2 7/7] n_tty: Provide an informational line on VSTATUS
+ receipt
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Arseny Maslennikov <ar@cs.msu.ru>
+Cc:     Jiri Slaby <jslaby@suse.com>, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Vladimir D. Seleznev" <vseleznv@altlinux.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Pavel Machek <pavel@ucw.cz>
+References: <20190625161153.29811-1-ar@cs.msu.ru>
+ <20190625161153.29811-8-ar@cs.msu.ru> <20190730161940.GA15798@kroah.com>
+From:   Rob Landley <rob@landley.net>
+Message-ID: <c6750387-8888-0b48-1d82-fd13c4466aa9@landley.net>
+Date:   Thu, 1 Aug 2019 07:35:33 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="S1BNGpv0yoYahz37"
-Content-Disposition: inline
-In-Reply-To: <20190801121718.GE31381@hirez.programming.kicks-ass.net>
-X-Cookie: Love thy neighbor, tune thy piano.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190730161940.GA15798@kroah.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 7/30/19 11:19 AM, Greg Kroah-Hartman wrote:
+> On Tue, Jun 25, 2019 at 07:11:53PM +0300, Arseny Maslennikov wrote:
+>> If the three termios local flags isig, icanon, iexten are enabled
+>> and the local flag nokerninfo is disabled for a tty governed
+>> by the n_tty line discipline, then on receiving the keyboard status
+>> character n_tty will generate a status message and write it out to
+>> the tty before sending SIGINFO to the tty's foreground process group.
+>>
+>> This kerninfo line contains information about the current system load
+>> as well as some properties of "the most interesting" process in the
+>> tty's current foreground process group, namely:
+>>  - its PID as seen inside its deepest PID namespace;
+>>    * the whole process group ought to be in a single PID namespace,
+>>      so this is actually deterministic
+>>  - its saved command name truncated to 16 bytes (task_struct::comm);
+>>    * at the time of writing TASK_COMM_LEN == 16
+>>  - its state and some related bits, procps-style;
+>>  - for S and D: its symbolic wait channel, if available; or a short
+>>    description for other process states instead;
+>>  - its user, system and real rusage time values;
+>>  - its resident set size (as well as the high watermark) in kilobytes.
+> 
+> Why is this really all needed as we have the SysRq handlers that report
+> all of this today?
 
---S1BNGpv0yoYahz37
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+People were lamenting the lack of siginfo in linux back in May, I offered to try
+to implement it, several people jumped in to offer suggestions, and it turns out
+you can't really do it without kernel support.
 
-On Thu, Aug 01, 2019 at 02:17:18PM +0200, Peter Zijlstra wrote:
+https://twitter.com/landley/status/1131764323196522498
 
-> I'm thinking that isn't true 99% of the time, except of course when that
-> bandsaw emergency break is attached through SPI, but in that case the
-> admin can very well chrt the prio of this thread.
+ >> The "most interesting" process is chosen as follows:
+>>  - runnables over everything
+>>  - uninterruptibles over everything else
+>>  - among 2 runnables pick the biggest utime + stime
+>>  - any unresolved ties are decided in favour of greatest PID.
+> 
+> This does not feel like something that the tty core code should be doing
+> at all.
 
-The SPI thread isn't usually RT, it's only made RT if something in the
-system asks for it - the reason the ChromeOS people got CCed in is that
-some of their embedded controllers are very fragile and need super tight
-timing on some of the interactions over their control interface so
-they're one of the users here.  Of course everyone is then going to
-claim that their usage is the most critical usage in the system, and
-they may well even be right, but I do tend to agree that just any old RT
-priority is probably a sensible default since for most cases there will
-be few if any other RT tasks anyway.
+I couldn't figure out how to do it without kernel support when I tried.
 
---S1BNGpv0yoYahz37
-Content-Type: application/pgp-signature; name="signature.asc"
+http://lists.landley.net/pipermail/toybox-landley.net/2019-May/010461.html
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl1C3HYACgkQJNaLcl1U
-h9Alfwf6AugMBoXb++tNEYu9FBXmJsqiEoyD4n90hKDCTMRgF8sokxYAvUGTJzQQ
-iE0h+bYBl8vU2eJG4nCGRQZRRFmACX/amPXBY82xVOcBooUZ74g+igbRW35/nSuR
-vtE8DGr2jugTuTznssPMVCKYSYcvxvV3PRzdvx30phQCUtqtBlpEFWVHH0FtacEM
-UQPH01JiVA7QcE/ZqYXAR7Jsgfm7kNEMTAgaxvGUhYVVnHmWwZnioK8Ke/cE75SL
-Uwa38z692JzCAL0c5qepeOF2aXLAjt+F1IPFWGrAjgmjRjqjS4ZzZWTGAWMMPscP
-2Y/hPW2i7J6cvNkLxXborjsKCte3iw==
-=t0Pu
------END PGP SIGNATURE-----
-
---S1BNGpv0yoYahz37--
+Rob
