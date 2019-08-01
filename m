@@ -2,90 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B18677D641
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 09:28:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B6E9E7D652
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 09:30:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730799AbfHAH2B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 03:28:01 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:34162 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727460AbfHAH2B (ORCPT
+        id S1729751AbfHAHaV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 03:30:21 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:34679 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725946AbfHAHaV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 03:28:01 -0400
-Received: from pd9ef1cb8.dip0.t-ipconnect.de ([217.239.28.184] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1ht5V7-00084G-Tp; Thu, 01 Aug 2019 09:27:50 +0200
-Date:   Thu, 1 Aug 2019 09:27:49 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Daniel Drake <drake@endlessm.com>
-cc:     x86@kernel.org, aubrey.li@linux.intel.com,
-        Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Endless Linux Upstreaming Team <linux@endlessm.com>
-Subject: Re: setup_boot_APIC_clock() NULL dereference during early boot on
- reduced hardware platforms
-In-Reply-To: <CAD8Lp448i7jOk9C5NJtC2wHMaGuRLD4pxVqK17YqRCuMVXhsOA@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.1908010918501.1788@nanos.tec.linutronix.de>
-References: <CAD8Lp448i7jOk9C5NJtC2wHMaGuRLD4pxVqK17YqRCuMVXhsOA@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Thu, 1 Aug 2019 03:30:21 -0400
+Received: by mail-lj1-f193.google.com with SMTP id p17so68339621ljg.1;
+        Thu, 01 Aug 2019 00:30:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rdlu4Ad817zx+iOTcsjqQM76adHXpOWbEydNxUMSAfU=;
+        b=UzX7Ppc2TrBZ0COGTnbdhjA8/92a3SmUDMUBe7LHJnt7UzjMivXlt5ctFlFa8oCssU
+         SYmn0SU0YmBzG+xH1D7Xm6LwZdeQI4DMIuCFZ2apRvrxooP1XuUSa4h0cqvLb+yZ84WV
+         gzhVlRU7mA0IUpLblx7J9CW2e26MxMXKOvypsTKT7OA+spMddfGXtcyN9dJUUq1oZ3L2
+         WXvXffxmd9eeUSa0XCpuLJgrwP5q0Njaz9GFOXVxMiAPzbRBN62y8b/zTpo9Vvq+4wem
+         H3/6ktlq9TuBKIZYLltyIKoSiqKgUj5S5PLdGFqXB4oRQrT7eg2cwmMCz/P449szEX0W
+         H97A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rdlu4Ad817zx+iOTcsjqQM76adHXpOWbEydNxUMSAfU=;
+        b=hNkzAwrdbRsfJhStlM5KWPM6IHEqTqlT31w7Y2vQVHfkv5EOmYrKuNf0uv+9UnqLUP
+         JDkfs5TfYgJHtCvgF7d7dGVaO9EkfU0FNZT92K0qEnqYZuyL+MTr+/Fvd1DNgCfWsOFY
+         9DW5DAh3ZIflDF5nCRzVH7DwDR4u5MSsT5bXuBJ4v/SjTQc+xw5X6mozi6zhxlfA1Pjl
+         zH2esaCyhlp7FXXNrHby9YSW6RwqXtU5tM3nvg2Kg5Q2gMWjlzmjkDhrILJw5pDHngDD
+         HHSIYKS8B1QYJRQY2+R2zCKIjGLTKfRPGjPFz2klAM2m4vb3yNpNiSGrUfns0KnTZkAE
+         4kXw==
+X-Gm-Message-State: APjAAAU/ZXp8pPwlYi6lk4+neztU55IIbSdYv/xBVNVCh92bF3gmGhqU
+        /m0LDSjwG/TdnxAdGkMYQK6y33tzBuFIrvVeQXI=
+X-Google-Smtp-Source: APXvYqzD4VpesQpUb8MYg+Q5e04vCOtwoAClw957rRW1FlaRZEsQmMx74W0N61umpEVSCQWDHKBhpRkvaPwaSWsWw1Q=
+X-Received: by 2002:a2e:1290:: with SMTP id 16mr64210069ljs.88.1564644618088;
+ Thu, 01 Aug 2019 00:30:18 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+References: <1564489420-677-1-git-send-email-sumit.garg@linaro.org>
+ <CAE=Ncrb63dQLe-nDQyO9OPv7XjwM_9mzL9SrcLiUi2Dr10cD4A@mail.gmail.com>
+ <CAFA6WYPJAzbPdcpBqioxjY=T8RLw-73B_hpzX4cGnwVvm5zpJw@mail.gmail.com>
+ <CAE=Ncrb23q++z8R8UMbjDE2epEq4YVcNGzrRD31eH3JAooYejg@mail.gmail.com>
+ <CAFA6WYOKcOzSwakHhgshZcebD8ZBMSi7xQdjWYFS79=Xc+odOg@mail.gmail.com>
+ <CAE=NcrYz8bT9zDhS_ZcvY84fpeTDxZ-KhJKeQGGyf=o4pG2J-Q@mail.gmail.com> <19d9be198619e951750dedeb4d0a7f372083b42c.camel@pengutronix.de>
+In-Reply-To: <19d9be198619e951750dedeb4d0a7f372083b42c.camel@pengutronix.de>
+From:   Janne Karhunen <janne.karhunen@gmail.com>
+Date:   Thu, 1 Aug 2019 10:30:06 +0300
+Message-ID: <CAE=NcraqD9FNM0Gk9UGhPGi3heVzZrAKGc1gNZxoe1OnDaQ=pA@mail.gmail.com>
+Subject: Re: [Tee-dev] [RFC v2 0/6] Introduce TEE based Trusted Keys support
+To:     Rouven Czerwinski <r.czerwinski@pengutronix.de>
+Cc:     Sumit Garg <sumit.garg@linaro.org>,
+        "tee-dev @ lists . linaro . org" <tee-dev@lists.linaro.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Jonathan Corbet <corbet@lwn.net>, jejb@linux.ibm.com,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dhowells@redhat.com, linux-security-module@vger.kernel.org,
+        keyrings@vger.kernel.org, Mimi Zohar <zohar@linux.ibm.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        linux-integrity@vger.kernel.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Daniel,
+On Thu, Aug 1, 2019 at 9:50 AM Rouven Czerwinski
+<r.czerwinski@pengutronix.de> wrote:
 
-On Thu, 1 Aug 2019, Daniel Drake wrote:
-> Working with a new consumer laptop based on AMD R7-3700U, we are
-> seeing a kernel panic during early boot (before the display
-> initializes). It's a new product and there is no previous known
-> working kernel version (tested 5.0, 5.2 and current linus master).
-> 
-> We may have also seen this problem on a MiniPC based on AMD APU 7010
-> from another vendor, but we don't have it in hands right now to
-> confirm that it's the exact same crash.
-> 
-> earlycon shows the details: a NULL dereference under
-> setup_boot_APIC_clock(), which actually happens in
-> calibrate_APIC_clock():
-> 
->     /* Replace the global interrupt handler */
->     real_handler = global_clock_event->event_handler;
->     global_clock_event->event_handler = lapic_cal_handler;
-> 
-> global_clock_event is NULL here. This is a "reduced hardware" ACPI
-> platform so acpi_generic_reduced_hw_init() has set timer_init to NULL,
-> avoiding the usual codepaths that would set up global_clock_event.
-> 
-> I tried the obvious:
->  if (!global_clock_event)
->     return -1;
-> 
-> However I'm probably missing part of the big picture here, as this
-> only makes boot fail later on. It continues til the next point that
-> something leads to schedule(), such as a driver calling msleep() or
-> mark_readonly() calling rcu_barrier(), etc. Then it hangs.
-> 
-> Is something missing in terms of timer setup here? Suggestions
-> appreciated...
+> > I'm aware of it - I have implemented a large part of the GP TEE APIs
+> > earlier (primarily the crypto functions). Does the TEE you work with
+> > actually support GP properly? Can I take a look at the code?
+>
+> AFAIK Sumit is working with the OP-TEE implementation, which can be
+> found on github: https://github.com/op-tee/optee_os
 
-So that trips over the problem that there is no timer to calibrate against
-and the LAPIC freuency is obviously unknown.
+Thanks, I will take a look. The fundamental problem with these things
+is that there are infinite amount of ways how TEEs and ROTs can be
+done in terms of the hardware and software. I really doubt there are 2
+implementations in existence that are even remotely compatible in real
+life. As such, all things TEE/ROT would logically really belong in the
+userland and thanks to the bpfilter folks now the umh logic really
+makes that possible ... I think. The key implementation I did was just
+an RFC on the concept, what if we start to move the stuff that really
+belongs in the userspace to this pseudo-userland. It's not kernel, but
+it's not commonly accessible userland either. The shared memory would
+also work without any modifications between the umh based TEE/ROT
+driver and the userland if needed.
 
-How is the kernel supposed to figure that out?
+Anyway, just my .02c. I guess having any new support in the kernel for
+new trust sources is good and improvement from the current state. I
+can certainly make my stuff work with your setup as well, what ever
+people think is the best.
 
-The only possible option in that case is to use RTC, but we have no support
-for this at all.
 
-Thanks,
-
-	tglx
-
+--
+Janne
