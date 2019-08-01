@@ -2,48 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0459A7E028
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 18:27:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 884E47E027
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 18:27:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732960AbfHAQ1B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 12:27:01 -0400
+        id S1732949AbfHAQ06 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 12:26:58 -0400
 Received: from terminus.zytor.com ([198.137.202.136]:56535 "EHLO
         mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732943AbfHAQ07 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 12:26:59 -0400
+        id S1731751AbfHAQ06 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Aug 2019 12:26:58 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x71Fugid005824
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x71FvRNQ006132
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Thu, 1 Aug 2019 08:56:43 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x71Fugid005824
+        Thu, 1 Aug 2019 08:57:27 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x71FvRNQ006132
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019071901; t=1564675003;
-        bh=idIoVIY/hjrBTbn8KTBHUk3muR8F9nF4P8B0TndQlgE=;
+        s=2019071901; t=1564675048;
+        bh=tqG6uf1LTHRhGWfpbJJjcy8tDR/Y6YbbAiLd3AAvQvg=;
         h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=gh8yhBGRqGhhPaCWNFCdy7uPE1J0Eiuzw8kh0vyK808xxKWDTPEidPK5SwpwzfGgz
-         29Kn4ufYAQIErypxydgRkBzDE3PdPx+Ao8oHyzM/u0qfyI5aFZYj/6Lc2Nm043CCX0
-         /cgy6TvDQPtZD0t+xqLU+aur38hCEAh4ZsyUaZ2Fg1Ku0yT+bZwBZENQSDFlCd02Nr
-         pAhebAyZYNLbtVQ4ZdmqzWnq9FXCblGl6BkHpnpKrjZ4od16AWXMKeBIrZQktvt1Ip
-         UjHsft8UCJN2B6XkKGhEkYQrIXZXbpOjyZ7xR42Gdwdu02JbHzwSVl/f3Ugi5SXzzd
-         oB1vZmVdHdc2Q==
+        b=Ag+oZXRfuKa/UiwKrSCHOCrzQhZwLYapW2eoTxp7Wz2ocdqHb+tSQTx/usGV3RJ0n
+         gM4Js0fBHzjPNKkmg776PDBPnWX5p9EFK+7/+twEeR7xfSuYW+eEcu5fENpm9a+2dO
+         SLrD8Wsn/LtQiWbKJL4QWSsm9YlOZdnLOXUvMIakBjEpB6e3XOBkfYqD8QpQs2+315
+         9ndpG7lPb89b8yjgh6sfR6hhAkgvCvyNrNEmJqJooMYYxhWD2NdEBXHiBrcKbMStkR
+         U8ayDK7ZoZJ6YIgivRlxhFi2j1LM53EHPURbgLvoZAMchiOL4exjE43EFCzK5zkJRa
+         UZUjZ1XFpuAlw==
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x71Fug9q005821;
-        Thu, 1 Aug 2019 08:56:42 -0700
-Date:   Thu, 1 Aug 2019 08:56:42 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x71FvRaY006128;
+        Thu, 1 Aug 2019 08:57:27 -0700
+Date:   Thu, 1 Aug 2019 08:57:27 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Sebastian Andrzej Siewior <tipbot@zytor.com>
-Message-ID: <tip-8dd1382c4f8562ee7395c030047a8cc2bc853042@git.kernel.org>
-Cc:     tglx@linutronix.de, peterz@infradead.org, bigeasy@linutronix.de,
-        hpa@zytor.com, mingo@kernel.org, linux-kernel@vger.kernel.org
-Reply-To: mingo@kernel.org, linux-kernel@vger.kernel.org,
-          tglx@linutronix.de, peterz@infradead.org, bigeasy@linutronix.de,
+Message-ID: <tip-edd2f987491fb47949a9612743435d6d0f61f614@git.kernel.org>
+Cc:     peterz@infradead.org, hpa@zytor.com, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        bigeasy@linutronix.de
+Reply-To: linux-kernel@vger.kernel.org, tglx@linutronix.de,
+          bigeasy@linutronix.de, peterz@infradead.org, mingo@kernel.org,
           hpa@zytor.com
-In-Reply-To: <20190726185753.459144407@linutronix.de>
-References: <20190726185753.459144407@linutronix.de>
+In-Reply-To: <20190726185753.551967692@linutronix.de>
+References: <20190726185753.551967692@linutronix.de>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:timers/core] tick: Mark tick related hrtimers to expiry in
- hard interrupt context
-Git-Commit-ID: 8dd1382c4f8562ee7395c030047a8cc2bc853042
+Subject: [tip:timers/core] hrtimer: Move unmarked hrtimers to soft interrupt
+ expiry on RT
+Git-Commit-ID: edd2f987491fb47949a9612743435d6d0f61f614
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -61,116 +62,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  8dd1382c4f8562ee7395c030047a8cc2bc853042
-Gitweb:     https://git.kernel.org/tip/8dd1382c4f8562ee7395c030047a8cc2bc853042
+Commit-ID:  edd2f987491fb47949a9612743435d6d0f61f614
+Gitweb:     https://git.kernel.org/tip/edd2f987491fb47949a9612743435d6d0f61f614
 Author:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-AuthorDate: Fri, 26 Jul 2019 20:30:56 +0200
+AuthorDate: Fri, 26 Jul 2019 20:30:57 +0200
 Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Thu, 1 Aug 2019 17:43:18 +0200
+CommitDate: Thu, 1 Aug 2019 17:43:19 +0200
 
-tick: Mark tick related hrtimers to expiry in hard interrupt context
+hrtimer: Move unmarked hrtimers to soft interrupt expiry on RT
 
-The tick related hrtimers, which drive the scheduler tick and hrtimer based
-broadcasting are required to expire in hard interrupt context for obvious
-reasons.
+On PREEMPT_RT not all hrtimers can be expired in hard interrupt context
+even if that is perfectly fine on a PREEMPT_RT=n kernel, e.g. because they
+take regular spinlocks. Also for latency reasons PREEMPT_RT tries to defer
+most hrtimers' expiry into softirq context.
 
-Mark them so PREEMPT_RT kernels wont move them to soft interrupt expiry.
+hrtimers marked with HRTIMER_MODE_HARD must be kept in hard interrupt
+context expiry mode. Add the required logic.
 
-Make the horribly formatted RCU_NONIDLE bracket maze readable while at it.
+No functional change for PREEMPT_RT=n kernels.
 
-No functional change, 
-
-[ tglx: Split out from larger combo patch. Add changelog ]
+[ tglx: Split out of a larger combo patch. Added changelog ]
 
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lkml.kernel.org/r/20190726185753.459144407@linutronix.de
+Link: https://lkml.kernel.org/r/20190726185753.551967692@linutronix.de
 
 
 ---
- kernel/time/tick-broadcast-hrtimer.c | 13 +++++++++----
- kernel/time/tick-sched.c             | 15 +++++++++------
- 2 files changed, 18 insertions(+), 10 deletions(-)
+ kernel/time/hrtimer.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/time/tick-broadcast-hrtimer.c b/kernel/time/tick-broadcast-hrtimer.c
-index 5be6154e2fd2..c1f5bb590b5e 100644
---- a/kernel/time/tick-broadcast-hrtimer.c
-+++ b/kernel/time/tick-broadcast-hrtimer.c
-@@ -59,11 +59,16 @@ static int bc_set_next(ktime_t expires, struct clock_event_device *bc)
- 	 * hrtimer_{start/cancel} functions call into tracing,
- 	 * calls to these functions must be bound within RCU_NONIDLE.
- 	 */
--	RCU_NONIDLE({
-+	RCU_NONIDLE(
-+		{
- 			bc_moved = hrtimer_try_to_cancel(&bctimer) >= 0;
--			if (bc_moved)
-+			if (bc_moved) {
- 				hrtimer_start(&bctimer, expires,
--					      HRTIMER_MODE_ABS_PINNED);});
-+					      HRTIMER_MODE_ABS_PINNED_HARD);
-+			}
-+		}
-+	);
-+
- 	if (bc_moved) {
- 		/* Bind the "device" to the cpu */
- 		bc->bound_on = smp_processor_id();
-@@ -104,7 +109,7 @@ static enum hrtimer_restart bc_handler(struct hrtimer *t)
- 
- void tick_setup_hrtimer_broadcast(void)
+diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
+index 0ace301a56f4..90dcc4d95e91 100644
+--- a/kernel/time/hrtimer.c
++++ b/kernel/time/hrtimer.c
+@@ -1275,8 +1275,17 @@ static void __hrtimer_init(struct hrtimer *timer, clockid_t clock_id,
+ 			   enum hrtimer_mode mode)
  {
--	hrtimer_init(&bctimer, CLOCK_MONOTONIC, HRTIMER_MODE_ABS);
-+	hrtimer_init(&bctimer, CLOCK_MONOTONIC, HRTIMER_MODE_ABS_HARD);
- 	bctimer.function = bc_handler;
- 	clockevents_register_device(&ce_broadcast_hrtimer);
- }
-diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
-index be9707f68024..01ff32a02af2 100644
---- a/kernel/time/tick-sched.c
-+++ b/kernel/time/tick-sched.c
-@@ -634,10 +634,12 @@ static void tick_nohz_restart(struct tick_sched *ts, ktime_t now)
- 	/* Forward the time to expire in the future */
- 	hrtimer_forward(&ts->sched_timer, now, tick_period);
+ 	bool softtimer = !!(mode & HRTIMER_MODE_SOFT);
+-	int base = softtimer ? HRTIMER_MAX_CLOCK_BASES / 2 : 0;
+ 	struct hrtimer_cpu_base *cpu_base;
++	int base;
++
++	/*
++	 * On PREEMPT_RT enabled kernels hrtimers which are not explicitely
++	 * marked for hard interrupt expiry mode are moved into soft
++	 * interrupt context for latency reasons and because the callbacks
++	 * can invoke functions which might sleep on RT, e.g. spin_lock().
++	 */
++	if (IS_ENABLED(CONFIG_PREEMPT_RT) && !(mode & HRTIMER_MODE_HARD))
++		softtimer = true;
  
--	if (ts->nohz_mode == NOHZ_MODE_HIGHRES)
--		hrtimer_start_expires(&ts->sched_timer, HRTIMER_MODE_ABS_PINNED);
--	else
-+	if (ts->nohz_mode == NOHZ_MODE_HIGHRES) {
-+		hrtimer_start_expires(&ts->sched_timer,
-+				      HRTIMER_MODE_ABS_PINNED_HARD);
-+	} else {
- 		tick_program_event(hrtimer_get_expires(&ts->sched_timer), 1);
-+	}
+ 	memset(timer, 0, sizeof(struct hrtimer));
  
- 	/*
- 	 * Reset to make sure next tick stop doesn't get fooled by past
-@@ -802,7 +804,8 @@ static void tick_nohz_stop_tick(struct tick_sched *ts, int cpu)
- 	}
+@@ -1290,6 +1299,7 @@ static void __hrtimer_init(struct hrtimer *timer, clockid_t clock_id,
+ 	if (clock_id == CLOCK_REALTIME && mode & HRTIMER_MODE_REL)
+ 		clock_id = CLOCK_MONOTONIC;
  
- 	if (ts->nohz_mode == NOHZ_MODE_HIGHRES) {
--		hrtimer_start(&ts->sched_timer, tick, HRTIMER_MODE_ABS_PINNED);
-+		hrtimer_start(&ts->sched_timer, tick,
-+			      HRTIMER_MODE_ABS_PINNED_HARD);
- 	} else {
- 		hrtimer_set_expires(&ts->sched_timer, tick);
- 		tick_program_event(tick, 1);
-@@ -1327,7 +1330,7 @@ void tick_setup_sched_timer(void)
- 	/*
- 	 * Emulate tick processing via per-CPU hrtimers:
- 	 */
--	hrtimer_init(&ts->sched_timer, CLOCK_MONOTONIC, HRTIMER_MODE_ABS);
-+	hrtimer_init(&ts->sched_timer, CLOCK_MONOTONIC, HRTIMER_MODE_ABS_HARD);
- 	ts->sched_timer.function = tick_sched_timer;
- 
- 	/* Get the next period (per-CPU) */
-@@ -1342,7 +1345,7 @@ void tick_setup_sched_timer(void)
- 	}
- 
- 	hrtimer_forward(&ts->sched_timer, now, tick_period);
--	hrtimer_start_expires(&ts->sched_timer, HRTIMER_MODE_ABS_PINNED);
-+	hrtimer_start_expires(&ts->sched_timer, HRTIMER_MODE_ABS_PINNED_HARD);
- 	tick_nohz_activate(ts, NOHZ_MODE_HIGHRES);
- }
- #endif /* HIGH_RES_TIMERS */
++	base = softtimer ? HRTIMER_MAX_CLOCK_BASES / 2 : 0;
+ 	base += hrtimer_clockid_to_base(clock_id);
+ 	timer->is_soft = softtimer;
+ 	timer->is_hard = !softtimer;
