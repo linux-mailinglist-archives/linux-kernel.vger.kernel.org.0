@@ -2,86 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C5827D6E9
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 10:07:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D8C3E7D6EE
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 10:08:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730890AbfHAIHJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 04:07:09 -0400
-Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:39876 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729578AbfHAIHI (ORCPT
+        id S1730941AbfHAIIA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 04:08:00 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:35492 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729572AbfHAIH7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 04:07:08 -0400
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-        by mx0b-001ae601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x7184GcN019463;
-        Thu, 1 Aug 2019 03:07:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=PODMain02222019;
- bh=Qe3BSURddtW0xIR5vVf0i7K36vS4J8Vn6YUqcPqkVr0=;
- b=izX7Mt4G0AtObSGFQm8SYBHcWz2vEpYHq8MJSAoQXqlhwRwwrggNEDccPrMAYtthcBS+
- oBAsnsSuGOPpF+mWatgTybnwsvs+MdCmNnd34QVe1wqj+yNZ9DsucQVkcK4L8GKsrEK1
- ldz2wmqw92RjijfakyFLW7q6/1c9TiaBX5vYHghWmzsnXcp8O2XF8Jz8kH2pW7KvnkXi
- 7b0xqAi5Y813BUEtRa3QC35c3C8DKPPAazkXsKtCkf+rW2F4XirHpdU5HCFlolUqAkSg
- TldH+ZKFZF9uMV0LCEKN5C7O2/oXM+7/MmYukMLBVKfpQsOK0UgmUPj6mdAcl9rcAlOa 6A== 
-Authentication-Results: ppops.net;
-        spf=fail smtp.mailfrom=ckeepax@opensource.cirrus.com
-Received: from ediex01.ad.cirrus.com ([87.246.76.36])
-        by mx0b-001ae601.pphosted.com with ESMTP id 2u3gpvrsrp-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Thu, 01 Aug 2019 03:07:05 -0500
-Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Thu, 1 Aug
- 2019 09:07:04 +0100
-Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server id 15.1.1591.10 via Frontend
- Transport; Thu, 1 Aug 2019 09:07:04 +0100
-Received: from ediswmail.ad.cirrus.com (ediswmail.ad.cirrus.com [198.61.86.93])
-        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id 1D9352C5;
-        Thu,  1 Aug 2019 09:07:04 +0100 (BST)
-Date:   Thu, 1 Aug 2019 09:07:04 +0100
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-CC:     Michael Turquette <mturquette@baylibre.com>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>
-Subject: Re: [PATCH 2/9] clk: lochnagar: Don't reference clk_init_data after
- registration
-Message-ID: <20190801080704.GK54126@ediswmail.ad.cirrus.com>
-References: <20190731193517.237136-1-sboyd@kernel.org>
- <20190731193517.237136-3-sboyd@kernel.org>
+        Thu, 1 Aug 2019 04:07:59 -0400
+Received: by mail-ed1-f66.google.com with SMTP id w20so68257417edd.2;
+        Thu, 01 Aug 2019 01:07:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=/A98ENoFGQr2SCQn9ABBf4M5URnbGIlXVcItSyIlQIY=;
+        b=Wpfuc/Jm6RyYET0+1F4x08xRLhNOqe5AZMmhCVijzNJP0ZYLJnTwSDSFDJw4yTm9ts
+         GEQJ0hM6YnpfnbAcWoA1PXGG/NunmgXCF89xCSgAx4qkFc7lBDGuN6lm3Nz3JTSNMpFw
+         pAlgYEVRRXnQmVqy41rIOnkkXV1TE9BmCOMSiQpQO3QsPYXzCCgzPucE8gKyMfAGlgWP
+         hiN1704KehFy0lXo+asJa+it+YSV4ckYq0QfCU8uKWBKFdcIiCPH6ivx54ru8hjqxAfm
+         X/oIQPD6gH/w4WFdbmMNAWbpaL478XNI6RiZJ459MJIPGS+uN4UxDnXNmt4Gi538CCDC
+         Amww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=/A98ENoFGQr2SCQn9ABBf4M5URnbGIlXVcItSyIlQIY=;
+        b=okGLzs99uJLZdKoWoAKbLGFpFKid41ifYOdf4qpFqFgadgvvg1J+/nTm4hQtybW/zh
+         zvtPrTl0bGzYstJfTw+LdMJKtdH3xx5KIxf0YKiFzn+4Azrz6l6OFCHLyhjuGZYgY73E
+         VV8vQwZ1SpMqNUK6drKXS16tyWVxPDS9EJ5tflyoj37bnDXuuZOpNt7GTyYSNw/k775s
+         tqtZYdvje6tyULp2G/A5FljSTaIgZ833K6WLD95AFJck10Hd53ctlTjDZut8PHheb1dw
+         +cMZeBgiyIOwKgC26yGnmmxxz8JMS/bs7fSev/22W648IgAWHXWkrmIgf1Y543maIKl1
+         ErGw==
+X-Gm-Message-State: APjAAAUGWj9gRhlXRvI6r3tsvjvs4i5aK6Kkdk8bsbsE4BnXI5+2BpZx
+        J6LdzzNHAsSHgzZyj3Hu0wYRznuw7JK4ffIedBq8qvlyfms=
+X-Google-Smtp-Source: APXvYqz1uwxLNSvD1OY5M5VgD6Oshlf7Q3vqRumXchcxbJpiZ6TcvfXvmGTOuvRZYUmwhvOYdd5AJ1jHDmJNpEIKpCQ=
+X-Received: by 2002:a50:fb0a:: with SMTP id d10mr84112001edq.124.1564646877779;
+ Thu, 01 Aug 2019 01:07:57 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20190731193517.237136-3-sboyd@kernel.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Proofpoint-SPF-Result: fail
-X-Proofpoint-SPF-Record: v=spf1 include:spf-001ae601.pphosted.com include:spf.protection.outlook.com
- -all
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 spamscore=0 bulkscore=0
- suspectscore=0 priorityscore=1501 lowpriorityscore=0 clxscore=1015
- phishscore=0 adultscore=0 impostorscore=0 mlxscore=0 mlxlogscore=781
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-1906280000
- definitions=main-1908010082
+References: <20190729151454.9606-1-hslester96@gmail.com> <20190729191511.GB2023@amd>
+In-Reply-To: <20190729191511.GB2023@amd>
+From:   Chuhong Yuan <hslester96@gmail.com>
+Date:   Thu, 1 Aug 2019 16:07:47 +0800
+Message-ID: <CANhBUQ3beB_aHMJSy9G942oUo_BT=x0w3gB3Vip_-nJxVjqu8A@mail.gmail.com>
+Subject: Re: [PATCH 07/12] power: Replace strncmp with str_has_prefix
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <len.brown@intel.com>, linux-pm@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 31, 2019 at 12:35:10PM -0700, Stephen Boyd wrote:
-> A future patch is going to change semantics of clk_register() so that
-> clk_hw::init is guaranteed to be NULL after a clk is registered. Avoid
-> referencing this member here so that we don't run into NULL pointer
-> exceptions.
-> 
-> Cc: Charles Keepax <ckeepax@opensource.cirrus.com>
-> Cc: Richard Fitzgerald <rf@opensource.cirrus.com>
-> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-> ---
-> 
+Pavel Machek <pavel@ucw.cz> =E4=BA=8E2019=E5=B9=B47=E6=9C=8830=E6=97=A5=E5=
+=91=A8=E4=BA=8C =E4=B8=8A=E5=8D=883:15=E5=86=99=E9=81=93=EF=BC=9A
+>
+> On Mon 2019-07-29 23:14:54, Chuhong Yuan wrote:
+> > strncmp(str, const, len) is error-prone.
+> > We had better use newly introduced
+> > str_has_prefix() instead of it.
+> >
+> > Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+> > ---
+> >  kernel/power/hibernate.c | 8 ++++----
+> >  kernel/power/main.c      | 2 +-
+> >  2 files changed, 5 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/kernel/power/hibernate.c b/kernel/power/hibernate.c
+> > index cd7434e6000d..49d4bfdb2b67 100644
+> > --- a/kernel/power/hibernate.c
+> > +++ b/kernel/power/hibernate.c
+> > @@ -1188,15 +1188,15 @@ static int __init resume_offset_setup(char *str=
+)
+> >
+> >  static int __init hibernate_setup(char *str)
+> >  {
+> > -     if (!strncmp(str, "noresume", 8)) {
+> > +     if (str_has_prefix(str, "noresume")) {
+> >               noresume =3D 1;
+> > -     } else if (!strncmp(str, "nocompress", 10)) {
+> > +     } else if (str_has_prefix(str, "nocompress")) {
+> >               nocompress =3D 1;
+>
+> Ok, old code is bad, too... but this makes the error visible. We do
+> not want "noresumenextmonday" to set noresume =3D 1, right?
+>
 
-Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+I am not clear about the semantic of the code.
+Therefore, what is the right way to fix this error?
 
-Thanks,
-Charles
+>                                                                 Pavel
+>
+> --
+> (english) http://www.livejournal.com/~pavelmachek
+> (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/b=
+log.html
