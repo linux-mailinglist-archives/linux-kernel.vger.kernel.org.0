@@ -2,58 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D6F77D6B2
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 09:55:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B9117D6B5
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 09:55:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730514AbfHAHzD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 03:55:03 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:53399 "EHLO
+        id S1730649AbfHAHzG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 03:55:06 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:35454 "EHLO
         mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729465AbfHAHzC (ORCPT
+        with ESMTP id S1729954AbfHAHzD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 03:55:02 -0400
-Received: by mail-wm1-f67.google.com with SMTP id x15so63566786wmj.3
+        Thu, 1 Aug 2019 03:55:03 -0400
+Received: by mail-wm1-f67.google.com with SMTP id l2so62213019wmg.0
         for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2019 00:55:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=DCllPmBw4lut+Uqi6OBcOMhCVblvrSC3X451qg4jFyI=;
-        b=1jyb7sI9h2Uu/fkFZ5BhBBVZzi57jo75CTaozgehdA86w5n7mdgbzo60jiiZVdMxE6
-         pU9AtBQsVZQWlm3Fj86Y/7/Guo6t5FrrkQTNpzN1jnFbIPJxcn2uLdrBjAQiIB45ETGJ
-         J9TgoQgHrrAtw2229GrQF+4d8T/JvLYVBTUb4XHiKyi39GxSMmrRHylwfXm10gJ9R5Br
-         0TOn0DO9J7iG7Nf18SBjlN5QL59+5/Kw2mEDuX16FEcZc+Tghy0Pp2JccwIvZ9bJSxTe
-         qBygl1LSw4Rk33E5JtmMmvOhd2R26tZZH7kmUCnLwzxgd4wcqbMN+ZWyjQ1jWXxE55Ko
-         lwtQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=VDh+yTCqb2E9NnVNrkncEUqcUL07YA1bsORJMbcQ8lw=;
+        b=IzvL6Fh8RsohbqMby4W0y9O0NYlulPkbH7/6/KE7ev/epMQUxqEMGoBNO7hasjRB01
+         /HKKAZluufYjxDeMWVHHn/PBOC16QdfF8bFsHPAH/y0seF5aLbTFn3qY0xodZ77nucSY
+         xYMW3sPy+9Q9CM6qMRRSINJH5EbEDk5vXnNhNZLhPlQpUwj+N7ffv9fojxS7O7dsAM1Q
+         wmk7yQI6F4l8KrAM7trg2kTFx7sn9OQD/diXUgZ9QzkMHRXcqBM5bSemJqoYhaxQhj/7
+         E9wFCTeeCCjgGVkitxS5ZV+i0H0VTV0ObPeyma9le55NMAyecpfvqWXsQP3FV+hdWzCM
+         UtSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=DCllPmBw4lut+Uqi6OBcOMhCVblvrSC3X451qg4jFyI=;
-        b=YiJ38uOCxcgfOxpbIyXZ+naXXgvN1AW7nlswB2vlpJADJJ5bzP5IbnQbv60scemeyA
-         Lo6Vc/2GLYmEE1/IoWkZRsvr8D5ZNp3Y5+gr/Fh1XoerFeoYFMsQ6cMu54NFPk12aTJV
-         +CJh4WScy3XDY3JrS7ppEtLqrg8+gngsoI9kCyCytGRWfGo309DHnCKr4iUixqTa/yY1
-         EpbSRFLJ4/dJlFwH9XYznT3Tb6JEhwGeK4d9VTpB7p+WxSTyOAs30fr3R98gH6c2IwnK
-         hC/ye4Yudy2ile1CawAYA4efko3r4bC2/nFhuqnuaP6LJGIh6iC17LkpGIzJ8SNnqviC
-         dktQ==
-X-Gm-Message-State: APjAAAWxA6+JsFfG0ToURFF45Uai8vGyFa5pKO9ydZuZTqGylfwe1uPN
-        1jayHpm7PsLoVXvlbDBXL00IFNh3bgY=
-X-Google-Smtp-Source: APXvYqzlDJs+p7+lHmLvPaIqh7+AzhIFpJlRyvlJ/W3TVENURBpyKur7D9F3PzuD0Ye68XsD7jxAXw==
-X-Received: by 2002:a1c:407:: with SMTP id 7mr120943986wme.113.1564646100198;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=VDh+yTCqb2E9NnVNrkncEUqcUL07YA1bsORJMbcQ8lw=;
+        b=hmJdhRP8caSaO24WxlfFpAjgamKl4Pxuc+lTIZR2DYcEqaKyv8Wb9BNHfiHDgsc2UV
+         xhl2lUHuWiaLEDLxGhv4SAgmTJZw7y8rdi1rkkFTCN5tJp+fP2JvMBgnsbeIEXIUHrpc
+         /W8+bJ6/RBI3F95276aC2h9oyWVPlhCarARejfu8PVyCeQ10OvUvxrdKVx4D48joygHr
+         8z/16XQ6eEcoxNTW/EHT19tQsx5j38tesiCyB5tHEboo5jOGqUu7nrbTOKiQqfIJHe8w
+         4x81OoDDTsJPgRXH3WlTvn9q/OY2xIDe176U04A1k6uljW1i8iuvtkQZ1D5ROIvXK0Kv
+         F7eg==
+X-Gm-Message-State: APjAAAVxcd3fGnV1RkyS1LwuFiuQBEsLWLqdnhzMI+DvJxN+eAywpjmo
+        gPuc8cAvA+ohKLecE7caiqPi0OwtM14=
+X-Google-Smtp-Source: APXvYqzGk38l6yq4GXNCBAzayn9dzPlX9QGyiHIVNo8jdmjDHvCA/27f71y7td8ETAlQCK68vOhRjA==
+X-Received: by 2002:a7b:ce01:: with SMTP id m1mr34128533wmc.1.1564646100811;
         Thu, 01 Aug 2019 00:55:00 -0700 (PDT)
 Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id y12sm64199221wrm.79.2019.08.01.00.54.59
+        by smtp.gmail.com with ESMTPSA id y12sm64199221wrm.79.2019.08.01.00.55.00
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 01 Aug 2019 00:54:59 -0700 (PDT)
+        Thu, 01 Aug 2019 00:55:00 -0700 (PDT)
 From:   Neil Armstrong <narmstrong@baylibre.com>
 To:     p.zabel@pengutronix.de
 Cc:     linux-amlogic@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Neil Armstrong <narmstrong@baylibre.com>
-Subject: [PATCH 0/3] reset: meson: update with SPDX Licence identifier
-Date:   Thu,  1 Aug 2019 09:54:51 +0200
-Message-Id: <20190801075454.23547-1-narmstrong@baylibre.com>
+Subject: [PATCH 1/3] reset: reset-meson: update with SPDX Licence identifier
+Date:   Thu,  1 Aug 2019 09:54:52 +0200
+Message-Id: <20190801075454.23547-2-narmstrong@baylibre.com>
 X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20190801075454.23547-1-narmstrong@baylibre.com>
+References: <20190801075454.23547-1-narmstrong@baylibre.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -61,20 +63,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This serie updates the Amlogic Reset driver and bindings.
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ drivers/reset/reset-meson.c | 51 +------------------------------------
+ 1 file changed, 1 insertion(+), 50 deletions(-)
 
-Neil Armstrong (3):
-  reset: reset-meson: update with SPDX Licence identifier
-  dt-bindings: reset: amlogic,meson-gxbb-reset: update with SPDX Licence
-    identifier
-  dt-bindings: reset: amlogic,meson8b-reset: update with SPDX Licence
-    identifier
-
- drivers/reset/reset-meson.c                   | 51 +------------------
- .../reset/amlogic,meson-gxbb-reset.h          | 51 +------------------
- .../dt-bindings/reset/amlogic,meson8b-reset.h | 51 +------------------
- 3 files changed, 3 insertions(+), 150 deletions(-)
-
+diff --git a/drivers/reset/reset-meson.c b/drivers/reset/reset-meson.c
+index 5242e0679df7..7d05d766e1ea 100644
+--- a/drivers/reset/reset-meson.c
++++ b/drivers/reset/reset-meson.c
+@@ -1,58 +1,9 @@
++// SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
+ /*
+  * Amlogic Meson Reset Controller driver
+  *
+- * This file is provided under a dual BSD/GPLv2 license.  When using or
+- * redistributing this file, you may do so under either license.
+- *
+- * GPL LICENSE SUMMARY
+- *
+- * Copyright (c) 2016 BayLibre, SAS.
+- * Author: Neil Armstrong <narmstrong@baylibre.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of version 2 of the GNU General Public License as
+- * published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful, but
+- * WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+- * General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program; if not, see <http://www.gnu.org/licenses/>.
+- * The full GNU General Public License is included in this distribution
+- * in the file called COPYING.
+- *
+- * BSD LICENSE
+- *
+  * Copyright (c) 2016 BayLibre, SAS.
+  * Author: Neil Armstrong <narmstrong@baylibre.com>
+- *
+- * Redistribution and use in source and binary forms, with or without
+- * modification, are permitted provided that the following conditions
+- * are met:
+- *
+- *   * Redistributions of source code must retain the above copyright
+- *     notice, this list of conditions and the following disclaimer.
+- *   * Redistributions in binary form must reproduce the above copyright
+- *     notice, this list of conditions and the following disclaimer in
+- *     the documentation and/or other materials provided with the
+- *     distribution.
+- *   * Neither the name of Intel Corporation nor the names of its
+- *     contributors may be used to endorse or promote products derived
+- *     from this software without specific prior written permission.
+- *
+- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  */
+ #include <linux/err.h>
+ #include <linux/init.h>
 -- 
 2.22.0
 
