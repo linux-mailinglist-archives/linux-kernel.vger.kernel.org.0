@@ -2,116 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CC797E60A
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 00:51:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E66D87E610
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 00:54:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390109AbfHAWvJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 18:51:09 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:11486 "EHLO
+        id S1730687AbfHAWx3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 18:53:29 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:62854 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1733241AbfHAWvI (ORCPT
+        by vger.kernel.org with ESMTP id S1727008AbfHAWx2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 18:51:08 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x71MlF2b077025;
-        Thu, 1 Aug 2019 18:50:30 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2u488k9s6c-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 01 Aug 2019 18:50:30 -0400
-Received: from m0098420.ppops.net (m0098420.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x71Mn4oM079923;
-        Thu, 1 Aug 2019 18:50:30 -0400
-Received: from ppma04wdc.us.ibm.com (1a.90.2fa9.ip4.static.sl-reverse.com [169.47.144.26])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2u488k9s5x-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 01 Aug 2019 18:50:30 -0400
-Received: from pps.filterd (ppma04wdc.us.ibm.com [127.0.0.1])
-        by ppma04wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x71Mo1vh031442;
-        Thu, 1 Aug 2019 22:50:29 GMT
-Received: from b01cxnp22034.gho.pok.ibm.com (b01cxnp22034.gho.pok.ibm.com [9.57.198.24])
-        by ppma04wdc.us.ibm.com with ESMTP id 2u0e85w6uw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 01 Aug 2019 22:50:29 +0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x71MoTnx50528652
+        Thu, 1 Aug 2019 18:53:28 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x71Mpwob130204
+        for <linux-kernel@vger.kernel.org>; Thu, 1 Aug 2019 18:53:27 -0400
+Received: from e34.co.us.ibm.com (e34.co.us.ibm.com [32.97.110.152])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2u486f1yxb-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2019 18:53:27 -0400
+Received: from localhost
+        by e34.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <leonardo@linux.ibm.com>;
+        Thu, 1 Aug 2019 23:53:26 +0100
+Received: from b03cxnp08028.gho.boulder.ibm.com (9.17.130.20)
+        by e34.co.us.ibm.com (192.168.1.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 1 Aug 2019 23:53:22 +0100
+Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
+        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x71MrLxn63504856
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 1 Aug 2019 22:50:29 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E56ECB2078;
-        Thu,  1 Aug 2019 22:50:28 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CC65BB2070;
-        Thu,  1 Aug 2019 22:50:28 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.154])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu,  1 Aug 2019 22:50:28 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id E7B9B16C9A59; Thu,  1 Aug 2019 15:50:29 -0700 (PDT)
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     rcu@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
-        jiangshanlai@gmail.com, dipankar@in.ibm.com,
-        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
-        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
-        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
-        fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>
-Subject: [PATCH tip/core/rcu 11/11] rcu/nocb: Print gp/cb kthread hierarchy if dump_tree
-Date:   Thu,  1 Aug 2019 15:50:28 -0700
-Message-Id: <20190801225028.18225-11-paulmck@linux.ibm.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190801225009.GA17155@linux.ibm.com>
-References: <20190801225009.GA17155@linux.ibm.com>
+        Thu, 1 Aug 2019 22:53:21 GMT
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5461A78060;
+        Thu,  1 Aug 2019 22:53:21 +0000 (GMT)
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 64CDD7805E;
+        Thu,  1 Aug 2019 22:53:18 +0000 (GMT)
+Received: from LeoBras.aus.stglabs.ibm.com (unknown [9.18.235.147])
+        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Thu,  1 Aug 2019 22:53:18 +0000 (GMT)
+From:   Leonardo Bras <leonardo@linux.ibm.com>
+To:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Cc:     Leonardo Bras <leonardo@linux.ibm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nathan Fontenot <nfont@linux.vnet.ibm.com>,
+        Pavel Tatashin <pavel.tatashin@microsoft.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Hildenbrand <david@redhat.com>,
+        Nathan Lynch <nathanl@linux.ibm.com>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH 1/1] pseries/hotplug-memory.c: Replace nested ifs by switch-case
+Date:   Thu,  1 Aug 2019 19:52:51 -0300
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
+x-cbid: 19080122-0016-0000-0000-000009D75A7B
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00011535; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000287; SDB=6.01240739; UDB=6.00654298; IPR=6.01022164;
+ MB=3.00028000; MTD=3.00000008; XFM=3.00000015; UTC=2019-08-01 22:53:26
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19080122-0017-0000-0000-000044428B7C
+Message-Id: <20190801225251.17864-1-leonardo@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-01_09:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=13 phishscore=0 bulkscore=0 spamscore=0
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1908010240
+ mlxlogscore=767 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908010241
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This commit causes the no-CBs grace-period/callback hierarchy to be
-printed to the console when the dump_tree kernel boot parameter is set.
+I noticed these nested ifs can be easily replaced by switch-cases,
+which can improve readability.
 
-Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
+Signed-off-by: Leonardo Bras <leonardo@linux.ibm.com>
 ---
- kernel/rcu/tree_plugin.h | 6 ++++++
- 1 file changed, 6 insertions(+)
+ .../platforms/pseries/hotplug-memory.c        | 26 +++++++++++++------
+ 1 file changed, 18 insertions(+), 8 deletions(-)
 
-diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
-index 80b27a9f306d..0a3f8680b450 100644
---- a/kernel/rcu/tree_plugin.h
-+++ b/kernel/rcu/tree_plugin.h
-@@ -2135,6 +2135,7 @@ module_param(rcu_nocb_gp_stride, int, 0444);
- static void __init rcu_organize_nocb_kthreads(void)
- {
- 	int cpu;
-+	bool firsttime = true;
- 	int ls = rcu_nocb_gp_stride;
- 	int nl = 0;  /* Next GP kthread. */
- 	struct rcu_data *rdp;
-@@ -2160,10 +2161,15 @@ static void __init rcu_organize_nocb_kthreads(void)
- 			nl = DIV_ROUND_UP(rdp->cpu + 1, ls) * ls;
- 			rdp->nocb_gp_rdp = rdp;
- 			rdp_gp = rdp;
-+			if (!firsttime && dump_tree)
-+				pr_cont("\n");
-+			firsttime = false;
-+			pr_alert("%s: No-CB GP kthread CPU %d:", __func__, cpu);
- 		} else {
- 			/* Another CB kthread, link to previous GP kthread. */
- 			rdp->nocb_gp_rdp = rdp_gp;
- 			rdp_prev->nocb_next_cb_rdp = rdp;
-+			pr_alert(" %d", cpu);
+diff --git a/arch/powerpc/platforms/pseries/hotplug-memory.c b/arch/powerpc/platforms/pseries/hotplug-memory.c
+index 46d0d35b9ca4..8e700390f3d6 100644
+--- a/arch/powerpc/platforms/pseries/hotplug-memory.c
++++ b/arch/powerpc/platforms/pseries/hotplug-memory.c
+@@ -880,34 +880,44 @@ int dlpar_memory(struct pseries_hp_errorlog *hp_elog)
+ 
+ 	switch (hp_elog->action) {
+ 	case PSERIES_HP_ELOG_ACTION_ADD:
+-		if (hp_elog->id_type == PSERIES_HP_ELOG_ID_DRC_COUNT) {
++		switch (hp_elog->id_type) {
++		case PSERIES_HP_ELOG_ID_DRC_COUNT:
+ 			count = hp_elog->_drc_u.drc_count;
+ 			rc = dlpar_memory_add_by_count(count);
+-		} else if (hp_elog->id_type == PSERIES_HP_ELOG_ID_DRC_INDEX) {
++			break;
++		case PSERIES_HP_ELOG_ID_DRC_INDEX:
+ 			drc_index = hp_elog->_drc_u.drc_index;
+ 			rc = dlpar_memory_add_by_index(drc_index);
+-		} else if (hp_elog->id_type == PSERIES_HP_ELOG_ID_DRC_IC) {
++			break;
++		case PSERIES_HP_ELOG_ID_DRC_IC:
+ 			count = hp_elog->_drc_u.ic.count;
+ 			drc_index = hp_elog->_drc_u.ic.index;
+ 			rc = dlpar_memory_add_by_ic(count, drc_index);
+-		} else {
++			break;
++		default:
+ 			rc = -EINVAL;
++			break;
  		}
- 		rdp_prev = rdp;
- 	}
+ 
+ 		break;
+ 	case PSERIES_HP_ELOG_ACTION_REMOVE:
+-		if (hp_elog->id_type == PSERIES_HP_ELOG_ID_DRC_COUNT) {
++		switch (hp_elog->id_type) {
++		case PSERIES_HP_ELOG_ID_DRC_COUNT:
+ 			count = hp_elog->_drc_u.drc_count;
+ 			rc = dlpar_memory_remove_by_count(count);
+-		} else if (hp_elog->id_type == PSERIES_HP_ELOG_ID_DRC_INDEX) {
++			break;
++		case PSERIES_HP_ELOG_ID_DRC_INDEX:
+ 			drc_index = hp_elog->_drc_u.drc_index;
+ 			rc = dlpar_memory_remove_by_index(drc_index);
+-		} else if (hp_elog->id_type == PSERIES_HP_ELOG_ID_DRC_IC) {
++			break;
++		case PSERIES_HP_ELOG_ID_DRC_IC:
+ 			count = hp_elog->_drc_u.ic.count;
+ 			drc_index = hp_elog->_drc_u.ic.index;
+ 			rc = dlpar_memory_remove_by_ic(count, drc_index);
+-		} else {
++			break;
++		default:
+ 			rc = -EINVAL;
++			break;
+ 		}
+ 
+ 		break;
 -- 
-2.17.1
+2.20.1
 
