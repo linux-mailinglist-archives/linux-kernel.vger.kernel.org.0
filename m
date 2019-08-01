@@ -2,116 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 74F437E359
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 21:32:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B112E7E35E
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 21:36:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388673AbfHATcw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 15:32:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34662 "EHLO mail.kernel.org"
+        id S2388699AbfHATg2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 15:36:28 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:43994 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388609AbfHATcv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 15:32:51 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        id S2388668AbfHATg2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Aug 2019 15:36:28 -0400
+Received: from zn.tnic (p200300EC2F159F00604C6CF9032D9ED3.dip0.t-ipconnect.de [IPv6:2003:ec:2f15:9f00:604c:6cf9:32d:9ed3])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 83A1220838;
-        Thu,  1 Aug 2019 19:32:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564687971;
-        bh=vz14t3owe2u9wPNTi1pd1alYwJBKwnmHIGoE00IrvBI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=VXTObOOvGa3qBKa2A+jl/PLiUR51hTNk9htCQEhrhXh3FokR+J3mTbL9I2CxOEkew
-         5S0vjaPIWUkEgBuAlJ4NF/sOeA/63iFsR7Bdw/slCl3U7p+fzLnFkya6w/yANW6u6H
-         f3LCxoHDsJmogD3khFQADSkLoWqcHaWbyn+o1hKQ=
-Date:   Thu, 1 Aug 2019 21:32:48 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Frank Rowand <frowand.list@gmail.com>
-Cc:     Saravana Kannan <saravanak@google.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        David Collins <collinsd@codeaurora.org>,
-        kernel-team@android.com
-Subject: Re: [PATCH v9 0/7] Solve postboot supplier cleanup and optimize
- probe ordering
-Message-ID: <20190801193248.GA24916@kroah.com>
-References: <20190731221721.187713-1-saravanak@google.com>
- <20190801061209.GA3570@kroah.com>
- <5a1e785d-075e-19a0-7d3d-949e1b65d726@gmail.com>
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 474D11EC074B;
+        Thu,  1 Aug 2019 21:36:26 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1564688186;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=Wj8mRbobMSud+T3lGNLliqvBRTHfWGxvPzm0IzQzcmQ=;
+        b=PGunn+YjazMw/w+6oOlCIvfur7M+8Fhx4XWWeFQcrypfUdB5QIafb+T11S5lgzgMK/odR7
+        Yht5LDKnOWde3+lCrNutvl92KZ8ltY2l73xcpkT+RJO4+0HHaSC8cjPjLEIb6WJV4BvXSU
+        3buqKwW9vMMnEFhfICNDJmk74APHVZE=
+Date:   Thu, 1 Aug 2019 21:36:07 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     "Luck, Tony" <tony.luck@intel.com>
+Cc:     "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        "Lin, Jing" <jing.lin@intel.com>,
+        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
+        linux-kernel@vger.kernel.org,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: Re: [PATCH] x86/asm: Add support for MOVDIR64B instruction
+Message-ID: <20190801193606.GA16031@zn.tnic>
+References: <20190730230554.8291-1-kirill.shutemov@linux.intel.com>
+ <20190801095928.GA32138@nazgul.tnic>
+ <20190801192030.GA11781@agluck-desk2.amr.corp.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <5a1e785d-075e-19a0-7d3d-949e1b65d726@gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20190801192030.GA11781@agluck-desk2.amr.corp.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 01, 2019 at 12:28:13PM -0700, Frank Rowand wrote:
-> Hi Greg,
-> 
-> On 7/31/19 11:12 PM, Greg Kroah-Hartman wrote:
-> > On Wed, Jul 31, 2019 at 03:17:13PM -0700, Saravana Kannan wrote:
-> >> Add device-links to track functional dependencies between devices
-> >> after they are created (but before they are probed) by looking at
-> >> their common DT bindings like clocks, interconnects, etc.
-> >>
-> >> Having functional dependencies automatically added before the devices
-> >> are probed, provides the following benefits:
-> >>
-> >> - Optimizes device probe order and avoids the useless work of
-> >>   attempting probes of devices that will not probe successfully
-> >>   (because their suppliers aren't present or haven't probed yet).
-> >>
-> >>   For example, in a commonly available mobile SoC, registering just
-> >>   one consumer device's driver at an initcall level earlier than the
-> >>   supplier device's driver causes 11 failed probe attempts before the
-> >>   consumer device probes successfully. This was with a kernel with all
-> >>   the drivers statically compiled in. This problem gets a lot worse if
-> >>   all the drivers are loaded as modules without direct symbol
-> >>   dependencies.
-> >>
-> >> - Supplier devices like clock providers, interconnect providers, etc
-> >>   need to keep the resources they provide active and at a particular
-> >>   state(s) during boot up even if their current set of consumers don't
-> >>   request the resource to be active. This is because the rest of the
-> >>   consumers might not have probed yet and turning off the resource
-> >>   before all the consumers have probed could lead to a hang or
-> >>   undesired user experience.
-> >>
-> >>   Some frameworks (Eg: regulator) handle this today by turning off
-> >>   "unused" resources at late_initcall_sync and hoping all the devices
-> >>   have probed by then. This is not a valid assumption for systems with
-> >>   loadable modules. Other frameworks (Eg: clock) just don't handle
-> >>   this due to the lack of a clear signal for when they can turn off
-> >>   resources. This leads to downstream hacks to handle cases like this
-> >>   that can easily be solved in the upstream kernel.
-> >>
-> >>   By linking devices before they are probed, we give suppliers a clear
-> >>   count of the number of dependent consumers. Once all of the
-> >>   consumers are active, the suppliers can turn off the unused
-> >>   resources without making assumptions about the number of consumers.
-> >>
-> >> By default we just add device-links to track "driver presence" (probe
-> >> succeeded) of the supplier device. If any other functionality provided
-> >> by device-links are needed, it is left to the consumer/supplier
-> >> devices to change the link when they probe.
-> > 
-> > All now queued up in my driver-core-testing branch, and if 0-day is
-> > happy with this, will move it to my "real" driver-core-next branch in a
-> > day or so to get included in linux-next.
-> 
-> I have been slow in getting my review out.
-> 
-> This patch series is not yet ready for sending to Linus, so if putting
-> this in linux-next implies that it will be in your next pull request
-> to Linus, please do not put it in linux-next.
+On Thu, Aug 01, 2019 at 12:20:30PM -0700, Luck, Tony wrote:
+> Just to get another of the non-controversial bits out of the
+> way before the main course arrives.
 
-It means that it will be in my pull request for 5.4-rc1, many many
-waeeks away from now.
+Let's submit functions together with their respective users pls. Like we
+always do.
 
-thanks,
+Thx.
 
-greg k-h
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
