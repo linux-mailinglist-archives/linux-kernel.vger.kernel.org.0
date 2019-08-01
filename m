@@ -2,119 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93E1B7E098
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 18:54:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D9B37E0A3
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 18:57:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733205AbfHAQyy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 12:54:54 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:44566 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732234AbfHAQyx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 12:54:53 -0400
-Received: by mail-wr1-f68.google.com with SMTP id p17so74326114wrf.11
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2019 09:54:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=xk32o95NCOLgUCqaaBPTpr45XpC6FO5dIRTVup5ncyo=;
-        b=aSPDaMi/4iBHWI/KfnsXpulgnq+3iP7eLvJn6gErPvj3StCjWMgDscR1jacc+NsvME
-         owqhNmz2fWtOt05s7L31gQzQM5Vw3BEHFc1qGCT+nrdU4ybjkAltHYeGRsdaHPpmHzB9
-         T7dAbqME63P48KRxxRnnTD1ZSQG1rvPaYcuekbRVGM9GZ3SBWGuuDLLHpM8CYj33dRVI
-         MaZHqmplWQrmDjUKeTHcNri7YSc7tDEOklhE6Nl6ufyqcJoNZX+paj/xWUXpfzlDTSHu
-         qtPbLm9Yp560cOY0d4UXwcV25RrZKSD5L6lxVqtMPWpBHwKcjfdrlAUU8TV26JxXReFx
-         Rw/A==
-X-Gm-Message-State: APjAAAVyCorjUnkM7ITdTSKIWtkyOShBhyVk2ay+thm7KkQIKwPO4mud
-        gq1JPJ0cLs+CAXvPMhyYGoZukQ==
-X-Google-Smtp-Source: APXvYqx4rwx51xdjuRB5YgIrLUydM30Bos6mOWLmy3EJ68VNQ2cELBXtN3JThNTb+NcCk2E7jyCLAQ==
-X-Received: by 2002:a5d:438e:: with SMTP id i14mr18809848wrq.122.1564678491260;
-        Thu, 01 Aug 2019 09:54:51 -0700 (PDT)
-Received: from ?IPv6:2001:b07:6468:f312:91e7:65e:d8cd:fdb3? ([2001:b07:6468:f312:91e7:65e:d8cd:fdb3])
-        by smtp.gmail.com with ESMTPSA id r11sm114254839wre.14.2019.08.01.09.54.50
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Thu, 01 Aug 2019 09:54:50 -0700 (PDT)
-Subject: Re: [PATCH] cpuidle-haltpoll: Enable kvm guest polling when dedicated
- physical CPUs are available
-To:     "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Wanpeng Li <kernellwp@gmail.com>,
-        Marcelo Tosatti <mtosatti@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Linux PM <linux-pm@vger.kernel.org>
-References: <1564643196-7797-1-git-send-email-wanpengli@tencent.com>
- <7b1e3025-f513-7068-32ac-4830d67b65ac@intel.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Message-ID: <c3fe182f-627f-88ad-cb4d-a4189202b438@redhat.com>
-Date:   Thu, 1 Aug 2019 18:54:49 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1730505AbfHAQ5J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 12:57:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40860 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725804AbfHAQ5I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Aug 2019 12:57:08 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 78E632064A;
+        Thu,  1 Aug 2019 16:57:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564678628;
+        bh=4ezqwlPAovpVuLlfTDzS1AWwDrqX++zYUnYp2p9b17s=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Q1WUKMDY3IL927TyRZwS7f3cRNOL2/DXVLQ+l59r43JrdhEuA+JvbMqeohhpPkBdx
+         nJvgax8KDyIsfdyhEQQKyhCmL8cobgwK5sJfEO5liDwipVQeCbsQBRR8eSZPbFopkq
+         Xn31aLfYr1p+KwmYrTHZlHG8Ci5LD29j5OoBfJ9o=
+Date:   Thu, 1 Aug 2019 18:57:05 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Ajay Kaher <akaher@vmware.com>
+Cc:     torvalds@linux-foundation.org, aarcange@redhat.com,
+        hughd@google.com, dave.hansen@intel.com, mgorman@suse.de,
+        riel@redhat.com, mhocko@suse.cz, jannh@google.com,
+        linux-kernel@vger.kernel.org, stable@kernel.org,
+        stable@vger.kernel.org, srivatsab@vmware.com,
+        srivatsa@csail.mit.edu, amakhalov@vmware.com, srinidhir@vmware.com,
+        bvikas@vmware.com, srostedt@vmware.com
+Subject: Re: [PATCH 0/8] Backported fixes for 4.4 stable tree
+Message-ID: <20190801165705.GA29730@kroah.com>
+References: <1563880111-19058-1-git-send-email-akaher@vmware.com>
+ <20190724120627.GF3244@kroah.com>
 MIME-Version: 1.0
-In-Reply-To: <7b1e3025-f513-7068-32ac-4830d67b65ac@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190724120627.GF3244@kroah.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/08/19 18:51, Rafael J. Wysocki wrote:
-> On 8/1/2019 9:06 AM, Wanpeng Li wrote:
->> From: Wanpeng Li <wanpengli@tencent.com>
->>
->> The downside of guest side polling is that polling is performed even
->> with other runnable tasks in the host. However, even if poll in kvm
->> can aware whether or not other runnable tasks in the same pCPU, it
->> can still incur extra overhead in over-subscribe scenario. Now we can
->> just enable guest polling when dedicated pCPUs are available.
->>
->> Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->> Cc: Paolo Bonzini <pbonzini@redhat.com>
->> Cc: Radim Krčmář <rkrcmar@redhat.com>
->> Cc: Marcelo Tosatti <mtosatti@redhat.com>
->> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+On Wed, Jul 24, 2019 at 02:06:27PM +0200, Greg KH wrote:
+> On Tue, Jul 23, 2019 at 04:38:23PM +0530, Ajay Kaher wrote:
+> > These patches include few backported fixes for the 4.4 stable
+> > tree.
+> > I would appreciate if you could kindly consider including them in the
+> > next release.
 > 
-> Paolo, Marcelo, any comments?
-
-Yes, it's a good idea.
-
-Acked-by: Paolo Bonzini <pbonzini@redhat.com>
-
-Paolo
-
+> Why are these needed?  From what I remember, the last patch here is only
+> needed for machines that are "HUGE" and for those, you shouldn't be
+> using 4.4.y anymore anyway, right?  You just end up saving so much more
+> speed and energy using a newer kernel, why would you want to waste it
+> using an older one?
 > 
->> ---
->>   drivers/cpuidle/cpuidle-haltpoll.c   | 3 ++-
->>   drivers/cpuidle/governors/haltpoll.c | 2 +-
->>   2 files changed, 3 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/cpuidle/cpuidle-haltpoll.c
->> b/drivers/cpuidle/cpuidle-haltpoll.c
->> index 9ac093d..7aee38a 100644
->> --- a/drivers/cpuidle/cpuidle-haltpoll.c
->> +++ b/drivers/cpuidle/cpuidle-haltpoll.c
->> @@ -53,7 +53,8 @@ static int __init haltpoll_init(void)
->>         cpuidle_poll_state_init(drv);
->>   -    if (!kvm_para_available())
->> +    if (!kvm_para_available() ||
->> +        !kvm_para_has_hint(KVM_HINTS_REALTIME))
->>           return 0;
->>         ret = cpuidle_register(&haltpoll_driver, NULL);
->> diff --git a/drivers/cpuidle/governors/haltpoll.c
->> b/drivers/cpuidle/governors/haltpoll.c
->> index 797477b..685c7007 100644
->> --- a/drivers/cpuidle/governors/haltpoll.c
->> +++ b/drivers/cpuidle/governors/haltpoll.c
->> @@ -141,7 +141,7 @@ static struct cpuidle_governor haltpoll_governor = {
->>     static int __init init_haltpoll(void)
->>   {
->> -    if (kvm_para_available())
->> +    if (kvm_para_available() && kvm_para_has_hint(KVM_HINTS_REALTIME))
->>           return cpuidle_register_governor(&haltpoll_governor);
->>         return 0;
-> 
-> 
+> So I need a really good reason why to accept these :)
 
+It's been a week, so I'm dropping this from my queue now.  Please resend
+with this information if you still want these in the tree.
+
+thanks,
+
+greg k-h
