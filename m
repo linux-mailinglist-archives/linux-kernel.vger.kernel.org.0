@@ -2,391 +2,186 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 958EA7E299
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 20:47:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DBE2E7E296
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2019 20:47:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387451AbfHASrY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 14:47:24 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:50234 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729195AbfHASrX (ORCPT
+        id S1733286AbfHASrH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 14:47:07 -0400
+Received: from iolanthe.rowland.org ([192.131.102.54]:46572 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1729195AbfHASrH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 14:47:23 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id D9E3A60E3E; Thu,  1 Aug 2019 18:47:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1564685241;
-        bh=dwtIA0OA/26JOWfo5xYfMvxA2f3n0fWcrdAhc71mlVc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Xi4W1doYGR1V6rg9qLpLOm5+t3WywrfdHsk2TU/oGogf4K+U4T7rAkjQ8kkUKXoEd
-         R40dEFo+tO2qPtC5DNa7a24W6U8xSMx9uxgCEh27UFxleyd8rncgXE99ilEr1sejTh
-         YYaTaWQDKP0FR2g6TzPlJmNkE5YdAi2UJr8xXiuw=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
-        version=3.4.0
-Received: from mojha-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: mojha@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 67DCC60DAD;
-        Thu,  1 Aug 2019 18:47:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1564685241;
-        bh=dwtIA0OA/26JOWfo5xYfMvxA2f3n0fWcrdAhc71mlVc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Xi4W1doYGR1V6rg9qLpLOm5+t3WywrfdHsk2TU/oGogf4K+U4T7rAkjQ8kkUKXoEd
-         R40dEFo+tO2qPtC5DNa7a24W6U8xSMx9uxgCEh27UFxleyd8rncgXE99ilEr1sejTh
-         YYaTaWQDKP0FR2g6TzPlJmNkE5YdAi2UJr8xXiuw=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 67DCC60DAD
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=mojha@codeaurora.org
-From:   Mukesh Ojha <mojha@codeaurora.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Mukesh Ojha <mojha@codeaurora.org>,
-        Raghavendra Rao Ananta <rananta@codeaurora.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Alexei Starovoitov <ast@kernel.org>
-Subject: [PATCH V5 1/1] perf: event preserve and create across cpu hotplug
-Date:   Fri,  2 Aug 2019 00:16:53 +0530
-Message-Id: <1564685213-8180-2-git-send-email-mojha@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1564685213-8180-1-git-send-email-mojha@codeaurora.org>
-References: <1564685213-8180-1-git-send-email-mojha@codeaurora.org>
+        Thu, 1 Aug 2019 14:47:07 -0400
+Received: (qmail 3931 invoked by uid 2102); 1 Aug 2019 14:47:06 -0400
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 1 Aug 2019 14:47:06 -0400
+Date:   Thu, 1 Aug 2019 14:47:06 -0400 (EDT)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To:     Andrey Konovalov <andreyknvl@google.com>,
+        Oliver Neukum <oneukum@suse.com>
+cc:     LKML <linux-kernel@vger.kernel.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        syzbot <syzbot+1b2449b7b5dc240d107a@syzkaller.appspotmail.com>
+Subject: Re: KASAN: use-after-free Read in device_release_driver_internal
+In-Reply-To: <CAAeHK+w4e=+qXOaas_Vmm0xnxLFkocN9uRJVxuYmvHhT0hSn1w@mail.gmail.com>
+Message-ID: <Pine.LNX.4.44L0.1908011359580.1305-100000@iolanthe.rowland.org>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Perf framework doesn't allow preserving CPU events across
-CPU hotplugs. The events are scheduled out as and when the
-CPU walks offline. Moreover, the framework also doesn't
-allow the clients to create events on an offline CPU. As
-a result, the clients have to keep on monitoring the CPU
-state until it comes back online.
+On Thu, 1 Aug 2019, Andrey Konovalov wrote:
 
-Therefore, introducing the perf framework to support creation
-and preserving of (CPU) events for offline CPUs. Through
-this, the CPU's online state would be transparent to the
-client and it not have to worry about monitoring the CPU's
-state. Success would be returned to the client even while
-creating the event on an offline CPU. If during the lifetime
-of the event the CPU walks offline, the event would be
-preserved and would continue to count as soon as (and if) the
-CPU comes back online.
+> On Tue, Jul 23, 2019 at 4:28 PM syzbot
+> <syzbot+1b2449b7b5dc240d107a@syzkaller.appspotmail.com> wrote:
+> >
+> > Hello,
+> >
+> > syzbot found the following crash on:
+> >
+> > HEAD commit:    6a3599ce usb-fuzzer: main usb gadget fuzzer driver
+> > git tree:       https://github.com/google/kasan.git usb-fuzzer
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=13f640cc600000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=700ca426ab83faae
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=1b2449b7b5dc240d107a
+> > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=116ce31fa00000
+> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1022f694600000
+> >
+> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> > Reported-by: syzbot+1b2449b7b5dc240d107a@syzkaller.appspotmail.com
+> >
+> > usb 1-1: USB disconnect, device number 2
+> > ==================================================================
+> > BUG: KASAN: use-after-free in __lock_acquire+0x3a5d/0x5340
+> > /kernel/locking/lockdep.c:3665
+> > Read of size 8 at addr ffff8881cfc4ef90 by task kworker/0:2/108
+> >
+> > CPU: 0 PID: 108 Comm: kworker/0:2 Not tainted 5.2.0-rc6+ #15
+> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> > Google 01/01/2011
+> > Workqueue: usb_hub_wq hub_event
+> > Call Trace:
+> >   __dump_stack /lib/dump_stack.c:77 [inline]
+> >   dump_stack+0xca/0x13e /lib/dump_stack.c:113
+> >   print_address_description+0x67/0x231 /mm/kasan/report.c:188
+> >   __kasan_report.cold+0x1a/0x32 /mm/kasan/report.c:317
+> >   kasan_report+0xe/0x20 /mm/kasan/common.c:614
+> >   __lock_acquire+0x3a5d/0x5340 /kernel/locking/lockdep.c:3665
+> >   lock_acquire+0x100/0x2b0 /kernel/locking/lockdep.c:4303
+> >   __mutex_lock_common /kernel/locking/mutex.c:926 [inline]
+> >   __mutex_lock+0xf9/0x12b0 /kernel/locking/mutex.c:1073
+> >   device_release_driver_internal+0x23/0x4c0 /drivers/base/dd.c:1109
+> >   bus_remove_device+0x2dc/0x4a0 /drivers/base/bus.c:556
+> >   device_del+0x460/0xb80 /drivers/base/core.c:2274
+> >   usb_disable_device+0x211/0x690 /drivers/usb/core/message.c:1237
+> >   usb_disconnect+0x284/0x830 /drivers/usb/core/hub.c:2199
+> >   hub_port_connect /drivers/usb/core/hub.c:4949 [inline]
+> >   hub_port_connect_change /drivers/usb/core/hub.c:5213 [inline]
+> >   port_event /drivers/usb/core/hub.c:5359 [inline]
+> >   hub_event+0x13bd/0x3550 /drivers/usb/core/hub.c:5441
+> >   process_one_work+0x905/0x1570 /kernel/workqueue.c:2269
+> >   worker_thread+0x96/0xe20 /kernel/workqueue.c:2415
+> >   kthread+0x30b/0x410 /kernel/kthread.c:255
+> >   ret_from_fork+0x24/0x30 /arch/x86/entry/entry_64.S:352
+> >
+> > Allocated by task 88:
+> >   save_stack+0x1b/0x80 /mm/kasan/common.c:71
+> >   set_track /mm/kasan/common.c:79 [inline]
+> >   __kasan_kmalloc /mm/kasan/common.c:489 [inline]
+> >   __kasan_kmalloc.constprop.0+0xbf/0xd0 /mm/kasan/common.c:462
+> >   kmalloc /./include/linux/slab.h:547 [inline]
+> >   kzalloc /./include/linux/slab.h:742 [inline]
+> >   usb_set_configuration+0x2c4/0x1670 /drivers/usb/core/message.c:1846
+> >   generic_probe+0x9d/0xd5 /drivers/usb/core/generic.c:210
+> >   usb_probe_device+0x99/0x100 /drivers/usb/core/driver.c:266
+> >   really_probe+0x281/0x660 /drivers/base/dd.c:509
+> >   driver_probe_device+0x104/0x210 /drivers/base/dd.c:670
+> >   __device_attach_driver+0x1c2/0x220 /drivers/base/dd.c:777
+> >   bus_for_each_drv+0x15c/0x1e0 /drivers/base/bus.c:454
+> >   __device_attach+0x217/0x360 /drivers/base/dd.c:843
+> >   bus_probe_device+0x1e4/0x290 /drivers/base/bus.c:514
+> >   device_add+0xae6/0x16f0 /drivers/base/core.c:2111
+> >   usb_new_device.cold+0x6a4/0xe61 /drivers/usb/core/hub.c:2536
+> >   hub_port_connect /drivers/usb/core/hub.c:5098 [inline]
+> >   hub_port_connect_change /drivers/usb/core/hub.c:5213 [inline]
+> >   port_event /drivers/usb/core/hub.c:5359 [inline]
+> >   hub_event+0x1abd/0x3550 /drivers/usb/core/hub.c:5441
+> >   process_one_work+0x905/0x1570 /kernel/workqueue.c:2269
+> >   worker_thread+0x96/0xe20 /kernel/workqueue.c:2415
+> >   kthread+0x30b/0x410 /kernel/kthread.c:255
+> >   ret_from_fork+0x24/0x30 /arch/x86/entry/entry_64.S:352
+> >
+> > Freed by task 108:
+> >   save_stack+0x1b/0x80 /mm/kasan/common.c:71
+> >   set_track /mm/kasan/common.c:79 [inline]
+> >   __kasan_slab_free+0x130/0x180 /mm/kasan/common.c:451
+> >   slab_free_hook /mm/slub.c:1421 [inline]
+> >   slab_free_freelist_hook /mm/slub.c:1448 [inline]
+> >   slab_free /mm/slub.c:2994 [inline]
+> >   kfree+0xd7/0x280 /mm/slub.c:3949
+> >   device_release+0x71/0x200 /drivers/base/core.c:1064
+> >   kobject_cleanup /lib/kobject.c:691 [inline]
+> >   kobject_release /lib/kobject.c:720 [inline]
+> >   kref_put /./include/linux/kref.h:65 [inline]
+> >   kobject_put+0x171/0x280 /lib/kobject.c:737
+> >   put_device+0x1b/0x30 /drivers/base/core.c:2210
+> >   klist_put+0xce/0x170 /lib/klist.c:221
+> >   bus_remove_device+0x3a4/0x4a0 /drivers/base/bus.c:552
+> >   device_del+0x460/0xb80 /drivers/base/core.c:2274
+> >   usb_disable_device+0x211/0x690 /drivers/usb/core/message.c:1237
+> >   usb_disconnect+0x284/0x830 /drivers/usb/core/hub.c:2199
+> >   hub_port_connect /drivers/usb/core/hub.c:4949 [inline]
+> >   hub_port_connect_change /drivers/usb/core/hub.c:5213 [inline]
+> >   port_event /drivers/usb/core/hub.c:5359 [inline]
+> >   hub_event+0x13bd/0x3550 /drivers/usb/core/hub.c:5441
+> >   process_one_work+0x905/0x1570 /kernel/workqueue.c:2269
+> >   worker_thread+0x96/0xe20 /kernel/workqueue.c:2415
+> >   kthread+0x30b/0x410 /kernel/kthread.c:255
+> >   ret_from_fork+0x24/0x30 /arch/x86/entry/entry_64.S:352
+> >
+> > The buggy address belongs to the object at ffff8881cfc4ee80
+> >   which belongs to the cache kmalloc-2k of size 2048
+> > The buggy address is located 272 bytes inside of
+> >   2048-byte region [ffff8881cfc4ee80, ffff8881cfc4f680)
+> > The buggy address belongs to the page:
+> > page:ffffea00073f1200 refcount:1 mapcount:0 mapping:ffff8881dac02800
+> > index:0x0 compound_mapcount: 0
+> > flags: 0x200000000010200(slab|head)
+> > raw: 0200000000010200 dead000000000100 dead000000000200 ffff8881dac02800
+> > raw: 0000000000000000 00000000000f000f 00000001ffffffff 0000000000000000
+> > page dumped because: kasan: bad access detected
+> >
+> > Memory state around the buggy address:
+> >   ffff8881cfc4ee80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> >   ffff8881cfc4ef00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> > > ffff8881cfc4ef80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> >                           ^
+> >   ffff8881cfc4f000: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> >   ffff8881cfc4f080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> > ==================================================================
+> 
+> Hi Alan,
+> 
+> Could you take a look at this report? This looks like some kind of bug
+> in USB core code, but I can't really figure out what's going on here.
 
-Co-authored-by: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Raghavendra Rao Ananta <rananta@codeaurora.org>
-Signed-off-by: Mukesh Ojha <mojha@codeaurora.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Alexei Starovoitov <ast@kernel.org>
----
-Change in V5:
-=============
-- Rebased it.
+I think this must be caused by an unbalanced refcount.  That is,
+something must drop one more reference to the device than it takes.
+That would explain why the invalid access occurs inside a single
+bus_remove_device() call, between the klist_del() and
+device_release_driver().
 
-Change in V4:
-=============
-- Released, __get_cpu_context would not be correct way to get the
-  cpu context of the cpu which is offline, instead use
-  container_of to get the cpuctx from ctx.
+The kernel log indicates that the device was probed by rndis_wlan,
+rndis_host, and cdc_acm, all of which got errors because of the
+device's bogus descriptors.  Probably one of them is messing up the
+refcount.
 
-- Changed the goto label name inside event_function_call from
-  'remove_event_from_context' to 'out'.
+Hard to say which or where, though.
 
-Change in V3:
-=============
-- Jiri has tried perf stat -a and removed one of the cpu from the other
-  terminal. This resulted in a crash. Crash was because in
-  event_function_call(), we were passing NULL as cpuctx in 
-  func(event, NULL, ctx, data).Fixed it in this patch.
-
-Change in V2:
-=============
-As per long back discussion happened at
-https://lkml.org/lkml/2018/2/15/1324
-
-Peter.Z. has suggested to do thing in different way and shared
-patch as well. This patch fixes the issue seen while trying
-to achieve the purpose.
-
-Fixed issue on top of Peter's patch:
-===================================
-1. Added a NULL check on task to avoid crash in __perf_install_in_context.
-
-2. while trying to add event to context when cpu is offline.
-   Inside add_event_to_ctx() to make consistent state machine while hotplug.
-
--event->state += PERF_EVENT_STATE_HOTPLUG_OFFSET;
-+event->state = PERF_EVENT_STATE_HOTPLUG_OFFSET;
-
-3. In event_function_call(), added a label 'remove_event_from_ctx' to
-   delete events from context list while cpu is offline.
-
- include/linux/perf_event.h |   1 +
- kernel/events/core.c       | 123 ++++++++++++++++++++++++++++-----------------
- 2 files changed, 79 insertions(+), 45 deletions(-)
-
-diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-index 3dc01cf..52b14b2 100644
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -511,6 +511,7 @@ enum perf_event_state {
- 	PERF_EVENT_STATE_OFF		= -1,
- 	PERF_EVENT_STATE_INACTIVE	=  0,
- 	PERF_EVENT_STATE_ACTIVE		=  1,
-+	PERF_EVENT_STATE_HOTPLUG_OFFSET	= -32,
- };
- 
- struct file;
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 118ad1a..82b5106 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -248,6 +248,8 @@ static int event_function(void *info)
- static void event_function_call(struct perf_event *event, event_f func, void *data)
- {
- 	struct perf_event_context *ctx = event->ctx;
-+	struct perf_cpu_context *cpuctx =
-+				container_of(ctx, struct perf_cpu_context, ctx);
- 	struct task_struct *task = READ_ONCE(ctx->task); /* verified in event_function */
- 	struct event_function_struct efs = {
- 		.event = event,
-@@ -264,17 +266,18 @@ static void event_function_call(struct perf_event *event, event_f func, void *da
- 		lockdep_assert_held(&ctx->mutex);
- 	}
- 
--	if (!task) {
--		cpu_function_call(event->cpu, event_function, &efs);
--		return;
--	}
--
- 	if (task == TASK_TOMBSTONE)
- 		return;
- 
- again:
--	if (!task_function_call(task, event_function, &efs))
--		return;
-+	if (task) {
-+		if (!task_function_call(task, event_function, &efs))
-+			return;
-+	} else {
-+		if (!cpu_function_call(event->cpu, event_function, &efs))
-+			return;
-+	}
-+
- 
- 	raw_spin_lock_irq(&ctx->lock);
- 	/*
-@@ -286,11 +289,17 @@ static void event_function_call(struct perf_event *event, event_f func, void *da
- 		raw_spin_unlock_irq(&ctx->lock);
- 		return;
- 	}
-+
-+	if (!task)
-+		goto out;
-+
- 	if (ctx->is_active) {
- 		raw_spin_unlock_irq(&ctx->lock);
- 		goto again;
- 	}
--	func(event, NULL, ctx, data);
-+
-+out:
-+	func(event, cpuctx, ctx, data);
- 	raw_spin_unlock_irq(&ctx->lock);
- }
- 
-@@ -2310,7 +2319,7 @@ static void perf_set_shadow_time(struct perf_event *event,
- 	struct perf_event *event, *partial_group = NULL;
- 	struct pmu *pmu = ctx->pmu;
- 
--	if (group_event->state == PERF_EVENT_STATE_OFF)
-+	if (group_event->state <= PERF_EVENT_STATE_OFF)
- 		return 0;
- 
- 	pmu->start_txn(pmu, PERF_PMU_TXN_ADD);
-@@ -2389,6 +2398,14 @@ static int group_can_go_on(struct perf_event *event,
- static void add_event_to_ctx(struct perf_event *event,
- 			       struct perf_event_context *ctx)
- {
-+	if (!ctx->task) {
-+		struct perf_cpu_context *cpuctx =
-+			container_of(ctx, struct perf_cpu_context, ctx);
-+
-+		if (!cpuctx->online)
-+			event->state = PERF_EVENT_STATE_HOTPLUG_OFFSET;
-+	}
-+
- 	list_add_event(event, ctx);
- 	perf_group_attach(event);
- }
-@@ -2576,11 +2593,6 @@ static int  __perf_install_in_context(void *info)
- 	 */
- 	smp_store_release(&event->ctx, ctx);
- 
--	if (!task) {
--		cpu_function_call(cpu, __perf_install_in_context, event);
--		return;
--	}
--
- 	/*
- 	 * Should not happen, we validate the ctx is still alive before calling.
- 	 */
-@@ -2619,8 +2631,14 @@ static int  __perf_install_in_context(void *info)
- 	 */
- 	smp_mb();
- again:
--	if (!task_function_call(task, __perf_install_in_context, event))
--		return;
-+
-+	if (task) {
-+		if (!task_function_call(task, __perf_install_in_context, event))
-+			return;
-+	} else {
-+		if (!cpu_function_call(cpu, __perf_install_in_context, event))
-+			return;
-+	}
- 
- 	raw_spin_lock_irq(&ctx->lock);
- 	task = ctx->task;
-@@ -2637,7 +2655,7 @@ static int  __perf_install_in_context(void *info)
- 	 * If the task is not running, ctx->lock will avoid it becoming so,
- 	 * thus we can safely install the event.
- 	 */
--	if (task_curr(task)) {
-+	if (task && task_curr(task)) {
- 		raw_spin_unlock_irq(&ctx->lock);
- 		goto again;
- 	}
-@@ -11022,16 +11040,7 @@ static int perf_event_set_clock(struct perf_event *event, clockid_t clk_id)
- 	}
- 
- 	if (!task) {
--		/*
--		 * Check if the @cpu we're creating an event for is online.
--		 *
--		 * We use the perf_cpu_context::ctx::mutex to serialize against
--		 * the hotplug notifiers. See perf_event_{init,exit}_cpu().
--		 */
--		struct perf_cpu_context *cpuctx =
--			container_of(ctx, struct perf_cpu_context, ctx);
--
--		if (!cpuctx->online) {
-+		if (!cpu_possible(cpu)) {
- 			err = -ENODEV;
- 			goto err_locked;
- 		}
-@@ -11213,15 +11222,7 @@ struct perf_event *
- 	}
- 
- 	if (!task) {
--		/*
--		 * Check if the @cpu we're creating an event for is online.
--		 *
--		 * We use the perf_cpu_context::ctx::mutex to serialize against
--		 * the hotplug notifiers. See perf_event_{init,exit}_cpu().
--		 */
--		struct perf_cpu_context *cpuctx =
--			container_of(ctx, struct perf_cpu_context, ctx);
--		if (!cpuctx->online) {
-+		if (!cpu_possible(cpu)) {
- 			err = -ENODEV;
- 			goto err_unlock;
- 		}
-@@ -11949,17 +11950,48 @@ static void perf_swevent_init_cpu(unsigned int cpu)
- }
- 
- #if defined CONFIG_HOTPLUG_CPU || defined CONFIG_KEXEC_CORE
-+static void __perf_event_init_cpu_context(void *__info)
-+{
-+	struct perf_cpu_context *cpuctx = __info;
-+	struct perf_event_context *ctx = &cpuctx->ctx;
-+	struct perf_event_context *task_ctx = cpuctx->task_ctx;
-+	struct perf_event *event;
-+
-+	perf_ctx_lock(cpuctx, task_ctx);
-+	ctx_sched_out(ctx, cpuctx, EVENT_ALL);
-+	if (task_ctx)
-+		ctx_sched_out(task_ctx, cpuctx, EVENT_ALL);
-+
-+	list_for_each_entry_rcu(event, &ctx->event_list, event_entry)
-+		perf_event_set_state(event, event->state - PERF_EVENT_STATE_HOTPLUG_OFFSET);
-+
-+	perf_event_sched_in(cpuctx, task_ctx, current);
-+	perf_ctx_unlock(cpuctx, task_ctx);
-+}
-+
-+static void _perf_event_init_cpu_context(int cpu, struct perf_cpu_context *cpuctx)
-+{
-+	smp_call_function_single(cpu, __perf_event_init_cpu_context, cpuctx, 1);
-+}
-+
- static void __perf_event_exit_context(void *__info)
- {
--	struct perf_event_context *ctx = __info;
--	struct perf_cpu_context *cpuctx = __get_cpu_context(ctx);
-+	struct perf_cpu_context *cpuctx = __info;
-+	struct perf_event_context *ctx = &cpuctx->ctx;
-+	struct perf_event_context *task_ctx = cpuctx->task_ctx;
- 	struct perf_event *event;
- 
--	raw_spin_lock(&ctx->lock);
--	ctx_sched_out(ctx, cpuctx, EVENT_TIME);
--	list_for_each_entry(event, &ctx->event_list, event_entry)
--		__perf_remove_from_context(event, cpuctx, ctx, (void *)DETACH_GROUP);
--	raw_spin_unlock(&ctx->lock);
-+	perf_ctx_lock(cpuctx, task_ctx);
-+	ctx_sched_out(ctx, cpuctx, EVENT_ALL);
-+	if (task_ctx)
-+		ctx_sched_out(task_ctx, cpuctx, EVENT_ALL);
-+
-+	list_for_each_entry_rcu(event, &ctx->event_list, event_entry)
-+		perf_event_set_state(event,
-+			event->state + PERF_EVENT_STATE_HOTPLUG_OFFSET);
-+
-+	perf_event_sched_in(cpuctx, task_ctx, current);
-+	perf_ctx_unlock(cpuctx, task_ctx);
- }
- 
- static void perf_event_exit_cpu_context(int cpu)
-@@ -11974,7 +12006,7 @@ static void perf_event_exit_cpu_context(int cpu)
- 		ctx = &cpuctx->ctx;
- 
- 		mutex_lock(&ctx->mutex);
--		smp_call_function_single(cpu, __perf_event_exit_context, ctx, 1);
-+		smp_call_function_single(cpu, __perf_event_exit_context, cpuctx, 1);
- 		cpuctx->online = 0;
- 		mutex_unlock(&ctx->mutex);
- 	}
-@@ -11982,7 +12014,7 @@ static void perf_event_exit_cpu_context(int cpu)
- 	mutex_unlock(&pmus_lock);
- }
- #else
--
-+static void _perf_event_init_cpu_context(int cpu, struct perf_cpu_context *cpuctx) { }
- static void perf_event_exit_cpu_context(int cpu) { }
- 
- #endif
-@@ -12003,6 +12035,7 @@ int perf_event_init_cpu(unsigned int cpu)
- 
- 		mutex_lock(&ctx->mutex);
- 		cpuctx->online = 1;
-+		_perf_event_init_cpu_context(cpu, cpuctx);
- 		mutex_unlock(&ctx->mutex);
- 	}
- 	mutex_unlock(&pmus_lock);
--- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center,
-Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project
+Alan Stern
 
