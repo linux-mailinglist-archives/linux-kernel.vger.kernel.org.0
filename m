@@ -2,130 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B5987E72F
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 02:28:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C0A97E720
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 02:20:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388308AbfHBA2b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 20:28:31 -0400
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:57172 "EHLO
-        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726825AbfHBA2b (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 20:28:31 -0400
-Received: by kvm5.telegraphics.com.au (Postfix, from userid 502)
-        id 4C16129C8C; Thu,  1 Aug 2019 20:28:30 -0400 (EDT)
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     "Michael Schmitz" <schmitzmic@gmail.com>,
-        linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org
-Message-Id: <9ec2190f5be1c4e676a803901200364578662b6d.1564704625.git.fthain@telegraphics.com.au>
-From:   Finn Thain <fthain@telegraphics.com.au>
-Subject: [PATCH] m68k: Prevent some compiler warnings in coldfire builds
-Date:   Fri, 02 Aug 2019 10:10:25 +1000
+        id S1732017AbfHBAUb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 20:20:31 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:58317 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726340AbfHBAUa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Aug 2019 20:20:30 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4607960P1Sz9sBF;
+        Fri,  2 Aug 2019 10:20:26 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1564705226;
+        bh=+ve0AekgqeeerfEkv1cIPb21hnwgyPwKRGIXqIAzqJk=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=YjzdNqoPwyZUWcWwEkhgLFWielvXQDNt1oh/h/3f7OZHuhkvwAEnmS0NsS2aSWgx2
+         B2V300+TDrUdlC7OpBnVfPKCtyHspBYyVrIkzS2oKTUABP3kFuebLKXOxoWobTLpWa
+         uyp1LPoZKiFNdZfqftKot8ImxnEgY49kSfG4gIejZSVnSdHNAJI+OD6KU5ayeGi4SZ
+         ZQ5fjPNon1XBDUGhd/xAMdshCfRYN1u0zLF00rzcq6t+AaRto8nMHC3HX3UxSm3XyC
+         svZz2CrudgIRmQGzt7iCXoPxqo4vqvQbB04QRPB8Hx8WS8TAJMoIzMr45mqliclP3J
+         U7WmrRBAl+DRQ==
+Date:   Fri, 2 Aug 2019 10:20:19 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Harald Freudenberger <freude@linux.ibm.com>,
+        Patrick Steuer <steuer@linux.ibm.com>,
+        Ondrej Mosnacek <omosnace@redhat.com>
+Subject: Re: linux-next: Tree for Jul 31 - s390 crypto build breakage
+Message-ID: <20190802102019.6a789c51@canb.auug.org.au>
+In-Reply-To: <CAKv+Gu_1HP2NapMk5O_-XpJdga5zyFJDkVudTRT6CWm+tqPndA@mail.gmail.com>
+References: <20190731163915.3fdfcb14@canb.auug.org.au>
+        <20190731085819.GA3488@osiris>
+        <20190731110816.GA20753@gondor.apana.org.au>
+        <20190731111520.GC3488@osiris>
+        <20190731113216.GA21068@gondor.apana.org.au>
+        <20190731114453.GD3488@osiris>
+        <20190801122849.GB4163@osiris>
+        <CAKv+Gu_1HP2NapMk5O_-XpJdga5zyFJDkVudTRT6CWm+tqPndA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/wVw44K.uM21QiDqGKSG=HiW";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since commit d3b41b6bb49e ("m68k: Dispatch nvram_ops calls to Atari or
-Mac functions"), Coldfire builds generate compiler warnings due to the
-unconditional inclusion of asm/atarihw.h and asm/macintosh.h.
+--Sig_/wVw44K.uM21QiDqGKSG=HiW
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-The inclusion of asm/atarihw.h causes warnings like this:
+Hi Herbert,
 
-In file included from ./arch/m68k/include/asm/atarihw.h:25:0,
-                 from arch/m68k/kernel/setup_mm.c:41,
-                 from arch/m68k/kernel/setup.c:3:
-./arch/m68k/include/asm/raw_io.h:39:0: warning: "__raw_readb" redefined
- #define __raw_readb in_8
+On Thu, 1 Aug 2019 20:28:56 +0300 Ard Biesheuvel <ard.biesheuvel@linaro.org=
+> wrote:
+>
+> On Thu, 1 Aug 2019 at 15:28, Heiko Carstens <heiko.carstens@de.ibm.com> w=
+rote:
+> >
+> > On Wed, Jul 31, 2019 at 01:44:54PM +0200, Heiko Carstens wrote: =20
+> > > On Wed, Jul 31, 2019 at 09:32:16PM +1000, Herbert Xu wrote: =20
+> > > > On Wed, Jul 31, 2019 at 01:15:20PM +0200, Heiko Carstens wrote: =20
+> > > > >
+> > > > > However that doesn't fix the simd.h header file breakage with the
+> > > > > second patch :) =20
+> > > >
+> > > > That fix should be there now too. =20
+> > >
+> > > Yes, works now. Thank you! =20
+> >
+> > Still not... with linux-next as of today I get this (s390 defconfig):
+> >
+> > ERROR: "crypto_aegis128_decrypt_chunk_simd" [crypto/aegis128.ko] undefi=
+ned!
+> > ERROR: "crypto_aegis128_update_simd" [crypto/aegis128.ko] undefined!
+> > ERROR: "crypto_aegis128_encrypt_chunk_simd" [crypto/aegis128.ko] undefi=
+ned!
+> > scripts/Makefile.modpost:105: recipe for target 'modules-modpost' failed
+> > =20
+>=20
+> Hello Heiko,
+>=20
+> Apologies for the breakage. The first two fixes addressed obvious
+> shortcomings in my code, but with this issue, I'm a bit puzzled tbh.
+> The calls to these missing functions should be optimized away, since
+> have_simd never gets assigned if CONFIG_CRYPTO_AEGIS128_SIMD is not
+> defined, but for some reason, this isn't working. Which version of GCC
+> are you using?
+>=20
+> Also, could you please try whether the patch below fixes the problem? Tha=
+nks
+>=20
+> https://lore.kernel.org/linux-crypto/20190729074434.21064-1-ard.biesheuve=
+l@linaro.org/
 
-In file included from ./arch/m68k/include/asm/io.h:6:0,
-                 from arch/m68k/kernel/setup_mm.c:36,
-                 from arch/m68k/kernel/setup.c:3:
-./arch/m68k/include/asm/io_no.h:16:0: note: this is the location of the previous definition
- #define __raw_readb(addr) \
-...
+It might be time to revert all this series and try again.  The
+implementation seems to have not been well thought through from a kernel
+building point of view.  For a start the two commits
 
-This issue is resolved by dropping the asm/raw_io.h include. It turns out
-that asm/io_mm.h already includes that header file.
+  7cdc0ddbf74a ("crypto: aegis128 - add support for SIMD acceleration")
+  ecc8bc81f2fb ("crypto: aegis128 - provide a SIMD implementation based on =
+NEON intrinsics")
 
-Moving the relevant macro definitions helps to clarify this dependency
-and make it safe to include asm/atarihw.h.
+seem to be in the wrong order (function used in the first before being
+defined in the second).  There are a series of declarations of external
+functions in crypto/aegis128-core.c that should be in a header file.
+And there was the assumption that asm/simd.h was available everywhere.
 
-The other warnings look like this:
+Also crypto_aegis128_decrypt_chunk_simd() is referenced in a structure
+initialisation (unprotected by any CONFIG_ variable - and so will be
+referenced even if it does not exist).  The compiler will have a hard
+time knowing that "have_simd" is effectively a constant zero (and
+crypto_simd_usable() is not constant).
+--=20
+Cheers,
+Stephen Rothwell
 
-In file included from arch/m68k/kernel/setup_mm.c:48:0,
-                 from arch/m68k/kernel/setup.c:3:
-./arch/m68k/include/asm/macintosh.h:19:35: warning: 'struct irq_data' declared inside parameter list will not be visible outside of this definition or declaration
- extern void mac_irq_enable(struct irq_data *data);
-                                   ^~~~~~~~
-...
+--Sig_/wVw44K.uM21QiDqGKSG=HiW
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-This issue is resolved by adding the missing linux/irq.h include.
+-----BEGIN PGP SIGNATURE-----
 
-Cc: Michael Schmitz <schmitzmic@gmail.com>
-Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
----
- arch/m68k/include/asm/atarihw.h   | 9 ---------
- arch/m68k/include/asm/io_mm.h     | 6 +++++-
- arch/m68k/include/asm/macintosh.h | 1 +
- 3 files changed, 6 insertions(+), 10 deletions(-)
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl1DgcMACgkQAVBC80lX
+0Gwx/Af/cVufoIrfiSSSl7Y9kjmf50nbufyfwr0bVq1E4/cox6s3YYwm5YjksyAv
+0Va0rY0BckXUkkFT6wi27uqVnX61synIjcUUDB4Gossa1LtK3+BlBqyWc2i8KYWk
+f04gN4Q8Y+CriSJPMkuXXy6mi0fp/kdxbfiJe4kag2Hs+5XCpVnDt3vwk4CP3Eci
+iasyqK5spS0ZcUBr8T6KmtiW8QmkO7wtdNnJOjeCFcioNihAu+KAK6yhaKtjAsIW
+/9uU761Bvzow2XqRp8uf71FXfWbiMKcJzJ+/ln5te2AS+4PFhU5vZtYeIYEZUN0w
+tuGhZn+FzLeLjMP1ZoPUVFCy4b0qFw==
+=WIXM
+-----END PGP SIGNATURE-----
 
-diff --git a/arch/m68k/include/asm/atarihw.h b/arch/m68k/include/asm/atarihw.h
-index 533008262b69..5e5601c382b8 100644
---- a/arch/m68k/include/asm/atarihw.h
-+++ b/arch/m68k/include/asm/atarihw.h
-@@ -22,7 +22,6 @@
- 
- #include <linux/types.h>
- #include <asm/bootinfo-atari.h>
--#include <asm/raw_io.h>
- #include <asm/kmap.h>
- 
- extern u_long atari_mch_cookie;
-@@ -132,14 +131,6 @@ extern struct atari_hw_present atari_hw_present;
-  */
- 
- 
--#define atari_readb   raw_inb
--#define atari_writeb  raw_outb
--
--#define atari_inb_p   raw_inb
--#define atari_outb_p  raw_outb
--
--
--
- #include <linux/mm.h>
- #include <asm/cacheflush.h>
- 
-diff --git a/arch/m68k/include/asm/io_mm.h b/arch/m68k/include/asm/io_mm.h
-index 6c03ca5bc436..819f611dccf2 100644
---- a/arch/m68k/include/asm/io_mm.h
-+++ b/arch/m68k/include/asm/io_mm.h
-@@ -29,7 +29,11 @@
- #include <asm-generic/iomap.h>
- 
- #ifdef CONFIG_ATARI
--#include <asm/atarihw.h>
-+#define atari_readb   raw_inb
-+#define atari_writeb  raw_outb
-+
-+#define atari_inb_p   raw_inb
-+#define atari_outb_p  raw_outb
- #endif
- 
- 
-diff --git a/arch/m68k/include/asm/macintosh.h b/arch/m68k/include/asm/macintosh.h
-index 8f0698bca3dc..8a43babcf53a 100644
---- a/arch/m68k/include/asm/macintosh.h
-+++ b/arch/m68k/include/asm/macintosh.h
-@@ -4,6 +4,7 @@
- 
- #include <linux/seq_file.h>
- #include <linux/interrupt.h>
-+#include <linux/irq.h>
- 
- #include <asm/bootinfo-mac.h>
- 
--- 
-2.21.0
-
+--Sig_/wVw44K.uM21QiDqGKSG=HiW--
