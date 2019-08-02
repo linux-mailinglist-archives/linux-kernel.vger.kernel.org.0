@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 041277F0B0
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:31:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 77DF77F0B4
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:32:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404727AbfHBJbm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 05:31:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57968 "EHLO mail.kernel.org"
+        id S2404713AbfHBJbq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 05:31:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58102 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404710AbfHBJbi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 05:31:38 -0400
+        id S2404734AbfHBJbn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 05:31:43 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4E71E2182B;
-        Fri,  2 Aug 2019 09:31:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6B1CE21783;
+        Fri,  2 Aug 2019 09:31:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564738297;
-        bh=afSZnQ3e+AUamiEgLFFnL1uE0s6b2WzVdeZ2DDPQg98=;
+        s=default; t=1564738302;
+        bh=kQtS5HRnJ8psTEGIU5vV0Utd3m2MptNrHxxPF7SjCPU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=td9g94QCfWFC2ilYw4+NwU7njZ8FOWAgfcBir0j2RoiUpQZY9vLLgH3SUNRsNLy2J
-         G08l2JFSxuKBdxTrU4iYaFdUL9mhebPKiNEqFqPEKgdVJwzyUVS0OUyZgJdF06d0Em
-         73Kyso+mk9ztEa1uVVnlAnQgo76Tpg7PaGZOgfMA=
+        b=V1zS0xr/sE6i4ye0rOdA7KTCvK5jrvSZenpMaBFDveBAIXS/FlmBCIfjGKctzEt+U
+         qlhKenw/pSvGQ1wcbXeU7v5bQ8bozvdFiYva4Z0e2PZyVPvIupIER3aUNGYwr7dnu3
+         JCjpmVFDvQfpGEo0nnQ2XTy12w84B6+kT/8zTdF0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anirudh Gupta <anirudh.gupta@sophos.com>,
-        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
+        stable@vger.kernel.org, Jason Wang <jasowang@redhat.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 032/158] xfrm: fix sa selector validation
-Date:   Fri,  2 Aug 2019 11:27:33 +0200
-Message-Id: <20190802092210.275945645@linuxfoundation.org>
+Subject: [PATCH 4.4 034/158] vhost_net: disable zerocopy by default
+Date:   Fri,  2 Aug 2019 11:27:35 +0200
+Message-Id: <20190802092210.747925084@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190802092203.671944552@linuxfoundation.org>
 References: <20190802092203.671944552@linuxfoundation.org>
@@ -46,40 +45,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit b8d6d0079757cbd1b69724cfd1c08e2171c68cee ]
+[ Upstream commit 098eadce3c622c07b328d0a43dda379b38cf7c5e ]
 
-After commit b38ff4075a80, the following command does not work anymore:
-$ ip xfrm state add src 10.125.0.2 dst 10.125.0.1 proto esp spi 34 reqid 1 \
-  mode tunnel enc 'cbc(aes)' 0xb0abdba8b782ad9d364ec81e3a7d82a1 auth-trunc \
-  'hmac(sha1)' 0xe26609ebd00acb6a4d51fca13e49ea78a72c73e6 96 flag align4
+Vhost_net was known to suffer from HOL[1] issues which is not easy to
+fix. Several downstream disable the feature by default. What's more,
+the datapath was split and datacopy path got the support of batching
+and XDP support recently which makes it faster than zerocopy part for
+small packets transmission.
 
-In fact, the selector is not mandatory, allow the user to provide an empty
-selector.
+It looks to me that disable zerocopy by default is more
+appropriate. It cold be enabled by default again in the future if we
+fix the above issues.
 
-Fixes: b38ff4075a80 ("xfrm: Fix xfrm sel prefix length validation")
-CC: Anirudh Gupta <anirudh.gupta@sophos.com>
-Signed-off-by: Nicolas Dichtel <nicolas.dichtel@6wind.com>
-Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+[1] https://patchwork.kernel.org/patch/3787671/
+
+Signed-off-by: Jason Wang <jasowang@redhat.com>
+Acked-by: Michael S. Tsirkin <mst@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/xfrm/xfrm_user.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/vhost/net.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/xfrm/xfrm_user.c b/net/xfrm/xfrm_user.c
-index 10fda9a39cc2..8cc2a9df84fd 100644
---- a/net/xfrm/xfrm_user.c
-+++ b/net/xfrm/xfrm_user.c
-@@ -166,6 +166,9 @@ static int verify_newsa_info(struct xfrm_usersa_info *p,
- 	}
+diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
+index 645b2197930e..f46317135224 100644
+--- a/drivers/vhost/net.c
++++ b/drivers/vhost/net.c
+@@ -30,7 +30,7 @@
  
- 	switch (p->sel.family) {
-+	case AF_UNSPEC:
-+		break;
-+
- 	case AF_INET:
- 		if (p->sel.prefixlen_d > 32 || p->sel.prefixlen_s > 32)
- 			goto out;
+ #include "vhost.h"
+ 
+-static int experimental_zcopytx = 1;
++static int experimental_zcopytx = 0;
+ module_param(experimental_zcopytx, int, 0444);
+ MODULE_PARM_DESC(experimental_zcopytx, "Enable Zero Copy TX;"
+ 		                       " 1 -Enable; 0 - Disable");
 -- 
 2.20.1
 
