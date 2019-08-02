@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E0837F08E
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:30:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7795E7F0A5
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:31:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389405AbfHBJaY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 05:30:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55750 "EHLO mail.kernel.org"
+        id S2404660AbfHBJbN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 05:31:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57060 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732128AbfHBJaT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 05:30:19 -0400
+        id S2391023AbfHBJbK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 05:31:10 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 440CA217D6;
-        Fri,  2 Aug 2019 09:30:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1094D21855;
+        Fri,  2 Aug 2019 09:31:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564738218;
-        bh=s2g2a07lysKSXpB3NEO4Ow1V2iAujCJIk8YPfYwmjsM=;
+        s=default; t=1564738269;
+        bh=m0veZ928HW1xnDYIdXCyZ4xPhGJ5yXnzbvu42gwoLrQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Y+rupirvDj5hdgABWBBIPq6P7eJpAGyiI0KiU2Kuzfo0XlTBmNxfBZM5WrmvUz5F0
-         S09grLZqPxy0SbZMSr8MKVX+/Q6JWNjPfNGIS/7o5ZD/os9xyAqN23YxNNUpDSq6DL
-         I4F2JJqwAUtWvVT5wviNMA8UcTJqRtc/UnNms65c=
+        b=UgKtqriw4zS0MKKZ/9l8ZpIfSWcDwEgLYPqPuJRQ2HsVIjnv4u9KwdHsjQOG+5Obu
+         QbDk3YoPN3WGhy6TvOREdnhwBm5F4MxaY0yvpWFV7eFZHny0XQbFp89lOCsxRt6x+z
+         gVe+lQ4s/pqr670bHIN8WFEyuwi3YNviBC6JRxcE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oliver Neukum <oneukum@suse.com>,
-        syzbot+26ec41e9f788b3eba396@syzkaller.appspotmail.com,
-        Sean Young <sean@mess.org>,
+        stable@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
         Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 009/158] media: dvb: usb: fix use after free in dvb_usb_device_exit
-Date:   Fri,  2 Aug 2019 11:27:10 +0200
-Message-Id: <20190802092205.358262830@linuxfoundation.org>
+Subject: [PATCH 4.4 011/158] media: marvell-ccic: fix DMA s/g desc number calculation
+Date:   Fri,  2 Aug 2019 11:27:12 +0200
+Message-Id: <20190802092205.749399064@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190802092203.671944552@linuxfoundation.org>
 References: <20190802092203.671944552@linuxfoundation.org>
@@ -46,42 +45,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 6cf97230cd5f36b7665099083272595c55d72be7 ]
+[ Upstream commit 0c7aa32966dab0b8a7424e1b34c7f206817953ec ]
 
-dvb_usb_device_exit() frees and uses the device name in that order.
-Fix by storing the name in a buffer before freeing it.
+The commit d790b7eda953 ("[media] vb2-dma-sg: move dma_(un)map_sg here")
+left dma_desc_nent unset. It previously contained the number of DMA
+descriptors as returned from dma_map_sg().
 
-Signed-off-by: Oliver Neukum <oneukum@suse.com>
-Reported-by: syzbot+26ec41e9f788b3eba396@syzkaller.appspotmail.com
-Signed-off-by: Sean Young <sean@mess.org>
+We can now (since the commit referred to above) obtain the same value from
+the sg_table and drop dma_desc_nent altogether.
+
+Tested on OLPC XO-1.75 machine. Doesn't affect the OLPC XO-1's Cafe
+driver, since that one doesn't do DMA.
+
+[mchehab+samsung@kernel.org: fix a checkpatch warning]
+
+Fixes: d790b7eda953 ("[media] vb2-dma-sg: move dma_(un)map_sg here")
+Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/usb/dvb-usb/dvb-usb-init.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/media/platform/marvell-ccic/mcam-core.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/usb/dvb-usb/dvb-usb-init.c b/drivers/media/usb/dvb-usb/dvb-usb-init.c
-index 1adf325012f7..97a89ef7e4c1 100644
---- a/drivers/media/usb/dvb-usb/dvb-usb-init.c
-+++ b/drivers/media/usb/dvb-usb/dvb-usb-init.c
-@@ -286,12 +286,15 @@ EXPORT_SYMBOL(dvb_usb_device_init);
- void dvb_usb_device_exit(struct usb_interface *intf)
+diff --git a/drivers/media/platform/marvell-ccic/mcam-core.c b/drivers/media/platform/marvell-ccic/mcam-core.c
+index aa2b44041d3f..22fe771d4dd2 100644
+--- a/drivers/media/platform/marvell-ccic/mcam-core.c
++++ b/drivers/media/platform/marvell-ccic/mcam-core.c
+@@ -209,7 +209,6 @@ struct mcam_vb_buffer {
+ 	struct list_head queue;
+ 	struct mcam_dma_desc *dma_desc;	/* Descriptor virtual address */
+ 	dma_addr_t dma_desc_pa;		/* Descriptor physical address */
+-	int dma_desc_nent;		/* Number of mapped descriptors */
+ };
+ 
+ static inline struct mcam_vb_buffer *vb_to_mvb(struct vb2_v4l2_buffer *vb)
+@@ -616,9 +615,11 @@ static void mcam_dma_contig_done(struct mcam_camera *cam, int frame)
+ static void mcam_sg_next_buffer(struct mcam_camera *cam)
  {
- 	struct dvb_usb_device *d = usb_get_intfdata(intf);
--	const char *name = "generic DVB-USB module";
-+	const char *default_name = "generic DVB-USB module";
-+	char name[40];
+ 	struct mcam_vb_buffer *buf;
++	struct sg_table *sg_table;
  
- 	usb_set_intfdata(intf, NULL);
- 	if (d != NULL && d->desc != NULL) {
--		name = d->desc->name;
-+		strscpy(name, d->desc->name, sizeof(name));
- 		dvb_usb_exit(d);
-+	} else {
-+		strscpy(name, default_name, sizeof(name));
- 	}
- 	info("%s successfully deinitialized and disconnected.", name);
- 
+ 	buf = list_first_entry(&cam->buffers, struct mcam_vb_buffer, queue);
+ 	list_del_init(&buf->queue);
++	sg_table = vb2_dma_sg_plane_desc(&buf->vb_buf.vb2_buf, 0);
+ 	/*
+ 	 * Very Bad Not Good Things happen if you don't clear
+ 	 * C1_DESC_ENA before making any descriptor changes.
+@@ -626,7 +627,7 @@ static void mcam_sg_next_buffer(struct mcam_camera *cam)
+ 	mcam_reg_clear_bit(cam, REG_CTRL1, C1_DESC_ENA);
+ 	mcam_reg_write(cam, REG_DMA_DESC_Y, buf->dma_desc_pa);
+ 	mcam_reg_write(cam, REG_DESC_LEN_Y,
+-			buf->dma_desc_nent*sizeof(struct mcam_dma_desc));
++			sg_table->nents * sizeof(struct mcam_dma_desc));
+ 	mcam_reg_write(cam, REG_DESC_LEN_U, 0);
+ 	mcam_reg_write(cam, REG_DESC_LEN_V, 0);
+ 	mcam_reg_set_bit(cam, REG_CTRL1, C1_DESC_ENA);
 -- 
 2.20.1
 
