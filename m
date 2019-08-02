@@ -2,68 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E4817FC8D
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 16:50:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 989F87FC93
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 16:50:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395034AbfHBOuT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 10:50:19 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:57146 "EHLO vps0.lunn.ch"
+        id S2436788AbfHBOuj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 10:50:39 -0400
+Received: from foss.arm.com ([217.140.110.172]:53234 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731205AbfHBOuS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 10:50:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=wFufv2A3VsleW9NhhqWmZQk/O8vzeBMOQMi+FRL3uZk=; b=sSq7JSiLEkL/Qu7pBt+3s/Obzj
-        G8JwPwZS1T0WVqB57yZXxCvVf2QIIawUP6uxAzuXsQq0kzkgixEE5dG0/bwZeBJsAEYi4apzeYV+q
-        AoKjNmoU+H7PbtN1VDnh/6vE0bi1lHbWKn/LJ4w1MHHyykhWmM2YgsOSAtjW4Z4wRUns=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
-        (envelope-from <andrew@lunn.ch>)
-        id 1htYsl-0001GD-Kc; Fri, 02 Aug 2019 16:50:11 +0200
-Date:   Fri, 2 Aug 2019 16:50:11 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Tao Ren <taoren@fb.com>
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Arun Parameswaran <arun.parameswaran@broadcom.com>,
-        Justin Chen <justinpopo6@gmail.com>,
-        Vladimir Oltean <olteanv@gmail.com>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org
-Subject: Re: [PATCH net-next v2] net: phy: broadcom: add 1000Base-X support
- for BCM54616S
-Message-ID: <20190802145011.GH2099@lunn.ch>
-References: <20190801235839.290689-1-taoren@fb.com>
+        id S2436764AbfHBOuh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 10:50:37 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 613671597;
+        Fri,  2 Aug 2019 07:50:36 -0700 (PDT)
+Received: from e112269-lin.arm.com (e112269-lin.cambridge.arm.com [10.1.196.133])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7A2943F575;
+        Fri,  2 Aug 2019 07:50:34 -0700 (PDT)
+From:   Steven Price <steven.price@arm.com>
+Cc:     Steven Price <steven.price@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Will Deacon <will@kernel.org>,
+        James Morse <james.morse@arm.com>,
+        Julien Thierry <julien.thierry.kdev@gmail.com>,
+        Suzuki K Pouloze <suzuki.poulose@arm.com>,
+        kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
+        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 3/9] KVM: arm64: Implement PV_FEATURES call
+Date:   Fri,  2 Aug 2019 15:50:11 +0100
+Message-Id: <20190802145017.42543-4-steven.price@arm.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190802145017.42543-1-steven.price@arm.com>
+References: <20190802145017.42543-1-steven.price@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190801235839.290689-1-taoren@fb.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> +static int bcm54616s_read_status(struct phy_device *phydev)
-> +{
-> +	int err;
-> +
-> +	err = genphy_read_status(phydev);
-> +
-> +	/* 1000Base-X register set doesn't provide speed fields: the
-> +	 * link speed is always 1000 Mb/s as long as link is up.
-> +	 */
-> +	if (phydev->dev_flags & PHY_BCM_FLAGS_MODE_1000BX &&
-> +	    phydev->link)
-> +		phydev->speed = SPEED_1000;
-> +
-> +	return err;
-> +}
+This provides a mechanism for querying which paravirtualized features
+are available in this hypervisor.
 
-This function is equivalent to bcm5482_read_status(). You should use
-it, rather than add a new function.
+Also add the header file which defines the ABI for the paravirtualized
+clock features we're about to add.
 
-    Andrew
+Signed-off-by: Steven Price <steven.price@arm.com>
+---
+ arch/arm64/include/asm/pvclock-abi.h | 20 ++++++++++++++++++++
+ include/linux/arm-smccc.h            | 14 ++++++++++++++
+ virt/kvm/arm/hypercalls.c            |  9 +++++++++
+ 3 files changed, 43 insertions(+)
+ create mode 100644 arch/arm64/include/asm/pvclock-abi.h
+
+diff --git a/arch/arm64/include/asm/pvclock-abi.h b/arch/arm64/include/asm/pvclock-abi.h
+new file mode 100644
+index 000000000000..1f7cdc102691
+--- /dev/null
++++ b/arch/arm64/include/asm/pvclock-abi.h
+@@ -0,0 +1,20 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/* Copyright (C) 2019 Arm Ltd. */
++
++#ifndef __ASM_PVCLOCK_ABI_H
++#define __ASM_PVCLOCK_ABI_H
++
++/* The below structures and constants are defined in ARM DEN0057A */
++
++struct pvclock_vcpu_stolen_time_info {
++	__le32 revision;
++	__le32 attributes;
++	__le64 stolen_time;
++	/* Structure must be 64 byte aligned, pad to that size */
++	u8 padding[48];
++} __packed;
++
++#define PV_VM_TIME_NOT_SUPPORTED	-1
++#define PV_VM_TIME_INVALID_PARAMETERS	-2
++
++#endif
+diff --git a/include/linux/arm-smccc.h b/include/linux/arm-smccc.h
+index 080012a6f025..e7f129f26ebd 100644
+--- a/include/linux/arm-smccc.h
++++ b/include/linux/arm-smccc.h
+@@ -45,6 +45,7 @@
+ #define ARM_SMCCC_OWNER_SIP		2
+ #define ARM_SMCCC_OWNER_OEM		3
+ #define ARM_SMCCC_OWNER_STANDARD	4
++#define ARM_SMCCC_OWNER_STANDARD_HYP	5
+ #define ARM_SMCCC_OWNER_TRUSTED_APP	48
+ #define ARM_SMCCC_OWNER_TRUSTED_APP_END	49
+ #define ARM_SMCCC_OWNER_TRUSTED_OS	50
+@@ -302,5 +303,18 @@ asmlinkage void __arm_smccc_hvc(unsigned long a0, unsigned long a1,
+ #define SMCCC_RET_NOT_SUPPORTED			-1
+ #define SMCCC_RET_NOT_REQUIRED			-2
+ 
++/* Paravirtualised time calls (defined by ARM DEN0057A) */
++#define ARM_SMCCC_HV_PV_FEATURES				\
++	ARM_SMCCC_CALL_VAL(ARM_SMCCC_FAST_CALL,			\
++			   ARM_SMCCC_SMC_64,			\
++			   ARM_SMCCC_OWNER_STANDARD_HYP,	\
++			   0x20)
++
++#define ARM_SMCCC_HV_PV_TIME_ST					\
++	ARM_SMCCC_CALL_VAL(ARM_SMCCC_FAST_CALL,			\
++			   ARM_SMCCC_SMC_64,			\
++			   ARM_SMCCC_OWNER_STANDARD_HYP,	\
++			   0x22)
++
+ #endif /*__ASSEMBLY__*/
+ #endif /*__LINUX_ARM_SMCCC_H*/
+diff --git a/virt/kvm/arm/hypercalls.c b/virt/kvm/arm/hypercalls.c
+index f875241bd030..2906b2df99df 100644
+--- a/virt/kvm/arm/hypercalls.c
++++ b/virt/kvm/arm/hypercalls.c
+@@ -5,6 +5,7 @@
+ #include <linux/kvm_host.h>
+ 
+ #include <asm/kvm_emulate.h>
++#include <asm/pvclock-abi.h>
+ 
+ #include <kvm/arm_hypercalls.h>
+ #include <kvm/arm_psci.h>
+@@ -48,6 +49,14 @@ int kvm_hvc_call_handler(struct kvm_vcpu *vcpu)
+ 				break;
+ 			}
+ 			break;
++		case ARM_SMCCC_HV_PV_FEATURES:
++			val = SMCCC_RET_SUCCESS;
++			break;
++		}
++		break;
++	case ARM_SMCCC_HV_PV_FEATURES:
++		feature = smccc_get_arg1(vcpu);
++		switch (feature) {
+ 		}
+ 		break;
+ 	default:
+-- 
+2.20.1
+
