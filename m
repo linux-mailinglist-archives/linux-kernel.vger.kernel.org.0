@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0EE547F0AE
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:31:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A1E77F0AD
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:31:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404696AbfHBJbe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 05:31:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57692 "EHLO mail.kernel.org"
+        id S2404686AbfHBJbd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 05:31:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57774 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391084AbfHBJb2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 05:31:28 -0400
+        id S2404675AbfHBJba (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 05:31:30 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 054D3217D7;
-        Fri,  2 Aug 2019 09:31:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 89F5D217F5;
+        Fri,  2 Aug 2019 09:31:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564738287;
-        bh=wlMcEKRz9amUlJPLKMTkIsD5OttdawNyCP4zt9PzuRw=;
+        s=default; t=1564738290;
+        bh=dZpLJQa/iNeL7/6UDAIQwxGQuAixpVJtkTlR0A7g43s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YpCJT/vVkCuYFSuZkze+pdYT/RswayIBEOI/zGgGvGnudczKkPz8VjqjRx5aqlKK1
-         TBj2CDPmS+NKBv/SkySFCIMgvCINKae++hJ8i5DczLnZnq7kmw+M1wnW3NC4P/DBpK
-         1RfYZ/9GMsppNOIvPBmo423PxH9qWQEzSrH6WEeI=
+        b=OUm8A8zxVfEau9XjtVDUNJxTdsRiUWSihD5T25tyGATZxklQyMY2yVhcBfVHB+wju
+         LUsB13ytw40ZqZ4mhsciVlo2oCRyRM4uix7kKugbuj2VHB5956050Gi9OkdwGZYZ1Z
+         6gWPQdXu2ZzAUJOFnyaeVQYXUOGgima6wAdE9Q4E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Miaoqing Pan <miaoqing@codeaurora.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        stable@vger.kernel.org,
+        Ferdinand Blomqvist <ferdinand.blomqvist@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 045/158] ath10k: fix PCIE device wake up failed
-Date:   Fri,  2 Aug 2019 11:27:46 +0200
-Message-Id: <20190802092213.195106650@linuxfoundation.org>
+Subject: [PATCH 4.4 046/158] rslib: Fix decoding of shortened codes
+Date:   Fri,  2 Aug 2019 11:27:47 +0200
+Message-Id: <20190802092213.410364483@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190802092203.671944552@linuxfoundation.org>
 References: <20190802092203.671944552@linuxfoundation.org>
@@ -44,47 +45,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 011d4111c8c602ea829fa4917af1818eb0500a90 ]
+[ Upstream commit 2034a42d1747fc1e1eeef2c6f1789c4d0762cb9c ]
 
-Observed PCIE device wake up failed after ~120 iterations of
-soft-reboot test. The error message is
-"ath10k_pci 0000:01:00.0: failed to wake up device : -110"
+The decoding of shortenend codes is broken. It only works as expected if
+there are no erasures.
 
-The call trace as below:
-ath10k_pci_probe -> ath10k_pci_force_wake -> ath10k_pci_wake_wait ->
-ath10k_pci_is_awake
+When decoding with erasures, Lambda (the error and erasure locator
+polynomial) is initialized from the given erasure positions. The pad
+parameter is not accounted for by the initialisation code, and hence
+Lambda is initialized from incorrect erasure positions.
 
-Once trigger the device to wake up, we will continuously check the RTC
-state until it returns RTC_STATE_V_ON or timeout.
+The fix is to adjust the erasure positions by the supplied pad.
 
-But for QCA99x0 chips, we use wrong value for RTC_STATE_V_ON.
-Occasionally, we get 0x7 on the fist read, we thought as a failure
-case, but actually is the right value, also verified with the spec.
-So fix the issue by changing RTC_STATE_V_ON from 0x5 to 0x7, passed
-~2000 iterations.
-
-Tested HW: QCA9984
-
-Signed-off-by: Miaoqing Pan <miaoqing@codeaurora.org>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Ferdinand Blomqvist <ferdinand.blomqvist@gmail.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lkml.kernel.org/r/20190620141039.9874-3-ferdinand.blomqvist@gmail.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/ath/ath10k/hw.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ lib/reed_solomon/decode_rs.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/wireless/ath/ath10k/hw.c b/drivers/net/wireless/ath/ath10k/hw.c
-index 7b84d08a5154..12d6549e45a1 100644
---- a/drivers/net/wireless/ath/ath10k/hw.c
-+++ b/drivers/net/wireless/ath/ath10k/hw.c
-@@ -128,7 +128,7 @@ const struct ath10k_hw_values qca6174_values = {
- };
- 
- const struct ath10k_hw_values qca99x0_values = {
--	.rtc_state_val_on		= 5,
-+	.rtc_state_val_on		= 7,
- 	.ce_count			= 12,
- 	.msi_assign_ce_max		= 12,
- 	.num_target_ce_config_wlan	= 10,
+diff --git a/lib/reed_solomon/decode_rs.c b/lib/reed_solomon/decode_rs.c
+index 0ec3f257ffdf..8eed0f9ac495 100644
+--- a/lib/reed_solomon/decode_rs.c
++++ b/lib/reed_solomon/decode_rs.c
+@@ -99,9 +99,9 @@
+ 	if (no_eras > 0) {
+ 		/* Init lambda to be the erasure locator polynomial */
+ 		lambda[1] = alpha_to[rs_modnn(rs,
+-					      prim * (nn - 1 - eras_pos[0]))];
++					prim * (nn - 1 - (eras_pos[0] + pad)))];
+ 		for (i = 1; i < no_eras; i++) {
+-			u = rs_modnn(rs, prim * (nn - 1 - eras_pos[i]));
++			u = rs_modnn(rs, prim * (nn - 1 - (eras_pos[i] + pad)));
+ 			for (j = i + 1; j > 0; j--) {
+ 				tmp = index_of[lambda[j - 1]];
+ 				if (tmp != nn) {
 -- 
 2.20.1
 
