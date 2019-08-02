@@ -2,37 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B4C547FAE3
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 15:36:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 269517FACD
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 15:35:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406159AbfHBNf1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 09:35:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60366 "EHLO mail.kernel.org"
+        id S2393678AbfHBNWB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 09:22:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60498 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393625AbfHBNVw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 09:21:52 -0400
+        id S2393664AbfHBNV5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 09:21:57 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1F178217D4;
-        Fri,  2 Aug 2019 13:21:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0929021850;
+        Fri,  2 Aug 2019 13:21:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564752110;
-        bh=nopyJIrag+tPMdf2wrz1rrKCXw5JMgcHYzSfj2Boglc=;
+        s=default; t=1564752116;
+        bh=ND1hno1Qb4xeyaLty/5xL69EBHwl0fpRMM3p558OdPM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PxD64+STnfdSfTjPcVy2aYkS3+rChY16rICVjaBDV38YJmmGLSBzsXwoPAf+I+Y8g
-         CHWLXuRE+UVm8evJDrtPdVm3O251wmvWnFk2y2G8P7+Q/S2QBJD2LGz6B0whuziRUH
-         vslAktsx4kZ5DbHYHCGE+NB25BYNIzJgY6IkKcgY=
+        b=C1m3V+vP+/1Ji651vQ7e4V+is3H5BZXaEnk30HyAqW+lM6CAfXg3p33/Oedbo+IYD
+         b7yQgHKEcOKKi3osdh3y4PwgEmPcamiWJkx32K1n00Ti+RNqfvDKZ0Ssmqysu6/2eh
+         aYqeBZXSwZNEe2dRGh3f+OwoYJOzt2WmjzmxR8Mo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Wen Yang <wen.yang99@zte.com.cn>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org,
-        linux-pm@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 46/76] cpufreq/pasemi: fix use-after-free in pas_cpufreq_cpu_init()
-Date:   Fri,  2 Aug 2019 09:19:20 -0400
-Message-Id: <20190802131951.11600-46-sashal@kernel.org>
+Cc:     Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Vinod Koul <vkoul@kernel.org>, Takashi Iwai <tiwai@suse.de>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.2 50/76] ALSA: compress: Don't allow paritial drain operations on capture streams
+Date:   Fri,  2 Aug 2019 09:19:24 -0400
+Message-Id: <20190802131951.11600-50-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190802131951.11600-1-sashal@kernel.org>
 References: <20190802131951.11600-1-sashal@kernel.org>
@@ -45,73 +43,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wen Yang <wen.yang99@zte.com.cn>
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
 
-[ Upstream commit e0a12445d1cb186d875410d093a00d215bec6a89 ]
+[ Upstream commit a70ab8a8645083f3700814e757f2940a88b7ef88 ]
 
-The cpu variable is still being used in the of_get_property() call
-after the of_node_put() call, which may result in use-after-free.
+Partial drain and next track are intended for gapless playback and
+don't really have an obvious interpretation for a capture stream, so
+makes sense to not allow those operations on capture streams.
 
-Fixes: a9acc26b75f6 ("cpufreq/pasemi: fix possible object reference leak")
-Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Acked-by: Vinod Koul <vkoul@kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/cpufreq/pasemi-cpufreq.c | 23 +++++++++--------------
- 1 file changed, 9 insertions(+), 14 deletions(-)
+ sound/core/compress_offload.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/cpufreq/pasemi-cpufreq.c b/drivers/cpufreq/pasemi-cpufreq.c
-index 6b1e4abe32483..d2f061015323d 100644
---- a/drivers/cpufreq/pasemi-cpufreq.c
-+++ b/drivers/cpufreq/pasemi-cpufreq.c
-@@ -131,10 +131,18 @@ static int pas_cpufreq_cpu_init(struct cpufreq_policy *policy)
- 	int err = -ENODEV;
+diff --git a/sound/core/compress_offload.c b/sound/core/compress_offload.c
+index 40dae723c59db..6cf5b8440cf30 100644
+--- a/sound/core/compress_offload.c
++++ b/sound/core/compress_offload.c
+@@ -834,6 +834,10 @@ static int snd_compr_next_track(struct snd_compr_stream *stream)
+ 	if (stream->runtime->state != SNDRV_PCM_STATE_RUNNING)
+ 		return -EPERM;
  
- 	cpu = of_get_cpu_node(policy->cpu, NULL);
-+	if (!cpu)
-+		goto out;
- 
-+	max_freqp = of_get_property(cpu, "clock-frequency", NULL);
- 	of_node_put(cpu);
--	if (!cpu)
-+	if (!max_freqp) {
-+		err = -EINVAL;
- 		goto out;
-+	}
++	/* next track doesn't have any meaning for capture streams */
++	if (stream->direction == SND_COMPRESS_CAPTURE)
++		return -EPERM;
 +
-+	/* we need the freq in kHz */
-+	max_freq = *max_freqp / 1000;
- 
- 	dn = of_find_compatible_node(NULL, NULL, "1682m-sdc");
- 	if (!dn)
-@@ -171,16 +179,6 @@ static int pas_cpufreq_cpu_init(struct cpufreq_policy *policy)
+ 	/* you can signal next track if this is intended to be a gapless stream
+ 	 * and current track metadata is set
+ 	 */
+@@ -861,6 +865,10 @@ static int snd_compr_partial_drain(struct snd_compr_stream *stream)
+ 		break;
  	}
  
- 	pr_debug("init cpufreq on CPU %d\n", policy->cpu);
--
--	max_freqp = of_get_property(cpu, "clock-frequency", NULL);
--	if (!max_freqp) {
--		err = -EINVAL;
--		goto out_unmap_sdcpwr;
--	}
--
--	/* we need the freq in kHz */
--	max_freq = *max_freqp / 1000;
--
- 	pr_debug("max clock-frequency is at %u kHz\n", max_freq);
- 	pr_debug("initializing frequency table\n");
- 
-@@ -198,9 +196,6 @@ static int pas_cpufreq_cpu_init(struct cpufreq_policy *policy)
- 
- 	return cpufreq_generic_init(policy, pas_freqs, get_gizmo_latency());
- 
--out_unmap_sdcpwr:
--	iounmap(sdcpwr_mapbase);
--
- out_unmap_sdcasr:
- 	iounmap(sdcasr_mapbase);
- out:
++	/* partial drain doesn't have any meaning for capture streams */
++	if (stream->direction == SND_COMPRESS_CAPTURE)
++		return -EPERM;
++
+ 	/* stream can be drained only when next track has been signalled */
+ 	if (stream->next_track == false)
+ 		return -EPERM;
 -- 
 2.20.1
 
