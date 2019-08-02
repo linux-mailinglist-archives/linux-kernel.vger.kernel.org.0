@@ -2,93 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 96A1F7F2B8
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:51:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C2AF57F48D
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 12:07:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405874AbfHBJuo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 05:50:44 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:39175 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404933AbfHBJuf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 05:50:35 -0400
-Received: from [5.158.153.52] (helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1htUCg-0001sw-HD; Fri, 02 Aug 2019 11:50:26 +0200
-Date:   Fri, 2 Aug 2019 11:50:20 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Peter Zijlstra <peterz@infradead.org>
-cc:     Qais Yousef <qais.yousef@arm.com>, mingo@kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH 0/5] Fix FIFO-99 abuse
-In-Reply-To: <20190802093244.GF2332@hirez.programming.kicks-ass.net>
-Message-ID: <alpine.DEB.2.21.1908021149110.3924@nanos.tec.linutronix.de>
-References: <20190801111348.530242235@infradead.org> <20190801131707.5rpyydznnhz474la@e107158-lin.cambridge.arm.com> <20190802093244.GF2332@hirez.programming.kicks-ass.net>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S2390979AbfHBJa7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 05:30:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56702 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390967AbfHBJa5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 05:30:57 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4D0442184B;
+        Fri,  2 Aug 2019 09:30:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564738256;
+        bh=DBCAkzvffWAKJjgBm7QCyOwr1ldjmM1ESkZdFiDt+ts=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Wy8iWIh+RWUV4UPwAXAomaEUdjX5U9I2VE/tnt9NzvXK2XK6fwAEmpSa86nw1oqDu
+         WzAZfjiQcfH2gCZiQBIc9p7hV/Xvm339VO0nQg7iCorld5kE94Bm/oyNNImheRDvtn
+         wH/IbzoUw6H9Ioaj+BbegraMsiAzSSfJ6SxfpQS4=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Anirudh Gupta <anirudh.gupta@sophos.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 016/158] xfrm: Fix xfrm sel prefix length validation
+Date:   Fri,  2 Aug 2019 11:27:17 +0200
+Message-Id: <20190802092206.761685549@linuxfoundation.org>
+X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20190802092203.671944552@linuxfoundation.org>
+References: <20190802092203.671944552@linuxfoundation.org>
+User-Agent: quilt/0.66
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2 Aug 2019, Peter Zijlstra wrote:
-> On Thu, Aug 01, 2019 at 02:17:07PM +0100, Qais Yousef wrote:
-> > On 08/01/19 13:13, Peter Zijlstra wrote:
-> > > I noticed a bunch of kthreads defaulted to FIFO-99, fix them.
-> > > 
-> > > The generic default is FIFO-50, the admin will have to configure the system
-> > > anyway.
-> > > 
-> > > For some the purpose is to be above OTHER and then FIFO-1 really is sufficient.
-> > 
-> > I was looking in this area too and was thinking of a way to consolidate the
-> > creation of RT/DL tasks in the kernel and the way we set the priority.
-> > 
-> > Does it make sense to create a new header for RT priorities for kthreads
-> > created in the kernel so that we can easily track and rationale about the
-> > relative priorities of in-kernel RT tasks?
-> > 
-> > When working in the FW world such a header helped a lot in understanding what
-> > runs at each priority level and how to reason about what priority level makes
-> > sense for a new item. It could be a nice single point of reference; even for
-> > admins.
-> 
-> Well, SCHED_FIFO is a broken scheduler model; that is, it is
-> fundamentally incapable of resource management, which is the one thing
-> an OS really should be doing.
-> 
-> This is of course the reason it is limited to privileged users only.
-> 
-> Worse still; it is fundamentally impossible to compose static priority
-> workloads. You cannot take two correctly working static prio workloads
-> and smash them together and still expect them to work.
-> 
-> For this reason 'all' FIFO tasks the kernel creates are basically at:
-> 
->   MAX_RT_PRIO / 2
-> 
-> The administrator _MUST_ configure the system, the kernel simply doesn't
-> know enough information to make a sensible choice.
-> 
-> Now, Geert suggested so make make a define for that, but how about we do
-> something like:
-> 
-> /*
->  * ${the above explanation}
->  */
-> int kernel_setscheduler_fifo(struct task_struct *p)
-> {
-> 	struct sched_param sp = { .sched_priority = MAX_RT_PRIO / 2 };
-> 	return sched_setscheduler_nocheck(p, SCHED_FIFO, &sp);
-> }
-> 
-> And then take away sched_setscheduler*().
+[ Upstream commit b38ff4075a80b4da5cb2202d7965332ca0efb213 ]
 
-Yes, please.
+Family of src/dst can be different from family of selector src/dst.
+Use xfrm selector family to validate address prefix length,
+while verifying new sa from userspace.
 
-     tglx
+Validated patch with this command:
+ip xfrm state add src 1.1.6.1 dst 1.1.6.2 proto esp spi 4260196 \
+reqid 20004 mode tunnel aead "rfc4106(gcm(aes))" \
+0x1111016400000000000000000000000044440001 128 \
+sel src 1011:1:4::2/128 sel dst 1021:1:4::2/128 dev Port5
+
+Fixes: 07bf7908950a ("xfrm: Validate address prefix lengths in the xfrm selector.")
+Signed-off-by: Anirudh Gupta <anirudh.gupta@sophos.com>
+Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ net/xfrm/xfrm_user.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+
+diff --git a/net/xfrm/xfrm_user.c b/net/xfrm/xfrm_user.c
+index b04c03043976..10fda9a39cc2 100644
+--- a/net/xfrm/xfrm_user.c
++++ b/net/xfrm/xfrm_user.c
+@@ -150,6 +150,22 @@ static int verify_newsa_info(struct xfrm_usersa_info *p,
+ 
+ 	err = -EINVAL;
+ 	switch (p->family) {
++	case AF_INET:
++		break;
++
++	case AF_INET6:
++#if IS_ENABLED(CONFIG_IPV6)
++		break;
++#else
++		err = -EAFNOSUPPORT;
++		goto out;
++#endif
++
++	default:
++		goto out;
++	}
++
++	switch (p->sel.family) {
+ 	case AF_INET:
+ 		if (p->sel.prefixlen_d > 32 || p->sel.prefixlen_s > 32)
+ 			goto out;
+-- 
+2.20.1
+
+
 
