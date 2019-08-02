@@ -2,67 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B24237ECE5
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 08:51:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F15447ECE9
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 08:52:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389101AbfHBGvC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 02:51:02 -0400
-Received: from helcar.hmeau.com ([216.24.177.18]:49158 "EHLO fornost.hmeau.com"
+        id S2389143AbfHBGwM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 02:52:12 -0400
+Received: from mga12.intel.com ([192.55.52.136]:39191 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389053AbfHBGvC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 02:51:02 -0400
-Received: from gondolin.me.apana.org.au ([192.168.0.6] helo=gondolin.hengli.com.au)
-        by fornost.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1htROu-0007m9-9r; Fri, 02 Aug 2019 16:50:52 +1000
-Received: from herbert by gondolin.hengli.com.au with local (Exim 4.80)
-        (envelope-from <herbert@gondor.apana.org.au>)
-        id 1htROs-00053c-Ht; Fri, 02 Aug 2019 16:50:50 +1000
-Date:   Fri, 2 Aug 2019 16:50:50 +1000
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Harald Freudenberger <freude@linux.ibm.com>,
-        Patrick Steuer <steuer@linux.ibm.com>,
-        Ondrej Mosnacek <omosnace@redhat.com>
-Subject: Re: linux-next: Tree for Jul 31 - s390 crypto build breakage
-Message-ID: <20190802065050.GC19278@gondor.apana.org.au>
-References: <20190731085819.GA3488@osiris>
- <20190731110816.GA20753@gondor.apana.org.au>
- <20190731111520.GC3488@osiris>
- <20190731113216.GA21068@gondor.apana.org.au>
- <20190731114453.GD3488@osiris>
- <20190801122849.GB4163@osiris>
- <CAKv+Gu_1HP2NapMk5O_-XpJdga5zyFJDkVudTRT6CWm+tqPndA@mail.gmail.com>
- <20190802102019.6a789c51@canb.auug.org.au>
- <20190802031414.GB14879@gondor.apana.org.au>
- <CAKv+Gu_dohBsU3HN_J8cZBSKakKM61g++K1V0T1CJ6JtkJ8V-A@mail.gmail.com>
+        id S1731644AbfHBGwM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 02:52:12 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Aug 2019 23:52:11 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,337,1559545200"; 
+   d="scan'208";a="372871607"
+Received: from orsmsx106.amr.corp.intel.com ([10.22.225.133])
+  by fmsmga006.fm.intel.com with ESMTP; 01 Aug 2019 23:52:11 -0700
+Received: from orsmsx114.amr.corp.intel.com ([169.254.8.96]) by
+ ORSMSX106.amr.corp.intel.com ([169.254.1.52]) with mapi id 14.03.0439.000;
+ Thu, 1 Aug 2019 23:52:11 -0700
+From:   "Prakhya, Sai Praneeth" <sai.praneeth.prakhya@intel.com>
+To:     Anshuman Khandual <anshuman.khandual@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>
+CC:     "Hansen, Dave" <dave.hansen@intel.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: RE: [PATCH] fork: Improve error message for corrupted page tables
+Thread-Topic: [PATCH] fork: Improve error message for corrupted page tables
+Thread-Index: AQHVRyU2Tlnukuaks0aiZwfZ/9aV0qbmQJYAgAEtK5A=
+Date:   Fri, 2 Aug 2019 06:52:10 +0000
+Message-ID: <FFF73D592F13FD46B8700F0A279B802F4F9D62D6@ORSMSX114.amr.corp.intel.com>
+References: <20190730221820.7738-1-sai.praneeth.prakhya@intel.com>
+ <56ad91b8-1ea0-6736-5bc5-eea0ced01054@arm.com>
+In-Reply-To: <56ad91b8-1ea0-6736-5bc5-eea0ced01054@arm.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNjE3Yzk5NjMtZDc4OC00ODc3LWI4OGEtOWEyMWE1MzM4ZmUxIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiRXVaNFc2KzJWZ0h5dk11WXE1K3NzaVdldmNMeGd5RXlzenJXZXJOM2x3cE1Ncmg3SnJ0Y0VoN1wvWUpWek0wV0gifQ==
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.600.7
+dlp-reaction: no-action
+x-originating-ip: [10.22.254.138]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKv+Gu_dohBsU3HN_J8cZBSKakKM61g++K1V0T1CJ6JtkJ8V-A@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 02, 2019 at 09:44:43AM +0300, Ard Biesheuvel wrote:
->
-> OK. I will adopt this mechanism [0] after all and resubmit, once I get
-> confirmation from either Voldis or Heiko that this makes the issue go
-> away (given that my local GCC does not reproduce the issue)
-> 
-> [0] https://lore.kernel.org/linux-crypto/20190729074434.21064-1-ard.biesheuvel@linaro.org/
-
-Please drop the ifdefs around the header files since we've already
-fixed that.
-
-Thanks,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+PiA+DQo+ID4gQ2M6IEluZ28gTW9sbmFyIDxtaW5nb0BrZXJuZWwub3JnPg0KPiA+IENjOiBQZXRl
+ciBaaWpsc3RyYSA8cGV0ZXJ6QGluZnJhZGVhZC5vcmc+DQo+ID4gQ2M6IEFuZHJldyBNb3J0b24g
+PGFrcG1AbGludXgtZm91bmRhdGlvbi5vcmc+DQo+ID4gU3VnZ2VzdGVkLWJ5L0Fja2VkLWJ5OiBE
+YXZlIEhhbnNlbiA8ZGF2ZS5oYW5zZW5AaW50ZWwuY29tPg0KPiANCj4gVGhvdWdoIEkgYW0gbm90
+IHN1cmUsIHNob3VsZCB0aGUgYWJvdmUgYmUgdHdvIHNlcGFyYXRlIGxpbmVzIGluc3RlYWQgPw0K
+DQpTdXJlISBXaWxsIHNwbGl0IHRoZW0gaW4gVjIuDQoNCj4gDQo+ID4gU2lnbmVkLW9mZi1ieTog
+U2FpIFByYW5lZXRoIFByYWtoeWEgPHNhaS5wcmFuZWV0aC5wcmFraHlhQGludGVsLmNvbT4NCj4g
+PiAtLS0NCj4gPiAgaW5jbHVkZS9saW51eC9tbV90eXBlc190YXNrLmggfCA3ICsrKysrKysNCj4g
+PiAga2VybmVsL2ZvcmsuYyAgICAgICAgICAgICAgICAgfCA0ICsrLS0NCj4gPiAgMiBmaWxlcyBj
+aGFuZ2VkLCA5IGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0pDQo+ID4NCj4gPiBkaWZmIC0t
+Z2l0IGEvaW5jbHVkZS9saW51eC9tbV90eXBlc190YXNrLmgNCj4gPiBiL2luY2x1ZGUvbGludXgv
+bW1fdHlwZXNfdGFzay5oIGluZGV4IGQ3MDE2ZGNiMjQ1ZS4uODgxZjRlYTNhMWI1DQo+ID4gMTAw
+NjQ0DQo+ID4gLS0tIGEvaW5jbHVkZS9saW51eC9tbV90eXBlc190YXNrLmgNCj4gPiArKysgYi9p
+bmNsdWRlL2xpbnV4L21tX3R5cGVzX3Rhc2suaA0KPiA+IEBAIC00NCw2ICs0NCwxMyBAQCBlbnVt
+IHsNCj4gPiAgCU5SX01NX0NPVU5URVJTDQo+ID4gIH07DQo+ID4NCj4gPiArc3RhdGljIGNvbnN0
+IGNoYXIgKiBjb25zdCByZXNpZGVudF9wYWdlX3R5cGVzW05SX01NX0NPVU5URVJTXSA9IHsNCj4g
+PiArCSJNTV9GSUxFUEFHRVMiLA0KPiA+ICsJIk1NX0FOT05QQUdFUyIsDQo+ID4gKwkiTU1fU1dB
+UEVOVFMiLA0KPiA+ICsJIk1NX1NITUVNUEFHRVMiLA0KPiA+ICt9Ow0KPiANCj4gU2hvdWxkIGlu
+ZGV4IHRoZW0gdG8gbWF0Y2ggcmVzcGVjdGl2ZSB0eXBvIG1hY3Jvcy4NCj4gDQo+IAlbTU1fRklM
+RVBBR0VTXSA9ICJNTV9GSUxFUEFHRVMiLA0KPiAJW01NX0FOT05QQUdFU10gPSAiTU1fQU5PTlBB
+R0VTIiwNCj4gCVtNTV9TV0FQRU5UU10gPSAiTU1fU1dBUEVOVFMiLA0KPiAJW01NX1NITUVNUEFH
+RVNdID0gIk1NX1NITUVNUEFHRVMiLA0KDQpTdXJlISBXaWxsIGNoYW5nZSBpdC4NCg0KPiA+ICsN
+Cj4gPiAgI2lmIFVTRV9TUExJVF9QVEVfUFRMT0NLUyAmJiBkZWZpbmVkKENPTkZJR19NTVUpICAj
+ZGVmaW5lDQo+ID4gU1BMSVRfUlNTX0NPVU5USU5HDQo+ID4gIC8qIHBlci10aHJlYWQgY2FjaGVk
+IGluZm9ybWF0aW9uLCAqLw0KPiA+IGRpZmYgLS1naXQgYS9rZXJuZWwvZm9yay5jIGIva2VybmVs
+L2ZvcmsuYyBpbmRleA0KPiA+IDI4NTJkMGU3NmVhMy4uNmFlZjU4NDJkNGUwIDEwMDY0NA0KPiA+
+IC0tLSBhL2tlcm5lbC9mb3JrLmMNCj4gPiArKysgYi9rZXJuZWwvZm9yay5jDQo+ID4gQEAgLTY0
+OSw4ICs2NDksOCBAQCBzdGF0aWMgdm9pZCBjaGVja19tbShzdHJ1Y3QgbW1fc3RydWN0ICptbSkN
+Cj4gPiAgCQlsb25nIHggPSBhdG9taWNfbG9uZ19yZWFkKCZtbS0+cnNzX3N0YXQuY291bnRbaV0p
+Ow0KPiA+DQo+ID4gIAkJaWYgKHVubGlrZWx5KHgpKQ0KPiA+IC0JCQlwcmludGsoS0VSTl9BTEVS
+VCAiQlVHOiBCYWQgcnNzLWNvdW50ZXIgc3RhdGUgIg0KPiA+IC0JCQkJCSAgIm1tOiVwIGlkeDol
+ZCB2YWw6JWxkXG4iLCBtbSwgaSwgeCk7DQo+ID4gKwkJCXByX2FsZXJ0KCJCVUc6IEJhZCByc3Mt
+Y291bnRlciBzdGF0ZSBtbTolcCB0eXBlOiVzDQo+IHZhbDolbGRcbiIsDQo+ID4gKwkJCQkgbW0s
+IHJlc2lkZW50X3BhZ2VfdHlwZXNbaV0sIHgpOw0KPiBJdCBjaGFuZ2VzIHRoZSBwcmludCBmdW5j
+dGlvbiBhcyB3ZWxsLCB0aG91Z2ggdmVyeSBtaW5vciBjaGFuZ2UgYnV0IHBlcmhhcHMNCj4gbWVu
+dGlvbiB0aGF0IGluIHRoZSBjb21taXQgbWVzc2FnZSA/DQoNClN1cmUhIFdpbGwgbWVudGlvbiBp
+dCBpbiBWMi4NCkkgaGF2ZSBjaGFuZ2VkIHByaW50aygpIHRvIHByX2FsZXJ0KCkgYmVjYXVzZSB0
+aGUgb3RoZXIgbWVzc2FnZSBpbiBjaGVja19tbSgpIHVzZXMgcHJfYWxlcnQoKS4NCg0KUmVnYXJk
+cywNClNhaQ0K
