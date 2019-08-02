@@ -2,90 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 361FD7F02F
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:18:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 71AED7F03B
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:19:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732984AbfHBJSH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 05:18:07 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:40430 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727127AbfHBJSG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 05:18:06 -0400
-Received: by mail-oi1-f195.google.com with SMTP id w196so34983470oie.7;
-        Fri, 02 Aug 2019 02:18:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xkFiSdpHUnfyoWjiC0O20PFSo9ZFj78rh5jCNoeTnAA=;
-        b=BQFz+2GF1t7sEohOqsiXJ36+8/nQQdkp1RPuto3z1P/QTcPE1EvKwPLJ63GLuGaX+N
-         KkLK+xeH7O165HsWrHiPFaYOPYxO/Q3haKyhcQ/jQ+kcx1SE/OQZ4EREPgpPSYDU7SjL
-         c6SoCb52Wdx9DYTHP3MV07CtoGZM5VnPRxSK36D6l7haeknoHmQt5UvmdUrWBGMYzUWg
-         F5TTfUdnDa448AxOQFK7+bWlTvi+zuY1en85c4c3KM28QqOE2q4714K08lRIAvpc7Mgp
-         ByWFaKD6rSy67b4en6/Oh7ZAK+aj0vP8a75PKkYC/tnvqRlE940f26oULge74g29ucJ4
-         tfuA==
-X-Gm-Message-State: APjAAAUahhI8BFfeojURGMipjBJyP1mmqJqNr1R2qUXXQ4iHOP2WNmi8
-        FTAxwiAy5upXKzBwGFFXPlw/VBf6OG/kWkvQlWM=
-X-Google-Smtp-Source: APXvYqyZS9QZ2kNW1W+zc/Px9C3QI2WFuduW3A8Nk8BTEuK5oQ9wdhdvZBRBfJARZ59KGV8kJCdtOk4AoB8lN+iBQtM=
-X-Received: by 2002:aca:edc8:: with SMTP id l191mr2172033oih.103.1564737485809;
- Fri, 02 Aug 2019 02:18:05 -0700 (PDT)
+        id S2388119AbfHBJTf convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 2 Aug 2019 05:19:35 -0400
+Received: from mga09.intel.com ([134.134.136.24]:11805 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387890AbfHBJTf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 05:19:35 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Aug 2019 02:19:33 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,337,1559545200"; 
+   d="scan'208";a="178105348"
+Received: from jlahtine-desk.ger.corp.intel.com (HELO localhost) ([10.252.3.11])
+  by orsmga006.jf.intel.com with ESMTP; 02 Aug 2019 02:19:23 -0700
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <7dedb6bd157b8183c693bb578e25e313cf4f451d.1564724511.git.viresh.kumar@linaro.org>
- <23e3dee8688f5a9767635b686bb7a9c0e09a4438.1564724511.git.viresh.kumar@linaro.org>
-In-Reply-To: <23e3dee8688f5a9767635b686bb7a9c0e09a4438.1564724511.git.viresh.kumar@linaro.org>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Fri, 2 Aug 2019 11:17:55 +0200
-Message-ID: <CAJZ5v0iqztRWyxf1cgiAN1dK4qTGwy9raaGOx5u3tfBTGUKOng@mail.gmail.com>
-Subject: Re: [PATCH V3 2/2] cpufreq: intel_pstate: Implement ->resolve_freq()
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Rafael Wysocki <rjw@rjwysocki.net>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Len Brown <lenb@kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        "v4 . 18+" <stable@vger.kernel.org>,
-        Doug Smythies <doug.smythies@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+To:     Andrew Morton <akpm@linux-foundation.org>, john.hubbard@gmail.com
+From:   Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20190802022005.5117-7-jhubbard@nvidia.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        =?utf-8?b?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        amd-gfx@lists.freedesktop.org, ceph-devel@vger.kernel.org,
+        devel@driverdev.osuosl.org, devel@lists.orangefs.org,
+        dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+        kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-block@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-fbdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-mm@kvack.org,
+        linux-nfs@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org, linux-xfs@vger.kernel.org,
+        netdev@vger.kernel.org, rds-devel@oss.oracle.com,
+        sparclinux@vger.kernel.org, x86@kernel.org,
+        xen-devel@lists.xenproject.org, John Hubbard <jhubbard@nvidia.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        David Airlie <airlied@linux.ie>
+References: <20190802022005.5117-1-jhubbard@nvidia.com>
+ <20190802022005.5117-7-jhubbard@nvidia.com>
+Message-ID: <156473756254.19842.12384378926183716632@jlahtine-desk.ger.corp.intel.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH 06/34] drm/i915: convert put_page() to put_user_page*()
+Date:   Fri, 02 Aug 2019 12:19:22 +0300
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 2, 2019 at 7:44 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
->
-> Intel pstate driver exposes min_perf_pct and max_perf_pct sysfs files,
-> which can be used to force a limit on the min/max P state of the driver.
-> Though these files eventually control the min/max frequencies that the
-> CPUs will run at, they don't make a change to policy->min/max values.
+Quoting john.hubbard@gmail.com (2019-08-02 05:19:37)
+> From: John Hubbard <jhubbard@nvidia.com>
+> 
+> For pages that were retained via get_user_pages*(), release those pages
+> via the new put_user_page*() routines, instead of via put_page() or
+> release_pages().
+> 
+> This is part a tree-wide conversion, as described in commit fc1d8e7cca2d
+> ("mm: introduce put_user_page*(), placeholder versions").
+> 
+> Note that this effectively changes the code's behavior in
+> i915_gem_userptr_put_pages(): it now calls set_page_dirty_lock(),
+> instead of set_page_dirty(). This is probably more accurate.
 
-That's correct.
+We've already fixed this in drm-tip where the current code uses
+set_page_dirty_lock().
 
-> When the values of these files are changed (in passive mode of the
-> driver), it leads to calling ->limits() callback of the cpufreq
-> governors, like schedutil. On a call to it the governors shall
-> forcefully update the frequency to come within the limits.
+This would conflict with our tree. Rodrigo is handling
+drm-intel-next for 5.4, so you guys want to coordinate how
+to merge.
 
-OK, so the problem is that it is a bug to invoke the governor's ->limits()
-callback without updating policy->min/max, because that's what
-"limits" mean to the governors.
-
-Fair enough.
-
-> For getting the value within limits, the schedutil governor calls
-> cpufreq_driver_resolve_freq(), which eventually tries to call
-> ->resolve_freq() callback for this driver. Since the callback isn't
-> present, the schedutil governor fails to get the target freq within
-> limit and sometimes aborts the update believing that the frequency is
-> already set to the target value.
->
-> This patch implements the resolve_freq() callback, so the correct target
-> frequency can be returned by the driver and the schedutil governor gets
-> the frequency within limits immediately.
-
-So the problem is that ->resolve_freq() adds overhead and it adds that
-overhead even if the limits don't change.  It just sits there and computes
-things every time even if that is completely redundant.
-
-So no, this is not the right way to fix it IMO.
+Regards, Joonas
