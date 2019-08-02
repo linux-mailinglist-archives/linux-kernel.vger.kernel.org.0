@@ -2,40 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22D927F313
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:54:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 52CAC7F358
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:57:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406344AbfHBJxy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 05:53:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59968 "EHLO mail.kernel.org"
+        id S2406731AbfHBJ4Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 05:56:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35116 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406309AbfHBJxl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 05:53:41 -0400
+        id S2406713AbfHBJ4Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 05:56:16 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 952492086A;
-        Fri,  2 Aug 2019 09:53:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 805432064A;
+        Fri,  2 Aug 2019 09:56:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564739621;
-        bh=Cd2/CtlMzi0MVSdMVDg8CkFE200fT4o/RHRtNoAlWUo=;
+        s=default; t=1564739776;
+        bh=TZyC/e3XWGinl9VbLp32LC4zDGiye8OtkVuPC0YrCuY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZXoysYs2WKumYYv2gnpyl4Hm+pbVlnYqZZGRRXzuirHEXepJGXZTMJ6CYWlau5ik3
-         evL+nONGUb8+AxoKKycRT0cAgmU/tPaX2lDhdfn4tuiznbzTNA1yxcv4F8LEKVopOA
-         b1+94Lk2iIL7aEJopM41PcQnPGxPx3pdtOvwoNbw=
+        b=I2gQdk93RCDDpAzTQO/DBEAmBgusyW/DXt5snZZymcg2PbHWU9+YnNA3KvHXGJN8b
+         8VB+uta3i+ZAz7Kq5WP+bXcPzkHU8TTY++tv0gcAlm6+ysCBn8EqXF7gklJ1roFi6x
+         x7GF/yaCXX6rKfGDGvFwcuBb+WGIxcwmZQtpt0cE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+8750abbc3a46ef47d509@syzkaller.appspotmail.com,
-        Phong Tran <tranmanphong@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 10/25] ISDN: hfcsusb: checking idx of ep configuration
-Date:   Fri,  2 Aug 2019 11:39:42 +0200
-Message-Id: <20190802092102.954442606@linuxfoundation.org>
+        stable@vger.kernel.org, Todd Kjos <tkjos@google.com>
+Subject: [PATCH 4.19 09/32] binder: fix possible UAF when freeing buffer
+Date:   Fri,  2 Aug 2019 11:39:43 +0200
+Message-Id: <20190802092104.545353007@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190802092058.428079740@linuxfoundation.org>
-References: <20190802092058.428079740@linuxfoundation.org>
+In-Reply-To: <20190802092101.913646560@linuxfoundation.org>
+References: <20190802092101.913646560@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,45 +42,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Phong Tran <tranmanphong@gmail.com>
+From: Todd Kjos <tkjos@android.com>
 
-commit f384e62a82ba5d85408405fdd6aeff89354deaa9 upstream.
+commit a370003cc301d4361bae20c9ef615f89bf8d1e8a upstream.
 
-The syzbot test with random endpoint address which made the idx is
-overflow in the table of endpoint configuations.
+There is a race between the binder driver cleaning
+up a completed transaction via binder_free_transaction()
+and a user calling binder_ioctl(BC_FREE_BUFFER) to
+release a buffer. It doesn't matter which is first but
+they need to be protected against running concurrently
+which can result in a UAF.
 
-this adds the checking for fixing the error report from
-syzbot
-
-KASAN: stack-out-of-bounds Read in hfcsusb_probe [1]
-The patch tested by syzbot [2]
-
-Reported-by: syzbot+8750abbc3a46ef47d509@syzkaller.appspotmail.com
-
-[1]:
-https://syzkaller.appspot.com/bug?id=30a04378dac680c5d521304a00a86156bb913522
-[2]:
-https://groups.google.com/d/msg/syzkaller-bugs/_6HBdge8F3E/OJn7wVNpBAAJ
-
-Signed-off-by: Phong Tran <tranmanphong@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Todd Kjos <tkjos@google.com>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
----
- drivers/isdn/hardware/mISDN/hfcsusb.c |    3 +++
- 1 file changed, 3 insertions(+)
 
---- a/drivers/isdn/hardware/mISDN/hfcsusb.c
-+++ b/drivers/isdn/hardware/mISDN/hfcsusb.c
-@@ -1963,6 +1963,9 @@ hfcsusb_probe(struct usb_interface *intf
+
+---
+ drivers/android/binder.c |   16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
+
+--- a/drivers/android/binder.c
++++ b/drivers/android/binder.c
+@@ -1960,8 +1960,18 @@ static struct binder_thread *binder_get_
  
- 				/* get endpoint base */
- 				idx = ((ep_addr & 0x7f) - 1) * 2;
-+				if (idx > 15)
-+					return -EIO;
+ static void binder_free_transaction(struct binder_transaction *t)
+ {
+-	if (t->buffer)
+-		t->buffer->transaction = NULL;
++	struct binder_proc *target_proc = t->to_proc;
 +
- 				if (ep_addr & 0x80)
- 					idx++;
- 				attr = ep->desc.bmAttributes;
++	if (target_proc) {
++		binder_inner_proc_lock(target_proc);
++		if (t->buffer)
++			t->buffer->transaction = NULL;
++		binder_inner_proc_unlock(target_proc);
++	}
++	/*
++	 * If the transaction has no target_proc, then
++	 * t->buffer->transaction has already been cleared.
++	 */
+ 	kfree(t);
+ 	binder_stats_deleted(BINDER_STAT_TRANSACTION);
+ }
+@@ -3484,10 +3494,12 @@ static int binder_thread_write(struct bi
+ 				     buffer->debug_id,
+ 				     buffer->transaction ? "active" : "finished");
+ 
++			binder_inner_proc_lock(proc);
+ 			if (buffer->transaction) {
+ 				buffer->transaction->buffer = NULL;
+ 				buffer->transaction = NULL;
+ 			}
++			binder_inner_proc_unlock(proc);
+ 			if (buffer->async_transaction && buffer->target_node) {
+ 				struct binder_node *buf_node;
+ 				struct binder_work *w;
 
 
