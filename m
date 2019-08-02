@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 887137FAD7
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 15:36:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA2C67FAD5
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 15:36:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405934AbfHBNez (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 09:34:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60970 "EHLO mail.kernel.org"
+        id S2405911AbfHBNet (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 09:34:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32778 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393744AbfHBNWW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 09:22:22 -0400
+        id S2393755AbfHBNWZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 09:22:25 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 165AB20644;
-        Fri,  2 Aug 2019 13:22:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7584921841;
+        Fri,  2 Aug 2019 13:22:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564752141;
-        bh=HPlxUtNwkZHE7h7+b4y2FQxruajmN736XDBowKuRmkY=;
+        s=default; t=1564752144;
+        bh=bzUI1CGt06M2B3ynUGZQxcbu7EQG4vNXUTOYUdThYu8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OichDcKQ9NP/k0O1gbCm/l8XxmqDLeCPKhsUF/zJpS2gl6lnWOXeiNhEr21LwqeyG
-         ciIv3jxWX1lpZmH7Ka9yUCzhDv3eJz5uSc9mYtCGJV2jUItopTQG4XMX4e3KdVMknh
-         MY6QPiFujPc+kwNKOo5T0thpTqHlH1AvYJAZUln0=
+        b=Uem8n2R+OYeCBO6CZ+vLCrFk2q4ADLyC+ne/z8dZkYL01STGGttgfWjNQW0rewVMY
+         FMLlWrufzTEgLnE2L1PNB14ya6MQ12UuliWGHajC7iHqj0WjoZgppZmwv8al4xWsyJ
+         /36KlqUvhx7TMi7C3fxcIsIYe882sC7yIB2ph3lY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Misha Nasledov <misha@nasledov.com>,
+Cc:     Marta Rybczynska <mrybczyn@kalray.eu>,
+        Marta Rybczynska <marta.rybczynska@kalray.eu>,
+        Jean-Baptiste Riaux <jbriaux@kalray.eu>,
         Christoph Hellwig <hch@lst.de>,
         Sasha Levin <sashal@kernel.org>, linux-nvme@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.2 59/76] nvme: ignore subnqn for ADATA SX6000LNP
-Date:   Fri,  2 Aug 2019 09:19:33 -0400
-Message-Id: <20190802131951.11600-59-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.2 61/76] nvme: fix multipath crash when ANA is deactivated
+Date:   Fri,  2 Aug 2019 09:19:35 -0400
+Message-Id: <20190802131951.11600-61-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190802131951.11600-1-sashal@kernel.org>
 References: <20190802131951.11600-1-sashal@kernel.org>
@@ -43,46 +45,125 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Misha Nasledov <misha@nasledov.com>
+From: Marta Rybczynska <mrybczyn@kalray.eu>
 
-[ Upstream commit 08b903b5fd0c49e5f224a9bf085b6329ec3c55c0 ]
+[ Upstream commit 66b20ac0a1a10769d059d6903202f53494e3d902 ]
 
-The ADATA SX6000LNP NVMe SSDs have the same subnqn and, due to this, a
-system with more than one of these SSDs will only have one usable.
+Fix a crash with multipath activated. It happends when ANA log
+page is larger than MDTS and because of that ANA is disabled.
+The driver then tries to access unallocated buffer when connecting
+to a nvme target. The signature is as follows:
 
-[ 0.942706] nvme nvme1: ignoring ctrl due to duplicate subnqn (nqn.2018-05.com.example:nvme:nvm-subsystem-OUI00E04C).
-[ 0.943017] nvme nvme1: Removing after probe failure status: -22
+[  300.433586] nvme nvme0: ANA log page size (8208) larger than MDTS (8192).
+[  300.435387] nvme nvme0: disabling ANA support.
+[  300.437835] nvme nvme0: creating 4 I/O queues.
+[  300.459132] nvme nvme0: new ctrl: NQN "nqn.0.0.0", addr 10.91.0.1:8009
+[  300.464609] BUG: unable to handle kernel NULL pointer dereference at 0000000000000008
+[  300.466342] #PF error: [normal kernel read fault]
+[  300.467385] PGD 0 P4D 0
+[  300.467987] Oops: 0000 [#1] SMP PTI
+[  300.468787] CPU: 3 PID: 50 Comm: kworker/u8:1 Not tainted 5.0.20kalray+ #4
+[  300.470264] Hardware name: Red Hat KVM, BIOS 0.5.1 01/01/2011
+[  300.471532] Workqueue: nvme-wq nvme_scan_work [nvme_core]
+[  300.472724] RIP: 0010:nvme_parse_ana_log+0x21/0x140 [nvme_core]
+[  300.474038] Code: 45 01 d2 d8 48 98 c3 66 90 0f 1f 44 00 00 41 57 41 56 41 55 41 54 55 53 48 89 fb 48 83 ec 08 48 8b af 20 0a 00 00 48 89 34 24 <66> 83 7d 08 00 0f 84 c6 00 00 00 44 8b 7d 14 49 89 d5 8b 55 10 48
+[  300.477374] RSP: 0018:ffffa50e80fd7cb8 EFLAGS: 00010296
+[  300.478334] RAX: 0000000000000001 RBX: ffff9130f1872258 RCX: 0000000000000000
+[  300.479784] RDX: ffffffffc06c4c30 RSI: ffff9130edad4280 RDI: ffff9130f1872258
+[  300.481488] RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000044
+[  300.483203] R10: 0000000000000220 R11: 0000000000000040 R12: ffff9130f18722c0
+[  300.484928] R13: ffff9130f18722d0 R14: ffff9130edad4280 R15: ffff9130f18722c0
+[  300.486626] FS:  0000000000000000(0000) GS:ffff9130f7b80000(0000) knlGS:0000000000000000
+[  300.488538] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  300.489907] CR2: 0000000000000008 CR3: 00000002365e6000 CR4: 00000000000006e0
+[  300.491612] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[  300.493303] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[  300.494991] Call Trace:
+[  300.495645]  nvme_mpath_add_disk+0x5c/0xb0 [nvme_core]
+[  300.496880]  nvme_validate_ns+0x2ef/0x550 [nvme_core]
+[  300.498105]  ? nvme_identify_ctrl.isra.45+0x6a/0xb0 [nvme_core]
+[  300.499539]  nvme_scan_work+0x2b4/0x370 [nvme_core]
+[  300.500717]  ? __switch_to_asm+0x35/0x70
+[  300.501663]  process_one_work+0x171/0x380
+[  300.502340]  worker_thread+0x49/0x3f0
+[  300.503079]  kthread+0xf8/0x130
+[  300.503795]  ? max_active_store+0x80/0x80
+[  300.504690]  ? kthread_bind+0x10/0x10
+[  300.505502]  ret_from_fork+0x35/0x40
+[  300.506280] Modules linked in: nvme_tcp nvme_rdma rdma_cm iw_cm ib_cm ib_core nvme_fabrics nvme_core xt_physdev ip6table_raw ip6table_mangle ip6table_filter ip6_tables xt_comment iptable_nat nf_nat_ipv4 nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 xt_CHECKSUM iptable_mangle iptable_filter veth ebtable_filter ebtable_nat ebtables iptable_raw vxlan ip6_udp_tunnel udp_tunnel sunrpc joydev pcspkr virtio_balloon br_netfilter bridge stp llc ip_tables xfs libcrc32c ata_generic pata_acpi virtio_net virtio_console net_failover virtio_blk failover ata_piix serio_raw libata virtio_pci virtio_ring virtio
+[  300.514984] CR2: 0000000000000008
+[  300.515569] ---[ end trace faa2eefad7e7f218 ]---
+[  300.516354] RIP: 0010:nvme_parse_ana_log+0x21/0x140 [nvme_core]
+[  300.517330] Code: 45 01 d2 d8 48 98 c3 66 90 0f 1f 44 00 00 41 57 41 56 41 55 41 54 55 53 48 89 fb 48 83 ec 08 48 8b af 20 0a 00 00 48 89 34 24 <66> 83 7d 08 00 0f 84 c6 00 00 00 44 8b 7d 14 49 89 d5 8b 55 10 48
+[  300.520353] RSP: 0018:ffffa50e80fd7cb8 EFLAGS: 00010296
+[  300.521229] RAX: 0000000000000001 RBX: ffff9130f1872258 RCX: 0000000000000000
+[  300.522399] RDX: ffffffffc06c4c30 RSI: ffff9130edad4280 RDI: ffff9130f1872258
+[  300.523560] RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000044
+[  300.524734] R10: 0000000000000220 R11: 0000000000000040 R12: ffff9130f18722c0
+[  300.525915] R13: ffff9130f18722d0 R14: ffff9130edad4280 R15: ffff9130f18722c0
+[  300.527084] FS:  0000000000000000(0000) GS:ffff9130f7b80000(0000) knlGS:0000000000000000
+[  300.528396] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  300.529440] CR2: 0000000000000008 CR3: 00000002365e6000 CR4: 00000000000006e0
+[  300.530739] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[  300.531989] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[  300.533264] Kernel panic - not syncing: Fatal exception
+[  300.534338] Kernel Offset: 0x17c00000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
+[  300.536227] ---[ end Kernel panic - not syncing: Fatal exception ]---
 
-02:00.0 Non-Volatile memory controller [0108]: Realtek Semiconductor Co., Ltd. Device [10ec:5762] (rev 01)
-71:00.0 Non-Volatile memory controller [0108]: Realtek Semiconductor Co., Ltd. Device [10ec:5762] (rev 01)
+Condition check refactoring from Christoph Hellwig.
 
-There are no firmware updates available from the vendor, unfortunately.
-Applying the NVME_QUIRK_IGNORE_DEV_SUBNQN quirk for these SSDs resolves
-the issue, and they all work after this patch:
-
-/dev/nvme0n1     2J1120050420         ADATA SX6000LNP [...]
-/dev/nvme1n1     2J1120050540         ADATA SX6000LNP [...]
-
-Signed-off-by: Misha Nasledov <misha@nasledov.com>
+Signed-off-by: Marta Rybczynska <marta.rybczynska@kalray.eu>
+Tested-by: Jean-Baptiste Riaux <jbriaux@kalray.eu>
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/nvme/host/pci.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/nvme/host/multipath.c | 8 ++------
+ drivers/nvme/host/nvme.h      | 6 +++++-
+ 2 files changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-index 7fbcd72c438f6..f9959eaaa185e 100644
---- a/drivers/nvme/host/pci.c
-+++ b/drivers/nvme/host/pci.c
-@@ -2959,6 +2959,8 @@ static const struct pci_device_id nvme_id_table[] = {
- 		.driver_data = NVME_QUIRK_LIGHTNVM, },
- 	{ PCI_DEVICE(0x1d1d, 0x2601),	/* CNEX Granby */
- 		.driver_data = NVME_QUIRK_LIGHTNVM, },
-+	{ PCI_DEVICE(0x10ec, 0x5762),   /* ADATA SX6000LNP */
-+		.driver_data = NVME_QUIRK_IGNORE_DEV_SUBNQN, },
- 	{ PCI_DEVICE_CLASS(PCI_CLASS_STORAGE_EXPRESS, 0xffffff) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_APPLE, 0x2001) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_APPLE, 0x2003) },
+diff --git a/drivers/nvme/host/multipath.c b/drivers/nvme/host/multipath.c
+index 499acf07d61a7..e942b3e840687 100644
+--- a/drivers/nvme/host/multipath.c
++++ b/drivers/nvme/host/multipath.c
+@@ -12,11 +12,6 @@ module_param(multipath, bool, 0444);
+ MODULE_PARM_DESC(multipath,
+ 	"turn on native support for multiple controllers per subsystem");
+ 
+-inline bool nvme_ctrl_use_ana(struct nvme_ctrl *ctrl)
+-{
+-	return multipath && ctrl->subsys && (ctrl->subsys->cmic & (1 << 3));
+-}
+-
+ /*
+  * If multipathing is enabled we need to always use the subsystem instance
+  * number for numbering our devices to avoid conflicts between subsystems that
+@@ -614,7 +609,8 @@ int nvme_mpath_init(struct nvme_ctrl *ctrl, struct nvme_id_ctrl *id)
+ {
+ 	int error;
+ 
+-	if (!nvme_ctrl_use_ana(ctrl))
++	/* check if multipath is enabled and we have the capability */
++	if (!multipath || !ctrl->subsys || !(ctrl->subsys->cmic & (1 << 3)))
+ 		return 0;
+ 
+ 	ctrl->anacap = id->anacap;
+diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
+index 55553d293a98a..7391cd0a7739e 100644
+--- a/drivers/nvme/host/nvme.h
++++ b/drivers/nvme/host/nvme.h
+@@ -472,7 +472,11 @@ extern const struct attribute_group *nvme_ns_id_attr_groups[];
+ extern const struct block_device_operations nvme_ns_head_ops;
+ 
+ #ifdef CONFIG_NVME_MULTIPATH
+-bool nvme_ctrl_use_ana(struct nvme_ctrl *ctrl);
++static inline bool nvme_ctrl_use_ana(struct nvme_ctrl *ctrl)
++{
++	return ctrl->ana_log_buf != NULL;
++}
++
+ void nvme_set_disk_name(char *disk_name, struct nvme_ns *ns,
+ 			struct nvme_ctrl *ctrl, int *flags);
+ void nvme_failover_req(struct request *req);
 -- 
 2.20.1
 
