@@ -2,37 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F0E07F221
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:45:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D77147F213
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:45:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405425AbfHBJpW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 05:45:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48988 "EHLO mail.kernel.org"
+        id S2405314AbfHBJox (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 05:44:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48372 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403831AbfHBJpR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 05:45:17 -0400
+        id S2405299AbfHBJou (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 05:44:50 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D144221726;
-        Fri,  2 Aug 2019 09:45:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 037232086A;
+        Fri,  2 Aug 2019 09:44:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564739116;
-        bh=viojl1Wh9riP/rQAtRHoMpxVkEnfhYOshj1b+skoEmE=;
+        s=default; t=1564739090;
+        bh=6EyA4BUqKDgjHynT9MTmCSzzqmkbv0iQoAtfbugv96Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0vauINYqPeGCvejJReZtDNi9M1pKNgDIQP0ur5XhR3vCCSsNgO5D7tiWsnMspc+BK
-         6686xCyOTLYGq7s/Hh6C7XOuZl2EKd8zI+YeUhBcNJEOD+sVtWlEmM7LvTTP6Sd1S3
-         MXL4c5M97qsZTgq2pFlfqFfJUfMy1zQBwG+nLxAM=
+        b=R8szWsRjRN88EYj4e9me7AFSZZ6gb4QT+/vNztEZ2xX5uAFbCnoF97tnO99BX5PU3
+         Cw5osIhVa8EpNNYUHPCaJCjrRMNiY9IzcUJcXehea0laV3yro9c4zuOQ3FtQZilYlz
+         qk0G0SlddWLarr9dIi9Islpvlhf6gr6qf4+OVOpE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Denis Efremov <efremov@ispras.ru>,
-        Willy Tarreau <w@1wt.eu>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 105/223] floppy: fix out-of-bounds read in next_valid_format
-Date:   Fri,  2 Aug 2019 11:35:30 +0200
-Message-Id: <20190802092246.036345213@linuxfoundation.org>
+        stable@vger.kernel.org, Steve Longerbeam <slongerbeam@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+Subject: [PATCH 4.9 109/223] gpu: ipu-v3: ipu-ic: Fix saturation bit offset in TPMEM
+Date:   Fri,  2 Aug 2019 11:35:34 +0200
+Message-Id: <20190802092246.318964135@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190802092238.692035242@linuxfoundation.org>
 References: <20190802092238.692035242@linuxfoundation.org>
@@ -45,75 +43,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 5635f897ed83fd539df78e98ba69ee91592f9bb8 ]
+From: Steve Longerbeam <slongerbeam@gmail.com>
 
-This fixes a global out-of-bounds read access in the next_valid_format
-function of the floppy driver.
+commit 3d1f62c686acdedf5ed9642b763f3808d6a47d1e upstream.
 
-The values from autodetect field of the struct floppy_drive_params are
-used as indices for the floppy_type array in the next_valid_format
-function 'floppy_type[DP->autodetect[probed_format]].sect'.
+The saturation bit was being set at bit 9 in the second 32-bit word
+of the TPMEM CSC. This isn't correct, the saturation bit is bit 42,
+which is bit 10 of the second word.
 
-To trigger the bug, one could use a value out of range and set the drive
-parameters with the FDSETDRVPRM ioctl.  A floppy disk is not required to
-be inserted.
+Fixes: 1aa8ea0d2bd5d ("gpu: ipu-v3: Add Image Converter unit")
 
-CAP_SYS_ADMIN is required to call FDSETDRVPRM.
-
-The patch adds the check for values of the autodetect field to be in the
-'0 <= x < ARRAY_SIZE(floppy_type)' range of the floppy_type array indices.
-
-The bug was found by syzkaller.
-
-Signed-off-by: Denis Efremov <efremov@ispras.ru>
-Tested-by: Willy Tarreau <w@1wt.eu>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
+Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: stable@vger.kernel.org
+Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/block/floppy.c |   18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
 
---- a/drivers/block/floppy.c
-+++ b/drivers/block/floppy.c
-@@ -3384,6 +3384,20 @@ static int fd_getgeo(struct block_device
- 	return 0;
- }
+---
+ drivers/gpu/ipu-v3/ipu-ic.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/drivers/gpu/ipu-v3/ipu-ic.c
++++ b/drivers/gpu/ipu-v3/ipu-ic.c
+@@ -256,7 +256,7 @@ static int init_csc(struct ipu_ic *ic,
+ 	writel(param, base++);
  
-+static bool valid_floppy_drive_params(const short autodetect[8])
-+{
-+	size_t floppy_type_size = ARRAY_SIZE(floppy_type);
-+	size_t i = 0;
-+
-+	for (i = 0; i < 8; ++i) {
-+		if (autodetect[i] < 0 ||
-+		    autodetect[i] >= floppy_type_size)
-+			return false;
-+	}
-+
-+	return true;
-+}
-+
- static int fd_locked_ioctl(struct block_device *bdev, fmode_t mode, unsigned int cmd,
- 		    unsigned long param)
- {
-@@ -3510,6 +3524,8 @@ static int fd_locked_ioctl(struct block_
- 		SUPBOUND(size, strlen((const char *)outparam) + 1);
- 		break;
- 	case FDSETDRVPRM:
-+		if (!valid_floppy_drive_params(inparam.dp.autodetect))
-+			return -EINVAL;
- 		*UDP = inparam.dp;
- 		break;
- 	case FDGETDRVPRM:
-@@ -3707,6 +3723,8 @@ static int compat_setdrvprm(int drive,
- 		return -EPERM;
- 	if (copy_from_user(&v, arg, sizeof(struct compat_floppy_drive_params)))
- 		return -EFAULT;
-+	if (!valid_floppy_drive_params(v.autodetect))
-+		return -EINVAL;
- 	mutex_lock(&floppy_mutex);
- 	UDP->cmos = v.cmos;
- 	UDP->max_dtr = v.max_dtr;
+ 	param = ((a[0] & 0x1fe0) >> 5) | (params->scale << 8) |
+-		(params->sat << 9);
++		(params->sat << 10);
+ 	writel(param, base++);
+ 
+ 	param = ((a[1] & 0x1f) << 27) | ((c[0][1] & 0x1ff) << 18) |
 
 
