@@ -2,127 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A2CA87EADA
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 05:58:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 31D6E7EAEA
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 06:04:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730984AbfHBD6p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 23:58:45 -0400
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:27264 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730934AbfHBD6p (ORCPT
+        id S1729814AbfHBEEW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 00:04:22 -0400
+Received: from mail1.windriver.com ([147.11.146.13]:54431 "EHLO
+        mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729150AbfHBEEW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 23:58:45 -0400
-Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x723sbGK027673;
-        Thu, 1 Aug 2019 20:58:31 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : subject :
- date : message-id : references : in-reply-to : content-type : content-id :
- content-transfer-encoding : mime-version; s=facebook;
- bh=lgYn/GHQ2ve4YnEndOVI+6nM2w3g64fGwXQiboiOO8c=;
- b=LF8vF2zip75ZTdSpKoYTYLXhzg5fMcPWNbVOt8Fn76SDwigXkl0XfbHVaaZsax9/I6Fq
- fcFH7gPKqkCxifymf0JW1+qURPPOaz6UmNvFE752Wi2B4q8/CWeK8eVKJDv5EpmVE9SI
- hK2GuyciwJmIdkcQSE1XGnHEXx7MmM6uKV0= 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com with ESMTP id 2u430yt9sa-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Thu, 01 Aug 2019 20:58:30 -0700
-Received: from ash-exhub101.TheFacebook.com (2620:10d:c0a8:82::e) by
- ash-exhub204.TheFacebook.com (2620:10d:c0a8:83::4) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Thu, 1 Aug 2019 20:58:29 -0700
-Received: from NAM03-BY2-obe.outbound.protection.outlook.com (100.104.31.183)
- by o365-in.thefacebook.com (100.104.35.173) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5
- via Frontend Transport; Thu, 1 Aug 2019 20:58:29 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=dq+RN4q+lUSSfvk+ZCKIaSRCXvE00VBeZ2M6xf4h3GTa828qfrQzfDIHFD+fqH4jzaIfhTPJwGN6c5KcWywZp8aPS8C4+MwdSsv3d96U1KslpBb0AdzorZbAQPzfIqkhqWPPKh1wgoq84G1uYe4Kzw6aE2u2zpIE0MyFDl6BLqExEPZaKwCLcCyAH6WXIKpcaEGITYDVozTCNvRhvvvoiruOxkgV8Q8V9zmWupIcNZSnXCN4ocZVOKre69dSgduXU2UB0PJXOtXsUVnQENvPubLJVEDCZXlSgFpJspBpmqrzsOc9WIgcNrA41dXHnEW2sk/Dt3nj3N8l0xAoqlfnOA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lgYn/GHQ2ve4YnEndOVI+6nM2w3g64fGwXQiboiOO8c=;
- b=Mq4hkcJComWFJfL6B+S+NdYIgIHlg6q1BgzDxtKBkLtQVASbFs8SIZBy0xKdPt+SeAB3Bkx08z3sZ0wANXyQxslZbUTvw17N9+/yuJdkN9yBEe2hHat+YjTlmAbk92ABIk/Sj5nSiBp2loxYqPBHVHY6upkDvP7SsL/3GNSw+LCuhB43g2mrtIJU6E/UmJFGFNBIfJgIzUc9JyRgF4sytE/f2zf/4DgJy9g24Q4siF8yc0hxUFqBgOwqPD8JhoqrwiXZOJlyAr/xK7xFkoPOMbmBH0TU0HiG+dj0v+8Ynx2HbNUcn1/K0OvvDFHNk0276KBYx3htD46prmYSxmYgsw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
- smtp.mailfrom=fb.com;dmarc=pass action=none header.from=fb.com;dkim=pass
- header.d=fb.com;arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector2-fb-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lgYn/GHQ2ve4YnEndOVI+6nM2w3g64fGwXQiboiOO8c=;
- b=NgaeKIaDY87Og+i4Nj8edflE3/pj6V+vPemHDPMZy/3kCMc22CpNoPlHe3wIe11jekjVzF4OIZlZ9HAPza7u9ToRX7lOyBHDeupEEYRoGpdqvXFieHlSthnAX6YLz23UbWPais1o9LINntbjGdosyaP7yEZbeKoO9k96ClZl5b4=
-Received: from MWHPR15MB1216.namprd15.prod.outlook.com (10.175.2.17) by
- MWHPR15MB1197.namprd15.prod.outlook.com (10.175.7.16) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2136.16; Fri, 2 Aug 2019 03:58:28 +0000
-Received: from MWHPR15MB1216.namprd15.prod.outlook.com
- ([fe80::c66:6d60:f6e5:773c]) by MWHPR15MB1216.namprd15.prod.outlook.com
- ([fe80::c66:6d60:f6e5:773c%8]) with mapi id 15.20.2136.010; Fri, 2 Aug 2019
- 03:58:28 +0000
-From:   Tao Ren <taoren@fb.com>
-To:     Andrew Jeffery <andrew@aj.id.au>, Rob Herring <robh+dt@kernel.org>,
-        "Mark Rutland" <mark.rutland@arm.com>,
-        Joel Stanley <joel@jms.id.au>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "openbmc@lists.ozlabs.org" <openbmc@lists.ozlabs.org>
-Subject: Re: [PATCH] ARM: dts: aspeed: Add Facebook Wedge40 BMC
-Thread-Topic: [PATCH] ARM: dts: aspeed: Add Facebook Wedge40 BMC
-Thread-Index: AQHVSMzi2YI0OqbiWE+Xo4WCtkS/eabnKj4A//+b4gA=
-Date:   Fri, 2 Aug 2019 03:58:27 +0000
-Message-ID: <A7C478FF-F7C9-4877-AC7E-69ADDE2EA144@fb.com>
-References: <20190802005427.467841-1-taoren@fb.com>
- <266be87c-3bf2-4dcb-9d90-8272fbc3b057@www.fastmail.com>
-In-Reply-To: <266be87c-3bf2-4dcb-9d90-8272fbc3b057@www.fastmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Microsoft-MacOutlook/10.1a.0.190609
-x-originating-ip: [2620:10d:c090:180::1:d664]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 7f5e8c93-a76c-421a-2f15-08d716fdacf4
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:MWHPR15MB1197;
-x-ms-traffictypediagnostic: MWHPR15MB1197:
-x-microsoft-antispam-prvs: <MWHPR15MB11978B9C90E42A3131A5D23EB2D90@MWHPR15MB1197.namprd15.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:6790;
-x-forefront-prvs: 011787B9DD
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(136003)(376002)(346002)(39850400004)(366004)(47680400002)(189003)(199004)(186003)(8936002)(7736002)(86362001)(8676002)(25786009)(6512007)(71190400001)(71200400001)(110136005)(316002)(305945005)(6486002)(76176011)(6436002)(53546011)(99286004)(102836004)(6246003)(2201001)(256004)(6116002)(58126008)(2906002)(229853002)(76116006)(66946007)(66446008)(53936002)(64756008)(66556008)(66476007)(14454004)(6506007)(33656002)(5660300002)(446003)(11346002)(36756003)(476003)(81156014)(2616005)(68736007)(46003)(2501003)(486006)(81166006)(478600001)(4744005);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR15MB1197;H:MWHPR15MB1216.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: CbId0CHQWeoVFP8y482rvZHQV8SPARAMRg2QVpAw8Z+zWHe67KMz2YGSkg5HMLR7lQlXRMsEas0OW29tJ4z0z5x7gQHtJjGx4k/pJ9eO75wlpVwaJlz3YXMKJxWZvlQDGQGbWpfZdxwZjEtGgJ53pjxLVt5qhtfvwYrnLRbsv0nUbwMDuZfZ9uxzU+stzZQFLKbU1mfu4jS6o1oxVbmN1BiALF2khDSOJQ6esFWBBA/nd3h5Xg2+CDwfV8xLOEtM5EfI88qWYzrRIk13WpGWpLKYwg9He4mU4BLV2q7YZVTyIoBVO4JtdyYWI8hxAbhMToil7wHH/Zkn6HjbuggBCZenbQRPcoARLaguncHV8OKi7X0O1BxM+Yo2o5NB/tzfKNYkRETuJxR58xA3mtTHnZ/neiy6y9DpeJAkxCNhAuQ=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <F5A34078B1920E4FB419DE9990F41BB3@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Fri, 2 Aug 2019 00:04:22 -0400
+Received: from ALA-HCA.corp.ad.wrs.com ([147.11.189.40])
+        by mail1.windriver.com (8.15.2/8.15.1) with ESMTPS id x722h7or006793
+        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
+        Thu, 1 Aug 2019 19:43:07 -0700 (PDT)
+Received: from [128.224.162.237] (128.224.162.237) by ALA-HCA.corp.ad.wrs.com
+ (147.11.189.50) with Microsoft SMTP Server id 14.3.468.0; Thu, 1 Aug 2019
+ 19:43:06 -0700
+Subject: Re: [PATCH v2] tracing: Function stack size and its name mismatch in
+ arm64
+To:     Will Deacon <will@kernel.org>
+CC:     <rostedt@goodmis.org>, <mingo@redhat.com>,
+        <catalin.marinas@arm.com>, <will.deacon@arm.com>,
+        <joel@joelfernandes.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20190801083340.57075-1-jiping.ma2@windriver.com>
+ <20190801094156.emo36ekvrm74nndl@willie-the-truck>
+From:   Jiping Ma <Jiping.Ma2@windriver.com>
+Message-ID: <47e90170-e971-c2f5-b6c9-d3c6a694a4a7@windriver.com>
+Date:   Fri, 2 Aug 2019 10:43:03 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7f5e8c93-a76c-421a-2f15-08d716fdacf4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Aug 2019 03:58:27.8403
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: taoren@fb.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR15MB1197
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-02_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=882 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1908020040
-X-FB-Internal: deliver
+In-Reply-To: <20190801094156.emo36ekvrm74nndl@willie-the-truck>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gOC8xLzE5LCA3OjU2IFBNLCAiQW5kcmV3IEplZmZlcnkiIDxhbmRyZXdAYWouaWQuYXU+IHdy
-b3RlOg0KDQo+ICAgIE9uIEZyaSwgMiBBdWcgMjAxOSwgYXQgMTA6MjQsIFRhbyBSZW4gd3JvdGU6
-IA0KPj4gQWRkIGluaXRpYWwgdmVyc2lvbiBvZiBkZXZpY2UgdHJlZSBmb3IgRmFjZWJvb2sgV2Vk
-Z2U0MCBBU1QyNDAwIEJNQw0KPj4gcGxhdGZvcm0uDQo+PiANCj4+IFNpZ25lZC1vZmYtYnk6IFRh
-byBSZW4gPHRhb3JlbkBmYi5jb20+DQo+ICANCj4gIFJldmlld2VkLWJ5OiBBbmRyZXcgSmVmZmVy
-eSA8YW5kcmV3QGFqLmlkLmF1Pg0KDQpUaGFuayB5b3UgQW5kcmV3IGZvciB0aGUgcXVpY2sgcmV2
-aWV3IChvbiBib3RoIHBhdGNoZXMpIQ0KDQpDaGVlcnMsDQoNClRhbw0KIA0KDQo=
+
+
+On 2019年08月01日 17:41, Will Deacon wrote:
+> On Thu, Aug 01, 2019 at 04:33:40PM +0800, Jiping Ma wrote:
+>> In arm64, the PC of the frame is matched to the last frame function,
+>> rather than the function of his frame. For the following example, the
+>> stack size of occupy_stack_init function should be 3376, rather than 176.
+>>
+>> Wrong info:
+>> Depth Size Location (16 entries)
+>> ----- ---- --------
+>> 0) 5400 16 __update_load_avg_se.isra.2+0x28/0x220
+>> 1) 5384 96 put_prev_entity+0x250/0x338
+>> 2) 5288 80 pick_next_task_fair+0x4c4/0x508
+>> 3) 5208 72 __schedule+0x100/0x600
+>> 4) 5136 184 preempt_schedule_common+0x28/0x48
+>> 5) 4952 32 preempt_schedule+0x28/0x30
+>> 6) 4920 16 vprintk_emit+0x170/0x1f8
+>> 7) 4904 128 vprintk_default+0x48/0x58
+>> 8) 4776 64 vprintk_func+0xf8/0x1c8
+>> 9) 4712 112 printk+0x70/0x90
+>> 10) 4600 176 occupy_stack_init+0x64/0xc0 [kernel_stack]
+>> 11) 4424 3376 do_one_initcall+0x68/0x248
+>> 12) 1048 144 do_init_module+0x60/0x1f0
+>> 13) 904 48 load_module+0x1d50/0x2340
+>> 14) 856 352 sys_finit_module+0xd0/0xe8
+>> 15) 504 504 el0_svc_naked+0x30/0x34
+>>
+>> Correct info:
+>> Depth Size Location (18 entries)
+>> ----- ---- --------
+>> 0) 5464 48 cgroup_rstat_updated+0x20/0x100
+>> 1) 5416 32 cgroup_base_stat_cputime_account_end.isra.0+0x30/0x60
+>> 2) 5384 32 __cgroup_account_cputime+0x3c/0x48
+>> 3) 5352 64 update_curr+0xc4/0x1d0
+>> 4) 5288 72 pick_next_task_fair+0x444/0x508
+>> 5) 5216 184 __schedule+0x100/0x600
+>> 6) 5032 32 preempt_schedule_common+0x28/0x48
+>> 7) 5000 16 preempt_schedule+0x28/0x30
+>> 8) 4984 128 vprintk_emit+0x170/0x1f8
+>> 9) 4856 64 vprintk_default+0x48/0x58
+>> 10) 4792 112 vprintk_func+0xf8/0x1c8
+>> 11) 4680 176 printk+0x70/0x90
+>> 12) 4504 80 func_test+0x7c/0xb8 [kernel_stack]
+>> 13) 4424 3376 occupy_stack_init+0x7c/0xc0 [kernel_stack]
+>> 14) 1048 144 do_one_initcall+0x68/0x248
+>> 15) 904 48 do_init_module+0x60/0x1f0
+>> 16) 856 352 load_module+0x1d50/0x2340
+>> 17) 504 504 sys_finit_module+0xd0/0xe8
+>>
+>> Signed-off-by: Jiping Ma <jiping.ma2@windriver.com>
+>> ---
+>>   kernel/trace/trace_stack.c | 28 ++++++++++++++++++++++++++--
+>>   1 file changed, 26 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/kernel/trace/trace_stack.c b/kernel/trace/trace_stack.c
+>> index 5d16f73898db..ed80b95abf06 100644
+>> --- a/kernel/trace/trace_stack.c
+>> +++ b/kernel/trace/trace_stack.c
+>> @@ -40,16 +40,28 @@ static void print_max_stack(void)
+>>   
+>>   	pr_emerg("        Depth    Size   Location    (%d entries)\n"
+>>   			   "        -----    ----   --------\n",
+>> +#ifdef CONFIG_ARM64
+>> +			   stack_trace_nr_entries - 1);
+>> +#else
+>>   			   stack_trace_nr_entries);
+> Sorry, but I have no idea what the problem is here. All I know is that the
+> solution looks highly dubious and I find it very hard to believe that the
+> arm64 backtracing code is uniquely special as to deserve being called out
+> like this. I suspect there's a bug lurking somewhere, but you really need
+> to do a better job of explaining the issue rather than simply providing a
+> couple of backtraces with no context.
+>
+> *Why* does the frame appear to be off-by-one?
+Because the PC is LR in ARM64 stack actually.  Following is ARM64 stack 
+layout. Please refer to the figure 3 in 
+http://infocenter.arm.com/help/topic/com.arm.doc.ihi0055b/IHI0055B_aapcs64.pdf
+             LR
+             FP
+             ......
+             LR
+             FP
+Jiping
+>
+> Will
+
