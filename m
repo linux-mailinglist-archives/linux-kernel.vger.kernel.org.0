@@ -2,70 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6423F7F6D0
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 14:27:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A0917F6DF
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 14:32:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392607AbfHBM1m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 08:27:42 -0400
-Received: from sonic308-56.consmr.mail.ne1.yahoo.com ([66.163.187.31]:39745
-        "EHLO sonic308-56.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388599AbfHBM1m (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 08:27:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1564748860; bh=tPdyM4f7Tq8kspt5syr9wxbiHLUxanV8lkCr2Pkkkas=; h=Date:From:Reply-To:Subject:From:Subject; b=VTUoly0p7ES2Ixq22NviOrwQKzo3BGRr5wX2Ns9PEzCCQlygrMPx+jEX2rcxwC8OtdwKjGxyYWyhv9I236BzILUc3TDf/vrf2VE54WhndHZGo3TN5K2pEnf0TdmpFqL088ZODULGeD7+KkEn+y48KltZDkFHZyMRSlELZrH+C+sjWJjaboWYmnt6qrkjc3xkUW3xkNKw1LM9o4gVElA15jbYGVLLf25Ia1Ghx/tYae9LpsoylIvBndyLFM9KvUfA82gQH1qzIyM9tj+eyR2AdP2Djit4vM9RiiSqqitLMMraB/jKqoiifXbIfGFCvBadU9Hu0L2TlundsqjVRuVjkA==
-X-YMail-OSG: LGYhDFEVM1lewJ8rJFRf9kbwMfMjJWBipXC0of3ugQg6Z3AVn3whVS13ZQ5wKit
- yibqZdXVDy2Ee4BaXhns9djvWxERXLJ5lcI3dvZrqINNp9YSvE_GeHd1fmLkvKIeMuOruxcS9gug
- W27RHGx8QQW5vjDy1k2T3I.ocQu.6MPgI_NE7Zt84IJiwt6GD8rwj1kTwGne.RfKeRd.r0FckVco
- mrKUEmngpeknYk0BQUUfM30C_rcoZ78cOG.t.SuDzeMWDK3Tz745EFfVG1LWXYbPLI2f5e.0HUvF
- WAHs5e8w12KIBNi_0i9KCuBaDFV2WzG.n_SeCx1HosdraHQXQPot0EqGV8fxm10btLxoGtw0q4VY
- wUM711kSXgNBw2m8.HuE7rKzzQR.lTZukI21wQ.4NIvnM7c.d8GnSZ4IWsA5qoZSNPtBVJjIy9gP
- 1jlqLT2D7HizO9s.XUT9aVOORE4hNXVSUCTzbxJJjS40ep0OqcmPLAnPxIk8LVpVeFhWdOHiQwDQ
- CRcfN0r352C0LePHmbjzKXe0w8zyUGH.nt9o8NUN.mKo74qc0NI3jh4CLCdkbougGABSQZjwdc31
- qAdoGa3Ifr6L_pzbdx5VT8MLFvM_Z2ergqlIG7PpMKsZj1OGXyB_1Mq0AJVWK4Uc.gVXmlAh9e8w
- _yY5oCMZbMq3ASQovb0CZsKsfNDVNOgEFnk7cuMbzUV0Hp6eUaga32.xk7CDB5Hf7y0QQns5zI0a
- qbtFIija40SoiEgWNAiHStS9pN_Wv8fjUJaktBGYQiDE_.rf3NBR5TdIOUlOiH0nWxxHDt4AF.RW
- qv0tj3SH0uliaEJDkScF6gFhrQqBlHe98enJzkHqTwNydIKLB50kPfBgJDfnk3.OKHhEYa76Eb91
- qLWeyfd1aXw9ZBPOYpBQgBY1xdQpGJYNZMXDgJ6c7IF.Ep_9WztQsXN5wiikvGXnTki5CtK9oHQa
- wmtQXtmSSuuA3ThRNUWEHPOuKNK5KDntYmTkyaeAMZPaAF94PemTwo4Zrw7yOb2eGcmK8oUUjX74
- mTH5.PzImziI3AWE2Ht7ECXJPvosMxRjUFHrwN9tNmL9aQvvaSo9oRmDhQu2ZphAG19szTergsSv
- a2.7AnOLkgvvBasZKn4CkxkqeKWDCcziOKD8qGbSQXlF8kCJ8Rf9wBuu8esMFvQGqaPREm26sTXu
- EzbGPdaFo74jVxxNiH9Rly1C3mNH_kcNjcvPgcp9flq1D_zrZJ8vznZY-
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.ne1.yahoo.com with HTTP; Fri, 2 Aug 2019 12:27:40 +0000
-Date:   Fri, 2 Aug 2019 12:27:39 +0000 (UTC)
-From:   Aisha Gaddafi <gaddafiaisha25552@aol.com>
-Reply-To: gaisha983@gmail.com
-Message-ID: <220361650.143829.1564748859288@mail.yahoo.com>
-Subject: Dear Friend,
+        id S2392611AbfHBMc2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 08:32:28 -0400
+Received: from mail5.windriver.com ([192.103.53.11]:52936 "EHLO mail5.wrs.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729267AbfHBMc2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 08:32:28 -0400
+Received: from ALA-HCA.corp.ad.wrs.com (ala-hca.corp.ad.wrs.com [147.11.189.40])
+        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id x72CTOZN001782
+        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
+        Fri, 2 Aug 2019 05:29:35 -0700
+Received: from [128.224.155.90] (128.224.155.90) by ALA-HCA.corp.ad.wrs.com
+ (147.11.189.50) with Microsoft SMTP Server (TLS) id 14.3.468.0; Fri, 2 Aug
+ 2019 05:29:13 -0700
+Subject: Re: memory leak in tipc_group_create_member
+To:     Hillf Danton <hdanton@sina.com>,
+        syzbot <syzbot+f95d90c454864b3b5bc9@syzkaller.appspotmail.com>
+CC:     <davem@davemloft.net>, <jon.maloy@ericsson.com>,
+        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <syzkaller-bugs@googlegroups.com>,
+        <tipc-discussion@lists.sourceforge.net>
+References: <000000000000879057058f193fb5@google.com>
+From:   Ying Xue <ying.xue@windriver.com>
+Message-ID: <bbc84761-29aa-b8cc-e50d-dbd6a026f469@windriver.com>
+Date:   Fri, 2 Aug 2019 20:18:08 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <000000000000879057058f193fb5@google.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-To:     unlisted-recipients:; (no To-header on input)
+X-Originating-IP: [128.224.155.90]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Friend,
+On 8/2/19 3:44 PM, Hillf Danton wrote:
+> 
+> On Thu, 01 Aug 2019 19:38:06 -0700
+>> Hello,
+>>
+>> syzbot found the following crash on:
+>>
+>> HEAD commit:    a9815a4f Merge branch 'x86-urgent-for-linus' of git://git...
+>> git tree:       upstream
+>> console output: https://syzkaller.appspot.com/x/log.txt?x=12a6dbf0600000
+>> kernel config:  https://syzkaller.appspot.com/x/.config?x=37c48fb52e3789e6
+>> dashboard link: https://syzkaller.appspot.com/bug?extid=f95d90c454864b3b5bc9
+>> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13be3ecc600000
+>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11c992b4600000
+>>
+>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+>> Reported-by: syzbot+f95d90c454864b3b5bc9@syzkaller.appspotmail.com
+>>
+>> executing program
+>> BUG: memory leak
+>> unreferenced object 0xffff888122bca200 (size 128):
+>>    comm "syz-executor232", pid 7065, jiffies 4294943817 (age 8.880s)
+>>    hex dump (first 32 bytes):
+>>      00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>>      00 00 00 00 00 00 00 00 18 a2 bc 22 81 88 ff ff  ..........."....
+>>    backtrace:
+>>      [<000000005bada299>] kmemleak_alloc_recursive  include/linux/kmemleak.h:43 [inline]
+>>      [<000000005bada299>] slab_post_alloc_hook mm/slab.h:522 [inline]
+>>      [<000000005bada299>] slab_alloc mm/slab.c:3319 [inline]
+>>      [<000000005bada299>] kmem_cache_alloc_trace+0x145/0x2c0 mm/slab.c:3548
+>>      [<00000000e7bcdc9f>] kmalloc include/linux/slab.h:552 [inline]
+>>      [<00000000e7bcdc9f>] kzalloc include/linux/slab.h:748 [inline]
+>>      [<00000000e7bcdc9f>] tipc_group_create_member+0x3c/0x190  net/tipc/group.c:306
+>>      [<0000000005f56f40>] tipc_group_add_member+0x34/0x40  net/tipc/group.c:327
+>>      [<0000000044406683>] tipc_nametbl_build_group+0x9b/0xf0  net/tipc/name_table.c:600
+>>      [<000000009f71e803>] tipc_sk_join net/tipc/socket.c:2901 [inline]
+>>      [<000000009f71e803>] tipc_setsockopt+0x170/0x490 net/tipc/socket.c:3006
+>>      [<000000007f61cbc2>] __sys_setsockopt+0x10f/0x220 net/socket.c:2084
+>>      [<00000000cc630372>] __do_sys_setsockopt net/socket.c:2100 [inline]
+>>      [<00000000cc630372>] __se_sys_setsockopt net/socket.c:2097 [inline]
+>>      [<00000000cc630372>] __x64_sys_setsockopt+0x26/0x30 net/socket.c:2097
+>>      [<00000000ec30be33>] do_syscall_64+0x76/0x1a0  arch/x86/entry/common.c:296
+>>      [<00000000271be3e6>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>>
 
-I came across your e-mail contact prior a private search while in need of 
-your assistance. My name is Aisha  Gaddafi a single Mother and a Widow with 
-three Children. I am the only biological Daughter of late Libyan President 
-(Late Colonel Muammar Gaddafi).
+Acked-by: Ying Xue <ying.xue@windriver.com>
 
-I have investment funds worth Twenty Seven Million Five Hundred Thousand 
-United State Dollar ($27.500.000.00 ) and i need a trusted investment 
-Manager/Partner because of my current refugee status, however, I am 
-interested in you for investment project assistance in your country, may be 
-from there, we can build business relationship in the nearest future.
-
-I am willing to negotiate investment/business profit sharing ratio with you 
-base on the future investment earning profits.
-
-If you are willing to handle this project on my behalf kindly reply urgent 
-to enable me provide you more information about the investment funds.
-
-Your Urgent Reply Will Be Appreciated.
-
-Best Regards
-Mrs Aisha Gaddafi
-(gaisha983@gmail.com)
+>  
+> --- a/net/tipc/group.c
+> +++ b/net/tipc/group.c
+> @@ -273,7 +273,7 @@ static struct tipc_member *tipc_group_fi
+>  	return NULL;
+>  }
+>  
+> -static void tipc_group_add_to_tree(struct tipc_group *grp,
+> +static struct tipc_member *tipc_group_add_to_tree(struct tipc_group *grp,
+>  				   struct tipc_member *m)
+>  {
+>  	u64 nkey, key = (u64)m->node << 32 | m->port;
+> @@ -282,7 +282,6 @@ static void tipc_group_add_to_tree(struc
+>  
+>  	n = &grp->members.rb_node;
+>  	while (*n) {
+> -		tmp = container_of(*n, struct tipc_member, tree_node);
+>  		parent = *n;
+>  		tmp = container_of(parent, struct tipc_member, tree_node);
+>  		nkey = (u64)tmp->node << 32 | tmp->port;
+> @@ -291,17 +290,18 @@ static void tipc_group_add_to_tree(struc
+>  		else if (key > nkey)
+>  			n = &(*n)->rb_right;
+>  		else
+> -			return;
+> +			return tmp;
+>  	}
+>  	rb_link_node(&m->tree_node, parent, n);
+>  	rb_insert_color(&m->tree_node, &grp->members);
+> +	return m;
+>  }
+>  
+>  static struct tipc_member *tipc_group_create_member(struct tipc_group *grp,
+>  						    u32 node, u32 port,
+>  						    u32 instance, int state)
+>  {
+> -	struct tipc_member *m;
+> +	struct tipc_member *m, *n;
+>  
+>  	m = kzalloc(sizeof(*m), GFP_ATOMIC);
+>  	if (!m)
+> @@ -315,10 +315,14 @@ static struct tipc_member *tipc_group_cr
+>  	m->instance = instance;
+>  	m->bc_acked = grp->bc_snd_nxt - 1;
+>  	grp->member_cnt++;
+> -	tipc_group_add_to_tree(grp, m);
+> -	tipc_nlist_add(&grp->dests, m->node);
+> -	m->state = state;
+> -	return m;
+> +	n = tipc_group_add_to_tree(grp, m);
+> +	if (n == m) {
+> +		tipc_nlist_add(&grp->dests, m->node);
+> +		m->state = state;
+> +	} else {
+> +		kfree(m);
+> +	}
+> +	return n;
+>  }
+>  
+>  void tipc_group_add_member(struct tipc_group *grp, u32 node,
+> --
+> 
+> 
