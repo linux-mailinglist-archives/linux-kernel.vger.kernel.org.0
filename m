@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D199F7F425
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 12:05:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A55697F440
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 12:05:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391830AbfHBJmP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 05:42:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44342 "EHLO mail.kernel.org"
+        id S2407173AbfHBKDR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 06:03:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43542 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391403AbfHBJmL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 05:42:11 -0400
+        id S2404702AbfHBJln (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 05:41:43 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 630F220679;
-        Fri,  2 Aug 2019 09:42:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3F8A920880;
+        Fri,  2 Aug 2019 09:41:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564738930;
-        bh=HmTvGqBfYt/sJX2ofqMKF6l5UKXzQApS2gjp3aXKD3E=;
+        s=default; t=1564738902;
+        bh=ARtThotik/fI83JySmVBSkBR1V/J+IsDANpmGcqlpV8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FnD+V1//rwC7KB24vKjkKTQ7j0OS3HHEYa7cVI69x6NTrNk1RgJmB7Jd4seq8VfSd
-         74tPGx6I+1tv/x5W7DldT2LyU/JdwreNDpdh6A519UJvgjuhU6t/ZS2zuM5JymEjMs
-         HMVTB2yI3t1WAujC9m2Rr1NhLXDhbQ5W0utLZdac=
+        b=Tx+cj7infDOy9omR17yW29FU4T4pw9cgDSekWHBdq2OSvm6HnUE08yP+cMlgqOnDA
+         FpdTdVqNgbee0B2Q1tVHtOMQc9vq6cBkK49K7APv/qQeZuE5aQQU2SSQ3/bR0GPRkb
+         8EcfmuYOM57gCyXKAEMB/8JOK3S20LKImQ8ZY4LA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Anirudh Gupta <anirudh.gupta@sophos.com>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 036/223] regmap: fix bulk writes on paged registers
-Date:   Fri,  2 Aug 2019 11:34:21 +0200
-Message-Id: <20190802092241.320506038@linuxfoundation.org>
+Subject: [PATCH 4.9 040/223] xfrm: fix sa selector validation
+Date:   Fri,  2 Aug 2019 11:34:25 +0200
+Message-Id: <20190802092241.585589553@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190802092238.692035242@linuxfoundation.org>
 References: <20190802092238.692035242@linuxfoundation.org>
@@ -45,40 +46,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit db057679de3e9e6a03c1bcd5aee09b0d25fd9f5b ]
+[ Upstream commit b8d6d0079757cbd1b69724cfd1c08e2171c68cee ]
 
-On buses like SlimBus and SoundWire which does not support
-gather_writes yet in regmap, A bulk write on paged register
-would be silently ignored after programming page.
-This is because local variable 'ret' value in regmap_raw_write_impl()
-gets reset to 0 once page register is written successfully and the
-code below checks for 'ret' value to be -ENOTSUPP before linearising
-the write buffer to send to bus->write().
+After commit b38ff4075a80, the following command does not work anymore:
+$ ip xfrm state add src 10.125.0.2 dst 10.125.0.1 proto esp spi 34 reqid 1 \
+  mode tunnel enc 'cbc(aes)' 0xb0abdba8b782ad9d364ec81e3a7d82a1 auth-trunc \
+  'hmac(sha1)' 0xe26609ebd00acb6a4d51fca13e49ea78a72c73e6 96 flag align4
 
-Fix this by resetting the 'ret' value to -ENOTSUPP in cases where
-gather_writes() is not supported or single register write is
-not possible.
+In fact, the selector is not mandatory, allow the user to provide an empty
+selector.
 
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: b38ff4075a80 ("xfrm: Fix xfrm sel prefix length validation")
+CC: Anirudh Gupta <anirudh.gupta@sophos.com>
+Signed-off-by: Nicolas Dichtel <nicolas.dichtel@6wind.com>
+Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/base/regmap/regmap.c | 2 ++
- 1 file changed, 2 insertions(+)
+ net/xfrm/xfrm_user.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/base/regmap/regmap.c b/drivers/base/regmap/regmap.c
-index 69c84fddfe8a..1799a1dfa46e 100644
---- a/drivers/base/regmap/regmap.c
-+++ b/drivers/base/regmap/regmap.c
-@@ -1506,6 +1506,8 @@ int _regmap_raw_write(struct regmap *map, unsigned int reg,
- 					     map->format.reg_bytes +
- 					     map->format.pad_bytes,
- 					     val, val_len);
-+	else
-+		ret = -ENOTSUPP;
+diff --git a/net/xfrm/xfrm_user.c b/net/xfrm/xfrm_user.c
+index df4b7fc721f6..f3e9d500fa5a 100644
+--- a/net/xfrm/xfrm_user.c
++++ b/net/xfrm/xfrm_user.c
+@@ -166,6 +166,9 @@ static int verify_newsa_info(struct xfrm_usersa_info *p,
+ 	}
  
- 	/* If that didn't work fall back on linearising by hand. */
- 	if (ret == -ENOTSUPP) {
+ 	switch (p->sel.family) {
++	case AF_UNSPEC:
++		break;
++
+ 	case AF_INET:
+ 		if (p->sel.prefixlen_d > 32 || p->sel.prefixlen_s > 32)
+ 			goto out;
 -- 
 2.20.1
 
