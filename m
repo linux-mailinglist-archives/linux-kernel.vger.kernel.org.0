@@ -2,39 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6200D7F43A
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 12:05:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D199F7F425
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 12:05:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407162AbfHBKDB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 06:03:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44132 "EHLO mail.kernel.org"
+        id S2391830AbfHBJmP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 05:42:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44342 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404962AbfHBJmE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 05:42:04 -0400
+        id S2391403AbfHBJmL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 05:42:11 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AC982206A2;
-        Fri,  2 Aug 2019 09:42:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 630F220679;
+        Fri,  2 Aug 2019 09:42:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564738923;
-        bh=lxNMlTMHwHHJCaiKmluvJoXn5yOUXrsdGvEWwF/KrZs=;
+        s=default; t=1564738930;
+        bh=HmTvGqBfYt/sJX2ofqMKF6l5UKXzQApS2gjp3aXKD3E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hMhyB6uqwwjW/dgnN/e/BSbt5nvMzrQ6oJiYZn6JafBSBJ9DmswGCbzb1NeFU4E7T
-         HAxA8KvBm3o2UCBLNob2f7LxQzLNnGhifBEqaB4s5vDa8UNE2Hdm0ACrSQqUFfgqSE
-         8/t/xP14iNVgSAohd1mrNg/6nEdrXC713BUlo6VU=
+        b=FnD+V1//rwC7KB24vKjkKTQ7j0OS3HHEYa7cVI69x6NTrNk1RgJmB7Jd4seq8VfSd
+         74tPGx6I+1tv/x5W7DldT2LyU/JdwreNDpdh6A519UJvgjuhU6t/ZS2zuM5JymEjMs
+         HMVTB2yI3t1WAujC9m2Rr1NhLXDhbQ5W0utLZdac=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Richter <tmricht@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        stable@vger.kernel.org,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 033/223] perf test 6: Fix missing kvm module load for s390
-Date:   Fri,  2 Aug 2019 11:34:18 +0200
-Message-Id: <20190802092241.125480296@linuxfoundation.org>
+Subject: [PATCH 4.9 036/223] regmap: fix bulk writes on paged registers
+Date:   Fri,  2 Aug 2019 11:34:21 +0200
+Message-Id: <20190802092241.320506038@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190802092238.692035242@linuxfoundation.org>
 References: <20190802092238.692035242@linuxfoundation.org>
@@ -47,85 +45,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 53fe307dfd309e425b171f6272d64296a54f4dff ]
+[ Upstream commit db057679de3e9e6a03c1bcd5aee09b0d25fd9f5b ]
 
-Command
+On buses like SlimBus and SoundWire which does not support
+gather_writes yet in regmap, A bulk write on paged register
+would be silently ignored after programming page.
+This is because local variable 'ret' value in regmap_raw_write_impl()
+gets reset to 0 once page register is written successfully and the
+code below checks for 'ret' value to be -ENOTSUPP before linearising
+the write buffer to send to bus->write().
 
-   # perf test -Fv 6
+Fix this by resetting the 'ret' value to -ENOTSUPP in cases where
+gather_writes() is not supported or single register write is
+not possible.
 
-fails with error
-
-   running test 100 'kvm-s390:kvm_s390_create_vm' failed to parse
-    event 'kvm-s390:kvm_s390_create_vm', err -1, str 'unknown tracepoint'
-    event syntax error: 'kvm-s390:kvm_s390_create_vm'
-                         \___ unknown tracepoint
-
-when the kvm module is not loaded or not built in.
-
-Fix this by adding a valid function which tests if the module
-is loaded. Loaded modules (or builtin KVM support) have a
-directory named
-  /sys/kernel/debug/tracing/events/kvm-s390
-for this tracepoint.
-
-Check for existence of this directory.
-
-Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
-Reviewed-by: Christian Borntraeger <borntraeger@de.ibm.com>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
-Link: http://lkml.kernel.org/r/20190604053504.43073-1-tmricht@linux.ibm.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/tests/parse-events.c | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
+ drivers/base/regmap/regmap.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/tools/perf/tests/parse-events.c b/tools/perf/tests/parse-events.c
-index aa9276bfe3e9..9134a0c3e99d 100644
---- a/tools/perf/tests/parse-events.c
-+++ b/tools/perf/tests/parse-events.c
-@@ -12,6 +12,32 @@
- #define PERF_TP_SAMPLE_TYPE (PERF_SAMPLE_RAW | PERF_SAMPLE_TIME | \
- 			     PERF_SAMPLE_CPU | PERF_SAMPLE_PERIOD)
+diff --git a/drivers/base/regmap/regmap.c b/drivers/base/regmap/regmap.c
+index 69c84fddfe8a..1799a1dfa46e 100644
+--- a/drivers/base/regmap/regmap.c
++++ b/drivers/base/regmap/regmap.c
+@@ -1506,6 +1506,8 @@ int _regmap_raw_write(struct regmap *map, unsigned int reg,
+ 					     map->format.reg_bytes +
+ 					     map->format.pad_bytes,
+ 					     val, val_len);
++	else
++		ret = -ENOTSUPP;
  
-+#if defined(__s390x__)
-+/* Return true if kvm module is available and loaded. Test this
-+ * and retun success when trace point kvm_s390_create_vm
-+ * exists. Otherwise this test always fails.
-+ */
-+static bool kvm_s390_create_vm_valid(void)
-+{
-+	char *eventfile;
-+	bool rc = false;
-+
-+	eventfile = get_events_file("kvm-s390");
-+
-+	if (eventfile) {
-+		DIR *mydir = opendir(eventfile);
-+
-+		if (mydir) {
-+			rc = true;
-+			closedir(mydir);
-+		}
-+		put_events_file(eventfile);
-+	}
-+
-+	return rc;
-+}
-+#endif
-+
- static int test__checkevent_tracepoint(struct perf_evlist *evlist)
- {
- 	struct perf_evsel *evsel = perf_evlist__first(evlist);
-@@ -1593,6 +1619,7 @@ static struct evlist_test test__events[] = {
- 	{
- 		.name  = "kvm-s390:kvm_s390_create_vm",
- 		.check = test__checkevent_tracepoint,
-+		.valid = kvm_s390_create_vm_valid,
- 		.id    = 100,
- 	},
- #endif
+ 	/* If that didn't work fall back on linearising by hand. */
+ 	if (ret == -ENOTSUPP) {
 -- 
 2.20.1
 
