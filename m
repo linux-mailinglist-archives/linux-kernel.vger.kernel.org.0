@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FC3E7F1D1
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:42:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5634F7F1DA
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:42:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391858AbfHBJmY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 05:42:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44636 "EHLO mail.kernel.org"
+        id S2404976AbfHBJmq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 05:42:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45248 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391528AbfHBJmV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 05:42:21 -0400
+        id S2391926AbfHBJmo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 05:42:44 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8E6AD2086A;
-        Fri,  2 Aug 2019 09:42:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AB674217D6;
+        Fri,  2 Aug 2019 09:42:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564738941;
-        bh=QbOzhcvweciA9gWRmPyRlKa3MlVNXQiRlmUhiobmx3I=;
+        s=default; t=1564738964;
+        bh=lepQzYX7YjyN1jZN4ayvq/iA11ZCONR178Epf1Sy2hI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Hb9cihbuUa89Xa50BPb2D1LvVjv4h8MpPWundt1odfdN4JHelPEwo1JvfgzE0fq0a
-         lsHQdTTwvweNzxBvZBgcAFrJRJ7f88p5LrWFXnpex+PcZWT0K1FmOKtGaD13JyFIFr
-         SknnVciFqM0lmc02vk9nsl3SXws7Z0yjWgGlEeM0=
+        b=rlm6Mx7526jSR4/uA5aYTrbXXudPunmtBIZN6vXaNxqtJuIPDsd1ftmb34lUf0c5G
+         9z/QuQjAC18v9BEJPUOv0YAXs34CFrmst5mSnTawTb2EclHEmXkCo8s762MpDc+sDO
+         xAR1nC3onkPtrjaQ/yL+G+//zZAoTLquS4uGdnGA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Weikang shi <swkhack@gmail.com>,
-        Miroslav Lichvar <mlichvar@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        John Stultz <john.stultz@linaro.org>,
-        Prarit Bhargava <prarit@redhat.com>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        stable@vger.kernel.org, Sudeep Holla <sudeep.holla@arm.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Graeme Gregory <graeme.gregory@linaro.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Hanjun Guo <guohanjun@huawei.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 047/223] ntp: Limit TAI-UTC offset
-Date:   Fri,  2 Aug 2019 11:34:32 +0200
-Message-Id: <20190802092241.975022524@linuxfoundation.org>
+Subject: [PATCH 4.9 049/223] acpi/arm64: ignore 5.1 FADTs that are reported as 5.0
+Date:   Fri,  2 Aug 2019 11:34:34 +0200
+Message-Id: <20190802092242.086830110@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190802092238.692035242@linuxfoundation.org>
 References: <20190802092238.692035242@linuxfoundation.org>
@@ -49,53 +49,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit d897a4ab11dc8a9fda50d2eccc081a96a6385998 ]
+[ Upstream commit 2af22f3ec3ca452f1e79b967f634708ff01ced8a ]
 
-Don't allow the TAI-UTC offset of the system clock to be set by adjtimex()
-to a value larger than 100000 seconds.
+Some Qualcomm Snapdragon based laptops built to run Microsoft Windows
+are clearly ACPI 5.1 based, given that that is the first ACPI revision
+that supports ARM, and introduced the FADT 'arm_boot_flags' field,
+which has a non-zero field on those systems.
 
-This prevents an overflow in the conversion to int, prevents the CLOCK_TAI
-clock from getting too far ahead of the CLOCK_REALTIME clock, and it is
-still large enough to allow leap seconds to be inserted at the maximum rate
-currently supported by the kernel (once per day) for the next ~270 years,
-however unlikely it is that someone can survive a catastrophic event which
-slowed down the rotation of the Earth so much.
+So in these cases, infer from the ARM boot flags that the FADT must be
+5.1 or later, and treat it as 5.1.
 
-Reported-by: Weikang shi <swkhack@gmail.com>
-Signed-off-by: Miroslav Lichvar <mlichvar@redhat.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: John Stultz <john.stultz@linaro.org>
-Cc: Prarit Bhargava <prarit@redhat.com>
-Cc: Richard Cochran <richardcochran@gmail.com>
-Cc: Stephen Boyd <sboyd@kernel.org>
-Link: https://lkml.kernel.org/r/20190618154713.20929-1-mlichvar@redhat.com
+Acked-by: Sudeep Holla <sudeep.holla@arm.com>
+Tested-by: Lee Jones <lee.jones@linaro.org>
+Reviewed-by: Graeme Gregory <graeme.gregory@linaro.org>
+Acked-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Acked-by: Hanjun Guo <guohanjun@huawei.com>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/time/ntp.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ arch/arm64/kernel/acpi.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/kernel/time/ntp.c b/kernel/time/ntp.c
-index 0a16419006f3..4bdb59604526 100644
---- a/kernel/time/ntp.c
-+++ b/kernel/time/ntp.c
-@@ -42,6 +42,7 @@ static u64			tick_length_base;
- #define MAX_TICKADJ		500LL		/* usecs */
- #define MAX_TICKADJ_SCALED \
- 	(((MAX_TICKADJ * NSEC_PER_USEC) << NTP_SCALE_SHIFT) / NTP_INTERVAL_FREQ)
-+#define MAX_TAI_OFFSET		100000
- 
- /*
-  * phase-lock loop variables
-@@ -639,7 +640,8 @@ static inline void process_adjtimex_modes(struct timex *txc,
- 		time_constant = max(time_constant, 0l);
+diff --git a/arch/arm64/kernel/acpi.c b/arch/arm64/kernel/acpi.c
+index 252a6d9c1da5..1a95d135def2 100644
+--- a/arch/arm64/kernel/acpi.c
++++ b/arch/arm64/kernel/acpi.c
+@@ -157,10 +157,14 @@ static int __init acpi_fadt_sanity_check(void)
+ 	 */
+ 	if (table->revision < 5 ||
+ 	   (table->revision == 5 && fadt->minor_revision < 1)) {
+-		pr_err("Unsupported FADT revision %d.%d, should be 5.1+\n",
++		pr_err(FW_BUG "Unsupported FADT revision %d.%d, should be 5.1+\n",
+ 		       table->revision, fadt->minor_revision);
+-		ret = -EINVAL;
+-		goto out;
++
++		if (!fadt->arm_boot_flags) {
++			ret = -EINVAL;
++			goto out;
++		}
++		pr_err("FADT has ARM boot flags set, assuming 5.1\n");
  	}
  
--	if (txc->modes & ADJ_TAI && txc->constant >= 0)
-+	if (txc->modes & ADJ_TAI &&
-+			txc->constant >= 0 && txc->constant <= MAX_TAI_OFFSET)
- 		*time_tai = txc->constant;
- 
- 	if (txc->modes & ADJ_OFFSET)
+ 	if (!(fadt->flags & ACPI_FADT_HW_REDUCED)) {
 -- 
 2.20.1
 
