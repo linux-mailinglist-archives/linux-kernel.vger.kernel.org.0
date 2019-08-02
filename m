@@ -2,79 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33FCF7FB7E
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 15:48:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 85F487FB83
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 15:48:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394735AbfHBNsD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 09:48:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48528 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730199AbfHBNsD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 09:48:03 -0400
-Received: from localhost (173-25-83-245.client.mchsi.com [173.25.83.245])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4DB5A21726;
-        Fri,  2 Aug 2019 13:48:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564753682;
-        bh=4iyFp3nxxcgWx4F9Y7pzUkBtSH9YEP6qmfh9a+6HKW4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=G7AjOhrbuHUU3S7qTwJIDv+cj/TPwsihgyZx5wZiqBX7l4XR9h/N3nJqB+Fwct/sK
-         MbSg/HwLELKa+aWkKep5eWxtP9zRjTuYL3CF2WOSizGzhvtsE2BF6WCyA+VFNWT7NL
-         024wiyagXsobyy76ci31cOpFiGXqo3MjvWaxuoig=
-Date:   Fri, 2 Aug 2019 08:48:01 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH] PCI: Mark expected switch fall-through
-Message-ID: <20190802134801.GK151852@google.com>
-References: <20190802012248.GA22622@embeddedor>
+        id S2436548AbfHBNsg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 09:48:36 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:3739 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728326AbfHBNsg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 09:48:36 -0400
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 66BA2FA07B734FF7568F;
+        Fri,  2 Aug 2019 21:48:34 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS404-HUB.china.huawei.com
+ (10.3.19.204) with Microsoft SMTP Server id 14.3.439.0; Fri, 2 Aug 2019
+ 21:48:26 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <zbr@ioremap.net>, <kstewart@linuxfoundation.org>,
+        <tglx@linutronix.de>, <gregkh@linuxfoundation.org>,
+        <rfontana@redhat.com>
+CC:     <linux-kernel@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] w1: mxc_w1: use devm_platform_ioremap_resource() to simplify code
+Date:   Fri, 2 Aug 2019 21:48:19 +0800
+Message-ID: <20190802134819.9088-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190802012248.GA22622@embeddedor>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 01, 2019 at 08:22:48PM -0500, Gustavo A. R. Silva wrote:
-> Mark switch cases where we are expecting to fall through.
-> 
-> This patch fixes the following warning (Building: allmodconfig i386):
-> 
-> drivers/pci/hotplug/ibmphp_res.c: In function ‘update_bridge_ranges’:
-> drivers/pci/hotplug/ibmphp_res.c:1943:16: warning: this statement may fall through [-Wimplicit-fallthrough=]
->        function = 0x8;
->        ~~~~~~~~~^~~~~
-> drivers/pci/hotplug/ibmphp_res.c:1944:6: note: here
->       case PCI_HEADER_TYPE_MULTIBRIDGE:
->       ^~~~
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Use devm_platform_ioremap_resource() to simplify the code a bit.
+This is detected by coccinelle.
 
-Applied with Kees' reviewed-by to pci/misc for v5.4, thanks, Gustavo!
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/w1/masters/mxc_w1.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-> ---
->  drivers/pci/hotplug/ibmphp_res.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/pci/hotplug/ibmphp_res.c b/drivers/pci/hotplug/ibmphp_res.c
-> index 5e8caf7a4452..1e1ba66cfd1e 100644
-> --- a/drivers/pci/hotplug/ibmphp_res.c
-> +++ b/drivers/pci/hotplug/ibmphp_res.c
-> @@ -1941,6 +1941,7 @@ static int __init update_bridge_ranges(struct bus_node **bus)
->  						break;
->  					case PCI_HEADER_TYPE_BRIDGE:
->  						function = 0x8;
-> +						/* Fall through */
->  					case PCI_HEADER_TYPE_MULTIBRIDGE:
->  						/* We assume here that only 1 bus behind the bridge
->  						   TO DO: add functionality for several:
-> -- 
-> 2.22.0
-> 
+diff --git a/drivers/w1/masters/mxc_w1.c b/drivers/w1/masters/mxc_w1.c
+index c3b2095..1ca880e 100644
+--- a/drivers/w1/masters/mxc_w1.c
++++ b/drivers/w1/masters/mxc_w1.c
+@@ -92,7 +92,6 @@ static int mxc_w1_probe(struct platform_device *pdev)
+ {
+ 	struct mxc_w1_device *mdev;
+ 	unsigned long clkrate;
+-	struct resource *res;
+ 	unsigned int clkdiv;
+ 	int err;
+ 
+@@ -120,8 +119,7 @@ static int mxc_w1_probe(struct platform_device *pdev)
+ 		dev_warn(&pdev->dev,
+ 			 "Incorrect time base frequency %lu Hz\n", clkrate);
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	mdev->regs = devm_ioremap_resource(&pdev->dev, res);
++	mdev->regs = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(mdev->regs)) {
+ 		err = PTR_ERR(mdev->regs);
+ 		goto out_disable_clk;
+-- 
+2.7.4
+
+
