@@ -2,101 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 636E37F0D0
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:32:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5700B7F108
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:35:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391299AbfHBJcz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 05:32:55 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:47558 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390208AbfHBJcx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 05:32:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=VqZFWxYVaUyhcuckDh3toTCzxHPZyFXRQKZUhqggFXI=; b=GoQZna+i55ANnp670+KAk3j4T
-        9iUvNxWhNh4GE989znF+XY5olW08Wy3IhDB8tCUij90HkRkVUxM1qrKT+GTC7xCp+T31aLPdF+1DQ
-        f+tmPXYCr5/Xs0iyB+Iz0zEJ8TAY3KNgMaYHgXt7bbN3XF+m9CtaKhgKX0/6zeMUQijY9HZ6h1Uv5
-        yNVg/1bp0jvtQAQI3dC0MSvCYD+w/koQ6FkNtC3o6SHCbuUYOFIyyipCW1yKD3/J0vfvV9ZDlnuO7
-        RJhmpTQi1w/wacf2gqAp+z9qt+wg/ib3ODK8iJEZ0fG7NruEkvEDTY/iHi78e5v7RsGZOrzqRjBdd
-        PM4KuTLow==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1htTva-00016v-F3; Fri, 02 Aug 2019 09:32:46 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 1C4492029F4CB; Fri,  2 Aug 2019 11:32:44 +0200 (CEST)
-Date:   Fri, 2 Aug 2019 11:32:44 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Qais Yousef <qais.yousef@arm.com>
-Cc:     mingo@kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 0/5] Fix FIFO-99 abuse
-Message-ID: <20190802093244.GF2332@hirez.programming.kicks-ass.net>
-References: <20190801111348.530242235@infradead.org>
- <20190801131707.5rpyydznnhz474la@e107158-lin.cambridge.arm.com>
+        id S2391634AbfHBJfR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 05:35:17 -0400
+Received: from mx2.suse.de ([195.135.220.15]:34402 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2391611AbfHBJfK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 05:35:10 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 12CB4AC7F;
+        Fri,  2 Aug 2019 09:35:09 +0000 (UTC)
+Date:   Fri, 2 Aug 2019 11:35:07 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Yang Shi <shy828301@gmail.com>
+Cc:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        cgroups@vger.kernel.org, Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Johannes Weiner <hannes@cmpxchg.org>
+Subject: Re: [PATCH RFC] mm/memcontrol: reclaim severe usage over high limit
+ in get_user_pages loop
+Message-ID: <20190802093507.GF6461@dhcp22.suse.cz>
+References: <156431697805.3170.6377599347542228221.stgit@buzz>
+ <20190729091738.GF9330@dhcp22.suse.cz>
+ <3d6fc779-2081-ba4b-22cf-be701d617bb4@yandex-team.ru>
+ <20190729103307.GG9330@dhcp22.suse.cz>
+ <CAHbLzkrdj-O2uXwM8ujm90OcgjyR4nAiEbFtRGe7SOoY_fs=BA@mail.gmail.com>
+ <20190729184850.GH9330@dhcp22.suse.cz>
+ <CAHbLzkp9xFV2sE0TdKfWNRVcAwaYNKwDugRiBBoEKx6A_Hr3Jw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190801131707.5rpyydznnhz474la@e107158-lin.cambridge.arm.com>
+In-Reply-To: <CAHbLzkp9xFV2sE0TdKfWNRVcAwaYNKwDugRiBBoEKx6A_Hr3Jw@mail.gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 01, 2019 at 02:17:07PM +0100, Qais Yousef wrote:
-> On 08/01/19 13:13, Peter Zijlstra wrote:
-> > I noticed a bunch of kthreads defaulted to FIFO-99, fix them.
-> > 
-> > The generic default is FIFO-50, the admin will have to configure the system
-> > anyway.
-> > 
-> > For some the purpose is to be above OTHER and then FIFO-1 really is sufficient.
+On Thu 01-08-19 14:00:51, Yang Shi wrote:
+> On Mon, Jul 29, 2019 at 11:48 AM Michal Hocko <mhocko@kernel.org> wrote:
+> >
+> > On Mon 29-07-19 10:28:43, Yang Shi wrote:
+> > [...]
+> > > I don't worry too much about scale since the scale issue is not unique
+> > > to background reclaim, direct reclaim may run into the same problem.
+> >
+> > Just to clarify. By scaling problem I mean 1:1 kswapd thread to memcg.
+> > You can have thousands of memcgs and I do not think we really do want
+> > to create one kswapd for each. Once we have a kswapd thread pool then we
+> > get into a tricky land where a determinism/fairness would be non trivial
+> > to achieve. Direct reclaim, on the other hand is bound by the workload
+> > itself.
 > 
-> I was looking in this area too and was thinking of a way to consolidate the
-> creation of RT/DL tasks in the kernel and the way we set the priority.
+> Yes, I agree thread pool would introduce more latency than dedicated
+> kswapd thread. But, it looks not that bad in our test. When memory
+> allocation is fast, even though dedicated kswapd thread can't catch
+> up. So, such background reclaim is best effort, not guaranteed.
 > 
-> Does it make sense to create a new header for RT priorities for kthreads
-> created in the kernel so that we can easily track and rationale about the
-> relative priorities of in-kernel RT tasks?
-> 
-> When working in the FW world such a header helped a lot in understanding what
-> runs at each priority level and how to reason about what priority level makes
-> sense for a new item. It could be a nice single point of reference; even for
-> admins.
+> I don't quite get what you mean about fairness. Do you mean they may
+> spend excessive cpu time then cause other processes starvation? I
+> think this could be mitigated by properly organizing and setting
+> groups. But, I agree this is tricky.
 
-Well, SCHED_FIFO is a broken scheduler model; that is, it is
-fundamentally incapable of resource management, which is the one thing
-an OS really should be doing.
+No, I meant that the cost of reclaiming a unit of charges (e.g.
+SWAP_CLUSTER_MAX) is not constant and depends on the state of the memory
+on LRUs. Therefore any thread pool mechanism would lead to unfair
+reclaim and non-deterministic behavior.
 
-This is of course the reason it is limited to privileged users only.
-
-Worse still; it is fundamentally impossible to compose static priority
-workloads. You cannot take two correctly working static prio workloads
-and smash them together and still expect them to work.
-
-For this reason 'all' FIFO tasks the kernel creates are basically at:
-
-  MAX_RT_PRIO / 2
-
-The administrator _MUST_ configure the system, the kernel simply doesn't
-know enough information to make a sensible choice.
-
-Now, Geert suggested so make make a define for that, but how about we do
-something like:
-
-/*
- * ${the above explanation}
- */
-int kernel_setscheduler_fifo(struct task_struct *p)
-{
-	struct sched_param sp = { .sched_priority = MAX_RT_PRIO / 2 };
-	return sched_setscheduler_nocheck(p, SCHED_FIFO, &sp);
-}
-
-And then take away sched_setscheduler*().
+I can imagine a middle ground where the background reclaim would have to
+be an opt-in feature and a dedicated kernel thread would be assigned to
+the particular memcg (hierarchy).
+-- 
+Michal Hocko
+SUSE Labs
