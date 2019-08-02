@@ -2,76 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 236C57F8FB
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 15:24:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D20E37F8FF
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 15:24:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394044AbfHBNXs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 09:23:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34194 "EHLO mail.kernel.org"
+        id S2394068AbfHBNXx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 09:23:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34232 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2394003AbfHBNXk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 09:23:40 -0400
+        id S2394008AbfHBNXl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 09:23:41 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2BEF22186A;
-        Fri,  2 Aug 2019 13:23:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 30C982182B;
+        Fri,  2 Aug 2019 13:23:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564752219;
-        bh=bYD0X8shc65cQyWWgd2mplLd3b7elQqoBA9LQVHfwyE=;
+        s=default; t=1564752220;
+        bh=jJgX98AJZJnhA4aX9anIjVIo5lzw1C5cycWdM9aFzeg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=a/9c0V5KcwbHHu/Eg0IBlgNCmJ6IqAc/h5wCcBPXKf/Sg4RH3NE1kBQai179tmg12
-         ta7RjoIfPjnLXQ/w94L0yL6l8xaisUv9mmonjCzbTwwib4bfYfZrS1HbdZDOxEXo/I
-         EojxzhAyg3tc4wZZ7im/pZL9m+2WB1WOOyKsUiSw=
+        b=JD9Zvb17e8p+3ykSjQGDH4a3JD+xTG4lEbN+hcLQqRbY8jPdBzftA8AGP/HL2rT/8
+         Wa687qTNLblWxp2o4btpE7oAiN3XQstOuDC5LppcHPUh3UPXvOzVUq4Hh0Ney9N/Ph
+         jfbwNQlUfgqavTWAcJKF31580N9+/7i3Ri3tkQec=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Navid Emamdoost <navid.emamdoost@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 15/42] allocate_flower_entry: should check for null deref
-Date:   Fri,  2 Aug 2019 09:22:35 -0400
-Message-Id: <20190802132302.13537-15-sashal@kernel.org>
+Cc:     =?UTF-8?q?Bj=C3=B6rn=20Gerhart?= <gerhart@posteo.de>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Sasha Levin <sashal@kernel.org>, linux-hwmon@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 16/42] hwmon: (nct6775) Fix register address and added missed tolerance for nct6106
+Date:   Fri,  2 Aug 2019 09:22:36 -0400
+Message-Id: <20190802132302.13537-16-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190802132302.13537-1-sashal@kernel.org>
 References: <20190802132302.13537-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Navid Emamdoost <navid.emamdoost@gmail.com>
+From: Björn Gerhart <gerhart@posteo.de>
 
-[ Upstream commit bb1320834b8a80c6ac2697ab418d066981ea08ba ]
+[ Upstream commit f3d43e2e45fd9d44ba52d20debd12cd4ee9c89bf ]
 
-allocate_flower_entry does not check for allocation success, but tries
-to deref the result. I only moved the spin_lock under null check, because
- the caller is checking allocation's status at line 652.
+Fixed address of third NCT6106_REG_WEIGHT_DUTY_STEP, and
+added missed NCT6106_REG_TOLERANCE_H.
 
-Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 6c009501ff200 ("hwmon: (nct6775) Add support for NCT6102D/6106D")
+Signed-off-by: Bjoern Gerhart <gerhart@posteo.de>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/chelsio/cxgb4/cxgb4_tc_flower.c | 3 ++-
+ drivers/hwmon/nct6775.c | 3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_tc_flower.c b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_tc_flower.c
-index f2aba5b160c2d..d45c435a599d6 100644
---- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_tc_flower.c
-+++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_tc_flower.c
-@@ -67,7 +67,8 @@ static struct ch_tc_pedit_fields pedits[] = {
- static struct ch_tc_flower_entry *allocate_flower_entry(void)
- {
- 	struct ch_tc_flower_entry *new = kzalloc(sizeof(*new), GFP_KERNEL);
--	spin_lock_init(&new->lock);
-+	if (new)
-+		spin_lock_init(&new->lock);
- 	return new;
- }
+diff --git a/drivers/hwmon/nct6775.c b/drivers/hwmon/nct6775.c
+index 78603b78cf410..eba692cddbdee 100644
+--- a/drivers/hwmon/nct6775.c
++++ b/drivers/hwmon/nct6775.c
+@@ -818,7 +818,7 @@ static const u16 NCT6106_REG_TARGET[] = { 0x111, 0x121, 0x131 };
+ static const u16 NCT6106_REG_WEIGHT_TEMP_SEL[] = { 0x168, 0x178, 0x188 };
+ static const u16 NCT6106_REG_WEIGHT_TEMP_STEP[] = { 0x169, 0x179, 0x189 };
+ static const u16 NCT6106_REG_WEIGHT_TEMP_STEP_TOL[] = { 0x16a, 0x17a, 0x18a };
+-static const u16 NCT6106_REG_WEIGHT_DUTY_STEP[] = { 0x16b, 0x17b, 0x17c };
++static const u16 NCT6106_REG_WEIGHT_DUTY_STEP[] = { 0x16b, 0x17b, 0x18b };
+ static const u16 NCT6106_REG_WEIGHT_TEMP_BASE[] = { 0x16c, 0x17c, 0x18c };
+ static const u16 NCT6106_REG_WEIGHT_DUTY_BASE[] = { 0x16d, 0x17d, 0x18d };
  
+@@ -3673,6 +3673,7 @@ static int nct6775_probe(struct platform_device *pdev)
+ 		data->REG_FAN_TIME[0] = NCT6106_REG_FAN_STOP_TIME;
+ 		data->REG_FAN_TIME[1] = NCT6106_REG_FAN_STEP_UP_TIME;
+ 		data->REG_FAN_TIME[2] = NCT6106_REG_FAN_STEP_DOWN_TIME;
++		data->REG_TOLERANCE_H = NCT6106_REG_TOLERANCE_H;
+ 		data->REG_PWM[0] = NCT6106_REG_PWM;
+ 		data->REG_PWM[1] = NCT6106_REG_FAN_START_OUTPUT;
+ 		data->REG_PWM[2] = NCT6106_REG_FAN_STOP_OUTPUT;
 -- 
 2.20.1
 
