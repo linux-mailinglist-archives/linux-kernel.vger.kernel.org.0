@@ -2,131 +2,197 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1FF37E88D
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 04:21:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A77037E943
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 04:24:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391022AbfHBCVR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 22:21:17 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:39548 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390984AbfHBCVG (ORCPT
+        id S2389552AbfHBCYC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 22:24:02 -0400
+Received: from mail-lf1-f43.google.com ([209.85.167.43]:43354 "EHLO
+        mail-lf1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731638AbfHBCX6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 22:21:06 -0400
-Received: by mail-pf1-f193.google.com with SMTP id f17so31162252pfn.6;
-        Thu, 01 Aug 2019 19:21:05 -0700 (PDT)
+        Thu, 1 Aug 2019 22:23:58 -0400
+Received: by mail-lf1-f43.google.com with SMTP id c19so51758327lfm.10
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2019 19:23:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=cegKTIaYJ+tSle0YiC1yJpybmvJrVZXG5Xryw9OToL0=;
-        b=DBN1w3/7Hxm2aTYhnTNoj1HADN0/qC4HQ/EIZkVxJXA/K2S11Q3/N9TAattYeDs6aQ
-         J+nm7tV2AKcpGrK2TkCrU1wyclxrRwBj4vymoXpkg4vkH9XlaJfQ55nzl3mveOP2o9MV
-         NUxRk2vipQv8FWXVtFS9aXrUBeQOuTE0Ko4oz4Isj8tPzLI9EqzmjnQsyBDLHQ25vBM5
-         q3jhgaW+xd3z7DYehUibJdxR/1EjTpgU+Bek0hJIqh1wGhpzFJhljWoUMm0t5/61KoNk
-         q3ATC6nVfWca/Nm/vukTsQm8ST5Kyw83g7ix2hN//xECaTu+OgVyIUA+IQWq3fIPa/3T
-         uZLw==
+        h=mime-version:from:date:message-id:subject:to:cc
+         :content-transfer-encoding;
+        bh=avfAa/7L14uB9QkcSbxP0pdLgxgaet/skvZa0szQ5IY=;
+        b=QV1yUR7ucwzp8P/EGXo8Gz3EwqkDbwjC37rULF73+IKsEBAorgPwmSp2Cy8WRcaqrV
+         cB2eYJJQ0+83OrZjZR2BjY0SdLQz1NKVjQFRcwf2MREaXh9fsAzVJ43FxGM1+mfEiIj3
+         jokJeHmzhfdNLH7xWUK+jRbyHMXitRgzl4OywY6NTO1oCuLjOYJ5kNWYpa68Xcf5hBQU
+         RdtErgVmAILdCdcNJL4luRCuf291vQtNb17qqTPlXSKFRh+xZ6ek02PznHvqbAnErV29
+         H4amLBJBpxSpC9UK3HDgniTrolnCiJVF2OLd1sIZRWrbkaEiHwgaqGgnedlEFEZ/jG9p
+         cBvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=cegKTIaYJ+tSle0YiC1yJpybmvJrVZXG5Xryw9OToL0=;
-        b=KarU3qj/ADgwBqvUf4Hg2wEpssP/vSRp0L8b348zzIpwhCi4+bdvwGjt8wAkK8gWEq
-         1FOuak5NKE5pDGI8CW0LSAcb08z95mbTIQ6dmLgcV9KXzqxxa8jN8EtLmG5+8u5d2xLU
-         KRuUfdRn4Sb+yTBIq9eU/53bVnySjgQ/bDF+dLBXY1u0CYnFwlepeJt8diR15lg6y8cW
-         xMyQjC3DySqrgb58KXXdXNkSm5g18qdNPyMnDbD98dI5mjR7Nv7eqH/lM95aj/FDCneG
-         pD0nZYKp/oirPxSMD2SNaKXdsyDr8eIn+eCTNUYHAgJYeLjzgGOmx0I/iZmrl4O0xI5/
-         XVYQ==
-X-Gm-Message-State: APjAAAVWWqxg4SCTAoFiTguV/Zxm5epS/2FOZRmN4RIZw7MiPEjFLP6S
-        v4ajr9axSzjgblKCB3dNvEs=
-X-Google-Smtp-Source: APXvYqyVNDRGKP1+FIQlU/b+5yAYmGOv3Rdk0fT5tiuKvQ+opVgMWL9GCqpjN6ICYNfQCU9j4FRWrg==
-X-Received: by 2002:a17:90a:338b:: with SMTP id n11mr1859934pjb.21.1564712465215;
-        Thu, 01 Aug 2019 19:21:05 -0700 (PDT)
-Received: from blueforge.nvidia.com (searspoint.nvidia.com. [216.228.112.21])
-        by smtp.gmail.com with ESMTPSA id u9sm38179744pgc.5.2019.08.01.19.21.03
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 01 Aug 2019 19:21:04 -0700 (PDT)
-From:   john.hubbard@gmail.com
-X-Google-Original-From: jhubbard@nvidia.com
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        amd-gfx@lists.freedesktop.org, ceph-devel@vger.kernel.org,
-        devel@driverdev.osuosl.org, devel@lists.orangefs.org,
-        dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
-        kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-block@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-fbdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-mm@kvack.org,
-        linux-nfs@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org, linux-xfs@vger.kernel.org,
-        netdev@vger.kernel.org, rds-devel@oss.oracle.com,
-        sparclinux@vger.kernel.org, x86@kernel.org,
-        xen-devel@lists.xenproject.org, John Hubbard <jhubbard@nvidia.com>
-Subject: [PATCH 34/34] fs/binfmt_elf: convert put_page() to put_user_page*()
-Date:   Thu,  1 Aug 2019 19:20:05 -0700
-Message-Id: <20190802022005.5117-35-jhubbard@nvidia.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190802022005.5117-1-jhubbard@nvidia.com>
-References: <20190802022005.5117-1-jhubbard@nvidia.com>
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc
+         :content-transfer-encoding;
+        bh=avfAa/7L14uB9QkcSbxP0pdLgxgaet/skvZa0szQ5IY=;
+        b=oJwz+cHpZPVpmyhPjdCt34ACbSL/0WMQzhLNAf0jd5yOXJGUIMV3ABfY8Fe5hq0CUU
+         NrL7kW8mEOV4wGBvQ+uMOGM5EBCsoIdYNdJVWhkZlf1zhu0crxQNqGtzEPrva4iBIA4B
+         Y7crT+4AYM5l//zZljZNtFuybJpD5TaA3akkbMR5Km28FHqttlB7nVS3FaTTEsPiS7vM
+         lK9iwsxCe2AO8qhHwEadoEmqZOqchwHu8B+4Gb8RRbjxC9iJdjOBmQMi5G4IetaQT0C+
+         0sDJqj0oVXZIcur34w6igfG4u23FGwWwQpeO0SwVwqeqU8l1my8NG8UIjx5BGC/Ouw0t
+         Ps2g==
+X-Gm-Message-State: APjAAAWFkvy8NXhv1iHiXy0i1r7jvnloFO9zJsC1X4HDtsldK7PBJ6yh
+        An5qrEUAReCDkCZZbJMO/8CWQ4pBcHGJHYTQJUIo2Vmc
+X-Google-Smtp-Source: APXvYqwx/g6dE/6hV5oTXlX6VP2+9JeyMq7cx9Mp5n4CGVHpBg1cjMn+Gymm/h6P6abHXBHTf6vDy1hDIvUX3J9Lg7M=
+X-Received: by 2002:a05:6512:51c:: with SMTP id o28mr65112767lfb.67.1564712635593;
+ Thu, 01 Aug 2019 19:23:55 -0700 (PDT)
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: 8bit
+From:   Dave Airlie <airlied@gmail.com>
+Date:   Fri, 2 Aug 2019 12:23:44 +1000
+Message-ID: <CAPM=9twvuac3guTTT-Y5O65GscWLG-NwOdyUCmHFi0HOcQM1DA@mail.gmail.com>
+Subject: drm fixes for 5.3-rc3
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ira Weiny <ira.weiny@intel.com>
+Hi Linus,
 
-For pages that were retained via get_user_pages*(), release those pages
-via the new put_user_page*() routines, instead of via put_page() or
-release_pages().
+Thanks to Daniel for handling the email the last couple of weeks, flus
+and break-ins combined to derail me. Surprised nothing materialised
+today to take me out again.
 
-This is part a tree-wide conversion, as described in commit fc1d8e7cca2d
-("mm: introduce put_user_page*(), placeholder versions").
+I've also tried embedding the summary into the signed pull request,
+since all the cool kids seemed to be doing it, it's a bit messy in my
+workflow as I do most of my stuff remotely including signing, but I
+usually edit the summary locally.
 
-get_dump_page calls get_user_page so put_user_page must be used
-to match.
+Otherwise, just more amdgpu navi fixes, msm fixes and a single nouveau
+regression fix.
 
-Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-Signed-off-by: John Hubbard <jhubbard@nvidia.com>
----
- fs/binfmt_elf.c       | 2 +-
- fs/binfmt_elf_fdpic.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+Thanks,
+Dave.
 
-diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-index d4e11b2e04f6..92e4a5ca99d8 100644
---- a/fs/binfmt_elf.c
-+++ b/fs/binfmt_elf.c
-@@ -2377,7 +2377,7 @@ static int elf_core_dump(struct coredump_params *cprm)
- 				void *kaddr = kmap(page);
- 				stop = !dump_emit(cprm, kaddr, PAGE_SIZE);
- 				kunmap(page);
--				put_page(page);
-+				put_user_page(page);
- 			} else
- 				stop = !dump_skip(cprm, PAGE_SIZE);
- 			if (stop)
-diff --git a/fs/binfmt_elf_fdpic.c b/fs/binfmt_elf_fdpic.c
-index d86ebd0dcc3d..321724b3be22 100644
---- a/fs/binfmt_elf_fdpic.c
-+++ b/fs/binfmt_elf_fdpic.c
-@@ -1511,7 +1511,7 @@ static bool elf_fdpic_dump_segments(struct coredump_params *cprm)
- 				void *kaddr = kmap(page);
- 				res = dump_emit(cprm, kaddr, PAGE_SIZE);
- 				kunmap(page);
--				put_page(page);
-+				put_user_page(page);
- 			} else {
- 				res = dump_skip(cprm, PAGE_SIZE);
- 			}
--- 
-2.22.0
+drm-fixes-2019-08-02:
+drm pull fixes for 5.3-rc3
 
+amdgpu:
+    navi10 temperature and pstate fixes
+    vcn dynamic power management fix
+    CS ioctl error handling fix
+    debugfs info leak fix
+    amdkfd VegaM fix.
+
+msm:
+    dma sync call fix
+    mdp5 dsi command mode fix
+    fall-through fixes
+    disabled GPU fix
+
+nouveau:
+    regression fix for displayport MST support.
+The following changes since commit 609488bc979f99f805f34e9a32c1e3b71179d10b=
+:
+
+  Linux 5.3-rc2 (2019-07-28 12:47:02 -0700)
+
+are available in the Git repository at:
+
+  git://anongit.freedesktop.org/drm/drm tags/drm-fixes-2019-08-02
+
+for you to fetch changes up to f8981e0309e9004c6e86d218049045700c79d740:
+
+  Merge tag 'msm-fixes-2019_08_01' of
+https://gitlab.freedesktop.org/drm/msm into drm-fixes (2019-08-02
+10:17:25 +1000)
+
+----------------------------------------------------------------
+drm pull fixes for 5.3-rc3
+
+amdgpu:
+    navi10 temperature and pstate fixes
+    vcn dynamic power management fix
+    CS ioctl error handling fix
+    debugfs info leak fix
+    amdkfd VegaM fix.
+
+msm:
+    dma sync call fix
+    mdp5 dsi command mode fix
+    fall-through fixes
+    disabled GPU fix
+
+nouveau:
+    regression fix for displayport MST support.
+
+----------------------------------------------------------------
+Alex Deucher (1):
+      drm/amdgpu/powerplay: use proper revision id for navi
+
+Brian Masney (1):
+      drm/msm: add support for per-CRTC max_vblank_count on mdp5
+
+Christian K=C3=B6nig (1):
+      drm/amdgpu: fix error handling in amdgpu_cs_process_fence_dep
+
+Dave Airlie (2):
+      Merge tag 'drm-fixes-5.3-2019-07-31' of
+git://people.freedesktop.org/~agd5f/linux into drm-fixes
+      Merge tag 'msm-fixes-2019_08_01' of
+https://gitlab.freedesktop.org/drm/msm into drm-fixes
+
+Evan Quan (7):
+      drm/amd/powerplay: fix null pointer dereference around dpm state rela=
+tes
+      drm/amd/powerplay: enable SW SMU reset functionality
+      drm/amd/powerplay: add new sensor type for VCN powergate status
+      drm/amd/powerplay: support VCN powergate status retrieval on Raven
+      drm/amd/powerplay: support VCN powergate status retrieval for SW SMU
+      drm/amd/powerplay: correct Navi10 VCN powergate control (v2)
+      drm/amd/powerplay: correct UVD/VCE/VCN power status retrieval
+
+Jeffrey Hugo (1):
+      drm: msm: Fix add_gpu_components
+
+Jordan Crouse (1):
+      drm/msm: Annotate intentional switch statement fall throughs
+
+Kent Russell (1):
+      drm/amdkfd: Fix byte align on VegaM
+
+Kevin Wang (2):
+      drm/amd/powerplay: add callback function of get_thermal_temperature_r=
+ange
+      drm/amd/powerplay: fix temperature granularity error in smu11
+
+Lyude Paul (1):
+      drm/nouveau: Only release VCPI slots on mode changes
+
+Rob Clark (1):
+      drm/msm: Use the correct dma_sync calls in msm_gem
+
+Wang Xiayang (1):
+      drm/amdgpu: fix a potential information leaking bug
+
+ drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c  |  3 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c            | 26 ++++----
+ drivers/gpu/drm/amd/amdgpu/amdgpu_debugfs.c       |  2 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c            | 74 +++++++++++++++----=
+----
+ drivers/gpu/drm/amd/include/kgd_pp_interface.h    |  1 +
+ drivers/gpu/drm/amd/powerplay/amdgpu_smu.c        | 23 ++++---
+ drivers/gpu/drm/amd/powerplay/hwmgr/smu10_hwmgr.c |  9 +++
+ drivers/gpu/drm/amd/powerplay/inc/amdgpu_smu.h    |  1 -
+ drivers/gpu/drm/amd/powerplay/navi10_ppt.c        | 48 +++++++++------
+ drivers/gpu/drm/amd/powerplay/smu_v11_0.c         | 36 ++++++-----
+ drivers/gpu/drm/amd/powerplay/vega20_ppt.c        | 34 ++++-------
+ drivers/gpu/drm/msm/adreno/a5xx_gpu.c             |  2 +
+ drivers/gpu/drm/msm/adreno/a6xx_gpu.c             |  1 +
+ drivers/gpu/drm/msm/adreno/adreno_gpu.c           |  1 +
+ drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c         | 16 ++++-
+ drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c          |  2 +-
+ drivers/gpu/drm/msm/msm_drv.c                     |  3 +-
+ drivers/gpu/drm/msm/msm_gem.c                     | 47 ++++++++++++--
+ drivers/gpu/drm/nouveau/dispnv50/disp.c           |  2 +-
+ 19 files changed, 215 insertions(+), 116 deletions(-)
