@@ -2,113 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6713C7F512
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 12:33:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EAD177F534
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 12:38:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392108AbfHBKdv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 06:33:51 -0400
-Received: from wout5-smtp.messagingengine.com ([64.147.123.21]:48201 "EHLO
-        wout5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730143AbfHBKdv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 06:33:51 -0400
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailout.west.internal (Postfix) with ESMTP id A582E400;
-        Fri,  2 Aug 2019 06:33:49 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute6.internal (MEProxy); Fri, 02 Aug 2019 06:33:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=rzS6XuNYwD34+UrvpJIGC8ldeuz
-        lzqnOgE995Y09X0s=; b=HAXqxdheLUb0v1xy7RsVcMERiwRQw9+/2fCE/xKL4ID
-        giu2MuieuVNtOGh8l++quWR5CyMPR07Fu5Zz8UHMQHBbB+g9lH2LeXDJbsbiMIvE
-        tYLXZC9Jsmg4amXKRJm2F2t6YgBiy5Wu+ZQOA6W9a43t3OdEi7A7yqsb2NRdvySP
-        nTZLG0DatKAIohty5UjarljaCw2wanoYiyGiFmp3t6rIqxIwaaIggeze7RxgnkZq
-        7LrBezrtqp3SeIfINycf5VhVjLyG9Ot6GuBQZhw4xSO15EX9wTT1ZUEqjK9i5M+U
-        rUlZ1gK1hrlRDs449k11Weo2XONXVXsS3icqBFG8yww==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=rzS6Xu
-        NYwD34+UrvpJIGC8ldeuzlzqnOgE995Y09X0s=; b=YhkceHBe2Brk8kOCIAP54v
-        uZ/1MG/PvFltjRk3NgVE+4N9DdzOn55f+wei/g0tASO4lFA4PL/ta/ZbHrizHAwI
-        R8TjHWpyJRhah5566j5VRB0EoSYWho25/57evwjPviiHX1ZHKKJoslrQwQMdfScL
-        TGEdI4b/LIB4jwwvSOKQ3AsELNbAKM7i8VAyJVDalw6Brl0SlyfmpE9Rlt3iAjhv
-        vHlSgwZwuVFo33ct29/QdqRPXh884oNTMsMLjpvWUpR8Xh91xzBqsS+6tu4Ldhlz
-        Xb7IXwSytmZmAs7bhATu2cnElYzF84dEmmx1+J8q3+Yfo4I4kmt8a4PxZIowUsyA
-        ==
-X-ME-Sender: <xms:jBFEXXXNGhcnx20SJIrw0TDkF2sS1mQSci0A17pUzeZDV0Z5_g2S1g>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrleelgddtfecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvuffkfhggtggujggfsehttdertddtredvnecuhfhrohhmpefirhgvghcu
-    mffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucffohhmrghinhepghhithhhuhgsrd
-    gtohhmnecukfhppeekfedrkeeirdekledruddtjeenucfrrghrrghmpehmrghilhhfrhho
-    mhepghhrvghgsehkrhhorghhrdgtohhmnecuvehluhhsthgvrhfuihiivgeptd
-X-ME-Proxy: <xmx:jBFEXbYX_9cRUn_20MDE9utlQuGkCebgFcnLtV0dEqmYhNR7QW2A2Q>
-    <xmx:jBFEXavKjxFEWVUVsHjtEK3kGjoegVtKwDueN7K_ye-gKqFu3xQFGQ>
-    <xmx:jBFEXVnQfce666uwWEzS2fYezCh1ohc3lovO9XsT4C7T2ejpEII0WQ>
-    <xmx:jRFEXfPKTmDnMbKKxY9zHJ_-V9-3aOVZffeOBKJISt6cHP-1I2qDbA>
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 84F178005C;
-        Fri,  2 Aug 2019 06:33:48 -0400 (EDT)
-Date:   Fri, 2 Aug 2019 12:33:46 +0200
-From:   Greg KH <greg@kroah.com>
-To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc:     Rolf Eike Beer <eb@emlix.com>, stable@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: Linux 4.9.180 build fails =?utf-8?Q?wi?=
- =?utf-8?Q?th_gcc_9_and_'cleanup=5Fmodule'_specifies_less_restrictive_attr?=
- =?utf-8?Q?ibute_than_its_target_=E2=80=A6?=
-Message-ID: <20190802103346.GA14255@kroah.com>
-References: <259986242.BvXPX32bHu@devpool35>
- <20190606185900.GA19937@kroah.com>
- <CANiq72n2E4Ue0MU5mWitSbsscizPQKML0QQx_DBwJVni+eWMHQ@mail.gmail.com>
- <4007272.nJfEYfeqza@devpool35>
- <CANiq72=T8nH3HHkYvWF+vPMscgwXki1Ugiq6C9PhVHJUHAwDYw@mail.gmail.com>
+        id S1728675AbfHBKiK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 06:38:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58344 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726049AbfHBKiJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 06:38:09 -0400
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D13942086A;
+        Fri,  2 Aug 2019 10:38:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564742288;
+        bh=IYNwTW73rLYyMyjD9BJMjODjl0NeiQXEjNWG7ynwQFE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=qVCPNdH/6+F3JEUwjc5ECdeVvv2rxFW/YIsSdLtdhUSAecBHvE/aZD9g4yMo2gZSj
+         2yoBLIUP0QYtsd9bkMqXcwYzxDAGO2T7/GL9cxrLT0Ys0KRqsv6Oult274XWCLaght
+         wblNSh7hCme4l3pG2uJghbpPO6jnYgJmHgYdUE7s=
+Date:   Fri, 2 Aug 2019 11:38:03 +0100
+From:   Will Deacon <will@kernel.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     iommu@lists.linux-foundation.org,
+        Shawn Anastasio <shawn@anastas.io>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        linuxppc-dev@lists.ozlabs.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dma-mapping: fix page attributes for dma_mmap_*
+Message-ID: <20190802103803.3qrbhqwxlasojsco@willie-the-truck>
+References: <20190801142118.21225-1-hch@lst.de>
+ <20190801142118.21225-2-hch@lst.de>
+ <20190801162305.3m32chycsdjmdejk@willie-the-truck>
+ <20190801163457.GB26588@lst.de>
+ <20190801164411.kmsl4japtfkgvzxe@willie-the-truck>
+ <20190802081441.GA9725@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CANiq72=T8nH3HHkYvWF+vPMscgwXki1Ugiq6C9PhVHJUHAwDYw@mail.gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20190802081441.GA9725@lst.de>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 02, 2019 at 12:19:33PM +0200, Miguel Ojeda wrote:
-> On Fri, Aug 2, 2019 at 10:17 AM Rolf Eike Beer <eb@emlix.com> wrote:
-> >
-> > Am Samstag, 8. Juni 2019, 14:00:34 CEST schrieb Miguel Ojeda:
-> > > On Thu, Jun 6, 2019 at 8:59 PM Greg KH <greg@kroah.com> wrote:
-> > > > "manually fixing it up" means "hacked it to pieces" to me, I have no
-> > > > idea what the end result really was :)
-> > > >
-> > > > If someone wants to send me some patches I can actually apply, that
-> > > > would be best...
-> > >
-> > > I will give it a go whenever I get some free time :)
-> >
-> > I fear this has never happened, did it?
+On Fri, Aug 02, 2019 at 10:14:41AM +0200, Christoph Hellwig wrote:
+> On Thu, Aug 01, 2019 at 05:44:12PM +0100, Will Deacon wrote:
+> > > > Although arch_dma_mmap_pgprot() is a bit of a misnomer now that it only
+> > > > gets involved in the non-coherent case.
+> > > 
+> > > A better name is welcome.
+> > 
+> > How about arch_dma_noncoherent_mmap_pgprot() ? Too long?
 > 
-> No. Between summer, holidays and a conference I didn't get to do it.
-> 
-> Done the minimal approach here:
-> 
->   https://github.com/ojeda/linux/commits/compiler-attributes-backport
-> 
-> Tested building a handful of drivers with gcc 4.6.4, 8.3.0 and 9.1.1.
-> 
-> Greg, I could backport the entire compiler_attributes.h, but given
-> this is stable, we are supposed to minimize changes, right?
-> 
-> I tried to imitate what you do in other stable patches, please check
-> the Cc:, Link: lines and the "commit ... upstream" just in case.
+> Sounds a little long yes.  And doesn't fix the additional problem that
+> we don't just it for mmap but also for the in-kernel remapping these
+> days.
 
-If only those 2 patches are all that is needed, nice!  I'll gladly take
-them, can you send them to me (and cc: the stable list) in email so I
-can queue them up for the next round of releases after this one?
+Hmm. Maybe just arch_dma_noncoherent_pgprot() then.
 
-thanks,
+> > > But my worry is how this interacts with architectures that have an
+> > > uncached segment (mips, nios2, microblaze, extensa) where we'd have
+> > > the kernel access DMA_ATTR_WRITE_COMBINE mappigns using the uncached
+> > > segment, and userspace mmaps using pgprot_writecombine, which could
+> > > lead to aliasing issues.  But then again mips already supports
+> > > DMA_ATTR_WRITE_COMBINE, so this must be ok somehow.  I guess I'll
+> > > need to field that question to the relevant parties.
+> > 
+> > Or it's always been busted and happens to work out in practice...
+> 
+> I've sent a ping to the mips folks.  While we'are at it:  arm64
+> and arm32 (optionally) map dma coherent allocations as write combine.
+> I suspect this hasn't always just been busted but intentional (of course!),
+> but is there any chance to get a quote from the arm architecture spec
+> on why this is fine as it looks rather confusion?
 
-greg k-h
+So this boils down to a terminology mismatch. The Arm architecture doesn't have
+anything called "write combine", so in Linux we instead provide what the Arm
+architecture calls "Normal non-cacheable" memory for pgprot_writecombine().
+Amongst other things, this memory type permits speculation, unaligned accesses
+and merging of writes. I found something in the architecture spec about
+non-cachable memory, but it's written in Armglish[1].
+
+pgprot_noncached(), on the other hand, provides what the architecture calls
+Strongly Ordered or Device-nGnRnE memory. This is intended for mapping MMIO
+(i.e. PCI config space) and therefore forbids speculation, preserves access
+size, requires strict alignment and also forces write responses to come from
+the endpoint.
+
+I think the naming mismatch is historical, but on arm64 we wanted to use the
+same names as arm32 so that any drivers using these things directly would get
+the same behaviour.
+
+Will
+
+[1]
+
+B2.4.4 Implication of caches for the application programmer
+
+[...]
+
+Data coherency issues
+
+Software can ensure the data coherency of caches in the following ways:
+
+  * By not using the caches in situations where coherency issues can arise.
+    This can be achieved by:
+
+    - Using Non-cacheable or, in some cases, Write-Through Cacheable memory.
+
+    - Not enabling caches in the system.
+
+  * By using cache maintenance instructions to manage the coherency issues
+    in software.
+
+  * By using hardware coherency mechanisms to ensure the coherency of data
+    accesses to memory for cacheable locations by observers within the
+    different shareability domains.
