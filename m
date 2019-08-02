@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E5A617F387
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:59:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD44E7F389
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:59:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407013AbfHBJ57 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 05:57:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37382 "EHLO mail.kernel.org"
+        id S2407021AbfHBJ6A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 05:58:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37442 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2407002AbfHBJ54 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 05:57:56 -0400
+        id S2406632AbfHBJ56 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 05:57:58 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 19C512086A;
-        Fri,  2 Aug 2019 09:57:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A81FB20B7C;
+        Fri,  2 Aug 2019 09:57:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564739875;
-        bh=pPXSjgHXNceoflCHZKInP4qX+6HEOlFDAA7prE++wEY=;
+        s=default; t=1564739878;
+        bh=/olJjJNhyVcDYFTUTY7lY3OozBfTbmMUD5nzSvABxKc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HZZCkQ7Y85lJMihjgObnZA3bUN2QlmvLOLe+ztTk/+L8UFPGO2nc7uTsfo957Hx0J
-         +6CnL7Zxigs/mWp+9ZDwKJdHo2NmqQtGf/+kV5+JmTNWxOeLqs/4vTFtPQO4qYzDBA
-         blFgSsz4HEg0uABnYjpqoSEvxZdAs76mNv+Gttls=
+        b=hfdhBwuOwoRvb7y1RiLT1KmyZK9Uz01aBI5pUKTS1ase87ZY+sxd8dsmU2uXOYmdd
+         KkhTQIbQzFtBJN7s7WH1HDoFZmmMfVzC4Q5o0yvJHh3ZnHm1rXmXFm92oBuo/eShUO
+         Q9js57tzkoJVEQelOo60QD/vZZpp3p7APYdjFiYE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+357d86bcb4cca1a2f572@syzkaller.appspotmail.com,
-        Sean Young <sean@mess.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH 5.2 05/20] media: au0828: fix null dereference in error path
-Date:   Fri,  2 Aug 2019 11:39:59 +0200
-Message-Id: <20190802092058.667994555@linuxfoundation.org>
+        syzbot+c1b25598aa60dcd47e78@syzkaller.appspotmail.com,
+        Fabio Estevam <festevam@gmail.com>,
+        Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 5.2 06/20] ath10k: Change the warning message string
+Date:   Fri,  2 Aug 2019 11:40:00 +0200
+Message-Id: <20190802092058.774755456@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190802092055.131876977@linuxfoundation.org>
 References: <20190802092055.131876977@linuxfoundation.org>
@@ -45,49 +45,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Young <sean@mess.org>
+From: Fabio Estevam <festevam@gmail.com>
 
-commit 6d0d1ff9ff21fbb06b867c13a1d41ce8ddcd8230 upstream.
+commit 265df32eae5845212ad9f55f5ae6b6dcb68b187b upstream.
 
-au0828_usb_disconnect() gets the au0828_dev struct via usb_get_intfdata,
-so it needs to set up for the error paths.
+The "WARNING" string confuses syzbot, which thinks it found
+a crash [1].
 
-Reported-by: syzbot+357d86bcb4cca1a2f572@syzkaller.appspotmail.com
-Signed-off-by: Sean Young <sean@mess.org>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Change the string to avoid such problem.
+
+[1] https://lkml.org/lkml/2019/5/9/243
+
+Reported-by: syzbot+c1b25598aa60dcd47e78@syzkaller.appspotmail.com
+Suggested-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Fabio Estevam <festevam@gmail.com>
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/usb/au0828/au0828-core.c |   12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/net/wireless/ath/ath10k/usb.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/media/usb/au0828/au0828-core.c
-+++ b/drivers/media/usb/au0828/au0828-core.c
-@@ -719,6 +719,12 @@ static int au0828_usb_probe(struct usb_i
- 	/* Setup */
- 	au0828_card_setup(dev);
+--- a/drivers/net/wireless/ath/ath10k/usb.c
++++ b/drivers/net/wireless/ath/ath10k/usb.c
+@@ -1016,7 +1016,7 @@ static int ath10k_usb_probe(struct usb_i
+ 	}
  
-+	/*
-+	 * Store the pointer to the au0828_dev so it can be accessed in
-+	 * au0828_usb_disconnect
-+	 */
-+	usb_set_intfdata(interface, dev);
-+
- 	/* Analog TV */
- 	retval = au0828_analog_register(dev, interface);
- 	if (retval) {
-@@ -737,12 +743,6 @@ static int au0828_usb_probe(struct usb_i
- 	/* Remote controller */
- 	au0828_rc_register(dev);
+ 	/* TODO: remove this once USB support is fully implemented */
+-	ath10k_warn(ar, "WARNING: ath10k USB support is incomplete, don't expect anything to work!\n");
++	ath10k_warn(ar, "Warning: ath10k USB support is incomplete, don't expect anything to work!\n");
  
--	/*
--	 * Store the pointer to the au0828_dev so it can be accessed in
--	 * au0828_usb_disconnect
--	 */
--	usb_set_intfdata(interface, dev);
--
- 	pr_info("Registered device AU0828 [%s]\n",
- 		dev->board.name == NULL ? "Unset" : dev->board.name);
+ 	return 0;
  
 
 
