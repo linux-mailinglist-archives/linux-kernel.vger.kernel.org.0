@@ -2,92 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BAB4F8032E
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2019 01:23:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 09A9E80320
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2019 01:20:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389333AbfHBXX3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 19:23:29 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:40333 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726422AbfHBXX2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 19:23:28 -0400
-Received: by mail-pg1-f195.google.com with SMTP id w10so36777612pgj.7
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2019 16:23:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=message-id:mime-version:content-transfer-encoding:in-reply-to
-         :references:subject:from:cc:to:user-agent:date;
-        bh=2tknq8ha5U7BNuuyVatdtjPrjoFm8FVQiAPwO+BVgX8=;
-        b=mx+c4i+C8tUW+7JDguP35xhR2WoEl5zaNtr74xW7KRFkkEMEawzKZqCutkcuVc6Y+i
-         +c4QrhEPS7BAUe3/EsS72++dyo2Zq3xVYCWpZxxU2puKBjHe/IhblCWqnRK9EkwkmYX4
-         dNw+cFrWsqbBEDEcSCwakZtYTsUhJudYq3FTY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:mime-version
-         :content-transfer-encoding:in-reply-to:references:subject:from:cc:to
-         :user-agent:date;
-        bh=2tknq8ha5U7BNuuyVatdtjPrjoFm8FVQiAPwO+BVgX8=;
-        b=A0F1Dnn861xMW/Rm/E7oWP3OrrvxwR5A7i07Ldne6z147e2i1/ZWGe+izIvsTmPxgK
-         /sQRoegrGhSKNdtUwmOginK0CQTnAwA1qxlMrZdJ6h+urBLZIYIFln5r8pi7xEW9tVuA
-         ywd++fAd26XeVxeQf6bf58gP8t6n4cLvkH4xbEVwQ78V/FeLSivXG6N3FLwilMmc5au7
-         elnvyisWM8b1dCIn6+m0r/qI1vHCZxIwm3bRoQKEWhHFxBKJoyMBKaeLDnKLRbjl46YY
-         lo4TjMKCh/xC0+2OnngCJZXkdHBMjz3pnFbgUiR4R8LcmyFioHjIH9ogtf90Av5rqvGD
-         rIwg==
-X-Gm-Message-State: APjAAAXMMbKpJ5utZDPG6Rm4gsXsbS1PaPPhfquPKJghUNh2cg3JhoKl
-        KORnLsTNhYYn6GqBDG/3YqVjpg==
-X-Google-Smtp-Source: APXvYqxNh0B8Wf8ImRp8AspYzF98NGC9VpLKh9ipgxTx9XSVhtLvzsOHEkswTpvOyF0jVuId3lju4w==
-X-Received: by 2002:a17:90a:bb94:: with SMTP id v20mr6693868pjr.88.1564787885862;
-        Fri, 02 Aug 2019 16:18:05 -0700 (PDT)
-Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id j16sm7485490pjz.31.2019.08.02.16.18.04
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 02 Aug 2019 16:18:05 -0700 (PDT)
-Message-ID: <5d44c4ad.1c69fb81.49b6c.56dd@mx.google.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190802202209.2jzeosacc66mtnpr@linux.intel.com>
-References: <20190716224518.62556-1-swboyd@chromium.org> <20190716224518.62556-2-swboyd@chromium.org> <20190802202209.2jzeosacc66mtnpr@linux.intel.com>
-Subject: Re: [PATCH v2 1/6] hwrng: core: Freeze khwrng thread during suspend
-From:   Stephen Boyd <swboyd@chromium.org>
-Cc:     Peter Huewe <peterhuewe@gmx.de>, linux-kernel@vger.kernel.org,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-integrity@vger.kernel.org,
-        Andrey Pronin <apronin@chromium.org>,
-        Duncan Laurie <dlaurie@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-User-Agent: alot/0.8.1
-Date:   Fri, 02 Aug 2019 16:18:03 -0700
+        id S2437458AbfHBXUL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 19:20:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59536 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2437446AbfHBXUL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 19:20:11 -0400
+Subject: Re: [GIT PULL] s390 updates for 5.3-rc3
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564788010;
+        bh=rMKBcLDfCGhasRdtm0uRydBPuSC1GDQPEtmka9yAR6o=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=g9b5/QiUNttj2PhTOseg6MYZHjn0xZ/BYmpsRUG834DlzGeniDCUCNyqlp/xoHpdv
+         Ba0ec4x3KbIiUeC1VqcGMQOPK0o488BFKYFNGOLptInWoMTV8Qg5jzVi/0zSz84G+b
+         Hd5rYkIwYiz2Fv00w5V4ngQucR1f37lT685bgKDs=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <your-ad-here.call-01564754888-ext-1592@work.hours>
+References: <your-ad-here.call-01564754888-ext-1592@work.hours>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <your-ad-here.call-01564754888-ext-1592@work.hours>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git tags/s390-5.3-4
+X-PR-Tracked-Commit-Id: 3cdd98606750a5a1d1c8bcda5b481cb86ed67b3b
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 4dd68199f3ed7ee62f94869a1d7b29749e3696fb
+Message-Id: <156478800999.22769.11059158573761622305.pr-tracker-bot@kernel.org>
+Date:   Fri, 02 Aug 2019 23:20:09 +0000
+To:     Vasily Gorbik <gor@linux.ibm.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Jarkko Sakkinen (2019-08-02 13:22:09)
-> On Tue, Jul 16, 2019 at 03:45:13PM -0700, Stephen Boyd wrote:
-> > The hwrng_fill() function can run while devices are suspending and
-> > resuming. If the hwrng is behind a bus such as i2c or SPI and that bus
-> > is suspended, the hwrng may hang the bus while attempting to add some
-> > randomness. It's been observed on ChromeOS devices with suspend-to-idle
-> > (s2idle) and an i2c based hwrng that this kthread may run and ask the
-> > hwrng device for randomness before the i2c bus has been resumed.
-> >=20
-> > Let's make this kthread freezable so that we don't try to touch the
-> > hwrng during suspend/resume. This ensures that we can't cause the hwrng
-> > backing driver to get into a bad state because the device is guaranteed
-> > to be resumed before the hwrng kthread is thawed.
-> >=20
-> > Cc: Andrey Pronin <apronin@chromium.org>
-> > Cc: Herbert Xu <herbert@gondor.apana.org.au>
-> > Cc: Duncan Laurie <dlaurie@chromium.org>
-> > Signed-off-by: Stephen Boyd <swboyd@chromium.org>
->=20
-> This does not need a fixes tag?
->=20
+The pull request you sent on Fri, 2 Aug 2019 16:08:08 +0200:
 
-I'll add Fixes: be4000bc4644 ("hwrng: create filler thread")
+> git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git tags/s390-5.3-4
 
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/4dd68199f3ed7ee62f94869a1d7b29749e3696fb
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
