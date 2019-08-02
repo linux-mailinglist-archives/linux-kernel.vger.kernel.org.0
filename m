@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 23EB77F2B0
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:50:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B7EF7F2B7
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:51:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405521AbfHBJuK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 05:50:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49908 "EHLO mail.kernel.org"
+        id S2405448AbfHBJuj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 05:50:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49184 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390950AbfHBJp6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 05:45:58 -0400
+        id S2405439AbfHBJp1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 05:45:27 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0C52E217D4;
-        Fri,  2 Aug 2019 09:45:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 307B420679;
+        Fri,  2 Aug 2019 09:45:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564739157;
-        bh=rbdUCINXBgKYCp87cPrQVrS8D6nIsmFue30DS1f2waI=;
+        s=default; t=1564739126;
+        bh=gRUh7r/2kagW87k821dT4UvIbhIkwAbcPWIlzXVFqa4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=a013YNKoj98w4rIC/qEhvHKy8yIxb1uFIVogAXkH1ZyQPGkALz+GCbj+07Fu3sffQ
-         B18RsWnHTmRkEqFhytaIciPnvwY9lZp3umYmHdI+b+SL9DalqXYIpVkGWGwIJ5iTG9
-         64Ksv/I316IC6FsPZ4IHb8wNeDgEVvG1Leul+KVs=
+        b=D+fCngFYz/49lC13YeSkVHBbzSIwLtDzgtKrz0QsZLiKqCkf9nKNXGCMbpcEhHCnx
+         QK0m1q29M8Qa5jeMipAppzrXn9GhDs/R/ohLu7lv3Ma+EWWj6i/Sb+BIdUv7Zu4GJd
+         XDypqNwYij+6G4Mjx8NkvVpmNhbOj8p4L2veGDbA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Tyler Hicks <tyhicks@canonical.com>
-Subject: [PATCH 4.9 120/223] eCryptfs: fix a couple type promotion bugs
-Date:   Fri,  2 Aug 2019 11:35:45 +0200
-Message-Id: <20190802092246.963008457@linuxfoundation.org>
+        stable@vger.kernel.org, "Lee, Chiasheng" <chiasheng.lee@intel.com>,
+        Mathias Nyman <mathias.nyman@linux.intel.com>,
+        Lee@vger.kernel.org
+Subject: [PATCH 4.9 123/223] usb: Handle USB3 remote wakeup for LPM enabled devices correctly
+Date:   Fri,  2 Aug 2019 11:35:48 +0200
+Message-Id: <20190802092247.109782285@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190802092238.692035242@linuxfoundation.org>
 References: <20190802092238.692035242@linuxfoundation.org>
@@ -43,51 +44,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Lee, Chiasheng <chiasheng.lee@intel.com>
 
-commit 0bdf8a8245fdea6f075a5fede833a5fcf1b3466c upstream.
+commit e244c4699f859cf7149b0781b1894c7996a8a1df upstream.
 
-ECRYPTFS_SIZE_AND_MARKER_BYTES is type size_t, so if "rc" is negative
-that gets type promoted to a high positive value and treated as success.
+With Link Power Management (LPM) enabled USB3 links transition to low
+power U1/U2 link states from U0 state automatically.
 
-Fixes: 778aeb42a708 ("eCryptfs: Cleanup and optimize ecryptfs_lookup_interpose()")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-[tyhicks: Use "if/else if" rather than "if/if"]
-Cc: stable@vger.kernel.org
-Signed-off-by: Tyler Hicks <tyhicks@canonical.com>
+Current hub code detects USB3 remote wakeups by checking if the software
+state still shows suspended, but the link has transitioned from suspended
+U3 to enabled U0 state.
+
+As it takes some time before the hub thread reads the port link state
+after a USB3 wake notification, the link may have transitioned from U0
+to U1/U2, and wake is not detected by hub code.
+
+Fix this by handling U1/U2 states in the same way as U0 in USB3 wakeup
+handling
+
+This patch should be added to stable kernels since 4.13 where LPM was
+kept enabled during suspend/resume
+
+Cc: <stable@vger.kernel.org> # v4.13+
+Signed-off-by: Lee, Chiasheng <chiasheng.lee@intel.com>
+Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ecryptfs/crypto.c |   12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ drivers/usb/core/hub.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/fs/ecryptfs/crypto.c
-+++ b/fs/ecryptfs/crypto.c
-@@ -1034,8 +1034,10 @@ int ecryptfs_read_and_validate_header_re
+--- a/drivers/usb/core/hub.c
++++ b/drivers/usb/core/hub.c
+@@ -3535,6 +3535,7 @@ static int hub_handle_remote_wakeup(stru
+ 	struct usb_device *hdev;
+ 	struct usb_device *udev;
+ 	int connect_change = 0;
++	u16 link_state;
+ 	int ret;
  
- 	rc = ecryptfs_read_lower(file_size, 0, ECRYPTFS_SIZE_AND_MARKER_BYTES,
- 				 inode);
--	if (rc < ECRYPTFS_SIZE_AND_MARKER_BYTES)
--		return rc >= 0 ? -EINVAL : rc;
-+	if (rc < 0)
-+		return rc;
-+	else if (rc < ECRYPTFS_SIZE_AND_MARKER_BYTES)
-+		return -EINVAL;
- 	rc = ecryptfs_validate_marker(marker);
- 	if (!rc)
- 		ecryptfs_i_size_init(file_size, inode);
-@@ -1397,8 +1399,10 @@ int ecryptfs_read_and_validate_xattr_reg
- 				     ecryptfs_inode_to_lower(inode),
- 				     ECRYPTFS_XATTR_NAME, file_size,
- 				     ECRYPTFS_SIZE_AND_MARKER_BYTES);
--	if (rc < ECRYPTFS_SIZE_AND_MARKER_BYTES)
--		return rc >= 0 ? -EINVAL : rc;
-+	if (rc < 0)
-+		return rc;
-+	else if (rc < ECRYPTFS_SIZE_AND_MARKER_BYTES)
-+		return -EINVAL;
- 	rc = ecryptfs_validate_marker(marker);
- 	if (!rc)
- 		ecryptfs_i_size_init(file_size, inode);
+ 	hdev = hub->hdev;
+@@ -3544,9 +3545,11 @@ static int hub_handle_remote_wakeup(stru
+ 			return 0;
+ 		usb_clear_port_feature(hdev, port, USB_PORT_FEAT_C_SUSPEND);
+ 	} else {
++		link_state = portstatus & USB_PORT_STAT_LINK_STATE;
+ 		if (!udev || udev->state != USB_STATE_SUSPENDED ||
+-				 (portstatus & USB_PORT_STAT_LINK_STATE) !=
+-				 USB_SS_PORT_LS_U0)
++				(link_state != USB_SS_PORT_LS_U0 &&
++				 link_state != USB_SS_PORT_LS_U1 &&
++				 link_state != USB_SS_PORT_LS_U2))
+ 			return 0;
+ 	}
+ 
 
 
