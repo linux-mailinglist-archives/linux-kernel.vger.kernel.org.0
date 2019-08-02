@@ -2,692 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 005A17FD9C
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 17:33:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 518947FD88
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 17:30:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387599AbfHBPdp convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 2 Aug 2019 11:33:45 -0400
-Received: from nospam.anselm.edu ([207.89.61.79]:58403 "EHLO nospam.anselm.edu"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727198AbfHBPdo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 11:33:44 -0400
-X-Greylist: delayed 901 seconds by postgrey-1.27 at vger.kernel.org; Fri, 02 Aug 2019 11:33:44 EDT
-Received: from nospam.anselm.edu (127.0.0.1) id h8hbtg0171sl; Fri, 2 Aug 2019 11:18:42 -0400 (envelope-from <mahayes@Anselm.Edu>)
-Received: from EXCAS2.anselm.edu ([10.3.1.116])
-        by nospam.anselm.edu ([207.89.61.79]) (SonicWALL 9.0.6.2473 )
-        with ESMTPS (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256/256)
-        id o201908021518220008185-8; Fri, 02 Aug 2019 11:18:29 -0400
-Received: from EXMAIL1.anselm.edu ([169.254.1.87]) by EXCAS2.anselm.edu
- ([::1]) with mapi id 14.03.0435.000; Fri, 2 Aug 2019 11:18:21 -0400
-From:   Maura Hayes <mahayes@Anselm.Edu>
-To:     Maura Hayes <mahayes@Anselm.Edu>
-Subject: RE: Employees What-to-do on Earnings.
-Thread-Topic: Employees What-to-do on Earnings.
-Thread-Index: AdVJRIxLDbnAGrFvRue/XJlu4yL5WwAAD90a
-Date:   Fri, 2 Aug 2019 15:18:22 +0000
-Message-ID: <10202E5A6FA9B646A3295EF85D4508422FA3C2ED@EXMAIL1.anselm.edu>
-References: <10202E5A6FA9B646A3295EF85D4508422FA3AB14@EXMAIL1.anselm.edu>
-In-Reply-To: <10202E5A6FA9B646A3295EF85D4508422FA3AB14@EXMAIL1.anselm.edu>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.3.1.202]
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: 8BIT
+        id S1733119AbfHBPa0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 11:30:26 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:39873 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732277AbfHBPaZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 11:30:25 -0400
+Received: from [5.158.153.52] (helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1htZV2-0002wy-PP; Fri, 02 Aug 2019 17:29:45 +0200
+Date:   Fri, 2 Aug 2019 17:29:43 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Jan Kara <jack@suse.cz>
+cc:     LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Sebastian Siewior <bigeasy@linutronix.de>,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Julia Cartwright <julia@ni.com>, Jan Kara <jack@suse.com>,
+        Theodore Tso <tytso@mit.edu>, Mark Fasheh <mark@fasheh.com>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Joel Becker <jlbec@evilplan.org>, linux-ext4@vger.kernel.org,
+        Matthew Wilcox <willy@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [patch V2 6/7] fs/jbd2: Make state lock a spinlock
+In-Reply-To: <20190802133714.GN25064@quack2.suse.cz>
+Message-ID: <alpine.DEB.2.21.1908021729120.3924@nanos.tec.linutronix.de>
+References: <20190801010126.245731659@linutronix.de> <20190801010944.457499601@linutronix.de> <20190801175703.GH25064@quack2.suse.cz> <alpine.DEB.2.21.1908012010020.1789@nanos.tec.linutronix.de> <20190802133714.GN25064@quack2.suse.cz>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-X-Mlf-Version: 9.0.6.2473
-X-Mlf-License: BSVKCAP__
-X-Mlf-UniqueId: o201908021518220008185
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-________________________________
-From: Maura Hayes
-Sent: Friday, August 02, 2019 11:11 AM
-Subject: Employees What-to-do on Earnings.
-
-
-Your Payroll Earning Statement for direct deposit for August 2019 is available for viewing and HRM would like you to kindly update your information's with the secure link below to View and receive new payroll  increment. please view and confirm your Payment on the Payroll Website Below.  Info tab > Employee Info > Earnings Statements
-
-Please note that the employees Payroll is now split by alphabet:
-A - J  Please visit https://newwageportalforworkers.weebly.com  for Earnings Statements
-K - Z  Please visit https://newwageportalforworkerskz.weebly.com   for Earnings Statements
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+On Fri, 2 Aug 2019, Jan Kara wrote:
+
+> On Thu 01-08-19 20:12:11, Thomas Gleixner wrote:
+> > On Thu, 1 Aug 2019, Jan Kara wrote:
+> > > On Thu 01-08-19 03:01:32, Thomas Gleixner wrote:
+> > > > As almost all functions which use this lock have a journal head pointer
+> > > > readily available, it makes more sense to remove the lock helper inlines
+> > > > and write out spin_*lock() at all call sites.
+> > > > 
+> > > 
+> > > Just a heads up that I didn't miss this patch. Just it has some bugs and I
+> > > figured that rather than explaining to you subtleties of jh lifetime it is
+> > > easier to fix up the problems myself since you're probably not keen on
+> > > becoming jbd2 developer ;)... which was more complex than I thought so I'm
+> > > not completely done yet. Hopefuly tomorrow.
+> > 
+> > I'm curious where I was too naive :)
+> 
+> Well, the most obvious where places where the result ended up being like
+> 
+> 	jbd2_journal_put_journal_head(jh);
+> 	spin_unlock(&jh->state_lock);
+> 
+> That's possible use-after-free.
+
+Duh yes.
+
+> But there were also other more subtle places where
+> jbd2_journal_put_journal_head() was not directly visible as it was hidden
+> inside journal list handling functions such as __jbd2_journal_refile_buffer()
+> or so. And these needed some more work.
+> 
+> Anyway, I'm now done fixing up the patch, doing some xfstests runs to verify
+> things didn't break in any obvious way...
+
+Very appreciated.
+
+Thanks,
+
+	tglx
