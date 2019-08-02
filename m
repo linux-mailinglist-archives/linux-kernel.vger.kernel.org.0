@@ -2,34 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B5917E776
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 03:24:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E2227E779
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 03:27:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730652AbfHBBYj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 21:24:39 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:3696 "EHLO huawei.com"
+        id S1730878AbfHBB1D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 21:27:03 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:3697 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726974AbfHBBYi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 21:24:38 -0400
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 09B61C6E263045241A3D;
-        Fri,  2 Aug 2019 09:24:37 +0800 (CST)
+        id S1727848AbfHBB1D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Aug 2019 21:27:03 -0400
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 6B64A1B966E4DF1DCBEF;
+        Fri,  2 Aug 2019 09:27:01 +0800 (CST)
 Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
- 14.3.439.0; Fri, 2 Aug 2019 09:24:25 +0800
+ DGGEMS405-HUB.china.huawei.com (10.3.19.205) with Microsoft SMTP Server id
+ 14.3.439.0; Fri, 2 Aug 2019 09:26:53 +0800
 From:   Wei Yongjun <weiyongjun1@huawei.com>
-To:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        "Rob Clark" <robdclark@chromium.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        "Eric Biggers" <ebiggers@google.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Sean Paul <seanpaul@chromium.org>
+To:     Ioana Radulescu <ruxandra.radulescu@nxp.com>,
+        Ioana Ciornei <ioana.ciornei@nxp.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 CC:     Wei Yongjun <weiyongjun1@huawei.com>,
-        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devel@driverdev.osuosl.org>,
         <kernel-janitors@vger.kernel.org>
-Subject: [PATCH -next] drm/vgem: Fix wrong pointer passed to PTR_ERR()
-Date:   Fri, 2 Aug 2019 01:29:20 +0000
-Message-ID: <20190802012920.60344-1-weiyongjun1@huawei.com>
+Subject: [PATCH -next] staging: fsl-dpaa2/ethsw: Remove useless set memory to zero use memset()
+Date:   Fri, 2 Aug 2019 01:31:49 +0000
+Message-ID: <20190802013149.80952-1-weiyongjun1@huawei.com>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Type:   text/plain; charset=US-ASCII
@@ -41,32 +38,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PTR_ERR should access the value just tested by IS_ERR, otherwise
-the wrong error code will be returned.
+The memory return by kzalloc() has already be set to zero, so remove
+useless memset(0).
 
-Fixes: 7e9e5ead55be ("drm/vgem: fix cache synchronization on arm/arm64")
 Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- drivers/gpu/drm/vgem/vgem_drv.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/staging/fsl-dpaa2/ethsw/ethsw.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/vgem/vgem_drv.c b/drivers/gpu/drm/vgem/vgem_drv.c
-index b98689fb0d5d..ef52546f48c4 100644
---- a/drivers/gpu/drm/vgem/vgem_drv.c
-+++ b/drivers/gpu/drm/vgem/vgem_drv.c
-@@ -304,10 +304,10 @@ static struct page **pin_and_sync(struct drm_vgem_gem_object *bo)
- 	if (IS_ERR(sgt)) {
- 		dev_err(dev->dev,
- 			"failed to allocate sgt: %ld\n",
--			PTR_ERR(bo->table));
-+			PTR_ERR(sgt));
- 		drm_gem_put_pages(&bo->base, pages, false, false);
- 		mutex_unlock(&bo->pages_lock);
--		return ERR_CAST(bo->table);
-+		return ERR_CAST(sgt);
- 	}
+diff --git a/drivers/staging/fsl-dpaa2/ethsw/ethsw.c b/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
+index 4b94a01513a7..aac98ece2335 100644
+--- a/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
++++ b/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
+@@ -641,8 +641,6 @@ static int port_fdb_dump(struct sk_buff *skb, struct netlink_callback *cb,
+ 	if (!dma_mem)
+ 		return -ENOMEM;
  
- 	/*
+-	memset(dma_mem, 0, fdb_dump_size);
+-
+ 	fdb_dump_iova = dma_map_single(dev, dma_mem, fdb_dump_size,
+ 				       DMA_FROM_DEVICE);
+ 	if (dma_mapping_error(dev, fdb_dump_iova)) {
 
 
 
