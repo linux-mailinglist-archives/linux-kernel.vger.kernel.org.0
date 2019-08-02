@@ -2,90 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AC697EF31
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 10:26:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 528F67EF41
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 10:28:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404132AbfHBI0R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 04:26:17 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:45218 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726164AbfHBI0Q (ORCPT
+        id S2404155AbfHBI2Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 04:28:24 -0400
+Received: from sender4-pp-o95.zoho.com ([136.143.188.95]:25573 "EHLO
+        sender4-pp-o95.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390852AbfHBI2X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 04:26:16 -0400
-Received: from pendragon.ideasonboard.com (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 81181CC;
-        Fri,  2 Aug 2019 10:26:14 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1564734374;
-        bh=aXNoGd0TIT84e+iwneFaYQWdhIReu4dkQnr3NUBLRCk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=nZ+shzg3mcQSFxFZwnqlvNLlnhfbaRE3XAmO8zsEreBXfQu8PqTmKQ5oU163razhL
-         gn2rDMncaNtYUnm+5ymz+/pl6CeXmBsbjvqsDkOF2Vqb+znPLbQGT1Uec/8Kn3Ogx0
-         QR7QGGr6JFBrXWl6HRO5c01rdOTwj8UZYL1rE9zo=
-Date:   Fri, 2 Aug 2019 11:26:13 +0300
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: Re: [PATCH/RFC 09/12] drm: rcar-du: lvds: Fix companion's mode
-Message-ID: <20190802082613.GJ5008@pendragon.ideasonboard.com>
-References: <1564731249-22671-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1564731249-22671-10-git-send-email-fabrizio.castro@bp.renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1564731249-22671-10-git-send-email-fabrizio.castro@bp.renesas.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Fri, 2 Aug 2019 04:28:23 -0400
+ARC-Seal: i=1; a=rsa-sha256; t=1564734476; cv=none; 
+        d=zoho.com; s=zohoarc; 
+        b=G4Cq8OYWfqhfhnlxc+GcZlAN4pHlgPyLls5CdBhz6k8fLnR0jR61OWAfnl/nlyaRq5eWAkU1yXW2cgVxYuZdITrs+UNP6JHfu1wLyATfPLa4N+6Fe1N/OSNcPWHJWXfcaGG3kbZTrxBP3clbpfpeIXET0wh85quhknusk45cSjo=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
+        t=1564734476; h=Cc:Date:From:In-Reply-To:Message-ID:References:Subject:To:ARC-Authentication-Results; 
+        bh=+3erHcEilJdLeorVhWvlSZIVgwfXIb0YRZhJi6Tmog8=; 
+        b=jJZDszmq6S70ioYmlSNEIUorEHfA+xHM+IiOYCn7+s1ZvMze+UbFyNJnXHpTcVuX41Ei9vqClhGllwijPSpW5E5K8xkP7nOLcdeCx4+O+t/VojCPpiD7EQify6tPzTcP09Nh8cQXvmnapfM/yxZb8lDmnteMu3yeWwurIAZ39ZQ=
+ARC-Authentication-Results: i=1; mx.zoho.com;
+        dkim=pass  header.i=zoho.com;
+        spf=pass  smtp.mailfrom=zhouyanjie@zoho.com;
+        dmarc=pass header.from=<zhouyanjie@zoho.com> header.from=<zhouyanjie@zoho.com>
+DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws; 
+  s=zapps768; d=zoho.com; 
+  h=from:to:cc:subject:date:message-id:in-reply-to:references; 
+  b=N8oKCyBfacw495TAv4kUjyD9TGh+uHL5S23sX1GJoRBz0sctl9q/GCyG3W9CgPy55JmU+L4/r/EM
+    lGVuxBeycyCc2pmA0h+hcIw66G25UBL1obM5kWi1xk0aYzzFMPxC  
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1564734476;
+        s=zm2019; d=zoho.com; i=zhouyanjie@zoho.com;
+        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; l=181;
+        bh=+3erHcEilJdLeorVhWvlSZIVgwfXIb0YRZhJi6Tmog8=;
+        b=AgtVFZJ9yuKQtKgw/4tDuCUS8Plkjx3ahFDmrRu5P7/RY3irf478hYk58U/sZcoD
+        vIkpfIZAsI+NOwCeAxhXiq+me01gZ8kcApGIVhcQfbmGHoQXFSGLT+vLLdHyzJk5KYh
+        6EkQliAgn194WTd6XgRjB9uN3oI8DA1kVC18OCNs=
+Received: from localhost.localdomain (125.71.5.36 [125.71.5.36]) by mx.zohomail.com
+        with SMTPS id 1564734473888282.7306527180192; Fri, 2 Aug 2019 01:27:53 -0700 (PDT)
+From:   Zhou Yanjie <zhouyanjie@zoho.com>
+To:     linux-mips@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, ralf@linux-mips.org,
+        paul@crapouillou.net, paul.burton@mips.com, jhogan@kernel.org,
+        malat@debian.org, gregkh@linuxfoundation.org, tglx@linutronix.de,
+        allison@lohutok.net, syq@debian.org, chenhc@lemote.com,
+        jiaxun.yang@flygoat.com
+Subject: MIPS: Ingenic: Fix bugs when detecting X1000's parameters v4
+Date:   Fri,  2 Aug 2019 16:27:35 +0800
+Message-Id: <1564734457-48801-1-git-send-email-zhouyanjie@zoho.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1564498510-3751-1-git-send-email-zhouyanjie@zoho.com>
+References: <1564498510-3751-1-git-send-email-zhouyanjie@zoho.com>
+X-ZohoMailClient: External
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Fabrizio,
+v1->v2: Use "set_c0_config7(BIT(4))" to simplify code and add comment.
+v2->v3: Split patch and use "MIPS_CONF7_BTB_LOOP_EN" to instead "BIT(4)".
+v3->v4: Change the commit title.
 
-Thank you for the patch.
 
-On Fri, Aug 02, 2019 at 08:34:06AM +0100, Fabrizio Castro wrote:
-> The companion encoder needs to be told to use the same
-> mode as the primary encoder.
-> 
-> Fixes: e9e8798ab7b8 ("drm: rcar-du: lvds: Add support for dual-link mode")
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> ---
->  drivers/gpu/drm/rcar-du/rcar_lvds.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/rcar-du/rcar_lvds.c b/drivers/gpu/drm/rcar-du/rcar_lvds.c
-> index edd63f5..7944ae9 100644
-> --- a/drivers/gpu/drm/rcar-du/rcar_lvds.c
-> +++ b/drivers/gpu/drm/rcar-du/rcar_lvds.c
-> @@ -415,8 +415,12 @@ static void rcar_lvds_enable(struct drm_bridge *bridge)
->  		return;
->  
->  	/* Enable the companion LVDS encoder in dual-link mode. */
-> -	if (lvds->dual_link && lvds->companion)
-> +	if (lvds->dual_link && lvds->companion) {
-> +		struct rcar_lvds *companion_lvds = bridge_to_rcar_lvds(
-> +							lvds->companion);
-> +		companion_lvds->mode = lvds->mode;
->  		lvds->companion->funcs->enable(lvds->companion);
-> +	}
-
-Would it make sense to do this in rcar_lvds_mode_set() instead, to keep
-the mode set code grouped in a single place ?
-
->  
->  	/*
->  	 * Hardcode the channels and control signals routing for now.
-
--- 
-Regards,
-
-Laurent Pinchart
