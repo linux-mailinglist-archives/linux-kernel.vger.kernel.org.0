@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C1E07F3D9
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 12:00:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BEAB07F3CF
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 12:00:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406930AbfHBKAv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 06:00:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57258 "EHLO mail.kernel.org"
+        id S2392195AbfHBJwN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 05:52:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57674 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392107AbfHBJvx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 05:51:53 -0400
+        id S2392178AbfHBJwM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 05:52:12 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8104420679;
-        Fri,  2 Aug 2019 09:51:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E4D3A206A2;
+        Fri,  2 Aug 2019 09:52:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564739513;
-        bh=bnNHVAa7cAU1dHs9mWMLdFPLJdL5nPw/dd6t3e9ifqs=;
+        s=default; t=1564739528;
+        bh=gW37YEBveilWs83XAvaMJxFdidorjLSE2sOGwO0txh4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NIL+5aBecFiXBFA41wysIO0n4/QLVGi8SXZ2f2aohvqTW+kJARqF8lxndZQeH/qj1
-         IU88yr5BFO7PamTmWpbVhX6R45wd7Mtk0mJWk1H0yhvx05aZoAzjd9t975kVRT+RVj
-         /9cQsssFLiOSnzVWAp7Ne74uxVkJKy252KrLCsPk=
+        b=eZvnv5mgyU2yjxXPuAJRdvQB+pxQabIZhi8FP/OQk69xMxSuQWXpjziMcr1KrTUPJ
+         COhWsgN85naueBbuf0VXo0hlBNoChyj1UkjrsvwXkuwRmrnjUtstsGjK9wQLx6gPQY
+         5GPvL1CGCkdWwbY0wQylXT3bhNCLzk7sJVJXaOA0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Robert Hancock <hancock@sedsystems.ca>,
-        Lee Jones <lee.jones@linaro.org>,
+        stable@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 181/223] mfd: core: Set fwnode for created devices
-Date:   Fri,  2 Aug 2019 11:36:46 +0200
-Message-Id: <20190802092249.388819897@linuxfoundation.org>
+Subject: [PATCH 4.9 187/223] serial: sh-sci: Terminate TX DMA during buffer flushing
+Date:   Fri,  2 Aug 2019 11:36:52 +0200
+Message-Id: <20190802092249.613450130@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190802092238.692035242@linuxfoundation.org>
 References: <20190802092238.692035242@linuxfoundation.org>
@@ -44,32 +45,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit c176c6d7e932662668bcaec2d763657096589d85 ]
+[ Upstream commit 775b7ffd7d6d5db320d99b0a485c51e04dfcf9f1 ]
 
-The logic for setting the of_node on devices created by mfd did not set
-the fwnode pointer to match, which caused fwnode-based APIs to
-malfunction on these devices since the fwnode pointer was null. Fix
-this.
+While the .flush_buffer() callback clears sci_port.tx_dma_len since
+commit 1cf4a7efdc71cab8 ("serial: sh-sci: Fix race condition causing
+garbage during shutdown"), it does not terminate a transmit DMA
+operation that may be in progress.
 
-Signed-off-by: Robert Hancock <hancock@sedsystems.ca>
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
+Fix this by terminating any pending DMA operations, and resetting the
+corresponding cookie.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Eugeniu Rosca <erosca@de.adit-jv.com>
+Tested-by: Eugeniu Rosca <erosca@de.adit-jv.com>
+
+Link: https://lore.kernel.org/r/20190624123540.20629-3-geert+renesas@glider.be
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mfd/mfd-core.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/tty/serial/sh-sci.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/mfd/mfd-core.c b/drivers/mfd/mfd-core.c
-index c57e407020f1..5c8ed2150c8b 100644
---- a/drivers/mfd/mfd-core.c
-+++ b/drivers/mfd/mfd-core.c
-@@ -179,6 +179,7 @@ static int mfd_add_device(struct device *parent, int id,
- 		for_each_child_of_node(parent->of_node, np) {
- 			if (of_device_is_compatible(np, cell->of_compatible)) {
- 				pdev->dev.of_node = np;
-+				pdev->dev.fwnode = &np->fwnode;
- 				break;
- 			}
- 		}
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index bcb997935c5e..8ec8b3bbaf25 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -1538,11 +1538,18 @@ static void sci_free_dma(struct uart_port *port)
+ 
+ static void sci_flush_buffer(struct uart_port *port)
+ {
++	struct sci_port *s = to_sci_port(port);
++
+ 	/*
+ 	 * In uart_flush_buffer(), the xmit circular buffer has just been
+-	 * cleared, so we have to reset tx_dma_len accordingly.
++	 * cleared, so we have to reset tx_dma_len accordingly, and stop any
++	 * pending transfers
+ 	 */
+-	to_sci_port(port)->tx_dma_len = 0;
++	s->tx_dma_len = 0;
++	if (s->chan_tx) {
++		dmaengine_terminate_async(s->chan_tx);
++		s->cookie_tx = -EINVAL;
++	}
+ }
+ #else /* !CONFIG_SERIAL_SH_SCI_DMA */
+ static inline void sci_request_dma(struct uart_port *port)
 -- 
 2.20.1
 
