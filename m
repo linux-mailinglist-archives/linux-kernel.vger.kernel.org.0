@@ -2,120 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2AE687EF9F
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 10:50:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1EFE37EFA5
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 10:51:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404490AbfHBIuE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 04:50:04 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:23702 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731704AbfHBIuE (ORCPT
+        id S2404507AbfHBIvc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 04:51:32 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:9624 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731648AbfHBIva (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 04:50:04 -0400
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x728kgEI025069;
-        Fri, 2 Aug 2019 10:49:49 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : subject :
- date : message-id : references : in-reply-to : content-type : content-id :
- content-transfer-encoding : mime-version; s=STMicroelectronics;
- bh=7oP2TLk/bh7ktiksulnUxikTpCmAWCoZAQWzbFRiYiI=;
- b=HWeHHE6szTeWTy7KRD9hXztk/dcwcjroscp14WCDjeynCAKs1YtJuV93C8R24aMH6X2/
- EfLpdAaLcPk2hJ0XTBKZcahfqNhMntQYofovPgkbscSe3UCn1GB3iwaLJ9KPcGRoW2i9
- Eap4KVSTpobAcweeLSqLNRvZJp2G2j+MfMMrmV4xRL8z1MqL8S9gGAJoIyyqxnwc4xUP
- DsYHilkOT1wVfxEa7FmRJcskW3oKcIDTSA4OVeYkAQa4nmQ89m8apJ24fTVdBruvY+24
- pEF03c1VjSlplo+hTVBIO3CvFq1v4DJtzNwKppgJgkIWFQ6ppdM3JpNKn5KN9WXwIikC Tg== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2u0c2yu8yk-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Fri, 02 Aug 2019 10:49:49 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 2823E41;
-        Fri,  2 Aug 2019 08:49:48 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag3node1.st.com [10.75.127.7])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id E7AEB20754E;
-        Fri,  2 Aug 2019 10:49:48 +0200 (CEST)
-Received: from SFHDAG6NODE2.st.com (10.75.127.17) by SFHDAG3NODE1.st.com
- (10.75.127.7) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 2 Aug
- 2019 10:49:48 +0200
-Received: from SFHDAG6NODE2.st.com ([fe80::a56f:c186:bab7:13d6]) by
- SFHDAG6NODE2.st.com ([fe80::a56f:c186:bab7:13d6%20]) with mapi id
- 15.00.1347.000; Fri, 2 Aug 2019 10:49:48 +0200
-From:   Olivier MOYSAN <olivier.moysan@st.com>
-To:     Alexandre TORGUE <alexandre.torgue@st.com>,
-        "linux-stm32@st-md-mailman.stormreply.com" 
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        "robh@kernel.org" <robh@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ARM: dts: stm32: add DFSDM pins to stm32mp157c
-Thread-Topic: [PATCH] ARM: dts: stm32: add DFSDM pins to stm32mp157c
-Thread-Index: AQHVSQmlOW7lqPM0IEWEE+OpQQXuJKbnat+A
-Date:   Fri, 2 Aug 2019 08:49:48 +0000
-Message-ID: <0e9689a6-0636-b1f2-22f7-009180709891@st.com>
-References: <1564645567-13156-1-git-send-email-olivier.moysan@st.com>
- <a95e5d74-c8e3-42f9-cabf-f42623aee255@st.com>
-In-Reply-To: <a95e5d74-c8e3-42f9-cabf-f42623aee255@st.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Fri, 2 Aug 2019 04:51:30 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d43f9920000>; Fri, 02 Aug 2019 01:51:30 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Fri, 02 Aug 2019 01:51:29 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Fri, 02 Aug 2019 01:51:29 -0700
+Received: from [10.21.132.148] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 2 Aug
+ 2019 08:51:26 +0000
+Subject: Re: [PATCH] [RFC] dmaengine: add fifo_size member
+To:     Vinod Koul <vkoul@kernel.org>
+CC:     Sameer Pujar <spujar@nvidia.com>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        <dan.j.williams@intel.com>, <tiwai@suse.com>,
+        <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <sharadg@nvidia.com>, <rlokhande@nvidia.com>, <dramesh@nvidia.com>,
+        <mkumard@nvidia.com>
+References: <09929edf-ddec-b70e-965e-cbc9ba4ffe6a@nvidia.com>
+ <20190618043308.GJ2962@vkoul-mobl>
+ <23474b74-3c26-3083-be21-4de7731a0e95@nvidia.com>
+ <20190624062609.GV2962@vkoul-mobl>
+ <e9e822da-1cb9-b510-7639-43407fda8321@nvidia.com>
+ <75be49ac-8461-0798-b673-431ec527d74f@nvidia.com>
+ <20190719050459.GM12733@vkoul-mobl.Dlink>
+ <3e7f795d-56fb-6a71-b844-2fc2b85e099e@nvidia.com>
+ <20190729061010.GC12733@vkoul-mobl.Dlink>
+ <98954eb3-21f1-6008-f8e1-f9f9b82f87fb@nvidia.com>
+ <20190731151610.GT12733@vkoul-mobl.Dlink>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <c0f4de86-423a-35df-3744-40db89f2fdfe@nvidia.com>
+Date:   Fri, 2 Aug 2019 09:51:24 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.46]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <9043CAB016B58A46BA78A79224654C44@st.com>
-Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-02_04:,,
- signatures=0
+In-Reply-To: <20190731151610.GT12733@vkoul-mobl.Dlink>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1564735890; bh=nax2DgzaAlHPRJRFGWdL5FItacr7F1m1EM0UoJ50c+s=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=YNva9S8cHTX6x7/kDHvIx5AZm7Y0xkUCrnDBsGEfdcQ9Nfb/HmvB6ygs8nk7mdnfn
+         LZclFQOatOHmGwsMb/2RQem/VwN02paSzuf/gjQJuzotmrR4bvjwdwq92Rva5VY3mM
+         lLGSiakKAxkhcSsQ71/8qsjelkpAurHhi7C/yBjTO35s2L6i+saTC1NN8SV28L7h3t
+         /5P9ago0B6kOwPiHFhm4oxzry22WWZxT/b9X9ny8vTdbcYHEAV7oT0SXKFfaxgp8hM
+         8r6ywsVlUXfe3pP+eL5AGTMXLrVUgPzGgAD09BR+UaSGq9h93EouK+w4tC6/s4OYLr
+         q1WMJOurs6trw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgQUxleCwNCg0KT24gOC8yLzE5IDEwOjA5IEFNLCBBbGV4YW5kcmUgVG9yZ3VlIHdyb3RlOg0K
-PiBIaSBPbGl2aWVyDQo+IA0KPiBPbiA4LzEvMTkgOTo0NiBBTSwgT2xpdmllciBNb3lzYW4gd3Jv
-dGU6DQo+PiBBZGQgREZTRE0gcGlucyB0byBzdG0zMm1wMTU3Yy4NCj4+DQo+PiBTaWduZWQtb2Zm
-LWJ5OiBPbGl2aWVyIE1veXNhbiA8b2xpdmllci5tb3lzYW5Ac3QuY29tPg0KPj4gLS0tDQo+PiAg
-ICBhcmNoL2FybS9ib290L2R0cy9zdG0zMm1wMTU3LXBpbmN0cmwuZHRzaSB8IDM5ICsrKysrKysr
-KysrKysrKysrKysrKysrKysrKysrKysNCj4+ICAgIDEgZmlsZSBjaGFuZ2VkLCAzOSBpbnNlcnRp
-b25zKCspDQo+Pg0KPj4gZGlmZiAtLWdpdCBhL2FyY2gvYXJtL2Jvb3QvZHRzL3N0bTMybXAxNTct
-cGluY3RybC5kdHNpIGIvYXJjaC9hcm0vYm9vdC9kdHMvc3RtMzJtcDE1Ny1waW5jdHJsLmR0c2kN
-Cj4+IGluZGV4IDllYWVjOWJmOGNiOC4uZjk2YTkyOGNiYzQ5IDEwMDY0NA0KPj4gLS0tIGEvYXJj
-aC9hcm0vYm9vdC9kdHMvc3RtMzJtcDE1Ny1waW5jdHJsLmR0c2kNCj4+ICsrKyBiL2FyY2gvYXJt
-L2Jvb3QvZHRzL3N0bTMybXAxNTctcGluY3RybC5kdHNpDQo+PiBAQCAtMjMwLDYgKzIzMCw0NSBA
-QA0KPj4gICAgCQkJCX07DQo+PiAgICAJCQl9Ow0KPj4gICAgDQo+IA0KPiBJIHVzZSB0byBvbmx5
-IHRha2UgcGluY29uZmlnIHdoaWNoIGFyZSB1c2VkIGluIGJvYXJkLiBTbyBwbGVhc2UgcmVzZW5k
-DQo+IHdpdGggdGhlICJib2FyZCBwYXRjaCIuDQo+IA0KDQpUaGUgREZTRE0gaXMgb25lIG9mIHRo
-ZSBpbnRlcmZhY2UgdXNlZCBpbiB0aGUgU1RNMzJNUDE1IHNvdW5kY2FyZC4NClRoaXMgc291bmRj
-YXJkIGFsc28gdXNlcyB0aGUgV29sZnNvbiB3bTg5OTQgYXVkaW8gY29kZWMuDQpUaGUgd204OTk0
-IGNvZGVjIGRyaXZlciByZXF1aXJlcyBhZGFwdGF0aW9ucywgYW5kIHRoZSB1cHN0cmVhbSBvZg0K
-dGhlc2UgY2hhbmdlcyBpcyBub3QgcGxhbm5lZCB0b2RheS4NClNvLCB0aGUgcmVsYXRlZCBib2Fy
-ZCBwYXRjaGVzIGNhbm5vdCBiZSBzZW50Lg0KDQpCUnMNCk9saXZpZXINCg0KPiByZWdhcmRzDQo+
-IEFsZXgNCj4gDQo+IA0KPj4gKwkJCWRmc2RtX2Nsa291dF9waW5zX2E6IGRmc2RtLWNsa291dC1w
-aW5zLTAgew0KPj4gKwkJCQlwaW5zIHsNCj4+ICsJCQkJCXBpbm11eCA9IDxTVE0zMl9QSU5NVVgo
-J0InLCAxMywgQUYzKT47IC8qIERGU0RNX0NLT1VUICovDQo+PiArCQkJCQliaWFzLWRpc2FibGU7
-DQo+PiArCQkJCQlkcml2ZS1wdXNoLXB1bGw7DQo+PiArCQkJCQlzbGV3LXJhdGUgPSA8MD47DQo+
-PiArCQkJCX07DQo+PiArCQkJfTsNCj4+ICsNCj4+ICsJCQlkZnNkbV9jbGtvdXRfc2xlZXBfcGlu
-c19hOiBkZnNkbS1jbGtvdXQtc2xlZXAtcGlucy0wIHsNCj4+ICsJCQkJcGlucyB7DQo+PiArCQkJ
-CQlwaW5tdXggPSA8U1RNMzJfUElOTVVYKCdCJywgMTMsIEFOQUxPRyk+OyAvKiBERlNETV9DS09V
-VCAqLw0KPj4gKwkJCQl9Ow0KPj4gKwkJCX07DQo+PiArDQo+PiArCQkJZGZzZG1fZGF0YTFfcGlu
-c19hOiBkZnNkbS1kYXRhMS1waW5zLTAgew0KPj4gKwkJCQlwaW5zIHsNCj4+ICsJCQkJCXBpbm11
-eCA9IDxTVE0zMl9QSU5NVVgoJ0MnLCAzLCBBRjMpPjsgLyogREZTRE1fREFUQTEgKi8NCj4+ICsJ
-CQkJfTsNCj4+ICsJCQl9Ow0KPj4gKw0KPj4gKwkJCWRmc2RtX2RhdGExX3NsZWVwX3BpbnNfYTog
-ZGZzZG0tZGF0YTEtc2xlZXAtcGlucy0wIHsNCj4+ICsJCQkJcGlucyB7DQo+PiArCQkJCQlwaW5t
-dXggPSA8U1RNMzJfUElOTVVYKCdDJywgMywgQU5BTE9HKT47IC8qIERGU0RNX0RBVEExICovDQo+
-PiArCQkJCX07DQo+PiArCQkJfTsNCj4+ICsNCj4+ICsJCQlkZnNkbV9kYXRhM19waW5zX2E6IGRm
-c2RtLWRhdGEzLXBpbnMtMCB7DQo+PiArCQkJCXBpbnMgew0KPj4gKwkJCQkJcGlubXV4ID0gPFNU
-TTMyX1BJTk1VWCgnRicsIDEzLCBBRjYpPjsgLyogREZTRE1fREFUQTMgKi8NCj4+ICsJCQkJfTsN
-Cj4+ICsJCQl9Ow0KPj4gKw0KPj4gKwkJCWRmc2RtX2RhdGEzX3NsZWVwX3BpbnNfYTogZGZzZG0t
-ZGF0YTMtc2xlZXAtcGlucy0wIHsNCj4+ICsJCQkJcGlucyB7DQo+PiArCQkJCQlwaW5tdXggPSA8
-U1RNMzJfUElOTVVYKCdGJywgMTMsIEFOQUxPRyk+OyAvKiBERlNETV9EQVRBMyAqLw0KPj4gKwkJ
-CQl9Ow0KPj4gKwkJCX07DQo+PiArDQo+PiAgICAJCQlldGhlcm5ldDBfcmdtaWlfcGluc19hOiBy
-Z21paS0wIHsNCj4+ICAgIAkJCQlwaW5zMSB7DQo+PiAgICAJCQkJCXBpbm11eCA9IDxTVE0zMl9Q
-SU5NVVgoJ0cnLCA1LCBBRjExKT4sIC8qIEVUSF9SR01JSV9DTEsxMjUgKi8NCj4+
+
+On 31/07/2019 16:16, Vinod Koul wrote:
+> On 31-07-19, 10:48, Jon Hunter wrote:
+>>
+>> On 29/07/2019 07:10, Vinod Koul wrote:
+>>> On 23-07-19, 11:24, Sameer Pujar wrote:
+>>>>
+>>>> On 7/19/2019 10:34 AM, Vinod Koul wrote:
+>>>>> On 05-07-19, 11:45, Sameer Pujar wrote:
+>>>>>> Hi Vinod,
+>>>>>>
+>>>>>> What are your final thoughts regarding this?
+>>>>> Hi sameer,
+>>>>>
+>>>>> Sorry for the delay in replying
+>>>>>
+>>>>> On this, I am inclined to think that dma driver should not be involved.
+>>>>> The ADMAIF needs this configuration and we should take the path of
+>>>>> dma_router for this piece and add features like this to it
+>>>>
+>>>> Hi Vinod,
+>>>>
+>>>> The configuration is needed by both ADMA and ADMAIF. The size is
+>>>> configurable
+>>>> on ADMAIF side. ADMA needs to know this info and program accordingly.
+>>>
+>>> Well I would say client decides the settings for both DMA, DMAIF and
+>>> sets the peripheral accordingly as well, so client communicates the two
+>>> sets of info to two set of drivers
+>>
+>> That maybe, but I still don't see how the information is passed from the
+>> client in the first place. The current problem is that there is no means
+>> to pass both a max-burst size and fifo-size to the DMA driver from the
+>> client.
+> 
+> So one thing not clear to me is why ADMA needs fifo-size, I thought it
+> was to program ADMAIF and if we have client programme the max-burst
+> size to ADMA and fifo-size to ADMAIF we wont need that. Can you please
+> confirm if my assumption is valid?
+
+Let me see if I can clarify ...
+
+1. The FIFO we are discussing here resides in the ADMAIF module which is
+   a separate hardware block the ADMA (although the naming make this
+   unclear).
+
+2. The size of FIFO in the ADMAIF is configurable and it this is
+   configured via the ADMAIF registers. This allows different channels
+   to use different FIFO sizes. Think of this as a shared memory that is
+   divided into n FIFOs shared between all channels.
+
+3. The ADMA, not the ADMAIF, manages the flow to the FIFO and this is
+   because the ADMAIF only tells the ADMA when a word has been
+   read/written (depending on direction), the ADMAIF does not indicate
+   if the FIFO is full, empty, etc. Hence, the ADMA needs to know the
+   total FIFO size.
+
+So the ADMA needs to know the FIFO size so that it does not overrun the
+FIFO and we can also set a burst size (less than the total FIFO size)
+indicating how many words to transfer at a time. Hence, the two parameters.
+
+Even if we were to use some sort of router between the ADMA and ADMAIF,
+the client still needs to indicate to the ADMA what FIFO size and burst
+size, if I am following you correctly.
+
+Let me know if this is clearer.
+
+Thanks
+Jon
+
+-- 
+nvpublic
