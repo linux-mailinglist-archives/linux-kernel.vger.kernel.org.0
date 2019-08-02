@@ -2,36 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FC3F7F1E3
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:43:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B946A7F1D2
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:42:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405017AbfHBJnD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 05:43:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45696 "EHLO mail.kernel.org"
+        id S2391867AbfHBJm1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 05:42:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44722 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404847AbfHBJnB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 05:43:01 -0400
+        id S2390542AbfHBJmY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 05:42:24 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0A89720880;
-        Fri,  2 Aug 2019 09:42:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2EE4D20679;
+        Fri,  2 Aug 2019 09:42:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564738979;
-        bh=BPj6Fqs5ZKIFZ+NOohujAGFUyRkC3VRVPwhMr31csK0=;
+        s=default; t=1564738943;
+        bh=WPH78JG2hGWgUDAQrnFeQz4Vyc83sY9/KeL3HcRRCDY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KLOS+XIx9TEYvuBpD/cM0piV/Vw30KOfdZ8GmFDWMw/bDrAQMzllJxjP91Rhmuryj
-         oNXTo2m1mrRwKTy1JSN4U2SKm4n9J03XWySa1M8VyH9U0SEKWDejkG43OrvtTV1t59
-         f+lOift6QvVsTJHKRIpN2wog2sya0sa3uqS9WfRM=
+        b=OVlhB6LI7wRICUEZ3v1wee9jqiQEBPu6JEHKpSJSl0pRJY9b+Ui2OKdxagPPa9I8I
+         3C95LF9839ksjTqwenR/1QOZTgPHT0mF6RpN0ZEm9r1aJc8s8Z1s1kD34qoVJ7GXUD
+         U2desgCRw8No7wQqVHEngHv/AbUeOd98fnohg7to=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Miaoqing Pan <miaoqing@codeaurora.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        stable@vger.kernel.org, Kyle Meyer <kyle.meyer@hpe.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 055/223] ath10k: fix PCIE device wake up failed
-Date:   Fri,  2 Aug 2019 11:34:40 +0200
-Message-Id: <20190802092242.450580701@linuxfoundation.org>
+Subject: [PATCH 4.9 056/223] perf tools: Increase MAX_NR_CPUS and MAX_CACHES
+Date:   Fri,  2 Aug 2019 11:34:41 +0200
+Message-Id: <20190802092242.512388192@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190802092238.692035242@linuxfoundation.org>
 References: <20190802092238.692035242@linuxfoundation.org>
@@ -44,47 +48,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 011d4111c8c602ea829fa4917af1818eb0500a90 ]
+[ Upstream commit 9f94c7f947e919c343b30f080285af53d0fa9902 ]
 
-Observed PCIE device wake up failed after ~120 iterations of
-soft-reboot test. The error message is
-"ath10k_pci 0000:01:00.0: failed to wake up device : -110"
+Attempting to profile 1024 or more CPUs with perf causes two errors:
 
-The call trace as below:
-ath10k_pci_probe -> ath10k_pci_force_wake -> ath10k_pci_wake_wait ->
-ath10k_pci_is_awake
+  perf record -a
+  [ perf record: Woken up X times to write data ]
+  way too many cpu caches..
+  [ perf record: Captured and wrote X MB perf.data (X samples) ]
 
-Once trigger the device to wake up, we will continuously check the RTC
-state until it returns RTC_STATE_V_ON or timeout.
+  perf report -C 1024
+  Error: failed to set  cpu bitmap
+  Requested CPU 1024 too large. Consider raising MAX_NR_CPUS
 
-But for QCA99x0 chips, we use wrong value for RTC_STATE_V_ON.
-Occasionally, we get 0x7 on the fist read, we thought as a failure
-case, but actually is the right value, also verified with the spec.
-So fix the issue by changing RTC_STATE_V_ON from 0x5 to 0x7, passed
-~2000 iterations.
+  Increasing MAX_NR_CPUS from 1024 to 2048 and redefining MAX_CACHES as
+  MAX_NR_CPUS * 4 returns normal functionality to perf:
 
-Tested HW: QCA9984
+  perf record -a
+  [ perf record: Woken up X times to write data ]
+  [ perf record: Captured and wrote X MB perf.data (X samples) ]
 
-Signed-off-by: Miaoqing Pan <miaoqing@codeaurora.org>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+  perf report -C 1024
+  ...
+
+Signed-off-by: Kyle Meyer <kyle.meyer@hpe.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/20190620193630.154025-1-meyerk@stormcage.eag.rdlabs.hpecorp.net
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/ath/ath10k/hw.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/perf.h        | 2 +-
+ tools/perf/util/header.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/wireless/ath/ath10k/hw.c b/drivers/net/wireless/ath/ath10k/hw.c
-index 675e75d66db2..14dc6548701c 100644
---- a/drivers/net/wireless/ath/ath10k/hw.c
-+++ b/drivers/net/wireless/ath/ath10k/hw.c
-@@ -157,7 +157,7 @@ const struct ath10k_hw_values qca6174_values = {
- };
+diff --git a/tools/perf/perf.h b/tools/perf/perf.h
+index 8f8d895d5b74..3b9d56125ee2 100644
+--- a/tools/perf/perf.h
++++ b/tools/perf/perf.h
+@@ -23,7 +23,7 @@ static inline unsigned long long rdclock(void)
+ }
  
- const struct ath10k_hw_values qca99x0_values = {
--	.rtc_state_val_on		= 5,
-+	.rtc_state_val_on		= 7,
- 	.ce_count			= 12,
- 	.msi_assign_ce_max		= 12,
- 	.num_target_ce_config_wlan	= 10,
+ #ifndef MAX_NR_CPUS
+-#define MAX_NR_CPUS			1024
++#define MAX_NR_CPUS			2048
+ #endif
+ 
+ extern const char *input_name;
+diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
+index de9b369d2d2e..283148104ffb 100644
+--- a/tools/perf/util/header.c
++++ b/tools/perf/util/header.c
+@@ -1008,7 +1008,7 @@ static int build_caches(struct cpu_cache_level caches[], u32 size, u32 *cntp)
+ 	return 0;
+ }
+ 
+-#define MAX_CACHES 2000
++#define MAX_CACHES (MAX_NR_CPUS * 4)
+ 
+ static int write_cache(int fd, struct perf_header *h __maybe_unused,
+ 			  struct perf_evlist *evlist __maybe_unused)
 -- 
 2.20.1
 
