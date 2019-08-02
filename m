@@ -2,137 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9A167FD33
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 17:14:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AF6347FD3B
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 17:15:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387623AbfHBPOs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 11:14:48 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:38351 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728719AbfHBPOr (ORCPT
+        id S2390918AbfHBPPS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 11:15:18 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52152 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2389312AbfHBPPP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 11:14:47 -0400
-Received: by mail-ed1-f67.google.com with SMTP id r12so37901371edo.5;
-        Fri, 02 Aug 2019 08:14:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=txRNymCLa0F2sH7rm1U39uNCjUyxuuiLjvn3rhtof6o=;
-        b=lO9QmjHP6O41ZCS8dtxftVcEU1ZMBi8DcpvUMY0blH5Qwqs9An8SwEtYIu4kI6xBqO
-         ROSjy4jrgZxUHgj+PoMsKXXOnCBPtY5s3OefBgajHeizJfCRzEQMpfJZsxWfs2ziBXQr
-         i8FM3V169K4mBiBVZU798HtbOMxk+zE0F74fIx/mFQP3tKcsbIYJQNMVfDCKLixaXC73
-         nOlcLwXTCJweexIyOsfohKaVuLPfBukqQrOIEHK1aRxxDDXvRW34lsQSzs7tYjyBU7tI
-         35VsEtCMIxfCasrfUvsocJfMQjs6gT5qlNs4oH7gbeoS5iNqtHQ+9CscZuIBYXg+ZC0P
-         1jiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=txRNymCLa0F2sH7rm1U39uNCjUyxuuiLjvn3rhtof6o=;
-        b=mUCERXEelUt/qhezWeh7jdYMOZdTzoMRelgkcaMdPwJ0EmaUKo7jy+IdYMSwC/fJ63
-         abpvUSTxs9tzHw4DzyD1cdsyl7vTWSEFmK1gWkPer8bQFSd8z47DvO2rSdFP2w9QtWhk
-         Hu3fRuuCdtcrRL3gomSvKrD0UF8oB97ZqVckSAODlZGAIAZrDuaf7tu28+A7Muwlz9Ap
-         a6FpnEP87zwO8WJOHbx2qEk03jLUALu7EIll9BuBVLQxtfZanRlMPCDQU6vUc1NyD/yW
-         R7pwlz/HjgqmBPG4TqugVXAInszF0JJgdMX5NKM5iBDPiovQG2HHxQNW6vqYvBIhPfxn
-         oZvA==
-X-Gm-Message-State: APjAAAU9wHdJWuLYjujLz+VKrfShtfsoivmv4stAKO1vICRY6LzxqZFg
-        CsWeqc76Wtbfl76hP59pSK5yE/wAuGDaR7bFxf4=
-X-Google-Smtp-Source: APXvYqzciECXl/Wx8kXkgux/UT3GuFE34O7YmYXV/Xzub/m93Yrtsl0lq1y+r+M8dslWjvKCZukCo7A1uiL7FM5xcDo=
-X-Received: by 2002:a50:a53a:: with SMTP id y55mr122610228edb.147.1564758886126;
- Fri, 02 Aug 2019 08:14:46 -0700 (PDT)
+        Fri, 2 Aug 2019 11:15:15 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x72F6Xqf078663;
+        Fri, 2 Aug 2019 11:14:36 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2u4ntc54qc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 02 Aug 2019 11:14:36 -0400
+Received: from m0098416.ppops.net (m0098416.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x72F6cvD079170;
+        Fri, 2 Aug 2019 11:14:35 -0400
+Received: from ppma01wdc.us.ibm.com (fd.55.37a9.ip4.static.sl-reverse.com [169.55.85.253])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2u4ntc54pv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 02 Aug 2019 11:14:35 -0400
+Received: from pps.filterd (ppma01wdc.us.ibm.com [127.0.0.1])
+        by ppma01wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x72FAmTE020270;
+        Fri, 2 Aug 2019 15:14:34 GMT
+Received: from b01cxnp23034.gho.pok.ibm.com (b01cxnp23034.gho.pok.ibm.com [9.57.198.29])
+        by ppma01wdc.us.ibm.com with ESMTP id 2u0e875118-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 02 Aug 2019 15:14:34 +0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x72FEYei14811432
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 2 Aug 2019 15:14:34 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 68EBEB2068;
+        Fri,  2 Aug 2019 15:14:34 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 49D8DB2064;
+        Fri,  2 Aug 2019 15:14:34 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.154])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Fri,  2 Aug 2019 15:14:34 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id C0A6E16C9993; Fri,  2 Aug 2019 08:14:35 -0700 (PDT)
+Date:   Fri, 2 Aug 2019 08:14:35 -0700
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     rcu@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
+        jiangshanlai@gmail.com, dipankar@in.ibm.com,
+        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
+        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
+        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
+        fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org
+Subject: [PATCH tip/core/rcu 0/14] No-CBs bypass addition for v5.4
+Message-ID: <20190802151435.GA1081@linux.ibm.com>
+Reply-To: paulmck@linux.ibm.com
 MIME-Version: 1.0
-References: <20190802083541.12602-1-hslester96@gmail.com> <CA+FuTSc8WBx2PCUhn-sLtYHQR-OROXm2pUN9SDj7P-Bd8432UQ@mail.gmail.com>
- <CANhBUQ2TRr4RuSmjaRYPXHZpVw_-2awXvWNjjdvV_z1yoGdkXA@mail.gmail.com>
- <CAF=yD-+3tzufyOnK4suJnovrhX_=4sPqWOsjOcETGG3cA9+MdA@mail.gmail.com> <CANhBUQ2C3OfkC6qDL9=hhXq=C-OMHUwaL7EaMbagVRTt=rc00A@mail.gmail.com>
-In-Reply-To: <CANhBUQ2C3OfkC6qDL9=hhXq=C-OMHUwaL7EaMbagVRTt=rc00A@mail.gmail.com>
-From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Date:   Fri, 2 Aug 2019 11:14:10 -0400
-Message-ID: <CAF=yD-K1=4sDmLb0sUaxTHAbVmBXTy4McdBJyVtrZEJx95CqxA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] cxgb4: sched: Use refcount_t for refcount
-To:     Chuhong Yuan <hslester96@gmail.com>
-Cc:     Vishal Kulkarni <vishal@chelsio.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Network Development <netdev@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-02_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=13 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=647 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908020156
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 2, 2019 at 11:10 AM Chuhong Yuan <hslester96@gmail.com> wrote:
->
-> Willem de Bruijn <willemdebruijn.kernel@gmail.com> =E4=BA=8E2019=E5=B9=B4=
-8=E6=9C=882=E6=97=A5=E5=91=A8=E4=BA=94 =E4=B8=8B=E5=8D=8810:53=E5=86=99=E9=
-=81=93=EF=BC=9A
-> >
-> > On Fri, Aug 2, 2019 at 10:27 AM Chuhong Yuan <hslester96@gmail.com> wro=
-te:
-> > >
-> > > Willem de Bruijn <willemdebruijn.kernel@gmail.com> =E4=BA=8E2019=E5=
-=B9=B48=E6=9C=882=E6=97=A5=E5=91=A8=E4=BA=94 =E4=B8=8B=E5=8D=889:40=E5=86=
-=99=E9=81=93=EF=BC=9A
-> > > >
-> > > > On Fri, Aug 2, 2019 at 4:36 AM Chuhong Yuan <hslester96@gmail.com> =
-wrote:
-> > > > >
-> > > > > refcount_t is better for reference counters since its
-> > > > > implementation can prevent overflows.
-> > > > > So convert atomic_t ref counters to refcount_t.
-> > > > >
-> > > > > Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
-> > > > > ---
-> > > > > Changes in v2:
-> > > > >   - Convert refcount from 0-base to 1-base.
-> > > >
-> > > > This changes the initial value from 0 to 1, but does not change the
-> > > > release condition. So this introduces an accounting bug?
-> > >
-> > > I have noticed this problem and have checked other files which use re=
-fcount_t.
-> > > I find although the refcounts are 1-based, they still use
-> > > refcount_dec_and_test()
-> > > to check whether the resource should be released.
-> > > One example is drivers/char/mspec.c.
-> > > Therefore I think this is okay and do not change the release conditio=
-n.
-> >
-> > Indeed it is fine to use refcount_t with a model where the initial
-> > allocation already accounts for the first reference and thus
-> > initializes with refcount_set(.., 1).
-> >
-> > But it is not correct to just change a previously zero initialization
-> > to one. As now an extra refcount_dec will be needed to release state.
-> > But the rest of the code has not changed, so this extra decrement will
-> > not happen.
-> >
-> > For a correct conversion, see for instance commits
-> >
-> >   commit db5bce32fbe19f0c7482fb5a40a33178bbe7b11b
-> >   net: prepare (struct ubuf_info)->refcnt conversion
-> >
-> > and
-> >
-> >   commit c1d1b437816f0afa99202be3cb650c9d174667bc
-> >   net: convert (struct ubuf_info)->refcnt to refcount_t
-> >
-> > The second makes a search-and-replace style API change like your
-> > patches (though also notice the additional required #include).
-> >
->
-> Thanks for your examples!
-> I will fix the #include in those no base changed patches.
->
-> > But the other patch is needed first to change both the initial
-> > atomic_set *and* at least one atomic_inc, to maintain the same
-> > reference count over the object's lifetime.
-> >
-> > That change requires understanding of the object's lifecycle, so I
-> > suggest only making those changes when aware of that whole data path.
->
-> I think I had better focus on the 1-based cases first.
+Hello!
 
-Yes, sounds good. And please try a single driver first and get that
-accepted, before moving on to multiple concurrent submissions.
+This series is a sneak preview of additional work for the move of no-CBs
+CPUs to the ->cblist segmented RCU callback list.  This work adds
+a ->nocb_bypass list with its own lock to further reduce contention.
+This series also includes some nascent work to turn the scheduling-clock
+interrupt back on for nohz_full CPUs doing heavy rcutorture work or RCU
+callback invocation, both of which can remain in the kernel for long
+time periods, which in turn can impede CPU hotplug removals.  (On some
+systems "impede" means up to seven minutes for stop-machine to actually
+get things to stop, a problem that has not yet been observed on no-CBs
+CPUs that are not also nohz_full CPUs.)
+
+1.	Atomic ->len field in rcu_segcblist structure.
+
+2.	Add bypass callback queueing in ->nocb_bypass with its own
+	->nocb_bypass_lock.
+
+3.	(Experimental) Check use and usefulness of ->nocb_lock_contended.
+
+4.	Print no-CBs diagnostics when rcutorture writer unduly delayed.
+
+5.	Avoid synchronous wakeup in __call_rcu_nocb_wake().
+
+6.	Advance CBs after merge in rcutree_migrate_callbacks() to
+	avoid unnecessary invocation delays.
+
+7.	Reduce nocb_cb_wait() leaf rcu_node ->lock contention.
+
+8.	Reduce __call_rcu_nocb_wake() leaf rcu_node ->lock contention.
+
+9.	Don't wake no-CBs GP kthread if timer posted under overload,
+	thus reducing overhead in the overload case.
+
+10.	Allow rcu_do_batch() to dynamically adjust batch sizes, courtesy
+	of Eric Dumazet.
+
+11.	(Experimental) Add TICK_DEP_BIT_RCU, courtesy of Frederic Weisbecker.
+
+12.	Force on tick when invoking lots of callbacks to reduce the
+	probability of long stop-machine delays.
+
+13.	Force on tick for readers and callback flooders, again to reduce
+	the probability of long stop-machine delays.
+
+14.	(Experimental and likely quite imperfect) Make multi_cpu_stop()
+	enable tick on all online CPUs, yet again to reduce the
+	probability of long stop-machine delays.
+
+							Thanx, Paul
+
+------------------------------------------------------------------------
+
+ include/linux/rcu_segcblist.h |    4 
+ include/linux/tick.h          |    7 
+ kernel/rcu/rcu_segcblist.c    |  116 +++++++++-
+ kernel/rcu/rcu_segcblist.h    |   17 +
+ kernel/rcu/rcutorture.c       |   25 +-
+ kernel/rcu/tree.c             |   41 +++
+ kernel/rcu/tree.h             |   35 ++-
+ kernel/rcu/tree_plugin.h      |  486 +++++++++++++++++++++++++++++++++++++-----
+ kernel/rcu/tree_stall.h       |    5 
+ kernel/stop_machine.c         |    9 
+ kernel/time/tick-sched.c      |    2 
+ 11 files changed, 667 insertions(+), 80 deletions(-)
