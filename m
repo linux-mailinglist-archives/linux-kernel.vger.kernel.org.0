@@ -2,89 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 416747F665
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 14:04:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 51AF47F670
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 14:04:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388430AbfHBMEM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 08:04:12 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:41414 "EHLO mx1.redhat.com"
+        id S2392505AbfHBMEh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 08:04:37 -0400
+Received: from ozlabs.org ([203.11.71.1]:47707 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731018AbfHBMEM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 08:04:12 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S2392489AbfHBMEg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 08:04:36 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id CD98330821A0;
-        Fri,  2 Aug 2019 12:04:11 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.136])
-        by smtp.corp.redhat.com (Postfix) with SMTP id AC4DA5D704;
-        Fri,  2 Aug 2019 12:04:08 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Fri,  2 Aug 2019 14:04:11 +0200 (CEST)
-Date:   Fri, 2 Aug 2019 14:04:07 +0200
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Sebastian Siewior <bigeasy@linutronix.de>,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Julia Cartwright <julia@ni.com>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Frederic Weisbecker <fweisbec@gmail.com>, kvm@vger.kernel.org,
-        Radim Krcmar <rkrcmar@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>
-Subject: Re: [patch 2/5] x86/kvm: Handle task_work on VMENTER/EXIT
-Message-ID: <20190802120407.GB20111@redhat.com>
-References: <20190801143250.370326052@linutronix.de>
- <20190801143657.887648487@linutronix.de>
- <20190801162451.GE31538@redhat.com>
- <alpine.DEB.2.21.1908012025100.1789@nanos.tec.linutronix.de>
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 460QnX1zNsz9s7T;
+        Fri,  2 Aug 2019 22:04:31 +1000 (AEST)
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Johannes Berg <johannes@sipsolutions.net>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        kvalo@codeaurora.org, Luca Coelho <luciano.coelho@intel.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+        Intel Linux Wireless <linuxwifi@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Shahar S Matityahu <shahar.s.matityahu@intel.com>,
+        Sara Sharon <sara.sharon@intel.com>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com
+Subject: Re: [PATCH -next] iwlwifi: dbg: work around clang bug by marking debug strings static
+In-Reply-To: <3a2b6d4f9356d54ab8e83fbf25ba9c5f50181f0d.camel@sipsolutions.net>
+References: <20190712001708.170259-1-ndesaulniers@google.com> <874l31r88y.fsf@concordia.ellerman.id.au> <3a2b6d4f9356d54ab8e83fbf25ba9c5f50181f0d.camel@sipsolutions.net>
+Date:   Fri, 02 Aug 2019 22:04:31 +1000
+Message-ID: <871ry3lqnk.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1908012025100.1789@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Fri, 02 Aug 2019 12:04:12 +0000 (UTC)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/01, Thomas Gleixner wrote:
+Johannes Berg <johannes@sipsolutions.net> writes:
+>> Luca, you said this was already fixed in your internal tree, and the fix
+>> would appear soon in next, but I don't see anything in linux-next?
 >
-> On Thu, 1 Aug 2019, Oleg Nesterov wrote:
-> > On 08/01, Thomas Gleixner wrote:
-> > >
-> > > @@ -8172,6 +8174,10 @@ static int vcpu_run(struct kvm_vcpu *vcp
-> > >  			++vcpu->stat.signal_exits;
-> > >  			break;
-> > >  		}
-> > > +
-> > > +		if (notify_resume_pending())
-> > > +			tracehook_handle_notify_resume();
-> >
-> > shouldn't you drop kvm->srcu before tracehook_handle_notify_resume() ?
-> >
-> > I don't understand this code at all, but vcpu_run() does this even before
-> > cond_resched().
->
-> Yeah, I noticed that it's dropped around cond_resched().
->
-> My understanding is that for voluntary giving up the CPU via cond_resched()
-> it needs to be dropped.
+> Luca is still on vacation, but I just sent out a version of the patch we
+> had applied internally.
 
-I am not sure it really needs, but this doesn't matter.
+Awesome, thanks.
 
-tracehook_handle_notify_resume() can do "anything", say it can run the
-works queued by systemtap. I don't think it should delay synchronize_srcu().
-And may be this is simply unsafe, even if I don't think a task_work can
-ever call synchronize_srcu(kvm->srcu) directly.
-
-Oleg.
-
+cheers
