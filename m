@@ -2,133 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 773337FBC0
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 16:08:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 46DF37FBC6
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 16:09:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436623AbfHBOIT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 10:08:19 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:13022 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2436601AbfHBOIS (ORCPT
+        id S2436632AbfHBOJO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 10:09:14 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:38968 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732817AbfHBOJN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 10:08:18 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x72E7UsL069532
-        for <linux-kernel@vger.kernel.org>; Fri, 2 Aug 2019 10:08:17 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2u4pjqga0r-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2019 10:08:16 -0400
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <gor@linux.ibm.com>;
-        Fri, 2 Aug 2019 15:08:14 +0100
-Received: from b06avi18878370.portsmouth.uk.ibm.com (9.149.26.194)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 2 Aug 2019 15:08:11 +0100
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x72E89pE22348106
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 2 Aug 2019 14:08:09 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 90E9352057;
-        Fri,  2 Aug 2019 14:08:09 +0000 (GMT)
-Received: from localhost (unknown [9.152.212.110])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTPS id 605505205F;
-        Fri,  2 Aug 2019 14:08:09 +0000 (GMT)
-Date:   Fri, 2 Aug 2019 16:08:08 +0200
-From:   Vasily Gorbik <gor@linux.ibm.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
-Subject: [GIT PULL] s390 updates for 5.3-rc3
+        Fri, 2 Aug 2019 10:09:13 -0400
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x72E6uLF014555;
+        Fri, 2 Aug 2019 16:09:00 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : subject :
+ date : message-id : mime-version : content-type :
+ content-transfer-encoding; s=STMicroelectronics;
+ bh=V4Oy0E5gbwyi1cbiRiVoGW45+5zWyza++ydGz4D477E=;
+ b=Z8BqG/0ydEYKorRq6uN7BstyvNz9rvTzsNTLIiUk0O/KLzdXaVrhf3fKJhOL+XEeruk1
+ dGUUYZ4gXS3ohGtP7MiUizl4oLWZ+3EVWP2e5syGLv5FHVEzscdE5QRYsQOizAfJ3arT
+ If/qqA0CWJFToyr79Oo1fW+TyDtXUPqoCjCri19Zu2UKJOzafaDMbPx4oM+cc3YbTcgq
+ FdYxSHDdY1A1zlMjTW4MURJTjducO/Wg9zL1r6gc++okNND+3dMKEHtGkOU+dfm4N5OJ
+ vrzrvZf/IH6fEAqSaggQGi8n5GCeCFmQ5c9+eKAk8Q7L+qYSDlwvbGiC2Hggumm9od11 vQ== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2u0c2yvs6w-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Fri, 02 Aug 2019 16:09:00 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 537F634;
+        Fri,  2 Aug 2019 14:09:00 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas22.st.com [10.75.90.92])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 3CEE72C4581;
+        Fri,  2 Aug 2019 16:09:00 +0200 (CEST)
+Received: from SAFEX1HUBCAS23.st.com (10.75.90.47) by Safex1hubcas22.st.com
+ (10.75.90.92) with Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 2 Aug 2019
+ 16:09:00 +0200
+Received: from localhost (10.201.23.97) by webmail-ga.st.com (10.75.90.48)
+ with Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 2 Aug 2019 16:08:59
+ +0200
+From:   =?UTF-8?q?Yannick=20Fertr=C3=A9?= <yannick.fertre@st.com>
+To:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Benjamin Gaignard <benjamin.gaignard@st.com>,
+        Yannick Fertre <yannick.fertre@st.com>,
+        Philippe Cornu <philippe.cornu@st.com>,
+        Fabrice Gasnier <fabrice.gasnier@st.com>
+Subject: [PATCH] ARM: dts: stm32: move ltdc pinctrl on stm32mp157a dk1 board
+Date:   Fri, 2 Aug 2019 16:08:51 +0200
+Message-ID: <1564754931-13861-1-git-send-email-yannick.fertre@st.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-X-TM-AS-GCONF: 00
-x-cbid: 19080214-0016-0000-0000-0000029907EE
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19080214-0017-0000-0000-000032F80835
-Message-Id: <your-ad-here.call-01564754888-ext-1592@work.hours>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.201.23.97]
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-02_06:,,
  signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=381 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1908020146
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Linus,
+The ltdc pinctrl must be in the display controller node and
+not in the peripheral node (hdmi bridge).
 
-please pull s390 changes for 5.3-rc3.
+Signed-off-by: Yannick Fertré <yannick.fertre@st.com>
+---
+ arch/arm/boot/dts/stm32mp157a-dk1.dts | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Thank you,
-Vasily
-
-The following changes since commit 609488bc979f99f805f34e9a32c1e3b71179d10b:
-
-  Linux 5.3-rc2 (2019-07-28 12:47:02 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git tags/s390-5.3-4
-
-for you to fetch changes up to 3cdd98606750a5a1d1c8bcda5b481cb86ed67b3b:
-
-  s390/zcrypt: adjust switch fall through comments for -Wimplicit-fallthrough (2019-08-02 13:58:23 +0200)
-
-----------------------------------------------------------------
-s390 updates for 5.3-rc3
-
- - Default configs updates.
-
- - Minor qdio cleanup.
-
- - Sparse warnings fixes.
-
- - Implicit-fallthrough warnings fixes.
-
-----------------------------------------------------------------
-Heiko Carstens (3):
-      s390: update configs
-      s390/mm: add fallthrough annotations
-      s390/tape: add fallthrough annotations
-
-Julian Wiedmann (1):
-      s390: clean up qdio.h
-
-Vasily Gorbik (8):
-      s390/boot: add missing declarations and includes
-      s390/lib: add missing include
-      s390/perf: make cf_diag_csd static
-      s390/kexec: add missing include to machine_kexec_reloc.c
-      s390/mm: make gmap_test_and_clear_dirty_pmd static
-      s390/3215: add switch fall through comment for -Wimplicit-fallthrough
-      vfio-ccw: make vfio_ccw_async_region_ops static
-      s390/zcrypt: adjust switch fall through comments for -Wimplicit-fallthrough
-
- arch/s390/boot/boot.h                  |   1 +
- arch/s390/boot/kaslr.c                 |   1 +
- arch/s390/configs/debug_defconfig      | 330 ++++++++++++++++++++-------------
- arch/s390/configs/defconfig            | 233 ++++++++++++++---------
- arch/s390/configs/zfcpdump_defconfig   |  31 ++--
- arch/s390/include/asm/qdio.h           |  10 +-
- arch/s390/include/asm/setup.h          |   1 +
- arch/s390/kernel/machine_kexec_reloc.c |   1 +
- arch/s390/kernel/perf_cpum_cf_diag.c   |   2 +-
- arch/s390/lib/xor.c                    |   1 +
- arch/s390/mm/fault.c                   |   3 +
- arch/s390/mm/gmap.c                    |   4 +-
- drivers/s390/char/con3215.c            |   1 +
- drivers/s390/char/tape_core.c          |   3 +
- drivers/s390/cio/vfio_ccw_async.c      |   2 +-
- drivers/s390/crypto/ap_queue.c         |   1 +
- drivers/s390/crypto/zcrypt_msgtype6.c  |  17 +-
- 17 files changed, 392 insertions(+), 250 deletions(-)
+diff --git a/arch/arm/boot/dts/stm32mp157a-dk1.dts b/arch/arm/boot/dts/stm32mp157a-dk1.dts
+index f3f0e37..1285cfc 100644
+--- a/arch/arm/boot/dts/stm32mp157a-dk1.dts
++++ b/arch/arm/boot/dts/stm32mp157a-dk1.dts
+@@ -99,9 +99,6 @@
+ 		reset-gpios = <&gpioa 10 GPIO_ACTIVE_LOW>;
+ 		interrupts = <1 IRQ_TYPE_EDGE_FALLING>;
+ 		interrupt-parent = <&gpiog>;
+-		pinctrl-names = "default", "sleep";
+-		pinctrl-0 = <&ltdc_pins_a>;
+-		pinctrl-1 = <&ltdc_pins_sleep_a>;
+ 		status = "okay";
+ 
+ 		ports {
+@@ -276,6 +273,9 @@
+ };
+ 
+ &ltdc {
++	pinctrl-names = "default", "sleep";
++	pinctrl-0 = <&ltdc_pins_a>;
++	pinctrl-1 = <&ltdc_pins_sleep_a>;
+ 	status = "okay";
+ 
+ 	port {
+-- 
+2.7.4
 
