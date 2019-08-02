@@ -2,74 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C56E97EF72
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 10:38:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6AC4E7EF7A
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 10:39:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404334AbfHBIi4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 04:38:56 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:34889 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404322AbfHBIiz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 04:38:55 -0400
-Received: by mail-wr1-f68.google.com with SMTP id y4so76299961wrm.2
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2019 01:38:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=P3tN8hyVu/1rvIEnIJgiZUpPyry7kC//HDrNGU4LrOY=;
-        b=bU/VkAOl8ucM4ZoHvZ9DXgRDkyID+EfiwBThmNXLK6DYw44ii4sJQPtqYKiWmSEYWl
-         dbITlj/ncVDc4Fw37TOO+uK1HYt37aFX+BJICYWRkrbkEzABbNWq4EyN27hsIPP21hgn
-         PkOQQKH2Ax0e3VblSHszNwgtw6krBe4DNms19MxzzUfmIWNkwnrS2d2GcTfEyL89GH28
-         fst68RUMYBb+0giMZEj4mXPb+6CymHW0znQ97f8Rh+Mltm411W5F3iK+Pc3RgvzbAG2P
-         GJi5xL7CjCBI/GotxMdZVxTazQpSohPAgqsi4UeiM5AHlKcdrDXNh16vuyjcl7gbY8wd
-         k7wQ==
-X-Gm-Message-State: APjAAAUGk0z1oIKfJMPSJ/Nkw27OySttYZoLqVS3ncAfijuS3hay/id+
-        BtI4sRgB67C5CpmbxIkd7XoMsA==
-X-Google-Smtp-Source: APXvYqz/g6gdVXMJql0snDFkEgsVaPP5ySOr1zSYLcZjwfcT2WdfDBfS1404UrPoIEPcrPsHrjtU0A==
-X-Received: by 2002:a5d:6406:: with SMTP id z6mr55322693wru.280.1564735133718;
-        Fri, 02 Aug 2019 01:38:53 -0700 (PDT)
-Received: from ?IPv6:2001:b07:6468:f312:4013:e920:9388:c3ff? ([2001:b07:6468:f312:4013:e920:9388:c3ff])
-        by smtp.gmail.com with ESMTPSA id i13sm67487079wrr.73.2019.08.02.01.38.52
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Fri, 02 Aug 2019 01:38:53 -0700 (PDT)
-Subject: Re: [PATCH] KVM: Disable wake-affine vCPU process to mitigate lock
- holder preemption
-To:     Dario Faggioli <dfaggioli@suse.com>,
-        Wanpeng Li <kernellwp@gmail.com>, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc:     =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-References: <1564479235-25074-1-git-send-email-wanpengli@tencent.com>
- <04700afaf68114b5ab329f5a5182e21578c15795.camel@suse.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Message-ID: <36f54918-171d-cf72-818e-dc8cec7cd3b0@redhat.com>
-Date:   Fri, 2 Aug 2019 10:38:53 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S2404359AbfHBIjp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 04:39:45 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:51256 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730941AbfHBIjp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 04:39:45 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 87B9E8EEDC29BFAD1BF8;
+        Fri,  2 Aug 2019 16:39:43 +0800 (CST)
+Received: from [127.0.0.1] (10.177.96.96) by DGGEMS401-HUB.china.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server id 14.3.439.0; Fri, 2 Aug 2019
+ 16:39:42 +0800
+Subject: Re: [PATCH net-next] net: can: Fix compiling warning
+To:     Oliver Hartkopp <socketcan@hartkopp.net>, <davem@davemloft.net>,
+        <netdev@vger.kernel.org>
+References: <20190802033643.84243-1-maowenan@huawei.com>
+ <0050efdb-af9f-49b9-8d83-f574b3d46a2e@hartkopp.net>
+CC:     <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+From:   maowenan <maowenan@huawei.com>
+Message-ID: <78f7288e-08bc-41cd-d5b3-668d10903528@huawei.com>
+Date:   Fri, 2 Aug 2019 16:39:37 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.2.0
 MIME-Version: 1.0
-In-Reply-To: <04700afaf68114b5ab329f5a5182e21578c15795.camel@suse.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <0050efdb-af9f-49b9-8d83-f574b3d46a2e@hartkopp.net>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.96.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/08/19 14:57, Dario Faggioli wrote:
-> Can't we achieve this by removing SD_WAKE_AFFINE from the relevant
-> scheduling domains? By acting on
-> /proc/sys/kernel/sched_domain/cpuX/domainY/flags, I mean?
+
+
+On 2019/8/2 16:10, Oliver Hartkopp wrote:
+> On 02/08/2019 05.36, Mao Wenan wrote:
+>> There are two warings in net/can, fix them by setting bcm_sock_no_ioctlcmd
+>> and raw_sock_no_ioctlcmd as static.
+>>
+>> net/can/bcm.c:1683:5: warning: symbol 'bcm_sock_no_ioctlcmd' was not declared. Should it be static?
+>> net/can/raw.c:840:5: warning: symbol 'raw_sock_no_ioctlcmd' was not declared. Should it be static?
+>>
+>> Fixes: 473d924d7d46 ("can: fix ioctl function removal")
+>>
+>> Signed-off-by: Mao Wenan <maowenan@huawei.com>
 > 
-> Of course this will impact all tasks, not only KVM vcpus. But if the
-> host does KVM only anyway...
+> Acked-by: Oliver Hartkopp <socketcan@hartkopp.net>
+> 
+> Thanks Mao!
+> 
+> Btw. what kind of compiler/make switches are you using so that I can see these warnings myself the next time?
+> 
 
-Perhaps add flags to the unified cgroups hierarchy instead.  But if the
-"min_cap close to max_cap" heuristics are wrong they should indeed be fixed.
+I use ARCH=mips CROSS_COMPILE=mips-linux-gnu- .
 
-Paolo
+> Best regards,
+> Oliver
+> 
+>> ---
+>>   net/can/bcm.c | 2 +-
+>>   net/can/raw.c | 2 +-
+>>   2 files changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/net/can/bcm.c b/net/can/bcm.c
+>> index bf1d0bbecec8..b8a32b4ac368 100644
+>> --- a/net/can/bcm.c
+>> +++ b/net/can/bcm.c
+>> @@ -1680,7 +1680,7 @@ static int bcm_recvmsg(struct socket *sock, struct msghdr *msg, size_t size,
+>>       return size;
+>>   }
+>>   -int bcm_sock_no_ioctlcmd(struct socket *sock, unsigned int cmd,
+>> +static int bcm_sock_no_ioctlcmd(struct socket *sock, unsigned int cmd,
+>>                unsigned long arg)
+>>   {
+>>       /* no ioctls for socket layer -> hand it down to NIC layer */
+>> diff --git a/net/can/raw.c b/net/can/raw.c
+>> index da386f1fa815..a01848ff9b12 100644
+>> --- a/net/can/raw.c
+>> +++ b/net/can/raw.c
+>> @@ -837,7 +837,7 @@ static int raw_recvmsg(struct socket *sock, struct msghdr *msg, size_t size,
+>>       return size;
+>>   }
+>>   -int raw_sock_no_ioctlcmd(struct socket *sock, unsigned int cmd,
+>> +static int raw_sock_no_ioctlcmd(struct socket *sock, unsigned int cmd,
+>>                unsigned long arg)
+>>   {
+>>       /* no ioctls for socket layer -> hand it down to NIC layer */
+>>
+> 
+> .
+> 
+
