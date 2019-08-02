@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A2FC27F8C5
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 15:22:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 083787F8C9
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 15:22:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732444AbfHBNW3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 09:22:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32810 "EHLO mail.kernel.org"
+        id S2393816AbfHBNWh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 09:22:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32934 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393760AbfHBNWZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 09:22:25 -0400
+        id S2393787AbfHBNWc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 09:22:32 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A6D9921855;
-        Fri,  2 Aug 2019 13:22:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 305C321849;
+        Fri,  2 Aug 2019 13:22:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564752145;
-        bh=8sBmr0xPW4QbjaqapDbv1f25B6bl8u9/kMKY5KOunzY=;
+        s=default; t=1564752152;
+        bh=eJKv3tpsME8BjCuggmZ+atHhlFO5rAhdtw4rTU2qTuY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jQXuAoqnG8iXNb3lr0eHP9LSNNTogHiDE3AR9qEdpgm/4jRnG3Y8X4lh5BFIGAa+k
-         bbuQ157LLTfgbXdfxM3RixOStfsv9PH5aZglle+ruajptRzlfo1tps5BPcTZqI5T1D
-         xtE5aJTP2kIRL6Duq3QPd2sPxxEJiImfQwoFNzPE=
+        b=SEO8NEZ1vRmyhc8ZrurLue24DxVx24qCw7at9o69bHXgbCD3aS1y6DyIlnQ2J0DkW
+         XZFZFZTW+MNoDPCAeHKcbGGPb6uRuzOEI0NTYIEmfvQfXdk8J3TOlWROmLxFGX7wZJ
+         ikftAuNzFqs2EXVxNESV7o0yyYpadueAtkUS6OzU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Arnd Bergmann <arnd@arndb.de>, Sekhar Nori <nsekhar@ti.com>,
-        Olof Johansson <olof@lixom.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.2 62/76] ARM: davinci: fix sleep.S build error on ARMv4
-Date:   Fri,  2 Aug 2019 09:19:36 -0400
-Message-Id: <20190802131951.11600-62-sashal@kernel.org>
+Cc:     Hannes Reinecke <hare@suse.de>, Hannes Reinecke <hare@suse.com>,
+        Zhangguanghui <zhang.guanghui@h3c.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.2 66/76] scsi: scsi_dh_alua: always use a 2 second delay before retrying RTPG
+Date:   Fri,  2 Aug 2019 09:19:40 -0400
+Message-Id: <20190802131951.11600-66-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190802131951.11600-1-sashal@kernel.org>
 References: <20190802131951.11600-1-sashal@kernel.org>
@@ -43,40 +44,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Hannes Reinecke <hare@suse.de>
 
-[ Upstream commit d64b212ea960db4276a1d8372bd98cb861dfcbb0 ]
+[ Upstream commit 20122994e38aef0ae50555884d287adde6641c94 ]
 
-When building a multiplatform kernel that includes armv4 support,
-the default target CPU does not support the blx instruction,
-which leads to a build failure:
+Retrying immediately after we've received a 'transitioning' sense code is
+pretty much pointless, we should always use a delay before retrying.  So
+ensure the default delay is applied before retrying.
 
-arch/arm/mach-davinci/sleep.S: Assembler messages:
-arch/arm/mach-davinci/sleep.S:56: Error: selected processor does not support `blx ip' in ARM mode
-
-Add a .arch statement in the sources to make this file build.
-
-Link: https://lore.kernel.org/r/20190722145211.1154785-1-arnd@arndb.de
-Acked-by: Sekhar Nori <nsekhar@ti.com>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Olof Johansson <olof@lixom.net>
+Signed-off-by: Hannes Reinecke <hare@suse.com>
+Tested-by: Zhangguanghui <zhang.guanghui@h3c.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/mach-davinci/sleep.S | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/scsi/device_handler/scsi_dh_alua.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-davinci/sleep.S b/arch/arm/mach-davinci/sleep.S
-index 05d03f09ff54b..71262dcdbca32 100644
---- a/arch/arm/mach-davinci/sleep.S
-+++ b/arch/arm/mach-davinci/sleep.S
-@@ -24,6 +24,7 @@
- #define DEEPSLEEP_SLEEPENABLE_BIT	BIT(31)
+diff --git a/drivers/scsi/device_handler/scsi_dh_alua.c b/drivers/scsi/device_handler/scsi_dh_alua.c
+index f0066f8a17864..4971104b1817b 100644
+--- a/drivers/scsi/device_handler/scsi_dh_alua.c
++++ b/drivers/scsi/device_handler/scsi_dh_alua.c
+@@ -40,6 +40,7 @@
+ #define ALUA_FAILOVER_TIMEOUT		60
+ #define ALUA_FAILOVER_RETRIES		5
+ #define ALUA_RTPG_DELAY_MSECS		5
++#define ALUA_RTPG_RETRY_DELAY		2
  
- 	.text
-+	.arch	armv5te
- /*
-  * Move DaVinci into deep sleep state
-  *
+ /* device handler flags */
+ #define ALUA_OPTIMIZE_STPG		0x01
+@@ -682,7 +683,7 @@ static int alua_rtpg(struct scsi_device *sdev, struct alua_port_group *pg)
+ 	case SCSI_ACCESS_STATE_TRANSITIONING:
+ 		if (time_before(jiffies, pg->expiry)) {
+ 			/* State transition, retry */
+-			pg->interval = 2;
++			pg->interval = ALUA_RTPG_RETRY_DELAY;
+ 			err = SCSI_DH_RETRY;
+ 		} else {
+ 			struct alua_dh_data *h;
+@@ -807,6 +808,8 @@ static void alua_rtpg_work(struct work_struct *work)
+ 				spin_lock_irqsave(&pg->lock, flags);
+ 				pg->flags &= ~ALUA_PG_RUNNING;
+ 				pg->flags |= ALUA_PG_RUN_RTPG;
++				if (!pg->interval)
++					pg->interval = ALUA_RTPG_RETRY_DELAY;
+ 				spin_unlock_irqrestore(&pg->lock, flags);
+ 				queue_delayed_work(kaluad_wq, &pg->rtpg_work,
+ 						   pg->interval * HZ);
+@@ -818,6 +821,8 @@ static void alua_rtpg_work(struct work_struct *work)
+ 		spin_lock_irqsave(&pg->lock, flags);
+ 		if (err == SCSI_DH_RETRY || pg->flags & ALUA_PG_RUN_RTPG) {
+ 			pg->flags &= ~ALUA_PG_RUNNING;
++			if (!pg->interval && !(pg->flags & ALUA_PG_RUN_RTPG))
++				pg->interval = ALUA_RTPG_RETRY_DELAY;
+ 			pg->flags |= ALUA_PG_RUN_RTPG;
+ 			spin_unlock_irqrestore(&pg->lock, flags);
+ 			queue_delayed_work(kaluad_wq, &pg->rtpg_work,
 -- 
 2.20.1
 
