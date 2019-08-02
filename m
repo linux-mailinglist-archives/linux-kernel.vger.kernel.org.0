@@ -2,98 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC21A7F611
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 13:34:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CD987F625
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 13:43:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389889AbfHBLea (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 07:34:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49066 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726626AbfHBLea (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 07:34:30 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S2391864AbfHBLm4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 07:42:56 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:49984 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732584AbfHBLm4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 07:42:56 -0400
+Received: from hades.home (unknown [IPv6:2a00:23c5:58d:db00:68bb:47d:d5ca:9abd])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 985282087C;
-        Fri,  2 Aug 2019 11:34:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564745669;
-        bh=jvdfRbhCdVfaC4jnfWn0lWKgluhsRXKIpW+7VxrZoLU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=lmOKmvJVSg2c+bfgAWqrbrqtHsDhgUS4gyA7TKMIgVfI++9GOIG2ojnm8uouKoc+F
-         zzijxYA8k+YQ3pkFuZU+2rct+VrHII4BUzpNE0HJSG0AkpVfY8Al2WBcK/0EL/e1PZ
-         DrTmBM50Isjg1keXm+ZHjAnsK0yQyTjORiXuD3Eg=
-Date:   Fri, 2 Aug 2019 13:34:27 +0200
-From:   "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-To:     "Rantala, Tommi T. (Nokia - FI/Espoo)" <tommi.t.rantala@nokia.com>
-Cc:     "lucien.xin@gmail.com" <lucien.xin@gmail.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "syzbot+a43d8d4e7e8a7a9e149e@syzkaller.appspotmail.com" 
-        <syzbot+a43d8d4e7e8a7a9e149e@syzkaller.appspotmail.com>,
-        "syzbot+c4c4b2bb358bb936ad7e@syzkaller.appspotmail.com" 
-        <syzbot+c4c4b2bb358bb936ad7e@syzkaller.appspotmail.com>,
-        "syzbot+a47c5f4c6c00fc1ed16e@syzkaller.appspotmail.com" 
-        <syzbot+a47c5f4c6c00fc1ed16e@syzkaller.appspotmail.com>,
-        "syzbot+a9e23ea2aa21044c2798@syzkaller.appspotmail.com" 
-        <syzbot+a9e23ea2aa21044c2798@syzkaller.appspotmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "syzbot+0290d2290a607e035ba1@syzkaller.appspotmail.com" 
-        <syzbot+0290d2290a607e035ba1@syzkaller.appspotmail.com>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "syzbot+9d4c12bfd45a58738d0a@syzkaller.appspotmail.com" 
-        <syzbot+9d4c12bfd45a58738d0a@syzkaller.appspotmail.com>
-Subject: Re: [PATCH 4.14 43/43] tipc: pass tunnel dev as NULL to
- udp_tunnel(6)_xmit_skb
-Message-ID: <20190802113427.GA32398@kroah.com>
-References: <20190702080123.904399496@linuxfoundation.org>
- <20190702080126.138655706@linuxfoundation.org>
- <0f105a3696611dc10aa4d7c5c22ffac031b3c098.camel@nokia.com>
- <20190802072834.GC26174@kroah.com>
- <88c88ec44e93c07170891bdf391d2b6251c7041a.camel@nokia.com>
+        (Authenticated sender: martyn)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id B297228A7E7;
+        Fri,  2 Aug 2019 12:42:54 +0100 (BST)
+From:   Martyn Welch <martyn.welch@collabora.com>
+To:     Mark Rutland <mark.rutland@arm.com>,
+        Jonathan Cameron <jic23@kernel.org>
+Cc:     Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel@lists.collabora.co.uk, devicetree@vger.kernel.org,
+        Martyn Welch <martyn.welch@collabora.com>,
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH v4 1/2] dt-bindings: Add binding document for NOA1305
+Date:   Fri,  2 Aug 2019 12:42:27 +0100
+Message-Id: <20190802114228.1278-1-martyn.welch@collabora.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <88c88ec44e93c07170891bdf391d2b6251c7041a.camel@nokia.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 02, 2019 at 11:03:15AM +0000, Rantala, Tommi T. (Nokia - FI/Espoo) wrote:
-> On Fri, 2019-08-02 at 09:28 +0200, gregkh@linuxfoundation.org wrote:
-> > On Thu, Aug 01, 2019 at 10:17:30AM +0000, Rantala, Tommi T. (Nokia -
-> > FI/Espoo) wrote:
-> > > Hi,
-> > > 
-> > > This tipc patch added in 4.14.132 is triggering a crash for me,
-> > > revert
-> > > fixes it.
-> > > 
-> > > Anyone have ideas if some other commits missing in 4.14.x to make
-> > > this
-> > > work...?
-> > 
-> > Do you also hav a problem with 4.19.y?  How about 5.2.y?  If not, can
-> > you do 'git bisect' to find the patch that fixes the issue?
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> 
-> Hi, please pick this to 4.14.y and 4.19.y, tested that it fixes the
-> crash in both:
-> 
-> commit 5684abf7020dfc5f0b6ba1d68eda3663871fce52
-> Author: Xin Long <lucien.xin@gmail.com>
-> Date:   Mon Jun 17 21:34:13 2019 +0800
-> 
->     ip_tunnel: allow not to count pkts on tstats by setting skb's dev
-> to NULL
-> 
-> 
-> For 5.2.y nothing is needed, these commits were in v5.2-rc6 already.
+Document the ON Semiconductor NOA1305 ambient light sensor devicetree
+bindings.
 
-Thanks for the info, now snuck into the latest round of -rc releases.
+Signed-off-by: Martyn Welch <martyn.welch@collabora.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
 
-greg k-h
+Changes:
+v2: Same as v1.
+v3: Same as v2.
+v4: Same as v3.
+
+ .../bindings/iio/light/noa1305.yaml           | 44 +++++++++++++++++++
+ 1 file changed, 44 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iio/light/noa1305.yaml
+
+diff --git a/Documentation/devicetree/bindings/iio/light/noa1305.yaml b/Documentation/devicetree/bindings/iio/light/noa1305.yaml
+new file mode 100644
+index 000000000000..17e7f140b69b
+--- /dev/null
++++ b/Documentation/devicetree/bindings/iio/light/noa1305.yaml
+@@ -0,0 +1,44 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/iio/light/noa1305.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: ON Semiconductor NOA1305 Ambient Light Sensor
++
++maintainers:
++  - Martyn Welch <martyn.welch@collabora.com>
++
++description: |
++  Ambient sensing with an i2c interface.
++
++  https://www.onsemi.com/pub/Collateral/NOA1305-D.PDF
++
++properties:
++  compatible:
++    enum:
++      - onnn,noa1305
++
++  reg:
++    maxItems: 1
++
++  vin-supply:
++    description: Regulator that provides power to the sensor
++
++required:
++  - compatible
++  - reg
++
++examples:
++  - |
++    i2c {
++
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        light@39 {
++                compatible = "onnn,noa1305";
++                reg = <0x39>;
++        };
++    };
++...
+-- 
+2.20.1
+
