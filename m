@@ -2,41 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DF7C7F0A4
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:31:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 15DD57F091
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:30:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391033AbfHBJbL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 05:31:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56970 "EHLO mail.kernel.org"
+        id S2389630AbfHBJab (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 05:30:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56002 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391016AbfHBJbH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 05:31:07 -0400
+        id S2389506AbfHBJa3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 05:30:29 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7E47D217D6;
-        Fri,  2 Aug 2019 09:31:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 29BE22184B;
+        Fri,  2 Aug 2019 09:30:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564738267;
-        bh=hySi3g5PbPPfDu0V+Ire/cYrt9qZkP9YXusABX/zMVQ=;
+        s=default; t=1564738228;
+        bh=Tr8aWNKlo2Wgrn6VcEDRPIIWe6L1PIrTNYoas381qJ4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fiySdEi7wvLm5lE8lCX6tXe/YcKs6UMGGYPlONrkMMWw4BX89zoHolEI5mihyp/PJ
-         arbO1+c7OkdfebLBA162G+EDvcmQ1M4/MyQfT6rlpBhOF5OViQBPVWWqZV4e9BXoX/
-         1RR2uof7xcj6CFjffngdk37+35S/QAorcmNl4ods=
+        b=PhEWH/2kLF1GGTv1j7cr4Kkw2fyN67aiCxZ7TNQ1Ue0Qk2Uomdz7sjOtfHWSUmkEu
+         x4hmHjvk/Wf5gsxfH8cqodEG4ZvpFCmyvDG+aX+zst/KnXRZhqA2+V6OTkqqGsKXig
+         jGgKGF17qn71T0VKpB22CHS0HHD11rJ/jkPZjDTU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Imre Deak <imre.deak@intel.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
-        <ville.syrjala@linux.intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 020/158] locking/lockdep: Fix merging of hlocks with non-zero references
-Date:   Fri,  2 Aug 2019 11:27:21 +0200
-Message-Id: <20190802092207.615648131@linuxfoundation.org>
+        stable@vger.kernel.org, Abhishek Goel <huntbag@linux.vnet.ibm.com>,
+        Thomas Renninger <trenn@suse.de>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 022/158] cpupower : frequency-set -r option misses the last cpu in related cpu list
+Date:   Fri,  2 Aug 2019 11:27:23 +0200
+Message-Id: <20190802092208.072383980@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190802092203.671944552@linuxfoundation.org>
 References: <20190802092203.671944552@linuxfoundation.org>
@@ -49,100 +45,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit d9349850e188b8b59e5322fda17ff389a1c0cd7d ]
+[ Upstream commit 04507c0a9385cc8280f794a36bfff567c8cc1042 ]
 
-The sequence
+To set frequency on specific cpus using cpupower, following syntax can
+be used :
+cpupower -c #i frequency-set -f #f -r
 
-	static DEFINE_WW_CLASS(test_ww_class);
+While setting frequency using cpupower frequency-set command, if we use
+'-r' option, it is expected to set frequency for all cpus related to
+cpu #i. But it is observed to be missing the last cpu in related cpu
+list. This patch fixes the problem.
 
-	struct ww_acquire_ctx ww_ctx;
-	struct ww_mutex ww_lock_a;
-	struct ww_mutex ww_lock_b;
-	struct ww_mutex ww_lock_c;
-	struct mutex lock_c;
-
-	ww_acquire_init(&ww_ctx, &test_ww_class);
-
-	ww_mutex_init(&ww_lock_a, &test_ww_class);
-	ww_mutex_init(&ww_lock_b, &test_ww_class);
-	ww_mutex_init(&ww_lock_c, &test_ww_class);
-
-	mutex_init(&lock_c);
-
-	ww_mutex_lock(&ww_lock_a, &ww_ctx);
-
-	mutex_lock(&lock_c);
-
-	ww_mutex_lock(&ww_lock_b, &ww_ctx);
-	ww_mutex_lock(&ww_lock_c, &ww_ctx);
-
-	mutex_unlock(&lock_c);	(*)
-
-	ww_mutex_unlock(&ww_lock_c);
-	ww_mutex_unlock(&ww_lock_b);
-	ww_mutex_unlock(&ww_lock_a);
-
-	ww_acquire_fini(&ww_ctx); (**)
-
-will trigger the following error in __lock_release() when calling
-mutex_release() at **:
-
-	DEBUG_LOCKS_WARN_ON(depth <= 0)
-
-The problem is that the hlock merging happening at * updates the
-references for test_ww_class incorrectly to 3 whereas it should've
-updated it to 4 (representing all the instances for ww_ctx and
-ww_lock_[abc]).
-
-Fix this by updating the references during merging correctly taking into
-account that we can have non-zero references (both for the hlock that we
-merge into another hlock or for the hlock we are merging into).
-
-Signed-off-by: Imre Deak <imre.deak@intel.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Will Deacon <will.deacon@arm.com>
-Link: https://lkml.kernel.org/r/20190524201509.9199-2-imre.deak@intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Abhishek Goel <huntbag@linux.vnet.ibm.com>
+Reviewed-by: Thomas Renninger <trenn@suse.de>
+Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/locking/lockdep.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ tools/power/cpupower/utils/cpufreq-set.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index 774ab79d3ec7..f2df5f86af28 100644
---- a/kernel/locking/lockdep.c
-+++ b/kernel/locking/lockdep.c
-@@ -3128,17 +3128,17 @@ static int __lock_acquire(struct lockdep_map *lock, unsigned int subclass,
- 	if (depth) {
- 		hlock = curr->held_locks + depth - 1;
- 		if (hlock->class_idx == class_idx && nest_lock) {
--			if (hlock->references) {
--				/*
--				 * Check: unsigned int references:12, overflow.
--				 */
--				if (DEBUG_LOCKS_WARN_ON(hlock->references == (1 << 12)-1))
--					return 0;
-+			if (!references)
-+				references++;
- 
-+			if (!hlock->references)
- 				hlock->references++;
--			} else {
--				hlock->references = 2;
--			}
-+
-+			hlock->references += references;
-+
-+			/* Overflow */
-+			if (DEBUG_LOCKS_WARN_ON(hlock->references < references))
-+				return 0;
- 
- 			return 1;
+diff --git a/tools/power/cpupower/utils/cpufreq-set.c b/tools/power/cpupower/utils/cpufreq-set.c
+index 0fbd1a22c0a9..2f86935094ca 100644
+--- a/tools/power/cpupower/utils/cpufreq-set.c
++++ b/tools/power/cpupower/utils/cpufreq-set.c
+@@ -306,6 +306,8 @@ int cmd_freq_set(int argc, char **argv)
+ 				bitmask_setbit(cpus_chosen, cpus->cpu);
+ 				cpus = cpus->next;
+ 			}
++			/* Set the last cpu in related cpus list */
++			bitmask_setbit(cpus_chosen, cpus->cpu);
+ 			cpufreq_put_related_cpus(cpus);
  		}
+ 	}
 -- 
 2.20.1
 
