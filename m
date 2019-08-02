@@ -2,109 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 028777F9A3
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 15:30:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3690B7F9A8
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 15:30:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729739AbfHBN1v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 09:27:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37618 "EHLO mail.kernel.org"
+        id S2394812AbfHBN2E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 09:28:04 -0400
+Received: from ms.lwn.net ([45.79.88.28]:49532 "EHLO ms.lwn.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2394650AbfHBN0t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 09:26:49 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S2390660AbfHBN02 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 09:26:28 -0400
+Received: from lwn.net (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B428921873;
-        Fri,  2 Aug 2019 13:26:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564752409;
-        bh=e6CiO5f/2BKSUvys9sR7WlxW/cPPHgRqaQucp6Tgn1M=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IR9ZMD0d/Rp6xk2S+rTpbPMb1TbaVydih/b7Xw3CRxQ6MYtXjDQkDIgiKcFFQwTUR
-         cXKd04I4EdVuNCAUYLt1XldCzj82UwlV5WgppuSzwMOvogMz+NlFy/SVaqidXtTN6H
-         Q2g8Cp89Y8kI2etzIoNg72ehOJjtyx2iX+FhK9lU=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Joerg Roedel <jroedel@suse.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 06/17] x86/mm: Sync also unmappings in vmalloc_sync_all()
-Date:   Fri,  2 Aug 2019 09:26:23 -0400
-Message-Id: <20190802132635.14885-6-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190802132635.14885-1-sashal@kernel.org>
-References: <20190802132635.14885-1-sashal@kernel.org>
+        by ms.lwn.net (Postfix) with ESMTPSA id 4C9687DA;
+        Fri,  2 Aug 2019 13:26:27 +0000 (UTC)
+Date:   Fri, 2 Aug 2019 07:26:26 -0600
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     Chao Yu <yuchao0@huawei.com>
+Cc:     <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <chao@kernel.org>, <jaegeuk@kernel.org>
+Subject: Re: [PATCH] mailmap: add entry for Jaegeuk Kim
+Message-ID: <20190802072626.405246e3@lwn.net>
+In-Reply-To: <20190802012135.31419-1-yuchao0@huawei.com>
+References: <20190802012135.31419-1-yuchao0@huawei.com>
+Organization: LWN.net
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Joerg Roedel <jroedel@suse.de>
+On Fri, 2 Aug 2019 09:21:35 +0800
+Chao Yu <yuchao0@huawei.com> wrote:
 
-[ Upstream commit 8e998fc24de47c55b47a887f6c95ab91acd4a720 ]
+> Add entry to connect all Jaegeuk's email addresses.
+> 
+> Acked-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+> ---
+>  .mailmap | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/.mailmap b/.mailmap
+> index 477debe3d960..70d41c86e644 100644
+> --- a/.mailmap
+> +++ b/.mailmap
+> @@ -89,6 +89,9 @@ Henrik Kretzschmar <henne@nachtwindheim.de>
+>  Henrik Rydberg <rydberg@bitmath.org>
+>  Herbert Xu <herbert@gondor.apana.org.au>
+>  Jacob Shin <Jacob.Shin@amd.com>
+> +Jaegeuk Kim <jaegeuk@kernel.org> <jaegeuk@google.com>
+> +Jaegeuk Kim <jaegeuk@kernel.org> <jaegeuk@motorola.com>
+> +Jaegeuk Kim <jaegeuk@kernel.org> <jaegeuk.kim@samsung.com>
 
-With huge-page ioremap areas the unmappings also need to be synced between
-all page-tables. Otherwise it can cause data corruption when a region is
-unmapped and later re-used.
+So as I understand it, the mailmap file is there mostly to ensure that a
+person's changesets are properly collected in 'git shortlog' and such.  As
+documented on the man page, it is used when a person's name is spelled
+differently at different times.
 
-Make the vmalloc_sync_one() function ready to sync unmappings and make sure
-vmalloc_sync_all() iterates over all page-tables even when an unmapped PMD
-is found.
+That doesn't appear to be the case here, and shortlog output is correct
+already.  Given that, do we *really* need to maintain a collection of old
+email addresses in the mailmap file?  What is the benefit of that?
 
-Fixes: 5d72b4fba40ef ('x86, mm: support huge I/O mapping capability I/F')
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Dave Hansen <dave.hansen@linux.intel.com>
-Link: https://lkml.kernel.org/r/20190719184652.11391-3-joro@8bytes.org
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- arch/x86/mm/fault.c | 13 +++++--------
- 1 file changed, 5 insertions(+), 8 deletions(-)
+Thanks,
 
-diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-index f3511f1a8f0ea..0e498683295b1 100644
---- a/arch/x86/mm/fault.c
-+++ b/arch/x86/mm/fault.c
-@@ -216,11 +216,12 @@ static inline pmd_t *vmalloc_sync_one(pgd_t *pgd, unsigned long address)
- 
- 	pmd = pmd_offset(pud, address);
- 	pmd_k = pmd_offset(pud_k, address);
--	if (!pmd_present(*pmd_k))
--		return NULL;
- 
--	if (!pmd_present(*pmd))
-+	if (pmd_present(*pmd) != pmd_present(*pmd_k))
- 		set_pmd(pmd, *pmd_k);
-+
-+	if (!pmd_present(*pmd_k))
-+		return NULL;
- 	else
- 		BUG_ON(pmd_pfn(*pmd) != pmd_pfn(*pmd_k));
- 
-@@ -242,17 +243,13 @@ void vmalloc_sync_all(void)
- 		spin_lock(&pgd_lock);
- 		list_for_each_entry(page, &pgd_list, lru) {
- 			spinlock_t *pgt_lock;
--			pmd_t *ret;
- 
- 			/* the pgt_lock only for Xen */
- 			pgt_lock = &pgd_page_get_mm(page)->page_table_lock;
- 
- 			spin_lock(pgt_lock);
--			ret = vmalloc_sync_one(page_address(page), address);
-+			vmalloc_sync_one(page_address(page), address);
- 			spin_unlock(pgt_lock);
--
--			if (!ret)
--				break;
- 		}
- 		spin_unlock(&pgd_lock);
- 	}
--- 
-2.20.1
-
+jon
