@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F1287FAED
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 15:36:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FBC97FAEB
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 15:36:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406296AbfHBNfz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 09:35:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58974 "EHLO mail.kernel.org"
+        id S2406247AbfHBNfo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 09:35:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59010 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393383AbfHBNUc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 09:20:32 -0400
+        id S2390653AbfHBNUf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 09:20:35 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2B69821841;
-        Fri,  2 Aug 2019 13:20:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DA6F221849;
+        Fri,  2 Aug 2019 13:20:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564752031;
-        bh=/pFn0OdCI5pP5nVMCvQZm6Dw/yEue9E4JUVrOlgG5j4=;
+        s=default; t=1564752034;
+        bh=8wPUOlUGXjzV6VZ8sBlIypSaLC8Ku5+bs82aSrbchfs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EuHapA3PYKYZRPMC5vozw6sXbAL9kSguS+A5zh0bnjKJZHwdTkjawkA0S3yG+Kms7
-         OfoILHUZad/sB/AEcNNk8IKqwrxhhcuy1jVNSMXMUMfor+qiOa+sB3EfZ1VRD9nJe7
-         DOPkHPgeKIi3WS9mKgNwWW99TwvGaEqg+tpnhxkA=
+        b=ZvHOOq5RkhKf6H6IlG34AnFMu7zuIgwxuQ9T52NQt4vCo13uF9Vg40k3QBo22Y0b1
+         khMj5j0qX/CXt4VtZog8JGzMv/xZWD0Hr1EIas9UH6/gk9Zk2E5JgcrWfar8TZXF5o
+         c4LFGMBB09rGetotPF1qQIiywLipoPtjAy0YxeS4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Thomas Tai <thomas.tai@oracle.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.2 26/76] iscsi_ibft: make ISCSI_IBFT dependson ACPI instead of ISCSI_IBFT_FIND
-Date:   Fri,  2 Aug 2019 09:19:00 -0400
-Message-Id: <20190802131951.11600-26-sashal@kernel.org>
+Cc:     Lorenzo Bianconi <lorenzo@kernel.org>,
+        Johannes Berg <johannes.berg@intel.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.2 28/76] mac80211: fix possible memory leak in ieee80211_assign_beacon
+Date:   Fri,  2 Aug 2019 09:19:02 -0400
+Message-Id: <20190802131951.11600-28-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190802131951.11600-1-sashal@kernel.org>
 References: <20190802131951.11600-1-sashal@kernel.org>
@@ -43,70 +44,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Tai <thomas.tai@oracle.com>
+From: Lorenzo Bianconi <lorenzo@kernel.org>
 
-[ Upstream commit 94bccc34071094c165c79b515d21b63c78f7e968 ]
+[ Upstream commit bcc27fab8cc673ddc95452674373cce618ccb3a3 ]
 
-iscsi_ibft can use ACPI to find the iBFT entry during bootup,
-currently, ISCSI_IBFT depends on ISCSI_IBFT_FIND which is
-a X86 legacy way to find the iBFT by searching through the
-low memory. This patch changes the dependency so that other
-arch like ARM64 can use ISCSI_IBFT as long as the arch supports
-ACPI.
+Free new beacon_data in ieee80211_assign_beacon whenever
+ieee80211_assign_beacon fails
 
-ibft_init() needs to use the global variable ibft_addr declared
-in iscsi_ibft_find.c. A #ifndef CONFIG_ISCSI_IBFT_FIND is needed
-to declare the variable if CONFIG_ISCSI_IBFT_FIND is not selected.
-Moving ibft_addr into the iscsi_ibft.c does not work because if
-ISCSI_IBFT is selected as a module, the arch/x86/kernel/setup.c won't
-be able to find the variable at compile time.
-
-Signed-off-by: Thomas Tai <thomas.tai@oracle.com>
-Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Fixes: 8860020e0be1 ("cfg80211: restructure AP/GO mode API")
+Fixes: bc847970f432 ("mac80211: support FTM responder configuration/statistic")
+Signed-off-by: Lorenzo Bianconi <lorenzo@kernel.org>
+Link: https://lore.kernel.org/r/770285772543c9fca33777bb4ad4760239e56256.1562105631.git.lorenzo@kernel.org
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/firmware/Kconfig      | 5 +++--
- drivers/firmware/iscsi_ibft.c | 4 ++++
- 2 files changed, 7 insertions(+), 2 deletions(-)
+ net/mac80211/cfg.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/firmware/Kconfig b/drivers/firmware/Kconfig
-index d40ccc3af9e26..fa7ed01415b72 100644
---- a/drivers/firmware/Kconfig
-+++ b/drivers/firmware/Kconfig
-@@ -157,7 +157,7 @@ config DMI_SCAN_MACHINE_NON_EFI_FALLBACK
+diff --git a/net/mac80211/cfg.c b/net/mac80211/cfg.c
+index a1973a26c7fc4..b8288125e05db 100644
+--- a/net/mac80211/cfg.c
++++ b/net/mac80211/cfg.c
+@@ -935,8 +935,10 @@ static int ieee80211_assign_beacon(struct ieee80211_sub_if_data *sdata,
  
- config ISCSI_IBFT_FIND
- 	bool "iSCSI Boot Firmware Table Attributes"
--	depends on X86 && ACPI
-+	depends on X86 && ISCSI_IBFT
- 	default n
- 	help
- 	  This option enables the kernel to find the region of memory
-@@ -168,7 +168,8 @@ config ISCSI_IBFT_FIND
- config ISCSI_IBFT
- 	tristate "iSCSI Boot Firmware Table Attributes module"
- 	select ISCSI_BOOT_SYSFS
--	depends on ISCSI_IBFT_FIND && SCSI && SCSI_LOWLEVEL
-+	select ISCSI_IBFT_FIND if X86
-+	depends on ACPI && SCSI && SCSI_LOWLEVEL
- 	default	n
- 	help
- 	  This option enables support for detection and exposing of iSCSI
-diff --git a/drivers/firmware/iscsi_ibft.c b/drivers/firmware/iscsi_ibft.c
-index ab3aa39838338..7e12cbdf957cc 100644
---- a/drivers/firmware/iscsi_ibft.c
-+++ b/drivers/firmware/iscsi_ibft.c
-@@ -84,6 +84,10 @@ MODULE_DESCRIPTION("sysfs interface to BIOS iBFT information");
- MODULE_LICENSE("GPL");
- MODULE_VERSION(IBFT_ISCSI_VERSION);
+ 	err = ieee80211_set_probe_resp(sdata, params->probe_resp,
+ 				       params->probe_resp_len, csa);
+-	if (err < 0)
++	if (err < 0) {
++		kfree(new);
+ 		return err;
++	}
+ 	if (err == 0)
+ 		changed |= BSS_CHANGED_AP_PROBE_RESP;
  
-+#ifndef CONFIG_ISCSI_IBFT_FIND
-+struct acpi_table_ibft *ibft_addr;
-+#endif
-+
- struct ibft_hdr {
- 	u8 id;
- 	u8 version;
+@@ -948,8 +950,10 @@ static int ieee80211_assign_beacon(struct ieee80211_sub_if_data *sdata,
+ 							 params->civicloc,
+ 							 params->civicloc_len);
+ 
+-		if (err < 0)
++		if (err < 0) {
++			kfree(new);
+ 			return err;
++		}
+ 
+ 		changed |= BSS_CHANGED_FTM_RESPONDER;
+ 	}
 -- 
 2.20.1
 
