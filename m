@@ -2,113 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D5BC7F44F
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 12:05:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED92C7F45D
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 12:05:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391903AbfHBKEV convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 2 Aug 2019 06:04:21 -0400
-Received: from skedge04.snt-world.com ([91.208.41.69]:60964 "EHLO
-        skedge04.snt-world.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391560AbfHBKES (ORCPT
+        id S2407257AbfHBKEg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 06:04:36 -0400
+Received: from smtprelay0124.hostedemail.com ([216.40.44.124]:48187 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2407202AbfHBKEa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 06:04:18 -0400
-Received: from sntmail12r.snt-is.com (unknown [10.203.32.182])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by skedge04.snt-world.com (Postfix) with ESMTPS id 999FD67A8D8;
-        Fri,  2 Aug 2019 12:04:11 +0200 (CEST)
-Received: from sntmail12r.snt-is.com (10.203.32.182) by sntmail12r.snt-is.com
- (10.203.32.182) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Fri, 2 Aug 2019
- 12:04:11 +0200
-Received: from sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305]) by
- sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305%3]) with mapi id
- 15.01.1713.004; Fri, 2 Aug 2019 12:04:11 +0200
-From:   Schrempf Frieder <frieder.schrempf@kontron.de>
-To:     "u.kleine-koenig@pengutronix.de" <u.kleine-koenig@pengutronix.de>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "linux-imx@nxp.com" <linux-imx@nxp.com>
-CC:     "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "geert+renesas@glider.be" <geert+renesas@glider.be>,
-        Schrempf Frieder <frieder.schrempf@kontron.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [PATCH v3 4/4] serial: 8250: Don't check for mctrl_gpio_init()
- returning -ENOSYS
-Thread-Topic: [PATCH v3 4/4] serial: 8250: Don't check for mctrl_gpio_init()
- returning -ENOSYS
-Thread-Index: AQHVSRmhIxHe9MI46E6+p88Y1S0NjQ==
-Date:   Fri, 2 Aug 2019 10:04:11 +0000
-Message-ID: <20190802100349.8659-4-frieder.schrempf@kontron.de>
-References: <20190802100349.8659-1-frieder.schrempf@kontron.de>
-In-Reply-To: <20190802100349.8659-1-frieder.schrempf@kontron.de>
-Accept-Language: de-DE, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: git-send-email 2.17.1
-x-originating-ip: [172.25.9.193]
-x-c2processedorg: 51b406b7-48a2-4d03-b652-521f56ac89f3
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: 8BIT
+        Fri, 2 Aug 2019 06:04:30 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay03.hostedemail.com (Postfix) with ESMTP id B157A837F24D;
+        Fri,  2 Aug 2019 10:04:28 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::,RULES_HIT:41:355:379:599:800:857:960:966:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1461:1515:1516:1518:1535:1543:1593:1594:1711:1730:1747:1777:1792:2196:2198:2199:2200:2393:2559:2562:2693:2828:3138:3139:3140:3141:3142:3355:3622:3865:3866:3867:3868:3870:3871:3872:3874:4250:4321:4385:5007:7576:7903:10004:10400:10848:11026:11232:11658:11914:12043:12291:12296:12297:12438:12555:12683:12740:12760:12895:13149:13161:13229:13230:13439:13972:14181:14659:14721:21080:21326:21451:21611:21627:21773:30012:30029:30054:30070:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:27,LUA_SUMMARY:none
+X-HE-Tag: balls06_26e92d0181236
+X-Filterd-Recvd-Size: 5010
+Received: from XPS-9350.home (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
+        (Authenticated sender: joe@perches.com)
+        by omf05.hostedemail.com (Postfix) with ESMTPA;
+        Fri,  2 Aug 2019 10:04:27 +0000 (UTC)
+Message-ID: <9403fd1e250bb4dd8e1bcf0536e6d224be7c889c.camel@perches.com>
+Subject: Re: [PATCH 5.2 10/20] media: radio-raremono: change devm_k*alloc to
+ k*alloc
+From:   Joe Perches <joe@perches.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     stable@vger.kernel.org,
+        Luke Nowakowski-Krijger <lnowakow@eng.ucsd.edu>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        syzbot+a4387f5b6b799f6becbf@syzkaller.appspotmail.com
+Date:   Fri, 02 Aug 2019 03:04:25 -0700
+In-Reply-To: <20190802092100.285432717@linuxfoundation.org>
+References: <20190802092055.131876977@linuxfoundation.org>
+         <20190802092100.285432717@linuxfoundation.org>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
 MIME-Version: 1.0
-X-SnT-MailScanner-Information: Please contact the ISP for more information
-X-SnT-MailScanner-ID: 999FD67A8D8.A10A8
-X-SnT-MailScanner: Not scanned: please contact your Internet E-Mail Service Provider for details
-X-SnT-MailScanner-SpamCheck: 
-X-SnT-MailScanner-From: frieder.schrempf@kontron.de
-X-SnT-MailScanner-To: festevam@gmail.com, geert+renesas@glider.be,
-        gregkh@linuxfoundation.org, jslaby@suse.com, kernel@pengutronix.de,
-        linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com,
-        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-        s.hauer@pengutronix.de, shawnguo@kernel.org,
-        u.kleine-koenig@pengutronix.de
-X-Spam-Status: No
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Frieder Schrempf <frieder.schrempf@kontron.de>
+On Fri, 2019-08-02 at 11:40 +0200, Greg Kroah-Hartman wrote:
+> From: Luke Nowakowski-Krijger <lnowakow@eng.ucsd.edu>
+> 
+> commit c666355e60ddb4748ead3bdd983e3f7f2224aaf0 upstream.
+> 
+> Change devm_k*alloc to k*alloc to manually allocate memory
+> 
+> The manual allocation and freeing of memory is necessary because when
+> the USB radio is disconnected, the memory associated with devm_k*alloc
+> is freed. Meaning if we still have unresolved references to the radio
+> device, then we get use-after-free errors.
+> 
+> This patch fixes this by manually allocating memory, and freeing it in
+> the v4l2.release callback that gets called when the last radio device
+> exits.
 
-Now that the mctrl_gpio code returns NULL instead of ERR_PTR(-ENOSYS)
-if CONFIG_GPIOLIB is disabled, we can safely remove this check.
+This really should be commented in the code
+and not just in the commit changelog as some
+unsuspecting person will likely undo this in
+the future without one.
 
-Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
----
-Changes in v3
-=============
-* Adjust the commit message and subject line
+> Reported-and-tested-by: syzbot+a4387f5b6b799f6becbf@syzkaller.appspotmail.com
+> 
+> Signed-off-by: Luke Nowakowski-Krijger <lnowakow@eng.ucsd.edu>
+> Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+> [hverkuil-cisco@xs4all.nl: cleaned up two small checkpatch.pl warnings]
+> [hverkuil-cisco@xs4all.nl: prefix subject with driver name]
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> 
+> ---
+>  drivers/media/radio/radio-raremono.c |   30 +++++++++++++++++++++++-------
+>  1 file changed, 23 insertions(+), 7 deletions(-)
+> 
+> --- a/drivers/media/radio/radio-raremono.c
+> +++ b/drivers/media/radio/radio-raremono.c
+> @@ -271,6 +271,14 @@ static int vidioc_g_frequency(struct fil
+>  	return 0;
+>  }
+>  
+> +static void raremono_device_release(struct v4l2_device *v4l2_dev)
+> +{
+> +	struct raremono_device *radio = to_raremono_dev(v4l2_dev);
+> +
+> +	kfree(radio->buffer);
+> +	kfree(radio);
+> +}
+> +
+>  /* File system interface */
+>  static const struct v4l2_file_operations usb_raremono_fops = {
+>  	.owner		= THIS_MODULE,
+> @@ -295,12 +303,14 @@ static int usb_raremono_probe(struct usb
+>  	struct raremono_device *radio;
+>  	int retval = 0;
+>  
+> -	radio = devm_kzalloc(&intf->dev, sizeof(struct raremono_device), GFP_KERNEL);
+> -	if (radio)
+> -		radio->buffer = devm_kmalloc(&intf->dev, BUFFER_LENGTH, GFP_KERNEL);
+> -
+> -	if (!radio || !radio->buffer)
+> +	radio = kzalloc(sizeof(*radio), GFP_KERNEL);
+> +	if (!radio)
+> +		return -ENOMEM;
+> +	radio->buffer = kmalloc(BUFFER_LENGTH, GFP_KERNEL);
+> +	if (!radio->buffer) {
+> +		kfree(radio);
+>  		return -ENOMEM;
+> +	}
+>  
+>  	radio->usbdev = interface_to_usbdev(intf);
+>  	radio->intf = intf;
+> @@ -324,7 +334,8 @@ static int usb_raremono_probe(struct usb
+>  	if (retval != 3 ||
+>  	    (get_unaligned_be16(&radio->buffer[1]) & 0xfff) == 0x0242) {
+>  		dev_info(&intf->dev, "this is not Thanko's Raremono.\n");
+> -		return -ENODEV;
+> +		retval = -ENODEV;
+> +		goto free_mem;
+>  	}
+>  
+>  	dev_info(&intf->dev, "Thanko's Raremono connected: (%04X:%04X)\n",
+> @@ -333,7 +344,7 @@ static int usb_raremono_probe(struct usb
+>  	retval = v4l2_device_register(&intf->dev, &radio->v4l2_dev);
+>  	if (retval < 0) {
+>  		dev_err(&intf->dev, "couldn't register v4l2_device\n");
+> -		return retval;
+> +		goto free_mem;
+>  	}
+>  
+>  	mutex_init(&radio->lock);
+> @@ -345,6 +356,7 @@ static int usb_raremono_probe(struct usb
+>  	radio->vdev.ioctl_ops = &usb_raremono_ioctl_ops;
+>  	radio->vdev.lock = &radio->lock;
+>  	radio->vdev.release = video_device_release_empty;
+> +	radio->v4l2_dev.release = raremono_device_release;
+>  
+>  	usb_set_intfdata(intf, &radio->v4l2_dev);
+>  
+> @@ -360,6 +372,10 @@ static int usb_raremono_probe(struct usb
+>  	}
+>  	dev_err(&intf->dev, "could not register video device\n");
+>  	v4l2_device_unregister(&radio->v4l2_dev);
+> +
+> +free_mem:
+> +	kfree(radio->buffer);
+> +	kfree(radio);
+>  	return retval;
+>  }
+>  
+> 
+> 
 
-Changes in v2
-=============
-* Add a patch for the 8250 driver
----
- drivers/tty/serial/8250/8250_core.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/tty/serial/8250/8250_core.c b/drivers/tty/serial/8250/8250_core.c
-index df3bcc0b2d74..e682390ce0de 100644
---- a/drivers/tty/serial/8250/8250_core.c
-+++ b/drivers/tty/serial/8250/8250_core.c
-@@ -1026,10 +1026,8 @@ int serial8250_register_8250_port(struct uart_8250_port *up)
- 		if (!has_acpi_companion(uart->port.dev)) {
- 			gpios = mctrl_gpio_init(&uart->port, 0);
- 			if (IS_ERR(gpios)) {
--				if (PTR_ERR(gpios) != -ENOSYS) {
--					ret = PTR_ERR(gpios);
--					goto out_unlock;
--				}
-+				ret = PTR_ERR(gpios);
-+				goto out_unlock;
- 			} else {
- 				uart->gpios = gpios;
- 			}
--- 
-2.17.1
