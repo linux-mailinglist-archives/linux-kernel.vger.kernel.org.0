@@ -2,122 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 78F2F7EAAA
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 05:25:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AFBB37EAAD
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 05:26:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729596AbfHBDZC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 23:25:02 -0400
-Received: from mail-eopbgr60049.outbound.protection.outlook.com ([40.107.6.49]:14581
-        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729012AbfHBDZB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 23:25:01 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=c4YCgF9np39tsq1fvfuQH25gkKSty8kwG5Uy8HgYqgxTIMoPm9IPhM0SxffyiWbj25QPKuXmweX3Q8WzYoZCaGanT7yYCjry/wdZCIHz6PCHFMJklh7isZvKhxVLJ+KbQ52GSOXT+rCdjN2acxz5ctPxxm3E4TJGuFKt/qCrw0xYbhnO2GC/lkl3e+UsLyclmR1N4VedSSbBzOIFUqZ9vWL7q6MknaOQQ4dSRXMbJX2Z0qGcUnFvLmSjzSTvbnKBBKzXAr7NrDljpkc206rsq85gCjzRbef6JCg95Si+0I5hPQcRFGYwyfXJfkUZ+MR7OkLjj8QnPtPsogPJkvYmZQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oiaA9NV6JrFsDl50HPScvL6VtJJVNrWzH34JU4CcAqo=;
- b=WSIsPEPXPbN5dWNMFTz3zCqd5yZD4nrzB/LSJpvCnLsNwPaBncuQLp7wnI5Se0H/2tWX5lwBSub+uds3VlvuwGLNskZpCaYmwUmG4Kt5W/P2oU3u/k9y6ihhaTOiiVU+ZTe4EESdw4sYqGcxu+FUst9tq+OD/ZLCR7sgvPmTRd0i72EQlU6oRMm9HqFUiK1wy9/r2HA/swV3Eldki4EwuSNmWTtIFEAF9EQiRtvRGssjIRmIbrySb2iMIELCndw4ur96ZdBnJmbXsxhl/jvtwx47sG0+ruE+XrKnkb2bDb735pwvqG/pXj2/LhpycmIZCqNyCeCyEWmDlyv23imW7w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
- smtp.mailfrom=nxp.com;dmarc=pass action=none header.from=nxp.com;dkim=pass
- header.d=nxp.com;arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oiaA9NV6JrFsDl50HPScvL6VtJJVNrWzH34JU4CcAqo=;
- b=KbKIog0dXBelPoMathNmLOZDk+mP0qBghJT7BwVEMRJYDfwpSzbLHF+mLomRE1Kz2SalzpjQ/XjrBYFoMgiSbSheimwzYod81MADmfHusN9o0BmsdDy1QS0O2NXSGZ6Xt27C7mea2+WIPzSOL8NlnCexCAnIBxBnqCpHb7MXJpA=
-Received: from AM0PR0402MB3570.eurprd04.prod.outlook.com (52.133.46.11) by
- AM0PR0402MB3810.eurprd04.prod.outlook.com (52.133.39.26) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2115.14; Fri, 2 Aug 2019 03:24:16 +0000
-Received: from AM0PR0402MB3570.eurprd04.prod.outlook.com
- ([fe80::19ee:c210:d6cd:561f]) by AM0PR0402MB3570.eurprd04.prod.outlook.com
- ([fe80::19ee:c210:d6cd:561f%6]) with mapi id 15.20.2136.010; Fri, 2 Aug 2019
- 03:24:16 +0000
-From:   Richard Zhu <hongxing.zhu@nxp.com>
-To:     Daniel Baluta <daniel.baluta@gmail.com>
-CC:     "jassisinghbrar@gmail.com" <jassisinghbrar@gmail.com>,
-        Oleksij Rempel <o.rempel@pengutronix.de>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: RE: [EXT] Re: [PATCH v3] mailbox: imx: add support for imx v1 mu
-Thread-Topic: [EXT] Re: [PATCH v3] mailbox: imx: add support for imx v1 mu
-Thread-Index: AQHVR4BTcg+IJWjJWkmRXLNrIcnNiKbmYQaAgADM5XA=
-Date:   Fri, 2 Aug 2019 03:24:16 +0000
-Message-ID: <AM0PR0402MB3570B875F7104A31BB2E3C518CD90@AM0PR0402MB3570.eurprd04.prod.outlook.com>
-References: <1564563107-23736-1-git-send-email-hongxing.zhu@nxp.com>
- <CAEnQRZCz=fu7-2PmH+RGgnRgzeDCeR+A+wPbhjq2wQ2CZ3oQYg@mail.gmail.com>
-In-Reply-To: <CAEnQRZCz=fu7-2PmH+RGgnRgzeDCeR+A+wPbhjq2wQ2CZ3oQYg@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=hongxing.zhu@nxp.com; 
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: d1d42969-0ca2-4feb-3f1e-08d716f8e63c
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:AM0PR0402MB3810;
-x-ms-traffictypediagnostic: AM0PR0402MB3810:
-x-microsoft-antispam-prvs: <AM0PR0402MB3810023B34B6EFC188D269198CD90@AM0PR0402MB3810.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
-x-forefront-prvs: 011787B9DD
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(366004)(39860400002)(346002)(376002)(396003)(51914003)(13464003)(189003)(199004)(4326008)(3846002)(76116006)(66446008)(64756008)(66556008)(66476007)(66946007)(486006)(476003)(25786009)(5024004)(2906002)(102836004)(86362001)(66066001)(6916009)(256004)(14444005)(11346002)(33656002)(6506007)(446003)(15650500001)(52536014)(55016002)(186003)(54906003)(478600001)(68736007)(76176011)(99286004)(6246003)(7696005)(53546011)(74316002)(9686003)(71200400001)(71190400001)(5660300002)(81156014)(81166006)(8936002)(316002)(305945005)(7736002)(8676002)(6436002)(53936002)(229853002)(26005)(6116002)(14454004);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR0402MB3810;H:AM0PR0402MB3570.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: FU0hcxrNhnbbpuQgvFQMxZIr+EdNC/W4ZRBfZzdaqFfdSaE6KWYVmzUq5y8CmnrCrNsjkg74WRhDjKq+fy27VMuck+bmBXh0EgdT4Jm6BWfMTJjdm9/qKXrw1gp+xug7e1xpFLZqn6igaiZ4Ubp/eXmYSS8qwPOIH7lipRg/p7o5ygfSjLfSFfdxvC/wLvi/1neMrhE9DIx08I6AAvyQ46UgNZTkZyD/Oy3UuJgb28BQj84cYnfXltifjfnh/txIndC4LTGpPdqma6ttyJcWsx5uCe80Wewp/kJ18RdUxEqfqjTYBlaXb0c3MBUPnn8S2NWraqmvX+7CBCwmIz7lpRENKykNf+F6tS5tHVuMfQTPr8dXiMVqhEADfjwDP6YFirhJrUYpixSYbvdQiwT3bPVJ8N07jk2AgZJdmSGQR2U=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1729874AbfHBD0J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 23:26:09 -0400
+Received: from conssluserg-04.nifty.com ([210.131.2.83]:22561 "EHLO
+        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729012AbfHBD0J (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Aug 2019 23:26:09 -0400
+Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com [209.85.217.51]) (authenticated)
+        by conssluserg-04.nifty.com with ESMTP id x723Pg16011603
+        for <linux-kernel@vger.kernel.org>; Fri, 2 Aug 2019 12:25:43 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com x723Pg16011603
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1564716343;
+        bh=ssjsPr4WP9okAPt/bXtctmL7QnQF1VG4HOIPeNSaxYk=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=LEKxmWnyo4xtXr1BMkwhIhg2uXtQ8C8vCc5wNsUmbm0VA+v0fw5ZUxdaUeiKaWoip
+         OTvuAPYBX+ppqugtuGATJuC8kLCoEd5/l8C5895X6VxcUuv/kGmjZDgkPHecThvpvq
+         z3XL72u1HdoebFQQZM+zpYSJxDSzgxgLs7Ytu8wih0V2oO5D7t4445n0Sse/d6vui8
+         f2yYqhDrEiCilFU5ZDQoB5D9tTwancR8sSXzqvuK6Sknk5WcUcYtAAV9Hg1dl0m5fD
+         HzI8ASzUtRXSvniJAFarQ2As6cb3vGsCsINhpNIp3F/V2wP0CfbLulOLrM0IEe5DSW
+         CJ4Zj5Psr1Adw==
+X-Nifty-SrcIP: [209.85.217.51]
+Received: by mail-vs1-f51.google.com with SMTP id r3so50376295vsr.13
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2019 20:25:43 -0700 (PDT)
+X-Gm-Message-State: APjAAAWQV3h8/eWWuWo15y/6AvX/SsMBEkqFWaL5G1dkboOryVBqcCRe
+        VR7GioFvIwb2jFsYVIRY2p7NoSyyAiPniGThbx8=
+X-Google-Smtp-Source: APXvYqwF5mYJGi6FSezyKTszoTEmupbaBODbzXNvLLgHnKa2V195R6JL3ciEvVZgr0738/KGOW43Fb2so36wWo5WNpM=
+X-Received: by 2002:a67:f495:: with SMTP id o21mr84639027vsn.54.1564716342291;
+ Thu, 01 Aug 2019 20:25:42 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d1d42969-0ca2-4feb-3f1e-08d716f8e63c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Aug 2019 03:24:16.5933
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: hongxing.zhu@nxp.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR0402MB3810
+References: <0306bec0ec270b01b09441da3200252396abed27.camel@perches.com>
+ <20190731190309.19909-1-rikard.falkeborn@gmail.com> <47d29791addc075431737aff4b64531a668d4c1b.camel@perches.com>
+ <CAK7LNAQdgUOsjWtWFnXm66DPnYFRp=i69DMyr+q4+NT+SPCQxA@mail.gmail.com> <2b782cf609330f53b6ecc5b75a8a4b49898483eb.camel@perches.com>
+In-Reply-To: <2b782cf609330f53b6ecc5b75a8a4b49898483eb.camel@perches.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Fri, 2 Aug 2019 12:25:06 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASw+Fraio3t=bZw-FzJihScTuDR=p2EktFVOmdLH4GTGA@mail.gmail.com>
+Message-ID: <CAK7LNASw+Fraio3t=bZw-FzJihScTuDR=p2EktFVOmdLH4GTGA@mail.gmail.com>
+Subject: Re: [PATCH] linux/bits.h: Add compile time sanity check of GENMASK inputs
+To:     Joe Perches <joe@perches.com>
+Cc:     Rikard Falkeborn <rikard.falkeborn@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBEYW5pZWwgQmFsdXRhIDxkYW5p
-ZWwuYmFsdXRhQGdtYWlsLmNvbT4NCj4gU2VudDogMjAxOeW5tDjmnIgx5pelIDIyOjQ3DQo+IFRv
-OiBSaWNoYXJkIFpodSA8aG9uZ3hpbmcuemh1QG54cC5jb20+DQo+IENjOiBqYXNzaXNpbmdoYnJh
-ckBnbWFpbC5jb207IE9sZWtzaWogUmVtcGVsIDxvLnJlbXBlbEBwZW5ndXRyb25peC5kZT47DQo+
-IEFpc2hlbmcgRG9uZyA8YWlzaGVuZy5kb25nQG54cC5jb20+OyBMaW51eCBLZXJuZWwgTWFpbGlu
-ZyBMaXN0DQo+IDxsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnPjsgbGludXgtYXJtLWtlcm5l
-bA0KPiA8bGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnPjsgZGwtbGludXgtaW14
-IDxsaW51eC1pbXhAbnhwLmNvbT4NCj4gU3ViamVjdDogW0VYVF0gUmU6IFtQQVRDSCB2M10gbWFp
-bGJveDogaW14OiBhZGQgc3VwcG9ydCBmb3IgaW14IHYxIG11DQo+IA0KPiBIaSBSaWNoYXJkLA0K
-PiANCj4gVGhhbmtzIGZvciB0aGUgcGF0Y2guIFBsZWFzZSBhbHdheXMgYWRkIGxpbnV4LWlteEBu
-eHAuY29tIG1haWxpbmcgbGlzdCBmb3IgaW14DQo+IHJlbGF0ZWQgcGF0Y2hlcy4gSSBtaXNzZWQg
-aXQuDQo+IA0KW1JpY2hhcmQgWmh1XSBPa2F5LCByb2dlciB0aGF0Lg0KDQo+IEZldyBjb21tZW50
-cyBpbmxpbmUuDQo+IA0KPiBQbGVhc2UgYWxzbyB1cGRhdGUgaW4gYSBzZXBhcmF0ZSBwYXRjaCBh
-dHRhY2hlZCB0byB0aGlzIHNlcmllcyB0aGUgZGV2aWN0cmVlDQo+IGJpbmRpbmdzIGRvYyBEb2N1
-bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbWFpbGJveC9mc2wsbXUudHh0DQo+IGJ5IGFk
-ZGluZyBkZXNjcmlwdGlvbiBmb3IgbXg3dWxwLW11DQo+IA0KPiA8c25pcD4NCltSaWNoYXJkIFpo
-dV0gT2theSwgdGhlIGJpbmRpbmcgZG9jIHdvdWxkIGJlIGFkZGVkIGxhdGVyLg0KPiANCj4gPiBU
-aGVyZSBpcyBhIHZlcnNpb24xLjAgTVUgb24gaS5NWDdVTFAgcGxhdGZvcm0uDQo+IA0KPiBzcGFj
-ZSBiZXR3ZWVuIHZlcnNpb24gYW5kIDEuMA0KPiANCltSaWNoYXJkIFpodV0gT2theS4NCg0KPiA+
-IE9uZSBuZXcgdmVyc2lvbiBJRCByZWdpc3RlciBpcyBhZGRlZCwgYW5kIGl0J3Mgb2Zmc2V0IGlz
-IDAuDQo+ID4gVFJuIHJlZ2lzdGVycyBhcmUgZGVmaW5lZCBhdCB0aGUgb2Zmc2V0IDB4MjAgfiAw
-eDJDLg0KPiA+IFJSbiByZWdpc3RlcnMgYXJlIGRlZmluZWQgYXQgdGhlIG9mZnNldCAweDQwIH4g
-MHg0Qy4NCj4gPiBTUi9DUiByZWdpc3RlcnMgYXJlIGRlZmluZWQgYXQgMHg2MC8weDY0Lg0KPiA+
-IEV4dGVuZCB0aGlzIGRyaXZlciB0byBzdXBwb3J0IGl0Lg0KPiANCj4gRG8geW91IGhhdmUgYSBs
-aXR0bGUgYml0IG9mIGhpc3RvcnkgYWJvdXQgTVUgdmVyc2lvbmluZz8gU28gdGhlcmUgd2FzOg0K
-PiANCj4gKiB2ZXJzaW9uIDAuNSBvbiBpLk1YNi1lcw0KPiAqIHZlcnNpb24gMS4wIG9uIGkuTVg3
-VUxQDQo+IA0KPiBOZXh0LCBpcyB0aGlzIDEuMCBjb21wYXRiaWxlIHdpdGggaS5NWDggcmlnaHQ/
-DQo+IA0KW1JpY2hhcmQgWmh1XSBPbmx5IGkuTVg3VUxQIGhhcyB0aGUgdmVyc2lvbiAxLjAgTVUu
-DQppLk1YOCBoYXMgdGhlIHNhbWUgdmVyc2lvbiBNVSB0aGF0IGkuTVg2LWVzIGhhdmUuDQpJTUhP
-LCBJIGRvbid0IGtub3cgd2h5IGRlc2lnbiB0ZWFtIGRvIGl0IHRoaXMgd2F5Lg0KDQo+IEFsc28s
-IGNhbiB5b3UgcGxlYXNlIHJlYmFzZSB5b3VyIHBhdGNoIG9uIG15IDIgYnVnZml4ZXMgYXR0YWNo
-ZWQ/DQpbUmljaGFyZCBaaHVdIE9rYXksIG5vIHByb2JsZW0uIEkgd291bGQgc2VuZCB0aGUgdjQg
-dmVyc2lvbiBvdXQgbGF0ZXIgYWZ0ZXIgcmViYXNlIHlvdXIgMiBidWdmaXhlcyBwYXRjaGVzLg0K
-PiANCj4gdGhhbmtzLA0KPiBEYW5pZWwuDQo=
+On Fri, Aug 2, 2019 at 12:14 PM Joe Perches <joe@perches.com> wrote:
+>
+> On Fri, 2019-08-02 at 10:40 +0900, Masahiro Yamada wrote:
+> > On Thu, Aug 1, 2019 at 4:27 AM Joe Perches <joe@perches.com> wrote:
+> > > On Wed, 2019-07-31 at 21:03 +0200, Rikard Falkeborn wrote:
+> > > > GENMASK() and GENMASK_ULL() are supposed to be called with the high bit
+> > > > as the first argument and the low bit as the second argument. Mixing
+> > > > them will return a mask with zero bits set.
+> > > >
+> > > > Recent commits show getting this wrong is not uncommon, see e.g.
+> > > > commit aa4c0c9091b0 ("net: stmmac: Fix misuses of GENMASK macro") and
+> > > > commit 9bdd7bb3a844 ("clocksource/drivers/npcm: Fix misuse of GENMASK
+> > > > macro").
+> > > >
+> > > > To prevent such mistakes from appearing again, add compile time sanity
+> > > > checking to the arguments of GENMASK() and GENMASK_ULL(). If both the
+> > > > arguments are known at compile time, and the low bit is higher than the
+> > > > high bit, break the build to detect the mistake immediately.
+> > > >
+> > > > Since GENMASK() is used in declarations, BUILD_BUG_OR_ZERO() must be
+> > > > used instead of BUILD_BUG_ON(), and __is_constexpr() must be used instead
+> > > > of __builtin_constant_p().
+> > > >
+> > > > Commit 95b980d62d52 ("linux/bits.h: make BIT(), GENMASK(), and friends
+> > > > available in assembly") made the macros in linux/bits.h available in
+> > > > assembly. Since neither BUILD_BUG_OR_ZERO() or __is_constexpr() are asm
+> > > > compatible, disable the checks if the file is included in an asm file.
+> > > >
+> > > > Signed-off-by: Rikard Falkeborn <rikard.falkeborn@gmail.com>
+> > > > ---
+> > > > Joe Perches sent a series to fix the existing misuses of GENMASK() that
+> > > > needs to be merged before this to avoid build failures. Currently, 7 of
+> > > > the patches were not in Linus tree, and 2 were not in linux-next.
+> > > >
+> > > > Also, there's currently no asm users of bits.h, but since it was made
+> > > > asm-compatible just two weeks ago it would be a shame to break it right
+> > > > away...
+> > > []
+> > > > diff --git a/include/linux/bits.h b/include/linux/bits.h
+> > > []
+> > > > @@ -18,12 +18,22 @@
+> > > >   * position @h. For example
+> > > >   * GENMASK_ULL(39, 21) gives us the 64bit vector 0x000000ffffe00000.
+> > > >   */
+> > > > +#ifndef __ASSEMBLY__
+> > > > +#include <linux/build_bug.h>
+> > > > +#define GENMASK_INPUT_CHECK(h, l)  BUILD_BUG_ON_ZERO(__builtin_choose_expr( \
+> > > > +             __is_constexpr(h) && __is_constexpr(l), (l) > (h), 0))
+> > > > +#else
+> > > > +#define GENMASK_INPUT_CHECK(h, l) 0
+> > >
+> > > A few things:
+> > >
+> > > o Reading the final code is a bit confusing.
+> > >   Perhaps add a comment description saying it's not checked
+> > >   in asm .h uses.
+> > >
+> > > o Maybe use:
+> > >   #define GENMASK_INPUT_CHECK(h, l) UL(0)
+> >
+> > Why?
+>
+> Consistency with the uses in what's now called __GENMASK
+
+Inconsistent with __GENMASK_ULL.
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
