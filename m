@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C574A7F3DA
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 12:00:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 921F67F3C6
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 12:00:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392088AbfHBJvt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 05:51:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57088 "EHLO mail.kernel.org"
+        id S2406074AbfHBJwq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 05:52:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58352 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405977AbfHBJvq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 05:51:46 -0400
+        id S2406039AbfHBJwh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 05:52:37 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D640A20679;
-        Fri,  2 Aug 2019 09:51:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 065B62086A;
+        Fri,  2 Aug 2019 09:52:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564739505;
-        bh=StWGtf6NFIgHwX2qfupd9JDopZuhlJkjQUoTCK9jBNU=;
+        s=default; t=1564739556;
+        bh=FTDDlLrsrxiuD+s+f38gBhVbtsI5eoj22rWzB+5HxWQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=s0U5H0Utkpmum+1GSYt1wUnZn2fmTtMWSsQvZIt8J0finCLrPk0cRiXHOUnPhF8mC
-         E+S2lDiyPfRscnDHTbkNZb93L50E457sFqAJM04g9RXpf/XHfPDJHd9cEnpQjrfd+k
-         kqMlahBbvMJmq475jnXzydBfKl1m9Pf8Vf76tTd4=
+        b=KXrD6BuTlM8yQdJSJ+TahhLvEpbfndhLnYEkW7mpBPNQEiPL6WiU87saJEwwElMQB
+         Nx2gMgC1IWyOyKG/79B1qTAh1hCDW04QQsPMcu/614JTmlsjPrYYtgDzzLTafpjCeK
+         /4jcigPfCe7OzH6JOwtVJLLXTA1laAulVXSld7hM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Konstantin Taranov <konstantin.taranov@inf.ethz.ch>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org, Dmitry Vyukov <dvyukov@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 191/223] RDMA/rxe: Fill in wc byte_len with IB_WC_RECV_RDMA_WITH_IMM
-Date:   Fri,  2 Aug 2019 11:36:56 +0200
-Message-Id: <20190802092249.759374311@linuxfoundation.org>
+Subject: [PATCH 4.9 197/223] mm/kmemleak.c: fix check for softirq context
+Date:   Fri,  2 Aug 2019 11:37:02 +0200
+Message-Id: <20190802092249.986935432@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190802092238.692035242@linuxfoundation.org>
 References: <20190802092238.692035242@linuxfoundation.org>
@@ -45,59 +46,94 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit bdce1290493caa3f8119f24b5dacc3fb7ca27389 ]
+[ Upstream commit 6ef9056952532c3b746de46aa10d45b4d7797bd8 ]
 
-Calculate the correct byte_len on the receiving side when a work
-completion is generated with IB_WC_RECV_RDMA_WITH_IMM opcode.
+in_softirq() is a wrong predicate to check if we are in a softirq
+context.  It also returns true if we have BH disabled, so objects are
+falsely stamped with "softirq" comm.  The correct predicate is
+in_serving_softirq().
 
-According to the IBA byte_len must indicate the number of written bytes,
-whereas it was always equal to zero for the IB_WC_RECV_RDMA_WITH_IMM
-opcode, even though data was transferred.
+If user does cat from /sys/kernel/debug/kmemleak previously they would
+see this, which is clearly wrong, this is system call context (see the
+comm):
 
-Fixes: 8700e3e7c485 ("Soft RoCE driver")
-Signed-off-by: Konstantin Taranov <konstantin.taranov@inf.ethz.ch>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+unreferenced object 0xffff88805bd661c0 (size 64):
+  comm "softirq", pid 0, jiffies 4294942959 (age 12.400s)
+  hex dump (first 32 bytes):
+    00 00 00 00 00 00 00 00 ff ff ff ff 00 00 00 00  ................
+    00 00 00 00 00 00 00 00 01 00 00 00 00 00 00 00  ................
+  backtrace:
+    [<0000000007dcb30c>] kmemleak_alloc_recursive include/linux/kmemleak.h:55 [inline]
+    [<0000000007dcb30c>] slab_post_alloc_hook mm/slab.h:439 [inline]
+    [<0000000007dcb30c>] slab_alloc mm/slab.c:3326 [inline]
+    [<0000000007dcb30c>] kmem_cache_alloc_trace+0x13d/0x280 mm/slab.c:3553
+    [<00000000969722b7>] kmalloc include/linux/slab.h:547 [inline]
+    [<00000000969722b7>] kzalloc include/linux/slab.h:742 [inline]
+    [<00000000969722b7>] ip_mc_add1_src net/ipv4/igmp.c:1961 [inline]
+    [<00000000969722b7>] ip_mc_add_src+0x36b/0x400 net/ipv4/igmp.c:2085
+    [<00000000a4134b5f>] ip_mc_msfilter+0x22d/0x310 net/ipv4/igmp.c:2475
+    [<00000000d20248ad>] do_ip_setsockopt.isra.0+0x19fe/0x1c00 net/ipv4/ip_sockglue.c:957
+    [<000000003d367be7>] ip_setsockopt+0x3b/0xb0 net/ipv4/ip_sockglue.c:1246
+    [<000000003c7c76af>] udp_setsockopt+0x4e/0x90 net/ipv4/udp.c:2616
+    [<000000000c1aeb23>] sock_common_setsockopt+0x3e/0x50 net/core/sock.c:3130
+    [<000000000157b92b>] __sys_setsockopt+0x9e/0x120 net/socket.c:2078
+    [<00000000a9f3d058>] __do_sys_setsockopt net/socket.c:2089 [inline]
+    [<00000000a9f3d058>] __se_sys_setsockopt net/socket.c:2086 [inline]
+    [<00000000a9f3d058>] __x64_sys_setsockopt+0x26/0x30 net/socket.c:2086
+    [<000000001b8da885>] do_syscall_64+0x7c/0x1a0 arch/x86/entry/common.c:301
+    [<00000000ba770c62>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+now they will see this:
+
+unreferenced object 0xffff88805413c800 (size 64):
+  comm "syz-executor.4", pid 8960, jiffies 4294994003 (age 14.350s)
+  hex dump (first 32 bytes):
+    00 7a 8a 57 80 88 ff ff e0 00 00 01 00 00 00 00  .z.W............
+    00 00 00 00 00 00 00 00 01 00 00 00 00 00 00 00  ................
+  backtrace:
+    [<00000000c5d3be64>] kmemleak_alloc_recursive include/linux/kmemleak.h:55 [inline]
+    [<00000000c5d3be64>] slab_post_alloc_hook mm/slab.h:439 [inline]
+    [<00000000c5d3be64>] slab_alloc mm/slab.c:3326 [inline]
+    [<00000000c5d3be64>] kmem_cache_alloc_trace+0x13d/0x280 mm/slab.c:3553
+    [<0000000023865be2>] kmalloc include/linux/slab.h:547 [inline]
+    [<0000000023865be2>] kzalloc include/linux/slab.h:742 [inline]
+    [<0000000023865be2>] ip_mc_add1_src net/ipv4/igmp.c:1961 [inline]
+    [<0000000023865be2>] ip_mc_add_src+0x36b/0x400 net/ipv4/igmp.c:2085
+    [<000000003029a9d4>] ip_mc_msfilter+0x22d/0x310 net/ipv4/igmp.c:2475
+    [<00000000ccd0a87c>] do_ip_setsockopt.isra.0+0x19fe/0x1c00 net/ipv4/ip_sockglue.c:957
+    [<00000000a85a3785>] ip_setsockopt+0x3b/0xb0 net/ipv4/ip_sockglue.c:1246
+    [<00000000ec13c18d>] udp_setsockopt+0x4e/0x90 net/ipv4/udp.c:2616
+    [<0000000052d748e3>] sock_common_setsockopt+0x3e/0x50 net/core/sock.c:3130
+    [<00000000512f1014>] __sys_setsockopt+0x9e/0x120 net/socket.c:2078
+    [<00000000181758bc>] __do_sys_setsockopt net/socket.c:2089 [inline]
+    [<00000000181758bc>] __se_sys_setsockopt net/socket.c:2086 [inline]
+    [<00000000181758bc>] __x64_sys_setsockopt+0x26/0x30 net/socket.c:2086
+    [<00000000d4b73623>] do_syscall_64+0x7c/0x1a0 arch/x86/entry/common.c:301
+    [<00000000c1098bec>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+Link: http://lkml.kernel.org/r/20190517171507.96046-1-dvyukov@gmail.com
+Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
+Acked-by: Catalin Marinas <catalin.marinas@arm.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/sw/rxe/rxe_resp.c  | 5 ++++-
- drivers/infiniband/sw/rxe/rxe_verbs.h | 1 +
- 2 files changed, 5 insertions(+), 1 deletion(-)
+ mm/kmemleak.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/infiniband/sw/rxe/rxe_resp.c b/drivers/infiniband/sw/rxe/rxe_resp.c
-index 297653ab4004..5bfea23f3b60 100644
---- a/drivers/infiniband/sw/rxe/rxe_resp.c
-+++ b/drivers/infiniband/sw/rxe/rxe_resp.c
-@@ -432,6 +432,7 @@ static enum resp_states check_rkey(struct rxe_qp *qp,
- 			qp->resp.va = reth_va(pkt);
- 			qp->resp.rkey = reth_rkey(pkt);
- 			qp->resp.resid = reth_len(pkt);
-+			qp->resp.length = reth_len(pkt);
- 		}
- 		access = (pkt->mask & RXE_READ_MASK) ? IB_ACCESS_REMOTE_READ
- 						     : IB_ACCESS_REMOTE_WRITE;
-@@ -841,7 +842,9 @@ static enum resp_states do_complete(struct rxe_qp *qp,
- 				pkt->mask & RXE_WRITE_MASK) ?
- 					IB_WC_RECV_RDMA_WITH_IMM : IB_WC_RECV;
- 		wc->vendor_err = 0;
--		wc->byte_len = wqe->dma.length - wqe->dma.resid;
-+		wc->byte_len = (pkt->mask & RXE_IMMDT_MASK &&
-+				pkt->mask & RXE_WRITE_MASK) ?
-+					qp->resp.length : wqe->dma.length - wqe->dma.resid;
- 
- 		/* fields after byte_len are different between kernel and user
- 		 * space
-diff --git a/drivers/infiniband/sw/rxe/rxe_verbs.h b/drivers/infiniband/sw/rxe/rxe_verbs.h
-index cac1d52a08f0..47003d2a4a46 100644
---- a/drivers/infiniband/sw/rxe/rxe_verbs.h
-+++ b/drivers/infiniband/sw/rxe/rxe_verbs.h
-@@ -209,6 +209,7 @@ struct rxe_resp_info {
- 	struct rxe_mem		*mr;
- 	u32			resid;
- 	u32			rkey;
-+	u32			length;
- 	u64			atomic_orig;
- 
- 	/* SRQ only */
+diff --git a/mm/kmemleak.c b/mm/kmemleak.c
+index 9e66449ed91f..d05133b37b17 100644
+--- a/mm/kmemleak.c
++++ b/mm/kmemleak.c
+@@ -569,7 +569,7 @@ static struct kmemleak_object *create_object(unsigned long ptr, size_t size,
+ 	if (in_irq()) {
+ 		object->pid = 0;
+ 		strncpy(object->comm, "hardirq", sizeof(object->comm));
+-	} else if (in_softirq()) {
++	} else if (in_serving_softirq()) {
+ 		object->pid = 0;
+ 		strncpy(object->comm, "softirq", sizeof(object->comm));
+ 	} else {
 -- 
 2.20.1
 
