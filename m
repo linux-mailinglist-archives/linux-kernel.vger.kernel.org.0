@@ -2,112 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 186027ECEE
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 08:53:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E81657ECFA
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 08:57:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389169AbfHBGx0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 02:53:26 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:50492 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389148AbfHBGx0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 02:53:26 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id E39A96043F; Fri,  2 Aug 2019 06:53:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1564728804;
-        bh=FnKA06X8S6Ar0MBJG65ZgJ8cP/xxJCbs0ty010kJAKY=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=Z8NG6myPRhpG9MDO0fmAIhzqorMKp2CFCvv9hO8pXiU9OYfCrb8W6x0pWnV5c6jRC
-         7ot9snFXFT1cZ2WHNW5hMbCVPuRTneUHNJi1OZs3bk1V+DKvsHyScLdL6pYAmZNFHi
-         4N/J012B7KUt/4Fe0N4gqnAHqc8zF/me43rV7/vQ=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
-        version=3.4.0
-Received: from [10.79.43.141] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S2389196AbfHBG5d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 02:57:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34520 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389177AbfHBG5d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 02:57:33 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: rnayak@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 7F282601F6;
-        Fri,  2 Aug 2019 06:53:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1564728804;
-        bh=FnKA06X8S6Ar0MBJG65ZgJ8cP/xxJCbs0ty010kJAKY=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=Z8NG6myPRhpG9MDO0fmAIhzqorMKp2CFCvv9hO8pXiU9OYfCrb8W6x0pWnV5c6jRC
-         7ot9snFXFT1cZ2WHNW5hMbCVPuRTneUHNJi1OZs3bk1V+DKvsHyScLdL6pYAmZNFHi
-         4N/J012B7KUt/4Fe0N4gqnAHqc8zF/me43rV7/vQ=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7F282601F6
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: pinctrl: qcom: Add SC7180 pinctrl
- binding
-To:     Vinod Koul <vkoul@kernel.org>
-Cc:     linus.walleij@linaro.org, bjorn.andersson@linaro.org,
-        linux-arm-msm@vger.kernel.org, agross@kernel.org,
-        robh+dt@kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jitendra Sharma <shajit@codeaurora.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>
-References: <20190802041507.12365-1-rnayak@codeaurora.org>
- <20190802063317.GB12733@vkoul-mobl.Dlink>
-From:   Rajendra Nayak <rnayak@codeaurora.org>
-Message-ID: <b468e53a-d010-d95f-de9a-62ef60083074@codeaurora.org>
-Date:   Fri, 2 Aug 2019 12:23:19 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        by mail.kernel.org (Postfix) with ESMTPSA id C82FC2086A;
+        Fri,  2 Aug 2019 06:57:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564729052;
+        bh=ffM+LICWllxWJE/vQvAaeiAc+X9tSUkA68IQmo2LQ9g=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=fAItImq9S90rX9l+DgsGbTRR+l8aOgIVns7ZwcBkAamUtiBQjgh6/Za1osWY0q23I
+         aYBBMz53C9J2HvskmWRFcNgWGgE+V9kj6KVbnQ2GwvB2sVM+W884Bm8B/yqdlp8uCA
+         TcTJFAPXluoI+zaj5nOyt7BgxDxEdzs/MgG2LCA8=
+Date:   Fri, 2 Aug 2019 08:57:29 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Willy Tarreau <w@1wt.eu>
+Cc:     Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+        Jonathan Corbet <corbet@lwn.net>, security@kernel.org,
+        linux-doc@vger.kernel.org, Jiri Kosina <jkosina@suse.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Subject: Re: [PATCH] Documentation/admin-guide: Embargoed hardware security
+ issues
+Message-ID: <20190802065729.GA24024@kroah.com>
+References: <20190725130113.GA12932@kroah.com>
+ <20190802044908.GA12834@1wt.eu>
 MIME-Version: 1.0
-In-Reply-To: <20190802063317.GB12733@vkoul-mobl.Dlink>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190802044908.GA12834@1wt.eu>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Aug 02, 2019 at 06:49:08AM +0200, Willy Tarreau wrote:
+> Hi Greg, Thomas,
+> 
+> On Thu, Jul 25, 2019 at 03:01:13PM +0200, Greg Kroah-Hartman wrote:
+> > +The list is encrypted and email to the list can be sent by either PGP or
+> > +S/MIME encrypted and must be signed with the reporter's PGP key or S/MIME
+> > +certificate. The list's PGP key and S/MIME certificate are available from
+> > +https://www.kernel.org/....
+> 
+> Just thinking, wouldn't it be useful to strongly encourage that the
+> document should be in plain text format ? Otherwise the door remains open
+> for sending you a self-extractable EXE file which contains an encrypted
+> Word doc, which is not the most useful to handle especially to copy-paste
+> mitigation code nor to comment on. Even some occasional PDFs we've seen
+> on the sec@k.o list were sometimes quite detailed but less convenient
+> than the vast majority of plain text ones, particularly when it comes
+> to quoting some parts.
 
+What document are you referring to here?  This just describes how the
+encrypted mailing list is going to work, not anything else.
 
-On 8/2/2019 12:03 PM, Vinod Koul wrote:
-> On 02-08-19, 09:45, Rajendra Nayak wrote:
->> From: Jitendra Sharma <shajit@codeaurora.org>
->>
->> Add the binding for the TLMM pinctrl block found in the SC7180 platform
->>
->> Signed-off-by: Jitendra Sharma <shajit@codeaurora.org>
->> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
->> [rnayak: Fix some copy-paste issues, sort and fix functions]
->> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
->> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
->> ---
-> 
-> changes since v1: ..?
-> 
->> +- reg-names:
->> +	Usage: required
->> +	Value type: <prop-encoded-array>
->> +	Defintiion: names for the cells of reg, must contain "north", "south"
-> 
-> s/Defintiion/Definition
-> 
->> +Example:
->> +
->> +	tlmm: pinctrl@3000000 {
-> 
-> this should be: pinctrl@3500000
-> 
-> with these two nitpicks fixed:
+But yes, we have had some "encrypted pdfs" be sent to us recently that
+no one can decrypt unless they run Windows or do some really crazy hacks
+with the gstreamer pipeline.  But that's separate from this specific
+mailing list, we can always just tell people to not do foolish things if
+that happens again (like we did in this case.)
 
-Thanks Vinod for the review. I will fix these and respin, after I wait
-a while to see if there is any more feedback :)
+thanks,
 
-> 
-> Reviewed-by: Vinod Koul <vkoul@kernel.org>
-> 
-
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+greg k-h
