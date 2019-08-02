@@ -2,76 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E81657ECFA
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 08:57:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB1117ED01
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 08:59:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389196AbfHBG5d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 02:57:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34520 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389177AbfHBG5d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 02:57:33 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C82FC2086A;
-        Fri,  2 Aug 2019 06:57:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564729052;
-        bh=ffM+LICWllxWJE/vQvAaeiAc+X9tSUkA68IQmo2LQ9g=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=fAItImq9S90rX9l+DgsGbTRR+l8aOgIVns7ZwcBkAamUtiBQjgh6/Za1osWY0q23I
-         aYBBMz53C9J2HvskmWRFcNgWGgE+V9kj6KVbnQ2GwvB2sVM+W884Bm8B/yqdlp8uCA
-         TcTJFAPXluoI+zaj5nOyt7BgxDxEdzs/MgG2LCA8=
-Date:   Fri, 2 Aug 2019 08:57:29 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Willy Tarreau <w@1wt.eu>
-Cc:     Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-        Jonathan Corbet <corbet@lwn.net>, security@kernel.org,
-        linux-doc@vger.kernel.org, Jiri Kosina <jkosina@suse.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: Re: [PATCH] Documentation/admin-guide: Embargoed hardware security
- issues
-Message-ID: <20190802065729.GA24024@kroah.com>
-References: <20190725130113.GA12932@kroah.com>
- <20190802044908.GA12834@1wt.eu>
+        id S2389201AbfHBG7P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 02:59:15 -0400
+Received: from mail-il-dmz.mellanox.com ([193.47.165.129]:39030 "EHLO
+        mellanox.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2389203AbfHBG7O (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 02:59:14 -0400
+Received: from Internal Mail-Server by MTLPINE2 (envelope-from parav@mellanox.com)
+        with ESMTPS (AES256-SHA encrypted); 2 Aug 2019 09:59:09 +0300
+Received: from sw-mtx-036.mtx.labs.mlnx (sw-mtx-036.mtx.labs.mlnx [10.12.150.149])
+        by labmailer.mlnx (8.13.8/8.13.8) with ESMTP id x726x7pW004367;
+        Fri, 2 Aug 2019 09:59:08 +0300
+From:   Parav Pandit <parav@mellanox.com>
+To:     kvm@vger.kernel.org, wankhede@nvidia.com,
+        linux-kernel@vger.kernel.org
+Cc:     parav@mellanox.com, alex.williamson@redhat.com, cohuck@redhat.com,
+        cjia@nvidia.com
+Subject: [PATCH 0/2] Simplify mtty driver and mdev core
+Date:   Fri,  2 Aug 2019 01:59:03 -0500
+Message-Id: <20190802065905.45239-1-parav@mellanox.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190802044908.GA12834@1wt.eu>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 02, 2019 at 06:49:08AM +0200, Willy Tarreau wrote:
-> Hi Greg, Thomas,
-> 
-> On Thu, Jul 25, 2019 at 03:01:13PM +0200, Greg Kroah-Hartman wrote:
-> > +The list is encrypted and email to the list can be sent by either PGP or
-> > +S/MIME encrypted and must be signed with the reporter's PGP key or S/MIME
-> > +certificate. The list's PGP key and S/MIME certificate are available from
-> > +https://www.kernel.org/....
-> 
-> Just thinking, wouldn't it be useful to strongly encourage that the
-> document should be in plain text format ? Otherwise the door remains open
-> for sending you a self-extractable EXE file which contains an encrypted
-> Word doc, which is not the most useful to handle especially to copy-paste
-> mitigation code nor to comment on. Even some occasional PDFs we've seen
-> on the sec@k.o list were sometimes quite detailed but less convenient
-> than the vast majority of plain text ones, particularly when it comes
-> to quoting some parts.
+Currently mtty sample driver uses mdev state and UUID in convoluated way to
+generate an interrupt.
+It uses several translations from mdev_state to mdev_device to mdev uuid.
+After which it does linear search of long uuid comparision to
+find out mdev_state in mtty_trigger_interrupt().
+mdev_state is already available while generating interrupt from which all
+such translations are done to reach back to mdev_state.
 
-What document are you referring to here?  This just describes how the
-encrypted mailing list is going to work, not anything else.
+This translations are done during interrupt generation path.
+This is unnecessary and reduandant.
 
-But yes, we have had some "encrypted pdfs" be sent to us recently that
-no one can decrypt unless they run Windows or do some really crazy hacks
-with the gstreamer pipeline.  But that's separate from this specific
-mailing list, we can always just tell people to not do foolish things if
-that happens again (like we did in this case.)
+Hence,
+Patch-1 simplifies mtty sample driver to directly use mdev_state.
 
-thanks,
+Patch-2, Since no production driver uses mdev_uuid(), and mdev's name
+is already available using core kernel dev_name(), simplifies and removes
+redandant mdev_uuid() exported symbol.
 
-greg k-h
+Parav Pandit (2):
+  vfio-mdev/mtty: Simplify interrupt generation
+  vfio/mdev: Removed unused and redundant API for mdev name
+
+ drivers/vfio/mdev/mdev_core.c |  6 ------
+ include/linux/mdev.h          |  1 -
+ samples/vfio-mdev/mtty.c      | 39 +++++++----------------------------
+ 3 files changed, 8 insertions(+), 38 deletions(-)
+
+-- 
+2.21.0.777.g83232e3864
+
