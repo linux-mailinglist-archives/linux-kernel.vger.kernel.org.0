@@ -2,40 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 980D37F8E3
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 15:24:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 694E07F8E7
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 15:24:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393863AbfHBNWu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 09:22:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33200 "EHLO mail.kernel.org"
+        id S2393874AbfHBNWy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 09:22:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33336 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393845AbfHBNWr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 09:22:47 -0400
+        id S2393862AbfHBNWu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 09:22:50 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5C4B021773;
-        Fri,  2 Aug 2019 13:22:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0DFCE20880;
+        Fri,  2 Aug 2019 13:22:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564752166;
-        bh=3LS0LuZEUGZyXLHS02o2dM7vNGPv1bCGiWlUbp3AVKM=;
+        s=default; t=1564752170;
+        bh=4rdWKrad3A6cYhFaCKEKIkiANKl0SRoiEvMXDqkIEQc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TYHVMw04rhNnz9sKFBu2v5MeOm4AQZlzgP/C2lWooGsy6AS1fYLY39Ds5cT9UBLx0
-         +OgoXvwTfySWWNcEuFIfrDWz6ESgbAPUwOxUqSLjHsU3xBYARV3SaL5j1SHK0EpOhD
-         tZcUudG4dKMzle0Ac0J5ejdU03jyjc9YbiNhwDxM=
+        b=0YhucAYX+c5qBSL2l80b1tLM0olO0GQzTT6BdijuCHZp/Uxt+I6+LCg6eKYboAzqP
+         DPL6XEV4cEQ4BXMQZ+i2EO9ibqsQGQAMSFSZhHX3X0m9LUkF67rMNtAM2isQ2/lR1m
+         N+6PbrPaLRJ4sauru1rFAgl9cw5uO0kOH1KMphHU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Yunying Sun <yunying.sun@intel.com>,
+Cc:     Leonard Crestez <leonard.crestez@nxp.com>,
         Peter Zijlstra <peterz@infradead.org>,
-        Kan Liang <kan.liang@linux.intel.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Frank Li <Frank.li@nxp.com>, Jiri Olsa <jolsa@redhat.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>, acme@kernel.org,
-        alexander.shishkin@linux.intel.com, bp@alien8.de, hpa@zytor.com,
-        jolsa@redhat.com, namhyung@kernel.org,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.2 72/76] perf/x86/intel: Fix invalid Bit 13 for Icelake MSR_OFFCORE_RSP_x register
-Date:   Fri,  2 Aug 2019 09:19:46 -0400
-Message-Id: <20190802131951.11600-72-sashal@kernel.org>
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.2 74/76] perf/core: Fix creating kernel counters for PMUs that override event->cpu
+Date:   Fri,  2 Aug 2019 09:19:48 -0400
+Message-Id: <20190802131951.11600-74-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190802131951.11600-1-sashal@kernel.org>
 References: <20190802131951.11600-1-sashal@kernel.org>
@@ -48,58 +51,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yunying Sun <yunying.sun@intel.com>
+From: Leonard Crestez <leonard.crestez@nxp.com>
 
-[ Upstream commit 3b238a64c3009fed36eaea1af629d9377759d87d ]
+[ Upstream commit 4ce54af8b33d3e21ca935fc1b89b58cbba956051 ]
 
-The Intel SDM states that bit 13 of Icelake's MSR_OFFCORE_RSP_x
-register is valid, and used for counting hardware generated prefetches
-of L3 cache. Update the bitmask to allow bit 13.
+Some hardware PMU drivers will override perf_event.cpu inside their
+event_init callback. This causes a lockdep splat when initialized through
+the kernel API:
 
-Before:
-$ perf stat -e cpu/event=0xb7,umask=0x1,config1=0x1bfff/u sleep 3
- Performance counter stats for 'sleep 3':
-   <not supported>      cpu/event=0xb7,umask=0x1,config1=0x1bfff/u
+ WARNING: CPU: 0 PID: 250 at kernel/events/core.c:2917 ctx_sched_out+0x78/0x208
+ pc : ctx_sched_out+0x78/0x208
+ Call trace:
+  ctx_sched_out+0x78/0x208
+  __perf_install_in_context+0x160/0x248
+  remote_function+0x58/0x68
+  generic_exec_single+0x100/0x180
+  smp_call_function_single+0x174/0x1b8
+  perf_install_in_context+0x178/0x188
+  perf_event_create_kernel_counter+0x118/0x160
 
-After:
-$ perf stat -e cpu/event=0xb7,umask=0x1,config1=0x1bfff/u sleep 3
- Performance counter stats for 'sleep 3':
-             9,293      cpu/event=0xb7,umask=0x1,config1=0x1bfff/u
+Fix this by calling perf_install_in_context with event->cpu, just like
+perf_event_open
 
-Signed-off-by: Yunying Sun <yunying.sun@intel.com>
+Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Kan Liang <kan.liang@linux.intel.com>
+Reviewed-by: Mark Rutland <mark.rutland@arm.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Frank Li <Frank.li@nxp.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: acme@kernel.org
-Cc: alexander.shishkin@linux.intel.com
-Cc: bp@alien8.de
-Cc: hpa@zytor.com
-Cc: jolsa@redhat.com
-Cc: namhyung@kernel.org
-Link: https://lkml.kernel.org/r/20190724082932.12833-1-yunying.sun@intel.com
+Cc: Will Deacon <will@kernel.org>
+Link: https://lkml.kernel.org/r/c4ebe0503623066896d7046def4d6b1e06e0eb2e.1563972056.git.leonard.crestez@nxp.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/events/intel/core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ kernel/events/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-index 2889dd0235668..e9042e3f3052c 100644
---- a/arch/x86/events/intel/core.c
-+++ b/arch/x86/events/intel/core.c
-@@ -263,8 +263,8 @@ static struct event_constraint intel_icl_event_constraints[] = {
- };
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index f851934d55d48..4bc15cff1026a 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -11266,7 +11266,7 @@ perf_event_create_kernel_counter(struct perf_event_attr *attr, int cpu,
+ 		goto err_unlock;
+ 	}
  
- static struct extra_reg intel_icl_extra_regs[] __read_mostly = {
--	INTEL_UEVENT_EXTRA_REG(0x01b7, MSR_OFFCORE_RSP_0, 0x3fffff9fffull, RSP_0),
--	INTEL_UEVENT_EXTRA_REG(0x01bb, MSR_OFFCORE_RSP_1, 0x3fffff9fffull, RSP_1),
-+	INTEL_UEVENT_EXTRA_REG(0x01b7, MSR_OFFCORE_RSP_0, 0x3fffffbfffull, RSP_0),
-+	INTEL_UEVENT_EXTRA_REG(0x01bb, MSR_OFFCORE_RSP_1, 0x3fffffbfffull, RSP_1),
- 	INTEL_UEVENT_PEBS_LDLAT_EXTRA_REG(0x01cd),
- 	INTEL_UEVENT_EXTRA_REG(0x01c6, MSR_PEBS_FRONTEND, 0x7fff17, FE),
- 	EVENT_EXTRA_END
+-	perf_install_in_context(ctx, event, cpu);
++	perf_install_in_context(ctx, event, event->cpu);
+ 	perf_unpin_context(ctx);
+ 	mutex_unlock(&ctx->mutex);
+ 
 -- 
 2.20.1
 
