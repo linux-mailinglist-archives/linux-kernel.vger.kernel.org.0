@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8CB77F44B
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 12:05:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 37B0E7F411
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 12:04:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407221AbfHBKEL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 06:04:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41716 "EHLO mail.kernel.org"
+        id S2404382AbfHBJkr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 05:40:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41914 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391731AbfHBJkh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 05:40:37 -0400
+        id S2404320AbfHBJko (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 05:40:44 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 69ED72086A;
-        Fri,  2 Aug 2019 09:40:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1C4E6206A2;
+        Fri,  2 Aug 2019 09:40:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564738835;
-        bh=RS0NyBFS6JKuvq0PDVkbfKTmJJz/+1JMsm+1zqfCZuo=;
+        s=default; t=1564738843;
+        bh=8GoT/nTBFzfCKVir7EOLLm1T0BtOMXfPe2pI+qONsTA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nkzeN31Gm+PhSDS5pFb4YbmY+LV3QISvI/mwKGP0OBth6ukGt1T9SgIIxJ3YALjma
-         BpZE/Kj6wp/p1fwQZLFpykUkNdU3YU6+7XMlyNm7hFPPTBiWtGEL1EpFxNlKq2Kf04
-         Qcbk1CXiI+4zdFAKZ+ceuw2uyNdYYZOoQ35Qjmho=
+        b=VuhQEK+obDtXmyKz8/AB+ymrHVtM2tnTobDKGRvaxjzrNFjAsNjqhtYokqsB7F4Tk
+         VwJNkxBQbxik1svHzSPqZJVhFdDulhCMi3i3SIuCuX0qpIlJH90XnditxRRG3a1jBU
+         gkqfzw9MGt83TDMbRR/LHOK1/6iJgYwSNxsz2nmA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sven Van Asbroeck <TheSven73@gmail.com>,
-        Robin Gong <yibin.gong@nxp.com>, Vinod Koul <vkoul@kernel.org>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 004/223] dmaengine: imx-sdma: fix use-after-free on probe error path
-Date:   Fri,  2 Aug 2019 11:33:49 +0200
-Message-Id: <20190802092239.001709269@linuxfoundation.org>
+Subject: [PATCH 4.9 007/223] ath6kl: add some bounds checking
+Date:   Fri,  2 Aug 2019 11:33:52 +0200
+Message-Id: <20190802092239.268580614@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190802092238.692035242@linuxfoundation.org>
 References: <20190802092238.692035242@linuxfoundation.org>
@@ -44,105 +44,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 2b8066c3deb9140fdf258417a51479b2aeaa7622 ]
+[ Upstream commit 5d6751eaff672ea77642e74e92e6c0ac7f9709ab ]
 
-If probe() fails anywhere beyond the point where
-sdma_get_firmware() is called, then a kernel oops may occur.
+The "ev->traffic_class" and "reply->ac" variables come from the network
+and they're used as an offset into the wmi->stream_exist_for_ac[] array.
+Those variables are u8 so they can be 0-255 but the stream_exist_for_ac[]
+array only has WMM_NUM_AC (4) elements.  We need to add a couple bounds
+checks to prevent array overflows.
 
-Problematic sequence of events:
-1. probe() calls sdma_get_firmware(), which schedules the
-   firmware callback to run when firmware becomes available,
-   using the sdma instance structure as the context
-2. probe() encounters an error, which deallocates the
-   sdma instance structure
-3. firmware becomes available, firmware callback is
-   called with deallocated sdma instance structure
-4. use after free - kernel oops !
+I also modified one existing check from "if (traffic_class > 3) {" to
+"if (traffic_class >= WMM_NUM_AC) {" just to make them all consistent.
 
-Solution: only attempt to load firmware when we're certain
-that probe() will succeed. This guarantees that the firmware
-callback's context will remain valid.
-
-Note that the remove() path is unaffected by this issue: the
-firmware loader will increment the driver module's use count,
-ensuring that the module cannot be unloaded while the
-firmware callback is pending or running.
-
-Signed-off-by: Sven Van Asbroeck <TheSven73@gmail.com>
-Reviewed-by: Robin Gong <yibin.gong@nxp.com>
-[vkoul: fixed braces for if condition]
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Fixes: bdcd81707973 (" Add ath6kl cleaned up driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/dma/imx-sdma.c | 48 ++++++++++++++++++++++++------------------
- 1 file changed, 27 insertions(+), 21 deletions(-)
+ drivers/net/wireless/ath/ath6kl/wmi.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/dma/imx-sdma.c b/drivers/dma/imx-sdma.c
-index 84856ac75a09..9f240b2d85a5 100644
---- a/drivers/dma/imx-sdma.c
-+++ b/drivers/dma/imx-sdma.c
-@@ -1821,27 +1821,6 @@ static int sdma_probe(struct platform_device *pdev)
- 	if (pdata && pdata->script_addrs)
- 		sdma_add_scripts(sdma, pdata->script_addrs);
+diff --git a/drivers/net/wireless/ath/ath6kl/wmi.c b/drivers/net/wireless/ath/ath6kl/wmi.c
+index 3fd1cc98fd2f..55609fc4e50e 100644
+--- a/drivers/net/wireless/ath/ath6kl/wmi.c
++++ b/drivers/net/wireless/ath/ath6kl/wmi.c
+@@ -1178,6 +1178,10 @@ static int ath6kl_wmi_pstream_timeout_event_rx(struct wmi *wmi, u8 *datap,
+ 		return -EINVAL;
  
--	if (pdata) {
--		ret = sdma_get_firmware(sdma, pdata->fw_name);
--		if (ret)
--			dev_warn(&pdev->dev, "failed to get firmware from platform data\n");
--	} else {
--		/*
--		 * Because that device tree does not encode ROM script address,
--		 * the RAM script in firmware is mandatory for device tree
--		 * probe, otherwise it fails.
--		 */
--		ret = of_property_read_string(np, "fsl,sdma-ram-script-name",
--					      &fw_name);
--		if (ret)
--			dev_warn(&pdev->dev, "failed to get firmware name\n");
--		else {
--			ret = sdma_get_firmware(sdma, fw_name);
--			if (ret)
--				dev_warn(&pdev->dev, "failed to get firmware from device tree\n");
--		}
--	}
--
- 	sdma->dma_device.dev = &pdev->dev;
- 
- 	sdma->dma_device.device_alloc_chan_resources = sdma_alloc_chan_resources;
-@@ -1883,6 +1862,33 @@ static int sdma_probe(struct platform_device *pdev)
- 		of_node_put(spba_bus);
- 	}
- 
-+	/*
-+	 * Kick off firmware loading as the very last step:
-+	 * attempt to load firmware only if we're not on the error path, because
-+	 * the firmware callback requires a fully functional and allocated sdma
-+	 * instance.
-+	 */
-+	if (pdata) {
-+		ret = sdma_get_firmware(sdma, pdata->fw_name);
-+		if (ret)
-+			dev_warn(&pdev->dev, "failed to get firmware from platform data\n");
-+	} else {
-+		/*
-+		 * Because that device tree does not encode ROM script address,
-+		 * the RAM script in firmware is mandatory for device tree
-+		 * probe, otherwise it fails.
-+		 */
-+		ret = of_property_read_string(np, "fsl,sdma-ram-script-name",
-+					      &fw_name);
-+		if (ret) {
-+			dev_warn(&pdev->dev, "failed to get firmware name\n");
-+		} else {
-+			ret = sdma_get_firmware(sdma, fw_name);
-+			if (ret)
-+				dev_warn(&pdev->dev, "failed to get firmware from device tree\n");
-+		}
+ 	ev = (struct wmi_pstream_timeout_event *) datap;
++	if (ev->traffic_class >= WMM_NUM_AC) {
++		ath6kl_err("invalid traffic class: %d\n", ev->traffic_class);
++		return -EINVAL;
 +	}
-+
- 	return 0;
  
- err_register:
+ 	/*
+ 	 * When the pstream (fat pipe == AC) timesout, it means there were
+@@ -1519,6 +1523,10 @@ static int ath6kl_wmi_cac_event_rx(struct wmi *wmi, u8 *datap, int len,
+ 		return -EINVAL;
+ 
+ 	reply = (struct wmi_cac_event *) datap;
++	if (reply->ac >= WMM_NUM_AC) {
++		ath6kl_err("invalid AC: %d\n", reply->ac);
++		return -EINVAL;
++	}
+ 
+ 	if ((reply->cac_indication == CAC_INDICATION_ADMISSION_RESP) &&
+ 	    (reply->status_code != IEEE80211_TSPEC_STATUS_ADMISS_ACCEPTED)) {
+@@ -2635,7 +2643,7 @@ int ath6kl_wmi_delete_pstream_cmd(struct wmi *wmi, u8 if_idx, u8 traffic_class,
+ 	u16 active_tsids = 0;
+ 	int ret;
+ 
+-	if (traffic_class > 3) {
++	if (traffic_class >= WMM_NUM_AC) {
+ 		ath6kl_err("invalid traffic class: %d\n", traffic_class);
+ 		return -EINVAL;
+ 	}
 -- 
 2.20.1
 
