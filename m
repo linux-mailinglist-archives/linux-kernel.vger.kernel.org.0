@@ -2,76 +2,220 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1533A80256
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 23:55:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC9B28025D
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 23:57:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395208AbfHBVzJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 17:55:09 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:44776 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732887AbfHBVzI (ORCPT
+        id S2395223AbfHBV5o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 17:57:44 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:40955 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730163AbfHBV5o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 17:55:08 -0400
-Received: by mail-pl1-f193.google.com with SMTP id t14so34098635plr.11
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2019 14:55:08 -0700 (PDT)
+        Fri, 2 Aug 2019 17:57:44 -0400
+Received: by mail-oi1-f193.google.com with SMTP id w196so36571942oie.7
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2019 14:57:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=networkplumber-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=3v959y3cG5ZVzOws7Yf1+skokBCt8eVG73f/LVI45bE=;
-        b=V3Hpl9HrCUyugLTACvQdLDIAxuPF+z+eQixtnPJTDCaVCGqGU3IOij7fUVmLgwP7DC
-         kQsEQblIgYdkFfFqFq4v2ktFDIaHIH/kCq1OBFMuF8o7rptFY8SBTg8EoRTkXEjlTurv
-         KIZm3oKsVAnb4XyKjVGi+Hn+e5zG1vs7oLSePanBwPr0YzLP4aaBpuGQn8/fdTV7+6oe
-         xKS1Pv+c4Ete30omsGWcP5Z3WeeZsfWBVvUefvXezmibpeBQsoFH5/4YukI8C6jrhkef
-         Y+jacXlaIVVCM7PKXLNKr3dnRQPPNji4bTwvii5cKhoD05JsyLdacylOm5WB2LGGTOgI
-         k4OQ==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rGuW4tG7YREvM0Tkwd56d78mTsuSaz2wZqP3WJdbo78=;
+        b=JS5WCbbgJ3urA3aE1jNreeG23PyNNrBu5EuDNauGNuCJrtFegQgUqeLFkSkbsKGOYH
+         pvh9Sen+L9CA7iU0/uPc80Y2VrIGgThDoLA9CWPkMmK9zdDHBUyTKJUE2udzdFxpGdzH
+         q3yX2kbeXOppHH36whi5FbxLvQsF1RvceEhIOZIbxjrOQ1IdStcU8n5Kj+1kPfNncxGO
+         C5k7qxldqyCJ3InOq1iLhKCfwEXH7CTG4aw77tgJCBPFmd7GzaEVD17Myl5tX60I/1II
+         pIfFxOYWJWxXH7fg2UtPQ6Ix2nYObRj08Gu1jFUel6COnkLdKzCuj+KtRHmWA/P3QRXp
+         ZChA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=3v959y3cG5ZVzOws7Yf1+skokBCt8eVG73f/LVI45bE=;
-        b=sSYM/RuM0/XDtNRQHT6BH8+rgYPhfiJtvTnusUEwxkzM42I2XVXJB3p9ZyAxlbJ6bN
-         s9D8rU4zWo1cDVU/jgcfuoRBs3RL1QRUpopo6/vq/beYrbSX6E9xGAyJ18zlGYcc7Pka
-         EWCfZEqsFslk4mIWAgJPooUTjx1tBylMqWMC6ddXl7Q+fUt2JneeesZx8fsRC5qXroVU
-         PVWZtIrtube6mA+92QrLJIxkiQb/YvnfIxu5WdwUOHk+uOSEocBYMjgu34YfMZ6x1UoR
-         YNzyerFS2yVXVcLMBD2yB28BRIi/qOVwwy62qQ9bv5YxBX1Vp3nwniaj6gshG0PQypWX
-         MpGw==
-X-Gm-Message-State: APjAAAUkgcb+6d15wLte57EwJMDmSZV1M4XW6Ah/YxOBOtsj7j/fNqVk
-        Yi9KFKOIbYRH+Ihom05IYcU=
-X-Google-Smtp-Source: APXvYqyQ65NF5GXQddSgKFl5futnv5t9QQ5mjPDSRTrAoLaT4aq/GyBekbHTh1tXi+6AxlMyrJ+RmQ==
-X-Received: by 2002:a17:902:100a:: with SMTP id b10mr91768385pla.338.1564782908080;
-        Fri, 02 Aug 2019 14:55:08 -0700 (PDT)
-Received: from hermes.lan (204-195-22-127.wavecable.com. [204.195.22.127])
-        by smtp.gmail.com with ESMTPSA id r188sm121634800pfr.16.2019.08.02.14.55.07
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 02 Aug 2019 14:55:08 -0700 (PDT)
-Date:   Fri, 2 Aug 2019 14:55:06 -0700
-From:   Stephen Hemminger <stephen@networkplumber.org>
-To:     Jose Carlos Cazarin Filho <joseespiriki@gmail.com>
-Cc:     isdn@linux-pingi.de, gregkh@linuxfoundation.org,
-        devel@driverdev.osuosl.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] isdn: hysdn: Fix error spaces around '*'
-Message-ID: <20190802145506.168b576b@hermes.lan>
-In-Reply-To: <20190802195602.28414-1-joseespiriki@gmail.com>
-References: <20190802195602.28414-1-joseespiriki@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rGuW4tG7YREvM0Tkwd56d78mTsuSaz2wZqP3WJdbo78=;
+        b=kgRN0op7fFOEjb4QA2AbDhFXJMKpsz+tWM58Dt5Jo/2lFL8jRtYGgMxd8tn4O6BQmF
+         jeNwRXate7v0tyO/vSJkKfmauVIo7qsJiWUvOBDNXheKNqFOYkwy8zYQOVwtPozEy4FF
+         HT//lvUe5hPVF6J4Gd+tn/N0wLIL5uV0r8L4xlPAIKwYwYqQFVOXrn4TS8PsI/8untbK
+         TpFVHJtD23Ojv+ZftMheWqwE+mTuZx0UdkdRhGB/4kGTZSFlM5V+JvjA32JEmsrQmIG0
+         X/R9bBPLkaJmvaveO5he3DOlYotzzIjtnpkV+YUMQZrY1Qz7P5NAsemJBnb+CGhFbKOm
+         gH+g==
+X-Gm-Message-State: APjAAAWHwOXhr5IbNFTmKiMaaszS7o2Y7HgaG+ryfKBApVvdzdjPShPr
+        CVVw/vr2zSvl1ETCamfibOkbSkhIxZiM/+NKLE420w==
+X-Google-Smtp-Source: APXvYqxPvIExhTr5+5hX20/Em3/RlwrgRTSjNvdYPqA76CZtPvAqwwYH4WeX6OYha37L5xo4AcV22x1g5iGUwq+ifGA=
+X-Received: by 2002:a54:4f95:: with SMTP id g21mr4070854oiy.23.1564783062470;
+ Fri, 02 Aug 2019 14:57:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20190801223556.209184-1-hridya@google.com> <20190802061838.GA10844@kroah.com>
+ <20190802150612.eff7t42256pvxuja@brauner.io>
+In-Reply-To: <20190802150612.eff7t42256pvxuja@brauner.io>
+From:   Hridya Valsaraju <hridya@google.com>
+Date:   Fri, 2 Aug 2019 14:57:06 -0700
+Message-ID: <CA+wgaPPfRiz1RYRyMxX2udhicQGrwNZipPWzbJ--MPWtEXka-w@mail.gmail.com>
+Subject: Re: [PATCH] Add default binder devices through binderfs when configured
+To:     Christian Brauner <christian@brauner.io>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>,
+        Todd Kjos <tkjos@android.com>,
+        Martijn Coenen <maco@android.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri,  2 Aug 2019 19:56:02 +0000
-Jose Carlos Cazarin Filho <joseespiriki@gmail.com> wrote:
+On Fri, Aug 2, 2019 at 8:06 AM Christian Brauner <christian@brauner.io> wrote:
+>
+> On Fri, Aug 02, 2019 at 08:18:38AM +0200, Greg Kroah-Hartman wrote:
+> > On Thu, Aug 01, 2019 at 03:35:56PM -0700, Hridya Valsaraju wrote:
+> > > If CONFIG_ANDROID_BINDERFS is set, the default binder devices
+> > > specified by CONFIG_ANDROID_BINDER_DEVICES are created in each
+> > > binderfs instance instead of global devices being created by
+> > > the binder driver.
+> > >
+> > > Co-developed-by: Christian Brauner <christian.brauner@ubuntu.com>
+> > > Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+> > > Signed-off-by: Hridya Valsaraju <hridya@google.com>
+> > > ---
+> > >  drivers/android/binder.c   |  3 ++-
+> > >  drivers/android/binderfs.c | 46 ++++++++++++++++++++++++++++++++++----
+> > >  2 files changed, 44 insertions(+), 5 deletions(-)
+> > >
+> > > diff --git a/drivers/android/binder.c b/drivers/android/binder.c
+> > > index 466b6a7f8ab7..65a99ac26711 100644
+> > > --- a/drivers/android/binder.c
+> > > +++ b/drivers/android/binder.c
+> > > @@ -6279,7 +6279,8 @@ static int __init binder_init(void)
+> > >                                 &transaction_log_fops);
+> > >     }
+> > >
+> > > -   if (strcmp(binder_devices_param, "") != 0) {
+> > > +   if (!IS_ENABLED(CONFIG_ANDROID_BINDERFS) &&
+> > > +       strcmp(binder_devices_param, "") != 0) {
+> > >             /*
+> > >             * Copy the module_parameter string, because we don't want to
+> > >             * tokenize it in-place.
+> > > diff --git a/drivers/android/binderfs.c b/drivers/android/binderfs.c
+> > > index e773f45d19d9..9f5ed50ffd70 100644
+> > > --- a/drivers/android/binderfs.c
+> > > +++ b/drivers/android/binderfs.c
+> > > @@ -48,6 +48,10 @@ static dev_t binderfs_dev;
+> > >  static DEFINE_MUTEX(binderfs_minors_mutex);
+> > >  static DEFINE_IDA(binderfs_minors);
+> > >
+> > > +static char *binder_devices_param = CONFIG_ANDROID_BINDER_DEVICES;
+> > > +module_param_named(devices, binder_devices_param, charp, 0444);
+> > > +MODULE_PARM_DESC(devices, "Binder devices to be created by default");
+> > > +
+> >
+> > Why are you creating a module parameter?  That was not in your changelog
+> > :(
+>
+> Yeah, you don't need an additional module parameter. You can just move
+>
+> static char *binder_devices_param = CONFIG_ANDROID_BINDER_DEVICES;
+> module_param_named(devices, binder_devices_param, charp, 0444);
+>
+> from binder.c to binder_internal.h and expose it to binder.c and
+> binderfs.c this way. This will work just fine since binderfs.c doesn't
+> modify the parameter and binder.c makes a copy of it before doing so.
+>
+> >
+> >
+> >
+> > >  /**
+> > >   * binderfs_mount_opts - mount options for binderfs
+> > >   * @max: maximum number of allocatable binderfs binder devices
+> > > @@ -135,7 +139,6 @@ static int binderfs_binder_device_create(struct inode *ref_inode,
+> > >  #else
+> > >     bool use_reserve = true;
+> > >  #endif
+> > > -
+> > >     /* Reserve new minor number for the new device. */
+> > >     mutex_lock(&binderfs_minors_mutex);
+> > >     if (++info->device_count <= info->mount_opts.max)
+> > > @@ -186,8 +189,7 @@ static int binderfs_binder_device_create(struct inode *ref_inode,
+> > >     req->major = MAJOR(binderfs_dev);
+> > >     req->minor = minor;
+> > >
+> > > -   ret = copy_to_user(userp, req, sizeof(*req));
+> > > -   if (ret) {
+> > > +   if (userp && copy_to_user(userp, req, sizeof(*req))) {
+> > >             ret = -EFAULT;
+> > >             goto err;
+> > >     }
+> > > @@ -467,6 +469,9 @@ static int binderfs_fill_super(struct super_block *sb, void *data, int silent)
+> > >     int ret;
+> > >     struct binderfs_info *info;
+> > >     struct inode *inode = NULL;
+> > > +   struct binderfs_device device_info = { 0 };
+> > > +   const char *name;
+> > > +   size_t len;
+> > >
+> > >     sb->s_blocksize = PAGE_SIZE;
+> > >     sb->s_blocksize_bits = PAGE_SHIFT;
+> > > @@ -521,7 +526,28 @@ static int binderfs_fill_super(struct super_block *sb, void *data, int silent)
+> > >     if (!sb->s_root)
+> > >             return -ENOMEM;
+> > >
+> > > -   return binderfs_binder_ctl_create(sb);
+> > > +   ret = binderfs_binder_ctl_create(sb);
+> > > +   if (ret)
+> > > +           return ret;
+> > > +
+> > > +   name = binder_devices_param;
+> > > +   for (len = strcspn(name, ","); len > 0; len = strcspn(name, ",")) {
+> > > +           /*
+> > > +            * init_binderfs() has already checked that the length of
+> > > +            * device_name_entry->name is not greater than device_info.name.
+> > > +            */
+> > > +           strscpy(device_info.name, name, len + 1);
+> > > +           ret = binderfs_binder_device_create(inode, NULL, &device_info);
+> > > +           if (ret)
+> > > +                   return ret;
+> > > +           name += len;
+> > > +           if (*name == ',')
+> > > +                   name++;
+> > > +
+> > > +   }
+> > > +
+> > > +   return 0;
+> > > +
+> > >  }
+> > >
+> > >  static struct dentry *binderfs_mount(struct file_system_type *fs_type,
+> > > @@ -553,6 +579,18 @@ static struct file_system_type binder_fs_type = {
+> > >  int __init init_binderfs(void)
+> > >  {
+> > >     int ret;
+> > > +   const char *name;
+> > > +   size_t len;
+> > > +
+> > > +   /* Verify that the default binderfs device names are valid. */
+> > > +   name = binder_devices_param;
+> > > +   for (len = strcspn(name, ","); len > 0; len = strcspn(name, ",")) {
+> > > +           if (len > BINDERFS_MAX_NAME)
+> > > +                   return -E2BIG;
+> > > +           name += len;
+> > > +           if (*name == ',')
+> > > +                   name++;
+> > > +   }
+> >
+> > This verification should be a separate patch, right?
+> >
+> > But the real issue here is I have no idea _why_ you are wanting this
+> > patch.  The changelog text says _what_ you are doing only, which isn't
+> > ok.
+> >
+> > Please provide more information as to why this is needed, what problem
+> > it is solving, and break this up into a patch series and resend.
 
-> Fix checkpath error:
-> CHECK: spaces preferred around that '*' (ctx:WxV)
-> +extern hysdn_card *card_root;        /* pointer to first card */
-> 
-> Signed-off-by: Jose Carlos Cazarin Filho <joseespiriki@gmail.com>
+Thank you Greg and Christian, I will address all issues in v2 and resend.
 
-
-Read the TODO, these drivers are scheduled for removal, so changes
-are not helpful at this time.
+> >
+> > thanks,
+> >
+> > greg k-h
+>
+> --
+> To unsubscribe from this group and stop receiving emails from it, send an email to kernel-team+unsubscribe@android.com.
+>
