@@ -2,35 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A120D7FA02
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 15:32:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 84BAB7FA5D
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 15:32:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394109AbfHBNYJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 09:24:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34462 "EHLO mail.kernel.org"
+        id S2405242AbfHBNcq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 09:32:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34554 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390911AbfHBNXw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 09:23:52 -0400
+        id S2389214AbfHBNX4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 09:23:56 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4380421872;
-        Fri,  2 Aug 2019 13:23:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1A42621850;
+        Fri,  2 Aug 2019 13:23:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564752231;
-        bh=M4R9972fnoxfSVPVzUhIELY1yTqicd3vIhICzW7oOwc=;
+        s=default; t=1564752235;
+        bh=/uCvZKWMqfzUScBLGFyCMp7naXjedMgbJFr9O/xgho4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jzdtEaPHaBHJpWj+YHGkLMoooIcLHwR2jEeH9QNm93GpoenkdD5btu5oArSzJS28d
-         V/P6uJwKx63lO17CxxabZDZDZs/1R+gXlr6z/tQhC67TIOfOFsZcAfAzQvcQp5hgYk
-         t9+d/GvxJs9ZqXPDoB7k94pR6xNckStELDkGabE8=
+        b=Y5vmPsHD+JtrzyL9ScJPTsL5+5X7UEvrykirXPUJBbFp9qWJB0Azlb199A1q1I0XO
+         ksYSsvOYCneWDkI5q83A91egua+K9HM3wAj/PiixSwXKRYL8rzqTdUaKZql0/LuSoo
+         NzD4L/TRj9D1+FBPKdDlqCDdmMUtrj5e5XJm+j1E=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Vinod Koul <vkoul@kernel.org>, Takashi Iwai <tiwai@suse.de>,
+Cc:     Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 26/42] ALSA: compress: Be more restrictive about when a drain is allowed
-Date:   Fri,  2 Aug 2019 09:22:46 -0400
-Message-Id: <20190802132302.13537-26-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 28/42] perf probe: Avoid calling freeing routine multiple times for same pointer
+Date:   Fri,  2 Aug 2019 09:22:48 -0400
+Message-Id: <20190802132302.13537-28-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190802132302.13537-1-sashal@kernel.org>
 References: <20190802132302.13537-1-sashal@kernel.org>
@@ -43,49 +46,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-[ Upstream commit 3b8179944cb0dd53e5223996966746cdc8a60657 ]
+[ Upstream commit d95daf5accf4a72005daa13fbb1d1bd8709f2861 ]
 
-Draining makes little sense in the situation of hardware overrun, as the
-hardware will have consumed all its available samples. Additionally,
-draining whilst the stream is paused would presumably get stuck as no
-data is being consumed on the DSP side.
+When perf_add_probe_events() we call cleanup_perf_probe_events() for the
+pev pointer it receives, then, as part of handling this failure the main
+'perf probe' goes on and calls cleanup_params() and that will again call
+cleanup_perf_probe_events()for the same pointer, so just set nevents to
+zero when handling the failure of perf_add_probe_events() to avoid the
+double free.
 
-Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-Acked-by: Vinod Koul <vkoul@kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Link: https://lkml.kernel.org/n/tip-x8qgma4g813z96dvtw9w219q@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/core/compress_offload.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ tools/perf/builtin-probe.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/sound/core/compress_offload.c b/sound/core/compress_offload.c
-index 9c1684f01aca0..516ec35873256 100644
---- a/sound/core/compress_offload.c
-+++ b/sound/core/compress_offload.c
-@@ -812,7 +812,10 @@ static int snd_compr_drain(struct snd_compr_stream *stream)
- 	case SNDRV_PCM_STATE_OPEN:
- 	case SNDRV_PCM_STATE_SETUP:
- 	case SNDRV_PCM_STATE_PREPARED:
-+	case SNDRV_PCM_STATE_PAUSED:
- 		return -EPERM;
-+	case SNDRV_PCM_STATE_XRUN:
-+		return -EPIPE;
- 	default:
- 		break;
- 	}
-@@ -861,7 +864,10 @@ static int snd_compr_partial_drain(struct snd_compr_stream *stream)
- 	case SNDRV_PCM_STATE_OPEN:
- 	case SNDRV_PCM_STATE_SETUP:
- 	case SNDRV_PCM_STATE_PREPARED:
-+	case SNDRV_PCM_STATE_PAUSED:
- 		return -EPERM;
-+	case SNDRV_PCM_STATE_XRUN:
-+		return -EPIPE;
- 	default:
- 		break;
- 	}
+diff --git a/tools/perf/builtin-probe.c b/tools/perf/builtin-probe.c
+index 99de91698de1e..0bdb34fee9d81 100644
+--- a/tools/perf/builtin-probe.c
++++ b/tools/perf/builtin-probe.c
+@@ -711,6 +711,16 @@ __cmd_probe(int argc, const char **argv)
+ 
+ 		ret = perf_add_probe_events(params.events, params.nevents);
+ 		if (ret < 0) {
++
++			/*
++			 * When perf_add_probe_events() fails it calls
++			 * cleanup_perf_probe_events(pevs, npevs), i.e.
++			 * cleanup_perf_probe_events(params.events, params.nevents), which
++			 * will call clear_perf_probe_event(), so set nevents to zero
++			 * to avoid cleanup_params() to call clear_perf_probe_event() again
++			 * on the same pevs.
++			 */
++			params.nevents = 0;
+ 			pr_err_with_code("  Error: Failed to add events.", ret);
+ 			return ret;
+ 		}
 -- 
 2.20.1
 
