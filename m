@@ -2,37 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FC447F33B
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:57:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 75D7E7F356
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:57:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406515AbfHBJzS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 05:55:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33728 "EHLO mail.kernel.org"
+        id S2406240AbfHBJ4T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 05:56:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35052 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406497AbfHBJzQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 05:55:16 -0400
+        id S2406701AbfHBJ4O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 05:56:14 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9DA2520665;
-        Fri,  2 Aug 2019 09:55:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E5DC62067D;
+        Fri,  2 Aug 2019 09:56:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564739715;
-        bh=TanoMrW0RE3wWpct4ktbdSwqBpkBitZroHl0GQaa0nQ=;
+        s=default; t=1564739773;
+        bh=VquHcwOcF7WSDfdfcKHX4oo10wc6iWPacef/VpfOICg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lcJTOmFsmYAaUQXdUi3DXUfRrMDX5XYghdM6Yv4CxXFTtiw8a1sSUC+Dl1+Gxarwk
-         EcmMZf1TF79zZRvp0ksbaHM2VxR1+IJzFlC4Y0NusKoOGc9//z/FSbJ2DaPFcBcBM5
-         QBkztlnGwXPenwzoTea95mgs1NiUFvICdBm7/fDI=
+        b=P6gRnQpRa6zGhJ1WgeI26kLwvGiEdR+xtKIL3W1zI0wmHev7iNvoK0mIvZkxWg/pb
+         9CT13HuHzIzfM166HNUXBszUvHYjzrgqCZD/W2dAMt4uwOreUfHQ9NYOGML7aIOyXV
+         zUnENpCwqtieJEkYxB/qJxU89beiAGwdz2Yuabvw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Todd Kjos <tkjos@google.com>
-Subject: [PATCH 4.14 09/25] binder: fix possible UAF when freeing buffer
-Date:   Fri,  2 Aug 2019 11:39:41 +0200
-Message-Id: <20190802092102.565055165@linuxfoundation.org>
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Steve McIntyre <steve.mcintyre@arm.com>,
+        Steve McIntyre <93sam@debian.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>
+Subject: [PATCH 4.19 08/32] arm64: compat: Provide definition for COMPAT_SIGMINSTKSZ
+Date:   Fri,  2 Aug 2019 11:39:42 +0200
+Message-Id: <20190802092104.138562524@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190802092058.428079740@linuxfoundation.org>
-References: <20190802092058.428079740@linuxfoundation.org>
+In-Reply-To: <20190802092101.913646560@linuxfoundation.org>
+References: <20190802092101.913646560@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,62 +52,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Todd Kjos <tkjos@android.com>
+From: Will Deacon <will.deacon@arm.com>
 
-commit a370003cc301d4361bae20c9ef615f89bf8d1e8a upstream.
+commit 24951465cbd279f60b1fdc2421b3694405bcff42 upstream.
 
-There is a race between the binder driver cleaning
-up a completed transaction via binder_free_transaction()
-and a user calling binder_ioctl(BC_FREE_BUFFER) to
-release a buffer. It doesn't matter which is first but
-they need to be protected against running concurrently
-which can result in a UAF.
+arch/arm/ defines a SIGMINSTKSZ of 2k, so we should use the same value
+for compat tasks.
 
-Signed-off-by: Todd Kjos <tkjos@google.com>
-Cc: stable <stable@vger.kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Dominik Brodowski <linux@dominikbrodowski.net>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Reviewed-by: Dave Martin <Dave.Martin@arm.com>
+Reported-by: Steve McIntyre <steve.mcintyre@arm.com>
+Tested-by: Steve McIntyre <93sam@debian.org>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-
-
 ---
- drivers/android/binder.c |   16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
+ arch/arm64/include/asm/compat.h |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/android/binder.c
-+++ b/drivers/android/binder.c
-@@ -1903,8 +1903,18 @@ static struct binder_thread *binder_get_
- 
- static void binder_free_transaction(struct binder_transaction *t)
- {
--	if (t->buffer)
--		t->buffer->transaction = NULL;
-+	struct binder_proc *target_proc = t->to_proc;
-+
-+	if (target_proc) {
-+		binder_inner_proc_lock(target_proc);
-+		if (t->buffer)
-+			t->buffer->transaction = NULL;
-+		binder_inner_proc_unlock(target_proc);
-+	}
-+	/*
-+	 * If the transaction has no target_proc, then
-+	 * t->buffer->transaction has already been cleared.
-+	 */
- 	kfree(t);
- 	binder_stats_deleted(BINDER_STAT_TRANSACTION);
+--- a/arch/arm64/include/asm/compat.h
++++ b/arch/arm64/include/asm/compat.h
+@@ -159,6 +159,7 @@ static inline compat_uptr_t ptr_to_compa
  }
-@@ -3426,10 +3436,12 @@ static int binder_thread_write(struct bi
- 				     buffer->debug_id,
- 				     buffer->transaction ? "active" : "finished");
  
-+			binder_inner_proc_lock(proc);
- 			if (buffer->transaction) {
- 				buffer->transaction->buffer = NULL;
- 				buffer->transaction = NULL;
- 			}
-+			binder_inner_proc_unlock(proc);
- 			if (buffer->async_transaction && buffer->target_node) {
- 				struct binder_node *buf_node;
- 				struct binder_work *w;
+ #define compat_user_stack_pointer() (user_stack_pointer(task_pt_regs(current)))
++#define COMPAT_MINSIGSTKSZ	2048
+ 
+ static inline void __user *arch_compat_alloc_user_space(long len)
+ {
 
 
