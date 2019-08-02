@@ -2,31 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F1F917F515
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 12:34:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 15DB97F524
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 12:34:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404724AbfHBKd6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 06:33:58 -0400
-Received: from shell.v3.sk ([90.176.6.54]:47552 "EHLO shell.v3.sk"
+        id S2405384AbfHBKe3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 06:34:29 -0400
+Received: from shell.v3.sk ([90.176.6.54]:47547 "EHLO shell.v3.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392160AbfHBKd4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 06:33:56 -0400
+        id S2392127AbfHBKdy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 06:33:54 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 088E98053C;
-        Fri,  2 Aug 2019 12:33:54 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTP id F3B588053D;
+        Fri,  2 Aug 2019 12:33:50 +0200 (CEST)
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id QN9O9-YxYJJv; Fri,  2 Aug 2019 12:33:40 +0200 (CEST)
+        with ESMTP id iJJngSIQ_H3y; Fri,  2 Aug 2019 12:33:40 +0200 (CEST)
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id CEFA080540;
-        Fri,  2 Aug 2019 12:33:38 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTP id AAE34804BE;
+        Fri,  2 Aug 2019 12:33:39 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at zimbra.v3.sk
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id UR4aRb2y413V; Fri,  2 Aug 2019 12:33:36 +0200 (CEST)
+        with ESMTP id DO9FlBCXBNN1; Fri,  2 Aug 2019 12:33:37 +0200 (CEST)
 Received: from belphegor.brq.redhat.com (nat-pool-brq-t.redhat.com [213.175.37.10])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id ECFE98053A;
-        Fri,  2 Aug 2019 12:33:35 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 2B2C58053B;
+        Fri,  2 Aug 2019 12:33:36 +0200 (CEST)
 From:   Lubomir Rintel <lkundrak@v3.sk>
 To:     Olof Johansson <olof@lixom.net>
 Cc:     Rob Herring <robh+dt@kernel.org>,
@@ -34,9 +34,9 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, Pavel Machek <pavel@ucw.cz>,
         Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH v2 2/6] ARM: dts: mmp2: fix the SPI nodes
-Date:   Fri,  2 Aug 2019 12:33:22 +0200
-Message-Id: <20190802103326.531250-3-lkundrak@v3.sk>
+Subject: [PATCH v2 3/6] ARM: dts: mmp2: rename the USB PHY node
+Date:   Fri,  2 Aug 2019 12:33:23 +0200
+Message-Id: <20190802103326.531250-4-lkundrak@v3.sk>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190802103326.531250-1-lkundrak@v3.sk>
 References: <20190802103326.531250-1-lkundrak@v3.sk>
@@ -47,68 +47,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The SPI bus has a single address cell and not size cells.
-
-Also, dtc thinks the SPI nodes are preferrably called "spi" and it is
-right to think so.
+This device is not an OTG phy, it's a regular USB HS phy. Follow the
+generic node name recommendation, and rename it to "usb-phy".
 
 Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 ---
- arch/arm/boot/dts/mmp2.dtsi | 16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
+ arch/arm/boot/dts/mmp2.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/arch/arm/boot/dts/mmp2.dtsi b/arch/arm/boot/dts/mmp2.dtsi
-index 50b6c38b39cc3..e64639ce57a91 100644
+index e64639ce57a91..21432cb9143f7 100644
 --- a/arch/arm/boot/dts/mmp2.dtsi
 +++ b/arch/arm/boot/dts/mmp2.dtsi
-@@ -346,35 +346,43 @@
- 				status =3D "disabled";
+@@ -117,7 +117,7 @@
+ 				mrvl,intc-nr-irqs =3D <2>;
  			};
 =20
--			ssp1: ssp@d4035000 {
-+			ssp1: spi@d4035000 {
- 				compatible =3D "marvell,mmp2-ssp";
- 				reg =3D <0xd4035000 0x1000>;
- 				clocks =3D <&soc_clocks MMP2_CLK_SSP0>;
- 				interrupts =3D <0>;
-+				#address-cells =3D <1>;
-+				#size-cells =3D <0>;
+-			usb_otg_phy0: usb-otg-phy@d4207000 {
++			usb_phy0: usb-phy@d4207000 {
+ 				compatible =3D "marvell,mmp2-usb-phy";
+ 				reg =3D <0xd4207000 0x40>;
+ 				#phy-cells =3D <0>;
+@@ -130,7 +130,7 @@
+ 				interrupts =3D <44>;
+ 				clocks =3D <&soc_clocks MMP2_CLK_USB>;
+ 				clock-names =3D "USBCLK";
+-				phys =3D <&usb_otg_phy0>;
++				phys =3D <&usb_phy0>;
+ 				phy-names =3D "usb";
  				status =3D "disabled";
  			};
-=20
--			ssp2: ssp@d4036000 {
-+			ssp2: spi@d4036000 {
- 				compatible =3D "marvell,mmp2-ssp";
- 				reg =3D <0xd4036000 0x1000>;
- 				clocks =3D <&soc_clocks MMP2_CLK_SSP1>;
- 				interrupts =3D <1>;
-+				#address-cells =3D <1>;
-+				#size-cells =3D <0>;
- 				status =3D "disabled";
- 			};
-=20
--			ssp3: ssp@d4037000 {
-+			ssp3: spi@d4037000 {
- 				compatible =3D "marvell,mmp2-ssp";
- 				reg =3D <0xd4037000 0x1000>;
- 				clocks =3D <&soc_clocks MMP2_CLK_SSP2>;
- 				interrupts =3D <20>;
-+				#address-cells =3D <1>;
-+				#size-cells =3D <0>;
- 				status =3D "disabled";
- 			};
-=20
--			ssp4: ssp@d4039000 {
-+			ssp4: spi@d4039000 {
- 				compatible =3D "marvell,mmp2-ssp";
- 				reg =3D <0xd4039000 0x1000>;
- 				clocks =3D <&soc_clocks MMP2_CLK_SSP3>;
- 				interrupts =3D <21>;
-+				#address-cells =3D <1>;
-+				#size-cells =3D <0>;
- 				status =3D "disabled";
- 			};
- 		};
 --=20
 2.21.0
 
