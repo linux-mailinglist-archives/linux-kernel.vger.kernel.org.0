@@ -2,222 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A02907ED81
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 09:34:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F06F7EDA0
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 09:36:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389800AbfHBHeq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 03:34:46 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:38483 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389759AbfHBHep (ORCPT
+        id S2389969AbfHBHgj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 03:36:39 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:42021 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726601AbfHBHgj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 03:34:45 -0400
-Received: by mail-wr1-f66.google.com with SMTP id g17so76092195wrr.5
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2019 00:34:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=3z/XjlqQ+U0upcsy+zCqEqLj7uveq+FerIfINm1EQYg=;
-        b=bzXL+D2eHD6aasQhELQOVuNHESg6xHsk/IMz3cUl1x9WsBNH6LP2zisZ3ixk/Z7jLx
-         OrMs0QlKuZTguZpm+oUNXabgtXaGpR5dKDAB/yli5dq9TnJ1WBq73sm7FaOr6yFPnYJx
-         Bk2EyEwTa86lubSkPS5D1oDdtwpUbLpeC3Wm+GheCxZIHqlpwxBxfA/HBDX91E/aHH4B
-         RTd3PqDYhF4bjPWP3bT1L1xrpG7p6GHikW9oTIhicSakHpjCF8fAjFdfrcCBm4qQdKkw
-         HqX5jtcQhfdCcwBMwfhf713jmUaES3LWT6HY92OTVr6ynivacppL20+4edbHFV/I3PA+
-         iK3g==
-X-Gm-Message-State: APjAAAVv+rxhk/6TI5PS/2uqS/67xacs4C/AyPNhjkr/irECOYRDaO1Y
-        L59tmudONl8niWdBvTXHIoSSTA==
-X-Google-Smtp-Source: APXvYqyDcHNOHDrN1B3sxwAdkKrHXAPTt73YgtuP1P4V9QyZxdkuE1ibEjXG/N8AINCuCf7chdE/kg==
-X-Received: by 2002:a5d:4ec1:: with SMTP id s1mr135829022wrv.19.1564731282930;
-        Fri, 02 Aug 2019 00:34:42 -0700 (PDT)
-Received: from vitty.brq.redhat.com (ip-89-176-127-93.net.upcbroadband.cz. [89.176.127.93])
-        by smtp.gmail.com with ESMTPSA id b2sm97905340wrp.72.2019.08.02.00.34.41
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 02 Aug 2019 00:34:42 -0700 (PDT)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Branden Bonaby <brandonbonaby94@gmail.com>
-Cc:     linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kys@microsoft.com, haiyangz@microsoft.com, sthemmin@microsoft.com,
-        sashal@kernel.org
-Subject: Re: [PATCH 2/3] drivers: hv: vmbus: add fuzz test attributes to sysfs
-In-Reply-To: <20f96dba927eaa42fceeebfc7a6a37f3b1a9ee65.1564527684.git.brandonbonaby94@gmail.com>
-References: <cover.1564527684.git.brandonbonaby94@gmail.com> <20f96dba927eaa42fceeebfc7a6a37f3b1a9ee65.1564527684.git.brandonbonaby94@gmail.com>
-Date:   Fri, 02 Aug 2019 09:34:40 +0200
-Message-ID: <87a7csggvj.fsf@vitty.brq.redhat.com>
+        Fri, 2 Aug 2019 03:36:39 -0400
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x727VJJx012518;
+        Fri, 2 Aug 2019 09:36:20 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : references
+ : from : message-id : date : mime-version : in-reply-to : content-type :
+ content-transfer-encoding; s=STMicroelectronics;
+ bh=dNdFBpnmHr57yWOWaZOQqM6cLIxmm15yY5RHlO47mkw=;
+ b=n2uaUNmkk6TmujMSGcFYd1PxMzfaQYxVJS1u7h+b2LKKp3xO1AKkBOnKdOlODirELbPq
+ OStYdNHcG56tCBok3AwwXvVTcUv+fxLTl9y8h/nDTjGGDbwzMFX+OKWvtOTNRwBsUwHz
+ PSDWOAU6DAZyTN12Xz70gYK1lqSnejizUWzCy3jjP/8v+7cUTyNXIBk5QP5iTMoEIbcd
+ IXqmPht/XJSsjIIOjDGeRsRJrQ1HJVszrxXoHGYxg80yDFNp5nAYgyLgtOv4KDhP1/5G
+ SRDAKqvTQLzs5PI48F7cexIDRrXt+Ftkf4aKeW2SrlqIE97nUKd2b8IUUPHAO2aqLYjo 2w== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2u3vd05qye-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Fri, 02 Aug 2019 09:36:20 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 1386F3A;
+        Fri,  2 Aug 2019 07:36:19 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 037D5206862;
+        Fri,  2 Aug 2019 09:36:19 +0200 (CEST)
+Received: from lmecxl0912.lme.st.com (10.75.127.45) by SFHDAG3NODE2.st.com
+ (10.75.127.8) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 2 Aug
+ 2019 09:36:18 +0200
+Subject: Re: [PATCH] ARM: dts: stm32: add phy-dsi-supply property on
+ stm32mp157c-ev1
+To:     =?UTF-8?Q?Yannick_Fertr=c3=a9?= <yannick.fertre@st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Benjamin Gaignard <benjamin.gaignard@st.com>,
+        Philippe Cornu <philippe.cornu@st.com>,
+        Fabrice Gasnier <fabrice.gasnier@st.com>
+References: <1564410548-20436-1-git-send-email-yannick.fertre@st.com>
+From:   Alexandre Torgue <alexandre.torgue@st.com>
+Message-ID: <346d04ad-17ed-40c8-f10a-b13a2ea79d92@st.com>
+Date:   Fri, 2 Aug 2019 09:36:17 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <1564410548-20436-1-git-send-email-yannick.fertre@st.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.75.127.45]
+X-ClientProxiedBy: SFHDAG1NODE1.st.com (10.75.127.1) To SFHDAG3NODE2.st.com
+ (10.75.127.8)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-02_04:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Branden Bonaby <brandonbonaby94@gmail.com> writes:
+Hi Yannick
 
-> Expose the test parameters as part of the sysfs channel attributes.
-> We will control the testing state via these attributes.
->
-> Signed-off-by: Branden Bonaby <brandonbonaby94@gmail.com>
+On 7/29/19 4:29 PM, Yannick Fertré wrote:
+> The dsi physical layer is powered by the 1v8 power controller supply.
+> 
+> Signed-off-by: Yannick Fertré <yannick.fertre@st.com>
 > ---
->  Documentation/ABI/stable/sysfs-bus-vmbus | 22 ++++++
->  drivers/hv/vmbus_drv.c                   | 97 +++++++++++++++++++++++-
->  2 files changed, 118 insertions(+), 1 deletion(-)
->
-> diff --git a/Documentation/ABI/stable/sysfs-bus-vmbus b/Documentation/ABI/stable/sysfs-bus-vmbus
-> index 8e8d167eca31..239fcb6fdc75 100644
-> --- a/Documentation/ABI/stable/sysfs-bus-vmbus
-> +++ b/Documentation/ABI/stable/sysfs-bus-vmbus
-> @@ -185,3 +185,25 @@ Contact:        Michael Kelley <mikelley@microsoft.com>
->  Description:    Total number of write operations that encountered an outbound
->  		ring buffer full condition
->  Users:          Debugging tools
-> +
-> +What:           /sys/bus/vmbus/devices/<UUID>/fuzz_test_state
+>   arch/arm/boot/dts/stm32mp157c-ev1.dts | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/arm/boot/dts/stm32mp157c-ev1.dts b/arch/arm/boot/dts/stm32mp157c-ev1.dts
+> index feb8f77..19d69d0 100644
+> --- a/arch/arm/boot/dts/stm32mp157c-ev1.dts
+> +++ b/arch/arm/boot/dts/stm32mp157c-ev1.dts
+> @@ -101,6 +101,7 @@
+>   &dsi {
+>   	#address-cells = <1>;
+>   	#size-cells = <0>;
+> +	phy-dsi-supply = <&reg18>;
+>   	status = "okay";
+>   
+>   	ports {
+> 
 
-I would prefer this to go under /sys/kernel/debug/ as this is clearly a
-debug/test feature.
+Applied on stm32-next.
 
-
-> +Date:           July 2019
-> +KernelVersion:  5.2
-> +Contact:        Branden Bonaby <brandonbonaby94@gmail.com>
-> +Description:    Fuzz testing status of a vmbus device, whether its in an ON
-> +		 state or a OFF state
-> +Users:          Debugging tools
-> +
-> +What:           /sys/bus/vmbus/devices/<UUID>/fuzz_test_buffer_delay
-> +Date:           July 2019
-> +KernelVersion:  5.2
-> +Contact:        Branden Bonaby <brandonbonaby94@gmail.com>
-> +Description:    Fuzz testing buffer delay value between 0 - 1000
-> +Users:          Debugging tools
-> +
-> +What:           /sys/bus/vmbus/devices/<UUID>/fuzz_test_message_delay
-> +Date:           July 2019
-> +KernelVersion:  5.2
-> +Contact:        Branden Bonaby <brandonbonaby94@gmail.com>
-> +Description:    Fuzz testing message delay value between 0 - 1000
-> +Users:          Debugging tools
-> diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
-> index 92b1874b3eb3..0c71fd66ef81 100644
-> --- a/drivers/hv/vmbus_drv.c
-> +++ b/drivers/hv/vmbus_drv.c
-> @@ -22,7 +22,7 @@
->  #include <linux/clockchips.h>
->  #include <linux/cpu.h>
->  #include <linux/sched/task_stack.h>
-> -
-> +#include <linux/kernel.h>
->  #include <asm/mshyperv.h>
->  #include <linux/notifier.h>
->  #include <linux/ptrace.h>
-> @@ -584,6 +584,98 @@ static ssize_t driver_override_show(struct device *dev,
->  }
->  static DEVICE_ATTR_RW(driver_override);
->  
-> +static ssize_t fuzz_test_state_store(struct device *dev,
-> +				     struct device_attribute *attr,
-> +				     const char *buf, size_t count)
-> +{
-> +	struct hv_device *hv_dev = device_to_hv_device(dev);
-> +	struct vmbus_channel *channel = hv_dev->channel;
-> +	int state;
-> +	int delay = kstrtoint(buf, 0, &state);
-> +
-> +	if (delay)
-> +		return count;
-> +	if (state)
-> +		channel->fuzz_testing_state = 1;
-> +	else
-> +		channel->fuzz_testing_state = 0;
-> +	return count;
-> +}
-> +
-> +static ssize_t fuzz_test_state_show(struct device *dev,
-> +				    struct device_attribute *dev_attr,
-> +				    char *buf)
-> +{
-> +	struct hv_device *hv_dev = device_to_hv_device(dev);
-> +	struct vmbus_channel *channel = hv_dev->channel;
-> +
-> +	return sprintf(buf, "%u\n", channel->fuzz_testing_state);
-> +}
-> +static DEVICE_ATTR_RW(fuzz_test_state);
-> +
-> +static ssize_t fuzz_test_buffer_delay_store(struct device *dev,
-> +					    struct device_attribute *attr,
-> +					    const char *buf, size_t count)
-> +{
-> +	struct hv_device *hv_dev = device_to_hv_device(dev);
-> +	struct vmbus_channel *channel = hv_dev->channel;
-> +	int val;
-> +	int delay = kstrtoint(buf, 0, &val);
-> +
-> +	if (delay)
-> +		return count;
-> +	if (val >= 1 && val <= 1000)
-> +		channel->fuzz_testing_buffer_delay = val;
-> +	/*Best to not use else statement here since we want
-> +	 *the buffer delay to remain the same if val > 1000
-> +	 */
-> +	else if (val <= 0)
-> +		channel->fuzz_testing_buffer_delay = 0;
-> +	return count;
-> +}
-> +
-> +static ssize_t fuzz_test_buffer_delay_show(struct device *dev,
-> +					   struct device_attribute *dev_attr,
-> +					   char *buf)
-> +{
-> +	struct hv_device *hv_dev = device_to_hv_device(dev);
-> +	struct vmbus_channel *channel = hv_dev->channel;
-> +
-> +	return sprintf(buf, "%u\n", channel->fuzz_testing_buffer_delay);
-> +}
-> +static DEVICE_ATTR_RW(fuzz_test_buffer_delay);
-> +
-> +static ssize_t fuzz_test_message_delay_store(struct device *dev,
-> +					     struct device_attribute *attr,
-> +					     const char *buf, size_t count)
-> +{
-> +	struct hv_device *hv_dev = device_to_hv_device(dev);
-> +	struct vmbus_channel *channel = hv_dev->channel;
-> +	int val;
-> +	int delay = kstrtoint(buf, 0, &val);
-> +
-> +	if (delay)
-> +		return count;
-> +	if (val >= 1 && val <= 1000)
-> +		channel->fuzz_testing_message_delay = val;
-> +	/*Best to not use else statement here since we want
-> +	 *the message delay to remain the same if val > 1000
-> +	 */
-> +	else if (val <= 0)
-> +		channel->fuzz_testing_message_delay = 0;
-> +	return count;
-> +}
-> +
-> +static ssize_t fuzz_test_message_delay_show(struct device *dev,
-> +					    struct device_attribute *dev_attr,
-> +					    char *buf)
-> +{
-> +	struct hv_device *hv_dev = device_to_hv_device(dev);
-> +	struct vmbus_channel *channel = hv_dev->channel;
-> +
-> +	return sprintf(buf, "%u\n", channel->fuzz_testing_message_delay);
-> +}
-> +static DEVICE_ATTR_RW(fuzz_test_message_delay);
->  /* Set up per device attributes in /sys/bus/vmbus/devices/<bus device> */
->  static struct attribute *vmbus_dev_attrs[] = {
->  	&dev_attr_id.attr,
-> @@ -615,6 +707,9 @@ static struct attribute *vmbus_dev_attrs[] = {
->  	&dev_attr_vendor.attr,
->  	&dev_attr_device.attr,
->  	&dev_attr_driver_override.attr,
-> +	&dev_attr_fuzz_test_state.attr,
-> +	&dev_attr_fuzz_test_buffer_delay.attr,
-> +	&dev_attr_fuzz_test_message_delay.attr,
->  	NULL,
->  };
-
--- 
-Vitaly
+Thanks.
+Alex
