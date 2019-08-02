@@ -2,103 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 397287FB72
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 15:47:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 33FCF7FB7E
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 15:48:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436538AbfHBNq4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 09:46:56 -0400
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:34452 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732669AbfHBNq4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 09:46:56 -0400
-Received: by mail-yw1-f66.google.com with SMTP id q128so27291236ywc.1
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2019 06:46:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=87nWth1qwkhZ1eXAHRwTJ+WjegXhw+N8PNzvPKErqiI=;
-        b=mCk6lApFIOYFCE3bZlJdfRIULk2LdKeUPxWmUybHzo0Yaxeyj+CpyB+J/wuFoVrWSF
-         gzGYdcnNrMDeTW8ONpOP30VbBDbMbNXAPePMk1DVPPjNrHDPGHEfKSpba6h/3gFnh7gm
-         B3C390NPInuszW/nW11OokHsjQwZRedE4pDrAUS7uJbLdEHqwn4S7jYgeuUrH0l7SV5K
-         elRfwudymEVNzdFUD6Kh6NUXNbC37Hs1QM67ptqkbvATaEUz4MHpZ+pE7GCu+MoJgFrU
-         qGQVBNSIaEi1LCi+GpoQ5uIrukfNuDGhy0bILWVeYFDvnUXTGr5Ar4u0xt9avya5677U
-         qaXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=87nWth1qwkhZ1eXAHRwTJ+WjegXhw+N8PNzvPKErqiI=;
-        b=JAx4k6wWSdEso4MmFy3L+6vnfO1Oj90vD8hsvXrmgiQlqYhb/yjb/RZeB3u7Edh0lz
-         V7vaQzNtjxXgWetjqgerUJ4SHujV7taBsK5mMo4wRk7no4jMOPIUvBtLxS6l91MLLosQ
-         byj+x3+1Hx5GHWEe5fJX5suCFlzaito1wSQV/hT9NcxpEk+fArTwBZ+UQ25592uFjwIN
-         GODBwssgObeCBI/ybXwz25UPA9GpQtEvsmwFWp3LmRoOr8UoI8lL8jequZK6NnhshlxY
-         bkiDTpA9Hb8+k7eoAK4E5p9a9Wj6N+Tf8GG/a9KMFPn4OzfJbyI+9aNBvs4QZ/Aezi4W
-         EgIw==
-X-Gm-Message-State: APjAAAU9Hkx6kvKaJ0lKhjUo65HIfLW+ttlBpbzOg2KxjZ4CqKOU5b7g
-        6QmKbrVU/vpJsJQ2H5qu3QdOd4mv
-X-Google-Smtp-Source: APXvYqzDlxQEJN7v80kV4DEfaLp6yf9DhkC+IZ9RRQfwyebbX3rxyxPNY/nFHh6StdmpuebmFjSPTw==
-X-Received: by 2002:a81:a343:: with SMTP id a64mr79656520ywh.142.1564753614452;
-        Fri, 02 Aug 2019 06:46:54 -0700 (PDT)
-Received: from mail-yw1-f46.google.com (mail-yw1-f46.google.com. [209.85.161.46])
-        by smtp.gmail.com with ESMTPSA id n38sm2046837ywh.11.2019.08.02.06.46.53
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Fri, 02 Aug 2019 06:46:53 -0700 (PDT)
-Received: by mail-yw1-f46.google.com with SMTP id u141so27273321ywe.4
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2019 06:46:53 -0700 (PDT)
-X-Received: by 2002:a81:4d86:: with SMTP id a128mr79663944ywb.291.1564753613185;
- Fri, 02 Aug 2019 06:46:53 -0700 (PDT)
+        id S2394735AbfHBNsD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 09:48:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48528 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730199AbfHBNsD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 09:48:03 -0400
+Received: from localhost (173-25-83-245.client.mchsi.com [173.25.83.245])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4DB5A21726;
+        Fri,  2 Aug 2019 13:48:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564753682;
+        bh=4iyFp3nxxcgWx4F9Y7pzUkBtSH9YEP6qmfh9a+6HKW4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=G7AjOhrbuHUU3S7qTwJIDv+cj/TPwsihgyZx5wZiqBX7l4XR9h/N3nJqB+Fwct/sK
+         MbSg/HwLELKa+aWkKep5eWxtP9zRjTuYL3CF2WOSizGzhvtsE2BF6WCyA+VFNWT7NL
+         024wiyagXsobyy76ci31cOpFiGXqo3MjvWaxuoig=
+Date:   Fri, 2 Aug 2019 08:48:01 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH] PCI: Mark expected switch fall-through
+Message-ID: <20190802134801.GK151852@google.com>
+References: <20190802012248.GA22622@embeddedor>
 MIME-Version: 1.0
-References: <20190802105507.16650-1-hslester96@gmail.com>
-In-Reply-To: <20190802105507.16650-1-hslester96@gmail.com>
-From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Date:   Fri, 2 Aug 2019 09:46:17 -0400
-X-Gmail-Original-Message-ID: <CA+FuTScLs-qJApj5Yw9OOjVk4++HSjn__Vdy+xX2V1rpWU8uLg@mail.gmail.com>
-Message-ID: <CA+FuTScLs-qJApj5Yw9OOjVk4++HSjn__Vdy+xX2V1rpWU8uLg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] ixgbe: Use refcount_t for refcount
-To:     Chuhong Yuan <hslester96@gmail.com>
-Cc:     Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        intel-wired-lan@lists.osuosl.org,
-        Network Development <netdev@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190802012248.GA22622@embeddedor>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 2, 2019 at 6:55 AM Chuhong Yuan <hslester96@gmail.com> wrote:
->
-> refcount_t is better for reference counters since its
-> implementation can prevent overflows.
-> So convert atomic_t ref counters to refcount_t.
->
-> Also convert refcount from 0-based to 1-based.
->
-> This patch depends on PATCH 1/2.
->
-> Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+On Thu, Aug 01, 2019 at 08:22:48PM -0500, Gustavo A. R. Silva wrote:
+> Mark switch cases where we are expecting to fall through.
+> 
+> This patch fixes the following warning (Building: allmodconfig i386):
+> 
+> drivers/pci/hotplug/ibmphp_res.c: In function ‘update_bridge_ranges’:
+> drivers/pci/hotplug/ibmphp_res.c:1943:16: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>        function = 0x8;
+>        ~~~~~~~~~^~~~~
+> drivers/pci/hotplug/ibmphp_res.c:1944:6: note: here
+>       case PCI_HEADER_TYPE_MULTIBRIDGE:
+>       ^~~~
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+
+Applied with Kees' reviewed-by to pci/misc for v5.4, thanks, Gustavo!
+
 > ---
->  drivers/net/ethernet/intel/ixgbe/ixgbe_fcoe.c | 6 +++---
->  drivers/net/ethernet/intel/ixgbe/ixgbe_fcoe.h | 2 +-
->  2 files changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_fcoe.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_fcoe.c
-> index 00710f43cfd2..d313d00065cd 100644
-> --- a/drivers/net/ethernet/intel/ixgbe/ixgbe_fcoe.c
-> +++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_fcoe.c
-> @@ -773,7 +773,7 @@ int ixgbe_setup_fcoe_ddp_resources(struct ixgbe_adapter *adapter)
->
->         fcoe->extra_ddp_buffer = buffer;
->         fcoe->extra_ddp_buffer_dma = dma;
-> -       atomic_set(&fcoe->refcnt, 0);
-> +       refcount_set(&fcoe->refcnt, 1);
-
-Same point as in the cxgb4 driver patch: how can you just change the
-initial value without modifying the condition for release?
-
-This is not a suggestion to resubmit all these changes again with a
-change to the release condition.
+>  drivers/pci/hotplug/ibmphp_res.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/pci/hotplug/ibmphp_res.c b/drivers/pci/hotplug/ibmphp_res.c
+> index 5e8caf7a4452..1e1ba66cfd1e 100644
+> --- a/drivers/pci/hotplug/ibmphp_res.c
+> +++ b/drivers/pci/hotplug/ibmphp_res.c
+> @@ -1941,6 +1941,7 @@ static int __init update_bridge_ranges(struct bus_node **bus)
+>  						break;
+>  					case PCI_HEADER_TYPE_BRIDGE:
+>  						function = 0x8;
+> +						/* Fall through */
+>  					case PCI_HEADER_TYPE_MULTIBRIDGE:
+>  						/* We assume here that only 1 bus behind the bridge
+>  						   TO DO: add functionality for several:
+> -- 
+> 2.22.0
+> 
