@@ -2,80 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 219FB7EAB1
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 05:32:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F4917EAB7
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 05:37:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729974AbfHBDcG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 1 Aug 2019 23:32:06 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:3699 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726703AbfHBDcG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 1 Aug 2019 23:32:06 -0400
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 6527F679240EDF7CAACF;
-        Fri,  2 Aug 2019 11:32:02 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS404-HUB.china.huawei.com (10.3.19.204) with Microsoft SMTP Server id
- 14.3.439.0; Fri, 2 Aug 2019 11:31:51 +0800
-From:   Mao Wenan <maowenan@huawei.com>
-To:     <socketcan@hartkopp.net>, <davem@davemloft.net>,
-        <netdev@vger.kernel.org>
-CC:     <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        "Mao Wenan" <maowenan@huawei.com>
-Subject: [PATCH net-next] net: can: Fix compiling warning
-Date:   Fri, 2 Aug 2019 11:36:43 +0800
-Message-ID: <20190802033643.84243-1-maowenan@huawei.com>
-X-Mailer: git-send-email 2.20.1
+        id S1730261AbfHBDhR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 1 Aug 2019 23:37:17 -0400
+Received: from foss.arm.com ([217.140.110.172]:44004 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726703AbfHBDhQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 1 Aug 2019 23:37:16 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F2A7C1570;
+        Thu,  1 Aug 2019 20:37:15 -0700 (PDT)
+Received: from [10.163.1.81] (unknown [10.163.1.81])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EFD503F71F;
+        Thu,  1 Aug 2019 20:37:13 -0700 (PDT)
+Subject: Re: [PATCH] mm/madvise: reduce code duplication in error handling
+ paths
+To:     Mike Rapoport <rppt@linux.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <1564640896-1210-1-git-send-email-rppt@linux.ibm.com>
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+Message-ID: <aeb49e1a-5a21-57bb-04b8-6439620d12eb@arm.com>
+Date:   Fri, 2 Aug 2019 09:07:55 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+In-Reply-To: <1564640896-1210-1-git-send-email-rppt@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are two warings in net/can, fix them by setting bcm_sock_no_ioctlcmd
-and raw_sock_no_ioctlcmd as static.
 
-net/can/bcm.c:1683:5: warning: symbol 'bcm_sock_no_ioctlcmd' was not declared. Should it be static?
-net/can/raw.c:840:5: warning: symbol 'raw_sock_no_ioctlcmd' was not declared. Should it be static?
 
-Fixes: 473d924d7d46 ("can: fix ioctl function removal")
+On 08/01/2019 11:58 AM, Mike Rapoport wrote:
+> The madvise_behavior() function converts -ENOMEM to -EAGAIN in several
+> places using identical code.
+> 
+> Move that code to a common error handling path.
+> 
+> No functional changes.
+> 
+> Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
 
-Signed-off-by: Mao Wenan <maowenan@huawei.com>
----
- net/can/bcm.c | 2 +-
- net/can/raw.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/net/can/bcm.c b/net/can/bcm.c
-index bf1d0bbecec8..b8a32b4ac368 100644
---- a/net/can/bcm.c
-+++ b/net/can/bcm.c
-@@ -1680,7 +1680,7 @@ static int bcm_recvmsg(struct socket *sock, struct msghdr *msg, size_t size,
- 	return size;
- }
- 
--int bcm_sock_no_ioctlcmd(struct socket *sock, unsigned int cmd,
-+static int bcm_sock_no_ioctlcmd(struct socket *sock, unsigned int cmd,
- 			 unsigned long arg)
- {
- 	/* no ioctls for socket layer -> hand it down to NIC layer */
-diff --git a/net/can/raw.c b/net/can/raw.c
-index da386f1fa815..a01848ff9b12 100644
---- a/net/can/raw.c
-+++ b/net/can/raw.c
-@@ -837,7 +837,7 @@ static int raw_recvmsg(struct socket *sock, struct msghdr *msg, size_t size,
- 	return size;
- }
- 
--int raw_sock_no_ioctlcmd(struct socket *sock, unsigned int cmd,
-+static int raw_sock_no_ioctlcmd(struct socket *sock, unsigned int cmd,
- 			 unsigned long arg)
- {
- 	/* no ioctls for socket layer -> hand it down to NIC layer */
--- 
-2.20.1
-
+Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
