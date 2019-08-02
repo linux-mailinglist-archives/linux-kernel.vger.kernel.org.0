@@ -2,67 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3E4080071
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 20:50:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC20880078
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 20:53:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729386AbfHBSuJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 14:50:09 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:37158 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728100AbfHBSuI (ORCPT
+        id S1730061AbfHBSw4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 14:52:56 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:5322 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726044AbfHBSwz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 14:50:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=4FKpdVqJ6x4ipIPagFBQljiwNMfp0DvGjLMeeuRcH8A=; b=dDHD2ywNsssRnL5ii/df4tYig
-        D3ALda+Rih2dKJmSzMKcZtVeekdAr6rLQlyWeDYNAodYDwZCcq1MjFSDSS1NFOUSO482/Y0i/fYFC
-        2IiqBNwW2N0YNUsj8Yx3VBoDkjkZCZc9bBCvpMZIwoEuTMK0eoIkvcWVGeyWZhL8d1QSwxUMjuGt5
-        p3ws1orng4avDhJYSwVrrbuOqCzSvSr01VZy/xxLaNfkNuvqcUzHHnIcIAMurN4H7+fF7CZM0UR9a
-        g9hgXaWENs9inVcSHFLRT+UGJwdr/s6LSeIQ6E80OMVl6Wk25R3ItbiY47onej027TxwekAQBoEOr
-        /dnveekLw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1htccg-0005aF-1p; Fri, 02 Aug 2019 18:49:50 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 6C43620293161; Fri,  2 Aug 2019 20:49:47 +0200 (CEST)
-Date:   Fri, 2 Aug 2019 20:49:47 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Will Deacon <will@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Hanjun Guo <guohanjun@huawei.com>,
-        Jan Glauber <jglauber@marvell.com>
-Subject: Re: [PATCH 0/6] Rework REFCOUNT_FULL using atomic_fetch_* operations
-Message-ID: <20190802184947.GC2349@hirez.programming.kicks-ass.net>
-References: <20190802101000.12958-1-will@kernel.org>
+        Fri, 2 Aug 2019 14:52:55 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d44868e0000>; Fri, 02 Aug 2019 11:53:02 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Fri, 02 Aug 2019 11:52:53 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Fri, 02 Aug 2019 11:52:53 -0700
+Received: from [10.2.171.217] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 2 Aug
+ 2019 18:52:52 +0000
+Subject: Re: [PATCH 16/34] drivers/tee: convert put_page() to put_user_page*()
+To:     Jens Wiklander <jens.wiklander@linaro.org>,
+        <john.hubbard@gmail.com>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        <amd-gfx@lists.freedesktop.org>, <ceph-devel@vger.kernel.org>,
+        <devel@driverdev.osuosl.org>, <devel@lists.orangefs.org>,
+        <dri-devel@lists.freedesktop.org>,
+        <intel-gfx@lists.freedesktop.org>, <kvm@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        <linux-block@vger.kernel.org>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>, <linux-fbdev@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-media@vger.kernel.org>,
+        <linux-mm@kvack.org>, <linux-nfs@vger.kernel.org>,
+        <linux-rdma@vger.kernel.org>,
+        <linux-rpi-kernel@lists.infradead.org>,
+        <linux-xfs@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <rds-devel@oss.oracle.com>, <sparclinux@vger.kernel.org>,
+        <x86@kernel.org>, <xen-devel@lists.xenproject.org>
+References: <20190802022005.5117-1-jhubbard@nvidia.com>
+ <20190802022005.5117-17-jhubbard@nvidia.com>
+ <CAHUa44G++iiwU62jj7QH=V3sr4z26sf007xrwWLPw6AAeMLAEw@mail.gmail.com>
+X-Nvconfidentiality: public
+From:   John Hubbard <jhubbard@nvidia.com>
+Message-ID: <23cc9ac3-4b03-9187-aae6-d64ba8cfca00@nvidia.com>
+Date:   Fri, 2 Aug 2019 11:51:14 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190802101000.12958-1-will@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAHUa44G++iiwU62jj7QH=V3sr4z26sf007xrwWLPw6AAeMLAEw@mail.gmail.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL104.nvidia.com (172.18.146.11) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1564771982; bh=CFAZPyZ9nyhPuztKsk/cdMMUIvZ+gPTM3kJiO5Miqjw=;
+        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=ot3YKf5tvKuqvfXnHFOaqaBQdxJLPGhqZRpe5CvAqHZLCjzw07N/807rN30ol1bdm
+         nSwbs6gHuJ0OhztqkvSHwPR2slPtTDH8B6O0PTm5jeGujoQh8m+xI16KJQgg3RcoMR
+         UmCB87Ti9N/9lxRub68goKft4A4cSSIx2dfCYEbKRo3lQGuFQW16SKp/EWIKLGs/zO
+         EK17YqQ1lGvgW/45aW7/Z5pzy0Gf5VysXOYCi076on7MtH51Ov9Uy2W59ssEl2aP4N
+         G3YJtwUCv04lDB6y7cBERLsZUR9V90J5rUhO14bUw0xWFxWN4jqCBXztLnN9RVkDQG
+         l2CwayAFuEHwg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 02, 2019 at 11:09:54AM +0100, Will Deacon wrote:
+On 8/1/19 11:29 PM, Jens Wiklander wrote:
+> On Fri, Aug 2, 2019 at 4:20 AM <john.hubbard@gmail.com> wrote:
+>>
+>> From: John Hubbard <jhubbard@nvidia.com>
+>>
+>> For pages that were retained via get_user_pages*(), release those pages
+>> via the new put_user_page*() routines, instead of via put_page() or
+>> release_pages().
+>>
+>> This is part a tree-wide conversion, as described in commit fc1d8e7cca2d
+>> ("mm: introduce put_user_page*(), placeholder versions").
+>>
+>> Cc: Jens Wiklander <jens.wiklander@linaro.org>
+>> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+>> ---
+>>   drivers/tee/tee_shm.c | 10 ++--------
+>>   1 file changed, 2 insertions(+), 8 deletions(-)
+> 
+> Acked-by: Jens Wiklander <jens.wiklander@linaro.org>
+> 
+> I suppose you're taking this via your own tree or such.
+> 
 
-> Although the revised implementation passes all of the lkdtm REFCOUNT
-> tests, there is a race condition introduced by the deferred saturation
-> whereby if INT_MIN + 2 tasks take a reference on a refcount at
-> REFCOUNT_MAX and are each preempted between detecting overflow and
-> writing the saturated value without being rescheduled, then another task
-> may end up erroneously freeing the object when it drops the refcount and
-> sees zero. It doesn't feel like a particularly realistic case to me, but
-> I thought I should mention it in case somebody else knows better.
+Hi Jens,
 
-So my OCD has always found that hole objectionable. Also I suppose the
-cmpxchg ones are simpler to understand.
+Thanks for the ACK! I'm expecting that Andrew will take this through his
+-mm tree, unless he pops up and says otherwise.
 
-Maybe make this fancy stuff depend on !FULL ?
+thanks,
+-- 
+John Hubbard
+NVIDIA
