@@ -2,95 +2,167 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EED6A7EF3E
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 10:28:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B89DD7EF48
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 10:29:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404168AbfHBI20 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 04:28:26 -0400
-Received: from wout3-smtp.messagingengine.com ([64.147.123.19]:59267 "EHLO
-        wout3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2404153AbfHBI2Z (ORCPT
+        id S2404184AbfHBI3V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 04:29:21 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:46660 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727455AbfHBI3U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 04:28:25 -0400
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailout.west.internal (Postfix) with ESMTP id C7AC5381;
-        Fri,  2 Aug 2019 04:28:23 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute6.internal (MEProxy); Fri, 02 Aug 2019 04:28:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=lXKpENl8wyg6SU2P0UYyhWDjFJG
-        fkJ1PSJo5X7cF/QQ=; b=KcUUMxUrK5sVDjjJ97JC1y3cj6v4feq54L0gIxp4/B4
-        4tFDm/NPqY6M1PaYJ8yrXaktSMw6qWAg7QYcVoeXlYewNnttgV6tXQDNT32Vo200
-        w/rqm7jh+8hw6IQvui8WhzgPmDJurtA/SOqlX55yMJBjd+DEiXzKeAwGHl5WPRYu
-        6wmvKjUGO6/v4tsDVYvN5hVqHWA/IsSzlhcTBF+zDKAzN9fm9lc1iyzHsThEKM4r
-        hf9y2rrqOM0A7FakKucxFlBb2+Li2yXeB0xAbWJaXv9tS19OlHiJbNTNM24Vx2U0
-        ke6jHYGhs1DQQ3b3M+ndWgyX/1kDS7jSn3V+9khrOVQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=lXKpEN
-        l8wyg6SU2P0UYyhWDjFJGfkJ1PSJo5X7cF/QQ=; b=FwEcrlj5oyDSLS4wwC0wPn
-        Bmh3RGOlt3Xk8HlNqhCdu31NYmptPtTME3IVrrASKVfZdAFjQA7r1QW/DUa3pMu5
-        LG1eelF3dHH4xyxBV9gp8tX1Xigj3/24KsZszOynOQy5smlsaNSlgfBBGrpjaeBH
-        AzULZXRqXH+72DU9xv+eRh8sKRhe6rdpmzHDvENwBqG3mlmSuka+ZKSu9couCHXS
-        EWTidfR4qB252UF+O23h33gcs0H4LyI1xaiWPUef2ZyKkAJurTR249reqIIozgmB
-        +tRX8p2ODFjXd6YGOq9P1Wx+f5+lqERBi9kPXr4Zl1+eWdNLlCvl3bnr4zhPdofQ
-        ==
-X-ME-Sender: <xms:J_RDXW7j2qt8NB4CHo9meH19pvwJCs2pvGPA4U_UQ6auLOO55hYyxw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrleekgddufedvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjfgesthdtredttdervdenucfhrhhomhepifhrvghg
-    ucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecukfhppeekfedrkeeirdekledrud
-    dtjeenucfrrghrrghmpehmrghilhhfrhhomhepghhrvghgsehkrhhorghhrdgtohhmnecu
-    vehluhhsthgvrhfuihiivgeptd
-X-ME-Proxy: <xmx:J_RDXeXGgH-czWHc_AuIQRrz90rsF61fRYj7SiJtWwwwMTudw1u-6A>
-    <xmx:J_RDXYEdch3gDTkuCHKWzhrAXf7WXOwIhg3My-hFWGjbGqszZpFKCQ>
-    <xmx:J_RDXeeLeSssjnzebQ8u_viHC4hELuke1_wXJ19vpbQllKQVXvzXWw>
-    <xmx:J_RDXT-sw3SS9AgiqaRvJQ3fUtXMDdkQ24uPKukaONmvGai06aE0Qw>
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 9732080064;
-        Fri,  2 Aug 2019 04:28:22 -0400 (EDT)
-Date:   Fri, 2 Aug 2019 10:28:20 +0200
-From:   Greg KH <greg@kroah.com>
-To:     Rolf Eike Beer <eb@emlix.com>
-Cc:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        stable@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: Linux 4.9.180 build fails =?utf-8?Q?wi?=
- =?utf-8?Q?th_gcc_9_and_'cleanup=5Fmodule'_specifies_less_restrictive_attr?=
- =?utf-8?Q?ibute_than_its_target_=E2=80=A6?=
-Message-ID: <20190802082820.GA30928@kroah.com>
-References: <259986242.BvXPX32bHu@devpool35>
- <20190606185900.GA19937@kroah.com>
- <CANiq72n2E4Ue0MU5mWitSbsscizPQKML0QQx_DBwJVni+eWMHQ@mail.gmail.com>
- <4007272.nJfEYfeqza@devpool35>
+        Fri, 2 Aug 2019 04:29:20 -0400
+Received: by mail-lj1-f195.google.com with SMTP id v24so72178297ljg.13
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2019 01:29:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=kdl2R0IBgfjJB4JZRxhZE0/T9CpAtSy8txxcK/4WOWY=;
+        b=R0+Hv9BP1gyMA34D02T3e8AtBzW0JtD9RzB2q43wKYUEP3bKsJazHF0UrcXlQ202mc
+         VYwvt0uAQAfweMCxq143kYfgnONAJMLO+RG33VrfgllSUaYFX8DOfxhw7Cz8EVMIHu50
+         5HlTJTzfBkpQqEopir2qfuJhDvNjTNzjhaQrpgDyJsEN+jvjQw79bFcF0wmJn+k3IGWY
+         BMYVzWHffvW5dtEA6TvY4fUHj0RQQ60VjxarRrC2CO7/q5akiWvQ24+3iK7xRKHonm0s
+         GMGYgYKWr8E5Jz1JLnkOoAUzbLfAznisfWLknafaUqDIU1VNUxUQyDTLc3GWLdv6uSF7
+         fgiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kdl2R0IBgfjJB4JZRxhZE0/T9CpAtSy8txxcK/4WOWY=;
+        b=SWVctuqCR6E+WFGGEcgLaVEyn27DN+4EJAoWceQNSdwkN6oiIQr6+DgWkpmB+8wpXu
+         2Zf5QDLlRuoBfvdnutvUkSIPqrB5D+cBO4sSsWdTfOhbQewlqHmpXrksmY9azb2lXMeA
+         aYqwkMIbZ4h1Z4PKAasPmmIyIzWTUlLJgtnpzSHENM51cFX3eQB1lIt5cZGZ+Dsqws9k
+         AoLcCT4oYbfmhdpTNiNZRVvjILLYleqxr+M4WE5miPpi2F8r3uZHdPbiHRWjqOxkaa1f
+         2l6ho4fri//gkCO5FnFYYGf3hiGrlKvppYE0B3d3lLVgdLtF9xwqJKCZgQ9JmdTJT5uc
+         KwEA==
+X-Gm-Message-State: APjAAAXjWlBRKapaFGXJn5nnn1cR63j7v4s/T4CK7B+fHUVxdKZuN9LV
+        komyqmHjIRgxK5f81SEFA7RgSuuR7pz/1Abc1SqaLg==
+X-Google-Smtp-Source: APXvYqwJwTHbJ0uwk+/AZGi4Vi/6dIysgXs+VXFlRpPMTwNulKwsAxuix0dgX1GFcTwKw2oVO2pgpAu7bJsdNj1ev0g=
+X-Received: by 2002:a2e:995a:: with SMTP id r26mr70660632ljj.107.1564734557634;
+ Fri, 02 Aug 2019 01:29:17 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4007272.nJfEYfeqza@devpool35>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+References: <1564670424-26023-1-git-send-email-vincent.guittot@linaro.org>
+ <1564670424-26023-9-git-send-email-vincent.guittot@linaro.org> <22ba6771-8bde-8c6e-65e0-4ab2ebc6e018@arm.com>
+In-Reply-To: <22ba6771-8bde-8c6e-65e0-4ab2ebc6e018@arm.com>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Fri, 2 Aug 2019 10:29:06 +0200
+Message-ID: <CAKfTPtApKzWZvD83QKwd4ZKhfsCyFMZffkyAOB5oYNgck5jbPw@mail.gmail.com>
+Subject: Re: [PATCH v2 8/8] sched/fair: use utilization to select misfit task
+To:     Valentin Schneider <valentin.schneider@arm.com>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Phil Auld <pauld@redhat.com>,
+        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <Morten.Rasmussen@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 02, 2019 at 10:17:04AM +0200, Rolf Eike Beer wrote:
-> Am Samstag, 8. Juni 2019, 14:00:34 CEST schrieb Miguel Ojeda:
-> > On Thu, Jun 6, 2019 at 8:59 PM Greg KH <greg@kroah.com> wrote:
-> > > "manually fixing it up" means "hacked it to pieces" to me, I have no
-> > > idea what the end result really was :)
-> > > 
-> > > If someone wants to send me some patches I can actually apply, that
-> > > would be best...
-> > 
-> > I will give it a go whenever I get some free time :)
-> 
-> I fear this has never happened, did it?
+On Thu, 1 Aug 2019 at 18:27, Valentin Schneider
+<valentin.schneider@arm.com> wrote:
+>
+> On 01/08/2019 15:40, Vincent Guittot wrote:
+> > @@ -8261,7 +8261,7 @@ static bool update_sd_pick_busiest(struct lb_env *env,
+> >                * If we have more than one misfit sg go with the
+> >                * biggest misfit.
+> >                */
+> > -             if (sgs->group_misfit_task_load < busiest->group_misfit_task_load)
+> > +             if (sgs->group_misfit_task_util < busiest->group_misfit_task_util)
+> >                       return false;
+>
+> I previously said this change would render the maximization useless, but I
+> had forgotten one thing: with PELT time scaling, task utilization can go
+> above its CPU's capacity.
+>
+> So if you have two LITTLE CPUs running a busy loop (misfit task) each, the
+> one that's been running the longest would have the highest utilization
+> (assuming they haven't reached 1024 yet). In other words "utilizations
+> above the capacity_margin can't be compared" doesn't really stand.
+>
+> Still, maximizing load would lead us there. Furthermore, if we have to pick
+> between two rqs with misfit tasks, I still believe we should pick the one
+> with the highest load, not the highest utilization.
+>
+> We could keep load and fix the issue of detaching the wrong task with
+> something like:
+>
+> -----8<-----
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 53e64a7b2ae0..bfc2b624ee98 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -7489,12 +7489,8 @@ static int detach_tasks(struct lb_env *env)
+>                 case migrate_misfit:
+>                         load = task_h_load(p);
+>
+> -                       /*
+> -                        * utilization of misfit task might decrease a bit
+> -                        * since it has been recorded. Be conservative in the
+> -                        * condition.
+> -                        */
+> -                       if (load < env->imbalance)
+> +                       /* This is not a misfit task */
+> +                       if (task_fits_capacity(p, capacity_of(env->src_cpu)))
+>                                 goto next;
 
-I do not think so, I'm still building 4.9.y and 4.14.y and 4.19.y with
-gcc8 because of these issues :(
+This could be a solution for make sure to pull only misfit task and
+keep using load
 
-thanks,
+>
+>                         env->imbalance = 0;
+> ----->8-----
+>
+> However what would be *even* better IMO would be:
+>
+> -----8<-----
+> @@ -8853,6 +8853,7 @@ voluntary_active_balance(struct lb_env *env)
+>                         return 1;
+>         }
+>
+> +       /* XXX: make sure current is still a misfit task? */
+>         if (env->balance_type == migrate_misfit)
+>                 return 1;
+>
+> @@ -8966,6 +8967,20 @@ static int load_balance(int this_cpu, struct rq *this_rq,
+>         env.src_rq = busiest;
+>
+>         ld_moved = 0;
+> +
+> +       /*
+> +        * Misfit tasks are only misfit if they are currently running, see
+> +        * update_misfit_status().
+> +        *
+> +        * - If they're not running, we'll get an opportunity at wakeup to
+> +        *   migrate them to a bigger CPU.
+> +        * - If they're running, we need to active balance them to a bigger CPU.
+> +        *
+> +        * Do the smart thing and go straight for active balance.
+> +        */
+> +       if (env->balance_type == migrate_misfit)
+> +               goto active_balance;
+> +
 
-greg k-h
+This looks ugly and add a new bypass which this patchset tries to remove
+This doesn't work if your misfit task has been preempted by another
+one during the load balance and waiting for the runqueue
+
+
+>         if (busiest->nr_running > 1) {
+>                 /*
+>                  * Attempt to move tasks. If find_busiest_group has found
+> @@ -9074,7 +9089,7 @@ static int load_balance(int this_cpu, struct rq *this_rq,
+>                         goto out_all_pinned;
+>                 }
+>         }
+> -
+> +active_balance:
+>         if (!ld_moved) {
+>                 schedstat_inc(sd->lb_failed[idle]);
+>                 /*
+> ----->8-----
