@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3B627F8BF
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 15:22:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9EE6C7F8B9
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 15:22:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393687AbfHBNWC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 09:22:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60462 "EHLO mail.kernel.org"
+        id S2393698AbfHBNWE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 09:22:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60556 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393653AbfHBNV4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 09:21:56 -0400
+        id S2393666AbfHBNV7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 09:21:59 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B7D432183F;
-        Fri,  2 Aug 2019 13:21:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 81373217D4;
+        Fri,  2 Aug 2019 13:21:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564752115;
-        bh=fgYQmhenvxKgy2yM4rFIOFAEyr/6mfSDZcosc71U7TA=;
+        s=default; t=1564752119;
+        bh=UDciwU+C4yH+IQMZq0y8cHobVlyc+1OycBfUZehk1Eo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0iuGt9AN71kAvc/2hRYLyfmFXZxycqsP2ugDqC9vmcGXwnqlmFU3repwIWrxY2e0/
-         2bK3Zp1YLfkqP1BE+flxlPlw9fFNZSMEu5Htwnj7bpiGNpHiH+5V9vdGzP9YYdvRV7
-         /U+z+ya5ehkoNY8mFYV3UacPJ1ySfAB11lUzIq/w=
+        b=jBTQ/pn3mUL6wuQRM760PXc2kLKfQopsKe6wB08DtXArcAFhXbmZA+XxIBlY1+PjV
+         d2IdBRIQfnTv31/QHZ7fKXxdnf+KXf0954OF5mCsdpdzT+wucr6WH3l2ir2hvloShE
+         dKexp0gNeMbjPK88rJMY5RpZruU28+BjHxg2OqZA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Vinod Koul <vkoul@kernel.org>, Takashi Iwai <tiwai@suse.de>,
+Cc:     Andi Kleen <ak@linux.intel.com>,
+        Denis Bakhvalov <denis.bakhvalov@intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.2 49/76] ALSA: compress: Prevent bypasses of set_params
-Date:   Fri,  2 Aug 2019 09:19:23 -0400
-Message-Id: <20190802131951.11600-49-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.2 52/76] perf script: Fix off by one in brstackinsn IPC computation
+Date:   Fri,  2 Aug 2019 09:19:26 -0400
+Message-Id: <20190802131951.11600-52-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190802131951.11600-1-sashal@kernel.org>
 References: <20190802131951.11600-1-sashal@kernel.org>
@@ -43,83 +45,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
+From: Andi Kleen <ak@linux.intel.com>
 
-[ Upstream commit 26c3f1542f5064310ad26794c09321780d00c57d ]
+[ Upstream commit dde4e732a5b02fa5599c2c0e6c48a0c11789afc4 ]
 
-Currently, whilst in SNDRV_PCM_STATE_OPEN it is possible to call
-snd_compr_stop, snd_compr_drain and snd_compr_partial_drain, which
-allow a transition to SNDRV_PCM_STATE_SETUP. The stream should
-only be able to move to the setup state once it has received a
-SNDRV_COMPRESS_SET_PARAMS ioctl. Fix this issue by not allowing
-those ioctls whilst in the open state.
+When we hit the end of a program block, need to count the last
+instruction too for the IPC computation. This caused large errors for
+small blocks.
 
-Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-Acked-by: Vinod Koul <vkoul@kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+  % perf script -b ls / > /dev/null
+
+Before:
+
+  % perf script -F +brstackinsn --xed
+  ...
+        00007f94c9ac70d8                        jz 0x7f94c9ac70e3                       # PRED 3 cycles [36] 4.33 IPC
+        00007f94c9ac70e3                        testb  $0x20, 0x31d(%rbx)
+        00007f94c9ac70ea                        jnz 0x7f94c9ac70b0
+        00007f94c9ac70ec                        testb  $0x8, 0x205ad(%rip)
+        00007f94c9ac70f3                        jz 0x7f94c9ac6ff0               # PRED 1 cycles [37] 3.00 IPC
+
+After:
+
+  % perf script -F +brstackinsn --xed
+  ...
+        00007f94c9ac70d8                        jz 0x7f94c9ac70e3                       # PRED 3 cycles [15] 4.67 IPC
+        00007f94c9ac70e3                        testb  $0x20, 0x31d(%rbx)
+        00007f94c9ac70ea                        jnz 0x7f94c9ac70b0
+        00007f94c9ac70ec                        testb  $0x8, 0x205ad(%rip)
+        00007f94c9ac70f3                        jz 0x7f94c9ac6ff0               # PRED 1 cycles [16] 4.00 IPC
+
+Suggested-by: Denis Bakhvalov <denis.bakhvalov@intel.com>
+Signed-off-by: Andi Kleen <ak@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Link: http://lkml.kernel.org/r/20190711181922.18765-2-andi@firstfloor.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/core/compress_offload.c | 30 ++++++++++++++++++++++++------
- 1 file changed, 24 insertions(+), 6 deletions(-)
+ tools/perf/builtin-script.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/core/compress_offload.c b/sound/core/compress_offload.c
-index d79aee6b9edd2..40dae723c59db 100644
---- a/sound/core/compress_offload.c
-+++ b/sound/core/compress_offload.c
-@@ -711,9 +711,15 @@ static int snd_compr_stop(struct snd_compr_stream *stream)
- {
- 	int retval;
+diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
+index d089eb706d188..4380474c8c35a 100644
+--- a/tools/perf/builtin-script.c
++++ b/tools/perf/builtin-script.c
+@@ -1057,7 +1057,7 @@ static int perf_sample__fprintf_brstackinsn(struct perf_sample *sample,
  
--	if (stream->runtime->state == SNDRV_PCM_STATE_PREPARED ||
--			stream->runtime->state == SNDRV_PCM_STATE_SETUP)
-+	switch (stream->runtime->state) {
-+	case SNDRV_PCM_STATE_OPEN:
-+	case SNDRV_PCM_STATE_SETUP:
-+	case SNDRV_PCM_STATE_PREPARED:
- 		return -EPERM;
-+	default:
-+		break;
-+	}
-+
- 	retval = stream->ops->trigger(stream, SNDRV_PCM_TRIGGER_STOP);
- 	if (!retval) {
- 		snd_compr_drain_notify(stream);
-@@ -801,9 +807,14 @@ static int snd_compr_drain(struct snd_compr_stream *stream)
- {
- 	int retval;
- 
--	if (stream->runtime->state == SNDRV_PCM_STATE_PREPARED ||
--			stream->runtime->state == SNDRV_PCM_STATE_SETUP)
-+	switch (stream->runtime->state) {
-+	case SNDRV_PCM_STATE_OPEN:
-+	case SNDRV_PCM_STATE_SETUP:
-+	case SNDRV_PCM_STATE_PREPARED:
- 		return -EPERM;
-+	default:
-+		break;
-+	}
- 
- 	retval = stream->ops->trigger(stream, SND_COMPR_TRIGGER_DRAIN);
- 	if (retval) {
-@@ -840,9 +851,16 @@ static int snd_compr_next_track(struct snd_compr_stream *stream)
- static int snd_compr_partial_drain(struct snd_compr_stream *stream)
- {
- 	int retval;
--	if (stream->runtime->state == SNDRV_PCM_STATE_PREPARED ||
--			stream->runtime->state == SNDRV_PCM_STATE_SETUP)
-+
-+	switch (stream->runtime->state) {
-+	case SNDRV_PCM_STATE_OPEN:
-+	case SNDRV_PCM_STATE_SETUP:
-+	case SNDRV_PCM_STATE_PREPARED:
- 		return -EPERM;
-+	default:
-+		break;
-+	}
-+
- 	/* stream can be drained only when next track has been signalled */
- 	if (stream->next_track == false)
- 		return -EPERM;
+ 			printed += ip__fprintf_sym(ip, thread, x.cpumode, x.cpu, &lastsym, attr, fp);
+ 			if (ip == end) {
+-				printed += ip__fprintf_jump(ip, &br->entries[i], &x, buffer + off, len - off, insn, fp,
++				printed += ip__fprintf_jump(ip, &br->entries[i], &x, buffer + off, len - off, ++insn, fp,
+ 							    &total_cycles);
+ 				if (PRINT_FIELD(SRCCODE))
+ 					printed += print_srccode(thread, x.cpumode, ip);
 -- 
 2.20.1
 
