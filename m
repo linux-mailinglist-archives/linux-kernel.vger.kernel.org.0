@@ -2,107 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B89F77F286
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:49:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B2B9C7F2D0
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:51:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405980AbfHBJt3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 05:49:29 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:64240 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405137AbfHBJt0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 05:49:26 -0400
-Received: from 79.184.255.110.ipv4.supernova.orange.pl (79.184.255.110) (HELO kreacher.localnet)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.275)
- id e1982bc9eb5b63f9; Fri, 2 Aug 2019 11:49:24 +0200
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     Sebastian Reichel <sre@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, kernel-team@android.com,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Tri Vo <trong@android.com>,
-        Kalesh Singh <kaleshsingh@google.com>,
-        Ravi Chandra Sadineni <ravisadineni@chromium.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH] power: supply: Init device wakeup after device_add()
-Date:   Fri, 02 Aug 2019 11:49:24 +0200
-Message-ID: <5888477.sfNfyo0UZj@kreacher>
-In-Reply-To: <20190801213330.81079-1-swboyd@chromium.org>
-References: <20190801213330.81079-1-swboyd@chromium.org>
+        id S2405808AbfHBJv2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 05:51:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48116 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2404070AbfHBJol (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 05:44:41 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1D66A2171F;
+        Fri,  2 Aug 2019 09:44:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564739080;
+        bh=MJtsPeYNZsKq49rZtkuN6dD8y6BQyFpESZtcOqsy/lo=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=O9Bjhxo1Yqix4fbdkznM9p1Bc3Ffaa/xjO20X/2lWWmd+mqzq3bz1yKBJac7glwT9
+         +zGIPuRathZM88miCfz/MT0dxZvOLsXguwCJ8Ij9ihVwGhZhsCDk6RVr2d4Npkh7IX
+         3XXNTntOY9gtQHylU6uyiIUI1NuZEBI0rFApkptI=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Elena Petrova <lenaptr@google.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.9 080/223] crypto: arm64/sha2-ce - correct digest for empty data in finup
+Date:   Fri,  2 Aug 2019 11:35:05 +0200
+Message-Id: <20190802092244.096277859@linuxfoundation.org>
+X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20190802092238.692035242@linuxfoundation.org>
+References: <20190802092238.692035242@linuxfoundation.org>
+User-Agent: quilt/0.66
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thursday, August 1, 2019 11:33:30 PM CEST Stephen Boyd wrote:
-> We may want to use the device pointer in device_init_wakeup() with
-> functions that expect the device to already be added with device_add().
-> For example, if we were to link the device initializing wakeup to
-> something in sysfs such as a class for wakeups we'll run into an error.
-> It looks like this code was written with the assumption that the device
-> would be added before initializing wakeup due to the order of operations
-> in power_supply_unregister().
-> 
-> Let's change the order of operations so we don't run into problems here.
-> 
-> Fixes: 948dcf966228 ("power_supply: Prevent suspend until power supply events are processed")
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>                                                                                                                      
-> Cc: Tri Vo <trong@android.com>                                                                                                                                             
-> Cc: Kalesh Singh <kaleshsingh@google.com>      
-> Cc: Ravi Chandra Sadineni <ravisadineni@chromium.org>
-> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-> Cc: Viresh Kumar <viresh.kumar@linaro.org>
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-> ---
-> 
-> See this thread[1] for more information on how this will be necessary.
-> 
-> [1] https://lkml.kernel.org/r/20190731215514.212215-1-trong@android.com
-> 
-> 
->  drivers/power/supply/power_supply_core.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/power/supply/power_supply_core.c b/drivers/power/supply/power_supply_core.c
-> index 82e84801264c..5c36c430ce8b 100644
-> --- a/drivers/power/supply/power_supply_core.c
-> +++ b/drivers/power/supply/power_supply_core.c
-> @@ -1051,14 +1051,14 @@ __power_supply_register(struct device *parent,
->  	}
->  
->  	spin_lock_init(&psy->changed_lock);
-> -	rc = device_init_wakeup(dev, ws);
-> -	if (rc)
-> -		goto wakeup_init_failed;
-> -
->  	rc = device_add(dev);
->  	if (rc)
->  		goto device_add_failed;
->  
-> +	rc = device_init_wakeup(dev, ws);
-> +	if (rc)
-> +		goto wakeup_init_failed;
-> +
->  	rc = psy_register_thermal(psy);
->  	if (rc)
->  		goto register_thermal_failed;
-> @@ -1101,8 +1101,8 @@ __power_supply_register(struct device *parent,
->  	psy_unregister_thermal(psy);
->  register_thermal_failed:
->  	device_del(dev);
-> -device_add_failed:
->  wakeup_init_failed:
-> +device_add_failed:
->  check_supplies_failed:
->  dev_set_name_failed:
->  	put_device(dev);
-> 
+From: Elena Petrova <lenaptr@google.com>
 
-Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+commit 6bd934de1e393466b319d29c4427598fda096c57 upstream.
 
+The sha256-ce finup implementation for ARM64 produces wrong digest
+for empty input (len=0). Expected: the actual digest, result: initial
+value of SHA internal state. The error is in sha256_ce_finup:
+for empty data `finalize` will be 1, so the code is relying on
+sha2_ce_transform to make the final round. However, in
+sha256_base_do_update, the block function will not be called when
+len == 0.
 
+Fix it by setting finalize to 0 if data is empty.
+
+Fixes: 03802f6a80b3a ("crypto: arm64/sha2-ce - move SHA-224/256 ARMv8 implementation to base layer")
+Cc: stable@vger.kernel.org
+Signed-off-by: Elena Petrova <lenaptr@google.com>
+Reviewed-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ arch/arm64/crypto/sha2-ce-glue.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/arch/arm64/crypto/sha2-ce-glue.c
++++ b/arch/arm64/crypto/sha2-ce-glue.c
+@@ -52,7 +52,7 @@ static int sha256_ce_finup(struct shash_
+ 			   unsigned int len, u8 *out)
+ {
+ 	struct sha256_ce_state *sctx = shash_desc_ctx(desc);
+-	bool finalize = !sctx->sst.count && !(len % SHA256_BLOCK_SIZE);
++	bool finalize = !sctx->sst.count && !(len % SHA256_BLOCK_SIZE) && len;
+ 
+ 	/*
+ 	 * Allow the asm code to perform the finalization if there is no
 
 
