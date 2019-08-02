@@ -2,135 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 359CD7EC35
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 07:44:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E2327EC40
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 07:50:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733059AbfHBFoz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 01:44:55 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:40365 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732504AbfHBFoy (ORCPT
+        id S2388080AbfHBFt5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 01:49:57 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:2974 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728714AbfHBFt4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 01:44:54 -0400
-Received: by mail-pl1-f196.google.com with SMTP id a93so33144635pla.7
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2019 22:44:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=yjkqVlh93tpY60WVDl/QuqFVLpfL0sHzZ896Xvml+z4=;
-        b=CjPSiFwCyakBTrbLM1unJu3mh6t/OHjXEJsYhOgENLXIMkZfnmMK7kA4LLGRIkBU5N
-         FewiqxHM7ESNfuWy2LjIA4max+VbOFSXBW1I11lkee7ya6yGtzI5G4pqadAGrlKLptjT
-         YUsYi2X+fUKMaCyHazV9Prvo7PrNCv5sBRDoskVTPIGO+CZ+YffAR1wonAWLwe9b966v
-         76f8CYpIul0BJVlnnsDy37Dd3kofpRsC6EUqlYjluPwa/qFkUuWzuquWKxaoNaNJFiOy
-         UnyKRZ17Ukwbmbg5qUIql6Zmb69GtFTP+WFmxAodQ0KI8fm+5phv1vdMnCPHLC5/4bd4
-         bpKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=yjkqVlh93tpY60WVDl/QuqFVLpfL0sHzZ896Xvml+z4=;
-        b=RMq1hrhLCZx2MNGiX7D9DtjNSJRYI0MAhgKucc9CZwCWajrTZ4fNfJyJh6QTL6pq9m
-         IBJipsxu4psq+VUcfS6NakCJyEmwQjpFYRDzi7axPhI1wsIvGDEHwhHND5JKMEAAQtPV
-         4A6K5NAeaVv6Z9P03xhzRzrlpvWmaA6Ct2gxziaOHj3ZsstandctHPb5clrt+jstgSXi
-         uGZz4kcquRLz0bjJhM40gTuxDHUHaO0QmWFdKvQWA0hDXNV2tXoyGOjf8YtNXpQxy2bT
-         N7eYZ1ajkLid5CdUOp8yRWXDMjsSk4QnW4ppwLWsolQzJYge42DJEFK5m7EIY+fPZdWf
-         jsDA==
-X-Gm-Message-State: APjAAAW/Mj2So/0NyAEA2QDoch0VYLVtvnEzosNOcpZalEC3/vznoPOp
-        2RO2RUcF/sCiJXQgSuJFkxsH5w==
-X-Google-Smtp-Source: APXvYqyZ1krLVASDIdDV11DS2l8tbxmM4spkv0MIrZ/oPkthee5mDfwIoxrJ33RZlFf4CMYGV6/CvQ==
-X-Received: by 2002:a17:902:846:: with SMTP id 64mr129733304plk.265.1564724693243;
-        Thu, 01 Aug 2019 22:44:53 -0700 (PDT)
-Received: from localhost ([122.172.28.117])
-        by smtp.gmail.com with ESMTPSA id bg3sm7230593pjb.9.2019.08.01.22.44.52
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 01 Aug 2019 22:44:52 -0700 (PDT)
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Rafael Wysocki <rjw@rjwysocki.net>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Len Brown <lenb@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     linux-pm@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        "v4 . 18+" <stable@vger.kernel.org>,
-        Doug Smythies <doug.smythies@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH V3 2/2] cpufreq: intel_pstate: Implement ->resolve_freq()
-Date:   Fri,  2 Aug 2019 11:14:30 +0530
-Message-Id: <23e3dee8688f5a9767635b686bb7a9c0e09a4438.1564724511.git.viresh.kumar@linaro.org>
-X-Mailer: git-send-email 2.21.0.rc0.269.g1a574e7a288b
-In-Reply-To: <7dedb6bd157b8183c693bb578e25e313cf4f451d.1564724511.git.viresh.kumar@linaro.org>
-References: <7dedb6bd157b8183c693bb578e25e313cf4f451d.1564724511.git.viresh.kumar@linaro.org>
+        Fri, 2 Aug 2019 01:49:56 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d43cf030000>; Thu, 01 Aug 2019 22:49:55 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 01 Aug 2019 22:49:54 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 01 Aug 2019 22:49:54 -0700
+Received: from [10.2.171.217] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 2 Aug
+ 2019 05:49:53 +0000
+Subject: Re: [PATCH 20/34] xen: convert put_page() to put_user_page*()
+To:     Juergen Gross <jgross@suse.com>, <john.hubbard@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+CC:     <devel@driverdev.osuosl.org>, Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>, <x86@kernel.org>,
+        <linux-mm@kvack.org>, Dave Hansen <dave.hansen@linux.intel.com>,
+        <amd-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
+        <intel-gfx@lists.freedesktop.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-rpi-kernel@lists.infradead.org>, <devel@lists.orangefs.org>,
+        <xen-devel@lists.xenproject.org>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        <rds-devel@oss.oracle.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Jan Kara <jack@suse.cz>, <ceph-devel@vger.kernel.org>,
+        <kvm@vger.kernel.org>, <linux-block@vger.kernel.org>,
+        <linux-crypto@vger.kernel.org>, <linux-fbdev@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        <linux-media@vger.kernel.org>, <linux-nfs@vger.kernel.org>,
+        <linux-rdma@vger.kernel.org>, <linux-xfs@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <sparclinux@vger.kernel.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+References: <20190802022005.5117-1-jhubbard@nvidia.com>
+ <20190802022005.5117-21-jhubbard@nvidia.com>
+ <4471e9dc-a315-42c1-0c3c-55ba4eeeb106@suse.com>
+X-Nvconfidentiality: public
+From:   John Hubbard <jhubbard@nvidia.com>
+Message-ID: <d5140833-e9ee-beb5-ff0a-2d13a4fe819f@nvidia.com>
+Date:   Thu, 1 Aug 2019 22:48:15 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <4471e9dc-a315-42c1-0c3c-55ba4eeeb106@suse.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL104.nvidia.com (172.18.146.11) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1564724995; bh=OWvjPY2RJnSXiNaT1G8Eyahp8MUAsm98cTkExQmaDUY=;
+        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=g4+wbBM5eRNl11+v4FSAl8PrvEnWACjbjTJMUv4Ewv3g+h7PgD8hueH5dPeoF8sW5
+         c20eFrVi38BUjWugKSUxA2GH7CM3A3OrXQMppFfNCHg/NTgln/g1EuAeIEfsheR70J
+         47ajhTYRdBziMz0qVCHRjvKDjLN869T+rpjyKMqZQbhfLl80UOF5a6wxQMkyYeuu5C
+         +SnQBQbOJUSigTfdZ2ZjmuC0GsGJhOMqTD72slI2rg2m1d7LKmLad2tBrS2UUN+9aI
+         ixGXEdOyIH0YMQhEWsNGgp8xCyCNq0cOZ0EzzfGMekaZZJReXbXnLe2japHjsnQzSN
+         gxuwPmkfTC8TQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Intel pstate driver exposes min_perf_pct and max_perf_pct sysfs files,
-which can be used to force a limit on the min/max P state of the driver.
-Though these files eventually control the min/max frequencies that the
-CPUs will run at, they don't make a change to policy->min/max values.
+On 8/1/19 9:36 PM, Juergen Gross wrote:
+> On 02.08.19 04:19, john.hubbard@gmail.com wrote:
+>> From: John Hubbard <jhubbard@nvidia.com>
+...
+>> diff --git a/drivers/xen/privcmd.c b/drivers/xen/privcmd.c
+>> index 2f5ce7230a43..29e461dbee2d 100644
+>> --- a/drivers/xen/privcmd.c
+>> +++ b/drivers/xen/privcmd.c
+>> @@ -611,15 +611,10 @@ static int lock_pages(
+>> =C2=A0 static void unlock_pages(struct page *pages[], unsigned int nr_pa=
+ges)
+>> =C2=A0 {
+>> -=C2=A0=C2=A0=C2=A0 unsigned int i;
+>> -
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!pages)
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return;
+>> -=C2=A0=C2=A0=C2=A0 for (i =3D 0; i < nr_pages; i++) {
+>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (pages[i])
+>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 put_=
+page(pages[i]);
+>> -=C2=A0=C2=A0=C2=A0 }
+>> +=C2=A0=C2=A0=C2=A0 put_user_pages(pages, nr_pages);
+>=20
+> You are not handling the case where pages[i] is NULL here. Or am I
+> missing a pending patch to put_user_pages() here?
+>=20
 
-When the values of these files are changed (in passive mode of the
-driver), it leads to calling ->limits() callback of the cpufreq
-governors, like schedutil. On a call to it the governors shall
-forcefully update the frequency to come within the limits. For getting
-the value within limits, the schedutil governor calls
-cpufreq_driver_resolve_freq(), which eventually tries to call
-->resolve_freq() callback for this driver. Since the callback isn't
-present, the schedutil governor fails to get the target freq within
-limit and sometimes aborts the update believing that the frequency is
-already set to the target value.
+Hi Juergen,
 
-This patch implements the resolve_freq() callback, so the correct target
-frequency can be returned by the driver and the schedutil governor gets
-the frequency within limits immediately.
+You are correct--this no longer handles the cases where pages[i]
+is NULL. It's intentional, though possibly wrong. :)
 
-Fixes: ecd288429126 ("cpufreq: schedutil: Don't set next_freq to UINT_MAX")
-Cc: v4.18+ <stable@vger.kernel.org> # v4.18+
-Reported-by: Doug Smythies <doug.smythies@gmail.com>
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
----
-V3:
-- This was earlier posted as a diff to an email reply and is getting
-  sent for the first time only as a proper patch.
+I see that I should have added my standard blurb to this
+commit description. I missed this one, but some of the other patches
+have it. It makes the following, possibly incorrect claim:
 
- drivers/cpufreq/intel_pstate.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+"This changes the release code slightly, because each page slot in the
+page_list[] array is no longer checked for NULL. However, that check
+was wrong anyway, because the get_user_pages() pattern of usage here
+never allowed for NULL entries within a range of pinned pages."
 
-diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstate.c
-index cc27d4c59dca..2d84361fbebc 100644
---- a/drivers/cpufreq/intel_pstate.c
-+++ b/drivers/cpufreq/intel_pstate.c
-@@ -2314,6 +2314,18 @@ static int intel_cpufreq_target(struct cpufreq_policy *policy,
- 	return 0;
- }
- 
-+static unsigned int intel_cpufreq_resolve_freq(struct cpufreq_policy *policy,
-+					       unsigned int target_freq)
-+{
-+	struct cpudata *cpu = all_cpu_data[policy->cpu];
-+	int target_pstate;
-+
-+	target_pstate = DIV_ROUND_UP(target_freq, cpu->pstate.scaling);
-+	target_pstate = intel_pstate_prepare_request(cpu, target_pstate);
-+
-+	return target_pstate * cpu->pstate.scaling;
-+}
-+
- static unsigned int intel_cpufreq_fast_switch(struct cpufreq_policy *policy,
- 					      unsigned int target_freq)
- {
-@@ -2350,6 +2362,7 @@ static struct cpufreq_driver intel_cpufreq = {
- 	.verify		= intel_cpufreq_verify_policy,
- 	.target		= intel_cpufreq_target,
- 	.fast_switch	= intel_cpufreq_fast_switch,
-+	.resolve_freq	= intel_cpufreq_resolve_freq,
- 	.init		= intel_cpufreq_cpu_init,
- 	.exit		= intel_pstate_cpu_exit,
- 	.stop_cpu	= intel_cpufreq_stop_cpu,
--- 
-2.21.0.rc0.269.g1a574e7a288b
+The way I've seen these page arrays used with get_user_pages(),
+things are either done single page, or with a contiguous range. So
+unless I'm missing a case where someone is either
 
+a) releasing individual pages within a range (and thus likely messing
+up their count of pages they have), or
+
+b) allocating two gup ranges within the same pages[] array, with a
+gap between the allocations,
+
+...then it should be correct. If so, then I'll add the above blurb
+to this patch's commit description.
+
+If that's not the case (both here, and in 3 or 4 other patches in this
+series, then as you said, I should add NULL checks to put_user_pages()
+and put_user_pages_dirty_lock().
+
+
+thanks,
+--=20
+John Hubbard
+NVIDIA
