@@ -2,116 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4AF0C7F395
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:59:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BE737F2B9
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:51:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406993AbfHBJ6f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 05:58:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37188 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406972AbfHBJ5s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 05:57:48 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 57FDE2067D;
-        Fri,  2 Aug 2019 09:57:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564739867;
-        bh=d4yGjujxHP7IOdvqPfhDM8i8eT9d2PmBoGZVERq1gCY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=my70lUaaaDwNdl8q9Vut9s5amcMkZvZgUp4fgjUufPBBcgmFgs7ZNFDliUFEUARhU
-         p6HVxuP0xu9m6zYQpzrD/uJIAYuX32GnYRXFoEjE97yDCiZ750qGp4Dr6n8QV/RQ4g
-         fCad5JqK45W5OppVeUyQD687dwYP45MM4zl0lgGw=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Yan, Zheng" <zyan@redhat.com>,
-        Jeff Layton <jlayton@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>
-Subject: [PATCH 5.2 20/20] ceph: hold i_ceph_lock when removing caps for freeing inode
-Date:   Fri,  2 Aug 2019 11:40:14 +0200
-Message-Id: <20190802092104.185027321@linuxfoundation.org>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190802092055.131876977@linuxfoundation.org>
-References: <20190802092055.131876977@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S2405413AbfHBJpU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 05:45:20 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:41215 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405386AbfHBJpP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 05:45:15 -0400
+Received: by mail-ot1-f67.google.com with SMTP id o101so77510787ota.8;
+        Fri, 02 Aug 2019 02:45:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=SIowbSyyRLa8kaPpGYFd2/TLvoMN+6bid3yfLLFVdbc=;
+        b=Une64RcEBB8g8ZhWmlTDhjip6lr0q8lw6a6dXpvmLR0WBC189Qk3jkXzIWrls39bnl
+         xdqomLhjNqOWBAl1YuLi2bPc4tOJVbrXBIvQfoyIJOCyXTEKg5q3Tfg8x18I4uFqXVx0
+         jXqJYPWDMcPvEuWexo7iRrehTn9ZbqrNwbuIMWz/63SNG+z1x0Z1ckbVwr4uPV1lZG3R
+         UNOD0uyl21PIafqSSS0HTCjg35a85s0wW1Y3jtcaSZT8QU6EHoXFpk3EvHAZFVw0GOG2
+         Ag0TYC4iIWbU1P4THLEU6kQYAN4q2YpkpLkvrXF0ctyEtVCkjo79Md4rnfLMNgcrPqi3
+         GchA==
+X-Gm-Message-State: APjAAAWxQ+eTTUmE8DnVgDJz39FLT440o2lzAJjaTGshW6xySRdW+MUW
+        Te6RJD0mt2Qr8iN7jm30SgH1snNKmz1EuT0Tmn07fpjo
+X-Google-Smtp-Source: APXvYqxo93Yl4vmPUr6mRr+3EBhZW4gSNFTKEYcIn760n+OBzQDV0oxl23NPUILTh0tZyODqwvAEFBDhHnP3GGcMLsk=
+X-Received: by 2002:a05:6830:8a:: with SMTP id a10mr69081583oto.167.1564739114618;
+ Fri, 02 Aug 2019 02:45:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Fri, 2 Aug 2019 11:45:03 +0200
+Message-ID: <CAJZ5v0i+ZJEdVw=sZfB1KUuqJFWA=mSfB6jL66c1HFfZN9MR6g@mail.gmail.com>
+Subject: [GIT PULL] Power management fix for v5.3-rc3
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux PCI <linux-pci@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yan, Zheng <zyan@redhat.com>
+Hi Linus,
 
-commit d6e47819721ae2d9d090058ad5570a66f3c42e39 upstream.
+Please pull from the tag
 
-ceph_d_revalidate(, LOOKUP_RCU) may call __ceph_caps_issued_mask()
-on a freeing inode.
+ git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
+ pm-5.3-rc3
 
-Signed-off-by: "Yan, Zheng" <zyan@redhat.com>
-Reviewed-by: Jeff Layton <jlayton@redhat.com>
-Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+with top-most commit 42787ed79638dc7f0f8d5c164caba1e87bfab50f
 
----
- fs/ceph/caps.c  |   10 ++++++----
- fs/ceph/inode.c |    2 +-
- fs/ceph/super.h |    2 +-
- 3 files changed, 8 insertions(+), 6 deletions(-)
+ ACPI: PM: Fix regression in acpi_device_set_power()
 
---- a/fs/ceph/caps.c
-+++ b/fs/ceph/caps.c
-@@ -1263,20 +1263,22 @@ static int send_cap_msg(struct cap_msg_a
- }
- 
- /*
-- * Queue cap releases when an inode is dropped from our cache.  Since
-- * inode is about to be destroyed, there is no need for i_ceph_lock.
-+ * Queue cap releases when an inode is dropped from our cache.
-  */
--void __ceph_remove_caps(struct inode *inode)
-+void __ceph_remove_caps(struct ceph_inode_info *ci)
- {
--	struct ceph_inode_info *ci = ceph_inode(inode);
- 	struct rb_node *p;
- 
-+	/* lock i_ceph_lock, because ceph_d_revalidate(..., LOOKUP_RCU)
-+	 * may call __ceph_caps_issued_mask() on a freeing inode. */
-+	spin_lock(&ci->i_ceph_lock);
- 	p = rb_first(&ci->i_caps);
- 	while (p) {
- 		struct ceph_cap *cap = rb_entry(p, struct ceph_cap, ci_node);
- 		p = rb_next(p);
- 		__ceph_remove_cap(cap, true);
- 	}
-+	spin_unlock(&ci->i_ceph_lock);
- }
- 
- /*
---- a/fs/ceph/inode.c
-+++ b/fs/ceph/inode.c
-@@ -536,7 +536,7 @@ void ceph_evict_inode(struct inode *inod
- 
- 	ceph_fscache_unregister_inode_cookie(ci);
- 
--	__ceph_remove_caps(inode);
-+	__ceph_remove_caps(ci);
- 
- 	if (__ceph_has_any_quota(ci))
- 		ceph_adjust_quota_realms_count(inode, false);
---- a/fs/ceph/super.h
-+++ b/fs/ceph/super.h
-@@ -1000,7 +1000,7 @@ extern void ceph_add_cap(struct inode *i
- 			 unsigned cap, unsigned seq, u64 realmino, int flags,
- 			 struct ceph_cap **new_cap);
- extern void __ceph_remove_cap(struct ceph_cap *cap, bool queue_release);
--extern void __ceph_remove_caps(struct inode* inode);
-+extern void __ceph_remove_caps(struct ceph_inode_info *ci);
- extern void ceph_put_cap(struct ceph_mds_client *mdsc,
- 			 struct ceph_cap *cap);
- extern int ceph_is_any_caps(struct inode *inode);
+on top of commit 609488bc979f99f805f34e9a32c1e3b71179d10b
+
+ Linux 5.3-rc2
+
+to receive a power management fix for 5.3-rc3.
+
+This fixes a recent regression affecting ACPI device power management.
+
+Thanks!
 
 
+---------------
+
+Rafael J. Wysocki (1):
+      ACPI: PM: Fix regression in acpi_device_set_power()
+
+---------------
+
+ drivers/acpi/device_pm.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
