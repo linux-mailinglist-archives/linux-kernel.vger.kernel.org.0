@@ -2,84 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 762D77F72E
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 14:47:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B4A57F73B
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 14:51:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389741AbfHBMrm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 08:47:42 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:53230 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730003AbfHBMrm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 08:47:42 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id BEFE1C027339;
-        Fri,  2 Aug 2019 12:47:41 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.136])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 69753608C2;
-        Fri,  2 Aug 2019 12:47:39 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Fri,  2 Aug 2019 14:47:41 +0200 (CEST)
-Date:   Fri, 2 Aug 2019 14:47:38 +0200
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Adrian Reber <areber@redhat.com>
-Cc:     Christian Brauner <christian@brauner.io>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Pavel Emelianov <xemul@virtuozzo.com>,
-        Jann Horn <jannh@google.com>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        linux-kernel@vger.kernel.org, Andrei Vagin <avagin@gmail.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Radostin Stoyanov <rstoyanov1@gmail.com>
-Subject: Re: [PATCH v2 1/2] fork: extend clone3() to support CLONE_SET_TID
-Message-ID: <20190802124738.GC20111@redhat.com>
-References: <20190731161223.2928-1-areber@redhat.com>
- <20190731174135.GA30225@redhat.com>
- <20190802072511.GD18263@dcbz.redhat.com>
+        id S2389832AbfHBMvN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 08:51:13 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38596 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726422AbfHBMvN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 08:51:13 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 94B71AFF6;
+        Fri,  2 Aug 2019 12:51:11 +0000 (UTC)
+Date:   Fri, 2 Aug 2019 14:51:09 +0200
+From:   Jean Delvare <jdelvare@suse.de>
+To:     Linux I2C <linux-i2c@vger.kernel.org>
+Cc:     Wolfram Sang <wsa@the-dreams.de>, linux-kernel@vger.kernel.org,
+        Andrew Cooks <acooks@rationali.st>, linux-acpi@vger.kernel.org,
+        platypus-sw@opengear.com, "Tobin C . Harding" <me@tobin.cc>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Will Wagner <willw@carallon.com>
+Subject: [PATCH v5 0/3] Enable ACPI-defined peripherals on i2c-piix4 SMBus
+Message-ID: <20190802145109.38dd4045@endymion>
+Organization: SUSE Linux
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-suse-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190802072511.GD18263@dcbz.redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Fri, 02 Aug 2019 12:47:42 +0000 (UTC)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/02, Adrian Reber wrote:
->
-> On Wed, Jul 31, 2019 at 07:41:36PM +0200, Oleg Nesterov wrote:
-> > But the main question is how it can really help if ns->level > 0, unlikely
-> > CRIU will ever need to clone the process with the same pid_nr == set_tid
-> > in the ns->parent chain.
->
-> Not sure I understand what you mean. For CRIU only the PID in the PID
-> namespace is relevant.
+These patches fix a couple of issues with the i2c-piix4 driver on
+AMD Family 16h Model 30h SoCs and add ACPI-based enumeration to the
+i2c-piix4 driver.
 
-If it runs "inside" this namespace. But in this case alloc_pid() should
-use nr == set_tid only once in the main loop, when i == ns->level.
+Some I2C peripherals, eg. PCA953x IO expander, are not discovered by the
+probe or detect mechanisms when attached to an SMBus controller that uses
+the i2c-piix4 SMBus driver.
 
-It doesn't need to have the same pid_nr in the parent pid namespace.
+ACPI provides a mechanism to define these peripherals and the controller
+port that they're attached to.
 
-And in fact we should not allow criu (or anything else) to control the child's
-pid_nr in the parent(s) namespace.
+Based on earlier work by Andrew Cooks.
 
-Right?
+Changes:
+v5:
+  take over from Andrew Cooks who apparently moved to other projects
+  fix style issues reported by Tobin C. Harding
+  fix potential array overrun
+  make sure all registered adapters get unregistered
+  keep ports 3 and 4 on early Hudson2
+  assume AMD SMBus numbering for ACPI devices
+v4:
+  remove unnecessary SB800_MAIN_PORTS constant
+  reduce piix4_remove change
+v3:
+  take chip revision into account when determining port selection register
+v2:
+  count the adapters, instead of misusing port numbers
 
-> > So may be kernel_clone_args->set_tid should be pid_t __user *set_tid_array?
-> > Or I missed something ?
->
-> Not sure why and how an array would be needed. Could you give me some
-> more details why you think this is needed.
-
-IIURC, criu can restore the process tree along with nested pid namespaces.
-
-how can this patch help in this case?
-
-But again, perhaps I missed something. I forgot everything about criu.
-
-Oleg.
-
+-- 
+Jean Delvare
+SUSE L3 Support
