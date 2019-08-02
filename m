@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF3817F449
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 12:05:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D5E27F468
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 12:05:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407209AbfHBKED (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 06:04:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41996 "EHLO mail.kernel.org"
+        id S2388375AbfHBJk3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 05:40:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41436 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404350AbfHBJkr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 05:40:47 -0400
+        id S2391065AbfHBJk0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 05:40:26 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AF75D20679;
-        Fri,  2 Aug 2019 09:40:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1A37E206A2;
+        Fri,  2 Aug 2019 09:40:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564738846;
-        bh=hbaWQ/86C4aWzlWjVCF8FiRdDL4BEFMH12eY0tpE9mM=;
+        s=default; t=1564738825;
+        bh=4WRnDc6ccVf1F9VSDNYejaU+jEuRvyZ28WXLUbFz+a0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dVzcUd/SFq7TexzY7akaM8uDFfU9A6pWPIPxElOI1HcPXiEPkfkwa6gMrqUrx05cz
-         YTdcfKeI9Yc/OrIol2kMnXZwn20UV/iQq84znuG9XCtEaFpv2OIJW0saBGgvvxSdi/
-         6qbVVUTPN/Xz/FFZbbgwJ+dK7EMUM8UvDU3YLcTc=
+        b=nYocTJui8b2iJLu7NEo9kDnayXU3MRzlAOekXaJEovfdeRHq3VrgpGZHK+lAyvUKM
+         /9dgqH6okNSTI8piDxdRUlxRbCO1xGrNkbpzQCbf0In1LdscWrlsNxKL9jIxosgubA
+         RWhMsBjUjNJUPrrS0kzMuiidaahJStmrpzGE7nqs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tamizh chelvam <tamizhr@codeaurora.org>,
-        Anilkumar Kolli <akolli@codeaurora.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
+        stable@vger.kernel.org, Oliver Neukum <oneukum@suse.com>,
+        syzbot+26ec41e9f788b3eba396@syzkaller.appspotmail.com,
+        Sean Young <sean@mess.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 008/223] ath: DFS JP domain W56 fixed pulse type 3 RADAR detection
-Date:   Fri,  2 Aug 2019 11:33:53 +0200
-Message-Id: <20190802092239.361781888@linuxfoundation.org>
+Subject: [PATCH 4.9 010/223] media: dvb: usb: fix use after free in dvb_usb_device_exit
+Date:   Fri,  2 Aug 2019 11:33:55 +0200
+Message-Id: <20190802092239.554840027@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190802092238.692035242@linuxfoundation.org>
 References: <20190802092238.692035242@linuxfoundation.org>
@@ -45,42 +46,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit d8792393a783158cbb2c39939cb897dc5e5299b6 ]
+[ Upstream commit 6cf97230cd5f36b7665099083272595c55d72be7 ]
 
-Increase pulse width range from 1-2usec to 0-4usec.
-During data traffic HW occasionally fails detecting radar pulses,
-so that SW cannot get enough radar reports to achieve the success rate.
+dvb_usb_device_exit() frees and uses the device name in that order.
+Fix by storing the name in a buffer before freeing it.
 
-Tested ath10k hw and fw:
-	* QCA9888(10.4-3.5.1-00052)
-	* QCA4019(10.4-3.2.1.1-00017)
-	* QCA9984(10.4-3.6-00104)
-	* QCA988X(10.2.4-1.0-00041)
-
-Tested ath9k hw: AR9300
-
-Tested-by: Tamizh chelvam <tamizhr@codeaurora.org>
-Signed-off-by: Tamizh chelvam <tamizhr@codeaurora.org>
-Signed-off-by: Anilkumar Kolli <akolli@codeaurora.org>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Oliver Neukum <oneukum@suse.com>
+Reported-by: syzbot+26ec41e9f788b3eba396@syzkaller.appspotmail.com
+Signed-off-by: Sean Young <sean@mess.org>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/ath/dfs_pattern_detector.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/usb/dvb-usb/dvb-usb-init.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/wireless/ath/dfs_pattern_detector.c b/drivers/net/wireless/ath/dfs_pattern_detector.c
-index 4100ffd42a43..78146607f16e 100644
---- a/drivers/net/wireless/ath/dfs_pattern_detector.c
-+++ b/drivers/net/wireless/ath/dfs_pattern_detector.c
-@@ -111,7 +111,7 @@ static const struct radar_detector_specs jp_radar_ref_types[] = {
- 	JP_PATTERN(0, 0, 1, 1428, 1428, 1, 18, 29, false),
- 	JP_PATTERN(1, 2, 3, 3846, 3846, 1, 18, 29, false),
- 	JP_PATTERN(2, 0, 1, 1388, 1388, 1, 18, 50, false),
--	JP_PATTERN(3, 1, 2, 4000, 4000, 1, 18, 50, false),
-+	JP_PATTERN(3, 0, 4, 4000, 4000, 1, 18, 50, false),
- 	JP_PATTERN(4, 0, 5, 150, 230, 1, 23, 50, false),
- 	JP_PATTERN(5, 6, 10, 200, 500, 1, 16, 50, false),
- 	JP_PATTERN(6, 11, 20, 200, 500, 1, 12, 50, false),
+diff --git a/drivers/media/usb/dvb-usb/dvb-usb-init.c b/drivers/media/usb/dvb-usb/dvb-usb-init.c
+index 84308569e7dc..b3413404f91a 100644
+--- a/drivers/media/usb/dvb-usb/dvb-usb-init.c
++++ b/drivers/media/usb/dvb-usb/dvb-usb-init.c
+@@ -287,12 +287,15 @@ EXPORT_SYMBOL(dvb_usb_device_init);
+ void dvb_usb_device_exit(struct usb_interface *intf)
+ {
+ 	struct dvb_usb_device *d = usb_get_intfdata(intf);
+-	const char *name = "generic DVB-USB module";
++	const char *default_name = "generic DVB-USB module";
++	char name[40];
+ 
+ 	usb_set_intfdata(intf, NULL);
+ 	if (d != NULL && d->desc != NULL) {
+-		name = d->desc->name;
++		strscpy(name, d->desc->name, sizeof(name));
+ 		dvb_usb_exit(d);
++	} else {
++		strscpy(name, default_name, sizeof(name));
+ 	}
+ 	info("%s successfully deinitialized and disconnected.", name);
+ 
 -- 
 2.20.1
 
