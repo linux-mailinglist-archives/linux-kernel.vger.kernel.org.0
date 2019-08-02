@@ -2,334 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BEE97F51B
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 12:34:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6713C7F512
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 12:33:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405251AbfHBKeQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 06:34:16 -0400
-Received: from shell.v3.sk ([90.176.6.54]:47579 "EHLO shell.v3.sk"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404935AbfHBKeH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 06:34:07 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 0E73280536;
-        Fri,  2 Aug 2019 12:34:05 +0200 (CEST)
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id XVuQ5ilwv7tj; Fri,  2 Aug 2019 12:33:49 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 0DF8180538;
-        Fri,  2 Aug 2019 12:33:44 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at zimbra.v3.sk
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id mjuXp4jJ5lMD; Fri,  2 Aug 2019 12:33:40 +0200 (CEST)
-Received: from belphegor.brq.redhat.com (nat-pool-brq-t.redhat.com [213.175.37.10])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id C72EB8053E;
-        Fri,  2 Aug 2019 12:33:36 +0200 (CEST)
-From:   Lubomir Rintel <lkundrak@v3.sk>
-To:     Olof Johansson <olof@lixom.net>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Pavel Machek <pavel@ucw.cz>,
-        Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH v2 6/6] ARM: dts: mmp2: add OLPC XO 1.75 machine
-Date:   Fri,  2 Aug 2019 12:33:26 +0200
-Message-Id: <20190802103326.531250-7-lkundrak@v3.sk>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190802103326.531250-1-lkundrak@v3.sk>
-References: <20190802103326.531250-1-lkundrak@v3.sk>
+        id S2392108AbfHBKdv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 06:33:51 -0400
+Received: from wout5-smtp.messagingengine.com ([64.147.123.21]:48201 "EHLO
+        wout5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730143AbfHBKdv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 06:33:51 -0400
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailout.west.internal (Postfix) with ESMTP id A582E400;
+        Fri,  2 Aug 2019 06:33:49 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute6.internal (MEProxy); Fri, 02 Aug 2019 06:33:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm1; bh=rzS6XuNYwD34+UrvpJIGC8ldeuz
+        lzqnOgE995Y09X0s=; b=HAXqxdheLUb0v1xy7RsVcMERiwRQw9+/2fCE/xKL4ID
+        giu2MuieuVNtOGh8l++quWR5CyMPR07Fu5Zz8UHMQHBbB+g9lH2LeXDJbsbiMIvE
+        tYLXZC9Jsmg4amXKRJm2F2t6YgBiy5Wu+ZQOA6W9a43t3OdEi7A7yqsb2NRdvySP
+        nTZLG0DatKAIohty5UjarljaCw2wanoYiyGiFmp3t6rIqxIwaaIggeze7RxgnkZq
+        7LrBezrtqp3SeIfINycf5VhVjLyG9Ot6GuBQZhw4xSO15EX9wTT1ZUEqjK9i5M+U
+        rUlZ1gK1hrlRDs449k11Weo2XONXVXsS3icqBFG8yww==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=rzS6Xu
+        NYwD34+UrvpJIGC8ldeuzlzqnOgE995Y09X0s=; b=YhkceHBe2Brk8kOCIAP54v
+        uZ/1MG/PvFltjRk3NgVE+4N9DdzOn55f+wei/g0tASO4lFA4PL/ta/ZbHrizHAwI
+        R8TjHWpyJRhah5566j5VRB0EoSYWho25/57evwjPviiHX1ZHKKJoslrQwQMdfScL
+        TGEdI4b/LIB4jwwvSOKQ3AsELNbAKM7i8VAyJVDalw6Brl0SlyfmpE9Rlt3iAjhv
+        vHlSgwZwuVFo33ct29/QdqRPXh884oNTMsMLjpvWUpR8Xh91xzBqsS+6tu4Ldhlz
+        Xb7IXwSytmZmAs7bhATu2cnElYzF84dEmmx1+J8q3+Yfo4I4kmt8a4PxZIowUsyA
+        ==
+X-ME-Sender: <xms:jBFEXXXNGhcnx20SJIrw0TDkF2sS1mQSci0A17pUzeZDV0Z5_g2S1g>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrleelgddtfecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvuffkfhggtggujggfsehttdertddtredvnecuhfhrohhmpefirhgvghcu
+    mffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucffohhmrghinhepghhithhhuhgsrd
+    gtohhmnecukfhppeekfedrkeeirdekledruddtjeenucfrrghrrghmpehmrghilhhfrhho
+    mhepghhrvghgsehkrhhorghhrdgtohhmnecuvehluhhsthgvrhfuihiivgeptd
+X-ME-Proxy: <xmx:jBFEXbYX_9cRUn_20MDE9utlQuGkCebgFcnLtV0dEqmYhNR7QW2A2Q>
+    <xmx:jBFEXavKjxFEWVUVsHjtEK3kGjoegVtKwDueN7K_ye-gKqFu3xQFGQ>
+    <xmx:jBFEXVnQfce666uwWEzS2fYezCh1ohc3lovO9XsT4C7T2ejpEII0WQ>
+    <xmx:jRFEXfPKTmDnMbKKxY9zHJ_-V9-3aOVZffeOBKJISt6cHP-1I2qDbA>
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 84F178005C;
+        Fri,  2 Aug 2019 06:33:48 -0400 (EDT)
+Date:   Fri, 2 Aug 2019 12:33:46 +0200
+From:   Greg KH <greg@kroah.com>
+To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc:     Rolf Eike Beer <eb@emlix.com>, stable@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: Linux 4.9.180 build fails =?utf-8?Q?wi?=
+ =?utf-8?Q?th_gcc_9_and_'cleanup=5Fmodule'_specifies_less_restrictive_attr?=
+ =?utf-8?Q?ibute_than_its_target_=E2=80=A6?=
+Message-ID: <20190802103346.GA14255@kroah.com>
+References: <259986242.BvXPX32bHu@devpool35>
+ <20190606185900.GA19937@kroah.com>
+ <CANiq72n2E4Ue0MU5mWitSbsscizPQKML0QQx_DBwJVni+eWMHQ@mail.gmail.com>
+ <4007272.nJfEYfeqza@devpool35>
+ <CANiq72=T8nH3HHkYvWF+vPMscgwXki1Ugiq6C9PhVHJUHAwDYw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANiq72=T8nH3HHkYvWF+vPMscgwXki1Ugiq6C9PhVHJUHAwDYw@mail.gmail.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a fairly complete description of an OLPC XO 1.75 laptop.
-What's missing for now is the GPU, LCD controller, DCON, the panel and
-audio.
+On Fri, Aug 02, 2019 at 12:19:33PM +0200, Miguel Ojeda wrote:
+> On Fri, Aug 2, 2019 at 10:17 AM Rolf Eike Beer <eb@emlix.com> wrote:
+> >
+> > Am Samstag, 8. Juni 2019, 14:00:34 CEST schrieb Miguel Ojeda:
+> > > On Thu, Jun 6, 2019 at 8:59 PM Greg KH <greg@kroah.com> wrote:
+> > > > "manually fixing it up" means "hacked it to pieces" to me, I have no
+> > > > idea what the end result really was :)
+> > > >
+> > > > If someone wants to send me some patches I can actually apply, that
+> > > > would be best...
+> > >
+> > > I will give it a go whenever I get some free time :)
+> >
+> > I fear this has never happened, did it?
+> 
+> No. Between summer, holidays and a conference I didn't get to do it.
+> 
+> Done the minimal approach here:
+> 
+>   https://github.com/ojeda/linux/commits/compiler-attributes-backport
+> 
+> Tested building a handful of drivers with gcc 4.6.4, 8.3.0 and 9.1.1.
+> 
+> Greg, I could backport the entire compiler_attributes.h, but given
+> this is stable, we are supposed to minimize changes, right?
+> 
+> I tried to imitate what you do in other stable patches, please check
+> the Cc:, Link: lines and the "commit ... upstream" just in case.
 
-The machine is booted with OpenFirmware and thus has a devicetree.
-However, older versions are unable to create a valid FDT and don't
-follow the Linux bindings. Having an device tree in the kernel tree
-makes it easier to use mainline kernels on such machines, test changes
-with CONFIG_ARM_APPENDED_DTB and give a good reference on what bindings
-are used on the machine without an access to one.
+If only those 2 patches are all that is needed, nice!  I'll gladly take
+them, can you send them to me (and cc: the stable list) in email so I
+can queue them up for the next round of releases after this one?
 
-Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
----
- arch/arm/boot/dts/Makefile              |   3 +-
- arch/arm/boot/dts/mmp2-olpc-xo-1-75.dts | 244 ++++++++++++++++++++++++
- 2 files changed, 246 insertions(+), 1 deletion(-)
- create mode 100644 arch/arm/boot/dts/mmp2-olpc-xo-1-75.dts
+thanks,
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 9159fa2cea90c..65213b5265187 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -336,7 +336,8 @@ dtb-$(CONFIG_MACH_MESON8) +=3D \
- dtb-$(CONFIG_ARCH_MMP) +=3D \
- 	pxa168-aspenite.dtb \
- 	pxa910-dkb.dtb \
--	mmp2-brownstone.dtb
-+	mmp2-brownstone.dtb \
-+	mmp2-olpc-xo-1-75.dtb
- dtb-$(CONFIG_ARCH_MPS2) +=3D \
- 	mps2-an385.dtb \
- 	mps2-an399.dtb
-diff --git a/arch/arm/boot/dts/mmp2-olpc-xo-1-75.dts b/arch/arm/boot/dts/=
-mmp2-olpc-xo-1-75.dts
-new file mode 100644
-index 0000000000000..6cfa0d4a18845
---- /dev/null
-+++ b/arch/arm/boot/dts/mmp2-olpc-xo-1-75.dts
-@@ -0,0 +1,244 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
-+/*
-+ * OLPC XO 1.75 Laptop.
-+ *
-+ * Copyright (C) 2018,2019 Lubomir Rintel <lkundrak@v3.sk>
-+ */
-+
-+/dts-v1/;
-+#include "mmp2.dtsi"
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/input/linux-event-codes.h>
-+#include <dt-bindings/interrupt-controller/irq.h>
-+
-+/ {
-+	model =3D "OLPC XO-1.75";
-+	compatible =3D "olpc,xo-1.75", "mrvl,mmp2";
-+
-+	chosen {
-+		#address-cells =3D <1>;
-+		#size-cells =3D <1>;
-+		ranges;
-+
-+		framebuffer@1fc00000 {
-+			compatible =3D "simple-framebuffer";
-+			reg =3D <0x1fc00000 (1200 * 900 * 2)>;
-+			width =3D <1200>;
-+			height =3D <900>;
-+			stride =3D <(1200 * 2)>;
-+			format =3D "r5g6b5";
-+			clocks =3D <&soc_clocks MMP2_CLK_DISP0_LCDC>,
-+				 <&soc_clocks MMP2_CLK_DISP0>;
-+		};
-+	};
-+
-+	memory {
-+		linux,usable-memory =3D <0x0 0x1f800000>;
-+		available =3D <0xcf000 0x1ef31000 0x1000 0xbf000>;
-+		reg =3D <0x0 0x20000000>;
-+		device_type =3D "memory";
-+	};
-+
-+	gpio-keys {
-+		compatible =3D "gpio-keys";
-+
-+		lid {
-+			label =3D "Lid";
-+			gpios =3D <&gpio 129 GPIO_ACTIVE_LOW>;
-+			linux,input-type =3D <EV_SW>;
-+			linux,code =3D <SW_LID>;
-+			wakeup-source;
-+		};
-+
-+		tablet_mode {
-+			label =3D "E-Book Mode";
-+			gpios =3D <&gpio 128 GPIO_ACTIVE_LOW>;
-+			linux,input-type =3D <EV_SW>;
-+			linux,code =3D <SW_TABLET_MODE>;
-+			wakeup-source;
-+		};
-+
-+		microphone_insert {
-+			label =3D "Microphone Plug";
-+			gpios =3D <&gpio 96 GPIO_ACTIVE_HIGH>;
-+			linux,input-type =3D <EV_SW>;
-+			linux,code =3D <SW_MICROPHONE_INSERT>;
-+			debounce-interval =3D <100>;
-+			wakeup-source;
-+		};
-+
-+		headphone_insert {
-+			label =3D "Headphone Plug";
-+			gpios =3D <&gpio 97 GPIO_ACTIVE_HIGH>;
-+			linux,input-type =3D <EV_SW>;
-+			linux,code =3D <SW_HEADPHONE_INSERT>;
-+			debounce-interval =3D <100>;
-+			wakeup-source;
-+		};
-+	};
-+
-+	camera_i2c {
-+		compatible =3D "i2c-gpio";
-+		gpios =3D <&gpio 109 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>,
-+			<&gpio 108 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+		#address-cells =3D <1>;
-+		#size-cells =3D <0>;
-+		i2c-gpio,timeout-ms =3D <1000>;
-+		status =3D "okay";
-+
-+		camera@21 {
-+			compatible =3D "ovti,ov7670";
-+			reg =3D <0x21>;
-+			reset-gpios =3D <&gpio 102 GPIO_ACTIVE_LOW>;
-+			powerdown-gpios =3D <&gpio 150 GPIO_ACTIVE_LOW>;
-+			clocks =3D <&camera0>;
-+			clock-names =3D "xclk";
-+
-+			port {
-+				ov7670_0: endpoint {
-+					hsync-active =3D <1>;
-+					vsync-active =3D <1>;
-+					remote-endpoint =3D <&camera0_0>;
-+				};
-+			};
-+		};
-+	};
-+
-+	battery {
-+		compatible =3D "olpc,xo1.5-battery", "olpc,xo1-battery";
-+	};
-+
-+	wlan_reg: fixedregulator0 {
-+		compatible =3D "regulator-fixed";
-+		regulator-name =3D "wlan";
-+		regulator-min-microvolt =3D <3300000>;
-+		regulator-max-microvolt =3D <3300000>;
-+		gpio =3D <&gpio 34 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
-+
-+	wlan_pwrseq: pwrseq0 {
-+		compatible =3D "mmc-pwrseq-sd8787";
-+		powerdown-gpios =3D <&gpio 57 GPIO_ACTIVE_HIGH>;
-+		reset-gpios =3D <&gpio 58 GPIO_ACTIVE_HIGH>;
-+	};
-+
-+	soc {
-+		axi@d4200000 {
-+			ap-sp@d4290000 {
-+				#address-cells =3D <1>;
-+				#size-cells =3D <0>;
-+				compatible =3D "olpc,ap-sp";
-+				interrupts =3D <40>;
-+				reg =3D <0xd4290000 0x1000>;
-+				data-gpios =3D <&gpio 72 GPIO_ACTIVE_HIGH>;
-+				clk-gpios =3D <&gpio 71 GPIO_ACTIVE_HIGH>;
-+				status =3D "okay";
-+			};
-+		};
-+	};
-+};
-+
-+&uart3 {
-+	status =3D "okay";
-+};
-+
-+&uart4 {
-+	status =3D "okay";
-+};
-+
-+&rtc {
-+	status =3D "okay";
-+};
-+
-+&usb_phy0 {
-+	status =3D "okay";
-+};
-+
-+&usb_otg0 {
-+	status =3D "okay";
-+};
-+
-+&mmc1 {
-+	clock-frequency =3D <50000000>;
-+	no-1-8-v;
-+	mrvl,clk-delay-cycles =3D <31>;
-+	broken-cd;
-+	status =3D "okay";
-+};
-+
-+&mmc2 {
-+	clock-frequency =3D <50000000>;
-+	no-1-8-v;
-+	bus-width =3D <4>;
-+	non-removable;
-+	broken-cd;
-+	wakeup-source;
-+	keep-power-in-suspend;
-+	mmc-pwrseq =3D <&wlan_pwrseq>;
-+	vmmc-supply =3D <&wlan_reg>;
-+	status =3D "okay";
-+};
-+
-+&mmc3 {
-+	clock-frequency =3D <50000000>;
-+	no-1-8-v;
-+	bus-width =3D <8>;
-+	non-removable;
-+	broken-cd;
-+	mrvl,clk-delay-cycles =3D <31>;
-+	status =3D "okay";
-+};
-+
-+&twsi1 {
-+	status =3D "okay";
-+
-+	audio-codec@1a {
-+		compatible =3D "realtek,alc5631";
-+		reg =3D <0x1a>;
-+		status =3D "okay";
-+	};
-+};
-+
-+&twsi2 {
-+	status =3D "okay";
-+
-+	rtc@68 {
-+		compatible =3D "dallas,ds1338";
-+		reg =3D <0x68>;
-+		status =3D "okay";
-+	};
-+};
-+
-+&twsi6 {
-+	status =3D "okay";
-+
-+	accelerometer@1d {
-+		compatible =3D "st,lis331dlh", "st,lis3lv02d";
-+		reg =3D <0x1d>;
-+		status =3D "okay";
-+	};
-+};
-+
-+&ssp3 {
-+	#address-cells =3D <0>;
-+	spi-slave;
-+	status =3D "okay";
-+	ready-gpio =3D <&gpio 125 GPIO_ACTIVE_HIGH>;
-+
-+	slave {
-+		compatible =3D "olpc,xo1.75-ec";
-+		spi-cpha;
-+		cmd-gpio =3D <&gpio 155 GPIO_ACTIVE_HIGH>;
-+	};
-+};
-+
-+&camera0 {
-+	status =3D "okay";
-+
-+	port {
-+		camera0_0: endpoint {
-+			remote-endpoint =3D <&ov7670_0>;
-+		};
-+	};
-+};
---=20
-2.21.0
-
+greg k-h
