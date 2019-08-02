@@ -2,105 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9518B7EBDB
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 07:18:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 844CD7EBDD
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 07:20:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732601AbfHBFSf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 01:18:35 -0400
-Received: from mail-wm1-f42.google.com ([209.85.128.42]:39969 "EHLO
-        mail-wm1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726626AbfHBFSf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 01:18:35 -0400
-Received: by mail-wm1-f42.google.com with SMTP id v19so65103615wmj.5;
-        Thu, 01 Aug 2019 22:18:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=eYTBzEX7GMOtIqjborVnFKsDkL4kSXgG4qFbaiySFOY=;
-        b=ueV7SpbzhRpnl8iQm2HfnxN2bO6BhCambLM5XdoTPJwI8TwdtCzlBzMVVEvtxsK+ck
-         aW/308wwjayjrlp1M2VqfdxUMCck2x5+fcuKwKRzVGgoM//S9RajWxDHbh3JMAZUK7kM
-         gQv71iMpx+2ry+vhYoxKW6qvtD6BJCN3U/GlhOiTPKN7h1xJo1336VAFskhJyik1mBU/
-         PaI7FWD3NPBHL65YaU6cLuK7NKAbJiJNmYcFX/YiNvqE7pSKve+12f+rNaGKhDNhLUyN
-         KPImUEcaoo5jP4wST9mBqm0uYC1l8jUr5GcFTIQLE5MeZscAPQiN5feUxJ+TDxAw7qSq
-         C1Bw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=eYTBzEX7GMOtIqjborVnFKsDkL4kSXgG4qFbaiySFOY=;
-        b=ujrSr6d6LOd0yI+Q46G3HaP8x/iR+HdIsqXPViw+kGBG6kFoodA1jmRd+C3AEeUPao
-         oyDfGI9yrM3zMEGyN/rusucHNUEHZpHzfoZbG7b7uFCq81oMm+tAwmhLoEvrzcP234+5
-         VMyGJAEM+jp+7z9WgvVY5k9vJVZ9tO5mVMoE6aZVi4CGmaNZMimrLrScgppKkM4kaLuZ
-         OPM5SxX7ZkuGwYOYaM+M83+SYZ5t7ZU6DQZuXlwZvex9tSMh8RbDDfU/XnEr3Im8dv0U
-         E3sggGJcEEMblRv5s0pO6XTVfKT2vL5VZOCIWhb/wq5ZJAmFvL7f5AZVaZMZMwqpyy+f
-         wq6g==
-X-Gm-Message-State: APjAAAX2pbTzHyOL8mUZhvyq36AHpHKSqhhN2ZmT7MNJQpSelwHld6hm
-        Jv3x49Xj+1JNLRtRdguLr47mYtxT
-X-Google-Smtp-Source: APXvYqy5l5dC5ORyhEdYkw2aFAApDY3VJbNLp6XFp0/GmBZPXoekpUdgnDsxUUALy1Iwjmyux44qRQ==
-X-Received: by 2002:a1c:107:: with SMTP id 7mr2210361wmb.84.1564723112827;
-        Thu, 01 Aug 2019 22:18:32 -0700 (PDT)
-Received: from Red ([2a01:cb1d:147:7200:2e56:dcff:fed2:c6d6])
-        by smtp.googlemail.com with ESMTPSA id c78sm102330630wmd.16.2019.08.01.22.18.31
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 01 Aug 2019 22:18:32 -0700 (PDT)
-Date:   Fri, 2 Aug 2019 07:18:30 +0200
-From:   Corentin Labbe <clabbe.montjoie@gmail.com>
-To:     Pascal Van Leeuwen <pvanleeuwen@verimatrix.com>
-Cc:     "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: Need help with failling gcm_base(ctr,ghash-generic) selftest
-Message-ID: <20190802051830.GA13677@Red>
-References: <20190801194249.GA18705@Red>
- <MN2PR20MB297372F8FB158C59BF4F6F2FCAD90@MN2PR20MB2973.namprd20.prod.outlook.com>
+        id S1732633AbfHBFSu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 01:18:50 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:31754 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726626AbfHBFSu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 01:18:50 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 460FnL5MkFz9vBfr;
+        Fri,  2 Aug 2019 07:18:46 +0200 (CEST)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=Bam9ZT8f; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id sdGXrrjyCDuQ; Fri,  2 Aug 2019 07:18:46 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 460FnL3Stcz9vBfp;
+        Fri,  2 Aug 2019 07:18:46 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1564723126; bh=dskM129Z+Pm2g90k1EaL/hR4S3jKQ/kszYbrKBxwKZM=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=Bam9ZT8fJlMSqeotbiCuQd3LWO9PpK+7w9pj2xMUyg6ZAYtLHCtDZ4pzOXQHI7kfe
+         uGh+XUsOrdEWkqJFeoXMMDvLB9QaQVw5STm2gmCOl2HmNvYrUGcHyiPRY/uJP5OmG4
+         j8CG7abnSTmsnnrTXnGYQ/q8V93FZO0n3ulXNTsM=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 6520A8B797;
+        Fri,  2 Aug 2019 07:18:47 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id OThNZB83Zkwe; Fri,  2 Aug 2019 07:18:47 +0200 (CEST)
+Received: from [192.168.4.90] (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id E45368B74C;
+        Fri,  2 Aug 2019 07:18:46 +0200 (CEST)
+Subject: Re: [PATCH] powerpc: Remove inaccessible CMDLINE default
+To:     Chris Packham <chris.packham@alliedtelesis.co.nz>,
+        benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+References: <20190802050232.22978-1-chris.packham@alliedtelesis.co.nz>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <43422528-c2fc-a2c8-49e6-0f6b2c791648@c-s.fr>
+Date:   Fri, 2 Aug 2019 07:18:46 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <MN2PR20MB297372F8FB158C59BF4F6F2FCAD90@MN2PR20MB2973.namprd20.prod.outlook.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190802050232.22978-1-chris.packham@alliedtelesis.co.nz>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 02, 2019 at 12:24:04AM +0000, Pascal Van Leeuwen wrote:
-> > -----Original Message-----
-> > From: linux-crypto-owner@vger.kernel.org <linux-crypto-owner@vger.kernel.org> On Behalf Of
-> > Corentin Labbe
-> > Sent: Thursday, August 1, 2019 9:43 PM
-> > To: herbert@gondor.apana.org.au; linux-crypto@vger.kernel.org
-> > Cc: linux-kernel@vger.kernel.org
-> > Subject: Need help with failling gcm_base(ctr,ghash-generic) selftest
-> > 
-> > Hello
-> > 
-> > I am writing the Allwinner sun8i-ce driver and when running tcrypt I got
-> > [   30.201739] alg: aead: gcm_base(ctr-aes-sun8i-ce,ghash-generic) decryption failed on test
-> > vector 3; expected_error=0, actual_error=-74, cfg=\"random: may_sleep use_digest
-> > src_divs=[100.0%@+2614] dst_divs=[5.90%@alignmask+3015, 60.56%@+3996, 17.92%@+865,
-> > 15.62%@+10]\"
-> > or
-> >
-> The decryption reports only an -EBADMSG here, which means the decryption itself went
-> fine, but the authentication tag mismatched.
+
+
+Le 02/08/2019 à 07:02, Chris Packham a écrit :
+> Since commit cbe46bd4f510 ("powerpc: remove CONFIG_CMDLINE #ifdef mess")
+> CONFIG_CMDLINE has always had a value regardless of CONNIG_CMDLINE_BOOL.
+
+s/CONNIG/CONFIG/
+
 > 
+> For example:
 > 
-> > [  148.613537] alg: aead: gcm_base(ctr-aes-sun8i-ce,ghash-generic) encryption test failed
-> > (wrong result) on test vector 2, cfg=\"random: may_sleep use_final src_divs=[100.0%@+0]
-> > iv_offset=20\"
-> > 
-> Can't say for sure, but considering the decrypt error, this is most likely just a
-> mismatch on the appended authentication tag.
+>   $ make ARCH=powerpc defconfig
+>   $ cat .config
+>   # CONFIG_CMDLINE_BOOL is not set
+>   CONFIG_CMDLINE=""
 > 
-> > Since ctr-aes-sun8i-ce is passing the ctr(aes) selftest, I dont understand what could be
-> > wrong.
-> > 
-> That is possible, as this appears to be a problem with the authentication part,
-> not the encryption part. So possibly a problem with the way you setup the 
-> authentication key (which is actually derived from the encryption key, but I don't
-> know if your hardware does this autonomously, mine doesn't) and/or operation?
+> When enabling CONNIG_CMDLINE_BOOL this value is kept making the 'default
+> "..." if CONNIG_CMDLINE_BOOL' ineffective.
+
+s/CONNIG/CONFIG/
+
+> 
+>   $ ./scripts/config --enable CONFIG_CMDLINE_BOOL
+>   $ cat .config
+>   CONFIG_CMDLINE_BOOL=y
+>   CONFIG_CMDLINE=""
+> 
+> Additionally all the in-tree powerpc defconfigs that set
+> CONFIG_CMDLINE_BOOL=y also set CONFIG_CMDLINE to something else. For
+> these reasons remove the inaccessible default.
+> 
+> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+
+Reviewed-by: Christophe Leroy <christophe.leroy@c-s.fr>
+
+> ---
+> This should be independent of http://patchwork.ozlabs.org/patch/1140811/ but
+> I've generated this patch on a stream that has it applied locally.
+> 
+>   arch/powerpc/Kconfig | 1 -
+>   1 file changed, 1 deletion(-)
+> 
+> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+> index d413fe1b4058..6fca6eba6aee 100644
+> --- a/arch/powerpc/Kconfig
+> +++ b/arch/powerpc/Kconfig
+> @@ -844,7 +844,6 @@ config CMDLINE_BOOL
+>   
+>   config CMDLINE
+>   	string "Initial kernel command string" if CMDLINE_BOOL
+> -	default "console=ttyS0,9600 console=tty0 root=/dev/sda2" if CMDLINE_BOOL
+>   	default ""
+>   	help
+>   	  On some platforms, there is currently no way for the boot loader to
 > 
 
-But since my driver is just a skcipher, I dont understand why I should care about any aead part, right ?
+I think we could also get rid of CMDLINE_BOOL totally and use CMDLINE != 
+"" instead.
+
+Christophe
