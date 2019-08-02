@@ -2,85 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43E157FA3C
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 15:32:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D1F357F9B5
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 15:30:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404867AbfHBNbl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 09:31:41 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:4158 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2404812AbfHBNbj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 09:31:39 -0400
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 47990CE132AA1DC6712D;
-        Fri,  2 Aug 2019 21:31:37 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS407-HUB.china.huawei.com
- (10.3.19.207) with Microsoft SMTP Server id 14.3.439.0; Fri, 2 Aug 2019
- 21:31:28 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <herbert@gondor.apana.org.au>, <lars.persson@axis.com>,
-        <jesper.nilsson@axis.com>, <davem@davemloft.net>,
-        <thomas.lendacky@amd.com>, <gary.hook@amd.com>, <krzk@kernel.org>,
-        <kgene@kernel.org>, <antoine.tenart@bootlin.com>,
-        <matthias.bgg@gmail.com>, <jamie@jamieiles.com>,
-        <agross@kernel.org>, <heiko@sntech.de>,
-        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@st.com>,
-        <clabbe.montjoie@gmail.com>, <mripard@kernel.org>, <wens@csie.org>
-CC:     <linux-kernel@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
-        <linux-arm-kernel@axis.com>, <linux-samsung-soc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
+        id S2394848AbfHBN2m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 09:28:42 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:61071 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2391155AbfHBN2j (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 09:28:39 -0400
+X-UUID: 1da96149f2434255840eb41c0a62870c-20190802
+X-UUID: 1da96149f2434255840eb41c0a62870c-20190802
+Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
+        (envelope-from <hsin-hsiung.wang@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0707 with TLS)
+        with ESMTP id 1967125001; Fri, 02 Aug 2019 21:28:30 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Fri, 2 Aug 2019 21:28:31 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 2 Aug 2019 21:28:31 +0800
+Message-ID: <1564752511.1587.5.camel@mtksdaap41>
+Subject: Re: [PATCH v3 04/10] dt-bindings: mfd: Add compatible for the
+ MediaTek MT6358 PMIC
+From:   Hsin-hsiung Wang <hsin-hsiung.wang@mediatek.com>
+To:     Nicolas Boichat <drinkcat@chromium.org>
+CC:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        "Mark Brown" <broonie@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        "Mark Rutland" <mark.rutland@arm.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        srv_heupstream <srv_heupstream@mediatek.com>,
+        <devicetree@vger.kernel.org>, Sean Wang <sean.wang@mediatek.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/Mediatek SoC support" 
         <linux-mediatek@lists.infradead.org>,
-        <linux-arm-msm@vger.kernel.org>,
-        <linux-rockchip@lists.infradead.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next 12/12] crypto: qcom-rng - use devm_platform_ioremap_resource() to simplify code
-Date:   Fri, 2 Aug 2019 21:28:09 +0800
-Message-ID: <20190802132809.8116-13-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
-In-Reply-To: <20190802132809.8116-1-yuehaibing@huawei.com>
-References: <20190802132809.8116-1-yuehaibing@huawei.com>
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        Eddie Huang <eddie.huang@mediatek.com>,
+        <linux-rtc@vger.kernel.org>
+Date:   Fri, 2 Aug 2019 21:28:31 +0800
+In-Reply-To: <CANMq1KCiK69kXkpagccqd1=pKOs7qOOVuJUaCe5JfoGVmPt7mg@mail.gmail.com>
+References: <20190503093117.54830-1-hsin-hsiung.wang@mediatek.com>
+         <20190503093117.54830-5-hsin-hsiung.wang@mediatek.com>
+         <CANMq1KCiK69kXkpagccqd1=pKOs7qOOVuJUaCe5JfoGVmPt7mg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use devm_platform_ioremap_resource() to simplify the code a bit.
-This is detected by coccinelle.
+Hi Nicolas,
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/crypto/qcom-rng.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+On Tue, 2019-05-07 at 14:24 +0900, Nicolas Boichat wrote:
+> On Fri, May 3, 2019 at 6:34 PM Hsin-Hsiung Wang
+> <hsin-hsiung.wang@mediatek.com> wrote:
+> >
+...
+> > This adds compatible for the MediaTek MT6358 PMIC.
+> >
+> > Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+> > Signed-off-by: Hsin-Hsiung Wang <hsin-hsiung.wang@mediatek.com>
+> > ---
+> >  Documentation/devicetree/bindings/mfd/mt6397.txt | 11 ++++++++---
+> >  1 file changed, 8 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/Documentation/devicetree/bindings/mfd/mt6397.txt b/Documentation/devicetree/bindings/mfd/mt6397.txt
+> > index 0ebd08af777d..62f1c17c7738 100644
+> > --- a/Documentation/devicetree/bindings/mfd/mt6397.txt
+> > +++ b/Documentation/devicetree/bindings/mfd/mt6397.txt
+> > @@ -17,22 +17,27 @@ Documentation/devicetree/bindings/soc/mediatek/pwrap.txt
+> >  This document describes the binding for MFD device and its sub module.
+> >
+> >  Required properties:
+> > -compatible: "mediatek,mt6397" or "mediatek,mt6323"
+> > +compatible:
+> > +       "mediatek,mt6323" for PMIC MT6323
+> > +       "mediatek,mt6358" for PMIC MT6358
+> > +       "mediatek,mt6397" for PMIC MT6397
+> >
+> >  Optional subnodes:
+> >
+> >  - rtc
+> >         Required properties:
+> > -               - compatible: "mediatek,mt6397-rtc"
+> > +               - compatible: "mediatek,mt6397-rtc" or "mediatek,mt6358-rtc"
+> >  - regulators
+> >         Required properties:
+> >                 - compatible: "mediatek,mt6397-regulator"
+> >         see Documentation/devicetree/bindings/regulator/mt6397-regulator.txt
+> > +               - compatible: "mediatek,mt6358-regulator"
+> > +       see Documentation/devicetree/bindings/regulator/mt6358-regulator.txt
+> >                 - compatible: "mediatek,mt6323-regulator"
+> >         see Documentation/devicetree/bindings/regulator/mt6323-regulator.txt
+> >  - codec
+> >         Required properties:
+> > -               - compatible: "mediatek,mt6397-codec"
+> > +               - compatible: "mediatek,mt6397-codec" or "mediatek,mt6358-sound"
+> 
+> Sean had a question about this
+> (https://patchwork.kernel.org/patch/10846669/#22524299):
+> "why didn't we use a more consistent naming as mt6358-codec?"
+> 
+The compatible name, "mediatek,mt6358-sound", is already in mt6358 audio
+driver which is already in the upstream codebase.
+After discussing with audio owner, we will submit another patch to fix
+it.
 
-diff --git a/drivers/crypto/qcom-rng.c b/drivers/crypto/qcom-rng.c
-index e54249c..4730f84 100644
---- a/drivers/crypto/qcom-rng.c
-+++ b/drivers/crypto/qcom-rng.c
-@@ -153,7 +153,6 @@ static struct rng_alg qcom_rng_alg = {
- 
- static int qcom_rng_probe(struct platform_device *pdev)
- {
--	struct resource *res;
- 	struct qcom_rng *rng;
- 	int ret;
- 
-@@ -164,8 +163,7 @@ static int qcom_rng_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, rng);
- 	mutex_init(&rng->lock);
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	rng->base = devm_ioremap_resource(&pdev->dev, res);
-+	rng->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(rng->base))
- 		return PTR_ERR(rng->base);
- 
--- 
-2.7.4
+Thanks.
+> >  - clk
+> >         Required properties:
+> >                 - compatible: "mediatek,mt6397-clk"
+> > --
+> > 2.18.0
+> >
+> >
+> > _______________________________________________
+> > Linux-mediatek mailing list
+> > Linux-mediatek@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-mediatek
 
 
