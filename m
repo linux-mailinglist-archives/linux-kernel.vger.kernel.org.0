@@ -2,115 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CA807FAE0
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 15:36:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 71AF17FAE7
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 15:36:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406067AbfHBNfK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 09:35:10 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:44889 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406017AbfHBNfH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 09:35:07 -0400
-Received: by mail-pl1-f196.google.com with SMTP id t14so33641892plr.11
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2019 06:35:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=FUKwvsUakiLdWHeLmkm41eeKrCNSJsxR9s2deeLtAuU=;
-        b=FMAo8/vMKAG3Z081LK7599yv8zpQ5D1bMJw/Chyc6hnWkWEUo3NtEviyx4qmTuoLAu
-         s/81LhUqS6pnSzJ5KEV/XM744D5k8ZgDTQNogZU5IMvzmejd4Y2sMifoYG/ikmpctugZ
-         EUnXnEtqKJgtRF1tcCwX916sa8aGaIcKWLMRm6BZGPuNbE4Z3F2ErVvlwPnmxtweyF2K
-         SS779zE83lL5bpAS8mOJ/opldu5ZFMsAFgxmimKF4D1NeOyGLnt6z9by0WJB/TUTEr/Y
-         /q7HO6go55GE33Vt0iklPJzIUXu4OQD66lPdunc9FCEeTv6ceu+Immxa0kkzPac8IKw5
-         jd5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=FUKwvsUakiLdWHeLmkm41eeKrCNSJsxR9s2deeLtAuU=;
-        b=c4EmrScZrzL0xsyqpTIlvUPrbTun4RVP/4nxt1DqeCh+vav8rM/gIFRX98L7J+4R93
-         IB/LJZvUgLBQ68fVOdXai2/+LelE8+V9DmcoybkO0k4Qg7YhWqilYkUJAjb0/7vEaRvm
-         D3pa948MZzIYNb5vHxLiTJEhpumOoQEsc/ZUKUhk7U8SwhIVJoNTbM2bcwv2CHM0Y4ug
-         Z+vrpoom7tIEezFvQ7C3wk/Bl46jmQoAA/2e31wXXSzldJPUa54ChMyZmcl0FT3fKrls
-         /iNutnKvN6JLdMTNaBCtWZ9atgJy2PLyzHAVBormyOOmMRtMHv0S3LOcTHCWm/jkvRj0
-         j2cA==
-X-Gm-Message-State: APjAAAUvc7KTwuZxqRTJfxC7Bn/n8h14YKaBuFZRAmPYIEp/1QMMSJLh
-        UtbcJv53tHReLYffJ03ctFk=
-X-Google-Smtp-Source: APXvYqwCXqnpwkproCYUNPLmAwfyhMI2JJoAiWiv9cKeSy9WaCOxpDHDV717uA6xD2DJ2hwr19LRfA==
-X-Received: by 2002:a17:902:aa88:: with SMTP id d8mr124580948plr.274.1564752906788;
-        Fri, 02 Aug 2019 06:35:06 -0700 (PDT)
-Received: from localhost ([121.137.63.184])
-        by smtp.gmail.com with ESMTPSA id g66sm73903121pfb.44.2019.08.02.06.35.05
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 02 Aug 2019 06:35:06 -0700 (PDT)
-From:   Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-X-Google-Original-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Date:   Fri, 2 Aug 2019 22:35:03 +0900
-To:     Chris Wilson <chris@chris-wilson.co.uk>
-Cc:     Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [PATCH 2/2] i915: do not leak module ref counter
-Message-ID: <20190802133503.GA18318@tigerII.localdomain>
-References: <20190802123956.2450-1-sergey.senozhatsky@gmail.com>
- <20190802123956.2450-2-sergey.senozhatsky@gmail.com>
- <156475071634.6598.8668583907388398632@skylake-alporthouse-com>
- <156475141863.6598.6809215010139776043@skylake-alporthouse-com>
- <20190802131523.GB466@tigerII.localdomain>
+        id S2406198AbfHBNfj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 09:35:39 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:36735 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2406126AbfHBNfg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 09:35:36 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7FA03882F2;
+        Fri,  2 Aug 2019 13:35:36 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-116-81.ams2.redhat.com [10.36.116.81])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id DB2A860C47;
+        Fri,  2 Aug 2019 13:35:32 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id DCD6916E05; Fri,  2 Aug 2019 15:35:31 +0200 (CEST)
+Date:   Fri, 2 Aug 2019 15:35:31 +0200
+From:   "kraxel@redhat.com" <kraxel@redhat.com>
+To:     Alex Williamson <alex.williamson@redhat.com>
+Cc:     "Zhang, Tina" <tina.zhang@intel.com>,
+        "Lu, Kechen" <kechen.lu@intel.com>,
+        "intel-gvt-dev@lists.freedesktop.org" 
+        <intel-gvt-dev@lists.freedesktop.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "zhenyuw@linux.intel.com" <zhenyuw@linux.intel.com>,
+        "Lv, Zhiyuan" <zhiyuan.lv@intel.com>,
+        "Wang, Zhi A" <zhi.a.wang@intel.com>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        "Yuan, Hang" <hang.yuan@intel.com>
+Subject: Re: [RFC PATCH v4 2/6] vfio: Introduce vGPU display irq type
+Message-ID: <20190802133531.4zwsjltvjisq4sfz@sirius.home.kraxel.org>
+References: <20190718155640.25928-1-kechen.lu@intel.com>
+ <20190718155640.25928-3-kechen.lu@intel.com>
+ <20190719102516.60af527f@x1.home>
+ <31185F57AF7C4B4F87C41E735C23A6FE64E06F@shsmsx102.ccr.corp.intel.com>
+ <20190722134124.16c55c2f@x1.home>
+ <237F54289DF84E4997F34151298ABEBC876BC9AD@SHSMSX101.ccr.corp.intel.com>
+ <20190722191830.425d1593@x1.home>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190802131523.GB466@tigerII.localdomain>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20190722191830.425d1593@x1.home>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Fri, 02 Aug 2019 13:35:36 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (08/02/19 22:15), Sergey Senozhatsky wrote:
-[..]
-> > > Looking around, it looks like we always need to drop type after
-> > > mounting. Should the
-> > >         put_filesystem(type);
-> > > be here instead?
-> > > 
-> > > Anyway, nice catch.
-> > 
-> > Sigh. put_filesystem() is part of fs internals. I'd be tempted to add
+  Hi,
+
+> > > Couldn't you expose this as another capability within the IRQ_INFO return
+> > > data?  If you were to define it as a macro, I assume that means it would be
+> > > hard coded, in which case this probably becomes an Intel specific IRQ, rather
+> > > than what appears to be framed as a generic graphics IRQ extension.  A new
+> > > capability could instead allow the vendor to specify their own value, where
+> > > we could define how userspace should interpret and make use of this value.
+> > > Thanks,  
+> > Good suggestion. Currently, vfio_irq_info is used to save one irq
+> > info. What we need here is to use it to save several events info.
+> > Maybe we could figure out a general layout of this capability so that
+> > it can be leveraged by others, not only for display irq/events.
 > 
-> Good catch!
-> 
-> So we can switch to vfs_kern_mount(), I guess, but pass different options,
-> depending on has_transparent_hugepage().
+> You could also expose a device specific IRQ with count > 1 (ie. similar
+> to MSI/X) and avoid munging the eventfd value, which is not something
+> we do elsewhere, at least in vfio.  Thanks,
 
-Hmm. This doesn't look exactly right. It appears that vfs_kern_mount()
-has a slightly different purpose. It's for drivers which register their
-own fstype and fs_context/sb callbacks. A typical usage would be
+Well, the basic idea is to use the eventfd value to signal the kind of
+changes which did happen, simliar to IRQ status register bits.
 
-	static struct file_system_type nfsd_fs_type = {
-		.owner→ →       = THIS_MODULE,
-		.name→  →       = "nfsd",
-		.init_fs_context = nfsd_init_fs_context,
-		.kill_sb→       = nfsd_umount,
-	};
-	MODULE_ALIAS_FS("nfsd");
+So, when the guest changes the primary plane, the mdev driver notes
+this.  Same with the cursor plane.  On vblank (when the guests update
+is actually applied) the mdev driver wakes the eventfd and uses eventfd
+value to signal whenever primary plane or cursor plane or both did
+change.
 
-	vfs_kern_mount(&nfsd_fs_type, SB_KERNMOUNT, "nfsd", NULL);
+Then userspace knows which planes need an update without an extra
+VFIO_DEVICE_QUERY_GFX_PLANE roundtrip to the kernel.
 
-i915 is a different beast, it just wants to mount fs and reconfigure
-it, it doesn't want to be an fs. So it seems that current kern_mount()
-is actually right.
+Alternatively we could have one eventfd for each change type.  But given
+that these changes are typically applied at the same time (vblank) we
+would have multiple eventfds being signaled at the same time.  Which
+doesn't look ideal to me ...
 
-Maybe we need to export put_filesystem() instead.
+cheers,
+  Gerd
 
-	-ss
