@@ -2,93 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E8FCD7FF3D
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 19:06:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4632E7FF37
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 19:05:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404169AbfHBRGF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 13:06:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36778 "EHLO mail.kernel.org"
+        id S2404057AbfHBRE5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 13:04:57 -0400
+Received: from foss.arm.com ([217.140.110.172]:55232 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403954AbfHBRGE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 13:06:04 -0400
-Received: from localhost (unknown [106.51.106.149])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B0DE220644;
-        Fri,  2 Aug 2019 17:06:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564765563;
-        bh=zyFQjXyh3QHHzXm6u/m7sXjNjCXkfXoAXKp3IdMcjwk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FZi0aW7hN7atOO49xnVUT7RbRhGIanyxnc5VBG93AS4P3SJ0v/zGLXClQD8S2xJ6z
-         PCJDaMZtexuQbRv6gDsfqWaxRMC7juiESX4QHIRZZO3uGxw5lu0D6fVOOTnDdmcOKn
-         BbpDXMIhg1sJyGfUHJ+ocJxX/PhdGY9uzxb98+h0=
-Date:   Fri, 2 Aug 2019 22:34:50 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc:     Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>,
-        alsa-devel@alsa-project.org, tiwai@suse.de,
-        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        broonie@kernel.org, srinivas.kandagatla@linaro.org,
-        jank@cadence.com, slawomir.blauciak@intel.com,
-        Sanyog Kale <sanyog.r.kale@intel.com>
-Subject: Re: [alsa-devel] [RFC PATCH 21/40] soundwire: export helpers to find
- row and column values
-Message-ID: <20190802170450.GY12733@vkoul-mobl.Dlink>
-References: <20190725234032.21152-1-pierre-louis.bossart@linux.intel.com>
- <20190725234032.21152-22-pierre-louis.bossart@linux.intel.com>
- <20190726144325.GH16003@ubuntu>
- <d6268a75-b38c-aee5-0463-af8b602286bb@linux.intel.com>
+        id S2403954AbfHBRE5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 13:04:57 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 74938344;
+        Fri,  2 Aug 2019 10:04:56 -0700 (PDT)
+Received: from [10.1.196.105] (eglon.cambridge.arm.com [10.1.196.105])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C281F3F575;
+        Fri,  2 Aug 2019 10:04:55 -0700 (PDT)
+Subject: Re: [PATCH v2 12/24] EDAC, ghes: Use standard kernel macros for page
+ calculations
+To:     Robert Richter <rrichter@marvell.com>
+Cc:     Borislav Petkov <bp@alien8.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20190624150758.6695-1-rrichter@marvell.com>
+ <20190624150758.6695-13-rrichter@marvell.com>
+From:   James Morse <james.morse@arm.com>
+Message-ID: <ffd8ec87-74fd-3d8e-1c8e-eed7f425df48@arm.com>
+Date:   Fri, 2 Aug 2019 18:04:54 +0100
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d6268a75-b38c-aee5-0463-af8b602286bb@linux.intel.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <20190624150758.6695-13-rrichter@marvell.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26-07-19, 10:26, Pierre-Louis Bossart wrote:
-> 
-> 
-> On 7/26/19 9:43 AM, Guennadi Liakhovetski wrote:
-> > On Thu, Jul 25, 2019 at 06:40:13PM -0500, Pierre-Louis Bossart wrote:
-> > > Add a prefix for common tables and export 2 helpers to set the frame
-> > > shapes based on row/col values.
-> > > 
-> > > Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-> > > ---
-> > >   drivers/soundwire/bus.h    |  7 +++++--
-> > >   drivers/soundwire/stream.c | 14 ++++++++------
-> > >   2 files changed, 13 insertions(+), 8 deletions(-)
-> > > 
-> > > diff --git a/drivers/soundwire/bus.h b/drivers/soundwire/bus.h
-> > > index 06ac4adb0074..c57c9c23f6ca 100644
-> > > --- a/drivers/soundwire/bus.h
-> > > +++ b/drivers/soundwire/bus.h
-> > > @@ -73,8 +73,11 @@ struct sdw_msg {
-> > >   #define SDW_DOUBLE_RATE_FACTOR		2
-> > > -extern int rows[SDW_FRAME_ROWS];
-> > > -extern int cols[SDW_FRAME_COLS];
-> > > +extern int sdw_rows[SDW_FRAME_ROWS];
-> > > +extern int sdw_cols[SDW_FRAME_COLS];
-> > 
-> > So these arrays actually have to be exported? In the current (5.2) sources they
-> > seem to only be used in stream.c, maybe make them static there?
-> > 
-> > > +
-> > > +int sdw_find_row_index(int row);
-> > > +int sdw_find_col_index(int col);
-> 
-> yes, they need to be exported, they are used by the allocation algorithm (in
-> Patch 27).
-> Others will need this for non-Intel solutions, it's really a part of the
-> standard definition and should be shared.
-> I can improve the commit message to make this explicit.
+Hi Robert,
 
-Yes that would help! And also move it to before it's usage so it clear
-that it is used in next one.
+On 24/06/2019 16:09, Robert Richter wrote:
+> Use standard macros for page calculations.
+> 
+> Signed-off-by: Robert Richter <rrichter@marvell.com>
+> ---
 
--- 
-~Vinod
+> diff --git a/drivers/edac/ghes_edac.c b/drivers/edac/ghes_edac.c
+> index 786f1b32eee1..746083876b5f 100644
+> --- a/drivers/edac/ghes_edac.c
+> +++ b/drivers/edac/ghes_edac.c
+> @@ -311,8 +311,8 @@ void ghes_edac_report_mem_error(int sev, struct cper_sec_mem_err *mem_err)
+>  
+>  	/* Error address */
+>  	if (mem_err->validation_bits & CPER_MEM_VALID_PA) {
+> -		e->page_frame_number = mem_err->physical_addr >> PAGE_SHIFT;
+> -		e->offset_in_page = mem_err->physical_addr & ~PAGE_MASK;
+> +		e->page_frame_number = PHYS_PFN(mem_err->physical_addr);
+> +		e->offset_in_page = offset_in_page(mem_err->physical_addr);
+>  	}
+>  
+>  	/* Error grain */
+> 
+
+
+After a shorter game of spot-the-difference:
+Reviewed-by: James Morse <james.morse@arm.com>
+
+Previously here:
+https://lore.kernel.org/linux-edac/e566fe1d-ed06-53bc-6827-f6dfa32ee485@arm.com/
+
+
+Please pick up tags when posting a new version.
+If you don't do this, its very difficult to convince people to spend time reviewing your
+series.
+
+
+Thanks,
+
+James
