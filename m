@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A52A67F231
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:46:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F6CC7F223
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:45:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405484AbfHBJqF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 05:46:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50082 "EHLO mail.kernel.org"
+        id S2390986AbfHBJpg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 05:45:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49326 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405471AbfHBJqD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 05:46:03 -0400
+        id S2391942AbfHBJpc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 05:45:32 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 18EFC216C8;
-        Fri,  2 Aug 2019 09:46:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5BB032086A;
+        Fri,  2 Aug 2019 09:45:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564739162;
-        bh=6rAfEz0VaxnRmTfVyrHrl5rArO9Sto31J1SKv7Io9EQ=;
+        s=default; t=1564739131;
+        bh=iQP2fSg2U+1c6Xp5RHw7ciIsyiz20F1hyTMk5VXWhX8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qdeFOlysktMMYlgwJLzFMrcsQuTK9ZxwQBdxOkPA+HRnGLy/ZQaIQrN+gKxjfyFO1
-         o+tYP1RmbJxBxMPlhwzIAHbZynq/GDPfwrBpPWnUeeJBNjurqKS+DMKCyzArAuhAlT
-         5LCnSflvpfIuiCph5MjW33pv8gCN/7AN7cmRmNhQ=
+        b=d7lCwHbqUso0LxTtAl0T1OXO8S5aPlCmplViZLfSPI21tcWxXyUNERDbtkWPOAmTi
+         TsZx/7gtMcXqRhaolEhmFj5I+ljNV53LaWTMtWnXjIVYq17XaSOvuuEBLCPfd0tKxC
+         KercnQYst2f+Ervm/ToxjKUx7jfGF8QyP0YRa+Bk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Szymon Janc <szymon.janc@codecoup.pl>,
-        Maarten Fonville <maarten.fonville@gmail.com>,
-        Marcel Holtmann <marcel@holtmann.org>
-Subject: [PATCH 4.9 122/223] Bluetooth: Add SMP workaround Microsoft Surface Precision Mouse bug
-Date:   Fri,  2 Aug 2019 11:35:47 +0200
-Message-Id: <20190802092247.058386240@linuxfoundation.org>
+        stable@vger.kernel.org, Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 125/223] compiler.h, kasan: Avoid duplicating __read_once_size_nocheck()
+Date:   Fri,  2 Aug 2019 11:35:50 +0200
+Message-Id: <20190802092247.195768384@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190802092238.692035242@linuxfoundation.org>
 References: <20190802092238.692035242@linuxfoundation.org>
@@ -44,67 +44,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Szymon Janc <szymon.janc@codecoup.pl>
+[ Upstream commit bdb5ac801af3d81d36732c2f640d6a1d3df83826 ]
 
-commit 1d87b88ba26eabd4745e158ecfd87c93a9b51dc2 upstream.
+Instead of having two identical __read_once_size_nocheck() functions
+with different attributes, consolidate all the difference in new macro
+__no_kasan_or_inline and use it. No functional changes.
 
-Microsoft Surface Precision Mouse provides bogus identity address when
-pairing. It connects with Static Random address but provides Public
-Address in SMP Identity Address Information PDU. Address has same
-value but type is different. Workaround this by dropping IRK if ID
-address discrepancy is detected.
-
-> HCI Event: LE Meta Event (0x3e) plen 19
-      LE Connection Complete (0x01)
-        Status: Success (0x00)
-        Handle: 75
-        Role: Master (0x00)
-        Peer address type: Random (0x01)
-        Peer address: E0:52:33:93:3B:21 (Static)
-        Connection interval: 50.00 msec (0x0028)
-        Connection latency: 0 (0x0000)
-        Supervision timeout: 420 msec (0x002a)
-        Master clock accuracy: 0x00
-
-....
-
-> ACL Data RX: Handle 75 flags 0x02 dlen 12
-      SMP: Identity Address Information (0x09) len 7
-        Address type: Public (0x00)
-        Address: E0:52:33:93:3B:21
-
-Signed-off-by: Szymon Janc <szymon.janc@codecoup.pl>
-Tested-by: Maarten Fonville <maarten.fonville@gmail.com>
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=199461
-Cc: stable@vger.kernel.org
-Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/bluetooth/smp.c |   13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ include/linux/compiler.h | 14 ++++++--------
+ 1 file changed, 6 insertions(+), 8 deletions(-)
 
---- a/net/bluetooth/smp.c
-+++ b/net/bluetooth/smp.c
-@@ -2514,6 +2514,19 @@ static int smp_cmd_ident_addr_info(struc
- 		goto distribute;
- 	}
+diff --git a/include/linux/compiler.h b/include/linux/compiler.h
+index 80a5bc623c47..ced454c03819 100644
+--- a/include/linux/compiler.h
++++ b/include/linux/compiler.h
+@@ -250,23 +250,21 @@ void __read_once_size(const volatile void *p, void *res, int size)
  
-+	/* Drop IRK if peer is using identity address during pairing but is
-+	 * providing different address as identity information.
-+	 *
-+	 * Microsoft Surface Precision Mouse is known to have this bug.
-+	 */
-+	if (hci_is_identity_address(&hcon->dst, hcon->dst_type) &&
-+	    (bacmp(&info->bdaddr, &hcon->dst) ||
-+	     info->addr_type != hcon->dst_type)) {
-+		bt_dev_err(hcon->hdev,
-+			   "ignoring IRK with invalid identity address");
-+		goto distribute;
-+	}
+ #ifdef CONFIG_KASAN
+ /*
+- * This function is not 'inline' because __no_sanitize_address confilcts
++ * We can't declare function 'inline' because __no_sanitize_address confilcts
+  * with inlining. Attempt to inline it may cause a build failure.
+  * 	https://gcc.gnu.org/bugzilla/show_bug.cgi?id=67368
+  * '__maybe_unused' allows us to avoid defined-but-not-used warnings.
+  */
+-static __no_sanitize_address __maybe_unused
+-void __read_once_size_nocheck(const volatile void *p, void *res, int size)
+-{
+-	__READ_ONCE_SIZE;
+-}
++# define __no_kasan_or_inline __no_sanitize_address __maybe_unused
+ #else
+-static __always_inline
++# define __no_kasan_or_inline __always_inline
++#endif
 +
- 	bacpy(&smp->id_addr, &info->bdaddr);
- 	smp->id_addr_type = info->addr_type;
++static __no_kasan_or_inline
+ void __read_once_size_nocheck(const volatile void *p, void *res, int size)
+ {
+ 	__READ_ONCE_SIZE;
+ }
+-#endif
  
+ static __always_inline void __write_once_size(volatile void *p, void *res, int size)
+ {
+-- 
+2.20.1
+
 
 
