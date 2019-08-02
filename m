@@ -2,71 +2,184 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 706F280333
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2019 01:26:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BB0180341
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2019 01:36:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389769AbfHBX0t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 19:26:49 -0400
-Received: from smtprelay0088.hostedemail.com ([216.40.44.88]:45777 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2389345AbfHBX0t (ORCPT
+        id S2390832AbfHBXgx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 19:36:53 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:36669 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388400AbfHBXgw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 19:26:49 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay03.hostedemail.com (Postfix) with ESMTP id 98FC3837F24A;
-        Fri,  2 Aug 2019 23:26:47 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::,RULES_HIT:41:355:379:599:800:960:967:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2525:2553:2559:2563:2682:2685:2828:2859:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3868:3870:3871:3872:3873:3874:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4250:4321:5007:6119:7576:8985:9025:9036:10004:10400:10848:10967:11232:11658:11914:12043:12297:12555:12740:12760:12895:13069:13311:13357:13439:14096:14097:14181:14659:14721:21080:21433:21611:21627:21740:30029:30054:30090:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:25,LUA_SUMMARY:none
-X-HE-Tag: deer92_3b20a69384253
-X-Filterd-Recvd-Size: 2168
-Received: from XPS-9350.home (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
-        (Authenticated sender: joe@perches.com)
-        by omf19.hostedemail.com (Postfix) with ESMTPA;
-        Fri,  2 Aug 2019 23:26:46 +0000 (UTC)
-Message-ID: <120880ae17b399cb5239522d8c229c717aaa81a5.camel@perches.com>
-Subject: Re: [PATCH] net: sctp: Rename fallthrough label to unhandled
-From:   Joe Perches <joe@perches.com>
-To:     David Miller <davem@davemloft.net>
-Cc:     nhorman@tuxdriver.com, vyasevich@gmail.com,
-        marcelo.leitner@gmail.com, linux-sctp@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Fri, 02 Aug 2019 16:26:44 -0700
-In-Reply-To: <20190802.161932.1776993765494484851.davem@davemloft.net>
-References: <eac3fe457d553a2b366e1c1898d47ae8c048087c.camel@perches.com>
-         <20190731121646.GD9823@hmswarspite.think-freely.org>
-         <a03a23728d3b468942a20b55f70babceaec587ee.camel@perches.com>
-         <20190802.161932.1776993765494484851.davem@davemloft.net>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
+        Fri, 2 Aug 2019 19:36:52 -0400
+Received: by mail-pf1-f194.google.com with SMTP id r7so36760829pfl.3
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2019 16:36:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:subject:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=qUss61uErCv45l6U5vMW/dNDvgWLW+8JpQICeZFcraM=;
+        b=opNi5P09MxsE+vav+3iC9q9f+8JyZWly3jBOYMwBH7/jzZOPNqgbw3ZBnJoxiYVWy/
+         ADLFS1F8nZrqcMc/ZFiss4V/EfjGtGY0Ir0T928i32sIxtGOHIFzvQ6bqbZtqh92OOAp
+         KqtAJFfDGc9dlQ7Ok9JbnuH5BoQk8g78VPRI2qNKGH2mhsN/8zoNSm1wu/3vJJo5GGmr
+         +PgOZcWZ6I8AG/HE9Q0a61LYp0sHB7a3lQYKTYgVAHNQCyG4w32/URdSiNh3SWbY0bEE
+         9B9vuN6t1s9tQ6824DJQ42CmXh7pyKhaeEyefvebyhWgUA9iMm3JBv5VDW4eVTuQjbfa
+         oXmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:subject:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=qUss61uErCv45l6U5vMW/dNDvgWLW+8JpQICeZFcraM=;
+        b=QxlGyYlySWhoA/WFaVPIm+i7yzp5KkOZxUGQlk5YtYwf6+9I4KxAaA/nDt4uDpWGTO
+         uxKrtA9Zkb8HlSCQb9fHqZrRf0cNgbLOLinInGjq0oG+hks2awSDMWQ72DuppHAEWEyP
+         0/GU7ADFU0lt4ku7i2DCGEYNg6LHbANs7TIKmpGHc2q7jQLCdpBnPdMXXRDbsPMWdJ4C
+         YVpMc+LlZVX8itZ8C5mxDho/0SRIK6RhxGkrxjJ5uXTkW4TSzrT9PTugfvLTOhVuTPm9
+         NXWo8T3Benc4CcafYeb7JX0Yc4tiXvjre4ozUsonZ+xpgKAT1j5hQqDnxCv1es5/rC+S
+         6dhA==
+X-Gm-Message-State: APjAAAV1Nq7srSbb8St1BEVAc/C80SKlZI+U+RdKwhj25fjhz3plYTu9
+        3W1uzinFrfWP1KnPn7+rLRdSpb6E
+X-Google-Smtp-Source: APXvYqzDF0llQk2e4hhPyuPJbcmSPlotnucj+ud6EVs/2cMJ2smGONRKJKv/bl9eBHE1gGjYVgdGag==
+X-Received: by 2002:a17:90a:9a83:: with SMTP id e3mr6485379pjp.105.1564789011564;
+        Fri, 02 Aug 2019 16:36:51 -0700 (PDT)
+Received: from [192.168.0.106] (124-169-192-12.dyn.iinet.net.au. [124.169.192.12])
+        by smtp.gmail.com with ESMTPSA id i74sm23703182pje.16.2019.08.02.16.36.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 02 Aug 2019 16:36:51 -0700 (PDT)
+From:   Greg Ungerer <gregungerer00@gmail.com>
+X-Google-Original-From: Greg Ungerer <gerg@linux-m68k.org>
+Subject: Re: [PATCH] m68k: Prevent some compiler warnings in coldfire builds
+To:     Finn Thain <fthain@telegraphics.com.au>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Michael Schmitz <schmitzmic@gmail.com>,
+        linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org
+References: <9ec2190f5be1c4e676a803901200364578662b6d.1564704625.git.fthain@telegraphics.com.au>
+Message-ID: <fd5ccd89-987a-3d4b-5c49-9068abadf81d@linux-m68k.org>
+Date:   Sat, 3 Aug 2019 09:36:45 +1000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
+In-Reply-To: <9ec2190f5be1c4e676a803901200364578662b6d.1564704625.git.fthain@telegraphics.com.au>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2019-08-02 at 16:19 -0700, David Miller wrote:
-> From: Joe Perches <joe@perches.com>
-> Date: Fri, 02 Aug 2019 10:47:34 -0700
-> 
-> > On Wed, 2019-07-31 at 08:16 -0400, Neil Horman wrote:
-> >> On Wed, Jul 31, 2019 at 04:32:43AM -0700, Joe Perches wrote:
-> >> > On Wed, 2019-07-31 at 07:19 -0400, Neil Horman wrote:
-> >> > > On Tue, Jul 30, 2019 at 10:04:37PM -0700, Joe Perches wrote:
-> >> > > > fallthrough may become a pseudo reserved keyword so this only use of
-> >> > > > fallthrough is better renamed to allow it.
-> > 
-> > Can you or any other maintainer apply this patch
-> > or ack it so David Miller can apply it?
-> 
-> I, like others, don't like the lack of __ in the keyword.  It's kind of
-> rediculous the problems it creates to pollute the global namespace like
-> that and yes also inconsistent with other shorthands for builtins.
+Hi Finn,
 
-Please add that to the conversation on the RFC thread.
-https://lore.kernel.org/patchwork/patch/1108577/
+On 2/8/19 10:10 am, Finn Thain wrote:
+> Since commit d3b41b6bb49e ("m68k: Dispatch nvram_ops calls to Atari or
+> Mac functions"), Coldfire builds generate compiler warnings due to the
+> unconditional inclusion of asm/atarihw.h and asm/macintosh.h.
+> 
+> The inclusion of asm/atarihw.h causes warnings like this:
+> 
+> In file included from ./arch/m68k/include/asm/atarihw.h:25:0,
+>                   from arch/m68k/kernel/setup_mm.c:41,
+>                   from arch/m68k/kernel/setup.c:3:
+> ./arch/m68k/include/asm/raw_io.h:39:0: warning: "__raw_readb" redefined
+>   #define __raw_readb in_8
+> 
+> In file included from ./arch/m68k/include/asm/io.h:6:0,
+>                   from arch/m68k/kernel/setup_mm.c:36,
+>                   from arch/m68k/kernel/setup.c:3:
+> ./arch/m68k/include/asm/io_no.h:16:0: note: this is the location of the previous definition
+>   #define __raw_readb(addr) \
+> ...
+> 
+> This issue is resolved by dropping the asm/raw_io.h include. It turns out
+> that asm/io_mm.h already includes that header file.
+> 
+> Moving the relevant macro definitions helps to clarify this dependency
+> and make it safe to include asm/atarihw.h.
+> 
+> The other warnings look like this:
+> 
+> In file included from arch/m68k/kernel/setup_mm.c:48:0,
+>                   from arch/m68k/kernel/setup.c:3:
+> ./arch/m68k/include/asm/macintosh.h:19:35: warning: 'struct irq_data' declared inside parameter list will not be visible outside of this definition or declaration
+>   extern void mac_irq_enable(struct irq_data *data);
+>                                     ^~~~~~~~
+> ...
+> 
+> This issue is resolved by adding the missing linux/irq.h include.
+> 
+> Cc: Michael Schmitz <schmitzmic@gmail.com>
+> Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
+> ---
+>   arch/m68k/include/asm/atarihw.h   | 9 ---------
+>   arch/m68k/include/asm/io_mm.h     | 6 +++++-
+>   arch/m68k/include/asm/macintosh.h | 1 +
+>   3 files changed, 6 insertions(+), 10 deletions(-)
+> 
+> diff --git a/arch/m68k/include/asm/atarihw.h b/arch/m68k/include/asm/atarihw.h
+> index 533008262b69..5e5601c382b8 100644
+> --- a/arch/m68k/include/asm/atarihw.h
+> +++ b/arch/m68k/include/asm/atarihw.h
+> @@ -22,7 +22,6 @@
+>   
+>   #include <linux/types.h>
+>   #include <asm/bootinfo-atari.h>
+> -#include <asm/raw_io.h>
+>   #include <asm/kmap.h>
+>   
+>   extern u_long atari_mch_cookie;
+> @@ -132,14 +131,6 @@ extern struct atari_hw_present atari_hw_present;
+>    */
+>   
+>   
+> -#define atari_readb   raw_inb
+> -#define atari_writeb  raw_outb
+> -
+> -#define atari_inb_p   raw_inb
+> -#define atari_outb_p  raw_outb
+> -
+> -
+> -
+>   #include <linux/mm.h>
+>   #include <asm/cacheflush.h>
+>   
+> diff --git a/arch/m68k/include/asm/io_mm.h b/arch/m68k/include/asm/io_mm.h
+> index 6c03ca5bc436..819f611dccf2 100644
+> --- a/arch/m68k/include/asm/io_mm.h
+> +++ b/arch/m68k/include/asm/io_mm.h
+> @@ -29,7 +29,11 @@
+>   #include <asm-generic/iomap.h>
+>   
+>   #ifdef CONFIG_ATARI
+> -#include <asm/atarihw.h>
+> +#define atari_readb   raw_inb
+> +#define atari_writeb  raw_outb
+> +
+> +#define atari_inb_p   raw_inb
+> +#define atari_outb_p  raw_outb
+>   #endif
+>   
+>   
+> diff --git a/arch/m68k/include/asm/macintosh.h b/arch/m68k/include/asm/macintosh.h
+> index 8f0698bca3dc..8a43babcf53a 100644
+> --- a/arch/m68k/include/asm/macintosh.h
+> +++ b/arch/m68k/include/asm/macintosh.h
+> @@ -4,6 +4,7 @@
+>   
+>   #include <linux/seq_file.h>
+>   #include <linux/interrupt.h>
+> +#include <linux/irq.h>
+>   
+>   #include <asm/bootinfo-mac.h>
+>   
 
-In any case, fallthrough is not really a good label
-name for this use.
+Looks good to me:
+
+Acked-by: Greg Ungerer <gerg@linux-m68k.org>
+
+Geert: I can take this via the m68knommu tree if you like?
+Or if you want to pick it up then no problem.
+
+Regards
+Greg
 
 
