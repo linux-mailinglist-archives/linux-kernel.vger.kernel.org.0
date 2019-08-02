@@ -2,112 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E2037F75A
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 14:54:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D59B97F772
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 14:55:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405064AbfHBMyn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 08:54:43 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39686 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2404889AbfHBMyk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 08:54:40 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 983BEAD85;
-        Fri,  2 Aug 2019 12:54:39 +0000 (UTC)
-Date:   Fri, 2 Aug 2019 14:54:38 +0200
-From:   Jean Delvare <jdelvare@suse.de>
-To:     Linux I2C <linux-i2c@vger.kernel.org>
-Cc:     Wolfram Sang <wsa@the-dreams.de>, linux-kernel@vger.kernel.org,
-        Andrew Cooks <acooks@rationali.st>, linux-acpi@vger.kernel.org,
-        platypus-sw@opengear.com, "Tobin C . Harding" <me@tobin.cc>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Will Wagner <willw@carallon.com>
-Subject: [PATCH v5 2/3] i2c: piix4: Fix probing of reserved ports on AMD
- Family 16h Model 30h
-Message-ID: <20190802145438.601c9a8c@endymion>
-In-Reply-To: <20190802145109.38dd4045@endymion>
-References: <20190802145109.38dd4045@endymion>
-Organization: SUSE Linux
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-suse-linux-gnu)
+        id S2389813AbfHBMzO convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 2 Aug 2019 08:55:14 -0400
+Received: from mail.fireflyinternet.com ([109.228.58.192]:51617 "EHLO
+        fireflyinternet.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2392687AbfHBMyu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 08:54:50 -0400
+X-Default-Received-SPF: pass (skip=forwardok (res=PASS)) x-ip-name=78.156.65.138;
+Received: from localhost (unverified [78.156.65.138]) 
+        by fireflyinternet.com (Firefly Internet (M1)) with ESMTP (TLS) id 17816996-1500050 
+        for multiple; Fri, 02 Aug 2019 13:54:45 +0100
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8BIT
+To:     Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+From:   Chris Wilson <chris@chris-wilson.co.uk>
+In-Reply-To: <20190802123956.2450-1-sergey.senozhatsky@gmail.com>
+Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+References: <20190802123956.2450-1-sergey.senozhatsky@gmail.com>
+Message-ID: <156475048333.6598.10268421599352645066@skylake-alporthouse-com>
+User-Agent: alot/0.6
+Subject: Re: [PATCH 1/2] i915: convert to new mount API
+Date:   Fri, 02 Aug 2019 13:54:43 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Prevent bus timeouts and resets on Family 16h Model 30h by not probing
-reserved Ports 3 and 4.
+Quoting Sergey Senozhatsky (2019-08-02 13:39:55)
+> tmpfs does not set ->remount_fs() anymore and its users need
+> to be converted to new mount API.
+> 
+>  BUG: kernel NULL pointer dereference, address: 0000000000000000
+>  PF: supervisor instruction fetch in kernel mode
+>  PF: error_code(0x0010) - not-present page
+>  RIP: 0010:0x0
+>  Code: Bad RIP value.
+>  Call Trace:
+>   i915_gemfs_init+0x6e/0xa0 [i915]
+>   i915_gem_init_early+0x76/0x90 [i915]
+>   i915_driver_probe+0x30a/0x1640 [i915]
+>   ? kernfs_activate+0x5a/0x80
+>   ? kernfs_add_one+0xdd/0x130
+>   pci_device_probe+0x9e/0x110
+>   really_probe+0xce/0x230
+>   driver_probe_device+0x4b/0xc0
+>   device_driver_attach+0x4e/0x60
+>   __driver_attach+0x47/0xb0
+>   ? device_driver_attach+0x60/0x60
+>   bus_for_each_dev+0x61/0x90
+>   bus_add_driver+0x167/0x1b0
+>   driver_register+0x67/0xaa
+> 
+> Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+> ---
+>  drivers/gpu/drm/i915/gem/i915_gemfs.c | 28 ++++++++++++++++++++-------
+>  1 file changed, 21 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/i915/gem/i915_gemfs.c b/drivers/gpu/drm/i915/gem/i915_gemfs.c
+> index 099f3397aada..cf05ba72df9d 100644
+> --- a/drivers/gpu/drm/i915/gem/i915_gemfs.c
+> +++ b/drivers/gpu/drm/i915/gem/i915_gemfs.c
+> @@ -7,14 +7,17 @@
+>  #include <linux/fs.h>
+>  #include <linux/mount.h>
+>  #include <linux/pagemap.h>
+> +#include <linux/fs_context.h>
+>  
+>  #include "i915_drv.h"
+>  #include "i915_gemfs.h"
+>  
+>  int i915_gemfs_init(struct drm_i915_private *i915)
+>  {
+> +       struct fs_context *fc = NULL;
+>         struct file_system_type *type;
+>         struct vfsmount *gemfs;
+> +       bool ok = true;
 
-According to the AMD BIOS and Kernel Developer's Guides (BKDG), Port 3
-and Port 4 are reserved on the following devices:
- - Family 15h Model 60h-6Fh
- - Family 15h Model 70h-7Fh
- - Family 16h Model 30h-3Fh
+Start with ok = false, we only need to set to true if we succeed in
+reconfiguring.
 
-Based on earlier work by Andrew Cooks.
+>         type = get_fs_type("tmpfs");
+>         if (!type)
+> @@ -36,18 +39,29 @@ int i915_gemfs_init(struct drm_i915_private *i915)
+>                 struct super_block *sb = gemfs->mnt_sb;
+>                 /* FIXME: Disabled until we get W/A for read BW issue. */
+>                 char options[] = "huge=never";
+> -               int flags = 0;
+> -               int err;
 
-Reported-by: Andrew Cooks <andrew.cooks@opengear.com>
-Signed-off-by: Jean Delvare <jdelvare@suse.de>
----
-Changes since v4:
- * Fix subject line
- * Drop local variable port_count, use piix4_adapter_count
-   everywhere to represent the maximum number of main SMBus ports
- * Exclude early Hudson2 implementations from this change
+Hmm, we could avoid this if we used vfs_kernel_mount() directly rather
+than the kern_mount wrapper, as then we pass options through to
+parse_monotithic_mount_data(). Or am I barking up the wrong tree?
 
- drivers/i2c/busses/i2c-piix4.c |   16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
+>  
+> -               err = sb->s_op->remount_fs(sb, &flags, options);
+> -               if (err) {
+> -                       kern_unmount(gemfs);
+> -                       return err;
+> +               fc = fs_context_for_reconfigure(sb->s_root, 0, 0);
+> +               if (IS_ERR(fc)) {
+> +                       ok = false;
+> +                       goto out;
+>                 }
+> +
+> +               if (!fc->ops->parse_monolithic ||
+> +                               fc->ops->parse_monolithic(fc, options)) {
 
---- linux-5.2.orig/drivers/i2c/busses/i2c-piix4.c	2019-08-02 14:08:17.003820098 +0200
-+++ linux-5.2/drivers/i2c/busses/i2c-piix4.c	2019-08-02 14:15:38.284423549 +0200
-@@ -72,7 +72,8 @@
- #define PIIX4_BLOCK_DATA	0x14
- 
- /* Multi-port constants */
--#define PIIX4_MAX_ADAPTERS 4
-+#define PIIX4_MAX_ADAPTERS	4
-+#define HUDSON2_MAIN_PORTS	2 /* HUDSON2, KERNCZ reserves ports 3, 4 */
- 
- /* SB800 constants */
- #define SB800_PIIX4_SMB_IDX		0xcd6
-@@ -806,6 +807,7 @@ MODULE_DEVICE_TABLE (pci, piix4_ids);
- 
- static struct i2c_adapter *piix4_main_adapters[PIIX4_MAX_ADAPTERS];
- static struct i2c_adapter *piix4_aux_adapter;
-+static int piix4_adapter_count;
- 
- static int piix4_add_adapter(struct pci_dev *dev, unsigned short smba,
- 			     bool sb800_main, u8 port, bool notify_imc,
-@@ -865,7 +867,15 @@ static int piix4_add_adapters_sb800(stru
- 	int port;
- 	int retval;
- 
--	for (port = 0; port < PIIX4_MAX_ADAPTERS; port++) {
-+	if (dev->device == PCI_DEVICE_ID_AMD_KERNCZ_SMBUS ||
-+	    (dev->device == PCI_DEVICE_ID_AMD_HUDSON2_SMBUS &&
-+	     dev->revision >= 0x1F)) {
-+		piix4_adapter_count = HUDSON2_MAIN_PORTS;
-+	} else {
-+		piix4_adapter_count = PIIX4_MAX_ADAPTERS;
-+	}
-+
-+	for (port = 0; port < piix4_adapter_count; port++) {
- 		retval = piix4_add_adapter(dev, smba, true, port, notify_imc,
- 					   piix4_main_port_names_sb800[port],
- 					   &piix4_main_adapters[port]);
-@@ -987,7 +997,7 @@ static void piix4_adap_remove(struct i2c
- 
- static void piix4_remove(struct pci_dev *dev)
- {
--	int port = PIIX4_MAX_ADAPTERS;
-+	int port = piix4_adapter_count;
- 
- 	while (--port >= 0) {
- 		if (piix4_main_adapters[port]) {
+checkpatch.pl will complain that this should line up with the '('
 
--- 
-Jean Delvare
-SUSE L3 Support
+> +                       ok = false;
+> +                       goto out;
+> +               }
+> +
+> +               if (!fc->ops->reconfigure || fc->ops->reconfigure(fc))
+> +                       ok = false;
+>         }
+>  
+> +out:
+> +       if (!ok)
+> +               pr_err("i915 gemfs reconfiguration failed\n");
+
+Let's make it a bit more user friendly,
+
+dev_err(i915->drm.dev,
+	"Unable to reconfigure internal shmemfs for preferred"
+	" allocation strategy; continuing, but performance may suffer.\n");
+
+Assuming that we can't just use vfs_kern_mount() instead, with the nits
+Reviewed-by: Chris Wilson <chris@chris-wilson.co.uk>
+-Chris
