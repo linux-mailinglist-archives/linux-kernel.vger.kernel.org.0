@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48F2A7F22E
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:46:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A52A67F231
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2019 11:46:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405474AbfHBJqD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 2 Aug 2019 05:46:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49994 "EHLO mail.kernel.org"
+        id S2405484AbfHBJqF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 2 Aug 2019 05:46:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50082 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405460AbfHBJqA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 2 Aug 2019 05:46:00 -0400
+        id S2405471AbfHBJqD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 2 Aug 2019 05:46:03 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8F66F2087E;
-        Fri,  2 Aug 2019 09:45:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 18EFC216C8;
+        Fri,  2 Aug 2019 09:46:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564739160;
-        bh=MjP5+T4QgA4Dko0e4aMo16WA7kdWEodafDQJ+oqDRZ4=;
+        s=default; t=1564739162;
+        bh=6rAfEz0VaxnRmTfVyrHrl5rArO9Sto31J1SKv7Io9EQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=alv3ZO7VApeSEGp+G9U/NNko0Dei9xZHiIJfMeK0xMIVVYKJCcW2hXVB8gp0XTReO
-         g+gaCD3bf9cCKfHqxqx38LHAKlarzjyMwRCcLCBWHIrm7TS5cwiVtOmMkXxPxtFmta
-         QW+iRPa5i1GYUEbooQFGfyIuDdiYSgTeVHOxFEzs=
+        b=qdeFOlysktMMYlgwJLzFMrcsQuTK9ZxwQBdxOkPA+HRnGLy/ZQaIQrN+gKxjfyFO1
+         o+tYP1RmbJxBxMPlhwzIAHbZynq/GDPfwrBpPWnUeeJBNjurqKS+DMKCyzArAuhAlT
+         5LCnSflvpfIuiCph5MjW33pv8gCN/7AN7cmRmNhQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Ammy Yi <ammy.yi@intel.com>
-Subject: [PATCH 4.9 121/223] intel_th: msu: Fix single mode with disabled IOMMU
-Date:   Fri,  2 Aug 2019 11:35:46 +0200
-Message-Id: <20190802092247.012932813@linuxfoundation.org>
+        stable@vger.kernel.org, Szymon Janc <szymon.janc@codecoup.pl>,
+        Maarten Fonville <maarten.fonville@gmail.com>,
+        Marcel Holtmann <marcel@holtmann.org>
+Subject: [PATCH 4.9 122/223] Bluetooth: Add SMP workaround Microsoft Surface Precision Mouse bug
+Date:   Fri,  2 Aug 2019 11:35:47 +0200
+Message-Id: <20190802092247.058386240@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190802092238.692035242@linuxfoundation.org>
 References: <20190802092238.692035242@linuxfoundation.org>
@@ -45,40 +44,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+From: Szymon Janc <szymon.janc@codecoup.pl>
 
-commit 918b8646497b5dba6ae82d4a7325f01b258972b9 upstream.
+commit 1d87b88ba26eabd4745e158ecfd87c93a9b51dc2 upstream.
 
-Commit 4e0eaf239fb3 ("intel_th: msu: Fix single mode with IOMMU") switched
-the single mode code to use dma mapping pages obtained from the page
-allocator, but with IOMMU disabled, that may lead to using SWIOTLB bounce
-buffers and without additional sync'ing, produces empty trace buffers.
+Microsoft Surface Precision Mouse provides bogus identity address when
+pairing. It connects with Static Random address but provides Public
+Address in SMP Identity Address Information PDU. Address has same
+value but type is different. Workaround this by dropping IRK if ID
+address discrepancy is detected.
 
-Fix this by using a DMA32 GFP flag to the page allocation in single mode,
-as the device supports full 32-bit DMA addressing.
+> HCI Event: LE Meta Event (0x3e) plen 19
+      LE Connection Complete (0x01)
+        Status: Success (0x00)
+        Handle: 75
+        Role: Master (0x00)
+        Peer address type: Random (0x01)
+        Peer address: E0:52:33:93:3B:21 (Static)
+        Connection interval: 50.00 msec (0x0028)
+        Connection latency: 0 (0x0000)
+        Supervision timeout: 420 msec (0x002a)
+        Master clock accuracy: 0x00
 
-Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Fixes: 4e0eaf239fb3 ("intel_th: msu: Fix single mode with IOMMU")
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Reported-by: Ammy Yi <ammy.yi@intel.com>
-Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20190621161930.60785-4-alexander.shishkin@linux.intel.com
+....
+
+> ACL Data RX: Handle 75 flags 0x02 dlen 12
+      SMP: Identity Address Information (0x09) len 7
+        Address type: Public (0x00)
+        Address: E0:52:33:93:3B:21
+
+Signed-off-by: Szymon Janc <szymon.janc@codecoup.pl>
+Tested-by: Maarten Fonville <maarten.fonville@gmail.com>
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=199461
+Cc: stable@vger.kernel.org
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hwtracing/intel_th/msu.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/bluetooth/smp.c |   13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
---- a/drivers/hwtracing/intel_th/msu.c
-+++ b/drivers/hwtracing/intel_th/msu.c
-@@ -638,7 +638,7 @@ static int msc_buffer_contig_alloc(struc
- 		goto err_out;
+--- a/net/bluetooth/smp.c
++++ b/net/bluetooth/smp.c
+@@ -2514,6 +2514,19 @@ static int smp_cmd_ident_addr_info(struc
+ 		goto distribute;
+ 	}
  
- 	ret = -ENOMEM;
--	page = alloc_pages(GFP_KERNEL | __GFP_ZERO, order);
-+	page = alloc_pages(GFP_KERNEL | __GFP_ZERO | GFP_DMA32, order);
- 	if (!page)
- 		goto err_free_sgt;
++	/* Drop IRK if peer is using identity address during pairing but is
++	 * providing different address as identity information.
++	 *
++	 * Microsoft Surface Precision Mouse is known to have this bug.
++	 */
++	if (hci_is_identity_address(&hcon->dst, hcon->dst_type) &&
++	    (bacmp(&info->bdaddr, &hcon->dst) ||
++	     info->addr_type != hcon->dst_type)) {
++		bt_dev_err(hcon->hdev,
++			   "ignoring IRK with invalid identity address");
++		goto distribute;
++	}
++
+ 	bacpy(&smp->id_addr, &info->bdaddr);
+ 	smp->id_addr_type = info->addr_type;
  
 
 
